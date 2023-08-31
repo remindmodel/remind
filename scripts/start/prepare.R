@@ -68,27 +68,12 @@ prepare <- function() {
   # change to REMIND main folder
   setwd(cfg$remind_folder)
 
-  # Check configuration for consistency
-#  cfg <- check_config(cfg, reference_file="config/default.cfg",
-#                      settings_config = "config/settings_config.csv",
-#                      extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
-#                                 "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
-#                                 "gms$cm_CES_configuration", "gms$c_description"))
-
-  # Check for compatibility with subsidizeLearning
-  if ( (cfg$gms$optimization != 'nash') & (cfg$gms$subsidizeLearning == 'globallyOptimal') ) {
-    cat("Only optimization='nash' is compatible with subsudizeLearning='globallyOptimal'. Switching subsidizeLearning to 'off' now. \n")
-    cfg$gms$subsidizeLearning = 'off'
-  }
-
-  # reportCEScalib only works with the calibrate module
-  if ( cfg$gms$CES_parameters != "calibrate" ) cfg$output <- setdiff(cfg$output,"reportCEScalib")
+  cfg <- checkFixCfg(cfg, remindPath = cfg$remind_folder)
 
   #AJS quit if title is too long - GAMS can't handle that
   if( nchar(cfg$title) > 75 | grepl("\\.",cfg$title) ) {
       stop("This title is too long or the name contains dots - GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now. ")
   }
-
 
   # adjust GDPpcScen based on GDPscen
   cfg$gms$c_GDPpcScen <- gsub("gdp_","",cfg$gms$cm_GDPscen)

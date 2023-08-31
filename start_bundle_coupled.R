@@ -6,7 +6,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 if (is.null(renv::project())) {
-  warning("Coupled runs are now recommended to be run using renv instead of snapshots")
+  stop("No renv found. Coupled runs must run via renv.")
 }
 require(lucode2)
 require(magclass)
@@ -59,7 +59,7 @@ if (! dir.exists(path_magpie)) path_magpie <- normalizePath(file.path(getwd(), "
 # path_settings_remind contains the detailed configuration of the REMIND scenarios
 # path_settings_coupled defines which runs will be started, coupling infos, and optimal gdx and report information that overrides path_settings_remind
 # these settings will be overwritten if you provide the path to the coupled file as first command line argument
-path_settings_coupled <- file.path(path_remind, "config", "scenario_config_coupled_NGFS_v4.csv")
+path_settings_coupled <- file.path(path_remind, "config", "scenario_config_coupled.csv")
 path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_settings_coupled)
                          # file.path(path_remind, "config", "scenario_config.csv")
 
@@ -142,7 +142,7 @@ if (length(argv) > 0) {
   if (sum(file_exists) > 1) stop("Enter only a scenario_config_coupled* file via command line or set all files manually in start_bundle_coupled.R")
   if (!all(file_exists)) stop("Unknown parameter provided: ", paste(argv[!file_exists], collapse = ", "))
   # set config file to not known parameter where the file actually exists
-  path_settings_coupled <- file.path(path_remind, argv[[1]])
+  path_settings_coupled <- normalizePath(argv[[1]])
   if (! isTRUE(grepl("scenario_config_coupled", path_settings_coupled)))
     stop("Enter only a scenario_config_coupled* file via command line or set all files manually in start_bundle_coupled.R.\n",
          "Your command line arguments were: ", paste0(argv, collapse = " "))
@@ -167,16 +167,7 @@ message("run_compareScenarios:  ", run_compareScenarios)
 
 if (! file.exists("output")) dir.create("output")
 
-# Check if dependencies for a REMIND model run are fulfilled
-if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.2.0") {
-  if (is.null(renv::project())) {
-    piamenv::checkDeps(action = "stop")
-  } else {
-    ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
-  }
-} else {
-  stop("REMIND requires piamenv >= 0.2.0, please use snapshot 2022_11_18_R4 or later.")
-}
+ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
 
 errorsfound <- 0
 startedRuns <- 0
@@ -278,6 +269,9 @@ if (file.exists("/p") && sum(scenarios_coupled[common, "qos"] == "priority", na.
 ####################################################
 ######## PREPARE AND START COUPLED RUNS ############
 ####################################################
+
+# initialize madrat settings
+invisible(madrat::getConfig(verbose = FALSE))
 
 # prepare runs: write RData files
 for(scen in common){
@@ -549,6 +543,8 @@ for(scen in common){
       numberOfTasks <- 1
     }
 
+    cfg_rem <- checkFixCfg(cfg_rem, remindPath = path_remind)
+
     Rdatafile <- paste0(fullrunname, ".RData")
     message("Save settings to ", Rdatafile)
     save(path_remind, path_magpie, cfg_rem, cfg_mag, runname, fullrunname, max_iterations, start_iter,
@@ -627,12 +623,12 @@ for (scen in common) {
           sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j'"), intern = TRUE)
           runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
         }
-        slurm_command <- paste0("sbatch --qos=", runEnv$qos, " --job-name=", fullrunname,
-        " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
-        if (runEnv$numberOfTasks == 1) " --mem=8000", " ", runEnv$sbatch,
-        " ", runEnv$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
-        message(slurm_command)
-        exitCode <- system(slurm_command)
+        slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
+          " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
+          if (runEnv$numberOfTasks == 1) " --mem=8000"), runEnv$sbatch)
+        slurmCommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
+        message(slurmCommand)
+        exitCode <- system(slurmCommand)
         if (0 < exitCode) {
           errorsfound <- errorsfound + 1
           message("sbatch command failed, check logs.")

@@ -615,11 +615,13 @@ $endif.CO2priceDependent_AdjCosts
 
 *** CG: calculate marginal adjustment cost for capacity investment: d(v_costInvTeAdj) / d(vm_deltaCap)  !!!! the closed formula only holds when v_adjFactorGlob.fx(t,regi,te) = 0;
 o_margAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te)) =  vm_costTeCapital.l(ttot,regi,te) * p_adj_coeff(ttot,regi,te)
-    * 2
-    * (sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf)) - sum(te2rlf(te,rlf),vm_deltaCap.l(ttot-1,regi,te,rlf))) / power((pm_ttot_val(ttot)-pm_ttot_val(ttot-1)),2)
-    /( sum(te2rlf(te,rlf),vm_deltaCap.l(ttot-1,regi,te,rlf)) + p_adj_seed_reg(ttot,regi) * p_adj_seed_te(ttot,regi,te)
-    + p_adj_deltacapoffset("2010",regi,te)$(ttot.val eq 2010) + p_adj_deltacapoffset("2015",regi,te)$(ttot.val eq 2015)
+    * 2 * (sum(te2rlf(te,rlf), vm_deltaCap.l(ttot,regi,te,rlf)) - sum(te2rlf(te,rlf), vm_deltaCap.l(ttot-1,regi,te,rlf)))
+    / power((pm_ttot_val(ttot) - pm_ttot_val(ttot-1)), 2)
+    / (sum(te2rlf(te,rlf), vm_deltaCap.l(ttot-1,regi,te,rlf)) + p_adj_seed_reg(ttot,regi) * p_adj_seed_te(ttot,regi,te)
+      + p_adj_deltacapoffset("2010",regi,te)$(ttot.val eq 2010) + p_adj_deltacapoffset("2015",regi,te)$(ttot.val eq 2015)
+      + p_adj_deltacapoffset("2020",regi,te)$(ttot.val eq 2020) + p_adj_deltacapoffset("2025",regi,te)$(ttot.val eq 2025)
     )
+    * (1.02 + pm_prtp(regi)) ** (pm_ts(ttot) / 2)
 ;
 
 *** CG: calculate average adjustment cost for capacity investment: v_costInvTeAdj / vm_deltaCap

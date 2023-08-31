@@ -275,7 +275,8 @@ $ENDIF.WindOff
         apCarElT        "Cars using final energy electricity (FEELT) to produce useful energy as electricity for transport (UEELT)"
         apTrnElT        "Trains using final energy electricity (FEELT) to produce useful energy as electricity for transport (UEELT)"
 ***  appCarGaT  "Cars using FEGAT to produce ESGAT."  ???
-        rockgrind       "grinding rock for enhanced weathering"
+        rockgrind       "grinding rock for enhanced weathering" !! deprecated, will be removed with CDR module refactoring
+        weathering      "enhanced weathering"
         dac             "direct air capture"
         x_gas2elec
         d_bio2elec      "d_* transmission and distribution losses"
@@ -330,9 +331,9 @@ $ENDIF.WindOff
         eaf          "Electric-arc furnace"
         bf           "Blast furnace"
         bof          "Basic-oxygen furnace"
-*        bfbof        "BF/BOF route"
-*        idreaf       "Direct reduction / EAF route"
-*        seceaf       "Scrap-loaded EAF route"
+        bfbof        "BF/BOF route"
+        idreaf       "Direct reduction / EAF route"
+        seceaf       "Scrap-loaded EAF route"
         pcc          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
         pco          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
 /
@@ -397,6 +398,7 @@ all_enty             "all types of quantities"
         feelt        "final energy electricity for transport"
         fehoi_cs     "final energy in industry diesel - carbon stored"
         fegai_cs     "final energy in industry natural gas - carbon stored "
+        entydummy      "dummy fe for process based industry implementation"
 
         ueHDVt       "transport useful energy heavy duty vehicles"
         ueLDVt       "transport useful energy light duty vehicles"
@@ -874,7 +876,7 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
        UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,
        VIR,VNM,VUT,WLF,WSM,YEM,ZAF,ZMB,ZWE /
 
-   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country"
+   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
          /
        EUR . EUR
        CHA . CHA
@@ -1224,6 +1226,12 @@ $ENDIF.WindOff
         termX_lng   'Export terminals for LNG (liquification)'
         termM_lng   'Import terminals for LNG (regasification)'
         vess_lng    'Vessels transporting LNG'
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+        idr          "Iron direct reduction"
+        eaf          "Electric-arc furnace"
+        bf           "Blast furnace"
+        bof          "Basic-oxygen furnace"
+$endif.process_based_steel
 /
 teAdj(all_te)           "technologies with adjustment costs on capacity additions"
 /
@@ -1606,6 +1614,7 @@ enty(all_enty)       "all types of quantities"
         fetf          "final energy transport fuels"
         feh2t         "final energy hydrogen transport"
         fegat         "final energy nat. gas for transport"
+        entydummy      "dummy fe for process based industry implementation"
 
         co2          "carbon dioxide emissions"
         ch4          "methane emissions"
@@ -2322,7 +2331,7 @@ alias(te,te2,te3);
 alias(all_enty,all_enty2);
 alias(enty,enty2,enty3,enty4,enty5,enty6,enty7);
 alias(entyPE,entyPE2);
-alias(entySe,entySe2);
+alias(entySE,entySE2);
 alias(entyFe,entyFe2);
 alias(teEs,teEs2);
 alias(esty,esty2);
@@ -2503,6 +2512,9 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
 sefe(all_enty,all_enty) "map secondary energy to final energy"
 fete(all_enty,all_te) "map final energy to technologies"
 fe2ue(all_enty,all_enty,all_te)    "map FE carriers to ES via appliances"
+//
+
+fe2mats(all_enty,all_enty,all_te)    "map FE carriers to materials"
 //
 
 fe2es(all_enty,all_esty,all_teEs)    "map FE carriers to ES via ES technologies"
@@ -2808,6 +2820,9 @@ teFe2rlfH2BI(all_te,rlf) "mapping for final energy to grades of helper technolog
 /
 
 teue2rlf(all_te,rlf)     "mapping for ES production technologies to grades"
+//
+
+teMats2rlf(all_te,rlf)     "mapping for material production technologies to grades"
 //
 
 teCCS2rlf(all_te,rlf)     "mapping for CCS technologies to grades"

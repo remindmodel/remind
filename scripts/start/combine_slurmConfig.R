@@ -12,8 +12,8 @@
 combine_slurmConfig <- function(original, update_with) {
 
   # trim whitespaces
-  original <- trimws(original)
-  update_with <- trimws(update_with)
+  original <- trimws(toString(original))
+  update_with <- trimws(toString(update_with))
 
   # remove double whitespaces
   original <- gsub("\\s+", " ", original)

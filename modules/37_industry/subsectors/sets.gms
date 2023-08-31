@@ -7,15 +7,17 @@
 *** SOF ./modules/37_industry/subsectors/sets.gms
 
 Sets
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
   tePrcb(all_te)        "Technologies used in material-flow model"
   /
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     bf                  "Blast furnace"
     bof                 "Basic oxygen furnace"
     eaf                 "Electric-arc furnace"
     idr                 "Iron direct reduction"
+$endif.process_based_steel
   /
 
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
   mats(all_enty)        "Materials considered in material-flow model"
   /
     prsteel             "Primary steel"
@@ -79,21 +81,29 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
    eaf . sec . ue_steel_secondary
   /
 
-*  routes(all_te)  "Process routes"
-*  /
-*    idreaf
-*    bfbof
-*    seceaf
-*  /
-*
-*  tePrcb2route(tePrcb,opModesPrcb,routes)    "Mapping of technologies onto route"
-*  /
-*    idr . (h2,ng) . idreaf
-*    eaf . pri . idreaf
-*    eaf . sec . seceaf
-*    bf  . standard . bfbof
-*    bof . unheated . bfbof
-*  /
+  routes(all_te)  "Process routes"
+  /
+    idreaf
+    bfbof
+    seceaf
+  /
+
+  route2ue(all_te,all_in)  "Process routes"
+  /
+    idreaf . ue_steel_primary
+    bfbof . ue_steel_primary
+    seceaf . ue_steel_secondary
+  /
+
+
+  tePrcb2route(tePrcb,opModesPrcb,routes)    "Mapping of technologies onto route"
+  /
+    idr . (h2,ng) . idreaf
+    eaf . pri . idreaf
+    eaf . sec . seceaf
+    bf  . standard . bfbof
+    bof . unheated . bfbof
+  /
 
   uePrcb(all_in) "Ue ces tree nodes connected to process based implementation"
   /
@@ -113,6 +123,14 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     eaf . (pri,sec)
     bf . (standard)
     bof . (unheated)
+  /
+
+  fe2mats_dyn37(all_enty,all_enty,all_te)    "map FE carriers to materials"
+  /
+    entydummy.entydummy.bf
+    entydummy.entydummy.bof
+    entydummy.entydummy.idr
+    entydummy.entydummy.eaf
   /
 $endif.process_based_steel
 
@@ -472,9 +490,10 @@ pf_eff_target_dyn29(pf_eff_target_dyn37)    = YES;
 pf_quan_target_dyn29(pf_quan_target_dyn37)  = YES;
 $endif.calibrate
 
-$ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_material_flows
-alias(mats,mats2,matsIn,matsOut);
-$endif.material_flows
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+teMats2rlf(tePrcb,"1") = YES;
+fe2mats(fe2mats_dyn37)       = YES;
+$endif.process_based_steel
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfen37,fe2ppfen37_2);
 

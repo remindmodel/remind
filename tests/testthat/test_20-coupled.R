@@ -239,6 +239,32 @@ test_that("Check path_mif_ghgprice_land with file", {
   }
 })
 
+test_that("start_bundle_coupled.R --test succeeds on all configs", {
+  skipIfPreviousFailed()
+  csvfiles <- system("git ls-files ../../config/scenario_config_coupled*.csv ../../config/*/scenario_config_coupled*.csv", intern = TRUE)
+  if (length(csvfiles) == 0) {
+    csvfiles <- Sys.glob(c(file.path("../../config/scenario_config_coupled*.csv"),
+                           file.path("../../config", "*", "scenario_config_coupled*.csv")))
+  }
+  skipfiles <- c("scenario_config_coupled_shortCascade", # fails on missing mif file which is present while running other tests
+                 "scenario_config_coupled_GCS")          # GCFS setting not in standard MAgPIE release
+  csvfiles <- normalizePath(grep(paste(skipfiles, collapse = "|"), csvfiles, invert = TRUE, value = TRUE))
+  expect_true(length(csvfiles) > 0)
+  with_mocked_bindings(
+    for (csvfile in csvfiles) {
+      test_that(paste("perform start_bundle_coupled.R --test with", basename(csvfile)), {
+        output <- localSystem2("Rscript",
+                             c("start_bundle_coupled.R", "--test", "startgroup=*", csvfile))
+        printIfFailed(output)
+        expectSuccessStatus(output)
+      })
+    },
+    getLine = function() stop("getLine should not called."),
+    .package = "gms"
+  )
+  unlink("../../*TESTTHAT.RData")
+})
+
 test_that("delete files to leave clean state", {
   # leave clean state
   skipIfPreviousFailed()

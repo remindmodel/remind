@@ -26,25 +26,24 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! c
     pigiron.bof.unheated    0.8
   /
 
-  !! h2:
   !! Read in in MWh/t, then convert to TWa/Gt directly below!!
   p37_specFeDem(all_enty,all_te,opModesPrcb)
   /
     !! reduction: 504 m^3; heat 242 m^3; conversion: x / 11.126 m^3/kg * 0.0333 MWh/kg
-    feh2s.idr.h2           2.23                                            !! Specific hydrogen demand when operating with H2. POSTED
-    feels.idr.h2           0.08                                            !! Specific electric demand for both H2 and NG operation. POSTED
+    feh2s.idr.h2           2.23                                            !! Source: POSTED
+    feels.idr.h2           0.08                                            !! Source: POSTED
 
-    fegas.idr.ng           2.69                                            !! Specific natural gas demand when operating with NG. POSTED
-    feels.idr.ng           0.08                                            !! Specific electric demand for both H2 and NG operation. POSTED
+    fegas.idr.ng           2.69                                            !! Source: POSTED
+    feels.idr.ng           0.08                                            !! Source: POSTED
 
-    feels.eaf.pri          0.67                                            !! Specific electricy demand of EAF when operating with iron sponge POSTED
-    feels.eaf.sec          0.67                                            !! Specific electricy demand of EAF when operating with scrap. POSTED
+    feels.eaf.pri          0.67                                            !! Source: POSTED
+    feels.eaf.sec          0.67                                            !! Source: POSTED
 
-    fesos.bf.standard      3.9                                             !! Specific coal demand of BF-BOF when operating with DRI OTTO_ET_AL
-    fegas.bf.standard      0.18                                            !! Specific coal demand of BF-BOF when operating with DRI DUMMY
-    feels.bf.standard      0.20                                            !! Specific electricy demand of EAF when operating with scrap. DUMMY
+    fesos.bf.standard      3.9                                             !! Source: OTTO_ET_AL
+    fegas.bf.standard      0.18                                            !! Source: DUMMY
+    feels.bf.standard      0.20                                            !! Source: DUMMY
 
-    feels.bof.unheated     0.05                                            !! Specific electricy demand of EAF when operating with scrap. DUMMY
+    feels.bof.unheated     0.05                                            !! Source: DUMMY
   /;
 !! Convert from MWh/t to TWa/Gt
 p37_specFeDem(all_enty,all_te,opModesPrcb) = p37_specFeDem(all_enty,all_te,opModesPrcb)  / (sm_TWa_2_MWh / sm_giga_2_non);

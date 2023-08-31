@@ -496,7 +496,11 @@ pm_cf(ttot,regi,"tdsyngas") = 0.65;
 pm_cf(ttot,regi,"tdsynhos") = 0.6;
 pm_cf(ttot,regi,"tdsynpet") = 0.7;
 pm_cf(ttot,regi,"tdsyndie") = 0.7;
-
+*JD short-term fix for pb ind 
+pm_cf(ttot,regi,"bf") = 0.8;
+pm_cf(ttot,regi,"bof") = 0.8;
+pm_cf(ttot,regi,"idr") = 0.8;
+pm_cf(ttot,regi,"eaf") = 0.8;
 
 *RP* phasing down the ngt cf to "peak load" cf of 5%
 pm_cf(ttot,regi,"ngt")$(ttot.val eq 2025) = 0.9 * pm_cf(ttot,regi,"ngt");
