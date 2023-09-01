@@ -186,6 +186,15 @@ eta                 1.00        1.00        1.00        1.00
 omf                  0.1         0.1         0.1        0.05
 omv                    0           0           0           0
 lifetime              20          20          20          20
+
++                  bfccs
+tech_stat
+inco0               TODO
+mix0                 0.0
+eta                 TODO
+omf                 TODO
+omv                 TODO
+lifetime            TODO
 $endif.process_based_steel
 
 

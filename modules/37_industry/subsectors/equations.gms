@@ -28,7 +28,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
   sum((secInd37_emiMkt(secInd37Prc,emiMkt),secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
     p37_specFEDem(entyFE,tePrc,opmoPrc)
 *    /
-*    pm_eta_conv(t,regi,tePrc)
+*    pm_eta_conv(t,regi,teBasePrc)
     *
     v37_prodVolPrc(ttot,regi,tePrc,opmoPrc)
   )$(NOT sameas(ttot,"2005"))
@@ -39,10 +39,10 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
 q37_demMatPrc(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matIn(mat))..
     v37_prodMat(ttot,regi,mat)
   =e=
-    sum(tePrc2matIn(tePrc,opmoPrc,mat),
-      p37_specMatDem(mat,tePrc,opmoPrc)
+    sum(teBasePrc2matIn(teBasePrc,opmoPrc,mat),
+      p37_specMatDem(mat,teBasePrc,opmoPrc)
       *
-      v37_prodVolPrc(ttot,regi,tePrc,opmoPrc)
+      v37_prodVolPrc(ttot,regi,teBasePrc,opmoPrc)
     )
 ;
 
@@ -52,8 +52,8 @@ q37_demMatPrc(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matIn(mat))..
 q37_prodMat(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matOut(mat))..
     v37_prodMat(ttot,regi,mat)
   =e=
-    sum(tePrc2matOut(tePrc,opmoPrc,mat),
-      v37_prodVolPrc(ttot,regi,tePrc,opmoPrc)
+    sum(teBasePrc2matOut(teBasePrc,opmoPrc,mat),
+      v37_prodVolPrc(ttot,regi,teBasePrc,opmoPrc)
     )
 ;
 
@@ -83,6 +83,16 @@ q37_limitCapMat(t,regi,tePrc)..
     )
 ;
 
+***------------------------------------------------------
+*' CCS is added to base technology, so its capacity can't be higher than base
+***------------------------------------------------------
+q37_limitCapCCSPrc(t,regi,teCCSPrc)..
+    vm_cap(t,regi,teCCSPrc,rlf)
+    =l=
+    sum(teBasePrc2teCCSPrc(teBasePrc,teCCSPrc),
+        vm_cap(t,regi,teBasePrc,rlf)
+    )
+;
 $endif.process_based_steel
 
 ***------------------------------------------------------
@@ -139,10 +149,10 @@ q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
   )$((NOT secInd37Prc(secInd37)) OR sameas(ttot,"2005"))
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   +
-  sum((secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
-      p37_specFEDem(entyFE,tePrc,opmoPrc)
+  sum((secInd37_tePrc(secInd37Prc,teBasePrc),tePrc2opmoPrc(teBasePrc,opmoPrc)),
+      p37_specFEDem(entyFE,teBasePrc,opmoPrc)
       *
-      v37_prodVolPrc(ttot,regi,tePrc,opmoPrc)
+      v37_prodVolPrc(ttot,regi,teBasePrc,opmoPrc)
       *
       sum(se2fe(entySEfos,entyFE,te),
           pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")

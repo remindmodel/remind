@@ -330,6 +330,7 @@ $ENDIF.WindOff
         idr          "Iron direct reduction"
         eaf          "Electric-arc furnace"
         bf           "Blast furnace"
+        bfccs        "Blast furnace CCS"
         bof          "Basic-oxygen furnace"
         bfbof        "BF/BOF route"
         idreaf       "Direct reduction / EAF route"
@@ -876,7 +877,7 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
        UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,
        VIR,VNM,VUT,WLF,WSM,YEM,ZAF,ZMB,ZWE /
 
-   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
+   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country"
          /
        EUR . EUR
        CHA . CHA
@@ -1231,6 +1232,8 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
         eaf          "Electric-arc furnace"
         bf           "Blast furnace"
         bof          "Basic-oxygen furnace"
+
+        bfccs        "Blast furnace CCS"
 $endif.process_based_steel
 /
 teAdj(all_te)           "technologies with adjustment costs on capacity additions"

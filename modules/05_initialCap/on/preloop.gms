@@ -116,6 +116,8 @@ pm_cap0(regi,'bof') = pm_fedemand('2005',regi,'ue_steel_primary') / pm_cf("2005"
 pm_cap0(regi,'bf') = pm_fedemand('2005',regi,'ue_steel_primary') / pm_cf("2005",regi,'bf');  !! measure bf capacity in t steel, not t pigiron! Skip: * p37_specMatDem('pigiron','bof','unheated'));
 pm_cap0(regi,'eaf') = pm_fedemand('2005',regi,'ue_steel_secondary') / pm_cf("2005",regi,'eaf');
 pm_cap0(regi,'idr') = 0.;
+* no initial capacity for CCS
+pm_cap0(regi,teCCSPrc) = 0.;
 
 *RP keep energy demand for the Kyoto target calibration
 pm_EN_demand_from_initialcap2(regi,enty) = v05_INIdemEn0.l(regi,enty);

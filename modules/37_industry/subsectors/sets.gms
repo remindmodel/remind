@@ -7,17 +7,37 @@
 *** SOF ./modules/37_industry/subsectors/sets.gms
 
 Sets
-  tePrc(all_te)         "Technologies used in material-flow model"
+  tePrc(all_te)         "Technologies used in material-flow model (including CCS)"
   /
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     bf                  "Blast furnace"
     bof                 "Basic oxygen furnace"
     eaf                 "Electric-arc furnace"
     idr                 "Iron direct reduction"
+
+    bfccs               "Blast furnace"
 $endif.process_based_steel
   /
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+  teBasePrc(tePrc)      "Technologies used in material-flow model (non-CCS)"
+  /
+    bf                  "Blast furnace"
+    bof                 "Basic oxygen furnace"
+    eaf                 "Electric-arc furnace"
+    idr                 "Iron direct reduction"
+  /
+
+  teCCSPrc(tePrc)       "CCS technologies used in material-flow model"
+  /
+    bfccs               "Blast furnace CCS"
+  /
+
+  teBasePrc2teCCSPrc(tePrc)  "Mapping of base technologies to CCS technologies"
+  /
+    bf . bfccs
+  /
+
   mat(all_enty)         "Materials considered in material-flow model"
   /
     prsteel             "Primary steel"
@@ -54,7 +74,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     standard            "Only one operation mode implemented"
   /
 
-  tePrc2matIn(tePrc,opmoPrc,mat)    "Mapping of technologies onto input materials"
+  teBasePrc2matIn(teBasePrc,opmoPrc,mat)    "Mapping of technologies onto input materials"
   /
     idr . (h2,ng) . ironore
     eaf . pri . driron
@@ -63,7 +83,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     bof . unheated . (pigiron,scrap)
   /
 
-  tePrc2matOut(tePrc,opmoPrc,mat)   "Mapping of technologies onto their output materials"
+  teBasePrc2matOut(teBasePrc,opmoPrc,mat)   "Mapping of technologies onto their output materials"
   /
    bf  . standard . pigiron
    bof . unheated . prsteel
@@ -72,7 +92,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
    eaf . sec . sesteel
   /
 
-  tePrc2ue(tePrc,opmoPrc,all_in)
+  teBasePrc2ue(teBasePrc,opmoPrc,all_in)
   /
    bf  . standard . ue_steel_primary
    bof . unheated . ue_steel_primary
@@ -96,7 +116,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
   /
 
 
-  tePrc2route(tePrc,opmoPrc,routes)  "Mapping of technologies onto route"
+  teBasePrc2route(teBasePrc,opmoPrc,routes)  "Mapping of technologies onto route"
   /
     idr . (h2,ng) . idreaf
     eaf . pri . idreaf
@@ -156,6 +176,8 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     steel . eaf
     steel . bf
     steel . bof
+
+    steel . bfccs
   /
 $endif.process_based_steel
 
@@ -193,7 +215,9 @@ $endif.process_based_steel
   /
     cement    . (co2cement, co2cement_process)
     chemicals . co2chemicals
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     steel     . co2steel
+$endif.process_based_steel
     otherInd  . co2otherInd
   /
 
@@ -493,6 +517,12 @@ $endif.calibrate
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
 teMat2rlf(tePrc,"1") = YES;
 fe2mat(fe2mat_dyn37)       = YES;
+* fill technology 2 opmode mapping of CCS with same values as base technology
+loop(tePrc2opmoPrc(teBasePrc,opmoPrc),
+  loop(teBasePrc2teCCSPrc(teBasePrc,teCCSPrc),
+    tePrc2opmoPrc(teCCSPrc,opmoPrc) = YES;
+    );
+);
 $endif.process_based_steel
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfen37,fe2ppfen37_2);

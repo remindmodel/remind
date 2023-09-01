@@ -44,6 +44,8 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! c
     feels.bf.standard      0.20                                            !! Source: DUMMY
 
     feels.bof.unheated     0.05                                            !! Source: DUMMY
+
+    feels.bfccs.standard   0.10                                            !! Source: DUMMY
   /;
 !! Convert from MWh/t to TWa/Gt
 p37_specFeDem(all_enty,all_te,opmoPrc) = p37_specFeDem(all_enty,all_te,opmoPrc)  / (sm_TWa_2_MWh / sm_giga_2_non);
