@@ -161,6 +161,33 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
 $endif.process_based_steel
 ;
 
+
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+q37_specEmiBasePrc(ttot,regi,teBasePrc,opmoPrc)$( ttot.val ge cm_startyear AND NOT sameas(ttot,"2005")) ..
+  v37_specEmiBasePrc(ttot,regi,teBasePrc,opmoPrc)
+  =e=
+  sum(entyFE,
+      p37_specFEDem(entyFE,teBasePrc,opmoPrc)
+      *
+      sum(se2fe(entySEfos,entyFE,te),
+          pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")
+      )
+  )
+;
+
+q37_emiCCSPrc(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND secInd37_2_emiInd37(secInd37Prc,emiInd37) AND NOT sameas(ttot,"2005")) ..
+  vm_emiIndCCS(ttot,regi,emiInd37)
+  =e=
+  sum((secInd37_tePrc(secInd37Prc,teBasePrc),tePrc2opmoPrc(teBasePrc,opmoPrc),teBasePrc2teCCSPrc(teBasePrc,teCCSPrc)),
+    v37_specEmiBasePrc(ttot,regi,teBasePrc,opmoPrc)
+    *
+    v37_prodVolPrc(ttot,regi,teCCSPrc,opmoPrc)
+    *
+    p37_captureRate(teCCSPrc,opmoPrc)
+  )
+;
+$endif.process_based_steel
+
 ***------------------------------------------------------
 *' Compute maximum possible CCS level in industry sub-sectors given the current
 *' CO2 price.
