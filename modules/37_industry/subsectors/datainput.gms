@@ -13,7 +13,7 @@ Parameters
 ***                         MATERIAL-FLOW IMPLEMENTATION
 ***-------------------------------------------------------------------------------
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! cm_process_based_steel
-  p37_specMatsDem(mats,all_te,opModesPrcb)                                      "Specific materials demand of a production technology and operation mode [t_input/t_output]"
+  p37_specMatDem(mat,all_te,opmoPrc)                                      "Specific materials demand of a production technology and operation mode [t_input/t_output]"
   /
     ironore.idr.(ng,h2)     1.5                                             !! Iron ore demand of iron direct-reduction (independent of fuel source) POSTED
 
@@ -27,7 +27,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! c
   /
 
   !! Read in in MWh/t, then convert to TWa/Gt directly below!!
-  p37_specFeDem(all_enty,all_te,opModesPrcb)
+  p37_specFeDem(all_enty,all_te,opmoPrc)
   /
     !! reduction: 504 m^3; heat 242 m^3; conversion: x / 11.126 m^3/kg * 0.0333 MWh/kg
     feh2s.idr.h2           2.23                                            !! Source: POSTED
@@ -46,10 +46,10 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! c
     feels.bof.unheated     0.05                                            !! Source: DUMMY
   /;
 !! Convert from MWh/t to TWa/Gt
-p37_specFeDem(all_enty,all_te,opModesPrcb) = p37_specFeDem(all_enty,all_te,opModesPrcb)  / (sm_TWa_2_MWh / sm_giga_2_non);
+p37_specFeDem(all_enty,all_te,opmoPrc) = p37_specFeDem(all_enty,all_te,opmoPrc)  / (sm_TWa_2_MWh / sm_giga_2_non);
 
 Parameters
-  p37_mats2ue(all_enty,all_in) !!,opModesPrcb)
+  p37_mat2ue(all_enty,all_in) !!,opmoPrc)
   /
     sesteel.ue_steel_secondary   1.                                            !! Only contibution, both are measured in Gt/a
     prsteel.ue_steel_primary     1.                                            !! Only contibution, both are measured in Gt/a

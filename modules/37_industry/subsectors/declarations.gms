@@ -23,9 +23,9 @@ Parameters
   p37_BAU_industry_ETS_solids(tall,all_regi)                                   "industry solids demand in baseline scenario"
   p37_cesIO_baseline(tall,all_regi,all_in)                                     "vm_cesIO from the baseline scenario"
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  p37_specMatsDem(mats,all_te,opModesPrcb)                                     "Specific materials demand of a production technology and operation mode [t_input/t_output]"
-  p37_specFeDem(all_enty,all_te,opModesPrcb)                                   "Specific final-energy demand of a production technology and operation mode [TWa/Gt_output]"
-  p37_mats2ue(all_enty,all_in)                                                 "Contribution of process output to ue in CES tree [Gt/Gt]"
+  p37_specMatDem(mat,all_te,opmoPrc)                                     "Specific materials demand of a production technology and operation mode [t_input/t_output]"
+  p37_specFeDem(all_enty,all_te,opmoPrc)                                   "Specific final-energy demand of a production technology and operation mode [TWa/Gt_output]"
+  p37_mat2ue(all_enty,all_in)                                                 "Contribution of process output to ue in CES tree [Gt/Gt]"
 $endif.process_based_steel
 
 *** output parameters only for reporting
@@ -35,7 +35,7 @@ $endif.process_based_steel
   o37_shIndFE(ttot,all_regi,all_enty,secInd37,all_emiMkt)                "share of subsector in FE industry energy carriers and emissions markets"
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)   "FE demand per industry subsector"
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  o37_demFePrcb(ttot,all_regi,all_enty,all_te,opModesPrcb)               "Process-based FE demand per FE type and process"
+  o37_demFePrc(ttot,all_regi,all_enty,all_te,opmoPrc)               "Process-based FE demand per FE type and process"
 $endif.process_based_steel
 
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard"
@@ -55,8 +55,8 @@ Positive Variables
   v37_emIIndCCSmax(ttot,all_regi,emiInd37)                                  "maximum abatable industry emissions"
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  v37_prodVolPrcb(tall,all_regi,all_te,opModesPrcb)                         "Production volume of processes in material-flow model [Gt]"
-  v37_prodMats(tall,all_regi,all_enty)                                      "Production of materials [Gt]"
+  v37_prodVolPrc(tall,all_regi,all_te,opmoPrc)                         "Production volume of processes in material-flow model [Gt]"
+  v37_prodMat(tall,all_regi,all_enty)                                      "Production of materials [Gt]"
 $endif.process_based_steel
 ;
 
@@ -74,10 +74,10 @@ $endif.no_calibration
   q37_costCESmarkup(ttot,all_regi,all_in)                 "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  q37_demMatsPrc(tall,all_regi,mats)                      "Demand of process materials"
-  q37_prodMats(tall,all_regi,mats)                        "Production volume of processes in material-flow model"
-  q37_mats2ue(tall,all_regi,all_in)                       "Connect materials production to ue ces tree nodes"
-  q37_limitCapMats(tall,all_regi,all_te)                  "Material-flow conversion is limited by capacities"
+  q37_demMatPrc(tall,all_regi,mat)                      "Demand of process materials"
+  q37_prodMat(tall,all_regi,mat)                        "Production volume of processes in material-flow model"
+  q37_mat2ue(tall,all_regi,all_in)                       "Connect materials production to ue ces tree nodes"
+  q37_limitCapMat(tall,all_regi,all_te)                  "Material-flow conversion is limited by capacities"
 $endif.process_based_steel
 ;
 

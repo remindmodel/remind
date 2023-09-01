@@ -20,66 +20,66 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
       (
           vm_cesIO(ttot,regi,in)
         + pm_cesdata(ttot,regi,in,"offset_quantity")
-      )$((NOT secInd37Prcb(secInd37)) OR sameas(ttot,"2005"))
+      )$((NOT secInd37Prc(secInd37)) OR sameas(ttot,"2005"))
     )
   )
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   +
-  sum((secInd37_emiMkt(secInd37Prcb,emiMkt),secInd37_tePrcb(secInd37Prcb,tePrcb),tePrcb2opModesPrcb(tePrcb,opModesPrcb)),
-    p37_specFEDem(entyFE,tePrcb,opModesPrcb)
+  sum((secInd37_emiMkt(secInd37Prc,emiMkt),secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
+    p37_specFEDem(entyFE,tePrc,opmoPrc)
 *    /
-*    pm_eta_conv(t,regi,tePrcb)
+*    pm_eta_conv(t,regi,tePrc)
     *
-    v37_prodVolPrcb(ttot,regi,tePrcb,opModesPrcb)
+    v37_prodVolPrc(ttot,regi,tePrc,opmoPrc)
   )$(NOT sameas(ttot,"2005"))
 $endif.process_based_steel
 ;
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-q37_demMatsPrc(ttot,regi,mats)$((ttot.val ge cm_startyear) AND matsIn(mats))..
-    v37_prodMats(ttot,regi,mats)
+q37_demMatPrc(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matIn(mat))..
+    v37_prodMat(ttot,regi,mat)
   =e=
-    sum(tePrcb2matsIn(tePrcb,opModesPrcb,mats),
-      p37_specMatsDem(mats,tePrcb,opModesPrcb)
+    sum(tePrc2matIn(tePrc,opmoPrc,mat),
+      p37_specMatDem(mat,tePrc,opmoPrc)
       *
-      v37_prodVolPrcb(ttot,regi,tePrcb,opModesPrcb)
+      v37_prodVolPrc(ttot,regi,tePrc,opmoPrc)
     )
 ;
 
 ***------------------------------------------------------
 *' Output material production
 ***------------------------------------------------------
-q37_prodMats(ttot,regi,mats)$((ttot.val ge cm_startyear) AND matsOut(mats))..
-    v37_prodMats(ttot,regi,mats)
+q37_prodMat(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matOut(mat))..
+    v37_prodMat(ttot,regi,mat)
   =e=
-    sum(tePrcb2matsOut(tePrcb,opModesPrcb,mats),
-      v37_prodVolPrcb(ttot,regi,tePrcb,opModesPrcb)
+    sum(tePrc2matOut(tePrc,opmoPrc,mat),
+      v37_prodVolPrc(ttot,regi,tePrc,opmoPrc)
     )
 ;
 
 ***------------------------------------------------------
 *' Hand-over to CES
 ***------------------------------------------------------
-q37_mats2ue(ttot,regi,all_in)$(uePrcb(all_in) AND (ttot.val ge cm_startyear))..
+q37_mat2ue(ttot,regi,all_in)$(uePrc(all_in) AND (ttot.val ge cm_startyear))..
     vm_cesIO(ttot,regi,all_in)
   =e=
-    sum(mats2ue(mats,all_in),
-      p37_mats2ue(mats,all_in)
+    sum(mat2ue(mat,all_in),
+      p37_mat2ue(mat,all_in)
       *
-      v37_prodMats(ttot,regi,mats)
+      v37_prodMat(ttot,regi,mat)
     )
 ;
 
 ***------------------------------------------------------
 *' Definition of capacity constraints
 ***------------------------------------------------------
-q37_limitCapMats(t,regi,tePrcb)..
-    sum(tePrcb2opModesPrcb(tePrcb,opModesPrcb),
-      v37_prodVolPrcb(t,regi,tePrcb,opModesPrcb)
+q37_limitCapMat(t,regi,tePrc)..
+    sum(tePrc2opmoPrc(tePrc,opmoPrc),
+      v37_prodVolPrc(t,regi,tePrc,opmoPrc)
     )
     =l=
-    sum(teMats2rlf(tePrcb,rlf),
-        vm_capFac(t,regi,tePrcb) * vm_cap(t,regi,tePrcb,rlf)
+    sum(teMat2rlf(tePrc,rlf),
+        vm_capFac(t,regi,tePrc) * vm_cap(t,regi,tePrc,rlf)
     )
 ;
 
@@ -136,13 +136,13 @@ q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
       sum(se2fe(entySEfos,entyFE,te),
           pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")
       )
-  )$((NOT secInd37Prcb(secInd37)) OR sameas(ttot,"2005"))
+  )$((NOT secInd37Prc(secInd37)) OR sameas(ttot,"2005"))
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   +
-  sum((secInd37_tePrcb(secInd37Prcb,tePrcb),tePrcb2opModesPrcb(tePrcb,opModesPrcb)),
-      p37_specFEDem(entyFE,tePrcb,opModesPrcb)
+  sum((secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
+      p37_specFEDem(entyFE,tePrc,opmoPrc)
       *
-      v37_prodVolPrcb(ttot,regi,tePrcb,opModesPrcb)
+      v37_prodVolPrc(ttot,regi,tePrc,opmoPrc)
       *
       sum(se2fe(entySEfos,entyFE,te),
           pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")

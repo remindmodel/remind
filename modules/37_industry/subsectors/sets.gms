@@ -7,7 +7,7 @@
 *** SOF ./modules/37_industry/subsectors/sets.gms
 
 Sets
-  tePrcb(all_te)        "Technologies used in material-flow model"
+  tePrc(all_te)         "Technologies used in material-flow model"
   /
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     bf                  "Blast furnace"
@@ -18,7 +18,7 @@ $endif.process_based_steel
   /
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
-  mats(all_enty)        "Materials considered in material-flow model"
+  mat(all_enty)         "Materials considered in material-flow model"
   /
     prsteel             "Primary steel"
     sesteel             "Secondary steel"
@@ -28,7 +28,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     ironore             "Iron Ore"
   /
 
-  matsIn(all_enty)      "Materials which serve as input to a process"
+  matIn(all_enty)      "Materials which serve as input to a process"
   /
     scrap               "Steel scrap"
     pigiron             "Pig iron"
@@ -36,7 +36,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     ironore             "Iron Ore"
   /
 
-  matsOut(all_enty)     "Materials which serve as output of a process"
+  matOut(all_enty)      "Materials which serve as output of a process"
   /
     prsteel             "Primary steel"
     sesteel             "Secondary steel"
@@ -44,7 +44,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     driron              "Direct reduced iron"
   /
 
-  opModesPrcb               "Operation modes for technologies in material-flow model"
+  opmoPrc               "Operation modes for technologies in material-flow model"
   /
     ng                  "Direct reduction using natural gas"
     h2                  "Direct reduction using hydrogen"
@@ -54,7 +54,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     standard            "Only one operation mode implemented"
   /
 
-  tePrcb2matsIn(tePrcb,opModesPrcb,mats)    "Mapping of technologies onto input materials"
+  tePrc2matIn(tePrc,opmoPrc,mat)    "Mapping of technologies onto input materials"
   /
     idr . (h2,ng) . ironore
     eaf . pri . driron
@@ -63,7 +63,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     bof . unheated . (pigiron,scrap)
   /
 
-  tePrcb2matsOut(tePrcb,opModesPrcb,mats) "Mapping of technologies onto their output materials"
+  tePrc2matOut(tePrc,opmoPrc,mat)   "Mapping of technologies onto their output materials"
   /
    bf  . standard . pigiron
    bof . unheated . prsteel
@@ -72,7 +72,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
    eaf . sec . sesteel
   /
 
-  tePrcb2ue(tePrcb,opModesPrcb,all_in)
+  tePrc2ue(tePrc,opmoPrc,all_in)
   /
    bf  . standard . ue_steel_primary
    bof . unheated . ue_steel_primary
@@ -96,7 +96,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
   /
 
 
-  tePrcb2route(tePrcb,opModesPrcb,routes)    "Mapping of technologies onto route"
+  tePrc2route(tePrc,opmoPrc,routes)  "Mapping of technologies onto route"
   /
     idr . (h2,ng) . idreaf
     eaf . pri . idreaf
@@ -105,19 +105,19 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     bof . unheated . bfbof
   /
 
-  uePrcb(all_in) "Ue ces tree nodes connected to process based implementation"
+  uePrc(all_in)  "Ue ces tree nodes connected to process based implementation"
   /
    ue_steel_primary
    ue_steel_secondary
   /
 
-  mats2ue(mats,all_in) "Mapping of materials onto ue ces tree node"
+  mat2ue(mat,all_in)  "Mapping of materials onto ue ces tree node"
   /
    prsteel . ue_steel_primary
    sesteel . ue_steel_secondary
   /
 
-  tePrcb2opModesPrcb(tePrcb,opModesPrcb)    "Mapping of technologies onto available operation modes"
+  tePrc2opmoPrc(tePrc,opmoPrc)  "Mapping of technologies onto available operation modes"
   /
     idr . (ng,h2)
     eaf . (pri,sec)
@@ -125,7 +125,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     bof . (unheated)
   /
 
-  fe2mats_dyn37(all_enty,all_enty,all_te)    "map FE carriers to materials"
+  fe2mat_dyn37(all_enty,all_enty,all_te)  "map FE carriers to materials"
   /
     entydummy.entydummy.bf
     entydummy.entydummy.bof
@@ -142,7 +142,7 @@ $endif.process_based_steel
     otherInd    "aggregated other industry sub-sectors"
   /
 
-  secInd37Prcb(secInd37)      "Sub-sectors with process-based modeling"
+  secInd37Prc(secInd37)      "Sub-sectors with process-based modeling"
   /
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
   steel
@@ -150,7 +150,7 @@ $endif.process_based_steel
   /
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
-  secInd37_tePrcb(secInd37,tePrcb)      "Mapping of technologies onto industry subsectors"
+  secInd37_tePrc(secInd37,tePrc)      "Mapping of technologies onto industry subsectors"
   /
     steel . idr
     steel . eaf
@@ -491,8 +491,8 @@ pf_quan_target_dyn29(pf_quan_target_dyn37)  = YES;
 $endif.calibrate
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
-teMats2rlf(tePrcb,"1") = YES;
-fe2mats(fe2mats_dyn37)       = YES;
+teMat2rlf(tePrc,"1") = YES;
+fe2mat(fe2mat_dyn37)       = YES;
 $endif.process_based_steel
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfen37,fe2ppfen37_2);
