@@ -66,6 +66,7 @@ $endif.no_calibration
   q37_macBaseInd(ttot,all_regi,all_enty,secInd37)         "gross industry emissions before CCS"
   q37_emiIndCCSmax(ttot,all_regi,emiInd37)                "maximum abatable industry emissions at current CO2 price"
   q37_IndCCS(ttot,all_regi,emiInd37)                      "limit industry emissions abatement"
+  q37_limit_IndCCS_growth(ttot,all_regi,emiInd37)	  "limit industry CCS scale-up"
   q37_cementCCS(ttot,all_regi)                            "link cement fuel and process abatement"
   q37_IndCCSCost                                          "Calculate industry CCS costs"
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)       "industry final energy demand (per emission market)"
