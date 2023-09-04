@@ -74,17 +74,13 @@ $endif.no_calibration
   q37_IndCCSCost                                          "Calculate industry CCS costs"
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)       "industry final energy demand (per emission market)"
   q37_costCESmarkup(ttot,all_regi,all_in)                 "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
-<<<<<<< HEAD
-
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   q37_balMats(tall,all_regi,all_enty)                     "Balance of materials in material-flow model"
   q37_limitCapMat(tall,all_regi,all_enty,all_te)          "Material-flow conversion is limited by capacities"
   q37_demMatsProc(tall,all_regi,all_enty)                 "Demand of process materials"
   q37_demFEMats(tall,all_regi,all_enty,all_emiMkt)        "Final-energy demand of materail-flow model"
 $endif.process_based_steel
-=======
   q37_BioLimitSubsec(ttot,all_regi,all_enty,all_emiMkt)   "limits of switching to biomass use in industry subsectors"
->>>>>>> 0e6e51ef... add constraint to limit the phase-in of biomass in industry depending on the industrial subsector
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms
