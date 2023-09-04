@@ -311,7 +311,10 @@ sum(tax_import_type_21, p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sam
 *' and the revenues received from the tax
 ***-------------------------------------------------------
 
-$ifthen.importtaxrc %cm_taxrc_RE% == "REdirect"
+$ifthen.importtaxrc "%cm_taxrc_RE%" == "REdirect"
+equations 
+q21_rc_tau_import_RE(ttot,all_regi) "Oli: rev recycling "
+;
 q21_rc_tau_import_RE(t,regi)..                       
   sum(en2en(enty,enty2,te)$(teVRE(te)),
       v_costInvTeDir(t,regi,te) + v_costInvTeAdj(t,regi,te)$teAdj(te) 
