@@ -9,9 +9,17 @@
 
 p22_deltacap0(ttot,regi,teLearn,rlf)$( (ttot.val ge 2005) and (pm_SolNonInfes(regi) eq 1)) = vm_deltaCap.l(ttot,regi,teLearn,rlf);
 
-loop((ttot,regi,teLearn),
-pm_capCumForeign(ttot,regi,teLearn)$(ttot.val ge 2005) = sum(regi2$(not sameas(regi2,regi)), pm_capCum0(ttot,regi2,teLearn) );  
-);
+$ifthen.altLearnRegiSet not "%cm_altLearnRegiSet%" == "off"
+  loop((ttot,regi,teLearn),
+    if(altLearnRegi22(regi,teLearn),
+      pm_capCumForeign(ttot,regi,teLearn)$(ttot.val ge 2005) = sum(regi2$((not sameas(regi2,regi)) and (altLearnRegi22(regi2,teLearn))), pm_capCum0(ttot,regi2,teLearn) );  
+    else
+      pm_capCumForeign(ttot,regi,teLearn)$(ttot.val ge 2005) = sum(regi2$((not sameas(regi2,regi)) and (not altLearnRegi22(regi2,teLearn))), pm_capCum0(ttot,regi2,teLearn) );  
+    );
+  );
+$else.altLearnRegiSet
+    pm_capCumForeign(ttot,regi,teLearn)$(ttot.val ge 2005) = sum(regi2$(not sameas(regi2,regi)), pm_capCum0(ttot,regi2,teLearn) );  
+$endif.altLearnRegiSet
 
 display pm_capCumForeign;
 

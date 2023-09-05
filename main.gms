@@ -1217,6 +1217,9 @@ $setGLobal cm_XportRegiLim off !! def off
 *** example: "cm_XportRegiLimRampUp = on" and "cm_XportRegiLim = (2030, 2035, 2040, 2045, 2050).REF_regi.peoil 0.5", exports will be limited to 75% of the reference scenario by 2025 (cm_XportRegiLimRampUp), and 50% onwards
 $setGLobal cm_XportRegiLimRampUp off
 *** cm_altLearnRegiSet
+*** define an alternative group of regions that have independent learning cumulative capacity
+*** example: "(REF, CHA).(wind, spv)", REF and CHA will have their cumulative capacity for wind and solar pv learning calculations accounted idenpendently of the rest of the World.
+$setGLobal cm_altLearnRegiSet off !! def off
 *** c_ccsinjecrateRegi  "regional upper bound of the CCS injection rate, overwrites for specified regions the settings set with c_ccsinjecratescen"
 ***  ("off") no regional differentiation
 ***  ("GLO 0.005") reproduces c_ccsinjecratescen = 1

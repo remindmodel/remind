@@ -5,12 +5,15 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/22_subsidizeLearning/globallyOptimal/sets.gms
+
 sets
-    
-m22_learnteUpdateSub(all_te)  "learning technologies"
-
-
+  m22_learnteUpdateSub(all_te)  "learning technologies"
 ;
 
+$IFTHEN.altLearnRegiSet not "%cm_altLearnRegiSet%" == "off"
+Set
+  altLearnRegi22(all_regi,all_te) / %cm_altLearnRegiSet% /;
+;
+$ENDIF.altLearnRegiSet
 
 *** EOF ./modules/22_subsidizeLearning/globallyOptimal/sets.gms
