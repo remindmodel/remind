@@ -1208,6 +1208,15 @@ $setGlobal cm_gas_scen  medGas         !! def = medGas
 ***  (medCoal): medium
 ***  (highCoal): high
 $setGlobal cm_coal_scen  medCoal        !! def = medCoal
+*** cm_XportRegiLim
+*** limit export levels on specific regions in relation to reference scenario levels
+*** example: "(2025, 2030, 2035, 2040, 2045, 2050).REF_regi.peoil 0.5" limits total exports of oil in REF to 50% of the values observed in the reference gdx
+$setGLobal cm_XportRegiLim off !! def off
+*** cm_XportRegiLimRampUp
+*** export limited levels defined at cm_XportRegiLim are gradually implemented with half of its level on the previous year
+*** example: "cm_XportRegiLimRampUp = on" and "cm_XportRegiLim = (2030, 2035, 2040, 2045, 2050).REF_regi.peoil 0.5", exports will be limited to 75% of the reference scenario by 2025 (cm_XportRegiLimRampUp), and 50% onwards
+$setGLobal cm_XportRegiLimRampUp off
+*** cm_altLearnRegiSet
 *** c_ccsinjecrateRegi  "regional upper bound of the CCS injection rate, overwrites for specified regions the settings set with c_ccsinjecratescen"
 ***  ("off") no regional differentiation
 ***  ("GLO 0.005") reproduces c_ccsinjecratescen = 1

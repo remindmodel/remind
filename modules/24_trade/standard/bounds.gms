@@ -128,4 +128,26 @@ if (cm_phaseoutBiolc eq 1,
 vm_Mport.fx(t,regi,entySe) = 0;
 vm_Xport.fx(t,regi,entySe) = 0;
 
+*** limit exports based on reference scenario results 
+$IFTHEN.XportRegiLim not "%cm_XportRegiLim%" == "off"
+Execute_Loadpoint 'input_ref' p24_Xport_refgdx = vm_Xport.l;
+  loop((ttot,ext_regi,enty)$(p24_XportRegiLim(ttot,ext_regi,enty) and (ttot.val ge cm_startyear)),
+    loop(regi$regi_groupExt(ext_regi,regi),
+      vm_Xport.up(ttot,regi,enty) = min(vm_Xport.up(ttot,regi,enty),p24_XportRegiLim(ttot,ext_regi,enty)*p24_Xport_refgdx(ttot,regi,enty));
+    );
+  );
+$IFTHEN.cm_XportRegiLimRampUp not "%cm_XportRegiLimRampUp%" == "off"
+loop((ext_regi,enty),
+  loop(ttot$(p24_XportRegiLim(ttot,ext_regi,enty) and (ttot.val ge cm_startyear)),
+    loop(ttot2,
+        break$((ttot2.val ge ttot.val) and (ttot2.val ge cm_startyear) and (ttot2.val ge 2020));
+        s24_prevYear = ttot2.val;
+    );
+    vm_Xport.up(ttot3,regi,enty)$(ttot3.val eq s24_prevYear) = min(vm_Xport.up(ttot3,regi,enty),(1-((1-p24_XportRegiLim(ttot,ext_regi,enty))/2))*p24_Xport_refgdx(ttot3,regi,enty));
+    break;
+  );
+);
+$ENDIF.cm_XportRegiLimRampUp
+$ENDIF.XportRegiLim
+
 *** EOF ./modules/24_trade/standard/bounds.gms

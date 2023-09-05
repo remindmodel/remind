@@ -16,7 +16,16 @@ p24_Mport2005correct(all_regi,all_enty)     "Correction factor to match fossil s
 
 pm_MPortsPrice(tall,all_regi,tradeSe)              "Secondary energy import price for region. Calculated in the postsolve and assuming that trade is distributed uniformetly according existent capacities defined at p24_seTradeCapacity [T$/TWa]"
 pm_XPortsPrice(tall,all_regi,tradeSe)              "Secondary energy export price for region. Calculated in the postsolve and corresponding to the region secondary energy price [T$/TWa]"
+
+$ifthen.XportRegiLim not "%cm_XportRegiLim%" == "off"
+  p24_Xport_refgdx(tall,all_regi,all_enty)   "Export of traded commodity in the reference gdx"
+  p24_XportRegiLim(ttot,ext_regi,all_enty)   "limit of total exports per region or region group in relation to the reference scenario [%]" / %cm_XportRegiLim% /
+$IFTHEN.cm_XportRegiLimRampUp not "%cm_XportRegiLimRampUp%" == "off"
+  s24_prevYear                               "value of the previous year to the first exports limit"
+$ENDIF.cm_XportRegiLimRampUp
+$endIf.XportRegiLim
 ;
+
 ***-------------------------------------------------------------------------------
 ***                                   VARIABLES
 ***-------------------------------------------------------------------------------
