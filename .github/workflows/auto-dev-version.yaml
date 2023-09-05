@@ -1,21 +1,20 @@
 on:
-  push:
+  pull_request:
     branches:
       - develop
-
+    types: [ closed ]
 name: auto-dev-version
 
 jobs:
   auto-dev-version:
-    if: github.repository == 'remindmodel/remind'
+    if: github.repository == 'remindmodel/remind' && github.event.pull_request.merged == true
     runs-on: ubuntu-22.04
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          token: ${{ secrets.AUTO_DEV_VERSION }}
 
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.9.15
@@ -37,7 +36,7 @@ jobs:
 
       - name: Commit changes to CITATION.cff
         uses: EndBug/add-and-commit@v9
-        with:
+        with:          
           add: '["CITATION.cff", "config/default.cfg"]'
           author_name: REMIND Research Software Engineering
           author_email: rse@pik-potsdam.de
