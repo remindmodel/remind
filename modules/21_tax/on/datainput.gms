@@ -139,27 +139,6 @@ p21_tau_xpres_tax(ttot,regi,"peoil")$(ttot.val ge 2005) = p21_tau_xpres_tax(ttot
 *LB* use 0 for all regions as default
 p21_tau_xpres_tax(ttot,regi,all_enty) = 0;
 
-
-*** --------------------
-*** CO2 prices
-*** --------------------    
-*IM* for tax case: future CO2-tax paths are given in different module/45_carbonprice realizations
-*RP* historic (2010, 2015) CO2 prices are defined here
-parameter f21_taxCO2eqHist(ttot,all_regi)        "historic CO2 prices ($/tCO2)"
-/
-$ondelim
-$include "./modules/21_tax/on/input/pm_taxCO2eqHist.cs4r"
-$offdelim
-/
-;
-
-** Fixing European 2020 carbon price to 20€/t CO2 (other regions to zero)
-f21_taxCO2eqHist("2020",regi) = 0;
-f21_taxCO2eqHist("2020",regi)$(regi_group("EUR_regi",regi)) =  20;
-
-*** convert from $/tCO2 to T$/GtC
-pm_taxCO2eqHist(t,regi) = f21_taxCO2eqHist(t,regi) * sm_DptCO2_2_TDpGtC;
-
 *JeS for SO2 tax case: tax path in 10^12$/TgS (= 10^6 $/t S) @ GDP/cap of 1000$/cap  (value gets scaled by GDP/cap)
 if((cm_so2tax_scen eq 0),
 s21_so2_tax_2010=0.0;

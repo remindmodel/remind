@@ -6,9 +6,6 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/NDC/preloop.gms
 
-***CB* special case SSA: maximum carbon price (after adjustment below) at 7.5$ in 2020, 30 in 2025, 45 in 2030, to reflect low energy productivity of region, and avoid high losses
-pm_taxCO2eq(t,regi)$(sameas(t, "2020") and sameas(regi,"SSA")) = 15 * sm_DptCO2_2_TDpGtC;
-
 *** first calculate tax path until last NDC target year - linear increase
 pm_taxCO2eq(t,regi)$(t.val gt 2016 AND t.val le p45_lastNDCyear(regi)) = pm_taxCO2eq("2020",regi)*(t.val-2015)/5;
 

@@ -12,6 +12,8 @@
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
 SETS
+numberOrder     "set to assure that numeric values follow ascending order in the GAMS entry order (e.g. iterations and years used in loop statements)" / 1*2200 /  
+
 * Save select compiler flags as sets, to make them accessible from the final gdx
 c_expname       "c_expname as set for use in GDX"       /%c_expname%/
 c_description   "%c_description%"   /"for model description, see explanatory text"/
@@ -273,7 +275,8 @@ $ENDIF.WindOff
         apCarElT        "Cars using final energy electricity (FEELT) to produce useful energy as electricity for transport (UEELT)"
         apTrnElT        "Trains using final energy electricity (FEELT) to produce useful energy as electricity for transport (UEELT)"
 ***  appCarGaT  "Cars using FEGAT to produce ESGAT."  ???
-        rockgrind       "grinding rock for enhanced weathering"
+        rockgrind       "grinding rock for enhanced weathering" !! deprecated, will be removed with CDR module refactoring
+        weathering      "enhanced weathering"
         dac             "direct air capture"
         x_gas2elec
         d_bio2elec      "d_* transmission and distribution losses"
@@ -741,23 +744,25 @@ teEs(all_teEs)           "ES technologies which are actually used (to be filled 
 *** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare.R
 
 sets
+
+*** Several parts of the REMIND code relies in the order that the regional set is defined.
+***   Therefore, you must always abide with the below rules:
+***   - The first regional set to be declared must be the ext_regi set, which includes the model native regions and all possible regional aggregations considered in REMIND.
+***   - The ext_regi set needs to be declared in the order of more aggregated to less aggregated region order (e.g. World comes first and country regions goes last).
+***   - IMPORTANT: You CANNOT use any of the ext_regi set elements in any set definition made prior to the ext_regi set declaration in the code.
+
    ext_regi "extended regions list (includes subsets of H12 regions)"
       /
         GLO,
-        
-LAM_regi,OAS_regi,SSA_regi,EUR_regi,NEU_regi,MEA_regi,REF_regi,CAZ_regi,CHA_regi,IND_regi,JPN_regi,USA_regi
-,
-        
-LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA
+        LAM_regi,OAS_regi,SSA_regi,EUR_regi,NEU_regi,MEA_regi,REF_regi,CAZ_regi,CHA_regi,IND_regi,JPN_regi,USA_regi,
+        LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA
       /
- 
 
    all_regi "all regions" /LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA/
 
    regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"
       /
-      
-GLO.( LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA )
+        GLO.( LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA )
         LAM_regi .(LAM)
         OAS_regi .(OAS)
         SSA_regi .(SSA)
@@ -771,7 +776,7 @@ GLO.( LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA )
         JPN_regi .(JPN)
         USA_regi .(USA)
       /
- 
+
    iso "list of iso countries" /
        ABW,AFG,AGO,AIA,ALA,ALB,AND,ARE,ARG,ARM,
        ASM,ATA,ATF,ATG,AUS,AUT,AZE,BDI,BEL,BEN,
@@ -2310,7 +2315,7 @@ alias(te,te2,te3);
 alias(all_enty,all_enty2);
 alias(enty,enty2,enty3,enty4,enty5,enty6,enty7);
 alias(entyPE,entyPE2);
-alias(entySe,entySe2);
+alias(entySE,entySE2);
 alias(entyFe,entyFe2);
 alias(teEs,teEs2);
 alias(esty,esty2);

@@ -1,4 +1,4 @@
 title;start;qos;sbatch;magpie_scen;magpie_empty;no_ghgprices_land_until;max_iterations;oldrun;path_gdx;path_gdx_ref;path_gdx_bau;path_report;cm_nash_autoconverge_lastrun;path_mif_ghgprice_land
-TESTTHAT-SSP2EU-Base;1;priority;--wait;SSP2|NPI;TRUE;y2150;2;;;;;;2;
-TESTTHAT-SSP2EU-NDC;1;priority;--wait;SSP2|NDC;TRUE;y2150;2;;;;;;2;TESTTHAT-SSP2EU-Base
-TESTTHAT-SSP2EU-Policy;2;priority;--wait;SSP2|NDC;TRUE;y2150;2;TESTTHAT-SSP2EU-Base;;;;;;output/C_TESTTHAT-SSP2EU-Base-rem-1/REMIND_generic_C_TESTTHAT-SSP2EU-Base-rem-1.mif
+TESTTHAT-SSP2EU-Base;1;auto;--wait --mail-type=FAIL;SSP2|NPI;TRUE;y2150;2;;;;;;2;
+TESTTHAT-SSP2EU-NDC;1;auto;--wait --mail-type=FAIL;SSP2|NDC;TRUE;y2150;2;;;;;;2;TESTTHAT-SSP2EU-Base
+TESTTHAT-SSP2EU-Policy;2;auto;--wait --mail-type=FAIL;SSP2|NDC;TRUE;y2150;2;TESTTHAT-SSP2EU-Base;;;;;;output/C_TESTTHAT-SSP2EU-Base-rem-1/REMIND_generic_C_TESTTHAT-SSP2EU-Base-rem-1.mif

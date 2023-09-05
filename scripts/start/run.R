@@ -199,6 +199,10 @@ run <- function(start_subsequent_runs = TRUE) {
 
       gdx_na <- is.na(cfg$files2export$start[pathes_to_gdx])
       needfulldatagdx <- names(cfg$files2export$start[pathes_to_gdx][cfg$files2export$start[pathes_to_gdx] == cfg_main$title & !gdx_na])
+      if (length(needfulldatagdx) == 0) {
+        message("Somehow, my gdx file was not needed although cfg$RunsUsingTHISgxAsInput expected that. Skipping ", run)
+        next
+      }
       message("In ", RData_file, ", use current fulldata.gdx path for ", paste(needfulldatagdx, collapse = ", "), ".")
       cfg$files2export$start[needfulldatagdx] <- fulldatapath
 

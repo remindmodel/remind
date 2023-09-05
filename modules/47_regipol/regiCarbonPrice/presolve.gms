@@ -18,7 +18,6 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
       pm_taxCO2eqSum(t,regi) = 0;
       pm_taxCO2eq(t,regi) = 0;
       pm_taxCO2eqRegi(t,regi) = 0;
-      pm_taxCO2eqHist(t,regi) = 0;
       pm_taxCO2eqSCC(t,regi) = 0;
 
       pm_taxrevGHG0(t,regi) = 0;
@@ -36,21 +35,30 @@ $ENDIF.emiMkt
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 
 *** saving value for implicit tax revenue recycling
-  p47_implicitQttyTargetTax0(t,regi) = 
-    sum((qttyTarget,qttyTargetGroup)$p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup),
-      ( p47_implicitQttyTargetTax(t,regi,"PE",qttyTargetGroup) * sum(entyPe$energyQttyTargetANDGroup2enty("PE",qttyTargetGroup,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(t,regi,entyPe,entySe,te))) 
-      )$(sameas(qttyTarget,"PE")) 
+*** the same line exists in postsolve.gms, don't forget to update there
+p47_implicitQttyTargetTax0(t,regi) =
+  sum((qttyTarget,qttyTargetGroup)$p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup),
+    p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * (
+      ( sum(entyPe$energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(t,regi,entyPe,entySe,te)))
+      )$(sameas(qttyTarget,"PE"))
       +
-      ( p47_implicitQttyTargetTax(t,regi,"SE",qttyTargetGroup) * sum(entySe$energyQttyTargetANDGroup2enty("SE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(t,regi,entySe,entyFe,te))) 
-      )$(sameas(qttyTarget,"SE")) 
+      ( sum(entySe$energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(t,regi,entySe,entyFe,te)))
+      )$(sameas(qttyTarget,"SE"))
       +
-      ( p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) 
+      ( sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt))))
       )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
       +
-      ( p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(t,regi,enty,enty2,te,rlf)))
-      )$(sameas(qttyTarget,"CCS")) 
+      ( sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(t,regi,enty,enty2,te,rlf)))
+      )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"all"))
+      +
+      (( !! Supply side BECCS
+        sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail.l(t,regi,enty,enty2,te,enty3))
+        !! Industry BECCS (using biofuels in Industry with CCS)
+      + sum((emiMkt,entySe,secInd37,entyFe)$entySeBio(entySe), pm_IndstCO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt))
+      ) * pm_share_CCS_CCO2(t,regi) )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"biomass"))
     )
-  ;
+  )
+;
 
 $endIf.cm_implicitQttyTarget
 
