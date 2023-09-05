@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          token: ${{ secrets.AUTO_DEV_VERSION }}
+          token: ${{ secrets.AUTO_DEV_VERSION_REMIND }}
 
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.9.15
