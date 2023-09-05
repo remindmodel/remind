@@ -12,7 +12,8 @@ sets
 
 $IFTHEN.altLearnRegiSet not "%cm_altLearnRegiSet%" == "off"
 Set
-  altLearnRegi22(all_regi,all_te) / %cm_altLearnRegiSet% /;
+  altLearnRegi22(all_regi,all_te) "Define regions to be accounted under an alternative learning cumulative capacity for each learning technology." 
+    / %cm_altLearnRegiSet% /
 ;
 $ENDIF.altLearnRegiSet
 
