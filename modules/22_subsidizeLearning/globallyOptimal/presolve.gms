@@ -18,7 +18,9 @@ $ifthen.altLearnRegiSet not "%cm_altLearnRegiSet%" == "off"
     );
   );
 $else.altLearnRegiSet
+  loop((ttot,regi,teLearn),
     pm_capCumForeign(ttot,regi,teLearn)$(ttot.val ge 2005) = sum(regi2$(not sameas(regi2,regi)), pm_capCum0(ttot,regi2,teLearn) );  
+  );
 $endif.altLearnRegiSet
 
 display pm_capCumForeign;
