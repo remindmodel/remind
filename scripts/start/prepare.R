@@ -153,10 +153,12 @@ prepare <- function() {
   manipulateConfig(tmpModelFile, cfg$gms)
 
   ######## declare functions for updating information ####
-  update_info <- function(regionscode, revision) {
+  update_info <- function(regionscode, revision, model_version) {
 
     subject <- "VERSION INFO"
     content <- c("",
+      paste("Modelversion:", model_version),
+      "",
       paste("Regionscode:", regionscode),
       "",
       paste("Input data revision:", revision),
@@ -270,7 +272,7 @@ prepare <- function() {
 
   ############ update information ########################
   # update_info, which regional resolution and input data revision in tmpModelFile
-  update_info(madrat::regionscode(cfg$regionmapping), cfg$inputRevision)
+  update_info(madrat::regionscode(cfg$regionmapping), cfg$inputRevision, cfg$model_version)
   # update_sets, which is updating the region-depending sets in core/sets.gms
   #-- load new mapping information
   map <- read.csv(cfg$regionmapping, sep=";")
