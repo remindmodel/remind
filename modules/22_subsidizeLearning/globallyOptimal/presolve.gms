@@ -13,25 +13,26 @@ $ifthen.altLearnRegiSet not "%cm_altLearnRegiSet%" == "off"
   loop((regi,teLearn),
     if(altLearnRegi22(regi,teLearn),
       pm_capCumForeign(ttot,regi,teLearn)$(ttot.val ge 2005) = 
-***	    global cumulative capacity excluding region for years before 2025
+***     global cumulative capacity excluding region for years before 2025
         sum(regi2$((not sameas(regi2,regi)) and (ttot.val ge 2005) and (ttot.val le 2020)), 
           pm_capCum0(ttot,regi2,teLearn) 
         )
         +
 ***	    2020 cumulative capacity for other regions plus sub-region cumulative capacity for years after 2020
-		sum((regi2,ttot)$((not sameas(regi2,regi)) and (NOT(altLearnRegi22(regi2,teLearn))) and (ttot.val ge 2025)),
+        sum((regi2,ttot)$((not sameas(regi2,regi)) and (NOT(altLearnRegi22(regi2,teLearn))) and (ttot.val ge 2025)),
           pm_capCum0("2020",regi2,teLearn) 
-		)
+        )
         +
-		sum((regi2,ttot)$((not sameas(regi2,regi)) and (altLearnRegi22(regi2,teLearn)) and (ttot.val ge 2025)),
+        sum((regi2,ttot)$((not sameas(regi2,regi)) and (altLearnRegi22(regi2,teLearn)) and (ttot.val ge 2025)),
           pm_capCum0(ttot,regi2,teLearn) 
-		)
-	  ;
+        )
+      ;
     else
       pm_capCumForeign(ttot,regi,teLearn)$(ttot.val ge 2005) = 
-	    sum(regi2$((not sameas(regi2,regi)) and (not altLearnRegi22(regi2,teLearn))),
-		  pm_capCum0(ttot,regi2,teLearn) 
-		);  
+        sum(regi2$((not sameas(regi2,regi)) and (not altLearnRegi22(regi2,teLearn))),
+          pm_capCum0(ttot,regi2,teLearn) 
+        )
+	  ;  
     );
   );
 $else.altLearnRegiSet
