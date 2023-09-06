@@ -181,11 +181,7 @@
 
 *##################### R SECTION START (VERSION INFO) ##########################
 *
-* Regionscode: 62eff8f7
-*
-* Input data revision: 6.316
-*
-* Last modification (input data): Wed Sep 28 10:35:42 2022
+* will be updated automatically when starting a REMIND run
 *
 *###################### R SECTION END (VERSION INFO) ###########################
 
