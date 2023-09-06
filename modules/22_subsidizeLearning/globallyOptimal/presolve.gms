@@ -19,11 +19,11 @@ $ifthen.altLearnRegiSet not "%cm_altLearnRegiSet%" == "off"
         )
         +
 ***	    2020 cumulative capacity for other regions plus sub-region cumulative capacity for years after 2020
-        sum((regi2,ttot)$((not sameas(regi2,regi)) and (NOT(altLearnRegi22(regi2,teLearn))) and (ttot.val ge 2025)),
+        sum(regi2$((not sameas(regi2,regi)) and (NOT(altLearnRegi22(regi2,teLearn))) and (ttot.val ge 2025)),
           pm_capCum0("2020",regi2,teLearn) 
         )
         +
-        sum((regi2,ttot)$((not sameas(regi2,regi)) and (altLearnRegi22(regi2,teLearn)) and (ttot.val ge 2025)),
+        sum(regi2$((not sameas(regi2,regi)) and (altLearnRegi22(regi2,teLearn)) and (ttot.val ge 2025)),
           pm_capCum0(ttot,regi2,teLearn) 
         )
       ;
