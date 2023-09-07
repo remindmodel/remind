@@ -9,11 +9,38 @@
 
 p22_deltacap0(ttot,regi,teLearn,rlf)$( (ttot.val ge 2005) and (pm_SolNonInfes(regi) eq 1)) = vm_deltaCap.l(ttot,regi,teLearn,rlf);
 
-loop((ttot,regi,teLearn),
-pm_capCumForeign(ttot,regi,teLearn)$(ttot.val ge 2005) = sum(regi2$(not sameas(regi2,regi)), pm_capCum0(ttot,regi2,teLearn) );  
-);
+$ifthen.altLearnRegiSet not "%cm_altLearnRegiSet%" == "off"
+  loop((regi,teLearn),
+    if(altLearnRegi22(regi,teLearn),
+      pm_capCumForeign(ttot,regi,teLearn)$(ttot.val ge 2005) = 
+***     global cumulative capacity excluding region for years before 2025
+        sum(regi2$((not sameas(regi2,regi)) and (ttot.val ge 2005) and (ttot.val le 2020)), 
+          pm_capCum0(ttot,regi2,teLearn) 
+        )
+        +
+***	    2020 cumulative capacity for other regions plus sub-region cumulative capacity for years after 2020
+        sum(regi2$((not sameas(regi2,regi)) and (NOT(altLearnRegi22(regi2,teLearn))) and (ttot.val ge 2025)),
+          pm_capCum0("2020",regi2,teLearn) 
+        )
+        +
+        sum(regi2$((not sameas(regi2,regi)) and (altLearnRegi22(regi2,teLearn)) and (ttot.val ge 2025)),
+          pm_capCum0(ttot,regi2,teLearn) 
+        )
+      ;
+    else
+      pm_capCumForeign(ttot,regi,teLearn)$(ttot.val ge 2005) = 
+        sum(regi2$((not sameas(regi2,regi)) and (not altLearnRegi22(regi2,teLearn))),
+          pm_capCum0(ttot,regi2,teLearn) 
+        )
+	  ;  
+    );
+  );
+$else.altLearnRegiSet
+  pm_capCumForeign(ttot,regi,teLearn)$(ttot.val ge 2005) = sum(regi2$(not sameas(regi2,regi)), pm_capCum0(ttot,regi2,teLearn) );  
+$endif.altLearnRegiSet
 
 display pm_capCumForeign;
+
 
 * calculate marginal benefit of spillovers in each region. This expression for the subsidy can be derived analytically.
 loop(regi$(pm_SolNonInfes(regi) eq 1),

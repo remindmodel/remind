@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### added
 - **config** regex tests for many parameters
 - **testthat** test and compile all config files
+- **22_subsidizeLearning** option to define independent learning cumulative capacity for alternative region groups (`cm_altLearnRegiSet`).
+- **24_trade** option to limit specific regions exports (`cm_XportRegiLim`).
 
 ### fixed
 - fixed weights of energy carriers in `pm_IndstCO2Captured`

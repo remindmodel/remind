@@ -12,3 +12,4 @@ pm_taxCO2eq,         parameter,   ???
 pm_ttot_val,         parameter,   ???
 pm_welf,             parameter,   ???
 vm_dummyBudget,      input,       questionnaire
+pm_capCumForeign,    parameter,   defined at module 22
