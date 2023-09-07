@@ -21,7 +21,10 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   } else {
     cfg <- gms::readDefaultConfig(remindPath)
   }
-  scenConf <- read.csv2(filename, stringsAsFactors = FALSE, row.names = 1, na.strings = "", comment.char = "#")
+  scenConf <- read.csv2(filename, stringsAsFactors = FALSE, na.strings = "", comment.char = "#")
+  scenConf <- scenConf[! is.na(scenConf[1]), ]
+  rownames(scenConf) <- scenConf[, 1]
+  scenConf[1] <- NULL
   toolong <- nchar(rownames(scenConf)) > 75
   if (any(toolong)) {
     warning("These titles are too long: ",
