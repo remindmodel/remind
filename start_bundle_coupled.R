@@ -155,16 +155,6 @@ if (length(argv) > 0) {
   message("")
 }
 
-message("path_remind:           ", if (dir.exists(path_remind)) green else red, path_remind, NC)
-message("path_magpie:           ", if (dir.exists(path_magpie)) green else red, path_magpie, NC)
-message("path_settings_coupled: ", if (file.exists(path_settings_coupled)) green else red, path_settings_coupled, NC)
-message("path_settings_remind:  ", if (file.exists(path_settings_remind)) green else red, path_settings_remind, NC)
-message("path_remind_oldruns:   ", if (dir.exists(path_remind_oldruns)) green else red, path_remind_oldruns, NC)
-message("path_magpie_oldruns:   ", if (dir.exists(path_magpie_oldruns)) green else red, path_magpie_oldruns, NC)
-message("prefix_runname:        ", prefix_runname)
-message("n600_iterations:       ", n600_iterations)
-message("run_compareScenarios:  ", run_compareScenarios)
-
 if (! file.exists("output")) dir.create("output")
 
 ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
@@ -177,6 +167,21 @@ qosRuns <- NULL
 deletedFolders <- 0
 
 stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
+
+message("path_remind:           ", if (dir.exists(path_remind)) green else red, path_remind, NC)
+message("path_magpie:           ", if (dir.exists(path_magpie)) green else red, path_magpie, NC)
+message("path_settings_coupled: ", if (file.exists(path_settings_coupled)) green else red, path_settings_coupled, NC)
+message("path_settings_remind:  ", if (file.exists(path_settings_remind)) green else red, path_settings_remind, NC)
+message("path_remind_oldruns:   ", if (dir.exists(path_remind_oldruns)) green else red, path_remind_oldruns, NC)
+message("path_magpie_oldruns:   ", if (dir.exists(path_magpie_oldruns)) green else red, path_magpie_oldruns, NC)
+message("prefix_runname:        ", prefix_runname)
+message("n600_iterations:       ", n600_iterations)
+message("run_compareScenarios:  ", run_compareScenarios)
+
+if (any(! file.exists(c(path_settings_coupled, path_settings_remind))) ||
+    any(! dir.exists(c(path_remind, path_magpie, path_remind_oldruns, path_magpie_oldruns)))) {
+  stop("Missing files or directories, see in red above.")
+}
 
 if ("--gamscompile" %in% flags && ! file.exists("input/source_files.log")) {
   message("\n### Input data missing, need to compile REMIND first (2 min.)\n")
@@ -269,6 +274,9 @@ if (file.exists("/p") && sum(scenarios_coupled[common, "qos"] == "priority", na.
 ####################################################
 ######## PREPARE AND START COUPLED RUNS ############
 ####################################################
+
+# initialize madrat settings
+invisible(madrat::getConfig(verbose = FALSE))
 
 # prepare runs: write RData files
 for(scen in common){

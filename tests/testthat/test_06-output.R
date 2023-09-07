@@ -30,7 +30,6 @@ test_that("output.R -> export -> xlsx_IIASA works", {
 })
 
 test_that("cleanup output.R", {
-  skipIfFast()
   skipIfPreviousFailed()
   exportfiles <- Sys.glob(file.path("..", "..", "output", "export", "*TESTTHAT*"))
   unlink(exportfiles)

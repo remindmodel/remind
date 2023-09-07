@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **config** regex tests for many parameters
 - **testthat** test and compile all config files
 
+### fixed
+- fixed weights of energy carriers in `pm_IndstCO2Captured`
+    [[#1354](https://github.com/remindmodel/remind/pull/1354)]
+
 ## [3.2.1] - 2023-07-13 (incomplete)
 
 ### changed
@@ -22,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** MAgPIE coupling interface: remove filtering of negative LU emissions
 - **scripts** `./start.R --gamscompile` now adjust sets and gets input data
 - **core** MAgPIE coupling: tolerate negative values for `n2ofertsom` and deactivate its MAC
+- **05_initialCap** fix overwriting of investment cost changes from cm_inco0Factor switch
 
 ### added
 - **45_carbonprice** added realization `NPi` (National Policies Implemented)

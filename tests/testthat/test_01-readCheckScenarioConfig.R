@@ -16,14 +16,16 @@ for (csvfile in csvfiles) {
 }
 test_that("readCheckScenarioConfig fails on error-loaden config", {
   csvfile <- tempfile(pattern = "scenario_config_a", fileext = ".csv")
-  writeLines(c(";start;copyConfigFrom;c_budgetCO2;path_gdx;path_gdx_carbonprice",
-               "abc.loremipsumloremipsum@lorem&ipsumloremipsumloremipsumloremipsumloremipsumloremipsum_;0;;33;;",
-               "PBS;1;glob;29; whitespacebefore;whitespaceafter ",
-               "glob;0;missing_copyConfigFrom;33; ;nobreakspace	tab",
-               "PBScopy;0;PBS;;;mustbedifferenttoPBS"),
+  writeLines(c(";start;copyConfigFrom;c_budgetCO2;path_gdx;path_gdx_carbonprice;carbonprice;path_gdx_bau;path_gdx_ref",
+               "abc.loremipsumloremipsum@lorem&ipsumloremipsumloremipsumloremipsumloremipsumloremipsum_;0;;33;;;;;",
+               "PBS;1;glob;29; whitespacebefore;whitespaceafter ;;;whatever",
+               "glob;0;missing_copyConfigFrom;33; ;nobreakspace	tab;;;",
+               "PBScopy;0;PBS;;;mustbedifferenttoPBS;;;",
+               "NA;1;;;;;notNDC_but_has_path_gdx_bau;PBS;",
+               "NDC_but_bau_missing;1;;;;;NDC;;"),
              con = csvfile, sep = "\n")
-  w <- capture_warnings(scenConf <- readCheckScenarioConfig(csvfile, remindPath = "../../", testmode = TRUE))
-  expect_match(w, "11 errors found", all = FALSE, fixed = TRUE)
+  w <- capture_warnings(m <- capture_messages(scenConf <- readCheckScenarioConfig(csvfile, remindPath = "../../", testmode = TRUE)))
+  expect_match(w, "13 errors found", all = FALSE, fixed = TRUE)
   expect_match(w, "These titles are too long", all = FALSE, fixed = TRUE)
   expect_match(w, "These titles may be confused with regions", all = FALSE, fixed = TRUE)
   expect_match(w, "These titles contain illegal characters", all = FALSE, fixed = TRUE)
@@ -32,6 +34,10 @@ test_that("readCheckScenarioConfig fails on error-loaden config", {
   expect_match(w, "contain whitespaces", all = FALSE, fixed = TRUE)
   expect_match(w, "scenario names indicated in copyConfigFrom column were not found", all = FALSE, fixed = TRUE)
   expect_match(w, "specify in copyConfigFrom column a scenario name defined below in the file", all = FALSE, fixed = TRUE)
+  expect_match(w, "which requires a reference gdx", all = FALSE, fixed = TRUE)
+  expect_match(w, "Do not use 'NA' as scenario name", all = FALSE, fixed = TRUE)
+  expect_match(m, "no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead", all = FALSE, fixed = TRUE)
+  expect_match(m, "In 1 scenarios, neither 'carbonprice'", all = FALSE, fixed = TRUE)
   copiedFromPBS <- c("c_budgetCO2", "path_gdx", "path_gdx_ref")
   expect_identical(unlist(scenConf["PBS", copiedFromPBS]),
                    unlist(scenConf["PBScopy", copiedFromPBS]))

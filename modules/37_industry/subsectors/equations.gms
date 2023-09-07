@@ -10,8 +10,8 @@
 ***-------------------------------------------------------------------------------
 ***                         MATERIAL-FLOW IMPLEMENTATION
 ***-------------------------------------------------------------------------------
-* Balance equation: Demand of materials equals to production of those materials, 
-* accounting for trade. Demand of materials arises either due to external demand 
+* Balance equation: Demand of materials equals to production of those materials,
+* accounting for trade. Demand of materials arises either due to external demand
 * from the economy (i.e. steel) or due to internal demand of the processes modelled
 * in the materials-flow model (i.e. directly reduced iron).
 *
@@ -106,10 +106,10 @@ $ifthen.fixed_production "%cm_import_EU%" == "bal"   !! cm_import_EU
          !! do not limit steel production shares for fixed production
      AND p37_industry_quantity_targets(ttot,regi,"ue_steel_secondary") eq 0
 $endif.fixed_production
-$ifthen.exogDem_scen NOT "%cm_exogDem_scen%" == "off" 
+$ifthen.exogDem_scen NOT "%cm_exogDem_scen%" == "off"
          !! do not limit steel production shares for fixed production
      AND pm_exogDemScen(ttot,regi,"%cm_exogDem_scen%","ue_steel_secondary") eq 0
-$endif.exogDem_scen 
+$endif.exogDem_scen
 
                                                                             ) ..
   vm_cesIO(ttot,regi,"ue_steel_secondary")
