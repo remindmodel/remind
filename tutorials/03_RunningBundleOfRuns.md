@@ -82,12 +82,14 @@ If you want to manually start runs instead of editing the `start` column in the 
 ```bash
 Rscript start.R --interactive config/scenario_config_XYZ.csv
 ```
-In interactive mode, the scripts lets you select a config file if you do not specify one. You can combine all these options and use
+In interactive mode, the scripts lets you select a config file if you do not specify one. You can combine options such as
 ```bash
-Rscript start.R -gqi
+Rscript start.R --quick --interactive
+Rscript start.R -qi
 ```
-as a shortcut, meaning `g` for `gamscompile`, `i` for `--interactive`, `q` for `--quick`. The shortcut `t` for `--test` avoids that `--gamscompile` is executed.
-
+The latter uses shortcuts, meaning `i` for `--interactive`, `q` for `--quick`. The shortcut `t` for `--test` avoids that anything is executed,
+`g` for `gamscompile` avoids that actual runs are started.
+See `Rscript start.R --help` for further information.
 
 Further notes:
 --------------

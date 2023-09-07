@@ -105,7 +105,7 @@ magpie_reporting_file <- envir$cfg$pathToMagpieReport
 if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
   message("add MAgPIE reporting from ", magpie_reporting_file)
   tmp_rem <- quitte::as.quitte(remind_reporting_file)
-  tmp_mag <- dplyr::filter(quitte::as.quitte(magpie_reporting_file), .data$period %in% levels(tmp_rem$period))
+  tmp_mag <- dplyr::filter(quitte::as.quitte(magpie_reporting_file), .data$period %in% unique(tmp_rem$period))
   # remove population from magpie reporting to avoid duplication (units "million" vs. "million people")
   sharedvariables <- intersect(tmp_mag$variable, tmp_rem$variable)
   if (length(sharedvariables) > 0) {
@@ -123,18 +123,18 @@ message("### end generation of mif files at ", Sys.time())
 
 ## produce REMIND LCOE reporting *.csv based on gdx information
 if (! isTRUE(envir$cfg$gms$c_empty_model == "on") || ! grepl("^C_TESTTHAT", scenario)) {
-  message("start generation of LCOE reporting")
+  message("### start generation of LCOE reporting at ", Sys.time())
   tmp <- try(convGDX2CSV_LCOE(gdx,file=LCOE_reporting_file,scen=scenario)) # execute convGDX2MIF_LCOE
-  message("end generation of LCOE reporting")
+  message("### end generation of LCOE reporting at ", Sys.time())
 }
 
 ## generate DIETER reporting if it is needed
 ## the reporting is appended to REMIND_generic_<scenario>.MIF in "DIETER" Sub Directory
 DIETERGDX <- "report_DIETER.gdx"
 if(file.exists(file.path(outputdir, DIETERGDX))){
-  message("start generation of DIETER reporting")
+  message("start generation of DIETER reporting at ", Sys.time())
   remind2::reportDIETER(DIETERGDX,outputdir)
-  message("end generation of DIETER reporting")
+  message("end generation of DIETER reporting at ", Sys.time())
 }
 
 message("### reporting finished.")

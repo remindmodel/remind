@@ -41,9 +41,9 @@ If you want to peek inside the archive to debug something or out of curiosity yo
 
 1. Run the helper tool `lastrev` (`/p/projects/rd3mod/tools/lastrev`) to get a list of the last five `revX.XXX*_remind.tgz` items in the default madrat output directory. Alternatively, you can also check by hand in the `/p/projects/rd3mod/inputdata/output` folder on the PIK cluster.
 
-2. Clone the [remind-preprocessing repo](https://github.com/remindmodel/pre-processing) to your tmp folder on the cluster and edit its `start.R` file by inserting the next revision number. Use at least 4 decimal places for development/testing. If an old revision number is used, the input data will not be recalculated. Input data for a new regional resolution will be recalculated based on the existing cache information in the PUC file.
+2. Clone the [remind-preprocessing repo](https://github.com/remindmodel/pre-processing) to your tmp folder on the cluster and edit its `config/default.cfg` file by inserting the next revision number. Use the additional argument `dev` for testing. If an old revision number is used, the input data will not be recalculated. Input data for a new regional resolution will be recalculated based on the existing cache information in the PUC file.
 
-3. Start the script with `sbatch slurm_start.sh`.
+3. Start the script with `Rscript submit_preprocessing.R`.
 The .log file lists the progress and potential errors. This process might take a while (currently >8 hours).
 
 4. If the process terminates without errors, do a test run with the new input data. To do this, clone the REMIND repo and update the data input version `cfg$revision` in `config/default.cfg` using your recently created data revision number file and run one scenario (e.g. SSP2EU-Base).
@@ -80,11 +80,11 @@ You need to pass the path to a input data revision, e.g. `idrcp /p/projects/rd3m
 Unfortunately, this does not work for archives that were created using a [portable unaggregated collection (puc)](https://pik-piam.r-universe.dev/articles/madrat/madrat-puc.html). If the diagnostics.log file has an entry looking like this under "Current madrat configuration", the archive won't be suitable for the script: `cachefolder -> "/p/tmp/benke/.Rtmp/RtmpU9rYHO/file25418fd5e15/puc"`
 
 
-**Option 2**: If you need a cache file for every single intermediate step executed during input data generation, you might want to generate your own cache from scratch. To do so, follow the steps 2) and 3) under [How to update input data](#how-to-update-input-data), but make further adjustments to the `start.R` script:
+**Option 2**: If you need a cache file for every single intermediate step executed during input data generation, you might want to generate your own cache from scratch. To do so, follow the steps 2) and 3) under [How to update input data](#how-to-update-input-data), but make further adjustments:
 
-- Make sure your own madrat settings are used: `cachetype <- "def"`
-- Adjust your madrat settings to read from / write to your own cache folder instead of the shared default cache. If you are not using an empty folder, make sure to disable forcing cache use: `setConfig(forcecache = F, cachefolder = "[PATH/TO/YOUR/CACHE]")`
-- Set a development suffix to distinguish your own input data version from other versions: `dev <- "my-personal-cache"` (optional)
+- Make sure your own madrat settings are used in `config/default.cfg`: `cachetype <- "def"` 
+- Adjust your madrat settings to read from / write to your own cache folder instead of the shared default cache. If you are not using an empty folder, make sure to disable forcing cache use: `setConfig(forcecache = F, cachefolder = "[PATH/TO/YOUR/CACHE]")` (insert this line in `run_preprocessing.R` after the libraries have been loaded)
+- Set a development suffix in `config/default.cfg` to distinguish your own input data version from other versions: `dev <- "my-personal-cache"` (optional)
 
 After input data generation succeeded, you can download your cache folder from the path you set in your madrat config and use it as your local cache. 
 

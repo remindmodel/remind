@@ -501,8 +501,6 @@ $setglobal cm_DAC_eff  off !! def = off
 
 $setglobal cm_sehe_upper  off !! def = off 
 
-$setglobal cm_fixCO2price  off !! def = off
-
 $setglobal cm_feShareLimits  off  !! def = off
 
 $setglobal c_fuelprice_init  off !! def = off

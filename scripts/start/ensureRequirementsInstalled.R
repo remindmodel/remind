@@ -20,16 +20,10 @@ ensureRequirementsInstalled <- function(
 ) {
   # Check if dependencies for a model run are fulfilled
   if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.3.4") {
-    if (is.null(renv::project())) {
-      message("Checking dependencies. If this fails, use a more recent snapshot.")
-      piamenv::checkDeps()
-    } else {
-      installedPackages <- piamenv::fixDeps(ask = ask)
-      piamenv::stopIfLoaded(names(installedPackages))
-    }
+    installedPackages <- piamenv::fixDeps(ask = ask)
+    piamenv::stopIfLoaded(names(installedPackages))
   } else {
     stop(paste0("REMIND requires piamenv >= 0.3.4, please run the following to update it:\n",
-                "renv::install('piamenv')\n",
-                "and re-run ", rerunPrompt, "."))
+                "renv::install('piamenv')\n", "and re-run ", rerunPrompt, "."))
   }
 }

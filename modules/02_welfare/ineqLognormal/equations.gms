@@ -135,7 +135,7 @@ q02_energyexpShare(ttot,regi)$(ttot.val ge cm_startyear)..
 q02_taxrev_Add(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_taxrev_Add(ttot,regi)
   =e=
-    ((pm_taxCO2eq(ttot,regi)+ pm_taxCO2eqSCC(ttot,regi)+pm_taxCO2eqHist(ttot,regi))*v02_emitaxredistr(ttot,regi)
+    ((pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqSCC(ttot,regi))*v02_emitaxredistr(ttot,regi)
     -p02_taxrev_redistr0_ref(ttot,regi))$(cm_emiscen ne 1)
 ;
 

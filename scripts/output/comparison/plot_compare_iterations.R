@@ -4,288 +4,208 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
+
 ############################# LOAD LIBRARIES #############################
-library(magclass, quietly = TRUE,warn.conflicts =FALSE)
-library(luplot, quietly = TRUE,warn.conflicts =FALSE)
-library(lusweave, quietly = TRUE,warn.conflicts =FALSE)
-library(gms, quietly = TRUE,warn.conflicts =FALSE)
-library(lucode2, quietly = TRUE,warn.conflicts =FALSE)
-library(gdx, quietly = TRUE,warn.conflicts =FALSE)
-library(magpie4, quietly = TRUE,warn.conflicts =FALSE)
-library(remind2, quietly = TRUE,warn.conflicts =FALSE)
-library(gtools, quietly = TRUE,warn.conflicts =FALSE)
+
+library(magclass, quietly = TRUE, warn.conflicts = FALSE)
+library(ggplot2,  quietly = TRUE, warn.conflicts = FALSE)
+# Functions from other libraries are loaded using ::
 
 ############################# BASIC CONFIGURATION #############################
+
 if (!exists("source_include") | !exists("runs") | !exists("folder")) {
   message("Script started from command line.")
   message("ls(): ", paste(ls(), collapse = ", "))
   runs <- if (exists("outputdirs")) unique(sub("-rem-[0-9]*", "", basename(outputdirs))) else NULL
   folder <- "./output"
-  readArgs("runs", "folder")
+  lucode2::readArgs("runs", "folder")
 } else {
   message("Script was sourced.")
   message("runs  : ", paste(runs, collapse = ", "))
   message("folder: ", paste(folder, collapse = ", "))
 }
 
-###############################################################################
-
 ############################# DEFINE FUNCTIONS ###########################
 
-readfuelex <- function(gdx,enty) {
-  out <- readGDX(gdx,name="vm_fuExtr", format="first_found", field="l")[,,enty]
-  out <- collapseNames(out)
-  return(out)
-}
-
-readprodPE <- function(gdx,enty) {
-  out <- readGDX(gdx,name="vm_prodPe", format="first_found", field="l")[,,enty]
-  out <- collapseNames(out)
-  return(out)
-}
-
-
-readshift <- function(gdx) {
-  out <- readGDX(gdx,name="p30_pebiolc_pricshift", format="first_found")
-  getNames(out) <- "pebiolc_priceshift"   # hab ich mir ausgedacht, kann natuerlich alles andere sein, wird durch collapseNames sowieso geloescht
-  out <- collapseNames(out)
-  return(out)
-}
-
-readbioprice <- function(gdx,name) {
-  out <- readGDX(gdx, name, format="first_found")
-  getNames(out) <- "pebiolc_pricemag"   # hab ich mir ausgedacht, kann natuerlich alles andere sein, wird durch collapseNames sowieso geloescht
-  out <- collapseNames(out)
-  return(out)
-}
-
-# function to read parameter from gdx file
-readpar <- function(gdx,name) {
-  out <- readGDX(gdx, name, format="first_found")
-  #getNames(out) <- "dummy" # something has to be here, will be removed by collapseNames anyway
-  #out <- collapseNames(out)
-  return(out)
-}
-
-# function to read variable from gdx file
-readvar <- function(gdx,name,enty=NULL) {
-  if (is.null(enty)) {
-    out <- readGDX(gdx,name, format="first_found", field="l")
-    getNames(out) <- "dummy" # something has to be here, will be removed by collapseNames anyway
-  } else {
-    out <- readGDX(gdx,name=name, format="first_found", field="l")[,,enty]
-  }
-  out <- collapseNames(out)
-  return(out)
-}
-# aufblasen auf alle jahre mit in die obige funktion, sodass man immer mult und shift mit vollen dimensionen zurueckbekommt.
-# diese dann fuer jede region ueber der zeit fuer alle iterationen plotten
-
-# If input (x) is not defined for years copy single value for all given years
-fillyears <- function (x,years) {
-  if (fulldim(x)[[1]][2]==1){
-    a<-new.magpie(getRegions(x),years,getNames(x))
-    for (i in years) {
-      for (r in getRegions(a)) {
-        a[r,i,]<-as.vector(x[r,1,])
-      }
-    }
-    x<-a
-  }
-  return(x)
-}
-
-
-# The main plot function
-plot_iterations <- function(runname) {
-  ############################ FIND GDX FILES #################################
-  message("Searching for reportings for ", runname)
-  gdx_path <- Sys.glob(paste0(runname,"-rem-*/fulldata.gdx"))
-  gdx_path <- rev(mixedsort(gdx_path)) # sort runs from 1,10,2,20 to 1,2,10,20i
-  message("The following reportings were found:")
-  message(paste(gdx_path, collapse = ", "))
-
-  # Read runnames and use them to name the rows of gdx_path
-  outputdirs <- sub("/fulldata.gdx","",gdx_path)
-  if(length(outputdirs) == 0) {
-    return("No gdx files found\n\n")
-  }
-
-  scenNames_path <- file.path(outputdirs, "config.Rdata")
-  scenNames <- c()
-  for (i in scenNames_path) {
-    load(i)
-    scenNames[i] <- cfg$title
-  }
-  names(gdx_path) <- scenNames
-
-  ######################### COMMON SETTINGS ############################
-  TWa2EJ <- 31.5576      # TWa to EJ (1 a = 365.25*24*3600 s = 31557600 s)
-  txtsiz <- 10
-  r   <- sort(c("SSA","CHA","EUR","NEU","IND","JPN","LAM","MEA","OAS","CAZ","REF","USA"))
-  y   <- paste0("y",2000+10*(1:10))
-  years <- c("y2005","y2010","y2015","y2020","y2025","y2030","y2035","y2040","y2045","y2050","y2055","y2060","y2070","y2080","y2090","y2100") # used for fillyears
-  sm_tdptwyr2dpgj <- 31.71 # multipl. factor to convert (TerraDollar per TWyear) to (Dollar per GJoule)
-  ######################### IMPORT AND PLOT DATA #######################
-
-  ### PRICES (MAgPIE) OF PURPOSE GROWN BIOENERGY ###
-  price <- readAll(gdx_path,readbioprice,name="p30_pebiolc_pricemag",asList=FALSE)
-  price <- price / TWa2EJ * 1000
-  #price <- mbind(price,new.magpie("GLO",getYears(price),getNames(price),fill=c(0)))
-  getNames(price) <- gsub(".*rem-","",getNames(price))
-
-  v  <- paste(runname,"Price|Biomass|MAgPIE (US$2005/GJ)",sep="\n")
-
-  p_price_mag <- magpie2ggplot2(price[r,years,],scenario=1,
-                   group=NULL,ylab="$/GJ",color="Scenario",facet_x="Region",show_grid=TRUE,title=v,
-                   scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,
-                   legend_position="right")
-
-  ### LUC EMISSIONS (MAgPIE) ###
-  emi <- readAll(gdx_path,readpar,name=c("pm_macBaseMagpie","p_macBaseMagpie"),asList=FALSE)[,,"co2luc"]*1000*44/12
-  emi <- mbind(emi,dimSums(emi,dim=1))
-  getNames(emi) <- gsub(".*rem-","",getNames(emi))
-
-  v  <- paste(runname,"Emissions|CO2|Land Use (Mt CO2/yr)",sep="\n")
-  p_emi_mag <- magpie2ggplot2(emi[r,y,],scenario=1,
-                   group=NULL,ylab="Mt CO2/yr",color="Scenario",facet_x="Region",show_grid=TRUE,title=v,
-                   scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,
-                   legend_position="right")
-
-  ### DEMAND FOR PURPOSE GROWN BIOENERGY ###
-  fuelex           <- readAll(gdx_path,readfuelex,enty="pebiolc",asList=FALSE)
-  fuelex_bio       <- collapseNames(fuelex[,,"1"]) * TWa2EJ
-  fuelex_bio       <- mbind(fuelex_bio,dimSums(fuelex_bio,dim=1))
-  getNames(fuelex_bio) <- gsub(".*rem-","",getNames(fuelex_bio))
-
-  v  <- paste(runname,"Primary Energy Production|Biomass|Energy Crops (EJ/yr)",sep="\n")
-
-  p_fuelex <- magpie2ggplot2(fuelex_bio[r,years,],scenario=1,
-                   group=NULL,ylab="EJ/yr",color="Scenario",facet_x="Region",show_grid=TRUE,title=v,
-                   scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,
-                   legend_position="right")
-
-  p_it_fuelex <- magpie2ggplot2(fuelex_bio[r,years,],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
-                   scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,asDate=FALSE,legend_position="right")
-
-  p_it_fuelex_fix <- magpie2ggplot2(fuelex_bio[r,years,],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
-                       scales="fixed",text_size=10,ncol=4,pointwidth=1,linewidth=1,asDate=FALSE,legend_position="right")
-
-  p_it_fuelex_2060 <- magpie2ggplot2(fuelex_bio[r,"y2060",],scenario=1,
-                        geom="bar",fill="Data1",stack=T,facet_x="Region",xaxis="Scenario",ylab="EJ/yr",
-                        title=paste0(v," in 2060"),xlab="Scenario",ncol=4)
-
-  ### DEMAND
-  fuelex           <- readAll(gdx_path,readprodPE,enty="pebiolc",asList=FALSE)
-  fuelex_bio       <- collapseNames(fuelex) * TWa2EJ
-  fuelex_bio       <- mbind(fuelex_bio,dimSums(fuelex_bio,dim=1))
-  getNames(fuelex_bio) <- gsub(".*rem-","",getNames(fuelex_bio))
-
-  v  <- paste(runname,"PE|Biomass|Modern (EJ/yr)",sep="\n")
-  p_demPE <- magpie2ggplot2(fuelex_bio[r,y,],scenario=1,
-               group=NULL,ylab="EJ/yr",color="Scenario",facet_x="Region",show_grid=TRUE,title=v,
-               scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,
-               legend_position="right")
-
-  p_it_demPE <- magpie2ggplot2(fuelex_bio[r,y,],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
-                       scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,asDate=FALSE,legend_position="right")
-
-  ### PRICE SHIFT FACTOR IN 2060 ###
-  shift <- readAll(gdx_path,readshift,asList=FALSE)* sm_tdptwyr2dpgj
-  #shift <- mbind(shift,new.magpie("GLO",getYears(shift),getNames(shift),fill=c(0)))
-  shift <- fillyears(shift,years)
-  getNames(shift) <- gsub(".*rem-","",getNames(shift))
+# Plot dimension specified for 'color' over dimension specified for 'xaxis' as line plot or bar plot
+myplot <- function(data, type = "line", xaxis = "period", color = "iteration", scales = "free_y", ylab = NULL, title = NULL) {
+  getNames(data) <- gsub(".*rem-","",getNames(data))
+  getSets(data) <- c("region","year","iteration")
+  dat <- quitte::as.quitte(data)
+  dat[[color]] <- as.factor(dat[[color]]) # convert dimension that should be distinguished by color to factors (relevant if years are plotted over iterations)
+  text_size <- 10
+  scale_color <- as.character(mip::plotstyle(as.character(unique(dat[[color]])),out="color"))
   
-  v  <- paste(runname,"Price|Biomass|Shiftfactor",sep="\n")
-  p_shift_2060 <- magpie2ggplot2(shift[r,"y2060",],scenario=1,
-                       geom="bar",fill="Data1",stack=T,facet_x="Region",xaxis="Scenario",ylab="[-]",
-                       title=paste0(v," in 2060"),xlab="Scenario",ncol=4)
+  p <- ggplot()
+  if (type == "line") {
+    p <- p + geom_line( mapping = aes(x=!!sym((xaxis)), y=value, color=!!sym(color), group = !!sym(color)), data = dat, linewidth = 1)
+    p <- p + geom_point(mapping = aes(x=!!sym((xaxis)), y=value, color=!!sym(color), group = !!sym(color)), data = dat, size = 1)
+  } else if (type == "bar"){
+    p <- p + geom_col(  mapping = aes(x=!!sym((xaxis)), y=value, fill=!!sym(color),  group = !!sym(color)), data = dat)
+  }
+    p <- p + facet_wrap(~region, scales=scales) + 
+    labs(x = NULL, y = ylab, title = title) +
+    scale_color_manual(values=scale_color) +
+    theme(
+      plot.title   = element_text(size = text_size+4),
+      strip.text.x = element_text(size = text_size),
+      axis.text.y  = element_text(size = text_size),
+      axis.title.x = element_text(size = text_size),
+      axis.text.x  = element_text(size = text_size)) #+
+    #theme_bw()
+  return(p)
+}
 
-  ### Price shift and mult factor over time ###
+# The main function that compiles all plots
+plot_iterations <- function(runname) {
 
-  v_shift    <- readAll(gdx_path,readvar,name="v30_priceshift",asList=FALSE) * sm_tdptwyr2dpgj
-  v_shift    <- fillyears(v_shift,years) # If there is no year dimension add it
-  getNames(v_shift) <- gsub(".*rem-","",getNames(v_shift))
-
-  p_shift <- magpie2ggplot2(v_shift[r,years,],geom='line',group=NULL,
-                        ylab='$/GJ',color='Data1',#linetype="Data2",
-                        scales='free',show_grid=TRUE,ncol=3,text_size=txtsiz,#ylim=y_limreg,
-                        title=paste(runname,"Price shift",sep="\n"))
-
-  v_mult    <- readAll(gdx_path,readvar,name="v30_pricemult",asList=FALSE)
-  v_mult    <- fillyears(v_mult,years) # If there is no year dimension add it
-  #y_limreg  <- c(0,max(v_mult[,years,]))
-  getNames(v_mult) <- gsub(".*rem-","",getNames(v_mult))
-
-  p_mult <- magpie2ggplot2(v_mult[r,years,],geom='line',group=NULL,
-                        ylab='',color='Data1',#linetype="Data2",
-                        scales='free_y',show_grid=TRUE,ncol=3,text_size=txtsiz,#ylim=y_limreg,
-                        title=paste(runname,"Price mult factor",sep="\n"))
-
-  ### CO2 price ###
+  # ---- Read REMIND reportings for all scenarios ----
+  
+  message("Searching for REMIND_generic_*.mif files for ", runname)
   report_path <- Sys.glob(paste0(runname,"-rem-*/REMIND_generic_*.mif"))
   report_path <- report_path[!grepl("with|adj",report_path)]
-
-  tmp <- NULL
-  for (r in report_path) {
-    tmp1 <- read.report(r, as.list=FALSE)
-    tmp <- mbind(tmp, tmp1[,,"Price|Carbon (US$2005/t CO2)"])
+  
+  message("Reading ", length(report_path), " REMIND reports.")
+  reports <- NULL
+  for (rep in report_path) {
+    reports <- mbind(reports, read.report(rep, as.list=FALSE)) #[,,"Price|Carbon (US$2005/t CO2)"])
   }
-  getNames(tmp) <- gsub(".*rem-","",getNames(tmp))
 
-  v  <- paste(runname,"Price|Carbon (US$2005/t CO2)",sep="\n")
+  # ---- Settings ----
+  
+  TWa2EJ <- 31.5576 # TWa to EJ (1 a = 365.25*24*3600 s = 31557600 s)
+  txtsiz <- 10
+  r      <- sort(c("SSA","CHA","EUR","NEU","IND","JPN","LAM","MEA","OAS","CAZ","REF","USA"))
+  y      <- paste0("y",2000+10*(1:10))
+  years  <- paste0("y",c(seq(2005,2060,5),seq(2070,2100,10)))
+  sm_tdptwyr2dpgj <- 31.71 # convert [TerraDollar per TWyear] to [Dollar per GJoule]
+  
+  
+  # ---- Plot: MAgPIE prices for purpose grown bioenergy ----
+  
+  var <- "Internal|Price|Biomass|MAgPIE (US$2005/GJ)"
 
-  #p_price_carbon <- magpie2ggplot2(tmp,geom='line',group=NULL,
-  #               ylab='US$2005/t CO2',color='Data1',#linetype="Data2",
-  #               scales='free',show_grid=TRUE,ncol=3,text_size=txtsiz+4,#ylim=y_limreg,
-  #               title=paste(runname,"Carbon price",sep="\n"))
+  p_price_mag <- myplot(reports[r, years, var], ylab = "$/GJ", title = paste(runname, var, sep = "\n"))
+  
+  
+  # ---- Plot: MAgPIE co2luc ----
 
-  p_it_price_carbon_1 <- magpie2ggplot2(tmp[,getYears(tmp)<"y2025",],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
-                              scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,asDate=FALSE,legend_position="right")
-  p_it_price_carbon_2 <- magpie2ggplot2(tmp[,getYears(tmp)>"y2020" & getYears(tmp)<="y2100",],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
-                              scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,asDate=FALSE,legend_position="right")
+  # core/datainput.gms
+  # $if %cm_MAgPIE_coupling% == "on"  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
+  # core/presolve.gms
+  # vm_macBase.fx(ttot,regi,"co2luc") = pm_macBaseMagpie(ttot,regi,"co2luc")-p_macPolCO2luc(ttot,regi);
+  # core/equations.gms
+  # vm_emiMacSector(t,regi,enty) =e= vm_macBase [...] + p_macPolCO2luc(t,regi)$( sameas(enty,"co2luc")
+  # remind2::reportEmi.R
+  # setNames(dimSums(vm_emiMacSector[, , "co2luc"], dim = 3) * GtC_2_MtCO2, "Emi|CO2|+|Land-Use Change (Mt CO2/yr)")
 
-  ######################### PRINT TO PDF ################################
-  out<-swopen(template="david")
-  swfigure(out,print,p_price_mag,sw_option="height=9,width=16")
-  swfigure(out,print,p_fuelex,sw_option="height=9,width=16")
-  swfigure(out,print,p_it_fuelex,sw_option="height=9,width=16")
-  swfigure(out,print,p_it_fuelex_fix,sw_option="height=9,width=16")
-  swfigure(out,print,p_it_demPE,sw_option="height=9,width=16")
-  swfigure(out,print,p_it_fuelex_2060,sw_option="height=9,width=16")
-  swfigure(out,print,p_emi_mag,sw_option="height=9,width=16")
-  swfigure(out,print,p_shift,sw_option="height=9,width=16")
-  swfigure(out,print,p_shift_2060,sw_option="height=9,width=16")
-  swfigure(out,print,p_mult,sw_option="height=9,width=16")
-  swfigure(out,print,p_it_price_carbon_1,sw_option="height=9,width=16")
-  swfigure(out,print,p_it_price_carbon_2,sw_option="height=9,width=16")
-  filename <- paste0(runname,"-",length(scenNames))
-  swclose(out,outfile=filename,clean_output=TRUE,save_stream=FALSE)
+  var <- "Emi|CO2|+|Land-Use Change (Mt CO2/yr)"
+
+  p_emi_mag <- myplot(reports[r, y, var], ylab = "Mt CO2/yr", title = paste(runname, var, sep = "\n"))
+  
+
+  # ---- Plot: REMIND Production of purpose grown bioenergy ----
+  
+  # remind2::reportExtraction.R
+  # vm_fuExtr[, , "pebiolc.1"] -> "PE|Production|Biomass|+|Lignocellulosic (EJ/yr)"
+  # vm_fuExtr[, , "pebiolc.1"] -> "Primary Energy Production|Biomass|Energy Crops (EJ/yr)" (used also in coupling interface in MAgPIE)
+
+  var <- "Primary Energy Production|Biomass|Energy Crops (EJ/yr)"
+  title <- paste(runname, var , sep = "\n")
+
+  p_fuelex         <- myplot(reports[r, years,   var],                                                      ylab = "EJ/yr", title = title)
+  p_fuelex_it      <- myplot(reports[r, years,   var],               xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title)
+  p_fuelex_it_fix  <- myplot(reports[r, years,   var],               xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title, scales = "fixed")
+  p_fuelex_it_2060 <- myplot(reports[r, "y2060", var], type = "bar", xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title, scales = "fixed")
+  
+
+  # ---- Plot: REMIND Demand for purpose grown bioenergy ----
+  
+  # remind2::reportPE.R
+  # fuelex[,,"pebiolc.1"] + (1-p_costsPEtradeMp[,,"pebiolc"]) * Mport[,,"pebiolc"] - Xport[,,"pebiolc"] -> "PE|Biomass|Energy Crops (EJ/yr)"
+  
+  var <- "PE|Biomass|Energy Crops (EJ/yr)"
+  title  <- paste(runname, var, sep = "\n")
+  
+  p_prodPE    <- myplot(reports[r, years, var],                                        ylab = "EJ/yr", title = title)
+  p_prodPE_it <- myplot(reports[r, years, var], xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title)
+  
+
+  # ---- Plot: REMIND Price shift factor ----
+  
+  # remind2::reportPrices.R
+  # p30_pebiolc_pricshift -> "Internal|Price|Biomass|Shiftfactor ()"
+
+  var <- "Internal|Price|Biomass|Shiftfactor ()"
+  
+  p_shift <- myplot(reports[r, years, var], ylab = "$/GJ", title = paste(runname, var, sep="\n"))
+  
+
+  # ---- Plot: REMIND Price scaling factor ----
+  
+  # remind2::reportPrices.R
+  # p30_pebiolc_pricmult -> "Internal|Price|Biomass|Multfactor ()"
+  
+  var <- "Internal|Price|Biomass|Multfactor ()"
+    
+  p_mult <- myplot(reports[r, years, var], title = paste(runname, var, sep = "\n"))
+
+  
+  # ---- Plot: REMIND co2 price ----
+  
+  var <- "Price|Carbon (US$2005/t CO2)"
+  title <- paste(runname, var, sep = "\n")
+
+  p_price_carbon      <- myplot(reports[r, years, var], ylab = "$/tCO2", title = title)
+
+  p_price_carbon_it_1 <- myplot(reports[r, getYears(reports)<"y2025", var],
+                                ylab = "$/tCO2", xaxis = "iteration", color = "period", title = title)
+  p_price_carbon_it_2 <- myplot(reports[r, getYears(reports)>"y2020" & getYears(reports)<="y2100", var], 
+                                ylab = "$/tCO2", xaxis = "iteration", color = "period", title = title)
+
+
+  # ---- Print to pdf ----
+  
+  out <- lusweave::swopen(template = "david")
+  
+  lusweave::swfigure(out, print, p_price_mag,         sw_option = "height=9,width=16")
+  lusweave::swfigure(out, print, p_fuelex,            sw_option = "height=9,width=16")
+  lusweave::swfigure(out, print, p_fuelex_it,         sw_option = "height=9,width=16")
+  lusweave::swfigure(out, print, p_fuelex_it_fix,     sw_option = "height=9,width=16")
+  lusweave::swfigure(out, print, p_fuelex_it_2060,    sw_option = "height=9,width=16")
+  lusweave::swfigure(out, print, p_prodPE_it,         sw_option = "height=9,width=16")
+  lusweave::swfigure(out, print, p_emi_mag,           sw_option = "height=9,width=16")
+  lusweave::swfigure(out, print, p_mult,              sw_option = "height=9,width=16")
+  lusweave::swfigure(out, print, p_shift,             sw_option = "height=9,width=16")
+  lusweave::swfigure(out, print, p_price_carbon,      sw_option = "height=9,width=16")
+  lusweave::swfigure(out, print, p_price_carbon_it_1, sw_option = "height=9,width=16")
+  lusweave::swfigure(out, print, p_price_carbon_it_2, sw_option = "height=9,width=16")
+  
+  filename <- paste0(runname, "-", length(getItems(reports, dim = 3.1)))
+  lusweave::swclose(out, outfile = filename, clean_output = TRUE, save_stream = FALSE)
   file.remove(paste0(filename,c(".log",".out")))
   return("Done\n")
 }
 
-wdnow <- getwd()
-setwd(folder)
+withr::with_dir(folder, {
 
-# Searching for runs to plot iterations for
-if (is.null(runs)) {
-  message("\nNo run specified by user. Searching for all runs available in this folder:")
-  # Find which runs were performed by searching for all files that contain "-rem-"
-  runs <- Sys.glob("*-rem-*/fulldata.gdx")
-  # keep directories only (filter out files)
-  #runs <- runs[file.info(runs)[,"isdir"]]
-  # Remove "-rem-*" from the folder names and remove remaining double elements to yield the pure runname
-  runs <- unique(sub("-rem-[0-9]+/fulldata.gdx","",runs))
-  message(paste(runs, collapse = ", "))
-  message("")
-}
+  # ---- Search for runs if not provided----
+  if (is.null(runs)) {
+    message("\nNo run specified by user. Searching for all runs available in this folder:")
+    # Find fulldata.gdx files of all runs
+    runs <- Sys.glob("*-rem-*/fulldata.gdx")
+    # Remove everything but the scenario name from the folder names and remove duplicates
+    runs <- unique(sub("-rem-[0-9]+/fulldata.gdx","",runs))
+    message(paste(runs, collapse = ", "))
+    message("")
+  }
+  
+  # ---- Loop over runs ans plot ----
+  for (runname in runs) {
+    message("##################### ",runname," #################################")
+    ret <- plot_iterations(runname)
+    message(ret)
+  }
 
-# Plot iterations
-for (runname in runs) {
-  message("##################### ",runname," #################################")
-  ret <- plot_iterations(runname)
-  message(ret)
-}
+})
 
-setwd(wdnow)

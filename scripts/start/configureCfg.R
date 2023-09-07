@@ -103,6 +103,8 @@ configureCfg <- function(icfg, iscen, iscenarios, verboseGamsCompile = TRUE) {
           }
         }
       }
+    }
+    
     # Define path where the GDXs will be taken from
     gdxlist <- unlist(iscenarios[iscen, names(path_gdx_list)])
     names(gdxlist) <- path_gdx_list
@@ -113,6 +115,6 @@ configureCfg <- function(icfg, iscen, iscenarios, verboseGamsCompile = TRUE) {
     # add table with information about runs that need the fulldata.gdx of the current run as input
     icfg$RunsUsingTHISgdxAsInput <- iscenarios %>% select(contains("path_gdx")) %>%              # select columns that have "path_gdx" in their name
                                                    filter(rowSums(. == iscen, na.rm = TRUE) > 0) # select rows that have the current scenario in any column
-    }
+    
     return(icfg)
 }
