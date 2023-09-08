@@ -297,43 +297,43 @@ sum(tax_import_type_21, p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sam
    * pm_pvp(t,tradePe) / pm_pvp(t,"good") * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)$sameas(tax_import_type_21, "worldPricemarkup")
  +
  p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "c02taxmarkup") *
- max(0,(pm_taxCO2eqSum(t,regi)- sum(regi2, pm_taxCO2eqSum(t,regi2))/(card(regi2)))) *
+ max(0,(pm_taxCO2eqSum(t,regi)- sum(trade_regi, pm_taxCO2eqSum(t,trade_regi))/(card(trade_regi)))) *
  p_cintraw(tradePe) * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)$sameas(tax_import_type_21, "c02taxmarkup")
 +
  p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "avC02taxmarkup") *
- max(pm_taxCO2eqSum(t,regi), sum(regi2, pm_taxCO2eqSum(t,regi2))/(card(regi2))) *
+ max(pm_taxCO2eqSum(t,regi), sum(trade_regi, pm_taxCO2eqSum(t,trade_regi))/(card(trade_regi))) *
  p_cintraw(tradePe) * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)$sameas(tax_import_type_21, "avC02taxmarkup") )
 ;
 
 
 Equations
-q21_taxrevImport_new(ttot,all_regi,all_enty) "new calculation"
-q21_taxrevImport_worldPricemarkup(ttot,all_regi,all_enty) "worldPricemarkup part"
-q21_taxrevImport_c02taxmarkup(ttot,all_regi,all_enty) "c02taxmarkup part"
-q21_taxrevImport_avC02taxmarkup(ttot,all_regi,all_enty) "avC02taxmarkup part"
-q21_taxrevImport_new_test(ttot,all_regi,all_enty) "new calculation test"
-q21_taxrevImport_worldPricemarkup_test(ttot,all_regi,all_enty) "worldPricemarkup part test"
-q21_taxrevImport_c02taxmarkup_test(ttot,all_regi,all_enty) "c02taxmarkup part test"
-q21_taxrevImport_avC02taxmarkup_test(ttot,all_regi,all_enty) "avC02taxmarkup part test"
-q21_taxrevImport_new0(ttot,all_regi,all_enty) "new calculation rev"
-q21_taxrevImport_worldPricemarkup0(ttot,all_regi,all_enty) "worldPricemarkup rev part"
-q21_taxrevImport_c02taxmarkup0(ttot,all_regi,all_enty) "c02taxmarkup rev part"
-q21_taxrevImport_avC02taxmarkup0(ttot,all_regi,all_enty) "avC02taxmarkup rev part";
+q21_taxrevImport_new(ttot,trade_regi,all_enty) "new calculation"
+q21_taxrevImport_worldPricemarkup(ttot,trade_regi,all_enty) "worldPricemarkup part"
+q21_taxrevImport_c02taxmarkup(ttot,trade_regi,all_enty) "c02taxmarkup part"
+q21_taxrevImport_avC02taxmarkup(ttot,trade_regi,all_enty) "avC02taxmarkup part"
+q21_taxrevImport_new_test(ttot,trade_regi,all_enty) "new calculation test"
+q21_taxrevImport_worldPricemarkup_test(ttot,trade_regi,all_enty) "worldPricemarkup part test"
+q21_taxrevImport_c02taxmarkup_test(ttot,trade_regi,all_enty) "c02taxmarkup part test"
+q21_taxrevImport_avC02taxmarkup_test(ttot,trade_regi,all_enty) "avC02taxmarkup part test"
+q21_taxrevImport_new0(ttot,trade_regi,all_enty) "new calculation rev"
+q21_taxrevImport_worldPricemarkup0(ttot,trade_regi,all_enty) "worldPricemarkup rev part"
+q21_taxrevImport_c02taxmarkup0(ttot,trade_regi,all_enty) "c02taxmarkup rev part"
+q21_taxrevImport_avC02taxmarkup0(ttot,trade_regi,all_enty) "avC02taxmarkup rev part";
 
 Variable
-v21_taxrevImport_new(ttot,all_regi,all_enty) "new calculation"
-v21_taxrevImport_all(ttot,all_regi,all_enty,tax_import_type_21) "all tax parts"
-v21_taxrevImport_worldPricemarkup(ttot,all_regi,all_enty) "worldPricemarkup part"
-v21_taxrevImport_c02taxmarkup(ttot,all_regi,all_enty) "c02taxmarkup part"
-v21_taxrevImport_avC02taxmarkup(ttot,all_regi,all_enty) "avC02taxmarkup part"
-v21_taxrevImport_new_test(ttot,all_regi,all_enty) "new calculation test"
-v21_taxrevImport_worldPricemarkup_test(ttot,all_regi,all_enty) "worldPricemarkup part test"
-v21_taxrevImport_c02taxmarkup_test(ttot,all_regi,all_enty) "c02taxmarkup part test"
-v21_taxrevImport_avC02taxmarkup_test(ttot,all_regi,all_enty) "avC02taxmarkup part test"
-v21_taxrevImport_new0(ttot,all_regi,all_enty) "new calculation rev"
-v21_taxrevImport_worldPricemarkup0(ttot,all_regi,all_enty) "worldPricemarkup rev part"
-v21_taxrevImport_c02taxmarkup0(ttot,all_regi,all_enty) "c02taxmarkup rev part"
-v21_taxrevImport_avC02taxmarkup0(ttot,all_regi,all_enty) "avC02taxmarkup rev part";
+v21_taxrevImport_new(ttot,trade_regi,all_enty) "new calculation"
+v21_taxrevImport_all(ttot,trade_regi,all_enty,tax_import_type_21) "all tax parts"
+v21_taxrevImport_worldPricemarkup(ttot,trade_regi,all_enty) "worldPricemarkup part"
+v21_taxrevImport_c02taxmarkup(ttot,trade_regi,all_enty) "c02taxmarkup part"
+v21_taxrevImport_avC02taxmarkup(ttot,trade_regi,all_enty) "avC02taxmarkup part"
+v21_taxrevImport_new_test(ttot,trade_regi,all_enty) "new calculation test"
+v21_taxrevImport_worldPricemarkup_test(ttot,trade_regi,all_enty) "worldPricemarkup part test"
+v21_taxrevImport_c02taxmarkup_test(ttot,trade_regi,all_enty) "c02taxmarkup part test"
+v21_taxrevImport_avC02taxmarkup_test(ttot,trade_regi,all_enty) "avC02taxmarkup part test"
+v21_taxrevImport_new0(ttot,trade_regi,all_enty) "new calculation rev"
+v21_taxrevImport_worldPricemarkup0(ttot,trade_regi,all_enty) "worldPricemarkup rev part"
+v21_taxrevImport_c02taxmarkup0(ttot,trade_regi,all_enty) "c02taxmarkup rev part"
+v21_taxrevImport_avC02taxmarkup0(ttot,trade_regi,all_enty) "avC02taxmarkup rev part";
 
 *** calculate individual components
 q21_taxrevImport_worldPricemarkup(t,regi,tradePe)..
@@ -346,14 +346,14 @@ q21_taxrevImport_c02taxmarkup(t,regi,tradePe)..
   v21_taxrevImport_c02taxmarkup(t,regi,tradePe)
   =e=
   p21_tau_Import(t, regi, tradePe, "c02taxmarkup")
-  * max(0, (pm_taxCO2eqSum(t,regi) - sum(regi2, pm_taxCO2eqSum(t, regi2))/(card(regi2))))
+  * max(0, (pm_taxCO2eqSum(t,regi) - sum(trade_regi, pm_taxCO2eqSum(t, trade_regi))/(card(trade_regi))))
   * p_cintraw(tradePe) * vm_Mport(t,regi,tradePe);
 
 q21_taxrevImport_avC02taxmarkup(t,regi,tradePe)..
   v21_taxrevImport_avC02taxmarkup(t,regi,tradePe)
   =e=
   p21_tau_Import(t, regi, tradePe, "avC02taxmarkup")
-  * max(pm_taxCO2eqSum(t,regi), sum(regi2, pm_taxCO2eqSum(t, regi2))/(card(regi2)))
+  * max(pm_taxCO2eqSum(t,regi), sum(trade_regi, pm_taxCO2eqSum(t, trade_regi))/(card(trade_regi)))
   * p_cintraw(tradePe) * vm_Mport(t,regi,tradePe);
 
 *** some test whether the sameas formulation makes any difference
@@ -370,16 +370,51 @@ q21_taxrevImport_c02taxmarkup_test(t,regi,tradePe)..
   =e=
   sum(tax_import_type_21,
     p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "c02taxmarkup")
-    * max(0, (pm_taxCO2eqSum(t,regi) - sum(regi2, pm_taxCO2eqSum(t, regi2))/(card(regi2))))
+    * max(0, (pm_taxCO2eqSum(t,regi) - sum(trade_regi, pm_taxCO2eqSum(t, trade_regi))/(card(trade_regi))))
     * p_cintraw(tradePe) * vm_Mport(t,regi,tradePe)
   );
+
+*** some more tests
+Equations
+q21_test1(ttot,trade_regi,all_enty) "test 1"
+q21_test2(ttot,trade_regi) "test 2"
+q21_test3(ttot,trade_regi) "test 3"
+q21_test4(all_enty) "test 4"
+;
+
+
+Variable v21_test_tau_Import(ttot,trade_regi,all_enty) "p21_tau_Import";
+q21_test1(t,regi,tradePe)..
+  v21_test_tau_Import(t,regi,tradePe)
+  =e=
+  sum(tax_import_type_21,
+    p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "c02taxmarkup")
+  );
+
+Variable v21_test_taxavg(ttot,trade_regi) "average world tax";
+q21_test2(t,regi)..
+  v21_test_taxavg(t,regi)
+  =e=
+  sum(trade_regi, pm_taxCO2eqSum(t, trade_regi))/(card(trade_regi));
+
+Variable v21_test_taxdiff(ttot,trade_regi) "tax difference";
+q21_test3(t,regi)..
+  v21_test_taxdiff(t,regi)
+  =e=
+  (pm_taxCO2eqSum(t,regi) - sum(trade_regi, pm_taxCO2eqSum(t, trade_regi))/(card(trade_regi)));
+
+Variable v21_test_cintraw(all_enty) "p_cintraw";
+q21_test4(tradePe)..
+  v21_test_cintraw(tradePe)
+  =e=
+  p_cintraw(tradePe);
 
 q21_taxrevImport_avC02taxmarkup_test(t,regi,tradePe)..
   v21_taxrevImport_avC02taxmarkup_test(t,regi,tradePe)
   =e=
   sum(tax_import_type_21,
     p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "avC02taxmarkup")
-    * max(pm_taxCO2eqSum(t,regi), sum(regi2, pm_taxCO2eqSum(t, regi2))/(card(regi2)))
+    * max(pm_taxCO2eqSum(t,regi), sum(trade_regi, pm_taxCO2eqSum(t, trade_regi))/(card(trade_regi)))
     * p_cintraw(tradePe) * vm_Mport(t,regi,tradePe)
   );
 
@@ -426,11 +461,11 @@ q21_taxrevImport_new_test(t,regi,tradePe)..
    * pm_pvp(t,tradePe) / pm_pvp(t,"good") * vm_Mport(t,regi,tradePe)
   +
    p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "c02taxmarkup")
-   * max(0,(pm_taxCO2eqSum(t,regi)- sum(regi2, pm_taxCO2eqSum(t,regi2))/(card(regi2))))
+   * max(0,(pm_taxCO2eqSum(t,regi)- sum(trade_regi, pm_taxCO2eqSum(t,trade_regi))/(card(trade_regi))))
    * p_cintraw(tradePe) * vm_Mport(t,regi,tradePe)
   +
    p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "avC02taxmarkup")
-   * max(pm_taxCO2eqSum(t,regi), sum(regi2, pm_taxCO2eqSum(t,regi2))/(card(regi2)))
+   * max(pm_taxCO2eqSum(t,regi), sum(trade_regi, pm_taxCO2eqSum(t,trade_regi))/(card(trade_regi)))
    * p_cintraw(tradePe) * vm_Mport(t,regi,tradePe)
   -
    p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)
@@ -447,7 +482,7 @@ q21_taxrevImport_new_test(t,regi,tradePe)..
 
 $ifthen.importtaxrc "%cm_taxrc_RE%" == "REdirect"
 equations
-q21_rc_tau_import_RE(ttot,all_regi) "Oli: rev recycling"
+q21_rc_tau_import_RE(ttot,trade_regi) "Oli: rev recycling"
 ;
 q21_rc_tau_import_RE(t,regi)..
   sum(en2en(enty,enty2,te)$(teVRE(te)),
