@@ -22,11 +22,14 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
   code <- system(paste0("grep regexp ", file.path(remindPath, "main.gms")), intern = TRUE)
   # this is used to replace all 'regexp = is.numeric'
   grepisnum <- "((\\+|-)?[0-9]*([0-9]\\.?|\\.?[0-9])[0-9]*)"
+  grepisnonnegative <- "(\\+?[0-9]*([0-9]\\.?|\\.?[0-9])[0-9]*)"
   grepisshare <-  "(\\+?0?\\.[0-9]+|0|0\\.0*|1|1\\.0*)"
   # some simple tests
   if (testmode) {
     stopifnot(all(  grepl(paste0("^", grepisnum, "$"), c("2", "2.2", "32.", "+32.", "+.05", "-0.5", "-.5", "-5", "-7."))))
     stopifnot(all(! grepl(paste0("^", grepisnum, "$"), c("2.2.", "0a", "1e1", ".2.", "ab", "2.3a", "--a", "++2"))))
+    stopifnot(all(  grepl(paste0("^", grepisnonnegative, "$"), c("2", "2.2", "32.", "+32.", "+.05"))))
+    stopifnot(all(! grepl(paste0("^", grepisnonnegative, "$"), c("2.2.", "0a", "1e1", ".2.", "ab", "2.3a", "--a", "++2", "-0.5", "-.5", "-5", "-7."))))
     stopifnot(all(  grepl(paste0("^", grepisshare, "$"), c("0", "0.0", ".000", "1.0", "1.", "1", "0.12341234"))))
     stopifnot(all(! grepl(paste0("^", grepisshare, "$"), c("1.1", "-0.3", "-0", "."))))
   }
@@ -42,6 +45,7 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
       regexp <- paste0("^(", trimws(gsub("!!.*", "", gsub("^.*regexp[ ]*=", "", filtered))), ")$")
       # replace is.numeric by pattern defined above
       useregexp <- gsub("is.numeric", grepisnum, regexp, fixed = TRUE)
+      useregexp <- gsub("is.nonnegative", grepisnonnegative, useregexp, fixed = TRUE)
       useregexp <- gsub("is.share", grepisshare, useregexp, fixed = TRUE)
       # check whether parameter value fits regular expression
       if (! grepl(useregexp, cfg$gms[[n]])) {

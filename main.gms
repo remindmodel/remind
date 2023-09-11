@@ -156,11 +156,12 @@
 *' ;
 *'   param_name = 0;     !! def = 0  !! regexp = 0|1
 *' --------
-*' * The value behind 'def' contains the default value and is added only for the user to remember if changed manually
-*' * The value behind regexp is read by scripts/start/checkFixCfg.R to check the validity of the input.
+*' * def shows the default value, which is added only for the user to remember if changed manually
+*' * regexp is optional, the value is read by scripts/start/checkFixCfg.R to check the validity of the input.
 *' In this case, it checks whether the value fits this regular expression: ^(0|1)$
 *' Use 'value1|value2' for specific values, use '[1-7]' for a row of integers.
-*' Two shortcut are defined: use 'is.numeric' for numeric values and 'is.share' if the value must be >= 0 and <= 1
+*' Three shortcut are defined: use 'is.numeric' for numeric values, 'is.nonnegative' for >= 0,
+*' and 'is.share' if the value must be >= 0 and <= 1
 *'
 *'
 *' #### Other general rules:
@@ -502,7 +503,7 @@ parameter
 parameter
   cm_co2_tax_2020           "level of co2 tax in year 2020 in $ per t CO2eq, makes sense only for emiscen eq 9 and 45_carbonprice exponential"
 ;
-  cm_co2_tax_2020   = -1;              !! def = -1  !! regexp = is.numeric
+  cm_co2_tax_2020   = -1;              !! def = -1  !! regexp = -1|is.nonnegative
 *' * (-1): default setting equivalent to no carbon tax
 *' * (any number >= 0): tax level in 2020, with 5% exponential increase over time
 *'
@@ -1137,7 +1138,7 @@ parameter
 *'
 *' *  (off): off = REMIND expects to be run standalone (emission factors are used, shiftfactors are set to zero)
 *' *  (on): on  = REMIND expects to be run based on a MAgPIE reporting file (emission factors are set to zero because emissions are retrieved from the MAgPIE reporting, shift factors for supply curves are calculated)
-$setglobal cm_MAgPIE_coupling  off     !! def = "off"  !! regexp = on|off
+$setglobal cm_MAgPIE_coupling  off     !! def = "off"  !! regexp = off|on
 *' cm_rcp_scen       "chooses RCP scenario"
 *'
 *' *  (none): no RCP scenario, standard setting
@@ -1193,7 +1194,7 @@ $setglobal cm_tradbio_phaseout  default  !! def = default  !! regexp = default|f
 ***  (off):             (default) no bound
 ***  (100):             (e.g.) set maximum to 100 EJ per year
 ***  (any value ge 0):  set maximum to that value
-$setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.numeric
+$setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.nonnegative
 *** cm_bioprod_regi_lim
 *** limit to total biomass production (including residues) by region to an upper value in EJ/yr from 2035 on
 *** example: "CHA 20, EUR_regi 7.5" limits total biomass production in China to 20 EJ/yr and
@@ -1202,7 +1203,7 @@ $setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.numeric
 *** If you specify a value for a region within a region group (e.g. DEU in EU27_regi),
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "EU27_regi 7.5, DEU 1.5".
-$setGLobal cm_bioprod_regi_lim off !! def off
+$setGLobal cm_bioprod_regi_lim off  !! def off
 *** cm_POPscen      "Population growth scenarios from UN data and IIASA projection used in SSP"
 *** pop_SSP1    "SSP1 population scenario"
 *** pop_SSP2    "SSP2 population scenario"
