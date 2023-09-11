@@ -831,7 +831,7 @@ parameter
   cm_iterative_target_adj  = 0;      !! def = 0  !! regexp = 0|2|3|4|5|6|7|9
 *' * (0): no iterative adjustment
 *' * (2): iterative adjustment II based on magicc calculated forcing (for both budget and tax runs), see modules/ 0 /magicc/postsolve.gms for direct algorithms of adjustment
-*' * (3): [requires 45_carbonprice = "NDC" and emiscen = 9] iterative adjustment III for tax based on 2025 or 2030 regionally differentiated emissions, see module/45_carbonprice/<NDC/NPi2018>/postsolve.gms for algorithm of adjustment
+*' * (3): [requires 45_carbonprice = "NDC" and emiscen = 9] iterative adjustment III for tax based on 2025 or 2030 regionally differentiated emissions, see module/45_carbonprice/NDC/postsolve.gms for algorithm of adjustment
 *' * (4): iterative adjustment IV for both budget and tax runs based on CO2 FF&I emissions 2020-2100, see core/postsolve.gms for direct algorithms of adjustment
 *' * (5): iterative adjustment V for both budget and tax runs based on CO2 emissions 2020-2100, see core/postsolve.gms for direct algorithms of adjustment
 *' * (6): iterative adjustment VI for both budget and tax runs based on peak CO2 emissions budget, without changing temporal profile (i.e. with overshoot), see core/postsolve.gms for direct algorithms of adjustment
