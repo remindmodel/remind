@@ -54,7 +54,6 @@ q33_DAC_capconst(t,regi)..
     - sum(teNoTransform2rlf33("dac",rlf),
         vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf)
     )
-    - (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * sum(fe2cdr("fegas",entyFe2,te_used33), v33_FEdemand(t,regi,"fegas", entyFe2,te_used33))
     ;
 
 ***---------------------------------------------------------------------------
@@ -67,6 +66,7 @@ q33_DAC_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
     sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
     =e=
     - v33_emi(t,regi,"dac")
+    + (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * sum(fe2cdr("fegas",entyFe2,te_used33), v33_FEdemand(t,regi,"fegas", entyFe2,te_used33))
     ;
 
 ***---------------------------------------------------------------------------
