@@ -164,17 +164,15 @@ q37_IndCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
   v37_emiIndCCSmax(ttot,regi,emiInd37)
 ;
 
-*' Limit industry CCS scale-up to 5 % p.a., or 2 % p.a. for cement before 2050
+*' Limit industry CCS scale-up to sm_macChange (default: 5 % p.a.)
 q37_limit_IndCCS_growth(ttot,regi,emiInd37) ..
   vm_emiIndCCS(ttot,regi,emiInd37)
   =l=
     vm_emiIndCCS(ttot-1,regi,emiInd37)
   + sum(secInd37_2_emiInd37(secInd37,emiInd37),
       v37_emiIndCCSmax(ttot,regi,emiInd37)
-    * ( 0.02$( sameas(secInd37,"cement") AND ttot.val le 2050 )
-      + 0.05$( NOT sameas(secInd37,"cement") OR ttot.val gt 2050 )
-      )
-    * pm_dt(ttot)
+    * sm_macChange
+    * pm_ts(ttot)
     )
 ;
 
