@@ -125,7 +125,7 @@ if (! exists("output")) {
 # Select output directories if not defined by readArgs
 if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
-                         "plot_compare_iterations", "varListHtml")
+                         "plot_compare_iterations", "varListHtml", "fixOnRef")
   needingMif <- any(modulesNeedingMif %in% output)
   dir_folder <- if (exists("remind_dir")) c(file.path(remind_dir, "output"), remind_dir) else "./output"
   dirs <- dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx")))
@@ -133,6 +133,9 @@ if (! exists("outputdir")) {
   dirnames <- if (length(dir_folder) == 1) basename(dirs) else dirs
   names(dirnames) <- stringr::str_extract(dirnames, "rem-[0-9]+$")
   names(dirnames)[is.na(names(dirnames))] <- ""
+  if (length(dirnames) == 0) {
+    stop("No directories found containing gdx", if (needingMif) " and mif", " files. Aborting.")
+  }
   selectedDirs <- chooseFromList(dirnames, type = "runs to be used for output generation",
                     userinfo = paste0(if ("policyCosts" %in% output) "The reference run will be selected separately! " else NULL,
                                       if (needingMif) "Do you miss a run? Check if .mif exists and rerun reporting. " else NULL),
