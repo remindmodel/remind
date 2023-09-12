@@ -112,4 +112,8 @@ $ifthen.policy_scenario "%cm_indstExogScen_set%" == "YES"
 $endif.policy_scenario
 $drop cm_indstExogScen_set
 
+
+*** force industrial coal-phase out by 2050 in EU27
+vm_demFEsector.up(t,regi,"sesofos","fesos","indst",emiMkt)$(	t.val ge 2050 AND
+								regi_group("EU27_regi",regi))=0;
 *** EOF ./modules/37_industry/subsectors/bounds.gms
