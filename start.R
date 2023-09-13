@@ -244,10 +244,6 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   # ask for slurmConfig if not specified for every run
   if ("--gamscompile" %in% flags) {
     slurmConfig <- "direct"
-    if (! file.exists("input/source_files.log")) {
-      message("\n### Input data missing, need to compile REMIND first (2 min.)\n")
-      system("Rscript start.R config/tests/scenario_config_compile.csv")
-    }
     message("\nTrying to compile the selected runs...")
     lockID <- gms::model_lock()
   }

@@ -156,11 +156,12 @@
 *' ;
 *'   param_name = 0;     !! def = 0  !! regexp = 0|1
 *' --------
-*' * The value behind 'def' contains the default value and is added only for the user to remember if changed manually
-*' * The value behind regexp is read by scripts/start/checkFixCfg.R to check the validity of the input.
+*' * def shows the default value, which is added only for the user to remember if changed manually
+*' * regexp is optional, the value is read by scripts/start/checkFixCfg.R to check the validity of the input.
 *' In this case, it checks whether the value fits this regular expression: ^(0|1)$
 *' Use 'value1|value2' for specific values, use '[1-7]' for a row of integers.
-*' Two shortcut are defined: use 'is.numeric' for numeric values and 'is.share' if the value must be >= 0 and <= 1
+*' Three shortcut are defined: use 'is.numeric' for numeric values, 'is.nonnegative' for >= 0,
+*' and 'is.share' if the value must be >= 0 and <= 1
 *'
 *'
 *' #### Other general rules:
@@ -181,11 +182,7 @@
 
 *##################### R SECTION START (VERSION INFO) ##########################
 *
-* Regionscode: 62eff8f7
-*
-* Input data revision: 6.316
-*
-* Last modification (input data): Wed Sep 28 10:35:42 2022
+* will be updated automatically when starting a REMIND run
 *
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -506,7 +503,7 @@ parameter
 parameter
   cm_co2_tax_2020           "level of co2 tax in year 2020 in $ per t CO2eq, makes sense only for emiscen eq 9 and 45_carbonprice exponential"
 ;
-  cm_co2_tax_2020   = -1;              !! def = -1  !! regexp = is.numeric
+  cm_co2_tax_2020   = -1;              !! def = -1  !! regexp = -1|is.nonnegative
 *' * (-1): default setting equivalent to no carbon tax
 *' * (any number >= 0): tax level in 2020, with 5% exponential increase over time
 *'
@@ -835,7 +832,7 @@ parameter
   cm_iterative_target_adj  = 0;      !! def = 0  !! regexp = 0|2|3|4|5|6|7|9
 *' * (0): no iterative adjustment
 *' * (2): iterative adjustment II based on magicc calculated forcing (for both budget and tax runs), see modules/ 0 /magicc/postsolve.gms for direct algorithms of adjustment
-*' * (3): [requires 45_carbonprice = "NDC" and emiscen = 9] iterative adjustment III for tax based on 2025 or 2030 regionally differentiated emissions, see module/45_carbonprice/<NDC/NPi2018>/postsolve.gms for algorithm of adjustment
+*' * (3): [requires 45_carbonprice = "NDC" and emiscen = 9] iterative adjustment III for tax based on 2025 or 2030 regionally differentiated emissions, see module/45_carbonprice/NDC/postsolve.gms for algorithm of adjustment
 *' * (4): iterative adjustment IV for both budget and tax runs based on CO2 FF&I emissions 2020-2100, see core/postsolve.gms for direct algorithms of adjustment
 *' * (5): iterative adjustment V for both budget and tax runs based on CO2 emissions 2020-2100, see core/postsolve.gms for direct algorithms of adjustment
 *' * (6): iterative adjustment VI for both budget and tax runs based on peak CO2 emissions budget, without changing temporal profile (i.e. with overshoot), see core/postsolve.gms for direct algorithms of adjustment
@@ -1141,7 +1138,7 @@ parameter
 *'
 *' *  (off): off = REMIND expects to be run standalone (emission factors are used, shiftfactors are set to zero)
 *' *  (on): on  = REMIND expects to be run based on a MAgPIE reporting file (emission factors are set to zero because emissions are retrieved from the MAgPIE reporting, shift factors for supply curves are calculated)
-$setglobal cm_MAgPIE_coupling  off     !! def = "off"  !! regexp = on|off
+$setglobal cm_MAgPIE_coupling  off     !! def = "off"  !! regexp = off|on
 *' cm_rcp_scen       "chooses RCP scenario"
 *'
 *' *  (none): no RCP scenario, standard setting
@@ -1197,7 +1194,7 @@ $setglobal cm_tradbio_phaseout  default  !! def = default  !! regexp = default|f
 ***  (off):             (default) no bound
 ***  (100):             (e.g.) set maximum to 100 EJ per year
 ***  (any value ge 0):  set maximum to that value
-$setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.numeric
+$setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.nonnegative
 *** cm_bioprod_regi_lim
 *** limit to total biomass production (including residues) by region to an upper value in EJ/yr from 2035 on
 *** example: "CHA 20, EUR_regi 7.5" limits total biomass production in China to 20 EJ/yr and
@@ -1206,7 +1203,7 @@ $setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.numeric
 *** If you specify a value for a region within a region group (e.g. DEU in EU27_regi),
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "EU27_regi 7.5, DEU 1.5".
-$setGLobal cm_bioprod_regi_lim off !! def off
+$setGLobal cm_bioprod_regi_lim off  !! def off
 *** cm_POPscen      "Population growth scenarios from UN data and IIASA projection used in SSP"
 *** pop_SSP1    "SSP1 population scenario"
 *** pop_SSP2    "SSP2 population scenario"
@@ -1322,6 +1319,8 @@ $setglobal cm_CES_calibration_default_prices  0.01  !!  def  =  0.01
 *** cm_calibration_string "def = off, else = additional string to include in the calibration name to be used" label for your calibration run to keep calibration files with different setups apart (e.g. with low elasticities, high elasticities)
 $setglobal cm_calibration_string  off    !!  def  =  off
 *** cm_techcosts -     use regionalized or globally homogenous technology costs for certain technologies
+*** (REG) regionalized technology costs
+*** (GLO) globally homogenous technology costs
 $setglobal cm_techcosts  REG       !! def = REG
 *** cm_regNetNegCO2 -    default "on" allows for regionally netNegative CO2 emissions, setting "off" activates bound in core/bounds.gms that disallows net negative CO2 emissions at the regional level
 $setglobal cm_regNetNegCO2  on       !! def = on
@@ -1479,10 +1478,12 @@ $setglobal cm_adj_coeff_multiplier  off
 *** cm_inco0Factor "change investment costs. [factor]."
 ***   def <- "off" = use default inco0 values.
 ***   or list of techs with respective factor to change inco0 value by a multiplication factor. (ex. "ccsinje=0.5,bioigccc=0.66,bioh2c=0.66,biogas=0.66,bioftrec=0.66,bioftcrec=0.66,igccc=0.66,coalh2c=0.66,coalgas=0.66,coalftrec=0.66,coalftcrec=0.66,ngccc=0.66,gash2c=0.66,gasftrec=0.66,gasftcrec=0.66,tnrs=0.66")
+*** (note: if %cm_techcosts% == "GLO", switch will not work for policy runs, i.e. cm_startyear > 2005, for pc, ngt and ngcc as this gets overwritten in 05_initialCap module)
 $setglobal cm_inco0Factor  off !! def = off
 *** cm_inco0RegiFactor "change investment costs regionalized technology values. [factor]."
 ***   def <- "off" = use default p_inco0 values.
 ***   or list of techs with respective factor to change p_inco0 value by a multiplication factor. (ex. "wind=0.33, spv=0.33" makes investment costs for wind and spv 3 times cheaper)
+*** (note: if %cm_techcosts% == "GLO", switch will not work for policy runs, i.e. cm_startyear > 2005, for pc, ngt and ngcc as this gets overwritten in 05_initialCap module)
 $setglobal cm_inco0RegiFactor  off  !! def = off
 *** cm_CCS_markup "multiplicative factor for CSS cost markup"
 ***   def <- "off" = use default CCS pm_inco0_t values.

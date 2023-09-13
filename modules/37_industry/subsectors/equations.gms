@@ -20,16 +20,16 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
       (
           vm_cesIO(ttot,regi,in)
         + pm_cesdata(ttot,regi,in,"offset_quantity")
-      )$((NOT secInd37Prc(secInd37)) OR sameas(ttot,"2005"))
+      )$(NOT secInd37Prc(secInd37))
     )
   )
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   +
   sum((secInd37_emiMkt(secInd37Prc,emiMkt),secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
-    p37_specFEDem(entyFE,tePrc,opmoPrc)
+    p37_specFEDem(ttot,regi,entyFE,tePrc,opmoPrc)
     *
     v37_prodVolPrc(ttot,regi,tePrc,opmoPrc)
-  )$(NOT sameas(ttot,"2005"))
+  )
 $endif.process_based_steel
 ;
 
@@ -75,7 +75,7 @@ q37_limitCapMat(t,regi,tePrc)..
     sum(tePrc2opmoPrc(tePrc,opmoPrc),
       v37_prodVolPrc(t,regi,tePrc,opmoPrc)
     )
-    =l=
+    =e=
     sum(teMat2rlf(tePrc,rlf),
         vm_capFac(t,regi,tePrc) * vm_cap(t,regi,tePrc,rlf)
     )
@@ -144,24 +144,24 @@ q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
       sum(se2fe(entySEfos,entyFE,te),
           pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")
       )
-  )$((NOT secInd37Prc(secInd37)) OR sameas(ttot,"2005"))
+  )$(NOT secInd37Prc(secInd37))
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   +
   sum((secInd37_tePrc(secInd37Prc,teBasePrc),tePrc2opmoPrc(teBasePrc,opmoPrc)),
-      p37_specFEDem(entyFE,teBasePrc,opmoPrc)
+      p37_specFEDem(ttot,regi,entyFE,teBasePrc,opmoPrc)
       *
       v37_prodVolPrc(ttot,regi,teBasePrc,opmoPrc)
       *
       sum(se2fe(entySEfos,entyFE,te),
           pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")
       )
-  )$(NOT sameas(ttot,"2005"))
+  )
 $endif.process_based_steel
 ;
 
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-q37_specEmiBasePrc(ttot,regi,teBasePrc,opmoPrc)$( ttot.val ge cm_startyear AND NOT sameas(ttot,"2005")) ..
+q37_specEmiBasePrc(ttot,regi,teBasePrc,opmoPrc)$( ttot.val ge cm_startyear ) ..
   v37_specEmiBasePrc(ttot,regi,teBasePrc,opmoPrc)
   =e=
   sum(entyFE,
@@ -173,7 +173,7 @@ q37_specEmiBasePrc(ttot,regi,teBasePrc,opmoPrc)$( ttot.val ge cm_startyear AND N
   )
 ;
 
-q37_emiCCSPrc(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND secInd37_2_emiInd37(secInd37Prc,emiInd37) AND NOT sameas(ttot,"2005")) ..
+q37_emiCCSPrc(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND secInd37_2_emiInd37(secInd37Prc,emiInd37) ) ..
   vm_emiIndCCS(ttot,regi,emiInd37)
   =e=
   sum((secInd37_tePrc(secInd37Prc,teBasePrc),tePrc2opmoPrc(teBasePrc,opmoPrc),teBasePrc2teCCSPrc(teBasePrc,teCCSPrc)),

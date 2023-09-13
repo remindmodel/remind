@@ -69,7 +69,7 @@ Imports:
     SPEI,
     stringr,
     terra,
-    testthat (>= 3.1.5),
+    testthat (>= 3.1.10),
     tibble,
     tidyr,
     tidyverse,

@@ -61,7 +61,7 @@ test-coupled:    ## Test if the coupling with MAgPIE works. Takes significantly
 
 test-coupled-slurm: ## test-coupled, but on slurm
 	$(info Coupling tests take around 75 minutes to run. Sent to slurm, find log in test-coupled.log)
-	@sbatch --qos=priority --wrap="make test-coupled" --job-name=test-coupled --mail-type=END --output=test-coupled.log
+	@sbatch --qos=priority --wrap="make test-coupled" --job-name=test-coupled --mail-type=END --output=test-coupled.log --comment="test-coupled.log"
 
 test-full:       ## Run all tests, including coupling tests and a default
                  ## REMIND scenario. Takes significantly longer than 10 minutes to run.
