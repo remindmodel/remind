@@ -17,3 +17,5 @@ vm_Mport,                variable,   not needed
 pm_tau_ces_tax,          input,      questionnaire
 pm_secBioShare,          parameter,  not needed
 pm_exogDemScen,input,added by codeCheck
+pm_ts,                   parameter,  not needed
+sm_macChange,            parameter,  not needed
