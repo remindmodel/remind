@@ -58,6 +58,11 @@ Parameters
     sesteel.ue_steel_secondary   1.                                            !! Only contibution, both are measured in Gt/a
     prsteel.ue_steel_primary     1.                                            !! Only contibution, both are measured in Gt/a
   /
+
+  p37_captureRate(all_te,opmoPrc)
+  /
+    bfccs . (standard)  0.8
+  /
 $endif.process_based_steel
 
 
