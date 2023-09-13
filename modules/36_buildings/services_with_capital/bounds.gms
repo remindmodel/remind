@@ -6,8 +6,14 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/36_buildings/services_with_capital/bounds.gms
 if ((cm_noReboundEffect eq 1 ), !! Fix the upper bound of vm_cesIO to the level of input_ref if no rebound is allowed
-vm_cesIO.up(t,regi,in)$(sameAs(in,"esswb") OR sameAs(in,"uealb") OR sameAs(in,"uecwb")) = (1 + 1e-14) * p36_cesIONoRebound(t,regi,in);
-vm_cesIO.lo(t,regi,in)$(sameAs(in,"esswb") OR sameAs(in,"uealb") OR sameAs(in,"uecwb")) = (1 - 1e-14) * p36_cesIONoRebound(t,regi,in);
+  vm_cesIO.up(t,regi,in)$(sameAs(in,"esswb") OR sameAs(in,"uealb") OR sameAs(in,"uecwb")) = (1 + 1e-14) * p36_cesIONoRebound(t,regi,in);
+  vm_cesIO.lo(t,regi,in)$(    sameAs(in,"esswb")
+                           OR sameAs(in,"uealb") 
+                           OR sameAs(in,"uecwb") ) 
+    = max(
+        (1 - 1e-14) * p36_cesIONoRebound(t,regi,in),
+        abs(pm_cesdata(t,regi,in,"offset_quantity"))
+      );
 );
 
 

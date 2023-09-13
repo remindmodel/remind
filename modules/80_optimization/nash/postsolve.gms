@@ -572,10 +572,11 @@ if(cm_abortOnConsecFail, !! execute only if consecutive failures switch is non-z
         else
             p80_trackConsecFail(regi) = p80_trackConsecFail(regi) + 1;
         );
-
+    );
+    loop(regi,
         if(p80_trackConsecFail(regi) >= cm_abortOnConsecFail,
             execute_unload "abort.gdx";
-
+            display p80_trackConsecFail;
             abort "Run was aborted because the maximum number of consecutive failures was reached in at least one region!";
         );
     )
