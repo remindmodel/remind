@@ -6,7 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 
 # if you want to change the reference run for yourrun, you can run:
-# Rscript scripts/output/single/fixRefOn.R outputdir=yourrun,newreferencerun
+# Rscript scripts/output/single/fixRefOn.R -i outputdir=yourrun,newreferencerun
 
 suppressPackageStartupMessages(library(tidyverse))
 
@@ -94,12 +94,13 @@ fixOnMif <- function(outputdir) {
   }
   filename <- file.path(outputdir, "log_fixOnRef.csv")
   message("Find failing variables in '", filename, "'.")
-  csvdata <- rbind(mutate(d, scenario = "data"), mutate(dref, scenario = "ref")) %>%
+  csvdata <- rbind(mutate(d, scenario = "value"), mutate(dref, scenario = "ref")) %>%
     filter(! grepl("Moving Avg$", variable), period < startyear) %>%
-    pivot_wider(names_from = scenario) %>% # order them such that ref is after run is missing
-    filter(abs(data - ref) > 0.00000001) %>%
+    pivot_wider(names_from = scenario) %>%
+    filter(abs(value - ref) > 0.00000001) %>%
+    add_column(scenario = title) %>%
     droplevels()
-  write.table(csvdata, filename, sep = ",", quote = FALSE, dec = ".", row.names = FALSE)
+  write.csv(csvdata, filename, quote = FALSE, row.names = FALSE)
   if (exists("flags") && isTRUE("--interactive" %in% flags)) {
     message("\nDo you want to fix that by overwriting ", title, " mif with reference run ", refname, " for t < ", startyear, "? y/N")
     if (tolower(gms::getLine()) %in% c("y", "yes")) {
