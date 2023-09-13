@@ -127,7 +127,6 @@ pm_cap0(regi,'bf')  = v37_prodVolPrc.l('2005',regi,'bf','standard') / pm_cf("200
 pm_cap0(regi,'eaf') = v37_prodVolPrc.l('2005',regi,'eaf','sec') / pm_cf("2005",regi,'eaf');
 pm_cap0(regi,'idr') = 0.;
 
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
 * no initial capacity for CCS
 pm_cap0(regi,teCCSPrc) = 0.;
 $endif.process_based_steel
@@ -541,7 +540,6 @@ if (cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' vm_deltaCap.up = vm_deltaCap.up;
   !! moved to industry module:
   !!Execute_Loadpoint 'input_ref' p37_specFeDem = p37_specFeDem;
-);
 
 *** if %cm_techcosts% == "GLO", load pm_inco0_t from input_ref.gdx and overwrite values
 *** only for pc, ngt, ngcc since they have been adapted in initialCap routine above

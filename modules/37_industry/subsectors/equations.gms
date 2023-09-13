@@ -84,7 +84,7 @@ q37_limitCapMat(t,regi,tePrc)..
 ***------------------------------------------------------
 *' CCS is added to base technology, so its capacity can't be higher than base
 ***------------------------------------------------------
-q37_limitCapCCSPrc(t,regi,teCCSPrc)..
+q37_limitCapCCSPrc(t,regi,teCCSPrc,rlf)..
     vm_cap(t,regi,teCCSPrc,rlf)
     =l=
     sum(teBasePrc2teCCSPrc(teBasePrc,teCCSPrc),

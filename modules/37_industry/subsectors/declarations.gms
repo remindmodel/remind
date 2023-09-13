@@ -77,8 +77,9 @@ $endif.no_calibration
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   q37_demMatPrc(tall,all_regi,mat)                      "Demand of process materials"
   q37_prodMat(tall,all_regi,mat)                        "Production volume of processes in material-flow model"
-  q37_mat2ue(tall,all_regi,all_in)                       "Connect materials production to ue ces tree nodes"
-  q37_limitCapMat(tall,all_regi,all_te)                  "Material-flow conversion is limited by capacities"
+  q37_mat2ue(tall,all_regi,all_in)                      "Connect materials production to ue ces tree nodes"
+  q37_limitCapMat(tall,all_regi,all_te)                 "Material-flow conversion is limited by capacities"
+  q37_limitCapCCSPrc(tall,all_regi,all_te)              "Steel CCS capacity cannot be higher than steel production capacity, transformed with an emission factor for steel"
 $endif.process_based_steel
 ;
 
