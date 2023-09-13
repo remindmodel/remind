@@ -163,7 +163,7 @@ $endif.process_based_steel
 
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-q37_specEmiBasePrc(ttot,regi,teBasePrc,opmoPrc)$( ttot.val ge cm_startyear AND NOT sameas(ttot,"2005")) ..
+q37_specEmiBasePrc(ttot,regi,teBasePrc,opmoPrc)$( ttot.val ge cm_startyear ) ..
   v37_specEmiBasePrc(ttot,regi,teBasePrc,opmoPrc)
   =e=
   sum(entyFE,
@@ -175,7 +175,7 @@ q37_specEmiBasePrc(ttot,regi,teBasePrc,opmoPrc)$( ttot.val ge cm_startyear AND N
   )
 ;
 
-q37_emiCCSPrc(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND secInd37_2_emiInd37(secInd37Prc,emiInd37) AND NOT sameas(ttot,"2005")) ..
+q37_emiCCSPrc(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND secInd37_2_emiInd37(secInd37Prc,emiInd37) ) ..
   vm_emiIndCCS(ttot,regi,emiInd37)
   =e=
   sum((secInd37_tePrc(secInd37Prc,teBasePrc),tePrc2opmoPrc(teBasePrc,opmoPrc),teBasePrc2teCCSPrc(teBasePrc,teCCSPrc)),
