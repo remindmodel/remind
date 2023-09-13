@@ -111,11 +111,22 @@ display v05_INIdemEn0.l, v05_INIcap0.l;
 
 pm_cap0(regi,te) = v05_INIcap0.l(regi,te);
 
-!! TODO: Prc hotfix until variable eta is implemented
-pm_cap0(regi,'bof') = pm_fedemand('2005',regi,'ue_steel_primary') / pm_cf("2005",regi,'bof');
-pm_cap0(regi,'bf') = pm_fedemand('2005',regi,'ue_steel_primary') / pm_cf("2005",regi,'bf');  !! measure bf capacity in t steel, not t pigiron! Skip: * p37_specMatDem('pigiron','bof','unheated'));
-pm_cap0(regi,'eaf') = pm_fedemand('2005',regi,'ue_steel_secondary') / pm_cf("2005",regi,'eaf');
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+* TODO:
+* - Add idr historic capacities
+* - make this a loop to not require additional code for new materials
+v37_prodVolPrc.fx('2005',regi,'bof','unheated') = pm_fedemand('2005',regi,'ue_steel_primary');
+v37_prodVolPrc.fx('2005',regi,'bf','standard') = p37_specMatDem("pigiron","bof","unheated") * v37_prodVolPrc.l('2005',regi,'bof','unheated');
+v37_prodVolPrc.fx('2005',regi,'eaf','sec') = pm_fedemand('2005',regi,'ue_steel_secondary');
+v37_prodVolPrc.fx('2005',regi,'eaf','pri') = 0.;
+v37_prodVolPrc.fx('2005',regi,'idr','ng') = 0.;
+v37_prodVolPrc.fx('2005',regi,'idr','h2') = 0.;
+
+pm_cap0(regi,'bof') = v37_prodVolPrc.l('2005',regi,'bof','unheated') / pm_cf("2005",regi,'bof');
+pm_cap0(regi,'bf')  = v37_prodVolPrc.l('2005',regi,'bf','standard') / pm_cf("2005",regi,'bf');  !! measure bf capacity in t steel, not t pigiron! Skip: * p37_specMatDem('pigiron','bof','unheated'));
+pm_cap0(regi,'eaf') = v37_prodVolPrc.l('2005',regi,'eaf','sec') / pm_cf("2005",regi,'eaf');
 pm_cap0(regi,'idr') = 0.;
+$endif.process_based_steel
 
 *RP keep energy demand for the Kyoto target calibration
 pm_EN_demand_from_initialcap2(regi,enty) = v05_INIdemEn0.l(regi,enty);
@@ -525,6 +536,8 @@ if (cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' vm_deltaCap.l = vm_deltaCap.l;
   Execute_Loadpoint 'input_ref' vm_deltaCap.lo = vm_deltaCap.lo;
   Execute_Loadpoint 'input_ref' vm_deltaCap.up = vm_deltaCap.up;
+  !! moved to industry module:
+  !!Execute_Loadpoint 'input_ref' p37_specFeDem = p37_specFeDem;
 );
 
 

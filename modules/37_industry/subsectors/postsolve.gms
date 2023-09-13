@@ -16,12 +16,9 @@ pm_FEPrice(ttot,regi,entyFE,"indst",emiMkt)$( abs(qm_budget.m(ttot,regi)) gt sm_
 *** reporting easier
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-o37_demFePrc(ttot,regi,entyFE,tePrc,opmoPrc)$(p37_specFEDem(entyFE,tePrc,opmoPrc) AND NOT sameas(ttot,"2005"))
+o37_demFePrc(ttot,regi,entyFE,tePrc,opmoPrc)$(p37_specFEDem(ttot,regi,entyFE,tePrc,opmoPrc))
   = v37_prodVolPrc.l(ttot,regi,tePrc,opmoPrc)
-    * p37_specFEDem(entyFE,tePrc,opmoPrc)
-;
-o37_demFePrc("2005",regi,entyFE,tePrc,opmoPrc)$(p37_specFEDem(entyFE,tePrc,opmoPrc))
-  = EPS
+    * p37_specFEDem(ttot,regi,entyFE,tePrc,opmoPrc)
 ;
 $endif.process_based_steel
 
@@ -29,7 +26,7 @@ $endif.process_based_steel
 *** subsectors)
 o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
   = sum((fe2ppfEn37(entyFe,in),secInd37_2_pf(secInd37,in),
-                         secInd37_emiMkt(secInd37,emiMkt))$((NOT secInd37Prc(secInd37)) OR sameas(ttot,"2005")),
+                         secInd37_emiMkt(secInd37,emiMkt))$(NOT secInd37Prc(secInd37)),
       (vm_cesIO.l(ttot,regi,in)
       +pm_cesdata(ttot,regi,in,"offset_quantity"))
     )
@@ -37,7 +34,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
     +
   sum((secInd37_emiMkt(secInd37Prc,emiMkt),secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
     o37_demFePrc(ttot,regi,entyFE,tePrc,opmoPrc)
-  )$(NOT sameas(ttot,"2005"))
+  )
 $endif.process_based_steel
 ;
 
@@ -47,7 +44,7 @@ o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)$(
   =
   ( sum(( fe2ppfEn37(entyFe,in),
           secInd37_2_pf(secInd37,in),
-          secInd37_emiMkt(secInd37,emiMkt))$((NOT secInd37Prc(secInd37)) OR sameas(ttot,"2005")),
+          secInd37_emiMkt(secInd37,emiMkt))$(NOT secInd37Prc(secInd37)),
       (vm_cesIO.l(ttot,regi,in)
       +pm_cesdata(ttot,regi,in,"offset_quantity"))
   )
@@ -55,7 +52,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
   +
   sum((secInd37_emiMkt(secInd37Prc,emiMkt),secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
     o37_demFePrc(ttot,regi,entyFE,tePrc,opmoPrc)
-  )$((secInd37Prc(secInd37)) AND NOT sameas(ttot,"2005"))
+  )$(secInd37Prc(secInd37))
 $endif.process_based_steel
   )
   / o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
