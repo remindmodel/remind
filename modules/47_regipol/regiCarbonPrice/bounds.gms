@@ -116,6 +116,10 @@ $ifThen.ensec "%cm_Ger_Pol%" == "ensec"
     vm_cap.lo("2030","DEU","elh2","1")=5*pm_eta_conv("2030","DEU","elh2")/1000;
 $endIf.ensec
 
+*** only start industry carbon capture in Germany by 2030 as status of projects for 2025 unclear,
+*** see IEA CCUS database https://www.iea.org/data-and-statistics/data-tools/ccus-projects-explorer
+vm_emiIndCCS.up(t,regi,emiInd37)$(sameAs(regi,"DEU") AND t.val lt 2030)=0;
+
 ***---------------------------------------------------------------------------
 *** per region minimun variable renewables share in electricity:
 ***---------------------------------------------------------------------------
