@@ -198,11 +198,14 @@ if (comp %in% c("comparison", "export")) {
   }
 } else { # comp = single
   # define slurm class or direct execution
-  outputUsingDirect <- c("plotIterations")
+  outputUsingDirect <- c("plotIterations", "fixOnRef")
   if (! exists("source_include")) {
     # for selected output scripts, only slurm configurations matching these regex are available
     slurmExceptions <- if ("reporting" %in% output) "--mem=[0-9]*[0-9]{3}" else NULL
-    if (any(output %in% outputUsingDirect)) slurmConfig <- "direct"
+    if (any(output %in% outputUsingDirect)) {
+      slurmConfig <- "direct"
+      interactivemode <- TRUE
+    }
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
     if (!exists("slurmConfig")) {
