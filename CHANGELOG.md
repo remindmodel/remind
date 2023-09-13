@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** MAgPIE coupling interface: replace old MAgPIE cost variable
 - **scripts** MAgPIE coupling interface: remove filtering of negative LU emissions
 - **core** MAgPIE coupling: tolerate negative values for `n2ofertsom` and deactivate its MAC
+- **05_initialCap** fix overwriting of investment cost changes from cm_inco0Factor switch
 
 ### added
 - **45_carbonprice** added realization `NPi` (National Policies Implemented)
