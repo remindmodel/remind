@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### added
 - **config** regex tests for many parameters
+- **scripts** add script to check fixing of runs to reference run
+    [[#1410](https://github.com/remindmodel/remind/pull/1410)]
 - **testthat** test and compile all config files
 
 ### fixed

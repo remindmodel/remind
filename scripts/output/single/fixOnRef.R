@@ -68,11 +68,13 @@ fixOnMif <- function(outputdir) {
     levels(dref$scenario) <- paste0(levels(dref$scenario), "_ref")
   }
 
+  falsepositives <- grep("Moving Avg$", levels(d$variable), value = TRUE)
+
   message("Comparing ", title, " with reference run ", refname, " for t < ", startyear)
   mismatches <- rbind(d, dref) %>%
-    filter(period < startyear, ! grepl("Moving Avg$", variable)) %>%
+    filter(period < startyear, ! variable %in% falsepositives) %>%
     group_by(model, region, variable, unit, period) %>%
-    filter(0 != var(value)) %>%
+    filter(1e-16 < var(value)) %>%
     ungroup() %>%
     distinct(variable, period) %>%
     group_by(variable) %>%
@@ -95,21 +97,25 @@ fixOnMif <- function(outputdir) {
   filename <- file.path(outputdir, "log_fixOnRef.csv")
   message("Find failing variables in '", filename, "'.")
   csvdata <- rbind(mutate(d, scenario = "value"), mutate(dref, scenario = "ref")) %>%
-    filter(! grepl("Moving Avg$", variable), period < startyear) %>%
+    filter(! variable %in% falsepositives, period < startyear) %>%
     pivot_wider(names_from = scenario) %>%
-    filter(abs(value - ref) > 0.00000001) %>%
+    filter(abs(value - ref) > 0) %>%
     add_column(scenario = title) %>%
     droplevels()
   write.csv(csvdata, filename, quote = FALSE, row.names = FALSE)
   if (exists("flags") && isTRUE("--interactive" %in% flags)) {
-    message("\nDo you want to fix that by overwriting ", title, " mif with reference run ", refname, " for t < ", startyear, "? y/N")
+    message("\nDo you want to fix that by overwriting ", title, " mif with reference run ", refname, " for t < ", startyear, "?\nType: y/N")
     if (tolower(gms::getLine()) %in% c("y", "yes")) {
+      message("Updating ", mifs[[1]])
       di <- rbind(
-              filter(d, period >= startyear),
-              mutate(filter(dref, period < startyear), scenario = title)
+              filter(d, period >= startyear | ! variable %in% levels(dref$variable) | variable %in% falsepositives),
+              mutate(filter(dref, period < startyear & variable %in% levels(d$variable)) & ! variable %in% falsepositives, scenario = title)
             )
-      quitte::write.mif(di, paste0(mifs[[1]], "test"))
+      tmpfile <- paste0(mifs[[1]], "fixOnMif")
+      quitte::write.mif(di, tmpfile)
+      file.rename(tmpfile, mifs[[1]])
       remind2::deletePlus(mifs[[1]], writemif = TRUE)
+      message("Keep in mind to update the runs that use this as `path_gdx_ref` as well.")
     }
   }
   return(mismatches)
