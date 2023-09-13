@@ -9,6 +9,10 @@
 	"H12": {
 		"reg": "c('CAZ', 'CHA', 'EUR', 'IND', 'JPN', 'LAM', 'MEA', 'NEU', 'OAS', 'REF', 'SSA', 'USA', 'World')"
 	},
+	"H12_fe_and_es": {
+		"reg": "c('CAZ', 'CHA', 'EUR', 'IND', 'JPN', 'LAM', 'MEA', 'NEU', 'OAS', 'REF', 'SSA', 'USA', 'World')",
+		"sections": "c(0,5,6,99)"
+	},
 	"H12-short": {
 		"reg": "c('CAZ', 'CHA', 'EUR', 'IND', 'JPN', 'LAM', 'MEA', 'NEU', 'OAS', 'REF', 'SSA', 'USA', 'World')",
 		"yearsScen": "seq(2005, 2050, 5)",

@@ -23,9 +23,10 @@ Parameters
   p37_BAU_industry_ETS_solids(tall,all_regi)                                   "industry solids demand in baseline scenario"
   p37_cesIO_baseline(tall,all_regi,all_in)                                     "vm_cesIO from the baseline scenario"
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  p37_specMatDem(mat,all_te,opmoPrc)                                     "Specific materials demand of a production technology and operation mode [t_input/t_output]"
-  p37_specFeDem(all_enty,all_te,opmoPrc)                                   "Specific final-energy demand of a production technology and operation mode [TWa/Gt_output]"
-  p37_mat2ue(all_enty,all_in)                                                 "Contribution of process output to ue in CES tree [Gt/Gt]"
+  p37_specMatDem(mat,all_te,opmoPrc)                                           "Specific materials demand of a production technology and operation mode [t_input/t_output]"
+  p37_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc)                         "Actual specific final-energy demand of a tech; blends between IEA data and Target [TWa/Gt_output]"
+  p37_specFeDemTarget(all_enty,all_te,opmoPrc)                                 "Best available technology (will be reached in convergence year) [TWa/Gt_output]"
+  p37_mat2ue(all_enty,all_in)                                                  "Contribution of process output to ue in CES tree [Gt/Gt]"
 $endif.process_based_steel
 
 *** output parameters only for reporting

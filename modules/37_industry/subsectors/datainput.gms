@@ -13,7 +13,7 @@ Parameters
 ***                         MATERIAL-FLOW IMPLEMENTATION
 ***-------------------------------------------------------------------------------
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! cm_process_based_steel
-  p37_specMatDem(mat,all_te,opmoPrc)                                      "Specific materials demand of a production technology and operation mode [t_input/t_output]"
+  p37_specMatDem(mat,all_te,opmoPrc)                                      "Specific materials demand of a production technology and operation mode [t_input/t_product], where product is e.g. pigiron, not steel"
   /
     ironore.idr.(ng,h2)     1.5                                             !! Iron ore demand of iron direct-reduction (independent of fuel source) POSTED
 
@@ -26,8 +26,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! c
     pigiron.bof.unheated    0.8
   /
 
-  !! Read in in MWh/t, then convert to TWa/Gt directly below!!
-  p37_specFeDem(all_enty,all_te,opmoPrc)
+  p37_specFeDemTarget(all_enty,all_te,opmoPrc)                        "Specific energy demand of a production technology and operation mode; read in as [MWh/t_product], where product is e.g. pigiron, not steel; converted to TWa/Gt directly below"
   /
     !! reduction: 504 m^3; heat 242 m^3; conversion: x / 11.126 m^3/kg * 0.0333 MWh/kg
     feh2s.idr.h2           2.23                                            !! Source: POSTED
@@ -37,18 +36,21 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! c
     feels.idr.ng           0.08                                            !! Source: POSTED
 
     feels.eaf.pri          0.67                                            !! Source: POSTED
+
     feels.eaf.sec          0.67                                            !! Source: POSTED
 
     fesos.bf.standard      3.9                                             !! Source: OTTO_ET_AL
     fegas.bf.standard      0.18                                            !! Source: DUMMY
     feels.bf.standard      0.20                                            !! Source: DUMMY
+    !!feh2s.bf.standard      EPS                                             !! Source: DUMMY
+    fehos.bf.standard      0.0001                                          !! Source: DUMMY
 
-    feels.bof.unheated     0.05                                            !! Source: DUMMY
+    !!feels.bof.unheated     0.05                                            !! Source: DUMMY
 
     feels.bfccs.standard   0.10                                            !! Source: DUMMY
   /;
 !! Convert from MWh/t to TWa/Gt
-p37_specFeDem(all_enty,all_te,opmoPrc) = p37_specFeDem(all_enty,all_te,opmoPrc)  / (sm_TWa_2_MWh / sm_giga_2_non);
+p37_specFeDemTarget(all_enty,all_te,opmoPrc) = p37_specFeDemTarget(all_enty,all_te,opmoPrc)  / (sm_TWa_2_MWh / sm_giga_2_non);
 
 Parameters
   p37_mat2ue(all_enty,all_in) !!,opmoPrc)
