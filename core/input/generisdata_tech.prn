@@ -2,7 +2,7 @@
 $ontext
 IMPORTANT: all costs are now given in $2015! As long as the model runs in $2005, the values need to be converted in datainput.gms
 tech_stat   technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'
-inco0       Initial investment costs given in $[2015] / kW[output] capacity; for dac: $[2015] / (tC[captured]/a)
+inco0       Initial investment costs given in $[2015] / kW[output] capacity; for dac/bfccs: $[2015] / (tC[captured]/a)
 constrTme   Construction time in years, needed to calculate turn-key cost premium compared to overnight costs
 mix0        Fraction of output that is produced by this technology in 2005. This value can be overwritten in the calibration process; also, it often does not add up to 1.
 eta         Conversion efficieny, i.e. energy output divided by energy input (for all but nuclear plants, there it is TW energy output over MT Uranium input)
@@ -189,12 +189,12 @@ lifetime              20          20          20          20
 
 +                  bfccs
 tech_stat
-inco0               TODO
+inco0                 27
 mix0                 0.0
-eta                 TODO
-omf                 TODO
-omv                 TODO
-lifetime            TODO
+eta                  1.0
+omf                 0.33
+omv                  5.5
+lifetime              20
 $endif.process_based_steel
 
 
@@ -225,6 +225,13 @@ Assume that all 400 USD/tCO2 are investment cost as current plants runs with was
 Assume floor cost 100 USD/tCO2.
 100 USD/tCO2 * 0.9 (capacity factor) / (0.07 1/yr) (annuity factor, stretch cost over plant lifetime)
 * 3.66 (tCO2 to tC) ~ 4800 USD/(tC/yr) -> incolearn = 14000
+
+Steel CCS
+cost parameterization:
+Using DOE report in 2022 for newer cost (Clara and Chris)
+"COST OF CAPTURING CO2 FROM INDUSTRIAL SOURCES" SYDNEY HUGHES, ALEXANDER ZOELLE
+Using table ES-2 steel and iron retrofit capital cost, omf, omv (not fuel cost)
+Assume lifetime is 20 years to align with non-CCS technologies
 
 annuity factor = r * (1+r)^lifetime/(-1+(1+r)^lifetime), factor to annualize total investment cost of plant, discounting r = 0.05
 $offtext
