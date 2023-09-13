@@ -501,10 +501,13 @@ pm_cf(ttot,regi,"bf") = 0.8;
 pm_cf(ttot,regi,"bof") = 0.8;
 pm_cf(ttot,regi,"idr") = 0.8;
 pm_cf(ttot,regi,"eaf") = 0.8;
+
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
 *CCS tech has same capacity factor as base tech
 loop(teBasePrc2teCCSPrc(teBasePrc,teCCSPrc),
   pm_cf(ttot,regi,teCCSPrc) = pm_cf(ttot,regi,teBasePrc);
 );
+$endif.process_based_steel
 
 *RP* phasing down the ngt cf to "peak load" cf of 5%
 pm_cf(ttot,regi,"ngt")$(ttot.val eq 2025) = 0.9 * pm_cf(ttot,regi,"ngt");

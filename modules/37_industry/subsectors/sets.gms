@@ -33,7 +33,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     bfccs               "Blast furnace CCS"
   /
 
-  teBasePrc2teCCSPrc(tePrc)  "Mapping of base technologies to CCS technologies"
+  teBasePrc2teCCSPrc(tePrc,tePrc)  "Mapping of base technologies to CCS technologies"
   /
     bf . bfccs
   /
@@ -152,6 +152,12 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     entydummy.entydummy.idr
     entydummy.entydummy.eaf
   /
+
+  teCCSPrc2opmoPrc(teCCSPrc,opmoPrc)  "Mapping of technologies onto available operation modes"
+  /
+    bfccs . (standard)
+  /
+
 $endif.process_based_steel
 
   secInd37   "industry sub-sectors"
@@ -518,11 +524,12 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
 teMat2rlf(tePrc,"1") = YES;
 fe2mat(fe2mat_dyn37)       = YES;
 * fill technology 2 opmode mapping of CCS with same values as base technology
-loop(tePrc2opmoPrc(teBasePrc,opmoPrc),
-  loop(teBasePrc2teCCSPrc(teBasePrc,teCCSPrc),
-    tePrc2opmoPrc(teCCSPrc,opmoPrc) = YES;
-    );
-);
+*loop(tePrc2opmoPrc(teBasePrc,opmoPrc),
+*  loop(teBasePrc2teCCSPrc(teBasePrc,teCCSPrc),
+*    tePrc2opmoPrc(teCCSPrc,opmoPrc) = YES;
+*    );
+*);
+
 $endif.process_based_steel
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfen37,fe2ppfen37_2);

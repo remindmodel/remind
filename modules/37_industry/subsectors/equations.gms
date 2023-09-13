@@ -27,8 +27,6 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
   +
   sum((secInd37_emiMkt(secInd37Prc,emiMkt),secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
     p37_specFEDem(entyFE,tePrc,opmoPrc)
-*    /
-*    pm_eta_conv(t,regi,teBasePrc)
     *
     v37_prodVolPrc(ttot,regi,tePrc,opmoPrc)
   )$(NOT sameas(ttot,"2005"))
