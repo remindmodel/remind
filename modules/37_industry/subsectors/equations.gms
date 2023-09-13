@@ -127,7 +127,7 @@ q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
   vm_macBaseInd(ttot,regi,entyFE,secInd37)
   =e=
     sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),
-         fe2ppfen(entyFE,in))$(entyFECC37(entyFE)),
+         fe2ppfen(entyFE,in))$( entyFECC37(entyFE) ),
       ( vm_cesIO(ttot,regi,in)
       - ( p37_chemicals_feedstock_share(ttot,regi)
         * vm_cesIO(ttot,regi,in)
@@ -229,8 +229,8 @@ q37_chemicals_feedstocks_limit(t,regi)$( t.val ge cm_startyear ) ..
 
 *** Flow of non-energy feedstocks. It is used for emissions accounting 
 q37_demFeFeedstockChemIndst(ttot,regi,entyFE,emiMkt)$(
-                          ttot.val ge cm_startyear 
-                      AND entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) .. 
+                         ttot.val ge cm_startyear 
+                     AND entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
   sum(se2fe(entySE,entyFE,te),
     vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)
   )
@@ -246,10 +246,12 @@ q37_demFeFeedstockChemIndst(ttot,regi,entyFE,emiMkt)$(
 ;
 
 * feedstocks flow has to be lower than total energy flow into industry
-q37_feedstocksLimit(ttot,regi,entySE,entyFE,emiMkt)$(ttot.val ge cm_startyear 
-                                                    AND sefe(entySE,entyFE) AND sector2emiMkt("indst",emiMkt) 
-                                                    AND entyFe2Sector(entyFe,"indst") AND entyFeCC37(entyFe))..
-
+q37_feedstocksLimit(ttot,regi,entySE,entyFE,emiMkt)$(
+                                             ttot.val ge cm_startyear       
+                                         AND sefe(entySE,entyFE)
+                                         AND sector2emiMkt("indst",emiMkt) 
+                                         AND entyFe2Sector(entyFe,"indst") 
+                                         AND entyFeCC37(entyFe)            ) ..
   vm_demFESector(ttot,regi,entySE,entyFE,"indst",emiMkt)
   =g=
   vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)  
@@ -257,7 +259,7 @@ q37_feedstocksLimit(ttot,regi,entySE,entyFE,emiMkt)$(ttot.val ge cm_startyear
 
 *** calculate carbon contained in chemical feedstocks
 q37_FeedstocksCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
-                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
+                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
   vm_FeedstocksCarbon(ttot,regi,entySE,entyFE,emiMkt)
   =e=
     vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)
@@ -266,7 +268,7 @@ q37_FeedstocksCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
 
 *** calculate carbon contained in plastics [GtC]
 q37_plasticsCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
-                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
+                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
   vm_plasticsCarbon(ttot,regi,entySE,entyFE,emiMkt)
   =e=
     vm_FeedstocksCarbon(ttot,regi,entySE,entyFE,emiMkt)
@@ -275,27 +277,28 @@ q37_plasticsCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
 
 *** calculate emissions from plastics incineration
 q37_incinerationEmi(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
-                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
+                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
   vm_incinerationEmi(ttot,regi,entySE,entyFE,emiMkt)
   =e=
     vm_plasticsCarbon(ttot,regi,entySE,entyFE,emiMkt)
   * pm_incinerationRate(ttot,regi)
 ;
 
-***calculate carbon contained in non-incinerated plastics
-*** this is used in emissions accounting to subtract the carbon that gets sequestered in plastic products
+*** calculate carbon contained in non-incinerated plastics
+*** this is used in emissions accounting to subtract the carbon that gets
+*** sequestered in plastic products
 q37_nonIncineratedPlastics(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
-                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
+                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
   vm_nonIncineratedPlastics(ttot,regi,entySE,entyFE,emiMkt)
   =e=
     vm_plasticsCarbon(ttot,regi,entySE,entyFE,emiMkt)
-  * (1-pm_incinerationRate(ttot,regi))
+  * (1 - pm_incinerationRate(ttot,regi))
   ;
 
 *** calculate flow of carbon contained in chemical feedstock with unknown fate
 *** it is assumed that this carbon is re-emitted in the same timestep 
 q37_feedstockEmiUnknownFate(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
-                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
+                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
   vm_feedstockEmiUnknownFate(ttot,regi,entySE,entyFE,emiMkt)
   =e=
     vm_FeedstocksCarbon(ttot,regi,entySE,entyFE,emiMkt)
@@ -305,8 +308,8 @@ q37_feedstockEmiUnknownFate(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
 *** in baseline runs, all industrial feedstocks should come from fossil energy
 *** carriers, no biofuels or synfuels
 q37_FossilFeedstock_Base(t,regi,entyFE,emiMkt)$(
-                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt)
-                      AND cm_emiscen eq 1                                   ) ..
+                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt)
+                     AND cm_emiscen eq 1                                   ) ..
   sum(entySE, vm_demFENonEnergySector(t,regi,entySE,entyFE,"indst",emiMkt))
   =e=
   sum(entySEFos, 

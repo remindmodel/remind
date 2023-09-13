@@ -9,7 +9,9 @@
 *** initialize captured CO2 parameter
 pm_IndstCO2Captured(t,regi,entySE,entyFE,secInd37,emiMkt) = 0;
 
-*** calculate parameter for feedstock carbon content as difference between combustion emissions factor of FE and industrial process emissions factor of feedstocks
+*** calculate parameter for feedstock carbon content as difference between
+*** combustion emissions factor of FE and industrial process emissions factor
+*** of feedstocks
 p37_FeedstockCarbonContent(ttot,regi,entyFE)
   = sum(se2fe(entySEFos,entyFE,te),
       pm_emifac(ttot,regi,entySEFos,entyFE,te,"co2") 
