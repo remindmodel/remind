@@ -94,11 +94,11 @@ fixOnMif <- function(outputdir) {
   }
   filename <- file.path(outputdir, "log_fixOnRef.csv")
   message("Find failing variables in '", filename, "'.")
-  csvdata <- rbind(d, dref) %>%
+  csvdata <- rbind(mutate(d, scenario = "data"), mutate(dref, scenario = "ref")) %>%
     filter(! grepl("Moving Avg$", variable), period < startyear) %>%
     pivot_wider(names_from = scenario) %>% # order them such that ref is after run is missing
+    filter(abs(data - ref) > 0.00000001) %>%
     droplevels()
-  csvdata <- filter(csvdata, abs(csvdata[, levels(d$scenario)] - csvdata[, levels(dref$scenario)]) > 0.0000001) # ugly!
   write.table(csvdata, filename, sep = ",", quote = FALSE, dec = ".", row.names = FALSE)
   if (exists("flags") && isTRUE("--interactive" %in% flags)) {
     message("\nDo you want to fix that by overwriting ", title, " mif with reference run ", refname, " for t < ", startyear, "? y/N")
