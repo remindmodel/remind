@@ -330,7 +330,7 @@ $ENDIF.WindOff
         idr          "Iron direct reduction"
         eaf          "Electric-arc furnace"
         bf           "Blast furnace"
-        bfccs        "Blast furnace CCS"
+        bfcc         "Blast furnace CCS"
         bof          "Basic-oxygen furnace"
         bfbof        "BF/BOF route"
         idreaf       "Direct reduction / EAF route"
@@ -1234,7 +1234,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
         bf           "Blast furnace"
         bof          "Basic-oxygen furnace"
 
-        bfccs        "Blast furnace CCS"
+        bfcc         "Blast furnace CCS"
 $endif.process_based_steel
 /
 teAdj(all_te)           "technologies with adjustment costs on capacity additions"

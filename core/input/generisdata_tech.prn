@@ -187,7 +187,7 @@ omf                  0.1         0.1         0.1        0.05
 omv                    0           0           0           0
 lifetime              20          20          20          20
 
-+                  bfccs
++                   bfcc
 tech_stat
 inco0                 27
 mix0                 0.0

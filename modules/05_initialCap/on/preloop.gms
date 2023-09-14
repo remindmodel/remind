@@ -115,16 +115,16 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
 * TODO:
 * - Add idr historic capacities
 * - make this a loop to not require additional code for new materials
-v37_prodVolPrc.fx('2005',regi,'bof','unheated') = pm_fedemand('2005',regi,'ue_steel_primary');
-v37_prodVolPrc.fx('2005',regi,'bf','standard') = p37_specMatDem("pigiron","bof","unheated") * v37_prodVolPrc.l('2005',regi,'bof','unheated');
-v37_prodVolPrc.fx('2005',regi,'eaf','sec') = pm_fedemand('2005',regi,'ue_steel_secondary');
-v37_prodVolPrc.fx('2005',regi,'eaf','pri') = 0.;
-v37_prodVolPrc.fx('2005',regi,'idr','ng') = 0.;
-v37_prodVolPrc.fx('2005',regi,'idr','h2') = 0.;
+v37_outflowPrc.fx('2005',regi,'bof','unheated') = pm_fedemand('2005',regi,'ue_steel_primary');
+v37_outflowPrc.fx('2005',regi,'bf','standard') = p37_specMatDem("pigiron","bof","unheated") * v37_outflowPrc.l('2005',regi,'bof','unheated');
+v37_outflowPrc.fx('2005',regi,'eaf','sec') = pm_fedemand('2005',regi,'ue_steel_secondary');
+v37_outflowPrc.fx('2005',regi,'eaf','pri') = 0.;
+v37_outflowPrc.fx('2005',regi,'idr','ng') = 0.;
+v37_outflowPrc.fx('2005',regi,'idr','h2') = 0.;
 
-pm_cap0(regi,'bof') = v37_prodVolPrc.l('2005',regi,'bof','unheated') / pm_cf("2005",regi,'bof');
-pm_cap0(regi,'bf')  = v37_prodVolPrc.l('2005',regi,'bf','standard') / pm_cf("2005",regi,'bf');  !! measure bf capacity in t steel, not t pigiron! Skip: * p37_specMatDem('pigiron','bof','unheated'));
-pm_cap0(regi,'eaf') = v37_prodVolPrc.l('2005',regi,'eaf','sec') / pm_cf("2005",regi,'eaf');
+pm_cap0(regi,'bof') = v37_outflowPrc.l('2005',regi,'bof','unheated') / pm_cf("2005",regi,'bof');
+pm_cap0(regi,'bf')  = v37_outflowPrc.l('2005',regi,'bf','standard') / pm_cf("2005",regi,'bf');  !! measure bf capacity in t steel, not t pigiron! Skip: * p37_specMatDem('pigiron','bof','unheated'));
+pm_cap0(regi,'eaf') = v37_outflowPrc.l('2005',regi,'eaf','sec') / pm_cf("2005",regi,'eaf');
 pm_cap0(regi,'idr') = 0.;
 
 * no initial capacity for CCS
