@@ -28,7 +28,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
   sum((secInd37_emiMkt(secInd37Prc,emiMkt),secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
     p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
     *
-    v37_prodVolPrc(ttot,regi,tePrc,opmoPrc)
+    v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
   )
 $endif.process_based_steel
 ;
@@ -37,10 +37,10 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
 q37_demMatPrc(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matIn(mat))..
     v37_prodMat(ttot,regi,mat)
   =e=
-    sum(teBasePrc2matIn(teBasePrc,opmoPrc,mat),
-      p37_specMatDem(mat,teBasePrc,opmoPrc)
+    sum(tePrc2matIn(tePrc,opmoPrc,mat),
+      p37_specMatDem(mat,tePrc,opmoPrc)
       *
-      v37_prodVolPrc(ttot,regi,teBasePrc,opmoPrc)
+      v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
     )
 ;
 
@@ -50,8 +50,8 @@ q37_demMatPrc(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matIn(mat))..
 q37_prodMat(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matOut(mat))..
     v37_prodMat(ttot,regi,mat)
   =e=
-    sum(teBasePrc2matOut(teBasePrc,opmoPrc,mat),
-      v37_prodVolPrc(ttot,regi,teBasePrc,opmoPrc)
+    sum(tePrc2matOut(tePrc,opmoPrc,mat),
+      v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
     )
 ;
 
@@ -73,7 +73,7 @@ q37_mat2ue(ttot,regi,all_in)$(uePrc(all_in) AND (ttot.val ge cm_startyear))..
 ***------------------------------------------------------
 q37_limitCapMat(t,regi,tePrc)..
     sum(tePrc2opmoPrc(tePrc,opmoPrc),
-      v37_prodVolPrc(t,regi,tePrc,opmoPrc)
+      v37_outflowPrc(t,regi,tePrc,opmoPrc)
     )
     =e=
     sum(teMat2rlf(tePrc,rlf),
@@ -87,8 +87,8 @@ q37_limitCapMat(t,regi,tePrc)..
 q37_limitCapCCSPrc(t,regi,teCCSPrc,rlf)..
     vm_cap(t,regi,teCCSPrc,rlf)
     =l=
-    sum(teBasePrc2teCCSPrc(teBasePrc,teCCSPrc),
-        vm_cap(t,regi,teBasePrc,rlf)
+    sum(tePrc2teCCSPrc2opmoPrc(tePrc,teCCSPrc,opmoPrc),
+        vm_cap(t,regi,tePrc,rlf) * v37_specEmiPrc(ttot,regi,tePrc,opmoPrc)
     )
 ;
 $endif.process_based_steel
@@ -147,10 +147,10 @@ q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
   )$(NOT secInd37Prc(secInd37))
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   +
-  sum((secInd37_tePrc(secInd37Prc,teBasePrc),tePrc2opmoPrc(teBasePrc,opmoPrc)),
-      p37_specFeDem(ttot,regi,entyFE,teBasePrc,opmoPrc)
+  sum((secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
+      p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
       *
-      v37_prodVolPrc(ttot,regi,teBasePrc,opmoPrc)
+      v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
       *
       sum(se2fe(entySEfos,entyFE,te),
           pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")
@@ -161,11 +161,11 @@ $endif.process_based_steel
 
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-q37_specEmiBasePrc(ttot,regi,teBasePrc,opmoPrc)$( ttot.val ge cm_startyear ) ..
-  v37_specEmiBasePrc(ttot,regi,teBasePrc,opmoPrc)
+q37_specEmiPrc(ttot,regi,tePrc,opmoPrc)$( ttot.val ge cm_startyear ) ..
+  v37_specEmiPrc(ttot,regi,tePrc,opmoPrc)
   =e=
   sum(entyFE,
-      p37_specFeDem(ttot,regi,entyFE,teBasePrc,opmoPrc)
+      p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
       *
       sum(se2fe(entySEfos,entyFE,te),
           pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")
@@ -176,10 +176,10 @@ q37_specEmiBasePrc(ttot,regi,teBasePrc,opmoPrc)$( ttot.val ge cm_startyear ) ..
 q37_emiCCSPrc(ttot,regi,emiInd37,secInd37Prc)$( ttot.val ge cm_startyear ) ..
   vm_emiIndCCS(ttot,regi,emiInd37)
   =e=
-  sum((secInd37_tePrc(secInd37Prc,teBasePrc),tePrc2opmoPrc(teBasePrc,opmoPrc),teBasePrc2teCCSPrc(teBasePrc,teCCSPrc)),
-    v37_specEmiBasePrc(ttot,regi,teBasePrc,opmoPrc)
+  sum((secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc),tePrc2teCCSPrc(teBasePrc,teCCSPrc)),
+    v37_specEmiPrc(ttot,regi,tePrc,opmoPrc)
     *
-    v37_prodVolPrc(ttot,regi,teCCSPrc,opmoPrc)
+    v37_outflowPrc(ttot,regi,teCCSPrc,opmoPrc)
     *
     p37_captureRate(teCCSPrc,opmoPrc)
   )

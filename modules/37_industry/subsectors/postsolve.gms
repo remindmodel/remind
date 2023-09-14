@@ -17,7 +17,7 @@ pm_FEPrice(ttot,regi,entyFE,"indst",emiMkt)$( abs(qm_budget.m(ttot,regi)) gt sm_
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
 o37_demFePrc(ttot,regi,entyFE,tePrc,opmoPrc)$(p37_specFEDem(ttot,regi,entyFE,tePrc,opmoPrc))
-  = v37_prodVolPrc.l(ttot,regi,tePrc,opmoPrc)
+  = v37_outflowPrc.l(ttot,regi,tePrc,opmoPrc)
     * p37_specFEDem(ttot,regi,entyFE,tePrc,opmoPrc)
 ;
 $endif.process_based_steel

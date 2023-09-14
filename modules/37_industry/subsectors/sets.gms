@@ -20,20 +20,8 @@ $endif.process_based_steel
   /
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
-  teBasePrc(tePrc)      "Technologies used in material-flow model (non-CCS)"
-  /
-    bf                  "Blast furnace"
-    bof                 "Basic oxygen furnace"
-    eaf                 "Electric-arc furnace"
-    idr                 "Iron direct reduction"
-  /
 
-  teCCSPrc(tePrc)       "CCS technologies used in material-flow model"
-  /
-    bfccs               "Blast furnace CCS"
-  /
-
-  teBasePrc2teCCSPrc(tePrc,tePrc)  "Mapping of base technologies to CCS technologies"
+  tePrc2teCCSPrc(tePrc,tePrc)  "Mapping of base technologies to CCS technologies"
   /
     bf . bfccs
   /
@@ -46,6 +34,8 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     pigiron             "Pig iron"
     driron              "Direct reduced iron"
     ironore             "Iron Ore"
+    bfco2               "CO2 exiting from BF"
+    cco2                "CO2 captured"
   /
 
   matIn(all_enty)      "Materials which serve as input to a process"
@@ -74,7 +64,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     standard            "Only one operation mode implemented"
   /
 
-  teBasePrc2matIn(teBasePrc,opmoPrc,mat)    "Mapping of technologies onto input materials"
+  tePrc2matIn(tePrc,opmoPrc,mat)    "Mapping of technologies onto input materials"
   /
     idr . (h2,ng) . ironore
     eaf . pri . driron
@@ -83,7 +73,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     bof . unheated . (pigiron,scrap)
   /
 
-  teBasePrc2matOut(teBasePrc,opmoPrc,mat)   "Mapping of technologies onto their output materials"
+  tePrc2matOut(tePrc,opmoPrc,mat)   "Mapping of technologies onto their output materials"
   /
    bf  . standard . pigiron
    bof . unheated . prsteel
@@ -92,7 +82,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
    eaf . sec . sesteel
   /
 
-  teBasePrc2ue(teBasePrc,opmoPrc,all_in)
+  tePrc2ue(tePrc,opmoPrc,all_in)
   /
    bf  . standard . ue_steel_primary
    bof . unheated . ue_steel_primary
@@ -116,7 +106,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
   /
 
 
-  teBasePrc2route(teBasePrc,opmoPrc,routes)  "Mapping of technologies onto route"
+  tePrc2route(tePrc,opmoPrc,routes)  "Mapping of technologies onto route"
   /
     idr . (h2,ng) . idreaf
     eaf . pri . idreaf
@@ -156,6 +146,11 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
   teCCSPrc2opmoPrc(teCCSPrc,opmoPrc)  "Mapping of technologies onto available operation modes"
   /
     bfccs . (standard)
+  /
+
+  tePrc2teCCSPrc2opmoPrc(tePrc,teCCSPrc,opmoPrc)  "Mapping of technologies and their CCS onto available operation modes"
+  /
+    bf . bfccs . (standard)
   /
 
 $endif.process_based_steel
@@ -524,8 +519,8 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
 teMat2rlf(tePrc,"1") = YES;
 fe2mat(fe2mat_dyn37)       = YES;
 * fill technology 2 opmode mapping of CCS with same values as base technology
-*loop(tePrc2opmoPrc(teBasePrc,opmoPrc),
-*  loop(teBasePrc2teCCSPrc(teBasePrc,teCCSPrc),
+*loop(tePrc2opmoPrc(tePrc,opmoPrc),
+*  loop(tePrc2teCCSPrc(tePrc,teCCSPrc),
 *    tePrc2opmoPrc(teCCSPrc,opmoPrc) = YES;
 *    );
 *);

@@ -61,7 +61,7 @@ Parameters
 
   p37_captureRate(all_te,opmoPrc)
   /
-    bfccs . (standard)  0.8
+    bfccs . (standard)   0.6
   /
 $endif.process_based_steel
 
