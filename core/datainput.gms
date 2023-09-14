@@ -504,8 +504,8 @@ pm_cf(ttot,regi,"eaf") = 0.8;
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
 *CCS tech has same capacity factor as base tech
-loop(teBasePrc2teCCSPrc(teBasePrc,teCCSPrc),
-  pm_cf(ttot,regi,teCCSPrc) = pm_cf(ttot,regi,teBasePrc);
+loop(tePrc2teCCPrc(tePrc,tePrc2),
+  pm_cf(ttot,regi,tePrc) = pm_cf(ttot,regi,tePrc2);
 );
 $endif.process_based_steel
 
