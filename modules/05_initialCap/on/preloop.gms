@@ -537,7 +537,6 @@ if (cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' vm_deltaCap.up = vm_deltaCap.up;
   !! moved to industry module:
   !!Execute_Loadpoint 'input_ref' p37_specFeDem = p37_specFeDem;
-);
 
 *** if %cm_techcosts% == "GLO", load pm_inco0_t from input_ref.gdx and overwrite values
 *** only for pc, ngt, ngcc since they have been adapted in initialCap routine above
