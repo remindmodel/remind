@@ -35,7 +35,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     driron              "Direct reduced iron"
     ironore             "Iron Ore"
     bfco2               "CO2 exiting from BF"
-    cco2                "CO2 captured"
+    cco2                "captured CO2"
   /
 
   matIn(all_enty)      "Materials which serve as input to a process"
@@ -44,6 +44,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     pigiron             "Pig iron"
     driron              "Direct reduced iron"
     ironore             "Iron Ore"
+    bfco2               "CO2 exiting from BF"
   /
 
   matOut(all_enty)      "Materials which serve as output of a process"
@@ -52,6 +53,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     sesteel             "Secondary steel"
     pigiron             "Pig iron"
     driron              "Direct reduced iron"
+    cco2                "captured CO2"
   /
 
   opmoPrc               "Operation modes for technologies in material-flow model"

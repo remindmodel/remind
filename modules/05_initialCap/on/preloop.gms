@@ -128,7 +128,7 @@ pm_cap0(regi,'eaf') = v37_outflowPrc.l('2005',regi,'eaf','sec') / pm_cf("2005",r
 pm_cap0(regi,'idr') = 0.;
 
 * no initial capacity for CCS
-pm_cap0(regi,teCCSPrc) = 0.;
+pm_cap0(regi,"bfcc") = 0.;
 $endif.process_based_steel
 
 *RP keep energy demand for the Kyoto target calibration
