@@ -34,6 +34,9 @@ $endif.process_based_steel
 ;
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+***------------------------------------------------------
+*' Material input to production
+***------------------------------------------------------
 q37_demMatPrc(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matIn(mat))..
     v37_prodMat(ttot,regi,mat)
   =e=
@@ -138,6 +141,9 @@ q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear AND NOT sec
 ;
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+***------------------------------------------------------
+*' Emission from process based industry sector
+***------------------------------------------------------
 q37_emiPrc(ttot,regi,entyFE,secInd37Prc) ..
   vm_emiPrc(ttot,regi,entyFE,secInd37Prc)
   =e=  
@@ -151,29 +157,17 @@ sum((secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
       )
   )
 ;
-$endif.process_based_steel
 
-
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-q37_specEmiPrc(ttot,regi,tePrc,opmoPrc)$( ttot.val ge cm_startyear ) ..
-  v37_specEmiPrc(ttot,regi,tePrc,opmoPrc)
-  =e=
-  sum(entyFE,
-      p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
-      *
-      sum(se2fe(entySEfos,entyFE,te),
-          pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")
-      )
-  )
-;
-
-q37_emiCCSPrc(ttot,regi,emiInd37,secInd37Prc)$( ttot.val ge cm_startyear ) ..
-  vm_emiIndCCS(ttot,regi,emiInd37)
+***------------------------------------------------------
+*' Emission captured from process based industry sector
+***------------------------------------------------------
+q37_emiCCPrc(ttot,regi,emiInd37,secInd37Prc)$( ttot.val ge cm_startyear ) ..
+  vm_emiCCPrc(ttot,regi,emiInd37)
   =e=
   sum((secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc),tePrc2teCCPrc(tePrc,tePrc2)),
-    v37_specEmiPrc(ttot,regi,tePrc,opmoPrc)
+    p37_specEmiPrc(ttot,regi,tePrc,opmoPrc) !! how much is emitted per tonnes of steel
     *
-    v37_outflowPrc(ttot,regi,tePrc2,opmoPrc)
+    v37_outflowPrc(ttot,regi,tePrc,opmoPrc) !! how much steel is produced
     *
     p37_captureRate(tePrc2,opmoPrc)
   )

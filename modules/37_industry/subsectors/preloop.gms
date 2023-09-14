@@ -49,6 +49,8 @@ if (cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' p37_specFeDem = p37_specFeDem;
 );
 
+p37_specEmiPrc(ttot,regi,tePrc,opmoPrc) = sum(entyFE, p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc) * sum(se2fe(entySEfos,entyFE,te), pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2") ) );
+
 $endif.process_based_steel
 
 

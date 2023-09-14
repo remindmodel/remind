@@ -189,11 +189,11 @@ lifetime              20          20          20          20
 
 +                   bfcc
 tech_stat
-inco0                 27
+inco0                100
 mix0                 0.0
 eta                  1.0
 omf                 0.33
-omv                  5.5
+omv                   20
 lifetime              20
 $endif.process_based_steel
 
@@ -226,12 +226,14 @@ Assume floor cost 100 USD/tCO2.
 100 USD/tCO2 * 0.9 (capacity factor) / (0.07 1/yr) (annuity factor, stretch cost over plant lifetime)
 * 3.66 (tCO2 to tC) ~ 4800 USD/(tC/yr) -> incolearn = 14000
 
-Steel CCS
+Steel CC
 cost parameterization:
 Using DOE report in 2022 for newer cost (Clara and Chris)
 "COST OF CAPTURING CO2 FROM INDUSTRIAL SOURCES" SYDNEY HUGHES, ALEXANDER ZOELLE
 Using table ES-2 steel and iron retrofit capital cost, omf, omv (not fuel cost)
-Assume lifetime is 20 years to align with non-CCS technologies
+inco0=27*(44/12)
+omv=5.5*(44/12)
+Assume lifetime is 20 years to align with non-CC technologies
 
 annuity factor = r * (1+r)^lifetime/(-1+(1+r)^lifetime), factor to annualize total investment cost of plant, discounting r = 0.05
 $offtext
