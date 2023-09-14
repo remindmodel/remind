@@ -47,7 +47,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! c
 
     !!feels.bof.unheated     0.05                                            !! Source: DUMMY
 
-    feels.bfccs.standard   0.10                                            !! Source: DUMMY
+    feels.bfcc.standard   0.10                                            !! Source: DUMMY
   /;
 !! Convert from MWh/t to TWa/Gt
 p37_specFeDemTarget(all_enty,all_te,opmoPrc) = p37_specFeDemTarget(all_enty,all_te,opmoPrc)  / (sm_TWa_2_MWh / sm_giga_2_non);
@@ -61,7 +61,7 @@ Parameters
 
   p37_captureRate(all_te,opmoPrc)
   /
-    bfccs . (standard)   0.6
+    bfcc . (standard)   0.6
   /
 $endif.process_based_steel
 

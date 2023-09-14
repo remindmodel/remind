@@ -15,15 +15,15 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     eaf                 "Electric-arc furnace"
     idr                 "Iron direct reduction"
 
-    bfccs               "Blast furnace"
+    bfcc               "Blast furnace"
 $endif.process_based_steel
   /
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
 
-  tePrc2teCCSPrc(tePrc,tePrc)  "Mapping of base technologies to CCS technologies"
+  tePrc2teCCPrc(tePrc,tePrc)  "Mapping of base technologies to CCS technologies"
   /
-    bf . bfccs
+    bf . bfcc
   /
 
   mat(all_enty)         "Materials considered in material-flow model"
@@ -133,6 +133,8 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     eaf . (pri,sec)
     bf . (standard)
     bof . (unheated)
+    bfcc . (standard)
+
   /
 
   fe2mat_dyn37(all_enty,all_enty,all_te)  "map FE carriers to materials"
@@ -141,16 +143,6 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     entydummy.entydummy.bof
     entydummy.entydummy.idr
     entydummy.entydummy.eaf
-  /
-
-  teCCSPrc2opmoPrc(teCCSPrc,opmoPrc)  "Mapping of technologies onto available operation modes"
-  /
-    bfccs . (standard)
-  /
-
-  tePrc2teCCSPrc2opmoPrc(tePrc,teCCSPrc,opmoPrc)  "Mapping of technologies and their CCS onto available operation modes"
-  /
-    bf . bfccs . (standard)
   /
 
 $endif.process_based_steel
@@ -178,7 +170,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     steel . bf
     steel . bof
 
-    steel . bfccs
+    steel . bfcc
   /
 $endif.process_based_steel
 
@@ -518,15 +510,9 @@ $endif.calibrate
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
 teMat2rlf(tePrc,"1") = YES;
 fe2mat(fe2mat_dyn37)       = YES;
-* fill technology 2 opmode mapping of CCS with same values as base technology
-*loop(tePrc2opmoPrc(tePrc,opmoPrc),
-*  loop(tePrc2teCCSPrc(tePrc,teCCSPrc),
-*    tePrc2opmoPrc(teCCSPrc,opmoPrc) = YES;
-*    );
-*);
-
 $endif.process_based_steel
+
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfen37,fe2ppfen37_2);
-
+alias(tePrc, tePrc2);
 *** EOF ./modules/37_industry/subsectors/sets.gms

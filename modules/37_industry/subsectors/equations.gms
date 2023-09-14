@@ -81,16 +81,6 @@ q37_limitCapMat(t,regi,tePrc)..
     )
 ;
 
-***------------------------------------------------------
-*' CCS is added to base technology, so its capacity can't be higher than base
-***------------------------------------------------------
-q37_limitCapCCSPrc(t,regi,teCCSPrc,rlf)..
-    vm_cap(t,regi,teCCSPrc,rlf)
-    =l=
-    sum(tePrc2teCCSPrc2opmoPrc(tePrc,teCCSPrc,opmoPrc),
-        vm_cap(t,regi,tePrc,rlf) * v37_specEmiPrc(ttot,regi,tePrc,opmoPrc)
-    )
-;
 $endif.process_based_steel
 
 ***------------------------------------------------------
@@ -135,7 +125,7 @@ $endif.exogDem_scen
 *' Compute gross industry emissions before CCS by multiplying sub-sector energy
 *' use with fuel-specific emission factors.
 ***------------------------------------------------------
-q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
+q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear AND NOT secInd37Prc(secInd37)) ..
   vm_macBaseInd(ttot,regi,entyFE,secInd37)
   =e=
   sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfen(entyFECC37(entyFE),in)),
@@ -144,10 +134,14 @@ q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
       sum(se2fe(entySEfos,entyFE,te),
           pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")
       )
-  )$(NOT secInd37Prc(secInd37))
+  )
+;
+
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  +
-  sum((secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
+q37_emiPrc(ttot,regi,entyFE,secInd37Prc) ..
+  vm_emiPrc(ttot,regi,entyFE,secInd37Prc)
+  =e=  
+sum((secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
       p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
       *
       v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
@@ -156,8 +150,8 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
           pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")
       )
   )
-$endif.process_based_steel
 ;
+$endif.process_based_steel
 
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
@@ -176,12 +170,12 @@ q37_specEmiPrc(ttot,regi,tePrc,opmoPrc)$( ttot.val ge cm_startyear ) ..
 q37_emiCCSPrc(ttot,regi,emiInd37,secInd37Prc)$( ttot.val ge cm_startyear ) ..
   vm_emiIndCCS(ttot,regi,emiInd37)
   =e=
-  sum((secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc),tePrc2teCCSPrc(teBasePrc,teCCSPrc)),
+  sum((secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc),tePrc2teCCPrc(tePrc,tePrc2)),
     v37_specEmiPrc(ttot,regi,tePrc,opmoPrc)
     *
-    v37_outflowPrc(ttot,regi,teCCSPrc,opmoPrc)
+    v37_outflowPrc(ttot,regi,tePrc2,opmoPrc)
     *
-    p37_captureRate(teCCSPrc,opmoPrc)
+    p37_captureRate(tePrc2,opmoPrc)
   )
 ;
 $endif.process_based_steel
