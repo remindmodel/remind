@@ -211,9 +211,9 @@ q37_costCESmarkup(t,regi,in)$(ppfen_industry_dyn37(in))..
   * (vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
 
-$ontext
+
 *** limits of switching to biomass use in industry subsectors
-q37_BioLimitSubsec(t,regi,entyFe,emiMkt)$(NO)..
+q37_BioLimitSubsec(t,regi,entyFe,emiMkt)..
   sum( se2fe(entySeBio,entyFe,te),
     vm_demFEsector(t,regi,entySeBio,entyFE,"indst",emiMkt)
   )
@@ -225,6 +225,6 @@ q37_BioLimitSubsec(t,regi,entyFe,emiMkt)$(NO)..
           vm_cesIO(t,regi,in))
   )
 ;
-$offtext
+
 
 *** EOF ./modules/37_industry/subsectors/equations.gms

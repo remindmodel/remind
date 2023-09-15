@@ -80,7 +80,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
   q37_demMatsProc(tall,all_regi,all_enty)                 "Demand of process materials"
   q37_demFEMats(tall,all_regi,all_enty,all_emiMkt)        "Final-energy demand of materail-flow model"
 $endif.process_based_steel
-***  q37_BioLimitSubsec(ttot,all_regi,all_enty,all_emiMkt)   "limits of switching to biomass use in industry subsectors"
+  q37_BioLimitSubsec(ttot,all_regi,all_enty,all_emiMkt)   "limits of switching to biomass use in industry subsectors"
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms
