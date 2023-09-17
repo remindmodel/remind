@@ -50,29 +50,19 @@ loop ((cesLevel2cesIO(counter,in),cesOut2cesIn(in,in2),cesOut2cesIn2(in2,in3)),
 *** compute marginal rate of substitution between primary production factors as
 *** ratio of CES prices provides the amount of in2 needed to subsitute one unit
 *** of in to generate the same economic value
-loop ((t,regi,cesOut2cesIn(out,ppfen(in)),cesOut2cesIn2(out,in2))$( 
+loop ((t,regi,cesOut2cesIn(out,ppfen(in)),cesOut2cesIn2(out,in2))$(
                                         o01_CESderivatives(t,regi,"inco",in2) ),
   o01_CESmrs(t,regi,in,in2)$(o01_CESderivatives(t,regi,"inco",in2) gt 0)
   = o01_CESderivatives(t,regi,"inco",in)
   / o01_CESderivatives(t,regi,"inco",in2)
   );
 
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-*** set dummy derivatives for unused ces tree nodes to avoid errors in reporting
-loop ((t,regi,in)$(in_pbs_37(in) AND (NOT ue_industry_dyn37(in))),
-  o01_CESderivatives(t,regi,"inco",in) = 1.
-  loop ((in2)$(ppfen_industry_dyn37(in2) AND in_pbs_37(in2)),
-    o01_CESmrs(t,regi,in,in2) = 1.
-  );
-);
-$endif.process_based_steel
-
 *** total CES efficiency as diagnostic output parameter
-o01_totalCESEff(ttot,regi,in) = sum(cesOut2cesIn(out,in), 
-                               pm_cesdata(ttot,regi,in,"xi") 
+o01_totalCESEff(ttot,regi,in) = sum(cesOut2cesIn(out,in),
+                               pm_cesdata(ttot,regi,in,"xi")
                                ** (1/pm_cesdata(ttot,regi,out,"rho"))
                                * pm_cesdata(ttot,regi,in,"eff")
                                * vm_effGr.l(ttot,regi,in));
-                      
-                             
+
+
 *** EOF ./modules/01_macro/singleSectorGr/postsolve.gms

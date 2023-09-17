@@ -234,6 +234,7 @@ $endif.process_based_steel
     ue_steel               "useful energy of steel production"
     ue_steel_primary       "useful energy of primary steel production"
     ue_steel_secondary     "useful energy of secondary steel production"
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     en_steel_primary       "energy use of primary steel production"
     kap_steel_primary      "energy efficiency capital of primary steel production"
     kap_steel_secondary    "energy efficiency capital of secondary steel production"
@@ -244,6 +245,7 @@ $endif.process_based_steel
     feh2_steel             "hydrogen energy use of primary steel production"
     feel_steel_primary     "electricity energy use pf primary steel production"
     feel_steel_secondary   "electricity energy use of secondary steel production"
+$endif.process_based_steel
 
     ue_otherInd       "useful energy of other industry production"
     en_otherInd       "energy use of other industry production"
@@ -258,22 +260,18 @@ $endif.process_based_steel
     feelwlth_otherInd "electric energy for mechanical work and low temperature heat in other industry production"
   /
 
-  in_pbs_37(all_in) "ces tree nodes that are modeled in a process-based approach"
+  extend_in_dyn37(all_in)   "all inputs and outputs of the CES function - industry"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
-    ue_steel_primary,
-    en_steel_primary,
-    kap_steel_primary,
-    en_steel_furnace,
-    feso_steel,
-    feli_steel,
-    fega_steel,
-    feh2_steel,
-    feel_steel_primary,
-    ue_steel_secondary,
-    kap_steel_secondary,
-    feel_steel_secondary
-$endif.process_based_steel
+    en_steel_primary       "energy use of primary steel production"
+    kap_steel_primary      "energy efficiency capital of primary steel production"
+    kap_steel_secondary    "energy efficiency capital of secondary steel production"
+    en_steel_furnace       "non-electric energy use of primary steel production"
+    feso_steel             "solids energy use of primary steel production"
+    feli_steel             "liquids energy use of primary steel production"
+    fega_steel             "gases energy use of primary steel production"
+    feh2_steel             "hydrogen energy use of primary steel production"
+    feel_steel_primary     "electricity energy use pf primary steel production"
+    feel_steel_secondary   "electricity energy use of secondary steel production"
   /
 
   ces_industry_dyn37(all_in,all_in)   "CES tree structure - industry"
@@ -313,10 +311,12 @@ $endif.process_based_steel
     ue_chemicals . (feso_chemicals, feli_chemicals, fega_chemicals,
                     feh2_chemicals, feelhth_chemicals, feelwlth_chemicals)
 
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     ue_steel_primary . (feso_steel, feli_steel, fega_steel, feh2_steel,
                         feel_steel_primary)
 
     ue_steel_secondary . feel_steel_secondary
+$endif.process_based_steel
 
     ue_otherInd . (feso_otherInd, feli_otherInd, fega_otherInd, feh2_otherInd,
                    fehe_otherInd, feelhth_otherInd, feelwlth_otherInd)
@@ -335,8 +335,10 @@ $endif.process_based_steel
   /
     kap_cement
     kap_chemicals
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     kap_steel_primary
     kap_steel_secondary
+$endif.process_based_steel
     kap_otherInd
   /
 
@@ -345,8 +347,10 @@ $endif.process_based_steel
     feso_cement, feli_cement, fega_cement, feh2_cement, feel_cement,
     feso_chemicals, feli_chemicals, fega_chemicals, feh2_chemicals,
     feelhth_chemicals, feelwlth_chemicals,
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     feso_steel, feli_steel, fega_steel, feh2_steel, feel_steel_primary,
     feel_steel_secondary,
+$endif.process_based_steel
     feso_otherInd, feli_otherInd, fega_otherInd, feh2_otherInd, fehe_otherInd,
     feelhth_otherInd, feelwlth_otherInd
   /
@@ -365,7 +369,9 @@ $endif.process_based_steel
   /
     feh2_cement    . fega_cement
     feh2_chemicals . fega_chemicals
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     feh2_steel     . fega_steel
+$endif.process_based_steel
     feh2_otherInd  . fega_otherInd
 
     feelhth_chemicals . feelwlth_chemicals
@@ -383,10 +389,13 @@ $endif.process_based_steel
                  feso_chemicals, feli_chemicals, fega_chemicals, feh2_chemicals,
                  feelhth_chemicals, feelwlth_chemicals)
 
-    steel . (ue_steel, ue_steel_primary, ue_steel_secondary, en_steel_primary,
-             kap_steel_primary, en_steel_furnace, feso_steel, feli_steel,
-             fega_steel, feh2_steel, feel_steel_primary, kap_steel_secondary,
-             feel_steel_secondary)
+    steel . (ue_steel, ue_steel_primary, ue_steel_secondary
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+             , en_steel_primary, kap_steel_primary, en_steel_furnace,
+             feso_steel, feli_steel, fega_steel, feh2_steel,
+             feel_steel_primary, kap_steel_secondary, feel_steel_secondary
+$endif.process_based_steel
+             )
 
     otherInd . (ue_otherInd, en_otherInd, kap_otherInd, en_otherInd_hth,
                 feso_otherInd, feli_otherInd, fega_otherInd, feh2_otherInd,
@@ -402,11 +411,13 @@ $endif.process_based_steel
                     feso_chemicals, feli_chemicals, fega_chemicals,
 		    feh2_chemicals, feelhth_chemicals, feelwlth_chemicals)
 
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     ue_steel_primary . (en_steel_primary, kap_steel_primary, en_steel_furnace,
                         feso_steel, feli_steel, fega_steel, feh2_steel,
 			feel_steel_primary)
 
     ue_steel_secondary . (kap_steel_secondary, feel_steel_secondary)
+$endif.process_based_steel
 
     ue_otherInd . (en_otherInd, kap_otherInd, en_otherInd_hth, feso_otherInd,
                    feli_otherInd, fega_otherInd, feh2_otherInd, fehe_otherInd,
@@ -432,7 +443,11 @@ $endif.process_based_steel
              feel_steel_primary, feel_steel_secondary, feelhth_otherInd,
              feelwlth_otherInd)
   /
-
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+;
+fe2ppfen37(all_enty,all_in)$(NOT in_industry_dyn37(all_in)) = NO;
+SETS
+$endif.process_based_steel
 
  fe_tax_sub37(all_in,all_in)  "correspondence between tax and subsidy input data resolution and model sectoral resolution"
   /
@@ -446,11 +461,20 @@ $endif.process_based_steel
              feelwlth_otherInd)
   /
 
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+;
+alias(all_in,all_in2);
+fe_tax_sub37(all_in,all_in2)$(NOT in_industry_dyn37(all_in2)) = NO;
+SETS
+$endif.process_based_steel
+
 energy_limits37(all_in,all_in)   "thermodynamic limit of energy"
   /
     ue_cement          . en_cement
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     ue_steel_primary   . en_steel_primary
     ue_steel_secondary . feel_steel_secondary
+$endif.process_based_steel
   /
 
 entyFeCC37(all_enty)  "FE carriers in industry which can be used for CO2 capture"
@@ -492,7 +516,8 @@ $endif.calibrate
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
 teMat2rlf(tePrc,"1") = YES;
-fe2mat(fe2mat_dyn37)       = YES;
+fe2mat(fe2mat_dyn37) = YES;
+ppfUe(uePrc) = YES;
 $endif.process_based_steel
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfen37,fe2ppfen37_2);

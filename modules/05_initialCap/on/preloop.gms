@@ -13,6 +13,55 @@
 *** to satisfy the internal and external energy demand at time t0.
 s05_inic_switch = 1;
 
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+* TODO:
+* - Add idr historic capacities
+* - make this a loop to not require additional code for new materials
+if (cm_startyear eq 2005,
+  v37_prodVolPrc.fx('2005',regi,'bof','unheated') = pm_fedemand('2005',regi,'ue_steel_primary');
+  v37_prodVolPrc.fx('2005',regi,'bf','standard') = p37_specMatDem("pigiron","bof","unheated") * v37_prodVolPrc.l('2005',regi,'bof','unheated');
+  v37_prodVolPrc.fx('2005',regi,'eaf','sec') = pm_fedemand('2005',regi,'ue_steel_secondary');
+  v37_prodVolPrc.fx('2005',regi,'eaf','pri') = 0.;
+  v37_prodVolPrc.fx('2005',regi,'idr','ng') = 0.;
+  v37_prodVolPrc.fx('2005',regi,'idr','h2') = 0.;
+
+  !! TODO: get prodVol by route and read in in mrremind
+  p37_specFeDem("2005",regi,"feh2s","idr","h2") = p37_specFeDemTarget("feh2s","idr","h2");
+  p37_specFeDem("2005",regi,"feels","idr","h2") = p37_specFeDemTarget("feels","idr","h2");
+
+  p37_specFeDem("2005",regi,"fegas","idr","ng") = p37_specFeDemTarget("fegas","idr","ng");
+  p37_specFeDem("2005",regi,"feels","idr","ng") = p37_specFeDemTarget("feels","idr","ng");
+
+  p37_specFeDem("2005",regi,"fesos","bf","standard") = pm_fedemand('2005',regi,'feso_steel')         * sm_EJ_2_TWa / v37_prodVolPrc.l('2005',regi,'bf','standard');
+  p37_specFeDem("2005",regi,"fehos","bf","standard") = pm_fedemand('2005',regi,'feli_steel')         * sm_EJ_2_TWa / v37_prodVolPrc.l('2005',regi,'bf','standard');
+  p37_specFeDem("2005",regi,"fegas","bf","standard") = pm_fedemand('2005',regi,'fega_steel')         * sm_EJ_2_TWa / v37_prodVolPrc.l('2005',regi,'bf','standard');
+  !!p37_specFeDem("2005",regi,"feh2s","bf","standard") = pm_fedemand('2005',regi,'feh2_steel')         * sm_EJ_2_TWa / v37_prodVolPrc.l('2005',regi,'bf','standard');
+  p37_specFeDem("2005",regi,"feels","bf","standard") = pm_fedemand('2005',regi,'feel_steel_primary') * sm_EJ_2_TWa / v37_prodVolPrc.l('2005',regi,'bf','standard');
+
+  p37_specFeDem("2005",regi,"feels","eaf","sec") = pm_fedemand('2005',regi,'feel_steel_secondary') * sm_EJ_2_TWa / v37_prodVolPrc.l('2005',regi,'eaf','sec');
+  p37_specFeDem("2005",regi,"feels","eaf","pri") = p37_specFeDem("2005",regi,"feels","eaf","sec");
+
+  !! loop over other years and blend
+  loop(entyFeStat(all_enty),
+    loop(tePrc(all_te),
+      loop(opmoPrc,
+        if( (p37_specFeDemTarget(all_enty,all_te,opmoPrc) gt 0.),
+          loop(ttot$((ttot.val > 2005)),
+            !! fedemand in excess of BAT halves until 2040
+            !! gams cannot handle float exponents, so pre-compute 0.5^(1/(2040-2005)) = 0.9804
+            p37_specFeDem(ttot,regi,all_enty,all_te,opmoPrc) = p37_specFeDemTarget(all_enty,all_te,opmoPrc) + (p37_specFeDem("2005",regi,all_enty,all_te,opmoPrc) - p37_specFeDemTarget(all_enty,all_te,opmoPrc)) * power(0.9804, ttot.val - 2005) ;
+          );
+        );
+      );
+    );
+  );
+);
+
+if (cm_startyear gt 2005,
+  Execute_Loadpoint 'input_ref' p37_specFeDem = p37_specFeDem;
+);
+$endif.process_based_steel
+
 *** energy demand = external demand + sum of all (direct + indirect)
 *** transformation pathways that consume this enty - sum of the indirect
 *** transformation pathways that produce this enty
@@ -43,6 +92,14 @@ q05_eedemini(regi,enty)..
         )
       )
     ) * s05_inic_switch
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+    !! Pathway IV: process-based industry
+  + sum(tePrc2opmoPrc(tePrc,opmoPrc)$(p37_specFEDem("2005",regi,enty,tePrc,opmoPrc) gt 0.),
+      p37_specFEDem("2005",regi,enty,tePrc,opmoPrc)
+      *
+      v37_prodVolPrc("2005",regi,tePrc,opmoPrc)
+    )$(entyFeStat(enty))
+$endif.process_based_steel
     !! Transformation pathways that consume this enty:
   + sum(en2en(enty,enty2,te)$(NOT tePrc(te)), !! TODO Prc temp fix until efficiencies are implemented
       pm_cf("2005",regi,te)
@@ -112,16 +169,6 @@ display v05_INIdemEn0.l, v05_INIcap0.l;
 pm_cap0(regi,te) = v05_INIcap0.l(regi,te);
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
-* TODO:
-* - Add idr historic capacities
-* - make this a loop to not require additional code for new materials
-v37_prodVolPrc.fx('2005',regi,'bof','unheated') = pm_fedemand('2005',regi,'ue_steel_primary');
-v37_prodVolPrc.fx('2005',regi,'bf','standard') = p37_specMatDem("pigiron","bof","unheated") * v37_prodVolPrc.l('2005',regi,'bof','unheated');
-v37_prodVolPrc.fx('2005',regi,'eaf','sec') = pm_fedemand('2005',regi,'ue_steel_secondary');
-v37_prodVolPrc.fx('2005',regi,'eaf','pri') = 0.;
-v37_prodVolPrc.fx('2005',regi,'idr','ng') = 0.;
-v37_prodVolPrc.fx('2005',regi,'idr','h2') = 0.;
-
 pm_cap0(regi,'bof') = v37_prodVolPrc.l('2005',regi,'bof','unheated') / pm_cf("2005",regi,'bof');
 pm_cap0(regi,'bf')  = v37_prodVolPrc.l('2005',regi,'bf','standard') / pm_cf("2005",regi,'bf');  !! measure bf capacity in t steel, not t pigiron! Skip: * p37_specMatDem('pigiron','bof','unheated'));
 pm_cap0(regi,'eaf') = v37_prodVolPrc.l('2005',regi,'eaf','sec') / pm_cf("2005",regi,'eaf');
@@ -537,7 +584,6 @@ if (cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' vm_deltaCap.up = vm_deltaCap.up;
   !! moved to industry module:
   !!Execute_Loadpoint 'input_ref' p37_specFeDem = p37_specFeDem;
-);
 
 *** if %cm_techcosts% == "GLO", load pm_inco0_t from input_ref.gdx and overwrite values
 *** only for pc, ngt, ngcc since they have been adapted in initialCap routine above
