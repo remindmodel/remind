@@ -22,8 +22,6 @@ prepareAndRun <- function() {
   } else {
     # If "full.gms" exists, the script assumes that a full.gms has been generated before and you want
     # to restart REMIND in the same folder using the gdx that it eventually previously produced.
-    message("\nRestarting REMIND, find old log in 'log_beforeRestart.txt'.")
-    if (file.exists("log.txt")) file.copy("log.txt", "log_beforeRestart.txt", overwrite = TRUE)
     if (file.exists("fulldata.gdx")) file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
   }
 
