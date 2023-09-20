@@ -23,7 +23,7 @@ p02_inconvPen_NonEn_Switch_Track(t,regi) = (sum((entySe,entyFe,te,sector,emiMkt)
                                                 AND (entySeBio(entySe) 
                                                     OR entySeSyn(entySe) )),
                                                 v02_NegInconvPenNonEnSwitch.l(t,regi,entySe,entyFe,sector,emiMkt) 
-                                                + v02_NegInconvPenNonEnSwitch.l(t,regi,entySe,entyFe,sector,emiMkt))/1e3)
+                                                + v02_PosInconvPenNonEnSwitch.l(t,regi,entySe,entyFe,sector,emiMkt))/1e3)
                                                 / vm_cons.l(t,regi);
 *the inequality term in the SCC calculation is set to 1 here
 pm_sccIneq(tall,regi) = 1;

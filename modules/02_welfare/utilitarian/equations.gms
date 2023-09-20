@@ -41,7 +41,7 @@ $if "%cm_INCONV_PENALTY_FESwitch%" == "on"  - sum((entySe,entyFe,te,sector,emiMk
                                           AND (entySeBio(entySe) 
                                             OR entySeSyn(entySe) )),
         v02_NegInconvPenNonEnSwitch(ttot,regi,entySe,entyFe,sector,emiMkt) 
-        + v02_NegInconvPenNonEnSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+        + v02_PosInconvPenNonEnSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
       )
       /1e3            
     )
