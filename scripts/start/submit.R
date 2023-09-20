@@ -130,7 +130,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
   } else {
     exitCode <- system(paste0("sbatch --job-name=",
                               cfg$title,
-                              " --output=log.txt",
+                              " --output=log.txt --open-mode=append", # append for requeued jobs
                               " --mail-type=END",
                               " --comment=REMIND",
                               " --wrap=\"Rscript prepareAndRun.R \" ",
