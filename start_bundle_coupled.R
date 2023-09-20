@@ -629,7 +629,7 @@ for (scen in common) {
           runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
         }
         slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
-          " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
+          " --open-mode=append --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
           if (runEnv$numberOfTasks == 1) " --mem=8000"), runEnv$sbatch)
         slurmCommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
         message(slurmCommand)

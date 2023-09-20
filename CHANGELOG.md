@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - switch off MAgPIE emission abatement for 45/NPi realization
     [[#1401](https://github.com/remindmodel/remind/pull/1401)]
 - let preempted and resumed runs start their subsequent runs
+    [[#1414](https://github.com/remindmodel/remind/pull/1414)]
 
 ## [3.2.1] - 2023-07-13 (incomplete)
 
