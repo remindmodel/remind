@@ -926,6 +926,16 @@ parameter
   cm_damage_KWSE                        = 0;     !! def = 0
 *'  {1.645 for 90% CI, 1.96 for 95% CI, no correction when 0}
 parameter
+  cm_sccConvergence			  "convergence indicator for SCC iteration"
+;
+  cm_sccConvergence			= 0.05;  !! def = 0.05
+;
+parameter
+  cm_tempConvergence			  "convergence indicator for temperature in damage iteration"
+;
+  cm_tempConvergence			= 0.05;  !! def = 0.05
+;
+parameter
   cm_carbonprice_temperatureLimit "not-to-exceed temperature target in degree above pre-industrial"
 ;
   cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8

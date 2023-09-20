@@ -125,7 +125,8 @@ q02_energyexpShare(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_energyexpShare(ttot,regi)
   =e=
 * simply divided by conso
-    v02_energyExp_Add(ttot,regi)/(vm_cons(ttot,regi))
+    v02_energyExp_Add(ttot,regi)/(p02_cons_ref(ttot,regi))
+*    v02_energyExp_Add(ttot,regi)/(vm_cons(ttot,regi))
 * divided by adjusted conso
 *    (v02_energyExp_Add(ttot,regi))/(vm_cons(ttot,regi)+v02_energyExp_Add(ttot,regi)-v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))
 
@@ -145,7 +146,8 @@ q02_relTaxlevels(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_revShare(ttot,regi)
   =e=
 * Simply divided by conso
-    v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0)/vm_cons(ttot,regi)
+    v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0)/p02_cons_ref(ttot,regi)
+*    v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0)/vm_cons(ttot,regi)
 
 * Divided by adjusted conso
 *    (v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))/(vm_cons(ttot,regi)+v02_energyExp_Add(ttot,regi)-v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))
@@ -156,7 +158,8 @@ q02_relTaxlevels(ttot,regi)$(ttot.val ge cm_startyear)..
 q02_consLossShare(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_damageConsShare(ttot,regi)
   =e=
-    1/(p02_damConsFactor1(ttot,regi)+vm_damageFactor(ttot,regi)*p02_damConsFactor2(ttot,regi))-1
+    vm_cons(ttot,regi)/((p02_damConsFactor1(ttot,regi)+vm_damageFactor(ttot,regi)*p02_damConsFactor2(ttot,regi))*p02_cons_ref(ttot,regi))-vm_cons(ttot,regi)/p02_cons_ref(ttot,regi)
+*    1/(p02_damConsFactor1(ttot,regi)+vm_damageFactor(ttot,regi)*p02_damConsFactor2(ttot,regi))-1
 ;
 
 * Alpha, the elasticity of energy expenditure, depends upon the region's GDP
@@ -164,7 +167,8 @@ q02_consLossShare(ttot,regi)$(ttot.val ge cm_startyear)..
 q02_distrAlpha(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_distrAlpha(ttot,regi)
     =e=
-    1+1.618788-2*0.09746092*log(1000*vm_cesIO(ttot,regi,"inco")/pm_pop(ttot,regi))
+    1+1.618788-2*0.09746092*log(1000*(vm_cesIO(ttot,regi,"inco")/pm_shPPPMER(regi)*vm_damageFactor(ttot,regi))/pm_pop(ttot,regi))
+*    1+1.618788-2*0.09746092*log(1000*vm_cesIO(ttot,regi,"inco")/pm_pop(ttot,regi))
 * Note that the above equation defines alpha as a parameter depending upon GDP, which could potentially bring a complex feedback (rich countries moderating GDP growth to reduce the regressivity of energy expenditures).
 * For tests, I also used previously consumption in the baseline instead of actual GDP in the current scenario, so that alpha is a parameter
 *    1+1.618788-2*0.09746092*log(1000*p02_cons_ref(ttot,regi)/pm_pop(ttot,regi))
