@@ -60,8 +60,8 @@ Positive Variables
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   v37_outflowPrc(tall,all_regi,all_te,opmoPrc)                             "Production volume of processes in material-flow model [Gt]"
   v37_prodMat(tall,all_regi,all_enty)                                      "Production of materials [Gt]"
-  vm_emiPrc(tall,all_regi,all_enty,secInd37)                               "industry baseline emissions [GtC/a]"
-  vm_emiCCPrc(tall,all_regi,emiInd37)
+  vm_emiPrc(tall,all_regi,secInd37)                                        "industry baseline emissions [GtC/a]"
+  vm_emiCCPrc(tall,all_regi,secInd37)
 $endif.process_based_steel
 ;
 
@@ -83,8 +83,8 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
   q37_prodMat(tall,all_regi,mat)                        "Production volume of processes in material-flow model"
   q37_mat2ue(tall,all_regi,all_in)                      "Connect materials production to ue ces tree nodes"
   q37_limitCapMat(tall,all_regi,all_te)                 "Material-flow conversion is limited by capacities"
-  q37_emiPrc(ttot,all_regi,all_enty,secInd37)           "industry baseline emissions [GtC/a]"
-  q37_emiCCPrc(tall,all_regi,emiInd37,secInd37)                 "captured emission from CCS"
+  q37_emiPrc(ttot,all_regi,secInd37)           "industry baseline emissions [GtC/a]"
+  q37_emiCCPrc(tall,all_regi,secInd37)                 "captured emission from CCS"
 $endif.process_based_steel
 ;
 

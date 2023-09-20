@@ -713,6 +713,9 @@ q_emiAll(t,regi,emi(enty))..
   =e=
     vm_emiTe(t,regi,enty)
   + vm_emiMac(t,regi,enty)
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+  + sum(secInd37Prc, vm_emiPrc(t,regi,secInd37Prc))
+$endif.process_based_steel
   + vm_emiCdr(t,regi,enty)
   + pm_emiExog(t,regi,enty)
 ;
