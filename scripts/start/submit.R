@@ -49,7 +49,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       # we only want to run renv checks/updates in the first run in a cascade, which can be
       # detected like this
       firstRunInCascade <- normalizePath(renv::project()) == normalizePath(".")
-      if (firstRunInCascade) {
+      if (firstRunInCascade && isTRUE(cfg$gms$cm_MAgPIE_coupling == "off")) {
         if (getOption("autoRenvUpdates", FALSE)) {
           installedUpdates <- piamenv::updateRenv()
           piamenv::stopIfLoaded(names(installedUpdates))
