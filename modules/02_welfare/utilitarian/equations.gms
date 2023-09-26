@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -17,25 +17,47 @@ q02_welfareGlob..
 ;
 
 ***---------------------------------------------------------------------------
-*' Total discounted intertemporal regional welfare calculated from per capita consumption 
-*' summing over all time steps taking into account the pure time preference rate.
-*' Assuming an intertemporal elasticity of substitution of 1, it holds:
+*' Total discounted intertemporal regional welfare calculated from per capita
+*' consumption summing over all time steps taking into account the pure time
+*' preference rate.  Assuming an intertemporal elasticity of substitution of 1,
+*' it holds:
 ***---------------------------------------------------------------------------
-q02_welfare(regi)..
-    v02_welfare(regi) 
+q02_welfare(regi) ..
+  v02_welfare(regi) 
   =e=
-    sum(ttot $(ttot.val ge 2005),
-        pm_welf(ttot) * pm_ts(ttot) * (1 / ( (1 + pm_prtp(regi))**(pm_ttot_val(ttot)-2005) ) )
-        *   (  (pm_pop(ttot,regi) 
-                *   (
-                        ((( (vm_cons(ttot,regi))/pm_pop(ttot,regi))**(1-1/pm_ies(regi))-1)/(1-1/pm_ies(regi)) )$(pm_ies(regi) ne 1)
-                       + (log((vm_cons(ttot,regi)) / pm_pop(ttot,regi)))$(pm_ies(regi) eq 1)
-                    )
-                )
-$if %cm_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalSolids(ttot,regi)
-$if "%cm_INCONV_PENALTY_FESwitch%" == "on"  - sum((entySe,entyFe,te,sector,emiMkt)$(se2fe(entySe,entyFe,te) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) AND (entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) ), v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt) + v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt))/1e3	
-            )
+    sum(ttot$( ttot.val ge 2005 ),
+      pm_welf(ttot)
+    * pm_ts(ttot)
+    / ((1 + pm_prtp(regi)) ** (pm_ttot_val(ttot) - 2005))
+    * ( ( pm_pop(ttot,regi) 
+        * ( ( ( ( vm_cons(ttot,regi)
+	        / pm_pop(ttot,regi)
+		)
+	     ** (1 - 1 / pm_ies(regi))
+	      - 1
+	      )
+	    / (1 - 1 / pm_ies(regi))
+	    )$( pm_ies(regi) ne 1 )
+	  + log(vm_cons(ttot,regi) / pm_pop(ttot,regi))$( pm_ies(regi) eq 1 )
+          )
         )
+$ifthen %cm_INCONV_PENALTY% == "on"
+      - v02_inconvPen(ttot,regi)
+      - v02_inconvPenCoalSolids(ttot,regi)
+$endif
+$ifthen "%cm_INCONV_PENALTY_FESwitch%" == "on"
+      - sum((entySe,entyFe,te,sector,emiMkt)$(
+                                    se2fe(entySe,entyFe,te)
+                                AND entyFe2Sector(entyFe,sector) 
+                                AND sector2emiMkt(sector,emiMkt) 
+                                AND (entySeBio(entySe) OR  entySeFos(entySe)) ),
+          v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+	+ v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+	)
+      / 1e3	
+$endif
+      )
+    )
 ;
 
 ***---------------------------------------------------------------------------
@@ -61,20 +83,23 @@ q02_inconvPenCoalSolids(t,regi)$(t.val > 2005)..
 ;
 $ENDIF.INCONV
 
-*** small inconvenience penalty for increasing/decreasing biomass/synfuel use between two time steps in buildings and industry and emissison markets
-*** necessary to avoid switching behavior in sectors and emissions markets between time steps as those sectors and markets do not have se2fe capcities
+*** small inconvenience penalty for increasing/decreasing biomass/synfuel use
+*** between two time steps in buildings and industry and emissison markets
+*** necessary to avoid switching behavior in sectors and emissions markets
+*** between time steps as those sectors and markets do not have se2fe capcities
 $IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_FESwitch%" == "on"
-q02_inconvPenFeBioSwitch(ttot,regi,entySe,entyFe,te,sector,emiMkt)$((ttot.val ge cm_startyear) 
-                                                            AND se2fe(entySe,entyFe,te) 
-                                                            AND entyFe2Sector(entyFe,sector) 
-                                                            AND sector2emiMkt(sector,emiMkt) 
-                                                            AND (entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) )..
-                                                              vm_demFeSector(ttot,regi,entySe,entyFe,sector,emiMkt) 
-                                                              - vm_demFeSector(ttot-1,regi,entySe,entyFe,sector,emiMkt)
-                                                              + v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
-                                                              - v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
-                                                            =e=
-                                                            0
+q02_inconvPenFeBioSwitch(ttot,regi,entySe,entyFe,te,sector,emiMkt)$(
+                                  ttot.val ge cm_startyear
+                              AND se2fe(entySe,entyFe,te) 
+                              AND entyFe2Sector(entyFe,sector) 
+                              AND sector2emiMkt(sector,emiMkt) 
+                              AND (entySeBio(entySe) OR  entySeFos(entySe)) ) ..
+    vm_demFeSector(ttot,regi,entySe,entyFe,sector,emiMkt) 
+  - vm_demFeSector(ttot-1,regi,entySe,entyFe,sector,emiMkt)
+  + v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+  - v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+  =e=
+  0
 ;
 $ENDIF.INCONV_bioSwitch
 

@@ -4,9 +4,9 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/15_climate/box/presolve.gms
-*** JeS set aerosol energy emissions to level of previous iteration
-p15_so2emi(ttot,"so2") = vm_emiAllGlob.l(ttot,"so2");
-p15_so2emi(ttot,"bc")  = vm_emiAllGlob.l(ttot,"bc");
-p15_so2emi(ttot,"oc")  = vm_emiAllGlob.l(ttot,"oc");
-*** EOF ./modules/15_climate/box/presolve.gms
+*** SOF ./modules/45_carbonprice/NPi/realization.gms
+
+*####################### R SECTION START (PHASES) ##############################
+$Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/NPi/datainput.gms"
+*######################## R SECTION END (PHASES) ###############################
+*** EOF ./modules/45_carbonprice/NPi/realization.gms

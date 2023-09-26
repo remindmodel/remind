@@ -1,7 +1,7 @@
 Package: remindmodel
 Title: REMIND - REgional Model of INvestments and Development
 Version: 0.1
-Date: 2022-08-31
+Date: 2023-07-13
 Description: This is not a package yet, the purpose of this file is to
     document metadata, notably dependencies.
 License: file LICENSE
@@ -51,7 +51,7 @@ Imports:
     nleqslv,
     optparse,
     piamenv (>= 0.4.0),
-    piamInterfaces (>= 0.0.37),
+    piamInterfaces (>= 0.0.88),
     plotly,
     purrr,
     quitte (>= 0.3106.0),
@@ -59,7 +59,7 @@ Imports:
     raster,
     readr,
     readxl,
-    remind2 (>= 1.104.1),
+    remind2 (>= 1.112.0),
     renv,
     reshape2,
     reticulate,
@@ -69,6 +69,7 @@ Imports:
     SPEI,
     stringr,
     terra,
+    testthat (>= 3.1.10),
     tibble,
     tidyr,
     tidyverse,

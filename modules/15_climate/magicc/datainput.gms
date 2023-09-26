@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -43,13 +43,13 @@ s15_gr_forc_kyo     = 0;
 
 p15_forc_magicc(tall) = 0;
 
-$if  %cm_rcp_scen% == "rcp26"    $include "./modules/15_climate/box/input/data_oghgf_rcp3pd.inc";
-$if  %cm_rcp_scen% == "rcp37"    $include "./modules/15_climate/box/input/data_oghgf_rcp45.inc";
-$if  %cm_rcp_scen% == "rcp45"    $include "./modules/15_climate/box/input/data_oghgf_rcp45.inc";
-$if  %cm_rcp_scen% == "rcp60"    $include "./modules/15_climate/box/input/data_oghgf_rcp6.inc";
-$if  %cm_rcp_scen% == "rcp85"    $include "./modules/15_climate/box/input/data_oghgf_rcp85.inc";
-$if  %cm_rcp_scen% == "rcp20"    $include "./modules/15_climate/box/input/data_oghgf_rcp3pd.inc";
-$if  %cm_rcp_scen% == "none"     $include "./modules/15_climate/box/input/data_oghgf_rcp6.inc";
+$if  %cm_rcp_scen% == "rcp26"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp3pd.inc";
+$if  %cm_rcp_scen% == "rcp37"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp45.inc";
+$if  %cm_rcp_scen% == "rcp45"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp45.inc";
+$if  %cm_rcp_scen% == "rcp60"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp6.inc";
+$if  %cm_rcp_scen% == "rcp85"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp85.inc";
+$if  %cm_rcp_scen% == "rcp20"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp3pd.inc";
+$if  %cm_rcp_scen% == "none"     $include "./modules/15_climate/magicc/input/data_oghgf_rcp6.inc";
 
 pm_emicapglob(ttot) = 0;
 

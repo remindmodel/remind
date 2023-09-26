@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -12,22 +12,22 @@ if(ord(iteration) > p46_startInIteration, !!start only after p46_startInIteratio
 
 *#' @equations
 *#' calculate emission variable to be used for NDC target: GHG emissions w/o land-use change and w/o transport bunker emissions, unit [Mt CO2eq/yr]
-p46_CO2eqwoLU_actual(p46_NDCyearSet(ttot,regi)) =
-    vm_co2eq.l(ttot,regi) * sm_c_2_co2*1000
+p46_CO2eqwoLU_actual(p46_NDCyearSet(t,regi)) =
+    vm_co2eq.l(t,regi) * sm_c_2_co2*1000
 *** add F-Gases
-    + vm_emiFgas.L(ttot,regi,"emiFgasTotal")
+    + vm_emiFgas.L(t,regi,"emiFgasTotal")
 *** substract bunker emissions
     - sum(se2fe(enty,enty2,te),
-        pm_emifac(ttot,regi,enty,enty2,te,"co2")
-        * vm_demFeSector.l(ttot,regi,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
+        pm_emifac(t,regi,enty,enty2,te,"co2")
+        * vm_demFeSector.l(t,regi,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
       );
 
 *** there is some debate whether Chinas net zero goal is not CO2eq, but CO2. Then use CO2 emissions minus substract bunker emissions
-*** p46_CO2eqwoLU_actual(p46_NDCyearSet(ttot,regi))$(sameas(regi,"CHA") AND sameas(ttot,"2055")) =
-***  (vm_emiTe.l(ttot,regi,"co2") + vm_emiMac.L(ttot,regi,"co2") + vm_emiCdr.L(ttot,regi,"co2"))*sm_c_2_co2*1000
+*** p46_CO2eqwoLU_actual(p46_NDCyearSet(t,regi))$(sameas(regi,"CHA") AND sameas(t,"2055")) =
+***  (vm_emiTe.l(t,regi,"co2") + vm_emiMac.L(t,regi,"co2") + vm_emiCdr.L(t,regi,"co2"))*sm_c_2_co2*1000
 ***    - sum(se2fe(enty,enty2,te),
-***        pm_emifac(ttot,regi,enty,enty2,te,"co2")
-***        * vm_demFeSector.l(ttot,regi,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
+***        pm_emifac(t,regi,enty,enty2,te,"co2")
+***        * vm_demFeSector.l(t,regi,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
 ***      );
 
 display vm_co2eq.l;
@@ -68,12 +68,12 @@ p46_previousYearInLoop = 2020;
 *** interpolate taxCO2eq linearly from 0 in 2020 to first NDC target and between NDC targets
 loop(regi,
   p46_previousYearInLoop = 2020;
-  p46_taxPreviousYearInLoop = smax(ttot$(ttot.val = p46_previousYearInLoop), pm_taxCO2eqRegi(ttot,regi) );
+  p46_taxPreviousYearInLoop = smax(t$(t.val = p46_previousYearInLoop), pm_taxCO2eqRegi(t,regi) );
   loop(p46_NDCyearSet(t,regi) ,
-    pm_taxCO2eqRegi(ttot,regi)$(ttot.val > p46_previousYearInLoop AND ttot.val < t.val)
-      = p46_taxPreviousYearInLoop + (ttot.val - p46_previousYearInLoop) * (pm_taxCO2eqRegi(t,regi) - p46_taxPreviousYearInLoop)/(t.val - p46_previousYearInLoop);
+    pm_taxCO2eqRegi(t2,regi)$(t2.val > p46_previousYearInLoop AND t2.val < t.val)
+      = p46_taxPreviousYearInLoop + (t2.val - p46_previousYearInLoop) * (pm_taxCO2eqRegi(t,regi) - p46_taxPreviousYearInLoop)/(t.val - p46_previousYearInLoop);
     p46_previousYearInLoop = t.val;
-    p46_taxPreviousYearInLoop = smax(ttot$(ttot.val = p46_previousYearInLoop), pm_taxCO2eqRegi(ttot,regi) );
+    p46_taxPreviousYearInLoop = smax(t2$(t2.val = p46_previousYearInLoop), pm_taxCO2eqRegi(t2,regi) );
   );
 );
 

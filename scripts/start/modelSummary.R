@@ -1,4 +1,4 @@
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -63,7 +63,7 @@ modelSummary <- function(folder = ".", gams_runtime = NULL) {
         message("  Modelstat after ", as.numeric(names(modelstat)), " iterations: ", modelstat,
                 if (modelstat %in% names(explain_modelstat)) paste0(" (", explain_modelstat[modelstat], ")"))
       }
-      logStatus <- grep("*** Status", readLines(file.path(folder, "full.log")), fixed = TRUE, value = TRUE)
+      logStatus <- grep("*** Status", readLines(file.path(folder, "full.log"), warn = FALSE), fixed = TRUE, value = TRUE)
       message("  full.log states: ", paste(logStatus, collapse = ", "))
       if (! all("*** Status: Normal completion" == logStatus)) stoprun <- TRUE
     }
