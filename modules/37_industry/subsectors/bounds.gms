@@ -110,6 +110,9 @@ vm_cesIO.lo(t,regi_dyn29(regi),in_industry_dyn37(in))$(
                                                   0 eq vm_cesIO.lo(t,regi,in) )
   = sm_eps;
 
+*** values must not fall below offset, as that would result in negative energy consumption
+vm_cesIO.lo(ttot,regi,in)$(ppfen_industry_dyn37(in)) = max(vm_cesIO.lo(ttot,regi,in), -pm_cesdata(ttot,regi,in,"offset_quantity"))
+
 *' Limit biomass solids use in industry to 25% (or historic shares, if they are higher)
 *' of baseline solids
 *' Cement CCS might otherwise become a compelling BioCCS option under very high

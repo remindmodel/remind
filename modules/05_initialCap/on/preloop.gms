@@ -98,7 +98,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
       p37_specFEDem("2005",regi,enty,tePrc,opmoPrc)
       *
       v37_prodVolPrc("2005",regi,tePrc,opmoPrc)
-    )$(entyFeStat(enty))
+    )$(entyFeStat(enty)) * s05_inic_switch
 $endif.process_based_steel
     !! Transformation pathways that consume this enty:
   + sum(en2en(enty,enty2,te)$(NOT tePrc(te)), !! TODO Prc temp fix until efficiencies are implemented
