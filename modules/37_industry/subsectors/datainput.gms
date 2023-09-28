@@ -445,10 +445,24 @@ pm_tau_ces_tax(t,regi,"feh2_steel") = 50* sm_TWa_2_MWh * 1e-12;
 pm_tau_ces_tax(t,regi,"feh2_cement") = 100* sm_TWa_2_MWh * 1e-12;
 
 
+
+*` temporal phase-in of mark-up cost changes defined by cm_CESMkup_ind
+*` no changes to mark-up cost before 2025, then gradual phase-in until 2040
+p37_CESMkup_policy_phasein(t) = 0;
+p37_CESMkup_policy_phasein(t)$(t.val ge 2040) = 1;
+p37_CESMkup_policy_phasein(t)$(t.val eq 2035) = 1/2;
+p37_CESMkup_policy_phasein(t)$(t.val eq 2030) = 1/4;
+p37_CESMkup_policy_phasein(t)$(t.val eq 2025) = 1/8;
+
 *` overwrite or extent CES markup cost if specified by switch
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard"
-  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in) AND ppfen_MkupCost37(in)) = p37_CESMkup_input(in);
-  pm_tau_ces_tax(t,regi,in)$(p37_CESMkup_input(in) AND (NOT ppfen_MkupCost37(in))) = p37_CESMkup_input(in);
+  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in) 
+                            AND ppfen_MkupCost37(in)) = 
+    p37_CESMkup(t,regi,in) + p37_CESMkup_policy_phasein(t) * (p37_CESMkup_input(in) - p37_CESMkup(t,regi,in));
+
+  pm_tau_ces_tax(t,regi,in)$(p37_CESMkup_input(in) 
+                              AND (NOT ppfen_MkupCost37(in))) =
+    pm_tau_ces_tax(t,regi,in) + p37_CESMkup_policy_phasein(t) * (p37_CESMkup_input(in) - pm_tau_ces_tax(t,regi,in));
 $endIf.CESMkup
 
 display p37_CESMkup;
@@ -545,5 +559,23 @@ execute_load "input_ref.gdx", vm_demFEsector;
       vm_demFEsector.l(t,regi,entySE,"fesos","indst","ETS")
     );
 );
+
+
+
+*** FS: maximum share of biomass use in industry subsector
+*** set to prevent too fast or technically unrealistic switch to biomass in industry subsectors
+
+*** initialize maximum biomass share in all industry subsectors at 100%
+p37_BioShareMaxSubsec(t,regi,entyFeCC37,secInd37)=1;
+
+
+*** for steel set maximum biomass share in solids to 30% until 2025 and linearly increase up to 80% in 2050
+p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val gt 2015 AND t.val le 2025)=0.3;
+p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val gt 2025 AND t.val le 2050)= 0.3 + (t.val - 2025) * 0.02;
+p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val gt 2050)=p37_BioShareMaxSubsec("2050",regi,"fesos","steel");
+
+*** for Germany set maximum biomass share of solids in steel to 10% at all times
+p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val ge 2020 AND sameas(regi,"DEU"))=0.1;
+
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms

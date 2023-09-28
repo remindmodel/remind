@@ -319,5 +319,12 @@ $offdelim
 
 $endif.ExogDemScen
 
+*** allow early phase-out based on Beyond Coal 2021 by increasing RetiRate for some regions
+*** this reverts the halving of retirements rates done in core/datainput
+$IFTHEN.CoalRegiPolReti not "%cm_CoalRegiPol%" == "off"
+  pm_regiEarlyRetiRate(t,regi,"coalchp")$(sameAs(regi,"ESW")) = 2 * pm_regiEarlyRetiRate(t,regi,"coalchp")$(sameAs(regi,"ESW"));
+  pm_regiEarlyRetiRate(t,regi,"coalchp")$(sameAs(regi,"FRA")) = 2 * pm_regiEarlyRetiRate(t,regi,"coalchp")$(sameAs(regi,"FRA"));
+  pm_regiEarlyRetiRate(t,regi,"coalchp")$(sameAs(regi,"UKI")) = 2 * pm_regiEarlyRetiRate(t,regi,"coalchp")$(sameAs(regi,"UKI"));
+$ENDIF.CoalRegiPolReti
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms

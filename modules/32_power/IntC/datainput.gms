@@ -99,4 +99,11 @@ $offtext
 *** initialize p32_PriceDurSlope parameter
 p32_PriceDurSlope(regi,"elh2") = cm_PriceDurSlope_elh2;
 
+*** flexibility tax phase-in factor
+p32_phaseInFlexTax(t)$(t.val < 2025) = 0;
+p32_phaseInFlexTax("2025") = 0.25;
+p32_phaseInFlexTax("2030") = 0.5;
+p32_phaseInFlexTax("2035") = 0.75;
+p32_phaseInFlexTax(t)$(t.val > 2035) = 1;
+
 *** EOF ./modules/32_power/IntC/datainput.gms

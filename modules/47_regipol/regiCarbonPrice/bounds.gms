@@ -61,7 +61,16 @@ $IFTHEN.CoalRegiPol not "%cm_CoalRegiPol%" == "off"
     vm_capTotal.up("2025",regi,"pecoal","seel")$(sameas(regi,"DEU"))=25/1000;
     vm_capTotal.up("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=17/1000;
     vm_capTotal.up("2035",regi,"pecoal","seel")$(sameas(regi,"DEU"))=6/1000;
-    vm_capTotal.up("2040",regi,"pecoal","seel")$(sameas(regi,"DEU"))=1E-6;
+    vm_capTotal.up("2040",regi,"pecoal","seel")$(sameas(regi,"DEU"))=1.1/1000;
+
+*** Force 2030 coal phase-out in ARIADNE Ampel scenarios (leave residual for waste, see below)
+$IFTHEN.EarlyPhaseOut "%cm_CoalRegiPol%" == "ampel"
+    vm_capTotal.up("2025",regi,"pecoal","seel")$(sameas(regi,"DEU"))=25/1000;
+    vm_capTotal.up("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=3.1/1000;
+    vm_capTotal.up("2035",regi,"pecoal","seel")$(sameas(regi,"DEU"))=2.1/1000;
+    vm_capTotal.up("2040",regi,"pecoal","seel")$(sameas(regi,"DEU"))=1.1/1000;
+$ENDIF.EarlyPhaseOut
+
 *** UK coal capacity phase-out
     vm_cap.up(t,regi,te,"1")$((t.val ge 2025) and (t.val ge cm_startyear) and (sameas(te,"igcc") or sameas(te,"pc") or sameas(te,"coalchp")) and (sameas(regi,"UKI"))) = 1E-6;
 
@@ -79,9 +88,12 @@ loop(regi$(sameAs(regi,"DEU")),
 vm_capTotal.up("2015",regi,"pegas","seel")$(sameas(regi,"DEU"))=30/1000;
 vm_capTotal.up("2020",regi,"pegas","seel")$(sameas(regi,"DEU"))=34/1000;
 
-*** limit coal-power capacity to at least 5 GW in 2030 to account for emissions from fossil waste (~20 MtCO2/yr as of 2020) in 2030 target as waste currently subsumed under coal-power in REMIND
-vm_capTotal.lo("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=5/1000;
-
+*** limit coal-power capacity to at least 3 GW in 2030 to account for emissions from fossil waste 
+*** (~20 MtCO2/yr as of 2020) in 2030 target as waste currently subsumed under coal-power in REMIND
+*** then reduce slowly until phase-out in 2045
+vm_capTotal.lo("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=3/1000;
+vm_capTotal.lo("2035",regi,"pecoal","seel")$(sameas(regi,"DEU"))=2/1000;
+vm_capTotal.lo("2040",regi,"pecoal","seel")$(sameas(regi,"DEU"))=1/1000;
 
 *** only small amount of co2 injection ccs until 2030 in Germany
 vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU"))) = 1e-3;
@@ -101,8 +113,12 @@ vm_capEarlyReti.up('2025',regi,'pc') = 0.65;
 
 *** energy security policy for Germany: 5GW(el) electrolysis installed by 2030 in Germany at minimum
 $ifThen.ensec "%cm_Ger_Pol%" == "ensec"
-    vm_cap.lo("2030",regi,"elh2","1")$(sameAs(regi,"DEU"))=5*pm_eta_conv("2030",regi,"elh2")/1000;
+    vm_cap.lo("2030","DEU","elh2","1")=5*pm_eta_conv("2030","DEU","elh2")/1000;
 $endIf.ensec
+
+*** only start industry carbon capture in Germany by 2030 as status of projects for 2025 unclear,
+*** see IEA CCUS database https://www.iea.org/data-and-statistics/data-tools/ccus-projects-explorer
+vm_emiIndCCS.up(t,regi,emiInd37)$(sameAs(regi,"DEU") AND t.val lt 2030)=0;
 
 ***---------------------------------------------------------------------------
 *** per region minimun variable renewables share in electricity:
@@ -115,6 +131,20 @@ $ifthen.cm_VREminShare not "%cm_VREminShare%" == "off"
   )
 ;
 $endIf.cm_VREminShare
+
+***---------------------------------------------------------------------------
+*** per region minimun variable renewables capacities:
+***---------------------------------------------------------------------------
+*** TODO: implement in analogy to VREminShare
+$ifthen.cm_VREminCap "%cm_VREminCap%" == "ampel"
+    vm_cap.lo("2030","DEU","spv","1")     = 0.215;
+    vm_cap.lo("2030","DEU","wind","1")    = 0.115;
+    vm_cap.lo("2030","DEU","windoff","1") = 0.03;
+    vm_cap.lo("2035","DEU","windoff","1") = 0.04;
+    vm_cap.lo("2045","DEU","windoff","1") = 0.07;
+    vm_cap.lo("2030","DEU","elh2","1")    = 10*pm_eta_conv("2030","DEU","elh2")/1000;
+$endIf.cm_VREminCap
+
 *** provide range for gas and coal power CF in EnSec scenario in 2025 and 2030 for subsitution
 $ifThen.ensec "%cm_Ger_Pol%" == "ensec"
     vm_capFac.up("2025",regi,"pc")$sameas(regi,"DEU") = 0.6;

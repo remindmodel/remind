@@ -779,6 +779,7 @@ $offdelim
 ;
 pm_dataren(all_regi,"maxprod",rlf,"windoff") = sm_EJ_2_TWa * f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf);
 pm_dataren(all_regi,"nur",rlf,"windoff")     = 1.25 * f_maxProdGradeRegiWindOff(all_regi,"nur",rlf);  !! increase wind offshore capacity factors by 25% as the NREL values seem to underestimate offshore capacity factors compared to historic values 
+pm_dataren(regi,"maxprod","6","windoff")$(sameAs(regi,"DEU")) = 0.015;  !! manual maximum of offshore wind for Germany
 
 pm_shareWindPotentialOff2On(all_regi) = sum(rlf,f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf)$(rlf.val le 8)) /
                       sum(rlf,f_maxProdGradeRegiWindOn(all_regi,"maxprod",rlf)$(rlf.val le 8));
@@ -1007,7 +1008,7 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,'apCarDiEffT')     = 0.50;
   p_adj_seed_te(ttot,regi,'apCarDiEffH2T')   = 0.50;
   p_adj_seed_te(ttot,regi,'dac')             = 0.25;
-  p_adj_seed_te(ttot,regi,'geohe')           = 0.33;
+  p_adj_seed_te(ttot,regi,'geohe')           = 1.00;
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
   p_adj_seed_te(ttot,regi,"windoff") = 0.5; 
@@ -1038,7 +1039,7 @@ $ENDIF.WindOff
   p_adj_coeff(ttot,regi,"ccsinje")         = 1.0;
   p_adj_coeff(ttot,regi,"spv")             = 0.15;
   p_adj_coeff(ttot,regi,"wind")            = 0.25;
-  p_adj_coeff(ttot,regi,"geohe")           = 0.6;
+  p_adj_coeff(ttot,regi,"geohe")           = 0.25;
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 

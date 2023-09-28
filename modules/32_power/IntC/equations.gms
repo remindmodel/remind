@@ -281,11 +281,12 @@ q32_flexPriceBalance(t,regi)$(cm_FlexTaxFeedback eq 1)..
 *** unreasonable FE prices caused by meaningless marginals in infeasible Nash
 *** iterations from propagating through the model.
 *** Fixed to 0 if cm_flex_tax != 1, and before 2025.
+*** FlexTax is linearly phased in between 2025 and 2040.
 q32_flexAdj(t,regi,te)$(teFlexTax(te))..
   vm_flexAdj(t,regi,te) 
   =e=
   ( (1 - v32_flexPriceShare(t,regi,te))
-  * max(0, min(2, pm_SEPrice(t,regi,"seel")))
+  * max(0, min(2, pm_SEPrice(t,regi,"seel"))) * p32_phaseInFlexTax(t)
   )$( cm_flex_tax eq 1 AND t.val ge 2025 )
 ;
 
