@@ -67,14 +67,13 @@ library(lucode2)
 library(gms)
 require(stringr, quietly = TRUE)
 
+flags <- NULL
 ### Define arguments that can be read from command line
 if (!exists("source_include")) {
   # if this script is not being sourced by another script but called from the command line via Rscript read the command
   # line arguments and let the user choose the slurm options
   flags <- readArgs("outputdir", "output", "comp", "remind_dir", "slurmConfig", "filename_prefix",
                     .flags = c(t = "--test", h = "--help"))
-} else {
-  flags <- NULL
 }
 
 if ("--help" %in% flags) {
@@ -198,13 +197,13 @@ if (comp %in% c("comparison", "export")) {
   }
 } else { # comp = single
   # define slurm class or direct execution
-  outputUsingDirect <- c("plotIterations", "fixOnRef")
+  outputInteractive <- c("plotIterations", "fixOnRef")
   if (! exists("source_include")) {
     # for selected output scripts, only slurm configurations matching these regex are available
     slurmExceptions <- if ("reporting" %in% output) "--mem=[0-9]*[0-9]{3}" else NULL
-    if (any(output %in% outputUsingDirect)) {
+    if (any(output %in% outputInteractive)) {
       slurmConfig <- "direct"
-      interactivemode <- TRUE
+      flags <- c(flags, "--interactive") # to tell scripts they can run in interactive mode
     }
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
@@ -277,7 +276,7 @@ if (comp %in% c("comparison", "export")) {
             rm(tmp.env)
             gc()
             if (!is.null(tmp.error)) {
-              warning("Script ", n, " was stopped by an error and not executed properly!")
+              warning("Script ", n, " for ", outputdir, " was stopped by an error and not executed properly!")
             }
           }
         } else {
@@ -285,7 +284,7 @@ if (comp %in% c("comparison", "export")) {
           logfile <- file.path(outputdir, "log_output.txt")
           Rscripts <- paste0("Rscript scripts/output/single/", name, " outputdir=", outputdir, collapse = "; ")
           slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
-                       " --mail-type=END --comment=output.R --wrap='", Rscripts, "'")
+                       " --mail-type=END --comment=output.R --time=120 --wrap='", Rscripts, "'")
           message("Sending to slurm: ", paste(name, collapse = ", "), ". Find log in ", logfile)
           system(slurmcmd)
         }

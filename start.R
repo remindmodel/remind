@@ -110,6 +110,8 @@ if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
   Sys.sleep(1)
 }
 
+invisible(madrat::getConfig(verbose = FALSE))
+
 errorsfound <- 0 # counts ignored errors in --test mode
 startedRuns <- 0
 waitingRuns <- 0
