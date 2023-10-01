@@ -89,6 +89,7 @@ $endif.process_based_steel
 *' Thermodynamic limits on subsector energy demand
 ***------------------------------------------------------
 $ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
                                       ttot.val gt 2020
 				  AND p37_energy_limit_slope(ttot,regi,out) ) ..
@@ -97,6 +98,7 @@ q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
     vm_cesIO(ttot,regi,out)
   * p37_energy_limit_slope(ttot,regi,out)
 ;
+$endif.process_based_steel
 $endif.no_calibration
 
 ***------------------------------------------------------

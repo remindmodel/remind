@@ -151,6 +151,10 @@ pm_energy_limit(in)
   * 1e9;                   !! * t/Gt
                            !! = TWa/Gt
 
+* remove energy limit for process-based materials
+pm_energy_limit(out)$(NOT sum(in, ces_eff_target_dyn37(out,in))) = 0.;
+
+
 * Specific energy demand cannot fall below a curve described by an exponential
 * function passing through the 2015 value and a point defined by an "efficiency
 * gain" (e.g. 75 %) between baseline value and thermodynamic limit at a given

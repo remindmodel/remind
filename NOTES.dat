@@ -1,6 +1,13 @@
 -------------------------------------
 NOTES ON CES TREE
 -------------------------------------
+
+- check how tax works, and fe_tax_sub_sbi (used in 11_aerosols): Do we need a replacement for non-CES?
+
+- Execute_Loadpoint 'input'      vm_cesIO 
+  in core/datainput.gms: remove non-in nodes
+  ==> accepted for now; should not do any damage, and will be obsolete after calibration
+
 - first: only restart, no new calibration; second: new calibration
 - ue_steel_primary etc are now new ppf, and may have to added to that set in some uses, but not in all
 - check all data input with 'in' as a dimension (only cesdata?)

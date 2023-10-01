@@ -494,6 +494,10 @@ ppfen_MkupCost37(all_in)  "primary production factors in industry on which CES m
 *** ---------------------------------------------------------------------------
 ppf_industry_dyn37(ppfKap_industry_dyn37)                              = YES;
 ppf_industry_dyn37(ppfen_industry_dyn37)                               = YES;
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+ppfUe(uePrc) = YES;
+ppf_industry_dyn37(ppfUe)                                              = YES;
+$endif.process_based_steel
 ipf_industry_dyn37(in_industry_dyn37)                                  = YES;
 ipf_industry_dyn37(ppf_industry_dyn37)                                 = NO;
 in(in_industry_dyn37)                                                  = YES;
@@ -517,7 +521,6 @@ $endif.calibrate
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
 teMat2rlf(tePrc,"1") = YES;
 fe2mat(fe2mat_dyn37) = YES;
-ppfUe(uePrc) = YES;
 $endif.process_based_steel
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfen37,fe2ppfen37_2);
