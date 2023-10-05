@@ -425,7 +425,7 @@ $ifthen.internalizeDamages not "%internalizeDamages%" == "off"
 	if(sameas(convMessage80,"damage"),
 	   display "#### 11) The damage iteration did not converge.";
 	   display "#### Check out below the values for pm_gmt_conv and pm_sccConvergenceMaxDeviation."
- 	   display "#### The should be below 0.05."
+ 	   display "#### They should be below 0.05."
 	   display pm_gmt_conv, pm_sccConvergenceMaxDeviation;
 	);
 $endIf.internalizeDamages
