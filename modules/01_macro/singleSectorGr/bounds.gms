@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -8,7 +8,8 @@
 
 *nb* lower bounds on CES values
 vm_cons.lo(t,regi)     = 1e-3;
-vm_cesIO.lo(t,regi,in)$( NOT in_industry_dyn37(in) ) = 1e-6;
+vm_cesIO.lo(t,regi,in)$( NOT in_industry_dyn37(in) ) 
+  = max(1e-6, abs(pm_cesdata(t,regi,in,"offset_quantity")));
 vm_cesIOdelta.lo(t,regi,in_putty) = 1e-6;
 
 *** fix energy inputs to CES structure in t0 to the parameter values

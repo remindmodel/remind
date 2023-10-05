@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -702,27 +702,15 @@ q_emiCdrAll(t,regi)..
 *' Total regional emissions are the sum of emissions from technologies, MAC-curves, CDR-technologies and emissions that are exogenously given for REMIND.
 ***------------------------------------------------------
 *LB* calculate total emissions for each region at each time step
-q_emiAll(t,regi,emi(enty)).. 
-  vm_emiAll(t,regi,enty) 
-  =e= 
-    vm_emiTe(t,regi,enty) 
-  + vm_emiMac(t,regi,enty) 
-  + vm_emiCdr(t,regi,enty) 
+q_emiAll(t,regi,emi(enty))..
+  vm_emiAll(t,regi,enty)
+  =e=
+    vm_emiTe(t,regi,enty)
+  + vm_emiMac(t,regi,enty)
+  + vm_emiCdr(t,regi,enty)
   + pm_emiExog(t,regi,enty)
 ;
 
-***------------------------------------------------------
-*' Total global emissions are calculated for each GHG emission type and links the energy system to the climate module.
-***------------------------------------------------------
-*LB* calculate total global emissions for each timestep - link to the climate module
-q_emiAllGlob(t,emi(enty)).. 
-  vm_emiAllGlob(t,enty) 
-  =e= 
-  sum(regi, 
-    vm_emiAll(t,regi,enty) 
-  + pm_emissionsForeign(t,regi,enty)
-  )
-;
 
 ***------------------------------------------------------
 *' Total regional emissions in CO2 equivalents that are part of the climate policy  are computed based on regional GHG
@@ -836,10 +824,6 @@ q_limitSo2(ttot+1,regi) $((pm_ttot_val(ttot+1) ge max(cm_startyear,2055)) AND (c
          =l=
          vm_emiTe(ttot,regi,"so2");
 
-q_limitCO2(ttot+1,regi) $((pm_ttot_val(ttot+1) ge max(cm_startyear,2055)) AND (ttot.val le 2100) AND (cm_emiscen eq 8)) ..
-         vm_emiTe(ttot+1,regi,"co2")
-         =l=
-         vm_emiTe(ttot,regi,"co2");
 
 ***---------------------------------------------------------------------------
 *' Adjustment costs - calculation of the relative change to last time step 
@@ -904,17 +888,18 @@ q_changeProdStartyearCost(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyea
 ***---------------------------------------------------------------------------
 *' The use of early retirement is restricted by the following equations:
 ***---------------------------------------------------------------------------
-q_limitCapEarlyReti(ttot,regi,te)$(ttot.val lt 2109 AND pm_ttot_val(ttot+1) ge max(2010, cm_startyear))..
-        vm_capEarlyReti(ttot+1,regi,te)
+q_limitCapEarlyReti(ttot,regi,te)$(ttot.val le 2100 AND pm_ttot_val(ttot) ge max(2010, cm_startyear)).. !! 2000 doesn't have capacity, so for cm_startyear = 2005 the equation should not be applied
+        vm_capEarlyReti(ttot,regi,te)
         =g=
-        vm_capEarlyReti(ttot,regi,te);
+        vm_capEarlyReti(ttot-1,regi,te);
 
-q_smoothphaseoutCapEarlyReti(ttot,regi,te)$(ttot.val lt 2120 AND pm_ttot_val(ttot+1) gt max(2010, cm_startyear))..
-        vm_capEarlyReti(ttot+1,regi,te)
+q_smoothphaseoutCapEarlyReti(ttot,regi,te)$(ttot.val le 2100 AND pm_ttot_val(ttot) ge max(2010, cm_startyear)).. !! 2000 doesn't have capacity, so for cm_startyear = 2005 the equation should not be applied
+        vm_capEarlyReti(ttot,regi,te)
         =l=
-        vm_capEarlyReti(ttot,regi,te) + (pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * 
+        vm_capEarlyReti(ttot-1,regi,te) + 
 *** Region- and tech-specific max early retirement rates, e.g. more retirement possible for coal power plants in CHA, EUR, REF and USA to account for relatively old fleet or short historical lifespans
-        pm_regiEarlyRetiRate(ttot,regi,te) 
+        ( pm_ttot_val(ttot) - pm_ttot_val(ttot-1) ) * 
+        ( pm_regiEarlyRetiRate(ttot,regi,te) + 0.2$( (ttot.val eq 2010) AND sameas(te,"pc") ) ) !! for some (currently unclear) reason, pc needs some extra flexibility in 2010
     ;
 
 

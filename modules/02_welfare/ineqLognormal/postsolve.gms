@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -7,14 +7,18 @@
 *** SOF ./modules/02_welfare/ineqLognormal/postsolve.gms
 
 $IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_FESwitch%" == "on"
-*** track inconvenience penalty for bio/synfuel switching to check how large it is relative to consumption
-p02_inconvPen_Switch_Track(t,regi) = (sum((entySe,entyFe,te,sector,emiMkt)$(se2fe(entySe,entyFe,te) 
-                                                                    AND entyFe2Sector(entyFe,sector) 
-                                                                    AND sector2emiMkt(sector,emiMkt) 
-                                                                    AND (entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe) )), 
-                                                                        v02_NegInconvPenFeBioSwitch.l(t,regi,entySe,entyFe,sector,emiMkt) 
-                                                                        + v02_PosInconvPenFeBioSwitch.l(t,regi,entySe,entyFe,sector,emiMkt))/1e3)
-																		/ vm_cons.l(t,regi);	
+*** track inconvenience penalty for bio/synfuel switching to check how large it
+*** is relative to consumption
+p02_inconvPen_Switch_Track(t,regi)
+  = sum((entySe,entyFe,te,sector,emiMkt)$(
+                                    se2fe(entySe,entyFe,te) 
+                                AND entyFe2Sector(entyFe,sector) 
+                                AND sector2emiMkt(sector,emiMkt) 
+                                AND (entySeBio(entySe) OR  entySeFos(entySe) )), 
+      v02_NegInconvPenFeBioSwitch.l(t,regi,entySe,entyFe,sector,emiMkt) 
+    + v02_PosInconvPenFeBioSwitch.l(t,regi,entySe,entyFe,sector,emiMkt)
+    )
+  / 1e3;
 $ENDIF.INCONV_bioSwitch
 
 *for use in the SCC calculation
@@ -30,7 +34,5 @@ loop(ttot$(ttot.val ge 2005),
 
 * assume sigma is flat from 2150 on (only enters damage calculations in the far future)
 pm_sccIneq(tall,regi)$(tall.val ge 2150) = pm_sccIneq("2149",regi); 
-
-
 
 *** EOF ./modules/02_welfare/ineqLognormal/postsolve.gms

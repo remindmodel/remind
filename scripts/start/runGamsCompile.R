@@ -1,11 +1,18 @@
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
 #' compile a modelFile with a cfg 
 #'
 #' @param modelFile filename of model file to be compiled
 #' @param cfg list with REMIND configuration
 #' @param interactive boolean, if TRUE, will ask user to compile again after fails
+#' @param testmode boolean. In test mode, don't update sets and input data
 #' @author Oliver Richters
 #' @return boolean whether compilation was successful
-runGamsCompile <- function(modelFile, cfg, interactive = TRUE) {
+runGamsCompile <- function(modelFile, cfg, interactive = TRUE, testmode = FALSE) {
   # Define colors for output
   red   <- "\033[0;31m"
   green <- "\033[0;32m"
@@ -13,12 +20,17 @@ runGamsCompile <- function(modelFile, cfg, interactive = TRUE) {
   gcdir <- file.path(dirname(modelFile), "output", "gamscompile")
   dir.create(gcdir, recursive = TRUE, showWarnings = FALSE)
   tmpModelFile <- file.path(gcdir, paste0("main_", cfg$title, ".gms"))
+  tmpModelLst <- gsub("gms$", "lst", tmpModelFile)
   file.copy(modelFile, tmpModelFile, overwrite = TRUE)
+  if (! testmode) {
+    unlink(file.path("modules", c("45_carbonprice", "46_carbonpriceRegi"), "NDC", "input", "pm_BAU_reg_emi_wo_LU_bunkers.cs4r"))
+    updateSets(cfg)
+    updateInputData(cfg, verbose = FALSE)
+  }
   lucode2::manipulateConfig(tmpModelFile, cfg$gms)
   exitcode <- system2(
     command = cfg$gamsv,
-    args = paste(tmpModelFile, "-o", gsub("gms$", "lst", tmpModelFile),
-                 "-action=c -errmsg=1 -pw=132 -ps=0 -logoption=0"))
+    args = paste(tmpModelFile, "-o", tmpModelLst, "-action=c -errmsg=1 -pw=132 -ps=0 -logoption=0"))
   if (0 < exitcode) {
     message(red, "FAIL ", NC, gsub("gms$", "lst", tmpModelFile))
     if (interactive) {
@@ -33,6 +45,9 @@ runGamsCompile <- function(modelFile, cfg, interactive = TRUE) {
     return(FALSE)
   } else {
     message(green, " OK  ", NC, gsub("gms$", "lst", tmpModelFile))
+    if (isTRUE(grepl("TESTTHAT_scenario_config", cfg$title))) { # for test_04-gamscompile
+      unlink(c(tmpModelFile, tmpModelLst))
+    }
     return(TRUE)
   }
 }

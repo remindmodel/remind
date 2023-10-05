@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -11,7 +11,12 @@
 
 if((cm_emiscen eq 9),
 
+p45_tau_co2_tax(ttot, regi) = 0;
+
+$ifthen exist "./modules/45_carbonprice/exogenous/input/p45_tau_co2_tax.inc"
 $include "./modules/45_carbonprice/exogenous/input/p45_tau_co2_tax.inc"
+$endif
+
 pm_taxCO2eq(ttot,regi)$(ttot.val ge 2005) = p45_tau_co2_tax(ttot,regi);
 
 else

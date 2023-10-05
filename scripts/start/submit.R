@@ -1,4 +1,4 @@
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -61,15 +61,21 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
         message("   Generating lockfile '", file.path(cfg$results_folder, "renv.lock"), "'... ", appendLF = FALSE)
         # suppress output of renv::snapshot
         utils::capture.output({
-          utils::capture.output({
-            # snapshot current main renv into run folder
-            renv::snapshot(lockfile = file.path(cfg$results_folder, "_renv.lock"), prompt = FALSE)
+          errorMessage <- utils::capture.output({
+            snapshotSuccess <- tryCatch({
+              # snapshot current main renv into run folder
+              renv::snapshot(lockfile = file.path(cfg$results_folder, "_renv.lock"), prompt = FALSE)
+              TRUE
+            }, error = function(error) FALSE)
           }, type = "message")
         })
+        if (!snapshotSuccess) {
+          stop(paste(errorMessage, collapse = "\n"))
+        }
         message("done.")
       } else {
         # a run renv is loaded, we are presumably starting new run in a cascade
-        message("Copying lockfile into '", cfg$results_folder, "'")
+        message("   Copying lockfile into '", cfg$results_folder, "'")
         file.copy(renv::paths$lockfile(), file.path(cfg$results_folder, "_renv.lock"))
       }
 
@@ -124,7 +130,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
   } else {
     exitCode <- system(paste0("sbatch --job-name=",
                               cfg$title,
-                              " --output=log.txt",
+                              " --output=log.txt --open-mode=append", # append for requeued jobs
                               " --mail-type=END",
                               " --comment=REMIND",
                               " --wrap=\"Rscript prepareAndRun.R \" ",
