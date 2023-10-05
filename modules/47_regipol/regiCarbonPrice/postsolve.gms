@@ -113,6 +113,29 @@ p47_emiTargetMkt(ttot,regi, emiMktExt,"netGHG_LULUCFGrassi_noBunkers") =
   p47_emiTargetMkt(ttot,regi, emiMktExt,"netGHG_noBunkers")
   - ( p47_LULUCFEmi_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"));
 
+*** net CO2 per Mkt without bunkers and with Grassi LULUCF shift
+p47_emiTargetMkt(ttot,regi, emiMktExt,"netCO2_LULUCFGrassi_intraRegBunker") =
+  p47_emiTargetMkt(ttot,regi, emiMktExt,"netCO2_noBunkers")
+  - ( p47_LULUCFEmi_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"))
+  + (
+    sum(se2fe(enty,enty2,te),
+      pm_emifac(ttot,regi,enty,enty2,te,"co2")
+      * vm_demFeSector.l(ttot,regi,enty,enty2,"trans","other")
+      ) * 0.35  !!35% of total bunkers in average from 2000-2020 for EU27 + UKI countries according UNFCCC numbers
+  )$((regi_group("EUR_regi",regi)) and (sameas(emiMktExt,"other") or sameas(emiMktExt,"all")));
+
+*** net GHG per Mkt without bunkers and with Grassi LULUCF shift
+p47_emiTargetMkt(ttot,regi, emiMktExt,"netGHG_LULUCFGrassi_intraRegBunker") =
+  p47_emiTargetMkt(ttot,regi, emiMktExt,"netGHG_noBunkers")
+  - ( p47_LULUCFEmi_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"))
+  + (
+    sum(se2fe(enty,enty2,te),
+      pm_emifac(ttot,regi,enty,enty2,te,"co2")
+      * vm_demFeSector.l(ttot,regi,enty,enty2,"trans","other")
+      ) * 0.35  !!35% of total bunkers in average from 2000-2020 for EU27 + UKI countries according UNFCCC numbers
+  )$((regi_group("EUR_regi",regi)) and (sameas(emiMktExt,"other") or sameas(emiMktExt,"all")));
+
+
 ***--------------------------------------------------
 *** Emission markets (EU Emission trading system and Effort Sharing)
 ***--------------------------------------------------
@@ -126,7 +149,6 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
       pm_taxCO2eqSum(t,regi) = 0;
       pm_taxCO2eq(t,regi) = 0;
       pm_taxCO2eqRegi(t,regi) = 0;
-      pm_taxCO2eqHist(t,regi) = 0;
       pm_taxCO2eqSCC(t,regi) = 0;
 
       pm_taxrevGHG0(t,regi) = 0;
@@ -172,8 +194,13 @@ pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) = pm_emiMktTa
 loop((ext_regi,ttot2)$regiANDperiodEmiMktTarget_47(ttot2,ext_regi),
   p47_targetConverged(ttot2,ext_regi) = 1;
   loop((ttot,emiMktExt,target_type_47,emi_type_47)$((pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47))),
-    if((abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) > 0.01), !! if any emiMKt target did not converged
-      p47_targetConverged(ttot2,ext_regi) = 0;
+    loop(regi$regi_groupExt(ext_regi,regi),
+      loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
+***     if emiMKt target did not converged and we are not forcing negative prices (if the price is at minimal level (1$/tCO2) and current emissions are lower than the target) 
+        if(((abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) gt cm_emiMktTarget_tolerance) and (not ((pm_taxemiMkt(ttot2,regi,emiMkt) eq 1*sm_DptCO2_2_TDpGtC) and (pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) lt 0)))), !! if emiMKt target did not converged and 
+          p47_targetConverged(ttot2,ext_regi) = 0;
+        );
+      );
     );
   );
 );
@@ -183,58 +210,18 @@ p47_targetConverged_iter(iteration,ttot2,ext_regi) = p47_targetConverged(ttot2,e
 loop(ext_regi$regiEmiMktTarget(ext_regi),
   p47_allTargetsConverged(ext_regi) = 1;
   loop((ttot)$regiANDperiodEmiMktTarget_47(ttot,ext_regi),
-    if(not (p47_targetConverged(ttot,ext_regi)),
+    if(p47_targetConverged(ttot,ext_regi) eq 0,
       p47_allTargetsConverged(ext_regi) = 0;
     );
   );
 );
 p47_allTargetsConverged_iter(iteration,ext_regi) = p47_allTargetsConverged(ext_regi);
 
-*** Calculating the emissions tax rescale factor based on previous iterations emission reduction
-loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47),
-  loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
-    loop(regi$regi_groupExt(ext_regi,regi),
-***   initiliazing first iteration rescale factor based on remaining deviation
-      if(iteration.val eq 1,
-        pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = (1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) ** 2;
-***   else if for the extreme case of a perfect match with no change between the two previous iteration emisssion taxes, in order to avoid a division by zero error, assume the rescale factor based on remaining deviation
-      elseif(((iteration.val eq 2) and (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) eq pm_taxemiMkt_iteration("1",ttot2,regi,emiMkt))) or
-             ((iteration.val gt 2) and (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) eq pm_taxemiMkt_iteration("2",ttot2,regi,emiMkt)))),
-        pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = (1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) ** 2;
-***   else using previous iteration information to define rescale factor  
-***   calculate rescale factor based on slope of previous iterations mitigation levels when compared to relative price difference          
-      else
-        if(iteration.val eq 2,
-          p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) =
-            (p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - p47_emiMktCurrent_iter("1",ttot,ttot2,ext_regi,emiMktExt))
-            /
-            (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration("1",ttot2,regi,emiMkt))
-          ;
-***     for iterations greater than 2, always calculate the slope relative to the second iteration
-        else
-          p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) =
-            (p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - p47_emiMktCurrent_iter("2",ttot,ttot2,ext_regi,emiMktExt))
-            /
-            (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration("2",ttot2,regi,emiMkt))
-          ;
-        );
-***     emission tax rescale factor
-        pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = 
-          (
-            (pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) - p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt))
-            / 
-            (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) * pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt))
-          ) + 1;
-      );
-    );    
-  );
-);
-p47_factorRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt);
-p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt); !!save rescale factor across iterations for debugging of target convergence issues
-
+*** define current target to be solved
+p47_currentConvergence_iter(iteration,ttot,ext_regi) = 0;
 loop(ext_regi$regiEmiMktTarget(ext_regi),
 *** solving targets sequentially, i.e. only apply target convergence algorithm if previous yearly targets were already achieved
-  if(not(p47_allTargetsConverged(ext_regi)), !!no rescale need if all targets already converged
+  if(not(p47_allTargetsConverged(ext_regi) eq 1), !!no rescale need if all targets already converged
 *** define current target to be solved
     loop((ttot)$regiANDperiodEmiMktTarget_47(ttot,ext_regi),
       p47_currentConvergencePeriod(ext_regi) = ttot.val;
@@ -244,15 +231,70 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
       p47_nextConvergencePeriod(ext_regi) = ttot.val;
       break;
     );
+    loop((ttot,ttot2,emiMktExt,target_type_47,emi_type_47)$(pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) AND (ttot2.val eq p47_currentConvergencePeriod(ext_regi))),
+      p47_currentConvergence_iter(iteration,ttot2,ext_regi) = 1;
+    );
+  );
+);
+
+*** reference iteration from which to calculate the mitigation cost slope.
+loop((ext_regi,ttot)$regiANDperiodEmiMktTarget_47(ttot,ext_regi),
+  if(ord(iteration) eq 1,
+    p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = 1;
+  elseif(NOT(p47_currentConvergence_iter(iteration,ttot,ext_regi) eq p47_currentConvergence_iter(iteration-1,ttot,ext_regi))), !! reset the iteration reference for slope calculation if the target that is being analyzed changes
+    p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = ord(iteration);
+  else
+    p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = p47_slopeReferenceIteration_iter(iteration-1,ttot,ext_regi);
+  );
+);
+
+
+*** Calculating the emissions tax rescale factor based on previous iterations emission reduction
+loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47),
+  loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
+    loop(regi$regi_groupExt(ext_regi,regi),
+      loop(iteration2$((iteration2.val le iteration.val) and (iteration2.val eq p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi))), !!reference iteration for slope calculation
+***     if it is the first iteration or the reference iteration changed, initialize the rescale factor based on remaining deviation
+        if(iteration.val eq p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi),
+          pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = (1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) ** 2;
+***     else if for the extreme case of a perfect match with no change between the two iterations emisssion taxes used in the slope calculation, in order to avoid a division by zero error assume the rescale factor based on remaining deviation
+        elseif((pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) eq pm_taxemiMkt_iteration(iteration2,ttot2,regi,emiMkt))),
+          pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = (1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) ** 2;
+***     else, use previous iteration information to define rescale factor  
+        else
+***       calculate the slope of previous iterations mitigation levels when compared to relative price difference          
+          p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) =
+            (p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - p47_emiMktCurrent_iter(iteration2,ttot,ttot2,ext_regi,emiMktExt))
+            /
+            (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration(iteration2,ttot2,regi,emiMkt))
+          ;
+***       calculate the tax rescale factor using the above calculated slope
+          pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = 
+            (
+              (pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) - p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt))
+              / 
+              (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) * pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt))
+            ) + 1;
+        );
+      );
+    );    
+  );
+);
+p47_factorRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt);
+p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt); !!save rescale factor across iterations for debugging of target convergence issues
+
+loop(ext_regi$regiEmiMktTarget(ext_regi),
+*** solving targets sequentially, i.e. only apply target convergence algorithm if previous yearly targets were already achieved
+  if(not(p47_allTargetsConverged(ext_regi) eq 1), !!no rescale need if all targets already converged
 *** updating the emiMkt co2 tax for the first non converged yearly target  
     loop((ttot,ttot2,emiMktExt,target_type_47,emi_type_47)$(pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) AND (ttot2.val eq p47_currentConvergencePeriod(ext_regi))),
       loop(emiMkt$emiMktGroup(emiMktExt,emiMkt),
-        loop(regi$regi_groupExt(ext_regi,regi),
+        loop(regi$regiEmiMktTarget2regi_47(ext_regi,regi),
 ***       terminal year price
           if((iteration.val eq 1) and (pm_taxemiMkt(ttot2,regi,emiMkt) eq 0), !!intialize price for first iteration if it is missing 
             pm_taxemiMkt(ttot2,regi,emiMkt) = 1* sm_DptCO2_2_TDpGtC;    
-          else !!update price using rescaling factor
-            pm_taxemiMkt(ttot2,regi,emiMkt) = pm_taxemiMkt(ttot2,regi,emiMkt) * pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt);
+          else !!update price using rescaling factor (Minimal aceptable price = 1 dollar/tCO2)
+            pm_taxemiMkt(ttot2,regi,emiMkt) = max(1* sm_DptCO2_2_TDpGtC, pm_taxemiMkt(ttot2,regi,emiMkt) * pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)); 
           );
 ***       linear price between first free year and current target terminal year
           loop(ttot3,
@@ -266,20 +308,26 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
           loop(ttot3$(ttot3.val eq s47_prefreeYear), !! ttot3 = beginning of slope; ttot2 = end of slope
             pm_taxemiMkt(t,regi,emiMkt)$((t.val ge s47_firstFreeYear) AND (t.val lt ttot2.val))  = pm_taxemiMkt(ttot3,regi,emiMkt) + ((pm_taxemiMkt(ttot2,regi,emiMkt) - pm_taxemiMkt(ttot3,regi,emiMkt))/(ttot2.val-ttot3.val))*(t.val-ttot3.val); 
           );
-***         if not last year target, then assume weighted average convergence price between current target terminal year (ttot2.val) and next target year (p47_nextConvergencePeriod)
-          if((not(ttot2.val eq p47_lastTargetYear(ext_regi))),
-            p47_averagetaxemiMkt(t,regi) = 
-              (pm_taxemiMkt(t,regi,"ETS")*p47_emiTargetMkt(t,regi,"ETS",emi_type_47) + pm_taxemiMkt(t,regi,"ES")*p47_emiTargetMkt(t,regi,"ESR",emi_type_47) + pm_taxemiMkt(t,regi,"other")*p47_emiTargetMkt(t,regi,"other",emi_type_47))
-              /
-              (p47_emiTargetMkt(t,regi,"ETS",emi_type_47) + p47_emiTargetMkt(t,regi,"ESR",emi_type_47) + p47_emiTargetMkt(t,regi,"other",emi_type_47));
-            loop(ttot3$(ttot3.val eq p47_nextConvergencePeriod(ext_regi)), !! ttot2 = beginning of slope; ttot3 = end of slope
-              pm_taxemiMkt(ttot3,regi,emiMkt) = p47_averagetaxemiMkt(ttot3,regi);
-              pm_taxemiMkt(t,regi,emiMkt)$((t.val gt ttot2.val) AND (t.val lt ttot3.val)) = pm_taxemiMkt(ttot2,regi,emiMkt) + ((pm_taxemiMkt(ttot3,regi,emiMkt) - pm_taxemiMkt(ttot2,regi,emiMkt))/(ttot3.val-ttot2.val))*(t.val-ttot2.val); !! price in between current target year and next target year
-              pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot3.val) = pm_taxemiMkt(ttot3,regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot3.val); !! price after next target year
-            );
-          else
-***         fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
+***       if last year target, fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
+          if((ttot2.val eq p47_lastTargetYear(ext_regi)),
             pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot2.val) = pm_taxemiMkt(ttot2,regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot2.val);
+***       if not last year target, define price trajectory for years after the current target terminal year
+          else 
+            loop(ttot3$(ttot3.val eq p47_nextConvergencePeriod(ext_regi)), !! ttot3 = next convergence terminal year
+***           if next target was executed at least once by the algorithm, update next target initial year value to the value adjusted in this iteration and linearly converge it to the previously set target terminal year 
+              if(sum(iteration2, p47_currentConvergence_iter(iteration2,ttot3,ext_regi)) gt 0, !! ttot2 = beginning of next target slope; ttot3 = end of slope
+                pm_taxemiMkt(t,regi,emiMkt)$((t.val gt ttot2.val) AND (t.val lt ttot3.val)) = pm_taxemiMkt(ttot2,regi,emiMkt) + ((pm_taxemiMkt(ttot3,regi,emiMkt) - pm_taxemiMkt(ttot2,regi,emiMkt))/(ttot3.val-ttot2.val))*(t.val-ttot2.val); !! price in between current target year and next target year
+***           else if next target was never executed by the algorithm yet, initialize next target value as weighted average convergence price between current target terminal year (ttot2.val) and next target year (p47_nextConvergencePeriod)
+              else
+                p47_averagetaxemiMkt(t,regi) = 
+                  (pm_taxemiMkt(t,regi,"ETS")*p47_emiTargetMkt(t,regi,"ETS",emi_type_47) + pm_taxemiMkt(t,regi,"ES")*p47_emiTargetMkt(t,regi,"ESR",emi_type_47) + pm_taxemiMkt(t,regi,"other")*p47_emiTargetMkt(t,regi,"other",emi_type_47))
+                  /
+                  (p47_emiTargetMkt(t,regi,"ETS",emi_type_47) + p47_emiTargetMkt(t,regi,"ESR",emi_type_47) + p47_emiTargetMkt(t,regi,"other",emi_type_47));
+                pm_taxemiMkt(ttot3,regi,emiMkt) = p47_averagetaxemiMkt(ttot2,regi); !! ttot2 = beginning of slope; ttot3 = end of slope
+                pm_taxemiMkt(t,regi,emiMkt)$((t.val gt ttot2.val) AND (t.val lt ttot3.val)) = pm_taxemiMkt(ttot2,regi,emiMkt) + ((pm_taxemiMkt(ttot3,regi,emiMkt) - pm_taxemiMkt(ttot2,regi,emiMkt))/(ttot3.val-ttot2.val))*(t.val-ttot2.val); !! price in between current target year and next target year
+                pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot3.val) = pm_taxemiMkt(ttot3,regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot3.val); !! price after next target year
+              );
+            );
           );
         );
       );
@@ -331,45 +379,59 @@ $ENDIF.emiMkt
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 
 *** saving previous iteration value for implicit tax revenue recycling
+*** the same line exists in presolve.gms, don't forget to update there
 p47_implicitQttyTargetTax_prevIter(t,regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup);
 p47_implicitQttyTargetTax0(t,regi) =
   sum((qttyTarget,qttyTargetGroup)$p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup),
-    ( p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(entyPe$energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(t,regi,entyPe,entySe,te))) 
-    )$(sameas(qttyTarget,"PE")) 
-    +
-    ( p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(entySe$energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(t,regi,entySe,entyFe,te))) 
-    )$(sameas(qttyTarget,"SE")) 
-    +
-    ( p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) 
-    )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
-    +
-    ( p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(t,regi,enty,enty2,te,rlf)))
-    )$(sameas(qttyTarget,"CCS"))    
+    p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * (
+      ( sum(entyPe$energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(t,regi,entyPe,entySe,te)))
+      )$(sameas(qttyTarget,"PE"))
+      +
+      ( sum(entySe$energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(t,regi,entySe,entyFe,te)))
+      )$(sameas(qttyTarget,"SE"))
+      +
+      ( sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt))))
+      )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
+      +
+      ( sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(t,regi,enty,enty2,te,rlf)))
+      )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"all"))
+      +
+      (( !! Supply side BECCS
+        sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail.l(t,regi,enty,enty2,te,enty3))
+        !! Industry BECCS (using biofuels in Industry with CCS)
+      + sum((emiMkt,entySe,secInd37,entyFe)$entySeBio(entySe), pm_IndstCO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt))
+      ) * pm_share_CCS_CCO2(t,regi) )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"biomass"))
+    )
   )
 ;
 
 ***  Calculating current quantity target levels (PE, SE, FE and/or CCS level)
 loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
-  if(sameas(targetType,"t"), !!absolute target (t=total) 
-    p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 
+  if(sameas(targetType,"t"), !!absolute target (t=total)
+    p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
       ( sum(regi$regi_groupExt(ext_regi,regi), sum(entyPe$energyQttyTargetANDGroup2enty("PE",qttyTargetGroup,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(ttot,regi,entyPe,entySe,te))) )
-      )$(sameas(qttyTarget,"PE")) 
+      )$(sameas(qttyTarget,"PE"))
       +
       ( sum(regi$regi_groupExt(ext_regi,regi), sum(entySe$energyQttyTargetANDGroup2enty("SE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(ttot,regi,entySe,entyFe,te))) )
-      )$(sameas(qttyTarget,"SE")) 
+      )$(sameas(qttyTarget,"SE"))
       +
       ( sum(regi$regi_groupExt(ext_regi,regi),  sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))) )
         + ( - ( sum(regi$regi_groupExt(ext_regi,regi), sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
         )$(sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
         +
         ( - ( p47_nonEnergyUse(ttot,ext_regi) )$((sameas(qttyTargetGroup,"all") or sameas(qttyTargetGroup,"fossil"))) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
-        )$(sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e")) 
+        )$(sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
       )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
       +
       ( sum(regi$regi_groupExt(ext_regi,regi), sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf))))
-      )$(sameas(qttyTarget,"CCS")) 
-    ;
-  ); 
+      )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"all"))
+      +
+      sum(regi$regi_groupExt(ext_regi,regi), ( !! Supply side BECCS
+        sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail.l(ttot,regi,enty,enty2,te,enty3))
+        !! Industry BECCS (using biofuels in Industry with CCS)
+      + sum((emiMkt,entySe,secInd37,entyFe)$entySeBio(entySe), pm_IndstCO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt))
+      ) * pm_share_CCS_CCO2(ttot,regi))$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"biomass"))
+  );
   if(sameas(targetType,"s"), !!relative target (s=share) (not applied to CCS)
     p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 
       (
@@ -423,16 +485,16 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
 loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
   if(sameas(taxType,"tax"),
     if(iteration.val lt 15,
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 4;
+      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 4);
     else
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 2;
+      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 2);
     );  
   );
   if(sameas(taxType,"sub"),
     if(iteration.val lt 15,
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 4;
+      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 4);
     else
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 2;
+      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 2);
     );  
   );
   put_utility "msg" / "p47_implicitQttyTargetTaxRescale before dampening:" ttot.tl ext_regi.tl  qttyTarget.tl qttyTargetGroup.tl p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) ; 
@@ -715,7 +777,6 @@ loop((ttot,ext_regi)$p47_exoCo2tax(ext_regi,ttot),
   pm_taxCO2eqSum(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
   pm_taxCO2eq(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
   pm_taxCO2eqRegi(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
-  pm_taxCO2eqHist(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
   pm_taxCO2eqSCC(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
 
   pm_taxrevGHG0(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;

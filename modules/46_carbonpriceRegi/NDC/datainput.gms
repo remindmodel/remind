@@ -22,7 +22,7 @@ $onlisting
 ;
 
 Parameter p46_factorTargetyear(ttot,all_regi) "Multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region";
-p46_factorTargetyear(ttot,all_regi) = f46_factorTargetyear(ttot,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
+p46_factorTargetyear(t,all_regi) = f46_factorTargetyear(t,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
 
 display p46_factorTargetyear;
 
@@ -91,22 +91,22 @@ Parameter p46_bestNDCcoverage(all_regi)         "highest coverage of NDC targets
 Parameter p46_distanceToOptyear(ttot,all_regi)  "distance to p46_useSingleYearCloseTo to favor years in case of multiple equally good targets";
 Parameter p46_minDistanceToOptyear(all_regi)    "minimal distance to p46_useSingleYearCloseTo per region";
 
-p46_bestNDCcoverage(regi) = smax(ttot$(ttot.val <= p46_ignoreNDCafter AND ttot.val >= p46_ignoreNDCbefore), p46_2005shareTarget(ttot,regi));
+p46_bestNDCcoverage(regi) = smax(t$(t.val <= p46_ignoreNDCafter AND t.val >= p46_ignoreNDCbefore), p46_2005shareTarget(t,regi));
 display p46_bestNDCcoverage;
 
-p46_NDCyearSet(ttot,regi)$(ttot.val <= p46_ignoreNDCafter AND ttot.val >= p46_ignoreNDCbefore) = p46_2005shareTarget(ttot,regi) >= p46_minRatioOfCoverageToMax * p46_bestNDCcoverage(regi);
+p46_NDCyearSet(t,regi)$(t.val <= p46_ignoreNDCafter AND t.val >= p46_ignoreNDCbefore) = p46_2005shareTarget(t,regi) >= p46_minRatioOfCoverageToMax * p46_bestNDCcoverage(regi);
 
 if(p46_useSingleYearCloseTo > 0,
-  p46_distanceToOptyear(p46_NDCyearSet(ttot,regi)) = abs(ttot.val - p46_useSingleYearCloseTo);
-  p46_minDistanceToOptyear(regi) = smin(ttot$(p46_NDCyearSet(ttot,regi)), p46_distanceToOptyear(ttot,regi));
-  p46_NDCyearSet(ttot,regi) = p46_distanceToOptyear(ttot,regi) = p46_minDistanceToOptyear(regi);
+  p46_distanceToOptyear(p46_NDCyearSet(t,regi)) = abs(t.val - p46_useSingleYearCloseTo);
+  p46_minDistanceToOptyear(regi) = smin(t$(p46_NDCyearSet(t,regi)), p46_distanceToOptyear(t,regi));
+  p46_NDCyearSet(t,regi) = p46_distanceToOptyear(t,regi) = p46_minDistanceToOptyear(regi);
 );
 
 *** first and last NDC year as a number
 Parameter p46_firstNDCyear(all_regi) "last year with NDC coverage within region";
-p46_firstNDCyear(regi) = smin( p46_NDCyearSet(ttot, regi), ttot.val );
+p46_firstNDCyear(regi) = smin( p46_NDCyearSet(t, regi), t.val );
 Parameter p46_lastNDCyear(all_regi)  "last year with NDC coverage within region";
-p46_lastNDCyear(regi)  = smax( p46_NDCyearSet(ttot, regi), ttot.val );
+p46_lastNDCyear(regi)  = smax( p46_NDCyearSet(t, regi), t.val );
 
 display p46_NDCyearSet,p46_firstNDCyear,p46_lastNDCyear;
 
