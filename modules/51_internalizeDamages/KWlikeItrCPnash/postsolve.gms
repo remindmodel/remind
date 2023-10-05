@@ -55,8 +55,8 @@ display p51_scc,pm_taxCO2eqSCC;
 
 
 * convergence indicator:
-p51_sccConvergenceMaxDeviation(regi) = 100 * smax(tall$(tall.val ge cm_startyear and tall.val lt 2150),abs(p51_scc(tall,regi)/max(p51_sccLastItr(tall,regi),1e-8) - 1) );
-display p51_sccConvergenceMaxDeviation;
+pm_sccConvergenceMaxDeviation(regi) = 100 * smax(tall$(tall.val ge cm_startyear and tall.val lt 2150),abs(p51_scc(tall,regi)/max(p51_sccLastItr(tall,regi),1e-8) - 1) );
+display pm_sccConvergenceMaxDeviation;
 
 
 *** EOF ./modules/51_internalizeDamages/KWlikeItrCPnash/postsolve.gms
