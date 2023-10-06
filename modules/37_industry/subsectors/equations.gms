@@ -141,7 +141,7 @@ q37_emiIndBase(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
     +
     sum((secInd37_tePrc(secInd37,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
-        v37_emiPrc(ttot,regi,tePrc,opmoPrc)
+        v37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc)
     )$(secInd37Prc(secInd37))
 $endif.process_based_steel
 ;
@@ -150,15 +150,13 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
 ***------------------------------------------------------
 *' Emission from process based industry sector (pre CC)
 ***------------------------------------------------------
-q37_emiPrc(t,regi,tePrc,opmoPrc) ..
-    v37_emiPrc(t,regi,tePrc,opmoPrc)
-  =e=  
-    sum(entyFE, 
-      p37_specFeDem(t,regi,entyFE,tePrc,opmoPrc) 
-      * 
-      sum(se2fe(entySEfos,entyFE,te), 
-        pm_emifac(t,regi,entySEfos,entyFE,te,"co2")) 
-    )
+q37_emiPrc(t,regi,entyFE,tePrc,opmoPrc) ..
+    v37_emiPrc(t,regi,entyFE,tePrc,opmoPrc)
+  =e=
+    p37_specFeDem(t,regi,entyFE,tePrc,opmoPrc)
+    *
+    sum(se2fe(entySEfos,entyFE,te),
+      pm_emifac(t,regi,entySEfos,entyFE,te,"co2"))
     *
     v37_outflowPrc(t,regi,tePrc,opmoPrc)
 ;
@@ -167,9 +165,9 @@ q37_emiPrc(t,regi,tePrc,opmoPrc) ..
 *' Carbon capture processes can only capture as much co2 as the base process emits
 ***------------------------------------------------------
 q37_limitOutflowCCPrc(t,regi,tePrc) ..
-    sum(tePrc2opmoPrc(tePrc,opmoPrc),
-      v37_emiPrc(t,regi,tePrc,opmoPrc))
-  =g=  
+    sum((entyFE,tePrc2opmoPrc(tePrc,opmoPrc)),
+      v37_emiPrc(t,regi,entyFE,tePrc,opmoPrc))
+  =g=
     sum((tePrc2teCCPrc(tePrc,teCCPrc),
          tePrc2opmoPrc(teCCPrc,opmoPrc)),
       1. / p37_captureRate(teCCPrc,opmoPrc)
@@ -182,13 +180,14 @@ q37_limitOutflowCCPrc(t,regi,tePrc) ..
 ***------------------------------------------------------
 *' Emission captured from process based industry sector
 ***------------------------------------------------------
-q37_emiCCPrc(t,regi,emiInd37)$(secInd37_2_emiInd37(secInd37Prc,emiInd37)) ..
+q37_emiCCPrc(t,regi,emiInd37)$( sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
     vm_emiIndCCS(t,regi,emiInd37)
-  =e= 
+  =e=
     sum((secInd37_2_emiInd37(secInd37Prc,emiInd37),
          secInd37_tePrc(secInd37Prc,tePrc),
-         tePrc2opmoPrc(tePrc,opmoPrc)), 
-      v37_outflowPrc(t,regi,tePrc,opmoPrc)
+         tePrc2teCCPrc(tePrc,teCCPrc),
+         tePrc2opmoPrc(teCCPrc,opmoPrc)),
+      v37_outflowPrc(t,regi,teCCPrc,opmoPrc)
     )
 ;
 $endif.process_based_steel
@@ -197,7 +196,7 @@ $endif.process_based_steel
 *' Compute maximum possible CCS level in industry sub-sectors given the current
 *' CO2 price.
 ***------------------------------------------------------
-q37_emiIndCCSmax(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND NOT secInd37_2_emiInd37(secInd37Prc,emiInd37) ) ..
+q37_emiIndCCSmax(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND NOT sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
   v37_emiIndCCSmax(ttot,regi,emiInd37)
   =e=
     !! map sub-sector emissions to sub-sector MACs
@@ -220,7 +219,7 @@ q37_emiIndCCSmax(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND NOT secInd37
 ***------------------------------------------------------
 *' Limit industry CCS to maximum possible CCS level.
 ***------------------------------------------------------
-q37_IndCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND NOT secInd37_2_emiInd37(secInd37Prc,emiInd37) ) ..
+q37_IndCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND NOT sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
   vm_emiIndCCS(ttot,regi,emiInd37)
   =l=
   v37_emiIndCCSmax(ttot,regi,emiInd37)
@@ -242,7 +241,7 @@ q37_cementCCS(ttot,regi)$(    ttot.val ge cm_startyear
 ***------------------------------------------------------
 *' Calculate industry CCS costs.
 ***------------------------------------------------------
-q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND NOT secInd37_2_emiInd37(secInd37Prc,emiInd37) ) ..
+q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND NOT sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
   vm_IndCCSCost(ttot,regi,emiInd37)
   =e=
     1e-3
