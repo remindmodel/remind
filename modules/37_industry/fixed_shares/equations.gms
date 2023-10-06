@@ -25,8 +25,8 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2
 *' industry subsector are calculated from final energy use in industry, the 
 *' subsectors' shares in that final energy carriers use, and the emission 
 *' factor the final energy carrier. 
-q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear  ) .. 
-  vm_macBaseInd(ttot,regi,entyFE,secInd37)
+q37_emiIndBase(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear  ) .. 
+  vm_emiIndBase(ttot,regi,entyFE,secInd37)
   =e=
     sum((fe2ppfEn(entyFE,in),ces_industry_dyn37("enhi",in))$(entyFeCC37(entyFe)),
       ( vm_cesIO(ttot,regi,in) + pm_cesdata(ttot,regi,in,"offset_quantity") )
@@ -44,10 +44,10 @@ q37_emiIndCCSmax(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
   =e=
     sum(emiMac2mac(emiInd37,macInd37),
       ( sum((secInd37_2_emiInd37(secInd37,emiInd37),entyFE),
-          vm_macBaseInd(ttot,regi,entyFE,secInd37)
+          vm_emiIndBase(ttot,regi,entyFE,secInd37)
         )$( NOT sameas(emiInd37,"co2cement_process") )
       + (
-          vm_macBaseInd(ttot,regi,"co2cement_process","cement")
+          vm_emiIndBase(ttot,regi,"co2cement_process","cement")
         )$( sameas(emiInd37,"co2cement_process") )
       )
     * pm_macSwitch(macInd37)
@@ -102,7 +102,7 @@ q37_cementCCS(ttot,regi)$( ttot.val ge cm_startyear
 *' ```
 *' vm_emiIndCCS = 
 *'     0.001
-*'   * vm_macBaseInd
+*'   * vm_emiIndBase
 *'   * sm_dmac
 *'   * ( 32 * 0.3
 *'     - ( 15 * 0
@@ -118,10 +118,10 @@ q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
     1e-3
   * pm_macSwitch(emiInd37)
   * ( sum((enty,secInd37_2_emiInd37(secInd37,emiInd37)),
-        vm_macBaseInd(ttot,regi,enty,secInd37)
+        vm_emiIndBase(ttot,regi,enty,secInd37)
       )$( NOT sameas(emiInd37,"co2cement_process") )
     + (
-        vm_macBaseInd(ttot,regi,"co2cement_process","cement")
+        vm_emiIndBase(ttot,regi,"co2cement_process","cement")
       )$( sameas(emiInd37,"co2cement_process") )
     )
   * sm_dmac

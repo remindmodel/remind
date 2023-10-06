@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/subsectors/datainput.gms
 
-vm_macBaseInd.l(ttot,regi,entyFE,secInd37) = 0;
+vm_emiIndBase.l(ttot,regi,entyFE,secInd37) = 0;
 
 Parameters
 ***-------------------------------------------------------------------------------
@@ -245,11 +245,13 @@ if (cm_IndCCSscen eq 1,
     emiMac2mac("co2chemicals","co2chemicals") = YES;
   );
 
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
   if (cm_CCS_steel eq 1,
     emiMacSector("co2steel") = YES;
     pm_macSwitch("co2steel") = YES;
     emiMac2mac("co2steel","co2steel") = YES;
   );
+$endif.process_based_steel
 );
 
 *** CCS for other industry is off in any case

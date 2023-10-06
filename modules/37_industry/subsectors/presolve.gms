@@ -12,7 +12,7 @@
 *' function.
 *' Last iteration's cement production value is used, since the MAC mechanism is
 *' outside of the optimisation loop.
-vm_macBaseInd.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
+vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
   = s37_clinker_process_CO2
   * p37_clinker_cement_ratio(ttot,regi)
   * vm_cesIO.l(ttot,regi,"ue_cement")

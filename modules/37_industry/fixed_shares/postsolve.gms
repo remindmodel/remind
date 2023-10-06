@@ -28,7 +28,7 @@ o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
 *** industry captured fuel CO2
 pm_IndstCO2Captured(ttot,regi,entySE,entyFE(entyFEcc37),secInd37,emiMkt)$(
                      macBaseInd37(entyFE,secInd37)
-                 AND sum(entyFE2, vm_macBaseInd.l(ttot,regi,entyFE2,secInd37)) )
+                 AND sum(entyFE2, vm_emiIndBase.l(ttot,regi,entyFE2,secInd37)) )
   = ( o37_demFEindsub(ttot,regi,entySE,entyFE,secInd37,emiMkt)
     * sum(se2fe(entySE2,entyFE,te),
         !! collapse entySE dimension, so emission factors apply to all entyFE
@@ -43,7 +43,7 @@ pm_IndstCO2Captured(ttot,regi,entySE,entyFE(entyFEcc37),secInd37,emiMkt)$(
       ) !! subsector captured energy emissions
 
     / sum(entyFE2,
-        vm_macBaseInd.l(ttot,regi,entyFE2,secInd37)
+        vm_emiIndBase.l(ttot,regi,entyFE2,secInd37)
       ) !! subsector total energy emissions
     ) !! subsector capture share
 ;

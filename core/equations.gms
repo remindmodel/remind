@@ -574,10 +574,9 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
 ***   energy emissions fuel extraction
 	+ v_emiEnFuelEx(t,regi,enty)$(sameas(emiMkt,"ETS"))
 ***   Industry CCS emissions
-	- ( sum(emiMac2mac(emiInd37_fuel,enty2),
+	- sum(emiInd37_fuel,
 		  vm_emiIndCCS(t,regi,emiInd37_fuel)
-		)$( sameas(enty,"co2") )
-	)$(sameas(emiMkt,"ETS"))
+		)$( sameas(enty,"co2") AND sameas(emiMkt,"ETS"))
 ***   LP, Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS capacity don't have the same lifetime
   + ( v_co2capturevalve(t,regi)$( sameas(enty,"co2") ) )$(sameas(emiMkt,"ETS"))
 ***  JS CO2 from short-term CCU (short term CCU co2 is emitted again in a time period shorter than 5 years)
@@ -669,7 +668,7 @@ q_emiMacSector(t,regi,emiMacSector(enty))..
       )
     )$( NOT sameas(enty,"co2cement_process") )
 ***   cement process emissions are accounted for in the industry module
-  + ( vm_macBaseInd(t,regi,enty,"cement")
+  + ( vm_emiIndBase(t,regi,enty,"cement")
     - vm_emiIndCCS(t,regi,enty)
     )$( sameas(enty,"co2cement_process") )
 
@@ -713,9 +712,6 @@ q_emiAll(t,regi,emi(enty))..
   =e=
     vm_emiTe(t,regi,enty)
   + vm_emiMac(t,regi,enty)
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
-  + sum(secInd37Prc, vm_emiPrc(t,regi,secInd37Prc))
-$endif.process_based_steel
   + vm_emiCdr(t,regi,enty)
   + pm_emiExog(t,regi,enty)
 ;

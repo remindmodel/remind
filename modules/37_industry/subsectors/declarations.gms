@@ -28,7 +28,6 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
   p37_specFeDemTarget(all_enty,all_te,opmoPrc)                                 "Best available technology (will be reached in convergence year) [TWa/Gt_output]"
   p37_mat2ue(all_enty,all_in)                                                  "Contribution of process output to ue in CES tree [Gt/Gt]"
   p37_captureRate(all_te,opmoPrc)                                              "capture rate of CCS technology"
-  p37_specEmiPrc(tall,all_regi,all_te,opmoPrc)                                 "specific emission from steel without CCS [GtCO2/GtSteel] [tCO2/tSteel]"
 $endif.process_based_steel
 
 *** output parameters only for reporting
@@ -52,16 +51,15 @@ $endif.sec_steel_scen
 ;
 
 Positive Variables
-  vm_macBaseInd(ttot,all_regi,all_enty,secInd37)                            "industry CCS baseline emissions [GtC/a]"
+  vm_emiIndBase(ttot,all_regi,all_enty,secInd37)                            "industry CCS baseline emissions [GtC/a]"
   vm_emiIndCCS(ttot,all_regi,all_enty)                                      "industry CCS emissions [GtC/a]"
   vm_IndCCSCost(ttot,alL_regi,all_enty)                                     "industry CCS cost"
   v37_emIIndCCSmax(ttot,all_regi,emiInd37)                                  "maximum abatable industry emissions"
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  v37_outflowPrc(tall,all_regi,all_te,opmoPrc)                             "Production volume of processes in material-flow model [Gt]"
-  v37_prodMat(tall,all_regi,all_enty)                                      "Production of materials [Gt]"
-  vm_emiPrc(tall,all_regi,secInd37)                                        "industry baseline emissions [GtC/a]"
-  vm_emiCCPrc(tall,all_regi,secInd37)
+  v37_outflowPrc(tall,all_regi,all_te,opmoPrc)                              "Production volume of processes in material-flow model [Gt]"
+  v37_matFlow(tall,all_regi,all_enty)                                       "Production of materials [Gt]"
+  v37_emiPrc(tall,all_regi,all_te,opmoPrc)                                  "Emissions per process and operation mode" 
 $endif.process_based_steel
 ;
 
@@ -70,7 +68,7 @@ $ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
   q37_energy_limits(ttot,all_regi,all_in)                 "thermodynamic/technical limit of energy use"
 $endif.no_calibration
   q37_limit_secondary_steel_share(ttot,all_regi)          "no more than 90% of steel from seconday production"
-  q37_macBaseInd(ttot,all_regi,all_enty,secInd37)         "gross industry emissions before CCS"
+  q37_emiIndBase(ttot,all_regi,all_enty,secInd37)         "gross industry emissions before CCS"
   q37_emiIndCCSmax(ttot,all_regi,emiInd37)                "maximum abatable industry emissions at current CO2 price"
   q37_IndCCS(ttot,all_regi,emiInd37)                      "limit industry emissions abatement"
   q37_cementCCS(ttot,all_regi)                            "link cement fuel and process abatement"
@@ -83,8 +81,9 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
   q37_prodMat(tall,all_regi,mat)                        "Production volume of processes in material-flow model"
   q37_mat2ue(tall,all_regi,all_in)                      "Connect materials production to ue ces tree nodes"
   q37_limitCapMat(tall,all_regi,all_te)                 "Material-flow conversion is limited by capacities"
-  q37_emiPrc(ttot,all_regi,secInd37)           "industry baseline emissions [GtC/a]"
-  q37_emiCCPrc(tall,all_regi,secInd37)                 "captured emission from CCS"
+  q37_emiPrc(ttot,all_regi,all_te,opmoPrc)              "industry baseline emissions [GtC/a]"
+  q37_emiCCPrc(tall,all_regi,emiInd37)                  "captured emission from CCS"
+  q37_limitOutflowCCPrc(tall,all_regi,all_te)           "Carbon capture processes can only capture as much co2 as the base process emits"
 $endif.process_based_steel
 ;
 

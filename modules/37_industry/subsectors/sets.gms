@@ -34,8 +34,6 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     pigiron             "Pig iron"
     driron              "Direct reduced iron"
     ironore             "Iron Ore"
-*   bfco2               "CO2 exiting from BF"
-*   cco2                "captured CO2"
   /
 
   matIn(all_enty)      "Materials which serve as input to a process"
@@ -44,7 +42,6 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     pigiron             "Pig iron"
     driron              "Direct reduced iron"
     ironore             "Iron Ore"
-*   bfco2               "CO2 exiting from BF"
   /
 
   matOut(all_enty)      "Materials which serve as output of a process"
@@ -53,7 +50,6 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     sesteel             "Secondary steel"
     pigiron             "Pig iron"
     driron              "Direct reduced iron"
-*   cco2                "captured CO2"
   /
 
   opmoPrc               "Operation modes for technologies in material-flow model"
@@ -174,6 +170,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
 
     steel . bfcc
   /
+
 $endif.process_based_steel
 
   emiInd37(all_enty)   "industry emissions"
@@ -197,7 +194,9 @@ $endif.process_based_steel
   /
     co2cement
     co2chemicals
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     co2steel
+$endif.process_based_steel
   /
 
   macBaseInd37(all_enty,secInd37)   "FE and industry combinations that have emissions"
@@ -210,9 +209,7 @@ $endif.process_based_steel
   /
     cement    . (co2cement, co2cement_process)
     chemicals . co2chemicals
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     steel     . co2steel
-$endif.process_based_steel
     otherInd  . co2otherInd
   /
 
@@ -512,9 +509,9 @@ $endif.calibrate
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
 teMat2rlf(tePrc,"1") = YES;
 fe2mat(fe2mat_dyn37)       = YES;
+alias(tePrc,teCCPrc);
 $endif.process_based_steel
 
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfen37,fe2ppfen37_2);
-alias(tePrc, tePrc2);
 *** EOF ./modules/37_industry/subsectors/sets.gms

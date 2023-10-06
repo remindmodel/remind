@@ -47,7 +47,7 @@ Variables
 ;
 
 Positive Variables
-  vm_macBaseInd(ttot,all_regi,all_enty,secInd37)   "industry CCS baseline emissions [GtC/a]"
+  vm_emiIndBase(ttot,all_regi,all_enty,secInd37)   "industry CCS baseline emissions [GtC/a]"
   v37_emiIndCCSmax(ttot,all_regi,all_enty)         "max industry CCS emissions [GtC/a]"
   vm_emiIndCCS(ttot,all_regi,all_enty)             "industry CCS emissions [GtC/a]"
   vm_IndCCSCost(ttot,all_regi,all_enty)            "industry CCS cost"
@@ -57,7 +57,7 @@ Positive Variables
 ;
 
 Equations
-  q37_macBaseInd(ttot,all_regi,all_enty,secInd37)   "calculate industry CCS baseline emissions"
+  q37_emiIndBase(ttot,all_regi,all_enty,secInd37)   "calculate industry CCS baseline emissions"
   q37_emiIndCCSmax(ttot,all_regi,all_enty)          "calculate max industry CCS emissions"
   q37_indCCS(ttot,all_regi,all_enty)                "calculate industry CCS emissions"
   q37_IndCCSCost(ttot,all_regi,all_enty)            "calculate cost for Industry CCS"

@@ -1895,7 +1895,9 @@ MacSector(all_enty)  "sectors for which mac curves exist. Some MACs are used for
         co2luc     "land use change"
         co2cement  "cement production (only process emissions)"
         co2chemicals
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
         co2steel
+$endif.process_based_steel
 /
 
 MacSectorMagpie(all_enty)  "land-use sectors for which mac curves exist in REMIND and in MAgPIE"
@@ -2709,7 +2711,9 @@ emiMac2mac(all_enty,all_enty)            "mapping of emission sources to MACs - 
         co2cement_process. co2cement   "process emissions are captured by kiln CCS too"
         co2cement    . co2cement
         co2chemicals . co2chemicals
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
         co2steel     . co2steel
+$endif.process_based_steel
 /
 
 emiMac2sector(all_enty,emi_sectors,sector_types,all_enty)            "mapping of emission sources from MACs to sectors (and emissions)"
@@ -2725,7 +2729,10 @@ emiMac2sector(all_enty,emi_sectors,sector_types,all_enty)            "mapping of
         (n2ofertin, n2ofertcr, n2ofertsom, n2oanwstc, n2oanwstm, n2oanwstp, n2oagwaste).agriculture.process.n2o
         (n2oforest, n2osavan, n2opeatland).lulucf.process.n2o
 
-        (co2cement_process,co2cement,co2chemicals,co2steel).indst.process.co2
+        (co2cement_process,co2cement,co2chemicals).indst.process.co2
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+        co2steel.indst.process.co2
+$endif.process_based_steel
         (co2luc).lulucf.process.co2
 /
 
