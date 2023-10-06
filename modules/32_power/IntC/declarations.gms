@@ -48,6 +48,7 @@ equations
     q32_operatingReserve(ttot,all_regi)  			"operating reserve for necessary flexibility"
     q32_h2turbVREcapfromTestor(tall,all_regi)       "calculate capacities of dummy seel<--h2 technology from storXXX technologies"
     q32_h2turbVREcapfromTestorUp(ttot,all_regi)     "constraint h2turbVRE hydrogen turbines to be only built together with storage capacities"
+    q32_elh2VREcapfromTestor(tall,all_regi)         "calculate capacities of dummy seel-->h2 technology from storXXX technologies"
     q32_flexAdj(ttot,all_regi,all_te)               "calculate flexibility benefit or cost per flexible technology to be used by flexibility tax"
     q32_flexPriceShareMin(ttot,all_regi,all_te)     "calculate miniumum share of average electricity that flexible technologies can see"
     q32_flexPriceShareVRE(ttot,all_regi,all_te)     "calculate miniumum share of average electricity that flexible technologies can see given the current VRE share"
