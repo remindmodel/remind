@@ -405,9 +405,6 @@ loop(regi,
 *** Fixing will produce clearly attributable errors (good for debugging) when using inconsistent data, as the GAMS accuracy when comparing fixed results is very high (< 1e-8).
 ***vm_prodFE.fx("2005",regi,se2fe(enty,enty2,te)) = sum(fe2ppfEn(enty2,in), pm_cesdata("2005",regi,in,"quantity") );
 
-vm_deltaCap.up(t,regi,"gasftrec",rlf)$(t.val gt 2005)   = 0.0;
-vm_deltaCap.up(t,regi,"gasftcrec",rlf)$(t.val gt 2005)  = 0.0;
-
 $ontext
 *** -------------------------------------------------------------
 *** *RP* Chinese depoyment of coal power plants and coal use in industry was probably not only demand-driven, but also policy-driven (faster than demand). Therefore, we implement lower bounds on coal power plants and solid coal use:
