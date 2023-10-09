@@ -199,6 +199,7 @@ $ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !
 $endif.process_based_steel
   /
 
+  !! rename to something like emiInd_fe2sector
   macBaseInd37(all_enty,secInd37)   "FE and industry combinations that have emissions"
   /
     (fesos, fehos, fegas) . (cement, chemicals, steel, otherInd)
