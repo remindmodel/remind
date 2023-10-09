@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** `./start.R --gamscompile` now adjust sets and gets input data
 - **core** MAgPIE coupling: tolerate negative values for `n2ofertsom` and deactivate its MAC
 - **05_initialCap** fix overwriting of investment cost changes from cm_inco0Factor switch
+- **core** fix bug that emissions from gas use in transport were not accounted
 
 ### added
 - **45_carbonprice** added realization `NPi` (National Policies Implemented)
