@@ -85,6 +85,7 @@ p50_damageGrowthRateImp(tall,tall2,regi)$(tall.val le 2020) = 0;
 *no growth rate damages after 2150 to prevent extreme runaway damages
 pm_damageGrowthRate(tall,regi)$(tall.val gt 2150) = 0;
 p50_damageGrowthRateImp(tall,tall2,regi)$(tall.val gt 2150) = 0;
+p50_damageGrowthRateImp(tall,tall2,regi)$(tall2.val gt 2150) = 0;
 
 *damage function. match observed 2020 GDP, that is, assume that no climate damages unitl then.
 *damage factor for budget equation
@@ -93,12 +94,7 @@ pm_damage(tall,regi)$(tall.val ge 2020 and tall.val le 2300) =
     (1 + pm_damageGrowthRate(tall2,regi))
     )
 ;
-*damage used in SCC calculation
-pm_damageScc(tall,tall2,regi)$(tall.val ge 2020 and tall.val le 2300 and tall2.val ge 2020 and tall2.val le 2300) =
-    prod(tall3$(tall3.val gt tall.val AND tall3.val le tall2.val),
-    (1 + pm_damageGrowthRate(tall3,regi))
-    )
-;
+
 *damage with emission pulse for SCC calculation
 pm_damageImp(tall,tall2,regi)$(tall.val ge 2020 and tall.val le 2300 and tall2.val ge 2020 and tall2.val le 2300) =
     prod(tall3$(tall3.val gt tall.val AND tall3.val le tall2.val),

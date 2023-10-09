@@ -246,6 +246,8 @@ message("max_iterations:        ", max_iterations)
 
 common <- intersect(rownames(settings_remind), rownames(scenarios_coupled))
 knownRefRuns <- apply(expand.grid(prefix_runname , common, "-rem-", seq(max_iterations)), 1, paste, collapse="")
+knownRefRuns <- gsub(" ", "", knownRefRuns) # if max_iterations has two digits apply in the line above introduces whitespaces before the single-digit iterations ("rem- 9"). Remove them.
+
 if (! identical(common, character(0))) {
   message("\n################################\n")
   message("The following ", length(common), " scenarios will be started:")
@@ -629,7 +631,7 @@ for (scen in common) {
           runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
         }
         slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
-          " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
+          " --open-mode=append --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
           if (runEnv$numberOfTasks == 1) " --mem=8000"), runEnv$sbatch)
         slurmCommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
         message(slurmCommand)

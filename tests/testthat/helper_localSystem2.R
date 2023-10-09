@@ -21,5 +21,10 @@ localSystem2 <- function(command, args = character(),
     if (is.null(attr(output, 'status', exact = TRUE))) {
         attr(output, 'status') <- 0
     }
+
+    # include command and arguments in output for pretty errors
+    attr(output, 'command') <- command
+    attr(output, 'args') <- args
+
     return(output)
 }

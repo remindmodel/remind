@@ -59,3 +59,7 @@ pm_implicitPePriceTarget,       parameter,  not needed
 pm_implicitPePrice_NotConv,     parameter,  not needed
 pm_implicitPePrice_ignConv,     parameter,  not needed
 cm_maxFadeOutPriceAnticip,      parameter,   ???
+cm_sccConvergence,		   switch,      not needed
+pm_sccConvergenceMaxDeviation,	   parameter,   ???
+pm_gmt_conv,	   parameter,   ???
+cm_tempConvergence,		   switch,      not needed

@@ -2663,6 +2663,7 @@ emi2te(all_enty,all_enty,all_te,all_enty)    " map emissions to technologies"
         sesofos.fesos.tdfossos.co2
         seliqfos.fepet.tdfospet.co2
         seliqfos.fedie.tdfosdie.co2
+        segafos.fegat.tdfosgat.co2
 /
 
 emi2fuel(all_enty,all_enty) "map emissions to fuel extraction"

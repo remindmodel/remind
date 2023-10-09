@@ -83,21 +83,34 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   }
   if ("path_gdx_bau" %in% names(scenConf)) {
     # fix if bau given despite not needed
-    NDC45 <- if ("carbonprice" %in% names(scenConf)) scenConf$carbonprice %in% "NDC" else FALSE
-    NDC46 <- if ("carbonpriceRegi" %in% names(scenConf)) scenConf$carbonpriceRegi %in% "NDC" else FALSE
-    noNDCbutBAU <- ! is.na(scenConf$path_gdx_bau) & ! (NDC45 | NDC46)
-    if (sum(noNDCbutBAU) > 0) {
-      msg <- paste0("In ", sum(noNDCbutBAU), " scenarios, neither 'carbonprice' nor 'carbonpriceRegi' is set to 'NDC', but 'path_gdx_bau' is not empty.\n",
+    needBau <- list(welfare = "ineqLognormal",
+                    carbonprice = c("NDC", "diffPriceSameCost"),
+                    carbonpriceRegi = "NDC",
+                    emicapregi = "AbilityToPay")
+    scenNeedsBau <- rep(FALSE, nrow(scenConf))
+    for (n in names(needBau)) {
+      if (n %in% names(scenConf)) {
+        if (n == "welfare" && "cm_emiscen" %in% names(scenConf)) {
+          scenNeedsBAU <- scenNeedsBau | (scenConf[[n]] %in% needBau[[n]] & scenConf[["cm_emiscen"]] != 1)
+        } else {
+          scenNeedsBau <- scenNeedsBau | scenConf[[n]] %in% needBau[[n]]
+        }
+      }
+    }
+    BAUbutNotNeeded <- ! is.na(scenConf$path_gdx_bau) & ! (scenNeedsBau)
+    if (sum(BAUbutNotNeeded) > 0) {
+      msg <- paste0("In ", sum(BAUbutNotNeeded), " scenarios, 'path_gdx_bau' is not empty although no realization is selected that needs it.\n",
                     "To avoid unnecessary dependencies to other runs, setting 'path_gdx_bau' to NA.")
       message(msg)
-      scenConf$path_gdx_bau[noNDCbutBAU] <- NA
+      scenConf$path_gdx_bau[BAUbutNotNeeded] <- NA
     }
     # fail if bau not given but needed
-    noBAUbutNDC <- is.na(scenConf$path_gdx_bau) & (NDC45 | NDC46)
-    if (sum(noBAUbutNDC) > 0) {
-      pathgdxerrors <- pathgdxerrors + sum(noBAUbutNDC)
-      warning("In ", sum(noBAUbutNDC), " scenarios, 'carbonprice' or 'carbonpriceRegi' is set to 'NDC' ",
-              "which requires a reference gdx in 'path_gdx_bau', but it is empty.")
+    noBAUbutNeeded <- is.na(scenConf$path_gdx_bau) & (scenNeedsBau)
+    if (sum(noBAUbutNeeded) > 0) {
+      pathgdxerrors <- pathgdxerrors + sum(noBAUbutNeeded)
+      warning("In ", sum(noBAUbutNeeded), " scenarios, a reference gdx in 'path_gdx_bau' is needed, but it is empty. ",
+              "These realizations need it: ",
+              paste0(names(needBau), ": ", sapply(needBau, paste, collapse = ", "), ".", collapse = " "))
     }
   }
   # make sure every path gdx column exists

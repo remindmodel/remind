@@ -37,7 +37,6 @@ test_that("start.R --gamscompile works on all configs and scenarios", {
                  "scenario_config_EDGE-T_NDC_NPi_pkbudget",
                  "scenario_config_NAVIGATE_300",
                  "scenario_config_tradeCap_standalone",
-                 "scenario_config_DeepEl",
                  "scenario_config_SHAPE",
                  "scenario_config_GCS")
   csvfiles <- grep(paste(skipfiles, collapse = "|"), csvfiles, invert = TRUE, value = TRUE)

@@ -14,6 +14,7 @@ pm_welf(tall)                                     "Weight parameter in the welfa
 pm_w(all_regi)                                    "Negishi weights"
 pm_prtp(all_regi)                                 "Pure rate of time preference"
 p02_cons_ref(ttot,all_regi)                        "consumption in reference run"
+p02_damageFactor_ref(ttot,all_regi)               "damage factor in reference run"
 p02_ineqTheil(ttot,all_regi)		                   "regional Theil-T index = sigma^2/2 for lognormal"
 p02_distrMu(ttot,all_regi)                         "mu of lognormal distribution (prior to mitigation costs)"
 p02_distrSigma(ttot,all_regi)                      "sigma of lognormal distribution (prior to mitigation costs)"
