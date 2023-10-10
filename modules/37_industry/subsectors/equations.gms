@@ -245,7 +245,7 @@ q37_demFeFeedstockChemIndst(ttot,regi,entyFE,emiMkt)$(
   )
 ;
 
-* feedstocks flow has to be lower than total energy flow into industry
+*** feedstocks flow has to be lower than total energy flow into industry
 q37_feedstocksLimit(ttot,regi,entySE,entyFE,emiMkt)$(
                                              ttot.val ge cm_startyear       
                                          AND sefe(entySE,entyFE)
@@ -276,21 +276,33 @@ q37_plasticsCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
 ;
 
 *** calculate plastic waste generation, shifted by mean lifetime of plastic products
-q37_plasticWaste(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
+*' shift by 2 time steps when we have 5-year steps
+q37_plasticWaste_until2060(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) 
-                         AND ord(ttot) ge 2) .. !!FIX ME: check notation for sets
+                         AND ttot.val gt cm_startyear
+                         AND ttot.val le 2060) .. !!FIX ME: check notation for sets
   vm_plasticWaste(ttot,regi,entySE,entyFE,emiMkt)
   =e=
     vm_plasticsCarbon(ttot-2,regi,entySE,entyFE,emiMkt)
 ;
-
-q37_plasticWaste_firstTimestep(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) 
-                         AND (ord(ttot) eq 1 OR ord(ttot) eq 2) ) ..
+*' shift by 1 time steps when we have 5-year steps
+q37_plasticWaste_from2060(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
+                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt)
+                         AND ttot.val gt 2060) .. !!FIX ME: check notation for sets
   vm_plasticWaste(ttot,regi,entySE,entyFE,emiMkt)
   =e=
-    0                    
+    vm_plasticsCarbon(ttot-1,regi,entySE,entyFE,emiMkt)
 ;
+
+*q37_plasticWaste_past(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
+*                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) 
+*                         AND ttot.val lt cm_startyear) ..
+*  vm_plasticWaste(ttot,regi,entySE,entyFE,emiMkt)
+*  =e=
+*    0                    
+*;
+*' plastic waste in the past is not accounted for
+vm_plasticWaste.fx(ttot,regi,sefe(entySE,entyFE),emiMkt)$( ttot.val le cm_startyear ) = 0 ;
 
 *** calculate emissions from plastics incineration
 q37_incinerationEmi(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
