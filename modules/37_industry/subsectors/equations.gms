@@ -77,7 +77,7 @@ q37_limitCapMat(t,regi,tePrc)..
     sum(tePrc2opmoPrc(tePrc,opmoPrc),
       v37_prodVolPrc(t,regi,tePrc,opmoPrc)
     )
-    =e=
+    =l=
     sum(teMat2rlf(tePrc,rlf),
         vm_capFac(t,regi,tePrc) * vm_cap(t,regi,tePrc,rlf)
     )

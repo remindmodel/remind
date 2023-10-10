@@ -63,7 +63,9 @@ $endif.process_based_steel
 
 Equations
 $ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   q37_energy_limits(ttot,all_regi,all_in)                 "thermodynamic/technical limit of energy use"
+$endif.process_based_steel
 $endif.no_calibration
   q37_limit_secondary_steel_share(ttot,all_regi)          "no more than 90% of steel from seconday production"
   q37_macBaseInd(ttot,all_regi,all_enty,secInd37)         "gross industry emissions before CCS"
