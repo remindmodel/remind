@@ -275,12 +275,29 @@ q37_plasticsCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
   * s37_plasticsShare
 ;
 
+*** calculate plastic waste generation, shifted by mean lifetime of plastic products
+q37_plasticWaste(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
+                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) 
+                         AND ord(ttot) ge 2) .. !!FIX ME: check notation for sets
+  vm_plasticWaste(ttot,regi,entySE,entyFE,emiMkt)
+  =e=
+    vm_plasticsCarbon(ttot-2,regi,entySE,entyFE,emiMkt)
+;
+
+q37_plasticWaste_firstTimestep(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
+                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) 
+                         AND (ord(ttot) eq 1 OR ord(ttot) eq 2) ) ..
+  vm_plasticWaste(ttot,regi,entySE,entyFE,emiMkt)
+  =e=
+    0                    
+;
+
 *** calculate emissions from plastics incineration
 q37_incinerationEmi(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
+                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt)) .. 
   vm_incinerationEmi(ttot,regi,entySE,entyFE,emiMkt)
   =e=
-    vm_plasticsCarbon(ttot,regi,entySE,entyFE,emiMkt)
+    vm_plasticWaste(ttot,regi,entySE,entyFE,emiMkt) 
   * pm_incinerationRate(ttot,regi)
 ;
 
@@ -291,7 +308,7 @@ q37_nonIncineratedPlastics(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
   vm_nonIncineratedPlastics(ttot,regi,entySE,entyFE,emiMkt)
   =e=
-    vm_plasticsCarbon(ttot,regi,entySE,entyFE,emiMkt)
+    vm_plasticWaste(ttot,regi,entySE,entyFE,emiMkt)
   * (1 - pm_incinerationRate(ttot,regi))
   ;
 
