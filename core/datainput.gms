@@ -501,6 +501,7 @@ pm_cf(ttot,regi,"bf") = 0.8;
 pm_cf(ttot,regi,"bfcc") = 0.8;
 pm_cf(ttot,regi,"bof") = 0.8;
 pm_cf(ttot,regi,"idr") = 0.8;
+pm_cf(ttot,regi,"idrcc") = 0.8;
 pm_cf(ttot,regi,"eaf") = 0.8;
 
 *RP* phasing down the ngt cf to "peak load" cf of 5%

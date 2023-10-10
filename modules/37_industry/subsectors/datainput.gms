@@ -48,6 +48,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! c
     !!feels.bof.unheated     0.05                                            !! Source: DUMMY
 
     feels.bfcc.standard   0.10                                            !! Source: DUMMY
+    feels.idrcc.ng        0.10                                            !! Source: DUMMY
   /;
 !! Convert from MWh/t to TWa/Gt
 p37_specFeDemTarget(all_enty,all_te,opmoPrc) = p37_specFeDemTarget(all_enty,all_te,opmoPrc)  / (sm_TWa_2_MWh / sm_giga_2_non);
@@ -62,6 +63,7 @@ Parameters
   p37_captureRate(all_te,opmoPrc)
   /
     bfcc . (standard)   0.8                                                    !! This is relative to all emissions at the integrated steel plant, but does not take coal mining emissions into account, as they are accounted for elsewhere in the model.
+    idrcc . (ng)        0.8
   /
 
 $endif.process_based_steel

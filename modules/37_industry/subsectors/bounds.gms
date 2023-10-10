@@ -96,11 +96,11 @@ vm_cesIO.fx("2005",regi,ppfkap_industry_dyn37(in))
 *** existing lower bound (should be far above sm_eps) to avoid CONOPT getting
 *** lost in the woods.
 loop (in$( sameas(in,"feel_steel_secondary") ),
-  vm_cesIO.lo(t,regi,in)$(    t.val ge cm_startyear 
+  vm_cesIO.lo(t,regi,in)$(    t.val ge cm_startyear
                           AND vm_cesIO.lo(t,regi,in) le sm_eps )
   = max(
-      sm_eps, 
-      (  0.01 
+      sm_eps,
+      (  0.01
       * smax(ttot$( vm_cesIO.lo(ttot,regi,in) gt sm_eps),
           vm_cesIO.lo(ttot,regi,in)
 	)
@@ -143,4 +143,10 @@ $ifthen.policy_scenario "%cm_indstExogScen_set%" == "YES"
 $endif.policy_scenario
 $drop cm_indstExogScen_set
 
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+!! Switch of steel CCS
+if (cm_CCS_steel ne 1 OR cm_IndCCSscen ne 1,
+  vm_cap.fx(t,regi,teCCPrc,rlf) = 0.;
+);
+$endif.process_based_steel
 *** EOF ./modules/37_industry/subsectors/bounds.gms

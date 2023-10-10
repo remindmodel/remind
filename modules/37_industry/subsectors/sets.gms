@@ -15,7 +15,8 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     eaf                 "Electric-arc furnace"
     idr                 "Iron direct reduction"
 
-    bfcc               "Blast furnace"
+    bfcc                "Blast furnace"
+    idrcc               "Direct reduction CCS"
 $endif.process_based_steel
   /
 
@@ -24,6 +25,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
   tePrc2teCCPrc(tePrc,tePrc)  "Mapping of base technologies to CCS technologies"
   /
     bf . bfcc
+    idr . idrcc
   /
 
   mat(all_enty)         "Materials considered in material-flow model"
@@ -132,6 +134,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     bf . (standard)
     bof . (unheated)
     bfcc . (standard)
+    idrcc . (ng)
 
   /
 
@@ -169,6 +172,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     steel . bof
 
     steel . bfcc
+    steel . idrcc
   /
 
 $endif.process_based_steel

@@ -187,14 +187,11 @@ omf                  0.1         0.1         0.1        0.05
 omv                    0           0           0           0
 lifetime              20          20          20          20
 
-+                   bfcc
-tech_stat
-inco0                100
-mix0                 0.0
-eta                  1.0
-omf                 0.33
-omv                   20
-lifetime              20
++                   bfcc       idrcc
+inco0                100         100
+omf                 0.33        0.33
+omv                   20          20
+lifetime              20          20
 $endif.process_based_steel
 
 
