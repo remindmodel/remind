@@ -279,8 +279,8 @@ q37_plasticsCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
 *' shift by 2 time steps when we have 5-year steps
 q37_plasticWaste_until2060(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) 
-                         AND ttot.val gt cm_startyear
-                         AND ttot.val le 2060) .. !!FIX ME: check notation for sets
+                         AND ttot.val gt cm_startyear !! FIX ME: this might be redundant with using t instead od ttot
+                         AND ttot.val le 2060) .. 
   vm_plasticWaste(ttot,regi,entySE,entyFE,emiMkt)
   =e=
     vm_plasticsCarbon(ttot-2,regi,entySE,entyFE,emiMkt)
@@ -288,21 +288,15 @@ q37_plasticWaste_until2060(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
 *' shift by 1 time steps when we have 5-year steps
 q37_plasticWaste_from2060(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt)
-                         AND ttot.val gt 2060) .. !!FIX ME: check notation for sets
+                         AND ttot.val gt 2060) .. 
   vm_plasticWaste(ttot,regi,entySE,entyFE,emiMkt)
   =e=
     vm_plasticsCarbon(ttot-1,regi,entySE,entyFE,emiMkt)
 ;
 
-*q37_plasticWaste_past(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
-*                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) 
-*                         AND ttot.val lt cm_startyear) ..
-*  vm_plasticWaste(ttot,regi,entySE,entyFE,emiMkt)
-*  =e=
-*    0                    
-*;
 *' plastic waste in the past is not accounted for
-vm_plasticWaste.fx(ttot,regi,sefe(entySE,entyFE),emiMkt)$( ttot.val le cm_startyear ) = 0 ;
+vm_plasticWaste.fx(ttot,regi,sefe(entySE,entyFE),emiMkt)$( ttot.val lt 2005 ) = 0 ;
+vm_plasticsCarbon.fx(ttot,regi,sefe(entySE,entyFE),emiMkt)$( ttot.val lt 2005 ) = 0 ;
 
 *** calculate emissions from plastics incineration
 q37_incinerationEmi(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
