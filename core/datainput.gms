@@ -138,8 +138,8 @@ $include "./core/input/generisdata_trade.prn"
 !! Modify spv and storspv parameters for optimistic VRE supply assumptions
 if (cm_VRE_supply_assumptions eq 1,
     fm_dataglob("learn","spv") = 0.257;
-    fm_dataglob("inco0","storspv") = 6470;
-    fm_dataglob("incolearn","storspv") = 4040;
+    fm_dataglob("inco0","storspv") = 7000;
+    fm_dataglob("incolearn","storspv") = 4240;
     fm_dataglob("learn","storspv") = 0.12;
     fm_dataglob("incolearn","spv") = 5010;
     fm_dataglob("incolearn","spv") = 4960;
