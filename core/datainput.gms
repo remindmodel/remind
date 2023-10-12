@@ -137,41 +137,12 @@ $include "./core/input/generisdata_trade.prn"
 
 !! Modify spv and storspv parameters for optimistic VRE supply assumptions
 if (cm_VRE_supply_assumptions eq 1,
-  if (fm_dataglob("learn","spv") ne 0.207,
-    abort "fm_dataglob('learn','spv') is to be modified, but changed externally";
-  else
     fm_dataglob("learn","spv") = 0.257;
-  );
-
-  if (fm_dataglob("inco0","storspv") ne 8350,
-    abort "fm_dataglob('inco0','storspv') is to be modified, but changed externally";
-  else
     fm_dataglob("inco0","storspv") = 7000;
-  );
-
-  if (fm_dataglob("incolearn","storspv") ne 5710,
-    abort "fm_dataglob('incolearn','storspv') is to be modified, but changed externally";
-  else
     fm_dataglob("incolearn","storspv") = 4240;
-  );
-
-  if (fm_dataglob("learn","storspv") ne 0.10,
-    abort "fm_dataglob('learn','storspv') is to be modified, but changed externally";
-  else
     fm_dataglob("learn","storspv") = 0.12;
-  );
-elseif cm_VRE_supply_assumptions eq 2,
-  if (fm_dataglob("incolearn","spv") ne 5060,
-    abort "fm_dataglob('incolearn','spv') is to be modified, but changed externally";
-  else
     fm_dataglob("incolearn","spv") = 5010;
-  );
-elseif cm_VRE_supply_assumptions eq 3,
-  if (fm_dataglob("incolearn","spv") ne 5060,
-    abort "fm_dataglob('incolearn','spv') is to be modified, but changed externally";
-  else
     fm_dataglob("incolearn","spv") = 4960;
-  );
 );
 
 parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit: USD$/KW"
