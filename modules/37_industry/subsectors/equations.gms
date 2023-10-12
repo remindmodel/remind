@@ -276,23 +276,21 @@ q37_plasticsCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
 ;
 
 *** calculate plastic waste generation, shifted by mean lifetime of plastic products
-*' shift by 2 time steps when we have 5-year steps
-q37_plasticWaste_until2060(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) 
-                         AND ttot.val gt cm_startyear !! FIX ME: this might be redundant with using t instead od ttot
-                         AND ttot.val le 2060) .. 
+*' shift by 2 time steps when we have 5-year steps and 1 when we have 10-year steps
+*' allocate averge of 2055 and 2060 to 2070
+q37_plasticWaste(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
+                        entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) 
+                    AND ttot.val ge cm_startyear                          ) ..
   vm_plasticWaste(ttot,regi,entySE,entyFE,emiMkt)
   =e=
-    vm_plasticsCarbon(ttot-2,regi,entySE,entyFE,emiMkt)
-;
-*' shift by 1 time steps when we have 5-year steps
-q37_plasticWaste_from2060(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt)
-                         AND ttot.val gt 2060) .. 
-  vm_plasticWaste(ttot,regi,entySE,entyFE,emiMkt)
-  =e=
-    vm_plasticsCarbon(ttot-1,regi,entySE,entyFE,emiMkt)
-;
+    vm_plasticsCarbon(ttot-2,regi,entySE,entyFE,emiMkt)$( ttot.val le 2060 )
+  + ( ( vm_plasticsCarbon(ttot-2,regi,entySE,entyFE,emiMkt)
+      + vm_plasticsCarbon(ttot-1,regi,entySE,entyFE,emiMkt)
+      )
+    / 2
+    )$( ttot.val eq 2070 )
+  + vm_plasticsCarbon(ttot-1,regi,entySE,entyFE,emiMkt)$( ttot.val gt 2070 )
+  ;
 
 *' plastic waste in the past is not accounted for
 vm_plasticWaste.fx(ttot,regi,sefe(entySE,entyFE),emiMkt)$( ttot.val lt 2005 ) = 0 ;
