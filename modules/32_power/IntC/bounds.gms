@@ -25,21 +25,34 @@ $IFTHEN.dispatchSeelDown not "%cm_dispatchSeelDown%" == "off"
   );
 $ENDIF.dispatchSeelDown
 
+*** FS: set bounds for capacity factor of electrolysis
 
-*** FS: if flexibility tax on, let capacity factor be endogenuously determined between 0.1 and 1 
+*** by default set capacity factor to value defined by swtich cm_elh2_CF
+*** check that value is meaningful between 0 and 1
+if ( cm_elh2_CF gt 0 AND cm_elh2_CF le 1,
+  vm_capFac.fx(t,regi,"elh2")$(t.val ge 2010) = cm_elh2_CF;
+);
+
+*** if flexibility tax with feedback is on, let capacity factor be endogenuously determined between 0.1 and 1
 *** for technologies that get flexibility tax/subsity (teFlexTax)
 if ( cm_flex_tax eq 1,
   if ( cm_FlexTaxFeedback eq 1,
-*** if flexibility tax feedback is on, let model choose capacity factor of flexible technologies freely
 	  vm_capFac.lo(t,regi,teFlexTax)$(t.val ge 2010) = 0.1;
     vm_capFac.up(t,regi,teFlexTax)$(t.val ge 2010) = pm_cf(t,regi,teFlexTax);
-  else 
-*** if flexibility tax feedback is off, only flexibliity tax benefit for flexible technologies and 0.5 capacity factor
-    vm_capFac.fx(t,regi,teFlex)$(t.val ge 2010) = 0.5;
-*** electricity price of inflexible technologies the same w/o feedback
+  );
+);
+
+*** if flexibility tax is on but feedback if off,
+*** electricity price of inflexible technologies shouild be the same as w/o feedback
+if ( cm_flex_tax eq 1,
+  if ( cm_FlexTaxFeedback eq 0,
     v32_flexPriceShare.fx(t,regi,te)$(teFlexTax(te) AND NOT(teFlex(te))) = 1;
   );
 );
+
+*** end capacity factor electrolysis
+
+
 
 *** Lower bounds on VRE use (more than 0.01% of electricity demand) after 2015 to prevent the model from overlooking solar and wind
 loop(regi,
