@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### added
 - **config** regex tests for many parameters
+- **scripts** add script to check fixing of runs to reference run
+    [[#1410](https://github.com/remindmodel/remind/pull/1410)]
 - **testthat** test and compile all config files
 
 ### fixed
@@ -18,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1401](https://github.com/remindmodel/remind/pull/1401)]
 - let preempted and resumed runs start their subsequent runs
     [[#1414](https://github.com/remindmodel/remind/pull/1414)]
+- correctly report `Tech|*|Capital Costs|w/ Adj Costs` for t < cm_startyear
+    [[#1429](https://github.com/remindmodel/remind/pull/1429)]
 
 ## [3.2.1] - 2023-07-13 (incomplete)
 
@@ -31,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** `./start.R --gamscompile` now adjust sets and gets input data
 - **core** MAgPIE coupling: tolerate negative values for `n2ofertsom` and deactivate its MAC
 - **05_initialCap** fix overwriting of investment cost changes from cm_inco0Factor switch
+- **core** fix bug that emissions from gas use in transport were not accounted
 
 ### added
 - **45_carbonprice** added realization `NPi` (National Policies Implemented)

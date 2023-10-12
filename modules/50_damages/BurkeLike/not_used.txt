@@ -16,7 +16,6 @@ pm_tempScaleGlob2Reg,input,questionnaire
 pm_damageMarginalTC,input,questionnaire
 pm_GDPGrossIso,input,questionnaire
 pm_damageImp,input,questionnaire
-pm_damageScc,input,questionnaire
 pm_damageProd,input,questionnaire
 pm_damageTC,input,questionnaire
 pm_damageGrowthRateTC,input,questionnaire
