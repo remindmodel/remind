@@ -5,7 +5,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-run <- function(start_subsequent_runs = TRUE) {
+run <- function() {
 
   load("config.Rdata")
 
@@ -175,7 +175,9 @@ run <- function(start_subsequent_runs = TRUE) {
   # Use the name to check whether it is a coupled run (TRUE if the name ends with "-rem-xx")
   coupled_run <- grepl("-rem-[0-9]{1,2}$",cfg$title)
   # Don't start subsequent runs form here if REMIND runs coupled. They are started in start_coupled.R instead.
-  start_subsequent_runs <- (start_subsequent_runs | isTRUE(cfg$restart_subsequent_runs)) & !coupled_run
+  # Only if this run has been restarted manually cfg$restart_subsequent_runs is TRUE. If the run is resumed after
+  # preemtion it is just NULL and isFALSE(NULL) is FALSE, so subsequent standalone runs will be started.
+  start_subsequent_runs <- ! isFALSE(cfg$restart_subsequent_runs) && ! coupled_run
 
   if (start_subsequent_runs & (length(rownames(cfg$RunsUsingTHISgdxAsInput)) > 0)) {
     # track whether any subsequent run was actually started

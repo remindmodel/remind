@@ -301,12 +301,12 @@ pm_macStep(ttot,regi,"ch4gas")
 pm_macStep(ttot,regi,"ch4coal")
   = min(801, ceil(max(pm_priceCO2forMAC(ttot,regi,"ch4coal") * (25/s_gwpCH4), 0.5 * max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);    
   
-*** limit yearly increase of MAC usage to s_macChange
+*** limit yearly increase of MAC usage to sm_macChange
 p_macAbat_lim(ttot,regi,enty)
   = sum(steps$(ord(steps) eq pm_macStep(ttot-1,regi,enty)),
       pm_macAbat(ttot-1,regi,enty,steps)
     )
-  + s_macChange * pm_ts(ttot)
+  + sm_macChange * pm_ts(ttot)
 ;
 
 *** if intended abatement pm_macAbat is higher than this limit, pm_macStep has to 
@@ -383,20 +383,14 @@ pm_macAbatLev(ttot,regi,enty)$( ttot.val gt 2015 )
 pm_macAbatLev("2015",regi,"co2luc") = 0;
 pm_macAbatLev("2020",regi,"co2luc") = 0;
 
-*** Limit MAC abatement level increase to 5 % p.a., or 2 % p.a. for cement
-*** before 2050
+*** Limit MAC abatement level increase to sm_macChange (default: 5 % p.a.)
 loop (ttot$( ttot.val ge 2015 ),
   pm_macAbatLev(ttot,regi,MACsector(enty))
     = min(
         pm_macAbatLev(ttot,regi,enty),
 
-        ( pm_macAbatLev(ttot-1,regi,enty)
-        + ( ( s_macChange$( NOT sameas(enty,"co2cement") OR  ttot.val gt 2050 )
-            + 0.02$(            sameas(enty,"co2cement") AND ttot.val le 2050 )
-  	    )
-          * pm_ts(ttot)
-          )
-        )
+          pm_macAbatLev(ttot-1,regi,enty)
+        + (sm_macChange * pm_ts(ttot))
       );
 );
 
