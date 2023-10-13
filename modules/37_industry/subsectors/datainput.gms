@@ -86,10 +86,12 @@ $endif.process_based_steel
           en_chemicals_fhth          3.0   !! solids, liquids, gases, electricity
 
       ue_steel                       5     !! primary steel, secondary steel
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
         ue_steel_primary             1.7   !! energy, capital
           en_steel_primary           0.3   !! furnace, electricity
             en_steel_furnace         2.0   !! solids, liquids, gases, hydrogen
         ue_steel_secondary           1.7   !! energy, capital
+$endif.process_based_steel
 
       ue_otherInd                    1.7   !! energy, capital
         en_otherInd                  0.3   !! high-temperature heat, electricity
@@ -110,10 +112,12 @@ pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val eq 2030) = 1.3;
 pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val eq 2035) = 2.0;
 pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val eq 2040) = 3.0;
 
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
 pm_cesdata_sigma(ttot,"en_steel_furnace")$ (ttot.val le 2025) = 0.5;
 pm_cesdata_sigma(ttot,"en_steel_furnace")$ (ttot.val eq 2030) = 0.7;
 pm_cesdata_sigma(ttot,"en_steel_furnace")$ (ttot.val eq 2035) = 1.3;
 pm_cesdata_sigma(ttot,"en_steel_furnace")$ (ttot.val eq 2040) = 2.0;
+$endif.process_based_steel
 
 pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val le 2025) = 0.7;
 pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2030) = 1.3;
@@ -156,6 +160,10 @@ pm_energy_limit(in)
   / (8760 * 3600)          !! * s/year
   * 1e9;                   !! * t/Gt
                            !! = TWa/Gt
+
+* remove energy limit for process-based materials
+pm_energy_limit(out)$(NOT sum(in, ces_eff_target_dyn37(out,in))) = 0.;
+
 
 * Specific energy demand cannot fall below a curve described by an exponential
 * function passing through the 2015 value and a point defined by an "efficiency
@@ -299,7 +307,9 @@ Parameter
   /
     feh2_cement       . fega_cement          1e-5
     feh2_chemicals    . fega_chemicals       1e-5
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     feh2_steel        . fega_steel           1e-5
+$endif.process_based_steel
     feh2_otherInd     . fega_otherInd        1e-5
     feelhth_chemicals . feelwlth_chemicals   1e-5
     feelhth_otherInd  . feelwlth_otherInd    1e-5
@@ -423,9 +433,11 @@ pm_calibrate_eff_scale("feh2_cement","fega_cement","width")              = 22;
 pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","level")        = 1.1;
 pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","midperiod")    = 2050;
 pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","width")        = 22;
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
 pm_calibrate_eff_scale("feh2_steel","fega_steel","level")                = 1.1;
 pm_calibrate_eff_scale("feh2_steel","fega_steel","midperiod")            = 2050;
 pm_calibrate_eff_scale("feh2_steel","fega_steel","width")                = 22;
+$endif.process_based_steel
 pm_calibrate_eff_scale("feh2_otherInd","fega_otherInd","level")          = 1.1;
 pm_calibrate_eff_scale("feh2_otherInd","fega_otherInd","midperiod")      = 2050;
 pm_calibrate_eff_scale("feh2_otherInd","fega_otherInd","width")          = 22;
@@ -462,12 +474,16 @@ p37_CESMkup(t,regi,in) = 0;
 *` mark-up cost on electrification (hth_electricity inputs), to reach >1 MRS to gas/liquids as technical efficiency gains from electrification
 pm_tau_ces_tax(t,regi,"feelhth_chemicals") = 100* sm_TWa_2_MWh * 1e-12;
 pm_tau_ces_tax(t,regi,"feelhth_otherInd") = 300* sm_TWa_2_MWh * 1e-12;
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
 pm_tau_ces_tax(t,regi,"feel_steel_secondary") = 100* sm_TWa_2_MWh * 1e-12;
+$endif.process_based_steel
 
 *` mark-up cost on H2 inputs, to reach MRS around 1 to gas/liquids as similar technical efficiency
 pm_tau_ces_tax(t,regi,"feh2_chemicals") = 100* sm_TWa_2_MWh * 1e-12;
 pm_tau_ces_tax(t,regi,"feh2_otherInd") = 50* sm_TWa_2_MWh * 1e-12;
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
 pm_tau_ces_tax(t,regi,"feh2_steel") = 50* sm_TWa_2_MWh * 1e-12;
+$endif.process_based_steel
 pm_tau_ces_tax(t,regi,"feh2_cement") = 100* sm_TWa_2_MWh * 1e-12;
 
 

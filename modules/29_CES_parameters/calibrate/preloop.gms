@@ -974,7 +974,7 @@ if (card(ppf_beyondcalib_29) >= 1, !! if there are any nodes in beyond calib
 $ifthen.subsectors "%industry%" == "subsectors"
 $ifthen.FE_target "%c_CES_calibration_industry_FE_target%" == "1" !! c_CES_calibration_industry_FE_target
     !! set minimum price on ppf_industry
-    pm_cesdata(t,regi_dyn29(regi),ppf_industry_dyn37(in),"price")
+    pm_cesdata(t,regi_dyn29(regi),ppf_industry_dyn37(in),"price")$(NOT ue_industry_dyn37(in))
     = max(pm_cesdata(t,regi,in,"price"), 1e-5);
 $endif.FE_target
 $endif.subsectors
@@ -1355,17 +1355,21 @@ if (0 gt sm_tmp,
 *** hold
 put logfile, ">>> Industry FE Price Rescaling <<<" /;
 loop ((t,regi_dyn29(regi),ue_industry_dyn37(out)),
-  sm_tmp
-  = ( pm_cesdata(t,regi,out,"quantity")
-    - sum(cesOut2cesIn(out,ppfKap(in)),
-        pm_cesdata(t,regi,in,"quantity")
-      * pm_cesdata(t,regi,in,"price")
+  if (not sum(in,ue_industry_2_pf(out,in)),
+    sm_tmp = 1;
+  else
+    sm_tmp
+    = ( pm_cesdata(t,regi,out,"quantity")
+      - sum(cesOut2cesIn(out,ppfKap(in)),
+          pm_cesdata(t,regi,in,"quantity")
+        * pm_cesdata(t,regi,in,"price")
+        )
       )
-    )
-  / sum(ue_industry_2_pf(out,ppfen_industry_dyn37(in)),
-      pm_cesdata(t,regi,in,"price")
-    * pm_cesdata(t,regi,in,"quantity")
-    );
+    / sum(ue_industry_2_pf(out,ppfen_industry_dyn37(in)),
+        pm_cesdata(t,regi,in,"price")
+      * pm_cesdata(t,regi,in,"quantity")
+      );
+  );
 
   if (sm_tmp ne 1,
     loop (ue_industry_2_pf(out,ppfen_industry_dyn37(in)),

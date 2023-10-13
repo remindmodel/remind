@@ -114,15 +114,8 @@ vm_cesIO.lo(t,regi_dyn29(regi),in_industry_dyn37(in))$(
                                                   0 eq vm_cesIO.lo(t,regi,in) )
   = max(sm_eps, abs(pm_cesdata(t,regi,in,"offset_quantity")));
 
-$ontext
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
-vm_cesIO.fx(ttot,regi,in_pbs_37(in))$(
-            ttot.val gt 2005
-            AND NOT sameas(in,"ue_steel_primary")
-            AND NOT sameas(in,"ue_steel_secondary"))
-  = 0.;
-$endif.process_based_steel
-$offtext
+*** values must not fall below offset, as that would result in negative energy consumption
+vm_cesIO.lo(ttot,regi,in)$(ppfen_industry_dyn37(in)) = max(vm_cesIO.lo(ttot,regi,in), -pm_cesdata(ttot,regi,in,"offset_quantity"))
 
 *' Limit biomass solids use in industry to 25% (or historic shares, if they are higher)
 *' of baseline solids
