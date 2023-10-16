@@ -430,7 +430,7 @@ pm_ue_eff_target("ue_otherInd")         = 0.008;
 *` Mark-up cost in industry are modeled without budget-effect (b).
 
 *` Default industry mark-up cost with budget effect:
-p37_CESMkup(t,regi,in) = 0;
+p37_CESMkup(ttot,regi,in) = 0;
 
 *` Default industry mark-up cost without budget effect:
 *` mark-up cost on electrification (hth_electricity inputs), to reach >1 MRS to gas/liquids as technical efficiency gains from electrification
@@ -447,8 +447,8 @@ pm_tau_ces_tax(t,regi,"feh2_cement") = 100* sm_TWa_2_MWh * 1e-12;
 
 *` overwrite or extent CES markup cost if specified by switch
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard"
-  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in) AND ppfen_MkupCost37(in)) = p37_CESMkup_input(in);
-  pm_tau_ces_tax(t,regi,in)$(p37_CESMkup_input(in) AND (NOT ppfen_MkupCost37(in))) = p37_CESMkup_input(in);
+  p37_CESMkup(ttot,regi,in)$(p37_CESMkup_input(in) AND ppfen_MkupCost37(in)) = p37_CESMkup_input(in);
+  pm_tau_ces_tax(ttot,regi,in)$(p37_CESMkup_input(in) AND (NOT ppfen_MkupCost37(in))) = p37_CESMkup_input(in);
 $endIf.CESMkup
 
 display p37_CESMkup;
