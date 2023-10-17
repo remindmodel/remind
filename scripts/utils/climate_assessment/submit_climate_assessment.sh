@@ -6,7 +6,6 @@
 #SBATCH --mem=60000
 #SBATCH --job-name=test_remind_2
 #SBATCH --output=PYTHONLOG-%x.%j.out
-source ~/.bashrc
 # Replace this with the resulting xls of output.R -> export -> xlsx_IIASA -> AR6
 filename="../../../output/export/REMIND_gabrielAR6SHAPE_2023-05-17_05.12.52.xlsx"
 python source_climate_assessment.py $filename
