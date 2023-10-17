@@ -30,8 +30,6 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
 $endif.process_based_steel
 
 
-<<<<<<< HEAD
-=======
   p37_clinker_cement_ratio(ttot,all_regi)   "clinker content per unit cement used"
 
   pm_ue_eff_target(all_in)   "energy efficiency target trajectories [% p.a.]"
@@ -40,7 +38,6 @@ $endif.process_based_steel
   p37_CESMkup(ttot,all_regi,all_in)  "CES markup cost parameter [trUSD/CES input]"
   p37_chemicals_feedstock_share(ttot,all_regi)   "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
 
->>>>>>> 60862226... add lower bound on feso/feli/fega in chemicals FE input for feedstocks
 *** output parameters only for reporting
   o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                   "industry CCS emissions [GtC/a]"
   o37_cementProcessEmissions(ttot,all_regi,all_enty)                     "cement process emissions [GtC/a]"
