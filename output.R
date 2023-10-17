@@ -67,14 +67,13 @@ library(lucode2)
 library(gms)
 require(stringr, quietly = TRUE)
 
+flags <- NULL
 ### Define arguments that can be read from command line
 if (!exists("source_include")) {
   # if this script is not being sourced by another script but called from the command line via Rscript read the command
   # line arguments and let the user choose the slurm options
   flags <- readArgs("outputdir", "output", "comp", "remind_dir", "slurmConfig", "filename_prefix",
                     .flags = c(t = "--test", h = "--help"))
-} else {
-  flags <- NULL
 }
 
 if ("--help" %in% flags) {
@@ -125,7 +124,7 @@ if (! exists("output")) {
 # Select output directories if not defined by readArgs
 if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
-                         "plot_compare_iterations", "varListHtml")
+                         "plot_compare_iterations", "varListHtml", "fixOnRef")
   needingMif <- any(modulesNeedingMif %in% output)
   dir_folder <- if (exists("remind_dir")) c(file.path(remind_dir, "output"), remind_dir) else "./output"
   dirs <- dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx")))
@@ -198,11 +197,14 @@ if (comp %in% c("comparison", "export")) {
   }
 } else { # comp = single
   # define slurm class or direct execution
-  outputUsingDirect <- c("plotIterations")
+  outputInteractive <- c("plotIterations", "fixOnRef")
   if (! exists("source_include")) {
     # for selected output scripts, only slurm configurations matching these regex are available
     slurmExceptions <- if ("reporting" %in% output) "--mem=[0-9]*[0-9]{3}" else NULL
-    if (any(output %in% outputUsingDirect)) slurmConfig <- "direct"
+    if (any(output %in% outputInteractive)) {
+      slurmConfig <- "direct"
+      flags <- c(flags, "--interactive") # to tell scripts they can run in interactive mode
+    }
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
     if (!exists("slurmConfig")) {

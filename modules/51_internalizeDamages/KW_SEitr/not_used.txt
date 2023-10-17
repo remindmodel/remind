@@ -13,7 +13,6 @@ pm_temperatureImpulseResponseCO2,input,questionnaire
 pm_interpolWeight_ttot_tall,input,questionnaire
 pm_tall_2_ttot,input,questionnaire
 pm_tempScaleGlob2Reg,input,questionnaire
-pm_damage,input,questionnaire
 pm_damageGrowthRate,input,questionnaire
 pm_damageMarginalT,input,questionnaire
 pm_damageMarginalTm1,input,questionnaire

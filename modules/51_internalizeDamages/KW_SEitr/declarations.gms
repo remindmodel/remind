@@ -13,7 +13,7 @@ p51_sccLastItr(tall) "Social cost of carbon (due to GDP damages) from last itera
 p51_sccParts(tall,tall,all_regi) "Social cost of carbon components (time, region)"
 
 
-p51_sccConvergenceMaxDeviation "max deviation of SCC from last iteration [percent]"
+pm_sccConvergenceMaxDeviation "max deviation of SCC from last iteration [percent]"
 ;
 
 *** EOF ./modules/51_internalizeDamages/KW_SEitr/declarations.gms

@@ -34,7 +34,6 @@ p50_cov_b1_b2 = 1.354e-7;
 * initialize
 pm_damage(tall,regi) = 1;
 pm_damageImp(tall,tall2,regi) = 1;
-pm_damageScc(tall,tall2,regi) = 1;
 pm_damageGrowthRate(tall,regi)         = 0;
 pm_damageMarginalT(tall,regi)           = 0;
 pm_damageMarginalTm1(tall,regi)           = 0;
