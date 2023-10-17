@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -179,8 +179,7 @@ c_abtrdy              "first year in which advanced bio-energy technology are re
 c_abtcst              "scaling of the cost of advanced bio-energy technologies (no unit, 50% increase means 1.5)"
 c_budgetCO2        "carbon budget for all CO2 emissions (in GtCO2)"
 
-cm_trdcst              "parameter to scale trade export cost for gas"
-cm_trdadj              "parameter scale the adjustment cost parameter for increasing gas trade export"
+cm_postTargetIncrease     "carbon price increase per year after target is reached (euro per tCO2)"
 
 cm_damages_BurkeLike_specification      "empirical specification for Burke-like damage functions"
 cm_damages_BurkeLike_persistenceTime    " persistence time in years for Burke-like damage functions"
@@ -496,8 +495,6 @@ $setglobal cm_renewables_floor_cost  off !! def = off
 $setglobal cm_DAC_eff  off !! def = off 
 
 $setglobal cm_sehe_upper  off !! def = off 
-
-$setglobal cm_fixCO2price  off !! def = off
 
 $setglobal cm_feShareLimits  off  !! def = off
 

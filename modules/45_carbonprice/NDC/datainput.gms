@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -7,14 +7,12 @@
 *** SOF ./modules/45_carbonprice/NDC/datainput.gms
 
 *** CO2 tax level is calculated at a 5% exponential increase from the 2020 tax level exogenously defined until 2030, then a linear tax, plus regional convergence
-pm_taxCO2eq("2020",regi) = 5;
-
 *** convert tax value from $/t CO2eq to T$/GtC
-pm_taxCO2eq("2020",regi)= pm_taxCO2eq("2020",regi) * sm_DptCO2_2_TDpGtC;
+pm_taxCO2eq(t,regi)$(sameas(t, "2020")) = 5 * sm_DptCO2_2_TDpGtC;
 
 *** set ETS price in 2015 for EUR
-pm_taxCO2eq("2015",regi)= 0;
-pm_taxCO2eq("2015",regi)$regi_group("EUR_regi",regi)= 5 * sm_DptCO2_2_TDpGtC;
+pm_taxCO2eq(t,regi)$(sameas(t, "2015")) = 0;
+pm_taxCO2eq(t,regi)$(sameas(t, "2015") and regi_group("EUR_regi",regi)) = 5 * sm_DptCO2_2_TDpGtC;
 
 *** parameters for exponential increase after NDC targets
 Scalar p45_taxCO2eqGlobal2030 "startprice in 2030 (unit TDpGtC) of global CO2eq taxes towards which countries converge";
@@ -41,7 +39,7 @@ $onlisting
 ;
 
 Parameter p45_factorTargetyear(ttot,all_regi) "Multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region";
-p45_factorTargetyear(ttot,all_regi) = f45_factorTargetyear(ttot,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
+p45_factorTargetyear(t,all_regi) = f45_factorTargetyear(t,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
 
 display p45_factorTargetyear;
 
@@ -54,7 +52,7 @@ $onlisting
 ;
 
 Parameter p45_2005shareTarget(ttot,all_regi) "2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years";
-p45_2005shareTarget(ttot,all_regi) = f45_2005shareTarget(ttot,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
+p45_2005shareTarget(t,all_regi) = f45_2005shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
 
 display p45_2005shareTarget;
 
@@ -87,27 +85,27 @@ Scalar p45_ignoreNDCafter           "NDC targets after  this years are ignored, 
 Scalar p45_minRatioOfCoverageToMax  "only targets whose coverage is this times p45_bestNDCcoverage are considered. Use 1 for only best." /1.0/;
 Scalar p45_useSingleYearCloseTo     "if 0: use all. If > 0: use only one single NDC target per country closest to this year (use 2030.4 to prefer 2030 over 2035 over 2025)" /2030.4/;
 
-Set p45_NDCyearSet(ttot,all_regi)              "YES for years whose NDC targets is used";
+Set p45_NDCyearSet(ttot,all_regi)                 "YES for years whose NDC targets is used";
 Parameter p45_bestNDCcoverage(all_regi)        "highest coverage of NDC targets within region";
-Parameter p45_distanceToOptyear(ttot,all_regi) "distance to p45_useSingleYearCloseTo to favor years in case of multiple equally good targets";
+Parameter p45_distanceToOptyear(ttot,all_regi)    "distance to p45_useSingleYearCloseTo to favor years in case of multiple equally good targets";
 Parameter p45_minDistanceToOptyear(all_regi)   "minimal distance to p45_useSingleYearCloseTo per region";
 
-p45_bestNDCcoverage(regi) = smax(ttot$(ttot.val <= p45_ignoreNDCafter AND ttot.val >= p45_ignoreNDCbefore), p45_2005shareTarget(ttot,regi));
+p45_bestNDCcoverage(regi) = smax(t$(t.val <= p45_ignoreNDCafter AND t.val >= p45_ignoreNDCbefore), p45_2005shareTarget(t,regi));
 display p45_bestNDCcoverage;
 
-p45_NDCyearSet(ttot,regi)$(ttot.val <= p45_ignoreNDCafter AND ttot.val >= p45_ignoreNDCbefore) = p45_2005shareTarget(ttot,regi) >= p45_minRatioOfCoverageToMax * p45_bestNDCcoverage(regi);
+p45_NDCyearSet(t,regi)$(t.val <= p45_ignoreNDCafter AND t.val >= p45_ignoreNDCbefore) = p45_2005shareTarget(t,regi) >= p45_minRatioOfCoverageToMax * p45_bestNDCcoverage(regi);
 
 if(p45_useSingleYearCloseTo > 0,
-  p45_distanceToOptyear(p45_NDCyearSet(ttot,regi)) = abs(ttot.val - p45_useSingleYearCloseTo);
-  p45_minDistanceToOptyear(regi) = smin(ttot$(p45_NDCyearSet(ttot,regi)), p45_distanceToOptyear(ttot,regi));
-  p45_NDCyearSet(ttot,regi) = p45_distanceToOptyear(ttot,regi) = p45_minDistanceToOptyear(regi);
+  p45_distanceToOptyear(p45_NDCyearSet(t,regi)) = abs(t.val - p45_useSingleYearCloseTo);
+  p45_minDistanceToOptyear(regi) = smin(t$(p45_NDCyearSet(t,regi)), p45_distanceToOptyear(t,regi));
+  p45_NDCyearSet(t,regi) = p45_distanceToOptyear(t,regi) = p45_minDistanceToOptyear(regi);
 );
 
 *** first and last NDC year as a number
 Parameter p45_firstNDCyear(all_regi) "last year with NDC coverage within region";
-p45_firstNDCyear(regi) = smin( p45_NDCyearSet(ttot, regi), ttot.val );
+p45_firstNDCyear(regi) = smin( p45_NDCyearSet(t, regi), t.val );
 Parameter p45_lastNDCyear(all_regi)  "last year with NDC coverage within region";
-p45_lastNDCyear(regi)  = smax( p45_NDCyearSet(ttot, regi), ttot.val );
+p45_lastNDCyear(regi)  = smax( p45_NDCyearSet(t, regi), t.val );
 
 display p45_NDCyearSet,p45_firstNDCyear,p45_lastNDCyear;
 
@@ -121,7 +119,7 @@ display p45_NDCyearSet,p45_firstNDCyear,p45_lastNDCyear;
 *** 0.2 is a rounded value valid for all except 2018_uncond, because Brazil had no unconditional target then.
 
 if (not sameas("%cm_NDC_version%","2018_uncond"),
-    p45_factorTargetyear(ttot,regi)$(sameas(regi,"LAM") AND sameas(ttot,"2030")) = p45_factorTargetyear(ttot,regi) + 0.2;
+    p45_factorTargetyear(t,regi)$(sameas(regi,"LAM") AND sameas(t,"2030")) = p45_factorTargetyear(t,regi) + 0.2;
 );
 
 *** EOF ./modules/45_carbonprice/NDC/datainput.gms

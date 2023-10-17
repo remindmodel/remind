@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -1370,8 +1370,16 @@ loop ((t,regi_dyn29(regi),ue_industry_dyn37(out)),
   if (sm_tmp ne 1,
     loop (ue_industry_2_pf(out,ppfen_industry_dyn37(in)),
       put pm_cesdata.tn(t,regi,in,"price"),
-          @60 pm_cesdata(t,regi,in,"price"), " x ",
-          sm_tmp, " = ";
+          @60 pm_cesdata(t,regi,in,"price"), " x ";
+      if (abs(sm_tmp - 1) lt 1e-2,
+        if (sm_tmp gt 1,
+          put "(1 + ", (sm_tmp - 1), ") = ";
+        else
+          put "(1 - ", (1 - sm_tmp), ") = ";
+        );
+      else
+        put "     ", sm_tmp, "  = ";
+      );
 
       pm_cesdata(t,regi,in,"price")
       = pm_cesdata(t,regi,in,"price")

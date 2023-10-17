@@ -54,12 +54,19 @@ test:            ## Test if the model compiles and runs without running a full
 	@R_PROFILE_USER= Rscript -e 'testthat::test_dir("tests/testthat")'
 
 test-coupled:    ## Test if the coupling with MAgPIE works. Takes significantly
-                 ## longer than 10 minutes to run and needs slurm and magpie
+                 ## longer than 60 minutes to run and needs slurm and magpie
                  ## available
-	$(info Coupling tests take more than 30 minutes to run, please be patient)
+	$(info Coupling tests take around 75 minutes to run, please be patient)
 	@R_PROFILE_USER= TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_file("tests/testthat/test_20-coupled.R")'
+
+test-coupled-slurm: ## test-coupled, but on slurm
+	$(info Coupling tests take around 75 minutes to run. Sent to slurm, find log in test-coupled.log)
+	@sbatch --qos=priority --wrap="make test-coupled" --job-name=test-coupled --mail-type=END --output=test-coupled.log --comment="test-coupled.log"
 
 test-full:       ## Run all tests, including coupling tests and a default
                  ## REMIND scenario. Takes significantly longer than 10 minutes to run.
 	$(info Full tests take more than an hour to run, please be patient)
 	@R_PROFILE_USER= TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat")'
+test-validation: ## Run validation tests, requires a full set of runs in the output folder
+	$(info Run validation tests, requires a full set of runs in the output folder)
+	@R_PROFILE_USER= TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat/validation")'	

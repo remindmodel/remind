@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -42,9 +42,13 @@ if (smax((t,regi_dyn29(regi),ipf)$(    t.val gt 2005
 sm_tmp = 5;  !! last iteration with bounds on industry
 loop (pf_industry_relaxed_bounds_dyn37(in),
   vm_cesIO.lo(t_29(t),regi_dyn29(regi),in)
-  = pm_cesdata(t,regi,in,"quantity")
-  !! goes from 0.95 to 1e-12 in -0.2 steps
-  * max(1e-12, 0.95 + min(0, (1 - sm_CES_calibration_iteration) / sm_tmp));
+  = max(
+      ( pm_cesdata(t,regi,in,"quantity")
+        !! goes from 0.95 to 1e-12 in -0.2 steps
+      * max(1e-12, 0.95 + min(0, (1 - sm_CES_calibration_iteration) / sm_tmp))
+      ),
+      abs(pm_cesdata(t,regi,in,"offset_quantity"))
+    );
 
   vm_cesIO.up(t,regi_dyn29(regi),in)
   = ( pm_cesdata(t,regi,in,"quantity")

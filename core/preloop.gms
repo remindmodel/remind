@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -38,13 +38,13 @@ vm_co2eqMkt.l(ttot,regi,emiMkt) = 0;
 v_shfe.l(t,regi,enty,sector) = 0;
 v_shGasLiq_fe.l(t,regi,sector) = 0;  
 pm_share_CCS_CCO2(t,regi) = 0; 
-  
+pm_pvpRegi(ttot,regi,enty) = 0;
+
 *** overwrite default targets with gdx values if wanted
 Execute_Loadpoint 'input' p_emi_budget1_gdx = sm_budgetCO2eqGlob;
 Execute_Loadpoint 'input' vm_demPe.l = vm_demPe.l;
 Execute_Loadpoint 'input' q_balPe.m = q_balPe.m;
 Execute_Loadpoint 'input' qm_budget.m = qm_budget.m;
-Execute_Loadpoint 'input' pm_pvpRegi = pm_pvpRegi;
 Execute_Loadpoint 'input' pm_pvp = pm_pvp;
 Execute_Loadpoint 'input' vm_demFeSector.l = vm_demFeSector.l;
 

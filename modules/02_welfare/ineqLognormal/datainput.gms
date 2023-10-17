@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -41,9 +41,10 @@ display p02_ineqTheil;
 
 * for a policy run, we need to load values coming from the baseline for consumption, tax revenues and energy expenditures:
 if ((cm_emiscen ne 1),
-    Execute_Loadpoint 'input_bau' p02_taxrev_redistr0_ref=v02_taxrev_Add.l;
-    Execute_Loadpoint 'input_bau' p02_cons_ref=vm_cons.l;
-    Execute_Loadpoint 'input_bau' p02_energyExp_ref=v02_energyExp.l;
+    Execute_Loadpoint 'input_ref' p02_taxrev_redistr0_ref=v02_taxrev_Add.l;
+    Execute_Loadpoint 'input_ref' p02_cons_ref=vm_cons.l;
+    Execute_Loadpoint 'input_ref' p02_energyExp_ref=v02_energyExp.l;
+    Execute_Loadpoint 'input_ref' p02_damageFactor_ref=vm_damageFactor.l;
  
 * if energy system costs are used:
 *    Execute_Loadpoint 'input_bau' p02_energyExp_ref=vm_costEnergySys.l;

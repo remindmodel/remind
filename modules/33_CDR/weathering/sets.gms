@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -9,17 +9,17 @@ sets
 
 te_dyn33(all_te)   "all technologies"
 /
-		rockgrind		"grinding rock for enhanced weathering"
+		weathering		"grinding rock for enhanced weathering"
 /
 
 teNoTransform_dyn33(all_te) "all technologies that do not transform energy but still have investment and O&M costs (like storage or grid)"
 /
-       rockgrind       "grinding rock for enhanced weathering"
+       weathering       "grinding rock for enhanced weathering"
 /
 
 teNoTransform2rlf_dyn33(all_te,rlf)      "mapping for final energy to grades"
 /
-      (rockgrind) . 1
+      (weathering) . 1
 /
 ;
 

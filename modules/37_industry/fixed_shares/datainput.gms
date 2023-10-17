@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -151,14 +151,14 @@ $endif.feShareScenario
 $ENDIF.feShare
 
 *** FS: CES markup cost industry
-p37_CESMkup(t,regi,in) = 0;
+p37_CESMkup(ttot,regi,in) = 0;
 *** in standard case, apply markup-cost of 0.5 trUSD/TWa to feeli to represent demand-side cost of electrification and 
 *** obtain a higher efficiency in calibration to mimic energy efficiency gains with increasing electricity share
-p37_CESMkup(t,regi,"feeli") = 0.5;
+p37_CESMkup(ttot,regi,"feeli") = 0.5;
 
 *** overwrite or extent CES markup cost if specified by switch
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
-  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in)) = p37_CESMkup_input(in);
+  p37_CESMkup(ttot,regi,in)$(p37_CESMkup_input(in)) = p37_CESMkup_input(in);
 $endIf.CESMkup
 
 display p37_CESMkup;

@@ -1,4 +1,4 @@
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -19,17 +19,14 @@ prepareAndRun <- function() {
     # If no "full.gms" exists, the script assumes that REMIND did not run before and
     # prepares all inputs before starting the run.
     prepare()
-    start_subsequent_runs <- TRUE
   } else {
     # If "full.gms" exists, the script assumes that a full.gms has been generated before and you want
     # to restart REMIND in the same folder using the gdx that it eventually previously produced.
-    message("\nRestarting REMIND, find old log in 'log_beforeRestart.txt'.")
-    if(file.exists("fulldata.gdx")) file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
-    start_subsequent_runs <- FALSE
+    if (file.exists("fulldata.gdx")) file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
   }
 
   # Run REMIND, start subsequent runs (if applicable), and produce output.
-  run(start_subsequent_runs)
+  run()
 }
 
 # Only if this file is run directly via Rscript prepareAndRun.R, but not if this file

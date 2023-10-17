@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -67,14 +67,13 @@ library(lucode2)
 library(gms)
 require(stringr, quietly = TRUE)
 
+flags <- NULL
 ### Define arguments that can be read from command line
 if (!exists("source_include")) {
   # if this script is not being sourced by another script but called from the command line via Rscript read the command
   # line arguments and let the user choose the slurm options
   flags <- readArgs("outputdir", "output", "comp", "remind_dir", "slurmConfig", "filename_prefix",
                     .flags = c(t = "--test", h = "--help"))
-} else {
-  flags <- NULL
 }
 
 if ("--help" %in% flags) {
@@ -125,7 +124,7 @@ if (! exists("output")) {
 # Select output directories if not defined by readArgs
 if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
-                         "plot_compare_iterations", "varListHtml")
+                         "plot_compare_iterations", "varListHtml", "fixOnRef")
   needingMif <- any(modulesNeedingMif %in% output)
   dir_folder <- if (exists("remind_dir")) c(file.path(remind_dir, "output"), remind_dir) else "./output"
   dirs <- dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx")))
@@ -133,6 +132,9 @@ if (! exists("outputdir")) {
   dirnames <- if (length(dir_folder) == 1) basename(dirs) else dirs
   names(dirnames) <- stringr::str_extract(dirnames, "rem-[0-9]+$")
   names(dirnames)[is.na(names(dirnames))] <- ""
+  if (length(dirnames) == 0) {
+    stop("No directories found containing gdx", if (needingMif) " and mif", " files. Aborting.")
+  }
   selectedDirs <- chooseFromList(dirnames, type = "runs to be used for output generation",
                     userinfo = paste0(if ("policyCosts" %in% output) "The reference run will be selected separately! " else NULL,
                                       if (needingMif) "Do you miss a run? Check if .mif exists and rerun reporting. " else NULL),
@@ -195,11 +197,14 @@ if (comp %in% c("comparison", "export")) {
   }
 } else { # comp = single
   # define slurm class or direct execution
-  outputUsingDirect <- c("plotIterations")
+  outputInteractive <- c("plotIterations", "fixOnRef")
   if (! exists("source_include")) {
     # for selected output scripts, only slurm configurations matching these regex are available
     slurmExceptions <- if ("reporting" %in% output) "--mem=[0-9]*[0-9]{3}" else NULL
-    if (all(output %in% outputUsingDirect)) slurmConfig <- "direct"
+    if (any(output %in% outputInteractive)) {
+      slurmConfig <- "direct"
+      flags <- c(flags, "--interactive") # to tell scripts they can run in interactive mode
+    }
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
     if (!exists("slurmConfig")) {
@@ -257,38 +262,38 @@ if (comp %in% c("comparison", "export")) {
       message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
     } else {
       message("\nStarting output generation for ", outputdir, "\n")
-      for (rout in output) {
-        name <- paste(rout, ".R", sep = "")
-        if ("--test" %in% flags) {
-          message("Test mode, not executing ", paste0("scripts/output/single/", name))
-        } else {
-          if (file.exists(paste0("scripts/output/single/", name))) {
-            if (slurmConfig == "direct" | rout %in% outputUsingDirect) {
-              # execute output script directly (without sending it to slurm)
-              message("Executing ", name)
-              tmp.env <- new.env()
-              tmp.error <- try(sys.source(paste0("scripts/output/single/", name), envir = tmp.env))
-              #        rm(list=ls(tmp.env),envir=tmp.env)
-              rm(tmp.env)
-              gc()
-              if (!is.null(tmp.error)) {
-                warning("Script ", name, " was stopped by an error and not executed properly!")
-              }
-            } else {
-              # send the output script to slurm
-              logfile <- paste0(outputdir, "/log_", rout, ".txt")
-              slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
-                                 " --mail-type=END --comment=REMIND --wrap=\"Rscript scripts/output/single/", rout,
-                                 ".R  outputdir=", outputdir, "\"")
-              message("Sending to slurm: ", name, ". Find log in ", logfile)
-              system(slurmcmd)
-              Sys.sleep(1)
+      name <- paste0(output, ".R")
+      if ("--test" %in% flags) {
+        message("Test mode, not executing scripts/output/single/", paste(name, collapse = ", "))
+      } else if (all(file.exists(paste0("scripts/output/single/", name)))) {
+        if (slurmConfig == "direct") {
+          # execute output script directly (without sending it to slurm)
+          for (n in name) {
+            message("Executing ", n)
+            tmp.env <- new.env()
+            tmp.error <- try(sys.source(paste0("scripts/output/single/", n), envir = tmp.env))
+            #        rm(list=ls(tmp.env),envir=tmp.env)
+            rm(tmp.env)
+            gc()
+            if (!is.null(tmp.error)) {
+              warning("Script ", n, " was stopped by an error and not executed properly!")
             }
           }
+        } else {
+          # send the output script to slurm
+          logfile <- file.path(outputdir, "log_output.txt")
+          Rscripts <- paste0("Rscript scripts/output/single/", name, " outputdir=", outputdir, collapse = "; ")
+          slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
+                       " --mail-type=END --comment=output.R --wrap='", Rscripts, "'")
+          message("Sending to slurm: ", paste(name, collapse = ", "), ". Find log in ", logfile)
+          system(slurmcmd)
         }
+        # finished
+        message("\nFinished ", ifelse(slurmConfig == "direct", "", "starting job for "), "output generation for ", outputdir, "!\n")
+      } else {
+        warning("Skipping ", outputdir, " because some output script selected could not be found ",
+                "in scripts/output/single: ", name[! name %in% dir("scripts/output/single")])
       }
-      # finished
-      message("\nFinished ", ifelse(slurmConfig == "direct", "", "starting jobs for "), "output generation for ", outputdir, "!\n")
     }
 
     rm(source_include)

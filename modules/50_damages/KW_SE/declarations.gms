@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -11,7 +11,6 @@ p50_regionalTemperatureImp(tall,tall,all_regi)	     "regional temperature with e
 p50_damageGrowthRateImp(tall,tall,all_regi)	     "growth rate damage with emission pulse"
 p50_seImp(tall,tall,all_regi)			     "damage standard error with emission pulse"
 pm_damageImp(tall,tall,all_regi)		     "damage with emission pulse"
-pm_damageScc(tall,tall,all_regi)		     "damage without pulse"
 pm_damage(tall,all_regi)                             "damage factor (reduces GDP)"
 pm_damageGrowthRate(tall,all_regi)                   "damage function for growth rate of GDP"
 pm_damageMarginalT(tall,all_regi)                    "damage function derivative for KW"

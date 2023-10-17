@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -23,7 +23,7 @@ p46_taxCO2eqLast(tall,all_regi)                          "general carbon price i
 ;
 
 Scalar    p46_adjustExponent                             "exponent in tax adjustment process";
-Scalar    p46_startInIteration                           "first iteration to start adapting pm_taxCO2eqRegi" / 10 /;
+Scalar    p46_startInIteration                           "first iteration to start adapting pm_taxCO2eqRegi" / 5 /;
 Scalar    p46_previousYearInLoop                         "previous year in loop, required for linear interpolation in postsolve";
 Scalar    p46_taxPreviousYearInLoop                      "tax of previous year in loop, required for linear interpolation in postsolve";
 
