@@ -39,7 +39,7 @@ helpText <- "
 #'   --testOneRegi, -1:  starting the REMIND run(s) in testOneRegi mode
 #'   startgroup=MYGROUP  when reading a scenario config .csv file, don't start
 #'                       everything specified by \"start = 1\", instead start everything
-#'                       specified by \"start = MYGROUP\"
+#'                       specified by \"start = MYGROUP\". Use startgroup=* to start all.
 #'   titletag=MYTAG      append \"-MYTAG\" to all titles of all runs that are started
 #'   slurmConfig=CONFIG  use the provided CONFIG as slurmConfig: a string, or an integer <= 16
 #'                       to select one of the options shown when running './start.R -t'.
@@ -110,6 +110,9 @@ if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
   Sys.sleep(1)
 }
 
+# initialize madrat settings
+invisible(madrat::getConfig(verbose = FALSE))
+
 errorsfound <- 0 # counts ignored errors in --test mode
 startedRuns <- 0
 waitingRuns <- 0
@@ -158,7 +161,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     if(! exists("slurmConfig")) {
       slurmConfig <- choose_slurmConfig(flags = flags)
     }
-    if ("--quick" %in% flags) slurmConfig <- combine_slurmConfig(slurmConfig, "--time=60")
+    if ("--quick" %in% flags && ! slurmConfig == "direct") slurmConfig <- combine_slurmConfig(slurmConfig, "--time=60")
     message()
     for (outputdir in outputdirs) {
       message("Restarting ", outputdir)
@@ -241,10 +244,6 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   # ask for slurmConfig if not specified for every run
   if ("--gamscompile" %in% flags) {
     slurmConfig <- "direct"
-    if (! file.exists("input/source_files.log")) {
-      message("\n### Input data missing, need to compile REMIND first (2 min.)\n")
-      system("Rscript start.R config/tests/scenario_config_compile.csv")
-    }
     message("\nTrying to compile the selected runs...")
     lockID <- gms::model_lock()
   }
@@ -328,6 +327,8 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     # abort on too long paths ----
     cfg$gms$cm_CES_configuration <- calculate_CES_configuration(cfg, check = TRUE)
 
+    cfg <- checkFixCfg(cfg)
+
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
     if (! "--gamscompile" %in% flags) {
       filename <- paste0(cfg$title,".RData")
@@ -349,11 +350,13 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       }
     }
     # print names of runs to be waited and subsequent runs if there are any
-    if (! start_now && ( ! "--gamscompile" %in% flags || "--interactive" %in% flags)) {
-      message("   Waiting for: ", paste(unique(cfg$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na]), collapse = ", "))
-    }
-    if (length(rownames(cfg$RunsUsingTHISgdxAsInput)) > 0) {
-      message("   Subsequent runs: ", paste(rownames(cfg$RunsUsingTHISgdxAsInput), collapse = ", "))
+    if (! "--gamscompile" %in% flags || "--interactive" %in% flags) {
+      if (! start_now) {
+        message("   Waiting for: ", paste(unique(cfg$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na]), collapse = ", "))
+      }
+      if (length(rownames(cfg$RunsUsingTHISgdxAsInput)) > 0) {
+        message("   Subsequent runs: ", paste(rownames(cfg$RunsUsingTHISgdxAsInput), collapse = ", "))
+      }
     }
   }
   message("")

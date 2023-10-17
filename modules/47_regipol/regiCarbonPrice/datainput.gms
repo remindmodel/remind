@@ -18,10 +18,16 @@ p47_implicitQttyTargetTaxRescale_iter("1", "2030",ext_regi,qttyTarget,qttyTarget
 $endIf.cm_implicitQttyTarget
 
 *** RR this should be replaced as soon as non-energy is treated endogenously in the model
-*** EUR in 2030 ~ 90Mtoe (90 * 10^6 toe -> 90 * 10^6 toe * 41.868 GJ/toe -> 3768.12 * 10^6 GJ * 10^-9 EJ/GJ -> 3.76812 EJ * 1 TWa/31.536 EJ -> 0.1194863 TWa) EU27 = 92% EU28"
-p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EUR_regi")) = 0.1194863;
-p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.11;
+*** non-energy use values are calculated by taking the time path as contained in pm_fe_nechem.cs4r (where eg the 2030 value for EU27 is 91.6% of the 2020 value) and rescaling that with historic non-energy values from Eurostat
+*** historical values can be found at: https://ec.europa.eu/eurostat/databrowser/bookmark/f7c8aa0e-3cf6-45d6-b85c-f2e76e90b4aa?lang=en
+p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.121606*0.916; 
+p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EUR_regi")) = 0.13*0.924;
+p47_nonEnergyUse("2050",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.121606*0.815; 
+p47_nonEnergyUse("2050",ext_regi)$(sameas(ext_regi, "EUR_regi")) = 0.13*0.841;
 
+p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "DEU")) = 0.03*0.928; 
+p47_nonEnergyUse("2045",ext_regi)$(sameas(ext_regi, "DEU")) = 0.03*0.848; 
+p47_nonEnergyUse("2050",ext_regi)$(sameas(ext_regi, "DEU")) = 0.03*0.822; 
 ***--------------------------------------------------
 *** Emission markets (EU Emission trading system and Effort Sharing)
 ***--------------------------------------------------
@@ -60,8 +66,10 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
 ***  pm_taxemiMkt (regipol carbon price) so the carbon tax can be initialized for regions with CO2 tax controlled by cm_emiMktTarget  
 p47_taxemiMkt_init(ttot,regi,emiMkt) = 0;
 
+if (cm_startyear gt 2005,
 Execute_Loadpoint 'input_ref' p47_taxCO2eq_ref = pm_taxCO2eq;
 Execute_Loadpoint 'input_ref' p47_taxemiMkt_init = pm_taxemiMkt;
+);
 
 *** copying taxCO2eq value to emiMkt tax parameter for years and regions that contain no pm_taxemiMkt value
 p47_taxemiMkt_init(ttot,regi,emiMkt)$(p47_taxCO2eq_ref(ttot,regi) and (NOT(p47_taxemiMkt_init(ttot,regi,emiMkt)))) = p47_taxCO2eq_ref(ttot,regi);
@@ -76,7 +84,7 @@ p47_taxemiMkt_init(ttot,regi,emiMkt)$(p47_taxCO2eq_ref(ttot,regi) and (NOT(p47_t
   );
   
 *** if there is a European regional target, overwrite historical prices for Europe if the historical years are free in the cm_emiMktTarget run. 
-*** in this case, historical prices will reflect the ETS market observed prices instead of the values defined at pm_taxCO2eqHist  
+*** in this case, historical prices will reflect the ETS market observed prices instead of the values defined pm_taxCO2eq
   loop(ext_regi$regiEmiMktTarget(ext_regi),
     loop(regi$(regi_groupExt(ext_regi,regi) and regi_groupExt("EUR_regi",regi)), !!second condition is necessary to support also country targets
       if((cm_startyear le 2010),
@@ -238,9 +246,19 @@ $offdelim
 /
 ;
 
-*** difference between 2015 land-use change emissions from Magpie and UNFCCC 2015 land-use change emissions
-p47_LULUCFEmi_GrassiShift(t,regi)$(p47_EmiLULUCFCountryAcc("2015",regi)) = (pm_macBaseMagpie("2015",regi,"co2luc") - p47_EmiLULUCFCountryAcc("2015",regi)* 1e-3/sm_c_2_co2);
-
+*** difference between 2020 land-use change emissions from Magpie and UNFCCC 2015 and 2020 moving average land-use change emissions
+p47_LULUCFEmi_GrassiShift(t,regi)$(p47_EmiLULUCFCountryAcc("2020",regi)) = 
+  pm_macBaseMagpie("2020",regi,"co2luc") 
+  - 
+  (
+    (
+      ((p47_EmiLULUCFCountryAcc("2013",regi) + p47_EmiLULUCFCountryAcc("2014",regi) + p47_EmiLULUCFCountryAcc("2015",regi) + p47_EmiLULUCFCountryAcc("2016",regi) + p47_EmiLULUCFCountryAcc("2017",regi))/5)
+      +
+      ((p47_EmiLULUCFCountryAcc("2018",regi) + p47_EmiLULUCFCountryAcc("2019",regi) + p47_EmiLULUCFCountryAcc("2020",regi) + p47_EmiLULUCFCountryAcc("2021",regi))/4)
+    )/2
+    * 1e-3/sm_c_2_co2
+  )
+;
 
 *** -------------------------Primary Energy Tax--------------------------
 

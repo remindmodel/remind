@@ -16,7 +16,7 @@ p51_sccParts(tall,tall,all_regi) "Social cost of carbon components (time, region
 p51_sccPartsTC(tall,tall,all_regi) "Social cost of carbon components (time, region)"
 
 
-p51_sccConvergenceMaxDeviation "max deviation of SCC from last iteration [percent]"
+pm_sccConvergenceMaxDeviation "max deviation of SCC from last iteration [percent]"
 ;
 
 *** EOF ./modules/51_internalizeDamages/KWTCintItr/declarations.gms

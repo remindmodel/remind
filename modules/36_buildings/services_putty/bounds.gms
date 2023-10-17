@@ -9,7 +9,13 @@ vm_enerSerAdj.fx("2005",regi,in) = 0;
 
 if ((cm_noReboundEffect eq 1 ), !! Fix the upper bound of vm_cesIO to the level of input_ref if no rebound is allowed
 vm_cesIO.up(t,regi,in)$(sameAs(in,"esswb") OR sameAs(in,"uealb") OR sameAs(in,"uecwb")) = (1 + 1e-14) * p36_cesIONoRebound(t,regi,in);
-vm_cesIO.lo(t,regi,in)$(sameAs(in,"esswb") OR sameAs(in,"uealb") OR sameAs(in,"uecwb")) = (1 - 1e-14) * p36_cesIONoRebound(t,regi,in);
+vm_cesIO.lo(t,regi,in)$(    sameAs(in,"esswb") 
+                        OR sameAs(in,"uealb")
+			OR sameAs(in,"uecwb")  )
+  = max(
+      (1 - 1e-14) * p36_cesIONoRebound(t,regi,in),
+      abs(pm_cesdata(t,regi,in,"offset_quantity"))
+    );
 vm_cesIOdelta.up(t,regi,in)$(sameAs(in,"esswb") OR sameAs(in,"uealb") OR sameAs(in,"uecwb")) = (1 + 1e-14) * p36_cesIONoRebound_putty(t,regi,in);
 vm_cesIOdelta.lo(t,regi,in)$(sameAs(in,"esswb") OR sameAs(in,"uealb") OR sameAs(in,"uecwb")) = (1 - 1e-14) * p36_cesIONoRebound_putty(t,regi,in);
 );
