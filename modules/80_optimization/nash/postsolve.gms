@@ -38,11 +38,11 @@ loop(ttot$(ttot.val ge 2005),
   loop(trade$(NOT tradeSe(trade)),
     loop(regi,
       p80_DevPriceAnticipReg(ttot,trade,regi) = 
-        ( vm_Xport(ttot,regi,trade) - vm_Mport(ttot,regi,trade) ) 
+        ( vm_Xport.l(ttot,regi,trade) - vm_Mport.l(ttot,regi,trade) ) 
         * pm_pvp(ttot,trade) / pm_pvp(ttot,"good")
         * ( sm_fadeoutPriceAnticip*p80_etaXp(trade)
-            * ( (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport(ttot,regi,trade) - vm_Mport(ttot,regi,trade))
-                - p80_taxrev0(ttot,regi)$(ttot.val gt 2005)$(sameas(trade,"good")) + vm_taxrev(ttot,regi)$(ttot.val gt 2005)$(sameas(trade,"good"))
+            * ( (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport.l(ttot,regi,trade) - vm_Mport.l(ttot,regi,trade))
+                - p80_taxrev0(ttot,regi)$(ttot.val gt 2005)$(sameas(trade,"good")) + vm_taxrev.l(ttot,regi)$(ttot.val gt 2005)$(sameas(trade,"good"))
 		          )
             / (p80_normalize0(ttot,regi,trade) + sm_eps)
           )
@@ -60,7 +60,7 @@ p80_DevPriceAnticipGlobMax(ttot,trade)$((ttot.val ge cm_startyear) AND (NOT trad
 
 p80_DevPriceAnticipGlobMaxIter(ttot,trade,iteration)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = p80_DevPriceAnticipGlobMax(ttot,trade);
 
-display p80_DevPriceAnticipGlob, p80_DevPriceAnticipGlob, p80_DevPriceAnticipGlobAll, p80_DevPriceAnticipGlobMax;  
+display p80_DevPriceAnticipGlob, p80_DevPriceAnticipGlob, p80_DevPriceAnticipGlobAll, p80_DevPriceAnticipGlobMax, p80_DevPriceAnticipGlobMaxIter;  
     
 
 
