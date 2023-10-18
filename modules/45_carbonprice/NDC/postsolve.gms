@@ -45,20 +45,20 @@ p45_factorRescaleCO2TaxLtd(p45_NDCyearSet(t,regi)) =
   min(max(0.1**p45_adjustExponent, p45_factorRescaleCO2Tax(t,regi)), max(2-iteration.val/15,1.01-iteration.val/10000));
 *** use max(0.1, ...) to make sure that negative emission values cause no problem, use +0.0001 such that net zero targets cause no problem
 
-pm_taxCO2eq(t,regi)$(t.val gt 2016 AND t.val ge cm_startyear AND t.val le p45_lastNDCyear(regi)) = max(1* sm_DptCO2_2_TDpGtC,pm_taxCO2eq(t,regi) * p45_factorRescaleCO2TaxLtd(t,regi) );
+pm_taxCO2eq(t,regi)$(t.val gt 2021 AND t.val le p45_lastNDCyear(regi)) = max(1* sm_DptCO2_2_TDpGtC,pm_taxCO2eq(t,regi) * p45_factorRescaleCO2TaxLtd(t,regi) );
 
 p45_factorRescaleCO2Tax_iter(iteration,t,regi) = p45_factorRescaleCO2Tax(t,regi);
 p45_factorRescaleCO2TaxLtd_iter(iteration,t,regi) = p45_factorRescaleCO2TaxLtd(t,regi);
 
 display p45_factorRescaleCO2TaxLtd_iter;
 
-*CB* special case SSA: cap carbon price at 30 in 2025, 45 in 2030, to reflect low energy productivity of region, and avoid high losses
+*CB* special case SSA: maximum carbon price at 30 in 2025, 45 in 2030, to reflect low energy productivity of region, and avoid high losses
 pm_taxCO2eq(t,regi)$(sameas(t,"2025") AND sameas(regi,"SSA")) = min(pm_taxCO2eq("2025",regi)$(sameas(regi,"SSA")),30 * sm_DptCO2_2_TDpGtC);
 pm_taxCO2eq(t,regi)$(sameas(t,"2030") AND sameas(regi,"SSA")) = min(pm_taxCO2eq("2030",regi)$(sameas(regi,"SSA")),45 * sm_DptCO2_2_TDpGtC);
 
 *** calculate tax path until NDC target year - linear increase
 p45_taxCO2eqFirstNDCyear(regi) = smax(t$(t.val = p45_firstNDCyear(regi)), pm_taxCO2eq(t,regi));
-pm_taxCO2eq(t,regi)$(t.val > 2016 AND t.val < p45_firstNDCyear(regi)) = p45_taxCO2eqFirstNDCyear(regi)*(t.val-2015)/(p45_firstNDCyear(regi)-2015);
+pm_taxCO2eq(t,regi)$(t.val > 2021 AND t.val < p45_firstNDCyear(regi)) = (p45_taxCO2eqFirstNDCyear(regi) - pm_taxCO2eq("2020",regi))*(t.val-2020)/(p45_firstNDCyear(regi)-2020) + pm_taxCO2eq("2020",regi);
 
 *** replace taxCO2eq between NDC targets such that taxCO2eq between goals does not decrease
 loop( p45_NDCyearSet(t2,regi) ,
@@ -77,9 +77,6 @@ pm_taxCO2eq(t,regi)$(t.val gt p45_lastNDCyear(regi))
 
 ***as a minimum, have linear price increase starting from 1$ in 2030
 pm_taxCO2eq(t,regi)$(t.val gt 2030) = max(pm_taxCO2eq(t,regi),1*sm_DptCO2_2_TDpGtC * (1+(t.val-2030)*9/7));
-
-*** new 2020 carbon price definition: weighted average of 2015 and 2025, with triple weight for 2015 (which is zero for all non-eu regions).
-pm_taxCO2eq(t,regi)$sameas(t,"2020") = (3*pm_taxCO2eq("2015",regi)+pm_taxCO2eq("2025",regi))/4;
 
         display pm_taxCO2eq;
 

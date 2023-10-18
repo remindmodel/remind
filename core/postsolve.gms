@@ -625,7 +625,7 @@ o_margAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te
 ;
 
 *** CG: calculate average adjustment cost for capacity investment: v_costInvTeAdj / vm_deltaCap
-o_avgAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te) AND (sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf)) ne 0 )) 
+o_avgAdjCostInv(ttot,regi,te)$(ttot.val ge 2010 AND teAdj(te) AND (sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf)) ne 0 ))
     = v_costInvTeAdj.l(ttot,regi,te) / sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf));
 *** and ratio between average adjCost and direct investment cost
 o_avgAdjCost_2_InvCost_ratioPc(ttot,regi,te)$(v_costInvTeDir.l(ttot,regi,te) ge 1E-22) = v_costInvTeAdj.l(ttot,regi,te)/v_costInvTeDir.l(ttot,regi,te) * 100;
