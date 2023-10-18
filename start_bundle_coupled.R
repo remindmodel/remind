@@ -246,6 +246,8 @@ message("max_iterations:        ", max_iterations)
 
 common <- intersect(rownames(settings_remind), rownames(scenarios_coupled))
 knownRefRuns <- apply(expand.grid(prefix_runname , common, "-rem-", seq(max_iterations)), 1, paste, collapse="")
+knownRefRuns <- gsub(" ", "", knownRefRuns) # if max_iterations has two digits apply in the line above introduces whitespaces before the single-digit iterations ("rem- 9"). Remove them.
+
 if (! identical(common, character(0))) {
   message("\n################################\n")
   message("The following ", length(common), " scenarios will be started:")

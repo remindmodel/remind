@@ -2511,8 +2511,9 @@ pc2te(all_enty,all_enty,all_te,all_enty)    "mapping for own consumption of tech
         pecoal.seh2.coalh2.seel
         pecoal.seh2.coalh2c.seel
         pebiolc.seel.biochp.sehe
+        pebiolc.segabio.biogasc.seel
         segabio.fegas.tdbiogas.seel
-		segafos.fegas.tdfosgas.seel
+	segafos.fegas.tdfosgas.seel
         pegeo.sehe.geohe.seel
         cco2.ico2.ccsinje.seel
         fedie.uedit.apCarDiEffT.feelt
@@ -2644,6 +2645,7 @@ emi2te(all_enty,all_enty,all_te,all_enty)    " map emissions to technologies"
         sesofos.fesos.tdfossos.co2
         seliqfos.fepet.tdfospet.co2
         seliqfos.fedie.tdfosdie.co2
+        segafos.fegat.tdfosgat.co2
 /
 
 emi2fuel(all_enty,all_enty) "map emissions to fuel extraction"
