@@ -142,12 +142,14 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
 
   /
 
-  fe2mat_dyn37(all_enty,all_enty,all_te)  "map FE carriers to materials"
+  fe2mat_dyn37(all_enty,all_enty,all_te)  "set of technologies to be included in en2en, which connects capex and opex to budget"
   /
     entydummy.entydummy.bf
     entydummy.entydummy.bof
     entydummy.entydummy.idr
     entydummy.entydummy.eaf
+    entydummy.entydummy.bfcc
+    entydummy.entydummy.idrcc
   /
 
 $endif.process_based_steel
