@@ -55,13 +55,21 @@ p80_handle(all_regi)                       "parallel mode handle parameter"
 p80_repy(all_regi,solveinfo80)             "summary report from solver "
 p80_repy_iteration(all_regi,solveinfo80,iteration) "summary report from solver in iteration"
 p80_repyLastOptim(all_regi,solveinfo80)    "p80_repy from last iteration"
-p80_messageFailedMarket(tall,all_enty)     "nash display helper"
-p80_messageShow(convMessage80)             "nash display helper"
+p80_messageFailedMarket(tall,all_enty)       "nash display helper"
+p80_messageFailedDevPriceAnticip(ttot,trade) "nash display helper for the trade goods and times where the deviation due to price anticipation effects was too large"
+p80_messageShow(convMessage80)               "nash display helper"
 p80_trackConsecFail(all_regi)              "Parameter to keep track of consecutive solve failures of regions in Nash mode."
 
 p80_curracc(ttot,all_regi)                 "current account"
 
 pm_cumEff(tall,all_regi,all_in)            "parameter for spillover externality (aggregated productivity level)"
+
+ 
+p80_DevPriceAnticipReg(ttot,trade,all_regi)          "Deviation of the yearly monetary export/import expenditure due to the price change anticipation effect. [Units: trillion Dollar]"
+p80_DevPriceAnticipGlob(ttot,trade)                  "Global sum of the absolute deviation of the yearly monetary export/import expenditure due to the price change anticipation effect. [Units: trillion Dollar]"
+p80_DevPriceAnticipGlobAll(ttot)                     "Global sum of the absolute deviation of the yearly monetary export/import expenditure due to the price change anticipation effect, summed over all trade goods. [Units: trillion Dollar]"
+p80_DevPriceAnticipGlobMax(ttot,trade)               "Max of p80_DevPriceAnticipGlob until the given year"
+p80_DevPriceAnticipGlobMaxIter(ttot,trade,iteration) "Track p80_DevPriceAnticipGlobMax over iterations"
 
 *EMIOPT relevant
 p80_eoMargPermBudg(all_regi)               "marginal of permit budget restriction"

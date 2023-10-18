@@ -33,6 +33,50 @@ loop(ttot$(ttot.val ge 2005),
       ); 
 ); 
 
+*** calculate the deviation of the yearly monetary export/import expenditure due to the price change anticipation effect: 
+loop(ttot$(ttot.val ge 2005),
+  loop(trade$(NOT tradeSe(trade)),
+    loop(regi,
+      p80_DevPriceAnticipReg(ttot,trade,regi) = 
+        ( vm_Xport(ttot,regi,trade) - vm_Mport(ttot,regi,trade) ) 
+        * pm_pvp(ttot,trade) / pm_pvp(ttot,"good")
+        * ( sm_fadeoutPriceAnticip*p80_etaXp(trade)
+            * ( (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport(ttot,regi,trade) - vm_Mport(ttot,regi,trade))
+                - p80_taxrev0(ttot,regi)$(ttot.val gt 2005)$(sameas(trade,"good")) + vm_taxrev(ttot,regi)$(ttot.val gt 2005)$(sameas(trade,"good"))
+		          )
+            / (p80_normalize0(ttot,regi,trade) + sm_eps)
+          )
+      ;
+    );
+  p80_DevPriceAnticipGlob(ttot,trade) = sum(regi, abs( p80_DevPriceAnticipReg(ttot,trade,regi) ) );  
+  );
+p80_DevPriceAnticipGlobAll(ttot) = sum(trade$(NOT tradeSe(trade)), p80_DevPriceAnticipGlob(ttot,trade));
+);
+
+*' calculate maximum deviation due to price anticipation on markets
+p80_DevPriceAnticipGlobMax(ttot,trade)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = 
+  smax(ttot2$(ttot2.val ge cm_startyear AND ttot2.val le ttot.val), p80_DevPriceAnticipGlob(ttot2,trade) )
+;
+
+p80_DevPriceAnticipGlobMaxIter(ttot,trade,iteration)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = p80_DevPriceAnticipGlobMax(ttot,trade);
+
+***criterion ""Price anticipation deviation": are we converged yet?
+loop(trade$(NOT tradeSe(trade)),
+  if(p80_DevPriceAnticipGlobMax(trade,"2100") gt p80_surplusMaxTolerance("good"),
+***    s80_bool=0; !! not yet active as convergence criterion                
+    p80_messageShow("DevPriceAnticip") = YES;
+    loop(ttot$((ttot.val ge cm_startyear) and (ttot.val le 2100)),
+      if( (abs(p80_DevPriceAnticipGlobMax(ttot,trade)) gt p80_surplusMaxTolerance("good") ),
+	       p80_messageFailedDevPriceAnticip(ttot,trade) = YES;
+      );
+    );
+  );
+);
+
+display p80_DevPriceAnticipGlob, p80_DevPriceAnticipGlob, p80_DevPriceAnticipGlobAll, p80_DevPriceAnticipGlobMax;  
+    
+
+
 ***calculate aggregated intertemporal market volumes - used in calculation of price corrections later on  
 loop(trade$(NOT tradeSe(trade)),
        p80_normalizeLT(trade) = sum(ttot$(ttot.val ge 2005), sum(regi, pm_pvp(ttot,trade) * pm_ts(ttot) *  p80_normalize0(ttot,regi,trade) ));
@@ -200,6 +244,7 @@ pm_FEPrice_iter(iteration,t,regi,enty,sector,emiMkt) =
 s80_bool=1;  
 p80_messageShow(convMessage80) = NO;   
 p80_messageFailedMarket(ttot,all_enty) = NO;
+p80_messageFailedDevPriceAnticip(ttot,trade) = NO;
 
 ***criterion ""surplus": are we converged yet?
 loop(trade$(NOT tradeSe(trade)),
@@ -375,6 +420,12 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
 		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";
           display "#### Check out sm_fadeoutPriceAnticip which needs to be below cm_maxFadeOutPriceAnticip.";
           display sm_fadeoutPriceAnticip, cm_maxFadeOutPriceAnticip;
+	      );
+        if(sameas(convMessage80, "DevPriceAnticip"),
+		      display "#### 5b.) The total monetary value of the price anticipation term * tradegood are larger than the "good" not sufficiently small.";
+	        OPTION decimals = 0;
+          display p80_messageFailedDevPriceAnticip;
+	        OPTION decimals = 3;
 	      );
         if(sameas(convMessage80, "target"),
 		      display "#### 6.) A global climate target has not been reached yet.";
