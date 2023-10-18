@@ -324,6 +324,13 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
   );
 );
 
+***  Assuming that other emissions outside the ESR and ETS see prices equal to the ESR prices
+loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$(pm_emiMktTarget(ttot,ttot2,ext_regi,"ESR",target_type_47,emi_type_47) or pm_emiMktTarget(ttot,ttot2,ext_regi,"all",target_type_47,emi_type_47)),
+  loop(regi$regi_groupExt(ext_regi,regi),
+    pm_taxemiMkt(t,regi,"other") = pm_taxemiMkt(t,regi,"ES");
+  );
+);
+
 *** updating periods after current target
 loop(ext_regi$regiEmiMktTarget(ext_regi),
   if(not(p47_allTargetsConverged(ext_regi) eq 1), !!no rescale need if all targets already converged
@@ -354,13 +361,6 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
         );
       );
     );
-  );
-);
-
-***  Assuming that other emissions outside the ESR and ETS see prices equal to the ESR prices
-loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$(pm_emiMktTarget(ttot,ttot2,ext_regi,"ESR",target_type_47,emi_type_47) or pm_emiMktTarget(ttot,ttot2,ext_regi,"all",target_type_47,emi_type_47)),
-  loop(regi$regi_groupExt(ext_regi,regi),
-    pm_taxemiMkt(t,regi,"other") = pm_taxemiMkt(t,regi,"ES");
   );
 );
 
