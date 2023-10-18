@@ -60,19 +60,6 @@ p80_DevPriceAnticipGlobMax(ttot,trade)$((ttot.val ge cm_startyear) AND (NOT trad
 
 p80_DevPriceAnticipGlobMaxIter(ttot,trade,iteration)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = p80_DevPriceAnticipGlobMax(ttot,trade);
 
-***criterion ""Price anticipation deviation": are we converged yet?
-loop(trade$(NOT tradeSe(trade)),
-  if(p80_DevPriceAnticipGlobMax(trade,"2100") gt p80_surplusMaxTolerance("good"),
-***    s80_bool=0; !! not yet active as convergence criterion                
-    p80_messageShow("DevPriceAnticip") = YES;
-    loop(ttot$((ttot.val ge cm_startyear) and (ttot.val le 2100)),
-      if( (abs(p80_DevPriceAnticipGlobMax(ttot,trade)) gt p80_surplusMaxTolerance("good") ),
-	       p80_messageFailedDevPriceAnticip(ttot,trade) = YES;
-      );
-    );
-  );
-);
-
 display p80_DevPriceAnticipGlob, p80_DevPriceAnticipGlob, p80_DevPriceAnticipGlobAll, p80_DevPriceAnticipGlobMax;  
     
 
@@ -301,7 +288,20 @@ if(sm_fadeoutPriceAnticip gt cm_maxFadeOutPriceAnticip,
   s80_bool = 0;
   p80_messageShow("anticip") = YES;
 );
-**
+
+*' criterion "Deviation due to price anticipation": are the resulting deviations sufficiently small?
+*' compare to the cutoff for goods imbalance 
+loop(trade$(NOT tradeSe(trade)),
+  if(p80_DevPriceAnticipGlobMax(trade,"2100") gt p80_surplusMaxTolerance("good"),
+***    s80_bool=0; !! not yet active as convergence criterion                
+    p80_messageShow("DevPriceAnticip") = YES;
+    loop(ttot$((ttot.val ge cm_startyear) and (ttot.val le 2100)),
+      if( (abs(p80_DevPriceAnticipGlobMax(ttot,trade)) gt p80_surplusMaxTolerance("good") ),
+	       p80_messageFailedDevPriceAnticip(ttot,trade) = YES;
+      );
+    );
+  );
+);
 
 ***additional criterion: did taxes converge? (only checked if cm_TaxConvCheck is 1)
 p80_taxrev_dev(t,regi) = 0;

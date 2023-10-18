@@ -1561,7 +1561,18 @@ fe2ppfEn(all_enty,all_in) "mapping between CES FE variables and ESM FE variables
 ***-----------------------------------------------------------------------------
 *** Definition of the main set of quantities 'enty':
 ***-----------------------------------------------------------------------------
-
+all_trade(all_enty)
+/
+  peoil, 
+  pecoal, 
+  pegas, 
+  peur, 
+  pebiolc,
+  seel,
+  seh2,
+  good, 
+  perm
+/
 
 enty(all_enty)       "all types of quantities"
 /
