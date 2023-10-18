@@ -15,14 +15,14 @@ Parameters
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! cm_process_based_steel
   p37_specMatDem(mat,all_te,opmoPrc)                                      "Specific materials demand of a production technology and operation mode [t_input/t_product], where product is e.g. pigiron, not steel"
   /
-    ironore.idr.(ng,h2)     1.5                                             !! Iron ore demand of iron direct-reduction (independent of fuel source) POSTED
+    dripell.idr.(ng,h2)     1.5                                             !! Iron ore demand of iron direct-reduction (independent of fuel source) POSTED
 
     driron.eaf.pri          1.08                                            !! DRI demand of EAF POSTED
-    scrap.eaf.sec           1.09                                            !! Scrap demand of EAF POSTED
+    eafscrap.eaf.sec        1.09                                            !! Scrap demand of EAF POSTED
 
     ironore.bf.standard     1.5                                             !! Iron ore demand of BF-BOF
 
-    scrap.bof.unheated      0.22                                             !! Scrap demand of BF-BOF
+    bofscrap.bof.unheated   0.22                                             !! Scrap demand of BF-BOF
     pigiron.bof.unheated    0.8
   /
 
@@ -55,6 +55,14 @@ Parameters
   /
     sesteel.ue_steel_secondary   1.                                            !! Only contibution, both are measured in Gt/a
     prsteel.ue_steel_primary     1.                                            !! Only contibution, both are measured in Gt/a
+  /
+
+  p37_priceMat(all_enty)
+  /
+    eafscrap      0.167
+    bofscrap      0.167
+    ironore       0.077
+    dripell       0.1
   /
 $endif.process_based_steel
 

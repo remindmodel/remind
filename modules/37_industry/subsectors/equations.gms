@@ -49,6 +49,18 @@ q37_demMatPrc(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matIn(mat))..
 ***------------------------------------------------------
 *' Output material production
 ***------------------------------------------------------
+q37_costMat(ttot,regi)$(ttot.val ge cm_startyear)..
+    vm_costMatPrc(ttot,regi)
+  =e=
+    sum(mat,
+      p37_priceMat(mat)
+      *
+      v37_prodMat(ttot,regi,mat))
+;
+
+***------------------------------------------------------
+*' Output material production
+***------------------------------------------------------
 q37_prodMat(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matOut(mat))..
     v37_prodMat(ttot,regi,mat)
   =e=

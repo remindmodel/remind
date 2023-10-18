@@ -27,6 +27,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
   p37_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc)                         "Actual specific final-energy demand of a tech; blends between IEA data and Target [TWa/Gt_output]"
   p37_specFeDemTarget(all_enty,all_te,opmoPrc)                                 "Best available technology (will be reached in convergence year) [TWa/Gt_output]"
   p37_mat2ue(all_enty,all_in)                                                  "Contribution of process output to ue in CES tree [Gt/Gt]"
+  p37_priceMat(all_enty)                                                       "prices of external material input [2005$/kg] = [trn2005$/Gt]"
 $endif.process_based_steel
 
 *** output parameters only for reporting
@@ -56,8 +57,9 @@ Positive Variables
   v37_emIIndCCSmax(ttot,all_regi,emiInd37)                                  "maximum abatable industry emissions"
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  v37_prodVolPrc(tall,all_regi,all_te,opmoPrc)                         "Production volume of processes in material-flow model [Gt]"
-  v37_prodMat(tall,all_regi,all_enty)                                      "Production of materials [Gt]"
+  v37_prodVolPrc(tall,all_regi,all_te,opmoPrc)                              "Production volume of processes in material-flow model [Gt]"
+  v37_prodMat(tall,all_regi,all_enty)                                       "Production of materials [Gt]"
+  vm_costMatPrc(tall,all_regi)                                              "Cost of materials in process-based industry [trn $2005]"
 $endif.process_based_steel
 ;
 
@@ -76,10 +78,11 @@ $endif.no_calibration
   q37_costCESmarkup(ttot,all_regi,all_in)                 "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  q37_demMatPrc(tall,all_regi,mat)                      "Demand of process materials"
-  q37_prodMat(tall,all_regi,mat)                        "Production volume of processes in material-flow model"
-  q37_mat2ue(tall,all_regi,all_in)                       "Connect materials production to ue ces tree nodes"
-  q37_limitCapMat(tall,all_regi,all_te)                  "Material-flow conversion is limited by capacities"
+  q37_demMatPrc(tall,all_regi,mat)                        "Demand of process materials"
+  q37_prodMat(tall,all_regi,mat)                          "Production volume of processes in material-flow model"
+  q37_mat2ue(tall,all_regi,all_in)                        "Connect materials production to ue ces tree nodes"
+  q37_limitCapMat(tall,all_regi,all_te)                   "Material-flow conversion is limited by capacities"
+  q37_costMat(tall,all_regi)                              "External material cost (non-energy)"
 $endif.process_based_steel
 ;
 

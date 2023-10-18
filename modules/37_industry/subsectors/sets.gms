@@ -22,18 +22,22 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
   /
     prsteel             "Primary steel"
     sesteel             "Secondary steel"
-    scrap               "Steel scrap"
+    eafscrap            "Steel scrap used in EAF"
+    bofscrap            "Steel scrap used in BOF"
     pigiron             "Pig iron"
     driron              "Direct reduced iron"
     ironore             "Iron Ore"
+    dripell             "DRI pellets"
   /
 
   matIn(all_enty)      "Materials which serve as input to a process"
   /
-    scrap               "Steel scrap"
+    eafscrap            "Steel scrap used in EAF"
+    bofscrap            "Steel scrap used in BOF"
     pigiron             "Pig iron"
     driron              "Direct reduced iron"
     ironore             "Iron Ore"
+    dripell             "DRI pellets"
   /
 
   matOut(all_enty)      "Materials which serve as output of a process"
@@ -56,11 +60,11 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
 
   tePrc2matIn(tePrc,opmoPrc,mat)    "Mapping of technologies onto input materials"
   /
-    idr . (h2,ng) . ironore
+    idr . (h2,ng) . dripell
     eaf . pri . driron
-    eaf . sec . scrap
+    eaf . sec . eafscrap
     bf  . standard . ironore
-    bof . unheated . (pigiron,scrap)
+    bof . unheated . (pigiron,bofscrap)
   /
 
   tePrc2matOut(tePrc,opmoPrc,mat)   "Mapping of technologies onto their output materials"

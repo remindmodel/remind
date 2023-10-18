@@ -409,10 +409,12 @@ all_enty             "all types of quantities"
         sesteel      "Secondary steel"
         !!steel        "Steel"
         dri          "Directly reduced iron"
-        scrap        "Steel scrap"
+        eafscrap     "Steel scrap used in EAF"
+        bofscrap     "Steel scrap used in BOF"
         pigiron      "Pig Iron"
         driron       "Direct reduced iron"
         ironore      "Iron ore"
+        dripell      "DRI pellets"
 
         !! emissions
         co2          "carbon dioxide emissions"
