@@ -38,7 +38,6 @@ vm_co2eqMkt.l(ttot,regi,emiMkt) = 0;
 v_shfe.l(t,regi,enty,sector) = 0;
 v_shGasLiq_fe.l(t,regi,sector) = 0;  
 pm_share_CCS_CCO2(t,regi) = 0; 
-pm_pvpRegi(ttot,regi,enty) = 0;
 
 *** overwrite default targets with gdx values if wanted
 Execute_Loadpoint 'input' p_emi_budget1_gdx = sm_budgetCO2eqGlob;
