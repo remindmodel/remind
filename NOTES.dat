@@ -1,10 +1,6 @@
 GENERAL TO DO
 
-- replace t by ttot
-- debug material cost implementation
 - test different branches with PBS = off
-- merge
-- try initializing idr with non-zero values
 - further reporting: prices & LCOP
 - specific energy demand historic
 - verify techno-economic input

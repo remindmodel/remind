@@ -90,7 +90,7 @@ q37_limitCapMat(ttot,regi,tePrc)$(ttot.val ge cm_startyear) ..
     sum(tePrc2opmoPrc(tePrc,opmoPrc),
       v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
     )
-  =e=
+    =l=
     sum(teMat2rlf(tePrc,rlf),
       vm_capFac(ttot,regi,tePrc) * vm_cap(ttot,regi,tePrc,rlf)
     )
