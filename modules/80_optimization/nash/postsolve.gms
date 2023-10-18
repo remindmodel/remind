@@ -292,7 +292,7 @@ if(sm_fadeoutPriceAnticip gt cm_maxFadeOutPriceAnticip,
 *' criterion "Deviation due to price anticipation": are the resulting deviations sufficiently small?
 *' compare to the cutoff for goods imbalance 
 loop(trade$(NOT tradeSe(trade)),
-  if(p80_DevPriceAnticipGlobMax(trade,"2100") gt p80_surplusMaxTolerance("good"),
+  if(p80_DevPriceAnticipGlobMax("2100",trade) gt p80_surplusMaxTolerance("good"),
 ***    s80_bool=0; !! not yet active as convergence criterion                
     p80_messageShow("DevPriceAnticip") = YES;
     loop(ttot$((ttot.val ge cm_startyear) and (ttot.val le 2100)),
@@ -422,7 +422,7 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
           display sm_fadeoutPriceAnticip, cm_maxFadeOutPriceAnticip;
 	      );
         if(sameas(convMessage80, "DevPriceAnticip"),
-		      display "#### 5b.) The total monetary value of the price anticipation term * tradegood are larger than the "good" not sufficiently small.";
+		      display "#### 5b.) The total monetary value of the price anticipation term times tradegood are larger than the good imbalance threshold";
 	        OPTION decimals = 0;
           display p80_messageFailedDevPriceAnticip;
 	        OPTION decimals = 3;
