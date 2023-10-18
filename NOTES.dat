@@ -1,3 +1,19 @@
+GENERAL TO DO
+
+- replace t by ttot
+- debug material cost implementation
+- test different branches with PBS = off
+- merge
+- try initializing idr with non-zero values
+- further reporting: prices & LCOP
+- specific energy demand historic
+- verify techno-economic input
+- look through other TO DO's
+- re-calibrate 
+- investigate behaviour (penny-switching, choice of technologies) under different assumptions
+
+- develop research questions & narrative for IAMC
+
 -------------------------------------
 NOTES ON CES TREE
 -------------------------------------
@@ -85,7 +101,7 @@ CAPACITY 1ST SHOT: STRATEGY
 -------------------------------------
 . = done; ! = To Do; ? = unclear; - = nothing to do
 - SETS: 
-  . opTimeYr2te is filled automatically from pm_data('liftetime')
+  . opTimeYr2te is filled automatically from pm_data('lifetime')
   . teNoLearn if filled automatically per set difference (since not included explicitly in teLearn)
   . teMats2rlf is set in 37/sets
       . added to te2rlf in sets_calculations
