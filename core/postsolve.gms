@@ -12,7 +12,7 @@
 p_taxCO2eq_iteration(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);
 pm_taxemiMkt_iteration(iteration,ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt);
 
-if (cm_emiscen eq 6), 
+if( (cm_emiscen eq 6), 
 $ifthen.neg %optimization% == 'negishi'     
     pm_taxCO2eqSum(ttot,regi) = abs((abs(q_co2eq.m(ttot,regi)) / pm_ts(ttot)) / (pm_pvp(ttot,"good") + sm_eps));
 $else.neg
