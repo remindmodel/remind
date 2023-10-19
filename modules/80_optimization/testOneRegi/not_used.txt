@@ -34,7 +34,6 @@ sm_fadeoutPriceAnticip,         scalar,     ???
 vm_co2eq,                       variable,   ???
 pm_taxCO2eq,                    parameter,  ???
 cm_emiscen,                     switch,     ???
-pm_pvpRegi,                     parameter,  ???
 pm_nfa_start,                   input,      questionnaire
 vm_dummyBudget,                 input,      questionnaire
 vm_cesIO,                       variable,   ???
