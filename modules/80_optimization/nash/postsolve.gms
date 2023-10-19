@@ -71,17 +71,21 @@ p80_DevPriceAnticipGlobIter(ttot,trade,iteration)$((ttot.val ge cm_startyear) AN
 p80_DevPriceAnticipGlobMax2100Iter(trade,iteration)$(NOT tradeSe(trade)) = p80_DevPriceAnticipGlobMax("2100",trade);
 p80_DevPriceAnticipGlobAllMax2100Iter(iteration) = p80_DevPriceAnticipGlobAllMax("2100");
 
-display p80_PriceChangePriceAnticipReg, 
+
+*' For display of price change p80_PriceChangePriceAnticipReg, round to 0.1% 
+o80_PriceChangePriceAnticipReg(ttot,trade,regi) = p80_PriceChangePriceAnticipReg(ttot,trade,regi);
+o80_PriceChangePriceAnticipReg(ttot,trade,regi)$(abs(o80_PriceChangePriceAnticipReg(ttot,trade,regi) lt 0.01)) = 0;
+
+display  
   p80_DevPriceAnticipGlob, 
-  p80_DevPriceAnticipGlob, 
-  p80_DevPriceAnticipGlobAll, 
   p80_DevPriceAnticipGlobMax, 
   p80_DevPriceAnticipGlobAllMax, 
   p80_DevPriceAnticipGlobMax2100Iter,
   p80_DevPriceAnticipGlobAllMax2100Iter
 ;  
-    
 
+option   p80_DevPriceAnticipGlobAll:3:0:0;     display   p80_DevPriceAnticipGlobAll;  
+option   o80_PriceChangePriceAnticipReg:1:0:0; display   o80_PriceChangePriceAnticipReg; 
 
 ***calculate aggregated intertemporal market volumes - used in calculation of price corrections later on  
 loop(trade$(NOT tradeSe(trade)),
@@ -250,7 +254,6 @@ pm_FEPrice_iter(iteration,t,regi,enty,sector,emiMkt) =
 s80_bool=1;  
 p80_messageShow(convMessage80) = NO;   
 p80_messageFailedMarket(ttot,all_enty) = NO;
-p80_messageFailedDevPriceAnticip(ttot) = NO;
 
 ***criterion ""surplus": are we converged yet?
 loop(trade$(NOT tradeSe(trade)),
@@ -313,11 +316,6 @@ if(sm_fadeoutPriceAnticip gt cm_maxFadeOutPriceAnticip,
 if(p80_DevPriceAnticipGlobAllMax("2100") gt 0.1 * p80_surplusMaxTolerance("good"),
 ***    s80_bool=0; !! not yet active as convergence criterion                
   p80_messageShow("DevPriceAnticip") = YES;
-  loop(ttot$((ttot.val ge cm_startyear) and (ttot.val le 2100)),
-    if( (abs(p80_DevPriceAnticipGlobAll(ttot)) gt p80_surplusMaxTolerance("good") ),
-	     p80_messageFailedDevPriceAnticip(ttot) = YES;
-    );
-  );
 );
 
 ***additional criterion: did taxes converge? (only checked if cm_TaxConvCheck is 1)
@@ -439,10 +437,8 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
           display sm_fadeoutPriceAnticip, cm_maxFadeOutPriceAnticip;
 	      );
         if(sameas(convMessage80, "DevPriceAnticip"),
-		      display "#### 5b.) The total monetary value of the price anticipation term times tradegood are larger than the good imbalance threshold";
-	        OPTION decimals = 0;
-          display p80_messageFailedDevPriceAnticip;
-	        OPTION decimals = 3;
+		      display "#### 5b.) The total monetary value of the price anticipation term times the traded amount are larger than the goods imbalance threshold * 0.1";
+          display "#### Check out p80_DevPriceAnticipGlobAllMax2100Iter, which needs to be below 0.1 * the threshold for goods imbalance, p80_surplusMaxTolerance";
 	      );
         if(sameas(convMessage80, "target"),
 		      display "#### 6.) A global climate target has not been reached yet.";
