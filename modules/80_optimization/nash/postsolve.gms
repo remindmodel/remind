@@ -76,6 +76,9 @@ p80_DevPriceAnticipGlobAllMax2100Iter(iteration) = p80_DevPriceAnticipGlobAllMax
 *o80_PriceChangePriceAnticipReg(ttot,trade,regi) = p80_PriceChangePriceAnticipReg(ttot,trade,regi);
 o80_PriceChangePriceAnticipReg(ttot,trade,regi) = round(p80_PriceChangePriceAnticipReg(ttot,trade,regi),1);
 
+*' determine largest price change in p80_PriceChangePriceAnticipReg
+o80_PriceChangePriceAnticipRegMaxIter(iteration) = smax( (ttot,trade,regi)$(ttot.val le 2100) , o80_PriceChangePriceAnticipReg(ttot,trade,regi) );
+
 display  
   p80_DevPriceAnticipGlob, 
   p80_DevPriceAnticipGlobMax, 
@@ -84,6 +87,7 @@ display
   p80_DevPriceAnticipGlobAllMax2100Iter,
   p80_DevPriceAnticipGlobAll,  
   o80_PriceChangePriceAnticipReg
+  o80_PriceChangePriceAnticipRegMaxIter
 ; 
 
 ***calculate aggregated intertemporal market volumes - used in calculation of price corrections later on  
