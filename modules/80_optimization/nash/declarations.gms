@@ -67,7 +67,7 @@ pm_cumEff(tall,all_regi,all_in)            "parameter for spillover externality 
 p80_PriceChangePriceAnticipReg(ttot,all_enty,all_regi)  "Price change of a trade good due to the price change anticipation effect in percent. [Unit: Percent]"
 p80_DevPriceAnticipReg(ttot,all_enty,all_regi)          "Deviation of the yearly monetary export/import expenditure due to price change anticipation effect. [Unit: trillion Dollar]"
 p80_DevPriceAnticipGlob(ttot,all_enty)                  "Global sum of p80_DevPriceAnticipReg. [Unit: trillion Dollar]"
-p80_DevPriceAnticipGlobIter(ttot,all_enty)              "Track p80_DevPriceAnticipGlob over iterations. [Unit: trillion Dollar]"
+p80_DevPriceAnticipGlobIter(ttot,all_enty,iteration)    "Track p80_DevPriceAnticipGlob over iterations. [Unit: trillion Dollar]"
 p80_DevPriceAnticipGlobAll(ttot)                        "p80_DevPriceAnticipGlob summed over all trade goods. [Units: trillion Dollar]"
 p80_DevPriceAnticipGlobMax(ttot,all_enty)               "Max of p80_DevPriceAnticipGlob until the given year. [Unit: trillion Dollar]"
 p80_DevPriceAnticipGlobAllMax(ttot)                     "Max of p80_DevPriceAnticipGlobAll until the given year. [Unit: trillion Dollar]"
