@@ -73,8 +73,8 @@ p80_DevPriceAnticipGlobAllMax2100Iter(iteration) = p80_DevPriceAnticipGlobAllMax
 
 
 *' For display of price change p80_PriceChangePriceAnticipReg, round to 0.1% 
-o80_PriceChangePriceAnticipReg(ttot,trade,regi) = p80_PriceChangePriceAnticipReg(ttot,trade,regi);
-o80_PriceChangePriceAnticipReg(ttot,trade,regi)$(abs(o80_PriceChangePriceAnticipReg(ttot,trade,regi) lt 0.01)) = 0;
+*o80_PriceChangePriceAnticipReg(ttot,trade,regi) = p80_PriceChangePriceAnticipReg(ttot,trade,regi);
+o80_PriceChangePriceAnticipReg(ttot,trade,regi) = round(p80_PriceChangePriceAnticipReg(ttot,trade,regi),1);
 
 display  
   p80_DevPriceAnticipGlob, 
@@ -86,7 +86,7 @@ display
 
   display   p80_DevPriceAnticipGlobAll;  
   display   o80_PriceChangePriceAnticipReg; 
-option   o80_PriceChangePriceAnticipReg:1:0:1;  display   o80_PriceChangePriceAnticipReg; 
+option   o80_PriceChangePriceAnticipReg:1:2:1;  display   o80_PriceChangePriceAnticipReg; 
 
 ***calculate aggregated intertemporal market volumes - used in calculation of price corrections later on  
 loop(trade$(NOT tradeSe(trade)),

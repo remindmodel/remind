@@ -122,8 +122,8 @@ s80_cnptfile                               "parameter that indicates which optim
 ;
 
 *' defining specific output formats:
-option   p80_DevPriceAnticipGlobAll:3:0:1;
-option   o80_PriceChangePriceAnticipReg:1:0:1;
+option   p80_DevPriceAnticipGlobAll:3:1:1;
+option   o80_PriceChangePriceAnticipReg:1:2:1;
 
 
 
