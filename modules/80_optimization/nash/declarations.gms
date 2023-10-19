@@ -63,6 +63,18 @@ p80_curracc(ttot,all_regi)                 "current account"
 
 pm_cumEff(tall,all_regi,all_in)            "parameter for spillover externality (aggregated productivity level)"
 
+p80_PriceChangePriceAnticipReg(ttot,all_enty,all_regi)  "Price change of a trade good due to the price anticipation effect. [Unit: Percent]"
+o80_PriceChangePriceAnticipReg(ttot,all_enty,all_regi)  "only for display: Price change of a trade good due to price anticipation. If nothing is displayed, all values are <0.1%. [Unit: Percent, rounded to 0.1%]"
+o80_PriceChangePriceAnticipRegMaxIter(ttot,iteration)   "only for display: Largest absolute value of o80_PriceChangePriceAnticipReg until 2100/2150, tracked over iteration. [Unit: Percent, rounded to 0.1%]"
+p80_DevPriceAnticipReg(ttot,all_enty,all_regi)          "Deviation of the yearly monetary export/import expenditure due to price change anticipation effect. [Unit: trillion Dollar]"
+p80_DevPriceAnticipGlob(ttot,all_enty)                  "Global sum of p80_DevPriceAnticipReg. [Unit: trillion Dollar]"
+p80_DevPriceAnticipGlobIter(ttot,all_enty,iteration)    "Track p80_DevPriceAnticipGlob over iterations. [Unit: trillion Dollar]"
+p80_DevPriceAnticipGlobAll(ttot)                        "p80_DevPriceAnticipGlob summed over all trade goods. [Units: trillion Dollar]"
+p80_DevPriceAnticipGlobMax(ttot,all_enty)               "Max of p80_DevPriceAnticipGlob until the given year. [Unit: trillion Dollar]"
+p80_DevPriceAnticipGlobAllMax(ttot)                     "Max of p80_DevPriceAnticipGlobAll until the given year. [Unit: trillion Dollar]"
+p80_DevPriceAnticipGlobMax2100Iter(all_enty,iteration)  "Track the 2100 value of p80_DevPriceAnticipGlobMax over iterations. [Unit: trillion Dollar]"
+p80_DevPriceAnticipGlobAllMax2100Iter(iteration)        "Track the 2100 value of p80_DevPriceAnticipGlobAllMax over iterations. [Unit: trillion Dollar]"
+
 *EMIOPT relevant
 p80_eoMargPermBudg(all_regi)               "marginal of permit budget restriction"
 p80_eoMargEmiCum(all_regi)                 "marginal of cumulative emissions" 
@@ -109,5 +121,12 @@ s80_converged                              "if nash converged, this is 1"
 s80_cnptfile                               "parameter that indicates which optimality tolerance will be used"      /1/
 
 ;
+
+*' defining specific output formats:
+option   p80_DevPriceAnticipGlobAll:3:0:1;
+option   p80_DevPriceAnticipGlobAllMax:3:0:1;
+option   o80_PriceChangePriceAnticipReg:1:2:1;
+option   o80_PriceChangePriceAnticipRegMaxIter:1:1:1;
+
 
 *** EOF ./modules/80_optimization/nash/declarations.gms
