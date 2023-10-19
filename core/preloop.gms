@@ -45,6 +45,7 @@ Execute_Loadpoint 'input' p_emi_budget1_gdx = sm_budgetCO2eqGlob;
 Execute_Loadpoint 'input' vm_demPe.l = vm_demPe.l;
 Execute_Loadpoint 'input' q_balPe.m = q_balPe.m;
 Execute_Loadpoint 'input' qm_budget.m = qm_budget.m;
+Execute_Loadpoint 'input' q_co2eq.m = q_co2eq.m;
 Execute_Loadpoint 'input' pm_pvp = pm_pvp;
 Execute_Loadpoint 'input' vm_demFeSector.l = vm_demFeSector.l;
 
