@@ -56,7 +56,7 @@ lifetime              35         35          40          40          40         
 
 +                geohdr       geohe       hydro        wind       windoff        spv       solhe         csp
 tech_stat            1
-inco0               3600        1200        2700        2400       5000         5160        9999       10320
+inco0               1950        1200        2700        2400       5000         5160        9999       10320
 constrTme            4           1           5            1          4            1           1          3
 mix0                
 eta                 1.00        1.00        1.00        1.00       1.00         1.00        1.00        1.00
