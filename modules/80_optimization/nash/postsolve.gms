@@ -81,11 +81,10 @@ display
   p80_DevPriceAnticipGlobMax, 
   p80_DevPriceAnticipGlobAllMax, 
   p80_DevPriceAnticipGlobMax2100Iter,
-  p80_DevPriceAnticipGlobAllMax2100Iter
-;  
-
-  display   p80_DevPriceAnticipGlobAll;  
-  display   o80_PriceChangePriceAnticipReg; 
+  p80_DevPriceAnticipGlobAllMax2100Iter,
+  p80_DevPriceAnticipGlobAll,  
+  o80_PriceChangePriceAnticipReg
+; 
 option   o80_PriceChangePriceAnticipReg:1:2:1;  display   o80_PriceChangePriceAnticipReg; 
 
 ***calculate aggregated intertemporal market volumes - used in calculation of price corrections later on  
