@@ -19,7 +19,7 @@ $else.neg
     pm_taxCO2eqSum(ttot,regi) = abs( abs(q_co2eq.m(ttot,regi)) / (abs(qm_budget.m(ttot,regi))+ sm_eps) );
 $endif.neg 
    elseif (cm_emiscen eq 1),  !! even in a BAU scenario without other climate policies, the 2010/2015/2020 CO2 prices should be reported (that still needs to be fixed, I guess, maybe by adding the historic prices to the 45/carbonprice/off variation
-    pm_taxCO2eqSum(ttot,regi)$(ttot.val < 2025) = abs( pm_taxCO2eq(ttot,regi)); 
+    pm_taxCO2eqSum(ttot,regi)$(ttot.val < 2025) = pm_taxCO2eq(ttot,regi); 
 );
 
 if(cm_iterative_target_adj eq 4,
