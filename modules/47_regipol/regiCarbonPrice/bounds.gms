@@ -111,6 +111,11 @@ vm_deltaCap.up("2025",regi,"ngcc","1") = 0.0015;
 vm_capEarlyReti.up('2025',regi,'pc') = 0.65; 
 );
 
+*** limit renewable power additions for 2025 in light of current developments
+*** limit solar PV to 110 GW in 2025 given that we are at only 76 GW PV in 2023
+vm_cap.up("2025",regi,"spv","1")$(sameAs(regi,"DEU"))=0.11;
+
+
 *** energy security policy for Germany: 5GW(el) electrolysis installed by 2030 in Germany at minimum
 $ifThen.ensec "%cm_Ger_Pol%" == "ensec"
     vm_cap.lo("2030","DEU","elh2","1")=5*pm_eta_conv("2030","DEU","elh2")/1000;
