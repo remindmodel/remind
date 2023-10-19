@@ -84,8 +84,9 @@ display
   p80_DevPriceAnticipGlobAllMax2100Iter
 ;  
 
-option   p80_DevPriceAnticipGlobAll:3:0:0;     display   p80_DevPriceAnticipGlobAll;  
-option   o80_PriceChangePriceAnticipReg:1:0:0; display   o80_PriceChangePriceAnticipReg; 
+  display   p80_DevPriceAnticipGlobAll;  
+  display   o80_PriceChangePriceAnticipReg; 
+option   o80_PriceChangePriceAnticipReg:1:0:1;  display   o80_PriceChangePriceAnticipReg; 
 
 ***calculate aggregated intertemporal market volumes - used in calculation of price corrections later on  
 loop(trade$(NOT tradeSe(trade)),
