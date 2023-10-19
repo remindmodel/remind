@@ -63,8 +63,8 @@ p80_curracc(ttot,all_regi)                 "current account"
 
 pm_cumEff(tall,all_regi,all_in)            "parameter for spillover externality (aggregated productivity level)"
 
-p80_PriceChangePriceAnticipReg(ttot,all_enty,all_regi)  "Price change of a trade good due to the price change anticipation effect in percent. [Unit: Percent]"
-o80_PriceChangePriceAnticipReg(ttot,all_enty,all_regi)  "only for display: Price change of a trade good due to the price change anticipation effect in percent. [Unit: Percent, rounded to 0.1%]"
+p80_PriceChangePriceAnticipReg(ttot,all_enty,all_regi)  "Price change of a trade good due to the price anticipation effect. [Unit: Percent]"
+o80_PriceChangePriceAnticipReg(ttot,all_enty,all_regi)  "only for display: Price change of a trade good due to price anticipation. If nothing is displayed, all values are <0.1%. [Unit: Percent, rounded to 0.1%]"
 p80_DevPriceAnticipReg(ttot,all_enty,all_regi)          "Deviation of the yearly monetary export/import expenditure due to price change anticipation effect. [Unit: trillion Dollar]"
 p80_DevPriceAnticipGlob(ttot,all_enty)                  "Global sum of p80_DevPriceAnticipReg. [Unit: trillion Dollar]"
 p80_DevPriceAnticipGlobIter(ttot,all_enty,iteration)    "Track p80_DevPriceAnticipGlob over iterations. [Unit: trillion Dollar]"
