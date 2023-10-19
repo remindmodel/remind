@@ -7,7 +7,6 @@
 name,                type,        reason
 cm_solver_try_max,   switch,      not needed
 pm_prtp,             parameter,   ???
-pm_pvpRegi,          parameter,   ???
 pm_taxCO2eq,         parameter,   ???
 pm_ttot_val,         parameter,   ???
 pm_welf,             parameter,   ???
