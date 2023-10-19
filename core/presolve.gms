@@ -112,25 +112,7 @@ loop(regi,
           );
     );
 
-  if (cm_emiscen eq 9 or (cm_emiscen eq 10),
-*** TODO: take care, this means that the SCC are only priced into MAC-curve
-*** abatement if emiscen = 9 and for emiscen = 10 for CBA runs. Might want to change this.
-    p_priceCO2(ttot,regi) = pm_taxCO2eqSum(ttot,regi) * 1000;
-  elseif (cm_emiscen eq 6), 
-$ifthen.neg %optimization% == 'negishi'     
-    p_priceCO2(ttot,regi) 
-    = abs((abs(q_co2eq.m(ttot,regi)) / pm_ts(ttot)) / (pm_pvp(ttot,"good") + sm_eps))
-     * 1000;
-$else.neg
-    p_priceCO2(ttot,regi) 
-    = abs( abs(q_co2eq.m(ttot,regi)) / (abs(qm_budget.m(ttot,regi))+ sm_eps)  )
-     * 1000;
-$endif.neg 
-   elseif (cm_emiscen eq 1),  !! even in a BAU scenario without other climate policies, the 2010/2015/2020 CO2 prices should be reported (that still needs to be fixed, I guess, maybe by adding the historic prices to the 45/carbonprice/off variation
-    p_priceCO2(ttot,regi)$(ttot.val < 2025) 
-    = abs( pm_taxCO2eq(ttot,regi))
-     * 1000; 
-);
+p_priceCO2(ttot,regi) = pm_taxCO2eqSum(ttot,regi) * 1000;
 
 *** Define co2 price for entities that are used in MAC. 
 loop((enty,enty2)$emiMac2mac(enty,enty2), !! make sure that both mac sectors and mac curves have prices asigned as both sets are used in calculations below

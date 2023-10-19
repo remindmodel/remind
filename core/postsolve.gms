@@ -12,6 +12,16 @@
 p_taxCO2eq_iteration(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);
 pm_taxemiMkt_iteration(iteration,ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt);
 
+if (cm_emiscen eq 6), 
+$ifthen.neg %optimization% == 'negishi'     
+    pm_taxCO2eqSum(ttot,regi) = abs((abs(q_co2eq.m(ttot,regi)) / pm_ts(ttot)) / (pm_pvp(ttot,"good") + sm_eps));
+$else.neg
+    pm_taxCO2eqSum(ttot,regi) = abs( abs(q_co2eq.m(ttot,regi)) / (abs(qm_budget.m(ttot,regi))+ sm_eps) );
+$endif.neg 
+   elseif (cm_emiscen eq 1),  !! even in a BAU scenario without other climate policies, the 2010/2015/2020 CO2 prices should be reported (that still needs to be fixed, I guess, maybe by adding the historic prices to the 45/carbonprice/off variation
+    pm_taxCO2eqSum(ttot,regi)$(ttot.val < 2025) = abs( pm_taxCO2eq(ttot,regi)); 
+);
+
 if(cm_iterative_target_adj eq 4,
 *JeS* Update tax levels/ multigasbudget values to reach the CO2 FF&I budget (s_actualbudgetco2 runs from 2020-2100)
 *KK* for a time step of 5 years, the budget is calculated as 3 * 2020 + ts(2025-2090) + 8 * 2100;
