@@ -33,19 +33,24 @@ loop(ttot$(ttot.val ge 2005),
       ); 
 ); 
 
-*** calculate the deviation of the yearly monetary export/import expenditure due to the price change anticipation effect: 
+*' calculate both the size of the price change due to the price change anticipation effect in percent, as well as  
+*' the deviation of the yearly monetary export/import expenditure due to the price change anticipation effect: 
 loop(ttot$(ttot.val ge 2005),
   loop(trade$(NOT tradeSe(trade)),
     loop(regi,
+      p80_PriceChangePriceAnticipReg(ttot,trade,regi) = 100 *
+        ( sm_fadeoutPriceAnticip*p80_etaXp(trade)
+          * ( (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport.l(ttot,regi,trade) - vm_Mport.l(ttot,regi,trade))
+              - p80_taxrev0(ttot,regi)$(ttot.val gt 2005)$(sameas(trade,"good")) + vm_taxrev.l(ttot,regi)$(ttot.val gt 2005)$(sameas(trade,"good"))
+		        )
+          / (p80_normalize0(ttot,regi,trade) + sm_eps)
+        )
+      ;
+
       p80_DevPriceAnticipReg(ttot,trade,regi) = 
         ( vm_Xport.l(ttot,regi,trade) - vm_Mport.l(ttot,regi,trade) ) 
         * pm_pvp(ttot,trade) / pm_pvp(ttot,"good")
-        * ( sm_fadeoutPriceAnticip*p80_etaXp(trade)
-            * ( (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport.l(ttot,regi,trade) - vm_Mport.l(ttot,regi,trade))
-                - p80_taxrev0(ttot,regi)$(ttot.val gt 2005)$(sameas(trade,"good")) + vm_taxrev.l(ttot,regi)$(ttot.val gt 2005)$(sameas(trade,"good"))
-		          )
-            / (p80_normalize0(ttot,regi,trade) + sm_eps)
-          )
+        * p80_PriceChangePriceAnticipReg(ttot,trade,regi)
       ;
     );
   p80_DevPriceAnticipGlob(ttot,trade) = sum(regi, abs( p80_DevPriceAnticipReg(ttot,trade,regi) ) );  
@@ -53,14 +58,28 @@ loop(ttot$(ttot.val ge 2005),
 p80_DevPriceAnticipGlobAll(ttot) = sum(trade$(NOT tradeSe(trade)), p80_DevPriceAnticipGlob(ttot,trade));
 );
 
-*' calculate maximum deviation due to price anticipation on markets
+*' calculate maximum of p80_DevPriceAnticipGlob
 p80_DevPriceAnticipGlobMax(ttot,trade)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = 
   smax(ttot2$(ttot2.val ge cm_startyear AND ttot2.val le ttot.val), p80_DevPriceAnticipGlob(ttot2,trade) )
 ;
+*' calculate maximum of p80_DevPriceAnticipGlobAll
+p80_DevPriceAnticipGlobAllMax(ttot)$((ttot.val ge cm_startyear)) = 
+  smax(ttot2$(ttot2.val ge cm_startyear AND ttot2.val le ttot.val), p80_DevPriceAnticipGlobAll(ttot2) )
+;
 
-p80_DevPriceAnticipGlobMaxIter(ttot,trade,iteration)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = p80_DevPriceAnticipGlobMax(ttot,trade);
+p80_DevPriceAnticipGlobIter(ttot,trade,iteration)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = p80_DevPriceAnticipGlob(ttot,trade);
+p80_DevPriceAnticipGlobMax2100Iter(trade,iteration)$(NOT tradeSe(trade)) = p80_DevPriceAnticipGlobMax("2100",trade);
+p80_DevPriceAnticipGlobAllMax2100Iter(iteration) = p80_DevPriceAnticipGlobAllMax("2100");
 
-display p80_DevPriceAnticipGlob, p80_DevPriceAnticipGlob, p80_DevPriceAnticipGlobAll, p80_DevPriceAnticipGlobMax, p80_DevPriceAnticipGlobMaxIter;  
+display p80_PriceChangePriceAnticipReg, 
+  p80_DevPriceAnticipGlob, 
+  p80_DevPriceAnticipGlob, 
+  p80_DevPriceAnticipGlobAll, 
+  p80_DevPriceAnticipGlobMax, 
+  p80_DevPriceAnticipGlobAllMax, 
+  p80_DevPriceAnticipGlobMax2100Iter,
+  p80_DevPriceAnticipGlobAllMax2100Iter
+;  
     
 
 
@@ -231,7 +250,7 @@ pm_FEPrice_iter(iteration,t,regi,enty,sector,emiMkt) =
 s80_bool=1;  
 p80_messageShow(convMessage80) = NO;   
 p80_messageFailedMarket(ttot,all_enty) = NO;
-p80_messageFailedDevPriceAnticip(ttot,trade) = NO;
+p80_messageFailedDevPriceAnticip(ttot) = NO;
 
 ***criterion ""surplus": are we converged yet?
 loop(trade$(NOT tradeSe(trade)),
@@ -290,15 +309,13 @@ if(sm_fadeoutPriceAnticip gt cm_maxFadeOutPriceAnticip,
 );
 
 *' criterion "Deviation due to price anticipation": are the resulting deviations sufficiently small?
-*' compare to the cutoff for goods imbalance 
-loop(trade$(NOT tradeSe(trade)),
-  if(p80_DevPriceAnticipGlobMax("2100",trade) gt p80_surplusMaxTolerance("good"),
+*' compare to 1/10th of the cutoff for goods imbalance 
+if(p80_DevPriceAnticipGlobAllMax("2100") gt 0.1 * p80_surplusMaxTolerance("good"),
 ***    s80_bool=0; !! not yet active as convergence criterion                
-    p80_messageShow("DevPriceAnticip") = YES;
-    loop(ttot$((ttot.val ge cm_startyear) and (ttot.val le 2100)),
-      if( (abs(p80_DevPriceAnticipGlobMax(ttot,trade)) gt p80_surplusMaxTolerance("good") ),
-	       p80_messageFailedDevPriceAnticip(ttot,trade) = YES;
-      );
+  p80_messageShow("DevPriceAnticip") = YES;
+  loop(ttot$((ttot.val ge cm_startyear) and (ttot.val le 2100)),
+    if( (abs(p80_DevPriceAnticipGlobAll(ttot)) gt p80_surplusMaxTolerance("good") ),
+	     p80_messageFailedDevPriceAnticip(ttot) = YES;
     );
   );
 );
