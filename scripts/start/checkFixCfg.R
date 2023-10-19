@@ -19,7 +19,7 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
 
   ## regexp check
   # extract all instances of 'regexp' from main.gms
-  code <- system(paste0("grep regexp ", file.path(remindPath, "main.gms")), intern = TRUE)
+  code <- grep("regexp", readLines(file.path(remindPath, "main.gms"), warn = FALSE), value = TRUE)
   # this is used to replace all 'regexp = is.numeric'
   grepisnum <- "((\\+|-)?[0-9]*([0-9]\\.?|\\.?[0-9])[0-9]*)"
   grepisnonnegative <- "(\\+?[0-9]*([0-9]\\.?|\\.?[0-9])[0-9]*)"
