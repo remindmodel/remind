@@ -19,6 +19,7 @@ parameters
     p32_shThresholdTotVREAddIntCost(ttot)           "Total VRE share threshold above which additional integration challenges arise. Increases with time as eg in 2030, there is still little experience with managing systems with 80% VRE share. Unit: Percent"
     p32_FactorAddIntCostTotVRE                      "Multiplicative factor that influences how much the total VRE share increases integration challenges"
     p32_phaseInFlexTax(ttot)                        "phase-in factor for flexibility tax, scales linearly between 0 in 2020 and 1 in 2040"
+    p32_phaseInElh2VREcap(ttot)                     "phase-in factor for electrolysis capacities built from stored VRE electricity, scale up from 2030 to 2040"
 ;
 
 scalars
@@ -48,6 +49,7 @@ equations
     q32_limitSolarWind(tall,all_regi)           	"limits on fluctuating renewables, only turned on for special EMF27 scenarios"
 	q32_h2turbVREcapfromTestor(tall,all_regi)       "calculate capacities of dummy seel<--h2 technology from storXXX technologies"
     q32_h2turbVREcapfromTestorUp(ttot,all_regi)     "constraint h2turbVRE hydrogen turbines to be only built together with storage capacities"
+    q32_elh2VREcapfromTestor(tall,all_regi)         "calculate capacities of dummy seel-->h2 technology from storXXX technologies"
     q32_flexAdj(tall,all_regi,all_te)               "calculate flexibility used in flexibility tax for technologies with electricity input"
     q32_flexPriceShareMin                           "calculatae miniumum share of average electricity that flexible technologies can see"
     q32_flexPriceShare(tall,all_regi,all_te)        "calculate share of average electricity price that flexible technologies see"

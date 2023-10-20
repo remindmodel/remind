@@ -30,6 +30,14 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
 $endif.process_based_steel
 
 
+  p37_clinker_cement_ratio(ttot,all_regi)   "clinker content per unit cement used"
+
+  pm_ue_eff_target(all_in)   "energy efficiency target trajectories [% p.a.]"
+  pm_IndstCO2Captured(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt) "Captured CO2 in industry by energy carrier, subsector and emissions market"
+
+  p37_CESMkup(ttot,all_regi,all_in)  "CES markup cost parameter [trUSD/CES input]"
+  p37_chemicals_feedstock_share(ttot,all_regi)   "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
+
 *** output parameters only for reporting
   o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                   "industry CCS emissions [GtC/a]"
   o37_cementProcessEmissions(ttot,all_regi,all_enty)                     "cement process emissions [GtC/a]"
@@ -81,6 +89,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
   q37_demFEMats(tall,all_regi,all_enty,all_emiMkt)        "Final-energy demand of materail-flow model"
 $endif.process_based_steel
   q37_BioLimitSubsec(ttot,all_regi,all_enty,all_emiMkt)   "limits of switching to biomass use in industry subsectors"
+  q37_chemicals_feedstocks_limit(ttot,all_regi)           "lower bound on feso/feli/fega in chemicals FE input for feedstocks"
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms

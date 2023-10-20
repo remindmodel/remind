@@ -6,59 +6,19 @@
 # |  Contact: remind@pik-potsdam.de
 helperSkipFailed <- FALSE
 
-expect_exit_status_n <- function(object, n = 0, invert = FALSE) {
-    act <- quasi_label(rlang::enquo(object), arg = 'object')
-
-    status <- attr(act[['val']], 'status', exact = TRUE)
-
-    if (all(c('command', 'args') %in% names(attributes(act[['val']])))) {
-        label <- paste0('`', attr(act[['val']], 'command', exact = TRUE), ' ',
-                        paste(attr(act[['val']], 'args', exact = TRUE),
-                              collapse = ' '),
-                        '`')
-    }
-    else {
-        label <- act[['lab']]
-    }
-
-    # empty trace to suppress testthat backtrace
-    empty_trace <- structure(
-        list(call      = list(),
-             parent    = integer(0),
-             visible   = logical(0),
-             namespace = character(0),
-             scope     = character(0)),
-        row.names = integer(0),
-        version   = 2L,
-        class     = c('rlang_trace', 'rlib_trace', 'tbl', 'data.frame'))
-
-    if (isFALSE(invert)) {
-        if (n != status)
-            helperSkipFailed <<- TRUE
-
-        expect(n == status,
-               sprintf('%s returned exit status %i, not %i', label, status, n),
-               trace = empty_trace)
-    }
-    else {
-        if (n == status)
-            helperSkipFailed <<- TRUE
-
-        expect(n != status,
-               sprintf('%s returned exit status %i, which it should not',
-                       label, status),
-               trace = empty_trace)
-    }
-
-    invisible(act[['val']])
-}
-
 expectSuccessStatus <- function(output) {
-    expect_exit_status_n(output, 0, FALSE)
+    status <- attr(output, "status", exact = TRUE)
+    if (0 != status) {
+        helperSkipFailed <<- TRUE
+    }
+    expect_equal(status, 0)
 }
-
 expectFailStatus <- function(output) {
-    expect_exit_status_n(output, 0, TRUE)
+    status <- attr(output, "status", exact = TRUE)
+    if (1 != status) {
+        helperSkipFailed <<- TRUE
+    }
+    expect_equal(status, 1)
 }
 
 skipIfPreviousFailed <- function() {

@@ -926,16 +926,6 @@ parameter
   cm_damage_KWSE                        = 0;     !! def = 0
 *'  {1.645 for 90% CI, 1.96 for 95% CI, no correction when 0}
 parameter
-  cm_sccConvergence			  "convergence indicator for SCC iteration"
-;
-  cm_sccConvergence			= 0.05;  !! def = 0.05
-;
-parameter
-  cm_tempConvergence			  "convergence indicator for temperature in damage iteration"
-;
-  cm_tempConvergence			= 0.05;  !! def = 0.05
-;
-parameter
   cm_carbonprice_temperatureLimit "not-to-exceed temperature target in degree above pre-industrial"
 ;
   cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
@@ -1025,6 +1015,15 @@ parameter
 *'  cm_PriceDurSlope_elh2, slope of price duration curve for electrolysis (increase means more flexibility subsidy for electrolysis H2)
 *' This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1
 *'
+parameter
+  cm_elh2_CF       "switch to change capacity factor of electrolyis, must be within (0-1]"
+;
+  cm_elh2_CF = 0.5;  !! def = 0.5
+*' cm_elh2_CF, capacity factor of electrolysis
+*' Note that by default this changes the flexibility tax for electrolysis, which depends on the capacity factor (as long as cm_flex_tax = 1).
+*' This is because the flexibility tax lowers the electricity price electrolysis sees in REMIND as a function of the capacity factor, the VRE share
+*' and the assumed price duration curve (the slope of this curve is also an scenario assumption defined by cm_PriceDurSlope_elh2).
+*' It is based on the logic that, in a high-VRE power system, electrolysis will only run in hours of low electricity prices.
 parameter
   cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
 ;

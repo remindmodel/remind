@@ -236,6 +236,15 @@ q37_BioLimitSubsec(t,regi,entyFe,emiMkt)..
           vm_cesIO(t,regi,in))
   )
 ;
+* lower bound on feso/feli/fega in chemicals FE input for feedstocks
+q37_chemicals_feedstocks_limit(t,regi)$( t.val ge cm_startyear ) .. 
+  sum(in_chemicals_feedstocks37(in), vm_cesIO(t,regi,in))
+  =g=
+    sum(ces_eff_target_dyn37("ue_chemicals",in), vm_cesIO(t,regi,in))
+  * p37_chemicals_feedstock_share(t,regi)
+;
+
+*** EOF ./modules/37_industry/subsectors/equations.gms
 
 
 *** EOF ./modules/37_industry/subsectors/equations.gms
