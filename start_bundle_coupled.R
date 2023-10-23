@@ -550,7 +550,10 @@ for(scen in common){
       numberOfTasks <- 1
     }
 
-    cfg_rem <- checkFixCfg(cfg_rem, remindPath = path_remind)
+    cfg_rem <- checkFixCfg(cfg_rem, remindPath = path_remind, testmode = "--test" %in% flags)
+    if ("errorsfoundInCheckFixCfg" %in% names(cfg_rem)) {
+      errorsfound <- errorsfound + cfg_rem$errorsfoundInCheckFixCfg
+    }
 
     Rdatafile <- paste0(fullrunname, ".RData")
     message("Save settings to ", Rdatafile)
