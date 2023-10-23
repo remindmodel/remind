@@ -327,7 +327,10 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     # abort on too long paths ----
     cfg$gms$cm_CES_configuration <- calculate_CES_configuration(cfg, check = TRUE)
 
-    cfg <- checkFixCfg(cfg)
+    cfg <- checkFixCfg(cfg, testmode = "--test" %in% flags)
+    if ("errorsfoundInCheckFixCfg" %in% names(cfg)) {
+      errorsfound <- errorsfound + cfg$errorsfoundInCheckFixCfg
+    }
 
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
     if (! "--gamscompile" %in% flags) {
