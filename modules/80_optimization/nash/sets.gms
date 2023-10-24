@@ -30,7 +30,7 @@ solveinfo80	"Nash solution stats"
 solvestat, modelstat, resusd, objval
 /
 
-convMessage80   "contains possible reasons for failed convergence"
+convMessage80   "contains all convergence criteria"
 /
 infes,surplus,nonopt,taxconv,anticip,target,regiTarget,implicitEnergyTarget,cm_implicitPriceTarget,cm_implicitPePriceTarget,damage,DevPriceAnticip
 /

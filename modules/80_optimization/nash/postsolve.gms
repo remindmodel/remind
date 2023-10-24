@@ -199,19 +199,16 @@ loop(trade$(NOT tradeSe(trade)),
     );
 );
 
-
-
 ***some diagnostic output:
 p80_taxrev_agg(ttot,iteration)$(ttot.val ge 2005) = sum(regi,vm_taxrev.l(ttot,regi));
 
-
 *AJS* calculate maximum residual surplusses on markets
-p80_surplusMax(trade,iteration,ttot)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = smax(ttot2$(ttot2.val ge cm_startyear AND ttot2.val le ttot.val), abs(p80_surplus(ttot2,trade,iteration)));
+p80_surplusMax_iter(trade,iteration,ttot)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = smax(ttot2$(ttot2.val ge cm_startyear AND ttot2.val le ttot.val), abs(p80_surplus(ttot2,trade,iteration)));
 
 ***from this, relative residual surplusses.  
 p80_surplusMaxRel(trade,iteration,ttot)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = 100 * smax(ttot2$(ttot2.val ge cm_startyear AND ttot2.val le ttot.val), abs(p80_surplus(ttot2,trade,iteration)) / sum(regi, p80_normalize0(ttot2,regi,trade)));
 
-p80_surplusMax2100(trade)$(NOT tradeSe(trade)) = p80_surplusMax(trade,iteration,"2100");
+p80_surplusMax2100(trade)$(NOT tradeSe(trade)) = p80_surplusMax_iter(trade,iteration,"2100");
 
 
 ***convergence indicators 
@@ -234,9 +231,9 @@ p80_defic_sum_rel(iteration) =  100 * p80_defic_sum(iteration) / (p80_normalizeL
 ***adjust parameters for next iteration 
 ***Decide on when to fade out price anticipation terms (doing this too early leads to diverging markets)
 ***if markets are reasonably cleared
-if( (smax(tradePe,p80_surplusMax(tradePe,iteration,'2150')) lt (10 * 0.05))   
-    AND ( p80_surplusMax("good",iteration,'2150') lt (10 * 0.1) )            !! 
-    AND ( p80_surplusMax("perm",iteration,'2150') lt (5 * 0.2) )
+if( (smax(tradePe,p80_surplusMax_iter(tradePe,iteration,'2150')) lt (10 * 0.05))   
+    AND ( p80_surplusMax_iter("good",iteration,'2150') lt (10 * 0.1) )            !! 
+    AND ( p80_surplusMax_iter("perm",iteration,'2150') lt (5 * 0.2) )
     AND (s80_fadeoutPriceAnticipStartingPeriod eq 0),                  !! as long as we are not fading out already
      s80_fadeoutPriceAnticipStartingPeriod = iteration.val;
 );
@@ -261,7 +258,7 @@ p80_messageFailedMarket(ttot,all_enty) = NO;
 
 ***criterion ""surplus": are we converged yet?
 loop(trade$(NOT tradeSe(trade)),
- if(p80_surplusMax(trade,iteration,"2100") gt p80_surplusMaxTolerance(trade),
+ if(p80_surplusMax_iter(trade,iteration,"2100") gt p80_surplusMaxTolerance(trade),
      s80_bool=0;                 
      p80_messageShow("surplus") = YES;
       loop(ttot$((ttot.val ge cm_startyear) and (ttot.val le 2100)),
@@ -270,7 +267,7 @@ loop(trade$(NOT tradeSe(trade)),
        );
       );
  );
- if(p80_surplusMax(trade,iteration,"2150") gt 10 * p80_surplusMaxTolerance(trade),
+ if(p80_surplusMax_iter(trade,iteration,"2150") gt 10 * p80_surplusMaxTolerance(trade),
      s80_bool=0;
      p80_messageShow("surplus") = YES;
       loop(ttot$((ttot.val ge cm_startyear) and (ttot.val gt 2100)),
@@ -283,38 +280,36 @@ loop(trade$(NOT tradeSe(trade)),
 
 *** critertion "infes": and are all solutions optimal?
 loop(regi,
- if((p80_repy(regi,'modelstat') ne 2) and (p80_repy(regi,'modelstat') ne 7),
-     s80_bool = 0;
-     p80_messageShow("infes") = YES;
-  );
-
+     if((p80_repy(regi,'modelstat') ne 2) and (p80_repy(regi,'modelstat') ne 7),
+         s80_bool = 0;
+         p80_messageShow("infes") = YES;
+     );
 *** critertion "nonopt": The next lines are a workaround for the status 7
 *** problem. If the objective value does not differ too much from the last known
 *** optimal solution, accept this solution as if it were optimal. 
-  if (1 le iteration.val,
-    !! no last iteration if this is the first; NA value in p80_repyLastOptim is
-    !! sticky, so test this separately
-    if (   p80_repy(regi,'modelstat') eq 7
+     p80_convNashObjVal_iter(iteration,regi) = abs(p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval'));
+     if (1 le iteration.val,
+        !! no last iteration if this is the first; NA value in p80_repyLastOptim is
+        !! sticky, so test this separately
+        if ( p80_repy(regi,'modelstat') eq 7
            !! The 1E-4 are quite arbitrary. One should do more research on how
-	   !! the solution differs over iteration when status 7 occurs. 
-       AND p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval') lt - 1e-4,
-      s80_bool = 0;
-      p80_messageShow("nonopt") = YES;     
-      display "Not all regions were status 2 in the last iteration. The deviation of the objective function from the last optimal solution is too large to be accepted:";
-      s80_dummy
-      = p80_repy(regi,'objval')
-      - p80_repyLastOptim(regi,'objval');
-      display s80_dummy;
-    );
-  );
-);
+           !! the solution differs over iteration when status 7 occurs. 
+           AND p80_convNashObjVal_iter(iteration,regi) lt 1e-4,
+           s80_bool = 0;
+           p80_messageShow("nonopt") = YES;     
+           display "Not all regions were status 2 in the last iteration. The deviation of the objective function from the last optimal solution is too large to be accepted:";
+           s80_dummy = p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval');
+           display s80_dummy;
+        );
+     );
+); !!regi
 
 ***additional criterion: are the anticipation terms sufficienctly small?
+p80_fadeoutPriceAnticip_iter(iteration) = sm_fadeoutPriceAnticip;
 if(sm_fadeoutPriceAnticip gt cm_maxFadeOutPriceAnticip, 
   s80_bool = 0;
   p80_messageShow("anticip") = YES;
 );
-
 *' criterion "Deviation due to price anticipation": are the resulting deviations sufficiently small?
 *' compare to 1/10th of the cutoff for goods imbalance 
 if(p80_DevPriceAnticipGlobAllMax("2100") gt 0.1 * p80_surplusMaxTolerance("good"),
@@ -323,19 +318,17 @@ if(p80_DevPriceAnticipGlobAllMax("2100") gt 0.1 * p80_surplusMaxTolerance("good"
 );
 
 ***additional criterion: did taxes converge? (only checked if cm_TaxConvCheck is 1)
-p80_taxrev_dev(t,regi) = 0;
-if (cm_TaxConvCheck eq 1,
-  loop(regi,
+p80_convNashTaxrev_iter(iteration,t,regi) = 0;
+loop(regi,
     loop(t,
-      if( abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco") gt 1E-4,
-        p80_taxrev_dev(t,regi) = abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco");
-        if (t.val lt 2100,
-          s80_bool = 0;
-          p80_messageShow("taxconv") = YES;
-        );
-      );
+         p80_convNashTaxrev_iter(iteration,t,regi) = abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco");
+         if (cm_TaxConvCheck eq 1,
+             if( p80_convNashTaxrev_iter(iteration,t,regi) gt 1E-4,
+                 s80_bool = 0;
+                 p80_messageShow("taxconv") = YES;
+             );
+         );
     );
-  );
 );
 
 *** additional criterion: Were regional climate targets reached? 
@@ -433,7 +426,7 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
 		      display "#### Just trying a different gdx may help.";
 	      );	 
 	      if(sameas(convMessage80, "taxconv"),
-		      display "#### 4.) Taxes did not converge in all regions and time steps. Absolut level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_taxrev_dev below.";
+		      display "#### 4.) Taxes did not converge in all regions and time steps. Absolute level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_convNashTaxrev_iter below.";
 	      );
         if(sameas(convMessage80, "anticip"),
 		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";
@@ -502,7 +495,7 @@ $endIf.internalizeDamages
 display "See the indicators below to dig deeper on the respective reasons of non-convergence: "
 
 display "tax convergence indicators";
-display p80_taxrev_dev;
+display p80_convNashTaxrev_iter;
 
 display "detailed trade convergence indicators";
 display p80_defic_trade, p80_defic_sum,p80_defic_sum_rel;
@@ -551,7 +544,7 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
 	     );	 
 	     if(sameas(convMessage80, "taxconv"),
 		 display "####";
-		 display "#### 4.) Taxes did not converge in all regions and time steps. Absolut level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_taxrev_dev.";
+		 display "#### 4.) Taxes did not converge in all regions and time steps. Absolut level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_convNashTaxrev_iter.";
 	     );	
       if(sameas(convMessage80, "anticip"),
 		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";
