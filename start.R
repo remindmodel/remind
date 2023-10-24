@@ -244,7 +244,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   # ask for slurmConfig if not specified for every run
   if ("--gamscompile" %in% flags) {
     slurmConfig <- "direct"
-    message("\nTrying to compile the selected runs...")
+    message("\nTrying to compile ", nrow(scenarios), " selected runs...")
     lockID <- gms::model_lock()
   }
   if (! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% flags)
