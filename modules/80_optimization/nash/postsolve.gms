@@ -332,10 +332,11 @@ loop(regi,
 );
 
 *** additional criterion: Were regional climate targets reached? 
+p80_emiMktTarget_dev_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt));
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off" 
 loop((ttot,ttot2,ext_regi,emiMktExt)$pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt),
 *** regipol targets must be met within 1% of target deviation, deviation for budget targets is measured relative to target value, while for year targets it is relative to 2015 emissions
-  if((abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) gt cm_emiMktTarget_tolerance),
+  if((p80_emiMktTarget_dev_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) gt cm_emiMktTarget_tolerance),
     s80_bool = 0;
     p80_messageShow("regiTarget") = YES;
   );
@@ -343,10 +344,12 @@ loop((ttot,ttot2,ext_regi,emiMktExt)$pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emi
 $endif.emiMkt
 
 *** additional criterion: Were the quantity targets reached by implicit taxes and/or subsidies? 
+p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) = pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup);
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
-  if(abs(pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup)) gt cm_implicitQttyTarget_tolerance,
-    if(NOT ((sameas(taxType,"tax") and pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 0) OR (sameas(taxType,"sub") and pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt 0)),
+  if(abs(p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)) gt cm_implicitQttyTarget_tolerance,
+    if(NOT ((sameas(taxType,"tax") and p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 0) 
+        OR  (sameas(taxType,"sub") and p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) gt 0)),
       if(NOT(pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) eq 1), !!no tax update either by reaching target or due to tax changes not affecting quantitties  
         s80_bool = 0;
         p80_messageShow("implicitEnergyTarget") = YES;
@@ -377,16 +380,19 @@ loop((t,regi,entyPe)$pm_implicitPePriceTarget(t,regi,entyPe),
 $endIf.cm_implicitPePriceTarget
 
 *** check global budget target from core/postsolve, must be within 1% of target value
-if (sm_globalBudget_dev gt 1.01 OR sm_globalBudget_dev lt 0.99,
+p80_globalBudget_dev_iter(iteration) = sm_globalBudget_dev;
+if (p80_globalBudget_dev_iter(iteration) gt 1.01 OR p80_globalBudget_dev_iter(iteration) lt 0.99,
   s80_bool = 0;
   p80_messageShow("target") = YES;
 );
 
 *** additional criterion: if damage internalization is on, is damage iteration converged?
+p80_sccConvergenceMaxDeviation_iter(iteration) = pm_sccConvergenceMaxDeviation;
+p80_gmt_conv_iter(iteration) = pm_gmt_conv;
 $ifthen.internalizeDamages not "%internalizeDamages%" == "off"
-   if(pm_sccConvergenceMaxDeviation > cm_sccConvergence OR pm_gmt_conv > cm_tempConvergence,
-	s80_bool = 0;
-	p80_messageShow("damage") = YES;
+   if(p80_sccConvergenceMaxDeviation_iter(iteration) gt cm_sccConvergence OR p80_gmt_conv_iter(iteration) gt cm_tempConvergence,
+      s80_bool = 0;
+      p80_messageShow("damage") = YES;
    );
 $endIf.internalizeDamages
 
