@@ -96,7 +96,7 @@ p80_SolNonOpt(all_regi)                    "solve status"
 pm_fuExtrForeign(ttot,all_regi,all_enty,rlf) "foreign fuel extraction"
 
 p80_convNashTaxrev_iter(iteration,ttot,all_regi) "deviation of tax revenue in percent GDP per iteration"
-p80_convNashObjVal_iter(iteration,regi)          "deviation of objective value to objective value from last iteration per iteration"
+p80_convNashObjVal_iter(iteration,all_regi)          "deviation of objective value to objective value from last iteration per iteration"
 p80_fadeoutPriceAnticip_iter(iteration)           "Helper parameter, describes fadeout of price anticipation during iterations per iteration"
 ;
 
