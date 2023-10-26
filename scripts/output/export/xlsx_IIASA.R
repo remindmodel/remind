@@ -21,19 +21,23 @@ removeFromScen <- ""                           # you can use regex such as: "_di
 addToScen <- NULL                              # is added at the beginning
 
 # filenames relative to REMIND main directory (or use absolute path) 
-mapping <- NULL                                  # file obtained from piamInterfaces, or AR6/SHAPE/NAVIGATE or NULL to get asked
-iiasatemplate <- "yaml_or_xlsx_file_from_IIASA"  # provided for each project, can be yaml or xlsx with a column 'Variable'
+mapping <- NULL                                # file obtained from piamInterfaces, or AR6/SHAPE/NAVIGATE or NULL to get asked
+iiasatemplate <- NULL                          # provided for each project, can be yaml or xlsx with a column 'Variable'
 
 # note: you can also pass all these options to output.R, so 'Rscript output.R logFile=mylogfile.txt' works.
 lucode2::readArgs("project")
 
 ### Load project-specific settings
 if (! exists("project")) {
-  project <- NULL
-} else {
+  project <- gms::chooseFromList(c("ECEMF", "ENGAGE_4p5", "ELEVATE", "ESABCC", "NAVIGATE", "NGFS_v4", "SHAPE"), type = "project", multiple = FALSE,
+                                 userinfo = paste0("Select project settings or leave empty.\n",
+                                                   "You can add your own project by editing 'scripts/output/export/xlsx_IIASA.R'"))
+}
+if (! is.null(project)) {
   message("# Overwrite settings with project settings for '", project, "'.")
   if ("TESTTHAT" %in% project) {
-    model <- "REMIND 3.2"
+    mapping <- "AR6"
+  } else if ("AR6" %in% project) {
     mapping <- "AR6"
   } else if ("NGFS_v4" %in% project) {
     model <- "REMIND-MAgPIE 3.2-4.6"
@@ -41,18 +45,32 @@ if (! exists("project")) {
     iiasatemplate <- "../ngfs-phase-4-internal-workflow/definitions/variable/variables.yaml"
     removeFromScen <- "C_|_bIT|_bit|_bIt"
   } else if ("ENGAGE_4p5" %in% project) {
-    model <- "REMIND 3.2"
     mapping <- c("AR6", "AR6_NGFS")
     iiasatemplate <- "ENGAGE_CD-LINKS_template_2019-08-22.xlsx"
-    removeFromScen <- "_diff|_expoLinear"
+    removeFromScen <- "_diff|_expoLinear|-all_regi"
+  } else if ("ELEVATE" %in% project) {
+    mapping <- "NAVIGATE"
+    iiasatemplate <- "2023-05-26_template_ELEVATE.xlsx"
+  } else if ("ECEMF" %in% project) {
+    mapping <- "ECEMF"
+  } else if ("ESABCC" %in% project) {
+    mapping <- "ESABCC"
+  } else if ("NAVIGATE" %in% project) {
+    mapping <- "NAVIGATE"
+  } else if ("SHAPE" %in% project) {
+    mapping <- c("NAVIGATE", "SHAPE")
   } else {
-    message("# Command line argument project='", project, "' defined, but not understood.")
+    stop("# Command line argument project='", project, "' defined, but not understood.")
   }
 }
 
 # overwrite settings with those specified as command-line arguments
 lucode2::readArgs("outputdirs", "filename_prefix", "outputFilename", "model",
                   "mapping", "logFile", "removeFromScen", "addToScen", "iiasatemplate")
+
+if (exists("iiasatemplate") && ! is.null(iiasatemplate) && ! file.exists(iiasatemplate)) {
+  stop("iiasatemplate=", iiasatemplate, " not found.")
+}
 
 # variables to be deleted although part of the template
 temporarydelete <- NULL # example: c("GDP|MER", "GDP|PPP")
@@ -121,7 +139,7 @@ withCallingHandlers({ # piping messages to logFile
           length(unique(mifdata$variable[mifdata$variable %in% temporarydelete])), " were deleted.")
   write(paste0("  - ", paste(unique(mifdata$variable[mifdata$variable %in% temporarydelete]), collapse = "\n  - "), "\n\n"),
         file = logFile, append = TRUE)
-  mifdata <- filter(mifdata, ! variable %in% temporarydelete)
+  mifdata <- droplevels(filter(mifdata, ! variable %in% temporarydelete))
 
   # message("\n### Generate joint mif, remind2 format: ", filename_remind2_mif)
   # write.mif(mifdata, filename_remind2_mif)
@@ -130,8 +148,7 @@ withCallingHandlers({ # piping messages to logFile
                           removeFromScen = removeFromScen, addToScen = addToScen,
                           outputDirectory = outputFolder,
                           logFile = logFile, outputFilename = basename(OUTPUT_xlsx),
-                          iiasatemplate = if (file.exists(iiasatemplate)) iiasatemplate else NULL,
-                          generatePlots = TRUE)
+                          iiasatemplate = iiasatemplate, generatePlots = TRUE)
 
 }, message = function(x) {
   cat(x$message, file = logFile, append = TRUE)
