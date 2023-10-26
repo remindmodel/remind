@@ -17,7 +17,7 @@ pm_taxCO2eq(t,regi)$(sameas(t, "2015") and regi_group("EUR_regi",regi)) = 5 * sm
 *** parameters for exponential increase after NDC targets
 Scalar p45_taxCO2eqGlobal2030 "startprice in 2030 (unit TDpGtC) of global CO2eq taxes towards which countries converge";
 p45_taxCO2eqGlobal2030 = 30 * sm_DptCO2_2_TDpGtC;
-Scalar p45_taxCO2eqYearlyIncrease "yearly multiplicative increase of co2 tax, write 3% as 1.03" /1.0125/;
+Scalar p45_taxCO2eqYearlyIncrease "yearly multiplicative increase of co2 tax, write 3% as 1.03" /1.015/;
 
 Scalar p45_taxCO2eqConvergenceYear "year until which CO2eq taxes have converged globally" /2100/;
 *** set Years for CO2eq taxes to converge after 2030
@@ -79,7 +79,7 @@ $offdelim
   /             ;
 
 *** parameters for selecting NDC years
-Scalar p45_ignoreNDCbefore          "NDC targets before this years are ignored, for example to exclude 2030 targets" /2020/;
+Scalar p45_ignoreNDCbefore          "NDC targets before this years are ignored, for example to exclude 2030 targets" /2024/;
 p45_ignoreNDCbefore = max(p45_ignoreNDCbefore, cm_startyear)
 Scalar p45_ignoreNDCafter           "NDC targets after  this years are ignored, for example to exclude 2050 net zero targets" /2030/;
 Scalar p45_minRatioOfCoverageToMax  "only targets whose coverage is this times p45_bestNDCcoverage are considered. Use 1 for only best." /1.0/;
