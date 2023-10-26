@@ -332,11 +332,10 @@ loop(regi,
 );
 
 *** additional criterion: Were regional climate targets reached? 
-p80_emiMktTarget_dev_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt));
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off" 
 loop((ttot,ttot2,ext_regi,emiMktExt)$pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt),
 *** regipol targets must be met within 1% of target deviation, deviation for budget targets is measured relative to target value, while for year targets it is relative to 2015 emissions
-  if((p80_emiMktTarget_dev_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) gt cm_emiMktTarget_tolerance),
+  if(( abs(pm_emiMktTarget_dev_iter(iteration,ttot,ttot2,ext_regi,emiMktExt)) gt cm_emiMktTarget_tolerance),
     s80_bool = 0;
     p80_messageShow("regiTarget") = YES;
   );

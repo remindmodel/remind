@@ -98,7 +98,6 @@ pm_fuExtrForeign(ttot,all_regi,all_enty,rlf) "foreign fuel extraction"
 p80_convNashTaxrev_iter(iteration,ttot,all_regi) "deviation of tax revenue in percent GDP per iteration"
 p80_convNashObjVal_iter(iteration,all_regi)          "deviation of objective value to objective value from last iteration per iteration"
 p80_fadeoutPriceAnticip_iter(iteration)           "Helper parameter, describes fadeout of price anticipation during iterations per iteration"
-p80_emiMktTarget_dev_iter(iteration,ttot,ttot2,ext_regi,emiMktExt)  "target deviation across iterations in current emissions divided by target emissions per iteration"
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)      "deviation of current iteration quantity target from target per iteration - relative for total targets, absolute (= share points) for share targets"
 $endif.cm_implicitQttyTarget
