@@ -27,41 +27,37 @@ iiasatemplate <- NULL                          # provided for each project, can 
 # note: you can also pass all these options to output.R, so 'Rscript output.R logFile=mylogfile.txt' works.
 lucode2::readArgs("project")
 
+projects <- list(
+  ELEVATE    = list(mapping = "NAVIGATE",
+                    iiasatemplate = "2023-05-26_template_ELEVATE.xlsx"),
+  ENGAGE_4p5 = list(mapping = c("AR6", "AR6_NGFS"),
+                    iiasatemplate = "ENGAGE_CD-LINKS_template_2019-08-22.xlsx",
+                    removeFromScen = "_diff|_expoLinear|-all_regi"),
+  NAVIGATE_coupled = list(mapping = c("NAVIGATE", "NAVIGATE_coupled")),
+  NGFS       = list(model = "REMIND-MAgPIE 3.2-4.6",
+                    mapping = c("AR6", "AR6_NGFS"),
+                    iiasatemplate = "../ngfs-phase-4-internal-workflow/definitions/variable/variables.yaml",
+                    removeFromScen = "C_|_bIT|_bit|_bIt"),
+  SHAPE      = list(mapping = c("NAVIGATE", "SHAPE")),
+  TESTTHAT   = list(mapping = "AR6")
+)
+
+# add pure mapping from piamInterfaces
+mappings <- setdiff(names(piamInterfaces::templateNames()), c(names(projects), "AR6_NGFS"))
+projects <- c(projects,
+              do.call(c, lapply(mappings, function(x) stats::setNames(list(list(mapping = x)), x))))
+
 ### Load project-specific settings
 if (! exists("project")) {
-  project <- gms::chooseFromList(c("ECEMF", "ENGAGE_4p5", "ELEVATE", "ESABCC", "NAVIGATE", "NGFS_v4", "SHAPE"), type = "project", multiple = FALSE,
+  project <- gms::chooseFromList(sort(setdiff(names(projects), "TESTTHAT")), type = "project", multiple = FALSE,
                                  userinfo = paste0("Select project settings or leave empty.\n",
-                                                   "You can add your own project by editing 'scripts/output/export/xlsx_IIASA.R'"))
+                                                   "You can adjust project settings by editing 'scripts/output/export/xlsx_IIASA.R'"))
 }
-if (! is.null(project)) {
-  message("# Overwrite settings with project settings for '", project, "'.")
-  if ("TESTTHAT" %in% project) {
-    mapping <- "AR6"
-  } else if ("AR6" %in% project) {
-    mapping <- "AR6"
-  } else if ("NGFS_v4" %in% project) {
-    model <- "REMIND-MAgPIE 3.2-4.6"
-    mapping <- c("AR6", "AR6_NGFS")
-    iiasatemplate <- "../ngfs-phase-4-internal-workflow/definitions/variable/variables.yaml"
-    removeFromScen <- "C_|_bIT|_bit|_bIt"
-  } else if ("ENGAGE_4p5" %in% project) {
-    mapping <- c("AR6", "AR6_NGFS")
-    iiasatemplate <- "ENGAGE_CD-LINKS_template_2019-08-22.xlsx"
-    removeFromScen <- "_diff|_expoLinear|-all_regi"
-  } else if ("ELEVATE" %in% project) {
-    mapping <- "NAVIGATE"
-    iiasatemplate <- "2023-05-26_template_ELEVATE.xlsx"
-  } else if ("ECEMF" %in% project) {
-    mapping <- "ECEMF"
-  } else if ("ESABCC" %in% project) {
-    mapping <- "ESABCC"
-  } else if ("NAVIGATE" %in% project) {
-    mapping <- "NAVIGATE"
-  } else if ("SHAPE" %in% project) {
-    mapping <- c("NAVIGATE", "SHAPE")
-  } else {
-    stop("# Command line argument project='", project, "' defined, but not understood.")
-  }
+projectdata <- projects[[project]]
+message("# Overwrite settings with project settings for '", project, "'.")
+varnames <- c("mapping", "iiasatemplate", "addToScen", "removeFromScen", "model", "outputFilename", "logFile")
+for (p in intersect(varnames, names(projectdata))) {
+  assign(p, projectdata[[p]])
 }
 
 # overwrite settings with those specified as command-line arguments
