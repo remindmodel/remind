@@ -1258,6 +1258,11 @@ $setGlobal cm_regiExoPrice  off    !! def = off
 ***     sets a 72 GtCO2eq budget target for European 27 countries (EU27_regi), for all GHG emissions excluding bunkers between 2020 and 2050; and a 100 MtCO2 CO2eq emission target for the year 2050, for Germany"
 ***     Requires regiCarbonPrice realization in regipol module
 $setGlobal cm_emiMktTarget  off    !! def = off
+*** cm_regipol_LUC "user-defined shift of land-use change emissions from Magpie trajectories when employing cm_emiMktTarget with the Grassi offset (LULUCFGrassi option)"
+***   Example on how to use:
+***    cm_regipol_LUC = "2050.EU27_regi -340"  shifts land-use change emissions of regions within the EU27 region to hit -340 MtCO2/yr by 2050 in EU27.
+***    Regional disaggregation happens via the 2015 share of regional land-use change emissions from the EU27 total based on UNFCCC data.
+$setGlobal cm_regipol_LUC  off    !! def = off
 *** cm_quantity_regiCO2target "emissions quantity upper bound from specific year for region group."
 ***   Example on how to use:
 ***     '2050.EUR_regi.netGHG 0.000001, obliges European GHG emissions to be approximately zero from 2050 onward"
