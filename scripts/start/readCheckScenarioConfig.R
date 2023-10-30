@@ -100,7 +100,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     BAUbutNotNeeded <- ! is.na(scenConf$path_gdx_bau) & ! (scenNeedsBau)
     if (sum(BAUbutNotNeeded) > 0) {
       msg <- paste0("In ", sum(BAUbutNotNeeded), " scenarios, 'path_gdx_bau' is not empty although no realization is selected that needs it.\n",
-                    "To avoid unnecessary dependencies to other runs, setting 'path_gdx_bau' to NA.")
+                    "To avoid unnecessary dependencies to other runs, setting 'path_gdx_bau' to NA for:\n",
+                    paste(rownames(scenConf)[BAUbutNotNeeded], collapse = ", "))
       message(msg)
       scenConf$path_gdx_bau[BAUbutNotNeeded] <- NA
     }
@@ -120,9 +121,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   errorsfound <- sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors
 
   # check column names
-  knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
-                        "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig",
-                        "results_folder", "force_replace", "action", "pythonEnabled", "copyConfigFrom")
+  knownColumnNames <- c(names(cfg$gms), setdiff(names(cfg), "gms"), names(path_gdx_list),
+                        "start", "model", "copyConfigFrom")
   if (grepl("scenario_config_coupled", filename)) {
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
@@ -166,7 +166,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
               basename(filename), ":")
       message("  ", paste(unknownColumnNames, collapse = ", "))
       message("This check was added Jan. 2022. ",
-              "If you find false positives, add them to knownColumnNames in start/scripts/readCheckScenarioConfig.R.\n")
+              "If you find false positives, add them to knownColumnNames in scripts/start/readCheckScenarioConfig.R.\n")
       unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
       if (length(unknownColumnNamesNoComments) > 0) {
         if (testmode) {

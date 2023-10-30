@@ -112,15 +112,7 @@ loop(regi,
           );
     );
 
-  if (cm_emiscen eq 9 or (cm_emiscen eq 10),
-*** TODO: take care, this means that the SCC are only priced into MAC-curve
-*** abatement if emiscen = 9 and for emiscen = 10 for CBA runs. Might want to change this.
-    p_priceCO2(ttot,regi) = (pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqSCC(ttot,regi) )* 1000;
-  else
-    p_priceCO2(ttot,regi) 
-    = abs(pm_pvpRegi(ttot,regi,"perm") / (pm_pvp(ttot,"good") + sm_eps))
-    * 1000;
-  );
+p_priceCO2(ttot,regi) = pm_taxCO2eqSum(ttot,regi) * 1000;
 
 *** Define co2 price for entities that are used in MAC. 
 loop((enty,enty2)$emiMac2mac(enty,enty2), !! make sure that both mac sectors and mac curves have prices asigned as both sets are used in calculations below

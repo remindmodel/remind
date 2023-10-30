@@ -19,7 +19,6 @@ parameters
 ***prices
 pm_pvp(ttot,all_enty)                                "Price on commodity markets",
 p_pvpRef(ttot,all_enty)                              "Price on commodity markets - imported from REF gdx",
-pm_pvpRegi(ttot,all_regi,all_enty)                   "prices of traded commodities - regional. only used for permit trade"
 
 p_pvpRegiBeforeStartYear(ttot,all_regi,all_enty)     "prices of traded commodities before start year - regional. only used for permit trade"
 
