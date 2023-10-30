@@ -20,6 +20,15 @@ Parameter
   p47_nonEnergyUse(ttot,ext_regi)                  "non-energy use"
 ;
 
+*** scenario-defined shift of land-use change emissions for targets incl. Grassi option
+$ifThen.cm_regipol_LUC NOT "%cm_regipol_LUC%" == "off"
+Parameter
+  p47_emiLUC(ttot,ext_regi) "User-defined land-use change CO2 emissions to hit in specific year and region group. Unit [Mt CO2/yr]" / %cm_regipol_LUC% / 
+  p47_emiLUC_regi(ttot,all_regi) "User-defined land-use change CO2 emissions to hit in specific year and region. Unit [Mt CO2/yr]"
+;
+$endIf.cm_regipol_LUC
+
+
 *** parameters to track regipol emissions calculation
 Parameters
   p47_emiTargetMkt(ttot,all_regi,emiMktExt,emi_type_47)            "CO2 or GHG Emissions per emission market used for target level [GtC]"

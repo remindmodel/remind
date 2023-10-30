@@ -93,6 +93,8 @@ vm_cesIO.lo(t,regi_dyn29(regi),in_industry_dyn37(in))$(
                                                   0 eq vm_cesIO.lo(t,regi,in) )
   = sm_eps;
 
+
+$ontext
 *' Limit biomass solids use in industry to 25% (or historic shares, if they are higher)
 *' of baseline solids
 *' Cement CCS might otherwise become a compelling BioCCS option under very high
@@ -102,6 +104,7 @@ if (cm_startyear gt 2005,   !! not a scenario, starting in 2005 (e.g. baseline o
   = max(0.25 , smax(t2, pm_secBioShare(t2,regi,"fesos","indst") ) )
     * p37_BAU_industry_ETS_solids(t,regi);
 );
+$offtext
 
 !! Fix industry output for Bal and EnSec scenario
 $if "%cm_indstExogScen%" == "forecast_bal"   $set cm_indstExogScen_set "YES"
@@ -112,4 +115,9 @@ $ifthen.policy_scenario "%cm_indstExogScen_set%" == "YES"
 $endif.policy_scenario
 $drop cm_indstExogScen_set
 
+$ontext
+*** force industrial coal-phase out by 2050 in EU27
+vm_demFEsector.up(t,regi,"sesofos","fesos","indst",emiMkt)$(	t.val ge 2050 AND
+								regi_group("EU27_regi",regi))=0;
+$offtext
 *** EOF ./modules/37_industry/subsectors/bounds.gms
