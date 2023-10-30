@@ -104,8 +104,10 @@ $endif.process_based_steel
 $ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
                              ttot.val gt 2020
-			                       AND p37_energy_limit_slope(ttot,regi,out)
-                             AND NOT uePrc(out) ) ..
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+                             AND NOT uePrc(out)
+$endif.process_based_steel
+			                       AND p37_energy_limit_slope(ttot,regi,out) ) ..
   sum(ces_eff_target_dyn37(out,in), vm_cesIO(ttot,regi,in))
   =g=
     vm_cesIO(ttot,regi,out)
