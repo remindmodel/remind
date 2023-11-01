@@ -89,6 +89,23 @@ $endif.CES_parameters
 vm_cesIO.fx("2005",regi,ppfkap_industry_dyn37(in))
   = pm_cesdata("2005",regi,in,"quantity");
 
+*** Set lower bound for secondary steel electricity to 1 % of the lowest
+*** existing lower bound (should be far above sm_eps) to avoid CONOPT getting
+*** lost in the woods.
+loop (in$( sameas(in,"feel_steel_secondary") ),
+  vm_cesIO.lo(t,regi,in)$(    t.val ge cm_startyear 
+                          AND vm_cesIO.lo(t,regi,in) le sm_eps )
+  = max(
+      sm_eps, 
+      (  0.01 
+      * smax(ttot$( vm_cesIO.lo(ttot,regi,in) gt sm_eps),
+          vm_cesIO.lo(ttot,regi,in)
+	)
+      )
+    );
+);
+
+*** Default lower bounds on all industry pfs
 vm_cesIO.lo(t,regi_dyn29(regi),in_industry_dyn37(in))$( 
                                                   0 eq vm_cesIO.lo(t,regi,in) )
   = sm_eps;

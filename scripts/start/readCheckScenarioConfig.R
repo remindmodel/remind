@@ -36,7 +36,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   }
   nameisNA <- grepl("^NA$", rownames(scenConf))
   if (any(nameisNA)) {
-    warning("Don't use 'NA' as scenario name, you fool. Stopping now.")
+    warning("Do not use 'NA' as scenario name, you fool. Stopping now.")
   }
   illegalchars <- grepl("[^[:alnum:]_-]", rownames(scenConf))
   if (any(illegalchars)) {
@@ -114,21 +114,6 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   }
   unknownColumnNames <- names(scenConf)[! names(scenConf) %in% knownColumnNames]
   if (length(unknownColumnNames) > 0) {
-    message("\nAutomated checks did not find counterparts in main.gms and default.cfg for these columns in ",
-            basename(filename), ":")
-    message("  ", paste(unknownColumnNames, collapse = ", "))
-    message("This check was added Jan. 2022. ",
-            "If you find false positives, add them to knownColumnNames in start/scripts/readCheckScenarioConfig.R.\n")
-    unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
-    if (length(unknownColumnNamesNoComments) > 0) {
-      if (testmode) {
-        warning("Unknown column names: ", paste(unknownColumnNamesNoComments, collapse = ", "))
-      } else {
-        message("Do you want to continue and simply ignore them? Y/n")
-        userinput <- tolower(gms::getLine())
-        if (! userinput %in% c("y", "")) stop("Ok, so let's stop.")
-      }
-    }
     forbiddenColumnNames <- list(   # specify forbidden column name and what should be done with it
        "c_budgetCO2" = "Rename to c_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
        "c_budgetCO2FFI" = "Rename to c_budgetCO2from2020FFI, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
@@ -144,8 +129,9 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_BioImportTax_EU" = "Use more flexible cm_import_tax switch instead, see https://github.com/remindmodel/remind/issues/1157",
        "cm_trdcst" = "Now always fixed to 1.5, see https://github.com/remindmodel/remind/pull/1052",
        "cm_trdadj" = "Now always fixed to 2, see https://github.com/remindmodel/remind/pull/1052",
-       "cm_OILRETIRE" = "Now always on by default, see https://github.com/remindmodel/remind/pull/1102"
-     )
+       "cm_OILRETIRE" = "Now always on by default, see https://github.com/remindmodel/remind/pull/1102",
+       "cm_fixCO2price" = "Was never in use, removed in https://github.com/remindmodel/remind/pull/1369",
+     NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       if (testmode) {
         warning("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
@@ -156,6 +142,25 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     if (any(names(forbiddenColumnNames) %in% unknownColumnNames)) {
       warning("Outdated column names found that must not be used.")
       errorsfound <- errorsfound + length(intersect(names(forbiddenColumnNames), unknownColumnNames))
+    }
+    # sort out known but forbidden names from unknown
+    unknownColumnNames <- setdiff(unknownColumnNames, names(forbiddenColumnNames))
+    if (length(unknownColumnNames) > 0) {
+      message("\nAutomated checks did not find counterparts in main.gms and default.cfg for these columns in ",
+              basename(filename), ":")
+      message("  ", paste(unknownColumnNames, collapse = ", "))
+      message("This check was added Jan. 2022. ",
+              "If you find false positives, add them to knownColumnNames in start/scripts/readCheckScenarioConfig.R.\n")
+      unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
+      if (length(unknownColumnNamesNoComments) > 0) {
+        if (testmode) {
+          warning("Unknown column names: ", paste(unknownColumnNamesNoComments, collapse = ", "))
+        } else if (errorsfound == 0) {
+          message("Do you want to continue and simply ignore them? Y/n")
+          userinput <- tolower(gms::getLine())
+          if (! userinput %in% c("y", "")) stop("Ok, so let's stop.")
+        }
+      }
     }
   }
   if (errorsfound > 0) {
