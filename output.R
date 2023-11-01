@@ -197,7 +197,7 @@ if (comp %in% c("comparison", "export")) {
   }
 } else { # comp = single
   # define slurm class or direct execution
-  outputInteractive <- c("plotIterations", "fixOnRef")
+  outputInteractive <- c("plotIterations", "fixOnRef", "integratedDamageCosts")
   if (! exists("source_include")) {
     # for selected output scripts, only slurm configurations matching these regex are available
     slurmExceptions <- if ("reporting" %in% output) "--mem=[0-9]*[0-9]{3}" else NULL
