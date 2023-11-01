@@ -114,4 +114,9 @@ if (use_cluster_defaults &&
     "/p/projects/remind/inputdata/CESparametersAndGDX" = NULL))
 }
 
+# include local calibration results
+options(remind_repos = c(
+  options("remind_repos")[[1]],
+    stats::setNames(list(x = NULL), normalizePath("./calibration_results/"))))
+ 
 })
