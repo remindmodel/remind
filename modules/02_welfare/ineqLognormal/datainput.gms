@@ -47,7 +47,7 @@ if ((cm_emiscen ne 1),
     Execute_Loadpoint 'input_ref' p02_damageFactor_ref=vm_damageFactor.l;
  
 * if energy system costs are used:
-*    Execute_Loadpoint 'input_bau' p02_energyExp_ref=vm_costEnergySys.l;
+*    Execute_Loadpoint 'input_ref' p02_energyExp_ref=vm_costEnergySys.l;
    
 );
 

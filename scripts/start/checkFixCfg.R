@@ -87,19 +87,21 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
     cfg$output <- setdiff(cfg$output, "reportCEScalib")
   }
   
-  # Make sure that an input_bau.gdx has been specified if an NDC is to be calculated.
-  if (isTRUE(cfg$gms$carbonprice == "NDC") | isTRUE(cfg$gms$carbonpriceRegi == "NDC")) {
+  # Make sure that an input_bau.gdx has been specified if and only if needed.
+  isBauneeded <- isTRUE(length(unlist(lapply(names(needBau), function(x) intersect(cfg$gms[[x]], needBau[[x]])))) > 0)
+  if (isBauneeded) {
     if (is.na(cfg$files2export$start["input_bau.gdx"])) {
-      errormsg <- "'carbonprice' or 'carbonpriceRegi' is set to 'NDC' which requires a reference gdx in 'path_gdx_bau' but it is empty."
+      errormsg <- "A module requires a reference gdx in 'path_gdx_bau', but it is empty."
       if (testmode) warning(errormsg) else stop(errormsg)
     }
   } else {
-    if (!is.na(cfg$files2export$start["input_bau.gdx"])) {
-      message("Neither 'carbonprice' nor 'carbonpriceRegi' is set to 'NDC' but 'path_gdx_bau' ",
-              "is not empty introducing an unnecessary dependency to another run. Setting 'path_gdx_bau' to NA.")
+    if (! is.na(cfg$files2export$start["input_bau.gdx"])) {
+      message("You have specified no realization that requires 'path_gdx_bau' but you have specified it. ",
+              "To avoid an unnecessary dependency to another run, setting 'path_gdx_bau' to NA.")
       cfg$files2export$start["input_bau.gdx"] <- NA
     }
   }
+
   if (errorsfound > 0) {
     cfg$errorsfoundInCheckFixCfg <- errorsfound
   }  
