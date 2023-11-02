@@ -48,7 +48,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
     } else {
       # we only want to run renv checks/updates in the first run in a cascade:
       # cfg$renvLockFromPreceedingRun is only NULL for the first run in a cascade.
-      # For a subsequent run it has been set by the parent run in run.R (standalone) or start_coupled.R (coupled)
+      # For a subsequent run it has been set by the parent run in run.R (standalone) or start_coupled.R (coupled).
       firstRunInCascade <- is.null(cfg$renvLockFromPreceedingRun)
       if (firstRunInCascade) {
         if (getOption("autoRenvUpdates", FALSE)) {
@@ -77,7 +77,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       } else {
         # a run renv is loaded, we are presumably starting new run in a cascade
         message("   Copying lockfile into '", cfg$results_folder, "'")
-        file.copy(renv::paths$lockfile(), file.path(cfg$results_folder, "_renv.lock"))
+        file.copy(cfg$renvLockFromPreceedingRun, file.path(cfg$results_folder, "_renv.lock"))
       }
 
 
