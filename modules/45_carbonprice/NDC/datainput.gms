@@ -79,7 +79,7 @@ $offdelim
   /             ;
 
 *** parameters for selecting NDC years
-Scalar p45_ignoreNDCbefore          "NDC targets before this years are ignored, for example to exclude 2030 targets" /2020/;
+Scalar p45_ignoreNDCbefore          "NDC targets before this years are ignored, for example to exclude 2030 targets" /2024/;
 p45_ignoreNDCbefore = max(p45_ignoreNDCbefore, cm_startyear)
 Scalar p45_ignoreNDCafter           "NDC targets after  this years are ignored, for example to exclude 2050 net zero targets" /2030/;
 Scalar p45_minRatioOfCoverageToMax  "only targets whose coverage is this times p45_bestNDCcoverage are considered. Use 1 for only best." /1.0/;

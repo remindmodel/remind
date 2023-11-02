@@ -87,7 +87,7 @@ yourfilter <- function(x) {
 }
 d <- quitte::read.snapshot("snapshot.csv", list(region = "World"), filter.function = yourfilter)
 ```
-If your computer supports the system commands `grep`, `head`, `sed` and `tail` (as the PIK cluster does), the
+If your computer supports the system commands `grep`, `head` and `tail` (as the PIK cluster does),
 using the list-based filtering reduces loading times, as the file size can be reduced _before_ reading the data into `R`.
 
 The following functions from `piamInterfaces` might be helpful for further analysis:
