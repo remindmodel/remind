@@ -83,6 +83,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   }
   if ("path_gdx_bau" %in% names(scenConf)) {
     # fix if bau given despite not needed. needBau is defined in needBau.R
+    # initialize vector with FALSE everywhere and turn elements to TRUE if a scenario config row setting matches a needBau element
     scenNeedsBau <- rep(FALSE, nrow(scenConf))
     for (n in intersect(names(needBau), names(scenConf))) {
       scenNeedsBau <- scenNeedsBau | scenConf[[n]] %in% needBau[[n]]
