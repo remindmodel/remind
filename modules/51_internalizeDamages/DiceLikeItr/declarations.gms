@@ -10,7 +10,7 @@ parameters
 p51_scc(tall) "Social cost of carbon (due to GDP damages) [$ per tCO2eq]"
 p51_sccLastItr(tall) "Social cost of carbon (due to GDP damages) from last iteration [$ per tCO2eq]"
 
-p51_sccConvergenceMaxDeviation "max deviation of SCC from last iteration [percent]"
+pm_sccConvergenceMaxDeviation "max deviation of SCC from last iteration [percent]"
 ;
 
 *** EOF ./modules/51_internalizeDamages/DiceLikeItr/declarations.gms

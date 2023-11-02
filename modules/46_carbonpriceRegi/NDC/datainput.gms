@@ -35,7 +35,7 @@ $onlisting
 ;
 
 Parameter p46_2005shareTarget(ttot,all_regi) "2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years";
-p46_2005shareTarget(ttot,all_regi) = f46_2005shareTarget(ttot,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
+p46_2005shareTarget(t,all_regi) = f46_2005shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
 
 display p46_2005shareTarget;
 
@@ -71,19 +71,38 @@ $offdelim
 *** 0.2 is a rounded value valid for all except 2018_uncond, because Brazil had no unconditional target then.
 
 if (not sameas("%cm_NDC_version%","2018_uncond"),
-    p46_factorTargetyear(ttot,regi)$(sameas(regi,"LAM") AND sameas(ttot,"2030")) = p46_factorTargetyear(ttot,regi) + 0.2;
+    p46_factorTargetyear(t,regi)$(sameas(regi,"LAM") AND sameas(t,"2030")) = p46_factorTargetyear(t,regi) + 0.2;
 );
 
 *** add 2060 GHG net zero target for China, not yet in the UNFCCC_NDC database
-p46_factorTargetyear(ttot,regi)$(sameas(regi,"CHA") AND sameas(ttot,"2060")) = 0;
-p46_2005shareTarget(ttot,regi)$(sameas(regi,"CHA") AND sameas(ttot,"2060")) = 1;
+p46_factorTargetyear(t,regi)$(sameas(regi,"CHA") AND sameas(t,"2060")) = 0;
+p46_2005shareTarget(t,regi)$(sameas(regi,"CHA") AND sameas(t,"2060")) = 1;
+
+$ifthen.p46_netZero "%cm_netZeroScen%" == "NGFS_v4_20pc"
+  p46_factorTargetyear(t,regi)$(sameas(regi,"CAZ") AND sameas(t,"2050")) = 0;
+   p46_2005shareTarget(t,regi)$(sameas(regi,"CAZ") AND sameas(t,"2050")) = 0.8;
+  p46_factorTargetyear(t,regi)$(sameas(regi,"EUR") AND sameas(t,"2050")) = 0;
+   p46_2005shareTarget(t,regi)$(sameas(regi,"EUR") AND sameas(t,"2050")) = 0.8;
+  p46_factorTargetyear(t,regi)$(sameas(regi,"JPN") AND sameas(t,"2050")) = 0;
+   p46_2005shareTarget(t,regi)$(sameas(regi,"JPN") AND sameas(t,"2050")) = 0.8;
+  p46_factorTargetyear(t,regi)$(sameas(regi,"LAM") AND sameas(t,"2050")) = 0;
+   p46_2005shareTarget(t,regi)$(sameas(regi,"LAM") AND sameas(t,"2050")) = 0.8;
+  p46_factorTargetyear(t,regi)$(sameas(regi,"USA") AND sameas(t,"2050")) = 0;
+   p46_2005shareTarget(t,regi)$(sameas(regi,"USA") AND sameas(t,"2050")) = 0.8;
+  p46_factorTargetyear(t,regi)$(sameas(regi,"CHA") AND sameas(t,"2060")) = 0;
+   p46_2005shareTarget(t,regi)$(sameas(regi,"CHA") AND sameas(t,"2060")) = 0.8;
+  p46_factorTargetyear(t,regi)$(sameas(regi,"REF") AND sameas(t,"2060")) = 0;
+   p46_2005shareTarget(t,regi)$(sameas(regi,"REF") AND sameas(t,"2060")) = 0.8;
+  p46_factorTargetyear(t,regi)$(sameas(regi,"IND") AND sameas(t,"2070")) = 0;
+   p46_2005shareTarget(t,regi)$(sameas(regi,"IND") AND sameas(t,"2070")) = 0.8;
+$endif.p46_netZero
 
 
 *** parameters for selecting NDC years
 Scalar p46_ignoreNDCbefore          "NDC targets before this years are ignored, for example to exclude 2030 targets" /2028/;
 p46_ignoreNDCbefore = max(p46_ignoreNDCbefore, cm_startyear)
-Scalar p46_ignoreNDCafter           "NDC targets after  this years are ignored, for example to exclude 2050 net zero targets" /2070/;
-Scalar p46_minRatioOfCoverageToMax  "only targets whose coverage is this times p46_bestNDCcoverage are considered. Use 1 for only best." /0.2/;
+Scalar p46_ignoreNDCafter           "NDC targets after  this years are ignored, for example to exclude 2050 net zero targets" /2100/;
+Scalar p46_minRatioOfCoverageToMax  "only targets whose coverage is this times p46_bestNDCcoverage are considered. Use 1 for only best." /0.7/;
 Scalar p46_useSingleYearCloseTo     "if 0: use all. If > 0: use only one single NDC target per country closest to this year (use 2030.4 to prefer 2030 over 2035 over 2025)" /0/;
 
 Set p46_NDCyearSet(ttot,all_regi)               "YES for years whose NDC targets is used";

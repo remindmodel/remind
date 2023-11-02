@@ -34,10 +34,10 @@ test_that("readCheckScenarioConfig fails on error-loaden config", {
   expect_match(w, "contain whitespaces", all = FALSE, fixed = TRUE)
   expect_match(w, "scenario names indicated in copyConfigFrom column were not found", all = FALSE, fixed = TRUE)
   expect_match(w, "specify in copyConfigFrom column a scenario name defined below in the file", all = FALSE, fixed = TRUE)
-  expect_match(w, "which requires a reference gdx", all = FALSE, fixed = TRUE)
+  expect_match(w, "a reference gdx in 'path_gdx_bau'", all = FALSE, fixed = TRUE)
   expect_match(w, "Do not use 'NA' as scenario name", all = FALSE, fixed = TRUE)
   expect_match(m, "no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead", all = FALSE, fixed = TRUE)
-  expect_match(m, "In 1 scenarios, neither 'carbonprice'", all = FALSE, fixed = TRUE)
+  expect_match(m, "is not empty although no realization is selected that needs it", all = FALSE, fixed = TRUE)
   copiedFromPBS <- c("c_budgetCO2", "path_gdx", "path_gdx_ref")
   expect_identical(unlist(scenConf["PBS", copiedFromPBS]),
                    unlist(scenConf["PBScopy", copiedFromPBS]))

@@ -19,7 +19,7 @@ You can generate the file to be uploaded by either calling [`piamInterfaces::gen
 `generateIIASASubmission` requires the following inputs:
 
 - `mifs`: vector of .mif files or directories that contain the .mif files
-- `model`: model name as registered in the database, such as "REMIND-MAgPIE 3.0-4.4"
+- `model`: model name as registered in the database, such as "REMIND-MAgPIE 3.2-4.6"
 - `iiasatemplate`: optional path to the xlsx or yaml file obtained in the project with the variables and units that are accepted in the database
 - `addToScen`: optional string added in front of all scenario names
 - `removeFromScen`: optional regular expression of parts to be deleted from the scenario names, such as "C_|_bIT|_bit|_bIt"
@@ -35,14 +35,14 @@ The script requires the inputs as above, expect that it lets you select the `mif
 - mapping: either the path to a mapping file you generated using [`piamInterfaces::generateMappingfile`](https://github.com/pik-piam/piamInterfaces/blob/master/R/generateMappingfile.R), or a vector of templates such as `c("NAVIGATE", "SHAPE")` referring to the last part of the file names in [this piamInterfaces directory](https://github.com/pik-piam/piamInterfaces/tree/master/inst/templates)
 - filename_prefix: optional prefix of the resulting outputFile, such as your project name
 
-You can specify the information above in two ways: Either edit [`xlsx_IIASA.R`](../scripts/output/export/xlsx_IIASA.R) and add a project in a similar way to `NGFS_v3` or `ENGAGE_4p5`. You can then start the scripts with:
+You can specify the information above in two ways: Either edit [`xlsx_IIASA.R`](../scripts/output/export/xlsx_IIASA.R) and add a project in a similar way to `NGFS_v4` or `ENGAGE_4p5`. You can then start the scripts with:
 ```
-Rscript output.R comp=export output=xlsx_IIASA project=NGFS_v3
+Rscript output.R comp=export output=xlsx_IIASA project=NGFS_v4
 ```
 You do not need to specify `comp` and `output` in the command line, you can just wait to be asked for it.
 An alternative is to specify everything individually as command-line arguments:
 ```
-Rscript output.R comp=export output=xlsx_IIASA model="REMIND 3.0" mapping=AR6,AR6_NGFS addToScen=whatever removeFromScen=C_ filename_prefix=test
+Rscript output.R comp=export output=xlsx_IIASA model="REMIND 3.2" mapping=AR6,AR6_NGFS addToScen=whatever removeFromScen=C_ filename_prefix=test
 ```
 All the information printed to you during the run will also be present in the logfile whose path will be told you at the end.
 
@@ -52,8 +52,46 @@ Check the logfile carefully for the variables that were omitted, failing summati
 
 If you specify `iiasatemplate`, the scripts will delete all the variables not in the template. This can be the reason that summation checks fail, simply because some of the variables that were reported by REMIND were omitted.
 
-Additionally, unit mismatches can cause the script to fail. In the past, IIASA has sometimes changed unit names to correct spelling mistakes or harmonize them. If there were unit mismatches where the units are identical, just spelled differently, you can add them to the named vector `identicalUnits` in [`piamInterfaces::checkIIASASubmission`](https://github.com/pik-piam/piamInterfaces/blob/master/R/checkIIASASubmission.R). So if the project template expects `Mt/yr`, but our templates export it as `Mt/year`, add `"Mt/yr" = "Mt/year"` to the vector, and it will in the future not fail on this unit mismatch but correct it to what is required in the project. Never use this mechanism if the units are not actually identical in their meaning.
+Additionally, unit mismatches can cause the script to fail. In the past, IIASA has sometimes changed unit names to correct spelling mistakes or harmonize them.
+If there were unit mismatches where the units are identical, just spelled differently, you can add them to the named vector `identicalUnits` in [`piamInterfaces::checkFixUnits`](https://github.com/pik-piam/piamInterfaces/blob/master/R/checkFixUnits.R).
+So if the project template expects `Mt/yr`, but our templates export it as `Mt/year`, add `"Mt/yr" = "Mt/year"` to the vector, and it will in the future not fail on this unit mismatch but correct it to what is required for the submission.
+Never use this mechanism if the units are not actually identical in their meaning.
 
 ## Step 4: upload file
 
-Go to the project internal Scenario Explorer, click on your login name and then on "uploads" and the "plus" in the upper right corner - submit your xlsx file. Do not expect it to work flawlessly on the first try so hope for the best. You will receive an email message with a log and may at some point need the help of the IIASA administrators of your project.
+Go to the project internal Scenario Explorer, click on your login name and then on "uploads" and the "plus" in the upper right corner - submit your xlsx file.
+Do not expect it to work flawlessly on the first try so hope for the best.
+You will receive an email message with a log and may at some point need the help of the IIASA administrators of your project.
+
+## Step 5: Analyse the snapshots
+
+To compare your submission with other groups, you can generate snapshots in the database.
+You receive a zip file with large csv files.
+You can try to read the full file into `R` using [`read.snapshot`](https://github.com/pik-piam/quitte/blob/master/R/read.snapshot.R):
+```
+quitte::read.snapshot("snapshot.csv")
+```
+But loading the full file might exceed available memory.
+You can prefilter the data with:
+```
+quitte::read.snapshot("snapshot.csv", list(variable = c("GDP|PPP", "GDP|MER"), region = "World", period = 2030))
+```
+You can also use more sophisticated filtering and pass a filter.function,
+see [`read.quitte` documentation](https://github.com/pik-piam/quitte/blob/master/R/read.quitte.R),
+or even combine these approaches.
+```
+library(tidyverse)
+yourfilter <- function(x) {
+  filter(x, grepl("^Final Energy", .data$variable),
+            between(.data$period, 2030, 2050))
+}
+d <- quitte::read.snapshot("snapshot.csv", list(region = "World"), filter.function = yourfilter)
+```
+If your computer supports the system commands `grep`, `head` and `tail` (as the PIK cluster does),
+using the list-based filtering reduces loading times, as the file size can be reduced _before_ reading the data into `R`.
+
+The following functions from `piamInterfaces` might be helpful for further analysis:
+- [`checkSummations()`](https://github.com/pik-piam/piamInterfaces/blob/master/R/checkSummations.R) checks whether the variable summation groups of the template are satisfied.
+- [`checkSummationsRegional()`](https://github.com/pik-piam/piamInterfaces/blob/master/R/checkSummationsRegional.R) checks whether regional aggregation is correct.
+- [`fixOnRef()`](https://github.com/pik-piam/piamInterfaces/blob/master/R/fixOnRef.R) checks whether the runs are correctly fixed on their reference run for delayed transition scenarios.
+- [`plotIntercomparison()`](https://github.com/pik-piam/piamInterfaces/blob/master/R/plotIntercomparison.R) plots area and line plots of selected variables.

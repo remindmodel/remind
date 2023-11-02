@@ -244,11 +244,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   # ask for slurmConfig if not specified for every run
   if ("--gamscompile" %in% flags) {
     slurmConfig <- "direct"
-    if (! file.exists("input/source_files.log")) {
-      message("\n### Input data missing, need to compile REMIND first (2 min.)\n")
-      system("Rscript start.R config/tests/scenario_config_compile.csv")
-    }
-    message("\nTrying to compile the selected runs...")
+    message("\nTrying to compile ", nrow(scenarios), " selected runs...")
     lockID <- gms::model_lock()
   }
   if (! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% flags)
@@ -331,7 +327,10 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     # abort on too long paths ----
     cfg$gms$cm_CES_configuration <- calculate_CES_configuration(cfg, check = TRUE)
 
-    cfg <- checkFixCfg(cfg)
+    cfg <- checkFixCfg(cfg, testmode = "--test" %in% flags)
+    if ("errorsfoundInCheckFixCfg" %in% names(cfg)) {
+      errorsfound <- errorsfound + cfg$errorsfoundInCheckFixCfg
+    }
 
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
     if (! "--gamscompile" %in% flags) {
@@ -354,11 +353,13 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       }
     }
     # print names of runs to be waited and subsequent runs if there are any
-    if (! start_now && ( ! "--gamscompile" %in% flags || "--interactive" %in% flags)) {
-      message("   Waiting for: ", paste(unique(cfg$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na]), collapse = ", "))
-    }
-    if (length(rownames(cfg$RunsUsingTHISgdxAsInput)) > 0) {
-      message("   Subsequent runs: ", paste(rownames(cfg$RunsUsingTHISgdxAsInput), collapse = ", "))
+    if (! "--gamscompile" %in% flags || "--interactive" %in% flags) {
+      if (! start_now) {
+        message("   Waiting for: ", paste(unique(cfg$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na]), collapse = ", "))
+      }
+      if (length(rownames(cfg$RunsUsingTHISgdxAsInput)) > 0) {
+        message("   Subsequent runs: ", paste(rownames(cfg$RunsUsingTHISgdxAsInput), collapse = ", "))
+      }
     }
   }
   message("")
