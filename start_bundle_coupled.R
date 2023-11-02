@@ -647,6 +647,7 @@ for (scen in common) {
 
 if (! "--test" %in% flags && ! "--gamscompile" %in% flags) {
   if (is.null(renv::project())) {
+    # Snapshots are the predecessor of renv. If renv is not used, copy the .Rprofile that contains the path to the snapshot to MAgPIE.
     system(paste("cp", file.path(path_remind, ".Rprofile "), file.path(path_magpie, ".Rprofile")))
     message("\nCopied REMIND .Rprofile to MAgPIE folder.")
   }
