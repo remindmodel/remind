@@ -46,9 +46,10 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
     if (is.null(renv::project())) {
       warning("No active renv project found, not using renv.")
     } else {
-      # we only want to run renv checks/updates in the first run in a cascade, which can be
-      # detected like this
-      firstRunInCascade <- normalizePath(renv::project()) == normalizePath(".")
+      # we only want to run renv checks/updates in the first run in a cascade:
+      # cfg$renvLockFromPreceedingRun is only NULL for the first run in a cascade.
+      # For a subsequent run it has been set by the parent run in run.R (standalone) or start_coupled.R (coupled)
+      firstRunInCascade <- is.null(cfg$renvLockFromPreceedingRun)
       if (firstRunInCascade) {
         if (getOption("autoRenvUpdates", FALSE)) {
           installedUpdates <- piamenv::updateRenv()
