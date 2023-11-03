@@ -82,20 +82,11 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     message(msg)
   }
   if ("path_gdx_bau" %in% names(scenConf)) {
-    # fix if bau given despite not needed
-    needBau <- list(welfare = "ineqLognormal",
-                    carbonprice = c("NDC", "diffPriceSameCost"),
-                    carbonpriceRegi = "NDC",
-                    emicapregi = "AbilityToPay")
+    # fix if bau given despite not needed. needBau is defined in needBau.R
+    # initialize vector with FALSE everywhere and turn elements to TRUE if a scenario config row setting matches a needBau element
     scenNeedsBau <- rep(FALSE, nrow(scenConf))
-    for (n in names(needBau)) {
-      if (n %in% names(scenConf)) {
-        if (n == "welfare" && "cm_emiscen" %in% names(scenConf)) {
-          scenNeedsBAU <- scenNeedsBau | (scenConf[[n]] %in% needBau[[n]] & scenConf[["cm_emiscen"]] != 1)
-        } else {
-          scenNeedsBau <- scenNeedsBau | scenConf[[n]] %in% needBau[[n]]
-        }
-      }
+    for (n in intersect(names(needBau), names(scenConf))) {
+      scenNeedsBau <- scenNeedsBau | scenConf[[n]] %in% needBau[[n]]
     }
     BAUbutNotNeeded <- ! is.na(scenConf$path_gdx_bau) & ! (scenNeedsBau)
     if (sum(BAUbutNotNeeded) > 0) {
