@@ -241,6 +241,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       message("In ", RData_file, ", use current fulldata.gdx path for ", paste(needfulldatagdx, collapse = ", "), ".")
       subseq.env$cfg_rem$files2export$start[needfulldatagdx] <- fulldatapath
       # let the subsequent run use the renv.lock of this run
+      message("In ", RData_file, ", use current renv.lock for subsequent run ", run, ".")
       subseq.env$cfg_rem$renvLockFromPreceedingRun <- file.path(path_remind, cfg_rem$results_folder, "renv.lock")
 
       if (isTRUE(subseq.env$path_report == runname)) subseq.env$path_report <- report_mag
