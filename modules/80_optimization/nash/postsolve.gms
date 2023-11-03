@@ -142,24 +142,24 @@ if(iteration.val > 2,
 if(iteration.val > 15,
   loop(ttot$(ttot.val ge 2005),
     loop(trade$(tradePe(trade) OR sameas(trade,"good")),
-	  if( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) , 
+      if( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) , 
         if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 4))),      
                   p80_surplus(ttot,trade,iteration2)          !! this sum should ensure the additional price adjustment only happens if the surplus was always off the same sign
                 )
               ) ge ( 5 * p80_surplusMaxTolerance(trade) ) ) AND ( o80_trackSurplusSign(ttot,trade,iteration) ge 5 ) , !! check if surplus was out of the target range for 5 consecutive iterations
           p80_etaST_correct(ttot,trade,iteration) = 4 * p80_etaST_correct(ttot,trade,iteration);
           o80_counter_iteration_trade_ttot(ttot,trade,iteration) = 1;
-		  
-		  if(iteration.val gt 20,      !! only start checking if a stronger push is necessary a few iterations later, so that step 1 could potentially show an effect
-		    if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 9))),
+          
+          if(iteration.val gt 20,      !! only start checking if a stronger push is necessary a few iterations later, so that step 1 could potentially show an effect
+            if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 9))),
                          p80_surplus(ttot,trade,iteration2)
                        )
                   ) ge ( 10 * p80_surplusMaxTolerance(trade)) ) AND ( o80_trackSurplusSign(ttot,trade,iteration) ge 10 ), !! check if surplus was out of the target range for 10 consecutive iterations
               p80_etaST_correct(ttot,trade,iteration) = 2 * p80_etaST_correct(ttot,trade,iteration);
               o80_counter_iteration_trade_ttot(ttot,trade,iteration) = 2;
-		      
-			  if(iteration.val gt 25,   !! only start checking if a stronger push is necessary a few iterations later, so that step 1&2 could potentially show an effect
-		        if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 14))),
+              
+              if(iteration.val gt 25,   !! only start checking if a stronger push is necessary a few iterations later, so that step 1&2 could potentially show an effect
+                if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 14))),
                              p80_surplus(ttot,trade,iteration2)
                            )
                       ) ge ( 15 * p80_surplusMaxTolerance(trade)) ) AND ( o80_trackSurplusSign(ttot,trade,iteration) ge 15 ), !! check if surplus was out of the target range for 15 consecutive iterations
@@ -167,13 +167,13 @@ if(iteration.val > 15,
                   o80_counter_iteration_trade_ttot(ttot,trade,iteration) = 3;
                 );
               );
-			);
+            );
           );
-		);
+        );
       );
-    );
-  );
-);	 
+    ); !! trade
+  ); !! ttot
+); !! iteration>15
 
 
 ***calculate prices for next iteration 
@@ -190,12 +190,12 @@ p80_pvp_itr(ttot,trade,iteration+1)$((ttot.val ge cm_startyear) AND (NOT tradeSe
 *ML* adjustments in case of infeasibilities (increase import)
 loop(trade$(NOT tradeSe(trade)),
     loop(regi,
-	loop(ttot$(ttot.val ge cm_startyear),
-	    pm_pvp(ttot,trade)  = p80_pvp_itr(ttot,trade,iteration+1);
-	    pm_Xport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 1)  = vm_Xport.l(ttot,regi,trade);
-	    p80_Mport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 1) = vm_Mport.l(ttot,regi,trade);
-	    p80_Mport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 0) = 1.2 * vm_Mport.l(ttot,regi,trade);	    
-	);
+    loop(ttot$(ttot.val ge cm_startyear),
+        pm_pvp(ttot,trade)  = p80_pvp_itr(ttot,trade,iteration+1);
+        pm_Xport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 1)  = vm_Xport.l(ttot,regi,trade);
+        p80_Mport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 1) = vm_Mport.l(ttot,regi,trade);
+        p80_Mport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 0) = 1.2 * vm_Mport.l(ttot,regi,trade);	    
+    );
     );
 );
 
@@ -214,12 +214,12 @@ p80_surplusMax2100(trade)$(NOT tradeSe(trade)) = p80_surplusMax_iter(trade,itera
 ***convergence indicators 
 loop(trade$(NOT tradeSe(trade)),
     p80_defic_trade(trade) = 1/pm_pvp("2005","good") *
-	sum(ttot$(ttot.val ge 2005),   pm_ts(ttot) * (
-	    abs(p80_surplus(ttot,trade,iteration)) * pm_pvp(ttot,trade)
-	    + sum(regi, abs(p80_taxrev0(ttot,regi)) * pm_pvp(ttot,"good"))$(sameas(trade,"good") and (ttot.val ge max(2010,cm_startyear)) )  
-	    + sum(regi, abs(vm_costAdjNash.l(ttot,regi)) * pm_pvp(ttot,"good"))$(sameas(trade,"good") and (ttot.val ge 2005) )  
+    sum(ttot$(ttot.val ge 2005),   pm_ts(ttot) * (
+        abs(p80_surplus(ttot,trade,iteration)) * pm_pvp(ttot,trade)
+        + sum(regi, abs(p80_taxrev0(ttot,regi)) * pm_pvp(ttot,"good"))$(sameas(trade,"good") and (ttot.val ge max(2010,cm_startyear)) )  
+        + sum(regi, abs(vm_costAdjNash.l(ttot,regi)) * pm_pvp(ttot,"good"))$(sameas(trade,"good") and (ttot.val ge 2005) )  
 
-	)
+    )
     );
 );
 p80_defic_sum("1") = 1;
@@ -263,7 +263,7 @@ loop(trade$(NOT tradeSe(trade)),
      p80_messageShow("surplus") = YES;
       loop(ttot$((ttot.val ge cm_startyear) and (ttot.val le 2100)),
        if( (abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) ),
-	   p80_messageFailedMarket(ttot,trade) = YES;
+       p80_messageFailedMarket(ttot,trade) = YES;
        );
       );
  );
