@@ -321,9 +321,9 @@ if(p80_DevPriceAnticipGlobAllMax("2100") gt 0.1 * p80_surplusMaxTolerance("good"
 p80_convNashTaxrev_iter(iteration,t,regi) = 0;
 loop(regi,
     loop(t,
-         p80_convNashTaxrev_iter(iteration,t,regi) = abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco");
+         p80_convNashTaxrev_iter(iteration,t,regi) = vm_taxrev.l(t,regi) / vm_cesIO.l(t,regi,"inco");
          if (cm_TaxConvCheck eq 1,
-             if( p80_convNashTaxrev_iter(iteration,t,regi) gt 1E-4,
+             if( abs(p80_convNashTaxrev_iter(iteration,t,regi)) gt 1E-4,
                  s80_bool = 0;
                  p80_messageShow("taxconv") = YES;
              );
