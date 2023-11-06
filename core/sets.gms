@@ -1970,51 +1970,51 @@ sector_types "differentiation of energy and process emissions in each sector"
 
 entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation) mapping to sectors (industry, buildings, transportation and cdr)"
 /
-		fegas.build
-		fegas.indst
-		fehos.build
-		fehos.indst
-		fesos.build
-		fesos.indst
-		feels.build
-		feels.indst
-		fehes.build
-		fehes.indst
-		feh2s.build
-		feh2s.indst
-		fepet.trans
-		fedie.trans
-		feh2t.trans
-		feelt.trans
-                fegat.trans
-		feels.cdr
-		fehes.cdr
-                fegas.cdr
-                feh2s.cdr
-                fedie.cdr
+    fegas.build
+    fegas.indst
+    fehos.build
+    fehos.indst
+    fesos.build
+    fesos.indst
+    feels.build
+    feels.indst
+    fehes.build
+    fehes.indst
+    feh2s.build
+    feh2s.indst
+    fepet.trans
+    fedie.trans
+    feh2t.trans
+    feelt.trans
+    fegat.trans
+    feels.cdr
+    fehes.cdr
+    fegas.cdr
+    feh2s.cdr
+    fedie.cdr
 /
 
 ppfEn2Sector(all_in,emi_sectors) "primary energy production factors mapping to sectors"
 /
-		fegab.build
-		fegai.indst
-		fehob.build
-		fehoi.indst
-		fesob.build
-		fesoi.indst
-		feelb.build
-		feeli.indst
-		feheb.build
-		fehei.indst
-		feh2b.build
-		feh2i.indst
-		ueHDVt.trans
-		ueLDVt.trans
-		ueelTt.trans
-                feeli.cdr
-                fehei.cdr
-                feh2i.cdr
-                fegai.cdr
+    fegab.build
+    fegai.indst
+    fehob.build
+    fehoi.indst
+    fesob.build
+    fesoi.indst
+    feelb.build
+    feeli.indst
+    feheb.build
+    fehei.indst
+    feh2b.build
+    feh2i.indst
+    ueHDVt.trans
+    ueLDVt.trans
+    ueelTt.trans
+    feeli.cdr
+    fehei.cdr
+    feh2i.cdr
+    fegai.cdr
 /
 
 entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy (stationary) and sector mapping to detailed final energy enty split by buildings and industry"
@@ -2034,25 +2034,26 @@ entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy (stationary)
 /
 
 all_emiMkt      "emission markets"
-/	ETS     "ETS emission market"
-	ES      "Effort sharing emission market"
-	other	"other market configurations"
+/
+  ETS     "ETS emission market"
+  ES      "Effort sharing emission market"
+  other	  "other market configurations"
 /
 
 all_emiMktExt   "extended emission market definitions"
-/	
-        ETS     "ETS emission market"
-	ESR     "Effort sharing emission market"
-	other	"other market configurations"
-        all     "economy wide emission market"
+/
+    ETS     "ETS emission market"
+    ESR     "Effort sharing emission market"
+    other   "other market configurations"
+    all     "economy wide emission market"
 /
 
 emiMktGroup(all_emiMktExt,all_emiMkt) "set to allow selecting either a single emission market or all together (all=ETS+ESR+other)"
 /
-        ETS.(ETS)
-        ESR.(ES)
-        other.(other)
-        all.(ETS,ES,other)
+    ETS.(ETS)
+    ESR.(ES)
+    other.(other)
+    all.(ETS,ES,other)
 /
 
 sector2emiMkt(emi_sectors,all_emiMkt)  "mapping sectors to emission markets"

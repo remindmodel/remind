@@ -158,7 +158,7 @@ You can also run REMIND for more iterations by modifying `cm_iteration_max` in [
 In the output subfolder, you also find a file `nash_info_convergence.csv` which contains the price and surplus information for the relevant markets for all iterations and time-steps:
 - `p80_surplus`, the "surplus on commodity markets"
 - `p80_pvp_itr`, the "price on commodity markets"
-- `p80_surplusMax`, the "worst residual market surplus until given year, absolute value", with units: TWa, trillion Dollar, GtC.
+- `p80_surplusMax_iter`, the "worst residual market surplus until given year, absolute value", with units: TWa, trillion Dollar, GtC.
 - `p80_surplusMaxRel`, the "worst residual market surplus until given year, in per cent".
 
 More information needed? debug runs
