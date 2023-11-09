@@ -1,4 +1,5 @@
-.PHONY: help docs update-renv update-renv-all archive-renv restore-renv check check-fix test test-coupled test-full
+.PHONY: help docs update-renv update-renv-all archive-renv restore-renv check \
+	check-fix test test-coupled test-full set-local-calibration
 .DEFAULT_GOAL := help
 
 # extracts the help text and formats it nicely
@@ -86,3 +87,7 @@ test-full:       ## Run all tests, including coupling tests and a default
 test-validation: ## Run validation tests, requires a full set of runs in the output folder
 	$(info Run validation tests, requires a full set of runs in the output folder)
 	@TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat/validation")'	
+
+set-local-calibration:		## set up local calibration results directory
+	@./scripts/utils/set-local-calibration.sh
+	$(info use `collect_calibration` script in calibration_results/ directory )

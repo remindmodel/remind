@@ -1,0 +1,97 @@
+#!/bin/bash
+
+help="Usage: collect_calibration <path>
+Copy calibration .inc and .gdx files from REMIND calibration directories <path>,
+stage them, include their source in the commit message and initialise the
+commit.  The commit message can be amended in the editor."
+
+# show help and quit
+if [ -z "$*" ] || [ '-h' == "$1" ] || [ '--help' == "$1" ]
+then
+	echo "$help"
+	exit
+fi
+
+# unstage any files left that are not committed
+git reset --quiet HEAD
+
+# prepare commit message template
+echo "\
+new CES parameters and GDX files
+
+# add descriptions for parameter sources as needed
+# comments starting with '#' are ignored
+# quit the editor without saving to abort the commit (use \`:cq\` in vim)
+
+parameters based on calibrations:" > commit-message.txt
+
+# cycle through directories in parameters
+for d in "$@"
+do
+	# skip if not a directory
+	if [ ! -d "$d" ]
+	then
+		echo "skipping $d"
+		continue
+	fi
+
+	cd "$d"
+
+	# get CES configuration as base for file names
+	CES_config=$( sed -n 's/ *cm_CES_configuration: *//p' cfg.txt 2>/dev/null )
+
+	# get designated last calibration iteration
+	CES_itr=$( sed -n 's/ *c_CES_calibration_iterations:[^0-9]*\([0-9]\+\).*/\1/p' cfg.txt 2>/dev/null )
+
+	# skip if configuration is missing
+	if [ -z "$CES_config" ]
+	then
+		echo "Can't find cm_CES_configuration in cfg.txt, skipping $PWD"
+		all_errors+=1
+		cd $OLDPWD
+		continue
+	fi
+
+	# count errors while copying
+	error=0
+
+	cp "$CES_config"_ITERATION_"$CES_itr".inc "$OLDPWD"/"$CES_config".inc
+	error+="$?"
+	cp "$CES_config".gdx "$OLDPWD"/
+	error+="$?"
+
+	cd "$OLDPWD"
+	    
+	# if no errors during file copy
+	if [ "$error" -eq 0 ]
+	then
+		# stage copied files and add source to commit message template
+		git add "$CES_config".inc "$CES_config".gdx
+		readlink -e "$d" >> commit-message.txt
+	else
+		all_errors+="$error"
+	fi
+done
+
+# if there where errors during copying, show the user the files that where
+# staged
+if [ 0 -ne $(( all_errors )) ]
+then
+	echo " "
+	git status
+	echo " "
+	read -p "Please review repository status.  (Press enter)"
+	echo " "
+fi
+
+# if there are any staged files to commit
+if [ ! $( git status --short | grep -q "^[AM].*gdx$" ) ]
+then
+	# commit and delete commit-message.txt if the commit was successful
+	# commit-message.txt is used as a commit message template as per
+	# local git configuration
+	git commit -eqF commit-message.txt && rm commit-message.txt
+else
+	# if not, delete unused commit message
+	rm commit-message.txt
+fi
