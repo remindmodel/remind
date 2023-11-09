@@ -2,11 +2,15 @@
 .DEFAULT_GOAL := help
 
 # extracts the help text and formats it nicely
-HELP_PARSING = 'm <- readLines("Makefile");\
-				m <- grep("\#\#", m, value=TRUE);\
-				command <- sub("^([^ ]*) *\#\#(.*)", "\\1", m);\
-				help <- sub("^([^ ]*) *\#\#(.*)", "\\2", m);\
-				cat(sprintf("%-18s%s", command, help), sep="\n")'
+HELP_PARSING = 'm <- grep("\#\#", readLines("Makefile"), value = TRUE);\
+                parse <- "^([^[[:space:]]*)[[:space:]]*\#\#[[:space:]]*(.*)";\
+                command <- sub(parse, "\\1", m, perl = TRUE);\
+                help <- sub(parse, "\\2",  m, perl = TRUE);\
+                i <- grep("^$$", command, invert = TRUE)[-1];\
+                command[i] <- paste0("\n", command[i]);\
+                help[i] <- paste0(" ", help[i]);\
+                cat(sprintf("%-*s%s", max(nchar(command)), command, help),\
+                    sep = "\n")'
 
 help:            ## Show this help.
 	@Rscript -e $(HELP_PARSING)
