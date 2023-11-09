@@ -76,7 +76,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
         message("done.")
       } else {
         # a run renv is loaded, we are presumably starting new run in a cascade
-        message("   Copying lockfile into '", cfg$results_folder, "'")
+        message("   Copying lockfile '",cfg$renvLockFromPreceedingRun,"' into '", cfg$results_folder, "'")
         file.copy(cfg$renvLockFromPreceedingRun, file.path(cfg$results_folder, "_renv.lock"))
       }
 
