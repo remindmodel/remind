@@ -30,7 +30,7 @@ jobs:
       - name: Install R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          packages: any::gms
+          packages: gms
         
       - name: codeCheck
         run: null <- gms::codeCheck(strict=TRUE)
