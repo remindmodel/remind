@@ -4,9 +4,11 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/51_internalizeDamages/off/datainput.gms
+*** SOF ./modules/51_internalizeDamages/off/declarations.gms
 
-pm_taxCO2eqSCC(ttot,regi)     = 0;
-pm_sccConvergenceMaxDeviation = 0;
+parameters
 
-*** EOF ./modules/51_internalizeDamages/off/datainput.gms
+pm_sccConvergenceMaxDeviation "max deviation of SCC from last iteration [percent]"
+;
+
+*** EOF ./modules/51_internalizeDamages/off/declarations.gms
