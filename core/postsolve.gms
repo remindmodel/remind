@@ -289,23 +289,35 @@ display p_actualbudgetco2;
 *** it results in a peak budget with linear increase by 2$/yr afterwards
 *** ---------------------------------------------------------------------------------------------------------------
 
-if(cm_iterative_target_adj eq 9,
-*RP* Update tax levels/ multigasbudget values to reach the peak CO2 budget, with a linear increase afterwards given by cm_taxCO2inc_after_peakBudgYr
-*** The PeakBudgYr is found automatically by the algorithm (within the time window 2040-2100)
+if (cm_iterative_target_adj eq 9,
+*' Update tax levels/multigas budget values to reach the peak CO~2~ budget, with
+*' a linear increase afterwards givn by `cm_taxCO2inc_after_peakBudgYr`.  The
+*' peak budget year is determined automatically (within the time window
+*' 2040--2100)
 
-*KK* p_actualbudgetco2 for ttot > 2020. It includes emissions from 2020 to ttot (including ttot).
-*** (ttot.val - (ttot - 1).val)/2 and pm_ts("2020")/2 are the time periods that haven't been taken into account in the sum over ttot2.
-*** 0.5 year of emissions is added for the two boundaries, such that the budget includes emissions in ttot.
-  p_actualbudgetco2(ttot)$(ttot.val > 2020) = sum(ttot2$(ttot2.val < ttot.val AND ttot2.val > 2020), (sum(regi, (vm_emiTe.l(ttot2,regi,"co2") + vm_emiCdr.l(ttot2,regi,"co2") + vm_emiMac.l(ttot2,regi,"co2"))) * sm_c_2_co2 * pm_ts(ttot2)))
-                       + sum(regi, (vm_emiTe.l(ttot,regi,"co2") + vm_emiCdr.l(ttot,regi,"co2") + vm_emiMac.l(ttot,regi,"co2"))) * sm_c_2_co2 * ((pm_ttot_val(ttot)-pm_ttot_val(ttot-1))/2 + 0.5)
-                       + sum(regi, (vm_emiTe.l("2020",regi,"co2") + vm_emiCdr.l("2020",regi,"co2") + vm_emiMac.l("2020",regi,"co2"))) * sm_c_2_co2 * (pm_ts("2020")/2 + 0.5);
-  s_actualbudgetco2 = smax(t$(t.val le cm_peakBudgYr),p_actualbudgetco2(t));
+*' `p_actualbudgetco2(ttot)` includes emissions from 2020 to `ttot` (inclusive).
+  p_actualbudgetco2(ttot)$( 2020 lt ttot.val )
+  = sum((regi,ttot2)$( 2020 le ttot2.val AND ttot2.val le ttot.val ),
+      ( vm_emiTe.l(ttot2,regi,"co2")
+      + vm_emiCdr.l(ttot2,regi,"co2")
+      + vm_emiMac.l(ttot2,regi,"co2")
+      )
+    * ( !! second half of the 2020 period: 2020-22
+        (pm_ts(ttot2) / 2 + 0.5)$( ttot2.val eq 2020 )
+        !! entire middle periods
+      + (pm_ts(ttot2))$( 2020 lt ttot2.val AND ttot2.val lt ttot.val )
+	!! first half of the final period, until the end of the middle year
+      + ((pm_ttot_val(ttot) - pm_ttot_val(ttot-1)) / 2 + 0.5)$(
+                                                         ttot2.val eq ttot.val )
+      )
+    )
+  * sm_c_2_co2;
+
+  s_actualbudgetco2 = smax(t$( t.val le cm_peakBudgYr ), p_actualbudgetco2(t));
   
   o_peakBudgYr_Itr(iteration) = cm_peakBudgYr;
                   
-  display s_actualbudgetco2;  
-  display p_actualbudgetco2;
-
+  display s_actualbudgetco2, p_actualbudgetco2;
 
   if(cm_emiscen eq 9,
   
