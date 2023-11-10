@@ -209,7 +209,7 @@ run <- function() {
       cfg$files2export$start[needfulldatagdx] <- fulldatapath
       # let the subsequent run use the renv.lock of this run
       message("In ", RData_file, ", use current renv.lock for subsequent run ", run, ".")
-      cfg$renvLockFromPreceedingRun <- file.path(cfg_main$remind_folder,cfg_main$results_folder,"renv.lock")
+      cfg$renvLockFromPreceedingRun <- file.path(cfg_main$remind_folder, cfg_main$results_folder, "renv.lock")
 
       save(cfg, file = RData_file)
 
