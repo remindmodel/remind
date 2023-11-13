@@ -115,25 +115,27 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
 !!    - o37_prodIndRoute(ttot,regi,"prsteel","bfbof_ccs");
 
 
-o37_relativeOutflow(tePrc,opmoPrc)$tePrc2opmoPrc(tePrc,opmoPrc) = 1.
+o37_relativeOutflow(ttot,regi,tePrc,opmoPrc)$tePrc2opmoPrc(tePrc,opmoPrc) = 1.
 
 loop((tePrc1,opmoPrc1,tePrc2,opmoPrc2,mat)$(
                 tePrc2matIn(tePrc2,opmoPrc2,mat)
             AND tePrc2matOut(tePrc1,opmoPrc1,mat)),
-  o37_relativeOutflow(tePrc1,opmoPrc1)
+  o37_relativeOutflow(ttot,regi,tePrc1,opmoPrc1)
     = p37_specMatDem(mat,tePrc2,opmoPrc2)
-    * o37_relativeOutflow(tePrc2,opmoPrc2); !! should be one; becomes relevant for more than two stages
+    * o37_relativeOutflow(ttot,regi,tePrc2,opmoPrc2); !! should be one; becomes relevant for more than two stages
 );
 
 loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc)$(
                           tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)),
-  o37_relativeOutflow(teCCPrc,opmoCCPrc)
+  o37_relativeOutflow(ttot,regi,teCCPrc,opmoCCPrc)
     = p37_captureRate(teCCPrc,opmoCCPrc)
-    * o37_relativeOutflow(tePrc,opmoPrc); !! TODO: ERROR!
-     !! v37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc)
+      sum(entyFe,
+        p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
+        *
+        sum(se2fe(entySEfos,entyFE,te),
+          pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")))
+    * o37_relativeOutflow(ttot,regi,tePrc,opmoPrc);
 );
-
-
 
 
 !!____________________________________________________________________________
@@ -147,11 +149,10 @@ loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc,route)$(
                       AND tePrc2route(teCCPrc,opmoCCPrc,route)),
 
   !! share of first-stage tech with CCS
-  !! TODO: ERROR! emiFac and fedemand are not considered!
-  o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)$(v37_outflowPrc.l(ttot,regi,tePrc,opmoPrc) gt 0.)
+  o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)$(sum(entyFE,v37_emiPrc.l(ttot,regi,entyFE,tePrc,opmoPrc)) gt 0.)
     = (   v37_outflowPrc.l(ttot,regi,teCCPrc,opmoCCPrc)
         / p37_captureRate(teCCPrc,opmoCCPrc))
-      / v37_outflowPrc.l(ttot,regi,tePrc,opmoPrc);
+      / sum(entyFE,v37_emiPrc.l(ttot,regi,entyFE,tePrc,opmoPrc));
 
   !! share of first-stage tech without CCS
   loop(route2$(        tePrc2route(tePrc,opmoPrc,route2)

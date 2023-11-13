@@ -42,7 +42,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
   o37_shareRoute(ttot,all_regi,all_te,opmoPrc,route)                     "The share of a technology outflow which belongs to a certain route equals"
   o37_ProdIndRoute(ttot,all_regi,mat,route)                              "produciton of a material via each process route"
   o37_demFeIndRoute(ttot,all_regi,all_enty,all_te,route,secInd37)        "FE demand by FE type, process route and tech"
-  o37_relativeOutflow(all_te,opmoPrc)                                    "Outflow of a process relative to the outflow of the route"
+  o37_relativeOutflow(ttot,all_regi,all_te,opmoPrc)                      "Outflow of a process relative to the outflow of the route"
 $endif.process_based_steel
 
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard"
