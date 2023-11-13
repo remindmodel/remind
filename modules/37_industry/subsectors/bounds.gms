@@ -123,7 +123,7 @@ vm_cesIO.lo(ttot,regi,in)$(ppfen_industry_dyn37(in)) = max(vm_cesIO.lo(ttot,regi
 *' carbon prices due to missing adjustment costs.
 if (cm_startyear gt 2005,   !! not a scenario, starting in 2005 (e.g. baseline or NPi)
   vm_demFEsector.up(t,regi,"sesobio","fesos","indst","ETS")
-  = max(0.25 , smax(t2, pm_secBioShare(t2,regi,"fesos","indst") ) )
+  = max(0.10 , smax(t2, pm_secBioShare(t2,regi,"fesos","indst") ) )
     * p37_BAU_industry_ETS_solids(t,regi);
 );
 

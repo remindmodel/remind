@@ -333,9 +333,12 @@ $ENDIF.WindOff
         bfcc         "Blast furnace CCS"
         idrcc        "Direct reduction CCS"
         bof          "Basic-oxygen furnace"
-        bfbof        "BF/BOF route"
-        idreaf       "Direct reduction / EAF route"
-        seceaf       "Scrap-loaded EAF route"
+        bfbof        "Route: BF/BOF without CCS"
+        bfbof_ccs    "Route: BF/BOF with CCS"
+        idreaf_h2    "Route: H2 Direct reduction / EAF"
+        idreaf_ng    "Route: NG Direct reduction / EAF without CCS"
+        idreaf_ng_ccs "Route: H2 Direct reduction / EAF with CCS"
+        seceaf       "Route: Scrap-loaded EAF"
         pcc          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
         pco          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
 /
@@ -1315,6 +1318,10 @@ $ENDIF.WindOff
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
   gridwindoff     "grid between areas with high wind offshore production and the rest"
 $ENDIF.WindOff
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+  bfcc            "Blast furnace CCS"
+  idrcc           "Direct reduction CCS"
+$endif.process_based_steel
 /
 
 ***-----------------------------------------------------------------------------

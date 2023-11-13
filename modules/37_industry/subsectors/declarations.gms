@@ -38,7 +38,11 @@ $endif.process_based_steel
   o37_shIndFE(ttot,all_regi,all_enty,secInd37,all_emiMkt)                "share of subsector in FE industry energy carriers and emissions markets"
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)   "FE demand per industry subsector"
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  o37_demFePrc(ttot,all_regi,all_enty,all_te,opmoPrc)               "Process-based FE demand per FE type and process"
+  o37_demFePrc(ttot,all_regi,all_enty,all_te,opmoPrc)                    "Process-based FE demand per FE type and process"
+  o37_shareRoute(ttot,all_regi,all_te,opmoPrc,route)                     "The share of a technology outflow which belongs to a certain route equals"
+  o37_ProdIndRoute(ttot,all_regi,mat,route)                              "produciton of a material via each process route"
+  o37_demFeIndRoute(ttot,all_regi,all_enty,all_te,route,secInd37)        "FE demand by FE type, process route and tech"
+  o37_relativeOutflow(all_te,opmoPrc)                                    "Outflow of a process relative to the outflow of the route"
 $endif.process_based_steel
 
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard"

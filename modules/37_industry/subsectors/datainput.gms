@@ -15,15 +15,15 @@ Parameters
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! cm_process_based_steel
   p37_specMatDem(mat,all_te,opmoPrc)                                      "Specific materials demand of a production technology and operation mode [t_input/t_product], where product is e.g. pigiron, not steel"
   /
-    dripell.idr.(ng,h2)     1.5                                             !! Iron ore demand of iron direct-reduction (independent of fuel source) POSTED
+    dripell.idr.(ng,h2)     1.45                                            !! Iron ore demand of iron direct-reduction (independent of fuel source) POSTED
 
     driron.eaf.pri          1.08                                            !! DRI demand of EAF POSTED
     eafscrap.eaf.sec        1.09                                            !! Scrap demand of EAF POSTED
 
-    ironore.bf.standard     1.5                                             !! Iron ore demand of BF-BOF
+    ironore.bf.standard     1.45                                            !! Iron ore demand of BF-BOF
 
-    bofscrap.bof.unheated   0.22                                             !! Scrap demand of BF-BOF
-    pigiron.bof.unheated    0.8
+    bofscrap.bof.unheated   0.00001                                         !! Scrap demand of BF-BOF
+    pigiron.bof.unheated    1.05
   /
 
   p37_specFeDemTarget(all_enty,all_te,opmoPrc)                        "Specific energy demand of a production technology and operation mode; read in as [MWh/t_product], where product is e.g. pigiron, not steel; converted to TWa/Gt directly below"
@@ -47,8 +47,8 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! c
 
     !!feels.bof.unheated     0.05                                            !! Source: DUMMY
 
-    feels.bfcc.standard   0.10                                            !! Source: DUMMY
-    feels.idrcc.ng        0.10                                            !! Source: DUMMY
+    feels.bfcc.standard   1.00                                            !! Source: DUMMY
+    feels.idrcc.ng        1.00                                            !! Source: DUMMY
   /;
 !! Convert from MWh/t to TWa/Gt
 p37_specFeDemTarget(all_enty,all_te,opmoPrc) = p37_specFeDemTarget(all_enty,all_te,opmoPrc)  / (sm_TWa_2_MWh / sm_giga_2_non);
@@ -66,12 +66,13 @@ Parameters
     idrcc . (ng)        0.8
   /
 
+  !! $2005/kg
   p37_priceMat(all_enty)
   /
     eafscrap      0.167
     bofscrap      0.167
     ironore       0.077
-    dripell       0.1
+    dripell       0.105
   /
 $endif.process_based_steel
 

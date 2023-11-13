@@ -22,12 +22,6 @@ $endif.process_based_steel
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
 
-  tePrc2teCCPrc(tePrc,tePrc)  "Mapping of base technologies to CCS technologies"
-  /
-    bf . bfcc
-    idr . idrcc
-  /
-
   mat(all_enty)         "Materials considered in material-flow model"
   /
     prsteel             "Primary steel"
@@ -88,41 +82,57 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
 
   tePrc2ue(tePrc,opmoPrc,all_in)
   /
-   bf  . standard . ue_steel_primary
+   (bf,bfcc)  . standard . ue_steel_primary
    bof . unheated . ue_steel_primary
    idr . (h2,ng) . ue_steel_primary
+   idrcc . ng . ue_steel_primary
    eaf . pri . ue_steel_primary
    eaf . sec . ue_steel_secondary
   /
 
-  routes(all_te)  "Process routes"
+  tePrc2teCCPrc(tePrc,opmoPrc,tePrc,opmoPrc)  "Mapping of base technologies to CCS technologies"
   /
-    idreaf
+    bf  . standard . bfcc  . standard
+    idr . ng       . idrcc . ng
+  /
+
+  route(all_te)  "Process routes"
+  /
+    idreaf_ng
+    idreaf_ng_ccs
+    idreaf_h2
     bfbof
+    bfbof_ccs
     seceaf
   /
 
-  route2ue(all_te,all_in)  "Process routes"
+  tePrc2route(tePrc,opmoPrc,route)  "Mapping of technologies onto route"
   /
-    idreaf . ue_steel_primary
-    bfbof . ue_steel_primary
-    seceaf . ue_steel_secondary
-  /
-
-
-  tePrc2route(tePrc,opmoPrc,routes)  "Mapping of technologies onto route"
-  /
-    idr . (h2,ng) . idreaf
-    eaf . pri . idreaf
     eaf . sec . seceaf
+    idr . h2 . idreaf_h2
+    idr . ng . idreaf_ng
+    idr . ng . idreaf_ng_ccs
+    eaf . pri . idreaf_h2
+    eaf . pri . idreaf_ng
+    eaf . pri . idreaf_ng_ccs
+    idrcc . ng . idreaf_ng_ccs
     bf  . standard . bfbof
+    bf  . standard . bfbof_ccs
     bof . unheated . bfbof
+    bof . unheated . bfbof_ccs
+    bfcc . standard . bfbof_ccs
   /
 
   uePrc(all_in)  "Ue ces tree nodes connected to process based implementation"
   /
    ue_steel_primary
    ue_steel_secondary
+  /
+
+  matFin(mat)  "Final products of a route"
+  /
+   prsteel
+   sesteel
   /
 
   mat2ue(mat,all_in)  "Mapping of materials onto ue ces tree node"
@@ -549,6 +559,12 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
 teMat2rlf(tePrc,"1") = YES;
 fe2mat(fe2mat_dyn37) = YES;
 alias(tePrc,teCCPrc);
+alias(tePrc,tePrc1);
+alias(tePrc,tePrc2);
+alias(opmoPrc,opmoCCPrc);
+alias(opmoPrc,opmoPrc1);
+alias(opmoPrc,opmoPrc2);
+alias(route,route2);
 $endif.process_based_steel
 
 alias(secInd37_2_pf,secInd37_2_pf2);

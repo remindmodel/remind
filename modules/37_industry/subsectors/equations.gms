@@ -183,11 +183,10 @@ q37_limitOutflowCCPrc(ttot,regi,tePrc)$(ttot.val ge cm_startyear ) ..
     sum((entyFE,tePrc2opmoPrc(tePrc,opmoPrc)),
       v37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc))
   =g=
-    sum((tePrc2teCCPrc(tePrc,teCCPrc),
-         tePrc2opmoPrc(teCCPrc,opmoPrc)),
-      1. / p37_captureRate(teCCPrc,opmoPrc)
+    sum(tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc),
+      1. / p37_captureRate(teCCPrc,opmoCCPrc)
       *
-      v37_outflowPrc(ttot,regi,teCCPrc,opmoPrc)
+      v37_outflowPrc(ttot,regi,teCCPrc,opmoCCPrc)
     )
 ;
 
@@ -200,9 +199,8 @@ q37_emiCCPrc(ttot,regi,emiInd37)$((ttot.val ge cm_startyear ) AND sum(secInd37Pr
   =e=
     sum((secInd37_2_emiInd37(secInd37Prc,emiInd37),
          secInd37_tePrc(secInd37Prc,tePrc),
-         tePrc2teCCPrc(tePrc,teCCPrc),
-         tePrc2opmoPrc(teCCPrc,opmoPrc)),
-      v37_outflowPrc(ttot,regi,teCCPrc,opmoPrc)
+         tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)),
+      v37_outflowPrc(ttot,regi,teCCPrc,opmoCCPrc)
     )
 ;
 $endif.process_based_steel
