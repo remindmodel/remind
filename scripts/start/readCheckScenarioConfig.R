@@ -139,6 +139,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_trdadj" = "Now always fixed to 2, see https://github.com/remindmodel/remind/pull/1052",
        "cm_OILRETIRE" = "Now always on by default, see https://github.com/remindmodel/remind/pull/1102",
        "cm_fixCO2price" = "Was never in use, removed in https://github.com/remindmodel/remind/pull/1369",
+       "cm_calibration_FE" = "Deleted, only used for old hand made industry trajectories, see https://github.com/remindmodel/remind/pull/1468",
      NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       if (testmode) {
