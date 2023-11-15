@@ -412,40 +412,40 @@ pm_ue_eff_target("ue_otherInd")         = 0.008;
 
 
 
-*` CES mark-up cost industry
+*' CES mark-up cost industry
 
-*` The Mark-up cost on primary production factors (final energy) of the CES tree have two functions. 
-*` (1) They represent sectoral end-use cost not captured by the energy system.
-*` (2) As they alter prices to of the CES function inputs, they affect the CES efficiency parameters during calibration
-*` and therefore influence the efficiency of different FE CES inputs. The resulting economic subsitution rates
-*` are given by the marginal rate of subsitution (MRS) in the parameter o01_CESmrs.
-*` Mark-up cost were tuned as to obtain similar or slightly higher marginal rate of substitution (MRS) to gas/liquids than technical subsitution rates and
-*` obtain similar specific energy consumption per value added in chemicals and other industry across high and low electrification scenarios.
+*' The Mark-up cost on primary production factors (final energy) of the CES tree have two functions. 
+*' (1) They represent sectoral end-use cost not captured by the energy system.
+*' (2) As they alter prices to of the CES function inputs, they affect the CES efficiency parameters during calibration
+*' and therefore influence the efficiency of different FE CES inputs. The resulting economic subsitution rates
+*' are given by the marginal rate of subsitution (MRS) in the parameter o01_CESmrs.
+*' Mark-up cost were tuned as to obtain similar or slightly higher marginal rate of substitution (MRS) to gas/liquids than technical subsitution rates and
+*' obtain similar specific energy consumption per value added in chemicals and other industry across high and low electrification scenarios.
 
 
-*` There are two ways in which mark-up cost can be set:
-*` (a) Mark-up cost on inputs in ppfen_MkupCost37: Those are counted as expenses in the budget and set by the parameter p37_CESMkup.
-*` (b) Mark-up cost on other inputs: Those are budget-neutral and implemented as a tax. They are set by the parameter pm_tau_ces_tax.
+*' There are two ways in which mark-up cost can be set:
+*' (a) Mark-up cost on inputs in ppfen_MkupCost37: Those are counted as expenses in the budget and set by the parameter p37_CESMkup.
+*' (b) Mark-up cost on other inputs: Those are budget-neutral and implemented as a tax. They are set by the parameter pm_tau_ces_tax.
 
-*` Mark-up cost in industry are modeled without budget-effect (b).
+*' Mark-up cost in industry are modeled without budget-effect (b).
 
-*` Default industry mark-up cost with budget effect:
+*' Default industry mark-up cost with budget effect:
 p37_CESMkup(ttot,regi,in) = 0;
 
-*` Default industry mark-up cost without budget effect:
-*` mark-up cost on electrification (hth_electricity inputs), to reach >1 MRS to gas/liquids as technical efficiency gains from electrification
+*' Default industry mark-up cost without budget effect:
+*' mark-up cost on electrification (hth_electricity inputs), to reach >1 MRS to gas/liquids as technical efficiency gains from electrification
 pm_tau_ces_tax(t,regi,"feelhth_chemicals") = 100* sm_TWa_2_MWh * 1e-12;
 pm_tau_ces_tax(t,regi,"feelhth_otherInd") = 300* sm_TWa_2_MWh * 1e-12;
 pm_tau_ces_tax(t,regi,"feel_steel_secondary") = 100* sm_TWa_2_MWh * 1e-12;
 
-*` mark-up cost on H2 inputs, to reach MRS around 1 to gas/liquids as similar technical efficiency
+*' mark-up cost on H2 inputs, to reach MRS around 1 to gas/liquids as similar technical efficiency
 pm_tau_ces_tax(t,regi,"feh2_chemicals") = 100* sm_TWa_2_MWh * 1e-12;
 pm_tau_ces_tax(t,regi,"feh2_otherInd") = 50* sm_TWa_2_MWh * 1e-12;
 pm_tau_ces_tax(t,regi,"feh2_steel") = 50* sm_TWa_2_MWh * 1e-12;
 pm_tau_ces_tax(t,regi,"feh2_cement") = 100* sm_TWa_2_MWh * 1e-12;
 
 
-*` overwrite or extent CES markup cost if specified by switch
+*' overwrite or extent CES markup cost if specified by switch
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard"
   p37_CESMkup(ttot,regi,in)$(p37_CESMkup_input(in) AND ppfen_MkupCost37(in)) = p37_CESMkup_input(in);
   pm_tau_ces_tax(ttot,regi,in)$(p37_CESMkup_input(in) AND (NOT ppfen_MkupCost37(in))) = p37_CESMkup_input(in);
