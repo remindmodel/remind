@@ -337,7 +337,6 @@ vm_co2eqGlob(ttot)                                   "global emissions to be bal
 vm_co2eq(ttot,all_regi)                              "total emissions measured in co2 equivalents ATTENTION: content depends on multigasscen. [GtCeq]"
 vm_co2eqMkt(ttot,all_regi,all_emiMkt)                                         "total emissions per market measured in co2 equivalents ATTENTION: content depends on multigasscen. [GtCeq]"
 v_co2eqCum(all_regi)                                 "cumulated vm_co2eq emissions for the first budget period.  [GtCeq]"
-vm_banking(ttot,all_regi)                            "banking of emission permits"
 v_adjFactor(tall,all_regi,all_te)                    "factor to multiply with investment costs for adjustment costs"
 v_adjFactorGlob(tall,all_regi,all_te)                "factor to multiply with investment costs for adjustment costs - global scale"
 v_costInvTeDir(tall,all_regi,all_te)                 "annual direct investments into a technology"
