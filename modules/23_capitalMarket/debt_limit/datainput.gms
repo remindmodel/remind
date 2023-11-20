@@ -13,7 +13,7 @@ p23_debt_growthCoeff(regi) = 0.2 ;
 parameter pm_nfa_start(all_regi)       "initial net foreign asset"
 /
 $ondelim
-$include "./modules/23_capitalMarket/perfect/input/pm_nfa_start.cs4r"
+$include "./modules/23_capitalMarket/debt_limit/input/pm_nfa_start.cs4r"
 $offdelim
 /
 ;
