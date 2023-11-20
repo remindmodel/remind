@@ -279,7 +279,6 @@ $setglobal subsidizeLearning  off           !! def = off
 *'----------------------    23_capitalMarket    -------------------------------
 *'
 *' * (imperfect): Imperfect capital market: brings initial consumption shares closer to empirical data
-*' * (perfect):   Perfect capital market (results in large short-term capital flows from North to South)
 *' * (debt_limit): Weak imperfection of capital market by debt and surplus growth limits
 $setglobal capitalMarket  debt_limit           !! def = debt_limit
 *'----------------------    24_trade    ---------------------------------------
@@ -366,11 +365,6 @@ $setglobal techpol  none           !! def = none
 *' * (PerCapitaConvergence):   based on CandC: convergence, to be run with emiscen = 4
 *' * (AbilityToPay):   mitigation requirement shared based on per-capita GDP, to be run with emiscen = 4
 $setglobal emicapregi  none           !! def = none
-*'---------------------    42_banking  ----------------------------------------
-*'
-*' * (off): no banking and borrowing of emission permits, no when-flexibility
-*' * (banking):  only banking allowed, no borrowing at all
-$setglobal banking  off          !! def = off
 *'---------------------    45_carbonprice  ----------------------------------------
 *'
 *' This module defines the carbon price pm_taxCO2eq, with behaviour across regions governed by similar principles (e.g. global targets, or all following NDC or NPi policies).

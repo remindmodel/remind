@@ -14,11 +14,11 @@
 SETS
 numberOrder     "set to assure that numeric values follow ascending order in the GAMS entry order (e.g. iterations and years used in loop statements)" / 1*2200 /  
 
-* Save select compiler flags as sets, to make them accessible from the final gdx
+*** Save select compiler flags as sets, to make them accessible from the final gdx
 c_expname       "c_expname as set for use in GDX"       /%c_expname%/
 c_description   "%c_description%"   /"for model description, see explanatory text"/
 cm_GDPscen      "cm_GDPscen as set for use in GDX"      /%cm_GDPscen%/
-*
+
 
 all_POPscen     " all possible population scenarios"
 /
@@ -203,30 +203,30 @@ all_te          "all energy technologies, including from modules"
         fnrs            "fast nuclear reactor (simple structure)"
         elh2            "hydrogen elecrolysis"
         h2turb          "hydrogen turbine for electricity production"
-		elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
+        elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
         h2turbVRE       "dummy technology: hydrogen turbine for electricity production; to demonstrate the capacities and SE flows inside the storXXX technologies"
         h2curt          "hydrogen production from curtailment"
         h22ch4          "Methanation, H2 + 4 CO2 --> CH4 + 2 H20"
-        MeOH			"Methanol production /liquid fuel, CO2 hydrogenation, CO2 + 3 H2 --> CH3OH + H20"
-		tdels           "transmission and distribution for electricity to stationary users"
+        MeOH            "Methanol production /liquid fuel, CO2 hydrogenation, CO2 + 3 H2 --> CH3OH + H20"
+        tdels           "transmission and distribution for electricity to stationary users"
         tdeli           "transmission and distribution for electricity to industry"
         tdelb           "transmission and distribution for electricity to buildings"
         tdelt           "transmission and distribution for electricity to transport"
         tdbiogas        "transmission and distribution for gas from biomass origin to stationary users"
-	tdfosgas        "transmission and distribution for gas from fossil origin to stationary users"
+        tdfosgas        "transmission and distribution for gas from fossil origin to stationary users"
         tdsyngas        "transmission and distribution for gas from synthetic origin to stationary users"
         tdbiogai        "transmission and distribution for gas from biomass origin to industry"
-	tdfosgai        "transmission and distribution for gas from fossil origin to industry"
+        tdfosgai        "transmission and distribution for gas from fossil origin to industry"
         tdbiogab        "transmission and distribution for gas from biomass origin to buildings"
-	tdfosgab        "transmission and distribution for gas from fossil origin to buildings"
+        tdfosgab        "transmission and distribution for gas from fossil origin to buildings"
         tdbiogat        "transmission and distribution for gas from biomass origin to transportation"
-	tdfosgat        "transmission and distribution for gas from fossil origin to transportation"
+        tdfosgat        "transmission and distribution for gas from fossil origin to transportation"
         tdsyngat        "transmission and distribution for gas from synthetic origin to transportation"
         tdbiohos        "transmission and distribution for heating oil from biomass origin to transportation"
         tdfoshos        "transmission and distribution for heating oil from fossil origin to stationary users"
         tdsynhos        "transmission and distribution for heating oil from synthetic origin to stationary users"
         tdbiohoi        "transmission and distribution for heating oil from biomass origin to industry"
-	tdfoshoi        "transmission and distribution for heating oil from fossil origin to industry"
+        tdfoshoi        "transmission and distribution for heating oil from fossil origin to industry"
         tdbiohob        "transmission and distribution for heating oil from biomass origin to buildings"
         tdfoshob        "transmission and distribution for heating oil from fossil origin to buildings"
         tdh2s           "transmission and distribution for hydrogen to stationary users"
@@ -234,7 +234,7 @@ all_te          "all energy technologies, including from modules"
         tdbiodie        "transmission and distribution for diesel from biomass origin to stationary users"
         tdfosdie        "transmission and distribution for diesel from fossil origin to stationary users"
         tdsyndie        "transmission and distribution for diesel from synthetic origin to stationary users"
-	tdbiopet        "transmission and distribution for petrol from biomass origin to stationary users"
+        tdbiopet        "transmission and distribution for petrol from biomass origin to stationary users"
         tdfospet        "transmission and distribution for petrol from fossil origin to stationary users"
         tdsynpet        "transmission and distribution for petrol from synthetic origin to stationary users"
         tdbiosos        "transmission and distribution for solids from biomass origin to stationary users"
@@ -242,15 +242,15 @@ all_te          "all energy technologies, including from modules"
         tdbiosoi        "transmission and distribution for solids from biomass origin to industry"
         tdfossoi        "transmission and distribution for solids from fossil origin to industry"
         tdbiosob        "transmission and distribution for solids from biomass origin to buildings"
-	tdfossob        "transmission and distribution for solids from fossil origin to buildings"
+        tdfossob        "transmission and distribution for solids from fossil origin to buildings"
         tdhes           "transmission and distribution for heat to stationary users"
         tdhei           "transmission and distribution for heat to industry"
         tdheb           "transmission and distribution for heat to buildings"
 
-*        ccscomp         "compression of co2"
-*        ccspipe         "transportation of co2"
+***        ccscomp         "compression of co2"
+***        ccspipe         "transportation of co2"
          ccsinje         "injection of co2"
-*        ccsmoni         "monitoring of co2"
+***        ccsmoni         "monitoring of co2"
 *RP* Storage technology:
         storspv         "storage technology for photo voltaic (PV)"
         storwind        "storage technology for wind onshore"
@@ -267,7 +267,7 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 $ENDIF.WindOff
 
 *AJS* transport technologies (ESH2T etc..) are defined in the transport module.
- 	apCarPeT        "Cars using final energy petrol (FEPET) to produce useful energy in form of petrol for transport (UEPET) "
+    apCarPeT        "Cars using final energy petrol (FEPET) to produce useful energy in form of petrol for transport (UEPET) "
     apCarDiT        "Vehicles using final energy diesel (FEDIE) to produce heavy-duty useful energy (uedit, e.g. freight, busses, planes, ships)."
     apcarDiEffT     "More efficient vehicles using final energy diesel (FEDIE) and electricity (FEELT) to produce heavy-duty useful energy (uedit, e.g. freight, busses, planes, ships)."
     apcarDiEffH2T   "Even more efficient vehicles using final energy diesel (FEDIE), electricity (FEELT) and Hydrogen (FEH2T) to produce heavy-duty useful energy (uedit, e.g. freight, busses, planes, ships)."
@@ -285,9 +285,9 @@ $ENDIF.WindOff
         d_feel
         d_fehe
         d_fesobio
-		d_fesofos
+        d_fesofos
         d_fegabio
-		d_fegafos
+        d_fegafos
         d_coal2coal
         d_oil2coal
         d_gas2coal
@@ -347,19 +347,19 @@ all_enty             "all types of quantities"
         pebiolc      "PE biomass lignocellulosic"
         pebios       "PE biomass sugar and starch"
         pebioil      "PE biomass sunflowers, palm oil, etc"
-	all_seliq	 "all to SE liquids"
-		seliqbio     "SE liquids from biomass (ex. ethanol)"
-		seliqfos     "SE liquids from fossil pe (ex. petrol and diesel)"
-                seliqsyn     "SE synthetic liquids from H2 (ex. petrol and diesel)"
-        all_seso	 "all to SE solids"
-		sesobio      "SE solids from biomass"
-		sesofos      "SE solids from fossil pe"
+        all_seliq    "all to SE liquids"
+        seliqbio     "SE liquids from biomass (ex. ethanol)"
+        seliqfos     "SE liquids from fossil pe (ex. petrol and diesel)"
+        seliqsyn     "SE synthetic liquids from H2 (ex. petrol and diesel)"
+        all_seso     "all to SE solids"
+        sesobio      "SE solids from biomass"
+        sesofos      "SE solids from fossil pe"
         seel         "SE electricity"
         seh2         "SE hydrogen"
-        all_sega	 "all to SE gas"
-		segabio      "SE gas from biomass"
-		segafos      "SE gas from fossil pe"
-                segasyn      "SE synthetic gas from H2"
+        all_sega     "all to SE gas"
+        segabio      "SE gas from biomass"
+        segafos      "SE gas from fossil pe"
+        segasyn      "SE synthetic gas from H2"
         sehe         "SE district heating and heat pumps"
         fegas        "FE gas stationary"
         fegab
@@ -484,7 +484,7 @@ all_enty             "all types of quantities"
 *** uegat   "Useful Energy: GAs for Transport. Unit: TWa (not yet a real ES, only copied 1:1 from FE)"
 *** ueh2t   "Useful Energy: H2 for Transport. Unit: TWa (not yet a real ES, only copied 1:1 from FE)"
 
-	good         "Generic good"
+         good         "Generic good"
          perm         "Carbon permit"
          peog         "aggregated oil and gas, only relevant for calibration because IEA only provides aggregated data"
 /
@@ -492,13 +492,13 @@ all_enty             "all types of quantities"
 all_esty "energy services"
 /
 *** Transport module: Energy services
-	espet_pass_sm
-	esdie_pass_sm
-	esdie_pass_lo
-	eselt_pass_sm
-	esdie_frgt_lo
-	esdie_frgt_sm
-	eselt_frgt_sm
+    espet_pass_sm
+    esdie_pass_sm
+    esdie_pass_lo
+    eselt_pass_sm
+    esdie_frgt_lo
+    esdie_frgt_sm
+    eselt_frgt_sm
     esh2t_pass_sm
     esgat_pass_sm
     esh2t_frgt_sm
@@ -914,7 +914,6 @@ $endif.altFeEmiFac
 ***######################## R SECTION START (MODULES) ###############################
 *** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY
 *** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT MODEL START
-*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare.R
 
 sets
 
@@ -944,7 +943,6 @@ sets
        CCU
        techpol
        emicapregi
-       banking
        carbonprice
        carbonpriceRegi
        regipol
@@ -955,7 +953,7 @@ sets
        codePerformance
        /
 
-module2realisation(modules,*) "mapping of modules and active realisations" /
+      module2realisation(modules,*) "mapping of modules and active realisations" /
        macro . %macro%
        welfare . %welfare%
        PE_FE_parameters . %PE_FE_parameters%
@@ -980,7 +978,6 @@ module2realisation(modules,*) "mapping of modules and active realisations" /
        CCU . %CCU%
        techpol . %techpol%
        emicapregi . %emicapregi%
-       banking . %banking%
        carbonprice . %carbonprice%
        carbonpriceRegi . %carbonpriceRegi%
        regipol . %regipol%

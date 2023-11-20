@@ -744,7 +744,6 @@ q_emiAll(t,regi,emi(enty))..
 *mh for each region and time step: emissions + permit trade balance < emission cap
 q_emiCap(t,regi) ..
                 vm_co2eq(t,regi) + vm_Xport(t,regi,"perm") - vm_Mport(t,regi,"perm")
-                + vm_banking(t,regi)
                 =l= vm_perm(t,regi);
 
 ***-----------------------------------------------------------------
