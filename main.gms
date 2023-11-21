@@ -1514,28 +1514,47 @@ $setGlobal cm_pushCalib  none  !! def = none
 $setGlobal cm_reducCostB  none  !! def = none
 *** cfg$gms$cm_effHP         <- 5 #def <- 5 , efficiency of heat pumps
 $setGlobal cm_effHP  5  !! def = 5
+
 *** Note on CES markup cost:
-*** represent the sector-specific demand-side transformation cost, can also be used to influence efficiencies during calibration as
-*** higher markup-cost in calibration will lead to higher efficiencies
-*** to change it to any specific value: set cm_CESMkup_ind e.g. to "feeli 0.8" -> this would apply a cost markup of 0.8 tr USD/TWa to feeli CES node of the industry fixed_shares module
-*** standard cost markups of the other nodes will remain unchanged unless you explicitly address them with this switch
-***   cm_CESMkup_build               "switch for setting markup cost to CES nodes in buildings"
-***  def = "standard", applies a markup cost of 200 USD/MWh(el) to heat pumps (feelhpb) and 25 USD/MWh(heat) to district heating (feheb)
-*** CES markup cost for buildings to represent sector-specific demand-side transformation cost
-*** (only applies to buildings realization "simple" for now)
+*** They represent the sector-specific demand-side transformation cost, can also
+*** be used to influence efficiencies during calibration as higher markup-cost
+*** in calibration will lead to higher efficiencies.
+***
+*** cm_CESMkup_build "switch for setting markup cost to CES nodes in buildings"
+*** def = "standard", applies a markup cost of 200 USD/MWh(el) to heat pumps
+*** (feelhpb) and 25 USD/MWh(heat) to district heating (feheb)
+*** CES markup cost for buildings to represent sector-specific demand-side
+*** transformation cost (only applies to buildings realization "simple" for
+*** now).
+*** To change them to any specific value, set cm_CESMkup_build to e.g.
+*** "feelhpb 0.876".  This will apply a cost markup of $tr 0.876/TWa (equivalent
+*** to $100/MWh(el)).  Standard cost markups of the other nodes will remain
+*** unchanged, unless you explicity address them with this switch.
 $setGlobal cm_CESMkup_build  standard  !! def = standard
-***   cm_CESMkup_ind                 "switch for setting markup cost to CES nodes in industry"
-*** def = "standard", applies a markup cost of 0.5 trUSD/TWa (57 USD/MWh(el)) to industry electricity (feeli)
-*** CES markup cost for industry to represent sector-specific demand-side transformation cost
-*** (only applies to industry realization "fixed_shares" for now)
-*** switch to change CES mark-up cost in industry
-*** "standard" applies standard mark-up cost found in 37_industry/subsectors/datainput.gms or 37_industry/fixed_shares/datainput.gms, note that different industry realizations have different CES nodes
-*** Setting the switch to, for example: "feelhth_otherInd 1.5, feh2_cement 0.6" would change the mark-up cost for feelhth_otherInd CES node to 1.3 trUSD/TWa and feh2_cement CES node to 0.6 trUSD/TWa
-*** and keep all other CES mark-up cost as in the standard configuration
-*** Note on CES markup cost:
-*** The CES mark-up cost represent the sector-specific demand-side transformation cost.
-*** When used in calibration/baseline runs they affect the CES efficiencies and can be used to increase/decrease them
-$setGlobal cm_CESMkup_ind  standard  !! def = standard
+
+*** cm_CESMkup_ind "switch for setting markup cost to CES nodes in industry"
+*** def = "standard", applies the following cost markups:
+***
+*** realisation  | ppfen                | markup
+*** -------------+----------------------+-------------
+*** fixed_shares | feeli                |  57 $/MWh(el)
+*** subsectors   | feelhth_chemicals    | 100 $/MWh(el)
+*** subsectors   | feel_steel_secondary | 100 $/MWh(el)
+*** subsectors   | feelhth_otherInd     | 300 $/MWh(el)
+*** subsectors   | feh2_cement          | 100 $/MWh(th)
+*** subsectors   | feh2_chemicals       | 100 $/MWh(th)
+*** subsectors   | feh2_steel           |  50 $/MWh(th)
+*** subsectors   | feh2_otherInd        |  50 $/MWh(th)
+*** 
+*** To change them to any specific value, either define a new setting besides
+*** "standard" in ./modules/37_industry/(fixed_shares|subsectors)/datainput.gms,
+*** or use the setting "manual" and set cm_CESMkup_ind_data to e.g. "feeli 0.8".
+*** This would apply a cost markup of 0.8 $tr/TWa (91 $/MWh(el)) to the feeli
+*** CES node.  Standard markup costs are not effected unless specifically
+*** addressed in cm_CESMkup_ind_data.
+$setGlobal cm_CESMkup_ind        standard  !! def = standard
+$setGlobal cm_CESMkup_ind_data   ""        !! def = ""
+
 *** cm_feShareLimits <-   "off"  # def <- "off", limit the electricity final energy share to be in line with the industry maximum electrification levels (60% by 2050 in the electric scenario), 10% lower (=50% in 2050) in an increased efficiency World, or 20% lower (40% in 2050) in an incumbents future (incumbents). The incumbents scenario also limits a minimal coverage of buildings heat provided by gas and liquids (25% by 2050).
 $setglobal cm_feShareLimits  off  !! def = off
 *** VRE potential switches
