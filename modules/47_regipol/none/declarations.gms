@@ -8,7 +8,8 @@
 
 	
 Parameter
-  pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)  "target deviation across iterations in current emissions divided by target emissions"
+  pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)                 "target deviation across iterations in current emissions divided by target emissions (1 is 100%)"
+  pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktTarget_dev across iterations (1 is 100%)"
 ;
 
 

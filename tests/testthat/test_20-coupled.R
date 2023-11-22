@@ -250,7 +250,7 @@ test_that("start_bundle_coupled.R --test succeeds on all configs", {
                  "scenario_config_coupled_GCS")          # GCFS setting not in standard MAgPIE release
   csvfiles <- normalizePath(grep(paste(skipfiles, collapse = "|"), csvfiles, invert = TRUE, value = TRUE))
   expect_true(length(csvfiles) > 0)
-  with_mocked_bindings(
+  testthat::with_mocked_bindings(
     for (csvfile in csvfiles) {
       test_that(paste("perform start_bundle_coupled.R --test with", basename(csvfile)), {
         output <- localSystem2("Rscript",

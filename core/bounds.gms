@@ -59,6 +59,12 @@ vm_deltaCap.up(t,regi,"solhe",rlf) = 0;
 vm_cap.fx(t,regi,"fnrs",rlf)     = 0;
 vm_deltaCap.up(t,regi,"fnrs",rlf) = 0;
 
+vm_cap.fx(t,regi,"pcc",rlf)     = 0;
+vm_deltaCap.up(t,regi,"pcc",rlf) = 0;
+
+vm_cap.fx(t,regi,"pco",rlf)     = 0;
+vm_deltaCap.up(t,regi,"pco",rlf) = 0;
+
 *** -----------------------------------------------------------------------------------------------------------------
 *** Traditional biomass use is phased out on an exogeneous time path
 *** -----------------------------------------------------------------------------------------------------------------

@@ -14,7 +14,8 @@ loop ((secInd37,enty)$( NOT macBaseInd37(enty,secInd37) ),
   vm_macBaseInd.fx(ttot,regi,enty,secInd37)$( ttot.val ge 2005 ) = 0;
 );
 
-vm_cesIO.lo(t,regi,in_industry_dyn37(in)) = 1e-6;
+vm_cesIO.lo(t,regi,in_industry_dyn37(in))
+  = max(1e-6, abs(pm_cesdata(t,regi,in,"offset_quantity")));
 
 *** Upper bound for exponent to avoid exponential gams overflow (if > 20 -> 3^20 > 1e10 what would cause GAMS to get an overflow x**y error) 
 v37_costExponent.up(t,regi) = 20; 

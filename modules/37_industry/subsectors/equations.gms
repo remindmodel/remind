@@ -164,6 +164,18 @@ q37_IndCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
   v37_emiIndCCSmax(ttot,regi,emiInd37)
 ;
 
+*' Limit industry CCS scale-up to sm_macChange (default: 5 % p.a.)
+q37_limit_IndCCS_growth(ttot,regi,emiInd37) ..
+  vm_emiIndCCS(ttot,regi,emiInd37)
+  =l=
+    vm_emiIndCCS(ttot-1,regi,emiInd37)
+  + sum(secInd37_2_emiInd37(secInd37,emiInd37),
+      v37_emiIndCCSmax(ttot,regi,emiInd37)
+    * sm_macChange
+    * pm_ts(ttot)
+    )
+;
+
 *' Fix cement fuel and cement process emissions to the same abatement level.
 q37_cementCCS(ttot,regi)$(    ttot.val ge cm_startyear
                           AND pm_macswitch("co2cement")

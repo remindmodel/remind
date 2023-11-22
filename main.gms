@@ -156,11 +156,12 @@
 *' ;
 *'   param_name = 0;     !! def = 0  !! regexp = 0|1
 *' --------
-*' * The value behind 'def' contains the default value and is added only for the user to remember if changed manually
-*' * The value behind regexp is read by scripts/start/checkFixCfg.R to check the validity of the input.
+*' * def shows the default value, which is added only for the user to remember if changed manually
+*' * regexp is optional, the value is read by scripts/start/checkFixCfg.R to check the validity of the input.
 *' In this case, it checks whether the value fits this regular expression: ^(0|1)$
 *' Use 'value1|value2' for specific values, use '[1-7]' for a row of integers.
-*' Two shortcut are defined: use 'is.numeric' for numeric values and 'is.share' if the value must be >= 0 and <= 1
+*' Three shortcut are defined: use 'is.numeric' for numeric values, 'is.nonnegative' for >= 0,
+*' and 'is.share' if the value must be >= 0 and <= 1
 *'
 *'
 *' #### Other general rules:
@@ -263,7 +264,6 @@ $setGlobal downscaleTemperature  off  !! def = off
 *'---------------------    20_growth    ------------------------------------------
 *'
 *' * (exogenous): exogenous growth
-*' * (endogenous): endogenous growth !!Warning: still experimental stuff!!
 *' * (spillover): endogenous growth with spillover externality !!Warning: not yet calibrated!!
 $setglobal growth  exogenous                !! def = exogenous
 *'---------------------    21_tax    ------------------------------------------
@@ -279,7 +279,6 @@ $setglobal subsidizeLearning  off           !! def = off
 *'----------------------    23_capitalMarket    -------------------------------
 *'
 *' * (imperfect): Imperfect capital market: brings initial consumption shares closer to empirical data
-*' * (perfect):   Perfect capital market (results in large short-term capital flows from North to South)
 *' * (debt_limit): Weak imperfection of capital market by debt and surplus growth limits
 $setglobal capitalMarket  debt_limit           !! def = debt_limit
 *'----------------------    24_trade    ---------------------------------------
@@ -363,11 +362,6 @@ $setglobal techpol  none           !! def = none
 *' * (PerCapitaConvergence):   based on CandC: convergence, to be run with emiscen = 4
 *' * (AbilityToPay):   mitigation requirement shared based on per-capita GDP, to be run with emiscen = 4
 $setglobal emicapregi  none           !! def = none
-*'---------------------    42_banking  ----------------------------------------
-*'
-*' * (off): no banking and borrowing of emission permits, no when-flexibility
-*' * (banking):  only banking allowed, no borrowing at all
-$setglobal banking  off          !! def = off
 *'---------------------    45_carbonprice  ----------------------------------------
 *'
 *' This module defines the carbon price pm_taxCO2eq, with behaviour across regions governed by similar principles (e.g. global targets, or all following NDC or NPi policies).
@@ -499,7 +493,7 @@ parameter
 parameter
   cm_co2_tax_2020           "level of co2 tax in year 2020 in $ per t CO2eq, makes sense only for emiscen eq 9 and 45_carbonprice exponential"
 ;
-  cm_co2_tax_2020   = -1;              !! def = -1  !! regexp = is.numeric
+  cm_co2_tax_2020   = -1;              !! def = -1  !! regexp = -1|is.nonnegative
 *' * (-1): default setting equivalent to no carbon tax
 *' * (any number >= 0): tax level in 2020, with 5% exponential increase over time
 *'
@@ -828,7 +822,7 @@ parameter
   cm_iterative_target_adj  = 0;      !! def = 0  !! regexp = 0|2|3|4|5|6|7|9
 *' * (0): no iterative adjustment
 *' * (2): iterative adjustment II based on magicc calculated forcing (for both budget and tax runs), see modules/ 0 /magicc/postsolve.gms for direct algorithms of adjustment
-*' * (3): [requires 45_carbonprice = "NDC" and emiscen = 9] iterative adjustment III for tax based on 2025 or 2030 regionally differentiated emissions, see module/45_carbonprice/<NDC/NPi2018>/postsolve.gms for algorithm of adjustment
+*' * (3): [requires 45_carbonprice = "NDC" and emiscen = 9] iterative adjustment III for tax based on 2025 or 2030 regionally differentiated emissions, see module/45_carbonprice/NDC/postsolve.gms for algorithm of adjustment
 *' * (4): iterative adjustment IV for both budget and tax runs based on CO2 FF&I emissions 2020-2100, see core/postsolve.gms for direct algorithms of adjustment
 *' * (5): iterative adjustment V for both budget and tax runs based on CO2 emissions 2020-2100, see core/postsolve.gms for direct algorithms of adjustment
 *' * (6): iterative adjustment VI for both budget and tax runs based on peak CO2 emissions budget, without changing temporal profile (i.e. with overshoot), see core/postsolve.gms for direct algorithms of adjustment
@@ -931,6 +925,16 @@ parameter
 ;
   cm_damage_KWSE                        = 0;     !! def = 0
 *'  {1.645 for 90% CI, 1.96 for 95% CI, no correction when 0}
+parameter
+  cm_sccConvergence         "convergence indicator for SCC iteration"
+;
+  cm_sccConvergence	       = 0.05;  !! def = 0.05
+;
+parameter
+  cm_tempConvergence         "convergence indicator for temperature in damage iteration"
+;
+  cm_tempConvergence       = 0.05;  !! def = 0.05
+;
 parameter
   cm_carbonprice_temperatureLimit "not-to-exceed temperature target in degree above pre-industrial"
 ;
@@ -1144,7 +1148,7 @@ parameter
 *'
 *' *  (off): off = REMIND expects to be run standalone (emission factors are used, shiftfactors are set to zero)
 *' *  (on): on  = REMIND expects to be run based on a MAgPIE reporting file (emission factors are set to zero because emissions are retrieved from the MAgPIE reporting, shift factors for supply curves are calculated)
-$setglobal cm_MAgPIE_coupling  off     !! def = "off"  !! regexp = on|off
+$setglobal cm_MAgPIE_coupling  off     !! def = "off"  !! regexp = off|on
 *' cm_rcp_scen       "chooses RCP scenario"
 *'
 *' *  (none): no RCP scenario, standard setting
@@ -1200,7 +1204,7 @@ $setglobal cm_tradbio_phaseout  default  !! def = default  !! regexp = default|f
 ***  (off):             (default) no bound
 ***  (100):             (e.g.) set maximum to 100 EJ per year
 ***  (any value ge 0):  set maximum to that value
-$setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.numeric
+$setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.nonnegative
 *** cm_bioprod_regi_lim
 *** limit to total biomass production (including residues) by region to an upper value in EJ/yr from 2035 on
 *** example: "CHA 20, EUR_regi 7.5" limits total biomass production in China to 20 EJ/yr and
@@ -1209,7 +1213,7 @@ $setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.numeric
 *** If you specify a value for a region within a region group (e.g. DEU in EU27_regi),
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "EU27_regi 7.5, DEU 1.5".
-$setGLobal cm_bioprod_regi_lim off !! def off
+$setGLobal cm_bioprod_regi_lim off  !! def off
 *** cm_POPscen      "Population growth scenarios from UN data and IIASA projection used in SSP"
 *** pop_SSP1    "SSP1 population scenario"
 *** pop_SSP2    "SSP2 population scenario"
@@ -1426,8 +1430,6 @@ $setGLobal cm_exogDem_scen off !! def off
 $setGlobal cm_Ger_Pol  off !! def off
 *** cm_altFeEmiFac <- "off"  # def <- "off", regions that should use alternative data from "umweltbundesamt" on emission factors for final energy carriers (ex. "EUR_regi, NEU_regi")
 $setGlobal cm_altFeEmiFac  off        !! def = off
-*** overwritte default fe trajectories with low, medium and high alternatives for buildings, transport and industry
-$setglobal cm_calibration_FE  off      !! def = off
 *** cm_eni "multiplicative factor applied to industry energy elasticity value (eni) used in fixed_shares realization. [factor]"
 ***   def <- "off" = no change for industry energy elasticity (eni);
 ***   or number (ex. 2) = multiply by 2 the default value used in REMIND.
@@ -1519,28 +1521,47 @@ $setGlobal cm_pushCalib  none  !! def = none
 $setGlobal cm_reducCostB  none  !! def = none
 *** cfg$gms$cm_effHP         <- 5 #def <- 5 , efficiency of heat pumps
 $setGlobal cm_effHP  5  !! def = 5
+
 *** Note on CES markup cost:
-*** represent the sector-specific demand-side transformation cost, can also be used to influence efficiencies during calibration as
-*** higher markup-cost in calibration will lead to higher efficiencies
-*** to change it to any specific value: set cm_CESMkup_ind e.g. to "feeli 0.8" -> this would apply a cost markup of 0.8 tr USD/TWa to feeli CES node of the industry fixed_shares module
-*** standard cost markups of the other nodes will remain unchanged unless you explicitly address them with this switch
-***   cm_CESMkup_build               "switch for setting markup cost to CES nodes in buildings"
-***  def = "standard", applies a markup cost of 200 USD/MWh(el) to heat pumps (feelhpb) and 25 USD/MWh(heat) to district heating (feheb)
-*** CES markup cost for buildings to represent sector-specific demand-side transformation cost
-*** (only applies to buildings realization "simple" for now)
+*** They represent the sector-specific demand-side transformation cost, can also
+*** be used to influence efficiencies during calibration as higher markup-cost
+*** in calibration will lead to higher efficiencies.
+***
+*** cm_CESMkup_build "switch for setting markup cost to CES nodes in buildings"
+*** def = "standard", applies a markup cost of 200 USD/MWh(el) to heat pumps
+*** (feelhpb) and 25 USD/MWh(heat) to district heating (feheb)
+*** CES markup cost for buildings to represent sector-specific demand-side
+*** transformation cost (only applies to buildings realization "simple" for
+*** now).
+*** To change them to any specific value, set cm_CESMkup_build to e.g.
+*** "feelhpb 0.876".  This will apply a cost markup of $tr 0.876/TWa (equivalent
+*** to $100/MWh(el)).  Standard cost markups of the other nodes will remain
+*** unchanged, unless you explicity address them with this switch.
 $setGlobal cm_CESMkup_build  standard  !! def = standard
-***   cm_CESMkup_ind                 "switch for setting markup cost to CES nodes in industry"
-*** def = "standard", applies a markup cost of 0.5 trUSD/TWa (57 USD/MWh(el)) to industry electricity (feeli)
-*** CES markup cost for industry to represent sector-specific demand-side transformation cost
-*** (only applies to industry realization "fixed_shares" for now)
-*** switch to change CES mark-up cost in industry
-*** "standard" applies standard mark-up cost found in 37_industry/subsectors/datainput.gms or 37_industry/fixed_shares/datainput.gms, note that different industry realizations have different CES nodes
-*** Setting the switch to, for example: "feelhth_otherInd 1.5, feh2_cement 0.6" would change the mark-up cost for feelhth_otherInd CES node to 1.3 trUSD/TWa and feh2_cement CES node to 0.6 trUSD/TWa
-*** and keep all other CES mark-up cost as in the standard configuration
-*** Note on CES markup cost:
-*** The CES mark-up cost represent the sector-specific demand-side transformation cost.
-*** When used in calibration/baseline runs they affect the CES efficiencies and can be used to increase/decrease them
-$setGlobal cm_CESMkup_ind  standard  !! def = standard
+
+*** cm_CESMkup_ind "switch for setting markup cost to CES nodes in industry"
+*** def = "standard", applies the following cost markups:
+***
+*** realisation  | ppfen                | markup
+*** -------------+----------------------+-------------
+*** fixed_shares | feeli                |  57 $/MWh(el)
+*** subsectors   | feelhth_chemicals    | 100 $/MWh(el)
+*** subsectors   | feel_steel_secondary | 100 $/MWh(el)
+*** subsectors   | feelhth_otherInd     | 300 $/MWh(el)
+*** subsectors   | feh2_cement          | 100 $/MWh(th)
+*** subsectors   | feh2_chemicals       | 100 $/MWh(th)
+*** subsectors   | feh2_steel           |  50 $/MWh(th)
+*** subsectors   | feh2_otherInd        |  50 $/MWh(th)
+*** 
+*** To change them to any specific value, either define a new setting besides
+*** "standard" in ./modules/37_industry/(fixed_shares|subsectors)/datainput.gms,
+*** or use the setting "manual" and set cm_CESMkup_ind_data to e.g. "feeli 0.8".
+*** This would apply a cost markup of 0.8 $tr/TWa (91 $/MWh(el)) to the feeli
+*** CES node.  Standard markup costs are not effected unless specifically
+*** addressed in cm_CESMkup_ind_data.
+$setGlobal cm_CESMkup_ind        standard  !! def = standard
+$setGlobal cm_CESMkup_ind_data   ""        !! def = ""
+
 *** cm_feShareLimits <-   "off"  # def <- "off", limit the electricity final energy share to be in line with the industry maximum electrification levels (60% by 2050 in the electric scenario), 10% lower (=50% in 2050) in an increased efficiency World, or 20% lower (40% in 2050) in an incumbents future (incumbents). The incumbents scenario also limits a minimal coverage of buildings heat provided by gas and liquids (25% by 2050).
 $setglobal cm_feShareLimits  off  !! def = off
 *** VRE potential switches

@@ -21,7 +21,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   } else {
     cfg <- gms::readDefaultConfig(remindPath)
   }
-  scenConf <- read.csv2(filename, stringsAsFactors = FALSE, na.strings = "", comment.char = "#")
+  scenConf <- read.csv2(filename, stringsAsFactors = FALSE, na.strings = "", comment.char = "#",
+                                  strip.white = TRUE, blank.lines.skip = TRUE)
   scenConf <- scenConf[! is.na(scenConf[1]), ]
   rownames(scenConf) <- scenConf[, 1]
   scenConf[1] <- NULL
@@ -82,22 +83,27 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     message(msg)
   }
   if ("path_gdx_bau" %in% names(scenConf)) {
-    # fix if bau given despite not needed
-    NDC45 <- if ("carbonprice" %in% names(scenConf)) scenConf$carbonprice %in% "NDC" else FALSE
-    NDC46 <- if ("carbonpriceRegi" %in% names(scenConf)) scenConf$carbonpriceRegi %in% "NDC" else FALSE
-    noNDCbutBAU <- ! is.na(scenConf$path_gdx_bau) & ! (NDC45 | NDC46)
-    if (sum(noNDCbutBAU) > 0) {
-      msg <- paste0("In ", sum(noNDCbutBAU), " scenarios, neither 'carbonprice' nor 'carbonpriceRegi' is set to 'NDC', but 'path_gdx_bau' is not empty.\n",
-                    "To avoid unnecessary dependencies to other runs, setting 'path_gdx_bau' to NA.")
+    # fix if bau given despite not needed. needBau is defined in needBau.R
+    # initialize vector with FALSE everywhere and turn elements to TRUE if a scenario config row setting matches a needBau element
+    scenNeedsBau <- rep(FALSE, nrow(scenConf))
+    for (n in intersect(names(needBau), names(scenConf))) {
+      scenNeedsBau <- scenNeedsBau | scenConf[[n]] %in% needBau[[n]]
+    }
+    BAUbutNotNeeded <- ! is.na(scenConf$path_gdx_bau) & ! (scenNeedsBau)
+    if (sum(BAUbutNotNeeded) > 0) {
+      msg <- paste0("In ", sum(BAUbutNotNeeded), " scenarios, 'path_gdx_bau' is not empty although no realization is selected that needs it.\n",
+                    "To avoid unnecessary dependencies to other runs, setting 'path_gdx_bau' to NA for:\n",
+                    paste(rownames(scenConf)[BAUbutNotNeeded], collapse = ", "))
       message(msg)
-      scenConf$path_gdx_bau[noNDCbutBAU] <- NA
+      scenConf$path_gdx_bau[BAUbutNotNeeded] <- NA
     }
     # fail if bau not given but needed
-    noBAUbutNDC <- is.na(scenConf$path_gdx_bau) & (NDC45 | NDC46)
-    if (sum(noBAUbutNDC) > 0) {
-      pathgdxerrors <- pathgdxerrors + sum(noBAUbutNDC)
-      warning("In ", sum(noBAUbutNDC), " scenarios, 'carbonprice' or 'carbonpriceRegi' is set to 'NDC' ",
-              "which requires a reference gdx in 'path_gdx_bau', but it is empty.")
+    noBAUbutNeeded <- is.na(scenConf$path_gdx_bau) & (scenNeedsBau)
+    if (sum(noBAUbutNeeded) > 0) {
+      pathgdxerrors <- pathgdxerrors + sum(noBAUbutNeeded)
+      warning("In ", sum(noBAUbutNeeded), " scenarios, a reference gdx in 'path_gdx_bau' is needed, but it is empty. ",
+              "These realizations need it: ",
+              paste0(names(needBau), ": ", sapply(needBau, paste, collapse = ", "), ".", collapse = " "))
     }
   }
   # make sure every path gdx column exists
@@ -107,9 +113,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   errorsfound <- sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors
 
   # check column names
-  knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
-                        "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig",
-                        "results_folder", "force_replace", "action", "pythonEnabled", "copyConfigFrom")
+  knownColumnNames <- c(names(cfg$gms), setdiff(names(cfg), "gms"), names(path_gdx_list),
+                        "start", "model", "copyConfigFrom")
   if (grepl("scenario_config_coupled", filename)) {
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
@@ -134,6 +139,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_trdadj" = "Now always fixed to 2, see https://github.com/remindmodel/remind/pull/1052",
        "cm_OILRETIRE" = "Now always on by default, see https://github.com/remindmodel/remind/pull/1102",
        "cm_fixCO2price" = "Was never in use, removed in https://github.com/remindmodel/remind/pull/1369",
+       "cm_calibration_FE" = "Deleted, only used for old hand made industry trajectories, see https://github.com/remindmodel/remind/pull/1468",
      NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       if (testmode) {
@@ -153,7 +159,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
               basename(filename), ":")
       message("  ", paste(unknownColumnNames, collapse = ", "))
       message("This check was added Jan. 2022. ",
-              "If you find false positives, add them to knownColumnNames in start/scripts/readCheckScenarioConfig.R.\n")
+              "If you find false positives, add them to knownColumnNames in scripts/start/readCheckScenarioConfig.R.\n")
       unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
       if (length(unknownColumnNamesNoComments) > 0) {
         if (testmode) {

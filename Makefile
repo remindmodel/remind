@@ -22,15 +22,27 @@ update-renv:     ## Upgrade all pik-piam packages in your renv to the respective
 update-renv-all: ## Upgrade all packages (including CRAN packages) in your renv
                  ## to the respective latest release, write renv.lock archive
                  ## Upgrade all packages in python venv, if python venv exists
-	Rscript -e 'renv::update(exclude = "renv"); piamenv::archiveRenv()'
-	[ -e ".venv/bin/python" ] && .venv/bin/python -mpip install --upgrade pip wheel
-	[ -e ".venv/bin/python" ] && .venv/bin/python -mpip install --upgrade --upgrade-strategy eager -r requirements.txt
+	@Rscript -e 'renv::update(exclude = "renv"); piamenv::archiveRenv()'
+	@if [ -e "./venv/bin/python" ]; then \
+		pv_maj=$$( .venv/bin/python -V | sed 's/^Python \([0-9]\).*/\1/' ); \
+		pv_min=$$( .venv/bin/python -V | sed 's/^Python [0-9]\.\([0-9]\+\).*/\1/' ); \
+		if (( 3 == $$pv_maj )) && (( 7 <= $$pv_min )) && (( $pv_min < 11 )); then \
+			.venv/bin/python -mpip install --upgrade pip wheel; \
+			.venv/bin/python -mpip install --upgrade --upgrade-strategy eager -r requirements.txt; \
+		fi \
+	fi
 
 ensure-reqs:     ## Ensure the REMIND library requirements are fulfilled
                  ## by installing updates and new libraries as necessary. Does not
                  ## install updates unless it is required.
 	@Rscript -e 'source("scripts/start/ensureRequirementsInstalled.R"); ensureRequirementsInstalled(rerunPrompt="make ensure-reqs")'
-	@[ -e ".venv/bin/python" ] && .venv/bin/python -mpip -qq install -r requirements.txt
+	@if [ -e "./venv/bin/python" ]; then \
+		pv_maj=$$( .venv/bin/python -V | sed 's/^Python \([0-9]\).*/\1/' ); \
+		pv_min=$$( .venv/bin/python -V | sed 's/^Python [0-9]\.\([0-9]\+\).*/\1/' ); \
+		if (( 3 == $$pv_maj )) && (( 7 <= $$pv_min )) && (( $pv_min < 11 )); then \
+			.venv/bin/python -mpip -qq install -r requirements.txt; \
+		fi \
+	fi
 
 archive-renv:    ## Write renv.lock into archive.
 	Rscript -e 'piamenv::archiveRenv()'
@@ -50,14 +62,14 @@ check-fix:       ## Check if the GAMS code follows the coding etiquette
 
 test:            ## Test if the model compiles and runs without running a full
                  ## scenario. Tests take about 10 minutes to run.
-	$(info Tests take about 10 minutes to run, please be patient)
-	@R_PROFILE_USER= Rscript -e 'testthat::test_dir("tests/testthat")'
+	$(info Tests take about 20 minutes to run, please be patient)
+	@Rscript -e 'testthat::test_dir("tests/testthat")'
 
 test-coupled:    ## Test if the coupling with MAgPIE works. Takes significantly
                  ## longer than 60 minutes to run and needs slurm and magpie
                  ## available
 	$(info Coupling tests take around 75 minutes to run, please be patient)
-	@R_PROFILE_USER= TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_file("tests/testthat/test_20-coupled.R")'
+	@TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_file("tests/testthat/test_20-coupled.R")'
 
 test-coupled-slurm: ## test-coupled, but on slurm
 	$(info Coupling tests take around 75 minutes to run. Sent to slurm, find log in test-coupled.log)
@@ -66,7 +78,7 @@ test-coupled-slurm: ## test-coupled, but on slurm
 test-full:       ## Run all tests, including coupling tests and a default
                  ## REMIND scenario. Takes significantly longer than 10 minutes to run.
 	$(info Full tests take more than an hour to run, please be patient)
-	@R_PROFILE_USER= TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat")'
+	@TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat")'
 test-validation: ## Run validation tests, requires a full set of runs in the output folder
 	$(info Run validation tests, requires a full set of runs in the output folder)
-	@R_PROFILE_USER= TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat/validation")'	
+	@TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat/validation")'	

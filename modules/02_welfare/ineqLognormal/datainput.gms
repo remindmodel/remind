@@ -41,12 +41,13 @@ display p02_ineqTheil;
 
 * for a policy run, we need to load values coming from the baseline for consumption, tax revenues and energy expenditures:
 if ((cm_emiscen ne 1),
-    Execute_Loadpoint 'input_bau' p02_taxrev_redistr0_ref=v02_taxrev_Add.l;
-    Execute_Loadpoint 'input_bau' p02_cons_ref=vm_cons.l;
-    Execute_Loadpoint 'input_bau' p02_energyExp_ref=v02_energyExp.l;
+    Execute_Loadpoint 'input_ref' p02_taxrev_redistr0_ref=v02_taxrev_Add.l;
+    Execute_Loadpoint 'input_ref' p02_cons_ref=vm_cons.l;
+    Execute_Loadpoint 'input_ref' p02_energyExp_ref=v02_energyExp.l;
+    Execute_Loadpoint 'input_ref' p02_damageFactor_ref=vm_damageFactor.l;
  
 * if energy system costs are used:
-*    Execute_Loadpoint 'input_bau' p02_energyExp_ref=vm_costEnergySys.l;
+*    Execute_Loadpoint 'input_ref' p02_energyExp_ref=vm_costEnergySys.l;
    
 );
 
