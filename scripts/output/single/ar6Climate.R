@@ -74,7 +74,8 @@ write.csv(outcsv, ar6csvfpath, row.names=F, quote=F)
 ############################# PYTHON/MAGICC SETUP #############################
 # These files are supposed to be all inside cfg$climate_assessment_files_dir in a certain structure
 # TODO: Make this even more flexible by explictly setting them in default.cfg
-probabilistic_file       <- file.path(cfg$climate_assessment_files_dir,"/parsets/RCP20_50.json")
+# probabilistic_file       <- file.path(cfg$climate_assessment_files_dir,"/parsets/RCP20_50.json")
+probabilistic_file       <- file.path(cfg$climate_assessment_files_dir,"/parsets/0fd0f62-derived-metrics-id-f023edb-drawnset.json")
 infilling_database_file  <- file.path(cfg$climate_assessment_files_dir,"/1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv")
 magicc_bin_file          <- file.path(cfg$climate_assessment_files_dir,"/magicc-v7.5.3/bin/magicc")
 
