@@ -28,9 +28,6 @@ print(getwd())
 
 # Read the cfg to get the location of MAGICC-related files
 cfg <- read_yaml(cfg_path)
-#######################################################################DELETEME MOVE TO DEFAULT.CFG!!!!!!!!!!!!!!!!!!
-cfg$climate_assessment_files_dir <- "/p/projects/rd3mod/climate-assessment-files/"
-#######################################################################DELETEME MOVE TO DEFAULT.CFG!!!!!!!!!!!!!!!!!!
 
 # Read the GDX and run reportEmi
 # gdxpath <- "fulldata.gdx"
