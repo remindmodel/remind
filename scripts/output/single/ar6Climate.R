@@ -118,7 +118,10 @@ logmsg <- paste0(date(), " Started runs\n")
 cat(logmsg)
 capture.output(cat(logmsg), file = logfile, append = T)
 
-cmd <- paste0("python ", sfolder, "run_clim.py ", workfolder, "/", basefname, "_harmonized_infilled.csv ", workfolder, " --num-cfgs 1 --scenario-batch-size ", 1, " --probabilistic-file ", probabilistic_file)
+# Read parameter sets file to ascertain how many parsets there are
+allparsets <- read_yaml(probabilistic_file)
+nparsets <- length(allparsets$configurations)
+cmd <- paste0("python ", sfolder, "run_clim.py ", workfolder, "/", basefname, "_harmonized_infilled.csv ", workfolder, " --num-cfgs ",nparsets," --scenario-batch-size ", 1, " --probabilistic-file ", probabilistic_file)
 # cmd <- paste0("python ", sfolder, "run_clim.py ", workfolder, "/", basefname, "_harmonized_infilled.csv ", workfolder, " --num-cfgs 1 --scenario-batch-size ", 1, " --probabilistic-file ", probabilistic_file, " --save-csv-combined-output")
 system(cmd)
 
