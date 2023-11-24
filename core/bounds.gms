@@ -22,6 +22,9 @@ vm_costTeCapital.fx(t,regi,teNoLearn)     = pm_inco0_t(t,regi,teNoLearn);
 loop(pe2se(enty,enty2,te)$((not sameas(te,"biotr"))  AND (not sameas(te,"biodiesel")) AND (not sameas(te,"bioeths")) AND (not sameas(te,"gasftcrec")) AND (not sameas(te,"gasftrec"))
 AND (not sameas(te,"tnrs"))),
   vm_cap.lo(t,regi,te,"1")$(t.val gt 2021 AND t.val le 2070) = 1e-7;
+  if( (NOT teccs(te)), 
+    vm_deltacap.lo(t,regi,te,"1")$(t.val gt 2021 AND t.val le 2070) = 1e-8;
+  );
 );
 
 
