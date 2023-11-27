@@ -8,14 +8,15 @@
 
 *' @title CDR
 *'
-*' @description  The 33_CDR module calculates CO2 removed from the atmosphere by options other than BECCS or afforestation, which are calculated in the core.
-*'
-*' @authors Jessica Strefler
+*' @description The 33_CDR module adds further options to remove CO2 from the atmosphere beyond BECCS
+*' and afforestation, which are calculated in the core. Currently, direct air carbon capture and storage (DACCS)
+*' and enhanced weathering of rocks (EW) are available, biochar and ocean alkalinization will follow soon.
+*' All options can be switched on and off individually via the switches called cm_33[option abbreviation].
+*' The module calculates capacities, emissions (including captured carbon), energy demand & supply, costs,
+*' and limitations associated with the different options.
+*' @authors Jessica Strefler, Katarzyna Kowalczyk, Anne Merfort
 
 *###################### R SECTION START (MODULETYPES) ##########################
-$Ifi "%CDR%" == "DAC" $include "./modules/33_CDR/DAC/realization.gms"
-$Ifi "%CDR%" == "all" $include "./modules/33_CDR/all/realization.gms"
-$Ifi "%CDR%" == "off" $include "./modules/33_CDR/off/realization.gms"
-$Ifi "%CDR%" == "weathering" $include "./modules/33_CDR/weathering/realization.gms"
+$Ifi "%CDR%" == "portfolio" $include "./modules/33_CDR/portfolio/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
 *** EOF ./modules/33_CDR/module.gms
