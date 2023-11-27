@@ -21,7 +21,10 @@ vm_costTeCapital.fx(t,regi,teNoLearn)     = pm_inco0_t(t,regi,teNoLearn);
 *** CB 20120402 Lower limit on all P2SE technologies capacities to 100 kW of all technologies and all time steps
 loop(pe2se(enty,enty2,te)$((not sameas(te,"biotr"))  AND (not sameas(te,"biodiesel")) AND (not sameas(te,"bioeths")) AND (not sameas(te,"gasftcrec")) AND (not sameas(te,"gasftrec"))
 AND (not sameas(te,"tnrs"))),
-  vm_cap.lo(t,regi,te,"1")$(t.val gt 2021 AND t.val le 2070) = 1e-7;
+  vm_cap.lo(t,regi,te,"1")$(t.val gt 2026 AND t.val le 2070) = 1e-7;
+  if( (NOT teccs(te)), 
+    vm_deltacap.lo(t,regi,te,"1")$(t.val gt 2026 AND t.val le 2070) = 1e-8;
+  );
 );
 
 
@@ -54,16 +57,16 @@ vm_cap.up("2010",regi,teStor,"1") = 0;
 *** completely switching off technologies that are not used in the current version of REMIND, although their parameters are declared:
 *** --------------------------------------------------------------------------------------------------------------------------------
 vm_cap.fx(t,regi,"solhe",rlf)     = 0;
-vm_deltaCap.up(t,regi,"solhe",rlf) = 0;
+vm_deltaCap.fx(t,regi,"solhe",rlf) = 0;
 
 vm_cap.fx(t,regi,"fnrs",rlf)     = 0;
-vm_deltaCap.up(t,regi,"fnrs",rlf) = 0;
+vm_deltaCap.fx(t,regi,"fnrs",rlf) = 0;
 
 vm_cap.fx(t,regi,"pcc",rlf)     = 0;
-vm_deltaCap.up(t,regi,"pcc",rlf) = 0;
+vm_deltaCap.fx(t,regi,"pcc",rlf) = 0;
 
 vm_cap.fx(t,regi,"pco",rlf)     = 0;
-vm_deltaCap.up(t,regi,"pco",rlf) = 0;
+vm_deltaCap.fx(t,regi,"pco",rlf) = 0;
 
 *** -----------------------------------------------------------------------------------------------------------------
 *** Traditional biomass use is phased out on an exogeneous time path
