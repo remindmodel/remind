@@ -18,7 +18,7 @@ vm_costTeCapital.fx(t,regi,teNoLearn)     = pm_inco0_t(t,regi,teNoLearn);
 *** These lower bounds are set so low that they do not restrict the results
 *** ----------------------------------------------------------------------------------------------------------------------------------------
 
-*' @code{extrapage: "Model_Assumptions"}
+*' @code{extrapage: "Model-Assumptions"}
 *' ### Model Bounds and Assumptions: 
 *' Lower limit on all P2SE technologies capacities to 100 kW of all technologies and all time steps
 loop(pe2se(enty,enty2,te)$((not sameas(te,"biotr"))  AND (not sameas(te,"biodiesel")) AND (not sameas(te,"bioeths")) AND (not sameas(te,"gasftcrec")) AND (not sameas(te,"gasftrec"))
@@ -56,6 +56,7 @@ vm_cap.up("2010",regi,teStor,"1") = 0;
 *' --------------------------------------------------------------------------------------------------------------------------------
 *' completely switching off technologies that are not used in the current version of REMIND, although their parameters are declared:
 *' --------------------------------------------------------------------------------------------------------------------------------
+
 vm_cap.fx(t,regi,"solhe",rlf)     = 0;
 vm_deltaCap.fx(t,regi,"solhe",rlf) = 0;
 
