@@ -55,9 +55,8 @@ vm_capDistr.fx(t,regi,te,rlf)$(rlf.val gt 9) = 0;
 *' No battery storage in 2010:
 vm_cap.up("2010",regi,teStor,"1") = 0;
 
-*' completely switching off technologies that are not used in the current version of REMIND, although their parameters are declared:
 *' --------------------------------------------------------------------------------------------------------------------------------
-
+*' completely switching off technologies that are not used in the current version of REMIND, although their parameters are declared:
 vm_cap.fx(t,regi,"solhe",rlf)     = 0;
 vm_deltaCap.fx(t,regi,"solhe",rlf) = 0;
 
@@ -114,9 +113,10 @@ if ( c_ccsinjecratescen eq 0, !!no carbon sequestration at all
     vm_co2CCS.fx(t,regi_capturescen,"cco2","ico2","ccsinje","1") =0;
 );
 
-*** ------------------------------------------------------------------------------------------
-*RP* implement switch for scenarios with different carbon capture assumptions::
-*** ------------------------------------------------------------------------------------------
+*' @code{extrapage: "00_model_assumptions"}
+*' ------------------------------------------------------------------------------------------
+*' implement switch for scenarios with different carbon capture assumptions::
+*' ------------------------------------------------------------------------------------------
 if (cm_ccapturescen eq 2,  !! no carbon capture at all
   vm_cap.fx(t,regi_capturescen,"ngccc",rlf)        = 0;
   vm_cap.fx(t,regi_capturescen,"ccsinje",rlf)      = 0;
@@ -144,7 +144,7 @@ elseif (cm_ccapturescen eq 4), !! no carbon capture in the electricity sector
   );
 );
 
-*DK* switching technologies off that produce liquids from lignocellulosic biomass
+*' switching technologies off that produce liquids from lignocellulosic biomass
 if (c_bioliqscen eq 0, !! no bioliquids technologies
   vm_deltaCap.up(t,regi,"bioftrec",rlf)$(t.val gt 2005)    = 1.0e-6;
   vm_deltaCap.up(t,regi,"bioftcrec",rlf)$(t.val gt 2005)   = 1.0e-6;
@@ -154,13 +154,14 @@ if (c_bioliqscen eq 0, !! no bioliquids technologies
 *  vm_cap.fx(t,regi,"bioethl",rlf)      = 0;
 );
 
-*DK* switching technologies off that produce hydrogen from lignocellulosic biomass
+*' switching technologies off that produce hydrogen from lignocellulosic biomass
 if (c_bioh2scen eq 0, !! no bioh2 technologies
   vm_deltaCap.up(t,regi,"bioh2",rlf)$(t.val gt 2005)       = 1.0e-6;
   vm_deltaCap.up(t,regi,"bioh2c",rlf)$(t.val gt 2005)      = 1.0e-6;
 *  vm_cap.fx(t,regi,"bioh2c",rlf)       = 0;
 *  vm_cap.fx(t,regi,"bioh2",rlf)       = 0;
 );
+*' @stop
 
 ***--------------------------------------------------------------------
 *RP no CCS should be used in a BAU run, and no CCS at all in 2010
