@@ -217,16 +217,15 @@ loop((ext_regi)$p_extRegiccsinjecrateRegi(ext_regi),
 ;
 $endIf.c_ccsinjecrateRegi
 
-
 $include "./core/input/generisdata_flexibility.prn"
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 fm_dataglob("flexibility","storwindoff")  = 1.93;
 fm_dataglob("flexibility","windoff")  = -1;
 $ENDIF.WindOff
 
-* inco0 (and incolearn) are given in $/kW (or $/(tC/a) for dac)
-* convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for dac)
-* note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
+*** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for dac)
+*** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for dac)
+*** note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
 fm_dataglob("inco0",te)              = sm_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
 fm_dataglob("incolearn",te)          = sm_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
 fm_dataglob("omv",te)                = s_DpKWa_2_TDpTWa      * fm_dataglob("omv",te);
@@ -326,7 +325,6 @@ $include "./core/input/p_histEmiSector.cs4r"
 $offdelim
 /
 ;
-
 
 ***---------------------------------------------------------------------------
 *** Import and set regional data
@@ -509,8 +507,6 @@ loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
 );
 $ENDIF.tech_earlyreti
 
-
-
 *SB* Time-dependent early retirement rates in Baseline scenarios
 $ifthen.Base_Cprice %carbonprice% == "none"
 $ifthen.Base_techpol %techpol% == "none"
@@ -524,7 +520,6 @@ $endif.Base_techpol
 $endif.Base_Cprice
 
 display pm_regiEarlyRetiRate;
-
 
 ***---------------------------------------------------------------------------
 *RP* calculate omegs and opTimeYr2te
@@ -590,7 +585,6 @@ loop(regi,
 putclose diagnosis_opTimeYr2te;
 
 
-
 *RP* safety check that no technology has zero life time - this should give a run-time error if omeg=0 for the first time step
 *RP* also check the previous calculation that pm_omeg is not >0 for a opTimeYr value greater than contained in opTimeYr2te
 *RP* for diagnosis, uncomment the putfile lines and you will find out which technologies have wrong inputs in generissets or generisdatadatacap
@@ -641,8 +635,6 @@ if(pm_NuclearConstraint("2020",regi,"tnrs")<0,
 );
 );
 
-
-
 *** read in data on CCS capacities used as bound on vm_co2CCS.up("2020",regi,"cco2","ico2","ccsinje","1")
 parameter pm_boundCapCCS(all_regi)        "installed and planed capacity of CCS"
 /
@@ -677,7 +669,6 @@ $include "./core/input/f_emiFgas.cs4r"
 $offdelim
 /
 ;
-
 
 parameter p_abatparam_CH4(tall,all_regi,all_enty,steps)        "MAC costs for CH4 by source"
 /
@@ -783,7 +774,6 @@ p_datapot(all_regi,"limitGeopot",rlf,"pesol") = f_dataRegiSolar(all_regi,"limitG
 pm_data(all_regi,"luse","spv")              = f_dataRegiSolar(all_regi,"luse","spv","1")/1000;
 
 
-
 table f_maxProdGeothermal(all_regi,char)                  "input of regionalized maximum from geothermal [EJ/a]"
 $ondelim
 $include "./core/input/f_maxProdGeothermal.cs3r"
@@ -805,9 +795,6 @@ display p_datapot, pm_dataren;
 ***---------------------------------------------------------------------------
 *** calculate average capacity factors for renewables in 2015
 *** --------------------------------------------------------------------------
-
-
-
 loop(regi,
   loop(teReNoBio(te),
     p_aux_capToDistr(regi,te) = pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
@@ -821,8 +808,8 @@ loop(regi,
       );
     );  !! teRe2rlfDetail
 
-	p_avCapFac2015(regi,te) = sum(teRe2rlfDetail(te,rlf), p_aux_capThisGrade(regi,te,rlf) * pm_dataren(regi,"nur",rlf,te) )
-								/ ( sum(teRe2rlfDetail(te,rlf), p_aux_capThisGrade(regi,te,rlf) ) + 1e-10)
+    p_avCapFac2015(regi,te) = sum(teRe2rlfDetail(te,rlf), p_aux_capThisGrade(regi,te,rlf) * pm_dataren(regi,"nur",rlf,te) )
+                                 / ( sum(teRe2rlfDetail(te,rlf), p_aux_capThisGrade(regi,te,rlf) ) + 1e-10)
   );    !! teReNoBio
 );      !! regi
 
@@ -907,9 +894,6 @@ $ifthen.VREPot_Factor not "%c_VREPot_Factor%" == "off"
     pm_dataren(regi,"maxprod",rlf,te)$( NOT( p_aux_capThisGrade(regi,te,rlf))) = pm_dataren(regi,"maxprod",rlf,te) * p_VREPot_Factor(te);
   );
 $endif.VREPot_Factor
-
-
-
 
 
 *** -----------------------------------------------------------------
@@ -1327,7 +1311,6 @@ if(c_macscen eq 1,
 *** for NDC and NPi switch off landuse MACs
 $if %carbonprice% == "NDC"      pm_macSwitch(emiMacMagpie) = 0;
 $if %carbonprice% == "NPi"      pm_macSwitch(emiMacMagpie) = 0;
-$if %carbonprice% == "NPi2018"  pm_macSwitch(emiMacMagpie) = 0;
 
 *DK* LU emissions are abated in MAgPIE in coupling mode
 *** An alternative to the approach below could be to introduce a new value for c_macswitch that only deactivates the LU MACs
