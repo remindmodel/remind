@@ -55,7 +55,6 @@ vm_capDistr.fx(t,regi,te,rlf)$(rlf.val gt 9) = 0;
 *' No battery storage in 2010:
 vm_cap.up("2010",regi,teStor,"1") = 0;
 
-*' --------------------------------------------------------------------------------------------------------------------------------
 *' completely switching off technologies that are not used in the current version of REMIND, although their parameters are declared:
 vm_cap.fx(t,regi,"solhe",rlf)     = 0;
 vm_deltaCap.fx(t,regi,"solhe",rlf) = 0;
@@ -114,9 +113,11 @@ if ( c_ccsinjecratescen eq 0, !!no carbon sequestration at all
 );
 
 *' @code{extrapage: "00_model_assumptions"}
+
 *' ------------------------------------------------------------------------------------------
 *' implement switch for scenarios with different carbon capture assumptions::
 *' ------------------------------------------------------------------------------------------
+
 if (cm_ccapturescen eq 2,  !! no carbon capture at all
   vm_cap.fx(t,regi_capturescen,"ngccc",rlf)        = 0;
   vm_cap.fx(t,regi_capturescen,"ccsinje",rlf)      = 0;
