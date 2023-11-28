@@ -216,9 +216,9 @@ $offdigit
 *** turn profiling off (0) or on (1-3, different levels of detail)
 option profile = 0;
 
-*' @code
+*' @description{extrapage: "Configuration"}
 *--------------------------------------------------------------------------
-*' #### Configuration - Settings for Scenarios:
+*' ### Configuration - Settings for Scenarios:
 *--------------------------------------------------------------------------
 
 ***---------------------    Run name and description    -------------------------

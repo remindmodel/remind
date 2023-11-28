@@ -18,7 +18,8 @@ vm_costTeCapital.fx(t,regi,teNoLearn)     = pm_inco0_t(t,regi,teNoLearn);
 *** These lower bounds are set so low that they do not restrict the results
 *** ----------------------------------------------------------------------------------------------------------------------------------------
 
-*** CB 20120402 Lower limit on all P2SE technologies capacities to 100 kW of all technologies and all time steps
+*' @description{extrapage: "Model Assumptions"}
+*' Lower limit on all P2SE technologies capacities to 100 kW of all technologies and all time steps
 loop(pe2se(enty,enty2,te)$((not sameas(te,"biotr"))  AND (not sameas(te,"biodiesel")) AND (not sameas(te,"bioeths")) AND (not sameas(te,"gasftcrec")) AND (not sameas(te,"gasftrec"))
 AND (not sameas(te,"tnrs"))),
   vm_cap.lo(t,regi,te,"1")$(t.val gt 2026 AND t.val le 2070) = 1e-7;
@@ -28,12 +29,12 @@ AND (not sameas(te,"tnrs"))),
 );
 
 
-*** RP 20160405 make sure that the model also sees the se2se technologies (seel <--> seh2)
+*' Make sure that the model also sees the se2se technologies (seel <--> seh2)
 loop(se2se(enty,enty2,te),
   vm_cap.lo(t,regi,te,"1")$(t.val gt 2025) = 1e-7;
 );
 
-*RP* Lower bound of 10 kW on each of the different grades for renewables with multiple resource grades
+*' Lower bound of 10 kW on each of the different grades for renewables with multiple resource grades
 loop(regi,
   loop(teRe2rlfDetail(te,rlf),
     if( (pm_dataren(regi,"maxprod",rlf,te) gt 0),
@@ -45,17 +46,15 @@ loop(regi,
   );
 );
 
-*cb* make sure no grades > 9 are used. Only cosmetic to avoid entries in lst file
+*' Make sure no grades > 9 are used. Only cosmetic to avoid entries in lst file
 vm_capDistr.fx(t,regi,te,rlf)$(rlf.val gt 9) = 0;
 
-
-
-*RP* no battery storage in 2010:
+*' No battery storage in 2010:
 vm_cap.up("2010",regi,teStor,"1") = 0;
 
-*** --------------------------------------------------------------------------------------------------------------------------------
-*** completely switching off technologies that are not used in the current version of REMIND, although their parameters are declared:
-*** --------------------------------------------------------------------------------------------------------------------------------
+*' --------------------------------------------------------------------------------------------------------------------------------
+*' completely switching off technologies that are not used in the current version of REMIND, although their parameters are declared:
+*' --------------------------------------------------------------------------------------------------------------------------------
 vm_cap.fx(t,regi,"solhe",rlf)     = 0;
 vm_deltaCap.fx(t,regi,"solhe",rlf) = 0;
 
@@ -67,6 +66,8 @@ vm_deltaCap.fx(t,regi,"pcc",rlf) = 0;
 
 vm_cap.fx(t,regi,"pco",rlf)     = 0;
 vm_deltaCap.fx(t,regi,"pco",rlf) = 0;
+
+*' @stop
 
 *** -----------------------------------------------------------------------------------------------------------------
 *** Traditional biomass use is phased out on an exogeneous time path
@@ -107,7 +108,7 @@ $if %cm_GDPscen% == "gdp_SSP5" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020
 *** ------------------------------------------------------------------------------------------
 
 if ( c_ccsinjecratescen eq 0, !!no carbon sequestration at all
-		vm_co2CCS.fx(t,regi_capturescen,"cco2","ico2","ccsinje","1") =0;
+    vm_co2CCS.fx(t,regi_capturescen,"cco2","ico2","ccsinje","1") =0;
 );
 
 *** ------------------------------------------------------------------------------------------
