@@ -53,7 +53,6 @@ vm_capDistr.fx(t,regi,te,rlf)$(rlf.val gt 9) = 0;
 *' No battery storage in 2010:
 vm_cap.up("2010",regi,teStor,"1") = 0;
 
-*' --------------------------------------------------------------------------------------------------------------------------------
 *' completely switching off technologies that are not used in the current version of REMIND, although their parameters are declared:
 *' --------------------------------------------------------------------------------------------------------------------------------
 
