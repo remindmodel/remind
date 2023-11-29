@@ -2,7 +2,7 @@
 $ontext
 IMPORTANT: all costs are now given in $2015! As long as the model runs in $2005, the values need to be converted in datainput.gms
 tech_stat   technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'
-inco0       Initial investment costs given in $[2015] / kW[output] capacity; for dac/bfccs: $[2015] / (tC[captured]/a)
+inco0       Initial investment costs given in $[2015] / kW[output] capacity; for dac/prc cc: $[2015] / (tC[captured]/a); for other indutry prc: $[2015]/(t[output]/a)
 constrTme   Construction time in years, needed to calculate turn-key cost premium compared to overnight costs
 mix0        Fraction of output that is produced by this technology in 2005. This value can be overwritten in the calibration process; also, it often does not add up to 1.
 eta         Conversion efficieny, i.e. energy output divided by energy input (for all but nuclear plants, there it is TW energy output over MT Uranium input)
@@ -178,18 +178,19 @@ ccap0                         0.0008
 learn                           0.15
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+!! take inco0 times 0.08 to get $/t
 +                     bf         bof         idr         eaf
 tech_stat
-inco0              500.0       100.0       700.0       200.0
+inco0              500.0       100.0       350.0       450.0
 mix0                 1.0         1.0         0.0         1.0
 eta                 1.00        1.00        1.00        1.00
-omf                  0.1         0.1         0.1        0.05
+omf                 0.06        0.06        0.06        0.06
 omv                    0           0           0           0
 lifetime              20          20          20          20
 
 +                   bfcc       idrcc
-inco0                100         100
-omf                 0.33        0.33
+inco0                900         900
+omf                 0.04        0.04
 omv                   20          20
 lifetime              20          20
 $endif.process_based_steel
@@ -228,7 +229,7 @@ cost parameterization:
 Using DOE report in 2022 for newer cost (Clara and Chris)
 "COST OF CAPTURING CO2 FROM INDUSTRIAL SOURCES" SYDNEY HUGHES, ALEXANDER ZOELLE
 Using table ES-2 steel and iron retrofit capital cost, omf, omv (not fuel cost)
-inco0=27*(44/12)
+inco0=27€/tCO2 -> to €/tC *(44/12) -> to €/(tC/a) with discount -> *12 ~ 1200; reduce slightly, since retrofit is pessimistic
 omv=5.5*(44/12)
 Assume lifetime is 20 years to align with non-CC technologies
 

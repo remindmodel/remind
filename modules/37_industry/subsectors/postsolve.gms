@@ -129,7 +129,7 @@ loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc)$(
                           tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)),
   o37_relativeOutflow(ttot,regi,teCCPrc,opmoCCPrc)
     = p37_captureRate(teCCPrc,opmoCCPrc)
-      sum(entyFe,
+    * sum(entyFe,
         p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
         *
         sum(se2fe(entySEfos,entyFE,te),

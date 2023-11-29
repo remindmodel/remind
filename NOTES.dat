@@ -1,14 +1,9 @@
-GENERAL TO DO
 
-- test different branches with PBS = off
-- further reporting: prices & LCOP
-- specific energy demand historic
-- verify techno-economic input
-- look through other TO DO's
-- re-calibrate 
-- investigate behaviour (penny-switching, choice of technologies) under different assumptions
-
-- develop research questions & narrative for IAMC
+Differences SlowCCS: 
+injratescen = 2
+bound to 0.1
+double storage cost
+adj: half seed, quadruple coeff
 
 -------------------------------------
 NOTES ON CES TREE

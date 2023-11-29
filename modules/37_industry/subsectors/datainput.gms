@@ -62,7 +62,7 @@ Parameters
 
   p37_captureRate(all_te,opmoPrc)
   /
-    bfcc . (standard)   0.8                                                    !! This is relative to all emissions at the integrated steel plant, but does not take coal mining emissions into account, as they are accounted for elsewhere in the model.
+    bfcc . (standard)   0.73                                                   !! This is relative to all emissions at the integrated steel plant, but does not take coal mining emissions into account, as they are accounted for elsewhere in the model.
     idrcc . (ng)        0.8
   /
 
