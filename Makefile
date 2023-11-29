@@ -1,12 +1,17 @@
-.PHONY: help docs update-renv update-renv-all archive-renv restore-renv check check-fix test test-coupled test-full
+.PHONY: help docs update-renv update-renv-all archive-renv restore-renv check \
+	check-fix test test-coupled test-full set-local-calibration
 .DEFAULT_GOAL := help
 
 # extracts the help text and formats it nicely
-HELP_PARSING = 'm <- readLines("Makefile");\
-				m <- grep("\#\#", m, value=TRUE);\
-				command <- sub("^([^ ]*) *\#\#(.*)", "\\1", m);\
-				help <- sub("^([^ ]*) *\#\#(.*)", "\\2", m);\
-				cat(sprintf("%-18s%s", command, help), sep="\n")'
+HELP_PARSING = 'm <- grep("\#\#", readLines("Makefile"), value = TRUE);\
+                parse <- "^([^[[:space:]]*)[[:space:]]*\#\#[[:space:]]*(.*)";\
+                command <- sub(parse, "\\1", m, perl = TRUE);\
+                help <- sub(parse, "\\2",  m, perl = TRUE);\
+                i <- grep("^$$", command, invert = TRUE)[-1];\
+                command[i] <- paste0("\n", command[i]);\
+                help[i] <- paste0(" ", help[i]);\
+                cat(sprintf("%-*s%s", max(nchar(command)), command, help),\
+                    sep = "\n")'
 
 help:            ## Show this help.
 	@Rscript -e $(HELP_PARSING)
@@ -82,3 +87,7 @@ test-full:       ## Run all tests, including coupling tests and a default
 test-validation: ## Run validation tests, requires a full set of runs in the output folder
 	$(info Run validation tests, requires a full set of runs in the output folder)
 	@TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat/validation")'	
+
+set-local-calibration:		## set up local calibration results directory
+	@./scripts/utils/set-local-calibration.sh
+	$(info use `collect_calibration` script in calibration_results/ directory )
