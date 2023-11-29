@@ -114,10 +114,12 @@ if ( c_ccsinjecratescen eq 0, !!no carbon sequestration at all
 
 *' @code{extrapage: "00_model_assumptions"}
 
-*' ------------------------------------------------------------------------------------------
-*' implement switch for scenarios with different carbon capture assumptions::
-*' ------------------------------------------------------------------------------------------
-
+***------------------------------------------------------------------------------------------
+*' #### implement switch for scenarios with different carbon capture assumptions:
+*** ------------------------------------------------------------------------------------------
+*'
+*' carbon capture bounds
+*'
 if (cm_ccapturescen eq 2,  !! no carbon capture at all
   vm_cap.fx(t,regi_capturescen,"ngccc",rlf)        = 0;
   vm_cap.fx(t,regi_capturescen,"ccsinje",rlf)      = 0;
@@ -146,21 +148,23 @@ elseif (cm_ccapturescen eq 4), !! no carbon capture in the electricity sector
 );
 
 *' switching technologies off that produce liquids from lignocellulosic biomass
+*'
 if (c_bioliqscen eq 0, !! no bioliquids technologies
   vm_deltaCap.up(t,regi,"bioftrec",rlf)$(t.val gt 2005)    = 1.0e-6;
   vm_deltaCap.up(t,regi,"bioftcrec",rlf)$(t.val gt 2005)   = 1.0e-6;
   vm_deltaCap.up(t,regi,"bioethl",rlf)$(t.val gt 2005)     = 1.0e-6;
-*  vm_cap.fx(t,regi,"bioftcrec",rlf)    = 0;
-*  vm_cap.fx(t,regi,"bioftrec",rlf)     = 0;
-*  vm_cap.fx(t,regi,"bioethl",rlf)      = 0;
+***  vm_cap.fx(t,regi,"bioftcrec",rlf)    = 0;
+***  vm_cap.fx(t,regi,"bioftrec",rlf)     = 0;
+***  vm_cap.fx(t,regi,"bioethl",rlf)      = 0;
 );
 
 *' switching technologies off that produce hydrogen from lignocellulosic biomass
+*'
 if (c_bioh2scen eq 0, !! no bioh2 technologies
   vm_deltaCap.up(t,regi,"bioh2",rlf)$(t.val gt 2005)       = 1.0e-6;
   vm_deltaCap.up(t,regi,"bioh2c",rlf)$(t.val gt 2005)      = 1.0e-6;
-*  vm_cap.fx(t,regi,"bioh2c",rlf)       = 0;
-*  vm_cap.fx(t,regi,"bioh2",rlf)       = 0;
+***  vm_cap.fx(t,regi,"bioh2c",rlf)       = 0;
+***  vm_cap.fx(t,regi,"bioh2",rlf)       = 0;
 );
 *' @stop
 
