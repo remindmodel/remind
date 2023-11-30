@@ -1505,10 +1505,6 @@ $setglobal cm_Industry_CCS_markup  off !! def = off
 ***   def <- "off" = use default floor cost for renewables.
 ***   or list of techs with respective value to be added to the renewables floor cost in Europe
 $setglobal cm_renewables_floor_cost  off  !! def = off
-*** cm_DAC_eff "multiplicative factor for energy demand per unit carbon captured with DAC"
-***   def <- "off" = use default p33_dac_fedem value.
-***   or list of stationary energy carriers with respective value to be multiplied to p33_dac_fedem
-$setglobal cm_DAC_eff  off  !! def = off
 *** cm_sehe_upper "secondary energy district heating and heat pumps upper bound"
 ***   def <- "off" = no additional limit for district heating and heat pumps.
 ***   or number (ex. 2), district heating and heat pumps are limited to an upper bound of 2 times the 2020 model values.

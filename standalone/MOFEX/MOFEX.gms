@@ -490,8 +490,6 @@ $setglobal cm_CCS_markup  off !! def = off
 $setglobal cm_Industry_CCS_markup  off !! def = off
 $setglobal cm_renewables_floor_cost  off !! def = off 
 
-$setglobal cm_DAC_eff  off !! def = off 
-
 $setglobal cm_sehe_upper  off !! def = off 
 
 $setglobal cm_feShareLimits  off  !! def = off
