@@ -17,6 +17,8 @@
 *' @authors Jessica Strefler, Katarzyna Kowalczyk, Anne Merfort
 
 *###################### R SECTION START (MODULETYPES) ##########################
+$Ifi "%CDR%" == "all" $include "./modules/33_CDR/all/realization.gms"
 $Ifi "%CDR%" == "portfolio" $include "./modules/33_CDR/portfolio/realization.gms"
+$Ifi "%CDR%" == "weathering" $include "./modules/33_CDR/weathering/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
 *** EOF ./modules/33_CDR/module.gms
