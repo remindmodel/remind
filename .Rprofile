@@ -114,4 +114,14 @@ if (use_cluster_defaults &&
     "/p/projects/remind/inputdata/CESparametersAndGDX" = NULL))
 }
 
+# Include local calibration results, if they exist, from either the main
+# directory or output directories.
+path <- file.path(
+    c('.', file.path('..', '..')),
+    'calibration_results', '.Rprofile_calibration_results')
+
+path <- head(path[file.exists(path)], 1)
+
+if (!rlang::is_empty(path))
+    source(path)
 })

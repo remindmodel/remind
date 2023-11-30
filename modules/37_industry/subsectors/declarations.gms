@@ -34,9 +34,12 @@ $endif.process_based_steel
   o37_shIndFE(ttot,all_regi,all_enty,secInd37,all_emiMkt)                "share of subsector in FE industry energy carriers and emissions markets"
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)   "FE demand per industry subsector"
 
-$ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
-  p37_CESMkup_input(all_in)  "markup cost parameter read in from config for CES levels in industry to influence demand-side cost and efficiencies in CES tree [trUSD/CES input]" / %cm_CESMkup_ind% /
-$endIf.CESMkup
+  p37_CESMkup_input(all_in)  "markup cost parameter read in from config for CES levels in industry to influence demand-side cost and efficiencies in CES tree [trUSD/CES input]"
+  /
+$ifthen.CESMkup "%cm_CESMkup_ind%" == "manual" 
+    %cm_CESMkup_ind_data%
+$endif.CESMkup
+  /
 
 $ifthen.sec_steel_scen NOT "%cm_steel_secondary_max_share_scenario%" == "off"   !! cm_steel_secondary_max_share_scenario
   p37_steel_secondary_max_share_scenario(tall,all_regi)   "scenario limits on share of secondary steel production"

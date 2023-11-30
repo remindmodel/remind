@@ -23,7 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - let preempted and resumed runs start their subsequent runs
     [[#1414](https://github.com/remindmodel/remind/pull/1414)]
 - correctly report `Tech|*|Capital Costs|w/ Adj Costs` for t < cm_startyear
-    [[#1429](https://github.com/remindmodel/remind/pull/1429)]
+    [[#1429](https://github.com/remindmodel/remind/pull/1429), [#1476](https://github.com/remindmodel/remind/pull/1476)]
 
 ## [3.2.1] - 2023-07-13 (incomplete)
 
