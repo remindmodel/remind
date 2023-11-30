@@ -30,18 +30,17 @@ Parameters
   o37_cementProcessEmissions(ttot,all_regi,all_enty)     "cement process emissions [GtC/a]"
   o37_CESderivatives(ttot,all_regi,all_in,all_in)        "derivatives of production CES function"
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)  "FE demand per industry subsector, FE carrier, SE carrier, emissions market"
-  o37_demFeIndSub_SecCC(ttot,all_regi,secInd37)           "FE per subsector whose emissions can be captured, helper parameter for calculation of industry captured CO2"
 
   !! empty parameters from subsectors
   pm_energy_limit(all_in)    ""   / /
-;
 
-
-$ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
-Parameter
-	p37_CESMkup_input(all_in)  "markup cost parameter read in from config for CES levels in industry to influence demand-side cost and efficiencies in CES tree [trUSD/CES input]" / %cm_CESMkup_ind% /
+  p37_CESMkup_input(all_in)  "markup cost parameter read in from config for CES levels in industry to influence demand-side cost and efficiencies in CES tree [trUSD/CES input]"
+  /
+$ifthen.CESMkup "%cm_CESMkup_ind%" == "manual"
+    %cm_CESMkup_ind_data% 
+$endif.CESMkup
+  /
 ;
-$endIf.CESMkup
 
 Variables
   v37_costExponent(ttot,all_regi)                  "logistic function exponent for additional hydrogen low penetration cost"

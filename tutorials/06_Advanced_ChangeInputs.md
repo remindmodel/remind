@@ -20,7 +20,7 @@ The data REMIND needs to run consists of three main parts:
 
 The input data for REMIND are generated from original sources (e.g. IEA, GTAP, PWT...) using the [madrat](https://github.com/pik-piam/madrat) framework.
 Within the madrat framework, the [mrremind](https://github.com/pik-piam/mrremind) package ties all REMIND input data together.
-For further information how this works and how to add new input data, the [madrat vignette](https://pik-piam.r-universe.dev/articles/madrat/madrat.html) is a good start.
+For further information on how this works and how to add new input data, the [madrat vignette](https://pik-piam.r-universe.dev/articles/madrat/madrat.html) is a good start.
 
 Within REMIND, the specific set of input files to use is specified in the config file `config/default.cfg`.
 The regional resolution of the run is set by 
@@ -32,7 +32,7 @@ Based on the regional resolution and the input data revision
 ```R
 cfg$inputRevision
 ```
-the name of the needed input data is constructed. It is checked whether those input data are already available. If not they are automatically downloaded and distributed. For details where to get the input data if you are not running the model on the PIK cluster, see [02a_RunningREMINDLocally.md](https://github.com/remindmodel/remind/blob/develop/tutorials/02a_RunningREMINDLocally.md).
+the name of the needed input data is constructed. It is checked whether those input data are already available. If not, they are automatically downloaded and distributed. For details on where to get the input data if you are not running the model on the PIK cluster, see [02a_RunningREMINDLocally.md](https://github.com/remindmodel/remind/blob/develop/tutorials/02a_RunningREMINDLocally.md).
 
 The prepared input data is a compressed tar archive file `.tgz` and can be found on the PIK cluster at `/p/projects/rd3mod/inputdata/output`.
 If you want to peek inside the archive to debug something or out of curiosity you can use the software [7-Zip](https://www.7-zip.org/), or the `tar` command in the terminal.
@@ -41,9 +41,9 @@ If you want to peek inside the archive to debug something or out of curiosity yo
 
 1. Run the helper tool `lastrev` (`/p/projects/rd3mod/tools/lastrev`) to get a list of the last five `revX.XXX*_remind.tgz` items in the default madrat output directory. Alternatively, you can also check by hand in the `/p/projects/rd3mod/inputdata/output` folder on the PIK cluster.
 
-2. Clone the [remind-preprocessing repo](https://github.com/remindmodel/pre-processing) to your tmp folder on the cluster and edit its `start.R` file by inserting the next revision number. Use at least 4 decimal places for development/testing. If an old revision number is used, the input data will not be recalculated. Input data for a new regional resolution will be recalculated based on the existing cache information in the PUC file.
+2. Clone or pull the latest version of the [remind-preprocessing repo](https://github.com/remindmodel/pre-processing) to your tmp folder on the cluster and edit its `config/default.cfg` file by inserting the next revision number. Use the additional argument `dev` for testing. If an old revision number is used, the input data will not be recalculated. Input data for a new regional resolution will be recalculated based on the existing cache information in the PUC file.
 
-3. Start the script with `sbatch slurm_start.sh`.
+3. Start the script with `Rscript submit_preprocessing.R`.
 The .log file lists the progress and potential errors. This process might take a while (currently >8 hours).
 
 4. If the process terminates without errors, do a test run with the new input data. To do this, clone the REMIND repo and update the data input version `cfg$revision` in `config/default.cfg` using your recently created data revision number file and run one scenario (e.g. SSP2EU-Base).
@@ -71,7 +71,7 @@ If you are developing in R using VS Code, you can connect to the cluster via ssh
 
 ### Get an up-to-date cache on the cluster for local development
 
-If you want to develop a madrat package locally, you might want to work with an up-to-date cache to avoid gathering all source data locally and re-running lengthy calculations on your own computer. The default cache folder on the cluster is too large for this purpose, but there are two ways to creat your own cache and download it. 
+If you want to develop a madrat package locally, you might want to work with an up-to-date cache to avoid gathering all source data locally and re-running lengthy calculations on your own computer. The default cache folder on the cluster is too large for this purpose, but there are two ways to create your own cache and download it. 
 
 **Option 1**: You can use the tool `idrcp` to achieve this. The tool extracts all cache files either written to or read from listed in the logfile of a REMIND input data revision and stores them in an archive you can download.
 
@@ -80,13 +80,13 @@ You need to pass the path to a input data revision, e.g. `idrcp /p/projects/rd3m
 Unfortunately, this does not work for archives that were created using a [portable unaggregated collection (puc)](https://pik-piam.r-universe.dev/articles/madrat/madrat-puc.html). If the diagnostics.log file has an entry looking like this under "Current madrat configuration", the archive won't be suitable for the script: `cachefolder -> "/p/tmp/benke/.Rtmp/RtmpU9rYHO/file25418fd5e15/puc"`
 
 
-**Option 2**: If you need a cache file for every single intermediate step executed during input data generation, you might want to generate your own cache from scratch. To do so, follow the steps 2) and 3) under [How to update input data](#how-to-update-input-data), but make further adjustments to the `start.R` script:
+**Option 2**: If you need a cache file for every single intermediate step executed during input data generation, you might want to generate your own cache from scratch. To do so, follow the steps 2) and 3) under [How to update input data](#how-to-update-input-data), but make further adjustments in`config/default.cfg`:
 
-- Make sure your own madrat settings are used: `cachetype <- "def"`
-- Adjust your madrat settings to read from / write to your own cache folder instead of the shared default cache. If you are not using an empty folder, make sure to disable forcing cache use: `setConfig(forcecache = F, cachefolder = "[PATH/TO/YOUR/CACHE]")`
-- Set a development suffix to distinguish your own input data version from other versions: `dev <- "my-personal-cache"` (optional)
+- Make sure your own madrat settings are used and caching is not forced: `cfg$cachetype <- "def"` (should be default already) 
+- Read from / write to your own cache folder instead of the shared default cache. `cfg$cachefolder <- "[PATH/TO/YOUR/CACHE]"`
+- Set a development suffix in `config/default.cfg` to distinguish your own input data version from other versions: `dev <- "my-personal-cache"` (optional)
 
-After input data generation succeeded, you can download your cache folder from the path you set in your madrat config and use it as your local cache. 
+After input data generation succeeded, you can download your cache folder from the path you set in the config file and use it as your local cache. 
 
 ### Development on the cluster using RStudio
 

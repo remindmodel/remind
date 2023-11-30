@@ -15,14 +15,14 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
     scrap               "Steel scrap"
     ironore             "Iron ore"
   /
-  
+
   teMats(all_te)        "Technologies used in material-flow model"
   /
     idr                 "Iron direct reduction"
     eaf                 "Electric-arc furnace"
     bfbof               "Blast furnace/basic-oxygen furnace"
   /
-  
+
   opModes               "Operation modes for technologies in material-flow model"
   /
     ng                  "Direct reduction using natural gas"
@@ -30,21 +30,21 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
     pri                 "Primary production of steel (based on iron ore or DRI)"
     sec                 "Secondary production of steel (based on scrap)"
   /
-  
+
   teMats2matsIn(teMats,mats)    "Mapping of technologies onto input materials"
   /
     idr . ironore
     eaf . (dri,scrap)
     bfbof . (ironore,scrap)
   /
-  
+
   teMats2opModes(teMats,opModes)    "Mapping of technologies onto available operation modes"
   /
     idr . (ng,h2)
     eaf . (pri,sec)
     bfbof . (pri,sec)
   /
-  
+
   matsOut2teMats(mats,teMats)       "Mapping of output materials onto technologies producing these"
   /
     dri . idr

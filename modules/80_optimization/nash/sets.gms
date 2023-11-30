@@ -11,7 +11,7 @@ learnte_dyn80(all_te)   "learnte for nash"
 /
         wind        "wind onshore power converters"
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-	windoff     "wind offshore power converters"
+        windoff     "wind offshore power converters"
 $ENDIF.WindOff
         spv         "solar photovoltaic" 
         csp         "concentrating solar power"
@@ -30,9 +30,9 @@ solveinfo80	"Nash solution stats"
 solvestat, modelstat, resusd, objval
 /
 
-convMessage80   "contains possible reasons for failed convergence"
+convMessage80   "contains all convergence criteria"
 /
-infes,surplus,nonopt,taxconv,anticip,target,regiTarget,implicitEnergyTarget,cm_implicitPriceTarget,cm_implicitPePriceTarget
+infes,surplus,nonopt,taxconv,anticip,target,regiTarget,implicitEnergyTarget,cm_implicitPriceTarget,cm_implicitPePriceTarget,damage,DevPriceAnticip
 /
 nash_sol_itr80  "nash iterations"
 /

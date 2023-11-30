@@ -46,9 +46,10 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
     if (is.null(renv::project())) {
       warning("No active renv project found, not using renv.")
     } else {
-      # we only want to run renv checks/updates in the first run in a cascade, which can be
-      # detected like this
-      firstRunInCascade <- normalizePath(renv::project()) == normalizePath(".")
+      # we only want to run renv checks/updates in the first run in a cascade:
+      # cfg$renvLockFromPrecedingRun is only NULL for the first run in a cascade.
+      # For a subsequent run it has been set by the parent run in run.R (standalone) or start_coupled.R (coupled).
+      firstRunInCascade <- is.null(cfg$renvLockFromPrecedingRun)
       if (firstRunInCascade) {
         if (getOption("autoRenvUpdates", FALSE)) {
           installedUpdates <- piamenv::updateRenv()
@@ -75,8 +76,8 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
         message("done.")
       } else {
         # a run renv is loaded, we are presumably starting new run in a cascade
-        message("Copying lockfile into '", cfg$results_folder, "'")
-        file.copy(renv::paths$lockfile(), file.path(cfg$results_folder, "_renv.lock"))
+        message("   Copying lockfile '",cfg$renvLockFromPrecedingRun,"' into '", cfg$results_folder, "'")
+        file.copy(cfg$renvLockFromPrecedingRun, file.path(cfg$results_folder, "_renv.lock"))
       }
 
 
@@ -130,7 +131,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
   } else {
     exitCode <- system(paste0("sbatch --job-name=",
                               cfg$title,
-                              " --output=log.txt",
+                              " --output=log.txt --open-mode=append", # append for requeued jobs
                               " --mail-type=END",
                               " --comment=REMIND",
                               " --wrap=\"Rscript prepareAndRun.R \" ",

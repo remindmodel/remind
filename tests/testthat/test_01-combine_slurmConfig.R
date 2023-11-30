@@ -6,8 +6,13 @@
 # |  Contact: remind@pik-potsdam.de
 test_that("combine_slurmConfig works", {
   teststring <- "--qos=priority --time=03:30:00"
+  expect_identical(combine_slurmConfig(teststring, teststring), teststring)
+  expect_identical(combine_slurmConfig(teststring, NULL), teststring)
+  expect_identical(combine_slurmConfig(NULL, NULL), "")
+  expect_identical(combine_slurmConfig(teststring, ""), teststring)
   expect_identical(combine_slurmConfig(teststring, "--qos=standby"), "--qos=standby --time=03:30:00")
   expect_identical(combine_slurmConfig(teststring, "--bla=blub"), paste("--bla=blub", teststring))
+  expect_identical(combine_slurmConfig(teststring, "--wait"), paste("--wait", teststring))
   teststring <- "--qos=priority --wait"
   expect_identical(combine_slurmConfig(teststring, "--qos=standby"), "--qos=standby --wait")
 })

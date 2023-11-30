@@ -24,7 +24,10 @@ Parameter
   p05_aux_cap_distr(all_regi,all_te,rlf)             "auxiliary calculation parameter for the calculation of initial capacities, distributed to grades"
   p05_aux_cap(all_regi,all_te)                       "auxiliary calculation parameter for the calculation of initial capacities"
   pm_aux_capLowerLimit(all_te,all_regi,tall)         "auxiliary calculation parameter for the calculation of the lowest possible capacities in the first time steps"
-  p05_aux_calccapLowerLimitSwitch(tall)              "auxiliary calculation parameter to allow the calculation of the lowest possible capacities in the first time steps"    
+  p05_aux_calccapLowerLimitSwitch(tall)              "auxiliary calculation parameter to allow the calculation of the lowest possible capacities in the first time steps"
+$ifThen %cm_techcosts% == "GLO"
+  p05_inco0_t_ref(ttot,all_regi,all_te)              "auxiliary parameter to load pm_inco0_t from reference run if cm_startyear > 2005 and initialCap is therefore not run"
+$endIf
 ;
 
 Variables

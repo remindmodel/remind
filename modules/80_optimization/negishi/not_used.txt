@@ -11,6 +11,12 @@ cm_keep_presolve_gdxes,            switch,      not needed
 cm_nash_autoconverge,              switch,      ???
 cm_solver_try_max,                 switch,      not needed
 cm_TaxConvCheck,                   variable,    ??
+cm_emiMktTarget_tolerance,         switch,      not needed
+cm_implicitQttyTarget_tolerance,   switch,      not needed
+cm_sccConvergence,		   switch,      not needed
+cm_tempConvergence,		   switch,      not needed
+pm_sccConvergenceMaxDeviation,	   parameter,   ???
+pm_gmt_conv,			   parameter,   ???
 pm_budgetCO2eq,                    parameter,   ???
 pm_capCum0,                        parameter,   ???
 pm_cesdata,                        parameter,   ???
@@ -60,3 +66,4 @@ vm_perm,                           variable,    ???
 vm_prodPe,                         variable,    ??
 sm_CES_calibration_iteration,      scalar,      only needed during calibration which is not support in negishi mode
 cm_maxFadeOutPriceAnticip,         parameter,   ???
+

@@ -33,6 +33,64 @@ loop(ttot$(ttot.val ge 2005),
       ); 
 ); 
 
+*' calculate both the size of the price change due to the price change anticipation effect in percent, as well as  
+*' the deviation of the yearly monetary export/import expenditure due to the price change anticipation effect: 
+loop(ttot$(ttot.val ge 2005),
+  loop(trade$(NOT tradeSe(trade)),
+    loop(regi,
+      p80_PriceChangePriceAnticipReg(ttot,trade,regi) = 100 *
+        ( sm_fadeoutPriceAnticip*p80_etaXp(trade)
+          * ( (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport.l(ttot,regi,trade) - vm_Mport.l(ttot,regi,trade))
+              - p80_taxrev0(ttot,regi)$(ttot.val gt 2005)$(sameas(trade,"good")) + vm_taxrev.l(ttot,regi)$(ttot.val gt 2005)$(sameas(trade,"good"))
+		        )
+          / (p80_normalize0(ttot,regi,trade) + sm_eps)
+        )
+      ;
+
+      p80_DevPriceAnticipReg(ttot,trade,regi) = 
+        ( vm_Xport.l(ttot,regi,trade) - vm_Mport.l(ttot,regi,trade) ) 
+        * pm_pvp(ttot,trade) / pm_pvp(ttot,"good")
+        * p80_PriceChangePriceAnticipReg(ttot,trade,regi)
+      ;
+    );
+  p80_DevPriceAnticipGlob(ttot,trade) = sum(regi, abs( p80_DevPriceAnticipReg(ttot,trade,regi) ) );  
+  );
+p80_DevPriceAnticipGlobAll(ttot) = sum(trade$(NOT tradeSe(trade)), p80_DevPriceAnticipGlob(ttot,trade));
+);
+
+*' calculate maximum of p80_DevPriceAnticipGlob
+p80_DevPriceAnticipGlobMax(ttot,trade)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = 
+  smax(ttot2$(ttot2.val ge cm_startyear AND ttot2.val le ttot.val), p80_DevPriceAnticipGlob(ttot2,trade) )
+;
+*' calculate maximum of p80_DevPriceAnticipGlobAll
+p80_DevPriceAnticipGlobAllMax(ttot)$((ttot.val ge cm_startyear)) = 
+  smax(ttot2$(ttot2.val ge cm_startyear AND ttot2.val le ttot.val), p80_DevPriceAnticipGlobAll(ttot2) )
+;
+
+p80_DevPriceAnticipGlobIter(ttot,trade,iteration)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = p80_DevPriceAnticipGlob(ttot,trade);
+p80_DevPriceAnticipGlobMax2100Iter(trade,iteration)$(NOT tradeSe(trade)) = p80_DevPriceAnticipGlobMax("2100",trade);
+p80_DevPriceAnticipGlobAllMax2100Iter(iteration) = p80_DevPriceAnticipGlobAllMax("2100");
+
+
+*' For display of price change p80_PriceChangePriceAnticipReg, round to 0.1% 
+*o80_PriceChangePriceAnticipReg(ttot,trade,regi) = p80_PriceChangePriceAnticipReg(ttot,trade,regi);
+o80_PriceChangePriceAnticipReg(ttot,trade,regi) = round(p80_PriceChangePriceAnticipReg(ttot,trade,regi),1);
+
+*' determine largest price change in p80_PriceChangePriceAnticipReg
+o80_PriceChangePriceAnticipRegMaxIter("2100",iteration) = smax( (ttot,trade,regi)$(ttot.val le 2100) , abs(o80_PriceChangePriceAnticipReg(ttot,trade,regi) ) );
+o80_PriceChangePriceAnticipRegMaxIter("2150",iteration) = smax( (ttot,trade,regi)$(ttot.val ge 2110) , abs(o80_PriceChangePriceAnticipReg(ttot,trade,regi) ) );
+
+display  
+  p80_DevPriceAnticipGlob, 
+  p80_DevPriceAnticipGlobMax, 
+  p80_DevPriceAnticipGlobAllMax, 
+  p80_DevPriceAnticipGlobMax2100Iter,
+  p80_DevPriceAnticipGlobAllMax2100Iter,
+  p80_DevPriceAnticipGlobAll,  
+  o80_PriceChangePriceAnticipReg
+  o80_PriceChangePriceAnticipRegMaxIter
+; 
+
 ***calculate aggregated intertemporal market volumes - used in calculation of price corrections later on  
 loop(trade$(NOT tradeSe(trade)),
        p80_normalizeLT(trade) = sum(ttot$(ttot.val ge 2005), sum(regi, pm_pvp(ttot,trade) * pm_ts(ttot) *  p80_normalize0(ttot,regi,trade) ));
@@ -84,24 +142,24 @@ if(iteration.val > 2,
 if(iteration.val > 15,
   loop(ttot$(ttot.val ge 2005),
     loop(trade$(tradePe(trade) OR sameas(trade,"good")),
-	  if( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) , 
+      if( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) , 
         if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 4))),      
                   p80_surplus(ttot,trade,iteration2)          !! this sum should ensure the additional price adjustment only happens if the surplus was always off the same sign
                 )
               ) ge ( 5 * p80_surplusMaxTolerance(trade) ) ) AND ( o80_trackSurplusSign(ttot,trade,iteration) ge 5 ) , !! check if surplus was out of the target range for 5 consecutive iterations
           p80_etaST_correct(ttot,trade,iteration) = 4 * p80_etaST_correct(ttot,trade,iteration);
           o80_counter_iteration_trade_ttot(ttot,trade,iteration) = 1;
-		  
-		  if(iteration.val gt 20,      !! only start checking if a stronger push is necessary a few iterations later, so that step 1 could potentially show an effect
-		    if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 9))),
+          
+          if(iteration.val gt 20,      !! only start checking if a stronger push is necessary a few iterations later, so that step 1 could potentially show an effect
+            if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 9))),
                          p80_surplus(ttot,trade,iteration2)
                        )
                   ) ge ( 10 * p80_surplusMaxTolerance(trade)) ) AND ( o80_trackSurplusSign(ttot,trade,iteration) ge 10 ), !! check if surplus was out of the target range for 10 consecutive iterations
               p80_etaST_correct(ttot,trade,iteration) = 2 * p80_etaST_correct(ttot,trade,iteration);
               o80_counter_iteration_trade_ttot(ttot,trade,iteration) = 2;
-		      
-			  if(iteration.val gt 25,   !! only start checking if a stronger push is necessary a few iterations later, so that step 1&2 could potentially show an effect
-		        if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 14))),
+              
+              if(iteration.val gt 25,   !! only start checking if a stronger push is necessary a few iterations later, so that step 1&2 could potentially show an effect
+                if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 14))),
                              p80_surplus(ttot,trade,iteration2)
                            )
                       ) ge ( 15 * p80_surplusMaxTolerance(trade)) ) AND ( o80_trackSurplusSign(ttot,trade,iteration) ge 15 ), !! check if surplus was out of the target range for 15 consecutive iterations
@@ -109,13 +167,13 @@ if(iteration.val > 15,
                   o80_counter_iteration_trade_ttot(ttot,trade,iteration) = 3;
                 );
               );
-			);
+            );
           );
-		);
+        );
       );
-    );
-  );
-);	 
+    ); !! trade
+  ); !! ttot
+); !! iteration>15
 
 
 ***calculate prices for next iteration 
@@ -132,39 +190,36 @@ p80_pvp_itr(ttot,trade,iteration+1)$((ttot.val ge cm_startyear) AND (NOT tradeSe
 *ML* adjustments in case of infeasibilities (increase import)
 loop(trade$(NOT tradeSe(trade)),
     loop(regi,
-	loop(ttot$(ttot.val ge cm_startyear),
-	    pm_pvp(ttot,trade)  = p80_pvp_itr(ttot,trade,iteration+1);
-	    pm_Xport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 1)  = vm_Xport.l(ttot,regi,trade);
-	    p80_Mport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 1) = vm_Mport.l(ttot,regi,trade);
-	    p80_Mport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 0) = 1.2 * vm_Mport.l(ttot,regi,trade);	    
-	);
+    loop(ttot$(ttot.val ge cm_startyear),
+        pm_pvp(ttot,trade)  = p80_pvp_itr(ttot,trade,iteration+1);
+        pm_Xport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 1)  = vm_Xport.l(ttot,regi,trade);
+        p80_Mport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 1) = vm_Mport.l(ttot,regi,trade);
+        p80_Mport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 0) = 1.2 * vm_Mport.l(ttot,regi,trade);	    
+    );
     );
 );
-
-
 
 ***some diagnostic output:
 p80_taxrev_agg(ttot,iteration)$(ttot.val ge 2005) = sum(regi,vm_taxrev.l(ttot,regi));
 
-
 *AJS* calculate maximum residual surplusses on markets
-p80_surplusMax(trade,iteration,ttot)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = smax(ttot2$(ttot2.val ge cm_startyear AND ttot2.val le ttot.val), abs(p80_surplus(ttot2,trade,iteration)));
+p80_surplusMax_iter(trade,iteration,ttot)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = smax(ttot2$(ttot2.val ge cm_startyear AND ttot2.val le ttot.val), abs(p80_surplus(ttot2,trade,iteration)));
 
 ***from this, relative residual surplusses.  
 p80_surplusMaxRel(trade,iteration,ttot)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = 100 * smax(ttot2$(ttot2.val ge cm_startyear AND ttot2.val le ttot.val), abs(p80_surplus(ttot2,trade,iteration)) / sum(regi, p80_normalize0(ttot2,regi,trade)));
 
-p80_surplusMax2100(trade)$(NOT tradeSe(trade)) = p80_surplusMax(trade,iteration,"2100");
+p80_surplusMax2100(trade)$(NOT tradeSe(trade)) = p80_surplusMax_iter(trade,iteration,"2100");
 
 
 ***convergence indicators 
 loop(trade$(NOT tradeSe(trade)),
     p80_defic_trade(trade) = 1/pm_pvp("2005","good") *
-	sum(ttot$(ttot.val ge 2005),   pm_ts(ttot) * (
-	    abs(p80_surplus(ttot,trade,iteration)) * pm_pvp(ttot,trade)
-	    + sum(regi, abs(p80_taxrev0(ttot,regi)) * pm_pvp(ttot,"good"))$(sameas(trade,"good") and (ttot.val ge max(2010,cm_startyear)) )  
-	    + sum(regi, abs(vm_costAdjNash.l(ttot,regi)) * pm_pvp(ttot,"good"))$(sameas(trade,"good") and (ttot.val ge 2005) )  
+    sum(ttot$(ttot.val ge 2005),   pm_ts(ttot) * (
+        abs(p80_surplus(ttot,trade,iteration)) * pm_pvp(ttot,trade)
+        + sum(regi, abs(p80_taxrev0(ttot,regi)) * pm_pvp(ttot,"good"))$(sameas(trade,"good") and (ttot.val ge max(2010,cm_startyear)) )  
+        + sum(regi, abs(vm_costAdjNash.l(ttot,regi)) * pm_pvp(ttot,"good"))$(sameas(trade,"good") and (ttot.val ge 2005) )  
 
-	)
+    )
     );
 );
 p80_defic_sum("1") = 1;
@@ -176,9 +231,9 @@ p80_defic_sum_rel(iteration) =  100 * p80_defic_sum(iteration) / (p80_normalizeL
 ***adjust parameters for next iteration 
 ***Decide on when to fade out price anticipation terms (doing this too early leads to diverging markets)
 ***if markets are reasonably cleared
-if( (smax(tradePe,p80_surplusMax(tradePe,iteration,'2150')) lt (10 * 0.05))   
-    AND ( p80_surplusMax("good",iteration,'2150') lt (10 * 0.1) )            !! 
-    AND ( p80_surplusMax("perm",iteration,'2150') lt (5 * 0.2) )
+if( (smax(tradePe,p80_surplusMax_iter(tradePe,iteration,'2150')) lt (10 * 0.05))   
+    AND ( p80_surplusMax_iter("good",iteration,'2150') lt (10 * 0.1) )            !! 
+    AND ( p80_surplusMax_iter("perm",iteration,'2150') lt (5 * 0.2) )
     AND (s80_fadeoutPriceAnticipStartingPeriod eq 0),                  !! as long as we are not fading out already
      s80_fadeoutPriceAnticipStartingPeriod = iteration.val;
 );
@@ -203,16 +258,16 @@ p80_messageFailedMarket(ttot,all_enty) = NO;
 
 ***criterion ""surplus": are we converged yet?
 loop(trade$(NOT tradeSe(trade)),
- if(p80_surplusMax(trade,iteration,"2100") gt p80_surplusMaxTolerance(trade),
+ if(p80_surplusMax_iter(trade,iteration,"2100") gt p80_surplusMaxTolerance(trade),
      s80_bool=0;                 
      p80_messageShow("surplus") = YES;
       loop(ttot$((ttot.val ge cm_startyear) and (ttot.val le 2100)),
        if( (abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) ),
-	   p80_messageFailedMarket(ttot,trade) = YES;
+       p80_messageFailedMarket(ttot,trade) = YES;
        );
       );
  );
- if(p80_surplusMax(trade,iteration,"2150") gt 10 * p80_surplusMaxTolerance(trade),
+ if(p80_surplusMax_iter(trade,iteration,"2150") gt 10 * p80_surplusMaxTolerance(trade),
      s80_bool=0;
      p80_messageShow("surplus") = YES;
       loop(ttot$((ttot.val ge cm_startyear) and (ttot.val gt 2100)),
@@ -225,60 +280,62 @@ loop(trade$(NOT tradeSe(trade)),
 
 *** critertion "infes": and are all solutions optimal?
 loop(regi,
- if((p80_repy(regi,'modelstat') ne 2) and (p80_repy(regi,'modelstat') ne 7),
-     s80_bool = 0;
-     p80_messageShow("infes") = YES;
-  );
-
+     if((p80_repy(regi,'modelstat') ne 2) and (p80_repy(regi,'modelstat') ne 7),
+         s80_bool = 0;
+         p80_messageShow("infes") = YES;
+     );
 *** critertion "nonopt": The next lines are a workaround for the status 7
 *** problem. If the objective value does not differ too much from the last known
 *** optimal solution, accept this solution as if it were optimal. 
-  if (1 le iteration.val,
-    !! no last iteration if this is the first; NA value in p80_repyLastOptim is
-    !! sticky, so test this separately
-    if (   p80_repy(regi,'modelstat') eq 7
+     p80_convNashObjVal_iter(iteration,regi) = p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval');
+     if (1 le iteration.val,
+        !! no last iteration if this is the first; NA value in p80_repyLastOptim is
+        !! sticky, so test this separately
+        if ( p80_repy(regi,'modelstat') eq 7
            !! The 1E-4 are quite arbitrary. One should do more research on how
-	   !! the solution differs over iteration when status 7 occurs. 
-       AND p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval') lt - 1e-4,
-      s80_bool = 0;
-      p80_messageShow("nonopt") = YES;     
-      display "Not all regions were status 2 in the last iteration. The deviation of the objective function from the last optimal solution is too large to be accepted:";
-      s80_dummy
-      = p80_repy(regi,'objval')
-      - p80_repyLastOptim(regi,'objval');
-      display s80_dummy;
-    );
-  );
-);
+           !! the solution differs over iteration when status 7 occurs. 
+           AND p80_convNashObjVal_iter(iteration,regi) lt - 1e-4,
+           s80_bool = 0;
+           p80_messageShow("nonopt") = YES;     
+           display "Not all regions were status 2 in the last iteration. The deviation of the objective function from the last optimal solution is too large to be accepted:";
+           s80_dummy = p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval');
+           display s80_dummy;
+        );
+     );
+); !!regi
 
 ***additional criterion: are the anticipation terms sufficienctly small?
+p80_fadeoutPriceAnticip_iter(iteration) = sm_fadeoutPriceAnticip;
 if(sm_fadeoutPriceAnticip gt cm_maxFadeOutPriceAnticip, 
   s80_bool = 0;
   p80_messageShow("anticip") = YES;
 );
-**
+*' criterion "Deviation due to price anticipation": are the resulting deviations sufficiently small?
+*' compare to 1/10th of the cutoff for goods imbalance 
+if(p80_DevPriceAnticipGlobAllMax("2100") gt 0.1 * p80_surplusMaxTolerance("good"),
+***    s80_bool=0; !! not yet active as convergence criterion                
+  p80_messageShow("DevPriceAnticip") = YES;
+);
 
 ***additional criterion: did taxes converge? (only checked if cm_TaxConvCheck is 1)
-p80_taxrev_dev(t,regi) = 0;
-if (cm_TaxConvCheck eq 1,
-  loop(regi,
+p80_convNashTaxrev_iter(iteration,t,regi) = 0;
+loop(regi,
     loop(t,
-      if( abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco") gt 1E-4,
-        p80_taxrev_dev(t,regi) = abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco");
-        if (t.val lt 2100,
-          s80_bool = 0;
-          p80_messageShow("taxconv") = YES;
-        );
-      );
+         p80_convNashTaxrev_iter(iteration,t,regi) = vm_taxrev.l(t,regi) / vm_cesIO.l(t,regi,"inco");
+         if (cm_TaxConvCheck eq 1,
+             if( abs(p80_convNashTaxrev_iter(iteration,t,regi)) gt 1E-4,
+                 s80_bool = 0;
+                 p80_messageShow("taxconv") = YES;
+             );
+         );
     );
-  );
 );
 
 *** additional criterion: Were regional climate targets reached? 
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off" 
 loop((ttot,ttot2,ext_regi,emiMktExt)$pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt),
 *** regipol targets must be met within 1% of target deviation, deviation for budget targets is measured relative to target value, while for year targets it is relative to 2015 emissions
-  if( (pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) gt 0.01 OR pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) lt -0.01),
+  if(( abs(pm_emiMktTarget_dev_iter(iteration,ttot,ttot2,ext_regi,emiMktExt)) gt cm_emiMktTarget_tolerance),
     s80_bool = 0;
     p80_messageShow("regiTarget") = YES;
   );
@@ -287,9 +344,11 @@ $endif.emiMkt
 
 *** additional criterion: Were the quantity targets reached by implicit taxes and/or subsidies? 
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
+p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) = pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup);
 loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
-  if( (pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt 0.01 OR pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt -0.01),
-    if(NOT ((sameas(taxType,"tax") and pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 0) OR (sameas(taxType,"sub") and pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt 0)),
+  if(abs(p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)) gt cm_implicitQttyTarget_tolerance,
+    if(NOT ((sameas(taxType,"tax") and p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 0) 
+        OR  (sameas(taxType,"sub") and p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) gt 0)),
       if(NOT(pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) eq 1), !!no tax update either by reaching target or due to tax changes not affecting quantitties  
         s80_bool = 0;
         p80_messageShow("implicitEnergyTarget") = YES;
@@ -320,11 +379,21 @@ loop((t,regi,entyPe)$pm_implicitPePriceTarget(t,regi,entyPe),
 $endIf.cm_implicitPePriceTarget
 
 *** check global budget target from core/postsolve, must be within 1% of target value
-if (sm_globalBudget_dev gt 1.01 OR sm_globalBudget_dev lt 0.99,
+p80_globalBudget_dev_iter(iteration) = sm_globalBudget_dev;
+if (p80_globalBudget_dev_iter(iteration) gt 1.01 OR p80_globalBudget_dev_iter(iteration) lt 0.99,
   s80_bool = 0;
   p80_messageShow("target") = YES;
 );
 
+*** additional criterion: if damage internalization is on, is damage iteration converged?
+p80_sccConvergenceMaxDeviation_iter(iteration) = pm_sccConvergenceMaxDeviation;
+p80_gmt_conv_iter(iteration) = pm_gmt_conv;
+$ifthen.internalizeDamages not "%internalizeDamages%" == "off"
+   if(p80_sccConvergenceMaxDeviation_iter(iteration) gt cm_sccConvergence OR p80_gmt_conv_iter(iteration) gt cm_tempConvergence,
+      s80_bool = 0;
+      p80_messageShow("damage") = YES;
+   );
+$endIf.internalizeDamages
 
 display "####";
 display "Convergence diagnostics";
@@ -362,12 +431,16 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
 		      display "#### Just trying a different gdx may help.";
 	      );	 
 	      if(sameas(convMessage80, "taxconv"),
-		      display "#### 4.) Taxes did not converge in all regions and time steps. Absolut level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_taxrev_dev below.";
+		      display "#### 4.) Taxes did not converge in all regions and time steps. Absolute level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_convNashTaxrev_iter below.";
 	      );
         if(sameas(convMessage80, "anticip"),
 		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";
           display "#### Check out sm_fadeoutPriceAnticip which needs to be below cm_maxFadeOutPriceAnticip.";
           display sm_fadeoutPriceAnticip, cm_maxFadeOutPriceAnticip;
+	      );
+        if(sameas(convMessage80, "DevPriceAnticip"),
+		      display "#### 5b.) The total monetary value of the price anticipation term times the traded amount are larger than the goods imbalance threshold * 0.1";
+          display "#### Check out p80_DevPriceAnticipGlobAllMax2100Iter, which needs to be below 0.1 * the threshold for goods imbalance, p80_surplusMaxTolerance";
 	      );
         if(sameas(convMessage80, "target"),
 		      display "#### 6.) A global climate target has not been reached yet.";
@@ -382,8 +455,8 @@ $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"
           display "#### Check out the pm_emiMktTarget_dev parameter of 47_regipol module.";
           display "#### For budget targets, the parameter gives the percentage deviation of current emissions in relation to the target value.";
           display "#### For yearly targets, the parameter gives the current emissions minus the target value in relative terms to the 2005 emissions.";
-          display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) of 2005 emissions to reach convergence.";
-          display pm_emiMktTarget_dev, pm_factorRescaleemiMktCO2Tax, pm_emiMktCurrent, pm_emiMktTarget, pm_emiMktRefYear;
+          display "#### The deviation must to be less than cm_emiMktTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of 2005 emissions to reach convergence.";
+          display cm_emiMktTarget_tolerance, pm_emiMktTarget_dev, pm_factorRescaleemiMktCO2Tax, pm_emiMktCurrent, pm_emiMktTarget, pm_emiMktRefYear;
           display pm_emiMktTarget_dev_iter;
           display pm_taxemiMkt_iteration;
 	      );
@@ -392,8 +465,8 @@ $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
         if(sameas(convMessage80, "implicitEnergyTarget"),
 		      display "#### 10) A primary, secondary and/or final energy target has not been reached yet.";
           display "#### Check out the pm_implicitQttyTarget_dev parameter of 47_regipol module.";
-          display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
-          display pm_implicitQttyTarget_dev;
+          display "#### The deviation must to be less than cm_implicitQttyTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of 2005 emissions to reach convergence.";
+          display cm_implicitQttyTarget_tolerance, pm_implicitQttyTarget_dev;
 	      );
 $endif.cm_implicitQttyTarget
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
@@ -414,12 +487,20 @@ $ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
           display pm_implicitPePrice_NotConv, pm_implicitPePrice_ignConv;
 	      );
 $endIf.cm_implicitPePriceTarget
+$ifthen.internalizeDamages not "%internalizeDamages%" == "off"
+	if(sameas(convMessage80,"damage"),
+	   display "#### 11) The damage iteration did not converge.";
+	   display "#### Check out below the values for pm_gmt_conv and pm_sccConvergenceMaxDeviation."
+ 	   display "#### They should be below 0.05."
+	   display pm_gmt_conv, pm_sccConvergenceMaxDeviation;
+	);
+$endIf.internalizeDamages
    );
 
 display "See the indicators below to dig deeper on the respective reasons of non-convergence: "
 
 display "tax convergence indicators";
-display p80_taxrev_dev;
+display p80_convNashTaxrev_iter;
 
 display "detailed trade convergence indicators";
 display p80_defic_trade, p80_defic_sum,p80_defic_sum_rel;
@@ -468,7 +549,7 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
 	     );	 
 	     if(sameas(convMessage80, "taxconv"),
 		 display "####";
-		 display "#### 4.) Taxes did not converge in all regions and time steps. Absolut level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_taxrev_dev.";
+		 display "#### 4.) Taxes did not converge in all regions and time steps. Absolut level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_convNashTaxrev_iter.";
 	     );	
       if(sameas(convMessage80, "anticip"),
 		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";
@@ -486,8 +567,8 @@ $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"
           display "#### Check out the pm_emiMktTarget_dev parameter of 47_regipol module.";
           display "#### For budget targets, the parameter gives the percentage deviation of current emissions in relation to the target value.";
           display "#### For yearly targets, the parameter gives the current emissions minus the target value in relative terms to the 2005 emissions.";
-          display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) of 2005 emissions to reach convergence.";
-          display pm_emiMktTarget_dev, pm_factorRescaleemiMktCO2Tax, pm_emiMktCurrent, pm_emiMktTarget, pm_emiMktRefYear;
+          display "#### The deviation must to be less than cm_emiMktTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of 2005 emissions to reach convergence.";
+          display cm_emiMktTarget_tolerance, pm_emiMktTarget_dev, pm_factorRescaleemiMktCO2Tax, pm_emiMktCurrent, pm_emiMktTarget, pm_emiMktRefYear;
           display pm_emiMktTarget_dev_iter;
           display pm_taxemiMkt_iteration;
 	      );
@@ -496,8 +577,8 @@ $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
         if(sameas(convMessage80, "implicitEnergyTarget"),
 		      display "#### 10) A primary, secondary and/or final energy target has not been reached yet.";
           display "#### Check out the pm_implicitQttyTarget_dev parameter of 47_regipol module.";
-          display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
-          display pm_implicitQttyTarget_dev;
+          display "#### The deviation must to be less than cm_implicitQttyTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of 2005 emissions to reach convergence.";
+          display cm_implicitQttyTarget_tolerance, pm_implicitQttyTarget_dev;
 	      );
 $endif.cm_implicitQttyTarget
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
@@ -572,10 +653,11 @@ if(cm_abortOnConsecFail, !! execute only if consecutive failures switch is non-z
         else
             p80_trackConsecFail(regi) = p80_trackConsecFail(regi) + 1;
         );
-
+    );
+    loop(regi,
         if(p80_trackConsecFail(regi) >= cm_abortOnConsecFail,
             execute_unload "abort.gdx";
-
+            display p80_trackConsecFail;
             abort "Run was aborted because the maximum number of consecutive failures was reached in at least one region!";
         );
     )

@@ -12,34 +12,14 @@
 p_taxCO2eq_iteration(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);
 pm_taxemiMkt_iteration(iteration,ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt);
 
-*RP* added the historic 2010/2015 CO2 prices 
-if (cm_emiscen eq 9,
- pm_pvpRegi(ttot,regi,"perm") = (pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqHist(ttot,regi) + pm_taxCO2eqSCC(ttot,regi))* pm_pvp(ttot,"good");
-elseif (cm_emiscen eq 6), !! the 2010/2015 CO2 prices do not need to be individually included, as they already influence the marginal of the q_co2eq equation (empirically tested) 
-
+if( (cm_emiscen eq 6), 
 $ifthen.neg %optimization% == 'negishi'     
- pm_pvpRegi(ttot,regi,"perm") = abs(q_co2eq.m(ttot,regi)) / pm_ts(ttot) ;
+    pm_taxCO2eqSum(ttot,regi) = abs((abs(q_co2eq.m(ttot,regi)) / pm_ts(ttot)) / (pm_pvp(ttot,"good") + sm_eps));
 $else.neg
-pm_pvpRegi(ttot,regi,"perm") = abs(q_co2eq.m(ttot,regi)) / (abs(qm_budget.m(ttot,regi) )+ sm_eps) * pm_pvp(ttot,"good") ; 
+    pm_taxCO2eqSum(ttot,regi) = abs( abs(q_co2eq.m(ttot,regi)) / (abs(qm_budget.m(ttot,regi))+ sm_eps) );
 $endif.neg 
-   
-elseif (cm_emiscen eq 1),  !! even in a BAU scenario without other climate policies, the 2010/2015 CO2 prices should be reported
- pm_pvpRegi(ttot,regi,"perm") = ( pm_taxCO2eqHist(ttot,regi) * pm_pvp(ttot,"good") );
-    
-);
-*** if the bau or ref gdx has been run with a carbon tax (e.g. cm_emiscen=9), overwrite values before cm_startyear  
-if ( (cm_startyear gt 2005),
-  Execute_Loadpoint 'input_ref' p_pvpRegiBeforeStartYear = pm_pvpRegi;
-  pm_pvpRegi(ttot,regi,"perm")$((ttot.val gt 2005) AND (ttot.val lt cm_startyear)) = p_pvpRegiBeforeStartYear(ttot,regi,"perm");
-);
-
-*LB* use the global permit price as regional permit price if no regional permit price is calculated
-loop(ttot$(ttot.val ge 2005),
-  loop(regi,
-    if(pm_pvpRegi(ttot,regi,"perm") eq NA,
-      pm_pvpRegi(ttot,regi,"perm") = pm_pvp(ttot,"perm") + ( pm_taxCO2eqHist(ttot,regi) * pm_pvp(ttot,"good") );
-    );
-  );
+   elseif (cm_emiscen eq 1),  !! even in a BAU scenario without other climate policies, the 2010/2015/2020 CO2 prices should be reported (that still needs to be fixed, I guess, maybe by adding the historic prices to the 45/carbonprice/off variation
+    pm_taxCO2eqSum(ttot,regi)$(ttot.val < 2025) = pm_taxCO2eq(ttot,regi); 
 );
 
 if(cm_iterative_target_adj eq 4,
@@ -309,23 +289,35 @@ display p_actualbudgetco2;
 *** it results in a peak budget with linear increase by 2$/yr afterwards
 *** ---------------------------------------------------------------------------------------------------------------
 
-if(cm_iterative_target_adj eq 9,
-*RP* Update tax levels/ multigasbudget values to reach the peak CO2 budget, with a linear increase afterwards given by cm_taxCO2inc_after_peakBudgYr
-*** The PeakBudgYr is found automatically by the algorithm (within the time window 2040-2100)
+if (cm_iterative_target_adj eq 9,
+*' Update tax levels/multigas budget values to reach the peak CO~2~ budget, with
+*' a linear increase afterwards givn by `cm_taxCO2inc_after_peakBudgYr`.  The
+*' peak budget year is determined automatically (within the time window
+*' 2040--2100)
 
-*KK* p_actualbudgetco2 for ttot > 2020. It includes emissions from 2020 to ttot (including ttot).
-*** (ttot.val - (ttot - 1).val)/2 and pm_ts("2020")/2 are the time periods that haven't been taken into account in the sum over ttot2.
-*** 0.5 year of emissions is added for the two boundaries, such that the budget includes emissions in ttot.
-  p_actualbudgetco2(ttot)$(ttot.val > 2020) = sum(ttot2$(ttot2.val < ttot.val AND ttot2.val > 2020), (sum(regi, (vm_emiTe.l(ttot2,regi,"co2") + vm_emiCdr.l(ttot2,regi,"co2") + vm_emiMac.l(ttot2,regi,"co2"))) * sm_c_2_co2 * pm_ts(ttot2)))
-                       + sum(regi, (vm_emiTe.l(ttot,regi,"co2") + vm_emiCdr.l(ttot,regi,"co2") + vm_emiMac.l(ttot,regi,"co2"))) * sm_c_2_co2 * ((pm_ttot_val(ttot)-pm_ttot_val(ttot-1))/2 + 0.5)
-                       + sum(regi, (vm_emiTe.l("2020",regi,"co2") + vm_emiCdr.l("2020",regi,"co2") + vm_emiMac.l("2020",regi,"co2"))) * sm_c_2_co2 * (pm_ts("2020")/2 + 0.5);
-  s_actualbudgetco2 = smax(t$(t.val le cm_peakBudgYr),p_actualbudgetco2(t));
+*' `p_actualbudgetco2(ttot)` includes emissions from 2020 to `ttot` (inclusive).
+  p_actualbudgetco2(ttot)$( 2020 lt ttot.val )
+  = sum((regi,ttot2)$( 2020 le ttot2.val AND ttot2.val le ttot.val ),
+      ( vm_emiTe.l(ttot2,regi,"co2")
+      + vm_emiCdr.l(ttot2,regi,"co2")
+      + vm_emiMac.l(ttot2,regi,"co2")
+      )
+    * ( !! second half of the 2020 period: 2020-22
+        (pm_ts(ttot2) / 2 + 0.5)$( ttot2.val eq 2020 )
+        !! entire middle periods
+      + (pm_ts(ttot2))$( 2020 lt ttot2.val AND ttot2.val lt ttot.val )
+	!! first half of the final period, until the end of the middle year
+      + ((pm_ttot_val(ttot) - pm_ttot_val(ttot-1)) / 2 + 0.5)$(
+                                                         ttot2.val eq ttot.val )
+      )
+    )
+  * sm_c_2_co2;
+
+  s_actualbudgetco2 = smax(t$( t.val le cm_peakBudgYr ), p_actualbudgetco2(t));
   
   o_peakBudgYr_Itr(iteration) = cm_peakBudgYr;
                   
-  display s_actualbudgetco2;  
-  display p_actualbudgetco2;
-
+  display s_actualbudgetco2, p_actualbudgetco2;
 
   if(cm_emiscen eq 9,
   
@@ -615,15 +607,20 @@ $endif.CO2priceDependent_AdjCosts
 
 *** CG: calculate marginal adjustment cost for capacity investment: d(v_costInvTeAdj) / d(vm_deltaCap)  !!!! the closed formula only holds when v_adjFactorGlob.fx(t,regi,te) = 0;
 o_margAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te)) =  vm_costTeCapital.l(ttot,regi,te) * p_adj_coeff(ttot,regi,te)
-    * 2
-    * (sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf)) - sum(te2rlf(te,rlf),vm_deltaCap.l(ttot-1,regi,te,rlf))) / power((pm_ttot_val(ttot)-pm_ttot_val(ttot-1)),2)
-    /( sum(te2rlf(te,rlf),vm_deltaCap.l(ttot-1,regi,te,rlf)) + p_adj_seed_reg(ttot,regi) * p_adj_seed_te(ttot,regi,te)
-    + p_adj_deltacapoffset("2010",regi,te)$(ttot.val eq 2010) + p_adj_deltacapoffset("2015",regi,te)$(ttot.val eq 2015)
+    * 2 * (sum(te2rlf(te,rlf), vm_deltaCap.l(ttot,regi,te,rlf)) - sum(te2rlf(te,rlf), vm_deltaCap.l(ttot-1,regi,te,rlf)))
+    / power((pm_ttot_val(ttot) - pm_ttot_val(ttot-1)), 2)
+    / (sum(te2rlf(te,rlf), vm_deltaCap.l(ttot-1,regi,te,rlf)) + p_adj_seed_reg(ttot,regi) * p_adj_seed_te(ttot,regi,te)
+      + p_adj_deltacapoffset("2010",regi,te)$(ttot.val eq 2010) + p_adj_deltacapoffset("2015",regi,te)$(ttot.val eq 2015)
+      + p_adj_deltacapoffset("2020",regi,te)$(ttot.val eq 2020) + p_adj_deltacapoffset("2025",regi,te)$(ttot.val eq 2025)
     )
+    * (1.02 + pm_prtp(regi)) ** (pm_ts(ttot) / 2)
 ;
 
 *** CG: calculate average adjustment cost for capacity investment: v_costInvTeAdj / vm_deltaCap
-o_avgAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te) AND (sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf)) ne 0 )) 
+o_avgAdjCostInv(ttot,regi,te)$(ttot.val ge 2010 AND teAdj(te) AND
+                              (v_costInvTeAdj.l(ttot,regi,te) eq 0 OR sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf)) eq 0))
+    = 0;
+o_avgAdjCostInv(ttot,regi,te)$(ttot.val ge 2010 AND teAdj(te) AND (sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf)) ne 0 ))
     = v_costInvTeAdj.l(ttot,regi,te) / sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf));
 *** and ratio between average adjCost and direct investment cost
 o_avgAdjCost_2_InvCost_ratioPc(ttot,regi,te)$(v_costInvTeDir.l(ttot,regi,te) ge 1E-22) = v_costInvTeAdj.l(ttot,regi,te)/v_costInvTeDir.l(ttot,regi,te) * 100;

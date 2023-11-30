@@ -19,7 +19,6 @@ parameters
 ***prices
 pm_pvp(ttot,all_enty)                                "Price on commodity markets",
 p_pvpRef(ttot,all_enty)                              "Price on commodity markets - imported from REF gdx",
-pm_pvpRegi(ttot,all_regi,all_enty)                   "prices of traded commodities - regional. only used for permit trade"
 
 p_pvpRegiBeforeStartYear(ttot,all_regi,all_enty)     "prices of traded commodities before start year - regional. only used for permit trade"
 
@@ -29,8 +28,7 @@ pm_gdp_gdx(tall,all_regi)                            "GDP path from gdx, updated
 p_inv_gdx(tall,all_regi)                             "macro-investments path from gdx, updated iteratively."
 pm_taxCO2eq(ttot,all_regi)                           "CO2 tax path in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
 pm_taxCO2eqRegi(tall,all_regi)                       "additional regional CO2 tax path in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
-pm_taxCO2eqHist(ttot,all_regi)                       "Historic CO2 tax path in 2010 and 2015 (also in BAU!) in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
-pm_taxCO2eqSum(tall,all_regi)                        "sum of pm_taxCO2eq, pm_taxCO2eqRegi, pm_taxCO2eqHist, pm_taxCO2eqSCC in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
+pm_taxCO2eqSum(tall,all_regi)                        "sum of pm_taxCO2eq, pm_taxCO2eqRegi, pm_taxCO2eqSCC in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
 p_taxCO2eq_iteration(iteration,ttot,all_regi)       "save CO2eq tax used in iteration"
 pm_taxCO2eq_iterationdiff(ttot,all_regi)              "help parameter for iterative adjustment of taxes"
 pm_taxCO2eq_iterationdiff_tmp(ttot,all_regi)          "help parameter for iterative adjustment of taxes"
@@ -344,7 +342,6 @@ vm_co2eqGlob(ttot)                                   "global emissions to be bal
 vm_co2eq(ttot,all_regi)                              "total emissions measured in co2 equivalents ATTENTION: content depends on multigasscen. [GtCeq]"
 vm_co2eqMkt(ttot,all_regi,all_emiMkt)                                         "total emissions per market measured in co2 equivalents ATTENTION: content depends on multigasscen. [GtCeq]"
 v_co2eqCum(all_regi)                                 "cumulated vm_co2eq emissions for the first budget period.  [GtCeq]"
-vm_banking(ttot,all_regi)                            "banking of emission permits"
 v_adjFactor(tall,all_regi,all_te)                    "factor to multiply with investment costs for adjustment costs"
 v_adjFactorGlob(tall,all_regi,all_te)                "factor to multiply with investment costs for adjustment costs - global scale"
 v_costInvTeDir(tall,all_regi,all_te)                 "annual direct investments into a technology"
@@ -414,7 +411,6 @@ v_co2capturevalve(ttot,all_regi)                            "CO2 emitted right a
 vm_prodUe(ttot,all_regi,all_enty,all_enty,all_te)    "Useful energy production [TWa]"
 
 vm_capEarlyReti(tall,all_regi,all_te)                "fraction of early retired capital"
-vm_otherFEdemand(ttot,all_regi,all_enty)             "final energy demand from no transformation technologies (e.g. enhanced weathering)"
 
 vm_demSeOth(ttot,all_regi,all_enty,all_te)	         "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
 vm_prodSeOth(ttot,all_regi,all_enty,all_te)	         "other sety production from certain technologies, have to be calculated in additional equations [TWa]"
@@ -601,7 +597,7 @@ sm_DpGJ_2_TDpTWa                                      "multipl. factor to conver
 s_gwpCH4                                              "Global Warming Potentials of CH4, AR5 WG1 CH08 Table 8.7"     /28/
 s_gwpN2O                                              "Global Warming Potentials of N2O, AR5 WG1 CH08 Table 8.7"     /265/
 sm_dmac                                               "step in MAC functions [US$]"                                                                   /5/
-s_macChange                                           "maximum yearly increase of relative abatement in percentage points of maximum abatement. [0..1]"      /0.05/
+sm_macChange                                           "maximum yearly increase of relative abatement in percentage points of maximum abatement. [0..1]"      /0.05/
 sm_tgn_2_pgc                                           "conversion factor 100-yr GWP from TgN to PgCeq"
 sm_tgch4_2_pgc                                         "conversion factor 100-yr GWP from TgCH4 to PgCeq"
 

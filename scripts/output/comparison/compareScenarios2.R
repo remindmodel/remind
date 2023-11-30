@@ -57,6 +57,7 @@ startComp <- function(
     clcom <- paste0(
       "sbatch ", slurmConfig,
       " --job-name=", jobName,
+      " --comment=compareScenarios2",
       " --output=", jobName, ".out",
       " --error=", jobName, ".out",
       " --mail-type=END --time=200 --mem-per-cpu=8000",

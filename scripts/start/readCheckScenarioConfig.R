@@ -21,7 +21,11 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   } else {
     cfg <- gms::readDefaultConfig(remindPath)
   }
-  scenConf <- read.csv2(filename, stringsAsFactors = FALSE, row.names = 1, na.strings = "", comment.char = "#")
+  scenConf <- read.csv2(filename, stringsAsFactors = FALSE, na.strings = "", comment.char = "#",
+                                  strip.white = TRUE, blank.lines.skip = TRUE)
+  scenConf <- scenConf[! is.na(scenConf[1]), ]
+  rownames(scenConf) <- scenConf[, 1]
+  scenConf[1] <- NULL
   toolong <- nchar(rownames(scenConf)) > 75
   if (any(toolong)) {
     warning("These titles are too long: ",
@@ -33,6 +37,10 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     warning("These titles may be confused with regions: ",
             paste0(rownames(scenConf)[regionname], collapse = ", "),
             " – Titles with three capital letters or 'glob' may be confused with region names by magclass. Stopping now.")
+  }
+  nameisNA <- grepl("^NA$", rownames(scenConf))
+  if (any(nameisNA)) {
+    warning("Do not use 'NA' as scenario name, you fool. Stopping now.")
   }
   illegalchars <- grepl("[^[:alnum:]_-]", rownames(scenConf))
   if (any(illegalchars)) {
@@ -51,12 +59,6 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
       whitespaceErrors <- whitespaceErrors + sum(haswhitespace)
     }
   }
-  if ("path_gdx_ref" %in% names(scenConf) && ! "path_gdx_refpolicycost" %in% names(scenConf)) {
-    scenConf$path_gdx_refpolicycost <- scenConf$path_gdx_ref
-    message("In ", filename,
-        ", no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
-  }
-  scenConf[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenConf)]] <- NA
 
   # fill empty cells with values from scenario written in copyConfigFrom cell
   copyConfigFromErrors <- 0
@@ -72,12 +74,47 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     }
   }
 
-  errorsfound <- sum(toolong) + sum(regionname) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors
+  pathgdxerrors <- 0
+  # fix missing path_gdx and inconsistencies
+  if ("path_gdx_ref" %in% names(scenConf) && ! "path_gdx_refpolicycost" %in% names(scenConf)) {
+    scenConf$path_gdx_refpolicycost <- scenConf$path_gdx_ref
+    msg <- paste0("In ", filename,
+        ", no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
+    message(msg)
+  }
+  if ("path_gdx_bau" %in% names(scenConf)) {
+    # fix if bau given despite not needed. needBau is defined in needBau.R
+    # initialize vector with FALSE everywhere and turn elements to TRUE if a scenario config row setting matches a needBau element
+    scenNeedsBau <- rep(FALSE, nrow(scenConf))
+    for (n in intersect(names(needBau), names(scenConf))) {
+      scenNeedsBau <- scenNeedsBau | scenConf[[n]] %in% needBau[[n]]
+    }
+    BAUbutNotNeeded <- ! is.na(scenConf$path_gdx_bau) & ! (scenNeedsBau)
+    if (sum(BAUbutNotNeeded) > 0) {
+      msg <- paste0("In ", sum(BAUbutNotNeeded), " scenarios, 'path_gdx_bau' is not empty although no realization is selected that needs it.\n",
+                    "To avoid unnecessary dependencies to other runs, setting 'path_gdx_bau' to NA for:\n",
+                    paste(rownames(scenConf)[BAUbutNotNeeded], collapse = ", "))
+      message(msg)
+      scenConf$path_gdx_bau[BAUbutNotNeeded] <- NA
+    }
+    # fail if bau not given but needed
+    noBAUbutNeeded <- is.na(scenConf$path_gdx_bau) & (scenNeedsBau)
+    if (sum(noBAUbutNeeded) > 0) {
+      pathgdxerrors <- pathgdxerrors + sum(noBAUbutNeeded)
+      warning("In ", sum(noBAUbutNeeded), " scenarios, a reference gdx in 'path_gdx_bau' is needed, but it is empty. ",
+              "These realizations need it: ",
+              paste0(names(needBau), ": ", sapply(needBau, paste, collapse = ", "), ".", collapse = " "))
+    }
+  }
+  # make sure every path gdx column exists
+  scenConf[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenConf)]] <- NA
+
+  # collect errors
+  errorsfound <- sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors
 
   # check column names
-  knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
-                        "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig",
-                        "results_folder", "force_replace", "action", "pythonEnabled", "copyConfigFrom")
+  knownColumnNames <- c(names(cfg$gms), setdiff(names(cfg), "gms"), names(path_gdx_list),
+                        "start", "model", "copyConfigFrom")
   if (grepl("scenario_config_coupled", filename)) {
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
@@ -85,21 +122,6 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   }
   unknownColumnNames <- names(scenConf)[! names(scenConf) %in% knownColumnNames]
   if (length(unknownColumnNames) > 0) {
-    message("\nAutomated checks did not find counterparts in main.gms and default.cfg for these columns in ",
-            basename(filename), ":")
-    message("  ", paste(unknownColumnNames, collapse = ", "))
-    message("This check was added Jan. 2022. ",
-            "If you find false positives, add them to knownColumnNames in start/scripts/readCheckScenarioConfig.R.\n")
-    unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
-    if (length(unknownColumnNamesNoComments) > 0) {
-      if (testmode) {
-        warning("Unknown column names: ", paste(unknownColumnNamesNoComments, collapse = ", "))
-      } else {
-        message("Do you want to continue and simply ignore them? Y/n")
-        userinput <- tolower(gms::getLine())
-        if (! userinput %in% c("y", "")) stop("Ok, so let's stop.")
-      }
-    }
     forbiddenColumnNames <- list(   # specify forbidden column name and what should be done with it
        "c_budgetCO2" = "Rename to c_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
        "c_budgetCO2FFI" = "Rename to c_budgetCO2from2020FFI, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
@@ -115,8 +137,10 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_BioImportTax_EU" = "Use more flexible cm_import_tax switch instead, see https://github.com/remindmodel/remind/issues/1157",
        "cm_trdcst" = "Now always fixed to 1.5, see https://github.com/remindmodel/remind/pull/1052",
        "cm_trdadj" = "Now always fixed to 2, see https://github.com/remindmodel/remind/pull/1052",
-       "cm_OILRETIRE" = "Now always on by default, see https://github.com/remindmodel/remind/pull/1102"
-     )
+       "cm_OILRETIRE" = "Now always on by default, see https://github.com/remindmodel/remind/pull/1102",
+       "cm_fixCO2price" = "Was never in use, removed in https://github.com/remindmodel/remind/pull/1369",
+       "cm_calibration_FE" = "Deleted, only used for old hand made industry trajectories, see https://github.com/remindmodel/remind/pull/1468",
+     NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       if (testmode) {
         warning("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
@@ -127,6 +151,25 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     if (any(names(forbiddenColumnNames) %in% unknownColumnNames)) {
       warning("Outdated column names found that must not be used.")
       errorsfound <- errorsfound + length(intersect(names(forbiddenColumnNames), unknownColumnNames))
+    }
+    # sort out known but forbidden names from unknown
+    unknownColumnNames <- setdiff(unknownColumnNames, names(forbiddenColumnNames))
+    if (length(unknownColumnNames) > 0) {
+      message("\nAutomated checks did not find counterparts in main.gms and default.cfg for these columns in ",
+              basename(filename), ":")
+      message("  ", paste(unknownColumnNames, collapse = ", "))
+      message("This check was added Jan. 2022. ",
+              "If you find false positives, add them to knownColumnNames in scripts/start/readCheckScenarioConfig.R.\n")
+      unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
+      if (length(unknownColumnNamesNoComments) > 0) {
+        if (testmode) {
+          warning("Unknown column names: ", paste(unknownColumnNamesNoComments, collapse = ", "))
+        } else if (errorsfound == 0) {
+          message("Do you want to continue and simply ignore them? Y/n")
+          userinput <- tolower(gms::getLine())
+          if (! userinput %in% c("y", "")) stop("Ok, so let's stop.")
+        }
+      }
     }
   }
   if (errorsfound > 0) {

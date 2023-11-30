@@ -197,7 +197,7 @@ cm_noReboundEffect      "Switch for allowing a rebound effect when closing the e
 cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
 cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
-cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
+cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffCurvPhaseIn2Lin"
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
 c_regi_synfuelscen			"region to apply synfuelscen to"
@@ -472,8 +472,6 @@ $setglobal c_testOneRegi_region  EUR       !! def = EUR
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
 
-$setglobal cm_calibration_FE  off      !! def = off
-
 $setglobal cm_eni  off!! def = off
 $setglobal cm_enb  off!! def = off
 
@@ -500,8 +498,6 @@ $setglobal cm_renewables_floor_cost  off !! def = off
 $setglobal cm_DAC_eff  off !! def = off 
 
 $setglobal cm_sehe_upper  off !! def = off 
-
-$setglobal cm_fixCO2price  off !! def = off
 
 $setglobal cm_feShareLimits  off  !! def = off
 

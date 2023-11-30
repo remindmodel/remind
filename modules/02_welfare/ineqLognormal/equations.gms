@@ -17,29 +17,54 @@ q02_welfareGlob..
 ;
 
 ***---------------------------------------------------------------------------
-*' Total discounted intertemporal regional welfare calculated from per capita consumption
-*' summing over all time steps taking into account the pure time preference rate.
-*' Assuming an intertemporal elasticity of substitution of 1, it holds:
+*' Total discounted intertemporal regional welfare calculated from per capita
+*' consumption summing over all time steps taking into account the pure time
+*' preference rate. Assuming an intertemporal elasticity of substitution of 1,
+*' it holds:
 ***---------------------------------------------------------------------------
-q02_welfare(regi)..
-    v02_welfare(regi)
+q02_welfare(regi) ..
+  v02_welfare(regi)
   =e=
-    sum(ttot $(ttot.val ge 2005),
-        pm_welf(ttot) * pm_ts(ttot) * (1 / ( (1 + pm_prtp(regi))**(pm_ttot_val(ttot)-2005) ) )
-        *   (  (pm_pop(ttot,regi)
-                *   (
-                        ((((vm_cons(ttot,regi)*exp(-0.5*(1/pm_ies(regi))*v02_distrFinal_sigmaSq_welfare(ttot,regi)))/pm_pop(ttot,regi))**(1-1/pm_ies(regi))-1)/(1-1/pm_ies(regi)) )$(pm_ies(regi) ne 1)
-                        
-
-
-                        + ( log((vm_cons(ttot,regi)) / pm_pop(ttot,regi))
-                              - 0.5*v02_distrFinal_sigmaSq_welfare(ttot,regi) )$(pm_ies(regi) eq 1)
-                    )
-                )
-$if %cm_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalSolids(ttot,regi)
-$if "%cm_INCONV_PENALTY_FESwitch%" == "on"  - sum((entySe,entyFe,te,sector,emiMkt)$(se2fe(entySe,entyFe,te) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) AND (entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) ), v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt) + v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt))/1e3	
-            )
+    sum(ttot$( ttot.val ge 2005 ),
+      pm_welf(ttot)
+    * pm_ts(ttot)
+    / ((1 + pm_prtp(regi)) ** (pm_ttot_val(ttot) - 2005))
+    * ( ( pm_pop(ttot,regi)
+        * ( ( ( ( (  vm_cons(ttot,regi)
+		  * exp(
+		      -0.5 
+		    * (1 / pm_ies(regi))
+		    * v02_distrFinal_sigmaSq_welfare(ttot,regi)
+		    )
+		  )
+		/ pm_pop(ttot,regi)
+		)
+	     ** (1 - 1 / pm_ies(regi))
+	      - 1
+	      )
+	    / (1 - 1/pm_ies(regi)) 
+	    )$( pm_ies(regi) ne 1 )
+	  + ( log((vm_cons(ttot,regi)) / pm_pop(ttot,regi))
+	    - 0.5 * v02_distrFinal_sigmaSq_welfare(ttot,regi)
+	    )$( pm_ies(regi) eq 1 )
+          )
         )
+$ifthen %cm_INCONV_PENALTY% == "on"
+      - v02_inconvPen(ttot,regi) - v02_inconvPenCoalSolids(ttot,regi)
+$endif
+$ifthen "%cm_INCONV_PENALTY_FESwitch%" == "on"
+      - sum((entySe,entyFe,te,sector,emiMkt)$(
+                                    se2fe(entySe,entyFe,te)
+                                AND entyFe2Sector(entyFe,sector)
+                                AND sector2emiMkt(sector,emiMkt) 
+                                AND (entySeBio(entySe) OR  entySeFos(entySe)) ),
+          v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+	+ v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+	)
+      / 1e3	
+$endif
+      )
+    )
 ;
 
 ***---------------------------------------------------------------------------
@@ -100,7 +125,8 @@ q02_energyexpShare(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_energyexpShare(ttot,regi)
   =e=
 * simply divided by conso
-    v02_energyExp_Add(ttot,regi)/(vm_cons(ttot,regi))
+    v02_energyExp_Add(ttot,regi)/(p02_cons_ref(ttot,regi))
+*    v02_energyExp_Add(ttot,regi)/(vm_cons(ttot,regi))
 * divided by adjusted conso
 *    (v02_energyExp_Add(ttot,regi))/(vm_cons(ttot,regi)+v02_energyExp_Add(ttot,regi)-v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))
 
@@ -110,7 +136,7 @@ q02_energyexpShare(ttot,regi)$(ttot.val ge cm_startyear)..
 q02_taxrev_Add(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_taxrev_Add(ttot,regi)
   =e=
-    ((pm_taxCO2eq(ttot,regi)+ pm_taxCO2eqSCC(ttot,regi)+pm_taxCO2eqHist(ttot,regi))*v02_emitaxredistr(ttot,regi)
+    ((pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqSCC(ttot,regi))*v02_emitaxredistr(ttot,regi)
     -p02_taxrev_redistr0_ref(ttot,regi))$(cm_emiscen ne 1)
 ;
 
@@ -120,7 +146,8 @@ q02_relTaxlevels(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_revShare(ttot,regi)
   =e=
 * Simply divided by conso
-    v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0)/vm_cons(ttot,regi)
+    v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0)/p02_cons_ref(ttot,regi)
+*    v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0)/vm_cons(ttot,regi)
 
 * Divided by adjusted conso
 *    (v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))/(vm_cons(ttot,regi)+v02_energyExp_Add(ttot,regi)-v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))
@@ -131,7 +158,8 @@ q02_relTaxlevels(ttot,regi)$(ttot.val ge cm_startyear)..
 q02_consLossShare(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_damageConsShare(ttot,regi)
   =e=
-    1/(p02_damConsFactor1(ttot,regi)+vm_damageFactor(ttot,regi)*p02_damConsFactor2(ttot,regi))-1
+    vm_cons(ttot,regi)/((p02_damConsFactor1(ttot,regi)+vm_damageFactor(ttot,regi)*p02_damConsFactor2(ttot,regi))*p02_cons_ref(ttot,regi))-vm_cons(ttot,regi)/p02_cons_ref(ttot,regi)
+*    1/(p02_damConsFactor1(ttot,regi)+vm_damageFactor(ttot,regi)*p02_damConsFactor2(ttot,regi))-1
 ;
 
 * Alpha, the elasticity of energy expenditure, depends upon the region's GDP
@@ -139,7 +167,8 @@ q02_consLossShare(ttot,regi)$(ttot.val ge cm_startyear)..
 q02_distrAlpha(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_distrAlpha(ttot,regi)
     =e=
-    1+1.618788-2*0.09746092*log(1000*vm_cesIO(ttot,regi,"inco")/pm_pop(ttot,regi))
+    1+1.618788-2*0.09746092*log(1000*(vm_cesIO(ttot,regi,"inco")/pm_shPPPMER(regi)*vm_damageFactor(ttot,regi))/pm_pop(ttot,regi))
+*    1+1.618788-2*0.09746092*log(1000*vm_cesIO(ttot,regi,"inco")/pm_pop(ttot,regi))
 * Note that the above equation defines alpha as a parameter depending upon GDP, which could potentially bring a complex feedback (rich countries moderating GDP growth to reduce the regressivity of energy expenditures).
 * For tests, I also used previously consumption in the baseline instead of actual GDP in the current scenario, so that alpha is a parameter
 *    1+1.618788-2*0.09746092*log(1000*p02_cons_ref(ttot,regi)/pm_pop(ttot,regi))
@@ -289,20 +318,23 @@ q02_inconvPenCoalSolids(t,regi)$(t.val > 2005)..
 ;
 $ENDIF.INCONV
 
-*** small inconvenience penalty for increasing/decreasing biomass/synfuel use between two time steps in buildings and industry and emissison markets
-*** necessary to avoid switching behavior in sectors and emissions markets between time steps as those sectors and markets do not have se2fe capcities
+*** small inconvenience penalty for increasing/decreasing biomass/synfuel use
+*** between two time steps in buildings and industry and emissison markets
+*** necessary to avoid switching behavior in sectors and emissions markets
+*** between time steps as those sectors and markets do not have se2fe capcities
 $IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_FESwitch%" == "on"
-q02_inconvPenFeBioSwitch(ttot,regi,entySe,entyFe,te,sector,emiMkt)$((ttot.val ge cm_startyear) 
-                                                            AND se2fe(entySe,entyFe,te) 
-                                                            AND entyFe2Sector(entyFe,sector) 
-                                                            AND sector2emiMkt(sector,emiMkt) 
-                                                            AND (entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) )..
-                                                              vm_demFeSector(ttot,regi,entySe,entyFe,sector,emiMkt) 
-                                                              - vm_demFeSector(ttot-1,regi,entySe,entyFe,sector,emiMkt)
-                                                              + v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
-                                                              - v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
-                                                            =e=
-                                                            0
+q02_inconvPenFeBioSwitch(ttot,regi,entySe,entyFe,te,sector,emiMkt)$(
+                                  ttot.val ge cm_startyear
+                              AND se2fe(entySe,entyFe,te) 
+                              AND entyFe2Sector(entyFe,sector) 
+                              AND sector2emiMkt(sector,emiMkt) 
+                              AND (entySeBio(entySe) OR  entySeFos(entySe)) ) ..
+    vm_demFeSector(ttot,regi,entySe,entyFe,sector,emiMkt) 
+  - vm_demFeSector(ttot-1,regi,entySe,entyFe,sector,emiMkt)
+  + v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+  - v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+  =e=
+  0
 ;
 $ENDIF.INCONV_bioSwitch
 *** EOF ./modules/02_welfare/ineqLognormal/equations.gms

@@ -14,3 +14,48 @@ test_that("start.R fails on missing path_gdx* files", {
   expect_true(any(grepl("2 errors were identified", output)))
   expectFailStatus(output)
 })
+
+test_that("start.R --test startgroup=AMT titletag=AMT config/scenario_config.csv works", {
+  testthat::with_mocked_bindings({
+    skipIfPreviousFailed()
+    output <- localSystem2("Rscript",
+                           c("start.R", "--test", "slurmConfig=16", "startgroup=AMT", "titletag=TESTTHAT", "config/scenario_config.csv"))
+    printIfFailed(output)
+    expectSuccessStatus(output)
+    expect_false(any(grepl("Waiting for.* NA( |$)", output)))
+    },
+    getLine = function() stop("getLine should not called."),
+    .package = "gms"
+  )
+  unlink("../../*TESTTHAT.RData")
+})
+
+test_that("start.R --test succeeds on all configs", {
+  skipIfFast()
+  skipIfPreviousFailed()
+  csvfiles <- system("git ls-files ../../config/scenario_config*.csv ../../config/*/scenario_config*.csv", intern = TRUE)
+  if (length(csvfiles) == 0) {
+    csvfiles <- Sys.glob(c(file.path("../../config/scenario_config*.csv"),
+                           file.path("../../config", "*", "scenario_config*.csv")))
+  }
+  csvfiles <- normalizePath(grep("scenario_config_coupled", csvfiles, invert = TRUE, value = TRUE))
+  skipfiles <- c("scenario_config_21_EU11_ECEMF",
+                 "scenario_config_EDGE-T_NDC_NPi_pkbudget",
+                 "scenario_config_NAVIGATE_300")
+  csvfiles <- grep(paste(skipfiles, collapse = "|"), csvfiles, invert = TRUE, value = TRUE)
+  expect_true(length(csvfiles) > 0)
+  testthat::with_mocked_bindings(
+    for (csvfile in csvfiles) {
+      test_that(paste("perform start.R --test with", basename(csvfile)), {
+        output <- localSystem2("Rscript",
+                             c("start.R", "--test", "slurmConfig=16", "startgroup=*", "titletag=TESTTHAT", csvfile))
+        printIfFailed(output)
+        expectSuccessStatus(output)
+        expect_false(any(grepl("Waiting for.* NA( |$)", output)))
+      })
+    },
+    getLine = function() stop("getLine should not called."),
+    .package = "gms"
+  )
+  unlink("../../*TESTTHAT.RData")
+})

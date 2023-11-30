@@ -15,8 +15,8 @@ OPTION decimals =5;
 display p21_deltarev;
 OPTION decimals =3;
 
-*** sum all 4 CO2eq tax components
-pm_taxCO2eqSum(ttot,regi) = pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqSCC(ttot,regi) + pm_taxCO2eqHist(ttot,regi);
+*** sum all 3 CO2eq tax components
+pm_taxCO2eqSum(ttot,regi) = pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqSCC(ttot,regi);
 
 *GL* save reference level value of taxes for revenue recycling
 *JH* !!Warning!! The same allocation block exists in presolve.gms.

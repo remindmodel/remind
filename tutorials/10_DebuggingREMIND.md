@@ -21,7 +21,6 @@ Case 1: REMIND did not start
 The first place to look is `log.txt` in the output subfolder for each run. It shows you the log of running [`prepareAndRun.R`](https://github.com/remindmodel/remind/blob/develop/scripts/start/prepareAndRun.R). If it states "Starting REMIND..." somewhere, this shows that the input preparation scripts were successful. If not, this can be caused by the following reasons:
 
 - the model is still locked? Another model run has locked the folder, so you have to wait until it has unlocked it again.
-- because of a locked folder in the R libraries, outdated packages were loaded: consider [creating a new snapshot](04_RunningREMINDandMAgPIE.md#create-snapshot-of-r-libraries).
 - input files are missing or outdated? delete `input/source_files.log` or set `cfg$force_download <- TRUE` to force the loading of new ones. If this doesn’t help, the input generation may be broken.
 - you use an outdated git branch? check `git log` or use main branch with `git checkout main/develop; git pull`.
 - a recent change in the start scripts may have broken the prepare scripts, check the [file history](https://github.com/remindmodel/remind/commits/develop/scripts/start/) for changes.
@@ -92,7 +91,7 @@ But it is important that the error may have first appeared in this equation, but
 
 If you find out that your run stopped specifically in iteration 14, you likely have a problem with the EDGE-T transport model. It runs iteratively with REMIND, but only after iteration 14. It calls [`edgeTransport::toolIterativeEDGETransport`](https://github.com/pik-piam/edgeTransport/blob/master/R/iterativeEDGETransport.R) and its input/output data are in the `EDGE-T` subfolder. You should find an error message in `log.txt`.
 If this is not helpful, try opening that script in an interactive `R` session (on your run’s folder) and run it line by line, you’ll have a better idea of what the problem actually was. Forcing the model to redownload its input data (see above) can help if something in either model changed when you created that folder.
-Also make sure that you are using a snapshot/renv that was created around the same time you cloned (or last pulled) your REMIND folder. The EDGE-T model makes heavy use of specific libraries that are updated constantly. So you’ll often find that a newer EDGE-T library (that would be loaded if you didn’t set a snapshot or updated your renv) won’t work with a REMIND folder that is even a few days old.
+Also make sure that the R packages installed in your renv are up-to-date. The EDGE-T model makes heavy use of specific libraries that are updated constantly. So you’ll often find that a newer EDGE-T library won’t work with a REMIND folder that is even a few days old.
 
 The file `abort.gdx` contains the latest data at the point GAMS aborted execution, which can be analysed using GAMS Studio.
 
@@ -159,7 +158,7 @@ You can also run REMIND for more iterations by modifying `cm_iteration_max` in [
 In the output subfolder, you also find a file `nash_info_convergence.csv` which contains the price and surplus information for the relevant markets for all iterations and time-steps:
 - `p80_surplus`, the "surplus on commodity markets"
 - `p80_pvp_itr`, the "price on commodity markets"
-- `p80_surplusMax`, the "worst residual market surplus until given year, absolute value", with units: TWa, trillion Dollar, GtC.
+- `p80_surplusMax_iter`, the "worst residual market surplus until given year, absolute value", with units: TWa, trillion Dollar, GtC.
 - `p80_surplusMaxRel`, the "worst residual market surplus until given year, in per cent".
 
 More information needed? debug runs

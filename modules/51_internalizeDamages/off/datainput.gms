@@ -6,6 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/51_internalizeDamages/off/datainput.gms
 
-pm_taxCO2eqSCC(ttot,regi) = 0;
+pm_taxCO2eqSCC(ttot,regi)     = 0;
+pm_sccConvergenceMaxDeviation = 0;
 
 *** EOF ./modules/51_internalizeDamages/off/datainput.gms

@@ -4,9 +4,10 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
+skipIfFast()
+skipIfPreviousFailed()
+
 test_that("output.R -> single -> reporting works", {
-  skipIfFast()
-  skipIfPreviousFailed()
   output <- localSystem2("Rscript", c("output.R", "comp=single", "output=reporting", "outputdir=output/testOneRegi",
                                       "slurmConfig='--qos=priority --mem=8000 --wait'"))
   printIfFailed(output)
@@ -15,8 +16,6 @@ test_that("output.R -> single -> reporting works", {
 })
 
 test_that("output.R -> export -> xlsx_IIASA works", {
-# skipIfFast()
-  skipIfPreviousFailed()
   exportfiles <- Sys.glob(file.path("..", "..", "output", "export", "*TESTTHAT*"))
   unlink(exportfiles)
   output <- localSystem2("Rscript", c("output.R", "project=TESTTHAT", "filename_prefix=TESTTHAT",
@@ -31,8 +30,8 @@ test_that("output.R -> export -> xlsx_IIASA works", {
 })
 
 test_that("cleanup output.R", {
-  skipIfFast()
   skipIfPreviousFailed()
   exportfiles <- Sys.glob(file.path("..", "..", "output", "export", "*TESTTHAT*"))
+  expect_true(length(exportfiles) > 1)
   unlink(exportfiles)
 })

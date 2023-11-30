@@ -13,6 +13,7 @@
 #' @return dataframe with scenarios from settings which should be started
 
 selectScenarios <- function (settings, interactive, startgroup) {
+    if (isTRUE(startgroup == "*")) return(settings)
     scenariosInGroup <- grepl(paste0("(^|,)", startgroup, "($|,)"), as.character(settings$start), perl = TRUE)
     if (interactive | ! any(scenariosInGroup)) {
       scenariosInGroup <- gms::chooseFromList(setNames(rownames(settings), settings$start), type = "runs", returnBoolean = TRUE)

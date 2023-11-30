@@ -31,7 +31,8 @@ run_compareScenarios2 <- function(
   # folder.
   system(paste0("mkdir ", outFileName)) 
   outDir <- normalizePath(outFileName, mustWork = TRUE)
-  
+
+  outputDirs <- unique(normalizePath(outputDirs, mustWork = TRUE))
   mifPath <- getMifScenPath(outputDirs, mustWork = TRUE)
   histPath <- getMifHistPath(outputDirs[1], mustWork = TRUE)
   scenConfigPath <- getCfgScenPath(outputDirs, mustWork = TRUE)

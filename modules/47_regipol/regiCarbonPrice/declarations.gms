@@ -40,12 +40,13 @@ Parameter
 *** Parameters necessary to calculate current emission target deviations
   pm_emiMktCurrent(ttot,ttot2,ext_regi,emiMktExt)    "previous iteration region emissions (from year ttot to ttot2 for budget) [GtCO2 or GtCO2eq]"
   p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktCurrent across iterations  [GtCO2 or GtCO2eq]"
-  pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt)    "emissions in reference year 2015, used for calculating target deviation of year targets [GtCO2 or GtCO2eq]"
-  pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktTarget_dev across iterations [%]"
+  pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt)    "emissions in reference year 2005, used for calculating target deviation of year targets [GtCO2 or GtCO2eq]"
+  pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktTarget_dev across iterations (1 is 100%)"
 
 *** Parameters necessary to calculate the emission tax rescaling factor
   p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)     "auxiliary parameter to save the slope corresponding to the observed mitigation derivative regarding to co2tax level changes from the two previous iterations [#]"
   p47_factorRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save mitigation curve slope across iterations [#]"
+  p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi)    "auxiliary parameter to store reference iteration used for calculating slope of current mititgation cost [#]"
   pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) "multiplicative tax rescale factor that rescales emiMkt carbon price from iteration to iteration to reach regipol targets [%]"
   p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugging purposes [%]"
 

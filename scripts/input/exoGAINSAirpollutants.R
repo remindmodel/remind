@@ -30,12 +30,17 @@ load("config.Rdata")
 ssp_scenario <- cfg$gms$cm_APscen
 
 # read in REMIND avtivities, use input.gdx if the fulldata_exoGAINS.gdx is not available
-gdx <- if (file.exists("fulldata_exoGAINS.gdx")) "fulldata_exoGAINS.gdx" else "input.gdx"
+if (file.exists("fulldata_exoGAINS.gdx")) {
+  gdx <- "fulldata_exoGAINS.gdx"
+  iterationInfo <- paste("iteration", as.numeric(readGDX(gdx = gdx, "o_iterationNumber", format = "simplest")))
+} else {
+  gdx <- "input.gdx"
+  iterationInfo <- gdx
+}
 
-iterationNumber <- as.numeric(readGDX(gdx = gdx, "o_iterationNumber", format = "simplest"))
 t <- c(seq(2005,2060,5),seq(2070,2110,10),2130,2150)
 rem_in_mo <- NULL
-message("Iteration ", iterationNumber, ": exoGAINSAirpollutants.R calls remind2::reportMacroEconomy ", appendLF = FALSE)
+message("With data from ", iterationInfo, ": exoGAINSAirpollutants.R calls remind2::reportMacroEconomy ", appendLF = FALSE)
 rem_in_mo <- mbind(rem_in_mo,reportMacroEconomy(gdx)[,t,])
 message("- reportPE ", appendLF = FALSE)
 rem_in_mo <- mbind(rem_in_mo,reportPE(gdx)[,t,])
