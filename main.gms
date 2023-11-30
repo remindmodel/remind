@@ -825,7 +825,7 @@ parameter
 *' * (5): iterative adjustment V for both budget and tax runs based on CO2 emissions 2020-2100, see core/postsolve.gms for direct algorithms of adjustment
 *' * (6): iterative adjustment VI for both budget and tax runs based on peak CO2 emissions budget, without changing temporal profile (i.e. with overshoot), see core/postsolve.gms for direct algorithms of adjustment
 *' * (7): iterative adjustment VII for tax runs based on peak CO2 emissions, with change of temporal tax profile after time of peak budget, aiming for net-zero thereafter, see core/postsolve.gms for direct algorithms of adjustment
-*' * (9): [REMIND 2.1 default for validation peakBudget runs, in combination with carbonprice = none; after the peaking year annual increase by cm_taxCO2inc_after_peakBudgYr. Automatically shifts cm_peakBudgYr to find the correct peaking year for a given .
+*' * (9): [REMIND 2.1 default for validation peakBudget runs, in combination with carbonprice = none; after the peaking year annual increase by c_taxCO2inc_after_peakBudgYr. Automatically shifts c_peakBudgYr to find the correct peaking year for a given .
 *'
 parameter
   cm_NDC_divergentScenario  "choose scenario about convergence of CO2eq prices in NDC realization of module 45_carbonprice"
@@ -974,14 +974,14 @@ parameter
   cm_priceSensiBuild     = -3;
 *'  price sensitivity of logit function for heating and cooking technological choice
 parameter
-  cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
+  c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 ;
-  cm_peakBudgYr            = 2050;   !! def = 2050
+  c_peakBudgYr            = 2050;   !! def = 2050
 *'   time of net-zero CO2 emissions (peak budget), requires emiscen to 9 and cm_iterative_target_adj to 7, will potentially be adjusted by algorithms
 parameter
-  cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
+  c_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 ;
-  cm_taxCO2inc_after_peakBudgYr = 0; !! def = 0 . For weak targets (higher than 1100 Peak Budget), this value might need to increased to prevent continually increasing temperatures
+  c_taxCO2inc_after_peakBudgYr = 0; !! def = 0 . For weak targets (higher than 1100 Peak Budget), this value might need to increased to prevent continually increasing temperatures
 *'
 parameter
   cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffCurvPhaseIn2Lin"
