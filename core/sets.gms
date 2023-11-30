@@ -885,7 +885,7 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
        UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,
        VIR,VNM,VUT,WLF,WSM,YEM,ZAF,ZMB,ZWE /
 
-   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
+   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country"
          /
        EUR . EUR
        CHA . CHA
@@ -2073,17 +2073,10 @@ all_emiMkt      "emission markets"
 
 all_emiMktExt   "extended emission market definitions"
 /
-<<<<<<< HEAD
-        ETS     "ETS emission market"
-	ESR     "Effort sharing emission market"
-	other	"other market configurations"
-        all     "economy wide emission market"
-=======
     ETS     "ETS emission market"
     ESR     "Effort sharing emission market"
     other   "other market configurations"
     all     "economy wide emission market"
->>>>>>> 1ea468e75003e6a0d1edfa4f61a2b53e087b9311
 /
 
 emiMktGroup(all_emiMktExt,all_emiMkt) "set to allow selecting either a single emission market or all together (all=ETS+ESR+other)"

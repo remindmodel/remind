@@ -90,30 +90,6 @@ pm_IndstCO2Captured(ttot,regi,entySE,entyFE(entyFEcc37),secInd37,emiMkt)$(
 ;
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
 
-!! LEFT (OUTDATED)
-!!o37_prodIndRoute(ttot,regi,"sesteel","seceaf") = v37_outflowPrc.l(ttot,regi,"eaf","sec");
-!!
-!!o37_prodIndRoute(ttot,regi,"prsteel","idreaf_ng_ccs")
-!!  =    v37_outflowPrc.l(ttot,regi,"idrcc","standard")
-!!    /( p37_captureRate("idrcc","standard")
-!!     * p37_specMatDem("driron","eaf","pri"));
-!!o37_prodIndRoute(ttot,regi,"prsteel","idreaf_ng")
-!!  =   v37_outflowPrc.l(ttot,regi,"idr","ng")
-!!    / p37_specMatDem("driron","eaf","pri")
-!!    - o37_prodIndRoute(ttot,regi,"prsteel","idreaf_ng_ccs");
-!!o37_prodIndRoute(ttot,regi,"prsteel","idreaf_h2")
-!!  =   v37_outflowPrc.l(ttot,regi,"idr","h2")
-!!    / p37_specMatDem("driron","eaf","pri");
-!!
-!!o37_prodIndRoute(ttot,regi,"prsteel","bfbof_ccs")
-!!  =    v37_outflowPrc.l(ttot,regi,"bfcc","standard")
-!!    /( p37_captureRate("bfcc","standard")
-!!     * p37_specMatDem("pigiron","bof","unheated"));
-!!o37_prodIndRoute(ttot,regi,"prsteel","bfbof")
-!!  =   v37_outflowPrc.l(ttot,regi,"bf","standard")
-!!    / p37_specMatDem("pigiron","bof","unheated")
-!!    - o37_prodIndRoute(ttot,regi,"prsteel","bfbof_ccs");
-
 
 o37_relativeOutflow(ttot,regi,tePrc,opmoPrc)$tePrc2opmoPrc(tePrc,opmoPrc) = 1.
 
@@ -179,21 +155,6 @@ loop((tePrc1,opmoPrc1,tePrc2,opmoPrc2,mat,route)$(
       * p37_specMatDem(mat,tePrc2,opmoPrc2));
 );
 
-!! LEFT AS EXAMPLE:
-
-!!!! first stage
-!!o37_shareRoute(ttot,regi,"idr","ng","idreaf_ng_ccs")
-!!  = (   v37_outflowPrc.l(ttot,regi,"idrcc","standard")
-!!      / p37_captureRate("idrcc","standard"))
-!!    / v37_outflowPrc.l(ttot,regi,"idr","ng");
-!!o37_shareRoute(ttot,regi,"idr","ng","idreaf_ng")
-!!  = 1. - o37_shareRoute(ttot,regi,"idr","ng","idreaf_ng_ccs");
-!!!! second stage
-!!o37_shareRoute(ttot,regi,"eaf","pri","idreaf_ng_ccs")
-!!  =   v37_outflowPrc.l(ttot,regi,"idr","ng")
-!!    * o37_shareRoute(ttot,regi,"idr","ng","idreaf_ng_ccs")
-!!    / ( v37_outflowPrc.l(ttot,regi,"eaf","pri")
-!!      * p37_specMatDem("driron","eaf","pri"));
 
 !!____________________________________________________________________________
 !! determine production and FE demand by route

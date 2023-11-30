@@ -223,15 +223,9 @@ fm_dataglob("flexibility","storwindoff")  = 1.93;
 fm_dataglob("flexibility","windoff")  = -1;
 $ENDIF.WindOff
 
-<<<<<<< HEAD
-* inco0 (and incolearn) are given in $/kW (or $/(tC/a) for dac or industry process-based CC
-* convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for dac or industry process-based CC
-* note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
-=======
-*** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for dac)
-*** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for dac)
+*** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for ccs-related tech or $/(t/a) for process-based industry)
+*** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for ccs-related tech or T$/(Gt/a) for process-based industry)
 *** note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
->>>>>>> 1ea468e75003e6a0d1edfa4f61a2b53e087b9311
 fm_dataglob("inco0",te)              = sm_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
 fm_dataglob("incolearn",te)          = sm_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
 fm_dataglob("omv",te)                = s_DpKWa_2_TDpTWa      * fm_dataglob("omv",te);
