@@ -845,14 +845,18 @@ parameter
 *' * (1): the values from the gdx are read in (works only if the gdx has a parameter value) ATTENTION: make sure that the values from the gdx have the right structure (e.g. regionally differentiated or not)
 *'
 parameter
-  cm_33DAC                  "choose whether DAC (direct air capture) should be included into the CDR portfolio. 0 = DAC not used, 1 = used"
+  cm_33DAC                  "choose whether DAC (direct air capture) should be included into the CDR portfolio."
 ;
-  cm_33DAC                 = 1;   !! def = 1
+  cm_33DAC                 = 1;   !! def = 1    !! regexp = 0|1
+*' * (1): direct air capture is included
+*' * (0): not included
 *'
 parameter
-  cm_33EW                   "choose whether EW (enhanced weathering) should be included into the CDR portfolio. 0 = EW not used, 1 = used"
+  cm_33EW                   "choose whether EW (enhanced weathering) should be included into the CDR portfolio."
 ;
-  cm_33EW                  = 0;   !! def = 0
+  cm_33EW                  = 0;   !! def = 0    !! regexp = 0|1
+*' * (1): enhanced weathering is included
+*' * (0): not included
 *'
 parameter
   cm_gs_ew                  "grain size (for enhanced weathering, CDR module) [micrometre]"
