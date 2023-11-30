@@ -214,6 +214,7 @@ loop ((ttot,regi,ppfKap_industry_dyn37(in))$( t(ttot-1) AND t(ttot+1) ),
   );
 );
 
+<<<<<<< HEAD
 *** ---- PRELIMINARY ALTERNATIVE FE TRAJECTORIES FOR INDUSTRY ----------------START----------
 ** Alternative ("handmade") FE trajectory
 display pm_fedemand;
@@ -236,6 +237,9 @@ $endif.cm_calibration_FE
 *** ---- PRELIMINARY ALTERNATIVE FE TRAJECTORIES FOR INDUSTRY -----------------END-----------
 
 *** Transport alternative FE trajectory
+=======
+*** Transport alternative FE trajectory 
+>>>>>>> 1ea468e75003e6a0d1edfa4f61a2b53e087b9311
 $ifthen.module "%transport%" == "complex"
 $ifthen.demTtrend "%cm_demTcomplex%" == "fromEDGET"
 
@@ -251,13 +255,6 @@ $include "./modules/29_CES_parameters/calibrate/input/pm_fe_demand_EDGETbased.cs
 $offdelim
 /
 ;
-$ifthen "%cm_calibration_FE%" == "low"
-  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SDP","Mix1Wise",in_dyn35);
-$elseif "%cm_calibration_FE%" == "medium"
-  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix1",in_dyn35);
-$elseif "%cm_calibration_FE%" == "high"
-  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix1",in_dyn35);
-$endif
 
 Parameter
  p29_fedemand_trasp2005_2015(tall,all_regi,all_in)  "transport demand based on complex in 2005"

@@ -649,10 +649,6 @@ for (scen in common) {
 }
 
 if (! "--test" %in% flags && ! "--gamscompile" %in% flags) {
-  if (is.null(renv::project())) {
-    system(paste("cp", file.path(path_remind, ".Rprofile "), file.path(path_magpie, ".Rprofile")))
-    message("\nCopied REMIND .Rprofile to MAgPIE folder.")
-  }
   cs_runs <- paste0(file.path("output", paste0(prefix_runname, common, "-rem-", max_iterations)), collapse = ",")
   cs_name <- paste0("compScen-all-rem-", max_iterations)
   cs_qos <- if (! isFALSE(run_compareScenarios)) run_compareScenarios else "short"

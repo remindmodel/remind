@@ -9,6 +9,7 @@
 
 * initialize regipol target deviation parameter
 pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
+pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) = 0;
 
 *** Region-specific datainput (with hard-coded regions)
 

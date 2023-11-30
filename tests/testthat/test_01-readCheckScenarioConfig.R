@@ -18,14 +18,14 @@ test_that("readCheckScenarioConfig fails on error-loaden config", {
   csvfile <- tempfile(pattern = "scenario_config_a", fileext = ".csv")
   writeLines(c(";start;copyConfigFrom;c_budgetCO2;path_gdx;path_gdx_carbonprice;carbonprice;path_gdx_bau;path_gdx_ref",
                "abc.loremipsumloremipsum@lorem&ipsumloremipsumloremipsumloremipsumloremipsumloremipsum_;0;;33;;;;;",
-               "PBS;1;glob;29; whitespacebefore;whitespaceafter ;;;whatever",
+               "PBS;1;glob;29;whitespace inside;whitespaceafter ;;;whatever",
                "glob;0;missing_copyConfigFrom;33; ;nobreakspace	tab;;;",
                "PBScopy;0;PBS;;;mustbedifferenttoPBS;;;",
                "NA;1;;;;;notNDC_but_has_path_gdx_bau;PBS;",
                "NDC_but_bau_missing;1;;;;;NDC;;"),
              con = csvfile, sep = "\n")
   w <- capture_warnings(m <- capture_messages(scenConf <- readCheckScenarioConfig(csvfile, remindPath = "../../", testmode = TRUE)))
-  expect_match(w, "13 errors found", all = FALSE, fixed = TRUE)
+  expect_match(w, "11 errors found", all = FALSE, fixed = TRUE)
   expect_match(w, "These titles are too long", all = FALSE, fixed = TRUE)
   expect_match(w, "These titles may be confused with regions", all = FALSE, fixed = TRUE)
   expect_match(w, "These titles contain illegal characters", all = FALSE, fixed = TRUE)
@@ -42,7 +42,7 @@ test_that("readCheckScenarioConfig fails on error-loaden config", {
   expect_identical(unlist(scenConf["PBS", copiedFromPBS]),
                    unlist(scenConf["PBScopy", copiedFromPBS]))
   expect_identical(scenConf["PBScopy", "path_gdx_carbonprice"], "mustbedifferenttoPBS")
-  expect_identical(scenConf["PBS", "path_gdx_carbonprice"], "whitespaceafter ")
+  expect_identical(scenConf["PBS", "path_gdx_carbonprice"], "whitespaceafter")
 })
 
 test_that("copyConfigFrom copies settings properly", {

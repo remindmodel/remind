@@ -45,9 +45,18 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
   o37_relativeOutflow(ttot,all_regi,all_te,opmoPrc)                      "Outflow of a process relative to the outflow of the route"
 $endif.process_based_steel
 
+<<<<<<< HEAD
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard"
   p37_CESMkup_input(all_in)  "markup cost parameter read in from config for CES levels in industry to influence demand-side cost and efficiencies in CES tree [trUSD/CES input]" / %cm_CESMkup_ind% /
 $endIf.CESMkup
+=======
+  p37_CESMkup_input(all_in)  "markup cost parameter read in from config for CES levels in industry to influence demand-side cost and efficiencies in CES tree [trUSD/CES input]"
+  /
+$ifthen.CESMkup "%cm_CESMkup_ind%" == "manual" 
+    %cm_CESMkup_ind_data%
+$endif.CESMkup
+  /
+>>>>>>> 1ea468e75003e6a0d1edfa4f61a2b53e087b9311
 
 $ifthen.sec_steel_scen NOT "%cm_steel_secondary_max_share_scenario%" == "off"   !! cm_steel_secondary_max_share_scenario
   p37_steel_secondary_max_share_scenario(tall,all_regi)   "scenario limits on share of secondary steel production"

@@ -21,7 +21,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   } else {
     cfg <- gms::readDefaultConfig(remindPath)
   }
-  scenConf <- read.csv2(filename, stringsAsFactors = FALSE, na.strings = "", comment.char = "#")
+  scenConf <- read.csv2(filename, stringsAsFactors = FALSE, na.strings = "", comment.char = "#",
+                                  strip.white = TRUE, blank.lines.skip = TRUE)
   scenConf <- scenConf[! is.na(scenConf[1]), ]
   rownames(scenConf) <- scenConf[, 1]
   scenConf[1] <- NULL
@@ -82,20 +83,11 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     message(msg)
   }
   if ("path_gdx_bau" %in% names(scenConf)) {
-    # fix if bau given despite not needed
-    needBau <- list(welfare = "ineqLognormal",
-                    carbonprice = c("NDC", "diffPriceSameCost"),
-                    carbonpriceRegi = "NDC",
-                    emicapregi = "AbilityToPay")
+    # fix if bau given despite not needed. needBau is defined in needBau.R
+    # initialize vector with FALSE everywhere and turn elements to TRUE if a scenario config row setting matches a needBau element
     scenNeedsBau <- rep(FALSE, nrow(scenConf))
-    for (n in names(needBau)) {
-      if (n %in% names(scenConf)) {
-        if (n == "welfare" && "cm_emiscen" %in% names(scenConf)) {
-          scenNeedsBAU <- scenNeedsBau | (scenConf[[n]] %in% needBau[[n]] & scenConf[["cm_emiscen"]] != 1)
-        } else {
-          scenNeedsBau <- scenNeedsBau | scenConf[[n]] %in% needBau[[n]]
-        }
-      }
+    for (n in intersect(names(needBau), names(scenConf))) {
+      scenNeedsBau <- scenNeedsBau | scenConf[[n]] %in% needBau[[n]]
     }
     BAUbutNotNeeded <- ! is.na(scenConf$path_gdx_bau) & ! (scenNeedsBau)
     if (sum(BAUbutNotNeeded) > 0) {
@@ -147,6 +139,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_trdadj" = "Now always fixed to 2, see https://github.com/remindmodel/remind/pull/1052",
        "cm_OILRETIRE" = "Now always on by default, see https://github.com/remindmodel/remind/pull/1102",
        "cm_fixCO2price" = "Was never in use, removed in https://github.com/remindmodel/remind/pull/1369",
+       "cm_calibration_FE" = "Deleted, only used for old hand made industry trajectories, see https://github.com/remindmodel/remind/pull/1468",
      NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       if (testmode) {

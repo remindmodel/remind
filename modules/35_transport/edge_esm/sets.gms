@@ -147,6 +147,8 @@ NAV_tec
 NAV_ele
 NAV_lce
 NAV_all
+CAMP_lscWeak
+CAMP_lscStrong
 /
 
 EDGE_scenario(EDGE_scenario_all) "Selected EDGE-T scenario"

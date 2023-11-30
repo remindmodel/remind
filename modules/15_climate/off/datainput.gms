@@ -50,4 +50,6 @@ $onlisting
 );
 display pm_emicapglob;
 
+pm_gmt_conv = 0;
+
 *** EOF ./modules/15_climate/off/datainput.gms
