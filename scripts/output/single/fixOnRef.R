@@ -64,61 +64,21 @@ fixOnMif <- function(outputdir) {
   refname <- basename(dirname(refmif))
   d <- quitte::as.quitte(mifs)
   dref <- quitte::as.quitte(refmif)
-  if (identical(levels(d$scenario), levels(dref$scenario))) {
-    levels(dref$scenario) <- paste0(levels(dref$scenario), "_ref")
-  }
+  failfile <- file.path(outputdir, "log_fixOnRef.csv")
+  fixeddata <- piamInterfaces::fixOnRef(d, dref, ret = "fixed", startyear = startyear, failfile = failfile)
 
-  falsepositives <- grep("Moving Avg$", levels(d$variable), value = TRUE)
-
-  message("Comparing ", title, " with reference run ", refname, " for t < ", startyear)
-  mismatches <- rbind(d, dref) %>%
-    filter(period < startyear, ! variable %in% falsepositives) %>%
-    group_by(model, region, variable, unit, period) %>%
-    filter(1e-16 < var(value)) %>%
-    ungroup() %>%
-    distinct(variable, period) %>%
-    group_by(variable) %>%
-    summarise(period = paste(sort(period), collapse = ', '))
-  if (nrow(mismatches) == 0) {
-    message("# Run is perfectly fixed on reference run!")
-    return(TRUE)
-  }
-  showrows <- 50
-  theserows <- match(unique(gsub("\\|.*$", "", mismatches$variable)), gsub("\\|.*$", "", mismatches$variable))
-  # extract some representative variables that differ in the first two parts of A|B|C…
-  first2elements <- gsub("(\\|.*?)\\|.*$", "\\1", mismatches$variable)
-  theserows <- match(unique(first2elements), first2elements)
-  theserows <- theserows[seq(min(length(theserows), showrows))]
-  rlang::with_options(width = 160, print(mismatches[theserows, ], n = showrows))
-  if (length(theserows) < nrow(mismatches)) {
-    message("The variables above are representative, avoiding repetition after A|B. ",
-            "Additional ", (nrow(mismatches) - length(theserows)), " variables differ.")
-  }
-  filename <- file.path(outputdir, "log_fixOnRef.csv")
-  message("Find failing variables in '", filename, "'.")
-  csvdata <- rbind(mutate(d, scenario = "value"), mutate(dref, scenario = "ref")) %>%
-    filter(! variable %in% falsepositives, period < startyear) %>%
-    pivot_wider(names_from = scenario) %>%
-    filter(abs(value - ref) > 0) %>%
-    add_column(scenario = title) %>%
-    droplevels()
-  write.csv(csvdata, filename, quote = FALSE, row.names = FALSE)
   if (exists("flags") && isTRUE("--interactive" %in% flags)) {
     message("\nDo you want to fix that by overwriting ", title, " mif with reference run ", refname, " for t < ", startyear, "?\nType: y/N")
     if (tolower(gms::getLine()) %in% c("y", "yes")) {
       message("Updating ", mifs[[1]])
-      di <- rbind(
-              filter(d, period >= startyear | ! variable %in% levels(dref$variable) | variable %in% falsepositives),
-              mutate(filter(dref, period < startyear & variable %in% levels(d$variable)) & ! variable %in% falsepositives, scenario = title)
-            )
       tmpfile <- paste0(mifs[[1]], "fixOnMif")
-      quitte::write.mif(di, tmpfile)
+      quitte::write.mif(fixeddata, tmpfile)
       file.rename(tmpfile, mifs[[1]])
       remind2::deletePlus(mifs[[1]], writemif = TRUE)
       message("Keep in mind to update the runs that use this as `path_gdx_ref` as well.")
     }
   }
-  return(mismatches)
+  return(NULL)
 }
 
 invisible(fixOnMif(outputdir))
