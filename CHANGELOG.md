@@ -25,6 +25,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - correctly report `Tech|*|Capital Costs|w/ Adj Costs` for t < cm_startyear
     [[#1429](https://github.com/remindmodel/remind/pull/1429), [#1476](https://github.com/remindmodel/remind/pull/1476)]
 
+### removed
+- **45_carbonprice** remove outdated realizations:
+    NDC2constant, NPi2018, diffPhaseIn2Constant, diffPhaseIn2Lin, diffPhaseInLin2LinFlex, diffPriceSameCost
+    [[#1480](https://github.com/remindmodel/remind/pull/1480)]
+
 ## [3.2.1] - 2023-07-13 (incomplete)
 
 ### changed
