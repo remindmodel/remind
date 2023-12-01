@@ -37,5 +37,5 @@ jobs:
         shell: Rscript {0}
         
       - name: pre-commit Hook
-        run: source(".githooks/pre-commit")
+        run: source(".github/hooks/pre-commit")
         shell: Rscript {0}
