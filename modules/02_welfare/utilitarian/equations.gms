@@ -58,16 +58,6 @@ $ifthen "%cm_INCONV_PENALTY_FESwitch%" == "on"
 	+ v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
 	)
       / 1e3	
-              !! inconvenience cost for fuel switching in FE non-energy use between biogenic, synthetic solids, liquids and gases
-              !! todo:hide behind a switch
-      - sum((entySe,entyFe,te,sector,emiMkt)$(
-                            se2fe(entySe,entyFe,te) 
-                        AND entyFe2sector2emiMkt_NonEn(entyFe,sector,emiMkt)
-                        AND (entySeBio(entySe) OR entySeSyn(entySe) )        ),
-          v02_NegInconvPenNonEnSwitch(ttot,regi,entySe,entyFe,sector,emiMkt) 
-        + v02_PosInconvPenNonEnSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
-        )
-      / 1e3
 $endif
       )
     )
