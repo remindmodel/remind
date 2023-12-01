@@ -17,8 +17,9 @@ $ondelim
 $include "./modules/33_CDR/portfolio/input/f33_maxProdGradeRegiWeathering.cs3r"
 $offdelim
 ;
-display f33_maxProdGradeRegiWeathering;
-$include "./modules/33_CDR/portfolio/input/p33_transport_costs.inc"
+!! display f33_maxProdGradeRegiWeathering;
+!! $include "./modules/33_CDR/portfolio/input/p33_transport_costs.inc"
+p33_transport_costs(regi, rlf, rlf) = 0.05; !! KK a temporary fix before p33_transport_costs are moved to mrremind
 
 s33_step = 2.5;
 *** fix costs [T$/Gt stone]. Data from strefler et al. in $/t stone: mining, crushing, grinding (5.0 investment costs, 25.1 O&M costs), spreading (12.1 O&M costs)

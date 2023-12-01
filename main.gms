@@ -216,9 +216,10 @@ $offdigit
 *** turn profiling off (0) or on (1-3, different levels of detail)
 option profile = 0;
 
-*' @code
+*' @title{extrapage: "00_configuration"} Configuration
+*' @code{extrapage: "00_configuration"}
 *--------------------------------------------------------------------------
-*' #### Configuration - Settings for Scenarios:
+*' ### Configuration - Settings for Scenarios:
 *--------------------------------------------------------------------------
 
 ***---------------------    Run name and description    -------------------------
@@ -371,11 +372,8 @@ $setglobal emicapregi  none           !! def = none
 *' * (expoLinear): 5% exponential increase until c_expoLinear_yearStart, linear increase thereafter
 *' * (exogenous): carbon price is specified using an external input file or using the switch cm_regiExoPrice
 *' * (linear): linear increase over time of the tax level in 2020 set via cm_co2_tax_2020 (combined with emiscen eq 9 and cm_co2_tax_2020>0)
-*' * (diffPriceSameCost) ! experimental ! adjusts regional carbon prices until regional mitigation costs (in NPV GDP) are equal across regions. Use with iterative_adjust=2, emiscen=9. Experimental feature, you are responsible to check for convergence yourself (check that p45_mitiCostRel is about constant over iterations)
 *' * (temperatureNotToExceed): [test and verify before using it!] Find the optimal carbon carbon tax (set cm_emiscen=1"iterative_target_adj" = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
-*' * (NDC2constant): linearly phase in global constant price from NDC prices (default 2020-2040 phase-in)
 *' * (diffCurvPhaseIn2Lin): [REMIND 2.1 default for validation peakBudget runs, in combination with "iterative_target_adj" = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
-*' * (diffPhaseIn2Constant): !experimental! linearly phase in global constant price, with starting values differentiated by GDP/cap
 *' * (NDC): implements a carbon price trajectory consistent with the NDC targets (up to 2030) and a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). Choose version using cm_NDC_version "2023_cond", "2023_uncond", or replace 2023 by 2022, 2021 or 2018 to get all NDC published until end of these years.
 *' * (NPi): National Policies Implemented, extrapolation of historical (until 2020) carbon prices
 $setglobal carbonprice  none           !! def = none
@@ -827,7 +825,7 @@ parameter
 *' * (5): iterative adjustment V for both budget and tax runs based on CO2 emissions 2020-2100, see core/postsolve.gms for direct algorithms of adjustment
 *' * (6): iterative adjustment VI for both budget and tax runs based on peak CO2 emissions budget, without changing temporal profile (i.e. with overshoot), see core/postsolve.gms for direct algorithms of adjustment
 *' * (7): iterative adjustment VII for tax runs based on peak CO2 emissions, with change of temporal tax profile after time of peak budget, aiming for net-zero thereafter, see core/postsolve.gms for direct algorithms of adjustment
-*' * (9): [REMIND 2.1 default for validation peakBudget runs, in combination with carbonprice = none; after the peaking year annual increase by cm_taxCO2inc_after_peakBudgYr. Automatically shifts cm_peakBudgYr to find the correct peaking year for a given .
+*' * (9): [REMIND 2.1 default for validation peakBudget runs, in combination with carbonprice = none; after the peaking year annual increase by c_taxCO2inc_after_peakBudgYr. Automatically shifts c_peakBudgYr to find the correct peaking year for a given .
 *'
 parameter
   cm_NDC_divergentScenario  "choose scenario about convergence of CO2eq prices in NDC realization of module 45_carbonprice"
@@ -980,17 +978,17 @@ parameter
   cm_priceSensiBuild     = -3;
 *'  price sensitivity of logit function for heating and cooking technological choice
 parameter
-  cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
+  c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 ;
-  cm_peakBudgYr            = 2050;   !! def = 2050
+  c_peakBudgYr            = 2050;   !! def = 2050
 *'   time of net-zero CO2 emissions (peak budget), requires emiscen to 9 and cm_iterative_target_adj to 7, will potentially be adjusted by algorithms
 parameter
-  cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
+  c_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 ;
-  cm_taxCO2inc_after_peakBudgYr = 0; !! def = 0 . For weak targets (higher than 1100 Peak Budget), this value might need to increased to prevent continually increasing temperatures
+  c_taxCO2inc_after_peakBudgYr = 0; !! def = 0 . For weak targets (higher than 1100 Peak Budget), this value might need to increased to prevent continually increasing temperatures
 *'
 parameter
-  cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
+  cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffCurvPhaseIn2Lin"
 ;
   cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 *'

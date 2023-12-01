@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# .inc files without .gdx file
+orphan_inc=$( comm -23 \
+  <( git status -s | sed -n 's/^[AMR].*\s\([^ ]\)\.inc$/\1/p' | sort ) \
+  <( git status -s | sed -n 's/^[AMR].*\s\([^ ]\)\.gdx$/\1/p' | sort ) )
+
+# .gdx files without .inc file
+orphan_gdx=$( comm -13 \
+  <( git status -s | sed -n 's/^[AMR].*\s\([^ ]\)\.inc$/\1/p' | sort ) \
+  <( git status -s | sed -n 's/^[AMR].*\s\([^ ]\)\.gdx$/\1/p' | sort ) )
+
+error=0
+
+if test 0 -ne `echo "$orphan_inc" | grep -cv "^$" `; then
+	echo "There are .inc files without corresponding .gdx file:"
+	echo "$orphan_inc" | sed 's/.*/&.inc/'
+	error=`expr "$error" + 1`
+fi
+
+if test 0 -ne `echo "$orphan_gdx" | grep -cv "^$" `; then
+	echo "There are .gdx files without corresponding .inc file:"
+	echo "$orphan_gdx" | sed 's/.*/&.gdx/'
+	error=`expr "$error" + 2`
+fi
+
+if test 0 -ne "$error"; then
+	echo "Commit aborted."
+fi
+
+exit "$error"
+

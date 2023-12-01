@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# Check for staged, modified, untracked, and ignored .inc|.gdx files
+staged_files=$( git status | \
+    sed -n '
+    /^Changes to be committed:$/,/^[^ 	]/ {
+      s/^\s*[^:]\+:\s*\(.*\.inc\)$/\1/p;
+      s/^\s*[^:]\+:\s*\(.*\.gdx\)$/\1/p }
+    ' )
+
+modified_files=$( git status | \
+    sed -n '
+    /^Changes not staged for commit:$/,/^[^ 	]/ {
+      s/^\s*[^:]\+:\s*\(.*\.inc\)$/\1/p;
+      s/^\s*[^:]\+:\s*\(.*\.gdx\)$/\1/p }
+    ' )
+
+untracked_files=$( git status | \
+    sed -n '
+    /^Untracked files:$/,/^[^ 	]/ {
+      s/^\s*\(.*\.inc\)$/\1/p;
+      s/^\s*\(.*\.gdx\)$/\1/p }
+    ' )
+
+ignored_files=$( git status --ignored -- *.inc *.gdx | \
+    sed -n '
+    /^Untracked files:$/,/^[^ 	]/ {
+      s/^\s*\(.*\.inc\)$/\1/p;
+      s/^\s*\(.*\.gdx\)$/\1/p }
+    ' )
+
+# exclude "normal" untracked from ignored files
+ignored_files=$( comm -23 <( echo "$ignored_files" | sort ) \
+                          <( echo "$untracked_files" | sort ) )
+
+error=0
+
+if test 0 -ne `echo "$staged_files" | grep -v "^$" | wc -l`
+then
+    echo "There are uncommited .inc or .gdx files"
+    echo "$staged_files"
+    echo ""
+    error=`expr "$error" + 1`
+fi
+
+if test 0 -ne `echo "$modified_files" | grep -v "^$" | wc -l`
+then
+    echo "There are modified .inc or .gdx files"
+    echo "$modified_files" | cat -A
+    echo ""
+    error=`expr "$error" + 2`
+fi
+
+if test 0 -ne `echo "$untracked_files" | grep -v "^$" | wc -l `
+then
+    echo "There are untracked .inc or .gdx files"
+    echo "$untracked_files"
+    echo ""
+    error=`expr "$error" + 4`
+fi
+
+if test 0 -ne `echo "$ignored_files" | grep -v "^$" | wc -l `
+then
+    echo "There are ignored .inc or .gdx files"
+    echo "$ignored_files"
+    echo ""
+    error=`expr "$error" + 8`
+fi
+
+if test 0 -ne "$error"
+then
+    echo "no action was taken"
+    exit "$error"
+else
+    # generate git commit info
+    git log --format=full -1 HEAD > git_info
+
+    # pack all .inc and .gdx files and git_info
+    echo "packing into CESparametersAndGDX archive:"
+    commit_hash=$( git --no-pager log --format="%H" -1 HEAD )
+    archive_name="CESparametersAndGDX_""$commit_hash"".tgz"
+    tar --create --file "$archive_name" --gzip --verbose *.inc *.gdx  git_info
+
+    # push updates, if we are tracking a remote branch
+    git branch -vv | grep -q "^\* .* [0-9a-f]\+ \[.*\]" && git push 
+    
+    # report hash
+    echo -e "\n'CESandGDXversion' to include in REMIND configuration:" \
+	    "$commit_hash\n"
+fi
