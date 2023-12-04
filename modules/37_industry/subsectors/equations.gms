@@ -231,7 +231,7 @@ q37_costCESmarkup(t,regi,in)$(ppfen_industry_dyn37(in))..
 *'  Feedstock balances
 ***--------------------------------------------------------------------------
 
-*** lower bound on feso/feli/fega in chemicals FE input for feedstocks
+*' Lower bound on feso/feli/fega in chemicals FE input for feedstocks
 q37_chemicals_feedstocks_limit(t,regi)$( t.val ge cm_startyear ) .. 
   sum(in_chemicals_37(in), vm_cesIO(t,regi,in))
   =g=
@@ -239,7 +239,7 @@ q37_chemicals_feedstocks_limit(t,regi)$( t.val ge cm_startyear ) ..
   * p37_chemicals_feedstock_share(t,regi)
 ;
 
-*** Flow of non-energy feedstocks. It is used for emissions accounting 
+*' Define the flow of non-energy feedstocks. It is used for emissions accounting and calculating plastics production
 q37_demFeFeedstockChemIndst(ttot,regi,entyFE,emiMkt)$(
                          ttot.val ge cm_startyear 
                      AND entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
@@ -257,7 +257,7 @@ q37_demFeFeedstockChemIndst(ttot,regi,entyFE,emiMkt)$(
   )
 ;
 
-*** feedstocks flow has to be lower than total energy flow into industry
+*' Feedstocks flow has to be lower than total energy flow into the industry
 q37_feedstocksLimit(ttot,regi,entySE,entyFE,emiMkt)$(
                                              ttot.val ge cm_startyear       
                                          AND sefe(entySE,entyFE)
@@ -269,7 +269,7 @@ q37_feedstocksLimit(ttot,regi,entySE,entyFE,emiMkt)$(
   vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)  
 ;
 
-*** calculate carbon contained in chemical feedstocks
+*' Calculate mass of carbon contained in chemical feedstocks
 q37_FeedstocksCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
   vm_FeedstocksCarbon(ttot,regi,entySE,entyFE,emiMkt)
@@ -278,7 +278,7 @@ q37_FeedstocksCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
   * p37_FeedstockCarbonContent(ttot,regi,entyFE)
 ;
 
-*** calculate carbon contained in plastics [GtC]
+*' Calculate carbon contained in plastics as a share of carbon in feedstock [GtC]
 q37_plasticsCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
   vm_plasticsCarbon(ttot,regi,entySE,entyFE,emiMkt)
@@ -287,7 +287,7 @@ q37_plasticsCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
   * s37_plasticsShare
 ;
 
-*** calculate plastic waste generation, shifted by mean lifetime of plastic products
+*' calculate plastic waste generation, shifted by mean lifetime of plastic products
 *' shift by 2 time steps when we have 5-year steps and 1 when we have 10-year steps
 *' allocate averge of 2055 and 2060 to 2070
 q37_plasticWaste(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
@@ -308,7 +308,7 @@ q37_plasticWaste(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
 vm_plasticWaste.fx(ttot,regi,sefe(entySE,entyFE),emiMkt)$( ttot.val lt 2005 ) = 0 ;
 vm_plasticsCarbon.fx(ttot,regi,sefe(entySE,entyFE),emiMkt)$( ttot.val lt 2005 ) = 0 ;
 
-*** calculate emissions from plastics incineration
+*' emissions from plastics incineration as a share of total plastic waste
 q37_incinerationEmi(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt)) .. 
   vm_incinerationEmi(ttot,regi,entySE,entyFE,emiMkt)
@@ -317,9 +317,9 @@ q37_incinerationEmi(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
   * pm_incinerationRate(ttot,regi)
 ;
 
-*** calculate carbon contained in non-incinerated plastics
-*** this is used in emissions accounting to subtract the carbon that gets
-*** sequestered in plastic products
+*' calculate carbon contained in non-incinerated plastics
+*' this is used in emissions accounting to subtract the carbon that gets
+*' sequestered in plastic products
 q37_nonIncineratedPlastics(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
   vm_nonIncineratedPlastics(ttot,regi,entySE,entyFE,emiMkt)
@@ -328,8 +328,8 @@ q37_nonIncineratedPlastics(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
   * (1 - pm_incinerationRate(ttot,regi))
   ;
 
-*** calculate flow of carbon contained in chemical feedstock with unknown fate
-*** it is assumed that this carbon is re-emitted in the same timestep 
+*' calculate flow of carbon contained in chemical feedstock with unknown fate
+*' it is assumed that this carbon is re-emitted in the same timestep 
 q37_feedstockEmiUnknownFate(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
   vm_feedstockEmiUnknownFate(ttot,regi,entySE,entyFE,emiMkt)
@@ -338,8 +338,8 @@ q37_feedstockEmiUnknownFate(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
   * (1 - s37_plasticsShare)
 ;
 
-*** in baseline runs, all industrial feedstocks should come from fossil energy
-*** carriers, no biofuels or synfuels
+*' in baseline runs, all industrial feedstocks should come from fossil energy
+*' carriers, no biofuels or synfuels
 q37_FossilFeedstock_Base(t,regi,entyFE,emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt)
                      AND cm_emiscen eq 1                                   ) ..
