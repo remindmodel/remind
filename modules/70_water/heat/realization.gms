@@ -6,10 +6,24 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/70_water/heat/realization.gms
 
-*' @description Exogenous water demand is calculated based on data on water demand coefficients and cooling shares. 
-*' Vintage structure in combination with time dependent cooling shares as vintages and efficiency factors are also considered.
-*' Demand is a function of excess heat as opposed to electricity output.
-*' @limitations Water demand is calculated in a post-processing of REMIND and not part of the optimization.
+*' @description Water demand is calculated based on data on water demand coefficients (both for consumption 
+*' and withdrawal) and cooling shares.
+*' 
+*' For thermal power plants, water demand is proportional to excess heat production, which is calculated as fuel input minus
+*' electricity output and smokestack losses (assumed to be 10% of fuel input for non-nuclear thermal power plants).
+*'
+*' For non-biomass renewable technologies, water demand is proportional to electricty output.
+*'
+*' The regional vintage structure of power plants enters the water demand calculation through the time- and region-dependent
+*' conversion efficiencies in the excess heat calculation, and also through time- and region-dependent shares of cooling
+*' technologies. Four cooling technologies are implemented: once trough, wet tower, dry tower and pond cooling. We assume
+*' a shift away from once-through cooling systems towards recirculating or dry cooling technologies.
+*' @limitations Water demand is calculated in a post-processing of REMIND; there is no market-based decision making process
+*' for water allocation. Instead, a rule-based priorization is adopted: only 50% of available water is allowed to be used 
+*' for agricultural purposes. Accordingly, there are no constraints on water quantity or quality for the expansion of
+*' water-intense technologies.
+*' 
+*' Water demand in sectors other than electricity is not represented.
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/70_water/heat/sets.gms"
