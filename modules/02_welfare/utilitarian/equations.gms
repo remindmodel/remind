@@ -107,19 +107,4 @@ q02_inconvPenFeBioSwitch(ttot,regi,entySe,entyFe,te,sector,emiMkt)$(
 ;
 $ENDIF.INCONV_bioSwitch
 
-*** inconvenience cost for fuel switching between biomass/synfuel in non-energy
-*** use
-q02_inconvPenNonEnSwitch(ttot,regi,entySe,entyFe,te,sector,emiMkt)$(
-                          ttot.val ge cm_startyear
-                      AND se2fe(entySe,entyFe,te) 
-                      AND entyFe2sector2emiMkt_NonEn(entyFe,sector,emiMkt)
-                      AND (entySeBio(entySe) OR entySeSyn(entySe) )        ) ..
-    vm_demFENonEnergySector(ttot,regi,entySe,entyFe,sector,emiMkt)
-  - vm_demFENonEnergySector(ttot-1,regi,entySe,entyFe,sector,emiMkt)
-  + v02_NegInconvPenNonEnSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
-  - v02_PosInconvPenNonEnSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
-  =e=
-  0
-;
-
 *** EOF ./modules/02_welfare/utilitarian/equations.gms

@@ -127,9 +127,6 @@ p_aux_lifetime(all_regi,all_te)                             "auxiliary parameter
 pm_pedem_res(ttot,all_regi,all_te)                          "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
 p_ef_dem(all_regi,all_enty)                                 "Demand side emission factor of final energy carriers [MtCO2/EJ]"
 
-*** share of plastic waste that is incinerated REDUNDANT; DELETE ME
-pm_incinerationShares(ttot,all_regi)                        "Share of plastic waste that gets incinerated [fraction]"
-
 pm_secBioShare(ttot,all_regi,all_enty,emi_sectors)           "share of biomass per carrier for each sector"
 
 p_avCapFac2015(all_regi,all_te)                             "average capacity factor of non-bio renewables in 2015 in REMIND"

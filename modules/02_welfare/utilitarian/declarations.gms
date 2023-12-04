@@ -24,7 +24,6 @@ $IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_FESwitch%" == "on"
 p02_inconvPen_Switch_Track(ttot,all_regi)                       "Parameter to track magnitude of inconvenience penalty for bio/synfuel share switching [share of consumption]"
 $ENDIF.INCONV_bioSwitch
 
-p02_inconvPen_NonEn_Switch_Track(ttot,all_regi)                  "Parameter to track magnitude of inconvenience penalty for bio/synfuel non-energy fuel switching [share of consumption]"
 ;
 
 ***-------------------------------------------------------------------------------

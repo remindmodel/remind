@@ -21,19 +21,6 @@ p02_inconvPen_Switch_Track(t,regi)
   / 1e3;
 $ENDIF.INCONV_bioSwitch
 
-*** track inconvenience penalty for no-energy bio/synfuel switching to check
-*** how large it is relative to consumption
-p02_inconvPen_NonEn_Switch_Track(t,regi)
-  = ( sum((entySe,entyFe,te,sector,emiMkt)$(
-                            se2fe(entySe,entyFe,te) 
-                        AND entyFe2sector2emiMkt_NonEn(entyFe,sector,emiMkt)
-                        AND (entySeBio(entySe) OR entySeSyn(entySe) )        ),
-        v02_NegInconvPenNonEnSwitch.l(t,regi,entySe,entyFe,sector,emiMkt)
-      + v02_PosInconvPenNonEnSwitch.l(t,regi,entySe,entyFe,sector,emiMkt)
-      )
-    / 1e3
-    )
-  / vm_cons.l(t,regi);
 
 *the inequality term in the SCC calculation is set to 1 here
 pm_sccIneq(tall,regi) = 1;

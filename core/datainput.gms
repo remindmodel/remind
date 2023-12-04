@@ -1422,8 +1422,7 @@ pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem(regi,"fedie"
 pm_emifac(ttot,regi,"segafos","fegat","tdfosgat","co2") = p_ef_dem(regi,"fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 
 ***------ Read in emission factors for process emissions in chemicals sector---
-*' calculated using IEA data on feedstocks flows and UNFCCC data on chem sector process emissions
-***TO DO: remove the "*" by modif the input file (fegas instead of gases, etc.)
+*** calculated using IEA data on feedstocks flows and UNFCCC data on chem sector process emissions
 *** "non-energy emission factors [GtC per ZJ]"
 parameter f_nechem_emissionFactors(ttot,all_regi,*)  
 /

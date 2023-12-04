@@ -7,11 +7,7 @@
 
 library(magclass)
 
-######remove for CLEAN UP------------------------
-#library(remind2)
-library(devtools)
-load_all("/p/projects/remind/users/simonlei/Feedstocks_clean/remind2")
-
+library(remind2)
 library(lucode2)
 library(gms)
 library(methods)
