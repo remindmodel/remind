@@ -7,7 +7,6 @@
 *** SOF ./modules/70_water/exogenous/realization.gms
 
 *' @description Exogenous water demand is calculated based on data on water demand coefficients and cooling shares.
-*' @limitations Water demand is calculated in a post-processing of REMIND and not part of the optimization.
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/70_water/exogenous/sets.gms"

@@ -7,10 +7,7 @@
 name,type,reason
 cm_emiscen, switch, ???
 cm_co2_tax_2020, switch, ???
-vm_cesIO,variable,???
-pm_pvp,parameter,???
 pm_ttot_val,parameter,???
-pm_ts,parameter,???
 cm_co2_tax_growth,switch,???
 cm_expoLinear_yearStart,switch,???
 pm_globalMeanTemperature,input,questionnaire
@@ -28,8 +25,6 @@ pm_shPPPMER,input,questionnaire
 pm_pop,input,questionnaire
 pm_gdp,input,questionnaire
 cm_CO2priceRegConvEndYr,input,questionnaire
-cm_peakBudgYr,input,questionnaire
-cm_taxCO2inc_after_peakBudgYr,input,questionnaire
 cm_NDC_divergentScenario,input,questionnaire
 vm_demFeSector,input,questionnaire
 pm_emifac,input,questionnaire
