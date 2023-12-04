@@ -67,6 +67,8 @@ library(lucode2)
 library(gms)
 require(stringr, quietly = TRUE)
 
+invisible(sapply(list.files("scripts/start", pattern = "\\.R$", full.names = TRUE), source))
+
 flags <- NULL
 ### Define arguments that can be read from command line
 if (!exists("source_include")) {
@@ -81,13 +83,13 @@ if ("--help" %in% flags) {
   q()
 }
 
-choose_slurmConfig_output <- function(slurmExceptions = NULL) {
+choose_slurmConfig_output <- function(output) {
   slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
                      "--qos=priority --mem=8000", "--qos=short --mem=8000",
-                     "--qos=standby --mem=8000", "--qos=priority --mem=32000", "direct")
-  if (!is.null(slurmExceptions)) {
-    slurm_options <- unique(c(grep(slurmExceptions, slurm_options, value = TRUE), "direct"))
-  }
+                     "--qos=standby --mem=8000", "--qos=priority --mem=32000",
+                     if ("ar6Climate" %in% output) "--qos=priority --tasks-per-node=12",
+                     "direct")
+  if ("reporting" %in% output) slurm_options <- unique(c(grep("--mem=[0-9]*[0-9]{3}", slurm_options, value = TRUE), "direct"))
   if (length(slurm_options) == 1) {
     return(slurm_options[[1]])
   }
@@ -165,7 +167,7 @@ if (comp %in% c("comparison", "export")) {
   # choose the slurm options. If you use command line arguments, use slurmConfig=priority or standby
   modules_using_slurmConfig <- c("compareScenarios2")
   if (!exists("slurmConfig") && any(modules_using_slurmConfig %in% output)) {
-    slurmConfig <- choose_slurmConfig_output()
+    slurmConfig <- choose_slurmConfig_output(output = output)
   }
   if (exists("slurmConfig")) {
     if (slurmConfig %in% c("priority", "short", "standby")) {
@@ -200,7 +202,6 @@ if (comp %in% c("comparison", "export")) {
   outputInteractive <- c("plotIterations", "fixOnRef")
   if (! exists("source_include")) {
     # for selected output scripts, only slurm configurations matching these regex are available
-    slurmExceptions <- if ("reporting" %in% output) "--mem=[0-9]*[0-9]{3}" else NULL
     if (any(output %in% outputInteractive)) {
       slurmConfig <- "direct"
       flags <- c(flags, "--interactive") # to tell scripts they can run in interactive mode
@@ -208,8 +209,8 @@ if (comp %in% c("comparison", "export")) {
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
     if (!exists("slurmConfig")) {
-      slurmConfig <- choose_slurmConfig_output(slurmExceptions = slurmExceptions)
-      if (slurmConfig != "direct") slurmConfig <- paste(slurmConfig, "--nodes=1 --tasks-per-node=1")
+      slurmConfig <- choose_slurmConfig_output(output = output)
+      if (slurmConfig != "direct") slurmConfig <- combine_slurmConfig("--nodes=1 --tasks-per-node=1", slurmConfig)
     }
     if (slurmConfig %in% c("priority", "short", "standby")) {
       slurmConfig <- paste0("--qos=", slurmConfig, " --nodes=1 --tasks-per-node=1")
