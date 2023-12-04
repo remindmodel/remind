@@ -843,14 +843,18 @@ parameter
 *' * (1): the values from the gdx are read in (works only if the gdx has a parameter value) ATTENTION: make sure that the values from the gdx have the right structure (e.g. regionally differentiated or not)
 *'
 parameter
-  cm_33DAC                  "choose whether DAC (direct air capture) should be included into the CDR portfolio. 0 = DAC not used, 1 = used"
+  cm_33DAC                  "choose whether DAC (direct air capture) should be included into the CDR portfolio."
 ;
-  cm_33DAC                 = 1;   !! def = 1
+  cm_33DAC                 = 1;   !! def = 1    !! regexp = 0|1
+*' * (1): direct air capture is included
+*' * (0): not included
 *'
 parameter
-  cm_33EW                   "choose whether EW (enhanced weathering) should be included into the CDR portfolio. 0 = EW not used, 1 = used"
+  cm_33EW                   "choose whether EW (enhanced weathering) should be included into the CDR portfolio."
 ;
-  cm_33EW                  = 0;   !! def = 0
+  cm_33EW                  = 0;   !! def = 0    !! regexp = 0|1
+*' * (1): enhanced weathering is included
+*' * (0): not included
 *'
 parameter
   cm_gs_ew                  "grain size (for enhanced weathering, CDR module) [micrometre]"
@@ -1503,10 +1507,6 @@ $setglobal cm_Industry_CCS_markup  off !! def = off
 ***   def <- "off" = use default floor cost for renewables.
 ***   or list of techs with respective value to be added to the renewables floor cost in Europe
 $setglobal cm_renewables_floor_cost  off  !! def = off
-*** cm_DAC_eff "multiplicative factor for energy demand per unit carbon captured with DAC"
-***   def <- "off" = use default p33_dac_fedem value.
-***   or list of stationary energy carriers with respective value to be multiplied to p33_dac_fedem
-$setglobal cm_DAC_eff  off  !! def = off
 *** cm_sehe_upper "secondary energy district heating and heat pumps upper bound"
 ***   def <- "off" = no additional limit for district heating and heat pumps.
 ***   or number (ex. 2), district heating and heat pumps are limited to an upper bound of 2 times the 2020 model values.
