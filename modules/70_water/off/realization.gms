@@ -7,7 +7,7 @@
 *** SOF ./modules/70_water/off/realization.gms
 
 *' @description The off-realization of the water module takes no water demand into account.
-*' @limitations REMIND calculates no results regarding water demand.
+*' @limitations No water demand calculated.
 
 *####################### R SECTION START (PHASES) ##############################
 *######################## R SECTION END (PHASES) ###############################

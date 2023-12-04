@@ -8,8 +8,8 @@
 
 *' @title Water
 *'
-*' @description  The 70_water module calculates water demand in a post-processing mode if it is turned on. The method and results are described in @Mouratiadou2016.
-*'
+*' @description  This module calculates water consumption and withdrawals from cooling in electricity production.
+*' The method and results are described detail in @Mouratiadou2016.
 *' @authors Ioanna Mouratiadou
 
 *###################### R SECTION START (MODULETYPES) ##########################
