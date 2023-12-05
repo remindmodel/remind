@@ -18,4 +18,4 @@ $endif.regi_bio_EFTax
 *** EOF ./modules/21_tax/on/sets.gms
 
 *** Module specific set
-set tax_import_type_21 "p21_tau_import type" / worldPricemarkup, c02taxmarkup, avC02taxmarkup /
+set tax_import_type_21 "p21_tau_import type" / worldPricemarkup, CO2taxmarkup, avCO2taxmarkup /

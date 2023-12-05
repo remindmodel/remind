@@ -154,4 +154,11 @@ q21_taxrevImport(ttot,all_regi,all_enty)        "calculation of import tax"
 q21_taxrevChProdStartYear(ttot,all_regi)        "calculation of tax to limit changes compared to reference run in cm_startyear"
 ;
 
+$ifthen.importtaxrc "%cm_taxrc_RE%" == "REdirect"
+equations
+q21_rc_tau_import_RE(ttot,trade_regi)           "revenue recycling of import tax to RE investments (wind, solar, storage): 
+                                                *' investments in wind, solar and storage equal (i) investments from reference scenario with tax and no revenue recycling 
+                                                *' plus (ii) the revenues received from the tax"
+;
+$endif.importtaxrc
 *** EOF ./modules/21_tax/on/declarations.gms
