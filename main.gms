@@ -1143,6 +1143,13 @@ parameter
 ;
   c_changeProdCost = 5;  !! def = 5
 *'
+parameter
+  cm_LearningSpillover      "Activate Learningspillover from foreign capacity in learning technogolies"
+;
+  cm_LearningSpillover = 1; !! def 1 = Learningspillover activated (set to 0 to deactivate)
+*'
+*' * if Learningspillover is deactivated, foreign capacity is set to the level of 2020 in technology learning.
+*'
 ***-----------------------------------------------------------------------------
 *' ####                     FLAGS
 ***-----------------------------------------------------------------------------
@@ -1370,10 +1377,15 @@ $setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for
 *** cm_import_tax
 *** set tax on imports for specific regions on traded energy carriers
 *** as a fraction of import price
-*** example: "EUR.pebiolc 0.5" means bioenergy imports to EUR see 50% tax on top of world market price.
+*** example: "EUR.worldPricemarkup.pebiolc 0.5" means bioenergy imports to EUR see 50% tax on top of world market price.
 *** If you specify a value for a region within a region group (e.g. DEU in EU27_regi),
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
-*** For example: "DEU.pegas 3, EU27_regi.pegas 1.5".
+*** For example: "DEU.worldPricemarkup.pegas 3, EU27_regi.worldPricemarkup.pegas 1.5".
+*** Other options are taxCO2markup and avtaxCO2markup that tax imported CO2 emission (i.e emissions associated to imports of energy carriers)
+*** with the national CO2 price (taxCO2markup) or the max between national and average CO2 price (avtaxCO2markup). Example: "EUR.taxCO2markup 1"
+*** Using different markups for each fossil PE is not recommended, "Price|Carbon|Imported" will then report an unweighted average.
+*** NOTE: In case of "CO2taxmarkup" and "avCO2taxmarkup" there is double-taxation of the CO2-content of the imported energy carrier:
+*** Once when being imported (at the border) and once when being converted to Secondary Energy (normal CO2price applied by REMIND)
 $setGlobal cm_import_tax off !! def off
 *** cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 *** EU-specific SE import assumptions (used for ariadne)
@@ -1665,6 +1677,9 @@ $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_p
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_industry_FE_target  1
 $setglobal c_testOneRegi_region  EUR       !! def = EUR  !! regexp = [A-Z]{3}
+
+*** cm_taxrc_RE     "switch to define whether tax on (CO2 content of) energy imports is recycled to additional direct investments in renewables (wind, solar and storage)"
+$setglobal cm_taxrc_RE  none   !! def = none   !! regexp = none|REdirect
 
 *' @stop
 

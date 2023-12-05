@@ -17,7 +17,7 @@ p21_max_fe_sub(tall,all_regi,all_enty)         "maximum final energy subsidy lev
 p21_prop_fe_sub(tall,all_regi,all_enty)        "subsidy proportional cap to avoid liquids increasing dramatically"
 p21_tau_fuEx_sub(tall,all_regi,all_enty)       "subsidy path for fuel extraction [$/TWa]"
 p21_bio_EF(ttot,all_regi)                      "bioenergy emission factor, which is used to calculate the emission-factor-based tax level [GtC/TWa]"
-p21_tau_Import(ttot,all_regi,all_enty)         "tax on energy imports, currently only works on primary energy levels as those are traded on nash markets [trUSD/TWa]"
+p21_tau_Import(ttot,all_regi,all_enty,tax_import_type_21)         "tax on energy imports, currently only works on primary energy levels as those are traded on nash markets [trUSD/TWa]"
 pm_tau_pe_tax(ttot,all_regi,all_enty)          "pe tax path"
 pm_tau_ces_tax(ttot,all_regi,all_in)           "ces production tax to implement CES mark-up cost in a budget-neutral way"
 
@@ -39,7 +39,7 @@ p21_taxrevBio0(ttot,all_regi)                    "reference level value of bioen
 p21_implicitDiscRate0(ttot,all_regi)             "reference level value of implicit tax on energy efficient capital"
 p21_taxemiMkt0(ttot,all_regi,all_emiMkt)         "reference level value of co2 emission taxes per emission market"
 p21_taxrevFlex0(ttot,all_regi)                   "reference level value of flexibility tax"
-p21_taxrevImport0(ttot,all_regi,all_enty)        "reference level value of import tax"
+p21_taxrevImport0(ttot,all_regi,all_enty,tax_import_type_21)        "reference level value of import tax"
 p21_taxrevChProdStartYear0(ttot,all_regi)        "reference level value of tax to limit changes compared to reference run in cm_startyear"
 
 p21_taxrevGHG_iter(iteration,ttot,all_regi)                "reference level value of GHG emission tax revenue"
@@ -72,10 +72,16 @@ p21_implicitDiscRateMarg(ttot,all_regi,all_in)  "Difference between the normal d
 
 $ifThen.import not "%cm_import_tax%" == "off" 
 Parameter
-  p21_import_tax(ext_regi,all_enty) "parameter to read in configurations from import tax switch" / %cm_import_tax% /
+  p21_import_tax(ext_regi,all_enty,tax_import_type_21) "parameter to read in configurations from import tax switch" / %cm_import_tax% /
 ;
 $endif.import
 
+$ifthen.importtaxrc "%cm_taxrc_RE%" == "REdirect"
+Parameters 
+  p47_ref_costInvTeDir_RE(ttot,all_regi,all_te)                                  "RE direct investment volume in reference scenario"
+  p47_ref_costInvTeAdj_RE(ttot,all_regi,all_te)                                  "RE adjustment cost investment volume in reference scenario"
+;
+$endif.importtaxrc
 
 $ifthen.fetax not "%cm_FEtax_trajectory_abs%" == "off" 
 Parameters
@@ -148,4 +154,11 @@ q21_taxrevImport(ttot,all_regi,all_enty)        "calculation of import tax"
 q21_taxrevChProdStartYear(ttot,all_regi)        "calculation of tax to limit changes compared to reference run in cm_startyear"
 ;
 
+$ifthen.importtaxrc "%cm_taxrc_RE%" == "REdirect"
+equations
+q21_rc_tau_import_RE(ttot,trade_regi)           "revenue recycling of import tax to RE investments (wind, solar, storage): 
+                                                *' investments in wind, solar and storage equal (i) investments from reference scenario with tax and no revenue recycling 
+                                                *' plus (ii) the revenues received from the tax"
+;
+$endif.importtaxrc
 *** EOF ./modules/21_tax/on/declarations.gms
