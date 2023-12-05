@@ -7,6 +7,8 @@ repos:
     -   id: check-yaml
     -   id: check-merge-conflict
     -   id: fix-byte-order-marker
+    -   id: check-added-large-files
+        args: ['--maxkb=100']
 # these two are useful as well, but very much not followed in remind ATM
 #    -   id: end-of-file-fixer
 #    -   id: trailing-whitespace

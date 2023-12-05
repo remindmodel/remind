@@ -2,7 +2,7 @@
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
-# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  REMIND License Exception, version 1.0 (see LICENSE file). fooo
 # |  Contact: remind@pik-potsdam.de
 
 ##################################################################
@@ -71,7 +71,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
 
     cfg_rem$results_folder <- paste0("output/",runname,"-rem-",i)
     cfg_rem$title          <- paste0(runname,"-rem-",i)
-    
+
     # Switch off generation of needless output for all but the last REMIND iteration
     if (i < max_iterations) {
       cfg_rem$output <- intersect(c("reporting", "emulator", "rds_report", "reportingREMIND2MAgPIE"), cfg_rem_original)
@@ -127,7 +127,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
 
       # In the coupling, at the end of each REMIND run, report.R already automatically appends the MAgPIE
       # report of the previous MAgPIE run to the normal REMIND_generic reporting.
-      # After the last coupling iteration: read this combined report from the REMIND output folder, set the 
+      # After the last coupling iteration: read this combined report from the REMIND output folder, set the
       # model name to 'REMIND-MAgPIE' and write the combined report directly to the 'output' folder.
       report_rem <- file.path(path_remind, outfolder_rem, paste0("REMIND_generic_", cfg_rem$title, ".mif"))
       if (i == max_iterations) {
