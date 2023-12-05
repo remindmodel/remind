@@ -36,6 +36,6 @@ jobs:
         run: null <- gms::codeCheck(strict=TRUE)
         shell: Rscript {0}
         
-      - name: pre-commit Hook
-        run: source(".github/hooks/pre-commit")
+      - name: fileSizeCheck
+        run: source(".github/workflows/size-check")
         shell: Rscript {0}
