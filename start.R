@@ -34,8 +34,7 @@ helpText <- "
 #'                       the full model.
 #'   --reprepare, -R:    rewrite full.gms and restart run
 #'   --restart, -r:      interactively restart run(s)
-#'   --test, -t:         test scenario configuration and writing the RData files
-#'                       in the REMIND main folder without starting the runs
+#'   --test, -t:         test scenario configuration without starting the runs
 #'   --testOneRegi, -1:  starting the REMIND run(s) in testOneRegi mode
 #'   startgroup=MYGROUP  when reading a scenario config .csv file, don't start
 #'                       everything specified by \"start = 1\", instead start everything
@@ -74,15 +73,13 @@ if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 argv <- argv[! grepl("^-", argv) & ! grepl("=", argv)]
 # check if user provided any unknown arguments or config files that do not exist
 if (length(argv) == 1) {
-  if (file.exists(argv)) {
-    config.file <- argv
-  } else if (file.exists(file.path("config", argv))) {
-    config.file <- file.path("config", argv)
-  } else {
-    stop("Unknown parameter provided: ", paste(argv, collapse = ", "))
-  }
+  config.file <- argv
+  if (! file.exists(config.file)) config.file <- file.path("config", argv)
+  if (! file.exists(config.file)) config.file <- file.path("config", paste0("scenario_config_", argv, ".csv"))
+  if (! file.exists(config.file)) stop("Unknown parameter provided: ", paste(argv, collapse = ", "))
 } else if (length(argv) > 1) {
-  stop("You provided more than one file or other command line argument, start.R can only handle one.")
+  stop("You provided more than one file or other command line argument, start.R can only handle one: ",
+       paste(argv, collapse = ", "))
 }
 
 if ("--help" %in% flags) {
@@ -333,7 +330,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     }
 
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
-    if (! "--gamscompile" %in% flags) {
+    if (! any(c("--test", "--gamscompile") %in% flags)) {
       filename <- paste0(cfg$title,".RData")
       message("   Writing cfg to file ", filename)
       save(cfg, file=filename)
@@ -366,12 +363,14 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   if (exists("lockID")) gms::model_unlock(lockID)
 }
 
+warnings()
+
 message("\nFinished: ", startedRuns, " runs started. ", waitingRuns, " runs are waiting. ",
         if (modeltestRunsUsed > 0) paste0(modeltestRunsUsed, " GDX files from modeltests selected."))
 if ("--gamscompile" %in% flags) {
   message("To investigate potential FAILs, run: less -j 4 --pattern='^\\*\\*\\*\\*' filename.lst")
 } else if ("--test" %in% flags) {
-  message("You are in --test mode: Rdata files were written, but no runs were started. ", errorsfound, " errors were identified.")
+  message("You are in --test mode: no runs were started. ", errorsfound, " errors were identified.")
 } else if (model_was_locked & (! "--restart" %in% flags | "--reprepare" %in% flags)) {
   message("The model was locked before runs were started, so they will have to queue.")
 }
