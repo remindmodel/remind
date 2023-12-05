@@ -25,7 +25,7 @@ test_that("readCheckScenarioConfig fails on error-loaden config", {
                "NDC_but_bau_missing;1;;;;;NDC;;"),
              con = csvfile, sep = "\n")
   w <- capture_warnings(m <- capture_messages(scenConf <- readCheckScenarioConfig(csvfile, remindPath = "../../", testmode = TRUE)))
-  expect_match(w, "11 errors found", all = FALSE, fixed = TRUE)
+  expect_match(w, "12 errors found", all = FALSE, fixed = TRUE)
   expect_match(w, "These titles are too long", all = FALSE, fixed = TRUE)
   expect_match(w, "These titles may be confused with regions", all = FALSE, fixed = TRUE)
   expect_match(w, "These titles contain illegal characters", all = FALSE, fixed = TRUE)
@@ -36,6 +36,7 @@ test_that("readCheckScenarioConfig fails on error-loaden config", {
   expect_match(w, "specify in copyConfigFrom column a scenario name defined below in the file", all = FALSE, fixed = TRUE)
   expect_match(w, "a reference gdx in 'path_gdx_bau'", all = FALSE, fixed = TRUE)
   expect_match(w, "Do not use 'NA' as scenario name", all = FALSE, fixed = TRUE)
+  expect_match(w, "For module carbonprice.*notNDC_but_has_path_gdx_bau", all = FALSE, fixed = FALSE)
   expect_match(m, "no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead", all = FALSE, fixed = TRUE)
   expect_match(m, "is not empty although no realization is selected that needs it", all = FALSE, fixed = TRUE)
   copiedFromPBS <- c("c_budgetCO2", "path_gdx", "path_gdx_ref")
