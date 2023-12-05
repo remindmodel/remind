@@ -49,8 +49,8 @@ if (! is.null(project)) {
     iiasatemplate <- "ENGAGE_CD-LINKS_template_2019-08-22.xlsx"
     removeFromScen <- "_diff|_expoLinear|-all_regi"
   } else if ("ELEVATE" %in% project) {
-    mapping <- "NAVIGATE"
-    iiasatemplate <- "2023-05-26_template_ELEVATE.xlsx"
+    mapping <- c("NAVIGATE", "ELEVATE")
+    iiasatemplate <- "elevate-workflow/definitions/variable/variable.yaml"
   } else if ("ECEMF" %in% project) {
     mapping <- "ECEMF"
   } else if ("NAVIGATE" %in% project) {

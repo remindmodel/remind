@@ -6,7 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 
 create_input_for_45_carbonprice_exogenous<-function(gdx){
-  
+ 
   library(luplot,quietly=TRUE,warn.conflicts =FALSE)
   library(gms,quietly=TRUE,warn.conflicts =FALSE)
   require(remind2,quietly = TRUE,warn.conflicts =FALSE)
@@ -20,6 +20,8 @@ create_input_for_45_carbonprice_exogenous<-function(gdx){
   } else {
     stop("No gdx file found to take the carbon price from - please provide gdx from a reference run in path_gdx_carbonprice in scenario_config file.")
   }
+
+  if (! dir.exists(dirname(p_fpath))) dir.create(dirname(p_fpath), recursive = TRUE)
   
   # ---- Convert data ----
   
