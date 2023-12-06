@@ -78,8 +78,8 @@ $endif.import
 
 $ifthen.importtaxrc "%cm_taxrc_RE%" == "REdirect"
 Parameters 
-  p47_ref_costInvTeDir_RE(ttot,all_regi,all_te)                                  "RE direct investment volume in reference scenario"
-  p47_ref_costInvTeAdj_RE(ttot,all_regi,all_te)                                  "RE adjustment cost investment volume in reference scenario"
+  p21_ref_costInvTeDir_RE(ttot,all_regi,all_te)                                  "RE direct investment volume in reference scenario"
+  p21_ref_costInvTeAdj_RE(ttot,all_regi,all_te)                                  "RE adjustment cost investment volume in reference scenario"
 ;
 $endif.importtaxrc
 
@@ -156,9 +156,7 @@ q21_taxrevChProdStartYear(ttot,all_regi)        "calculation of tax to limit cha
 
 $ifthen.importtaxrc "%cm_taxrc_RE%" == "REdirect"
 equations
-q21_rc_tau_import_RE(ttot,trade_regi)           "revenue recycling of import tax to RE investments (wind, solar, storage): 
-                                                *' investments in wind, solar and storage equal (i) investments from reference scenario with tax and no revenue recycling 
-                                                *' plus (ii) the revenues received from the tax"
+q21_rc_tau_import_RE(ttot,trade_regi)           "revenue recycling of import tax to RE investments (wind, solar, storage): investments in wind, solar and storage equal (i) investments from reference scenario with tax and no revenue recycling plus (ii) the revenues received from the tax"
 ;
 $endif.importtaxrc
 *** EOF ./modules/21_tax/on/declarations.gms

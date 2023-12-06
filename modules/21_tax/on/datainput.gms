@@ -243,8 +243,8 @@ p21_bio_EF(ttot,regi_bio_EFTax21) = cm_bioenergy_EF_for_tax * (1/1000 * 12/44) /
 
 *** Read in direct investments into renewables from reference scenario
 $ifthen.importtaxrc %cm_taxrc_RE% == "REdirect"
-Execute_Loadpoint 'input_ref' p47_ref_costInvTeDir_RE = v_costInvTeDir.l;
-Execute_Loadpoint 'input_ref' p47_ref_costInvTeAdj_RE = v_costInvTeAdj.l;
+Execute_Loadpoint 'input_ref' p21_ref_costInvTeDir_RE = vm_costInvTeDir.l;
+Execute_Loadpoint 'input_ref' p21_ref_costInvTeAdj_RE = vm_costInvTeAdj.l;
 $endif.importtaxrc
 
 *** EOF ./modules/21_tax/on/datainput.gms

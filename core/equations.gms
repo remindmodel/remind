@@ -31,12 +31,12 @@ q_costInv(t,regi)..
   =e=
 *** investment cost of conversion technologies
   sum(en2en(enty,enty2,te),
-    v_costInvTeDir(t,regi,te) + v_costInvTeAdj(t,regi,te)$teAdj(te)
+    vm_costInvTeDir(t,regi,te) + vm_costInvTeAdj(t,regi,te)$teAdj(te)
   )
   +
 *** investment cost of non-conversion technologies (storage, grid etc.)
   sum(teNoTransform,
-    v_costInvTeDir(t,regi,teNoTransform) + v_costInvTeAdj(t,regi,teNoTransform)$teAdj(teNoTransform)
+    vm_costInvTeDir(t,regi,teNoTransform) + vm_costInvTeAdj(t,regi,teNoTransform)$teAdj(teNoTransform)
   )
 *** additional transmission and distribution cost (increases hydrogen cost at low hydrogen penetration levels when hydrogen infrastructure is not yet developed) 
   +
@@ -53,7 +53,7 @@ q_costInv(t,regi)..
 
 *** investment costs
 q_costInvTeDir(t,regi,te)..
-  v_costInvTeDir(t,regi,te)
+  vm_costInvTeDir(t,regi,te)
   =e=
   vm_costTeCapital(t,regi,te) 
   * sum(te2rlf(te,rlf), vm_deltaCap(t,regi,te,rlf)) 
@@ -69,7 +69,7 @@ v_adjFactorGlob.fx(t,regi,te) = 0;
 
 *RP* 2010-05-10 adjustment costs
 q_costInvTeAdj(t,regi,teAdj)..
-  v_costInvTeAdj(t,regi,teAdj)
+  vm_costInvTeAdj(t,regi,teAdj)
   =e=
   vm_costTeCapital(t,regi,teAdj) * (
     (p_adj_coeff(t,regi,teAdj) * v_adjFactor(t,regi,teAdj)) + (p_adj_coeff_glob(teAdj) * v_adjFactorGlob(t,regi,teAdj))
@@ -548,7 +548,7 @@ q_emiEnFuelEx(t,regi,emiTe(enty))..
 ***   emissions from conventional fuel extraction
 	+ (sum(pe2rlf(enty3,rlf2),
       sum(enty2$(peFos(enty2)),   
-		    (p_cintraw(enty2)
+		    (pm_cintraw(enty2)
 		     * pm_fuExtrOwnCons(regi, enty2, enty3) 
 		     * vm_fuExtr(t,regi,enty3,rlf2))$(pm_fuExtrOwnCons(regi, enty2, enty3) gt 0))))$(sameas("co2",enty))
 ;    

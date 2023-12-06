@@ -301,11 +301,11 @@ q21_taxrevImport(t,regi,tradePe)..
 sum(tax_import_type_21, p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "worldPricemarkup")
    * pm_pvp(t,tradePe) / pm_pvp(t,"good") * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)$sameas(tax_import_type_21, "worldPricemarkup")
  +
- p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "CO2taxmarkup") * pm_taxCO2eqSum(t,regi) * p_cintraw(tradePe) * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)$sameas(tax_import_type_21, "CO2taxmarkup")
+ p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "CO2taxmarkup") * pm_taxCO2eqSum(t,regi) * pm_cintraw(tradePe) * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)$sameas(tax_import_type_21, "CO2taxmarkup")
 +
  p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "avCO2taxmarkup") *
  max(pm_taxCO2eqSum(t,regi), sum(trade_regi, pm_taxCO2eqSum(t,trade_regi))/(card(trade_regi))) *
- p_cintraw(tradePe) * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)$sameas(tax_import_type_21, "avCO2taxmarkup") )
+ pm_cintraw(tradePe) * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)$sameas(tax_import_type_21, "avCO2taxmarkup") )
 ;
 
 
@@ -319,21 +319,21 @@ $ifthen.importtaxrc "%cm_taxrc_RE%" == "REdirect"
 
 q21_rc_tau_import_RE(t,regi)..
   sum(en2en(enty,enty2,te)$(teVRE(te)),
-      v_costInvTeDir(t,regi,te) + v_costInvTeAdj(t,regi,te)$teAdj(te)
+      vm_costInvTeDir(t,regi,te) + vm_costInvTeAdj(t,regi,te)$teAdj(te)
   )
   +
   sum(teNoTransform,
-    v_costInvTeDir(t,regi,teNoTransform) + v_costInvTeAdj(t,regi,teNoTransform)$teAdj(teNoTransform)
+    vm_costInvTeDir(t,regi,teNoTransform) + vm_costInvTeAdj(t,regi,teNoTransform)$teAdj(teNoTransform)
   )
 =g= 
   sum(tradePE, sum(tax_import_type_21, p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)))
   +
   sum(en2en(enty,enty2,te)$(teVRE(te)),
-      p47_ref_costInvTeDir_RE(t,regi,te) + p47_ref_costInvTeAdj_RE(t,regi,te)$teAdj(te)  !! Reference VRE investment
+      p21_ref_costInvTeDir_RE(t,regi,te) + p21_ref_costInvTeAdj_RE(t,regi,te)$teAdj(te)  !! Reference VRE investment
   )
   +
   sum(teNoTransform,
-    p47_ref_costInvTeDir_RE(t,regi,teNoTransform) + p47_ref_costInvTeAdj_RE(t,regi,teNoTransform)$teAdj(teNoTransform)  !! Reference grid + storage investment
+    p21_ref_costInvTeDir_RE(t,regi,teNoTransform) + p21_ref_costInvTeAdj_RE(t,regi,teNoTransform)$teAdj(teNoTransform)  !! Reference grid + storage investment
   )
 ;
 $endif.importtaxrc
