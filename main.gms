@@ -1382,7 +1382,8 @@ $setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "DEU.worldPricemarkup.pegas 3, EU27_regi.worldPricemarkup.pegas 1.5".
 *** Other options are taxCO2markup and avtaxCO2markup that tax imported CO2 emission (i.e emissions associated to imports of energy carriers)
-*** with the national CO2 price (taxCO2markup) or the max between national and average CO2 price (avtaxCO2markup). Example: "EUR.taxCO2markup 1"
+*** with the national CO2 price (CO2taxmarkup) or the max between national and average CO2 price (avCO2taxmarkup).
+*** Example: "GLO.(pecoal,pegas,peoil).CO2taxmarkup 1" implements a global CO2 tax markup for imports.
 *** Using different markups for each fossil PE is not recommended, "Price|Carbon|Imported" will then report an unweighted average.
 *** NOTE: In case of "CO2taxmarkup" and "avCO2taxmarkup" there is double-taxation of the CO2-content of the imported energy carrier:
 *** Once when being imported (at the border) and once when being converted to Secondary Energy (normal CO2price applied by REMIND)
