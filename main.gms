@@ -1249,7 +1249,7 @@ $setGlobal cm_oil_scen  medOil         !! def = medOil  !! regexp = lowOil|medOi
 ***  (lowGas): low
 ***  (medGas): medium
 ***  (highGas): high
-$setGlobal cm_gas_scen  medGas         !! def = medGas  !! regexp = low|medium|high
+$setGlobal cm_gas_scen  medGas         !! def = medGas  !! regexp = lowGas|medGas|highGas
 *** cm_coal_scen     "assumption on coal availability"
 ***  (0): very low (this has been the "low" case; RoSE relevant difference)
 ***  (lowCoal): low (this is the new case)
@@ -1311,13 +1311,13 @@ $setGlobal cm_vehiclesSubsidies  off !! def = off
 ***     To limit CCS to 8 GtCO2 and BECCS to 5 GtCO2, use "2050.GLO.tax.t.CCS.all 8000, 2050.GLO.tax.t.CCS.biomass 5000"
 $setGlobal cm_implicitQttyTarget  off !! def = off
 *** cm_loadFromGDX_implicitQttyTargetTax "load p47_implicitQttyTargetTax values from gdx for first iteration. Usefull for policy runs."
-$setGlobal cm_loadFromGDX_implicitQttyTargetTax  off  !! def = off  !! regexp = off|Initial|HighElectricityPrice|HighGasandLiquidsPrice|HighPrice|LowPrice|LowElectricityPrice"
+$setGlobal cm_loadFromGDX_implicitQttyTargetTax  off  !! def = off  !! regexp = off|on
 *** cm_implicitPriceTarget "define tax/subsidies to match FE prices defined in the pm_implicitPriceTarget parameter."
-***   Aceptable values: "off", "Initial", "HighElectricityPrice", "HighGasandLiquidsPrice", "HighPrice", "LowPrice", "LowElectricityPrice"
-$setGlobal cm_implicitPriceTarget  off  !! def = off  !! regexp = off|highFossilPrice
+***   Acceptable values: "off", "Initial", "HighElectricityPrice", "HighGasandLiquidsPrice", "HighPrice", "LowPrice", "LowElectricityPrice"
+$setGlobal cm_implicitPriceTarget  off  !! def = off  !! regexp = off|Initial|HighElectricityPrice|HighGasandLiquidsPrice|HighPrice|LowPrice|LowElectricityPrice"
 *** cm_implicitPePriceTarget "define tax/subsidies to match PE prices defined in the pm_implicitPePriceTarget parameter."
-***   Aceptable values: "off", "highFossilPrice".
-$setGlobal cm_implicitPePriceTarget  off !! def = off
+***   Acceptable values: "off", "highFossilPrice".
+$setGlobal cm_implicitPePriceTarget  off  !! def = off  !! regexp = off|highFossilPrice
 *** cm_VREminShare "minimum variable renewables share requirement per region."
 ***   Example on how to use:
 ***     cm_VREminShare = "2050.EUR_regi 0.7".
@@ -1386,7 +1386,7 @@ $setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for
 *** Using different markups for each fossil PE is not recommended, "Price|Carbon|Imported" will then report an unweighted average.
 *** NOTE: In case of "CO2taxmarkup" and "avCO2taxmarkup" there is double-taxation of the CO2-content of the imported energy carrier:
 *** Once when being imported (at the border) and once when being converted to Secondary Energy (normal CO2price applied by REMIND)
-$setGlobal cm_import_tax off !! def off
+$setGlobal cm_import_tax off !! def = off  !! regexp = .*(worldPricemarkup|CO2taxmarkup|avCO2taxmarkup|off).*
 *** cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 *** EU-specific SE import assumptions (used for ariadne)
 *** different exogenous hydrogen import scenarios for EU regions (developed in ARIADNE project)
