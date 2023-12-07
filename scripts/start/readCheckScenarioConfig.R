@@ -64,7 +64,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   for (m in intersect(rownames(modules), colnames(scenConf))) {
     missingRealiz <- setdiff(unique(scenConf[, m]), c(NA, strsplit(modules[m, "realizations"], ",")[[1]]))
     if (length(missingRealiz) > 0) {
-      warning("For module ", m, ", these realizations are missing: ", paste0(missingRealiz, collapse = ", "))
+      warning("For module ", m, ", the undefined realizations ", paste0(missingRealiz, collapse = ", "),
+              " are used by these scenarios: ", paste(rownames(scenConf)[scenConf[,m] %in% missingRealiz], collapse = ", "))
       missingRealizations <- missingRealizations + length(missingRealiz)
     }
   }
