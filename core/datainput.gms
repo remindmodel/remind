@@ -973,8 +973,8 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,'dac')             = 0.25;
   p_adj_seed_te(ttot,regi,'geohe')           = 0.33;
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-*  p_adj_seed_te(ttot,regi,"bfcc")            = 0.05;
-*  p_adj_seed_te(ttot,regi,"idrcc")           = 0.05;
+  p_adj_seed_te(ttot,regi,"bfcc")            = 0.05;
+  p_adj_seed_te(ttot,regi,"idrcc")           = 0.05;
 $endif.process_based_steel
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
@@ -1008,8 +1008,8 @@ $ENDIF.WindOff
   p_adj_coeff(ttot,regi,"wind")            = 0.25;
   p_adj_coeff(ttot,regi,"geohe")           = 0.6;
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-*  p_adj_coeff(ttot,regi,"bfcc")            = 1.0;
-*  p_adj_coeff(ttot,regi,"idrcc")           = 1.0;
+  p_adj_coeff(ttot,regi,"bfcc")            = 1.0;
+  p_adj_coeff(ttot,regi,"idrcc")           = 1.0;
 $endif.process_based_steel
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
