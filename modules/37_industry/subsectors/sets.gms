@@ -41,9 +41,9 @@ Sets
   /
     co2cement
     co2chemicals
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     co2steel
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   !! rename to something like emiInd_fe2sector
@@ -98,7 +98,7 @@ $endif.process_based_steel
     ue_steel               "useful energy of steel production"
     ue_steel_primary       "useful energy of primary steel production"
     ue_steel_secondary     "useful energy of secondary steel production"
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     en_steel_primary       "energy use of primary steel production"
     kap_steel_primary      "energy efficiency capital of primary steel production"
     kap_steel_secondary    "energy efficiency capital of secondary steel production"
@@ -109,7 +109,7 @@ $ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !
     feh2_steel             "hydrogen energy use of primary steel production"
     feel_steel_primary     "electricity energy use pf primary steel production"
     feel_steel_secondary   "electricity energy use of secondary steel production"
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
 
     ue_otherInd       "useful energy of other industry production"
     en_otherInd       "energy use of other industry production"
@@ -140,12 +140,12 @@ $endif.process_based_steel
                                feh2_chemicals, feelhth_chemicals)
 
    ue_steel                 . (ue_steel_primary, ue_steel_secondary)
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
    ue_steel_secondary       . (feel_steel_secondary, kap_steel_secondary)
    ue_steel_primary         . (en_steel_primary, kap_steel_primary)
    en_steel_primary         . (en_steel_furnace, feel_steel_primary)
    en_steel_furnace         . (feso_steel, feli_steel, fega_steel, feh2_steel)
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
 
    ue_otherInd     . (en_otherInd, kap_otherInd)
    en_otherInd     . (en_otherInd_hth, feelwlth_otherInd)
@@ -161,12 +161,12 @@ $endif.process_based_steel
     ue_chemicals . (feso_chemicals, feli_chemicals, fega_chemicals,
                     feh2_chemicals, feelhth_chemicals, feelwlth_chemicals)
 
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     ue_steel_primary . (feso_steel, feli_steel, fega_steel, feh2_steel,
                         feel_steel_primary)
 
     ue_steel_secondary . feel_steel_secondary
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
 
     ue_otherInd . (feso_otherInd, feli_otherInd, fega_otherInd, feh2_otherInd,
                    fehe_otherInd, feelhth_otherInd, feelwlth_otherInd)
@@ -185,10 +185,10 @@ $endif.process_based_steel
   /
     kap_cement
     kap_chemicals
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     kap_steel_primary
     kap_steel_secondary
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
     kap_otherInd
   /
 
@@ -197,10 +197,10 @@ $endif.process_based_steel
     feso_cement, feli_cement, fega_cement, feh2_cement, feel_cement,
     feso_chemicals, feli_chemicals, fega_chemicals, feh2_chemicals,
     feelhth_chemicals, feelwlth_chemicals,
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     feso_steel, feli_steel, fega_steel, feh2_steel, feel_steel_primary,
     feel_steel_secondary,
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
     feso_otherInd, feli_otherInd, fega_otherInd, feh2_otherInd, fehe_otherInd,
     feelhth_otherInd, feelwlth_otherInd
   /
@@ -219,9 +219,9 @@ $endif.process_based_steel
   /
     feh2_cement    . fega_cement
     feh2_chemicals . fega_chemicals
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     feh2_steel     . fega_steel
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
     feh2_otherInd  . fega_otherInd
 
     feelhth_chemicals . feelwlth_chemicals
@@ -240,11 +240,11 @@ $endif.process_based_steel
                  feelhth_chemicals, feelwlth_chemicals)
 
     steel . (ue_steel, ue_steel_primary, ue_steel_secondary
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
              , en_steel_primary, kap_steel_primary, en_steel_furnace,
              feso_steel, feli_steel, fega_steel, feh2_steel,
              feel_steel_primary, kap_steel_secondary, feel_steel_secondary
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
              )
 
     otherInd . (ue_otherInd, en_otherInd, kap_otherInd, en_otherInd_hth,
@@ -261,13 +261,13 @@ $endif.process_based_steel
                     feso_chemicals, feli_chemicals, fega_chemicals,
 		                feh2_chemicals, feelhth_chemicals, feelwlth_chemicals)
 
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     ue_steel_primary . (en_steel_primary, kap_steel_primary, en_steel_furnace,
                         feso_steel, feli_steel, fega_steel, feh2_steel,
 			                  feel_steel_primary)
 
     ue_steel_secondary . (kap_steel_secondary, feel_steel_secondary)
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
 
     ue_otherInd . (en_otherInd, kap_otherInd, en_otherInd_hth, feso_otherInd,
                    feli_otherInd, fega_otherInd, feh2_otherInd, fehe_otherInd,
@@ -291,13 +291,13 @@ $endif.process_based_steel
     fehes . fehe_otherInd
     feels . (feel_cement, feelhth_chemicals, feelwlth_chemicals,
              feelhth_otherInd, feelwlth_otherInd)
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     fesos . feso_steel
     fehos . feli_steel
     fegas . fega_steel
     feh2s . feh2_steel
     feels . (feel_steel_primary, feel_steel_secondary)
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
  fe_tax_sub37(all_in,all_in)   "correspondence between tax and subsidy input data resolution and model sectoral resolution"
@@ -309,22 +309,22 @@ $endif.process_based_steel
     fehei . fehe_otherInd
     feeli . (feel_cement, feelhth_chemicals, feelwlth_chemicals,
              feelhth_otherInd, feelwlth_otherInd)
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     fesoi . feso_steel
     fehoi . feli_steel
     fegai . fega_steel
     feh2i . feh2_steel
     feeli . (feel_steel_primary, feel_steel_secondary)
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
 energy_limits37(all_in,all_in)   "thermodynamic limit of energy"
   /
     ue_cement          . en_cement
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     ue_steel_primary   . en_steel_primary
     ue_steel_secondary . feel_steel_secondary
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
 entyFeCC37(all_enty)   "FE carriers in industry which can be used for CO2 capture"
@@ -345,14 +345,14 @@ ppfen_MkupCost37(all_in)   "primary production factors in industry on which CES 
 
   secInd37Prc(secInd37)   "Sub-sectors with process-based modeling"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   steel
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   tePrc(all_te)  "Technologies used in material-flow model (including CCS)"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bf      "Blast furnace"
     bof     "Basic oxygen furnace"
     eaf     "Electric-arc furnace"
@@ -360,14 +360,14 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
 
     bfcc    "Blast furnace"
     idrcc   "Direct reduction CCS"
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 
   mat(all_enty)   "Materials considered in material-flow model"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     prsteel    "Primary steel"
     sesteel    "Secondary steel"
     eafscrap   "Steel scrap used in EAF"
@@ -376,128 +376,128 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     driron     "Direct reduced iron"
     ironore    "Iron Ore"
     dripell    "DRI pellets"
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   matIn(all_enty)   "Materials which serve as input to a process"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     eafscrap   "Steel scrap used in EAF"
     bofscrap   "Steel scrap used in BOF"
     pigiron    "Pig iron"
     driron     "Direct reduced iron"
     ironore    "Iron Ore"
     dripell    "DRI pellets"
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   matOut(all_enty)   "Materials which serve as output of a process"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     prsteel   "Primary steel"
     sesteel   "Secondary steel"
     pigiron   "Pig iron"
     driron    "Direct reduced iron"
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   matFin(mat)   "Final products of a process-based production route"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    prsteel
    sesteel
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   opmoPrc   "Operation modes for technologies in material-flow model"
   /
     standard   "Only one operation mode implemented"
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     ng         "Direct reduction using natural gas"
     h2         "Direct reduction using hydrogen"
     unheated   "BOF operation with maximum amount of scrap possible without external heating"
     pri        "Primary production of steel (based on iron ore or DRI)"
     sec        "Secondary production of steel (based on scrap)"
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   ppfUePrc(all_in)   "Ue CES tree nodes connected to process based implementation"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    ue_steel_primary
    ue_steel_secondary
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   route(all_te)  "Process routes"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idreaf_ng
     idreaf_ng_ccs
     idreaf_h2
     bfbof
     bfbof_ccs
     seceaf
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   ppfen_no_ces_use(all_in)   "FE nodes of all_in that are not part of the CES tree in the process-based industry model; Needed for pm_fedemand data input"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     feso_steel             "solids energy use of primary steel production"
     feli_steel             "liquids energy use of primary steel production"
     fega_steel             "gases energy use of primary steel production"
     feh2_steel             "hydrogen energy use of primary steel production"
     feel_steel_primary     "electricity energy use pf primary steel production"
     feel_steel_secondary   "electricity energy use of secondary steel production"
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   tePrc2matIn(tePrc,opmoPrc,mat)   "Mapping of technologies onto input materials"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idr . (h2,ng) . dripell
     eaf . pri . driron
     eaf . sec . eafscrap
     bf  . standard . ironore
     bof . unheated . (pigiron,bofscrap)
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   tePrc2matOut(tePrc,opmoPrc,mat)   "Mapping of industry process technologies onto their output materials"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    bf  . standard . pigiron
    bof . unheated . prsteel
    idr . (h2,ng) . driron
    eaf . pri . prsteel
    eaf . sec . sesteel
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   tePrc2ue(tePrc,opmoPrc,all_in)   "Mapping of industry process technologies to the UE ces nodes they directly or indirectly feed into"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    (bf,bfcc)  . standard . ue_steel_primary
    bof . unheated . ue_steel_primary
    idr . (h2,ng) . ue_steel_primary
    idrcc . ng . ue_steel_primary
    eaf . pri . ue_steel_primary
    eaf . sec . ue_steel_secondary
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   tePrc2teCCPrc(tePrc,opmoPrc,tePrc,opmoPrc)  "Mapping of base technologies to CCS technologies"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bf  . standard . bfcc  . standard
     idr . ng       . idrcc . ng
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   tePrc2route(tePrc,opmoPrc,route)  "Mapping of technologies onto the production routes they belong to"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     eaf . sec . seceaf
     idr . h2 . idreaf_h2
     idr . ng . idreaf_ng
@@ -511,44 +511,44 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     bof . unheated . bfbof
     bof . unheated . bfbof_ccs
     bfcc . standard . bfbof_ccs
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   mat2ue(mat,all_in)   "Mapping of materials onto UE ces tree node"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    prsteel . ue_steel_primary
    sesteel . ue_steel_secondary
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   tePrc2opmoPrc(tePrc,opmoPrc)   "Mapping of technologies onto available operation modes"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idr . (ng,h2)
     eaf . (pri,sec)
     bf . (standard)
     bof . (unheated)
     bfcc . (standard)
     idrcc . (ng)
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   fe2mat(all_enty,all_enty,all_te)   "Set of industry technologies to be included in en2en, which connects capex and opex to budget"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     entydummy.entydummy.bf
     entydummy.entydummy.bof
     entydummy.entydummy.idr
     entydummy.entydummy.eaf
     entydummy.entydummy.bfcc
     entydummy.entydummy.idrcc
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   secInd37_tePrc(secInd37,tePrc)   "Mapping of technologies onto industry subsectors"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     steel . idr
     steel . eaf
     steel . bf
@@ -556,18 +556,18 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
 
     steel . bfcc
     steel . idrcc
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 
   fe2ppfen_no_ces_use(all_enty,all_in)   "match ESM entyFE to ppfen that are not used in the CES tree, but for datainput for process-bases industry"
   /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     fesos . feso_steel
     fehos . feli_steel
     fegas . fega_steel
     feh2s . feh2_steel
     feels . (feel_steel_primary, feel_steel_secondary)
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   /
 ;
 

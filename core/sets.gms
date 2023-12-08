@@ -1234,7 +1234,7 @@ $ENDIF.WindOff
         termX_lng   'Export terminals for LNG (liquification)'
         termM_lng   'Import terminals for LNG (regasification)'
         vess_lng    'Vessels transporting LNG'
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
         idr          "Iron direct reduction"
         eaf          "Electric-arc furnace"
         bf           "Blast furnace"
@@ -1242,7 +1242,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
 
         bfcc         "Blast furnace CCS"
         idrcc        "Direct reduction CCS"
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
 /
 teAdj(all_te)           "technologies with adjustment costs on capacity additions"
 /
@@ -1318,10 +1318,10 @@ $ENDIF.WindOff
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
   gridwindoff     "grid between areas with high wind offshore production and the rest"
 $ENDIF.WindOff
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   bfcc            "Blast furnace CCS"
   idrcc           "Direct reduction CCS"
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
 /
 
 ***-----------------------------------------------------------------------------
@@ -1905,9 +1905,9 @@ MacSector(all_enty)  "sectors for which mac curves exist. Some MACs are used for
         co2luc     "land use change"
         co2cement  "cement production (only process emissions)"
         co2chemicals
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
         co2steel
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
 /
 
 MacSectorMagpie(all_enty)  "land-use sectors for which mac curves exist in REMIND and in MAgPIE"
@@ -2721,9 +2721,9 @@ emiMac2mac(all_enty,all_enty)            "mapping of emission sources to MACs - 
         co2cement_process. co2cement   "process emissions are captured by kiln CCS too"
         co2cement    . co2cement
         co2chemicals . co2chemicals
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
         co2steel     . co2steel
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
 /
 
 emiMac2sector(all_enty,emi_sectors,sector_types,all_enty)            "mapping of emission sources from MACs to sectors (and emissions)"
@@ -2740,9 +2740,9 @@ emiMac2sector(all_enty,emi_sectors,sector_types,all_enty)            "mapping of
         (n2oforest, n2osavan, n2opeatland).lulucf.process.n2o
 
         (co2cement_process,co2cement,co2chemicals).indst.process.co2
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
         co2steel.indst.process.co2
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
         (co2luc).lulucf.process.co2
 /
 

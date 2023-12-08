@@ -52,9 +52,9 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
   + pm_totLUcosts(ttot,regi)
 *** agricultural MACs are part of pm_totLUcosts (see module 26_agCosts)
   + sum(enty$(emiMacSector(enty) AND (NOT emiMacMagpie(enty))), pm_macCost(ttot,regi,enty))
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   + vm_costMatPrc(ttot,regi)
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
   + vm_costEnergySys(ttot,regi)
 ;
 

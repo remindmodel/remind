@@ -9,7 +9,7 @@
 *** initialize captured CO2 parameter
 pm_IndstCO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt) = 0;
 
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 * TODO:
 * - Add idr historic capacities
 * - make this a loop to not require additional code for new materials
@@ -57,6 +57,6 @@ if (cm_startyear eq 2005,
 if (cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' p37_specFeDem = p37_specFeDem;
 );
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
 
 *** EOF ./modules/37_industry/subsectors/preloop.gms

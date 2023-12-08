@@ -117,7 +117,7 @@ display v05_INIdemEn0.l, v05_INIcap0.l;
 
 pm_cap0(regi,te) = v05_INIcap0.l(regi,te);
 
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 * TODO:
 * - Add idr historic capacities
 * - make this a loop to not require additional code for new materials
@@ -136,7 +136,7 @@ pm_cap0(regi,'idr') = 0.;
 * no initial capacity for CCS
 pm_cap0(regi,"bfcc") =sm_eps;
 pm_cap0(regi,"idrcc") =sm_eps;
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
 
 *RP keep energy demand for the Kyoto target calibration
 pm_EN_demand_from_initialcap2(regi,enty) = v05_INIdemEn0.l(regi,enty);

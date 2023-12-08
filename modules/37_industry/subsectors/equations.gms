@@ -23,17 +23,17 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
       )$(NOT secInd37Prc(secInd37))
     )
   )
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   +
   sum((secInd37_emiMkt(secInd37Prc,emiMkt),secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
     p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
     *
     v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
   )
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
 ;
 
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 ***------------------------------------------------------
 *' Material input to production
 ***------------------------------------------------------
@@ -96,7 +96,7 @@ q37_limitCapMat(ttot,regi,tePrc)$(ttot.val ge cm_startyear) ..
     )
 ;
 
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
 
 ***------------------------------------------------------
 *' Thermodynamic limits on subsector energy demand
@@ -104,9 +104,9 @@ $endif.process_based_steel
 $ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
                              ttot.val gt 2020
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
                              AND NOT ppfUePrc(out)
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
 			                       AND p37_energy_limit_slope(ttot,regi,out) ) ..
   sum(ces_eff_target_dyn37(out,in), vm_cesIO(ttot,regi,in))
   =g=
@@ -155,15 +155,15 @@ q37_emiIndBase(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
             pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")
         )
     )$(NOT secInd37Prc(secInd37))
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     +
     sum((secInd37_tePrc(secInd37,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
         v37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc)
     )$(secInd37Prc(secInd37))
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
 ;
 
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 ***------------------------------------------------------
 *' Emission from process based industry sector (pre CC)
 ***------------------------------------------------------
@@ -205,7 +205,7 @@ q37_emiCCPrc(ttot,regi,emiInd37)$((ttot.val ge cm_startyear ) AND sum(secInd37Pr
       v37_outflowPrc(ttot,regi,teCCPrc,opmoCCPrc)
     )
 ;
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
 
 ***------------------------------------------------------
 *' Compute maximum possible CCS level in industry sub-sectors given the current

@@ -23,10 +23,10 @@ $endif
     pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge 78 ) = 0.121;
     pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge 80 ) = 0.572;
 
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge 59 ) = 0.117;
     pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge 82 ) = 0.234;
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
 
   !! long-term (from 2030 on)
   else
@@ -45,10 +45,10 @@ $endif.process_based_steel
       pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge 78 ) = 0.484;
       pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge 80 ) = 0.572;
 
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
       pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge 48 ) = 0.117;
       pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge 62 ) = 0.275;
-$endif.process_based_steel
+$endif.cm_subsec_model_steel
     );
   );
 );
