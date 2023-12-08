@@ -124,16 +124,6 @@ $endif.process_based_steel
     feelwlth_otherInd "electric energy for mechanical work and low temperature heat in other industry production"
   /
 
-  extend_in_dyn37(all_in)   "all inputs and outputs of the CES function - industry"
-  /
-    feso_steel             "solids energy use of primary steel production"
-    feli_steel             "liquids energy use of primary steel production"
-    fega_steel             "gases energy use of primary steel production"
-    feh2_steel             "hydrogen energy use of primary steel production"
-    feel_steel_primary     "electricity energy use pf primary steel production"
-    feel_steel_secondary   "electricity energy use of secondary steel production"
-  /
-
   ces_industry_dyn37(all_in,all_in)   "CES tree structure - industry"
   /
    en                       . ue_industry
@@ -391,6 +381,7 @@ $endif.process_based_steel
 
   matIn(all_enty)   "Materials which serve as input to a process"
   /
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     eafscrap   "Steel scrap used in EAF"
     bofscrap   "Steel scrap used in BOF"
     pigiron    "Pig iron"
@@ -447,6 +438,18 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     bfbof
     bfbof_ccs
     seceaf
+$endif.process_based_steel
+  /
+
+  ppfen_no_ces_use(all_in)   "FE nodes of all_in that are not part of the CES tree in the process-based industry model; Needed for pm_fedemand data input"
+  /
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+    feso_steel             "solids energy use of primary steel production"
+    feli_steel             "liquids energy use of primary steel production"
+    fega_steel             "gases energy use of primary steel production"
+    feh2_steel             "hydrogen energy use of primary steel production"
+    feel_steel_primary     "electricity energy use pf primary steel production"
+    feel_steel_secondary   "electricity energy use of secondary steel production"
 $endif.process_based_steel
   /
 
@@ -553,6 +556,17 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
 
     steel . bfcc
     steel . idrcc
+$endif.process_based_steel
+  /
+
+  fe2ppfen_no_ces_use(all_enty,all_in)   "match ESM entyFE to ppfen that are not used in the CES tree, but for datainput for process-bases industry"
+  /
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+    fesos . feso_steel
+    fehos . feli_steel
+    fegas . fega_steel
+    feh2s . feh2_steel
+    feels . (feel_steel_primary, feel_steel_secondary)
 $endif.process_based_steel
   /
 ;

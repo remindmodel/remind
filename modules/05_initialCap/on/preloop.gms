@@ -13,72 +13,23 @@
 *** to satisfy the internal and external energy demand at time t0.
 s05_inic_switch = 1;
 
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
-* TODO:
-* - Add idr historic capacities
-* - make this a loop to not require additional code for new materials
-if (cm_startyear eq 2005,
-  v37_outflowPrc.fx('2005',regi,'bof','unheated') = pm_fedemand('2005',regi,'ue_steel_primary');
-  v37_outflowPrc.fx('2005',regi,'bf','standard') = p37_specMatDem("pigiron","bof","unheated") * v37_outflowPrc.l('2005',regi,'bof','unheated');
-  v37_outflowPrc.fx('2005',regi,'eaf','sec') = pm_fedemand('2005',regi,'ue_steel_secondary');
-  v37_outflowPrc.fx('2005',regi,'eaf','pri') = 0.;
-  v37_outflowPrc.fx('2005',regi,'idr','ng') = 0.;
-  v37_outflowPrc.fx('2005',regi,'idr','h2') = 0.;
-
-  !! TODO: get outflow by route and read in in mrremind
-  loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
-    p37_specFeDem(ttot,regi,"feh2s","idr","h2") = p37_specFeDemTarget("feh2s","idr","h2");
-    p37_specFeDem(ttot,regi,"feels","idr","h2") = p37_specFeDemTarget("feels","idr","h2");
-
-    p37_specFeDem(ttot,regi,"fegas","idr","ng") = p37_specFeDemTarget("fegas","idr","ng");
-    p37_specFeDem(ttot,regi,"feels","idr","ng") = p37_specFeDemTarget("feels","idr","ng");
-
-    p37_specFeDem(ttot,regi,"fesos","bf","standard") = pm_fedemand(ttot,regi,'feso_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
-    p37_specFeDem(ttot,regi,"fehos","bf","standard") = pm_fedemand(ttot,regi,'feli_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
-    p37_specFeDem(ttot,regi,"fegas","bf","standard") = pm_fedemand(ttot,regi,'fega_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
-    p37_specFeDem(ttot,regi,"feels","bf","standard") = pm_fedemand(ttot,regi,'feel_steel_primary') * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
-
-    p37_specFeDem(ttot,regi,"feels","eaf","sec") = pm_fedemand(ttot,regi,'feel_steel_secondary') * sm_EJ_2_TWa / pm_fedemand(ttot,regi,'ue_steel_secondary');
-    p37_specFeDem(ttot,regi,"feels","eaf","pri") = p37_specFeDem(ttot,regi,"feels","eaf","sec");
-  );
-
-  !! loop over other years and blend
-  loop(entyFeStat(all_enty),
-    loop(tePrc(all_te),
-      loop(opmoPrc,
-        if( (p37_specFeDemTarget(all_enty,all_te,opmoPrc) gt 0.),
-          loop(ttot$(ttot.val > 2020),
-            !! fedemand in excess of BAT halves until 2055
-            !! gams cannot handle float exponents, so pre-compute 0.5^(1/(2055-2020)) = 0.9804
-            p37_specFeDem(ttot,regi,all_enty,all_te,opmoPrc) = p37_specFeDemTarget(all_enty,all_te,opmoPrc) + (p37_specFeDem("2020",regi,all_enty,all_te,opmoPrc) - p37_specFeDemTarget(all_enty,all_te,opmoPrc)) * power(0.9804, ttot.val - 2020) ;
-          );
-        );
-      );
-    );
-  );
-);
-
-if (cm_startyear gt 2005,
-  Execute_Loadpoint 'input_ref' p37_specFeDem = p37_specFeDem;
-);
-$endif.process_based_steel
-
 *** energy demand = external demand + sum of all (direct + indirect)
 *** transformation pathways that consume this enty - sum of the indirect
 *** transformation pathways that produce this enty
 q05_eedemini(regi,enty)..
   v05_INIdemEn0(regi,enty)
   =e=
+  (
     !! Pathway I: FE to ppfEn.
     sum(fe2ppfEn(enty,in),
       pm_cesdata("2005",regi,in,"quantity")
     + pm_cesdata("2005",regi,in,"offset_quantity")
-  ) * s05_inic_switch
+    )
     !! Pathway II: FE via UE to ppfEn
   + sum(ue2ppfen(enty,in),
       pm_cesdata("2005",regi,in,"quantity")
     + pm_cesdata("2005",regi,in,"offset_quantity")
-    ) * s05_inic_switch
+    )
     !! Pathway III: FE via ES to ppfEn
     !! For the ES layer, we have to be consistent with conversion and share
     !! parameters when providing FE demands from CES node values.
@@ -92,15 +43,12 @@ q05_eedemini(regi,enty)..
         * pm_shFeCes("2005",regi,enty2,in,teEs2)
         )
       )
-    ) * s05_inic_switch
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+    )
     !! Pathway IV: process-based industry
-  + sum(tePrc2opmoPrc(tePrc,opmoPrc)$(p37_specFEDem("2005",regi,enty,tePrc,opmoPrc) gt 0.),
-      p37_specFEDem("2005",regi,enty,tePrc,opmoPrc)
-      *
-      v37_outflowPrc("2005",regi,tePrc,opmoPrc)
-    )$(entyFeStat(enty)) * s05_inic_switch
-$endif.process_based_steel
+  + sum(fe2ppfEn(enty,in)$(ppfen_no_ces_use(in)),
+      pm_fedemand("2005",regi,enty) * sm_EJ_2_TWa
+    )
+  ) * s05_inic_switch
     !! Transformation pathways that consume this enty:
   + sum(en2en(enty,enty2,te)$(NOT tePrc(te)), !! TODO Prc temp fix until efficiencies are implemented
       pm_cf("2005",regi,te)

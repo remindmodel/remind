@@ -26,7 +26,6 @@ in(all_in)                            "All inputs and outputs of the CES functio
   kap                                 "Capital input"
   en                                  "Energy input"
 /
-in_extended(all_in)                   "Used to include otherwise removed parts of ces tree in pm_fedemand" //
 ppf(all_in)                           "All primary production factors"
 ipf(all_in)                           "All intermediate production factors"
 ppfKap(all_in)                        "Primary production factors capital"   / kap /

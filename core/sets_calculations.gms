@@ -166,12 +166,6 @@ loop (fe2es(entyFe,esty,teEs),
 
 display "ES layer sets:", ppfenFromEs, feForEs, feViaEs2ppfen;
 
-
-*** in_extended is used to include otherwise removed parts of ces tree in pm_fedemand
-in_extended(in) = YES;
-in_extended(extend_in_dyn37) = YES;
-
-
 loop ( se2fe(entySe,entyFe,te),
 fete(entyFe,te) = YES;
 sefe(entySe,entyFe) = YES;

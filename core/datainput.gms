@@ -1505,7 +1505,9 @@ $offdelim
 
 *** use cm_demScen for Industry and Buildings
 *** cm_GDPscen will be used for Transport (EDGE-T) (see p29_trpdemand)
-pm_fedemand(tall,all_regi,in_extended) = f_fedemand(tall,all_regi,"%cm_demScen%",in_extended);
+pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
+*** data input for industry FE that is no part of the CES tree
+pm_fedemand(tall,all_regi,ppfen_no_ces_use) = f_fedemand(tall,all_regi,"%cm_demScen%",ppfen_no_ces_use);
 
 *** RCP-dependent demands in buildings (climate impact)
 $ifthen.cm_rcp_scen_build NOT "%cm_rcp_scen_build%" == "none"
