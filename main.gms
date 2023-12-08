@@ -1149,6 +1149,7 @@ parameter
   cm_LearningSpillover = 1; !! def 1 = Learningspillover activated (set to 0 to deactivate)
 *'
 *' * if Learningspillover is deactivated, foreign capacity is set to the level of 2020 in technology learning.
+*' * In combination with endogenous carbon pricing (e.g., in NDC), the deactivated Learningspillover will lead to higher overall carbon prices. Can be solved by setting carbonprice to exogenous (config).
 *'
 ***-----------------------------------------------------------------------------
 *' ####                     FLAGS
@@ -1387,6 +1388,7 @@ $setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for
 *** Using different markups for each fossil PE is not recommended, "Price|Carbon|Imported" will then report an unweighted average.
 *** NOTE: In case of "CO2taxmarkup" and "avCO2taxmarkup" there is double-taxation of the CO2-content of the imported energy carrier:
 *** Once when being imported (at the border) and once when being converted to Secondary Energy (normal CO2price applied by REMIND)
+*** In combination with endogenous carbon pricing, the import tax will lead to lower overall carbon prices. Can be solved by setting carbonprice to exogenous (config).
 $setGlobal cm_import_tax off !! def = off  !! regexp = .*(worldPricemarkup|CO2taxmarkup|avCO2taxmarkup|off).*
 *** cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 *** EU-specific SE import assumptions (used for ariadne)
