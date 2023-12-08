@@ -62,7 +62,7 @@ period123(ttot) = period1(ttot) + period2(ttot) + period3(ttot);
 period1234(ttot) = period1(ttot) + period2(ttot) + period3(ttot) + period4(ttot);
 
 *** calculate primary production factors (ppf)
-ppf(all_in) = ppfEn(all_in) + ppfKap(all_in) + ppfUE(all_in);
+ppf(all_in) = ppfEn(all_in) + ppfKap(all_in) + ppfUePrc(all_in);
 *** add labour to the primary production factors (ppf)
 ppf("lab")  = YES;
 

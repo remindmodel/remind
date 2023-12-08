@@ -73,7 +73,7 @@ q37_prodMat(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matOut(mat))..
 ***------------------------------------------------------
 *' Hand-over to CES
 ***------------------------------------------------------
-q37_mat2ue(ttot,regi,all_in)$((ttot.val ge cm_startyear) AND uePrc(all_in))..
+q37_mat2ue(ttot,regi,all_in)$((ttot.val ge cm_startyear) AND ppfUePrc(all_in))..
     vm_cesIO(ttot,regi,all_in)
   =e=
     sum(mat2ue(mat,all_in),
@@ -105,7 +105,7 @@ $ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
                              ttot.val gt 2020
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-                             AND NOT uePrc(out)
+                             AND NOT ppfUePrc(out)
 $endif.process_based_steel
 			                       AND p37_energy_limit_slope(ttot,regi,out) ) ..
   sum(ces_eff_target_dyn37(out,in), vm_cesIO(ttot,regi,in))
@@ -140,8 +140,10 @@ $endif.exogDem_scen
 ;
 
 ***------------------------------------------------------
-*' Compute gross industry emissions before CCS by multiplying sub-sector energy
-*' use with fuel-specific emission factors.
+*' Compute gross local industry emissions before CCS by multiplying sub-sector energy
+*' use with fuel-specific emission factors. (Local means from a hypothetical purely fossil
+*' energy mix, as that is what can be captured); vm_emiIndBase itself is not used for emission
+*' accounting, just as a CCS baseline.
 ***------------------------------------------------------
 q37_emiIndBase(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
     vm_emiIndBase(ttot,regi,entyFE,secInd37)

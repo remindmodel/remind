@@ -31,7 +31,7 @@ ppf(all_in)                           "All primary production factors"
 ipf(all_in)                           "All intermediate production factors"
 ppfKap(all_in)                        "Primary production factors capital"   / kap /
 ppfEn(all_in)                         "Primary production factors energy"
-ppfUe(all_in)                         "Primary production factors useful energy"  //
+
 in_putty(all_in)                      "Production factors subject to putty-clay dynamics"
 ppf_putty(all_in)                     "All putty-clay primary production factors"
 ipf_putty(all_in)                     "All putty-clay intermediate production factors"

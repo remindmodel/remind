@@ -2531,9 +2531,6 @@ fete(all_enty,all_te) "map final energy to technologies"
 fe2ue(all_enty,all_enty,all_te)    "map FE carriers to ES via appliances"
 //
 
-fe2mat(all_enty,all_enty,all_te)    "map FE carriers to materials"
-//
-
 fe2es(all_enty,all_esty,all_teEs)    "map FE carriers to ES via ES technologies"
 //
 
