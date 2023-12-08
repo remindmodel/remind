@@ -244,6 +244,16 @@ q37_chemicals_feedstocks_limit(t,regi)$( t.val ge cm_startyear ) ..
   * p37_chemicals_feedstock_share(t,regi)
 ;
 
+*** limit substitution of solids in primary steel making in the near-term
+q37_Psteel_solids_limit(t,regi)$( t.val ge cm_startyear ) ..
+  sum(ces_eff_target_dyn37("ue_steel_primary",in), 
+    vm_cesIO(t,regi,in))
+  * p37_Psteel_solids_limit(t,regi)
+  =l=
+  vm_cesIO(t,regi,"feso_steel")
+;
+
+
 *** EOF ./modules/37_industry/subsectors/equations.gms
 
 

@@ -200,7 +200,36 @@ loop (industry_ue_calibration_target_dyn37(out)$( sameas(out,"ue_chemicals") OR 
     );
 );
 
+
+*** for ARIADNE scenarios, set minimum energy limit (FE/industry production) to energy limit of reference (Npi) run from 2025
+*** as this is already quite optimsitic especially in the near-term
+loop (industry_ue_calibration_target_dyn37(out),
+  p37_energy_limit_slope(t,regi,out)$(t.val ge 2025) = sum(ces_eff_target_dyn37(out,in), 
+                                                          p37_cesIO_baseline(t,regi,in))
+                                                        / p37_cesIO_baseline(t,regi,out);
+);
+
+
+
+
+
+
+*** minimum share of solids in primary steel FE mix, used to avoid too fast substitution of solids in the near-term
+p37_Psteel_solids_limit("2015",regi) =  pm_cesdata("2015",regi,"feso_steel","quantity") 
+                                          / sum(ces_eff_target_dyn37("ue_steel_primary",in), 
+                                              pm_cesdata("2015",regi,in,"quantity"));
+
+*** allow for up to 5% lower solids share in FE primary steel than in historic data
+p37_Psteel_solids_limit("2015",regi) = p37_Psteel_solids_limit("2015",regi) - 0.5;
+*** limit reduction of solids share in FE primary steel in the near-term
+p37_Psteel_solids_limit("2020",regi) = p37_Psteel_solids_limit("2015",regi);
+p37_Psteel_solids_limit("2025",regi) = p37_Psteel_solids_limit("2015",regi);
+p37_Psteel_solids_limit("2030",regi) = p37_Psteel_solids_limit("2015",regi) - 0.05;
+p37_Psteel_solids_limit("2035",regi) = p37_Psteel_solids_limit("2015",regi) - 0.2;
+p37_Psteel_solids_limit("2035",regi) = p37_Psteel_solids_limit("2015",regi) - 0.5;
+
 display p37_energy_limit_slope;
+display p37_Psteel_solids_limit;
 $endif.no_calibration
 
 *** CCS for industry is off by default
