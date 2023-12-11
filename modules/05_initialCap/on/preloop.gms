@@ -45,8 +45,8 @@ q05_eedemini(regi,enty)..
       )
     )
     !! Pathway IV: process-based industry
-  + sum(fe2ppfEn(enty,in)$(ppfen_no_ces_use(in)),
-      pm_fedemand("2005",regi,enty) * sm_EJ_2_TWa
+  + sum(fe2ppfen_no_ces_use(enty,ppfen_no_ces_use),
+      pm_fedemand("2005",regi,ppfen_no_ces_use) * sm_EJ_2_TWa
     )
   ) * s05_inic_switch
     !! Transformation pathways that consume this enty:

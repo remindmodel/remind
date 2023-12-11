@@ -363,8 +363,6 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-
   mat(all_enty)   "Materials considered in material-flow model"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -565,7 +563,6 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     fesos . feso_steel
     fehos . feli_steel
     fegas . fega_steel
-    feh2s . feh2_steel
     feels . (feel_steel_primary, feel_steel_secondary)
 $endif.cm_subsec_model_steel
   /
