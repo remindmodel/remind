@@ -5,7 +5,7 @@ Mika Pflüger (mika.pflueger@pik-potsdam.de), Tonn Rüter (tonn.rueter@pik-potsd
 
 ## System Requirements
 
-- Installed python version must be `3.10.X` or older. To check your python version run `python --version` in a terminal of your choice
+- Installed python version must be `< 3.11`. We recommend a python version `3.10.X` as it is closest to being up-to-date while remaining REMIND compatible. To check your python version run `python --version` in a terminal of your choice
 - GAMS must be installed and the path to GAMS applications needs to be in your PATH environment variable
 - R version must be at least `4.2.X`. To check your R version run `R --version` in a terminal of your choice
 - On Windows we recommend to use PowerShell rather than the standard command prompt
@@ -139,25 +139,25 @@ then restart your run.
 In case your REMIND run fails and you wish to be supported by REMIND RSE in getting it to run properly, please help us by recording the logging output of the run. On linux, start your run via
 
 ```bash
-Rscript start.R &>> ~/failed_REMIND_run.log
+Rscript start.R &>> failed_REMIND_run.log
 ```
 
 or on Windows via
 
 ```PowerShell
-Rscript.exe .\start.R *>> ~/failed_REMIND_run.log
+Rscript.exe .\start.R *>> failed_REMIND_run.log
 ```
 
-This writes *all* output from your run to a file in your home directory called `failed_REMIND_run.log`. After hitting enter in your terminal session, none of the usual output will show up since it is being redirected into the aforementioned file. You can still follow the progress of your run by opening a second terminal window and type in
+This writes *all* output from your run to a file in your `<REMIND_DIR>` directory called `failed_REMIND_run.log`. After hitting enter in your terminal session, none of the usual output will show up since it is being redirected into the aforementioned file. You can still follow the progress of your run by opening a second terminal window and type in
 
 ```bash
-tail -n 25 -f ~/failed_REMIND_run.log
+tail -n 25 -f <REMIND_DIR>/failed_REMIND_run.log
 ```
 
 on Linux or
 
 ```PowerShell
-Get-Content ~/failed_REMIND_run.log -Tail 10 -Wait
+Get-Content <REMIND_DIR>/failed_REMIND_run.log -Tail 10 -Wait
 ```
 
 on Windows. In case you need to interact with the run script during execution (ie. when selecting the run mode) you can still do so in the terminal session from which you started the run.
