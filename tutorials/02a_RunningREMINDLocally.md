@@ -10,7 +10,9 @@ Mika Pflüger (mika.pflueger@pik-potsdam.de), Tonn Rüter (tonn.rueter@pik-potsd
 - R version must be at least `4.2.X`. To check your R version run `R --version` in a terminal of your choice
 - On Windows we recommend to use PowerShell rather than the standard command prompt
 
-## Use Local Input Data
+## Getting Input Data
+
+### Use Local Input Data
 
 **This is the supported way of input data handling**
 
@@ -37,6 +39,37 @@ REMIND_repos_dirs="/my/first/path:/my/second/path"
 ```
 
 You do not have to unpack tar-archives as this will be done during the start-up of your REMIND run.
+
+Make sure that the configuration parameters `inputRevision` and `CESandGDXversion` in your default configuration file `<REMIND_DIR>/config/default.cfg` match the file names. In the present example, parameter `inputRevision` must be `6.606`, consisting of the numbers after `rev` in the file name `rev6.606_62eff8f7_remind.tgz`. Parameter `CESandGDXversion` must be the string `878ac5d69254efb4eba5c1fa39aba64000307bb1` given in the corresponding file whose name starts with `CESparametersAndGDX_`.
+
+### Download Input Data Automatically
+
+**This approach requires a working, OpenSSH-based SSH key management set-up on your machine**
+
+Please verify the SSH set-up on your machine by running `ssh-key -L` in a terminal session. The output should look similar to
+
+```bash
+ssh-rsa LongStringOfRandomLettersNumbersAndSuch== pikaccounts\\<Your PIK user name>@<Host Name>
+```
+
+If your output is empty, try the [Use Local Input Data](#use-local-input-data) approach mentioned above.
+
+If you have access to the PIK cluster (if you don't have access to the PIK cluster, you can get access only if you are a PIK employee) and like to automatically download the input data when running REMIND on your local machine, you need to configure this via environment variables.
+Add to your `~/.Renviron` file (in linux, found in your home directory, in windows, found at `C:\Users\<your windows username>\Documents\.Renviron`):
+```bash
+# REMIND data repository setup
+# Download from the PIK cluster, (needs access)
+REMIND_repos_scp="scp://cluster.pik-potsdam.de/p/projects/rd3mod/inputdata/output;scp://cluster.pik-potsdam.de/p/projects/remind/inputdata/CESparametersAndGDX"
+# Username on the PIK cluster
+REMIND_repos_scp_user="myusername"
+# Path to your ssh private key on your laptop (might also be id_rsa or similar)
+REMIND_repos_scp_key="/home/myusername/.ssh/id_ed25519"
+# For windows, the path to the key is likely something like
+# C:\Users\myusername\.ssh\id_ed25519 , check the `.ssh` folder
+# in your home directory
+```
+
+Make sure to use your username on the cluster and the correct path to your private ssh key (might also be named `id_rsa` or something similar starting with `id_`).
 
 ## Start a run
 
@@ -128,32 +161,3 @@ Get-Content ~/failed_REMIND_run.log -Tail 10 -Wait
 ```
 
 on Windows. In case you need to interact with the run script during execution (ie. when selecting the run mode) you can still do so in the terminal session from which you started the run.
-
-## Download Input Data Automatically
-
-**This approach requires a working, OpenSSH-based SSH key management set-up on your machine**
-
-Please verify the SSH set-up on your machine by running `ssh-key -L` in a terminal session. The output should look similar to
-
-```bash
-ssh-rsa LongStringOfRandomLettersNumbersAndSuch== pikaccounts\\<Your PIK user name>@<Host Name>
-```
-
-If your output is empty, try the [Use Local Input Data](#use-local-input-data) approach mentioned above.
-
-If you have access to the PIK cluster (if you don't have access to the PIK cluster, you can get access only if you are a PIK employee) and like to automatically download the input data when running REMIND on your local machine, you need to configure this via environment variables.
-Add to your `~/.Renviron` file (in linux, found in your home directory, in windows, found at `C:\Users\<your windows username>\Documents\.Renviron`):
-```bash
-# REMIND data repository setup
-# Download from the PIK cluster, (needs access)
-REMIND_repos_scp="scp://cluster.pik-potsdam.de/p/projects/rd3mod/inputdata/output;scp://cluster.pik-potsdam.de/p/projects/remind/inputdata/CESparametersAndGDX"
-# Username on the PIK cluster
-REMIND_repos_scp_user="myusername"
-# Path to your ssh private key on your laptop (might also be id_rsa or similar)
-REMIND_repos_scp_key="/home/myusername/.ssh/id_ed25519"
-# For windows, the path to the key is likely something like
-# C:\Users\myusername\.ssh\id_ed25519 , check the `.ssh` folder
-# in your home directory
-```
-
-Make sure to use your username on the cluster and the correct path to your private ssh key (might also be named `id_rsa` or something similar starting with `id_`).
