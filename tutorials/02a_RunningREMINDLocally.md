@@ -74,6 +74,32 @@ REMIND_repos_scp_key="/home/myusername/.ssh/id_ed25519"
 
 Make sure to use your username on the cluster and the correct path to your private ssh key (might also be named `id_rsa` or something similar starting with `id_`).
 
+### Tell REMIND where to find MAGICC
+
+REMIND needs to be told where to find the configuration files of the 'Model for the Assessment of Greenhouse Gas Induced Climate Change' ([MAGICC](https://magicc.org/)). The config files all come with REMIND, so we just need to set the appropriate location in the REMIND default config file at `<REMIND_DIR>/config/default.cfg`. Open the file with a text editor of your choice and locate the variable `magicc_template`. In the `default.cfg` file, the corresponding section will look like
+
+```R
+cfg$magicc_template <- "/p/projects/rd3mod/magicc/"
+```
+
+Change it to the fully qualified file path (i.e. a file path without double points `..` or the tilde `~`) of the MAGICC configuration files. These are located at `<REMIND_DIR>/core/magicc`. The resulting line should look like:
+
+```R
+cfg$magicc_template <- "<REMIND_DIR>/core/magicc/"
+```
+
+On Linux the fully qualified file path will look similar to:
+
+```R
+cfg$magicc_template <- "/home/<YOUR USERNAME>/REMIND/core/magicc"
+```
+
+On Windows remember to also escape the backslashes:
+
+```R
+cfg$magicc_template <- "C:\\Users\\<YOUR USERNAME>\\REMIND\\core\\magicc"
+```
+
 ## Start a run
 
 In a terminal session change directory to the location where REMIND was cloned via `cd <REMIND_DIR>` and start a run as you would do on the cluster. As a linux user, type
@@ -89,35 +115,6 @@ Rscript.exe .\start.R
 ```
 
 ## Known Issues & Further Debugging
-
-### MAGCFG_STORE File Path Resolution Fails in `prepare.R`
-
-*Telltale sign* Function `prepare()` in `prepare.R` is unable to resolve the file path to `MAGCFG_STORE`, ie. the location where MAGICC configurations are stored. The error message reads:
-
-```
-Error in prepare() :
-  ERROR in MAGGICC configuration: Could not find file  ./core/magicc/MAGCFG_STORE/MAGCFG_USER_OLDDEFAULT.CFG
-```
-
-This bug might be specific to Windows systems and is still under investigation. However, there is a
-
-*Solution* Locate lines
-
-```R
-magcfgFile = paste0('./magicc/MAGCFG_STORE/','MAGCFG_USER_',toupper(cfg$gms$cm_magicc_config),'.CFG')
-[...]
-system(paste0('cp ',magcfgFile,' ','./magicc/MAGCFG_USER.CFG'))
-```
-
-in file `<REMIND_DIR>/scripts/start/prepare.R` (around line numbers 680ff). Replace them with
-
-```R
-magcfgFile = normalizePath(paste0('../../core/magicc/MAGCFG_STORE/','MAGCFG_USER_',toupper(cfg$gms$cm_magicc_config),'.CFG'))
-[...]
-system(paste0('cp ',magcfgFile,' ','../../core/magicc/MAGCFG_USER.CFG'))
-```
-
-and then restart your run.
 
 ### `renv` Confuses Itself
 
