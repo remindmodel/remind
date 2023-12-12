@@ -34,7 +34,9 @@ vm_invMacro(ttot,all_regi,all_in)                               "Investment for 
 v01_invMacroAdj(ttot,all_regi,all_in)                           "Adjustment costs of macro economic investments"
 vm_invRD(ttot,all_regi,all_in)                                  "R&D investments"
 vm_invInno(ttot,all_regi,all_in)                                "Investment into innovation"
-vm_invImi(ttot, all_regi,all_in)                                "Investment into imitation"     
+vm_invImi(ttot, all_regi,all_in)                                "Investment into imitation" 
+v01_enerSerAdj(tall,all_regi,all_in)                             "adjustment costs for energy service transformations"
+    
 
 *** putty-clay variables   
 vm_cesIOdelta(tall,all_regi,all_in)                             "Putty-clay production factor"  

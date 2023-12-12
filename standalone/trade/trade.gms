@@ -193,8 +193,6 @@ cm_frac_CCS          "tax on CCS to reflect risk of leakage, formulated as fract
 cm_frac_NetNegEmi    "tax on CDR to reflect risk of overshooting, formulated as fraction of carbon price"
 
 cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
-cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
-cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
 c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 c_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffCurvPhaseIn2Lin"
@@ -351,8 +349,6 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 
 cm_DiscRateScen        = 0;!! def = 0
-cm_noReboundEffect     = 0;
-cm_priceSensiBuild     = -3;
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 $setGlobal cm_pushCalib  none !! def = none
 $setGlobal cm_reducCostB  none !! def = none

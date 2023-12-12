@@ -20,6 +20,8 @@ p21_bio_EF(ttot,all_regi)                      "bioenergy emission factor, which
 p21_tau_Import(ttot,all_regi,all_enty)         "tax on energy imports, currently only works on primary energy levels as those are traded on nash markets [trUSD/TWa]"
 pm_tau_pe_tax(ttot,all_regi,all_enty)          "pe tax path"
 pm_tau_ces_tax(ttot,all_regi,all_in)           "ces production tax to implement CES mark-up cost in a budget-neutral way"
+p21_tau_fe_tax(ttot,all_regi,emi_sectors,all_enty)    "tax path for final energy"
+p21_tau_fe_sub(ttot,all_regi,emi_sectors,all_enty)    "subsidy path for final energy"
 
 pm_taxrevGHG0(ttot,all_regi)                    "reference level value of GHG emission tax"
 pm_taxrevCO2Sector0(ttot,all_regi,emi_sectors)  "reference level value of CO2 sector markup tax"
