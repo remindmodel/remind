@@ -94,11 +94,9 @@ q_costOM(t,regi)..
     pm_data(regi,"omv",te)
       * (vm_prodSe(t,regi,enty,enty2,te)$entySe(enty2)
          + vm_prodFe(t,regi,enty,enty2,te)$entyFe(enty2)
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
          + sum(tePrc2opmoPrc(tePrc(te),opmoPrc),
                v37_outflowPrc(t,regi,te,opmoPrc)
                )
-$endif.cm_subsec_model_steel
         )
   )
   +

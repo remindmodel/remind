@@ -45,9 +45,11 @@ q05_eedemini(regi,enty)..
       )
     )
     !! Pathway IV: process-based industry
-  + sum(fe2ppfen_no_ces_use(enty,ppfen_no_ces_use),
-      pm_fedemand("2005",regi,ppfen_no_ces_use) * sm_EJ_2_TWa
-    )
+  + sum(tePrc2opmoPrc(tePrc,opmoPrc)$(p37_specFEDem("2005",regi,enty,tePrc,opmoPrc) gt 0.),
+      p37_specFEDem("2005",regi,enty,tePrc,opmoPrc)
+      *
+      v37_outflowPrc("2005",regi,tePrc,opmoPrc)
+    )$(entyFeStat(enty))
   ) * s05_inic_switch
     !! Transformation pathways that consume this enty:
   + sum(en2en(enty,enty2,te)$(NOT tePrc(te)), !! TODO Prc temp fix until efficiencies are implemented
@@ -118,24 +120,12 @@ display v05_INIdemEn0.l, v05_INIcap0.l;
 pm_cap0(regi,te) = v05_INIcap0.l(regi,te);
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-* TODO:
-* - Add idr historic capacities
-* - make this a loop to not require additional code for new materials
-v37_outflowPrc.fx('2005',regi,'bof','unheated') = pm_fedemand('2005',regi,'ue_steel_primary');
-v37_outflowPrc.fx('2005',regi,'bf','standard') = p37_specMatDem("pigiron","bof","unheated") * v37_outflowPrc.l('2005',regi,'bof','unheated');
-v37_outflowPrc.fx('2005',regi,'eaf','sec') = pm_fedemand('2005',regi,'ue_steel_secondary');
-v37_outflowPrc.fx('2005',regi,'eaf','pri') = 0.;
-v37_outflowPrc.fx('2005',regi,'idr','ng') = 0.;
-v37_outflowPrc.fx('2005',regi,'idr','h2') = 0.;
-
 pm_cap0(regi,'bof') = v37_outflowPrc.l('2005',regi,'bof','unheated') / pm_cf("2005",regi,'bof');
-pm_cap0(regi,'bf')  = v37_outflowPrc.l('2005',regi,'bf','standard') / pm_cf("2005",regi,'bf');  !! measure bf capacity in t steel, not t pigiron! Skip: * p37_specMatDem('pigiron','bof','unheated'));
-pm_cap0(regi,'eaf') = v37_outflowPrc.l('2005',regi,'eaf','sec') / pm_cf("2005",regi,'eaf');
+pm_cap0(regi,'bf')  = v37_outflowPrc.l('2005',regi,'bf','standard')  / pm_cf("2005",regi,'bf');
+pm_cap0(regi,'eaf') = v37_outflowPrc.l('2005',regi,'eaf','sec')      / pm_cf("2005",regi,'eaf');
 pm_cap0(regi,'idr') = 0.;
-
-* no initial capacity for CCS
-pm_cap0(regi,"bfcc") =sm_eps;
-pm_cap0(regi,"idrcc") =sm_eps;
+pm_cap0(regi,"bfcc") =0.;
+pm_cap0(regi,"idrcc") =0.;
 $endif.cm_subsec_model_steel
 
 *RP keep energy demand for the Kyoto target calibration

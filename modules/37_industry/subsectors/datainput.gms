@@ -9,77 +9,10 @@
 vm_emiIndBase.l(ttot,regi,entyFE,secInd37) = 0;
 
 Parameters
-***-------------------------------------------------------------------------------
-***                         MATERIAL-FLOW IMPLEMENTATION
-***-------------------------------------------------------------------------------
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-  p37_specMatDem(mat,all_te,opmoPrc)                                      "Specific materials demand of a production technology and operation mode [t_input/t_product], where product is e.g. pigiron, not steel"
-  /
-    dripell.idr.(ng,h2)     1.45                                            !! Iron ore demand of iron direct-reduction (independent of fuel source) POSTED
 
-    driron.eaf.pri          1.08                                            !! DRI demand of EAF POSTED
-    eafscrap.eaf.sec        1.09                                            !! Scrap demand of EAF POSTED
-
-    ironore.bf.standard     1.45                                            !! Iron ore demand of BF-BOF
-
-    bofscrap.bof.unheated   0.00001                                         !! Scrap demand of BF-BOF
-    pigiron.bof.unheated    1.05
-  /
-
-  p37_specFeDemTarget(all_enty,all_te,opmoPrc)                        "Specific energy demand of a production technology and operation mode; read in as [MWh/t_product], where product is e.g. pigiron, not steel; converted to TWa/Gt directly below"
-  /
-    !! reduction: 504 m^3; heat 242 m^3; conversion: x / 11.126 m^3/kg * 0.0333 MWh/kg
-    feh2s.idr.h2           2.23                                            !! Source: POSTED
-    feels.idr.h2           0.08                                            !! Source: POSTED
-
-    fegas.idr.ng           2.69                                            !! Source: POSTED
-    feels.idr.ng           0.08                                            !! Source: POSTED
-
-    feels.eaf.pri          0.67                                            !! Source: POSTED
-
-    feels.eaf.sec          0.67                                            !! Source: POSTED
-
-    fesos.bf.standard      3.9                                             !! Source: OTTO_ET_AL
-    fegas.bf.standard      0.18                                            !! Source: DUMMY
-    feels.bf.standard      0.20                                            !! Source: DUMMY
-    !!feh2s.bf.standard      EPS                                             !! Source: DUMMY
-    fehos.bf.standard      0.0001                                          !! Source: DUMMY
-
-    !!feels.bof.unheated     0.05                                            !! Source: DUMMY
-
-    feels.bfcc.standard   1.00                                            !! Source: DUMMY
-    feels.idrcc.ng        1.00                                            !! Source: DUMMY
-  /;
-!! Convert from MWh/t to TWa/Gt
-p37_specFeDemTarget(all_enty,all_te,opmoPrc) = p37_specFeDemTarget(all_enty,all_te,opmoPrc)  / (sm_TWa_2_MWh / sm_giga_2_non);
-
-Parameters
-  p37_mat2ue(all_enty,all_in) !!,opmoPrc)
-  /
-    sesteel.ue_steel_secondary   1.                                            !! Only contibution, both are measured in Gt/a
-    prsteel.ue_steel_primary     1.                                            !! Only contibution, both are measured in Gt/a
-  /
-
-  p37_captureRate(all_te,opmoPrc)
-  /
-    bfcc . (standard)   0.73                                                   !! This is relative to all emissions at the integrated steel plant, but does not take coal mining emissions into account, as they are accounted for elsewhere in the model.
-    idrcc . (ng)        0.8
-  /
-
-  !! $2005/kg
-  p37_priceMat(all_enty)
-  /
-    eafscrap      0.167
-    bofscrap      0.167
-    ironore       0.077
-    dripell       0.105
-  /
-$endif.cm_subsec_model_steel
-
-
-***-------------------------------------------------------------------------------
-***                     REST OF SUBSECTOR INDUSTRY MODULE
-***-------------------------------------------------------------------------------
+*** ---------------------------------------------------------------------------
+***        1. CES-Based
+*** ---------------------------------------------------------------------------
 *** substitution elasticities
   p37_cesdata_sigma(all_in)  "industry substitution elasticities"
   /
@@ -600,5 +533,186 @@ execute_load "input_ref.gdx", vm_demFEsector;
       vm_demFEsector.l(t,regi,entySE,"fesos","indst","ETS")
     );
 );
+
+
+!!
+!! *** ---------------------------------------------------------------------------
+!! ***        2. Process-Based
+!! *** ---------------------------------------------------------------------------
+!! Parameter
+!!   p37_specMatDem(mat,all_te,opmoPrc)   "Specific materials demand of a production technology and operation mode [t_input/t_product], where product is e.g. pigiron, not steel"
+!!   /
+!! $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+!!     dripell.idr.(ng,h2)     1.45                                            !! Iron ore demand of iron direct-reduction (independent of fuel source) POSTED
+!!
+!!     driron.eaf.pri          1.08                                            !! DRI demand of EAF POSTED
+!!     eafscrap.eaf.sec        1.09                                            !! Scrap demand of EAF POSTED
+!!
+!!     ironore.bf.standard     1.45                                            !! Iron ore demand of BF-BOF
+!!
+!!     bofscrap.bof.unheated   1e-9                                            !! Scrap demand of BF-BOF
+!!     pigiron.bof.unheated    1.05
+!! $endif.cm_subsec_model_steel
+!!   /
+!!
+!!   p37_specFeDemTarget(all_enty,all_te,opmoPrc)   "Specific energy demand of a production technology and operation mode; read in as [MWh/t_product], where product is e.g. pigiron, not steel; converted to TWa/Gt directly below"
+!!   /
+!! $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+!!     !! reduction: 504 m^3; heat 242 m^3; conversion: x / 11.126 m^3/kg * 0.0333 MWh/kg
+!!     feh2s.idr.h2             2.23      !! Source: POSTED
+!!     feels.idr.h2             0.08      !! Source: POSTED
+!!
+!!     fegas.idr.ng             2.69      !! Source: POSTED
+!!     feels.idr.ng             0.08      !! Source: POSTED
+!!
+!!     feels.eaf.pri            0.67      !! Source: POSTED
+!!     feels.eaf.sec            0.67      !! Source: POSTED
+!!
+!!     fesos.bf.standard        3.90      !! Source: OTTO_ET_AL
+!!     fegas.bf.standard        0.18      !! Source: DUMMY
+!!     feels.bf.standard        0.20      !! Source: DUMMY
+!!     fehos.bf.standard        1e-9      !! Source: DUMMY
+!!
+!!     feels.bfcc.standard      1.00      !! Source: DUMMY
+!!     feels.idrcc.ng           1.00      !! Source: DUMMY
+!! $endif.cm_subsec_model_steel
+!!   /;
+!!   p37_specFeDemTarget(all_enty,all_te,opmoPrc) = p37_specFeDemTarget(all_enty,all_te,opmoPrc) / (sm_TWa_2_MWh/sm_giga_2_non)
+!!
+!! PARAMETER
+!!   p37_mat2ue(all_enty,all_in)   "Contribution of each material output to the UE; Becomes trivial in case of one output material per UE"
+!!   /
+!! $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+!!     sesteel.ue_steel_secondary   1.
+!!     prsteel.ue_steel_primary     1.
+!! $endif.cm_subsec_model_steel
+!!   /
+!!
+!!   p37_captureRate(all_te,opmoPrc)   "Share of local CO2 emissions that are coaptured by CC tech"
+!!   /
+!! $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+!!     bfcc . (standard)   0.73
+!!     idrcc . (ng)        0.8
+!! $endif.cm_subsec_model_steel
+!!   /
+!!
+!!   p37_priceMat(all_enty)   "Price of input materials [trn $2005/Gt = $/kg]"
+!!   /
+!! $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+!!     eafscrap      0.167
+!!     bofscrap      0.167
+!!     ironore       0.077
+!!     dripell       0.105
+!! $endif.cm_subsec_model_steel
+!!   /
+!! ;
+*** ---------------------------------------------------------------------------
+***        2. Process-Based
+*** ---------------------------------------------------------------------------
+
+p37_specMatDem(mat,all_te,opmoPrc) = 0.;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+p37_specMatDem("dripell","idr","ng")        = 1.45;                                           !! Iron ore demand of iron direct-reduction (independent of fuel source) POSTED
+p37_specMatDem("dripell","idr","h2")        = 1.45;                                           !! Iron ore demand of iron direct-reduction (independent of fuel source) POSTED
+
+p37_specMatDem("driron","eaf","pri")        = 1.08;                                           !! DRI demand of EAF POSTED
+p37_specMatDem("eafscrap","eaf","sec")      = 1.09;                                           !! Scrap demand of EAF POSTED
+
+p37_specMatDem("ironore","bf","standard")   = 1.45;                                           !! Iron ore demand of BF-BOF
+
+p37_specMatDem("bofscrap","bof","unheated") = sm_eps;                                         !! Scrap demand of BF-BOF
+p37_specMatDem("pigiron","bof","unheated")  = 1.05;
+$endif.cm_subsec_model_steel
+
+p37_specFeDemTarget(all_enty,all_te,opmoPrc) = 0.;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+    !! reduction: 504 m^3; heat 242 m^3; conversion: x / 11.126 m^3/kg * 0.0333 MWh/kg
+p37_specFeDemTarget("feh2s","idr","h2")           = 2.23 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED
+p37_specFeDemTarget("feels","idr","h2")           = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED
+
+p37_specFeDemTarget("fegas","idr","ng")           = 2.69 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED
+p37_specFeDemTarget("feels","idr","ng")           = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED
+
+p37_specFeDemTarget("feels","eaf","pri")          = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED
+p37_specFeDemTarget("feels","eaf","sec")          = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED
+
+p37_specFeDemTarget("fesos","bf","standard")      = 3.90 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: OTTO_ET_AL
+p37_specFeDemTarget("fegas","bf","standard")      = 0.18 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+p37_specFeDemTarget("feels","bf","standard")      = 0.20 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+p37_specFeDemTarget("fehos","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+
+p37_specFeDemTarget("feels","bfcc","standard")    = 1.00 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+p37_specFeDemTarget("feels","idrcc","ng")         = 1.00 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+$endif.cm_subsec_model_steel
+
+p37_mat2ue(all_enty,all_in) = 0.;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+p37_mat2ue("sesteel","ue_steel_secondary") = 1.;
+p37_mat2ue("prsteel","ue_steel_primary")   = 1.;
+$endif.cm_subsec_model_steel
+
+p37_captureRate(all_te,opmoPrc) = 0.;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+p37_captureRate("bfcc","standard") = 0.73;
+p37_captureRate("idrcc","ng")      = 0.8;
+$endif.cm_subsec_model_steel
+
+p37_priceMat(all_enty) = 0.;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+p37_priceMat("eafscrap") = 0.167;
+p37_priceMat("bofscrap") = 0.167;
+p37_priceMat("ironore")  = 0.077;
+p37_priceMat("dripell")  = 0.105;
+$endif.cm_subsec_model_steel
+
+p37_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+if (cm_startyear eq 2005,
+  v37_outflowPrc.fx('2005',regi,'bof','unheated') = pm_fedemand('2005',regi,'ue_steel_primary');
+  v37_outflowPrc.fx('2005',regi,'bf','standard') = p37_specMatDem("pigiron","bof","unheated") * v37_outflowPrc.l('2005',regi,'bof','unheated');
+  v37_outflowPrc.fx('2005',regi,'eaf','sec') = pm_fedemand('2005',regi,'ue_steel_secondary');
+  v37_outflowPrc.fx('2005',regi,'eaf','pri') = 0.;
+  v37_outflowPrc.fx('2005',regi,'idr','ng') = 0.;
+  v37_outflowPrc.fx('2005',regi,'idr','h2') = 0.;
+
+  loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
+    p37_specFeDem(ttot,regi,"feh2s","idr","h2") = p37_specFeDemTarget("feh2s","idr","h2");
+    p37_specFeDem(ttot,regi,"feels","idr","h2") = p37_specFeDemTarget("feels","idr","h2");
+
+    p37_specFeDem(ttot,regi,"fegas","idr","ng") = p37_specFeDemTarget("fegas","idr","ng");
+    p37_specFeDem(ttot,regi,"feels","idr","ng") = p37_specFeDemTarget("feels","idr","ng");
+
+    p37_specFeDem(ttot,regi,"fesos","bf","standard") = pm_fedemand(ttot,regi,'feso_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+    p37_specFeDem(ttot,regi,"fehos","bf","standard") = pm_fedemand(ttot,regi,'feli_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+    p37_specFeDem(ttot,regi,"fegas","bf","standard") = pm_fedemand(ttot,regi,'fega_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+    p37_specFeDem(ttot,regi,"feels","bf","standard") = pm_fedemand(ttot,regi,'feel_steel_primary') * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+
+    p37_specFeDem(ttot,regi,"feels","eaf","sec") = pm_fedemand(ttot,regi,'feel_steel_secondary') * sm_EJ_2_TWa / pm_fedemand(ttot,regi,'ue_steel_secondary');
+    p37_specFeDem(ttot,regi,"feels","eaf","pri") = p37_specFeDem(ttot,regi,"feels","eaf","sec");
+  );
+
+  !! loop over other years and blend
+  loop(entyFeStat(all_enty),
+    loop(tePrc(all_te),
+      loop(opmoPrc,
+        if( (p37_specFeDemTarget(all_enty,all_te,opmoPrc) gt 0.),
+          loop(ttot$(ttot.val > 2020),
+            !! fedemand in excess of BAT halves until 2055
+            !! gams cannot handle float exponents, so pre-compute 0.5^(1/(2055-2020)) = 0.9804
+            p37_specFeDem(ttot,regi,all_enty,all_te,opmoPrc)
+            = p37_specFeDemTarget(all_enty,all_te,opmoPrc)
+            + (p37_specFeDem("2020",regi,all_enty,all_te,opmoPrc) - p37_specFeDemTarget(all_enty,all_te,opmoPrc))
+            * power(0.9804, ttot.val - 2020) ;
+          );
+        );
+      );
+    );
+  );
+);
+
+if (cm_startyear gt 2005,
+  Execute_Loadpoint 'input_ref' p37_specFeDem = p37_specFeDem;
+);
+$endif.cm_subsec_model_steel
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms

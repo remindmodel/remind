@@ -886,7 +886,7 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
        UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,
        VIR,VNM,VUT,WLF,WSM,YEM,ZAF,ZMB,ZWE /
 
-   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country"
+   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
          /
        EUR . EUR
        CHA . CHA
@@ -1203,14 +1203,14 @@ $ENDIF.WindOff
         tdfosdie        "transmission and distribution for diesel from fossil origin to stationary users"
         tdsyndie        "transmission and distribution for diesel from synthetic origin to stationary users"
         tdbiopet        "transmission and distribution for petrol from biomass origin to stationary users"
-	tdfospet        "transmission and distribution for petrol from fossil origin to stationary users"
+	      tdfospet        "transmission and distribution for petrol from fossil origin to stationary users"
         tdsynpet        "transmission and distribution for petrol from synthetic origin to stationary users"
         tdbiosos        "transmission and distribution for solids from biomass origin to stationary users"
         tdfossos        "transmission and distribution for solids from fossil origin to stationary users"
         tdhes           "transmission and distribution for heat to stationary users"
 *** FS: H2 transmission & distribution helper technologies for industry & buildings
-        tdh2i   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
-        tdh2b   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
+        tdh2i           "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
+        tdh2b           "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
 
 *        ccscomp         "compression of co2, CCS related"
 *        ccspipe         "transportation of co2, CCS related"
@@ -1230,18 +1230,17 @@ $ENDIF.WindOff
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
         gridwindoff     "grid between areas with high wind offshore production and the rest"
 $ENDIF.WindOff
-        pipe_gas    'Pipelines transporting natural gas'
-        termX_lng   'Export terminals for LNG (liquification)'
-        termM_lng   'Import terminals for LNG (regasification)'
-        vess_lng    'Vessels transporting LNG'
+        pipe_gas        "Pipelines transporting natural gas"
+        termX_lng       "Export terminals for LNG (liquification)"
+        termM_lng       "Import terminals for LNG (regasification)"
+        vess_lng        "Vessels transporting LNG"
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-        idr          "Iron direct reduction"
-        eaf          "Electric-arc furnace"
-        bf           "Blast furnace"
-        bof          "Basic-oxygen furnace"
-
-        bfcc         "Blast furnace CCS"
-        idrcc        "Direct reduction CCS"
+        idr             "Iron direct reduction"
+        eaf             "Electric-arc furnace"
+        bf              "Blast furnace"
+        bof             "Basic-oxygen furnace"
+        bfcc            "Blast furnace CCS"
+        idrcc           "Direct reduction CCS"
 $endif.cm_subsec_model_steel
 /
 teAdj(all_te)           "technologies with adjustment costs on capacity additions"

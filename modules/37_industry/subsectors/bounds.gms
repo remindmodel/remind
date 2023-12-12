@@ -136,10 +136,12 @@ $ifthen.policy_scenario "%cm_indstExogScen_set%" == "YES"
 $endif.policy_scenario
 $drop cm_indstExogScen_set
 
+
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-!! Switch of steel CCS
+!! Switch to turn off steel CCS
 if (cm_CCS_steel ne 1 OR cm_IndCCSscen ne 1,
   vm_cap.fx(t,regi,teCCPrc,rlf) = 0.;
 );
 $endif.cm_subsec_model_steel
+
 *** EOF ./modules/37_industry/subsectors/bounds.gms

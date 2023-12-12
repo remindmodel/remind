@@ -6,6 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/subsectors/equations.gms
 
+*** ---------------------------------------------------------------------------
+***        1. CES-Based (mostly)
+*** ---------------------------------------------------------------------------
+
 ***------------------------------------------------------
 *' Industry final energy balance
 ***------------------------------------------------------
@@ -23,80 +27,15 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
       )$(NOT secInd37Prc(secInd37))
     )
   )
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   +
-  sum((secInd37_emiMkt(secInd37Prc,emiMkt),secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
+  sum((secInd37_emiMkt(secInd37Prc,emiMkt),
+       secInd37_tePrc(secInd37Prc,tePrc),
+       tePrc2opmoPrc(tePrc,opmoPrc)),
     p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
     *
     v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
   )
-$endif.cm_subsec_model_steel
 ;
-
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-***------------------------------------------------------
-*' Material input to production
-***------------------------------------------------------
-q37_demMatPrc(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matIn(mat))..
-    v37_matFlow(ttot,regi,mat)
-  =e=
-    sum(tePrc2matIn(tePrc,opmoPrc,mat),
-      p37_specMatDem(mat,tePrc,opmoPrc)
-      *
-      v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
-    )
-;
-
-***------------------------------------------------------
-*' Material cost
-***------------------------------------------------------
-q37_costMat(ttot,regi)$(ttot.val ge cm_startyear)..
-    vm_costMatPrc(ttot,regi)
-  =e=
-    sum(mat,
-      p37_priceMat(mat)
-      *
-      v37_matFlow(ttot,regi,mat))
-;
-
-***------------------------------------------------------
-*' Output material production
-***------------------------------------------------------
-q37_prodMat(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matOut(mat))..
-    v37_matFlow(ttot,regi,mat)
-  =e=
-    sum(tePrc2matOut(tePrc,opmoPrc,mat),
-      v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
-    )
-;
-
-***------------------------------------------------------
-*' Hand-over to CES
-***------------------------------------------------------
-q37_mat2ue(ttot,regi,all_in)$((ttot.val ge cm_startyear) AND ppfUePrc(all_in))..
-    vm_cesIO(ttot,regi,all_in)
-  =e=
-    sum(mat2ue(mat,all_in),
-      p37_mat2ue(mat,all_in)
-      *
-      v37_matFlow(ttot,regi,mat)
-    )
-;
-
-***------------------------------------------------------
-*' Definition of capacity constraints
-***------------------------------------------------------
-q37_limitCapMat(ttot,regi,tePrc)$(ttot.val ge cm_startyear) ..
-    sum(tePrc2opmoPrc(tePrc,opmoPrc),
-      v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
-    )
-    =l=
-    sum(teMat2rlf(tePrc,rlf),
-      vm_capFac(ttot,regi,tePrc) * vm_cap(ttot,regi,tePrc,rlf)
-    )
-;
-
-$endif.cm_subsec_model_steel
 
 ***------------------------------------------------------
 *' Thermodynamic limits on subsector energy demand
@@ -104,9 +43,7 @@ $endif.cm_subsec_model_steel
 $ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
                              ttot.val gt 2020
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
                              AND NOT ppfUePrc(out)
-$endif.cm_subsec_model_steel
 			                       AND p37_energy_limit_slope(ttot,regi,out) ) ..
   sum(ces_eff_target_dyn37(out,in), vm_cesIO(ttot,regi,in))
   =g=
@@ -155,57 +92,11 @@ q37_emiIndBase(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
             pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")
         )
     )$(NOT secInd37Prc(secInd37))
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     +
     sum((secInd37_tePrc(secInd37,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
         v37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc)
     )$(secInd37Prc(secInd37))
-$endif.cm_subsec_model_steel
 ;
-
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-***------------------------------------------------------
-*' Emission from process based industry sector (pre CC)
-***------------------------------------------------------
-q37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc)$(ttot.val ge cm_startyear ) ..
-    v37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc)
-  =e=
-    p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
-    *
-    sum(se2fe(entySEfos,entyFE,te),
-      pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2"))
-    *
-    v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
-;
-
-***------------------------------------------------------
-*' Carbon capture processes can only capture as much co2 as the base process emits
-***------------------------------------------------------
-q37_limitOutflowCCPrc(ttot,regi,tePrc)$(ttot.val ge cm_startyear ) ..
-    sum((entyFE,tePrc2opmoPrc(tePrc,opmoPrc)),
-      v37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc))
-  =g=
-    sum(tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc),
-      1. / p37_captureRate(teCCPrc,opmoCCPrc)
-      *
-      v37_outflowPrc(ttot,regi,teCCPrc,opmoCCPrc)
-    )
-;
-
-
-***------------------------------------------------------
-*' Emission captured from process based industry sector
-***------------------------------------------------------
-q37_emiCCPrc(ttot,regi,emiInd37)$((ttot.val ge cm_startyear ) AND sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
-    vm_emiIndCCS(ttot,regi,emiInd37)
-  =e=
-    sum((secInd37_2_emiInd37(secInd37Prc,emiInd37),
-         secInd37_tePrc(secInd37Prc,tePrc),
-         tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)),
-      v37_outflowPrc(ttot,regi,teCCPrc,opmoCCPrc)
-    )
-;
-$endif.cm_subsec_model_steel
 
 ***------------------------------------------------------
 *' Compute maximum possible CCS level in industry sub-sectors given the current
@@ -295,14 +186,124 @@ q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND NOT sum(secInd
 ;
 
 
-***---------------------------------------------------------------------------
+***------------------------------------------------------
 *'  CES markup cost that are accounted in the budget (GDP) to represent sector-specific demand-side transformation cost in industry
-***---------------------------------------------------------------------------
+***------------------------------------------------------
 q37_costCESmarkup(t,regi,in)$(ppfen_industry_dyn37(in))..
   vm_costCESMkup(t,regi,in)
   =e=
     p37_CESMkup(t,regi,in)
   * (vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity"))
+;
+
+
+
+*** ---------------------------------------------------------------------------
+***        2. Process-Based
+*** ---------------------------------------------------------------------------
+
+***------------------------------------------------------
+*' Material input to production
+***------------------------------------------------------
+q37_demMatPrc(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matIn(mat))..
+    v37_matFlow(ttot,regi,mat)
+  =e=
+    sum(tePrc2matIn(tePrc,opmoPrc,mat),
+      p37_specMatDem(mat,tePrc,opmoPrc)
+      *
+      v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
+    )
+;
+
+***------------------------------------------------------
+*' Material cost
+***------------------------------------------------------
+q37_costMat(ttot,regi)$(ttot.val ge cm_startyear)..
+    vm_costMatPrc(ttot,regi)
+  =e=
+    sum(mat,
+      p37_priceMat(mat)
+      *
+      v37_matFlow(ttot,regi,mat))
+;
+
+***------------------------------------------------------
+*' Output material production
+***------------------------------------------------------
+q37_prodMat(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matOut(mat))..
+    v37_matFlow(ttot,regi,mat)
+  =e=
+    sum(tePrc2matOut(tePrc,opmoPrc,mat),
+      v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
+    )
+;
+
+***------------------------------------------------------
+*' Hand-over to CES
+***------------------------------------------------------
+q37_mat2ue(ttot,regi,all_in)$((ttot.val ge cm_startyear) AND ppfUePrc(all_in))..
+    vm_cesIO(ttot,regi,all_in)
+  =e=
+    sum(mat2ue(mat,all_in),
+      p37_mat2ue(mat,all_in)
+      *
+      v37_matFlow(ttot,regi,mat)
+    )
+;
+
+***------------------------------------------------------
+*' Definition of capacity constraints
+***------------------------------------------------------
+q37_limitCapMat(ttot,regi,tePrc)$(ttot.val ge cm_startyear) ..
+    sum(tePrc2opmoPrc(tePrc,opmoPrc),
+      v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
+    )
+    =l=
+    sum(teMat2rlf(tePrc,rlf),
+      vm_capFac(ttot,regi,tePrc) * vm_cap(ttot,regi,tePrc,rlf)
+    )
+;
+
+***------------------------------------------------------
+*' Emission from process based industry sector (pre CC)
+***------------------------------------------------------
+q37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc)$(ttot.val ge cm_startyear ) ..
+    v37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc)
+  =e=
+    p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
+    *
+    sum(se2fe(entySEfos,entyFE,te),
+      pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2"))
+    *
+    v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
+;
+
+***------------------------------------------------------
+*' Carbon capture processes can only capture as much co2 as the base process emits
+***------------------------------------------------------
+q37_limitOutflowCCPrc(ttot,regi,tePrc)$(ttot.val ge cm_startyear ) ..
+    sum((entyFE,tePrc2opmoPrc(tePrc,opmoPrc)),
+      v37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc))
+  =g=
+    sum(tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc),
+      1. / p37_captureRate(teCCPrc,opmoCCPrc)
+      *
+      v37_outflowPrc(ttot,regi,teCCPrc,opmoCCPrc)
+    )
+;
+
+
+***------------------------------------------------------
+*' Emission captured from process based industry sector
+***------------------------------------------------------
+q37_emiCCPrc(ttot,regi,emiInd37)$((ttot.val ge cm_startyear ) AND sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
+    vm_emiIndCCS(ttot,regi,emiInd37)
+  =e=
+    sum((secInd37_2_emiInd37(secInd37Prc,emiInd37),
+         secInd37_tePrc(secInd37Prc,tePrc),
+         tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)),
+      v37_outflowPrc(ttot,regi,teCCPrc,opmoCCPrc)
+    )
 ;
 
 *** EOF ./modules/37_industry/subsectors/equations.gms

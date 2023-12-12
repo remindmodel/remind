@@ -15,12 +15,10 @@ pm_FEPrice(ttot,regi,entyFE,"indst",emiMkt)$( abs(qm_budget.m(ttot,regi)) gt sm_
 *** calculate reporting parameters for FE per subsector and SE origin to make R
 *** reporting easier
 
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 o37_demFePrc(ttot,regi,entyFE,tePrc,opmoPrc)$(p37_specFEDem(ttot,regi,entyFE,tePrc,opmoPrc))
   = v37_outflowPrc.l(ttot,regi,tePrc,opmoPrc)
     * p37_specFEDem(ttot,regi,entyFE,tePrc,opmoPrc)
 ;
-$endif.cm_subsec_model_steel
 
 *** total FE per energy carrier and emissions market in industry (sum over
 *** subsectors)
@@ -30,30 +28,27 @@ o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
       (vm_cesIO.l(ttot,regi,in)
       +pm_cesdata(ttot,regi,in,"offset_quantity"))
     )
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-    +
-  sum((secInd37_emiMkt(secInd37Prc,emiMkt),secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
-    o37_demFePrc(ttot,regi,entyFE,tePrc,opmoPrc)
-  )
-$endif.cm_subsec_model_steel
+  + sum((secInd37_emiMkt(secInd37Prc,emiMkt),secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
+      o37_demFePrc(ttot,regi,entyFE,tePrc,opmoPrc)
+    )
 ;
 
 *** share of subsector in FE industry energy carriers and emissions markets
 o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)$(
                                     o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt) )
   =
-  ( sum(( fe2ppfEn37(entyFe,in),
+  (
+    sum(( fe2ppfEn37(entyFe,in),
           secInd37_2_pf(secInd37,in),
           secInd37_emiMkt(secInd37,emiMkt))$(NOT secInd37Prc(secInd37)),
       (vm_cesIO.l(ttot,regi,in)
-      +pm_cesdata(ttot,regi,in,"offset_quantity"))
-  )
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-  +
-  sum((secInd37_emiMkt(secInd37Prc,emiMkt),secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
-    o37_demFePrc(ttot,regi,entyFE,tePrc,opmoPrc)
-  )$(secInd37Prc(secInd37))
-$endif.cm_subsec_model_steel
+      + pm_cesdata(ttot,regi,in,"offset_quantity"))
+      )
+  + sum((secInd37_emiMkt(secInd37Prc,emiMkt),
+           secInd37_tePrc(secInd37Prc,tePrc),
+           tePrc2opmoPrc(tePrc,opmoPrc)),
+      o37_demFePrc(ttot,regi,entyFE,tePrc,opmoPrc)
+      )$(secInd37Prc(secInd37))
   )
   / o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
 ;
@@ -88,8 +83,11 @@ pm_IndstCO2Captured(ttot,regi,entySE,entyFE(entyFEcc37),secInd37,emiMkt)$(
       ) !! subsector total energy emissions
     ) !! subsector capture share
 ;
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 
+
+*** ---------------------------------------------------------------------------
+*** Process-Based
+*** ---------------------------------------------------------------------------
 
 o37_relativeOutflow(ttot,regi,tePrc,opmoPrc)$tePrc2opmoPrc(tePrc,opmoPrc) = 1.
 
@@ -114,9 +112,9 @@ loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc)$(
 );
 
 
-!!____________________________________________________________________________
-!! determine shares of v37_outflowPrc that belong to a certain route
-!!____________________________________________________________________________
+*** determine shares of v37_outflowPrc that belong to a certain route
+*** ---------------------------------------------------------------------------
+
 !! init all to 1
 o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)$tePrc2route(tePrc,opmoPrc,route) = 1.
 
@@ -156,9 +154,8 @@ loop((tePrc1,opmoPrc1,tePrc2,opmoPrc2,mat,route)$(
 );
 
 
-!!____________________________________________________________________________
-!! determine production and FE demand by route
-!!____________________________________________________________________________
+*** determine production and FE demand by route
+*** ---------------------------------------------------------------------------
 loop((mat,route)$(matFin(mat)),
   o37_ProdIndRoute(ttot,regi,mat,route)
     = sum((tePrc,opmoPrc)$(    tePrc2matOut(tePrc,opmoPrc,mat)
@@ -179,12 +176,5 @@ loop((entyFE,route,tePrc,opmoPrc,secInd37)$(    tePrc2route(tePrc,opmoPrc,route)
       * o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)
       * p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc);
 );
-
-!! TODO weighting of CAPEX, OPEX also requires p37_specMatDem; BUT since specific, might not need o37_shareRoute
-!! Maybe all of the above is only good for compareScenarios, and LCOP still needs own R code?
-
-!!____________________________________________________________________________
-
-$endif.cm_subsec_model_steel
 
 *** EOF ./modules/37_industry/subsectors/postsolve.gms
