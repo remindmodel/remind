@@ -40,27 +40,6 @@ $endif.transpmodule
   p29_share_H2HTH_traj_indst(ttot,all_regi,all_in)  "H2 and electricity HTH baseline trajectories as share of gas (for H2) and low-temperature electricity (for HTH electricity) trajectories in industry"
 ;
 
-*** in case of a putty formulation, the model putty_paths will try to 
-*** find a pathway of variations which fits approximately the exogenous trajectories
-*** the underlying variables (e.g. the consumption of useful energy in the whole buildings stock)
-*** may vary but this is very costly in the objective function (we allow for these variations
-*** because EDGE does not have a vintage structure and the projections might not fit the putty formulation
-Variables
-v29_cesdata(tall,all_regi,all_in)       "underlying variables to the putty variations"
-v29_cesdata_putty(tall,all_regi,all_in) "variation in the underlying variable"
-v29_puttyTechDiff(tall,all_regi,all_in) "Difference to be minimised between the K/E ratio of putty and the K/E ratio from the technological data"
-v29_putty_obj                           "index of the step by step variation of v29_cesdata_putty"
-v29_ratioTotalPutty(tall,all_regi,all_in,all_in,all_in) "Ratio of the ratio between input quantities for total and putty quantities"
-
-;
-
-Equations
-q29_pathConstraint(tall,all_regi,all_in)  "equation describing the relation between a variable and its variation"
-q29_esubsConstraint(tall,all_regi,all_in,all_in,all_in) "constraint ensuring that the ratio between capital and energy in putty for the last historical region will be close to the technological data used for the ESUB estimation"
-q29_ratioTotalPutty (tall,all_regi,all_in,all_in,all_in) "Computation of the ratio between the two putty inputs of a same CES nestand the the ratio of pm_cesdata"
-q29_putty_obj                              "objective function"
-;          
-
 *** Load calibration iteration number from environment variable
 *** cm_CES_calibration_iteration
 put_utility "shell" / "exit $cm_CES_calibration_iteration";
