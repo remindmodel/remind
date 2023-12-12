@@ -419,9 +419,8 @@ $setGlobal internalizeDamages  off               !! def = off
 *'---------------------    70_water  -------------------------------------------
 *'
 *' * (off): no water demand taken into account
-*' * (exogenous): exogenous water demand is calculated based on data on water demand coefficients and cooling shares
 *' * (heat): as exogenous only that vintage structure in combination with time dependent cooling shares as vintages and efficiency factors are also considered and demand is a function of excess heat as opposed to electricity output
-$setglobal water  off                 !! def = off
+$setglobal water  heat                 !! def = heat
 *'---------------------    80_optimization    ----------------------------------
 *'
 *' * (nash): Nash solution. Adjust cm_nash_autoconverge to needs.

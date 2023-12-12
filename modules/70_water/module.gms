@@ -13,7 +13,6 @@
 *' @authors Ioanna Mouratiadou
 
 *###################### R SECTION START (MODULETYPES) ##########################
-$Ifi "%water%" == "exogenous" $include "./modules/70_water/exogenous/realization.gms"
 $Ifi "%water%" == "heat" $include "./modules/70_water/heat/realization.gms"
 $Ifi "%water%" == "off" $include "./modules/70_water/off/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################

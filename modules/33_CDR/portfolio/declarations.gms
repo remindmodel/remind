@@ -16,7 +16,6 @@ s33_step                    "size of bins in v33_weathering_onfield [Gt stone]"
 parameters
 p33_fedem(all_te,all_enty)               "final energy demand of each technology [EJ/GtC] (for EW the unit is [EJ/Gt stone])"
 p33_LimRock(all_regi)                    "regional share of EW limit [fraction], calculated ex ante for a maximal annual amount of 8 Gt rock in D:\projects\CEMICS\paper_technical\supply_curve_transport_remind_regions.m"
-p33_transport_costs(all_regi,rlf,rlf)    "transport costs [T$/Gt stone]"
 p33_co2_rem_rate(rlf)                    "carbon removal rate [fraction of annual reduction of total carbon removal potential], multiplied with grade factor"
 ;
 
