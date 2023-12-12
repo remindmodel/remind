@@ -52,7 +52,7 @@ q05_eedemini(regi,enty)..
     )$(entyFeStat(enty))
   ) * s05_inic_switch
     !! Transformation pathways that consume this enty:
-  + sum(en2en(enty,enty2,te)$(NOT tePrc(te)), !! TODO Prc temp fix until efficiencies are implemented
+  + sum(en2en(enty,enty2,te)$(NOT tePrc(te)),
       pm_cf("2005",regi,te)
     / pm_data(regi,"eta",te)
     * v05_INIcap0(regi,te)
@@ -66,7 +66,7 @@ q05_eedemini(regi,enty)..
 ;
 
 *** capacity meets demand of the produced energy:
-q05_ccapini(regi,en2en(enty,enty2,te))$(NOT tePrc(te)).. !! TODO temp fix until efficiencies are implemented
+q05_ccapini(regi,en2en(enty,enty2,te))$(NOT tePrc(te))..
     pm_cf("2005",regi,te)
   * pm_dataren(regi,"nur","1",te)
   * v05_INIcap0(regi,te)

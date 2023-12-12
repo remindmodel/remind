@@ -405,7 +405,7 @@ all_enty             "all types of quantities"
         feelt        "final energy electricity for transport"
         fehoi_cs     "final energy in industry diesel - carbon stored"
         fegai_cs     "final energy in industry natural gas - carbon stored "
-        entydummy      "dummy fe for process based industry implementation"
+        entydummy    "dummy fe for process based industry implementation"
 
         ueHDVt       "transport useful energy heavy duty vehicles"
         ueLDVt       "transport useful energy light duty vehicles"
@@ -886,7 +886,7 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
        UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,
        VIR,VNM,VUT,WLF,WSM,YEM,ZAF,ZMB,ZWE /
 
-   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
+   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country"
          /
        EUR . EUR
        CHA . CHA
@@ -1182,9 +1182,9 @@ $ENDIF.WindOff
         fnrs            "fast nuclear reactor (simple structure)"
         elh2            "hydrogen elecrolysis"
         h2turb          "hydrogen turbine for electricity production"
-	elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
+        elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
         h2turbVRE       "dummy technology: hydrogen turbine for electricity production; to demonstrate the capacities and SE flows inside the storXXX technologies"
-        h2curt      	"hydrogen production from curtailment"
+        h2curt          "hydrogen production from curtailment"
         tdels           "transmission and distribution for electricity to stationary users"
         tdelt           "transmission and distribution for electricity to transport"
         tdbiogas        "transmission and distribution for gas from biomass origin to stationary users"
@@ -1202,7 +1202,7 @@ $ENDIF.WindOff
         tdfosdie        "transmission and distribution for diesel from fossil origin to stationary users"
         tdsyndie        "transmission and distribution for diesel from synthetic origin to stationary users"
         tdbiopet        "transmission and distribution for petrol from biomass origin to stationary users"
-	      tdfospet        "transmission and distribution for petrol from fossil origin to stationary users"
+        tdfospet        "transmission and distribution for petrol from fossil origin to stationary users"
         tdsynpet        "transmission and distribution for petrol from synthetic origin to stationary users"
         tdbiosos        "transmission and distribution for solids from biomass origin to stationary users"
         tdfossos        "transmission and distribution for solids from fossil origin to stationary users"
@@ -1295,7 +1295,7 @@ $ENDIF.WindOff
   fnrs            "fast nuclear reactor (simple structure)"
   elh2            "hydrogen elecrolysis"
   h2turb          "hydrogen turbine for electricity production"
-  h2curt      	  "hydrogen production from curtailment"
+  h2curt          "hydrogen production from curtailment"
 *** ccscomp         "compression of co2, CCS related"
 *** ccspipe         "transportation of co2, CCS related"
   ccsinje         "injection of co2, CCS related"
@@ -1334,7 +1334,7 @@ teLearn(all_te)     "Learning technologies (investment costs can be reduced)"
 /
         wind        "wind onshore power converters"
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-	      windoff     "wind offshore power converters"
+        windoff     "wind offshore power converters"
 $ENDIF.WindOff
         spv         "solar photovoltaic"
         csp         "concentrating solar power"
@@ -1604,14 +1604,14 @@ enty(all_enty)       "all types of quantities"
         pebios       "primary energy biomass sugar nd starch"
         pebioil      "primary energy biomass sunflowers, palm oil, etc"
         seliqbio     "secondary energy liquids from biomass (ex. ethanol)"
-	seliqfos     "secondary energy liquids from fossil primary energy (ex. petrol and diesel)"
+        seliqfos     "secondary energy liquids from fossil primary energy (ex. petrol and diesel)"
         seliqsyn     "secondary energy synthetic liquids from H2"
         sesobio      "secondary energy solids from biomass"
-	sesofos      "secondary energy solids from fossil primary energy"
+        sesofos      "secondary energy solids from fossil primary energy"
         seel         "secondary energy electricity"
         seh2         "secondary energy hydrogen"
         segabio      "secondary energy gas from biomass"
-	segafos      "secondary energy gas from fossil primary energy"
+        segafos      "secondary energy gas from fossil primary energy"
         segasyn      "secondary energy synthetic gas from H2"
         sehe         "secondary energy district heating and heat pumps"
         fegas        "final energy gas stationary"
@@ -1619,14 +1619,14 @@ enty(all_enty)       "all types of quantities"
         fesos        "final energy solids stationary"
         feels        "final energy electricity stationary"
         fehes        "final energy district heating (including combined heat nd power), nd heat pumps stationary"
-        feh2s         "final energy hydrogen stationary"
-        fepet         "final energy petrol transport"
-        fedie         "final energy diesel transport"
-        feelt         "final energy electricity for transport"
-        fetf          "final energy transport fuels"
-        feh2t         "final energy hydrogen transport"
-        fegat         "final energy nat. gas for transport"
-        entydummy      "dummy fe for process based industry implementation"
+        feh2s        "final energy hydrogen stationary"
+        fepet        "final energy petrol transport"
+        fedie        "final energy diesel transport"
+        feelt        "final energy electricity for transport"
+        fetf         "final energy transport fuels"
+        feh2t        "final energy hydrogen transport"
+        fegat        "final energy nat. gas for transport"
+        entydummy    "dummy fe for process based industry implementation"
 
         co2          "carbon dioxide emissions"
         ch4          "methane emissions"
@@ -1675,8 +1675,8 @@ enty(all_enty)       "all types of quantities"
 *        tco2         "CCS related parameter during transportation of CO2"
         ico2         "CCS related parameter during injection of CO2"
 *        sco2         "CCS related parameter during storage of CO2 - monitoring ???"
-	good         "Generic good"
-	perm         "Carbon permit"
+        good         "Generic good"
+        perm         "Carbon permit"
 
         !! emissions from industry sub-sectors
         co2cement      "CO2 emissions from clinker and cement production"
@@ -1749,23 +1749,23 @@ peReComp(all_enty) "Renewable PE used by several technologies, thus the competit
 entySe(all_enty)       "secondary energy types"
 /
         seliqbio     "secondary energy liquids from biomass"
-	seliqfos     "secondary energy liquids from fossil primary energy"
+        seliqfos     "secondary energy liquids from fossil primary energy"
         seliqsyn     "secondary energy synthetic liquids from H2"
         sesobio      "secondary energy solids from biomass"
-	sesofos      "secondary energy solids from fossil primary energy"
+        sesofos      "secondary energy solids from fossil primary energy"
         seel         "SE electricity"
         seh2         "SE hydrogen"
         segabio      "secondary energy gas from biomass"
-	segafos      "secondary energy gas from fossil primary energy"
+        segafos      "secondary energy gas from fossil primary energy"
         segasyn      "secondary energy synthetic gas from H2"
         sehe         "SE district heating nd heat pumps"
 /
 
 entySeBio(all_enty)       "biomass secondary energy types"
 /
-	seliqbio     "secondary energy liquids from biomass"
-	sesobio      "secondary energy solids from biomass"
-	segabio      "secondary energy gas from biomass"
+        seliqbio     "secondary energy liquids from biomass"
+        sesobio      "secondary energy solids from biomass"
+        segabio      "secondary energy gas from biomass"
 /
 
 entySeSyn(all_enty)   "synfuel secondary energy types"
@@ -1776,9 +1776,9 @@ entySeSyn(all_enty)   "synfuel secondary energy types"
 
 entySeFos(all_enty) "secondary energy types from fossil primary energy"
 /
-	seliqfos     "secondary energy liquids from fossil primary energy"
-	sesofos      "secondary energy solids from fossil primary energy"
-	segafos      "secondary energy gas from fossil primary energy"
+        seliqfos     "secondary energy liquids from fossil primary energy"
+        sesofos      "secondary energy solids from fossil primary energy"
+        segafos      "secondary energy gas from fossil primary energy"
 /
 
 entyFe(all_enty)      "final energy types."
@@ -1792,7 +1792,7 @@ entyFe(all_enty)      "final energy types."
         fepet        "FE petrol transport"
         fedie        "FE diesel transport"
         feh2t        "FE hydrogen transport"
-	feelt        "FE electricity for transport"
+        feelt        "FE electricity for transport"
         fegat        "FE gases for transport"
 /
 
@@ -1817,7 +1817,7 @@ entyFeTrans(all_enty) "final energy types from transport sector"
         fepet        "FE petrol transport"
         fedie        "FE diesel transport"
         feh2t        "FE hydrogen transport"
-	feelt        "FE electricity for transport"
+        feelt        "FE electricity for transport"
         fegat        "FE gases for transport"
 /
 
@@ -1948,7 +1948,7 @@ emiMacExoN2O(all_enty) "types of climate-relevant non-energy N2O emissions with 
 /
         n2oforest  "n2o emissions from forest burning (no MAC available)"
         n2osavan   "n2o emissions from savannah burning (no MAC available)"
-		n2oagwaste "n2o emissions from agricultural waste burning (no MAC available)"
+        n2oagwaste "n2o emissions from agricultural waste burning (no MAC available)"
 /
 emiMacExoCH4(all_enty)  "types of climate-relevant non-energy CH4 emissions with mac curve where baseline emissions are exogenous"
 /
@@ -2068,7 +2068,7 @@ all_emiMkt      "emission markets"
 /
   ETS     "ETS emission market"
   ES      "Effort sharing emission market"
-  other	  "other market configurations"
+  other   "other market configurations"
 /
 
 all_emiMktExt   "extended emission market definitions"
@@ -2094,7 +2094,7 @@ sector2emiMkt(emi_sectors,all_emiMkt)  "mapping sectors to emission markets"
         build.ES
         trans.ES
         trans.other
-	cdr.ETS
+        cdr.ETS
 /
 
 te2sectortdH2(all_te,emi_sectors)           "mapping of sectors to technologies to link H2 distribution capacities to sectors"
@@ -2144,7 +2144,7 @@ rlf             "cost levels of fossil fuels"
 /
 integ           "set of integers for looping etc"
 /
-	1*100
+      1*100
 /
 xirog       "parameters decribing exhaustible extraction coss including long-run marginal costs and short term adjustment costs"
 /
@@ -2429,21 +2429,21 @@ $ENDIF.WindOff
 
 seAgg(all_enty) "secondary energy aggregations"
 /
-	all_seliq
-	all_seso
-	all_sega
+        all_seliq
+        all_seso
+        all_sega
 /
 
 seAgg2se(all_enty,all_enty) "map secondary energy aggregation to se"
 /
-	all_seliq.seliqbio
-	all_seliq.seliqfos
-        all_seliq.seliqsyn
-	all_seso.sesobio
-	all_seso.sesofos
-	all_sega.segabio
-	all_sega.segafos
-        all_sega.segasyn
+      all_seliq.seliqbio
+      all_seliq.seliqfos
+      all_seliq.seliqsyn
+      all_seso.sesobio
+      all_seso.sesofos
+      all_sega.segabio
+      all_sega.segafos
+      all_sega.segasyn
 /
 
 capTotal(all_enty,all_enty)    "mapping of input to output carriers for calculating total capacities without technology differentiation vm_capTotal"
@@ -2544,7 +2544,7 @@ pc2te(all_enty,all_enty,all_te,all_enty)    "mapping for own consumption of tech
         pebiolc.seel.biochp.sehe
         pebiolc.segabio.biogasc.seel
         segabio.fegas.tdbiogas.seel
-	segafos.fegas.tdfosgas.seel
+        segafos.fegas.tdfosgas.seel
         pegeo.sehe.geohe.seel
         cco2.ico2.ccsinje.seel
         fedie.uedit.apCarDiEffT.feelt
@@ -2749,7 +2749,7 @@ emiBECCS2te(all_enty,all_enty,all_te,all_enty) "mapping of BECCS PE,SE,technolog
         pebiolc.seliqbio.bioftcrec.cco2
         pebiolc. seel.bioigccc.cco2
         pebiolc.seh2.bioh2c.cco2
-	pebiolc.segabio.biogasc.cco2
+        pebiolc.segabio.biogasc.cco2
 /
 
 *NB*111125 emissions from fossil fuel extraction by grade that is on top of combustion
@@ -2898,7 +2898,7 @@ tsu2opTime5(tall,opTimeYr)     "mapping for spinup time index to lifetime index"
 2005.1
 /
 
-sectorEndoEmi2te(all_enty,all_enty,all_te,sectorEndoEmi)	 "map sectors to technologies"
+sectorEndoEmi2te(all_enty,all_enty,all_te,sectorEndoEmi)   "map sectors to technologies"
 /
         pegas.seel.ngcc.power
         pegas.seel.ngt.power
@@ -2922,16 +2922,16 @@ sectorEndoEmi2te(all_enty,all_enty,all_te,sectorEndoEmi)	 "map sectors to techno
         pebiolc.sesobio.biotr.res
         pebiolc.sesobio.biotrmod.indst
         seliqbio.fehos.tdbiohos.indst
-	seliqfos.fehos.tdfoshos.indst
+        seliqfos.fehos.tdfoshos.indst
         seliqsyn.fehos.tdsynhos.indst
         seliqbio.fehos.tdbiohos.res
-	seliqfos.fehos.tdfoshos.res
+        seliqfos.fehos.tdfoshos.res
         seliqsyn.fehos.tdsynhos.res
         seliqbio.fedie.tdbiodie.trans
-	seliqfos.fedie.tdfosdie.trans
+        seliqfos.fedie.tdfosdie.trans
         seliqsyn.fedie.tdsyndie.trans
         seliqbio.fepet.tdbiopet.trans
-	seliqfos.fepet.tdfospet.trans
+        seliqfos.fepet.tdfospet.trans
         seliqsyn.fepet.tdsynpet.trans
 /
 emiRCP2emiREMIND "mapping between emission types expected by MAGICC and provided by REMIND"
