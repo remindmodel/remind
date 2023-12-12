@@ -5,10 +5,13 @@ Mika Pflüger (mika.pflueger@pik-potsdam.de), Tonn Rüter (tonn.rueter@pik-potsd
 
 ## System Requirements
 
+Check the general system requirements in [Section 1: Getting REMIND](01_GettingREMIND.md).
+
 - Installed python version must be `< 3.11`. We recommend a python version `3.10.X` as it is closest to being up-to-date while remaining REMIND compatible. To check your python version run `python --version` in a terminal of your choice
-- GAMS must be installed and the path to GAMS applications needs to be in your PATH environment variable
-- R version must be at least `4.2.X`. To check your R version run `R --version` in a terminal of your choice
-- On Windows we recommend to use PowerShell rather than the standard command prompt
+- There are some additional recommendations for running REMIND locally on a **Windows systems**:  
+  - To avoid lengthy compilation times during preparation for your remind run, we recommend to use a version of R for which most R-packages that REMIND depends on, are available as binary packages. This is typically the case for recent versions of R, currently `4.2.X` or `4.3.X`. To check your R version run `R --version` in a terminal of your choice
+  - As mentioned in the general system requirements, GAMS must be installed. On Windows, make sure that the path to GAMS applications is in your PATH environment variable
+  - We recommend to use PowerShell rather than the standard command prompt
 
 ## Getting Input Data
 
