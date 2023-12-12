@@ -327,8 +327,6 @@ $setglobal transport  edge_esm           !! def = edge_esm
 *'---------------------    36_buildings    ---------------------------------
 *'
 *' * (simple): representation of final energy demand via a CES function calibrated to EDGE-Buildings' demand trajectories
-*' * (services_with_capital): representation of the demand by energy service with capital
-*' * (services_putty): representation of the demand by energy service with capital and with putty-clay for buildings insulation
 $setglobal buildings  simple      !! def = simple
 *'---------------------    37_industry    ----------------------------------
 *'
@@ -1063,11 +1061,6 @@ parameter
   cm_build_H2costDecayEnd = 0.1;  !! def = 0.1
 *'
 parameter
-  cm_build_AdjCostActive      "Activate adjustment cost to penalise inter-temporal variation of area-specific weatherisation demand and space cooling efficiency slope (only in putty)"
-;
-  cm_build_AdjCostActive = 0;  !! def = 0: Adjustment cost deactivated (set to 1 to activate)  !! regexp = 0|1
-*'
-parameter
   cm_indst_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 3.25$kg = 0.1 $/kWh)"
 ;
   cm_indst_H2costAddH2Inv = 0.1;  !! def = 3.25$/kg = 0.1 $/Kwh
@@ -1101,16 +1094,6 @@ parameter
 *' * (0) none
 *' * (1) no fossil carbon and capture in Germany
 *'
-parameter
-  cm_logitCal_markup_conv_b   "value to which logit calibration markup of standard fe2ue technologies in detailed buildings module converges to"
-;
-  cm_logitCal_markup_conv_b = 0.8;  !! def = 0.8
-*'  long-term convergence value of detailed buildings fe2ue conventional techs price markup
-parameter
-  cm_logitCal_markup_newtech_conv_b "value to which logit calibration markup of new fe2ue technologies in detailed buildings module converges to"
-;
-  cm_logitCal_markup_newtech_conv_b = 0.3; !! def = 0.3
-*'  long-term convergence value of detailed buildings fe2ue new techs price markup
 parameter
   cm_startIter_EDGET          "starting iteration of EDGE-T"
 ;
