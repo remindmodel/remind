@@ -270,17 +270,7 @@
 *' each variable is computed by multiplying a key variable of the CES function by a given factor. The calibration computes
 *' this factor for each period.
 *'
-*' ##### Compute elasticities of substitution
-*'
-*' Normally, the elasticities of substitution are prescribed as an ad-hoc guess in the according modules.
-*'
-*' However, for some CES nodes (currently only in the `services_with_capital` realization of the buildings module), it is
-*' estimated with technological data instead.
-*'
-*' To this end, equations are defined in the file `equations.gms`, and a corresponding model minimizing an error is solved
-*' in `preloop.gms` to best fit the data. The according section is labeled "compute elasticities of substitution" in the
-*' source code.
-*'
+
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/29_CES_parameters/calibrate/sets.gms"

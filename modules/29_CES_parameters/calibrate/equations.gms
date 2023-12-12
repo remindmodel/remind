@@ -80,50 +80,5 @@ v29_putty_obj =e= 5e-1 * sum ((t_29,regi_dyn29(regi),in)$(putty_compute_in(in)
                    
 $onOrder
 
-
-
-q29_outputtech(regi_dyn29(regi),ipf(out),index_Nr)$( (pm_cesdata_sigma("2015",out) eq -1) AND  p29_capitalUnitProjections(regi,out,index_Nr))..
-   
-    v29_outputtech(regi,out,index_Nr)
-  =e=
-    sum ((cesOut2cesIn(out,in), t_29hist_last(t)),
-      pm_cesdata(t,regi,in,"xi")
-    * ( 
-        pm_cesdata(t,regi,in,"eff")
-      * p29_capitalUnitProjections(regi,in,index_Nr)
-      )
-   ** v29_rho(regi,out)
-    )
- ** (1 / v29_rho(regi,out))
-;
-
-q29_esub_obj..
-
-    v29_esub_err 
-    =e=
-    sum ((out,regi_dyn29(regi),index_Nr, t_29hist_last(t))$((pm_cesdata_sigma("2015",out) eq -1) AND  p29_capitalUnitProjections(regi,out,index_Nr)),
-    (1 + pm_cesdata(t,regi,out,"quantity")) **2  !! weight by regional size of the service demand
-    *
-    (
-      power (
-             ( p29_output_estimation(regi,out)
-              / v29_outputtech(regi,out,index_Nr)
-              )
-              - 1
-              , 2
-      )
-      +
-      power (
-             ( v29_outputtech(regi,out,index_Nr)
-              / p29_output_estimation(regi,out)
-             )
-             -1 
-             ,2
-      )
-      )
-    );  
-
-    
-  
 *** EOF ./modules/29_CES_parameters/calibrate/equations.gms
 

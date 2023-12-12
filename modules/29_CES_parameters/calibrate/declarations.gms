@@ -32,7 +32,6 @@ $endif.transpmodule
 
   f29_capitalUnitProjections(all_regi,all_in,index_Nr,capUnitType)   "Capital cost per unit of consumed energy and FE per unit of UE (or UE per unit of ES) used to calibrate some Esubs. kap is in $/kWh; UE and FE in kWh. Data for new investments and for standing capital"
   p29_capitalUnitProjections(all_regi,all_in,index_Nr)  "Capital cost per unit of consumed energy and final energy per unit of useful energy (or UE per unit of ES) used to calibrate some elasticities of substitution. kap is in $/kWh; UE and FE in kWh"
-  p29_output_estimation(all_regi,all_in)       "scaling of the target quantity for comparability with technological data"
 
   p29_esubGrowth         "long term growth of the elasticity of substitution"
 
@@ -53,9 +52,6 @@ v29_puttyTechDiff(tall,all_regi,all_in) "Difference to be minimised between the 
 v29_putty_obj                           "index of the step by step variation of v29_cesdata_putty"
 v29_ratioTotalPutty(tall,all_regi,all_in,all_in,all_in) "Ratio of the ratio between input quantities for total and putty quantities"
 
-v29_esub_err                   "sum of errors to be minimized"
-v29_outputtech(all_regi,all_in,index_Nr)         "CES output from the technological data"
-v29_rho(all_regi,all_in)                        "parameter to be calibrated, related to the esub through: rho = 1 - 1/esub"
 ;
 
 Equations
@@ -63,10 +59,6 @@ q29_pathConstraint(tall,all_regi,all_in)  "equation describing the relation betw
 q29_esubsConstraint(tall,all_regi,all_in,all_in,all_in) "constraint ensuring that the ratio between capital and energy in putty for the last historical region will be close to the technological data used for the ESUB estimation"
 q29_ratioTotalPutty (tall,all_regi,all_in,all_in,all_in) "Computation of the ratio between the two putty inputs of a same CES nestand the the ratio of pm_cesdata"
 q29_putty_obj                              "objective function"
-
-q29_esub_obj                               "objective function of esub estimation"
-q29_outputtech(all_regi,all_in,index_Nr)            "CES equation for technological data"
-
 ;          
 
 *** Load calibration iteration number from environment variable

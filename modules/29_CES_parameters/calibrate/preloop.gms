@@ -1167,92 +1167,6 @@ $endif.subsectors
 
 ***_____________________________ END OF: BEYOND CALIB ________________________________________
 
-***_____________________________ START OF: COMPUTE ELASTICITIES OF SUBSTITUTION ________________________________________
-
-*** Elasticities of substitution are normally prescribed manually.
-*** However, they can also be estimated from technological data. This is done here.
-*** At the time of documentation, the nodes for which this is done are in the services_with_capital realization of the
-*** buildings module.
-
-*** Compute the rho parameter from the elasticity of substitution
-pm_cesdata(ttot,regi,ipf(out),"rho")$(    ttot.val ge 2005
-                                      AND pm_cesdata_sigma(ttot,out)
-                                      AND pm_cesdata_sigma(ttot,out) ne -1 )
-    !! Do not compute it if sigma = 0, because these should be estimated
-  = 1 - (1 / pm_cesdata_sigma(ttot,out));
-
-*** Check whether all sigma = INF correspond to complementary factors
-*** while it seems contradictory, the model currently only supports
-*** complementary factors which add up to yield their output (therefore the perfect substituability).
-*** OUT = IN1 + IN2 + IN3 +...
-*** The complementarity is ensured by the production constraints on the relations between IN1, IN2, etc
-
-loop (cesOut2cesIn(out,in) $  (pm_cesdata_sigma("2015",out) eq INF ),
-      if ( NOT in_complements(in),
-      execute_unload "abort.gdx";
-      abort "the model only supports perfect substituability for complementary factors. Please read the comments in calibration/preloop.gms"
-      );
-      );
-
-
-*** For the estimation of Esubs: set the CES out to 1 if the CES inputs are in the data
-loop (cesOut2cesIn(out,in) $ (pm_cesdata_sigma("2015",out) eq -1),
- p29_capitalUnitProjections(all_regi,out,index_Nr) $p29_capitalUnitProjections(all_regi,in,index_Nr) = 1;
-);
-
-      model esubs /
-q29_outputtech,
-q29_esub_obj,
-/;
-
-v29_outputtech.L(regi_dyn29,ipf(out),index_Nr) = 1;
-v29_outputtech.lo(regi_dyn29,ipf(out),index_Nr) = 0;
-v29_rho.L(regi,out)$( pm_cesdata_sigma("2015",out) eq -1) = 0.5;
-v29_rho.up(regi,out) = 0.8; !! corresponds to sigma = 5
-v29_rho.lo(regi,out) = -9; !! corresponds to sigma = 0.1
-
-loop ((cesOut2cesIn(out,in),  t_29hist_last(t))$((pm_cesdata_sigma(t,out) eq -1) AND ppfKap(in)),
-
- p29_output_estimation(regi_dyn29(regi),out) = ( pm_cesdata(t,regi,out,"quantity") $ ( NOT ipf_putty(out))
-                                                 + pm_cesdata_putty(t,regi,out,"quantity") $ (  ipf_putty(out))
-                                                 )
-                                               / ( pm_cesdata(t,regi,in,"quantity") $ ( NOT ipf_putty(out))
-                                                + pm_cesdata_putty(t,regi,in,"quantity") $ (  ipf_putty(out))
-                                               )
-                                               * p29_capitalUnitProjections(regi,in,"0") !! index = 0, is the typical technology
-
-);
-if (execError > 0,
-  execute_unload "abort.gdx";
-  abort "at least one execution error occured, abort.gdx written";
-);
-
-solve esubs minimizing v29_esub_err using nlp;
-
-if ( NOT ( esubs.solvestat eq 1  AND (esubs.modelstat eq 1 OR esubs.modelstat eq 2)),
-  execute_unload "abort.gdx";
-  abort "model esubs is infeasible";
-);
-
-display "esubs results", p29_capitalUnitProjections;
-
-pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1)  = v29_rho.L(regi,in);
-
-pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1) =
- 1 -  (1 - pm_cesdata(t,regi,in,"rho"))
- / ( 1 + min(max((pm_ttot_val(t) - 2015)/(2050 -2015),0),1)
-         * p29_esubGrowth
-    )
-;
-
-pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 AND pm_cesdata(t,regi,in,"rho") lt 0) = min(pm_cesdata(t,regi,in,"rho"), 1 - 1/0.8); !! If complementary factors, sigma should be below 0.8
-pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 AND pm_cesdata(t,regi,in,"rho") ge 0) = max(pm_cesdata(t,regi,in,"rho"), 1 - 1/1.2); !! If substitution factors, sigma should be above 1.2
-pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 ) = max ( v29_rho.lo(regi,in), pm_cesdata(t,regi,in,"rho"));
-pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 ) = min ( v29_rho.up(regi,in), pm_cesdata(t,regi,in,"rho"));
-
-***_____________________________ END OF: COMPUTE ELASTICITIES OF SUBSTITUTION ________________________________________
-
-
 ***_____________________________ START OF: PASS EFF TIME EVOLUTION TO EFFGR ________________________________________
 
 *** Finally, we take the evolution of xi and eff, and pass it on to effGr.
@@ -1536,10 +1450,6 @@ loop ((out,in,in2,t)$((pm_cesdata_sigma(t,out) eq -1)
                                     AND ( cesOut2cesIn(out,in) AND cesOut2cesIn2(out,in2))
                                     AND ( ppfKap(in) AND ( NOT ppfKap(in2)))
                                     AND (sameAs(t, "2015") OR sameAs(t, "2050") OR sameAs(t, "2100"))) ,
-
-       if ( sameAs(t,"2015"),
-           put sm_CES_calibration_iteration:0:0, "remind" ,"2015", out.tl   , "output_scale", regi.tl, p29_output_estimation(regi,out) /;
-       );
 
        put sm_CES_calibration_iteration:0:0, "remind" , t.tl, out.tl   , "quantity", regi.tl, ( pm_cesdata(t,regi,out,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,out,"quantity") $ ( ipf_putty(out))) /;
        put sm_CES_calibration_iteration:0:0, "remind" , t.tl, in.tl , "quantity", regi.tl, ( pm_cesdata(t,regi,in,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,in,"quantity") $ ( ipf_putty(out))) /;
