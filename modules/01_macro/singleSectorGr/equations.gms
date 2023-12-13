@@ -139,8 +139,8 @@ q01_kapMo(ttot,regi,ppfKap(in))$(
     vm_cesIO(ttot,regi,in)
   * (1 - pm_delta_kap(regi,in))
  ** (pm_ttot_val(ttot+1) - pm_ttot_val(ttot))
-  + pm_cumDeprecFactor_old(ttot+1,regi,in) * vm_invMacro(ttot,regi,in)
-  + pm_cumDeprecFactor_new(ttot+1,regi,in) * vm_invMacro(ttot+1,regi,in)
+  + p01_cumDeprecFactor_old(ttot+1,regi,in) * vm_invMacro(ttot,regi,in)
+  + p01_cumDeprecFactor_new(ttot+1,regi,in) * vm_invMacro(ttot+1,regi,in)
 ;
 
 ***---------------------------------------------------------------------------

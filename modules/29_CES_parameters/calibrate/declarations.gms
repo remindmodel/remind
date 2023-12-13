@@ -17,7 +17,6 @@ Parameters
   p29_beta(all_regi,all_in)                        "XXX"
   p29_cesdata_load(tall,all_regi,all_in,cesParameter)  "pm_cesdata from the gdx file"
   p29_cesIO_load(tall,all_regi,all_in)                "production factor vm_cesIO from input.gdx"
-  p29_cesIOdelta_load(tall,all_regi,all_in)                "production factor vm_cesIOdelta from input.gdx"
   p29_effGr(tall,all_regi,all_in)                                   "growth of factor efficiency from input.gdx"
 $ifthen.transpmodule "%transport%" == "edge_esm"
   p29_trpdemand(tall,all_regi,all_GDPscen,all_demScen,EDGE_scenario_all,all_in) "transport demand for the edge_esm transport module, unit: trillion passenger/ton km"
