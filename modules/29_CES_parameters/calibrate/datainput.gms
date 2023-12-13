@@ -141,11 +141,6 @@ loop (cesOut2cesIn(out,in)$(in_beyond_calib_29(in) AND ppf(in)),
 ipf_beyond_last(out) = YES;
 );
 
-putty_compute_in(in)$((in_29(in) AND ppf_putty(in))
-                                         OR (ppf_29(in) and in_putty(in))
-                                      )
-                                      = YES;
-
 *** End of Sets calculation
 
 Parameter
@@ -257,8 +252,7 @@ $endif.indst_H2_penetration
 display pm_fedemand;
 
 *** Attribute technological data to p29_capitalUnitProjections according to putty-clay
- p29_capitalUnitProjections(all_regi,all_in,index_Nr) =  f29_capitalUnitProjections(all_regi,all_in,index_Nr,"cap") $ ( NOT in_putty(all_in))
-                                                         + f29_capitalUnitProjections(all_regi,all_in,index_Nr,"inv") $ ( in_putty(all_in));
+ p29_capitalUnitProjections(all_regi,all_in,index_Nr) =  f29_capitalUnitProjections(all_regi,all_in,index_Nr,"cap") ;
 loop (cesOut2cesIn(out,in)$ppfKap(in),
 loop (cesOut2cesIn2(out,in2),
 p29_capitalUnitProjections(all_regi,all_in,index_Nr)$(p29_capitalUnitProjections(all_regi,all_in,index_Nr)
@@ -314,12 +308,6 @@ p29_cesdata_load(t,regi,in,"rho")$( p29_cesdata_load(t,regi,in,"rho") eq 0) = 0.
 
 *** Load quantities and efficiency growth from the last run
 Execute_Loadpoint 'input'  p29_cesIO_load = vm_cesIO.l, p29_effGr = vm_effGr.l;
-
-*** Load putty-clay quantities if relevant (initialise to 0 in case it is not)
-p29_cesIOdelta_load(t,regi,in) = 0;
-if ( (sm_CES_calibration_iteration gt 1 OR s29_CES_calibration_new_structure eq 0) AND (card(in_putty) gt 0),
-Execute_Loadpoint 'input'  p29_cesIOdelta_load = vm_cesIOdelta.l;
-);
 
 *** DEBUG: Load vm_deltacap
 Execute_Loadpoint 'input' vm_deltacap;
@@ -442,13 +430,6 @@ loop (ue_fe_kap_29(out),
         p29_efficiency_growth(t,regi,in) = p29_efficiency_growth(t,regi,in2);
         );
     );
-
-***
-loop ( (t0(t),regi, ppfIO_putty(in)),
-    if (pm_cesdata(t,regi,in,"quantity") eq 0,
-    abort "ppfIO_putty must have an exogenous value for the first period";
-    );
-);
 
 p29_esubGrowth = 0.3;
 

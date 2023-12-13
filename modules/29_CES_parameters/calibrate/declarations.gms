@@ -27,8 +27,7 @@ $endif.transpmodule
   p29_capitalQuantity(tall,all_regi,all_in)            "capital quantities"
   p29_capitalPrice(tall,all_regi)                "capital prices"
 
-   p29_test_CES_recursive(tall,all_regi,all_in)      "test the technological consistency of pm_cesdata"
-   p29_test_CES_putty_recursive(tall,all_regi,all_in)      "test the technological consistency of pm_cesdata_putty"
+  p29_test_CES_recursive(tall,all_regi,all_in)      "test the technological consistency of pm_cesdata"
 
   f29_capitalUnitProjections(all_regi,all_in,index_Nr,capUnitType)   "Capital cost per unit of consumed energy and FE per unit of UE (or UE per unit of ES) used to calibrate some Esubs. kap is in $/kWh; UE and FE in kWh. Data for new investments and for standing capital"
   p29_capitalUnitProjections(all_regi,all_in,index_Nr)  "Capital cost per unit of consumed energy and final energy per unit of useful energy (or UE per unit of ES) used to calibrate some elasticities of substitution. kap is in $/kWh; UE and FE in kWh"

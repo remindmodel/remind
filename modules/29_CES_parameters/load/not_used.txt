@@ -15,7 +15,6 @@ pm_lab,parameter,???
 sm_EJ_2_TWa,input,questionnaire
 pm_cesdata_sigma,input,questionnaire
 vm_cesIOdelta,input,questionnaire
-pm_cesdata_putty,input,questionnaire
 pm_dt,input,questionnaire
 pm_cumDeprecFactor_old,input,questionnaire
 pm_cumDeprecFactor_new,input,questionnaire

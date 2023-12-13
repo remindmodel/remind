@@ -241,23 +241,6 @@
 *' approach is taken: All ppfen (not ppfkap) input prices are mutliplied with the same factor (the ratio of prescribed
 *' to computed UE quantity, minus the ppfkap share), such that the quantity trajectories are met for UE.
 *'
-*' ##### Putty-Clay
-*'
-*' Putty-Clay is currently mainly used in the buildings module.
-*'
-*' It is possible to introduce segments of the CES tree which are subject to putty-clay dynamics, _i.e._ the model at
-*' time `t` will substitute between _increments_ of the variables. The _aggregate_ level of the variable will be the
-*' sum of the _increment_ from the CES and the depreciated past _aggregate_ level. This mechanism limits the extent
-*' to which the energy demand can be reduced in response to higher energy prices.
-*'
-*' To treat some CES sections as putty-clay, the set items should be included to `in_putty` and `ppf_putty` for the lowest
-*' level of the putty-clay section. In addition, depreciation rates should be defined for the putty variables. For
-*' consistency, it is advisable to use identical depreciation rates for inputs and outputs in the same CES function.
-*'
-*' Currently, the calibration script has not been tested for a putty-clay structure that is in the `beyond_calib` part.
-*'
-*' The Powerpoint file attached gives some more explanations.
-*'
 *' ##### Perfectly complementary factors
 *'
 *' To implement perfectly complementary factors, you should include the factors in the set `in_complements`. In addition,
@@ -266,7 +249,7 @@
 *' elasticity should be INF), which makes sense for energetic entities. It would however be possible to change this
 *' (by choosing another elasticity of substitution) without harming the calibration.
 *'
-*' In the model, the complementary factors are subject to a constraint (`q01_prodCompl` or `q01_prodCompl_putty`), so that
+*' In the model, the complementary factors are subject to a constraint (`q01_prodCompl`), so that
 *' each variable is computed by multiplying a key variable of the CES function by a given factor. The calibration computes
 *' this factor for each period.
 *'

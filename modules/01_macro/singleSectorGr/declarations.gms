@@ -36,11 +36,7 @@ vm_invRD(ttot,all_regi,all_in)                                  "R&D investments
 vm_invInno(ttot,all_regi,all_in)                                "Investment into innovation"
 vm_invImi(ttot, all_regi,all_in)                                "Investment into imitation" 
 v01_enerSerAdj(tall,all_regi,all_in)                             "adjustment costs for energy service transformations"
-    
-
-*** putty-clay variables   
-vm_cesIOdelta(tall,all_regi,all_in)                             "Putty-clay production factor"  
-;   
+;
 ***------------------------------------------------------------ -------------------
 ***                                   EQUATIONS 
 ***------------------------------------------------------------ -------------------
@@ -55,10 +51,5 @@ q01_invMacroAdj(ttot,all_regi,all_in)                           "Adjustment cost
 q01_limitShPpfen(ttot,all_regi,all_in,all_in)                   "Limit the share of one ppfEn in total CES nest inputs"
 q01_limtRatioPpfen(ttot,all_regi,all_in,all_in)                 "Limit the ratio of two ppfEn"
 
-*** putty-clay equations    
-q01_cesIO_puttyclay(ttot,all_regi,all_in)                       "Putty-clay production function"
-q01_puttyclay(ttot,all_regi,all_in)                             "Putty-clay Correspondance between variations in input and past stocks of input"
-q01_prodCompl_putty(ttot,all_regi,all_in,all_in)                "Putty-Clay constraints for perfect complements in the CES tree"
-q01_kapMo_putty(ttot,all_regi,all_in)                           "Putty-clay capital motion equation"
 ;
 *** EOF ./modules/01_macro/singleSectorGr/declarations.gms

@@ -269,69 +269,7 @@ for (s in levels(CES.cal.report$scenario)) {
       ggtitle(paste("total efficiency (1 = iteration 1)", r, s)) -> p
     plot(p)
 
-
-    # plot Putty quantities
-    if ( dim(CES.cal.report %>% filter(variable == "quantity_putty"))[1] > 0){
-    CES.cal.report %>%
-      filter(scenario == s,
-             t        <= 2100,
-             regi     == r,
-             variable == "quantity_putty") %>%
-      order.levels(pf = getElement(.pf,"structure" )) %>%
-      ggplot(aes(x = t, y = value, colour = iteration,
-                 linetype = iteration)) +
-      geom_line() +
-      facet_wrap(~ pf, scales = "free", as.table = FALSE) +
-      expand_limits(y = 0) +
-      scale_colour_manual(values = col) +
-      scale_linetype_manual(values = lns) +
-      ggtitle(paste("Putty quantities", r, s)) -> p
-
-    plot(p)
-
-    # plot prices putty
-    CES.cal.report %>%
-      filter(scenario == s,
-             t        <= 2100,
-             regi     == r,
-             variable == "price_putty") %>%
-      order.levels(pf = getElement(.pf,"structure" )) %>%
-      ggplot(aes(x = t, y = value, colour = iteration,
-                 linetype = iteration)) +
-      geom_line() +
-      facet_wrap(~ pf, scales = "free", as.table = FALSE) +
-      expand_limits(y = 0) +
-      scale_colour_manual(values = col) +
-      scale_linetype_manual(values = lns) +
-      ggtitle(paste("prices", r, s)) -> p
-    plot(p)
-
-    # plot efficiencies
-    CES.cal.report %>%
-      filter(scenario == s,
-             t        <= 2100,
-             regi     == r,
-             variable == "total efficiency putty",
-             iteration != "origin") %>%
-      group_by(scenario,t,regi,pf,variable) %>%
-      mutate(value = value / value[as.character(iteration) == "1"]) %>%
-      ungroup() %>%
-      order.levels(pf = getElement(.pf,"structure" )) %>%
-      ggplot(aes(x = t, y = value, colour = iteration,
-                 linetype = iteration)) +
-      geom_line() +
-      facet_wrap(~ pf, scales = "free", as.table = FALSE) +
-      expand_limits(y = 0) +
-      scale_colour_manual(values = col) +
-      scale_linetype_manual(values = lns) +
-      ggtitle(paste("total efficiency (1 = iteration 1)", r, s)) -> p
-    plot(p)
-
     }
-
-
-
-
 
 
     # plot delta_cap

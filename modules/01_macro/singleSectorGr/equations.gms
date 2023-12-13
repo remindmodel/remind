@@ -88,7 +88,7 @@ q01_balLab(t,regi)..
 *** Keep in mind to adjust the calculation of derivatives and shares 
 *** in ./core/reswrite.inc if you change the structure of this function.
 ***---------------------------------------------------------------------------
-q01_cesIO(t,regi,ipf(out))$( NOT ipf_putty(out) ) ..
+q01_cesIO(t,regi,ipf(out))..
   vm_cesIO(t,regi,out)
   =e=
   !! use exp(log(a) * b) = a ** b because the latter is not accurate in GAMS for
@@ -115,7 +115,7 @@ q01_cesIO(t,regi,ipf(out))$( NOT ipf_putty(out) ) ..
 ***---------------------------------------------------------------------------
 *' Constraints for perfect complements in the CES tree
 ***---------------------------------------------------------------------------
-q01_prodCompl(t,regi,in,in2) $ (complements_ref(in,in2) AND (( NOT in_putty(in2)) OR ppfIO_putty(in2))) ..
+q01_prodCompl(t,regi,in,in2) $ (complements_ref(in,in2) ) ..
     vm_cesIO(t,regi,in) 
   =e= 
     pm_cesdata(t,regi,in2,"compl_coef")
@@ -131,7 +131,6 @@ q01_prodCompl(t,regi,in,in2) $ (complements_ref(in,in2) AND (( NOT in_putty(in2)
 *' so the time step length is taken into account.
 ***---------------------------------------------------------------------------
 q01_kapMo(ttot,regi,ppfKap(in))$(
-                             NOT in_putty(in)
                          AND ord(ttot) lt card(ttot)
                          AND pm_ttot_val(ttot+1) ge max(2010, cm_startyear)
                          AND pm_cesdata("2005",regi,in,"quantity") gt 0     ) ..
@@ -183,49 +182,4 @@ q01_limtRatioPpfen(t,regi,in,in2)$( p01_ppfen_ratios(t,regi,in,in2) ) ..
   * (vm_cesIO(t,regi,in2) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
 
-
-***---------------------------------------------------------------------------                                
-*** Start of Putty-Clay equations 
-*' Putty-Clay production function:
-***---------------------------------------------------------------------------
-q01_cesIO_puttyclay(t,regi,ipf_putty(out)) ..
-  vm_cesIOdelta(t,regi,out)
-  =e=
-    sum(cesOut2cesIn(out,in),
-      pm_cesdata(t,regi,in,"xi")
-    * ( 
-        pm_cesdata(t,regi,in,"eff")
-      * vm_effGr(t,regi,in)
-      * vm_cesIOdelta(t,regi,in)
-      )
-   ** pm_cesdata(t,regi,out,"rho")
-    )
- ** (1 / pm_cesdata(t,regi,out,"rho"))
-;
-
-*' Putty-Clay constraints for perfect complements in the CES tree:
-q01_prodCompl_putty(t,regi,in,in2) $ (complements_ref(in,in2)
-                                 AND ( in_putty(in2) AND  ( NOT ppfIO_putty(in2)))) ..
-      vm_cesIOdelta(t,regi,in) =e=
-                                pm_cesdata(t,regi,in2,"compl_coef")
-                                * vm_cesIOdelta(t,regi,in2);
-
-*' Correspondance between vm_cesIO and vm_cesIOdelta:
-q01_puttyclay(ttot,regi,in_putty(in))$(ord(ttot) lt card(ttot)  AND (pm_ttot_val(ttot+1) ge max(2010, cm_startyear)))..
-  vm_cesIO(ttot+1,regi,in)
-  =e=
-  vm_cesIO(ttot,regi,in)*(1- pm_delta_kap(regi,in))**(pm_ttot_val(ttot+1)-pm_ttot_val(ttot))
-           +  pm_cumDeprecFactor_old(ttot+1,regi,in)* vm_cesIOdelta(ttot,regi,in)
-           +  pm_cumDeprecFactor_new(ttot+1,regi,in)* vm_cesIOdelta(ttot+1,regi,in)
-;
-
-*' Capital motion equation for putty clay capital:
-q01_kapMo_putty(ttot,regi,in_putty(in))$(ppfKap(in) AND (ord(ttot) le card(ttot)) AND (pm_ttot_val(ttot) ge max(2005, cm_startyear)) AND (pm_cesdata("2005",regi,in,"quantity") gt 0))..
-    vm_cesIOdelta(ttot,regi,in)
-    =e=
-    vm_invMacro(ttot,regi,in)
-;
-***---------------------------------------------------------------------------
-*** End of Putty-Clay equations
-***---------------------------------------------------------------------------
 *** EOF ./modules/01_macro/singleSectorGr/equations.gms

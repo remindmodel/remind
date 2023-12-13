@@ -74,8 +74,7 @@ else
     * p29_cesdata_load(t,regi,in,"eff")
     * p29_effGr(t,regi,in)
 
-    * ( p29_cesIO_load(t,regi,out)$( NOT ipf_putty(out))
-      + p29_cesIOdelta_load(t,regi,out)$( ipf_putty(out))
+    * ( p29_cesIO_load(t,regi,out)
       )
     ** (1 - p29_cesdata_load(t,regi,out,"rho"))
 
@@ -83,8 +82,7 @@ else
       log(
       p29_cesdata_load(t,regi,in,"eff")
       * p29_effGr(t,regi,in)
-      * ( p29_cesIO_load(t,regi,in)$( NOT ipf_putty(out))
-        + p29_cesIOdelta_load(t,regi,in)$( ipf_putty(out)))
+      * ( p29_cesIO_load(t,regi,in)
       )
       * (p29_cesdata_load(t,regi,out,"rho") - 1));
 
@@ -186,7 +184,7 @@ if (sm_CES_calibration_iteration eq 1, !! first CES calibration iteration
                                   OR ppf_beyondcalib_29(in)
                                   OR sameas(in,"enhb")
                                   OR sameas(in,"enhgab")       ),
-    if (NOT in_putty(in) AND (ppf_29(in) OR sameas(in,"inco")),
+    if ((ppf_29(in) OR sameas(in,"inco")),
       put "%c_expname%", "origin", t.tl, regi.tl, "quantity",   in.tl;
       put p29_cesIO_load(t,regi,in) /;
 
@@ -195,27 +193,6 @@ if (sm_CES_calibration_iteration eq 1, !! first CES calibration iteration
 
       if (p29_cesdata_load("2005",regi,in,"eff") AND p29_effGr(t,regi,in),
         put "%c_expname%", "origin", t.tl, regi.tl, "total efficiency", in.tl;
-        put ( sum(cesOut2cesIn(out,in),
-                p29_cesdata_load(t,regi,in,"xi")
-             ** (1 / p29_cesdata_load(t,regi,out,"rho"))
-              * ( p29_cesdata_load("2005",regi,in,"eff")
-                * p29_effGr(t,regi,in)
-                )
-              )
-            ) /;
-      );
-    );
-
-    if (in_putty(in) AND ppf_29(in),
-      put "%c_expname%", "origin", t.tl, regi.tl, "quantity_putty",   in.tl;
-      put p29_cesIOdelta_load(t,regi,in) /;
-
-      put "%c_expname%", "origin", t.tl, regi.tl, "price_putty",      in.tl;
-      put pm_cesdata(t,regi,in,"price") /;
-
-      if (p29_cesdata_load("2005",regi,in,"eff") AND p29_effGr(t,regi,in),
-        put "%c_expname%", "origin", t.tl, regi.tl, "total efficiency putty";
-        put in.tl;
         put ( sum(cesOut2cesIn(out,in),
                 p29_cesdata_load(t,regi,in,"xi")
              ** (1 / p29_cesdata_load(t,regi,out,"rho"))
@@ -371,22 +348,6 @@ loop (ttot$( ttot.val ge 2005),
 
 display "after all but entrp_frgt_lo smoothening", pm_cesdata;
 
-*** Smooth prices for the whole period for elements in or below the putty-clay
-*** structure. Problem if there are several ppfIO_putty below each other,
-*** prices are then smoothed twice.
-loop ((t_29,cesOut2cesIn_below(out,in))$( ppfIO_putty(out) ),
-  pm_cesdata(t_29,regi_dyn29(regi),in,"price")
-  = sum(t2_29$( t2_29.val ge t_29.val ),
-      (1 - pm_delta_kap(regi,out))
-   ** (t2_29.val - t_29.val)
-    * pm_cesdata(t2_29,regi,in,"price")
-    )
-  / sum(t2_29$( t2_29.val ge t_29.val ),
-      (1 - pm_delta_kap(regi,out))
-   ** (t2_29.val - t_29.val)
-    );
-);
-
 display "after price smoothing",  cesOut2cesIn_below, pm_cesdata;
 
 ***_____________________________ END OF: GET PRICES _____________________________
@@ -400,7 +361,6 @@ display "after price smoothing",  cesOut2cesIn_below, pm_cesdata;
 *** prices equal derivatives.
 loop  ((cesRev2cesIO(counter,ipf_29(out)),ces_29(out,in))$(
                                                     NOT sameas(out,"inco") ),
-  if (NOT ipf_putty(out),
     pm_cesdata(t,regi_dyn29, in,"xi")
       = pm_cesdata(t,regi_dyn29,in,"price")
       * pm_cesdata(t,regi_dyn29,in,"quantity")
@@ -409,18 +369,6 @@ loop  ((cesRev2cesIO(counter,ipf_29(out)),ces_29(out,in))$(
    pm_cesdata(t,regi_dyn29,in,"eff")
       = pm_cesdata(t,regi_dyn29,out, "quantity")
       / pm_cesdata(t,regi_dyn29,in, "quantity");
-    );
-
-  if (ipf_putty(out),
-    pm_cesdata(t_29,regi_dyn29, in,"xi")
-      = pm_cesdata(t_29,regi_dyn29,in,"price")
-      * pm_cesdata_putty(t_29,regi_dyn29,in,"quantity")
-      / pm_cesdata_putty(t_29,regi_dyn29,out,"quantity");
-
-    pm_cesdata(t_29,regi_dyn29,in,"eff")
-      = pm_cesdata_putty(t_29,regi_dyn29,out, "quantity")
-      / pm_cesdata_putty(t_29,regi_dyn29,in, "quantity");
-  );
 );
 display "after change up to en consistency", pm_cesdata;
 
@@ -441,7 +389,7 @@ pm_cesdata(t,regi_dyn29,"kap","eff")
   = pm_cesdata(t,regi_dyn29,"inco", "quantity")
   / pm_cesdata(t,regi_dyn29,"kap", "quantity");
 
-display "after change cap eff consistency", pm_cesdata, pm_cesdata_putty;
+display "after change cap eff consistency", pm_cesdata;
 
 *** If the value (quantity x price) of either en or kap, or the sum of both,
 *** exceed the quantity of inco (all of which would result in negative labour
@@ -630,8 +578,7 @@ if (card(ppf_beyondcalib_29) >= 1, !! if there are any nodes in beyond calib
       * p29_cesdata_load(t,regi,in,"eff")
       * p29_effGr(t,regi,in)
 
-      * ( p29_cesIO_load(t,regi,out)$( NOT ipf_putty(out) )
-        + p29_cesIOdelta_load(t,regi,out)$( ipf_putty(out) )
+      * ( p29_cesIO_load(t,regi,out)
         )
       ** (1 - p29_cesdata_load(t,regi,out,"rho"))
 
@@ -639,8 +586,7 @@ if (card(ppf_beyondcalib_29) >= 1, !! if there are any nodes in beyond calib
         log(
         p29_cesdata_load(t,regi,in,"eff")
         * p29_effGr(t,regi,in)
-        * ( p29_cesIO_load(t,regi,in)$( NOT ipf_putty(out))
-          + p29_cesIOdelta_load(t,regi,in)$( ipf_putty(out))
+        * ( p29_cesIO_load(t,regi,in)
           )
         )
         * (p29_cesdata_load(t,regi,out,"rho") - 1));
@@ -735,8 +681,7 @@ $endif.subsectors
 
   !! First, we compute the quantity for the root deriving from the ppf
   !! quantities and prices and we adjust the ppf prices so that it matches the
-  !! root quantity. The current formulation does not support putty in beyond
-  !! and complements.
+  !! root quantity. 
 
   loop ((t_29hist(t),regi_dyn29(regi),root_beyond_calib_29(out)),
     sm_tmp
@@ -760,17 +705,11 @@ $endif.subsectors
       put " " /;
 
       loop (cesOut2cesIn(out,in),
-         if ( NOT ipf_putty(out),
            put pm_cesdata.tn(t,regi,in,"quantity"), " = ";
            put pm_cesdata(t,regi,in,"quantity") /;
-        );
-        if ( ipf_putty(out),
-          put pm_cesdata_putty.tn(t,regi,in,"quantity"), " = ";
-          put pm_cesdata_putty(t,regi,in,"quantity") /;
-        );
 
-        put pm_cesdata.tn(t,regi,in,"price"), " = ";
-        put pm_cesdata(t,regi,in,"price") /;
+           put pm_cesdata.tn(t,regi,in,"price"), " = ";
+           put pm_cesdata(t,regi,in,"price") /;
       );
 
       execute_unload "abort.gdx";
@@ -793,59 +732,14 @@ $endif.subsectors
 
   loop ((t_29,cesRev2cesIO(counter,ipf_beyond_29_excludeRoot(out)))$(
                                                    NOT sameas(out,"inco") ),
-    pm_cesdata(t_29,regi_dyn29,out,"quantity")$( NOT ipf_putty(out) )
+    pm_cesdata(t_29,regi_dyn29,out,"quantity")
     = sum(cesOut2cesIn(out,in),
         pm_cesdata(t_29,regi_dyn29,in,"price")
       * pm_cesdata(t_29,regi_dyn29,in,"quantity")
       );
-
-    pm_cesdata_putty(t_29,regi_dyn29,out,"quantity")$( ipf_putty(out) )
-    = sum(cesOut2cesIn(out,in),
-        pm_cesdata(t_29,regi_dyn29,in,"price")
-      * pm_cesdata_putty(t_29,regi_dyn29,in, "quantity")
-      );
-
-    !! compute the total for factors that are ppf in the CES and ipf in the putty
-    pm_cesdata(t0(t_29),regi_dyn29,ppfIO_putty(out),"quantity")
-    = pm_cesdata_putty(t_29,regi_dyn29,out,"quantity")
-    / pm_delta_kap(regi_dyn29,out);
-
-    !! compute the delta for factors that are ipf in the CES and ppf in the putty
-    pm_cesdata_putty(t0(t_29),regi_dyn29,ppf_putty(out),"quantity")
-    = pm_cesdata(t_29,regi_dyn29,out,"quantity")
-    - ( pm_cesdata(t_29,regi_dyn29,out,"quantity")
-      * (1 - pm_delta_kap(regi_dyn29,out))
-      );
-
-    !! compute the total for factors that are ppf in the CES and ipf in the putty
-    pm_cesdata(t_29,regi_dyn29,ppfIO_putty(out),"quantity")$( NOT t0(t_29) )
-    = ( pm_cesdata(t_29-1,regi_dyn29,out,"quantity")
-      * (1 - pm_delta_kap(regi_dyn29,out))
-     ** pm_dt(t_29)
-      )
-    + ( pm_cumDeprecFactor_old(t_29,regi_dyn29,out)
-      * pm_cesdata_putty(t_29-1,regi_dyn29,out,"quantity")
-      )
-    + ( pm_cumDeprecFactor_new(t_29,regi_dyn29,out)
-      * pm_cesdata_putty(t_29,regi_dyn29,out,"quantity")
-      );
-
-    !! compute the delta for factors that are ipf in the CES and ppf in the putty
-    pm_cesdata_putty(t_29,regi_dyn29,ppf_putty(out),"quantity")$( NOT t0(t_29) )
-    = 1 /pm_cumDeprecFactor_new(t_29,regi_dyn29,out)
-    * ( pm_cesdata(t_29,regi_dyn29,out,"quantity")
-      - ( pm_cesdata(t_29-1,regi_dyn29,out,"quantity")
-        * (1 - pm_delta_kap(regi_dyn29,out))
-       ** pm_dt(t_29)
-        )
-      - ( pm_cumDeprecFactor_old(t_29,regi_dyn29,out)
-        * pm_cesdata_putty(t_29-1,regi_dyn29,out,"quantity")
-        )
-      );
   );
 
   loop ((t_29hist(t_29),cesOut2cesIn(out,in_beyond_calib_29_excludeRoot(in))),
-    if (NOT ipf_putty(out),
       pm_cesdata(t_29,regi_dyn29,in,"xi")
       = pm_cesdata(t_29,regi_dyn29,in,"price")
       * pm_cesdata(t_29,regi_dyn29,in,"quantity")
@@ -854,18 +748,6 @@ $endif.subsectors
       pm_cesdata(t_29,regi_dyn29,in,"eff")
       = pm_cesdata(t_29,regi_dyn29,out,"quantity")
       / pm_cesdata(t_29,regi_dyn29,in,"quantity");
-    );
-
-    if (ipf_putty(out),
-      pm_cesdata(t_29,regi_dyn29,in,"xi")
-      = pm_cesdata(t_29,regi_dyn29,in,"price")
-      * pm_cesdata_putty(t_29,regi_dyn29,in,"quantity")
-      / pm_cesdata_putty(t_29,regi_dyn29,out,"quantity");
-
-      pm_cesdata(t_29,regi_dyn29,in,"eff")
-      = pm_cesdata_putty(t_29,regi_dyn29,out,"quantity")
-      / pm_cesdata_putty(t_29,regi_dyn29,in,"quantity");
-    );
   );
 );
 
@@ -1116,15 +998,9 @@ display "after long term efficiencies", pm_cesdata, p29_efficiency_growth;
 *** FIXME: In case in_complements are in beyond, quantity data is needed for
 *** the assignment below
 loop (complements_ref(in, in2),
-  pm_cesdata(t,regi_dyn29(regi),in2,"compl_coef")$(
-             ( NOT in_putty(in2)) OR ppfIO_putty(in2) )
+  pm_cesdata(t,regi_dyn29(regi),in2,"compl_coef")
   = pm_cesdata(t,regi,in,"quantity")
   / pm_cesdata(t,regi,in2,"quantity");
-
-  pm_cesdata(t,regi_dyn29(regi),in2,"compl_coef")$(
-             in_putty(in2) AND  (NOT ppfIO_putty(in2)) )
-  = pm_cesdata_putty(t,regi,in,"quantity")
-  / pm_cesdata_putty(t,regi,in2,"quantity");
 );
 ***_______________________ END COMPLEMENTARY CONSTRAINTS _____________________________
 
@@ -1155,9 +1031,9 @@ loop ((out,in,in2,t)$((pm_cesdata_sigma(t,out) eq -1)
                                     AND ( ppfKap(in) AND ( NOT ppfKap(in2)))
                                     AND (sameAs(t, "2015") OR sameAs(t, "2050") OR sameAs(t, "2100"))) ,
 
-       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, out.tl   , "quantity", regi.tl, ( pm_cesdata(t,regi,out,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,out,"quantity") $ ( ipf_putty(out))) /;
-       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, in.tl , "quantity", regi.tl, ( pm_cesdata(t,regi,in,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,in,"quantity") $ ( ipf_putty(out))) /;
-       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, in2.tl  , "quantity", regi.tl, ( pm_cesdata(t,regi,in2,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,in2,"quantity") $ ( ipf_putty(out))) /;
+       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, out.tl   , "quantity", regi.tl, ( pm_cesdata(t,regi,out,"quantity") ) /;
+       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, in.tl , "quantity", regi.tl, ( pm_cesdata(t,regi,in,"quantity") ) /;
+       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, in2.tl  , "quantity", regi.tl, ( pm_cesdata(t,regi,in2,"quantity") ) /;
 
        put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in.tl , "eff", regi.tl, pm_cesdata(t,regi,in,"eff") /;
        put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in2.tl  , "eff", regi.tl, pm_cesdata(t,regi,in2,"eff") /;
@@ -1189,33 +1065,15 @@ p29_test_CES_recursive(t_29,regi,in) = 0;
 p29_test_CES_recursive(t_29hist,regi_dyn29,ppf(in))
 = pm_cesdata(t_29hist,regi_dyn29,in,"quantity");
 
-p29_test_CES_recursive(t_29,regi_dyn29,ppf_29(in))$( NOT ppf_putty(in) )
+p29_test_CES_recursive(t_29,regi_dyn29,ppf_29(in))
 = pm_cesdata(t_29,regi_dyn29,in,"quantity");
 
-p29_test_CES_putty_recursive(t_29,regi_dyn29,ppf_29(in))$( ppf_putty(in) )
-= pm_cesdata_putty(t_29,regi_dyn29,in,"quantity");
-
-p29_test_CES_putty_recursive(t_29hist,regi_dyn29,ppf_putty(in))$(
-                                                                NOT ppf_29(in) )
-= pm_cesdata_putty(t_29hist,regi_dyn29,in,"quantity");
-
-display "consistency beyond 1", p29_test_CES_recursive,
-        p29_test_CES_putty_recursive;
+display "consistency beyond 1", p29_test_CES_recursive;
 
 *** test for the historical periods, where beyond_calib is also taken into account
 loop ((t_29hist(t),regi_dyn29(regi),cesRev2cesIO(counter,ipf(out))),
-  p29_test_CES_putty_recursive(t,regi,out)$( ipf_putty(out) )
-  = sum(cesOut2cesIn(out,in),
-      pm_cesdata(t,regi,in,"xi")
-    * ( pm_cesdata(t,regi,in,"eff")
-      * pm_cesdata(t,regi,in,"effGr")
-      * p29_test_CES_putty_recursive(t,regi,in)
-      )
-   ** pm_cesdata(t,regi,out,"rho")
-    )
- ** (1 / pm_cesdata(t,regi,out,"rho"));
 
-  p29_test_CES_recursive(t,regi,out)$( NOT ipf_putty(out) )
+  p29_test_CES_recursive(t,regi,out)
   = sum(cesOut2cesIn(out,in),
       pm_cesdata(t,regi,in,"xi")
     * ( pm_cesdata(t,regi,in,"eff")
@@ -1226,57 +1084,16 @@ loop ((t_29hist(t),regi_dyn29(regi),cesRev2cesIO(counter,ipf(out))),
     )
  ** (1 / pm_cesdata(t,regi,out,"rho"));
 
-!! compute the total for factors that are ppf in the CES and ipf in the putty
-p29_test_CES_recursive(t0(t),regi,ppfIO_putty(out))
-  = p29_test_CES_putty_recursive(t,regi,out)
-  / pm_delta_kap(regi,out);
-
-!! compute the total for factors that are ppf in the CES and ipf in the putty
-p29_test_CES_recursive(t,regi_dyn29,ppfIO_putty(out))$( NOT t0(t) )
-  = ( p29_test_CES_recursive(t-1,regi_dyn29,out)
-    * (1- pm_delta_kap(regi_dyn29,out))
-   ** pm_dt(t)
-    )
-  + ( pm_cumDeprecFactor_old(t,regi_dyn29,out)
-    * p29_test_CES_putty_recursive(t-1,regi_dyn29,out)
-    )
-  + ( pm_cumDeprecFactor_new(t,regi_dyn29,out)
-    * p29_test_CES_putty_recursive(t,regi_dyn29,out)
-    );
-
-!! compute the delta for factors that are ipf in the CES and ppf in the putty
-p29_test_CES_putty_recursive(t,regi_dyn29,ppf_putty(out))$( NOT t0(t) )
-  = 1 / pm_cumDeprecFactor_new(t,regi_dyn29,out)
-  * ( p29_test_CES_recursive(t,regi_dyn29,out)
-    - ( p29_test_CES_recursive(t-1,regi_dyn29,out)
-      * (1 - pm_delta_kap(regi_dyn29,out))
-     ** pm_dt(t)
-      )
-    - ( pm_cumDeprecFactor_old(t,regi_dyn29,out)
-      * p29_test_CES_putty_recursive(t-1,regi_dyn29,out)
-      )
-    );
 );
 putclose logfile;
 
-display "consistency beyond 2", p29_test_CES_recursive,
-        p29_test_CES_putty_recursive;
+display "consistency beyond 2", p29_test_CES_recursive;
 
 *** test for the other periods, and restrict to in_29
 loop ((t_29(t),regi_dyn29(regi),cesRev2cesIO(counter,ipf_29(out)))$(
                                                               NOT t_29hist(t) ),
-  p29_test_CES_putty_recursive(t,regi,out)$( ipf_putty(out) )
-  = sum(cesOut2cesIn(out,in),
-      pm_cesdata(t,regi,in,"xi")
-    * ( pm_cesdata(t,regi,in,"eff")
-      * pm_cesdata(t,regi,in,"effGr")
-      * p29_test_CES_putty_recursive(t,regi,in)
-      )
-   ** pm_cesdata(t,regi,out,"rho")
-    )
- ** (1 / pm_cesdata(t,regi,out,"rho"));
 
-  p29_test_CES_recursive(t,regi,out)$( NOT ipf_putty(out) )
+  p29_test_CES_recursive(t,regi,out)
   !! use exp(log(a) * b) = a ** b because the latter is not accurate in GAMS
   = exp(
       log(
@@ -1295,80 +1112,13 @@ loop ((t_29(t),regi_dyn29(regi),cesRev2cesIO(counter,ipf_29(out)))$(
       )
     * (1 / pm_cesdata(t,regi,out,"rho"))
     );
-
-  !! compute the total for factors that are ppf in the CES and ipf in the putty
-  p29_test_CES_recursive(t,regi_dyn29,out)$( ppfIO_putty(out) )
-  = ( p29_test_CES_recursive(t-1,regi_dyn29,out)
-    * (1 - pm_delta_kap(regi_dyn29,out))
-   ** pm_dt(t)
-    )
-  + ( pm_cumDeprecFactor_old(t,regi_dyn29,out)
-    * p29_test_CES_putty_recursive(t-1,regi_dyn29,out)
-    )
-  + ( pm_cumDeprecFactor_new(t,regi_dyn29,out)
-    * p29_test_CES_putty_recursive(t,regi_dyn29,out)
-    );
-
-  !! compute the delta for factors that are ipf in the CES and ppf in the putty
-  p29_test_CES_putty_recursive(t,regi_dyn29,out)$( ppf_putty(out) )
-  = 1 / pm_cumDeprecFactor_new(t,regi_dyn29,out)
-  * ( p29_test_CES_recursive(t,regi_dyn29,out)
-    - ( p29_test_CES_recursive(t-1,regi_dyn29,out)
-      * (1 - pm_delta_kap(regi_dyn29,out))
-     ** pm_dt(t)
-      )
-    - ( pm_cumDeprecFactor_old(t,regi_dyn29,out)
-      * p29_test_CES_putty_recursive(t-1,regi_dyn29,out)
-      )
-    );
 );
 
-display "consistency beyond 3", p29_test_CES_recursive,
-        p29_test_CES_putty_recursive;
+display "consistency beyond 3", p29_test_CES_recursive;
 
 option p29_test_CES_recursive:8;
 display "check technological consistency beyond calibration", pm_cesdata,
         p29_test_CES_recursive;
-
-put logfile;
-sm_tmp = 0;
-loop ((t_29(t),regi_dyn29(Regi)),
-  if (   (    card(putty_compute_in) eq 0
-          AND abs( p29_test_CES_recursive(t,regi,"inco")
-                 - pm_cesdata(t,regi,"inco","quantity")) gt 1e-6)
-      OR (    card(putty_compute_in) gt 0
-          AND abs( p29_test_CES_recursive(t,regi,"inco")
-                 - pm_cesdata(t,regi,"inco","quantity")) gt 1e-2),
-
-    put "consistency check failed for ", t.tl, ", ", regi.tl /;
-    sm_tmp = 0;
-    loop (cesLevel2cesIO(counter,ipf)$(    pm_cesdata(t,regi,ipf,"quantity")
-                                        ne p29_test_CES_recursive(t,regi,ipf) ),
-      sm_tmp = max(sm_tmp, card(ipf.tl) + counter.val);
-    );
-    put "ipf", @(sm_tmp + 2) "pm_cesdata";
-    put @(sm_tmp + 15) "p29_test_CES_recursive" /;
-    loop (cesLevel2cesIO(counter,ipf)$(
-                                      ( pm_cesdata(t,regi,ipf,"quantity")
-                                      ne p29_test_CES_recursive(t,regi,ipf))
-                                  AND p29_test_CES_recursive(t,regi,ipf) ne 0 ),
-      put @(counter.val - 1) ipf.tl;
-      put @(sm_tmp + 3) pm_cesdata(t,regi,ipf,"quantity");
-      put @(sm_tmp + 16) p29_test_CES_recursive(t,regi,ipf);
-      put @(sm_tmp + 41) "[", ( p29_test_CES_recursive(t,regi,ipf)
-                              - pm_cesdata(t,regi,ipf,"quantity")), "]" /;
-    );
-    put " " /;
-
-    sm_tmp = 1;
-  );
-);
-putclose logfile;
-
-if (sm_tmp,
-  execute_unload "abort.gdx";
-  abort "something is wrong with the consistency of pm_cesdata, see logfile";
-);
 
 sm_tmp = 0;
 loop ((t_29(t),regi_dyn29(regi),cesOut2cesIn(out,in))$( NOT sameas(in,"inco") ),
@@ -1412,23 +1162,9 @@ putclose logfile;
 
 ***_____________________________ END OF: CONSISTENCY CHECKS ________________________________________
 
-*** Add information on ppf_putty quantities which are not in ppf_29
-if (sm_CES_calibration_iteration eq 1,
-  put file_CES_calibration;
-
-  loop ((t,regi_dyn29(regi),in)$(( NOT ppf_29(in)) AND ppf_putty(in)),
-
-    put "%c_expname%", "target", t.tl, regi.tl, "quantity_putty",   in.tl;
-    put pm_cesdata_putty(t,regi,in,"quantity") /;
-
-
-        );
- putclose file_CES_calibration;
-    );
-
 $ONorder
 
-* Assert that q37_energy_limits is feasible for calibration runs
+*** Assert that q37_energy_limits is feasible for calibration runs
 sm_tmp = 0;
 loop ((ttot(t),regi_dyn29(regi),industry_ue_calibration_target_dyn37(out))$(
                                       t.val gt 2015 AND pm_energy_limit(out) ),
