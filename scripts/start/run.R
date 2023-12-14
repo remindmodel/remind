@@ -78,7 +78,7 @@ run <- function() {
             sub("'([^']*)'.'([^']*)'.'([^']*)'.'([^']*)' (.*)[ ,][ /];?",
                 "pm_cesdata(\"\\1\",\"\\2\",\"\\3\",\"\\4\") = \\5;", x = .) %>%
             write(file_name)
-
+        } 
         getLoadFile()
 
         # Store all the interesting output
