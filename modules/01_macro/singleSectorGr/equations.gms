@@ -130,8 +130,7 @@ q01_prodCompl(t,regi,in,in2) $ (complements_ref(in,in2) ) ..
 *' Both depreciation and investments are expressed as annual values,
 *' so the time step length is taken into account.
 ***---------------------------------------------------------------------------
-q01_kapMo(ttot,regi,ppfKap(in))$(
-                         AND ord(ttot) lt card(ttot)
+q01_kapMo(ttot,regi,ppfKap(in))$(ord(ttot) lt card(ttot)
                          AND pm_ttot_val(ttot+1) ge max(2010, cm_startyear)
                          AND pm_cesdata("2005",regi,in,"quantity") gt 0     ) ..
   vm_cesIO(ttot+1,regi,in)
