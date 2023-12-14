@@ -23,7 +23,7 @@ Felix Scheyer (<felix.schreyer@pik-potsdam.de>), Isabelle Weindl (<weindl@pik-po
 
 ## 1. Introduction
 
-After having successfully started and completed a scenario run, the next step is to evaluate the results. 
+After having successfully started and completed a scenario run, the next step is to evaluate the results.
 
 There are plentiful ways to look at and analyze REMIND results. This tutorial gives an overview on different tools and options that can be used.
 
@@ -33,7 +33,7 @@ For each scenario, results are written to a folder that is created automatically
 
 As mentioned in [tutorial 2 - RunningREMIND](02_RunningREMIND.md), the two main output files you will typically care about are the *fulldata.gdx* and the *REMIND_generic_NameofYourRun.mif* files in the *output* folder of your run. The *fulldata.gdx* is the actual technical output of the GAMS optimization and contains all the variables, parameters, sets etc. of the REMIND model (the differences between these GAMS objects are explained in tutorial 2 section 3c). However, this gdx-file is mainly interesting once you actually work on the GAMS code and want to check specific the variables and their values. If you simply want to look at REMIND results of your run or use it for further data analysis and plotting, you would open the *REMIND_generic_NameofYourRun.mif* which is basically a csv-file in a certain standardized format (called the model intercomparison file format) used in the Integrated Assessment Modeling community. Please refer to the `vignette("mif")` of the package *mip* (model intercomparison plots) to learn more about the mif format.
 
-Looking at the *REMIND_generic_NameofYourRun.mif*, the column **scenario** gives the name of the run (that you specified in the first column of your config file when starting the run). The column **region** provides an three-letter acronym of the region (e.g. EUR -> EU, SSA -> Sub-Saharan Africa). The column **variable** represents the variable you are looking at (To avoid confusion with the above: It does not necessarily represent a variable in the GAMS code of REMIND. The mif-file is a synthetized output generated from *fulldata.gdx* by post-processing Rscripts from the *remind* package). Scrolling through the **variable** column, you will get an impression of the outputs the REMIND model permits you to explore. 
+Looking at the *REMIND_generic_NameofYourRun.mif*, the column **scenario** gives the name of the run (that you specified in the first column of your config file when starting the run). The column **region** provides an three-letter acronym of the region (e.g. EUR -> EU, SSA -> Sub-Saharan Africa). The column **variable** represents the variable you are looking at (To avoid confusion with the above: It does not necessarily represent a variable in the GAMS code of REMIND. The mif-file is a synthetized output generated from *fulldata.gdx* by post-processing Rscripts from the *remind* package). Scrolling through the **variable** column, you will get an impression of the outputs the REMIND model permits you to explore.
 
 ## 3. Loading and analyzing model output in R
 
@@ -53,26 +53,26 @@ This will load the content of the mif-file into a magpie object which is an arra
 ``` r
 str(out)
 ```
-you see the dimension of the magpie object. Magpie objects are basically arrays, you can look at specific entries, for example, like this 
+you see the dimension of the magpie object. Magpie objects are basically arrays, you can look at specific entries, for example, like this
 
 ``` r
 out["EUR", c("y2020","y2050"), "FE|Transport (EJ/yr)"]
 ```
 Instead of these objects from the R package **magclass**, you can also use data frames from the R package **quitte**. Arrays are generally better for doing calculations, while data frames are better for plotting. You will find out after a while which way works best for you. The **quitte** data frames are probably better for output analysis because this is a lot about plotting. For reading in the *.mif* file as a data frame, you have to load the package **quitte** and then run the command
 
-### 3.3 Load a mif file as a quitte Object	
+### 3.3 Load a mif file as a quitte Object
 
 ``` r
 mifdata <- read.quitte('PathtoYourMifFile.mif')
 ```
-The data is now stored in the *quitte* object *mifdata*. In RStudio, selecting it (the text *mifdata* in the editor window) and hitting F2 will show you its content. Usually, you will want to filter for some regions, variables, periods that you are interested in. For example, like this: 
-	
+The data is now stored in the *quitte* object *mifdata*. In RStudio, selecting it (the text *mifdata* in the editor window) and hitting F2 will show you its content. Usually, you will want to filter for some regions, variables, periods that you are interested in. For example, like this:
+
 ``` r
 df <- filter(mifdata,
    		region %in% c('EUR','LAM'),
 			variable %in% c('SE|Electricity'),
 			scenario %in% c('BAU'),
-			period %in% c(2005,2030,2050)) 
+			period %in% c(2005,2030,2050))
 ```
 ### 3.4 Load a gdx file as a Magpie Object
 
@@ -95,10 +95,10 @@ Here **gdx** is the path to the gdx file, while the second argument is the **nam
 ## 4. Automated model validation
 
 ### 4.1. Generation of summary and validation pdfs
-The automated model analysis (summary and validation) is an important example of output analysis based on model-internal scripts (see section 6). If these scripts are executed (either by selection via cfg$output as explained in 6.1. or by execution via command window as explained in 6.2.), standard evaluation pdfs are created. They validate numerous model outputs with historical data, either visually or via statistical tests. 
+The automated model analysis (summary and validation) is an important example of output analysis based on model-internal scripts (see section 6). If these scripts are executed (either by selection via cfg$output as explained in 6.1. or by execution via command window as explained in 6.2.), standard evaluation pdfs are created. They validate numerous model outputs with historical data, either visually or via statistical tests.
 
 ### 4.2 A Summary of Results
-For a first overview and for not getting lost in the huge amount of variables you can look at the *REMIND_summary_[title].pdf*. This .pdf-file will give you an overview on the model results and guides you through the story. 
+For a first overview and for not getting lost in the huge amount of variables you can look at the *REMIND_summary_[title].pdf*. This .pdf-file will give you an overview on the model results and guides you through the story.
 
 ### 4.3 The Whole Range of Validation
 A standard validation PDF *REMIND_validation_[title].pdf* consists of hundreds of evaluation outputs. By evaluating the model outputs on such a broad level rather than focusing only on key outputs, it allows getting a more complete picture of the corresponding scenario. The table of contents of the validation pdf gives a good overview about the breadth of model outputs that can be generated with a REMIND standard scenario, even though the validation pdf only shows a subset of possible model outputs.
@@ -110,13 +110,13 @@ The automated model validation is a good tool for visually evaluating a broad ra
 
 ### 5.1. AppResults
 
-To overcome this issue, we developed the interactive scenario analysis and evaluation tools appResults and appResultsLocal as part of the package **shinyresults** (<https://github.com/pik-piam/shinyresults>), which show evaluation plots for multiple scenarios including historical data and other projections based on an interactive selection of regions and variables. 
+To overcome this issue, we developed the interactive scenario analysis and evaluation tools appResults and appResultsLocal as part of the package **shinyresults** (<https://github.com/pik-piam/shinyresults>), which show evaluation plots for multiple scenarios including historical data and other projections based on an interactive selection of regions and variables.
 
-The `appResultsLocal` tool is meant to work on a local REMIND ouput folder in your computer. The `appResults` tool also runs in your computer, but it's meant for remote access to runs made on the cluster computer at the [Potsdam Institute for Climate Impact Researck (PIK)](www.pik-potsdam.de), and therefore requires specific credentials. If you are not an authorized user at PIK, you should use `appResultsLocal`, which has the same functionalities.
+The `appResultsLocal` tool is meant to work on a local REMIND ouput folder in your computer. The `appResults` tool also runs in your computer, but it's meant for remote access to runs made on the cluster computer at the [Potsdam Institute for Climate Impact Researck (PIK)](https://www.pik-potsdam.de), and therefore requires specific credentials. If you are not an authorized user at PIK, you should use `appResultsLocal`, which has the same functionalities.
 
 #### appResults(): runs made on the PIK cluster
 
-To use this tool, you first have to set up authentication in your `.Rprofile`. PIK-internal instructions on how to do this can be found in [Redmine](https://redmine.pik-potsdam.de/projects/mo/wiki/Configuration_for_AppResults) (login with your PIK account required). 
+To use this tool, you first have to set up authentication in your `.Rprofile`. PIK-internal instructions on how to do this can be found in [Redmine](https://redmine.pik-potsdam.de/projects/mo/wiki/Configuration_for_AppResults) (login with your PIK account required).
 
 You can then use the tool by running the following R command in your computer, which will automatically collect all runs made on the cluster (regardless of where in the cluster) and visualize them:
 
@@ -145,7 +145,7 @@ If you run the following command in the output folder of your local computer you
 ``` r
 shinyresults::appResultsLocal()
 ```
-Another tool for analyzing model output on your local computer is the scenario tool from the mip package. You can open it from the R console by: 
+Another tool for analyzing model output on your local computer is the scenario tool from the mip package. You can open it from the R console by:
 
 ``` r
 mip::scenTool()
@@ -191,12 +191,12 @@ Rscript output.R comp=comparison filename_prefix= output=compareScenarios2 slurm
 ```
 If you want to compare runs from different REMIND folders, add `remind_dir=.,../otherremind` as a parameter.
 
-How to create new plots is described in the tutorial [8_Advanced_AnalysingModelOutputs.Rmd](./8_Advanced_AnalysingModelOutputs.Rmd).
+How to create new plots is described in the tutorial [8_Advanced_AnalysingModelOutputs.Rmd](./08_Advanced_AnalysingModelOutputs.Rmd).
 Another useful and compatible resource for generating plots (e.g. box plots) from REMIND results is UTokyo's *mipplot* R package: https://github.com/UTokyo-mip/mipplot.
 
 ## 7. Analysis of outputs with the remind2 R package
 
-If you want to go beyond visual output analysis and predefined output evaluation facilitated by scripts in the model folders **scripts/output/single** and **scripts/output/comparison**, you can use the functionality of the R package *remind2* (https://github.com/pik-piam/remind2). This package contains a list of common functions for extracting outputs from the REMIND model which are also the basis for the generation of the automated validation pdf. For a quick overview on the functions which are included in the package, you can scan the folder **remind2/R** of the remind2 package source code. 
+If you want to go beyond visual output analysis and predefined output evaluation facilitated by scripts in the model folders **scripts/output/single** and **scripts/output/comparison**, you can use the functionality of the R package *remind2* (https://github.com/pik-piam/remind2). This package contains a list of common functions for extracting outputs from the REMIND model which are also the basis for the generation of the automated validation pdf. For a quick overview on the functions which are included in the package, you can scan the folder **remind2/R** of the remind2 package source code.
 
 For making yourself familiar with this package, you can open a R/RStudio session and set the REMIND model folder as working directory. This can be done by using the following command:
 
