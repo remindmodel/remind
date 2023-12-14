@@ -376,10 +376,10 @@ display "after change up to en consistency", pm_cesdata;
 
 ***_____________________________ START OF: ENSURE GDP CONSISTENCY VIA LABOUR PRICE _____________________________
 
-* Then, we consider the bottom level of the CES tree, where capital and labor
-* have specific restrictions.  Capital works as for the other ppfen, Labour
-* will be the adjustment variable to meet inco. xi will not be equal to the
-* income share of capital (from equation price = derivative)
+*** Then, we consider the bottom level of the CES tree, where capital and labor
+*** have specific restrictions.  Capital works as for the other ppfen, Labour
+*** will be the adjustment variable to meet inco. xi will not be equal to the
+*** income share of capital (from equation price = derivative)
 pm_cesdata(t,regi_dyn29,"kap","xi")
   = pm_cesdata(t,regi_dyn29,"kap","price")
   * pm_cesdata(t,regi_dyn29,"kap","quantity")
@@ -407,33 +407,33 @@ if (smax((t,regi_dyn29(regi)),
     sm_tmp   !! by how much does en + kap exceed inco?
     = ( ( pm_cesdata(t,regi,"en","quantity")
         * pm_cesdata(t,regi,"en","price")
-	)
+    )
       + ( pm_cesdata(t,regi,"kap","quantity")
         * pm_cesdata(t,regi,"kap","price")
-	)
+    )
       )
     / pm_cesdata(t,regi,"inco","quantity");
 
     if (sm_tmp > 1,
       put "  ", t.tl, " ", regi.tl, "   ",
           pm_cesdata(t,regi,"en","quantity"), " x ",
-	  pm_cesdata(t,regi,"en","price"), " + ",
-	  pm_cesdata(t,regi,"kap","quantity"), " x ",
-	  pm_cesdata(t,regi,"kap","price"), " > ",
-	  pm_cesdata(t,regi,"inco","quantity"), " -> ";
+          pm_cesdata(t,regi,"en","price"), " + ",
+          pm_cesdata(t,regi,"kap","quantity"), " x ",
+          pm_cesdata(t,regi,"kap","price"), " > ",
+          pm_cesdata(t,regi,"inco","quantity"), " -> ";
 
       sm_tmp2
       = ( pm_cesdata(t,regi,"inco","quantity")
         - ( pm_cesdata(t,regi,"lab","quantity")
           * pm_cesdata(t,regi,"lab","price")
-  	  )
+      )
         )
       / ( ( pm_cesdata(t,regi,"en","quantity")
           * pm_cesdata(t,regi,"en","price")
-	  )
+      )
         + ( pm_cesdata(t,regi,"kap","quantity")
           * pm_cesdata(t,regi,"kap","price")
-	  )
+      )
         );
 
       pm_cesdata(t,regi,"en","price")
@@ -468,20 +468,20 @@ loop (cesOut2cesIn("inco",in)$( NOT sameas(in,"lab") ),
 
       if (sm_tmp gt 1,
         put "  ", t.tl, " ", regi.tl, in.tl:>4, "   ",
-	    pm_cesdata(t,regi,in,"quantity"), " x ",
-	    pm_cesdata(t,regi,in,"price"), " > ",
-	    pm_cesdata(t,regi,"inco","quantity"), " -> ";
+         pm_cesdata(t,regi,in,"quantity"), " x ",
+         pm_cesdata(t,regi,in,"price"), " > ",
+         pm_cesdata(t,regi,"inco","quantity"), " -> ";
 
         pm_cesdata(t,regi,in,"price")
-	= ( pm_cesdata(t,regi,"inco","quantity")
-	  - sum(cesOut2cesIn2("inco",in2)$( NOT sameas(in,in2) ),
-	      pm_cesdata(t,regi,in2,"quantity")
-	    * pm_cesdata(t,regi,in2,"price")
-	    )
-	  )
-	/ pm_cesdata(t,regi,in,"quantity");
+    = ( pm_cesdata(t,regi,"inco","quantity")
+      - sum(cesOut2cesIn2("inco",in2)$( NOT sameas(in,in2) ),
+          pm_cesdata(t,regi,in2,"quantity")
+        * pm_cesdata(t,regi,in2,"price")
+        )
+      )
+    / pm_cesdata(t,regi,in,"quantity");
 
-	put pm_cesdata(t,regi,in,"price") /;
+    put pm_cesdata(t,regi,in,"price") /;
       );
     );
     putclose logfile, " " /;
@@ -823,11 +823,11 @@ $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
 *** Abort if any industry EEK value is lower than subsector output quantity
 sm_tmp = smin((t,regi_dyn29(regi),
                cesOut2cesIn(ue_industry_dyn37(out),ppfKap(in))),
-	   pm_cesdata(t,regi,out,"quantity")
-	 - ( pm_cesdata(t,regi,in,"quantity")
-	   * pm_cesdata(t,regi,in,"price")
-	   )
-	);
+       pm_cesdata(t,regi,out,"quantity")
+     - ( pm_cesdata(t,regi,in,"quantity")
+       * pm_cesdata(t,regi,in,"price")
+       )
+    );
 if (0 gt sm_tmp,
   put logfile,  "Error in industry FE price rescaling: ",
                 "EEK value exceeds subsector output quantity" /;
@@ -836,13 +836,13 @@ if (0 gt sm_tmp,
          cesOut2cesIn(ue_industry_dyn37(out),ppfKap(in))),
     sm_tmp = pm_cesdata(t,regi,out,"quantity")
            - ( pm_cesdata(t,regi,in,"quantity")
-	     * pm_cesdata(t,regi,in,"price")
-	     );
+         * pm_cesdata(t,regi,in,"price")
+         );
     if (0 gt sm_tmp,
       put t.tl, ".", regi.tl, "   ", out.tl:>20,
           pm_cesdata(t,regi,out,"quantity"):>10:4, " < ",
-	  pm_cesdata(t,regi,in,"quantity"):>8:4, " x ",
-	  pm_cesdata(t,regi,in,"price"):<8:4, " ",
+          pm_cesdata(t,regi,in,"quantity"):>8:4, " x ",
+          pm_cesdata(t,regi,in,"price"):<8:4, " ",
           in.tl:<0 /;
     );
   );
@@ -1188,7 +1188,7 @@ if (sm_tmp eq 1,
       put " > ", sm_tmp /;
       loop (ces_eff_target_dyn37(out,in)$( pm_cesdata(t,regi,in,"quantity") ),
         put @3 pm_cesdata.tn(t,regi,in,"quantity"), @73 " = ";
-	put pm_cesdata(t,regi,in,"quantity") /;
+        put pm_cesdata(t,regi,in,"quantity") /;
       );
       put " " /;
     );
