@@ -36,3 +36,6 @@ jobs:
         run: null <- gms::codeCheck(strict=TRUE)
         shell: Rscript {0}
         
+      - name: fileSizeCheck
+        run: source(".github/workflows/size-check")
+        shell: Rscript {0}
