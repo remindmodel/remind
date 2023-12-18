@@ -262,6 +262,11 @@ pm_CementDemandReductionCost(ttot,regi) = 0;
 
 *** Exogenous share of carbon in chemical feedstock that is embeded into plastics
 ** calculated based on energy flows in REMIND, plastics production from (Geyer et.al., 2017) and stoichiometric calculations
+** Specifically, historical production of plastics, energy demand for chemicals sector,
+** and carbon content of polymers
+** Regionalized calculations will require regionalized data on plastics production
+** this could be extracteg from (Stegmann et.al., 2022) if a feedstock-demand-based
+** approximation is desired
 s37_plasticsShare = 0.629;
 
 *** FIXME calibration debug
