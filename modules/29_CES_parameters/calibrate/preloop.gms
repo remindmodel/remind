@@ -68,8 +68,7 @@ else
 
   !! Compute prices of each node from CES derivatives of previous run:
   !! d(V_o)/d(V_i) = pi_i  = xi_i * eff_i * effGr_i * V_o**(1-rho_o)  *  (eff_i * effGr_i * V_i)**(rho_o-1)
-  p29_CESderivative(t,regi_dyn29(regi),ces_29(out,in))$(
-                                                      p29_cesIO_load(t,regi,in))
+  p29_CESderivative(t,regi_dyn29(regi),ces_29(out,in))$(p29_cesIO_load(t,regi,in))
     = p29_cesdata_load(t,regi,in,"xi")
     * p29_cesdata_load(t,regi,in,"eff")
     * p29_effGr(t,regi,in)
@@ -79,12 +78,13 @@ else
     ** (1 - p29_cesdata_load(t,regi,out,"rho"))
 
     * exp(
-      log(
-      p29_cesdata_load(t,regi,in,"eff")
-      * p29_effGr(t,regi,in)
-      * ( p29_cesIO_load(t,regi,in)
-      )
-      * (p29_cesdata_load(t,regi,out,"rho") - 1));
+         log(
+            p29_cesdata_load(t,regi,in,"eff")
+            * p29_effGr(t,regi,in)
+            * p29_cesIO_load(t,regi,in)
+            * (p29_cesdata_load(t,regi,out,"rho") - 1)
+          )
+        );
 
   !! Propagate price down the CES tree to get prices in terms of inco,
   !! i.e. calc d(inco)/d(in) by applying the chain rule (product of node derivatives)
