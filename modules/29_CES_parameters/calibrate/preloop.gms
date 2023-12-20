@@ -82,8 +82,8 @@ else
             p29_cesdata_load(t,regi,in,"eff")
             * p29_effGr(t,regi,in)
             * p29_cesIO_load(t,regi,in)
-            * (p29_cesdata_load(t,regi,out,"rho") - 1)
           )
+            * (p29_cesdata_load(t,regi,out,"rho") - 1)
         );
 
   !! Propagate price down the CES tree to get prices in terms of inco,
