@@ -7,14 +7,13 @@
 test_that("checkFixCfg works", {
   remind_folder <- "../.."
   savecfg <- cfg <- gms::readDefaultConfig(remind_folder)
-  # regexp = NA means: no warning
-  expect_warning(checkFixCfg(cfg, remind_folder, testmode = TRUE), regexp = NA)
+  expect_no_warning(checkFixCfg(cfg, remind_folder, testmode = TRUE))
 
   wrongsetting <- c(
     "cm_NDC_version" = "2004_cond",
     "cm_emiscen" = "123",
     "cm_nash_autoconverge" = "NA",
-    "cm_co2_tax_2020" = "2.2.2",
+    "cm_gs_ew" = "2.2.2",
     "cm_co2_tax_growth" = "333++",
     "c_macscen" = "-1",
     "cm_keep_presolve_gdxes" = "1.1",
@@ -23,6 +22,7 @@ test_that("checkFixCfg works", {
     "cm_rcp_scen" = "apocalypse",
     "c_testOneRegi_region" = "LOONG",
     "c_shGreenH2" = "1.5",
+    "cm_co2_tax_2020" = "-2",
   NULL)
 
   cfg <- savecfg

@@ -402,9 +402,9 @@ pm_IO_trade(ttot,regi,enty,char) = f_IO_trade(ttot,regi,enty,char) * sm_EJ_2_TWa
 
 *LB* use scaled data for export to guarantee net trade = 0 for each traded good
 loop(tradePe,
-    loop(t,
-       if(sum(regi2, pm_IO_trade(t,regi2,tradePe,"Xport")) ne 0,
-            pm_IO_trade(t,regi,tradePe,"Xport") = pm_IO_trade(t,regi,tradePe,"Xport") * sum(regi2, pm_IO_trade(t,regi2,tradePe,"Mport")) / sum(regi2, pm_IO_trade(t,regi2,tradePe,"Xport"));
+    loop(ttot,
+       if(sum(regi2, pm_IO_trade(ttot,regi2,tradePe,"Xport")) ne 0,
+            pm_IO_trade(ttot,regi,tradePe,"Xport") = pm_IO_trade(ttot,regi,tradePe,"Xport") * sum(regi2, pm_IO_trade(ttot,regi2,tradePe,"Mport")) / sum(regi2, pm_IO_trade(ttot,regi2,tradePe,"Xport"));
        );
     );
 );
@@ -1352,7 +1352,8 @@ if(c_macscen eq 1,
 *pm_macCostSwitch(enty)=pm_macSwitch(enty);
 
 *** for NDC and NPi switch off landuse MACs
-$if %carbonprice% == "NDC"  pm_macSwitch(emiMacMagpie) = 0;
+$if %carbonprice% == "NDC"      pm_macSwitch(emiMacMagpie) = 0;
+$if %carbonprice% == "NPi"      pm_macSwitch(emiMacMagpie) = 0;
 $if %carbonprice% == "NPi2018"  pm_macSwitch(emiMacMagpie) = 0;
 
 *DK* LU emissions are abated in MAgPIE in coupling mode

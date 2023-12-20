@@ -59,7 +59,7 @@ if (! dir.exists(path_magpie)) path_magpie <- normalizePath(file.path(getwd(), "
 # path_settings_remind contains the detailed configuration of the REMIND scenarios
 # path_settings_coupled defines which runs will be started, coupling infos, and optimal gdx and report information that overrides path_settings_remind
 # these settings will be overwritten if you provide the path to the coupled file as first command line argument
-path_settings_coupled <- file.path(path_remind, "config", "scenario_config_coupled_NGFS_v4.csv")
+path_settings_coupled <- file.path(path_remind, "config", "scenario_config_coupled.csv")
 path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_settings_coupled)
                          # file.path(path_remind, "config", "scenario_config.csv")
 
@@ -155,16 +155,6 @@ if (length(argv) > 0) {
   message("")
 }
 
-message("path_remind:           ", if (dir.exists(path_remind)) green else red, path_remind, NC)
-message("path_magpie:           ", if (dir.exists(path_magpie)) green else red, path_magpie, NC)
-message("path_settings_coupled: ", if (file.exists(path_settings_coupled)) green else red, path_settings_coupled, NC)
-message("path_settings_remind:  ", if (file.exists(path_settings_remind)) green else red, path_settings_remind, NC)
-message("path_remind_oldruns:   ", if (dir.exists(path_remind_oldruns)) green else red, path_remind_oldruns, NC)
-message("path_magpie_oldruns:   ", if (dir.exists(path_magpie_oldruns)) green else red, path_magpie_oldruns, NC)
-message("prefix_runname:        ", prefix_runname)
-message("n600_iterations:       ", n600_iterations)
-message("run_compareScenarios:  ", run_compareScenarios)
-
 if (! file.exists("output")) dir.create("output")
 
 ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
@@ -177,6 +167,21 @@ qosRuns <- NULL
 deletedFolders <- 0
 
 stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
+
+message("path_remind:           ", if (dir.exists(path_remind)) green else red, path_remind, NC)
+message("path_magpie:           ", if (dir.exists(path_magpie)) green else red, path_magpie, NC)
+message("path_settings_coupled: ", if (file.exists(path_settings_coupled)) green else red, path_settings_coupled, NC)
+message("path_settings_remind:  ", if (file.exists(path_settings_remind)) green else red, path_settings_remind, NC)
+message("path_remind_oldruns:   ", if (dir.exists(path_remind_oldruns)) green else red, path_remind_oldruns, NC)
+message("path_magpie_oldruns:   ", if (dir.exists(path_magpie_oldruns)) green else red, path_magpie_oldruns, NC)
+message("prefix_runname:        ", prefix_runname)
+message("n600_iterations:       ", n600_iterations)
+message("run_compareScenarios:  ", run_compareScenarios)
+
+if (any(! file.exists(c(path_settings_coupled, path_settings_remind))) ||
+    any(! dir.exists(c(path_remind, path_magpie, path_remind_oldruns, path_magpie_oldruns)))) {
+  stop("Missing files or directories, see in red above.")
+}
 
 if ("--gamscompile" %in% flags && ! file.exists("input/source_files.log")) {
   message("\n### Input data missing, need to compile REMIND first (2 min.)\n")
@@ -269,6 +274,9 @@ if (file.exists("/p") && sum(scenarios_coupled[common, "qos"] == "priority", na.
 ####################################################
 ######## PREPARE AND START COUPLED RUNS ############
 ####################################################
+
+# initialize madrat settings
+invisible(madrat::getConfig(verbose = FALSE))
 
 # prepare runs: write RData files
 for(scen in common){
@@ -621,7 +629,7 @@ for (scen in common) {
           runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
         }
         slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
-          " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
+          " --open-mode=append --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
           if (runEnv$numberOfTasks == 1) " --mem=8000"), runEnv$sbatch)
         slurmCommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
         message(slurmCommand)

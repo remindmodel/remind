@@ -120,15 +120,6 @@ prepare <- function() {
     create_input_for_45_carbonprice_exogenous(as.character(cfg$files2export$start["input_carbonprice.gdx"]))
   }
 
-  cfg$gms$cm_CES_configuration <- calculate_CES_configuration(cfg)
-
-  # write name of corresponding CES file to datainput.gms
-  replace_in_file(file    = "./modules/29_CES_parameters/load/datainput.gms",
-                  content = paste0('$include "',
-                                   "./modules/29_CES_parameters/load/input/",
-                                   cfg$gms$cm_CES_configuration, ".inc\""),
-                  subject = "CES INPUT")
-
   # If a path to a MAgPIE report is supplied use it as REMIND input (used for REMIND-MAgPIE coupling)
   # ATTENTION: modifying gms files
   if (!is.null(cfg$pathToMagpieReport)) {
@@ -153,10 +144,12 @@ prepare <- function() {
   manipulateConfig(tmpModelFile, cfg$gms)
 
   ######## declare functions for updating information ####
-  update_info <- function(regionscode, revision) {
+  update_info <- function(regionscode, revision, model_version) {
 
     subject <- "VERSION INFO"
     content <- c("",
+      paste("Modelversion:", model_version),
+      "",
       paste("Regionscode:", regionscode),
       "",
       paste("Input data revision:", revision),
@@ -167,99 +160,9 @@ prepare <- function() {
     replace_in_file(tmpModelFile, paste("*", content), subject)
   }
 
-  update_sets <- function(map) {
-     .tmp <- function(x,prefix="", suffix1="", suffix2=" /", collapse=",", n=10) {
-      content <- NULL
-      tmp <- lapply(split(x, ceiling(seq_along(x)/n)),paste,collapse=collapse)
-      end <- suffix1
-      for(i in 1:length(tmp)) {
-        if(i==length(tmp)) end <- suffix2
-        content <- c(content,paste0('       ',prefix,tmp[[i]],end))
-      }
-      return(content)
-    }
-    modification_warning <- c(
-      '*** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY',
-      '*** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT INPUT DOWNLOAD',
-      '*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare.R')
-    content <- c(modification_warning,'','sets')
-    # create iso set with nice formatting (10 countries per line)
-    tmp <- lapply(split(map$CountryCode, ceiling(seq_along(map$CountryCode)/10)),paste,collapse=",")
-    regions <- as.character(unique(map$RegionCode))
-    # Creating sets for H12 subregions
-    subsets <- remind2::toolRegionSubsets(map=cfg$regionmapping,singleMatches=TRUE,removeDuplicates=FALSE)
-    if(grepl("regionmapping_21_EU11", cfg$regionmapping, fixed = TRUE)){ #add EU27 region group
-      subsets <- c(subsets,list(
-        "EU27"=c("ENC","EWN","ECS","ESC","ECE","FRA","DEU","ESW"), #EU27 (without Ireland)
-        "NEU_UKI"=c("NES", "NEN", "UKI") #EU27 (without Ireland)
-      ) )
-    }
-    # declare ext_regi (needs to be declared before ext_regi to keep order of ext_regi)
-    content <- c(content, '')
-    content <- c(content, paste('*** Several parts of the REMIND code relies in the order that the regional set is defined.'))
-    content <- c(content, paste('***   Therefore, you must always abide with the below rules:'))
-    content <- c(content, paste('***   - The first regional set to be declared must be the ext_regi set, which includes the model native regions and all possible regional aggregations considered in REMIND.'))
-    content <- c(content, paste('***   - The ext_regi set needs to be declared in the order of more aggregated to less aggregated region order (e.g. World comes first and country regions goes last).'))
-    content <- c(content, paste('***   - IMPORTANT: You CANNOT use any of the ext_regi set elements in any set definition made prior to the ext_regi set declaration in the code.'))
-    content <- c(content, '')
-    content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)"'))
-    content <- c(content, '      /')
-    content <- c(content, '        GLO,')
-    content <- c(content, paste0('        ',paste(paste0(names(subsets),"_regi"),collapse=','),","))
-    content <- c(content, paste0('        ',paste(regions,collapse=',')))
-    content <- c(content, '      /')
-    # declare all_regi
-    content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
-    # regi_group
-    content <- c(content, '   regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"')
-    content <- c(content, '      /')
-    content <- c(content, paste0('        ',paste('GLO.(',paste(regions,collapse=','),')')))
-    for (i in 1:length(subsets)){
-        content <- c(content, paste0('        ', paste(c(paste0(names(subsets)[i],"_regi"))), ' .(',paste(subsets[[i]],collapse=','), ')'))
-    }
-    content <- c(content, '      /')
-    content <- c(content, '')
-    # iso countries set
-    content <- c(content,'   iso "list of iso countries" /')
-    content <- c(content, .tmp(map$CountryCode, suffix1=",", suffix2=" /"),'')
-    content <- c(content,'   regi2iso(all_regi,iso) "mapping regions to iso countries"','      /')
-    for(i in as.character(unique(map$RegionCode))) {
-      content <- c(content, .tmp(map$CountryCode[map$RegionCode==i], prefix=paste0(i," . ("), suffix1=")", suffix2=")"))
-    }
-    content <- c(content,'      /')
-    content <- c(content, 'iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,')
-    content <- c(content, .tmp(map$CountryCode, suffix1=",", suffix2=" /"),'')
-    content <- c(content,'   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" ','         /')
-    for(i in regions[regions %in% c("EUR","CHA",as.character(unique(map$CountryCode)))]) {
-      content <- c(content, .tmp(i, prefix=paste0(i," . "), suffix1="", suffix2=""))
-    }
-    content <- c(content,'      /',';')
-    replace_in_file('core/sets.gms',content,"SETS",comment="***")
-  }
-
   ############ download and distribute input data ########
   # check whether the regional resolution and input data revision are outdated and update data if needed
-  if(file.exists("input/source_files.log")) {
-      input_old     <- readLines("input/source_files.log")[c(1,2,3)]
-  } else {
-      input_old     <- "no_data"
-  }
-  input_new      <- c(paste0("rev",cfg$inputRevision,"_", madrat::regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
-                      paste0("rev",cfg$inputRevision,"_", madrat::regionscode(cfg$regionmapping),ifelse(cfg$extramappings_historic == "","",paste0("-", madrat::regionscode(cfg$extramappings_historic))),"_", tolower(cfg$validationmodel_name),".tgz"),
-                      paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
-  # download and distribute needed data
-  if (! setequal(input_new, input_old) || isTRUE(cfg$force_download)) {
-      message(if (isTRUE(cfg$force_download)) "You set 'cfg$force_download = TRUE'"
-              else "Your input data are outdated or in a different regional resolution",
-              ". New input data are downloaded and distributed.")
-      download_distribute(files        = input_new,
-                          repositories = cfg$repositories, # defined in your environment variables
-                          modelfolder  = ".",
-                          debug        = FALSE,
-			  stopOnMissing = TRUE)
-  } else {
-      message("No input data downloaded and distributed. To enable that, delete input/source_files.log or set cfg$force_download to TRUE.")
-  }
+  cfg <- updateInputData(cfg, remindPath = ".")
 
   # extract BAU emissions for NDC runs to set up emission goals for region where only some countries have a target
   if (isTRUE(cfg$gms$carbonprice == "NDC") || isTRUE(cfg$gms$carbonpriceRegi == "NDC")) {
@@ -270,11 +173,10 @@ prepare <- function() {
 
   ############ update information ########################
   # update_info, which regional resolution and input data revision in tmpModelFile
-  update_info(madrat::regionscode(cfg$regionmapping), cfg$inputRevision)
-  # update_sets, which is updating the region-depending sets in core/sets.gms
+  update_info(madrat::regionscode(cfg$regionmapping), cfg$inputRevision, cfg$model_version)
+  # updateSets, which is updating the region-depending sets in core/sets.gms
   #-- load new mapping information
-  map <- read.csv(cfg$regionmapping, sep=";")
-  update_sets(map)
+  updateSets(cfg)
 
   ########################################################
   ### PROCESSING INPUT DATA ###################### END ###
