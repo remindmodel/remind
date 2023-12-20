@@ -1150,6 +1150,11 @@ parameter
 *'
 *' * if Learningspillover is deactivated, foreign capacity is set to the level of 2020 in technology learning.
 *' * In combination with endogenous carbon pricing (e.g., in NDC), the deactivated Learningspillover will lead to higher overall carbon prices. Can be solved by setting carbonprice to exogenous (config).
+*' * This means that in the model, each region's learning depends on its OWN additional capacity investment after 2020 in comparison to the GLOBAL cumulative capacity until 2020, 
+*' * so for small regions learning is very slow. This is a very pessimistic interpretation of 'no learning spillovers',
+*' * as every region has to climb up the global learning curve all by itself.
+*'
+*'
 *'
 ***-----------------------------------------------------------------------------
 *' ####                     FLAGS

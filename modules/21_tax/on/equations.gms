@@ -298,14 +298,18 @@ q21_taxrevImport(t,regi,tradePe)..
 *'                   3. "avCO2taxmarkup" = import tax level * max( national carbon price, average carbonprice) * imported carbon by carrier
 * NOTE: In case of "CO2taxmarkup" and "avCO2taxmarkup" there is double-taxation of the CO2-content of the imported energy carrier: Once when being imported (at the border) and once when being converted to Secondary Energy (normal CO2price applied by REMIND)
 ***---------------------------------------------------------------------------
-sum(tax_import_type_21, p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "worldPricemarkup")
-   * pm_pvp(t,tradePe) / pm_pvp(t,"good") * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)$sameas(tax_import_type_21, "worldPricemarkup")
- +
- p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "CO2taxmarkup") * pm_taxCO2eqSum(t,regi) * pm_cintraw(tradePe) * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)$sameas(tax_import_type_21, "CO2taxmarkup")
-+
- p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "avCO2taxmarkup") *
- max(pm_taxCO2eqSum(t,regi), sum(trade_regi, pm_taxCO2eqSum(t,trade_regi))/(card(trade_regi))) *
- pm_cintraw(tradePe) * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)$sameas(tax_import_type_21, "avCO2taxmarkup") )
+sum(tax_import_type_21, 
+ (  p21_tau_Import(t, regi, tradePe, tax_import_type_21) * pm_pvp(t,tradePe) / pm_pvp(t,"good") * vm_Mport(t,regi,tradePe) 
+    - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)
+  )$sameas(tax_import_type_21, "worldPricemarkup")
+  + 
+  (  p21_tau_Import(t, regi, tradePe, tax_import_type_21) * pm_taxCO2eqSum(t,regi) * pm_cintraw(tradePe) * vm_Mport(t,regi,tradePe) 
+  - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)
+   )$sameas(tax_import_type_21, "CO2taxmarkup")
+  + 
+  (  p21_tau_Import(t, regi, tradePe, tax_import_type_21)* max(pm_taxCO2eqSum(t,regi), sum(trade_regi, pm_taxCO2eqSum(t,trade_regi))/(card(trade_regi))) 
+  * pm_cintraw(tradePe) * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)
+   )$sameas(tax_import_type_21, "avCO2taxmarkup"))
 ;
 
 
