@@ -198,7 +198,7 @@ $endif.process_based_steel
                       feh2_otherInd, fehe_otherInd, feelhth_otherInd)
   /
 
-  in_chemicals_37(all_in)   "chemicals FE that can provide feedstocks"
+  in_chemicals_feedstock_37(all_in)   "chemicals FE that can provide feedstocks"
   /
     feso_chemicals
     feli_chemicals

@@ -131,7 +131,7 @@ q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
       ( vm_cesIO(ttot,regi,in)
       - ( p37_chemicals_feedstock_share(ttot,regi)
         * vm_cesIO(ttot,regi,in)
-	)$( in_chemicals_37(in) )
+	)$( in_chemicals_feedstock_37(in) )
       )
     * sum(se2fe(entySEfos,entyFE,te),
         pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")
@@ -233,7 +233,7 @@ q37_costCESmarkup(t,regi,in)$(ppfen_industry_dyn37(in))..
 
 *' Lower bound on feso/feli/fega in chemicals FE input for feedstocks
 q37_chemicals_feedstocks_limit(t,regi)$( t.val ge cm_startyear ) .. 
-  sum(in_chemicals_37(in), vm_cesIO(t,regi,in))
+  sum(in_chemicals_feedstock_37(in), vm_cesIO(t,regi,in))
   =g=
     sum(ces_eff_target_dyn37("ue_chemicals",in), vm_cesIO(t,regi,in))
   * p37_chemicals_feedstock_share(t,regi)
@@ -249,7 +249,7 @@ q37_demFeFeedstockChemIndst(ttot,regi,entyFE,emiMkt)$(
   =e=
   sum((fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),              
        secInd37_emiMkt(secInd37,emiMkt),
-       secInd37_2_pf(secInd37,in_chemicals_37(in))), 
+       secInd37_2_pf(secInd37,in_chemicals_feedstock_37(in))), 
     ( vm_cesIO(ttot,regi,in) 
     + pm_cesdata(ttot,regi,in,"offset_quantity")
     )

@@ -6,7 +6,6 @@
 # |  Contact: remind@pik-potsdam.de
 
 library(magclass)
-
 library(remind2)
 library(lucode2)
 library(gms)
