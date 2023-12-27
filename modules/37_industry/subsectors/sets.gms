@@ -135,7 +135,7 @@ $endif.process_based_steel
     en_chemicals         "energy use of chemicals production"
     kap_chemicals        "energy efficiency capital of chemicals production"
     en_chemicals_fhth    "feedstock and high temperature heat energy use of chemicals production"
-    feso_chemicals       "solids energy use of cement production"
+    feso_chemicals       "solids energy use of chemicals production"
     feli_chemicals       "liquids energy use of chemicals production"
     fega_chemicals       "gases energy use of chemicals production"
     feh2_chemicals       "hydrogen energy use of chemicals production"
@@ -196,6 +196,13 @@ $endif.process_based_steel
    en_otherInd     . (en_otherInd_hth, feelwlth_otherInd)
    en_otherInd_hth . (feso_otherInd, feli_otherInd, fega_otherInd,
                       feh2_otherInd, fehe_otherInd, feelhth_otherInd)
+  /
+
+  in_chemicals_feedstock_37(all_in)   "chemicals FE that can provide feedstocks"
+  /
+    feso_chemicals
+    feli_chemicals
+    fega_chemicals
   /
 
   ces_eff_target_dyn37(all_in,all_in)   "limits to specific total energy use"
@@ -346,12 +353,20 @@ energy_limits37(all_in,all_in)   "thermodynamic limit of energy"
     ue_steel_secondary . feel_steel_secondary
   /
 
-entyFeCC37(all_enty)  "FE carriers in industry which can be used for CO2 capture"
+entyFECC37(all_enty)  "FE carriers in industry which can be used for CO2 capture"
   /
     fesos
     fehos
     fegas
   /
+
+entySE_emiFac_feedstocks(all_enty,all_enty) "SE type of emissions factor that should be used to calculate carbon contained in feedstocks"
+
+/
+  sesofos  . fesos
+  seliqfos . fehos
+  segafos  . fegas
+/
 
 ppfen_MkupCost37(all_in)  "primary production factors in industry on which CES mark-up cost can be levied that are counted as expenses in the macroeconomic budget equation"
   /

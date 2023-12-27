@@ -19,6 +19,6 @@ vm_macBaseInd.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
   / sm_C_2_CO2;
 
 
-***p37_emiFac(ttot,regi,entyFe) = sum((entySe,te)$(se2fe(entySe,entyFe,te) and entySeFos(entySe)), pm_emifac(ttot,regi,entySe,entyFe,te,"co2"));
+***p37_emiFac(ttot,regi,entyFE) = sum((entySE,te)$(se2fe(entySE,entyFE,te) and entySEFos(entySE)), pm_emifac(ttot,regi,entySE,entyFE,te,"co2"));
 
 *** EOF ./modules/37_industry/subsectors/presolve.gms
