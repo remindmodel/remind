@@ -1,10 +1,6 @@
 *** SOF ./core/input/generisdata_emi.prn
 *TA* This file includes the emission factors of secondary energy production technologies given in GtC per ZJ (ie 10^9tC per 10^9TJ) 
-*RP* the emission factors for oil were reduced from 20 to 18.4 to represent 
-***  that a share of oil is not burned but rather converted into long-lived
-***  goods (bitumen->tar for streets, durable plastics - most of plastics is 
-***  quickly burned, but some remains unburnt for decades) - "carbonstored".
-***  NB: reduction calculated based on values in manual to IEA CO2 emissions statistics (2007).
+*SMore* As part of the feedstock and plastics implementation, the emission factors for oil were set back to the actual value of 20 
 *JeS* emission factors for n2o are in Tg N per TWa (native remind units)
 *DK* biomass N2O emissions are taken care via p_efFossilFuelExtr in q_macBase in core/equations.gms
 *LP* ratio of C to H  in CCU-technologies (make sure if it is H or H2 you are reffering to!)
@@ -42,8 +38,8 @@ pebiolc.sehe.biohp
 pebiolc.sesobio.biotr                           
 pebiolc.sesobio.biotrmod                        
 pebiolc.segabio.biogas                          
-peoil.seliqfos.refliq          18.4               
-peoil.seel.dot                 18.4             0.01892
+peoil.seliqfos.refliq          20               
+peoil.seel.dot                 20             0.01892
 seh2.segasyn.h22ch4                                              0.395
 seh2.seliqsyn.MeOH                                               0.53
 

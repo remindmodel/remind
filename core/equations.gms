@@ -511,26 +511,33 @@ q_emiTe(t,regi,emiTe(enty))..
 *' from secondary to final energy transformation (some air pollutants), or
 *' transformations within the chain of CCS steps (Leakage).
 ***-----------------------------------------------------------------------------
-
-q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3) OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
+q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
+                           emi2te(enty,enty2,te,enty3) 
+                        OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
   vm_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
   =e=
     sum(emi2te(enty,enty2,te,enty3),
-      (
-	    sum(pe2se(enty,enty2,te),
-		  pm_emifac(t,regi,enty,enty2,te,enty3)
-		  * vm_demPE(t,regi,enty,enty2,te)
-		  )
-	    + sum((ccs2Leak(enty,enty2,te,enty3),teCCS2rlf(te,rlf)),
-		    pm_emifac(t,regi,enty,enty2,te,enty3)
-		    * vm_co2CCS(t,regi,enty,enty2,te,rlf)
-		  )
-	  )$(sameas(emiMkt,"ETS"))
-	  + sum(se2fe(enty,enty2,te),
+      ( sum(pe2se(enty,enty2,te),
           pm_emifac(t,regi,enty,enty2,te,enty3)
-		  * sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,enty,enty2,sector,emiMkt))
-		)
-	)
+        * vm_demPE(t,regi,enty,enty2,te)
+      )
+    + sum((ccs2Leak(enty,enty2,te,enty3),teCCS2rlf(te,rlf)),
+        pm_emifac(t,regi,enty,enty2,te,enty3)
+      * vm_co2CCS(t,regi,enty,enty2,te,rlf)
+      )
+    )$( sameas(emiMkt,"ETS") )
+  + sum(se2fe(enty,enty2,te),
+      pm_emifac(t,regi,enty,enty2,te,enty3)
+    * sum(sector$(    entyFe2Sector(enty2,sector) 
+                  AND sector2emiMkt(sector,emiMkt) ), 
+        vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)
+        !! substract FE used for non-energy purposes (as feedstocks) so it does
+        !! not create energy-related emissions
+      - sum(entyFe2sector2emiMkt_NonEn(enty2,sector,emiMkt),
+          vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
+        )
+      )
+    )
 ;
 
 ***--------------------------------------------------
@@ -558,44 +565,76 @@ q_emiEnFuelEx(t,regi,emiTe(enty))..
 ***--------------------------------------------------
 *' Total energy-emissions per emission market, region and timestep  
 ***--------------------------------------------------
-q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
+q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
   vm_emiTeMkt(t,regi,enty,emiMkt)
   =e=
-***   emissions from fuel combustion
+    !! emissions from fuel combustion
     sum(emi2te(enty2,enty3,te,enty),     
       vm_emiTeDetailMkt(t,regi,enty2,enty3,te,enty,emiMkt)
     )
-***   energy emissions fuel extraction
-	+ v_emiEnFuelEx(t,regi,enty)$(sameas(emiMkt,"ETS"))
-***   Industry CCS emissions
-	- ( sum(emiMac2mac(emiInd37_fuel,enty2),
-		  vm_emiIndCCS(t,regi,emiInd37_fuel)
-		)$( sameas(enty,"co2") )
-	)$(sameas(emiMkt,"ETS"))
-***   LP, Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS capacity don't have the same lifetime
-  + ( v_co2capturevalve(t,regi)$( sameas(enty,"co2") ) )$(sameas(emiMkt,"ETS"))
-***  JS CO2 from short-term CCU (short term CCU co2 is emitted again in a time period shorter than 5 years)
+    !! energy emissions fuel extraction
+  + v_emiEnFuelEx(t,regi,enty)$(sameas(emiMkt,"ETS"))
+    !! Industry CCS emissions
+  - ( sum(emiMac2mac(emiInd37_fuel,enty2),
+        vm_emiIndCCS(t,regi,emiInd37_fuel)
+      )$( sameas(enty,"co2") )
+    )$(sameas(emiMkt,"ETS") )
+    !! substract carbon from biogenic or synthetic origin contained in
+    !! plastics that don't get incinerated ("plastic removals")
+  - sum(entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+      sum(se2fe(entySe,entyFe,te)$( entySeBio(entySe) OR entySeSyn(entySe) ),
+        vm_nonIncineratedPlastics(t,regi,entySe,entyFe,emiMkt)
+      )
+    )$( sameas(enty,"co2") )
+    !! add emissions from plastics incineration. CHECK FOR DOUBLE-COUNTING RISK
+  + sum(entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+      sum(se2fe(entySe,entyFe,te),
+        vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
+      )
+    )$( sameas(enty,"co2") )
+    !! add emissions from chemical feedstock with unknown fate
+  + sum(entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+      sum(se2fe(entySe,entyFe,te),
+        vm_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
+      )
+    )$( sameas(enty,"co2") )
+    !! Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS
+    !! capacity don't have the same lifetime
+  + v_co2capturevalve(t,regi)$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
+    !! CO2 from short-term CCU (short term CCU co2 is emitted again in a time
+    !! period shorter than 5 years)
   + sum(teCCU2rlf(te2,rlf),
-		vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)$( sameas(enty,"co2") ) 
-	)$(sameas(emiMkt,"ETS"))
+      vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)$( sameas(enty,"co2") ) 
+    )$(sameas(emiMkt,"ETS"))
 ;
 
 ***--------------------------------------------------
 *' Total emissions
 ***--------------------------------------------------
-q_emiAllMkt(t,regi,emi,emiMkt)..
+q_emiAllMkt(t,regi,emi,emiMkt) ..
   vm_emiAllMkt(t,regi,emi,emiMkt)
-	=e=
-	vm_emiTeMkt(t,regi,emi,emiMkt)
-*** Non-energy sector emissions. Note: These are emissions from all MAC curves. 
-*** So, this includes fugitive emissions, which are sometimes also subsumed under the term energy emissions. 
-	+	sum(emiMacSector2emiMac(emiMacSector,emiMac(emi))$macSector2emiMkt(emiMacSector,emiMkt),
-   	vm_emiMacSector(t,regi,emiMacSector)
-  )
-*** CDR from CDR module
-	+ vm_emiCdr(t,regi,emi)$(sameas(emi,"co2") AND sameas(emiMkt,"ETS")) 
-*** Exogenous emissions
-  +	pm_emiExog(t,regi,emi)$(sameas(emiMkt,"other"))
+  =e=
+    vm_emiTeMkt(t,regi,emi,emiMkt)
+    !! Non-energy sector emissions. Note: These are emissions from all MAC
+    !! curves.  So, this includes fugitive emissions, which are sometimes also
+    !! subsumed under the term energy emissions. 
+  + sum((emiMacSector2emiMac(emiMacSector,emiMac(emi)),
+         macSector2emiMkt(emiMacSector,emiMkt)),
+      vm_emiMacSector(t,regi,emiMacSector)
+    )
+    !! CDR from CDR module
+  + vm_emiCdr(t,regi,emi)$( sameas(emi,"co2") AND sameas(emiMkt,"ETS") ) 
+    !! Exogenous emissions
+  + pm_emiExog(t,regi,emi)$( sameas(emiMkt,"other") )
+    !! non energy emi from chem sector (process emissions from feedstocks):
+  + sum((entyFe2sector2emiMkt_NonEn(entyFe,sector,emiMkt), 
+         se2fe(entySe,entyFe,te)), 
+      vm_demFENonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
+    * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
+    )
+    !!emissions from plastics incineration
+
+    !!emissions from chemical feedstock with unknown fate (assumed to go into the atmosphere)
 ;
 
 

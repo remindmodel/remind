@@ -4,13 +4,19 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-name,type,reason
-vm_cap,variable,???
-vm_deltaCap,variable,???
-vm_demPe,variable,???
-pm_ts,parameter,???
-pm_dataeta,parameter,???
-pm_eta_conv,paramter,???
-pm_omeg,parameter,???
-vm_capEarlyReti,variable,???
+library(lucode2)
+library(remind2)
 
+
+if(!exists("outputdir")) {
+  #Define arguments that can be read from command line
+  readArgs("outputdir")
+}
+
+gdx_name <- "fulldata.gdx"
+gdx <- file.path(outputdir, gdx_name)
+
+remind2::nashAnalysis(
+  gdx = gdx,
+  outputDir = outputdir
+)

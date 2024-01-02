@@ -9,7 +9,7 @@ REMIND has Python support via [reticulate](https://rstudio.github.io/reticulate/
 ## Using Python in REMIND
 
 First, you have to make sure that you have Python installed and available in your environment.
-Run `Rscript scripts/utils/checkSetup.R` to check if REMIND finds you Python.
+Run `Rscript scripts/utils/checkSetup.R` to check if REMIND finds your Python.
 If not, repair that by installing Python and making sure it is on your PATH.
 
 Next, you have to enable REMIND's Python integration by setting `cfg$pythonEnabled` to `on` in `config/default.cfg`.

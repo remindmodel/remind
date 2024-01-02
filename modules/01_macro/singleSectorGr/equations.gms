@@ -25,7 +25,6 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
     vm_cons(ttot,regi)
   + sum(ppfKap(in), vm_invMacro(ttot,regi,in))
   + sum(ppfKap(in), v01_invMacroAdj(ttot,regi,in))  
-  + sum(in, vm_invRD(ttot,regi,in))
   + sum(in, vm_invInno(ttot,regi,in))
   + sum(in, vm_invImi(ttot,regi,in))
   + sum(tradePe(enty)$(NOT tradeCap(enty)), pm_costsTradePeFinancial(regi,"Mport",enty) * vm_Mport(ttot,regi,enty))
