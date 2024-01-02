@@ -169,6 +169,7 @@ $include "./core/input/generisdata_trade.prn"
 if (cm_nucscen eq 6,
   f_dataglob_SSP5("inco0","tnrs") = 6270; !! increased from 4000 to 6270 with the update of technology costs in REMIND 1.7 to keep the percentage increase between SSP2 and SSP5 constant
 );
+
 if (c_techAssumptScen eq 2,
                fm_dataglob(char,te) = f_dataglob_SSP1(char,te)
 );

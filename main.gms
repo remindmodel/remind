@@ -585,10 +585,9 @@ parameter
 parameter
   c_solscen                 "solar option choice"
 ;
-  c_solscen        = 1;        !! def = 1  !! regexp = [1-3]
+  c_solscen        = 1;        !! def = 1  !! regexp = [1-2]
 *' *  (1): yes
-*' *  (2): no solar
-*' *  (3): fix at bau level
+*' *  (2): fix at bau level
 *'
 parameter
   cm_bioenergy_SustTax      "level of the bioenergy sustainability tax in fraction of bioenergy price"
@@ -782,7 +781,7 @@ parameter
   c_techAssumptScen         "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
 ;
   c_techAssumptScen     = 1;         !! def = 1  !! regexp = [1-3]
-*' This flag defines an energy technology scenario
+*' This flag defines an energy technology scenario according to SSP scenario
 *' *   (1) SSP2: reference scenario - default investment costs & learning rates for pv, csp and wind
 *' *   (2) SSP1: advanced renewable energy techno., pessimistic for nuclear and CCS
 *' *   (3) SSP5: pessimistic techno-economic assumptions
@@ -817,7 +816,7 @@ parameter
   cm_iterative_target_adj   "settings on iterative adjustment for CO2 tax based on in-iteration emission or forcing level. Allow iteratively generated endogenous global CO2 price under peak budget constraint."
 ;
   cm_iterative_target_adj = 0;      !! def = 0  !! regexp = 0|2|3|4|5|6|7|9
-*' * (0): no iterative adjustment of CO2 price
+*' * (0): no iterative adjustment of CO2 price (terminology: CO2 price and CO2 tax in REMIND is used interchangeably)
 *' * (2): iterative adjustment of CO2 tax based on climate forcing calculated by climate model magicc (for runs with budget and/or CO2 tax constraints), see ./modules/15_climate/magicc/postsolve.gms for direct algorithm
 *' * (3): [requires 45_carbonprice = NDC and emiscen = 9] iterative adjustment of CO2 tax based on 2025 or 2030 regionally differentiated emissions, see ./modules/45_carbonprice/NDC/postsolve.gms for direct algorithm
 *' * (4): iterative adjustment of CO2 tax based on CO2 FF&I emission budget (i.e. without landuse emissions) (2020-2100), see core/postsolve.gms for direct algorithms

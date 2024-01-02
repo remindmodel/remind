@@ -1,4 +1,4 @@
-*** SOF ./core/input/generisdata_tech.prn
+*** SOF ./core/input/generisdata_tech_SSP1.prn
 $ontext
 IMPORTANT: all costs are now given in $2015! As long as the model runs in $2005, the values need to be converted in datainput.gms
 tech_stat   technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'
