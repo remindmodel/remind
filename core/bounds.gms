@@ -217,7 +217,7 @@ if (cm_nucscen eq 5,
 );
 
 *** -------------------------------------------------------------
-*** *DK* Phaseout of 1st generation biofuel technologies
+*** *DK* Force no new capacities of 1st generation biofuel technologies to be installed after 2030, allowing more cost-efficient new generation of biofuel technologies free entrance to the market
 *** -------------------------------------------------------------
 if(cm_1stgen_phaseout=1,
    vm_deltaCap.up(t,regi,"bioeths",rlf)$(t.val gt 2030)   = 0;

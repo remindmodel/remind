@@ -633,11 +633,11 @@ parameter
 ***  (any value ge 0):  set costs multiplier to that value
 *'
 parameter
-  cm_1stgen_phaseout        "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap equals 0)"
+  cm_1stgen_phaseout        "scenario setting for phase-out of 1st generation biofuels"
 ;
   cm_1stgen_phaseout  = 0;         !! def = 0  !! regexp = 0|1
-*' *  (0): 1st generation biofuels after 2020 are fixed at upper limit of resource potential (maxprod)
-*' *  (1): no new capacities for 1st generation biofuel technologies may be built after 2030 -> phaseout until ~2060
+*' *  (0): no phase-out. Production of 1st generation biofuels after 2045 is bound from below by 90% of maximum resource potential ("maxprod")
+*' *  (1): phase-out. No new capacities for 1st generation biofuel technologies are built after 2030 (i.e. added capacity vm_deltaCap equals 0), in practice this means a slow phaseout of 1st generation biofuel due to lack of economic competitiveness. Bioenergy production is bound from below by 90% of maximum biomass resource potential in 2045
 *'
 parameter
   cm_phaseoutBiolc          "Switch that allows for a full phaseout of all bioenergy technologies globally"
@@ -1683,6 +1683,7 @@ $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_industry_FE_target  1
+*' setting which region is to be tested in the one-region test run (80_optimization = testOneRegi)
 $setglobal c_testOneRegi_region  EUR       !! def = EUR  !! regexp = [A-Z]{3}
 
 *** cm_taxrc_RE     "switch to define whether tax on (CO2 content of) energy imports is recycled to additional direct investments in renewables (wind, solar and storage)"
