@@ -444,7 +444,7 @@ parameter
   cm_iteration_max       = 1;     !! def = 1
 *'
 parameter
-  cm_abortOnConsecFail      "number of iterations of consecutive failures of one region after which to abort"
+  cm_abortOnConsecFail      "number of iterations of consecutive infeasibilities/failures to solve for one region, after which the run is automatically aborted"
 ;
   cm_abortOnConsecFail   = 5;     !! def = 5
 *'
@@ -483,12 +483,12 @@ parameter
 *' *  (1): BAU
 *' *  (4): emission time path
 *' *  (6): budget
-*' *  (9): tax scenario (requires running module 21_tax "on"), tax level controlled by module 45_carbonprice and cm_co2_tax_2020, other ghg etc. controlled by cm_rcp_scen
+*' *  (9): tax scenario (requires running module 21_tax "on"), tax level controlled by module 45_carbonprice and cm_co2_tax_2020, other GHG etc. controlled by cm_rcp_scen
 *' *  (10): used for cost-benefit analysis
 *' *JeS* WARNING: data for cm_emiscen 4 only exists for multigas_scen 2 bau scenarios and for multigas_scen 1
 *'
 parameter
-  cm_co2_tax_2020           "level of co2 tax in year 2020 in $ per t CO2eq, makes sense only for emiscen eq 9 and 45_carbonprice exponential"
+  cm_co2_tax_2020           "level of co2 tax in year 2020 in $ per t CO2eq [emiscen = 9 and 45_carbonprice = exponential]"
 ;
   cm_co2_tax_2020   = -1;              !! def = -1  !! regexp = -1|is.nonnegative
 *' * (-1): default setting equivalent to no carbon tax
@@ -500,7 +500,7 @@ parameter
   cm_co2_tax_growth = 1.05;            !! def = 1.05  !! regexp = is.numeric
 *'  (any number >= 0): rate of exponential increase over time
 parameter
-  c_macscen                 "use of mac"
+  c_macscen                 "scenario switch on whether or not to use MAC (Marginal Abatement Cost) for certain sectors not related to direct combustion of fossil fuel, e.g. fugitive emissions from old mines, forestry, agriculture and cement"
 ;
   c_macscen         = 1;               !! def = 1  !! regexp = 1|2
 *' * (1): on
@@ -826,7 +826,7 @@ parameter
 *' * (9): [require carbonprice = diffCurvePhaseIn2Lin] iteratively obtain endogenous global CO2 price under peak budget constraint, option IX. Features: 1) after the year when budget peaks, CO2 tax has an annual increase by c_taxCO2inc_after_peakBudgYr, 2) automatically shifts c_peakBudgYr to find the correct year of budget peaking for a given budget. For REMIND version v2.1 or above.
 *'
 parameter
-  cm_NDC_divergentScenario  "choose scenario about convergence of CO2eq prices in NDC realization of module 45_carbonprice"
+  cm_NDC_divergentScenario  "choose scenario about convergence of CO2eq prices [45_carbonprice = NDC]"
 ;
   cm_NDC_divergentScenario = 0;           !! def = 0  !! regexp = [0-2]
 *' *  (0) 70 years after 2030
@@ -936,7 +936,7 @@ parameter
   cm_tempConvergence       = 0.05;  !! def = 0.05
 ;
 parameter
-  cm_carbonprice_temperatureLimit "not-to-exceed temperature target in degree above pre-industrial"
+  cm_carbonprice_temperatureLimit "not-to-exceed temperature target in degree above pre-industrial [45_carbonprice = temperatureNotToExceed]"
 ;
   cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 *'
@@ -1037,14 +1037,14 @@ parameter
   cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bleak (3) assumptions on VRE supply"
 ;
   cm_VRE_supply_assumptions = 0;  !! 0 - default, 1 - optimistic, 2 - sombre, 3 - bleak  !! regexp = [0-3]
-*' *   for 1 - optimistic, modify
-*'      - inco0, incolearn, and learn parameters for spv and storspv
-*'      - ease capacity constraints on storage
+*' *   for 1 - optimistic
+*'      - investment cost (inco0), to-be-learned investment cost (incolearn), and learning rate parameters for spv and storspv are modified
+*'      - ease capacity constraints on power storage
 *'      - reduce necessary storage for electricity production
-*'  * for 2 - sombre, modify
-*'      - incolearn spv to 5010 (150 $ per kW floor cost)
-*'  * for 3 - bleak, modify
-*'      - incolearn spv to 4960 (200 $ per kW floor cost)
+*'  * for 2 - sombre
+*'      - change to-be-learned investment cost (incolearn) for solar PV (spv) to 5010 (150 $ per kW floor cost)
+*'  * for 3 - bleak
+*'      - change to-be-learned investment cost (incolearn) for solar PV (spv) to 4960 (200 $ per kW floor cost)
 *'
 parameter
   cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/kg = 0.2 $/Kwh)"
@@ -1322,10 +1322,10 @@ $setGlobal cm_implicitPriceTarget  off  !! def = off  !! regexp = off|Initial|Hi
 *** cm_implicitPePriceTarget "define tax/subsidies to match PE prices defined in the pm_implicitPePriceTarget parameter."
 ***   Acceptable values: "off", "highFossilPrice".
 $setGlobal cm_implicitPePriceTarget  off  !! def = off  !! regexp = off|highFossilPrice
-*** cm_VREminShare "minimum variable renewables share requirement per region."
+*** cm_VREminShare "minimum variable renewables share requirement for given region and given year."
 ***   Example on how to use:
 ***     cm_VREminShare = "2050.EUR_regi 0.7".
-***       Require a minimum 70% VRE share (wind plus solar) in electricity production for all regions that belong to EUR."
+***       Require a minimum 70% VRE share (wind plus solar) in electricity production for all regions that belong to EUR in year 2050."
 $setGlobal cm_VREminShare    off !! def = off
 *** cm_CCSmaxBound "limits Carbon Capture and Storage (including DACCS and BECCS) to a maximum value."
 ***   Example on how to use:
