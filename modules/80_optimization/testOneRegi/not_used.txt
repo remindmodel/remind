@@ -62,3 +62,4 @@ cm_sccConvergence,		   switch,      not needed
 pm_sccConvergenceMaxDeviation,	   parameter,   ???
 pm_gmt_conv,	   parameter,   ???
 cm_tempConvergence,		   switch,      not needed
+cm_LearningSpillover,input,learning spillover only implemented in nash

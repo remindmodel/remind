@@ -28,8 +28,8 @@ iiasatemplate <- NULL                          # provided for each project, can 
 lucode2::readArgs("project")
 
 projects <- list(
-  ELEVATE    = list(mapping = "NAVIGATE",
-                    iiasatemplate = "2023-05-26_template_ELEVATE.xlsx"),
+  ELEVATE    = list(mapping = c("NAVIGATE", "ELEVATE"),
+                    iiasatemplate = "elevate-workflow/definitions/variable/variable.yaml"),
   ENGAGE_4p5 = list(mapping = c("AR6", "AR6_NGFS"),
                     iiasatemplate = "ENGAGE_CD-LINKS_template_2019-08-22.xlsx",
                     removeFromScen = "_diff|_expoLinear|-all_regi"),

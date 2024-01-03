@@ -260,6 +260,15 @@ p37_clinker_cement_ratio(t,regi)
 *** costs have to be calculated.
 pm_CementDemandReductionCost(ttot,regi) = 0;
 
+*** Exogenous share of carbon in chemical feedstock that is embeded into plastics
+** calculated based on energy flows in REMIND, plastics production from (Geyer et.al., 2017) and stoichiometric calculations
+** Specifically, historical production of plastics, energy demand for chemicals sector,
+** and carbon content of polymers
+** Regionalized calculations will require regionalized data on plastics production
+** this could be extracteg from (Stegmann et.al., 2022) if a feedstock-demand-based
+** approximation is desired
+s37_plasticsShare = 0.629;
+
 *** FIXME calibration debug
 Parameter
   p37_arcane_FE_limits(all_in,all_in)   "minimum ratio of feelhth/feelwlth and feh2/fega (may be needed for calibration)"
@@ -542,6 +551,13 @@ loop ((regi,t2)$( p37_steel_secondary_max_share_scenario(t2,regi) ),
 display "scenario limits for maximum secondary steel share",
         p37_steel_secondary_max_share;
 $endif.sec_steel_scen
+Parameter p37_chemicals_feedstock_share(ttot,all_regi)   "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_chemicals_feedstock_share.cs4r";
+$offdelim
+  /
+;
 
 *' load baseline industry ETS solids demand
 if (cm_startyear ne 2005,   !! not a BAU scenario

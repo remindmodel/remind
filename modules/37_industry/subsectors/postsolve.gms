@@ -32,11 +32,11 @@ o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)$(
       (vm_cesIO.l(ttot,regi,in)
       +pm_cesdata(ttot,regi,in,"offset_quantity"))
     )
-  / o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt);
+  / o37_demFeIndTotEn(ttot,regi,entyFE,emiMkt);
 
 
 *** FE per subsector and energy carriers
-o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
+o37_demFeIndSub(ttot,regi,entySE,entyFE,secInd37,emiMkt)
   = sum(secInd37_emiMkt(secInd37,emiMkt),
       o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)
     * vm_demFeSector_afterTax.l(ttot,regi,entySe,entyFe,"indst",emiMkt)
