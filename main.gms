@@ -813,17 +813,17 @@ parameter
   c_export_tax_scen     = 0;         !! def = 0  !! regexp = 0|1
 *'
 parameter
-  cm_iterative_target_adj   "settings on iterative adjustment for CO2 tax based on in-iteration emission or forcing level. Allow iteratively generated endogenous global CO2 price under peak budget constraint."
+  cm_iterative_target_adj   "settings on iterative adjustment for CO2 tax based on in-iteration emission or forcing level. Allow iteratively generated endogenous global CO2 tax under peak budget constraint."
 ;
   cm_iterative_target_adj = 0;      !! def = 0  !! regexp = 0|2|3|4|5|6|7|9
-*' * (0): no iterative adjustment of CO2 price (terminology: CO2 price and CO2 tax in REMIND is used interchangeably)
-*' * (2): iterative adjustment of CO2 tax based on climate forcing calculated by climate model magicc (for runs with budget and/or CO2 tax constraints), see ./modules/15_climate/magicc/postsolve.gms for direct algorithm
-*' * (3): [requires 45_carbonprice = NDC and emiscen = 9] iterative adjustment of CO2 tax based on 2025 or 2030 regionally differentiated emissions, see ./modules/45_carbonprice/NDC/postsolve.gms for direct algorithm
-*' * (4): iterative adjustment of CO2 tax based on CO2 FF&I emission budget (i.e. without landuse emissions) (2020-2100), see core/postsolve.gms for direct algorithms
-*' * (5): iterative adjustment of CO2 tax based on economy-wide CO2 emissions (2020-2100), see core/postsolve.gms for direct algorithms
-*' * (6): iterative adjustment of CO2 tax based on economy-wide CO2 emission peak budget, features: without changing temporal profile (i.e. with overshoot), see core/postsolve.gms for direct algorithms
-*' * (7): iterative adjustment of CO2 tax based on economy-wide CO2 emission peak budget, features: with a change of temporal tax profile after time of peak budget, aiming for net-zero thereafter, see core/postsolve.gms for direct algorithms
-*' * (9): [require carbonprice = diffCurvePhaseIn2Lin] iteratively obtain endogenous global CO2 price under peak budget constraint, option IX. Features: 1) after the year when budget peaks, CO2 tax has an annual increase by c_taxCO2inc_after_peakBudgYr, 2) automatically shifts c_peakBudgYr to find the correct year of budget peaking for a given budget. For REMIND version v2.1 or above.
+*' * (0): no iterative adjustment of CO2 tax (terminology: CO2 price and CO2 tax in REMIND is used interchangeably)
+*' * (2): iterative adjustment of CO2 tax or cumulative emission based on climate forcing calculated by climate model magicc, for runs with budget or CO2 tax constraints. See ./modules/45_carbonprice/NDC/postsolve.gms for direct algorithm
+*' * (3): [requires 45_carbonprice = NDC and emiscen = 9] iterative adjustment of CO2 tax based on 2025 or 2030 regionally differentiated emissions, for runs with emission budget or CO2 tax constraints. See ./modules/45_carbonprice/NDC/postsolve.gms for direct algorithm
+*' * (4): iterative adjustment of CO2 tax based on CO2 FF&I cumulative emission budget (i.e. without landuse emissions) (2020-2100), for runs with emission budget or CO2 tax constraints. See core/postsolve.gms for direct algorithms for runs with budget or CO2 tax constraints
+*' * (5): iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission budget(2020-2100), for runs with emission budget or CO2 tax constraints. See core/postsolve.gms for direct algorithms
+*' * (6): iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission peak budget, for runs with emission budget or CO2 tax constraints. Features: without changing temporal profile (i.e. with overshoot). See core/postsolve.gms for direct algorithms
+*' * (7): iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission peak budget, for runs with emission budget or CO2 tax constraints. Features: with a change of temporal tax profile after time of peak budget, aiming for net-zero thereafter. See core/postsolve.gms for direct algorithms
+*' * (9): [require carbonprice = diffCurvePhaseIn2Lin] iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission peak budget, for runs with emission budget or CO2 tax constraints. Features: 1) after the year when budget peaks, CO2 tax has an annual increase by c_taxCO2inc_after_peakBudgYr, 2) automatically shifts c_peakBudgYr to find the correct year of budget peaking for a given budget. For REMIND version v2.1 or above. 
 *'
 parameter
   cm_NDC_divergentScenario  "choose scenario about convergence of CO2eq prices [45_carbonprice = NDC]"
@@ -981,12 +981,12 @@ parameter
   c_peakBudgYr            = 2050;   !! def = 2050
 *'   time of net-zero CO2 emissions (peak budget), requires emiscen to 9 and cm_iterative_target_adj to 7, will potentially be adjusted by algorithms
 parameter
-  c_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
+  c_taxCO2inc_after_peakBudgYr "annual increase of CO2 tax after the Peak Budget Year in $ per tCO2"
 ;
   c_taxCO2inc_after_peakBudgYr = 0; !! def = 0 . For weak targets (higher than 1100 Peak Budget), this value might need to increased to prevent continually increasing temperatures
 *'
 parameter
-  cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffCurvPhaseIn2Lin"
+  cm_CO2priceRegConvEndYr      "Year at which regional CO2 taxes converge in module 45 realization diffCurvPhaseIn2Lin"
 ;
   cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 *'
