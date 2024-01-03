@@ -352,7 +352,26 @@ display "after price smoothing",  cesOut2cesIn_below, pm_cesdata;
 
 ***_____________________________ END OF: GET PRICES _____________________________
 
+***_____________________________ START OF: CALCULATE IPF _____________________________
 
+*** All effGr, are set to one, so that we can focus on efficiencies
+*** we will split xi and eff evolutions later and pass it on to effGr
+pm_cesdata(t,regi_dyn29,in_29,"effGr") = 1;
+
+*** First, using the prices and quantities of the ppfEn, the prices of ipf
+*** we compute thanks to the Euler equation the quantities of the ipf.
+
+*** we compute quantities for everything up to the last CES level inco.(lab,kap,en)
+
+loop  ((t,cesRev2cesIO(counter,ipf_29(out)))$( NOT (  sameas(out,"inco")) ),
+  pm_cesdata(t,regi_dyn29,out,"quantity")
+  = sum(cesOut2cesIn(out,in),
+      pm_cesdata(t,regi_dyn29,in,"price")
+    * pm_cesdata(t,regi_dyn29,in,"quantity")
+    );
+);
+
+***_____________________________ END OF: CALCULATE IPF _____________________________
 
 ***_____________________________ START OF: CHANGE EFFICIENCIES TO FULFILL ECONOMIC CONSTRAINT _____________________________
 
