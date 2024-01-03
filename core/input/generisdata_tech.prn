@@ -178,20 +178,17 @@ ccap0                         0.0008
 learn                           0.15
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-!! take inco0 times 0.08 to get $/t
 +                     bf         bof         idr         eaf
+!! documentation & sources: see below
 tech_stat
-inco0              500.0       100.0       350.0       450.0
-mix0                 1.0         1.0         0.0         1.0
-eta                 1.00        1.00        1.00        1.00
+inco0              400.0       200.0       350.0       350.0
 omf                 0.06        0.06        0.06        0.06
-omv                    0           0           0           0
 lifetime              20          20          20          20
 
 +                   bfcc       idrcc
-inco0                900         900
-omf                 0.04        0.04
-omv                   20          20
+!! documentation & sources: see below
+inco0               1100         900
+omf                 0.06        0.06
 lifetime              20          20
 $endif.cm_subsec_model_steel
 
@@ -224,16 +221,40 @@ Assume floor cost 100 USD/tCO2.
 100 USD/tCO2 * 0.9 (capacity factor) / (0.07 1/yr) (annuity factor, stretch cost over plant lifetime)
 * 3.66 (tCO2 to tC) ~ 4800 USD/(tC/yr) -> incolearn = 14000
 
-Steel CC
-cost parameterization:
-Using DOE report in 2022 for newer cost (Clara and Chris)
-"COST OF CAPTURING CO2 FROM INDUSTRIAL SOURCES" SYDNEY HUGHES, ALEXANDER ZOELLE
-Using table ES-2 steel and iron retrofit capital cost, omf, omv (not fuel cost)
-inco0=27€/tCO2 -> to €/tC *(44/12) -> to €/(tC/a) with discount -> *12 ~ 1200; reduce slightly, since retrofit is pessimistic
-omv=5.5*(44/12)
-Assume lifetime is 20 years to align with non-CC technologies
-
+--- process-based industry: ---
 annuity factor = r * (1+r)^lifetime/(-1+(1+r)^lifetime), factor to annualize total investment cost of plant, discounting r = 0.05
+Assumption (for now): 20 yr lifetime for all techs (something in between plant lifetimes and retrofit intervals)
+-> take inco0 times 0.08 to get $/t
+
+bf and bof:
+IEA I&S Fig 1.3: Route combined 52-94 $/t CAPEX (8 % discount, 25 yr lifetime -> discFac = 0.09), 48-87 $/t OPEX
+Figure shows 65 / 55 --> inco0 approx 700
+Agora KSV-Rechner: 38 € OPEX
+Woertler 2013 Exhibit 8: Components (no C&R) summed CAPEX 442 € (149 BF, 128 BOF, + Rest) --> approx 500 $
+--> inco0 average is 600; distribution among bf and bof does not affect model, measurement of bf in tPI is negligible
+
+dri-eaf:
+IEA I&S Fig 1.3: Route combined 53-136 $/t CAPEX (8 % discount, 25 yr lifetime -> discFac = 0.09), 48-125 $/t OPEX
+Figure shows 85 / 75 --> inco0 approx 900
+Agora KSV-Rechner: 40 € OPEX
+Woertler 2013 Exhibit 8: Components (no C&R) summed CAPEX 414 € (230 BF, 184 EAF) --> approx 475 $
+--> Rough average inco0 is 700
+
+scrap-eaf:
+IEA I&S Fig 1.3: Route combined 34-58 $/t CAPEX (8 % discount, 25 yr lifetime -> discFac = 0.09), 31-54 $/t OPEX
+Figure shows 45 / 40 --> inco0 approx 480
+Woertler 2013 Exhibit 8: EAF (no C&R) CAPEX 184 € --> approx 210 $
+--> Rough average inco0 is 350
+
+bfcc:
+CAPEX 25 $ /tCO2
+(Rough average of sources: Wiley 2011, Tsupari 2013, Herron 2014, Yun 2021)
+inco0=25$/tCO2 -> to $/tC *(44/12) -> to $/(tC/a) with discount -> *12 = 1100
+omf ~ 0.75*capex
+
+idrcc:
+make slightly cheaper than bfcc as there is only one point source
+
 $offtext
 
 *** EOF ./core/input/generisdata_tech.prn

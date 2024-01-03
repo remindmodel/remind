@@ -31,17 +31,17 @@ Parameters
   p37_priceMat(all_enty)                                                       "Prices of external material input [2005$/kg] = [trn2005$/Gt]"
 
 *** output parameters only for reporting
-  o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                   "industry CCS emissions [GtC/a]"
   o37_cementProcessEmissions(ttot,all_regi,all_enty)                     "cement process emissions [GtC/a]"
   o37_demFeIndTotEn(ttot,all_regi,all_enty,all_emiMkt)                   "total FE per energy carrier and emissions market in industry (sum over subsectors)"
   o37_shIndFE(ttot,all_regi,all_enty,secInd37,all_emiMkt)                "share of subsector in FE industry energy carriers and emissions markets"
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)   "FE demand per industry subsector"
   !! process-based implementation
   o37_demFePrc(ttot,all_regi,all_enty,all_te,opmoPrc)                    "Process-based FE demand per FE type and process"
-  o37_shareRoute(ttot,all_regi,all_te,opmoPrc,route)                     "The share of a technology outflow which belongs to a certain route equals"
-  o37_ProdIndRoute(ttot,all_regi,mat,route)                              "produciton of a material via each process route"
+  o37_shareRoute(ttot,all_regi,all_te,opmoPrc,route)                     "The relative share (between 0 and 1) of a technology and operation mode outflow which belongs to a certain route; For example, bf.standard belongs partly to the route bfbof and partly to the route bfbof"
+  o37_ProdIndRoute(ttot,all_regi,mat,route)                              "produciton volume of a material via each process route"
   o37_demFeIndRoute(ttot,all_regi,all_enty,all_te,route,secInd37)        "FE demand by FE type, process route and tech"
-  o37_relativeOutflow(ttot,all_regi,all_te,opmoPrc)                      "Outflow of a process relative to the outflow of the route"
+  !! TODO: make route specific; So far, this only works because the relative outflow of each tech/opmo is the same for all routes.
+  o37_relativeOutflow(ttot,all_regi,all_te,opmoPrc)                      "Outflow of a process relative to the outflow of the route, i.e. the final product of that route"
 
   p37_CESMkup_input(all_in)  "markup cost parameter read in from config for CES levels in industry to influence demand-side cost and efficiencies in CES tree [trUSD/CES input]"
   /
@@ -57,16 +57,16 @@ $endif.sec_steel_scen
 ;
 
 Positive Variables
-  vm_emiIndBase(ttot,all_regi,all_enty,secInd37)                            "industry CCS baseline emissions [GtC/a]"
+  vm_emiIndBase(ttot,all_regi,all_enty,secInd37)                            "industry CCS baseline emissions [GtC/a]; Not used for emission accounting outside CCS"
   vm_emiIndCCS(ttot,all_regi,all_enty)                                      "industry CCS emissions [GtC/a]"
   vm_IndCCSCost(ttot,alL_regi,all_enty)                                     "industry CCS cost"
   v37_emIIndCCSmax(ttot,all_regi,emiInd37)                                  "maximum abatable industry emissions"
 
   !! process-based implementation
-  v37_outflowPrc(tall,all_regi,all_te,opmoPrc)                              "Production volume of processes in material-flow model [Gt]"
-  v37_matFlow(tall,all_regi,all_enty)                                       "Production of materials [Gt]"
-  v37_emiPrc(tall,all_regi,all_enty,all_te,opmoPrc)                         "Emissions per process and operation mode"
-  vm_costMatPrc(tall,all_regi)                                              "Cost of materials in process-based industry [trn $2005]"
+  v37_outflowPrc(tall,all_regi,all_te,opmoPrc)                              "Production volume of processes in process-based model [Gt/a]"
+  v37_matFlow(tall,all_regi,all_enty)                                       "Production of materials [Gt/a]"
+  v37_emiPrc(tall,all_regi,all_enty,all_te,opmoPrc)                         "Emissions per process and operation mode [GtC/a]"
+  vm_costMatPrc(tall,all_regi)                                              "Cost of external material inputs such as iron ore in process-based industry [trn $2005/a]"
 ;
 
 Equations
@@ -77,19 +77,19 @@ $endif.no_calibration
   q37_emiIndBase(ttot,all_regi,all_enty,secInd37)         "gross industry emissions before CCS"
   q37_emiIndCCSmax(ttot,all_regi,emiInd37)                "maximum abatable industry emissions at current CO2 price"
   q37_IndCCS(ttot,all_regi,emiInd37)                      "limit industry emissions abatement"
-  q37_limit_IndCCS_growth(ttot,all_regi,emiInd37)	  "limit industry CCS scale-up"
+  q37_limit_IndCCS_growth(ttot,all_regi,emiInd37)         "limit industry CCS scale-up"
   q37_cementCCS(ttot,all_regi)                            "link cement fuel and process abatement"
   q37_IndCCSCost                                          "Calculate industry CCS costs"
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)       "industry final energy demand (per emission market)"
   q37_costCESmarkup(ttot,all_regi,all_in)                 "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
 
   !! process-based implementation
-  q37_demMatPrc(tall,all_regi,mat)                        "Demand of process materials"
-  q37_prodMat(tall,all_regi,mat)                          "Production volume of processes in material-flow model"
+  q37_demMatPrc(tall,all_regi,mat)                        "Material demand of processes"
+  q37_prodMat(tall,all_regi,mat)                          "Production volume of processes equals material flow of output material"
   q37_mat2ue(tall,all_regi,all_in)                        "Connect materials production to ue ces tree nodes"
   q37_limitCapMat(tall,all_regi,all_te)                   "Material-flow conversion is limited by capacities"
-  q37_emiPrc(ttot,all_regi,all_enty,all_te,opmoPrc)       "industry baseline emissions [GtC/a]"
-  q37_emiCCPrc(tall,all_regi,emiInd37)                    "captured emission from CCS"
+  q37_emiPrc(ttot,all_regi,all_enty,all_te,opmoPrc)       "Local industry emissions [GtC/a] pre-capture; Only used as baseline for CCS"
+  q37_emiCCPrc(tall,all_regi,emiInd37)                    "Captured emissions from CCS"
   q37_limitOutflowCCPrc(tall,all_regi,all_te)             "Carbon capture processes can only capture as much co2 as the base process emits"
   q37_costMat(tall,all_regi)                              "External material cost (non-energy)"
 ;

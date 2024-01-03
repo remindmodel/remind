@@ -343,63 +343,67 @@ ppfen_MkupCost37(all_in)   "primary production factors in industry on which CES 
 ***        2. Process-Based
 *** ---------------------------------------------------------------------------
 
-  secInd37Prc(secInd37)   "Sub-sectors with process-based modeling"
+*** -----------------------
+*** A) one-dimensional sets
+*** -----------------------
+
+secInd37Prc(secInd37)   "Sub-sectors with process-based modeling"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   steel
 $endif.cm_subsec_model_steel
   /
 
-  tePrc(all_te)  "Technologies used in material-flow model (including CCS)"
+tePrc(all_te)  "Technologies used in process-based model (including CCS)"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-    bf      "Blast furnace"
-    bof     "Basic oxygen furnace"
-    eaf     "Electric-arc furnace"
-    idr     "Iron direct reduction"
+    bf
+    bof
+    eaf
+    idr
 
-    bfcc    "Blast furnace"
-    idrcc   "Direct reduction CCS"
+    bfcc
+    idrcc
 $endif.cm_subsec_model_steel
   /
 
-  mat(all_enty)   "Materials considered in material-flow model"
+mat(all_enty)   "Materials considered in process-based model; Can be input and/or output of a process"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-    prsteel    "Primary steel"
-    sesteel    "Secondary steel"
+    prsteel
+    sesteel
+    eafscrap
+    bofscrap
+    pigiron
+    driron
+    ironore
+    dripell
+$endif.cm_subsec_model_steel
+  /
+
+matIn(all_enty)   "Materials which serve as input to a process"
+  /
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     eafscrap   "Steel scrap used in EAF"
     bofscrap   "Steel scrap used in BOF"
     pigiron    "Pig iron"
     driron     "Direct reduced iron"
-    ironore    "Iron Ore"
+    ironore    "Iron ore"
     dripell    "DRI pellets"
 $endif.cm_subsec_model_steel
   /
 
-  matIn(all_enty)   "Materials which serve as input to a process"
+matOut(all_enty)   "Materials which serve as output of a process"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-    eafscrap   "Steel scrap used in EAF"
-    bofscrap   "Steel scrap used in BOF"
-    pigiron    "Pig iron"
-    driron     "Direct reduced iron"
-    ironore    "Iron Ore"
-    dripell    "DRI pellets"
+    prsteel
+    sesteel
+    pigiron
+    driron
 $endif.cm_subsec_model_steel
   /
 
-  matOut(all_enty)   "Materials which serve as output of a process"
-  /
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-    prsteel   "Primary steel"
-    sesteel   "Secondary steel"
-    pigiron   "Pig iron"
-    driron    "Direct reduced iron"
-$endif.cm_subsec_model_steel
-  /
-
-  matFin(mat)   "Final products of a process-based production route"
+matFin(mat)   "Final products of a process-based production route"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    prsteel
@@ -407,7 +411,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-  opmoPrc   "Operation modes for technologies in material-flow model"
+opmoPrc   "Operation modes for technologies in process-based model"
   /
     standard   "Only one operation mode implemented"
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -419,7 +423,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-  ppfUePrc(all_in)   "Ue CES tree nodes connected to process based implementation"
+ppfUePrc(all_in)   "Ue CES tree nodes connected to process based implementation, which therefore become primary production factors (ppf)"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    ue_steel_primary
@@ -427,7 +431,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-  route(all_te)  "Process routes"
+route(all_te)  "Process routes; Currently only used for reporting"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idreaf_ng
@@ -439,19 +443,35 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-  ppfen_no_ces_use(all_in)   "FE nodes of all_in that are not part of the CES tree in the process-based industry model; Needed for pm_fedemand data input"
+ppfen_no_ces_use(all_in)   "FE nodes of all_in that are not part of the CES tree in the process-based industry model; Needed for pm_fedemand data input"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-    feso_steel             "solids energy use of primary steel production"
-    feli_steel             "liquids energy use of primary steel production"
-    fega_steel             "gases energy use of primary steel production"
-    feh2_steel             "hydrogen energy use of primary steel production"
-    feel_steel_primary     "electricity energy use pf primary steel production"
-    feel_steel_secondary   "electricity energy use of secondary steel production"
+    feso_steel
+    feli_steel
+    fega_steel
+    feh2_steel
+    feel_steel_primary
+    feel_steel_secondary
 $endif.cm_subsec_model_steel
   /
 
-  tePrc2matIn(tePrc,opmoPrc,mat)   "Mapping of technologies onto input materials"
+*** -----------------------
+*** B) mappings
+*** -----------------------
+
+tePrc2opmoPrc(tePrc,opmoPrc)   "Mapping of technologies onto available operation modes"
+  /
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+    idr . (ng,h2)
+    eaf . (pri,sec)
+    bf . (standard)
+    bof . (unheated)
+    bfcc . (standard)
+    idrcc . (ng)
+$endif.cm_subsec_model_steel
+  /
+
+tePrc2matIn(tePrc,opmoPrc,mat)   "Mapping of technologies onto input materials"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idr . (h2,ng) . dripell
@@ -462,7 +482,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-  tePrc2matOut(tePrc,opmoPrc,mat)   "Mapping of industry process technologies onto their output materials"
+tePrc2matOut(tePrc,opmoPrc,mat)   "Mapping of industry process technologies onto their output materials"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    bf  . standard . pigiron
@@ -473,7 +493,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-  tePrc2ue(tePrc,opmoPrc,all_in)   "Mapping of industry process technologies to the UE ces nodes they directly or indirectly feed into"
+tePrc2ue(tePrc,opmoPrc,all_in)   "Mapping of industry process technologies to the UE ces nodes they directly or indirectly feed into"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    (bf,bfcc)  . standard . ue_steel_primary
@@ -485,7 +505,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-  tePrc2teCCPrc(tePrc,opmoPrc,tePrc,opmoPrc)  "Mapping of base technologies to CCS technologies"
+tePrc2teCCPrc(tePrc,opmoPrc,tePrc,opmoPrc)  "Mapping of base technologies to CCS technologies"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bf  . standard . bfcc  . standard
@@ -493,7 +513,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-  tePrc2route(tePrc,opmoPrc,route)  "Mapping of technologies onto the production routes they belong to"
+tePrc2route(tePrc,opmoPrc,route)  "Mapping of technologies onto the production routes they belong to"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     eaf . sec . seceaf
@@ -512,7 +532,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-  mat2ue(mat,all_in)   "Mapping of materials onto UE ces tree node"
+mat2ue(mat,all_in)   "Mapping of materials (final route products) onto the UE ces tree node the model is connected to"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    prsteel . ue_steel_primary
@@ -520,19 +540,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-  tePrc2opmoPrc(tePrc,opmoPrc)   "Mapping of technologies onto available operation modes"
-  /
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-    idr . (ng,h2)
-    eaf . (pri,sec)
-    bf . (standard)
-    bof . (unheated)
-    bfcc . (standard)
-    idrcc . (ng)
-$endif.cm_subsec_model_steel
-  /
-
-  fe2mat(all_enty,all_enty,all_te)   "Set of industry technologies to be included in en2en, which connects capex and opex to budget"
+fe2mat(all_enty,all_enty,all_te)   "Set of industry technologies to be included in en2en, which connects capex and opex to budget"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     entydummy.entydummy.bf
@@ -544,7 +552,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-  secInd37_tePrc(secInd37,tePrc)   "Mapping of technologies onto industry subsectors"
+secInd37_tePrc(secInd37,tePrc)   "Mapping of technologies onto industry subsectors"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     steel . idr
@@ -557,7 +565,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-  fe2ppfen_no_ces_use(all_enty,all_in)   "match ESM entyFE to ppfen that are not used in the CES tree, but for datainput for process-bases industry"
+fe2ppfen_no_ces_use(all_enty,all_in)   "Match ESM entyFE to ppfen that are not used in the CES tree, but for datainput for process-bases industry"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     fesos . feso_steel

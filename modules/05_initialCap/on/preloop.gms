@@ -52,6 +52,7 @@ q05_eedemini(regi,enty)..
     )$(entyFeStat(enty))
   ) * s05_inic_switch
     !! Transformation pathways that consume this enty:
+    !!(exclude tePrc, as process-based industry has its own vm_cap0 calculation below)
   + sum(en2en(enty,enty2,te)$(NOT tePrc(te)),
       pm_cf("2005",regi,te)
     / pm_data(regi,"eta",te)
@@ -66,6 +67,7 @@ q05_eedemini(regi,enty)..
 ;
 
 *** capacity meets demand of the produced energy:
+!!(exclude tePrc, as process-based industry has its own vm_cap0 calculation below)
 q05_ccapini(regi,en2en(enty,enty2,te))$(NOT tePrc(te))..
     pm_cf("2005",regi,te)
   * pm_dataren(regi,"nur","1",te)

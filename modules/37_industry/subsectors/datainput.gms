@@ -534,116 +534,66 @@ execute_load "input_ref.gdx", vm_demFEsector;
     );
 );
 
-
-!!
-!! *** ---------------------------------------------------------------------------
-!! ***        2. Process-Based
-!! *** ---------------------------------------------------------------------------
-!! Parameter
-!!   p37_specMatDem(mat,all_te,opmoPrc)   "Specific materials demand of a production technology and operation mode [t_input/t_product], where product is e.g. pigiron, not steel"
-!!   /
-!! $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-!!     dripell.idr.(ng,h2)     1.45                                            !! Iron ore demand of iron direct-reduction (independent of fuel source) POSTED
-!!
-!!     driron.eaf.pri          1.08                                            !! DRI demand of EAF POSTED
-!!     eafscrap.eaf.sec        1.09                                            !! Scrap demand of EAF POSTED
-!!
-!!     ironore.bf.standard     1.45                                            !! Iron ore demand of BF-BOF
-!!
-!!     bofscrap.bof.unheated   1e-9                                            !! Scrap demand of BF-BOF
-!!     pigiron.bof.unheated    1.05
-!! $endif.cm_subsec_model_steel
-!!   /
-!!
-!!   p37_specFeDemTarget(all_enty,all_te,opmoPrc)   "Specific energy demand of a production technology and operation mode; read in as [MWh/t_product], where product is e.g. pigiron, not steel; converted to TWa/Gt directly below"
-!!   /
-!! $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-!!     !! reduction: 504 m^3; heat 242 m^3; conversion: x / 11.126 m^3/kg * 0.0333 MWh/kg
-!!     feh2s.idr.h2             2.23      !! Source: POSTED
-!!     feels.idr.h2             0.08      !! Source: POSTED
-!!
-!!     fegas.idr.ng             2.69      !! Source: POSTED
-!!     feels.idr.ng             0.08      !! Source: POSTED
-!!
-!!     feels.eaf.pri            0.67      !! Source: POSTED
-!!     feels.eaf.sec            0.67      !! Source: POSTED
-!!
-!!     fesos.bf.standard        3.90      !! Source: OTTO_ET_AL
-!!     fegas.bf.standard        0.18      !! Source: DUMMY
-!!     feels.bf.standard        0.20      !! Source: DUMMY
-!!     fehos.bf.standard        1e-9      !! Source: DUMMY
-!!
-!!     feels.bfcc.standard      1.00      !! Source: DUMMY
-!!     feels.idrcc.ng           1.00      !! Source: DUMMY
-!! $endif.cm_subsec_model_steel
-!!   /;
-!!   p37_specFeDemTarget(all_enty,all_te,opmoPrc) = p37_specFeDemTarget(all_enty,all_te,opmoPrc) / (sm_TWa_2_MWh/sm_giga_2_non)
-!!
-!! PARAMETER
-!!   p37_mat2ue(all_enty,all_in)   "Contribution of each material output to the UE; Becomes trivial in case of one output material per UE"
-!!   /
-!! $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-!!     sesteel.ue_steel_secondary   1.
-!!     prsteel.ue_steel_primary     1.
-!! $endif.cm_subsec_model_steel
-!!   /
-!!
-!!   p37_captureRate(all_te,opmoPrc)   "Share of local CO2 emissions that are coaptured by CC tech"
-!!   /
-!! $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-!!     bfcc . (standard)   0.73
-!!     idrcc . (ng)        0.8
-!! $endif.cm_subsec_model_steel
-!!   /
-!!
-!!   p37_priceMat(all_enty)   "Price of input materials [trn $2005/Gt = $/kg]"
-!!   /
-!! $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-!!     eafscrap      0.167
-!!     bofscrap      0.167
-!!     ironore       0.077
-!!     dripell       0.105
-!! $endif.cm_subsec_model_steel
-!!   /
-!! ;
 *** ---------------------------------------------------------------------------
 ***        2. Process-Based
 *** ---------------------------------------------------------------------------
 
 p37_specMatDem(mat,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-p37_specMatDem("dripell","idr","ng")        = 1.45;                                           !! Iron ore demand of iron direct-reduction (independent of fuel source) POSTED
-p37_specMatDem("dripell","idr","h2")        = 1.45;                                           !! Iron ore demand of iron direct-reduction (independent of fuel source) POSTED
+p37_specMatDem("dripell","idr","ng")        = 1.44;                                           !! Source: POSTED / Average of Devlin2022, Otto2017, Volg2018, Rechberge2020
+p37_specMatDem("dripell","idr","h2")        = 1.44;                                           !! Source: POSTED / Copy from ng opMode
 
-p37_specMatDem("driron","eaf","pri")        = 1.08;                                           !! DRI demand of EAF POSTED
-p37_specMatDem("eafscrap","eaf","sec")      = 1.09;                                           !! Scrap demand of EAF POSTED
+p37_specMatDem("driron","eaf","pri")        = 1.065;                                          !! Source: POSTED / Average of Devlin et al 2022, Section 2.2.2 and Otto et al 2017, Figure 6
+p37_specMatDem("eafscrap","eaf","sec")      = 1.09;                                           !! Source: POSTED / Ecorys 2014, Table 3.1
 
-p37_specMatDem("ironore","bf","standard")   = 1.45;                                           !! Iron ore demand of BF-BOF
+p37_specMatDem("ironore","bf","standard")   = 1.58;                                           !! Source: Sum of weighted average values for sinter, ore and pellets in JRC BAT, Table 6.1: 1.626 / tHM -> 1.58/tPI
 
-p37_specMatDem("bofscrap","bof","unheated") = sm_eps;                                         !! Scrap demand of BF-BOF
-p37_specMatDem("pigiron","bof","unheated")  = 1.05;
+!! Switch off scrap input to BOF, as BOF output is purely prsteel (for now) and scrap availability limits sesteel in current implementation
+p37_specMatDem("bofscrap","bof","unheated") = sm_eps;                                         !! Source: DUMMY
+p37_specMatDem("pigiron","bof","unheated")  = 1.03;                                           !! Source: Rough total of scrap and pigiron in JRC-BAT
 $endif.cm_subsec_model_steel
 
+*** --------------------------------
+
+!!TODO: Think about accounting of integrated plants / casting & rolling
 p37_specFeDemTarget(all_enty,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-    !! reduction: 504 m^3; heat 242 m^3; conversion: x / 11.126 m^3/kg * 0.0333 MWh/kg
-p37_specFeDemTarget("feh2s","idr","h2")           = 2.23 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED
-p37_specFeDemTarget("feels","idr","h2")           = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED
+!! numbers are given in MWh/t and converted to Remind units TWa/Gt with the factors after that (divided by 8.76)
+!! reduction: 504 m^3; heat 242 m^3; conversion: x / 11.126 m^3/kg * 0.0333 MWh/kg
+p37_specFeDemTarget("feh2s","idr","h2")           = 2.23 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Rechberger et al 2020, Section 4.2 (per tDRI)
+p37_specFeDemTarget("feels","idr","h2")           = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Just before Table 1 (per tHBI)
 
-p37_specFeDemTarget("fegas","idr","ng")           = 2.69 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED
-p37_specFeDemTarget("feels","idr","ng")           = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED
+p37_specFeDemTarget("fegas","idr","ng")           = 2.69 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Page 7 (9.7 GJ) (per tHBI)
+p37_specFeDemTarget("feels","idr","ng")           = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Page 7 (9.7 GJ) (per tHBI)
 
-p37_specFeDemTarget("feels","eaf","pri")          = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED
-p37_specFeDemTarget("feels","eaf","sec")          = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED
+!! To do: Does not include casting and rolling;
+!! Birat2010, p. 11: 0.97 MWh total, only 0.44 MWh of which is electrical
+!! EU JRC BAT says 0.404–0.748 (only EAF, elec) / Otto et al. say 0.92
+!! --> have declining curve?
+p37_specFeDemTarget("feels","eaf","pri")          = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Copy from secondary (Agora Energiewende, 2022 give similar values, between w and w/o reheating)
+p37_specFeDemTarget("feels","eaf","sec")          = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Vogl et al 2018, Section 3.1
 
-p37_specFeDemTarget("fesos","bf","standard")      = 3.90 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: OTTO_ET_AL
-p37_specFeDemTarget("fegas","bf","standard")      = 0.18 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
-p37_specFeDemTarget("feels","bf","standard")      = 0.20 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+!! Otto et al. Fig 3: 10.303 GJ coke (from 13.24 GJ coal, see Menendez2015 Fig 3) + 4.67 GJ coal dust -> 18 GJ
+!! Birat2010, p.11 says best performers have 17 GJ, out of which 16 GJ coal
+!! -> take 16 GJ / 3.6 (to MWH) / 1.03 (pigiron to steel) = 4.3
+!! Optimistic value as tech will improve over time and historic BF vs BAT DRI is unfair anyways
+p37_specFeDemTarget("fesos","bf","standard")      = 4.30 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Otto et al.
+!! set all others to zero to have rough approximation of power plant output
+p37_specFeDemTarget("fegas","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+p37_specFeDemTarget("feels","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
 p37_specFeDemTarget("fehos","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
 
-p37_specFeDemTarget("feels","bfcc","standard")    = 1.00 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
-p37_specFeDemTarget("feels","idrcc","ng")         = 1.00 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+!! per tC for cc tech!!
+p37_specFeDemTarget("feels","bfcc","standard")    = 0.11 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Tsupari2013
+p37_specFeDemTarget("fegas","bfcc","standard")    = 0.92 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Tsupari2013 / Yun2021
+
+!! World Steel Factsheet says no additional equipment needed --> very cheap and no energy demand
+!! IEA Steel Roadmap Fig 2.11 also shows very little additional fuel cost
+p37_specFeDemTarget("feels","idrcc","ng")         = 0.11 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc
+p37_specFeDemTarget("fegas","idrcc","ng")         = 0.92 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc
 $endif.cm_subsec_model_steel
+
+*** --------------------------------
 
 p37_mat2ue(all_enty,all_in) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -651,19 +601,29 @@ p37_mat2ue("sesteel","ue_steel_secondary") = 1.;
 p37_mat2ue("prsteel","ue_steel_primary")   = 1.;
 $endif.cm_subsec_model_steel
 
+*** --------------------------------
+
 p37_captureRate(all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-p37_captureRate("bfcc","standard") = 0.73;
-p37_captureRate("idrcc","ng")      = 0.8;
+p37_captureRate("bfcc","standard") = 0.73; !! Source: Witecka 2023, Figure 18
+p37_captureRate("idrcc","ng")      = 0.85; !! Source: IEA Steel Roadmap Fig. 2.11
 $endif.cm_subsec_model_steel
+
+*** --------------------------------
 
 p37_priceMat(all_enty) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-p37_priceMat("eafscrap") = 0.167;
-p37_priceMat("bofscrap") = 0.167;
-p37_priceMat("ironore")  = 0.077;
-p37_priceMat("dripell")  = 0.105;
+!! IEA STeel Roadmap Fig 1.3 Caption: Scrap price 200-300 $/t
+!! => take 250 $/t, inflation 2005 --> 2020 / 1.33
+p37_priceMat("eafscrap") = 0.188;
+p37_priceMat("bofscrap") = 0.188;
+!! Agora KSV-Rechner: 114 €/tSteel / (1.4 2005$/2023€) / (tn$ /bn t)
+p37_priceMat("ironore")  = 0.081;
+!! Agora KSV-Rechner: 154 €/tSteel / (1.4 2005$/2023€) / (tn$ /bn t)
+p37_priceMat("dripell")  = 0.110;
 $endif.cm_subsec_model_steel
+
+*** --------------------------------
 
 p37_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
