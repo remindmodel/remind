@@ -112,7 +112,7 @@ display s_actualbudgetco2;
 );
 
 if(cm_iterative_target_adj eq 6,
-*JeS* Update CO2 tax trajectories / cumulative emission level to reach the target for peak budget, without changing temporal profile (i.e. with overshoot)
+*JeS* Update CO2 tax trajectories / cumulative emission level to reach the target for the peak budget, without changing temporal profile (i.e. with overshoot)
 
 *KK* p_actualbudgetco2 for ttot > 2020. It includes emissions from 2020 to ttot (including ttot).
 *** (ttot.val - (ttot - 1).val)/2 and pm_ts("2020")/2 are the time periods that haven't been taken into account in the sum over ttot2.
@@ -290,7 +290,7 @@ display p_actualbudgetco2;
 *** ---------------------------------------------------------------------------------------------------------------
 
 if (cm_iterative_target_adj eq 9,
-*' Update CO2 tax trajectories / cumulative GHG emission level (CO2+CH4+N2O, in CO2eq units) to reach the peak CO2 budget, with a linear increase afterwards given by `c_taxCO2inc_after_peakBudgYr`.  The
+*' Update CO2 tax trajectories / cumulative emission level to reach the target for the peak budget, with a linear increase afterwards given by `c_taxCO2inc_after_peakBudgYr`.  The
 *' peak budget year is determined automatically (within the time window 2040--2100)
 
 *' `p_actualbudgetco2(ttot)` includes emissions from 2020 to `ttot` (inclusive).
