@@ -308,6 +308,7 @@ $setglobal biomass  magpie_40     !! def = magpie_hightccost
 *' * (timeDepGrades): time-dependent grade structure of fossil resources (oil & gas only)
 *' * (grades2poly)  : simplified version of the time-dependent grade realization (using polynomial functions)
 *' * (exogenous)    : exogenous fossil extraction and costs
+*' * (MOFEX)        : contains the standalone version of MOFEX (Model Of Fossil EXtraction), which minimizes the discounted extraction and trade costs of fossils while balancing trade for each time step. Not to be run within a REMIND run but instead through the standalone architecture or soft-linked with REMIND (not yet implemented)
 $setglobal fossil  grades2poly        !! def = grades2poly
 *'---------------------    32_power    ----------------------------------------
 *'
@@ -512,7 +513,7 @@ parameter
   cm_nucscen       = 2;        !! def = 2  !! regexp = 2|5|6
 *' *  (2): no fnrs, tnrs with restricted new builds until 2030 (based on current data on plants under construction, planned or proposed)
 *' *  (5): no new nuclear investments after 2020
-*' *  (6): +33% investment costs (tnrs) & uranium resources increased by a factor of 10
+*' *  (6): +33% investment costs for tnrs under SSP5, uranium resources increased by a factor of 10 
 *'
 parameter
   cm_ccapturescen       "carbon capture option choice, no carbon capture only if CCS and CCU are switched off!"
