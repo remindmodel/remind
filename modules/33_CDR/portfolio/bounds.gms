@@ -9,6 +9,12 @@
 vm_emiCdr.fx(t,regi,emi)$(not sameas(emi,"co2")) = 0.0;
 vm_emiCdr.l(t,regi,"co2")$(t.val ge 2025 AND cm_ccapturescen ne 2) = -sm_eps;
 
+*' Fix CDR-module variables to zero for early time steps t < 2025 (no CDR in the real-world)
+*' to reduce unnecessary freedom (and likelyhood of spontaneous solver infeasibilities)
+v33_emi.fx(t,regi,te_all33)$(t.val lt 2025) = 0.0;
+v33_FEdemand.fx(t,regi,entyFe,entyFe2,te_all33)$(t.val lt 2025) = 0.0;
+v33_EW_onfield.fx(t,regi,rlf_cz33,rlf)$(t.val lt 2025) = 0.0;
+
 *' Bounds if there are no technologies in the portfolio
 if(card(te_used33) eq 0,
     vm_emiCdr.fx(t,regi,"co2") = 0;
