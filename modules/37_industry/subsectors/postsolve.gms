@@ -63,7 +63,7 @@ o37_demFeIndSub(ttot,regi,entySE,entyFE,secInd37,emiMkt)
 
 *** industry captured fuel CO2
 pm_IndstCO2Captured(ttot,regi,entySE,entyFE(entyFEcc37),secInd37,emiMkt)$(
-                     macBaseInd37(entyFE,secInd37)
+                     emiInd37_fe2sec(entyFE,secInd37)
                  AND sum(entyFE2, vm_emiIndBase.l(ttot,regi,entyFE2,secInd37)) )
   = ( o37_demFEindsub(ttot,regi,entySE,entyFE,secInd37,emiMkt)
     * sum(se2fe(entySE2,entyFE,te),

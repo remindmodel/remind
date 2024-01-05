@@ -46,8 +46,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 $endif.cm_subsec_model_steel
   /
 
-  !! rename to something like emiInd_fe2sector
-  macBaseInd37(all_enty,secInd37)   "FE and industry combinations that have emissions"
+  emiInd37_fe2sec(all_enty,secInd37)   "FE and industry combinations that have emissions"
   /
     (fesos, fehos, fegas) . (cement, chemicals, steel, otherInd)
     co2cement_process     . cement
