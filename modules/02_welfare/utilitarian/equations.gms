@@ -46,6 +46,9 @@ $ifthen %cm_INCONV_PENALTY% == "on"
       - v02_inconvPenCoalSolids(ttot,regi)
 $endif
 $ifthen "%cm_INCONV_PENALTY_FESwitch%" == "on"
+        !! inconvenience cost for fuel switching in FE between fossil,
+        !! biogenic, synthetic solids, liquids and gases across sectors and
+        !! emissions markets
       - sum((entySe,entyFe,te,sector,emiMkt)$(
                                     se2fe(entySe,entyFe,te)
                                 AND entyFe2Sector(entyFe,sector) 
@@ -102,6 +105,5 @@ q02_inconvPenFeBioSwitch(ttot,regi,entySe,entyFe,te,sector,emiMkt)$(
   0
 ;
 $ENDIF.INCONV_bioSwitch
-
 
 *** EOF ./modules/02_welfare/utilitarian/equations.gms

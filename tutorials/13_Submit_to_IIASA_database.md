@@ -95,3 +95,10 @@ The following functions from `piamInterfaces` might be helpful for further analy
 - [`checkSummationsRegional()`](https://github.com/pik-piam/piamInterfaces/blob/master/R/checkSummationsRegional.R) checks whether regional aggregation is correct.
 - [`fixOnRef()`](https://github.com/pik-piam/piamInterfaces/blob/master/R/fixOnRef.R) checks whether the runs are correctly fixed on their reference run for delayed transition scenarios.
 - [`plotIntercomparison()`](https://github.com/pik-piam/piamInterfaces/blob/master/R/plotIntercomparison.R) plots area and line plots of selected variables.
+
+## Further Information
+
+Please refer to [this repository](https://gitlab.pik-potsdam.de/REMIND/miptemplate) for a showcase of all the tools and best practices when working with data from the IIASA database, including:
+- how to download data from the IIASA database
+- how read in and validate data in R
+- how to create plots from the data in R

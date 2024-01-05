@@ -48,7 +48,7 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
     # how parameter n is defined in main.gms
     paramdef <- paste0("^([ ]*", n, "[ ]*=|\\$setglobal[ ]+", n, " )")
     # filter fitting parameter definition from code snippets containing regexp
-    filtered <- grep(paste0(paramdef, ".*regexp[ ]*=[ ]*"), code, value = TRUE)
+    filtered <- grep(paste0(paramdef, ".*regexp[ ]*=[ ]*"), code, value = TRUE, ignore.case = TRUE)
     if (length(filtered) == 1) {
       # search for string '!! regexp = whatever', potentially followed by '!! otherstuff' and extract 'whatever'
       regexp <- paste0("^(", trimws(gsub("!!.*", "", gsub("^.*regexp[ ]*=", "", filtered))), ")$")
@@ -67,7 +67,8 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
     # count errors
     if (! is.null(errormsg)) {
       errorsfound <- errorsfound + 1
-      if (testmode) warning(errormsg) else message(errormsg)
+      message(errormsg)
+      if (testmode) warning(errormsg)
     }
   }
 

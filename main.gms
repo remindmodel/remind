@@ -1142,6 +1142,19 @@ parameter
 ;
   c_changeProdCost = 5;  !! def = 5
 *'
+parameter
+  cm_LearningSpillover      "Activate Learningspillover from foreign capacity in learning technogolies"
+;
+  cm_LearningSpillover = 1; !! def 1 = Learningspillover activated (set to 0 to deactivate)
+*'
+*' * if Learningspillover is deactivated, foreign capacity is set to the level of 2020 in technology learning.
+*' * This means that in the model, each region's learning depends on its OWN additional capacity investment after 2020 in comparison to the GLOBAL cumulative capacity until 2020, 
+*' * so for small regions learning is very slow. This is a very pessimistic interpretation of 'no learning spillovers',
+*' * as every region has to climb up the global learning curve all by itself.
+*' * In combination with endogenous carbon pricing (e.g., in NDC), the deactivated Learningspillover will lead to higher overall carbon prices. Can be solved by setting carbonprice to exogenous (config).
+*'
+*'
+*'
 ***-----------------------------------------------------------------------------
 *' ####                     FLAGS
 ***-----------------------------------------------------------------------------
@@ -1241,7 +1254,7 @@ $setGlobal cm_oil_scen  medOil         !! def = medOil  !! regexp = lowOil|medOi
 ***  (lowGas): low
 ***  (medGas): medium
 ***  (highGas): high
-$setGlobal cm_gas_scen  medGas         !! def = medGas  !! regexp = low|medium|high
+$setGlobal cm_gas_scen  medGas         !! def = medGas  !! regexp = lowGas|medGas|highGas
 *** cm_coal_scen     "assumption on coal availability"
 ***  (0): very low (this has been the "low" case; RoSE relevant difference)
 ***  (lowCoal): low (this is the new case)
@@ -1303,13 +1316,13 @@ $setGlobal cm_vehiclesSubsidies  off !! def = off
 ***     To limit CCS to 8 GtCO2 and BECCS to 5 GtCO2, use "2050.GLO.tax.t.CCS.all 8000, 2050.GLO.tax.t.CCS.biomass 5000"
 $setGlobal cm_implicitQttyTarget  off !! def = off
 *** cm_loadFromGDX_implicitQttyTargetTax "load p47_implicitQttyTargetTax values from gdx for first iteration. Usefull for policy runs."
-$setGlobal cm_loadFromGDX_implicitQttyTargetTax  off  !! def = off  !! regexp = off|Initial|HighElectricityPrice|HighGasandLiquidsPrice|HighPrice|LowPrice|LowElectricityPrice"
+$setGlobal cm_loadFromGDX_implicitQttyTargetTax  off  !! def = off  !! regexp = off|on
 *** cm_implicitPriceTarget "define tax/subsidies to match FE prices defined in the pm_implicitPriceTarget parameter."
-***   Aceptable values: "off", "Initial", "HighElectricityPrice", "HighGasandLiquidsPrice", "HighPrice", "LowPrice", "LowElectricityPrice"
-$setGlobal cm_implicitPriceTarget  off  !! def = off  !! regexp = off|highFossilPrice
+***   Acceptable values: "off", "Initial", "HighElectricityPrice", "HighGasandLiquidsPrice", "HighPrice", "LowPrice", "LowElectricityPrice"
+$setGlobal cm_implicitPriceTarget  off  !! def = off  !! regexp = off|Initial|HighElectricityPrice|HighGasandLiquidsPrice|HighPrice|LowPrice|LowElectricityPrice"
 *** cm_implicitPePriceTarget "define tax/subsidies to match PE prices defined in the pm_implicitPePriceTarget parameter."
-***   Aceptable values: "off", "highFossilPrice".
-$setGlobal cm_implicitPePriceTarget  off !! def = off
+***   Acceptable values: "off", "highFossilPrice".
+$setGlobal cm_implicitPePriceTarget  off  !! def = off  !! regexp = off|highFossilPrice
 *** cm_VREminShare "minimum variable renewables share requirement per region."
 ***   Example on how to use:
 ***     cm_VREminShare = "2050.EUR_regi 0.7".
@@ -1369,11 +1382,18 @@ $setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for
 *** cm_import_tax
 *** set tax on imports for specific regions on traded energy carriers
 *** as a fraction of import price
-*** example: "EUR.pebiolc 0.5" means bioenergy imports to EUR see 50% tax on top of world market price.
+*** example: "EUR.pebiolc.worldPricemarkup 0.5" means bioenergy imports to EUR see 50% tax on top of world market price.
 *** If you specify a value for a region within a region group (e.g. DEU in EU27_regi),
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
-*** For example: "DEU.pegas 3, EU27_regi.pegas 1.5".
-$setGlobal cm_import_tax off !! def off
+*** For example: "DEU.pegas.worldPricemarkup 3, EU27_regi.pegas.worldPricemarkup 1.5".
+*** Other options are taxCO2markup and avtaxCO2markup that tax imported CO2 emission (i.e emissions associated to imports of energy carriers)
+*** with the national CO2 price (CO2taxmarkup) or the max between national and average CO2 price (avCO2taxmarkup).
+*** Example: "GLO.(pecoal,pegas,peoil).CO2taxmarkup 1" implements a global CO2 tax markup for imports.
+*** Using different markups for each fossil PE is not recommended, "Price|Carbon|Imported" will then report an unweighted average.
+*** NOTE: In case of "CO2taxmarkup" and "avCO2taxmarkup" there is double-taxation of the CO2-content of the imported energy carrier:
+*** Once when being imported (at the border) and once when being converted to Secondary Energy (normal CO2price applied by REMIND)
+*** In combination with endogenous carbon pricing, the import tax will lead to lower overall carbon prices. Can be solved by setting carbonprice to exogenous (config).
+$setGlobal cm_import_tax off !! def = off  !! regexp = .*(worldPricemarkup|CO2taxmarkup|avCO2taxmarkup|off).*
 *** cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 *** EU-specific SE import assumptions (used for ariadne)
 *** different exogenous hydrogen import scenarios for EU regions (developed in ARIADNE project)
@@ -1663,6 +1683,9 @@ $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_p
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_industry_FE_target  1
 $setglobal c_testOneRegi_region  EUR       !! def = EUR  !! regexp = [A-Z]{3}
+
+*** cm_taxrc_RE     "switch to define whether tax on (CO2 content of) energy imports is recycled to additional direct investments in renewables (wind, solar and storage)"
+$setglobal cm_taxrc_RE  none   !! def = none   !! regexp = none|REdirect
 
 *' @stop
 
