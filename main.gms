@@ -1355,10 +1355,10 @@ $setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for
 *** cm_import_tax
 *** set tax on imports for specific regions on traded energy carriers
 *** as a fraction of import price
-*** example: "EUR.worldPricemarkup.pebiolc 0.5" means bioenergy imports to EUR see 50% tax on top of world market price.
+*** example: "EUR.pebiolc.worldPricemarkup 0.5" means bioenergy imports to EUR see 50% tax on top of world market price.
 *** If you specify a value for a region within a region group (e.g. DEU in EU27_regi),
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
-*** For example: "DEU.worldPricemarkup.pegas 3, EU27_regi.worldPricemarkup.pegas 1.5".
+*** For example: "DEU.pegas.worldPricemarkup 3, EU27_regi.pegas.worldPricemarkup 1.5".
 *** Other options are taxCO2markup and avtaxCO2markup that tax imported CO2 emission (i.e emissions associated to imports of energy carriers)
 *** with the national CO2 price (CO2taxmarkup) or the max between national and average CO2 price (avCO2taxmarkup).
 *** Example: "GLO.(pecoal,pegas,peoil).CO2taxmarkup 1" implements a global CO2 tax markup for imports.
