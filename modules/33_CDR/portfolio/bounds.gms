@@ -9,12 +9,6 @@
 vm_emiCdr.fx(t,regi,emi)$(not sameas(emi,"co2")) = 0.0;
 vm_emiCdr.l(t,regi,"co2")$(t.val ge 2025 AND cm_ccapturescen ne 2) = -sm_eps;
 
-*' Fix CDR-module variables to zero for early time steps t < 2025 (no CDR in the real-world)
-*' to reduce unnecessary freedom (and likelyhood of spontaneous solver infeasibilities)
-v33_emi.fx(t,regi,te_all33)$(t.val lt 2025) = 0.0;
-v33_FEdemand.fx(t,regi,entyFe,entyFe2,te_all33)$(fe2cdr(entyFe,entyFe2,te_all33) AND (t.val lt 2025)) = 0.0;
-v33_EW_onfield.fx(t,regi,rlf_cz33,rlf)$(t.val lt 2025) = 0.0;
-
 *' Bounds if there are no technologies in the portfolio
 if(card(te_used33) eq 0,
     vm_emiCdr.fx(t,regi,"co2") = 0;
@@ -29,9 +23,14 @@ if(card(te_ccs33) eq 0,
 v33_emi.fx(t,regi,te_all33)$(not te_used33(te_all33)) = 0;
 v33_FEdemand.fx(t,regi,entyFe,entyFe2,te_all33)$(not te_used33(te_all33) and fe2cdr(entyFe,entyFe2,te_all33)) = 0;
 
-*' Bounds for DAC (cm_emiscen ne 1 avoids setting the boundary for the business-as-usual scenario)
-if (te_used33("dac") and cm_emiscen ne 1,
-    vm_cap.lo(t,regi,"dac",rlf)$(teNoTransform2rlf33("dac",rlf) AND (t.val ge max(2025,cm_startyear))) = sm_eps;
+*' And fix negative emissions and FE demand to zero for early time steps t< 2025 (no CDR in the real world)
+*' to reduce unnecessary freedom (and likelyhood of spontaneous solver infeasibilities)
+v33_emi.fx(t,regi,te_all33)$(t.val lt 2025) = 0.0;
+v33_FEdemand.fx(t,regi,entyFe,entyFe2,te_all33)$(fe2cdr(entyFe,entyFe2,te_all33) AND (t.val lt 2025)) = 0.0;
+
+*' Set minimum DAC capacities (if available) to help the solver find the technology 
+if (te_used33("dac"),
+    vm_cap.lo(t,regi,"dac",rlf)$(teNoTransform2rlf33("dac",rlf) AND (t.val ge 2030)) = sm_eps;
 );
 
 *' Bounds for enhanced weathering
