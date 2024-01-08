@@ -363,12 +363,63 @@ pm_cesdata(t,regi_dyn29,in_29,"effGr") = 1;
 
 *** we compute quantities for everything up to the last CES level inco.(lab,kap,en)
 
+
 loop  ((t,cesRev2cesIO(counter,ipf_29(out)))$( NOT (  sameas(out,"inco")) ),
   pm_cesdata(t,regi_dyn29,out,"quantity")
   = sum(cesOut2cesIn(out,in),
       pm_cesdata(t,regi_dyn29,in,"price")
     * pm_cesdata(t,regi_dyn29,in,"quantity")
     );
+*** Ensure that the labour share in GDP is at least 20 % for historical periods
+*** and 0.5 % for others.
+sm_tmp  = 0;
+sm_tmp2 = 0;
+
+put logfile;
+loop ((t_29hist(t),regi_dyn29(regi)),
+  sm_tmp
+  = sum(in$(sameAs(in, "kap") OR sameAs(in,"en")),
+      pm_cesdata(t,regi,in,"quantity")
+    * pm_cesdata(t,regi,in,"price")
+    )
+    / pm_cesdata(t,regi,"inco","quantity");
+
+
+   if ( (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) )) lt sm_tmp,
+
+   put t.tl, " ", regi.tl, " labour share in GDP: ", (1 - sm_tmp);
+
+     pm_cesdata(t,regi,ppf_29(in),"price") $ ( NOT (  sameAs(in, "lab")
+                                                       OR in_complements(in)) )
+     = pm_cesdata(t,regi,in,"price")
+     * (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) ))
+     / sm_tmp;
+
+     loop (cesOut2cesIn(in2,in)$( ppf_29(in) AND in_complements(in) ),
+       pm_cesdata(t,regi,in2,"price")
+       = pm_cesdata(t,regi,in2,"price")
+       * (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) ))
+       / sm_tmp;
+     );
+
+     put " -> ", (1 - (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) ))) /;
+     sm_tmp2 = sm_tmp2 + 1;
+     );
+);
+putclose logfile;
+!! If there has been a rescaling for historical steps, repeat previous steps with new prices
+if ( sm_tmp2 gt 0, !! If there has been a rescaling
+
+  loop  ((t,cesRev2cesIO(counter,ipf_29(out)))$( NOT (  sameas(out,"inco")
+                                                        OR in_below_putty(out)
+                                                        OR ppf_putty(out))     ),
+    pm_cesdata(t,regi_dyn29,out,"quantity")$( NOT ipf_putty(out) )
+    = sum(cesOut2cesIn(out,in),
+        pm_cesdata(t,regi_dyn29,in,"price")
+      * pm_cesdata(t,regi_dyn29,in,"quantity")
+      );
+  );    
+      
 );
 
 ***_____________________________ END OF: CALCULATE IPF _____________________________
@@ -772,6 +823,48 @@ $endif.subsectors
 
 ***_____________________________ END OF: BEYOND CALIB ________________________________________
 
+***_____________________________ START OF: COMPUTE ELASTICITIES OF SUBSTITUTION ________________________________________
+
+*** Elasticities of substitution are normally prescribed manually.
+*** However, they can also be estimated from technological data. This is done here.
+*** At the time of documentation, the nodes for which this is done are in the services_with_capital realization of the
+*** buildings module.
+
+*** Compute the rho parameter from the elasticity of substitution
+pm_cesdata(ttot,regi,ipf(out),"rho")$(    ttot.val ge 2005
+                                      AND pm_cesdata_sigma(ttot,out)
+                                      AND pm_cesdata_sigma(ttot,out) ne -1 )
+    !! Do not compute it if sigma = 0, because these should be estimated
+  = 1 - (1 / pm_cesdata_sigma(ttot,out));
+
+*** Check whether all sigma = INF correspond to complementary factors
+*** while it seems contradictory, the model currently only supports
+*** complementary factors which add up to yield their output (therefore the perfect substituability).
+*** OUT = IN1 + IN2 + IN3 +...
+*** The complementarity is ensured by the production constraints on the relations between IN1, IN2, etc
+*** For the estimation of Esubs: set the CES out to 1 if the CES inputs are in the data
+loop (cesOut2cesIn(out,in) $ (pm_cesdata_sigma("2015",out) eq -1),
+ p29_capitalUnitProjections(all_regi,out,index_Nr) $p29_capitalUnitProjections(all_regi,in,index_Nr) = 1;
+);
+loop ((cesOut2cesIn(out,in),  t_29hist_last(t))$((pm_cesdata_sigma(t,out) eq -1) AND ppfKap(in)),
+
+ p29_output_estimation(regi_dyn29(regi),out) = ( pm_cesdata(t,regi,out,"quantity") )
+                                               / ( pm_cesdata(t,regi,in,"quantity") )
+                                               * p29_capitalUnitProjections(regi,in,"0") !! index = 0, is the typical technology
+
+);
+pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1) =
+ 1 -  (1 - pm_cesdata(t,regi,in,"rho"))
+ / ( 1 + min(max((pm_ttot_val(t) - 2015)/(2050 -2015),0),1)
+         * p29_esubGrowth
+    )
+;
+pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 AND pm_cesdata(t,regi,in,"rho") lt 0) = min(pm_cesdata(t,regi,in,"rho"), 1 - 1/0.8); !! If complementary factors, sigma should be below 0.8
+pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 AND pm_cesdata(t,regi,in,"rho") ge 0) = max(pm_cesdata(t,regi,in,"rho"), 1 - 1/1.2); !! If substitution factors, sigma should be above 1.2
+pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 ) = max ( v29_rho.lo(regi,in), pm_cesdata(t,regi,in,"rho"));
+pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 ) = min ( v29_rho.up(regi,in), pm_cesdata(t,regi,in,"rho"));
+
+***_____________________________ END OF: COMPUTE ELASTICITIES OF SUBSTITUTION ________________________________________
 ***_____________________________ START OF: PASS EFF TIME EVOLUTION TO EFFGR ________________________________________
 
 *** Finally, we take the evolution of xi and eff, and pass it on to effGr.
