@@ -6,9 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/portfolio/equations.gms
 
-
+*' @equations
 ***---------------------------------------------------------------------------
-*** Equations concerning two or more options
+*' #### Equations concerning two or more options
 
 ***---------------------------------------------------------------------------
 *'  CDR Final Energy Balance
@@ -44,7 +44,7 @@ q33_H2bio_lim(t,regi)..
     ;
 
 ***---------------------------------------------------------------------------
-*** DAC
+*' #### DAC equations
 
 ***---------------------------------------------------------------------------
 *'  Calculation of (negative) CO2 emissions from direct air capture.
@@ -81,7 +81,7 @@ q33_DAC_FEdemand(t,regi,entyFe2)$sum(entyFe, fe2cdr(entyFe,entyFe2,"dac"))..
     ;
 
 ***---------------------------------------------------------------------------
-*** EW
+*' #### EW equations
 
 ***---------------------------------------------------------------------------
 *'  Calculation of the amount of ground rock spread in timestep t.
@@ -157,7 +157,7 @@ q33_EW_potential(t,regi,rlf_cz33)..
     ;
 
 ***---------------------------------------------------------------------------
-*'  An annual limit for the maximum amount of rocks spred [Gt] can be set via cm_LimRock,
+*'  An annual limit for the maximum global amount of rocks spread [Gt] can be set via cm_LimRock,
 *'  e.g. due to sustainability concerns.
 ***---------------------------------------------------------------------------
 q33_EW_LimEmi(t,regi)..

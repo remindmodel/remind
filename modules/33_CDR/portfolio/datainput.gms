@@ -6,12 +6,15 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/portfolio/datainput.gms
 
-*** direct air capture input data
-!! Beuttler et al. 2019 (Climeworks)
+*' @code
+*' #### DAC input data
+*' FE demand from Beuttler et al. 2019 (Climeworks)
 p33_fedem("dac", "feels") = 5.28; !! FE demand electricity for ventilation
 p33_fedem("dac", "fehes") = 21.12; !! FE demand heat for material recovery
 
-*** enhanced weatering input data
+
+*' #### EW input data
+*' @stop
 table f33_maxProdGradeRegiWeathering(all_regi,rlf)  "regional maximum potentials for enhanced weathering in Gt of grinded stone/a for different grades"
 $ondelim
 $include "./modules/33_CDR/portfolio/input/f33_maxProdGradeRegiWeathering.cs3r"
@@ -29,7 +32,9 @@ $offdelim
 display p33_EW_transport_costs;
 
 s33_step = 2.5;
-*** fix costs [T$/Gt stone]. Data from strefler et al. in $/t stone: mining, crushing, grinding (5.0 investment costs, 25.1 O&M costs), spreading (12.1 O&M costs)
+
+*' @code
+*' fix costs [T$/Gt stone]. Data from strefler et al. in $/t stone: mining, crushing, grinding (5.0 investment costs, 25.1 O&M costs), spreading (12.1 O&M costs)
 s33_costs_fix = 0.0422;
 s33_co2_rem_pot = 0.3 * 12/44;       !! default for basalt, for Olivine 1.1
 
@@ -44,5 +49,5 @@ p33_fedem("weathering", "fedie") = 0.3;
 
 *' Factor distributing the global rock limit across regions according to population
 p33_LimRock(regi) = pm_pop("2005",regi) / sum(regi2,pm_pop("2005",regi2));
-
+*' @stop
 *** EOF ./modules/33_CDR/portfolio/datainput.gms
