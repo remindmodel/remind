@@ -25,6 +25,7 @@ q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr"))..
 
 ***---------------------------------------------------------------------------
 *'  Sum of all CDR emissions other than BECCS and afforestation, which are calculated in the core.
+*'  Note that this includes all CO2 removed in this module that enters the CCUS chain.
 ***---------------------------------------------------------------------------
 q33_emiCDR(t,regi)..
     vm_emiCdr(t,regi,"co2")
@@ -48,7 +49,7 @@ q33_H2bio_lim(t,regi)..
 ***---------------------------------------------------------------------------
 *'  Calculation of (negative) CO2 emissions from direct air capture.
 ***---------------------------------------------------------------------------
-q33_DAC_capconst(t,regi)..
+q33_DAC_emi(t,regi)..
     v33_emi(t,regi,"dac")
     =e=
     - sum(teNoTransform2rlf33("dac",rlf),
@@ -57,7 +58,7 @@ q33_DAC_capconst(t,regi)..
     ;
 
 ***---------------------------------------------------------------------------
-*'  Preparation of captured emissions to enter the CCS chain.
+*'  Preparation of captured emissions to enter the CCUS chain.
 *'  The first part of the equation describes emissions captured from the ambient air,
 *'  the second part calculates the CO2 captured from the gas used for heat production
 *'  assuming 90% capture rate.

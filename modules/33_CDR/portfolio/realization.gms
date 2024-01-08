@@ -7,9 +7,10 @@
 *** SOF ./modules/33_CDR/portfolio/realization.gms
 
 *' @description
-*' (DACCS) Direct air capture uses heat and electricity to capture CO2 from the atmosphere,
-*' which can then either be used or stored. Based on the climeworks technology described in Beutler et al. 2019,
-*' we assume 5.28 EJ/Gt C (* 12 Gt C/44 Gt CO2) = 1.44 GJ/tCO2 (*10^6 kJ / GJ * 1h/3600s) =  400 kWh/tCO2
+*' (DAC) Direct air capture uses heat and electricity to capture CO2 from the atmosphere,
+*' which can then either be used or stored. Modelled is a low-temperature solid adsorbent process based 
+*' on the climeworks technology described in Beuttler et al. 2019.
+*' We assume 5.28 EJ/Gt C (* 12 Gt C/44 Gt CO2) = 1.44 GJ/tCO2 (*10^6 kJ / GJ * 1h/3600s) =  400 kWh/tCO2
 *' electricity and 21.12 EJ/Gt C (* 12 Gt C/44 Gt CO2) = 5,76 GJ/tCO2 (*10^6 kJ / GJ * 1h/3600s) = 1600 kWh/tCO2
 *' low-temperature heat demand. The heat can be provided via district heat, electricity, gas, or H2. If gas is used,
 *' the resulting CO2 is captured with a capture rate of 90%.

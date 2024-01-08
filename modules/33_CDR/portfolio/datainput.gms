@@ -7,7 +7,7 @@
 *** SOF ./modules/33_CDR/portfolio/datainput.gms
 
 *** direct air capture input data
-!! Beutler et al. 2019 (Climeworks)
+!! Beuttler et al. 2019 (Climeworks)
 p33_fedem("dac", "feels") = 5.28; !! FE demand electricity for ventilation
 p33_fedem("dac", "fehes") = 21.12; !! FE demand heat for material recovery
 
@@ -33,15 +33,16 @@ s33_step = 2.5;
 s33_costs_fix = 0.0422;
 s33_co2_rem_pot = 0.3 * 12/44;       !! default for basalt, for Olivine 1.1
 
-*** carbon removal rate: eqs 2+c1 in strefler, amann et al., 2017: wr = grain surface area based WR (10^-10.53 mol m^-2 s^-1) * molar weight of basalt/forsterite (140.7 g/mol) * 3.155^7 s/a * SSA(gs)
+*' carbon removal rate: eqs 2+c1 in strefler, amann et al. (2018): wr = grain surface area based WR (10^-10.53 mol m^-2 s^-1) * molar weight of basalt/forsterite (140.7 g/mol) * 3.155^7 s/a * SSA(gs)
 s33_co2_rem_rate = 10**(-10.53) * 125 * 3.155*10**7 * 69.18*(cm_gs_ew**(-1.24));
 p33_co2_rem_rate("1") = -log(1-s33_co2_rem_rate * 0.94);
 p33_co2_rem_rate("2") = -log(1-s33_co2_rem_rate * 0.29);
 
-*JeS fit from Thorben: SI D in strefler, amann et al. (2017)
+*' JeS FE demand fit from Thorben: SI D in strefler, amann et al. (2018)
 p33_fedem("weathering", "feels") = 6.62 * cm_gs_ew**(-1.16);
 p33_fedem("weathering", "fedie") = 0.3;
 
+*' Factor distributing the global rock limit across regions according to population
 p33_LimRock(regi) = pm_pop("2005",regi) / sum(regi2,pm_pop("2005",regi2));
 
 *** EOF ./modules/33_CDR/portfolio/datainput.gms
