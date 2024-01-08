@@ -85,5 +85,14 @@ q36_costCESmarkup(t,regi,in)$(ppfen_buildings_dyn36(in))..
      + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
 
+***---------------------------------------------------------------------------
+*' Use at least as much solids from biomass in buildings as was transformed
+*' via biotr in order to prevent that traditionally used biomass is also used
+*' in other sectors. This only applies to regions that still have trational
+*' biomass use, which is defined via a gdp criteria.
+***---------------------------------------------------------------------------
+q36_biotrBound(t,regi)$((pm_gdp("2005",regi)/pm_pop("2005",regi) / pm_shPPPMER(regi)) lt 4)..
+  vm_demFeSector_afterTax(t,regi,'sesobio','fesos','build',emiMkt)$(sector2emiMkt('build',emiMkt))
+  =g= vm_prodSe(t,regi,"pebiolc","sesobio","biotr")
 
 *** EOF ./modules/36_buildings/simple/equations.gms
