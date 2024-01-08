@@ -788,13 +788,13 @@ parameter
 *' *   (3) SSP5: pessimistic techno-economic assumptions
 *'
 parameter
-  c_ccsinjecratescen        "CCS injection rate factor, 0.5% by default yielding a 60 Mt per year IR"
+  c_ccsinjecratescen        "CCS injection rate factor applied to total regional storage potentials, yielding an upper bound on annual injection"
 ;
   c_ccsinjecratescen    = 1;         !! def = 1  !! regexp = [0-5]
-*' This flag determines the upper bound of the CCS injection rate
-*' CCS refers to carbon sequestration, carbon capture is modelled separately
+*' This switch determines the upper bound of the annual CCS injection rate.
+*' CCS here refers to carbon sequestration, carbon capture is modelled separately.
 *' *   (0) no "CCS" as in no carbon sequestration at all
-*' *   (1) reference case: 0.005; max 19.7 GtCO2/yr globally
+*' *   (1) reference case: 0.005; max 19.7 GtCO2/yr globally  
 *' *   (2) lower estimate: 0.0025; max 9.8 GtCO2/yr globally 
 *' *   (3) upper estimate: 0.0075; max 29.5 GtCO2/yr globally
 *' *   (4) unconstrained: 1; max 3900 GtCO2/yr globally
