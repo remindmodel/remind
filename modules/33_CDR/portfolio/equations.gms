@@ -30,7 +30,7 @@ q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr"))..
 q33_emiCDR(t,regi)..
     vm_emiCdr(t,regi,"co2")
     =e=
-    sum(te_used33, v33_emi(t,regi,te_used33))
+    sum(te_used33, vm_emiCdrTeDetail(t,regi,te_used33))
     ;
 
 ***---------------------------------------------------------------------------
@@ -50,7 +50,7 @@ q33_H2bio_lim(t,regi)..
 *'  Calculation of (negative) CO2 emissions from direct air capture.
 ***---------------------------------------------------------------------------
 q33_DAC_emi(t,regi)..
-    v33_emi(t,regi,"dac")
+    vm_emiCdrTeDetail(t,regi,"dac")
     =e=
     - sum(teNoTransform2rlf33("dac",rlf),
         vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf)
@@ -66,7 +66,7 @@ q33_DAC_emi(t,regi)..
 q33_DAC_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
     sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
     =e=
-    - v33_emi(t,regi,"dac")
+    - vm_emiCdrTeDetail(t,regi,"dac")
     + (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * sum(fe2cdr("fegas",entyFe2,te_used33), v33_FEdemand(t,regi,"fegas", entyFe2,te_used33))
     ;
 
@@ -77,7 +77,7 @@ q33_DAC_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
 q33_DAC_FEdemand(t,regi,entyFe2)$sum(entyFe, fe2cdr(entyFe,entyFe2,"dac"))..
     sum(fe2cdr(entyFe,entyFe2,"dac"), v33_FEdemand(t,regi,entyFe,entyFe2,"dac"))
     =e=
-    p33_fedem("dac", entyFe2) * sm_EJ_2_TWa * (- v33_emi(t,regi,"dac"))
+    p33_fedem("dac", entyFe2) * sm_EJ_2_TWa * (- vm_emiCdrTeDetail(t,regi,"dac"))
     ;
 
 ***---------------------------------------------------------------------------
@@ -119,7 +119,7 @@ q33_EW_onfield_tot(ttot,regi,rlf_cz33,rlf)$(ttot.val ge max(2025, cm_startyear))
 *'  Calculation of (negative) CO2 emissions from enhanced weathering.
 ***---------------------------------------------------------------------------
 q33_EW_emi(t,regi)..
-    v33_emi(t,regi, "weathering")
+    vm_emiCdrTeDetail(t,regi, "weathering")
     =e=
     sum((rlf_cz33, rlf),
         - v33_EW_onfield_tot(t,regi,rlf_cz33,rlf) * s33_co2_rem_pot * (1 - exp(-p33_co2_rem_rate(rlf_cz33)))

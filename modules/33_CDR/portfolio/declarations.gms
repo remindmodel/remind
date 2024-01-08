@@ -27,7 +27,7 @@ vm_ccs_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "total emissions capture
 ;
 
 negative variables
-v33_emi(ttot,all_regi,all_te)               "negative emissions from CDR [GtC / a]"
+vm_emiCdrTeDetail(ttot,all_regi,all_te)               "(negative) emissions from CDR technologies in the CDR module by technology. Includes all captured emissions that enter the CCUS chain [GtC / a]"
 ;
 
 equations

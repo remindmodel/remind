@@ -20,7 +20,7 @@ if(card(te_ccs33) eq 0,
 );
 
 *' Fix negative emissions and FE demand to zero for all the technologies that are not used
-v33_emi.fx(t,regi,te_all33)$(not te_used33(te_all33)) = 0;
+vm_emiCdrTeDetail.fx(t,regi,te_all33)$(not te_used33(te_all33)) = 0;
 v33_FEdemand.fx(t,regi,entyFe,entyFe2,te_all33)$(not te_used33(te_all33) and fe2cdr(entyFe,entyFe2,te_all33)) = 0;
 
 *' Bounds for DAC (cm_emiscen ne 1 avoids setting the boundary for the business-as-usual scenario)
