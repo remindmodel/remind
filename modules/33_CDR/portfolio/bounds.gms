@@ -29,7 +29,7 @@ v33_emi.fx(t,regi,te_used33)$(t.val lt 2025) = 0.0;
 v33_FEdemand.fx(t,regi,entyFe,entyFe2,te_used33)$(fe2cdr(entyFe,entyFe2,te_used33) AND (t.val lt 2025)) = 0.0;
 vm_emiCdr.fx(t,regi,"co2")$(t.val lt 2025) = 0;
 vm_omcosts_cdr.fx(t,regi)$((t.val lt 2025)) = 0;
-vm_cap.fx(t,regi,"weathering",rlf)(t.val lt 2025) = 0;
+vm_cap.fx(t,regi,"weathering",rlf)$(t.val lt 2025) = 0;
 *** vm_cap for dac is fixed for t<2025 in core/bounds.gms (tech_stat eq 4)
 vm_ccs_cdr.fx(t,regi,enty,enty2,te,rlf)$(ccs2te(enty,enty2,te) AND t.val lt 2025) = 0;
 
