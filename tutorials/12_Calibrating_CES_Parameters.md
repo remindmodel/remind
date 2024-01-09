@@ -128,19 +128,39 @@ used.
 
 ## Results
 
-The main output of the CES calibration are a .gdx file and a .inc files with all
+The main output of the CES calibration are a .gdx file and an .inc file with all
 the CES parameters.  They are named based on the CES configuration, the
 GDP/population scenarios, the capital market module realisation and the region
 configuration (e.g. `indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7`).
 You don't need to change these names, they are matched automatically using the
 switch `cm_CES_configuration`.  The parameter files also include a counter for
-the calibration iteration they resulted from (e.g. `_ITERATION_10.inc`).  To
-use the calibration results, copy the parameter (`.inc`) file (without the
-iteration counter) to the directory `./modules/29_CES_parameters/load/input/`
-and the .gdx file to the directory `./config/gdx-files/`.  At PIK, this is done
-automatically using the RSE support scripts.  See [this wiki
-page](https://gitlab.pik-potsdam.de/REMIND/wiki/-/wikis/Handling-of-Gdx-and-Ces-Parameter-Files-in-Remind)
-for details.
+the calibration iteration they resulted from (e.g. `_ITERATION_10.inc`).
+
+Calibration results can be included the PIK calibration repository (for use by
+all REMIND users), or used in a local directory (e.g. for project work).
+
+- To include calibration results in the PIK calibration repository, navigate to
+  `/p/projects/remind/inputdata/CESparametersAndGDX/` on the PIK cluster and use
+  the `collect_calibration` script with one ore more paths to the completed
+  calibration run directories as a parameter (e.g.
+  `./collect_calibration /p/tmp/pehl/Remind/output/SSP2EU-calibrate_2022-09-06_08.48.56/`). \
+  The script will copy the necessary .inc and .gdx files to the repository,
+  (adjusting the file names as needed) stage and commit them.  It will also add
+  the directories the parameter files originated from to the commit message.
+  You can review and amend the message before committing.  (If after reviewing
+  you decide not to commit, use `:cq` in vim to abort.) \
+  The commit will trigger the generation of new `.tgz` archive, which is what
+  the REMIND model will be looking for in order to run.  Finally it will display
+  the commit hash that has to be included as the `CESandGDXrevision` in the
+  REMIND configuration.
+
+- For use in a local directory, use `make set-local-calibration` to set up a
+  `calibration_results/` directory inside the REMIND directory and add it as a
+  repository for `.gdx` files to the REMIND configuration (the `remind_repos` R
+  option).  From there on, proceed inside the local `calibration_results/`
+  directory as you would in the PIK calibration repository on the cluster, i.e.
+  call the `collect_calibration` script on your local calibration results (e.g.
+  `./collect_calibration ../output/SSP2EU-calibrate_2022-09-06_08.48.56/`).
 
 If the specific calibration settings (e.g. `cm_CES_configuration`) have not been
 calibrated and used in REMIND before, the names of the .gdx and .inc files have
@@ -151,10 +171,11 @@ new calibration results are copied into these directories during run setup.
 As for diagnostic output, there are the `full.log` and `full.lst` files for each
 calibration iteration (`full_01.log` …), the file `CES_calibration.csv`
 containing all the relevant calibration parameters (inputs and outputs) for all
-iterations for automated analysis and a `CES_calibration_report` .pdf file with
-plots of quantities, prices, and efficiency parameters over regions, production
-factors, and time.  This .pdf file can also be generated manually using the
-`output.R` script (option "reportCEScalib").
+iterations for automated analysis and a
+`CES_calibration_report_<scenario_name>.pdf` file with plots of quantities,
+prices, and efficiency parameters over regions, production factors, and time.
+This .pdf file can also be generated manually using the `output.R` script
+(option "reportCEScalib").
 
 
 ## Validity

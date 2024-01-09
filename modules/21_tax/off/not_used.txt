@@ -69,3 +69,6 @@ pm_tau_ces_tax,input,questionnaire
 vm_taxrevimplicitPriceTax,input,questionnaire
 vm_taxrevimplicitPePriceTax,input,questionnaire
 vm_changeProdStartyearCost, variable, ???
+vm_costInvTeDir,input,only needed if tax is on
+vm_costInvTeAdj,input,only needed if tax is on
+pm_cintraw,input,only needed if tax is on

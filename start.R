@@ -244,7 +244,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   # ask for slurmConfig if not specified for every run
   if ("--gamscompile" %in% flags) {
     slurmConfig <- "direct"
-    message("\nTrying to compile the selected runs...")
+    message("\nTrying to compile ", nrow(scenarios), " selected runs...")
     lockID <- gms::model_lock()
   }
   if (! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% flags)
@@ -327,7 +327,10 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     # abort on too long paths ----
     cfg$gms$cm_CES_configuration <- calculate_CES_configuration(cfg, check = TRUE)
 
-    cfg <- checkFixCfg(cfg)
+    cfg <- checkFixCfg(cfg, testmode = "--test" %in% flags)
+    if ("errorsfoundInCheckFixCfg" %in% names(cfg)) {
+      errorsfound <- errorsfound + cfg$errorsfoundInCheckFixCfg
+    }
 
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
     if (! "--gamscompile" %in% flags) {

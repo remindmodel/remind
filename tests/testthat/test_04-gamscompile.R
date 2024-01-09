@@ -8,7 +8,7 @@ test_that("start.R --gamscompile startgroup=AMT config/scenario_config.csv works
   unlink(paste0("../../output/gamscompile/*TESTTHAT", c(".gms", ".lst")))
   csvfile <- "config/scenario_config.csv"
   titletag <- paste0("titletag=TESTTHAT-", gsub(".csv$", "", basename(csvfile)))
-  with_mocked_bindings({
+  testthat::with_mocked_bindings({
     skipIfPreviousFailed()
     output <- localSystem2("Rscript",
                            c("start.R", "--gamscompile", "startgroup=AMT", titletag, csvfile))
@@ -41,7 +41,7 @@ test_that("start.R --gamscompile works on all configs and scenarios", {
                  "scenario_config_GCS")
   csvfiles <- grep(paste(skipfiles, collapse = "|"), csvfiles, invert = TRUE, value = TRUE)
   expect_true(length(csvfiles) > 0)
-  with_mocked_bindings(
+  testthat::with_mocked_bindings(
     for (csvfile in csvfiles) {
       test_that(paste("perform start.R --gamscompile with", basename(csvfile)), {
         titletag <- paste0("titletag=TESTTHAT-", gsub(".csv$", "", basename(csvfile)))

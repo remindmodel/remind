@@ -21,7 +21,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   } else {
     cfg <- gms::readDefaultConfig(remindPath)
   }
-  scenConf <- read.csv2(filename, stringsAsFactors = FALSE, na.strings = "", comment.char = "#")
+  scenConf <- read.csv2(filename, stringsAsFactors = FALSE, na.strings = "", comment.char = "#",
+                                  strip.white = TRUE, blank.lines.skip = TRUE)
   scenConf <- scenConf[! is.na(scenConf[1]), ]
   rownames(scenConf) <- scenConf[, 1]
   scenConf[1] <- NULL
@@ -58,6 +59,16 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
       whitespaceErrors <- whitespaceErrors + sum(haswhitespace)
     }
   }
+  missingRealizations <- 0
+  modules <- gms::getModules(file.path(remindPath, "modules"))
+  for (m in intersect(rownames(modules), colnames(scenConf))) {
+    missingRealiz <- setdiff(unique(scenConf[, m]), c(NA, strsplit(modules[m, "realizations"], ",")[[1]]))
+    if (length(missingRealiz) > 0) {
+      warning("For module ", m, ", the undefined realizations ", paste0(missingRealiz, collapse = ", "),
+              " are used by these scenarios: ", paste(rownames(scenConf)[scenConf[,m] %in% missingRealiz], collapse = ", "))
+      missingRealizations <- missingRealizations + length(missingRealiz)
+    }
+  }
 
   # fill empty cells with values from scenario written in copyConfigFrom cell
   copyConfigFromErrors <- 0
@@ -82,25 +93,17 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     message(msg)
   }
   if ("path_gdx_bau" %in% names(scenConf)) {
-    # fix if bau given despite not needed
-    needBau <- list(welfare = "ineqLognormal",
-                    carbonprice = c("NDC", "diffPriceSameCost"),
-                    carbonpriceRegi = "NDC",
-                    emicapregi = "AbilityToPay")
+    # fix if bau given despite not needed. needBau is defined in needBau.R
+    # initialize vector with FALSE everywhere and turn elements to TRUE if a scenario config row setting matches a needBau element
     scenNeedsBau <- rep(FALSE, nrow(scenConf))
-    for (n in names(needBau)) {
-      if (n %in% names(scenConf)) {
-        if (n == "welfare" && "cm_emiscen" %in% names(scenConf)) {
-          scenNeedsBAU <- scenNeedsBau | (scenConf[[n]] %in% needBau[[n]] & scenConf[["cm_emiscen"]] != 1)
-        } else {
-          scenNeedsBau <- scenNeedsBau | scenConf[[n]] %in% needBau[[n]]
-        }
-      }
+    for (n in intersect(names(needBau), names(scenConf))) {
+      scenNeedsBau <- scenNeedsBau | scenConf[[n]] %in% needBau[[n]]
     }
     BAUbutNotNeeded <- ! is.na(scenConf$path_gdx_bau) & ! (scenNeedsBau)
     if (sum(BAUbutNotNeeded) > 0) {
       msg <- paste0("In ", sum(BAUbutNotNeeded), " scenarios, 'path_gdx_bau' is not empty although no realization is selected that needs it.\n",
-                    "To avoid unnecessary dependencies to other runs, setting 'path_gdx_bau' to NA.")
+                    "To avoid unnecessary dependencies to other runs, setting 'path_gdx_bau' to NA for:\n",
+                    paste(rownames(scenConf)[BAUbutNotNeeded], collapse = ", "))
       message(msg)
       scenConf$path_gdx_bau[BAUbutNotNeeded] <- NA
     }
@@ -117,12 +120,11 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   scenConf[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenConf)]] <- NA
 
   # collect errors
-  errorsfound <- sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors
+  errorsfound <- sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors + missingRealizations
 
   # check column names
-  knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
-                        "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig",
-                        "results_folder", "force_replace", "action", "pythonEnabled", "copyConfigFrom")
+  knownColumnNames <- c(names(cfg$gms), setdiff(names(cfg), "gms"), names(path_gdx_list),
+                        "start", "model", "copyConfigFrom")
   if (grepl("scenario_config_coupled", filename)) {
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
@@ -147,6 +149,10 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_trdadj" = "Now always fixed to 2, see https://github.com/remindmodel/remind/pull/1052",
        "cm_OILRETIRE" = "Now always on by default, see https://github.com/remindmodel/remind/pull/1102",
        "cm_fixCO2price" = "Was never in use, removed in https://github.com/remindmodel/remind/pull/1369",
+       "cm_calibration_FE" = "Deleted, only used for old hand made industry trajectories, see https://github.com/remindmodel/remind/pull/1468",
+       "cm_DAC_eff" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/1487",
+       "cm_peakBudgYr" = "Rename to c_peakBudgYr, see https://github.com/remindmodel/remind/pull/1488",
+       "cm_taxCO2inc_after_peakBudgYr" = "Rename to c_taxCO2inc_after_peakBudgYr, see https://github.com/remindmodel/remind/pull/1488",
      NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       if (testmode) {
@@ -166,7 +172,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
               basename(filename), ":")
       message("  ", paste(unknownColumnNames, collapse = ", "))
       message("This check was added Jan. 2022. ",
-              "If you find false positives, add them to knownColumnNames in start/scripts/readCheckScenarioConfig.R.\n")
+              "If you find false positives, add them to knownColumnNames in scripts/start/readCheckScenarioConfig.R.\n")
       unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
       if (length(unknownColumnNamesNoComments) > 0) {
         if (testmode) {

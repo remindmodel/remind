@@ -126,7 +126,12 @@ if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
                          "plot_compare_iterations", "varListHtml", "fixOnRef")
   needingMif <- any(modulesNeedingMif %in% output)
-  dir_folder <- if (exists("remind_dir")) c(file.path(remind_dir, "output"), remind_dir) else "./output"
+  if (exists("remind_dir")) {
+    dir_folder <- c(file.path(remind_dir, "output"), remind_dir)
+  } else {
+    defaultcfg <- readDefaultConfig(".")
+    dir_folder <- unique(c("output", dirname(defaultcfg$results_folder)))
+  }
   dirs <- dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx")))
   if (needingMif) dirs <- intersect(dirs, unique(dirname(Sys.glob(file.path(dir_folder, "*", "REMIND_generic_*.mif")))))
   dirnames <- if (length(dir_folder) == 1) basename(dirs) else dirs
@@ -197,7 +202,7 @@ if (comp %in% c("comparison", "export")) {
   }
 } else { # comp = single
   # define slurm class or direct execution
-  outputInteractive <- c("plotIterations", "fixOnRef")
+  outputInteractive <- c("plotIterations", "fixOnRef", "integratedDamageCosts")
   if (! exists("source_include")) {
     # for selected output scripts, only slurm configurations matching these regex are available
     slurmExceptions <- if ("reporting" %in% output) "--mem=[0-9]*[0-9]{3}" else NULL

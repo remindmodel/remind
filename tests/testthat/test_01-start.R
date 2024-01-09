@@ -16,7 +16,7 @@ test_that("start.R fails on missing path_gdx* files", {
 })
 
 test_that("start.R --test startgroup=AMT titletag=AMT config/scenario_config.csv works", {
-  with_mocked_bindings({
+  testthat::with_mocked_bindings({
     skipIfPreviousFailed()
     output <- localSystem2("Rscript",
                            c("start.R", "--test", "slurmConfig=16", "startgroup=AMT", "titletag=TESTTHAT", "config/scenario_config.csv"))
@@ -44,7 +44,7 @@ test_that("start.R --test succeeds on all configs", {
                  "scenario_config_NAVIGATE_300")
   csvfiles <- grep(paste(skipfiles, collapse = "|"), csvfiles, invert = TRUE, value = TRUE)
   expect_true(length(csvfiles) > 0)
-  with_mocked_bindings(
+  testthat::with_mocked_bindings(
     for (csvfile in csvfiles) {
       test_that(paste("perform start.R --test with", basename(csvfile)), {
         output <- localSystem2("Rscript",

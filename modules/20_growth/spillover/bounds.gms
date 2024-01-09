@@ -18,6 +18,5 @@ display pm_cesdata;
 
    vm_effGr.fx(t,regi,"feelt") = 1;
    vm_effGR.lo(t,regi,inRD20(in)) = 1;    
-   vm_invRD.fx(t,regi,in) = 0; 
 
 *** EOF ./modules/20_growth/spillover/bounds.gms
