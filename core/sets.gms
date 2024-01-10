@@ -77,6 +77,9 @@ gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures (ele + act + tec)"
 gdp_SSP2EU_CAMP_weak   "CAMPAIGNers scenario with low ambition lifestyle change"
 gdp_SSP2EU_CAMP_strong "CAMPAIGNers scenario with high ambition lifestyle change"
 gdp_SSP2EU_demRedWeak
+gdp_SSP2EU_ECEMF_modEffInd      "ECEMF scenario where the industry has moderated efficiency gains (less efficient than default)"
+gdp_SSP2EU_ECEMF_IndLMD         "ECEMF scenario where bahavioral changes lead to reduced material demand (only de-materialization from sharing economy based on Gruebler et.al., for now)"
+gdp_SSP2EU_GCS_IndLMD           "Global Commons scenario whith reduced material output in the industry sector (from de-materialization and material efficiency)"
 /
 
 all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
