@@ -49,6 +49,8 @@ vm_capEarlyReti.up('2025',regi,'pc') = 0.65;
 *' This limits coal-power capacity to at least 5 GW in 2030 to account for emissions 
 *' from fossil waste (~20 MtCO2/yr as of 2020) in 2030 target as waste currently subsumed under coal-power in REMIND.
 *' Waste power plants will not be phase-out by 2030. 
+*' Rough calculation with REMIND parameters:
+*' 5 GW * 8760 (hours per year) * 0.5 (capacity factor) / 0.4 (conversion efficiency) * 1e-3 * 0.35 MtCO2/TWh (emissions factor coal) ~ 20 Mt CO2/yr.
 vm_capTotal.lo("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=5/1000;
 
 
@@ -60,9 +62,17 @@ vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU
 *' If c_noPeFosCCDeu = 1 chosen, fossil CCS for energy system technologies (pe2se) is forbidden.   
 vm_emiTeDetail.up(t,regi,peFos,entySe,teFosCCS,"cco2")$((sameas(regi,"DEU")) AND (cm_noPeFosCCDeu = 1)) = 1e-4;
 
-*' If cm_deuCDRmax > 0, limit German CDR amount (Energy system BECCS, DACCS, EW and negative Landuse Change emissions) to cm_deuCDRmax.
+*' If cm_deuCDRmax >= 0, limit German CDR amount (Energy system BECCS, DACCS, EW and negative Landuse Change emissions) to cm_deuCDRmax.
 *' Convert cm_deuCDRmax from MtCO2/yr to model unit of GtC/yr. 
 vm_emiCdrAll.up(t,regi)$((cm_deuCDRmax ge 0) AND (sameas(regi,"DEU"))) = cm_deuCDRmax / 1000 / sm_c_2_co2;
+
+
+*' ####### Bounds for German Energy Security Scenario (activated by switches)
+
+*' Background: The energy security scenario used for the Ariadne Report on energy sovereignity in 2022 assumes that there is a continued gas crisis after 2022/23 in Germany
+*' with higher gas prices (see cm_EnSecScen_price) or limits to gas consumption (see cm_EnSecScen_limit switch) in the medium-term.
+*' Moreover, this scenario is characterized by a more pronounced role of coal power in the short-term as well as a greater role of
+*' industrial relocation and behavioral and energy efficiency transformations in demand sectors. Bounds in this section refer to energy supply technologies only. 
 
 *' Policy in energy security scenario for Germany: 5GW(el) electrolysis installed by 2030 in Germany at minimum.
 $ifThen.ensec "%cm_Ger_Pol%" == "ensec"
@@ -152,7 +162,7 @@ $ifthen.cm_VREminShare not "%cm_VREminShare%" == "off"
 ;
 $endIf.cm_VREminShare
 
-*' This fixes Fix CES function quantity trajectories to exogenous data if cm_exogDem_scen is activated.
+*' This bounds fixes CES function quantity trajectories to exogenous data if cm_exogDem_scen is activated.
 *' It is used, for example, to hit specific, steel and cement production trajectories in policy scenarios
 *' for project-specific scenarios. It is not necessarily a policy but a different (exogenuous) assumption 
 *' about future production trajectories than what REMIND produces endogenuously. 
