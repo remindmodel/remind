@@ -91,8 +91,12 @@ q36_costCESmarkup(t,regi,in)$(ppfen_buildings_dyn36(in))..
 *' in other sectors. This only applies to regions that still have trational
 *' biomass use, which is defined via a gdp criteria.
 ***---------------------------------------------------------------------------
-q36_biotrBound(t,regi)$((pm_gdp("2005",regi)/pm_pop("2005",regi) / pm_shPPPMER(regi)) lt 4)..
-  vm_demFeSector_afterTax(t,regi,'sesobio','fesos','build',emiMkt)$(sector2emiMkt('build',emiMkt))
-  =g= vm_prodSe(t,regi,"pebiolc","sesobio","biotr")
+q36_biotrBound(t,regi)$(t.val ge 2010 AND (pm_gdp("2005",regi)/pm_pop("2005",regi) / pm_shPPPMER(regi)) lt 4)..
+  sum(sector2emiMkt('build',emiMkt),
+    vm_demFeSector_afterTax(t,regi,'sesobio','fesos','build',emiMkt)
+  )
+  =g=
+  vm_prodSe(t,regi,"pebiolc","sesobio","biotr")
+;
 
 *** EOF ./modules/36_buildings/simple/equations.gms
