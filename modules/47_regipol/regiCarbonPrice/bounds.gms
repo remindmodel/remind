@@ -67,12 +67,12 @@ vm_emiTeDetail.up(t,regi,peFos,entySe,teFosCCS,"cco2")$((sameas(regi,"DEU")) AND
 vm_emiCdrAll.up(t,regi)$((cm_deuCDRmax ge 0) AND (sameas(regi,"DEU"))) = cm_deuCDRmax / 1000 / sm_c_2_co2;
 
 
-*' ####### Bounds for German Energy Security Scenario (activated by switches)
+*' ###### Bounds for German Energy Security Scenario (activated by switches)
 
 *' Background: The energy security scenario used for the Ariadne Report on energy sovereignity in 2022 assumes that there is a continued gas crisis after 2022/23 in Germany
 *' with higher gas prices (see cm_EnSecScen_price) or limits to gas consumption (see cm_EnSecScen_limit switch) in the medium-term.
 *' Moreover, this scenario is characterized by a more pronounced role of coal power in the short-term as well as a greater role of
-*' industrial relocation and behavioral and energy efficiency transformations in demand sectors. Bounds in this section refer to energy supply technologies only. 
+*' industrial relocation and behavioral and energy efficiency transformations in demand sectors. Bounds in this section refer to energy supply technologies only. \ \
 
 *' Policy in energy security scenario for Germany: 5GW(el) electrolysis installed by 2030 in Germany at minimum.
 $ifThen.ensec "%cm_Ger_Pol%" == "ensec"
