@@ -8,7 +8,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this bug report!
+        > :warning: **Important:**
+        >
+        > We welcome bug reports and will address them promptly. However, support for setting up and running REMIND outside of PIK is limited.
   - type: input
     id: contact
     attributes:
