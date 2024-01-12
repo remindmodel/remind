@@ -1100,13 +1100,6 @@ $if %cm_techcosts% == "GLO"  (1.03 + 0.03 + pm_prtp(regi) )                     
 );
 
 display p_tkpremused;
-***for those technologies, for which differentiated costs are available for 2015-2040, use those
-***$if %cm_techcosts% == "REG"   loop(teRegTechCosts(te)$(not teLearn(te)),
-***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);
-***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2040) = p_inco0("2040",regi,te);
-***$if %cm_techcosts% == "REG"   );
-
-***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);
 
 pm_data(regi,"inco0",te)       = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"inco0",te);
 pm_data(regi,"incolearn",te)   = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"incolearn",te);
@@ -1210,10 +1203,10 @@ display pm_inco0_t;
 
 $ifthen.REG_techcosts "%cm_techcosts%" == "REG"   !! cm_techcosts
 *** for those technologies, for which differentiated costs are available for
-*** 2015-2040, use those
+*** 2015-2020, use those
 loop(te$( teNoLearn(te) AND teRegTechCosts(te) ),
   !! no value after 2020 is currently used (see convergence below)
-  pm_inco0_t(ttot,regi,te)$( ttot.val ge 2015 AND ttot.val lt 2040 )
+  pm_inco0_t(ttot,regi,te)$( ttot.val ge 2015 AND ttot.val lt 2025)
   = p_inco0(ttot,regi,te);
 
 *** linear convergence of investment costs from 2025 on for non-learning
