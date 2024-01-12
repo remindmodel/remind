@@ -373,8 +373,7 @@ qm_deltaCapCumNet(ttot,regi,teLearn)$(ord(ttot) lt card(ttot) AND pm_ttot_val(tt
   vm_capCum(ttot+1,regi,teLearn)
   =e=
   sum(te2rlf(teLearn,rlf),
-         (pm_ts(ttot) / 2 * vm_deltaCap(ttot,regi,teLearn,rlf)) + (pm_ts(ttot+1) / 2 * vm_deltaCap(ttot+1,regi,teLearn,rlf))
-  )
+        pm_ts(ttot+1)* vm_deltaCap(ttot+1,regi,teLearn,rlf))
   +
   vm_capCum(ttot,regi,teLearn);
 
