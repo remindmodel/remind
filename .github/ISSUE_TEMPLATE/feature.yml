@@ -3,8 +3,6 @@ name: Feature Request
 description: Suggest a new feature or enhancement for the REMIND model.
 title: '[FEATURE REQUEST]'
 labels: enhancement
-assignees: 
-  - 'whitehacker'
 body:
 - type: markdown
   attributes:
