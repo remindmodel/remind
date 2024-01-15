@@ -1,22 +1,63 @@
 name: Bug Report
 description: This template is for reporting bugs found in the REMIND model
-title: "[Bug]: "
+title: "[BUG]: "
 labels: ["bug", "remind"]
-assignees:
-  - whitehacker
 body:
   - type: markdown
     attributes:
       value: |
-        > :warning: **Important:**
-        >
-        > We welcome bug reports and will address them promptly. However, support for setting up and running REMIND outside of PIK is limited.
-  - type: input
-    id: contact
+        :warning: **Please note:** We welcome bug reports and will address them promptly. However, support for setting up and running REMIND outside of PIK is limited.
+  - type: textarea
+    id: user-environment
     attributes:
-      label: Contact Details
-      description: How can we contact you if we need more info?
-      placeholder: ex. email@example.com
+      label: Your environment
+      description: Tell us a bit about your computing environment. Please include the following information. You can copy and paste the output of the commands into the text box. Run all commands in a terminal/PowerShell session in your REMIND root directory.
+      value: |
+        **REMIND version**
+        Run `cat CITATION.cff | grep ^version`
+
+        **R version**
+        On Linux/Mac run `R --version`
+        On Windows run `R.exe --version`
+
+        **Operating System**
+        On Linux run `lsb_release -a` or `cat /etc/os-release`
+        On Mac run `sw_vers`
+        On Windows run `systeminfo | findstr /B /C:"OS Name" /B /C:"OS Version"`
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: What did happen?
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce the Problem
+      description: Please provide detailed steps for reproducing the problem.
+      placeholder: |
+        e.g.:
+        1. Configured REMIND for run `SSP2-EU` ...
+        2. Started REMIND via `R start.R` ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Log Output
+      description: |
+        Any log output that will give us more context about the issue you are encountering is much appreciated. Tip: You can attach screenshots or log files by clicking this area to highlight it and then dragging files in.
     validations:
       required: false
   - type: checkboxes
@@ -26,55 +67,9 @@ body:
       description: Please check the relevant boxes.
       options:
         - label: I have access to the PIK cluster
-        - label: I have access to the Input Data
+        - label: I have access to the REMIND input data
         - label: I have searched the existing issues
         - label: I have provided detailed information about the bug
         - label: I have provided steps to reproduce the issue
         - label: I have provided information about my environment (OS)
-  - type: textarea
-    id: what-happened
-    attributes:
-      label: What happened?
-      description: Also, tell us, what did you expect to happen?
-      placeholder: Tell us what you see!
-      value: "A bug happened!"
-    validations:
-      required: true
-  - type: dropdown
-    id: version
-    attributes:
-      label: Version
-      description: What version of REMIND are you running?
-      options:
-        - 3.2.0 (Latest)
-        - 3.1.0
-        - 3.0.0
-        - Other
-    validations:
-      required: true
-  - type: dropdown
-    id: os
-    attributes:
-      label: What Operating System are you seeing the problem on?
-      multiple: true
-      options:
-        - Windows
-        - Linux
-        - macOS
-    validations:
-      required: true
-  - type: textarea
-    id: logs
-    attributes:
-      label: Relevant log output
-      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
-      render: shell
-  - type: checkboxes
-    id: terms
-    attributes:
-      label: Code of Conduct
-      description: By submitting this issue, you agree to follow our [Code of Conduct](https://example.com)
-      options:
-        - label: I agree to follow this project's Code of Conduct
-          required: true
 
