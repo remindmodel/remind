@@ -23,8 +23,8 @@ if(card(te_ccs33) eq 0,
 vm_emiCdrTeDetail.fx(t,regi,te_all33)$(not te_used33(te_all33)) = 0;
 v33_FEdemand.fx(t,regi,entyFe,entyFe2,te_all33)$(not te_used33(te_all33) and fe2cdr(entyFe,entyFe2,te_all33)) = 0;
 
-*' Fix all CDR-related variables to zero for early time steps t< 2025 (no CDR in the real world)
-*' to reduce unnecessary freedom (and likelyhood of spontaneous solver infeasibilities)
+*** Fix all CDR-related variables to zero for early time steps t< 2025 (no CDR in the real world)
+*** to reduce unnecessary freedom (and likelyhood of spontaneous solver infeasibilities)
 vm_emiCdrTeDetail.fx(t,regi,te_used33)$(t.val lt 2025) = 0.0;
 v33_FEdemand.fx(t,regi,entyFe,entyFe2,te_used33)$(fe2cdr(entyFe,entyFe2,te_used33) AND (t.val lt 2025)) = 0.0;
 vm_emiCdr.fx(t,regi,"co2")$(t.val lt 2025) = 0;
@@ -34,7 +34,7 @@ vm_cap.fx(t,regi,"weathering",rlf)$(t.val lt 2025) = 0;
 vm_ccs_cdr.fx(t,regi,enty,enty2,te,rlf)$(ccs2te(enty,enty2,te) AND t.val lt 2025) = 0;
 
 
-*' Set minimum DAC capacities (if available) to help the solver find the technology 
+*** Set minimum DAC capacities (if available) to help the solver find the technology 
 if (te_used33("dac"),
     vm_cap.lo(t,regi,"dac",rlf)$(teNoTransform2rlf33("dac",rlf) AND (t.val ge 2030)) = sm_eps;
 );
