@@ -18,9 +18,7 @@ display pm_capCumForeign;
 * calculate marginal benefit of spillovers in each region. This expression for the subsidy can be derived analytically.
 loop(regi$(pm_SolNonInfes(regi) eq 1),
     p22_marginalCapcumBenefit(ttot,regi,teLearn)  =  
-	pm_ts(ttot)/2 * (abs(qm_deltaCapCumNet.m(ttot,regi,teLearn)) / max(abs(qm_budget.m(ttot,regi)),1E-9)) 
-      + pm_ts(ttot)/2 * (abs(qm_deltaCapCumNet.m(ttot -1,regi,teLearn)) / max(abs(qm_budget.m(ttot,regi)),1E-9)) 
-
+	pm_ts(ttot) * (abs(qm_deltaCapCumNet.m(ttot,regi,teLearn)) / max(abs(qm_budget.m(ttot,regi)),1E-9)) 
 );                                              
 
 
