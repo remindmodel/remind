@@ -588,7 +588,7 @@ parameter
 ;
   c_solscen        = 1;        !! def = 1  !! regexp = [1-2]
 *' *  (1): yes
-*' *  (2): fix at bau level
+*' *  (3): fix at bau level
 *'
 parameter
   cm_bioenergy_SustTax      "level of the bioenergy sustainability tax in fraction of bioenergy price"

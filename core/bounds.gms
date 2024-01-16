@@ -231,7 +231,7 @@ if(cm_1stgen_phaseout=1,
 *** -----------------------------------------------------------
 
 if (cm_startyear gt 2005,
-  if (c_solscen eq 2,
+  if (c_solscen eq 3,
     vm_cap.up(t,regi,"spv",rlf)$(t.val ge 2010)  = p_boundtmp(t,regi,"spv",rlf);
   );
 );
