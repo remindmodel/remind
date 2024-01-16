@@ -47,14 +47,30 @@ p36_floorspace(ttot,regi) = p36_floorspace_scen(ttot,regi,"%cm_demScen%") * 1e-3
 
 
 *** UE demand for reporting
-Parameter
-f36_uedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in)   "useful energy demand in buildings"
+*** read-in of f36_uedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in)   "useful energy demand in buildings" from f36_uedemand_build.cs4r 
+
+Parameter f36_uedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in)   "useful energy demand in buildings"
 /
+$onverbatim
+$Offlisting
 $ondelim
-$include "./modules/36_buildings/simple/input/f36_uedemand_build.cs4r"
+$include "../../modules/36_buildings/simple/input/f36_uedemand_build.cs4r"
 $offdelim
+$Onlisting
+$offverbatim
 /
 ;
+
+
+*$Offlisting
+*table   f_cf(tall,all_regi,all_te)     "installed capacity availability"
+*$ondelim
+*$include "./core/input/f_cf.cs3r"
+*$offdelim
+*;
+*$Onlisting
+
+
 p36_uedemand_build(ttot,regi,in) = f36_uedemand_build(ttot,regi,"%cm_demScen%","%cm_rcp_scen_build%",in);
 
 
