@@ -2,7 +2,9 @@
 name: Feature Request
 description: Suggest a new feature or enhancement for the REMIND model.
 title: '[FEATURE REQUEST]'
-labels: enhancement
+labels: 
+  - enhancement
+  - remind
 body:
 - type: markdown
   attributes:
@@ -35,7 +37,8 @@ body:
 - type: checkboxes
   id: terms
   attributes:
-    label: Agreement
+    label: Please confirm the following
+    description: Please check the relevant boxes
     options:
       - label: I have searched to see if this feature has been requested before.
         required: true
