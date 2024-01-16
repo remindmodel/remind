@@ -41,4 +41,3 @@ body:
         required: true
       - label: I have provided details and context for the feature.
         required: true
----

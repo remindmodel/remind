@@ -1,17 +1,25 @@
+---
 name: Bug Report
 description: This template is for reporting bugs found in the REMIND model
 title: "[BUG]: "
-labels: ["bug", "remind"]
+labels:
+  - bug
+  - remind
 body:
   - type: markdown
     attributes:
-      value: |
-        :warning: **Please note:** We welcome bug reports and will address them promptly. However, support for setting up and running REMIND outside of PIK is limited.
+      value: >
+        :warning: **Please note:** We welcome bug reports and will address them
+        promptly. However, support for setting up and running REMIND outside of
+        PIK is limited.
   - type: textarea
     id: user-environment
     attributes:
       label: Your environment
-      description: Tell us a bit about your computing environment. Please include the following information. You can copy and paste the output of the commands into the text box. Run all commands in a terminal/PowerShell session in your REMIND root directory.
+      description: Tell us a bit about your computing environment. Please include the
+        following information. You can copy and paste the output of the commands
+        into the text box. Run all commands in a terminal/PowerShell session in
+        your REMIND root directory.
       value: |
         **REMIND version**
         Run `cat CITATION.cff | grep ^version`
@@ -56,8 +64,11 @@ body:
     id: logs
     attributes:
       label: Relevant Log Output
-      description: |
-        Any log output that will give us more context about the issue you are encountering is much appreciated. Tip: You can attach screenshots or log files by clicking this area to highlight it and then dragging files in.
+      description: >
+        Any log output that will give us more context about the issue you
+        are encountering is much appreciated. Tip: You can attach screenshots or
+        log files by clicking this area to highlight it and then dragging files
+        in.
     validations:
       required: false
   - type: checkboxes
@@ -72,4 +83,3 @@ body:
         - label: I have provided detailed information about the bug
         - label: I have provided steps to reproduce the issue
         - label: I have provided information about my environment (OS)
-
