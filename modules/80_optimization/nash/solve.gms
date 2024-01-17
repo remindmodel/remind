@@ -9,14 +9,22 @@
 regi(all_regi) = no;
 hybrid.solvelink = 3;
 hybrid.optfile   = 9;
-p80_repy(all_regi,"solvestat") = NA;
-p80_repy(all_regi,"modelstat") = NA;
 
 $ifthene.debug (sameas("%cm_nash_mode%","serial"))OR(sameas("%cm_nash_mode%","debug"))
 hybrid.solvelink = 0;
 $endif.debug
 
 loop (all_regi,
+  !! only solve for regions that do not have a valid solution for this nash
+  !! iteration
+  if (    sol_itr.val gt 1
+      AND (   p80_repy(all_regi,"modelstat") eq 2
+           OR p80_repy(all_regi,"modelstat") eq 7),
+
+    p80_repy(all_regi,solveinfo80) = 0;
+    continue;
+  );
+
   regi(all_regi) = yes;
 
   if (execError > 0,
@@ -97,10 +105,16 @@ if (o_modelstat ne 2,
 );
 $endif.solprint
 
-p80_repy_iteration(all_regi,solveinfo80,iteration)
-  = p80_repy(all_regi,solveinfo80);
+p80_repy_iteration(all_regi,solveinfo80,iteration)$(
+                                                p80_repy(all_regi,solveinfo80) )
+    !! store sum of resusd for all sol_itrs
+  = ( p80_repy_iteration(all_regi,solveinfo80,iteration)
+    + p80_repy(all_regi,solveinfo80)
+    )$( sameas(solveinfo80,"resusd") )
+  + p80_repy(all_regi,solveinfo80)$( NOT sameas(solveinfo80,"resusd") );
 
-p80_repy_nashitr_solitr(all_regi,solveinfo80,iteration,sol_itr)
+p80_repy_nashitr_solitr(all_regi,solveinfo80,iteration,sol_itr)$(
+                                                p80_repy(all_regi,solveinfo80) )
   = p80_repy(all_regi,solveinfo80);
 
 *** EOF ./modules/80_optimization/nash/solve.gms
