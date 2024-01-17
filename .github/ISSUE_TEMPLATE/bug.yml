@@ -72,13 +72,19 @@ body:
     validations:
       required: false
   - type: checkboxes
+    id: access-to-resources
+    attributes:
+      label: Access to PIK/REMIND resources
+      description: Please tell us if you have access to the PIK cluster and/or the REMIND input data.
+      options:
+        - label: I have access to the PIK cluster
+        - label: I have access to the REMIND input data
+  - type: checkboxes
     id: checklist
     attributes:
       label: Please confirm the following
       description: Please check the relevant boxes.
       options:
-        - label: I have access to the PIK cluster
-        - label: I have access to the REMIND input data
         - label: I have searched the existing issues
         - label: I have provided detailed information about the bug
         - label: I have provided steps to reproduce the issue
