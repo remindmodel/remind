@@ -23,7 +23,7 @@ $endif.neg
 );
 
 if(cm_iterative_target_adj eq 4,
-*JeS* Update tax levels / cumulative emission level to reach the FF&I budget target (s_actualbudgetco2 runs from 2020-2100, not peak budget)
+*JeS* Iteratively update regional CO2 tax trajectories / regional CO2 budget to reach the FF&I budget target (s_actualbudgetco2 runs from 2020-2100, not peak budget)
 *KK* for a time step of 5 years, the budget is calculated as 3 * 2020 + ts(2025-2090) + 8 * 2100;
 *** 10-pm_ts("2090")/2 and pm_ts("2020")/2 are the time periods that haven't been taken into account in the sum over ttot.
 *** 0.5 year of emissions is added for the two boundaries, such that the budget is calculated for 81 years.

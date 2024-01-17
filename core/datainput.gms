@@ -144,7 +144,11 @@ if (cm_VRE_supply_assumptions eq 1,
     fm_dataglob("inco0","storspv") = 7000;
     fm_dataglob("incolearn","storspv") = 4240;
     fm_dataglob("learn","storspv") = 0.12;
+);
+if (cm_VRE_supply_assumptions eq 2,
     fm_dataglob("incolearn","spv") = 5010;
+);
+if (cm_VRE_supply_assumptions eq 3,
     fm_dataglob("incolearn","spv") = 4960;
 );
 
