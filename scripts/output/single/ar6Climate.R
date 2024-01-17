@@ -85,7 +85,7 @@ dir.create(workfolder, showWarnings = F)
 
 # Set relevant environment variables and create a MAGICC worker directory
 Sys.setenv(MAGICC_EXECUTABLE_7=magicc_bin_file)
-Sys.setenv(MAGICC_WORKER_ROOT_DIR=normalizePath(paste0(workfolder,"/workers/"))) # Has to be an absolute path
+Sys.setenv(MAGICC_WORKER_ROOT_DIR=paste0(normalizePath(workfolder),"/workers/")) # Has to be an absolute path
 Sys.setenv(MAGICC_WORKER_NUMBER=1) # TODO: Get this from slurm or nproc
 
 dir.create(Sys.getenv("MAGICC_WORKER_ROOT_DIR"), recursive = T, showWarnings = F)
