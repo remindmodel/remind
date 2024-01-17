@@ -366,13 +366,13 @@ vm_capEarlyReti.fx(ttot,regi,"dot")=0;
 vm_deltaCap.up(t,regi,"dot","1")$( (t.val gt 2005) AND regi_group("EUR_regi",regi) )  = 1e-6;
 
 
-
+*' @code{extrapage: "00_model_assumptions"}
 *** -----------------------------------------------------------------------------
-*DK 20100929 Bound on CCS injection rate
+*' #### Bound on maximum annual carbon storage by region
 *** -----------------------------------------------------------------------------
-*** default value (0.5%) is consistent with Interview Gerling (BGR)
-*** http://www.iz-klima.de/aktuelles/archiv/news-2010/mai/news-05052010-2/
-*** 12 Gt storage potential in Germany, 50-75 Mt/a injection => 60 Mt/a => 60/12000=0.005
+*' DK 20100929: default value (pm_ccsinjecrate= 0.5%) is consistent with Interview Gerling (BGR)
+*' (http://www.iz-klima.de/aktuelles/archiv/news-2010/mai/news-05052010-2/): 
+*' 12 Gt storage potential in Germany, 50-75 Mt/a injection => 60 Mt/a => 60/12000=0.005
 *LP* if c_ccsinjecratescen=0 --> no CCS at all and vm_co2CCS is fixed to 0 before, therefore the upper bound is only set if there should be CCS!
 *** -----------------------------------------------------------------------------
 
@@ -384,7 +384,7 @@ if ( c_ccsinjecratescen gt 0,
 	);
 
 );
-
+*' @stop
 
 *** strong reliance on coal-to-liquids is not consistent with SSP1 storyline, therefore limit their use in the SSP 1 and SSP2 policy scenarios
 $ifthen %c_SSP_forcing_adjust% == "forcing_SSP1"

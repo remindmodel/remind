@@ -814,13 +814,15 @@ q_budgetCO2eqGlob$(cm_emiscen=6)..
 q_balcapture(t,regi,ccs2te(ccsCO2(enty),enty2,te)) ..
   sum(teCCS2rlf(te,rlf),vm_co2capture(t,regi,enty,enty2,te,rlf))
   =e=
+*** Carbon captured in energy sector
     sum(emi2te(enty3,enty4,te2,enty),
       vm_emiTeDetail(t,regi,enty3,enty4,te2,enty)
     )
+*** Carbon captured from CDR technologies in CDR module
   + sum(teCCS2rlf(te,rlf),
       vm_ccs_cdr(t,regi,enty,enty2,te,rlf)
     )
-***   CCS from industry
+*** Carbon captured from industry
   + sum(emiInd37,
       vm_emiIndCCS(t,regi,emiInd37)
     )

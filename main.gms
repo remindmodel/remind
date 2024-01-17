@@ -788,25 +788,25 @@ parameter
 *' *   (3) SSP5: pessimistic techno-economic assumptions
 *'
 parameter
-  c_ccsinjecratescen        "CCS injection rate factor, 0.5% by default yielding a 60 Mt per year IR"
+  c_ccsinjecratescen        "CCS injection rate factor applied to total regional storage potentials, yielding an upper bound on annual injection"
 ;
   c_ccsinjecratescen    = 1;         !! def = 1  !! regexp = [0-5]
-*' This flag determines the upper bound of the CCS injection rate
-*' CCS refers to carbon sequestration, carbon capture is modelled separately
+*' This switch determines the upper bound of the annual CCS injection rate.
+*' CCS here refers to carbon sequestration, carbon capture is modelled separately.
 *' *   (0) no "CCS" as in no carbon sequestration at all
-*' *   (1) reference case: 0.005
-*' *   (2) lower estimate: 0.0025
-*' *   (3) upper estimate: 0.0075
-*' *   (4) unconstrained: 1
-*' *   (5) sustainability case: 0.001
+*' *   (1) reference case: 0.005; max 19.7 GtCO2/yr globally  
+*' *   (2) lower estimate: 0.0025; max 9.8 GtCO2/yr globally 
+*' *   (3) upper estimate: 0.0075; max 29.5 GtCO2/yr globally
+*' *   (4) unconstrained: 1; max 3900 GtCO2/yr globally
+*' *   (5) sustainability case: 0.001; max 3.9 GtCO2/yr globally
 *'
 parameter
   c_ccscapratescen          "CCS capture rate"
 ;
   c_ccscapratescen      = 1;         !! def = 1  !! regexp = 1|2
-*'   This flag determines the CO2 capture rate of CCS technologies
-*' *   (1) reference
-*' *   (2) increased capture rate
+*' This flag determines the CO2 capture rate of selected CCS technologies
+*' *   (1) reference (90%)
+*' *   (2) increased capture rate (99%)
 *'
 parameter
   c_export_tax_scen         "choose which oil export tax is used in the model. 0 = none, 1 = fix"
@@ -942,15 +942,22 @@ parameter
   cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 *'
 parameter
-  cm_frac_CCS          "tax on CCS to reflect risk of leakage, formulated as fraction of ccs O&M costs"
+  cm_frac_CCS          "tax on carbon transport & storage (ccsinje) to reflect risk of leakage, formulated as fraction of ccsinje O&M costs"
 ;
   cm_frac_CCS          = 10;   !! def = 10
 *'
 parameter
-  cm_frac_NetNegEmi    "tax on CDR to reflect risk of overshooting, formulated as fraction of carbon price"
+  cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshooting, formulated as fraction of carbon price"
 ;
   cm_frac_NetNegEmi    = 0.5;  !! def = 0.5
+*' This tax reduces the regional effective carbon price for CO2 once regional net CO2 emissions turn negative; default is a reduction by 50 percent. 
+*' As the tax applies to net CO2 emissions, both further emission reductions and CDR are disincentivised.
+*' Fraction can be freely chosen. Guidelines:
 *'
+*' * (0)   No net negative tax, the full CO2 price always applies.
+*' * (0.5) Halves the effective CO2 price when regional net CO2 emissions turn negative.
+*' * (1)   No effective CO2 tax once regional emissions turn net-negative. Hence regions never become net-negative.
+
 parameter
   cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
 ;
@@ -1346,8 +1353,6 @@ $setglobal cm_calibration_string  off    !!  def  =  off
 *** (REG) regionalized technology costs
 *** (GLO) globally homogenous technology costs
 $setglobal cm_techcosts  REG       !! def = REG
-*** cm_regNetNegCO2 -    default "on" allows for regionally netNegative CO2 emissions, setting "off" activates bound in core/bounds.gms that disallows net negative CO2 emissions at the regional level
-$setglobal cm_regNetNegCO2  on       !! def = on
 *** cfg$gms$cm_EDGEtr_scen  "the EDGE-T scenario"  # def <- "Mix1". For calibration runs: Mix1. Mix2, Mix3, Mix4 also available - numbers after the "mix" denote policy strength, with 1 corresponding roughly to Baseline/NPI, 2= NDC, 3= Budg1500, 4 = Budg800
 ***  The following descriptions are based on scenario results for EUR in 2050 unless specified otherwise.
 ***  Whenever we give numbers, please be aware that they are just there to estimate the ballpark.
