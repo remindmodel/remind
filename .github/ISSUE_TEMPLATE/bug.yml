@@ -5,6 +5,8 @@ title: "[BUG]: "
 labels:
   - bug
   - remind
+assignees:
+  - LaviniaBaumstark
 body:
   - type: markdown
     attributes:

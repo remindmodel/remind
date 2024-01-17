@@ -5,6 +5,8 @@ title: '[FEATURE REQUEST]'
 labels: 
   - enhancement
   - remind
+assignees:
+  - LaviniaBaumstark
 body:
 - type: markdown
   attributes:
