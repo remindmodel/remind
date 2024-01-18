@@ -304,16 +304,17 @@ loop(regi,
      );
 ); !!regi
 
-***additional criterion: are the anticipation terms sufficienctly small?
+*** criterion only for checking, not applied anymore: are the anticipation terms sufficienctly small?
 p80_fadeoutPriceAnticip_iter(iteration) = sm_fadeoutPriceAnticip;
 if(sm_fadeoutPriceAnticip gt cm_maxFadeOutPriceAnticip, 
-  s80_bool = 0;
+***  s80_bool = 0; !! not an active convergence criterion anymore 
   p80_messageShow("anticip") = YES;
 );
+
 *' criterion "Deviation due to price anticipation": are the resulting deviations sufficiently small?
 *' compare to 1/10th of the cutoff for goods imbalance 
-if(p80_DevPriceAnticipGlobAllMax("2100") gt 0.1 * p80_surplusMaxTolerance("good"),
-***    s80_bool=0; !! not yet active as convergence criterion                
+if(p80_DevPriceAnticipGlobAllMax2100Iter(iteration) gt 0.1 * p80_surplusMaxTolerance("good"),
+  s80_bool=0;                
   p80_messageShow("DevPriceAnticip") = YES;
 );
 
@@ -433,14 +434,14 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
 	      if(sameas(convMessage80, "taxconv"),
 		      display "#### 4.) Taxes did not converge in all regions and time steps. Absolute level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_convNashTaxrev_iter below.";
 	      );
+        if(sameas(convMessage80, "DevPriceAnticip"),
+		      display "#### 5.) The total monetary value of the price anticipation term times the traded amount are larger than the goods imbalance threshold * 0.1";
+          display "#### Check out p80_DevPriceAnticipGlobAllMax2100Iter, which needs to be below 0.1 * the threshold for goods imbalance, p80_surplusMaxTolerance";
+	      );
         if(sameas(convMessage80, "anticip"),
-		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";
+		      display "#### 5b.) only for checking, not anymore a criterion that stops convergence: The fadeout price anticipation terms are not sufficiently small.";
           display "#### Check out sm_fadeoutPriceAnticip which needs to be below cm_maxFadeOutPriceAnticip.";
           display sm_fadeoutPriceAnticip, cm_maxFadeOutPriceAnticip;
-	      );
-        if(sameas(convMessage80, "DevPriceAnticip"),
-		      display "#### 5b.) The total monetary value of the price anticipation term times the traded amount are larger than the goods imbalance threshold * 0.1";
-          display "#### Check out p80_DevPriceAnticipGlobAllMax2100Iter, which needs to be below 0.1 * the threshold for goods imbalance, p80_surplusMaxTolerance";
 	      );
         if(sameas(convMessage80, "target"),
 		      display "#### 6.) A global climate target has not been reached yet.";
