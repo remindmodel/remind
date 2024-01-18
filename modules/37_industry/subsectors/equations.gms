@@ -321,7 +321,7 @@ q37_FossilFeedstock_Base(t,regi,entyFE,emiMkt)$(
   sum(entySEFos,
     vm_demFENonEnergySector(t,regi,entySEfos,entyFE,"indst",emiMkt)
   )
-
+;
 
 *** ---------------------------------------------------------------------------
 ***        2. Process-Based
@@ -416,7 +416,6 @@ q37_limitOutflowCCPrc(ttot,regi,tePrc)$(ttot.val ge cm_startyear ) ..
       v37_outflowPrc(ttot,regi,teCCPrc,opmoCCPrc)
     )
 ;
-
 
 ***------------------------------------------------------
 *' Emission captured from process based industry sector
