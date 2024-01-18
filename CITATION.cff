@@ -245,6 +245,11 @@ authors:
   orcid: https://orcid.org/0000-0001-8801-173X
   affiliation: "Potsdam Institute for Climate Impact Research"
 
+- family-names: "Duerrwaechter"
+  given-names:  "Jakob"
+  orcid: https://orcid.org/0000-0001-8961-5340
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
 title: REMIND - REgional Model of INvestments and Development
 version: "3.2.1.dev677"
 date-released: 2024-01-18
