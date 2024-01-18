@@ -644,12 +644,12 @@ $endif.cm_subsec_model_steel
 p37_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 if (cm_startyear eq 2005,
-  v37_outflowPrc.fx('2005',regi,'bof','unheated') = pm_fedemand('2005',regi,'ue_steel_primary');
-  v37_outflowPrc.fx('2005',regi,'bf','standard') = p37_specMatDem("pigiron","bof","unheated") * v37_outflowPrc.l('2005',regi,'bof','unheated');
-  v37_outflowPrc.fx('2005',regi,'eaf','sec') = pm_fedemand('2005',regi,'ue_steel_secondary');
-  v37_outflowPrc.fx('2005',regi,'eaf','pri') = 0.;
-  v37_outflowPrc.fx('2005',regi,'idr','ng') = 0.;
-  v37_outflowPrc.fx('2005',regi,'idr','h2') = 0.;
+  vm_outflowPrc.fx('2005',regi,'bof','unheated') = pm_fedemand('2005',regi,'ue_steel_primary');
+  vm_outflowPrc.fx('2005',regi,'bf','standard') = p37_specMatDem("pigiron","bof","unheated") * vm_outflowPrc.l('2005',regi,'bof','unheated');
+  vm_outflowPrc.fx('2005',regi,'eaf','sec') = pm_fedemand('2005',regi,'ue_steel_secondary');
+  vm_outflowPrc.fx('2005',regi,'eaf','pri') = 0.;
+  vm_outflowPrc.fx('2005',regi,'idr','ng') = 0.;
+  vm_outflowPrc.fx('2005',regi,'idr','h2') = 0.;
 
   loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
     p37_specFeDem(ttot,regi,"feh2s","idr","h2") = p37_specFeDemTarget("feh2s","idr","h2");

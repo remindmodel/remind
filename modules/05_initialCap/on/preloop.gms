@@ -48,7 +48,7 @@ q05_eedemini(regi,enty)..
   + sum(tePrc2opmoPrc(tePrc,opmoPrc)$(p37_specFEDem("2005",regi,enty,tePrc,opmoPrc) gt 0.),
       p37_specFEDem("2005",regi,enty,tePrc,opmoPrc)
       *
-      v37_outflowPrc("2005",regi,tePrc,opmoPrc)
+      vm_outflowPrc("2005",regi,tePrc,opmoPrc)
     )$(entyFeStat(enty))
   ) * s05_inic_switch
     !! Transformation pathways that consume this enty:
@@ -122,9 +122,9 @@ display v05_INIdemEn0.l, v05_INIcap0.l;
 pm_cap0(regi,te) = v05_INIcap0.l(regi,te);
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-pm_cap0(regi,'bof') = v37_outflowPrc.l('2005',regi,'bof','unheated') / pm_cf("2005",regi,'bof');
-pm_cap0(regi,'bf')  = v37_outflowPrc.l('2005',regi,'bf','standard')  / pm_cf("2005",regi,'bf');
-pm_cap0(regi,'eaf') = v37_outflowPrc.l('2005',regi,'eaf','sec')      / pm_cf("2005",regi,'eaf');
+pm_cap0(regi,'bof') = vm_outflowPrc.l('2005',regi,'bof','unheated') / pm_cf("2005",regi,'bof');
+pm_cap0(regi,'bf')  = vm_outflowPrc.l('2005',regi,'bf','standard')  / pm_cf("2005",regi,'bf');
+pm_cap0(regi,'eaf') = vm_outflowPrc.l('2005',regi,'eaf','sec')      / pm_cf("2005",regi,'eaf');
 pm_cap0(regi,'idr') = 0.;
 pm_cap0(regi,"bfcc") =0.;
 pm_cap0(regi,"idrcc") =0.;

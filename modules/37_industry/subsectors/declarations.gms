@@ -33,7 +33,7 @@ Parameters
 
   p37_chemicals_feedstock_share(ttot,all_regi)               "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
   p37_FeedstockCarbonContent(ttot,all_regi,all_enty)         "carbon content of feedstocks [GtC/TWa]"
-  p37_FE_noNonEn(ttot,all_regi,all_enty,all_enty2,emiMkt)    "testing parameter for FE without non-energy use" 
+  p37_FE_noNonEn(ttot,all_regi,all_enty,all_enty2,emiMkt)    "testing parameter for FE without non-energy use"
   p37_Emi_ChemProcess(ttot,all_regi,all_enty,emiMkt)         "testing parameter for process emissions from chemical feedstocks"
   p37_CarbonFeed_CDR(ttot,all_regi,all_emiMkt)               "testing parameter for carbon in feedstocks from biogenic and synthetic sources"
   p37_IndFeBal_FeedStock_LH(ttot,all_regi,all_enty,emiMkt)   "testing parameter Ind FE Balance left-hand side feedstock term"
@@ -74,7 +74,7 @@ Positive Variables
   v37_emIIndCCSmax(ttot,all_regi,emiInd37)                                  "maximum abatable industry emissions"
 
   !! process-based implementation
-  v37_outflowPrc(tall,all_regi,all_te,opmoPrc)                              "Production volume of processes in process-based model [Gt/a]"
+  vm_outflowPrc(tall,all_regi,all_te,opmoPrc)                               "Production volume of processes in process-based model [Gt/a]"
   v37_matFlow(tall,all_regi,all_enty)                                       "Production of materials [Gt/a]"
   v37_emiPrc(tall,all_regi,all_enty,all_te,opmoPrc)                         "Emissions per process and operation mode [GtC/a]"
   vm_costMatPrc(tall,all_regi)                                              "Cost of external material inputs such as iron ore in process-based industry [trn $2005/a]"

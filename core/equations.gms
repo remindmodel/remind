@@ -95,7 +95,7 @@ q_costOM(t,regi)..
       * (vm_prodSe(t,regi,enty,enty2,te)$entySe(enty2)
          + vm_prodFe(t,regi,enty,enty2,te)$entyFe(enty2)
          + sum(tePrc2opmoPrc(tePrc(te),opmoPrc),
-               v37_outflowPrc(t,regi,te,opmoPrc)
+               vm_outflowPrc(t,regi,te,opmoPrc)
                )
         )
   )

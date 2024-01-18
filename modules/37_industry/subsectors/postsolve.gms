@@ -16,7 +16,7 @@ pm_FEPrice(ttot,regi,entyFE,"indst",emiMkt)$( abs(qm_budget.m(ttot,regi)) gt sm_
 *** reporting easier
 
 o37_demFePrc(ttot,regi,entyFE,tePrc,opmoPrc)$(p37_specFEDem(ttot,regi,entyFE,tePrc,opmoPrc))
-  = v37_outflowPrc.l(ttot,regi,tePrc,opmoPrc)
+  = vm_outflowPrc.l(ttot,regi,tePrc,opmoPrc)
     * p37_specFEDem(ttot,regi,entyFE,tePrc,opmoPrc)
 ;
 
@@ -112,7 +112,7 @@ loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc)$(
 );
 
 
-*** determine shares of v37_outflowPrc that belong to a certain route
+*** determine shares of vm_outflowPrc that belong to a certain route
 *** ---------------------------------------------------------------------------
 
 !! init all to 1
@@ -124,7 +124,7 @@ loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc,route)$(
 
   !! share of first-stage tech with CCS
   o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)$(sum(entyFE,v37_emiPrc.l(ttot,regi,entyFE,tePrc,opmoPrc)) gt 0.)
-    = (   v37_outflowPrc.l(ttot,regi,teCCPrc,opmoCCPrc)
+    = (   vm_outflowPrc.l(ttot,regi,teCCPrc,opmoCCPrc)
         / p37_captureRate(teCCPrc,opmoCCPrc))
       / sum(entyFE,v37_emiPrc.l(ttot,regi,entyFE,tePrc,opmoPrc));
 
@@ -143,13 +143,13 @@ loop((tePrc1,opmoPrc1,tePrc2,opmoPrc2,mat,route)$(
             AND tePrc2route(tePrc1,opmoPrc1,route)
             AND tePrc2route(tePrc2,opmoPrc2,route)),
   !! The share of second-stage tech (such as eaf) which belongs to a certain route equals...
-  o37_shareRoute(ttot,regi,tePrc2,opmoPrc2,route)$(v37_outflowPrc.l(ttot,regi,tePrc2,opmoPrc2) gt 0.)
+  o37_shareRoute(ttot,regi,tePrc2,opmoPrc2,route)$(vm_outflowPrc.l(ttot,regi,tePrc2,opmoPrc2) gt 0.)
   !! ...the outflow of the first-stage tech (such as idr) which provides the input material (such as driron) to the second-stage...
-  =   v37_outflowPrc.l(ttot,regi,tePrc1,opmoPrc1)
+  =   vm_outflowPrc.l(ttot,regi,tePrc1,opmoPrc1)
     !! ...times the share of that 1st stage tech which belongs to a certain route
     * o37_shareRoute(ttot,regi,tePrc1,opmoPrc1,route)
     !! divided by total amount of that input material required by second-stage tech
-    / ( v37_outflowPrc.l(ttot,regi,tePrc2,opmoPrc2)
+    / ( vm_outflowPrc.l(ttot,regi,tePrc2,opmoPrc2)
       * p37_specMatDem(mat,tePrc2,opmoPrc2));
 );
 
@@ -160,7 +160,7 @@ loop((mat,route)$(matFin(mat)),
   o37_ProdIndRoute(ttot,regi,mat,route)
     = sum((tePrc,opmoPrc)$(    tePrc2matOut(tePrc,opmoPrc,mat)
                            AND tePrc2route(tePrc,opmoPrc,route)),
-        v37_outflowPrc.l(ttot,regi,tePrc,opmoPrc)
+        vm_outflowPrc.l(ttot,regi,tePrc,opmoPrc)
           * o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)
       );
 );
@@ -172,7 +172,7 @@ loop((entyFE,route,tePrc,opmoPrc,secInd37)$(    tePrc2route(tePrc,opmoPrc,route)
                                             AND (p37_specFeDemTarget(entyFE,tePrc,opmoPrc) gt 0.) ),
   o37_demFeIndRoute(ttot,regi,entyFE,tePrc,route,secInd37)
   = o37_demFeIndRoute(ttot,regi,entyFE,tePrc,route,secInd37) !!sum (only necessary if several opmodes for one route)
-    + v37_outflowPrc.l(ttot,regi,tePrc,opmoPrc)
+    + vm_outflowPrc.l(ttot,regi,tePrc,opmoPrc)
       * o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)
       * p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc);
 );

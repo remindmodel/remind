@@ -33,7 +33,7 @@ q37_demFeIndst(ttot,regi,entyFE,emiMkt)$(    ttot.val ge cm_startyear
        tePrc2opmoPrc(tePrc,opmoPrc)),
     p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
     *
-    v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
+    vm_outflowPrc(ttot,regi,tePrc,opmoPrc)
   )
 ;
 
@@ -336,7 +336,7 @@ q37_demMatPrc(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matIn(mat))..
     sum(tePrc2matIn(tePrc,opmoPrc,mat),
       p37_specMatDem(mat,tePrc,opmoPrc)
       *
-      v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
+      vm_outflowPrc(ttot,regi,tePrc,opmoPrc)
     )
 ;
 
@@ -359,7 +359,7 @@ q37_prodMat(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matOut(mat))..
     v37_matFlow(ttot,regi,mat)
   =e=
     sum(tePrc2matOut(tePrc,opmoPrc,mat),
-      v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
+      vm_outflowPrc(ttot,regi,tePrc,opmoPrc)
     )
 ;
 
@@ -381,7 +381,7 @@ q37_mat2ue(ttot,regi,all_in)$((ttot.val ge cm_startyear) AND ppfUePrc(all_in))..
 ***------------------------------------------------------
 q37_limitCapMat(ttot,regi,tePrc)$(ttot.val ge cm_startyear) ..
     sum(tePrc2opmoPrc(tePrc,opmoPrc),
-      v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
+      vm_outflowPrc(ttot,regi,tePrc,opmoPrc)
     )
     =l=
     sum(teMat2rlf(tePrc,rlf),
@@ -400,7 +400,7 @@ q37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc)$(ttot.val ge cm_startyear ) ..
     sum(se2fe(entySEfos,entyFE,te),
       pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2"))
     *
-    v37_outflowPrc(ttot,regi,tePrc,opmoPrc)
+    vm_outflowPrc(ttot,regi,tePrc,opmoPrc)
 ;
 
 ***------------------------------------------------------
@@ -413,7 +413,7 @@ q37_limitOutflowCCPrc(ttot,regi,tePrc)$(ttot.val ge cm_startyear ) ..
     sum(tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc),
       1. / p37_captureRate(teCCPrc,opmoCCPrc)
       *
-      v37_outflowPrc(ttot,regi,teCCPrc,opmoCCPrc)
+      vm_outflowPrc(ttot,regi,teCCPrc,opmoCCPrc)
     )
 ;
 
@@ -426,7 +426,7 @@ q37_emiCCPrc(ttot,regi,emiInd37)$((ttot.val ge cm_startyear ) AND sum(secInd37Pr
     sum((secInd37_2_emiInd37(secInd37Prc,emiInd37),
          secInd37_tePrc(secInd37Prc,tePrc),
          tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)),
-      v37_outflowPrc(ttot,regi,teCCPrc,opmoCCPrc)
+      vm_outflowPrc(ttot,regi,teCCPrc,opmoCCPrc)
     )
 ;
 
