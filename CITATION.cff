@@ -66,6 +66,11 @@ authors:
   orcid: https://orcid.org/0000-0002-3240-2608
   affiliation: "Potsdam Institute for Climate Impact Research"
 
+- family-names: "Duerrwaechter"
+  given-names:  "Jakob"
+  orcid: https://orcid.org/0000-0001-8961-5340
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
 - family-names: "Fuchs"
   given-names:  "Sophie"
   orcid: https://orcid.org/0009-0000-7258-1287
@@ -243,11 +248,6 @@ authors:
 - family-names: "Weigmann"
   given-names:  "Pascal"
   orcid: https://orcid.org/0000-0001-8801-173X
-  affiliation: "Potsdam Institute for Climate Impact Research"
-
-- family-names: "Duerrwaechter"
-  given-names:  "Jakob"
-  orcid: https://orcid.org/0000-0001-8961-5340
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 title: REMIND - REgional Model of INvestments and Development
