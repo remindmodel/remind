@@ -584,13 +584,6 @@ parameter
   cm_CCS_steel           = 1;        !! def = 1
 *'
 parameter
-  c_solscen                 "solar option choice"
-;
-  c_solscen        = 1;        !! def = 1  !! regexp = [1-2]
-*' *  (1): yes
-*' *  (3): fix at bau level
-*'
-parameter
   cm_bioenergy_SustTax      "level of the bioenergy sustainability tax in fraction of bioenergy price"
 ;
   cm_bioenergy_SustTax   = 1.5;      !! def = 1.5
