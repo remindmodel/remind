@@ -774,7 +774,7 @@ o_emissions_AFOLU(ttot,regi,emi)$(ttot.val ge 2005) =
         vm_emiMacSector.l(ttot,regi,emiMacSector)
     )*o_emi_conv(emi);
 
-o_emissions_DACCS(ttot,regi,emi)$(ttot.val ge 2005) =
+o_emissions_CDRmodule(ttot,regi,emi)$(ttot.val ge 2005) =
    vm_emiCdr.l(ttot,regi,emi)*o_emi_conv(emi)
 ;
 

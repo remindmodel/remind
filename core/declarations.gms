@@ -326,7 +326,7 @@ vm_emiCO2Sector(ttot,all_regi,emi_sectors)           "total CO2 emissions from i
 vm_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty)  "energy-related emissions per region and technology"
 vm_emiTe(ttot,all_regi,all_enty)                     "total energy-related emissions of each region. [GtC, Mt CH4, Mt N]"
 vm_emiMacSector(ttot,all_regi,all_enty)              "total non-energy-related emission of each region. [GtC, Mt CH4, Mt N]"
-vm_emiCdr(ttot,all_regi,all_enty)                    "total (negative) emissions due to CDR technologies of each region. [GtC]"
+vm_emiCdr(ttot,all_regi,all_enty)                    "total (negative) emissions from CDR technologies of each region that are calculated in the CDR module. Note that it includes all atmospheric CO2 entering the CCUS chain (i.e. CO2 stored (CDR) AND used (not CDR)) [GtC]"
 vm_emiMac(ttot,all_regi,all_enty)                    "total non-energy-related emission of each region. [GtC, Mt CH4, Mt N]"
 vm_emiAll(ttot,all_regi,all_enty)                    "total regional emissions. [GtC, Mt CH4, Mt N]"
 vm_perm(ttot,all_regi)                               "emission allowances"
@@ -655,7 +655,7 @@ o_emissions_energy_extraction(ttot,all_regi,all_enty,all_enty)   "output paramet
 o_emissions_energy_negative(ttot,all_regi,all_enty)   "output parameter"
 o_emissions_industrial_processes(ttot,all_regi,all_enty)   "output parameter"
 o_emissions_AFOLU(ttot,all_regi,all_enty)   "output parameter"
-o_emissions_DACCS(ttot,all_regi,all_enty)   "output parameter"
+o_emissions_CDRmodule(ttot,all_regi,all_enty)   "output parameter"
 o_emissions_other(ttot,all_regi,all_enty)   "output parameter"
 
 o_capture(ttot,all_regi,all_enty)   "output parameter"

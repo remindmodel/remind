@@ -291,8 +291,6 @@ if (c_ccscapratescen eq 2,
   fm_dataemiglob("pecoal","seel","coalh2c","cco2") = 25.9;
 $ifthen "%c_SSP_forcing_adjust%" == "forcing_SSP5"
    fm_dataemiglob("pegas","seel","ngccc","co2")  = 0.1;
-   fm_dataemiglob("pegas","seel","ngccc","co2")  = 0.1;
-   fm_dataemiglob("pegas","seel","ngccc","co2")  = 0.1;
    fm_dataemiglob("pegas","seel","ngccc","cco2") = 15.2;
    fm_dataemiglob("pegas","seh2","gash2c","co2")  = 0.1;
    fm_dataemiglob("pegas","seh2","gash2c","cco2") = 15.2;
