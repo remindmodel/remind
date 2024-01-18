@@ -864,12 +864,12 @@ parameter
   cm_expoLinear_yearStart  = 2050;   !! def = 2050
 *'
 parameter
-  c_budgetCO2from2020FFI "carbon budget for CO2 emissions starting from 2020 from fossil fuels & industry (FFI), i.e. without land-use (in GtCO2)"
+  c_budgetCO2from2020FFI "carbon budget for CO2 emissions starting from 2020 from fossil fuels & industry (FFI), i.e. without land-use (in GtCO2). It can be either peak budget, but can also be an end-of-century budget"
 ;
   c_budgetCO2from2020FFI   = 700;    !! def = 700
 *'
 parameter
-  c_budgetCO2from2020   "carbon budget for all CO2 emissions starting from 2020 (in GtCO2)"
+  c_budgetCO2from2020   "CO2 budget for all economic sectors starting from 2020 (GtCO2). It can be either peak budget, but can also be an end-of-century budget"
 ;
   c_budgetCO2from2020      = 1150;   !! def = 1150
 *'  budgets from AR6 for 2020-2100 (including 2020), for 1.5 C: 500 Gt CO2 peak budget (400 Gt CO2 end of century), for 2 C: 1150 Gt CO2

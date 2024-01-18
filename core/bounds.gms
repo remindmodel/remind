@@ -216,11 +216,11 @@ if (cm_nucscen eq 5,
   vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2015)  = 0;
 );
 
-*** -------------------------------------------------------------
-*** *DK* Force no new capacities of 1st generation biofuel technologies to be
-*** installed after 2030, allowing more cost-efficient and more sustainable new
-*** generation of biofuel technologies free entrance to the market
-*** -------------------------------------------------------------
+*'  -------------------------------------------------------------
+*'  Force no new capacities of 1st generation biofuel technologies to be
+*'  installed after 2030, allowing more cost-efficient and more sustainable new
+*'  generation of biofuel technologies free entrance to the market
+*'  -------------------------------------------------------------
 if(cm_1stgen_phaseout=1,
    vm_deltaCap.up(t,regi,"bioeths",rlf)$(t.val gt 2030)   = 0;
    vm_deltaCap.up(t,regi,"biodiesel",rlf)$(t.val gt 2030) = 0;
