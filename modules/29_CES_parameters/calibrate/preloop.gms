@@ -46,7 +46,7 @@ if (sm_tmp,
 $endif.old_structure
 
 
-***_____________________________ START OF: GET PRICES _____________________________
+***_____________________________ START OF: CALCULATE PRICES _____________________________
 *** In the first iteration with a changed CES structure, ppf prices can't be loaded from file, so they have to be set to an initial default.
 if( sm_CES_calibration_iteration eq 1 and s29_CES_calibration_new_structure eq 1,
   !! Set CES prices to the value specified by cm_CES_calibration_default_prices
@@ -350,7 +350,7 @@ display "after all but entrp_frgt_lo smoothening", pm_cesdata;
 
 display "after price smoothing",  cesOut2cesIn_below, pm_cesdata;
 
-***_____________________________ END OF: GET PRICES _____________________________
+***_____________________________ END OF: CALCULATE PRICES _____________________________
 
 ***_____________________________ START OF: CALCULATE IPF _____________________________
 
