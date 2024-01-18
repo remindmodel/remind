@@ -313,7 +313,7 @@ if(sm_fadeoutPriceAnticip gt cm_maxFadeOutPriceAnticip,
 
 *' criterion "Deviation due to price anticipation": are the resulting deviations sufficiently small?
 *' compare to 1/10th of the cutoff for goods imbalance 
-if(p80_DevPriceAnticipGlobAllMax("2100") gt 0.1 * p80_surplusMaxTolerance("good"),
+if(p80_DevPriceAnticipGlobAllMax2100Iter(iteration) gt 0.1 * p80_surplusMaxTolerance("good"),
   s80_bool=0;                
   p80_messageShow("DevPriceAnticip") = YES;
 );
