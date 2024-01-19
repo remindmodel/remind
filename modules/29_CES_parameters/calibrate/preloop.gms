@@ -47,7 +47,7 @@ $endif.old_structure
 
 
 ***_____________________________ START OF: CALCULATE PRICES _____________________________
-*** In the first iteration with a changed CES structure, ppf prices can't be loaded from file, so they have to be set to an initial default.
+*** In the first iteration with a changed CES structure, ppf prices are set to an initial default.
 if( sm_CES_calibration_iteration eq 1 and s29_CES_calibration_new_structure eq 1,
   !! Set CES prices to the value specified by cm_CES_calibration_default_prices
   !! and abort if cm_CES_calibration_default_prices == 0
@@ -64,7 +64,7 @@ $endif.default_prices
     = %cm_CES_calibration_default_prices%;
 
 else
-  !! If not first iteration or known CES structure, compute ppf prices from CES derivatives load from file
+  !! If not first iteration with unknown CES structure, compute ppf prices from CES derivatives loaded from file
 
   !! Compute prices of each node from CES derivatives of previous run:
   !! d(V_o)/d(V_i) = pi_i  = xi_i * eff_i * effGr_i * V_o**(1-rho_o)  *  (eff_i * effGr_i * V_i)**(rho_o-1)

@@ -26,6 +26,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1414](https://github.com/remindmodel/remind/pull/1414)]
 - correctly report `Tech|*|Capital Costs|w/ Adj Costs` for t < cm_startyear
     [[#1429](https://github.com/remindmodel/remind/pull/1429), [#1476](https://github.com/remindmodel/remind/pull/1476)]
+- prevent tradtional biomass spillover to other sectors than buildings
+    [[#1519](https://github.com/remindmodel/remind/pull/1519)]
 
 ### removed
 - **45_carbonprice** remove outdated realizations:
