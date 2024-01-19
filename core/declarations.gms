@@ -47,7 +47,7 @@ p_developmentState(tall,all_regi)                    "level of development based
 f_lab(tall,all_regi,all_POPscen)                     "labour data for all possible scenarios"
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
 pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer)"
-pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution"
+pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution. If elasticities of substitution (sigma) is below 1, the smaller it is the less the substitution replacement effect between different CES nodes. The products become more and more complementary in the production, meaning that the more one product is used, the more the other one is demanded as well. If sigma is larger than 1, the more one product is used, the less the others are used, i.e. the products are substitutes"
 p_r(ttot,all_regi)				     "calculating capital interest rate"
 
 o_diff_to_Budg(iteration)                             "Difference between actual CO2 budget and target CO2 budget"
