@@ -88,7 +88,7 @@ q36_costCESmarkup(t,regi,in)$(ppfen_buildings_dyn36(in))..
 ***---------------------------------------------------------------------------
 *' Use at least as much solids from biomass in buildings as was transformed
 *' via biotr in order to prevent that traditionally used biomass is also used
-*' in other sectors. This only applies to regions that still have trational
+*' in other sectors. This only applies to regions that still have traditional
 *' biomass use, which is defined via a gdp criteria.
 ***---------------------------------------------------------------------------
 q36_biotrBound(t,regi)$(t.val ge 2010 AND (pm_gdp("2005",regi)/pm_pop("2005",regi) / pm_shPPPMER(regi)) lt 4)..
