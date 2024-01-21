@@ -513,11 +513,23 @@ if (cm_run_initialCap eq 0 AND cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' pm_EN_demand_from_initialcap2 = pm_EN_demand_from_initialcap2;
   Execute_Loadpoint 'input_ref' pm_pedem_res = pm_pedem_res;
   Execute_Loadpoint 'input_ref' pm_dataeta = pm_dataeta;
-  Execute_Loadpoint 'input_ref' pm_data = pm_data;
   Execute_Loadpoint 'input_ref' pm_aux_capLowerLimit = pm_aux_capLowerLimit;
   Execute_Loadpoint 'input_ref' vm_deltaCap.l = vm_deltaCap.l;
   Execute_Loadpoint 'input_ref' vm_deltaCap.lo = vm_deltaCap.lo;
   Execute_Loadpoint 'input_ref' vm_deltaCap.up = vm_deltaCap.up;
+
+
+
+*** load pm_data from input_ref.gdx and overwrite values
+*** only for eta of chp technologies since they have been adapted in initialCap routine above
+*** This is to avoid overwriting changes to pm_data by scenario switches
+  Execute_Loadpoint 'input_ref' p05_pmdata_ref = pm_data;
+  pm_data(regi,char,te)$( (sameas(te,"coalchp")  
+                              OR sameas(te,"gaschp")
+                              OR sameas(te,"biochp") )
+                            AND sameas(char,"eta") ) = p05_pmdata_ref(regi,char,te);
+
+
 
 *** if %cm_techcosts% == "GLO", load pm_inco0_t from input_ref.gdx and overwrite values
 *** only for pc, ngt, ngcc since they have been adapted in initialCap routine above
