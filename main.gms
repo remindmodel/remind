@@ -1136,7 +1136,7 @@ parameter
 parameter
   cm_run_initialCap   "Switch to entable running the InitialCap module in policy runs"
 ;
-  cm_run_initialCap = 1;  !! def = 1
+  cm_run_initialCap = 0;  !! def = 1
 *' This switch is used to enable running the InitialCap module to determine initial capacities and modify some technology data accordingly. 
 *'
 *' * (0)                InitialCap is only run if cm_startyear is 2005, otherwise its output is taken from input_ref.gdx.
