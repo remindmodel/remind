@@ -144,7 +144,11 @@ if (cm_VRE_supply_assumptions eq 1,
     fm_dataglob("inco0","storspv") = 7000;
     fm_dataglob("incolearn","storspv") = 4240;
     fm_dataglob("learn","storspv") = 0.12;
+);
+if (cm_VRE_supply_assumptions eq 2,
     fm_dataglob("incolearn","spv") = 5010;
+);
+if (cm_VRE_supply_assumptions eq 3,
     fm_dataglob("incolearn","spv") = 4960;
 );
 
@@ -169,6 +173,7 @@ $include "./core/input/generisdata_trade.prn"
 if (cm_nucscen eq 6,
   f_dataglob_SSP5("inco0","tnrs") = 6270; !! increased from 4000 to 6270 with the update of technology costs in REMIND 1.7 to keep the percentage increase between SSP2 and SSP5 constant
 );
+
 if (c_techAssumptScen eq 2,
                fm_dataglob(char,te) = f_dataglob_SSP1(char,te)
 );
@@ -1097,13 +1102,6 @@ $if %cm_techcosts% == "GLO"  (1.03 + 0.03 + pm_prtp(regi) )                     
 );
 
 display p_tkpremused;
-***for those technologies, for which differentiated costs are available for 2015-2040, use those
-***$if %cm_techcosts% == "REG"   loop(teRegTechCosts(te)$(not teLearn(te)),
-***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);
-***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2040) = p_inco0("2040",regi,te);
-***$if %cm_techcosts% == "REG"   );
-
-***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);
 
 pm_data(regi,"inco0",te)       = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"inco0",te);
 pm_data(regi,"incolearn",te)   = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"incolearn",te);
@@ -1207,10 +1205,10 @@ display pm_inco0_t;
 
 $ifthen.REG_techcosts "%cm_techcosts%" == "REG"   !! cm_techcosts
 *** for those technologies, for which differentiated costs are available for
-*** 2015-2040, use those
+*** 2015-2020, use those
 loop(te$( teNoLearn(te) AND teRegTechCosts(te) ),
   !! no value after 2020 is currently used (see convergence below)
-  pm_inco0_t(ttot,regi,te)$( ttot.val ge 2015 AND ttot.val lt 2040 )
+  pm_inco0_t(ttot,regi,te)$( ttot.val ge 2015 AND ttot.val lt 2025)
   = p_inco0(ttot,regi,te);
 
 *** linear convergence of investment costs from 2025 on for non-learning

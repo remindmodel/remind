@@ -23,7 +23,7 @@ $endif.neg
 );
 
 if(cm_iterative_target_adj eq 4,
-*JeS* Update tax levels/ multigasbudget values to reach the CO2 FF&I budget (s_actualbudgetco2 runs from 2020-2100)
+*JeS* Iteratively update regional CO2 tax trajectories / regional CO2 budget to reach the FF&I budget target (s_actualbudgetco2 runs from 2020-2100, not peak budget)
 *KK* for a time step of 5 years, the budget is calculated as 3 * 2020 + ts(2025-2090) + 8 * 2100;
 *** 10-pm_ts("2090")/2 and pm_ts("2020")/2 are the time periods that haven't been taken into account in the sum over ttot.
 *** 0.5 year of emissions is added for the two boundaries, such that the budget is calculated for 81 years.
@@ -54,7 +54,7 @@ display s_actualbudgetco2;
 );
 
 if(cm_iterative_target_adj eq 5,
-*JeS* Update tax levels/ multigasbudget values to reach the CO2 budget (s_actualbudgetco2 runs from 2020-2100)
+*JeS* Iteratively update regional CO2 tax trajectories / regional CO2 budget to reach the global emission budget (s_actualbudgetco2 runs from 2020-2100, not peak budget)
 *KK* for a time step of 5 years, the budget is calculated as 3 * 2020 + ts(2025-2090) + 8 * 2100;
 *** 10-pm_ts("2090")/2 and pm_ts("2020")/2 are the time periods that haven't been taken into account in the sum over ttot.
 *** 0.5 year of emissions is added for the two boundaries, such that the budget is calculated for 81 years.
@@ -112,7 +112,7 @@ display s_actualbudgetco2;
 );
 
 if(cm_iterative_target_adj eq 6,
-*JeS* Update tax levels/ multigasbudget values to reach the peak CO2 budget
+*JeS* Iteratively update regional CO2 tax trajectories / regional CO2 budget to reach the target for global peak budget
 
 *KK* p_actualbudgetco2 for ttot > 2020. It includes emissions from 2020 to ttot (including ttot).
 *** (ttot.val - (ttot - 1).val)/2 and pm_ts("2020")/2 are the time periods that haven't been taken into account in the sum over ttot2.
@@ -175,7 +175,7 @@ display s_actualbudgetco2;
 *** it results in a peak budget with zero net CO2 emissions afterwards
 *** ---------------------------------------------------------------------------------------------------------------
 if(cm_iterative_target_adj eq 7,
-*JeS/CB* Update tax levels/ multigasbudget values to reach the peak CO2 budget, but make sure CO2 emissions afterward are close to zero on the global level
+*JeS/CB* Iteratively update regional CO2 tax trajectories / regional CO2 budget to reach the target for global peak budget, but make sure CO2 emissions afterward are close to zero on the global level
  
 *** Save the original functional form of the CO2 price trajectory so values for all times can be accessed even if the peakBudgYr is shifted. 
   if( iteration.val eq 1, 
@@ -290,10 +290,8 @@ display p_actualbudgetco2;
 *** ---------------------------------------------------------------------------------------------------------------
 
 if (cm_iterative_target_adj eq 9,
-*' Update tax levels/multigas budget values to reach the peak CO~2~ budget, with
-*' a linear increase afterwards givn by `c_taxCO2inc_after_peakBudgYr`.  The
-*' peak budget year is determined automatically (within the time window
-*' 2040--2100)
+*' Update Iteratively update regional CO2 tax trajectories / regional CO2 budget to reach the target for global peak budget, with a linear increase afterwards given by `c_taxCO2inc_after_peakBudgYr`.  The
+*' peak budget year is determined automatically (within the time window 2040--2100)
 
 *' `p_actualbudgetco2(ttot)` includes emissions from 2020 to `ttot` (inclusive).
   p_actualbudgetco2(ttot)$( 2020 lt ttot.val )
@@ -323,7 +321,7 @@ if (cm_iterative_target_adj eq 9,
   
 *** --------A: calculate the new CO2 price path,  the CO2 tax rescale factor----------------------------------------------------------  
   
-    if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2from2020 - s_actualbudgetco2) ge 2,   !!only for optimal iterations, and not after the last one, and only if budget still possitive, and only if target not yet reached
+    if(o_modelstat eq 2 AND ord(iteration) < cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2from2020 - s_actualbudgetco2) ge 2,   !!only for optimal iterations, and not after the last one, and only if budget still possitive, and only if target not yet reached
       display pm_taxCO2eq;
 
       if( ( ( p_actualbudgetco2("2100") > 1.1 * s_actualbudgetco2 ) AND ( abs(c_budgetCO2from2020 - s_actualbudgetco2) < 50 ) AND (iteration.val < 12) ), 
@@ -493,7 +491,7 @@ if (cm_iterative_target_adj eq 9,
 	
     display o_delay_increase_peakBudgYear, o_reached_until2150pricepath, pm_taxCO2eq, o_peakBudgYr_Itr, o_taxCO2eq_afterPeakShiftLoop_Itr_1regi, o_pkBudgYr_flipflop;
   ); !! if cm_emiscen eq 9,
-);   !! if cm_iterative_target_adj eq 8,
+);   !! if cm_iterative_target_adj eq 9,
 
 ***------ end of "cm_iterative_target_adj" variants-----------------------------------------
 
