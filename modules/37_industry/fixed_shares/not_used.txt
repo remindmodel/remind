@@ -4,28 +4,31 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-name,                    type,       reason
-pm_delta_kap,            input,      questionnaire
-pm_calibrate_eff_scale,  parameter,  not needed
-pm_fedemand,             parameter,  not needed
-sm_TWa_2_MWh,            input,      questionnaire
-sm_tmp2,                 parameter,  not needed
-vm_cap,                  variable,   not needed
-vm_capFac,               variable,   not needed
-vm_Xport,                variable,   not needed
-vm_Mport,                variable,   not needed
-pm_tau_ces_tax,          input,      questionnaire
-pm_secBioShare,          parameter,  not needed
-pm_exogDemScen,input,added by codeCheck
-pm_ts,                   parameter,  not needed
-sm_macChange,            parameter,  not needed
-vm_demFENonEnergySector,    parameter,  not needed
-vm_FeedstocksCarbon,        parameter,  not needed
-vm_plasticsCarbon,          parameter,  not needed
-vm_plasticWaste,            parameter,  not needed
-vm_feedstockEmiUnknownFate, parameter,  not needed
-vm_incinerationEmi,         parameter,  not needed
-vm_nonIncineratedPlastics,  parameter,  not needed
+name,type,reason
+pm_delta_kap,               input,      questionnaire
+pm_calibrate_eff_scale,     parameter,  not needed
+pm_fedemand,                parameter,  not needed
+sm_TWa_2_MWh,               input,      questionnaire
+sm_giga_2_non,              input,      not needed
+sm_EJ_2_TWa,                input,      not needed
+sm_tmp2,                    parameter,  not needed
+vm_cap,                     variable,   not needed
+vm_capFac,                  variable,   not needed
+pm_tau_ces_tax,             input,      questionnaire
+pm_secBioShare,             parameter,  not needed
+pm_exogDemScen,             input,      added by codeCheck
+pm_ts,                      parameter,  not needed
+pm_outflowPrcIni,           parameter,  not needed
+sm_macChange,               parameter,  not needed
+vm_demFENonEnergySector,    variable,   not needed
+vm_FeedstocksCarbon,        variable,   not needed
+vm_plasticsCarbon,          variable,   not needed
+vm_plasticWaste,            variable,   not needed
+vm_feedstockEmiUnknownFate, variable,   not needed
+vm_incinerationEmi,         variable,   not needed
+vm_nonIncineratedPlastics,  variable,   not needed
+vm_outflowPrc,              variable,   not needed
+vm_costMatPrc,              variable,   not needed
 pm_emifacNonEnergy,         parameter,  not needed
 pm_incinerationRate,        parameter,  not needed
 cm_emiscen,                 parameter,  not needed

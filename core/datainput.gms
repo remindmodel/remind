@@ -228,8 +228,8 @@ fm_dataglob("flexibility","storwindoff")  = 1.93;
 fm_dataglob("flexibility","windoff")  = -1;
 $ENDIF.WindOff
 
-*** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for dac)
-*** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for dac)
+*** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for ccs-related tech or $/(t/a) for process-based industry)
+*** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for ccs-related tech or T$/(Gt/a) for process-based industry)
 *** note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
 fm_dataglob("inco0",te)              = sm_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
 fm_dataglob("incolearn",te)          = sm_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
@@ -342,7 +342,7 @@ loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
 );
 
 *** Allocate emission factors to pm_emifac
-option pm_emifac:3:3:1; 
+option pm_emifac:3:3:1;
 pm_emifac(ttot,regi,enty,enty2,te,"co2")$emi2te(enty,enty2,te,"co2")   = fm_dataemiglob(enty,enty2,te,"co2");
 pm_emifac(ttot,regi,enty,enty2,te,"cco2")$emi2te(enty,enty2,te,"cco2") = fm_dataemiglob(enty,enty2,te,"cco2");
 *JeS scale N2O energy emissions to EDGAR
@@ -471,7 +471,13 @@ pm_cf(ttot,regi,"tdsyngas") = 0.65;
 pm_cf(ttot,regi,"tdsynhos") = 0.6;
 pm_cf(ttot,regi,"tdsynpet") = 0.7;
 pm_cf(ttot,regi,"tdsyndie") = 0.7;
-
+*JD eternal short-term fix for process-based industry
+pm_cf(ttot,regi,"bf") = 0.8;
+pm_cf(ttot,regi,"bfcc") = 0.8;
+pm_cf(ttot,regi,"bof") = 0.8;
+pm_cf(ttot,regi,"idr") = 0.8;
+pm_cf(ttot,regi,"idrcc") = 0.8;
+pm_cf(ttot,regi,"eaf") = 0.8;
 
 *RP* phasing down the ngt cf to "peak load" cf of 5%
 pm_cf(ttot,regi,"ngt")$(ttot.val eq 2025) = 0.9 * pm_cf(ttot,regi,"ngt");
@@ -490,7 +496,7 @@ pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
 *SB* Region- and tech-specific early retirement rates
 *Regional*
-loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi), 
+loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi),
   pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi)) = pm_extRegiEarlyRetiRate(ext_regi);
 );
 *Tech-specific*
@@ -505,7 +511,7 @@ pm_regiEarlyRetiRate(t,regi,"biohp")   = 0.5 * pm_regiEarlyRetiRate(t,regi,"bioh
 
 
 $IFTHEN.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
-loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te), 
+loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
   pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi) and (t.val lt 2035 or sameas(ext_regi,"GLO"))) = p_techEarlyRetiRate(ext_regi,te);
 );
 $ENDIF.tech_earlyreti
@@ -746,7 +752,7 @@ $include "./core/input/f_maxProdGradeRegiWindOff.cs3r"
 $offdelim
 ;
 pm_dataren(all_regi,"maxprod",rlf,"windoff") = sm_EJ_2_TWa * f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf);
-pm_dataren(all_regi,"nur",rlf,"windoff")     = 1.25 * f_maxProdGradeRegiWindOff(all_regi,"nur",rlf);  !! increase wind offshore capacity factors by 25% as the NREL values seem to underestimate offshore capacity factors compared to historic values 
+pm_dataren(all_regi,"nur",rlf,"windoff")     = 1.25 * f_maxProdGradeRegiWindOff(all_regi,"nur",rlf);  !! increase wind offshore capacity factors by 25% as the NREL values seem to underestimate offshore capacity factors compared to historic values
 
 pm_shareWindPotentialOff2On(all_regi) = sum(rlf,f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf)$(rlf.val le 8)) /
                       sum(rlf,f_maxProdGradeRegiWindOn(all_regi,"maxprod",rlf)$(rlf.val le 8));
@@ -868,7 +874,7 @@ pm_cf(t,regi,te) =
 (pm_ttot_val(t) - 2015) / 20 * pm_cf(t,regi,te)
 );
 );
-$ENDIF.WindOff 
+$ENDIF.WindOff
 
 
 *CG* set storage and grid of windoff to be the same as windon
@@ -969,10 +975,14 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,'apCarDiEffH2T')   = 0.50;
   p_adj_seed_te(ttot,regi,'dac')             = 0.25;
   p_adj_seed_te(ttot,regi,'geohe')           = 0.33;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+  p_adj_seed_te(ttot,regi,"bfcc")            = 0.05;
+  p_adj_seed_te(ttot,regi,"idrcc")           = 0.05;
+$endif.cm_subsec_model_steel
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-  p_adj_seed_te(ttot,regi,"windoff") = 0.5; 
-$ENDIF.WindOff 
+  p_adj_seed_te(ttot,regi,"windoff") = 0.5;
+$ENDIF.WindOff
 
 *RP: for comparison of different technologies:
 *** pm_conv_cap_2_MioLDV <- 650  # The world has slightly below 800million cars in 2005 (IEA TECO2), so with a global vm_cap of 1.2, this gives ~650
@@ -1000,6 +1010,10 @@ $ENDIF.WindOff
   p_adj_coeff(ttot,regi,"spv")             = 0.15;
   p_adj_coeff(ttot,regi,"wind")            = 0.25;
   p_adj_coeff(ttot,regi,"geohe")           = 0.6;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+  p_adj_coeff(ttot,regi,"bfcc")            = 1.0;
+  p_adj_coeff(ttot,regi,"idrcc")           = 1.0;
+$endif.cm_subsec_model_steel
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 
@@ -1021,7 +1035,7 @@ $ifthen not "%cm_adj_seed_multiplier%" == "off"
    p_adj_seed_te(ttot,regi,te)$(p_adj_seed_multiplier(te)) = p_adj_seed_multiplier(te) * p_adj_seed_te(ttot,regi,te);
 $endif
 
-$ifthen not "%cm_adj_coeff_multiplier%" == "off"  
+$ifthen not "%cm_adj_coeff_multiplier%" == "off"
   p_adj_coeff(ttot,regi,te)$(p_adj_coeff_multiplier(te)) = p_adj_coeff_multiplier(te) * p_adj_coeff(ttot,regi,te);
 $endif
 
@@ -1167,8 +1181,8 @@ $if %cm_techcosts% == "GLO"   pm_data(regi,"learnMult_wFC",teLearn(te))    = pm_
 $if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC",teLearn(te))    = pm_data(regi,"incolearn",te)/(sum(regi2,p_capCum("2015",regi2,te))**pm_data(regi,"learnExp_wFC",te));
 *** initialize spv learning curve in 2020
 $if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC","spv")    = pm_data(regi,"incolearn","spv")/(sum(regi2,p_capCum("2020",regi2,"spv"))**pm_data(regi,"learnExp_wFC","spv"));
-*FS initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020) 
-* equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost) 
+*FS initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020)
+* equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost)
 pm_data(regi,"learnMult_wFC",te)$( pm_data(regi,"tech_stat",te) eq 4 )
   = pm_data(regi,"incolearn",te)
   / ( fm_dataglob("ccap0",te)
@@ -1194,7 +1208,7 @@ p_costMarkupAdvTech("5",ttot)=p_costMarkupAdvTech("3",ttot);
 loop (teNoLearn(te),
   pm_inco0_t(ttot,regi,te) = pm_data(regi,"inco0",te);
   loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2035 ),
-    pm_inco0_t(ttot,regi,te) 
+    pm_inco0_t(ttot,regi,te)
     = sum(s_statusTe$( s_statusTe.val eq pm_data(regi,"tech_stat",te) ),
         p_costMarkupAdvTech(s_statusTe,ttot)
       * pm_inco0_t(ttot,regi,te)
@@ -1518,9 +1532,11 @@ $offdelim
 /
 ;
 
-*** use cm_demScen for Industry and Buildings 
+*** use cm_demScen for Industry and Buildings
 *** cm_GDPscen will be used for Transport (EDGE-T) (see p29_trpdemand)
 pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
+*** data input for industry FE that is no part of the CES tree
+pm_fedemand(tall,all_regi,ppfen_no_ces_use) = f_fedemand(tall,all_regi,"%cm_demScen%",ppfen_no_ces_use);
 
 *** RCP-dependent demands in buildings (climate impact)
 $ifthen.cm_rcp_scen_build NOT "%cm_rcp_scen_build%" == "none"

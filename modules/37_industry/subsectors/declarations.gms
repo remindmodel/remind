@@ -23,14 +23,18 @@ Parameters
   p37_steel_secondary_max_share(tall,all_regi)                                 "maximum share of secondary steel production"
   p37_BAU_industry_ETS_solids(tall,all_regi)                                   "industry solids demand in baseline scenario"
   p37_cesIO_baseline(tall,all_regi,all_in)                                     "vm_cesIO from the baseline scenario"
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-**p37_specMatsDem(mats,all_te,opModes)                                         "Specific materials demand of a production technology and operation mode [t_input/t_output]"
-**p37_specFeDem(all_enty,all_te,opModes)                                       "Specific final-energy demand of a production technology and operation mode [MWh/t_output]"
-$endif.process_based_steel
+  !! process-based implementation
+  p37_specMatDem(mat,all_te,opmoPrc)                                           "Specific materials demand of a production technology and operation mode [t_input/t_output]"
+  p37_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc)                         "Actual specific final-energy demand of a tech; blends between IEA data and Target [TWa/Gt_output]"
+  p37_specFeDemTarget(all_enty,all_te,opmoPrc)                                 "Best available technology (will be reached in convergence year) [TWa/Gt_output]"
+  pm_outflowPrcIni(all_regi,all_te,opmoPrc)                                    "Exogenously prescribed production volume of processes in start year (from IEA data)"
+  p37_mat2ue(all_enty,all_in)                                                  "Contribution of process output to ue in CES tree [Gt/Gt]. Trivial if just one material per UE, as in steel"
+  p37_captureRate(all_te,opmoPrc)                                              "Capture rate of CCS technology"
+  p37_priceMat(all_enty)                                                       "Prices of external material input [2005$/kg] = [trn2005$/Gt]"
 
   p37_chemicals_feedstock_share(ttot,all_regi)               "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
   p37_FeedstockCarbonContent(ttot,all_regi,all_enty)         "carbon content of feedstocks [GtC/TWa]"
-  p37_FE_noNonEn(ttot,all_regi,all_enty,all_enty2,emiMkt)    "testing parameter for FE without non-energy use" 
+  p37_FE_noNonEn(ttot,all_regi,all_enty,all_enty2,emiMkt)    "testing parameter for FE without non-energy use"
   p37_Emi_ChemProcess(ttot,all_regi,all_enty,emiMkt)         "testing parameter for process emissions from chemical feedstocks"
   p37_CarbonFeed_CDR(ttot,all_regi,all_emiMkt)               "testing parameter for carbon in feedstocks from biogenic and synthetic sources"
   p37_IndFeBal_FeedStock_LH(ttot,all_regi,all_enty,emiMkt)   "testing parameter Ind FE Balance left-hand side feedstock term"
@@ -39,15 +43,21 @@ $endif.process_based_steel
   p37_EmiEnDemand(ttot,all_regi)                             "energy demand co2 emissions without non-energy correction"
 
 *** output parameters only for reporting
-  o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                   "industry CCS emissions [GtC/a]"
   o37_cementProcessEmissions(ttot,all_regi,all_enty)                     "cement process emissions [GtC/a]"
   o37_demFeIndTotEn(ttot,all_regi,all_enty,all_emiMkt)                   "total FE per energy carrier and emissions market in industry (sum over subsectors)"
   o37_shIndFE(ttot,all_regi,all_enty,secInd37,all_emiMkt)                "share of subsector in FE industry energy carriers and emissions markets"
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)   "FE demand per industry subsector"
+  !! process-based implementation
+  o37_demFePrc(ttot,all_regi,all_enty,all_te,opmoPrc)                    "Process-based FE demand per FE type and process"
+  o37_shareRoute(ttot,all_regi,all_te,opmoPrc,route)                     "The relative share (between 0 and 1) of a technology and operation mode outflow which belongs to a certain route; For example, bf.standard belongs partly to the route bfbof and partly to the route bfbof"
+  o37_ProdIndRoute(ttot,all_regi,mat,route)                              "produciton volume of a material via each process route"
+  o37_demFeIndRoute(ttot,all_regi,all_enty,all_te,route,secInd37)        "FE demand by FE type, process route and tech"
+  !! TODO: make route specific; So far, this only works because the relative outflow of each tech/opmo is the same for all routes.
+  o37_relativeOutflow(ttot,all_regi,all_te,opmoPrc)                      "Outflow of a process relative to the outflow of the route, i.e. the final product of that route"
 
   p37_CESMkup_input(all_in)  "markup cost parameter read in from config for CES levels in industry to influence demand-side cost and efficiencies in CES tree [trUSD/CES input]"
   /
-$ifthen.CESMkup "%cm_CESMkup_ind%" == "manual" 
+$ifthen.CESMkup "%cm_CESMkup_ind%" == "manual"
     %cm_CESMkup_ind_data%
 $endif.CESMkup
   /
@@ -59,17 +69,16 @@ $endif.sec_steel_scen
 ;
 
 Positive Variables
-  vm_macBaseInd(ttot,all_regi,all_enty,secInd37)                            "industry CCS baseline emissions [GtC/a]"
+  vm_emiIndBase(ttot,all_regi,all_enty,secInd37)                            "industry CCS baseline emissions [GtC/a]; Not used for emission accounting outside CCS"
   vm_emiIndCCS(ttot,all_regi,all_enty)                                      "industry CCS emissions [GtC/a]"
   vm_IndCCSCost(ttot,alL_regi,all_enty)                                     "industry CCS cost"
   v37_emIIndCCSmax(ttot,all_regi,emiInd37)                                  "maximum abatable industry emissions"
 
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  v37_demMatsEcon(tall,all_regi,all_enty)                                   "External demand of materials from economy"
-  v37_demMatsProc(tall,all_regi,all_enty)                                   "Internal demand of materials from processes"
-  v37_prodMats(tall,all_regi,all_enty,all_te,opModes)                       "Production of materials"
-  v37_demFEMats(tall,all_regi,all_enty,all_emiMkt)                          "Final-energy demand of material-flow model"
-$endif.process_based_steel
+  !! process-based implementation
+  vm_outflowPrc(tall,all_regi,all_te,opmoPrc)                               "Production volume of processes in process-based model [Gt/a]"
+  v37_matFlow(tall,all_regi,all_enty)                                       "Production of materials [Gt/a]"
+  v37_emiPrc(tall,all_regi,all_enty,all_te,opmoPrc)                         "Emissions per process and operation mode [GtC/a]"
+  vm_costMatPrc(tall,all_regi)                                              "Cost of external material inputs such as iron ore in process-based industry [trn $2005/a]"
 ;
 
 Equations
@@ -77,10 +86,10 @@ $ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
   q37_energy_limits(ttot,all_regi,all_in)                 "thermodynamic/technical limit of energy use"
 $endif.no_calibration
   q37_limit_secondary_steel_share(ttot,all_regi)          "no more than 90% of steel from seconday production"
-  q37_macBaseInd(ttot,all_regi,all_enty,secInd37)         "gross industry emissions before CCS"
+  q37_emiIndBase(ttot,all_regi,all_enty,secInd37)         "gross industry emissions before CCS"
   q37_emiIndCCSmax(ttot,all_regi,emiInd37)                "maximum abatable industry emissions at current CO2 price"
   q37_IndCCS(ttot,all_regi,emiInd37)                      "limit industry emissions abatement"
-  q37_limit_IndCCS_growth(ttot,all_regi,emiInd37)	  "limit industry CCS scale-up"
+  q37_limit_IndCCS_growth(ttot,all_regi,emiInd37)         "limit industry CCS scale-up"
   q37_cementCCS(ttot,all_regi)                            "link cement fuel and process abatement"
   q37_IndCCSCost                                          "Calculate industry CCS costs"
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)       "industry final energy demand (per emission market)"
@@ -96,12 +105,15 @@ $endif.no_calibration
   q37_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)   "calculate carbon contained in chemical feedstock with unknown fate [GtC]"
   q37_feedstocksLimit(ttot,all_regi,all_enty,all_enty,all_emiMkt)           "restrict feedstocks flow to total energy flows into industry"
 
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  q37_balMats(tall,all_regi,all_enty)                     "Balance of materials in material-flow model"
-  q37_limitCapMat(tall,all_regi,all_enty,all_te)          "Material-flow conversion is limited by capacities"
-  q37_demMatsProc(tall,all_regi,all_enty)                 "Demand of process materials"
-  q37_demFEMats(tall,all_regi,all_enty,all_emiMkt)        "Final-energy demand of materail-flow model"
-$endif.process_based_steel
+  !! process-based implementation
+  q37_demMatPrc(tall,all_regi,mat)                        "Material demand of processes"
+  q37_prodMat(tall,all_regi,mat)                          "Production volume of processes equals material flow of output material"
+  q37_mat2ue(tall,all_regi,all_in)                        "Connect materials production to ue ces tree nodes"
+  q37_limitCapMat(tall,all_regi,all_te)                   "Material-flow conversion is limited by capacities"
+  q37_emiPrc(ttot,all_regi,all_enty,all_te,opmoPrc)       "Local industry emissions [GtC/a] pre-capture; Only used as baseline for CCS"
+  q37_emiCCPrc(tall,all_regi,emiInd37)                    "Captured emissions from CCS"
+  q37_limitOutflowCCPrc(tall,all_regi,all_te)             "Carbon capture processes can only capture as much co2 as the base process emits"
+  q37_costMat(tall,all_regi)                              "External material cost (non-energy)"
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms

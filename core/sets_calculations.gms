@@ -10,7 +10,7 @@
 *** is needed for calculating certain sets.
 Scalar
   sm_tmp           "temporary scalar that can be used locally"
-  sm_tmp2          "temporary scalar that can be used locally" 
+  sm_tmp2          "temporary scalar that can be used locally"
 ;
 
 ***------------------- region set    ------------------------------------------
@@ -29,15 +29,15 @@ teEtaConst(te)  = not teEtaIncr(te);
 teNoCCS(te)     = not teCCS(te);
 
 trade(enty)          = tradePe(enty) + tradeSe(enty) + tradeMacro(enty);
-emi(enty)            = emiTe(enty) + emiMac(enty) + emiExog(enty); 
+emi(enty)            = emiTe(enty) + emiMac(enty) + emiExog(enty);
 emiMacMagpie(enty)   = emiMacMagpieCH4(enty) + emiMacMagpieN2O(enty) + emiMacMagpieCO2(enty);
 emiMacExo(enty)      = emiMacExoCH4(enty) + emiMacExoN2O(enty);
 peExGrade(enty)      = peEx(enty)  - peExPol(enty);
 peRicardian(enty)    = peBio(enty) + peEx(enty);
 en2se(enty,enty2,te) = pe2se(enty,enty2,te) + se2se(enty,enty2,te);
 
-en2en(enty,enty2,te) = pe2se(enty,enty2,te) + se2se(enty,enty2,te) + se2fe(enty,enty2,te) + fe2ue(enty,enty2,te) + ccs2te(enty,enty2,te);
-te2rlf(te,rlf)       = teFe2rlf(te,rlf) + teSe2rlf(te,rlf) + teue2rlf(te,rlf) + teCCS2rlf(te,rlf) + teCCU2rlf2(te,rlf) +teNoTransform2rlf(te,rlf) + teFe2rlfH2BI(te,rlf);
+en2en(enty,enty2,te) = pe2se(enty,enty2,te) + se2se(enty,enty2,te) + se2fe(enty,enty2,te) + fe2ue(enty,enty2,te) + ccs2te(enty,enty2,te) + fe2mat(enty,enty2,te);
+te2rlf(te,rlf)       = teFe2rlf(te,rlf) + teSe2rlf(te,rlf) + teue2rlf(te,rlf) + teCCS2rlf(te,rlf) + teCCU2rlf2(te,rlf) +teNoTransform2rlf(te,rlf) + teFe2rlfH2BI(te,rlf) + teMat2rlf(te,rlf);
 ***----------------------------------------------------------------------------
 *** Fill sets that were created empty and should be filled from the mappings above
 ***----------------------------------------------------------------------------
@@ -50,7 +50,7 @@ loop(pe2se(enty,'seel',te),
 display teChp;
 
 
-loop(fe2ue(entyFe,entyUe,te), 
+loop(fe2ue(entyFe,entyUe,te),
     feForUe(entyFe) = yes;
 );
 display feForUe;
@@ -62,7 +62,7 @@ period123(ttot) = period1(ttot) + period2(ttot) + period3(ttot);
 period1234(ttot) = period1(ttot) + period2(ttot) + period3(ttot) + period4(ttot);
 
 *** calculate primary production factors (ppf)
-ppf(all_in) = ppfEn(all_in) + ppfKap(all_in);
+ppf(all_in) = ppfEn(all_in) + ppfKap(all_in) + ppfUePrc(all_in);
 *** add labour to the primary production factors (ppf)
 ppf("lab")  = YES;
 
@@ -78,7 +78,7 @@ ppfIO_putty(in)$(cesOut2cesIn(out,in)
 loop (counter$( ord(counter) eq 1 ),
   cesLevel2cesIO(counter,"inco") = YES;   !! the root is at the lowest level
   sm_tmp = counter.val;              !! used here to track total depth in the tree
-); 
+);
 
 loop ((counter,cesOut2cesIn(out,in)),    !! loop over all out/in combinations
   if (cesLevel2cesIO(counter-1,out),    !! if out was an input on the last level
@@ -165,7 +165,6 @@ loop (fe2es(entyFe,esty,teEs),
 );
 
 display "ES layer sets:", ppfenFromEs, feForEs, feViaEs2ppfen;
-
 
 loop ( se2fe(entySe,entyFe,te),
 fete(entyFe,te) = YES;

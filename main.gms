@@ -636,7 +636,7 @@ parameter
   cm_phaseoutBiolc          "Switch that allows for a full phaseout of all bioenergy technologies globally"
 ;
   cm_phaseoutBiolc    = 0;         !! def = 0  !! regexp = 0|1
-***  Only working with magpie_40 realization of 30_biomass module. 
+***  Only working with magpie_40 realization of 30_biomass module.
 ***  (0): (default) No phaseout
 ***  (1): Phaseout capacities of all bioenergy technologies using pebiolc, as far
 ***       as historical bounds on bioenergy technologies allow it. This covers
@@ -1223,7 +1223,7 @@ $setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.nonnegative
 *** limit to total biomass production (including residues) by region to an upper value in EJ/yr from 2035 on
 *** example: "CHA 20, EUR_regi 7.5" limits total biomass production in China to 20 EJ/yr and
 *** limits in EU-regions (EUR region or EU-subregions) to 7.5 EJ/yr.
-*** For region groups (e.g. EU27_regi), regional limits will be dissaggregated by 2005 total biomass production. 
+*** For region groups (e.g. EU27_regi), regional limits will be dissaggregated by 2005 total biomass production.
 *** If you specify a value for a region within a region group (e.g. DEU in EU27_regi),
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "EU27_regi 7.5, DEU 1.5".
@@ -1407,12 +1407,12 @@ $setGlobal cm_import_EU  off !! def off
 $setGlobal cm_import_ariadne  off !! def off
 *** cm_trade_SE_exog
 *** set exogenous SE trade scenarios (requires se_trade realization of modul 24 to be active)
-*** e.g. "2030.2050.MEA.DEU.seh2 0.5", means import of SE hydrogen from MEA to Germany from 2050 onwards of 0.5 EJ/yr, 
+*** e.g. "2030.2050.MEA.DEU.seh2 0.5", means import of SE hydrogen from MEA to Germany from 2050 onwards of 0.5 EJ/yr,
 *** linear scale-up of trade in 2030-2050 period.
 *** For region groups (e.g. EU27_regi), trade flows will be dissaggregated by GDP share.
 *** If you specify trade flows for a region within a region group,
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
-*** For example: "2030.2050.MEA.EU27_regi.seh2 0.5, 2030.2050.MEA.DEU.seh2 0.3".  
+*** For example: "2030.2050.MEA.EU27_regi.seh2 0.5, 2030.2050.MEA.DEU.seh2 0.3".
 $setGlobal cm_trade_SE_exog off !! def off
 *** cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
 *** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
@@ -1430,14 +1430,14 @@ $setGlobal cm_EnSecScen_price  off !! def off
 ***  (forecast_ensec) fix to forecast outputs as used in the ARIADNE scenario "EnSec"
 $setGlobal cm_indstExogScen  off !! def off
 *** cm_exogDem_scen
-*** switch to fix FE or ES demand represented in CES function to trajectories 
+*** switch to fix FE or ES demand represented in CES function to trajectories
 *** from exgenous sources (not EDGE models) given in file p47_exogDemScen.
 *** This switch fixes demand without recalibration of REMIND CES parameters.
 *** This should be kept in mind when comparing those runs to baseline runs without fixing
 *** as the fixing shifts the CES function away from its optimal point based on the CES parameters used.
-*** Warning: the formulation fixing CES quantity nodes in scenarios should be used with care and parsimony. 
-*** Price and tax-induced solutions are preferable from the REMIND formulation perspective 
-*** and consequences of fixing CES tree nodes directly require further investigation. 
+*** Warning: the formulation fixing CES quantity nodes in scenarios should be used with care and parsimony.
+*** Price and tax-induced solutions are preferable from the REMIND formulation perspective
+*** and consequences of fixing CES tree nodes directly require further investigation.
 *** (off)              default, no fixing
 *** (ariadne_bal)      steel and cement production trajectories for Germany used in the Ariadne "Balanced" scenario
 *** (ariadne_ensec)    steel and cement production trajectories for Germany used in the Ariadne "EnSec" (energy security) scenario
@@ -1567,7 +1567,7 @@ $setGlobal cm_CESMkup_build  standard  !! def = standard
 *** subsectors   | feh2_chemicals       | 100 $/MWh(th)
 *** subsectors   | feh2_steel           |  50 $/MWh(th)
 *** subsectors   | feh2_otherInd        |  50 $/MWh(th)
-*** 
+***
 *** To change them to any specific value, either define a new setting besides
 *** "standard" in ./modules/37_industry/(fixed_shares|subsectors)/datainput.gms,
 *** or use the setting "manual" and set cm_CESMkup_ind_data to e.g. "feeli 0.8".
@@ -1598,7 +1598,7 @@ $setGlobal cm_FEtax_trajectory_abs  off !! def = off
 *** (note: don't put values to 0 as this will make the model ignore the switch)
 $setGlobal cm_FEtax_trajectory_rel  off !! def = off
 *** Switch to scale agriculture baseline emissions per region relative to default (Magpie) levels
-*** example: "CHA 0.2, EUR -0.4" means 20% increase of agricultural baseline emissions in China, 40% decrease in EUR, 
+*** example: "CHA 0.2, EUR -0.4" means 20% increase of agricultural baseline emissions in China, 40% decrease in EUR,
 *** phase-in of the scaling is gradual over time and full scaling is reached by 2040.
 *** If you specify a value for a region within a region group (e.g. DEU in EU27_regi),
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
@@ -1652,9 +1652,8 @@ $setglobal cm_CO2TaxSectorMarkup  off   !! def = off
 $setGlobal c_regi_nucscen  all  !! def = all
 ***  c_regi_capturescen              "regions to apply cm_ccapturescen to (availability of carbon capture technologies), e.g. c_regi_nucscen <- "JPN,USA"
 $setGlobal c_regi_capturescen  all  !! def = all
-*** cm_process_based_steel      "switch to turn on process-based steel implementation"
-*** enable process-based implementation of steel in subsectors realisation of industry module
-$setglobal cm_process_based_steel   off  !! def = off  !! regexp = off|on
+*** cm_subsec_model_steel      "switch between ces-based and process-based steel implementation in subsectors realisation of industry module"
+$setglobal cm_subsec_model_steel  ces  !! def = ces  !! regexp = ces|processes
 *** c_CO2priceDependent_AdjCosts
 *** changes adjustment costs based on CO2 prices, currently only for advanced vehicles
 $setglobal c_CO2priceDependent_AdjCosts    on   !! def = on

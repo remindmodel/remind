@@ -6,49 +6,14 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/subsectors/datainput.gms
 
-vm_macBaseInd.l(ttot,regi,entyFE,secInd37) = 0;
+vm_emiIndBase.l(ttot,regi,entyFE,secInd37) = 0;
 
-***-------------------------------------------------------------------------------
-***                         MATERIAL-FLOW IMPLEMENTATION
-***-------------------------------------------------------------------------------
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! cm_process_based_steel
-PARAMETERS
-  p37_specMatsDem(mats,teMats,opModes)                                      "Specific materials demand of a production technology and operation mode [t_input/t_output]"
-  /
-    ironore.idr.(ng,h2)     1.5                                             !! Iron ore demand of iron direct-reduction (independent of fuel source)
+Parameters
 
-    dri.eaf.pri             1.0                                             !! DRI demand of EAF
-    scrap.eaf.sec           1.0                                             !! Scrap demand of EAF
-    dri.eaf.sec             0.0
-    scrap.eaf.pri           0.0
-
-    ironore.bfbof.pri       1.5                                             !! Iron ore demand of BF-BOF
-    scrap.bfbof.sec         1.0                                             !! Scrap demand of BF-BOF
-    scrap.bfbof.pri         0.0
-    ironore.bfbof.sec       0.0
-  /
-
-  p37_specFeDem(entyFe,teMats,opModes)                                      "Specific final-energy demand of a production technology and operation mode [MWh/t_output]"
-  /
-    feels.idr.(ng,h2)       0.33                                            !! Specific electric demand for both H2 and NG operation.
-    fegas.idr.ng            2.94                                            !! Specific natural gas demand when operating with NG.
-    feh2s.idr.h2            1.91                                            !! Specific hydrogen demand when operating with H2.
-
-    feels.eaf.pri           0.91                                            !! Specific electricy demand of EAF when operating with DRI.
-    feels.eaf.sec           0.67                                            !! Specific electricy demand of EAF when operating with scrap.
-
-    fesos.bfbof.pri         2.0                                             !! Specific coal demand of BF-BOF when operating with DRI -- this number is just a guess
-    fesos.bfbof.sec         0.5                                             !! Specific coal demand of BF-BOF when operating with scrap -- this number is just a guess
-  /
-;
-$endif.process_based_steel
-
-
-***-------------------------------------------------------------------------------
-***                     REST OF SUBSECTOR INDUSTRY MODULE
-***-------------------------------------------------------------------------------
+*** ---------------------------------------------------------------------------
+***        1. CES-Based
+*** ---------------------------------------------------------------------------
 *** substitution elasticities
-Parameter
   p37_cesdata_sigma(all_in)  "industry substitution elasticities"
   /
     ue_industry                      0.5   !! cement - chemicals - steel - other
@@ -62,10 +27,12 @@ Parameter
           en_chemicals_fhth          3.0   !! solids, liquids, gases, electricity
 
       ue_steel                       5     !! primary steel, secondary steel
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
         ue_steel_primary             1.7   !! energy, capital
           en_steel_primary           0.3   !! furnace, electricity
             en_steel_furnace         2.0   !! solids, liquids, gases, hydrogen
         ue_steel_secondary           1.7   !! energy, capital
+$endif.cm_subsec_model_steel
 
       ue_otherInd                    1.7   !! energy, capital
         en_otherInd                  0.3   !! high-temperature heat, electricity
@@ -86,10 +53,12 @@ pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val eq 2030) = 1.3;
 pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val eq 2035) = 2.0;
 pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val eq 2040) = 3.0;
 
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 pm_cesdata_sigma(ttot,"en_steel_furnace")$ (ttot.val le 2025) = 0.5;
 pm_cesdata_sigma(ttot,"en_steel_furnace")$ (ttot.val eq 2030) = 0.7;
 pm_cesdata_sigma(ttot,"en_steel_furnace")$ (ttot.val eq 2035) = 1.3;
 pm_cesdata_sigma(ttot,"en_steel_furnace")$ (ttot.val eq 2040) = 2.0;
+$endif.cm_subsec_model_steel
 
 pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val le 2025) = 0.7;
 pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2030) = 1.3;
@@ -126,6 +95,10 @@ pm_energy_limit(in)
   * 1e9;                   !! * t/Gt
                            !! = TWa/Gt
 
+* remove energy limit for process-based materials
+pm_energy_limit(out)$(NOT sum(in, ces_eff_target_dyn37(out,in))) = 0.;
+
+
 * Specific energy demand cannot fall below a curve described by an exponential
 * function passing through the 2015 value and a point defined by an "efficiency
 * gain" (e.g. 75 %) between baseline value and thermodynamic limit at a given
@@ -137,7 +110,7 @@ else
   execute_loadpoint "input_ref.gdx" p37_cesIO_baseline = vm_cesIO.l;
 );
 
-sm_tmp2 = 0.75;   !! maximum "efficiency gain", from 2015 baseline value to 
+sm_tmp2 = 0.75;   !! maximum "efficiency gain", from 2015 baseline value to
                   !! thermodynamic limit
 sm_tmp  = 2050;   !! period in which closing could be achieved
 
@@ -216,11 +189,13 @@ if (cm_IndCCSscen eq 1,
     emiMac2mac("co2chemicals","co2chemicals") = YES;
   );
 
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
   if (cm_CCS_steel eq 1,
     emiMacSector("co2steel") = YES;
     pm_macSwitch("co2steel") = YES;
     emiMac2mac("co2steel","co2steel") = YES;
   );
+$endif.cm_subsec_model_steel
 );
 
 *** CCS for other industry is off in any case
@@ -275,7 +250,9 @@ Parameter
   /
     feh2_cement       . fega_cement          1e-5
     feh2_chemicals    . fega_chemicals       1e-5
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     feh2_steel        . fega_steel           1e-5
+$endif.cm_subsec_model_steel
     feh2_otherInd     . fega_otherInd        1e-5
     feelhth_chemicals . feelwlth_chemicals   1e-5
     feelhth_otherInd  . feelwlth_otherInd    1e-5
@@ -399,9 +376,11 @@ pm_calibrate_eff_scale("feh2_cement","fega_cement","width")              = 22;
 pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","level")        = 1.1;
 pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","midperiod")    = 2050;
 pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","width")        = 22;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 pm_calibrate_eff_scale("feh2_steel","fega_steel","level")                = 1.1;
 pm_calibrate_eff_scale("feh2_steel","fega_steel","midperiod")            = 2050;
 pm_calibrate_eff_scale("feh2_steel","fega_steel","width")                = 22;
+$endif.cm_subsec_model_steel
 pm_calibrate_eff_scale("feh2_otherInd","fega_otherInd","level")          = 1.1;
 pm_calibrate_eff_scale("feh2_otherInd","fega_otherInd","midperiod")      = 2050;
 pm_calibrate_eff_scale("feh2_otherInd","fega_otherInd","width")          = 22;
@@ -411,7 +390,6 @@ pm_ue_eff_target("ue_chemicals")        = 0.008;
 pm_ue_eff_target("ue_steel_primary")    = 0.0015;
 pm_ue_eff_target("ue_steel_secondary")  = 0.0015;
 pm_ue_eff_target("ue_otherInd")         = 0.008;
-
 
 
 *' CES mark-up cost industry
@@ -445,13 +423,17 @@ p37_CESMkup(ttot,regi,in) = 0;
 *' gas/liquids as technical efficiency gains from electrification
 pm_tau_ces_tax(t,regi,"feelhth_chemicals")    = 100 * sm_TWa_2_MWh * 1e-12;
 pm_tau_ces_tax(t,regi,"feelhth_otherInd")     = 300 * sm_TWa_2_MWh * 1e-12;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 pm_tau_ces_tax(t,regi,"feel_steel_secondary") = 100 * sm_TWa_2_MWh * 1e-12;
+$endif.cm_subsec_model_steel
 
 *' mark-up cost on H2 inputs, to reach MRS around 1 to gas/liquids as similar
 *' technical efficiency
 pm_tau_ces_tax(t,regi,"feh2_chemicals") = 100 * sm_TWa_2_MWh * 1e-12;
 pm_tau_ces_tax(t,regi,"feh2_otherInd")  =  50 * sm_TWa_2_MWh * 1e-12;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 pm_tau_ces_tax(t,regi,"feh2_steel")     =  50 * sm_TWa_2_MWh * 1e-12;
+$endif.cm_subsec_model_steel
 pm_tau_ces_tax(t,regi,"feh2_cement")    = 100 * sm_TWa_2_MWh * 1e-12;
 
 
@@ -567,5 +549,154 @@ execute_load "input_ref.gdx", vm_demFEsector;
       vm_demFEsector.l(t,regi,entySE,"fesos","indst","ETS")
     );
 );
+
+*** ---------------------------------------------------------------------------
+***        2. Process-Based
+*** ---------------------------------------------------------------------------
+
+p37_specMatDem(mat,all_te,opmoPrc) = 0.;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+p37_specMatDem("dripell","idr","ng")        = 1.44;                                           !! Source: POSTED / Average of Devlin2022, Otto2017, Volg2018, Rechberge2020
+p37_specMatDem("dripell","idr","h2")        = 1.44;                                           !! Source: POSTED / Copy from ng opMode
+
+p37_specMatDem("driron","eaf","pri")        = 1.065;                                          !! Source: POSTED / Average of Devlin et al 2022, Section 2.2.2 and Otto et al 2017, Figure 6
+p37_specMatDem("eafscrap","eaf","sec")      = 1.09;                                           !! Source: POSTED / Ecorys 2014, Table 3.1
+
+p37_specMatDem("ironore","bf","standard")   = 1.58;                                           !! Source: Sum of weighted average values for sinter, ore and pellets in JRC BAT, Table 6.1: 1.626 / tHM -> 1.58/tPI
+
+!! Switch off scrap input to BOF, as BOF output is purely prsteel (for now) and scrap availability limits sesteel in current implementation
+p37_specMatDem("bofscrap","bof","unheated") = sm_eps;                                         !! Source: DUMMY
+p37_specMatDem("pigiron","bof","unheated")  = 1.03;                                           !! Source: Rough total of scrap and pigiron in JRC-BAT
+$endif.cm_subsec_model_steel
+
+*** --------------------------------
+
+!!TODO: Think about accounting of integrated plants / casting & rolling
+p37_specFeDemTarget(all_enty,all_te,opmoPrc) = 0.;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+!! numbers are given in MWh/t and converted to Remind units TWa/Gt with the factors after that (divided by 8.76)
+!! reduction: 504 m^3; heat 242 m^3; conversion: x / 11.126 m^3/kg * 0.0333 MWh/kg
+p37_specFeDemTarget("feh2s","idr","h2")           = 2.23 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Rechberger et al 2020, Section 4.2 (per tDRI)
+p37_specFeDemTarget("feels","idr","h2")           = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Just before Table 1 (per tHBI)
+
+p37_specFeDemTarget("fegas","idr","ng")           = 2.69 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Page 7 (9.7 GJ) (per tHBI)
+p37_specFeDemTarget("feels","idr","ng")           = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Page 7 (9.7 GJ) (per tHBI)
+
+!! To do: Does not include casting and rolling;
+!! Birat2010, p. 11: 0.97 MWh total, only 0.44 MWh of which is electrical
+!! EU JRC BAT says 0.404–0.748 (only EAF, elec) / Otto et al. say 0.92
+!! --> have declining curve?
+p37_specFeDemTarget("feels","eaf","pri")          = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Copy from secondary (Agora Energiewende, 2022 give similar values, between w and w/o reheating)
+p37_specFeDemTarget("feels","eaf","sec")          = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Vogl et al 2018, Section 3.1
+
+!! Otto et al. Fig 3: 10.303 GJ coke (from 13.24 GJ coal, see Menendez2015 Fig 3) + 4.67 GJ coal dust -> 18 GJ
+!! Birat2010, p.11 says best performers have 17 GJ, out of which 16 GJ coal
+!! -> take 16 GJ / 3.6 (to MWH) / 1.03 (pigiron to steel) = 4.3
+!! Optimistic value as tech will improve over time and historic BF vs BAT DRI is unfair anyways
+p37_specFeDemTarget("fesos","bf","standard")      = 4.30 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Otto et al.
+!! set all others to zero to have rough approximation of power plant output
+p37_specFeDemTarget("fegas","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+p37_specFeDemTarget("feels","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+p37_specFeDemTarget("fehos","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+
+!! per tC for cc tech!!
+p37_specFeDemTarget("feels","bfcc","standard")    = 0.11 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Tsupari2013
+p37_specFeDemTarget("fegas","bfcc","standard")    = 0.92 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Tsupari2013 / Yun2021
+
+!! World Steel Factsheet says no additional equipment needed --> very cheap and no energy demand
+!! IEA Steel Roadmap Fig 2.11 also shows very little additional fuel cost
+p37_specFeDemTarget("feels","idrcc","ng")         = 0.11 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc
+p37_specFeDemTarget("fegas","idrcc","ng")         = 0.92 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc
+$endif.cm_subsec_model_steel
+
+*** --------------------------------
+
+p37_mat2ue(all_enty,all_in) = 0.;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+p37_mat2ue("sesteel","ue_steel_secondary") = 1.;
+p37_mat2ue("prsteel","ue_steel_primary")   = 1.;
+$endif.cm_subsec_model_steel
+
+*** --------------------------------
+
+p37_captureRate(all_te,opmoPrc) = 0.;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+p37_captureRate("bfcc","standard") = 0.73; !! Source: Witecka 2023, Figure 18
+p37_captureRate("idrcc","ng")      = 0.85; !! Source: IEA Steel Roadmap Fig. 2.11
+$endif.cm_subsec_model_steel
+
+*** --------------------------------
+
+p37_priceMat(all_enty) = 0.;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+!! IEA STeel Roadmap Fig 1.3 Caption: Scrap price 200-300 $/t
+!! => take 250 $/t, inflation 2005 --> 2020 / 1.33
+p37_priceMat("eafscrap") = 0.188;
+p37_priceMat("bofscrap") = 0.188;
+!! Agora KSV-Rechner: 114 €/tSteel / (1.4 2005$/2023€) / (tn$ /bn t)
+p37_priceMat("ironore")  = 0.081;
+!! Agora KSV-Rechner: 154 €/tSteel / (1.4 2005$/2023€) / (tn$ /bn t)
+p37_priceMat("dripell")  = 0.110;
+$endif.cm_subsec_model_steel
+
+*** --------------------------------
+
+p37_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+if (cm_startyear eq 2005,
+  pm_outflowPrcIni(regi,'bof','unheated') = pm_fedemand('2005',regi,'ue_steel_primary');
+  pm_outflowPrcIni(regi,'bf','standard') = p37_specMatDem("pigiron","bof","unheated") * pm_outflowPrcIni(regi,'bof','unheated');
+  pm_outflowPrcIni(regi,'eaf','sec') = pm_fedemand('2005',regi,'ue_steel_secondary');
+  pm_outflowPrcIni(regi,'eaf','pri') = 0.;
+  pm_outflowPrcIni(regi,'idr','ng') = 0.;
+  pm_outflowPrcIni(regi,'idr','h2') = 0.;
+  pm_outflowPrcIni(regi,'bfcc','standard') = 0.;
+  pm_outflowPrcIni(regi,'idrcc','ng') = 0.;
+
+  loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
+    p37_specFeDem(ttot,regi,"feh2s","idr","h2") = p37_specFeDemTarget("feh2s","idr","h2");
+    p37_specFeDem(ttot,regi,"feels","idr","h2") = p37_specFeDemTarget("feels","idr","h2");
+
+    p37_specFeDem(ttot,regi,"fegas","idr","ng") = p37_specFeDemTarget("fegas","idr","ng");
+    p37_specFeDem(ttot,regi,"feels","idr","ng") = p37_specFeDemTarget("feels","idr","ng");
+
+    p37_specFeDem(ttot,regi,"fegas","bfcc","standard") = p37_specFeDemTarget("fegas","bfcc","standard");
+    p37_specFeDem(ttot,regi,"feels","bfcc","standard") = p37_specFeDemTarget("feels","bfcc","standard");
+
+    p37_specFeDem(ttot,regi,"fegas","idrcc","ng") = p37_specFeDemTarget("fegas","idrcc","ng");
+    p37_specFeDem(ttot,regi,"feels","idrcc","ng") = p37_specFeDemTarget("feels","idrcc","ng");
+
+    p37_specFeDem(ttot,regi,"fesos","bf","standard") = pm_fedemand(ttot,regi,'feso_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+    p37_specFeDem(ttot,regi,"fehos","bf","standard") = pm_fedemand(ttot,regi,'feli_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+    p37_specFeDem(ttot,regi,"fegas","bf","standard") = pm_fedemand(ttot,regi,'fega_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+    p37_specFeDem(ttot,regi,"feels","bf","standard") = pm_fedemand(ttot,regi,'feel_steel_primary') * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+
+    p37_specFeDem(ttot,regi,"feels","eaf","sec") = pm_fedemand(ttot,regi,'feel_steel_secondary') * sm_EJ_2_TWa / pm_fedemand(ttot,regi,'ue_steel_secondary');
+    p37_specFeDem(ttot,regi,"feels","eaf","pri") = p37_specFeDem(ttot,regi,"feels","eaf","sec");
+  );
+
+  !! loop over other years and blend
+  loop(entyFeStat(all_enty),
+    loop(tePrc(all_te),
+      loop(opmoPrc,
+        if( (p37_specFeDemTarget(all_enty,all_te,opmoPrc) gt 0.),
+          loop(ttot$(ttot.val > 2020),
+            !! fedemand in excess of BAT halves until 2055
+            !! gams cannot handle float exponents, so pre-compute 0.5^(1/(2055-2020)) = 0.9804
+            p37_specFeDem(ttot,regi,all_enty,all_te,opmoPrc)
+            = p37_specFeDemTarget(all_enty,all_te,opmoPrc)
+            + (p37_specFeDem("2020",regi,all_enty,all_te,opmoPrc) - p37_specFeDemTarget(all_enty,all_te,opmoPrc))
+            * power(0.9804, ttot.val - 2020) ;
+          );
+        );
+      );
+    );
+  );
+);
+
+if (cm_startyear gt 2005,
+  Execute_Loadpoint 'input_ref' p37_specFeDem = p37_specFeDem;
+);
+$endif.cm_subsec_model_steel
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms
