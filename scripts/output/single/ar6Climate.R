@@ -18,9 +18,9 @@ cfgName <- "cfg.txt"                  # cfg file for getting file paths
 
 
 if (!exists("source_include")) {
-   # Define arguments that can be read from command line
-   outputdir <- "."
-   readArgs("outputdir", "gdxName", "gdx_ref_name", "gdx_refpolicycost_name")
+  # Define arguments that can be read from command line
+  outputdir <- "."
+  readArgs("outputdir", "gdxName", "gdx_ref_name", "gdx_refpolicycost_name")
 }
 
 gdx                 <- file.path(outputdir, gdxName)
@@ -36,7 +36,6 @@ print(getwd())
 cfg <- read_yaml(cfgPath)
 
 # Read the GDX and run reportEmi
-# gdxpath <- "fulldata.gdx"
 cat(date(), " ar6Climate.R: Running reportEmi \n")
 emimag <- reportEmi(gdx)
 
@@ -84,7 +83,6 @@ write.csv(outcsv, ar6csvfpath, row.names = FALSE, quote = FALSE)
 ############################# PYTHON/MAGICC SETUP #############################
 # These files are supposed to be all inside cfg$climate_assessment_files_dir in a certain structure
 # TODO: Make this even more flexible by explictly setting them in default.cfg
-# probabilisticFile       <- file.path(cfg$climate_assessment_files_dir,"/parsets/RCP20_50.json")
 probabilisticFile     <- file.path(cfg$climate_assessment_files_dir,
                                    "/parsets/0fd0f62-derived-metrics-id-f023edb-drawnset.json")
 infillingDatabaseFile <- file.path(cfg$climate_assessment_files_dir, 
@@ -129,9 +127,8 @@ capture.output(cat(logmsg), file = logfile, append = TRUE)
 allparsets <- read_yaml(probabilisticFile)
 nparsets <- length(allparsets$configurations)
 cmd <- paste0("python ", scriptsFolder, "run_clim.py ", workfolder, "/", basefname,
-              "_harmonized_infilled.csv ", workfolder, " --num-cfgs ",nparsets," --scenario-batch-size ", 1,
+              "_harmonized_infilled.csv ", workfolder, " --num-cfgs ", nparsets, " --scenario-batch-size ", 1,
               " --probabilistic-file ", probabilisticFile)
-# cmd <- paste0("python ", scriptsFolder, "run_clim.py ", workfolder, "/", basefname, "_harmonized_infilled.csv ", workfolder, " --num-cfgs 1 --scenario-batch-size ", 1, " --probabilistic-file ", probabilisticFile, " --save-csv-combined-output")
 system(cmd)
 
 ############################# READING CLIMATE OUTPUT #############################
