@@ -400,7 +400,7 @@ if ( sm_tmp2 gt 0, !! If there has been a rescaling
 
 ***_____________________________ END OF:  2 - CALCULATE QUANTITIES_____________________________
 
-***_____________________________ START OF: CHANGE EFFICIENCIES TO FULFILL ECONOMIC CONSTRAINT _____________________________
+***_____________________________ START OF: 3 - CALCULATE EFFICIENCIES _____________________________
 
 *** We ensure that the prices correspond to the derivatives, because
 *** the Euler equation holds for derivatives. Using prices makes only sense if
@@ -418,12 +418,12 @@ loop  ((cesRev2cesIO(counter,ipf_29(out)),ces_29(out,in))$(
 );
 display "after change up to en consistency", pm_cesdata;
 
-***_____________________________ END OF: CHANGE EFFICIENCIES TO FULFILL ECONOMIC CONSTRAINT _____________________________
+***_____________________________ END OF: 3 - CALCULATE EFFICIENCIES _____________________________
 
-***_____________________________ START OF: ENSURE GDP CONSISTENCY VIA LABOUR PRICE _____________________________
+***_____________________________ START OF: 4 - ADJUST LABOUR PRICE to GDP _____________________________
 
-*** Then, we consider the bottom level of the CES tree, where capital and labor
-*** have specific restrictions.  Capital works as for the other ppfen, Labour
+*** Then, we consider the top level of the CES tree, where capital and labor
+*** have specific restrictions. Capital works as for the other ppfen, Labour
 *** will be the adjustment variable to meet inco. xi will not be equal to the
 *** income share of capital (from equation price = derivative)
 pm_cesdata(t,regi_dyn29,"kap","xi")
@@ -594,11 +594,11 @@ if (sm_tmp,
   abort "assertion xi gt 0 failed, see .log file for details";
 );
 
-***_____________________________ END OF: ENSURE GDP CONSISTENCY VIA LABOUR PRICE _____________________________
-
 display " end consistency", pm_cesdata;
 *** End of the part ensuring consistency given the ppfEn prices and quantities, the ipf prices,
 *** the labor quantities, and the capital efficiency growth.
+
+***_____________________________ END OF: 4 - ADJUST LABOUR PRICE to GDP _____________________________
 
 ***_____________________________ START OF: BEYOND CALIB _________________________________________________
 
@@ -793,7 +793,7 @@ $endif.subsectors
 
 ***_____________________________ END OF: BEYOND CALIB ________________________________________
 
-***_____________________________ START OF: PASS EFF TIME EVOLUTION TO EFFGR ________________________________________
+***_____________________________ START OF: 5 - PASS EFF TIME EVOLUTION TO EFFGR ________________________________________
 
 *** Finally, we take the evolution of xi and eff, and pass it on to effGr.
 *** (a) for items in ces_29
@@ -849,7 +849,7 @@ loop ((t_29hist_last(t2),cesOut2cesIn(out,in))$(    ue_fe_kap_29(out) ),
   / p29_efficiency_growth(t2,regi,in);
 );
 
-***_____________________________ END OF: PASS EFF TIME EVOLUTION TO EFFGR ________________________________________
+***_____________________________ END OF: 5 - PASS EFF TIME EVOLUTION TO EFFGR ________________________________________
 
 
 ***_____________________________ START OF: BEYOND CALIBRATION PART II ________________________________________
@@ -1032,18 +1032,6 @@ $endif.subsectors
 
 option p29_efficiency_growth:8;
 display "after long term efficiencies", pm_cesdata, p29_efficiency_growth;
-
-***_______________________ COMPLEMENTARY CONSTRAINTS _____________________________
-*** Compute the coefficients for the complementarity constraints
-*** FIXME: In case in_complements are in beyond, quantity data is needed for
-*** the assignment below
-loop (complements_ref(in, in2),
-  pm_cesdata(t,regi_dyn29(regi),in2,"compl_coef")
-  = pm_cesdata(t,regi,in,"quantity")
-  / pm_cesdata(t,regi,in2,"quantity");
-);
-***_______________________ END COMPLEMENTARY CONSTRAINTS _____________________________
-
 
 *** All efficiences after t_29_last are set to their t_29_last values. This is
 *** done in order to avoid xi negative in the latest periods. Should not be
