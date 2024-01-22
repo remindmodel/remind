@@ -642,6 +642,7 @@ $endif.cm_subsec_model_steel
 *** --------------------------------
 
 p37_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
+pm_outflowPrcIni(all_regi,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 if (cm_startyear eq 2005,
   pm_outflowPrcIni(regi,'bof','unheated') = pm_fedemand('2005',regi,'ue_steel_primary');
