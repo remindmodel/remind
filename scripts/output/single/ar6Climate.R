@@ -66,7 +66,7 @@ ar6mif <- read.quitte(emimifar6fpath)
 # Get it ready for climate-assessment: capitalized titles, just World, comma separator
 colnames(ar6mif) <- paste(toupper(substr(colnames(ar6mif), 1, 1)), substr(colnames(ar6mif), 2, nchar(colnames(ar6mif))), sep = "")
 ar6mif <- ar6mif[ar6mif$Region %in% c("GLO", "World"),]
-ar6mif$Region = "World"
+ar6mif$Region <- "World"
 
 # Long to wide
 outcsv <- reshape(as.data.frame(ar6mif), direction = "wide", timevar = "Period", v.names = "Value", idvar = c("Model", "Variable", "Scenario", "Region", "Unit"))
