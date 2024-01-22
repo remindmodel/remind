@@ -57,7 +57,6 @@ $endif.default_prices
   pm_cesdata(t,regi,all_in,"price") = %cm_CES_calibration_default_prices%;
 
   pm_cesdata(t,regi,ipf_29,"price") = 1;
-  pm_cesdata(t,regi,in_complements(in),"price") = 1;
 
   pm_cesdata(t,regi,industry_ue_calibration_target_dyn37(in),"price")$(
                                             pm_cesdata(t,regi,in,"price") eq 1 )
@@ -103,19 +102,12 @@ else
   !! To account for the chain rule multiplication above.
   !! except on the level above the perfect substitutes if they are ppf_29.
   !! Here, the level above gets the price, while the perfect substitutes below get 1.
-  loop ( cesOut2cesIn(in2,in) $ (
-                      NOT ( ppf_29(in) AND in_complements(in))
-                      ),
+  loop ( cesOut2cesIn(in2,in) $ (NOT  ppf_29(in)),
     p29_CESderivative(t,regi_dyn29(regi),out,ipf_29(in2))$(
                                               p29_CESderivative(t,regi,out,in2) )
     = 1;
   );
-
-  !! Prices of perfect substitutes factors are all 1
-  p29_CESderivative(t,regi_dyn29(regi),out,ppf_29(in2))$(
-                      p29_CESderivative(t,regi,out,in2) AND in_complements(in2) )
-    = 1;
-  !! Price of inco is 1, too
+  !! Price of inco is 1
   p29_cesdata_load(t,regi_dyn29(regi),"inco","price") = 1;   !! unit price
 
   !! Transfer prices
@@ -237,7 +229,6 @@ if (sm_tmp eq 1,
   execute_unload "abort.gdx";
   abort "some prices are negative. See log file";
 );
-
 
 display "before price smoothing", cesOut2cesIn_below, pm_cesdata;
 *** Smooth 2005 prices
@@ -385,18 +376,10 @@ loop ((t_29hist(t),regi_dyn29(regi)),
 
    put t.tl, " ", regi.tl, " labour share in GDP: ", (1 - sm_tmp);
 
-     pm_cesdata(t,regi,ppf_29(in),"price") $ ( NOT (  sameAs(in, "lab")
-                                                       OR in_complements(in)) )
+     pm_cesdata(t,regi,ppf_29(in),"price") $ ( NOT sameAs(in, "lab"))
      = pm_cesdata(t,regi,in,"price")
      * (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) ))
      / sm_tmp;
-
-     loop (cesOut2cesIn(in2,in)$( ppf_29(in) AND in_complements(in) ),
-       pm_cesdata(t,regi,in2,"price")
-       = pm_cesdata(t,regi,in2,"price")
-       * (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) ))
-       / sm_tmp;
-     );
 
      put " -> ", (1 - (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) ))) /;
      sm_tmp2 = sm_tmp2 + 1;
@@ -664,17 +647,11 @@ if (card(ppf_beyondcalib_29) >= 1, !! if there are any nodes in beyond calib
 
     !! Prices of intermediate production factors are all 1, except on the level
     !! above the perfect substitutes if they are ppf_29
-    loop (cesOut2cesIn(in2,in)$(
-                            NOT (ppf_beyondcalib_29(in) AND in_complements(in)) ),
+    loop (cesOut2cesIn(in2,in)$(NOT ppf_beyondcalib_29(in) ),
       p29_CESderivative(t,regi_dyn29(regi),out,ipf_beyond_29_excludeRoot(in2))$(
                                               p29_CESderivative(t,regi,out,in2) )
       = 1;
     );
-
-    !!  Prices of perfect substitutes factors are all 1
-    p29_CESderivative(t,regi_dyn29(regi),out,ppf_beyondcalib_29(in2))$(
-                      p29_CESderivative(t,regi,out,in2) AND in_complements(in2) )
-    = 1;
 
     display "check p29_CESderivative", p29_CESderivative;
 
