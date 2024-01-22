@@ -600,7 +600,7 @@ display " end consistency", pm_cesdata;
 
 ***_____________________________ END OF: 4 - ADJUST LABOUR PRICE to GDP _____________________________
 
-***_____________________________ START OF: BEYOND CALIB _________________________________________________
+***_____________________________ START OF: BEYOND CALIBRATION PART I _________________________________________________
 
 *** Beyond calib allows for calibration of intermediate levels.
 *** At the time of documentation, this was mainly used for the industry module subsectors realization.
@@ -791,7 +791,7 @@ $endif.subsectors
   );
 );
 
-***_____________________________ END OF: BEYOND CALIB ________________________________________
+***_____________________________ END OF: BEYOND CALIBRATION PART I ________________________________________
 
 ***_____________________________ START OF: 5 - PASS EFF TIME EVOLUTION TO EFFGR ________________________________________
 
