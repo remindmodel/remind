@@ -48,7 +48,7 @@ q05_eedemini(regi,enty)..
   + sum(tePrc2opmoPrc(tePrc,opmoPrc)$(p37_specFEDem("2005",regi,enty,tePrc,opmoPrc) gt 0.),
       p37_specFEDem("2005",regi,enty,tePrc,opmoPrc)
       *
-      vm_outflowPrc("2005",regi,tePrc,opmoPrc)
+      pm_outflowPrcIni(regi,tePrc,opmoPrc)
     )$(entyFeStat(enty))
   ) * s05_inic_switch
     !! Transformation pathways that consume this enty:
@@ -122,9 +122,9 @@ display v05_INIdemEn0.l, v05_INIcap0.l;
 pm_cap0(regi,te) = v05_INIcap0.l(regi,te);
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-pm_cap0(regi,'bof') = vm_outflowPrc.l('2005',regi,'bof','unheated') / pm_cf("2005",regi,'bof');
-pm_cap0(regi,'bf')  = vm_outflowPrc.l('2005',regi,'bf','standard')  / pm_cf("2005",regi,'bf');
-pm_cap0(regi,'eaf') = vm_outflowPrc.l('2005',regi,'eaf','sec')      / pm_cf("2005",regi,'eaf');
+pm_cap0(regi,'bof') = pm_outflowPrcIni(regi,'bof','unheated') / pm_cf("2005",regi,'bof');
+pm_cap0(regi,'bf')  = pm_outflowPrcIni(regi,'bf','standard')  / pm_cf("2005",regi,'bf');
+pm_cap0(regi,'eaf') = pm_outflowPrcIni(regi,'eaf','sec')      / pm_cf("2005",regi,'eaf');
 pm_cap0(regi,'idr') = 0.;
 pm_cap0(regi,"bfcc") =0.;
 pm_cap0(regi,"idrcc") =0.;
@@ -537,8 +537,6 @@ if (cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' vm_deltaCap.l = vm_deltaCap.l;
   Execute_Loadpoint 'input_ref' vm_deltaCap.lo = vm_deltaCap.lo;
   Execute_Loadpoint 'input_ref' vm_deltaCap.up = vm_deltaCap.up;
-  !! moved to industry module:
-  !!Execute_Loadpoint 'input_ref' p37_specFeDem = p37_specFeDem;
 
 *** if %cm_techcosts% == "GLO", load pm_inco0_t from input_ref.gdx and overwrite values
 *** only for pc, ngt, ngcc since they have been adapted in initialCap routine above

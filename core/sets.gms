@@ -414,7 +414,6 @@ all_enty             "all types of quantities"
         !! materials, feedstock, and industrial goods
         prsteel      "Primary steel"
         sesteel      "Secondary steel"
-        !!steel        "Steel"
         dri          "Directly reduced iron"
         eafscrap     "Steel scrap used in EAF"
         bofscrap     "Steel scrap used in BOF"

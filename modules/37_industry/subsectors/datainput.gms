@@ -644,12 +644,14 @@ $endif.cm_subsec_model_steel
 p37_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 if (cm_startyear eq 2005,
-  vm_outflowPrc.fx('2005',regi,'bof','unheated') = pm_fedemand('2005',regi,'ue_steel_primary');
-  vm_outflowPrc.fx('2005',regi,'bf','standard') = p37_specMatDem("pigiron","bof","unheated") * vm_outflowPrc.l('2005',regi,'bof','unheated');
-  vm_outflowPrc.fx('2005',regi,'eaf','sec') = pm_fedemand('2005',regi,'ue_steel_secondary');
-  vm_outflowPrc.fx('2005',regi,'eaf','pri') = 0.;
-  vm_outflowPrc.fx('2005',regi,'idr','ng') = 0.;
-  vm_outflowPrc.fx('2005',regi,'idr','h2') = 0.;
+  pm_outflowPrcIni(regi,'bof','unheated') = pm_fedemand('2005',regi,'ue_steel_primary');
+  pm_outflowPrcIni(regi,'bf','standard') = p37_specMatDem("pigiron","bof","unheated") * pm_outflowPrcIni(regi,'bof','unheated');
+  pm_outflowPrcIni(regi,'eaf','sec') = pm_fedemand('2005',regi,'ue_steel_secondary');
+  pm_outflowPrcIni(regi,'eaf','pri') = 0.;
+  pm_outflowPrcIni(regi,'idr','ng') = 0.;
+  pm_outflowPrcIni(regi,'idr','h2') = 0.;
+  pm_outflowPrcIni(regi,'bfcc','standard') = 0.;
+  pm_outflowPrcIni(regi,'idrcc','ng') = 0.;
 
   loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
     p37_specFeDem(ttot,regi,"feh2s","idr","h2") = p37_specFeDemTarget("feh2s","idr","h2");
@@ -657,6 +659,12 @@ if (cm_startyear eq 2005,
 
     p37_specFeDem(ttot,regi,"fegas","idr","ng") = p37_specFeDemTarget("fegas","idr","ng");
     p37_specFeDem(ttot,regi,"feels","idr","ng") = p37_specFeDemTarget("feels","idr","ng");
+
+    p37_specFeDem(ttot,regi,"fegas","bfcc","standard") = p37_specFeDemTarget("fegas","bfcc","standard");
+    p37_specFeDem(ttot,regi,"feels","bfcc","standard") = p37_specFeDemTarget("feels","bfcc","standard");
+
+    p37_specFeDem(ttot,regi,"fegas","idrcc","ng") = p37_specFeDemTarget("fegas","idrcc","ng");
+    p37_specFeDem(ttot,regi,"feels","idrcc","ng") = p37_specFeDemTarget("feels","idrcc","ng");
 
     p37_specFeDem(ttot,regi,"fesos","bf","standard") = pm_fedemand(ttot,regi,'feso_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
     p37_specFeDem(ttot,regi,"fehos","bf","standard") = pm_fedemand(ttot,regi,'feli_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
