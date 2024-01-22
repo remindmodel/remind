@@ -62,12 +62,13 @@ p36_uedemand_build(ttot,regi,in) = f36_uedemand_build(ttot,regi,"%cm_demScen%","
 $IFTHEN.cm_enb not "%cm_enb%" == "off" 
   pm_cesdata_sigma(ttot,"enb")$pm_cesdata_sigma(ttot,"enb") =
     pm_cesdata_sigma(ttot,"enb") * %cm_enb%;
+*** avoid the elasticity of substitution parameter to be too close to one, which could cause undesired numerical behavior: if the resulting scaled parameter is between 0.8 and 1, make it 0.8; if it is between 1 and 1.2, make it 1.2. 
   pm_cesdata_sigma(ttot,"enb")$(pm_cesdata_sigma(ttot,"enb") gt 0.8
                                 AND pm_cesdata_sigma(ttot,"enb") lt 1) =
-    0.8; !! If complementary factors, sigma should be below 0.8
+    0.8; 
   pm_cesdata_sigma(ttot,"enb")$(pm_cesdata_sigma(ttot,"enb") ge 1
                                 AND pm_cesdata_sigma(ttot,"enb") lt 1.2) =
-    1.2; !! If substitution factors, sigma should be above 1.2
+    1.2;  
 $ENDIF.cm_enb
 
 

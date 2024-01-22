@@ -32,7 +32,7 @@ $endif.calibrate
 ***-------------------------------------------------------------------
 *** load start gdx
 
-execute_loadpoint 'input';
+execute_loadpoint "input";
 
 ***--------------------------------------------------------------------------
 ***    start iteration loop
@@ -64,7 +64,7 @@ $batinclude "./modules/include.gms" presolve
 *AJS* In case of fixing, fix to prices from input_ref.gdx (t < cm_startyear). 
 *** Parameters are not automatically treated by the fixing mechanism above.
 if( (cm_startyear gt 2005),
-    Execute_Loadpoint 'input_ref' p_pvpRef = pm_pvp;
+    Execute_Loadpoint "input_ref" p_pvpRef = pm_pvp;
     pm_pvp(ttot,trade)$( (ttot.val ge 2005) and (ttot.val lt cm_startyear) and (NOT tradeSe(trade))) = p_pvpRef(ttot,trade);
 );
 
@@ -85,7 +85,7 @@ $batinclude "./modules/include.gms" solve
 ***---------------------------------------------------------
 ***     Track of changes between iterations
 ***---------------------------------------------------------
-loop(entyPe$(NOT sameas(entyPe,'peur')),
+loop(entyPe$(NOT sameas(entyPe,"peur")),
   o_negitr_cumulative_peprod(iteration,entyPe) = 0.031536
     * sum(regi,
         sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), vm_prodPe.l(ttot,regi,entyPe) * pm_ts(ttot)  )
@@ -95,9 +95,9 @@ loop(entyPe$(NOT sameas(entyPe,'peur')),
 );
 o_negitr_cumulative_peprod(iteration,"peur") =
 sum(regi,
-        sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), sum(pe2rlf('peur',rlf), 0.4102 * vm_prodPe.l(ttot,regi,'peur') * pm_ts(ttot) ) )
-        + sum(ttot$(ttot.val eq 2005), 0.4102 * vm_prodPe.l(ttot,regi,'peur') * pm_ts(ttot) * 0.5 )
-        + sum(ttot$(ttot.val eq 2100), 0.4102 * vm_prodPe.l(ttot,regi,'peur') * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5 )
+        sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), sum(pe2rlf("peur",rlf), 0.4102 * vm_prodPe.l(ttot,regi,"peur") * pm_ts(ttot) ) )
+        + sum(ttot$(ttot.val eq 2005), 0.4102 * vm_prodPe.l(ttot,regi,"peur") * pm_ts(ttot) * 0.5 )
+        + sum(ttot$(ttot.val eq 2100), 0.4102 * vm_prodPe.l(ttot,regi,"peur") * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5 )
 );
 o_negitr_cumulative_CO2_emineg_co2luc(iteration) =
 sum(regi,
@@ -138,9 +138,9 @@ o_negitr_disc_cons_dr5_reg(iteration,regi) =
     + sum(ttot$(ttot.val eq 2100), vm_cons.l(ttot,regi) * (0.95 ** (pm_ttot_val(ttot) - s_t_start)) * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5 )
 ;
 o_negitr_disc_cons_drInt_reg(iteration,regi) =
-    sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), vm_cons.l(ttot,regi) * qm_budget.m(ttot,regi)/ (qm_budget.m('2005',regi) + 1.e-8) * pm_ts(ttot) )
-    + sum(ttot$(ttot.val eq 2005), vm_cons.l(ttot,regi) * qm_budget.m(ttot,regi)/ (qm_budget.m('2005',regi) + 1.e-8) * pm_ts(ttot) * 0.5 )
-    + sum(ttot$(ttot.val eq 2100), vm_cons.l(ttot,regi) * qm_budget.m(ttot,regi)/ (qm_budget.m('2005',regi) + 1.e-8) * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5 )
+    sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), vm_cons.l(ttot,regi) * qm_budget.m(ttot,regi)/ (qm_budget.m("2005",regi) + 1.e-8) * pm_ts(ttot) )
+    + sum(ttot$(ttot.val eq 2005), vm_cons.l(ttot,regi) * qm_budget.m(ttot,regi)/ (qm_budget.m("2005",regi) + 1.e-8) * pm_ts(ttot) * 0.5 )
+    + sum(ttot$(ttot.val eq 2100), vm_cons.l(ttot,regi) * qm_budget.m(ttot,regi)/ (qm_budget.m("2005",regi) + 1.e-8) * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5 )
 ;
 
 ***--------------------------------------------------------------------------
@@ -157,7 +157,7 @@ $batinclude "./modules/include.gms" postsolve
 ***   o_modelstat in solve.gms)
 logfile.nr = 1;
 if (o_modelstat le 2,
-  execute_unload 'fulldata';
+  execute_unload "fulldata";
   !! retain gdxes of intermediate iterations by copying them using shell
   !! commands
   if (c_keep_iteration_gdxes eq 1,
@@ -165,7 +165,7 @@ if (o_modelstat le 2,
       "cp fulldata.gdx fulldata_" iteration.val:0:0 ".gdx";
   );
 else
-  execute_unload 'non_optimal';
+  execute_unload "non_optimal";
   if (c_keep_iteration_gdxes eq 1,
     put_utility logfile, "shell" /
       "cp non_optimal.gdx non_optimal_" iteration.val:0:0 ".gdx";
