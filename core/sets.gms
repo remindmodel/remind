@@ -1301,8 +1301,8 @@ $ENDIF.WindOff
 teRLDCDisp(all_te)     "RLDC Dispatchable technologies that produce seel"
 /
 /
-
-teLearn(all_te)     "Learning technologies (for which investment costs are reduced endogenously through capacity deployment). Note: technologies without endogenous learning can also have decreasing (or increasing) capital cost over time, due to for example convergence to global value"
+*** Note: technologies without endogenous learning can also have decreasing (or increasing) capital cost over time, due to for example convergence to global value
+teLearn(all_te)     "Learning technologies (for which investment costs are reduced endogenously through capacity deployment)."
 /
         wind        "wind onshore power converters"
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
