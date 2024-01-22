@@ -75,7 +75,7 @@ colnames(outcsv) <- gsub("Value.", "", colnames(outcsv))
 # Write output in csv for climate-assessment
 cat(date(), " ar6Climate.R: Writing csv for climate-assessment\n")
 ar6csvfpath <- paste0(outputdir, "/", "ar6csv_", scenario, ".csv")
-write.csv(outcsv, ar6csvfpath, row.names=F, quote=F)
+write.csv(outcsv, ar6csvfpath, row.names = FALSE, quote = FALSE)
 
 ############################# PYTHON/MAGICC SETUP #############################
 # These files are supposed to be all inside cfg$climate_assessment_files_dir in a certain structure
@@ -88,14 +88,14 @@ scriptsFolder         <- "/p/projects/rd3mod/python/climate-assessment/scripts"
 
 # Create working folder for climate-assessment files
 workfolder <- file.path(outputdir, "climate-temp")
-dir.create(workfolder, showWarnings = F)
+dir.create(workfolder, showWarnings = FALSE)
 
 # Set relevant environment variables and create a MAGICC worker directory
 Sys.setenv(MAGICC_EXECUTABLE_7=magiccBinFile)
 Sys.setenv(MAGICC_WORKER_ROOT_DIR=paste0(normalizePath(workfolder),"/workers/")) # Has to be an absolute path
 Sys.setenv(MAGICC_WORKER_NUMBER=1) # TODO: Get this from slurm or nproc
 
-dir.create(Sys.getenv("MAGICC_WORKER_ROOT_DIR"), recursive = T, showWarnings = F)
+dir.create(Sys.getenv("MAGICC_WORKER_ROOT_DIR"), recursive = TRUE, showWarnings = FALSE)
 
 # The base name, that climate-assessment uses to derive it's output names
 basefname <- sub("\\.csv$", "", basename(ar6csvfpath))
@@ -103,12 +103,12 @@ basefname <- sub("\\.csv$", "", basename(ar6csvfpath))
 # Set up another log file for the python output
 logmsg <- paste0(date(), " Created log\n================================ EXECUTING climate-assessment scripts =================================\n")
 cat(logmsg)
-capture.output(cat(logmsg), file = logfile, append = F)
+capture.output(cat(logmsg), file = logfile, append = FALSE)
 
 ############################# HARMONIZATION/INFILLING #############################
 logmsg <- paste0(date(), " Started harmonization\n")
 cat(logmsg)
-capture.output(cat(logmsg), file = logfile, append = T)
+capture.output(cat(logmsg), file = logfile, append = TRUE)
 
 cmd <- paste0("python ", scriptsFolder, "run_harm_inf.py ", ar6csvfpath, " ", workfolder, " ", "--no-inputcheck --infilling-database ", infillingDatabaseFile)
 system(cmd)
@@ -116,7 +116,7 @@ system(cmd)
 ############################# RUNNING MODEL #############################
 logmsg <- paste0(date(), " Started runs\n")
 cat(logmsg)
-capture.output(cat(logmsg), file = logfile, append = T)
+capture.output(cat(logmsg), file = logfile, append = TRUE)
 
 # Read parameter sets file to ascertain how many parsets there are
 allparsets <- read_yaml(probabilisticFile)
@@ -133,20 +133,5 @@ climdata <- read.quitte(climoutfpath)
 # Filter only periods used in REMIND, so that it doesn't expand the original mif
 useperiods <- unique(read.quitte(remindReportingFile)$period)
 climdata <- climdata[climdata$period %in% useperiods, ]
-climdata <- interpolate_missing_periods(climdata, useperiods, expand.values = F)
-write.mif(climdata, remindReportingFile, append = T)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+climdata <- interpolate_missing_periods(climdata, useperiods, expand.values = FALSE)
+write.mif(climdata, remindReportingFile, append = TRUE)
