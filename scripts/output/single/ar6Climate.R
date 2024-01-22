@@ -17,7 +17,7 @@ gdxName <- "fulldata.gdx"             # name of the gdx
 cfgName <- "cfg.txt"                  # cfg file for getting file paths
 
 
-if(!exists("source_include")) {
+if (!exists("source_include")) {
    # Define arguments that can be read from command line
    outputdir <- "."
    readArgs("outputdir", "gdxName", "gdx_ref_name", "gdx_refpolicycost_name")
@@ -37,7 +37,7 @@ cfg <- read_yaml(cfgPath)
 
 # Read the GDX and run reportEmi
 # gdxpath <- "fulldata.gdx"
-cat(date()," ar6Climate.R: Running reportEmi \n")
+cat(date(), " ar6Climate.R: Running reportEmi \n")
 emimag <- reportEmi(gdx)
 
 # Convert to quitte and add metadata
@@ -48,23 +48,23 @@ emimif["scenario"] <- scenario #TODO: Get scenario name from cfg
 # TODO: This wouldn't be necessary if we added an option to generateIIASASubmission
 # to work with a quitte object directly, not a file path
 cat(date(), " ar6Climate.R: Writing raw emissions mif in file: \n")
-emimifpath <- paste0(outputdir ,"/", "emimif_raw_", scenario, ".mif")
+emimifpath <- paste0(outputdir, "/", "emimif_raw_", scenario, ".mif")
 cat(date(), " ar6Climate.R: ", emimifpath, "\n")
 write.mif(emimif, emimifpath)
 
 # Get the emissions in AR6 format
 # This seems to work with just the reportEmi mif
-cat(date()," ar6Climate.R: Running generateIIASASubmission to generate AR6 mif in file:\n")
+cat(date(), " ar6Climate.R: Running generateIIASASubmission to generate AR6 mif in file:\n")
 emimifar6fpath <- paste0(outputdir, "/", "emimif_ar6_", scenario, ".mif")
 cat(date(), " ar6Climate.R: ", emimifar6fpath, "\n")
 generateIIASASubmission(emimifpath, mapping = "AR6", outputDirectory = outputdir, outputFilename = basename(emimifar6fpath), logFile = paste0(outputdir, "/missing.log"))
 
 # Read in AR6 mif
-cat(date()," ar6Climate.R: Reading AR6 mif and preparing csv for climate-assessment\n")
+cat(date(), " ar6Climate.R: Reading AR6 mif and preparing csv for climate-assessment\n")
 ar6mif <- read.quitte(emimifar6fpath)
 
 # Get it ready for climate-assessment: capitalized titles, just World, comma separator
-colnames(ar6mif) <- paste(toupper(substr(colnames(ar6mif), 1, 1)), substr(colnames(ar6mif), 2, nchar(colnames(ar6mif))), sep="")
+colnames(ar6mif) <- paste(toupper(substr(colnames(ar6mif), 1, 1)), substr(colnames(ar6mif), 2, nchar(colnames(ar6mif))), sep = "")
 ar6mif <- ar6mif[ar6mif$Region %in% c("GLO", "World"),]
 ar6mif$Region = "World"
 
@@ -81,8 +81,8 @@ write.csv(outcsv, ar6csvfpath, row.names = FALSE, quote = FALSE)
 # These files are supposed to be all inside cfg$climate_assessment_files_dir in a certain structure
 # TODO: Make this even more flexible by explictly setting them in default.cfg
 # probabilisticFile       <- file.path(cfg$climate_assessment_files_dir,"/parsets/RCP20_50.json")
-probabilisticFile     <- file.path(cfg$climate_assessment_files_dir,"/parsets/0fd0f62-derived-metrics-id-f023edb-drawnset.json")
-infillingDatabaseFile <- file.path(cfg$climate_assessment_files_dir,"/1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv")
+probabilisticFile     <- file.path(cfg$climate_assessment_files_dir, "/parsets/0fd0f62-derived-metrics-id-f023edb-drawnset.json")
+infillingDatabaseFile <- file.path(cfg$climate_assessment_files_dir, "/1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv")
 magiccBinFile         <- file.path(cfg$climate_assessment_files_dir, "/magicc-v7.5.3/bin/magicc")
 scriptsFolder         <- "/p/projects/rd3mod/python/climate-assessment/scripts"
 
@@ -91,9 +91,9 @@ workfolder <- file.path(outputdir, "climate-temp")
 dir.create(workfolder, showWarnings = FALSE)
 
 # Set relevant environment variables and create a MAGICC worker directory
-Sys.setenv(MAGICC_EXECUTABLE_7=magiccBinFile)
-Sys.setenv(MAGICC_WORKER_ROOT_DIR=paste0(normalizePath(workfolder),"/workers/")) # Has to be an absolute path
-Sys.setenv(MAGICC_WORKER_NUMBER=1) # TODO: Get this from slurm or nproc
+Sys.setenv(MAGICC_EXECUTABLE_7 = magiccBinFile)
+Sys.setenv(MAGICC_WORKER_ROOT_DIR = paste0(normalizePath(workfolder), "/workers/")) # Has to be an absolute path
+Sys.setenv(MAGICC_WORKER_NUMBER = 1) # TODO: Get this from slurm or nproc
 
 dir.create(Sys.getenv("MAGICC_WORKER_ROOT_DIR"), recursive = TRUE, showWarnings = FALSE)
 
