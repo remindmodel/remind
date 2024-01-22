@@ -57,19 +57,23 @@ write.mif(emimif, emimifpath)
 cat(date(), " ar6Climate.R: Running generateIIASASubmission to generate AR6 mif in file:\n")
 emimifar6fpath <- paste0(outputdir, "/", "emimif_ar6_", scenario, ".mif")
 cat(date(), " ar6Climate.R: ", emimifar6fpath, "\n")
-generateIIASASubmission(emimifpath, mapping = "AR6", outputDirectory = outputdir, outputFilename = basename(emimifar6fpath), logFile = paste0(outputdir, "/missing.log"))
+generateIIASASubmission(emimifpath, mapping = "AR6", outputDirectory = outputdir,
+                        outputFilename = basename(emimifar6fpath), logFile = paste0(outputdir, "/missing.log"))
 
 # Read in AR6 mif
 cat(date(), " ar6Climate.R: Reading AR6 mif and preparing csv for climate-assessment\n")
 ar6mif <- read.quitte(emimifar6fpath)
 
 # Get it ready for climate-assessment: capitalized titles, just World, comma separator
-colnames(ar6mif) <- paste(toupper(substr(colnames(ar6mif), 1, 1)), substr(colnames(ar6mif), 2, nchar(colnames(ar6mif))), sep = "")
-ar6mif <- ar6mif[ar6mif$Region %in% c("GLO", "World"),]
+colnames(ar6mif) <- paste(toupper(substr(colnames(ar6mif), 1, 1)),
+                          substr(colnames(ar6mif), 2, nchar(colnames(ar6mif))), sep = "")
+ar6mif <- ar6mif[ar6mif$Region %in% c("GLO", "World"), ]
 ar6mif$Region <- "World"
 
 # Long to wide
-outcsv <- reshape(as.data.frame(ar6mif), direction = "wide", timevar = "Period", v.names = "Value", idvar = c("Model", "Variable", "Scenario", "Region", "Unit"))
+outcsv <- reshape(as.data.frame(ar6mif),
+                  direction = "wide", timevar = "Period", v.names = "Value",
+                  idvar = c("Model", "Variable", "Scenario", "Region", "Unit"))
 colnames(outcsv) <- gsub("Value.", "", colnames(outcsv))
 
 # Write output in csv for climate-assessment
@@ -81,8 +85,10 @@ write.csv(outcsv, ar6csvfpath, row.names = FALSE, quote = FALSE)
 # These files are supposed to be all inside cfg$climate_assessment_files_dir in a certain structure
 # TODO: Make this even more flexible by explictly setting them in default.cfg
 # probabilisticFile       <- file.path(cfg$climate_assessment_files_dir,"/parsets/RCP20_50.json")
-probabilisticFile     <- file.path(cfg$climate_assessment_files_dir, "/parsets/0fd0f62-derived-metrics-id-f023edb-drawnset.json")
-infillingDatabaseFile <- file.path(cfg$climate_assessment_files_dir, "/1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv")
+probabilisticFile     <- file.path(cfg$climate_assessment_files_dir,
+                                   "/parsets/0fd0f62-derived-metrics-id-f023edb-drawnset.json")
+infillingDatabaseFile <- file.path(cfg$climate_assessment_files_dir, 
+                                   "/1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv")
 magiccBinFile         <- file.path(cfg$climate_assessment_files_dir, "/magicc-v7.5.3/bin/magicc")
 scriptsFolder         <- "/p/projects/rd3mod/python/climate-assessment/scripts"
 
@@ -101,7 +107,7 @@ dir.create(Sys.getenv("MAGICC_WORKER_ROOT_DIR"), recursive = TRUE, showWarnings 
 basefname <- sub("\\.csv$", "", basename(ar6csvfpath))
 
 # Set up another log file for the python output
-logmsg <- paste0(date(), " Created log\n================================ EXECUTING climate-assessment scripts =================================\n")
+logmsg <- paste0(date(), " Created log\n=================== EXECUTING climate-assessment scripts ===================n")
 cat(logmsg)
 capture.output(cat(logmsg), file = logfile, append = FALSE)
 
@@ -110,7 +116,8 @@ logmsg <- paste0(date(), " Started harmonization\n")
 cat(logmsg)
 capture.output(cat(logmsg), file = logfile, append = TRUE)
 
-cmd <- paste0("python ", scriptsFolder, "run_harm_inf.py ", ar6csvfpath, " ", workfolder, " ", "--no-inputcheck --infilling-database ", infillingDatabaseFile)
+cmd <- paste0("python ", scriptsFolder, "run_harm_inf.py ", ar6csvfpath, " ", workfolder, " ",
+              "--no-inputcheck --infilling-database ", infillingDatabaseFile)
 system(cmd)
 
 ############################# RUNNING MODEL #############################
@@ -121,7 +128,9 @@ capture.output(cat(logmsg), file = logfile, append = TRUE)
 # Read parameter sets file to ascertain how many parsets there are
 allparsets <- read_yaml(probabilisticFile)
 nparsets <- length(allparsets$configurations)
-cmd <- paste0("python ", scriptsFolder, "run_clim.py ", workfolder, "/", basefname, "_harmonized_infilled.csv ", workfolder, " --num-cfgs ",nparsets," --scenario-batch-size ", 1, " --probabilistic-file ", probabilisticFile)
+cmd <- paste0("python ", scriptsFolder, "run_clim.py ", workfolder, "/", basefname,
+              "_harmonized_infilled.csv ", workfolder, " --num-cfgs ",nparsets," --scenario-batch-size ", 1,
+              " --probabilistic-file ", probabilisticFile)
 # cmd <- paste0("python ", scriptsFolder, "run_clim.py ", workfolder, "/", basefname, "_harmonized_infilled.csv ", workfolder, " --num-cfgs 1 --scenario-batch-size ", 1, " --probabilistic-file ", probabilisticFile, " --save-csv-combined-output")
 system(cmd)
 
