@@ -7,27 +7,27 @@ library(lucode2)
 library(readxl) # GA: Wont be necessary after https://github.com/iiasa/climate-assessment/pull/43 goes into release
 
 ############################# BASIC CONFIGURATION #############################
-gdx_name     <- "fulldata.gdx"             # name of the gdx
-cfg_name     <- "cfg.txt"                  # cfg file for getting file paths
+gdxName <- "fulldata.gdx"             # name of the gdx
+cfgName <- "cfg.txt"                  # cfg file for getting file paths
 
 
 if(!exists("source_include")) {
    # Define arguments that can be read from command line
    outputdir <- "."
-   readArgs("outputdir", "gdx_name", "gdx_ref_name", "gdx_refpolicycost_name")
+   readArgs("outputdir", "gdxName", "gdx_ref_name", "gdx_refpolicycost_name")
 }
 
-gdx           <- file.path(outputdir, gdx_name)
-cfg_path      <- file.path(outputdir, cfg_name)
-logfile       <- file.path(outputdir, "climate.log") # specific log for python steps
-scenario <- getScenNames(outputdir)
-remind_reporting_file <- file.path(outputdir,paste0("REMIND_generic_", scenario,".mif"))
+gdx                 <- file.path(outputdir, gdxName)
+cfgPath             <- file.path(outputdir, cfgName)
+logfile             <- file.path(outputdir, "climate.log") # specific log for python steps
+scenario            <- getScenNames(outputdir)
+remindReportingFile <- file.path(outputdir,paste0("REMIND_generic_", scenario,".mif"))
 
 print(getwd())
 ############################# PREPARING EMISSIONS INPUT #############################
 
 # Read the cfg to get the location of MAGICC-related files
-cfg <- read_yaml(cfg_path)
+cfg <- read_yaml(cfgPath)
 
 # Read the GDX and run reportEmi
 # gdxpath <- "fulldata.gdx"
@@ -74,17 +74,18 @@ write.csv(outcsv, ar6csvfpath, row.names=F, quote=F)
 ############################# PYTHON/MAGICC SETUP #############################
 # These files are supposed to be all inside cfg$climate_assessment_files_dir in a certain structure
 # TODO: Make this even more flexible by explictly setting them in default.cfg
-# probabilistic_file       <- file.path(cfg$climate_assessment_files_dir,"/parsets/RCP20_50.json")
-probabilistic_file       <- file.path(cfg$climate_assessment_files_dir,"/parsets/0fd0f62-derived-metrics-id-f023edb-drawnset.json")
-infilling_database_file  <- file.path(cfg$climate_assessment_files_dir,"/1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv")
-magicc_bin_file          <- file.path(cfg$climate_assessment_files_dir,"/magicc-v7.5.3/bin/magicc")
+# probabilisticFile       <- file.path(cfg$climate_assessment_files_dir,"/parsets/RCP20_50.json")
+probabilisticFile     <- file.path(cfg$climate_assessment_files_dir,"/parsets/0fd0f62-derived-metrics-id-f023edb-drawnset.json")
+infillingDatabaseFile <- file.path(cfg$climate_assessment_files_dir,"/1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv")
+magiccBinFile         <- file.path(cfg$climate_assessment_files_dir, "/magicc-v7.5.3/bin/magicc")
+scriptsFolder         <- "/p/projects/rd3mod/python/climate-assessment/scripts"
 
 # Create working folder for climate-assessment files
 workfolder <- file.path(outputdir, "climate-temp")
 dir.create(workfolder, showWarnings = F)
 
 # Set relevant environment variables and create a MAGICC worker directory
-Sys.setenv(MAGICC_EXECUTABLE_7=magicc_bin_file)
+Sys.setenv(MAGICC_EXECUTABLE_7=magiccBinFile)
 Sys.setenv(MAGICC_WORKER_ROOT_DIR=paste0(normalizePath(workfolder),"/workers/")) # Has to be an absolute path
 Sys.setenv(MAGICC_WORKER_NUMBER=1) # TODO: Get this from slurm or nproc
 
@@ -98,19 +99,12 @@ logmsg <- paste0(date(), " Created log\n================================ EXECUTI
 cat(logmsg)
 capture.output(cat(logmsg), file = logfile, append = F)
 
-# TODO: Activate venv and get the script from the right location
-# Get the available climate-assessment module location and its scripts folder
-root_climate_assessment <- system('python -c "import importlib; print(importlib.util.find_spec(\\"climate_assessment\\").submodule_search_locations[0])"', intern = T)
-# sfolder <- file.path(root_climate_assessment, "scripts/")
-sfolder="/p/projects/piam/abrahao/scratch/iiasa/climate-assessment/scripts/" #TODO: Get the one used in the renv
-
-
 ############################# HARMONIZATION/INFILLING #############################
 logmsg <- paste0(date(), " Started harmonization\n")
 cat(logmsg)
 capture.output(cat(logmsg), file = logfile, append = T)
 
-cmd <- paste0("python ", sfolder, "run_harm_inf.py ", ar6csvfpath, " ", workfolder, " ", "--no-inputcheck --infilling-database ", infilling_database_file)
+cmd <- paste0("python ", scriptsFolder, "run_harm_inf.py ", ar6csvfpath, " ", workfolder, " ", "--no-inputcheck --infilling-database ", infillingDatabaseFile)
 system(cmd)
 
 ############################# RUNNING MODEL #############################
@@ -119,10 +113,10 @@ cat(logmsg)
 capture.output(cat(logmsg), file = logfile, append = T)
 
 # Read parameter sets file to ascertain how many parsets there are
-allparsets <- read_yaml(probabilistic_file)
+allparsets <- read_yaml(probabilisticFile)
 nparsets <- length(allparsets$configurations)
-cmd <- paste0("python ", sfolder, "run_clim.py ", workfolder, "/", basefname, "_harmonized_infilled.csv ", workfolder, " --num-cfgs ",nparsets," --scenario-batch-size ", 1, " --probabilistic-file ", probabilistic_file)
-# cmd <- paste0("python ", sfolder, "run_clim.py ", workfolder, "/", basefname, "_harmonized_infilled.csv ", workfolder, " --num-cfgs 1 --scenario-batch-size ", 1, " --probabilistic-file ", probabilistic_file, " --save-csv-combined-output")
+cmd <- paste0("python ", scriptsFolder, "run_clim.py ", workfolder, "/", basefname, "_harmonized_infilled.csv ", workfolder, " --num-cfgs ",nparsets," --scenario-batch-size ", 1, " --probabilistic-file ", probabilisticFile)
+# cmd <- paste0("python ", scriptsFolder, "run_clim.py ", workfolder, "/", basefname, "_harmonized_infilled.csv ", workfolder, " --num-cfgs 1 --scenario-batch-size ", 1, " --probabilistic-file ", probabilisticFile, " --save-csv-combined-output")
 system(cmd)
 
 ############################# READING CLIMATE OUTPUT #############################
@@ -131,10 +125,10 @@ climdata <- read.quitte(climoutfpath)
 
 ############################# APPEND TO REMIND MIF #############################
 # Filter only periods used in REMIND, so that it doesn't expand the original mif
-useperiods <- unique(read.quitte(remind_reporting_file)$period)
+useperiods <- unique(read.quitte(remindReportingFile)$period)
 climdata <- climdata[climdata$period %in% useperiods,]
 climdata <- interpolate_missing_periods(climdata, useperiods, expand.values = F)
-write.mif(climdata, remind_reporting_file, append = T)
+write.mif(climdata, remindReportingFile, append = T)
 
 
 
