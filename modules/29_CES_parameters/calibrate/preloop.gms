@@ -357,6 +357,7 @@ loop  ((t,cesRev2cesIO(counter,ipf_29(out)))$( NOT (  sameas(out,"inco")) ),
       pm_cesdata(t,regi_dyn29,in,"price")
     * pm_cesdata(t,regi_dyn29,in,"quantity")
     );
+);
 *** Ensure that the labour share in GDP is at least 20 % for historical periods
 *** and 0.5 % for others.
 sm_tmp  = 0;
