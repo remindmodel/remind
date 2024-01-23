@@ -25,7 +25,7 @@ if (!exists("source_include")) {
 
 gdx                 <- file.path(outputdir, gdxName)
 cfgPath             <- file.path(outputdir, cfgName)
-logfile             <- file.path(outputdir, "climate.log") # specific log for python steps
+logfile             <- file.path(outputdir, "log_climate.txt") # specific log for python steps
 scenario            <- getScenNames(outputdir)
 remindReportingFile <- file.path(outputdir, paste0("REMIND_generic_", scenario, ".mif"))
 
