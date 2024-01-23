@@ -87,7 +87,7 @@ choose_slurmConfig_output <- function(output) {
   slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
                      "--qos=priority --mem=8000", "--qos=short --mem=8000",
                      "--qos=standby --mem=8000", "--qos=priority --mem=32000",
-                     if ("ar6Climate" %in% output) "--qos=priority --tasks-per-node=12",
+                     if ("ar6Climate" %in% output) "--qos=priority --tasks-per-node=12 --mem=32000",
                      "direct")
   if ("reporting" %in% output) slurm_options <- unique(c(grep("--mem=[0-9]*[0-9]{3}", slurm_options, value = TRUE), "direct"))
   if (length(slurm_options) == 1) {
