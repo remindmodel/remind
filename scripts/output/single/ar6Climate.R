@@ -88,7 +88,7 @@ probabilisticFile     <- file.path(cfg$climate_assessment_files_dir,
 infillingDatabaseFile <- file.path(cfg$climate_assessment_files_dir, 
                                    "/1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv")
 magiccBinFile         <- file.path(cfg$climate_assessment_files_dir, "/magicc-v7.5.3/bin/magicc")
-scriptsFolder         <- "/p/projects/rd3mod/python/climate-assessment/scripts"
+scriptsFolder         <- file.path(cfg$climate_assessment_root, "scripts/")
 
 # Create working folder for climate-assessment files
 workfolder <- file.path(outputdir, "climate-temp")
