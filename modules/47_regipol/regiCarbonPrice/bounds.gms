@@ -116,6 +116,58 @@ vm_capEarlyReti.up('2025',regi,'pc') = 0.65;
 vm_cap.up("2025",regi,"spv","1")$(sameAs(regi,"DEU"))=0.11;
 
 
+*** bounds to align 2020 chp capcities for Germany with historic data (shares from Eurostat)
+loop(regi$(sameAs(regi,"DEU")),
+    loop(t$(t.val eq 2020),
+*** coal share of chp heat output to be between 15-25%
+*** gas share of chp heat output to be between 45-55%
+        vm_cap.lo(t,regi,"coalchp","1")= 0.15 
+*** total FE heat demand from industry and buildings calibration trajectories
+                                            * (pm_cesdata(t,regi,"feheb","quantity")
+                                                + pm_cesdata(t,regi,"feheb","quantity"))
+*** divide by tdhes efficiency get from FE heat to SE heat, i.e. take into account heat transmission losses
+                                            / pm_eta_conv(t,regi,"tdhes")
+*** divide by pm_prodCouple to get from heat production to production of seel
+                                            /  pm_prodCouple(regi,"pecoal","seel","coalchp","sehe")
+*** divide by capacity factor to get from seel production in TWa to capacity in TW
+                                            / pm_cf(t,regi,"coalchp"); 
+
+        vm_cap.up(t,regi,"coalchp","1")= 0.25 
+*** total FE heat demand from industry and buildings calibration trajectories
+                                            * (pm_cesdata(t,regi,"feheb","quantity")
+                                                + pm_cesdata(t,regi,"feheb","quantity"))
+*** divide by tdhes efficiency get from FE heat to SE heat, i.e. take into account heat transmission losses
+                                            / pm_eta_conv(t,regi,"tdhes")
+*** divide by pm_prodCouple to get from heat production to production of seel
+                                            /  pm_prodCouple(regi,"pecoal","seel","coalchp","sehe")
+*** divide by capacity factor to get from seel production in TWa to capacity in TW
+                                            / pm_cf(t,regi,"coalchp"); 
+        vm_cap.lo(t,regi,"gaschp","1")= 0.45 
+*** total FE heat demand from industry and buildings calibration trajectories
+                                            * (pm_cesdata(t,regi,"feheb","quantity")
+                                                + pm_cesdata(t,regi,"feheb","quantity"))
+*** divide by tdhes efficiency get from FE heat to SE heat, i.e. take into account heat transmission losses
+                                            / pm_eta_conv(t,regi,"tdhes")
+*** divide by pm_prodCouple to get from heat production to production of seel
+                                            /  pm_prodCouple(regi,"pegas","seel","gaschp","sehe")
+*** divide by capacity factor to get from seel production in TWa to capacity in TW
+                                            / pm_cf(t,regi,"gaschp"); 
+
+        vm_cap.up(t,regi,"gaschp","1")= 0.55
+*** total FE heat demand from industry and buildings calibration trajectories
+                                            * (pm_cesdata(t,regi,"feheb","quantity")
+                                                + pm_cesdata(t,regi,"feheb","quantity"))
+*** divide by tdhes efficiency get from FE heat to SE heat, i.e. take into account heat transmission losses
+                                            / pm_eta_conv(t,regi,"tdhes")
+*** divide by pm_prodCouple to get from heat production to production of seel
+                                            /  pm_prodCouple(regi,"pegas","seel","gaschp","sehe")
+*** divide by capacity factor to get from seel production in TWa to capacity in TW
+                                            / pm_cf(t,regi,"gaschp"); 
+
+
+    );
+);
+
 *** energy security policy for Germany: 5GW(el) electrolysis installed by 2030 in Germany at minimum
 $ifThen.ensec "%cm_Ger_Pol%" == "ensec"
     vm_cap.lo("2030","DEU","elh2","1")=5*pm_eta_conv("2030","DEU","elh2")/1000;
