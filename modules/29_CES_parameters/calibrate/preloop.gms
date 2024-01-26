@@ -794,6 +794,21 @@ $endif.subsectors
 
 ***_____________________________ END OF: BEYOND CALIBRATION PART I ________________________________________
 
+***_____________________________ START OF: COMPUTE ELASTICITIES OF SUBSTITUTION ________________________________________
+
+*** Elasticities of substitution are normally prescribed manually.
+*** However, they can also be estimated from technological data. This is done here.
+*** At the time of documentation, the nodes for which this is done are in the services_with_capital realization of the
+*** buildings module.
+
+*** Compute the rho parameter from the elasticity of substitution
+pm_cesdata(ttot,regi,ipf(out),"rho")$(    ttot.val ge 2005
+                                      AND pm_cesdata_sigma(ttot,out)
+                                      AND pm_cesdata_sigma(ttot,out) ne -1 )
+    !! Do not compute it if sigma = 0, because these should be estimated
+  = 1 - (1 / pm_cesdata_sigma(ttot,out));
+***_____________________________ END OF: COMPUTE ELASTICITIES OF SUBSTITUTION ________________________________________
+
 ***_____________________________ START OF: 5 - PASS EFF TIME EVOLUTION TO EFFGR ________________________________________
 
 *** Finally, we take the evolution of xi and eff, and pass it on to effGr.
