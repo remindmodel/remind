@@ -173,10 +173,11 @@ logmsg <- paste0(
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)
 
-
 ############################# APPEND TO REMIND MIF #############################
 # Filter only periods used in REMIND, so that it doesn't expand the original mif
 usePeriods <- unique(read.quitte(remindReportingFile)$period)
+# TODO: Get years from someplace else? Above approach take a long time, instead maybe:
+# sort(as.integer(colnames(climateAssessmentInputData %>% select(matches("^[0-9]")))))
 
 # climateAssessmentData <- read.quitte(climateAssessmentOutput)
 # climateAssessmentData <- climateAssessmentData[climateAssessmentData$period %in% usePeriods, ]
