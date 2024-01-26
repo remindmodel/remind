@@ -9,6 +9,9 @@ library(remind2)
 library(quitte)
 library(piamInterfaces)
 library(yaml)
+library(readr)
+library(lucode2)
+library(stringr)
 
 # TODO: REMOVE THIS LINE. piamInterfaces should be installed as a package on the cluster
 devtools::load_all("/p/tmp/tonnru/piamInterfaces/") 
