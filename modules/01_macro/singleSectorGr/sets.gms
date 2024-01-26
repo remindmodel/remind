@@ -20,7 +20,7 @@ cesOut2cesIn_below(all_in,all_in)     "All elements of the CES below located bel
 
 in(all_in)                            "All inputs and outputs of the CES function"
 /
-  inco                                "Macroeconomic output"  
+  inco                                "Macroeconomic output"
   lab                                 "Labour input"
   kap                                 "Capital input"
   en                                  "Energy input"
@@ -28,7 +28,8 @@ in(all_in)                            "All inputs and outputs of the CES functio
 ppf(all_in)                           "All primary production factors"
 ipf(all_in)                           "All intermediate production factors"
 ppfKap(all_in)                        "Primary production factors capital"   / kap /
-ppfEn(all_in)                         "Primary production factors energy" 
+ppfEn(all_in)                         "Primary production factors energy"
+
 in_enerSerAdj(all_in)                 "Energy services factors which should be constrained by adjustment costs" //
 in_complements(all_in)                "Factors which are perfect complements"  //
 complements_ref(all_in,all_in)        "Correspondence between complementary factors. Necessary to have a reference factor for the constraints equations"
