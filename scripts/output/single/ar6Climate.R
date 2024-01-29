@@ -115,8 +115,8 @@ Sys.setenv(MAGICC_WORKER_NUMBER = 1) # TODO: Get this from slurm or nproc
 # TODO: This makes assumptions about the users climate-assessment installation. There are a couple of options:
 # A) Remove entirely and assume that the user has set up their environment correctly
 # B) Make this more flexible by explictly setting them in default.cfg
-activate_venv_cmd <- paste("source", normalizePath(file.path(cfg$climate_assessment_root, "..", "venv", "bin", "activate")))
-deactivate_venv_cmd <- "deactivate"
+#activate_venv_cmd <- paste("source", normalizePath(file.path(cfg$climate_assessment_root, "..", "venv", "bin", "activate")))
+#deactivate_venv_cmd <- "deactivate"
 
 run_harm_inf_cmd <- paste(
   "python", file.path(scriptsFolder, "run_harm_inf.py"),
@@ -156,10 +156,6 @@ logmsg <- paste0(
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = FALSE)
 
-############################# ACTIVATE VENV #############################
-
-system(activate_venv_cmd)
-
 ############################# HARMONIZATION/INFILLING #############################
 
 system(run_harm_inf_cmd)
@@ -189,7 +185,7 @@ climateAssessmentOutput <- file.path(
 logmsg <- paste0(
   date(), "  climate-assessment finished\n",
   date(), " =================== POSTPROCESS climate-assessment output ==================\n",
-  "  climateAssessmentOutput = '", climateAssessmentOutput, "' exists? ", dir.exists(climateAssessmentOutput), "\n"
+  "  climateAssessmentOutput = '", climateAssessmentOutput, "'\n"
 )
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)
@@ -216,5 +212,3 @@ logmsg <- paste0(
 )
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)
-
-system(deactivate_venv_cmd)
