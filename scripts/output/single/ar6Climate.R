@@ -37,7 +37,8 @@ scenario              <- getScenNames(outputdir)
 remindReportingFile   <- file.path(outputdir, paste0("REMIND_generic_", scenario, ".mif"))
 climateAssessmentYaml <- file.path(system.file("iiasaTemplates", package = "piamInterfaces"),
                                    "climate_assessment_variables.yaml")
-climateAssessmentEmi  <- file.path(outputdir, paste0("ar6_climate_assessment_", scenario, ".csv"))
+climateAssessmentEmi <- normalizePath(file.path(outputdir, paste0("ar6_climate_assessment_", scenario, ".csv")), 
+                                      mustWork = FALSE)
 
 ############################# PREPARING EMISSIONS INPUT #############################
 
@@ -92,7 +93,11 @@ infillingDatabaseFile <- normalizePath(file.path(cfg$climate_assessment_files_di
                                       "1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv"))
 scriptsFolder         <- normalizePath(file.path(cfg$climate_assessment_root, "scripts"))
 magiccBinFile         <- normalizePath(file.path(cfg$climate_assessment_magicc_bin))
-magiccWorkersFolder   <- file.path(normalizePath(climateAssessmentFolder), "workers")
+magiccWorkersFolder <- file.path(normalizePath(climateAssessmentFolder), "workers")
+
+# Read parameter sets file to ascertain how many parsets there are
+allparsets <- read_yaml(probabilisticFile)
+nparsets <- length(allparsets$configurations)
 
 logmsg <- paste0(date(), " =================== SET UP climate-assessment scripts environment ===================\n")
 cat(logmsg)
@@ -106,27 +111,12 @@ Sys.setenv(MAGICC_EXECUTABLE_7 = magiccBinFile)
 Sys.setenv(MAGICC_WORKER_ROOT_DIR = magiccWorkersFolder) # Has to be an absolute path
 Sys.setenv(MAGICC_WORKER_NUMBER = 1) # TODO: Get this from slurm or nproc
 
-logmsg <- paste0(
-  "  climateAssessmentFolder = '", climateAssessmentFolder, "' exists? ", dir.exists(climateAssessmentFolder), "\n",
-  "  baseFileName = '",            baseFileName, "\n",
-  "  probabilisticFile = '",       probabilisticFile,       "' exists? ", file.exists(probabilisticFile), "\n",
-  "  infillingDatabaseFile = '",   infillingDatabaseFile,   "' exists? ", file.exists(infillingDatabaseFile), "\n",
-  "  scriptsFolder = '",           scriptsFolder,           "' exists? ", dir.exists(scriptsFolder), "\n",
-  "  magiccBinFile = '",           magiccBinFile,           "' exists? ", file.exists(magiccBinFile), "\n",
-  "  magiccWorkersFolder = '",     magiccWorkersFolder,     "' exists? ", dir.exists(magiccWorkersFolder), "\n\n",
-  "  ENVIRONMENT VARIABLES:\n",
-  "  MAGICC_EXECUTABLE_7    = ", Sys.getenv("MAGICC_EXECUTABLE_7") ,"\n",
-  "  MAGICC_WORKER_ROOT_DIR = ", Sys.getenv("MAGICC_WORKER_ROOT_DIR") ,"\n",
-  "  MAGICC_WORKER_NUMBER   = ", Sys.getenv("MAGICC_WORKER_NUMBER") ,"\n",
-  date(), " =================== EXECUTING climate-assessment scripts ===================\n"
-)
-cat(logmsg)
-capture.output(cat(logmsg), file = logFile, append = FALSE)
-
-############################# HARMONIZATION/INFILLING #############################
-logmsg <- paste0(date(), "  Startclimate-assessment harmonization\n")
-cat(logmsg)
-capture.output(cat(logmsg), file = logFile, append = TRUE)
+# Specify the commands to (de-)activate the venv & run the harmonization/infilling/model scripts
+# TODO: This makes assumptions about the users climate-assessment installation. There are a couple of options:
+# A) Remove entirely and assume that the user has set up their environment correctly
+# B) Make this more flexible by explictly setting them in default.cfg
+activate_venv_cmd <- paste("source", normalizePath(file.path(cfg$climate_assessment_root, "..", "venv", "bin", "activate")))
+deactivate_venv_cmd <- "deactivate"
 
 run_harm_inf_cmd <- paste(
   "python", file.path(scriptsFolder, "run_harm_inf.py"),
@@ -135,18 +125,7 @@ run_harm_inf_cmd <- paste(
   "--no-inputcheck",
   "--infilling-database", infillingDatabaseFile
 )
-cat(run_harm_inf_cmd, "\n")
-# system(run_harm_inf_cmd)
-
-############################# RUNNING MODEL #############################
-# Read parameter sets file to ascertain how many parsets there are
-allparsets <- read_yaml(probabilisticFile)
-nparsets   <- length(allparsets$configurations)
-
-logmsg <- paste0(
-  date(), "  Found ", nparsets, " nparsets, start climate-assessment model runs\n", run_harm_inf_cmd, "\n")
-cat(logmsg)
-capture.output(cat(logmsg), file = logFile, append = TRUE)
+# cat(run_harm_inf_cmd, "\n")
 
 run_clim_cmd <- paste(
   "python", file.path(scriptsFolder, "run_clim.py"),
@@ -156,8 +135,50 @@ run_clim_cmd <- paste(
   "--scenario-batch-size", 1,
   "--probabilistic-file", probabilisticFile
 )
-cat(run_clim_cmd, "\n")
-# system(run_clim_cmd)
+# cat(run_clim_cmd, "\n")
+
+logmsg <- paste0(
+  "  climateAssessmentFolder = '", climateAssessmentFolder, "' exists? ", dir.exists(climateAssessmentFolder), "\n",
+  "  baseFileName = '",            baseFileName, "'\n",
+  "  probabilisticFile = '",       probabilisticFile,       "' exists? ", file.exists(probabilisticFile), "\n",
+  "  infillingDatabaseFile = '",   infillingDatabaseFile,   "' exists? ", file.exists(infillingDatabaseFile), "\n",
+  "  scriptsFolder = '",           scriptsFolder,           "' exists? ", dir.exists(scriptsFolder), "\n",
+  "  magiccBinFile = '",           magiccBinFile,           "' exists? ", file.exists(magiccBinFile), "\n",
+  "  magiccWorkersFolder = '",     magiccWorkersFolder,     "' exists? ", dir.exists(magiccWorkersFolder), "\n\n",
+  "  ENVIRONMENT VARIABLES:\n",
+  "  MAGICC_EXECUTABLE_7    = ", Sys.getenv("MAGICC_EXECUTABLE_7") ,"\n",
+  "  MAGICC_WORKER_ROOT_DIR = ", Sys.getenv("MAGICC_WORKER_ROOT_DIR") ,"\n",
+  "  MAGICC_WORKER_NUMBER   = ", Sys.getenv("MAGICC_WORKER_NUMBER") ,"\n",
+  date(), " =================== RUN climate-assessment infilling & harmonization ===================\n",
+  "  activate_venv_cmd = '", activate_venv_cmd, "'\n",
+  run_harm_inf_cmd, "'\n"
+)
+cat(logmsg)
+capture.output(cat(logmsg), file = logFile, append = FALSE)
+
+############################# ACTIVATE VENV #############################
+
+system(activate_venv_cmd)
+
+############################# HARMONIZATION/INFILLING #############################
+
+system(run_harm_inf_cmd)
+
+logmsg <- paste0(date(), "  Done with harmonization & infilling\n")
+cat(logmsg)
+capture.output(cat(logmsg), file = logFile, append = TRUE)
+
+############################# RUNNING MODEL #############################
+
+logmsg <- paste0(
+  date(), "  Found ", nparsets, " nparsets, start climate-assessment model runs\n", run_harm_inf_cmd, "\n",
+  date(), " =================== RUN climate-assessment model ============================\n",
+  run_clim_cmd, "'\n"
+)
+cat(logmsg)
+capture.output(cat(logmsg), file = logFile, append = TRUE)
+
+system(run_clim_cmd)
 
 ############################# POSTPROCESS CLIMATE OUTPUT #############################
 climateAssessmentOutput <- file.path(
@@ -176,7 +197,7 @@ capture.output(cat(logmsg), file = logFile, append = TRUE)
 ############################# APPEND TO REMIND MIF #############################
 # Filter only periods used in REMIND, so that it doesn't expand the original mif
 usePeriods <- unique(read.quitte(remindReportingFile)$period)
-# TODO: Get years from someplace else? Above approach take a long time, instead maybe:
+# TODO: Get years from someplace else? Above approach takes a long time, instead maybe:
 # sort(as.integer(colnames(climateAssessmentInputData %>% select(matches("^[0-9]")))))
 
 # climateAssessmentData <- read.quitte(climateAssessmentOutput)
@@ -195,3 +216,5 @@ logmsg <- paste0(
 )
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)
+
+system(deactivate_venv_cmd)
