@@ -218,22 +218,14 @@ if (cm_nucscen eq 5,
   vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2015)  = 0;
 );
 
-*** -------------------------------------------------------------
-*** *DK* Phaseout of 1st generation biofuel technologies
-*** -------------------------------------------------------------
+*'  -------------------------------------------------------------
+*'  Force no new capacities of 1st generation biofuel technologies to be
+*'  installed after 2030, allowing more cost-efficient and more sustainable new
+*'  generation of biofuel technologies free entrance to the market
+*'  -------------------------------------------------------------
 if(cm_1stgen_phaseout=1,
    vm_deltaCap.up(t,regi,"bioeths",rlf)$(t.val gt 2030)   = 0;
    vm_deltaCap.up(t,regi,"biodiesel",rlf)$(t.val gt 2030) = 0;
-);
-
-*** -----------------------------------------------------------
-*mh Implementation of scenarios where capacities are fixed at BAU level:
-*** -----------------------------------------------------------
-
-if (cm_startyear gt 2005,
-  if (c_solscen eq 3,
-    vm_cap.up(t,regi,"spv",rlf)$(t.val ge 2010)  = p_boundtmp(t,regi,"spv",rlf);
-  );
 );
 
 *** -----------------------------------------------------------

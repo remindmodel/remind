@@ -30,7 +30,7 @@
 scalars
 *** Debug
 s31_debug                                            "debugging option to display more output"        /0/
-s31_max_disp_peur                                    "maximum amount of cumulative uranium production in Megatonnes of metal uranium (U3O8, the stuff that is traded at 40-60US$/lb)."
+s31_max_disp_peur                                    "maximum amount of cumulative uranium production (metal uranium U3O8, 40-60US$/lb grade). [Mt]"
 ;
 
 

@@ -116,7 +116,7 @@ The `appResultsLocal` tool is meant to work on a local REMIND ouput folder in yo
 
 #### appResults(): runs made on the PIK cluster
 
-To use this tool, you first have to set up authentication in your `.Rprofile`. PIK-internal instructions on how to do this can be found in [Redmine](https://redmine.pik-potsdam.de/projects/mo/wiki/Configuration_for_AppResults) (login with your PIK account required).
+To use this tool, you first have to set up authentication in your `.Rprofile`. PIK-internal instructions on how to do this can be found in the [Wiki](https://gitlab.pik-potsdam.de/rse/rsewiki/-/wikis/Configuration-for-AppResults) (login with your PIK account required).
 
 You can then use the tool by running the following R command in your computer, which will automatically collect all runs made on the cluster (regardless of where in the cluster) and visualize them:
 
