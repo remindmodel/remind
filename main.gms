@@ -1317,6 +1317,13 @@ $setGlobal cm_vehiclesSubsidies  off !! def = off
 $setGlobal cm_implicitQttyTarget  off !! def = off
 *** cm_loadFromGDX_implicitQttyTargetTax "load p47_implicitQttyTargetTax values from gdx for first iteration. Usefull for policy runs."
 $setGlobal cm_loadFromGDX_implicitQttyTargetTax  off  !! def = off  !! regexp = off|on
+*** cm_implicitQttyTarget_delay "delay the start of the quantity target algorithm either to:
+***   (1) start only after iteration i, by setting "cm_implicitQttyTarget_delay = iteration i", or
+***   (2) start only after the emission targets converged for the model, for both "modules/45_carbonprice" and "modules/47_regipol", by setting "cm_implicitQttyTarget_delay = emiConv x", or
+***   (3) start only after regional emission target is close to convergence, by setting "cm_implicitQttyTarget_delay = emiRegiConv x", which forces the quantity target to start only after x times the cm_emiMktTarget_tolerance is achieved.
+***      e.g., if "cm_emiMktTarget_tolerance = 0.01", i.e. 1% of deviation, and "cm_implicitQttyTarget_delay = emiRegiConv 5", the quantity target algorithm will only start after the emission target achieved a number lower than 5% (0.01 * 5)."
+***      option 3 should only be used if the target is defined for a region that has its carbon pricing controlled by cm_emiMktTarget in the 47_regipol module.
+$setGlobal cm_implicitQttyTarget_delay  iteration 3  !! def = iteration 3, quantity targets only start after iteration 3  
 *** cm_implicitPriceTarget "define tax/subsidies to match FE prices defined in the pm_implicitPriceTarget parameter."
 ***   Acceptable values: "off", "Initial", "HighElectricityPrice", "HighGasandLiquidsPrice", "HighPrice", "LowPrice", "LowElectricityPrice"
 $setGlobal cm_implicitPriceTarget  off  !! def = off  !! regexp = off|Initial|HighElectricityPrice|HighGasandLiquidsPrice|HighPrice|LowPrice|LowElectricityPrice"
