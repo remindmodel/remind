@@ -108,7 +108,7 @@ Parameter
   p47_implicitQttyTargetIterationCount(ext_regi)      "number of iterations that the quantity target scaling algorithm is active"
 
 $ifthen.cm_implicitQttyTarget_delay not "%cm_implicitQttyTarget_delay%" == "off"
-  p47_implicitQttyTarget_delay(qttyDelayType_47)  / %cm_implicitQttyTarget_delay% /
+  p47_implicitQttyTarget_delay(qttyDelayType_47)  "delay the start of the quantity target algorithm either by a given number of iteration or to after achieving emission targets convergence" / %cm_implicitQttyTarget_delay% /
 $endIf.cm_implicitQttyTarget_delay
 
   p47_implicitQttyTargetActive_iter(iteration,ext_regi) "auxiliary parameter to store the iterations that the quantity target should be active"
