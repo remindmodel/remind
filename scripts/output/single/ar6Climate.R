@@ -8,19 +8,16 @@ library(madrat)
 library(remind2)
 library(quitte)
 library(piamInterfaces)
-library(yaml)
-library(readr)
 library(lucode2)
+library(yaml)
+library(tidyverse)
+library(readr)
 library(stringr)
 
 # TODO: REMOVE THIS LINE. piamInterfaces should be installed as a package on the cluster
 devtools::load_all("/p/tmp/tonnru/piamInterfaces/") 
 
 ############################# BASIC CONFIGURATION #############################
-
-logmsg <- paste0(date(), " =================== CONFIGURATION STARTED ==================================\n")
-cat(logmsg)
-capture.output(cat(logmsg), file = logFile, append = FALSE)
 
 gdxName <- "fulldata.gdx"             # name of the gdx
 cfgName <- "cfg.txt"                  # cfg file for getting file paths
@@ -35,14 +32,15 @@ cfgPath               <- file.path(outputdir, cfgName)
 logFile               <- file.path(outputdir, "log_climate.txt") # specific log for python steps
 scenario              <- getScenNames(outputdir)
 remindReportingFile   <- file.path(outputdir, paste0("REMIND_generic_", scenario, ".mif"))
-climateAssessmentYaml <- file.path(system.file("iiasaTemplates", package = "piamInterfaces"),
-                                   "climate_assessment_variables.yaml")
-climateAssessmentEmi <- normalizePath(file.path(outputdir, paste0("ar6_climate_assessment_", scenario, ".csv")), 
-                                      mustWork = FALSE)
+climateAssessmentYaml <- file.path(system.file(package = "piamInterfaces"),
+                                   "iiasaTemplates", "climate_assessment_variables.yaml")
+climateAssessmentEmi  <- normalizePath(file.path(outputdir, paste0("ar6_climate_assessment_", scenario, ".csv")),
+                                       mustWork = FALSE)
 
 ############################# PREPARING EMISSIONS INPUT #############################
 
 logmsg <- paste0(
+  date(), " =================== CONFIGURATION STARTED ==================================\n",
   "  cfgPath = '",              cfgPath,                "' exists? ", file.exists(cfgPath), "\n",
   "  logFile = '",              logFile,                "' exists? ", file.exists(logFile), "\n",
   "  scenario = '",              scenario, "\n",
@@ -90,7 +88,7 @@ baseFileName <- sub("\\.csv$", "", basename(climateAssessmentEmi))
 probabilisticFile     <- normalizePath(file.path(cfg$climate_assessment_files_dir,
                                        "parsets", "0fd0f62-derived-metrics-id-f023edb-drawnset.json"))
 infillingDatabaseFile <- normalizePath(file.path(cfg$climate_assessment_files_dir,
-                                      "1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv"))
+                                       "1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv"))
 scriptsFolder         <- normalizePath(file.path(cfg$climate_assessment_root, "scripts"))
 magiccBinFile         <- normalizePath(file.path(cfg$climate_assessment_magicc_bin))
 magiccWorkersFolder <- file.path(normalizePath(climateAssessmentFolder), "workers")
@@ -150,7 +148,7 @@ logmsg <- paste0(
   "  MAGICC_WORKER_ROOT_DIR = ", Sys.getenv("MAGICC_WORKER_ROOT_DIR") ,"\n",
   "  MAGICC_WORKER_NUMBER   = ", Sys.getenv("MAGICC_WORKER_NUMBER") ,"\n",
   date(), " =================== RUN climate-assessment infilling & harmonization ===================\n",
-  "  activate_venv_cmd = '", activate_venv_cmd, "'\n",
+  #"  activate_venv_cmd = '", activate_venv_cmd, "'\n",
   run_harm_inf_cmd, "'\n"
 )
 cat(logmsg)
