@@ -1325,7 +1325,7 @@ $setGlobal cm_implicitQttyTarget  off !! def = off
 *** cm_loadFromGDX_implicitQttyTargetTax "load p47_implicitQttyTargetTax values from gdx for first iteration. Usefull for policy runs."
 $setGlobal cm_loadFromGDX_implicitQttyTargetTax  off  !! def = off  !! regexp = off|on
 *** cm_implicitQttyTarget_delay "delay the start of the quantity target algorithm either to:
-***   (1) start only after iteration i, by setting "cm_implicitQttyTarget_delay = iter n", or
+***   (1) start only after iteration i, by setting "cm_implicitQttyTarget_delay = iteration n", or
 ***   (2) start only after the emission targets converged for the model, for both "modules/45_carbonprice" and "modules/47_regipol", by setting "cm_implicitQttyTarget_delay = emiConv 1", or
 ***   (3) start only after regional emission target is close to convergence, by setting "cm_implicitQttyTarget_delay = emiRegiConv x", which forces the quantity target to start only after x times the cm_emiMktTarget_tolerance is achieved.
 ***      e.g., if "cm_emiMktTarget_tolerance = 0.01", i.e. 1% of deviation, and "cm_implicitQttyTarget_delay = emiRegiConv 5", the quantity target algorithm will only start after the emission target achieved a number lower than 5% (0.01 * 5)."
