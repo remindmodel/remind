@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **testthat** test and compile all config files
 - **37_Industry** add feedstocks for chemicals subsector and plastics production
 - **core** add process emissions from chemicals subsector and from plastics incineration
+- **47_regipol** ddd support for delaying quantity targets and improving regional emission tax convergence
 
 ### fixed
 - fixed weights of energy carriers in `pm_IndstCO2Captured`
