@@ -546,7 +546,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
     );
     p47_implicitQttyTargetIterationCount(ext_regi) = iteration.val - p47_implicitQttyTargetReferenceIteration(ext_regi) + 1;
 
-***  calculating targets implicit tax rescale factor
+***  calculating the rescale factor for the implicit tax to achieve the target
     if(sameas(taxType,"tax"),
       if(p47_implicitQttyTargetIterationCount(ext_regi) lt 15,
         p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 4);
