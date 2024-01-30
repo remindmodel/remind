@@ -130,24 +130,25 @@ pm_shGasLiq_fe_up(ttot,regi,sector)=0;
 pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 
 
+****************************************************************************************************
+*************************Technology data input read-in and manipulation ****************************
+****************************************************************************************************
+*** (future to be its own module perhaps)
 ***---------------------------------------------------------------------------
-*** Import and set global data
+*** Reading in and initializing global data
 ***---------------------------------------------------------------------------
-table fm_dataglob(char,all_te)  "energy technology characteristics: investment costs, O&M costs, efficiency, learning rates ..."
+
+table fm_dataglob(char,all_te)  "Energy and CDR technology characteristics: investment costs, O&M costs, efficiency, learning rates ..."
 $include "./core/input/generisdata_tech.prn"
 $include "./core/input/generisdata_trade.prn"
 ;
 
-!! Modify spv and storspv parameters for optimistic VRE supply assumptions
-if (cm_VRE_supply_assumptions eq 1,
-    fm_dataglob("learn","spv") = 0.257;
-    fm_dataglob("inco0","storspv") = 7000;
-    fm_dataglob("incolearn","storspv") = 4240;
-    fm_dataglob("learn","storspv") = 0.12;
-    fm_dataglob("incolearn","spv") = 5010;
-    fm_dataglob("incolearn","spv") = 4960;
-);
+*** initializing energy service capital
+pm_esCapCost(tall,all_regi,all_teEs) = 0;
 
+***---------------------------------------------------------------------------
+*** Reading in and initializing regional data
+***---------------------------------------------------------------------------
 parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit: USD$/KW"
 /
 $ondelim
@@ -156,19 +157,34 @@ $offdelim
 /
 ;
 
+***---------------------------------------------------------------------------
+*** Manipulating technology data
+***---------------------------------------------------------------------------
+
+!! Modify spv and storspv parameters for optimistic VRE supply assumptions
+if (cm_VRE_supply_assumptions eq 1,
+    fm_dataglob("learn","spv") = 0.257;
+    fm_dataglob("inco0","storspv") = 7000;
+    fm_dataglob("incolearn","storspv") = 4240;
+    fm_dataglob("learn","storspv") = 0.12;
+);
+if (cm_VRE_supply_assumptions eq 2,
+    fm_dataglob("incolearn","spv") = 5010;
+);
+if (cm_VRE_supply_assumptions eq 3,
+    fm_dataglob("incolearn","spv") = 4960;
+);
+
+
+*** CG: some of the SSP1 and SSP5 costs are not consistent with the story line (e.g. under SSP1 blue H2 and some fossil fuel CCS technologies have lower costs than in SSP2). This is to be fixed in the future under new SSP storylines (29-1-2024)
 *JH* SSP energy technology scenario
 table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
 $include "./core/input/generisdata_tech_SSP1.prn"
-$include "./core/input/generisdata_trade.prn"
 ;
 table f_dataglob_SSP5(char,all_te)        "Techno-economic assumptions consistent with SSP5"
 $include "./core/input/generisdata_tech_SSP5.prn"
-$include "./core/input/generisdata_trade.prn"
 ;
-*JH* New nuclear assumption for SSP5
-if (cm_nucscen eq 6,
-  f_dataglob_SSP5("inco0","tnrs") = 6270; !! increased from 4000 to 6270 with the update of technology costs in REMIND 1.7 to keep the percentage increase between SSP2 and SSP5 constant
-);
+
 if (c_techAssumptScen eq 2,
                fm_dataglob(char,te) = f_dataglob_SSP1(char,te)
 );
@@ -188,16 +204,185 @@ $if not "%cm_inco0RegiFactor%" == "off" p_inco0(ttot,regi,te)$(p_inco0(ttot,regi
 $if not "%cm_learnRate%" == "off" parameter p_new_learnRate(all_te) / %cm_learnRate% /;
 $if not "%cm_learnRate%" == "off" fm_dataglob("learn",te)$p_new_learnRate(te)=p_new_learnRate(te);
 
-*RP* the new cost data in generisdata_tech is now in $2015. As long as the model runs in $2005, these values have first to be converted to D2005 by dividing by 1.2 downwards
-fm_dataglob("inco0",te)              = sm_D2015_2_D2005 * fm_dataglob("inco0",te);
-fm_dataglob("incolearn",te)          = sm_D2015_2_D2005 * fm_dataglob("incolearn",te);
-fm_dataglob("omv",te)                = sm_D2015_2_D2005 * fm_dataglob("omv",te);
-p_inco0(ttot,regi,te)               = sm_D2015_2_D2005 * p_inco0(ttot,regi,te);
-
 *RP* rescale the global CSP investment costs in REMIND: Originally we assume a SM3/12h setup, while the cost data from IEA for the short term seems rather based on a SM2/6h setup (with 40% average CF)
 *** Accordingly, also decrease long-term costs in REMIND to 0.7 of the current values
 fm_dataglob("inco0","csp")              = 0.7 * fm_dataglob("inco0","csp");
 fm_dataglob("incolearn","csp")          = 0.7 * fm_dataglob("incolearn","csp");
+
+
+*** --------------------------------------------------------------------------------
+*** Adjust investment cost data
+*** -------------------------------------------------------------------------------
+
+*RP* calculate turnkey costs (which are the sum of the overnight costs in generisdata_tech and the "interest during construction” (IDC) )
+
+*** in the version with regionalized technology costs, also use regionally differentiated financing costs
+*** First read in the regional market risks:
+parameter p_risk_premium_constr(all_regi)       "risk premium during construction time. Use same values as pm_risk_premium used in module 23_capital markets"
+*RP* 2 parameters needed because pm_risk_premium is set to 0 in module 23 realization perfect".
+/
+$ondelim
+$include "./core/input/pm_risk_premium.cs4r"
+$offdelim
+/
+;
+
+*** then calculate the financing costs during construction
+loop(te$(fm_dataglob("constrTme",te) > 0),
+  p_tkpremused(regi,te) = 1/fm_dataglob("constrTme",te)
+    * sum(integ$(integ.val <= fm_dataglob("constrTme",te)),
+$if %cm_techcosts% == "REG"  (1.03 + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
+$if %cm_techcosts% == "GLO"  (1.03 + pm_prtp(regi) )                                 ** (integ.val - 0.5) - 1
+      )
+);
+*** nuclear sees 3% higher interest rates during construction time due to higher construction time risk, see "The economic future of nuclear power - A study conducted at The University of Chicago" (2004)
+loop(te$sameas(te,"tnrs"),
+  p_tkpremused(regi,te) = 1/fm_dataglob("constrTme",te)
+    * sum(integ$(integ.val <= fm_dataglob("constrTme",te)),
+$if %cm_techcosts% == "REG"  (1.03 + 0.03 + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
+$if %cm_techcosts% == "GLO"  (1.03 + 0.03 + pm_prtp(regi) )                                 ** (integ.val - 0.5) - 1
+      )
+);
+
+display p_tkpremused;
+***for those technologies, for which differentiated costs are available for 2015-2040, use those
+***$if %cm_techcosts% == "REG"   loop(teRegTechCosts(te)$(not teLearn(te)),
+***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);
+***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2040) = p_inco0("2040",regi,te);
+***$if %cm_techcosts% == "REG"   );
+
+***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);
+
+pm_data(regi,"inco0",te)       = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"inco0",te);
+pm_data(regi,"incolearn",te)   = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"incolearn",te);
+p_inco0(ttot,regi,teRegTechCosts)  = (1 + p_tkpremused(regi,teRegTechCosts) ) * p_inco0(ttot,regi,teRegTechCosts);
+*** take region average p_tkpremused for global convergence price
+fm_dataglob("inco0",te)       = (1 + sum(regi, p_tkpremused(regi,te))/sum(regi, 1)) * fm_dataglob("inco0",te);
+
+***calculate default floor costs for learning technologies
+pm_data(regi,"floorcost",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
+
+
+*** In case regionally differentiated investment costs should be used the corresponding entries are revised:
+$if %cm_techcosts% == "REG"   pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2015",regi,teRegTechCosts);
+loop(teRegTechCosts$(sameas(teRegTechCosts,"spv") ),
+$if %cm_techcosts% == "REG"   pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2020",regi,teRegTechCosts);
+);
+
+$if %cm_techcosts% == "REG"   pm_data(regi,"incolearn",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"floorcost",te) ;
+
+
+*** Calculate learning parameters:
+
+*** global exponent
+*** parameter calculation for global level, that regional values can gradually converge to
+fm_dataglob("learnExp_wFC",teLearn(te)) = fm_dataglob("inco0",te)/fm_dataglob("incolearn",te) * log(1-fm_dataglob("learn", te))/log(2);
+
+*** regional exponent
+pm_data(regi,"learnExp_woFC",teLearn(te))    = log(1-pm_data(regi,"learn", te))/log(2);
+*RP* adjust exponent parameter learnExp_woFC to take floor costs into account
+pm_data(regi,"learnExp_wFC",teLearn(te))     = pm_data(regi,"inco0",te) / pm_data(regi,"incolearn",te) * log(1-pm_data(regi,"learn", te))/log(2);
+
+*** global factor
+*** parameter calculation for global level, that regional values can gradually converge to
+fm_dataglob("learnMult_wFC",teLearn(te)) = fm_dataglob("incolearn",te)/(fm_dataglob("ccap0",te)**fm_dataglob("learnExp_wFC", te));
+
+*** regional factor
+*NB* read in vm_capCum(t0,regi,teLearn) from input.gdx to have info available for the recalibration of 2005 investment costs
+Execute_Loadpoint 'input' p_capCum = vm_capCum.l;
+*** FS: in case technologies did not exist in gdx, set intial capacities to global initial value
+p_capCum(tall,regi,te)$( NOT p_capCum(tall,regi,te)) = fm_dataglob("ccap0",te)/card(regi);
+*RP overwrite p_capCum by exogenous values for 2020
+p_capCum("2020",regi,"spv")  = 0.6 / card(regi2);  !! roughly 600GW in 2020
+
+pm_data(regi,"learnMult_woFC",teLearn(te))   = pm_data(regi,"incolearn",te)/sum(regi2,(pm_data(regi2,"ccap0",te))**(pm_data(regi,"learnExp_woFC",te)));
+*RP* adjust parameter learnMult_woFC to take floor costs into account
+$if %cm_techcosts% == "GLO"   pm_data(regi,"learnMult_wFC",teLearn(te))    = pm_data(regi,"incolearn",te)/(sum(regi2,pm_data(regi2,"ccap0",te))**pm_data(regi,"learnExp_wFC",te));
+*NB* this is the correction of the original parameter calibration
+$if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC",teLearn(te))    = pm_data(regi,"incolearn",te)/(sum(regi2,p_capCum("2015",regi2,te))**pm_data(regi,"learnExp_wFC",te));
+*** initialize spv learning curve in 2020
+$if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC","spv")    = pm_data(regi,"incolearn","spv")/(sum(regi2,p_capCum("2020",regi2,"spv"))**pm_data(regi,"learnExp_wFC","spv"));
+*FS initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020) 
+* equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost) 
+pm_data(regi,"learnMult_wFC",te)$( pm_data(regi,"tech_stat",te) eq 4 )
+  = pm_data(regi,"incolearn",te)
+  / ( fm_dataglob("ccap0",te)
+   ** pm_data(regi,"learnExp_wFC",te)
+    );
+
+display p_capCum;
+display pm_data;
+
+*** end learning parameters
+
+*RP* 2012-03-07: Markup for advanced technologies
+table p_costMarkupAdvTech(s_statusTe,tall)              "Multiplicative investment cost markup for early time periods (until 2030) on advanced technologies (CCS, Hydrogen) that are not modeled through endogenous learning"
+$include "./core/input/p_costMarkupAdvTech.prn"
+;
+
+*** add mark-up cost for tech_stat 4 and 5 technologies as for tech_stat 3 technologies in first years
+p_costMarkupAdvTech("4",ttot)=p_costMarkupAdvTech("3",ttot);
+p_costMarkupAdvTech("5",ttot)=p_costMarkupAdvTech("3",ttot);
+
+loop (teNoLearn(te),
+  pm_inco0_t(ttot,regi,te) = pm_data(regi,"inco0",te);
+  loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2035 ),
+    pm_inco0_t(ttot,regi,te) 
+    = sum(s_statusTe$( s_statusTe.val eq pm_data(regi,"tech_stat",te) ),
+        p_costMarkupAdvTech(s_statusTe,ttot)
+      * pm_inco0_t(ttot,regi,te)
+      );
+  );
+);
+display pm_inco0_t;
+
+$ifthen.REG_techcosts "%cm_techcosts%" == "REG"   !! cm_techcosts
+*** for those technologies, for which differentiated costs are available for
+*** 2015-2040, use those
+loop(te$( teNoLearn(te) AND teRegTechCosts(te) ),
+  !! no value after 2020 is currently used (see convergence below)
+  pm_inco0_t(ttot,regi,te)$( ttot.val ge 2015 AND ttot.val lt 2040 )
+  = p_inco0(ttot,regi,te);
+
+*** linear convergence of investment costs from 2025 on for non-learning
+*** technologies with regionally differentiated costs so that in 2070 all
+*** regions again have the technology cost data that is given in generisdata.prn
+  loop(ttot$( ttot.val ge 2020 AND ttot.val le 2070 ),
+    pm_inco0_t(ttot,regi,te)
+    = (pm_ttot_val(ttot) - 2020) / 50 * fm_dataglob("inco0",te)
+    + (2070 - pm_ttot_val(ttot)) / 50 * pm_inco0_t("2020",regi,te);
+  );
+
+  pm_inco0_t(ttot,regi,te)$( ttot.val gt 2070 ) = fm_dataglob("inco0",te);
+);
+
+*** re-insert effect of costMarkupAdvTech for IGCC in the regionalized cost
+*** data, as the IEA numbers have unrealistically low IGCC costs in 2005-2020
+loop (teNoLearn(te)$( sameas(te,"igcc") ),
+  loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2035 ),
+    pm_inco0_t(ttot,regi,te)
+    = sum(s_statusTe$( s_statusTe.val eq pm_data(regi,"tech_stat",te) ),
+        p_costMarkupAdvTech(s_statusTe,ttot)
+      * pm_inco0_t(ttot,regi,te)
+      );
+  );
+);
+$endif.REG_techcosts
+
+
+*** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for dac)
+*** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for dac)
+*** note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
+fm_dataglob("inco0",te)              = sm_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
+fm_dataglob("incolearn",te)          = sm_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
+fm_dataglob("omv",te)                = s_DpKWa_2_TDpTWa      * fm_dataglob("omv",te);
+p_inco0(ttot,regi,te)               = sm_DpKW_2_TDpTW       * p_inco0(ttot,regi,te);
+
+
+****************************************************************************************************
+*************************END of Technology data input read-in and manipulation *********************
+****************************************************************************************************
+
 
 *JH* Determine CCS injection rates
 *LP* for c_ccsinjecratescen =0 the storing variable vm_co2CCS will be fixed to 0 in bounds.gms, the sm_ccsinjecrate=0 will cause a division by 0 error in the 21_tax module
@@ -223,20 +408,14 @@ fm_dataglob("flexibility","storwindoff")  = 1.93;
 fm_dataglob("flexibility","windoff")  = -1;
 $ENDIF.WindOff
 
-*** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for dac)
-*** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for dac)
-*** note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
-fm_dataglob("inco0",te)              = sm_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
-fm_dataglob("incolearn",te)          = sm_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
-fm_dataglob("omv",te)                = s_DpKWa_2_TDpTWa      * fm_dataglob("omv",te);
-p_inco0(ttot,regi,te)               = sm_DpKW_2_TDpTW       * p_inco0(ttot,regi,te);
+
 
 
 table fm_dataemiglob(all_enty,all_enty,all_te,all_enty)  "read-in of emissions factors co2,cco2"
 $include "./core/input/generisdata_emi.prn"
 ;
 
-pm_esCapCost(tall,all_regi,all_teEs) = 0;
+
 
 parameter pm_share_ind_fesos(tall,all_regi)					"Share of coal solids (coaltr) used in the industry (rest is residential)"
 /
@@ -1063,191 +1242,6 @@ p_emi_quan_conv_ar4("n2owaste")   = sm_tgn_2_pgc * (298/s_gwpN2O);
 *RP* Distribute ccap0 for all regions
 pm_data(regi,"ccap0",te) = 1/card(regi)*fm_dataglob("ccap0",te);
 
-
-*** --------------------------------------------------------------------------------
-*** Adjust investment cost data
-*** -------------------------------------------------------------------------------
-
-*RP* calculate turnkey costs (which are the sum of the overnight costs in generisdata_tech and the "interest during construction” (IDC) )
-
-*** in the version with regionalized technology costs, also use regionally differentiated financing costs
-*** First read in the regional market risks:
-parameter p_risk_premium_constr(all_regi)       "risk premium during construction time. Use same values as pm_risk_premium used in module 23_capital markets"
-*RP* 2 parameters needed because pm_risk_premium is set to 0 in module 23 realization perfect".
-/
-$ondelim
-$include "./core/input/pm_risk_premium.cs4r"
-$offdelim
-/
-;
-
-*** then calculate the financing costs during construction
-loop(te$(fm_dataglob("constrTme",te) > 0),
-  p_tkpremused(regi,te) = 1/fm_dataglob("constrTme",te)
-    * sum(integ$(integ.val <= fm_dataglob("constrTme",te)),
-$if %cm_techcosts% == "REG"  (1.03 + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
-$if %cm_techcosts% == "GLO"  (1.03 + pm_prtp(regi) )                                 ** (integ.val - 0.5) - 1
-      )
-);
-*** nuclear sees 3% higher interest rates during construction time due to higher construction time risk, see "The economic future of nuclear power - A study conducted at The University of Chicago" (2004)
-loop(te$sameas(te,"tnrs"),
-  p_tkpremused(regi,te) = 1/fm_dataglob("constrTme",te)
-    * sum(integ$(integ.val <= fm_dataglob("constrTme",te)),
-$if %cm_techcosts% == "REG"  (1.03 + 0.03 + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
-$if %cm_techcosts% == "GLO"  (1.03 + 0.03 + pm_prtp(regi) )                                 ** (integ.val - 0.5) - 1
-      )
-);
-
-display p_tkpremused;
-***for those technologies, for which differentiated costs are available for 2015-2040, use those
-***$if %cm_techcosts% == "REG"   loop(teRegTechCosts(te)$(not teLearn(te)),
-***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);
-***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2040) = p_inco0("2040",regi,te);
-***$if %cm_techcosts% == "REG"   );
-
-***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);
-
-pm_data(regi,"inco0",te)       = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"inco0",te);
-pm_data(regi,"incolearn",te)   = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"incolearn",te);
-p_inco0(ttot,regi,teRegTechCosts)  = (1 + p_tkpremused(regi,teRegTechCosts) ) * p_inco0(ttot,regi,teRegTechCosts);
-*** take region average p_tkpremused for global convergence price
-fm_dataglob("inco0",te)       = (1 + sum(regi, p_tkpremused(regi,te))/sum(regi, 1)) * fm_dataglob("inco0",te);
-
-if( cm_solwindenergyscen = 2,
-    loop(te$( sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind") ),
-        pm_data(regi,"learn",te)     = 0.8 * pm_data(regi,"learn",te);
-    );
-    pm_data(regi,"incolearn","csp")  = 0.7 * pm_data(regi,"incolearn","csp") ;
-    pm_data(regi,"incolearn","spv")  = 0.6 * pm_data(regi,"incolearn","spv") ;
-    pm_data(regi,"incolearn","wind") = 0.3 * pm_data(regi,"incolearn","wind");
-);
-
-if( cm_solwindenergyscen = 3,
-    loop(te$( sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind") ),
-        pm_data(regi,"learn",te)     = 0;
-    );
-);
-
-***calculate default floor costs for learning technologies
-pm_data(regi,"floorcost",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
-
-
-*** In case regionally differentiated investment costs should be used the corresponding entries are revised:
-$if %cm_techcosts% == "REG"   pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2015",regi,teRegTechCosts);
-loop(teRegTechCosts$(sameas(teRegTechCosts,"spv") ),
-$if %cm_techcosts% == "REG"   pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2020",regi,teRegTechCosts);
-);
-
-$if %cm_techcosts% == "REG"   pm_data(regi,"incolearn",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"floorcost",te) ;
-
-
-*** Calculate learning parameters:
-
-*** global exponent
-*** parameter calculation for global level, that regional values can gradually converge to
-fm_dataglob("learnExp_wFC",teLearn(te)) = fm_dataglob("inco0",te)/fm_dataglob("incolearn",te) * log(1-fm_dataglob("learn", te))/log(2);
-
-*** regional exponent
-pm_data(regi,"learnExp_woFC",teLearn(te))    = log(1-pm_data(regi,"learn", te))/log(2);
-*RP* adjust exponent parameter learnExp_woFC to take floor costs into account
-pm_data(regi,"learnExp_wFC",teLearn(te))     = pm_data(regi,"inco0",te) / pm_data(regi,"incolearn",te) * log(1-pm_data(regi,"learn", te))/log(2);
-
-*** global factor
-*** parameter calculation for global level, that regional values can gradually converge to
-fm_dataglob("learnMult_wFC",teLearn(te)) = fm_dataglob("incolearn",te)/(fm_dataglob("ccap0",te)**fm_dataglob("learnExp_wFC", te));
-
-*** regional factor
-*NB* read in vm_capCum(t0,regi,teLearn) from input.gdx to have info available for the recalibration of 2005 investment costs
-Execute_Loadpoint 'input' p_capCum = vm_capCum.l;
-*** FS: in case technologies did not exist in gdx, set intial capacities to global initial value
-p_capCum(tall,regi,te)$( NOT p_capCum(tall,regi,te)) = fm_dataglob("ccap0",te)/card(regi);
-*RP overwrite p_capCum by exogenous values for 2020
-p_capCum("2020",regi,"spv")  = 0.6 / card(regi2);  !! roughly 600GW in 2020
-
-pm_data(regi,"learnMult_woFC",teLearn(te))   = pm_data(regi,"incolearn",te)/sum(regi2,(pm_data(regi2,"ccap0",te))**(pm_data(regi,"learnExp_woFC",te)));
-*RP* adjust parameter learnMult_woFC to take floor costs into account
-$if %cm_techcosts% == "GLO"   pm_data(regi,"learnMult_wFC",teLearn(te))    = pm_data(regi,"incolearn",te)/(sum(regi2,pm_data(regi2,"ccap0",te))**pm_data(regi,"learnExp_wFC",te));
-*NB* this is the correction of the original parameter calibration
-$if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC",teLearn(te))    = pm_data(regi,"incolearn",te)/(sum(regi2,p_capCum("2015",regi2,te))**pm_data(regi,"learnExp_wFC",te));
-*** initialize spv learning curve in 2020
-$if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC","spv")    = pm_data(regi,"incolearn","spv")/(sum(regi2,p_capCum("2020",regi2,"spv"))**pm_data(regi,"learnExp_wFC","spv"));
-*FS initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020) 
-* equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost) 
-pm_data(regi,"learnMult_wFC",te)$( pm_data(regi,"tech_stat",te) eq 4 )
-  = pm_data(regi,"incolearn",te)
-  / ( fm_dataglob("ccap0",te)
-   ** pm_data(regi,"learnExp_wFC",te)
-    );
-
-
-
-display p_capCum;
-display pm_data;
-
-*** end learning parameters
-
-*RP* 2012-03-07: Markup for advanced technologies
-table p_costMarkupAdvTech(s_statusTe,tall)              "Multiplicative investment cost markup for early time periods (until 2030) on advanced technologies (CCS, Hydrogen) that are not modeled through endogenous learning"
-$include "./core/input/p_costMarkupAdvTech.prn"
-;
-
-*** add mark-up cost for tech_stat 4 and 5 technologies as for tech_stat 3 technologies in first years
-p_costMarkupAdvTech("4",ttot)=p_costMarkupAdvTech("3",ttot);
-p_costMarkupAdvTech("5",ttot)=p_costMarkupAdvTech("3",ttot);
-
-loop (teNoLearn(te),
-  pm_inco0_t(ttot,regi,te) = pm_data(regi,"inco0",te);
-  loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2035 ),
-    pm_inco0_t(ttot,regi,te) 
-    = sum(s_statusTe$( s_statusTe.val eq pm_data(regi,"tech_stat",te) ),
-        p_costMarkupAdvTech(s_statusTe,ttot)
-      * pm_inco0_t(ttot,regi,te)
-      );
-  );
-);
-display pm_inco0_t;
-
-$ifthen.REG_techcosts "%cm_techcosts%" == "REG"   !! cm_techcosts
-*** for those technologies, for which differentiated costs are available for
-*** 2015-2040, use those
-loop(te$( teNoLearn(te) AND teRegTechCosts(te) ),
-  !! no value after 2020 is currently used (see convergence below)
-  pm_inco0_t(ttot,regi,te)$( ttot.val ge 2015 AND ttot.val lt 2040 )
-  = p_inco0(ttot,regi,te);
-
-*** linear convergence of investment costs from 2025 on for non-learning
-*** technologies with regionally differentiated costs so that in 2070 all
-*** regions again have the technology cost data that is given in generisdata.prn
-  loop(ttot$( ttot.val ge 2020 AND ttot.val le 2070 ),
-    pm_inco0_t(ttot,regi,te)
-    = (pm_ttot_val(ttot) - 2020) / 50 * fm_dataglob("inco0",te)
-    + (2070 - pm_ttot_val(ttot)) / 50 * pm_inco0_t("2020",regi,te);
-  );
-
-  pm_inco0_t(ttot,regi,te)$( ttot.val gt 2070 ) = fm_dataglob("inco0",te);
-);
-
-*** re-insert effect of costMarkupAdvTech for IGCC in the regionalized cost
-*** data, as the IEA numbers have unrealistically low IGCC costs in 2005-2020
-loop (teNoLearn(te)$( sameas(te,"igcc") ),
-  loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2035 ),
-    pm_inco0_t(ttot,regi,te)
-    = sum(s_statusTe$( s_statusTe.val eq pm_data(regi,"tech_stat",te) ),
-        p_costMarkupAdvTech(s_statusTe,ttot)
-      * pm_inco0_t(ttot,regi,te)
-      );
-  );
-);
-$endif.REG_techcosts
-
-*** rename f_datafecostsglob
-* p_esCapCost(regi,in)$f_datafecostsglob("lifetime",in)
-*                        = (f_datafecostsglob("inco0",in)
-*                          + f_datafecostsglob("omf",in) * f_datafecostsglob("lifetime",in)
-*                          ) * f_datafecostsglob("eta",in) !! from cost per UE power to cost per FE power
-*                        / (f_datafecostsglob("lifetime",in) * f_datafecostsglob("usehr",in)) !! capital costs are levelled over the yearly use
-*                        * sm_day_2_hour * sm_year_2_day    !! from $/TWh to $/TWa.
-*                        ;
 
 *** -----------------------------------------------------------------------------
 *** ------------ emission budgets and their time periods ------------------------
