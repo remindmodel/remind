@@ -143,7 +143,6 @@ cm_optimisticMAC     "assume optimistic Industry MAC from AR5 Ch. 10?"
 cm_CCS_cement        "CCS for cement sub-sector"
 cm_CCS_chemicals     "CCS for chemicals sub-sector"
 cm_CCS_steel         "CCS for steel sub-sector"
-c_solscen             "solar option choice"
 cm_bioenergy_SustTax    "level of the bioenergy sustainability tax in fraction of bioenergy price"
 cm_bioenergy_EF_for_tax "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2 per GJ]"
 cm_maxProdBiolc         "bound on global pebiolc production including residues but excluding traditionally used biomass [EJ per yr]"
@@ -189,8 +188,8 @@ cm_damages_BurkeLike_specification      "empirical specification for Burke-like 
 cm_damages_BurkeLike_persistenceTime    " persistence time in years for Burke-like damage functions"
 cm_damages_SccHorizon               "Horizon for SCC calculation. Damages cm_damagesSccHorizon years into the future are internalized."
 cm_carbonprice_temperatureLimit "not-to-exceed temperature target in degree above pre-industrial"
-cm_frac_CCS          "tax on CCS to reflect risk of leakage, formulated as fraction of ccs O&M costs"
-cm_frac_NetNegEmi    "tax on CDR to reflect risk of overshooting, formulated as fraction of carbon price"
+cm_frac_CCS          "tax on carbon transport & storage (ccsinje) to reflect risk of leakage, formulated as fraction of ccsinje O&M costs"
+cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshooting, formulated as fraction of carbon price"
 
 cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
 cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
@@ -264,7 +263,6 @@ c_shGreenH2      = 0;        !! def = 0
 c_shBioTrans     = 1;        !! def = 1
 cm_shSynTrans    = 0;        !! def = 0
 cm_shSynGas      = 0;        !! def = 0
-c_solscen        = 1;        !! def = 1
 
 cm_IndCCSscen          = 1;        !! def = 1
 cm_optimisticMAC       = 0;        !! def = 0
@@ -470,7 +468,6 @@ $setglobal cm_calibration_string  off      !! def = off
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
 $setglobal cm_techcosts  REG       !! def = REG
-$setglobal cm_regNetNegCO2  on       !! def = on
 
 $setglobal cm_eni  off!! def = off
 $setglobal cm_enb  off!! def = off

@@ -29,6 +29,7 @@ $offdelim
 ;
 pm_costsTradePeFinancial(regi,"XportElasticity", tradePe(enty)) = 100;
 pm_costsTradePeFinancial(regi, "tradeFloor", tradePe(enty))     = 0.0125;
+pm_costsTradePeFinancial(regi,"Mport","peur")                   = 1e-06;
 
 *** Adjust tradecosts based on switch
 pm_costsTradePeFinancial(regi,"Xport", "pebiolc") = pm_costsTradePeFinancial(regi,"Xport", "pebiolc") * cm_tradecostBio;

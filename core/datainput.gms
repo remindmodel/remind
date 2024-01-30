@@ -413,9 +413,6 @@ fm_dataglob("flexibility","storwindoff")  = 1.93;
 fm_dataglob("flexibility","windoff")  = -1;
 $ENDIF.WindOff
 
-
-
-
 table fm_dataemiglob(all_enty,all_enty,all_te,all_enty)  "read-in of emissions factors co2,cco2"
 $include "./core/input/generisdata_emi.prn"
 ;
@@ -475,8 +472,6 @@ if (c_ccscapratescen eq 2,
   fm_dataemiglob("pecoal","seel","coalh2c","cco2") = 25.9;
 $ifthen "%c_SSP_forcing_adjust%" == "forcing_SSP5"
    fm_dataemiglob("pegas","seel","ngccc","co2")  = 0.1;
-   fm_dataemiglob("pegas","seel","ngccc","co2")  = 0.1;
-   fm_dataemiglob("pegas","seel","ngccc","co2")  = 0.1;
    fm_dataemiglob("pegas","seel","ngccc","cco2") = 15.2;
    fm_dataemiglob("pegas","seh2","gash2c","co2")  = 0.1;
    fm_dataemiglob("pegas","seh2","gash2c","cco2") = 15.2;
@@ -523,7 +518,7 @@ loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
 );
 
 *** Allocate emission factors to pm_emifac
-option pm_emifac:3:3:1; 
+option pm_emifac:3:3:1;
 pm_emifac(ttot,regi,enty,enty2,te,"co2")$emi2te(enty,enty2,te,"co2")   = fm_dataemiglob(enty,enty2,te,"co2");
 pm_emifac(ttot,regi,enty,enty2,te,"cco2")$emi2te(enty,enty2,te,"cco2") = fm_dataemiglob(enty,enty2,te,"cco2");
 *JeS scale N2O energy emissions to EDGAR
@@ -648,7 +643,13 @@ pm_cf(ttot,regi,"tdsyngas") = 0.65;
 pm_cf(ttot,regi,"tdsynhos") = 0.6;
 pm_cf(ttot,regi,"tdsynpet") = 0.7;
 pm_cf(ttot,regi,"tdsyndie") = 0.7;
-
+*JD eternal short-term fix for process-based industry
+pm_cf(ttot,regi,"bf") = 0.8;
+pm_cf(ttot,regi,"bfcc") = 0.8;
+pm_cf(ttot,regi,"bof") = 0.8;
+pm_cf(ttot,regi,"idr") = 0.8;
+pm_cf(ttot,regi,"idrcc") = 0.8;
+pm_cf(ttot,regi,"eaf") = 0.8;
 
 *RP* phasing down the ngt cf to "peak load" cf of 5%
 pm_cf(ttot,regi,"ngt")$(ttot.val eq 2025) = 0.9 * pm_cf(ttot,regi,"ngt");
@@ -667,7 +668,7 @@ pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
 *SB* Region- and tech-specific early retirement rates
 *Regional*
-loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi), 
+loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi),
   pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi)) = pm_extRegiEarlyRetiRate(ext_regi);
 );
 *Tech-specific*
@@ -682,7 +683,7 @@ pm_regiEarlyRetiRate(t,regi,"biohp")   = 0.5 * pm_regiEarlyRetiRate(t,regi,"bioh
 
 
 $IFTHEN.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
-loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te), 
+loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
   pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi) and (t.val lt 2035 or sameas(ext_regi,"GLO"))) = p_techEarlyRetiRate(ext_regi,te);
 );
 $ENDIF.tech_earlyreti
@@ -923,7 +924,7 @@ $include "./core/input/f_maxProdGradeRegiWindOff.cs3r"
 $offdelim
 ;
 pm_dataren(all_regi,"maxprod",rlf,"windoff") = sm_EJ_2_TWa * f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf);
-pm_dataren(all_regi,"nur",rlf,"windoff")     = 1.25 * f_maxProdGradeRegiWindOff(all_regi,"nur",rlf);  !! increase wind offshore capacity factors by 25% as the NREL values seem to underestimate offshore capacity factors compared to historic values 
+pm_dataren(all_regi,"nur",rlf,"windoff")     = 1.25 * f_maxProdGradeRegiWindOff(all_regi,"nur",rlf);  !! increase wind offshore capacity factors by 25% as the NREL values seem to underestimate offshore capacity factors compared to historic values
 
 pm_shareWindPotentialOff2On(all_regi) = sum(rlf,f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf)$(rlf.val le 8)) /
                       sum(rlf,f_maxProdGradeRegiWindOn(all_regi,"maxprod",rlf)$(rlf.val le 8));
@@ -1045,7 +1046,7 @@ pm_cf(t,regi,te) =
 (pm_ttot_val(t) - 2015) / 20 * pm_cf(t,regi,te)
 );
 );
-$ENDIF.WindOff 
+$ENDIF.WindOff
 
 
 *CG* set storage and grid of windoff to be the same as windon
@@ -1146,10 +1147,14 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,'apCarDiEffH2T')   = 0.50;
   p_adj_seed_te(ttot,regi,'dac')             = 0.25;
   p_adj_seed_te(ttot,regi,'geohe')           = 0.33;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+  p_adj_seed_te(ttot,regi,"bfcc")            = 0.05;
+  p_adj_seed_te(ttot,regi,"idrcc")           = 0.05;
+$endif.cm_subsec_model_steel
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-  p_adj_seed_te(ttot,regi,"windoff") = 0.5; 
-$ENDIF.WindOff 
+  p_adj_seed_te(ttot,regi,"windoff") = 0.5;
+$ENDIF.WindOff
 
 *RP: for comparison of different technologies:
 *** pm_conv_cap_2_MioLDV <- 650  # The world has slightly below 800million cars in 2005 (IEA TECO2), so with a global vm_cap of 1.2, this gives ~650
@@ -1177,6 +1182,10 @@ $ENDIF.WindOff
   p_adj_coeff(ttot,regi,"spv")             = 0.15;
   p_adj_coeff(ttot,regi,"wind")            = 0.25;
   p_adj_coeff(ttot,regi,"geohe")           = 0.6;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+  p_adj_coeff(ttot,regi,"bfcc")            = 1.0;
+  p_adj_coeff(ttot,regi,"idrcc")           = 1.0;
+$endif.cm_subsec_model_steel
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 
@@ -1198,7 +1207,7 @@ $ifthen not "%cm_adj_seed_multiplier%" == "off"
    p_adj_seed_te(ttot,regi,te)$(p_adj_seed_multiplier(te)) = p_adj_seed_multiplier(te) * p_adj_seed_te(ttot,regi,te);
 $endif
 
-$ifthen not "%cm_adj_coeff_multiplier%" == "off"  
+$ifthen not "%cm_adj_coeff_multiplier%" == "off"
   p_adj_coeff(ttot,regi,te)$(p_adj_coeff_multiplier(te)) = p_adj_coeff_multiplier(te) * p_adj_coeff(ttot,regi,te);
 $endif
 
@@ -1416,6 +1425,39 @@ pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem(regi,"fepet"
 pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem(regi,"fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 pm_emifac(ttot,regi,"segafos","fegat","tdfosgat","co2") = p_ef_dem(regi,"fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 
+***------ Read in emission factors for process emissions in chemicals sector---
+*** calculated using IEA data on feedstocks flows and UNFCCC data on chem sector process emissions
+*** these emission factors are for the chemical industry only
+parameter f_nechem_emissionFactors(ttot,all_regi,*)  "non-energy emission factors [GtC per ZJ]"
+/
+$ondelim
+$include "./core/input/f_nechem_emissionFactors.cs4r"
+$offdelim
+/
+;
+
+pm_emifacNonEnergy(ttot,regi,"segafos","fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,"seliqfos","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,"sesofos","fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids") / s_zj_2_twa;
+
+pm_emifacNonEnergy(ttot,regi,"segabio","fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,"seliqbio","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,"sesobio","fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids") / s_zj_2_twa;
+
+pm_emifacNonEnergy(ttot,regi,"segasyn","fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,"seliqsyn","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
+
+***------ Read in projections for incineration rates of plastic waste---
+*** "incineration rates [fraction]"
+parameter f_incinerationShares(ttot,all_regi)         "incineration rate of plastic waste"
+/
+$ondelim
+$include "./core/input/f_incinerationShares.cs4r"
+$offdelim
+/
+;
+pm_incinerationRate(ttot,all_regi)=f_incinerationShares(ttot,all_regi);
+
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!
 pm_cesdata(ttot,regi,in,"offset_quantity")$(ttot.val ge 2005)       = 0;
@@ -1484,9 +1526,11 @@ $offdelim
 /
 ;
 
-*** use cm_demScen for Industry and Buildings 
+*** use cm_demScen for Industry and Buildings
 *** cm_GDPscen will be used for Transport (EDGE-T) (see p29_trpdemand)
 pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
+*** data input for industry FE that is no part of the CES tree
+pm_fedemand(tall,all_regi,ppfen_no_ces_use) = f_fedemand(tall,all_regi,"%cm_demScen%",ppfen_no_ces_use);
 
 *** RCP-dependent demands in buildings (climate impact)
 $ifthen.cm_rcp_scen_build NOT "%cm_rcp_scen_build%" == "none"

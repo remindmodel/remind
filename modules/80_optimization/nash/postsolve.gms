@@ -304,16 +304,17 @@ loop(regi,
      );
 ); !!regi
 
-***additional criterion: are the anticipation terms sufficienctly small?
+*** criterion only for checking, not applied anymore: are the anticipation terms sufficienctly small?
 p80_fadeoutPriceAnticip_iter(iteration) = sm_fadeoutPriceAnticip;
 if(sm_fadeoutPriceAnticip gt cm_maxFadeOutPriceAnticip, 
-  s80_bool = 0;
+***  s80_bool = 0; !! not an active convergence criterion anymore 
   p80_messageShow("anticip") = YES;
 );
+
 *' criterion "Deviation due to price anticipation": are the resulting deviations sufficiently small?
 *' compare to 1/10th of the cutoff for goods imbalance 
-if(p80_DevPriceAnticipGlobAllMax("2100") gt 0.1 * p80_surplusMaxTolerance("good"),
-***    s80_bool=0; !! not yet active as convergence criterion                
+if(p80_DevPriceAnticipGlobAllMax2100Iter(iteration) gt 0.1 * p80_surplusMaxTolerance("good"),
+  s80_bool=0;                
   p80_messageShow("DevPriceAnticip") = YES;
 );
 
@@ -433,14 +434,14 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
 	      if(sameas(convMessage80, "taxconv"),
 		      display "#### 4.) Taxes did not converge in all regions and time steps. Absolute level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_convNashTaxrev_iter below.";
 	      );
+        if(sameas(convMessage80, "DevPriceAnticip"),
+		      display "#### 5.) The total monetary value of the price anticipation term times the traded amount are larger than the goods imbalance threshold * 0.1";
+          display "#### Check out p80_DevPriceAnticipGlobAllMax2100Iter, which needs to be below 0.1 * the threshold for goods imbalance, p80_surplusMaxTolerance";
+	      );
         if(sameas(convMessage80, "anticip"),
-		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";
+		      display "#### 5b.) only for checking, not anymore a criterion that stops convergence: The fadeout price anticipation terms are not sufficiently small.";
           display "#### Check out sm_fadeoutPriceAnticip which needs to be below cm_maxFadeOutPriceAnticip.";
           display sm_fadeoutPriceAnticip, cm_maxFadeOutPriceAnticip;
-	      );
-        if(sameas(convMessage80, "DevPriceAnticip"),
-		      display "#### 5b.) The total monetary value of the price anticipation term times the traded amount are larger than the goods imbalance threshold * 0.1";
-          display "#### Check out p80_DevPriceAnticipGlobAllMax2100Iter, which needs to be below 0.1 * the threshold for goods imbalance, p80_surplusMaxTolerance";
 	      );
         if(sameas(convMessage80, "target"),
 		      display "#### 6.) A global climate target has not been reached yet.";
@@ -463,15 +464,15 @@ $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"
 $endif.emiMkt  
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"    
         if(sameas(convMessage80, "implicitEnergyTarget"),
-		      display "#### 10) A primary, secondary and/or final energy target has not been reached yet.";
+		      display "#### 10) A quantity target has not been reached yet.";
           display "#### Check out the pm_implicitQttyTarget_dev parameter of 47_regipol module.";
-          display "#### The deviation must to be less than cm_implicitQttyTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of 2005 emissions to reach convergence.";
+          display "#### The deviation must to be less than cm_implicitQttyTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of the defined target.";
           display cm_implicitQttyTarget_tolerance, pm_implicitQttyTarget_dev;
 	      );
 $endif.cm_implicitQttyTarget
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
         if(sameas(convMessage80, "cm_implicitPriceTarget"),
-		      display "#### 11) A final energy price target has not been reached yet.";
+		      display "#### 11) A price target has not been reached yet.";
           display "#### Check out below the pm_implicitPrice_NotConv parameter values for non convergence cases.";
           display "####     Deviations must be lower than 5%.";
           display "#### The pm_implicitPrice_ignConv stores the cases disconsidered in the convergence check.";
@@ -575,9 +576,9 @@ $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"
 $endif.emiMkt
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"    
         if(sameas(convMessage80, "implicitEnergyTarget"),
-		      display "#### 10) A primary, secondary and/or final energy target has not been reached yet.";
+		      display "#### 10) A quantity target has not been reached yet.";
           display "#### Check out the pm_implicitQttyTarget_dev parameter of 47_regipol module.";
-          display "#### The deviation must to be less than cm_implicitQttyTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of 2005 emissions to reach convergence.";
+          display "#### The deviation must to be less than cm_implicitQttyTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of the defined target.";
           display cm_implicitQttyTarget_tolerance, pm_implicitQttyTarget_dev;
 	      );
 $endif.cm_implicitQttyTarget

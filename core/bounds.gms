@@ -22,6 +22,8 @@ vm_costTeCapital.fx(t,regi,teNoLearn)     = pm_inco0_t(t,regi,teNoLearn);
 *' @code{extrapage: "00_model_assumptions"}
 
 *' ### Model Bounds and Assumptions: 
+
+*' #### Model Bounds in Core
 *' Lower limit on all P2SE technologies capacities to 100 kW of all technologies and all time steps
 loop(pe2se(enty,enty2,te)$((not sameas(te,"biotr"))  AND (not sameas(te,"biodiesel")) AND (not sameas(te,"bioeths")) AND (not sameas(te,"gasftcrec")) AND (not sameas(te,"gasftrec"))
 AND (not sameas(te,"tnrs"))),
@@ -80,28 +82,28 @@ vm_deltaCap.fx(t,regi,"biotr",rlf)$(t.val gt 2005) = 0;
 *BS/DK* Developing regions (defined by GDP PPP threshold) phase out more slowly ( + varied by SSP)
 loop(regi,
   if ( (pm_gdp("2005",regi)/pm_pop("2005",regi) / pm_shPPPMER(regi)) lt 4,
-    vm_deltaCap.fx("2010",regi,"biotr","1") = 1.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
-    vm_deltaCap.fx("2015",regi,"biotr","1") = 0.9  * vm_deltaCap.lo("2005",regi,"biotr","1");
-    vm_deltaCap.fx("2020",regi,"biotr","1") = 0.7  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.up("2010",regi,"biotr","1") = 1.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.up("2015",regi,"biotr","1") = 0.9  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.up("2020",regi,"biotr","1") = 0.7  * vm_deltaCap.lo("2005",regi,"biotr","1");
 $ifthen NOT %cm_tradbio_phaseout% == "fast"   !! cm_tradbio_phaseout
-    vm_deltaCap.fx("2025",regi,"biotr","1") = 0.5  * vm_deltaCap.lo("2005",regi,"biotr","1");
-    vm_deltaCap.fx("2030",regi,"biotr","1") = 0.4  * vm_deltaCap.lo("2005",regi,"biotr","1");
-    vm_deltaCap.fx("2035",regi,"biotr","1") = 0.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
-    vm_deltaCap.fx("2040",regi,"biotr","1") = 0.2  * vm_deltaCap.lo("2005",regi,"biotr","1");
-    vm_deltaCap.fx("2045",regi,"biotr","1") = 0.15 * vm_deltaCap.lo("2005",regi,"biotr","1");
-    vm_deltaCap.fx("2050",regi,"biotr","1") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
-    vm_deltaCap.fx("2055",regi,"biotr","1") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.up("2025",regi,"biotr","1") = 0.5  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.up("2030",regi,"biotr","1") = 0.4  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.up("2035",regi,"biotr","1") = 0.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.up("2040",regi,"biotr","1") = 0.2  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.up("2045",regi,"biotr","1") = 0.15 * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.up("2050",regi,"biotr","1") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.up("2055",regi,"biotr","1") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
 $endif
   );
 );
 
 * quickest phaseout in SDP scenarios (no new capacities allowed), quick phaseout in SSP1 und SSP5
-$if %cm_GDPscen% == "gdp_SDP" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SDP_EI" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SDP_MC" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SDP_RC" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SSP1" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
-$if %cm_GDPscen% == "gdp_SSP5" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SDP" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0;
+$if %cm_GDPscen% == "gdp_SDP_EI" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0;
+$if %cm_GDPscen% == "gdp_SDP_MC" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0;
+$if %cm_GDPscen% == "gdp_SDP_RC" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0;
+$if %cm_GDPscen% == "gdp_SSP1" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SSP5" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
 
 
 *** ------------------------------------------------------------------------------------------
@@ -216,22 +218,14 @@ if (cm_nucscen eq 5,
   vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2015)  = 0;
 );
 
-*** -------------------------------------------------------------
-*** *DK* Phaseout of 1st generation biofuel technologies
-*** -------------------------------------------------------------
+*'  -------------------------------------------------------------
+*'  Force no new capacities of 1st generation biofuel technologies to be
+*'  installed after 2030, allowing more cost-efficient and more sustainable new
+*'  generation of biofuel technologies free entrance to the market
+*'  -------------------------------------------------------------
 if(cm_1stgen_phaseout=1,
    vm_deltaCap.up(t,regi,"bioeths",rlf)$(t.val gt 2030)   = 0;
    vm_deltaCap.up(t,regi,"biodiesel",rlf)$(t.val gt 2030) = 0;
-);
-
-*** -----------------------------------------------------------
-*mh Implementation of scenarios where capacities are fixed at BAU level:
-*** -----------------------------------------------------------
-
-if (cm_startyear gt 2005,
-  if (c_solscen eq 3,
-    vm_cap.up(t,regi,"spv",rlf)$(t.val ge 2010)  = p_boundtmp(t,regi,"spv",rlf);
-  );
 );
 
 *** -----------------------------------------------------------
@@ -364,13 +358,13 @@ vm_capEarlyReti.fx(ttot,regi,"dot")=0;
 vm_deltaCap.up(t,regi,"dot","1")$( (t.val gt 2005) AND regi_group("EUR_regi",regi) )  = 1e-6;
 
 
-
+*' @code{extrapage: "00_model_assumptions"}
 *** -----------------------------------------------------------------------------
-*DK 20100929 Bound on CCS injection rate
+*' #### Bound on maximum annual carbon storage by region
 *** -----------------------------------------------------------------------------
-*** default value (0.5%) is consistent with Interview Gerling (BGR)
-*** http://www.iz-klima.de/aktuelles/archiv/news-2010/mai/news-05052010-2/
-*** 12 Gt storage potential in Germany, 50-75 Mt/a injection => 60 Mt/a => 60/12000=0.005
+*' DK 20100929: default value (pm_ccsinjecrate= 0.5%) is consistent with Interview Gerling (BGR)
+*' (http://www.iz-klima.de/aktuelles/archiv/news-2010/mai/news-05052010-2/): 
+*' 12 Gt storage potential in Germany, 50-75 Mt/a injection => 60 Mt/a => 60/12000=0.005
 *LP* if c_ccsinjecratescen=0 --> no CCS at all and vm_co2CCS is fixed to 0 before, therefore the upper bound is only set if there should be CCS!
 *** -----------------------------------------------------------------------------
 
@@ -382,7 +376,7 @@ if ( c_ccsinjecratescen gt 0,
 	);
 
 );
-
+*' @stop
 
 *** strong reliance on coal-to-liquids is not consistent with SSP1 storyline, therefore limit their use in the SSP 1 and SSP2 policy scenarios
 $ifthen %c_SSP_forcing_adjust% == "forcing_SSP1"

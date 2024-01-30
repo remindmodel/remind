@@ -1,12 +1,12 @@
 *** SOF ./core/input/generisdata_vintages.prn
 
-*RP* 
+*RP*
 $ontext
-Newly developped vintage structures to fix the age structure of capacities standing in 2005. 
-The first column on the left counts years back from 2005, so 1= 2005, 6=2000, 11=1995, .... 
-The numbers below a technology represent the capacity that was newly installed in a time period in the past. 
-Values given in arbitrary units - thus only the relative size of different time steps for one technology matter, not the total size. 
-This works as all values are rescaled inside Remind, so that the actual deltacaps add up (after depreciation) to the capacity in 2005 that comes out of initialcap2.  
+Newly developped vintage structures to fix the age structure of capacities standing in 2005.
+The first column on the left counts years back from 2005, so 1= 2005, 6=2000, 11=1995, ....
+The numbers below a technology represent the capacity that was newly installed in a time period in the past.
+Values given in arbitrary units - thus only the relative size of different time steps for one technology matter, not the total size.
+This works as all values are rescaled inside Remind, so that the actual deltacaps add up (after depreciation) to the capacity in 2005 that comes out of initialcap2.
 
 ---Warning----: As the historic energy system development was very different in different countries, it is impossible to have a generic  vintage structure that works for all regions. Thus, the originally strong gradient was reduced to allow matching regions with slow growth of their energy system (Japan, EU, US).
 For regions with faster growth, the numbers are later adjusted in REMIND by CB's adjustment of vintages according to the real-world regional FE demand growth in 2000/2005 in generisdata_histfegrowth_FEELT.inc.
@@ -34,20 +34,20 @@ $offtext
 46      5.0                                    5.0           5.0            5.0                                      6.0          6.0
 51      5.0                                    5.0           5.0            5.0                                      6.0          6.0
 
-+    refliq      
-1        6.0     
-6        6.0     
-11       6.0     
-16       6.0     
-21       6.0     
-26       6.0     
-31       5.0     
-36       5.0     
-41       5.0     
-46       5.0     
-51       5.0     
-56       5.0     
- 
++    refliq
+1        6.0
+6        6.0
+11       6.0
+16       6.0
+21       6.0
+26       6.0
+31       5.0
+36       5.0
+41       5.0
+46       5.0
+51       5.0
+56       5.0
+
 
 +        pc           igcc         igccc       coalchp        coalhp       coalgas        coalh2       coalh2c        coaltr    coalftrec     coalftcrec
 1        5.0           1.0           1.0           6.0           6.0           5.0           5.0           1.0           5.0           1.0           1.0
@@ -67,88 +67,88 @@ $offtext
 1        1.0         1.0       3.0      3.0       1.0        1.0       3.0           1.0          3.0           3.0       3.0      3.0       3.0       0.1           1.0
 6        1.0         1.0       2.0      2.0       1.0                  2.0                        2.0           2.0       2.0      2.0       2.0       0.01          1.0
 11       1.0         2.0       1.0      1.0       1.0                  1.0                        1.0           1.0       1.0      1.0       1.0       1.0           1.0
-16       1.0         2.0                                             
-21       1.0         2.0                                             
-26       1.0                                                      
-31       1.0                                                      
-36       1.0                                                      
-41       1.0                                                      
+16       1.0         2.0
+21       1.0         2.0
+26       1.0
+31       1.0
+36       1.0
+41       1.0
 
 +       hydro          wind           spv         solhe           csp          elh2        geohdr         geohe     h2turb   h22ch4   MeOH
 1        5.0          10.0          10.0           4.5           1.0           1.0          10.0          10.0         1       1.0     1.0
 6        5.0           5.0           5.0           2.8           0.0                         5.0           5.0
 11       5.0           1.0           1.0           1.8           0.0                         1.0           1.0
-16       5.0                                       1.1           1.0                   
-21       5.0                                                     0.0                   
-26       5.0                                                     0.0                   
-31       5.0                                                     0.0                   
-36       5.0                                                                           
-41       5.0                                                                           
-46       5.0                                                                           
-51       5.0                                                                           
-56       5.0                                                                           
-61       5.0                                                                           
-66       5.0                                                                           
-71       5.0                                                                           
-76       5.0                                                                           
-81       5.0                                                                           
-86       5.0                                                                           
-91       5.0                                                                           
-96       5.0                                                                           
+16       5.0                                       1.1           1.0
+21       5.0                                                     0.0
+26       5.0                                                     0.0
+31       5.0                                                     0.0
+36       5.0
+41       5.0
+46       5.0
+51       5.0
+56       5.0
+61       5.0
+66       5.0
+71       5.0
+76       5.0
+81       5.0
+86       5.0
+91       5.0
+96       5.0
 
-+     tdels       tdbiogas      tdfosgas    tdbiohos      tdfoshos         tdh2s         tdh2t   
-1       6.0          6.0           6.0          5.0           5.0           1.0           1.0 
-6       6.0          6.0           6.0          5.0           5.0           1.0                        
-11      6.0          6.0           6.0          6.0           6.0           1.0                
-16      6.0          6.0           6.0          6.0           6.0           1.0               
-21      6.0          6.0           6.0          7.0           7.0                                 
-26      6.0          6.0           6.0          7.0           7.0                                 
-31      5.0          5.0           5.0          8.0           8.0                                    
-36      5.0          5.0           5.0          8.0           8.0                                     
-41      5.0          5.0           5.0          7.0           7.0                                   
-46      5.0          5.0           5.0          7.0           7.0                                  
-51      5.0          5.0           5.0          6.0           6.0                                   
-56      5.0          5.0           5.0          6.0           6.0                                   
++     tdels       tdbiogas      tdfosgas    tdbiohos      tdfoshos         tdh2s         tdh2t
+1       6.0          6.0           6.0          5.0           5.0           1.0           1.0
+6       6.0          6.0           6.0          5.0           5.0           1.0
+11      6.0          6.0           6.0          6.0           6.0           1.0
+16      6.0          6.0           6.0          6.0           6.0           1.0
+21      6.0          6.0           6.0          7.0           7.0
+26      6.0          6.0           6.0          7.0           7.0
+31      5.0          5.0           5.0          8.0           8.0
+36      5.0          5.0           5.0          8.0           8.0
+41      5.0          5.0           5.0          7.0           7.0
+46      5.0          5.0           5.0          7.0           7.0
+51      5.0          5.0           5.0          6.0           6.0
+56      5.0          5.0           5.0          6.0           6.0
 
 
 +      tdbiogat      tdfosgat
-1       6.0           6.0    
-6       6.0           6.0       
-11      6.0           6.0    
-16      6.0           6.0    
-21      6.0           6.0    
-26      6.0           6.0    
-31      5.0           5.0     
-36      5.0           5.0      
-41      5.0           5.0    
-46      5.0           5.0    
-51      5.0           5.0    
-56      5.0           5.0    
+1       6.0           6.0
+6       6.0           6.0
+11      6.0           6.0
+16      6.0           6.0
+21      6.0           6.0
+26      6.0           6.0
+31      5.0           5.0
+36      5.0           5.0
+41      5.0           5.0
+46      5.0           5.0
+51      5.0           5.0
+56      5.0           5.0
 
-+     tdbiosos    tdfossos        tdhes      tdbiodie       tdfosdie      tdbiopet      tdfospet        tdelt  
-1       5.0           5.0           5.0           6.0           6.0           6.0           6.0          5.0 
-6       5.0           5.0           5.0           6.0           6.0           6.0           6.0          5.0 
-11      6.0           6.0           6.0           6.0           6.0           6.0           6.0          5.0 
-16      6.0           6.0           6.0           6.0           6.0           6.0           6.0          5.0 
-21      7.0           7.0           7.0           6.0           6.0           6.0           6.0          5.0 
-26      7.0           7.0           7.0           6.0           6.0           6.0           6.0          5.0 
-31      8.0           8.0           8.0           5.0           5.0           5.0           5.0          5.0 
-36      8.0           8.0           8.0           5.0           5.0           5.0           5.0          5.0 
-41      9.0           9.0           7.0           5.0           5.0           5.0           5.0          5.0 
-46      9.0           9.0           7.0           5.0           5.0           5.0           5.0          5.0 
-51      8.0           8.0           6.0           5.0           5.0           5.0           5.0          5.0 
-56      8.0           8.0           6.0           5.0           5.0           5.0           5.0          5.0 
++     tdbiosos    tdfossos        tdhes      tdbiodie       tdfosdie      tdbiopet      tdfospet        tdelt
+1       5.0           5.0           5.0           6.0           6.0           6.0           6.0          5.0
+6       5.0           5.0           5.0           6.0           6.0           6.0           6.0          5.0
+11      6.0           6.0           6.0           6.0           6.0           6.0           6.0          5.0
+16      6.0           6.0           6.0           6.0           6.0           6.0           6.0          5.0
+21      7.0           7.0           7.0           6.0           6.0           6.0           6.0          5.0
+26      7.0           7.0           7.0           6.0           6.0           6.0           6.0          5.0
+31      8.0           8.0           8.0           5.0           5.0           5.0           5.0          5.0
+36      8.0           8.0           8.0           5.0           5.0           5.0           5.0          5.0
+41      9.0           9.0           7.0           5.0           5.0           5.0           5.0          5.0
+46      9.0           9.0           7.0           5.0           5.0           5.0           5.0          5.0
+51      8.0           8.0           6.0           5.0           5.0           5.0           5.0          5.0
+56      8.0           8.0           6.0           5.0           5.0           5.0           5.0          5.0
 
 
 
 +      storspv      storwind       storcsp       gridspv      gridwind       gridcsp
 1        1.0           1.0           1.0           1.0           1.0           1.0
 
-+      ccsinje   
++      ccsinje
 1         1.0
 
 +      tdsyngas      tdsyngat       tdsynhos       tdsynpet      tdsyndie
-1        1.0           1.0           1.0           1.0           1.0          
+1        1.0           1.0           1.0           1.0           1.0
 
 +       tnrs          fnrs
 1        0.2           1.0
@@ -166,12 +166,34 @@ $offtext
 1        1.0           1.0           1.0          1.0          1.0           1                1
 6        1.0                         1.0          1.0          1.0
 11       1.0                         1.0          1.0          1.0
-16       1.0                                      1.0          1.0                      
-21       1.0                                      1.0          1.0  
-26       1.0                                      1.0          1.0  
+16       1.0                                      1.0          1.0
+21       1.0                                      1.0          1.0
+26       1.0                                      1.0          1.0
 31       1.0
 36       1.0
 
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
++         bf           bof           idr          eaf
+1        1.0           1.0           1.0          1.0
+6        1.0           1.0           1.0          1.0
+11       1.0           1.0           1.0          1.0
+16       1.0           1.0           1.0          1.0
+21       1.0           1.0           1.0          1.0
+26       1.0           1.0           1.0          1.0
+31       1.0           1.0           1.0          1.0
+36       1.0           1.0           1.0          1.0
+
+
++       bfcc         idrcc
+1        1.0           1.0
+6        1.0           1.0
+11       1.0           1.0
+16       1.0           1.0
+21       1.0           1.0
+26       1.0           1.0
+31       1.0           1.0
+36       1.0           1.0
+$endif.cm_subsec_model_steel
 
 
 *** EOF ./core/input/generisdata_vintages.prn

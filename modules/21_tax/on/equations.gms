@@ -292,10 +292,56 @@ q21_taxrevFlex(t,regi)$( t.val ge max(2010, cm_startyear) ) ..
 q21_taxrevImport(t,regi,tradePe)..
   v21_taxrevImport(t,regi,tradePe)
   =e=
-*** import tax level * world market bioenergy price * bioenergy import
-  p21_tau_Import(t,regi,tradePe) * pm_pvp(t,tradePe) / pm_pvp(t,"good") * vm_Mport(t,regi,tradePe)
-    - p21_taxrevImport0(t,regi,tradePe)
+***---------------------------------------------------------------------------
+*'  import taxation: 1. "worldPricemarkup" = import tax level * world market price * tradePE import
+*'                   2. "CO2taxmarkup" = import tax level * national carbon price * imported carbon by carrier
+*'                   3. "avCO2taxmarkup" = import tax level * max( national carbon price, average carbonprice) * imported carbon by carrier
+* NOTE: In case of "CO2taxmarkup" and "avCO2taxmarkup" there is double-taxation of the CO2-content of the imported energy carrier: Once when being imported (at the border) and once when being converted to Secondary Energy (normal CO2price applied by REMIND)
+***---------------------------------------------------------------------------
+sum(tax_import_type_21, 
+ (  p21_tau_Import(t, regi, tradePe, tax_import_type_21) * pm_pvp(t,tradePe) / pm_pvp(t,"good") * vm_Mport(t,regi,tradePe) 
+    - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)
+  )$sameas(tax_import_type_21, "worldPricemarkup")
+  + 
+  (  p21_tau_Import(t, regi, tradePe, tax_import_type_21) * pm_taxCO2eqSum(t,regi) * pm_cintraw(tradePe) * vm_Mport(t,regi,tradePe) 
+  - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)
+   )$sameas(tax_import_type_21, "CO2taxmarkup")
+  + 
+  (  p21_tau_Import(t, regi, tradePe, tax_import_type_21)* max(pm_taxCO2eqSum(t,regi), sum(trade_regi, pm_taxCO2eqSum(t,trade_regi))/(card(trade_regi))) 
+  * pm_cintraw(tradePe) * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)
+   )$sameas(tax_import_type_21, "avCO2taxmarkup"))
 ;
+
+
+***-------------------------------------------
+*' SF: "revenue recycling of import tax to RE investments (wind, solar, storage): 
+*' investments in wind, solar and storage equal (i) investments from reference scenario with tax and no revenue recycling 
+*' plus (ii) the revenues received from the tax"
+***-------------------------------------------------------
+
+$ifthen.importtaxrc "%cm_taxrc_RE%" == "REdirect"
+
+q21_rc_tau_import_RE(t,regi)..
+  sum(en2en(enty,enty2,te)$(teVRE(te)),
+      vm_costInvTeDir(t,regi,te) + vm_costInvTeAdj(t,regi,te)$teAdj(te)
+  )
+  +
+  sum(teNoTransform,
+    vm_costInvTeDir(t,regi,teNoTransform) + vm_costInvTeAdj(t,regi,teNoTransform)$teAdj(teNoTransform)
+  )
+=g= 
+  sum(tradePE, sum(tax_import_type_21, p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)))
+  +
+  sum(en2en(enty,enty2,te)$(teVRE(te)),
+      p21_ref_costInvTeDir_RE(t,regi,te) + p21_ref_costInvTeAdj_RE(t,regi,te)$teAdj(te)  !! Reference VRE investment
+  )
+  +
+  sum(teNoTransform,
+    p21_ref_costInvTeDir_RE(t,regi,teNoTransform) + p21_ref_costInvTeAdj_RE(t,regi,teNoTransform)$teAdj(teNoTransform)  !! Reference grid + storage investment
+  )
+;
+$endif.importtaxrc
+
 
 ***---------------------------------------------------------------------------
 *'  Calculation of costs limiting the change compared to the reference run in cm_startyear.

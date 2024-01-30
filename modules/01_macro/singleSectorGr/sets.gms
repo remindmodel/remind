@@ -21,7 +21,7 @@ in_below_putty(all_in)                "All elements of the CES below ppf_putty, 
 
 in(all_in)                            "All inputs and outputs of the CES function"
 /
-  inco                                "Macroeconomic output"  
+  inco                                "Macroeconomic output"
   lab                                 "Labour input"
   kap                                 "Capital input"
   en                                  "Energy input"
@@ -29,7 +29,8 @@ in(all_in)                            "All inputs and outputs of the CES functio
 ppf(all_in)                           "All primary production factors"
 ipf(all_in)                           "All intermediate production factors"
 ppfKap(all_in)                        "Primary production factors capital"   / kap /
-ppfEn(all_in)                         "Primary production factors energy" 
+ppfEn(all_in)                         "Primary production factors energy"
+
 in_putty(all_in)                      "Production factors subject to putty-clay dynamics"
 ppf_putty(all_in)                     "All putty-clay primary production factors"
 ipf_putty(all_in)                     "All putty-clay intermediate production factors"
@@ -42,10 +43,10 @@ complements_ref(all_in,all_in)        "Correspondence between complementary fact
 
 
 
-in_putty(all_in)    = NO;   
-ppf_putty(all_in)   = NO; 
-ipf_putty(all_in)   = NO; 
-ppfIO_putty(all_in) = NO;  
+in_putty(all_in)    = NO;
+ppf_putty(all_in)   = NO;
+ipf_putty(all_in)   = NO;
+ppfIO_putty(all_in) = NO;
 
 alias(cesOut2cesIn,cesOut2cesIn2,cesOut2cesIn3);
 alias(in,out);

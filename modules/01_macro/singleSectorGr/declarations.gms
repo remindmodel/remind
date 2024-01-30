@@ -32,7 +32,6 @@ vm_cons(ttot,all_regi)                                          "Consumption"
 vm_cesIO(tall,all_regi,all_in)                                  "Production factor" 
 vm_invMacro(ttot,all_regi,all_in)                               "Investment for capital for ttot"
 v01_invMacroAdj(ttot,all_regi,all_in)                           "Adjustment costs of macro economic investments"
-vm_invRD(ttot,all_regi,all_in)                                  "R&D investments"
 vm_invInno(ttot,all_regi,all_in)                                "Investment into innovation"
 vm_invImi(ttot, all_regi,all_in)                                "Investment into imitation"     
 
