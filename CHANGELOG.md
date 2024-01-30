@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **37_industry** add feedstocks for chemicals subsector and plastics production
 - **core** add process emissions from chemicals subsector and from plastics incineration
 - **37_industry** add process-based steel model as alternative to CES-tree branch
+- **47_regipol** add support for delaying quantity targets and improving regional emission tax convergence
 
 ### fixed
 - fixed weights of energy carriers in `pm_IndstCO2Captured`
