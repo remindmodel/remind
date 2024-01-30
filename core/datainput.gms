@@ -133,7 +133,8 @@ pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 ****************************************************************************************************
 *************************Technology data input read-in and manipulation ****************************
 ****************************************************************************************************
-*** (future to be its own module perhaps)
+*** Note: future to be its own module perhaps
+*** Note: in module 5 there are more cost manipulation after initial capacities are calculated, be aware those can overwrite your technology values for policy runs if you set them here in the core
 ***---------------------------------------------------------------------------
 *** Reading in and initializing global data
 ***---------------------------------------------------------------------------
@@ -245,7 +246,8 @@ $if %cm_techcosts% == "GLO"  (1.03 + 0.03 + pm_prtp(regi) )                     
 );
 
 display p_tkpremused;
-***for those technologies, for which differentiated costs are available for 2015-2040, use those
+
+*** for those technologies, for which differentiated costs are available for 2015-2040, use those
 ***$if %cm_techcosts% == "REG"   loop(teRegTechCosts(te)$(not teLearn(te)),
 ***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);
 ***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2040) = p_inco0("2040",regi,te);
@@ -253,13 +255,16 @@ display p_tkpremused;
 
 ***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);
 
+*** initialize regionalized data using global data
+pm_data(all_regi,char,te) = fm_dataglob(char,te);
+
 pm_data(regi,"inco0",te)       = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"inco0",te);
 pm_data(regi,"incolearn",te)   = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"incolearn",te);
 p_inco0(ttot,regi,teRegTechCosts)  = (1 + p_tkpremused(regi,teRegTechCosts) ) * p_inco0(ttot,regi,teRegTechCosts);
 *** take region average p_tkpremused for global convergence price
 fm_dataglob("inco0",te)       = (1 + sum(regi, p_tkpremused(regi,te))/sum(regi, 1)) * fm_dataglob("inco0",te);
 
-***calculate default floor costs for learning technologies
+*** calculate default floor costs for learning technologies
 pm_data(regi,"floorcost",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
 
 
@@ -581,10 +586,6 @@ fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
 fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
 
 $ENDIF.WindOff
-
-*** Use global data as standard for regionalized data:
-pm_data(all_regi,char,te) = fm_dataglob(char,te);
-*NB* display
 
 $IFTHEN.WindOff %cm_wind_offshore% == "0"
 ** historical installed capacity
