@@ -4,6 +4,21 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
+
+#' @title AR6 climate assessment
+#' @description Assessment of new emissions pathways consistent with the climate variable data from the working group
+#' III contribution to the IPCC Sixth Assessment (AR6) report. The script uses REMIND emissions data to perform
+#' harmonization and infilling based on the IIASA [climate-assessment](https://climate-assessment.readthedocs.io)
+#' package. The harmonized and infilled emissions are then used as input to the
+#' [MAGICC7 simple climate model](https://magicc.org/). Results are postprocessed and appended to the REMIND model
+#' intercomparison file (MIF).
+#'
+#' @author Gabriel Abrahao, Oliver Richters, Tonn Rüter
+#'
+#' @param outputdir Directory where REMIND MIF file is located. Output files generated in the process will be written
+#' to a subfolder "climate-assessment-data" in this directory. Defaults to "."
+#' @param gdxName Name of the REMIND GDX file. Defaults to "fulldata.gdx"
+
 library(madrat)
 library(remind2)
 library(quitte)
@@ -13,9 +28,6 @@ library(yaml)
 library(tidyverse)
 library(readr)
 library(stringr)
-
-# TODO: REMOVE THIS LINE. piamInterfaces should be installed as a package on the cluster
-devtools::load_all("/p/tmp/tonnru/piamInterfaces/") 
 
 ############################# BASIC CONFIGURATION #############################
 
@@ -32,10 +44,12 @@ cfgPath               <- file.path(outputdir, cfgName)
 logFile               <- file.path(outputdir, "log_climate.txt") # specific log for python steps
 scenario              <- getScenNames(outputdir)
 remindReportingFile   <- file.path(outputdir, paste0("REMIND_generic_", scenario, ".mif"))
-climateAssessmentYaml <- file.path(system.file(package = "piamInterfaces"),
-                                   "iiasaTemplates", "climate_assessment_variables.yaml")
 climateAssessmentEmi  <- normalizePath(file.path(outputdir, paste0("ar6_climate_assessment_", scenario, ".csv")),
                                        mustWork = FALSE)
+# TODO: REMOVE THE NEXT LINE. piamInterfaces should be installed as a package on the cluster
+devtools::load_all("/p/tmp/tonnru/piamInterfaces/")
+climateAssessmentYaml <- file.path(system.file(package = "piamInterfaces"),
+                                   "iiasaTemplates", "climate_assessment_variables.yaml")
 
 ############################# PREPARING EMISSIONS INPUT #############################
 
@@ -54,7 +68,10 @@ cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = FALSE)
 
 climateAssessmentInputData <- as.quitte(remindReportingFile) %>%
+  # Consider only the global region
   filter(region %in% c("GLO", "World")) %>%
+  # Extract only the variables needed for climate-assessment. These are provided from the iiasaTemplates in the 
+  # piamInterfaces package: https://github.com/pik-piam/piamInterfaces/blob/master/inst/iiasaTemplates/climate_assessment_variables.yaml
   generateIIASASubmission(
     mapping = "AR6",
     outputFilename = NULL,
@@ -62,7 +79,10 @@ climateAssessmentInputData <- as.quitte(remindReportingFile) %>%
     logFile = logFile
   ) %>%
   mutate(region = factor("World")) %>%
+  # Rename the columns using str_to_title which capitalizes the first letter of each word
   rename_with(str_to_title) %>%
+  # Transforms the yearly values for each variable from a long to a wide format. The resulting data frame then has
+  # one column for each year and one row for each variable
   pivot_wider(names_from = "Period", values_from = "Value") %>%
   write_csv(climateAssessmentEmi, quote = "none")
 
@@ -89,6 +109,8 @@ probabilisticFile     <- normalizePath(file.path(cfg$climate_assessment_files_di
                                        "parsets", "0fd0f62-derived-metrics-id-f023edb-drawnset.json"))
 infillingDatabaseFile <- normalizePath(file.path(cfg$climate_assessment_files_dir,
                                        "1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv"))
+
+# Extract the location of the climate-assessment scripts and the MAGICC binary from cfg.txt
 scriptsFolder         <- normalizePath(file.path(cfg$climate_assessment_root, "scripts"))
 magiccBinFile         <- normalizePath(file.path(cfg$climate_assessment_magicc_bin))
 magiccWorkersFolder <- file.path(normalizePath(climateAssessmentFolder), "workers")
