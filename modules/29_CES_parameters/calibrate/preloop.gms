@@ -119,15 +119,15 @@ else
     pm_cesdata:3:3:1
   ;
 
-***  !! The calibration of elasticities of substitution takes
-***  !! much longer to converge if it starts from a high elasticity of
-***  !! substitution. To avoid this situation, the price of the capital stock
-***  !! is increased
-***  if (sm_CES_calibration_iteration eq 1,
-***    loop (cesOut2cesIn(out,in)$(pm_cesdata_sigma("2015",out) eq -1 AND ppfKap(in) AND in_29(in)),
-***        pm_cesdata(t,regi,in,"price") = pm_cesdata(t,regi,in,"price") *1.3;
-***    );
-***  );
+  !! The calibration of elasticities of substitution takes
+  !! much longer to converge if it starts from a high elasticity of
+  !! substitution. To avoid this situation, the price of the capital stock
+  !! is increased
+  if (sm_CES_calibration_iteration eq 1,
+    loop (cesOut2cesIn(out,in)$(pm_cesdata_sigma("2015",out) eq -1 AND ppfKap(in) AND in_29(in)),
+        pm_cesdata(t,regi,in,"price") = pm_cesdata(t,regi,in,"price") *1.3;
+    );
+  );
 
   display "derivatives", p29_CESderivative, p29_effGr, p29_cesIO_load;
 
@@ -391,12 +391,13 @@ putclose logfile;
 if ( sm_tmp2 gt 0, !! If there has been a rescaling
 
   loop  ((t,cesRev2cesIO(counter,ipf_29(out)))$( NOT ( sameas(out,"inco"))),
+
     pm_cesdata(t,regi_dyn29,out,"quantity")
     = sum(cesOut2cesIn(out,in),
         pm_cesdata(t,regi_dyn29,in,"price")
       * pm_cesdata(t,regi_dyn29,in,"quantity")
       );
-  );    
+  );   
 );
 
 ***_____________________________ END OF:  2 - CALCULATE QUANTITIES_____________________________
@@ -794,12 +795,8 @@ $endif.subsectors
 
 ***_____________________________ END OF: BEYOND CALIBRATION PART I ________________________________________
 
-***_____________________________ START OF: COMPUTE ELASTICITIES OF SUBSTITUTION ________________________________________
+***_____________________________ START OF: 5 - COMPUTE ELASTICITIES OF SUBSTITUTION ________________________________________
 
-*** Elasticities of substitution are normally prescribed manually.
-*** However, they can also be estimated from technological data. This is done here.
-*** At the time of documentation, the nodes for which this is done are in the services_with_capital realization of the
-*** buildings module.
 
 *** Compute the rho parameter from the elasticity of substitution
 pm_cesdata(ttot,regi,ipf(out),"rho")$(    ttot.val ge 2005

@@ -173,15 +173,6 @@ $offdelim
 ;
 p29_efficiency_growth(t,regi,in) = f29_efficiency_growth(t,regi,"%cm_demScen%",in);
 
-Parameter
-f29_capitalUnitProjections "Capital cost per unit of consumed energy and final energy per unit of useful energy (or UE per unit of ES) used to calibrate some elasticities of substitution"
-/
-$ondelim
-$include "./modules/29_CES_parameters/calibrate/input/f29_capitalUnitProjections.cs4r"
-$offdelim
-/
-;
-
 parameter
 f29_capitalQuantity(tall,all_regi,all_demScen,all_in)          "capital quantities"
 /
@@ -251,26 +242,10 @@ $endif.indst_H2_penetration
 
 display pm_fedemand;
 
-*** Attribute technological data to p29_capitalUnitProjections according to putty-clay
- p29_capitalUnitProjections(all_regi,all_in,index_Nr) =  f29_capitalUnitProjections(all_regi,all_in,index_Nr,"cap") ;
-loop (cesOut2cesIn(out,in)$ppfKap(in),
-loop (cesOut2cesIn2(out,in2),
-p29_capitalUnitProjections(all_regi,all_in,index_Nr)$(p29_capitalUnitProjections(all_regi,all_in,index_Nr)
-                                                      AND (sameAs(all_in,out) OR sameAs(all_in,in2))
-                                                    )
-                                        = p29_capitalUnitProjections(all_regi,all_in,index_Nr)$(p29_capitalUnitProjections(all_regi,in,index_Nr) ge p29_capitalUnitProjections(all_regi,in,"0")
-                                        );
-);
-);
-
 *** Change PPP for MER.
 p29_capitalQuantity(tall,all_regi,all_in)
  = p29_capitalQuantity(tall,all_regi,all_in)
  * pm_shPPPMER(all_regi);
-
-p29_capitalUnitProjections(all_regi,all_in,index_Nr)$ppfKap(all_in)
-  = p29_capitalUnitProjections(all_regi,all_in,index_Nr)
-  * pm_shPPPMER(all_regi);
 
 *** Subtract "special" capital stocks from gross economy capital stock
 p29_capitalQuantity(tall,all_regi,"kap")
@@ -280,10 +255,6 @@ p29_capitalQuantity(tall,all_regi,"kap")
     );
 
 *** Substract the end-use capital quantities from the aggregate capital
-
-*** Change $/kWh to Trillion$/TWa;
-p29_capitalUnitProjections(all_regi,all_in,index_Nr)$ppfKap(all_in) =  p29_capitalUnitProjections(all_regi,all_in,index_Nr) * sm_TWa_2_kWh / sm_trillion_2_non;
-
 
 *** Load CES parameters from the last run
 Execute_Load 'input'  p29_cesdata_load = pm_cesdata;
