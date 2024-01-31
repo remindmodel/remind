@@ -1094,10 +1094,6 @@ loop ((out,in,in2,t)$((pm_cesdata_sigma(t,out) eq -1)
 
        put sm_CES_calibration_iteration:0:0,"remind" , t.tl,out.tl  , "rho", regi.tl, pm_cesdata(t,regi,out,"rho") /;
        );
-
-       loop ((index_Nr,in)$p29_capitalUnitProjections(regi, in, index_Nr),
-       put sm_CES_calibration_iteration:0:0,index_Nr.tl, "2015", in.tl , "quantity", regi.tl,  p29_capitalUnitProjections(regi,in,index_Nr) /;
-       );
 );
 putclose;
 
