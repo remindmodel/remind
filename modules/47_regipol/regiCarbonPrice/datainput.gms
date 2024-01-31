@@ -15,6 +15,8 @@ option pm_taxemiMkt_iteration:3:3:1;
 pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 p47_implicitQttyTargetTaxRescale_iter("1", "2030",ext_regi,qttyTarget,qttyTargetGroup) = 0;
+p47_implicitQttyTargetReferenceIteration(ext_regi) = 0;
+p47_implicitQttyTargetIterationCount(ext_regi) = 0;
 $endIf.cm_implicitQttyTarget
 
 *** RR this should be replaced as soon as non-energy is treated endogenously in the model

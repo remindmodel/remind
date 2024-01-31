@@ -47,7 +47,7 @@ Sets
     co2steel
   /
 
-  macBaseInd37(all_enty,secInd37)   "FE and industry combinations that have emissions"
+  emiInd37_fe2sec(all_enty,secInd37)   "FE and industry combinations that have emissions"
   /
     (fesos, fehos, fegas) . (cement, chemicals, steel, otherInd)
     co2cement_process     . cement
@@ -80,7 +80,7 @@ Sets
     enhgai . (fegai, feh2i)
   /
 
- 
+
   fe2ppfEn37(all_enty,all_in)   "match ESM entyFe to ppfEn"
   /
     fesos . fesoi

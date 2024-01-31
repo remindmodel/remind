@@ -15,7 +15,7 @@ $endif
 
 
 *** Core substitution elasticities
-Parameter 
+Parameter
   p29_cesdata_sigma(all_in) "substitution elasticities"
   /
     inco        0.5
@@ -51,27 +51,27 @@ ppf_29("kap") = YES;
 ppf_29("lab") = YES;
 
 *** Useful energy
-ue_29(all_in) 
+ue_29(all_in)
   = ue_dyn36(all_in)                               !! Buildings
   + industry_ue_calibration_target_dyn37(all_in)   !! Industry
 ;
-  
+
 *** Fill the sets that need special treatment of efficiencies beyond calib
 ue_fe_kap_29(in) = NO;
 
 loop (ue_29(ppf_29(out)),
   sm_tmp  = 0;
   sm_tmp2 = 0;
-    
+
   loop (cesOut2cesIn(out,in),
     if (ppfKap(in), sm_tmp  = sm_tmp  + 1);
     if (ppfen(in),  sm_tmp2 = sm_tmp2 + 1);
   );
-    
+
   !! in case one input is ppfen/FE and the other Kap
   if (sm_tmp eq 1 AND sm_tmp2 eq 1,
     ue_fe_kap_29(out) = YES;
-  else               
+  else
      sm_tmp = 0;
      loop (cesOut2cesIn(out,in),
        sm_tmp = sm_tmp +1;
@@ -80,17 +80,17 @@ loop (ue_29(ppf_29(out)),
 );
 
 *** Remove sets from ue_fe_kap_29 that receive special treatment
-loop (cesOut2cesIn(out,in)$(   pf_eff_target_dyn29(in) 
+loop (cesOut2cesIn(out,in)$(   pf_eff_target_dyn29(in)
                             OR pf_quan_target_dyn29(in) ),
   ue_fe_kap_29(out) = NO;
-); 
+);
 
 *** Compute the internal sets for the calibration of the CES
 
 *** First, take the maximum level of ppf_29
 sm_tmp = 0
 loop(cesLevel2cesIO(counter,ppf_29(in)),
-  if (counter.val gt sm_tmp, 
+  if (counter.val gt sm_tmp,
     sm_tmp = counter.val;
   );
 );
@@ -117,14 +117,14 @@ ppf_beyondcalib_29(all_in) = in(all_in) - in_29(all_in);
 
 loop (cesOut2cesIn(out,ppf_beyondcalib_29(in)),
   ipf_beyond_29(out) = YES;
-); 
+);
 ipf_beyond_29_excludeRoot(ipf_beyond_29) = YES;
 ipf_beyond_29_excludeRoot(ppf_29) = NO;
 
-in_beyond_calib_29(all_in) 
-  = ipf_beyond_29(all_in) 
+in_beyond_calib_29(all_in)
+  = ipf_beyond_29(all_in)
   + ppf_beyondcalib_29(all_in);
-  
+
 in_beyond_calib_29_excludeRoot(in_beyond_calib_29) = YES;
 in_beyond_calib_29_excludeRoot(ppf_29) = NO;
 
@@ -214,7 +214,7 @@ loop ((ttot,regi,ppfKap_industry_dyn37(in))$( t(ttot-1) AND t(ttot+1) ),
   );
 );
 
-*** Transport alternative FE trajectory 
+*** Transport alternative FE trajectory
 $ifthen.module "%transport%" == "complex"
 $ifthen.demTtrend "%cm_demTcomplex%" == "fromEDGET"
 
@@ -263,39 +263,29 @@ loop (cesOut2cesIn(out,in)$ppfKap(in),
 loop (cesOut2cesIn2(out,in2),
 p29_capitalUnitProjections(all_regi,all_in,index_Nr)$(p29_capitalUnitProjections(all_regi,all_in,index_Nr)
                                                       AND (sameAs(all_in,out) OR sameAs(all_in,in2))
-                                                    )                                                      
+                                                    )
                                         = p29_capitalUnitProjections(all_regi,all_in,index_Nr)$(p29_capitalUnitProjections(all_regi,in,index_Nr) ge p29_capitalUnitProjections(all_regi,in,"0")
                                         );
 );
-);                                                        
-  
+);
+
 *** Change PPP for MER.
-p29_capitalQuantity(tall,all_regi,all_in) 
- = p29_capitalQuantity(tall,all_regi,all_in) 
+p29_capitalQuantity(tall,all_regi,all_in)
+ = p29_capitalQuantity(tall,all_regi,all_in)
  * pm_shPPPMER(all_regi);
 
-p29_capitalUnitProjections(all_regi,all_in,index_Nr)$ppfKap(all_in) 
-  = p29_capitalUnitProjections(all_regi,all_in,index_Nr) 
+p29_capitalUnitProjections(all_regi,all_in,index_Nr)$ppfKap(all_in)
+  = p29_capitalUnitProjections(all_regi,all_in,index_Nr)
   * pm_shPPPMER(all_regi);
 
 *** Subtract "special" capital stocks from gross economy capital stock
-p29_capitalQuantity(tall,all_regi,"kap") 
-  = p29_capitalQuantity(tall,all_regi,"kap") 
-  - sum(ppfKap(in)$( NOT sameAs(in,"kap")), 
+p29_capitalQuantity(tall,all_regi,"kap")
+  = p29_capitalQuantity(tall,all_regi,"kap")
+  - sum(ppfKap(in)$( NOT sameAs(in,"kap")),
       p29_capitalQuantity(tall,all_regi,in)
     );
 
 *** Substract the end-use capital quantities from the aggregate capital
-
-*** Change EJ to TWa
-$ifthen.industry_subsectors "%industry%" == "subsectors"
-  pm_fedemand(tall,all_regi,all_in)$( 
-                              NOT industry_ue_calibration_target_dyn37(all_in) )
-  = sm_EJ_2_TWa * pm_fedemand(tall,all_regi,all_in);
-$else.industry_subsectors
-  pm_fedemand(tall,all_regi,all_in)
-    = sm_EJ_2_TWa * pm_fedemand(tall,all_regi,all_in);
-$endif.industry_subsectors
 
 *** Change $/kWh to Trillion$/TWa;
 p29_capitalUnitProjections(all_regi,all_in,index_Nr)$ppfKap(all_in) =  p29_capitalUnitProjections(all_regi,all_in,index_Nr) * sm_TWa_2_kWh / sm_trillion_2_non;
@@ -328,7 +318,16 @@ Execute_Loadpoint 'input' vm_deltacap;
 pm_cesdata(t,regi,"inco","quantity") = pm_gdp(t,regi);
 pm_cesdata(t,regi,"lab","quantity") = pm_lab(t,regi);
 *** Load exogenous FE trajectories
-pm_cesdata(t,regi,in,"quantity")$(pm_fedemand(t,regi,in)) = pm_fedemand(t,regi,in);
+*** Change EJ to TWa
+
+pm_cesdata(t,regi,in,"quantity")$(pm_fedemand(t,regi,in)) =
+$ifthen.industry_subsectors "%industry%" == "subsectors"
+  pm_fedemand(t,regi,in)$(industry_ue_calibration_target_dyn37(in))
+  +
+  sm_EJ_2_TWa * pm_fedemand(t,regi,in)$(NOT industry_ue_calibration_target_dyn37(in));
+$else.industry_subsectors
+  sm_EJ_2_TWa * pm_fedemand(t,regi,in)
+$endif.industry_subsectors
 
 *** Load exogenous ES trajectories
 pm_cesdata(t,regi,in,"quantity") $p29_esdemand(t,regi,in) = p29_esdemand(t,regi,in);
@@ -343,9 +342,9 @@ $endif.edgesm
 pm_cesdata(t,regi,ppfKap,"quantity") = p29_capitalQuantity(t,regi,ppfKap);
 
 $ifthen.subsectors "%industry%" == "subsectors"
-*** Assume fehe_otherInd at 0.1% of fega_otherInd for regions with zero 
+*** Assume fehe_otherInd at 0.1% of fega_otherInd for regions with zero
 *** fehe_otherInd in historic periods (IND, LAM, MEA, SSA)
-loop ((t_29hist(t),regi_dyn29(regi))$( 
+loop ((t_29hist(t),regi_dyn29(regi))$(
                            pm_cesdata(t,regi,"fehe_otherInd","quantity") eq 0 ),
   pm_cesdata(t,regi,"fehe_otherInd","quantity")
   = 1e-4
@@ -390,7 +389,7 @@ loop ((t,regi)$(pm_cesdata(t,regi,"feh2i","quantity") lt (0.01 * pm_cesdata(t,re
   pm_cesdata(t,regi,"feh2i","quantity") = 0.01 * pm_cesdata(t,regi,"fegai","quantity");
 );
 
-*** Special treatment for fehei, which is part of ppfen_industry_dyn37, yet 
+*** Special treatment for fehei, which is part of ppfen_industry_dyn37, yet
 *** needs an offset value for some regions under fixed_shares
 loop ((t,regi)$(pm_cesdata(t,regi,"fehei","quantity") lt 1e-5 ),
   pm_cesdata(t,regi,"fehei","offset_quantity")  = pm_cesdata(t,regi,"fehei","quantity") - 1e-5;
@@ -411,19 +410,19 @@ loop ((t,regi),
   = - (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
       * pm_cesdata(t,regi,"fegab","quantity")
     - pm_cesdata(t,regi,"feh2b","quantity");
-	pm_cesdata(t,regi,"feh2b","quantity") 
+	pm_cesdata(t,regi,"feh2b","quantity")
   = (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
       * pm_cesdata(t,regi,"fegab","quantity");
 );
 $endif.build_H2_offset
 
-*** Add an epsilon to the values which are 0 so that they can fit in the CES 
+*** Add an epsilon to the values which are 0 so that they can fit in the CES
 *** function. And withdraw this epsilon when going to the ESM side
-loop((t,regi,in)$(    (ppf(in) OR ppf_29(in)) 
-                  AND pm_cesdata(t,regi,in,"quantity") lt 1e-5 
+loop((t,regi,in)$(    (ppf(in) OR ppf_29(in))
+                  AND pm_cesdata(t,regi,in,"quantity") lt 1e-5
                   AND NOT ppfen_industry_dyn37(in)
-                  AND NOT ppfkap_industry_dyn37(in)  
-                  AND NOT SAMEAS(in,"feh2i")  
+                  AND NOT ppfkap_industry_dyn37(in)
+                  AND NOT SAMEAS(in,"feh2i")
                   AND NOT SAMEAS(in,"feh2b")        ),
   pm_cesdata(t,regi,in,"offset_quantity")  = pm_cesdata(t,regi,in,"quantity")  - 1e-5;
   pm_cesdata(t,regi,in,"quantity") = 1e-5;

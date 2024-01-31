@@ -77,7 +77,7 @@ if (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1,
   = vm_macBase.lo(ttot,regi,"co2cement_process")
   * pm_ResidualCementDemand(ttot,regi);
 
-  vm_macBaseInd.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
+  vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
   = vm_macBase.lo(ttot,regi,"co2cement_process");
 );
 

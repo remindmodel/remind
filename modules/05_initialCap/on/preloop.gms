@@ -19,16 +19,17 @@ s05_inic_switch = 1;
 q05_eedemini(regi,enty)..
   v05_INIdemEn0(regi,enty)
   =e=
+  (
     !! Pathway I: FE to ppfEn.
     sum(fe2ppfEn(enty,in),
       pm_cesdata("2005",regi,in,"quantity")
     + pm_cesdata("2005",regi,in,"offset_quantity")
-  ) * s05_inic_switch
+    )
     !! Pathway II: FE via UE to ppfEn
   + sum(ue2ppfen(enty,in),
       pm_cesdata("2005",regi,in,"quantity")
     + pm_cesdata("2005",regi,in,"offset_quantity")
-    ) * s05_inic_switch
+    )
     !! Pathway III: FE via ES to ppfEn
     !! For the ES layer, we have to be consistent with conversion and share
     !! parameters when providing FE demands from CES node values.
@@ -42,9 +43,17 @@ q05_eedemini(regi,enty)..
         * pm_shFeCes("2005",regi,enty2,in,teEs2)
         )
       )
-    ) * s05_inic_switch
+    )
+    !! Pathway IV: process-based industry
+  + sum(tePrc2opmoPrc(tePrc,opmoPrc)$(p37_specFEDem("2005",regi,enty,tePrc,opmoPrc) gt 0.),
+      p37_specFEDem("2005",regi,enty,tePrc,opmoPrc)
+      *
+      pm_outflowPrcIni(regi,tePrc,opmoPrc)
+    )$(entyFeStat(enty))
+  ) * s05_inic_switch
     !! Transformation pathways that consume this enty:
-  + sum(en2en(enty,enty2,te),
+    !!(exclude tePrc, as process-based industry has its own vm_cap0 calculation below)
+  + sum(en2en(enty,enty2,te)$(NOT tePrc(te)),
       pm_cf("2005",regi,te)
     / pm_data(regi,"eta",te)
     * v05_INIcap0(regi,te)
@@ -58,7 +67,8 @@ q05_eedemini(regi,enty)..
 ;
 
 *** capacity meets demand of the produced energy:
-q05_ccapini(regi,en2en(enty,enty2,te)) ..
+!!(exclude tePrc, as process-based industry has its own vm_cap0 calculation below)
+q05_ccapini(regi,en2en(enty,enty2,te))$(NOT tePrc(te))..
     pm_cf("2005",regi,te)
   * pm_dataren(regi,"nur","1",te)
   * v05_INIcap0(regi,te)
@@ -110,6 +120,15 @@ solve initialcap2 using cns;
 display v05_INIdemEn0.l, v05_INIcap0.l;
 
 pm_cap0(regi,te) = v05_INIcap0.l(regi,te);
+
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+pm_cap0(regi,'bof') = pm_outflowPrcIni(regi,'bof','unheated') / pm_cf("2005",regi,'bof');
+pm_cap0(regi,'bf')  = pm_outflowPrcIni(regi,'bf','standard')  / pm_cf("2005",regi,'bf');
+pm_cap0(regi,'eaf') = pm_outflowPrcIni(regi,'eaf','sec')      / pm_cf("2005",regi,'eaf');
+pm_cap0(regi,'idr') = 0.;
+pm_cap0(regi,"bfcc") =0.;
+pm_cap0(regi,"idrcc") =0.;
+$endif.cm_subsec_model_steel
 
 *RP keep energy demand for the Kyoto target calibration
 pm_EN_demand_from_initialcap2(regi,enty) = v05_INIdemEn0.l(regi,enty);
@@ -495,8 +514,8 @@ display pm_EN_demand_from_initialcap2, p05_emi2005_from_initialcap2;
 *** To be moved to new emiAccounting module
 * Discounting se2fe emissions from pe2se emission factors
 loop(entySe$(sameas(entySe,"segafos") OR sameas(entySe,"seliqfos") OR sameas(entySe,"sesofos")),
-  pm_emifac(ttot,regi,entyPe,entySe,te,"co2")$pm_emifac(ttot,regi,entyPe,entySe,te,"co2") = 
-    pm_emifac(ttot,regi,entyPe,entySe,te,"co2") 
+  pm_emifac(ttot,regi,entyPe,entySe,te,"co2")$pm_emifac(ttot,regi,entyPe,entySe,te,"co2") =
+    pm_emifac(ttot,regi,entyPe,entySe,te,"co2")
     - pm_eta_conv(ttot,regi,te)
       *( sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"), pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2")*pm_eta_conv(ttot,regi,te2))/sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"),1)  );
 );
