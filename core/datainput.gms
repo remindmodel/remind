@@ -151,17 +151,14 @@ pm_esCapCost(tall,all_regi,all_teEs) = 0;
 *** Reading in and initializing regional data
 ***---------------------------------------------------------------------------
 parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit: USD$/KW"
-/
-$ondelim
 $include "./core/input/p_inco0.cs4r"
-$offdelim
-/
 ;
 
 ***---------------------------------------------------------------------------
-*** Manipulating technology data
+****** Manipulating technology data
 ***---------------------------------------------------------------------------
-
+*** Manipulating technology data - absolute values
+***---------------------------------------------------------------------------
 !! Modify spv and storspv parameters for optimistic VRE supply assumptions
 if (cm_VRE_supply_assumptions eq 1,
     fm_dataglob("learn","spv") = 0.257;
@@ -176,8 +173,7 @@ if (cm_VRE_supply_assumptions eq 3,
     fm_dataglob("incolearn","spv") = 4960;
 );
 
-
-*** CG: some of the SSP1 and SSP5 costs are not consistent with the story line (e.g. under SSP1 blue H2 and some fossil fuel CCS technologies have lower costs than in SSP2). This is to be fixed in the future under new SSP storylines (29-1-2024)
+*** CG warning: some of the SSP1 and SSP5 costs are not consistent with the story line (e.g. under SSP1 blue H2 and some fossil fuel CCS technologies have lower costs than in SSP2). This is to be fixed in the future when new SSP storylines are implemented, unclear when (29-1-2024). In the future, SSP1 and SSP5 data should be implemented as switches to avoid errors
 *JH* SSP energy technology scenario
 table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
 $include "./core/input/generisdata_tech_SSP1.prn"
@@ -194,7 +190,10 @@ if (c_techAssumptScen eq 3,
 );
 
 display fm_dataglob;
-
+fm_dataglob("lifetime","windoff") = fm_dataglob("lifetime","wind");
+***---------------------------------------------------------------------------
+*** Manipulating technology data - relative values
+***---------------------------------------------------------------------------
 *** Overwrite default technology parameter values based on specific scenario configs
 $if not "%cm_incolearn%" == "off" parameter p_new_incolearn(all_te) / %cm_incolearn% /;
 $if not "%cm_incolearn%" == "off" fm_dataglob("incolearn",te)$p_new_incolearn(te)=p_new_incolearn(te);
@@ -212,7 +211,9 @@ fm_dataglob("incolearn","csp")          = 0.7 * fm_dataglob("incolearn","csp");
 
 
 *** --------------------------------------------------------------------------------
-*** Adjust investment cost data
+****** Regionalize investment cost data
+*** -------------------------------------------------------------------------------
+****** Regional risk premium during building time
 *** -------------------------------------------------------------------------------
 
 *RP* calculate turnkey costs (which are the sum of the overnight costs in generisdata_tech and the "interest during construction” (IDC) )
