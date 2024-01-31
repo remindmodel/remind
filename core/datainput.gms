@@ -1221,15 +1221,6 @@ loop (teNoLearn(te)$( sameas(te,"igcc") ),
 );
 $endif.REG_techcosts
 
-*** rename f_datafecostsglob
-* p_esCapCost(regi,in)$f_datafecostsglob("lifetime",in)
-*                        = (f_datafecostsglob("inco0",in)
-*                          + f_datafecostsglob("omf",in) * f_datafecostsglob("lifetime",in)
-*                          ) * f_datafecostsglob("eta",in) !! from cost per UE power to cost per FE power
-*                        / (f_datafecostsglob("lifetime",in) * f_datafecostsglob("usehr",in)) !! capital costs are levelled over the yearly use
-*                        * sm_day_2_hour * sm_year_2_day    !! from $/TWh to $/TWa.
-*                        ;
-
 *** -----------------------------------------------------------------------------
 *** ------------ emission budgets and their time periods ------------------------
 *** -----------------------------------------------------------------------------
