@@ -194,7 +194,7 @@ if (c_techAssumptScen eq 3,
 );
 
 display fm_dataglob;
-fm_dataglob("lifetime","windoff") = fm_dataglob("lifetime","wind");
+
 ***---------------------------------------------------------------------------
 *** Manipulating technology data - relative values
 ***---------------------------------------------------------------------------
@@ -580,11 +580,11 @@ p_cint(regi,"co2","peoil","7")=0.2283105600;
 p_cint(regi,"co2","peoil","8")=0.4153983800;
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-*CG* set wind offshore storage and grid to be the same as wind onshore (later should be integrated into input data)
+*CG* set wind offshore, storage and grid to be the same as wind onshore (later should be integrated into input data)
 * main difference between onshore and offshore is the difference in f32_factorStorage
+fm_dataglob(char,"windoff") = fm_dataglob(char,"wind");
 fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
 fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
-
 $ENDIF.WindOff
 
 $IFTHEN.WindOff %cm_wind_offshore% == "0"
