@@ -130,9 +130,9 @@ pm_shGasLiq_fe_up(ttot,regi,sector)=0;
 pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 
 
-****************************************************************************************************
-*************************Technology data input read-in and manipulation ****************************
-****************************************************************************************************
+*******************************************************************************
+**************     Technology data input read-in and manipulation       *******
+*******************************************************************************
 *** Note: future to be its own module perhaps
 *** Note: in module 5 there are more cost manipulation after initial capacities are calculated, be aware those can overwrite your technology values for policy runs if you set them here in the core
 ***---------------------------------------------------------------------------
@@ -151,7 +151,11 @@ pm_esCapCost(tall,all_regi,all_teEs) = 0;
 *** Reading in and initializing regional data
 ***---------------------------------------------------------------------------
 parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit: USD$/KW"
+/
+$ondelim
 $include "./core/input/p_inco0.cs4r"
+$offdelim
+/
 ;
 
 ***---------------------------------------------------------------------------
