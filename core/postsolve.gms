@@ -755,10 +755,9 @@ o_emissions_energy_negative(ttot,regi,emi)$(ttot.val ge 2005) =
             * vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf)
           )
 ***   Industry CCS emissions
-    - ( sum(emiMac2mac(emiInd37_fuel,enty2),
+    - sum(emiInd37_fuel,
           vm_emiIndCCS.l(ttot,regi,emiInd37_fuel)
         )$( sameas(emi,"co2") )
-    )
     )*o_emi_conv(emi)
 ;
 

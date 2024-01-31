@@ -14,8 +14,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** add script for cost decomposition of integrated damage runs
     [[#1445](https://github.com/remindmodel/remind/pull/1445)]
 - **testthat** test and compile all config files
-- **37_Industry** add feedstocks for chemicals subsector and plastics production
+- **37_industry** add feedstocks for chemicals subsector and plastics production
 - **core** add process emissions from chemicals subsector and from plastics incineration
+- **37_industry** add process-based steel model as alternative to CES-tree branch
+- **47_regipol** add support for delaying quantity targets and improving regional emission tax convergence
 
 ### fixed
 - fixed weights of energy carriers in `pm_IndstCO2Captured`
@@ -26,6 +28,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1414](https://github.com/remindmodel/remind/pull/1414)]
 - correctly report `Tech|*|Capital Costs|w/ Adj Costs` for t < cm_startyear
     [[#1429](https://github.com/remindmodel/remind/pull/1429), [#1476](https://github.com/remindmodel/remind/pull/1476)]
+- prevent tradtional biomass spillover to other sectors than buildings
+    [[#1519](https://github.com/remindmodel/remind/pull/1519)]
 
 ### removed
 - **45_carbonprice** remove outdated realizations:

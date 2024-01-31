@@ -37,6 +37,7 @@ Equations
   q36_costAddH2PhaseIn(ttot,all_regi)               "additional industry H2 t&d cost at low H2 penetration in buildings" 
   q36_costCESmarkup(ttot,all_regi,all_in)           "calculation of additional CES markup cost that are accounted in the budget (GDP) to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps"
   q36_costAddTeInv(ttot,all_regi,all_te)            "summation of sector-specific demand-side cost"
+  q36_biotrBound(ttot,all_regi)                     "enforce that solid biomass demand in buildings is at least as much as what is transformed via biotr to prevent spillover to other sectors"
 ;
 
 *** EOF ./modules/36_buildings/simple/declarations.gms
