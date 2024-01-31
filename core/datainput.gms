@@ -144,8 +144,24 @@ $include "./core/input/generisdata_tech.prn"
 $include "./core/input/generisdata_trade.prn"
 ;
 
+*** CG warning: some of the SSP1 and SSP5 costs are not consistent with the story line (e.g. under SSP1 blue H2 and some fossil fuel CCS technologies have lower costs than in SSP2). This is to be fixed in the future when new SSP storylines are implemented, unclear when (29-1-2024). In the future, SSP1 and SSP5 data should be implemented as switches to avoid errors
+*JH* SSP energy technology scenario
+table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
+$include "./core/input/generisdata_tech_SSP1.prn"
+;
+table f_dataglob_SSP5(char,all_te)        "Techno-economic assumptions consistent with SSP5"
+$include "./core/input/generisdata_tech_SSP5.prn"
+;
+
 *** initializing energy service capital
 pm_esCapCost(tall,all_regi,all_teEs) = 0;
+
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+*CG* set wind offshore, storage and grid to be the same as wind onshore (later should be integrated into input data)
+* main difference between onshore and offshore is the difference in f32_factorStorage
+fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
+fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
+$ENDIF.WindOff
 
 ***---------------------------------------------------------------------------
 *** Reading in and initializing regional data
@@ -177,14 +193,7 @@ if (cm_VRE_supply_assumptions eq 3,
     fm_dataglob("incolearn","spv") = 4960;
 );
 
-*** CG warning: some of the SSP1 and SSP5 costs are not consistent with the story line (e.g. under SSP1 blue H2 and some fossil fuel CCS technologies have lower costs than in SSP2). This is to be fixed in the future when new SSP storylines are implemented, unclear when (29-1-2024). In the future, SSP1 and SSP5 data should be implemented as switches to avoid errors
-*JH* SSP energy technology scenario
-table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
-$include "./core/input/generisdata_tech_SSP1.prn"
-;
-table f_dataglob_SSP5(char,all_te)        "Techno-economic assumptions consistent with SSP5"
-$include "./core/input/generisdata_tech_SSP5.prn"
-;
+
 
 if (c_techAssumptScen eq 2,
                fm_dataglob(char,te) = f_dataglob_SSP1(char,te)
@@ -578,14 +587,6 @@ p_cint(regi,"co2","peoil","5")=0.1078133200;
 p_cint(regi,"co2","peoil","6")=0.1775748800;
 p_cint(regi,"co2","peoil","7")=0.2283105600;
 p_cint(regi,"co2","peoil","8")=0.4153983800;
-
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-*CG* set wind offshore, storage and grid to be the same as wind onshore (later should be integrated into input data)
-* main difference between onshore and offshore is the difference in f32_factorStorage
-fm_dataglob(char,"windoff") = fm_dataglob(char,"wind");
-fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
-fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
-$ENDIF.WindOff
 
 $IFTHEN.WindOff %cm_wind_offshore% == "0"
 ** historical installed capacity
