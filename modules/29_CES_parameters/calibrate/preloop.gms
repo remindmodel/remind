@@ -100,9 +100,7 @@ else
 
   !! Prices of intermediate production factors are all set to 1,
   !! To account for the chain rule multiplication above.
-  !! except on the level above the perfect substitutes if they are ppf_29.
-  !! Here, the level above gets the price, while the perfect substitutes below get 1.
-  loop ( cesOut2cesIn(in2,in) $ (NOT  ppf_29(in)),
+  loop ( cesOut2cesIn(in2,in),
     p29_CESderivative(t,regi_dyn29(regi),out,ipf_29(in2))$(
                                               p29_CESderivative(t,regi,out,in2) )
     = 1;
@@ -647,9 +645,8 @@ if (card(ppf_beyondcalib_29) >= 1, !! if there are any nodes in beyond calib
     );
 
 
-    !! Prices of intermediate production factors are all 1, except on the level
-    !! above the perfect substitutes if they are ppf_29
-    loop (cesOut2cesIn(in2,in)$(NOT ppf_beyondcalib_29(in) ),
+    !! Prices of intermediate production factors are all 1
+    loop (cesOut2cesIn(in2,in),
       p29_CESderivative(t,regi_dyn29(regi),out,ipf_beyond_29_excludeRoot(in2))$(
                                               p29_CESderivative(t,regi,out,in2) )
       = 1;
