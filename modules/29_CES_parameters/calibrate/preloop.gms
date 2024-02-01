@@ -349,6 +349,39 @@ pm_cesdata(t,regi_dyn29,in_29,"effGr") = 1;
 *** we compute thanks to the Euler equation the quantities of the ipf.
 *** we compute quantities for everything up to the last CES level inco.(lab,kap,en)
 
+!! Write to file
+if (sm_CES_calibration_iteration eq 1, !! first CES calibration iteration
+  put file_CES_calibration;
+
+  loop ((t,regi_dyn29(regi),in)$(    ppf_29(in)
+                                  OR sameas(in,"inco")
+                                  OR ppf_beyondcalib_29(in)
+                                  OR sameas(in,"enhb")
+                                  OR sameas(in,"enhgab")       ),
+    if ((ppf_29(in) OR sameas(in,"inco")),
+      put "%c_expname%", "target", t.tl, regi.tl, "quantity",   in.tl;
+      put pm_cesdata(t,regi,in,"quantity") /;
+    );
+  );
+
+  loop ((t_29hist(t),regi_dyn29(regi),ppf_beyondcalib_29(in)),
+    put "%c_expname%", "target", t.tl, regi.tl, "quantity", in.tl;
+    put pm_cesdata(t,regi,in,"quantity") /;
+  );
+
+$ifthen.subsectors "%industry%" == "subsectors"
+$ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
+  loop((t_29scen(t),regi_dyn29(regi),in)$(   ppfen_industry_dyn37(in)
+                                          OR ppfKap_industry_dyn37(in) ),
+    put "%c_expname%", "target", t.tl, regi.tl, "quantity", in.tl;
+    put pm_cesdata(t,regi,in,"quantity") /;
+  );
+$endif.industry_FE_target
+$endif.subsectors
+
+  putclose file_CES_calibration;
+);
+
 loop  ((t,cesRev2cesIO(counter,ipf_29(out)))$( NOT (  sameas(out,"inco")) ),
   pm_cesdata(t,regi_dyn29,out,"quantity")
   = sum(cesOut2cesIn(out,in),
