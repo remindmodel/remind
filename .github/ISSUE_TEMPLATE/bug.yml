@@ -1,0 +1,92 @@
+---
+name: Bug Report
+description: This template is for reporting bugs found in the REMIND model
+labels:
+  - bug
+  - remind
+assignees:
+  - LaviniaBaumstark
+body:
+  - type: markdown
+    attributes:
+      value: >
+        :warning: **Please note:** We welcome bug reports and will address them
+        promptly. However, support for setting up and running REMIND outside of
+        PIK is limited.
+  - type: textarea
+    id: user-environment
+    attributes:
+      label: Your environment
+      description: Tell us a bit about your computing environment. Please include the
+        following information. You can copy and paste the output of the commands
+        into the text box. Run all commands in a terminal/PowerShell session in
+        your REMIND root directory.
+      value: |
+        **REMIND version**
+        Run `cat CITATION.cff | grep ^version`
+
+        **R version**
+        On Linux/Mac run `R --version`
+        On Windows run `R.exe --version`
+
+        **Operating System**
+        On Linux run `lsb_release -a` or `cat /etc/os-release`
+        On Mac run `sw_vers`
+        On Windows run `systeminfo | findstr /B /C:"OS Name" /B /C:"OS Version"`
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: What did happen?
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce the Problem
+      description: Please provide detailed steps for reproducing the problem.
+      placeholder: |
+        e.g.:
+        1. Configured REMIND for run `SSP2-EU` ...
+        2. Started REMIND via `R start.R` ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Log Output
+      description: >
+        Any log output that will give us more context about the issue you
+        are encountering is much appreciated. Tip: You can attach screenshots or
+        log files by clicking this area to highlight it and then dragging files
+        in.
+    validations:
+      required: false
+  - type: checkboxes
+    id: access-to-resources
+    attributes:
+      label: Access to PIK/REMIND resources
+      description: Please tell us if you have access to the PIK cluster and/or the REMIND input data.
+      options:
+        - label: I have access to the PIK cluster
+        - label: I have access to the REMIND input data
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Please confirm the following
+      description: Please check the relevant boxes.
+      options:
+        - label: I have searched the existing issues
+        - label: I have provided detailed information about the bug
+        - label: I have provided steps to reproduce the issue
+        - label: I have provided information about my environment (OS)
