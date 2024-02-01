@@ -1,7 +1,6 @@
 ---
 name: Bug Report
 description: This template is for reporting bugs found in the REMIND model
-title: ""
 labels:
   - bug
   - remind
