@@ -330,15 +330,6 @@ $ENDIF.WindOff
 ;
 
 ***---------------------------------------------------------------------------
-*** EMF27 limits on fluctuating renewables, only turned on for special EMF27 and AWP 2 scenarios, not for SSP
-***---------------------------------------------------------------------------
-q32_limitSolarWind(t,regi)$( (cm_solwindenergyscen = 2) OR (cm_solwindenergyscen = 3) )..
-	vm_usableSeTe(t,regi,"seel","spv") + vm_usableSeTe(t,regi,"seel","wind") + vm_usableSeTe(t,regi,"seel","csp") 
-	=l=
-	0.2 * vm_usableSe(t,regi,"seel")
-;
-
-***---------------------------------------------------------------------------
 *** Calculation of share of electricity production of a technology:
 ***---------------------------------------------------------------------------
 q32_shSeEl(t,regi,teVRE)..

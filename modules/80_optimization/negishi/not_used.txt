@@ -67,3 +67,4 @@ vm_prodPe,                         variable,    ??
 sm_CES_calibration_iteration,      scalar,      only needed during calibration which is not support in negishi mode
 cm_maxFadeOutPriceAnticip,         parameter,   ???
 
+cm_LearningSpillover,input,learning spillover only implemented in nash

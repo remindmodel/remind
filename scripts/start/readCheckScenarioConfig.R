@@ -59,6 +59,16 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
       whitespaceErrors <- whitespaceErrors + sum(haswhitespace)
     }
   }
+  missingRealizations <- 0
+  modules <- gms::getModules(file.path(remindPath, "modules"))
+  for (m in intersect(rownames(modules), colnames(scenConf))) {
+    missingRealiz <- setdiff(unique(scenConf[, m]), c(NA, strsplit(modules[m, "realizations"], ",")[[1]]))
+    if (length(missingRealiz) > 0) {
+      warning("For module ", m, ", the undefined realizations ", paste0(missingRealiz, collapse = ", "),
+              " are used by these scenarios: ", paste(rownames(scenConf)[scenConf[,m] %in% missingRealiz], collapse = ", "))
+      missingRealizations <- missingRealizations + length(missingRealiz)
+    }
+  }
 
   # fill empty cells with values from scenario written in copyConfigFrom cell
   copyConfigFromErrors <- 0
@@ -110,7 +120,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   scenConf[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenConf)]] <- NA
 
   # collect errors
-  errorsfound <- sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors
+  errorsfound <- sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors + missingRealizations
 
   # check column names
   knownColumnNames <- c(names(cfg$gms), setdiff(names(cfg), "gms"), names(path_gdx_list),
@@ -144,6 +154,9 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_DAC_eff" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/1487",
        "cm_peakBudgYr" = "Rename to c_peakBudgYr, see https://github.com/remindmodel/remind/pull/1488",
        "cm_taxCO2inc_after_peakBudgYr" = "Rename to c_taxCO2inc_after_peakBudgYr, see https://github.com/remindmodel/remind/pull/1488",
+       "c_solscen" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/1515",
+       "cm_regNetNegCO2" = "Deleted, not used, see https://github.com/remindmodel/remind/pull/1517",
+       "cm_solwindenergyscen"= "Deleted, not used, see https://github.com/remindmodel/remind/pull/1532",
      NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       if (testmode) {

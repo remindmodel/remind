@@ -5,7 +5,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 calculate_CES_configuration <- function(cfg, check = FALSE) {
-    CESstring <- paste0("indu_", cfg$gms$industry,"-",
+    CESstring <- paste0("indu_", cfg$gms$industry,ifelse(cfg$gms$cm_subsec_model_steel=="processes","pbs",""),"-",
                         "buil_", cfg$gms$buildings,"-",
                         "tran_", cfg$gms$transport,"-",
                         "POP_",  cfg$gms$cm_POPscen, "-",

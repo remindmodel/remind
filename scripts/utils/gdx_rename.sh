@@ -112,7 +112,6 @@ if (length(args) == 1) {
     v_sedem     = 'v_demSe',
 #-- Power module creation - version 7452 -----
     q_limitCapTeChp		= 'q32_limitCapTeChp',
-    q_limitSolarWind	= 'q32_limitSolarWind',
     q_shSeEl			= 'q32_shSeEl',
     q_shStor			= 'q32_shStor',
     q_storloss			= 'q32_storloss',

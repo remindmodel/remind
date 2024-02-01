@@ -7,9 +7,9 @@
 *** SOF ./modules/31_fossil/exogenous/datainput.gms
 
 p31_fix_costfu_ex(tall,regi,enty) = 0;
-$include "./modules/31_fossil/exogenous/input/p31_fix_costfu_ex.put";
+*** $include "./modules/31_fossil/exogenous/input/p31_fix_costfu_ex.put";  
 p31_fix_fuelex(tall,regi,enty,rlf) = 0;
-$include "./modules/31_fossil/exogenous/input/p31_fix_fuelex.put";
+*** $include "./modules/31_fossil/exogenous/input/p31_fix_fuelex.put";
 
 *LB* preliminary dummy for $ condition in core/equations.gms
 p31_grades(regi,"xi3",enty,rlf) = 0.0001;

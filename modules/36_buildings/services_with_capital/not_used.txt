@@ -26,3 +26,4 @@ sm_trillion_2_non,input,questionnaire
 sm_TWa_2_kWh,input,questionnaire
 pm_tau_ces_tax,input,questionnaire
 pm_dt,parameter,???
+vm_prodSe,input,questionnaire
