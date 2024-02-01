@@ -213,15 +213,6 @@ q32_operatingReserve(t,regi)$(t.val ge 2010)..
 			pm_data(regi,"flexibility",teStor) * (vm_prodSe(t,regi,enty,"seel",teVRE)-v32_storloss(t,regi,teVRE)) ) )
 ;
 
-***---------------------------------------------------------------------------
-*** EMF27 limits on fluctuating renewables, only turned on for special EMF27 and AWP 2 scenarios, not for SSP
-***---------------------------------------------------------------------------
-q32_limitSolarWind(t,regi)$( (cm_solwindenergyscen = 2) OR (cm_solwindenergyscen = 3) )..
-	vm_usableSeTe(t,regi,"seel","spv") + vm_usableSeTe(t,regi,"seel","wind") + vm_usableSeTe(t,regi,"seel","csp") 
-	=l=
-	0.2 * vm_usableSe(t,regi,"seel")
-;
-
 ***----------------------------------------------------------------------------
 *** FS: calculate flexibility adjustment used in flexibility tax for technologies with electricity input 
 ***----------------------------------------------------------------------------

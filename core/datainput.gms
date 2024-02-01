@@ -1123,21 +1123,6 @@ p_inco0(ttot,regi,teRegTechCosts)  = (1 + p_tkpremused(regi,teRegTechCosts) ) * 
 *** take region average p_tkpremused for global convergence price
 fm_dataglob("inco0",te)       = (1 + sum(regi, p_tkpremused(regi,te))/sum(regi, 1)) * fm_dataglob("inco0",te);
 
-if( cm_solwindenergyscen = 2,
-    loop(te$( sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind") ),
-        pm_data(regi,"learn",te)     = 0.8 * pm_data(regi,"learn",te);
-    );
-    pm_data(regi,"incolearn","csp")  = 0.7 * pm_data(regi,"incolearn","csp") ;
-    pm_data(regi,"incolearn","spv")  = 0.6 * pm_data(regi,"incolearn","spv") ;
-    pm_data(regi,"incolearn","wind") = 0.3 * pm_data(regi,"incolearn","wind");
-);
-
-if( cm_solwindenergyscen = 3,
-    loop(te$( sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind") ),
-        pm_data(regi,"learn",te)     = 0;
-    );
-);
-
 ***calculate default floor costs for learning technologies
 pm_data(regi,"floorcost",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
 

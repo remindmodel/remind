@@ -760,16 +760,6 @@ parameter
 *' *  (4): so2 tax intermediary between 1 and 2, multiplying (1) tax by the ratio (3) and (2)
 *'
 parameter
-  cm_solwindenergyscen      "scenario for fluctuating renewables, 1 is reference, 2 is pessimistic with limits to fluctuating SE el share"
-;
-  cm_solwindenergyscen  = 1;         !! def = 1  !! regexp = [0-4]
-*' *  (0) advanced - cheap investment costs, higher learning rates for pv, csp and wind
-*' *  (1) reference - normal investment costs & learning rates for pv, csp and wind     EMF27-3nd round Adv scenario
-*' *  (2) pessimistic EMF27 and AWP 2 - share of PV, wind&CSP limited to 20%. Learning rates reduced by 20%, floor costs increased by 40%. EMF27-3nd round Cons scenario
-*' *  (3) frozen - no learning after 2010, share of PV, wind&CSP limited to 20%. EMF27-3rd round Frozen scenario
-*' *  (4) pessimistic SSP: pessimistic techno-economic assumptions
-*'
-parameter
   c_techAssumptScen         "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
 ;
   c_techAssumptScen     = 1;         !! def = 1  !! regexp = [1-3]
