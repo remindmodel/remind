@@ -4,5 +4,7 @@ test_that("readDefaultConfig works", {
   expect_identical(intersect(names(cfg), names(cfg$gms)), character(0))
   # make sure there is no cm_test and c_test simultaneously
   shortnames <- tolower(gsub("^[a-zA-Z][a-zA-Z]?_", "", names(cfg$gms)))
-  expect_equal(shortnames[duplicated(shortnames)], character(0))
+  duplicates <- names(cfg$gms)[duplicated(shortnames) | duplicated(shortnames, fromLast = TRUE)]
+  expect_equal(duplicates, character(0),
+               label = paste("Duplicated variable names:", paste(duplicates, collapse = ", ")))
 })
