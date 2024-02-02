@@ -1,0 +1,47 @@
+---
+name: Feature Request
+description: Suggest a new feature or enhancement for the REMIND model.
+labels: 
+  - enhancement
+  - remind
+assignees:
+  - LaviniaBaumstark
+body:
+- type: markdown
+  attributes:
+    value: |
+      Thanks for taking the time to suggest a new feature or enhancement!
+- type: input
+  id: feature-summary
+  attributes:
+    label: Feature Summary
+    description: Provide a brief summary of the feature or enhancement.
+    placeholder: 'e.g., Add a new model parameter to handle X...'
+  validations:
+    required: true
+- type: textarea
+  id: feature-benefit
+  attributes:
+    label: Benefit
+    description: Please explain the benefit of this feature.
+    placeholder: 'This feature would improve...'
+  validations:
+    required: true
+- type: textarea
+  id: feature-details
+  attributes:
+    label: Feature Details
+    description: Please provide any additional details or context about the feature.
+    placeholder: 'The feature works by...'
+  validations:
+    required: true
+- type: checkboxes
+  id: terms
+  attributes:
+    label: Please confirm the following
+    description: Please check the relevant boxes
+    options:
+      - label: I have searched to see if this feature has been requested before.
+        required: true
+      - label: I have provided details and context for the feature.
+        required: true
