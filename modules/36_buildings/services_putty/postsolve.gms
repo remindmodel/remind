@@ -8,10 +8,10 @@
 
 
 *** calculation of FE Buildings Prices (useful for internal use and reporting purposes)
-pm_FEPrice(ttot,regi,entyFE,"build",emiMkt)$(abs (qm_budget.m(ttot,regi)) gt sm_eps) = 
-       q36_demFeBuild.m(ttot,regi,entyFE,emiMkt) / qm_budget.m(ttot,regi);
+pm_FEPrice(ttot,regi,entyFe,"build",emiMkt)$(abs (qm_budget.m(ttot,regi)) gt sm_eps) = 
+       q36_demFeBuild.m(ttot,regi,entyFe,emiMkt) / qm_budget.m(ttot,regi);
 
-p36_fePrice(t,regi_dyn36(regi),entyFe)=pm_FEPrice(t,regi,entyFE,"build","ES");
+p36_fePrice(t,regi_dyn36(regi),entyFe)=pm_FEPrice(t,regi,entyFe,"build","ES");
 
 loop (se2fe(entySe,entyFe,te),
 p36_fePrice(t,regi_dyn36(regi),entyFe)$(abs (qm_budget.m(t,regi)) gt sm_eps) = abs ( qm_balFe.m(t,regi,entySe,entyFe,te)) / abs (qm_budget.m(t,regi));

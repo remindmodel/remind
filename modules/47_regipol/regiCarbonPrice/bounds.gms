@@ -166,9 +166,9 @@ $endIf.cm_VREminShare
 *' It is used, for example, to hit specific, steel and cement production trajectories in policy scenarios
 *' for project-specific scenarios. It is not necessarily a policy but a different (exogenuous) assumption 
 *' about future production trajectories than what REMIND produces endogenuously. 
-$ifthen.ExogDemScen NOT "%cm_exogDem_scen%" == "off"
+$ifthen.exogDemScen NOT "%cm_exogDem_scen%" == "off"
 vm_cesIO.fx(t,regi,in)$(pm_exogDemScen(t,regi,"%cm_exogDem_scen%",in))=pm_exogDemScen(t,regi,"%cm_exogDem_scen%",in);
-$endif.ExogDemScen
+$endif.exogDemScen
 
 *' @stop
 

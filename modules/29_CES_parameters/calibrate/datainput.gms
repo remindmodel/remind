@@ -65,10 +65,10 @@ loop (ue_29(ppf_29(out)),
 
   loop (cesOut2cesIn(out,in),
     if (ppfKap(in), sm_tmp  = sm_tmp  + 1);
-    if (ppfen(in),  sm_tmp2 = sm_tmp2 + 1);
+    if (ppfEn(in),  sm_tmp2 = sm_tmp2 + 1);
   );
 
-  !! in case one input is ppfen/FE and the other Kap
+  !! in case one input is ppfEn/FE and the other Kap
   if (sm_tmp eq 1 AND sm_tmp2 eq 1,
     ue_fe_kap_29(out) = YES;
   else
@@ -311,8 +311,8 @@ if ( (sm_CES_calibration_iteration gt 1 OR s29_CES_calibration_new_structure eq 
 Execute_Loadpoint 'input'  p29_cesIOdelta_load = vm_cesIOdelta.l;
 );
 
-*** DEBUG: Load vm_deltacap
-Execute_Loadpoint 'input' vm_deltacap;
+*** DEBUG: Load vm_deltaCap
+Execute_Loadpoint 'input' vm_deltaCap;
 
 *** Load exogenous Labour, GDP
 pm_cesdata(t,regi,"inco","quantity") = pm_gdp(t,regi);
@@ -421,7 +421,7 @@ $endif.build_H2_offset
 loop((t,regi,in)$(    (ppf(in) OR ppf_29(in))
                   AND pm_cesdata(t,regi,in,"quantity") lt 1e-5
                   AND NOT ppfen_industry_dyn37(in)
-                  AND NOT ppfkap_industry_dyn37(in)
+                  AND NOT ppfKap_industry_dyn37(in)
                   AND NOT SAMEAS(in,"feh2i")
                   AND NOT SAMEAS(in,"feh2b")        ),
   pm_cesdata(t,regi,in,"offset_quantity")  = pm_cesdata(t,regi,in,"quantity")  - 1e-5;
@@ -437,7 +437,7 @@ if( sm_CES_calibration_iteration eq 1 AND s29_CES_calibration_new_structure eq 1
 *** In case there is one capital variable together with an energy variable in a same CES, give them the same efficiency growth pathways
 
 loop (ue_fe_kap_29(out),
-        loop ((cesOut2cesIn(out,in),cesOut2cesIn2(out,in2))$(ppfKap(in) AND ppfen(in2)),
+        loop ((cesOut2cesIn(out,in),cesOut2cesIn2(out,in2))$(ppfKap(in) AND ppfEn(in2)),
         p29_efficiency_growth(t,regi,in) = p29_efficiency_growth(t,regi,in2);
         );
     );

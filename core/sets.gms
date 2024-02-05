@@ -2135,14 +2135,14 @@ macSector2emiMkt(all_enty,all_emiMkt)  "mapping mac sectors to emission markets"
         co2cement_process.ETS
 /
 
-entyFE2sector2emiMkt_NonEn(all_enty,emi_sectors,all_emiMkt)                     "combinations of FE type, sector and emissions markets existing for FE non-energy use"
+entyFe2sector2emiMkt_NonEn(all_enty,emi_sectors,all_emiMkt)                     "combinations of FE type, sector and emissions markets existing for FE non-energy use"
 /
   fesos . indst . ETS
   fehos . indst . ETS
   fegas . indst . ETS
 /
 
-ccsCo2(all_enty)    "only cco2 (???)"
+ccsCO2(all_enty)    "only cco2 (???)"
 /
         cco2
 /
@@ -2353,8 +2353,8 @@ alias(all_te,all_te2);
 alias(te,te2,te3);
 alias(all_enty,all_enty2);
 alias(enty,enty2,enty3,enty4,enty5,enty6,enty7);
-alias(entyPE,entyPE2);
-alias(entySE,entySE2);
+alias(entyPe,entyPE2);
+alias(entySe,entySE2);
 alias(entyFe,entyFe2);
 alias(teEs,teEs2);
 alias(esty,esty2);

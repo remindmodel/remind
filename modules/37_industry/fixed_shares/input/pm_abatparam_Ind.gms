@@ -8,7 +8,7 @@
 
 loop ((ttot,steps)$( ttot.val ge 2005 ),
 
-  sm_tmp = steps.val * sm_dmac / sm_C_2_CO2;   !! CO2 price at MAC step [$/tCO2] 
+  sm_tmp = steps.val * sm_dmac / sm_c_2_co2;   !! CO2 price at MAC step [$/tCO2] 
 
 $ifthen NOT "%cm_Industry_CCS_markup%" == "off"
   sm_tmp = sm_tmp / %cm_Industry_CCS_markup%;

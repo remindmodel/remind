@@ -288,7 +288,7 @@ $endif.cm_subsec_model_steel
     ue_cement, ue_chemicals, ue_steel_primary, ue_steel_secondary, ue_otherInd
   /
 
-  fe2ppfen37(all_enty,all_in)   "match ESM entyFE to ppfen"
+  fe2ppfEn37(all_enty,all_in)   "match ESM entyFe to ppfen"
   /
     fesos . (feso_cement, feso_chemicals, feso_otherInd)
     fehos . (feli_cement, feli_chemicals, feli_otherInd)
@@ -333,7 +333,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 $endif.cm_subsec_model_steel
   /
 
-entyFECC37(all_enty)   "FE carriers in industry which can be used for CO2 capture"
+entyFeCC37(all_enty)   "FE carriers in industry which can be used for CO2 capture"
   /
     fesos
     fehos
@@ -579,7 +579,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-fe2ppfen_no_ces_use(all_enty,all_in)   "Match ESM entyFE to ppfen that are not used in the CES tree, but for datainput for process-bases industry"
+fe2ppfen_no_ces_use(all_enty,all_in)   "Match ESM entyFe to ppfen that are not used in the CES tree, but for datainput for process-bases industry"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     fesos . feso_steel
@@ -600,12 +600,12 @@ ipf_industry_dyn37(in_industry_dyn37)                                  = YES;
 ipf_industry_dyn37(ppf_industry_dyn37)                                 = NO;
 in(in_industry_dyn37)                                                  = YES;
 ppfKap(ppfKap_industry_dyn37)                                          = YES;
-ppfen(ppfen_industry_dyn37)                                            = YES;
+ppfEn(ppfen_industry_dyn37)                                            = YES;
 cesOut2cesIn(ces_industry_dyn37)                                       = YES;
-fe2ppfen(fe2ppfen37)                                                   = YES;
+fe2ppfEn(fe2ppfEn37)                                                   = YES;
 fe_tax_sub_sbi(fe_tax_sub37)                                           = YES;
 pf_eff_target_dyn37(ppfen_industry_dyn37)                              = YES;
-pf_quan_target_dyn37(ppfkap_industry_dyn37)                            = YES;
+pf_quan_target_dyn37(ppfKap_industry_dyn37)                            = YES;
 pf_industry_relaxed_bounds_dyn37(ppf_industry_dyn37)                   = YES;
 pf_industry_relaxed_bounds_dyn37(industry_ue_calibration_target_dyn37) = YES;
 
@@ -626,5 +626,5 @@ alias(opmoPrc,opmoPrc2);
 alias(route,route2);
 
 alias(secInd37_2_pf,secInd37_2_pf2);
-alias(fe2ppfen37,fe2ppfen37_2);
+alias(fe2ppfEn37,fe2ppfEn37_2);
 *** EOF ./modules/37_industry/subsectors/sets.gms

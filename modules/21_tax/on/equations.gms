@@ -185,7 +185,7 @@ v21_taxrevTech(t,regi)
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevXport(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevXport(t,regi) =e= SUM(tradePe(enty), p21_tau_XpRes_tax(t,regi,enty) * vm_Xport(t,regi,enty))
+v21_taxrevXport(t,regi) =e= SUM(tradePe(enty), p21_tau_xpres_tax(t,regi,enty) * vm_Xport(t,regi,enty))
                             - p21_taxrevXport0(t,regi);
 
 ***---------------------------------------------------------------------------

@@ -8,7 +8,7 @@
 
 *BS* 2019-05-23 (merged from AD SDP-transport gitlab, changed SSP1 -> SDP)
 *AD* 2019-04-11 let's be a little more ambitious with respect to electricity shares in SDP
-$ifthen.cm_GDPScen %cm_GDPScen% == "gdp_SDP"
+$ifthen.cm_GDPscen %cm_GDPscen% == "gdp_SDP"
 
 loop(regi,
   loop(t$(t.val>2020),
@@ -59,7 +59,7 @@ loop(regi,
   );
 );
 
-$else.cm_GDPScen
+$else.cm_GDPscen
 
 *RP 2012-04-01 lower bounds on the share of electric and hydrogen cars so that the solver does not overlook these technologies.
 *** The stated numbers are given in %.
@@ -134,7 +134,7 @@ vm_cap.up(t,regi,"apCarDiEffH2T","1")$(t.val < 2030) = 0.0001;
 vm_cap.lo(t,regi,"apCarDiEffT","1")$(t.val > 2090) = 0.001;
 vm_cap.lo(t,regi,"apCarDiEffH2T","1")$(t.val > 2090) = 0.001;
 
-$endif.cm_GDPScen
+$endif.cm_GDPscen
 
 $ifthen.shLDVsales not "%cm_share_LDV_sales%" == "off"
 loop((ttot,ttot2,ext_regi,te,bound_type)$(p35_shLDVSales_bound(ttot,ttot2,ext_regi,te,bound_type) AND (NOT(all_regi(ext_regi)))), !!for region groups
