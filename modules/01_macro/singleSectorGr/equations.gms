@@ -113,18 +113,6 @@ q01_cesIO(t,regi,ipf(out))..
 ;
 
 ***---------------------------------------------------------------------------
-*' Constraints for perfect complements in the CES tree
-***---------------------------------------------------------------------------
-q01_prodCompl(t,regi,in,in2) $ (complements_ref(in,in2) ) ..
-    vm_cesIO(t,regi,in)
-  =e=
-    pm_cesdata(t,regi,in2,"compl_coef")
-  * vm_cesIO(t,regi,in2)
-;
-
-
-
-***---------------------------------------------------------------------------
 *' The capital stock is calculated recursively. Its amount in the previous time
 *' step is devaluated by an annual depreciation factor and enlarged by investments.
 *' Both depreciation and investments are expressed as annual values,

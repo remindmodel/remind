@@ -112,18 +112,6 @@ loop ((cesRev2cesIO(counter,in),cesOut2cesIn(in,in2)),
 *** Aliasing of mappings is not available in all GAMS versions
 cesOut2cesIn2(out,in) = cesOut2cesIn(out,in);
 
-*** Computing the reference complentary factors
-$offOrder
-sm_tmp = 0;
-loop (cesOut2cesIn(out,in) $ in_complements(in),
-  if ( NOT ord(out) eq sm_tmp,
-  sm_tmp = ord(out);
-  loop (cesOut2cesIn2(out,in2),
-        complements_ref(in,in2) = YES;
-        );
-     );
-     );
-
 $onOrder
 *** TODO this should be reworked with Robert when revising the transport module
 loop(ue2ppfen(enty,ppfEn),

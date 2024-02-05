@@ -31,8 +31,6 @@ ppfKap(all_in)                        "Primary production factors capital"   / k
 ppfEn(all_in)                         "Primary production factors energy"
 
 in_enerSerAdj(all_in)                 "Energy services factors which should be constrained by adjustment costs" //
-in_complements(all_in)                "Factors which are perfect complements"  //
-complements_ref(all_in,all_in)        "Correspondence between complementary factors. Necessary to have a reference factor for the constraints equations"
 ;
 
 alias(cesOut2cesIn,cesOut2cesIn2,cesOut2cesIn3);

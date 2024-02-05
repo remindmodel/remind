@@ -241,18 +241,6 @@
 *' approach is taken: All ppfen (not ppfkap) input prices are mutliplied with the same factor (the ratio of prescribed
 *' to computed UE quantity, minus the ppfkap share), such that the quantity trajectories are met for UE.
 *'
-*' ##### Perfectly complementary factors
-*'
-*' To implement perfectly complementary factors, you should include the factors in the set `in_complements`. In addition,
-*' the elasticity of substitution between these factors should be set to `INF` (which is counter-intuitive). Prices of
-*' complementary inputs are set to 1, so that the output is equal to the sum of inputs (reason why the substitution
-*' elasticity should be INF), which makes sense for energetic entities. It would however be possible to change this
-*' (by choosing another elasticity of substitution) without harming the calibration.
-*'
-*' In the model, the complementary factors are subject to a constraint (`q01_prodCompl`), so that
-*' each variable is computed by multiplying a key variable of the CES function by a given factor. The calibration computes
-*' this factor for each period.
-*'
 
 
 *####################### R SECTION START (PHASES) ##############################
