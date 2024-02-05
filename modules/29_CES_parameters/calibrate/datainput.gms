@@ -344,7 +344,7 @@ $ifthen.indst_H2_offset "%industry%" == "fixed_shares"
 
 *** Assuming feh2i minimun levels as 1% of fegai to avoid CES numerical calibration issues and allow more aligned efficiencies between gas and h2
 loop ((t,regi)$(pm_cesdata(t,regi,"feh2i","quantity") lt (0.01 * pm_cesdata(t,regi,"fegai","quantity"))),
-	pm_cesdata(t,regi,"feh2i","offset_quantity") = - (0.01 * pm_cesdata(t,regi,"fegai","quantity") - pm_cesdata(t,regi,"feh2i","quantity"));
+  pm_cesdata(t,regi,"feh2i","offset_quantity") = - (0.01 * pm_cesdata(t,regi,"fegai","quantity") - pm_cesdata(t,regi,"feh2i","quantity"));
   pm_cesdata(t,regi,"feh2i","quantity") = 0.01 * pm_cesdata(t,regi,"fegai","quantity");
 );
 
@@ -369,7 +369,7 @@ loop ((t,regi),
   = - (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
       * pm_cesdata(t,regi,"fegab","quantity")
     - pm_cesdata(t,regi,"feh2b","quantity");
-	pm_cesdata(t,regi,"feh2b","quantity")
+      pm_cesdata(t,regi,"feh2b","quantity")
   = (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
       * pm_cesdata(t,regi,"fegab","quantity");
 );
