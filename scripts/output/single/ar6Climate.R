@@ -48,6 +48,7 @@ climateAssessmentEmi  <- normalizePath(file.path(outputdir, paste0("ar6_climate_
                                        mustWork = FALSE)
 # TODO: REMOVE THE NEXT LINE. piamInterfaces should be installed as a package on the cluster
 devtools::load_all("/p/tmp/tonnru/piamInterfaces/")
+devtools::load_all("/p/tmp/tonnru/quitte/")
 climateAssessmentYaml <- file.path(system.file(package = "piamInterfaces"),
                                    "iiasaTemplates", "climate_assessment_variables.yaml")
 
@@ -212,9 +213,8 @@ capture.output(cat(logmsg), file = logFile, append = TRUE)
 
 ############################# APPEND TO REMIND MIF #############################
 # Filter only periods used in REMIND, so that it doesn't expand the original mif
-usePeriods <- unique(read.quitte(remindReportingFile)$period)
-# TODO: Get years from someplace else? Above approach takes a long time, instead maybe:
-# sort(as.integer(colnames(climateAssessmentInputData %>% select(matches("^[0-9]")))))
+#usePeriods <- unique(read.quitte(remindReportingFile)$period)
+usePeriods <- as.numeric(grep("[0-9]+", quitte::read_mif_header(remindReportingFile)$header, value = TRUE))
 
 # climateAssessmentData <- read.quitte(climateAssessmentOutput)
 # climateAssessmentData <- climateAssessmentData[climateAssessmentData$period %in% usePeriods, ]
