@@ -335,7 +335,7 @@ loop (ttot$( ttot.val ge 2005),
 
 display "after all but entrp_frgt_lo smoothening", pm_cesdata;
 
-display "after price smoothing",  cesOut2cesIn_below, pm_cesdata;
+display "after price smoothing",  cesOut2cesIn_below;
 
 ***_____________________________ END OF:  1 - CALCULATE PRICES _____________________________
 
@@ -484,14 +484,14 @@ if (smax((t,regi_dyn29(regi)),
                "value exceeds inco <<<" /;
   loop ((t,regi_dyn29(regi)),
     sm_tmp   !! by how much does en + kap exceed inco?
-    = ( ( pm_cesdata(t,regi,"en","quantity")
-        * pm_cesdata(t,regi,"en","price")
-    )
-      + ( pm_cesdata(t,regi,"kap","quantity")
-        * pm_cesdata(t,regi,"kap","price")
-    )
+    = ( (  pm_cesdata(t,regi,"en","quantity")
+         * pm_cesdata(t,regi,"en","price")
+        )
+      + (  pm_cesdata(t,regi,"kap","quantity")
+         * pm_cesdata(t,regi,"kap","price")
+        )
       )
-    / pm_cesdata(t,regi,"inco","quantity");
+     / pm_cesdata(t,regi,"inco","quantity");
 
     if (sm_tmp > 1,
       put "  ", t.tl, " ", regi.tl, "   ",
@@ -505,14 +505,14 @@ if (smax((t,regi_dyn29(regi)),
       = ( pm_cesdata(t,regi,"inco","quantity")
         - ( pm_cesdata(t,regi,"lab","quantity")
           * pm_cesdata(t,regi,"lab","price")
-      )
+          )
         )
       / ( ( pm_cesdata(t,regi,"en","quantity")
           * pm_cesdata(t,regi,"en","price")
-      )
+          )
         + ( pm_cesdata(t,regi,"kap","quantity")
           * pm_cesdata(t,regi,"kap","price")
-      )
+          )
         );
 
       pm_cesdata(t,regi,"en","price")
@@ -540,28 +540,28 @@ loop (cesOut2cesIn("inco",in)$( NOT sameas(in,"lab") ),
     put logfile, ">>> Warning: Rescaling ", in.tl, " prices as its value ",
                  "exceedes inco <<<" /;
     loop ((t,regi_dyn29(regi)),
-      sm_tmp
-      = pm_cesdata(t,regi,in,"quantity")
-      * pm_cesdata(t,regi,in,"price")
-      / pm_cesdata(t,regi,"inco","quantity");
+           sm_tmp
+           = pm_cesdata(t,regi,in,"quantity")
+           * pm_cesdata(t,regi,in,"price")
+           / pm_cesdata(t,regi,"inco","quantity");
 
-      if (sm_tmp gt 1,
-        put "  ", t.tl, " ", regi.tl, in.tl:>4, "   ",
-         pm_cesdata(t,regi,in,"quantity"), " x ",
-         pm_cesdata(t,regi,in,"price"), " > ",
-         pm_cesdata(t,regi,"inco","quantity"), " -> ";
+          if (sm_tmp gt 1,
+              put "  ", t.tl, " ", regi.tl, in.tl:>4, "   ",
+               pm_cesdata(t,regi,in,"quantity"), " x ",
+               pm_cesdata(t,regi,in,"price"), " > ",
+               pm_cesdata(t,regi,"inco","quantity"), " -> ";
 
-        pm_cesdata(t,regi,in,"price")
-    = ( pm_cesdata(t,regi,"inco","quantity")
-      - sum(cesOut2cesIn2("inco",in2)$( NOT sameas(in,in2) ),
-          pm_cesdata(t,regi,in2,"quantity")
-        * pm_cesdata(t,regi,in2,"price")
-        )
-      )
-    / pm_cesdata(t,regi,in,"quantity");
+               pm_cesdata(t,regi,in,"price")
+            = ( pm_cesdata(t,regi,"inco","quantity")
+              - sum(cesOut2cesIn2("inco",in2)$( NOT sameas(in,in2) ),
+                    pm_cesdata(t,regi,in2,"quantity")
+                  * pm_cesdata(t,regi,in2,"price")
+                )
+               )
+             / pm_cesdata(t,regi,in,"quantity");
 
-    put pm_cesdata(t,regi,in,"price") /;
-      );
+            put pm_cesdata(t,regi,in,"price") /;
+         );
     );
     putclose logfile, " " /;
   );
@@ -662,13 +662,13 @@ if (card(ppf_beyondcalib_29) >= 1, !! if there are any nodes in beyond calib
       ** (1 - p29_cesdata_load(t,regi,out,"rho"))
 
       * exp(
-        log(
-        p29_cesdata_load(t,regi,in,"eff")
-        * p29_effGr(t,regi,in)
-        * ( p29_cesIO_load(t,regi,in)
-          )
-        )
-        * (p29_cesdata_load(t,regi,out,"rho") - 1));
+           log(
+                p29_cesdata_load(t,regi,in,"eff")
+              * p29_effGr(t,regi,in)
+              * p29_cesIO_load(t,regi,in)
+           )
+        * (p29_cesdata_load(t,regi,out,"rho") - 1)
+        );
 
     !! Propagate price down the CES tree
     loop ((cesLevel2cesIO(counter,in),cesOut2cesIn(in,in2),cesOut2cesIn2(in2,in3)),
@@ -906,11 +906,11 @@ $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
 *** Abort if any industry EEK value is lower than subsector output quantity
 sm_tmp = smin((t,regi_dyn29(regi),
                cesOut2cesIn(ue_industry_dyn37(out),ppfKap(in))),
-       pm_cesdata(t,regi,out,"quantity")
-     - ( pm_cesdata(t,regi,in,"quantity")
-       * pm_cesdata(t,regi,in,"price")
-       )
-    );
+                   pm_cesdata(t,regi,out,"quantity")
+                - (  pm_cesdata(t,regi,in,"quantity")
+                   * pm_cesdata(t,regi,in,"price")
+                  )
+         );
 if (0 gt sm_tmp,
   put logfile,  "Error in industry FE price rescaling: ",
                 "EEK value exceeds subsector output quantity" /;
@@ -919,8 +919,8 @@ if (0 gt sm_tmp,
          cesOut2cesIn(ue_industry_dyn37(out),ppfKap(in))),
     sm_tmp = pm_cesdata(t,regi,out,"quantity")
            - ( pm_cesdata(t,regi,in,"quantity")
-         * pm_cesdata(t,regi,in,"price")
-         );
+             * pm_cesdata(t,regi,in,"price")
+             );
     if (0 gt sm_tmp,
       put t.tl, ".", regi.tl, "   ", out.tl:>20,
           pm_cesdata(t,regi,out,"quantity"):>10:4, " < ",
@@ -1106,9 +1106,9 @@ loop ((out,in,in2,t)$((pm_cesdata_sigma(t,out) eq -1)
                                     AND ( ppfKap(in) AND ( NOT ppfKap(in2)))
                                     AND (sameAs(t, "2015") OR sameAs(t, "2050") OR sameAs(t, "2100"))) ,
 
-       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, out.tl   , "quantity", regi.tl, ( pm_cesdata(t,regi,out,"quantity") ) /;
-       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, in.tl , "quantity", regi.tl, ( pm_cesdata(t,regi,in,"quantity") ) /;
-       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, in2.tl  , "quantity", regi.tl, ( pm_cesdata(t,regi,in2,"quantity") ) /;
+       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, out.tl   , "quantity", regi.tl, pm_cesdata(t,regi,out,"quantity") /;
+       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, in.tl , "quantity", regi.tl, pm_cesdata(t,regi,in,"quantity") /;
+       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, in2.tl  , "quantity", regi.tl, pm_cesdata(t,regi,in2,"quantity") /;
 
        put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in.tl , "eff", regi.tl, pm_cesdata(t,regi,in,"eff") /;
        put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in2.tl  , "eff", regi.tl, pm_cesdata(t,regi,in2,"eff") /;
