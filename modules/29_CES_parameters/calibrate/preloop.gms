@@ -775,11 +775,10 @@ $endif.subsectors
       put " " /;
 
       loop (cesOut2cesIn(out,in),
-           put pm_cesdata.tn(t,regi,in,"quantity"), " = ";
-           put pm_cesdata(t,regi,in,"quantity") /;
-
-           put pm_cesdata.tn(t,regi,in,"price"), " = ";
-           put pm_cesdata(t,regi,in,"price") /;
+        put pm_cesdata.tn(t,regi,in,"quantity"), " = ";
+        put pm_cesdata(t,regi,in,"quantity") /;
+        put pm_cesdata.tn(t,regi,in,"price"), " = ";
+        put pm_cesdata(t,regi,in,"price") /;
       );
 
       execute_unload "abort.gdx";
@@ -903,11 +902,12 @@ $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
 
 *** Abort if any industry EEK value is lower than subsector output quantity
 sm_tmp = smin((t,regi_dyn29(regi),
-               cesOut2cesIn(ue_industry_dyn37(out),ppfKap(in))),
-                  pm_cesdata(t,regi,out,"quantity")
-                - ( pm_cesdata(t,regi,in,"quantity")
-                  * pm_cesdata(t,regi,in,"price")
-                  )
+               cesOut2cesIn(ue_industry_dyn37(out),ppfKap(in))
+               ),
+               pm_cesdata(t,regi,out,"quantity")
+            - ( pm_cesdata(t,regi,in,"quantity")
+              * pm_cesdata(t,regi,in,"price")
+              )
          );
 if (0 gt sm_tmp,
   put logfile,  "Error in industry FE price rescaling: ",
