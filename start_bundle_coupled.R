@@ -182,11 +182,6 @@ if (any(! file.exists(c(path_settings_coupled, path_settings_remind))) ||
   stop("Missing files or directories, see in red above.")
 }
 
-if ("--gamscompile" %in% flags && ! file.exists("input/source_files.log")) {
-  message("\n### Input data missing, need to compile REMIND first (2 min.)\n")
-  system("Rscript start.R config/tests/scenario_config_compile.csv")
-}
-
 ####################################################
 ############## F U N C T I O N S ###################
 ####################################################
