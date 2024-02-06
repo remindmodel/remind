@@ -621,10 +621,10 @@ p_teAnnuity(te) = 1/p_discountedLifetime(te) ;
 display p_discountedLifetime, p_teAnnuity;
 
 *** read in data on electric vehicles used as bound on vm_cap.up(t,regi,"apCarElT","1")
-parameter pm_boundCapEV(tall,all_regi)     "installed capacity of electric vehicles"
+parameter p_boundCapEV(tall,all_regi)     "installed capacity of electric vehicles"
 /
 $ondelim
-$include "./core/input/pm_boundCapEV.cs4r"
+$include "./core/input/p_boundCapEV.cs4r"
 $offdelim
 /
 ;
@@ -944,8 +944,8 @@ p_adj_deltacapoffset(t,regi,"windoff")= p_adj_deltacapoffset(t,regi,"wind");
 $ENDIF.WindOff
 
 ***additional deltacapoffset on electric vehicles, based on latest data
-p_adj_deltacapoffset("2020",regi,"apCarElT") = 0.3 * pm_boundCapEV("2019",regi);
-p_adj_deltacapoffset("2025",regi,"apCarElT") = 2   * pm_boundCapEV("2019",regi);
+p_adj_deltacapoffset("2020",regi,"apCarElT") = 0.3 * p_boundCapEV("2019",regi);
+p_adj_deltacapoffset("2025",regi,"apCarElT") = 2   * p_boundCapEV("2019",regi);
 
 $ifthen.vehiclesSubsidies not "%cm_vehiclesSubsidies%" == "off"
 *** disabling electric vehicles delta cap offset for European regions as BEV installed capacity for these regions is a consequence of subsidies instead of a hard coded values.
@@ -1534,7 +1534,7 @@ sm_globalBudget_dev = 1;
 if (cm_startyear gt 2005,
 execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
 execute_load "input_ref.gdx", p_prodFEReference = vm_prodFE.l;
-execute_load "input_ref.gdx", p_prodUeReference = vm_prodUe.l;
+execute_load "input_ref.gdx", p_prodUeReference = v_prodUe .l;
 execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
 );
 

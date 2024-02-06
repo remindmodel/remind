@@ -322,7 +322,6 @@ $setglobal power  IntC        !! def = IntC
 $setglobal CDR  portfolio        !! def = portfolio
 *'---------------------    35_transport    ----------------------------------------
 *'
-*' * (complex):  transport realization with aggregated transport demand (LDV, HDV, electric trains) via CES function with constrained choice on vehicle technologies
 *' * (edge_esm): transport realization with iterative coupling to logit-based transport model EDGE-Transport with detailed representation of transport modes and technologies
 $setglobal transport  edge_esm           !! def = edge_esm
 *'---------------------    36_buildings    ---------------------------------
@@ -1427,16 +1426,6 @@ $setglobal cm_eni  off  !! def = off
 ***   def <- "off" = no change for buildings energy elasticity (eni);
 ***   or number (ex. 2) = multiply by 2 the default value used in REMIND.
 $setglobal cm_enb  off  !! def = off
-*** cm_LDV_mkt_share "set upper or lower bounds to transport LDV market shares in complex realisation"
-***   Example on how to use:
-***     cm_LDV_mkt_share  apCarElT.up 80, apCarH2T.up 90, apCarPeT.lo 5
-***        maximum market share for EV equal to 80%, for H2V 90%, and minimum market share for ICE equal to 5% of the total LDv market
-$setglobal cm_LDV_mkt_share  off !! def = off
-*** cm_share_LDV_sales "set upper or lower bounds to transport LDV market share sales in complex realisation"
-***   Example on how to use:
-***     cm_share_LDV_sales    2030.2050.apCarElT.upper 80, 2030.2050.apCarH2T.upper 90, 2030.2050.apCarPeT.lower 5
-***        maximum sales market share for EV equal to 80%, for H2V 90%, and minimum sales market share for ICE equal to 5% in between the years 2030 and 2050 of the total LDV market
-$setglobal cm_share_LDV_sales  off !! def = off
 ***  cm_incolearn "change floor investment cost value"
 ***   Example on how to use:
 ***     cm_incolearn  "apcarelt=17000,wind=1600,spv=5160,csp=9500"
