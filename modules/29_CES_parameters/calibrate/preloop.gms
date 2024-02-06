@@ -78,11 +78,11 @@ else
 
     * exp(
          log(
-            p29_cesdata_load(t,regi,in,"eff")
-            * p29_effGr(t,regi,in)
-            * p29_cesIO_load(t,regi,in)
-          )
-            * (p29_cesdata_load(t,regi,out,"rho") - 1)
+             p29_cesdata_load(t,regi,in,"eff")
+           * p29_effGr(t,regi,in)
+           * p29_cesIO_load(t,regi,in)
+         )
+       * (p29_cesdata_load(t,regi,out,"rho") - 1)
         );
 
   !! Propagate price down the CES tree to get prices in terms of inco,
@@ -904,10 +904,10 @@ $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
 sm_tmp = smin((t,regi_dyn29(regi),
                cesOut2cesIn(ue_industry_dyn37(out),ppfKap(in))
                ),
-               pm_cesdata(t,regi,out,"quantity")
-            - ( pm_cesdata(t,regi,in,"quantity")
-              * pm_cesdata(t,regi,in,"price")
-              )
+             pm_cesdata(t,regi,out,"quantity")
+          - ( pm_cesdata(t,regi,in,"quantity")
+            * pm_cesdata(t,regi,in,"price")
+            )
          );
 if (0 gt sm_tmp,
   put logfile,  "Error in industry FE price rescaling: ",
