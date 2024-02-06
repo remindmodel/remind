@@ -624,7 +624,7 @@ display p_discountedLifetime, p_teAnnuity;
 parameter p_boundCapEV(tall,all_regi)     "installed capacity of electric vehicles"
 /
 $ondelim
-$include "./core/input/p_boundCapEV.cs4r"
+$include "./core/input/pm_boundCapEV.cs4r"
 $offdelim
 /
 ;
