@@ -215,7 +215,7 @@ q_transSe2se(t,regi,se2se(enty,enty2,te))..
 ***---------------------------------------------------------------------------
 *** FE Balance
 ***---------------------------------------------------------------------------
-qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
+q_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
   vm_prodFe(t,regi,entySe,entyFe,te)
   =e=
   sum((sector2emiMkt(sector,emiMkt),entyFE2sector(entyFE,sector)),

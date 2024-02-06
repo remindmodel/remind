@@ -141,11 +141,6 @@ loop (cesOut2cesIn(out,in)$(in_beyond_calib_29(in) AND ppf(in)),
 ipf_beyond_last(out) = YES;
 );
 
-putty_compute_in(in)$((in_29(in) AND ppf_putty(in))
-                                         OR (ppf_29(in) and in_putty(in))
-                                      )
-                                      = YES;
-
 *** End of Sets calculation
 
 Parameter
@@ -177,15 +172,6 @@ $offdelim
 /
 ;
 p29_efficiency_growth(t,regi,in) = f29_efficiency_growth(t,regi,"%cm_demScen%",in);
-
-Parameter
-f29_capitalUnitProjections "Capital cost per unit of consumed energy and final energy per unit of useful energy (or UE per unit of ES) used to calibrate some elasticities of substitution"
-/
-$ondelim
-$include "./modules/29_CES_parameters/calibrate/input/f29_capitalUnitProjections.cs4r"
-$offdelim
-/
-;
 
 parameter
 f29_capitalQuantity(tall,all_regi,all_demScen,all_in)          "capital quantities"
@@ -256,27 +242,10 @@ $endif.indst_H2_penetration
 
 display pm_fedemand;
 
-*** Attribute technological data to p29_capitalUnitProjections according to putty-clay
- p29_capitalUnitProjections(all_regi,all_in,index_Nr) =  f29_capitalUnitProjections(all_regi,all_in,index_Nr,"cap") $ ( NOT in_putty(all_in))
-                                                         + f29_capitalUnitProjections(all_regi,all_in,index_Nr,"inv") $ ( in_putty(all_in));
-loop (cesOut2cesIn(out,in)$ppfKap(in),
-loop (cesOut2cesIn2(out,in2),
-p29_capitalUnitProjections(all_regi,all_in,index_Nr)$(p29_capitalUnitProjections(all_regi,all_in,index_Nr)
-                                                      AND (sameAs(all_in,out) OR sameAs(all_in,in2))
-                                                    )
-                                        = p29_capitalUnitProjections(all_regi,all_in,index_Nr)$(p29_capitalUnitProjections(all_regi,in,index_Nr) ge p29_capitalUnitProjections(all_regi,in,"0")
-                                        );
-);
-);
-
 *** Change PPP for MER.
 p29_capitalQuantity(tall,all_regi,all_in)
  = p29_capitalQuantity(tall,all_regi,all_in)
  * pm_shPPPMER(all_regi);
-
-p29_capitalUnitProjections(all_regi,all_in,index_Nr)$ppfKap(all_in)
-  = p29_capitalUnitProjections(all_regi,all_in,index_Nr)
-  * pm_shPPPMER(all_regi);
 
 *** Subtract "special" capital stocks from gross economy capital stock
 p29_capitalQuantity(tall,all_regi,"kap")
@@ -286,10 +255,6 @@ p29_capitalQuantity(tall,all_regi,"kap")
     );
 
 *** Substract the end-use capital quantities from the aggregate capital
-
-*** Change $/kWh to Trillion$/TWa;
-p29_capitalUnitProjections(all_regi,all_in,index_Nr)$ppfKap(all_in) =  p29_capitalUnitProjections(all_regi,all_in,index_Nr) * sm_TWa_2_kWh / sm_trillion_2_non;
-
 
 *** Load CES parameters from the last run
 Execute_Load 'input'  p29_cesdata_load = pm_cesdata;
@@ -304,12 +269,6 @@ p29_cesdata_load(t,regi,in,"rho")$( p29_cesdata_load(t,regi,in,"rho") eq 0) = 0.
 
 *** Load quantities and efficiency growth from the last run
 Execute_Loadpoint 'input'  p29_cesIO_load = vm_cesIO.l, p29_effGr = vm_effGr.l;
-
-*** Load putty-clay quantities if relevant (initialise to 0 in case it is not)
-p29_cesIOdelta_load(t,regi,in) = 0;
-if ( (sm_CES_calibration_iteration gt 1 OR s29_CES_calibration_new_structure eq 0) AND (card(in_putty) gt 0),
-Execute_Loadpoint 'input'  p29_cesIOdelta_load = vm_cesIOdelta.l;
-);
 
 *** DEBUG: Load vm_deltacap
 Execute_Loadpoint 'input' vm_deltacap;
@@ -385,7 +344,7 @@ $ifthen.indst_H2_offset "%industry%" == "fixed_shares"
 
 *** Assuming feh2i minimun levels as 1% of fegai to avoid CES numerical calibration issues and allow more aligned efficiencies between gas and h2
 loop ((t,regi)$(pm_cesdata(t,regi,"feh2i","quantity") lt (0.01 * pm_cesdata(t,regi,"fegai","quantity"))),
-	pm_cesdata(t,regi,"feh2i","offset_quantity") = - (0.01 * pm_cesdata(t,regi,"fegai","quantity") - pm_cesdata(t,regi,"feh2i","quantity"));
+  pm_cesdata(t,regi,"feh2i","offset_quantity") = - (0.01 * pm_cesdata(t,regi,"fegai","quantity") - pm_cesdata(t,regi,"feh2i","quantity"));
   pm_cesdata(t,regi,"feh2i","quantity") = 0.01 * pm_cesdata(t,regi,"fegai","quantity");
 );
 
@@ -410,7 +369,7 @@ loop ((t,regi),
   = - (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
       * pm_cesdata(t,regi,"fegab","quantity")
     - pm_cesdata(t,regi,"feh2b","quantity");
-	pm_cesdata(t,regi,"feh2b","quantity")
+      pm_cesdata(t,regi,"feh2b","quantity")
   = (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
       * pm_cesdata(t,regi,"fegab","quantity");
 );
@@ -441,13 +400,6 @@ loop (ue_fe_kap_29(out),
         p29_efficiency_growth(t,regi,in) = p29_efficiency_growth(t,regi,in2);
         );
     );
-
-***
-loop ( (t0(t),regi, ppfIO_putty(in)),
-    if (pm_cesdata(t,regi,in,"quantity") eq 0,
-    abort "ppfIO_putty must have an exogenous value for the first period";
-    );
-);
 
 p29_esubGrowth = 0.3;
 
