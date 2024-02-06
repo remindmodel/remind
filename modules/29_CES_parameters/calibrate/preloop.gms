@@ -553,10 +553,10 @@ loop (cesOut2cesIn("inco",in)$( NOT sameas(in,"lab") ),
                pm_cesdata(t,regi,in,"price")
             = ( pm_cesdata(t,regi,"inco","quantity")
               - sum(cesOut2cesIn2("inco",in2)$( NOT sameas(in,in2) ),
-                    pm_cesdata(t,regi,in2,"quantity")
-                  * pm_cesdata(t,regi,in2,"price")
+                  pm_cesdata(t,regi,in2,"quantity")
+                * pm_cesdata(t,regi,in2,"price")
                 )
-               )
+              )
              / pm_cesdata(t,regi,in,"quantity");
 
             put pm_cesdata(t,regi,in,"price") /;
