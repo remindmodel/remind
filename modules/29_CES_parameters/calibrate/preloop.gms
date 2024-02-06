@@ -71,9 +71,8 @@ else
     = p29_cesdata_load(t,regi,in,"xi")
     * p29_cesdata_load(t,regi,in,"eff")
     * p29_effGr(t,regi,in)
+    * p29_cesIO_load(t,regi,out)
 
-    * ( p29_cesIO_load(t,regi,out)
-      )
     ** (1 - p29_cesdata_load(t,regi,out,"rho"))
 
     * exp(
@@ -656,9 +655,8 @@ if (card(ppf_beyondcalib_29) >= 1, !! if there are any nodes in beyond calib
       = p29_cesdata_load(t,regi,in,"xi")
       * p29_cesdata_load(t,regi,in,"eff")
       * p29_effGr(t,regi,in)
+      * p29_cesIO_load(t,regi,out)
 
-      * ( p29_cesIO_load(t,regi,out)
-        )
       ** (1 - p29_cesdata_load(t,regi,out,"rho"))
 
       * exp(
