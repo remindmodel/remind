@@ -328,8 +328,6 @@ $setglobal transport  edge_esm           !! def = edge_esm
 *'---------------------    36_buildings    ---------------------------------
 *'
 *' * (simple): representation of final energy demand via a CES function calibrated to EDGE-Buildings' demand trajectories
-*' * (services_with_capital): representation of the demand by energy service with capital
-*' * (services_putty): representation of the demand by energy service with capital and with putty-clay for buildings insulation
 $setglobal buildings  simple      !! def = simple
 *'---------------------    37_industry    ----------------------------------
 *'
@@ -952,20 +950,10 @@ parameter
 *' * (4) Energy Efficiency policy: higher discount rate until cm_start_year, decreasing to 25% value linearly until 2030.
 *'
 parameter
-  cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
-;
-  cm_noReboundEffect     = 0;
-*'  price sensitivity of logit function for heating and cooking technological choice
-parameter
   c_H2InBuildOnlyAfter "Switch to fix H2 in buildings to zero until given year"
 ;
   c_H2InBuildOnlyAfter = 2150;   !! def = 2150 (rule out H2 in buildings)
 *' For all years until the given year, FE demand for H2 in buildings is set to zero
-parameter
-  cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
-;
-  cm_priceSensiBuild     = -3;
-*'  price sensitivity of logit function for heating and cooking technological choice
 parameter
   c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 ;
@@ -1053,11 +1041,6 @@ parameter
   cm_build_H2costDecayEnd = 0.1;  !! def = 0.1
 *'
 parameter
-  cm_build_AdjCostActive      "Activate adjustment cost to penalise inter-temporal variation of area-specific weatherisation demand and space cooling efficiency slope (only in putty)"
-;
-  cm_build_AdjCostActive = 0;  !! def = 0: Adjustment cost deactivated (set to 1 to activate)  !! regexp = 0|1
-*'
-parameter
   cm_indst_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 3.25$kg = 0.1 $/kWh)"
 ;
   cm_indst_H2costAddH2Inv = 0.1;  !! def = 3.25$/kg = 0.1 $/Kwh
@@ -1091,16 +1074,6 @@ parameter
 *' * (0) none
 *' * (1) no fossil carbon and capture in Germany
 *'
-parameter
-  cm_logitCal_markup_conv_b   "value to which logit calibration markup of standard fe2ue technologies in detailed buildings module converges to"
-;
-  cm_logitCal_markup_conv_b = 0.8;  !! def = 0.8
-*'  long-term convergence value of detailed buildings fe2ue conventional techs price markup
-parameter
-  cm_logitCal_markup_newtech_conv_b "value to which logit calibration markup of new fe2ue technologies in detailed buildings module converges to"
-;
-  cm_logitCal_markup_newtech_conv_b = 0.3; !! def = 0.3
-*'  long-term convergence value of detailed buildings fe2ue new techs price markup
 parameter
   cm_startIter_EDGET          "starting iteration of EDGE-T"
 ;

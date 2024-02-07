@@ -194,10 +194,10 @@ $if not "%cm_learnRate%" == "off" parameter p_new_learnRate(all_te) / %cm_learnR
 $if not "%cm_learnRate%" == "off" fm_dataglob("learn",te)$p_new_learnRate(te)=p_new_learnRate(te);
 
 *RP* the new cost data in generisdata_tech is now in $2015. As long as the model runs in $2005, these values have first to be converted to D2005 by dividing by 1.2 downwards
-fm_dataglob("inco0",te)              = sm_D2015_2_D2005 * fm_dataglob("inco0",te);
-fm_dataglob("incolearn",te)          = sm_D2015_2_D2005 * fm_dataglob("incolearn",te);
-fm_dataglob("omv",te)                = sm_D2015_2_D2005 * fm_dataglob("omv",te);
-p_inco0(ttot,regi,te)               = sm_D2015_2_D2005 * p_inco0(ttot,regi,te);
+fm_dataglob("inco0",te)              = s_D2015_2_D2005 * fm_dataglob("inco0",te);
+fm_dataglob("incolearn",te)          = s_D2015_2_D2005 * fm_dataglob("incolearn",te);
+fm_dataglob("omv",te)                = s_D2015_2_D2005 * fm_dataglob("omv",te);
+p_inco0(ttot,regi,te)               = s_D2015_2_D2005 * p_inco0(ttot,regi,te);
 
 *RP* rescale the global CSP investment costs in REMIND: Originally we assume a SM3/12h setup, while the cost data from IEA for the short term seems rather based on a SM2/6h setup (with 40% average CF)
 *** Accordingly, also decrease long-term costs in REMIND to 0.7 of the current values
@@ -231,10 +231,10 @@ $ENDIF.WindOff
 *** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for ccs-related tech or $/(t/a) for process-based industry)
 *** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for ccs-related tech or T$/(Gt/a) for process-based industry)
 *** note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
-fm_dataglob("inco0",te)              = sm_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
-fm_dataglob("incolearn",te)          = sm_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
+fm_dataglob("inco0",te)              = s_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
+fm_dataglob("incolearn",te)          = s_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
 fm_dataglob("omv",te)                = s_DpKWa_2_TDpTWa      * fm_dataglob("omv",te);
-p_inco0(ttot,regi,te)               = sm_DpKW_2_TDpTW       * p_inco0(ttot,regi,te);
+p_inco0(ttot,regi,te)               = s_DpKW_2_TDpTW       * p_inco0(ttot,regi,te);
 
 
 table fm_dataemiglob(all_enty,all_enty,all_te,all_enty)  "read-in of emissions factors co2,cco2"

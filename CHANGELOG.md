@@ -37,6 +37,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **45_carbonprice** remove outdated realizations:
     NDC2constant, NPi2018, diffPhaseIn2Constant, diffPhaseIn2Lin, diffPhaseInLin2LinFlex, diffPriceSameCost
     [[#1480](https://github.com/remindmodel/remind/pull/1480)]
+- **36_buildings** remove outdated realizations: services_putty, services_with_capital 
+    [[#1509] (https://github.com/remindmodel/remind/pull/1509)]
 
 ## [3.2.1] - 2023-07-13 (incomplete)
 

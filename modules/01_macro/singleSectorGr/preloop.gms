@@ -9,13 +9,13 @@
 *** Calculate cummulative depreciation factors
 loop ((t,counter),
 if ( pm_dt(t) eq 2 * counter.val,
-pm_cumDeprecFactor_old(t,regi,in)$(ppfKap(in) OR in_putty(in)) 
+p01_cumDeprecFactor_old(t,regi,in)$(ppfKap(in)) 
 =   ((1 - pm_delta_kap(regi,in)) ** (pm_dt(t)/2 )
       - (1 - pm_delta_kap(regi,in)) ** (pm_dt(t) ))
      /  pm_delta_kap(regi,in)
     ;
 
-pm_cumDeprecFactor_new(t,regi,in)$(ppfKap(in) OR in_putty(in)) 
+p01_cumDeprecFactor_new(t,regi,in)$(ppfKap(in) ) 
 =   ( 1 
      - (1 - pm_delta_kap(regi,in)) ** (pm_dt(t)/2)
       )
@@ -24,14 +24,14 @@ pm_cumDeprecFactor_new(t,regi,in)$(ppfKap(in) OR in_putty(in))
 
 );
 if ( pm_dt(t) eq (2 * counter.val -1),
-pm_cumDeprecFactor_old(t,regi,in)$(ppfKap(in) OR in_putty(in)) 
+p01_cumDeprecFactor_old(t,regi,in)$(ppfKap(in)) 
 =   ((1 - pm_delta_kap(regi,in)) ** (pm_dt(t)/2 - 0.5)
       - (1 - pm_delta_kap(regi,in)) ** (pm_dt(t)))
      /  pm_delta_kap(regi,in)
     - 1/2 * (1 - pm_delta_kap(regi,in)) ** (pm_dt(t)/2 - 0.5 ) 
     ;
 
-pm_cumDeprecFactor_new(t,regi,in)$(ppfKap(in) OR in_putty(in)) 
+p01_cumDeprecFactor_new(t,regi,in)$(ppfKap(in)) 
 =   ( 1 
      - (1 - pm_delta_kap(regi,in)) ** (pm_dt(t)/2 - 0.5 + 1)
       )
@@ -41,6 +41,6 @@ pm_cumDeprecFactor_new(t,regi,in)$(ppfKap(in) OR in_putty(in))
     
 );
 ); 
-display "test Deprec", pm_cumDeprecFactor_new,pm_cumDeprecFactor_old;
+display "test Deprec", p01_cumDeprecFactor_new,p01_cumDeprecFactor_old;
 
 *** EOF ./modules/01_macro/singleSectorGr/preloop.gms
