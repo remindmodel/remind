@@ -1428,7 +1428,7 @@ $setglobal cm_eni  off  !! def = off
 $setglobal cm_enb  off  !! def = off
 ***  cm_incolearn "change floor investment cost value"
 ***   Example on how to use:
-***     cm_incolearn  "apcarelt=17000,wind=1600,spv=5160,csp=9500"
+***     cm_incolearn  "wind=1600,spv=5160,csp=9500"
 ***       floor investment costs from learning set to 17000 for EVs; and 1600, 5160 and 9500 for wind, solar pv and solar csp respectively.
 $setglobal cm_incolearn  off !! def = off
 *** cm_storageFactor "scale curtailment and storage requirements. [factor]"
@@ -1437,18 +1437,18 @@ $setglobal cm_incolearn  off !! def = off
 $setglobal cm_storageFactor  off !! def = off
 *** cm_learnRate "change learn rate value by technology."
 ***   def <- "off" = no change for learn rate value;
-***   or list of techs to change learn rate value. (ex. "apcarelt 0.2")
+***   or list of techs to change learn rate value. 
 $setglobal cm_learnRate  off !! def = off
 *** cm_adj_seed and cm_adj_seed_cont "overwrite the technology-dependent adjustment cost seed value. Smaller means slower scale-up."
 ***   both swicthes have the same functionality, but allow more changes once the character limit of cm_adj_seed is reached.
 ***   def <- "off" = use default adj seed values.
-***   or list of techs to change adj_seed value. (ex. "apCarH2T=0.5,apCarElT=0.5,apCarDiEffT=0.25,apCarDiEffH2T=0.25")
+***   or list of techs to change adj_seed value.
 $setglobal cm_adj_seed  off
 $setglobal cm_adj_seed_cont  off
 *** cm_adj_coeff and cm_adj_coeff_cont "overwrite the technology-dependent adjustment cost coefficient. Higher means higher adjustment cost."
 ***   both swicthes have the same functionality, but allow more changes once the character limit of cm_adj_coeff is reached.
 ***   def <- "off" = use default adj coefficient values.
-***   or list of techs to change adj_coeff value. (ex. "apCarH2T=100,apCarElT=100,apCarDiEffT=200,apCarDiEffH2T=200")
+***   or list of techs to change adj_coeff value. 
 $setglobal cm_adj_coeff  off
 $setglobal cm_adj_coeff_cont  off
 *** cm_adj_seed_multiplier "rescale adjustment cost seed value relative to default value. [factor]. Smaller means slower scale-up."

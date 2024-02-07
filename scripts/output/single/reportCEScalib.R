@@ -120,7 +120,7 @@ names(col) <- c("origin", "target", itr_num)
 lns <- c(rep("solid", 2), rep("longdash", length(itr_num)))
 names(lns) <- c("origin", "target", itr_num)
 
-.pf <- list("TE" = c("gastr", "refliq", "biotr", "coaltr","hydro", "ngcc","ngt","pc", "apCarDiT","apCarPeT","apCarElT","dot","gaschp","wind","tnrs"))
+.pf <- list("TE" = c("gastr", "refliq", "biotr", "coaltr","hydro", "ngcc","ngt","pc","dot","gaschp","wind","tnrs"))
 
 
 
