@@ -46,9 +46,6 @@ scenario              <- getScenNames(outputdir)
 remindReportingFile   <- file.path(outputdir, paste0("REMIND_generic_", scenario, ".mif"))
 climateAssessmentEmi  <- normalizePath(file.path(outputdir, paste0("ar6_climate_assessment_", scenario, ".csv")),
                                        mustWork = FALSE)
-# TODO: REMOVE THE NEXT LINE. piamInterfaces should be installed as a package on the cluster
-devtools::load_all("/p/tmp/tonnru/piamInterfaces/")
-devtools::load_all("/p/tmp/tonnru/quitte/")
 climateAssessmentYaml <- file.path(system.file(package = "piamInterfaces"),
                                    "iiasaTemplates", "climate_assessment_variables.yaml")
 
@@ -71,8 +68,9 @@ capture.output(cat(logmsg), file = logFile, append = FALSE)
 climateAssessmentInputData <- as.quitte(remindReportingFile) %>%
   # Consider only the global region
   filter(region %in% c("GLO", "World")) %>%
-  # Extract only the variables needed for climate-assessment. These are provided from the iiasaTemplates in the 
-  # piamInterfaces package: https://github.com/pik-piam/piamInterfaces/blob/master/inst/iiasaTemplates/climate_assessment_variables.yaml
+  # Extract only the variables needed for climate-assessment. These are provided from the iiasaTemplates in the
+  # piamInterfaces package. See also:
+  # https://github.com/pik-piam/piamInterfaces/blob/master/inst/iiasaTemplates/climate_assessment_variables.yaml
   generateIIASASubmission(
     mapping = "AR6",
     outputFilename = NULL,
@@ -106,14 +104,18 @@ dir.create(climateAssessmentFolder, showWarnings = FALSE)
 baseFileName <- sub("\\.csv$", "", basename(climateAssessmentEmi))
 
 # These files are supposed to be all inside cfg$climate_assessment_files_dir in a certain structure
-probabilisticFile     <- normalizePath(file.path(cfg$climate_assessment_files_dir,
-                                       "parsets", "0fd0f62-derived-metrics-id-f023edb-drawnset.json"))
-infillingDatabaseFile <- normalizePath(file.path(cfg$climate_assessment_files_dir,
-                                       "1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv"))
+probabilisticFile <- normalizePath(file.path(
+  cfg$climate_assessment_files_dir,
+  "parsets", "0fd0f62-derived-metrics-id-f023edb-drawnset.json"
+))
+infillingDatabaseFile <- normalizePath(file.path(
+  cfg$climate_assessment_files_dir,
+  "1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv"
+))
 
 # Extract the location of the climate-assessment scripts and the MAGICC binary from cfg.txt
-scriptsFolder         <- normalizePath(file.path(cfg$climate_assessment_root, "scripts"))
-magiccBinFile         <- normalizePath(file.path(cfg$climate_assessment_magicc_bin))
+scriptsFolder       <- normalizePath(file.path(cfg$climate_assessment_root, "scripts"))
+magiccBinFile       <- normalizePath(file.path(cfg$climate_assessment_magicc_bin))
 magiccWorkersFolder <- file.path(normalizePath(climateAssessmentFolder), "workers")
 
 # Read parameter sets file to ascertain how many parsets there are
@@ -146,7 +148,6 @@ run_harm_inf_cmd <- paste(
   "--no-inputcheck",
   "--infilling-database", infillingDatabaseFile
 )
-# cat(run_harm_inf_cmd, "\n")
 
 run_clim_cmd <- paste(
   "python", file.path(scriptsFolder, "run_clim.py"),
@@ -156,7 +157,6 @@ run_clim_cmd <- paste(
   "--scenario-batch-size", 1,
   "--probabilistic-file", probabilisticFile
 )
-# cat(run_clim_cmd, "\n")
 
 logmsg <- paste0(
   "  climateAssessmentFolder = '", climateAssessmentFolder, "' exists? ", dir.exists(climateAssessmentFolder), "\n",
@@ -171,7 +171,6 @@ logmsg <- paste0(
   "  MAGICC_WORKER_ROOT_DIR = ", Sys.getenv("MAGICC_WORKER_ROOT_DIR") ,"\n",
   "  MAGICC_WORKER_NUMBER   = ", Sys.getenv("MAGICC_WORKER_NUMBER") ,"\n",
   date(), " =================== RUN climate-assessment infilling & harmonization ===================\n",
-  #"  activate_venv_cmd = '", activate_venv_cmd, "'\n",
   run_harm_inf_cmd, "'\n"
 )
 cat(logmsg)
@@ -213,13 +212,7 @@ capture.output(cat(logmsg), file = logFile, append = TRUE)
 
 ############################# APPEND TO REMIND MIF #############################
 # Filter only periods used in REMIND, so that it doesn't expand the original mif
-#usePeriods <- unique(read.quitte(remindReportingFile)$period)
 usePeriods <- as.numeric(grep("[0-9]+", quitte::read_mif_header(remindReportingFile)$header, value = TRUE))
-
-# climateAssessmentData <- read.quitte(climateAssessmentOutput)
-# climateAssessmentData <- climateAssessmentData[climateAssessmentData$period %in% usePeriods, ]
-# climateAssessmentData <- interpolate_missing_periods(climateAssessmentData, usePeriods, expand.values = FALSE)
-# write.mif(climateAssessmentData, remindReportingFile, append = TRUE)
 
 climateAssessmentData <- read.quitte(climateAssessmentOutput) %>%
   filter(period %in% usePeriods) %>%
