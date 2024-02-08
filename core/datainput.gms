@@ -1503,7 +1503,7 @@ sm_globalBudget_dev = 1;
 if (cm_startyear gt 2005,
 execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
 execute_load "input_ref.gdx", p_prodFEReference = vm_prodFE.l;
-execute_load "input_ref.gdx", p_prodUeReference = v_prodUe .l;
+execute_load "input_ref.gdx", p_prodUeReference = v_prodUe.l;
 execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
 );
 
