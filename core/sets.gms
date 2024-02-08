@@ -331,7 +331,8 @@ $ENDIF.WindOff
         seceaf       "Route: Scrap-loaded EAF"
         pcc          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
         pco          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
-*** transport technologies for deleted realization complex of module 35_transport - only here for input data consistency
+*** transport technologies for deleted realization complex of module 35_transport 
+*** only here to make it possible to process input data that still includes data for these obsolete transport technologies
         apCarPeT        "outdated transport technology"
         apCarDiT        "outdated transport technology"
         apcarDiEffT     "outdated transport technology"
