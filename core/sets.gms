@@ -250,10 +250,7 @@ all_te          "all energy technologies, including from modules"
         tdhei           "transmission and distribution for heat to industry"
         tdheb           "transmission and distribution for heat to buildings"
 
-***        ccscomp         "compression of co2"
-***        ccspipe         "transportation of co2"
          ccsinje         "injection of co2"
-***        ccsmoni         "monitoring of co2"
 *RP* Storage technology:
         storspv         "storage technology for photo voltaic (PV)"
         storwind        "storage technology for wind onshore"
@@ -334,6 +331,14 @@ $ENDIF.WindOff
         seceaf       "Route: Scrap-loaded EAF"
         pcc          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
         pco          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
+*** transport technologies for deleted realization complex of module 35_transport - only here for input data consistency
+        apCarPeT        "outdated transport technology"
+        apCarDiT        "outdated transport technology"
+        apcarDiEffT     "outdated transport technology"
+        apcarDiEffH2T   "outdated transport technology"
+        apCarH2T        "outdated transport technology"
+        apCarElT        "outdated transport technology"
+        apTrnElT        "outdated transport technology"
 /
 
 all_enty             "all types of quantities"
