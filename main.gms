@@ -1437,18 +1437,18 @@ $setglobal cm_incolearn  off !! def = off
 $setglobal cm_storageFactor  off !! def = off
 *** cm_learnRate "change learn rate value by technology."
 ***   def <- "off" = no change for learn rate value;
-***   or list of techs to change learn rate value. 
+***   or list of techs to change learn rate value. (ex. "spv 0.2")
 $setglobal cm_learnRate  off !! def = off
 *** cm_adj_seed and cm_adj_seed_cont "overwrite the technology-dependent adjustment cost seed value. Smaller means slower scale-up."
 ***   both swicthes have the same functionality, but allow more changes once the character limit of cm_adj_seed is reached.
 ***   def <- "off" = use default adj seed values.
-***   or list of techs to change adj_seed value.
+***   or list of techs to change adj_seed value. (ex. "spv=1, tnrs = 0.1")
 $setglobal cm_adj_seed  off
 $setglobal cm_adj_seed_cont  off
 *** cm_adj_coeff and cm_adj_coeff_cont "overwrite the technology-dependent adjustment cost coefficient. Higher means higher adjustment cost."
 ***   both swicthes have the same functionality, but allow more changes once the character limit of cm_adj_coeff is reached.
 ***   def <- "off" = use default adj coefficient values.
-***   or list of techs to change adj_coeff value. 
+***   or list of techs to change adj_coeff value. (ex. "gash2=1, hydro=0.1")
 $setglobal cm_adj_coeff  off
 $setglobal cm_adj_coeff_cont  off
 *** cm_adj_seed_multiplier "rescale adjustment cost seed value relative to default value. [factor]. Smaller means slower scale-up."
