@@ -894,7 +894,7 @@ q_changeProdStartyear(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) 
   sum(pe2se(enty,enty2,te),   vm_prodSe(t,regi,enty,enty2,te)  - p_prodSeReference(t,regi,enty,enty2,te) )
   + sum(se2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te)  - p_prodSeReference(t,regi,enty,enty2,te) )
   + sum(se2fe(enty,enty2,te), vm_prodFE(t,regi,enty,enty2,te)  - p_prodFEReference(t,regi,enty,enty2,te) )
-  + sum(fe2ue(enty,enty2,te), vm_prodUe(t,regi,enty,enty2,te)  - p_prodUeReference(t,regi,enty,enty2,te) )
+  + sum(fe2ue(enty,enty2,te), v_prodUe (t,regi,enty,enty2,te)  - p_prodUeReference(t,regi,enty,enty2,te) )
   + sum(ccs2te(enty,enty2,te), sum(teCCS2rlf(te,rlf), vm_co2CCS(t,regi,enty,enty2,te,rlf) - p_co2CCSReference(t,regi,enty,enty2,te,rlf) ) )
 ;
 

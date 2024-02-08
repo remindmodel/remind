@@ -46,10 +46,7 @@ te_29_report(all_te)  "set of technologies to report on"
   ngcc
   ngt
   pc
-  apCarDit
   dot
-  apCarPet
-  apCarElt
   gaschp
   wind
   tnrs

@@ -87,7 +87,7 @@ $setGlobal power  IntC               !! def = IntC
 ***---------------------    33_cdr       ----------------------------------------
 $setGlobal CDR  DAC                   !! def = DAC
 ***---------------------    35_transport    -------------------------------------
-$setGlobal transport  complex         !! def = complex
+$setGlobal transport  edge_esm         !! def = edge_esm
 ***---------------------    36_buildings    -------------------------------------
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
@@ -215,7 +215,6 @@ cm_indst_H2costDecayEnd     "simplified logistic function start of null value (e
 cm_BioSupply_Adjust_EU      "factor for scaling sub-EU bioenergy supply curves"
 cm_BioImportTax_EU          "factor for EU bioenergy import tax"
 cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
-cm_demTcomplex              "switch used to select the source of demand trends for the complex transport realization. By default, temporary handmade trajectories; if set to fromEDGET, EDGE-T based mrremind results."
 cm_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
 cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
@@ -390,8 +389,6 @@ cm_indst_H2costDecayEnd = 0.1;  !! def 10%
 cm_BioSupply_Adjust_EU = 3; !! def 1
 cm_BioImportTax_EU = 1; !! def 0.25
 
-$setGlobal cm_demTcomplex  temporary_trend !! def = temporary_trend
-
 cm_noPeFosCCDeu = 0; !! def 0
 
 
@@ -446,7 +443,7 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
@@ -460,8 +457,6 @@ $setglobal cm_techcosts  REG       !! def = REG
 
 $setglobal cm_eni  off!! def = off
 $setglobal cm_enb  off!! def = off
-
-$setglobal cm_LDV_mkt_share  off !! def = off
 
 $setglobal cm_incolearn  off !! def = off
 $setglobal cm_storageFactor  off !! def = off

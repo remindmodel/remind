@@ -461,9 +461,6 @@ f_cf(ttot,regi,"windoff") = f_cf(ttot,regi,"wind");
 $ENDIF.WindOff
 
 pm_cf(ttot,regi,te) =  f_cf(ttot,regi,te);
-*RP short-term fix: set capacity factors here by hand, because the input data procudure won't be updated in time
-pm_cf(ttot,regi,"apcardiefft") = 1;
-pm_cf(ttot,regi,"apcardieffH2t") = 1;
 ***pm_cf(ttot,regi,"h2turbVRE") = 0.15;
 pm_cf(ttot,regi,"elh2VRE") = 0.6;
 *short-term fix for new synfuel td technologies
@@ -619,15 +616,6 @@ p_discountedLifetime(te) = sum(opTimeYr, (sum(regi, pm_omeg(regi,opTimeYr,te))/s
 p_teAnnuity(te) = 1/p_discountedLifetime(te) ;
 
 display p_discountedLifetime, p_teAnnuity;
-
-*** read in data on electric vehicles used as bound on vm_cap.up(t,regi,"apCarElT","1")
-parameter pm_boundCapEV(tall,all_regi)     "installed capacity of electric vehicles"
-/
-$ondelim
-$include "./core/input/pm_boundCapEV.cs4r"
-$offdelim
-/
-;
 
 *** read in data on Nuclear capacities used as bound on vm_cap.fx("2015",regi,"tnrs","1"), vm_deltaCap.fx("2020",regi,"tnrs","1") and vm_deltaCap.up("2025" and "2030")
 parameter pm_NuclearConstraint(ttot,all_regi,all_te)       "parameter with the real-world capacities, construction and plans"
@@ -943,16 +931,6 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 p_adj_deltacapoffset(t,regi,"windoff")= p_adj_deltacapoffset(t,regi,"wind");
 $ENDIF.WindOff
 
-***additional deltacapoffset on electric vehicles, based on latest data
-p_adj_deltacapoffset("2020",regi,"apCarElT") = 0.3 * pm_boundCapEV("2019",regi);
-p_adj_deltacapoffset("2025",regi,"apCarElT") = 2   * pm_boundCapEV("2019",regi);
-
-$ifthen.vehiclesSubsidies not "%cm_vehiclesSubsidies%" == "off"
-*** disabling electric vehicles delta cap offset for European regions as BEV installed capacity for these regions is a consequence of subsidies instead of a hard coded values.
-p_adj_deltacapoffset("2020",regi,"apCarElT")$(regi_group("EUR_regi",regi)) = 0;
-p_adj_deltacapoffset("2025",regi,"apCarElT")$(regi_group("EUR_regi",regi)) = 0;
-$endIf.vehiclesSubsidies
-
 *** share of PE2SE capacities in 2005 depends on GDP-MER
 p_adj_seed_reg(t,regi) = pm_gdp(t,regi) * 1e-4;
 
@@ -969,10 +947,6 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,"coalftrec")       = 0.25;
   p_adj_seed_te(ttot,regi,"coalftcrec")      = 0.25;
   p_adj_seed_te(ttot,regi,"coaltr")          = 4.00;
-  p_adj_seed_te(ttot,regi,'apCarH2T')        = 1.00;
-  p_adj_seed_te(ttot,regi,'apCarElT')        = 1.00;
-  p_adj_seed_te(ttot,regi,'apCarDiEffT')     = 0.50;
-  p_adj_seed_te(ttot,regi,'apCarDiEffH2T')   = 0.50;
   p_adj_seed_te(ttot,regi,'dac')             = 0.25;
   p_adj_seed_te(ttot,regi,'geohe')           = 0.33;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -1021,11 +995,6 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 $ENDIF.WindOff
 
   p_adj_coeff(ttot,regi,"dac")             = 0.8;
-  p_adj_coeff(ttot,regi,'apCarH2T')        = 1.0;
-  p_adj_coeff(ttot,regi,'apCarElT')        = 1.0;
-  p_adj_coeff(ttot,regi,'apCarDiT')        = 1.0;
-  p_adj_coeff(ttot,regi,'apCarDiEffT')     = 2.0;
-  p_adj_coeff(ttot,regi,'apCarDiEffH2T')   = 2.0;
   p_adj_coeff(ttot,regi,teGrid)            = 0.3;
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
 );
@@ -1534,7 +1503,7 @@ sm_globalBudget_dev = 1;
 if (cm_startyear gt 2005,
 execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
 execute_load "input_ref.gdx", p_prodFEReference = vm_prodFE.l;
-execute_load "input_ref.gdx", p_prodUeReference = vm_prodUe.l;
+execute_load "input_ref.gdx", p_prodUeReference = v_prodUe.l;
 execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
 );
 
