@@ -18,10 +18,6 @@
 *'
 *' ###### Bounds for Historic and Near-term Alignment
 
-*' These bounds account for historic nuclear power development.
-vm_cap.fx("2015",regi,"tnrs","1")$((cm_startyear le 2015) and (sameas(regi,"DEU"))) = 10.8/1000; 
-vm_cap.fx("2020",regi,"tnrs","1")$((cm_startyear le 2020) and (sameas(regi,"DEU"))) = 7.8/1000;
-
 *' This limits wind and solar PV capacity additions for 2025 in light of recent slow developments as of 2023.
 *' Upper bound is double the historic maximum capacity addition in 2011-2020.
 loop(regi$(sameAs(regi,"DEU")),

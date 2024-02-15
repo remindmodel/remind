@@ -200,39 +200,6 @@ loop ((ttot,regi,ppfKap_industry_dyn37(in))$( t(ttot-1) AND t(ttot+1) ),
   );
 );
 
-*** Transport alternative FE trajectory
-$ifthen.module "%transport%" == "complex"
-$ifthen.demTtrend "%cm_demTcomplex%" == "fromEDGET"
-
-Parameter
- p29_fedemand_trasp(tall,all_regi,all_GDPscen,all_demScen,EDGE_scenario_all,all_in)  "transport alternative demand for complex module based on EDGE-T"
-;
-
-Parameter
-p29_fedemand_trasp "transport alternative demand for complex module based on EDGE-T"
-/
-$ondelim
-$include "./modules/29_CES_parameters/calibrate/input/pm_fe_demand_EDGETbased.cs4r"
-$offdelim
-/
-;
-
-Parameter
- p29_fedemand_trasp2005_2015(tall,all_regi,all_in)  "transport demand based on complex in 2005"
-;
-
-p29_fedemand_trasp2005_2015(t,regi,in_dyn35)$(t.val ge 2005 AND t.val le 2015)= pm_fedemand(t,regi,in_dyn35)$(t.val ge 2005 AND t.val le 2015);
-
-display p29_fedemand_trasp2005_2015;
-
-*** Linear convergence to EDGE-T based values to avoid pre-triangular infeasibility due to IEA balances mismatches
-loop(ttot$(ttot.val ge 2005 AND ttot.val le 2015),
-       pm_fedemand(ttot,regi,in_dyn35) = p29_fedemand_trasp2005_2015("2005",regi,in_dyn35) + (ttot.val-2005)*(p29_fedemand_trasp2005_2015("2015",regi,in_dyn35)-p29_fedemand_trasp2005_2015("2005",regi,in_dyn35))/10;
-);
-
-$endif.demTtrend
-$endif.module
-
 display pm_fedemand;
 
 *** setting feh2i equal to 1% of fegai

@@ -435,32 +435,24 @@ $iftheni.CO2priceDependent_AdjCosts %c_CO2priceDependent_AdjCosts% == "on"
 loop(ttot$( (ttot.val > cm_startyear) AND (ttot.val > 2020) ),  !! only change values in the unfixed time steps of the current run, and not in the past
   loop(regi,
     if( pm_taxCO2eq(ttot-1,regi) le (40 * sm_DptCO2_2_TDpGtC) ,
-	  p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.1;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 4;
+      p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.1;
+      p_varyAdj_mult_adjCoeff(ttot,regi)  = 4;
     elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (40 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (80 * sm_DptCO2_2_TDpGtC) ) ) ,
       p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.25;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 2.5;
+      p_varyAdj_mult_adjCoeff(ttot,regi)  = 2.5;
     elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (80 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (160 * sm_DptCO2_2_TDpGtC) ) ) ,
       p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.5;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 1.5;
+      p_varyAdj_mult_adjCoeff(ttot,regi)  = 1.5;
     elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (160 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (320 * sm_DptCO2_2_TDpGtC) ) ) ,
       p_varyAdj_mult_adjSeedTe(ttot,regi) = 1;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 1;
+      p_varyAdj_mult_adjCoeff(ttot,regi)  = 1;
     elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (320 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (640 * sm_DptCO2_2_TDpGtC) ) ) ,
       p_varyAdj_mult_adjSeedTe(ttot,regi) = 2;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.5;
-	elseif ( pm_taxCO2eq(ttot-1,regi) gt (640 * sm_DptCO2_2_TDpGtC) ) ,
+      p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.5;
+    elseif ( pm_taxCO2eq(ttot-1,regi) gt (640 * sm_DptCO2_2_TDpGtC) ) ,
       p_varyAdj_mult_adjSeedTe(ttot,regi) = 4;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.25;
+      p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.25;
     );
-	p_adj_seed_te(ttot,regi,'apCarH2T')        = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarH2T');
-    p_adj_seed_te(ttot,regi,'apCarElT')        = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarElT');
-    p_adj_seed_te(ttot,regi,'apCarDiEffT')     = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarDiEffT');
-    p_adj_seed_te(ttot,regi,'apCarDiEffH2T')   = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarDiEffH2T');
-    p_adj_coeff(ttot,regi,'apCarH2T')         = p_varyAdj_mult_adjCoeff(ttot,regi) * p_adj_coeff_Orig(ttot,regi,'apCarH2T') ;
-    p_adj_coeff(ttot,regi,'apCarElT')         = p_varyAdj_mult_adjCoeff(ttot,regi) * p_adj_coeff_Orig(ttot,regi,'apCarElT') ;
-    p_adj_coeff(ttot,regi,'apCarDiEffT')      = p_varyAdj_mult_adjCoeff(ttot,regi) * p_adj_coeff_Orig(ttot,regi,'apCarDiEffT') ;
-    p_adj_coeff(ttot,regi,'apCarDiEffH2T')    = p_varyAdj_mult_adjCoeff(ttot,regi) * p_adj_coeff_Orig(ttot,regi,'apCarDiEffH2T') ;
   );
 );
 display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adjCoeff;

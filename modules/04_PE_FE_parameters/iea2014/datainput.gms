@@ -279,9 +279,6 @@ p04_prodCoupleGlob("segabio","fegas","tdbiogas","seel")     = -0.05;
 p04_prodCoupleGlob("segafos","fegas","tdfosgas","seel")     = -0.05;
 p04_prodCoupleGlob("pegeo","sehe","geohe","seel")           = -0.3;
 p04_prodCoupleGlob("cco2","ico2","ccsinje","seel")          = -0.005;
-p04_prodCoupleGlob("fedie","uedit","apcardiEffT","feelt")   = -0.1;
-p04_prodCoupleGlob("fedie","uedit","apcardiEffH2T","feelt") = -0.2;
-p04_prodCoupleGlob("fedie","uedit","apcardiEffH2T","feh2t") = -0.1;
 *** use global data for coule products if regional data form IEA are 0
 loop(pc2te(enty,enty2,te,enty3),
     loop(regi,

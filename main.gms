@@ -322,7 +322,6 @@ $setglobal power  IntC        !! def = IntC
 $setglobal CDR  portfolio        !! def = portfolio
 *'---------------------    35_transport    ----------------------------------------
 *'
-*' * (complex):  transport realization with aggregated transport demand (LDV, HDV, electric trains) via CES function with constrained choice on vehicle technologies
 *' * (edge_esm): transport realization with iterative coupling to logit-based transport model EDGE-Transport with detailed representation of transport modes and technologies
 $setglobal transport  edge_esm           !! def = edge_esm
 *'---------------------    36_buildings    ---------------------------------
@@ -1427,19 +1426,9 @@ $setglobal cm_eni  off  !! def = off
 ***   def <- "off" = no change for buildings energy elasticity (eni);
 ***   or number (ex. 2) = multiply by 2 the default value used in REMIND.
 $setglobal cm_enb  off  !! def = off
-*** cm_LDV_mkt_share "set upper or lower bounds to transport LDV market shares in complex realisation"
-***   Example on how to use:
-***     cm_LDV_mkt_share  apCarElT.up 80, apCarH2T.up 90, apCarPeT.lo 5
-***        maximum market share for EV equal to 80%, for H2V 90%, and minimum market share for ICE equal to 5% of the total LDv market
-$setglobal cm_LDV_mkt_share  off !! def = off
-*** cm_share_LDV_sales "set upper or lower bounds to transport LDV market share sales in complex realisation"
-***   Example on how to use:
-***     cm_share_LDV_sales    2030.2050.apCarElT.upper 80, 2030.2050.apCarH2T.upper 90, 2030.2050.apCarPeT.lower 5
-***        maximum sales market share for EV equal to 80%, for H2V 90%, and minimum sales market share for ICE equal to 5% in between the years 2030 and 2050 of the total LDV market
-$setglobal cm_share_LDV_sales  off !! def = off
 ***  cm_incolearn "change floor investment cost value"
 ***   Example on how to use:
-***     cm_incolearn  "apcarelt=17000,wind=1600,spv=5160,csp=9500"
+***     cm_incolearn  "wind=1600,spv=5160,csp=9500"
 ***       floor investment costs from learning set to 17000 for EVs; and 1600, 5160 and 9500 for wind, solar pv and solar csp respectively.
 $setglobal cm_incolearn  off !! def = off
 *** cm_storageFactor "scale curtailment and storage requirements. [factor]"
@@ -1448,18 +1437,18 @@ $setglobal cm_incolearn  off !! def = off
 $setglobal cm_storageFactor  off !! def = off
 *** cm_learnRate "change learn rate value by technology."
 ***   def <- "off" = no change for learn rate value;
-***   or list of techs to change learn rate value. (ex. "apcarelt 0.2")
+***   or list of techs to change learn rate value. (ex. "spv 0.2")
 $setglobal cm_learnRate  off !! def = off
 *** cm_adj_seed and cm_adj_seed_cont "overwrite the technology-dependent adjustment cost seed value. Smaller means slower scale-up."
 ***   both swicthes have the same functionality, but allow more changes once the character limit of cm_adj_seed is reached.
 ***   def <- "off" = use default adj seed values.
-***   or list of techs to change adj_seed value. (ex. "apCarH2T=0.5,apCarElT=0.5,apCarDiEffT=0.25,apCarDiEffH2T=0.25")
+***   or list of techs to change adj_seed value. (ex. "spv=1, tnrs = 0.1")
 $setglobal cm_adj_seed  off
 $setglobal cm_adj_seed_cont  off
 *** cm_adj_coeff and cm_adj_coeff_cont "overwrite the technology-dependent adjustment cost coefficient. Higher means higher adjustment cost."
 ***   both swicthes have the same functionality, but allow more changes once the character limit of cm_adj_coeff is reached.
 ***   def <- "off" = use default adj coefficient values.
-***   or list of techs to change adj_coeff value. (ex. "apCarH2T=100,apCarElT=100,apCarDiEffT=200,apCarDiEffH2T=200")
+***   or list of techs to change adj_coeff value. (ex. "gash2=1, hydro=0.1")
 $setglobal cm_adj_coeff  off
 $setglobal cm_adj_coeff_cont  off
 *** cm_adj_seed_multiplier "rescale adjustment cost seed value relative to default value. [factor]. Smaller means slower scale-up."

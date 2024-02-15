@@ -39,6 +39,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1480](https://github.com/remindmodel/remind/pull/1480)]
 - **36_buildings** remove outdated realizations: services_putty, services_with_capital 
     [[#1509] (https://github.com/remindmodel/remind/pull/1509)]
+- **35_transport** remove outdated realization: complex 
+    [[#1543] (https://github.com/remindmodel/remind/pull/1543)]
 
 ## [3.2.1] - 2023-07-13 (incomplete)
 

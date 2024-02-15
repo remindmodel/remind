@@ -250,10 +250,7 @@ all_te          "all energy technologies, including from modules"
         tdhei           "transmission and distribution for heat to industry"
         tdheb           "transmission and distribution for heat to buildings"
 
-***        ccscomp         "compression of co2"
-***        ccspipe         "transportation of co2"
          ccsinje         "injection of co2"
-***        ccsmoni         "monitoring of co2"
 *RP* Storage technology:
         storspv         "storage technology for photo voltaic (PV)"
         storwind        "storage technology for wind onshore"
@@ -269,15 +266,6 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
         gridwindoff     "grid between areas with high wind offshore production and the rest"
 $ENDIF.WindOff
 
-*AJS* transport technologies (ESH2T etc..) are defined in the transport module.
-    apCarPeT        "Cars using final energy petrol (FEPET) to produce useful energy in form of petrol for transport (UEPET) "
-    apCarDiT        "Vehicles using final energy diesel (FEDIE) to produce heavy-duty useful energy (uedit, e.g. freight, busses, planes, ships)."
-    apcarDiEffT     "More efficient vehicles using final energy diesel (FEDIE) and electricity (FEELT) to produce heavy-duty useful energy (uedit, e.g. freight, busses, planes, ships)."
-    apcarDiEffH2T   "Even more efficient vehicles using final energy diesel (FEDIE), electricity (FEELT) and Hydrogen (FEH2T) to produce heavy-duty useful energy (uedit, e.g. freight, busses, planes, ships)."
-    apCarH2T        "Cars using final energy hydrogen for transport (FEH2T) to produce energy service (ESH2T)."
-        apCarElT        "Cars using final energy electricity (FEELT) to produce useful energy (UEELT)"
-        apTrnElT        "Trains using final energy electricity (FEELT) to produce useful energy (UEELT)"
-***  appCarGaT  "Cars using FEGAT to produce ESGAT."  ???
         weathering      "enhanced weathering"
         dac             "direct air capture"
         x_gas2elec
@@ -343,6 +331,15 @@ $ENDIF.WindOff
         seceaf       "Route: Scrap-loaded EAF"
         pcc          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
         pco          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
+*** transport technologies for deleted realization complex of module 35_transport 
+*** only here to make it possible to process input data that still includes data for these obsolete transport technologies
+        apCarPeT        "outdated transport technology"
+        apCarDiT        "outdated transport technology"
+        apcarDiEffT     "outdated transport technology"
+        apcarDiEffH2T   "outdated transport technology"
+        apCarH2T        "outdated transport technology"
+        apCarElT        "outdated transport technology"
+        apTrnElT        "outdated transport technology"
 /
 
 all_enty             "all types of quantities"
@@ -491,20 +488,12 @@ all_enty             "all types of quantities"
         ccuco2short  "CCU related parameter for short term stored co2 in ccu products"
         CtoH         "co2 emissions ratio C to H for CCU-technologies"
         cco2         "captured CO2"
-***       pco2         "CCS related parameter during compression of CO2"
-***       tco2         "CCS related parameter during transportation of CO2"
         ico2         "CCS related parameter during injection of CO2"
-***       sco2         "CCS related parameter during storage of CO2 - monitoring ???"
-        uedit        "Useful Energy: DIesel for Transport. Unit: TWa (not yet a real ES, only copied 1:1 from FE)"
-        uepet        "Useful Energy: PEtrol for Transport. Unit: TWa (not yet a real ES, only copied 1:1 from FE)"
-        ueelt        "Useful Energy: ELectricity for Transport. Unit: TWa (not yet a real ES, only copied 1:1 from FE)"
-*** uegat   "Useful Energy: GAs for Transport. Unit: TWa (not yet a real ES, only copied 1:1 from FE)"
-*** ueh2t   "Useful Energy: H2 for Transport. Unit: TWa (not yet a real ES, only copied 1:1 from FE)"
 
-         good         "Generic good"
-         perm         "Carbon permit"
-         peog         "aggregated oil and gas, only relevant for calibration because IEA only provides aggregated data"
-         bfco2        "CO2 emission from blast furnace"
+        good         "Generic good"
+        perm         "Carbon permit"
+        peog         "aggregated oil and gas, only relevant for calibration because IEA only provides aggregated data"
+        bfco2        "CO2 emission from blast furnace"
 /
 
 all_esty "energy services"
@@ -932,7 +921,6 @@ $endif.altFeEmiFac
 ***######################## R SECTION START (MODULES) ###############################
 *** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY
 *** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT MODEL START
-*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare.R
 
 sets
 
@@ -972,7 +960,7 @@ sets
        codePerformance
        /
 
-module2realisation(modules,*) "mapping of modules and active realisations" /
+      module2realisation(modules,*) "mapping of modules and active realisations" /
        macro . %macro%
        welfare . %welfare%
        PE_FE_parameters . %PE_FE_parameters%
@@ -2557,9 +2545,6 @@ pc2te(all_enty,all_enty,all_te,all_enty)    "mapping for own consumption of tech
         segafos.fegas.tdfosgas.seel
         pegeo.sehe.geohe.seel
         cco2.ico2.ccsinje.seel
-        fedie.uedit.apCarDiEffT.feelt
-        fedie.uedit.apCarDiEffH2T.feelt
-        fedie.uedit.apCarDiEffH2T.feh2t
 /
 *NB* mappings for emissions, capture and leakage
 emi2te(all_enty,all_enty,all_te,all_enty)    " map emissions to technologies"
