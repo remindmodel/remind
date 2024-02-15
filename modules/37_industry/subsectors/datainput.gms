@@ -572,41 +572,41 @@ $endif.cm_subsec_model_steel
 *** --------------------------------
 
 !!TODO: Think about accounting of integrated plants / casting & rolling
-p37_specFeDemTarget(all_enty,all_te,opmoPrc) = 0.;
+pm_specFeDemTarget(all_enty,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 !! numbers are given in MWh/t and converted to Remind units TWa/Gt with the factors after that (divided by 8.76)
 !! reduction: 504 m^3; heat 242 m^3; conversion: x / 11.126 m^3/kg * 0.0333 MWh/kg
-p37_specFeDemTarget("feh2s","idr","h2")           = 2.23 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Rechberger et al 2020, Section 4.2 (per tDRI)
-p37_specFeDemTarget("feels","idr","h2")           = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Just before Table 1 (per tHBI)
+pm_specFeDemTarget("feh2s","idr","h2")           = 2.23 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Rechberger et al 2020, Section 4.2 (per tDRI)
+pm_specFeDemTarget("feels","idr","h2")           = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Just before Table 1 (per tHBI)
 
-p37_specFeDemTarget("fegas","idr","ng")           = 2.69 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Page 7 (9.7 GJ) (per tHBI)
-p37_specFeDemTarget("feels","idr","ng")           = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Page 7 (9.7 GJ) (per tHBI)
+pm_specFeDemTarget("fegas","idr","ng")           = 2.69 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Page 7 (9.7 GJ) (per tHBI)
+pm_specFeDemTarget("feels","idr","ng")           = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Page 7 (9.7 GJ) (per tHBI)
 
 !! To do: Does not include casting and rolling;
 !! Birat2010, p. 11: 0.97 MWh total, only 0.44 MWh of which is electrical
 !! EU JRC BAT says 0.404–0.748 (only EAF, elec) / Otto et al. say 0.92
 !! --> have declining curve?
-p37_specFeDemTarget("feels","eaf","pri")          = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Copy from secondary (Agora Energiewende, 2022 give similar values, between w and w/o reheating)
-p37_specFeDemTarget("feels","eaf","sec")          = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Vogl et al 2018, Section 3.1
+pm_specFeDemTarget("feels","eaf","pri")          = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Copy from secondary (Agora Energiewende, 2022 give similar values, between w and w/o reheating)
+pm_specFeDemTarget("feels","eaf","sec")          = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Vogl et al 2018, Section 3.1
 
 !! Otto et al. Fig 3: 10.303 GJ coke (from 13.24 GJ coal, see Menendez2015 Fig 3) + 4.67 GJ coal dust -> 18 GJ
 !! Birat2010, p.11 says best performers have 17 GJ, out of which 16 GJ coal
 !! -> take 16 GJ / 3.6 (to MWH) / 1.03 (pigiron to steel) = 4.3
 !! Optimistic value as tech will improve over time and historic BF vs BAT DRI is unfair anyways
-p37_specFeDemTarget("fesos","bf","standard")      = 4.30 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Otto et al.
+pm_specFeDemTarget("fesos","bf","standard")      = 4.30 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Otto et al.
 !! set all others to zero to have rough approximation of power plant output
-p37_specFeDemTarget("fegas","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
-p37_specFeDemTarget("feels","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
-p37_specFeDemTarget("fehos","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+pm_specFeDemTarget("fegas","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+pm_specFeDemTarget("feels","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+pm_specFeDemTarget("fehos","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
 
 !! per tC for cc tech!!
-p37_specFeDemTarget("feels","bfcc","standard")    = 0.11 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Tsupari2013
-p37_specFeDemTarget("fegas","bfcc","standard")    = 0.92 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Tsupari2013 / Yun2021
+pm_specFeDemTarget("feels","bfcc","standard")    = 0.11 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Tsupari2013
+pm_specFeDemTarget("fegas","bfcc","standard")    = 0.92 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Tsupari2013 / Yun2021
 
 !! World Steel Factsheet says no additional equipment needed --> very cheap and no energy demand
 !! IEA Steel Roadmap Fig 2.11 also shows very little additional fuel cost
-p37_specFeDemTarget("feels","idrcc","ng")         = 0.11 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc
-p37_specFeDemTarget("fegas","idrcc","ng")         = 0.92 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc
+pm_specFeDemTarget("feels","idrcc","ng")         = 0.11 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc
+pm_specFeDemTarget("fegas","idrcc","ng")         = 0.92 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc
 $endif.cm_subsec_model_steel
 
 *** --------------------------------
@@ -641,7 +641,7 @@ $endif.cm_subsec_model_steel
 
 *** --------------------------------
 
-p37_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
+pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
 pm_outflowPrcIni(all_regi,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 if (cm_startyear eq 2005,
@@ -655,38 +655,38 @@ if (cm_startyear eq 2005,
   pm_outflowPrcIni(regi,'idrcc','ng') = 0.;
 
   loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
-    p37_specFeDem(ttot,regi,"feh2s","idr","h2") = p37_specFeDemTarget("feh2s","idr","h2");
-    p37_specFeDem(ttot,regi,"feels","idr","h2") = p37_specFeDemTarget("feels","idr","h2");
+    pm_specFeDem(ttot,regi,"feh2s","idr","h2") = pm_specFeDemTarget("feh2s","idr","h2");
+    pm_specFeDem(ttot,regi,"feels","idr","h2") = pm_specFeDemTarget("feels","idr","h2");
 
-    p37_specFeDem(ttot,regi,"fegas","idr","ng") = p37_specFeDemTarget("fegas","idr","ng");
-    p37_specFeDem(ttot,regi,"feels","idr","ng") = p37_specFeDemTarget("feels","idr","ng");
+    pm_specFeDem(ttot,regi,"fegas","idr","ng") = pm_specFeDemTarget("fegas","idr","ng");
+    pm_specFeDem(ttot,regi,"feels","idr","ng") = pm_specFeDemTarget("feels","idr","ng");
 
-    p37_specFeDem(ttot,regi,"fegas","bfcc","standard") = p37_specFeDemTarget("fegas","bfcc","standard");
-    p37_specFeDem(ttot,regi,"feels","bfcc","standard") = p37_specFeDemTarget("feels","bfcc","standard");
+    pm_specFeDem(ttot,regi,"fegas","bfcc","standard") = pm_specFeDemTarget("fegas","bfcc","standard");
+    pm_specFeDem(ttot,regi,"feels","bfcc","standard") = pm_specFeDemTarget("feels","bfcc","standard");
 
-    p37_specFeDem(ttot,regi,"fegas","idrcc","ng") = p37_specFeDemTarget("fegas","idrcc","ng");
-    p37_specFeDem(ttot,regi,"feels","idrcc","ng") = p37_specFeDemTarget("feels","idrcc","ng");
+    pm_specFeDem(ttot,regi,"fegas","idrcc","ng") = pm_specFeDemTarget("fegas","idrcc","ng");
+    pm_specFeDem(ttot,regi,"feels","idrcc","ng") = pm_specFeDemTarget("feels","idrcc","ng");
 
-    p37_specFeDem(ttot,regi,"fesos","bf","standard") = pm_fedemand(ttot,regi,'feso_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
-    p37_specFeDem(ttot,regi,"fehos","bf","standard") = pm_fedemand(ttot,regi,'feli_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
-    p37_specFeDem(ttot,regi,"fegas","bf","standard") = pm_fedemand(ttot,regi,'fega_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
-    p37_specFeDem(ttot,regi,"feels","bf","standard") = pm_fedemand(ttot,regi,'feel_steel_primary') * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+    pm_specFeDem(ttot,regi,"fesos","bf","standard") = pm_fedemand(ttot,regi,'feso_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+    pm_specFeDem(ttot,regi,"fehos","bf","standard") = pm_fedemand(ttot,regi,'feli_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+    pm_specFeDem(ttot,regi,"fegas","bf","standard") = pm_fedemand(ttot,regi,'fega_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+    pm_specFeDem(ttot,regi,"feels","bf","standard") = pm_fedemand(ttot,regi,'feel_steel_primary') * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
 
-    p37_specFeDem(ttot,regi,"feels","eaf","sec") = pm_fedemand(ttot,regi,'feel_steel_secondary') * sm_EJ_2_TWa / pm_fedemand(ttot,regi,'ue_steel_secondary');
-    p37_specFeDem(ttot,regi,"feels","eaf","pri") = p37_specFeDem(ttot,regi,"feels","eaf","sec");
+    pm_specFeDem(ttot,regi,"feels","eaf","sec") = pm_fedemand(ttot,regi,'feel_steel_secondary') * sm_EJ_2_TWa / pm_fedemand(ttot,regi,'ue_steel_secondary');
+    pm_specFeDem(ttot,regi,"feels","eaf","pri") = pm_specFeDem(ttot,regi,"feels","eaf","sec");
   );
 
   !! loop over other years and blend
   loop(entyFeStat(all_enty),
     loop(tePrc(all_te),
       loop(opmoPrc,
-        if( (p37_specFeDemTarget(all_enty,all_te,opmoPrc) gt 0.),
+        if( (pm_specFeDemTarget(all_enty,all_te,opmoPrc) gt 0.),
           loop(ttot$(ttot.val > 2020),
             !! fedemand in excess of BAT halves until 2055
             !! gams cannot handle float exponents, so pre-compute 0.5^(1/(2055-2020)) = 0.9804
-            p37_specFeDem(ttot,regi,all_enty,all_te,opmoPrc)
-            = p37_specFeDemTarget(all_enty,all_te,opmoPrc)
-            + (p37_specFeDem("2020",regi,all_enty,all_te,opmoPrc) - p37_specFeDemTarget(all_enty,all_te,opmoPrc))
+            pm_specFeDem(ttot,regi,all_enty,all_te,opmoPrc)
+            = pm_specFeDemTarget(all_enty,all_te,opmoPrc)
+            + (pm_specFeDem("2020",regi,all_enty,all_te,opmoPrc) - pm_specFeDemTarget(all_enty,all_te,opmoPrc))
             * power(0.9804, ttot.val - 2020) ;
           );
         );
@@ -696,7 +696,7 @@ if (cm_startyear eq 2005,
 );
 
 if (cm_startyear gt 2005,
-  Execute_Loadpoint 'input_ref' p37_specFeDem = p37_specFeDem;
+  Execute_Loadpoint 'input_ref' pm_specFeDem = pm_specFeDem;
 );
 $endif.cm_subsec_model_steel
 

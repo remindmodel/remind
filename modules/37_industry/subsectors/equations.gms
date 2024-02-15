@@ -31,7 +31,7 @@ q37_demFeIndst(ttot,regi,entyFE,emiMkt)$(    ttot.val ge cm_startyear
   sum((secInd37_emiMkt(secInd37Prc,emiMkt),
        secInd37_tePrc(secInd37Prc,tePrc),
        tePrc2opmoPrc(tePrc,opmoPrc)),
-    p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
+    pm_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
     *
     vm_outflowPrc(ttot,regi,tePrc,opmoPrc)
   )
@@ -395,7 +395,7 @@ q37_limitCapMat(ttot,regi,tePrc)$(ttot.val ge cm_startyear) ..
 q37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc)$(ttot.val ge cm_startyear ) ..
     v37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc)
   =e=
-    p37_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
+    pm_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
     *
     sum(se2fe(entySEfos,entyFE,te),
       pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2"))
