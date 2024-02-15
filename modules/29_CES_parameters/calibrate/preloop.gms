@@ -878,15 +878,6 @@ loop ((t_29hist_last(t2),regi_dyn29(regi),cesOut2cesIn(out,in))$(
   = pm_cesdata(t2,regi,in, "effGr");
 );
 
-*** Second, change efficiencies for the variables which have exogenous pathways
-*** in case UE = f(FE,K)
-loop ((t_29hist_last(t2),cesOut2cesIn(out,in))$(    ue_fe_kap_29(out) ),
-  pm_cesdata(t_29,regi_dyn29(regi),in, "effGr")$( NOT t_29hist(t_29) )
-  = pm_cesdata(t2,regi,in, "effGr")
-  * p29_efficiency_growth(t_29,regi,in)
-  / p29_efficiency_growth(t2,regi,in);
-);
-
 ***_____________________________ END OF: 5 - PASS EFF TIME EVOLUTION TO EFFGR ________________________________________
 
 
@@ -1073,8 +1064,7 @@ $endif.subsectors
 
 ***_____________________________ END OF: BEYOND CALIBRATION PART II ________________________________________
 
-option p29_efficiency_growth:8;
-display "after long term efficiencies", pm_cesdata, p29_efficiency_growth;
+display "after long term efficiencies", pm_cesdata;
 
 *** All efficiences after t_29_last are set to their t_29_last values. This is
 *** done in order to avoid xi negative in the latest periods. Should not be
