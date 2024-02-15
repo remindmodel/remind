@@ -177,7 +177,7 @@ $offdelim
 ***---------------------------------------------------------------------------
 ****** Manipulating technology data
 ***---------------------------------------------------------------------------
-*** Manipulating technology data - absolute values
+*** Manipulating global or regional technology data - absolute value
 ***---------------------------------------------------------------------------
 !! Modify spv and storspv parameters for optimistic VRE supply assumptions
 if (cm_VRE_supply_assumptions eq 1,
@@ -205,7 +205,7 @@ if (c_techAssumptScen eq 3,
 display fm_dataglob;
 
 ***---------------------------------------------------------------------------
-*** Manipulating technology data - relative values
+*** Manipulating global or regional technology data - relative value
 ***---------------------------------------------------------------------------
 *** Overwrite default technology parameter values based on specific scenario configs
 $if not "%cm_incolearn%" == "off" parameter p_new_incolearn(all_te) / %cm_incolearn% /;
@@ -395,14 +395,13 @@ loop (teNoLearn(te)$( sameas(te,"igcc") ),
 $endif.REG_techcosts
 
 
-*** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for dac)
-*** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for dac)
+*** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for ccs-related tech or $/(t/a) for process-based industry)
+*** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for ccs-related tech or T$/(Gt/a) for process-based industry)
 *** note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
-fm_dataglob("inco0",te)              = sm_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
-fm_dataglob("incolearn",te)          = sm_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
+fm_dataglob("inco0",te)              = s_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
+fm_dataglob("incolearn",te)          = s_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
 fm_dataglob("omv",te)                = s_DpKWa_2_TDpTWa      * fm_dataglob("omv",te);
-p_inco0(ttot,regi,te)               = sm_DpKW_2_TDpTW       * p_inco0(ttot,regi,te);
-
+p_inco0(ttot,regi,te)               = s_DpKW_2_TDpTW       * p_inco0(ttot,regi,te);
 
 ****************************************************************************************************
 *************************END of Technology data input read-in and manipulation *********************
@@ -432,15 +431,6 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 fm_dataglob("flexibility","storwindoff")  = 1.93;
 fm_dataglob("flexibility","windoff")  = -1;
 $ENDIF.WindOff
-
-*** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for ccs-related tech or $/(t/a) for process-based industry)
-*** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for ccs-related tech or T$/(Gt/a) for process-based industry)
-*** note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
-fm_dataglob("inco0",te)              = sm_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
-fm_dataglob("incolearn",te)          = sm_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
-fm_dataglob("omv",te)                = s_DpKWa_2_TDpTWa      * fm_dataglob("omv",te);
-p_inco0(ttot,regi,te)               = sm_DpKW_2_TDpTW       * p_inco0(ttot,regi,te);
-
 
 table fm_dataemiglob(all_enty,all_enty,all_te,all_enty)  "read-in of emissions factors co2,cco2"
 $include "./core/input/generisdata_emi.prn"
