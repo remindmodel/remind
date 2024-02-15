@@ -82,7 +82,7 @@ $setGlobal power  IntC               !! def = IntC
 ***---------------------    33_cdr       ----------------------------------------
 $setGlobal CDR  DAC                   !! def = DAC
 ***---------------------    35_transport    -------------------------------------
-$setGlobal transport  complex         !! def = complex
+$setGlobal transport  edge_esm         !! def = edge_esm
 ***---------------------    36_buildings    -------------------------------------
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
@@ -158,7 +158,6 @@ cm_rentdisccoal2      "[grades2poly] discount factor for the coal rent achieved 
 cm_rentconvcoal       "[grades2poly] number of years required to converge to the 2100 coal rent"
 c_cint_scen           "additional GHG emissions from mining fossil fuels"
 cm_so2tax_scen         "level of SO2 tax"
-cm_solwindenergyscen   "scenario for fluctuating renewables, 1 is reference, 2 is pessimistic with limits to fluctuating SE el share"
 c_techAssumptScen     "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
 c_ccsinjecratescen    "CCS injection rate factor, 0.5% by default yielding a 60 Mt per year IR"
 c_ccscapratescen      "CCS capture rate"
@@ -182,7 +181,6 @@ cm_frac_CCS          "tax on carbon transport & storage (ccsinje) to reflect ris
 cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshooting, formulated as fraction of carbon price"
 
 cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
-cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -250,7 +248,6 @@ cm_rentconvcoal     = 50;        !! def 50
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
-cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
 c_ccsinjecratescen    = 1;         !! def = 1
 c_ccscapratescen      = 1;         !! def = 1
@@ -277,7 +274,6 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 
 cm_DiscRateScen = 0;!! def = 0
-cm_noReboundEffect = 0;
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -296,7 +292,7 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  indu_fixed_shares-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10   !! def = 10

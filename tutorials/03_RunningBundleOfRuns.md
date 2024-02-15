@@ -65,7 +65,7 @@ The column `slurmConfig` can be used to specify the slurm configuration, either 
 
 Everything in the row after a `#` is interpreted as comment. Best use it as first character in the first column to structure the file. Using `#` elsewhere else can lead to unexpected data losses of the cells that follow in the row. If you want to switch off the use of a column, either temporarily or to add some comments, add a dot before the parameter name, which then may read `.cm_startyear` and is then ignored.
 
-Before you start the runs, you can test whether the right runs would be started and find all necessary gdx files. This also writes the `.Rdata` files in the REMIND main folder:
+Before you start the runs, you can test whether the right runs would be started and find all necessary gdx files:
 ```bash
 Rscript start.R --test config/scenario_config_XYZ.csv
 ```

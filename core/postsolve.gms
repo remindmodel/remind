@@ -588,14 +588,6 @@ loop(ttot$( (ttot.val > cm_startyear) AND (ttot.val > 2020) ),  !! only change v
       p_varyAdj_mult_adjSeedTe(ttot,regi) = 4;
       p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.25;	
     );
-    p_adj_seed_te(ttot,regi,'apCarH2T')        = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarH2T');
-    p_adj_seed_te(ttot,regi,'apCarElT')        = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarElT');
-    p_adj_seed_te(ttot,regi,'apCarDiEffT')     = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarDiEffT');
-    p_adj_seed_te(ttot,regi,'apCarDiEffH2T')   = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarDiEffH2T');
-    p_adj_coeff(ttot,regi,'apCarH2T')         = p_varyAdj_mult_adjCoeff(ttot,regi) * p_adj_coeff_Orig(ttot,regi,'apCarH2T') ;
-    p_adj_coeff(ttot,regi,'apCarElT')         = p_varyAdj_mult_adjCoeff(ttot,regi) * p_adj_coeff_Orig(ttot,regi,'apCarElT') ;
-    p_adj_coeff(ttot,regi,'apCarDiEffT')      = p_varyAdj_mult_adjCoeff(ttot,regi) * p_adj_coeff_Orig(ttot,regi,'apCarDiEffT') ;
-    p_adj_coeff(ttot,regi,'apCarDiEffH2T')    = p_varyAdj_mult_adjCoeff(ttot,regi) * p_adj_coeff_Orig(ttot,regi,'apCarDiEffH2T') ;
   );
 );
 display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adjCoeff;

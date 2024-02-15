@@ -322,14 +322,11 @@ $setglobal power  IntC        !! def = IntC
 $setglobal CDR  portfolio        !! def = portfolio
 *'---------------------    35_transport    ----------------------------------------
 *'
-*' * (complex):  transport realization with aggregated transport demand (LDV, HDV, electric trains) via CES function with constrained choice on vehicle technologies
 *' * (edge_esm): transport realization with iterative coupling to logit-based transport model EDGE-Transport with detailed representation of transport modes and technologies
 $setglobal transport  edge_esm           !! def = edge_esm
 *'---------------------    36_buildings    ---------------------------------
 *'
 *' * (simple): representation of final energy demand via a CES function calibrated to EDGE-Buildings' demand trajectories
-*' * (services_with_capital): representation of the demand by energy service with capital
-*' * (services_putty): representation of the demand by energy service with capital and with putty-clay for buildings insulation
 $setglobal buildings  simple      !! def = simple
 *'---------------------    37_industry    ----------------------------------
 *'
@@ -762,16 +759,6 @@ parameter
 *' *  (4): so2 tax intermediary between 1 and 2, multiplying (1) tax by the ratio (3) and (2)
 *'
 parameter
-  cm_solwindenergyscen      "scenario for fluctuating renewables, 1 is reference, 2 is pessimistic with limits to fluctuating SE el share"
-;
-  cm_solwindenergyscen  = 1;         !! def = 1  !! regexp = [0-4]
-*' *  (0) advanced - cheap investment costs, higher learning rates for pv, csp and wind
-*' *  (1) reference - normal investment costs & learning rates for pv, csp and wind     EMF27-3nd round Adv scenario
-*' *  (2) pessimistic EMF27 and AWP 2 - share of PV, wind&CSP limited to 20%. Learning rates reduced by 20%, floor costs increased by 40%. EMF27-3nd round Cons scenario
-*' *  (3) frozen - no learning after 2010, share of PV, wind&CSP limited to 20%. EMF27-3rd round Frozen scenario
-*' *  (4) pessimistic SSP: pessimistic techno-economic assumptions
-*'
-parameter
   c_techAssumptScen         "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
 ;
   c_techAssumptScen     = 1;         !! def = 1  !! regexp = [1-3]
@@ -962,20 +949,10 @@ parameter
 *' * (4) Energy Efficiency policy: higher discount rate until cm_start_year, decreasing to 25% value linearly until 2030.
 *'
 parameter
-  cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
-;
-  cm_noReboundEffect     = 0;
-*'  price sensitivity of logit function for heating and cooking technological choice
-parameter
   c_H2InBuildOnlyAfter "Switch to fix H2 in buildings to zero until given year"
 ;
   c_H2InBuildOnlyAfter = 2150;   !! def = 2150 (rule out H2 in buildings)
 *' For all years until the given year, FE demand for H2 in buildings is set to zero
-parameter
-  cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
-;
-  cm_priceSensiBuild     = -3;
-*'  price sensitivity of logit function for heating and cooking technological choice
 parameter
   c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 ;
@@ -1063,11 +1040,6 @@ parameter
   cm_build_H2costDecayEnd = 0.1;  !! def = 0.1
 *'
 parameter
-  cm_build_AdjCostActive      "Activate adjustment cost to penalise inter-temporal variation of area-specific weatherisation demand and space cooling efficiency slope (only in putty)"
-;
-  cm_build_AdjCostActive = 0;  !! def = 0: Adjustment cost deactivated (set to 1 to activate)  !! regexp = 0|1
-*'
-parameter
   cm_indst_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 3.25$kg = 0.1 $/kWh)"
 ;
   cm_indst_H2costAddH2Inv = 0.1;  !! def = 3.25$/kg = 0.1 $/Kwh
@@ -1101,16 +1073,6 @@ parameter
 *' * (0) none
 *' * (1) no fossil carbon and capture in Germany
 *'
-parameter
-  cm_logitCal_markup_conv_b   "value to which logit calibration markup of standard fe2ue technologies in detailed buildings module converges to"
-;
-  cm_logitCal_markup_conv_b = 0.8;  !! def = 0.8
-*'  long-term convergence value of detailed buildings fe2ue conventional techs price markup
-parameter
-  cm_logitCal_markup_newtech_conv_b "value to which logit calibration markup of new fe2ue technologies in detailed buildings module converges to"
-;
-  cm_logitCal_markup_newtech_conv_b = 0.3; !! def = 0.3
-*'  long-term convergence value of detailed buildings fe2ue new techs price markup
 parameter
   cm_startIter_EDGET          "starting iteration of EDGE-T"
 ;
@@ -1464,19 +1426,9 @@ $setglobal cm_eni  off  !! def = off
 ***   def <- "off" = no change for buildings energy elasticity (eni);
 ***   or number (ex. 2) = multiply by 2 the default value used in REMIND.
 $setglobal cm_enb  off  !! def = off
-*** cm_LDV_mkt_share "set upper or lower bounds to transport LDV market shares in complex realisation"
-***   Example on how to use:
-***     cm_LDV_mkt_share  apCarElT.up 80, apCarH2T.up 90, apCarPeT.lo 5
-***        maximum market share for EV equal to 80%, for H2V 90%, and minimum market share for ICE equal to 5% of the total LDv market
-$setglobal cm_LDV_mkt_share  off !! def = off
-*** cm_share_LDV_sales "set upper or lower bounds to transport LDV market share sales in complex realisation"
-***   Example on how to use:
-***     cm_share_LDV_sales    2030.2050.apCarElT.upper 80, 2030.2050.apCarH2T.upper 90, 2030.2050.apCarPeT.lower 5
-***        maximum sales market share for EV equal to 80%, for H2V 90%, and minimum sales market share for ICE equal to 5% in between the years 2030 and 2050 of the total LDV market
-$setglobal cm_share_LDV_sales  off !! def = off
 ***  cm_incolearn "change floor investment cost value"
 ***   Example on how to use:
-***     cm_incolearn  "apcarelt=17000,wind=1600,spv=5160,csp=9500"
+***     cm_incolearn  "wind=1600,spv=5160,csp=9500"
 ***       floor investment costs from learning set to 17000 for EVs; and 1600, 5160 and 9500 for wind, solar pv and solar csp respectively.
 $setglobal cm_incolearn  off !! def = off
 *** cm_storageFactor "scale curtailment and storage requirements. [factor]"
@@ -1485,18 +1437,18 @@ $setglobal cm_incolearn  off !! def = off
 $setglobal cm_storageFactor  off !! def = off
 *** cm_learnRate "change learn rate value by technology."
 ***   def <- "off" = no change for learn rate value;
-***   or list of techs to change learn rate value. (ex. "apcarelt 0.2")
+***   or list of techs to change learn rate value. (ex. "spv 0.2")
 $setglobal cm_learnRate  off !! def = off
 *** cm_adj_seed and cm_adj_seed_cont "overwrite the technology-dependent adjustment cost seed value. Smaller means slower scale-up."
 ***   both swicthes have the same functionality, but allow more changes once the character limit of cm_adj_seed is reached.
 ***   def <- "off" = use default adj seed values.
-***   or list of techs to change adj_seed value. (ex. "apCarH2T=0.5,apCarElT=0.5,apCarDiEffT=0.25,apCarDiEffH2T=0.25")
+***   or list of techs to change adj_seed value. (ex. "spv=1, tnrs = 0.1")
 $setglobal cm_adj_seed  off
 $setglobal cm_adj_seed_cont  off
 *** cm_adj_coeff and cm_adj_coeff_cont "overwrite the technology-dependent adjustment cost coefficient. Higher means higher adjustment cost."
 ***   both swicthes have the same functionality, but allow more changes once the character limit of cm_adj_coeff is reached.
 ***   def <- "off" = use default adj coefficient values.
-***   or list of techs to change adj_coeff value. (ex. "apCarH2T=100,apCarElT=100,apCarDiEffT=200,apCarDiEffH2T=200")
+***   or list of techs to change adj_coeff value. (ex. "gash2=1, hydro=0.1")
 $setglobal cm_adj_coeff  off
 $setglobal cm_adj_coeff_cont  off
 *** cm_adj_seed_multiplier "rescale adjustment cost seed value relative to default value. [factor]. Smaller means slower scale-up."

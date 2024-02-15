@@ -32,18 +32,17 @@ helpText <- "
 #'
 #' Control the script's behavior by providing additional arguments:
 #'
-#'   --help, -h:        show this help text and exit
-#'   --gamscompile, -g: compile gms of all selected runs. Combined with
-#'                      --interactive, it stops in case of compilation
-#'                      errors, allowing to fix them and rerun gamscompile
-#'   --interactive, -i: interactively select run(s) to be started. Asks for
-#'                      config file also if the one specified as
-#'                      path_settings_coupled cannot be found.
-#'   --test, -t:        Test scenario configuration and write the RData files
-#'                      in the REMIND main folder without starting the runs.
+#'   --help, -h:         show this help text and exit
+#'   --gamscompile, -g:  compile gms of all selected runs. Combined with
+#'                       --interactive, it stops in case of compilation
+#'                       errors, allowing to fix them and rerun gamscompile
+#'   --interactive, -i:  interactively select run(s) to be started. Asks for
+#'                       config file also if the one specified as
+#'                       path_settings_coupled cannot be found.
+#'   --test, -t:         Test scenario configuration without starting the runs.
 #'   startgroup=MYGROUP  when reading a scenario config .csv file, don't start
-#'                       everything specified by \"start = 1\", instead start everything
-#'                       specified by \"start = MYGROUP\"
+#'                       everything specified by \"start = 1\", instead start
+#'                       everything specified by \"start = MYGROUP\"
 "
 
 ########################################################################################################
@@ -181,11 +180,6 @@ message("run_compareScenarios:  ", run_compareScenarios)
 if (any(! file.exists(c(path_settings_coupled, path_settings_remind))) ||
     any(! dir.exists(c(path_remind, path_magpie, path_remind_oldruns, path_magpie_oldruns)))) {
   stop("Missing files or directories, see in red above.")
-}
-
-if ("--gamscompile" %in% flags && ! file.exists("input/source_files.log")) {
-  message("\n### Input data missing, need to compile REMIND first (2 min.)\n")
-  system("Rscript start.R config/tests/scenario_config_compile.csv")
 }
 
 ####################################################
@@ -523,7 +517,7 @@ for(scen in common){
       # runs by hand after the NDC has finished.
     }
     if (i == start_iter_first && ! start_now && all(file.exists(cfg_rem$files2export$start[path_gdx_list]) | unlist(gdx_na))) {
-        start_now <- TRUE
+      start_now <- TRUE
     }
     foldername <- file.path("output", fullrunname)
     if ((i > start_iter_first || !scenarios_coupled[scen, "start_magpie"]) && file.exists(foldername)) {
@@ -551,11 +545,15 @@ for(scen in common){
       errorsfound <- errorsfound + cfg_rem$errorsfoundInCheckFixCfg
     }
 
-    Rdatafile <- paste0(fullrunname, ".RData")
-    message("Save settings to ", Rdatafile)
-    save(path_remind, path_magpie, cfg_rem, cfg_mag, runname, fullrunname, max_iterations, start_iter,
-         n600_iterations, path_report, qos, sbatch, prefix_runname, run_compareScenarios, magpie_empty,
-         numberOfTasks, start_now, file = Rdatafile)
+    if (! "--test" %in% flags) {
+      Rdatafile <- paste0(fullrunname, ".RData")
+      message("Save settings to ", Rdatafile)
+      save(path_remind, path_magpie, cfg_rem, cfg_mag, runname, fullrunname, max_iterations, start_iter,
+           n600_iterations, path_report, qos, sbatch, prefix_runname, run_compareScenarios, magpie_empty,
+           numberOfTasks, start_now, file = Rdatafile)
+    } else if (start_now) {
+      startedRuns <- c(startedRuns, fullrunname)
+    }
 
   } # end for (i %in% iterations)
 
@@ -604,12 +602,16 @@ for(scen in common){
 # start runs
 message("\nStarting Runs")
 for (scen in common) {
-  if (!scenarios_coupled[scen, "start_scenario"]) {
+  if (! scenarios_coupled[scen, "start_scenario"]) {
     next
   }
   start_iter_first <- scenarios_coupled[scen, "start_iter_first"]
   runname <- paste0(prefix_runname, scen)
   fullrunname <- paste0(runname, "-rem-", start_iter_first)
+  if ("--test" %in% flags || "--gamscompile" %in% flags) {
+    message("Test mode: run ", fullrunname, " NOT submitted to the cluster.")
+    next
+  }
   Rdatafile <- paste0(fullrunname, ".RData")
   runEnv <- new.env()
   load(Rdatafile, envir = runEnv)
@@ -623,26 +625,22 @@ for (scen in common) {
         runEnv$qos <- gsub("^(medium|standby)$", "auto", runEnv$qos)
         runEnv$numberOfTasks <- 3
       }
-      if ("--test" %in% flags || "--gamscompile" %in% flags) {
-        message("Test mode: run ", fullrunname, " NOT submitted to the cluster.")
-      } else {
-        logfile <- file.path("output", fullrunname, paste0("log", if (scenarios_coupled[scen, "start_magpie"]) "-mag", ".txt"))
-        if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
-        message("Find logging in ", logfile)
-        if (isTRUE(runEnv$qos == "auto")) {
-          sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j'"), intern = TRUE)
-          runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
-        }
-        slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
-          " --open-mode=append --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
-          if (runEnv$numberOfTasks == 1) " --mem=8000"), runEnv$sbatch)
-        slurmCommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
-        message(slurmCommand)
-        exitCode <- system(slurmCommand)
-        if (0 < exitCode) {
-          errorsfound <- errorsfound + 1
-          message("sbatch command failed, check logs.")
-        }
+      logfile <- file.path("output", fullrunname, paste0("log", if (scenarios_coupled[scen, "start_magpie"]) "-mag", ".txt"))
+      if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
+      message("Find logging in ", logfile)
+      if (isTRUE(runEnv$qos == "auto")) {
+        sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j'"), intern = TRUE)
+        runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
+      }
+      slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
+        " --open-mode=append --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
+        if (runEnv$numberOfTasks == 1) " --mem=8000"), runEnv$sbatch)
+      slurmCommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
+      message(slurmCommand)
+      exitCode <- system(slurmCommand)
+      if (0 < exitCode) {
+        errorsfound <- errorsfound + 1
+        message("sbatch command failed, check logs.")
       }
     }
   }

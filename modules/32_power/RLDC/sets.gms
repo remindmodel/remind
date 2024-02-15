@@ -41,14 +41,6 @@ SETS
 
 teVRE(all_te) = no;
 
-*dynamically define teVRE
-if ( (cm_solwindenergyscen eq 9) AND (cm_solwindenergyscen <> 8),
-	teVRE("csp") = yes;
-);
-if (cm_solwindenergyscen <> 8,
-	teVRE("spv") = yes;
-	teVRE("wind") = yes;
-);	
 
 *RLDC dispatchable technologies
 teRLDCDisp("ngcc") = yes;
@@ -70,10 +62,6 @@ teRLDCDisp("hydro") = yes;
 teRLDCDisp("h2turb") = yes;
 teRLDCDisp("csp") = yes;
 
-if (cm_solwindenergyscen eq 8,
-    teRLDCDisp("spv") = yes;
-    teRLDCDisp("wind") = yes;
-);
 
 *Sets used on data input assignments
 SETS

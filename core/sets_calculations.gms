@@ -68,12 +68,7 @@ ppf("lab")  = YES;
 
 *** calculate intermediate production factors
 ipf(all_in) = in(all_in) - ppf(all_in);
-ipf_putty(all_in) = in_putty(all_in) - ppf_putty(all_in);
-loop ( out,
-ppfIO_putty(in)$(cesOut2cesIn(out,in)
-                  AND ipf_putty(in)
-                  AND NOT in_putty(out))          = YES;
-);
+
 *** Initialise cesLevel2cesIO and cesRev2cesIO
 loop (counter$( ord(counter) eq 1 ),
   cesLevel2cesIO(counter,"inco") = YES;   !! the root is at the lowest level
@@ -114,28 +109,8 @@ loop ((cesRev2cesIO(counter,in),cesOut2cesIn(in,in2)),
   cesOut2cesIn_below(in,in2) = YES;
 );
 
-in_below_putty(in) = NO;
-loop (ppf_putty,
-in_below_putty(in)$cesOut2cesIn_below(ppf_putty,in) = YES;
-);
-
-
 *** Aliasing of mappings is not available in all GAMS versions
 cesOut2cesIn2(out,in) = cesOut2cesIn(out,in);
-
-
-*** Computing the reference complentary factors
-
-$offOrder
-sm_tmp = 0;
-loop (cesOut2cesIn(out,in) $ in_complements(in),
-  if ( NOT ord(out) eq sm_tmp,
-  sm_tmp = ord(out);
-  loop (cesOut2cesIn2(out,in2),
-        complements_ref(in,in2) = YES;
-        );
-     );
-     );
 
 $onOrder
 *** TODO this should be reworked with Robert when revising the transport module

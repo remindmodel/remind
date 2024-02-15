@@ -11,7 +11,7 @@ test_that("start.R --gamscompile startgroup=AMT config/scenario_config.csv works
   testthat::with_mocked_bindings({
     skipIfPreviousFailed()
     output <- localSystem2("Rscript",
-                           c("start.R", "--gamscompile", "startgroup=AMT", titletag, csvfile))
+                           c("start.R", "--gamscompile", "startgroup=compileInTests", titletag, csvfile))
     printIfFailed(output)
     expectSuccessStatus(output)
     },

@@ -87,7 +87,7 @@ $setGlobal power  IntC               !! def = IntC
 ***---------------------    33_cdr       ----------------------------------------
 $setGlobal CDR  DAC                   !! def = DAC
 ***---------------------    35_transport    -------------------------------------
-$setGlobal transport  complex         !! def = complex
+$setGlobal transport  edge_esm         !! def = edge_esm
 ***---------------------    36_buildings    -------------------------------------
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
@@ -166,7 +166,6 @@ cm_rentdisccoal2      "[grades2poly] discount factor for the coal rent achieved 
 cm_rentconvcoal       "[grades2poly] number of years required to converge to the 2100 coal rent"
 c_cint_scen           "additional GHG emissions from mining fossil fuels"
 cm_so2tax_scen         "level of SO2 tax"
-cm_solwindenergyscen   "scenario for fluctuating renewables, 1 is reference, 2 is pessimistic with limits to fluctuating SE el share"
 c_techAssumptScen     "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
 c_ccsinjecratescen    "CCS injection rate factor, 0.5% by default yielding a 60 Mt per year IR"
 c_ccscapratescen      "CCS capture rate"
@@ -192,8 +191,6 @@ cm_frac_CCS          "tax on carbon transport & storage (ccsinje) to reflect ris
 cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshooting, formulated as fraction of carbon price"
 
 cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
-cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
-cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
 c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 c_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffCurvPhaseIn2Lin"
@@ -218,9 +215,6 @@ cm_indst_H2costDecayEnd     "simplified logistic function start of null value (e
 cm_BioSupply_Adjust_EU      "factor for scaling sub-EU bioenergy supply curves"
 cm_BioImportTax_EU          "factor for EU bioenergy import tax"
 cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
-cm_logitCal_markup_conv_b   "value to which logit calibration markup of standard fe2ue technologies in detailed buildings module converges to"
-cm_logitCal_markup_newtech_conv_b "value to which logit calibration markup of new fe2ue technologies in detailed buildings module converges to"
-cm_demTcomplex              "switch used to select the source of demand trends for the complex transport realization. By default, temporary handmade trajectories; if set to fromEDGET, EDGE-T based mrremind results."
 cm_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
 cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
@@ -310,7 +304,6 @@ cm_rentconvcoal     = 50;        !! def 50
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
-cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
 c_ccsinjecratescen    = 1;         !! def = 1
 c_ccscapratescen      = 1;         !! def = 1
@@ -351,8 +344,6 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 
 cm_DiscRateScen        = 0;!! def = 0
-cm_noReboundEffect     = 0;
-cm_priceSensiBuild     = -3;
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 $setGlobal cm_pushCalib  none !! def = none
 $setGlobal cm_reducCostB  none !! def = none
@@ -376,9 +367,6 @@ cm_H2targets = 0; !! def 0
 *** EU import switches
 $setGlobal cm_import_EU  off !! def off
 
-*** buildings services_putty switches
-cm_logitCal_markup_conv_b = 0.8; !! def 0.8
-cm_logitCal_markup_newtech_conv_b = 0.3; !! def 0.3
 
 *** flex tax switches
 cm_flex_tax = 0; !! def 0
@@ -400,8 +388,6 @@ cm_indst_H2costDecayEnd = 0.1;  !! def 10%
 *** EU bioenergy switches
 cm_BioSupply_Adjust_EU = 3; !! def 1
 cm_BioImportTax_EU = 1; !! def 0.25
-
-$setGlobal cm_demTcomplex  temporary_trend !! def = temporary_trend
 
 cm_noPeFosCCDeu = 0; !! def 0
 
@@ -457,7 +443,7 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
@@ -471,8 +457,6 @@ $setglobal cm_techcosts  REG       !! def = REG
 
 $setglobal cm_eni  off!! def = off
 $setglobal cm_enb  off!! def = off
-
-$setglobal cm_LDV_mkt_share  off !! def = off
 
 $setglobal cm_incolearn  off !! def = off
 $setglobal cm_storageFactor  off !! def = off

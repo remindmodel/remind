@@ -5,17 +5,3 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 name,type,reason
-vm_cap,input,questionnaire
-vm_deltaCap,input,questionnaire
-vm_prodUe,input,questionnaire
-pm_boundCapEV,input,questionnaire
-pm_cesdata,input,questionnaire
-pm_pop,input,questionnaire
-pm_vintage_in,input,questionnaire
-vm_shUePeT,input,questionnaire
-vm_capFac,input,questionnaire
-pm_eta_conv,input,questionnaire
-vm_cesIO,input,questionnaire
-pm_prodCouple,input,questionnaire
-sm_EJ_2_TWa,input,questionnaire
-

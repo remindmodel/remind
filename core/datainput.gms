@@ -217,6 +217,12 @@ $if not "%cm_inco0RegiFactor%" == "off" p_inco0(ttot,regi,te)$(p_inco0(ttot,regi
 $if not "%cm_learnRate%" == "off" parameter p_new_learnRate(all_te) / %cm_learnRate% /;
 $if not "%cm_learnRate%" == "off" fm_dataglob("learn",te)$p_new_learnRate(te)=p_new_learnRate(te);
 
+*RP* the new cost data in generisdata_tech is now in $2015. As long as the model runs in $2005, these values have first to be converted to D2005 by dividing by 1.2 downwards
+fm_dataglob("inco0",te)              = s_D2015_2_D2005 * fm_dataglob("inco0",te);
+fm_dataglob("incolearn",te)          = s_D2015_2_D2005 * fm_dataglob("incolearn",te);
+fm_dataglob("omv",te)                = s_D2015_2_D2005 * fm_dataglob("omv",te);
+p_inco0(ttot,regi,te)               = s_D2015_2_D2005 * p_inco0(ttot,regi,te);
+
 *RP* rescale the global CSP investment costs in REMIND: Originally we assume a SM3/12h setup, while the cost data from IEA for the short term seems rather based on a SM2/6h setup (with 40% average CF)
 *** Accordingly, also decrease long-term costs in REMIND to 0.7 of the current values
 fm_dataglob("inco0","csp")              = 0.7 * fm_dataglob("inco0","csp");
@@ -426,6 +432,15 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 fm_dataglob("flexibility","storwindoff")  = 1.93;
 fm_dataglob("flexibility","windoff")  = -1;
 $ENDIF.WindOff
+
+*** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for ccs-related tech or $/(t/a) for process-based industry)
+*** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for ccs-related tech or T$/(Gt/a) for process-based industry)
+*** note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
+fm_dataglob("inco0",te)              = sm_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
+fm_dataglob("incolearn",te)          = sm_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
+fm_dataglob("omv",te)                = s_DpKWa_2_TDpTWa      * fm_dataglob("omv",te);
+p_inco0(ttot,regi,te)               = sm_DpKW_2_TDpTW       * p_inco0(ttot,regi,te);
+
 
 table fm_dataemiglob(all_enty,all_enty,all_te,all_enty)  "read-in of emissions factors co2,cco2"
 $include "./core/input/generisdata_emi.prn"
@@ -639,9 +654,6 @@ f_cf(ttot,regi,"windoff") = f_cf(ttot,regi,"wind");
 $ENDIF.WindOff
 
 pm_cf(ttot,regi,te) =  f_cf(ttot,regi,te);
-*RP short-term fix: set capacity factors here by hand, because the input data procudure won't be updated in time
-pm_cf(ttot,regi,"apcardiefft") = 1;
-pm_cf(ttot,regi,"apcardieffH2t") = 1;
 ***pm_cf(ttot,regi,"h2turbVRE") = 0.15;
 pm_cf(ttot,regi,"elh2VRE") = 0.6;
 *short-term fix for new synfuel td technologies
@@ -797,15 +809,6 @@ p_discountedLifetime(te) = sum(opTimeYr, (sum(regi, pm_omeg(regi,opTimeYr,te))/s
 p_teAnnuity(te) = 1/p_discountedLifetime(te) ;
 
 display p_discountedLifetime, p_teAnnuity;
-
-*** read in data on electric vehicles used as bound on vm_cap.up(t,regi,"apCarElT","1")
-parameter pm_boundCapEV(tall,all_regi)     "installed capacity of electric vehicles"
-/
-$ondelim
-$include "./core/input/pm_boundCapEV.cs4r"
-$offdelim
-/
-;
 
 *** read in data on Nuclear capacities used as bound on vm_cap.fx("2015",regi,"tnrs","1"), vm_deltaCap.fx("2020",regi,"tnrs","1") and vm_deltaCap.up("2025" and "2030")
 parameter pm_NuclearConstraint(ttot,all_regi,all_te)       "parameter with the real-world capacities, construction and plans"
@@ -1121,16 +1124,6 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 p_adj_deltacapoffset(t,regi,"windoff")= p_adj_deltacapoffset(t,regi,"wind");
 $ENDIF.WindOff
 
-***additional deltacapoffset on electric vehicles, based on latest data
-p_adj_deltacapoffset("2020",regi,"apCarElT") = 0.3 * pm_boundCapEV("2019",regi);
-p_adj_deltacapoffset("2025",regi,"apCarElT") = 2   * pm_boundCapEV("2019",regi);
-
-$ifthen.vehiclesSubsidies not "%cm_vehiclesSubsidies%" == "off"
-*** disabling electric vehicles delta cap offset for European regions as BEV installed capacity for these regions is a consequence of subsidies instead of a hard coded values.
-p_adj_deltacapoffset("2020",regi,"apCarElT")$(regi_group("EUR_regi",regi)) = 0;
-p_adj_deltacapoffset("2025",regi,"apCarElT")$(regi_group("EUR_regi",regi)) = 0;
-$endIf.vehiclesSubsidies
-
 *** share of PE2SE capacities in 2005 depends on GDP-MER
 p_adj_seed_reg(t,regi) = pm_gdp(t,regi) * 1e-4;
 
@@ -1147,10 +1140,6 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,"coalftrec")       = 0.25;
   p_adj_seed_te(ttot,regi,"coalftcrec")      = 0.25;
   p_adj_seed_te(ttot,regi,"coaltr")          = 4.00;
-  p_adj_seed_te(ttot,regi,'apCarH2T')        = 1.00;
-  p_adj_seed_te(ttot,regi,'apCarElT')        = 1.00;
-  p_adj_seed_te(ttot,regi,'apCarDiEffT')     = 0.50;
-  p_adj_seed_te(ttot,regi,'apCarDiEffH2T')   = 0.50;
   p_adj_seed_te(ttot,regi,'dac')             = 0.25;
   p_adj_seed_te(ttot,regi,'geohe')           = 0.33;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -1199,11 +1188,6 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 $ENDIF.WindOff
 
   p_adj_coeff(ttot,regi,"dac")             = 0.8;
-  p_adj_coeff(ttot,regi,'apCarH2T')        = 1.0;
-  p_adj_coeff(ttot,regi,'apCarElT')        = 1.0;
-  p_adj_coeff(ttot,regi,'apCarDiT')        = 1.0;
-  p_adj_coeff(ttot,regi,'apCarDiEffT')     = 2.0;
-  p_adj_coeff(ttot,regi,'apCarDiEffH2T')   = 2.0;
   p_adj_coeff(ttot,regi,teGrid)            = 0.3;
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
 );
@@ -1558,7 +1542,7 @@ sm_globalBudget_dev = 1;
 if (cm_startyear gt 2005,
 execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
 execute_load "input_ref.gdx", p_prodFEReference = vm_prodFE.l;
-execute_load "input_ref.gdx", p_prodUeReference = vm_prodUe.l;
+execute_load "input_ref.gdx", p_prodUeReference = v_prodUe.l;
 execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
 );
 
