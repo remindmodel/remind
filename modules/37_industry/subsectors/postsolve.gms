@@ -15,9 +15,9 @@ pm_FEPrice(ttot,regi,entyFe,"indst",emiMkt)$( abs(qm_budget.m(ttot,regi)) gt sm_
 *** calculate reporting parameters for FE per subsector and SE origin to make R
 *** reporting easier
 
-o37_demFePrc(ttot,regi,entyFe,tePrc,opmoPrc)$(p37_specFeDem(ttot,regi,entyFe,tePrc,opmoPrc))
+o37_demFePrc(ttot,regi,entyFE,tePrc,opmoPrc)$(pm_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc))
   = vm_outflowPrc.l(ttot,regi,tePrc,opmoPrc)
-    * p37_specFeDem(ttot,regi,entyFe,tePrc,opmoPrc)
+    * pm_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
 ;
 
 *** total FE per energy carrier and emissions market in industry (sum over
@@ -104,7 +104,7 @@ loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc)$(
   o37_relativeOutflow(ttot,regi,teCCPrc,opmoCCPrc)
     = p37_captureRate(teCCPrc,opmoCCPrc)
     * sum(entyFe,
-        p37_specFeDem(ttot,regi,entyFe,tePrc,opmoPrc)
+        pm_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
         *
         sum(se2fe(entySeFos,entyFe,te),
           pm_emifac(ttot,regi,entySeFos,entyFe,te,"co2")))
@@ -174,7 +174,7 @@ loop((entyFe,route,tePrc,opmoPrc,secInd37)$(    tePrc2route(tePrc,opmoPrc,route)
   = o37_demFeIndRoute(ttot,regi,entyFe,tePrc,route,secInd37) !!sum (only necessary if several opmodes for one route)
     + vm_outflowPrc.l(ttot,regi,tePrc,opmoPrc)
       * o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)
-      * p37_specFeDem(ttot,regi,entyFe,tePrc,opmoPrc);
+      * pm_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc);
 );
 
 *** EOF ./modules/37_industry/subsectors/postsolve.gms

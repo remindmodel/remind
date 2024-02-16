@@ -19,6 +19,7 @@ pm_secBioShare,             parameter,  not needed
 pm_exogDemScen,             input,      added by codeCheck
 pm_ts,                      parameter,  not needed
 pm_outflowPrcIni,           parameter,  not needed
+pm_specFeDem,               parameter,  not needed
 sm_macChange,               parameter,  not needed
 vm_demFENonEnergySector,    variable,   not needed
 vm_FeedstocksCarbon,        variable,   not needed
