@@ -247,14 +247,45 @@ q32_limitSolarWind(t,regi)$( (cm_solwindenergyscen = 2) OR (cm_solwindenergyscen
   4 * vm_capFac(t,regi,te) 
 ;
 
-*** Calculates the electricity price of flexible technologies:
-*** The effective flexible price linearly decreases with VRE share
-*** from 1 (at 0% VRE share) to v32_flexPriceShareMin (at 100% VRE). 
+*** Calculates the minimum electricity price of flexible technologies depending on VRE share
+*** at 0% share of flexible technology in total electricity demand (best-case).
+*** 100% VRE share will give v32_flexPriceShareMin, 
+*** 0% VRE share will give 1, i.e. no flexibility benefit or cost 
+*** and electricity price is annual average electricity price from pm_SEPrice. 
+*** Linear relation between flexibility benefit or cost between 0-100% VRE share. 
+q32_flexPriceShareVRE(t,regi,te)$(teFlex(te))..
+  v32_flexPriceShareVRE(t,regi,te)
+  =e=
+  1 - 
+*** maximum flexibility benefit
+  (   ( 1-v32_flexPriceShareMin(t,regi,te) )
+*** VRE share
+    * sum(teVRE, vm_shSeEl(t,regi,teVRE))/100
+  )
+;
+
+*** Calculates the electricity price of flexible technologies 
+*** depending on the share of the flexible technology in total electricity demand
+*** At 0% demand share, v32_flexPriceShare = v32_flexPriceShareVRE from above equation.
+*** Linear relation between flexibility benefit or cost and based on regression 
+*** from Langfristszenarien for Germany with hourly electricity system modeling. 
 q32_flexPriceShare(t,regi,te)$(teFlex(te))..
   v32_flexPriceShare(t,regi,te)
   =e=
-  1 - (1-v32_flexPriceShareMin(t,regi,te)) * sum(teVRE, vm_shSeEl(t,regi,teVRE))/100
+*** minimum electricity price of flexible technology at this VRE share
+    v32_flexPriceShareVRE(t,regi,te)
+*** linearly scale with share of flexible technology in total electricity demand
+  + (p32_flexSeelShare_slope(t,regi,te)
+              * sum(en2en(enty,enty2,te)$(sameas(enty,"seel")),
+                  vm_demSe(t,regi,enty,enty2,te)) 
+                  / sum(en2en(enty,enty2,te2)$(sameas(enty,"seel")),
+                      vm_demSe(t,regi,enty,enty2,te2))
+    )
 ;
+
+
+
+
 
 *** This balance ensures that the lower electricity prices of flexible technologies are compensated 
 *** by higher electricity prices of inflexible technologies. Inflexible technologies are all technologies

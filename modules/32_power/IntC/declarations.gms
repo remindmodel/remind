@@ -18,6 +18,7 @@ parameters
     o32_dispatchDownPe2se(ttot,all_regi,all_te)     "output parameter to check by how much a pe2se te reduced its output below the normal, in % of the normal output."
     p32_shThresholdTotVREAddIntCost(ttot)           "Total VRE share threshold above which additional integration challenges arise. Increases with time as eg in 2030, there is still little experience with managing systems with 80% VRE share. Unit: Percent"
     p32_FactorAddIntCostTotVRE                      "Multiplicative factor that influences how much the total VRE share increases integration challenges"
+    p32_flexSeelShare_slope(ttot,all_regi,all_te)   "Slope of relationship between average electricity price for flexible technology and share of this technology in total electricity demand. Unit: [ % percentage of average electricity price / % share in electricity demand]."
 ;
 
 scalars
@@ -47,17 +48,27 @@ equations
     q32_limitSolarWind(tall,all_regi)           	"limits on fluctuating renewables, only turned on for special EMF27 scenarios"
 	q32_h2turbVREcapfromTestor(tall,all_regi)       "calculate capacities of dummy seel<--h2 technology from storXXX technologies"
     q32_h2turbVREcapfromTestorUp(ttot,all_regi)     "constraint h2turbVRE hydrogen turbines to be only built together with storage capacities"
-    q32_flexAdj(tall,all_regi,all_te)               "calculate flexibility used in flexibility tax for technologies with electricity input"
-    q32_flexPriceShareMin                           "calculatae miniumum share of average electricity that flexible technologies can see"
-    q32_flexPriceShare(tall,all_regi,all_te)        "calculate share of average electricity price that flexible technologies see"
-    q32_flexPriceBalance(tall,all_regi)             "constraint such that flexible electricity prices balanance to average electricity price"
+    q32_flexAdj(ttot,all_regi,all_te)               "calculate flexibility used in flexibility tax for technologies with electricity input"
+    q32_flexPriceShareMin(ttot,all_regi,all_te)     "calculatae miniumum share of average electricity that flexible technologies can see"
+    q32_flexPriceShareVRE(ttot,all_regi,all_te)     "calculatae miniumum share of average electricity that flexible technologies can see given the current VRE share"
+    q32_flexPriceShare(ttot,all_regi,all_te)        "calculate share of average electricity price that flexible technologies see given a certain VRE share and share of electrolysis in total electricity demand"
+    q32_flexPriceBalance(ttot,all_regi)             "constraint such that flexible electricity prices balanance to average electricity price"
     q32_TotVREshare(ttot,all_regi)                  "calculate total VRE share"
     q32_shAddIntCostTotVRE(ttot,all_regi)           "calculate how much total VRE share is above threshold value"
 ;
 
 variables
-v32_flexPriceShare(tall,all_regi,all_te)            "share of average electricity price that flexible technologies see [share: 0...1]"
-v32_flexPriceShareMin(tall,all_regi,all_te)         "possible minimum of share of average electricity price that flexible technologies see [share: 0...1]"
+v32_flexPriceShare(ttot,all_regi,all_te)            "share of average electricity price that flexible technologies see [share: 0...1]"
+v32_flexPriceShareVRE(ttot,all_regi,all_te)         "possible minimum of share of average electricity price that flexible technologies see given the current VRE share [share: 0...1]"   
+v32_flexPriceShareMin(ttot,all_regi,all_te)         "possible minimum of share of average electricity price that flexible technologies see [share: 0...1]"
+
 ;
+
+
+*** for checks
+parameter
+o32_Elh2Share_SeelDem(ttot,all_regi,all_te)         "share of technology in total SE electricity demand"
+;
+
 
 *** EOF ./modules/32_power/IntC/declarations.gms
