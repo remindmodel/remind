@@ -641,7 +641,7 @@ $endif.cm_subsec_model_steel
 
 *** --------------------------------
 
-p37_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
+pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
 pm_outflowPrcIni(all_regi,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 if (cm_startyear eq 2005,
@@ -655,25 +655,25 @@ if (cm_startyear eq 2005,
   pm_outflowPrcIni(regi,'idrcc','ng') = 0.;
 
   loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
-    p37_specFeDem(ttot,regi,"feh2s","idr","h2") = p37_specFeDemTarget("feh2s","idr","h2");
-    p37_specFeDem(ttot,regi,"feels","idr","h2") = p37_specFeDemTarget("feels","idr","h2");
+    pm_specFeDem(ttot,regi,"feh2s","idr","h2") = p37_specFeDemTarget("feh2s","idr","h2");
+    pm_specFeDem(ttot,regi,"feels","idr","h2") = p37_specFeDemTarget("feels","idr","h2");
 
-    p37_specFeDem(ttot,regi,"fegas","idr","ng") = p37_specFeDemTarget("fegas","idr","ng");
-    p37_specFeDem(ttot,regi,"feels","idr","ng") = p37_specFeDemTarget("feels","idr","ng");
+    pm_specFeDem(ttot,regi,"fegas","idr","ng") = p37_specFeDemTarget("fegas","idr","ng");
+    pm_specFeDem(ttot,regi,"feels","idr","ng") = p37_specFeDemTarget("feels","idr","ng");
 
-    p37_specFeDem(ttot,regi,"fegas","bfcc","standard") = p37_specFeDemTarget("fegas","bfcc","standard");
-    p37_specFeDem(ttot,regi,"feels","bfcc","standard") = p37_specFeDemTarget("feels","bfcc","standard");
+    pm_specFeDem(ttot,regi,"fegas","bfcc","standard") = p37_specFeDemTarget("fegas","bfcc","standard");
+    pm_specFeDem(ttot,regi,"feels","bfcc","standard") = p37_specFeDemTarget("feels","bfcc","standard");
 
-    p37_specFeDem(ttot,regi,"fegas","idrcc","ng") = p37_specFeDemTarget("fegas","idrcc","ng");
-    p37_specFeDem(ttot,regi,"feels","idrcc","ng") = p37_specFeDemTarget("feels","idrcc","ng");
+    pm_specFeDem(ttot,regi,"fegas","idrcc","ng") = p37_specFeDemTarget("fegas","idrcc","ng");
+    pm_specFeDem(ttot,regi,"feels","idrcc","ng") = p37_specFeDemTarget("feels","idrcc","ng");
 
-    p37_specFeDem(ttot,regi,"fesos","bf","standard") = pm_fedemand(ttot,regi,'feso_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
-    p37_specFeDem(ttot,regi,"fehos","bf","standard") = pm_fedemand(ttot,regi,'feli_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
-    p37_specFeDem(ttot,regi,"fegas","bf","standard") = pm_fedemand(ttot,regi,'fega_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
-    p37_specFeDem(ttot,regi,"feels","bf","standard") = pm_fedemand(ttot,regi,'feel_steel_primary') * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+    pm_specFeDem(ttot,regi,"fesos","bf","standard") = pm_fedemand(ttot,regi,'feso_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+    pm_specFeDem(ttot,regi,"fehos","bf","standard") = pm_fedemand(ttot,regi,'feli_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+    pm_specFeDem(ttot,regi,"fegas","bf","standard") = pm_fedemand(ttot,regi,'fega_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+    pm_specFeDem(ttot,regi,"feels","bf","standard") = pm_fedemand(ttot,regi,'feel_steel_primary') * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
 
-    p37_specFeDem(ttot,regi,"feels","eaf","sec") = pm_fedemand(ttot,regi,'feel_steel_secondary') * sm_EJ_2_TWa / pm_fedemand(ttot,regi,'ue_steel_secondary');
-    p37_specFeDem(ttot,regi,"feels","eaf","pri") = p37_specFeDem(ttot,regi,"feels","eaf","sec");
+    pm_specFeDem(ttot,regi,"feels","eaf","sec") = pm_fedemand(ttot,regi,'feel_steel_secondary') * sm_EJ_2_TWa / pm_fedemand(ttot,regi,'ue_steel_secondary');
+    pm_specFeDem(ttot,regi,"feels","eaf","pri") = pm_specFeDem(ttot,regi,"feels","eaf","sec");
   );
 
   !! loop over other years and blend
@@ -684,9 +684,9 @@ if (cm_startyear eq 2005,
           loop(ttot$(ttot.val > 2020),
             !! fedemand in excess of BAT halves until 2055
             !! gams cannot handle float exponents, so pre-compute 0.5^(1/(2055-2020)) = 0.9804
-            p37_specFeDem(ttot,regi,all_enty,all_te,opmoPrc)
+            pm_specFeDem(ttot,regi,all_enty,all_te,opmoPrc)
             = p37_specFeDemTarget(all_enty,all_te,opmoPrc)
-            + (p37_specFeDem("2020",regi,all_enty,all_te,opmoPrc) - p37_specFeDemTarget(all_enty,all_te,opmoPrc))
+            + (pm_specFeDem("2020",regi,all_enty,all_te,opmoPrc) - p37_specFeDemTarget(all_enty,all_te,opmoPrc))
             * power(0.9804, ttot.val - 2020) ;
           );
         );
@@ -696,7 +696,7 @@ if (cm_startyear eq 2005,
 );
 
 if (cm_startyear gt 2005,
-  Execute_Loadpoint 'input_ref' p37_specFeDem = p37_specFeDem;
+  Execute_Loadpoint 'input_ref' pm_specFeDem = pm_specFeDem;
 );
 $endif.cm_subsec_model_steel
 

@@ -45,8 +45,8 @@ q05_eedemini(regi,enty)..
       )
     )
     !! Pathway IV: process-based industry
-  + sum(tePrc2opmoPrc(tePrc,opmoPrc)$(p37_specFEDem("2005",regi,enty,tePrc,opmoPrc) gt 0.),
-      p37_specFEDem("2005",regi,enty,tePrc,opmoPrc)
+  + sum(tePrc2opmoPrc(tePrc,opmoPrc)$(pm_specFeDem("2005",regi,enty,tePrc,opmoPrc) gt 0.),
+      pm_specFeDem("2005",regi,enty,tePrc,opmoPrc)
       *
       pm_outflowPrcIni(regi,tePrc,opmoPrc)
     )$(entyFeStat(enty))
