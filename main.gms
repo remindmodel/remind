@@ -1287,8 +1287,8 @@ $setGlobal cm_loadFromGDX_implicitQttyTargetTax  off  !! def = off  !! regexp = 
 ***      option 3 should only be used if the target is defined for a region that has its carbon pricing controlled by cm_emiMktTarget in the 47_regipol module.
 $setGlobal cm_implicitQttyTarget_delay  iteration 3  !! def = iteration 3, quantity targets only start after iteration 3  
 *** cm_implicitPriceTarget "define tax/subsidies to match FE prices defined in the pm_implicitPriceTarget parameter."
-***   Acceptable values: "off", "Initial", "HighElectricityPrice", "HighGasandLiquidsPrice", "HighPrice", "LowPrice", "LowElectricityPrice"
-$setGlobal cm_implicitPriceTarget  off  !! def = off  !! regexp = off|Initial|HighElectricityPrice|HighGasandLiquidsPrice|HighPrice|LowPrice|LowElectricityPrice"
+***   Acceptable values: "off", "initial", "elecPrice", "H2Price", "highElec", "highGasandLiq", "highPrice", "lowElec", "lowPrice"
+$setGlobal cm_implicitPriceTarget  off  !! def = off  !! regexp = off|initial|elecPrice|H2Price|highElec|highGasandLiq|highPrice|lowElec|lowPrice
 *** cm_implicitPePriceTarget "define tax/subsidies to match PE prices defined in the pm_implicitPePriceTarget parameter."
 ***   Acceptable values: "off", "highFossilPrice".
 $setGlobal cm_implicitPePriceTarget  off  !! def = off  !! regexp = off|highFossilPrice
