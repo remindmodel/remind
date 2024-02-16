@@ -144,34 +144,12 @@ ipf_beyond_last(out) = YES;
 *** End of Sets calculation
 
 Parameter
-f29_esdemand(tall,all_regi,all_demScen,all_in)       "energy service demand"
-/
-$ondelim
-$include "./modules/29_CES_parameters/calibrate/input/f29_esdemand.cs4r"
-$offdelim
-/
-;
-*** change million m2.C to trillion m2.C
-p29_esdemand(t,regi,in) = f29_esdemand(t,regi,"%cm_demScen%",in)/sm_mega_2_non;
-
-Parameter
-$ifthen.transpmodule "%transport%" == "edge_esm"
 p29_trpdemand       "transport demand"
 /
 $ondelim
 $include "./modules/29_CES_parameters/calibrate/input/pm_trp_demand.cs4r"
 $offdelim
 /
-$endif.transpmodule
-
-f29_efficiency_growth(tall,all_regi,all_demScen,all_in)       "efficency growth for ppf beyond calibration"
-/
-$ondelim
-$include "./modules/29_CES_parameters/calibrate/input/f29_efficiency_growth.cs4r"
-$offdelim
-/
-;
-p29_efficiency_growth(t,regi,in) = f29_efficiency_growth(t,regi,"%cm_demScen%",in);
 
 parameter
 f29_capitalQuantity(tall,all_regi,all_demScen,all_in)          "capital quantities"
@@ -254,9 +232,6 @@ $ifthen.industry_subsectors "%industry%" == "subsectors"
 $else.industry_subsectors
   sm_EJ_2_TWa * pm_fedemand(t,regi,in)
 $endif.industry_subsectors
-
-*** Load exogenous ES trajectories
-pm_cesdata(t,regi,in,"quantity") $p29_esdemand(t,regi,in) = p29_esdemand(t,regi,in);
 
 *** Load exogenous transport demand - required for the EDGE transport module
 $ifthen.edgesm %transport% ==  "edge_esm"
@@ -359,14 +334,6 @@ p29_capitalPrice(t,regi) = 0.12;
 
 *** Load capital price assumption for the first iteration, otherwise take it from gdx prices
 if( sm_CES_calibration_iteration eq 1 AND s29_CES_calibration_new_structure eq 1,  pm_cesdata(t,regi,"kap","price") = p29_capitalPrice(t,regi));
-
-*** In case there is one capital variable together with an energy variable in a same CES, give them the same efficiency growth pathways
-
-loop (ue_fe_kap_29(out),
-        loop ((cesOut2cesIn(out,in),cesOut2cesIn2(out,in2))$(ppfKap(in) AND ppfen(in2)),
-        p29_efficiency_growth(t,regi,in) = p29_efficiency_growth(t,regi,in2);
-        );
-    );
 
 p29_esubGrowth = 0.3;
 
