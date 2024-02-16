@@ -972,7 +972,7 @@ parameter
   cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
 ;
   cm_TaxConvCheck = 1;  !! def = 1, which means tax convergence check is on  !! regexp = 0|1
-*'  switches tax convergence check in nash mode on and off (check that tax revenue in all regions, periods be smaller than 10% of GDP)
+*'  switches tax convergence check in nash mode on and off (check that tax revenue in all regions, periods be smaller than 0.1% of GDP)
 *' * 0 (off)
 *' * 1 (on), default
 *'

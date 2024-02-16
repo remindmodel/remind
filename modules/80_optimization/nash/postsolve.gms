@@ -320,7 +320,7 @@ loop(regi,
     loop(t,
          p80_convNashTaxrev_iter(iteration,t,regi) = vm_taxrev.l(t,regi) / vm_cesIO.l(t,regi,"inco");
          if (cm_TaxConvCheck eq 1,
-             if( abs(p80_convNashTaxrev_iter(iteration,t,regi)) gt 0.1,
+             if( abs(p80_convNashTaxrev_iter(iteration,t,regi)) gt 0.001,
                  s80_bool = 0;
                  p80_messageShow("taxconv") = YES;
              );
