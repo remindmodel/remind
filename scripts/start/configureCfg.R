@@ -31,7 +31,7 @@ configureCfg <- function(icfg, iscen, iscenarios, verboseGamsCompile = TRUE) {
 
     # Set description
     if ("description" %in% names(iscenarios) && ! is.na(iscenarios[iscen, "description"])) {
-      icfg$description <- gsub('"', '', iscenarios[iscen, "description"])
+      icfg$description <- iconv(gsub('"', '', iscenarios[iscen, "description"]), from = "UTF-8", to = "ASCII//TRANSLIT")
     } else {
       icfg$description <- paste0("REMIND run ", iscen, " started by ", config.file, ".")
     }
