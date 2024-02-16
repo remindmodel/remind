@@ -14,7 +14,6 @@ pm_gdp,parameter,???
 pm_lab,parameter,???
 sm_EJ_2_TWa,input,questionnaire
 pm_cesdata_sigma,input,questionnaire
-sm_mega_2_non,input,questionnaire
 pm_delta_kap,input,questionnaire
 sm_tmp2,input,questionnaire
 pm_ttot_val,input,questionnaire
