@@ -407,7 +407,10 @@ $endif.REG_techcosts
 
 
 ****************************************************************************************************
-*************************END of Technology data input read-in and manipulation *********************
+*************************END of Technology data input read-in and manipulation in core *************
+*** Note: in modules/05_initialCap/on/preloop.gms, there are additional adjustment to investment
+*** cost in the near term due to calibration of historical energy conversion efficiencies based on
+*** initial capacities
 ****************************************************************************************************
 
 
