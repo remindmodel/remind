@@ -153,16 +153,20 @@ table f_dataglob_SSP5(char,all_te)        "Techno-economic assumptions consisten
 $include "./core/input/generisdata_tech_SSP5.prn"
 ;
 
-*** initializing energy service capital
-pm_esCapCost(tall,all_regi,all_teEs) = 0;
-
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
+
 *CG* set wind offshore, storage and grid to be the same as wind onshore (later should be integrated into input data)
 * main difference between onshore and offshore is the difference in f32_factorStorage
 fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
 fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
 $ENDIF.WindOff
 
+*RP* include global flexibility parameters
+$include "./core/input/generisdata_flexibility.prn"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+fm_dataglob("flexibility","storwindoff")  = 1.93;
+fm_dataglob("flexibility","windoff")  = -1;
+$ENDIF.WindOff
 ***---------------------------------------------------------------------------
 *** Reading in and initializing regional data
 ***---------------------------------------------------------------------------
@@ -173,6 +177,9 @@ $include "./core/input/p_inco0.cs4r"
 $offdelim
 /
 ;
+
+*** initializing energy service capital
+pm_esCapCost(tall,all_regi,all_teEs) = 0;
 
 ***---------------------------------------------------------------------------
 ****** Manipulating technology data
@@ -422,17 +429,9 @@ loop((ext_regi)$p_extRegiccsinjecrateRegi(ext_regi),
 ;
 $endIf.c_ccsinjecrateRegi
 
-$include "./core/input/generisdata_flexibility.prn"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-fm_dataglob("flexibility","storwindoff")  = 1.93;
-fm_dataglob("flexibility","windoff")  = -1;
-$ENDIF.WindOff
-
 table fm_dataemiglob(all_enty,all_enty,all_te,all_enty)  "read-in of emissions factors co2,cco2"
 $include "./core/input/generisdata_emi.prn"
 ;
-
-
 
 parameter pm_share_ind_fesos(tall,all_regi)					"Share of coal solids (coaltr) used in the industry (rest is residential)"
 /
