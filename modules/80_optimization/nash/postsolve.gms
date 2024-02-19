@@ -17,10 +17,7 @@ p80_taxrev0(ttot,regi)$( (ttot.val ge max(2010,cm_startyear)) and (pm_SolNonInfe
 *AJS*update normalization paramaters, take values from last iteration for regions that were not solved optimally
 p80_normalize0(ttot,regi,"good")$(ttot.val ge 2005) = max(vm_cons.l(ttot,regi)$(pm_SolNonInfes(regi) eq 1) + p80_normalize0(ttot,regi,"good")$(pm_SolNonInfes(regi) eq 0),sm_eps);
 *ML*normalize permit trade corrections to consumption or positive cap path instead of emissions, as those may be negative
-*p80_normalize0(ttot,regi,"perm")$(ttot.val ge 2005) = vm_cons.l(ttot,regi)$(pm_SolNonInfes(regi) eq 1) + p80_normalize0(ttot,regi,"good")$(pm_SolNonInfes(regi) eq 0);
-*p80_normalize0(ttot,regi,"perm")$(ttot.val ge 2005) = max(abs(pm_shPerm(ttot,regi) * pm_emicapglob(ttot)) , sm_eps);
 p80_normalize0(ttot,regi,"perm")$(ttot.val ge 2005) = max(abs(pm_shPerm(ttot,regi) * pm_emicapglob("2050")) , sm_eps);
-***$ifi %emicapregi% == "budget" p80_normalize0(ttot,regi,"perm")$(trtot.val ge 2005) = p_emi_budget1_reg(regi)/(sm_endBudgetCO2eq - s_t_start);
 p80_normalize0(ttot,regi,tradePe)$(ttot.val ge 2005) = max(0.5 * (sum(rlf, vm_fuExtr.l(ttot,regi,tradePe,rlf)) + vm_prodPe.l(ttot,regi,tradePe))$(pm_SolNonInfes(regi) eq 1)
                                                         + p80_normalize0(ttot,regi,tradePe)$(pm_SolNonInfes(regi) eq 0) ,sm_eps);
 
@@ -119,22 +116,22 @@ if(iteration.val > 2,
   loop(ttot$(ttot.val ge 2005),
     loop(trade$(tradePe(trade) OR sameas(trade,"good") ),
       if( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade),
-	    o80_SurplusOverTolerance(ttot,trade,iteration) = Sign(p80_surplus(ttot,trade,iteration) );
-	  );
+          o80_SurplusOverTolerance(ttot,trade,iteration) = Sign(p80_surplus(ttot,trade,iteration) );
+        );
     );
   );
-);	
+);
 
 *RP* track continued surplusses with the same sign (to show where convergence is too slow)
 if(iteration.val > 2, 
   loop(ttot$(ttot.val ge 2005),
     loop(trade$(tradePe(trade) OR sameas(trade,"good") ),
       if( ( Sign(p80_surplus(ttot,trade,iteration) ) eq Sign(p80_surplus(ttot,trade,iteration-1) ) ) AND 
-	  ( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) ) ,
-        o80_trackSurplusSign(ttot,trade,iteration) = o80_trackSurplusSign(ttot,trade,iteration-1) +1;	  
-	  else
-	    o80_trackSurplusSign(ttot,trade,iteration) = 0;
-	  );
+      ( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) ) ,
+           o80_trackSurplusSign(ttot,trade,iteration) = o80_trackSurplusSign(ttot,trade,iteration-1) +1;	  
+      else
+        o80_trackSurplusSign(ttot,trade,iteration) = 0;
+      );
     );
   );
 );
@@ -225,7 +222,6 @@ loop(trade$(NOT tradeSe(trade)),
 p80_defic_sum("1") = 1;
 p80_defic_sum(iteration) = sum(trade$(NOT tradeSe(trade)),  p80_defic_trade(trade)); 
 p80_defic_sum_rel(iteration) =  100 * p80_defic_sum(iteration) / (p80_normalizeLT("good")/pm_pvp("2005","good"));
-
 
 
 ***adjust parameters for next iteration 
@@ -324,7 +320,7 @@ loop(regi,
     loop(t,
          p80_convNashTaxrev_iter(iteration,t,regi) = vm_taxrev.l(t,regi) / vm_cesIO.l(t,regi,"inco");
          if (cm_TaxConvCheck eq 1,
-             if( abs(p80_convNashTaxrev_iter(iteration,t,regi)) gt 1E-4,
+             if( abs(p80_convNashTaxrev_iter(iteration,t,regi)) gt 0.001,
                  s80_bool = 0;
                  p80_messageShow("taxconv") = YES;
              );

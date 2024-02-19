@@ -570,7 +570,6 @@ o_modelstat                                           "critical solver status fo
 pm_conv_TWa_EJ                                        "conversion from TWa to EJ"               /31.536/,
 sm_c_2_co2                                            "conversion from c to co2"                /3.666666666667/,
 *** conversion factors of time units
-sm_mega_2_non                                         "mega to non"                             /1e+6/,
 sm_giga_2_non                                         "giga to non"                             /1e+9/,
 sm_trillion_2_non                                     "trillion to non"                         /1e+12/,
 *** conversion of energy units
