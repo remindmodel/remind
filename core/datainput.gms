@@ -223,6 +223,14 @@ fm_dataglob("incolearn",te)          = s_D2015_2_D2005 * fm_dataglob("incolearn"
 fm_dataglob("omv",te)                = s_D2015_2_D2005 * fm_dataglob("omv",te);
 p_inco0(ttot,regi,te)               = s_D2015_2_D2005 * p_inco0(ttot,regi,te);
 
+*** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for ccs-related tech or $/(t/a) for process-based industry)
+*** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for ccs-related tech or T$/(Gt/a) for process-based industry)
+*** note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
+fm_dataglob("inco0",te)              = s_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
+fm_dataglob("incolearn",te)          = s_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
+fm_dataglob("omv",te)                = s_DpKWa_2_TDpTWa      * fm_dataglob("omv",te);
+p_inco0(ttot,regi,te)               = s_DpKW_2_TDpTW       * p_inco0(ttot,regi,te);
+
 *RP* rescale the global CSP investment costs in REMIND: Originally we assume a SM3/12h setup, while the cost data from IEA for the short term seems rather based on a SM2/6h setup (with 40% average CF)
 *** Accordingly, also decrease long-term costs in REMIND to 0.7 of the current values
 fm_dataglob("inco0","csp")              = 0.7 * fm_dataglob("inco0","csp");
@@ -231,6 +239,11 @@ fm_dataglob("incolearn","csp")          = 0.7 * fm_dataglob("incolearn","csp");
 
 *** --------------------------------------------------------------------------------
 ****** Regionalize investment cost data
+*** -------------------------------------------------------------------------------
+
+*** initialize regionalized data using global data
+pm_data(all_regi,char,te) = fm_dataglob(char,te);
+
 *** -------------------------------------------------------------------------------
 ****** Regional risk premium during building time
 *** -------------------------------------------------------------------------------
@@ -266,21 +279,12 @@ $if %cm_techcosts% == "GLO"  (1.03 + 0.03 + pm_prtp(regi) )                     
 );
 
 display p_tkpremused;
-
-*** for those technologies, for which differentiated costs are available for 2015-2040, use those
-***$if %cm_techcosts% == "REG"   loop(teRegTechCosts(te)$(not teLearn(te)),
-***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);
-***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2040) = p_inco0("2040",regi,te);
-***$if %cm_techcosts% == "REG"   );
-
-***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);
-
-*** initialize regionalized data using global data
-pm_data(all_regi,char,te) = fm_dataglob(char,te);
+*** modify regionalized cost data using cost premium during construction time
 
 pm_data(regi,"inco0",te)       = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"inco0",te);
 pm_data(regi,"incolearn",te)   = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"incolearn",te);
 p_inco0(ttot,regi,teRegTechCosts)  = (1 + p_tkpremused(regi,teRegTechCosts) ) * p_inco0(ttot,regi,teRegTechCosts);
+
 *** take region average p_tkpremused for global convergence price
 fm_dataglob("inco0",te)       = (1 + sum(regi, p_tkpremused(regi,te))/sum(regi, 1)) * fm_dataglob("inco0",te);
 
@@ -352,7 +356,7 @@ p_costMarkupAdvTech("5",ttot)=p_costMarkupAdvTech("3",ttot);
 loop (teNoLearn(te),
   pm_inco0_t(ttot,regi,te) = pm_data(regi,"inco0",te);
   loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2035 ),
-    pm_inco0_t(ttot,regi,te) 
+    pm_inco0_t(ttot,regi,te)
     = sum(s_statusTe$( s_statusTe.val eq pm_data(regi,"tech_stat",te) ),
         p_costMarkupAdvTech(s_statusTe,ttot)
       * pm_inco0_t(ttot,regi,te)
@@ -363,10 +367,10 @@ display pm_inco0_t;
 
 $ifthen.REG_techcosts "%cm_techcosts%" == "REG"   !! cm_techcosts
 *** for those technologies, for which differentiated costs are available for
-*** 2015-2040, use those
+*** 2015-2020, use those
 loop(te$( teNoLearn(te) AND teRegTechCosts(te) ),
   !! no value after 2020 is currently used (see convergence below)
-  pm_inco0_t(ttot,regi,te)$( ttot.val ge 2015 AND ttot.val lt 2040 )
+  pm_inco0_t(ttot,regi,te)$( ttot.val ge 2015 AND ttot.val lt 2025)
   = p_inco0(ttot,regi,te);
 
 *** linear convergence of investment costs from 2025 on for non-learning
@@ -394,14 +398,6 @@ loop (teNoLearn(te)$( sameas(te,"igcc") ),
 );
 $endif.REG_techcosts
 
-
-*** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for ccs-related tech or $/(t/a) for process-based industry)
-*** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for ccs-related tech or T$/(Gt/a) for process-based industry)
-*** note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
-fm_dataglob("inco0",te)              = s_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
-fm_dataglob("incolearn",te)          = s_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
-fm_dataglob("omv",te)                = s_DpKWa_2_TDpTWa      * fm_dataglob("omv",te);
-p_inco0(ttot,regi,te)               = s_DpKW_2_TDpTW       * p_inco0(ttot,regi,te);
 
 ****************************************************************************************************
 *************************END of Technology data input read-in and manipulation *********************
