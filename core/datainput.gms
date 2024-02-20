@@ -130,9 +130,9 @@ pm_shGasLiq_fe_up(ttot,regi,sector)=0;
 pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 
 
-*******************************************************************************
-**************     Technology data input read-in and manipulation       *******
-*******************************************************************************
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++ Technology cost data input read-in and manipulation ++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 *** Note: future to be its own module perhaps
 *** Note: in module 5 there are more cost manipulation after initial capacities are calculated, be aware those can overwrite your technology values for policy runs if you set them here in the core
 ***---------------------------------------------------------------------------
@@ -153,8 +153,12 @@ table f_dataglob_SSP5(char,all_te)        "Techno-economic assumptions consisten
 $include "./core/input/generisdata_tech_SSP5.prn"
 ;
 
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+*JH* New nuclear assumption for SSP5
+if (cm_nucscen eq 6,
+  f_dataglob_SSP5("inco0","tnrs") = 6270; !! increased from 4000 to 6270 with the update of technology costs in REMIND 1.7 to keep the percentage increase between SSP2 and SSP5 constant
+);
 
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
 *CG* set wind offshore, storage and grid to be the same as wind onshore (later should be integrated into input data)
 * main difference between onshore and offshore is the difference in f32_factorStorage
 fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
@@ -182,9 +186,9 @@ $offdelim
 pm_esCapCost(tall,all_regi,all_teEs) = 0;
 
 ***---------------------------------------------------------------------------
-****** Manipulating technology data
+++++** Manipulating technology cost data 
 ***---------------------------------------------------------------------------
-*** Manipulating global or regional technology data - absolute value
+*** Manipulating global or regional technology cost data - absolute value
 ***---------------------------------------------------------------------------
 !! Modify spv and storspv parameters for optimistic VRE supply assumptions
 if (cm_VRE_supply_assumptions eq 1,
@@ -212,9 +216,9 @@ if (c_techAssumptScen eq 3,
 display fm_dataglob;
 
 ***---------------------------------------------------------------------------
-*** Manipulating global or regional technology data - relative value
+*** Manipulating global or regional technology cost data  - relative value
 ***---------------------------------------------------------------------------
-*** Overwrite default technology parameter values based on specific scenario configs
+*** Overwrite default technology cost parameter values based on specific scenario configs
 $if not "%cm_incolearn%" == "off" parameter p_new_incolearn(all_te) / %cm_incolearn% /;
 $if not "%cm_incolearn%" == "off" fm_dataglob("incolearn",te)$p_new_incolearn(te)=p_new_incolearn(te);
 $if not "%cm_inco0Factor%" == "off" parameter p_new_inco0Factor(all_te) / %cm_inco0Factor% /;
@@ -245,14 +249,14 @@ fm_dataglob("incolearn","csp")          = 0.7 * fm_dataglob("incolearn","csp");
 
 
 *** --------------------------------------------------------------------------------
-****** Regionalize investment cost data
+++++** Regionalize investment cost data
 *** -------------------------------------------------------------------------------
 
 *** initialize regionalized data using global data
 pm_data(all_regi,char,te) = fm_dataglob(char,te);
 
 *** -------------------------------------------------------------------------------
-****** Regional risk premium during building time
+++++** Regional risk premium during building time
 *** -------------------------------------------------------------------------------
 
 *RP* calculate turnkey costs (which are the sum of the overnight costs in generisdata_tech and the "interest during construction” (IDC) )
@@ -406,12 +410,12 @@ loop (teNoLearn(te)$( sameas(te,"igcc") ),
 $endif.REG_techcosts
 
 
-****************************************************************************************************
-*************************END of Technology data input read-in and manipulation in core *************
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++*END of Technology cost data input read-in and manipulation in core ++++++++++
 *** Note: in modules/05_initialCap/on/preloop.gms, there are additional adjustment to investment
 *** cost in the near term due to calibration of historical energy conversion efficiencies based on
 *** initial capacities
-****************************************************************************************************
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 *JH* Determine CCS injection rates
