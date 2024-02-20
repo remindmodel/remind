@@ -33,7 +33,6 @@ test_that("start.R --gamscompile works on all configs and scenarios", {
   skipfiles <- c("scenario_config_21_EU11_ECEMF",
                  "scenario_config_21_EU11_ARIADNE",
                  "scenario_config_21_EU11_SSPSDP",
-                 "scenario_config_NAVIGATE_300",
                  "scenario_config_tradeCap_standalone",
                  "scenario_config_SHAPE",
                  "scenario_config_GCS")
