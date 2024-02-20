@@ -85,7 +85,10 @@ configureCfg <- function(icfg, iscen, iscenarios, verboseGamsCompile = TRUE) {
                     strptime(format='%Y-%m-%d_%H.%M.%S') %>%
                     as.numeric %>%
                     which.max -> latest_fulldata
-                  message(paste0("   Use newest normally completed run for ", path_to_gdx, " = ", iscenarios[iscen, path_to_gdx], ":\n     ", str_sub(dirs[latest_fulldata],if (dirfolder == icfg$modeltests_folder) 0 else 10 ,-14)))
+                  msg_latest <- gsub(file.path("", "fulldata.gdx"), "",
+                                     gsub(file.path(dirname(icfg$results_folder), ""), "", dirs[latest_fulldata], fixed = TRUE), fixed = TRUE)
+                  message(paste0("   Use newest normally completed run for ", path_to_gdx, " = ", iscenarios[iscen, path_to_gdx],
+                                 ":\n     ", msg_latest))
                   iscenarios[iscen, path_to_gdx] <- dirs[latest_fulldata]
                   if (dirfolder == icfg$modeltests_folder) modeltestRunsUsed <<- modeltestRunsUsed + 1
                 }
