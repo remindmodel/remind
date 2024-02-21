@@ -32,6 +32,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1500](https://github.com/remindmodel/remind/pull/1500)]
 - prevent tradtional biomass spillover to other sectors than buildings
     [[#1519](https://github.com/remindmodel/remind/pull/1519)]
+- fully fix landuse and MAGICC6 variables in delayed transition runs to reference run
+    [[#1565](https://github.com/remindmodel/remind/pull/1565)]
 
 ### removed
 - **45_carbonprice** remove outdated realizations:
