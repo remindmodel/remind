@@ -264,6 +264,18 @@ q32_flexPriceShareVRE(t,regi,te)$(teFlex(te))..
   )
 ;
 
+
+*** Calculate share of electricity demand per technology in total electricity demand
+*** Relevant for technologies that see flexibility tax or SE (electricity) taxes. 
+q32_shDemSeel(t,regi,te)$(teFlex(te) OR teSeTax(te))..
+  vm_shDemSeel(t,regi,te)
+  * sum(en2en(enty,enty2,te2)$(sameas(enty,"seel")),
+        vm_demSe(t,regi,enty,enty2,te2))
+  =e=
+  sum(en2en(enty,enty2,te)$(sameas(enty,"seel")),
+      vm_demSe(t,regi,enty,enty2,te)) 
+;
+
 *** Calculates the electricity price of flexible technologies 
 *** depending on the share of the flexible technology in total electricity demand
 *** At 0% demand share, v32_flexPriceShare = v32_flexPriceShareVRE from above equation.
@@ -275,12 +287,8 @@ q32_flexPriceShare(t,regi,te)$(teFlex(te))..
 *** minimum electricity price of flexible technology at this VRE share
     v32_flexPriceShareVRE(t,regi,te)
 *** linearly scale with share of flexible technology in total electricity demand
-  + (p32_flexSeelShare_slope(t,regi,te)
-              * sum(en2en(enty,enty2,te)$(sameas(enty,"seel")),
-                  vm_demSe(t,regi,enty,enty2,te)) 
-                  / sum(en2en(enty,enty2,te2)$(sameas(enty,"seel")),
-                      vm_demSe(t,regi,enty,enty2,te2))
-    )
+  + p32_flexSeelShare_slope(t,regi,te)
+      * vm_shDemSeel(t,regi,te) 
 ;
 
 
