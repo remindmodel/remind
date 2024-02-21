@@ -182,9 +182,9 @@ $offdelim
 pm_esCapCost(tall,all_regi,all_teEs) = 0;
 
 ***---------------------------------------------------------------------------
-****** Manipulating technology data
+****** Manipulating cost technology data
 ***---------------------------------------------------------------------------
-*** Manipulating global or regional technology data - absolute value
+*** Manipulating global or regional cost technology data - absolute value
 ***---------------------------------------------------------------------------
 !! Modify spv and storspv parameters for optimistic VRE supply assumptions
 if (cm_VRE_supply_assumptions eq 1,
@@ -201,6 +201,10 @@ if (cm_VRE_supply_assumptions eq 3,
 );
 
 
+*JH* New nuclear assumption for SSP5
+if (cm_nucscen eq 6,
+  f_dataglob_SSP5("inco0","tnrs") = 6270; !! increased from 4000 to 6270 with the update of technology costs in REMIND 1.7 to keep the percentage increase between SSP2 and SSP5 constant
+);
 
 if (c_techAssumptScen eq 2,
                fm_dataglob(char,te) = f_dataglob_SSP1(char,te)
@@ -212,7 +216,7 @@ if (c_techAssumptScen eq 3,
 display fm_dataglob;
 
 ***---------------------------------------------------------------------------
-*** Manipulating global or regional technology data - relative value
+*** Manipulating global or regional cost technology data - relative value
 ***---------------------------------------------------------------------------
 *** Overwrite default technology parameter values based on specific scenario configs
 $if not "%cm_incolearn%" == "off" parameter p_new_incolearn(all_te) / %cm_incolearn% /;
