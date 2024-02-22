@@ -130,9 +130,9 @@ pm_shGasLiq_fe_up(ttot,regi,sector)=0;
 pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 
 
-*******************************************************************************
-**************     Technology data input read-in and manipulation       *******
-*******************************************************************************
+*------------------------------------------------------------------------------------
+***          Technology data input read-in and manipulation
+*------------------------------------------------------------------------------------
 *** Note: future to be its own module perhaps
 *** Note: in module 5 there are more cost manipulation after initial capacities are calculated, be aware those can overwrite your technology values for policy runs if you set them here in the core
 ***---------------------------------------------------------------------------
@@ -182,7 +182,7 @@ $offdelim
 pm_esCapCost(tall,all_regi,all_teEs) = 0;
 
 ***---------------------------------------------------------------------------
-****** Manipulating technology data
+*** Manipulating technology data
 ***---------------------------------------------------------------------------
 *** Manipulating global or regional technology data - absolute value
 ***---------------------------------------------------------------------------
@@ -244,16 +244,16 @@ fm_dataglob("inco0","csp")              = 0.7 * fm_dataglob("inco0","csp");
 fm_dataglob("incolearn","csp")          = 0.7 * fm_dataglob("incolearn","csp");
 
 
-*** --------------------------------------------------------------------------------
-****** Regionalize investment cost data
-*** -------------------------------------------------------------------------------
+***---------------------------------------------------------------------------
+*** Regionalize investment cost data
+***---------------------------------------------------------------------------
 
 *** initialize regionalized data using global data
 pm_data(all_regi,char,te) = fm_dataglob(char,te);
 
-*** -------------------------------------------------------------------------------
-****** Regional risk premium during building time
-*** -------------------------------------------------------------------------------
+***---------------------------------------------------------------------------
+*** Regional risk premium during building time
+***---------------------------------------------------------------------------
 
 *RP* calculate turnkey costs (which are the sum of the overnight costs in generisdata_tech and the "interest during construction” (IDC) )
 
@@ -406,12 +406,13 @@ loop (teNoLearn(te)$( sameas(te,"igcc") ),
 $endif.REG_techcosts
 
 
-****************************************************************************************************
-*************************END of Technology data input read-in and manipulation in core *************
+*------------------------------------------------------------------------------------
+*   END of Technology data input read-in and manipulation in core
+*------------------------------------------------------------------------------------
 *** Note: in modules/05_initialCap/on/preloop.gms, there are additional adjustment to investment
 *** cost in the near term due to calibration of historical energy conversion efficiencies based on
 *** initial capacities
-****************************************************************************************************
+*------------------------------------------------------------------------------------
 
 
 *JH* Determine CCS injection rates
