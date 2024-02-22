@@ -56,7 +56,7 @@ q37_emiIndCCSmax(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
 ;
 
 *' Industry CCS is limited to below the maximum abatable emissions. 
-q37_indCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) .. 
+q37_IndCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) .. 
   vm_emiIndCCS(ttot,regi,emiInd37)
   =l=
   v37_emiIndCCSmax(ttot,regi,emiInd37)

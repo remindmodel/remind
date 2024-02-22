@@ -129,7 +129,7 @@ q37_emiIndCCSmax(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND NOT sum(secI
 ***------------------------------------------------------
 *' Limit industry CCS to maximum possible CCS level.
 ***------------------------------------------------------
-q37_indCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND NOT sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
+q37_IndCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND NOT sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
   vm_emiIndCCS(ttot,regi,emiInd37)
   =l=
   v37_emiIndCCSmax(ttot,regi,emiInd37)
