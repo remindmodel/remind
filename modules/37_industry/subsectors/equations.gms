@@ -85,7 +85,7 @@ $endif.exogDem_scen
 q37_emiIndBase(ttot,regi,entyFe,secInd37)$( ttot.val ge cm_startyear ) ..
     vm_emiIndBase(ttot,regi,entyFe,secInd37)
   =e=
-    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfEn(entyFECC37(entyFe),in)),
+    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfEn(entyFeCC37(entyFe),in)),
       ( vm_cesIO(ttot,regi,in)
       - ( p37_chemicals_feedstock_share(ttot,regi)
         * vm_cesIO(ttot,regi,in)
@@ -236,7 +236,7 @@ q37_feedstocksLimit(ttot,regi,entySe,entyFe,emiMkt)$(
                                          AND sefe(entySe,entyFe)
                                          AND sector2emiMkt("indst",emiMkt)
                                          AND entyFe2Sector(entyFe,"indst")
-                                         AND entyFECC37(entyFe)            ) ..
+                                         AND entyFeCC37(entyFe)            ) ..
   vm_demFeSector(ttot,regi,entySe,entyFe,"indst",emiMkt)
   =g=
   vm_demFENonEnergySector(ttot,regi,entySe,entyFe,"indst",emiMkt)

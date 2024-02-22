@@ -22,11 +22,11 @@ pm_FEPrice(ttot,regi,entyFe,"indst",emiMkt)$( abs(qm_budget.m(ttot,regi)) gt sm_
 *** is only defined for total FE not FE per emissions market.
 *** A correct split is done in the subsectors realization.
 o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
-  = sum(fe2ppfen37(entyFe,in), p37_shIndFE(regi,in,secInd37))
+  = sum(fe2ppfEn37(entyFe,in), p37_shIndFE(regi,in,secInd37))
   * vm_demFeSector_afterTax.l(ttot,regi,entySe,entyFe,"indst",emiMkt);
 
 *** industry captured fuel CO2
-pm_IndstCO2Captured(ttot,regi,entySe,entyFe(entyFECC37),secInd37,emiMkt)$(
+pm_IndstCO2Captured(ttot,regi,entySe,entyFe(entyFeCC37),secInd37,emiMkt)$(
                      emiInd37_fe2sec(entyFe,secInd37)
                  AND sum(entyFE2, vm_emiIndBase.l(ttot,regi,entyFE2,secInd37)) )
   = ( o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)

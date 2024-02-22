@@ -81,7 +81,7 @@ Sets
   /
 
 
-  fe2ppfen37(all_enty,all_in)   "match ESM entyFe to ppfEn"
+  fe2ppfEn37(all_enty,all_in)   "match ESM entyFe to ppfEn"
   /
     fesos . fesoi
     fehos . fehoi
@@ -111,7 +111,7 @@ Sets
     feels
   /
 
-  entyFECC37(all_enty)  "FE carriers in industry which can be used for CO2 capture"
+  entyFeCC37(all_enty)  "FE carriers in industry which can be used for CO2 capture"
   /
     fesos
     fehos
@@ -153,7 +153,7 @@ Sets
 in(in_industry_dyn37)              = YES;
 ppfEn(ppfen_industry_dyn37)        = YES;
 cesOut2cesIn(ces_industry_dyn37)   = YES;
-fe2ppfEn(fe2ppfen37)               = YES;
+fe2ppfEn(fe2ppfEn37)               = YES;
 fe_tax_sub_sbi(fe_tax_sub37)       = YES;
 ppfen_CESMkup(ppfen_CESMkup_dyn37) = YES;
 
