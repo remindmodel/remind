@@ -64,23 +64,18 @@ for (p in intersect(varnames, names(projectdata))) {
 lucode2::readArgs("outputdirs", "filename_prefix", "outputFilename", "model",
                   "mapping", "logFile", "removeFromScen", "addToScen", "iiasatemplate")
 
+if (is.null(mapping)) {
+  mapping <- gms::chooseFromList(names(piamInterfaces::templateNames()), type = "mapping template")
+}
+if (length(mapping) == 0 || ! all(file.exists(mapping) | mapping %in% names(templateNames())))
+  stop("mapping='", paste(mapping, collapse = ", "), "' not found.")
+}
 if (exists("iiasatemplate") && ! is.null(iiasatemplate) && ! file.exists(iiasatemplate)) {
   stop("iiasatemplate=", iiasatemplate, " not found.")
 }
 
 # variables to be deleted although part of the template
 temporarydelete <- NULL # example: c("GDP|MER", "GDP|PPP")
-
-### select mapping
-
-mappingFile <- NULL
-if (length(mapping) == 1 && file.exists(mapping)) {
-  mappingFile <- mapping
-  mapping <- NULL
-} else if (! all(mapping %in% names(templateNames())) || length(mapping) == 0) {
-  message("# Mapping = '", paste(mapping, collapse = ","), "' exists neither as file nor mapping name.")
-  mapping <- gms::chooseFromList(names(piamInterfaces::templateNames()), type = "mapping template")
-}
 
 ### define filenames
 
@@ -140,7 +135,7 @@ withCallingHandlers({ # piping messages to logFile
   # message("\n### Generate joint mif, remind2 format: ", filename_remind2_mif)
   # write.mif(mifdata, filename_remind2_mif)
 
-  generateIIASASubmission(mifdata, mapping = mapping, model = model, mappingFile = mappingFile,
+  generateIIASASubmission(mifdata, mapping = mapping, model = model,
                           removeFromScen = removeFromScen, addToScen = addToScen,
                           outputDirectory = outputFolder,
                           logFile = logFile, outputFilename = basename(OUTPUT_xlsx),
