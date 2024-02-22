@@ -536,7 +536,7 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
         vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)
         !! substract FE used for non-energy purposes (as feedstocks) so it does
         !! not create energy-related emissions
-      - sum(entyFe2sector2emiMkt_NonEn(enty2,sector,emiMkt),
+      - sum(entyFE2sector2emiMkt_NonEn(enty2,sector,emiMkt),
           vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
         )
       )
@@ -583,19 +583,19 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
 		)$( sameas(enty,"co2") AND sameas(emiMkt,"ETS"))
     !! substract carbon from biogenic or synthetic origin contained in
     !! plastics that don't get incinerated ("plastic removals")
-  - sum(entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+  - sum(entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
       sum(se2fe(entySe,entyFe,te)$( entySeBio(entySe) OR entySeSyn(entySe) ),
         vm_nonIncineratedPlastics(t,regi,entySe,entyFe,emiMkt)
       )
     )$( sameas(enty,"co2") )
     !! add emissions from plastics incineration. CHECK FOR DOUBLE-COUNTING RISK
-  + sum(entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+  + sum(entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
       sum(se2fe(entySe,entyFe,te),
         vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
       )
     )$( sameas(enty,"co2") )
     !! add emissions from chemical feedstock with unknown fate
-  + sum(entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+  + sum(entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
       sum(se2fe(entySe,entyFe,te),
         vm_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
       )
@@ -629,7 +629,7 @@ q_emiAllMkt(t,regi,emi,emiMkt) ..
     !! Exogenous emissions
   + pm_emiExog(t,regi,emi)$( sameas(emiMkt,"other") )
     !! non energy emi from chem sector (process emissions from feedstocks):
-  + sum((entyFe2sector2emiMkt_NonEn(entyFe,sector,emiMkt),
+  + sum((entyFE2sector2emiMkt_NonEn(entyFe,sector,emiMkt),
          se2fe(entySe,entyFe,te)),
       vm_demFENonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
     * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
@@ -814,7 +814,7 @@ q_budgetCO2eqGlob$(cm_emiscen=6)..
 ***---------------------------------------------------------------------------
 *' Definition of carbon capture :
 ***---------------------------------------------------------------------------
-q_balcapture(t,regi,ccs2te(ccsCO2(enty),enty2,te)) ..
+q_balcapture(t,regi,ccs2te(ccsCo2(enty),enty2,te)) ..
   sum(teCCS2rlf(te,rlf),vm_co2capture(t,regi,enty,enty2,te,rlf))
   =e=
 *** Carbon captured in energy sector

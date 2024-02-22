@@ -23,7 +23,7 @@ o37_demFePrc(ttot,regi,entyFe,tePrc,opmoPrc)$(pm_specFeDem(ttot,regi,entyFe,tePr
 *** total FE per energy carrier and emissions market in industry (sum over
 *** subsectors)
 o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
-  = sum((fe2ppfEn37(entyFe,in),secInd37_2_pf(secInd37,in),
+  = sum((fe2ppfen37(entyFe,in),secInd37_2_pf(secInd37,in),
                          secInd37_emiMkt(secInd37,emiMkt))$(NOT secInd37Prc(secInd37)),
       (vm_cesIO.l(ttot,regi,in)
       +pm_cesdata(ttot,regi,in,"offset_quantity"))
@@ -38,7 +38,7 @@ o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)$(
                                     o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt) )
   =
   (
-    sum(( fe2ppfEn37(entyFe,in),
+    sum(( fe2ppfen37(entyFe,in),
           secInd37_2_pf(secInd37,in),
           secInd37_emiMkt(secInd37,emiMkt))$(NOT secInd37Prc(secInd37)),
       (vm_cesIO.l(ttot,regi,in)
@@ -62,7 +62,7 @@ o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
   );
 
 *** industry captured fuel CO2
-pm_IndstCO2Captured(ttot,regi,entySe,entyFe(entyFeCC37),secInd37,emiMkt)$(
+pm_IndstCO2Captured(ttot,regi,entySe,entyFe(entyFECC37),secInd37,emiMkt)$(
                      emiInd37_fe2sec(entyFe,secInd37)
                  AND sum(entyFE2, vm_emiIndBase.l(ttot,regi,entyFE2,secInd37)) )
   = ( o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)

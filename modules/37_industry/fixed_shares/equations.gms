@@ -28,7 +28,7 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2
 q37_emiIndBase(ttot,regi,entyFe,secInd37)$( ttot.val ge cm_startyear  ) .. 
   vm_emiIndBase(ttot,regi,entyFe,secInd37)
   =e=
-    sum((fe2ppfEn(entyFe,in),ces_industry_dyn37("enhi",in))$(entyFeCC37(entyFe)),
+    sum((fe2ppfEn(entyFe,in),ces_industry_dyn37("enhi",in))$(entyFECC37(entyFe)),
       ( vm_cesIO(ttot,regi,in) + pm_cesdata(ttot,regi,in,"offset_quantity") )
     * p37_shIndFE(regi,in,secInd37)
     * sum((entySe,te)$(se2fe(entySe,entyFe,te) and entySeFos(entySe)), pm_emifac(ttot,regi,entySe,entyFe,te,"co2"))
@@ -56,7 +56,7 @@ q37_emiIndCCSmax(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
 ;
 
 *' Industry CCS is limited to below the maximum abatable emissions. 
-q37_IndCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) .. 
+q37_indCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) .. 
   vm_emiIndCCS(ttot,regi,emiInd37)
   =l=
   v37_emiIndCCSmax(ttot,regi,emiInd37)

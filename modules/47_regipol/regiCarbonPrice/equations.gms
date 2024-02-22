@@ -28,7 +28,7 @@ q47_implicitQttyTargetTax(t,regi)$(t.val ge max(2010,cm_startyear))..
     )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
     +
     ( 
-      p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS(t,regi,enty,enty2,te,rlf)))
+      p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(ccs2te(ccsCo2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS(t,regi,enty,enty2,te,rlf)))
     )$(sameas(qttyTarget,"CCS"))  
   )
   -
@@ -116,7 +116,7 @@ $endIf.cm_VREminShare
 $ifthen.cm_CCSmaxBound not "%cm_CCSmaxBound%" == "off"
 
 q47_CCSmaxBound(t,regi)$p47_CCSmaxBound(regi)..
-  sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS(t,regi,enty,enty2,te,rlf)))
+  sum(ccs2te(ccsCo2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS(t,regi,enty,enty2,te,rlf)))
   =l=
   p47_CCSmaxBound(regi)
 ;

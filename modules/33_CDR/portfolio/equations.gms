@@ -63,7 +63,7 @@ q33_DAC_emi(t,regi)..
 *'  the second part calculates the CO2 captured from the gas used for heat production
 *'  assuming 90% capture rate.
 ***---------------------------------------------------------------------------
-q33_DAC_ccsbal(t,regi,ccs2te(ccsCO2(enty),enty2,te))..
+q33_DAC_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
     sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
     =e=
     - vm_emiCdrTeDetail(t,regi,"dac")
