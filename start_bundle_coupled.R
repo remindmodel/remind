@@ -101,6 +101,7 @@ if (!is.null(renv::project())) {
   installedPackages <- installed.packages()[, "Package"]
   missingDeps <- setdiff(unique(magpieDeps$Package), installedPackages)
   if (length(missingDeps) > 0) {
+    message("Installing missing MAgPIE dependencies ", paste(missingDeps, collapse = ", "))
     renv::install(missingDeps)
   }
   if (! any(grepl("renvVersion", readLines(file.path(path_magpie, ".Rprofile"), warn = FALSE)))) {
@@ -397,7 +398,7 @@ for(scen in common){
   }
 
   # Edit remind main model file, region settings and input data revision based on scenarios table, if cell non-empty
-  for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "inputRevision"), names(settings_remind))) {
+  for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "inputRevision", "output"), names(settings_remind))) {
     if ( ! is.na(settings_remind[scen, switchname] )) {
       cfg_rem[[switchname]] <- settings_remind[scen, switchname]
     }
