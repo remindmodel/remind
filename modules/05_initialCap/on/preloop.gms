@@ -481,7 +481,7 @@ p05_cap_res(ttot,regi,teBioPebiolc) =
     * p05_deltacap_res(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,teBioPebiolc)
   )
 ;
-*** PE demand for pebiolc resulting from all technologies using pebiols assuming they would phase out after 2005
+*** PE demand for pebiolc resulting from all technologies using pebiolc assuming they would phase out after 2005
 pm_pedem_res(ttot,regi,teBioPebiolc) = p05_cap_res(ttot,regi,teBioPebiolc)* pm_cf(ttot,regi,teBioPebiolc) / pm_data(regi,"eta",teBioPebiolc);
 
 display p05_deltacap_res,p05_cap_res,pm_pedem_res;
