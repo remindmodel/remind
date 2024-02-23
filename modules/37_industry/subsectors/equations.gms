@@ -242,6 +242,21 @@ q37_feedstocksLimit(ttot,regi,entySE,entyFE,emiMkt)$(
   vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)
 ;
 
+*' Feedstocks have identical fossil/biomass/synfuel shares as industry FE
+q37_feedstocksShares(t,regi,entySE,entyFE,emiMkt)$(
+                                          sum(te, se2fe(entySE,entyFE,te)) ) ..
+    vm_demFEsector_afterTax(t,regi,entySE,entyFE,"indst",emiMkt)
+  * sum(se2fe(entySE2,entyFE,te),
+      vm_demFENonEnergySector(t,regi,entySE2,entyFE,"indst",emiMkt)
+    )
+  =e=
+    vm_demFENonEnergySector(t,regi,entySE,entyFE,"indst",emiMkt)
+  * sum(se2fe2(entySE2,entyFE,te),
+      vm_demFEsector_afterTax(t,regi,entySE2,entyFE,"indst",emiMkt)
+    )
+;
+
+
 *' Calculate mass of carbon contained in chemical feedstocks
 q37_FeedstocksCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..

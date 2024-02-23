@@ -519,11 +519,11 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
                         OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
   vm_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
   =e=
-    sum(emi2te(enty,enty2,te,enty3),
-      ( sum(pe2se(enty,enty2,te),
-          pm_emifac(t,regi,enty,enty2,te,enty3)
-        * vm_demPE(t,regi,enty,enty2,te)
-      )
+  sum(emi2te(enty,enty2,te,enty3),
+    ( sum(pe2se(enty,enty2,te),
+        pm_emifac(t,regi,enty,enty2,te,enty3)
+      * vm_demPE(t,regi,enty,enty2,te)
+    )
     + sum((ccs2Leak(enty,enty2,te,enty3),teCCS2rlf(te,rlf)),
         pm_emifac(t,regi,enty,enty2,te,enty3)
       * vm_co2CCS(t,regi,enty,enty2,te,rlf)
@@ -531,16 +531,21 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
     )$( sameas(emiMkt,"ETS") )
   + sum(se2fe(enty,enty2,te),
       pm_emifac(t,regi,enty,enty2,te,enty3)
-    * sum(sector$(    entyFe2Sector(enty2,sector)
-                  AND sector2emiMkt(sector,emiMkt) ),
-        vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)
-        !! substract FE used for non-energy purposes (as feedstocks) so it does
-        !! not create energy-related emissions
-      - sum(entyFe2sector2emiMkt_NonEn(enty2,sector,emiMkt),
-          vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
-        )
+    * ( sum(sector$(    entyFe2Sector(enty2,sector)
+		    AND sector2emiMkt(sector,emiMkt) ),
+	  vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)
+	  !! substract FE used for non-energy purposes (as feedstocks) so i
+	  !! does not create energy-related emissions
+	  !! FE from seXXbio, seXXsyn (not included in emi2te, therefore se2fe2)
+	  !! create negative emissions
+	- sum((se2fe2(entySe,enty2,te2),
+	       entyFe2sector2emiMkt_NonEn(entyFe,sector2emiMkt(sector,emiMkt))),
+	    vm_demFENonEnergySector(t,regi,entySe,enty2,sector,emiMkt)
+	  )
+	)
       )
     )
+  )
 ;
 
 ***--------------------------------------------------
