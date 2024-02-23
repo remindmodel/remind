@@ -148,9 +148,11 @@ $include "./core/input/generisdata_trade.prn"
 *JH* SSP energy technology scenario
 table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
 $include "./core/input/generisdata_tech_SSP1.prn"
+$include "./core/input/generisdata_trade.prn"
 ;
 table f_dataglob_SSP5(char,all_te)        "Techno-economic assumptions consistent with SSP5"
 $include "./core/input/generisdata_tech_SSP5.prn"
+$include "./core/input/generisdata_trade.prn"
 ;
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
@@ -159,6 +161,10 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 * main difference between onshore and offshore is the difference in f32_factorStorage
 fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
 fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
+f_dataglob_SSP1(char,"storwindoff") = f_dataglob_SSP1(char,"storwind");
+f_dataglob_SSP1(char,"gridwindoff") = f_dataglob_SSP1(char,"gridwind");
+f_dataglob_SSP5(char,"storwindoff") = f_dataglob_SSP5(char,"storwind");
+f_dataglob_SSP5(char,"gridwindoff") = f_dataglob_SSP5(char,"gridwind");
 $ENDIF.WindOff
 
 *RP* include global flexibility parameters
@@ -166,6 +172,10 @@ $include "./core/input/generisdata_flexibility.prn"
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 fm_dataglob("flexibility","storwindoff")  = 1.93;
 fm_dataglob("flexibility","windoff")  = -1;
+f_dataglob_SSP1("flexibility","storwindoff")  = 1.93;
+f_dataglob_SSP1("flexibility","windoff")  = -1;
+f_dataglob_SSP5("flexibility","storwindoff")  = 1.93;
+f_dataglob_SSP5("flexibility","windoff")  = -1;
 $ENDIF.WindOff
 ***---------------------------------------------------------------------------
 *** Reading in and initializing regional data
@@ -1548,6 +1558,34 @@ p_prodAllReference(t,regi,te) =
 
 *' initialize vm_changeProdStartyearCost for tax calculation
 vm_changeProdStartyearCost.l(t,regi,te) = 0;
+
+file compare_refac;
+put compare_refac;
+put "te", @15, "regi", @20, "pm_data", @27,  "inco0", @27, "pm_inco0_t"//;
+loop(regi,
+        loop(te,
+                put te.tl, @ 15, regi.tl, @20, pm_data(regi,"inco0",te), @65  /;
+        )
+);
+
+loop(regi,
+        loop(te,
+		loop(ttot,
+                put ttot.tl @15, te.tl, @ 15, regi.tl, @20, pm_inco0_t(ttot,regi,te), @65  /;
+		)
+        )
+);
+
+loop(regi,
+        loop(te,
+                loop(ttot,
+                put ttot.tl @15, te.tl, @ 15, regi.tl, @20, p_inco0(ttot,regi,te), @65  /;
+                )
+        )
+);
+
+putclose compare_refac;
+
 
 *** EOF ./core/datainput.gms
 
