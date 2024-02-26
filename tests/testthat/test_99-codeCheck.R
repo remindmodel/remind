@@ -8,7 +8,24 @@ test_that("GAMS code follows the coding etiquette", {
   # have to run this via localSystem2 so that it uses the renv, where gms
   # is actually installed.
   skipIfPreviousFailed()
-  output <- localSystem2("Rscript", c("-e", "'invisible(gms::codeCheck(strict=TRUE))'"))
+  codecheckcode <- "'invisible(gms::codeCheck(strict=TRUE)); if (! is.null(warnings())) stop(warnings())'"
+  output <- localSystem2("Rscript", c("-e", codecheckcode))
   printIfFailed(output)
   expectSuccessStatus(output)
+})
+
+test_that("No four asterisks in code", {
+  notavailable <- Sys.which("grep") == ""
+  if (notavailable) {
+    skip("'grep' not available, please check yourself whether code starts with four asterisks.")
+  } else {
+    files <- paste0("../../", c("*.gms", "core/*.gms", "modules/*.gms", "modules/*/*.gms", "modules/*/*/*.gms"))
+    grepcode <- paste("grep", "'^\\*\\*\\*\\*'", paste(files, collapse = " "))
+    starlines <- suppressWarnings(system(grepcode, intern = TRUE))
+    if (length(starlines) > 0) {
+      warning("The following lines start with four asterisks, reserved for GAMS error messages.\n",
+              paste(starlines, collapse = "\n"))
+    }
+    expect_true(length(starlines) == 0)
+  }
 })

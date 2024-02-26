@@ -17,7 +17,6 @@ parameters
 ***--------------------------------------------------MACRO module--------------------------
 ***
 ***prices
-failnamingconvention(ttot,all_enty)       "whatever"
 pm_pvp(ttot,all_enty)                                "Price on commodity markets",
 p_pvpRef(ttot,all_enty)                              "Price on commodity markets - imported from REF gdx",
 
