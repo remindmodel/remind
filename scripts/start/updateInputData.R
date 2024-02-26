@@ -1,7 +1,7 @@
 updateInputData <- function(cfg, remindPath = ".", verbose = TRUE) {
   # write name of corresponding CES file to datainput.gms
 
-  cfg$gms$cm_CES_configuration <- calculate_CES_configuration(cfg)
+  cfg$gms$cm_CES_configuration <- calculate_CES_configuration(cfg, path = remindPath)
   replace_in_file(file    = file.path(remindPath, "modules/29_CES_parameters/load/datainput.gms"),
                   content = paste0('$include "',
                                    "./modules/29_CES_parameters/load/input/",
@@ -14,14 +14,12 @@ updateInputData <- function(cfg, remindPath = ".", verbose = TRUE) {
   } else {
       input_old     <- "no_data"
   }
-  input_new      <- c(paste0("rev",cfg$inputRevision,"_", madrat::regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
-                      paste0("rev",cfg$inputRevision,"_", madrat::regionscode(cfg$regionmapping),ifelse(cfg$extramappings_historic == "","",paste0("-", madrat::regionscode(cfg$extramappings_historic))),"_", tolower(cfg$validationmodel_name),".tgz"),
+  regicode <- madrat::regionscode(file.path(remindPath, cfg$regionmapping))
+  input_new <- c(paste0("rev",cfg$inputRevision,"_",regicode,"_", tolower(cfg$model_name),".tgz"),
+                 paste0("rev",cfg$inputRevision,"_",regicode,ifelse(cfg$extramappings_historic == "","",paste0("-", madrat::regionscode(cfg$extramappings_historic))),"_", tolower(cfg$validationmodel_name),".tgz"),
                       paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
   # check if all input files are there
-  inputfiles <- gms::getfiledestinations()
-  inputpaths <- file.path(inputfiles$destination, inputfiles$file)
-  missinginput <- inputpaths[! file.exists(inputpaths)]
-  missinginput <- grep("gdx-files|29_CES_parameters", missinginput, value = TRUE, invert = TRUE)
+  missinginput <- missingInputData()
 
   # download and distribute needed data
   if (! setequal(input_new, input_old) || isTRUE(cfg$force_download) || length(missinginput) > 0) {
