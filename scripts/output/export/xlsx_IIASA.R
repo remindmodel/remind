@@ -67,7 +67,7 @@ lucode2::readArgs("outputdirs", "filename_prefix", "outputFilename", "model",
 if (is.null(mapping)) {
   mapping <- gms::chooseFromList(names(piamInterfaces::templateNames()), type = "mapping template")
 }
-if (length(mapping) == 0 || ! all(file.exists(mapping) | mapping %in% names(templateNames())))
+if (length(mapping) == 0 || ! all(file.exists(mapping) | mapping %in% names(templateNames()))) {
   stop("mapping='", paste(mapping, collapse = ", "), "' not found.")
 }
 if (exists("iiasatemplate") && ! is.null(iiasatemplate) && ! file.exists(iiasatemplate)) {
