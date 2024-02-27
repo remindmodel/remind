@@ -1554,33 +1554,5 @@ p_prodAllReference(t,regi,te) =
 *' initialize vm_changeProdStartyearCost for tax calculation
 vm_changeProdStartyearCost.l(t,regi,te) = 0;
 
-file compare_refac;
-put compare_refac;
-put "te", @15, "regi", @20, "pm_data", @27,  "inco0", @27, "pm_inco0_t"//;
-loop(regi,
-        loop(te,
-                put te.tl, @ 15, regi.tl, @20, pm_data(regi,"inco0",te), @65  /;
-        )
-);
-
-loop(regi,
-        loop(te,
-		loop(ttot,
-                put ttot.tl @15, te.tl, @ 15, regi.tl, @20, pm_inco0_t(ttot,regi,te), @65  /;
-		)
-        )
-);
-
-loop(regi,
-        loop(te,
-                loop(ttot,
-                put ttot.tl @15, te.tl, @ 15, regi.tl, @20, p_inco0(ttot,regi,te), @65  /;
-                )
-        )
-);
-
-putclose compare_refac;
-
-
 *** EOF ./core/datainput.gms
 
