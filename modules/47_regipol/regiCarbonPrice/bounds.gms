@@ -77,16 +77,7 @@ $ENDIF.EarlyPhaseOut
 $ENDIF.CoalRegiPol  
 
 *** further bounds for Germany
-*** upper bound on capacity additions for 2025 based on near-term trends
-*** for now only REMIND-EU/Germany, upper bound is double the historic maximum capacity addition in 2011-2020
-loop(regi$(sameAs(regi,"DEU")),
-  vm_deltaCap.up("2025",regi,"wind","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"wind"));
-  vm_deltaCap.up("2025",regi,"spv","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"spv"));
-);
 
-*** bounds on historic gas capacities in Germany
-vm_capTotal.up("2015",regi,"pegas","seel")$(sameas(regi,"DEU"))=30/1000;
-vm_capTotal.up("2020",regi,"pegas","seel")$(sameas(regi,"DEU"))=34/1000;
 
 *** limit coal-power capacity to at least 3 GW in 2030 to account for emissions from fossil waste 
 *** (~20 MtCO2/yr as of 2020) in 2030 target as waste currently subsumed under coal-power in REMIND
@@ -102,18 +93,22 @@ vm_emiTeDetail.up(t,regi,peFos,entySe,teFosCCS,"cco2")$((sameas(regi,"DEU")) AND
 *** limit German CDR amount (Energy system BECCS, DACCS, EW and negative Landuse Change emissions), conversion from MtCO2 to GtC
 vm_emiCdrAll.up(t,regi)$((cm_deuCDRmax ge 0) AND (sameas(regi,"DEU"))) = cm_deuCDRmax / 1000 / sm_c_2_co2;
 
-*** adaptation of power system for Germany in early years  to prevent coal to gas switch in Germany due to coal-phase out policies
+*** adaptation of power system for Germany in early years
+*** upper bound on VRE capacity additions for 2025 based on near-term trends
+*** for now only REMIND-EU/Germany, upper bound is double the historic maximum capacity addition in 2011-2020
 loop(regi$(sameAs(regi,"DEU")),
-vm_deltaCap.up("2015",regi,"ngcc","1") = 0.002;
-vm_deltaCap.up("2020",regi,"ngcc","1") = 0.0015;
-vm_deltaCap.up("2025",regi,"ngcc","1") = 0.0015;
+  vm_deltaCap.up("2025",regi,"wind","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"wind"));
+  vm_deltaCap.up("2025",regi,"spv","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"spv"));
 *** limit early retirement of coal power in Germany in 2020s to avoid extremly fast phase-out
 vm_capEarlyReti.up('2025',regi,'pc') = 0.65; 
+*** bounds on historic and near-term gas capacities in Germany based on recent data
+vm_prodSEtotal.up("2020",regi,"pegas","seel")= 0.36*sm_EJ_2_TWa;
+vm_prodSEtotal.up("2025",regi,"pegas","seel")= 0.4*sm_EJ_2_TWa;
 );
 
 *** limit renewable power additions for 2025 in light of current developments
-*** limit solar PV to 110 GW in 2025 given that we are at only 76 GW PV in 2023
-vm_cap.up("2025",regi,"spv","1")$(sameAs(regi,"DEU"))=0.11;
+*** limit solar PV to 120 GW in 2025 (2023-2027 average) given that we are at only 76 GW PV in 2023
+vm_cap.up("2025",regi,"spv","1")$(sameAs(regi,"DEU"))=0.12;
 
 
 *** bounds to align 2020 chp capcities for Germany with historic data (shares from Eurostat)

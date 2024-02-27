@@ -135,6 +135,17 @@ $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
   );
 $endIf.cm_implicitQttyTarget
 
+Sets
+enty_pe2se(all_enty,all_enty) "all combinations of PE and SE carriers for which technologies exist in pe2se mapping, start only with electricity and chp technologies for now where there exist several technologies for same combination"
+/
+        pegas.seel
+        pecoal.seel
+        peoil.seel
+        pebiolc.seel       
+/
+;
+
+
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/sets.gms
 

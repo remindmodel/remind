@@ -218,4 +218,14 @@ Parameter
 $endIf.regiExoPrice
 
 
+
+Variable
+vm_prodSEtotal(ttot,all_regi,all_enty,all_enty) "total SE production per PE and SE over all technologies"
+;
+
+Equation
+q47_prodSEtotal(ttot,all_regi,all_enty,all_enty) "calculate total SE production per PE and SE over all technologies"
+;
+
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/declarations.gms
