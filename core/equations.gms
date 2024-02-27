@@ -519,11 +519,11 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
                         OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
   vm_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
   =e=
-  sum(emi2te(enty,enty2,te,enty3),
-    ( sum(pe2se(enty,enty2,te),
-        pm_emifac(t,regi,enty,enty2,te,enty3)
-      * vm_demPE(t,regi,enty,enty2,te)
-    )
+    sum(emi2te(enty,enty2,te,enty3),
+      ( sum(pe2se(enty,enty2,te),
+          pm_emifac(t,regi,enty,enty2,te,enty3)
+        * vm_demPE(t,regi,enty,enty2,te)
+      )
     + sum((ccs2Leak(enty,enty2,te,enty3),teCCS2rlf(te,rlf)),
         pm_emifac(t,regi,enty,enty2,te,enty3)
       * vm_co2CCS(t,regi,enty,enty2,te,rlf)
@@ -531,21 +531,16 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
     )$( sameas(emiMkt,"ETS") )
   + sum(se2fe(enty,enty2,te),
       pm_emifac(t,regi,enty,enty2,te,enty3)
-    * ( sum(sector$(    entyFe2Sector(enty2,sector)
-		    AND sector2emiMkt(sector,emiMkt) ),
-	  vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)
-	  !! substract FE used for non-energy purposes (as feedstocks) so i
-	  !! does not create energy-related emissions
-	  !! FE from seXXbio, seXXsyn (not included in emi2te, therefore se2fe2)
-	  !! create negative emissions
-	- sum((se2fe2(entySe,enty2,te2),
-	       entyFe2sector2emiMkt_NonEn(entyFe,sector2emiMkt(sector,emiMkt))),
-	    vm_demFENonEnergySector(t,regi,entySe,enty2,sector,emiMkt)
-	  )
-	)
+    * sum(sector$(    entyFe2Sector(enty2,sector)
+                  AND sector2emiMkt(sector,emiMkt) ),
+        vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)
+        !! substract FE used for non-energy purposes (as feedstocks) so it does
+        !! not create energy-related emissions
+      - sum(entyFe2sector2emiMkt_NonEn(enty2,sector,emiMkt),
+          vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
+        )
       )
     )
-  )
 ;
 
 ***--------------------------------------------------
@@ -764,22 +759,18 @@ q_emiAll(t,regi,emi(enty))..
 ***------------------------------------------------------
 *mlb 8/2010* extension for multigas accounting/trading
 *cb only "static" equation to be active before cm_startyear, as multigasscen could be different from a scenario to another that is fixed on the first
-q_co2eq(ttot,regi)$(ttot.val ge cm_startyear)..
-  vm_co2eq(ttot,regi)
-  =e=
-  sum(emiMkt, vm_co2eqMkt(ttot,regi,emiMkt))
-;
+  q_co2eq(ttot,regi)$(ttot.val ge cm_startyear)..
+         vm_co2eq(ttot,regi)
+         =e=
+         sum(emiMkt, vm_co2eqMkt(ttot,regi,emiMkt));
 
-q_co2eqMkt(ttot,regi,emiMkt)$(ttot.val ge cm_startyear)..
+  q_co2eqMkt(ttot,regi,emiMkt)$(ttot.val ge cm_startyear)..
   vm_co2eqMkt(ttot,regi,emiMkt)
   =e=
-    vm_emiAllMkt(ttot,regi,"co2",emiMkt)
-  + ( sm_tgn_2_pgc   * vm_emiAllMkt(ttot,regi,"n2o",emiMkt)
-    + sm_tgch4_2_pgc * vm_emiAllMkt(ttot,regi,"ch4",emiMkt)
-    )$( cm_multigasscen eq 2 or cm_multigasscen eq 3 )
-  - vm_emiMacSector(ttot,regi,"co2luc")$(
-                              cm_multigasscen eq 3 AND sameas(emiMkt,"other") )
-;
+  vm_emiAllMkt(ttot,regi,"co2",emiMkt)
+  + (sm_tgn_2_pgc   * vm_emiAllMkt(ttot,regi,"n2o",emiMkt) +
+     sm_tgch4_2_pgc * vm_emiAllMkt(ttot,regi,"ch4",emiMkt)) $(cm_multigasscen eq 2 or cm_multigasscen eq 3)
+  - vm_emiMacSector(ttot,regi,"co2luc") $((cm_multigasscen eq 3) AND (sameas(emiMkt,"other")));
 
 ***------------------------------------------------------
 *' Total global emissions in CO2 equivalents that are part of the climate policy also take into account foreign emissions.
@@ -793,12 +784,8 @@ q_co2eqMkt(ttot,regi,emiMkt)$(ttot.val ge cm_startyear)..
 ***------------------------------------
 *mh for each region and time step: emissions + permit trade balance < emission cap
 q_emiCap(t,regi) ..
-    vm_co2eq(t,regi) 
-  + vm_Xport(t,regi,"perm")
-  - vm_Mport(t,regi,"perm")
-  =l=
-  vm_perm(t,regi)
-;
+                vm_co2eq(t,regi) + vm_Xport(t,regi,"perm") - vm_Mport(t,regi,"perm")
+                =l= vm_perm(t,regi);
 
 ***-----------------------------------------------------------------
 *** Budgets on GHG emissions (single or two subsequent time periods)
