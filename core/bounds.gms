@@ -396,6 +396,7 @@ $endif
 *** -------------------------------------------------------------------------------------------------------------
 
 if ( c_ccsinjecratescen gt 0,
+        vm_co2CCS.up(ttot,regi,"cco2","ico2","ccsinje","1")$(ttot.val ge 2005 AND ttot.val lt 2020) = 0;
 	vm_co2CCS.up("2020",regi,"cco2","ico2","ccsinje","1") = pm_boundCapCCS(regi);
 	vm_co2CCS.up("2025",regi,"cco2","ico2","ccsinje","1") = pm_boundCapCCS(regi);
 );

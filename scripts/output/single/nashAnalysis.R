@@ -8,15 +8,18 @@ library(lucode2)
 library(remind2)
 
 
-if(!exists("outputdir")) {
-  #Define arguments that can be read from command line
+if (!exists("outputdir")) {
+  # Define arguments that can be read from command line
   readArgs("outputdir")
 }
 
 gdx_name <- "fulldata.gdx"
 gdx <- file.path(outputdir, gdx_name)
 
+dir_name <- tail(strsplit(outputdir, split = "/")[[1]], n = 1)
+
 remind2::nashAnalysis(
   gdx = gdx,
-  outputDir = outputdir
+  outputDir = outputdir,
+  outputFile = paste0("NashAnalysis_", dir_name, ".html")
 )

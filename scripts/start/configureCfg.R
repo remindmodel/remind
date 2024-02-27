@@ -16,7 +16,7 @@ configureCfg <- function(icfg, iscen, iscenarios, verboseGamsCompile = TRUE) {
     if (verboseGamsCompile) message("   Configuring cfg for ", iscen)
 
     # Edit main model file, region settings and input data revision based on scenarios table, if cell non-empty
-    for (switchname in intersect(c("model", setdiff(names(icfg), "gms")), names(iscenarios))) {
+    for (switchname in intersect(c("model", setdiff(names(icfg), c("gms", "output"))), names(iscenarios))) {
       if ( ! is.na(iscenarios[iscen, switchname] )) {
         icfg[[switchname]] <- iscenarios[iscen, switchname]
       }
@@ -38,8 +38,9 @@ configureCfg <- function(icfg, iscen, iscenarios, verboseGamsCompile = TRUE) {
 
     # Set reporting script
     if ("output" %in% names(iscenarios) && ! is.na(iscenarios[iscen, "output"])) {
-      icfg$output <- gsub('c\\("|\\)|"', '', strsplit(iscenarios[iscen, "output"],',')[[1]])
-    }
+      scenoutput <- gsub('c\\("|\\)|"', '', trimws(unlist(strsplit(iscenarios[iscen, "output"], split = ','))))
+      icfg$output <- unique(c(if ("cfg$output" %in% scenoutput) icfg$output, setdiff(scenoutput, "cfg$output")))
+    }  
 
     # Edit switches in config based on scenarios table, if cell non-empty
     for (switchname in intersect(names(icfg$gms), names(iscenarios))) {
@@ -85,7 +86,10 @@ configureCfg <- function(icfg, iscen, iscenarios, verboseGamsCompile = TRUE) {
                     strptime(format='%Y-%m-%d_%H.%M.%S') %>%
                     as.numeric %>%
                     which.max -> latest_fulldata
-                  message(paste0("   Use newest normally completed run for ", path_to_gdx, " = ", iscenarios[iscen, path_to_gdx], ":\n     ", str_sub(dirs[latest_fulldata],if (dirfolder == icfg$modeltests_folder) 0 else 10 ,-14)))
+                  msg_latest <- gsub(file.path("", "fulldata.gdx"), "",
+                                     gsub(file.path(dirname(icfg$results_folder), ""), "", dirs[latest_fulldata], fixed = TRUE), fixed = TRUE)
+                  message(paste0("   Use newest normally completed run for ", path_to_gdx, " = ", iscenarios[iscen, path_to_gdx],
+                                 ":\n     ", msg_latest))
                   iscenarios[iscen, path_to_gdx] <- dirs[latest_fulldata]
                   if (dirfolder == icfg$modeltests_folder) modeltestRunsUsed <<- modeltestRunsUsed + 1
                 }

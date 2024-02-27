@@ -25,7 +25,7 @@ runGamsCompile <- function(modelFile, cfg, interactive = TRUE, testmode = FALSE)
   if (! testmode) {
     unlink(file.path("modules", c("45_carbonprice", "46_carbonpriceRegi"), "NDC", "input", "pm_BAU_reg_emi_wo_LU_bunkers.cs4r"))
     updateSets(cfg)
-    updateInputData(cfg, verbose = FALSE)
+    updateInputData(cfg, gamsCompile = TRUE)
   }
   lucode2::manipulateConfig(tmpModelFile, cfg$gms)
   exitcode <- system2(

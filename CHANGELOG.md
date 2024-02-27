@@ -8,12 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### added
-- **config** regex tests for many parameters
+- **config** regex tests for many parameters [[#1356](https://github.com/remindmodel/remind/pull/1356)]
 - **scripts** add script to check fixing of runs to reference run
     [[#1410](https://github.com/remindmodel/remind/pull/1410)]
 - **scripts** add script for cost decomposition of integrated damage runs
     [[#1445](https://github.com/remindmodel/remind/pull/1445)]
-- **testthat** test and compile all config files
+- **testthat** test and compile all config files [[#1356](https://github.com/remindmodel/remind/pull/1356)]
+- **testthat** test existence of all required input data [[#1577](https://github.com/remindmodel/remind/pull/1577)]
 - **37_industry** add feedstocks for chemicals subsector and plastics production
 - **core** add process emissions from chemicals subsector and from plastics incineration
 - **37_industry** add process-based steel model as alternative to CES-tree branch
@@ -32,6 +33,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1500](https://github.com/remindmodel/remind/pull/1500)]
 - prevent tradtional biomass spillover to other sectors than buildings
     [[#1519](https://github.com/remindmodel/remind/pull/1519)]
+- fully fix landuse and MAGICC6 variables in delayed transition runs to reference run
+    [[#1565](https://github.com/remindmodel/remind/pull/1565)]
 
 ### removed
 - **45_carbonprice** remove outdated realizations:
