@@ -53,9 +53,10 @@ climateAssessmentYaml <- file.path(system.file(package = "piamInterfaces"),
 
 logmsg <- paste0(
   date(), " =================== CONFIGURATION STARTED ==================================\n",
-  "  cfgPath = '",              cfgPath,                "' exists? ", file.exists(cfgPath), "\n",
-  "  logFile = '",              logFile,                "' exists? ", file.exists(logFile), "\n",
-  "  scenario = '",              scenario, "\n",
+  "  outputdir = '",             outputdir,              "' exists? ", file.exists(outputdir), "\n",
+  "  cfgPath = '",               cfgPath,                "' exists? ", file.exists(cfgPath), "\n",
+  "  logFile = '",               logFile,                "' exists? ", file.exists(logFile), "\n",
+  "  scenario = '",              scenario, "'\n",
   "  remindReportingFile = '",   remindReportingFile,   "' exists? ", file.exists(remindReportingFile), "\n",
   "  climateAssessmentYaml = '", climateAssessmentYaml, "' exists? ", file.exists(climateAssessmentYaml), "\n",
   "  climateAssessmentEmi = '",  climateAssessmentEmi,  "' exists? ", file.exists(climateAssessmentEmi), "\n",
@@ -63,7 +64,7 @@ logmsg <- paste0(
   "  ar6Climate.R: Extracting REMIND emission data\n"
 )
 cat(logmsg)
-capture.output(cat(logmsg), file = logFile, append = FALSE)
+capture.output(cat(logmsg), file = logFile, append = TRUE)
 
 climateAssessmentInputData <- as.quitte(remindReportingFile) %>%
   # Consider only the global region
@@ -89,7 +90,7 @@ logmsg <- paste0(
   date(), "  ar6Climate.R: Wrote REMIND emission data to '", climateAssessmentEmi, "' for climate-assessment\n"
 )
 cat(logmsg)
-capture.output(cat(logmsg), file = logFile, append = FALSE)
+capture.output(cat(logmsg), file = logFile, append = TRUE)
 
 ############################# PYTHON/MAGICC SETUP #############################
 
@@ -124,7 +125,7 @@ nparsets <- length(allparsets$configurations)
 
 logmsg <- paste0(date(), " =================== SET UP climate-assessment scripts environment ===================\n")
 cat(logmsg)
-capture.output(cat(logmsg), file = logFile, append = FALSE)
+capture.output(cat(logmsg), file = logFile, append = TRUE)
 
 # Create working folder for climate-assessment files
 dir.create(magiccWorkersFolder, recursive = TRUE, showWarnings = FALSE)
@@ -174,7 +175,7 @@ logmsg <- paste0(
   run_harm_inf_cmd, "'\n"
 )
 cat(logmsg)
-capture.output(cat(logmsg), file = logFile, append = FALSE)
+capture.output(cat(logmsg), file = logFile, append = TRUE)
 
 ############################# HARMONIZATION/INFILLING #############################
 
