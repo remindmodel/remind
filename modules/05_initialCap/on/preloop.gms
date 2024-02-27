@@ -518,6 +518,17 @@ if (cm_run_initialCap eq 0 AND cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' vm_deltaCap.lo = vm_deltaCap.lo;
   Execute_Loadpoint 'input_ref' vm_deltaCap.up = vm_deltaCap.up;
 
+*** if %cm_techcosts% == "GLO", load pm_inco0_t from input_ref.gdx and overwrite values
+*** only for pc, ngt, ngcc since they have been adapted in initialCap routine above
+*** This is to avoid overwriting changes to pm_inco0_t by scenario switches
+$ifThen %cm_techcosts% == "GLO"
+  Execute_Loadpoint 'input_ref' p05_inco0_t_ref = pm_inco0_t;
+  pm_inco0_t(t,regi,te)$( teEtaIncr(te)
+                          AND (sameas(te,"pc")
+                            OR sameas(te,"ngt")
+                            OR sameas(te,"ngcc") ) ) = p05_inco0_t_ref(t,regi,te);
+$endIf
+);
 
 
 *** load pm_data from input_ref.gdx and overwrite values

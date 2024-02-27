@@ -10,8 +10,8 @@
 ***-------------------------------------------------------------------------------
 ***                         MATERIAL-FLOW IMPLEMENTATION
 ***-------------------------------------------------------------------------------
-* Balance equation: Demand of materials equals to production of those materials, 
-* accounting for trade. Demand of materials arises either due to external demand 
+* Balance equation: Demand of materials equals to production of those materials,
+* accounting for trade. Demand of materials arises either due to external demand
 * from the economy (i.e. steel) or due to internal demand of the processes modelled
 * in the materials-flow model (i.e. directly reduced iron).
 *
@@ -106,10 +106,10 @@ $ifthen.fixed_production "%cm_import_EU%" == "bal"   !! cm_import_EU
          !! do not limit steel production shares for fixed production
      AND p37_industry_quantity_targets(ttot,regi,"ue_steel_secondary") eq 0
 $endif.fixed_production
-$ifthen.exogDem_scen NOT "%cm_exogDem_scen%" == "off" 
+$ifthen.exogDem_scen NOT "%cm_exogDem_scen%" == "off"
          !! do not limit steel production shares for fixed production
      AND pm_exogDemScen(ttot,regi,"%cm_exogDem_scen%","ue_steel_secondary") eq 0
-$endif.exogDem_scen 
+$endif.exogDem_scen
 
                                                                             ) ..
   vm_cesIO(ttot,regi,"ue_steel_secondary")
@@ -162,6 +162,18 @@ q37_IndCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
   vm_emiIndCCS(ttot,regi,emiInd37)
   =l=
   v37_emiIndCCSmax(ttot,regi,emiInd37)
+;
+
+*' Limit industry CCS scale-up to sm_macChange (default: 5 % p.a.)
+q37_limit_IndCCS_growth(ttot,regi,emiInd37) ..
+  vm_emiIndCCS(ttot,regi,emiInd37)
+  =l=
+    vm_emiIndCCS(ttot-1,regi,emiInd37)
+  + sum(secInd37_2_emiInd37(secInd37,emiInd37),
+      v37_emiIndCCSmax(ttot,regi,emiInd37)
+    * sm_macChange
+    * pm_ts(ttot)
+    )
 ;
 
 *' Fix cement fuel and cement process emissions to the same abatement level.
@@ -225,6 +237,25 @@ q37_BioLimitSubsec(t,regi,entyFe,emiMkt)..
           vm_cesIO(t,regi,in))
   )
 ;
+* lower bound on feso/feli/fega in chemicals FE input for feedstocks
+q37_chemicals_feedstocks_limit(t,regi)$( t.val ge cm_startyear ) .. 
+  sum(in_chemicals_feedstocks37(in), vm_cesIO(t,regi,in))
+  =g=
+    sum(ces_eff_target_dyn37("ue_chemicals",in), vm_cesIO(t,regi,in))
+  * p37_chemicals_feedstock_share(t,regi)
+;
+
+*** limit substitution of solids in primary steel making in the near-term
+q37_Psteel_solids_limit(t,regi)$( t.val ge cm_startyear ) ..
+  sum(ces_eff_target_dyn37("ue_steel_primary",in), 
+    vm_cesIO(t,regi,in))
+  * p37_Psteel_solids_limit(t,regi)
+  =l=
+  vm_cesIO(t,regi,"feso_steel")
+;
+
+
+*** EOF ./modules/37_industry/subsectors/equations.gms
 
 
 *** EOF ./modules/37_industry/subsectors/equations.gms

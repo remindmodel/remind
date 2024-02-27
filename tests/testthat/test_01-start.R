@@ -22,6 +22,7 @@ test_that("start.R --test startgroup=AMT titletag=AMT config/scenario_config.csv
                            c("start.R", "--test", "slurmConfig=16", "startgroup=AMT", "titletag=TESTTHAT", "config/scenario_config.csv"))
     printIfFailed(output)
     expectSuccessStatus(output)
+    expect_false(any(grepl("Waiting for.* NA( |$)", output)))
     },
     getLine = function() stop("getLine should not called."),
     .package = "gms"
@@ -38,8 +39,9 @@ test_that("start.R --test succeeds on all configs", {
                            file.path("../../config", "*", "scenario_config*.csv")))
   }
   csvfiles <- normalizePath(grep("scenario_config_coupled", csvfiles, invert = TRUE, value = TRUE))
-  skipfiles <- c("scenario_config_21_EU11_ECEMF", "scenario_config_DeepEl",
-                 "scenario_config_EDGE-T_NDC_NPi_pkbudget", "scenario_config_NAVIGATE_300")
+  skipfiles <- c("scenario_config_21_EU11_ECEMF",
+                 "scenario_config_EDGE-T_NDC_NPi_pkbudget",
+                 "scenario_config_NAVIGATE_300")
   csvfiles <- grep(paste(skipfiles, collapse = "|"), csvfiles, invert = TRUE, value = TRUE)
   expect_true(length(csvfiles) > 0)
   with_mocked_bindings(
@@ -49,6 +51,7 @@ test_that("start.R --test succeeds on all configs", {
                              c("start.R", "--test", "slurmConfig=16", "startgroup=*", "titletag=TESTTHAT", csvfile))
         printIfFailed(output)
         expectSuccessStatus(output)
+        expect_false(any(grepl("Waiting for.* NA( |$)", output)))
       })
     },
     getLine = function() stop("getLine should not called."),

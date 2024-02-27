@@ -277,7 +277,7 @@ if (cm_TaxConvCheck eq 1,
 *** additional criterion: Were regional climate targets reached? 
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off" 
 loop((ttot,ttot2,ext_regi,emiMktExt)$pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt),
-*** regipol targets must be met within 1% of target deviation, deviation for budget targets is measured relative to target value, while for year targets it is relative to 2015 emissions
+*** regipol targets must be met within cm_emiMktTarget_tolerance (by default 1%) of target deviation, deviation for budget targets is measured relative to target value, while for year targets it is relative to 2015 emissions
   if((abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) gt cm_emiMktTarget_tolerance),
     s80_bool = 0;
     p80_messageShow("regiTarget") = YES;
@@ -572,10 +572,11 @@ if(cm_abortOnConsecFail, !! execute only if consecutive failures switch is non-z
         else
             p80_trackConsecFail(regi) = p80_trackConsecFail(regi) + 1;
         );
-
+    );
+    loop(regi,
         if(p80_trackConsecFail(regi) >= cm_abortOnConsecFail,
             execute_unload "abort.gdx";
-
+            display p80_trackConsecFail;
             abort "Run was aborted because the maximum number of consecutive failures was reached in at least one region!";
         );
     )
