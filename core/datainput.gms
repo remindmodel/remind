@@ -155,11 +155,6 @@ $include "./core/input/generisdata_tech_SSP5.prn"
 $include "./core/input/generisdata_trade.prn"
 ;
 
-*JH* New nuclear assumption for SSP5
-if (cm_nucscen eq 6,
-  f_dataglob_SSP5("inco0","tnrs") = 6270; !! increased from 4000 to 6270 with the update of technology costs in REMIND 1.7 to keep the percentage increase between SSP2 and SSP5 constant
-);
-
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 *CG* set wind offshore, storage and grid to be the same as wind onshore (later should be integrated into input data)
 * main difference between onshore and offshore is the difference in f32_factorStorage
