@@ -608,6 +608,11 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
   + sum(teCCU2rlf(te2,rlf),
       vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)$( sameas(enty,"co2") )
     )$(sameas(emiMkt,"ETS"))
+    !! CCU from captured non-atmospheric CO2 from CDR activities (e.g., natural gas for DAC heat)
+  - ((
+      sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t, regi, "cco2", "ico2", "ccsinje", rlf)) + vm_emiCdrTeDetail(t, regi, "dac")
+    ) * (1 - vm_share_CCS_CCO2(t,regi)))
+    $(sameas(enty, "co2") AND sameas(emiMkt, "ETS"))
 ;
 
 ***--------------------------------------------------
@@ -720,24 +725,32 @@ q_emiMac(t,regi,emiMac) ..
 ;
 
 ***--------------------------------------------------
+*' Share of captured CO2 that is stored
+***--------------------------------------------------
+q_share_CCS_CCO2(t, regi)..
+  vm_share_CCS_CCO2(t, regi)
+  =e=
+  sum(teCCS2rlf(te, rlf), vm_co2CCS(t, regi, "cco2", "ico2", te, rlf))
+  / (
+    sum(teCCS2rlf(te, rlf), vm_co2capture(t, regi, "cco2", "ico2", "ccsinje", rlf)) + sm_eps
+  );
+
+
+***--------------------------------------------------
 *' All CDR emissions summed up
 ***--------------------------------------------------
 q_emiCdrAll(t,regi)..
   vm_emiCdrAll(t,regi)
-       =e= !! BECC + DACC
-  (sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail(t,regi,enty,enty2,te,enty3))
-  + sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,"cco2","ico2","ccsinje",rlf)))
-  !! scaled by the fraction that gets stored geologically
-  * (sum(teCCS2rlf(te,rlf),
-        vm_co2CCS(t,regi,"cco2","ico2",te,rlf)) /
-  (sum(teCCS2rlf(te,rlf),
-        vm_co2capture(t,regi,"cco2","ico2","ccsinje",rlf))+sm_eps))
+  =e=
+  !! BECC + DACC (scaled by the fraction that gets stored geologically)
+  (sum(emiBECCS2te(enty,enty2,te,enty3), vm_emiTeDetail(t,regi,enty,enty2,te,enty3))
+    - vm_emiCdrTeDetail(t, regi, "dac")
+  ) * vm_share_CCS_CCO2(t, regi)
   !! net negative emissions from co2luc
   -  p_macBaseMagpieNegCo2(t,regi)
-       !! negative emissions from the cdr module that are not stored geologically
-       -       (vm_emiCdr(t,regi,"co2") + sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,"cco2","ico2","ccsinje",rlf)))
+  !! negative emissions from the CDR module that are not stored geologically
+  - (vm_emiCdr(t, regi, "co2") + vm_emiCdrTeDetail(t, regi, "dac"))
 ;
-
 
 ***------------------------------------------------------
 *' Total regional emissions are the sum of emissions from technologies, MAC-curves, CDR-technologies and emissions that are exogenously given for REMIND.
