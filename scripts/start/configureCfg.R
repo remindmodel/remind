@@ -16,7 +16,7 @@ configureCfg <- function(icfg, iscen, iscenarios, verboseGamsCompile = TRUE) {
     if (verboseGamsCompile) message("   Configuring cfg for ", iscen)
 
     # Edit main model file, region settings and input data revision based on scenarios table, if cell non-empty
-    for (switchname in intersect(c("model", setdiff(names(icfg), "gms")), names(iscenarios))) {
+    for (switchname in intersect(c("model", setdiff(names(icfg), c("gms", "output"))), names(iscenarios))) {
       if ( ! is.na(iscenarios[iscen, switchname] )) {
         icfg[[switchname]] <- iscenarios[iscen, switchname]
       }
