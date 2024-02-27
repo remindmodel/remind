@@ -101,6 +101,7 @@ if (!is.null(renv::project())) {
   installedPackages <- installed.packages()[, "Package"]
   missingDeps <- setdiff(unique(magpieDeps$Package), installedPackages)
   if (length(missingDeps) > 0) {
+    message("Installing missing MAgPIE dependencies ", paste(missingDeps, collapse = ", "))
     renv::install(missingDeps)
   }
   if (! any(grepl("renvVersion", readLines(file.path(path_magpie, ".Rprofile"), warn = FALSE)))) {
@@ -402,8 +403,14 @@ for(scen in common){
       cfg_rem[[switchname]] <- settings_remind[scen, switchname]
     }
   }
+  
+  # Set reporting scripts
+  if ("output" %in% names(settings_remind) && ! is.na(settings_remind[scen, "output"])) {
+    scenoutput <- gsub('c\\("|\\)|"', '', trimws(unlist(strsplit(settings_remind[scen, "output"], split = ','))))
+    cfg_rem$output <- unique(c(if ("cfg$output" %in% scenoutput) cfg_rem$output, setdiff(scenoutput, "cfg$output")))
+  }
 
-  # Edit switches in default.cfg based on scenarios table, if cell non-empty
+  # Edit GAMS switches in default.cfg based on scenarios table, if cell non-empty
   for (switchname in intersect(names(cfg_rem$gms), names(settings_remind))) {
     if ( ! is.na(settings_remind[scen, switchname] )) {
       cfg_rem$gms[[switchname]] <- settings_remind[scen, switchname]
@@ -461,9 +468,10 @@ for(scen in common){
       }
     }
 
-    # Create list of previously defined paths to gdxs
+    # Create list of gdx's that this run needs as input from other runs
     gdxlist <- unlist(settings_remind[scen, names(path_gdx_list)])
     names(gdxlist) <- path_gdx_list
+    # look for gdx's not only among runs to be started but among all coupled scenarios, as runs that have already finished may also be required
     gdxlist[gdxlist %in% rownames(settings_coupled)] <- paste0(prefix_runname, gdxlist[gdxlist %in% rownames(settings_coupled)], "-rem-", i)
     possibleFulldata <- file.path(path_remind, "output", gdxlist, "fulldata.gdx")
     possibleRemindReport <- file.path(path_remind, "output", gdxlist, paste0("REMIND_generic_", gdxlist, ".mif"))
@@ -500,25 +508,26 @@ for(scen in common){
     }
 
     if (i > start_iter_first || ! start_now) {
-      # if no real file is given but a reference to another scenario (that has to run first) create path for input_ref and input_bau
-      # using the scenario names given in the columns path_gdx_ref and path_gdx_ref in the REMIND standalone scenario config
+      # if no real file is given but a reference to another scenario (that has to run first) create paths to their gdx files
+      # using the scenario names given in the respective path_gdx* columns in the REMIND standalone scenario config
       for (path_gdx in names(path_gdx_list)) {
         if (! is.na(cfg_rem$files2export$start[path_gdx_list[path_gdx]]) && ! grepl(".gdx", cfg_rem$files2export$start[path_gdx_list[path_gdx]], fixed = TRUE)) {
-          cfg_rem$files2export$start[path_gdx_list[path_gdx]] <- paste0(prefix_runname, settings_remind[scen, path_gdx],
-                                                                        "-rem-", i)
+          cfg_rem$files2export$start[path_gdx_list[path_gdx]] <- paste0(prefix_runname, settings_remind[scen, path_gdx], "-rem-", i)
         }
       }
       if (i > start_iter_first) {
         cfg_rem$files2export$start["input.gdx"] <- paste0(runname, "-rem-", i-1)
       }
+    }
+    
       # If the preceding run has already finished (= its gdx file exist) start
       # the current run immediately. This might be the case e.g. if you started
       # the NDC run in a first batch and now want to start the subsequent policy
       # runs by hand after the NDC has finished.
-    }
     if (i == start_iter_first && ! start_now && all(file.exists(cfg_rem$files2export$start[path_gdx_list]) | unlist(gdx_na))) {
       start_now <- TRUE
     }
+    
     foldername <- file.path("output", fullrunname)
     if ((i > start_iter_first || !scenarios_coupled[scen, "start_magpie"]) && file.exists(foldername)) {
       if (errorsfound == 0 && ! any(c("--test", "--gamscompile") %in% flags)) {

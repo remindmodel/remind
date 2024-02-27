@@ -19,6 +19,8 @@ pm_taxCO2eq(t,regi)$(t.val gt p45_lastNDCyear(regi))
       + p45_taxCO2eqGlobal2030          * p45_taxCO2eqYearlyIncrease**(t.val-2030)                    * (min(p45_taxCO2eqConvergenceYear,t.val) - p45_lastNDCyear(regi))
       )/(p45_taxCO2eqConvergenceYear - p45_lastNDCyear(regi));
 
+pm_taxCO2eq(t,regi) = max(pm_taxCO2eq(t,regi), p45_taxCO2eq_bau(t,regi));
+
 display pm_taxCO2eq;
 
 *#' @equations 

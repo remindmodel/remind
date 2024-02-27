@@ -6,13 +6,20 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/NDC/datainput.gms
 
-*** CO2 tax level is calculated at a 5% exponential increase from the 2020 tax level exogenously defined until 2030, then a linear tax, plus regional convergence
-*** convert tax value from $/t CO2eq to T$/GtC
-pm_taxCO2eq(t,regi)$(sameas(t, "2020")) = 5 * sm_DptCO2_2_TDpGtC;
+*** CO2 tax level from business as usual run, serves as minimal tax in NDC
+Execute_Loadpoint "input_ref" p45_taxCO2eq_bau = pm_taxCO2eq;
 
-*** set ETS price in 2015 for EUR
-pm_taxCO2eq(t,regi)$(sameas(t, "2015")) = 0;
-pm_taxCO2eq(t,regi)$(sameas(t, "2015") and regi_group("EUR_regi",regi)) = 5 * sm_DptCO2_2_TDpGtC;
+pm_taxCO2eq(t,regi) = p45_taxCO2eq_bau(t,regi)
+
+*** Carbon prices defined in $/t CO2, has to be rescaled to right unit
+parameter f45_taxCO2eqHist(ttot,all_regi)       "historic CO2 prices ($/tCO2)"
+/
+$ondelim
+$include "./modules/45_carbonprice/NDC/input/pm_taxCO2eqHist.cs4r"
+$offdelim
+/
+;
+pm_taxCO2eq(t,regi)$(t.val < 2025) = f45_taxCO2eqHist(t,regi) * sm_DptCO2_2_TDpGtC;
 
 *** parameters for exponential increase after NDC targets
 Scalar p45_taxCO2eqGlobal2030 "startprice in 2030 (unit TDpGtC) of global CO2eq taxes towards which countries converge";
