@@ -1,0 +1,16 @@
+mode: ContinuousDelivery
+assembly-versioning-format: '{Major}.{Minor}.{Patch}.dev{CommitsSinceVersionSource}'
+branches:
+  develop:
+    regex: ^dev(elop)?(ment)?$
+    mode: ContinuousDeployment
+    tag: dev
+    increment: None
+    prevent-increment-of-merged-branch-version: false
+    track-merge-target: true
+    source-branches: []
+    tracks-release-branches: true
+    is-release-branch: false
+    is-mainline: false
+    pre-release-weight: 0
+

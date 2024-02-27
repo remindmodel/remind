@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -32,7 +32,7 @@ q33_otherFEdemand(t,regi,entyFe)$(sameas(entyFe,"feels") OR sameas(entyFe,"fedie
 q33_capconst_grindrock(t,regi)..
 	sum(rlf2,sum(rlf$(rlf.val le 2), v33_grindrock_onfield(t,regi,rlf,rlf2)))
 	=l=
-	sum(teNoTransform2rlf_dyn33(te,rlf2), vm_capFac(t,regi,"rockgrind") * vm_cap(t,regi,"rockgrind",rlf2))
+	sum(teNoTransform2rlf_dyn33(te,rlf2), vm_capFac(t,regi,"weathering") * vm_cap(t,regi,"weathering",rlf2))
 	;
 	
 ***---------------------------------------------------------------------------

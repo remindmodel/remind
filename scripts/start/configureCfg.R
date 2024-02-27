@@ -1,4 +1,4 @@
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -103,6 +103,8 @@ configureCfg <- function(icfg, iscen, iscenarios, verboseGamsCompile = TRUE) {
           }
         }
       }
+    }
+    
     # Define path where the GDXs will be taken from
     gdxlist <- unlist(iscenarios[iscen, names(path_gdx_list)])
     names(gdxlist) <- path_gdx_list
@@ -113,6 +115,6 @@ configureCfg <- function(icfg, iscen, iscenarios, verboseGamsCompile = TRUE) {
     # add table with information about runs that need the fulldata.gdx of the current run as input
     icfg$RunsUsingTHISgdxAsInput <- iscenarios %>% select(contains("path_gdx")) %>%              # select columns that have "path_gdx" in their name
                                                    filter(rowSums(. == iscen, na.rm = TRUE) > 0) # select rows that have the current scenario in any column
-    }
+    
     return(icfg)
 }

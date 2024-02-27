@@ -1,4 +1,4 @@
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -31,7 +31,8 @@ run_compareScenarios2 <- function(
   # folder.
   system(paste0("mkdir ", outFileName)) 
   outDir <- normalizePath(outFileName, mustWork = TRUE)
-  
+
+  outputDirs <- unique(normalizePath(outputDirs, mustWork = TRUE))
   mifPath <- getMifScenPath(outputDirs, mustWork = TRUE)
   histPath <- getMifHistPath(outputDirs[1], mustWork = TRUE)
   scenConfigPath <- getCfgScenPath(outputDirs, mustWork = TRUE)

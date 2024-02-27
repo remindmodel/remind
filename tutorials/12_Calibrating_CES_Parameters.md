@@ -49,16 +49,16 @@ derivatives are the equilibrium prices $\pi_i$ of the input factors $V_i$ and
 the efficiency parameters can be expressed in terms of quantities, prices, and
 elasticity parameters:
 
-$\frac{\partial V_o}{\partial  V_i} = \pi_i \Leftrightarrow \alpha_i = \pi_i \left(\frac{V_o}{V_i}\right)^{1 - \rho_o}$
+$\frac{\partial V_o}{\partial  V_i} = \pi_i \Leftrightarrow \alpha_i = \pi_i \left(\frac{V_i}{V_o}\right)^{1 - \rho_o}$
 
 The basic process of the calibration is to use the price calculated using the
 partial derivatives of iteration $j$ and combine them with the exogenously
 prescribed target quantities $V^\ast$ to calculate the efficiency parameters of
 the next iteration $j+1$:
 
-$\pi_i^{(j)} = \alpha_i^{(j)} {V_i^{(j)}}^{1 - \rho_o} {V_o^{(j)}}^{1 - \rho_o}$
+$\pi_i^{(j)} = \alpha_i^{(j)} {V_i^{(j)}}^{\rho_o - 1} {V_o^{(j)}}^{1 - \rho_o}$
 
-$\alpha_i^{(j+1)} = \pi_i^{(j)} \left(\frac{V_o^\ast}{V_i^\ast}\right)^{1 - \rho_o}$
+$\alpha_i^{(j+1)} = \pi_i^{(j)} \left(\frac{V_i^\ast}{V_o^\ast}\right)^{1 - \rho_o}$
 
 
 ## Requirements
@@ -139,7 +139,7 @@ use the calibration results, copy the parameter (`.inc`) file (without the
 iteration counter) to the directory `./modules/29_CES_parameters/load/input/`
 and the .gdx file to the directory `./config/gdx-files/`.  At PIK, this is done
 automatically using the RSE support scripts.  See [this wiki
-page](https://redmine.pik-potsdam.de/projects/remind-r/wiki/GDX_and_CES_parameter_Handling)
+page](https://gitlab.pik-potsdam.de/REMIND/wiki/-/wikis/Handling-of-Gdx-and-Ces-Parameter-Files-in-Remind)
 for details.
 
 If the specific calibration settings (e.g. `cm_CES_configuration`) have not been

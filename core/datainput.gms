@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -24,6 +24,9 @@ pm_temperatureImpulseResponseCO2(tall,tall) = 0;
 *AL* Initialise to avoid compilation errors in presolve if variable not in input.gdx
 vm_demFeForEs.L(t,regi,entyFe,esty,teEs) = 0;
 vm_demFeForEs.L(t,regi,fe2es(entyFe,esty,teEs)) = 0.1;
+
+pm_taxCO2eq_iterationdiff(t,regi) = 0;
+pm_taxCO2eq_iterationdiff_tmp(t,regi) = 0;
 
 *------------------------------------------------------------------------------------
 ***                        calculations based on sets
@@ -137,41 +140,12 @@ $include "./core/input/generisdata_trade.prn"
 
 !! Modify spv and storspv parameters for optimistic VRE supply assumptions
 if (cm_VRE_supply_assumptions eq 1,
-  if (fm_dataglob("learn","spv") ne 0.207,
-    abort "fm_dataglob('learn','spv') is to be modified, but changed externally";
-  else
     fm_dataglob("learn","spv") = 0.257;
-  );
-
-  if (fm_dataglob("inco0","storspv") ne 8350,
-    abort "fm_dataglob('inco0','storspv') is to be modified, but changed externally";
-  else
     fm_dataglob("inco0","storspv") = 7000;
-  );
-
-  if (fm_dataglob("incolearn","storspv") ne 5710,
-    abort "fm_dataglob('incolearn','storspv') is to be modified, but changed externally";
-  else
     fm_dataglob("incolearn","storspv") = 4240;
-  );
-
-  if (fm_dataglob("learn","storspv") ne 0.10,
-    abort "fm_dataglob('learn','storspv') is to be modified, but changed externally";
-  else
     fm_dataglob("learn","storspv") = 0.12;
-  );
-elseif cm_VRE_supply_assumptions eq 2,
-  if (fm_dataglob("incolearn","spv") ne 5060,
-    abort "fm_dataglob('incolearn','spv') is to be modified, but changed externally";
-  else
     fm_dataglob("incolearn","spv") = 5010;
-  );
-elseif cm_VRE_supply_assumptions eq 3,
-  if (fm_dataglob("incolearn","spv") ne 5060,
-    abort "fm_dataglob('incolearn','spv') is to be modified, but changed externally";
-  else
     fm_dataglob("incolearn","spv") = 4960;
-  );
 );
 
 parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit: USD$/KW"
@@ -238,9 +212,8 @@ pm_ccsinjecrate(regi) = s_ccsinjecrate;
 $ifThen.c_ccsinjecrateRegi not "%c_ccsinjecrateRegi%" == "off"
 Parameter p_extRegiccsinjecrateRegi(ext_regi) "Regional CCS injection rate factor. 1/a. (extended regions)" / %c_ccsinjecrateRegi% /;
 loop((ext_regi)$p_extRegiccsinjecrateRegi(ext_regi),
-  pm_ccsinjecrate(regi)$(regi_group(ext_regi,regi)) = p_extRegiccsinjecrateRegi(ext_regi);
+  pm_ccsinjecrate(regi)$(regi_groupExt(ext_regi,regi)) = p_extRegiccsinjecrateRegi(ext_regi);
 );
-pm_ccsinjecrate(regi) = s_ccsinjecrate;
 ;
 $endIf.c_ccsinjecrateRegi
 
@@ -403,9 +376,9 @@ pm_IO_trade(ttot,regi,enty,char) = f_IO_trade(ttot,regi,enty,char) * sm_EJ_2_TWa
 
 *LB* use scaled data for export to guarantee net trade = 0 for each traded good
 loop(tradePe,
-    loop(t,
-       if(sum(regi2, pm_IO_trade(t,regi2,tradePe,"Xport")) ne 0,
-            pm_IO_trade(t,regi,tradePe,"Xport") = pm_IO_trade(t,regi,tradePe,"Xport") * sum(regi2, pm_IO_trade(t,regi2,tradePe,"Mport")) / sum(regi2, pm_IO_trade(t,regi2,tradePe,"Xport"));
+    loop(ttot,
+       if(sum(regi2, pm_IO_trade(ttot,regi2,tradePe,"Xport")) ne 0,
+            pm_IO_trade(ttot,regi,tradePe,"Xport") = pm_IO_trade(ttot,regi,tradePe,"Xport") * sum(regi2, pm_IO_trade(ttot,regi2,tradePe,"Mport")) / sum(regi2, pm_IO_trade(ttot,regi2,tradePe,"Xport"));
        );
     );
 );
@@ -1352,7 +1325,8 @@ if(c_macscen eq 1,
 *pm_macCostSwitch(enty)=pm_macSwitch(enty);
 
 *** for NDC and NPi switch off landuse MACs
-$if %carbonprice% == "NDC"  pm_macSwitch(emiMacMagpie) = 0;
+$if %carbonprice% == "NDC"      pm_macSwitch(emiMacMagpie) = 0;
+$if %carbonprice% == "NPi"      pm_macSwitch(emiMacMagpie) = 0;
 $if %carbonprice% == "NPi2018"  pm_macSwitch(emiMacMagpie) = 0;
 
 *DK* LU emissions are abated in MAgPIE in coupling mode
@@ -1360,6 +1334,8 @@ $if %carbonprice% == "NPi2018"  pm_macSwitch(emiMacMagpie) = 0;
 $if %cm_MAgPIE_coupling% == "on"  pm_macSwitch(enty)$emiMacMagpie(enty) = 0;
 *** As long as there is hardly any CO2 LUC reduction in MAgPIE we dont need MACs in REMIND
 $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("co2luc") = 0;
+*** The tiny fraction n2ofertsom of total land use n2o can get slitghliy negative in some cases. Ignore MAC for n2ofertsom by default.
+$if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("n2ofertsom") = 0;
 
 pm_macCostSwitch(enty)=pm_macSwitch(enty);
 pm_macSwitch("co2cement_process") =0 ;
@@ -1460,6 +1436,7 @@ pm_emifac(ttot,regi,"sesofos","fesos","tdfossos","co2") = p_ef_dem(regi,"fesos")
 pm_emifac(ttot,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem(regi,"fehos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem(regi,"fepet") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem(regi,"fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"segafos","fegat","tdfosgat","co2") = p_ef_dem(regi,"fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!

@@ -1,0 +1,45 @@
+on:
+  pull_request_target:
+    branches:
+      - develop
+    types: [ closed ]
+name: auto-dev-version
+
+jobs:
+  auto-dev-version:
+    if: github.repository == 'remindmodel/remind' && github.event.pull_request.merged == true
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.AUTO_DEV_VERSION_REMIND }}
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.15
+        with:
+          versionSpec: '5.x'
+
+      - name: Determine Version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.9.15
+        with:
+          useConfigFile: true
+          configFilePath: .github/GitVersion.yml
+
+      - name: Update CITATION.cff and config/default.cfg with version and date
+        run: |
+          sed -i 's/^version:.*$/version: "${{ steps.gitversion.outputs.assemblySemVer }}"/' CITATION.cff
+          sed -i "s/^date-released:.*$/date-released: $(date --iso)/" CITATION.cff
+          sed -i 's/^cfg$model_version <-.*$/cfg$model_version <- "${{ steps.gitversion.outputs.assemblySemVer }}"/' config/default.cfg
+
+      - name: Commit changes to CITATION.cff
+        uses: EndBug/add-and-commit@v9
+        with:          
+          add: '["CITATION.cff", "config/default.cfg"]'
+          author_name: REMIND Research Software Engineering
+          author_email: rse@pik-potsdam.de
+          message: 'Release development version ${{ steps.gitversion.outputs.assemblySemVer }}'
+          tag: 'v${{ steps.gitversion.outputs.assemblySemVer }}'
+          pathspec_error_handling: exitImmediately

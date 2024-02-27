@@ -1,4 +1,4 @@
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -39,14 +39,14 @@ if (!identical(trimws(answer), "")) {
 }
 symbolNames <- trimws(strsplit(symbolNames, ",")[[1]])
 
-
 # choose plot mapping
-  for (s in symbolNames) {
+for (s in symbolNames) {
   cat("\n\nHow do you want to map the dimensions of ", s, "in the plot?",
       "Unused aesthetics need to be set to NULL. Combine dimensions with +.\n(default: ", plotMappingDefault, ")\n")
   answer <- getLineCoerce()
   if (!identical(trimws(answer), "")) {
     pm <- answer
+    # user input contains combined dimensions
     if (grepl("\\+", pm)) {
       cd <- strsplit(pm, ",")[[1]]
       cd <- cd[grepl("\\+", cd)]
@@ -72,6 +72,10 @@ symbolNames <- trimws(strsplit(symbolNames, ",")[[1]])
       )
       combineDims[[s]] <- cd
       plotMapping[[s]] <- pm
+    # user input does not contain combined dimensions
+    } else{
+      plotMapping[[s]] <- pm
+      combineDims[[s]] <- ""
     }
   } else {
     plotMapping[[s]] <- plotMappingDefault

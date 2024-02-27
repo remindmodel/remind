@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -21,7 +21,7 @@ vm_costTeCapital.fx(t,regi,teNoLearn)     = pm_inco0_t(t,regi,teNoLearn);
 *** CB 20120402 Lower limit on all P2SE technologies capacities to 100 kW of all technologies and all time steps
 loop(pe2se(enty,enty2,te)$((not sameas(te,"biotr"))  AND (not sameas(te,"biodiesel")) AND (not sameas(te,"bioeths")) AND (not sameas(te,"gasftcrec")) AND (not sameas(te,"gasftrec"))
 AND (not sameas(te,"tnrs"))),
-  vm_cap.lo(t,regi,te,"1")$(t.val gt 2021 AND t.val lt 2100) = 1e-7;
+  vm_cap.lo(t,regi,te,"1")$(t.val gt 2021 AND t.val le 2070) = 1e-7;
 );
 
 
@@ -58,6 +58,12 @@ vm_deltaCap.up(t,regi,"solhe",rlf) = 0;
 
 vm_cap.fx(t,regi,"fnrs",rlf)     = 0;
 vm_deltaCap.up(t,regi,"fnrs",rlf) = 0;
+
+vm_cap.fx(t,regi,"pcc",rlf)     = 0;
+vm_deltaCap.up(t,regi,"pcc",rlf) = 0;
+
+vm_cap.fx(t,regi,"pco",rlf)     = 0;
+vm_deltaCap.up(t,regi,"pco",rlf) = 0;
 
 *** -----------------------------------------------------------------------------------------------------------------
 *** Traditional biomass use is phased out on an exogeneous time path
@@ -209,7 +215,7 @@ if(cm_1stgen_phaseout=1,
 *mh Implementation of scenarios where capacities are fixed at BAU level:
 *** -----------------------------------------------------------
 
-if (cm_emiscen ne 1,
+if (cm_startyear gt 2005,
   if (c_solscen eq 3,
     vm_cap.up(t,regi,"spv",rlf)$(t.val ge 2010)  = p_boundtmp(t,regi,"spv",rlf);
   );
@@ -234,6 +240,7 @@ v_adjFactor.fx("2005",regi,te)=0;
 
 vm_emiMacSector.lo(t,regi,enty)    =  0;
 vm_emiMacSector.lo(t,regi,"co2luc")= -5.0;  !! afforestation can lead to negative emissions
+vm_emiMacSector.lo(t,regi,"n2ofertsom") =  -1; !! small negative emissions can result from human activity
 vm_emiMac.fx(t,regi,"so2") = 0;
 vm_emiMac.fx(t,regi,"bc") = 0;
 vm_emiMac.fx(t,regi,"oc") = 0;
@@ -504,8 +511,8 @@ v_shfe.lo(t,regi,entyFe,sector)$pm_shfe_lo(t,regi,entyFe,sector) = pm_shfe_lo(t,
 v_shGasLiq_fe.up(t,regi,sector)$pm_shGasLiq_fe_up(t,regi,sector) = pm_shGasLiq_fe_up(t,regi,sector);
 v_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_fe_lo(t,regi,sector);
 
-*** FS: allow for H2 use in buildings only from 2030 onwards
-vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le 2025)=0;
+*** RH: Fix H2 in buildings to zero until given year (always zero by default)
+vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le c_H2InBuildOnlyAfter) = 0;
 
 ***----------------------------------------------------------------------------
 ***  Controlling if active, dampening factor to align edge-t non-energy transportation costs with historical GDP data

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -15,7 +15,6 @@
 *   change for example.
 *===========================================
 * Authors...: JH, NB, TAC, SB
-* Wiki......: http://redmine.pik-potsdam.de/projects/remind-r/wiki/31_fossil
 * History...:
 *   - 2020-04-15 : Created moinput functions for input data handling, including region-specific constraints
 *                  previously in the GAMS code. Data aggregated to H12 regions.
@@ -171,7 +170,7 @@ if (cm_nucscen eq 6,
   s31_max_disp_peur = 23*10;
 );
 
-p31_datafosdyn(regi,"pegas",rlf,"alph") = cm_trdadj * p31_datafosdyn(regi,"pegas",rlf,"alph");
+p31_datafosdyn(regi,"pegas",rlf,"alph") = 2 * p31_datafosdyn(regi,"pegas",rlf,"alph");
 
 *NB* extra seed value for the US gas sector to reduce initial price in EJ/yr
 *SB 04/15/2020* Moved this parameter definition to moinput

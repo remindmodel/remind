@@ -1,4 +1,4 @@
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -57,6 +57,7 @@ startComp <- function(
     clcom <- paste0(
       "sbatch ", slurmConfig,
       " --job-name=", jobName,
+      " --comment=compareScenarios2",
       " --output=", jobName, ".out",
       " --error=", jobName, ".out",
       " --mail-type=END --time=200 --mem-per-cpu=8000",

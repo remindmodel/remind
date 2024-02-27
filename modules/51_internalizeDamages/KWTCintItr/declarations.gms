@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -16,7 +16,7 @@ p51_sccParts(tall,tall,all_regi) "Social cost of carbon components (time, region
 p51_sccPartsTC(tall,tall,all_regi) "Social cost of carbon components (time, region)"
 
 
-p51_sccConvergenceMaxDeviation "max deviation of SCC from last iteration [percent]"
+pm_sccConvergenceMaxDeviation "max deviation of SCC from last iteration [percent]"
 ;
 
 *** EOF ./modules/51_internalizeDamages/KWTCintItr/declarations.gms

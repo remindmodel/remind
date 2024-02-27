@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -115,7 +115,7 @@ p11_share_sector(ttot,"peoil","seliqfos","refliq","res",regi)   = (1-pm_share_tr
 $ELSE.sectorshares
 
 
-if (cm_emiscen eq 1,
+if (cm_startyear eq 2005,
   Execute_Loadpoint 'input'      p11_cesIO = vm_cesIO.l;
 else
   Execute_Loadpoint 'input_ref'  p11_cesIO = vm_cesIO.l;
