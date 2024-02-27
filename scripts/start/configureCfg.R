@@ -38,7 +38,7 @@ configureCfg <- function(icfg, iscen, iscenarios, verboseGamsCompile = TRUE) {
 
     # Set reporting script
     if ("output" %in% names(iscenarios) && ! is.na(iscenarios[iscen, "output"])) {
-      scenoutput <- gsub('c\\("|\\)|"', '', trimws(strsplit(iscenarios[iscen, "output"],',')[[1]]))
+      scenoutput <- gsub('c\\("|\\)|"', '', trimws(unlist(strsplit(iscenarios[iscen, "output"], split = ','))))
       icfg$output <- unique(c(if ("cfg$output" %in% scenoutput) icfg$output, setdiff(scenoutput, "cfg$output")))
     }  
 
