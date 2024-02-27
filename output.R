@@ -67,7 +67,8 @@ library(lucode2)
 library(gms)
 require(stringr, quietly = TRUE)
 
-source("scripts/start/isSlurmAvailable.R")
+# Import all functions from the scripts/start folder
+invisible(sapply(list.files("scripts/start", pattern = "\\.R$", full.names = TRUE), source))
 
 flags <- NULL
 ### Define arguments that can be read from command line
@@ -86,17 +87,16 @@ if ("--help" %in% flags) {
 choose_slurmConfig_output <- function(output) {
   slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
                      "--qos=priority --mem=8000", "--qos=short --mem=8000",
-                     "--qos=standby --mem=8000", "--qos=priority --mem=32000")
-  
-  # Modify slurm options for ar6 reporting, since we want to run MAGICC in parallel and we'll need a lot of memory
-  if ("ar6Climate" %in% output) slurm_options <- paste(slurm_options[1:3], "--tasks-per-node=12 --mem=32000")
+                     "--qos=standby --mem=8000", "--qos=priority --mem=32000",
+                     "direct")
 
   if (!isSlurmAvailable())
     return("direct")
 
-  if (!is.null(slurmExceptions)) {
-    slurm_options <- grep(slurmExceptions, slurm_options, value = TRUE)
-  }
+  if ("reporting" %in% output) slurm_options <- unique(c(grep("--mem=[0-9]*[0-9]{3}", slurm_options, value = TRUE), "direct"))
+
+  # Modify slurm options for ar6 reporting, since we want to run MAGICC in parallel and we'll need a lot of memory
+  if ("ar6Climate" %in% output) slurm_options <- paste(slurm_options[1:3], "--tasks-per-node=12 --mem=32000")
 
   if (length(slurm_options) == 1) {
     return(slurm_options[[1]])
@@ -211,10 +211,9 @@ if (comp %in% c("comparison", "export")) {
     }
   }
 } else { # comp = single
-  # define slurm class or direct execution
+    # define slurm class or direct execution
   outputInteractive <- c("plotIterations", "fixOnRef", "integratedDamageCosts")
   if (! exists("source_include")) {
-    # for selected output scripts, only slurm configurations matching these regex are available
     if (any(output %in% outputInteractive)) {
       slurmConfig <- "direct"
       flags <- c(flags, "--interactive") # to tell scripts they can run in interactive mode
