@@ -398,13 +398,19 @@ for(scen in common){
   }
 
   # Edit remind main model file, region settings and input data revision based on scenarios table, if cell non-empty
-  for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "inputRevision", "output"), names(settings_remind))) {
+  for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "inputRevision"), names(settings_remind))) {
     if ( ! is.na(settings_remind[scen, switchname] )) {
-      cfg_rem[[switchname]] <- trimws(unlist(strsplit(settings_remind[scen, switchname], split = ',')))
+      cfg_rem[[switchname]] <- settings_remind[scen, switchname]
     }
   }
+  
+  # Set reporting scripts
+  if ("output" %in% names(settings_remind) && ! is.na(settings_remind[scen, "output"])) {
+    scenoutput <- gsub('c\\("|\\)|"', '', trimws(unlist(strsplit(settings_remind[scen, "output"], split = ','))))
+    cfg_rem$output <- unique(c(if ("cfg$output" %in% scenoutput) cfg_rem$output, setdiff(scenoutput, "cfg$output")))
+  }
 
-  # Edit switches in default.cfg based on scenarios table, if cell non-empty
+  # Edit GAMS switches in default.cfg based on scenarios table, if cell non-empty
   for (switchname in intersect(names(cfg_rem$gms), names(settings_remind))) {
     if ( ! is.na(settings_remind[scen, switchname] )) {
       cfg_rem$gms[[switchname]] <- settings_remind[scen, switchname]
@@ -514,10 +520,10 @@ for(scen in common){
       }
     }
     
-    # If the preceding run has already finished (= its gdx file exist) start
-    # the current run immediately. This might be the case e.g. if you started
-    # the NDC run in a first batch and now want to start the subsequent policy
-    # runs by hand after the NDC has finished.
+      # If the preceding run has already finished (= its gdx file exist) start
+      # the current run immediately. This might be the case e.g. if you started
+      # the NDC run in a first batch and now want to start the subsequent policy
+      # runs by hand after the NDC has finished.
     if (i == start_iter_first && ! start_now && all(file.exists(cfg_rem$files2export$start[path_gdx_list]) | unlist(gdx_na))) {
       start_now <- TRUE
     }

@@ -38,8 +38,9 @@ configureCfg <- function(icfg, iscen, iscenarios, verboseGamsCompile = TRUE) {
 
     # Set reporting script
     if ("output" %in% names(iscenarios) && ! is.na(iscenarios[iscen, "output"])) {
-      icfg$output <- gsub('c\\("|\\)|"', '', strsplit(iscenarios[iscen, "output"],',')[[1]])
-    }
+      scenoutput <- gsub('c\\("|\\)|"', '', trimws(strsplit(iscenarios[iscen, "output"],',')[[1]]))
+      icfg$output <- unique(c(if ("cfg$output" %in% scenoutput) icfg$output, setdiff(scenoutput, "cfg$output")))
+    }  
 
     # Edit switches in config based on scenarios table, if cell non-empty
     for (switchname in intersect(names(icfg$gms), names(iscenarios))) {
