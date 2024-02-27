@@ -130,9 +130,9 @@ pm_shGasLiq_fe_up(ttot,regi,sector)=0;
 pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 
 
-*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-*++++++++++ Technology cost data input read-in and manipulation ++++
-*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+*------------------------------------------------------------------------------------
+***          Technology data input read-in and manipulation
+*------------------------------------------------------------------------------------
 *** Note: future to be its own module perhaps
 *** Note: in module 5 there are more cost manipulation after initial capacities are calculated, be aware those can overwrite your technology values for policy runs if you set them here in the core
 ***---------------------------------------------------------------------------
@@ -172,7 +172,7 @@ f_dataglob_SSP5(char,"gridwindoff") = f_dataglob_SSP5(char,"gridwind");
 $ENDIF.WindOff
 
 ***---------------------------------------------------------------------------
-*** Reading in and initializing regional data
+*** Reading in and initializing regional cost data
 ***---------------------------------------------------------------------------
 parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit: USD$/KW"
 /
@@ -186,9 +186,9 @@ $offdelim
 pm_esCapCost(tall,all_regi,all_teEs) = 0;
 
 ***---------------------------------------------------------------------------
-*++++** Manipulating technology cost data 
+*** Manipulating technology cost data
 ***---------------------------------------------------------------------------
-*** Manipulating global or regional technology cost data - absolute value
+*** Manipulating global or regional cost technology data - absolute value
 ***---------------------------------------------------------------------------
 !! Modify spv and storspv parameters for optimistic VRE supply assumptions
 if (cm_VRE_supply_assumptions eq 1,
@@ -260,14 +260,14 @@ fm_dataglob("incolearn","csp")          = 0.7 * fm_dataglob("incolearn","csp");
 
 
 *** --------------------------------------------------------------------------------
-*++++** Regionalize investment cost data
+*** Regionalize technology investment cost data
 *** -------------------------------------------------------------------------------
 
 *** initialize regionalized data using global data
 pm_data(all_regi,char,te) = fm_dataglob(char,te);
 
 *** -------------------------------------------------------------------------------
-*++++** Regional risk premium during building time
+*** Regional risk premium during building time
 *** -------------------------------------------------------------------------------
 
 *RP* calculate turnkey costs (which are the sum of the overnight costs in generisdata_tech and the "interest during construction” (IDC) )
@@ -420,14 +420,13 @@ loop (teNoLearn(te)$( sameas(te,"igcc") ),
 );
 $endif.REG_techcosts
 
-
-*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-*++++++++++++++++++++*END of Technology cost data input read-in and manipulation in core ++++++++++
+*------------------------------------------------------------------------------------
+*   END of Technology cost data input read-in and manipulation in core
+*------------------------------------------------------------------------------------
 *** Note: in modules/05_initialCap/on/preloop.gms, there are additional adjustment to investment
 *** cost in the near term due to calibration of historical energy conversion efficiencies based on
 *** initial capacities
-*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+*------------------------------------------------------------------------------------
 
 *JH* Determine CCS injection rates
 *LP* for c_ccsinjecratescen =0 the storing variable vm_co2CCS will be fixed to 0 in bounds.gms, the sm_ccsinjecrate=0 will cause a division by 0 error in the 21_tax module
