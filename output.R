@@ -90,9 +90,7 @@ choose_slurmConfig_output <- function(output) {
                      "direct")
   if ("reporting" %in% output) slurm_options <- unique(c(grep("--mem=[0-9]*[0-9]{3}", slurm_options, value = TRUE), "direct"))
   # Modify slurm options for ar6 reporting, since we want to run MAGICC in parallel and we'll need a lot of memory
-  if ("ar6Climate" %in% output) slurm_options <- c("--qos=priority --tasks-per-node=12 --mem=32000",
-                                                   "--qos=short --tasks-per-node=12 --mem=32000",
-                                                   "--qos=standby --tasks-per-node=12 --mem=32000")
+  if ("ar6Climate" %in% output) slurm_options <- paste(slurm_options[1:3], "--tasks-per-node=12 --mem=32000")
   if (length(slurm_options) == 1) {
     return(slurm_options[[1]])
   }
