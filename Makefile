@@ -37,6 +37,12 @@ update-renv-all: ## Upgrade all packages (including CRAN packages) in your renv
 		fi \
 	fi
 
+revert-dev-packages: ## All PIK-PIAM packages that are development versions, i.e.
+                     ## that have a non-zero fourth version number component, are
+                     ## reverted to the highest version lower than the
+                     ## development version.
+	@Rscript -e 'piamenv::revertDevelopmentVersions()'
+
 ensure-reqs:     ## Ensure the REMIND library requirements are fulfilled
                  ## by installing updates and new libraries as necessary. Does not
                  ## install updates unless it is required.
