@@ -14,7 +14,6 @@
 
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%techpol%" == "CombLowCandCoalPO" $include "./modules/40_techpol/CombLowCandCoalPO/realization.gms"
-$Ifi "%techpol%" == "EVmandates" $include "./modules/40_techpol/EVmandates/realization.gms"
 $Ifi "%techpol%" == "NDC" $include "./modules/40_techpol/NDC/realization.gms"
 $Ifi "%techpol%" == "NDCplus" $include "./modules/40_techpol/NDCplus/realization.gms"
 $Ifi "%techpol%" == "NPi2018" $include "./modules/40_techpol/NPi2018/realization.gms"

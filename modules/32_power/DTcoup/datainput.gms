@@ -81,7 +81,7 @@ $offdelim
 /
 ; 
 *** convert from USD2015/MWh to trUSD2005/TWa
-p32_flex_maxdiscount(regi,te) = p32_flex_maxdiscount(regi,te) * sm_TWa_2_MWh * sm_D2015_2_D2005 * 1e-12;
+p32_flex_maxdiscount(regi,te) = p32_flex_maxdiscount(regi,te) * sm_TWa_2_MWh * s_D2015_2_D2005 * 1e-12;
 display p32_flex_maxdiscount;
 $offtext
 

@@ -37,6 +37,19 @@ findRefMif <- function(outputdir, envi) {
   return(refmif)
 }
 
+fixMAGICC <- function(d, dref, startyear) {
+  magiccgrep <- "^Forcing|^Temperature|^Concentration"
+  message("Fixing MAGICC6 data before ", startyear)
+  dnew <-
+    rbind(
+      filter(dref, grepl(magiccgrep, .data$variable),
+             .data$period < startyear),
+      filter(d, ! grepl(magiccgrep, .data$variable) |
+             .data$period >= startyear)
+    )
+  return(dnew)
+}
+
 fixOnMif <- function(outputdir) {
 
   gdxs    <- file.path(outputdir, "fulldata.gdx")
@@ -64,6 +77,7 @@ fixOnMif <- function(outputdir) {
   refname <- basename(dirname(refmif))
   d <- quitte::as.quitte(mifs)
   dref <- quitte::as.quitte(refmif)
+  d <- fixMAGICC(d, dref, startyear)
   failfile <- file.path(outputdir, "log_fixOnRef.csv")
   fixeddata <- piamInterfaces::fixOnRef(d, dref, ret = "fixed", startyear = startyear, failfile = failfile)
 

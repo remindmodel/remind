@@ -42,7 +42,7 @@ o80_trackSurplusSign(ttot,all_enty,iteration)             "auxiliary parameter t
 o80_SurplusOverTolerance(ttot,all_enty,iteration)         "auxiliary parameter to track in which iterations which item surpassed the tolerance (positive/negative)"
 
 
-p80_surplusMax(all_enty,iteration,tall)    "Diagnostics for Nash: Worst residual market surplus until given year, absolute value. [Units: TWa, trillion Dollar, GtC]"
+p80_surplusMax_iter(all_enty,iteration,tall)    "Diagnostics for Nash: Worst residual market surplus until given year, absolute value. [Units: TWa, trillion Dollar, GtC]"
 p80_surplusMax2100(all_enty)               "Worst residual market surplus until 2100, absolute value. [Units: TWa, trillion Dollar, GtC]"
 p80_surplusMaxRel(all_enty,iteration,tall) "Diagnostics for Nash: Worst residual market surplus until given year, in per cent."
 p80_surplusMaxTolerance(all_enty)          "maximum tolerable residual value of absolute market surplus in 2100."
@@ -55,6 +55,7 @@ p80_handle(all_regi)                       "parallel mode handle parameter"
 p80_repy(all_regi,solveinfo80)             "summary report from solver "
 p80_repy_iteration(all_regi,solveinfo80,iteration) "summary report from solver in iteration"
 p80_repyLastOptim(all_regi,solveinfo80)    "p80_repy from last iteration"
+p80_repy_nashitr_solitr(all_regi,solveinfo80,iteration,sol_itr)   "summary report from solver in nash iteration and solver iteration"
 p80_messageFailedMarket(tall,all_enty)     "nash display helper"
 p80_messageShow(convMessage80)             "nash display helper"
 p80_trackConsecFail(all_regi)              "Parameter to keep track of consecutive solve failures of regions in Nash mode."
@@ -92,11 +93,19 @@ p80_count                                  "count regions with feasible solution
 p80_eoWeights_fix(all_regi)                "default and fallback weighting factors"
 
 p80_SolNonOpt(all_regi)                    "solve status"
-p80_taxrev_dev(ttot,all_regi)              "deviation of tax revenue normalized by GDP if taxes did not converge"
 
 pm_fuExtrForeign(ttot,all_regi,all_enty,rlf) "foreign fuel extraction"
-p80_taxrev_dev(ttot,all_regi)                "deviation of tax revenue in percent GDP"
-;
+
+p80_convNashTaxrev_iter(iteration,ttot,all_regi) "deviation of tax revenue in percent GDP per iteration"
+p80_convNashObjVal_iter(iteration,all_regi)          "deviation of objective value to objective value from last iteration per iteration"
+p80_fadeoutPriceAnticip_iter(iteration)           "Helper parameter, describes fadeout of price anticipation during iterations per iteration"
+$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
+p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)      "deviation of current iteration quantity target from target per iteration - relative for total targets, absolute (= share points) for share targets"
+$endif.cm_implicitQttyTarget
+p80_globalBudget_dev_iter(iteration)              "actual level of global cumulated emissions budget divided by target budget per iteration"
+p80_sccConvergenceMaxDeviation_iter(iteration)    "max deviation of SCC from last iteration [percent] per iteration"
+p80_gmt_conv_iter(iteration)                      "global mean temperature convergence per iteration"
+; 
 
 positive variable
 *AJS* Adjustment costs for Nash trade algorithm.  Only non-zero in the Nash_test realization of 80_optimization module.

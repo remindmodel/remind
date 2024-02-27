@@ -99,9 +99,6 @@ $offtext
 
 ***parameter p32_curtOn(all_regi) - control variable for curtailment fitted from the DIMES-Results
 p32_curtOn(regi) = 1;
-if (cm_solwindenergyscen = 8,  !! RI No Integration scenario 
-	p32_curtOn(regi) = 0;
-);
 
 ***display p32_capFacDem, p32_capFacLoB, p32_RLDCcoeff, p32_avCapFac, p32_ResMarg, p32_curtOn, p32_shCHP, p32_grid_factor;
 
