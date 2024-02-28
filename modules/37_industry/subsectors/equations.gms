@@ -242,7 +242,7 @@ q37_feedstocksLimit(t,regi,entySe,entyFe,emiMkt)$(
 *' Calculate mass of carbon contained in chemical feedstocks
 q37_FeedstocksCarbon(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
-  vm_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
+  v37_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
   =e=
     vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
   * p37_FeedstockCarbonContent(t,regi,entyFe)
@@ -251,9 +251,9 @@ q37_FeedstocksCarbon(t,regi,sefe(entySe,entyFe),emiMkt)$(
 *' Calculate carbon contained in plastics as a share of carbon in feedstock [GtC]
 q37_plasticsCarbon(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
-  vm_plasticsCarbon(t,regi,entySe,entyFe,emiMkt)
+  v37_plasticsCarbon(t,regi,entySe,entyFe,emiMkt)
   =e=
-    vm_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
+    v37_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
   * s37_plasticsShare
 ;
 
@@ -263,15 +263,15 @@ q37_plasticsCarbon(t,regi,sefe(entySe,entyFe),emiMkt)$(
 q37_plasticWaste(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
                      AND ttot.val ge max(2015, cm_startyear)               ) ..
-  vm_plasticWaste(ttot,regi,entySe,entyFe,emiMkt)
+  v37_plasticWaste(ttot,regi,entySe,entyFe,emiMkt)
   =e=
-    vm_plasticsCarbon(ttot-2,regi,entySe,entyFe,emiMkt)$( ttot.val lt 2070 )
-  + ( ( vm_plasticsCarbon(ttot-2,regi,entySe,entyFe,emiMkt)
-      + vm_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)
+    v37_plasticsCarbon(ttot-2,regi,entySe,entyFe,emiMkt)$( ttot.val lt 2070 )
+  + ( ( v37_plasticsCarbon(ttot-2,regi,entySe,entyFe,emiMkt)
+      + v37_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)
       )
     / 2
     )$( ttot.val eq 2070 )
-  + vm_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)$( ttot.val gt 2070 )
+  + v37_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)$( ttot.val gt 2070 )
   ;
 
 *' emissions from plastics incineration as a share of total plastic waste
@@ -279,7 +279,7 @@ q37_incinerationEmi(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)) ..
   vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
   =e=
-    vm_plasticWaste(t,regi,entySe,entyFe,emiMkt)
+    v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
   * pm_incinerationRate(t,regi)
 ;
 
@@ -290,9 +290,9 @@ q37_nonIncineratedPlastics(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
   vm_nonIncineratedPlastics(t,regi,entySe,entyFe,emiMkt)
   =e=
-    vm_plasticWaste(t,regi,entySe,entyFe,emiMkt)
+    v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
   * (1 - pm_incinerationRate(t,regi))
-;
+  ;
 
 *' calculate flow of carbon contained in chemical feedstock with unknown fate
 *' it is assumed that this carbon is re-emitted in the same timestep
@@ -300,7 +300,7 @@ q37_feedstockEmiUnknownFate(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
   vm_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
   =e=
-    vm_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
+    v37_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
   * (1 - s37_plasticsShare)
 ;
 

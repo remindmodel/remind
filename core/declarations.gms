@@ -417,9 +417,6 @@ v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids
 
 vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
 
-vm_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)             "Carbon flow: carbon contained in chemical feedstocks [GtC]"
-vm_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)               "Carbon flow: carbon contained in plastics [GtC]"
-vm_plasticWaste(ttot,all_regi,all_enty,all_enty,all_emiMkt)                 "Carbon flow: carbon contained in plastic waste [GtC]"
 vm_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)      "Carbon flow: carbon contained in feedstocks with unknown fate (not plastics)(assumed to go back into the atmosphere) [GtC]"
 vm_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "Emissions from incineration of plastic waste [GtC]"
 vm_nonIncineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)       "Carbon flow: carbon contained in plastics that are not incinerated [GtC]"
