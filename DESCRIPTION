@@ -54,7 +54,7 @@ Imports:
     piamInterfaces (>= 0.12.18),
     plotly,
     purrr,
-    quitte (>= 0.3123.0),
+    quitte (>= 0.3128.4),
     R.utils,
     raster,
     readr,
