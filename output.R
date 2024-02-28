@@ -93,7 +93,7 @@ choose_slurmConfig_output <- function(output) {
     return("direct")
 
   # Modify slurm options for ar6 reporting, since we want to run MAGICC in parallel and we'll need a lot of memory
-  if ("ar6Climate" %in% output) slurm_options <- combine_slurmConfig(slurm_options[1:3], "--tasks-per-node=12 --mem=32000")
+if ("ar6Climate" %in% output) slurm_options <- paste(slurm_options[1:3], "--tasks-per-node=12 --mem=32000")
   # reporting.R, in particular remind2::convGDX2MIF, requires at least --mem=8000 of memory
   if ("reporting" %in% output) slurm_options <- grep("--mem=[0-9]*[0-9]{3}", slurm_options, value = TRUE)
 
