@@ -78,7 +78,7 @@ q02_energyExp(ttot,regi)$(ttot.val ge max(2015,cm_startyear))..
     v02_energyExp(ttot,regi)
     =e=
     sum(se2fe(entySe,entyFe,te),
-        sum((sector2emiMkt(sector,emiMkt),entyFE2sector(entyFE,sector)),
+        sum((sector2emiMkt(sector,emiMkt),entyFe2Sector(entyFe,sector)),
         vm_demFeSector(ttot,regi,entySe,entyFe,sector,emiMkt)*pm_FEPrice(ttot,regi,entyFe,sector,emiMkt))
         )
 ;

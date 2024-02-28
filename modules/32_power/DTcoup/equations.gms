@@ -12,9 +12,9 @@
 q32_balSe(t,regi,enty2)$(sameas(enty2,"seel"))..
 	sum(pe2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te) )
 	+ sum(se2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te) )
-	+ sum(pc2te(enty,entySE(enty3),te,enty2), 
+	+ sum(pc2te(enty,entySe(enty3),te,enty2), 
 		pm_prodCouple(regi,enty,enty3,te,enty2) * vm_prodSe(t,regi,enty,enty3,te) )
-	+ sum(pc2te(enty4,entyFE(enty5),te,enty2), 
+	+ sum(pc2te(enty4,entyFe(enty5),te,enty2), 
 		pm_prodCouple(regi,enty4,enty5,te,enty2) * vm_prodFe(t,regi,enty4,enty5,te) )
 	+ sum(pc2te(enty,enty3,te,enty2),
 		sum(teCCS2rlf(te,rlf),
@@ -77,14 +77,14 @@ q32_limitCapTeStor(t,regi,teStor)$( t.val ge 2015 ) ..
 q32_elh2VREcapfromTestor(t,regi)..
   vm_cap(t,regi,"elh2","1") 
   =g= 
-  sum(te$testor(te), p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") )
+  sum(te$teStor(te), p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") )
 ;
 
 *** build additional h2 to seel capacities to use stored hydrogen
 q32_h2turbVREcapfromTestor(t,regi)..
   vm_cap(t,regi,"h2turbVRE","1") 
   =e= 
-  sum(te$testor(te), p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
+  sum(te$teStor(te), p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
 ;
 
 

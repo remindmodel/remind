@@ -47,7 +47,7 @@ helpText <- "
 #'                     folders, comma-separated, such as remind_dir=.,../otherremind
 #'   slurmConfig=      use slurmConfig=priority, short or standby to specify slurm
 #'                     selection. You may also pass complicated arguments such as
-#'                     slurmConfig='--qos=priority --mem=8000'
+#'                     slurmConfig='--qos=priority --mem=16000'
 "
 
 argv <- get0("argv", ifnotfound = commandArgs(trailingOnly = TRUE))

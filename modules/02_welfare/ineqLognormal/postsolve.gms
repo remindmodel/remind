@@ -22,7 +22,7 @@ p02_inconvPen_Switch_Track(t,regi)
 $ENDIF.INCONV_bioSwitch
 
 *for use in the SCC calculation
-pm_sccIneq(ttot,regi)$((pm_SolNonInfes(regi) eq 1)) = exp(-1*(2*cm_distrAlphaDam-(pm_ies(regi)+1))*0.5*pm_ies(regi)*v02_distrFinal_SigmaSq_postDam.l(ttot,regi));
+pm_sccIneq(ttot,regi)$((pm_SolNonInfes(regi) eq 1)) = exp(-1*(2*cm_distrAlphaDam-(pm_ies(regi)+1))*0.5*pm_ies(regi)*v02_distrFinal_sigmaSq_postDam.l(ttot,regi));
 
 *interpolate sigma
 loop(ttot$(ttot.val ge 2005),

@@ -19,8 +19,8 @@ if( (ord(iteration) le 25 and ord(iteration) ge cm_startIter_EDGET and (mod(ord(
     Execute_Loadpoint "p35_fe2es", p35_fe2es_aux = p35_fe2es;
     !! update module parameter with EDGE-Transport results, preserving 2005 data
     !! so no altered 2005 data gets passed on to potential fixed runs
-    p35_fe2es(t,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%",teES_dyn35)$( t.val gt 2005 ) 
-    = p35_fe2es_aux(t,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%",teES_dyn35);
+    p35_fe2es(t,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%",teEs_dyn35)$( t.val gt 2005 ) 
+    = p35_fe2es_aux(t,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%",teEs_dyn35);
     !! up date model parameter with data after 2010
     pm_fe2es(t,regi,teEs_dyn35)$(t.val gt 2010 AND t.val ge cm_startyear AND t.val le 2100)
     = p35_fe2es_aux(t,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%",teEs_dyn35);

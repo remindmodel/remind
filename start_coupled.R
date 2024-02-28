@@ -74,7 +74,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     
     # Switch off generation of needless output for all but the last REMIND iteration
     if (i < max_iterations) {
-      cfg_rem$output <- intersect(c("reporting", "emulator", "rds_report", "reportingREMIND2MAgPIE"), cfg_rem_original)
+      cfg_rem$output <- intersect(cfg_rem_original, c("reporting", "reportingREMIND2MAgPIE", "emulator", "rds_report"))
     } else {
       cfg_rem$output <- cfg_rem_original
     }
@@ -260,7 +260,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
         }
         slurmOptions <- combine_slurmConfig(paste0("--qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", logfile,
            " --open-mode=append --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", subseq.env$numberOfTasks,
-          if (subseq.env$numberOfTasks == 1) " --mem=8000"), subseq.env$sbatch)
+          if (subseq.env$numberOfTasks == 1) " --mem=16000"), subseq.env$sbatch)
         subsequentcommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
         message(subsequentcommand)
         if (length(needfulldatagdx) > 0) {

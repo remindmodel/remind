@@ -65,10 +65,10 @@ loop (ue_29(ppf_29(out)),
 
   loop (cesOut2cesIn(out,in),
     if (ppfKap(in), sm_tmp  = sm_tmp  + 1);
-    if (ppfen(in),  sm_tmp2 = sm_tmp2 + 1);
+    if (ppfEn(in),  sm_tmp2 = sm_tmp2 + 1);
   );
 
-  !! in case one input is ppfen/FE and the other Kap
+  !! in case one input is ppfEn/FE and the other Kap
   if (sm_tmp eq 1 AND sm_tmp2 eq 1,
     ue_fe_kap_29(out) = YES;
   else
@@ -215,8 +215,7 @@ p29_cesdata_load(t,regi,in,"rho")$( p29_cesdata_load(t,regi,in,"rho") eq 0) = 0.
 *** Load quantities and efficiency growth from the last run
 Execute_Loadpoint 'input'  p29_cesIO_load = vm_cesIO.l, p29_effGr = vm_effGr.l;
 
-*** DEBUG: Load vm_deltacap
-Execute_Loadpoint 'input' vm_deltacap;
+Execute_Loadpoint 'input' vm_deltaCap;
 
 *** Load exogenous Labour, GDP
 pm_cesdata(t,regi,"inco","quantity") = pm_gdp(t,regi);
@@ -322,7 +321,7 @@ $endif.build_H2_offset
 loop((t,regi,in)$(    (ppf(in) OR ppf_29(in))
                   AND pm_cesdata(t,regi,in,"quantity") lt 1e-5
                   AND NOT ppfen_industry_dyn37(in)
-                  AND NOT ppfkap_industry_dyn37(in)
+                  AND NOT ppfKap_industry_dyn37(in)
                   AND NOT SAMEAS(in,"feh2i")
                   AND NOT SAMEAS(in,"feh2b")        ),
   pm_cesdata(t,regi,in,"offset_quantity")  = pm_cesdata(t,regi,in,"quantity")  - 1e-5;

@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/subsectors/datainput.gms
 
-vm_emiIndBase.l(ttot,regi,entyFE,secInd37) = 0;
+vm_emiIndBase.l(ttot,regi,entyFe,secInd37) = 0;
 
 Parameters
 
@@ -543,10 +543,10 @@ $offdelim
 
 *' load baseline industry ETS solids demand
 if (cm_startyear ne 2005,   !! not a BAU scenario
-execute_load "input_ref.gdx", vm_demFEsector;
+execute_load "input_ref.gdx", vm_demFeSector;
   p37_BAU_industry_ETS_solids(t,regi)
-  = sum(se2fe(entySE,"fesos",te),
-      vm_demFEsector.l(t,regi,entySE,"fesos","indst","ETS")
+  = sum(se2fe(entySe,"fesos",te),
+      vm_demFeSector.l(t,regi,entySe,"fesos","indst","ETS")
     );
 );
 

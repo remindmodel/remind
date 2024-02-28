@@ -124,16 +124,13 @@ NC    <- "\033[0m"   # No Color
 
 # define arguments that are accepted (test for backward compatibility)
 startgroup <- "1"
-flags <- lucode2::readArgs("startgroup", .flags = c(h = "--help", g = "--gamscompile", i = "--interactive", p = "--parallel", t = "--test"))
+flags <- lucode2::readArgs("startgroup", .flags = c(h = "--help", g = "--gamscompile", i = "--interactive", t = "--test"))
 if (! exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 if ("--help" %in% flags) {
   message(helpText)
   q()
 }
 if ("test" %in% argv) flags <- unique(c(flags, "--test"))
-if ("--parallel" %in% flags) {
-  message("The flag --parallel is not necessary anymore, as this is default now")
-}
 
 # load arguments from command line
 argv <- grep('(^-|=|^test$)', argv, value = TRUE, invert = TRUE)
@@ -155,7 +152,8 @@ if (length(argv) > 0) {
   message("")
 }
 
-if (! file.exists("output")) dir.create("output")
+dir.create(file.path(path_remind, "output"), showWarnings = FALSE)
+dir.create(file.path(path_magpie, "output"), showWarnings = FALSE)
 
 ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
 
@@ -643,7 +641,7 @@ for (scen in common) {
       }
       slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
         " --open-mode=append --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
-        if (runEnv$numberOfTasks == 1) " --mem=8000"), runEnv$sbatch)
+        if (runEnv$numberOfTasks == 1) " --mem=16000"), runEnv$sbatch)
       slurmCommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
       message(slurmCommand)
       exitCode <- system(slurmCommand)

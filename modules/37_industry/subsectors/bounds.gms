@@ -86,7 +86,7 @@ $endif.rcp_scen
 $endif.secondary_steel_bound
 $endif.CES_parameters
 
-vm_cesIO.fx("2005",regi,ppfkap_industry_dyn37(in))
+vm_cesIO.fx("2005",regi,ppfKap_industry_dyn37(in))
   = max(
       pm_cesdata("2005",regi,in,"quantity"),
       abS(pm_cesdata("2005",regi,in,"offset_quantity"))
@@ -119,7 +119,7 @@ vm_cesIO.lo(t,regi_dyn29(regi),in_industry_dyn37(in))$(
 *' Cement CCS might otherwise become a compelling BioCCS option under very high
 *' carbon prices due to missing adjustment costs.
 if (cm_startyear gt 2005,   !! not a scenario, starting in 2005 (e.g. baseline or NPi)
-  vm_demFEsector.up(t,regi,"sesobio","fesos","indst","ETS")
+  vm_demFeSector.up(t,regi,"sesobio","fesos","indst","ETS")
   = max(0.25 , smax(t2, pm_secBioShare(t2,regi,"fesos","indst") ) )
     * p37_BAU_industry_ETS_solids(t,regi);
 );

@@ -35,13 +35,13 @@ display p46_CO2eqwoLU_actual;
 display p46_CO2eqwoLU_goal;
 
 *#' calculate emissions in 2020 as reference
-p46_vm_co2eq_2020(regi) = vm_co2eq.l("2020",regi)*sm_c_2_co2*1000;
+p46_vm_CO2eq_2020(regi) = vm_co2eq.l("2020",regi)*sm_c_2_co2*1000;
 
 *#' nash compatible convergence scheme: adjustment of co2 tax for next iteration based on deviation of emissions in this iteration (actual) from target emissions (ref)
 *#' maximum possible change between iterations decreases with increase of iteration number
 
 *** rescale regi tax by comparing the required emission reduction with 2020 emission levels
-p46_factorRescaleCO2Tax(p46_NDCyearSet(t,regi)) = 1+(p46_CO2eqwoLU_actual(t,regi) - p46_CO2eqwoLU_goal(t,regi))/p46_vm_co2eq_2020(regi);
+p46_factorRescaleCO2Tax(p46_NDCyearSet(t,regi)) = 1+(p46_CO2eqwoLU_actual(t,regi) - p46_CO2eqwoLU_goal(t,regi))/p46_vm_CO2eq_2020(regi);
 
 p46_factorRescaleCO2TaxLtd(p46_NDCyearSet(t,regi)) =
   min(

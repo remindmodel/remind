@@ -389,7 +389,7 @@ display p05_inital_eta, p05_corrected_inital_eta, pm_data, pm_dataeta;
 *** (values in pm_data("eta") for the whole time horizon. For these technologies, the etas are not vintage-dependent, but rather etas change FOR ALL STANDING CAPACITIES in each time step.
 *** We therefore fade out the 2005 etas until 2050 to the initial values that are read-in from generisdata_tech (now in fm_dataglob("eta")).
 loop(regi,
-  loop(teEtaConst(te)$(NOT teCHP(te)),
+  loop(teEtaConst(te)$(NOT teChp(te)),
     loop(ttot$(ttot.val < 2010),
       pm_eta_conv(ttot,regi,te) = pm_data(regi,"eta",te) ;
     )
@@ -401,7 +401,7 @@ loop(regi,
     )
   );
 );
-pm_eta_conv(ttot,regi,teCHP) = pm_data(regi,"eta",teCHP);
+pm_eta_conv(ttot,regi,teChp) = pm_data(regi,"eta",teChp);
 
 *AD* It looks like the dynamic etas in pm_dataeta are not used in pm_eta_conv, i.e.,
 *** they are not relevant for se->se or se->fe conversion.
