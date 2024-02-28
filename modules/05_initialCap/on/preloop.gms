@@ -539,9 +539,9 @@ if (cm_startyear gt 2005,
 
 
 
-*** load pm_data from input_ref.gdx and overwrite values
-*** only for eta of chp technologies since they have been adapted in initialCap routine above
-*** This is to avoid overwriting changes to pm_data by scenario switches
+*** load pm_data from input_ref.gdx and overwrite values only for eta of chp technologies
+*** Only the eta values of chp technologies have been adapted by initialCap script above.
+*** This is to avoid overwriting all of pm_data and make sure that scenario switches which adapt pm_data before this module work as intended.
   Execute_Loadpoint 'input_ref' p05_pmdata_ref = pm_data;
   pm_data(regi,char,te)$( (sameas(te,"coalchp")  
                               OR sameas(te,"gaschp")
