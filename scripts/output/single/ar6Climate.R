@@ -97,6 +97,10 @@ capture.output(cat(logmsg), file = logFile, append = TRUE)
 # Read the cfg to get the location of MAGICC-related files
 cfg <- read_yaml(cfgPath)
 
+if (is.null(cfg$climate_assessment_root)) cfg$climate_assessment_root <- "/p/projects/rd3mod/python/climate-assessment/src/"
+if (is.null(cfg$climate_assessment_files_dir)) cfg$climate_assessment_files_dir <- "/p/projects/rd3mod/climate-assessment-files/"
+if (is.null(cfg$cfg$climate_assessment_magicc_bin)) cfg$climate_assessment_magicc_bin <- "/p/projects/rd3mod/climate-assessment-files/magicc-v7.5.3/bin/magicc"
+
 # All climate-assessment files will be written to this folder
 climateAssessmentFolder <- normalizePath(file.path(outputdir, "climate-assessment-data"))
 dir.create(climateAssessmentFolder, showWarnings = FALSE)
