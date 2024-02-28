@@ -73,13 +73,13 @@ if(cm_fetaxscen ne 0,
   if(cm_fetaxscen eq 1,
     loop(ttot$(ttot.val ge 2005), p21_tau_fe_sub(ttot,regi,sector,entyFe)=p21_tau_fe_sub("2005",regi,sector,entyFe));
     loop(ttot$(ttot.val ge 2005), p21_tau_pe2se_sub(ttot,regi,te)=p21_tau_pe2se_sub("2005",regi,te));
-    loop(ttot$(ttot.val ge 2005), p21_tau_fuEx_sub(ttot,regi,entyPE)=p21_tau_fuEx_sub("2005",regi,entyPE));
+    loop(ttot$(ttot.val ge 2005), p21_tau_fuEx_sub(ttot,regi,entyPe)=p21_tau_fuEx_sub("2005",regi,entyPe));
   );
 *** CASE 2 and 3 and 4: Global subsidies phase-out by 2030 (SSP1, SDP) and 2050 (SSP2) respectively
   if(cm_fetaxscen eq 2 OR cm_fetaxscen eq 3 OR cm_fetaxscen eq 4,
      p21_tau_fe_sub(ttot,regi,sector,entyFe)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_fe_sub("2005",regi,sector,entyFe);
      p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_pe2se_sub("2005",regi,te);
-     p21_tau_fuEx_sub(ttot,regi,entyPE)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_fuEx_sub("2005",regi,entyPE);
+     p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_fuEx_sub("2005",regi,entyPe);
     if(cm_fetaxscen eq 2 OR cm_fetaxscen eq 4, s21_tax_time = 2030);
     if(cm_fetaxscen eq 3, s21_tax_time = 2050);
     s21_tax_value = 0;
@@ -95,10 +95,10 @@ if(cm_fetaxscen ne 0,
       p21_tau_pe2se_sub("2015",regi,te)+((s21_tax_value-p21_tau_pe2se_sub("2015",regi,te))*(ttot.val-2015)/(s21_tax_time-2015));
       p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val>(s21_tax_time)) = s21_tax_value;
 
-      p21_tau_fuEx_sub(ttot,regi,entyPE)$(ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
+      p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
       =
-      p21_tau_fuEx_sub("2015",regi,entyPE)+((s21_tax_value-p21_tau_fuEx_sub("2015",regi,entyPE))*(ttot.val-2015)/(s21_tax_time-2015));
-      p21_tau_fuEx_sub(ttot,regi,entyPE)$(ttot.val>(s21_tax_time)) = s21_tax_value;
+      p21_tau_fuEx_sub("2015",regi,entyPe)+((s21_tax_value-p21_tau_fuEx_sub("2015",regi,entyPe))*(ttot.val-2015)/(s21_tax_time-2015));
+      p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val>(s21_tax_time)) = s21_tax_value;
 
     );
   );

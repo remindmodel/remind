@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/fixed_shares/datainput.gms
 
-vm_emiIndBase.l(ttot,regi,entyFE,secInd37) = 0;
+vm_emiIndBase.l(ttot,regi,entyFe,secInd37) = 0;
 
 *** substitution elasticities
 Parameter 

@@ -20,7 +20,7 @@ if (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1,
           steps.val - 1.5 !! average upper and lower step
         )
     )
-  * sm_dMAC;
+  * sm_dmac;
 
   display "Marginal cost of Cement Demand Reduction [$/tC]",
           pm_CementAbatementPrice;
@@ -32,7 +32,7 @@ if (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1,
       * pm_CementAbatementPrice(ttot,regi)
       )
     )
-  / sm_C_2_CO2;
+  / sm_c_2_co2;
 
   display "Mixed price of CO2 for Cement Demand Reduction [$/tCO2]",
           pm_CementAbatementPrice;

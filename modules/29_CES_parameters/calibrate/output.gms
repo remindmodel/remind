@@ -77,7 +77,7 @@ loop ((t,regi_dyn29(regi),in)$( (   ppf_29(in)
 loop ((ttot,regi_dyn29(regi),te_29_report),
   put "%c_expname%", sm_CES_calibration_iteration:0:0, ttot.tl, regi.tl;
   put "vm_deltaCap", te_29_report.tl;
-  put sum(rlf,vm_deltacap.L(ttot,regi,te_29_report,rlf)) /;
+  put sum(rlf,vm_deltaCap.L(ttot,regi,te_29_report,rlf)) /;
 );
 
 loop ((t,regi_dyn29(regi),in),

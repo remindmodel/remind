@@ -204,7 +204,7 @@ if (sm_CES_calibration_iteration eq 1, !! first CES calibration iteration
   loop ((ttot,regi_dyn29(regi),te_29_report),
     put "%c_expname%", "origin", ttot.tl, regi.tl, "vm_deltaCap";
     put te_29_report.tl;
-    put sum(rlf,vm_deltacap.L(ttot,regi,te_29_report,rlf)) /;
+    put sum(rlf,vm_deltaCap.L(ttot,regi,te_29_report,rlf)) /;
   );
   putclose file_CES_calibration;
 );
@@ -458,6 +458,7 @@ display "after change up to en consistency", pm_cesdata;
 *** have specific restrictions. Capital works as for the other ppfen, Labour
 *** will be the adjustment variable to meet inco. xi will not be equal to the
 *** income share of capital (from equation price = derivative)
+
 pm_cesdata(t,regi_dyn29,"kap","xi")
   = pm_cesdata(t,regi_dyn29,"kap","price")
   * pm_cesdata(t,regi_dyn29,"kap","quantity")
@@ -1014,7 +1015,7 @@ $endif.industry_FE_target
 !! - adjust efficiency parameters for feelhth_X and feh2_X
 $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "0"
 loop (cesOut2cesIn(in_industry_dyn37(out),in)$(
-                              (ppfen(in) OR ipf(in))
+                              (ppfEn(in) OR ipf(in))
                           AND NOT industry_ue_calibration_target_dyn37(out)
                           AND NOT cesOut2cesIn_below("ue_steel_secondary",in) ),
   !! in2 is the reference energy input (gas if 'in' is H2)

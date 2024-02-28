@@ -28,8 +28,8 @@ vm_costTeCapital.fx(t,regi,teNoLearn)     = pm_inco0_t(t,regi,teNoLearn);
 loop(pe2se(enty,enty2,te)$((not sameas(te,"biotr"))  AND (not sameas(te,"biodiesel")) AND (not sameas(te,"bioeths")) AND (not sameas(te,"gasftcrec")) AND (not sameas(te,"gasftrec"))
 AND (not sameas(te,"tnrs"))),
   vm_cap.lo(t,regi,te,"1")$(t.val gt 2026 AND t.val le 2070) = 1e-7;
-  if( (NOT teccs(te)), 
-    vm_deltacap.lo(t,regi,te,"1")$(t.val gt 2026 AND t.val le 2070) = 1e-8;
+  if( (NOT teCCS(te)), 
+    vm_deltaCap.lo(t,regi,te,"1")$(t.val gt 2026 AND t.val le 2070) = 1e-8;
   );
 );
 
@@ -417,7 +417,7 @@ loop(regi,
 
 *AL* fixing prodFE in 2005 to the value contained in pm_cesdata("2005",regi,in,"quantity"). This is done to ensure that the energy system will reproduce the 2005 calibration values.
 *** Fixing will produce clearly attributable errors (good for debugging) when using inconsistent data, as the GAMS accuracy when comparing fixed results is very high (< 1e-8).
-***vm_prodFE.fx("2005",regi,se2fe(enty,enty2,te)) = sum(fe2ppfEn(enty2,in), pm_cesdata("2005",regi,in,"quantity") );
+***vm_prodFe.fx("2005",regi,se2fe(enty,enty2,te)) = sum(fe2ppfEn(enty2,in), pm_cesdata("2005",regi,in,"quantity") );
 
 vm_deltaCap.up(t,regi,"gasftrec",rlf)$(t.val gt 2005)   = 0.0;
 vm_deltaCap.up(t,regi,"gasftcrec",rlf)$(t.val gt 2005)  = 0.0;
@@ -482,7 +482,7 @@ loop ((t, regi) $ ( (sameAs(t,"2010") OR sameAs(t,"2015"))
                     + pm_cesdata(t,regi,in2,"quantity") + pm_cesdata(t,regi,in2,"offset_quantity")
                     ) eq 0)
                     AND
-                    (sum(ttot$(ttot.val lt 2005), vm_deltacap.up(ttot,regi,"biochp","1")) eq 0)) ,
+                    (sum(ttot$(ttot.val lt 2005), vm_deltaCap.up(ttot,regi,"biochp","1")) eq 0)) ,
       vm_prodSe.up(t,regi,"pegas"  ,"seel","gaschp")  = 0;
       vm_prodSe.up(t,regi,"pecoal" ,"seel","coalchp") = 0;
       vm_prodSe.up(t,regi,"pecoal" ,"sehe","coalhp")  = 0;

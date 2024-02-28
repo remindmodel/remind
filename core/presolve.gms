@@ -66,19 +66,19 @@ display p_emineg_econometric;
 *** calculate some emission factors
 ***--------------------------------------
 *** calculate global emission factor
-loop (emi2fuel(entyPE,enty),
-  p_efFossilFuelExtrGlo(entyPE,enty)
-  = sum(regi, p_emiFossilFuelExtr(regi,entyPE))
-  / sum((rlf,regi), vm_fuExtr.l("2005",regi,entyPE,rlf));
+loop (emi2fuel(entyPe,enty),
+  p_efFossilFuelExtrGlo(entyPe,enty)
+  = sum(regi, p_emiFossilFuelExtr(regi,entyPe))
+  / sum((rlf,regi), vm_fuExtr.l("2005",regi,entyPe,rlf));
 
   loop (regi,
-    sm_tmp =  sum(rlf, vm_fuExtr.l("2005",regi,entyPE,rlf));
+    sm_tmp =  sum(rlf, vm_fuExtr.l("2005",regi,entyPe,rlf));
 
-    p_efFossilFuelExtr(regi,entyPE,enty)$( sm_tmp )
-      = p_emiFossilFuelExtr(regi,entyPE) / sm_tmp;
+    p_efFossilFuelExtr(regi,entyPe,enty)$( sm_tmp )
+      = p_emiFossilFuelExtr(regi,entyPe) / sm_tmp;
 
-    p_efFossilFuelExtr(regi,entyPE,enty)$( NOT sm_tmp )
-      = p_efFossilFuelExtrGlo(entyPE,enty);
+    p_efFossilFuelExtr(regi,entyPe,enty)$( NOT sm_tmp )
+      = p_efFossilFuelExtrGlo(entyPe,enty);
   );
 );
 
@@ -197,7 +197,7 @@ if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
 *** pricing leads to significant price markups.
 
   pm_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
-  = pm_priceCO2forMAC(ttot,regi,"co2cement") / sm_C_2_CO2;
+  = pm_priceCO2forMAC(ttot,regi,"co2cement") / sm_c_2_co2;
 
   display "CO2 price for computing Cement Demand Reduction [$/tC]",
           pm_CementAbatementPrice;
@@ -380,7 +380,7 @@ pm_macAbatLev("2020",regi,"co2luc") = 0;
 
 *** Limit MAC abatement level increase to sm_macChange (default: 5 % p.a.)
 loop (ttot$( ttot.val ge 2015 ),
-  pm_macAbatLev(ttot,regi,MACsector(enty))
+  pm_macAbatLev(ttot,regi,MacSector(enty))
     = min(
         pm_macAbatLev(ttot,regi,enty),
 

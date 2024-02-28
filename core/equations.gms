@@ -132,14 +132,14 @@ q_balPe(t,regi,entyPe(enty))..
 *' 3. Couple production is modeled as own consumption, but with a positive coefficient.
 *' 4. Secondary energy can be demanded to produce final or (another type of) secondary energy.
 ***---------------------------------------------------------------------------
-q_balSe(t,regi,enty2)$( entySE(enty2) AND (NOT (sameas(enty2,"seel"))) )..
+q_balSe(t,regi,enty2)$( entySe(enty2) AND (NOT (sameas(enty2,"seel"))) )..
     sum(pe2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te))
   + sum(se2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te))
-  + sum(pc2te(enty,entySE(enty3),te,enty2),
+  + sum(pc2te(enty,entySe(enty3),te,enty2),
       pm_prodCouple(regi,enty,enty3,te,enty2)
     * vm_prodSe(t,regi,enty,enty3,te)
          )
-  + sum(pc2te(enty4,entyFE(enty5),te,enty2),
+  + sum(pc2te(enty4,entyFe(enty5),te,enty2),
       pm_prodCouple(regi,enty4,enty5,te,enty2)
     * vm_prodFe(t,regi,enty4,enty5,te)
     )
@@ -218,8 +218,8 @@ q_transSe2se(t,regi,se2se(enty,enty2,te))..
 q_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
   vm_prodFe(t,regi,entySe,entyFe,te)
   =e=
-  sum((sector2emiMkt(sector,emiMkt),entyFE2sector(entyFE,sector)),
-    vm_demFEsector(t,regi,entySE,entyFE,sector,emiMkt)
+  sum((sector2emiMkt(sector,emiMkt),entyFe2Sector(entyFe,sector)),
+    vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
   )
 ;
 
@@ -522,7 +522,7 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
     sum(emi2te(enty,enty2,te,enty3),
       ( sum(pe2se(enty,enty2,te),
           pm_emifac(t,regi,enty,enty2,te,enty3)
-        * vm_demPE(t,regi,enty,enty2,te)
+        * vm_demPe(t,regi,enty,enty2,te)
       )
     + sum((ccs2Leak(enty,enty2,te,enty3),teCCS2rlf(te,rlf)),
         pm_emifac(t,regi,enty,enty2,te,enty3)
@@ -536,7 +536,7 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
         vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)
         !! substract FE used for non-energy purposes (as feedstocks) so it does
         !! not create energy-related emissions
-      - sum(entyFe2sector2emiMkt_NonEn(enty2,sector,emiMkt),
+      - sum(entyFE2sector2emiMkt_NonEn(enty2,sector,emiMkt),
           vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
         )
       )
@@ -583,19 +583,19 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
 		)$( sameas(enty,"co2") AND sameas(emiMkt,"ETS"))
     !! substract carbon from biogenic or synthetic origin contained in
     !! plastics that don't get incinerated ("plastic removals")
-  - sum(entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+  - sum(entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
       sum(se2fe(entySe,entyFe,te)$( entySeBio(entySe) OR entySeSyn(entySe) ),
         vm_nonIncineratedPlastics(t,regi,entySe,entyFe,emiMkt)
       )
     )$( sameas(enty,"co2") )
     !! add emissions from plastics incineration. CHECK FOR DOUBLE-COUNTING RISK
-  + sum(entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+  + sum(entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
       sum(se2fe(entySe,entyFe,te),
         vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
       )
     )$( sameas(enty,"co2") )
     !! add emissions from chemical feedstock with unknown fate
-  + sum(entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+  + sum(entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
       sum(se2fe(entySe,entyFe,te),
         vm_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
       )
@@ -629,7 +629,7 @@ q_emiAllMkt(t,regi,emi,emiMkt) ..
     !! Exogenous emissions
   + pm_emiExog(t,regi,emi)$( sameas(emiMkt,"other") )
     !! non energy emi from chem sector (process emissions from feedstocks):
-  + sum((entyFe2sector2emiMkt_NonEn(entyFe,sector,emiMkt),
+  + sum((entyFE2sector2emiMkt_NonEn(entyFe,sector,emiMkt),
          se2fe(entySe,entyFe,te)),
       vm_demFENonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
     * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
@@ -814,7 +814,7 @@ q_budgetCO2eqGlob$(cm_emiscen=6)..
 ***---------------------------------------------------------------------------
 *' Definition of carbon capture :
 ***---------------------------------------------------------------------------
-q_balcapture(t,regi,ccs2te(ccsCO2(enty),enty2,te)) ..
+q_balcapture(t,regi,ccs2te(ccsCo2(enty),enty2,te)) ..
   sum(teCCS2rlf(te,rlf),vm_co2capture(t,regi,enty,enty2,te,rlf))
   =e=
 *** Carbon captured in energy sector
@@ -893,7 +893,7 @@ q_changeProdStartyear(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) 
   =e=
   sum(pe2se(enty,enty2,te),   vm_prodSe(t,regi,enty,enty2,te)  - p_prodSeReference(t,regi,enty,enty2,te) )
   + sum(se2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te)  - p_prodSeReference(t,regi,enty,enty2,te) )
-  + sum(se2fe(enty,enty2,te), vm_prodFE(t,regi,enty,enty2,te)  - p_prodFEReference(t,regi,enty,enty2,te) )
+  + sum(se2fe(enty,enty2,te), vm_prodFe(t,regi,enty,enty2,te)  - p_prodFEReference(t,regi,enty,enty2,te) )
   + sum(fe2ue(enty,enty2,te), v_prodUe (t,regi,enty,enty2,te)  - p_prodUeReference(t,regi,enty,enty2,te) )
   + sum(ccs2te(enty,enty2,te), sum(teCCS2rlf(te,rlf), vm_co2CCS(t,regi,enty,enty2,te,rlf) - p_co2CCSReference(t,regi,enty,enty2,te,rlf) ) )
 ;
@@ -1096,7 +1096,7 @@ q_limitCapFeH2BI(t,regi,sector)$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst"
 *' Enforce historical data biomass share per carrier in sector final energy for buildings and industry (+- 2%)
 ***---------------------------------------------------------------------------
 
-q_shbiofe_up(t,regi,entyFe,sector,emiMkt)$((sameas(entyFE,"fegas") or sameas(entyFE,"fehos") or sameas(entyFE,"fesos")) and entyFe2Sector(entyFe,sector) and sector2emiMkt(sector,emiMkt) and (t.val le 2015))..
+q_shbiofe_up(t,regi,entyFe,sector,emiMkt)$((sameas(entyFe,"fegas") or sameas(entyFe,"fehos") or sameas(entyFe,"fesos")) and entyFe2Sector(entyFe,sector) and sector2emiMkt(sector,emiMkt) and (t.val le 2015))..
   (pm_secBioShare(t,regi,entyFe,sector) + 0.02)
   *
   sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
@@ -1104,7 +1104,7 @@ q_shbiofe_up(t,regi,entyFe,sector,emiMkt)$((sameas(entyFE,"fegas") or sameas(ent
   sum((entySeBio,te)$se2fe(entySeBio,entyFe,te), vm_demFeSector(t,regi,entySeBio,entyFe,sector,emiMkt))
 ;
 
-q_shbiofe_lo(t,regi,entyFe,sector,emiMkt)$((sameas(entyFE,"fegas") or sameas(entyFE,"fehos") or sameas(entyFE,"fesos")) and entyFe2Sector(entyFe,sector) and sector2emiMkt(sector,emiMkt) and (t.val le 2015))..
+q_shbiofe_lo(t,regi,entyFe,sector,emiMkt)$((sameas(entyFe,"fegas") or sameas(entyFe,"fehos") or sameas(entyFe,"fesos")) and entyFe2Sector(entyFe,sector) and sector2emiMkt(sector,emiMkt) and (t.val le 2015))..
   (pm_secBioShare(t,regi,entyFe,sector) - 0.02)
   *
   sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))

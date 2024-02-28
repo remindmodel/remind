@@ -12,9 +12,9 @@
 q32_balSe(t,regi,enty2)$(sameas(enty2,"seel"))..
 	sum(pe2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te) )
 	+ sum(se2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te) )
-	+ sum(pc2te(enty,entySE(enty3),te,enty2), 
+	+ sum(pc2te(enty,entySe(enty3),te,enty2), 
 		pm_prodCouple(regi,enty,enty3,te,enty2) * vm_prodSe(t,regi,enty,enty3,te) )
-	+ sum(pc2te(enty4,entyFE(enty5),te,enty2), 
+	+ sum(pc2te(enty4,entyFe(enty5),te,enty2), 
 		pm_prodCouple(regi,enty4,enty5,te,enty2) * vm_prodFe(t,regi,enty4,enty5,te) )
 	+ sum(pc2te(enty,enty3,te,enty2),
 		sum(teCCS2rlf(te,rlf),
@@ -82,15 +82,15 @@ q32_h2turbVREcapfromTestor(t,regi)..
   vm_cap(t,regi,"h2turbVRE","1")
   + vm_cap(t,regi,"ngt","1")
   =g=
-  sum(testor, 
-    p32_storageCap(testor,"h2turbVREcapratio") * vm_cap(t,regi,testor,"1") )
+  sum(teStor, 
+    p32_storageCap(teStor,"h2turbVREcapratio") * vm_cap(t,regi,teStor,"1") )
 ;
 
 *** h2turbVRE hydrogen turbines should only be built in conjunction with storage capacities and not on its own
 q32_h2turbVREcapfromTestorUp(t,regi)..
   vm_cap(t,regi,"h2turbVRE","1")
   =l=
-  sum(te$testor(te), 
+  sum(te$teStor(te), 
       p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
 ;
 
