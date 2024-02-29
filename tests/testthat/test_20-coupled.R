@@ -67,7 +67,25 @@ test_that("using start_bundle_coupled.R --test works", {
   expect_true(any(grepl("NOT submitted", output)))
   for (scen in rownames(config)[config$start == 1]) {
     expect_true(any(grepl(paste0("starting with C_", scen, "-rem-1"), output)))
-    expectedFiles <- paste0("../../C_", scen, "-rem-", seq(max_iterations), ".RData")
+  }
+})
+
+test_that("runs coupled to MAgPIE work", {
+  skipIfPreviousFailed()
+  # try running actual runs
+  output <- localSystem2("Rscript", c("start_bundle_coupled.R", coupledConfig, "startgroup=1"),
+                         env = paste0("R_PROFILE_USER=", Rprofile))
+  printIfFailed(output)
+  expectSuccessStatus(output)
+  expect_true(xor("Copied REMIND .Rprofile to MAgPIE folder." %in% output,
+                  any(grepl("^Finding R package dependencies.*Done.", output))))
+  for (scen in rownames(config)[config$start == 1]) {
+    expectedFiles <- c(
+      paste0("../../output/C_", scen, "-rem-", seq(max_iterations)),
+      paste0("../../output/C_", scen, ".mif"),
+      paste0("../../C_", scen, "-rem-", seq(max_iterations), ".RData"),
+      file.path(magpie_folder, paste0("output/C_", scen, "-mag-", seq(max_iterations - 1)))
+    )
     expect_true(all(file.exists(expectedFiles)))
     # check -rem-1 config file
     configfile <- paste0("../../C_", scen, "-rem-1.RData")
@@ -92,28 +110,6 @@ test_that("using start_bundle_coupled.R --test works", {
     if ("cm_nash_autoconverge_lastrun" %in% names(config)) {
       expect_true(envir$cfg_rem$gms$cm_nash_autoconverge == config[scen, "cm_nash_autoconverge_lastrun"])
     }
-    # no_ghgprices_land_until, oldrun, path_report
-  }
-})
-
-test_that("runs coupled to MAgPIE work", {
-  skipIfPreviousFailed()
-  # try running actual runs
-  output <- localSystem2("Rscript", c("start_bundle_coupled.R", coupledConfig, "startgroup=1"),
-                         env = paste0("R_PROFILE_USER=", Rprofile))
-  printIfFailed(output)
-  expectSuccessStatus(output)
-  expect_true(xor("Copied REMIND .Rprofile to MAgPIE folder." %in% output,
-                  any(grepl("^Finding R package dependencies.*Done.", output))))
-  for (scen in rownames(config)[config$start == 1]) {
-    expectedFiles <- c(
-      paste0("../../output/C_", scen, "-rem-", seq(max_iterations)),
-      # paste0("../../output/C_", scen, "-", max_iterations, ".pdf"),
-      paste0("../../output/C_", scen, ".mif"),
-      paste0("../../C_", scen, "-rem-", seq(max_iterations), ".RData"),
-      file.path(magpie_folder, paste0("output/C_", scen, "-mag-", seq(max_iterations - 1)))
-    )
-    expect_true(all(file.exists(expectedFiles)))
     # check path_mif_ghgprice_land
     if ("path_mif_ghgprice_land" %in% names(config)[config$start == 1]) {
       configfile <- paste0("../../C_", scen, "-rem-", (max_iterations - 1), ".RData")
@@ -144,7 +140,6 @@ test_that("runs coupled to MAgPIE work", {
     expect_true(any(grepl("^MAgPIE", levels(qscen$model))))
     lengthwithmag <- nrow(qscen)
     expect_true(lengthwithmag > lengthwithoutmag && lengthwithmag > 700000)
-    qscen <- quitte::as.quitte(paste0("../../output/C_", scen, "-rem-1/REMIND_generic_C_", scen, "-rem-1.mif"))
     # check main mif
     qscen <- quitte::as.quitte(paste0("../../output/C_", scen, ".mif"))
     expect_true(all(grepl("^REMIND-MAgPIE", levels(qscen$model))))

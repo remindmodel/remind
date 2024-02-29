@@ -552,7 +552,7 @@ for(scen in common){
       errorsfound <- errorsfound + cfg_rem$errorsfoundInCheckFixCfg
     }
 
-    if (! "--test" %in% flags) {
+    if (! any(c("--test", "--gamscompile")) %in% flags) {
       Rdatafile <- paste0(fullrunname, ".RData")
       message("Save settings to ", Rdatafile)
       save(path_remind, path_magpie, cfg_rem, cfg_mag, runname, fullrunname, max_iterations, start_iter,
