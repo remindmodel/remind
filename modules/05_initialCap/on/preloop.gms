@@ -528,8 +528,6 @@ $ifThen %cm_techcosts% == "GLO"
                             OR sameas(te,"ngt")
                             OR sameas(te,"ngcc") ) ) = p05_inco0_t_ref(t,regi,te);
 $endIf
-);
-
 
 *** load pm_data from input_ref.gdx and overwrite values
 *** only for eta of chp technologies since they have been adapted in initialCap routine above
