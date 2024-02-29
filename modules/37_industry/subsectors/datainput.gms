@@ -133,6 +133,11 @@ pm_energy_limit(in)
   * 1e9;                   !! * t/Gt
                            !! = TWa/Gt
 
+
+*** minimum share of solids in energy demand for steel
+*** in calibration runs 0 for non-calibration runs see assumptions below in this file
+p37_Psteel_solids_limit(t,regi) = 0;
+
 * Specific energy demand cannot fall below a curve described by an exponential
 * function passing through the 2015 value and a point defined by an "efficiency
 * gain" (e.g. 75 %) between baseline value and thermodynamic limit at a given
