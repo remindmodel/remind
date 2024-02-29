@@ -611,7 +611,7 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
     !! CCU from captured non-atmospheric CO2 from CDR activities (e.g., natural gas for DAC heat)
   - ((
       sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t, regi, "cco2", "ico2", "ccsinje", rlf)) + vm_emiCdrTeDetail(t, regi, "dac")
-    ) * (1 - vm_share_CCS_CCO2(t,regi)))
+    ) * (1 - v_share_CCS_CCO2(t,regi)))
     $(sameas(enty, "co2") AND sameas(emiMkt, "ETS"))
 ;
 
@@ -728,7 +728,7 @@ q_emiMac(t,regi,emiMac) ..
 *' Share of captured CO2 that is stored
 ***--------------------------------------------------
 q_share_CCS_CCO2(t, regi)..
-  vm_share_CCS_CCO2(t, regi)
+  v_share_CCS_CCO2(t, regi)
   =e=
   sum(teCCS2rlf(te, rlf), vm_co2CCS(t, regi, "cco2", "ico2", te, rlf))
   / (
@@ -745,7 +745,7 @@ q_emiCdrAll(t,regi)..
   !! BECC + DACC (scaled by the fraction that gets stored geologically)
   (sum(emiBECCS2te(enty,enty2,te,enty3), vm_emiTeDetail(t,regi,enty,enty2,te,enty3))
     - vm_emiCdrTeDetail(t, regi, "dac")
-  ) * vm_share_CCS_CCO2(t, regi)
+  ) * v_share_CCS_CCO2(t, regi)
   !! net negative emissions from co2luc
   -  p_macBaseMagpieNegCo2(t,regi)
   !! negative emissions from the CDR module that are not stored geologically
