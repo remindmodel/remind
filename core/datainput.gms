@@ -55,6 +55,7 @@ pm_ttot_2_tall(ttot,tall)$((ttot.val = tall.val) ) = Yes;
 *** define pm_prtp according to cm_prtpScen:
 if(cm_prtpScen eq 1, pm_prtp(regi) = 0.01);
 if(cm_prtpScen eq 3, pm_prtp(regi) = 0.03);
+pm_ies(regi) = 0.5;
 
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
@@ -272,16 +273,16 @@ $offdelim
 loop(te$(fm_dataglob("constrTme",te) > 0),
   p_tkpremused(regi,te) = 1/fm_dataglob("constrTme",te)
     * sum(integ$(integ.val <= fm_dataglob("constrTme",te)),
-$if %cm_techcosts% == "REG"  (1.03 + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
-$if %cm_techcosts% == "GLO"  (1.03 + pm_prtp(regi) )                                 ** (integ.val - 0.5) - 1
+$if %cm_techcosts% == "REG"  (1 + 0.02/pm_ies(regi) + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
+$if %cm_techcosts% == "GLO"  (1 + 0.02/pm_ies(regi) +  pm_prtp(regi) )                               ** (integ.val - 0.5) - 1
       )
 );
 *** nuclear sees 3% higher interest rates during construction time due to higher construction time risk, see "The economic future of nuclear power - A study conducted at The University of Chicago" (2004)
 loop(te$sameas(te,"tnrs"),
   p_tkpremused(regi,te) = 1/fm_dataglob("constrTme",te)
     * sum(integ$(integ.val <= fm_dataglob("constrTme",te)),
-$if %cm_techcosts% == "REG"  (1.03 + 0.03 + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
-$if %cm_techcosts% == "GLO"  (1.03 + 0.03 + pm_prtp(regi) )                                 ** (integ.val - 0.5) - 1
+$if %cm_techcosts% == "REG"  (1 + 0.02/pm_ies(regi) + 0.03 + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
+$if %cm_techcosts% == "GLO"  (1 + 0.02/pm_ies(regi) + 0.03 + pm_prtp(regi) )                                ** (integ.val - 0.5) - 1
       )
 );
 
