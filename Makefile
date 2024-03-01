@@ -91,6 +91,10 @@ test-full:       ## Run all tests, including coupling tests and a default
 	$(info Full tests take more than an hour to run, please be patient)
 	@TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat")'
 
+test-full-slurm: ##test-full, but on slurm
+	$(info Full tests take more than an hour to run, please be patient)
+	@sbatch --qos=priority --wrap="make test-full" --job-name=test-full --mail-type=END --output=test-full.log --comment="test-full.log"
+
 test-validation: ## Run validation tests, requires a full set of runs in the output folder
 	$(info Run validation tests, requires a full set of runs in the output folder)
 	@TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat/validation")'	
