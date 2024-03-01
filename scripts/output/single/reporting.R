@@ -50,11 +50,8 @@ load(configfile, envir = envir)
 
 # produce REMIND reporting *.mif based on gdx information
 message("\n### start generation of mif files at ", Sys.time())
-tmp <- try(convGDX2MIF(gdx, gdx_refpolicycost = gdx_refpolicycost, file = remind_reporting_file,
-                       scenario = scenario, gdx_ref = gdx_ref)) # try to execute convGDX2MIF
-if (inherits(tmp, "try-error")) {
-  convGDX2MIF_REMIND2MAgPIE(gdx, file = remind_reporting_file, scenario = scenario)
-}
+convGDX2MIF(gdx, gdx_refpolicycost = gdx_refpolicycost, file = remind_reporting_file,
+            scenario = scenario, gdx_ref = gdx_ref)
 
 #  MAGICC code not working with REMIND-EU
 # generate MAGICC reporting and append to REMIND reporting
@@ -122,11 +119,9 @@ if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
 message("### end generation of mif files at ", Sys.time())
 
 ## produce REMIND LCOE reporting *.csv based on gdx information
-if (! isTRUE(envir$cfg$gms$c_empty_model == "on") || ! grepl("^C_TESTTHAT", scenario)) {
-  message("### start generation of LCOE reporting at ", Sys.time())
-  tmp <- try(convGDX2CSV_LCOE(gdx,file=LCOE_reporting_file,scen=scenario)) # execute convGDX2MIF_LCOE
-  message("### end generation of LCOE reporting at ", Sys.time())
-}
+message("### start generation of LCOE reporting at ", Sys.time())
+tmp <- try(convGDX2CSV_LCOE(gdx,file=LCOE_reporting_file,scen=scenario)) # execute convGDX2MIF_LCOE
+message("### end generation of LCOE reporting at ", Sys.time())
 
 ## generate DIETER reporting if it is needed
 ## the reporting is appended to REMIND_generic_<scenario>.MIF in "DIETER" Sub Directory

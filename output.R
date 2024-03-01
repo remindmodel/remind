@@ -67,7 +67,8 @@ library(lucode2)
 library(gms)
 require(stringr, quietly = TRUE)
 
-source("scripts/start/isSlurmAvailable.R")
+# Import all functions from the scripts/start folder
+invisible(sapply(list.files("scripts/start", pattern = "\\.R$", full.names = TRUE), source))
 
 flags <- NULL
 ### Define arguments that can be read from command line
@@ -83,7 +84,7 @@ if ("--help" %in% flags) {
   q()
 }
 
-choose_slurmConfig_output <- function(slurmExceptions = NULL) {
+choose_slurmConfig_output <- function(output) {
   slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
                      "--qos=priority --mem=16000", "--qos=short --mem=16000",
                      "--qos=standby --mem=16000", "--qos=priority --mem=32000")
@@ -91,9 +92,11 @@ choose_slurmConfig_output <- function(slurmExceptions = NULL) {
   if (!isSlurmAvailable())
     return("direct")
 
-  if (!is.null(slurmExceptions)) {
-    slurm_options <- grep(slurmExceptions, slurm_options, value = TRUE)
-  }
+  # Modify slurm options for ar6 reporting, since we want to run MAGICC in parallel and we'll need a lot of memory
+  if ("ar6Climate" %in% output) slurm_options <- paste(slurm_options[1:3], "--tasks-per-node=12 --mem=32000")
+  # reporting.R, in particular remind2::convGDX2MIF, requires at least --mem=8000 of memory
+  if ("reporting" %in% output) slurm_options <- grep("--mem=[0-9]*[0-9]{3}", slurm_options, value = TRUE)
+
   if (length(slurm_options) == 1) {
     return(slurm_options[[1]])
   }
@@ -176,7 +179,7 @@ if (comp %in% c("comparison", "export")) {
   # choose the slurm options. If you use command line arguments, use slurmConfig=priority or standby
   modules_using_slurmConfig <- c("compareScenarios2")
   if (!exists("slurmConfig") && any(modules_using_slurmConfig %in% output)) {
-    slurmConfig <- choose_slurmConfig_output()
+    slurmConfig <- choose_slurmConfig_output(output = output)
   }
   if (exists("slurmConfig")) {
     if (slurmConfig %in% c("priority", "short", "standby")) {
@@ -207,11 +210,9 @@ if (comp %in% c("comparison", "export")) {
     }
   }
 } else { # comp = single
-  # define slurm class or direct execution
+    # define slurm class or direct execution
   outputInteractive <- c("plotIterations", "fixOnRef", "integratedDamageCosts")
   if (! exists("source_include")) {
-    # for selected output scripts, only slurm configurations matching these regex are available
-    slurmExceptions <- if ("reporting" %in% output) "--mem=[0-9]*[0-9]{3}" else NULL
     if (any(output %in% outputInteractive)) {
       slurmConfig <- "direct"
       flags <- c(flags, "--interactive") # to tell scripts they can run in interactive mode
@@ -219,8 +220,8 @@ if (comp %in% c("comparison", "export")) {
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
     if (!exists("slurmConfig")) {
-      slurmConfig <- choose_slurmConfig_output(slurmExceptions = slurmExceptions)
-      if (slurmConfig != "direct") slurmConfig <- paste(slurmConfig, "--nodes=1 --tasks-per-node=1")
+      slurmConfig <- choose_slurmConfig_output(output = output)
+      if (slurmConfig != "direct") slurmConfig <- combine_slurmConfig("--nodes=1 --tasks-per-node=1", slurmConfig)
     }
     if (slurmConfig %in% c("priority", "short", "standby")) {
       slurmConfig <- paste0("--qos=", slurmConfig, " --nodes=1 --tasks-per-node=1")

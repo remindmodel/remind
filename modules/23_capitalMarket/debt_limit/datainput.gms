@@ -6,7 +6,6 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/23_capitalMarket/debt_limit/datainput.gms
 
-pm_ies(regi) = 1;
 pm_risk_premium(regi) = 0.0;
 p23_debt_growthCoeff(regi) = 0.2 ;
 

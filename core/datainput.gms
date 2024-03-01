@@ -55,6 +55,7 @@ pm_ttot_2_tall(ttot,tall)$((ttot.val = tall.val) ) = Yes;
 *** define pm_prtp according to cm_prtpScen:
 if(cm_prtpScen eq 1, pm_prtp(regi) = 0.01);
 if(cm_prtpScen eq 3, pm_prtp(regi) = 0.03);
+pm_ies(regi) = 0.5;
 
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
@@ -148,27 +149,26 @@ $include "./core/input/generisdata_trade.prn"
 *JH* SSP energy technology scenario
 table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
 $include "./core/input/generisdata_tech_SSP1.prn"
+$include "./core/input/generisdata_trade.prn"
 ;
 table f_dataglob_SSP5(char,all_te)        "Techno-economic assumptions consistent with SSP5"
 $include "./core/input/generisdata_tech_SSP5.prn"
+$include "./core/input/generisdata_trade.prn"
 ;
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-
 *CG* set wind offshore, storage and grid to be the same as wind onshore (later should be integrated into input data)
 * main difference between onshore and offshore is the difference in f32_factorStorage
 fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
 fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
+f_dataglob_SSP1(char,"storwindoff") = f_dataglob_SSP1(char,"storwind");
+f_dataglob_SSP1(char,"gridwindoff") = f_dataglob_SSP1(char,"gridwind");
+f_dataglob_SSP5(char,"storwindoff") = f_dataglob_SSP5(char,"storwind");
+f_dataglob_SSP5(char,"gridwindoff") = f_dataglob_SSP5(char,"gridwind");
 $ENDIF.WindOff
 
-*RP* include global flexibility parameters
-$include "./core/input/generisdata_flexibility.prn"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-fm_dataglob("flexibility","storwindoff")  = 1.93;
-fm_dataglob("flexibility","windoff")  = -1;
-$ENDIF.WindOff
 ***---------------------------------------------------------------------------
-*** Reading in and initializing regional data
+*** Reading in and initializing regional cost data
 ***---------------------------------------------------------------------------
 parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit: USD$/KW"
 /
@@ -182,9 +182,9 @@ $offdelim
 pm_esCapCost(tall,all_regi,all_teEs) = 0;
 
 ***---------------------------------------------------------------------------
-*** Manipulating technology data
+*** Manipulating technology cost data
 ***---------------------------------------------------------------------------
-*** Manipulating global or regional technology data - absolute value
+*** Manipulating global or regional cost technology data - absolute value
 ***---------------------------------------------------------------------------
 !! Modify spv and storspv parameters for optimistic VRE supply assumptions
 if (cm_VRE_supply_assumptions eq 1,
@@ -201,6 +201,10 @@ if (cm_VRE_supply_assumptions eq 3,
 );
 
 
+*JH* New nuclear assumption for SSP5
+if (cm_nucscen eq 6,
+  f_dataglob_SSP5("inco0","tnrs") = 6270; !! increased from 4000 to 6270 with the update of technology costs in REMIND 1.7 to keep the percentage increase between SSP2 and SSP5 constant
+);
 
 if (c_techAssumptScen eq 2,
                fm_dataglob(char,te) = f_dataglob_SSP1(char,te)
@@ -208,6 +212,13 @@ if (c_techAssumptScen eq 2,
 if (c_techAssumptScen eq 3,
                fm_dataglob(char,te) = f_dataglob_SSP5(char,te)
 );
+
+*RP* include global flexibility parameters
+$include "./core/input/generisdata_flexibility.prn"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+fm_dataglob("flexibility","storwindoff")  = 1.93;
+fm_dataglob("flexibility","windoff")  = -1;
+$ENDIF.WindOff
 
 display fm_dataglob;
 
@@ -218,9 +229,9 @@ $if "%cm_ccsinjeCost%" == "low" fm_dataglob("inco0","ccsinje") = 220;
 * high estimate: ~20USD/tCO2 (constant), assuming upper end of storage cost and long transport distances
 $if "%cm_ccsinjeCost%" == "high" fm_dataglob("inco0","ccsinje") = 550;
 ***---------------------------------------------------------------------------
-*** Manipulating global or regional technology data - relative value
+*** Manipulating global or regional cost technology data - relative value
 ***---------------------------------------------------------------------------
-*** Overwrite default technology parameter values based on specific scenario configs
+*** Overwrite default technology cost parameter values based on specific scenario configs
 $if not "%cm_incolearn%" == "off" parameter p_new_incolearn(all_te) / %cm_incolearn% /;
 $if not "%cm_incolearn%" == "off" fm_dataglob("incolearn",te)$p_new_incolearn(te)=p_new_incolearn(te);
 $if not "%cm_inco0Factor%" == "off" parameter p_new_inco0Factor(all_te) / %cm_inco0Factor% /;
@@ -250,16 +261,16 @@ fm_dataglob("inco0","csp")              = 0.7 * fm_dataglob("inco0","csp");
 fm_dataglob("incolearn","csp")          = 0.7 * fm_dataglob("incolearn","csp");
 
 
-***---------------------------------------------------------------------------
-*** Regionalize investment cost data
-***---------------------------------------------------------------------------
+*** --------------------------------------------------------------------------------
+*** Regionalize technology investment cost data
+*** -------------------------------------------------------------------------------
 
 *** initialize regionalized data using global data
 pm_data(all_regi,char,te) = fm_dataglob(char,te);
 
-***---------------------------------------------------------------------------
+*** -------------------------------------------------------------------------------
 *** Regional risk premium during building time
-***---------------------------------------------------------------------------
+*** -------------------------------------------------------------------------------
 
 *RP* calculate turnkey costs (which are the sum of the overnight costs in generisdata_tech and the "interest during construction” (IDC) )
 
@@ -278,16 +289,16 @@ $offdelim
 loop(te$(fm_dataglob("constrTme",te) > 0),
   p_tkpremused(regi,te) = 1/fm_dataglob("constrTme",te)
     * sum(integ$(integ.val <= fm_dataglob("constrTme",te)),
-$if %cm_techcosts% == "REG"  (1.03 + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
-$if %cm_techcosts% == "GLO"  (1.03 + pm_prtp(regi) )                                 ** (integ.val - 0.5) - 1
+$if %cm_techcosts% == "REG"  (1 + 0.02/pm_ies(regi) + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
+$if %cm_techcosts% == "GLO"  (1 + 0.02/pm_ies(regi) +  pm_prtp(regi) )                               ** (integ.val - 0.5) - 1
       )
 );
 *** nuclear sees 3% higher interest rates during construction time due to higher construction time risk, see "The economic future of nuclear power - A study conducted at The University of Chicago" (2004)
 loop(te$sameas(te,"tnrs"),
   p_tkpremused(regi,te) = 1/fm_dataglob("constrTme",te)
     * sum(integ$(integ.val <= fm_dataglob("constrTme",te)),
-$if %cm_techcosts% == "REG"  (1.03 + 0.03 + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
-$if %cm_techcosts% == "GLO"  (1.03 + 0.03 + pm_prtp(regi) )                                 ** (integ.val - 0.5) - 1
+$if %cm_techcosts% == "REG"  (1 + 0.02/pm_ies(regi) + 0.03 + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
+$if %cm_techcosts% == "GLO"  (1 + 0.02/pm_ies(regi) + 0.03 + pm_prtp(regi) )                                ** (integ.val - 0.5) - 1
       )
 );
 
@@ -411,15 +422,13 @@ loop (teNoLearn(te)$( sameas(te,"igcc") ),
 );
 $endif.REG_techcosts
 
-
 *------------------------------------------------------------------------------------
-*   END of Technology data input read-in and manipulation in core
+*   END of Technology cost data input read-in and manipulation in core
 *------------------------------------------------------------------------------------
 *** Note: in modules/05_initialCap/on/preloop.gms, there are additional adjustment to investment
 *** cost in the near term due to calibration of historical energy conversion efficiencies based on
 *** initial capacities
 *------------------------------------------------------------------------------------
-
 
 *JH* Determine CCS injection rates
 *LP* for c_ccsinjecratescen =0 the storing variable vm_co2CCS will be fixed to 0 in bounds.gms, the sm_ccsinjecrate=0 will cause a division by 0 error in the 21_tax module
