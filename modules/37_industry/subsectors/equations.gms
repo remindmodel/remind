@@ -240,11 +240,12 @@ q37_feedstocksLimit(t,regi,entySe,entyFe,emiMkt)$(
 ;
 
 *' Feedstocks have identical fossil/biomass/synfuel shares as industry FE
-q37_feedstocksShares(t,regi,entySe,entyFe,emiMkt)$(
-                                          sum(te, se2fe(entySe,entyFe,te)) ) ..
-    vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
-  * sum(se2fe(entySe2,entyFe,te),
-      vm_demFENonEnergySector(t,regi,entySe2,entyFe,"indst",emiMkt)
+q37_feedstocksShares(t,regi,entySE,entyFE,emiMkt)$(
+                         sum(te, se2fe(entySE,entyFE,te))
+                     AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
+    vm_demFEsector_afterTax(t,regi,entySE,entyFE,"indst",emiMkt)
+  * sum(se2fe(entySE2,entyFE,te),
+      vm_demFENonEnergySector(t,regi,entySE2,entyFE,"indst",emiMkt)
     )
   =e=
     vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
