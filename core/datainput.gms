@@ -830,8 +830,8 @@ if(pm_NuclearConstraint("2020",regi,"tnrs")<0,
 );
 );
 
-*** read in data on CCS capacities used as bound on vm_co2CCS.up("2020",regi,"cco2","ico2","ccsinje","1")
-parameter pm_boundCapCCS(all_regi)        "installed and planed capacity of CCS"
+*** read in data on CCS capacities and announced projects used as upper and lower bound on vm_co2CCS in 2025 and 2030
+parameter pm_boundCapCCS(ttot,all_regi,bounds)        "installed and planned capacity of CCS"
 /
 $ondelim
 $include "./core/input/pm_boundCapCCS.cs4r"
