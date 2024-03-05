@@ -243,14 +243,14 @@ q37_feedstocksLimit(t,regi,entySe,entyFe,emiMkt)$(
 q37_feedstocksShares(t,regi,entySE,entyFE,emiMkt)$(
                                           sum(te, se2fe(entySE,entyFE,te))
                                           AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
-    vm_demFEsector_afterTax(t,regi,entySE,entyFE,"indst",emiMkt)
-  * sum(se2fe(entySE2,entyFE,te),
-      vm_demFENonEnergySector(t,regi,entySE2,entyFE,"indst",emiMkt)
+    vm_demFEsector_afterTax(t,regi,entySE,entyFe,"indst",emiMkt)
+  * sum(se2fe(entySE2,entyFe,te),
+      vm_demFENonEnergySector(t,regi,entySE2,entyFe,"indst",emiMkt)
     )
   =e=
-    vm_demFENonEnergySector(t,regi,entySE,entyFE,"indst",emiMkt)
-  * sum(se2fe2(entySE2,entyFE,te),
-      vm_demFEsector_afterTax(t,regi,entySE2,entyFE,"indst",emiMkt)
+    vm_demFENonEnergySector(t,regi,entySE,entyFe,"indst",emiMkt)
+  * sum(se2fe2(entySE2,entyFe,te),
+      vm_demFEsector_afterTax(t,regi,entySE2,entyFe,"indst",emiMkt)
     )
 ;
 
