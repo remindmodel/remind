@@ -2114,7 +2114,7 @@ macSector2emiMkt(all_enty,all_emiMkt)  "mapping mac sectors to emission markets"
         n2onitac.ETS
         n2ofertin.ES
         n2ofertcr.ES
-        n2ofertsom.other
+        n2ofertsom.ES
         n2oanwstc.ES
         n2oanwstm.ES
         n2oanwstp.ES
