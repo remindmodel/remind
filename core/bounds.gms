@@ -391,20 +391,28 @@ $endif
 
 
 *** -------------------------------------------------------------------------------------------------------------
-*RP* Upper limit on CCS deployment in 2020-2030
+*AM* No geological storage before 2025 (omitting approx. 40 MtCCS/yr globally in 2020 for Enhanced Oil Recovery)
+*AM* Lower limit for 2025 and 2030 is capacities of all projects that are operational and under construction from project data base
+*AM* Upper limit for 2025 and 2030 additionally includes announced/planned projects from project data base
+*AM* In nash-mode regions cannot easily share ressources, therefore CCS potentials are redistributed in Europe: 
+*AM* Potential of EU27 regions is pooled and redistributed according to GDP (Only upper limit for 2030)
+*AM* Norway and UK announced to store CO2 for EU27 countries. So 50% of Norway and UK potential in 2030 is attributed to EU27-Pool
 *LP* if c_ccsinjecratescen=0 --> no CCS at all and vm_co2CCS is fixed to 0 before, therefore the upper bound is only set if there should be CCS!
 *** -------------------------------------------------------------------------------------------------------------
 
 if ( c_ccsinjecratescen gt 0,
-        vm_co2CCS.up(ttot,regi,"cco2","ico2","ccsinje","1")$(ttot.val ge 2005 AND ttot.val lt 2020) = 0;
-	vm_co2CCS.up("2020",regi,"cco2","ico2","ccsinje","1") = pm_boundCapCCS(regi);
-	vm_co2CCS.up("2025",regi,"cco2","ico2","ccsinje","1") = pm_boundCapCCS(regi);
+  vm_co2CCS.up(ttot,regi,"cco2","ico2","ccsinje","1")$(ttot.val ge 2005 AND ttot.val lt 2025) = 0;
+	vm_co2CCS.up("2025",regi,"cco2","ico2","ccsinje","1") = pm_boundCapCCS("2025",regi,"up")/(1000*11/3);
+	vm_co2CCS.up("2030",regi,"cco2","ico2","ccsinje","1") = pm_boundCapCCS("2030",regi,"up")/(1000*11/3);
+	vm_co2CCS.lo("2025",regi,"cco2","ico2","ccsinje","1") = pm_boundCapCCS("2025",regi,"low")/(1000*11/3);
+	vm_co2CCS.lo("2030",regi,"cco2","ico2","ccsinje","1") = pm_boundCapCCS("2030",regi,"low")/(1000*11/3);
 );
 
 loop(regi,
-  if( (pm_boundCapCCS(regi) eq 0),
-    vm_cap.fx("2020",regi,teCCS,rlf) = 0;
-	vm_cap.fx("2025",regi,teCCS,rlf) = 0;
+  loop(t$(t.val le 2030),
+    if( ( pm_boundCapCCS(t,regi,"up") eq 0),
+      vm_cap.fx(t,regi,teCCS,rlf) = 0;
+    );
   );
 );
 

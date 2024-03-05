@@ -55,10 +55,12 @@ loop(regi,
 
 *Avoiding infeasibilities from upper limit on CCS deployment in 2020
 loop(regi,
-	if( (pm_boundCapCCS(regi) eq 0),
-		vm_capFac.fx("2020",regi,teCCS)      = 0;
-        v32_capLoB.fx("2020",regi,teCCS,LoB)    = 0;
-        v32_capER.fx("2020",regi,teCCS)         = 0;
+  loop(t$(t.val le 2030),
+    if( ( pm_boundCapCCS(t,regi,"up") eq 0),
+      vm_capFac.fx(t,regi,teCCS)      = 0;
+          v32_capLoB.fx(t,regi,teCCS,LoB)    = 0;
+          v32_capER.fx(t,regi,teCCS)         = 0;
+      );
     );
 );
 
