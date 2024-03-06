@@ -24,6 +24,14 @@ unitList <- c("%", "Percent", "percent", "% pa", "1", "share", "USD/capita", "in
              "cm/capita", "kcal/capita/day", "unitless", "kcal/kcal", "m3/ha", "tC/tC", "tC/ha", "years",
              "share of total land", "tDM/capita/yr", "US$05 PPP/cap/yr", "t DM/ha/yr", "US$2010/kW", "US$2010/kW/yr")
 
+# emi variables where bunkers are added only to the World level
+gases <- c("BC", "CO", "CO2", "Kyoto Gases", "NOx", "OC", "Sulfur", "VOC")
+vars <- c("", "|Energy", "|Energy Demand|Transportation", "|Energy and Industrial Processes",
+          "|Energy|Demand", "|Energy|Demand|Transportation")
+gasvars <- expand.grid(gases, vars, stringsAsFactors = FALSE)
+bunkervars <- unique(sort(paste0("Emissions|", gasvars$Var1, gasvars$Var2)))
+
+
 # failing <- mif %>%
 #   checkSummations(dataDumpFile = NULL, outputDirectory = NULL,  summationsFile = "extractVariableGroups",
 #                   absDiff = 5e-7, relDiff = 1e-8) %>%
@@ -51,11 +59,14 @@ for (template in c("AR6", "NAVIGATE")) {
   checkyear <- 2050
   failregi <- csregi %>%
     filter(abs(.data$reldiff) > 0.5, abs(.data$diff) > 0.00015, period == checkyear) %>%
-    filter(! grepl("^Emissions\\|", .data$variable)) %>% # because World includes bunkers, but regions not
+    filter(! .data$variable %in% bunkervars) %>%
     select(-"model", -"scenario")
   if (nrow(failregi) > 0) {
-    message("For those variables, the sum of regional values does not match the World value in 2050:")
+    message("For those ", template, " variables, the sum of regional values does not match the World value in 2050:")
     failregi %>% piamInterfaces::niceround() %>% print(n = 1000)
+    print(paste0(failregi$variable, collapse = ", "))
+  } else {
+    message("Regional summation checks are fine.")
   }
 
   if (nrow(failvars) > 0 || nrow(failregi) > 0) stopmessage <- c(stopmessage, template)
