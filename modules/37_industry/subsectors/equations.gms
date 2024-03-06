@@ -243,7 +243,7 @@ q37_feedstocksLimit(t,regi,entySe,entyFe,emiMkt)$(
 q37_feedstocksShares(t,regi,entySe,entyFe,emiMkt)$(
                          sum(te, se2fe(entySe,entyFe,te))
                      AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
-                     AND cm_emiscen ne 1                                   ) ..
+                     AND cm_emiscen ne 1                                   ) ..                 
     vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
   * sum(se2fe(entySe2,entyFe,te),
       vm_demFENonEnergySector(t,regi,entySe2,entyFe,"indst",emiMkt)
