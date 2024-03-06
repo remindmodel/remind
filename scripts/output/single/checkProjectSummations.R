@@ -10,11 +10,19 @@ if(! exists("source_include")) {
 
 scen <- lucode2::getScenNames(outputdir)
 mif  <- file.path(outputdir, paste0("REMIND_generic_", scen, ".mif"))
+mifdata <- as.quitte(mif)
 
 stopmessage <- NULL
 
 absDiff <- 0.00001
 relDiff <- 0.01
+
+# to be skipped for regional aggregation as they are no extensive variables
+varGrep <- paste0("^Tech|CES Price|^Price|^Internal|[Pp]er[- ][Cc]apita|per-GDP|Specific|Interest Rate|",
+                  "Intensity|Productivity|Average Extraction Costs|^PVP|Other Fossil Adjusted|Projected|[Ss]hare")
+unitList <- c("%", "Percent", "percent", "% pa", "1", "share", "USD/capita", "index", "kcal/cap/day",
+             "cm/capita", "kcal/capita/day", "unitless", "kcal/kcal", "m3/ha", "tC/tC", "tC/ha", "years",
+             "share of total land", "tDM/capita/yr", "US$05 PPP/cap/yr", "t DM/ha/yr", "US$2010/kW", "US$2010/kW/yr")
 
 # failing <- mif %>%
 #   checkSummations(dataDumpFile = NULL, outputDirectory = NULL,  summationsFile = "extractVariableGroups",
@@ -26,15 +34,31 @@ relDiff <- 0.01
 
 for (template in c("AR6", "NAVIGATE")) {
   message("\n### Check project summations for ", template)
-  d <- generateIIASASubmission(mif, outputDirectory = NULL, logFile = NULL, mapping = template, checkSummation = FALSE)
-  failing <- d %>%
+  d <- generateIIASASubmission(mifdata, outputDirectory = NULL, logFile = NULL,
+                               mapping = template, checkSummation = FALSE)
+  failvars <- d %>%
     checkSummations(template = template, summationsFile = template, logFile = NULL, dataDumpFile = NULL,
                     absDiff = absDiff, relDiff = relDiff) %>%
     filter(abs(diff) >= absDiff, abs(reldiff) >= relDiff) %>%
     df_variation() %>%
     droplevels()
   
-  if (nrow(failing) > 0) stopmessage <- c(stopmessage, template)
+  csregi <- d %>%
+    filter(! .data$unit %in% unitList, ! grepl(varGrep, .data$variable)) %>%
+    checkSummationsRegional() %>%
+    rename(World = "total") %>%
+    droplevels()
+  checkyear <- 2050
+  failregi <- csregi %>%
+    filter(abs(.data$reldiff) > 0.5, abs(.data$diff) > 0.00015, period == checkyear) %>%
+    filter(! grepl("^Emissions\\|", .data$variable)) %>% # because World includes bunkers, but regions not
+    select(-"model", -"scenario")
+  if (nrow(failregi) > 0) {
+    message("For those variables, the sum of regional values does not match the World value in 2050:")
+    failregi %>% piamInterfaces::niceround() %>% print(n = 1000)
+  }
+
+  if (nrow(failvars) > 0 || nrow(failregi) > 0) stopmessage <- c(stopmessage, template)
 }
 
 if (length(stopmessage) > 0) {
