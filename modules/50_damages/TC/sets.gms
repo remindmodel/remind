@@ -29,12 +29,6 @@ all_TCspec "TC damage distribution quantiles"
 */estimates_mean,estimates_median,estimates_95,estimates_83,estimates_17,estimates_05/
 /mean,median,95,83,17,05/
 
-all_SSPscen "all 5 SSP scenarios" 
-/SSP1,SSP2,SSP3,SSP4,SSP5/
-
-all_TCpers "all possible persistencies of TC damages"
-/0,1,2,3,4,5,6,7,8,9/
-
 ;
 
 *** EOF ./modules/50_damages/TC/sets.gms

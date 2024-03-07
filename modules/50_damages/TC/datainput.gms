@@ -12,24 +12,30 @@ p50_damageFuncCoefTC2(isoTC) = 0;
 
 *** load TC damage parameter data (Krichene et al. 2022)
 
-parameter f50_TCconst(iso,all_TCpers,all_TCspec)	"damage parameter for TC, constant"
+*parameter f50_TCconst(iso,all_TCpers,all_TCspec)	"damage parameter for TC, constant"
+parameter f50_TCconst(iso,all_TCspec)	"damage parameter for TC, constant"
 /
 $ondelim
-$include "./modules/50_damages/TC/input/f50_TC_df_const.cs4r"
+*$include "./modules/50_damages/TC/input/f50_TC_df_const.cs4r"
+$include "./modules/50_damages/TC/input/f50_TC_df_const_new.csv"
 $offdelim
 /
 ;
 
-parameter f50_TCtasK(iso,all_TCpers,all_TCspec)	"damage parameter for TC, linear with temperature"
+*parameter f50_TCtasK(iso,all_TCpers,all_TCspec)	"damage parameter for TC, linear with temperature"
+parameter f50_TCtasK(iso,all_TCspec)	"damage parameter for TC, linear with temperature"
 /
 $ondelim
-$include "./modules/50_damages/TC/input/f50_TC_df_tasK.cs4r"
+*$include "./modules/50_damages/TC/input/f50_TC_df_tasK.cs4r"
+$include "./modules/50_damages/TC/input/f50_TC_df_tasK_new.csv"
 $offdelim
 /
 ;
 
-p50_damageFuncCoefTC0(iso) = f50_TCconst(iso,"%cm_TCpers%","%cm_TCspec%")/100;
-p50_damageFuncCoefTC1(iso) = f50_TCtasK(iso,"%cm_TCpers%","%cm_TCspec%")/100;
+*p50_damageFuncCoefTC0(iso) = f50_TCconst(iso,"%cm_TCpers%","%cm_TCspec%")/100;
+*p50_damageFuncCoefTC1(iso) = f50_TCtasK(iso,"%cm_TCpers%","%cm_TCspec%")/100;
+p50_damageFuncCoefTC0(iso) = f50_TCconst(iso,"%cm_TCspec%");
+p50_damageFuncCoefTC1(iso) = f50_TCtasK(iso,"%cm_TCspec%");
 
 display p50_damageFuncCoefTC0;
 
@@ -44,7 +50,7 @@ $offdelim
 ;
 
 *calculate and interpolate country GDP fraction of regional GDP for SSP2EU scenario, country GDP is in PPP, regional GDP in trl MER!
-pm_GDPfrac(tall,iso)=f50_countryGDP(tall,iso,"gdp_SSP2EU")/1000000/sum(regi2iso(regi,iso),pm_gdp(tall,regi)/pm_shPPPMER(regi));
+pm_GDPfrac(tall,iso)=f50_countryGDP(tall,iso,"gdp_SSP2EU")/1000000/(sum(regi2iso(regi,iso),pm_gdp(tall,regi)/pm_shPPPMER(regi))+1e-9);
 loop(ttot$(ttot.val ge 2005),
 	loop(tall$(pm_tall_2_ttot(tall,ttot)),
 		pm_GDPfrac(tall,iso) = 

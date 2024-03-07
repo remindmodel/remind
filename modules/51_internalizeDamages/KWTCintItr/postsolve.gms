@@ -41,7 +41,7 @@ p51_sccParts(tall,tall2,regi2)$((tall.val ge 2010) and (tall.val le 2150) and (t
 
 p51_sccLastItr(tall) = p51_scc(tall);
 
-p51_scc(tall)$((tall.val ge 2010) and (tall.val le 2150)) = 1000 *
+p51_scc(tall)$((tall.val ge 2020) and (tall.val le 2150)) = 1000 *
 *p51_welf(tall)**(-1) * 
     sum(regi2,
     sum(tall2$( (tall2.val ge tall.val) and (tall2.val le (tall.val + cm_damages_SccHorizon))),   !! add this for limiting horizon of damage consideration: and (tall2.val le 2150)
@@ -59,7 +59,7 @@ display p51_scc;
 p51_scc(tall) = p51_sccLastItr(tall) *  min(max( (p51_scc(tall)/max(p51_sccLastItr(tall),1e-8)),1 - 0.5*0.95**iteration.val),1 + 0.95**iteration.val);
 
 pm_taxCO2eqSCC(ttot,regi) = 0;
-pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2020) = max(0, p51_scc(ttot) * (44/12)/1000);
+pm_taxCO2eqSCC(t,regi)$(t.val ge 2020) = max(0, p51_scc(t) * (44/12)/1000);
 
 *);
 

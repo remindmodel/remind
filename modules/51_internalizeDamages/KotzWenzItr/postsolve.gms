@@ -4,32 +4,22 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/51_internalizeDamages/BurkeLikeItr/postsolve.gms
 
-* this is the third sum in Eq. (1). computed seperately for computational effectiveness. (this is still expensive, at a couple of seconds!)
-p51_marginalDamageCumul(tall,tall2,regi2)$((tall2.val ge tall.val) and (tall.val le 2250) and (tall2.val le 2250)) = 
-    sum(tall3$((tall3.val ge tall.val) and (tall3.val le tall2.val)), 
-	pm_temperatureImpulseResponseCO2(tall3,tall) * pm_tempScaleGlob2Reg(tall3,regi2)
-      * 2**(-(tall2.val - tall3.val)/cm_damages_BurkeLike_persistenceTime)
-	  * (-1) * pm_damageMarginal(tall3,regi2)
-      / ( 1 + pm_damageGrowthRate(tall3,regi2) * 2**(-(tall2.val - tall3.val)/cm_damages_BurkeLike_persistenceTime))
-    )
-;
+*** SOF ./modules/51_internalizeDamages/KotzWenzItr/postsolve.gms
+
 
 p51_sccLastItr(tall) = p51_scc(tall);
 
-p51_sccParts(tall,tall2,regi2)$((tall.val ge 2010) and (tall.val le 2150) and (tall2.val ge tall.val) and (tall2.val le 2250)) = 
-	 (1 + pm_prtp(regi2) )**(-(tall2.val - tall.val))
-	* pm_consPC(tall,regi2)/pm_consPC(tall2,regi2) 
-        * pm_damage(tall2,regi2) * pm_GDPGross(tall2,regi2) 
-	* p51_marginalDamageCumul(tall,tall2,regi2) 
-;
 
 p51_scc(tall)$((tall.val ge 2020) and (tall.val le 2150)) = 1000 *
 *p51_welf(tall)**(-1) * 
     sum(regi2,
     sum(tall2$( (tall2.val ge tall.val) and (tall2.val le (tall.val + cm_damages_SccHorizon))),   !! add this for limiting horizon of damage consideration: and (tall2.val le 2150)
-	p51_sccParts(tall,tall2,regi2)
+	(1 + pm_prtp(regi2) )**(-(tall2.val - tall.val))
+	* pm_consPC(tall,regi2)/pm_consPC(tall2,regi2) 
+	* pm_GDPGross(tall2,regi2)
+	* pm_temperatureImpulseResponseCO2(tall2,tall)
+	* pm_damageMarginal(tall2,regi2)
     )
    )
 ;
@@ -55,7 +45,10 @@ display p51_scc,pm_taxCO2eqSCC;
 
 
 * convergence indicator:
+pm_sccConvergenceMaxDeviation=0;
 pm_sccConvergenceMaxDeviation = 100 * smax(tall$(tall.val ge cm_startyear and tall.val lt 2150),abs(p51_scc(tall)/max(p51_sccLastItr(tall),1e-8) - 1) );
 display pm_sccConvergenceMaxDeviation;
 
-*** EOF ./modules/51_internalizeDamages/BurkeLikeItr/postsolve.gms
+*** EOF ./modules/51_internalizeDamages/KotzWenzItr/postsolve.gms
+
+
