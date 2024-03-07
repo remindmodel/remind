@@ -175,10 +175,9 @@ v21_taxrevPE2SE(t,regi)
 ***---------------------------------------------------------------------------
 q21_taxrevTech(t,regi)$(t.val ge max(2010,cm_startyear))..
 v21_taxrevTech(t,regi) 
-=e= sum(te2rlf(te,rlf),
-          (p21_tech_tax(t,regi,te,rlf) + p21_tech_sub(t,regi,te,rlf)) * vm_deltaCap(t,regi,te,rlf)
+=e= sum(te2rlf(te,rlf), vm_deltaCap(t,regi,te,rlf)
        )
-	- p21_taxrevTech0(t,regi);
+    - p21_taxrevTech0(t,regi);
 
 ***---------------------------------------------------------------------------
 *'  Calculation of export taxes: tax rate times export volume
