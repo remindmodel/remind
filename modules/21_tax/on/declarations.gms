@@ -6,20 +6,17 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/21_tax/on/declarations.gms
 Parameters
-p21_tau_so2_tax(tall,all_regi)               "so2 tax path"
-p21_tau_pe2se_tax(tall,all_regi,all_te)      "tax path for primary energy technologies"
-p21_tau_pe2se_inconv(tall,all_regi,all_te)   "inconvenience cost path for primary energy technologies"
-p21_tech_tax(tall,all_regi,all_te,rlf)       "tax path for technology specific new capacity"
-p21_tech_sub(tall,all_regi,all_te,rlf)       "subsidy path for technology specific new capacity"
-
+p21_tau_so2_tax(tall,all_regi)                     "so2 tax path"
+p21_tau_pe2se_tax(tall,all_regi,all_te)        "tax path for primary energy technologies"
+p21_tau_pe2se_inconv(tall,all_regi,all_te)     "inconvenience cost path for primary energy technologies"
 p21_tau_pe2se_sub(tall,all_regi,all_te)        "subsidy path for primary energy technologies"
 p21_max_fe_sub(tall,all_regi,all_enty)         "maximum final energy subsidy levels from REMIND version prior to rev. 5429 [$/TWa]"
 p21_prop_fe_sub(tall,all_regi,all_enty)        "subsidy proportional cap to avoid liquids increasing dramatically"
 p21_tau_fuEx_sub(tall,all_regi,all_enty)       "subsidy path for fuel extraction [$/TWa]"
 p21_bio_EF(ttot,all_regi)                      "bioenergy emission factor, which is used to calculate the emission-factor-based tax level [GtC/TWa]"
 p21_tau_Import(ttot,all_regi,all_enty,tax_import_type_21)         "tax on energy imports, only works on energy carriers traded on nash markets, tax defined as share of world market price pm_pvp [Unit: share]"
-pm_tau_pe_tax(ttot,all_regi,all_enty)          "pe tax path"
-pm_tau_ces_tax(ttot,all_regi,all_in)           "ces production tax to implement CES mark-up cost in a budget-neutral way"
+pm_tau_pe_tax(ttot,all_regi,all_enty)                 "pe tax path"
+pm_tau_ces_tax(ttot,all_regi,all_in)                  "ces production tax to implement CES mark-up cost in a budget-neutral way"
 p21_tau_fe_tax(ttot,all_regi,emi_sectors,all_enty)    "tax path for final energy"
 p21_tau_fe_sub(ttot,all_regi,emi_sectors,all_enty)    "subsidy path for final energy"
 
