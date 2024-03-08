@@ -728,12 +728,10 @@ q_emiMac(t,regi,emiMac) ..
 *' Share of captured CO2 that is stored
 ***--------------------------------------------------
 q_share_CCS_CCO2(t, regi)..
-  v_share_CCS_CCO2(t, regi)
+  v_share_CCS_CCO2(t, regi) * sum(teCCS2rlf(te, rlf), vm_co2capture(t, regi, "cco2", "ico2", "ccsinje", rlf))
   =e=
   sum(teCCS2rlf(te, rlf), vm_co2CCS(t, regi, "cco2", "ico2", te, rlf))
-  / (
-    sum(teCCS2rlf(te, rlf), vm_co2capture(t, regi, "cco2", "ico2", "ccsinje", rlf)) + sm_eps
-  );
+  ;
 
 
 ***--------------------------------------------------
