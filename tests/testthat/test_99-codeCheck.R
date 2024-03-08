@@ -7,7 +7,6 @@
 test_that("GAMS code follows the coding etiquette", {
   # have to run this via localSystem2 so that it uses the renv, where gms
   # is actually installed.
-  skipIfPreviousFailed()
   codecheckcode <- "'invisible(gms::codeCheck(strict=TRUE)); if (! is.null(warnings())) stop(warnings())'"
   output <- localSystem2("Rscript", c("-e", codecheckcode))
   printIfFailed(output)
