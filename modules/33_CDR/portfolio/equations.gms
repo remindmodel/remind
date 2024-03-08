@@ -44,6 +44,16 @@ q33_H2bio_lim(t,regi)..
     ;
 
 ***---------------------------------------------------------------------------
+*'  The amount of energy-related carbon from CDR activities,
+*'  the gas for DAC is assumed to be captured.
+***---------------------------------------------------------------------------
+q33_captured_energy_emi(t, regi)..
+    vm_co2capture_CDR_energy(t, regi)
+    =e=
+    (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * sum(fe2cdr("fegas",entyFe2,te_used33), v33_FEdemand(t,regi,"fegas", entyFe2,te_used33))
+    ;
+
+***---------------------------------------------------------------------------
 *' #### DAC equations
 
 ***---------------------------------------------------------------------------
@@ -64,10 +74,10 @@ q33_DAC_emi(t,regi)..
 *'  assuming 90% capture rate.
 ***---------------------------------------------------------------------------
 q33_DAC_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
-    sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
+    sum(teCCS2rlf(te,rlf), vm_co2capture_cdr(t,regi,enty,enty2,te,rlf))
     =e=
     - vm_emiCdrTeDetail(t,regi,"dac")
-    + (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * sum(fe2cdr("fegas",entyFe2,te_used33), v33_FEdemand(t,regi,"fegas", entyFe2,te_used33))
+    + vm_co2capture_cdr_energy(t, regi)
     ;
 
 ***---------------------------------------------------------------------------

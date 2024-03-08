@@ -609,9 +609,7 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
       vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)$( sameas(enty,"co2") )
     )$(sameas(emiMkt,"ETS"))
     !! CCU from captured non-atmospheric CO2 from CDR activities (e.g., natural gas for DAC heat)
-  - ((
-      sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t, regi, "cco2", "ico2", "ccsinje", rlf)) + vm_emiCdrTeDetail(t, regi, "dac")
-    ) * (1 - v_share_CCS_CCO2(t,regi)))
+  - vm_co2capture_cdr_energy(t, regi)
     $(sameas(enty, "co2") AND sameas(emiMkt, "ETS"))
 ;
 
@@ -834,7 +832,7 @@ q_balcapture(t,regi,ccs2te(ccsCo2(enty),enty2,te)) ..
     )
 *** Carbon captured from CDR technologies in CDR module
   + sum(teCCS2rlf(te,rlf),
-      vm_ccs_cdr(t,regi,enty,enty2,te,rlf)
+      vm_co2capture_cdr(t,regi,enty,enty2,te,rlf)
     )
 *** Carbon captured from industry
   + sum(emiInd37,
