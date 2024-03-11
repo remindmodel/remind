@@ -640,29 +640,28 @@ if(s80_bool eq 1,
 
 );
 
-
-*** check if any region has failed to solve consecutively for a certain number of times
-if(cm_abortOnConsecFail, !! execute only if consecutive failures switch is non-zero
-    loop(regi,
-        if(((p80_repy(regi,"solvestat") eq 1) and (p80_repy(regi,"modelstat") eq 2))
-        or ((p80_repy(regi,"solvestat") eq 4) and (p80_repy(regi,"modelstat") eq 7)), !! region was solved successfully
-            p80_trackConsecFail(regi) = 0;
-        else
-            p80_trackConsecFail(regi) = p80_trackConsecFail(regi) + 1;
-        );
+*** check if any region has failed to solve consecutively for
+*** cm_abortOnConsecFail times
+if (cm_abortOnConsecFail gt 0,
+  loop (regi,
+    if (   (    p80_repy_iteration(regi,"solvestat",iteration) eq 1
+            AND p80_repy_iteration(regi,"modelstat",iteration) eq 2)
+	OR (    p80_repy_iteration(regi,"solvestat",iteration) eq 4
+	    AND p80_repy_iteration(regi,"modelstat",iteration) eq 7),
+      !! region was solved successfully
+      p80_trackConsecFail(regi) = 0;
+    else
+      !! region failed to solve
+      p80_trackConsecFail(regi) = p80_trackConsecFail(regi) + 1;
     );
-    loop(regi,
-        if(p80_trackConsecFail(regi) >= cm_abortOnConsecFail,
-            execute_unload "abort.gdx";
-            display p80_trackConsecFail;
-            abort "Run was aborted because the maximum number of consecutive failures was reached in at least one region!";
-        );
-    )
-)
+  );
 
-
-
-
+  if (smax(regi, p80_trackConsecFail(regi)) >= cm_abortOnConsecFail,
+    execute_unload "abort.gdx";
+    display p80_trackConsecFail;
+    abort "Run was aborted because the maximum number of consecutive failures was reached in at least one region!";
+  );
+);
 
 ***Fade out LT correction terms, they should only be important in the first iterations and might interfere with ST corrections.
 ***p80_etaLT(trade) = p80_etaLT(trade)*0.5;
