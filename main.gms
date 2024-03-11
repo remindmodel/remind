@@ -1615,9 +1615,6 @@ $setGlobal c_regi_nucscen  all  !! def = all
 $setGlobal c_regi_capturescen  all  !! def = all
 *** cm_subsec_model_steel      "switch between ces-based and process-based steel implementation in subsectors realisation of industry module"
 $setglobal cm_subsec_model_steel  ces  !! def = ces  !! regexp = ces|processes
-*** c_CO2priceDependent_AdjCosts
-*** changes adjustment costs based on CO2 prices, currently only for advanced vehicles
-$setglobal c_CO2priceDependent_AdjCosts    on   !! def = on
 *** set conopt version. Warning: conopt4 is in beta
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
 *' c_empty_model  "Short-circuit the model, just use the input as solution"

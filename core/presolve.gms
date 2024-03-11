@@ -425,42 +425,4 @@ p_macPE(ttot,regi,enty) = 0.0;
 p_macPE(ttot,regi,"pegas")$(ttot.val gt 2005) = s_MtCH4_2_TWa * 0.5 * (vm_macBase.l(ttot,regi,"ch4coal")-vm_emiMacSector.l(ttot,regi,"ch4coal"));
 
 
-***------------ adjust adjustment costs for advanced vehicles according to CO2 price in the previous time step ----------------------
-*** (same as in postsolve - if you change it here, also change in postsolve)
-*** this represents the concept that with stringent climate policies (as represented by high CO2 prices), all market actors will have a clearer expectation that
-*** transport shifts to low-carbon vehicles, thus companies will be more likely to invest into new zero-carbon vehicle models, charging infrastructure, etc.
-*** Also, gov'ts will be more likely to implement additional support policies that overcome existing barriers & irrationalities and thereby facilitate deployment
-*** of advanced vehicles, e.g. infrastructure for charging, setting phase-out dates that encourage car manufacturers to develop more advanced fuel models, etc.
-*** Use the CO2 price from the previous time step to represent inertia
-
-$iftheni.CO2priceDependent_AdjCosts %c_CO2priceDependent_AdjCosts% == "on"
-
-loop(ttot$( (ttot.val > cm_startyear) AND (ttot.val > 2020) ),  !! only change values in the unfixed time steps of the current run, and not in the past
-  loop(regi,
-    if( pm_taxCO2eq(ttot-1,regi) le (40 * sm_DptCO2_2_TDpGtC) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.1;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 4;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (40 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (80 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.25;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 2.5;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (80 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (160 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.5;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 1.5;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (160 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (320 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 1;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 1;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (320 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (640 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 2;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.5;
-    elseif ( pm_taxCO2eq(ttot-1,regi) gt (640 * sm_DptCO2_2_TDpGtC) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 4;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.25;
-    );
-  );
-);
-display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adjCoeff;
-
-$endif.CO2priceDependent_AdjCosts
-
-
 *** EOF ./core/presolve.gms
