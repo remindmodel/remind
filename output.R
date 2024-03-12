@@ -92,10 +92,14 @@ choose_slurmConfig_output <- function(output) {
   if (!isSlurmAvailable())
     return("direct")
 
-  # Modify slurm options for ar6 reporting, since we want to run MAGICC in parallel and we'll need a lot of memory
-  if ("ar6Climate" %in% output) slurm_options <- paste(slurm_options[1:3], "--tasks-per-node=12 --mem=32000")
-  # reporting.R, in particular remind2::convGDX2MIF, requires at least --mem=8000 of memory
-  if ("reporting" %in% output) slurm_options <- grep("--mem=[0-9]*[0-9]{3}", slurm_options, value = TRUE)
+  # Modify slurm options for reporting options that run in parallel (MAGICC) or need more memory
+  if ("ar6Climate" %in% output) {
+    slurm_options <- paste(slurm_options[1:3], "--tasks-per-node=12 --mem=32000")
+  } else if ("nashAnalysis" %in% output) {
+    slurm_options <- paste(slurm_options[1:3], "--mem=32000")
+  } else if ("reporting" %in% output) {
+    slurm_options <- grep("--mem=[0-9]*[0-9]{3}", slurm_options, value = TRUE)
+  }
 
   if (length(slurm_options) == 1) {
     return(slurm_options[[1]])
@@ -275,12 +279,13 @@ if (comp %in% c("comparison", "export")) {
     } else {
       message("\nStarting output generation for ", outputdir, "\n")
       name <- paste0(output, ".R")
+      scriptsfound <- file.exists(paste0("scripts/output/single/", name))
       if ("--test" %in% flags) {
         message("Test mode, not executing scripts/output/single/", paste(name, collapse = ", "))
-      } else if (all(file.exists(paste0("scripts/output/single/", name)))) {
+      } else {
         if (slurmConfig == "direct") {
           # execute output script directly (without sending it to slurm)
-          for (n in name) {
+          for (n in name[scriptsfound]) {
             message("Executing ", n)
             tmp.env <- new.env()
             tmp.error <- try(sys.source(paste0("scripts/output/single/", n), envir = tmp.env))
@@ -302,9 +307,10 @@ if (comp %in% c("comparison", "export")) {
         }
         # finished
         message("\nFinished ", ifelse(slurmConfig == "direct", "", "starting job for "), "output generation for ", outputdir, "!\n")
-      } else {
-        warning("Skipping ", outputdir, " because some output script selected could not be found ",
-                "in scripts/output/single: ", name[! name %in% dir("scripts/output/single")])
+      }
+      if (any(! scriptsfound)) {
+        warning("Skipping those output script selected that could not be found in scripts/output/single: ",
+                name[! scriptsfound])
       }
     }
 
