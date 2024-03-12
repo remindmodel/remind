@@ -546,53 +546,14 @@ pm_GDPGross(ttot,regi)$( (pm_SolNonInfes(regi) eq 1) ) =  vm_cesIO.l(ttot,regi,"
 
 *interpolate GDP
 loop(ttot$(ttot.val ge 2005),
-	loop(tall$(pm_tall_2_ttot(tall, ttot)),
-	    pm_GDPGross(tall,regi) =
-		(1- pm_interpolWeight_ttot_tall(tall)) * pm_GDPGross(ttot,regi)
-		+ pm_interpolWeight_ttot_tall(tall) * pm_GDPGross(ttot+1,regi);
+    loop(tall$(pm_tall_2_ttot(tall, ttot)),
+        pm_GDPGross(tall,regi) =
+       (1- pm_interpolWeight_ttot_tall(tall)) * pm_GDPGross(ttot,regi)
+       + pm_interpolWeight_ttot_tall(tall) * pm_GDPGross(ttot+1,regi);
 ));
 
-* assume GDP is flat from 2150 on (only enters damage calculations in the far future)
+*** assume GDP is flat from 2150 on (only enters damage calculations in the far future)
 pm_GDPGross(tall,regi)$(tall.val ge 2150) = pm_GDPGross("2149",regi); 
-
-
-
-***------------ adjust adjustment costs for advanced vehicles according to CO2 price in the previous time step ----------------------
-*** (same as in presolve - if you change it here, also change in presolve)
-*** this represents the concept that with stringent climate policies (as represented by high CO2 prices), all market actors will have a clearer expectation that 
-*** transport shifts to low-carbon vehicles, thus companies will be more likely to invest into new zero-carbon vehicle models, charging infrastructure, etc. 
-*** Also, gov'ts will be more likely to implement additional support policies that overcome existing barriers & irrationalities and thereby facilitate deployment 
-*** of advanced vehicles, e.g. infrastructure for charging, setting phase-out dates that encourage car manufacturers to develop more advanced fuel models, etc. 
-*** Use the CO2 price from the previous time step to represent inertia
-
-$iftheni.CO2priceDependent_AdjCosts %c_CO2priceDependent_AdjCosts% == "on"
-
-loop(ttot$( (ttot.val > cm_startyear) AND (ttot.val > 2020) ),  !! only change values in the unfixed time steps of the current run, and not in the past
-  loop(regi,
-    if( pm_taxCO2eq(ttot-1,regi) le (40 * sm_DptCO2_2_TDpGtC) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.1;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 4;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (40 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (80 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.25;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 2.5;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (80 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (160 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.5;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 1.5;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (160 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (320 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 1;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 1;	
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (320 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (640 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 2;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.5;	
-    elseif ( pm_taxCO2eq(ttot-1,regi) gt (640 * sm_DptCO2_2_TDpGtC) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 4;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.25;	
-    );
-  );
-);
-display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adjCoeff;
-
-$endif.CO2priceDependent_AdjCosts
 
 
 *** CG: calculate marginal adjustment cost for capacity investment: d(vm_costInvTeAdj) / d(vm_deltaCap)  !!!! the closed formula only holds when v_adjFactorGlob.fx(t,regi,te) = 0;
