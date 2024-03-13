@@ -47,7 +47,7 @@ helpText <- "
 #'                     folders, comma-separated, such as remind_dir=.,../otherremind
 #'   slurmConfig=      use slurmConfig=priority, short or standby to specify slurm
 #'                     selection. You may also pass complicated arguments such as
-#'                     slurmConfig='--qos=priority --mem=16000'
+#'                     slurmConfig='--qos=priority --mem=8000'
 "
 
 argv <- get0("argv", ifnotfound = commandArgs(trailingOnly = TRUE))
@@ -86,8 +86,8 @@ if ("--help" %in% flags) {
 
 choose_slurmConfig_output <- function(output) {
   slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
-                     "--qos=priority --mem=16000", "--qos=short --mem=16000",
-                     "--qos=standby --mem=16000", "--qos=priority --mem=32000")
+                     "--qos=priority --mem=8000", "--qos=short --mem=8000",
+                     "--qos=standby --mem=8000", "--qos=priority --mem=32000")
 
   if (!isSlurmAvailable())
     return("direct")
