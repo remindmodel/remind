@@ -20,11 +20,5 @@ loop(t,
   );
 );
 
-*** some checks
-o32_Elh2Share_SeelDem(t,regi,te) =   sum(en2en(enty,enty2,te)$(sameas(enty,"seel")),
-                                        vm_demSe.l(t,regi,enty,enty2,te)) 
-                                          / sum(en2en(enty,enty2,te2)$(sameas(enty,"seel")),
-                                              vm_demSe.l(t,regi,enty,enty2,te2));
-
 *** EOF ./modules/32_power/IntC/postsolve.gms
 

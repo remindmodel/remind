@@ -49,9 +49,9 @@ equations
     q32_limitSolarWind(tall,all_regi)           	"limits on fluctuating renewables, only turned on for special EMF27 scenarios"
 	q32_h2turbVREcapfromTestor(tall,all_regi)       "calculate capacities of dummy seel<--h2 technology from storXXX technologies"
     q32_h2turbVREcapfromTestorUp(ttot,all_regi)     "constraint h2turbVRE hydrogen turbines to be only built together with storage capacities"
-    q32_flexAdj(ttot,all_regi,all_te)               "calculate flexibility used in flexibility tax for technologies with electricity input"
-    q32_flexPriceShareMin(ttot,all_regi,all_te)     "calculatae miniumum share of average electricity that flexible technologies can see"
-    q32_flexPriceShareVRE(ttot,all_regi,all_te)     "calculatae miniumum share of average electricity that flexible technologies can see given the current VRE share"
+    q32_flexAdj(ttot,all_regi,all_te)               "calculate flexibility benefit or cost per flexible technology to be used by flexibility tax"
+    q32_flexPriceShareMin(ttot,all_regi,all_te)     "calculate miniumum share of average electricity that flexible technologies can see"
+    q32_flexPriceShareVRE(ttot,all_regi,all_te)     "calculate miniumum share of average electricity that flexible technologies can see given the current VRE share"
     q32_flexPriceShare(ttot,all_regi,all_te)        "calculate share of average electricity price that flexible technologies see given a certain VRE share and share of electrolysis in total electricity demand"
     q32_flexPriceBalance(ttot,all_regi)             "constraint such that flexible electricity prices balanance to average electricity price"
     q32_TotVREshare(ttot,all_regi)                  "calculate total VRE share"
@@ -65,12 +65,4 @@ v32_flexPriceShareVRE(ttot,all_regi,all_te)         "possible minimum of share o
 v32_flexPriceShareMin(ttot,all_regi,all_te)         "possible minimum of share of average electricity price that flexible technologies see [share: 0...1]"
 
 ;
-
-
-*** for checks
-parameter
-o32_Elh2Share_SeelDem(ttot,all_regi,all_te)         "share of technology in total SE electricity demand"
-;
-
-
 *** EOF ./modules/32_power/IntC/declarations.gms

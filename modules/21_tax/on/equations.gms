@@ -135,8 +135,8 @@ q21_taxrevSE(t,regi)$( t.val ge max(2010, cm_startyear) ) ..
   v21_taxrevSE(t,regi)
   =e=
     sum(se2se(enty,enty2,te)$(teSeTax(te)),
-      !! v21_tau_SE_tax is the (endogenous calculated) tax rate,
-      !! i.e. electricity price increase due to taxes and grid fees
+*** v21_tau_SE_tax is the (endogenous calculated) tax rate,
+*** i.e. electricity price increase due to taxes and grid fees
       v21_tau_SE_tax(t,regi,te) 
     * vm_demSe(t,regi,enty,enty2,te)
     )
@@ -286,7 +286,7 @@ q21_taxemiMkt(t,regi,emiMkt)$(t.val ge max(2010,cm_startyear))..
 ; 
 
 ***---------------------------------------------------------------------------
-*'  FS: Calculation of tax/subsidy on technologies with inflexible/flexible electricity input 
+*'  Calculation of tax/subsidy on technologies with inflexible/flexible electricity input 
 *'  This is to emulate the effect of lower/higher electricity prices in high VRE systems on flexible/inflexible electricity demands. 
 ***---------------------------------------------------------------------------
 
@@ -305,7 +305,7 @@ q21_taxrevFlex(t,regi)$( t.val ge max(2010, cm_startyear) ) ..
 
 
 ***---------------------------------------------------------------------------
-*'  FS: (PE) import tax 
+*'  (PE) import tax 
 *'  can be used to place taxes on PE energy imports 
 *'  e.g. bioenergy import taxes due to sustainability concerns by importers
 ***---------------------------------------------------------------------------
@@ -329,20 +329,22 @@ q21_taxrevChProdStartYear(t,regi)$(t.val ge max(2010,cm_startyear))..
 ;
 
 
-*' This calculates the SE tax rate for electricity going into electrolysis. 
+*' This calculates the SE tax rate for electricity going into electrolysis.
 *' It contains the final energy tax rate for electricity use in industry and
-*' grid fees that are assumed be equal to the investment cost of tdfels. 
+*' grid fees that are assumed be equal to the investment cost of tdfels.
 *' We furthermore assume that these taxes and fees are small at low shares
 *' of electrolysis in total electricity demand as electrolysis has power system
 *' benefits at low shares. The tax rate increases with increasing share of electrolysis
 *' following a logistic curve. It starts at close to zero tax rate for a share o 0%, reaches half
-*' of the full tax rate at 10% share and is within 1% of the full tax rate above a 25% share of 
+*' of the full tax rate at 10% share and is within 1% of the full tax rate above a 25% share of
 *' electrolysis electricity demand within total electricity demand. The parameters
-*' to define this functional relationsship are set to in the datainput file. 
+*' to define this functional relationsship are set to in the preloop file.
 q21_SeTaxRate(t,regi,te)$(teSeTax(te))..
   v21_tau_SE_tax(t,regi,te)
   =e=
+*** maximum electrolysis SE tax rate
   p21_tau_SE_tax(t,regi,te)
+*** logistic ramp-up function depending on electrolysis share in total electricity demand vm_shDemSeel
   / ( 1 + 
       (exp(-p21_tau_SE_tax_rampup(t,regi,te,"a")
         * (vm_shDemSeel(t,regi,te) * 100
