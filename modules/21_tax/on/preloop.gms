@@ -151,7 +151,7 @@ p21_tau_SE_tax(t,regi,"elh2") = p21_tau_fe_tax(t,regi,"indst","feels")
 *** calculate grid fees as levelized cost of CAPEX from tdels, the electricity transmission and distribution grid
 *** by annualising the CAPEX and dividing by the capacity factor
                                   + pm_inco0_t(t,regi,"tdels") 
-                                  * p_teAnnuity("tdels")
+                                  * pm_teAnnuity("tdels")
                                   / pm_cf(t,regi,"tdels");
 
 p21_tau_SE_tax_rampup(t,regi,te,"a") = 0.4;
