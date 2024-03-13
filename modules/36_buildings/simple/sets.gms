@@ -22,7 +22,16 @@ Sets
   /
 
   ppfen_buildings_dyn36(all_in)   "primary production factors energy - buildings"
-  / fesob, fehob, fegab, feh2b, feheb, feelcb, feelhpb, feelrhb /
+  /
+    fesob
+    fehob
+    fegab
+    feh2b
+    feheb
+    feelcb
+    feelhpb
+    feelrhb
+  /
 
   cal_ppf_buildings_dyn36(all_in)   "primary production factors for calibration - buildings"
  
@@ -56,21 +65,28 @@ Sets
   
   fe_tax_sub36(all_in,all_in)  "correspondence between tax and subsidy input data resolution and model sectoral resolution"
   /
-  fesob . fesob
-  fehob . fehob
-  fegab . fegab
-  feh2b . feh2b
-  feheb . feheb
-  feelb . (feelcb,feelhpb,feelrhb)
+    fesob . fesob
+    fehob . fehob
+    fegab . fegab
+    feh2b . feh2b
+    feheb . feheb
+    feelb . (feelcb,feelhpb,feelrhb)
   /
   
   ue_dyn36(all_in)  "useful energy items"
   //
 
- ppfen_MkupCost36(all_in)  "primary production factors in buildings on which CES mark-up cost can be levied that are counted as expenses in the macroeconomic budget equation"
+  ppfen_MkupCost36(all_in)  "primary production factors in buildings on which CES mark-up cost can be levied that are counted as expenses in the macroeconomic budget equation"
   /
-  feelhpb
-  feheb
+    feelhpb
+    feheb
+  /
+
+  secBuild36 "Buildings subsectors, only for floor space reporting"
+  /
+    buildings
+    residential
+    commercial
   /
 ;
 
