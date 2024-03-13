@@ -139,6 +139,24 @@ display p21_tau_fe_sub;
 display p21_tau_fe_tax;
 display p21_tau_pe2se_sub, p21_tau_fuEx_sub;
 
+*** SE Tax
+*** SE tax is currently used to tax electricity going into electrolysis. There is a maximum tax rate that is assumed
+*** to be the sum of the industry electricity FE tax and the investment cost per unit electricity of the grid (grid fee). 
+*** There is a ramp up of the SE electricity tax for electrolysis depending on the share of electrolysis in total electricity demand
+*** described by a logistic function. This results in low taxes for electrolysis at low shares of electrolysis in the power system
+*** as the technology has system benefits in this domain. At higher shares this rapidly increases and converges towards the maximum tax rate.
+*** See the equations file of the tax module for more information on the SE tax.
+*** Parameter datainput needs to happen here because pm_tau_fe_tax, the final energy tax rate, is set in this file and not in the datainput file.
+p21_tau_SE_tax(t,regi,"elh2") = p21_tau_fe_tax(t,regi,"indst","feels")
+*** calculate grid fees as levelized cost of CAPEX from tdels, the electricity transmission and distribution grid
+*** by annualising the CAPEX and dividing by the capacity factor
+                                  + pm_inco0_t(t,regi,"tdels") 
+                                  * p_teAnnuity("tdels")
+                                  / pm_cf(t,regi,"tdels");
+
+p21_tau_SE_tax_rampup(t,regi,te,"a") = 0.4;
+p21_tau_SE_tax_rampup(t,regi,te,"b") = 10;
+
 *LB* initialization of vm_emiMac
 vm_emiMac.l(ttot,regi,enty) = 0;
 *LB* initialization of v21_emiALLco2neg
@@ -158,5 +176,8 @@ v21_taxrevImport.l(t,regi,tradePe) = 0;
 
 *** initialize taxrevImport
 v21_taxrevChProdStartYear.l(t,regi) = 0;
+
+*** initialize SE tax rate
+v21_tau_SE_tax.l(t,regi,te)=0;
 
 *** EOF ./modules/21_tax/on/preloop.gms
