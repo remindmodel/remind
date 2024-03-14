@@ -22,6 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **core** change of preference parameters and associated computation of interest rates/mark ups 	
 - **scripts** add script to automatically check project summations from piamInterfaces
     [[#1587](https://github.com/remindmodel/remind/pull/1587)]
+- **32_power** extend and reparameterize flexibility tax implementation for electrolysis for hydrogen production
+- **21_tax** add SE tax on electricity going into electrolysis for hydrogen production
 - **scripts** add compareScenarios section for MAGICC7 AR6 output
     [[#1615](https://github.com/remindmodel/remind/pull/1615)
 

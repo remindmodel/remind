@@ -218,10 +218,15 @@ q32_operatingReserve(t,regi)$(t.val ge 2010)..
 ***----------------------------------------------------------------------------
 
 *** This equation calculates the minimal flexible electricity price that flexible technologies (like elh2) can see. It is reached when the VRE share is 100%.
-*** It depends on the capacity factor with a hyperbolic function. The equation ensures that by decreasing 
+*** It depends on the capacity factor with a hyperbolic function. The equation ensures that by decreasing
 *** capacity factor of flexible technologies (teFlex) these technologies see lower electricity prices given that there is a high VRE share in the power system.
+*** Note: By default, capacity factors in REMIND are exogenuous (see bounds file of the power module).
+*** In that standard case, the minimum electricity price for electrolysis, v32_flexPriceShareMin, only depends on p32_PriceDurSlope,
+*** which is defined by scenario assumptions via the switch cm_PriceDurSlope_elh2.
+*** It essentially makes an assumption about how many low electricity price hours electrolysis will run on in future VRE-based power systems.
+*** The standard value is derived from data of the German Langfristszenarien (see datainput file).
 
-*** On the derivation of the equation: 
+*** On the derivation of the equation:
 *** The formulation assumes a cubic price duration curve. That is, the effective electricity price the flexible technologies sees
 *** depends on the capacity factor (CF) with a cubic function centered at (0.5,1): 
 *** p32_PriceDurSlope * (CF-0.5)^3 + 1, 
@@ -238,20 +243,58 @@ q32_operatingReserve(t,regi)$(t.val ge 2010)..
   4 * vm_capFac(t,regi,te) 
 ;
 
-*** Calculates the electricity price of flexible technologies:
-*** The effective flexible price linearly decreases with VRE share
-*** from 1 (at 0% VRE share) to v32_flexPriceShareMin (at 100% VRE). 
+*** Calculates the minimum electricity price of flexible technologies depending on VRE share.
+*** 100% VRE share will give v32_flexPriceShareMin,
+*** 0% VRE share will give 1, i.e. no flexibility benefit or cost.
+*** In the latter case, electricity price is annual average electricity price from pm_SEPrice.
+*** Linear relation assumed between flexibility benefit or cost in range of 0-100% VRE share.
+*** This parameterizes that flexibility benefits increase in power systems with higher VRE shares.
+q32_flexPriceShareVRE(t,regi,te)$(teFlex(te))..
+  v32_flexPriceShareVRE(t,regi,te)
+  =e=
+  1 - 
+*** maximum flexibility benefit
+  (   ( 1-v32_flexPriceShareMin(t,regi,te) )
+*** VRE share
+    * sum(teVRE, vm_shSeEl(t,regi,teVRE))/100
+  )
+;
+
+*** Calculate share of electricity demand per technology in total electricity demand
+*** Relevant for technologies that see flexibility tax or SE (electricity) taxes.
+q32_shDemSeel(t,regi,te)$(teFlex(te) OR teSeTax(te))..
+  vm_shDemSeel(t,regi,te)
+  * sum(en2en(enty,enty2,te2)$(sameas(enty,"seel")),
+        vm_demSe(t,regi,enty,enty2,te2))
+  =e=
+  sum(en2en(enty,enty2,te)$(sameas(enty,"seel")),
+      vm_demSe(t,regi,enty,enty2,te)) 
+;
+
+*** Calculates the electricity price of flexible technologies 
+*** depending on the share of the flexible technology in total electricity demand
+*** At 0% demand share, v32_flexPriceShare = v32_flexPriceShareVRE from above equation.
+*** Linear relation between flexibility benefit based on regression 
+*** from German Langfristszenarien (see datainput file). 
 q32_flexPriceShare(t,regi,te)$(teFlex(te))..
   v32_flexPriceShare(t,regi,te)
   =e=
-  1 - (1-v32_flexPriceShareMin(t,regi,te)) * sum(teVRE, vm_shSeEl(t,regi,teVRE))/100
+*** minimum electricity price of flexible technology at this VRE share
+    v32_flexPriceShareVRE(t,regi,te)
+*** linearly scale with share of flexible technology in total electricity demand
+  + p32_flexSeelShare_slope(t,regi,te)
+      * vm_shDemSeel(t,regi,te) 
 ;
 
+
+
+
+*** Note: This equation is not active by default. This means that there is no change in electricity prices for inflexible technologies.
+*** The equation is only active if cm_FlexTaxFeedback = 1.
 *** This balance ensures that the lower electricity prices of flexible technologies are compensated 
 *** by higher electricity prices of inflexible technologies. Inflexible technologies are all technologies
 *** which are part of teFlexTax but not of teFlex. The weighted sum of 
 *** flexible/inflexible electricity prices (v32_flexPriceShare) and electricity demand must be one. 
-*** Note: this is only on if cm_FlexTaxFeedback = 1. Otherwise, there is no change in electricity prices for inflexible technologies. 
 q32_flexPriceBalance(t,regi)$(cm_FlexTaxFeedback eq 1)..
   sum(en2en(enty,enty2,te)$(teFlexTax(te)), 
   	vm_demSe(t,regi,enty,enty2,te)) 

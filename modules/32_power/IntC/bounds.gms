@@ -34,9 +34,11 @@ if ( cm_flex_tax eq 1,
 	  vm_capFac.lo(t,regi,teFlexTax)$(t.val ge 2010) = 0.1;
     vm_capFac.up(t,regi,teFlexTax)$(t.val ge 2010) = pm_cf(t,regi,teFlexTax);
   else 
-*** if flexibility tax feedback is off, only flexibliity tax benefit for flexible technologies and 0.5 capacity factor
-    vm_capFac.fx(t,regi,teFlex)$(t.val ge 2010) = 0.5;
-*** electricity price of inflexible technologies the same w/o feedback
+*** if flexibility tax feedback is off, flexibility tax benefit only for flexible technologies and capacity factors fixed.
+*** Assume capacity factor of flexible electrolysis to be 0.38.
+*** The value based on data from German Langfristszenarien (see flexibility tax section in datainput file).
+    vm_capFac.fx(t,regi,"elh2")$(t.val ge 2010) = 0.38;
+*** electricity price of inflexible technologies the same as w/o feedback
     v32_flexPriceShare.fx(t,regi,te)$(teFlexTax(te) AND NOT(teFlex(te))) = 1;
   );
 );
