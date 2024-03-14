@@ -109,9 +109,13 @@ loop (regi,
   if (p80_repy(regi,"modelstat") eq 7, p80_SolNonOpt(regi) = 1);
 );
 
-*** set o_modelstat to the highest value across all regions, ignoring status 7 
+*** set o_modelstat to the highest value across all regions
 o_modelstat
-  = smax(regi, p80_repy(regi,"modelstat")$(p80_repy(regi,"modelstat") ne 7));
+$ifthen.repeatNonOpt "%cm_repeatNonOpt%" == "off"
+  = smax(regi, p80_repy(regi,"modelstat")$(p80_repy(regi,"modelstat") ne 7));  !! ignoring status 7 
+$else 
+  = smax(regi, p80_repy(regi,"modelstat"));                                    !! also taking into account status 7
+$endif.repeatNonOpt
 
 *** in cm_nash_mode=debug mode, enable solprint for next sol_itr when last
 *** iteration was non-optimal:
