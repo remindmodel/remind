@@ -224,7 +224,7 @@ climateAssessmentData <- read.quitte(climateAssessmentOutput) %>%
   interpolate_missing_periods(usePeriods, expand.values = FALSE) %>%
   write.mif(remindReportingFile, append = TRUE)
 
-deletePlus(remind_reporting_file, writemif = TRUE)
+deletePlus(remindReportingFile, writemif = TRUE)
 
 logmsg <- paste0(
   date(), " postprocessing done! Results appended to REMIND mif '", remindReportingFile, "'\n",
