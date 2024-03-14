@@ -14,31 +14,17 @@ mifdata <- as.quitte(mif)
 
 stopmessage <- NULL
 
+options(width = 160)
+
 absDiff <- 0.00001
 relDiff <- 0.01
-
-# to be skipped for regional aggregation as they are no extensive variables
-varGrep <- paste0("^Tech|CES Price|^Price|^Internal|[Pp]er[- ][Cc]apita|per-GDP|Specific|Interest Rate|",
-                  "Intensity|Productivity|Average Extraction Costs|^PVP|Other Fossil Adjusted|Projected|[Ss]hare")
-unitList <- c("%", "Percent", "percent", "% pa", "1", "share", "USD/capita", "index", "kcal/cap/day",
-             "cm/capita", "kcal/capita/day", "unitless", "kcal/kcal", "m3/ha", "tC/tC", "tC/ha", "years",
-             "share of total land", "tDM/capita/yr", "US$05 PPP/cap/yr", "t DM/ha/yr", "US$2010/kW", "US$2010/kW/yr")
 
 # emi variables where bunkers are added only to the World level
 gases <- c("BC", "CO", "CO2", "Kyoto Gases", "NOx", "OC", "Sulfur", "VOC")
 vars <- c("", "|Energy", "|Energy Demand|Transportation", "|Energy and Industrial Processes",
           "|Energy|Demand", "|Energy|Demand|Transportation")
 gasvars <- expand.grid(gases, vars, stringsAsFactors = FALSE)
-bunkervars <- unique(sort(paste0("Emissions|", gasvars$Var1, gasvars$Var2)))
-
-
-# failing <- mif %>%
-#   checkSummations(dataDumpFile = NULL, outputDirectory = NULL,  summationsFile = "extractVariableGroups",
-#                   absDiff = 5e-7, relDiff = 1e-8) %>%
-#   filter(abs(diff) >= 5e-7, abs(reldiff) >= 1e-8) %>%
-#   df_variation() %>%
-#   droplevels()
-# if (nrow(failing) > 0) stopmessage <- c(stopmessage, "extractVariableGroups")
+bunkervars <- unique(sort(c("Gross Emissions|CO2", paste0("Emissions|", gasvars$Var1, gasvars$Var2))))
 
 for (template in c("AR6", "NAVIGATE")) {
   message("\n### Check project summations for ", template)
@@ -52,8 +38,7 @@ for (template in c("AR6", "NAVIGATE")) {
     droplevels()
   
   csregi <- d %>%
-    filter(! .data$unit %in% unitList, ! grepl(varGrep, .data$variable)) %>%
-    checkSummationsRegional() %>%
+    checkSummationsRegional(skipUnits = TRUE) %>%
     rename(World = "total") %>%
     droplevels()
   checkyear <- 2050
@@ -64,7 +49,6 @@ for (template in c("AR6", "NAVIGATE")) {
   if (nrow(failregi) > 0) {
     message("For those ", template, " variables, the sum of regional values does not match the World value in 2050:")
     failregi %>% piamInterfaces::niceround() %>% print(n = 1000)
-    print(paste0(failregi$variable, collapse = ", "))
   } else {
     message("Regional summation checks are fine.")
   }
