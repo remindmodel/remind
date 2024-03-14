@@ -61,7 +61,7 @@ logmsg <- paste0(
   "  climateAssessmentYaml = '", climateAssessmentYaml, "' exists? ", file.exists(climateAssessmentYaml), "\n",
   "  climateAssessmentEmi = '",  climateAssessmentEmi,  "' exists? ", file.exists(climateAssessmentEmi), "\n",
   date(), " =================== EXTRACT REMIND emission data ===========================\n",
-  "  ar6Climate.R: Extracting REMIND emission data\n"
+  "  MAGICC7_AR6.R: Extracting REMIND emission data\n"
 )
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)
@@ -87,7 +87,7 @@ climateAssessmentInputData <- as.quitte(remindReportingFile) %>%
   write_csv(climateAssessmentEmi, quote = "none")
 
 logmsg <- paste0(
-  date(), "  ar6Climate.R: Wrote REMIND emission data to '", climateAssessmentEmi, "' for climate-assessment\n"
+  date(), "  MAGICC7_AR6.R: Wrote REMIND emission data to '", climateAssessmentEmi, "' for climate-assessment\n"
 )
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)
@@ -223,13 +223,15 @@ usePeriods <- as.numeric(grep("[0-9]+", quitte::read_mif_header(remindReportingF
 climateAssessmentData <- read.quitte(climateAssessmentOutput) %>%
   filter(period %in% usePeriods) %>%
   interpolate_missing_periods(usePeriods, expand.values = FALSE) %>%
+  mutate(variable = gsub("|MAGICCv7.5.3", "", .data$variable, fixed = TRUE)) %>%
+  mutate(variable = gsub("AR6 climate diagnostics|", "MAGICC7 AR6|", .data$variable, fixed = TRUE)) %>%
   write.mif(remindReportingFile, append = TRUE)
 
 deletePlus(remindReportingFile, writemif = TRUE)
 
 logmsg <- paste0(
   date(), " postprocessing done! Results appended to REMIND mif '", remindReportingFile, "'\n",
-  "ar6Climate.R finished\n"
+  "MAGICC7_AR6.R finished\n"
 )
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)

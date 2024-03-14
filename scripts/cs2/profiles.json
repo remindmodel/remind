@@ -44,6 +44,10 @@
 		"sections": "0",
 		"userSectionPath": "normalizePath('./scripts/cs2/magpie.Rmd')"
 	},
+        "MAGICC7_AR6": {
+                "sections": "0",
+                "userSectionPath": "normalizePath('./scripts/cs2/MAGICC7_AR6.Rmd')"
+        },
 	"mySection": {
 		"sections": "0",
 		"userSectionPath": "normalizePath('./scripts/cs2/mySection.Rmd')"

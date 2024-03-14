@@ -24,7 +24,7 @@ gases <- c("BC", "CO", "CO2", "Kyoto Gases", "NOx", "OC", "Sulfur", "VOC")
 vars <- c("", "|Energy", "|Energy Demand|Transportation", "|Energy and Industrial Processes",
           "|Energy|Demand", "|Energy|Demand|Transportation")
 gasvars <- expand.grid(gases, vars, stringsAsFactors = FALSE)
-bunkervars <- unique(sort(paste0("Emissions|", gasvars$Var1, gasvars$Var2)))
+bunkervars <- unique(sort(c("Gross Emissions|CO2", paste0("Emissions|", gasvars$Var1, gasvars$Var2))))
 
 for (template in c("AR6", "NAVIGATE")) {
   message("\n### Check project summations for ", template)
