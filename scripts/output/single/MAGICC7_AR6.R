@@ -146,7 +146,7 @@ Sys.setenv(MAGICC_WORKER_NUMBER = 1) # TODO: Get this from slurm or nproc
 #activate_venv_cmd <- paste("source", normalizePath(file.path(cfg$climate_assessment_root, "..", "venv", "bin", "activate")))
 #deactivate_venv_cmd <- "deactivate"
 
-run_harm_inf_cmd <- paste(
+runHarmoniseAndInfillCmd <- paste(
   "python", file.path(scriptsFolder, "run_harm_inf.py"),
   climateAssessmentEmi,
   climateAssessmentFolder,
@@ -154,7 +154,7 @@ run_harm_inf_cmd <- paste(
   "--infilling-database", infillingDatabaseFile
 )
 
-run_clim_cmd <- paste(
+runClimateEmulatorCmd <- paste(
   "python", file.path(scriptsFolder, "run_clim.py"),
   normalizePath(file.path(climateAssessmentFolder, paste0(baseFileName, "_harmonized_infilled.csv"))),
   climateAssessmentFolder,
@@ -176,14 +176,14 @@ logmsg <- paste0(
   "  MAGICC_WORKER_ROOT_DIR = ", Sys.getenv("MAGICC_WORKER_ROOT_DIR") ,"\n",
   "  MAGICC_WORKER_NUMBER   = ", Sys.getenv("MAGICC_WORKER_NUMBER") ,"\n",
   date(), " =================== RUN climate-assessment infilling & harmonization ===================\n",
-  run_harm_inf_cmd, "'\n"
+  runHarmoniseAndInfillCmd, "'\n"
 )
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)
 
 ############################# HARMONIZATION/INFILLING #############################
 
-system(run_harm_inf_cmd)
+system(runHarmoniseAndInfillCmd)
 
 logmsg <- paste0(date(), "  Done with harmonization & infilling\n")
 cat(logmsg)
@@ -192,14 +192,15 @@ capture.output(cat(logmsg), file = logFile, append = TRUE)
 ############################# RUNNING MODEL #############################
 
 logmsg <- paste0(
-  date(), "  Found ", nparsets, " nparsets, start climate-assessment model runs\n", run_harm_inf_cmd, "\n",
+  date(), "  Found ", nparsets, " nparsets, start climate-assessment climate emulator step\n", 
+  runHarmoniseAndInfillCmd, "\n",
   date(), " =================== RUN climate-assessment model ============================\n",
-  run_clim_cmd, "'\n"
+  runClimateEmulatorCmd, "'\n"
 )
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)
 
-system(run_clim_cmd)
+system(runClimateEmulatorCmd)
 
 ############################# POSTPROCESS CLIMATE OUTPUT #############################
 climateAssessmentOutput <- file.path(
@@ -208,7 +209,7 @@ climateAssessmentOutput <- file.path(
 )
 
 logmsg <- paste0(
-  date(), "  climate-assessment finished\n",
+  date(), "  climate-assessment climate emulator finished\n",
   date(), " =================== POSTPROCESS climate-assessment output ==================\n",
   "  climateAssessmentOutput = '", climateAssessmentOutput, "'\n"
 )
