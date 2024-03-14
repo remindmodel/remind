@@ -1646,9 +1646,9 @@ $setglobal cm_taxrc_RE  none   !! def = none   !! regexp = none|REdirect
 
 *' cm_repeatNonOpt       "should nonoptimal regions be solved again?"
 *'
-*' *  (no): no, only infeasable regions are repeated, standard setting
+*' *  (off): no, only infeasable regions are repeated, standard setting
 *' *  (yes):  also non-optimal regions are solved again, up to cm_solver_try_max
-$setglobal cm_repeatNonOpt  no  
+$setglobal cm_repeatNonOpt off  
 
 *' @stop
 
