@@ -1644,6 +1644,12 @@ $setglobal c_testOneRegi_region  EUR       !! def = EUR  !! regexp = [A-Z]{3}
 *** cm_taxrc_RE     "switch to define whether tax on (CO2 content of) energy imports is recycled to additional direct investments in renewables (wind, solar and storage)"
 $setglobal cm_taxrc_RE  none   !! def = none   !! regexp = none|REdirect
 
+*' cm_repeatNonOpt       "should nonoptimal regions be solved again?"
+*'
+*' *  (no): no, only infeasable regions are repeated, standard setting
+*' *  (yes):  also non-optimal regions are solved again, up to cm_solver_try_max
+$setglobal cm_repeatNonOpt  no  
+
 *' @stop
 
 *-------------------------------------------------------------------------------------

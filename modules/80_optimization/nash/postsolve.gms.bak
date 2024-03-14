@@ -276,8 +276,7 @@ loop(trade$(NOT tradeSe(trade)),
 
 *** critertion "infes": and are all solutions optimal?
 loop(regi,
-     if( (p80_repy(regi,'modelstat') ne 2) and (p80_repy(regi,'modelstat') ne 7)   !! 2 is optimal, 7 nonopt, 
-         and (p80_repy(regi,'modelstat') ne 0),                                    !! 0 means "was not rerun while other infes regions were rerun, so they were 2/7 in previous sol_itr"
+     if((p80_repy(regi,'modelstat') ne 2) and (p80_repy(regi,'modelstat') ne 7),
          s80_bool = 0;
          p80_messageShow("infes") = YES;
      );
@@ -407,7 +406,6 @@ display p80_repy;
 
 display "trade convergence indicators";
 display p80_surplusMaxTolerance, p80_surplusMax2100;
-display p80_defic_trade, p80_defic_sum,p80_defic_sum_rel;
 
 display "Reasons for non-convergence in this iteration (if not yet converged)";
 
