@@ -969,6 +969,11 @@ parameter
   cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 *'
 parameter
+  c_teNoLearngConvEndYr      "Year at which regional costs of non-learning technologies converge"
+;
+  c_teNoLearngConvEndYr  = 2070;   !! def = 2070
+*'
+parameter
   cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
 ;
   cm_TaxConvCheck = 1;  !! def = 1, which means tax convergence check is on  !! regexp = 0|1
@@ -1312,9 +1317,10 @@ $setglobal cm_CES_calibration_default_prices  0.01  !!  def  =  0.01
 *** cm_calibration_string "def = off, else = additional string to include in the calibration name to be used" label for your calibration run to keep calibration files with different setups apart (e.g. with low elasticities, high elasticities)
 $setglobal cm_calibration_string  off    !!  def  =  off
 *** cm_techcosts -     use regionalized or globally homogenous technology costs for certain technologies
-*** (REG) regionalized technology costs
+*** (REG) regionalized technology costs with linear convergence between 2020 and year c_teNoLearngConvEndYr
+*** (REG2040) regionalized technology costs given by p_inco0 until 2040, then stable without convergence
 *** (GLO) globally homogenous technology costs
-$setglobal cm_techcosts  REG       !! def = REG
+$setglobal cm_techcosts  REG       !! def = REG  !! regexp = REG|REG2040|GLO
 *** cfg$gms$cm_EDGEtr_scen  "the EDGE-T scenario"  # def <- "Mix1". For calibration runs: Mix1. Mix2, Mix3, Mix4 also available - numbers after the "mix" denote policy strength, with 1 corresponding roughly to Baseline/NPI, 2= NDC, 3= Budg1500, 4 = Budg800
 ***  The following descriptions are based on scenario results for EUR in 2050 unless specified otherwise.
 ***  Whenever we give numbers, please be aware that they are just there to estimate the ballpark.
