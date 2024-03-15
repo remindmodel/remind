@@ -20,6 +20,5 @@ loop(t,
   );
 );
 
-
 *** EOF ./modules/32_power/IntC/postsolve.gms
 

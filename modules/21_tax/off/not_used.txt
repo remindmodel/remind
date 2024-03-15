@@ -70,3 +70,6 @@ vm_costInvTeDir,input,only needed if tax is on
 vm_costInvTeAdj,input,only needed if tax is on
 pm_cintraw,input,only needed if tax is on
 pm_gdp,input,only needed if tax is on
+pm_cf,input,only needed if tax is on
+vm_shDemSeel,input,only needed if tax is on
+pm_teAnnuity,input,only needed if tax is on
