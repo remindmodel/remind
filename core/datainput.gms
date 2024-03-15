@@ -811,9 +811,9 @@ loop(regi,
 
 *RP* calculate annuity of a technology
 p_discountedLifetime(te) = sum(opTimeYr, (sum(regi, pm_omeg(regi,opTimeYr,te))/sum(regi,1)) / 1.06**opTimeYr.val );
-p_teAnnuity(te) = 1/p_discountedLifetime(te) ;
+pm_teAnnuity(te) = 1/p_discountedLifetime(te) ;
 
-display p_discountedLifetime, p_teAnnuity;
+display p_discountedLifetime, pm_teAnnuity;
 
 *** read in data on Nuclear capacities used as bound on vm_cap.fx("2015",regi,"tnrs","1"), vm_deltaCap.fx("2020",regi,"tnrs","1") and vm_deltaCap.up("2025" and "2030")
 parameter pm_NuclearConstraint(ttot,all_regi,all_te)       "parameter with the real-world capacities, construction and plans"

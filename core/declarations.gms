@@ -307,7 +307,7 @@ p_share_seh2_s(ttot,all_regi)                        "share of hydrogen used for
 p_share_seel_s(ttot,all_regi)                        "Share of electricity used for stationary sector (feels). [0..1]"
 
 p_discountedLifetime(all_te)                         "Sum over the discounted (@6%) depreciation factor (omega)"
-p_teAnnuity(all_te)                                  "Annuity factor of a technology"
+pm_teAnnuity(all_te)                                  "Annuity factor of a technology"
 
 ;
 

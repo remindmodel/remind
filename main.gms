@@ -1000,9 +1000,9 @@ parameter
   cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
 ;
   cm_PriceDurSlope_elh2 = 15;  !! def = 15
-*'  cm_PriceDurSlope_elh2, slope of price duration curve for electrolysis (increase means more flexibility subsidy for electrolysis H2)
+*' cm_PriceDurSlope_elh2, slope of price duration curve for electrolysis (increase means more flexibility subsidy for electrolysis H2)
 *' This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1
-*'
+*' Default value is based on data from German Langfristszenarien (see ./modules/32_power/IntC/datainput.gms).
 parameter
   cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
 ;
