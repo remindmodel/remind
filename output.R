@@ -93,7 +93,7 @@ choose_slurmConfig_output <- function(output) {
     return("direct")
 
   # Modify slurm options for reporting options that run in parallel (MAGICC) or need more memory
-  if ("ar6Climate" %in% output) {
+  if ("MAGICC7_AR6" %in% output) {
     slurm_options <- paste(slurm_options[1:3], "--tasks-per-node=12 --mem=32000")
   } else if ("nashAnalysis" %in% output) {
     slurm_options <- paste(slurm_options[1:3], "--mem=32000")
