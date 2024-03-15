@@ -113,7 +113,7 @@ loop (regi,
 o_modelstat
 $ifthen.repeatNonOpt "%cm_repeatNonOpt%" == "off"
   = smax(regi, p80_repy(regi,"modelstat")$(p80_repy(regi,"modelstat") ne 7));  !! ignoring status 7 
-$else 
+$else.repeatNonOpt
   = smax(regi, p80_repy(regi,"modelstat"));                                    !! also taking into account status 7
 $endif.repeatNonOpt
 
