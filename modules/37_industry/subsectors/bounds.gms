@@ -103,7 +103,7 @@ loop (in$( sameas(in,"feel_steel_secondary") ),
       (  0.01
       * smax(ttot$( vm_cesIO.lo(ttot,regi,in) gt sm_eps),
           vm_cesIO.lo(ttot,regi,in)
-	)
+        )
       ),
       abs(pm_cesdata(t,regi,in,"offset_quantity"))
     );
@@ -159,5 +159,26 @@ if (cm_CCS_steel ne 1 OR cm_IndCCSscen ne 1,
   vm_cap.fx(t,regi,teCCPrc,rlf) = 0.;
 );
 $endif.cm_subsec_model_steel
+
+*** Populate values for v37_demFeIndst to ease introduction of new variale.  Can
+*** be removed once the variable is established.
+loop ((t,regi,
+       sefe(entySe,entyFe),
+       fe2ppfEn(entyFe,in),
+       ppfen_industry_dyn37(in),
+       secInd37_2_pf(secInd37,in),
+       secInd37_emiMkt(secInd37,emiMkt))$(   entySeFos(entySe)
+                                          OR entySeBio(entySe)
+                                          OR entySeSyn(entySe) ),
+  v37_demFeIndst.l(t,regi,entySe,entyFe,in,emiMkt)$(
+            sum(se2fe(entySe2,entyFe,te),
+              vm_demFeSector_afterTax.l(t,regi,entySe2,entyFe,"indst",emiMkt)
+            )                                                                 )
+  = vm_cesIO.l(t,regi,in)
+  * vm_demFeSector_afterTax.l(t,regi,entySe,entyFe,"indst",emiMkt)
+  / sum(se2fe(entySe2,entyFe,te),
+      vm_demFeSector_afterTax.l(t,regi,entySe2,entyFe,"indst",emiMkt)
+    );
+);
 
 *** EOF ./modules/37_industry/subsectors/bounds.gms

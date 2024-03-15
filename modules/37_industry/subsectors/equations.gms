@@ -13,26 +13,36 @@
 ***------------------------------------------------------
 *' Industry final energy balance
 ***------------------------------------------------------
-q37_demFeIndst(t,regi,entyFe,emiMkt)$( entyFe2Sector(entyFe,"indst") ) ..
-  sum(se2fe(entySe,entyFe,te),
-    vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
+q37_demFeIndst_intermediate(t,regi,in,secInd37,emiMkt)$(
+                                          ppfen_industry_dyn37(in)
+                                      AND secInd37_2_pf(secInd37,in)
+                                      AND secInd37_emiMkt(secInd37,emiMkt) ) ..
+  sum((sefe(entySe,entyFe),
+       fe2ppfEn(entyFe,in)),
+    v37_demFeIndst(t,regi,entySe,entyFe,in,emiMkt)
   )
   =e=
-  sum(fe2ppfEn(entyFe,ppfen_industry_dyn37(in)),
-    sum((secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in)),
-      (
-          vm_cesIO(t,regi,in)
-        + pm_cesdata(t,regi,in,"offset_quantity")
-      )$(NOT secInd37Prc(secInd37))
+    ( vm_cesIO(t,regi,in)
+    + pm_cesdata(t,regi,in,"offset_quantity")
+    )$( NOT secInd37Prc(secInd37) )
+  + sum((secInd37_tePrc(secInd37,tePrc),
+         tePrc2opmoPrc(tePrc,opmoPrc),
+         fe2ppfEn(entyFe,in)),
+      pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc)
+    * vm_outflowPrc(t,regi,tePrc,opmoPrc)
     )
-  )
-  +
-  sum((secInd37_emiMkt(secInd37Prc,emiMkt),
-       secInd37_tePrc(secInd37Prc,tePrc),
-       tePrc2opmoPrc(tePrc,opmoPrc)),
-    pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc)
-    *
-    vm_outflowPrc(t,regi,tePrc,opmoPrc)
+;
+
+q37_demFeIndst(t,regi,entySe,entyFe,emiMkt)$(
+                                             sefe(entySe,entyFe)
+                                         AND entyFe2Sector(entyFe,"indst") ) ..
+  vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
+  =e=
+  sum((fe2ppfEn(entyFe,in),
+       ppfen_industry_dyn37(in),
+       secInd37_2_pf(secInd37,in),
+       secInd37_emiMkt(secInd37,emiMkt)),
+    v37_demFeIndst(t,regi,entySe,entyFe,in,emiMkt)
   )
 ;
 
@@ -86,7 +96,7 @@ q37_emiIndBase(t,regi,entyFe,secInd37) ..
       ( vm_cesIO(t,regi,in)
       - ( p37_chemicals_feedstock_share(t,regi)
         * vm_cesIO(t,regi,in)
-	)$( in_chemicals_feedstock_37(in) )
+        )$( in_chemicals_feedstock_37(in) )
       )
         *
         sum(se2fe(entySeFos,entyFe,te),
@@ -211,50 +221,41 @@ q37_chemicals_feedstocks_limit(t,regi) ..
   * p37_chemicals_feedstock_share(t,regi)
 ;
 
-*' Define the flow of non-energy feedstocks. It is used for emissions accounting and calculating plastics production
+*' Define the flow of non-energy feedstocks. It is used for emissions accounting
+*' and calculating plastics production
 q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
-  sum(se2fe(entySe,entyFe,te),
+  sum(sefe(entySe,entyFe),
     vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
   )
   =e=
-  sum((fe2ppfEn(entyFe,ppfen_industry_dyn37(in)),
-       secInd37_emiMkt(secInd37,emiMkt),
-       secInd37_2_pf(secInd37,in_chemicals_feedstock_37(in))),
-    ( vm_cesIO(t,regi,in)
-    + pm_cesdata(t,regi,in,"offset_quantity")
+    sum((sefe(entySe,entyFe),
+         fe2ppfEn(entyFe,in),
+         in_chemicals_feedstock_37(in),
+         secInd37_2_pf(secInd37,in),
+         secInd37_emiMkt(secInd37,emiMkt)),
+      v37_demFeIndst(t,regi,entySe,entyFe,in,emiMkt)
     )
   * p37_chemicals_feedstock_share(t,regi)
-  )
 ;
 
 *' Feedstocks flow has to be lower than total energy flow into the industry
-q37_feedstocksLimit(t,regi,entySe,entyFe,emiMkt)$(
-                                             sefe(entySe,entyFe)
-                                         AND sector2emiMkt("indst",emiMkt)
-                                         AND entyFe2Sector(entyFe,"indst")
-                                         AND entyFeCC37(entyFe)            ) ..
-  vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt)
-  =g=
-  vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
-;
-
-*' Feedstocks have identical fossil/biomass/synfuel shares as industry FE
-q37_feedstocksShares(t,regi,entySe,entyFe,emiMkt)$(
-                         sum(te, se2fe(entySe,entyFe,te))
-                     AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
-                     AND cm_emiscen ne 1                                   ) ..                 
-    vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
-  * sum(se2fe(entySe2,entyFe,te),
-      vm_demFENonEnergySector(t,regi,entySe2,entyFe,"indst",emiMkt)
-    )
-  =e=
+q37_feedstocksLimit(t,regi,entySe,entyFe,in,secInd37,emiMkt)$(
+                                          sefe(entySe,entyFe)
+                                      AND in_chemicals_feedstock_37(in)
+                                      AND fe2ppfEn(entyFe,in)
+                                      AND ppfen_industry_dyn37(in)
+                                      AND sector2emiMkt("indst",emiMkt)
+                                      AND secInd37_2_pf(secInd37,in)
+                                      AND secInd37_emiMkt(secInd37,emiMkt)
+                                      AND entyFe2Sector(entyFe,"indst")
+                                      AND entyFeCC37(entyFe)               ) ..
+  sum(fe2ppfEn(entyFe,in),
     vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
-  * sum(se2fe2(entySe2,entyFe,te),
-      vm_demFeSector_afterTax(t,regi,entySe2,entyFe,"indst",emiMkt)
-    )
+  )
+  =l=
+  v37_demFeIndst(t,regi,entySe,entyFe,in,emiMkt)
 ;
-
 
 *' Calculate mass of carbon contained in chemical feedstocks
 q37_FeedstocksCarbon(t,regi,sefe(entySe,entyFe),emiMkt)$(

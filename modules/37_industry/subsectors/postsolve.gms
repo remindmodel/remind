@@ -8,58 +8,35 @@
 
 *** calculation of FE Industry Prices (useful for internal use and reporting
 *** purposes)
-pm_FEPrice(ttot,regi,entyFe,"indst",emiMkt)$( abs(qm_budget.m(ttot,regi)) gt sm_eps )
-  = q37_demFeIndst.m(ttot,regi,entyFe,emiMkt)
-  / qm_budget.m(ttot,regi);
+pm_FEPrice(ttot,regi,entyFe,"indst",emiMkt)$(
+          abs(qm_budget.m(ttot,regi)) gt sm_eps
+      AND sum(sefe(entySe,entyFe),
+            vm_demFeSector_afterTax.l(ttot,regi,entySe,entyFe,"indst",emiMkt)
+          )                                                                   )
+  = sum(sefe(entySe,entyFe),
+      q37_demFeIndst.m(ttot,regi,entySe,entyFe,emiMkt)
+    / qm_budget.m(ttot,regi)
+    * vm_demFeSector_afterTax.l(ttot,regi,entySe,entyFe,"indst",emiMkt)
+    )
+  / sum(sefe(entySe,entyFe),
+      vm_demFeSector_afterTax.l(ttot,regi,entySe,entyFe,"indst",emiMkt)
+    );
 
 *** calculate reporting parameters for FE per subsector and SE origin to make R
 *** reporting easier
 
 o37_demFePrc(ttot,regi,entyFe,tePrc,opmoPrc)$(pm_specFeDem(ttot,regi,entyFe,tePrc,opmoPrc))
   = vm_outflowPrc.l(ttot,regi,tePrc,opmoPrc)
-    * pm_specFeDem(ttot,regi,entyFe,tePrc,opmoPrc)
-;
-
-*** total FE per energy carrier and emissions market in industry (sum over
-*** subsectors)
-o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
-  = sum((fe2ppfEn37(entyFe,in),secInd37_2_pf(secInd37,in),
-                         secInd37_emiMkt(secInd37,emiMkt))$(NOT secInd37Prc(secInd37)),
-      (vm_cesIO.l(ttot,regi,in)
-      +pm_cesdata(ttot,regi,in,"offset_quantity"))
-    )
-  + sum((secInd37_emiMkt(secInd37Prc,emiMkt),secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
-      o37_demFePrc(ttot,regi,entyFe,tePrc,opmoPrc)
-    )
-;
-
-*** share of subsector in FE industry energy carriers and emissions markets
-o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)$(
-                                    o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt) )
-  =
-  (
-    sum(( fe2ppfEn37(entyFe,in),
-          secInd37_2_pf(secInd37,in),
-          secInd37_emiMkt(secInd37,emiMkt))$(NOT secInd37Prc(secInd37)),
-      (vm_cesIO.l(ttot,regi,in)
-      + pm_cesdata(ttot,regi,in,"offset_quantity"))
-      )
-  + sum((secInd37_emiMkt(secInd37Prc,emiMkt),
-           secInd37_tePrc(secInd37Prc,tePrc),
-           tePrc2opmoPrc(tePrc,opmoPrc)),
-      o37_demFePrc(ttot,regi,entyFe,tePrc,opmoPrc)
-      )$(secInd37Prc(secInd37))
-  )
-  / o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
-;
-
+  * pm_specFeDem(ttot,regi,entyFe,tePrc,opmoPrc);
 
 *** FE per subsector and energy carriers
-o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
-  = sum(secInd37_emiMkt(secInd37,emiMkt),
-      o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)
-    * vm_demFeSector_afterTax.l(ttot,regi,entySe,entyFe,"indst",emiMkt)
-  );
+o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)$(
+                                             sefe(entySe,entyFe)
+                                         AND secInd37_emiMkt(secInd37,emiMkt) )
+  = sum((fe2ppfEn(entyFe,in),
+         secInd37_2_pf(secInd37,in)),
+      v37_demFeIndst.l(ttot,regi,entySe,entyFe,in,emiMkt)
+    );
 
 *** industry captured fuel CO2
 pm_IndstCO2Captured(ttot,regi,entySe,entyFe(entyFeCC37),secInd37,emiMkt)$(
@@ -68,8 +45,8 @@ pm_IndstCO2Captured(ttot,regi,entySe,entyFe(entyFeCC37),secInd37,emiMkt)$(
   = ( o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
     * sum(se2fe(entySE2,entyFe,te),
         !! collapse entySe dimension, so emission factors apply to all entyFe
-	!! regardless or origin, and therefore entySEbio and entySEsyn have
-	!! non-zero emission factors
+        !! regardless or origin, and therefore entySEbio and entySEsyn have
+        !! non-zero emission factors
         pm_emifac(ttot,regi,entySE2,entyFe,te,"co2")
       )
     ) !! subsector emissions (smokestack, i.e. including biomass & synfuels)
