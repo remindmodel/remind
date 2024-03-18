@@ -13,21 +13,21 @@
 ***------------------------------------------------------
 *' Industry final energy balance
 ***------------------------------------------------------
-q37_demFeIndst_intermediate(t,regi,in,secInd37,emiMkt)$(
-                                          ppfen_industry_dyn37(in)
+q37_demFeIndst_intermediate(t,regi,entyFe,in,secInd37,emiMkt)$(
+                                          ue_industry_dyn37(in)
                                       AND secInd37_2_pf(secInd37,in)
                                       AND secInd37_emiMkt(secInd37,emiMkt) ) ..
-  sum((sefe(entySe,entyFe),
-       fe2ppfEn(entyFe,in)),
+  sum(sefe(entySe,entyFe),
     v37_demFeIndst(t,regi,entySe,entyFe,in,emiMkt)
   )
   =e=
-    ( vm_cesIO(t,regi,in)
-    + pm_cesdata(t,regi,in,"offset_quantity")
-    )$( NOT secInd37Prc(secInd37) )
-  + sum((secInd37_tePrc(secInd37,tePrc),
-         tePrc2opmoPrc(tePrc,opmoPrc),
-         fe2ppfEn(entyFe,in)),
+    sum((ue_industry_2_pf(in,in2),
+         fe2ppfEn(entyFe,in2)),
+    ( vm_cesIO(t,regi,in2)
+    + pm_cesdata(t,regi,in2,"offset_quantity")
+    ))
+  + sum((tePrc2ue(tePrc,in),
+         tePrc2opmoPrc(tePrc,opmoPrc)),
       pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc)
     * vm_outflowPrc(t,regi,tePrc,opmoPrc)
     )
