@@ -38,7 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1429](https://github.com/remindmodel/remind/pull/1429), [#1476](https://github.com/remindmodel/remind/pull/1476)]
 - **scripts** '--test' mode for start.R and start_bundle_coupled.R does not write RData files anymore
     [[#1500](https://github.com/remindmodel/remind/pull/1500)]
-- prevent tradtional biomass spillover to other sectors than buildings
+- prevent traditional biomass spillover to other sectors than buildings
     [[#1519](https://github.com/remindmodel/remind/pull/1519)]
 - fully fix landuse and MAGICC6 variables in delayed transition runs to reference run
     [[#1565](https://github.com/remindmodel/remind/pull/1565)]
