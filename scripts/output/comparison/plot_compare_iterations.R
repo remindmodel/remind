@@ -62,8 +62,8 @@ plot_iterations <- function(runname) {
   # ---- Read REMIND reportings for all scenarios ----
   
   message("Searching for REMIND_generic_*.mif files for ", runname)
-  report_path <- Sys.glob(paste0(runname,"-rem-*/REMIND_generic_*.mif"))
-  report_path <- report_path[!grepl("with|adj",report_path)]
+  report_path <- Sys.glob(paste0(runname,"-rem-*/REMIND_generic_", runname, "-rem-*.mif"))
+  report_path <- grep(paste0(runname, "-rem-[0-9]+\\.mif$"), report_path, value = TRUE)
   
   message("Reading ", length(report_path), " REMIND reports.")
   reports <- NULL

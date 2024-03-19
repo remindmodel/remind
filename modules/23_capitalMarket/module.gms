@@ -18,7 +18,6 @@
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%capitalMarket%" == "debt_limit" $include "./modules/23_capitalMarket/debt_limit/realization.gms"
 $Ifi "%capitalMarket%" == "imperfect" $include "./modules/23_capitalMarket/imperfect/realization.gms"
-$Ifi "%capitalMarket%" == "perfect" $include "./modules/23_capitalMarket/perfect/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
 
 *** EOF ./modules/23_capitalMarket/module.gms

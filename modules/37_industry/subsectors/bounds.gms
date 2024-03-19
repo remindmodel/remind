@@ -87,7 +87,10 @@ $endif.secondary_steel_bound
 $endif.CES_parameters
 
 vm_cesIO.fx("2005",regi,ppfkap_industry_dyn37(in))
-  = pm_cesdata("2005",regi,in,"quantity");
+  = max(
+      pm_cesdata("2005",regi,in,"quantity"),
+      abS(pm_cesdata("2005",regi,in,"offset_quantity"))
+    );
 
 *** Set lower bound for secondary steel electricity to 1 % of the lowest
 *** existing lower bound (should be far above sm_eps) to avoid CONOPT getting
@@ -101,14 +104,15 @@ loop (in$( sameas(in,"feel_steel_secondary") ),
       * smax(ttot$( vm_cesIO.lo(ttot,regi,in) gt sm_eps),
           vm_cesIO.lo(ttot,regi,in)
 	)
-      )
+      ),
+      abs(pm_cesdata(t,regi,in,"offset_quantity"))
     );
 );
 
 *** Default lower bounds on all industry pfs
 vm_cesIO.lo(t,regi_dyn29(regi),in_industry_dyn37(in))$( 
                                                   0 eq vm_cesIO.lo(t,regi,in) )
-  = sm_eps;
+  = max(sm_eps, abs(pm_cesdata(t,regi,in,"offset_quantity")));
 
 *' Limit biomass solids use in industry to 25% (or historic shares, if they are higher)
 *' of baseline solids

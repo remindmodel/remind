@@ -16,12 +16,12 @@ PARAMETERS
   p37_specMatsDem(mats,teMats,opModes)                                      "Specific materials demand of a production technology and operation mode [t_input/t_output]"
   /
     ironore.idr.(ng,h2)     1.5                                             !! Iron ore demand of iron direct-reduction (independent of fuel source)
-    
+
     dri.eaf.pri             1.0                                             !! DRI demand of EAF
     scrap.eaf.sec           1.0                                             !! Scrap demand of EAF
     dri.eaf.sec             0.0
     scrap.eaf.pri           0.0
-    
+
     ironore.bfbof.pri       1.5                                             !! Iron ore demand of BF-BOF
     scrap.bfbof.sec         1.0                                             !! Scrap demand of BF-BOF
     scrap.bfbof.pri         0.0
@@ -33,10 +33,10 @@ PARAMETERS
     feels.idr.(ng,h2)       0.33                                            !! Specific electric demand for both H2 and NG operation.
     fegas.idr.ng            2.94                                            !! Specific natural gas demand when operating with NG.
     feh2s.idr.h2            1.91                                            !! Specific hydrogen demand when operating with H2.
-    
+
     feels.eaf.pri           0.91                                            !! Specific electricy demand of EAF when operating with DRI.
     feels.eaf.sec           0.67                                            !! Specific electricy demand of EAF when operating with scrap.
-    
+
     fesos.bfbof.pri         2.0                                             !! Specific coal demand of BF-BOF when operating with DRI -- this number is just a guess
     fesos.bfbof.sec         0.5                                             !! Specific coal demand of BF-BOF when operating with scrap -- this number is just a guess
   /
@@ -98,13 +98,6 @@ pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2040) = 2.0;
 
 *** abatement parameters for industry CCS MACs
 $include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
-
-$IFTHEN.Industry_CCS_markup NOT "%cm_Industry_CCS_markup%" == "off" 
-pm_abatparam_Ind(ttot,regi,all_enty,steps)$(
-                                    pm_abatparam_Ind(ttot,regi,all_enty,steps) )
-  = pm_abatparam_Ind(ttot,regi,all_enty,steps);
-  / %cm_Industry_CCS_markup%);
-$ENDIF.Industry_CCS_markup
 
 if (cm_IndCCSscen eq 1,
   if (cm_CCS_cement eq 1,
@@ -175,7 +168,7 @@ loop (industry_ue_calibration_target_dyn37(out)$( pm_energy_limit(out) ),
 
 *** Specific energy demand limits for other industry and chemicals in TWa/trUSD
 *** exponential decrease of minimum specific energy demand per value added up to 90% by 2100
-sm_tmp2 = 0.9;   !! maximum "efficiency gain" relative to 2015 baseline value 
+sm_tmp2 = 0.9;   !! maximum "efficiency gain" relative to 2015 baseline value
 sm_tmp  = 2100;   !! period in which closing could be achieved
 
 loop (industry_ue_calibration_target_dyn37(out)$( sameas(out,"ue_chemicals") OR  sameas(out,"ue_otherInd")),
@@ -266,6 +259,15 @@ p37_clinker_cement_ratio(t,regi)
 *** Cement demand reduction is implicit in the production function, so no extra
 *** costs have to be calculated.
 pm_CementDemandReductionCost(ttot,regi) = 0;
+
+*** Exogenous share of carbon in chemical feedstock that is embeded into plastics
+** calculated based on energy flows in REMIND, plastics production from (Geyer et.al., 2017) and stoichiometric calculations
+** Specifically, historical production of plastics, energy demand for chemicals sector,
+** and carbon content of polymers
+** Regionalized calculations will require regionalized data on plastics production
+** this could be extracteg from (Stegmann et.al., 2022) if a feedstock-demand-based
+** approximation is desired
+s37_plasticsShare = 0.629;
 
 *** FIXME calibration debug
 Parameter
@@ -412,44 +414,57 @@ pm_ue_eff_target("ue_otherInd")         = 0.008;
 
 
 
-*` CES mark-up cost industry
+*' CES mark-up cost industry
 
-*` The Mark-up cost on primary production factors (final energy) of the CES tree have two functions. 
-*` (1) They represent sectoral end-use cost not captured by the energy system. 
-*` (2) As they alter prices to of the CES function inputs, they affect the CES efficiency parameters during calibration 
-*` and therefore influence the efficiency of different FE CES inputs. The resulting economic subsitution rates
-*` are given by the marginal rate of subsitution (MRS) in the parameter o01_CESmrs.
-*` Mark-up cost were tuned as to obtain similar or slightly higher marginal rate of substitution (MRS) to gas/liquids than technical subsitution rates and 
-*` obtain similar specific energy consumption per value added in chemicals and other industry across high and low electrification scenarios. 
+*' The Mark-up cost on primary production factors (final energy) of the CES tree
+*' have two functions:
+*'  1. They represent sectoral end-use cost not captured by the energy system.
+*'  2. As they alter prices to of the CES function inputs, they affect the CES
+*'     efficiency parameters during calibration and therefore influence the
+*'     efficiency of different FE CES inputs. The resulting economic subsitution
+*'     rates are given by the marginal rate of subsitution (MRS) in the
+*'     parameter `o01_CESmrs`.
+*' Mark-up cost were tuned as to obtain similar or slightly higher marginal rate
+*' of substitution (MRS) to gas/liquids than technical subsitution rates and
+*' obtain similar specific energy consumption per value added in chemicals and
+*' other industry across high and low electrification scenarios.
+*'
+*' There are two ways in which mark-up cost can be set:
+*'  a. Mark-up cost on inputs in `ppfen_MkupCost37`: Those are counted as
+*'     expenses in the budget and set by the parameter `p37_CESMkup`.
+*'  b. Mark-up cost on other inputs: Those are budget-neutral and implemented as
+*'     a tax.  They are set by the parameter `pm_tau_ces_tax`.
+*'
+*' Mark-up cost in industry are modeled without budget-effect (b).
+
+*' Default industry mark-up cost with budget effect:
+p37_CESMkup(ttot,regi,in) = 0;
+
+*' Default industry mark-up cost without budget effect:
+*' mark-up cost on electrification (hth_electricity inputs), to reach > 1 MRS to
+*' gas/liquids as technical efficiency gains from electrification
+pm_tau_ces_tax(t,regi,"feelhth_chemicals")    = 100 * sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feelhth_otherInd")     = 300 * sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feel_steel_secondary") = 100 * sm_TWa_2_MWh * 1e-12;
+
+*' mark-up cost on H2 inputs, to reach MRS around 1 to gas/liquids as similar
+*' technical efficiency
+pm_tau_ces_tax(t,regi,"feh2_chemicals") = 100 * sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feh2_otherInd")  =  50 * sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feh2_steel")     =  50 * sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feh2_cement")    = 100 * sm_TWa_2_MWh * 1e-12;
 
 
-*` There are two ways in which mark-up cost can be set:
-*` (a) Mark-up cost on inputs in ppfen_MkupCost37: Those are counted as expenses in the budget and set by the parameter p37_CESMkup. 
-*` (b) Mark-up cost on other inputs: Those are budget-neutral and implemented as a tax. They are set by the parameter pm_tau_ces_tax. 
+*' overwrite or extent CES markup cost if specified by switch
+$ifthen.CESMkup "%cm_CESMkup_ind%" == "manual"
+loop (ppfen_industry_dyn37(in)$( p37_CESMkup_input(in) ),
+  p37_CESMkup(ttot,regi,in)$( ppfen_MkupCost37(in) )
+  = p37_CESMkup_input(in);
 
-*` Mark-up cost in industry are modeled without budget-effect (b).
-
-*` Default industry mark-up cost with budget effect:
-p37_CESMkup(t,regi,in) = 0;
-
-*` Default industry mark-up cost without budget effect:
-*` mark-up cost on electrification (hth_electricity inputs), to reach >1 MRS to gas/liquids as technical efficiency gains from electrification
-pm_tau_ces_tax(t,regi,"feelhth_chemicals") = 100* sm_TWa_2_MWh * 1e-12;
-pm_tau_ces_tax(t,regi,"feelhth_otherInd") = 300* sm_TWa_2_MWh * 1e-12;
-pm_tau_ces_tax(t,regi,"feel_steel_secondary") = 100* sm_TWa_2_MWh * 1e-12;
-
-*` mark-up cost on H2 inputs, to reach MRS around 1 to gas/liquids as similar technical efficiency
-pm_tau_ces_tax(t,regi,"feh2_chemicals") = 100* sm_TWa_2_MWh * 1e-12;
-pm_tau_ces_tax(t,regi,"feh2_otherInd") = 50* sm_TWa_2_MWh * 1e-12;
-pm_tau_ces_tax(t,regi,"feh2_steel") = 50* sm_TWa_2_MWh * 1e-12;
-pm_tau_ces_tax(t,regi,"feh2_cement") = 100* sm_TWa_2_MWh * 1e-12;
-
-
-*` overwrite or extent CES markup cost if specified by switch
-$ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard"
-  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in) AND ppfen_MkupCost37(in)) = p37_CESMkup_input(in);
-  pm_tau_ces_tax(t,regi,in)$(p37_CESMkup_input(in) AND (NOT ppfen_MkupCost37(in))) = p37_CESMkup_input(in);
-$endIf.CESMkup
+  pm_tau_ces_tax(ttot,regi,in)$( NOT ppfen_MkupCost37(in) )
+  = p37_CESMkup_input(in);
+);
+$endif.CESMkup
 
 display p37_CESMkup;
 display pm_tau_ces_tax;
@@ -536,6 +551,13 @@ loop ((regi,t2)$( p37_steel_secondary_max_share_scenario(t2,regi) ),
 display "scenario limits for maximum secondary steel share",
         p37_steel_secondary_max_share;
 $endif.sec_steel_scen
+Parameter p37_chemicals_feedstock_share(ttot,all_regi)   "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_chemicals_feedstock_share.cs4r";
+$offdelim
+  /
+;
 
 *' load baseline industry ETS solids demand
 if (cm_startyear ne 2005,   !! not a BAU scenario

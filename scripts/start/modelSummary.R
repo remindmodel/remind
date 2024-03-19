@@ -97,7 +97,7 @@ modelSummary <- function(folder = ".", gams_runtime = NULL) {
     } else {
       message("No failed markets in fulldata.gdx.")
     }
-    failedtaxes <- quitte::as.quitte(readGDX(file.path(folder, "fulldata.gdx"), "p80_taxrev_dev"))
+    failedtaxes <- quitte::as.quitte(readGDX(file.path(folder, "fulldata.gdx"), "p80_convNashTaxrev_iter"))
     failedtaxes <- droplevels(dplyr::filter(failedtaxes, !!rlang::sym("value") == 1))
     if (nrow(failedtaxes) > 0) {
       message("Failed tax convergence in fulldata.gdx:")

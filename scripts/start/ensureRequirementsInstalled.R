@@ -22,6 +22,7 @@ ensureRequirementsInstalled <- function(
   if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.3.4") {
     installedPackages <- piamenv::fixDeps(ask = ask)
     piamenv::stopIfLoaded(names(installedPackages))
+    piamenv::checkDeps()
   } else {
     stop(paste0("REMIND requires piamenv >= 0.3.4, please run the following to update it:\n",
                 "renv::install('piamenv')\n", "and re-run ", rerunPrompt, "."))

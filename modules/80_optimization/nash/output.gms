@@ -24,7 +24,7 @@ putclose prices_NASH;
 *** The file is formated in columns as follows: | Experiment title | Region | Year | Iteration | Market | surplus | price |  ..
 file nash_info_convergence / "nash_info_convergence.csv" / ;
 put nash_info_convergence;
-put 'Scenario',',','Region',',','Year',',','Iteration',',',"Market",",","p80_surplus",",","p80_pvp_itr",",","p80_surplusMax",",","p80_surplusMaxRel",",":0 ;
+put 'Scenario',',','Region',',','Year',',','Iteration',',',"Market",",","p80_surplus",",","p80_pvp_itr",",","p80_surplusMax_iter",",","p80_surplusMaxRel",",":0 ;
 put /;
 loop(ttot$(ttot.val ge 2005),
     loop(iteration$(iteration.val le cm_iteration_max),
@@ -36,7 +36,7 @@ loop(ttot$(ttot.val ge 2005),
 	    put trade.tl,",";
 	    put p80_surplus(ttot,trade,iteration):12:8,",";
 	    put p80_pvp_itr(ttot,trade,iteration):12:8,"," ;
-	    put p80_surplusMax(trade,iteration,ttot):12:8,",";
+	    put p80_surplusMax_iter(trade,iteration,ttot):12:8,",";
 	    put p80_surplusMaxRel(trade,iteration,ttot):12:8,",";
 	    put /;
 	);

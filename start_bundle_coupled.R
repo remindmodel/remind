@@ -155,6 +155,19 @@ if (length(argv) > 0) {
   message("")
 }
 
+if (! file.exists("output")) dir.create("output")
+
+ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
+
+errorsfound <- 0
+startedRuns <- NULL
+finishedRuns <- NULL
+waitingRuns <- NULL
+qosRuns <- list()
+deletedFolders <- NULL
+
+stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
+
 message("path_remind:           ", if (dir.exists(path_remind)) green else red, path_remind, NC)
 message("path_magpie:           ", if (dir.exists(path_magpie)) green else red, path_magpie, NC)
 message("path_settings_coupled: ", if (file.exists(path_settings_coupled)) green else red, path_settings_coupled, NC)
@@ -165,18 +178,10 @@ message("prefix_runname:        ", prefix_runname)
 message("n600_iterations:       ", n600_iterations)
 message("run_compareScenarios:  ", run_compareScenarios)
 
-if (! file.exists("output")) dir.create("output")
-
-ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
-
-errorsfound <- 0
-startedRuns <- 0
-finishedRuns <- 0
-waitingRuns <- 0
-qosRuns <- NULL
-deletedFolders <- 0
-
-stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
+if (any(! file.exists(c(path_settings_coupled, path_settings_remind))) ||
+    any(! dir.exists(c(path_remind, path_magpie, path_remind_oldruns, path_magpie_oldruns)))) {
+  stop("Missing files or directories, see in red above.")
+}
 
 if ("--gamscompile" %in% flags && ! file.exists("input/source_files.log")) {
   message("\n### Input data missing, need to compile REMIND first (2 min.)\n")
@@ -241,6 +246,8 @@ message("max_iterations:        ", max_iterations)
 
 common <- intersect(rownames(settings_remind), rownames(scenarios_coupled))
 knownRefRuns <- apply(expand.grid(prefix_runname , common, "-rem-", seq(max_iterations)), 1, paste, collapse="")
+knownRefRuns <- gsub(" ", "", knownRefRuns) # if max_iterations has two digits apply in the line above introduces whitespaces before the single-digit iterations ("rem- 9"). Remove them.
+
 if (! identical(common, character(0))) {
   message("\n################################\n")
   message("The following ", length(common), " scenarios will be started:")
@@ -259,12 +266,9 @@ for (scen in common) {
   }
 }
 
+# assign qos_default as defined above to runs without qos specification
 if (! "qos" %in% names(scenarios_coupled)) scenarios_coupled[, "qos"] <- qos_default
 scenarios_coupled[, "qos"] <- ifelse(is.na(scenarios_coupled[, "qos"]), qos_default, scenarios_coupled[, "qos"])
-if (file.exists("/p") && sum(scenarios_coupled[common, "qos"] == "priority", na.rm = TRUE) > 4) {
-  message("\nAttention, you want to start more than 4 runs with qos=priority mode.")
-  message("They may not be able to run in parallel on the PIK cluster.")
-}
 
 ####################################################
 ######## PREPARE AND START COUPLED RUNS ############
@@ -281,7 +285,6 @@ for(scen in common){
   runname      <- paste0(prefix_runname, scen)            # name of the run that is used for the folder names
   path_report  <- NULL                                    # sets the path to the report REMIND is started with in the first loop
   qos          <- scenarios_coupled[scen, "qos"]          # set the SLURM quality of service (priority/short/medium/...)
-  qosRuns[qos] <- if (isTRUE(qosRuns[qos] > 0)) qosRuns[qos] + 1 else 1 # count
   sbatch       <- scenarios_coupled[scen, "sbatch"]       # retrieve sbatch options from scenarios_coupled
   if (is.null(sbatch) || is.na(sbatch)) sbatch <- ""      # if sbatch could not be found in scenarios_coupled use empty string
   start_iter_first <- 1                                   # iteration to start the coupling with
@@ -361,7 +364,7 @@ for(scen in common){
   } else if (iter_rem >= max_iterations & iter_mag >= max_iterations - 1) {
     message("This scenario is already completed with rem-", iter_rem, " and mag-", iter_mag, " and max_iterations=", max_iterations, ".")
     scenarios_coupled[scen, "start_scenario"] <- FALSE
-    finishedRuns <- finishedRuns + 1
+    finishedRuns <- c(finishedRuns, scen)
     next
   } else {
     message(red, "Error", NC, ": REMIND has finished ", iter_rem, " runs, but MAgPIE ", iter_mag, " runs. Something is wrong!")
@@ -528,7 +531,7 @@ for(scen in common){
         message("Folder ", foldername, " exists but incomplete. Delete it and rerun (else will be skipped)? y/N")
         if (tolower(gms::getLine()) %in% c("y", "yes")) {
           unlink(foldername, recursive = TRUE, force = TRUE)
-          deletedFolders <- deletedFolders + 1
+          deletedFolders <- c(deletedFolders, basename(foldername))
         } else {
           start_now <- FALSE
         }
@@ -543,7 +546,10 @@ for(scen in common){
       numberOfTasks <- 1
     }
 
-    cfg_rem <- checkFixCfg(cfg_rem, remindPath = path_remind)
+    cfg_rem <- checkFixCfg(cfg_rem, remindPath = path_remind, testmode = "--test" %in% flags)
+    if ("errorsfoundInCheckFixCfg" %in% names(cfg_rem)) {
+      errorsfound <- errorsfound + cfg_rem$errorsfoundInCheckFixCfg
+    }
 
     Rdatafile <- paste0(fullrunname, ".RData")
     message("Save settings to ", Rdatafile)
@@ -556,7 +562,7 @@ for(scen in common){
   # convert from logi to character so file.exists does not throw an error
   path_report <- as.character(path_report)
 
-
+  qosRuns[qos] <- if (is.null(qosRuns[[qos]])) 1 else qosRuns[[qos]] + 1 # count
   message("\nSUMMARY")
   message("runname       : ", runname)
   message("Start iter    : ", if (scenarios_coupled[scen, "start_magpie"]) "mag-" else "rem-", start_iter_first)
@@ -590,7 +596,7 @@ for(scen in common){
       message(red, "Error", NC, ": Cannot start because ", paste(setdiff(missingRefRuns, knownRefRuns), collapse = ", "), " not found!")
       errorsfound <- errorsfound + length(setdiff(missingRefRuns, knownRefRuns))
     } else {
-      waitingRuns <- waitingRuns + 1
+      waitingRuns <- c(waitingRuns, fullrunname)
     }
   }
 }
@@ -607,12 +613,16 @@ for (scen in common) {
   Rdatafile <- paste0(fullrunname, ".RData")
   runEnv <- new.env()
   load(Rdatafile, envir = runEnv)
-
   if (runEnv$start_now) {
     if (errorsfound > 0) {
       message("Errors found: run ", fullrunname, " NOT submitted to the cluster.")
     } else {
-      startedRuns <- startedRuns + 1
+      startedRuns <- c(startedRuns, fullrunname)
+      if (isTRUE(scenarios_coupled[scen, "start_magpie"])) {
+        # MAgPIE alone does not need medium
+        runEnv$qos <- gsub("^(medium|standby)$", "auto", runEnv$qos)
+        runEnv$numberOfTasks <- 3
+      }
       if ("--test" %in% flags || "--gamscompile" %in% flags) {
         message("Test mode: run ", fullrunname, " NOT submitted to the cluster.")
       } else {
@@ -624,7 +634,7 @@ for (scen in common) {
           runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
         }
         slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
-          " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
+          " --open-mode=append --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
           if (runEnv$numberOfTasks == 1) " --mem=8000"), runEnv$sbatch)
         slurmCommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
         message(slurmCommand)
@@ -639,10 +649,6 @@ for (scen in common) {
 }
 
 if (! "--test" %in% flags && ! "--gamscompile" %in% flags) {
-  if (is.null(renv::project())) {
-    system(paste("cp", file.path(path_remind, ".Rprofile "), file.path(path_magpie, ".Rprofile")))
-    message("\nCopied REMIND .Rprofile to MAgPIE folder.")
-  }
   cs_runs <- paste0(file.path("output", paste0(prefix_runname, common, "-rem-", max_iterations)), collapse = ",")
   cs_name <- paste0("compScen-all-rem-", max_iterations)
   cs_qos <- if (! isFALSE(run_compareScenarios)) run_compareScenarios else "short"
@@ -656,11 +662,12 @@ if (! "--test" %in% flags && ! "--gamscompile" %in% flags) {
 
 message("#### Summary ####")
 message("\nDone.", if(any(c("--test", "--gamscompile") %in% flags)) " You are in TEST or gamscompile mode, no runs were actually started.")
-message("- ", finishedRuns, " runs already finished.")
-message("- ", deletedFolders, " folders deleted.")
-message("- ", startedRuns, " runs started.")
-message("- ", waitingRuns, " runs are waiting.")
-message("qos statistics: ", paste0(names(qosRuns), ": ", qosRuns, collapse = ", "), ".")
+message("- ", length(finishedRuns), " runs already finished: ", paste(finishedRuns, collapse = ", "))
+message("- ", length(deletedFolders), " folders deleted: ", paste(deletedFolders, collapse = ", "))
+message("- ", length(startedRuns), " runs started: ", paste(startedRuns, collapse = ", "))
+message("- ", length(waitingRuns), " runs are waiting: ", paste(waitingRuns, collapse = ", "))
+message("- qos statistics: ", paste0(names(qosRuns), ": ", unlist(qosRuns), collapse = ", "), ".",
+        if (isTRUE(qosRuns[["priority"]] > 4)) " More than 4 runs with qos=priority. They may not be able to run in parallel on the PIK cluster.")
 # make sure we have a non-zero exit status if there were any errors
 if (0 < errorsfound) {
   stop(red, errorsfound, NC, " errors were identified, check logs above for details.")

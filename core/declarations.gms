@@ -19,7 +19,6 @@ parameters
 ***prices
 pm_pvp(ttot,all_enty)                                "Price on commodity markets",
 p_pvpRef(ttot,all_enty)                              "Price on commodity markets - imported from REF gdx",
-pm_pvpRegi(ttot,all_regi,all_enty)                   "prices of traded commodities - regional. only used for permit trade"
 
 p_pvpRegiBeforeStartYear(ttot,all_regi,all_enty)     "prices of traded commodities before start year - regional. only used for permit trade"
 
@@ -63,7 +62,7 @@ o_change_totCO2emi_peakBudgYr                         "Measure for how much the 
 p_factorRescale_taxCO2(iteration)                     "Multiplicative factor for rescaling the CO2 price to reach the target"
 p_factorRescale_taxCO2_Funneled(iteration)            "Multiplicative factor for rescaling the CO2 price to reach the target - limited by an iteration-dependent funnel"
 o_taxCO2eq_Itr_1regi(ttot,iteration)                  "CO2 taxed in the last region, tracked over iterations for debugging"
-o_pkBudgYr_flipflop(iteration)                        "Counter that tracks if flipfloping of cm_peakBudgYr occured in the last iterations"
+o_pkBudgYr_flipflop(iteration)                        "Counter that tracks if flipfloping of c_peakBudgYr occured in the last iterations"
 o_taxCO2eq_afterPeakShiftLoop_Itr_1regi(ttot, iteration) "CO2 taxed in the last region, after the loop that shifts peakBudgYr, tracked over iterations for debugging"
 
 ***----------------------------------------------------------------------------------------
@@ -121,6 +120,8 @@ p_extRegiccsinjecrateRegi(ext_regi)                         "Regional CCS inject
 pm_dataeta(tall,all_regi,all_te)                            "regional eta data"
 p_emi_quan_conv_ar4(all_enty)                               "conversion factor for various gases to GtCeq"
 pm_emifac(tall,all_regi,all_enty,all_enty,all_te,all_enty)  "emission factor by technology for all types of emissions in emiTe"
+pm_emifacNonEnergy(ttot,all_regi,all_enty,all_enty,emi_sectors,all_enty)                "emission factor for non-energy fedstocks. For now only for Chemicals Industry [GtC per TWa]"
+pm_incinerationRate(ttot,all_regi)                          "share of plastic waste that gets incinerated [fraction]"
 pm_omeg (all_regi,opTimeYr,all_te)                          "technical depreciation parameter, gives the share of a capacity that is still usable after tlt. [none/share, value between 0 and 1]"
 p_aux_lifetime(all_regi,all_te)                             "auxiliary parameter for calculating life times, calculated externally in excel sheet"
 pm_pedem_res(ttot,all_regi,all_te)                          "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
@@ -209,7 +210,7 @@ p_capCum(tall, all_regi,all_te)                      "vm_capCum from input.gdx f
 pm_capCumForeign(ttot,all_regi,all_te)               "parameter for learning externality (cumulated capacity of other regions except regi)"
 pm_SolNonInfes(all_regi)                             "model status from last iteration. 1 means status 2 or 7, 0 for all other status codes"
 
-p_cintraw(all_enty)                                  "carbon intensity of fossils [GtC per TWa]"
+pm_cintraw(all_enty)                                  "carbon intensity of fossils [GtC per TWa]"
 
 p_CapFixFromRWfix(ttot,all_regi,all_te)              "parameter for fixing capacity variable to Real-World values in 2010/2015"
 p_deltaCapFromRWfix(ttot,all_regi,all_te)            "parameter with resulting deltacap values resulting from fixing capacity to real-world values in 2010/2015"
@@ -338,11 +339,10 @@ vm_co2eqGlob(ttot)                                   "global emissions to be bal
 vm_co2eq(ttot,all_regi)                              "total emissions measured in co2 equivalents ATTENTION: content depends on multigasscen. [GtCeq]"
 vm_co2eqMkt(ttot,all_regi,all_emiMkt)                                         "total emissions per market measured in co2 equivalents ATTENTION: content depends on multigasscen. [GtCeq]"
 v_co2eqCum(all_regi)                                 "cumulated vm_co2eq emissions for the first budget period.  [GtCeq]"
-vm_banking(ttot,all_regi)                            "banking of emission permits"
 v_adjFactor(tall,all_regi,all_te)                    "factor to multiply with investment costs for adjustment costs"
 v_adjFactorGlob(tall,all_regi,all_te)                "factor to multiply with investment costs for adjustment costs - global scale"
-v_costInvTeDir(tall,all_regi,all_te)                 "annual direct investments into a technology"
-v_costInvTeAdj(tall,all_regi,all_te)                 "annual investments into a technology due to adjustment costs"
+vm_costInvTeDir(tall,all_regi,all_te)                 "annual direct investments into a technology"
+vm_costInvTeAdj(tall,all_regi,all_te)                 "annual investments into a technology due to adjustment costs"
 vm_usableSe(ttot,all_regi,entySe)                    "usable se before se2se and MP/XP (pe2se, +positive oc from pe2se, -storage losses). [TWa]"
 vm_usableSeTe(ttot,all_regi,entySe,all_te)           "usable se produced by one te (pe2se, +positive oc from pe2se, -storage losses). [TWa]"
 vm_costFuBio(ttot,all_regi)                          "fuel costs from bio energy [tril$US]"
@@ -388,6 +388,7 @@ vm_prodPe(ttot,all_regi,all_enty)                    "pe production. [TWa, Urani
 vm_demSe(ttot,all_regi,all_enty,all_enty,all_te)     "se demand. [TWa]"
 vm_prodSe(tall,all_regi,all_enty,all_enty,all_te)    "se production. [TWa]"
 vm_prodFe(ttot,all_regi,all_enty,all_enty,all_te)    "fe production. [TWa]"
+vm_demFENonEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "energy flows of non-energy feedstocks [TWa]"
 vm_demFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)          "fe demand per sector and emission market. Taxes should be applied to this variable or variables closer to the supply side whenever possible so the marginal prices include the tax effects. [TWa]"
 vm_demFeSector_afterTax(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "fe demand per sector and emission market after tax. Demand sectors should use this variable in their fe balance equations so demand side marginals include taxes effects. [TWa]"
 v_costFu(ttot,all_regi)                              "fuel costs"
@@ -407,7 +408,6 @@ v_co2capturevalve(ttot,all_regi)                            "CO2 emitted right a
 vm_prodUe(ttot,all_regi,all_enty,all_enty,all_te)    "Useful energy production [TWa]"
 
 vm_capEarlyReti(tall,all_regi,all_te)                "fraction of early retired capital"
-vm_otherFEdemand(ttot,all_regi,all_enty)             "final energy demand from no transformation technologies (e.g. enhanced weathering)"
 
 vm_demSeOth(ttot,all_regi,all_enty,all_te)	         "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
 vm_prodSeOth(ttot,all_regi,all_enty,all_te)	         "other sety production from certain technologies, have to be calculated in additional equations [TWa]"
@@ -419,6 +419,13 @@ v_shfe(ttot,all_regi,all_enty,emi_sectors)           "share of final energy in s
 v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids in sector final energy [0..1]"
 
 vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
+
+vm_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)             "Carbon flow: carbon contained in chemical feedstocks [GtC]"
+vm_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)               "Carbon flow: carbon contained in plastics [GtC]"
+vm_plasticWaste(ttot,all_regi,all_enty,all_enty,all_emiMkt)                 "Carbon flow: carbon contained in plastic waste [GtC]"
+vm_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)      "Carbon flow: carbon contained in feedstocks with unknown fate (not plastics)(assumed to go back into the atmosphere) [GtC]"
+vm_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "Emissions from incineration of plastic waste [GtC]"
+vm_nonIncineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)       "Carbon flow: carbon contained in plastics that are not incinerated [GtC]"
 
 v_changeProdStartyearAdj(ttot,all_regi,all_te)       "Absolute effect size of changing output with respect to the reference run for each te"
 vm_changeProdStartyearCost(ttot,all_regi,all_te)     "Costs for changing output with respect to the reference run for each te"
@@ -587,7 +594,7 @@ sm_DpGJ_2_TDpTWa                                      "multipl. factor to conver
 s_gwpCH4                                              "Global Warming Potentials of CH4, AR5 WG1 CH08 Table 8.7"     /28/
 s_gwpN2O                                              "Global Warming Potentials of N2O, AR5 WG1 CH08 Table 8.7"     /265/
 sm_dmac                                               "step in MAC functions [US$]"                                                                   /5/
-s_macChange                                           "maximum yearly increase of relative abatement in percentage points of maximum abatement. [0..1]"      /0.05/
+sm_macChange                                           "maximum yearly increase of relative abatement in percentage points of maximum abatement. [0..1]"      /0.05/
 sm_tgn_2_pgc                                           "conversion factor 100-yr GWP from TgN to PgCeq"
 sm_tgch4_2_pgc                                         "conversion factor 100-yr GWP from TgCH4 to PgCeq"
 
@@ -602,7 +609,7 @@ s_c_so2                                               "constant, see S. Smith, 2
 s_ccsinjecrate                                        "CCS injection rate factor. [1/a]"
 
 s_t_start                                             "start year of emission budget"
-cm_peakBudgYr                                         "date of net-zero CO2 emissions for peak budget runs without overshoot"
+c_peakBudgYr                                         "date of net-zero CO2 emissions for peak budget runs without overshoot"
 
 sm_endBudgetCO2eq                                     "end time step of emission budget period 1"
 sm_budgetCO2eqGlob                                    "budget for global energy-emissions in period 1"
@@ -626,9 +633,9 @@ sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 
 ***----------------------------------------------------------------------------------------
 *----------------------------------------------carbon intensities of coal, oil, and gas
-p_cintraw("pecoal") = 26.1 / s_zj_2_twa;
-p_cintraw("peoil")  = 20.0 / s_zj_2_twa;
-p_cintraw("pegas")  = 15.0 / s_zj_2_twa;
+pm_cintraw("pecoal") = 26.1 / s_zj_2_twa;
+pm_cintraw("peoil")  = 20.0 / s_zj_2_twa;
+pm_cintraw("pegas")  = 15.0 / s_zj_2_twa;
 
 ***----------------------------------------------------------------------------------------
 ***                                   F I L E S

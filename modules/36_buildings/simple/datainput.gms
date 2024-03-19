@@ -89,34 +89,34 @@ $ifthen.feShareScenario "%cm_feShareLimits%" == "incumbents"
 $endif.feShareScenario
 
 ***-----------------------------------------------------------------------------
-*` CES mark-up cost buildings
+*' CES mark-up cost buildings
 ***-----------------------------------------------------------------------------
 
-*` The Mark-up cost on primary production factors (final energy) of the CES tree have two functions. 
-*` (1) They represent sectoral end-use cost not captured by the energy system. 
-*` (2) As they alter prices to of the CES function inputs, they affect the CES efficiency parameters during calibration 
-*` and therefore influence the efficiency of different FE CES inputs. The resulting economic subsitution rates
-*` are given by the marginal rate of subsitution (MRS) in the parameter o01_CESmrs.
+*' The Mark-up cost on primary production factors (final energy) of the CES tree have two functions. 
+*' (1) They represent sectoral end-use cost not captured by the energy system. 
+*' (2) As they alter prices to of the CES function inputs, they affect the CES efficiency parameters during calibration 
+*' and therefore influence the efficiency of different FE CES inputs. The resulting economic subsitution rates
+*' are given by the marginal rate of subsitution (MRS) in the parameter o01_CESmrs.
 
-*` There are two types of CES mark-up cost:
-*` (a) Mark-up cost on inputs in ppfen_MkupCost37: Those are counted as expenses in the budget and set by the parameter p37_CESMkup. 
-*` (b) Mark-up cost on other inputs: Those are budget-neutral and implemented as a tax. They are set by the parameter pm_tau_ces_tax. 
+*' There are two types of CES mark-up cost:
+*' (a) Mark-up cost on inputs in ppfen_MkupCost36: Those are counted as expenses in the budget and set by the parameter p36_CESMkup.
+*' (b) Mark-up cost on other inputs: Those are budget-neutral and implemented as a tax. They are set by the parameter pm_tau_ces_tax. 
 
-*` Mark-up cost in buildings are modeled with budget-effect (a).
+*' Mark-up cost in buildings are modeled with budget-effect (a).
 
-*` default values of CES mark-up with budget effect:
-p36_CESMkup(t,regi,in) = 0;
-*` mark-up cost on heat pumps and district heating are incurred as actual cost to the budget (see option (a) above)
-*` place markup cost on heat pumps electricity of 200 USD/MWh(el) to represent demand-side cost of electrification
-*` and reach higher efficiency during calibration to model higher energy efficiency of heat pumps
-p36_CESMkup(t,regi,"feelhpb") = 200 * sm_TWa_2_MWh * 1e-12;
-*` place markup cost on district heating of 25 USD/MWh(heat) to represent additional t&d cost of expanding district heating networks for buildings
-*` which makes district heating in buildings more expensive than in industry
-p36_CESMkup(t,regi,"feheb") = 25 * sm_TWa_2_MWh * 1e-12;
+*' default values of CES mark-up with budget effect:
+p36_CESMkup(ttot,regi,in) = 0;
+*' mark-up cost on heat pumps and district heating are incurred as actual cost to the budget (see option (a) above)
+*' place markup cost on heat pumps electricity of 200 USD/MWh(el) to represent demand-side cost of electrification
+*' and reach higher efficiency during calibration to model higher energy efficiency of heat pumps
+p36_CESMkup(ttot,regi,"feelhpb") = 200 * sm_TWa_2_MWh * 1e-12;
+*' place markup cost on district heating of 25 USD/MWh(heat) to represent additional t&d cost of expanding district heating networks for buildings
+*' which makes district heating in buildings more expensive than in industry
+p36_CESMkup(ttot,regi,"feheb") = 25 * sm_TWa_2_MWh * 1e-12;
 
-*` overwrite or extent CES markup cost if specified by switch
+*' overwrite or extent CES markup cost if specified by switch
 $ifThen.CESMkup not "%cm_CESMkup_build%" == "standard"
-  p36_CESMkup(t,regi,in)$(p36_CESMkup_input(in)
+  p36_CESMkup(ttot,regi,in)$(p36_CESMkup_input(in)
                           AND ppfen_MkupCost36(in)) =
     p36_CESMkup_input(in);
   pm_tau_ces_tax(t,regi,in)$(p36_CESMkup_input(in)

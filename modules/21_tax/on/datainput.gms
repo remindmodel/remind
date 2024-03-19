@@ -204,12 +204,12 @@ elseif (cm_DiscRateScen eq 4),
 *** works only on PEs at the moment as implementation requires pm_pvp
 *** which is only available for the commodities of the nash markets
 *** zero by default
-p21_tau_Import(t,regi,tradePe) = 0;
+p21_tau_Import(t,regi,tradePe,tax_import_type_21) = 0;
 *** read in import tax values from switch cm_import_tax
 $ifThen.import not "%cm_import_tax%" == "off" 
-loop((ext_regi,tradePe)$(p21_import_tax(ext_regi,tradePe)),
+loop((ext_regi,tradePe,tax_import_type_21)$(p21_import_tax(ext_regi,tradePe,tax_import_type_21)),
   loop(regi$regi_groupExt(ext_regi,regi),
-    p21_tau_Import(t,regi,tradePe) =  p21_import_tax(ext_regi,tradePe)
+    p21_tau_Import(t,regi,tradePe,tax_import_type_21) =  p21_import_tax(ext_regi,tradePe,tax_import_type_21)
   );
 );
 $endif.import
@@ -241,5 +241,10 @@ pm_tau_ces_tax(ttot,regi,all_in) = 0;
 p21_bio_EF(ttot,all_regi) = 0;
 p21_bio_EF(ttot,regi_bio_EFTax21) = cm_bioenergy_EF_for_tax * (1/1000 * 12/44) / (sm_EJ_2_TWa);
 
+*** Read in direct investments into renewables from reference scenario
+$ifthen.importtaxrc %cm_taxrc_RE% == "REdirect"
+Execute_Loadpoint 'input_ref' p21_ref_costInvTeDir_RE = vm_costInvTeDir.l;
+Execute_Loadpoint 'input_ref' p21_ref_costInvTeAdj_RE = vm_costInvTeAdj.l;
+$endif.importtaxrc
 
 *** EOF ./modules/21_tax/on/datainput.gms

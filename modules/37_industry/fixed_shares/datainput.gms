@@ -150,16 +150,18 @@ $endif.feShareScenario
 
 $ENDIF.feShare
 
-*** FS: CES markup cost industry
-p37_CESMkup(t,regi,in) = 0;
-*** in standard case, apply markup-cost of 0.5 trUSD/TWa to feeli to represent demand-side cost of electrification and 
-*** obtain a higher efficiency in calibration to mimic energy efficiency gains with increasing electricity share
-p37_CESMkup(t,regi,"feeli") = 0.5;
+*** CES markup cost industry
+p37_CESMkup(ttot,regi,in) = 0;
+*** in standard case, apply markup-cost of 0.5 trUSD/TWa to feeli to represent
+*** demand-side cost of electrification and obtain a higher efficiency in
+*** calibration to mimic energy efficiency gains with increasing electricity
+*** share.
+p37_CESMkup(ttot,regi,"feeli") = 0.5;
 
 *** overwrite or extent CES markup cost if specified by switch
-$ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
-  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in)) = p37_CESMkup_input(in);
-$endIf.CESMkup
+$ifthen.CESMkup "%cm_CESMkup_ind%" == "manual" 
+  p37_CESMkup(ttot,regi,in)$( p37_CESMkup_input(in) ) = p37_CESMkup_input(in);
+$endif.CESMkup
 
 display p37_CESMkup;
 

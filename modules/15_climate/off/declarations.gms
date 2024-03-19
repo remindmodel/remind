@@ -21,6 +21,7 @@ p15_oghgf_minaer               "exogenous forcings from RCP: mineral dust",
 p15_oghgf_nitaer               "exogenous forcings from RCP: nitrates",
 p15_emicapregi(tall,all_regi)  "regional emission caps, used for calculation of global emission cap",
 p15_forc_magicc(tall)          "actual radiative forcing as calculated by magicc [W/m^2]"
+pm_gmt_conv                    "global mean temperature convergence"
 ;
 
 scalars
