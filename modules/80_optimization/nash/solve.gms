@@ -94,12 +94,17 @@ display p80_repy;
 *** internal nash helper paramter:
 pm_SolNonInfes(regi) = 0;
 p80_SolNonOpt(regi)  = 0;
+
+putclose foo_msg;  
+*** This putclose serves to make foo_msg the last "active" put file, and thus makes GAMS use the foo_msg formating (namely F-format, not scientific E-format)
+*** Otherwise, the following put messages will try to write modelstat in scientif format, throwing errors because of insufficient space
+
 loop (regi,
   if( (p80_repy_thisSolitr(regi,"solvestat") > 0) ,
-    put_utility "msg" / "Solitr:" sol_itr.tl:2:0 " " regi.tl:4:0 "     updated. Modstat new " p80_repy_thisSolitr(regi,"modelstat"):2:0 ", old " p80_repy(regi,"modelstat"):2:0 "; Resusd new" p80_repy_thisSolitr(regi,"resusd"):5:0 ", old" p80_repy(regi,"resusd"):5:0 "; Obj new" p80_repy_thisSolitr(regi,"objval"):7:3 ", old" p80_repy(regi,"objval"):7:3 ;
+    put_utility foo_msg "msg" / "Solitr:" sol_itr.tl:2:0 " " regi.tl:4:0 "     updated. Modstat new " p80_repy_thisSolitr(regi,"modelstat"):2:0 ", old " p80_repy(regi,"modelstat"):2:0 "; Resusd new" p80_repy_thisSolitr(regi,"resusd"):5:0 ", old" p80_repy(regi,"resusd"):5:0 "; Obj new" p80_repy_thisSolitr(regi,"objval"):7:3 ", old" p80_repy(regi,"objval"):7:3 ;
     p80_repy(regi,solveinfo80) = p80_repy_thisSolitr(regi,solveinfo80); !! copy info from this Solitr into p80_repy
   else
-    put_utility "msg" / "Solitr:" sol_itr.tl:2:0 " " regi.tl:4:0 " not updated. Modstat new " p80_repy_thisSolitr(regi,"modelstat"):2:0 ", old " p80_repy(regi,"modelstat"):2:0 "; Resusd new" p80_repy_thisSolitr(regi,"resusd"):5:0 ", old" p80_repy(regi,"resusd"):5:0 "; Obj new" p80_repy_thisSolitr(regi,"objval"):7:3 ", old" p80_repy(regi,"objval"):7:3 ;
+    put_utility foo_msg "msg" / "Solitr:" sol_itr.tl:2:0 " " regi.tl:4:0 " not updated. Modstat new " p80_repy_thisSolitr(regi,"modelstat"):2:0 ", old " p80_repy(regi,"modelstat"):2:0 "; Resusd new" p80_repy_thisSolitr(regi,"resusd"):5:0 ", old" p80_repy(regi,"resusd"):5:0 "; Obj new" p80_repy_thisSolitr(regi,"objval"):7:3 ", old" p80_repy(regi,"objval"):7:3 ;
   );
 
   if (p80_repy(regi,"modelstat") eq 2 OR p80_repy(regi,"modelstat") eq 7,
