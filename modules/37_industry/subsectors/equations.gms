@@ -242,8 +242,7 @@ q37_feedstocksLimit(t,regi,entySe,entyFe,emiMkt)$(
 *' Feedstocks have identical fossil/biomass/synfuel shares as industry FE
 q37_feedstocksShares(t,regi,entySe,entyFe,emiMkt)$(
                          sum(te, se2fe(entySe,entyFe,te))
-                     AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
-                     AND cm_emiscen ne 1                                   ) ..                 
+                     AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..                 
     vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
   * sum(se2fe(entySe2,entyFe,te),
       vm_demFENonEnergySector(t,regi,entySe2,entyFe,"indst",emiMkt)
@@ -319,18 +318,6 @@ q37_feedstockEmiUnknownFate(t,regi,sefe(entySe,entyFe),emiMkt)$(
   =e=
     v37_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
   * (1 - s37_plasticsShare)
-;
-
-*' in baseline runs, all industrial feedstocks should come from fossil energy
-*' carriers, no biofuels or synfuels
-q37_FossilFeedstock_Base(t,regi,entyFe,emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
-                     AND cm_emiscen eq 1                                   ) ..
-  sum(entySe, vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt))
-  =e=
-  sum(entySeFos,
-    vm_demFENonEnergySector(t,regi,entySeFos,entyFe,"indst",emiMkt)
-  )
 ;
 
 *** ---------------------------------------------------------------------------
