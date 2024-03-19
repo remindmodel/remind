@@ -160,10 +160,11 @@ if (! exists("outputdir")) {
   outputdirs <- if (length(dir_folder) == 1) file.path(dir_folder, selectedDirs) else selectedDirs
 
   if ("policyCosts" %in% output) {
-    policyrun <- chooseFromList(dirnames, type = "reference run to which policy run will be compared",
+    policyrun <- chooseFromList(c("--- only here to avoid that folder numbers change ---", dirnames),
+                                type = "reference run to which policy run will be compared",
                                 userinfo = "Select a single reference run.",
                                 returnBoolean = TRUE, multiple = FALSE)
-    outputdirs <- c(rbind(outputdirs, dirs[policyrun])) # generate 3,1,4,1,5,1 out of 3,4,5 and policyrun 1
+    outputdirs <- c(rbind(outputdirs, dirs[policyrun[-1]])) # generate 3,1,4,1,5,1 out of 3,4,5 and policyrun 1
   }
 } else {
   outputdirs <- outputdir
