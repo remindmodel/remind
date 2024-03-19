@@ -105,7 +105,7 @@ $endif.no_calibration
   q37_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)                   "calculate carbon contained in plastics that are incinerated [GtC]"
   q37_nonIncineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "calculate carbon contained in plastics that are not incinerated [GtC]"
   q37_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)           "calculate carbon contained in chemical feedstock with unknown fate [GtC]"
-  q37_feedstocksLimit(ttot,all_regi,all_enty,all_enty,all_in,secInd37,all_emiMkt)   "restrict feedstocks flow to total energy flows into industry"
+  q37_feedstocksLimit(ttot,all_regi,all_enty,all_enty,all_in,all_emiMkt)            "restrict feedstocks flow to total energy flows into industry"
 
   !! process-based implementation
   q37_demMatPrc(tall,all_regi,mat)                                                  "Material demand of processes"

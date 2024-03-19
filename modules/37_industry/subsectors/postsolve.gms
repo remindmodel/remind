@@ -33,9 +33,9 @@ o37_demFePrc(ttot,regi,entyFe,tePrc,opmoPrc)$(pm_specFeDem(ttot,regi,entyFe,tePr
 o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)$(
                                              sefe(entySe,entyFe)
                                          AND secInd37_emiMkt(secInd37,emiMkt) )
-  = sum((fe2ppfEn(entyFe,in),
-         secInd37_2_pf(secInd37,in)),
-      v37_demFeIndst.l(ttot,regi,entySe,entyFe,in,emiMkt)
+  = sum((secInd37_2_pf(secInd37,out),
+         ue_industry_dyn37(out)),
+      v37_demFeIndst.l(ttot,regi,entySe,entyFe,out,emiMkt)
     );
 
 *** industry captured fuel CO2

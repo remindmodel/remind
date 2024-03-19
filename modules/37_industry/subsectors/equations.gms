@@ -13,21 +13,25 @@
 ***------------------------------------------------------
 *' Industry final energy balance
 ***------------------------------------------------------
-q37_demFeIndst_intermediate(t,regi,entyFe,in,secInd37,emiMkt)$(
-                                          ue_industry_dyn37(in)
-                                      AND secInd37_2_pf(secInd37,in)
-                                      AND secInd37_emiMkt(secInd37,emiMkt) ) ..
+*' Industry final energy demand is calculated by (entySe,entyFe,out,secIind37)
+*' tuple, where out is the root of the CES subtree (e.g. ue_cement).  The
+*' (entyFe,out) tuple is equivalent to ppfen, and necessary to deal with
+*' process-based steel, which is not part of the CES tree below
+*' ue_steel_primary/ue_steel_secondary.
+q37_demFeIndst_intermediate(t,regi,entyFe,out,secInd37,emiMkt)$(
+                                      entyFe_out_emiMkt(entyFe,out,emiMkt)
+                                  AND secInd37_emiMkt(secInd37,emiMkt)
+                                  AND secInd37_2_pf(secInd37,out)          ) ..
   sum(sefe(entySe,entyFe),
-    v37_demFeIndst(t,regi,entySe,entyFe,in,emiMkt)
+    v37_demFeIndst(t,regi,entySe,entyFe,out,emiMkt)
   )
   =e=
-    sum((ue_industry_2_pf(in,in2),
-         fe2ppfEn(entyFe,in2)),
-    ( vm_cesIO(t,regi,in2)
-    + pm_cesdata(t,regi,in2,"offset_quantity")
-    ))
-  + sum((tePrc2ue(tePrc,in),
-         tePrc2opmoPrc(tePrc,opmoPrc)),
+    sum((ue_industry_2_pf(out,in),
+         fe2ppfEn(entyFe,in)),
+      vm_cesIO(t,regi,in)
+    + pm_cesdata(t,regi,in,"offset_quantity")
+    )
+  + sum(tePrc2ue(tePrc,opmoPrc,out),
       pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc)
     * vm_outflowPrc(t,regi,tePrc,opmoPrc)
     )
@@ -35,16 +39,15 @@ q37_demFeIndst_intermediate(t,regi,entyFe,in,secInd37,emiMkt)$(
 
 q37_demFeIndst(t,regi,entySe,entyFe,emiMkt)$(
                                              sefe(entySe,entyFe)
-                                         AND entyFe2Sector(entyFe,"indst") ) ..
+                                         AND entyFe2Sector(entyFe,"indst")
+                                         AND sector2emiMkt("indst",emiMkt) ) ..
   vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
   =e=
-  sum((fe2ppfEn(entyFe,in),
-       ppfen_industry_dyn37(in),
-       secInd37_2_pf(secInd37,in),
-       secInd37_emiMkt(secInd37,emiMkt)),
-    v37_demFeIndst(t,regi,entySe,entyFe,in,emiMkt)
+  sum(entyFe_out_emiMkt(entyFe,out,emiMkt),
+    v37_demFeIndst(t,regi,entySe,entyFe,out,emiMkt)
   )
 ;
+
 
 ***------------------------------------------------------
 *' Thermodynamic limits on subsector energy demand
@@ -230,31 +233,24 @@ q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt)$(
   )
   =e=
     sum((sefe(entySe,entyFe),
-         fe2ppfEn(entyFe,in),
-         in_chemicals_feedstock_37(in),
-         secInd37_2_pf(secInd37,in),
-         secInd37_emiMkt(secInd37,emiMkt)),
-      v37_demFeIndst(t,regi,entySe,entyFe,in,emiMkt)
+         entyFe_out_emiMkt(entyFe,out,emiMkt))$( sameas(out,"ue_chemicals") ),
+      v37_demFeIndst(t,regi,entySe,entyFe,out,emiMkt)
     )
   * p37_chemicals_feedstock_share(t,regi)
 ;
 
 *' Feedstocks flow has to be lower than total energy flow into the industry
-q37_feedstocksLimit(t,regi,entySe,entyFe,in,secInd37,emiMkt)$(
-                                          sefe(entySe,entyFe)
-                                      AND in_chemicals_feedstock_37(in)
-                                      AND fe2ppfEn(entyFe,in)
-                                      AND ppfen_industry_dyn37(in)
-                                      AND sector2emiMkt("indst",emiMkt)
-                                      AND secInd37_2_pf(secInd37,in)
-                                      AND secInd37_emiMkt(secInd37,emiMkt)
-                                      AND entyFe2Sector(entyFe,"indst")
-                                      AND entyFeCC37(entyFe)               ) ..
-  sum(fe2ppfEn(entyFe,in),
+q37_feedstocksLimit(t,regi,entySe,entyFe,out,emiMkt)$(
+                                       sefe(entySe,entyFe)
+                                   AND entyFe_out_emiMkt(entyFe,out,emiMkt)
+                                   AND sameas(out,"ue_chemicals")
+                                   AND entyFeCC37(entyFe)                   ) ..
+  sum((ue_industry_2_pf(out,in),
+       fe2ppfEn(entyFe,in)),
     vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
   )
   =l=
-  v37_demFeIndst(t,regi,entySe,entyFe,in,emiMkt)
+  v37_demFeIndst(t,regi,entySe,entyFe,out,emiMkt)
 ;
 
 *' Calculate mass of carbon contained in chemical feedstocks
