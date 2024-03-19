@@ -11,16 +11,6 @@ Execute_Loadpoint "input_ref" p45_taxCO2eq_bau = pm_taxCO2eq;
 
 pm_taxCO2eq(t,regi) = p45_taxCO2eq_bau(t,regi)
 
-*** Carbon prices defined in $/t CO2, has to be rescaled to right unit
-parameter f45_taxCO2eqHist(ttot,all_regi)       "historic CO2 prices ($/tCO2)"
-/
-$ondelim
-$include "./modules/45_carbonprice/NDC/input/pm_taxCO2eqHist.cs4r"
-$offdelim
-/
-;
-pm_taxCO2eq(t,regi)$(t.val < 2025) = f45_taxCO2eqHist(t,regi) * sm_DptCO2_2_TDpGtC;
-
 *** parameters for exponential increase after NDC targets
 Scalar p45_taxCO2eqGlobal2030 "startprice in 2030 (unit TDpGtC) of global CO2eq taxes towards which countries converge";
 p45_taxCO2eqGlobal2030 = 30 * sm_DptCO2_2_TDpGtC;
