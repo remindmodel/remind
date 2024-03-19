@@ -9,10 +9,15 @@
 # This script is meant to run the full IIASA climate assessment using a single parameter set,
 # meant to be used between REMIND iterations
 
+logfile <- paste0("log_climate_", format(Sys.time(), "%Y-%m-%d_%H-%M-%S"), ".txt")
+
 CLIMATE_ASSESSMENT_FILES_DIR <- "/p/projects/rd3mod/climate-assessment-files/"
-workfolder <- "climate-temp"
-logfile="climate.log"
-probabilistic_file <- paste0(CLIMATE_ASSESSMENT_FILES_DIR,"/parsets/RCP20_50.json")
+workfolder <- normalizePath(file.path(getwd(), "climate-temp"))
+logmsg <- paste0(date(), " Using workfolder = ", workfolder, "\n")
+cat(logmsg)
+capture.output(cat(logmsg), file = logfile, append = F)
+
+probabilistic_file <- paste0(CLIMATE_ASSESSMENT_FILES_DIR, "parsets/RCP20_50.json")
 gdxfname <- "fulldata_prepostsolve.gdx"
 
 sfolder="/p/projects/piam/abrahao/scratch/iiasa/climate-assessment/scripts/" #TODO: Get the one used in the renv
