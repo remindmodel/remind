@@ -7,8 +7,8 @@
 *** SOF ./modules/32_power/IntC/postsolve.gms
 
 *** calculation of SE electricity price (useful for internal use and reporting purposes)
-pm_SEPrice(ttot,regi,entySE)$(abs (qm_budget.m(ttot,regi)) gt sm_eps AND sameas(entySE,"seel")) = 
-       q32_balSe.m(ttot,regi,entySE) / qm_budget.m(ttot,regi);
+pm_SEPrice(ttot,regi,entySe)$(abs (qm_budget.m(ttot,regi)) gt sm_eps AND sameas(entySe,"seel")) = 
+       q32_balSe.m(ttot,regi,entySe) / qm_budget.m(ttot,regi);
 
 loop(t,
   loop(regi,
@@ -19,7 +19,6 @@ loop(t,
     );
   );
 );
-
 
 *** EOF ./modules/32_power/IntC/postsolve.gms
 

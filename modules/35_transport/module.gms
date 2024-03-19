@@ -13,7 +13,6 @@
 *' @authors Alois Dirnaichner, Robert Pietzcker, Marianna Rottoli
 
 *###################### R SECTION START (MODULETYPES) ##########################
-$Ifi "%transport%" == "complex" $include "./modules/35_transport/complex/realization.gms"
 $Ifi "%transport%" == "edge_esm" $include "./modules/35_transport/edge_esm/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
 *** EOF ./modules/35_transport/module.gms

@@ -102,7 +102,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     BAUbutNotNeeded <- ! is.na(scenConf$path_gdx_bau) & ! (scenNeedsBau)
     if (sum(BAUbutNotNeeded) > 0) {
       msg <- paste0("In ", sum(BAUbutNotNeeded), " scenarios, 'path_gdx_bau' is not empty although no realization is selected that needs it.\n",
-                    "To avoid unnecessary dependencies to other runs, setting 'path_gdx_bau' to NA for:\n",
+                    "To avoid unnecessary dependencies to other runs, automatically setting 'path_gdx_bau' to NA for:\n",
                     paste(rownames(scenConf)[BAUbutNotNeeded], collapse = ", "))
       message(msg)
       scenConf$path_gdx_bau[BAUbutNotNeeded] <- NA
@@ -132,6 +132,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   }
   unknownColumnNames <- names(scenConf)[! names(scenConf) %in% knownColumnNames]
   if (length(unknownColumnNames) > 0) {
+    message("")
     forbiddenColumnNames <- list(   # specify forbidden column name and what should be done with it
        "c_budgetCO2" = "Rename to c_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
        "c_budgetCO2FFI" = "Rename to c_budgetCO2from2020FFI, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
@@ -153,6 +154,9 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_DAC_eff" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/1487",
        "cm_peakBudgYr" = "Rename to c_peakBudgYr, see https://github.com/remindmodel/remind/pull/1488",
        "cm_taxCO2inc_after_peakBudgYr" = "Rename to c_taxCO2inc_after_peakBudgYr, see https://github.com/remindmodel/remind/pull/1488",
+       "c_solscen" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/1515",
+       "cm_regNetNegCO2" = "Deleted, not used, see https://github.com/remindmodel/remind/pull/1517",
+       "cm_solwindenergyscen"= "Deleted, not used, see https://github.com/remindmodel/remind/pull/1532",
      NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       if (testmode) {

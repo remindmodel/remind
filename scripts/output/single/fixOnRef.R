@@ -37,6 +37,21 @@ findRefMif <- function(outputdir, envi) {
   return(refmif)
 }
 
+fixMAGICC <- function(d, dref, startyear, scenario) {
+  magiccgrep <- "^Forcing|^Temperature|^Concentration"
+  message("Fixing MAGICC6 data before ", startyear)
+  dnew <-
+    rbind(
+      filter(dref, grepl(magiccgrep, .data$variable),
+             .data$period < startyear),
+      filter(d, ! grepl(magiccgrep, .data$variable) |
+             .data$period >= startyear)
+    ) %>%
+    mutate(scenario = factor(scenario)) %>%
+    droplevels()
+  return(dnew)
+}
+
 fixOnMif <- function(outputdir) {
 
   gdxs    <- file.path(outputdir, "fulldata.gdx")
@@ -64,20 +79,28 @@ fixOnMif <- function(outputdir) {
   refname <- basename(dirname(refmif))
   d <- quitte::as.quitte(mifs)
   dref <- quitte::as.quitte(refmif)
+  d <- fixMAGICC(d, dref, startyear, title)
   failfile <- file.path(outputdir, "log_fixOnRef.csv")
-  fixeddata <- piamInterfaces::fixOnRef(d, dref, ret = "fixed", startyear = startyear, failfile = failfile)
+  fixeddata <- piamInterfaces::fixOnRef(d, dref, ret = "TRUE_or_fixed", startyear = startyear, failfile = failfile)
 
-  if (exists("flags") && isTRUE("--interactive" %in% flags)) {
-    message("\nDo you want to fix that by overwriting ", title, " mif with reference run ", refname, " for t < ", startyear, "?\nType: y/N")
+  update <- paste0("MAGICC data. ", if (! isTRUE(fixeddata)) "Run output.R -> single -> fixOnRef to fix the rest.")
+  if (! isTRUE(fixeddata) && isTRUE(envi$cfg$fixOnRefAuto)) {
+    d <- fixeddata
+    update <- "data from reference run because cfg$fixOnRefAuto=TRUE."
+  } else if (! isTRUE(fixeddata) && exists("flags") && isTRUE("--interactive" %in% flags)) {
+    message("\nDo you want to fix that by overwriting ", title, " mif with reference run ",
+            refname, " for t < ", startyear, "?\nType: y/N")
     if (tolower(gms::getLine()) %in% c("y", "yes")) {
-      message("Updating ", mifs[[1]])
-      tmpfile <- paste0(mifs[[1]], "fixOnMif")
-      quitte::write.mif(fixeddata, tmpfile)
-      file.rename(tmpfile, mifs[[1]])
-      remind2::deletePlus(mifs[[1]], writemif = TRUE)
-      message("Keep in mind to update the runs that use this as `path_gdx_ref` as well.")
+      d <- fixeddata
+      update <- "data from reference run."
     }
   }
+  message("Updating ", mifs[[1]], " with ", update)
+  tmpfile <- paste0(mifs[[1]], "fixOnMif")
+  quitte::write.mif(d, tmpfile)
+  file.rename(tmpfile, mifs[[1]])
+  remind2::deletePlus(mifs[[1]], writemif = TRUE)
+  message("Keep in mind to update the runs that use this as `path_gdx_ref` as well.")
   return(NULL)
 }
 

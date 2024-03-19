@@ -5,8 +5,11 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./core/presolve.gms
-*JeS* calculate share of transport fuels in liquids
 
+* defining the CO2 price parameter that sums up the 3 CO2eq tax components
+pm_taxCO2eqSum(ttot,regi) = pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqSCC(ttot,regi);
+
+*JeS* calculate share of transport fuels in liquids
 pm_share_trans(ttot,regi)$(ttot.val ge 2005) = sum(se2fe(entySe,entyFe,te)$(seAgg2se("all_seliq",entySe) AND ( sameas(entyFe,"fepet") OR sameas(entyFe,"fedie"))), vm_prodFe.l(ttot,regi,entySe,entyFe,te)) / (sum(se2fe(entySe,entyFe,te)$seAgg2se("all_seliq",entySe), vm_prodFe.l(ttot,regi,entySe,entyFe,te)) + 0.0000001);
 
 *AJS* we need those in nash
@@ -63,19 +66,19 @@ display p_emineg_econometric;
 *** calculate some emission factors
 ***--------------------------------------
 *** calculate global emission factor
-loop (emi2fuel(entyPE,enty),
-  p_efFossilFuelExtrGlo(entyPE,enty)
-  = sum(regi, p_emiFossilFuelExtr(regi,entyPE))
-  / sum((rlf,regi), vm_fuExtr.l("2005",regi,entyPE,rlf));
+loop (emi2fuel(entyPe,enty),
+  p_efFossilFuelExtrGlo(entyPe,enty)
+  = sum(regi, p_emiFossilFuelExtr(regi,entyPe))
+  / sum((rlf,regi), vm_fuExtr.l("2005",regi,entyPe,rlf));
 
   loop (regi,
-    sm_tmp =  sum(rlf, vm_fuExtr.l("2005",regi,entyPE,rlf));
+    sm_tmp =  sum(rlf, vm_fuExtr.l("2005",regi,entyPe,rlf));
 
-    p_efFossilFuelExtr(regi,entyPE,enty)$( sm_tmp )
-      = p_emiFossilFuelExtr(regi,entyPE) / sm_tmp;
+    p_efFossilFuelExtr(regi,entyPe,enty)$( sm_tmp )
+      = p_emiFossilFuelExtr(regi,entyPe) / sm_tmp;
 
-    p_efFossilFuelExtr(regi,entyPE,enty)$( NOT sm_tmp )
-      = p_efFossilFuelExtrGlo(entyPE,enty);
+    p_efFossilFuelExtr(regi,entyPe,enty)$( NOT sm_tmp )
+      = p_efFossilFuelExtrGlo(entyPe,enty);
   );
 );
 
@@ -184,7 +187,7 @@ vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
     )$(p_inv_gdx(ttot,regi) ne 0)
 ;
 
-vm_macBaseInd.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
+vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
 = vm_macBase.lo(ttot,regi,"co2cement_process");
 
 * *** Reduction of cement demand due to CO2 price markups *** *
@@ -194,7 +197,7 @@ if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
 *** pricing leads to significant price markups.
 
   pm_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
-  = pm_priceCO2forMAC(ttot,regi,"co2cement") / sm_C_2_CO2;
+  = pm_priceCO2forMAC(ttot,regi,"co2cement") / sm_c_2_co2;
 
   display "CO2 price for computing Cement Demand Reduction [$/tC]",
           pm_CementAbatementPrice;
@@ -247,7 +250,7 @@ if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
   = vm_macBase.lo(ttot,regi,"co2cement_process")
   * pm_ResidualCementDemand(ttot,regi);
 
-  vm_macBaseInd.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
+  vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
   = vm_macBase.lo(ttot,regi,"co2cement_process");
 );
 
@@ -377,7 +380,7 @@ pm_macAbatLev("2020",regi,"co2luc") = 0;
 
 *** Limit MAC abatement level increase to sm_macChange (default: 5 % p.a.)
 loop (ttot$( ttot.val ge 2015 ),
-  pm_macAbatLev(ttot,regi,MACsector(enty))
+  pm_macAbatLev(ttot,regi,MacSector(enty))
     = min(
         pm_macAbatLev(ttot,regi,enty),
 
@@ -420,52 +423,6 @@ pm_macCost(ttot,regi,emiMacSector(enty))
 *** conversion factor MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 (BP statistical review)
 p_macPE(ttot,regi,enty) = 0.0;
 p_macPE(ttot,regi,"pegas")$(ttot.val gt 2005) = s_MtCH4_2_TWa * 0.5 * (vm_macBase.l(ttot,regi,"ch4coal")-vm_emiMacSector.l(ttot,regi,"ch4coal"));
-
-
-***------------ adjust adjustment costs for advanced vehicles according to CO2 price in the previous time step ----------------------
-*** (same as in postsolve - if you change it here, also change in postsolve)
-*** this represents the concept that with stringent climate policies (as represented by high CO2 prices), all market actors will have a clearer expectation that
-*** transport shifts to low-carbon vehicles, thus companies will be more likely to invest into new zero-carbon vehicle models, charging infrastructure, etc.
-*** Also, gov'ts will be more likely to implement additional support policies that overcome existing barriers & irrationalities and thereby facilitate deployment
-*** of advanced vehicles, e.g. infrastructure for charging, setting phase-out dates that encourage car manufacturers to develop more advanced fuel models, etc.
-*** Use the CO2 price from the previous time step to represent inertia
-
-$iftheni.CO2priceDependent_AdjCosts %c_CO2priceDependent_AdjCosts% == "on"
-
-loop(ttot$( (ttot.val > cm_startyear) AND (ttot.val > 2020) ),  !! only change values in the unfixed time steps of the current run, and not in the past
-  loop(regi,
-    if( pm_taxCO2eq(ttot-1,regi) le (40 * sm_DptCO2_2_TDpGtC) ,
-	  p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.1;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 4;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (40 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (80 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.25;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 2.5;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (80 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (160 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.5;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 1.5;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (160 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (320 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 1;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 1;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (320 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (640 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 2;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.5;
-	elseif ( pm_taxCO2eq(ttot-1,regi) gt (640 * sm_DptCO2_2_TDpGtC) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 4;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.25;
-    );
-	p_adj_seed_te(ttot,regi,'apCarH2T')        = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarH2T');
-    p_adj_seed_te(ttot,regi,'apCarElT')        = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarElT');
-    p_adj_seed_te(ttot,regi,'apCarDiEffT')     = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarDiEffT');
-    p_adj_seed_te(ttot,regi,'apCarDiEffH2T')   = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarDiEffH2T');
-    p_adj_coeff(ttot,regi,'apCarH2T')         = p_varyAdj_mult_adjCoeff(ttot,regi) * p_adj_coeff_Orig(ttot,regi,'apCarH2T') ;
-    p_adj_coeff(ttot,regi,'apCarElT')         = p_varyAdj_mult_adjCoeff(ttot,regi) * p_adj_coeff_Orig(ttot,regi,'apCarElT') ;
-    p_adj_coeff(ttot,regi,'apCarDiEffT')      = p_varyAdj_mult_adjCoeff(ttot,regi) * p_adj_coeff_Orig(ttot,regi,'apCarDiEffT') ;
-    p_adj_coeff(ttot,regi,'apCarDiEffH2T')    = p_varyAdj_mult_adjCoeff(ttot,regi) * p_adj_coeff_Orig(ttot,regi,'apCarDiEffH2T') ;
-  );
-);
-display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adjCoeff;
-
-$endif.CO2priceDependent_AdjCosts
 
 
 *** EOF ./core/presolve.gms

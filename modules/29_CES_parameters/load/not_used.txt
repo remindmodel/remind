@@ -14,19 +14,11 @@ pm_gdp,parameter,???
 pm_lab,parameter,???
 sm_EJ_2_TWa,input,questionnaire
 pm_cesdata_sigma,input,questionnaire
-vm_cesIOdelta,input,questionnaire
-pm_cesdata_putty,input,questionnaire
-pm_dt,input,questionnaire
-pm_cumDeprecFactor_old,input,questionnaire
-pm_cumDeprecFactor_new,input,questionnaire
-sm_mega_2_non,input,questionnaire
 pm_delta_kap,input,questionnaire
 sm_tmp2,input,questionnaire
 pm_ttot_val,input,questionnaire
-sm_trillion_2_non,input,questionnaire
-sm_TWa_2_kWh,input,questionnaire
 pm_ue_eff_target,parameter,not needed
 pm_calibrate_eff_scale,parameter,not needed
 pm_fedemand,parameter,not needed
-pm_energy_limit
+pm_energy_limit,,
 sm_CES_calibration_iteration,scalar,only applicable during calibration

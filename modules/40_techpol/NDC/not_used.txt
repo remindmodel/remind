@@ -9,3 +9,5 @@ pm_ttot_val,parameter,???
 pm_NuclearConstraint,input,questionnaire
 vm_capEarlyReti,input,questionnaire
 pm_regiEarlyRetiRate,input,questionnaire
+pm_pop,input,not needed
+pm_gdp,input,not needed

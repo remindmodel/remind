@@ -421,7 +421,6 @@ prepare <- function() {
                                 list(c("q40_PEcoalBound.M", "!!q40_PEcoalBound.M")),
                                 list(c("q40_PEgasBound.M", "!!q40_PEgasBound.M")),
                                 list(c("q40_PElowcarbonBound.M", "!!q40_PElowcarbonBound.M")),
-                                list(c("q40_EV_share.M", "!!q40_EV_share.M")),
                                 list(c("q40_TrpEnergyRed.M", "!!q40_TrpEnergyRed.M")),
                                 list(c("q40_El_RenShare.M", "!!q40_El_RenShare.M")),
                                 list(c("q40_BioFuelBound.M", "!!q40_BioFuelBound.M")))
@@ -529,13 +528,16 @@ prepare <- function() {
 
     if(cfg$gms$CDR == 'portfolio'){
       fixings_manipulateThis <- c(fixings_manipulateThis,
-                                  list(c("vm_otherFEdemand.FX", "!!vm_otherFEdemand.FX")))
+                                  list(c("vm_otherFEdemand.FX", "!!vm_otherFEdemand.FX")),
+                                  list(c("v33_emi.FX", "vm_emiCdrTeDetail.FX")))
 
       levs_manipulateThis <- c(levs_manipulateThis,
-                               list(c("vm_otherFEdemand.L", "!!vm_otherFEdemand.L")))
+                               list(c("vm_otherFEdemand.L", "!!vm_otherFEdemand.L")),
+                               list(c("v33_emi.L", "vm_emiCdrTeDetail.L")))
 
       margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("vm_otherFEdemand.M", "!!vm_otherFEdemand.M")))
+                                list(c("vm_otherFEdemand.M", "!!vm_otherFEdemand.M")),
+                                list(c("q33_DAC_capconst.M", "q33_DAC_emi.M")))
     }
 
     # end of CDR module realizations

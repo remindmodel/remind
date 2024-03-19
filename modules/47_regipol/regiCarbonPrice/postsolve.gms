@@ -38,7 +38,7 @@ p47_emiTargetMkt(ttot,regi, emiMktExt,"netCO2_noLULUCF_noBunkers") =
 p47_emiTargetMkt(ttot,regi, emiMktExt,"grossEnCO2_noBunkers") =
   sum(emiMkt$emiMktGroup(emiMktExt,emiMkt),
     vm_emiTeMkt.l(ttot,regi,"co2",emiMkt) !! total net CO2 energy CO2 (w/o DAC accounting of synfuels) 
-    + ( vm_emiCdr.l(ttot,regi,"co2")* (1-pm_share_CCS_CCO2(ttot,regi)) )$(sameas(emiMkt,"ETS") or sameas(emiMktExt,"all"))  !! DAC accounting of synfuels: remove CO2 of vm_emiCDR (which is negative) from vm_emiTe which is not stored in vm_co2CCS
+    + ( vm_emiCdrTeDetail.l(ttot,regi,"dac")* (1-pm_share_CCS_CCO2(ttot,regi)) )$(sameas(emiMkt,"ETS") or sameas(emiMktExt,"all"))  !! DAC accounting of synfuels: remove CO2 captured by DAC and used (which is negative) from vm_emiTe which is not stored in vm_co2CCS
     + sum(emi2te(enty,enty2,te,enty3)$(teBio(te) AND teCCS(te) AND sameAs(enty3,"cco2")), vm_emiTeDetailMkt.l(ttot,regi,enty,enty2,te,enty3,emiMkt)) * pm_share_CCS_CCO2(ttot,regi) !! add pe2se BECCS
     + sum( (entySe,entyFe,secInd37)$(NOT (entySeFos(entySe))), pm_IndstCO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt)) * pm_share_CCS_CCO2(ttot,regi) !! add industry CCS with hydrocarbon fuels from biomass (industry BECCS) or synthetic origin
     - (sum(se2fe(enty,enty2,te), pm_emifac(ttot,regi,enty,enty2,te,"co2")*vm_demFeSector.l(ttot,regi,enty,enty2,"trans","other")))$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all")) !! remove bunker emissions
@@ -256,18 +256,29 @@ loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(
       loop(iteration2$((iteration2.val le iteration.val) and (iteration2.val eq p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi))), !!reference iteration for slope calculation
 ***     if it is the first iteration or the reference iteration changed, initialize the rescale factor based on remaining deviation
         if(iteration.val eq p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi),
-          pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = (1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) ** 2;
+          pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
 ***     else if for the extreme case of a perfect match with no change between the two iterations emisssion taxes used in the slope calculation, in order to avoid a division by zero error assume the rescale factor based on remaining deviation
         elseif((pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) eq pm_taxemiMkt_iteration(iteration2,ttot2,regi,emiMkt))),
-          pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = (1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) ** 2;
+          pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
+***     else if emission tax variation in relation to base iteration is very small, assume the rescale factor based on the remaining deviation to avoid very slow improvements 
+        elseif(abs((pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration(iteration2,ttot2,regi,emiMkt))) lt 1e-2),
+          pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
 ***     else, use previous iteration information to define rescale factor  
         else
-***       calculate the slope of previous iterations mitigation levels when compared to relative price difference          
-          p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) =
+***       calculate the slope of previous iterations mitigation levels when compared to relative price difference    
+          p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = 
             (p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - p47_emiMktCurrent_iter(iteration2,ttot,ttot2,ext_regi,emiMktExt))
             /
-            (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration(iteration2,ttot2,regi,emiMkt))
-          ;
+            (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration(iteration2,ttot2,regi,emiMkt));
+***       if the slope is positive, recalculate the slope based on the initial iteration instead of the reference one because we assume a trade-off between tax and emission levels 
+          if(p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) gt 0, 
+            p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = 
+              (p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - p47_emiMktCurrent_iter("1",ttot,ttot2,ext_regi,emiMktExt))
+              /
+              (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration("1",ttot2,regi,emiMkt));
+          );
+***       clamp negative slopes to avoid extreme changes on a single iteration (avoid corner cases where other parts of the model changes causing undesirable fluctuations on the calculated slope)
+          p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = min(-0.3, p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt));
 ***       calculate the tax rescale factor using the above calculated slope
           pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = 
             (
@@ -406,7 +417,7 @@ p47_implicitQttyTargetTax0(t,regi) =
       ( sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt))))
       )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
       +
-      ( sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(t,regi,enty,enty2,te,rlf)))
+      ( sum(ccs2te(ccsCo2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(t,regi,enty,enty2,te,rlf)))
       )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"all"))
       +
       (( !! Supply side BECCS
@@ -436,7 +447,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
         )$(sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
       )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
       +
-      ( sum(regi$regi_groupExt(ext_regi,regi), sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf))))
+      ( sum(regi$regi_groupExt(ext_regi,regi), sum(ccs2te(ccsCo2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf))))
       )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"all"))
       +
       sum(regi$regi_groupExt(ext_regi,regi), ( !! Supply side BECCS
@@ -494,87 +505,126 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
   p47_implicitQttyTarget_dev_iter(iteration, ttot,ext_regi,qttyTarget,qttyTargetGroup) = pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup);
 );
 
-***  calculating targets implicit tax rescale factor
+*** Defining if quantity target algorithm should be active based on cm_implicitQttyTarget_delay option
+p47_implicitQttyTargetActive_iter(iteration,ext_regi) = 0; !!if no delay is defined 
+$ifthen.cm_implicitQttyTarget_delay "%cm_implicitQttyTarget_delay%" == "off"
+  p47_implicitQttyTargetActive_iter(iteration,ext_regi) = 1;
+$else.cm_implicitQttyTarget_delay
+  if(p47_implicitQttyTarget_delay("iteration"), !!iteration delay is defined
+    if(p47_implicitQttyTarget_delay("iteration") le iteration.val,
+      p47_implicitQttyTargetActive_iter(iteration,ext_regi) = 1;
+    );
+  elseif(p47_implicitQttyTarget_delay("emiConv")), !!only after emissions targets converged
+    if(abs(1-sm_globalBudget_dev) lt 0.1,
+      p47_implicitQttyTargetActive_iter(iteration,ext_regi) = 1;
+    );
+$ifThen.emiMkt not "%cm_emiMktTarget%" == "off"
+    loop(ext_regi,
+      if((smax((ttot,ttot2,emiMktExt),abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt))) gt cm_emiMktTarget_tolerance), !! resetting active state if regipol target is defined and it did not converged
+        p47_implicitQttyTargetActive_iter(iteration,ext_regi) = 0;
+      );
+    );
+  elseif(p47_implicitQttyTarget_delay("emiRegiConv")), !!emiTarget delay is defined and deviation is lower than tolerance times p47_implicitQttyTarget_delay("emiRegiConv")
+    loop(ext_regi,
+      if((smax((ttot,ttot2,emiMktExt),abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt))) lt (cm_emiMktTarget_tolerance * p47_implicitQttyTarget_delay("emiRegiConv"))),
+        p47_implicitQttyTargetActive_iter(iteration,ext_regi) = 1;
+      );
+    );
+$endIf.emiMkt 
+  );
+$endIf.cm_implicitQttyTarget_delay
+
+display p47_implicitQttyTargetActive_iter;
+
 loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
-  if(sameas(taxType,"tax"),
-    if(iteration.val lt 15,
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 4);
-    else
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 2);
-    );  
-  );
-  if(sameas(taxType,"sub"),
-    if(iteration.val lt 15,
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 4);
-    else
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 2);
-    );  
-  );
-  put_utility "msg" / "Dampening rescaling for " ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl;
-  put_utility "msg" / "p47_implicitQttyTargetTaxRescale before dampening:  " ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl " " p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup):10:3; 
+
+  if(p47_implicitQttyTargetActive_iter(iteration,ext_regi) = 1,
+
+    loop(iteration2,
+      p47_implicitQttyTargetReferenceIteration(ext_regi) = iteration2.val;
+      break$(p47_implicitQttyTargetActive_iter(iteration2,ext_regi) = 1);
+    );
+    p47_implicitQttyTargetIterationCount(ext_regi) = iteration.val - p47_implicitQttyTargetReferenceIteration(ext_regi) + 1;
+
+***  calculating the rescale factor for the implicit tax to achieve the target
+    if(sameas(taxType,"tax"),
+      if(p47_implicitQttyTargetIterationCount(ext_regi) lt 15,
+        p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 4);
+      else
+        p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 2);
+      );  
+    );
+    if(sameas(taxType,"sub"),
+      if(p47_implicitQttyTargetIterationCount(ext_regi) lt 15,
+        p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 4);
+      else
+        p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 2);
+      );  
+    );
+    put_utility "msg" / "Dampening rescaling for " ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl;
+    put_utility "msg" / "p47_implicitQttyTargetTaxRescale before dampening:  " ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl " " p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup):10:3; 
 
 *** dampen rescale factor when closer than 1.5 / 0.75 to reduce oscillations
-  if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) > 1,
-    if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) > 1.7, !! prevent numeric explosion by limiting the maximum value
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 1.7;
-    );
-    p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
-      (  
-        ( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 )
-          * exp( (p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1.5 ) * 2 ) !! this is 0.4 at p47_rescale = 1.01; 1 at 1.5, 2.7 at 2 
-          * ( 2 * ( exp( -0.025 * iteration.val) + 0.1 ) )  !! in order to also have some dampening over iterations, 
-      !! this line decreases from 2.1 at iteration 1 to 0.36 in iteration 100. 
-      )
-      + 1
-    ;
-  else !! if rescale is <1, do the same procedure on (1/rescale)
-    if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) < 0.6,  !! prevent numeric explosion by limiting the minimum value
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 0.6;
-    );
-    p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
-      1
-      / (
-          (  
-            ( 1 / p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 )
-            * exp( ( 1 / p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1.5 ) * 2 ) !! this is 0.4 at p47_rescale = 1.01; 1 at 1.5, 2.7 at 2 
-            * ( 2 * ( exp( -0.025 * iteration.val) + 0.1 ) )  !! in order to also have some dampening over iterations, 
-              !! this line decreases from 2.1 at iteration 1 to 0.36 in iteration 100. 
-          )
-          + 1
+    if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) > 1,
+      if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) > 1.7, !! prevent numeric explosion by limiting the maximum value
+        p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 1.7;
+      );
+      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
+        (  
+          ( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 )
+            * exp( (p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1.5 ) * 2 ) !! this is 0.4 at p47_rescale = 1.01; 1 at 1.5, 2.7 at 2 
+            * ( 2 * ( exp( -0.025 * p47_implicitQttyTargetIterationCount(ext_regi)) + 0.1 ) )  !! in order to also have some dampening over iterations, 
+        !! this line decreases from 2.1 at p47_implicitQttyTargetIterationCount 1 to 0.36 in p47_implicitQttyTargetIterationCount 100. 
         )
-    ;
-  );
-  put_utility "msg" / "p47_implicitQttyTargetTaxRescale after dampening: " ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl " " p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup):10:3; 
+        + 1
+      ;       
+    else !! if rescale is <1, do the same procedure on (1/rescale)
+      if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) < 0.6,  !! prevent numeric explosion by limiting the minimum value
+        p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 0.6;
+      );
+      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
+        1
+        / (
+            (  
+              ( 1 / p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 )
+              * exp( ( 1 / p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1.5 ) * 2 ) !! this is 0.4 at p47_rescale = 1.01; 1 at 1.5, 2.7 at 2 
+              * ( 2 * ( exp( -0.025 * p47_implicitQttyTargetIterationCount(ext_regi)) + 0.1 ) )  !! in order to also have some dampening over iterations, 
+                !! this line decreases from 2.1 at p47_implicitQttyTargetIterationCount 1 to 0.36 in p47_implicitQttyTargetIterationCount 100. 
+            )
+            + 1
+          )
+      ;
+    );
+    put_utility "msg" / "p47_implicitQttyTargetTaxRescale after dampening: " ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl " " p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup):10:3; 
 
 *** with increasing iterations, tighten the bound around the rescale factor to prevent large jumps in late iterations
-  p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
-    max( min( 2 * EXP( -0.05 * iteration.val ) + 1.01 ,
-              p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)
-         ),
-         1 / ( 2 * EXP( -0.05 * iteration.val ) + 1.01)
-    );
-  put_utility "msg" / "p47_implicitQttyTargetTaxRescale after boundaries: " ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl " " p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup):10:3; 
+    p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
+      max( min( 2 * EXP( -0.05 * p47_implicitQttyTargetIterationCount(ext_regi) ) + 1.01 ,
+                p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)
+          ),
+          1 / ( 2 * EXP( -0.05 * p47_implicitQttyTargetIterationCount(ext_regi) ) + 1.01)
+      );
+    put_utility "msg" / "p47_implicitQttyTargetTaxRescale after boundaries: " ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl " " p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup):10:3; 
 
 *** dampen if rescale oscillates
-  if( (iteration.val > 3) , 
-    if ( ( 
-            ( ( ( p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 ) 
-                * ( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 ) ) < 0 
-            ) AND  !! test if rescale changed from >1 to <1 or vice versa between iteration -1 and current iteration
-            ( ( ( p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 )
-                * ( p47_implicitQttyTargetTaxRescale_iter(iteration-2,ttot,ext_regi,qttyTarget,qttyTargetGroup) -1 ) ) < 0
-           ) !! test if rescale changed from >1 to <1 or vice versa between iteration -2 and iteration -1
-        ) ,
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
-        1 + ( ( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 ) / 2 ) 
-      ; !! this brings the value closer to one. The formulation works reasonably well within the range of 0.5..2
-      put_utility "msg" / "Reducing p47_implicitQttyTargetTaxRescale due to oscillation in the previous 3 iterations: "; 
-      put_utility "msg" / ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl " " p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup):10:3; 
-    );
+    if( (iteration.val > 3) , 
+      if ( ( 
+              ( ( ( p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 ) 
+                  * ( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 ) ) < 0 
+              ) AND  !! test if rescale changed from >1 to <1 or vice versa between iteration -1 and current iteration
+              ( ( ( p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 )
+                  * ( p47_implicitQttyTargetTaxRescale_iter(iteration-2,ttot,ext_regi,qttyTarget,qttyTargetGroup) -1 ) ) < 0
+            ) !! test if rescale changed from >1 to <1 or vice versa between iteration -2 and iteration -1
+          ) ,
+        p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
+          1 + ( ( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 ) / 2 ) 
+        ; !! this brings the value closer to one. The formulation works reasonably well within the range of 0.5..2
+        put_utility "msg" / "Reducing p47_implicitQttyTargetTaxRescale due to oscillation in the previous 3 iterations: "; 
+        put_utility "msg" / ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl " " p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup):10:3; 
+      );
+    );   
   );
-    
 );
-
 p47_implicitQttyTargetTaxRescale_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup);
 
 *** updating quantity targets implicit tax
@@ -586,52 +636,56 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
 );
 
 loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
-  loop(all_regi$regi_groupExt(ext_regi,all_regi),
-*** terminal year onward tax
-    if(sameas(taxType,"tax"),
-      if((p47_implicitQttyTargetTax_prevIter(ttot,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 1e-10), !! assuring that the updated tax is positive, i.e. the target is achieved without the need for any additional tax
-        pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) = 1;
-        p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = 1e-10;
-      else
-        p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup); 
-      ); 
-    );
-    if(sameas(taxType,"sub"),
-      if((p47_implicitQttyTargetTax_prevIter(ttot,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt -1e-10), !! assuring that the updated tax is negative (subsidy), i.e. the target is achieved without the need for any additional subsidy
-        pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) = 1;
-        p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = -1e-10;
-      else
-        p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup); 
-      ); 
-    );
-*** linear price between first free year and target year
-    loop(ttot2$(ttot2.val eq p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)),
-      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$((t.val gt ttot2.val) and (t.val lt ttot.val) and (t.val ge cm_startyear)) = 
-           p47_implicitQttyTargetTax(ttot2,all_regi,qttyTarget,qttyTargetGroup) +
-        (
-          p47_implicitQttyTargetTax(ttot,all_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetTax(ttot2,all_regi,qttyTarget,qttyTargetGroup)
-        ) * ((t.val - ttot2.val) / (ttot.val - ttot2.val))
-      ;
-    );
-*** checking if there is a hard bound on the model that does not allow the tax to change further the energy usage
-*** if current value (p47_implicitQttyTargetCurrent) is unchanged in relation to previous iteration when the rescale factor of the previous iteration was different than one, price changes did not affected quantity and therefore the tax level is reseted to the previous iteration value to avoid unecessary tax increase without target achievment gains.  
-    if((iteration.val gt 3),
-      if( ((p47_implicitQttyTargetCurrent_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 1e-10) AND (p47_implicitQttyTargetCurrent_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt -1e-10) ) 
-        and (NOT( p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 0.0001 and p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) gt -0.0001 )),
-        p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup);
-        pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) = 1;
+  if(p47_implicitQttyTargetActive_iter(iteration,ext_regi) = 1,
+    loop(all_regi$regi_groupExt(ext_regi,all_regi),
+***   terminal year onward tax
+      if(sameas(taxType,"tax"),
+        if((p47_implicitQttyTargetTax_prevIter(ttot,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 1e-10), !! assuring that the updated tax is positive, i.e. the target is achieved without the need for any additional tax
+          pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) = 1;
+          p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = 1e-10;
+        else
+          p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup); 
+        ); 
+      );
+      if(sameas(taxType,"sub"),
+        if((p47_implicitQttyTargetTax_prevIter(ttot,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt -1e-10), !! assuring that the updated tax is negative (subsidy), i.e. the target is achieved without the need for any additional subsidy
+          pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) = 1;
+          p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = -1e-10;
+        else
+          p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup); 
+        ); 
+      );
+***   linear price between first free year and target year
+      loop(ttot2$(ttot2.val eq p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)),
+        p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$((t.val gt ttot2.val) and (t.val lt ttot.val) and (t.val ge cm_startyear)) = 
+            p47_implicitQttyTargetTax(ttot2,all_regi,qttyTarget,qttyTargetGroup) +
+          (
+            p47_implicitQttyTargetTax(ttot,all_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetTax(ttot2,all_regi,qttyTarget,qttyTargetGroup)
+          ) * ((t.val - ttot2.val) / (ttot.val - ttot2.val))
+        ;
+      );
+***   checking if there is a hard bound on the model that does not allow the tax to change further the energy usage
+***   if current value (p47_implicitQttyTargetCurrent) is unchanged in relation to previous iteration when the rescale factor of the previous iteration was different than one, price changes did not affected quantity and therefore the tax level is reseted to the previous iteration value to avoid unecessary tax increase without target achievment gains.  
+      if((iteration.val gt 3),
+        if( ((p47_implicitQttyTargetCurrent_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 1e-10) AND (p47_implicitQttyTargetCurrent_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt -1e-10) ) 
+          and (NOT( p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 0.0001 and p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) gt -0.0001 )),
+          p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup);
+          pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) = 1;
+        );
       );
     );
+***   update initialYear for further targets
+    p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) = ttot.val;
   );
-*** update initialYear for further targets
-  p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) = ttot.val;
-);
 
 *** tax associated with a specific iteration is the tax that was used in this iteration
-p47_implicitQttyTargetTax_iter(iteration,ttot,all_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax_prevIter(ttot,all_regi,qttyTarget,qttyTargetGroup); 
+  p47_implicitQttyTargetTax_iter(iteration,ttot,all_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax_prevIter(ttot,all_regi,qttyTarget,qttyTargetGroup); 
 
-display p47_implicitQttyTargetCurrent, pm_implicitQttyTarget, p47_implicitQttyTargetTax_prevIter, pm_implicitQttyTarget_dev, p47_implicitQttyTarget_dev_iter, p47_implicitQttyTargetTax, 
-        p47_implicitQttyTargetTaxRescale, p47_implicitQttyTargetTaxRescale_iter, p47_implicitQttyTargetTax_iter, p47_implicitQttyTargetCurrent_iter, p47_implicitQttyTargetTax0;
+  display p47_implicitQttyTargetCurrent, pm_implicitQttyTarget, p47_implicitQttyTargetTax_prevIter, pm_implicitQttyTarget_dev, p47_implicitQttyTarget_dev_iter, p47_implicitQttyTargetTax, 
+    p47_implicitQttyTargetTaxRescale, p47_implicitQttyTargetTaxRescale_iter, p47_implicitQttyTargetTax_iter, p47_implicitQttyTargetCurrent_iter, p47_implicitQttyTargetTax0;
+
+);
+
 
 $endIf.cm_implicitQttyTarget
 
@@ -799,6 +853,7 @@ loop((ttot,ext_regi)$p47_exoCo2tax(ext_regi,ttot),
 
 *** setting exogenous CO2 prices
   pm_taxCO2eq(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = p47_exoCo2tax(ext_regi,ttot)*sm_DptCO2_2_TDpGtC;
+  pm_taxCO2eqSum(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = pm_taxCO2eq(ttot,regi);
 );
 display 'update of CO2 prices due to exogenously given CO2 prices in p47_exoCo2tax', pm_taxCO2eq;
 $endIf.regiExoPrice

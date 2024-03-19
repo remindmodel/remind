@@ -72,7 +72,6 @@ equations
     q32_hydroROR(ttot,all_regi)					"Represent Run-Of-River Hydro by requiring that 20% of produced hydro electricity comes from baseload"
     q32_limitCapTeChp(ttot,all_regi)  			"Capacitiy constraint for chp electricity generation"
     q32_limitCapTeGrid(ttot,all_regi)   		"Calculate the additional grid capacity required by VRE"
-    q32_limitSolarWind(tall,all_regi)    		"Limits on fluctuating renewables, only turned on for special EMF27 scenarios"
     q32_shSeEl(ttot,all_regi,all_te)         		"calculate share of electricity production of a technology (vm_shSeEl)"
 ;
 

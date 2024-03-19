@@ -89,6 +89,13 @@ energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,all_enty) "set combinin
   FE.electricity.(seel)
   FE.heat.(sehe)
 /
+
+qttyDelayType_47 "options to define different delay rules for starting the quantity targets algorithm"
+/
+  iteration    "quantity targets are only active after certain iteration"
+  emiConv      "quantity targets are only active after emission targets defined at the carbon price modules and at the regipol modules converged"
+  emiRegiConv  "quantity targets are only active after regional emission targets achieved given deviation levels"
+/
 $endIf.cm_implicitQttyTarget
 
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
@@ -112,13 +119,13 @@ pePriceScenario "scenarios for exogenous PE price targets"
 /
 $endIf.cm_implicitPePriceTarget
 
-$ifthen.ExogDemScen NOT "%cm_exogDem_scen%" == "off"
+$ifthen.exogDemScen NOT "%cm_exogDem_scen%" == "off"
 exogDemScen       "exogenuous FE and ES demand scenarios that can be activated by cm_exogDem_scen"
 /
         ariadne_bal
         ariadne_ensec
 /
-$endif.ExogDemScen
+$endif.exogDemScen
 
 ;
 

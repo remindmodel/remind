@@ -21,36 +21,35 @@ if(!exists("source_include")) {
 
 gdx      <- file.path(outputdir,gdx_name)
 scenario <- getScenNames(outputdir)
+
+configfile <- file.path(outputdir, "config.Rdata")
+envir <- new.env()
+load(configfile, envir = envir)
+
 ###############################################################################
 # paths of the reporting files
 remind_reporting_file <- file.path(outputdir,paste0("REMIND_generic_",scenario,".mif"))
 
 # produce REMIND reporting *.mif based on gdx information
+message("\n### start generation of mif files at ", Sys.time())
 convGDX2MIF_REMIND2MAgPIE(gdx, file = remind_reporting_file, scenario = scenario)
 
-# create common REMIND-MAgPIE reporting by sticking individual REMIND and MAgPIE reporting mifs together
-configfile <- file.path(outputdir, "config.Rdata")
-envir <- new.env()
-load(configfile, envir = envir)
 magpie_reporting_file <- envir$cfg$pathToMagpieReport
 if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
   message("add MAgPIE reporting from ", magpie_reporting_file)
-  tmp_rem <- read.report(remind_reporting_file, as.list=FALSE)
-  tmp_mag <- read.report(magpie_reporting_file, as.list=FALSE)[, getYears(tmp_rem), ]
+  tmp_rem <- quitte::as.quitte(remind_reporting_file)
+  tmp_mag <- dplyr::filter(quitte::as.quitte(magpie_reporting_file), .data$period %in% unique(tmp_rem$period))
   # remove population from magpie reporting to avoid duplication (units "million" vs. "million people")
-  tmp_mag <- tmp_mag[, , "Population (million people)", invert = TRUE]  
-  # harmonize scenario name from -mag-xx to -rem-xx
-  getNames(tmp_mag, dim = 1) <- paste0(scenario)
-  tmp_rem_mag <- mbind(tmp_rem, tmp_mag)
-  # extract variable names without units for both models
-  remind_variables <- magclass::unitsplit(getNames(tmp_rem_mag[, , "REMIND"], dim = 3))$variable
-  magpie_variables <- magclass::unitsplit(getNames(tmp_rem_mag[, , "MAgPIE"], dim = 3))$variable
-  if (any(remind_variables %in% magpie_variables)) {
-      message("Cannot produce common REMIND-MAgPIE reporting because there are identical variable names in both models!")
-  } else {
-    write.report(tmp_rem_mag, file = remind_reporting_file, ndigit = 7)
-    deletePlus(remind_reporting_file, writemif = TRUE)
+  sharedvariables <- intersect(tmp_mag$variable, tmp_rem$variable)
+  if (length(sharedvariables) > 0) {
+    message("The following variables will be dropped from MAgPIE reporting because they are in REMIND reporting: ", paste(sharedvariables, collapse = ", "))
+    tmp_mag <- dplyr::filter(tmp_mag, ! .data$variable %in% sharedvariables)
   }
+  # harmonize scenario name from -mag-xx to -rem-xx
+  tmp_mag$scenario <- paste0(scenario)
+  tmp_rem_mag <- rbind(tmp_rem, tmp_mag)
+  quitte::write.mif(tmp_rem_mag, path = remind_reporting_file)
+  deletePlus(remind_reporting_file, writemif = TRUE)
 }
 
 message("### end generation of mif files at ", Sys.time())

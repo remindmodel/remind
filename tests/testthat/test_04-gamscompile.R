@@ -11,7 +11,7 @@ test_that("start.R --gamscompile startgroup=AMT config/scenario_config.csv works
   testthat::with_mocked_bindings({
     skipIfPreviousFailed()
     output <- localSystem2("Rscript",
-                           c("start.R", "--gamscompile", "startgroup=AMT", titletag, csvfile))
+                           c("start.R", "--gamscompile", "startgroup=compileInTests", titletag, csvfile))
     printIfFailed(output)
     expectSuccessStatus(output)
     },
@@ -30,16 +30,6 @@ test_that("start.R --gamscompile works on all configs and scenarios", {
                            file.path("../../config", "*", "scenario_config*.csv")))
   }
   csvfiles <- normalizePath(grep("^scenario_config_coupled.*", csvfiles, invert = TRUE, value = TRUE))
-  skipfiles <- c("scenario_config_21_EU11_ECEMF",
-                 "scenario_config_21_EU11_ARIADNE",
-                 "scenario_config_21_EU11_SSPSDP",
-                 "scenario_config_21_EU11_Fit_for_55_sensitivity",
-                 "scenario_config_EDGE-T_NDC_NPi_pkbudget",
-                 "scenario_config_NAVIGATE_300",
-                 "scenario_config_tradeCap_standalone",
-                 "scenario_config_SHAPE",
-                 "scenario_config_GCS")
-  csvfiles <- grep(paste(skipfiles, collapse = "|"), csvfiles, invert = TRUE, value = TRUE)
   expect_true(length(csvfiles) > 0)
   testthat::with_mocked_bindings(
     for (csvfile in csvfiles) {

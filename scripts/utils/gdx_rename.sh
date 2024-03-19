@@ -91,7 +91,7 @@ if (length(args) == 1) {
     q_co2eq                = 'q_co2eq',
     pm_costsPEtradeMp      = 'pm_costsPEtradeMp', 
     vm_welfare             = 'v_welfare',
-    pm_tau_fe_sub          = 'p21_tau_fe_sub', 
+    p21_tau_fe_sub          = 'p21_tau_fe_sub', 
     pm_datapop             = 'pm_pop',
     p_datalab              = 'pm_lab',
     p80_pvp                = 'pm_pvp', 
@@ -112,7 +112,6 @@ if (length(args) == 1) {
     v_sedem     = 'v_demSe',
 #-- Power module creation - version 7452 -----
     q_limitCapTeChp		= 'q32_limitCapTeChp',
-    q_limitSolarWind	= 'q32_limitSolarWind',
     q_shSeEl			= 'q32_shSeEl',
     q_shStor			= 'q32_shStor',
     q_storloss			= 'q32_storloss',

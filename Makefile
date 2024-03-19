@@ -37,6 +37,12 @@ update-renv-all: ## Upgrade all packages (including CRAN packages) in your renv
 		fi \
 	fi
 
+revert-dev-packages: ## All PIK-PIAM packages that are development versions, i.e.
+                     ## that have a non-zero fourth version number component, are
+                     ## reverted to the highest version lower than the
+                     ## development version.
+	@Rscript -e 'piamenv::revertDevelopmentVersions()'
+
 ensure-reqs:     ## Ensure the REMIND library requirements are fulfilled
                  ## by installing updates and new libraries as necessary. Does not
                  ## install updates unless it is required.
@@ -66,8 +72,8 @@ check-fix:       ## Check if the GAMS code follows the coding etiquette
 	Rscript -e 'invisible(gms::codeCheck(strict = TRUE, interactive = TRUE))'
 
 test:            ## Test if the model compiles and runs without running a full
-                 ## scenario. Tests take about 10 minutes to run.
-	$(info Tests take about 20 minutes to run, please be patient)
+                 ## scenario. Tests take about 15 minutes to run.
+	$(info Tests take about 15 minutes to run, please be patient)
 	@Rscript -e 'testthat::test_dir("tests/testthat")'
 
 test-coupled:    ## Test if the coupling with MAgPIE works. Takes significantly
@@ -81,9 +87,14 @@ test-coupled-slurm: ## test-coupled, but on slurm
 	@sbatch --qos=priority --wrap="make test-coupled" --job-name=test-coupled --mail-type=END --output=test-coupled.log --comment="test-coupled.log"
 
 test-full:       ## Run all tests, including coupling tests and a default
-                 ## REMIND scenario. Takes significantly longer than 10 minutes to run.
+                 ## REMIND scenario. Takes several hours to run.
 	$(info Full tests take more than an hour to run, please be patient)
 	@TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat")'
+
+test-full-slurm: ##test-full, but on slurm
+	$(info Full tests take more than an hour to run, please be patient)
+	@sbatch --qos=priority --wrap="make test-full" --job-name=test-full --mail-type=END --output=test-full.log --comment="test-full.log"
+
 test-validation: ## Run validation tests, requires a full set of runs in the output folder
 	$(info Run validation tests, requires a full set of runs in the output folder)
 	@TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat/validation")'	

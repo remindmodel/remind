@@ -14,7 +14,7 @@ p51_sccLastItr(tall,all_regi) "Social cost of carbon (due to GDP damages) from l
 p51_sccParts(tall,tall,all_regi) "Social cost of carbon components (time, region)"
 
 
-pm_sccConvergenceMaxDeviation(all_regi) "max deviation of SCC from last iteration [percent]"
+pm_sccConvergenceMaxDeviation "max deviation of SCC from last iteration [percent]"
 ;
 
 *** EOF ./modules/51_internalizeDamages/KWlikeItrCPnash/declarations.gms

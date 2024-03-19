@@ -6,9 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/portfolio/equations.gms
 
-
+*' @equations
 ***---------------------------------------------------------------------------
-*** Equations concerning two or more options
+*' #### Equations concerning two or more options
 
 ***---------------------------------------------------------------------------
 *'  CDR Final Energy Balance
@@ -25,11 +25,12 @@ q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr"))..
 
 ***---------------------------------------------------------------------------
 *'  Sum of all CDR emissions other than BECCS and afforestation, which are calculated in the core.
+*'  Note that this includes all atmospheric CO2 captured in this module that enters the CCUS chain.
 ***---------------------------------------------------------------------------
 q33_emiCDR(t,regi)..
     vm_emiCdr(t,regi,"co2")
     =e=
-    sum(te_used33, v33_emi(t,regi,te_used33))
+    sum(te_used33, vm_emiCdrTeDetail(t,regi,te_used33))
     ;
 
 ***---------------------------------------------------------------------------
@@ -37,19 +38,19 @@ q33_emiCDR(t,regi)..
 *'  It's a sustainability bound to prevent a large demand for biomass.
 ***---------------------------------------------------------------------------
 q33_H2bio_lim(t,regi)..
-    sum(pe2se("pebiolc","seh2",te), vm_prodSE(t,regi,"pebiolc","seh2",te))
+    sum(pe2se("pebiolc","seh2",te), vm_prodSe(t,regi,"pebiolc","seh2",te))
     =l=
     vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - sum(fe2cdr("feh2s",entyFe2,te_used33), v33_FEdemand(t,regi,"feh2s",entyFe2,te_used33))
     ;
 
 ***---------------------------------------------------------------------------
-*** DAC
+*' #### DAC equations
 
 ***---------------------------------------------------------------------------
-*'  Calculation of (negative) CO2 emissions from direct air capture.
+*'  Calculation of (negative) atmospheric CO2 captured by direct air capture.
 ***---------------------------------------------------------------------------
-q33_DAC_capconst(t,regi)..
-    v33_emi(t,regi,"dac")
+q33_DAC_emi(t,regi)..
+    vm_emiCdrTeDetail(t,regi,"dac")
     =e=
     - sum(teNoTransform2rlf33("dac",rlf),
         vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf)
@@ -57,7 +58,7 @@ q33_DAC_capconst(t,regi)..
     ;
 
 ***---------------------------------------------------------------------------
-*'  Preparation of captured emissions to enter the CCS chain.
+*'  Preparation of captured emissions to enter the CCUS chain.
 *'  The first part of the equation describes emissions captured from the ambient air,
 *'  the second part calculates the CO2 captured from the gas used for heat production
 *'  assuming 90% capture rate.
@@ -65,7 +66,7 @@ q33_DAC_capconst(t,regi)..
 q33_DAC_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
     sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
     =e=
-    - v33_emi(t,regi,"dac")
+    - vm_emiCdrTeDetail(t,regi,"dac")
     + (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * sum(fe2cdr("fegas",entyFe2,te_used33), v33_FEdemand(t,regi,"fegas", entyFe2,te_used33))
     ;
 
@@ -76,11 +77,11 @@ q33_DAC_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
 q33_DAC_FEdemand(t,regi,entyFe2)$sum(entyFe, fe2cdr(entyFe,entyFe2,"dac"))..
     sum(fe2cdr(entyFe,entyFe2,"dac"), v33_FEdemand(t,regi,entyFe,entyFe2,"dac"))
     =e=
-    p33_fedem("dac", entyFe2) * sm_EJ_2_TWa * (- v33_emi(t,regi,"dac"))
+    p33_fedem("dac", entyFe2) * sm_EJ_2_TWa * (- vm_emiCdrTeDetail(t,regi,"dac"))
     ;
 
 ***---------------------------------------------------------------------------
-*** EW
+*' #### EW equations
 
 ***---------------------------------------------------------------------------
 *'  Calculation of the amount of ground rock spread in timestep t.
@@ -118,7 +119,7 @@ q33_EW_onfield_tot(ttot,regi,rlf_cz33,rlf)$(ttot.val ge max(2025, cm_startyear))
 *'  Calculation of (negative) CO2 emissions from enhanced weathering.
 ***---------------------------------------------------------------------------
 q33_EW_emi(t,regi)..
-    v33_emi(t,regi, "weathering")
+    vm_emiCdrTeDetail(t,regi, "weathering")
     =e=
     sum((rlf_cz33, rlf),
         - v33_EW_onfield_tot(t,regi,rlf_cz33,rlf) * s33_co2_rem_pot * (1 - exp(-p33_co2_rem_rate(rlf_cz33)))
@@ -156,7 +157,7 @@ q33_EW_potential(t,regi,rlf_cz33)..
     ;
 
 ***---------------------------------------------------------------------------
-*'  An annual limit for the maximum amount of rocks spred [Gt] can be set via cm_LimRock,
+*'  An annual limit for the maximum global amount of rocks spread [Gt] can be set via cm_LimRock,
 *'  e.g. due to sustainability concerns.
 ***---------------------------------------------------------------------------
 q33_EW_LimEmi(t,regi)..

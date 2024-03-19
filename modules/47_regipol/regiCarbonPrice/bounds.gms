@@ -18,10 +18,6 @@
 *'
 *' ###### Bounds for Historic and Near-term Alignment
 
-*' These bounds account for historic nuclear power development.
-vm_cap.fx("2015",regi,"tnrs","1")$((cm_startyear le 2015) and (sameas(regi,"DEU"))) = 10.8/1000; 
-vm_cap.fx("2020",regi,"tnrs","1")$((cm_startyear le 2020) and (sameas(regi,"DEU"))) = 7.8/1000;
-
 *' This limits wind and solar PV capacity additions for 2025 in light of recent slow developments as of 2023.
 *' Upper bound is double the historic maximum capacity addition in 2011-2020.
 loop(regi$(sameAs(regi,"DEU")),
@@ -166,9 +162,9 @@ $endIf.cm_VREminShare
 *' It is used, for example, to hit specific, steel and cement production trajectories in policy scenarios
 *' for project-specific scenarios. It is not necessarily a policy but a different (exogenuous) assumption 
 *' about future production trajectories than what REMIND produces endogenuously. 
-$ifthen.ExogDemScen NOT "%cm_exogDem_scen%" == "off"
+$ifthen.exogDemScen NOT "%cm_exogDem_scen%" == "off"
 vm_cesIO.fx(t,regi,in)$(pm_exogDemScen(t,regi,"%cm_exogDem_scen%",in))=pm_exogDemScen(t,regi,"%cm_exogDem_scen%",in);
-$endif.ExogDemScen
+$endif.exogDemScen
 
 *' @stop
 

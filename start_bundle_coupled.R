@@ -32,18 +32,17 @@ helpText <- "
 #'
 #' Control the script's behavior by providing additional arguments:
 #'
-#'   --help, -h:        show this help text and exit
-#'   --gamscompile, -g: compile gms of all selected runs. Combined with
-#'                      --interactive, it stops in case of compilation
-#'                      errors, allowing to fix them and rerun gamscompile
-#'   --interactive, -i: interactively select run(s) to be started. Asks for
-#'                      config file also if the one specified as
-#'                      path_settings_coupled cannot be found.
-#'   --test, -t:        Test scenario configuration and write the RData files
-#'                      in the REMIND main folder without starting the runs.
+#'   --help, -h:         show this help text and exit
+#'   --gamscompile, -g:  compile gms of all selected runs. Combined with
+#'                       --interactive, it stops in case of compilation
+#'                       errors, allowing to fix them and rerun gamscompile
+#'   --interactive, -i:  interactively select run(s) to be started. Asks for
+#'                       config file also if the one specified as
+#'                       path_settings_coupled cannot be found.
+#'   --test, -t:         Test scenario configuration without starting the runs.
 #'   startgroup=MYGROUP  when reading a scenario config .csv file, don't start
-#'                       everything specified by \"start = 1\", instead start everything
-#'                       specified by \"start = MYGROUP\"
+#'                       everything specified by \"start = 1\", instead start
+#'                       everything specified by \"start = MYGROUP\"
 "
 
 ########################################################################################################
@@ -102,6 +101,7 @@ if (!is.null(renv::project())) {
   installedPackages <- installed.packages()[, "Package"]
   missingDeps <- setdiff(unique(magpieDeps$Package), installedPackages)
   if (length(missingDeps) > 0) {
+    message("Installing missing MAgPIE dependencies ", paste(missingDeps, collapse = ", "))
     renv::install(missingDeps)
   }
   if (! any(grepl("renvVersion", readLines(file.path(path_magpie, ".Rprofile"), warn = FALSE)))) {
@@ -124,16 +124,13 @@ NC    <- "\033[0m"   # No Color
 
 # define arguments that are accepted (test for backward compatibility)
 startgroup <- "1"
-flags <- lucode2::readArgs("startgroup", .flags = c(h = "--help", g = "--gamscompile", i = "--interactive", p = "--parallel", t = "--test"))
+flags <- lucode2::readArgs("startgroup", .flags = c(h = "--help", g = "--gamscompile", i = "--interactive", t = "--test"))
 if (! exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 if ("--help" %in% flags) {
   message(helpText)
   q()
 }
 if ("test" %in% argv) flags <- unique(c(flags, "--test"))
-if ("--parallel" %in% flags) {
-  message("The flag --parallel is not necessary anymore, as this is default now")
-}
 
 # load arguments from command line
 argv <- grep('(^-|=|^test$)', argv, value = TRUE, invert = TRUE)
@@ -155,7 +152,8 @@ if (length(argv) > 0) {
   message("")
 }
 
-if (! file.exists("output")) dir.create("output")
+dir.create(file.path(path_remind, "output"), showWarnings = FALSE)
+dir.create(file.path(path_magpie, "output"), showWarnings = FALSE)
 
 ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
 
@@ -181,11 +179,6 @@ message("run_compareScenarios:  ", run_compareScenarios)
 if (any(! file.exists(c(path_settings_coupled, path_settings_remind))) ||
     any(! dir.exists(c(path_remind, path_magpie, path_remind_oldruns, path_magpie_oldruns)))) {
   stop("Missing files or directories, see in red above.")
-}
-
-if ("--gamscompile" %in% flags && ! file.exists("input/source_files.log")) {
-  message("\n### Input data missing, need to compile REMIND first (2 min.)\n")
-  system("Rscript start.R config/tests/scenario_config_compile.csv")
 }
 
 ####################################################
@@ -408,8 +401,14 @@ for(scen in common){
       cfg_rem[[switchname]] <- settings_remind[scen, switchname]
     }
   }
+  
+  # Set reporting scripts
+  if ("output" %in% names(settings_remind) && ! is.na(settings_remind[scen, "output"])) {
+    scenoutput <- gsub('c\\("|\\)|"', '', trimws(unlist(strsplit(settings_remind[scen, "output"], split = ','))))
+    cfg_rem$output <- unique(c(if ("cfg$output" %in% scenoutput) cfg_rem$output, setdiff(scenoutput, "cfg$output")))
+  }
 
-  # Edit switches in default.cfg based on scenarios table, if cell non-empty
+  # Edit GAMS switches in default.cfg based on scenarios table, if cell non-empty
   for (switchname in intersect(names(cfg_rem$gms), names(settings_remind))) {
     if ( ! is.na(settings_remind[scen, switchname] )) {
       cfg_rem$gms[[switchname]] <- settings_remind[scen, switchname]
@@ -418,7 +417,7 @@ for(scen in common){
 
   # Set description
   if ("description" %in% names(settings_remind) && ! is.na(settings_remind[scen, "description"])) {
-    cfg_rem$description <- gsub('"', '', settings_remind[scen, "description"])
+    cfg_rem$description <- iconv(gsub('"', '', settings_remind[scen, "description"]), from = "UTF-8", to = "ASCII//TRANSLIT")
   } else {
     cfg_rem$description <- paste0("Coupled REMIND and MAgPIE run ", scen, " started by ", path_settings_remind, " and ", path_settings_coupled, ".")
   }
@@ -467,9 +466,10 @@ for(scen in common){
       }
     }
 
-    # Create list of previously defined paths to gdxs
+    # Create list of gdx's that this run needs as input from other runs
     gdxlist <- unlist(settings_remind[scen, names(path_gdx_list)])
     names(gdxlist) <- path_gdx_list
+    # look for gdx's not only among runs to be started but among all coupled scenarios, as runs that have already finished may also be required
     gdxlist[gdxlist %in% rownames(settings_coupled)] <- paste0(prefix_runname, gdxlist[gdxlist %in% rownames(settings_coupled)], "-rem-", i)
     possibleFulldata <- file.path(path_remind, "output", gdxlist, "fulldata.gdx")
     possibleRemindReport <- file.path(path_remind, "output", gdxlist, paste0("REMIND_generic_", gdxlist, ".mif"))
@@ -506,25 +506,26 @@ for(scen in common){
     }
 
     if (i > start_iter_first || ! start_now) {
-      # if no real file is given but a reference to another scenario (that has to run first) create path for input_ref and input_bau
-      # using the scenario names given in the columns path_gdx_ref and path_gdx_ref in the REMIND standalone scenario config
+      # if no real file is given but a reference to another scenario (that has to run first) create paths to their gdx files
+      # using the scenario names given in the respective path_gdx* columns in the REMIND standalone scenario config
       for (path_gdx in names(path_gdx_list)) {
         if (! is.na(cfg_rem$files2export$start[path_gdx_list[path_gdx]]) && ! grepl(".gdx", cfg_rem$files2export$start[path_gdx_list[path_gdx]], fixed = TRUE)) {
-          cfg_rem$files2export$start[path_gdx_list[path_gdx]] <- paste0(prefix_runname, settings_remind[scen, path_gdx],
-                                                                        "-rem-", i)
+          cfg_rem$files2export$start[path_gdx_list[path_gdx]] <- paste0(prefix_runname, settings_remind[scen, path_gdx], "-rem-", i)
         }
       }
       if (i > start_iter_first) {
         cfg_rem$files2export$start["input.gdx"] <- paste0(runname, "-rem-", i-1)
       }
+    }
+    
       # If the preceding run has already finished (= its gdx file exist) start
       # the current run immediately. This might be the case e.g. if you started
       # the NDC run in a first batch and now want to start the subsequent policy
       # runs by hand after the NDC has finished.
-    }
     if (i == start_iter_first && ! start_now && all(file.exists(cfg_rem$files2export$start[path_gdx_list]) | unlist(gdx_na))) {
-        start_now <- TRUE
+      start_now <- TRUE
     }
+    
     foldername <- file.path("output", fullrunname)
     if ((i > start_iter_first || !scenarios_coupled[scen, "start_magpie"]) && file.exists(foldername)) {
       if (errorsfound == 0 && ! any(c("--test", "--gamscompile") %in% flags)) {
@@ -551,11 +552,15 @@ for(scen in common){
       errorsfound <- errorsfound + cfg_rem$errorsfoundInCheckFixCfg
     }
 
-    Rdatafile <- paste0(fullrunname, ".RData")
-    message("Save settings to ", Rdatafile)
-    save(path_remind, path_magpie, cfg_rem, cfg_mag, runname, fullrunname, max_iterations, start_iter,
-         n600_iterations, path_report, qos, sbatch, prefix_runname, run_compareScenarios, magpie_empty,
-         numberOfTasks, start_now, file = Rdatafile)
+    if (! any(c("--test", "--gamscompile") %in% flags)) {
+      Rdatafile <- paste0(fullrunname, ".RData")
+      message("Save settings to ", Rdatafile)
+      save(path_remind, path_magpie, cfg_rem, cfg_mag, runname, fullrunname, max_iterations, start_iter,
+           n600_iterations, path_report, qos, sbatch, prefix_runname, run_compareScenarios, magpie_empty,
+           numberOfTasks, start_now, file = Rdatafile)
+    } else if (start_now) {
+      startedRuns <- c(startedRuns, fullrunname)
+    }
 
   } # end for (i %in% iterations)
 
@@ -604,12 +609,16 @@ for(scen in common){
 # start runs
 message("\nStarting Runs")
 for (scen in common) {
-  if (!scenarios_coupled[scen, "start_scenario"]) {
+  if (! scenarios_coupled[scen, "start_scenario"]) {
     next
   }
   start_iter_first <- scenarios_coupled[scen, "start_iter_first"]
   runname <- paste0(prefix_runname, scen)
   fullrunname <- paste0(runname, "-rem-", start_iter_first)
+  if ("--test" %in% flags || "--gamscompile" %in% flags) {
+    message("Test mode: run ", fullrunname, " NOT submitted to the cluster.")
+    next
+  }
   Rdatafile <- paste0(fullrunname, ".RData")
   runEnv <- new.env()
   load(Rdatafile, envir = runEnv)
@@ -623,26 +632,22 @@ for (scen in common) {
         runEnv$qos <- gsub("^(medium|standby)$", "auto", runEnv$qos)
         runEnv$numberOfTasks <- 3
       }
-      if ("--test" %in% flags || "--gamscompile" %in% flags) {
-        message("Test mode: run ", fullrunname, " NOT submitted to the cluster.")
-      } else {
-        logfile <- file.path("output", fullrunname, paste0("log", if (scenarios_coupled[scen, "start_magpie"]) "-mag", ".txt"))
-        if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
-        message("Find logging in ", logfile)
-        if (isTRUE(runEnv$qos == "auto")) {
-          sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j'"), intern = TRUE)
-          runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
-        }
-        slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
-          " --open-mode=append --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
-          if (runEnv$numberOfTasks == 1) " --mem=8000"), runEnv$sbatch)
-        slurmCommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
-        message(slurmCommand)
-        exitCode <- system(slurmCommand)
-        if (0 < exitCode) {
-          errorsfound <- errorsfound + 1
-          message("sbatch command failed, check logs.")
-        }
+      logfile <- file.path("output", fullrunname, paste0("log", if (scenarios_coupled[scen, "start_magpie"]) "-mag", ".txt"))
+      if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
+      message("Find logging in ", logfile)
+      if (isTRUE(runEnv$qos == "auto")) {
+        sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j'"), intern = TRUE)
+        runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
+      }
+      slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
+        " --open-mode=append --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
+        if (runEnv$numberOfTasks == 1) " --mem=8000"), runEnv$sbatch)
+      slurmCommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
+      message(slurmCommand)
+      exitCode <- system(slurmCommand)
+      if (0 < exitCode) {
+        errorsfound <- errorsfound + 1
+        message("sbatch command failed, check logs.")
       }
     }
   }

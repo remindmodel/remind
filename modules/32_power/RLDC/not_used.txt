@@ -11,3 +11,4 @@ cm_VRE_supply_assumptions,input,questionnaire
 cm_flex_tax,input,questionnaire
 cm_PriceDurSlope_elh2,input,questionnaire
 cm_FlexTaxFeedback,input,questionnaire
+vm_shDemSeel,input,only used in IntC realization

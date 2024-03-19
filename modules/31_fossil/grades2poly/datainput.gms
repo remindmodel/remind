@@ -66,9 +66,10 @@ p31_fosadjco_xi5xi6(regi,"xi6","peoil")=1/1;
 p31_fosadjco_xi5xi6(regi,"xi5","pegas")=0.3;
 p31_fosadjco_xi5xi6(regi,"xi6","pegas")=1/1;
 
-*RP* Define bound on total PE uranium use in Megatonnes of metal uranium (U3O8, the stuff that is traded at 40-60US$/lb).
+*RP* Define bound on total PE uranium (metal uranium U3O8).
 s31_max_disp_peur = 23;
-*JH* 20140604 (25th Anniversary of Tiananmen) New nuclear assumption for SSP5
+
+*JH* New nuclear assumption for SSP5
 if (cm_nucscen eq 6,
   s31_max_disp_peur = 23*10;
 );

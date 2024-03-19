@@ -74,6 +74,11 @@ $offdelim
 /
 ;
 
+
+if (cm_startyear gt 2005,
+execute_load "input_ref.gdx", p30_pebiolc_costs_emu_preloop;
+);
+
 *** Select bioenergy bioenergy supply curve according to SSP scenario
 i30_bioen_price_a(ttot,regi) = f30_bioen_price(ttot,regi,"%cm_LU_emi_scen%","%cm_rcp_scen%","a");
 i30_bioen_price_b(ttot,regi) = f30_bioen_price(ttot,regi,"%cm_LU_emi_scen%","%cm_rcp_scen%","b");

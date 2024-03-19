@@ -93,7 +93,7 @@ $endif
 ***------------ Step 3: calculate bioenergy costs -------------
 *** The costs are calculated applying the regular cost equation. 
 *** This equation integrates the shifted (!) price supply curve over the demand.
-*** It requires the price shift factor to be calcualted before (see above).
+*** It requires the price shift factor to be calculated before (see above).
 
 if (execError > 0,
   execute_unload "abort.gdx";
@@ -102,7 +102,7 @@ if (execError > 0,
 
 solve model_biopresolve_c using cns; !!! nothing has to be optimized here, just pure calculation
 
-p30_pebiolc_costs_emu_preloop(ttot,regi) = v30_pebiolc_costs.l(ttot,regi);
+p30_pebiolc_costs_emu_preloop(t,regi) = v30_pebiolc_costs.l(t,regi);
 
 display p30_pebiolc_costs_emu_preloop;
 

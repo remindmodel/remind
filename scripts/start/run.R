@@ -78,21 +78,7 @@ run <- function() {
             sub("'([^']*)'.'([^']*)'.'([^']*)'.'([^']*)' (.*)[ ,][ /];?",
                 "pm_cesdata(\"\\1\",\"\\2\",\"\\3\",\"\\4\") = \\5;", x = .) %>%
             write(file_name)
-
-
-          pm_cesdata_putty = system("gdxdump fulldata.gdx symb=pm_cesdata_putty", intern = TRUE)
-          if (length(pm_cesdata_putty) == 2){
-            tmp_putty =  gsub("^Parameter *([A-z_(,)])+cesParameters\\).*$",'\\1"quantity")  =   0;',  pm_cesdata_putty[2])
-          } else {
-            tmp_putty = pm_cesdata_putty[-(1:2)] %>%
-              grep("quantity", x = ., value = TRUE) %>%
-              grep(expr_ces_in,x = ., value = T)
-          }
-          tmp_putty %>%
-            sub("'([^']*)'.'([^']*)'.'([^']*)'.'([^']*)' (.*)[ ,][ /];?",
-                "pm_cesdata_putty(\"\\1\",\"\\2\",\"\\3\",\"\\4\") = \\5;", x = .)%>% write(file_name,append =T)
-        }
-
+        } 
         getLoadFile()
 
         # Store all the interesting output
