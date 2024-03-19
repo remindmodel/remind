@@ -462,7 +462,8 @@ $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
         if(sameas(convMessage80, "implicitEnergyTarget"),
 		      display "#### 10) A quantity target has not been reached yet.";
           display "#### Check out the pm_implicitQttyTarget_dev parameter of 47_regipol module.";
-          display "#### The deviation must to be less than cm_implicitQttyTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of the defined target.";
+          display "#### The relative deviation must to be less than cm_implicitQttyTarget_tolerance, which is 1 percent by default.";
+          display "#### For taxes, this means every value > +0.01, while for subsidies everything < -0.01 is problematic in the following lines.";
           display cm_implicitQttyTarget_tolerance, pm_implicitQttyTarget_dev;
 	      );
 $endif.cm_implicitQttyTarget
