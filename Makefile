@@ -76,6 +76,11 @@ test:            ## Test if the model compiles and runs without running a full
 	$(info Tests take about 15 minutes to run, please be patient)
 	@Rscript -e 'testthat::test_dir("tests/testthat")'
 
+test-fix:        ## First run codeCheck interactively, then test if the model compiles and runs without
+                 ## running a full scenario. Tests take about 15 minutes to run.
+	$(info Tests take about 18 minutes to run, please be patient)
+	@Rscript -e 'invisible(gms::codeCheck(strict = TRUE, interactive = TRUE)); testthat::test_dir("tests/testthat"); message("Do not forget to commit changes done by codeCheck to not_used.txt files");'
+
 test-coupled:    ## Test if the coupling with MAgPIE works. Takes significantly
                  ## longer than 60 minutes to run and needs slurm and magpie
                  ## available
