@@ -5,7 +5,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-run <- function(start_subsequent_runs = TRUE) {
+run <- function() {
 
   load("config.Rdata")
 
@@ -78,21 +78,7 @@ run <- function(start_subsequent_runs = TRUE) {
             sub("'([^']*)'.'([^']*)'.'([^']*)'.'([^']*)' (.*)[ ,][ /];?",
                 "pm_cesdata(\"\\1\",\"\\2\",\"\\3\",\"\\4\") = \\5;", x = .) %>%
             write(file_name)
-
-
-          pm_cesdata_putty = system("gdxdump fulldata.gdx symb=pm_cesdata_putty", intern = TRUE)
-          if (length(pm_cesdata_putty) == 2){
-            tmp_putty =  gsub("^Parameter *([A-z_(,)])+cesParameters\\).*$",'\\1"quantity")  =   0;',  pm_cesdata_putty[2])
-          } else {
-            tmp_putty = pm_cesdata_putty[-(1:2)] %>%
-              grep("quantity", x = ., value = TRUE) %>%
-              grep(expr_ces_in,x = ., value = T)
-          }
-          tmp_putty %>%
-            sub("'([^']*)'.'([^']*)'.'([^']*)'.'([^']*)' (.*)[ ,][ /];?",
-                "pm_cesdata_putty(\"\\1\",\"\\2\",\"\\3\",\"\\4\") = \\5;", x = .)%>% write(file_name,append =T)
-        }
-
+        } 
         getLoadFile()
 
         # Store all the interesting output
@@ -175,7 +161,9 @@ run <- function(start_subsequent_runs = TRUE) {
   # Use the name to check whether it is a coupled run (TRUE if the name ends with "-rem-xx")
   coupled_run <- grepl("-rem-[0-9]{1,2}$",cfg$title)
   # Don't start subsequent runs form here if REMIND runs coupled. They are started in start_coupled.R instead.
-  start_subsequent_runs <- (start_subsequent_runs | isTRUE(cfg$restart_subsequent_runs)) & !coupled_run
+  # Only if this run has been restarted manually cfg$restart_subsequent_runs is TRUE. If the run is resumed after
+  # preemtion it is just NULL and isFALSE(NULL) is FALSE, so subsequent standalone runs will be started.
+  start_subsequent_runs <- ! isFALSE(cfg$restart_subsequent_runs) && ! coupled_run
 
   if (start_subsequent_runs & (length(rownames(cfg$RunsUsingTHISgdxAsInput)) > 0)) {
     # track whether any subsequent run was actually started
@@ -205,6 +193,9 @@ run <- function(start_subsequent_runs = TRUE) {
       }
       message("In ", RData_file, ", use current fulldata.gdx path for ", paste(needfulldatagdx, collapse = ", "), ".")
       cfg$files2export$start[needfulldatagdx] <- fulldatapath
+      # let the subsequent run use the renv.lock of this run
+      message("In ", RData_file, ", use current renv.lock for subsequent run ", run, ".")
+      cfg$renvLockFromPrecedingRun <- file.path(cfg_main$remind_folder, cfg_main$results_folder, "renv.lock")
 
       save(cfg, file = RData_file)
 

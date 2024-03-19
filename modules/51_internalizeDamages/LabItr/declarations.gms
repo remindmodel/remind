@@ -12,7 +12,7 @@ p51_sccLastItr(tall) "Social cost of carbon (due to GDP damages) from last itera
 p51_sccParts(tall,tall,all_regi)  "component needed for SCC calculation"
 p51_dy(tall,all_regi)		"damage factor for GDP instead of labor"
 
-p51_sccConvergenceMaxDeviation "max deviation of SCC from last iteration [percent]"
+pm_sccConvergenceMaxDeviation "max deviation of SCC from last iteration [percent]"
 
 p51_labRho(tall,all_regi)	"ces parameter rho for labor, needed for extension beyond 2150"
 p51_labXi(tall,all_regi)	"ces parameter xi for labor, needed for extension beyond 2150"

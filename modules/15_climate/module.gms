@@ -16,6 +16,7 @@
 *' @authors Jessica Strefler, Michaja Pehl, Christoph Bertram
 
 *###################### R SECTION START (MODULETYPES) ##########################
+$Ifi "%climate%" == "ar6" $include "./modules/15_climate/ar6/realization.gms"
 $Ifi "%climate%" == "magicc" $include "./modules/15_climate/magicc/realization.gms"
 $Ifi "%climate%" == "off" $include "./modules/15_climate/off/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################

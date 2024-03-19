@@ -11,13 +11,7 @@ plotMapping <- list()
 generateHtml <- "y"
 combineDims <- list()
 
-if (!exists("source_include")) {
-  outputdir <- file.path("output", "B-putty_SSP2-NDC_restartWithAllIterationResults")
-  lucode2::readArgs("outputdir", "symbolNames", "generateHtml")
-}
-
 outputdir <- normalizePath(outputdir)
-
 
 getLineCoerce <- function() {
   # gets characters (line) from the user and always returns a string

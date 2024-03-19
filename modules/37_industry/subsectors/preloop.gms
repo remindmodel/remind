@@ -9,5 +9,13 @@
 *** initialize captured CO2 parameter
 pm_IndstCO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt) = 0;
 
-*** EOF ./modules/37_industry/subsectors/preloop.gms
+*' calculate carbon content of feedstock for chemicals subsector as difference between
+*' combustion emissions factor of FE and industrial process emissions factor
+*' of feedstocks
+p37_FeedstockCarbonContent(ttot,regi,entyFe)
+  = sum(se2fe(entySeFos,entyFe,te),
+      pm_emifac(ttot,regi,entySeFos,entyFe,te,"co2") 
+    - pm_emifacNonEnergy(ttot,regi,entySeFos,entyFe,"indst","co2")
+    );
 
+*** EOF ./modules/37_industry/subsectors/preloop.gms

@@ -71,7 +71,8 @@ Go to your REMIND main folder (i.e. it contains subfolders such as `config`, `co
 Rscript start.R
 ```
 
-Without additional arguments this starts a single REMIND run using the settings from [`config/default.cfg`](../config/default.cfg) and [`main.gms`](../main.gms). Also, on Windows, you can double-click the `start.cmd` file.
+Without additional arguments this starts a single REMIND run using the settings from [`config/default.cfg`](../config/default.cfg) and [`main.gms`](../main.gms).
+Also, on Windows, you can double-click the `start_windows.cmd` file.
 You can control the script's behavior by providing additional arguments, for example starting a single REMIND run in one-region mode using the settings from `config/default.cfg` and `main.gms` (useful to quickly check if your changes to the code break the model):
 
 ``` bash
@@ -91,12 +92,12 @@ sq
 ```
 in the terminal.
 
-To see how far your run is or whether it was stopped due to some problems, go to the `output` folder and type
-
+To see how far your run is or whether it was stopped due to some problems, you can check based on the output folder (shown as `WORK_DIR` in `sq`) by typing
 ``` bash
-rs2
+remindstatus output/default_2024-02-29_16.45.19
 ```
-in the console. For more commands to manage your runs, type **piaminfo**.
+in the console. If you are in the folder, `remindstatus` is sufficient.
+For a short version, use `rs2` (see help at `rs2 -h`). For more commands to manage your runs, type `piaminfo`.
 
 NOTE: A few words on the scripts that we currently use to start runs. The scripts containing the string 'start' have a double functionality:
 - they submit the run to the cluster or to your GAMS system if you work locally

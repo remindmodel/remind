@@ -8,25 +8,37 @@
 #' @author Oliver Richters
 #' @return updated cfg
 checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
-  refcfg <- gms::readDefaultConfig(remindPath)
-  gms::check_config(cfg, reference_file = refcfg, modulepath = file.path(remindPath, "modules"),
-                    settings_config = file.path(remindPath, "config", "settings_config.csv"),
-                    extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
-                               "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
-                               "gms$cm_CES_configuration", "gms$c_description", "model"))
-
   errorsfound <- 0
+  red   <- "\033[0;31m"
+  NC    <- "\033[0m"   # No Color
+
+  refcfg <- gms::readDefaultConfig(remindPath)
+  remindextras <- c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
+                               "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
+                               "gms$cm_CES_configuration", "gms$c_description", "model", "renvLockFromPrecedingRun")
+  fail <- tryCatch(gms::check_config(cfg, reference_file = refcfg, modulepath = file.path(remindPath, "modules"),
+                     settings_config = file.path(remindPath, "config", "settings_config.csv"),
+                     extras = remindextras),
+                     error = function(x) { paste0(red, "Error", NC, ": ", gsub("^Error: ", "", x)) } )
+  if (is.character(fail) && length(fail) == 1 && grepl("Error", fail)) {
+    message(fail, appendLF = FALSE)
+    if (testmode) warning(fail)
+    errorsfound <- errorsfound + 1
+  }
 
   ## regexp check
   # extract all instances of 'regexp' from main.gms
-  code <- system(paste0("grep regexp ", file.path(remindPath, "main.gms")), intern = TRUE)
+  code <- grep("regexp", readLines(file.path(remindPath, "main.gms"), warn = FALSE), value = TRUE)
   # this is used to replace all 'regexp = is.numeric'
   grepisnum <- "((\\+|-)?[0-9]*([0-9]\\.?|\\.?[0-9])[0-9]*)"
+  grepisnonnegative <- "(\\+?[0-9]*([0-9]\\.?|\\.?[0-9])[0-9]*)"
   grepisshare <-  "(\\+?0?\\.[0-9]+|0|0\\.0*|1|1\\.0*)"
   # some simple tests
   if (testmode) {
     stopifnot(all(  grepl(paste0("^", grepisnum, "$"), c("2", "2.2", "32.", "+32.", "+.05", "-0.5", "-.5", "-5", "-7."))))
     stopifnot(all(! grepl(paste0("^", grepisnum, "$"), c("2.2.", "0a", "1e1", ".2.", "ab", "2.3a", "--a", "++2"))))
+    stopifnot(all(  grepl(paste0("^", grepisnonnegative, "$"), c("2", "2.2", "32.", "+32.", "+.05"))))
+    stopifnot(all(! grepl(paste0("^", grepisnonnegative, "$"), c("2.2.", "0a", "1e1", ".2.", "ab", "2.3a", "--a", "++2", "-0.5", "-.5", "-5", "-7."))))
     stopifnot(all(  grepl(paste0("^", grepisshare, "$"), c("0", "0.0", ".000", "1.0", "1.", "1", "0.12341234"))))
     stopifnot(all(! grepl(paste0("^", grepisshare, "$"), c("1.1", "-0.3", "-0", "."))))
   }
@@ -36,12 +48,13 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
     # how parameter n is defined in main.gms
     paramdef <- paste0("^([ ]*", n, "[ ]*=|\\$setglobal[ ]+", n, " )")
     # filter fitting parameter definition from code snippets containing regexp
-    filtered <- grep(paste0(paramdef, ".*regexp[ ]*=[ ]*"), code, value = TRUE)
+    filtered <- grep(paste0(paramdef, ".*regexp[ ]*=[ ]*"), code, value = TRUE, ignore.case = TRUE)
     if (length(filtered) == 1) {
       # search for string '!! regexp = whatever', potentially followed by '!! otherstuff' and extract 'whatever'
       regexp <- paste0("^(", trimws(gsub("!!.*", "", gsub("^.*regexp[ ]*=", "", filtered))), ")$")
       # replace is.numeric by pattern defined above
       useregexp <- gsub("is.numeric", grepisnum, regexp, fixed = TRUE)
+      useregexp <- gsub("is.nonnegative", grepisnonnegative, useregexp, fixed = TRUE)
       useregexp <- gsub("is.share", grepisshare, useregexp, fixed = TRUE)
       # check whether parameter value fits regular expression
       if (! grepl(useregexp, cfg$gms[[n]])) {
@@ -54,7 +67,8 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
     # count errors
     if (! is.null(errormsg)) {
       errorsfound <- errorsfound + 1
-      if (testmode) warning(errormsg) else message(errormsg)
+      message(errormsg)
+      if (testmode) warning(errormsg)
     }
   }
 
@@ -65,7 +79,7 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
 
   # Check for compatibility with subsidizeLearning
   if ((cfg$gms$optimization != "nash") && (cfg$gms$subsidizeLearning == "globallyOptimal") ) {
-    message("Only optimization='nash' is compatible with subsidizeLearning='globallyOptimal'. Switching subsidizeLearning to 'off' now.\n")
+    message("Only optimization='nash' is compatible with subsidizeLearning='globallyOptimal'. Switching subsidizeLearning to 'off' now.")
     cfg$gms$subsidizeLearning <- "off"
   }
 
@@ -74,19 +88,23 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
     cfg$output <- setdiff(cfg$output, "reportCEScalib")
   }
   
-  # Make sure that an input_bau.gdx has been specified if an NDC is to be calculated.
-  if (isTRUE(cfg$gms$carbonprice == "NDC") | isTRUE(cfg$gms$carbonpriceRegi == "NDC")) {
+  # Make sure that an input_bau.gdx has been specified if and only if needed.
+  isBauneeded <- isTRUE(length(unlist(lapply(names(needBau), function(x) intersect(cfg$gms[[x]], needBau[[x]])))) > 0)
+  if (isBauneeded) {
     if (is.na(cfg$files2export$start["input_bau.gdx"])) {
-      errormsg <- "'carbonprice' or 'carbonpriceRegi' is set to 'NDC' which requires a reference gdx in 'path_gdx_bau' but it is empty."
+      errormsg <- "A module requires a reference gdx in 'path_gdx_bau', but it is empty."
       if (testmode) warning(errormsg) else stop(errormsg)
     }
   } else {
-    if (!is.na(cfg$files2export$start["input_bau.gdx"])) {
-      message("Neither 'carbonprice' nor 'carbonpriceRegi' is set to 'NDC' but 'path_gdx_bau' ",
-              "is not empty introducing an unnecessary dependency to another run. Setting 'path_gdx_bau' to NA")
-      cfg$files2export$start["input_bau.gdx"] <- NA        
+    if (! is.na(cfg$files2export$start["input_bau.gdx"])) {
+      message("You have specified no realization that requires 'path_gdx_bau' but you have specified it. ",
+              "To avoid an unnecessary dependency to another run, setting 'path_gdx_bau' to NA.")
+      cfg$files2export$start["input_bau.gdx"] <- NA
     }
+  }
+
+  if (errorsfound > 0) {
+    cfg$errorsfoundInCheckFixCfg <- errorsfound
   }  
-  
   return(cfg)
 }

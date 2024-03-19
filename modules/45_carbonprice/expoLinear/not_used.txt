@@ -6,9 +6,6 @@
 # |  Contact: remind@pik-potsdam.de
 name,type,reason
 sm_c_2_co2,switch, ???
-vm_cesIO,variable,???
-pm_pvp,parameter,???
-pm_ts,parameter,???
 cm_emiscen,switch,???
 cm_iterative_target_adj,switch,???
 vm_co2eq,variable,???
@@ -24,8 +21,6 @@ pm_shPPPMER,input,questionnaire
 pm_pop,input,questionnaire
 pm_gdp,input,questionnaire
 cm_CO2priceRegConvEndYr,input,questionnaire
-cm_peakBudgYr,input,questionnaire
-cm_taxCO2inc_after_peakBudgYr,input,questionnaire
 cm_NDC_divergentScenario,input,questionnaire
 vm_demFeSector,input,questionnaire
 pm_emifac,input,questionnaire

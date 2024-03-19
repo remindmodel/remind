@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/fixed_shares/datainput.gms
 
-vm_macBaseInd.l(ttot,regi,entyFE,secInd37) = 0;
+vm_emiIndBase.l(ttot,regi,entyFe,secInd37) = 0;
 
 *** substitution elasticities
 Parameter 
@@ -38,10 +38,12 @@ pm_cesdata_sigma(ttot,"enhgai")$ (ttot.val eq 2030) = 1.2;
 pm_cesdata_sigma(ttot,"enhgai")$ (ttot.val eq 2035) = 2;
 pm_cesdata_sigma(ttot,"enhgai")$ (ttot.val eq 2040) = 3;
 
+*** rescale elasticity of substitution parameter sigma
+*** avoid the elasticity of substitution parameter to be too close to one, which could cause undesired numerical behavior: if the resulting scaled parameter is between 0.8 and 1, make it 0.8; if it is between 1 and 1.2, make it 1.2
 $IFTHEN.cm_eni not "%cm_eni%" == "off" 
   pm_cesdata_sigma(ttot,"eni")$pm_cesdata_sigma(ttot,"eni") = pm_cesdata_sigma(ttot,"eni") * %cm_eni%;
-  pm_cesdata_sigma(ttot,"eni")$( (pm_cesdata_sigma(ttot,"eni") gt 0.8) AND (pm_cesdata_sigma(ttot,"eni") lt 1)) = 0.8; !! If complementary factors, sigma should be below 0.8
-  pm_cesdata_sigma(ttot,"eni")$( (pm_cesdata_sigma(ttot,"eni") ge 1) AND (pm_cesdata_sigma(ttot,"eni") lt 1.2)) = 1.2; !! If substitution factors, sigma should be above 1.2
+  pm_cesdata_sigma(ttot,"eni")$( (pm_cesdata_sigma(ttot,"eni") gt 0.8) AND (pm_cesdata_sigma(ttot,"eni") lt 1)) = 0.8;
+  pm_cesdata_sigma(ttot,"eni")$( (pm_cesdata_sigma(ttot,"eni") ge 1) AND (pm_cesdata_sigma(ttot,"eni") lt 1.2)) = 1.2;
 $ENDIF.cm_eni
 
 *** assuming a maximum 20% of heat pumps in heat industry to be more in line with industry subsectors
@@ -150,16 +152,18 @@ $endif.feShareScenario
 
 $ENDIF.feShare
 
-*** FS: CES markup cost industry
-p37_CESMkup(t,regi,in) = 0;
-*** in standard case, apply markup-cost of 0.5 trUSD/TWa to feeli to represent demand-side cost of electrification and 
-*** obtain a higher efficiency in calibration to mimic energy efficiency gains with increasing electricity share
-p37_CESMkup(t,regi,"feeli") = 0.5;
+*** CES markup cost industry
+p37_CESMkup(ttot,regi,in) = 0;
+*** in standard case, apply markup-cost of 0.5 trUSD/TWa to feeli to represent
+*** demand-side cost of electrification and obtain a higher efficiency in
+*** calibration to mimic energy efficiency gains with increasing electricity
+*** share.
+p37_CESMkup(ttot,regi,"feeli") = 0.5;
 
 *** overwrite or extent CES markup cost if specified by switch
-$ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
-  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in)) = p37_CESMkup_input(in);
-$endIf.CESMkup
+$ifthen.CESMkup "%cm_CESMkup_ind%" == "manual" 
+  p37_CESMkup(ttot,regi,in)$( p37_CESMkup_input(in) ) = p37_CESMkup_input(in);
+$endif.CESMkup
 
 display p37_CESMkup;
 

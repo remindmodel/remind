@@ -241,52 +241,12 @@
 *' approach is taken: All ppfen (not ppfkap) input prices are mutliplied with the same factor (the ratio of prescribed
 *' to computed UE quantity, minus the ppfkap share), such that the quantity trajectories are met for UE.
 *'
-*' ##### Putty-Clay
-*'
-*' Putty-Clay is currently mainly used in the buildings module.
-*'
-*' It is possible to introduce segments of the CES tree which are subject to putty-clay dynamics, _i.e._ the model at
-*' time `t` will substitute between _increments_ of the variables. The _aggregate_ level of the variable will be the
-*' sum of the _increment_ from the CES and the depreciated past _aggregate_ level. This mechanism limits the extent
-*' to which the energy demand can be reduced in response to higher energy prices.
-*'
-*' To treat some CES sections as putty-clay, the set items should be included to `in_putty` and `ppf_putty` for the lowest
-*' level of the putty-clay section. In addition, depreciation rates should be defined for the putty variables. For
-*' consistency, it is advisable to use identical depreciation rates for inputs and outputs in the same CES function.
-*'
-*' Currently, the calibration script has not been tested for a putty-clay structure that is in the `beyond_calib` part.
-*'
-*' The Powerpoint file attached gives some more explanations.
-*'
-*' ##### Perfectly complementary factors
-*'
-*' To implement perfectly complementary factors, you should include the factors in the set `in_complements`. In addition,
-*' the elasticity of substitution between these factors should be set to `INF` (which is counter-intuitive). Prices of
-*' complementary inputs are set to 1, so that the output is equal to the sum of inputs (reason why the substitution
-*' elasticity should be INF), which makes sense for energetic entities. It would however be possible to change this
-*' (by choosing another elasticity of substitution) without harming the calibration.
-*'
-*' In the model, the complementary factors are subject to a constraint (`q01_prodCompl` or `q01_prodCompl_putty`), so that
-*' each variable is computed by multiplying a key variable of the CES function by a given factor. The calibration computes
-*' this factor for each period.
-*'
-*' ##### Compute elasticities of substitution
-*'
-*' Normally, the elasticities of substitution are prescribed as an ad-hoc guess in the according modules.
-*'
-*' However, for some CES nodes (currently only in the `services_with_capital` realization of the buildings module), it is
-*' estimated with technological data instead.
-*'
-*' To this end, equations are defined in the file `equations.gms`, and a corresponding model minimizing an error is solved
-*' in `preloop.gms` to best fit the data. The according section is labeled "compute elasticities of substitution" in the
-*' source code.
-*'
+
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/29_CES_parameters/calibrate/sets.gms"
 $Ifi "%phase%" == "declarations" $include "./modules/29_CES_parameters/calibrate/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/29_CES_parameters/calibrate/datainput.gms"
-$Ifi "%phase%" == "equations" $include "./modules/29_CES_parameters/calibrate/equations.gms"
 $Ifi "%phase%" == "preloop" $include "./modules/29_CES_parameters/calibrate/preloop.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/29_CES_parameters/calibrate/bounds.gms"
 $Ifi "%phase%" == "output" $include "./modules/29_CES_parameters/calibrate/output.gms"

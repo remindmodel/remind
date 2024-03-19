@@ -15,6 +15,8 @@ option pm_taxemiMkt_iteration:3:3:1;
 pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 p47_implicitQttyTargetTaxRescale_iter("1", "2030",ext_regi,qttyTarget,qttyTargetGroup) = 0;
+p47_implicitQttyTargetReferenceIteration(ext_regi) = 0;
+p47_implicitQttyTargetIterationCount(ext_regi) = 0;
 $endIf.cm_implicitQttyTarget
 
 *** RR this should be replaced as soon as non-energy is treated endogenously in the model
@@ -309,7 +311,7 @@ pm_tau_ces_tax("2025",regi,"ue_steel_primary")$(sameAs(regi,"DEU")) = 0.0;
 
 
 *** FE and ES demand trajectories from exogenous sources (not EDGE models) used for fixing via switch cm_exogDem_scen (not used in calibration)
-$ifthen.ExogDemScen NOT "%cm_exogDem_scen%" == "off"
+$ifthen.exogDemScen NOT "%cm_exogDem_scen%" == "off"
 Parameter pm_exogDemScen(ttot,all_regi,exogDemScen,all_in) "Exogenous demand trajectories to fix CES function to specific quantity trajectories"
 /
 $ondelim
@@ -317,7 +319,7 @@ $include "./modules/47_regipol/regiCarbonPrice/input/p47_exogDemScen.cs4r"
 $offdelim
 /;
 
-$endif.ExogDemScen
+$endif.exogDemScen
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms

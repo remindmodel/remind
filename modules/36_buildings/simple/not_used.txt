@@ -5,36 +5,3 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 name,type,reason
-vm_cesIOdelta,input,questionnaire
-vm_enerSerAdj,input,questionnaire
-pm_capital_lifetime_exp,input,questionnaire
-pm_dt,input,questionnaire
-pm_ts,input,questionnaire
-pm_cumDeprecFactor_old,input,questionnaire
-pm_cumDeprecFactor_new,input,questionnaire
-pm_delta_kap,input,questionnaire
-sm_EJ_2_TWa,input,questionnaire
-sm_DpKW_2_TDpTW,input,questionnaire
-sm_DpGJ_2_TDpTWa,input,questionnaire
-sm_D2015_2_D2005,input,questionnaire
-sm_tmp,input,questionnaire
-vm_effGr,input,questionnaire
-pm_shPPPMER,input,questionnaire
-pm_pop,input,questionnaire
-pm_gdp,input,questionnaire
-pm_esCapCost,input,questionnaire
-pm_fe2es,input,questionnaire
-pm_shFeCes,input,questionnaire
-cm_DiscRateScen,input,questionnaire
-cm_noReboundEffect,input,questionnaire
-sm_year_2_day,input,questionnaire
-sm_day_2_hour,input,questionnaire
-pm_tsu2opTimeYr,input,questionnaire
-vm_demFeForEs,input,questionnaire
-cm_priceSensiBuild,input,questionnaire
-cm_logitCal_markup_conv_b,input,questionnaire
-cm_logitCal_markup_newtech_conv_b,input,questionnaire
-cm_build_AdjCostActive,input,questionnaire
-qm_balFe,input,questionnaire
-pm_tau_fe_tax,input,questionnaire
-pm_tau_fe_sub,input,questionnaire

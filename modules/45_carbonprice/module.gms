@@ -22,14 +22,8 @@
 
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%carbonprice%" == "NDC" $include "./modules/45_carbonprice/NDC/realization.gms"
-$Ifi "%carbonprice%" == "NDC2constant" $include "./modules/45_carbonprice/NDC2constant/realization.gms"
 $Ifi "%carbonprice%" == "NPi" $include "./modules/45_carbonprice/NPi/realization.gms"
-$Ifi "%carbonprice%" == "NPi2018" $include "./modules/45_carbonprice/NPi2018/realization.gms"
 $Ifi "%carbonprice%" == "diffCurvPhaseIn2Lin" $include "./modules/45_carbonprice/diffCurvPhaseIn2Lin/realization.gms"
-$Ifi "%carbonprice%" == "diffPhaseIn2Constant" $include "./modules/45_carbonprice/diffPhaseIn2Constant/realization.gms"
-$Ifi "%carbonprice%" == "diffPhaseIn2Lin" $include "./modules/45_carbonprice/diffPhaseIn2Lin/realization.gms"
-$Ifi "%carbonprice%" == "diffPhaseInLin2LinFlex" $include "./modules/45_carbonprice/diffPhaseInLin2LinFlex/realization.gms"
-$Ifi "%carbonprice%" == "diffPriceSameCost" $include "./modules/45_carbonprice/diffPriceSameCost/realization.gms"
 $Ifi "%carbonprice%" == "exogenous" $include "./modules/45_carbonprice/exogenous/realization.gms"
 $Ifi "%carbonprice%" == "expoLinear" $include "./modules/45_carbonprice/expoLinear/realization.gms"
 $Ifi "%carbonprice%" == "exponential" $include "./modules/45_carbonprice/exponential/realization.gms"

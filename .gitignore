@@ -58,7 +58,8 @@ core/magicc/
 !core/magicc/magicc_scen_450.inc
 !core/magicc/magicc_scen_550.inc
 
-# ignore files created by the climate assessment scripts
+# ignore climate assessment data
+scripts/utils/climate_assessment/PYTHONLOG*.out
 scripts/utils/climate_assessment/output_climate/
 
 # ignore GDX files in the gdx-files folder
@@ -82,3 +83,4 @@ runtime.rds
 # ignore slurm logs
 slurm-[0-9]*.log
 slurm-[0-9]*.out
+calibration_results/

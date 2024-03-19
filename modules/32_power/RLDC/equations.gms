@@ -11,9 +11,9 @@
 ***---------------------------------------------------------------------------
 q32_balSe(t,regi,enty2)$(sameas(enty2,"seel"))..
 	v32_scaleCap(t,regi) * p32_capFacDem(regi) 
-	+ sum(pc2te(enty,entySE(enty3),te,enty2), 
+	+ sum(pc2te(enty,entySe(enty3),te,enty2), 
 		pm_prodCouple(regi,enty,enty3,te,enty2) * vm_prodSe(t,regi,enty,enty3,te) )
-	+ sum(pc2te(enty4,entyFE(enty5),te,enty2), 
+	+ sum(pc2te(enty4,entyFe(enty5),te,enty2), 
 		pm_prodCouple(regi,enty4,enty5,te,enty2) * vm_prodFe(t,regi,enty4,enty5,te) )
 	+ sum(pc2te(enty,enty3,te,enty2),
 		sum(teCCS2rlf(te,rlf),
@@ -55,9 +55,9 @@ q32_shTheo(t,regi,teVRE)..
     sum(pe2se(entyPe,"seel",teVRE), vm_prodSe(t,regi,entyPe,"seel",teVRE) )
     / (
 		v32_scaleCap(t,regi) * p32_capFacDem(regi)
-		+ sum(pc2te(enty,entySE(enty3),te,enty2), 
+		+ sum(pc2te(enty,entySe(enty3),te,enty2), 
 			pm_prodCouple(regi,enty,enty3,te,enty2) * vm_prodSe(t,regi,enty,enty3,te) )
-		+ sum(pc2te(enty4,entyFE(enty5),te,enty2), 
+		+ sum(pc2te(enty4,entyFe(enty5),te,enty2), 
 			pm_prodCouple(regi,enty4,enty5,te,enty2) * vm_prodFe(t,regi,enty4,enty5,te) )
 		+ sum(pc2te(enty,enty3,te,enty2),
 			sum(teCCS2rlf(te,rlf),
@@ -69,7 +69,7 @@ q32_shTheo(t,regi,teVRE)..
 *** Transform the RLDC normalized capacities (0-1) to real world magnitudes
 ***---------------------------------------------------------------------------
 q32_scaleCapTe(t,regi,te)$( (t.val > 2000) AND teRLDCDisp(te) )..  !! scale the capacities of all technologies explicitly represented in the RLDCs
-	sum(tese2rlf(te,rlf), vm_cap(t,regi,te,rlf) )
+	sum(teSe2rlf(te,rlf), vm_cap(t,regi,te,rlf) )
 	=e=
 	v32_scaleCap(t,regi) * ( sum(LoB, v32_capLoB(t,regi,te,LoB) ) + v32_capER(t,regi,te) )
 ;
@@ -217,7 +217,7 @@ q32_peakCap(t,regi)..
 
 q32_capAdeq(t,regi)$(t.val > 2005)..    
 	sum(teRLDCDisp(te)$(NOT sameas(te,"hydro")),
-		sum(tese2rlf(te,rlf), vm_cap(t,regi,te,rlf) )
+		sum(teSe2rlf(te,rlf), vm_cap(t,regi,te,rlf) )
 	)
 	+ 0.8 * vm_cap(t,regi,"hydro","1")  !! to represent that it is not fully dispatchable, hydro counts only with 80% of its installed capacity towards peak capacity
 	=g=
@@ -327,15 +327,6 @@ q32_limitCapTeGrid(t,regi)$( t.val ge 2015 ) ..
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
     + 1.5 * vm_prodSe(t,regi,"pewin","seel","windoff")
 $ENDIF.WindOff
-;
-
-***---------------------------------------------------------------------------
-*** EMF27 limits on fluctuating renewables, only turned on for special EMF27 and AWP 2 scenarios, not for SSP
-***---------------------------------------------------------------------------
-q32_limitSolarWind(t,regi)$( (cm_solwindenergyscen = 2) OR (cm_solwindenergyscen = 3) )..
-	vm_usableSeTe(t,regi,"seel","spv") + vm_usableSeTe(t,regi,"seel","wind") + vm_usableSeTe(t,regi,"seel","csp") 
-	=l=
-	0.2 * vm_usableSe(t,regi,"seel")
 ;
 
 ***---------------------------------------------------------------------------

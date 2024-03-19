@@ -45,8 +45,8 @@ helpText <- "
 #'   remind_dir=       path to remind or output folder(s) where runs can be found.
 #'                     Defaults to ./output but can also be used to specify multiple
 #'                     folders, comma-separated, such as remind_dir=.,../otherremind
-#'   slurmConfig=      use slurmConfig=direct, priority, short or standby to specify
-#'                     slurm selection. You may also pass complicated arguments such as
+#'   slurmConfig=      use slurmConfig=priority, short or standby to specify slurm
+#'                     selection. You may also pass complicated arguments such as
 #'                     slurmConfig='--qos=priority --mem=8000'
 "
 
@@ -67,14 +67,16 @@ library(lucode2)
 library(gms)
 require(stringr, quietly = TRUE)
 
+# Import all functions from the scripts/start folder
+invisible(sapply(list.files("scripts/start", pattern = "\\.R$", full.names = TRUE), source))
+
+flags <- NULL
 ### Define arguments that can be read from command line
 if (!exists("source_include")) {
   # if this script is not being sourced by another script but called from the command line via Rscript read the command
   # line arguments and let the user choose the slurm options
   flags <- readArgs("outputdir", "output", "comp", "remind_dir", "slurmConfig", "filename_prefix",
                     .flags = c(t = "--test", h = "--help"))
-} else {
-  flags <- NULL
 }
 
 if ("--help" %in% flags) {
@@ -82,13 +84,23 @@ if ("--help" %in% flags) {
   q()
 }
 
-choose_slurmConfig_output <- function(slurmExceptions = NULL) {
+choose_slurmConfig_output <- function(output) {
   slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
                      "--qos=priority --mem=8000", "--qos=short --mem=8000",
-                     "--qos=standby --mem=8000", "--qos=priority --mem=32000", "direct")
-  if (!is.null(slurmExceptions)) {
-    slurm_options <- unique(c(grep(slurmExceptions, slurm_options, value = TRUE), "direct"))
+                     "--qos=standby --mem=8000", "--qos=priority --mem=32000")
+
+  if (!isSlurmAvailable())
+    return("direct")
+
+  # Modify slurm options for reporting options that run in parallel (MAGICC) or need more memory
+  if ("ar6Climate" %in% output) {
+    slurm_options <- paste(slurm_options[1:3], "--tasks-per-node=12 --mem=32000")
+  } else if ("nashAnalysis" %in% output) {
+    slurm_options <- paste(slurm_options[1:3], "--mem=32000")
+  } else if ("reporting" %in% output) {
+    slurm_options <- grep("--mem=[0-9]*[0-9]{3}", slurm_options, value = TRUE)
   }
+
   if (length(slurm_options) == 1) {
     return(slurm_options[[1]])
   }
@@ -125,14 +137,22 @@ if (! exists("output")) {
 # Select output directories if not defined by readArgs
 if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
-                         "plot_compare_iterations", "varListHtml")
+                         "plot_compare_iterations", "varListHtml", "fixOnRef", "MAGICC7_AR6")
   needingMif <- any(modulesNeedingMif %in% output)
-  dir_folder <- if (exists("remind_dir")) c(file.path(remind_dir, "output"), remind_dir) else "./output"
+  if (exists("remind_dir")) {
+    dir_folder <- c(file.path(remind_dir, "output"), remind_dir)
+  } else {
+    defaultcfg <- readDefaultConfig(".")
+    dir_folder <- unique(c("output", dirname(defaultcfg$results_folder)))
+  }
   dirs <- dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx")))
   if (needingMif) dirs <- intersect(dirs, unique(dirname(Sys.glob(file.path(dir_folder, "*", "REMIND_generic_*.mif")))))
   dirnames <- if (length(dir_folder) == 1) basename(dirs) else dirs
   names(dirnames) <- stringr::str_extract(dirnames, "rem-[0-9]+$")
   names(dirnames)[is.na(names(dirnames))] <- ""
+  if (length(dirnames) == 0) {
+    stop("No directories found containing gdx", if (needingMif) " and mif", " files. Aborting.")
+  }
   selectedDirs <- chooseFromList(dirnames, type = "runs to be used for output generation",
                     userinfo = paste0(if ("policyCosts" %in% output) "The reference run will be selected separately! " else NULL,
                                       if (needingMif) "Do you miss a run? Check if .mif exists and rerun reporting. " else NULL),
@@ -140,10 +160,11 @@ if (! exists("outputdir")) {
   outputdirs <- if (length(dir_folder) == 1) file.path(dir_folder, selectedDirs) else selectedDirs
 
   if ("policyCosts" %in% output) {
-    policyrun <- chooseFromList(dirnames, type = "reference run to which policy run will be compared",
+    policyrun <- chooseFromList(c("--- only here to avoid that folder numbers change ---", dirnames),
+                                type = "reference run to which policy run will be compared",
                                 userinfo = "Select a single reference run.",
                                 returnBoolean = TRUE, multiple = FALSE)
-    outputdirs <- c(rbind(outputdirs, dirs[policyrun])) # generate 3,1,4,1,5,1 out of 3,4,5 and policyrun 1
+    outputdirs <- c(rbind(outputdirs, dirs[policyrun[-1]])) # generate 3,1,4,1,5,1 out of 3,4,5 and policyrun 1
   }
 } else {
   outputdirs <- outputdir
@@ -163,7 +184,7 @@ if (comp %in% c("comparison", "export")) {
   # choose the slurm options. If you use command line arguments, use slurmConfig=priority or standby
   modules_using_slurmConfig <- c("compareScenarios2")
   if (!exists("slurmConfig") && any(modules_using_slurmConfig %in% output)) {
-    slurmConfig <- choose_slurmConfig_output()
+    slurmConfig <- choose_slurmConfig_output(output = output)
   }
   if (exists("slurmConfig")) {
     if (slurmConfig %in% c("priority", "short", "standby")) {
@@ -194,17 +215,18 @@ if (comp %in% c("comparison", "export")) {
     }
   }
 } else { # comp = single
-  # define slurm class or direct execution
-  outputUsingDirect <- c("plotIterations")
+    # define slurm class or direct execution
+  outputInteractive <- c("plotIterations", "fixOnRef", "integratedDamageCosts")
   if (! exists("source_include")) {
-    # for selected output scripts, only slurm configurations matching these regex are available
-    slurmExceptions <- if ("reporting" %in% output) "--mem=[0-9]*[0-9]{3}" else NULL
-    if (any(output %in% outputUsingDirect)) slurmConfig <- "direct"
+    if (any(output %in% outputInteractive)) {
+      slurmConfig <- "direct"
+      flags <- c(flags, "--interactive") # to tell scripts they can run in interactive mode
+    }
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
     if (!exists("slurmConfig")) {
-      slurmConfig <- choose_slurmConfig_output(slurmExceptions = slurmExceptions)
-      if (slurmConfig != "direct") slurmConfig <- paste(slurmConfig, "--nodes=1 --tasks-per-node=1")
+      slurmConfig <- choose_slurmConfig_output(output = output)
+      if (slurmConfig != "direct") slurmConfig <- combine_slurmConfig("--nodes=1 --tasks-per-node=1", slurmConfig)
     }
     if (slurmConfig %in% c("priority", "short", "standby")) {
       slurmConfig <- paste0("--qos=", slurmConfig, " --nodes=1 --tasks-per-node=1")
@@ -258,12 +280,13 @@ if (comp %in% c("comparison", "export")) {
     } else {
       message("\nStarting output generation for ", outputdir, "\n")
       name <- paste0(output, ".R")
+      scriptsfound <- file.exists(paste0("scripts/output/single/", name))
       if ("--test" %in% flags) {
         message("Test mode, not executing scripts/output/single/", paste(name, collapse = ", "))
-      } else if (all(file.exists(paste0("scripts/output/single/", name)))) {
+      } else {
         if (slurmConfig == "direct") {
           # execute output script directly (without sending it to slurm)
-          for (n in name) {
+          for (n in name[scriptsfound]) {
             message("Executing ", n)
             tmp.env <- new.env()
             tmp.error <- try(sys.source(paste0("scripts/output/single/", n), envir = tmp.env))
@@ -285,9 +308,10 @@ if (comp %in% c("comparison", "export")) {
         }
         # finished
         message("\nFinished ", ifelse(slurmConfig == "direct", "", "starting job for "), "output generation for ", outputdir, "!\n")
-      } else {
-        warning("Skipping ", outputdir, " because some output script selected could not be found ",
-                "in scripts/output/single: ", name[! name %in% dir("scripts/output/single")])
+      }
+      if (any(! scriptsfound)) {
+        warning("Skipping those output script selected that could not be found in scripts/output/single: ",
+                name[! scriptsfound])
       }
     }
 

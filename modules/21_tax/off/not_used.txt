@@ -14,22 +14,20 @@ vm_prodSe, variable, ???
 vm_prodPe, variable, ???
 vm_Xport, variable, ???
 pm_taxCO2eq, parameter, ???
-pm_tau_fe_sub, parameter, ???
-pm_tau_fe_tax, parameter, ???
+p21_tau_fe_sub, parameter, ???
+p21_tau_fe_tax, parameter, ???
 pm_ts, parameter, ???
 cm_bioenergy_SustTax,input,questionnaire
 cm_bioenergy_EF_for_tax,input,questionnaire
 cm_startyear, switch, ???
 cm_fetaxscen, switch, ???
 cm_gdximport_target, switch, ???
-pm_gdp_gdx,parameter,???
 pm_pop,parameter,???
 cm_so2tax_scen,switch,???
 sm_DpGJ_2_TDpTWa,switch,???
 vm_cesIO,variable,???
 vm_co2eq,variable,???
 cm_emiscen,input,questionnaire
-pm_taxCO2eqSCC,input,questionnaire
 vm_co2CCS,input,questionnaire
 pm_dataccs,input,questionnaire
 pm_data,input,questionnaire
@@ -53,10 +51,8 @@ pm_pvp,input,questionnaire
 pm_taxemiMkt,input,questionnaire
 pm_taxemiMkt_iteration,input,questionnaire
 vm_Mport,input,questionnaire
-vm_deltaCap, variable, ???
 sm_TWa_2_MWh,input,questionnaire
 vm_emiCO2Sector,input,questionnaire
-pm_taxCO2eqRegi,input,questionnare
 pm_taxCO2eqSum,input,questionnare
 pm_tau_pe_tax,input,questionnaire
 pm_ccsinjecrate,input,questionaire
@@ -69,3 +65,10 @@ pm_tau_ces_tax,input,questionnaire
 vm_taxrevimplicitPriceTax,input,questionnaire
 vm_taxrevimplicitPePriceTax,input,questionnaire
 vm_changeProdStartyearCost, variable, ???
+vm_costInvTeDir,input,only needed if tax is on
+vm_costInvTeAdj,input,only needed if tax is on
+pm_cintraw,input,only needed if tax is on
+pm_gdp,input,only needed if tax is on
+pm_cf,input,only needed if tax is on
+vm_shDemSeel,input,only needed if tax is on
+pm_teAnnuity,input,only needed if tax is on

@@ -297,7 +297,7 @@ if (!"3" %in% special_requests) {
 
   tmp_policy_costs <- tmp_policy_costs_magpie %>%
     lapply(quitte::as.quitte) %>%
-    lapply(select, region, period, data, value)
+    lapply(select, "region", "period", "variable", "value")
 
   # Combine results in single tibble, with names like "Pol_w.r.t_Ref"
   policy_costs <- rename(tmp_policy_costs[[1]], !!sym(paste0(pol_names[1], "_w.r.t_",ref_names[1])):=value)
@@ -305,13 +305,13 @@ if (!"3" %in% special_requests) {
     for (i in 2:length(tmp_policy_costs)) {
       policy_costs <- tmp_policy_costs[[i]] %>%
         rename(!!sym(paste0(pol_names[i], "_w.r.t_", ref_names[i])) := value) %>%
-        left_join(policy_costs, tmp_policy_costs[[i]], by = c("region", "period", "data"))
+        left_join(policy_costs, tmp_policy_costs[[i]], by = c("region", "period", "variable"))
     }
   }
   # and do some pivotting
   policy_costs <- policy_costs %>%
     pivot_longer(cols = matches(".*w\\.r\\.t.*"), names_to = "Model Output") %>%
-    pivot_wider(names_from = data)
+    pivot_wider(names_from = "variable")
 
   # By default, plots are only created until 2100
   if (!"4" %in% special_requests) {

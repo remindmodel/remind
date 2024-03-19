@@ -11,6 +11,12 @@ $ifthen.p46_zeroYear "%cm_netZeroScen%" == "ENGAGE4p5_GlP"
   p46_zeroYear = 2200;
 $endif.p46_zeroYear
 
+$ifthen.p46_zeroYear "%cm_netZeroScen%" == "NGFS_v4_20pc"
+  p46_zeroYear = 2200;
+$endif.p46_zeroYear
+$ifthen.p46_zeroYear "%cm_netZeroScen%" == "NGFS_v4"
+  p46_zeroYear = 2200;
+$endif.p46_zeroYear
 
 ***profile for countries with 2050 target
 pm_taxCO2eqRegi(t,nz_reg2050)$sameas(t,"2035")=5;

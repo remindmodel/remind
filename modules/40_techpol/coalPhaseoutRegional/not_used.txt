@@ -10,7 +10,6 @@ vm_prodSe, variable, ???
 vm_demPe,variable,???
 pm_prodCouple,parameter,???
 pm_gdp,input,questionnaire
-vm_shUePeT,input,questionnaire
 pm_NuclearConstraint,input,questionnaire
 vm_capEarlyReti,input,questionnaire
 pm_regiEarlyRetiRate,input,questionnaire
