@@ -224,8 +224,13 @@ climateAssessmentData <- read.quitte(climateAssessmentOutput) %>%
   filter(period %in% usePeriods) %>%
   interpolate_missing_periods(usePeriods, expand.values = FALSE) %>%
   mutate(variable = gsub("|MAGICCv7.5.3", "", .data$variable, fixed = TRUE)) %>%
-  mutate(variable = gsub("AR6 climate diagnostics|", "MAGICC7 AR6|", .data$variable, fixed = TRUE)) %>%
-  write.mif(remindReportingFile, append = TRUE)
+  mutate(variable = gsub("AR6 climate diagnostics|", "MAGICC7 AR6|", .data$variable, fixed = TRUE))
+
+as.quitte(remindReportingFile) %>%
+  # remove data from old MAGICC7 runs to avoid duplicated
+  filter(! grepl("AR6 climate diagnostics.*MAGICC7", .data$variable), ! grepl("^MAGICC7 AR6", .data$variable)) %>%
+  rbind(climateAssessmentData) %>%
+  write.mif(remindReportingFile)
 
 deletePlus(remindReportingFile, writemif = TRUE)
 
