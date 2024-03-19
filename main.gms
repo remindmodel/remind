@@ -216,6 +216,12 @@ $offdigit
 *** turn profiling off (0) or on (1-3, different levels of detail)
 option profile = 0;
 
+file foo_msg;     !! This creates a dummy output file with a well-defined output format:  
+foo_msg.nr = 1;   !! namely F-format (decimal) (and not E-format = scientific notation)
+*** The file can throughout the code be activated with `putclose foo_msg;` and used in the form `put_utility foo_msg "msg" / "xxxx"` to print out xxxx to full.lst 
+*** and be sure that the numeric format is F-format
+
+
 *' @title{extrapage: "00_configuration"} Configuration
 *' @code{extrapage: "00_configuration"}
 *--------------------------------------------------------------------------
@@ -1643,6 +1649,12 @@ $setglobal c_testOneRegi_region  EUR       !! def = EUR  !! regexp = [A-Z]{3}
 
 *** cm_taxrc_RE     "switch to define whether tax on (CO2 content of) energy imports is recycled to additional direct investments in renewables (wind, solar and storage)"
 $setglobal cm_taxrc_RE  none   !! def = none   !! regexp = none|REdirect
+
+*' cm_repeatNonOpt       "should nonoptimal regions be solved again?"
+*'
+*' *  (off): no, only infeasable regions are repeated, standard setting
+*' *  (yes):  also non-optimal regions are solved again, up to cm_solver_try_max
+$setglobal cm_repeatNonOpt off  
 
 *' @stop
 
