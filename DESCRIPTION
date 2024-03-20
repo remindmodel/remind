@@ -43,7 +43,7 @@ Imports:
     magclass,
     magpie4,
     magpiesets,
-    mip (>= 0.148.11),
+    mip (>= 0.148.12),
     modelstats,
     mrremind,
     mrvalidation,
