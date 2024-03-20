@@ -26,6 +26,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **21_tax** add SE tax on electricity going into electrolysis for hydrogen production
 - **scripts** add MAGICCv7.5.3 with AR6 settings as output script, add compareScenarios2 option
     [[#1475](https://github.com/remindmodel/remind/pull/1475), [[#1615](https://github.com/remindmodel/remind/pull/1615)]
+- **scripts** add 'make test-fix' which runs codeCheck in interactive mode, adjusting not_used.txt files
+    [[#1625](https://github.com/remindmodel/remind/pull/1625)
 
 ### fixed
 - fixed weights of energy carriers in `pm_IndstCO2Captured`
