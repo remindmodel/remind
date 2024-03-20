@@ -614,13 +614,15 @@ execute_load "input_ref.gdx", vm_demFEsector;
 p37_BioShareMaxSubsec(t,regi,entyFeCC37,secInd37)=1;
 
 
-*** for steel set maximum biomass share in solids to 30% until 2025 and linearly increase up to 80% in 2050
+*** for steel to prevent too fast switch to biomass, set maximum biomass shares in near-term
 p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val gt 2015 AND t.val le 2025)=0.3;
-p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val gt 2025 AND t.val le 2050)= 0.3 + (t.val - 2025) * 0.02;
-p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val gt 2050)=p37_BioShareMaxSubsec("2050",regi,"fesos","steel");
+p37_BioShareMaxSubsec("2030",regi,"fesos","steel")=0.4;
+p37_BioShareMaxSubsec("2035",regi,"fesos","steel")=0.7;
+p37_BioShareMaxSubsec("2040",regi,"fesos","steel")=1;
+
 
 *** for Germany set maximum biomass share of solids in steel to 10% at all times
-p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val ge 2020 AND sameas(regi,"DEU"))=0.1;
+***p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val ge 2020 AND sameas(regi,"DEU"))=0.1;
 
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms
