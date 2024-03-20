@@ -28,6 +28,18 @@ bunkervars <- unique(sort(c("Gross Emissions|CO2", paste0("Emissions|", gasvars$
 
 for (template in c("AR6", "NAVIGATE")) {
   message("\n### Check project summations for ", template)
+  templateVariables <- template %>%
+    getTemplateVariables(paste0("RT", if (any(grepl("^MAgPIE", levels(mifdata$model)))) "M")) %>%
+    unique() %>%
+    removePlus()
+  computedVariables <- unique(paste0(removePlus(mifdata$variable), " (", gsub("^$", "unitless", mifdata$unit), ")"))
+  missingVariables <- sort(setdiff(templateVariables, computedVariables))
+  if (length(missingVariables) > 0) {
+    message("# The following ", length(missingVariables), " variables are expected in the piamInterfaces package ",
+            "for template ", template, ", but cannot be found in the reporting:\n- ",
+            paste(missingVariables, collapse = ",\n- "), "\n")
+  }
+
   d <- generateIIASASubmission(mifdata, outputDirectory = NULL, logFile = NULL,
                                mapping = template, checkSummation = FALSE)
   failvars <- d %>%
@@ -53,7 +65,7 @@ for (template in c("AR6", "NAVIGATE")) {
     message("Regional summation checks are fine.")
   }
 
-  if (nrow(failvars) > 0 || nrow(failregi) > 0) stopmessage <- c(stopmessage, template)
+  if (nrow(failvars) > 0 || nrow(failregi) > 0 || length(missingVariables) > 0) stopmessage <- c(stopmessage, template)
 }
 
 if (length(stopmessage) > 0) {
