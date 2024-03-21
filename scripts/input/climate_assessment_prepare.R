@@ -1,62 +1,96 @@
-# require(tidyverse)
-require(madrat)
 require(remind2)
 require(quitte)
 require(piamInterfaces)
 require(yaml)
-# require(reticulate)
+require(tidyverse)
+# require(madrat)
 
-# Rscript climate_assessment_run_all.sh [gdxpath] [cfgpath] [temppath]
+# Rscript climate_assessment_run_all.sh [gdxpath] [cfgpath] [temppath] [iterationIdx]
 
+#
+# READ COMMAND LINE ARGUMENTS
+#
 args <- commandArgs(trailingOnly = T)
-# args <- c("fulldata.gdx", "cfg.txt", "climate-temp")
+# args <- c("fulldata.gdx", "cfg.txt", "climate-temp", "log_climate_dummy.log")
 
-gdxpath <- args[1]
-cfgpath <- args[2]
-outputdir <- args[3] 
+gdxPath <- args[1]
+cfgPath <- args[2]
+climateTempDir <- args[3]
+logFile <- args[4]
+# iterationIdx <- as.numeric(args[4])
+
+logMsg <- paste0(
+    date(), " climate_assessment_prepare.R: Using\n",
+    "gdxPath        '", gdxPath, "'\n",
+    "config         '", cfgPath, "'\n",
+    "climateTempDir '", climateTempDir, "'\n"
+)
+cat(logMsg)
+capture.output(cat(logMsg), file = logFile, append = TRUE)
 
 # Get the scenario name from the cfg
-cfg <- read_yaml(cfgpath)
+cfg <- read_yaml(cfgPath)
+scenarioName <- cfg$title
 
-# Create the output directory if it doesn't exist
-# outputdir="output_all/"
-cat(date()," climate_assessment_prepare.R: Attempting to create climate temp directory ",outputdir," \n")
-dir.create(outputdir, showWarnings = F)
+# Set up climate-assessment related configuration and output files
+climateAssessmentYaml <- file.path(system.file(package = "piamInterfaces"), "iiasaTemplates", "climate_assessment_variables.yaml")
+climateAssessmentEmi <- file.path(climateTempDir, paste0("ar6_climate_assessment_", scenarioName, ".csv"))
+if (!file.exists(climateAssessmentEmi)) {
+    file.create(climateAssessmentEmi)
+    createdOutputCsv <- TRUE
+} else {
+   createdOutputCsv <- FALSE
+}
 
-# Read the GDX and run reportEmi
-# gdxpath <- "fulldata.gdx"
-cat(date()," climate_assessment_prepare.R: Running reportEmi \n")
-emimag <- reportEmi(gdxpath)
+logMsg <- paste0(
+    date(), " climate_assessment_prepare.R: \n",
+    "Using climateAssessmentYaml '", climateAssessmentYaml, "'\n",
+    "Start reportEmi"
+)
+cat(logMsg)
+capture.output(cat(logMsg), file = logFile, append = TRUE)
 
-# Convert to quitte and add metadata
-emimif <- as.quitte(emimag)
-emimif["scenario"] <- cfg$title #TODO: Get scenario name from cfg
+#
+# Run emissions report here
+#
+timeStartPreprocessing <- Sys.time()
+emiReport <- reportEmi(gdxPath)
 
-# Write the raw emissions mif
-cat(date()," climate_assessment_prepare.R: Writing raw emissions mif \n")
-emimifpath <- paste0(outputdir,"/","emimif.mif")
-write.mif(emimif,emimifpath)
+logMsg <- paste0(
+    date(), " climate_assessment_prepare.R: Done reportEmi, start to wrangle emissions report into shape\n"
+)
+cat(logMsg)
+capture.output(cat(logMsg), file = logFile, append = TRUE)
 
-# Get the emissions in AR6 format
-# This seems to work with just the reportEmi mif
-cat(date()," climate_assessment_prepare.R: Running generateIIASASubmission to generate AR6 mif\n")
-generateIIASASubmission(emimifpath, mapping = "AR6", outputDirectory = outputdir, outputFilename = "emimif_ar6.mif", logFile = paste0(outputdir, "/missing.log"))
+#
+# Since the script is called in between runs, we need convert the emissions report each time
+#
+climateAssessmentInputData <- emiReport %>%
+    as.quitte() %>%
+    # Consider only the global region
+    filter(region %in% c("GLO", "World")) %>%
+    # Extract only the variables needed for climate-assessment. These are provided from the iiasaTemplates in the
+    # piamInterfaces package. See also:
+    # https://github.com/pik-piam/piamInterfaces/blob/master/inst/iiasaTemplates/climate_assessment_variables.yaml
+    generateIIASASubmission(
+        mapping = "AR6",
+        outputFilename = NULL,
+        iiasatemplate = climateAssessmentYaml,
+        logFile = logFile
+    ) %>%
+    mutate(region = factor("World"), scenario = factor(scenarioName)) %>%
+    # Rename the columns using str_to_title which capitalizes the first letter of each word
+    rename_with(str_to_title) %>%
+    # Transforms the yearly values for each variable from a long to a wide format. The resulting data frame then has
+    # one column for each year and one row for each variable
+    pivot_wider(names_from = "Period", values_from = "Value") %>%
+    write_csv(climateAssessmentEmi, quote = "none")
 
-# Read in AR6 mif
-cat(date()," climate_assessment_prepare.R: Reading AR6 mif and preparing csv for climate-assessment\n")
-ar6mif <- read.quitte(paste0(outputdir,"/","emimif_ar6.mif"))
-
-# Get it ready for climate-assessment: capitalized titles, just World, comma separator
-colnames(ar6mif) <- paste(toupper(substr(colnames(ar6mif), 1, 1)), substr(colnames(ar6mif), 2, nchar(colnames(ar6mif))), sep="")
-ar6mif <- ar6mif[ar6mif$Region=="GLO",]
-ar6mif$Region = "World"
-
-# Long to wide
-# ar6mif$Period=as.factor(ar6mif$Period)
-outcsv <- reshape(as.data.frame(ar6mif), direction = "wide", timevar = "Period", v.names = "Value", idvar = c("Model","Variable","Scenario","Region","Unit"))
-colnames(outcsv) <- gsub("Value.","",colnames(outcsv))
-
-# Write output in csv for climate-assessment
-cat(date()," climate_assessment_prepare.R: Writing csv for climate-assessment\n")
-write.csv(outcsv, paste0(outputdir,"/","emimif_ar6.csv"), row.names=F, quote=F)
-
+timeStopPreprocessing <- Sys.time()
+logMsg <- paste0(
+    date(), " climate_assessment_prepare.R: Done data wrangling\n",
+    "Runtime preprocessing: ", timeStopPreprocessing - timeStartPreprocessing, "s \n",
+    date(), " climate_assessment_prepare.R: ", if (createdOutputCsv) "Created" else "Replaced", " climateAssessmentEmi '", climateAssessmentEmi, "'\n"
+)
+cat(logMsg)
+capture.output(cat(logMsg), file = logFile, append = TRUE)
