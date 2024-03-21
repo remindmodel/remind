@@ -41,13 +41,17 @@ q36_costAddH2PhaseIn(t,regi)..
   + (v36_expSlack(t,regi) * 1e-8)
 ;
 
+
 *' barrier cost for low penetration
+$ifthen.no_calibration NOT "%CES_parameters%" == "calibration"   !! CES_parameters
 q36_costAddH2LowPen(t,regi)..
   v36_costAddH2LowPen(t,regi)
   =e=
-  cm_build_H2costAddH2Inv * sm_TWa_2_kWh / sm_trillion_2_non
+  cm_build_H2costAddH2Inv
+  * sm_TWa_2_kWh / sm_trillion_2_non
   / (1 + 3**v36_costExponent(t,regi)) 
 ;
+$endif.no_calibration
 
 
 *' Logistic function exponent for additional cost for hydrogen at low penetration cost equation
