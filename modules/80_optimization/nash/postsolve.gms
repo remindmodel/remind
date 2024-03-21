@@ -274,31 +274,31 @@ loop(trade$(NOT tradeSe(trade)),
  );
 );
 
-*** critertion "infes": and are all solutions optimal?
+*** critertion "infes": is any region neither optimal nor intermediate non-optimal -> then it is infeasible 
 loop(regi,
-     if((p80_repy(regi,'modelstat') ne 2) and (p80_repy(regi,'modelstat') ne 7),
-         s80_bool = 0;
-         p80_messageShow("infes") = YES;
-     );
+  if( (p80_repy(regi,'modelstat') ne 2) and (p80_repy(regi,'modelstat') ne 7),    !! 2 is optimal, 7 nonopt,            
+    s80_bool = 0;
+    p80_messageShow("infes") = YES;
+  );
 *** critertion "nonopt": The next lines are a workaround for the status 7
 *** problem. If the objective value does not differ too much from the last known
 *** optimal solution, accept this solution as if it were optimal. 
-     p80_convNashObjVal_iter(iteration,regi) = p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval');
-     if (1 le iteration.val,
-        !! no last iteration if this is the first; NA value in p80_repyLastOptim is
-        !! sticky, so test this separately
-        if ( p80_repy(regi,'modelstat') eq 7
-           !! The 1E-4 are quite arbitrary. One should do more research on how
-           !! the solution differs over iteration when status 7 occurs. 
-           AND p80_convNashObjVal_iter(iteration,regi) lt - 1e-4,
-           s80_bool = 0;
-           p80_messageShow("nonopt") = YES;     
-           display "Not all regions were status 2 in the last iteration. The deviation of the objective function from the last optimal solution is too large to be accepted:";
-           s80_dummy = p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval');
-           display s80_dummy;
-        );
-     );
-); !!regi
+  p80_convNashObjVal_iter(iteration,regi) = p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval');
+  if (1 le iteration.val,
+    !! no last iteration if this is the first; NA value in p80_repyLastOptim is
+    !! sticky, so test this separately
+    if ( p80_repy(regi,'modelstat') eq 7
+        !! The 1E-4 are quite arbitrary. One should do more research on how
+        !! the solution differs over iteration when status 7 occurs. 
+        AND p80_convNashObjVal_iter(iteration,regi) lt - 1e-4,
+      s80_bool = 0;
+      p80_messageShow("nonopt") = YES;     
+      display "Not all regions were status 2 in the last iteration. The deviation of the objective function from the last optimal solution is too large to be accepted:";
+      s80_dummy = p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval');
+      display s80_dummy;
+    );
+  );
+); !! loop over regi
 
 *** criterion only for checking, not applied anymore: are the anticipation terms sufficienctly small?
 p80_fadeoutPriceAnticip_iter(iteration) = sm_fadeoutPriceAnticip;
@@ -406,6 +406,7 @@ display p80_repy;
 
 display "trade convergence indicators";
 display p80_surplusMaxTolerance, p80_surplusMax2100;
+display p80_defic_trade, p80_defic_sum,p80_defic_sum_rel;
 
 display "Reasons for non-convergence in this iteration (if not yet converged)";
 

@@ -216,6 +216,12 @@ $offdigit
 *** turn profiling off (0) or on (1-3, different levels of detail)
 option profile = 0;
 
+file foo_msg;     !! This creates a dummy output file with a well-defined output format:  
+foo_msg.nr = 1;   !! namely F-format (decimal) (and not E-format = scientific notation)
+*** The file can throughout the code be activated with `putclose foo_msg;` and used in the form `put_utility foo_msg "msg" / "xxxx"` to print out xxxx to full.lst 
+*** and be sure that the numeric format is F-format
+
+
 *' @title{extrapage: "00_configuration"} Configuration
 *' @code{extrapage: "00_configuration"}
 *--------------------------------------------------------------------------
@@ -846,7 +852,7 @@ parameter
   cm_LimRock               = 1000;   !! def = 1000
 *'
 parameter
-  cm_expoLinear_yearStart   "time at which carbon price increases lineraly instead of exponentially"
+  cm_expoLinear_yearStart   "time at which carbon price increases linearly instead of exponentially"
 ;
   cm_expoLinear_yearStart  = 2050;   !! def = 2050
 *'
@@ -1004,7 +1010,7 @@ parameter
 *' This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1
 *' Default value is based on data from German Langfristszenarien (see ./modules/32_power/IntC/datainput.gms).
 parameter
-  cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
+  cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildings and industry electricity prices is on"
 ;
   cm_FlexTaxFeedback = 0;  !! def = 0  !! regexp = 0|1
 *' cm_FlexTaxFeedback, switches on feedback of flexibility tax on buildings and industry.
@@ -1095,12 +1101,12 @@ parameter
 *' * (any other number) limit of gas demand from 2025 on in Germany in EJ/yr
 *'
 parameter
-  c_SlackMultiplier   "Muliplicative factor to up/downscale the slack size for v_changeProdStartyearSlack"
+  c_SlackMultiplier   "Multiplicative factor to up/downscale the slack size for v_changeProdStartyearSlack"
 ;
   c_SlackMultiplier = 1;  !! def = 1
 *'
 parameter
-  c_changeProdCost   "Muliplicative factor to up/downscale the costs for vm_changeProdStartyearCost"
+  c_changeProdCost   "Multiplicative factor to up/downscale the costs for vm_changeProdStartyearCost"
 ;
   c_changeProdCost = 5;  !! def = 5
 *'
@@ -1400,7 +1406,7 @@ $setGlobal cm_EnSecScen_price  off !! def off
 $setGlobal cm_indstExogScen  off !! def off
 *** cm_exogDem_scen
 *** switch to fix FE or ES demand represented in CES function to trajectories
-*** from exgenous sources (not EDGE models) given in file p47_exogDemScen.
+*** from exogenous sources (not EDGE models) given in file p47_exogDemScen.
 *** This switch fixes demand without recalibration of REMIND CES parameters.
 *** This should be kept in mind when comparing those runs to baseline runs without fixing
 *** as the fixing shifts the CES function away from its optimal point based on the CES parameters used.
@@ -1643,6 +1649,12 @@ $setglobal c_testOneRegi_region  EUR       !! def = EUR  !! regexp = [A-Z]{3}
 
 *** cm_taxrc_RE     "switch to define whether tax on (CO2 content of) energy imports is recycled to additional direct investments in renewables (wind, solar and storage)"
 $setglobal cm_taxrc_RE  none   !! def = none   !! regexp = none|REdirect
+
+*' cm_repeatNonOpt       "should nonoptimal regions be solved again?"
+*'
+*' *  (off): no, only infeasable regions are repeated, standard setting
+*' *  (yes):  also non-optimal regions are solved again, up to cm_solver_try_max
+$setglobal cm_repeatNonOpt off  
 
 *' @stop
 
