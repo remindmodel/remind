@@ -319,8 +319,12 @@ q37_feedstockEmiUnknownFate(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
   vm_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
   =e=
+$ifthen.cm_feedstockEmiUnknownFate not "%cm_feedstockEmiUnknownFate%" == "off"
+  (
     v37_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
   * (1 - s37_plasticsShare)
+  )
+$endIf.cm_feedstockEmiUnknownFate
 ;
 
 *' in baseline runs, all industrial feedstocks should come from fossil energy
