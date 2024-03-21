@@ -307,12 +307,12 @@ $ifthen.build_H2_offset "%buildings%" == "simple"
 
 *** RK: feh2b offset scaled from 1% in 2025 to 50% in 2050 of fegab quantity
 loop ((t,regi),
-	pm_cesdata(t,regi,"feh2b","offset_quantity")
-  = - (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
+  pm_cesdata(t,regi,"feh2b","offset_quantity")
+  = - (0.05 + 0.45 * min(1, (t.val - 2025) * max(0, (t.val - 2025) / (2080 - 2025)**2)))
       * pm_cesdata(t,regi,"fegab","quantity")
     - pm_cesdata(t,regi,"feh2b","quantity");
-      pm_cesdata(t,regi,"feh2b","quantity")
-  = (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
+	pm_cesdata(t,regi,"feh2b","quantity") 
+  = (0.05 + 0.45 * min(1, (t.val - 2025) * max(0, (t.val - 2025) / (2080 - 2025)**2)))
       * pm_cesdata(t,regi,"fegab","quantity");
 );
 $endif.build_H2_offset

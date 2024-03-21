@@ -951,7 +951,7 @@ parameter
 parameter
   c_H2InBuildOnlyAfter "Switch to fix H2 in buildings to zero until given year"
 ;
-  c_H2InBuildOnlyAfter = 2150;   !! def = 2150 (rule out H2 in buildings)
+  c_H2InBuildOnlyAfter = 2025;   !! def = 2025
 *' For all years until the given year, FE demand for H2 in buildings is set to zero
 parameter
   c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
