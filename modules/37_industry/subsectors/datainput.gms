@@ -543,10 +543,10 @@ $offdelim
 
 *' load baseline industry ETS solids demand
 if (cm_startyear ne 2005,   !! not a BAU scenario
-execute_load "input_ref.gdx", vm_demFeSector;
+execute_load "input_ref.gdx", vm_demFeSector_afterTax;
   p37_BAU_industry_ETS_solids(t,regi)
   = sum(se2fe(entySe,"fesos",te),
-      vm_demFeSector.l(t,regi,entySe,"fesos","indst","ETS")
+      vm_demFeSector_afterTax.l(t,regi,entySe,"fesos","indst","ETS")
     );
 );
 

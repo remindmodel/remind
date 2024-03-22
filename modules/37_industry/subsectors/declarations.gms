@@ -44,8 +44,6 @@ Parameters
 
 *** output parameters only for reporting
   o37_cementProcessEmissions(ttot,all_regi,all_enty)                     "cement process emissions [GtC/a]"
-  o37_demFeIndTotEn(ttot,all_regi,all_enty,all_emiMkt)                   "total FE per energy carrier and emissions market in industry (sum over subsectors)"
-  o37_shIndFE(ttot,all_regi,all_enty,secInd37,all_emiMkt)                "share of subsector in FE industry energy carriers and emissions markets"
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)   "FE demand per industry subsector"
   !! process-based implementation
   o37_demFePrc(ttot,all_regi,all_enty,all_te,opmoPrc)                    "Process-based FE demand per FE type and process"
@@ -76,7 +74,7 @@ Positive Variables
   v37_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)          "Carbon flow: carbon contained in chemical feedstocks [GtC]"
   v37_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "Carbon flow: carbon contained in plastics [GtC]"
   v37_plasticWaste(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "Carbon flow: carbon contained in plastic waste [GtC]"
-
+  v37_demFeIndst(ttot,all_regi,all_enty,all_enty,all_in,all_emiMkt)         "FE demand of industry sector by SE origin, industry subsector, and emission market. [TWa]"
   !! process-based implementation
   vm_outflowPrc(tall,all_regi,all_te,opmoPrc)                               "Production volume of processes in process-based model [Gt/a]"
   v37_matFlow(tall,all_regi,all_enty)                                       "Production of materials [Gt/a]"
@@ -86,38 +84,38 @@ Positive Variables
 
 Equations
 $ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
-  q37_energy_limits(ttot,all_regi,all_in)                 "thermodynamic/technical limit of energy use"
+  q37_energy_limits(ttot,all_regi,all_in)                                           "thermodynamic/technical limit of energy use"
 $endif.no_calibration
-  q37_limit_secondary_steel_share(ttot,all_regi)          "no more than 90% of steel from seconday production"
-  q37_emiIndBase(ttot,all_regi,all_enty,secInd37)         "gross industry emissions before CCS"
-  q37_emiIndCCSmax(ttot,all_regi,emiInd37)                "maximum abatable industry emissions at current CO2 price"
-  q37_IndCCS(ttot,all_regi,emiInd37)                      "limit industry emissions abatement"
-  q37_limit_IndCCS_growth(ttot,all_regi,emiInd37)         "limit industry CCS scale-up"
-  q37_cementCCS(ttot,all_regi)                            "link cement fuel and process abatement"
-  q37_IndCCSCost                                          "Calculate industry CCS costs"
-  q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)       "industry final energy demand (per emission market)"
-  q37_costCESmarkup(ttot,all_regi,all_in)                 "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
-  q37_chemicals_feedstocks_limit(ttot,all_regi)                     "lower bound on feso/feli/fega in chemicals FE input for feedstocks"
-  q37_demFeFeedstockChemIndst(ttot,all_regi,all_enty,all_emiMkt)    "defines energy flow of non-energy feedstocks for the chemicals industry. It is used for emissions accounting"
-  q37_FossilFeedstock_Base(ttot,all_regi,all_enty,all_emiMkt)       "in baseline runs feedstocks only come from fossil energy carriers"
-  q37_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)  "calculate carbon contained in feedstocks [GtC]"
-  q37_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "calculate carbon contained in plastics [GtC]"
-  q37_plasticWaste(ttot,all_regi,all_enty,all_enty,all_emiMkt)  "calculate carbon contained in plastic waste [GtC]"
-  q37_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)           "calculate carbon contained in plastics that are incinerated [GtC]"
-  q37_nonIncineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)    "calculate carbon contained in plastics that are not incinerated [GtC]"
-  q37_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)   "calculate carbon contained in chemical feedstock with unknown fate [GtC]"
-  q37_feedstocksLimit(ttot,all_regi,all_enty,all_enty,all_emiMkt)           "restrict feedstocks flow to total energy flows into industry"
-  q37_feedstocksShares(ttot,all_regi,all_enty,all_enty,all_emiMkt)   "identical fossil/biomass/synfuel shares for FE and feedstocks"
+  q37_limit_secondary_steel_share(ttot,all_regi)                                    "no more than 90% of steel from seconday production"
+  q37_emiIndBase(ttot,all_regi,all_enty,secInd37)                                   "gross industry emissions before CCS"
+  q37_emiIndCCSmax(ttot,all_regi,emiInd37)                                          "maximum abatable industry emissions at current CO2 price"
+  q37_IndCCS(ttot,all_regi,emiInd37)                                                "limit industry emissions abatement"
+  q37_limit_IndCCS_growth(ttot,all_regi,emiInd37)                                   "limit industry CCS scale-up"
+  q37_cementCCS(ttot,all_regi)                                                      "link cement fuel and process abatement"
+  q37_IndCCSCost                                                                    "Calculate industry CCS costs"
+  q37_demFeIndst(ttot,all_regi,all_enty,all_enty,all_emiMkt)                        "industry final energy demand (per emission market)"
+  q37_demFeIndst_intermediate(ttot,all_regi,all_enty,all_in,secInd37,all_emiMkt)    "industry final energy demand (per emission market)"
+  q37_costCESmarkup(ttot,all_regi,all_in)                                           "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
+  q37_chemicals_feedstocks_limit(ttot,all_regi)                                     "lower bound on feso/feli/fega in chemicals FE input for feedstocks"
+  q37_demFeFeedstockChemIndst(ttot,all_regi,all_enty,all_emiMkt)                    "defines energy flow of non-energy feedstocks for the chemicals industry. It is used for emissions accounting"
+  q37_FossilFeedstock_Base(ttot,all_regi,all_enty,all_emiMkt)                       "in baseline runs feedstocks only come from fossil energy carriers"
+  q37_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)                  "calculate carbon contained in feedstocks [GtC]"
+  q37_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)                    "calculate carbon contained in plastics [GtC]"
+  q37_plasticWaste(ttot,all_regi,all_enty,all_enty,all_emiMkt)                      "calculate carbon contained in plastic waste [GtC]"
+  q37_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)                   "calculate carbon contained in plastics that are incinerated [GtC]"
+  q37_nonIncineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "calculate carbon contained in plastics that are not incinerated [GtC]"
+  q37_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)           "calculate carbon contained in chemical feedstock with unknown fate [GtC]"
+  q37_feedstocksLimit(ttot,all_regi,all_enty,all_enty,all_in,all_emiMkt)            "restrict feedstocks flow to total energy flows into industry"
 
   !! process-based implementation
-  q37_demMatPrc(tall,all_regi,mat)                        "Material demand of processes"
-  q37_prodMat(tall,all_regi,mat)                          "Production volume of processes equals material flow of output material"
-  q37_mat2ue(tall,all_regi,all_in)                        "Connect materials production to ue ces tree nodes"
-  q37_limitCapMat(tall,all_regi,all_te)                   "Material-flow conversion is limited by capacities"
-  q37_emiPrc(ttot,all_regi,all_enty,all_te,opmoPrc)       "Local industry emissions [GtC/a] pre-capture; Only used as baseline for CCS"
-  q37_emiCCPrc(tall,all_regi,emiInd37)                    "Captured emissions from CCS"
-  q37_limitOutflowCCPrc(tall,all_regi,all_te)             "Carbon capture processes can only capture as much co2 as the base process emits"
-  q37_costMat(tall,all_regi)                              "External material cost (non-energy)"
+  q37_demMatPrc(tall,all_regi,mat)                                                  "Material demand of processes"
+  q37_prodMat(tall,all_regi,mat)                                                    "Production volume of processes equals material flow of output material"
+  q37_mat2ue(tall,all_regi,all_in)                                                  "Connect materials production to ue ces tree nodes"
+  q37_limitCapMat(tall,all_regi,all_te)                                             "Material-flow conversion is limited by capacities"
+  q37_emiPrc(ttot,all_regi,all_enty,all_te,opmoPrc)                                 "Local industry emissions [GtC/a] pre-capture; Only used as baseline for CCS"
+  q37_emiCCPrc(tall,all_regi,emiInd37)                                              "Captured emissions from CCS"
+  q37_limitOutflowCCPrc(tall,all_regi,all_te)                                       "Carbon capture processes can only capture as much co2 as the base process emits"
+  q37_costMat(tall,all_regi)                                                        "External material cost (non-energy)"
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms

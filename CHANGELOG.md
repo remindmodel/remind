@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### changed
+- **37_industry** changed industry to have subsector-specific shares of SE
+  origins in FE carriers[[#1620]](https://github.com/remindmodel/remind/pull/1620)
+
 ### added
 - **config** regex tests for many parameters [[#1356](https://github.com/remindmodel/remind/pull/1356)]
 - **scripts** add script to check fixing of runs to reference run

@@ -352,6 +352,15 @@ ppfen_MkupCost37(all_in)   "primary production factors in industry on which CES 
   /
   /
 
+  entyFe_out_emiMkt(all_enty,all_in,all_emiMkt) "link FE demand to subsector production to emission markets"
+  /
+    (fesos, fehos, fegas, feh2s,        feels) . ue_cement          . ETS
+    (fesos, fehos, fegas, feh2s,        feels) . ue_chemicals       . ETS
+    (fesos, fehos, fegas, feh2s,        feels) . ue_steel_primary   . ETS
+                                        feels  . ue_steel_secondary . ETS
+    (fesos, fehos, fegas, feh2s, fehes, feels) . ue_otherInd        . ES
+  /
+
 
 *** ---------------------------------------------------------------------------
 ***        2. Process-Based
