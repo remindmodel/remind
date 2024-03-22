@@ -26,12 +26,24 @@ vars <- c("", "|Energy", "|Energy Demand|Transportation", "|Energy and Industria
 gasvars <- expand.grid(gases, vars, stringsAsFactors = FALSE)
 bunkervars <- unique(sort(c("Gross Emissions|CO2", paste0("Emissions|", gasvars$Var1, gasvars$Var2))))
 
-for (template in c("AR6", "NAVIGATE")) {
-  message("\n### Check project summations for ", template)
+for (mapping in c("AR6", "NAVIGATE")) {
+  message("\n### Check project summations for ", mapping)
+  mappingVariables <- mapping %>%
+    getMappingVariables(paste0("RT", if (any(grepl("^MAgPIE", levels(mifdata$model)))) "M")) %>%
+    unique() %>%
+    removePlus()
+  computedVariables <- unique(paste0(removePlus(mifdata$variable), " (", gsub("^$", "unitless", mifdata$unit), ")"))
+  missingVariables <- sort(setdiff(mappingVariables, computedVariables))
+  if (length(missingVariables) > 0) {
+    message("# The following ", length(missingVariables), " variables are expected in the piamInterfaces package ",
+            "for mapping ", mapping, ", but cannot be found in the reporting:\n- ",
+            paste(missingVariables, collapse = ",\n- "), "\n")
+  }
+
   d <- generateIIASASubmission(mifdata, outputDirectory = NULL, logFile = NULL,
-                               mapping = template, checkSummation = FALSE)
+                               mapping = mapping, checkSummation = FALSE)
   failvars <- d %>%
-    checkSummations(template = template, summationsFile = template, logFile = NULL, dataDumpFile = NULL,
+    checkSummations(template = mapping, summationsFile = mapping, logFile = NULL, dataDumpFile = NULL,
                     absDiff = absDiff, relDiff = relDiff) %>%
     filter(abs(diff) >= absDiff, abs(reldiff) >= relDiff) %>%
     df_variation() %>%
@@ -47,13 +59,13 @@ for (template in c("AR6", "NAVIGATE")) {
     filter(! .data$variable %in% bunkervars) %>%
     select(-"model", -"scenario")
   if (nrow(failregi) > 0) {
-    message("For those ", template, " variables, the sum of regional values does not match the World value in 2050:")
+    message("For those ", mapping, " variables, the sum of regional values does not match the World value in 2050:")
     failregi %>% piamInterfaces::niceround() %>% print(n = 1000)
   } else {
     message("Regional summation checks are fine.")
   }
 
-  if (nrow(failvars) > 0 || nrow(failregi) > 0) stopmessage <- c(stopmessage, template)
+  if (nrow(failvars) > 0 || nrow(failregi) > 0 || length(missingVariables) > 0) stopmessage <- c(stopmessage, mapping)
 }
 
 if (length(stopmessage) > 0) {
