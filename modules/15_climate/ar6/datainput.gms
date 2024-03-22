@@ -78,6 +78,7 @@ $onlisting
 );
 display pm_emicapglob;
 
+pm_gmt_conv=1;
 p15_gmt0(tall)=1;
 
 *** EOF ./modules/15_climate/magicc/datainput.gms

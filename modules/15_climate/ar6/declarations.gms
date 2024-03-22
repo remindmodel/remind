@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/15_climate/magicc/declarations.gms
+*** SOF ./modules/15_climate/ar6/declarations.gms
 
 Scalar
   s15_forcing_budgetiterationoffset "offset for the calculation of iteratively adjusted budget"
@@ -31,7 +31,7 @@ p15_oghgf_minaer	"exogenous forcings from RCP: mineral dust",
 p15_oghgf_nitaer	"exogenous forcings from RCP: nitrates",
 p15_emicapregi(tall,all_regi)  "regional emission caps, used for calculation of global emission cap",
 p15_forc_magicc(tall) "actual radiative forcing as calculated by magicc [W/m^2]"
-p15_gmt_conv          "global mean temperature convergence"    
+pm_gmt_conv          "global mean temperature convergence"    
 p15_gmt0(tall)        "global mean temperature convergence saved for the next iteration"
 ;
 
@@ -44,4 +44,4 @@ s15_gr_forc_os       "overshoot (os) radiative forcing target (guardrail = gr) f
 s15_rcpCluster       " clustering of rcp_scen for the iterative traget adjustment"
 ;
 
-*** EOF ./modules/15_climate/magicc/declarations.gms
+*** EOF ./modules/15_climate/ar6/declarations.gms
