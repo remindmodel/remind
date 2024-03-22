@@ -288,13 +288,15 @@ q37_plasticWaste(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
   + v37_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)$( ttot.val gt 2070 )
   ;
 
-*' emissions from plastics incineration as a share of total plastic waste
+*' emissions from plastics incineration as a share of total plastic waste, discounted by captured amount
 q37_incinerationEmi(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)) ..
   vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
   =e=
+  (
     v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
   * pm_incinerationRate(t,regi)
+  ) * (1 - p37_regionalWasteIncinerationCCSshare(t,regi))
 ;
 
 *' calculate carbon contained in non-incinerated plastics
@@ -309,13 +311,19 @@ q37_nonIncineratedPlastics(t,regi,sefe(entySe,entyFe),emiMkt)$(
   ;
 
 *' calculate flow of carbon contained in chemical feedstock with unknown fate
-*' it is assumed that this carbon is re-emitted in the same timestep
+*' it is assumed that this carbon is re-emitted in the same timestep if cm_feedstockEmiUnknownFate is enabled (=on)
 q37_feedstockEmiUnknownFate(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
   vm_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
   =e=
+$ifthen.cm_feedstockEmiUnknownFate not "%cm_feedstockEmiUnknownFate%" == "off"
+  (
     v37_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
   * (1 - s37_plasticsShare)
+  )
+$else.cm_feedstockEmiUnknownFate
+  0
+$endIf.cm_feedstockEmiUnknownFate
 ;
 
 *' in baseline runs, all industrial feedstocks should come from fossil energy
