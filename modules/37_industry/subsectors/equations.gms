@@ -324,6 +324,8 @@ $ifthen.cm_feedstockEmiUnknownFate not "%cm_feedstockEmiUnknownFate%" == "off"
     v37_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
   * (1 - s37_plasticsShare)
   )
+$else.cm_feedstockEmiUnknownFate
+  0
 $endIf.cm_feedstockEmiUnknownFate
 ;
 
