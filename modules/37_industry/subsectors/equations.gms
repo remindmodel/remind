@@ -291,7 +291,7 @@ q37_plasticWaste(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
   + v37_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)$( ttot.val gt 2070 )
   ;
 
-*' emissions from plastics incineration as a share of total plastic waste
+*' emissions from plastics incineration as a share of total plastic waste, discounted by captured amount
 q37_incinerationEmi(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)) ..
   vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
@@ -314,7 +314,7 @@ q37_nonIncineratedPlastics(t,regi,sefe(entySe,entyFe),emiMkt)$(
   ;
 
 *' calculate flow of carbon contained in chemical feedstock with unknown fate
-*' it is assumed that this carbon is re-emitted in the same timestep
+*' it is assumed that this carbon is re-emitted in the same timestep if cm_feedstockEmiUnknownFate is enabled (=on)
 q37_feedstockEmiUnknownFate(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
   vm_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
