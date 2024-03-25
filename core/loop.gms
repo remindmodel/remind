@@ -71,9 +71,12 @@ if( (cm_startyear gt 2005),
 ***--------------------------------------------------------------------------
 ***         SOLVE
 ***--------------------------------------------------------------------------
-***this disables solprint in cm_nash_mode=debug case by default. It is switched on in case of infes in nash/solve.gms
-*RP* for faster debugging, turn solprint immediately on
-$IF %cm_nash_mode% == "debug" option solprint = on ;
+*** This disables solprint in cm_nash_mode=1 (debug) case by default. It is switched on in case of infes in nash/solve.gms
+*** For faster debugging, turn solprint immediately on
+if (cm_nash_mode eq 1, 
+      option solprint = on;
+);
+
 
 o_modelstat = 100;
 loop(sol_itr$(sol_itr.val <= cm_solver_try_max),
@@ -153,8 +156,8 @@ $batinclude "./modules/include.gms" postsolve
 ***                  save gdx
 *--------------------------------------------------------------------------
 *** write the fulldata.gdx file after each optimal iteration
-*AJS* in Nash status 7 is considered optimal in that respect (see definition of
-***   o_modelstat in solve.gms)
+*** In Nash status 7 is considered optimal in that respect (see definition of
+*** o_modelstat in solve.gms)
 logfile.nr = 1;
 if (o_modelstat le 2,
   execute_unload "fulldata";

@@ -443,7 +443,14 @@ $setGlobal codePerformance  off       !! def = off
 *' ####                     SWITCHES
 ***-----------------------------------------------------------------------------
 parameter
-  cm_iteration_max          "number of iterations, if optimization is set to negishi or testOneRegi; used in nash mode only with cm_nash_autoconverge = 0"
+  cm_nash_mode              "mode for solving nash problem"
+;
+  cm_nash_mode           = 2;     !! def = 2  !! regexp = 1|2
+*' *  (1): debug     - all regions are run in a sequence and the lst-file will contain information on infeasiblities
+*' *  (2): parallel  - all regions are run in parallel
+*'
+parameter
+  cm_iteration_max          "number of iterations, if optimization is set to negishi or testOneRegi; is overwritten in Nash mode, except for cm_nash_autoconverge = 0"
 ;
   cm_iteration_max       = 1;     !! def = 1
 *'
@@ -1638,11 +1645,7 @@ $setGlobal cm_conoptv  conopt3    !! def = conopt3
 *' (off): normal model operation, default
 *' (on): no model operation, instead input.gdx is copied to fulldata.gdx
 $setGlobal c_empty_model   off    !! def = off  !! regexp = off|on
-*' mode for solving nash problem
-*'
-*' * parallel  - all regions are run an parallel
-*' * debug     - all regions are run in a sequence and the lst-file will contain information on infeasiblities
-$setGlobal cm_nash_mode  parallel      !! def = parallel  !! regexp = debug|parallel|serial
+
 
 $setglobal cm_secondary_steel_bound  scenario   !! def = scenario
 $setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen)
