@@ -15,11 +15,13 @@ if(cm_nash_mode eq 1,
 );
 
 loop (all_regi,
-  !! only solve for regions that do not have a valid solution for this nash iteration
-  if ( sol_itr.val gt 1
-       AND ( p80_repy(all_regi,"modelstat") eq 2
+  !! only solve for regions that do not have a valid solution from the
+  !! last solver iteration
+  if (    (   sol_itr.val gt 1 
+           OR s80_runInDebug eq 1)
+      AND (   p80_repy(all_regi,"modelstat") eq 2
 $ifthen.repeatNonOpt "%cm_repeatNonOpt%" == "off"
-          OR p80_repy(all_regi,"modelstat") eq 7
+           OR p80_repy(all_regi,"modelstat") eq 7
 $endif.repeatNonOpt
           ),
 
