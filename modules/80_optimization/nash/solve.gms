@@ -129,15 +129,20 @@ if (o_modelstat ne 2,
 );
 $endif.solprint
 
-p80_repy_iteration(all_regi,solveinfo80,iteration)$( p80_repy_thisSolitr(all_regi,solveinfo80) ) !! add information if this region was solved in this iteration
+!! add information if this region was solved in this iteration
+p80_repy_iteration(regi,solveinfo80,iteration)$(
+                                         p80_repy_thisSolitr(regi,solveinfo80) )
     !! store sum of resusd for all sol_itrs
-  = ( p80_repy_iteration(all_regi,solveinfo80,iteration)
-    + p80_repy_thisSolitr(all_regi,solveinfo80)
+  = ( p80_repy_iteration(regi,solveinfo80,iteration)
+    + p80_repy_thisSolitr(regi,solveinfo80)$( 
+                                   p80_repy_thisSolitr(regi,solveinfo80) ne NA )
     )$( sameas(solveinfo80,"resusd") )
-  + p80_repy_thisSolitr(all_regi,solveinfo80)$( NOT sameas(solveinfo80,"resusd") );
+  + p80_repy_thisSolitr(regi,solveinfo80)$( NOT sameas(solveinfo80,"resusd") );
 
-p80_repy_nashitr_solitr(all_regi,solveinfo80,iteration,sol_itr)$( p80_repy_thisSolitr(all_regi,solveinfo80) ) !! add information if this region was solved in this iteration
-  = p80_repy_thisSolitr(all_regi,solveinfo80);
+!! add information if this region was solved in this iteration
+p80_repy_nashitr_solitr(regi,solveinfo80,iteration,sol_itr)$(
+                                         p80_repy_thisSolitr(regi,solveinfo80) )
+  = p80_repy_thisSolitr(regi,solveinfo80);
 
 put_utility "msg" / "Solve overview: The following are the results for iteration " iteration.tl:3:0  " , sol_itr " sol_itr.tl:3:0 ;
 display o_modelstat;
