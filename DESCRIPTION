@@ -31,7 +31,6 @@ Imports:
     hdf5r,
     here,
     htmltools,
-    iamc,
     kableExtra,
     knitr,
     lazyeval,
