@@ -124,10 +124,8 @@ $endif.repeatNonOpt
 
 *** in cm_nash_mode=1 (debug) mode, enable solprint for next sol_itr when last
 *** iteration was non-optimal:
-if(cm_nash_mode eq 1,
-if (o_modelstat ne 2,   
-    option solprint = on;
-);
+if(cm_nash_mode eq 1 AND o_modelstat ne 2,   
+  option solprint = on;
 );
 
 !! add information if this region was solved in this iteration

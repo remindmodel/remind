@@ -455,7 +455,7 @@ parameter
   cm_iteration_max       = 1;     !! def = 1
 *'
 parameter
-  cm_abortOnConsecFail      "number of iterations of consecutive infeasibilities/failures to solve for one region, after which the run is automatically aborted"
+  cm_abortOnConsecFail      "number of iterations of consecutive infeasibilities/failures to solve for one region, after which the run automatically switches to serial debug mode"
 ;
   cm_abortOnConsecFail   = 5;     !! def = 5
 *'
