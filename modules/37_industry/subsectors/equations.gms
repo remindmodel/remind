@@ -13,28 +13,41 @@
 ***------------------------------------------------------
 *' Industry final energy balance
 ***------------------------------------------------------
-q37_demFeIndst(t,regi,entyFe,emiMkt)$( entyFe2Sector(entyFe,"indst") ) ..
-  sum(se2fe(entySe,entyFe,te),
-    vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
+*' Industry final energy demand is calculated by (entySe,entyFe,out,secIind37)
+*' tuple, where out is the root of the CES subtree (e.g. ue_cement).  The
+*' (entyFe,out) tuple is equivalent to ppfen, and necessary to deal with
+*' process-based steel, which is not part of the CES tree below
+*' ue_steel_primary/ue_steel_secondary.
+q37_demFeIndst_intermediate(t,regi,entyFe,out,secInd37,emiMkt)$(
+                                      entyFe_out_emiMkt(entyFe,out,emiMkt)
+                                  AND secInd37_emiMkt(secInd37,emiMkt)
+                                  AND secInd37_2_pf(secInd37,out)          ) ..
+  sum(sefe(entySe,entyFe),
+    v37_demFeIndst(t,regi,entySe,entyFe,out,emiMkt)
   )
   =e=
-  sum(fe2ppfEn(entyFe,ppfen_industry_dyn37(in)),
-    sum((secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in)),
-      (
-          vm_cesIO(t,regi,in)
-        + pm_cesdata(t,regi,in,"offset_quantity")
-      )$(NOT secInd37Prc(secInd37))
+    sum((ue_industry_2_pf(out,in),
+         fe2ppfEn(entyFe,in)),
+      vm_cesIO(t,regi,in)
+    + pm_cesdata(t,regi,in,"offset_quantity")
     )
-  )
-  +
-  sum((secInd37_emiMkt(secInd37Prc,emiMkt),
-       secInd37_tePrc(secInd37Prc,tePrc),
-       tePrc2opmoPrc(tePrc,opmoPrc)),
-    pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc)
-    *
-    vm_outflowPrc(t,regi,tePrc,opmoPrc)
+  + sum(tePrc2ue(tePrc,opmoPrc,out),
+      pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc)
+    * vm_outflowPrc(t,regi,tePrc,opmoPrc)
+    )
+;
+
+q37_demFeIndst(t,regi,entySe,entyFe,emiMkt)$(
+                                             sefe(entySe,entyFe)
+                                         AND entyFe2Sector(entyFe,"indst")
+                                         AND sector2emiMkt("indst",emiMkt) ) ..
+  vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
+  =e=
+  sum(entyFe_out_emiMkt(entyFe,out,emiMkt),
+    v37_demFeIndst(t,regi,entySe,entyFe,out,emiMkt)
   )
 ;
+
 
 ***------------------------------------------------------
 *' Thermodynamic limits on subsector energy demand
@@ -86,7 +99,7 @@ q37_emiIndBase(t,regi,entyFe,secInd37) ..
       ( vm_cesIO(t,regi,in)
       - ( p37_chemicals_feedstock_share(t,regi)
         * vm_cesIO(t,regi,in)
-	)$( in_chemicals_feedstock_37(in) )
+        )$( in_chemicals_feedstock_37(in) )
       )
         *
         sum(se2fe(entySeFos,entyFe,te),
@@ -211,50 +224,34 @@ q37_chemicals_feedstocks_limit(t,regi) ..
   * p37_chemicals_feedstock_share(t,regi)
 ;
 
-*' Define the flow of non-energy feedstocks. It is used for emissions accounting and calculating plastics production
+*' Define the flow of non-energy feedstocks. It is used for emissions accounting
+*' and calculating plastics production
 q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
-  sum(se2fe(entySe,entyFe,te),
+  sum(sefe(entySe,entyFe),
     vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
   )
   =e=
-  sum((fe2ppfEn(entyFe,ppfen_industry_dyn37(in)),
-       secInd37_emiMkt(secInd37,emiMkt),
-       secInd37_2_pf(secInd37,in_chemicals_feedstock_37(in))),
-    ( vm_cesIO(t,regi,in)
-    + pm_cesdata(t,regi,in,"offset_quantity")
+    sum((sefe(entySe,entyFe),
+         entyFe_out_emiMkt(entyFe,out,emiMkt))$( sameas(out,"ue_chemicals") ),
+      v37_demFeIndst(t,regi,entySe,entyFe,out,emiMkt)
     )
   * p37_chemicals_feedstock_share(t,regi)
-  )
 ;
 
 *' Feedstocks flow has to be lower than total energy flow into the industry
-q37_feedstocksLimit(t,regi,entySe,entyFe,emiMkt)$(
-                                             sefe(entySe,entyFe)
-                                         AND sector2emiMkt("indst",emiMkt)
-                                         AND entyFe2Sector(entyFe,"indst")
-                                         AND entyFeCC37(entyFe)            ) ..
-  vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt)
-  =g=
-  vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
-;
-
-*' Feedstocks have identical fossil/biomass/synfuel shares as industry FE
-q37_feedstocksShares(t,regi,entySe,entyFe,emiMkt)$(
-                         sum(te, se2fe(entySe,entyFe,te))
-                     AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
-                     AND cm_emiscen ne 1                                   ) ..                 
-    vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
-  * sum(se2fe(entySe2,entyFe,te),
-      vm_demFENonEnergySector(t,regi,entySe2,entyFe,"indst",emiMkt)
-    )
-  =e=
+q37_feedstocksLimit(t,regi,entySe,entyFe,out,emiMkt)$(
+                                       sefe(entySe,entyFe)
+                                   AND entyFe_out_emiMkt(entyFe,out,emiMkt)
+                                   AND sameas(out,"ue_chemicals")
+                                   AND entyFeCC37(entyFe)                   ) ..
+  sum((ue_industry_2_pf(out,in),
+       fe2ppfEn(entyFe,in)),
     vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
-  * sum(se2fe2(entySe2,entyFe,te),
-      vm_demFeSector_afterTax(t,regi,entySe2,entyFe,"indst",emiMkt)
-    )
+  )
+  =l=
+  v37_demFeIndst(t,regi,entySe,entyFe,out,emiMkt)
 ;
-
 
 *' Calculate mass of carbon contained in chemical feedstocks
 q37_FeedstocksCarbon(t,regi,sefe(entySe,entyFe),emiMkt)$(
@@ -291,13 +288,15 @@ q37_plasticWaste(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
   + v37_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)$( ttot.val gt 2070 )
   ;
 
-*' emissions from plastics incineration as a share of total plastic waste
+*' emissions from plastics incineration as a share of total plastic waste, discounted by captured amount
 q37_incinerationEmi(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)) ..
   vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
   =e=
+  (
     v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
   * pm_incinerationRate(t,regi)
+  ) * (1 - p37_regionalWasteIncinerationCCSshare(t,regi))
 ;
 
 *' calculate carbon contained in non-incinerated plastics
@@ -312,13 +311,19 @@ q37_nonIncineratedPlastics(t,regi,sefe(entySe,entyFe),emiMkt)$(
   ;
 
 *' calculate flow of carbon contained in chemical feedstock with unknown fate
-*' it is assumed that this carbon is re-emitted in the same timestep
+*' it is assumed that this carbon is re-emitted in the same timestep if cm_feedstockEmiUnknownFate is enabled (=on)
 q37_feedstockEmiUnknownFate(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
   vm_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
   =e=
+$ifthen.cm_feedstockEmiUnknownFate not "%cm_feedstockEmiUnknownFate%" == "off"
+  (
     v37_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
   * (1 - s37_plasticsShare)
+  )
+$else.cm_feedstockEmiUnknownFate
+  0
+$endIf.cm_feedstockEmiUnknownFate
 ;
 
 *' in baseline runs, all industrial feedstocks should come from fossil energy
