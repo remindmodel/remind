@@ -37,7 +37,7 @@ findRefMif <- function(outputdir, envi) {
   return(refmif)
 }
 
-fixMAGICC <- function(d, dref, startyear, scenario) {
+fixMAGICC <- function(d, dref, startyear, scen) {
   magiccgrep <- "^Forcing|^Temperature|^Concentration"
   message("Fixing MAGICC6 data before ", startyear)
   dnew <-
@@ -47,7 +47,7 @@ fixMAGICC <- function(d, dref, startyear, scenario) {
       filter(d, ! grepl(magiccgrep, .data$variable) |
              .data$period >= startyear)
     ) %>%
-    mutate(scenario = factor(scenario)) %>%
+    mutate(scenario = factor(scen)) %>%
     droplevels()
   return(dnew)
 }
