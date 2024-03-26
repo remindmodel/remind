@@ -61,7 +61,7 @@ logmsg <- paste0(
   "  climateAssessmentYaml = '", climateAssessmentYaml, "' exists? ", file.exists(climateAssessmentYaml), "\n",
   "  climateAssessmentEmi = '",  climateAssessmentEmi,  "' exists? ", file.exists(climateAssessmentEmi), "\n",
   date(), " =================== EXTRACT REMIND emission data ===========================\n",
-  "  ar6Climate.R: Extracting REMIND emission data\n"
+  "  MAGICC7_AR6.R: Extracting REMIND emission data\n"
 )
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)
@@ -87,7 +87,7 @@ climateAssessmentInputData <- as.quitte(remindReportingFile) %>%
   write_csv(climateAssessmentEmi, quote = "none")
 
 logmsg <- paste0(
-  date(), "  ar6Climate.R: Wrote REMIND emission data to '", climateAssessmentEmi, "' for climate-assessment\n"
+  date(), "  MAGICC7_AR6.R: Wrote REMIND emission data to '", climateAssessmentEmi, "' for climate-assessment\n"
 )
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)
@@ -146,7 +146,7 @@ Sys.setenv(MAGICC_WORKER_NUMBER = 1) # TODO: Get this from slurm or nproc
 #activate_venv_cmd <- paste("source", normalizePath(file.path(cfg$climate_assessment_root, "..", "venv", "bin", "activate")))
 #deactivate_venv_cmd <- "deactivate"
 
-run_harm_inf_cmd <- paste(
+runHarmoniseAndInfillCmd <- paste(
   "python", file.path(scriptsFolder, "run_harm_inf.py"),
   climateAssessmentEmi,
   climateAssessmentFolder,
@@ -154,7 +154,7 @@ run_harm_inf_cmd <- paste(
   "--infilling-database", infillingDatabaseFile
 )
 
-run_clim_cmd <- paste(
+runClimateEmulatorCmd <- paste(
   "python", file.path(scriptsFolder, "run_clim.py"),
   normalizePath(file.path(climateAssessmentFolder, paste0(baseFileName, "_harmonized_infilled.csv"))),
   climateAssessmentFolder,
@@ -176,14 +176,14 @@ logmsg <- paste0(
   "  MAGICC_WORKER_ROOT_DIR = ", Sys.getenv("MAGICC_WORKER_ROOT_DIR") ,"\n",
   "  MAGICC_WORKER_NUMBER   = ", Sys.getenv("MAGICC_WORKER_NUMBER") ,"\n",
   date(), " =================== RUN climate-assessment infilling & harmonization ===================\n",
-  run_harm_inf_cmd, "'\n"
+  runHarmoniseAndInfillCmd, "'\n"
 )
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)
 
 ############################# HARMONIZATION/INFILLING #############################
 
-system(run_harm_inf_cmd)
+system(runHarmoniseAndInfillCmd)
 
 logmsg <- paste0(date(), "  Done with harmonization & infilling\n")
 cat(logmsg)
@@ -192,14 +192,15 @@ capture.output(cat(logmsg), file = logFile, append = TRUE)
 ############################# RUNNING MODEL #############################
 
 logmsg <- paste0(
-  date(), "  Found ", nparsets, " nparsets, start climate-assessment model runs\n", run_harm_inf_cmd, "\n",
+  date(), "  Found ", nparsets, " nparsets, start climate-assessment climate emulator step\n", 
+  runHarmoniseAndInfillCmd, "\n",
   date(), " =================== RUN climate-assessment model ============================\n",
-  run_clim_cmd, "'\n"
+  runClimateEmulatorCmd, "'\n"
 )
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)
 
-system(run_clim_cmd)
+system(runClimateEmulatorCmd)
 
 ############################# POSTPROCESS CLIMATE OUTPUT #############################
 climateAssessmentOutput <- file.path(
@@ -208,7 +209,7 @@ climateAssessmentOutput <- file.path(
 )
 
 logmsg <- paste0(
-  date(), "  climate-assessment finished\n",
+  date(), "  climate-assessment climate emulator finished\n",
   date(), " =================== POSTPROCESS climate-assessment output ==================\n",
   "  climateAssessmentOutput = '", climateAssessmentOutput, "'\n"
 )
@@ -222,13 +223,20 @@ usePeriods <- as.numeric(grep("[0-9]+", quitte::read_mif_header(remindReportingF
 climateAssessmentData <- read.quitte(climateAssessmentOutput) %>%
   filter(period %in% usePeriods) %>%
   interpolate_missing_periods(usePeriods, expand.values = FALSE) %>%
-  write.mif(remindReportingFile, append = TRUE)
+  mutate(variable = gsub("|MAGICCv7.5.3", "", .data$variable, fixed = TRUE)) %>%
+  mutate(variable = gsub("AR6 climate diagnostics|", "MAGICC7 AR6|", .data$variable, fixed = TRUE))
 
-deletePlus(remind_reporting_file, writemif = TRUE)
+as.quitte(remindReportingFile) %>%
+  # remove data from old MAGICC7 runs to avoid duplicated
+  filter(! grepl("AR6 climate diagnostics.*MAGICC7", .data$variable), ! grepl("^MAGICC7 AR6", .data$variable)) %>%
+  rbind(climateAssessmentData) %>%
+  write.mif(remindReportingFile)
+
+deletePlus(remindReportingFile, writemif = TRUE)
 
 logmsg <- paste0(
   date(), " postprocessing done! Results appended to REMIND mif '", remindReportingFile, "'\n",
-  "ar6Climate.R finished\n"
+  "MAGICC7_AR6.R finished\n"
 )
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)

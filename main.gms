@@ -216,6 +216,12 @@ $offdigit
 *** turn profiling off (0) or on (1-3, different levels of detail)
 option profile = 0;
 
+file foo_msg;     !! This creates a dummy output file with a well-defined output format:  
+foo_msg.nr = 1;   !! namely F-format (decimal) (and not E-format = scientific notation)
+*** The file can throughout the code be activated with `putclose foo_msg;` and used in the form `put_utility foo_msg "msg" / "xxxx"` to print out xxxx to full.lst 
+*** and be sure that the numeric format is F-format
+
+
 *' @title{extrapage: "00_configuration"} Configuration
 *' @code{extrapage: "00_configuration"}
 *--------------------------------------------------------------------------
@@ -846,7 +852,7 @@ parameter
   cm_LimRock               = 1000;   !! def = 1000
 *'
 parameter
-  cm_expoLinear_yearStart   "time at which carbon price increases lineraly instead of exponentially"
+  cm_expoLinear_yearStart   "time at which carbon price increases linearly instead of exponentially"
 ;
   cm_expoLinear_yearStart  = 2050;   !! def = 2050
 *'
@@ -1005,11 +1011,11 @@ parameter
   cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
 ;
   cm_PriceDurSlope_elh2 = 15;  !! def = 15
-*'  cm_PriceDurSlope_elh2, slope of price duration curve for electrolysis (increase means more flexibility subsidy for electrolysis H2)
+*' cm_PriceDurSlope_elh2, slope of price duration curve for electrolysis (increase means more flexibility subsidy for electrolysis H2)
 *' This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1
-*'
+*' Default value is based on data from German Langfristszenarien (see ./modules/32_power/IntC/datainput.gms).
 parameter
-  cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
+  cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildings and industry electricity prices is on"
 ;
   cm_FlexTaxFeedback = 0;  !! def = 0  !! regexp = 0|1
 *' cm_FlexTaxFeedback, switches on feedback of flexibility tax on buildings and industry.
@@ -1100,12 +1106,12 @@ parameter
 *' * (any other number) limit of gas demand from 2025 on in Germany in EJ/yr
 *'
 parameter
-  c_SlackMultiplier   "Muliplicative factor to up/downscale the slack size for v_changeProdStartyearSlack"
+  c_SlackMultiplier   "Multiplicative factor to up/downscale the slack size for v_changeProdStartyearSlack"
 ;
   c_SlackMultiplier = 1;  !! def = 1
 *'
 parameter
-  c_changeProdCost   "Muliplicative factor to up/downscale the costs for vm_changeProdStartyearCost"
+  c_changeProdCost   "Multiplicative factor to up/downscale the costs for vm_changeProdStartyearCost"
 ;
   c_changeProdCost = 5;  !! def = 5
 *'
@@ -1314,6 +1320,8 @@ $setglobal c_CES_calibration_new_structure  0     !!  def  =  0  !! regexp = 0|1
 $setglobal c_CES_calibration_write_prices  0     !!  def  =  0  !! regexp = 0|1
 *** cm_CES_calibration_default_prices    <-   0.01    # def <-  0.01 lower value if input factors get negative shares (xi), CES prices in the first calibration iteration
 $setglobal cm_CES_calibration_default_prices  0.01  !!  def  =  0.01
+*** cm_in_limit_price_change sets production factors that have their price changes limited to a factor of two during calibration"
+$setglobal cm_in_limit_price_change "ue_steel_primary, kap_steel_primary"   !! def = ""
 *** cm_calibration_string "def = off, else = additional string to include in the calibration name to be used" label for your calibration run to keep calibration files with different setups apart (e.g. with low elasticities, high elasticities)
 $setglobal cm_calibration_string  off    !!  def  =  off
 *** cm_techcosts -     use regionalized or globally homogenous technology costs for certain technologies
@@ -1406,7 +1414,7 @@ $setGlobal cm_EnSecScen_price  off !! def off
 $setGlobal cm_indstExogScen  off !! def off
 *** cm_exogDem_scen
 *** switch to fix FE or ES demand represented in CES function to trajectories
-*** from exgenous sources (not EDGE models) given in file p47_exogDemScen.
+*** from exogenous sources (not EDGE models) given in file p47_exogDemScen.
 *** This switch fixes demand without recalibration of REMIND CES parameters.
 *** This should be kept in mind when comparing those runs to baseline runs without fixing
 *** as the fixing shifts the CES function away from its optimal point based on the CES parameters used.
@@ -1543,7 +1551,15 @@ $setGlobal cm_CESMkup_build  standard  !! def = standard
 *** addressed in cm_CESMkup_ind_data.
 $setGlobal cm_CESMkup_ind        standard  !! def = standard
 $setGlobal cm_CESMkup_ind_data   ""        !! def = ""
-
+*** cm_wasteIncinerationCCSshare, proportion of waste incineration emissions that is captured and geologically stored at a given year and region
+*** off: means that all plastics incineration emissions in the World goes back to the atmosphere.
+*** 2050.GLO 0.5, 2050.EUR 0.8: means that 50% of waste incineration emissions are captured for all regions from 2050 onward, except for Europe that has 80% of its waste incineration emissions captured.
+*** The CCS share of waste incineration increases linearly from zero, in 2025, to the value set at the switch, and it is kept constant for years afterwards.
+$setglobal cm_wasteIncinerationCCSshare  off      !! def = off
+*** cm_feedstockEmiUnknownFate, account for chemical feedstock emissions with unknown fate
+*** off: assume that these emissions are trapped and do not account for total anthropogenic emissions 
+*** on: account for chemical feedstock emissions with unknown fate as re-emitted to the atmosphere
+$setglobal cm_feedstockEmiUnknownFate  off      !! def = off
 *** cm_feShareLimits <-   "off"  # def <- "off", limit the electricity final energy share to be in line with the industry maximum electrification levels (60% by 2050 in the electric scenario), 10% lower (=50% in 2050) in an increased efficiency World, or 20% lower (40% in 2050) in an incumbents future (incumbents). The incumbents scenario also limits a minimal coverage of buildings heat provided by gas and liquids (25% by 2050).
 $setglobal cm_feShareLimits  off  !! def = off
 *** VRE potential switches
@@ -1649,6 +1665,12 @@ $setglobal c_testOneRegi_region  EUR       !! def = EUR  !! regexp = [A-Z]{3}
 
 *** cm_taxrc_RE     "switch to define whether tax on (CO2 content of) energy imports is recycled to additional direct investments in renewables (wind, solar and storage)"
 $setglobal cm_taxrc_RE  none   !! def = none   !! regexp = none|REdirect
+
+*' cm_repeatNonOpt       "should nonoptimal regions be solved again?"
+*'
+*' *  (off): no, only infeasable regions are repeated, standard setting
+*' *  (yes):  also non-optimal regions are solved again, up to cm_solver_try_max
+$setglobal cm_repeatNonOpt off  
 
 *' @stop
 

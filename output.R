@@ -93,7 +93,7 @@ choose_slurmConfig_output <- function(output) {
     return("direct")
 
   # Modify slurm options for reporting options that run in parallel (MAGICC) or need more memory
-  if ("ar6Climate" %in% output) {
+  if ("MAGICC7_AR6" %in% output) {
     slurm_options <- paste(slurm_options[1:3], "--tasks-per-node=12 --mem=32000")
   } else if ("nashAnalysis" %in% output) {
     slurm_options <- paste(slurm_options[1:3], "--mem=32000")
@@ -131,13 +131,13 @@ if (isTRUE(comp)) comp <- "comparison"
 
 if (! exists("output")) {
   modules <- gsub("\\.R$", "", grep("\\.R$", list.files(paste0("./scripts/output/", if (isFALSE(comp)) "single" else comp)), value = TRUE))
-  output <- chooseFromList(modules, type = "modules to be used for output generation", addAllPattern = FALSE)
+  output <- if (length(modules) == 1) modules else chooseFromList(modules, type = "modules to be used for output generation", addAllPattern = FALSE)
 }
 
 # Select output directories if not defined by readArgs
 if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
-                         "plot_compare_iterations", "varListHtml", "fixOnRef")
+                         "plot_compare_iterations", "varListHtml", "fixOnRef", "MAGICC7_AR6")
   needingMif <- any(modulesNeedingMif %in% output)
   if (exists("remind_dir")) {
     dir_folder <- c(file.path(remind_dir, "output"), remind_dir)
@@ -160,10 +160,11 @@ if (! exists("outputdir")) {
   outputdirs <- if (length(dir_folder) == 1) file.path(dir_folder, selectedDirs) else selectedDirs
 
   if ("policyCosts" %in% output) {
-    policyrun <- chooseFromList(dirnames, type = "reference run to which policy run will be compared",
+    policyrun <- chooseFromList(c("--- only here to avoid that folder numbers change ---", dirnames),
+                                type = "reference run to which policy run will be compared",
                                 userinfo = "Select a single reference run.",
                                 returnBoolean = TRUE, multiple = FALSE)
-    outputdirs <- c(rbind(outputdirs, dirs[policyrun])) # generate 3,1,4,1,5,1 out of 3,4,5 and policyrun 1
+    outputdirs <- c(rbind(outputdirs, dirs[policyrun[-1]])) # generate 3,1,4,1,5,1 out of 3,4,5 and policyrun 1
   }
 } else {
   outputdirs <- outputdir
