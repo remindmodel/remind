@@ -31,7 +31,7 @@ mifs <- c(
 
 details <- 
   readr::read_delim(
-    "https://raw.githubusercontent.com/pik-piam/piamInterfaces/master/inst/templates/mapping_template_AR6.csv",
+    "https://raw.githubusercontent.com/pik-piam/piamInterfaces/master/inst/mappings/mapping_AR6.csv",
     delim = ";",
     col_select = c(piam_variable, Definition),
     col_types = "cc"
