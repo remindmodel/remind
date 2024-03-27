@@ -659,14 +659,18 @@ if (cm_abortOnConsecFail gt 0,
   );
 
   if (smax(regi, p80_trackConsecFail(regi)) >= cm_abortOnConsecFail,
-    if (s80_runInDebug eq 0,
-      s80_runInDebug = 1;
-      cm_nash_mode = 1;
-      display "Starting nash in debug mode after maximum number of consecutive failures was reached in at least one region.";
-    else
+    if ((s80_runInDebug eq 0) AND (cm_nash_mode ne 1), !! auto-start debug only if not already in debug mode
+      if (sum(regi, pm_SolNonInfes(regi) ne 0) eq 0, !! if all regions are infeasible debug makes no sense
+        execute_unload "abort.gdx";
+        abort "Run was aborted because the maximum number of consecutive failures was reached in at least one region! No debug started since all regions are infeasible.";
+      else !! start debug mode only if at leat one region was feasible
+        s80_runInDebug = 1;
+        cm_nash_mode = 1;
+        display "Starting nash in debug mode after maximum number of consecutive failures was reached in at least one region.";
+      );
+    else !! s80_runInDebug eq 1 AND/OR cm_nash_mode eq 1
       execute_unload "abort.gdx";
-      display p80_trackConsecFail;
-      abort "Run was aborted because the maximum number of consecutive failures was reached in at least one region!";
+      abort "After debug mode run was aborted because the maximum number of consecutive failures was still reached in at least one region!";
     );
   else
   !! Set nash mode back to parallel because all regions got feasible after they have been automatically restarted as debug

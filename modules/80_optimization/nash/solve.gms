@@ -52,15 +52,15 @@ $endif.repeatNonOpt
   
   solve hybrid using nlp maximizing vm_welfareGlob;
 
-if(cm_nash_mode eq 1,
-  p80_repy_thisSolitr(all_regi,"solvestat") = hybrid.solvestat;
-  p80_repy_thisSolitr(all_regi,"modelstat") = hybrid.modelstat;
-  p80_repy_thisSolitr(all_regi,"resusd")    = hybrid.resusd;
-  p80_repy_thisSolitr(all_regi,"objval")    = hybrid.objval;
-  if (p80_repy_thisSolitr(all_regi,"modelstat") eq 2,
-    p80_repyLastOptim(all_regi,"objval") = p80_repy(all_regi,"objval");
+  if(cm_nash_mode eq 1,
+    p80_repy_thisSolitr(all_regi,"solvestat") = hybrid.solvestat;
+    p80_repy_thisSolitr(all_regi,"modelstat") = hybrid.modelstat;
+    p80_repy_thisSolitr(all_regi,"resusd")    = hybrid.resusd;
+    p80_repy_thisSolitr(all_regi,"objval")    = hybrid.objval;
+    if (p80_repy_thisSolitr(all_regi,"modelstat") eq 2,
+      p80_repyLastOptim(all_regi,"objval") = p80_repy(all_regi,"objval");
+    );
   );
-);
 
   regi(all_regi) = NO;
   p80_handle(all_regi) = hybrid.handle;
@@ -121,12 +121,6 @@ $ifthen.repeatNonOpt "%cm_repeatNonOpt%" == "off"
 $else.repeatNonOpt
   = smax(regi, p80_repy(regi,"modelstat"));                                    !! also taking into account status 7
 $endif.repeatNonOpt
-
-*** in cm_nash_mode=1 (debug) mode, enable solprint for next sol_itr when last
-*** iteration was non-optimal:
-if(cm_nash_mode eq 1 AND o_modelstat ne 2,   
-  option solprint = on;
-);
 
 !! add information if this region was solved in this iteration
 p80_repy_iteration(regi,solveinfo80,iteration)$(
