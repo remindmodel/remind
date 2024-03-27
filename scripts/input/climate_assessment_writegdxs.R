@@ -42,18 +42,18 @@ associateVariablesAndFiles <- as.data.frame(rbind(
       c(
          magicc7Variable = "AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile",
          gamsVariable = "pm_globalMeanTemperature",
-         fileName = "zdeleteme"
+         fileName = "p15_magicc_temp"
       ),
       c(
          magicc7Variable = "AR6 climate diagnostics|Effective Radiative Forcing|Basket|Anthropogenic|MAGICCv7.5.3|50.0th Percentile",
          gamsVariable = "p15_forc_magicc",
-         fileName = "wdeleteme"
-      ),
-      c(
-         magicc7Variable = "AR6 climate diagnostics|Atmospheric Concentrations|CO2|MAGICCv7.5.3|50.0th Percentile",
-         gamsVariable = "pm_co2_conc",
-         fileName = "wdeleteme"
-      )
+         fileName = "p15_forc_magicc"
+      ) #,
+      # c(
+      #    magicc7Variable = "AR6 climate diagnostics|Atmospheric Concentrations|CO2|MAGICCv7.5.3|50.0th Percentile",
+      #    gamsVariable = "pm_co2_conc",
+      #    fileName = "wdeleteme"
+      # )
    )) %>% 
    mutate(remindVariable = sapply(
       .data$magicc7Variable,
