@@ -403,6 +403,7 @@ loop (teNoLearn(te),
 );
 display pm_inco0_t;
 
+*FL* regional differentiation and convergence of non-learning technologies costs
 $ifthen.REG2040_techcosts "%cm_techcosts%" == "REG2040"   !! cm_techcosts REG2040
 *** for 2015-2040, use differentiated costs when available for a specific non-learning technology
     loop(te$( teNoLearn(te) AND teRegTechCosts(te) ),
