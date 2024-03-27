@@ -1,7 +1,7 @@
 Package: remindmodel
 Title: REMIND - REgional Model of INvestments and Development
 Version: 0.1
-Date: 2024-03-28
+Date: 2024-03-27
 Description: This is not a package yet, the purpose of this file is to
     document metadata, notably dependencies.
 License: file LICENSE
