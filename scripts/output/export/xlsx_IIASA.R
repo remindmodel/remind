@@ -16,7 +16,7 @@ library(tidyr)
 
 options(warn = 1)
 
-model <- paste("REMIND", substr(gms::readDefaultConfig(".")$model_version, 1, 3))
+model <- paste("REMIND", paste0(strsplit(gms::readDefaultConfig(".")$model_version, "\\.")[[1]][1:2], collapse = "."))
 # model <- "REMIND 3.3"                        # modelname in final file, overwrite if necessary
 
 
