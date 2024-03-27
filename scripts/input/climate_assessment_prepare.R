@@ -4,6 +4,7 @@ require(piamInterfaces)
 require(yaml)
 require(tidyverse)
 # require(madrat)
+library(lucode2)
 
 # Rscript climate_assessment_run_all.sh [gdxpath] [cfgpath] [temppath] [iterationIdx]
 
