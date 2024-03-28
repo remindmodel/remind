@@ -33,4 +33,3 @@ vm_costMatPrc,               variable,   not needed
 pm_emifacNonEnergy,          parameter,  not needed
 pm_incinerationRate,         parameter,  not needed
 cm_emiscen,                  parameter,  not needed
-vm_demFeSector,              variable,   not needed
