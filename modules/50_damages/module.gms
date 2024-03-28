@@ -18,6 +18,7 @@ $Ifi "%damages%" == "DiceLike" $include "./modules/50_damages/DiceLike/realizati
 $Ifi "%damages%" == "KWLike" $include "./modules/50_damages/KWLike/realization.gms"
 $Ifi "%damages%" == "KWTCint" $include "./modules/50_damages/KWTCint/realization.gms"
 $Ifi "%damages%" == "KW_SE" $include "./modules/50_damages/KW_SE/realization.gms"
+$Ifi "%damages%" == "KotzWenz" $include "./modules/50_damages/KotzWenz/realization.gms"
 $Ifi "%damages%" == "Labor" $include "./modules/50_damages/Labor/realization.gms"
 $Ifi "%damages%" == "TC" $include "./modules/50_damages/TC/realization.gms"
 $Ifi "%damages%" == "off" $include "./modules/50_damages/off/realization.gms"
