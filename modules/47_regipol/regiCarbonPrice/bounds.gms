@@ -39,15 +39,8 @@ vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"DEU"))
 *' This limits early retirement of coal power in Germany in 2020s to avoid extremly fast phase-out.
 vm_capEarlyReti.up('2025',regi,'pc')$(sameAs(regi,"DEU")) = 0.65;
 
-*' This limits coal-power capacity to at least 5 GW in 2030 to account for emissions
-*' from fossil waste (~20 MtCO2/yr as of 2020) in 2030 target as waste currently subsumed under coal-power in REMIND.
-*' Waste power plants will not be phase-out by 2030.
-*' Rough calculation with REMIND parameters:
-*' 5 GW * 8760 (hours per year) * 0.5 (capacity factor) / 0.4 (conversion efficiency) * 1e-3 * 0.35 MtCO2/TWh (emissions factor coal) ~ 20 Mt CO2/yr.
-vm_capTotal.lo("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=5/1000;
-
 *' DEU coal-power capacity phase-out, upper bounds following the Kohleausstiegsgesetz from 2020.
-*' https://www.bmuv.de/themen/klimaschutz-anpassung/klimaschutz/nationale-klimapolitik/fragen-und-antworten-zum-kohleausstieg-in-deutschland
+*' https://www.bmuv.de/faqs/kohleausstiegsgesetz
     vm_capTotal.up("2025",regi,"pecoal","seel")$(sameas(regi,"DEU"))=25/1000;
     vm_capTotal.up("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=17/1000;
     vm_capTotal.up("2035",regi,"pecoal","seel")$(sameas(regi,"DEU"))=6/1000;
@@ -128,12 +121,10 @@ $ifthen.cm_VREminCap "%cm_VREminCap%" == "ampel"
 $endIf.cm_VREminCap
 
 
-*' Force 2030 coal phase-out in ARIADNE Ampel scenarios (leave residual for waste, see below)
+*' Force 2030 coal phase-out in ARIADNE Ampel scenarios 
 $IFTHEN.EarlyPhaseOut "%cm_CoalRegiPol%" == "ampel"
     vm_capTotal.up("2025",regi,"pecoal","seel")$(sameas(regi,"DEU"))=25/1000;
-    vm_capTotal.up("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=3.1/1000;
-    vm_capTotal.up("2035",regi,"pecoal","seel")$(sameas(regi,"DEU"))=2.1/1000;
-    vm_capTotal.up("2040",regi,"pecoal","seel")$(sameas(regi,"DEU"))=1.1/1000;
+    vm_capTotal.up("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=1/1000;
 $ENDIF.EarlyPhaseOut
 
 *' If c_noPeFosCCDeu = 1 chosen, fossil CCS for energy system technologies (pe2se) is forbidden.
