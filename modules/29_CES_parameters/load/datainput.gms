@@ -6,9 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/29_CES_parameters/load/datainput.gms
 *** Load CES parameters based on current model configuration
-*** ATTENTION the file name is replaced by the function start_run()
+*** ATTENTION the file name is replaced by the function updateInputData()
 *##################### R SECTION START (CES INPUT) ##########################
-$include "./modules/29_CES_parameters/load/input/indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7.inc"
+$include "./modules/29_CES_parameters/load/input/CES_configuration.inc"
 *###################### R SECTION END (CES INPUT) ###########################
 
 option pm_cesdata:8:3:1;
