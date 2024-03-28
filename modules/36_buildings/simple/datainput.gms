@@ -7,7 +7,7 @@
 *** SOF ./modules/36_buildings/simple/datainput.gms
 
 *** substitution elasticities
-Parameter 
+Parameter
   p36_cesdata_sigma(all_in)  "substitution elasticities in buildings"
   /
     enb    0.5
@@ -59,16 +59,16 @@ p36_uedemand_build(ttot,regi,in) = f36_uedemand_build(ttot,regi,"%cm_demScen%","
 
 
 *** scale default elasticity of substitution on enb level
-$IFTHEN.cm_enb not "%cm_enb%" == "off" 
+$IFTHEN.cm_enb not "%cm_enb%" == "off"
   pm_cesdata_sigma(ttot,"enb")$pm_cesdata_sigma(ttot,"enb") =
     pm_cesdata_sigma(ttot,"enb") * %cm_enb%;
-*** avoid the elasticity of substitution parameter to be too close to one, which could cause undesired numerical behavior: if the resulting scaled parameter is between 0.8 and 1, make it 0.8; if it is between 1 and 1.2, make it 1.2. 
+*** avoid the elasticity of substitution parameter to be too close to one, which could cause undesired numerical behavior: if the resulting scaled parameter is between 0.8 and 1, make it 0.8; if it is between 1 and 1.2, make it 1.2.
   pm_cesdata_sigma(ttot,"enb")$(pm_cesdata_sigma(ttot,"enb") gt 0.8
                                 AND pm_cesdata_sigma(ttot,"enb") lt 1) =
-    0.8; 
+    0.8;
   pm_cesdata_sigma(ttot,"enb")$(pm_cesdata_sigma(ttot,"enb") ge 1
                                 AND pm_cesdata_sigma(ttot,"enb") lt 1.2) =
-    1.2;  
+    1.2;
 $ENDIF.cm_enb
 
 
@@ -85,7 +85,7 @@ pm_shGasLiq_fe_lo(ttot,regi,"build") = 0;
 * RR: lower bound for gases and liquids share in buildings for an incumbents scenario
 $ifthen.feShareScenario "%cm_feShareLimits%" == "incumbents"
   pm_shGasLiq_fe_lo(t,regi,"build")$(t.val ge 2050) = 0.25;
-  pm_shGasLiq_fe_lo(t,regi,"build")$(t.val ge 2030 AND t.val le 2045) = 
+  pm_shGasLiq_fe_lo(t,regi,"build")$(t.val ge 2030 AND t.val le 2045) =
     0.15 + (0.10 / 20) * (t.val - 2030);
 $endif.feShareScenario
 
@@ -93,15 +93,15 @@ $endif.feShareScenario
 *' CES mark-up cost buildings
 ***-----------------------------------------------------------------------------
 
-*' The Mark-up cost on primary production factors (final energy) of the CES tree have two functions. 
-*' (1) They represent sectoral end-use cost not captured by the energy system. 
-*' (2) As they alter prices to of the CES function inputs, they affect the CES efficiency parameters during calibration 
+*' The Mark-up cost on primary production factors (final energy) of the CES tree have two functions.
+*' (1) They represent sectoral end-use cost not captured by the energy system.
+*' (2) As they alter prices to of the CES function inputs, they affect the CES efficiency parameters during calibration
 *' and therefore influence the efficiency of different FE CES inputs. The resulting economic subsitution rates
 *' are given by the marginal rate of subsitution (MRS) in the parameter o01_CESmrs.
 
 *' There are two types of CES mark-up cost:
 *' (a) Mark-up cost on inputs in ppfen_MkupCost36: Those are counted as expenses in the budget and set by the parameter p36_CESMkup.
-*' (b) Mark-up cost on other inputs: Those are budget-neutral and implemented as a tax. They are set by the parameter pm_tau_ces_tax. 
+*' (b) Mark-up cost on other inputs: Those are budget-neutral and implemented as a tax. They are set by the parameter pm_tau_ces_tax.
 
 *' Mark-up cost in buildings are modeled with budget-effect (a).
 
@@ -115,14 +115,24 @@ p36_CESMkup(ttot,regi,"feelhpb") = 200 * sm_TWa_2_MWh * 1e-12;
 *' which makes district heating in buildings more expensive than in industry
 p36_CESMkup(ttot,regi,"feheb") = 25 * sm_TWa_2_MWh * 1e-12;
 
+*` temporal phase-in of mark-up cost changes defined by cm_CESMkup_build
+*` no changes to mark-up cost before 2025, then gradual phase-in until 2040
+p36_CESMkup_policy_phasein(t) = 0;
+p36_CESMkup_policy_phasein(t)$(t.val ge 2040) = 1;
+p36_CESMkup_policy_phasein(t)$(t.val eq 2035) = 1/2;
+p36_CESMkup_policy_phasein(t)$(t.val eq 2030) = 1/4;
+p36_CESMkup_policy_phasein(t)$(t.val eq 2025) = 1/8;
+
 *' overwrite or extent CES markup cost if specified by switch
 $ifThen.CESMkup not "%cm_CESMkup_build%" == "standard"
-  p36_CESMkup(ttot,regi,in)$(p36_CESMkup_input(in)
+
+  p36_CESMkup(t,regi,in)$(p36_CESMkup_input(in)
                           AND ppfen_MkupCost36(in)) =
-    p36_CESMkup_input(in);
+    p36_CESMkup(t,regi,in) + p36_CESMkup_policy_phasein(t) * (p36_CESMkup_input(in) - p36_CESMkup(t,regi,in));
+
   pm_tau_ces_tax(t,regi,in)$(p36_CESMkup_input(in)
                              AND (NOT ppfen_MkupCost36(in))) =
-    p36_CESMkup_input(in);
+    pm_tau_ces_tax(t,regi,in) + p36_CESMkup_policy_phasein(t) * (p36_CESMkup_input(in) - pm_tau_ces_tax(t,regi,in));
 $endIf.CESMkup
 
 display p36_CESMkup;

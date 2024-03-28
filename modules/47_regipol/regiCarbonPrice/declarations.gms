@@ -20,6 +20,15 @@ Parameter
   p47_nonEnergyUse(ttot,ext_regi)                  "non-energy use"
 ;
 
+*** scenario-defined shift of land-use change emissions for targets incl. Grassi option
+$ifThen.cm_regipol_LUC NOT "%cm_regipol_LUC%" == "off"
+Parameter
+  p47_emiLUC(ttot,ext_regi) "User-defined land-use change CO2 emissions to hit in specific year and region group. Unit [Mt CO2/yr]" / %cm_regipol_LUC% /
+  p47_emiLUC_regi(ttot,all_regi) "User-defined land-use change CO2 emissions to hit in specific year and region. Unit [Mt CO2/yr]"
+;
+$endIf.cm_regipol_LUC
+
+
 *** parameters to track regipol emissions calculation
 Parameters
   p47_emiTargetMkt(ttot,all_regi,emiMktExt,emi_type_47)            "CO2 or GHG Emissions per emission market used for target level [GtC]"
@@ -29,7 +38,7 @@ Parameters
 ***--------------------------------------------------
 *** Emission markets (EU Emission trading system and Effort Sharing)
 ***--------------------------------------------------
-$ifThen.emiMkt not "%cm_emiMktTarget%" == "off" 
+$ifThen.emiMkt not "%cm_emiMktTarget%" == "off"
 Parameter
   pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) "region emissions target [GtCO2 or GtCO2eq]" / %cm_emiMktTarget% /
 
@@ -50,7 +59,7 @@ Parameter
   pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) "multiplicative tax rescale factor that rescales emiMkt carbon price from iteration to iteration to reach regipol targets [%]"
   p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugging purposes [%]"
 
-*** Parameters necessary to define the CO2 tax curve shape   
+*** Parameters necessary to define the CO2 tax curve shape
   p47_targetConverged(ttot,ext_regi)                 "boolean to store if emission target has converged [0 or 1]"
   p47_targetConverged_iter(iteration,ttot,ext_regi)  "parameter to save p47_targetConverged across iterations [0 or 1]"
   p47_allTargetsConverged(ext_regi)                  "boolean to store if all emission targets converged at least once [0 or 1]"
@@ -88,15 +97,15 @@ $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 Parameter
   p47_implicitQttyTargetTax(ttot,all_regi,qttyTarget,qttyTargetGroup)          "tax/subsidy level necessary to achieve a quantity target"
   p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup)      "current iteration total value for an specific quantity target"
-  p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)  "rescale factor for current implicit quantity target tax" 
+  p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)  "rescale factor for current implicit quantity target tax"
   p47_implicitQttyTargetTax_prevIter(ttot,all_regi,qttyTarget,qttyTargetGroup) "previous iteration quantity target tax"
   p47_implicitQttyTargetTax0(ttot,all_regi)                                    "previous iteration quantity target tax revenue"
 
   p47_implicitQttyTargetTax_iter(iteration,ttot,all_regi,qttyTarget,qttyTargetGroup)  "tax/subsidy level to achieve a quantity target that the model saw in a given iteration"
   pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup)                 "deviation of current iteration quantity target from target - relative for total targets, absolute (= share points) for share targets"
   p47_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) "deviation of current iteration quantity from target after the given iteration"
-  p47_implicitQttyTargetTaxRescale_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) "rescale factor for current implicit quantity target tax after the given iteration"    
-  p47_implicitQttyTargetCurrent_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)    "current iteration total value for an specific quantity target per iteration"   
+  p47_implicitQttyTargetTaxRescale_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) "rescale factor for current implicit quantity target tax after the given iteration"
+  p47_implicitQttyTargetCurrent_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)    "current iteration total value for an specific quantity target per iteration"
 
   pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)  "quantity target [absolute: TWa or GtC; or percentage: 0.1]"  / %cm_implicitQttyTarget% /
 
@@ -116,7 +125,7 @@ $endIf.cm_implicitQttyTarget_delay
 
 *' RP: improve formatting of output: always have the iteration separate to allow easy comparison over iterations.
 *' For non-iteration values show time and regi down, and the other two sets to the right
-option p47_implicitQttyTarget_dev_iter:3:1:4;  
+option p47_implicitQttyTarget_dev_iter:3:1:4;
 option p47_implicitQttyTargetTaxRescale_iter:3:1:4;
 option p47_implicitQttyTargetTax_iter:3:1:4;
 option p47_implicitQttyTargetCurrent_iter:3:1:4;
@@ -142,8 +151,8 @@ Parameter
   p47_implicitPriceTax0(ttot,all_regi,all_enty,entySe,sector)  "previous iteration implicit price target tax revenue  [2005 TerraDollar]"
   p47_implicitPrice_dev(ttot,all_regi,all_enty,entySe,sector)   "implicit price tax deviation of current iteration from target [%]"
   p47_implicitPrice_dev_iter(iteration,ttot,all_regi,all_enty,entySe,sector) "implicit price tax deviation of current iteration from target per iteration [%]"
-  pm_implicitPrice_NotConv(all_regi,sector,all_enty,entySe,ttot) "auxiliary parameter to store the price targets that did not converged [%]" 
-  pm_implicitPrice_ignConv(all_regi,sector,all_enty,entySe,ttot) "auxiliary parameter to store the price targets that were ignored in the convergence check (cases: 1 = non existent price, 2 = no change in prices for the last 3 iterations) [#]" 
+  pm_implicitPrice_NotConv(all_regi,sector,all_enty,entySe,ttot) "auxiliary parameter to store the price targets that did not converged [%]"
+  pm_implicitPrice_ignConv(all_regi,sector,all_enty,entySe,ttot) "auxiliary parameter to store the price targets that were ignored in the convergence check (cases: 1 = non existent price, 2 = no change in prices for the last 3 iterations) [#]"
   p47_implicitPriceTax_iter(iteration,ttot,all_regi,all_enty,entySe,sector)  "tax/subsidy level on FE for reaching the price target per iteration [2005 TerraDollar per TWyear]"
   p47_implicitPriceTarget_terminalYear(all_regi,all_enty,entySe,sector) "terminal year of price target for given region and energy carrier [year]"
   p47_implicitPriceTarget_initialYear(all_regi,all_enty,entySe,sector) "initial year of price target for given region and energy carrier [year]"
@@ -165,8 +174,8 @@ Parameter
   p47_implicitPePriceTax0(ttot,all_regi,all_enty)  "previous iteration implicit price target tax revenue  [2005 TerraDollar]"
   p47_implicitPePrice_dev(ttot,all_regi,all_enty)   "implicit price tax deviation of current iteration from target [%]"
   p47_implicitPePrice_dev_iter(iteration,ttot,all_regi,all_enty) "implicit price tax deviation of current iteration from target per iteration [%]"
-  pm_implicitPePrice_NotConv(all_regi,all_enty,ttot) "auxiliary parameter to store the price targets that did not converged [%]" 
-  pm_implicitPePrice_ignConv(all_regi,all_enty,ttot) "auxiliary parameter to store the price targets that were ignored in the convergence check (cases: 1 = non existent price, 2 = no change in prices for the last 3 iterations) [#]" 
+  pm_implicitPePrice_NotConv(all_regi,all_enty,ttot) "auxiliary parameter to store the price targets that did not converged [%]"
+  pm_implicitPePrice_ignConv(all_regi,all_enty,ttot) "auxiliary parameter to store the price targets that were ignored in the convergence check (cases: 1 = non existent price, 2 = no change in prices for the last 3 iterations) [#]"
   p47_implicitPePriceTax_iter(iteration,ttot,all_regi,all_enty)  "tax/subsidy level on PE for reaching the price target per iteration [2005 TerraDollar per TWyear]"
   p47_implicitPePriceTarget_terminalYear(all_regi,all_enty) "terminal year of price target for given region and energy carrier [year]"
   p47_implicitPePriceTarget_initialYear(all_regi,all_enty) "initial year of price target for given region and energy carrier [year]"
@@ -187,7 +196,7 @@ Parameter
 equations
   q47_quantity_regiCO2target(ttot,ext_regi) "Exogenously emissions quantity constrain on net CO2 without bunkers [GtC]"
 ;
-$endIf.quantity_regiCO2target   
+$endIf.quantity_regiCO2target
 
 ***---------------------------------------------------------------------------
 *** per region minimun variable renewables share in electricity:
@@ -197,7 +206,7 @@ Variable
   v47_VREshare(ttot,all_regi) "share of variable renewables (wind and solar) in electricity"
 ;
 Parameter
-  p47_VREminShare(ttot,ext_regi) "per region minimun share of variable renewables (wind and solar) in electricity. Applied to yaers greater or equal to ttot. Unit [0..1]" / %cm_VREminShare% /  
+  p47_VREminShare(ttot,ext_regi) "per region minimun share of variable renewables (wind and solar) in electricity. Applied to yaers greater or equal to ttot. Unit [0..1]" / %cm_VREminShare% /
 ;
 Equation
   q47_VREShare(ttot,all_regi) "per region minimun share of variable renewables (wind and solar) from ttot year onward"
@@ -209,7 +218,7 @@ $endIf.cm_VREminShare
 ***---------------------------------------------------------------------------
 $ifthen.cm_CCSmaxBound not "%cm_CCSmaxBound%" == "off"
 Parameter
-  p47_CCSmaxBound(all_regi) "per region yearly maximum CCS. Unit[Gt C]" / %cm_CCSmaxBound% /  
+  p47_CCSmaxBound(all_regi) "per region yearly maximum CCS. Unit[Gt C]" / %cm_CCSmaxBound% /
 ;
 p47_CCSmaxBound(regi) = p47_CCSmaxBound(regi) / sm_c_2_co2;
 Equation
@@ -225,6 +234,16 @@ Parameter
   p47_exoCo2tax(ext_regi,ttot)   "Exogenous CO2 tax level. Overrides carbon prices in pm_taxCO2eq, only if explicitly defined. Regions and region groups allowed. Format: '<regigroup>.<year> <value>, <regigroup>.<year2> <value2>' or '<regigroup>.(<year1> <value>,<year2> <value>'). [$/tCO2]" / %cm_regiExoPrice% /
 ;
 $endIf.regiExoPrice
+
+
+
+Variable
+vm_prodSEtotal(ttot,all_regi,all_enty,all_enty) "total SE production per PE and SE over all technologies"
+;
+
+Equation
+q47_prodSEtotal(ttot,all_regi,all_enty,all_enty) "calculate total SE production per PE and SE over all technologies"
+;
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/declarations.gms

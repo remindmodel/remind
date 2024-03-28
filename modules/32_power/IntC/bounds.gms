@@ -20,34 +20,40 @@ $IFTHEN.dispatchSetyDown not "%cm_dispatchSetyDown%" == "off"
 $ENDIF.dispatchSetyDown
 
 $IFTHEN.dispatchSeelDown not "%cm_dispatchSeelDown%" == "off"
-  loop(pe2se(enty,enty2,te)$sameas(enty2,"seel"),  
-    vm_capFac.lo(t,regi,te) = ( 1 - %cm_dispatchSeelDown% / 100 ) * pm_cf(t,regi,te);  
+  loop(pe2se(enty,enty2,te)$sameas(enty2,"seel"),
+    vm_capFac.lo(t,regi,te) = ( 1 - %cm_dispatchSeelDown% / 100 ) * pm_cf(t,regi,te);
   );
 $ENDIF.dispatchSeelDown
 
+*** start capacity factor electrolysis
 
-*** FS: if flexibility tax on, let capacity factor be endogenuously determined between 0.1 and 1 
+*** if flexibility tax with feedback is on, let capacity factor be endogenuously determined between 0.1 and 1
 *** for technologies that get flexibility tax/subsity (teFlexTax)
 if ( cm_flex_tax eq 1,
   if ( cm_FlexTaxFeedback eq 1,
-*** if flexibility tax feedback is on, let model choose capacity factor of flexible technologies freely
 	  vm_capFac.lo(t,regi,teFlexTax)$(t.val ge 2010) = 0.1;
     vm_capFac.up(t,regi,teFlexTax)$(t.val ge 2010) = pm_cf(t,regi,teFlexTax);
-  else 
+  else
 *** if flexibility tax feedback is off, flexibility tax benefit only for flexible technologies and capacity factors fixed.
-*** Assume capacity factor of flexible electrolysis to be 0.38.
-*** The value based on data from German Langfristszenarien (see flexibility tax section in datainput file).
-    vm_capFac.fx(t,regi,"elh2")$(t.val ge 2010) = 0.38;
+*** By default set capacity factor to value defined by swtich cm_elh2_CF.
+*** The default value (see main.gms) is based on data from German Langfristszenarien.
+    if ( cm_elh2_CF gt 0 AND cm_elh2_CF le 1,
+      vm_capFac.fx(t,regi,"elh2")$(t.val ge 2010) = cm_elh2_CF;
+    );
 *** electricity price of inflexible technologies the same as w/o feedback
     v32_flexPriceShare.fx(t,regi,te)$(teFlexTax(te) AND NOT(teFlex(te))) = 1;
   );
 );
 
+*** end capacity factor electrolysis
+
+
+
 *** Lower bounds on VRE use (more than 0.01% of electricity demand) after 2015 to prevent the model from overlooking solar and wind
 loop(regi,
   loop(te$(teVRE(te)),
     if ( (sum(rlf, pm_dataren(regi,"maxprod",rlf,te)) > 0.01 * pm_IO_input(regi,"seel","feels","tdels")) ,
-         vm_shSeEl.lo(t,regi,te)$(t.val>2020) = 0.01; 
+         vm_shSeEl.lo(t,regi,te)$(t.val>2020) = 0.01;
     );
   );
 );
