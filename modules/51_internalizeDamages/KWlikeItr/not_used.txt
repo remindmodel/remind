@@ -18,6 +18,5 @@ pm_GDPfrac,input,questionnaire
 pm_damageMarginalTC,input,questionnaire
 pm_GDPGrossIso,input,questionnaire
 pm_damageImp,input,questionnaire
-pm_damageScc,input,questionnaire
 pm_damageIso,input,questionnaire
 pm_damageGrowthRateIso,input,questionnaire

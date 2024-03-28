@@ -22,13 +22,13 @@ p46_CO2eqwoLU_actual(p46_NDCyearSet(t,regi)) =
         * vm_demFeSector.l(t,regi,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
       );
 
-*** there is some debate whether Chinas net zero goal is not CO2eq, but CO2. Then use CO2 emissions minus substract bunker emissions
-*** p46_CO2eqwoLU_actual(p46_NDCyearSet(t,regi))$(sameas(regi,"CHA") AND sameas(t,"2055")) =
-***  (vm_emiTe.l(t,regi,"co2") + vm_emiMac.L(t,regi,"co2") + vm_emiCdr.L(t,regi,"co2"))*sm_c_2_co2*1000
-***    - sum(se2fe(enty,enty2,te),
-***        pm_emifac(t,regi,enty,enty2,te,"co2")
-***        * vm_demFeSector.l(t,regi,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
-***      );
+*** Indias 2070 target is not CO2eq, but CO2. Then use CO2 emissions minus substract bunker emissions
+p46_CO2eqwoLU_actual(p46_NDCyearSet(t,regi))$(sameas(regi,"IND") AND sameas(t,"2070")) =
+  (vm_emiTe.l(t,regi,"co2") + vm_emiMac.L(t,regi,"co2") + vm_emiCdr.L(t,regi,"co2"))*sm_c_2_co2*1000
+    - sum(se2fe(enty,enty2,te),
+        pm_emifac(t,regi,enty,enty2,te,"co2")
+        * vm_demFeSector.l(t,regi,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
+      );
 
 display vm_co2eq.l;
 display p46_CO2eqwoLU_actual;

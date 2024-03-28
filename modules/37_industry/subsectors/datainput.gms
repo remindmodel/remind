@@ -537,7 +537,7 @@ if (smax((t,regi),
   );
 putclose logfile, " " /;
 );
-*** EOF ./modules/37_industry/subsectors/datainput.gms
+
 
 $ifthen.sec_steel_scen NOT "%cm_steel_secondary_max_share_scenario%" == "off"   !! cm_steel_secondary_max_share_scenario
 * Modify secondary steel share limits by scenario assumptions

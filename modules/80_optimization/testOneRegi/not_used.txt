@@ -14,6 +14,7 @@ pm_welf,                        parameter,  ???
 pm_prtp,                        parameter,  ???
 cm_iteration_max,               switch,     ???
 cm_abortOnConsecFail,           switch,     ???
+cm_nash_mode,                   switch,     not needed
 cm_nash_autoconverge,           switch,     ???
 cm_emiMktTarget_tolerance,      switch,     not needed
 cm_implicitQttyTarget_tolerance,switch,     not needed

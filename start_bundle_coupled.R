@@ -239,6 +239,8 @@ message("max_iterations:        ", max_iterations)
 
 common <- intersect(rownames(settings_remind), rownames(scenarios_coupled))
 knownRefRuns <- apply(expand.grid(prefix_runname , common, "-rem-", seq(max_iterations)), 1, paste, collapse="")
+knownRefRuns <- gsub(" ", "", knownRefRuns) # if max_iterations has two digits apply in the line above introduces whitespaces before the single-digit iterations ("rem- 9"). Remove them.
+
 if (! identical(common, character(0))) {
   message("\n################################\n")
   message("The following ", length(common), " scenarios will be started:")
@@ -537,7 +539,7 @@ for(scen in common){
       }
     }
 
-    if (cfg_rem$gms$optimization == "nash" && cfg_rem$gms$cm_nash_mode == "parallel" && isFALSE(magpie_empty)) {
+    if (cfg_rem$gms$optimization == "nash" && cfg_rem$gms$cm_nash_mode == 2 && isFALSE(magpie_empty)) {
       # for nash: set the number of CPUs per node to number of regions + 1
       numberOfTasks <- length(unique(read.csv2(cfg_rem$regionmapping)$RegionCode)) + 1
     } else {
