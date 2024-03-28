@@ -226,14 +226,12 @@ q37_chemicals_feedstocks_limit(t,regi) ..
 
 *' Define the flow of non-energy feedstocks. It is used for emissions accounting
 *' and calculating plastics production
-q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
-  sum(sefe(entySe,entyFe),
-    vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
-  )
+q37_demFeFeedstockChemIndst(t,regi,entySe,entyFe,emiMkt)$(
+                         sefe(entySe,entyFe)
+                     AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
+  vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
   =e=
-    sum((sefe(entySe,entyFe),
-         entyFe_out_emiMkt(entyFe,out,emiMkt))$( sameas(out,"ue_chemicals") ),
+    sum(entyFe_out_emiMkt(entyFe,out,emiMkt)$( sameas(out,"ue_chemicals") ),
       v37_demFeIndst(t,regi,entySe,entyFe,out,emiMkt)
     )
   * p37_chemicals_feedstock_share(t,regi)
