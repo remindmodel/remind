@@ -167,7 +167,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       # for debug, testOneRegi, quick: save original settings to cfg$backup; restore them from there if not set.
       if ("--debug" %in% flags) {
         if (is.null(cfg[["backup"]][["cm_nash_mode"]])) cfg$backup$cm_nash_mode <- cfg$gms$cm_nash_mode
-        cfg$gms$cm_nash_mode <- "debug"
+        cfg$gms$cm_nash_mode <- 1
       } else {
         if (! is.null(cfg[["backup"]][["cm_nash_mode"]])) cfg$gms$cm_nash_mode <- cfg$backup$cm_nash_mode
       }
@@ -312,7 +312,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     }
 
     if ("--debug" %in% flags) {
-      cfg$gms$cm_nash_mode <- "debug"
+      cfg$gms$cm_nash_mode <- 1
       cfg$slurmConfig      <- slurmConfig
     }
 

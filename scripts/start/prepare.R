@@ -335,7 +335,7 @@ prepare <- function() {
 
     writeLines(levs, "levs.gms")
 
-    # Replace fixing.gms with level values
+    # Replace fixings.gms with level values
     file.copy("levs.gms", "fixings.gms", overwrite = TRUE)
 
     fixings_manipulateThis <- c(fixings_manipulateThis, list(c(".L ", ".FX ")))

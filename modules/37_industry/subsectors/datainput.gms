@@ -595,10 +595,10 @@ $offdelim
 
 *' load baseline industry ETS solids demand
 if (cm_startyear ne 2005,   !! not a BAU scenario
-execute_load "input_ref.gdx", vm_demFeSector;
+execute_load "input_ref.gdx", vm_demFeSector_afterTax;
   p37_BAU_industry_ETS_solids(t,regi)
   = sum(se2fe(entySe,"fesos",te),
-      vm_demFeSector.l(t,regi,entySe,"fesos","indst","ETS")
+      vm_demFeSector_afterTax.l(t,regi,entySe,"fesos","indst","ETS")
     );
 );
 
@@ -618,6 +618,18 @@ p37_BioShareMaxSubsec("2040",regi,"fesos","steel")=1;
 
 *** for Germany set maximum biomass share of solids in steel to 10% at all times
 ***p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val ge 2020 AND sameas(regi,"DEU"))=0.1;
+
+
+* Define carbon capture and storage share in waste incineration emissions
+* capture rate increases linearly from zero in 2025 to value the set in the switch for the defined year, and it is kept constant for years afterwards
+p37_regionalWasteIncinerationCCSshare(ttot,all_regi) = 0;
+$ifthen.cm_wasteIncinerationCCSshare not "%cm_wasteIncinerationCCSshare%" == "off"
+loop((ttot,ext_regi)$p37_wasteIncinerationCCSshare(ttot,ext_regi),
+  loop(regi$regi_groupExt(ext_regi,regi),
+    p37_regionalWasteIncinerationCCSshare(t,regi)$((t.val gt 2025)) = min(p37_wasteIncinerationCCSshare(ttot,ext_regi), (p37_wasteIncinerationCCSshare(ttot,ext_regi)/(ttot.val -  2025))*(t.val-2025)); 
+  );
+);
+$endIf.cm_wasteIncinerationCCSshare
 
 *** ---------------------------------------------------------------------------
 ***        2. Process-Based

@@ -103,7 +103,7 @@ loop (in$( sameas(in,"feel_steel_secondary") ),
       (  0.01
       * smax(ttot$( vm_cesIO.lo(ttot,regi,in) gt sm_eps),
           vm_cesIO.lo(ttot,regi,in)
-	)
+        )
       ),
       abs(pm_cesdata(t,regi,in,"offset_quantity"))
     );
@@ -114,14 +114,13 @@ vm_cesIO.lo(t,regi_dyn29(regi),in_industry_dyn37(in))$(
                                                   0 eq vm_cesIO.lo(t,regi,in) )
   = max(sm_eps, abs(pm_cesdata(t,regi,in,"offset_quantity")));
 
-
 $ontext
-*' Limit biomass solids use in industry to 25% (or historic shares, if they are higher)
-*' of baseline solids
+*' Limit biomass solids use in industry to 25% (or historic shares, if they are 
+*' higher) of baseline solids
 *' Cement CCS might otherwise become a compelling BioCCS option under very high
 *' carbon prices due to missing adjustment costs.
-if (cm_startyear gt 2005,   !! not a scenario, starting in 2005 (e.g. baseline or NPi)
-  vm_demFeSector.up(t,regi,"sesobio","fesos","indst","ETS")
+if (cm_startyear gt 2005,   !! not a baeline or NPi scenario
+  vm_demFeSector_afterTax.up(t,regi,"sesobio","fesos","indst","ETS")
   = max(0.25 , smax(t2, pm_secBioShare(t2,regi,"fesos","indst") ) )
     * p37_BAU_industry_ETS_solids(t,regi);
 );
@@ -163,4 +162,27 @@ if (cm_CCS_steel ne 1 OR cm_IndCCSscen ne 1,
 );
 $endif.cm_subsec_model_steel
 
+*** Populate values for v37_demFeIndst to ease introduction of new variale.  Can
+*** be removed once the variable is established.
+v37_demFeIndst.l(t,regi,entySe,entyFe,out,emiMkt) = 0;
+loop ((t,regi,entySe,entyFe,out,emiMkt,secInd37,in)$(
+            sefe(entySe,entyFe)
+        AND sector2emiMkt("indst",emiMkt)
+        AND secInd37_emiMkt(secInd37,emiMkt)
+        AND secInd37_2_pf(secInd37,out)
+        AND ue_industry_2_pf(out,in)
+        AND fe2ppfEn37(entyFe,in)
+        AND sum(se2fe(entySe,entyFe,te),
+              vm_demFeSector_afterTax.l(t,regi,entySe,entyFe,"indst",emiMkt)
+            )                                                                ),
+  v37_demFeIndst.l(t,regi,entySe,entyFe,out,emiMkt)
+  = sum((fe2ppfEn37_2(entyFe,in),ue_industry_2_pf(out,in)),
+      vm_cesIO.l(t,regi,in)
+    + pm_cesdata(t,regi,in,"offset_quantity")
+    )
+  * vm_demFeSector_afterTax.l(t,regi,entySe,entyFe,"indst",emiMkt)
+  / sum(se2fe(entySe2,entyFe,te),
+      vm_demFeSector_afterTax.l(t,regi,entySe2,entyFe,"indst",emiMkt)
+    );
+);
 *** EOF ./modules/37_industry/subsectors/bounds.gms
