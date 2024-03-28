@@ -12,6 +12,8 @@ require(yaml)
 require(tidyverse)
 # require(madrat)
 require(lucode2)
+require(purrr)
+require(gdxrrw) # Might need a environmental variable to be set:
 
 # This script is meant to run the full IIASA climate assessment using a single parameter set,
 # meant to be used between REMIND iterations
@@ -30,12 +32,13 @@ if (!file.exists(logFile)) {
 }
 
 climateTempDir <- file.path(outputDir, "climate-assessment-data")
-if (!exists(climateTempDir)) {
+if (!dir.exists(climateTempDir)) {
     dir.create(climateTempDir, showWarnings = FALSE)
     createdClimateTempDir <- TRUE
 } else {
     createdClimateTempDir <- FALSE
 }
+cat(climateTempDir)
 
 gdxPath <- file.path(outputDir, "fulldata_prepostsolve.gdx")
 cfgPath <- file.path(outputDir, "cfg.txt")
@@ -169,12 +172,19 @@ dir.create(magiccWorkersDir, recursive = TRUE, showWarnings = FALSE)
 # Character vector of all required MAGICC7 environment variables
 magiccEnvs <- c(
     "MAGICC_EXECUTABLE_7"    = magiccBinFile,    # Specifies the path to the MAGICC executable
-    "MAGICC_WORKER_ROOT_DIR" = "", # Directory of magicc workers
+    "MAGICC_WORKER_ROOT_DIR" = magiccWorkersDir, # Directory of magicc workers
     "MAGICC_WORKER_NUMBER"   = 1                 # TODO: Get this from slurm or nproc
 )
 
+gamsEnvs <- c(
+    "R_GAMS_SYSDIR" = "/p/system/packages/gams/43.4.1"
+)
+
+# Set GAMS environment variable
+Sys.setenv(R_GAMS_SYSDIR = "/p/system/packages/gams/43.4.1")
+
 # Check if all necessary environment variables are set
-alreadySet <- lapply(Sys.getenv(names(magiccEnvs)), nchar) > 0
+alreadySet <- lapply(Sys.getenv(names(c(magiccEnvs, gamsEnvs))), nchar) > 0
 # Only set those environment variables that are not already set
 if (any(!alreadySet)) do.call(Sys.setenv, as.list(magiccEnvs[!alreadySet]))
 
@@ -211,6 +221,7 @@ logmsg <- paste0(
     "  MAGICC_EXECUTABLE_7    = ", Sys.getenv("MAGICC_EXECUTABLE_7"), "\n",
     "  MAGICC_WORKER_ROOT_DIR = ", Sys.getenv("MAGICC_WORKER_ROOT_DIR"), "\n",
     "  MAGICC_WORKER_NUMBER   = ", Sys.getenv("MAGICC_WORKER_NUMBER"), "\n",
+    "  R_GAMS_SYSDIR          = ", Sys.getenv("R_GAMS_SYSDIR"), "\n",
     date(), " =================== RUN climate-assessment infilling & harmonization ===================\n",
     runHarmoniseAndInfillCmd, "'\n"
 )
