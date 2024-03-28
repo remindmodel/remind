@@ -326,6 +326,9 @@ pm_shareWindOff(ttot,regi)$(ttot.val ge 2035 AND sameAs(regi,"DEU")) = 1;
 *** parameter to deteremine regional long-term share
 pm_shareWindPotentialOff2On(regi)$(sameAs(regi,"DEU")) = 0.7;
 
+*** adapt offshore wind potential in Germany
+pm_dataren(regi,"maxprod","6","windoff")$(sameAs(regi,"DEU")) = 0.015;  !! manual maximum of offshore wind for Germany
+
 *** intermediate solution for code check until ces tax gets implemented
 pm_tau_ces_tax("2025",regi,"ue_steel_primary")$(sameAs(regi,"DEU")) = 0.0;
 
