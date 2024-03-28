@@ -61,7 +61,7 @@ $batinclude "./modules/include.gms" presolve
 *cb 20140305 submit.R looks for the unique string in the following line and replaces it with the offlisting include into the full.gms at this position
 ***cb20140305readinpositionforfinxingfiles
 
-*AJS* In case of fixing, fix to prices from input_ref.gdx (t < cm_startyear). 
+*** In case of fixing, fix to prices from input_ref.gdx (t < cm_startyear). 
 *** Parameters are not automatically treated by the fixing mechanism above.
 if( (cm_startyear gt 2005),
     Execute_Loadpoint "input_ref" p_pvpRef = pm_pvp;
@@ -71,9 +71,15 @@ if( (cm_startyear gt 2005),
 ***--------------------------------------------------------------------------
 ***         SOLVE
 ***--------------------------------------------------------------------------
-***this disables solprint in cm_nash_mode=debug case by default. It is switched on in case of infes in nash/solve.gms
-*RP* for faster debugging, turn solprint immediately on
-$IF %cm_nash_mode% == "debug" option solprint = on ;
+*** Set options for debugging
+if (cm_nash_mode eq 1, 
+      option 
+        solprint = on
+        limcol   = 2147483647
+        limrow   = 2147483647
+      ;
+);
+
 
 o_modelstat = 100;
 loop(sol_itr$(sol_itr.val <= cm_solver_try_max),
@@ -153,8 +159,8 @@ $batinclude "./modules/include.gms" postsolve
 ***                  save gdx
 *--------------------------------------------------------------------------
 *** write the fulldata.gdx file after each optimal iteration
-*AJS* in Nash status 7 is considered optimal in that respect (see definition of
-***   o_modelstat in solve.gms)
+*** In Nash status 7 is considered optimal in that respect (see definition of
+*** o_modelstat in solve.gms)
 logfile.nr = 1;
 if (o_modelstat le 2,
   execute_unload "fulldata";

@@ -30,9 +30,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** add MAGICCv7.5.3 with AR6 settings as output script, add compareScenarios2 option
     [[#1475](https://github.com/remindmodel/remind/pull/1475), [[#1615](https://github.com/remindmodel/remind/pull/1615)]
 - **scripts** add 'make test-fix' which runs codeCheck in interactive mode, adjusting not_used.txt files
-    [[#1625](https://github.com/remindmodel/remind/pull/1625)
+    [[#1625](https://github.com/remindmodel/remind/pull/1625)]
 - **testthat** test and compile all config files [[#1356](https://github.com/remindmodel/remind/pull/1356)]
 - **testthat** test existence of all required input data [[#1577](https://github.com/remindmodel/remind/pull/1577)]
+- **80_optimization** For Nash mode: after infeasibilities continue in debug mode before aborting
+    [[#1636](https://github.com/remindmodel/remind/pull/1636)]
 
 ### fixed
 - **26_agCosts** **30_biomass** fully fix landuse and MAGICC6 variables in delayed transition runs to reference run

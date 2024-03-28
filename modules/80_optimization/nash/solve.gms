@@ -6,20 +6,22 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/80_optimization/nash/solve.gms
 
-regi(all_regi) = no;
-hybrid.solvelink = 3;
+regi(all_regi) = NO;
+hybrid.solvelink = 3; !! activate multiple-CPU mode for GAMS
 hybrid.optfile   = 9;
 
-$ifthene.debug (sameas("%cm_nash_mode%","serial"))OR(sameas("%cm_nash_mode%","debug"))
-hybrid.solvelink = 0;
-$endif.debug
+if(cm_nash_mode eq 1,
+  hybrid.solvelink = 0;  !! activate single-CPU mode for GAMS
+);
 
 loop (all_regi,
-  !! only solve for regions that do not have a valid solution for this nash iteration
-  if ( sol_itr.val gt 1
-       AND ( p80_repy(all_regi,"modelstat") eq 2
+  !! only solve for regions that do not have a valid solution from the
+  !! last solver iteration
+  if (    (   sol_itr.val gt 1 
+           OR s80_runInDebug eq 1)
+      AND (   p80_repy(all_regi,"modelstat") eq 2
 $ifthen.repeatNonOpt "%cm_repeatNonOpt%" == "off"
-            OR p80_repy(all_regi,"modelstat") eq 7
+           OR p80_repy(all_regi,"modelstat") eq 7
 $endif.repeatNonOpt
           ),
 
@@ -27,7 +29,7 @@ $endif.repeatNonOpt
     continue;
   );
 
-  regi(all_regi) = yes;
+  regi(all_regi) = YES;
 
   if (execError > 0,
     execute_unload "abort.gdx";
@@ -50,29 +52,27 @@ $endif.repeatNonOpt
   
   solve hybrid using nlp maximizing vm_welfareGlob;
 
-$ifthene.debug (sameas("%cm_nash_mode%","serial"))OR(sameas("%cm_nash_mode%","debug"))
-  p80_repy_thisSolitr(all_regi,"solvestat") = hybrid.solvestat;
-  p80_repy_thisSolitr(all_regi,"modelstat") = hybrid.modelstat;
-  p80_repy_thisSolitr(all_regi,"resusd")    = hybrid.resusd;
-  p80_repy_thisSolitr(all_regi,"objval")    = hybrid.objval;
-  if (p80_repy_thisSolitr(all_regi,"modelstat") eq 2,
-    p80_repyLastOptim(all_regi,"objval") = p80_repy(all_regi,"objval");
+  if(cm_nash_mode eq 1,
+    p80_repy_thisSolitr(all_regi,"solvestat") = hybrid.solvestat;
+    p80_repy_thisSolitr(all_regi,"modelstat") = hybrid.modelstat;
+    p80_repy_thisSolitr(all_regi,"resusd")    = hybrid.resusd;
+    p80_repy_thisSolitr(all_regi,"objval")    = hybrid.objval;
+    if (p80_repy_thisSolitr(all_regi,"modelstat") eq 2,
+      p80_repyLastOptim(all_regi,"objval") = p80_repy(all_regi,"objval");
+    );
   );
-$endif.debug
 
   regi(all_regi) = NO;
   p80_handle(all_regi) = hybrid.handle;
 );  !! close regi loop
 
-$ifthen.parallel %cm_nash_mode% == "parallel"
+if(cm_nash_mode eq 2,
 repeat
   loop (all_regi$handlecollect(p80_handle(all_regi)),
     p80_repy_thisSolitr(all_regi,"solvestat") = hybrid.solvestat;
     p80_repy_thisSolitr(all_regi,"modelstat") = hybrid.modelstat;
     p80_repy_thisSolitr(all_regi,"resusd")    = hybrid.resusd;
     p80_repy_thisSolitr(all_regi,"objval")    = hybrid.objval;
-
-*    p80_repyLatestSolve(all_regi,solveinfo80) = p80_repy(all_regi,solveinfo80);
 
     if (p80_repy_thisSolitr(all_regi,"modelstat") eq 2,
       p80_repyLastOptim(all_regi,"objval") = p80_repy_thisSolitr(all_regi,"objval");
@@ -83,7 +83,7 @@ repeat
   );
   display$sleep(5) "sleep some time";
 until card(p80_handle) = 0;
-$endif.parallel
+);
 
 regi(all_regi) = YES;
 
@@ -110,7 +110,8 @@ loop (regi,
   if (p80_repy(regi,"modelstat") eq 2 OR p80_repy(regi,"modelstat") eq 7,
     pm_SolNonInfes(regi) = 1;
   );
-  if (p80_repy(regi,"modelstat") eq 7, p80_SolNonOpt(regi) = 1);
+  if (p80_repy(regi,"modelstat") eq 7, 
+    p80_SolNonOpt(regi) = 1);
 );
 
 *** set o_modelstat to the highest value across all regions
@@ -120,14 +121,6 @@ $ifthen.repeatNonOpt "%cm_repeatNonOpt%" == "off"
 $else.repeatNonOpt
   = smax(regi, p80_repy(regi,"modelstat"));                                    !! also taking into account status 7
 $endif.repeatNonOpt
-
-*** in cm_nash_mode=debug mode, enable solprint for next sol_itr when last
-*** iteration was non-optimal:
-$ifthen.solprint %cm_nash_mode% == "debug" 
-if (o_modelstat ne 2,   
-    option solprint = on;
-);
-$endif.solprint
 
 !! add information if this region was solved in this iteration
 p80_repy_iteration(regi,solveinfo80,iteration)$(
