@@ -216,9 +216,9 @@ $offdigit
 *** turn profiling off (0) or on (1-3, different levels of detail)
 option profile = 0;
 
-file foo_msg;     !! This creates a dummy output file with a well-defined output format:  
+file foo_msg;     !! This creates a dummy output file with a well-defined output format:
 foo_msg.nr = 1;   !! namely F-format (decimal) (and not E-format = scientific notation)
-*** The file can throughout the code be activated with `putclose foo_msg;` and used in the form `put_utility foo_msg "msg" / "xxxx"` to print out xxxx to full.lst 
+*** The file can throughout the code be activated with `putclose foo_msg;` and used in the form `put_utility foo_msg "msg" / "xxxx"` to print out xxxx to full.lst
 *** and be sure that the numeric format is F-format
 
 
@@ -395,7 +395,7 @@ $setglobal carbonpriceRegi  none      !! def = none
 *'
 *' * (none): no regional policies
 *' * (regiCarbonPrice): region-specific policies and refinements (regional emissions targets, co2 prices, phase-out policies etc.)
-$setglobal regipol  none              !! def = none
+$setglobal regipol  regiCarbonPrice              !! def = none
 *'---------------------    50_damages    ---------------------------------------
 *'
 *' * (off): no damages on GDP
@@ -516,7 +516,7 @@ parameter
   cm_nucscen       = 2;        !! def = 2  !! regexp = 2|5|6
 *' *  (2): no fnrs, tnrs with restricted new builds until 2030 (based on current data on plants under construction, planned or proposed)
 *' *  (5): no new nuclear investments after 2020
-*' *  (6): +33% investment costs for tnrs under SSP5, uranium resources increased by a factor of 10 
+*' *  (6): +33% investment costs for tnrs under SSP5, uranium resources increased by a factor of 10
 *'
 parameter
   cm_ccapturescen       "carbon capture option choice, no carbon capture only if CCS and CCU are switched off!"
@@ -780,8 +780,8 @@ parameter
 *' This switch determines the upper bound of the annual CCS injection rate.
 *' CCS here refers to carbon sequestration, carbon capture is modelled separately.
 *' *   (0) no "CCS" as in no carbon sequestration at all
-*' *   (1) reference case: 0.005; max 19.7 GtCO2/yr globally  
-*' *   (2) lower estimate: 0.0025; max 9.8 GtCO2/yr globally 
+*' *   (1) reference case: 0.005; max 19.7 GtCO2/yr globally
+*' *   (2) lower estimate: 0.0025; max 9.8 GtCO2/yr globally
 *' *   (3) upper estimate: 0.0075; max 29.5 GtCO2/yr globally
 *' *   (4) unconstrained: 1; max 3900 GtCO2/yr globally
 *' *   (5) sustainability case: 0.001; max 3.9 GtCO2/yr globally
@@ -810,7 +810,7 @@ parameter
 *' * (5): iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission budget(2020-2100), for runs with emission budget or CO2 tax constraints. See core/postsolve.gms for direct algorithms
 *' * (6): iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission peak budget, for runs with emission budget or CO2 tax constraints. See core/postsolve.gms for direct algorithms
 *' * (7): iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission peak budget, for runs with emission budget or CO2 tax constraints. Features: results in a peak budget with zero net CO2 emissions after peak budget is reached. See core/postsolve.gms for direct algorithms
-*' * (9): [require the right settings in 45_carbonprice] iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission peak budget, for runs with emission budget or CO2 tax constraints. Features: 1) after the year when budget peaks, CO2 tax has an annual increase by c_taxCO2inc_after_peakBudgYr, 2) automatically shifts c_peakBudgYr to find the correct year of budget peaking for a given budget. For REMIND version v2.1 or above. 
+*' * (9): [require the right settings in 45_carbonprice] iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission peak budget, for runs with emission budget or CO2 tax constraints. Features: 1) after the year when budget peaks, CO2 tax has an annual increase by c_taxCO2inc_after_peakBudgYr, 2) automatically shifts c_peakBudgYr to find the correct year of budget peaking for a given budget. For REMIND version v2.1 or above.
 *'
 parameter
   cm_NDC_divergentScenario  "choose scenario about convergence of CO2eq prices [45_carbonprice = NDC]"
@@ -936,7 +936,7 @@ parameter
   cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshooting, formulated as fraction of carbon price"
 ;
   cm_frac_NetNegEmi    = 0.5;  !! def = 0.5
-*' This tax reduces the regional effective carbon price for CO2 once regional net CO2 emissions turn negative; default is a reduction by 50 percent. 
+*' This tax reduces the regional effective carbon price for CO2 once regional net CO2 emissions turn negative; default is a reduction by 50 percent.
 *' As the tax applies to net CO2 emissions, both further emission reductions and CDR are disincentivised.
 *' Fraction can be freely chosen. Guidelines:
 *'
@@ -1010,7 +1010,18 @@ parameter
 *' This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1
 *' Default value is based on data from German Langfristszenarien (see ./modules/32_power/IntC/datainput.gms).
 parameter
-  cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildings and industry electricity prices is on"
+  cm_elh2_CF       "switch to change capacity factor of electrolyis, must be within (0-1]"
+;
+  cm_elh2_CF = 0.38;  !! def = 0.38
+*' cm_elh2_CF, capacity factor of electrolysis. Note only effective if cm_flex_tax = 1.
+*' Note that by default this changes the flexibility tax for electrolysis, which depends on the capacity factor (as long as cm_flex_tax = 1).
+*' This is because the flexibility tax lowers the electricity price electrolysis sees in REMIND as a function of the capacity factor, the VRE share
+*' and the assumed price duration curve (the slope of this curve is also an scenario assumption defined by cm_PriceDurSlope_elh2).
+*' It is based on the logic that, in a high-VRE power system, electrolysis will only run in hours of low electricity prices.
+*' The default value of 0.38 is based on data from the German Langfristszenarien from high-VRE scenarios simulated
+*' by the Enertile power system model (see ./modules/32_power/IntC/datainput.gms).
+parameter
+  cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
 ;
   cm_FlexTaxFeedback = 0;  !! def = 0  !! regexp = 0|1
 *' cm_FlexTaxFeedback, switches on feedback of flexibility tax on buildings and industry.
@@ -1109,6 +1120,15 @@ parameter
   c_changeProdCost   "Multiplicative factor to up/downscale the costs for vm_changeProdStartyearCost"
 ;
   c_changeProdCost = 5;  !! def = 5
+parameter
+  cm_run_initialCap   "Switch to entable running the InitialCap module in policy runs"
+;
+  cm_run_initialCap = 0;  !! def = 1
+*' This switch is used to enable running the InitialCap module to determine initial capacities and modify some technology data accordingly.
+*'
+*' * (0)                InitialCap is only run if cm_startyear is 2005, otherwise its output is taken from input_ref.gdx.
+*' * (1)                InitialCap is run.
+*'
 *'
 parameter
   cm_LearningSpillover      "Activate Learningspillover from foreign capacity in learning technogolies"
@@ -1116,7 +1136,7 @@ parameter
   cm_LearningSpillover = 1; !! def 1 = Learningspillover activated (set to 0 to deactivate)
 *'
 *' * if Learningspillover is deactivated, foreign capacity is set to the level of 2020 in technology learning.
-*' * This means that in the model, each region's learning depends on its OWN additional capacity investment after 2020 in comparison to the GLOBAL cumulative capacity until 2020, 
+*' * This means that in the model, each region's learning depends on its OWN additional capacity investment after 2020 in comparison to the GLOBAL cumulative capacity until 2020,
 *' * so for small regions learning is very slow. This is a very pessimistic interpretation of 'no learning spillovers',
 *' * as every region has to climb up the global learning curve all by itself.
 *' * In combination with endogenous carbon pricing (e.g., in NDC), the deactivated Learningspillover will lead to higher overall carbon prices. Can be solved by setting carbonprice to exogenous (config).
@@ -1247,6 +1267,11 @@ $setGlobal cm_regiExoPrice  off    !! def = off
 ***     sets a 72 GtCO2eq budget target for European 27 countries (EU27_regi), for all GHG emissions excluding bunkers between 2020 and 2050; and a 100 MtCO2 CO2eq emission target for the year 2050, for Germany"
 ***     Requires regiCarbonPrice realization in regipol module
 $setGlobal cm_emiMktTarget  off    !! def = off
+*** cm_regipol_LUC "user-defined shift of land-use change emissions from Magpie trajectories when employing cm_emiMktTarget with the Grassi offset (LULUCFGrassi option)"
+***   Example on how to use:
+***    cm_regipol_LUC = "2050.EU27_regi -340"  shifts land-use change emissions of regions within the EU27 region to hit -340 MtCO2/yr by 2050 in EU27.
+***    Regional disaggregation happens via the 2015 share of regional land-use change emissions from the EU27 total based on UNFCCC data.
+$setGlobal cm_regipol_LUC  off    !! def = off
 *** cm_quantity_regiCO2target "emissions quantity upper bound from specific year for region group."
 ***   Example on how to use:
 ***     '2050.EUR_regi.netGHG 0.000001, obliges European GHG emissions to be approximately zero from 2050 onward"
@@ -1291,7 +1316,7 @@ $setGlobal cm_loadFromGDX_implicitQttyTargetTax  off  !! def = off  !! regexp = 
 ***   (3) start only after regional emission target is close to convergence, by setting "cm_implicitQttyTarget_delay = emiRegiConv x", which forces the quantity target to start only after x times the cm_emiMktTarget_tolerance is achieved.
 ***      e.g., if "cm_emiMktTarget_tolerance = 0.01", i.e. 1% of deviation, and "cm_implicitQttyTarget_delay = emiRegiConv 5", the quantity target algorithm will only start after the emission target achieved a number lower than 5% (0.01 * 5)."
 ***      option 3 should only be used if the target is defined for a region that has its carbon pricing controlled by cm_emiMktTarget in the 47_regipol module.
-$setGlobal cm_implicitQttyTarget_delay  iteration 3  !! def = iteration 3, quantity targets only start after iteration 3  
+$setGlobal cm_implicitQttyTarget_delay  iteration 3  !! def = iteration 3, quantity targets only start after iteration 3
 *** cm_implicitPriceTarget "define tax/subsidies to match FE prices defined in the pm_implicitPriceTarget parameter."
 ***   Acceptable values: "off", "initial", "elecPrice", "H2Price", "highElec", "highGasandLiq", "highPrice", "lowElec", "lowPrice"
 $setGlobal cm_implicitPriceTarget  off  !! def = off  !! regexp = off|initial|elecPrice|H2Price|highElec|highGasandLiq|highPrice|lowElec|lowPrice
@@ -1303,6 +1328,10 @@ $setGlobal cm_implicitPePriceTarget  off  !! def = off  !! regexp = off|highFoss
 ***     cm_VREminShare = "2050.EUR_regi 0.7".
 ***       Require a minimum 70% VRE share (wind plus solar) in electricity production for all regions that belong to EUR in year 2050."
 $setGlobal cm_VREminShare    off !! def = off
+*** cm_VREminCap "minimum variable renewables capacities."
+***  (off):   (default) no bounds
+***  (ampel): sets lower bounds on capacities for wind, solar and H2 as specified in the ampel coalition agreement and KSG."
+$setGlobal cm_VREminCap    off !! def = off
 *** cm_CCSmaxBound "limits Carbon Capture and Storage (including DACCS and BECCS) to a maximum value."
 ***   Example on how to use:
 ***     cm_CCSmaxBound   GLO 2, EUR 0.25
@@ -1654,7 +1683,7 @@ $setglobal cm_taxrc_RE  none   !! def = none   !! regexp = none|REdirect
 *'
 *' *  (off): no, only infeasable regions are repeated, standard setting
 *' *  (yes):  also non-optimal regions are solved again, up to cm_solver_try_max
-$setglobal cm_repeatNonOpt off  
+$setglobal cm_repeatNonOpt off
 
 *' @stop
 

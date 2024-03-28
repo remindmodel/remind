@@ -84,8 +84,8 @@ model initialcap2 / q05_eedemini, q05_ccapini /;
 ***           MODEL    initialcap2         END
 ***---------------------------------------------------------------------------
 
-*** only run intialcap model if startyear is 2005
-if (cm_startyear eq 2005,
+*** only run intialcap model if startyear is 2005 or cm_run_initialCap is not 0
+if ( cm_run_initialCap gt 0 OR cm_startyear eq 2005,
 
 ***------------------------------------------------------------------------------
 *** Normalization of historical vintage structure - ESM
@@ -524,8 +524,8 @@ display pm_emifac;
 
 );
 
-*** if cm_startyear > 2005, load outputs of InitialCap from input_ref.gdx
-if (cm_startyear gt 2005,
+*** if cm_startyear > 2005 and cm_run_initialCap is 0, load outputs of InitialCap from input_ref.gdx
+if (cm_run_initialCap eq 0 AND cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' pm_eta_conv = pm_eta_conv;
   Execute_Loadpoint 'input_ref' o_INI_DirProdSeTe = o_INI_DirProdSeTe;
   Execute_Loadpoint 'input_ref' pm_emifac = pm_emifac;
@@ -542,6 +542,28 @@ if (cm_startyear gt 2005,
 *** load pm_data from input_ref.gdx and overwrite values only for eta of chp technologies
 *** Only the eta values of chp technologies have been adapted by initialCap script above.
 *** This is to avoid overwriting all of pm_data and make sure that scenario switches which adapt pm_data before this module work as intended.
+  Execute_Loadpoint 'input_ref' p05_pmdata_ref = pm_data;
+  pm_data(regi,char,te)$( (sameas(te,"coalchp")  
+                              OR sameas(te,"gaschp")
+                              OR sameas(te,"biochp") )
+                            AND sameas(char,"eta") ) = p05_pmdata_ref(regi,char,te);
+
+
+
+*** if %cm_techcosts% == "GLO", load pm_inco0_t from input_ref.gdx and overwrite values
+*** only for pc, ngt, ngcc since they have been adapted in initialCap routine above
+*** This is to avoid overwriting changes to pm_inco0_t by scenario switches
+$ifThen %cm_techcosts% == "GLO"
+  Execute_Loadpoint 'input_ref' p05_inco0_t_ref = pm_inco0_t;
+  pm_inco0_t(t,regi,te)$( teEtaIncr(te)
+                          AND (sameas(te,"pc")
+                            OR sameas(te,"ngt")
+                            OR sameas(te,"ngcc") ) ) = p05_inco0_t_ref(t,regi,te);
+$endIf
+
+*** load pm_data from input_ref.gdx and overwrite values
+*** only for eta of chp technologies since they have been adapted in initialCap routine above
+*** This is to avoid overwriting changes to pm_data by scenario switches
   Execute_Loadpoint 'input_ref' p05_pmdata_ref = pm_data;
   pm_data(regi,char,te)$( (sameas(te,"coalchp")  
                               OR sameas(te,"gaschp")

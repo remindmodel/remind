@@ -99,6 +99,10 @@ pm_energy_limit(in)
 pm_energy_limit(out)$(NOT sum(in, ces_eff_target_dyn37(out,in))) = 0.;
 
 
+*** minimum share of solids in energy demand for steel
+*** in calibration runs 0 for non-calibration runs see assumptions below in this file
+p37_Psteel_solids_limit(t,regi) = 0;
+
 * Specific energy demand cannot fall below a curve described by an exponential
 * function passing through the 2015 value and a point defined by an "efficiency
 * gain" (e.g. 75 %) between baseline value and thermodynamic limit at a given
@@ -166,7 +170,38 @@ loop (industry_ue_calibration_target_dyn37(out)$( sameas(out,"ue_chemicals") OR 
     );
 );
 
+
+*** for ARIADNE scenarios, set minimum energy limit (FE/industry production) in policy runs to energy limit of reference (Npi) run from 2025
+*** as this is already quite optimsitic especially in the near-term
+if (cm_startyear gt 2005,
+  loop (industry_ue_calibration_target_dyn37(out),
+    p37_energy_limit_slope(t,regi,out)$(t.val ge 2025) = sum(ces_eff_target_dyn37(out,in),
+                                                            p37_cesIO_baseline(t,regi,in))
+                                                          / p37_cesIO_baseline(t,regi,out);
+  );
+);
+
+
+
+
+
+
+*** minimum share of solids in primary steel FE mix, used to avoid too fast substitution of solids in the near-term
+p37_Psteel_solids_limit("2015",regi) =  pm_cesdata("2015",regi,"feso_steel","quantity")
+                                          / sum(ces_eff_target_dyn37("ue_steel_primary",in),
+                                              pm_cesdata("2015",regi,in,"quantity"));
+
+*** allow for up to 5% lower solids share in FE primary steel than in historic data
+p37_Psteel_solids_limit("2015",regi) = p37_Psteel_solids_limit("2015",regi) - 0.5;
+*** limit reduction of solids share in FE primary steel in the near-term
+p37_Psteel_solids_limit("2020",regi) = p37_Psteel_solids_limit("2015",regi);
+p37_Psteel_solids_limit("2025",regi) = p37_Psteel_solids_limit("2015",regi);
+p37_Psteel_solids_limit("2030",regi) = p37_Psteel_solids_limit("2015",regi) - 0.05;
+p37_Psteel_solids_limit("2035",regi) = p37_Psteel_solids_limit("2015",regi) - 0.2;
+p37_Psteel_solids_limit("2035",regi) = p37_Psteel_solids_limit("2015",regi) - 0.5;
+
 display p37_energy_limit_slope;
+display p37_Psteel_solids_limit;
 $endif.no_calibration
 
 *** CCS for industry is off by default
@@ -436,15 +471,28 @@ pm_tau_ces_tax(t,regi,"feh2_steel")     =  50 * sm_TWa_2_MWh * 1e-12;
 $endif.cm_subsec_model_steel
 pm_tau_ces_tax(t,regi,"feh2_cement")    = 100 * sm_TWa_2_MWh * 1e-12;
 
+*` temporal phase-in of mark-up cost changes defined by cm_CESMkup_ind
+*` no changes to mark-up cost before 2025, then gradual phase-in until 2040
+p37_CESMkup_policy_phasein(t) = 0;
+p37_CESMkup_policy_phasein(t)$(t.val ge 2040) = 1;
+p37_CESMkup_policy_phasein(t)$(t.val eq 2035) = 1/2;
+p37_CESMkup_policy_phasein(t)$(t.val eq 2030) = 1/4;
+p37_CESMkup_policy_phasein(t)$(t.val eq 2025) = 1/8;
 
 *' overwrite or extent CES markup cost if specified by switch
 $ifthen.CESMkup "%cm_CESMkup_ind%" == "manual"
 loop (ppfen_industry_dyn37(in)$( p37_CESMkup_input(in) ),
-  p37_CESMkup(ttot,regi,in)$( ppfen_MkupCost37(in) )
-  = p37_CESMkup_input(in);
+  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in)
+                            AND ppfen_MkupCost37(in)) =
+    p37_CESMkup(t,regi,in)
+    + p37_CESMkup_policy_phasein(t)
+    * (p37_CESMkup_input(in) - p37_CESMkup(t,regi,in));
 
-  pm_tau_ces_tax(ttot,regi,in)$( NOT ppfen_MkupCost37(in) )
-  = p37_CESMkup_input(in);
+  pm_tau_ces_tax(t,regi,in)$(p37_CESMkup_input(in)
+                              AND (NOT ppfen_MkupCost37(in))) =
+    pm_tau_ces_tax(t,regi,in)
+    + p37_CESMkup_policy_phasein(t)
+    * (p37_CESMkup_input(in) - pm_tau_ces_tax(t,regi,in));
 );
 $endif.CESMkup
 
@@ -489,6 +537,7 @@ if (smax((t,regi),
   );
 putclose logfile, " " /;
 );
+*** EOF ./modules/37_industry/subsectors/datainput.gms
 
 $ifthen.sec_steel_scen NOT "%cm_steel_secondary_max_share_scenario%" == "off"   !! cm_steel_secondary_max_share_scenario
 * Modify secondary steel share limits by scenario assumptions
@@ -533,6 +582,9 @@ loop ((regi,t2)$( p37_steel_secondary_max_share_scenario(t2,regi) ),
 display "scenario limits for maximum secondary steel share",
         p37_steel_secondary_max_share;
 $endif.sec_steel_scen
+
+
+
 Parameter p37_chemicals_feedstock_share(ttot,all_regi)   "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
   /
 $ondelim
@@ -549,6 +601,23 @@ execute_load "input_ref.gdx", vm_demFeSector;
       vm_demFeSector.l(t,regi,entySe,"fesos","indst","ETS")
     );
 );
+
+*** maximum share of biomass use in industry subsector
+*** set to prevent too fast or technically unrealistic switch to biomass in industry subsectors
+
+*** initialize maximum biomass share in all industry subsectors at 100%
+p37_BioShareMaxSubsec(t,regi,entyFeCC37,secInd37)=1;
+
+
+*** for steel to prevent too fast switch to biomass, set maximum biomass shares in near-term
+p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val gt 2015 AND t.val le 2025)=0.3;
+p37_BioShareMaxSubsec("2030",regi,"fesos","steel")=0.4;
+p37_BioShareMaxSubsec("2035",regi,"fesos","steel")=0.7;
+p37_BioShareMaxSubsec("2040",regi,"fesos","steel")=1;
+
+
+*** for Germany set maximum biomass share of solids in steel to 10% at all times
+***p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val ge 2020 AND sameas(regi,"DEU"))=0.1;
 
 *** ---------------------------------------------------------------------------
 ***        2. Process-Based

@@ -199,6 +199,35 @@ q37_costCESmarkup(t,regi,in)$(ppfen_industry_dyn37(in))..
   * (vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
 
+***------------------------------------------------------
+*' Near-term limits of switching to biomass use in industry subsectors
+***------------------------------------------------------
+q37_BioLimitSubsec(t,regi,entyFe,emiMkt)..
+  sum( se2fe(entySeBio,entyFe,te),
+    vm_demFEsector(t,regi,entySeBio,entyFE,"indst",emiMkt)
+  )
+  =l=
+  sum(secInd37_emiMkt(secInd37,emiMkt),
+      p37_BioShareMaxSubsec(t,regi,entyFe,secInd37)
+      * sum( (secInd37_2_pf(secInd37,in),
+              fe2ppfen37(entyFe,in)),
+          vm_cesIO(t,regi,in))
+  )
+;
+
+***------------------------------------------------------
+*' Near-term limits of subsituting solids in primary steel making
+***------------------------------------------------------
+q37_Psteel_solids_limit(t,regi)$( t.val ge cm_startyear ) ..
+  sum(ces_eff_target_dyn37("ue_steel_primary",in),
+    vm_cesIO(t,regi,in))
+  * p37_Psteel_solids_limit(t,regi)
+  =l=
+  vm_cesIO(t,regi,"feso_steel")
+;
+
+
+
 ***--------------------------------------------------------------------------
 *'  Feedstock balances
 ***--------------------------------------------------------------------------
@@ -243,7 +272,7 @@ q37_feedstocksLimit(t,regi,entySe,entyFe,emiMkt)$(
 q37_feedstocksShares(t,regi,entySe,entyFe,emiMkt)$(
                          sum(te, se2fe(entySe,entyFe,te))
                      AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
-                     AND cm_emiscen ne 1                                   ) ..                 
+                     AND cm_emiscen ne 1                                   ) ..
     vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
   * sum(se2fe(entySe2,entyFe,te),
       vm_demFENonEnergySector(t,regi,entySe2,entyFe,"indst",emiMkt)

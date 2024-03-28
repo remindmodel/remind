@@ -262,6 +262,26 @@ p47_LULUCFEmi_GrassiShift(t,regi)$(p47_EmiLULUCFCountryAcc("2020",regi)) =
   )
 ;
 
+
+*** shift land-use change emissions for Grassi targets based on exogenuous assumption from scenario config
+$ifThen.cm_regipol_LUC NOT "%cm_regipol_LUC%" == "off"
+
+*** rescaling all ext_regi provided by cm_regipol_LUC
+loop((ttot,ext_regi)$(p47_emiLUC(ttot,ext_regi)), 
+ loop(regi$regi_groupExt(ext_regi,regi),
+*** calculate shfit in land-use change CO2 emissions by disaggregating shift of region group into regions based on UNFCCC 2015 land-use change emissions 
+*** apply shift to all time steps ttot2 and not only to specific year defined by switch ttot
+    p47_emiLUC_regi(ttot2,regi) = p47_emiLUC(ttot,ext_regi) 
+                                      * p47_EmiLULUCFCountryAcc("2015",regi)
+                                      / sum(regi2$regi_groupExt(ext_regi,regi2),
+                                          p47_EmiLULUCFCountryAcc("2015",regi2)); 
+  );
+);
+*** difference between 2015 land-use change emissions from Magpie and user-defined land-use change emissions from cm_regipol_LUC, convert to GtC/yr 
+p47_LULUCFEmi_GrassiShift(ttot,regi)$(p47_emiLUC_regi(ttot,regi)) =  pm_macBaseMagpie(ttot,regi,"co2luc") - p47_emiLUC_regi(ttot,regi) * 1e-3/sm_c_2_co2;
+$endIf.cm_regipol_LUC
+
+
 *** -------------------------Primary Energy Tax--------------------------
 
 *PW* charge tax on PE gas,oil,coal in energy security scenario for Germany (in trUSD/TWa) to hit Ariadne energy security price trajectories
@@ -321,5 +341,12 @@ $offdelim
 
 $endif.exogDemScen
 
+*** allow early phase-out based on Beyond Coal 2021 by increasing RetiRate for some regions
+*** this reverts the halving of retirements rates done in core/datainput
+$IFTHEN.CoalRegiPolReti not "%cm_CoalRegiPol%" == "off"
+  pm_regiEarlyRetiRate(t,regi,"coalchp")$(sameAs(regi,"ESW")) = 2 * pm_regiEarlyRetiRate(t,regi,"coalchp")$(sameAs(regi,"ESW"));
+  pm_regiEarlyRetiRate(t,regi,"coalchp")$(sameAs(regi,"FRA")) = 2 * pm_regiEarlyRetiRate(t,regi,"coalchp")$(sameAs(regi,"FRA"));
+  pm_regiEarlyRetiRate(t,regi,"coalchp")$(sameAs(regi,"UKI")) = 2 * pm_regiEarlyRetiRate(t,regi,"coalchp")$(sameAs(regi,"UKI"));
+$ENDIF.CoalRegiPolReti
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms

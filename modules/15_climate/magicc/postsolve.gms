@@ -44,8 +44,8 @@ display pm_globalMeanTemperature;
 $endif.cm_magicc_calibrateTemperature2000
 
 *** temperature convergence indicator
-pm_gmt_conv = 100*smax(t,abs(pm_globalMeanTemperature(t)/max(p15_gmt0(t),1e-8) -1));
-display pm_gmt_conv;
+p15_gmt_conv = 100*smax(t,abs(pm_globalMeanTemperature(t)/max(p15_gmt0(t),1e-8) -1));
+display p15_gmt_conv;
 *** save temp from last iteration
 p15_gmt0(tall) = pm_globalMeanTemperature(tall);
 
