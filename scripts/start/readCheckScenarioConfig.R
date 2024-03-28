@@ -105,14 +105,15 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
                     "To avoid unnecessary dependencies to other runs, automatically setting 'path_gdx_bau' to NA for:\n",
                     paste(rownames(scenConf)[BAUbutNotNeeded], collapse = ", "))
       message(msg)
-      scenConf$path_gdx_bau[noNDCbutBAU] <- NA
+      scenConf$path_gdx_bau[BAUbutNotNeeded] <- NA
     }
     # fail if bau not given but needed
-    noBAUbutNDC <- is.na(scenConf$path_gdx_bau) & (NDC45 | NDC46)
-    if (sum(noBAUbutNDC) > 0) {
-      pathgdxerrors <- pathgdxerrors + sum(noBAUbutNDC)
-      warning("In ", sum(noBAUbutNDC), " scenarios, 'carbonprice' or 'carbonpriceRegi' is set to 'NDC' ",
-              "which requires a reference gdx in 'path_gdx_bau', but it is empty.")
+    noBAUbutNeeded <- is.na(scenConf$path_gdx_bau) & (scenNeedsBau)
+    if (sum(noBAUbutNeeded) > 0) {
+      pathgdxerrors <- pathgdxerrors + sum(noBAUbutNeeded)
+      warning("In ", sum(noBAUbutNeeded), " scenarios, a reference gdx in 'path_gdx_bau' is needed, but it is empty. ",
+              "These realizations need it: ",
+              paste0(names(needBau), ": ", sapply(needBau, paste, collapse = ", "), ".", collapse = " "))
     }
   }
   # make sure every path gdx column exists
