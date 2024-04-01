@@ -32,10 +32,6 @@ convMessage80   "contains all convergence criteria"
 /
 infes,surplus,nonopt,taxconv,anticip,target,regiTarget,implicitEnergyTarget,cm_implicitPriceTarget,cm_implicitPePriceTarget,damage,DevPriceAnticip
 /
-nash_sol_itr80  "nash iterations"
-/
-    1*10
-/    
 ;
 
 teLearn(learnte_dyn80)   = YES;
