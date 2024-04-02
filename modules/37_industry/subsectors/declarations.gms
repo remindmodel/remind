@@ -103,7 +103,7 @@ $endif.no_calibration
   q37_demFeIndst_intermediate(ttot,all_regi,all_enty,all_in,secInd37,all_emiMkt)    "industry final energy demand (per emission market)"
   q37_costCESmarkup(ttot,all_regi,all_in)                                           "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
   q37_chemicals_feedstocks_limit(ttot,all_regi)                                     "lower bound on feso/feli/fega in chemicals FE input for feedstocks"
-  q37_demFeFeedstockChemIndst(ttot,all_regi,all_enty,all_emiMkt)                    "defines energy flow of non-energy feedstocks for the chemicals industry. It is used for emissions accounting"
+  q37_demFeFeedstockChemIndst(ttot,all_regi,all_enty,all_enty,all_emiMkt)           "defines energy flow of non-energy feedstocks for the chemicals industry. It is used for emissions accounting"
   q37_FossilFeedstock_Base(ttot,all_regi,all_enty,all_emiMkt)                       "in baseline runs feedstocks only come from fossil energy carriers"
   q37_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)                  "calculate carbon contained in feedstocks [GtC]"
   q37_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)                    "calculate carbon contained in plastics [GtC]"
