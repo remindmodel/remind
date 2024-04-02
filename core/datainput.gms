@@ -1146,7 +1146,6 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,"coalftcrec")      = 0.25;
   p_adj_seed_te(ttot,regi,"coaltr")          = 4.00;
   p_adj_seed_te(ttot,regi,'dac')             = 0.25;
-  p_adj_seed_te(ttot,regi,'geohe')           = 0.33;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   p_adj_seed_te(ttot,regi,"bfcc")            = 0.05;
   p_adj_seed_te(ttot,regi,"idrcc")           = 0.05;
@@ -1181,7 +1180,6 @@ $ENDIF.WindOff
   p_adj_coeff(ttot,regi,"ccsinje")         = 1.0;
   p_adj_coeff(ttot,regi,"spv")             = 0.15;
   p_adj_coeff(ttot,regi,"wind")            = 0.25;
-  p_adj_coeff(ttot,regi,"geohe")           = 0.6;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   p_adj_coeff(ttot,regi,"bfcc")            = 1.0;
   p_adj_coeff(ttot,regi,"idrcc")           = 1.0;

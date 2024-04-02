@@ -84,8 +84,8 @@ model initialcap2 / q05_eedemini, q05_ccapini /;
 ***           MODEL    initialcap2         END
 ***---------------------------------------------------------------------------
 
-*** only run intialcap model if startyear is 2005
-if (cm_startyear eq 2005,
+*** only run intialcap model if startyear is 2005 or cm_run_initialCap is not 0
+if ( cm_run_initialCap gt 0 OR cm_startyear eq 2005,
 
 ***------------------------------------------------------------------------------
 *** Normalization of historical vintage structure - ESM
@@ -524,8 +524,8 @@ display pm_emifac;
 
 );
 
-*** if cm_startyear > 2005, load outputs of InitialCap from input_ref.gdx
-if (cm_startyear gt 2005,
+*** if cm_startyear > 2005 and cm_run_initialCap is 0, load outputs of InitialCap from input_ref.gdx
+if (cm_run_initialCap eq 0 AND cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' pm_eta_conv = pm_eta_conv;
   Execute_Loadpoint 'input_ref' o_INI_DirProdSeTe = o_INI_DirProdSeTe;
   Execute_Loadpoint 'input_ref' pm_emifac = pm_emifac;
@@ -560,6 +560,7 @@ $ifThen %cm_techcosts% == "GLO"
                             OR sameas(te,"ngt")
                             OR sameas(te,"ngcc") ) ) = p05_inco0_t_ref(t,regi,te);
 $endIf
+
 );
 
 *** EOF ./modules/05_initialCap/on/preloop.gms
