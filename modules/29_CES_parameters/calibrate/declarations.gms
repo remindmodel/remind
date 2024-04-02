@@ -71,9 +71,9 @@ if (sm_CES_calibration_iteration eq 1,
     !! are pending (so it has not been processed before)
     if (sum(CES_tc$(    (   ppf(CES_tc)
                          OR industry_ue_calibration_target_dyn37(CES_tc))
-		    AND (   sum(cesOut2cesIn(CES_tc,in), 1)
-		         eq sum(cesOut2cesIn(CES_tc,CES_tp), 1))
-		   ), 1),
+                    AND (   sum(cesOut2cesIn(CES_tc,in), 1)
+                         eq sum(cesOut2cesIn(CES_tc,CES_tp), 1))
+                   ), 1),
     !! add the current node to the list
     loop (CES_tc, put ", ", CES_tc.tl:0);
   );
