@@ -43,7 +43,7 @@ q36_costAddH2PhaseIn(t,regi)..
 
 
 *' barrier cost for low penetration
-$ifthen.no_calibration NOT "%CES_parameters%" == "calibration"   !! CES_parameters
+$ifthen.no_calibration NOT "%CES_parameters%" == "calibrate"   !! CES_parameters
 q36_costAddH2LowPen(t,regi)..
   v36_costAddH2LowPen(t,regi)
   =e=
