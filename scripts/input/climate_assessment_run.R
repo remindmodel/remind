@@ -32,10 +32,6 @@ renameVariableRemindToMagicc7 <- function(varName, magiccVersion = "7.5.3") {
 
 outputDir <- getwd()
 
-# Way to get the number of iterations?
-#as.numeric(readGDX(gdx = "input.gdx", "o_iterationNumber", format = "simplest"))
-
-#logFile <- file.path(outputDir, paste0("log_climate_", format(Sys.time(), "%Y-%m-%d_%H-%M-%S"), ".txt"))
 logFile <- file.path(outputDir, paste0("log_climate.txt"))
 if (!file.exists(logFile)) {
     file.create(logFile)
@@ -200,11 +196,6 @@ alreadySet <- lapply(Sys.getenv(names(environmentVariables)), nchar) > 0
 # Only set those environment variables that are not already set
 if (any(!alreadySet)) do.call(Sys.setenv, as.list(environmentVariables[!alreadySet]))
 
-# TODO: Remove me
-# for (env in names(environmentVariables)) {
-#     Sys.unsetenv(env)
-# }
-
 #
 # BUILD climate-assessment RUN COMMANDS
 #
@@ -276,9 +267,6 @@ climateAssessmentOutput <- file.path(
     paste0(baseFn, "_harmonized_infilled_IAMC_climateassessment.xlsx")
 )
 
-# TODO: Remove me
-#args <- c("/p/tmp/tonnru/ca_remind/output/SSP2EU-NPi-ar6_2024-03-25_09.49.11/climate-assessment-data/ar6_climate_assessment_SSP2EU-NPi-ar6_harmonized_infilled_IAMC_climateassessment.xlsx")
-
 assessmentData <- read.quitte(climateAssessmentOutput)
 usePeriods <- unique(assessmentData$period)
 logMsg <- paste0(
@@ -348,7 +336,6 @@ for (currentFn in unique(associateVariablesAndFiles$fileName)) {
     )
     # Drop row names (period/years), since they are provided in the GDX file as "uels"
     rownames(gdxData) <- NULL
-    #values
     # Write the GDX file
     # First, create a list of lists that in turn contain the actual data to be written
     wgdx.lst(
