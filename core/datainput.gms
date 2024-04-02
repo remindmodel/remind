@@ -1219,6 +1219,10 @@ $ifthen.WindOff %cm_wind_offshore% == "1"
   p_adj_seed_te(ttot,regi,"windoff") = 0.5;
 $endif.WindOff
 
+  p_adj_seed_te(ttot,regi,"elh2") = 0.33;
+  p_adj_seed_te(ttot,regi,"MeOH") = 0.5;
+  p_adj_seed_te(ttot,regi,"h22ch4") = 0.5;
+
 *RP: for comparison of different technologies:
 *** pm_conv_cap_2_MioLDV <- 650  # The world has slightly below 800million cars in 2005 (IEA TECO2), so with a global vm_cap of 1.2, this gives ~650
 *** ==> 1TW power plant ~ 650 million LDV
@@ -1260,6 +1264,12 @@ $endif.WindOff
   p_adj_coeff(ttot,regi,'oae_el')          = 0.8;
   p_adj_coeff(ttot,regi,teGrid)            = 0.3;
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
+  
+  p_adj_coeff(ttot,regi,"elh2")            = 0.75;
+  p_adj_coeff(ttot,regi,"MeOH")            = 0.5;
+  p_adj_coeff(ttot,regi,"h22ch4")            = 0.5;
+
+
 );
 
 ***Rescaling adj seed and coeff if adj cost multiplier switches are on
