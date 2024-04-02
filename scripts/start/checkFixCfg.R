@@ -20,6 +20,10 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
                      settings_config = file.path(remindPath, "config", "settings_config.csv"),
                      extras = remindextras),
                      error = function(x) { paste0(red, "Error", NC, ": ", gsub("^Error: ", "", x)) } )
+  if (! identical(refcfg$model_version, cfg$model_version)) {
+    message("The model version when the cfg was generated (", cfg$model_version, ") and the current version (",
+            refcfg$model_version, ") differ. This might cause fails. If so, try to start the run from scratch.")
+  }
   if (is.character(fail) && length(fail) == 1 && grepl("Error", fail)) {
     message(fail, appendLF = FALSE)
     if (testmode) warning(fail)
