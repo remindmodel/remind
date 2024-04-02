@@ -40,30 +40,43 @@ pm_cesdata(t,regi_dyn29(regi),in,"price")
   
 put file_CES_calibration;
 
+
 loop ((t,regi_dyn29(regi),in)$(   ppf_29(in) 
                                OR ppf_beyondcalib_29(in)
                                OR sameas(in,"inco")),
-  put "%c_expname%", sm_CES_calibration_iteration:0:0, t.tl, regi.tl;
+  file_CES_calibration_integers
+  put "%c_expname%", sm_CES_calibration_iteration, t.tl, regi.tl;
+  file_CES_calibration_floats
   put "efficiency", in.tl;
   put (pm_cesdata("2005",regi,in,"eff") * vm_effGr.l(t,regi,in)) /;
 
-  put "%c_expname%", sm_CES_calibration_iteration:0:0, t.tl, regi.tl;
+  file_CES_calibration_integers
+  put "%c_expname%", sm_CES_calibration_iteration, t.tl, regi.tl;
+  file_CES_calibration_floats
   put "efficiency growth", in.tl, vm_effGr.l(t,regi,in) /;
 
-  put "%c_expname%", sm_CES_calibration_iteration:0:0, t.tl, regi.tl, "xi";
+  file_CES_calibration_integers
+  put "%c_expname%", sm_CES_calibration_iteration, t.tl, regi.tl, "xi";
+  file_CES_calibration_floats
   put in.tl, pm_cesdata(t,regi,in,"xi") /;
 );
 
 loop ((t,regi_dyn29(regi),in)$( (   ppf_29(in) 
                                     OR ppf_beyondcalib_29(in)
                                     OR sameas(in,"inco"))     ),
-  put "%c_expname%", sm_CES_calibration_iteration:0:0, t.tl, regi.tl;
+  file_CES_calibration_integers
+  put "%c_expname%", sm_CES_calibration_iteration, t.tl, regi.tl;
+  file_CES_calibration_floats
   put "quantity", in.tl, vm_cesIO.l(t,regi,in) /;
 
-  put "%c_expname%", sm_CES_calibration_iteration:0:0, t.tl, regi.tl, "price";
+  file_CES_calibration_integers
+  put "%c_expname%", sm_CES_calibration_iteration, t.tl, regi.tl, "price";
+  file_CES_calibration_floats
   put in.tl, pm_cesdata(t,regi,in,"price") /;
 
-  put "%c_expname%", sm_CES_calibration_iteration:0:0, t.tl, regi.tl; 
+  file_CES_calibration_integers
+  put "%c_expname%", sm_CES_calibration_iteration, t.tl, regi.tl;
+  file_CES_calibration_floats
   put "total efficiency", in.tl;
   put sum(cesOut2cesIn(out,in),
         pm_cesdata(t,regi,in,"xi")
@@ -75,19 +88,25 @@ loop ((t,regi_dyn29(regi),in)$( (   ppf_29(in)
 );
 
 loop ((ttot,regi_dyn29(regi),te_29_report),
-  put "%c_expname%", sm_CES_calibration_iteration:0:0, ttot.tl, regi.tl;
+  file_CES_calibration_integers
+  put "%c_expname%", sm_CES_calibration_iteration, ttot.tl, regi.tl;
+  file_CES_calibration_floats
   put "vm_deltaCap", te_29_report.tl;
   put sum(rlf,vm_deltaCap.L(ttot,regi,te_29_report,rlf)) /;
 );
 
 loop ((t,regi_dyn29(regi),in),
   if (vm_cesIO.lo(t,regi,in) ne 0,
-    put "%c_expname%", sm_CES_calibration_iteration:0:0, t.tl, regi.tl;
+    file_CES_calibration_integers
+    put "%c_expname%", sm_CES_calibration_iteration, t.tl, regi.tl;
+    file_CES_calibration_floats
     put "lower bound", in.tl, vm_cesIO.lo(t,regi,in) /;
   );
 
   if (vm_cesIO.up(t,regi,in) ne INF,
-    put "%c_expname%", sm_CES_calibration_iteration:0:0, t.tl, regi.tl;
+    file_CES_calibration_integers
+    put "%c_expname%", sm_CES_calibration_iteration, t.tl, regi.tl;
+    file_CES_calibration_floats
     put "upper bound", in.tl, vm_cesIO.up(t,regi,in) /;
   );
 );

@@ -50,6 +50,17 @@ file_CES_calibration.nd =     3;   !! three decimal places
 file_CES_calibration.nw =    10;   !! number width: +0.000e+00
 file_CES_calibration.pw = 32767;   !! page width
 
+$macro file_CES_calibration_integers \
+  file_CES_calibration.nd = 0; \
+  file_CES_calibration.nr = 1; \
+  file_CES_calibration.nw = 0;
+
+$macro file_CES_calibration_floats \
+  file_CES_calibration.nd =  3; \
+  file_CES_calibration.nr =  2; \
+  file_CES_calibration.nw = 10;
+
+
 if (sm_CES_calibration_iteration eq 1,
   !! print a comment header giving the order of production factors in the CES
   !! tree so that they can be displayed in a meaningful order in calibration
