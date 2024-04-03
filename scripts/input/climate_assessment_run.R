@@ -143,7 +143,8 @@ cfg <- read_yaml(cfgPath)
 # Set default values for the climate assessment config data in case they are not available for backward compatibility
 if (is.null(cfg$climate_assessment_root)) cfg$climate_assessment_root <- "/p/projects/rd3mod/python/climate-assessment/src/"
 if (is.null(cfg$climate_assessment_files_dir)) cfg$climate_assessment_files_dir <- "/p/projects/rd3mod/climate-assessment-files/"
-if (is.null(cfg$cfg$climate_assessment_magicc_bin)) cfg$climate_assessment_magicc_bin <- "/p/projects/rd3mod/climate-assessment-files/magicc-v7.5.3/bin/magicc"
+if (is.null(cfg$climate_assessment_magicc_bin)) cfg$climate_assessment_magicc_bin <- "/p/projects/rd3mod/climate-assessment-files/magicc-v7.5.3/bin/magicc"
+if (is.null(cfg$climate_assessment_r_gams_dir)) cfg$climate_assessment_r_gams_dir <- "/p/system/packages/gams/43.4.1"
 
 # The base name, that climate-assessment uses to derive it's output names
 baseFn <- sub("\\.csv$", "", basename(climateAssessmentEmi))
@@ -162,6 +163,7 @@ infillingDatabaseFile <- normalizePath(file.path(
 scriptsDir <- normalizePath(file.path(cfg$climate_assessment_root, "scripts"))
 magiccBinFile <- normalizePath(file.path(cfg$climate_assessment_magicc_bin))
 magiccWorkersDir <- file.path(normalizePath(climateTempDir), "workers")
+gamsRDir <- normalizePath(cfg$climate_assessment_r_gams_dir)
 
 # Read parameter sets file to ascertain how many parsets there are
 allparsets <- read_yaml(probabilisticFile)
@@ -186,7 +188,7 @@ magiccEnvs <- c(
 )
 
 gamsEnvs <- c(
-    "R_GAMS_SYSDIR" = "/p/system/packages/gams/43.4.1"
+    "R_GAMS_SYSDIR" = gamsRDir
 )
 
 environmentVariables <- c(magiccEnvs, gamsEnvs)
