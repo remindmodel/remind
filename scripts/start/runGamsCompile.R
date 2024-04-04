@@ -42,14 +42,12 @@ runGamsCompile <- function(modelFile, cfg, interactive = TRUE, testmode = FALSE)
         return(runGamsCompile(modelFile, cfg, interactive))
       }
     }
-    if (! testmode) resetCESfile()
     return(FALSE)
   } else {
     message(green, " OK  ", NC, gsub("gms$", "lst", tmpModelFile))
     if (isTRUE(grepl("TESTTHAT_scenario_config", cfg$title))) { # for test_04-gamscompile
       unlink(c(tmpModelFile, tmpModelLst))
     }
-    if (! testmode) resetCESfile()
     return(TRUE)
   }
 }

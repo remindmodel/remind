@@ -266,7 +266,6 @@ prepare <- function() {
 
   ################## M O D E L   U N L O C K ###################################
   # After full.gms was produced remind folders have to be unlocked to allow setting up the next run
-  resetCESfile()
   model_unlock(lock_id)
   # Reset on.exit: Prevent model_unlock from being executed again at the end
   # and remove "setwd(cfg$results_folder)" from on.exit, becaue we change to it in the next line
