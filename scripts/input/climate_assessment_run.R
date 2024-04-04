@@ -10,7 +10,6 @@ require(quitte)
 require(piamInterfaces)
 require(yaml)
 require(tidyverse)
-# require(madrat)
 require(lucode2)
 require(purrr)
 require(gdxrrw) # Needs an environmental variable to be set, see below
@@ -136,22 +135,17 @@ capture.output(cat(logMsg), file = logFile, append = TRUE)
 cfg <- read_yaml(cfgPath)
 # Set default values for the climate assessment config data in case they are not available for backward compatibility
 if (is.null(cfg$climate_assessment_root)) cfg$climate_assessment_root <- "/p/projects/rd3mod/python/climate-assessment/src/"
-if (is.null(cfg$climate_assessment_files_dir)) cfg$climate_assessment_files_dir <- "/p/projects/rd3mod/climate-assessment-files/"
+if (is.null(cfg$climate_assessment_infiller_db)) cfg$climate_assessment_infiller_db <- "/p/projects/rd3mod/climate-assessment-files/1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv"
 if (is.null(cfg$climate_assessment_magicc_bin)) cfg$climate_assessment_magicc_bin <- "/p/projects/rd3mod/climate-assessment-files/magicc-v7.5.3/bin/magicc"
+if (is.null(cfg$climate_assessment_magicc_prob_file_iteration)) cfg$climate_assessment_magicc_prob_file_iteration <- "/p/projects/rd3mod/climate-assessment-files/parsets/RCP20_50.json"
 if (is.null(cfg$climate_assessment_r_gams_dir)) cfg$climate_assessment_r_gams_dir <- "/p/system/packages/gams/43.4.1"
 
 # The base name, that climate-assessment uses to derive it's output names
 baseFn <- sub("\\.csv$", "", basename(climateAssessmentEmi))
 
-# These files are supposed to be all inside cfg$climate_assessment_files_dir in a certain structure
-probabilisticFile <- normalizePath(file.path(
-    cfg$climate_assessment_files_dir,
-    "parsets", "RCP20_50.json"
-))
-infillingDatabaseFile <- normalizePath(file.path(
-    cfg$climate_assessment_files_dir,
-    "1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv"
-))
+# Auxiliary input data for climate-assessment and MAGICC7
+infillingDatabaseFile <- normalizePath(cfg$climate_assessment_infiller_db, mustWork = TRUE)
+probabilisticFile <- normalizePath(cfg$climate_assessment_magicc_prob_file_iteration, mustWork = TRUE)
 
 # Extract the location of the climate-assessment scripts and the MAGICC binary from cfg.txt
 scriptsDir <- normalizePath(file.path(cfg$climate_assessment_root, "scripts"))

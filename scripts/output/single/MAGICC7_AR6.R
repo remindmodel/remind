@@ -96,10 +96,11 @@ capture.output(cat(logmsg), file = logFile, append = TRUE)
 
 # Read the cfg to get the location of MAGICC-related files
 cfg <- read_yaml(cfgPath)
-
+# Set default values for the climate assessment config data in case they are not available for backward compatibility
 if (is.null(cfg$climate_assessment_root)) cfg$climate_assessment_root <- "/p/projects/rd3mod/python/climate-assessment/src/"
-if (is.null(cfg$climate_assessment_files_dir)) cfg$climate_assessment_files_dir <- "/p/projects/rd3mod/climate-assessment-files/"
-if (is.null(cfg$cfg$climate_assessment_magicc_bin)) cfg$climate_assessment_magicc_bin <- "/p/projects/rd3mod/climate-assessment-files/magicc-v7.5.3/bin/magicc"
+if (is.null(cfg$climate_assessment_infiller_db)) cfg$climate_assessment_infiller_db <- "/p/projects/rd3mod/climate-assessment-files/1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv"
+if (is.null(cfg$climate_assessment_magicc_bin)) cfg$climate_assessment_magicc_bin <- "/p/projects/rd3mod/climate-assessment-files/magicc-v7.5.3/bin/magicc"
+if (is.null(cfg$climate_assessment_magicc_prob_file_reporting)) cfg$climate_assessment_magicc_prob_file_reporting <- "/p/projects/rd3mod/climate-assessment-files/parsets/0fd0f62-derived-metrics-id-f023edb-drawnset.json"
 
 # All climate-assessment files will be written to this folder
 climateAssessmentFolder <- normalizePath(file.path(outputdir, "climate-assessment-data"))
@@ -108,15 +109,9 @@ dir.create(climateAssessmentFolder, showWarnings = FALSE)
 # The base name, that climate-assessment uses to derive it's output names
 baseFileName <- sub("\\.csv$", "", basename(climateAssessmentEmi))
 
-# These files are supposed to be all inside cfg$climate_assessment_files_dir in a certain structure
-probabilisticFile <- normalizePath(file.path(
-  cfg$climate_assessment_files_dir,
-  "parsets", "0fd0f62-derived-metrics-id-f023edb-drawnset.json"
-))
-infillingDatabaseFile <- normalizePath(file.path(
-  cfg$climate_assessment_files_dir,
-  "1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv"
-))
+# Auxiliary input data for climate-assessment and MAGICC7
+infillingDatabaseFile <- normalizePath(cfg$climate_assessment_infiller_db, mustWork = TRUE)
+probabilisticFile <- normalizePath(cfg$climate_assessment_magicc_prob_file_reporting, mustWork = TRUE)
 
 # Extract the location of the climate-assessment scripts and the MAGICC binary from cfg.txt
 scriptsFolder       <- normalizePath(file.path(cfg$climate_assessment_root, "scripts"))
