@@ -6,11 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### changed
+- **scripts** do not check anymore that MAgPIE uses renv
+  [[1646](https://github.com/remindmodel/remind/pull/1646)]
+
 ## [3.3.0] - 2024-03-28
 
 ### changed
 - **37_industry** changed industry to have subsector-specific shares of SE
-  origins in FE carriers[[#1620]](https://github.com/remindmodel/remind/pull/1620)
+  origins in FE carriers [[#1620]](https://github.com/remindmodel/remind/pull/1620)
 
 ### added
 - **config** regex tests for many parameters [[#1356](https://github.com/remindmodel/remind/pull/1356)]
