@@ -5,11 +5,9 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/29_CES_parameters/load/datainput.gms
+
 *** Load CES parameters based on current model configuration
-*** ATTENTION the file name is replaced by the function updateInputData()
-*##################### R SECTION START (CES INPUT) ##########################
-$include "./modules/29_CES_parameters/load/input/CES_configuration.inc"
-*###################### R SECTION END (CES INPUT) ###########################
+$include "./modules/29_CES_parameters/load/input/%cm_CES_configuration%.inc"
 
 option pm_cesdata:8:3:1;
 display "loaded pm_cesdata", pm_cesdata;

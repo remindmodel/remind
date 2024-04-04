@@ -3,7 +3,6 @@ test_that("Are all input data files present?", {
   if (length(missinginput) > 0) {
     lockID <- gms::model_lock(folder = "../..")
     updateInputData(cfg = gms::readDefaultConfig("../.."), remindPath = "../..")
-    resetCESfile(remindPath = "../..")
     gms::model_unlock(lockID)
     missinginput <- missingInputData(path = "../..")
     if (length(missinginput) > 0) {
