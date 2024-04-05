@@ -18,7 +18,7 @@
 .~*#
 
 # Ignore everything in "input" folders
-input/
+/input/
 
 # Ignore everything in root "output" folder
 /output/
