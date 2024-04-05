@@ -258,7 +258,7 @@ climateAssessmentOutput <- file.path(
 )
 
 assessmentData <- read.quitte(climateAssessmentOutput)
-usePeriods <- unique(assessmentData$period)
+usePeriods <- as.numeric(grep("[0-9]+", names(climateAssessmentInputData), value = TRUE))
 logMsg <- paste0(
     date(), "  climate-assessment climate emulator finished in ", timeStopEmulation - timeStartEmulation, "s\n",
     " =================== POSTPROCESS climate-assessment output ==================\n",
