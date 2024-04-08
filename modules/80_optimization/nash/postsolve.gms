@@ -39,7 +39,7 @@ loop(ttot$(ttot.val ge 2005),
         ( sm_fadeoutPriceAnticip*p80_etaXp(trade)
           * ( (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport.l(ttot,regi,trade) - vm_Mport.l(ttot,regi,trade))
               - p80_taxrev0(ttot,regi)$(ttot.val gt 2005)$(sameas(trade,"good")) + vm_taxrev.l(ttot,regi)$(ttot.val gt 2005)$(sameas(trade,"good"))
-		        )
+            )
           / (p80_normalize0(ttot,regi,trade) + sm_eps)
         )
       ;
@@ -126,9 +126,9 @@ if(iteration.val > 2,
 if(iteration.val > 2, 
   loop(ttot$(ttot.val ge 2005),
     loop(trade$(tradePe(trade) OR sameas(trade,"good") ),
-      if( ( Sign(p80_surplus(ttot,trade,iteration) ) eq Sign(p80_surplus(ttot,trade,iteration-1) ) ) AND 
-      ( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) ) ,
-           o80_trackSurplusSign(ttot,trade,iteration) = o80_trackSurplusSign(ttot,trade,iteration-1) +1;	  
+      if(     ( Sign(p80_surplus(ttot,trade,iteration) ) eq Sign(p80_surplus(ttot,trade,iteration-1) ) )  
+          AND ( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) ) ,
+        o80_trackSurplusSign(ttot,trade,iteration) = o80_trackSurplusSign(ttot,trade,iteration-1) +1;
       else
         o80_trackSurplusSign(ttot,trade,iteration) = 0;
       );
@@ -191,7 +191,7 @@ loop(trade$(NOT tradeSe(trade)),
         pm_pvp(ttot,trade)  = p80_pvp_itr(ttot,trade,iteration+1);
         pm_Xport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 1)  = vm_Xport.l(ttot,regi,trade);
         p80_Mport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 1) = vm_Mport.l(ttot,regi,trade);
-        p80_Mport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 0) = 1.2 * vm_Mport.l(ttot,regi,trade);	    
+        p80_Mport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 0) = 1.2 * vm_Mport.l(ttot,regi,trade);
     );
     );
 );
@@ -268,7 +268,7 @@ loop(trade$(NOT tradeSe(trade)),
      p80_messageShow("surplus") = YES;
       loop(ttot$((ttot.val ge cm_startyear) and (ttot.val gt 2100)),
        if( (abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) ),
-	   p80_messageFailedMarket(ttot,trade) = YES;
+          p80_messageFailedMarket(ttot,trade) = YES;
        );
       );
  );
@@ -648,8 +648,8 @@ if (cm_abortOnConsecFail gt 0,
   loop (regi,
     if (   (    p80_repy_iteration(regi,"solvestat",iteration) eq 1
             AND p80_repy_iteration(regi,"modelstat",iteration) eq 2)
-	OR (    p80_repy_iteration(regi,"solvestat",iteration) eq 4
-	    AND p80_repy_iteration(regi,"modelstat",iteration) eq 7),
+        OR (    p80_repy_iteration(regi,"solvestat",iteration) eq 4
+            AND p80_repy_iteration(regi,"modelstat",iteration) eq 7),
       !! region was solved successfully
       p80_trackConsecFail(regi) = 0;
     else
@@ -659,16 +659,29 @@ if (cm_abortOnConsecFail gt 0,
   );
 
   if (smax(regi, p80_trackConsecFail(regi)) >= cm_abortOnConsecFail,
-    execute_unload "abort.gdx";
-    display p80_trackConsecFail;
-    abort "Run was aborted because the maximum number of consecutive failures was reached in at least one region!";
+    if ((s80_runInDebug eq 0) AND (cm_nash_mode ne 1), !! auto-start debug only if not already in debug mode
+      if (sum(regi, pm_SolNonInfes(regi) ne 0) eq 0, !! if all regions are infeasible debug makes no sense
+        execute_unload "abort.gdx";
+        abort "Run was aborted because the maximum number of consecutive failures was reached in at least one region! No debug started since all regions are infeasible.";
+      else !! start debug mode only if at leat one region was feasible
+        s80_runInDebug = 1;
+        cm_nash_mode = 1;
+        display "Starting nash in debug mode after maximum number of consecutive failures was reached in at least one region.";
+      );
+    else !! s80_runInDebug eq 1 AND/OR cm_nash_mode eq 1
+      execute_unload "abort.gdx";
+      abort "After debug mode run was aborted because the maximum number of consecutive failures was still reached in at least one region!";
+    );
+  else
+  !! Set nash mode back to parallel because all regions got feasible after they have been automatically restarted as debug
+    if (s80_runInDebug eq 1,
+      s80_runInDebug = 0;
+      cm_nash_mode = 2;
+      display "Set nash mode back to parallel after regions got feasible in auto-debug mode.";
+    );
   );
 );
 
-***Fade out LT correction terms, they should only be important in the first iterations and might interfere with ST corrections.
-***p80_etaLT(trade) = p80_etaLT(trade)*0.5;
-
-                
 
 ***--------------------------
 ***  EMIOPT implementation
@@ -676,11 +689,11 @@ if (cm_abortOnConsecFail gt 0,
 $ifthen.emiopt %emicapregi% == 'none' 
 if(cm_emiscen eq 6,
 
-*mlb 20150609* nash emiopt algorithm
-***we iteratively reach the point where these two marginals are equal for each region by adjusting regional permit budgets:
-***marginal of cumulative emissions:
+*** nash emiopt algorithm
+*** we iteratively reach the point where these two marginals are equal for each region by adjusting regional permit budgets:
+*** marginal of cumulative emissions:
 p80_eoMargEmiCum(regi) = 5*(abs(qm_co2eqCum.m(regi)))$(pm_SolNonInfes(regi) eq 1);
-***marginal of permit budget :
+*** marginal of permit budget :
 p80_eoMargPermBudg(regi) = 5*(abs(q80_budgetPermRestr.m(regi)))$(pm_SolNonInfes(regi) eq 1);
 
 display pm_budgetCO2eq;
@@ -689,7 +702,7 @@ display pm_budgetCO2eq;
 loop(regi,
     p80_eoWeights(regi) = 1/max(abs(qm_budget.m("2050",regi)),1E-9);
 );
-***normalize sum to unity	
+***normalize sum to unity
 p80_eoWeights(regi) = p80_eoWeights(regi) / sum(regi2, p80_eoWeights(regi2) );
 
 

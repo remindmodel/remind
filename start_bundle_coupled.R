@@ -104,9 +104,6 @@ if (!is.null(renv::project())) {
     message("Installing missing MAgPIE dependencies ", paste(missingDeps, collapse = ", "))
     renv::install(missingDeps)
   }
-  if (! any(grepl("renvVersion", readLines(file.path(path_magpie, ".Rprofile"), warn = FALSE)))) {
-    stop("REMIND uses renv, but no renvVersion defined in MAgPIE .Rprofile. Checkout a recent .Rprofile in ", path_magpie)
-  }
 }
 
 ########################################################################################################
@@ -539,7 +536,7 @@ for(scen in common){
       }
     }
 
-    if (cfg_rem$gms$optimization == "nash" && cfg_rem$gms$cm_nash_mode == "parallel" && isFALSE(magpie_empty)) {
+    if (cfg_rem$gms$optimization == "nash" && cfg_rem$gms$cm_nash_mode == 2 && isFALSE(magpie_empty)) {
       # for nash: set the number of CPUs per node to number of regions + 1
       numberOfTasks <- length(unique(read.csv2(cfg_rem$regionmapping)$RegionCode)) + 1
     } else {
