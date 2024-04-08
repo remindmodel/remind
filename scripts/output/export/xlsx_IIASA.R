@@ -16,7 +16,10 @@ library(tidyr)
 
 options(warn = 1)
 
-model <- "REMIND 3.2"                          # modelname in final file
+model <- paste("REMIND", paste0(strsplit(gms::readDefaultConfig(".")$model_version, "\\.")[[1]][1:2], collapse = "."))
+# model <- "REMIND 3.3"                        # modelname in final file, overwrite if necessary
+
+
 removeFromScen <- ""                           # you can use regex such as: "_diff|_expoLinear"
 addToScen <- NULL                              # is added at the beginning
 
@@ -34,7 +37,7 @@ projects <- list(
                     iiasatemplate = "ENGAGE_CD-LINKS_template_2019-08-22.xlsx",
                     removeFromScen = "_diff|_expoLinear|-all_regi"),
   NAVIGATE_coupled = list(mapping = c("NAVIGATE", "NAVIGATE_coupled")),
-  NGFS       = list(model = "REMIND-MAgPIE 3.2-4.6",
+  NGFS       = list(model = "REMIND-MAgPIE 3.3-4.7",
                     mapping = c("AR6", "AR6_NGFS"),
                     iiasatemplate = "../ngfs-phase-4-internal-workflow/definitions/variable/variables.yaml",
                     removeFromScen = "C_|_bIT|_bit|_bIt"),

@@ -1156,10 +1156,11 @@ $setglobal cm_rcp_scen  none         !! def = "none"  !! regexp = none|rcp20|rcp
 *' *  (2018_cond):   all NDCs conditional to international financial support published until December 31, 2018
 *' *  (2018_uncond): all NDCs independent of international financial support published until December 31, 2018
 $setglobal cm_NDC_version  2023_cond    !! def = "2023_cond"  !! regexp = 20(18|2[1-3])_(un)?cond
-*** cm_netZeroScen     "choose scenario of net zero targets of netZero realization of module 46_carbonpriceRegi"
-***  (NGFS_v4):        settings used for NGFS v4, 2023
-***  (NGFS_v4_20pc):   settings used for NGFS v4, 2023, with still 20% of 2020 emissions in netZero year
-***  (ENGAGE4p5_GlP):  settings used for ENGAGE 4.5 Glasgow+ scenario
+*' cm_netZeroScen     "choose scenario of net zero targets of netZero realization of module 46_carbonpriceRegi"
+*'
+*'  (NGFS_v4):        settings used for NGFS v4, 2023
+*'  (NGFS_v4_20pc):   settings used for NGFS v4, 2023, with still 20% of 2020 emissions in netZero year
+*'  (ENGAGE4p5_GlP):  settings used for ENGAGE 4.5 Glasgow+ scenario
 $setglobal cm_netZeroScen  NGFS_v4     !! def = "NGFS_v4"  !! regexp = NGFS_v4|NGFS_v4_20pc|ENGAGE4p5_GlP
 *' *  c_regi_earlyreti_rate  "maximum percentage of capital stock that can be retired early (before reaching their expected lifetimes) in one year in specified regions, if they are not economically viable. It is applied to all techs unless otherwise specified in c_tech_earlyreti_rate."
 *' *  GLO 0.09, EUR_regi 0.15: default value. (0.09 means full retirement after 11 years, 10% standing after 10 years)
@@ -1201,21 +1202,23 @@ $setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.nonnegative
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "EU27_regi 7.5, DEU 1.5".
 $setGLobal cm_bioprod_regi_lim off  !! def off
-*** cm_POPscen      "Population growth scenarios from UN data and IIASA projection used in SSP"
-*** pop_SSP1    "SSP1 population scenario"
-*** pop_SSP2    "SSP2 population scenario"
-*** pop_SSP2EU    "SSP2 population scenario"
-*** pop_SSP3    "SSP3 population scenario"
-*** pop_SSP4    "SSP4 population scenario"
-*** pop_SSP5    "SSP5 population scenario"
+*' cm_POPscen      "Population growth scenarios from UN data and IIASA projection used in SSP"
+*'
+*' * pop_SSP1    "SSP1 population scenario"
+*' * pop_SSP2    "SSP2 population scenario"
+*' * pop_SSP2EU    "SSP2 population scenario"
+*' * pop_SSP3    "SSP3 population scenario"
+*' * pop_SSP4    "SSP4 population scenario"
+*' * pop_SSP5    "SSP5 population scenario"
 $setglobal cm_POPscen  pop_SSP2EU  !! def = pop_SSP2EU
-*** cm_GDPscen  "assumptions about future GDP development, linked to population development (cm_POPscen)"
-***  (gdp_SSP1):  SSP1 fastGROWTH medCONV
-***  (gdp_SSP2):  SSP2 medGROWTH medCONV
-***  (gdp_SSP2EU):  SSP2 medGROWTH medCONV
-***  (gdp_SSP3):  SSP3 slowGROWTH slowCONV
-***  (gdp_SSP4):  SSP4  medGROWTH mixedCONV
-***  (gdp_SSP5):  SSP5 fastGROWTH fastCONV
+*' cm_GDPscen  "assumptions about future GDP development, linked to population development (cm_POPscen)"
+*'
+*' * (gdp_SSP1):  SSP1 fastGROWTH medCONV
+*' * (gdp_SSP2):  SSP2 medGROWTH medCONV
+*' * (gdp_SSP2EU):  SSP2 medGROWTH medCONV
+*' * (gdp_SSP3):  SSP3 slowGROWTH slowCONV
+*' * (gdp_SSP4):  SSP4  medGROWTH mixedCONV
+*' * (gdp_SSP5):  SSP5 fastGROWTH fastCONV
 $setglobal cm_GDPscen  gdp_SSP2EU  !! def = gdp_SSP2EU
 *** cm_oil_scen      "assumption on oil availability"
 ***  (lowOil): low
@@ -1649,7 +1652,6 @@ $setGlobal c_empty_model   off    !! def = off  !! regexp = off|on
 *' * parallel  - all regions are run an parallel
 *' * debug     - all regions are run in a sequence and the lst-file will contain information on infeasiblities
 $setGlobal cm_nash_mode  parallel      !! def = parallel  !! regexp = debug|parallel|serial
-
 $setglobal cm_secondary_steel_bound  scenario   !! def = scenario
 $setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen)
 $setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
@@ -1662,10 +1664,8 @@ $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_industry_FE_target  1
 *' setting which region is to be tested in the one-region test run (80_optimization = testOneRegi)
 $setglobal c_testOneRegi_region  EUR       !! def = EUR  !! regexp = [A-Z]{3}
-
-*** cm_taxrc_RE     "switch to define whether tax on (CO2 content of) energy imports is recycled to additional direct investments in renewables (wind, solar and storage)"
+*' cm_taxrc_RE     "switch to define whether tax on (CO2 content of) energy imports is recycled to additional direct investments in renewables (wind, solar and storage)"
 $setglobal cm_taxrc_RE  none   !! def = none   !! regexp = none|REdirect
-
 *' cm_repeatNonOpt       "should nonoptimal regions be solved again?"
 *'
 *' *  (off): no, only infeasable regions are repeated, standard setting
