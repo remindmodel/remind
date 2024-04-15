@@ -10,7 +10,7 @@
 *'
 *' @description  The 40_techpol module formulates technological policies. They can be part of a baseline or climate policy scenario.
 *'
-*' @authors Christoph Bertram, Falko Ueckertd
+*' @authors Christoph Bertram, Falko Ueckerdt
 
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%techpol%" == "CombLowCandCoalPO" $include "./modules/40_techpol/CombLowCandCoalPO/realization.gms"
