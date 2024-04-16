@@ -66,26 +66,46 @@ pm_IndstCO2Captured(ttot,regi,entySe,entyFe(entyFeCC37),secInd37,emiMkt)$(
 *** Process-Based
 *** ---------------------------------------------------------------------------
 
-o37_relativeOutflow(ttot,regi,tePrc,opmoPrc)$tePrc2opmoPrc(tePrc,opmoPrc) = 1.
+!! relative outflow:
+!! Needed for LCOP calculation; has to be independent of vm_outflowPrc to also
+!! yield valid values for tech with zero vm_outflowPrc
+*** ---------------------------------------------------------------------------
+
+o37_relativeOutflow(ttot,regi,tePrc,opmoPrc)$tePrc2opmoPrc(tePrc,opmoPrc) = 1.;
+o37_specificEmi(ttot,regi,tePrc,opmoPrc) = 0.;
 
 loop((tePrc1,opmoPrc1,tePrc2,opmoPrc2,mat)$(
                 tePrc2matIn(tePrc2,opmoPrc2,mat)
             AND tePrc2matOut(tePrc1,opmoPrc1,mat)),
   o37_relativeOutflow(ttot,regi,tePrc1,opmoPrc1)
     = p37_specMatDem(mat,tePrc2,opmoPrc2)
-    * o37_relativeOutflow(ttot,regi,tePrc2,opmoPrc2); !! should be one; becomes relevant for more than two stages
+    * o37_relativeOutflow(ttot,regi,tePrc2,opmoPrc2); !! should be one; becomes relevant for more than two stages; then, ensure to loop backwards through the route!
 );
 
-loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc)$(
-                          tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)),
-  o37_relativeOutflow(ttot,regi,teCCPrc,opmoCCPrc)
-    = p37_captureRate(teCCPrc,opmoCCPrc)
-    * sum(entyFe,
+!! auxiliary for CC relative outflow
+loop((tePrc,opmoPrc)$(tePrc2opmoPrc(tePrc,opmoPrc)),
+  o37_specificEmi(ttot,regi,tePrc,opmoPrc) =
+    sum(entyFe,
         pm_specFeDem(ttot,regi,entyFe,tePrc,opmoPrc)
         *
         sum(se2fe(entySeFos,entyFe,te),
-          pm_emifac(ttot,regi,entySeFos,entyFe,te,"co2")))
-    * o37_relativeOutflow(ttot,regi,tePrc,opmoPrc);
+          pm_emifac(ttot,regi,entySeFos,entyFe,te,"co2")));
+);
+
+!! CC relative outflow
+loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc)$(
+                          tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)),
+
+  !! of_cc = cr_base * emi_base * of_base   +   cr_cc * emi_cc * of_cc       !! solve for of_cc
+  !! --> of_cc = (cr_base * emi_base * of_base) / (1. - cr_cc * emi_cc)      !! divide by of_fin
+  !! --> relOf_cc = (cr_base * emi_base * relOf_base) / (1. - cr_cc * emi_cc)
+
+  o37_relativeOutflow(ttot,regi,teCCPrc,opmoCCPrc)
+    = (p37_captureRate(teCCPrc)
+      * o37_specificEmi(ttot,regi,tePrc,opmoPrc)
+      * o37_relativeOutflow(ttot,regi,tePrc,opmoPrc))
+    /
+      (1. - p37_selfCaptureRate(teCCPrc) * o37_specificEmi(ttot,regi,teCCPrc,opmoCCPrc) );
 );
 
 
@@ -93,7 +113,7 @@ loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc)$(
 *** ---------------------------------------------------------------------------
 
 !! init all to 1
-o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)$tePrc2route(tePrc,opmoPrc,route) = 1.
+o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)$tePrc2route(tePrc,opmoPrc,route) = 1.;
 
 loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc,route)$(
                           tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)
@@ -101,15 +121,13 @@ loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc,route)$(
 
   !! share of first-stage tech with CCS
   o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)$(sum(entyFe,v37_emiPrc.l(ttot,regi,entyFe,tePrc,opmoPrc)) gt 0.)
-    = (   vm_outflowPrc.l(ttot,regi,teCCPrc,opmoCCPrc)
-        / p37_captureRate(teCCPrc,opmoCCPrc))
-      / sum(entyFe,v37_emiPrc.l(ttot,regi,entyFe,tePrc,opmoPrc));
+    = v37_shareWithCC.l(ttot,regi,tePrc,opmoPrc);
 
   !! share of first-stage tech without CCS
   loop(route2$(        tePrc2route(tePrc,opmoPrc,route2)
                AND NOT tePrc2route(teCCPrc,opmoCCPrc,route2)),
     o37_shareRoute(ttot,regi,tePrc,opmoPrc,route2)
-      = 1. - o37_shareRoute(ttot,regi,tePrc,opmoPrc,route);
+    = 1. - v37_shareWithCC.l(ttot,regi,tePrc,opmoPrc);
   );
 );
 
