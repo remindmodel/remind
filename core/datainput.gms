@@ -293,7 +293,7 @@ loop(te$(fm_dataglob("constrTme",te) > 0),
 $ifthen %cm_techcosts% == "GLO"
     (1 + 0.02/pm_ies(regi) +  pm_prtp(regi) )                               ** (integ.val - 0.5) - 1
 $else
-    (1 + 0.02/pm_ies(regi) + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1  
+    (1 + 0.02/pm_ies(regi) + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
 $endif
       )
 );
@@ -369,8 +369,8 @@ $else
     pm_data(regi,"learnMult_wFC","spv")        = pm_data(regi,"incolearn","spv") / (sum(regi2,p_capCum("2020",regi2,"spv")) ** pm_data(regi,"learnExp_wFC","spv"));
 $endif
 
-*FS initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020) 
-* equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost) 
+*FS initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020)
+* equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost)
 pm_data(regi,"learnMult_wFC",te)$( pm_data(regi,"tech_stat",te) eq 4 )
   = pm_data(regi,"incolearn",te)
   / ( fm_dataglob("ccap0",te)
@@ -431,7 +431,7 @@ $ifthen.REG_techcosts "%cm_techcosts%" == "REG"   !! cm_techcosts REG
           )
           / (c_teNoLearngConvEndYr - 2020);
       );
-    
+
       pm_inco0_t(ttot,regi,te)$( ttot.val gt c_teNoLearngConvEndYr ) = fm_dataglob("inco0",te);
     );
 
@@ -697,8 +697,8 @@ pm_cf(ttot,regi,"bf") = 0.8;
 pm_cf(ttot,regi,"bfcc") = 0.8;
 pm_cf(ttot,regi,"bof") = 0.8;
 pm_cf(ttot,regi,"idr") = 0.8;
-pm_cf(ttot,regi,"idrcc") = 0.8;
-pm_cf(ttot,regi,"eaf") = 0.8;
+pm_cf(ttot,regi,"idrcc") = 1.0; !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
+pm_cf(ttot,regi,"eaf") = 1.0;   !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
 
 *RP* phasing down the ngt cf to "peak load" cf of 5%
 pm_cf(ttot,regi,"ngt")$(ttot.val eq 2025) = 0.9 * pm_cf(ttot,regi,"ngt");

@@ -158,6 +158,9 @@ if (cm_startyear eq 2005,
 if (cm_CCS_steel ne 1 OR cm_IndCCSscen ne 1,
   vm_cap.fx(t,regi,teCCPrc,rlf) = 0.;
 );
+
+v37_shareWithCC.lo(t,regi,tePrc,opmoPrc) = 0.;
+v37_shareWithCC.up(t,regi,tePrc,opmoPrc) = 1.;
 $endif.cm_subsec_model_steel
 
 *** EOF ./modules/37_industry/subsectors/bounds.gms

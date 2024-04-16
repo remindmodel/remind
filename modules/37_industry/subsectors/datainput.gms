@@ -556,7 +556,7 @@ p37_regionalWasteIncinerationCCSshare(ttot,all_regi) = 0;
 $ifthen.cm_wasteIncinerationCCSshare not "%cm_wasteIncinerationCCSshare%" == "off"
 loop((ttot,ext_regi)$p37_wasteIncinerationCCSshare(ttot,ext_regi),
   loop(regi$regi_groupExt(ext_regi,regi),
-    p37_regionalWasteIncinerationCCSshare(t,regi)$((t.val gt 2025)) = min(p37_wasteIncinerationCCSshare(ttot,ext_regi), (p37_wasteIncinerationCCSshare(ttot,ext_regi)/(ttot.val -  2025))*(t.val-2025)); 
+    p37_regionalWasteIncinerationCCSshare(t,regi)$((t.val gt 2025)) = min(p37_wasteIncinerationCCSshare(ttot,ext_regi), (p37_wasteIncinerationCCSshare(ttot,ext_regi)/(ttot.val -  2025))*(t.val-2025));
   );
 );
 $endIf.cm_wasteIncinerationCCSshare
@@ -630,10 +630,13 @@ $endif.cm_subsec_model_steel
 
 *** --------------------------------
 
-p37_captureRate(all_te,opmoPrc) = 0.;
+p37_captureRate(all_te) = 0.;
+p37_selfCaptureRate(all_te) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-p37_captureRate("bfcc","standard") = 0.73; !! Source: Witecka 2023, Figure 18
-p37_captureRate("idrcc","ng")      = 0.85; !! Source: IEA Steel Roadmap Fig. 2.11
+p37_captureRate("bfcc")  = 0.73; !! Source: Witecka 2023, Figure 18
+p37_captureRate("idrcc") = 0.85; !! Source: IEA Steel Roadmap Fig. 2.11
+p37_selfCaptureRate("bfcc")  = 0.9;
+p37_selfCaptureRate("idrcc") = 0.9;
 $endif.cm_subsec_model_steel
 
 *** --------------------------------
