@@ -22,15 +22,15 @@
 	"EU27-short": {
 		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
 		"yearsScen": "seq(2005, 2050, 5)",
-		"yearsHist": "c(seq(1990, 2020, 1), seq(2025, 2050, 5))",
-		"yearsBarPlot": "c(2010, 2030, 2050)",
+		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))",
+		"yearsBarPlot": "c(2020, 2030, 2050)",
 		"mainReg": "'EU27'"
 	},
 	"AriadneDEU": {
 		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
 		"yearsScen": "seq(2005, 2050, 5)",
-		"yearsHist": "c(seq(1990, 2020, 1), seq(2025, 2050, 5))",
-		"yearsBarPlot": "c(2010, 2030, 2050)",
+		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))",
+		"yearsBarPlot": "c(2020, 2030, 2050)",
 		"modelsHistExclude": "c('IEA ETP B2DS', 'IEA ETP 2DS', 'IEA ETP RTS', 'EDGE_SSP1', 'EDGE_SSP2', 'CEDS', 'IRENA', 'IEA WEO 2021 APS', 'IEA WEO 2021 SDS', 'IEA WEO 2021 SPS')",
 		"mainReg": "'DEU'"
 	},
