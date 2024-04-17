@@ -16,22 +16,10 @@
 ***---------------------------------------------------------------------------
 *' @code
 
-* *** Generate MAGICC scenario file
-* $include "./core/magicc.gms";
-* *** execute MAGICC (this is cheap enough, ~2s)
-* Execute "Rscript run_magicc.R";
-* *** read in results
-* Execute "Rscript read_DAT_TOTAL_ANTHRO_RF.R";
-* Execute_Loadpoint 'p15_forc_magicc'  p15_forc_magicc;
-* Execute "Rscript read_DAT_SURFACE_TEMP.R";
-* Execute_Loadpoint 'p15_magicc_temp' pm_globalMeanTemperature = pm_globalMeanTemperature;
-* *** MAGICC only reports unitl 2300:
-* pm_globalMeanTemperature(tall)$(tall.val gt 2300) = 0;
-
 * Run only on first iteration to avoid incomplete GDXs
 if (iteration.val ge 2,
 * Run the climate assessment script. Takes around 2-3m for a single parameter set, including harmonization and infilling
-execute_unload 'fulldata_postsolve';
+Execute_unload 'fulldata_postsolve';
 Execute "Rscript climate_assessment_run.R";
 * Read in results
 Execute_Loadpoint 'p15_forc_magicc'  p15_forc_magicc;
