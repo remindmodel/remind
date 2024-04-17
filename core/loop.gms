@@ -150,16 +150,6 @@ o_negitr_disc_cons_drInt_reg(iteration,regi) =
 ;
 
 ***--------------------------------------------------------------------------
-***         Save GDX with solution before postsolve
-***--------------------------------------------------------------------------
-* execute_unload 'fulldata_prepostsolve';
-!! retain gdxes of intermediate iterations by copying them using shell
-!! commands
-* if (c_keep_iteration_gdxes eq 1,
-*   put_utility logfile, "shell" /
-*     "cp fulldata_prepostsolve.gdx fulldata_prepostsolve_" iteration.val:0:0 ".gdx";
-
-***--------------------------------------------------------------------------
 ***         POSTSOLVE
 ***--------------------------------------------------------------------------
 $include    "./core/postsolve.gms";
