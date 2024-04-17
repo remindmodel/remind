@@ -138,7 +138,6 @@ if (is.null(cfg$climate_assessment_root)) cfg$climate_assessment_root <- "/p/pro
 if (is.null(cfg$climate_assessment_infiller_db)) cfg$climate_assessment_infiller_db <- "/p/projects/rd3mod/climate-assessment-files/1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv"
 if (is.null(cfg$climate_assessment_magicc_bin)) cfg$climate_assessment_magicc_bin <- "/p/projects/rd3mod/climate-assessment-files/magicc-v7.5.3/bin/magicc"
 if (is.null(cfg$climate_assessment_magicc_prob_file_iteration)) cfg$climate_assessment_magicc_prob_file_iteration <- "/p/projects/rd3mod/climate-assessment-files/parsets/RCP20_50.json"
-if (is.null(cfg$climate_assessment_r_gams_dir)) cfg$climate_assessment_r_gams_dir <- "/p/system/packages/gams/43.4.1"
 
 # The base name, that climate-assessment uses to derive it's output names
 baseFn <- sub("\\.csv$", "", basename(climateAssessmentEmi))
@@ -151,7 +150,10 @@ probabilisticFile <- normalizePath(cfg$climate_assessment_magicc_prob_file_itera
 scriptsDir <- normalizePath(file.path(cfg$climate_assessment_root, "scripts"))
 magiccBinFile <- normalizePath(file.path(cfg$climate_assessment_magicc_bin))
 magiccWorkersDir <- file.path(normalizePath(climateTempDir), "workers")
-gamsRDir <- normalizePath(cfg$climate_assessment_r_gams_dir)
+gamsRDir <- Sys.getenv("GAMSROOT")
+if (nchar(gamsRDir) <= 0) {
+    warning("Empty GAMSROOT environment variable")
+}
 
 # Read parameter sets file to ascertain how many parsets there are
 allparsets <- read_yaml(probabilisticFile)
@@ -258,7 +260,7 @@ climateAssessmentOutput <- file.path(
 )
 
 assessmentData <- read.quitte(climateAssessmentOutput)
-usePeriods <- unique(assessmentData$period)
+usePeriods <- as.numeric(grep("[0-9]+", names(climateAssessmentInputData), value = TRUE))
 logMsg <- paste0(
     date(), "  climate-assessment climate emulator finished in ", timeStopEmulation - timeStartEmulation, "s\n",
     " =================== POSTPROCESS climate-assessment output ==================\n",
@@ -309,8 +311,6 @@ relevantData <- assessmentData %>%
 # Loop through each file name given in associateVariablesAndFiles and write the associated variables to GDX files
 # Note: This arrangement is capable of writing multiple variables to the same GDX file
 for (currentFn in unique(associateVariablesAndFiles$fileName)) {
-    # gamsVariable <- gdxFilesAndRemindVariables[[fileName]]
-    #cat(paste0(currentFn, "\n"))
     whatToWrite <- associateVariablesAndFiles %>%
         filter(.data$fileName == currentFn) %>%
         select(remindVariable, gamsVariable)
