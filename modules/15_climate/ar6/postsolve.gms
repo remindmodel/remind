@@ -76,51 +76,6 @@ $endif.cm_magicc_tirf
 *' __Iterative adjustment of budgets or carbon taxes to meet forcing target__
 ***---------------------------------------------------------------------------
 if (cm_iterative_target_adj eq 2, !! otherwise adjustment happens in core/postsolve.gms 
-  
-* TODO: Can this go? possibly DELETE ME start
-***---------------------------------------------------------------------------
-*' Iterative adjustment for budget runs: scale current budget with the ratio of target forcing s15_gr_forc_os to current forcing p15_forc_magicc.
-*' The offset is only there to increase the speed of convergence, the values have no physical meaning.
-*' For low stabilization targets (rcp2.0, rcp2.6, rcp3.7) the target is the 2100 forcing target (s15_rcpCluster eq 1),
-*' for lower targets the forcing target is valid during the full century (s15_rcpCluster eq 0).
-***---------------------------------------------------------------------------
-  if ((cm_emiscen eq 6),
-   
-      display sm_budgetCO2eqGlob, s15_gr_forc_os, p15_forc_magicc;
-   
-      if (s15_rcpCluster eq 1,
-        sm_budgetCO2eqGlob 
-        = 
-          sm_budgetCO2eqGlob 
-        * (s15_gr_forc_os       - s15_forcing_budgetiterationoffset)
-        / (p15_forc_magicc("2100") - s15_forcing_budgetiterationoffset)
-        ;
-      
-        pm_budgetCO2eq(regi)
-        =
-          pm_budgetCO2eq(regi)
-        * (s15_gr_forc_os       - s15_forcing_budgetiterationoffset)
-        / (p15_forc_magicc("2100") - s15_forcing_budgetiterationoffset)
-        ;
-      elseif (s15_rcpCluster eq 0),
-        sm_budgetCO2eqGlob 
-        = 
-          sm_budgetCO2eqGlob 
-        * (s15_gr_forc_nte       - s15_forcing_budgetiterationoffset)
-        / (smax(tall,p15_forc_magicc(tall)) - s15_forcing_budgetiterationoffset)
-        ;
-      
-        pm_budgetCO2eq(regi)
-        =
-          pm_budgetCO2eq(regi)
-        * (s15_gr_forc_nte       - s15_forcing_budgetiterationoffset)
-        / (smax(tall,p15_forc_magicc(tall)) - s15_forcing_budgetiterationoffset)
-        ;
-       );
-   
-     display sm_budgetCO2eqGlob;
-     );
-*  TODO: DELETE ME end
     
 ***---------------------------------------------------------------------------
 *' Iterative adjustment for carbon tax runs: scale current tax pathway with the ratio of target forcing s15_gr_forc_os to current forcing p15_forc_magicc.
