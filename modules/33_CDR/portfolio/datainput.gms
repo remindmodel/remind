@@ -71,9 +71,13 @@ if(cm_33_OAE_scen = 1, !! optimistic scenario for distribution, lower diesel dem
 );
 
 $ifthen.OAE_glo_limit not %cm_33_OAE_lim% == "off"
-*** get the global limit on OAE (if exists) in GtC per yr
+*** get the global limit on OAE (if exists) in GtC per yr,
+*** the limit is set in bounds.gms, and distributed among regions proportional to GDP
+*** note that an alternative to using this is the qttyTarget (preferred)
 s33_OAE_glo_limit = %cm_33_OAE_lim% / 1000 / sm_c_2_co2;
 $endif.OAE_glo_limit
+
+vm_costTeCapital.fx(t,regi,"oae") = pm_inco0_t(t, regi, "oae") / s33_OAE_efficiency;
 
 *' @stop
 
