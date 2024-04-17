@@ -31,6 +31,7 @@
 * Run only on first iteration to avoid incomplete GDXs
 if (iteration.val ge 2,
 * Run the climate assessment script. Takes around 2-3m for a single parameter set, including harmonization and infilling
+execute_unload 'fulldata_postsolve';
 Execute "Rscript climate_assessment_run.R";
 * Read in results
 Execute_Loadpoint 'p15_forc_magicc'  p15_forc_magicc;
@@ -49,6 +50,7 @@ $ifthen.cm_magicc_calibrateTemperature2000 %cm_magicc_calibrateTemperature2000% 
 ***---------------------------------------------------------------------------
 *' Calibrate temperature such that anomaly in 2006-2015 reference period is 0.97 (SR1.5 Table 2.2, footnote 1)
 ***---------------------------------------------------------------------------
+* TODO: Is manual adjustment of temperature still needed?
 s15_tempOffset2010 = sum(tall$(tall.val gt 2005 and tall.val le 2015),pm_globalMeanTemperature(tall))/10; 
 display s15_tempOffset2010;
 pm_globalMeanTemperature(tall) = pm_globalMeanTemperature(tall) - s15_tempOffset2010 + 0.97;
@@ -62,6 +64,7 @@ p15_gmt0(tall) = pm_globalMeanTemperature(tall);
 
 $endif.cm_magicc_calibrateTemperature2000
 
+* TODO: Why is this here
 *** offset from HADCRUT4 to zero temperature in 1900, instead of the default 1870 (20 year averages each).
 pm_globalMeanTemperatureZeroed1900(tall)  = pm_globalMeanTemperature(tall) + 0.092; 
 
@@ -86,6 +89,7 @@ $endif.cm_magicc_tirf
 ***---------------------------------------------------------------------------
 if (cm_iterative_target_adj eq 2, !! otherwise adjustment happens in core/postsolve.gms 
   
+* TODO: Can this go? possibly DELETE ME start
 ***---------------------------------------------------------------------------
 *' Iterative adjustment for budget runs: scale current budget with the ratio of target forcing s15_gr_forc_os to current forcing p15_forc_magicc.
 *' The offset is only there to increase the speed of convergence, the values have no physical meaning.
@@ -128,7 +132,8 @@ if (cm_iterative_target_adj eq 2, !! otherwise adjustment happens in core/postso
    
      display sm_budgetCO2eqGlob;
      );
-
+*  TODO: DELETE ME end
+    
 ***---------------------------------------------------------------------------
 *' Iterative adjustment for carbon tax runs: scale current tax pathway with the ratio of target forcing s15_gr_forc_os to current forcing p15_forc_magicc.
 *' The offset is only there to increase the speed of convergence, the values have no physical meaning.

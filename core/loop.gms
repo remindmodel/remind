@@ -152,7 +152,7 @@ o_negitr_disc_cons_drInt_reg(iteration,regi) =
 ***--------------------------------------------------------------------------
 ***         Save GDX with solution before postsolve
 ***--------------------------------------------------------------------------
-execute_unload 'fulldata_prepostsolve';
+* execute_unload 'fulldata_prepostsolve';
 !! retain gdxes of intermediate iterations by copying them using shell
 !! commands
 * if (c_keep_iteration_gdxes eq 1,

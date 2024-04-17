@@ -42,7 +42,7 @@ if (!dir.exists(climateTempDir)) {
 }
 cat(climateTempDir)
 
-gdxPath <- file.path(outputDir, "fulldata_prepostsolve.gdx")
+gdxPath <- file.path(outputDir, "fulldata_postsolve.gdx")
 cfgPath <- file.path(outputDir, "cfg.txt")
 
 logMsg <- paste0(
