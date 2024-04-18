@@ -314,10 +314,18 @@ p_inco0(ttot,regi,teRegTechCosts)  = (1 + p_tkpremused(regi,teRegTechCosts) ) * 
 fm_dataglob("inco0",te)       = (1 + sum(regi, p_tkpremused(regi,te))/sum(regi, 1)) * fm_dataglob("inco0",te);
 
 *** calculate default floor costs for learning technologies
+$ifthen.floorscen %cm_floorCostScen% == "default"
 pm_data(regi,"floorcost",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
+$endif.floorscen
 
+*** calculate floor costs for learning technologies if historical price structure prevails
+$ifthen.floorscen %cm_floorCostScen% == "pricestruc"
+p_maxRegTechCost(teRegTechCosts) = SMax(regi, p_inco0("2020",regi,teRegTechCosts));
+pm_data(regi,"floorcost",teLearn(te)) = pm_data(regi,"floorcost",teLearn(te)) * p_inco0("2020",regi,teRegTechCosts(te)) / p_maxRegTechCost(teRegTechCosts(te));
+p_newFloorCostdata(regi,teLearn(te)) = pm_data(regi,teLearn(te));
+$endif.floorscen
 
-*** In case regionally differentiated investment costs should be used the corresponding entries are revised:
+*** In case regionally differentiated investment costs should be used, the corresponding entries are revised:
 $if %cm_techcosts% == "REG"   pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2015",regi,teRegTechCosts);
 loop(teRegTechCosts$(sameas(teRegTechCosts,"spv") ),
 $if %cm_techcosts% == "REG"   pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2020",regi,teRegTechCosts);
@@ -707,7 +715,7 @@ pm_regiEarlyRetiRate(t,regi,"biohp")   = 0.5 * pm_regiEarlyRetiRate(t,regi,"bioh
 
 $IFTHEN.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
 loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
-  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi) and (t.val lt 2035 or sameas(ext_regi,"GLO"))) = p_techEarlyRetiRate(ext_regi,te);
+  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi) and (t.val lt 2065 or sameas(ext_regi,"GLO"))) = p_techEarlyRetiRate(ext_regi,te);
 );
 $ENDIF.tech_earlyreti
 
