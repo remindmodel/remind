@@ -111,6 +111,11 @@ p_techEarlyRetiRate(ext_regi,all_te)                 "Technology specific early 
 $ENDIF.tech_earlyreti
 pm_regiEarlyRetiRate(ttot,all_regi,all_te)                "regional early retirement rate (model native regions)"
 
+p_maxRegTechCost2015(all_te)                         "highest historical regional tech cost in 2015"
+p_maxRegTechCost2020(all_te)                         "highest historical regional tech cost in 2020"
+p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data"
+p_newFloorCostdata(all_regi,all_te)                  "print new floor cost data"
+
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]"
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1"
 p_actualbudgetco2(tall)                              "actual level of cumulated emissions starting from 2020 [GtCO2]"
