@@ -688,6 +688,12 @@ pm_cf(ttot,regi,"h2turbVRE")$(ttot.val ge 2025) = pm_cf(ttot,regi,"ngt");
 pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
+*CG* global tech-specific early retirement rates
+$IFTHEN.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
+loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
+  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi) and (t.val lt 2035 or sameas(ext_regi,"GLO"))) = p_techEarlyRetiRate(ext_regi,te);
+);
+$ENDIF.tech_earlyreti
 
 *SB* Region- and tech-specific early retirement rates
 *Regional*
@@ -704,12 +710,6 @@ pm_regiEarlyRetiRate(t,regi,"gashp")   = 0.5 * pm_regiEarlyRetiRate(t,regi,"gash
 pm_regiEarlyRetiRate(t,regi,"coalhp")  = 0.5 * pm_regiEarlyRetiRate(t,regi,"coalhp"); !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
 pm_regiEarlyRetiRate(t,regi,"biohp")   = 0.5 * pm_regiEarlyRetiRate(t,regi,"biohp") ; !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
 
-
-$IFTHEN.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
-loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
-  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi) and (t.val lt 2035 or sameas(ext_regi,"GLO"))) = p_techEarlyRetiRate(ext_regi,te);
-);
-$ENDIF.tech_earlyreti
 
 *SB* Time-dependent early retirement rates in Baseline scenarios
 $ifthen.Base_Cprice %carbonprice% == "none"
