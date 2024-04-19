@@ -319,7 +319,7 @@ pm_data(regi,"floorcost",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,
 
 *** report old floor costs pre manipulation
 $ifthen.floorscen NOT %cm_floorCostScen% == "default"
-p_oldFloorCostdata(regi,te) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
+p_oldFloorCostdata(regi,teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
 $endif.floorscen
 
 *** calculate floor costs for learning technologies if historical price structure prevails
@@ -327,13 +327,13 @@ $ifthen.floorscen %cm_floorCostScen% == "pricestruc"
 ** compute maximum tech cost in 2015 for a given tech among regions
 p_maxRegTechCost2015(teRegTechCosts) = SMax(regi, p_inco0("2015",regi,teRegTechCosts));
 *take the ratio of the tech cost in 2015 and the maximum cost, and multiply with the global floor to get new floorcost that preserves the price structure
-pm_data(regi,"floorcost",te)$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
+pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
 * for newer data than 2015, use these
 p_maxRegTechCost2020(teRegTechCosts) = SMax(regi, p_inco0("2020",regi,teRegTechCosts));
-pm_data(regi,"floorcost",te)$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
+pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
 * report the new floor cost data
-p_newFloorCostdata(regi,te)$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
-p_newFloorCostdata(regi,te)$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
+p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
+p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
 $endif.floorscen
 
 *** In case regionally differentiated investment costs should be used, the corresponding entries are revised:
