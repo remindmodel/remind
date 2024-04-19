@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/15_climate/ar6/declarations.gms
+*** SOF ./modules/15_climate/magicc7_ar6/declarations.gms
 
 Scalar
   s15_forcing_budgetiterationoffset "offset for the calculation of iteratively adjusted budget"
@@ -44,4 +44,4 @@ s15_gr_forc_os       "overshoot (os) radiative forcing target (guardrail = gr) f
 s15_rcpCluster       " clustering of rcp_scen for the iterative traget adjustment"
 ;
 
-*** EOF ./modules/15_climate/ar6/declarations.gms
+*** EOF ./modules/15_climate/magicc7_ar6/declarations.gms
