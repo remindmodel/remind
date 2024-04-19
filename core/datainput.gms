@@ -971,12 +971,12 @@ pm_shareWindPotentialOff2On(all_regi) = sum(rlf,f_maxProdGradeRegiWindOff(all_re
 
 pm_shareWindOff("2010",regi) = 0.05;
 pm_shareWindOff("2015",regi) = 0.1;
-pm_shareWindOff("2020",regi) = 0.15;
-pm_shareWindOff("2025",regi) = 0.2;
-pm_shareWindOff("2030",regi) = 0.35;
-pm_shareWindOff("2035",regi) = 0.5;
-pm_shareWindOff("2040",regi) = 0.65;
-pm_shareWindOff("2045",regi) = 0.8;
+pm_shareWindOff("2020",regi) = 0.2;
+pm_shareWindOff("2025",regi) = 0.4;
+pm_shareWindOff("2030",regi) = 0.6;
+pm_shareWindOff("2035",regi) = 0.8;
+pm_shareWindOff("2040",regi) = 0.9;
+pm_shareWindOff("2045",regi) = 0.95;
 pm_shareWindOff(ttot,regi)$((ttot.val ge 2050)) = 1;
 
 $endif.WindOff
