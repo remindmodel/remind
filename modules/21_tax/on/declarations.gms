@@ -68,7 +68,10 @@ p21_tau_CO2_tax_gdx_bau(ttot,all_regi)       "tax path from gdx, may overwrite d
 
 p21_implicitDiscRateMarg(ttot,all_regi,all_in)  "Difference between the normal discount rate and the implicit discount rate"
 
-p21_tau_SE_tax_rampup(ttot,all_regi,all_te,teSeTax_coeff)  "Paramters of logistic function to describe relationship between SE electricity tax rate and share of technology in total electricity demand"
+p21_tau_SE_tax_rampup(ttot,all_regi,all_te,teSeTax_coeff)  "Parameters of logistic function to describe relationship between SE electricity tax rate and share of technology in total electricity demand"
+$IFTHEN.elh2_tax_rampup not "%cm_elh2_tax_rampup%" == "standard"
+p21_tau_elh2_tax_rampup_input(ext_regi,teSeTax_coeff)  "Parameters from config file to overwrite p21_tau_SE_tax_rampup for electrolysis in specific regions" / %cm_elh2_tax_rampup% /
+$ENDIF.elh2_tax_rampup
 ;
 
 

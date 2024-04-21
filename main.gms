@@ -1620,6 +1620,16 @@ $setGlobal cm_FEtax_trajectory_rel  off !! def = off
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "DEU -0.2, EU27_regi -0.4".
 $setGLobal c_agricult_base_shift off !! def off
+*** electrolysis tax switch: cm_elh2_tax_rampup
+*** This allows to manually adjust the ramp-up curve of the SE tax on electricity going into electrolysis for green hydrogen production.
+*** The ramp-up curve is a logistic function that determines how fast taxes increase with increasing share of electrolysis in total power demand.
+*** This essentially makes an assumption about to what extend electrolysis will be taxed and how much tax exemptions there will be at low shares of green hydrogen production.
+*** The parameter a defines how fast the tax increases with increasing share, while the parameter b defines at which share
+*** the tax is halfway between the value at 0 share and the maximum value (defined by a region's electricity tax and the electricity grid cost) that it converges to for high shares.
+*** Example use: "GLO.a 1.5, GLO.b 20" changes the parameter values to a=1.5 and b=20 for all world regions.
+*** Note that all regions to which this switch is not applied receive the default parameter values.
+*** For details, please see ./modules/21_tax/on/equations.gms.
+$setGLobal cm_elh2_tax_rampup standard !! def standard
 *** wind offshore switch
 *** cm_wind_offshore  1, wind energy is represented by "wind" and "windoff", where "wind" means wind onshore. Later this will be the default and the name "wind" will be made to change to windon
 *** cm_wind_offshore  0, means wind energy is only represented by "wind", which is a mixture of both wind onshore and wind offshore
