@@ -64,12 +64,6 @@ $ifthen.sec_steel_scen NOT "%cm_steel_secondary_max_share_scenario%" == "off"   
   p37_steel_secondary_max_share_scenario(tall,all_regi)   "scenario limits on share of secondary steel production"
   / %cm_steel_secondary_max_share_scenario% /
 $endif.sec_steel_scen
-
-  p37_regionalWasteIncinerationCCSshare(ttot,all_regi)    "regional proportion of waste incineration that is captured [%]"   
-$ifthen.cm_wasteIncinerationCCSshare not "%cm_wasteIncinerationCCSshare%" == "off"
-  p37_wasteIncinerationCCSshare(ttot,ext_regi)            "switch values for proportion of waste incineration that is captured [%]"   
-  / %cm_wasteIncinerationCCSshare% /
-$endIf.cm_wasteIncinerationCCSshare
 ;
 
 Positive Variables

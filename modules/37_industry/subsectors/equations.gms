@@ -107,6 +107,10 @@ q37_emiIndBase(t,regi,entyFe,secInd37) ..
         )
     )$(NOT secInd37Prc(secInd37))
     +
+    sum((sefe(entySe,entyFe),secInd37_emiMkt(secInd37,emiMkt)),
+        vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
+      )$( sameas(secInd37,"chemicals") )
+    +
     sum((secInd37_tePrc(secInd37,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
         v37_emiPrc(t,regi,entyFe,tePrc,opmoPrc)
     )$(secInd37Prc(secInd37))
@@ -291,10 +295,8 @@ q37_incinerationEmi(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)) ..
   vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
   =e=
-  (
     v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
   * pm_incinerationRate(t,regi)
-  ) * (1 - p37_regionalWasteIncinerationCCSshare(t,regi))
 ;
 
 *' calculate carbon contained in non-incinerated plastics

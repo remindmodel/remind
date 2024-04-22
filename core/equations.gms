@@ -590,7 +590,7 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
     )$( sameas(enty,"co2") )
     !! add emissions from plastics incineration. CHECK FOR DOUBLE-COUNTING RISK
   + sum(entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-      sum(se2fe(entySe,entyFe,te),
+      sum(sefe(entySe,entyFe),
         vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
       )
     )$( sameas(enty,"co2") )
