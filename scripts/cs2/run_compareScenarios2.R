@@ -24,7 +24,7 @@ run_compareScenarios2 <- function(
   # working directory is assumed to be the remind directory
 
   # load cs2 profiles
-  profiles <- remind2::getCs2Profiles()
+  profiles <- piamPlotComparison::getCs2Profiles()
 
   # Create temporary folder. This is necessary because each compareScenarios2
   # run creates a folder named 'figure'. If multiple compareScenarios2 run in

@@ -83,7 +83,7 @@ startComp <- function(
 
 
 # Load cs2 profiles.
-profiles <- remind2::getCs2Profiles()
+profiles <- piamPlotComparison::getCs2Profiles()
 
 lucode2::readArgs("profileNames")
 
