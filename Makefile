@@ -1,5 +1,5 @@
 .PHONY: help docs update-renv update-renv-all archive-renv restore-renv check \
-	check-fix test test-coupled test-full set-local-calibration
+     check-fix test test-coupled test-full set-local-calibration
 .DEFAULT_GOAL := help
 
 # extracts the help text and formats it nicely
@@ -14,7 +14,7 @@ HELP_PARSING = 'm <- grep("\#\#", readLines("Makefile"), value = TRUE);\
                     sep = "\n")'
 
 help:            ## Show this help.
-    @Rscript -e $(HELP_PARSING)
+@Rscript -e $(HELP_PARSING)
 
 docs:            ## Generate/update model HTML documentation in the doc/ folder
     Rscript -e 'goxygen::goxygen(unitPattern = c("\\[","\\]"), includeCore=T, max_num_edge_labels="adjust", max_num_nodes_for_edge_labels = 15, startType=NULL); warnings()'
