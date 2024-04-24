@@ -5,7 +5,6 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-library(remind2)
 library(piamPlotComparison)
 
 if (!exists("source_include")) {
