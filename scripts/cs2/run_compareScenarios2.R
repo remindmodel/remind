@@ -34,10 +34,10 @@ run_compareScenarios2 <- function(
   outDir <- normalizePath(outFileName, mustWork = TRUE)
 
   outputDirs <- unique(normalizePath(outputDirs, mustWork = TRUE))
-  mifPath <- getMifScenPath(outputDirs, mustWork = TRUE)
-  histPath <- getMifHistPath(outputDirs[1], mustWork = TRUE)
-  scenConfigPath <- getCfgScenPath(outputDirs, mustWork = TRUE)
-  defaultConfigPath <- getCfgDefaultPath(mustWork = TRUE)
+  mifPath <- remind2::getMifScenPath(outputDirs, mustWork = TRUE)
+  histPath <- remind2::getMifHistPath(outputDirs[1], mustWork = TRUE)
+  scenConfigPath <- remind2::getCfgScenPath(outputDirs, mustWork = TRUE)
+  defaultConfigPath <- remind2::getCfgDefaultPath(mustWork = TRUE)
 
   # predefined arguments
   args <- list(
