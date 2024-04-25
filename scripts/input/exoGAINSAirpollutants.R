@@ -5,7 +5,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-# Only output messages to the log if it is the first run of exoGAINS to avoid repetion in the log.txt file 
+# Only output messages to the log if it is the first run of exoGAINS to avoid repetition in the log.txt file 
 firstIteration = FALSE
 if (file.exists("log.txt")){
   if(!any(grepl("ExoGAINS - log for first iteration...", readLines("log.txt")))){
@@ -18,7 +18,7 @@ if (file.exists("log.txt")){
 #rm(list=ls())
 
 # load required packages
-for (pkg in c('madrat', 'dplyr', 'luscale', 'remind2', 'gdx')) {
+for (pkg in c('madrat', 'dplyr', 'remind2', 'gdx')) {
   suppressPackageStartupMessages(require(pkg, character.only = TRUE))
 }
 
@@ -163,7 +163,7 @@ map_GAINSsec2REMINDsec <- na.omit(map_GAINSsec2REMINDsec)
 # not necessary, since speed_aggregate seems to remove duplicates
 #map_GAINSsec2REMINDsec <- map_GAINSsec2REMINDsec[-which(duplicated(map_GAINSsec2REMINDsec)),]
 
-E_rem <- speed_aggregate(x=E,weight = NULL, dim=3.1, rel = map_GAINSsec2REMINDsec, from="GAINS_mixed",to="REMINDsectors")
+E_rem <- madrat::toolAggregate(x = E, weight = NULL, dim = 3.1, rel = map_GAINSsec2REMINDsec, from = "GAINS_mixed", to = "REMINDsectors")
 
 getNames(E_rem,dim=2) <- gsub("VOC","NMVOC",getNames(E_rem,dim=2)) # rename emissions to names defined in emiRCP
 
