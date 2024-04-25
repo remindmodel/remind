@@ -37,14 +37,12 @@ run_compareScenarios2 <- function(
   mifPath <- remind2::getMifScenPath(outputDirs, mustWork = TRUE)
   histPath <- remind2::getMifHistPath(outputDirs[1], mustWork = TRUE)
   scenConfigPath <- remind2::getCfgScenPath(outputDirs, mustWork = TRUE)
-  defaultConfigPath <- remind2::getCfgDefaultPath(mustWork = TRUE)
 
   # predefined arguments
   args <- list(
     mifScen = mifPath,
     mifHist = histPath,
     cfgScen = scenConfigPath,
-    cfgDefault = defaultConfigPath,
     outputDir = outDir,
     outputFile = outFileName,
     outputFormat = "pdf"
