@@ -13,6 +13,7 @@ require(tidyverse)
 require(lucode2)
 require(purrr)
 require(gdxrrw) # Needs an environmental variable to be set, see below
+require(R.utils)
 
 timeStartSetUpScript <- Sys.time()
 renameVariableMagicc7ToRemind <- function(varName) {
@@ -25,6 +26,11 @@ renameVariableMagicc7ToRemind <- function(varName) {
 # meant to be used between REMIND iterations
 
 outputDir <- getwd()
+gdxPath <- file.path(outputDir, "fulldata_postsolve.gdx")
+cfgPath <- file.path(outputDir, "cfg.txt")
+cfg <- read_yaml(cfgPath)
+archiveClimateAssessmentData <- cfg$climate_assessment_archive
+timestamp <- format(timeStartSetUpScript, "%Y%m%d_%H%M%S")
 
 logFile <- file.path(outputDir, paste0("log_climate.txt"))
 if (!file.exists(logFile)) {
@@ -34,7 +40,7 @@ if (!file.exists(logFile)) {
     createdLogFile <- FALSE
 }
 
-climateTempDir <- file.path(outputDir, "climate-assessment-data")
+climateTempDir <- file.path(outputDir, "climate_assessment_data")
 if (!dir.exists(climateTempDir)) {
     dir.create(climateTempDir, showWarnings = FALSE)
     createdClimateTempDir <- TRUE
@@ -43,8 +49,16 @@ if (!dir.exists(climateTempDir)) {
 }
 cat(climateTempDir)
 
-gdxPath <- file.path(outputDir, "fulldata_postsolve.gdx")
-cfgPath <- file.path(outputDir, "cfg.txt")
+# Create dir to archive the climate assessment data after script has finished
+if (archiveClimateAssessmentData) {
+    climateArchiveDir <- file.path(climateTempDir, "archive", paste0("iteration_", timestamp))
+    if (!dir.exists(climateArchiveDir)) {
+        dir.create(climateArchiveDir, recursive = TRUE, showWarnings = FALSE)
+        createdClimateArchiveDir <- TRUE
+    } else {
+        createdClimateArchiveDi <- FALSE
+    }
+}
 
 logMsg <- paste0(
     date(), " climate_assessment_run.R:\n",
@@ -53,9 +67,9 @@ logMsg <- paste0(
     "Using config           '", cfgPath, "'\n",
     if (createdLogFile) "Created logfile        '" else "Append to logFile      '", logFile, "'\n",
     if (createdClimateTempDir) "Created climateTempDir '" else "Using climateTempDir   '", climateTempDir, "'\n",
+    if (archiveClimateAssessmentData) paste0("Created climateArchiveDir '", climateArchiveDir, "'\n"),
     date(), " climate_assessment_run.R: Start Postprocessing GDX file\n"
 )
-cat(logMsg)
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 
 #
@@ -81,7 +95,6 @@ logMsg <- paste0(
     "Using climateAssessmentYaml '", climateAssessmentYaml, "'\n",
     "Start reportEmi\n"
 )
-cat(logMsg)
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 timeStopSetUpScript <- Sys.time()
 
@@ -94,7 +107,6 @@ emiReport <- reportEmi(gdxPath)
 logMsg <- paste0(
     date(), " climate_assessment_prepare.R: Done reportEmi, start to wrangle emissions report into shape\n"
 )
-cat(logMsg)
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 
 #
@@ -127,14 +139,12 @@ logMsg <- paste0(
     date(), " climate_assessment_prepare.R: ", if (createdOutputCsv) "Created" else "Replaced", 
     " climateAssessmentEmi '", climateAssessmentEmi, "'\n"
 )
-cat(logMsg)
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 
 #
 # RUN CLIMATE ASSESSMENT
 #
 timeStartSetUpAssessment <- Sys.time()
-cfg <- read_yaml(cfgPath)
 # Set default values for the climate assessment config data in case they are not available for backward compatibility
 if (is.null(cfg$climate_assessment_root)) cfg$climate_assessment_root <- "/p/projects/rd3mod/python/climate-assessment/src/"
 if (is.null(cfg$climate_assessment_infiller_db)) cfg$climate_assessment_infiller_db <- "/p/projects/rd3mod/climate-assessment-files/1652361598937-ar6_emissions_vetted_infillerdatabase_10.5281-zenodo.6390768.csv"
@@ -162,7 +172,6 @@ allparsets <- read_yaml(probabilisticFile)
 nparsets <- length(allparsets$configurations)
 
 logMsg <- paste0(date(), " =================== SET UP climate-assessment scripts environment ===================\n")
-cat(logMsg)
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 
 # Create working folder for climate-assessment files
@@ -227,14 +236,13 @@ logMsg <- paste0(
     date(), " =================== RUN climate-assessment infilling & harmonization ===================\n",
     runHarmoniseAndInfillCmd, "'\n"
 )
-cat(logMsg)
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 timeStopSetUpAssessment <- Sys.time()
 
 ############################# HARMONIZATION/INFILLING #############################
 
 timeStartHarmInf <- Sys.time()
-system(runHarmoniseAndInfillCmd)
+system(paste(runHarmoniseAndInfillCmd, "&>>", logFile))
 timeStopHarmInf <- Sys.time()
 
 ############################# RUNNING MODEL #############################
@@ -245,12 +253,10 @@ logMsg <- paste0(
     date(), " =================== RUN climate-assessment model ============================\n",
     runClimateEmulatorCmd, "'\n"
 )
-cat(logMsg)
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 
-
 timeStartEmulation <- Sys.time()
-system(runClimateEmulatorCmd)
+system(paste(runClimateEmulatorCmd, "&>>", logFile))
 timeStopEmulation <- Sys.time()
 
 ############################# POSTPROCESS CLIMATE OUTPUT #############################
@@ -266,7 +272,6 @@ logMsg <- paste0(
     date(), "Read climate assessment output file '", climateAssessmentOutput, "' file containing ", 
     length(usePeriods), " years\n"
 )
-cat(logMsg)
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 
 timeStartPostProcessing <- Sys.time()
@@ -351,18 +356,56 @@ for (currentFn in unique(associateVariablesAndFiles$fileName)) {
 }
 timeStopWriteGdx <- Sys.time()
 
+# Archive the data: Get the list of xlsx and csv files in climateTempDir and the relevant gdx-es in outputDir
+timeStartArchive <- Sys.time()
+if (archiveClimateAssessmentData) {
+    climateAssessmentFiles <- list.files(climateTempDir, pattern = "\\.(xlsx|csv)$", full.names = TRUE)
+    climateAssessmentFiles <- c(
+        climateAssessmentFiles,
+        file.path(outputDir, "fulldata_postsolve.gdx"),
+        file.path(outputDir, "p15_forc_magicc.gdx"),
+        file.path(outputDir, "p15_magicc_temp.gdx")
+    )
+    # Copy each file to climateArchiveDir
+    lapply(climateAssessmentFiles, function(file) {
+        file.copy(file, file.path(climateArchiveDir, basename(file)))
+    })
+    # Create a tar archive of the directory Compress the tar archive using xz. Need to switch working directory here so
+    # tar does not include the full path directory structure in the archive :facepalm:
+    oldwd <- getwd()
+    setwd(climateArchiveDir)
+    tarfile <- paste0(climateArchiveDir, ".tar.gz")
+    tar(tarfile, files = basename(climateAssessmentFiles), compression = "gzip")
+    setwd(oldwd)
+    # Delete the archive directory (i.e. <outputdir>/climate_assessment_data/archive/iteration_<timestamp>, not the
+    # <outputdir>/climate_assessment_data/archive directory itself)
+    unlink(climateArchiveDir, recursive = TRUE)
+    logMsg <- paste0(date(), " Archived climate assessment data to '", tarfile, "'\n")
+    cat(logMsg)
+    capture.output(cat(logMsg), file = logFile, append = TRUE)
+}
+timeStopArchive <- Sys.time()
+
 logMsg <- paste0(
     date(), " Done writing GDX files\n",
-    date(), "Runtime report:\n",
-        "\tRuntime set_up_script: ",             timeStopSetUpScript - timeStartSetUpScript, "s\n",
-        "\tRuntime preprocessing: ",             timeStopPreprocessing - timeStartPreprocessing, "s\n",
-        "\tRuntime set_up_assessment: ",         timeStopSetUpAssessment - timeStartSetUpAssessment, "s\n",
-        "\tRuntime harmonization & infilling: ", timeStopHarmInf - timeStartHarmInf, "s\n",
-        "\tRuntime emulation: ",                 timeStopEmulation - timeStartEmulation, "s\n",
-        "\tRuntime postprocessing: ",            timeStopPostProcessing - timeStartPostProcessing, "s\n",
-        "\tRuntime write_gdx: ",                 timeStopWriteGdx - timeStartWriteGdx, "s\n",
-    date(), " climate-assessment: Finished all\n"
+    date(), " Runtime report: ", paste0("'iteration_", timestamp, ".tar.gz'\n"),
+    "\tRuntime set_up_script: ",
+    difftime(timeStopSetUpScript, timeStartSetUpScript, units = "secs"), "s\n",
+    "\tRuntime preprocessing: ",
+    difftime(timeStopPreprocessing, timeStartPreprocessing, units = "secs"), "s\n",
+    "\tRuntime set_up_assessment: ",
+    difftime(timeStopSetUpAssessment, timeStartSetUpAssessment, units = "secs"), "s\n",
+    "\tRuntime harmonization & infilling: ",
+    difftime(timeStopHarmInf, timeStartHarmInf, units = "secs"), "s\n",
+    "\tRuntime emulation: ",
+    difftime(timeStopEmulation, timeStartEmulation, units = "secs"), "s\n",
+    "\tRuntime postprocessing: ",
+    difftime(timeStopPostProcessing, timeStartPostProcessing, units = "secs"), "s\n",
+    "\tRuntime write_gdx: ",
+    difftime(timeStopWriteGdx, timeStartWriteGdx, units = "secs"), "s\n",
+    "\tRuntime archive_data: ",
+    difftime(timeStopArchive, timeStartSetUpScript, units = "secs"), "s\n",
+    date(), " climate_assessment_run.R: Done\n"
 )
-cat(logMsg)
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 
