@@ -87,6 +87,8 @@ q02_inconvPenCoalSolids(t,regi)$(t.val > 2005)..
 ;
 $ENDIF.INCONV
 
+*' @stop
+
 *** small inconvenience penalty for increasing/decreasing biomass/synfuel use
 *** between two time steps in buildings and industry and emissison markets
 *** necessary to avoid switching behavior in sectors and emissions markets

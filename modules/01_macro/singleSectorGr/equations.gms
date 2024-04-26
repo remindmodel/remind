@@ -166,5 +166,5 @@ q01_limtRatioPpfen(t,regi,in,in2)$( p01_ppfen_ratios(t,regi,in,in2) ) ..
     p01_ppfen_ratios(t,regi,in,in2)
   * (vm_cesIO(t,regi,in2) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
-
+*' @stop
 *** EOF ./modules/01_macro/singleSectorGr/equations.gms
