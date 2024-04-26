@@ -17,6 +17,12 @@ p24_Mport2005correct(all_regi,all_enty)     "Correction factor to match fossil s
 p24_seTradeCapacity(tall,all_regi,all_regi,all_enty) "Secondary energy international yearly trade capacity potential from regi to regi2 [TWa]"
 p24_seTrade_Quantity(all_regi,all_regi,all_enty)      "Maximum import quantity in import scenarios with fixed quantities [TWa]"
 
+$ifthen.import_nzero_EU "%cm_import_EU%" == "nzero"
+p24_FEShareInRegion(ttot,ext_regi,all_regi,seAgg) "region share (regi) of total final energy demand per carrier (seAgg) in region group (ext_regi)"
+p24_demFeForEsReference(ttot,all_regi,all_enty,all_esty,all_teEs) "Final Energy which will be used in the ES layer in the reference run [TWa]"
+p24_demFeIndSubReference(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)  "FE demand per industry subsector, FE carrier, SE carrier, emissions market in the reference run "
+p24_aviationAndChemicalsFEShareInRegion(ttot,ext_regi,all_regi) "region share (regi) of total final energy aviation and chemicals demand in region group (ext_regi)"
+$endif.import_nzero_EU
 
 $IFTHEN.trade_SE_exog not "%cm_trade_SE_exog%" == "off"
 p24_trade_exog(ttot,ttot,ext_regi,ext_regi,all_enty)   "parameter to define exogenous SE trade trajectories [EJ/yr]" / %cm_trade_SE_exog% /
