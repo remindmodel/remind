@@ -14,6 +14,7 @@ require(lucode2)
 require(purrr)
 require(gdxrrw) # Needs an environmental variable to be set, see below
 
+timeStartSetUpScript <- Sys.time()
 renameVariableMagicc7ToRemind <- function(varName) {
    varName <- gsub("|MAGICCv7.5.3", "", varName, fixed = TRUE)
    varName <- gsub("AR6 climate diagnostics|", "MAGICC7 AR6|", varName, fixed = TRUE)
@@ -82,6 +83,7 @@ logMsg <- paste0(
 )
 cat(logMsg)
 capture.output(cat(logMsg), file = logFile, append = TRUE)
+timeStopSetUpScript <- Sys.time()
 
 #
 # Run emissions report here
@@ -122,7 +124,6 @@ climateAssessmentInputData <- emiReport %>%
 timeStopPreprocessing <- Sys.time()
 logMsg <- paste0(
     date(), " climate_assessment_prepare.R: Done data wrangling\n",
-    "Runtime preprocessing: ", timeStopPreprocessing - timeStartPreprocessing, "s \n",
     date(), " climate_assessment_prepare.R: ", if (createdOutputCsv) "Created" else "Replaced", 
     " climateAssessmentEmi '", climateAssessmentEmi, "'\n"
 )
@@ -132,6 +133,7 @@ capture.output(cat(logMsg), file = logFile, append = TRUE)
 #
 # RUN CLIMATE ASSESSMENT
 #
+timeStartSetUpAssessment <- Sys.time()
 cfg <- read_yaml(cfgPath)
 # Set default values for the climate assessment config data in case they are not available for backward compatibility
 if (is.null(cfg$climate_assessment_root)) cfg$climate_assessment_root <- "/p/projects/rd3mod/python/climate-assessment/src/"
@@ -227,16 +229,13 @@ logMsg <- paste0(
 )
 cat(logMsg)
 capture.output(cat(logMsg), file = logFile, append = TRUE)
+timeStopSetUpAssessment <- Sys.time()
 
 ############################# HARMONIZATION/INFILLING #############################
 
 timeStartHarmInf <- Sys.time()
 system(runHarmoniseAndInfillCmd)
 timeStopHarmInf <- Sys.time()
-
-logMsg <- paste0(date(), "  Done with harmonization & infilling in ", timeStopHarmInf - timeStartHarmInf, "s\n")
-cat(logMsg)
-capture.output(cat(logMsg), file = logFile, append = TRUE)
 
 ############################# RUNNING MODEL #############################
 
@@ -248,6 +247,7 @@ logMsg <- paste0(
 )
 cat(logMsg)
 capture.output(cat(logMsg), file = logFile, append = TRUE)
+
 
 timeStartEmulation <- Sys.time()
 system(runClimateEmulatorCmd)
@@ -262,7 +262,6 @@ climateAssessmentOutput <- file.path(
 assessmentData <- read.quitte(climateAssessmentOutput)
 usePeriods <- as.numeric(grep("[0-9]+", names(climateAssessmentInputData), value = TRUE))
 logMsg <- paste0(
-    date(), "  climate-assessment climate emulator finished in ", timeStopEmulation - timeStartEmulation, "s\n",
     " =================== POSTPROCESS climate-assessment output ==================\n",
     date(), "Read climate assessment output file '", climateAssessmentOutput, "' file containing ", 
     length(usePeriods), " years\n"
@@ -270,6 +269,7 @@ logMsg <- paste0(
 cat(logMsg)
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 
+timeStartPostProcessing <- Sys.time()
 # thesePlease contains all variables IN MAGICC7 format that oughta be written to GDX as NAMES and the GDX file name
 # as VALUES. If the variable is not found in the input data, it will be ignored. If you want the the same variable in 
 # mutliple files, add another entry to the list. TODO: This could config file...
@@ -308,8 +308,11 @@ relevantData <- assessmentData %>%
    # Rename variables to REMIND-style names
    mutate(variable = sapply(.data$variable, renameVariableMagicc7ToRemind, simplify = TRUE, USE.NAMES = FALSE))
 
+timeStopPostProcessing <- Sys.time()
+
 # Loop through each file name given in associateVariablesAndFiles and write the associated variables to GDX files
 # Note: This arrangement is capable of writing multiple variables to the same GDX file
+timeStartWriteGdx <- Sys.time()
 for (currentFn in unique(associateVariablesAndFiles$fileName)) {
     whatToWrite <- associateVariablesAndFiles %>%
         filter(.data$fileName == currentFn) %>%
@@ -346,8 +349,18 @@ for (currentFn in unique(associateVariablesAndFiles$fileName)) {
     cat(logMsg)
     capture.output(cat(logMsg), file = logFile, append = TRUE)
 }
+timeStopWriteGdx <- Sys.time()
+
 logMsg <- paste0(
     date(), " Done writing GDX files\n",
+    date(), "Runtime report:\n",
+        "\tRuntime set_up_script: ",             timeStopSetUpScript - timeStartSetUpScript, "s\n",
+        "\tRuntime preprocessing: ",             timeStopPreprocessing - timeStartPreprocessing, "s\n",
+        "\tRuntime set_up_assessment: ",         timeStopSetUpAssessment - timeStartSetUpAssessment, "s\n",
+        "\tRuntime harmonization & infilling: ", timeStopHarmInf - timeStartHarmInf, "s\n",
+        "\tRuntime emulation: ",                 timeStopEmulation - timeStartEmulation, "s\n",
+        "\tRuntime postprocessing: ",            timeStopPostProcessing - timeStartPostProcessing, "s\n",
+        "\tRuntime write_gdx: ",                 timeStopWriteGdx - timeStartWriteGdx, "s\n",
     date(), " climate-assessment: Finished all\n"
 )
 cat(logMsg)
