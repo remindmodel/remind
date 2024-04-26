@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### changed
 - **scripts** do not check anymore that MAgPIE uses renv
   [[1646](https://github.com/remindmodel/remind/pull/1646)]
+- **37_industry** remove subsector-specific shares of SE
+  origins in FE carriers for performance reasons [[#1659]](https://github.com/remindmodel/remind/pull/1659)
+- **37_industry** make process-based steel production model the default over the ces-based model [[#1663]](https://github.com/remindmodel/remind/pull/1663)
+- **core** another change of preference parameters and associated computation of interest rates/mark ups [[#1663]](https://github.com/remindmodel/remind/pull/1663)	
 
 ## [3.3.0] - 2024-03-28
 
