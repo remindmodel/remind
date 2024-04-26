@@ -189,7 +189,7 @@ $ifthen.import_nzero_EU "%cm_import_EU%" == "nzero"
 *** 100 TWh = 100 * 0.0036 EJ/yr =  100 * 0.0036 * sm_EJ_2_TWa TWa = 100 * 0.0036 * 0.03171 TWa = 0.0114156 TWa
 
 *** calculating the share of FE demand per carrier for each region in each region group
-  p24_seAggReference(ttot,regi,seAgg) = sum(enty$seAgg2se(seAgg,enty), sum(se2fe(enty,enty2,te), p_prodFEReference(ttot,regi,enty,enty2,te)));
+  p24_seAggReference(ttot,regi,seAgg) = sum(enty$seAgg2se(seAgg,enty), sum(se2fe(enty,enty2,te), pm_prodFEReference(ttot,regi,enty,enty2,te)));
   p24_FEShareInRegion(ttot,ext_regi,regi,seAgg)$(regi_group(ext_regi,regi) and p24_seAggReference(ttot,regi,seAgg)) = p24_seAggReference(ttot,regi,seAgg) / sum(regi2$regi_group(ext_regi,regi2), p24_seAggReference(ttot,regi2,seAgg));
 
 *** defining Germany H2 trade import flows

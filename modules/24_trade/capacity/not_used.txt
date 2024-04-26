@@ -7,3 +7,4 @@
 name,type,reason
 pm_gdp,input,questionnaire
 pm_SEPrice, parameter, not yet used in capacity realization
+pm_prodFEReference, parameter, not needed

@@ -1585,7 +1585,7 @@ sm_globalBudget_dev = 1;
 *' load production values from reference gdx to allow penalizing changes vs reference run in the first time step via q_changeProdStartyearCost/q21_taxrevChProdStartYear
 if (cm_startyear gt 2005,
 execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
-execute_load "input_ref.gdx", p_prodFEReference = vm_prodFe.l;
+execute_load "input_ref.gdx", pm_prodFEReference = vm_prodFe.l;
 execute_load "input_ref.gdx", p_prodUeReference = v_prodUe.l;
 execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
 );
@@ -1593,7 +1593,7 @@ execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
 p_prodAllReference(t,regi,te) =
     sum(pe2se(enty,enty2,te),  p_prodSeReference(t,regi,enty,enty2,te) )
   + sum(se2se(enty,enty2,te),  p_prodSeReference(t,regi,enty,enty2,te) )
-  + sum(se2fe(enty,enty2,te),  p_prodFEReference(t,regi,enty,enty2,te) )
+  + sum(se2fe(enty,enty2,te),  pm_prodFEReference(t,regi,enty,enty2,te) )
   + sum(fe2ue(enty,enty2,te),  p_prodUeReference(t,regi,enty,enty2,te) )
   + sum(ccs2te(enty,enty2,te), sum(teCCS2rlf(te,rlf), p_co2CCSReference(t,regi,enty,enty2,te,rlf) ) )
 ;
