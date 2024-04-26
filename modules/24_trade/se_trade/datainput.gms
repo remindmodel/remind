@@ -183,78 +183,64 @@ $endif.import_h2_EU
 $ifthen.import_nzero_EU "%cm_import_EU%" == "nzero"
 
 *** H2 trade:
-***   Importing regions: Germany, 100 TWh/yr, and EWN, proportional to German values and FE|Gases demand by 2050 in reference run (NZero run without trade, or NPi?).
+***   Importing regions: Germany, 100 TWh/yr, and EWN, proportional to German values and FE|Gases demand by 2050 in the reference NPi run.
 ***   Exporting regions: UK, Norway and Spain (one-third each)
-***   exponential curve starting by 2020 at 4 TWh for Germany
+***   exponential curve starting at 12 TWh by 2030 for Germany
+*** 100 TWh = 100 * 0.0036 EJ/yr =  100 * 0.0036 * sm_EJ_2_TWa TWa = 100 * 0.0036 * 0.03171 TWa = 0.0114156 TWa
 
-*** calculating share of FE demand per carrier at each region group
-  loop(regi_group(ext_regi,regi),
-    loop(seAgg,
-      p24_FEShareInRegion(ttot,ext_regi,regi,seAgg) = 
-        sum(enty$seAgg2se(seAgg,enty), sum(se2fe(enty,enty2,te), p_prodFEReference(ttot,regi,enty,enty2,te))) !! 2050 fe gas 
-        /
-        sum(regi2$regi_group(ext_regi,regi2), sum(enty$seAgg2se(seAgg,enty), sum(se2fe(enty,enty2,te), p_prodFEReference(ttot,regi2,enty,enty2,te))));
-    );
-  );
+*** calculating the share of FE demand per carrier for each region in each region group
+  p24_seAggReference(ttot,regi,seAgg) = sum(enty$seAgg2se(seAgg,enty), sum(se2fe(enty,enty2,te), p_prodFEReference(ttot,regi,enty,enty2,te)));
+  p24_FEShareInRegion(ttot,ext_regi,regi,seAgg)$(regi_group(ext_regi,regi) and p24_seAggReference(ttot,regi,seAgg)) = p24_seAggReference(ttot,regi,seAgg) / sum(regi2$regi_group(ext_regi,regi2), p24_seAggReference(ttot,regi2,seAgg));
 
 *** defining Germany H2 trade import flows
 *** 2050 and onward
-  p24_seTradeCapacity(t,"UKI","DEU","seh2")$(t.val ge 2050) = 100 * 1/3;
-  p24_seTradeCapacity(t,"NEN","DEU","seh2")$(t.val ge 2050) = 100 * 2/3;
+  p24_seTradeCapacity(t,"UKI","DEU","seh2")$(t.val ge 2050) = 100 * 0.0036 * sm_EJ_2_TWa * 1/3;
+  p24_seTradeCapacity(t,"NEN","DEU","seh2")$(t.val ge 2050) = 100 * 0.0036 * sm_EJ_2_TWa * 2/3;
 *** 2030
-  p24_seTradeCapacity("2030","UKI","DEU","seh2") = 12 * 1/3;
-  p24_seTradeCapacity("2030","NEN","DEU","seh2") = 12 * 2/3;
+  p24_seTradeCapacity("2030","UKI","DEU","seh2") = 12 * 0.0036 * sm_EJ_2_TWa * 1/3;
+  p24_seTradeCapacity("2030","NEN","DEU","seh2") = 12 * 0.0036 * sm_EJ_2_TWa * 2/3;
 
 *** defining EWN H2 trade import flows
 *** 2050 and onward
-  p24_seTradeCapacity(t,"UK","EWN","seh2")$(t.val ge 2050) = 
-    (100 / (p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega") / (p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega") + p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega")))) !! total EU imports given DEU = 100 TWh/yr
-    * p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega") * 1/3;
-  p24_seTradeCapacity(t,"ESW","EWN","seh2")$(t.val ge 2050) = 
-    (100 / (p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega") / (p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega") + p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega")))) !! total EU imports given DEU = 100 TWh/yr
-    * p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega") * 2/3;
+  p24_seTradeCapacity(t,"UKI","EWN","seh2")$(t.val ge 2050) = 100 * 0.0036 * sm_EJ_2_TWa * (p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega")/p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega")) * 1/3;
+  p24_seTradeCapacity(t,"ESW","EWN","seh2")$(t.val ge 2050) = 100 * 0.0036 * sm_EJ_2_TWa * (p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega")/p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega")) * 2/3;
 *** 2030
-  p24_seTradeCapacity("2030","UKI","EWN","seh2") = 8 * 1/3;
-  p24_seTradeCapacity("2030","ESW","EWN","seh2") = 8 * 2/3;
+  p24_seTradeCapacity("2030","UKI","EWN","seh2") = 12 * 0.0036 * sm_EJ_2_TWa * (p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega")/p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega")) * 1/3;
+  p24_seTradeCapacity("2030","ESW","EWN","seh2") = 12 * 0.0036 * sm_EJ_2_TWa * (p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega")/p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega")) * 2/3;
 
 *** exponential curve for years in between
-  p24_seTradeCapacity(t,enty,enty2,"seh2")$(p24_seTradeCapacity("2050",enty,enty2,"seh2") and (t.val gt 2030 and t.val lt 2050)) = 
-    ((power(p24_seTradeCapacity("2050",enty,enty2,"seh2"),1/4)) / p24_seTradeCapacity("2030",enty,enty2,"seh2")) - 1;
+  p24_seTradeCapacity(t,regi,regi2,"seh2")$(p24_seTradeCapacity("2050",regi,regi2,"seh2") and (t.val gt 2030 and t.val lt 2050)) = 
+    p24_seTradeCapacity("2030",regi,regi2,"seh2") * ((sqrt(sqrt(p24_seTradeCapacity("2050",regi,regi2,"seh2") / p24_seTradeCapacity("2030",regi,regi2,"seh2")))) ** ((t.val - 2030)/5)) ;
 
-*** E-fuels trade:
-***   All regions import proportionally to their 2050 FE|Transport|Pass|Aviation + FE|Industry|Chemicals in a reference run (NZero run without trade, or NPi?)
+*** E-fuels (e-liquids) trade:
+***   All regions (EU-27 and UKI) import proportionally to their 2050 FE|Transport|Pass|Aviation + FE|Industry|Chemicals|Liquids in the reference NPi run.
 ***   Exporting regions: SSA, LAM and MEA (one-third each)
-***   Import quantities: exponential increase with 6 TWh/yr by 2030 for the EU27, and 500 TWh/yr by 2050 (Germany: 100 TWh/yr by 2050)
-***   Imports are considered as pure e-liquids (no e-gases for now)
+***   Import quantities: exponential increase from 1.2 TWh/yr by 2030 to 100 TWh/yr by 2050 for Germany
 
 execute_load "input_ref.gdx", p24_demFeForEsReference = vm_demFeForEs.l;
 execute_load "input_ref.gdx", p24_demFeIndSubReference = o37_demFeIndSub;
 
 *** calculating share of FE aviation and chemicals demand at each region group
-p24_aviationAndChemicalsFEShareInRegion(ttot,ext_regi,regi) = 
-  ( 
-    p24_demFeForEsReference(ttot,regi,"fedie","esdie_pass_lo","te_esdie_pass_lo") + !! aviation FE demand
-    sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,"indst") AND sector2emiMkt("indst",emiMkt)), o37_demFeIndSub(ttot,regi,entySe,entyFe,"chemicals",emiMkt)) !! chemicals FE demand
-  ) /
-  sum(regi2$regi_group(ext_regi,regi2), 
-    p24_demFeForEsReference(ttot,regi2,"fedie","esdie_pass_lo","te_esdie_pass_lo") + !! aviation FE demand
-    sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,"indst") AND sector2emiMkt("indst",emiMkt)), o37_demFeIndSub(ttot,regi2,entySe,entyFe,"chemicals",emiMkt)) !! chemicals FE demand
-  )
-  ;
+  p24_aviationAndChemicalsFE(ttot,regi) = p24_demFeForEsReference(ttot,regi,"fedie","esdie_pass_lo","te_esdie_pass_lo") + !! aviation FE demand
+    sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,"indst") AND sector2emiMkt("indst",emiMkt) AND (sameas("fehos",entyFe))), p24_demFeIndSubReference(ttot,regi,entySe,entyFe,"chemicals",emiMkt)); !! chemicals FE demand
+  p24_aviationAndChemicalsFEShareInRegion(ttot,ext_regi,regi)$(regi_group(ext_regi,regi) and p24_aviationAndChemicalsFE(ttot,regi)) = 
+    p24_aviationAndChemicalsFE(ttot,regi) / sum(regi2$regi_group(ext_regi,regi2), p24_aviationAndChemicalsFE(ttot,regi2));
+
+display p24_aviationAndChemicalsFEShareInRegion;
 
 *** defining Germany seliqsyn trade import flows
-  loop(regi$(sameas(regi,"SSA") or sameas(regi,"LAM") or sameas(regi,"MEA")), !! supplier regions provide each one-third of total imports
+  loop(regi$(sameas(regi,"SSA") or sameas(regi,"LAM") or sameas(regi,"MEA")), !! each supplier region provide one-third of total imports
 *** 2050 and onward
     p24_seTradeCapacity(t,regi,regi2,"seliqsyn")$(t.val ge 2050) = 
-      ( 100 / p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi","DEU") ) !! total EUR imports based on Germany values
+      ( 100 * 0.0036 * sm_EJ_2_TWa  / p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi","DEU") ) !! total EUR imports based on Germany values
       * p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi",regi2) * 1/3;
 *** 2030 
-    p24_seTradeCapacity("2030",regi,regi2,"seliqsyn") = (6 * p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi",regi2)) * 1/3;
+    p24_seTradeCapacity("2030",regi,regi2,"seliqsyn") = ((1.2 * 0.0036 * sm_EJ_2_TWa / p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi","DEU") ) * p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi",regi2)) * 1/3;
   );
 
 *** exponential curve for years in between
-  p24_seTradeCapacity(t,enty,enty2,"seliqsyn")$(p24_seTradeCapacity("2050",enty,enty2,"seliqsyn") and (t.val gt 2030 and t.val lt 2050)) = 
-    ((power(p24_seTradeCapacity("2050",enty,enty2,"seliqsyn"),1/4)) / p24_seTradeCapacity("2030",enty,enty2,"seliqsyn")) - 1;
+  p24_seTradeCapacity(t,regi,regi2,"seliqsyn")$(p24_seTradeCapacity("2050",regi,regi2,"seliqsyn") and (t.val gt 2030 and t.val lt 2050)) = 
+    p24_seTradeCapacity("2030",regi,regi2,"seliqsyn") * ((sqrt(sqrt(p24_seTradeCapacity("2050",regi,regi2,"seliqsyn") / p24_seTradeCapacity("2030",regi,regi2,"seliqsyn")))) ** ((t.val - 2030)/5)) ;
 
 display p24_seTradeCapacity;
 
