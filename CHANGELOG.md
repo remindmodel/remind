@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** do not check anymore that MAgPIE uses renv
   [[1646](https://github.com/remindmodel/remind/pull/1646)]
 
+### added
+- **24_trade** add optinal trade scenario for EUR hydrogen and e-liquids imports [[#1666](https://github.com/remindmodel/remind/pull/1666)] 
+
 ## [3.3.0] - 2024-03-28
 
 ### changed
