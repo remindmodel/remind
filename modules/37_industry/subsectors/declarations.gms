@@ -29,7 +29,8 @@ Parameters
   p37_specFeDemTarget(all_enty,all_te,opmoPrc)                                  "Best available technology (will be reached in convergence year) [TWa/Gt_output]"
   pm_outflowPrcIni(all_regi,all_te,opmoPrc)                                    "Exogenously prescribed production volume of processes in start year (from IEA data)"
   p37_mat2ue(all_enty,all_in)                                                  "Contribution of process output to ue in CES tree [Gt/Gt]. Trivial if just one material per UE, as in steel"
-  p37_captureRate(all_te,opmoPrc)                                              "Capture rate of CCS technology"
+  p37_captureRate(all_te)                                                      "Capture rate of CCS technology"
+  p37_selfCaptureRate(all_te)                                                  "Share of emissions from fossil fuels used for a CCS process which are captured by the CCS process itself"
   p37_priceMat(all_enty)                                                       "Prices of external material input [2005$/kg] = [trn2005$/Gt]"
 
   p37_chemicals_feedstock_share(ttot,all_regi)               "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
@@ -52,8 +53,9 @@ Parameters
   o37_shareRoute(ttot,all_regi,all_te,opmoPrc,route)                     "The relative share (between 0 and 1) of a technology and operation mode outflow which belongs to a certain route; For example, bf.standard belongs partly to the route bfbof and partly to the route bfbof"
   o37_ProdIndRoute(ttot,all_regi,mat,route)                              "produciton volume of a material via each process route"
   o37_demFeIndRoute(ttot,all_regi,all_enty,all_te,route,secInd37)        "FE demand by FE type, process route and tech"
+  o37_specificEmi(ttot,all_regi,all_te,opmoPrc)                          "Specific emissions of a technology; Needed as auxiliary for relative outflow calculation of CC tech"
   !! TODO: make route specific; So far, this only works because the relative outflow of each tech/opmo is the same for all routes.
-  o37_relativeOutflow(ttot,all_regi,all_te,opmoPrc)                      "Outflow of a process relative to the outflow of the route, i.e. the final product of that route"
+  o37_relativeOutflow(ttot,all_regi,all_te,opmoPrc)                      "Outflow of a process relative to the outflow of the route, i.e. the final product of that route; Needed for LCOP calculation"
 
   p37_CESMkup_input(all_in)  "markup cost parameter read in from config for CES levels in industry to influence demand-side cost and efficiencies in CES tree [trUSD/CES input]"
   /
@@ -87,6 +89,7 @@ Positive Variables
   vm_outflowPrc(tall,all_regi,all_te,opmoPrc)                               "Production volume of processes in process-based model [Gt/a]"
   v37_matFlow(tall,all_regi,all_enty)                                       "Production of materials [Gt/a]"
   v37_emiPrc(tall,all_regi,all_enty,all_te,opmoPrc)                         "Emissions per process and operation mode [GtC/a]"
+  v37_shareWithCC(tall,all_regi,all_te,opmoPrc)                             "Share of process and operation mode equipped with carbon capture technology"
   vm_costMatPrc(tall,all_regi)                                              "Cost of external material inputs such as iron ore in process-based industry [trn $2005/a]"
 ;
 

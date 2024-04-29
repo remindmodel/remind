@@ -385,11 +385,12 @@ q37_prodMat(t,regi,mat)$( matOut(mat) ) ..
 ***------------------------------------------------------
 *' Hand-over to CES
 ***------------------------------------------------------
-q37_mat2ue(t,regi,all_in)$( ppfUePrc(all_in) ) ..
-    vm_cesIO(t,regi,all_in)
+q37_mat2ue(t,regi,in)$( ppfUePrc(in) ) ..
+    vm_cesIO(t,regi,in)
+    + pm_cesdata(t,regi,in,"offset_quantity")
   =e=
-    sum(mat2ue(mat,all_in),
-      p37_mat2ue(mat,all_in)
+    sum(mat2ue(mat,in),
+      p37_mat2ue(mat,in)
       *
       v37_matFlow(t,regi,mat)
     )
@@ -423,18 +424,28 @@ q37_emiPrc(t,regi,entyFe,tePrc,opmoPrc) ..
     vm_outflowPrc(t,regi,tePrc,opmoPrc)
 ;
 
+
 ***------------------------------------------------------
-*' Carbon capture processes can only capture as much co2 as the base process emits
+*' Carbon capture processes can only capture as much co2 as the base process and the CCS process combined emit
 ***------------------------------------------------------
-q37_limitOutflowCCPrc(t,regi,tePrc) ..
-    sum((entyFe,tePrc2opmoPrc(tePrc,opmoPrc)),
-      v37_emiPrc(t,regi,entyFe,tePrc,opmoPrc))
-  =g=
-    sum(tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc),
-      1. / p37_captureRate(teCCPrc,opmoCCPrc)
-      *
+q37_limitOutflowCCPrc(t,regi,teCCPrc)$(
+                sum((tePrc,opmoPrc,opmoCCPrc),tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)) ) ..
+    sum(tePrc2opmoPrc(teCCPrc,opmoCCPrc),
       vm_outflowPrc(t,regi,teCCPrc,opmoCCPrc)
     )
+  =e=
+    p37_captureRate(teCCPrc)
+    *
+    sum((entyFe,tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)),
+      v37_shareWithCC(t,regi,tePrc,opmoPrc)
+      *
+      v37_emiPrc(t,regi,entyFe,tePrc,opmoPrc)
+    )
+    +
+    p37_selfCaptureRate(teCCPrc)
+    *
+    sum((entyFe,tePrc2opmoPrc(teCCPrc,opmoCCPrc)),
+      v37_emiPrc(t,regi,entyFe,teCCPrc,opmoCCPrc))
 ;
 
 ***------------------------------------------------------
