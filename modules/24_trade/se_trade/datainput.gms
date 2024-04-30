@@ -193,19 +193,15 @@ $ifthen.import_nzero_EU "%cm_import_EU%" == "nzero"
 
 *** defining Germany H2 trade import flows
 *** 2050 and onward
-  p24_seTradeCapacity(t,"UKI","DEU","seh2")$(t.val ge 2050) = (100 / sm_TWa_2_TWh) * 1/3;
-  p24_seTradeCapacity(t,"NEN","DEU","seh2")$(t.val ge 2050) = (100 / sm_TWa_2_TWh) * 2/3;
+  p24_seTradeCapacity(t,regi,"DEU","seh2")$((t.val ge 2050) and (sameas(regi,"UKI") or sameas(regi,"NEN") or sameas(regi,"ESW"))) = (100 / sm_TWa_2_TWh) * 1/3; !! each supplier region provides one-third of the imports
 *** 2030
-  p24_seTradeCapacity("2030","UKI","DEU","seh2") = (12 / sm_TWa_2_TWh) * 1/3;
-  p24_seTradeCapacity("2030","NEN","DEU","seh2") = (12 / sm_TWa_2_TWh) * 2/3;
+  p24_seTradeCapacity("2030",regi,"DEU","seh2")$((sameas(regi,"UKI") or sameas(regi,"NEN") or sameas(regi,"ESW"))) = (12 / sm_TWa_2_TWh) * 1/3; !! each supplier region provides one-third of the imports
 
 *** defining EWN H2 trade import flows
 *** 2050 and onward
-  p24_seTradeCapacity(t,"UKI","EWN","seh2")$(t.val ge 2050) = (100 / sm_TWa_2_TWh) * (p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega")/p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega")) * 1/3;
-  p24_seTradeCapacity(t,"ESW","EWN","seh2")$(t.val ge 2050) = (100 / sm_TWa_2_TWh) * (p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega")/p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega")) * 2/3;
+  p24_seTradeCapacity(t,regi,"EWN","seh2")$((t.val ge 2050) and (sameas(regi,"UKI") or sameas(regi,"NEN") or sameas(regi,"ESW"))) = (100 / sm_TWa_2_TWh) * (p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega")/p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega")) * 1/3;
 *** 2030
-  p24_seTradeCapacity("2030","UKI","EWN","seh2") = (12 / sm_TWa_2_TWh) * (p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega")/p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega")) * 1/3;
-  p24_seTradeCapacity("2030","ESW","EWN","seh2") = (12 / sm_TWa_2_TWh) * (p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega")/p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega")) * 2/3;
+  p24_seTradeCapacity("2030",regi,"EWN","seh2")$((sameas(regi,"UKI") or sameas(regi,"NEN") or sameas(regi,"ESW"))) = (12 / sm_TWa_2_TWh) * (p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega")/p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega")) * 1/3;
 
 *** exponential curve for years in between
   p24_seTradeCapacity(t,regi,regi2,"seh2")$(p24_seTradeCapacity("2050",regi,regi2,"seh2") and (t.val gt 2030 and t.val lt 2050)) = 
@@ -225,7 +221,7 @@ execute_load "input_ref.gdx", p24_demFeIndSubReference = o37_demFeIndSub;
   p24_aviationAndChemicalsFEShareInRegion(ttot,ext_regi,regi)$(regi_group(ext_regi,regi) and p24_aviationAndChemicalsFE(ttot,regi)) = 
     p24_aviationAndChemicalsFE(ttot,regi) / sum(regi2$regi_group(ext_regi,regi2), p24_aviationAndChemicalsFE(ttot,regi2));
 
-display p24_aviationAndChemicalsFEShareInRegion;
+* display p24_aviationAndChemicalsFEShareInRegion;
 
 *** defining Germany seliqsyn trade import flows
   loop(regi$(sameas(regi,"SSA") or sameas(regi,"LAM") or sameas(regi,"MEA")), !! each supplier region provide one-third of total imports
