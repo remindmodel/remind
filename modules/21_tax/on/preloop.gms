@@ -154,9 +154,6 @@ p21_tau_SE_tax(t,regi,"elh2") = p21_tau_fe_tax(t,regi,"indst","feels")
                                   * pm_teAnnuity("tdels")
                                   / pm_cf(t,regi,"tdels");
 
-p21_tau_SE_tax_rampup(t,regi,te,"a") = 0.4;
-p21_tau_SE_tax_rampup(t,regi,te,"b") = 10;
-
 *LB* initialization of vm_emiMac
 vm_emiMac.l(ttot,regi,enty) = 0;
 *LB* initialization of v21_emiALLco2neg
