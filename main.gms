@@ -1408,7 +1408,8 @@ $setGlobal cm_import_ariadne  off !! def off
 *** For example: "2030.2050.MEA.EU27_regi.seh2 0.5, 2030.2050.MEA.DEU.seh2 0.3".
 $setGlobal cm_trade_SE_exog off !! def off
 *** cm_SEtaxRampUpParam "set the logistic function parameters to describe relationship between SE electricity tax rate and share of technology in total electricity demand"
-$setGlobal cm_SEtaxRampUpParam  GLO.te.a 0.4, GLO.te.b 10    !! def = GLO.te.a 0.4, GLO.te.b 10
+*** cm_SEtaxRampUpParam = "off" disables v21_tau_SE_tax 
+$setGlobal cm_SEtaxRampUpParam  GLO.elh2.a 0.4, GLO.elh2.b 10    !! def = GLO.te.a 0.4, GLO.te.b 10
 *** cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
 *** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
 *** switch to activate energy security scenario assumptions for Germany including additional tax on gas/oil
