@@ -14,3 +14,4 @@ pm_tsu2opTimeYr,parameter,only used in capacity realization
 pm_ttot_val,parameter,only used in capacity realization
 pm_ts,parameter,only used in capacity realization
 pm_prodFEReference, parameter, not needed
+sm_TWa_2_TWh, parameter, not needed
