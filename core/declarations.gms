@@ -572,6 +572,7 @@ sm_trillion_2_non                                     "trillion to non"         
 s_zj_2_twa                                            "zeta joule to tw year"                              /31.7098/,
 sm_EJ_2_TWa                                           "multiplicative factor to convert from EJ to TWa"    /31.71e-03/,
 sm_GJ_2_TWa                                           "multiplicative factor to convert from GJ to TWa"    /31.71e-12/,
+sm_TWa_2_TWh                                          "tera Watt year to Tera Watt hour"                    /8.76e+3/,
 sm_TWa_2_MWh                                          "tera Watt year to Mega Watt hour"                    /8.76e+9/,
 sm_TWa_2_kWh                                          "tera Watt year to kilo Watt hour"                    /8.76e+12/,
 *RP* all these new conversion factors with the form "s_xxx_2_yyy" are multplicative factors. Thus, if you have a number in Unit xxx, you have to
