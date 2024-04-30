@@ -281,6 +281,10 @@ $ifthen.exogDemScen NOT "%cm_exogDem_scen%" == "off"
 vm_cesIO.fx(t,regi,in)$(pm_exogDemScen(t,regi,"%cm_exogDem_scen%",in))=pm_exogDemScen(t,regi,"%cm_exogDem_scen%",in);
 $endif.exogDemScen
 
+*' This bound avoids hydrogen production from gas in the European region (unlikely to happen after recent gas trade changes)
+vm_deltaCap.up(t,regi,"gasftrec",rlf)$((t.val gt 2005) and (regi_group("EUR_regi",regi))) = 0;
+vm_deltaCap.up(t,regi,"gasftcrec",rlf)$((t.val gt 2005) and (regi_group("EUR_regi",regi))) = 0;
+
 *' @stop
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms
