@@ -12,6 +12,7 @@ library(gms)
 library(methods)
 library(edgeTransport)
 library(quitte)
+library(piamutils)
 ############################# BASIC CONFIGURATION #############################
 gdx_name     <- "fulldata.gdx"             # name of the gdx
 gdx_ref_name <- "input_ref.gdx"            # name of the ref for < cm_startyear
@@ -87,7 +88,7 @@ if(file.exists(edgetOutputDir)) {
                                   gdx = file.path(outputdir, "fulldata.gdx"))
 
   write.mif(EDGET_output, remind_reporting_file, append = TRUE)
-  deletePlus(remind_reporting_file, writemif = TRUE)
+  piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 
   message("end generation of EDGE-T reporting")
 }
@@ -111,7 +112,7 @@ if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
   tmp_mag$scenario <- paste0(scenario)
   tmp_rem_mag <- rbind(tmp_rem, tmp_mag)
   quitte::write.mif(tmp_rem_mag, path = remind_reporting_file)
-  deletePlus(remind_reporting_file, writemif = TRUE)
+  piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 }
 
 message("### end generation of mif files at ", Sys.time())
