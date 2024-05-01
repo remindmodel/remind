@@ -115,6 +115,9 @@ p_maxRegTechCost2015(all_te)                         "highest historical regiona
 p_maxRegTechCost2020(all_te)                         "highest historical regional tech cost in 2020"
 p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data"
 p_newFloorCostdata(all_regi,all_te)                  "print new floor cost data"
+p_gdppcap2050_PPP(all_regi)	                     "regional GDP PPP per capita in 2050"
+p_maxPPP2050					     "maximum income GDP PPP among regions in 2050"
+p_maxSpvCost                                         "maximum spv investment cost among regions"
 
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]"
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1"

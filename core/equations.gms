@@ -474,6 +474,15 @@ $ifthen.floorscen %cm_floorCostScen% == "pricestruc"
     )$( t.val ge 2020 AND t.val le 2100 )
 $endif.floorscen
 
+$ifthen.floorscen %cm_floorCostScen% == "techtrans"
+  + ( pm_data(regi,"learnMult_wFC",teLearn)
+    * ( sum(regi2, vm_capCum(t,regi2,teLearn))
+      + pm_capCumForeign(t,regi,teLearn)
+      )
+          ** pm_data(regi,"learnExp_wFC",teLearn)
+    )$( t.val ge 2020 AND t.val le 2100 )
+$endif.floorscen
+
 $ifthen.floorscen %cm_floorCostScen% == "default"
 *** globally harmonized costs after 2050
   + ( fm_dataglob("learnMult_wFC",teLearn)
