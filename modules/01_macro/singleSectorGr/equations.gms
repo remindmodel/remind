@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/01_macro/singleSectorGr/equations.gms
 
-*' @equation
+*' @equations
 ***---------------------------------------------------------------------------
 *' Usable macroeconomic output - net of climate change damages - is calculated from the macroeconomic output,
 *' taking into account export and import of the final good, taking specific trade costs into account,
@@ -55,9 +55,6 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
   + vm_costEnergySys(ttot,regi)
 ;
 
-*' @stop
-
-*' @code
 ***---------------------------------------------------------------------------
 *' The labor available in every time step and every region comes from exogenous data.
 *' It is the population corrected by the population age structure,

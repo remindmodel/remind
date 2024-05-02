@@ -6,8 +6,6 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/01_macro/singleSectorGr/preloop.gms
 
-*' @code
-*' testdocu
 *** Calculate cummulative depreciation factors
 loop ((t,counter),
 if ( pm_dt(t) eq 2 * counter.val,
@@ -44,7 +42,5 @@ p01_cumDeprecFactor_new(t,regi,in)$(ppfKap(in))
 );
 ); 
 display "test Deprec", p01_cumDeprecFactor_new,p01_cumDeprecFactor_old;
-
-*' @stop
 
 *** EOF ./modules/01_macro/singleSectorGr/preloop.gms

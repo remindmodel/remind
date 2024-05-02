@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/02_welfare/utilitarian/equations.gms
 
-*' @equation
+*' @equations
 ***---------------------------------------------------------------------------
 *' The objective of the optimization is to maximize the total discounted intertemporal utility.
 *' It is summed over all regions. 

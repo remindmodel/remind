@@ -6,6 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/02_welfare/ineqLognormal/equations.gms
 
+*' @equations
 ***---------------------------------------------------------------------------
 *' The objective of the optimization is to maximize the total discounted intertemporal utility.
 *' It is summed over all regions.
@@ -88,17 +89,19 @@ q02_energyExp(ttot,regi)$(ttot.val ge max(2015,cm_startyear))..
 q02_emitaxredistr(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_emitaxredistr(ttot,regi)
     =e=
-* Summing on all markets energy emissions as well as CDR emissions.
+*** Summing on all markets energy emissions as well as CDR emissions.
     sum(emiMkt, 
     vm_emiTeMkt(ttot,regi,"co2",emiMkt)+vm_emiCdr(ttot,regi,"co2")$(sameas(emiMkt,"ETS"))
     + sm_tgn_2_pgc   * (vm_emiTeMkt (ttot,regi,"n2o",emiMkt)+vm_emiCdr(ttot,regi,"n2o")$(sameas(emiMkt,"ETS")))
     + sm_tgch4_2_pgc * (vm_emiTeMkt (ttot,regi,"ch4",emiMkt)+vm_emiCdr(ttot,regi,"ch4")$(sameas(emiMkt,"ETS")))
    )
-* Plus all non-energy emissions sources coming from FF and industrial processes:
+*** Plus all non-energy emissions sources coming from FF and industrial processes:
    	+ vm_emiMacSector(ttot,regi,"co2cement_process")
     + sm_tgch4_2_pgc*(vm_emiMacSector(ttot,regi,"ch4coal")+vm_emiMacSector(ttot,regi,"ch4gas")+vm_emiMacSector(ttot,regi,"ch4oil"))
     + sm_tgn_2_pgc*(vm_emiMacSector(ttot,regi,"n2otrans")+vm_emiMacSector(ttot,regi,"n2oadac")+vm_emiMacSector(ttot,regi,"n2onitac"))
 ;
+
+*' @stop
 
 ***---------------------------------------------------------------------------
 *' Variables affecting inequalities:
