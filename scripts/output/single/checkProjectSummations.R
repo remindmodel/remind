@@ -1,4 +1,4 @@
-library(piamInterfaces)
+library(piamutils)
 library(quitte)
 suppressPackageStartupMessages(library(tidyverse))
 
@@ -31,8 +31,8 @@ for (mapping in c("AR6", "NAVIGATE")) {
   mappingVariables <- mapping %>%
     getMappingVariables(paste0("RT", if (any(grepl("^MAgPIE", levels(mifdata$model)))) "M")) %>%
     unique() %>%
-    removePlus()
-  computedVariables <- unique(paste0(removePlus(mifdata$variable), " (", gsub("^$", "unitless", mifdata$unit), ")"))
+    deletePlus()
+  computedVariables <- unique(paste0(deletePlus(mifdata$variable), " (", gsub("^$", "unitless", mifdata$unit), ")"))
   missingVariables <- sort(setdiff(mappingVariables, computedVariables))
   if (length(missingVariables) > 0) {
     message("# The following ", length(missingVariables), " variables are expected in the piamInterfaces package ",

@@ -13,6 +13,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   origins in FE carriers for performance reasons [[#1659]](https://github.com/remindmodel/remind/pull/1659)
 - **37_industry** make process-based steel production model the default over the ces-based model [[#1663]](https://github.com/remindmodel/remind/pull/1663)
 - **core** another change of preference parameters and associated computation of interest rates/mark ups [[#1663]](https://github.com/remindmodel/remind/pull/1663)	
+- ***scripts*** adjust function calls after moving functionality from `remind2` [[#578]]](https://github.com/pik-piam/remind2/pull/578) to `piamPlotComparison` and `piamutils` [[#1661](https://github.com/remindmodel/remind/pull/1661)
+
+### added
+- **24_trade** add optinal trade scenario for EUR hydrogen and e-liquids imports [[#1666](https://github.com/remindmodel/remind/pull/1666)] 
 
 ## [3.3.0] - 2024-03-28
 

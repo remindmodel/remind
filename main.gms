@@ -1388,7 +1388,7 @@ $setGlobal cm_import_tax off !! def = off  !! regexp = .*(worldPricemarkup|CO2ta
 *** cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 *** EU-specific SE import assumptions (used for ariadne)
 *** different exogenous hydrogen import scenarios for EU regions (developed in ARIADNE project)
-*** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf"
+*** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf", "nzero"
 *** see 24_trade/se_trade/datainput for H2 import assumptions, this switch only works if the trade realization "se_trade" is selected
 $setGlobal cm_import_EU  off !! def off
 *** cm_import_ariadne        "Germany-specific H2 imports assumptions for Ariadne project (needs cm_import_EU to be on)"

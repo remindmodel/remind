@@ -51,6 +51,8 @@ Imports:
     optparse,
     piamenv (>= 0.4.0),
     piamInterfaces (>= 0.17.4),
+    piamPlotComparison (>= 0.0.10),
+    piamutils,
     plotly,
     purrr,
     quitte (>= 0.3128.4),

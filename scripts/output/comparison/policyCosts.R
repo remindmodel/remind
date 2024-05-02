@@ -124,21 +124,21 @@ write_new_reporting <- function(mif_path, scen_name, new_polCost_data) {
   # Overwrite reporting
   magclass::write.report(my_data, file = new_mif_path, ndigit = 7)
   # Create 'withouPlus' mif file
-  remind2::deletePlus(new_mif_path, writemif = TRUE)
+  piamutils::deletePlus(new_mif_path, writemif = TRUE)
   # Return path
   new_mif_path
 }
 
 
 report_transfers <- function(pol_mif, ref_mif) {
-  
+
   # Read in reporting files
   pol_run <- magclass::read.report(pol_mif)
   ref_run <- magclass::read.report(ref_mif)
-  
+
   # Tell the user what's going on
   message("Adding ", crayon::green("transfers"), " to mif file")
-  
+
   # Get gdploss
   gdploss <- pol_run[[1]][["REMIND"]][, , "Policy Cost|GDP Loss (billion US$2005/yr)"]
   # Add rel gdploss (not in percent)
@@ -147,7 +147,7 @@ report_transfers <- function(pol_mif, ref_mif) {
   # Get gdp
   gdp_ref <- ref_run[[1]][["REMIND"]][ , , "GDP|MER (billion US$2005/yr)"]
   gdp_policy <- pol_run[[1]][["REMIND"]][, , "GDP|MER (billion US$2005/yr)"]
-  
+
   # Calculate difference to global rel gdploss
   delta_gdploss <- gdploss_rel[, , ] - gdploss_rel["GLO", , ]
   # Calculate transfer required to equalize rel gdploss across regions
@@ -155,8 +155,8 @@ report_transfers <- function(pol_mif, ref_mif) {
                                        "Policy Cost|Transfers equal effort (billion US$2005/yr)")
   delta_transfer_rel <- 100 * magclass::setNames(delta_transfer / gdp_ref,
                                                  "Policy Cost|Transfers equal effort|Relative to Reference GDP (percent)")
-  
-  
+
+
   # Calculate new gdp variables
   gdp_withtransfers <- magclass::setNames(gdp_policy + delta_transfer,
                                           "GDP|MER|w/ transfers equal effort (billion US$2005/yr)")
@@ -164,17 +164,17 @@ report_transfers <- function(pol_mif, ref_mif) {
                                               "Policy Cost|GDP Loss|w/ transfers equal effort (billion US$2005/yr)")
   gdploss_withtransfers_rel <- 100 * magclass::setNames(gdploss_withtransfers/gdp_ref,
                                                         "Policy Cost|GDP Loss|w/ transfers equal effort|Relative to Reference GDP (percent)")
-  
+
   # Correct sets and bind together
   my_list <- list(delta_transfer, delta_transfer_rel, gdp_withtransfers, gdploss_withtransfers, gdploss_withtransfers_rel)
-  my_transfers <- lapply(my_list, function (x) {magclass::getSets(x, fulldim = FALSE)[3] <- "variable"; x}) %>% 
+  my_transfers <- lapply(my_list, function (x) {magclass::getSets(x, fulldim = FALSE)[3] <- "variable"; x}) %>%
     magclass::mbind()
-  
-  pol_run[[1]][["REMIND"]] <- magclass::mbind(pol_run[[1]][["REMIND"]][, , ], my_transfers) 
-  
+
+  pol_run[[1]][["REMIND"]] <- magclass::mbind(pol_run[[1]][["REMIND"]][, , ], my_transfers)
+
   magclass::write.report(pol_run, file = pol_mif, ndigit = 7, skipempty = FALSE)
-  remind2::deletePlus(pol_mif, writemif = TRUE)
-  
+  piamutils::deletePlus(pol_mif, writemif = TRUE)
+
   my_transfers
 }
 # ###### END FUNCTION DEFINITONS ########################################
