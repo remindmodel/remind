@@ -55,6 +55,9 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
   + vm_costEnergySys(ttot,regi)
 ;
 
+*' @stop
+
+*' @code
 ***---------------------------------------------------------------------------
 *' The labor available in every time step and every region comes from exogenous data.
 *' It is the population corrected by the population age structure,
