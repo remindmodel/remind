@@ -362,7 +362,6 @@ if (archiveClimateAssessmentData) {
     climateAssessmentFiles <- list.files(climateTempDir, pattern = "\\.(xlsx|csv)$", full.names = TRUE)
     climateAssessmentFiles <- c(
         climateAssessmentFiles,
-        file.path(outputDir, "fulldata_postsolve.gdx"),
         file.path(outputDir, "p15_forc_magicc.gdx"),
         file.path(outputDir, "p15_magicc_temp.gdx")
     )
