@@ -12,8 +12,8 @@ q22_costSubsidizeLearning(ttot,regi)$(ttot.val ge max(2010,cm_startyear) )..
     vm_costSubsidizeLearning(ttot,regi)
     =e=
      v22_costSubsidizeLearningForeign(ttot,regi)
-*       +   v22_costSubsidizeLearningOwn(ttot,regi)
-;    
+***       +   v22_costSubsidizeLearningOwn(ttot,regi)
+;
 
 
 q22_costSubsidizeLearningForeign(ttot,regi)$(ttot.val ge max(2010,cm_startyear) )..
