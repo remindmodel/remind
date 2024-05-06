@@ -6,13 +6,15 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/40_techpol/NPi2018/equations.gms
 
+*' @equations
+
 q40_ElecBioBound(t,regi)$(t.val gt 2015)..
 ***am minimum targets for certain technologies
     sum(te2rlf(te,rlf)$(sameas(te,"biochp") OR sameas(te,"bioigcc") OR sameas(te,"bioigccc")), vm_cap(t,regi,te,rlf))
       * 1000 =g= p40_ElecBioBound(t,regi);	 
 
 q40_windBound(t,regi)$(t.val gt 2025)..
-**making target apply to both wind onshore and offshore, when offshore switch is on
+***making target apply to both wind onshore and offshore, when offshore switch is on
 sum(teWind(te), vm_cap(t,regi,te,"1")) 
     =g= p40_TechBound(t,regi,"wind")*0.001
 ;
@@ -25,7 +27,7 @@ sum(pe2se(enty,enty2,te)$(sameas(enty,"pegas")),vm_demPe(t,regi,enty,enty2,te))
   + sum(pe2se(enty,enty2,te)$(sameas(enty,"peoil") OR sameas(enty,"pecoal") OR sameas(enty,"pegas")),vm_demPe(t,regi,enty,enty2,te))
   + sum(pe2se(enty,entySe,te)$(sameas(enty,"pegeo") OR sameas(enty,"pehyd") OR sameas(enty,"pewin")  OR sameas(enty,"pesol")  OR sameas(enty,"peur") ), 
   vm_prodSe(t,regi,enty,entySe,te)/ p40_noncombust_acc_eff(t,iso_regi,te))) 
-  );		
+  );
 
 q40_PElowcarbonBound(t,regi)$(t.val ge 2020 AND (sameas(regi,"CHN") OR sameas(regi,"CHA")))..
 *cb for china, lowCarbon PE (excl. traditional) must be smaller than lowCarbonshare times total PE (substitution method accounting: increase ren. and nuclear PE by inverse of coal power plant efficiencies) 
@@ -52,7 +54,7 @@ q40_PElowcarbonBound(t,regi)$(t.val ge 2020 AND (sameas(regi,"CHN") OR sameas(re
   + sum(pc2te(enty,enty2,te,entySe(enty3)),
      max(0, pm_prodCouple(regi,enty,enty2,te,enty3)) * vm_prodSe(t,regi,enty,enty2,te))
   );
- 
 
-	
+*' @stop
+
 *** EOF ./modules/40_techpol/NPi2018/equations.gms

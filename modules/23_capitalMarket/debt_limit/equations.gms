@@ -6,6 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/23_capitalMarket/debt_limit/equations.gms
 
+*' @equations
+
 q23_limit_debt_growth(t,regi)..
   vm_cesIO(t,regi,"inco") * p23_debt_growthCoeff(regi)
   =g=
@@ -23,5 +25,7 @@ q23_limit_surplus_growth(t,regi)..
   + (pm_pvp(t,"perm")/(pm_pvp(t,"good")+0.000000001)) * (vm_Mport(t,regi,"perm") - vm_Xport(t,regi,"perm"))
   + sum(tradeSe, pm_MPortsPrice(t,regi,tradeSe) * vm_Mport(t,regi,tradeSe)) - sum(tradeSe, pm_XPortsPrice(t,regi,tradeSe) * vm_Xport(t,regi,tradeSe)) 
 ;
+
+*' @stop
 
 *** EOF ./modules/23_capitalMarket/debt_limit/equations.gms

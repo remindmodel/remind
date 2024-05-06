@@ -6,6 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/fixed_shares/equations.gms
 
+*' @equations
+
 ***---------------------------------------------------------------------------
 *'  Industry Final Energy Balance
 ***---------------------------------------------------------------------------
@@ -34,7 +36,6 @@ q37_emiIndBase(ttot,regi,entyFe,secInd37)$( ttot.val ge cm_startyear  ) ..
     * sum((entySe,te)$(se2fe(entySe,entyFe,te) and entySeFos(entySe)), pm_emifac(ttot,regi,entySe,entyFe,te,"co2"))
   )
 ;
-
 
 *' The maximum abatable emissions of a given type (industry subsector, fuel or
 *' process) are calculated from the baseline emissions and the possible 
@@ -189,6 +190,8 @@ q37_costCESmarkup(t,regi,in)$(ppfen_CESMkup_dyn37(in))..
   =e=
   p37_CESMkup(t,regi,in)*(vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
+
+*' @stop
 
 *** EOF ./modules/37_industry/fixed_shares/equations.gms
 
