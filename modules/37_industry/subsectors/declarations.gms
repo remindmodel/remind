@@ -45,6 +45,8 @@ Parameters
 *** output parameters only for reporting
   o37_cementProcessEmissions(ttot,all_regi,all_enty)                     "cement process emissions [GtC/a]"
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)   "FE demand per industry subsector"
+  o37_indCCSshare(ttot,all_regi,secInd37)                                "industry subsector CCS capture share"
+  o37_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)        "Emissions from incineration of plastic waste, net of CCS [GtC]"
   !! process-based implementation
   o37_demFePrc(ttot,all_regi,all_enty,all_te,opmoPrc)                    "Process-based FE demand per FE type and process"
   o37_shareRoute(ttot,all_regi,all_te,opmoPrc,route)                     "The relative share (between 0 and 1) of a technology and operation mode outflow which belongs to a certain route; For example, bf.standard belongs partly to the route bfbof and partly to the route bfbof"

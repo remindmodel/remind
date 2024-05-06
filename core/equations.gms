@@ -576,29 +576,27 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
       vm_emiTeDetailMkt(t,regi,enty2,enty3,te,enty,emiMkt)
     )
     !! energy emissions fuel extraction
-  + v_emiEnFuelEx(t,regi,enty)$(sameas(emiMkt,"ETS"))
+  + v_emiEnFuelEx(t,regi,enty)$( sameas(emiMkt,"ETS") )
     !! Industry CCS emissions
-	- sum(emiInd37_fuel,
-		  vm_emiIndCCS(t,regi,emiInd37_fuel)
-		)$( sameas(enty,"co2") AND sameas(emiMkt,"ETS"))
+  - sum(emiInd37_fuel,
+      vm_emiIndCCS(t,regi,emiInd37_fuel)
+    )$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
     !! substract carbon from biogenic or synthetic origin contained in
     !! plastics that don't get incinerated ("plastic removals")
-  - sum(entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-      sum(se2fe(entySe,entyFe,te)$( entySeBio(entySe) OR entySeSyn(entySe) ),
-        vm_nonIncineratedPlastics(t,regi,entySe,entyFe,emiMkt)
-      )
+  - sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+         se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
+      vm_nonIncineratedPlastics(t,regi,entySe,entyFe,emiMkt)
     )$( sameas(enty,"co2") )
-    !! add emissions from plastics incineration. CHECK FOR DOUBLE-COUNTING RISK
-  + sum(entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-      sum(sefe(entySe,entyFe),
-        vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
-      )
+    !! add emissions from plastics incineration before CCS
+    !! (CCS emissions are subtracted via vm_emiIndCCS)
+  + sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+         sefe(entySe,entyFe)),
+      vm_incinerationEmi_Base(t,regi,entySe,entyFe,emiMkt)
     )$( sameas(enty,"co2") )
     !! add emissions from chemical feedstock with unknown fate
-  + sum(entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-      sum(se2fe(entySe,entyFe,te),
-        vm_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
-      )
+  + sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+         se2fe(entySe,entyFe,te)),
+      vm_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
     )$( sameas(enty,"co2") )
     !! Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS
     !! capacity don't have the same lifetime
@@ -607,7 +605,7 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
     !! period shorter than 5 years)
   + sum(teCCU2rlf(te2,rlf),
       vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)$( sameas(enty,"co2") )
-    )$(sameas(emiMkt,"ETS"))
+    )$( sameas(emiMkt,"ETS") )
 ;
 
 ***--------------------------------------------------

@@ -93,27 +93,25 @@ $endif.exogDem_scen
 *' accounting, just as a CCS baseline.
 ***------------------------------------------------------
 q37_emiIndBase(t,regi,entyFe,secInd37) ..
-    vm_emiIndBase(t,regi,entyFe,secInd37)
+  vm_emiIndBase(t,regi,entyFe,secInd37)
   =e=
-    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfEn(entyFeCC37(entyFe),in)),
+    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),
+         fe2ppfEn(entyFeCC37(entyFe),in)),
       ( vm_cesIO(t,regi,in)
-      - ( p37_chemicals_feedstock_share(t,regi)
-        * vm_cesIO(t,regi,in)
-        )$( in_chemicals_feedstock_37(in) )
-      )
-        *
-        sum(se2fe(entySeFos,entyFe,te),
-            pm_emifac(t,regi,entySeFos,entyFe,te,"co2")
+      * ( 1
+        - p37_chemicals_feedstock_share(t,regi)$( in_chemicals_feedstock_37(in) )
         )
-    )$(NOT secInd37Prc(secInd37))
-    +
-    sum((sefe(entySe,entyFe),secInd37_emiMkt(secInd37,emiMkt)),
-        vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
-      )$( sameas(secInd37,"chemicals") )
-    +
-    sum((secInd37_tePrc(secInd37,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
-        v37_emiPrc(t,regi,entyFe,tePrc,opmoPrc)
-    )$(secInd37Prc(secInd37))
+      )
+    * sum(se2fe(entySeFos,entyFe,te),
+        pm_emifac(t,regi,entySeFos,entyFe,te,"co2")
+      )
+    )$( NOT secInd37Prc(secInd37) )
+  + sum((sefe(entySe,entyFe),secInd37_emiMkt(secInd37,emiMkt)),
+      vm_incinerationEmi_Base(t,regi,entySe,entyFe,emiMkt)
+    )$( sameas(secInd37,"chemicals") )
+  + sum((secInd37_tePrc(secInd37,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
+      v37_emiPrc(t,regi,entyFe,tePrc,opmoPrc)
+  )$( secInd37Prc(secInd37) )
 ;
 
 ***------------------------------------------------------
@@ -290,10 +288,11 @@ q37_plasticWaste(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
   + v37_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)$( ttot.val gt 2070 )
   ;
 
-*' emissions from plastics incineration as a share of total plastic waste, discounted by captured amount
+*' emissions from plastics incineration as a share of total plastic waste,
+*' before CCS
 q37_incinerationEmi(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)) ..
-  vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
+  vm_incinerationEmi_Base(t,regi,entySe,entyFe,emiMkt)
   =e=
     v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
   * pm_incinerationRate(t,regi)
