@@ -106,7 +106,9 @@ q37_emiIndBase(t,regi,entyFe,secInd37) ..
         pm_emifac(t,regi,entySeFos,entyFe,te,"co2")
       )
     )$( NOT secInd37Prc(secInd37) )
-  + sum((sefe(entySe,entyFe),secInd37_emiMkt(secInd37,emiMkt)),
+  + sum((entyFeCC37(entyFe),
+         sefe(entySe,entyFe),
+         secInd37_emiMkt(secInd37,emiMkt)),
       vm_incinerationEmi_Base(t,regi,entySe,entyFe,emiMkt)
     )$( sameas(secInd37,"chemicals") )
   + sum((secInd37_tePrc(secInd37,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
