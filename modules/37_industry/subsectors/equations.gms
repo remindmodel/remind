@@ -6,6 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/subsectors/equations.gms
 
+*' @equations
+
 *** ---------------------------------------------------------------------------
 ***        1. CES-Based (mostly)
 *** ---------------------------------------------------------------------------
@@ -35,7 +37,6 @@ q37_demFeIndst(t,regi,entyFe,emiMkt)$( entyFe2Sector(entyFe,"indst") ) ..
     vm_outflowPrc(t,regi,tePrc,opmoPrc)
   )
 ;
-
 
 ***------------------------------------------------------
 *' Thermodynamic limits on subsector energy demand
@@ -462,4 +463,5 @@ q37_emiCCPrc(t,regi,emiInd37)$(
     )
 ;
 
+*' @stop
 *** EOF ./modules/37_industry/subsectors/equations.gms
