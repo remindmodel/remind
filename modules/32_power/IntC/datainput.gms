@@ -91,8 +91,8 @@ $include "./modules/32_power/IntC/input/p32_flex_maxdiscount.cs4r"
 $offdelim
 /
 ; 
-*** convert from USD2015/MWh to trUSD2015/TWa
-p32_flex_maxdiscount(regi,te) = p32_flex_maxdiscount(regi,te) * sm_TWa_2_MWh * 1e-12;
+*** convert from USD2015/MWh to trUSD2017/TWa
+p32_flex_maxdiscount(regi,te) = p32_flex_maxdiscount(regi,te) * sm_TWa_2_MWh * s_D2015_2_D2017 * 1e-12;
 display p32_flex_maxdiscount;
 $offtext
 

@@ -242,6 +242,13 @@ $if not "%cm_inco0RegiFactor%" == "off" p_inco0(ttot,regi,te)$(p_inco0(ttot,regi
 $if not "%cm_learnRate%" == "off" parameter p_new_learnRate(all_te) / %cm_learnRate% /;
 $if not "%cm_learnRate%" == "off" fm_dataglob("learn",te)$p_new_learnRate(te)=p_new_learnRate(te);
 
+
+*** generisdata_tech is in $2015. Needs to be converted to $2017
+fm_dataglob("inco0",te)              = s_D2015_2_D2017 * fm_dataglob("inco0",te);
+fm_dataglob("incolearn",te)          = s_D2015_2_D2017 * fm_dataglob("incolearn",te);
+fm_dataglob("omv",te)                = s_D2015_2_D2017 * fm_dataglob("omv",te);
+p_inco0(ttot,regi,te)                = s_D2015_2_D2017 * p_inco0(ttot,regi,te);
+
 *** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for ccs-related tech or $/(t/a) for process-based industry)
 *** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for ccs-related tech or T$/(Gt/a) for process-based industry)
 *** note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
