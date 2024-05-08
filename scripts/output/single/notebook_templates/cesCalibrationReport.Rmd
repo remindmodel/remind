@@ -77,7 +77,7 @@ ces <- ces %>% filter(.data$pf %in% c(ppf_29, pf_eff_target_dyn37))
 last_iteration <- max(itr)
 ```
 
-## Quantity Outliers
+### Quantity Outliers
 
 ```{r quantity outliers}
 threshold <- 0.15
@@ -113,7 +113,7 @@ knitr::kable(df, caption = "Quantities diverge by more than 15%")
 
 \newpage
 
-## Price Outliers
+### Price Outliers
 
 ```{r price outliers}
 threshold <- 0.01
@@ -140,7 +140,7 @@ knitr::kable(df, caption = "Prices below 0.01")
 
 \newpage
 
-## Line Plots
+### Line Plots
 
 \newpage
 
