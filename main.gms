@@ -1561,6 +1561,11 @@ $setGlobal cm_CESMkup_build  standard  !! def = standard
 *** addressed in cm_CESMkup_ind_data.
 $setGlobal cm_CESMkup_ind        standard  !! def = standard
 $setGlobal cm_CESMkup_ind_data   ""        !! def = ""
+
+*** cm_fxIndUe "switch for fixing UE demand in industry to baseline level - no endogenous demand adjustment"
+$setGlobal cm_fxIndUe        on  !! def = off
+$setGlobal cm_fxIndUeReg     "CHA"       !! def = ""
+
 *** cm_wasteIncinerationCCSshare, proportion of waste incineration emissions that is captured and geologically stored at a given year and region
 *** off: means that all plastics incineration emissions in the World goes back to the atmosphere.
 *** 2050.GLO 0.5, 2050.EUR 0.8: means that 50% of waste incineration emissions are captured for all regions from 2050 onward, except for Europe that has 80% of its waste incineration emissions captured.
