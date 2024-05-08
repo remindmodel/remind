@@ -13,9 +13,12 @@ if (!exists("source_include")) {
   readArgs("outputdir")
 }
 
-
-yamlParams <- list(outputdir = normalizePath(outputdir, mustWork = TRUE))
 scenario <- lucode2::getScenNames(outputdir)
+
+yamlParams <- list(
+  outputdir = normalizePath(outputdir, mustWork = TRUE),
+  doctitle = paste0("CES Calibration Report ", scenario)
+)
 
 rmarkdown::render(
   file.path("scripts", "output", "single", "notebook_templates", "cesCalibrationReport.Rmd"),
