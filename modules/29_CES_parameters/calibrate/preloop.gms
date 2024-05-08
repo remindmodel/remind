@@ -162,6 +162,37 @@ if (smin((t,regi_dyn29(regi),ppf_29(in)), pm_cesdata(t,regi,in,"price")) le 0,
   abort "Some ppf prices are <= 0. Check ./modules/29_CES_parameters/calibrate/input/pm_cesdata_price_XXX.inc!";
 );
 
+*** Limit changes in prices for susceptible pf
+if (sum((t,regi_dyn29(regi),in_limit_price_change_29(ppf_29(in))),
+      (pm_cesdata(t,regi,in,"price") > 2   * p29_cesdata_load(t,regi,in,"price"))
+    + (pm_cesdata(t,regi,in,"price") < 0.5 * p29_cesdata_load(t,regi,in,"price"))
+    ),
+  put logfile, " " / "limiting pf price changes" /;
+  loop ((t,regi_dyn29(regi),in_limit_price_change_29(ppf_29(in))),
+    sm_tmp 
+    = pm_cesdata(t,regi,in,"price")
+    / p29_cesdata_load(t,regi,in,"price");
+
+    if (sm_tmp < 0.5 OR 2 < sm_tmp,
+      put pm_cesdata.tn(t,regi,in,"price"), " [",
+          p29_cesdata_load(t,regi,in,"price"), " -> ",
+	  pm_cesdata(t,regi,in,"price"), "] -> ";
+
+      pm_cesdata(t,regi,in,"price")
+      = min(
+          max(
+            pm_cesdata(t,regi,in,"price"),
+            0.5 * p29_cesdata_load(t,regi,in,"price")
+          ),
+          2 * p29_cesdata_load(t,regi,in,"price")
+        );
+
+      put pm_cesdata(t,regi,in,"price") /;
+    );
+  );
+  putclose logfile, " " /;
+);
+
 *** Write prices to file
 if (sm_CES_calibration_iteration eq 1, !! first CES calibration iteration
   put file_CES_calibration;
@@ -204,7 +235,7 @@ if (sm_CES_calibration_iteration eq 1, !! first CES calibration iteration
   loop ((ttot,regi_dyn29(regi),te_29_report),
     put "%c_expname%", "origin", ttot.tl, regi.tl, "vm_deltaCap";
     put te_29_report.tl;
-    put sum(rlf,vm_deltacap.L(ttot,regi,te_29_report,rlf)) /;
+    put sum(rlf,vm_deltaCap.L(ttot,regi,te_29_report,rlf)) /;
   );
   putclose file_CES_calibration;
 );
@@ -325,8 +356,8 @@ loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2020),
 loop (ttot$( ttot.val ge 2005),
   pm_cesdata(ttot,regi_dyn29(regi),in_29,"price")$( ppf_29(in_29) AND (NOT sameas(in_29,"entrp_frgt_lo")) )
   = max(
-    ( 1e-2$( NOT in_industry_dyn37(in_29) )
-    + 1e-4$(     in_industry_dyn37(in_29) )
+    ( 1e-2$( NOT (in_buildings_dyn36(in_29) OR in_industry_dyn37(in_29)) )
+    + 1e-4$(     (in_buildings_dyn36(in_29) OR in_industry_dyn37(in_29)) )
     ),
     pm_cesdata(ttot,regi,in_29,"price")
   );
@@ -458,6 +489,7 @@ display "after change up to en consistency", pm_cesdata;
 *** have specific restrictions. Capital works as for the other ppfen, Labour
 *** will be the adjustment variable to meet inco. xi will not be equal to the
 *** income share of capital (from equation price = derivative)
+
 pm_cesdata(t,regi_dyn29,"kap","xi")
   = pm_cesdata(t,regi_dyn29,"kap","price")
   * pm_cesdata(t,regi_dyn29,"kap","quantity")
@@ -889,7 +921,38 @@ $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
 *** c_CES_calibration_industry_FE_target == 1 means that
 *** industry ppfen input prices are scaled to make the Euler identity hold
 
-*** Abort if any industry EEK value is lower than subsector output quantity
+*** Limit changes in prices for industry EEK
+if (sum((t,regi_dyn29(regi),in_limit_price_change_29(ppfKap_industry_dyn37(in))),
+      (pm_cesdata(t,regi,in,"price") > 2   * p29_cesdata_load(t,regi,in,"price"))
+    + (pm_cesdata(t,regi,in,"price") < 0.5 * p29_cesdata_load(t,regi,in,"price"))
+    ),
+  put logfile, " " / "limiting pf price changes" /;
+  loop ((t,regi_dyn29(regi),in_limit_price_change_29(ppfKap_industry_dyn37(in))),
+    sm_tmp 
+    = pm_cesdata(t,regi,in,"price")
+    / p29_cesdata_load(t,regi,in,"price");
+
+    if (sm_tmp < 0.5 OR 2 < sm_tmp,
+      put pm_cesdata.tn(t,regi,in,"price"), " [",
+          p29_cesdata_load(t,regi,in,"price"), " -> ",
+	  pm_cesdata(t,regi,in,"price"), "] -> ";
+
+      pm_cesdata(t,regi,in,"price")
+      = min(
+          max(
+            pm_cesdata(t,regi,in,"price"),
+            0.5 * p29_cesdata_load(t,regi,in,"price")
+          ),
+          2 * p29_cesdata_load(t,regi,in,"price")
+        );
+
+      put pm_cesdata(t,regi,in,"price") /;
+    );
+  );
+  putclose logfile, " " /;
+);
+
+*** Abort if any industry EEK value is higher than subsector output quantity
 sm_tmp = smin((t,regi_dyn29(regi),
                cesOut2cesIn(ue_industry_dyn37(out),ppfKap(in))
                ),
@@ -1014,7 +1077,7 @@ $endif.industry_FE_target
 !! - adjust efficiency parameters for feelhth_X and feh2_X
 $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "0"
 loop (cesOut2cesIn(in_industry_dyn37(out),in)$(
-                              (ppfen(in) OR ipf(in))
+                              (ppfEn(in) OR ipf(in))
                           AND NOT industry_ue_calibration_target_dyn37(out)
                           AND NOT cesOut2cesIn_below("ue_steel_secondary",in) ),
   !! in2 is the reference energy input (gas if 'in' is H2)

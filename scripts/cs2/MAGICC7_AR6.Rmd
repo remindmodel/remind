@@ -1,0 +1,36 @@
+<!--
+|  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+|  authors, and contributors see CITATION.cff file. This file is part
+|  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+|  AGPL-3.0, you are granted additional permissions described in the
+|  REMIND License Exception, version 1.0 (see LICENSE file).
+|  Contact: remind@pik-potsdam.de
+-->
+# Climate
+
+```{r MAGICC6}
+showLinePlots(data, "Forcing")
+showLinePlots(data, "Temperature|Global Mean")
+```
+
+# MAGICC7 AR6 Climate
+
+```{r Climate}
+
+allmagiccvar <- grep("^MAGICC7.*50\\.0th Percentile", unique(data$variable), value = TRUE)
+mainmagiccvar <-  c("Surface Temperature (GSAT)", "Atmospheric Concentrations|CO2",
+                    "Effective Radiative Forcing|Basket|Anthropogenic")
+mainmagiccvar <- paste0("MAGICC7 AR6|", mainmagiccvar, "|50.0th Percentile")
+allmagiccvar <- unique(c(mainmagiccvar, allmagiccvar)) # main first
+
+if (length(allmagiccvar) == 0) {
+  print("No MAGICC7 data found, run output.R -> single -> MAGICC7_AR6")
+} else {
+  for (mv in allmagiccvar) {
+    showLinePlots(data, mv)
+    print(plotPercentiles(data, variables = gsub("|50.0th Percentile", "", mv, fixed = TRUE)))
+    cat("\n\n")
+  }
+}
+
+```

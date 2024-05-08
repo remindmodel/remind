@@ -17,6 +17,7 @@ p45_taxCO2eqFirstNDCyear(all_regi)                       "CO2eq tax in p45_first
 p45_taxCO2eqLastNDCyear(all_regi)                        "CO2eq tax in p45_lastNDCyear"
 p45_CO2eqwoLU_actual_iter(iteration,ttot,all_regi)       "actual level of regional GHG emissions p45_CO2eqwoLU_actual tracked over iterations"
 p45_taxCO2eq_iter(iteration,ttot,all_regi)               "CO2eq tax non-regi tracked over iterations"
+p45_taxCO2eq_bau(ttot,all_regi)                          "level of CO2 taxes in business as usual run"
 ;
 
 Scalar    p45_adjustExponent                             "exponent in tax adjustment process";

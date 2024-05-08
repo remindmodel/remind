@@ -121,12 +121,13 @@ lifetime                30       30          45          45          45         
 *lifetime              40          40          40          40
 
 +                 ccsinje
-tech_stat               2
-inco0                 220
+tech_stat               0
+inco0                 350
 mix0                 1.00
 eta                  1.00
 omf                  0.06
 lifetime               40
+constrTme               3
 
 +                  tnrs        fnrs
 inco0               4700        6000
@@ -238,7 +239,7 @@ Woertler 2013 Exhibit 8: EAF (no C&R) CAPEX 184 € --> approx 210 $
 bfcc:
 CAPEX 25 $ /tCO2
 (Rough average of sources: Wiley 2011, Tsupari 2013, Herron 2014, Yun 2021)
-inco0=25$/tCO2 -> to $/tC *(44/12) -> to $/(tC/a) with discount -> *12 = 1100
+inco0=25$/tCO2 -> to $/tC *(44/12) -> to $/(tC/a) with discount *12 -> *capFac = 1100
 omf ~ 0.75*capex
 
 idrcc:

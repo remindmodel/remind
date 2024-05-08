@@ -28,6 +28,7 @@ Parameter
 $ifThen %cm_techcosts% == "GLO"
   p05_inco0_t_ref(ttot,all_regi,all_te)              "auxiliary parameter to load pm_inco0_t from reference run if cm_startyear > 2005 and initialCap is therefore not run"
 $endIf
+  p05_pmdata_ref(all_regi,char,all_te)               "auxiliary parameter to load pm_data from reference run if cm_startyear > 2005 and initialCap is therefore not run"
 ;
 
 Variables

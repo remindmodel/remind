@@ -154,8 +154,6 @@ pm_shGasLiq_fe_lo(ttot,all_regi,emi_sectors)         "Final energy gases plus li
 
 p_adj_coeff_Orig(ttot,all_regi,all_te)               "initial value of p_adj_coeff"
 p_adj_seed_te_Orig(ttot,all_regi,all_te)             "initial value of p_adj_seed_te"
-p_varyAdj_mult_adjSeedTe(ttot,all_regi)              "Multiplicative factor to adjust adjustment cost parameter p_adj_seed_te according to CO2 price level"
-p_varyAdj_mult_adjCoeff(ttot,all_regi)               "Multiplicative factor to adjust adjustment cost parameter p_adj_coeff according to CO2 price level"
 $ifthen not "%cm_adj_seed_cont%" == "off"
   p_new_adj_seed(all_te)                               "redefine adjustment seed parameters through model config switch" / %cm_adj_seed% , %cm_adj_seed_cont% /
 $elseif not "%cm_adj_seed%" == "off"
@@ -229,7 +227,7 @@ pm_share_CCS_CCO2(ttot,all_regi)                      "share of stored CO2 from 
 pm_delta_histCap(tall,all_regi,all_te)                "parameter to store data of historic capacity additions [TW/yr]"
 
 p_prodSeReference(ttot,all_regi,all_enty,all_enty,all_te)         "Secondary Energy output of a te in the reference run [TWa]"
-p_prodFEReference(ttot,all_regi,all_enty,all_enty,all_te)         "Final Energy output of a te in the reference run [TWa]"
+pm_prodFEReference(ttot,all_regi,all_enty,all_enty,all_te)         "Final Energy output of a te in the reference run [TWa]"
 p_prodUeReference(ttot,all_regi,all_enty,all_enty,all_te)         "Useful Energy output of a te in the reference run [TWa]"
 p_co2CCSReference(ttot,all_regi,all_enty,all_enty,all_te,rlf)     "Captured CO2 put through the CCS chain in ccs2te (pipelines/injection) in the reference run [GtC]"
 p_prodAllReference(ttot,all_regi,all_te)                          "Sum of the above in the reference run. As each te has only one type of output, the differing units should not be a problem"
@@ -309,7 +307,7 @@ p_share_seh2_s(ttot,all_regi)                        "share of hydrogen used for
 p_share_seel_s(ttot,all_regi)                        "Share of electricity used for stationary sector (feels). [0..1]"
 
 p_discountedLifetime(all_te)                         "Sum over the discounted (@6%) depreciation factor (omega)"
-p_teAnnuity(all_te)                                  "Annuity factor of a technology"
+pm_teAnnuity(all_te)                                  "Annuity factor of a technology"
 
 ;
 
@@ -417,9 +415,6 @@ v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids
 
 vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
 
-vm_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)             "Carbon flow: carbon contained in chemical feedstocks [GtC]"
-vm_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)               "Carbon flow: carbon contained in plastics [GtC]"
-vm_plasticWaste(ttot,all_regi,all_enty,all_enty,all_emiMkt)                 "Carbon flow: carbon contained in plastic waste [GtC]"
 vm_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)      "Carbon flow: carbon contained in feedstocks with unknown fate (not plastics)(assumed to go back into the atmosphere) [GtC]"
 vm_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "Emissions from incineration of plastic waste [GtC]"
 vm_nonIncineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)       "Carbon flow: carbon contained in plastics that are not incinerated [GtC]"
@@ -577,6 +572,7 @@ sm_trillion_2_non                                     "trillion to non"         
 s_zj_2_twa                                            "zeta joule to tw year"                              /31.7098/,
 sm_EJ_2_TWa                                           "multiplicative factor to convert from EJ to TWa"    /31.71e-03/,
 sm_GJ_2_TWa                                           "multiplicative factor to convert from GJ to TWa"    /31.71e-12/,
+sm_TWa_2_TWh                                          "tera Watt year to Tera Watt hour"                    /8.76e+3/,
 sm_TWa_2_MWh                                          "tera Watt year to Mega Watt hour"                    /8.76e+9/,
 sm_TWa_2_kWh                                          "tera Watt year to kilo Watt hour"                    /8.76e+12/,
 *RP* all these new conversion factors with the form "s_xxx_2_yyy" are multplicative factors. Thus, if you have a number in Unit xxx, you have to

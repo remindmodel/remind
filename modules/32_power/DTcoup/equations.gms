@@ -6,50 +6,52 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/32_power/DTcoup/equations.gms
 
+*' @equations
+
 ***---------------------------------------------------------------------------
-*** Balance equation for electricity secondary energy type:
+*' Balance equation for electricity secondary energy type:
 ***---------------------------------------------------------------------------
 q32_balSe(t,regi,enty2)$(sameas(enty2,"seel"))..
-	sum(pe2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te) )
-	+ sum(se2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te) )
-	+ sum(pc2te(enty,entySE(enty3),te,enty2), 
-		pm_prodCouple(regi,enty,enty3,te,enty2) * vm_prodSe(t,regi,enty,enty3,te) )
-	+ sum(pc2te(enty4,entyFE(enty5),te,enty2), 
-		pm_prodCouple(regi,enty4,enty5,te,enty2) * vm_prodFe(t,regi,enty4,enty5,te) )
-	+ sum(pc2te(enty,enty3,te,enty2),
-		sum(teCCS2rlf(te,rlf),
-			pm_prodCouple(regi,enty,enty3,te,enty2) * vm_co2CCS(t,regi,enty,enty3,te,rlf) ) )
-	+ vm_Mport(t,regi,enty2)
+    sum(pe2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te) )
+    + sum(se2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te) )
+    + sum(pc2te(enty,entySe(enty3),te,enty2), 
+          pm_prodCouple(regi,enty,enty3,te,enty2) * vm_prodSe(t,regi,enty,enty3,te) )
+    + sum(pc2te(enty4,entyFe(enty5),te,enty2), 
+          pm_prodCouple(regi,enty4,enty5,te,enty2) * vm_prodFe(t,regi,enty4,enty5,te) )
+    + sum(pc2te(enty,enty3,te,enty2),
+        sum(teCCS2rlf(te,rlf),
+            pm_prodCouple(regi,enty,enty3,te,enty2) * vm_co2CCS(t,regi,enty,enty3,te,rlf) ) )
+    + vm_Mport(t,regi,enty2)
   =e=
     sum(se2fe(enty2,enty3,te), vm_demSe(t,regi,enty2,enty3,te) )
-	+ sum(se2se(enty2,enty3,te), vm_demSe(t,regi,enty2,enty3,te) )
-	+ sum(teVRE, v32_storloss(t,regi,teVRE) )
-	+ sum(pe2rlf(enty3,rlf2), (pm_fuExtrOwnCons(regi, enty2, enty3) * vm_fuExtr(t,regi,enty3,rlf2))$(pm_fuExtrOwnCons(regi, enty2, enty3) gt 0))$(t.val > 2005) !! do not use in 2005 because this demand is not contained in 05_initialCap
-	+ vm_Xport(t,regi,enty2)
+    + sum(se2se(enty2,enty3,te), vm_demSe(t,regi,enty2,enty3,te) )
+    + sum(teVRE, v32_storloss(t,regi,teVRE) )
+    + sum(pe2rlf(enty3,rlf2), (pm_fuExtrOwnCons(regi, enty2, enty3) * vm_fuExtr(t,regi,enty3,rlf2))$(pm_fuExtrOwnCons(regi, enty2, enty3) gt 0))$(t.val > 2005) !! do not use in 2005 because this demand is not contained in 05_initialCap
+    + vm_Xport(t,regi,enty2)
 ;
 
 q32_usableSe(t,regi,entySe)$(sameas(entySe,"seel"))..
-	vm_usableSe(t,regi,entySe)
-	=e=
-	sum(pe2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) )
-	+ sum(se2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) ) 
-	+ sum(pc2te(entyPe,entySe(enty3),te,entySe)$(pm_prodCouple(regi,entyPe,enty3,te,entySe) gt 0),
-		pm_prodCouple(regi,entyPe,enty3,te,entySe)*vm_prodSe(t,regi,entyPe,enty3,te) )
-	- sum(teVRE, v32_storloss(t,regi,teVRE) )
+    vm_usableSe(t,regi,entySe)
+    =e=
+    sum(pe2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) )
+    + sum(se2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) ) 
+    + sum(pc2te(entyPe,entySe(enty3),te,entySe)$(pm_prodCouple(regi,entyPe,enty3,te,entySe) gt 0),
+         pm_prodCouple(regi,entyPe,enty3,te,entySe)*vm_prodSe(t,regi,entyPe,enty3,te) )
+    - sum(teVRE, v32_storloss(t,regi,teVRE) )
 ;
 
 q32_usableSeTe(t,regi,entySe,te)$(sameas(entySe,"seel") AND teVRE(te))..
- 	vm_usableSeTe(t,regi,entySe,te)
- 	=e=
- 	sum(pe2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) )
-	+ sum(se2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) )
- 	+ sum(pc2te(enty,entySe(enty3),te,entySe)$(pm_prodCouple(regi,enty,enty3,te,entySe) gt 0),
-		pm_prodCouple(regi,enty,enty3,te,entySe) * vm_prodSe(t,regi,enty,enty3,te) )
- 	- sum(teVRE$sameas(te,teVRE), v32_storloss(t,regi,teVRE) )
+    vm_usableSeTe(t,regi,entySe,te)
+    =e=
+    sum(pe2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) )
+  + sum(se2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) )
+  + sum(pc2te(enty,entySe(enty3),te,entySe)$(pm_prodCouple(regi,enty,enty3,te,entySe) gt 0),
+        pm_prodCouple(regi,enty,enty3,te,entySe) * vm_prodSe(t,regi,enty,enty3,te) )
+  - sum(teVRE$sameas(te,teVRE), v32_storloss(t,regi,teVRE) )
 ;
 
 ***---------------------------------------------------------------------------
-*** Definition of capacity constraints for storage:
+*' Definition of capacity constraints for storage:
 ***---------------------------------------------------------------------------
 q32_limitCapTeStor(t,regi,teStor)$( t.val ge 2015 ) ..
     ( 0.5$( cm_VRE_supply_assumptions eq 1 )
@@ -72,24 +74,22 @@ q32_limitCapTeStor(t,regi,teStor)$( t.val ge 2015 ) ..
 *** elh2VRE (electrolysis from VRE, seel -> seh2) and H2 turbines (h2turbVRE, seh2 -> seel)
 *** with VRE capacities which require storage (according to q32_limitCapTeStor):
 
-
 *** build additional electrolysis capacities with stored VRE electricity
 q32_elh2VREcapfromTestor(t,regi)..
   vm_cap(t,regi,"elh2","1") 
   =g= 
-  sum(te$testor(te), p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") )
+  sum(te$teStor(te), p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") )
 ;
 
 *** build additional h2 to seel capacities to use stored hydrogen
 q32_h2turbVREcapfromTestor(t,regi)..
   vm_cap(t,regi,"h2turbVRE","1") 
   =e= 
-  sum(te$testor(te), p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
+  sum(te$teStor(te), p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
 ;
 
-
 ***---------------------------------------------------------------------------
-*** Definition of capacity constraints for CHP technologies:
+*' Definition of capacity constraints for CHP technologies:
 ***---------------------------------------------------------------------------
 q32_limitCapTeChp(t,regi)..
     sum(pe2se(enty,"seel",teChp(te)), vm_prodSe(t,regi,enty,"seel",te) )
@@ -97,9 +97,9 @@ q32_limitCapTeChp(t,regi)..
     p32_shCHP(t,regi)
     * sum(pe2se(enty,"seel",te), vm_prodSe(t,regi,enty,"seel",te) )
 ;
-		 
+
 ***---------------------------------------------------------------------------
-*** Calculation of necessary grid installations for centralized renewables:
+*' Calculation of necessary grid installations for centralized renewables:
 ***---------------------------------------------------------------------------
 q32_limitCapTeGrid(t,regi)$( t.val ge 2015 ) .. 
     vm_cap(t,regi,"gridwind",'1')      !! Technology is now parameterized to yield marginal costs of ~3.5$/MWh VRE electricity
@@ -114,7 +114,7 @@ $ENDIF.WindOff
 ;
 
 ***---------------------------------------------------------------------------
-*** Calculation of share of electricity production of a technology:
+*' Calculation of share of electricity production of a technology:
 ***---------------------------------------------------------------------------
 q32_shSeEl(t,regi,teVRE)..
     vm_shSeEl(t,regi,teVRE) / 100 * vm_usableSe(t,regi,"seel")
@@ -123,46 +123,46 @@ q32_shSeEl(t,regi,teVRE)..
 ;
 
 ***---------------------------------------------------------------------------
-*** Calculation of necessary storage electricity production:
+*'  Calculation of necessary storage electricity production:
 ***---------------------------------------------------------------------------
 q32_shStor(t,regi,teVRE)$(t.val ge 2015)..
-	v32_shStor(t,regi,teVRE)
-	=g=
-	p32_factorStorage(regi,teVRE) * 100 
-	* (
-		(1.e-10 + (vm_shSeEl(t,regi,teVRE)+ sum(VRE2teVRElinked(teVRE,teVRE2), vm_shSeEl(t,regi,teVRE2)) /s32_storlink)/100 ) ** p32_storexp(regi,teVRE)    !! offset of 1.e-10 for numerical reasons: gams doesn't like 0 if the exponent is not integer 
-		- (1.e-10 ** p32_storexp(regi,teVRE) )       !! offset correction
-		- 0.07                                      !! first 7% of VRE share bring no negative effects
-	)
+    v32_shStor(t,regi,teVRE)
+    =g=
+    p32_factorStorage(regi,teVRE) * 100 
+    * (
+       (1.e-10 + (vm_shSeEl(t,regi,teVRE)+ sum(VRE2teVRElinked(teVRE,teVRE2), vm_shSeEl(t,regi,teVRE2)) /s32_storlink)/100 ) ** p32_storexp(regi,teVRE)    !! offset of 1.e-10 for numerical reasons: gams doesn't like 0 if the exponent is not integer 
+       - (1.e-10 ** p32_storexp(regi,teVRE) )       !! offset correction
+       - 0.07                                      !! first 7% of VRE share bring no negative effects
+    )
 ;
 
 q32_storloss(t,regi,teVRE)$(t.val ge 2015)..
-	v32_storloss(t,regi,teVRE)
-	=e=
-	v32_shStor(t,regi,teVRE) / 93    !! corrects for the 7%-shift in v32_shStor: at 100% the value is correct again
-	* sum(VRE2teStor(teVRE,teStor), (1 - pm_eta_conv(t,regi,teStor) ) /  pm_eta_conv(t,regi,teStor) )
-	* vm_usableSeTe(t,regi,"seel",teVRE)
+    v32_storloss(t,regi,teVRE)
+    =e=
+    v32_shStor(t,regi,teVRE) / 93    !! corrects for the 7%-shift in v32_shStor: at 100% the value is correct again
+    * sum(VRE2teStor(teVRE,teStor), (1 - pm_eta_conv(t,regi,teStor) ) /  pm_eta_conv(t,regi,teStor) )
+    * vm_usableSeTe(t,regi,"seel",teVRE)
 ;
 
 ***---------------------------------------------------------------------------
-*** Operating reserve constraint
+*' Operating reserve constraint
 ***---------------------------------------------------------------------------
 q32_operatingReserve(t,regi)$(t.val ge 2010)..
 ***1 is the chosen load coefficient
-	vm_usableSe(t,regi,"seel")
-	=l=    
-***Variable renewable coefficients could be expected to be negative because they are variable.
-***However they are modeled positive because storage conditions make variable renewables controllable.
-	sum(pe2se(enty,"seel",te)$(NOT teVRE(te)),
-		pm_data(regi,"flexibility",te) * vm_prodSe(t,regi,enty,"seel",te) )
-	+ sum(se2se(enty,"seel",te)$(NOT teVRE(te)),
-		pm_data(regi,"flexibility",te) * vm_prodSe(t,regi,enty,"seel",te) )
-	+ sum(pe2se(enty,"seel",teVRE),
-		pm_data(regi,"flexibility",teVRE) * (vm_prodSe(t,regi,enty,"seel",teVRE)-v32_storloss(t,regi,teVRE)) )
-	+
-	sum(pe2se(enty,"seel",teVRE),
-		sum(VRE2teStor(teVRE,teStor),
-			pm_data(regi,"flexibility",teStor) * (vm_prodSe(t,regi,enty,"seel",teVRE)-v32_storloss(t,regi,teVRE)) ) )
+   vm_usableSe(t,regi,"seel")
+   =l=    
+*** Variable renewable coefficients could be expected to be negative because they are variable.
+*** However they are modeled positive because storage conditions make variable renewables controllable.
+    sum(pe2se(enty,"seel",te)$(NOT teVRE(te)),
+        pm_data(regi,"flexibility",te) * vm_prodSe(t,regi,enty,"seel",te) )
+  + sum(se2se(enty,"seel",te)$(NOT teVRE(te)),
+        pm_data(regi,"flexibility",te) * vm_prodSe(t,regi,enty,"seel",te) )
+  + sum(pe2se(enty,"seel",teVRE),
+        pm_data(regi,"flexibility",teVRE) * (vm_prodSe(t,regi,enty,"seel",teVRE)-v32_storloss(t,regi,teVRE)) )
+    +
+    sum(pe2se(enty,"seel",teVRE),
+        sum(VRE2teStor(teVRE,teStor),
+            pm_data(regi,"flexibility",teStor) * (vm_prodSe(t,regi,enty,"seel",teVRE)-v32_storloss(t,regi,teVRE)) ) )
 ;
 
 *** FS: calculate flexibility adjustment used in flexibility tax for technologies with electricity input 
@@ -230,5 +230,7 @@ q32_flexAdj(t,regi,te)$(teFlexTax(te))..
   * max(0, min(2, pm_SEPrice(t,regi,"seel")))
   )$( cm_flex_tax eq 1 AND t.val ge 2025 )
 ;
+
+*' @stop
 
 *** EOF ./modules/32_power/DTcoup/equations.gms

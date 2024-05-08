@@ -546,53 +546,14 @@ pm_GDPGross(ttot,regi)$( (pm_SolNonInfes(regi) eq 1) ) =  vm_cesIO.l(ttot,regi,"
 
 *interpolate GDP
 loop(ttot$(ttot.val ge 2005),
-	loop(tall$(pm_tall_2_ttot(tall, ttot)),
-	    pm_GDPGross(tall,regi) =
-		(1- pm_interpolWeight_ttot_tall(tall)) * pm_GDPGross(ttot,regi)
-		+ pm_interpolWeight_ttot_tall(tall) * pm_GDPGross(ttot+1,regi);
+    loop(tall$(pm_tall_2_ttot(tall, ttot)),
+        pm_GDPGross(tall,regi) =
+       (1- pm_interpolWeight_ttot_tall(tall)) * pm_GDPGross(ttot,regi)
+       + pm_interpolWeight_ttot_tall(tall) * pm_GDPGross(ttot+1,regi);
 ));
 
-* assume GDP is flat from 2150 on (only enters damage calculations in the far future)
+*** assume GDP is flat from 2150 on (only enters damage calculations in the far future)
 pm_GDPGross(tall,regi)$(tall.val ge 2150) = pm_GDPGross("2149",regi); 
-
-
-
-***------------ adjust adjustment costs for advanced vehicles according to CO2 price in the previous time step ----------------------
-*** (same as in presolve - if you change it here, also change in presolve)
-*** this represents the concept that with stringent climate policies (as represented by high CO2 prices), all market actors will have a clearer expectation that 
-*** transport shifts to low-carbon vehicles, thus companies will be more likely to invest into new zero-carbon vehicle models, charging infrastructure, etc. 
-*** Also, gov'ts will be more likely to implement additional support policies that overcome existing barriers & irrationalities and thereby facilitate deployment 
-*** of advanced vehicles, e.g. infrastructure for charging, setting phase-out dates that encourage car manufacturers to develop more advanced fuel models, etc. 
-*** Use the CO2 price from the previous time step to represent inertia
-
-$iftheni.CO2priceDependent_AdjCosts %c_CO2priceDependent_AdjCosts% == "on"
-
-loop(ttot$( (ttot.val > cm_startyear) AND (ttot.val > 2020) ),  !! only change values in the unfixed time steps of the current run, and not in the past
-  loop(regi,
-    if( pm_taxCO2eq(ttot-1,regi) le (40 * sm_DptCO2_2_TDpGtC) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.1;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 4;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (40 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (80 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.25;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 2.5;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (80 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (160 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.5;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 1.5;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (160 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (320 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 1;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 1;	
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (320 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (640 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 2;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.5;	
-    elseif ( pm_taxCO2eq(ttot-1,regi) gt (640 * sm_DptCO2_2_TDpGtC) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 4;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.25;	
-    );
-  );
-);
-display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adjCoeff;
-
-$endif.CO2priceDependent_AdjCosts
 
 
 *** CG: calculate marginal adjustment cost for capacity investment: d(vm_costInvTeAdj) / d(vm_deltaCap)  !!!! the closed formula only holds when v_adjFactorGlob.fx(t,regi,te) = 0;
@@ -603,7 +564,7 @@ o_margAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te
       + p_adj_deltacapoffset("2010",regi,te)$(ttot.val eq 2010) + p_adj_deltacapoffset("2015",regi,te)$(ttot.val eq 2015)
       + p_adj_deltacapoffset("2020",regi,te)$(ttot.val eq 2020) + p_adj_deltacapoffset("2025",regi,te)$(ttot.val eq 2025)
     )
-    * (1.02 + pm_prtp(regi)) ** (pm_ts(ttot) / 2)
+    * (1 + 0.02/pm_ies(regi) + pm_prtp(regi)) ** (pm_ts(ttot) / 2)
 ;
 
 *** CG: calculate average adjustment cost for capacity investment: vm_costInvTeAdj / vm_deltaCap
@@ -616,8 +577,8 @@ o_avgAdjCostInv(ttot,regi,te)$(ttot.val ge 2010 AND teAdj(te) AND (sum(te2rlf(te
 o_avgAdjCost_2_InvCost_ratioPc(ttot,regi,te)$(vm_costInvTeDir.l(ttot,regi,te) ge 1E-22) = vm_costInvTeAdj.l(ttot,regi,te)/vm_costInvTeDir.l(ttot,regi,te) * 100;
 
 *** calculation of PE and SE Prices (useful for internal use and reporting purposes)
-pm_SEPrice(ttot,regi,entySE)$(abs (qm_budget.m(ttot,regi)) gt sm_eps AND (NOT (sameas(entySE,"seel")))) = 
-       q_balSe.m(ttot,regi,entySE) / qm_budget.m(ttot,regi);
+pm_SEPrice(ttot,regi,entySe)$(abs (qm_budget.m(ttot,regi)) gt sm_eps AND (NOT (sameas(entySe,"seel")))) = 
+       q_balSe.m(ttot,regi,entySe) / qm_budget.m(ttot,regi);
 
 pm_PEPrice(ttot,regi,entyPe)$(abs (qm_budget.m(ttot,regi)) gt sm_eps) = 
        q_balPe.m(ttot,regi,entyPe) / qm_budget.m(ttot,regi);
@@ -710,7 +671,7 @@ o_emissions_energy_extraction(ttot,regi,emi,entyPe)$(ttot.val ge 2005) =
 o_emissions_energy_supply_gross(ttot,regi,emi)$(ttot.val ge 2005) =
     sum(pe2se(entyPe,entySe,te)$(pm_emifac(ttot,regi,entyPe,entySe,te,emi)>0),
          pm_emifac(ttot,regi,entyPe,entySe,te,emi)
-         * vm_demPE.l(ttot,regi,entyPe,entySe,te)
+         * vm_demPe.l(ttot,regi,entyPe,entySe,te)
     )*o_emi_conv(emi)
     +
     sum(entyPe, o_emissions_energy_extraction(ttot,regi,emi,entyPe))
@@ -719,7 +680,7 @@ o_emissions_energy_supply_gross(ttot,regi,emi)$(ttot.val ge 2005) =
 o_emissions_energy_supply_gross_carrier(ttot,regi,emi,entySe)$(ttot.val ge 2005) =
     sum((entyPe,te)$(pe2se(entyPe,entySe,te) AND (pm_emifac(ttot,regi,entyPe,entySe,te,emi)>0)),
          pm_emifac(ttot,regi,entyPe,entySe,te,emi)
-         * vm_demPE.l(ttot,regi,entyPe,entySe,te)
+         * vm_demPe.l(ttot,regi,entyPe,entySe,te)
     )*o_emi_conv(emi)
     +
     (
@@ -739,7 +700,7 @@ o_emissions_energy_negative(ttot,regi,emi)$(ttot.val ge 2005) =
     (
      sum(pe2se(entyPe,entySe,te)$(pm_emifac(ttot,regi,entyPe,entySe,te,emi)<0),
          pm_emifac(ttot,regi,entyPe,entySe,te,emi)
-         * vm_demPE.l(ttot,regi,entyPe,entySe,te)
+         * vm_demPe.l(ttot,regi,entyPe,entySe,te)
     )
     +
     sum((ccs2Leak(enty,enty2,te,emi),teCCS2rlf(te,rlf)),
@@ -810,7 +771,7 @@ o_capture_industry(ttot,regi,"co2")$(ttot.val ge 2005) =
 
 ***Carbon Management|Carbon Capture|Primary Energy|Biomass (Mt CO2/yr)
 o_capture_energy_bio(ttot,regi,"co2")$(ttot.val ge 2005) =
-    sum(enty3$pebio(enty3),
+    sum(enty3$peBio(enty3),
         sum(emi2te(enty3,enty4,te2,"cco2"),
             vm_emiTeDetail.l(ttot,regi,enty3,enty4,te2,"cco2")
         )
@@ -818,7 +779,7 @@ o_capture_energy_bio(ttot,regi,"co2")$(ttot.val ge 2005) =
 
 ***Carbon Management|Carbon Capture|Primary Energy|Fossil (Mt CO2/yr)
 o_capture_energy_fos(ttot,regi,"co2")$(ttot.val ge 2005) =
-    sum(enty3$(NOT(pebio(enty3))),
+    sum(enty3$(NOT(peBio(enty3))),
         sum(emi2te(enty3,enty4,te2,"cco2"),
             vm_emiTeDetail.l(ttot,regi,enty3,enty4,te2,"cco2")
         )
@@ -850,7 +811,7 @@ o_carbon_reemitted(ttot,regi,"co2")$(ttot.val ge 2005) =
 
 *CG**ML*: capital interest rate
 p_r(ttot,regi)$(ttot.val gt 2005 and ttot.val le 2130)
-    = (( (vm_cons.l(ttot+1,regi)/pm_pop(ttot+1,regi)) /
+    = 1 / pm_ies(regi) * (( (vm_cons.l(ttot+1,regi)/pm_pop(ttot+1,regi)) /
       (vm_cons.l(ttot-1,regi)/pm_pop(ttot-1,regi)) )
       ** (1 / ( pm_ttot_val(ttot+1)- pm_ttot_val(ttot-1))) - 1) + pm_prtp(regi)
 ;

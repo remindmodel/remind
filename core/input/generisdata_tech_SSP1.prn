@@ -119,12 +119,13 @@ lifetime                30       30          45          45          45         
 *lifetime              40          40          40          40
 
 +                 ccsinje
-tech_stat               2
-inco0                 290
+tech_stat               0 
+inco0                 460
 mix0                 1.00
 eta                  1.00
 omf                  0.06
 lifetime               40
+constrTme               3
 
 +                  tnrs        fnrs
 inco0               7830        6000

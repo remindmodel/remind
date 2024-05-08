@@ -20,6 +20,10 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
                      settings_config = file.path(remindPath, "config", "settings_config.csv"),
                      extras = remindextras),
                      error = function(x) { paste0(red, "Error", NC, ": ", gsub("^Error: ", "", x)) } )
+  if (! identical(refcfg$model_version, cfg$model_version)) {
+    message("The model version when the cfg was generated (", cfg$model_version, ") and the current version (",
+            refcfg$model_version, ") differ. This might cause fails. If so, try to start the run from scratch.")
+  }
   if (is.character(fail) && length(fail) == 1 && grepl("Error", fail)) {
     message(fail, appendLF = FALSE)
     if (testmode) warning(fail)
@@ -58,7 +62,7 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
       useregexp <- gsub("is.share", grepisshare, useregexp, fixed = TRUE)
       # check whether parameter value fits regular expression
       if (! grepl(useregexp, cfg$gms[[n]])) {
-        errormsg <- paste0("Parameter cfg$gms$", n, "=", cfg$gms[[n]], " does not fit this regular expression: ", regexp)
+        errormsg <- paste0("Parameter cfg$gms$", n, "=", cfg$gms[[n]], " does not fit this regular expression in main.gms: ", regexp)
       }
     } else if (length(filtered) > 1) {
       # fail if more than one regexp found for parameter
@@ -74,7 +78,7 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
 
   if (errorsfound > 0) {
     if (testmode) warning(errorsfound, " errors found.")
-      else stop(errorsfound, " errors found, see above. Either adapt the parameter choice or the regexp in main.gms")
+      else stop(errorsfound, " errors found, see above.")
   }
 
   # Check for compatibility with subsidizeLearning

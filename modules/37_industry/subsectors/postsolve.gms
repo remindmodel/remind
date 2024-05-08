@@ -8,16 +8,16 @@
 
 *** calculation of FE Industry Prices (useful for internal use and reporting
 *** purposes)
-pm_FEPrice(ttot,regi,entyFE,"indst",emiMkt)$( abs(qm_budget.m(ttot,regi)) gt sm_eps )
-  = q37_demFeIndst.m(ttot,regi,entyFE,emiMkt)
+pm_FEPrice(ttot,regi,entyFe,"indst",emiMkt)$( abs(qm_budget.m(ttot,regi)) gt sm_eps )
+  = q37_demFeIndst.m(ttot,regi,entyFe,emiMkt)
   / qm_budget.m(ttot,regi);
 
 *** calculate reporting parameters for FE per subsector and SE origin to make R
 *** reporting easier
 
-o37_demFePrc(ttot,regi,entyFE,tePrc,opmoPrc)$(pm_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc))
+o37_demFePrc(ttot,regi,entyFe,tePrc,opmoPrc)$(pm_specFeDem(ttot,regi,entyFe,tePrc,opmoPrc))
   = vm_outflowPrc.l(ttot,regi,tePrc,opmoPrc)
-    * pm_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
+    * pm_specFeDem(ttot,regi,entyFe,tePrc,opmoPrc)
 ;
 
 *** total FE per energy carrier and emissions market in industry (sum over
@@ -29,7 +29,7 @@ o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
       +pm_cesdata(ttot,regi,in,"offset_quantity"))
     )
   + sum((secInd37_emiMkt(secInd37Prc,emiMkt),secInd37_tePrc(secInd37Prc,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
-      o37_demFePrc(ttot,regi,entyFE,tePrc,opmoPrc)
+      o37_demFePrc(ttot,regi,entyFe,tePrc,opmoPrc)
     )
 ;
 
@@ -47,7 +47,7 @@ o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)$(
   + sum((secInd37_emiMkt(secInd37Prc,emiMkt),
            secInd37_tePrc(secInd37Prc,tePrc),
            tePrc2opmoPrc(tePrc,opmoPrc)),
-      o37_demFePrc(ttot,regi,entyFE,tePrc,opmoPrc)
+      o37_demFePrc(ttot,regi,entyFe,tePrc,opmoPrc)
       )$(secInd37Prc(secInd37))
   )
   / o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
@@ -55,22 +55,22 @@ o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)$(
 
 
 *** FE per subsector and energy carriers
-o37_demFeIndSub(ttot,regi,entySE,entyFE,secInd37,emiMkt)
+o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
   = sum(secInd37_emiMkt(secInd37,emiMkt),
       o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)
     * vm_demFeSector_afterTax.l(ttot,regi,entySe,entyFe,"indst",emiMkt)
   );
 
 *** industry captured fuel CO2
-pm_IndstCO2Captured(ttot,regi,entySE,entyFE(entyFEcc37),secInd37,emiMkt)$(
-                     emiInd37_fe2sec(entyFE,secInd37)
+pm_IndstCO2Captured(ttot,regi,entySe,entyFe(entyFeCC37),secInd37,emiMkt)$(
+                     emiInd37_fe2sec(entyFe,secInd37)
                  AND sum(entyFE2, vm_emiIndBase.l(ttot,regi,entyFE2,secInd37)) )
-  = ( o37_demFEindsub(ttot,regi,entySE,entyFE,secInd37,emiMkt)
-    * sum(se2fe(entySE2,entyFE,te),
-        !! collapse entySE dimension, so emission factors apply to all entyFE
-	!! regardless or origin, and therefore entySEbio and entySEsyn have
-	!! non-zero emission factors
-        pm_emifac(ttot,regi,entySE2,entyFE,te,"co2")
+  = ( o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
+    * sum(se2fe(entySE2,entyFe,te),
+        !! collapse entySe dimension, so emission factors apply to all entyFe
+        !! regardless or origin, and therefore entySEbio and entySEsyn have
+        !! non-zero emission factors
+        pm_emifac(ttot,regi,entySE2,entyFe,te,"co2")
       )
     ) !! subsector emissions (smokestack, i.e. including biomass & synfuels)
 
@@ -89,26 +89,46 @@ pm_IndstCO2Captured(ttot,regi,entySE,entyFE(entyFEcc37),secInd37,emiMkt)$(
 *** Process-Based
 *** ---------------------------------------------------------------------------
 
-o37_relativeOutflow(ttot,regi,tePrc,opmoPrc)$tePrc2opmoPrc(tePrc,opmoPrc) = 1.
+!! relative outflow:
+!! Needed for LCOP calculation; has to be independent of vm_outflowPrc to also
+!! yield valid values for tech with zero vm_outflowPrc
+*** ---------------------------------------------------------------------------
+
+o37_relativeOutflow(ttot,regi,tePrc,opmoPrc)$tePrc2opmoPrc(tePrc,opmoPrc) = 1.;
+o37_specificEmi(ttot,regi,tePrc,opmoPrc) = 0.;
 
 loop((tePrc1,opmoPrc1,tePrc2,opmoPrc2,mat)$(
                 tePrc2matIn(tePrc2,opmoPrc2,mat)
             AND tePrc2matOut(tePrc1,opmoPrc1,mat)),
   o37_relativeOutflow(ttot,regi,tePrc1,opmoPrc1)
     = p37_specMatDem(mat,tePrc2,opmoPrc2)
-    * o37_relativeOutflow(ttot,regi,tePrc2,opmoPrc2); !! should be one; becomes relevant for more than two stages
+    * o37_relativeOutflow(ttot,regi,tePrc2,opmoPrc2); !! should be one; becomes relevant for more than two stages; then, ensure to loop backwards through the route!
 );
 
+!! auxiliary for CC relative outflow
+loop((tePrc,opmoPrc)$(tePrc2opmoPrc(tePrc,opmoPrc)),
+  o37_specificEmi(ttot,regi,tePrc,opmoPrc) =
+    sum(entyFe,
+        pm_specFeDem(ttot,regi,entyFe,tePrc,opmoPrc)
+        *
+        sum(se2fe(entySeFos,entyFe,te),
+          pm_emifac(ttot,regi,entySeFos,entyFe,te,"co2")));
+);
+
+!! CC relative outflow
 loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc)$(
                           tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)),
+
+  !! of_cc = cr_base * emi_base * of_base   +   cr_cc * emi_cc * of_cc       !! solve for of_cc
+  !! --> of_cc = (cr_base * emi_base * of_base) / (1. - cr_cc * emi_cc)      !! divide by of_fin
+  !! --> relOf_cc = (cr_base * emi_base * relOf_base) / (1. - cr_cc * emi_cc)
+
   o37_relativeOutflow(ttot,regi,teCCPrc,opmoCCPrc)
-    = p37_captureRate(teCCPrc,opmoCCPrc)
-    * sum(entyFe,
-        pm_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
-        *
-        sum(se2fe(entySEfos,entyFE,te),
-          pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")))
-    * o37_relativeOutflow(ttot,regi,tePrc,opmoPrc);
+    = (p37_captureRate(teCCPrc)
+      * o37_specificEmi(ttot,regi,tePrc,opmoPrc)
+      * o37_relativeOutflow(ttot,regi,tePrc,opmoPrc))
+    /
+      (1. - p37_selfCaptureRate(teCCPrc) * o37_specificEmi(ttot,regi,teCCPrc,opmoCCPrc) );
 );
 
 
@@ -116,23 +136,21 @@ loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc)$(
 *** ---------------------------------------------------------------------------
 
 !! init all to 1
-o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)$tePrc2route(tePrc,opmoPrc,route) = 1.
+o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)$tePrc2route(tePrc,opmoPrc,route) = 1.;
 
 loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc,route)$(
                           tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)
                       AND tePrc2route(teCCPrc,opmoCCPrc,route)),
 
   !! share of first-stage tech with CCS
-  o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)$(sum(entyFE,v37_emiPrc.l(ttot,regi,entyFE,tePrc,opmoPrc)) gt 0.)
-    = (   vm_outflowPrc.l(ttot,regi,teCCPrc,opmoCCPrc)
-        / p37_captureRate(teCCPrc,opmoCCPrc))
-      / sum(entyFE,v37_emiPrc.l(ttot,regi,entyFE,tePrc,opmoPrc));
+  o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)$(sum(entyFe,v37_emiPrc.l(ttot,regi,entyFe,tePrc,opmoPrc)) gt 0.)
+    = v37_shareWithCC.l(ttot,regi,tePrc,opmoPrc);
 
   !! share of first-stage tech without CCS
   loop(route2$(        tePrc2route(tePrc,opmoPrc,route2)
                AND NOT tePrc2route(teCCPrc,opmoCCPrc,route2)),
     o37_shareRoute(ttot,regi,tePrc,opmoPrc,route2)
-      = 1. - o37_shareRoute(ttot,regi,tePrc,opmoPrc,route);
+    = 1. - v37_shareWithCC.l(ttot,regi,tePrc,opmoPrc);
   );
 );
 
@@ -166,15 +184,15 @@ loop((mat,route)$(matFin(mat)),
 );
 
 !!
-o37_demFeIndRoute(ttot,regi,entyFE,tePrc,route,secInd37) = 0.;
-loop((entyFE,route,tePrc,opmoPrc,secInd37)$(    tePrc2route(tePrc,opmoPrc,route)
+o37_demFeIndRoute(ttot,regi,entyFe,tePrc,route,secInd37) = 0.;
+loop((entyFe,route,tePrc,opmoPrc,secInd37)$(    tePrc2route(tePrc,opmoPrc,route)
                                             AND secInd37_tePrc(secInd37,tePrc)
-                                            AND (p37_specFeDemTarget(entyFE,tePrc,opmoPrc) gt 0.) ),
-  o37_demFeIndRoute(ttot,regi,entyFE,tePrc,route,secInd37)
-  = o37_demFeIndRoute(ttot,regi,entyFE,tePrc,route,secInd37) !!sum (only necessary if several opmodes for one route)
+                                            AND (p37_specFeDemTarget(entyFe,tePrc,opmoPrc) gt 0.) ),
+  o37_demFeIndRoute(ttot,regi,entyFe,tePrc,route,secInd37)
+  = o37_demFeIndRoute(ttot,regi,entyFe,tePrc,route,secInd37) !!sum (only necessary if several opmodes for one route)
     + vm_outflowPrc.l(ttot,regi,tePrc,opmoPrc)
       * o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)
-      * pm_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc);
+      * pm_specFeDem(ttot,regi,entyFe,tePrc,opmoPrc);
 );
 
 *** EOF ./modules/37_industry/subsectors/postsolve.gms

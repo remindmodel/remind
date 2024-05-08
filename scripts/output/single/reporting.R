@@ -12,11 +12,11 @@ library(gms)
 library(methods)
 library(edgeTransport)
 library(quitte)
+library(piamutils)
 ############################# BASIC CONFIGURATION #############################
 gdx_name     <- "fulldata.gdx"             # name of the gdx
 gdx_ref_name <- "input_ref.gdx"            # name of the ref for < cm_startyear
 gdx_refpolicycost_name <- "input_refpolicycost.gdx"  # name of the reference gdx (for policy cost calculation)
-
 
 if(!exists("source_include")) {
    # Define arguments that can be read from command line
@@ -31,6 +31,7 @@ if (! file.exists(gdx_ref))           gdx_ref <- NULL
 if (! file.exists(gdx_refpolicycost)) gdx_refpolicycost <- NULL
 scenario <- getScenNames(outputdir)
 ###############################################################################
+
 # paths of the reporting files
 remind_reporting_file <- file.path(outputdir,paste0("REMIND_generic_", scenario,".mif"))
 magicc_reporting_file <- file.path(outputdir,paste0("REMIND_climate_", scenario, ".mif"))
@@ -41,22 +42,14 @@ remind_policy_reporting_file <- remind_policy_reporting_file[file.exists(remind_
 if (length(remind_policy_reporting_file) > 0) {
   unlink(remind_policy_reporting_file)
   message("\n", paste(basename(remind_policy_reporting_file), collapse = ", "), " deleted.")
-  message(paste(basename(remind_reporting_file), collapse = ", "), " will contain policy costs based on input_refpolicycost.gdx.")
+  message(paste0(basename(remind_reporting_file), collapse = ", "), " will contain policy costs based on ", basename(gdx_refpolicycost_name), ".")
 }
-
-configfile <- file.path(outputdir, "config.Rdata")
-envir <- new.env()
-load(configfile, envir = envir)
 
 # produce REMIND reporting *.mif based on gdx information
 message("\n### start generation of mif files at ", Sys.time())
-tmp <- try(convGDX2MIF(gdx, gdx_refpolicycost = gdx_refpolicycost, file = remind_reporting_file,
-                       scenario = scenario, gdx_ref = gdx_ref)) # try to execute convGDX2MIF
-if (inherits(tmp, "try-error")) {
-  convGDX2MIF_REMIND2MAgPIE(gdx, file = remind_reporting_file, scenario = scenario)
-}
+convGDX2MIF(gdx, gdx_refpolicycost = gdx_refpolicycost, file = remind_reporting_file, scenario = scenario, gdx_ref = gdx_ref)
 
-#  MAGICC code not working with REMIND-EU
+# MAGICC code not working with REMIND-EU
 # generate MAGICC reporting and append to REMIND reporting
 if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
   warning('Can\'t find magicc executable under environment variable MAGICC_BINARY')
@@ -73,7 +66,6 @@ if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
              "cat ", "../../../",magicc_reporting_file, " >> ", "../../../",remind_reporting_file, "; ",
              sep = ""))
 }
-
 
 ## generate EDGE-T reporting if it is needed
 ## the reporting is appended to REMIND_generic_<scenario>.MIF
@@ -96,17 +88,21 @@ if(file.exists(edgetOutputDir)) {
                                   gdx = file.path(outputdir, "fulldata.gdx"))
 
   write.mif(EDGET_output, remind_reporting_file, append = TRUE)
-  deletePlus(remind_reporting_file, writemif = TRUE)
+  piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 
   message("end generation of EDGE-T reporting")
 }
 
+envir <- new.env()
+load(file.path(outputdir, "config.Rdata"), envir = envir)
+
+## Append MAgPIE reporting if available
 magpie_reporting_file <- envir$cfg$pathToMagpieReport
 if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
   message("add MAgPIE reporting from ", magpie_reporting_file)
   tmp_rem <- quitte::as.quitte(remind_reporting_file)
   tmp_mag <- dplyr::filter(quitte::as.quitte(magpie_reporting_file), .data$period %in% unique(tmp_rem$period))
-  # remove population from magpie reporting to avoid duplication (units "million" vs. "million people")
+  # remove common variables from magpie reporting to avoid duplication
   sharedvariables <- intersect(tmp_mag$variable, tmp_rem$variable)
   if (length(sharedvariables) > 0) {
     message("The following variables will be dropped from MAgPIE reporting because they are in REMIND reporting: ", paste(sharedvariables, collapse = ", "))
@@ -116,25 +112,23 @@ if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
   tmp_mag$scenario <- paste0(scenario)
   tmp_rem_mag <- rbind(tmp_rem, tmp_mag)
   quitte::write.mif(tmp_rem_mag, path = remind_reporting_file)
-  deletePlus(remind_reporting_file, writemif = TRUE)
+  piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 }
 
 message("### end generation of mif files at ", Sys.time())
 
 ## produce REMIND LCOE reporting *.csv based on gdx information
-if (! isTRUE(envir$cfg$gms$c_empty_model == "on") || ! grepl("^C_TESTTHAT", scenario)) {
-  message("### start generation of LCOE reporting at ", Sys.time())
-  tmp <- try(convGDX2CSV_LCOE(gdx,file=LCOE_reporting_file,scen=scenario)) # execute convGDX2MIF_LCOE
-  message("### end generation of LCOE reporting at ", Sys.time())
-}
+message("### start generation of LCOE reporting at ", Sys.time())
+tmp <- try(convGDX2CSV_LCOE(gdx, file = LCOE_reporting_file, scen = scenario)) # execute convGDX2MIF_LCOE
+message("### end generation of LCOE reporting at ", Sys.time())
 
 ## generate DIETER reporting if it is needed
 ## the reporting is appended to REMIND_generic_<scenario>.MIF in "DIETER" Sub Directory
 DIETERGDX <- "report_DIETER.gdx"
 if(file.exists(file.path(outputdir, DIETERGDX))){
-  message("start generation of DIETER reporting at ", Sys.time())
+  message("### start generation of DIETER reporting at ", Sys.time())
   remind2::reportDIETER(DIETERGDX,outputdir)
-  message("end generation of DIETER reporting at ", Sys.time())
+  message("### end generation of DIETER reporting at ", Sys.time())
 }
 
 message("### reporting finished.")

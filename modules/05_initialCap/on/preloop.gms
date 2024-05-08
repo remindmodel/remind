@@ -389,7 +389,7 @@ display p05_inital_eta, p05_corrected_inital_eta, pm_data, pm_dataeta;
 *** (values in pm_data("eta") for the whole time horizon. For these technologies, the etas are not vintage-dependent, but rather etas change FOR ALL STANDING CAPACITIES in each time step.
 *** We therefore fade out the 2005 etas until 2050 to the initial values that are read-in from generisdata_tech (now in fm_dataglob("eta")).
 loop(regi,
-  loop(teEtaConst(te)$(NOT teCHP(te)),
+  loop(teEtaConst(te)$(NOT teChp(te)),
     loop(ttot$(ttot.val < 2010),
       pm_eta_conv(ttot,regi,te) = pm_data(regi,"eta",te) ;
     )
@@ -401,7 +401,7 @@ loop(regi,
     )
   );
 );
-pm_eta_conv(ttot,regi,teCHP) = pm_data(regi,"eta",teCHP);
+pm_eta_conv(ttot,regi,teChp) = pm_data(regi,"eta",teChp);
 
 *AD* It looks like the dynamic etas in pm_dataeta are not used in pm_eta_conv, i.e.,
 *** they are not relevant for se->se or se->fe conversion.
@@ -481,7 +481,7 @@ p05_cap_res(ttot,regi,teBioPebiolc) =
     * p05_deltacap_res(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,teBioPebiolc)
   )
 ;
-*** PE demand for pebiolc resulting from all technologies using pebiols assuming they would phase out after 2005
+*** PE demand for pebiolc resulting from all technologies using pebiolc assuming they would phase out after 2005
 pm_pedem_res(ttot,regi,teBioPebiolc) = p05_cap_res(ttot,regi,teBioPebiolc)* pm_cf(ttot,regi,teBioPebiolc) / pm_data(regi,"eta",teBioPebiolc);
 
 display p05_deltacap_res,p05_cap_res,pm_pedem_res;
@@ -532,11 +532,23 @@ if (cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' pm_EN_demand_from_initialcap2 = pm_EN_demand_from_initialcap2;
   Execute_Loadpoint 'input_ref' pm_pedem_res = pm_pedem_res;
   Execute_Loadpoint 'input_ref' pm_dataeta = pm_dataeta;
-  Execute_Loadpoint 'input_ref' pm_data = pm_data;
   Execute_Loadpoint 'input_ref' pm_aux_capLowerLimit = pm_aux_capLowerLimit;
   Execute_Loadpoint 'input_ref' vm_deltaCap.l = vm_deltaCap.l;
   Execute_Loadpoint 'input_ref' vm_deltaCap.lo = vm_deltaCap.lo;
   Execute_Loadpoint 'input_ref' vm_deltaCap.up = vm_deltaCap.up;
+
+
+
+*** load pm_data from input_ref.gdx and overwrite values only for eta of chp technologies
+*** Only the eta values of chp technologies have been adapted by initialCap script above.
+*** This is to avoid overwriting all of pm_data and make sure that scenario switches which adapt pm_data before this module work as intended.
+  Execute_Loadpoint 'input_ref' p05_pmdata_ref = pm_data;
+  pm_data(regi,char,te)$( (sameas(te,"coalchp")  
+                              OR sameas(te,"gaschp")
+                              OR sameas(te,"biochp") )
+                            AND sameas(char,"eta") ) = p05_pmdata_ref(regi,char,te);
+
+
 
 *** if %cm_techcosts% == "GLO", load pm_inco0_t from input_ref.gdx and overwrite values
 *** only for pc, ngt, ngcc since they have been adapted in initialCap routine above

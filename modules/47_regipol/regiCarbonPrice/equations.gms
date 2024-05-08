@@ -6,6 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/47_regipol/regiCarbonPrice/equations.gms
 
+*' @equations
+
 ***---------------------------------------------------------------------------
 *'  Implicit tax/subsidy necessary to achieve quantity target for primary, secondary, final energy and/or CCS
 ***---------------------------------------------------------------------------
@@ -28,7 +30,7 @@ q47_implicitQttyTargetTax(t,regi)$(t.val ge max(2010,cm_startyear))..
     )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
     +
     ( 
-      p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS(t,regi,enty,enty2,te,rlf)))
+      p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(ccs2te(ccsCo2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS(t,regi,enty,enty2,te,rlf)))
     )$(sameas(qttyTarget,"CCS"))  
   )
   -
@@ -38,7 +40,7 @@ q47_implicitQttyTargetTax(t,regi)$(t.val ge max(2010,cm_startyear))..
 $endIf.cm_implicitQttyTarget
 
 ***---------------------------------------------------------------------------
-*** implicit tax/subsidy necessary to final energy price targets
+*' implicit tax/subsidy necessary to final energy price targets
 ***---------------------------------------------------------------------------
 
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
@@ -56,7 +58,7 @@ q47_implicitPriceTax(t,regi,entyFe,entySe,sector)$((t.val ge max(2010,cm_startye
 $endIf.cm_implicitPriceTarget
 
 ***---------------------------------------------------------------------------
-*** implicit tax/subsidy necessary to primary energy price targets
+*' implicit tax/subsidy necessary to primary energy price targets
 ***---------------------------------------------------------------------------
 
 $ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
@@ -82,13 +84,13 @@ $ifThen.quantity_regiCO2target not "%cm_quantity_regiCO2target%" == "off"
 q47_quantity_regiCO2target(t,ext_regi)$p47_quantity_regiCO2target(t,ext_regi)..
 *** net CO2 without bunkers 
   sum(emiMkt,
-	  sum(emiMkt$emiMktGroup(emiMktExt,emiMkt), vm_emiAllMkt(t,regi,"co2",emiMkt) )
-	- (
-		sum(se2fe(enty,enty2,te),
-		pm_emifac(t,regi,enty,enty2,te,"co2")
-		* vm_demFeSector(t,regi,enty,enty2,"trans","other")
-		)
-	)$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"))
+      sum(emiMkt$emiMktGroup(emiMktExt,emiMkt), vm_emiAllMkt(t,regi,"co2",emiMkt) )
+    - (
+       sum(se2fe(enty,enty2,te),
+       pm_emifac(t,regi,enty,enty2,te,"co2")
+       * vm_demFeSector(t,regi,enty,enty2,"trans","other")
+       )
+    )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"))
   )
   =l=
   p47_quantity_regiCO2target(t,ext_regi)/sm_c_2_co2
@@ -98,7 +100,7 @@ $endIf.quantity_regiCO2target
 
 
 ***---------------------------------------------------------------------------
-*** per region minimum variable renewables share in electricity:
+*' per region minimum variable renewables share in electricity:
 ***---------------------------------------------------------------------------
 $ifthen.cm_VREminShare not "%cm_VREminShare%" == "off"
 
@@ -111,17 +113,17 @@ q47_VREShare(ttot,regi)..
 $endIf.cm_VREminShare
 
 ***---------------------------------------------------------------------------
-*** per region maximum CCS:
+*' per region maximum CCS:
 ***---------------------------------------------------------------------------
 $ifthen.cm_CCSmaxBound not "%cm_CCSmaxBound%" == "off"
 
 q47_CCSmaxBound(t,regi)$p47_CCSmaxBound(regi)..
-  sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS(t,regi,enty,enty2,te,rlf)))
+  sum(ccs2te(ccsCo2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS(t,regi,enty,enty2,te,rlf)))
   =l=
   p47_CCSmaxBound(regi)
 ;
 
 $endIf.cm_CCSmaxBound
 
-
+*' @stop
 *** EOF ./modules/47_regipol/regiCarbonPrice/equations.gms

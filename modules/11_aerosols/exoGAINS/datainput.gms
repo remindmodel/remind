@@ -127,10 +127,10 @@ p11_share_sector(ttot,sectorEndoEmi2te(enty,enty2,te,sectorEndoEmi),regi) = 1.0;
 *** Compute sector shares
 loop ((t,regi)$( t.val ge 2005 ),
   !! share in solids
-  if (sum(fe2ppfen("fesos",in), p11_cesIO(t,regi,in)) gt 0,
+  if (sum(fe2ppfEn("fesos",in), p11_cesIO(t,regi,in)) gt 0,
     p11_share_sector(t,"pecoal","sesofos","coaltr","indst",regi)
     = sum(fe_tax_sub_sbi("fehos",in), p11_cesIO(t,regi,in))
-    / sum(fe2ppfen("fesos",in), p11_cesIO(t,regi,in));
+    / sum(fe2ppfEn("fesos",in), p11_cesIO(t,regi,in));
 
     p11_share_sector(t,"pebiolc","sesobio","biotr","indst",regi)
     = p11_share_sector(t,"pecoal","sesofos","coaltr","indst",regi);
@@ -157,10 +157,10 @@ loop ((t,regi)$( t.val ge 2005 ),
   = 1 - p11_share_sector(ttot,"pebiolc","sesobio","biotr","indst",regi);
 
   !! share in liquids
-  if (sum(fe2ppfen("fehos",in), p11_cesIO(t,regi,in)) gt 0,
+  if (sum(fe2ppfEn("fehos",in), p11_cesIO(t,regi,in)) gt 0,
     p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi)
     = sum(fe_tax_sub_sbi("fehoi",in), p11_cesIO(t,regi,in))
-    / sum(fe2ppfen("fehos",in), p11_cesIO(t,regi,in));
+    / sum(fe2ppfEn("fehos",in), p11_cesIO(t,regi,in));
   else
     p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi)
     = pm_share_ind_fehos(t,regi)
@@ -181,10 +181,10 @@ loop ((t,regi)$( t.val ge 2005 ),
   * (1 - p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi));
 
   !! share in gases
-  if (sum(fe2ppfen("fegas",in), p11_cesIO(t,regi,in)) gt 0,
+  if (sum(fe2ppfEn("fegas",in), p11_cesIO(t,regi,in)) gt 0,
     p11_share_sector(t,"pegas","segafos","gastr","indst",regi)
     = sum(fe_tax_sub_sbi("fegai",in), p11_cesIO(t,regi,in))
-    / sum(fe2ppfen("fegas",in), p11_cesIO(t,regi,in));
+    / sum(fe2ppfEn("fegas",in), p11_cesIO(t,regi,in));
   else
     p11_share_sector(t,"pegas","segafos","gastr","indst",regi)
     = pm_share_ind_fehos(t,regi);

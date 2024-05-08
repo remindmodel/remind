@@ -125,8 +125,8 @@ loop (fe2ppfEn(entyFe,ppfEn),
 display "production function sets", cesOut2cesIn, cesOut2cesIn2, cesLevel2cesIO, cesRev2cesIO, ppf, ppfEn, ipf;
 
 *** Energy service layer sets
-loop(es2ppfen(esty,ppfen),
-    ppfenFromEs(ppfen) = yes;
+loop(es2ppfen(esty,ppfEn),
+    ppfenFromEs(ppfEn) = yes;
 );
 
 loop (fe2es(entyFe,esty,teEs),
@@ -134,8 +134,8 @@ loop (fe2es(entyFe,esty,teEs),
 );
 
 loop (fe2es(entyFe,esty,teEs),
-    loop(es2ppfen(esty,ppfen),
-	feViaEs2ppfen(entyFe,ppfen,teEs) = YES;
+    loop(es2ppfen(esty,ppfEn),
+	feViaEs2ppfen(entyFe,ppfEn,teEs) = YES;
 	);
 );
 

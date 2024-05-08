@@ -204,7 +204,7 @@ all_te          "all energy technologies, including from modules"
         solhe           "solar thermal heat generation"
         tnrs            "thermal nuclear reactor (simple structure)"
         fnrs            "fast nuclear reactor (simple structure)"
-        elh2            "hydrogen elecrolysis"
+        elh2            "hydrogen electrolysis, using grid electricity"
         h2turb          "hydrogen turbine for electricity production"
         elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
         h2turbVRE       "dummy technology: hydrogen turbine for electricity production; to demonstrate the capacities and SE flows inside the storXXX technologies"
@@ -344,62 +344,64 @@ $ENDIF.WindOff
 
 all_enty             "all types of quantities"
 /
+        pecoal       "PE coal"
         peoil        "PE oil"
         pegas        "PE gas"
-        pecoal       "PE coal"
         peur         "PE uranium"
-        pegeo        "PE geothermal"
         pehyd        "PE hydropower"
+        pegeo        "PE geothermal"
         pewin        "PE wind"
         pesol        "PE solar"
         pebiolc      "PE biomass lignocellulosic"
         pebios       "PE biomass sugar and starch"
         pebioil      "PE biomass sunflowers, palm oil, etc"
-        all_seliq    "all to SE liquids"
-        seliqbio     "SE liquids from biomass (ex. ethanol)"
-        seliqfos     "SE liquids from fossil pe (ex. petrol and diesel)"
-        seliqsyn     "SE synthetic liquids from H2 (ex. petrol and diesel)"
+
         all_seso     "all to SE solids"
-        sesobio      "SE solids from biomass"
         sesofos      "SE solids from fossil pe"
-        seel         "SE electricity"
-        seh2         "SE hydrogen"
+        sesobio      "SE solids from biomass"
+        all_seliq    "all to SE liquids"
+        seliqfos     "SE liquids from fossil pe (ex. petrol and diesel)"
+        seliqbio     "SE liquids from biomass (ex. ethanol)"
+        seliqsyn     "SE synthetic liquids from H2 (ex. petrol and diesel)"
         all_sega     "all to SE gas"
-        segabio      "SE gas from biomass"
         segafos      "SE gas from fossil pe"
+        segabio      "SE gas from biomass"
         segasyn      "SE synthetic gas from H2"
+        seh2         "SE hydrogen"
         sehe         "SE district heating and heat pumps"
+        seel         "SE electricity"
+
+        feso
+        fesos        "FE solids stationary"
+        fesob
+        fesoi
+        fehos        "FE heating oil stationary"
+        fehob
+        fehoi
+        fega
         fegas        "FE gas stationary"
         fegab
         fegai
         fegat
-        fega
-        fehos        "FE heating oil stationary"
-        fehob
-        fehoi
-        fesos        "FE solids stationary"
-        feso
-        fesoi
-        fesob
+        feh2s        "FE hydrogen stationary"
+        feh2t        "FE hydrogen transport"
+        fehes        "FE district heating (including combined heat and power), and heat pumps stationary"
+        feheg
+        fehei
+        feheb
+        fehe
+        feel
         feels        "FE electricity stationary"
         feelb
         feelcb       "buildings use of conventional electricity (all but space heating)"
         feelhpb      "buildings use of electricity for space heating with heat pumps"
         feelrhb      "buildings use of electricity for space heating with resistive heating"
         feeli
-        feel
-        fehes        "FE district heating (including combined heat and power), and heat pumps stationary"
-        feheg
-        fehei
-        feheb
-        fehe
-        feh2s        "FE hydrogen stationary"
+        feelt        "final energy electricity for transport"
         fepet        "FE petrol transport"
         fedie        "FE diesel transport"
         felit        "FE liquids for transport (includes diesel and petrol)"
         fetf         "FE transport fuels"
-        feh2t        "FE hydrogen transport"
-        feelt        "final energy electricity for transport"
         fehoi_cs     "final energy in industry diesel - carbon stored"
         fegai_cs     "final energy in industry natural gas - carbon stored "
         entydummy    "dummy fe for process based industry implementation"
@@ -1043,6 +1045,7 @@ RCP_regions_world(RCP_regions_world_bunkers) "five RCP regions plus total (world
 Sets
   counter   "helper set to facilitate looping in defined order"   / 1 * 20 /
   NDC_version "NDC data version for NDC realizations of 40_techpol and 45_carbonprice"  /2018_cond, 2018_uncond, 2021_cond, 2021_uncond, 2022_cond, 2022_uncond, 2023_cond, 2023_uncond/
+  bounds "helper set to define upper and lower bounds read in from input data" /low, up/
 ;
 
 ***-----------------------------------------------------------------------------
@@ -2121,7 +2124,7 @@ macSector2emiMkt(all_enty,all_emiMkt)  "mapping mac sectors to emission markets"
         n2onitac.ETS
         n2ofertin.ES
         n2ofertcr.ES
-        n2ofertsom.other
+        n2ofertsom.ES
         n2oanwstc.ES
         n2oanwstm.ES
         n2oanwstp.ES
@@ -2350,8 +2353,8 @@ alias(all_te,all_te2);
 alias(te,te2,te3);
 alias(all_enty,all_enty2);
 alias(enty,enty2,enty3,enty4,enty5,enty6,enty7);
-alias(entyPE,entyPE2);
-alias(entySE,entySE2);
+alias(entyPe,entyPE2);
+alias(entySe,entySE2);
 alias(entyFe,entyFe2);
 alias(teEs,teEs2);
 alias(esty,esty2);

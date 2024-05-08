@@ -16,7 +16,10 @@ library(tidyr)
 
 options(warn = 1)
 
-model <- "REMIND 3.2"                          # modelname in final file
+model <- paste("REMIND", paste0(strsplit(gms::readDefaultConfig(".")$model_version, "\\.")[[1]][1:2], collapse = "."))
+# model <- "REMIND 3.3"                        # modelname in final file, overwrite if necessary
+
+
 removeFromScen <- ""                           # you can use regex such as: "_diff|_expoLinear"
 addToScen <- NULL                              # is added at the beginning
 
@@ -34,7 +37,7 @@ projects <- list(
                     iiasatemplate = "ENGAGE_CD-LINKS_template_2019-08-22.xlsx",
                     removeFromScen = "_diff|_expoLinear|-all_regi"),
   NAVIGATE_coupled = list(mapping = c("NAVIGATE", "NAVIGATE_coupled")),
-  NGFS       = list(model = "REMIND-MAgPIE 3.2-4.6",
+  NGFS       = list(model = "REMIND-MAgPIE 3.3-4.7",
                     mapping = c("AR6", "AR6_NGFS"),
                     iiasatemplate = "../ngfs-phase-4-internal-workflow/definitions/variable/variables.yaml",
                     removeFromScen = "C_|_bIT|_bit|_bIt"),
@@ -43,7 +46,7 @@ projects <- list(
 )
 
 # add pure mapping from piamInterfaces
-mappings <- setdiff(names(piamInterfaces::templateNames()), c(names(projects), "AR6_NGFS"))
+mappings <- setdiff(names(piamInterfaces::mappingNames()), c(names(projects), "AR6_NGFS"))
 projects <- c(projects,
               do.call(c, lapply(mappings, function(x) stats::setNames(list(list(mapping = x)), x))))
 
@@ -64,23 +67,18 @@ for (p in intersect(varnames, names(projectdata))) {
 lucode2::readArgs("outputdirs", "filename_prefix", "outputFilename", "model",
                   "mapping", "logFile", "removeFromScen", "addToScen", "iiasatemplate")
 
+if (is.null(mapping)) {
+  mapping <- gms::chooseFromList(names(piamInterfaces::mappingNames()), type = "mapping")
+}
+if (length(mapping) == 0 || ! all(file.exists(mapping) | mapping %in% names(mappingNames()))) {
+  stop("mapping='", paste(mapping, collapse = ", "), "' not found.")
+}
 if (exists("iiasatemplate") && ! is.null(iiasatemplate) && ! file.exists(iiasatemplate)) {
   stop("iiasatemplate=", iiasatemplate, " not found.")
 }
 
-# variables to be deleted although part of the template
+# variables to be deleted although part of the mapping
 temporarydelete <- NULL # example: c("GDP|MER", "GDP|PPP")
-
-### select mapping
-
-mappingFile <- NULL
-if (length(mapping) == 1 && file.exists(mapping)) {
-  mappingFile <- mapping
-  mapping <- NULL
-} else if (! all(mapping %in% names(templateNames())) || length(mapping) == 0) {
-  message("# Mapping = '", paste(mapping, collapse = ","), "' exists neither as file nor mapping name.")
-  mapping <- gms::chooseFromList(names(piamInterfaces::templateNames()), type = "mapping template")
-}
 
 ### define filenames
 
@@ -140,7 +138,7 @@ withCallingHandlers({ # piping messages to logFile
   # message("\n### Generate joint mif, remind2 format: ", filename_remind2_mif)
   # write.mif(mifdata, filename_remind2_mif)
 
-  generateIIASASubmission(mifdata, mapping = mapping, model = model, mappingFile = mappingFile,
+  generateIIASASubmission(mifdata, mapping = mapping, model = model,
                           removeFromScen = removeFromScen, addToScen = addToScen,
                           outputDirectory = outputFolder,
                           logFile = logFile, outputFilename = basename(OUTPUT_xlsx),

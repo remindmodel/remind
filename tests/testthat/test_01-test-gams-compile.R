@@ -4,11 +4,11 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-test_that("GAMS code follows the coding etiquette", {
-  # have to run this via localSystem2 so that it uses the renv, where gms
-  # is actually installed.
-  skipIfPreviousFailed()
-  output <- localSystem2("Rscript", c("-e", "'invisible(gms::codeCheck(strict=TRUE))'"))
-  printIfFailed(output)
-  expectSuccessStatus(output)
-})
+test_that(
+  'gams -a=c works on stock configuration',
+  {
+    expect_equal(
+      attr(localSystem2('gams', 'main.gms -a=c -errmsg=1 -pw=185 -ps=0'),
+	   'status'),
+      0)
+  })

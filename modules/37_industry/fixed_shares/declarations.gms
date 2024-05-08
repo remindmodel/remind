@@ -58,7 +58,7 @@ Positive Variables
 Equations
   q37_emiIndBase(ttot,all_regi,all_enty,secInd37)   "calculate industry CCS baseline emissions"
   q37_emiIndCCSmax(ttot,all_regi,all_enty)          "calculate max industry CCS emissions"
-  q37_indCCS(ttot,all_regi,all_enty)                "calculate industry CCS emissions"
+  q37_IndCCS(ttot,all_regi,all_enty)                "calculate industry CCS emissions"
   q37_IndCCSCost(ttot,all_regi,all_enty)            "calculate cost for Industry CCS"
   q37_cementCCS(ttot,all_regi)                      "equal abatement levels for cement fuel and process emissions"
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt) "industry final energy demand (per emission market)"

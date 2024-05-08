@@ -11,5 +11,5 @@ o20_ImiGDP_E(t,regi,"en")= vm_invImi.L(t,regi,"en")/vm_cesIO.l(t,regi,"inco");
 o20_InnoGDP_lab(t,regi,"lab")= vm_invInno.L(t,regi,"lab")/vm_cesIO.l(t,regi,"inco");
 o20_InnoGDP_E(t,regi,"en")= vm_invInno.L(t,regi,"en")/vm_cesIO.l(t,regi,"inco");
 
-display vm_EffGr.l, v20_effInno.l, v20_effImi.l, o20_ImiGDP_lab, o20_ImiGDP_E, o20_InnoGDP_lab, o20_InnoGDP_E;
+display vm_effGr.l, v20_effInno.l, v20_effImi.l, o20_ImiGDP_lab, o20_ImiGDP_E, o20_InnoGDP_lab, o20_InnoGDP_E;
 *** EOF ./modules/20_growth/spillover/output.gms

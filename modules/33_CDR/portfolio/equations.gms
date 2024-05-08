@@ -38,7 +38,7 @@ q33_emiCDR(t,regi)..
 *'  It's a sustainability bound to prevent a large demand for biomass.
 ***---------------------------------------------------------------------------
 q33_H2bio_lim(t,regi)..
-    sum(pe2se("pebiolc","seh2",te), vm_prodSE(t,regi,"pebiolc","seh2",te))
+    sum(pe2se("pebiolc","seh2",te), vm_prodSe(t,regi,"pebiolc","seh2",te))
     =l=
     vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - sum(fe2cdr("feh2s",entyFe2,te_used33), v33_FEdemand(t,regi,"feh2s",entyFe2,te_used33))
     ;
@@ -165,5 +165,6 @@ q33_EW_LimEmi(t,regi)..
     =l=
     cm_LimRock * p33_LimRock(regi)
     ;
-
+	
+*' @stop
 *** EOF ./modules/33_CDR/portfolio/equations.gms
