@@ -9,7 +9,7 @@ require(rmarkdown)
 require(lucode2)
 
 if (!exists("source_include")) {
-  ## Define arguments that can be read from command line
+  # Define arguments that can be read from command line
   readArgs("outputdir")
 }
 
@@ -21,6 +21,6 @@ rmarkdown::render(
   file.path("scripts", "output", "single", "notebook_templates", "cesCalibrationReport.Rmd"),
   output_dir = outputdir,
   output_file = paste0("CES_calibration_report_", scenario, ".pdf"),
-  output_format = "pdf",
+  output_format = "pdf_document",
   params = yamlParams
 )
