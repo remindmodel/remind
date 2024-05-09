@@ -6,6 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/36_buildings/simple/equations.gms
 
+*' @equations
+
 ***---------------------------------------------------------------------------
 *'  Buildings Final Energy Balance
 ***---------------------------------------------------------------------------
@@ -99,4 +101,5 @@ q36_biotrBound(t,regi)$(t.val ge 2010 AND (pm_gdp("2005",regi)/pm_pop("2005",reg
   vm_prodSe(t,regi,"pebiolc","sesobio","biotr")
 ;
 
+*' @stop
 *** EOF ./modules/36_buildings/simple/equations.gms

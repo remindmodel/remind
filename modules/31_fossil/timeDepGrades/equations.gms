@@ -29,24 +29,24 @@
 *NB/LB/BB/GL* fossil extraction costs parameterized as 3rd order polynomial
 ***This is used for uranium
 q31_costFuExPol(ttot,regi,peExPol(enty))$(ttot.val ge cm_startyear)..
-	vm_costFuEx(ttot,regi,enty)
-	=e=
+    vm_costFuEx(ttot,regi,enty)
+    =e=
 *NB*111123 this is the long-term marginal extraction cost part
-	( p31_costExPoly(regi,"xi1",enty)
-	  + p31_costExPoly(regi,"xi2",enty) * v31_fuExtrCum(ttot,regi,enty, "1")
-	  + p31_costExPoly(regi,"xi3",enty) * v31_fuExtrCum(ttot,regi,enty, "1")**2
-	  + p31_costExPoly(regi,"xi4",enty) * v31_fuExtrCum(ttot,regi,enty, "1")**3
-	)
-	*
+    ( p31_costExPoly(regi,"xi1",enty)
+      + p31_costExPoly(regi,"xi2",enty) * v31_fuExtrCum(ttot,regi,enty, "1")
+      + p31_costExPoly(regi,"xi3",enty) * v31_fuExtrCum(ttot,regi,enty, "1")**2
+      + p31_costExPoly(regi,"xi4",enty) * v31_fuExtrCum(ttot,regi,enty, "1")**3
+    )
+    *
 *' Short term decline and increase rates are determined by adjustment costs.
 *NB*111123 this is the short-term adjustment cost part
-	(1$(ttot.val eq 2005)
-	+(
-		(1-p31_fosadjco_xi5xi6(regi,"xi5",enty))
-		+ p31_fosadjco_xi5xi6(regi,"xi5",enty) * ((vm_fuExtr(ttot,regi,enty,"1")+1.e-5)/(vm_fuExtr(ttot-1,regi,enty,"1")$(ttot.val gt 2005)+1.e-5))**p31_fosadjco_xi5xi6(regi,"xi6",enty)
-	)$(ttot.val gt 2005)
-	)
-	* vm_fuExtr(ttot,regi,enty,"1")
+    (1$(ttot.val eq 2005)
+    +(
+        (1-p31_fosadjco_xi5xi6(regi,"xi5",enty))
+        + p31_fosadjco_xi5xi6(regi,"xi5",enty) * ((vm_fuExtr(ttot,regi,enty,"1")+1.e-5)/(vm_fuExtr(ttot-1,regi,enty,"1")$(ttot.val gt 2005)+1.e-5))**p31_fosadjco_xi5xi6(regi,"xi6",enty)
+    )$(ttot.val gt 2005)
+    )
+    * vm_fuExtr(ttot,regi,enty,"1")
 ;
 
 *' Two dummy equations further determine regional uranium extraction bounds. 
@@ -111,28 +111,28 @@ $ENDIF.mofex
 *' is calculated based on long-term marginal extraction costs and short-term calibrated adjustment costs which capture inertias, e.g. from infrastructure
 
 q31_costFuExGrade(ttot,regi,peExGrade(enty))$(ttot.val ge cm_startyear)..
-	vm_costFuEx(ttot,regi,enty)
-	=e=
+    vm_costFuEx(ttot,regi,enty)
+    =e=
 *NB*111123 this is the long-term marginal extraction cost part
-	sum(pe2rlf(enty,rlf),
-		((p31_grades(ttot,regi,"xi1",enty, rlf) + pm_costsTradePeFinancial(regi,"use",enty)
-			+ (p31_grades(ttot,regi,"xi2",enty,rlf)-p31_grades(ttot,regi,"xi1",enty, rlf)) * v31_fuExtrCum(ttot-1,regi,enty, rlf)$(ttot.val gt 2005) / p31_grades(ttot,regi,"xi3",enty, rlf)
-			+ (p31_grades(ttot,regi,"xi2",enty,rlf)-p31_grades(ttot,regi,"xi1",enty, rlf)) * (v31_fuExtrCum(ttot,regi,enty,rlf)-v31_fuExtrCum(ttot-1,regi,enty,rlf)$(ttot.val gt 2005)) / (2 * p31_grades(ttot,regi,"xi3",enty, rlf))
-			)
+    sum(pe2rlf(enty,rlf),
+        ((p31_grades(ttot,regi,"xi1",enty, rlf) + pm_costsTradePeFinancial(regi,"use",enty)
+            + (p31_grades(ttot,regi,"xi2",enty,rlf)-p31_grades(ttot,regi,"xi1",enty, rlf)) * v31_fuExtrCum(ttot-1,regi,enty, rlf)$(ttot.val gt 2005) / p31_grades(ttot,regi,"xi3",enty, rlf)
+            + (p31_grades(ttot,regi,"xi2",enty,rlf)-p31_grades(ttot,regi,"xi1",enty, rlf)) * (v31_fuExtrCum(ttot,regi,enty,rlf)-v31_fuExtrCum(ttot-1,regi,enty,rlf)$(ttot.val gt 2005)) / (2 * p31_grades(ttot,regi,"xi3",enty, rlf))
+            )
 ***this is the short-term adjustment cost part
-			* (
-				(1 +
-				(p31_datafosdyn(regi,enty,rlf,"alph") * 1/(sqr(pm_ttot_val(ttot)-pm_ttot_val(ttot-1)))
-				* sqr(((vm_fuExtr(ttot,regi,enty,rlf)-vm_fuExtr(ttot-1,regi,enty,rlf))/(vm_fuExtr(ttot-1,regi,enty,rlf)+
-							0.001*p31_grades(ttot,regi,"xi3",enty,rlf) + 
-							p31_extraseed(ttot,regi,enty,rlf) +
-							1.e-9)))
-				)$(ttot.val gt 2005) 
-				)
-			)
-			* vm_fuExtr(ttot,regi,enty,rlf)
-		)$(p31_grades(ttot,regi,"xi3",enty,rlf) gt 0)
-	)
+            * (
+                (1 +
+                (p31_datafosdyn(regi,enty,rlf,"alph") * 1/(sqr(pm_ttot_val(ttot)-pm_ttot_val(ttot-1)))
+                * sqr(((vm_fuExtr(ttot,regi,enty,rlf)-vm_fuExtr(ttot-1,regi,enty,rlf))/(vm_fuExtr(ttot-1,regi,enty,rlf)+
+                            0.001*p31_grades(ttot,regi,"xi3",enty,rlf) + 
+                            p31_extraseed(ttot,regi,enty,rlf) +
+                            1.e-9)))
+                )$(ttot.val gt 2005) 
+                )
+            )
+            * vm_fuExtr(ttot,regi,enty,rlf)
+        )$(p31_grades(ttot,regi,"xi3",enty,rlf) gt 0)
+    )
 ;
 
 *--------------------------------------
@@ -163,9 +163,9 @@ q31_fuExtrDec(ttot+1,regi,enty2rlf_dec(enty,rlf))$(pm_ttot_val(ttot+1) ge max(20
 
 ***CG:RETIRE% ==  replacing earlyreti_lim with regional early retirement rate pm_extRegiEarlyRetiRate(ext_regi)
 q31_smoothoilphaseout(ttot,regi,enty2rlf_dec(enty,rlf))$( (ttot.val ge cm_startyear) AND (ttot.val lt 2120) AND (sameas(enty,"peoil")) )..
-	v31_fuSlack(ttot+1,regi,enty,rlf)
-	=l=
-	v31_fuSlack(ttot,regi,enty,rlf) + (pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * sum(regi_group(ext_regi,regi), pm_extRegiEarlyRetiRate(ext_regi)) * 0.3 * p31_max_oil_extraction(regi,enty,rlf); !! 0.3 is an arbitrarily chosen number to make the retirement of oil comparable to retirement of other sectors- the "max_oil_extraction" is alsways higher than the real extraction, so some decrease of this limit makes the results smoother.
+    v31_fuSlack(ttot+1,regi,enty,rlf)
+    =l=
+    v31_fuSlack(ttot,regi,enty,rlf) + (pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * sum(regi_group(ext_regi,regi), pm_extRegiEarlyRetiRate(ext_regi)) * 0.3 * p31_max_oil_extraction(regi,enty,rlf); !! 0.3 is an arbitrarily chosen number to make the retirement of oil comparable to retirement of other sectors- the "max_oil_extraction" is alsways higher than the real extraction, so some decrease of this limit makes the results smoother.
 ;
 
 
@@ -173,12 +173,15 @@ q31_smoothoilphaseout(ttot,regi,enty2rlf_dec(enty,rlf))$( (ttot.val ge cm_starty
 *' Dynamic constraint on increase rate
 *** --------------------------------------
 q31_fuExtrInc(ttot+1,regi,enty2rlf_inc(enty,rlf))$((p31_grades(ttot,regi,"xi3",enty,rlf) gt 0) AND (pm_ttot_val(ttot+1) ge max(2010,cm_startyear)))..
-	vm_fuExtr(ttot+1,regi,enty,rlf)
-	=l=
-	(1 + p31_datafosdyn(regi,enty,rlf,"inc"))**(pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * (vm_fuExtr(ttot,regi,enty,rlf) + p31_datafosdyn(regi,enty,rlf,"incoffset"))
+   vm_fuExtr(ttot+1,regi,enty,rlf)
+   =l=
+   (1 + p31_datafosdyn(regi,enty,rlf,"inc"))**(pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * (vm_fuExtr(ttot,regi,enty,rlf) + p31_datafosdyn(regi,enty,rlf,"incoffset"))
 $ifthen.cm_oil_scen %cm_oil_scen% == "highOil"	  +(10)$(cm_startyear eq 2015 AND pm_ttot_val(ttot+1) eq 2015 AND ((sameas(enty,"peoil") AND sameas(rlf,"7")) OR (sameas(enty,"pegas") AND sameas(rlf,"6"))))
                                                   +(10)$(cm_startyear eq 2015 AND pm_ttot_val(ttot+1) eq 2015 AND (sameas(enty,"peoil") AND sameas(rlf,"1") AND sameas(regi,"REF")));
 $elseif.cm_oil_scen %cm_oil_scen% == "4"          +(10)$(cm_startyear eq 2015 AND pm_ttot_val(ttot+1) eq 2015 AND ((sameas(enty,"peoil") AND sameas(rlf,"7")) OR (sameas(enty,"pegas") AND sameas(rlf,"6"))))
 $endif.cm_oil_scen
 ;
+
+*' @stop
+
 *** EOF ./modules/31_fossil/timeDepGrades/equations.gms

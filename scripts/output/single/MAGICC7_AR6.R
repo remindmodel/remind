@@ -28,6 +28,7 @@ library(yaml)
 library(tidyverse)
 library(readr)
 library(stringr)
+library(piamutils)
 
 ############################# BASIC CONFIGURATION #############################
 
@@ -192,7 +193,7 @@ capture.output(cat(logmsg), file = logFile, append = TRUE)
 ############################# RUNNING MODEL #############################
 
 logmsg <- paste0(
-  date(), "  Found ", nparsets, " nparsets, start climate-assessment climate emulator step\n", 
+  date(), "  Found ", nparsets, " nparsets, start climate-assessment climate emulator step\n",
   runHarmoniseAndInfillCmd, "\n",
   date(), " =================== RUN climate-assessment model ============================\n",
   runClimateEmulatorCmd, "'\n"
@@ -232,7 +233,7 @@ as.quitte(remindReportingFile) %>%
   rbind(climateAssessmentData) %>%
   write.mif(remindReportingFile)
 
-deletePlus(remindReportingFile, writemif = TRUE)
+piamutils::deletePlus(remindReportingFile, writemif = TRUE)
 
 logmsg <- paste0(
   date(), " postprocessing done! Results appended to REMIND mif '", remindReportingFile, "'\n",

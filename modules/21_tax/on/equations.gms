@@ -6,6 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/21_tax/on/equations.gms
 
+*' @equations
+
 ***---------------------------------------------------------------------------
 *'  The dynamic bioenergy sustainability tax is calculated: it scales linearly
 *'  with the bioenergy demand starting at 0 at 0EJ to the level defined in
@@ -388,5 +390,6 @@ q21_SeTaxRate(t,regi,te)$(teSeTax(te))..
   )
 ;
 
+*' @stop
 
 *** EOF ./modules/21_tax/on/equations.gms
