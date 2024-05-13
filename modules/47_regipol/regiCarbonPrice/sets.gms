@@ -9,18 +9,18 @@
 SETS
 target_type_47 "CO2 policy target type" / budget , year /
 
-emi_type_47 "emission type used in regional target" 
-/ 
+emi_type_47 "emission type used in regional target"
+/
   netCO2, netCO2_noBunkers, netCO2_noLULUCF_noBunkers, netCO2_LULUCFGrassi, netCO2_LULUCFGrassi_noBunkers, netCO2_LULUCFGrassi_intraRegBunker,
   netGHG, netGHG_noBunkers, netGHG_noLULUCF_noBunkers, netGHG_LULUCFGrassi, netGHG_LULUCFGrassi_noBunkers, netGHG_LULUCFGrassi_intraRegBunker, netGHG_noLULUCF,
-  grossEnCO2_noBunkers 
+  grossEnCO2_noBunkers
 /
 
 *** Emission markets
-$ifThen.emiMkt not "%cm_emiMktTarget%" == "off" 
+$ifThen.emiMkt not "%cm_emiMktTarget%" == "off"
   regiEmiMktTarget(ext_regi)               "regions with emiMkt targets" / /
   regiANDperiodEmiMktTarget_47(ttot,ext_regi) "regions and periods with emiMkt targets" / /
-  regiEmiMktTarget2regi_47(ext_regi,all_regi)  "regions controlled by emiMkt market set to ext_regi" / / 
+  regiEmiMktTarget2regi_47(ext_regi,all_regi)  "regions controlled by emiMkt market set to ext_regi" / /
 $ENDIF.emiMkt
 
 *** Implicit tax/subsidy necessary to achieve quantity target for primary, secondary, final energy and/or CCS
@@ -71,7 +71,7 @@ energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,all_enty) "set combinin
   PE.fossil.(peoil,pegas,pecoal)
   PE.VRE.(pewin,pesol)
   PE.renewables.(pegeo,pehyd,pewin,pesol,pebiolc,pebios,pebioil)
-  PE.renewablesNoBio.(pegeo,pehyd,pewin,pesol)  
+  PE.renewablesNoBio.(pegeo,pehyd,pewin,pesol)
 *** Secondary energy type categories
 ***  SE.all.(entySe) !! defined below as calculated set
   SE.biomass.(seliqbio,sesobio,segabio)
@@ -141,6 +141,17 @@ $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
     energyQttyTargetANDGroup2enty("FE","all",entySe) = YES;
   );
 $endIf.cm_implicitQttyTarget
+
+Sets
+enty_pe2se(all_enty,all_enty) "all combinations of PE and SE carriers for which technologies exist in pe2se mapping, start only with electricity and chp technologies for now where there exist several technologies for same combination"
+/
+        pegas.seel
+        pecoal.seel
+        peoil.seel
+        pebiolc.seel
+/
+;
+
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/sets.gms

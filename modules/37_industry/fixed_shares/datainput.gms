@@ -9,7 +9,7 @@
 vm_emiIndBase.l(ttot,regi,entyFe,secInd37) = 0;
 
 *** substitution elasticities
-Parameter 
+Parameter
   p37_cesdata_sigma(all_in)  "substitution elasticities"
   /
     eni    2.5
@@ -40,7 +40,7 @@ pm_cesdata_sigma(ttot,"enhgai")$ (ttot.val eq 2040) = 3;
 
 *** rescale elasticity of substitution parameter sigma
 *** avoid the elasticity of substitution parameter to be too close to one, which could cause undesired numerical behavior: if the resulting scaled parameter is between 0.8 and 1, make it 0.8; if it is between 1 and 1.2, make it 1.2
-$IFTHEN.cm_eni not "%cm_eni%" == "off" 
+$IFTHEN.cm_eni not "%cm_eni%" == "off"
   pm_cesdata_sigma(ttot,"eni")$pm_cesdata_sigma(ttot,"eni") = pm_cesdata_sigma(ttot,"eni") * %cm_eni%;
   pm_cesdata_sigma(ttot,"eni")$( (pm_cesdata_sigma(ttot,"eni") gt 0.8) AND (pm_cesdata_sigma(ttot,"eni") lt 1)) = 0.8;
   pm_cesdata_sigma(ttot,"eni")$( (pm_cesdata_sigma(ttot,"eni") ge 1) AND (pm_cesdata_sigma(ttot,"eni") lt 1.2)) = 1.2;
@@ -49,8 +49,8 @@ $ENDIF.cm_eni
 *** assuming a maximum 20% of heat pumps in heat industry to be more in line with industry subsectors
 pm_ppfen_shares(t,regi,"enhi","fehei") = 0.2;
 *** exception or the above: REF. Assuming a maximum 30% of heat pumps in heat industry. reduced lineraly from initial year levels to be more in line with industry subsectors (2030 and afterwards = 30% maximum, 2005 = 50% to avoid infeasiblities)
-pm_ppfen_shares(t,regi,"enhi","fehei")$(sameas(regi,"REF")) = 0.3; 
-pm_ppfen_shares(t,regi,"enhi","fehei")$((t.val le 2030) and (sameas(regi,"REF"))) = 0.50 - (0.20/25)*(t.val-2005); 
+pm_ppfen_shares(t,regi,"enhi","fehei")$(sameas(regi,"REF")) = 0.3;
+pm_ppfen_shares(t,regi,"enhi","fehei")$((t.val le 2030) and (sameas(regi,"REF"))) = 0.50 - (0.20/25)*(t.val-2005);
 
 Table p37_shIndFE(all_regi,all_in,secInd37)   "share of industry sub-sectors in FE use [ratio]"
 $ondelim
@@ -60,7 +60,7 @@ $offdelim
 
 $include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
 
-$IFTHEN.Industry_CCS_markup not "%cm_Industry_CCS_markup%" == "off" 
+$IFTHEN.Industry_CCS_markup not "%cm_Industry_CCS_markup%" == "off"
 	pm_abatparam_Ind(ttot,regi,all_enty,steps)$pm_abatparam_Ind(ttot,regi,all_enty,steps) = (1/%cm_Industry_CCS_markup%)*pm_abatparam_Ind(ttot,regi,all_enty,steps);
 $ENDIF.Industry_CCS_markup
 
@@ -128,7 +128,7 @@ pm_shGasLiq_fe_lo(ttot,regi,"indst")=0;
 
 
 *** Upper bound for electricity share in industry
-$IFTHEN.feShare not "%cm_feShareLimits%" == "off" 
+$IFTHEN.feShare not "%cm_feShareLimits%" == "off"
 
 $ifthen.feShareScenario "%cm_feShareLimits%" == "electric"
   pm_shfe_up(t,regi,"feels","indst")$(t.val ge 2050) = 0.6;
@@ -161,7 +161,7 @@ p37_CESMkup(ttot,regi,in) = 0;
 p37_CESMkup(ttot,regi,"feeli") = 0.5;
 
 *** overwrite or extent CES markup cost if specified by switch
-$ifthen.CESMkup "%cm_CESMkup_ind%" == "manual" 
+$ifthen.CESMkup "%cm_CESMkup_ind%" == "manual"
   p37_CESMkup(ttot,regi,in)$( p37_CESMkup_input(in) ) = p37_CESMkup_input(in);
 $endif.CESMkup
 

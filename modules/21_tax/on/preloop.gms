@@ -154,8 +154,22 @@ p21_tau_SE_tax(t,regi,"elh2") = p21_tau_fe_tax(t,regi,"indst","feels")
                                   * pm_teAnnuity("tdels")
                                   / pm_cf(t,regi,"tdels");
 
+*** default parameters of logistic tax ramp-up curve
 p21_tau_SE_tax_rampup(t,regi,te,"a") = 0.4;
 p21_tau_SE_tax_rampup(t,regi,te,"b") = 10;
+
+
+*** overwrite parameters of logistic tax ramp-up curve for electrolysis with input from cm_elh2_tax_rampup
+$IFTHEN.elh2_tax_rampup not "%cm_elh2_tax_rampup%" == "standard"
+
+  loop((ext_regi,teSeTax_coeff)$(p21_tau_elh2_tax_rampup_input(ext_regi,teSeTax_coeff)),
+    loop(regi$regi_groupExt(ext_regi,regi),
+      p21_tau_SE_tax_rampup(t,regi,"elh2",teSeTax_coeff)$(p21_tau_elh2_tax_rampup_input(ext_regi,teSeTax_coeff)) =
+        p21_tau_elh2_tax_rampup_input(ext_regi,teSeTax_coeff);
+    );
+  );
+
+$ENDIF.elh2_tax_rampup
 
 *LB* initialization of vm_emiMac
 vm_emiMac.l(ttot,regi,enty) = 0;

@@ -94,6 +94,13 @@ q32_h2turbVREcapfromTestorUp(t,regi)..
       p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
 ;
 
+*** build additional electrolysis capacities with stored VRE electricity, phase-in from 2030 to 2040
+q32_elh2VREcapfromTestor(t,regi)..
+  vm_cap(t,regi,"elh2","1")
+  =g=
+  sum(te$testor(te), p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") ) * p32_phaseInElh2VREcap(t)
+;
+
 
 ***---------------------------------------------------------------------------
 *** Definition of capacity constraints for CHP technologies:
@@ -315,11 +322,12 @@ q32_flexPriceBalance(t,regi)$(cm_FlexTaxFeedback eq 1)..
 *** unreasonable FE prices caused by meaningless marginals in infeasible Nash
 *** iterations from propagating through the model.
 *** Fixed to 0 if cm_flex_tax != 1, and before 2025.
+*** FlexTax is linearly phased in between 2025 and 2040.
 q32_flexAdj(t,regi,te)$(teFlexTax(te))..
   vm_flexAdj(t,regi,te) 
   =e=
   ( (1 - v32_flexPriceShare(t,regi,te))
-  * max(0, min(2, pm_SEPrice(t,regi,"seel")))
+  * max(0, min(2, pm_SEPrice(t,regi,"seel"))) * p32_phaseInFlexTax(t)
   )$( cm_flex_tax eq 1 AND t.val ge 2025 )
 ;
 

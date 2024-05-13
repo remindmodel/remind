@@ -262,6 +262,26 @@ p47_LULUCFEmi_GrassiShift(t,regi)$(p47_EmiLULUCFCountryAcc("2020",regi)) =
   )
 ;
 
+
+*** shift land-use change emissions for Grassi targets based on exogenuous assumption from scenario config
+$ifThen.cm_regipol_LUC NOT "%cm_regipol_LUC%" == "off"
+
+*** rescaling all ext_regi provided by cm_regipol_LUC
+loop((ttot,ext_regi)$(p47_emiLUC(ttot,ext_regi)), 
+ loop(regi$regi_groupExt(ext_regi,regi),
+*** calculate shfit in land-use change CO2 emissions by disaggregating shift of region group into regions based on UNFCCC 2015 land-use change emissions 
+*** apply shift to all time steps ttot2 and not only to specific year defined by switch ttot
+    p47_emiLUC_regi(ttot2,regi) = p47_emiLUC(ttot,ext_regi) 
+                                      * p47_EmiLULUCFCountryAcc("2015",regi)
+                                      / sum(regi2$regi_groupExt(ext_regi,regi2),
+                                          p47_EmiLULUCFCountryAcc("2015",regi2)); 
+  );
+);
+*** difference between 2015 land-use change emissions from Magpie and user-defined land-use change emissions from cm_regipol_LUC, convert to GtC/yr 
+p47_LULUCFEmi_GrassiShift(ttot,regi)$(p47_emiLUC_regi(ttot,regi)) =  pm_macBaseMagpie(ttot,regi,"co2luc") - p47_emiLUC_regi(ttot,regi) * 1e-3/sm_c_2_co2;
+$endIf.cm_regipol_LUC
+
+
 *** -------------------------Primary Energy Tax--------------------------
 
 *PW* charge tax on PE gas,oil,coal in energy security scenario for Germany (in trUSD/TWa) to hit Ariadne energy security price trajectories
@@ -306,6 +326,9 @@ pm_shareWindOff(ttot,regi)$(ttot.val ge 2035 AND sameAs(regi,"DEU")) = 1;
 *** parameter to deteremine regional long-term share
 pm_shareWindPotentialOff2On(regi)$(sameAs(regi,"DEU")) = 0.7;
 
+*** adapt offshore wind potential in Germany
+pm_dataren(regi,"maxprod","6","windoff")$(sameAs(regi,"DEU")) = 0.015;  !! manual maximum of offshore wind for Germany
+
 *** intermediate solution for code check until ces tax gets implemented
 pm_tau_ces_tax("2025",regi,"ue_steel_primary")$(sameAs(regi,"DEU")) = 0.0;
 
@@ -320,6 +343,5 @@ $offdelim
 /;
 
 $endif.exogDemScen
-
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms

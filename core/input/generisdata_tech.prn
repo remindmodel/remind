@@ -70,7 +70,7 @@ luse                                                                            
 
 
 +                  elh2         dot         dhp       h2turb      h2curt       h2turbVRE  elh2VRE      h22ch4      MeOH
-tech_stat            4                                    5           5            5                     3          3
+tech_stat            3                                    5           5            5                     3          3  
 inco0               1350         480         360         510         700          510      0.1          700       1300
 constrTme            2            2           1           2           2            2        1            2          2
 mix0

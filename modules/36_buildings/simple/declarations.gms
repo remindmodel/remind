@@ -10,6 +10,7 @@ Parameters
   p36_CESMkup(ttot,all_regi,all_in)        "parameter for those CES markup cost accounted as investment cost in the budget [trUSD/CES input]"
   p36_floorspace(tall,all_regi)            "buildings floorspace, billion m2, in simple realization only used for reporting"
   p36_uedemand_build(tall,all_regi,all_in) "useful energy demand in buildings in TWh/a, in simple realization only used for reporting"
+  p36_CESMkup_policy_phasein(ttot)          "parameter to define temporal phase-in of CES mark-up cost changes via switch cm_CESMkup_build"
 ;
 
 $ifThen.CESMkup not "%cm_CESMkup_build%" == "standard" 

@@ -23,6 +23,21 @@ Parameters
   p37_steel_secondary_max_share(tall,all_regi)                                 "maximum share of secondary steel production"
   p37_BAU_industry_ETS_solids(tall,all_regi)                                   "industry solids demand in baseline scenario"
   p37_cesIO_baseline(tall,all_regi,all_in)                                     "vm_cesIO from the baseline scenario"
+  p37_CESMkup_policy_phasein(ttot)                                             "parameter to define temporal phase-in of CES mark-up cost changes via switch cm_CESMkup_ind"
+  !! chemicals and feedstock-related
+  p37_FeedstockCarbonContent(ttot,all_regi,all_enty)                           "carbon content of feedstocks [GtC/TWa]"
+  p37_FE_noNonEn(ttot,all_regi,all_enty,all_enty2,emiMkt)                      "testing parameter for FE without non-energy use"
+  p37_Emi_ChemProcess(ttot,all_regi,all_enty,emiMkt)                           "testing parameter for process emissions from chemical feedstocks"
+  p37_CarbonFeed_CDR(ttot,all_regi,all_emiMkt)                                 "testing parameter for carbon in feedstocks from biogenic and synthetic sources"
+  p37_IndFeBal_FeedStock_LH(ttot,all_regi,all_enty,emiMkt)                     "testing parameter Ind FE Balance left-hand side feedstock term"
+  p37_IndFeBal_FeedStock_RH(ttot,all_regi,all_enty,emiMkt)                     "testing parameter Ind FE Balance right-hand side feedstock term"
+  p37_EmiEnDemand_NonEnCorr(ttot,all_regi)                                     "energy demand co2 emissions with non-energy correction"
+  p37_EmiEnDemand(ttot,all_regi)                                               "energy demand co2 emissions without non-energy correction"
+  p37_clinker_cement_ratio(ttot,all_regi)                                      "clinker content per unit cement used"
+  pm_ue_eff_target(all_in)                                                     "energy efficiency target trajectories [% p.a.]"
+  pm_IndstCO2Captured(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)     "Captured CO2 in industry by energy carrier, subsector and emissions market"
+
+
   !! process-based implementation
   p37_specMatDem(mat,all_te,opmoPrc)                                           "Specific materials demand of a production technology and operation mode [t_input/t_output]"
   pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc)                          "Actual specific final-energy demand of a tech; blends between IEA data and Target [TWa/Gt_output]"
@@ -32,16 +47,6 @@ Parameters
   p37_captureRate(all_te)                                                      "Capture rate of CCS technology"
   p37_selfCaptureRate(all_te)                                                  "Share of emissions from fossil fuels used for a CCS process which are captured by the CCS process itself"
   p37_priceMat(all_enty)                                                       "Prices of external material input [2005$/kg] = [trn2005$/Gt]"
-
-  p37_chemicals_feedstock_share(ttot,all_regi)               "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
-  p37_FeedstockCarbonContent(ttot,all_regi,all_enty)         "carbon content of feedstocks [GtC/TWa]"
-  p37_FE_noNonEn(ttot,all_regi,all_enty,all_enty2,emiMkt)    "testing parameter for FE without non-energy use"
-  p37_Emi_ChemProcess(ttot,all_regi,all_enty,emiMkt)         "testing parameter for process emissions from chemical feedstocks"
-  p37_CarbonFeed_CDR(ttot,all_regi,all_emiMkt)               "testing parameter for carbon in feedstocks from biogenic and synthetic sources"
-  p37_IndFeBal_FeedStock_LH(ttot,all_regi,all_enty,emiMkt)   "testing parameter Ind FE Balance left-hand side feedstock term"
-  p37_IndFeBal_FeedStock_RH(ttot,all_regi,all_enty,emiMkt)   "testing parameter Ind FE Balance right-hand side feedstock term"
-  p37_EmiEnDemand_NonEnCorr(ttot,all_regi)                   "energy demand co2 emissions with non-energy correction"
-  p37_EmiEnDemand(ttot,all_regi)                             "energy demand co2 emissions without non-energy correction"
 
 *** output parameters only for reporting
   o37_cementProcessEmissions(ttot,all_regi,all_enty)                     "cement process emissions [GtC/a]"
@@ -81,6 +86,7 @@ Positive Variables
   vm_emiIndCCS(ttot,all_regi,all_enty)                                      "industry CCS emissions [GtC/a]"
   vm_IndCCSCost(ttot,all_regi,all_enty)                                     "industry CCS cost"
   v37_emiIndCCSmax(ttot,all_regi,emiInd37)                                  "maximum abatable industry emissions"
+  !! chemicals and feedstock-related
   v37_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)          "Carbon flow: carbon contained in chemical feedstocks [GtC]"
   v37_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "Carbon flow: carbon contained in plastics [GtC]"
   v37_plasticWaste(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "Carbon flow: carbon contained in plastic waste [GtC]"
@@ -106,6 +112,7 @@ $endif.no_calibration
   q37_IndCCSCost                                                                    "Calculate industry CCS costs"
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)                                 "industry final energy demand (per emission market)"
   q37_costCESmarkup(ttot,all_regi,all_in)                                           "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
+  !! chemicals and feedstock-related
   q37_chemicals_feedstocks_limit(ttot,all_regi)                                     "lower bound on feso/feli/fega in chemicals FE input for feedstocks"
   q37_demFeFeedstockChemIndst(ttot,all_regi,all_enty,all_emiMkt)                    "defines energy flow of non-energy feedstocks for the chemicals industry. It is used for emissions accounting"
   q37_FossilFeedstock_Base(ttot,all_regi,all_enty,all_emiMkt)                       "in baseline runs feedstocks only come from fossil energy carriers"
@@ -117,6 +124,7 @@ $endif.no_calibration
   q37_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)           "calculate carbon contained in chemical feedstock with unknown fate [GtC]"
   q37_feedstocksLimit(ttot,all_regi,all_enty,all_enty,all_emiMkt)                   "restrict feedstocks flow to total energy flows into industry"
   q37_feedstocksShares(ttot,all_regi,all_enty,all_enty,all_emiMkt)                  "identical fossil/biomass/synfuel shares for FE and feedstocks"
+
 
   !! process-based implementation
   q37_demMatPrc(tall,all_regi,mat)                                                  "Material demand of processes"

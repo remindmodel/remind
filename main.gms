@@ -395,7 +395,7 @@ $setglobal carbonpriceRegi  none      !! def = none
 *'
 *' * (none): no regional policies
 *' * (regiCarbonPrice): region-specific policies and refinements (regional emissions targets, co2 prices, phase-out policies etc.)
-$setglobal regipol  none              !! def = none
+$setglobal regipol  regiCarbonPrice              !! def = none
 *'---------------------    50_damages    ---------------------------------------
 *'
 *' * (off): no damages on GDP
@@ -1022,7 +1022,18 @@ parameter
 *' This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1
 *' Default value is based on data from German Langfristszenarien (see ./modules/32_power/IntC/datainput.gms).
 parameter
-  cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildings and industry electricity prices is on"
+  cm_elh2_CF       "switch to change capacity factor of electrolyis, must be within (0-1]"
+;
+  cm_elh2_CF = 0.38;  !! def = 0.38
+*' cm_elh2_CF, capacity factor of electrolysis. Note only effective if cm_flex_tax = 1.
+*' Note that by default this changes the flexibility tax for electrolysis, which depends on the capacity factor (as long as cm_flex_tax = 1).
+*' This is because the flexibility tax lowers the electricity price electrolysis sees in REMIND as a function of the capacity factor, the VRE share
+*' and the assumed price duration curve (the slope of this curve is also an scenario assumption defined by cm_PriceDurSlope_elh2).
+*' It is based on the logic that, in a high-VRE power system, electrolysis will only run in hours of low electricity prices.
+*' The default value of 0.38 is based on data from the German Langfristszenarien from high-VRE scenarios simulated
+*' by the Enertile power system model (see ./modules/32_power/IntC/datainput.gms).
+parameter
+  cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
 ;
   cm_FlexTaxFeedback = 0;  !! def = 0  !! regexp = 0|1
 *' cm_FlexTaxFeedback, switches on feedback of flexibility tax on buildings and industry.
@@ -1121,6 +1132,15 @@ parameter
   c_changeProdCost   "Multiplicative factor to up/downscale the costs for vm_changeProdStartyearCost"
 ;
   c_changeProdCost = 5;  !! def = 5
+parameter
+  cm_run_initialCap   "Switch to entable running the InitialCap module in policy runs"
+;
+  cm_run_initialCap = 0;  !! def = 1
+*' This switch is used to enable running the InitialCap module to determine initial capacities and modify some technology data accordingly.
+*'
+*' * (0)                InitialCap is only run if cm_startyear is 2005, otherwise its output is taken from input_ref.gdx.
+*' * (1)                InitialCap is run.
+*'
 *'
 parameter
   cm_LearningSpillover      "Activate Learningspillover from foreign capacity in learning technogolies"
@@ -1262,6 +1282,11 @@ $setGlobal cm_regiExoPrice  off    !! def = off
 ***     sets a 72 GtCO2eq budget target for European 27 countries (EU27_regi), for all GHG emissions excluding bunkers between 2020 and 2050; and a 100 MtCO2 CO2eq emission target for the year 2050, for Germany"
 ***     Requires regiCarbonPrice realization in regipol module
 $setGlobal cm_emiMktTarget  off    !! def = off
+*** cm_regipol_LUC "user-defined shift of land-use change emissions from Magpie trajectories when employing cm_emiMktTarget with the Grassi offset (LULUCFGrassi option)"
+***   Example on how to use:
+***    cm_regipol_LUC = "2050.EU27_regi -340"  shifts land-use change emissions of regions within the EU27 region to hit -340 MtCO2/yr by 2050 in EU27.
+***    Regional disaggregation happens via the 2015 share of regional land-use change emissions from the EU27 total based on UNFCCC data.
+$setGlobal cm_regipol_LUC  off    !! def = off
 *** cm_quantity_regiCO2target "emissions quantity upper bound from specific year for region group."
 ***   Example on how to use:
 ***     '2050.EUR_regi.netGHG 0.000001, obliges European GHG emissions to be approximately zero from 2050 onward"
@@ -1318,6 +1343,10 @@ $setGlobal cm_implicitPePriceTarget  off  !! def = off  !! regexp = off|highFoss
 ***     cm_VREminShare = "2050.EUR_regi 0.7".
 ***       Require a minimum 70% VRE share (wind plus solar) in electricity production for all regions that belong to EUR in year 2050."
 $setGlobal cm_VREminShare    off !! def = off
+*** cm_VREminCap "minimum variable renewables capacities."
+***  (off):   (default) no bounds
+***  (ampel): sets lower bounds on capacities for wind, solar and H2 as specified in the ampel coalition agreement and KSG."
+$setGlobal cm_VREminCap    off !! def = off
 *** cm_CCSmaxBound "limits Carbon Capture and Storage (including DACCS and BECCS) to a maximum value."
 ***   Example on how to use:
 ***     cm_CCSmaxBound   GLO 2, EUR 0.25
@@ -1597,6 +1626,16 @@ $setGlobal cm_FEtax_trajectory_rel  off !! def = off
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "DEU -0.2, EU27_regi -0.4".
 $setGLobal c_agricult_base_shift off !! def off
+*** electrolysis tax switch: cm_elh2_tax_rampup
+*** This allows to manually adjust the ramp-up curve of the SE tax on electricity going into electrolysis for green hydrogen production.
+*** The ramp-up curve is a logistic function that determines how fast taxes increase with increasing share of electrolysis in total power demand.
+*** This essentially makes an assumption about to what extend electrolysis will be taxed and how much tax exemptions there will be at low shares of green hydrogen production.
+*** The parameter a defines how fast the tax increases with increasing share, while the parameter b defines at which share
+*** the tax is halfway between the value at 0 share and the maximum value (defined by a region's electricity tax and the electricity grid cost) that it converges to for high shares.
+*** Example use: "GLO.a 1.5, GLO.b 20" changes the parameter values to a=1.5 and b=20 for all world regions.
+*** Note that all regions to which this switch is not applied receive the default parameter values.
+*** For details, please see ./modules/21_tax/on/equations.gms.
+$setGLobal cm_elh2_tax_rampup standard !! def standard
 *** wind offshore switch
 *** cm_wind_offshore  1, wind energy is represented by "wind" and "windoff", where "wind" means wind onshore. Later this will be the default and the name "wind" will be made to change to windon
 *** cm_wind_offshore  0, means wind energy is only represented by "wind", which is a mixture of both wind onshore and wind offshore

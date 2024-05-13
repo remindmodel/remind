@@ -99,6 +99,8 @@ pm_energy_limit(in)
 pm_energy_limit(out)$(NOT sum(in, ces_eff_target_dyn37(out,in))) = 0.;
 
 
+
+
 * Specific energy demand cannot fall below a curve described by an exponential
 * function passing through the 2015 value and a point defined by an "efficiency
 * gain" (e.g. 75 %) between baseline value and thermodynamic limit at a given
@@ -166,7 +168,18 @@ loop (industry_ue_calibration_target_dyn37(out)$( sameas(out,"ue_chemicals") OR 
     );
 );
 
-display p37_energy_limit_slope;
+
+*** for ARIADNE scenarios, set minimum energy limit (FE/industry production) in policy runs to energy limit of reference (Npi) run from 2025
+*** as this is already quite optimsitic especially in the near-term
+if (cm_startyear gt 2005,
+  loop (industry_ue_calibration_target_dyn37(out),
+    p37_energy_limit_slope(t,regi,out)$(t.val ge 2025) = sum(ces_eff_target_dyn37(out,in),
+                                                            p37_cesIO_baseline(t,regi,in))
+                                                          / p37_cesIO_baseline(t,regi,out);
+  );
+);
+
+
 $endif.no_calibration
 
 *** CCS for industry is off by default
@@ -436,15 +449,28 @@ pm_tau_ces_tax(t,regi,"feh2_steel")     =  50 * sm_TWa_2_MWh * 1e-12;
 $endif.cm_subsec_model_steel
 pm_tau_ces_tax(t,regi,"feh2_cement")    = 100 * sm_TWa_2_MWh * 1e-12;
 
+*` temporal phase-in of mark-up cost changes defined by cm_CESMkup_ind
+*` no changes to mark-up cost before 2025, then gradual phase-in until 2040
+p37_CESMkup_policy_phasein(t) = 0;
+p37_CESMkup_policy_phasein(t)$(t.val ge 2040) = 1;
+p37_CESMkup_policy_phasein(t)$(t.val eq 2035) = 1/2;
+p37_CESMkup_policy_phasein(t)$(t.val eq 2030) = 1/4;
+p37_CESMkup_policy_phasein(t)$(t.val eq 2025) = 1/8;
 
 *' overwrite or extent CES markup cost if specified by switch
 $ifthen.CESMkup "%cm_CESMkup_ind%" == "manual"
 loop (ppfen_industry_dyn37(in)$( p37_CESMkup_input(in) ),
-  p37_CESMkup(ttot,regi,in)$( ppfen_MkupCost37(in) )
-  = p37_CESMkup_input(in);
+  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in)
+                            AND ppfen_MkupCost37(in)) =
+    p37_CESMkup(t,regi,in)
+    + p37_CESMkup_policy_phasein(t)
+    * (p37_CESMkup_input(in) - p37_CESMkup(t,regi,in));
 
-  pm_tau_ces_tax(ttot,regi,in)$( NOT ppfen_MkupCost37(in) )
-  = p37_CESMkup_input(in);
+  pm_tau_ces_tax(t,regi,in)$(p37_CESMkup_input(in)
+                              AND (NOT ppfen_MkupCost37(in))) =
+    pm_tau_ces_tax(t,regi,in)
+    + p37_CESMkup_policy_phasein(t)
+    * (p37_CESMkup_input(in) - pm_tau_ces_tax(t,regi,in));
 );
 $endif.CESMkup
 
@@ -490,6 +516,7 @@ if (smax((t,regi),
 putclose logfile, " " /;
 );
 
+
 $ifthen.sec_steel_scen NOT "%cm_steel_secondary_max_share_scenario%" == "off"   !! cm_steel_secondary_max_share_scenario
 * Modify secondary steel share limits by scenario assumptions
 
@@ -533,6 +560,9 @@ loop ((regi,t2)$( p37_steel_secondary_max_share_scenario(t2,regi) ),
 display "scenario limits for maximum secondary steel share",
         p37_steel_secondary_max_share;
 $endif.sec_steel_scen
+
+
+
 Parameter p37_chemicals_feedstock_share(ttot,all_regi)   "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
   /
 $ondelim

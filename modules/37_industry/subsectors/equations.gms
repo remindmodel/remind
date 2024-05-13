@@ -200,6 +200,7 @@ q37_costCESmarkup(t,regi,in)$(ppfen_industry_dyn37(in))..
   * (vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
 
+
 ***--------------------------------------------------------------------------
 *'  Feedstock balances
 ***--------------------------------------------------------------------------
