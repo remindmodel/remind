@@ -39,8 +39,6 @@ if (!file.exists(file.path(params$outputdir, params$cal))) {
 }
 ```
 
-## Line Plots
-
 ```{r load data}
 gdx <- file.path(params$outputdir, params$gdx)
 ces <- read.table(file.path(params$outputdir, params$cal), header = TRUE, sep = ",", quote = "\"") %>%
@@ -76,7 +74,7 @@ ces <- ces %>% filter(.data$pf %in% c(ppf_29, pf_eff_target_dyn37))
 last_iteration <- max(itr)
 ```
 
-### Quantity Outliers
+## Quantity Outliers
 
 ```{r quantity outliers}
 threshold <- 0.15
@@ -112,7 +110,7 @@ knitr::kable(df, caption = "Quantities diverge by more than 15%")
 
 \newpage
 
-### Price Outliers
+## Price Outliers
 
 ```{r price outliers}
 threshold <- 0.01
@@ -139,7 +137,7 @@ knitr::kable(df, caption = "Prices below 0.01")
 
 \newpage
 
-### Line Plots
+## Line Plots
 
 \newpage
 
@@ -151,8 +149,10 @@ te <- c(
 in_set <- readGDX(gdx, "in", "sets")
 structure <- sort(intersect(in_set, getColValues(ces, "pf")))
 
+
+
 for (s in levels(ces$scenario)) {
-  for (r in unique(ces[ces$scenario == s, ][["regi"]])) {
+  for (r in sort(unique(ces$regi))) {
     # plot quantities
     df <- ces %>%
       filter(
@@ -162,6 +162,8 @@ for (s in levels(ces$scenario)) {
         .data$variable == "quantity"
       ) %>%
       order.levels(pf = structure)
+
+    if (nrow(df) == 0) next
 
     p <- ggplot(
       df,
