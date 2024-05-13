@@ -714,6 +714,9 @@ pm_cf(ttot,regi,"h2turbVRE")$(ttot.val ge 2025) = pm_cf(ttot,regi,"ngt");
 pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
+*** set CF for biogasc to the same value as for biogas
+pm_cf(t,regi,"biogasc") = 0.91;
+
 
 *SB* Region- and tech-specific early retirement rates
 *Regional*
