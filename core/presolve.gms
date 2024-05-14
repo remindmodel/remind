@@ -117,14 +117,14 @@ loop(regi,
 
 p_priceCO2(ttot,regi) = pm_taxCO2eqSum(ttot,regi) * 1000;
 
-*** Define co2 price for entities that are used in MAC. 
+*** Define co2 price for entities that are used in MAC.
 loop((enty,enty2)$emiMac2mac(enty,enty2), !! make sure that both mac sectors and mac curves have prices asigned as both sets are used in calculations below
   pm_priceCO2forMAC(ttot,regi,enty) = p_priceCO2(ttot,regi);
   pm_priceCO2forMAC(ttot,regi,enty2) = p_priceCO2(ttot,regi);
 );
 
 *** Redefine the MAC price for regions with emission tax defined by the regipol module
-$IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
+$IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
  loop(ext_regi$regiEmiMktTarget(ext_regi),
   loop(regi$regi_groupExt(ext_regi,regi),
 *** average CO2 price aggregated by FE
@@ -169,26 +169,26 @@ vm_macBase.fx(ttot,regi,"ch4wsts")$(ttot.val ge 2005) = p_emineg_econometric(reg
 vm_macBase.fx(ttot,regi,"ch4wstl")$(ttot.val ge 2005) = p_emineg_econometric(regi,"ch4wstl","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2");
 vm_macBase.fx(ttot,regi,"n2owaste")$(ttot.val ge 2005) = p_emineg_econometric(regi,"n2owaste","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"n2owaste","p2");
 
-vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 ) 
-  = ( pm_pop(ttot,regi)
-    * ( (1 - p_switch_cement(ttot,regi))
-      * p_emineg_econometric(regi,"co2cement_process","p1")
-      * ( (1000
-          * p_inv_gdx(ttot,regi)
-          / ( pm_pop(ttot,regi)
-            * pm_shPPPMER(regi)
-            )
-          ) ** p_emineg_econometric(regi,"co2cement_process","p2")
-         )
-      + ( p_switch_cement(ttot,regi)
-        * p_emineg_econometric(regi,"co2cement_process","p3")
-        )
-       )
-    )$(p_inv_gdx(ttot,regi) ne 0)
-;
-
-vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
-= vm_macBase.lo(ttot,regi,"co2cement_process");
+!! vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
+!!   = ( pm_pop(ttot,regi)
+!!     * ( (1 - p_switch_cement(ttot,regi))
+!!       * p_emineg_econometric(regi,"co2cement_process","p1")
+!!       * ( (1000
+!!           * p_inv_gdx(ttot,regi)
+!!           / ( pm_pop(ttot,regi)
+!!             * pm_shPPPMER(regi)
+!!             )
+!!           ) ** p_emineg_econometric(regi,"co2cement_process","p2")
+!!          )
+!!       + ( p_switch_cement(ttot,regi)
+!!         * p_emineg_econometric(regi,"co2cement_process","p3")
+!!         )
+!!        )
+!!     )$(p_inv_gdx(ttot,regi) ne 0)
+!! ;
+!!
+!! vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
+!! = vm_macBase.lo(ttot,regi,"co2cement_process");
 
 * *** Reduction of cement demand due to CO2 price markups *** *
 if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
@@ -202,7 +202,7 @@ if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
   display "CO2 price for computing Cement Demand Reduction [$/tC]",
           pm_CementAbatementPrice;
 
-  !! The demand reduction function a = 160 / (p + 200) + 0.2 assumes that demand 
+  !! The demand reduction function a = 160 / (p + 200) + 0.2 assumes that demand
   !!  for cement is reduced by 40% if the price doubles (CO2 price of $200) and
   !!  that demand reductions of 80% can be achieved in the limit.
   pm_ResidualCementDemand("2005",regi) = 1;
@@ -230,7 +230,7 @@ if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
   display "Cement Demand Reduction, price of limited reduction",
           pm_CementAbatementPrice;
 
-  !! Costs of cement demand reduction are the integral under the activity 
+  !! Costs of cement demand reduction are the integral under the activity
   !! reduction curve times baseline emissions.
   !! a = 160 / (p + 200) + 0.2
   !! A = 160 ln(p + 200) + 0.2p
@@ -282,7 +282,7 @@ pm_macAbat(ttot,regi,enty,steps)
 ;
 pm_macAbat(ttot,regi,enty,steps)$(ttot.val gt 2100) = pm_macAbat("2100",regi,enty,steps);
 
-*** Abatement options are in steps of length sm_dmac; options at zero price are 
+*** Abatement options are in steps of length sm_dmac; options at zero price are
 *** in the first step
 pm_macStep(ttot,regi,enty)$(MacSector(enty))
   = min(801, ceil(pm_priceCO2forMAC(ttot,regi,enty) / sm_dmac) + 1);
@@ -294,8 +294,8 @@ p_priceGas(ttot,regi)=q_balPe.m(ttot,regi,"pegas")/(qm_budget.m(ttot,regi)+sm_ep
 pm_macStep(ttot,regi,"ch4gas")
   = min(801, ceil(max(pm_priceCO2forMAC(ttot,regi,"ch4gas") * (25/s_gwpCH4), max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);
 pm_macStep(ttot,regi,"ch4coal")
-  = min(801, ceil(max(pm_priceCO2forMAC(ttot,regi,"ch4coal") * (25/s_gwpCH4), 0.5 * max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);    
-  
+  = min(801, ceil(max(pm_priceCO2forMAC(ttot,regi,"ch4coal") * (25/s_gwpCH4), 0.5 * max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);
+
 *** limit yearly increase of MAC usage to sm_macChange
 p_macAbat_lim(ttot,regi,enty)
   = sum(steps$(ord(steps) eq pm_macStep(ttot-1,regi,enty)),
@@ -304,7 +304,7 @@ p_macAbat_lim(ttot,regi,enty)
   + sm_macChange * pm_ts(ttot)
 ;
 
-*** if intended abatement pm_macAbat is higher than this limit, pm_macStep has to 
+*** if intended abatement pm_macAbat is higher than this limit, pm_macStep has to
 *** be set to the highest step number where pm_macAbat is still lower or equal to
 *** this limit
 loop ((ttot,regi,MacSector(enty))$(NOT sameas(enty,"co2luc")),
@@ -317,7 +317,7 @@ loop ((ttot,regi,MacSector(enty))$(NOT sameas(enty,"co2luc")),
   );
 );
 
-*** In USA, EUR and JPN, abatement measures for CH4 emissions from waste started 
+*** In USA, EUR and JPN, abatement measures for CH4 emissions from waste started
 *** in 1990. These levels of abatement are enforced as a minimum in all
 *** scenarios including BAU.
 p_macUse2005(regi,enty) = 0.0;
@@ -329,7 +329,7 @@ p_macUse2005(regi,"ch4wsts")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) ge 10)
 *** This includes sum of sub-categories from MAgPIE (see mapping emiMac2mac).
 pm_macAbat(ttot,regi,MacSectorMagpie(enty),"1") = 0;
 
-*** phase in use of zero cost abatement options until 2040 if there is no 
+*** phase in use of zero cost abatement options until 2040 if there is no
 *** carbon price
 p_macLevFree(ttot,regi,enty)$( ttot.val gt 2005 )
   =
@@ -391,7 +391,7 @@ loop (ttot$( ttot.val ge 2015 ),
 
 Display "computed abatement levels at carbon price", pm_macAbatLev;
 
-    
+
 ***--------------------------------------
 *** MAC costs
 ***--------------------------------------
