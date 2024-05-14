@@ -46,12 +46,14 @@ vm_capEarlyReti.up('2025',regi,'pc')$(sameAs(regi,"DEU")) = 0.65;
     vm_capTotal.up("2035",regi,"pecoal","seel")$(sameas(regi,"DEU"))=6/1000;
     vm_capTotal.up("2040",regi,"pecoal","seel")$(sameas(regi,"DEU"))=1.1/1000;
 
-*' This aligns 2020 chp capcities for Germany with historic data (shares from Eurostat data)
+*' This aligns 2020 chp capcities for Germany with historic data (AGEB)
+*' most of district heating is provided by CHP plants.
+*' coal share of chp heat output to be between 20-25% of total district heating demand
+*' gas share of chp heat output to be between 50-55% of total district heating demand
+*' bio share of chp heat output to be between 15-25% of total district heating demand
 loop(regi$(sameAs(regi,"DEU")),
     loop(t$(t.val eq 2020),
-*** coal share of chp heat output to be between 15-25%
-*** gas share of chp heat output to be between 45-55%
-        vm_cap.lo(t,regi,"coalchp","1")= 0.15
+        vm_cap.lo(t,regi,"coalchp","1")= 0.2
 *** total FE heat demand from industry and buildings calibration trajectories
                                             * (pm_cesdata(t,regi,"feheb","quantity")
                                                 + pm_cesdata(t,regi,"feheb","quantity"))
@@ -72,7 +74,7 @@ loop(regi$(sameAs(regi,"DEU")),
                                             /  pm_prodCouple(regi,"pecoal","seel","coalchp","sehe")
 *** divide by capacity factor to get from seel production in TWa to capacity in TW
                                             / pm_cf(t,regi,"coalchp");
-        vm_cap.lo(t,regi,"gaschp","1")= 0.45
+        vm_cap.lo(t,regi,"gaschp","1")= 0.5
 *** total FE heat demand from industry and buildings calibration trajectories
                                             * (pm_cesdata(t,regi,"feheb","quantity")
                                                 + pm_cesdata(t,regi,"feheb","quantity"))
@@ -93,6 +95,28 @@ loop(regi$(sameAs(regi,"DEU")),
                                             /  pm_prodCouple(regi,"pegas","seel","gaschp","sehe")
 *** divide by capacity factor to get from seel production in TWa to capacity in TW
                                             / pm_cf(t,regi,"gaschp");
+
+        vm_cap.lo(t,regi,"biochp","1")= 0.15
+*** total FE heat demand from industry and buildings calibration trajectories
+                                            * (pm_cesdata(t,regi,"feheb","quantity")
+                                                + pm_cesdata(t,regi,"feheb","quantity"))
+*** divide by tdhes efficiency get from FE heat to SE heat, i.e. take into account heat transmission losses
+                                            / pm_eta_conv(t,regi,"tdhes")
+*** divide by pm_prodCouple to get from heat production to production of seel
+                                            /  pm_prodCouple(regi,"pebiolc","seel","biochp","sehe")
+*** divide by capacity factor to get from seel production in TWa to capacity in TW
+                                            / pm_cf(t,regi,"biochp");
+
+        vm_cap.up(t,regi,"biochp","1")= 0.25
+*** total FE heat demand from industry and buildings calibration trajectories
+                                            * (pm_cesdata(t,regi,"feheb","quantity")
+                                                + pm_cesdata(t,regi,"feheb","quantity"))
+*** divide by tdhes efficiency get from FE heat to SE heat, i.e. take into account heat transmission losses
+                                            / pm_eta_conv(t,regi,"tdhes")
+*** divide by pm_prodCouple to get from heat production to production of seel
+                                            /  pm_prodCouple(regi,"pebiolc","seel","biochp","sehe")
+*** divide by capacity factor to get from seel production in TWa to capacity in TW
+                                            / pm_cf(t,regi,"biochp");
 
 
     );
