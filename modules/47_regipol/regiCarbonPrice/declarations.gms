@@ -32,7 +32,7 @@ Parameters
 $ifThen.emiMkt not "%cm_emiMktTarget%" == "off" 
 Parameter
 
-$ifThen.emiMktTargetType "%cm_emiMktTarget%" == "NZero" 
+$ifThen.emiMktTargetType "%cm_emiMktTarget%" == "nzero" 
   pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) "region emissions target [GtCO2 or GtCO2eq]" / 
     2020.2030.EU27_regi.all.year.netGHG_LULUCFGrassi_intraRegBunker 2.221  !! European Union 2030 GHG target
     2020.2030.DEU.all.year.netGHG_noLULUCF_noBunkers 0.44                  !! Germany 2030 GHG target
