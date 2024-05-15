@@ -1,0 +1,501 @@
+---
+title: "`r params$doctitle`"
+date: "`r format(Sys.Date())`"
+output:
+  pdf_document:
+    toc: true
+    fig_width: 11.25
+    fig_height: 7.85
+  html_document: default
+geometry: "a4paper, landscape, left = 0.5cm, right = 0.5cm, top = 0.5cm, bottom = 0.5cm, footnotesep = 0.0cm, footskip = 0.1cm"
+params:
+  doctitle: "CES Calibration Report"
+  cal: "CES_calibration.csv"
+  gdx: "fulldata.gdx"
+  outputdir: "."
+  lastiteration: null 
+  warning: false
+  message: false
+---
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(quitte)
+library(colorspace)
+library(gdx)
+
+knitr::opts_chunk$set(
+  echo = FALSE,
+  error = TRUE,
+  message = params$message,
+  warning = params$warning
+)
+```
+
+```{r check}
+if (!file.exists(file.path(params$outputdir, params$cal))) {
+  print("No CES_calibration.csv file found. CES_calibration.csv is normally produced during calibration runs.")
+  knitr::knit_exit()
+}
+```
+
+```{r load data}
+gdx <- file.path(params$outputdir, params$gdx)
+ces <- read.table(file.path(params$outputdir, params$cal), header = TRUE, sep = ",", quote = "\"") %>%
+  as.data.frame()
+
+# normalize iteration numbers, which are characters because they contain "origin" and "target" as well
+ces$iteration <- coalesce(
+  ces$iteration %>% as.double() %>% as.character(),
+  ces$iteration
+)
+
+# set up color palette and line types for iterations
+itr <- sort(as.double(setdiff(
+  getColValues(ces, "iteration"),
+  c("origin", "target")
+)))
+
+colour <- c("#fc0000", "#000000", diverging_hcl(length(itr), palette = "Green-Orange"))
+names(colour) <- c("origin", "target", itr)
+
+lines <- c(rep("solid", 2), rep("longdash", length(itr)))
+names(lines) <- c("origin", "target", itr)
+
+ces <- ces %>%
+  order.levels(iteration = names(colour)) %>%
+  mutate("scenario" = as.factor(.data$scenario))
+
+# select only calibrated nodes to show in report
+ppf_29 <- readGDX(gdx, "ppf_29")
+pf_eff_target_dyn37 <- readGDX(gdx, "pf_eff_target_dyn37")
+ces <- ces %>% filter(.data$pf %in% c(ppf_29, pf_eff_target_dyn37))
+
+last_iteration <- max(itr)
+```
+
+## Quantity Outliers
+
+```{r quantity outliers}
+threshold <- 0.15
+eps <- 1e-2
+
+target_period_items <- ces %>%
+  filter(iteration == "target") %>%
+  select(t, pf) %>%
+  unique()
+
+df <- left_join(target_period_items, ces, by = c("pf", "t")) %>%
+  filter(
+    .data$variable == "quantity",
+    .data$iteration %in% c("target", last_iteration),
+    .data$t <= 2100
+  ) %>%
+  group_by(t, regi, variable, pf) %>%
+  filter(abs((value[iteration == "target"] - value[iteration == last_iteration]) /
+    value[iteration == "target"]) > threshold) %>%
+  ungroup() %>%
+  filter(.data$value > eps) %>%
+  select("regi", "pf", "t") %>%
+  unique() %>%
+  group_by(regi, pf) %>%
+  mutate("period" = paste(.data$t, collapse = ", ")) %>%
+  select(-"t") %>%
+  unique() %>%
+  ungroup() %>%
+  arrange(regi, pf, period)
+
+knitr::kable(df, caption = "Quantities diverge by more than 15%")
+```
+
+\newpage
+
+## Price Outliers
+
+```{r price outliers}
+threshold <- 0.01
+
+df <- ces %>%
+  filter(
+    .data$variable == "price",
+    .data$iteration %in% c(last_iteration),
+    .data$pf != "inco",
+    .data$t <= 2100,
+    .data$value < threshold
+  ) %>%
+  select("regi", "pf", "t") %>%
+  group_by(regi, pf) %>%
+  filter(length(.data$t) > 1) %>%
+  mutate("period" = paste(.data$t, collapse = ", ")) %>%
+  select(-"t") %>%
+  unique() %>%
+  ungroup() %>%
+  arrange(regi, pf, period)
+
+knitr::kable(df, caption = "Prices below 0.01")
+```
+
+\newpage
+
+## Line Plots
+
+\newpage
+
+```{r line plots}
+te <- c(
+  "gastr", "refliq", "biotr", "coaltr", "hydro", "ngcc", "ngt",
+  "pc", "dot", "gaschp", "wind", "tnrs"
+)
+in_set <- readGDX(gdx, "in", "sets")
+structure <- sort(intersect(in_set, getColValues(ces, "pf")))
+
+
+
+for (s in levels(ces$scenario)) {
+  for (r in sort(unique(ces$regi))) {
+    # plot quantities
+    df <- ces %>%
+      filter(
+        .data$scenario == s,
+        .data$t <= 2100,
+        .data$regi == r,
+        .data$variable == "quantity"
+      ) %>%
+      order.levels(pf = structure)
+
+    if (nrow(df) == 0) next
+
+    p <- ggplot(
+      df,
+      aes(
+        x = t, y = value, colour = iteration,
+        linetype = iteration
+      )
+    ) +
+      geom_line() +
+      facet_wrap(~pf, scales = "free", as.table = FALSE) +
+      expand_limits(y = 0) +
+      scale_colour_manual(values = colour) +
+      scale_linetype_manual(values = lines) +
+      ggtitle(paste("quantities", r, s)) +
+      theme_bw() +
+      theme(text = element_text(size = 8))
+
+    plot(p)
+
+    # plot prices
+    df <- ces %>%
+      filter(
+        .data$scenario == s,
+        .data$t <= 2100,
+        .data$regi == r,
+        .data$variable == "price"
+      ) %>%
+      order.levels(pf = structure)
+
+    p <- ggplot(df, aes(
+      x = t, y = value, colour = iteration,
+      linetype = iteration
+    )) +
+      geom_line() +
+      facet_wrap(~pf, scales = "free", as.table = FALSE) +
+      expand_limits(y = 0) +
+      scale_colour_manual(values = colour) +
+      scale_linetype_manual(values = lines) +
+      ggtitle(paste("prices", r, s)) +
+      theme_bw() +
+      theme(text = element_text(size = 8))
+
+    plot(p)
+
+    # plot efficiencies
+    df <- ces %>%
+      filter(
+        .data$scenario == s,
+        .data$t <= 2100,
+        .data$regi == r,
+        .data$variable == "total efficiency",
+        .data$iteration != "origin"
+      ) %>%
+      group_by(scenario, t, regi, pf, variable) %>%
+      mutate(value = value / value[as.character(iteration) == as.character(min(itr))]) %>%
+      ungroup() %>%
+      order.levels(pf = structure)
+
+    p <- ggplot(df, aes(
+      x = t, y = value, colour = iteration,
+      linetype = iteration
+    )) +
+      geom_line() +
+      facet_wrap(~pf, scales = "free", as.table = FALSE) +
+      scale_colour_manual(values = colour) +
+      scale_linetype_manual(values = lines) +
+      ggtitle(paste("total efficiency (1 = iteration 1)", r, s)) +
+      theme_bw() +
+      theme(text = element_text(size = 8))
+
+    plot(p)
+
+    # plot delta_cap
+    if ("vm_deltaCap" %in% unique(ces$variable)) {
+      df <- ces %>%
+        filter(
+          .data$scenario == s,
+          .data$t <= 2100,
+          .data$t >= 1980,
+          .data$regi == r,
+          .data$variable == "vm_deltaCap",
+          pf %in% te
+        ) %>%
+        order.levels(pf = te)
+
+      p <- ggplot(df, aes(
+        x = t,
+        y = value,
+        colour = iteration,
+        linetype = iteration
+      )) +
+        geom_line() +
+        facet_wrap(~pf, scales = "free", as.table = FALSE) +
+        expand_limits(y = 0) +
+        scale_colour_manual(values = colour) +
+        scale_linetype_manual(values = lines) +
+        geom_vline(xintercept = 2005) +
+        ggtitle(paste("vm_deltaCap", r, s)) +
+        theme_bw() +
+        theme(text = element_text(size = 8))
+
+      plot(p)
+    }
+  }
+}
+```
+
+## Heat Maps
+
+\newpage
+
+```{r heat maps}
+ces <- read_csv(file = file.path(params$outputdir, params$cal), show_col_types = FALSE, comment = "#") %>%
+  mutate(iteration = gsub(".E+00", "",
+    gsub(".E+01", "0", iteration, fixed = TRUE),
+    fixed = TRUE
+  ))
+
+# remove duplicated data (due to a bug in REMIND)
+ces <- ces %>%
+  filter(
+    !duplicated(ces),
+    scenario != "scenario"
+  )
+
+target_pf <- ces %>%
+  filter(
+    "target" == iteration,
+    between(t, 2020, 2100),
+    "quantity" == variable
+  ) %>%
+  distinct(pf) %>%
+  pull(pf)
+
+periods <- unique(pmax(2005, pmin(2100, ces$t)))
+
+pf_order <- read_lines(file = file.path(params$outputdir, params$cal), n_max = 1)
+if (grepl("^# pf order:", pf_order)) {
+  pf_order <- pf_order %>%
+    sub("^# pf order: ", "", .) %>%
+    strsplit(", ") %>%
+    unlist()
+} else {
+  pf_order <- ces %>%
+    pull("pf") %>%
+    unique()
+}
+
+ces <- ces %>%
+  order.levels(pf = pf_order)
+
+
+if (is.null(params$lastiteration)) {
+  last_iteration <- ces %>%
+    distinct(iteration) %>%
+    pull(iteration) %>%
+    grep("^[0-9]*$", ., value = TRUE) %>%
+    as.integer() %>%
+    max()
+} else {
+  last_iteration <- params$lastiteration
+}
+
+for (r in sort(unique(ces$regi))) {
+  df <- ces %>%
+    filter(
+      iteration %in% c("target", last_iteration),
+      2100 >= t,
+      r == regi,
+      pf %in% target_pf,
+      "quantity" == variable
+    ) %>%
+    mutate(iteration = sub(
+      last_iteration, "last_iteration",
+      iteration
+    )) %>%
+    pivot_wider(names_from = "iteration") %>%
+    mutate(
+      delta = (last_iteration / target - 1) * 100,
+      delta.group = factor(
+        x = case_when(
+          15 <= abs(delta) ~ "> 15 %",
+          5 <= abs(delta) ~ "5-15 %",
+          0.1 >= abs(delta) ~ "0",
+          TRUE ~ "< 5 %"
+        ),
+        levels = c("0", "< 5 %", "5-15 %", "> 15 %")
+      )
+    )
+
+  p <- ggplot(data = df) +
+    geom_rect(mapping = aes(
+      xmin = 0, xmax = 1, ymin = 0, ymax = 1,
+      fill = delta.group, alpha = 0 == delta.group
+    )) +
+    geom_text(
+      mapping = aes(
+        x = 0.5, y = 0.5, hjust = 0.5, vjust = 0.5,
+        label = paste(signif(round(delta, 1), 2), "%")
+      )
+    ) +
+    facet_grid(pf ~ t, switch = "y") +
+    scale_fill_manual(
+      values = c(
+        "0" = NA,
+        "< 5 %" = "lightgreen",
+        "5-15 %" = "yellow",
+        "> 15 %" = "red"
+      ),
+      breaks = c("< 5 %", "5-15 %", "> 15 %"),
+      name = NULL
+    ) +
+    scale_alpha_manual(
+      values = c("TRUE" = 0, "FALSE" = 1),
+      guide = "none"
+    ) +
+    coord_cartesian(expand = FALSE) +
+    labs(x = NULL, y = NULL, subtitle = paste(r, "quantity errors")) +
+    theme_minimal() +
+    theme(
+      axis.text = element_blank(),
+      axis.ticks = element_blank(),
+      panel.grid = element_blank(),
+      panel.spacing = unit(0, "npc"),
+      strip.text.y.left = element_text(angle = 0)
+    )
+
+  plot(p)
+
+  df <- ces %>%
+    filter(
+      iteration %in% c("origin", "target"),
+      2100 >= t,
+      r == regi,
+      pf %in% target_pf,
+      "quantity" == variable
+    ) %>%
+    mutate(
+      x = t - last_iteration / 2 + 1 / 2,
+      xend = t + last_iteration / 2 - 1 / 2
+    )
+
+  p <- ggplot() +
+    geom_segment(
+      data = df,
+      mapping = aes(
+        x = x, xend = xend, y = value, yend = value,
+        colour = iteration
+      )
+    ) +
+    scale_colour_manual(
+      values = c(
+        "target" = "black",
+        "origin" = "grey",
+        gg_colour_hue(as.character(periods))
+      ),
+      guide = "none"
+    ) +
+    geom_line(
+      data = ces %>%
+        filter(
+          iteration %in% 1:10,
+          2100 >= t,
+          r == regi,
+          pf %in% target_pf,
+          "quantity" == variable
+        ) %>%
+        mutate(
+          x = t + as.integer(iteration) - (last_iteration + 1) / 2
+        ),
+      mapping = aes(x = x, y = value, group = t, colour = as.factor(t)),
+      alpha = 0.7
+    ) +
+    facet_wrap(~pf, scales = "free_y") +
+    expand_limits(y = 0) +
+    labs(x = NULL, y = NULL, subtitle = paste(r, "quantity evolution")) +
+    theme_minimal() +
+    theme(axis.text = element_text(size = rel(0.5)))
+
+  plot(p)
+
+  df_seg <- ces %>%
+    filter(
+      "origin" == iteration,
+      2100 >= t,
+      r == regi,
+      pf %in% target_pf,
+      "price" == variable
+    ) %>%
+    mutate(
+      x = t - last_iteration / 2 + 1 / 2,
+      xend = t + last_iteration / 2 - 1 / 2
+    )
+
+  df_line <- ces %>%
+    filter(
+      iteration %in% 1:10,
+      2100 >= t,
+      r == regi,
+      pf %in% target_pf,
+      "price" == variable
+    ) %>%
+    mutate(
+      x = t + as.integer(iteration) - (last_iteration + 1) / 2
+    )
+
+  p <- ggplot() +
+    geom_segment(
+      data = df_seg,
+      mapping = aes(
+        x = x, xend = xend, y = value, yend = value,
+        colour = iteration
+      )
+    ) +
+    scale_colour_manual(
+      values = c(
+        "origin" = "grey",
+        gg_colour_hue(as.character(periods))
+      ),
+      guide = "none"
+    ) +
+    geom_line(
+      data = df_line,
+      mapping = aes(x = x, y = value, group = t, colour = as.factor(t)),
+      alpha = 0.7
+    ) +
+    facet_wrap(~pf, scales = "free_y") +
+    expand_limits(y = 0) +
+    labs(x = NULL, y = NULL, subtitle = paste(r, "price evolution")) +
+    theme_minimal() +
+    theme(axis.text = element_text(size = rel(0.5)))
+
+  plot(p)
+}
+```
