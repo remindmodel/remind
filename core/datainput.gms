@@ -1331,7 +1331,6 @@ if(c_macscen eq 2,
 if(c_macscen eq 1,
   pm_macSwitch(emiMacSector) = 1;
 );
-*pm_macCostSwitch(enty)=pm_macSwitch(enty);
 
 *** for NDC and NPi switch off landuse MACs
 $if %carbonprice% == "off"      pm_macSwitch(emiMacMagpie) = 0;
@@ -1359,8 +1358,6 @@ $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("co2luc") = 0;
 $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("n2ofertsom") = 0;
 
 pm_macCostSwitch(enty)=pm_macSwitch(enty);
-pm_macSwitch("co2cement_process") =0 ;
-pm_macCostSwitch("co2cement_process") =0 ;
 
 *** load econometric emission data
 *** read in p3 and p4

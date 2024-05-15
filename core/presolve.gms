@@ -169,90 +169,6 @@ vm_macBase.fx(ttot,regi,"ch4wsts")$(ttot.val ge 2005) = p_emineg_econometric(reg
 vm_macBase.fx(ttot,regi,"ch4wstl")$(ttot.val ge 2005) = p_emineg_econometric(regi,"ch4wstl","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2");
 vm_macBase.fx(ttot,regi,"n2owaste")$(ttot.val ge 2005) = p_emineg_econometric(regi,"n2owaste","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"n2owaste","p2");
 
-!! vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
-!!   = ( pm_pop(ttot,regi)
-!!     * ( (1 - p_switch_cement(ttot,regi))
-!!       * p_emineg_econometric(regi,"co2cement_process","p1")
-!!       * ( (1000
-!!           * p_inv_gdx(ttot,regi)
-!!           / ( pm_pop(ttot,regi)
-!!             * pm_shPPPMER(regi)
-!!             )
-!!           ) ** p_emineg_econometric(regi,"co2cement_process","p2")
-!!          )
-!!       + ( p_switch_cement(ttot,regi)
-!!         * p_emineg_econometric(regi,"co2cement_process","p3")
-!!         )
-!!        )
-!!     )$(p_inv_gdx(ttot,regi) ne 0)
-!! ;
-!!
-!! vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
-!! = vm_macBase.lo(ttot,regi,"co2cement_process");
-
-* *** Reduction of cement demand due to CO2 price markups *** *
-if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
-*** Cement (clinker) production causes process emissions of the order of
-*** 0.5 t CO2/t Cement. As cement prices are of the magnitude of 100 $/t, CO2
-*** pricing leads to significant price markups.
-
-  pm_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
-  = pm_priceCO2forMAC(ttot,regi,"co2cement") / sm_c_2_co2;
-
-  display "CO2 price for computing Cement Demand Reduction [$/tC]",
-          pm_CementAbatementPrice;
-
-  !! The demand reduction function a = 160 / (p + 200) + 0.2 assumes that demand
-  !!  for cement is reduced by 40% if the price doubles (CO2 price of $200) and
-  !!  that demand reductions of 80% can be achieved in the limit.
-  pm_ResidualCementDemand("2005",regi) = 1;
-  pm_ResidualCementDemand(ttot,regi)$( ttot.val gt 2005 )
-  = 160 / (pm_CementAbatementPrice(ttot,regi) + 200) + 0.2;
-
-  display "Cement Demand Reduction as computed", pm_ResidualCementDemand;
-
-  !! Demand can only be reduced by 1% p.a.
-  loop (ttot$( ttot.val gt 2005 ),
-    pm_ResidualCementDemand(ttot,regi)
-    = max(pm_ResidualCementDemand(ttot,regi),
-          ( pm_ResidualCementDemand(ttot-1,regi)
-          - 0.01 * (pm_ttot_val(ttot) - pm_ttot_val(ttot-1))
-          )
-      );
-  );
-
-  display "Cement Demand Reduction, limited to 1% p.a.",
-          pm_ResidualCementDemand;
-
-  pm_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
-  = 160 / (pm_ResidualCementDemand(ttot,regi) - 0.2) - 200;
-
-  display "Cement Demand Reduction, price of limited reduction",
-          pm_CementAbatementPrice;
-
-  !! Costs of cement demand reduction are the integral under the activity
-  !! reduction curve times baseline emissions.
-  !! a = 160 / (p + 200) + 0.2
-  !! A = 160 ln(p + 200) + 0.2p
-  !! A_MAC(p*) = A(p*) - A(0) - a(p*)p*
-  pm_CementDemandReductionCost(ttot,regi)$( ttot.val ge 2005 )
-  = ( 160 * log(pm_CementAbatementPrice(ttot,regi) + 200)
-    + 0.2 * pm_CementAbatementPrice(ttot,regi)
-    - 160 * log(200)
-    - pm_ResidualCementDemand(ttot,regi) * pm_CementAbatementPrice(ttot,regi)
-    )$( pm_CementAbatementPrice(ttot,regi) gt 0 )
-  / 1000
-  * vm_macBase.lo(ttot,regi,"co2cement_process");
-
-  display "Cement Demand Reduction cost", pm_CementDemandReductionCost;
-
-  vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
-  = vm_macBase.lo(ttot,regi,"co2cement_process")
-  * pm_ResidualCementDemand(ttot,regi);
-
-  vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
-  = vm_macBase.lo(ttot,regi,"co2cement_process");
-);
 
 
 *** exogenous
@@ -269,6 +185,10 @@ vm_macBase.fx(ttot,regi,"n2onitac")$(p_macBaseVanv("2005",regi,"n2oadac") OR p_m
 vm_macBase.fx(ttot,regi,enty)$((ttot.val gt 2100)$((NOT emiMacMagpie(enty)) AND (NOT emiFuEx(enty)) AND (NOT sameas(enty,"n2ofertin")) ))=vm_macBase.l("2100",regi,enty);
 *DK: baseline continuation not necessary for magpie-emissions as the exogenous data reaches until 2150
 * JeS: exclude endgenous baseline calculation, i.e. emiFuEx and n2ofertin
+
+!! industry uses vm_emiIndBase instead (both for ccs cost and for emission accounting)
+!! (exception: in the fixed_shares realization, for co2cement_process; here, vm_macBase.fx is overwritten in presolve)
+vm_macBase.fx(ttot,regi,emiInd37) = 0;
 
 
 ***--------------------------------------

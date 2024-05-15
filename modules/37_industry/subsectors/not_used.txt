@@ -8,8 +8,8 @@ name,type,reason
 vm_effGr,input,questionnaire
 pm_ppfen_shares,input,questionnaire
 pm_priceCO2forMAC,input,questionnaire
-pm_ResidualCementDemand,input,questionnaire
-pm_CementAbatementPrice,input,questionnaire
+p37_ResidualCementDemand,input,questionnaire
+p37_CementAbatementPrice,input,questionnaire
 pm_ttot_val,input,questionnaire
 cm_optimisticMAC,input,questionnaire
 pm_macCostSwitch,input,questionnaire

@@ -45,10 +45,10 @@ p_developmentState(tall,all_regi)                    "level of development based
 f_lab(tall,all_regi,all_POPscen)                     "labour data for all possible scenarios"
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
 pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer)"
-*** If elasticities of substitution (sigma) is below 1, the smaller it is the less the substitution replacement effect between different CES nodes. 
-*** The products become more and more complementary in the production, meaning that the more one product is used, the more the other one is demanded as well. 
+*** If elasticities of substitution (sigma) is below 1, the smaller it is the less the substitution replacement effect between different CES nodes.
+*** The products become more and more complementary in the production, meaning that the more one product is used, the more the other one is demanded as well.
 *** If sigma is larger than 1, the more one product is used, the less the others are used, i.e. the products are substitutes"
-pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution." 
+pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution."
 p_r(ttot,all_regi)                                   "calculating capital interest rate"
 
 o_diff_to_Budg(iteration)                             "Difference between actual CO2 budget and target CO2 budget"
@@ -86,9 +86,7 @@ pm_macCostSwitch(all_enty)                           "switch to include mac cost
 p_priceCO2(tall,all_regi)                           "carbon price [$/tC]"
 pm_priceCO2forMAC(tall,all_regi,all_enty)             "carbon price defined for MAC gases [$/tC]"
 p_priceGas(tall,all_regi)                            "gas price in [$/tCeq] for ch4gas MAC"
-pm_ResidualCementDemand(tall,all_regi)               "reduction in cemend demand (and thus process emissions) due to climate policy [0...1]"
-pm_CementAbatementPrice(ttot,all_regi)               "CO2 price used during calculation of cement demand reduction [$/tCO2]"
-pm_CementDemandReductionCost(tall,all_regi)          "cost of reducing cement demand [tn$2005]"
+pm_CementDemandReductionCost(tall,all_regi)          "cost of reducing cement demand [tn$2005]; only used in fixed_shares"
 p_macPE(ttot,all_regi,all_enty)                      "pe from MACs"
 pm_shPerm(tall, all_regi)                            "emission permit shares"
 pm_emicapglob(tall)                                  "global emission cap"
@@ -426,7 +424,7 @@ vm_changeProdStartyearCost(ttot,all_regi,all_te)     "Costs for changing output 
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
 
 vm_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
-vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"  
+vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"
 
 ;
 ***----------------------------------------------------------------------------------------

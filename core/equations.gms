@@ -955,7 +955,7 @@ q_costEnergySys(ttot,regi)$( ttot.val ge cm_startyear ) ..
     + v_costInv(ttot,regi)
     )
   + sum(emiInd37, vm_IndCCSCost(ttot,regi,emiInd37))
-  + pm_CementDemandReductionCost(ttot,regi)
+  + pm_CementDemandReductionCost(ttot,regi) !! only used in 37_industry/fixed_shares
 ;
 
 
