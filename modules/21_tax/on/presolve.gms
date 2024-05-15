@@ -47,7 +47,7 @@ p21_taxrevBio0(ttot,regi) = v21_tau_bio.l(ttot) * vm_pebiolc_price.l(ttot,regi) 
 p21_implicitDiscRate0(ttot,regi) = sum(ppfKap(in),  p21_implicitDiscRateMarg(ttot,regi,in)  * vm_cesIO.l(ttot,regi,in) );
 p21_taxemiMkt0(ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt) * vm_co2eqMkt.l(ttot,regi,emiMkt);
 p21_taxrevFlex0(ttot,regi)   =  sum(en2en(enty,enty2,te)$(teFlexTax(te)),
-                                        -vm_flexAdj.l(ttot,regi,te) * vm_demSe.l(ttot,regi,enty,enty2,te));
+                                        - vm_flexAdj.l(ttot,regi,te) * vm_demSe.l(ttot,regi,enty,enty2,te));
 p21_taxrevImport0(ttot,regi,tradePe,tax_import_type_21) =  p21_tau_Import(ttot,regi,tradePe,tax_import_type_21)$sameas(tax_import_type_21, "worldPricemarkup") * pm_pvp(ttot,tradePe) / pm_pvp(ttot,"good") * vm_Mport.l(ttot,regi,tradePe)+
   p21_tau_Import(ttot, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "CO2taxmarkup") * pm_taxCO2eqSum(ttot,regi) * pm_cintraw(tradePe) * vm_Mport.l(ttot,regi,tradePe)+
   p21_tau_Import(ttot, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "avCO2taxmarkup") * max(pm_taxCO2eqSum(ttot,regi), sum(regi2, pm_taxCO2eqSum(ttot,regi2))/(card(regi2))) * pm_cintraw(tradePe) * vm_Mport.l(ttot,regi,tradePe);

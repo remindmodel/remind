@@ -94,10 +94,10 @@ p21_tau_pe2se_tax(ttot,regi,"coalgas")$(ttot.val ge 2005)    = 0.5;
 ***JaS* Introduces inconvenience costs as taxes for the transformation of primary to secondary energy types
 ***JaS* Taxes are given in USD(2005) per GJ 
 *cb* to be exchanged for file with values if needed 
-p21_tau_pe2se_inconv(ttot,regi,te)$(ttot.val ge 2005)=0.000000;
+p21_tau_pe2se_inconv(ttot,regi,te)$(ttot.val ge 2005) = 0.000000;
 *** description: Taxes/subsidies are given in USD(2005) per GJ
 *** unit: USD(2005) per GJ
-p21_tau_pe2se_inconv(ttot,regi,te)$(ttot.val ge 2005)=0.000000;
+p21_tau_pe2se_inconv(ttot,regi,te)$(ttot.val ge 2005) = 0.000000;
 
 
 ***cb20110923 rescaling of PE2SE parameters from $/GJ to trillion $ / TWa 

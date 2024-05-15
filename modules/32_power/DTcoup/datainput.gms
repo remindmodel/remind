@@ -72,19 +72,6 @@ $ENDIF.WindOff
 p32_storageCap(te,char) = f32_storageCap(char,te);
 display p32_storageCap;
 
-$ontext
-parameter p32_flex_maxdiscount(all_regi,all_te) "maximum electricity price discount for flexible technologies reached at high VRE shares"
-/
-$ondelim
-$include "./modules/32_power/IntC/input/p32_flex_maxdiscount.cs4r"
-$offdelim
-/
-; 
-*** convert from USD2015/MWh to trUSD2017/TWa
-p32_flex_maxdiscount(regi,te) = p32_flex_maxdiscount(regi,te) * sm_TWa_2_MWh * s_D2015_2_D2017 * 1e-12;
-display p32_flex_maxdiscount;
-$offtext
-
 *** initialize p32_PriceDurSlope parameter
 p32_PriceDurSlope(regi,"elh2") = cm_PriceDurSlope_elh2;
 

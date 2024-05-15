@@ -287,7 +287,7 @@ q21_taxrevFlex(t,regi)$( t.val ge max(2010, cm_startyear) ) ..
       !! vm_flexAdj is electricity price reduction/increases for flexible/
       !! inflexible technologies change sign such that flexible technologies
       !! get subsidy
-      -vm_flexAdj(t,regi,te) 
+      - vm_flexAdj(t,regi,te) 
     * vm_demSe(t,regi,enty,enty2,te)
     )
   - p21_taxrevFlex0(t,regi)
