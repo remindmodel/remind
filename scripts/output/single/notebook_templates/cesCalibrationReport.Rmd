@@ -56,7 +56,7 @@ itr <- sort(as.double(setdiff(
   c("origin", "target")
 )))
 
-colour <- c("#fc0000", "#000000", diverging_hcl(length(itr), palette = "Purple-Green"))
+colour <- c("#fc0000", "#000000", diverging_hcl(length(itr), palette = "Green-Orange"))
 names(colour) <- c("origin", "target", itr)
 
 lines <- c(rep("solid", 2), rep("longdash", length(itr)))
