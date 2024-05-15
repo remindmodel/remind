@@ -4,9 +4,8 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-library(lucode2)
-library(remind2)
 
+library(remind2)
 
 if (!exists("outputdir")) {
   # Define arguments that can be read from command line
