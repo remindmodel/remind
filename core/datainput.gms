@@ -13,7 +13,7 @@ vm_emiCO2Sector.l(ttot,all_regi,emi_sectors) = 0;
 
 
 *AJS* initialize parameter (avoid compilation errors)
-* do this at the start of datainput to prevent accidental overwriting
+*** do this at the start of datainput to prevent accidental overwriting
 pm_SolNonInfes(regi) = 1; !! assume the starting point came from a feasible solution
 pm_capCum0(ttot,regi,teLearn)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq 1)) = 0;
 
@@ -158,7 +158,7 @@ $include "./core/input/generisdata_trade.prn"
 
 $ifthen.WindOff %cm_wind_offshore% == "1"
 *CG* set wind offshore, storage and grid to be the same as wind onshore (later should be integrated into input data)
-* main difference between onshore and offshore is the difference in f32_factorStorage
+*** main difference between onshore and offshore is the difference in f32_factorStorage
 fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
 fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
 f_dataglob_SSP1(char,"storwindoff") = f_dataglob_SSP1(char,"storwind");
@@ -200,8 +200,7 @@ if (cm_VRE_supply_assumptions eq 3,
     fm_dataglob("incolearn","spv") = 4960;
 );
 
-
-*JH* New nuclear assumption for SSP5
+*** New nuclear assumption for SSP5
 if (cm_nucscen eq 6,
   f_dataglob_SSP5("inco0","tnrs") = 6270; !! increased from 4000 to 6270 with the update of technology costs in REMIND 1.7 to keep the percentage increase between SSP2 and SSP5 constant
 );
@@ -223,11 +222,11 @@ $endif.WindOff
 display fm_dataglob;
 
 *TD* ccsinje cost scenarios
-* low estimate: ccsinje cost prior to 03/2024; i.e. ~11 USD/tCO2 in 2025, decreasing to ~7.5USD/tCO2 as of 2035
+*** low estimate: ccsinje cost prior to 03/2024; i.e. ~11 USD/tCO2 in 2025, decreasing to ~7.5USD/tCO2 as of 2035
 $if "%cm_ccsinjeCost%" == "low" fm_dataglob("tech_stat","ccsinje") = 2;
 $if "%cm_ccsinjeCost%" == "low" fm_dataglob("inco0","ccsinje") = 220;
 $if "%cm_ccsinjeCost%" == "low" fm_dataglob("constrTme","ccsinje") = 0;
-* high estimate: ~20USD/tCO2 (constant), assuming upper end of storage cost and long transport distances
+*** high estimate: ~20USD/tCO2 (constant), assuming upper end of storage cost and long transport distances
 $if "%cm_ccsinjeCost%" == "high" fm_dataglob("inco0","ccsinje") = 550;
 ***---------------------------------------------------------------------------
 *** Manipulating global or regional cost technology data - relative value
@@ -254,8 +253,8 @@ p_inco0(ttot,regi,te)                = s_D2015_2_D2017 * p_inco0(ttot,regi,te);
 *** note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
 fm_dataglob("inco0",te)              = s_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
 fm_dataglob("incolearn",te)          = s_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
-fm_dataglob("omv",te)                = s_DpKWa_2_TDpTWa      * fm_dataglob("omv",te);
-p_inco0(ttot,regi,te)               = s_DpKW_2_TDpTW       * p_inco0(ttot,regi,te);
+fm_dataglob("omv",te)                = s_DpKWa_2_TDpTWa     * fm_dataglob("omv",te);
+p_inco0(ttot,regi,te)                = s_DpKW_2_TDpTW       * p_inco0(ttot,regi,te);
 
 *RP* rescale the global CSP investment costs in REMIND: Originally we assume a SM3/12h setup, while the cost data from IEA for the short term seems rather based on a SM2/6h setup (with 40% average CF)
 *** Accordingly, also decrease long-term costs in REMIND to 0.7 of the current values
@@ -335,8 +334,9 @@ $ifthen.REG_techcosts not "%cm_techcosts%" == "GLO"   !! cm_techcosts is REG or 
     pm_data(regi,"incolearn",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"floorcost",te) ;
 $endif.REG_techcosts
 
+*** -------------------------------------------------------------------------------
 *** Calculate learning parameters:
-
+*** -------------------------------------------------------------------------------
 *** global exponent
 *** parameter calculation for global level, that regional values can gradually converge to
 fm_dataglob("learnExp_wFC",teLearn(te)) = fm_dataglob("inco0",te)/fm_dataglob("incolearn",te) * log(1-fm_dataglob("learn", te))/log(2);
@@ -370,8 +370,8 @@ $else
     pm_data(regi,"learnMult_wFC","spv")        = pm_data(regi,"incolearn","spv") / (sum(regi2,p_capCum("2020",regi2,"spv")) ** pm_data(regi,"learnExp_wFC","spv"));
 $endif
 
-*FS initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020)
-* equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost)
+*FS* initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020)
+*** equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost)
 pm_data(regi,"learnMult_wFC",te)$( pm_data(regi,"tech_stat",te) eq 4 )
   = pm_data(regi,"incolearn",te)
   / ( fm_dataglob("ccap0",te)
@@ -380,8 +380,9 @@ pm_data(regi,"learnMult_wFC",te)$( pm_data(regi,"tech_stat",te) eq 4 )
 
 display p_capCum;
 display pm_data;
-
+*** -------------------------------------------------------------------------------
 *** end learning parameters
+*** -------------------------------------------------------------------------------
 
 *RP* 2012-03-07: Markup for advanced technologies
 table p_costMarkupAdvTech(s_statusTe,tall)              "Multiplicative investment cost markup for early time periods (until 2030) on advanced technologies (CCS, Hydrogen) that are not modeled through endogenous learning"
@@ -389,8 +390,8 @@ $include "./core/input/p_costMarkupAdvTech.prn"
 ;
 
 *** add mark-up cost for tech_stat 4 and 5 technologies as for tech_stat 3 technologies in first years
-p_costMarkupAdvTech("4",ttot)=p_costMarkupAdvTech("3",ttot);
-p_costMarkupAdvTech("5",ttot)=p_costMarkupAdvTech("3",ttot);
+p_costMarkupAdvTech("4",ttot) = p_costMarkupAdvTech("3",ttot);
+p_costMarkupAdvTech("5",ttot) = p_costMarkupAdvTech("3",ttot);
 
 loop (teNoLearn(te),
   pm_inco0_t(ttot,regi,te) = pm_data(regi,"inco0",te);
@@ -450,16 +451,16 @@ $ifthen.REG_techcosts "%cm_techcosts%" == "REG"   !! cm_techcosts REG
 $endif.REG_techcosts
 
 
-*------------------------------------------------------------------------------------
-*   END of Technology cost data input read-in and manipulation in core
-*------------------------------------------------------------------------------------
+***------------------------------------------------------------------------------------
+***   END of Technology cost data input read-in and manipulation in core
+***------------------------------------------------------------------------------------
 *** Note: in modules/05_initialCap/on/preloop.gms, there are additional adjustment to investment
 *** cost in the near term due to calibration of historical energy conversion efficiencies based on
 *** initial capacities
 *------------------------------------------------------------------------------------
 
-*JH* Determine CCS injection rates
-*LP* for c_ccsinjecratescen =0 the storing variable vm_co2CCS will be fixed to 0 in bounds.gms, the sm_ccsinjecrate=0 will cause a division by 0 error in the 21_tax module
+*** Determine CCS injection rates
+*** for c_ccsinjecratescen =0 the storing variable vm_co2CCS will be fixed to 0 in bounds.gms, the sm_ccsinjecrate=0 will cause a division by 0 error in the 21_tax module
 s_ccsinjecrate = 0.005
 if (c_ccsinjecratescen eq 2, s_ccsinjecrate = s_ccsinjecrate *   0.50 ); !! Lower estimate
 if (c_ccsinjecratescen eq 3, s_ccsinjecrate = s_ccsinjecrate *   1.50 ); !! Upper estimate
@@ -480,7 +481,7 @@ table fm_dataemiglob(all_enty,all_enty,all_te,all_enty)  "read-in of emissions f
 $include "./core/input/generisdata_emi.prn"
 ;
 
-parameter pm_share_ind_fesos(tall,all_regi)					"Share of coal solids (coaltr) used in the industry (rest is residential)"
+parameter pm_share_ind_fesos(tall,all_regi)              "Share of coal solids (coaltr) used in the industry (rest is residential)"
 /
 $ondelim
 $include "./core/input/p_share_ind_fesos.cs4r"
@@ -488,7 +489,7 @@ $offdelim
 /
 ;
 
-parameter pm_share_ind_fesos_bio(tall,all_regi)				"Share of biomass solids (biotr) used in the industry (rest is residential)"
+parameter pm_share_ind_fesos_bio(tall,all_regi)           "Share of biomass solids (biotr) used in the industry (rest is residential)"
 /
 $ondelim
 $include "./core/input/p_share_ind_fesos_bio.cs4r"
@@ -496,7 +497,7 @@ $offdelim
 /
 ;
 
-parameter pm_share_ind_fehos(tall,all_regi)					"Share of heating oil used in the industry (rest is residential)"
+parameter pm_share_ind_fehos(tall,all_regi)               "Share of heating oil used in the industry (rest is residential)"
 /
 $ondelim
 $include "./core/input/p_share_ind_fehos.cs4r"
@@ -525,7 +526,7 @@ pm_share_trans("2130",regi) = 0.865;
 pm_share_trans("2150",regi) = 0.872;
 
 
-*JH* CO2 capture rate of CCS technologies (new SSP5 assumptions)
+*** CO2 capture rate of CCS technologies (new SSP5 assumptions)
 if (c_ccscapratescen eq 2,
   fm_dataemiglob("pecoal","seel","igccc","co2")    = 0.2;
   fm_dataemiglob("pecoal","seel","igccc","cco2")   = 25.9;
@@ -549,7 +550,7 @@ table f_dataetaglob(tall,all_te)                      "global eta data"
 $include "./core/input/generisdata_varying_eta.prn"
 ;
 
-* Read in mac historical emissions to calibrate MAC reference emissions
+*** Read in mac historical emissions to calibrate MAC reference emissions
 parameter p_histEmiMac(tall,all_regi,all_enty)    "historical emissions per MAC"
 /
 $ondelim
@@ -557,7 +558,7 @@ $include "./core/input/p_histEmiMac.cs4r"
 $offdelim
 /
 ;
-* Read in historical emissions per sector to calibrate MAC reference emissions
+*** Read in historical emissions per sector to calibrate MAC reference emissions
 parameter p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types)    "historical emissions per sector"
 /
 $ondelim
@@ -612,7 +613,7 @@ $offdelim
 ;
 pm_IO_trade(ttot,regi,enty,char) = f_IO_trade(ttot,regi,enty,char) * sm_EJ_2_TWa;
 
-*LB* use scaled data for export to guarantee net trade = 0 for each traded good
+*** use scaled data for export to guarantee net trade = 0 for each traded good
 loop(tradePe,
     loop(ttot,
        if(sum(regi2, pm_IO_trade(ttot,regi2,tradePe,"Xport")) ne 0,
@@ -636,7 +637,7 @@ p_cint(regi,"co2","peoil","7")=0.2283105600;
 p_cint(regi,"co2","peoil","8")=0.4153983800;
 
 $ifthen.WindOff %cm_wind_offshore% == "0"
-** historical installed capacity
+*** historical installed capacity
 *** read-in of pm_histCap.cs3r
 $Offlisting
 table   pm_histCap(tall,all_regi,all_te)     "historical installed capacity"
@@ -717,11 +718,11 @@ pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
 
 *SB* Region- and tech-specific early retirement rates
-*Regional*
+***Regional*
 loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi),
   pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi)) = pm_extRegiEarlyRetiRate(ext_regi);
 );
-*Tech-specific*
+***Tech-specific*
 *RP*: reduce early retirement for technologies with additional characteristics that are difficult to represent in REMIND, eg. industries built around heating/CHP plants, or flexibility from ngt plants
 pm_regiEarlyRetiRate(t,regi,"ngt")     = 0.3 * pm_regiEarlyRetiRate(t,regi,"ngt")    ; !! ngt should only be phased out very slowly, as they provide flexibility - which REMIND is not too good at capturing endogeneously
 pm_regiEarlyRetiRate(t,regi,"gaschp")  = 0.5 * pm_regiEarlyRetiRate(t,regi,"gaschp") ; !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
@@ -778,7 +779,7 @@ loop(regi,
         );
 );
 
-*LB* calculate mapping tsu2opTimeYr
+*** calculate mapping tsu2opTimeYr
 alias(ttot, tttot);
 tsu2opTimeYr(ttot,opTimeYr) =  no;
 tsu2opTimeYr(ttot,"1") =  yes;
@@ -1332,7 +1333,6 @@ if(c_macscen eq 2,
 if(c_macscen eq 1,
   pm_macSwitch(emiMacSector) = 1;
 );
-*pm_macCostSwitch(enty)=pm_macSwitch(enty);
 
 *** for NDC and NPi switch off landuse MACs
 $if %carbonprice% == "off"      pm_macSwitch(emiMacMagpie) = 0;
@@ -1349,7 +1349,6 @@ $offdelim
 /
 ;
 pm_taxCO2eq(t,regi)$(t.val le 2020) = f_taxCO2eqHist(t,regi) * sm_DptCO2_2_TDpGtC;
-
 
 *DK* LU emissions are abated in MAgPIE in coupling mode
 *** An alternative to the approach below could be to introduce a new value for c_macswitch that only deactivates the LU MACs
