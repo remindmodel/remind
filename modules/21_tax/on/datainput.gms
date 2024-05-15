@@ -81,15 +81,15 @@ p21_tau_pe2se_inconv(tall,regi,te) = 0;
 p21_tau_pe2se_sub(tall,regi,te)= 0;
 
 *RP* FILE changed by hand after introduction of SO2 taxes and inconvenience penalties on 2012-03-08
-*GL* Values try to account for excessive water use, further pollution
-*GL* Taxes are given in USD(2005) per GJ 
-p21_tau_pe2se_tax(ttot,regi,"igcc")$(ttot.val ge 2005)       = 0.25;
-p21_tau_pe2se_tax(ttot,regi,"igccc")$(ttot.val ge 2005)      = 0.25;
-p21_tau_pe2se_tax(ttot,regi,"coalftrec")$(ttot.val ge 2005)  = 1.0;
-p21_tau_pe2se_tax(ttot,regi,"coalftcrec")$(ttot.val ge 2005) = 1.0;
-p21_tau_pe2se_tax(ttot,regi,"coalh2")$(ttot.val ge 2005)     = 0.5;
-p21_tau_pe2se_tax(ttot,regi,"coalh2c")$(ttot.val ge 2005)    = 0.5;
-p21_tau_pe2se_tax(ttot,regi,"coalgas")$(ttot.val ge 2005)    = 0.5;
+*** Values try to account for excessive water use, further pollution
+*** Taxes are given in USD(2005) and converted to USD(2017) per GJ 
+p21_tau_pe2se_tax(ttot,regi,"igcc")$(ttot.val ge 2005)       = s_D2005_2_D2017 * 0.25;
+p21_tau_pe2se_tax(ttot,regi,"igccc")$(ttot.val ge 2005)      = s_D2005_2_D2017 * 0.25;
+p21_tau_pe2se_tax(ttot,regi,"coalftrec")$(ttot.val ge 2005)  = s_D2005_2_D2017 * 1.0;
+p21_tau_pe2se_tax(ttot,regi,"coalftcrec")$(ttot.val ge 2005) = s_D2005_2_D2017 * 1.0;
+p21_tau_pe2se_tax(ttot,regi,"coalh2")$(ttot.val ge 2005)     = s_D2005_2_D2017 * 0.5;
+p21_tau_pe2se_tax(ttot,regi,"coalh2c")$(ttot.val ge 2005)    = s_D2005_2_D2017 * 0.5;
+p21_tau_pe2se_tax(ttot,regi,"coalgas")$(ttot.val ge 2005)    = s_D2005_2_D2017 * 0.5;
 
 ***JaS* Introduces inconvenience costs as taxes for the transformation of primary to secondary energy types
 ***JaS* Taxes are given in USD(2005) per GJ 

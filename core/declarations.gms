@@ -590,8 +590,10 @@ sm_tgch4_2_pgc                                         "conversion factor 100-yr
 
 s_MtCH4_2_TWa                                        "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
 
-s_D2015_2_D2017                                      "Convert $2015 to $2017"      /1.0292/
-s_D2005_2_D2017                                      "Convert $2005 to $2017"      /1.231/
+s_D2015_2_D2017                                         "Convert $2015 to $2017"      /1.0292/
+s_D2005_2_D2017                                         "Convert $2005 to $2017"      /1.231/
+s_D2020_2_D2017                                         "Convert $2020 to $2017"      /0.9469/
+s_EURO2023_2_D2017                                      "Convert EURO 2023 to $2017"  /0.8915/
 
 sm_DptCO2_2_TDpGtC                                    "Conversion multiplier to go from $/tCO2 to T$/GtC: 44/12/1000"     /0.00366667/
 

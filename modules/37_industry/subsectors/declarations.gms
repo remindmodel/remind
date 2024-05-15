@@ -31,7 +31,7 @@ Parameters
   p37_mat2ue(all_enty,all_in)                                                  "Contribution of process output to ue in CES tree [Gt/Gt]. Trivial if just one material per UE, as in steel"
   p37_captureRate(all_te)                                                      "Capture rate of CCS technology"
   p37_selfCaptureRate(all_te)                                                  "Share of emissions from fossil fuels used for a CCS process which are captured by the CCS process itself"
-  p37_priceMat(all_enty)                                                       "Prices of external material input [2005$/kg] = [trn2005$/Gt]"
+  p37_priceMat(all_enty)                                                       "Prices of external material input [US$/kg] = [trn$US/Gt]"
 
   p37_chemicals_feedstock_share(ttot,all_regi)               "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
   p37_FeedstockCarbonContent(ttot,all_regi,all_enty)         "carbon content of feedstocks [GtC/TWa]"
