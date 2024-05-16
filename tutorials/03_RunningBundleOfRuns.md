@@ -27,7 +27,7 @@ Those two columns are mandatory and usually placed at the beginning:
 The column `copyFromConfig` allows to specify a scenario from the same config file. All empty cells are copied from this scenario, allowing to generate scenario variations efficiently. Nested assignment is allowed, so `NDC` can specify `Base` here, and `Policy` can specify `NDC`, so if both `Policy` and `NDC` don't specify a certain switch, the value is taken from `Base`. The only restriction is that the scenario specified in the `copyFromConfig` cell must be defined in an earlier row. To get the full settings for a specific scenario (here: `SSP2EU-Base` in `scenario_config.csv`) including those copied, run in your REMIND folder:
 ``` R
 source("scripts/start/readCheckScenarioConfig.R"); source("scripts/start/path_gdx_list.R")
-readCheckScenarioConfig("config/scenario_config.csv")["SSP2EU-Base", ]
+readCheckScenarioConfig("config/scenario_config.csv")["SSP2-Base", ]
 ```
 
 Further columns are the configurations that you can choose for the specific runs.
