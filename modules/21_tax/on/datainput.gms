@@ -77,7 +77,6 @@ if(cm_fetaxscen eq 0,
 *** -------------------------PE2SE Taxes--------------------------(Primary to secondary energy technology taxes, specified by technology)
 *** cb 20110923 load paths for technology taxes, subsidies and inconvenience costs 
 p21_tau_pe2se_tax(tall,regi,te) = 0;
-p21_tau_pe2se_inconv(tall,regi,te) = 0;
 p21_tau_pe2se_sub(tall,regi,te)= 0;
 
 *RP* FILE changed by hand after introduction of SO2 taxes and inconvenience penalties on 2012-03-08
@@ -91,19 +90,9 @@ p21_tau_pe2se_tax(ttot,regi,"coalh2")$(ttot.val ge 2005)     = s_D2005_2_D2017 *
 p21_tau_pe2se_tax(ttot,regi,"coalh2c")$(ttot.val ge 2005)    = s_D2005_2_D2017 * 0.5;
 p21_tau_pe2se_tax(ttot,regi,"coalgas")$(ttot.val ge 2005)    = s_D2005_2_D2017 * 0.5;
 
-***JaS* Introduces inconvenience costs as taxes for the transformation of primary to secondary energy types
-***JaS* Taxes are given in USD(2005) per GJ 
-*cb* to be exchanged for file with values if needed 
-p21_tau_pe2se_inconv(ttot,regi,te)$(ttot.val ge 2005) = 0.000000;
-*** description: Taxes/subsidies are given in USD(2005) per GJ
-*** unit: USD(2005) per GJ
-p21_tau_pe2se_inconv(ttot,regi,te)$(ttot.val ge 2005) = 0.000000;
-
-
 ***cb20110923 rescaling of PE2SE parameters from $/GJ to trillion $ / TWa 
 p21_tau_pe2se_tax(ttot,regi,te)$(ttot.val ge 2005)    = p21_tau_pe2se_tax(ttot,regi,te)    * 0.001 / sm_EJ_2_TWa;
 p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val ge 2005)    = p21_tau_pe2se_sub(ttot,regi,te)    * 0.001 / sm_EJ_2_TWa;
-p21_tau_pe2se_inconv(ttot,regi,te)$(ttot.val ge 2005) = p21_tau_pe2se_inconv(ttot,regi,te) * 0.001 / sm_EJ_2_TWa;
 
 *** SE electricity tax rate tech specific ramp up logistic function parameters
 p21_tau_SE_tax_rampup(t,regi,te,teSeTax_coeff) = 0;

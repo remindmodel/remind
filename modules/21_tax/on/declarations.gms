@@ -8,7 +8,6 @@
 Parameters
 p21_tau_so2_tax(tall,all_regi)                     "so2 tax path"
 p21_tau_pe2se_tax(tall,all_regi,all_te)        "tax path for primary energy technologies"
-p21_tau_pe2se_inconv(tall,all_regi,all_te)     "inconvenience cost path for primary energy technologies"
 p21_tau_pe2se_sub(tall,all_regi,all_te)        "subsidy path for primary energy technologies"
 p21_max_fe_sub(tall,all_regi,all_enty)         "maximum final energy subsidy levels from REMIND version prior to rev. 5429 [$/TWa]"
 p21_prop_fe_sub(tall,all_regi,all_enty)        "subsidy proportional cap to avoid liquids increasing dramatically"

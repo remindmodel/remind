@@ -187,7 +187,7 @@ v21_taxrevResEx(t,regi) =e=  sum(pe2rlf(peEx(enty),rlf), p21_tau_fuEx_sub(t,regi
 q21_taxrevPE2SE(t,regi)$(t.val ge max(2010,cm_startyear))..
 v21_taxrevPE2SE(t,regi) 
 =e= SUM(pe2se(enty,enty2,te),
-          (p21_tau_pe2se_tax(t,regi,te) + p21_tau_pe2se_sub(t,regi,te) + p21_tau_pe2se_inconv(t,regi,te)) * vm_prodSe(t,regi,enty,enty2,te)
+          (p21_tau_pe2se_tax(t,regi,te) + p21_tau_pe2se_sub(t,regi,te)) * vm_prodSe(t,regi,enty,enty2,te)
        )
     - p21_taxrevPE2SE0(t,regi);
 
