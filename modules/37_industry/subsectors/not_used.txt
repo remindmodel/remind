@@ -11,8 +11,12 @@ pm_priceCO2forMAC,input,questionnaire
 p37_ResidualCementDemand,input,questionnaire
 p37_CementAbatementPrice,input,questionnaire
 pm_ttot_val,input,questionnaire
+pm_emineg_econometric,input,questionnaire
+pm_switch_cement,input,questionnaire
+pm_shPPPMER,input,questionnaire
+pm_pop,input,questionnaire
+pm_inv_gdx,input,questionnaire
 cm_optimisticMAC,input,questionnaire
-pm_macCostSwitch,input,questionnaire
 vm_costAddTeInv,input,questionnaire
 cm_indst_H2costAddH2Inv,input,questionnaire
 cm_indst_costDecayStart,input,questionnaire
