@@ -169,26 +169,29 @@ vm_macBase.fx(ttot,regi,"ch4wsts")$(ttot.val ge 2005) = p_emineg_econometric(reg
 vm_macBase.fx(ttot,regi,"ch4wstl")$(ttot.val ge 2005) = p_emineg_econometric(regi,"ch4wstl","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2");
 vm_macBase.fx(ttot,regi,"n2owaste")$(ttot.val ge 2005) = p_emineg_econometric(regi,"n2owaste","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"n2owaste","p2");
 
-!! vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
-!!   = ( pm_pop(ttot,regi)
-!!     * ( (1 - p_switch_cement(ttot,regi))
-!!       * p_emineg_econometric(regi,"co2cement_process","p1")
-!!       * ( (1000
-!!           * p_inv_gdx(ttot,regi)
-!!           / ( pm_pop(ttot,regi)
-!!             * pm_shPPPMER(regi)
-!!             )
-!!           ) ** p_emineg_econometric(regi,"co2cement_process","p2")
-!!          )
-!!       + ( p_switch_cement(ttot,regi)
-!!         * p_emineg_econometric(regi,"co2cement_process","p3")
-!!         )
-!!        )
-!!     )$(p_inv_gdx(ttot,regi) ne 0)
-!! ;
-!!
-!! vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
-!! = vm_macBase.lo(ttot,regi,"co2cement_process");
+
+$ifthen.fixed_shares "%industry%" == "fixed_shares"
+vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
+  = ( pm_pop(ttot,regi)
+    * ( (1 - p_switch_cement(ttot,regi))
+      * p_emineg_econometric(regi,"co2cement_process","p1")
+      * ( (1000
+          * p_inv_gdx(ttot,regi)
+          / ( pm_pop(ttot,regi)
+            * pm_shPPPMER(regi)
+            )
+          ) ** p_emineg_econometric(regi,"co2cement_process","p2")
+         )
+      + ( p_switch_cement(ttot,regi)
+        * p_emineg_econometric(regi,"co2cement_process","p3")
+        )
+       )
+    )$(p_inv_gdx(ttot,regi) ne 0)
+;
+
+vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
+= vm_macBase.lo(ttot,regi,"co2cement_process");
+$endif.fixed_shares
 
 * *** Reduction of cement demand due to CO2 price markups *** *
 if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
