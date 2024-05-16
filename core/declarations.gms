@@ -86,7 +86,7 @@ pm_macCostSwitch(all_enty)                           "switch to include mac cost
 p_priceCO2(tall,all_regi)                           "carbon price [$/tC]"
 pm_priceCO2forMAC(tall,all_regi,all_enty)             "carbon price defined for MAC gases [$/tC]"
 p_priceGas(tall,all_regi)                            "gas price in [$/tCeq] for ch4gas MAC"
-pm_CementDemandReductionCost(tall,all_regi)          "cost of reducing cement demand [tn$2005]; only used in fixed_shares"
+pm_CementDemandReductionCost(tall,all_regi)          "cost of reducing cement demand; only used in fixed_shares [tn$2005]"
 p_macPE(ttot,all_regi,all_enty)                      "pe from MACs"
 pm_shPerm(tall, all_regi)                            "emission permit shares"
 pm_emicapglob(tall)                                  "global emission cap"

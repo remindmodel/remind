@@ -1364,7 +1364,7 @@ pm_macCostSwitch(enty)=pm_macSwitch(enty);
 *** the co2cement_process part is only used in subsectors
 table pm_emineg_econometric(all_regi,all_enty,p)        "parameters for ch4 and n2o emissions from waste baseline and co2 emissions from cement production"
 $ondelim
-$include "./core/input/pm_emineg_econometric.cs3r"
+$include "./core/input/p_emineg_econometric.cs3r"
 $offdelim
 ;
 pm_emineg_econometric(regi,"co2cement_process","p4")$(pm_emineg_econometric(regi,"co2cement_process","p4") eq 0) = sm_eps;
