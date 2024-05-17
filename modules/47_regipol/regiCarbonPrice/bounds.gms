@@ -18,36 +18,35 @@
 *'
 *' ###### Bounds for Historic and Near-term Alignment
 
+*' ####### Power Sector
+
+$ifThen.tech_bounds_2025 "%cm_tech_bounds_2025%" == "on"
 *' This limits wind and solar PV capacity additions for 2025 in light of recent slow developments as of 2023.
 *' Upper bound is double the historic maximum capacity addition in 2011-2020.
+*' In addition: Limit solar PV capacity to 120 GW in 2025 (2023-2027 average) given that we are at only 76 GW PV in 2023
 loop(regi$(sameAs(regi,"DEU")),
   vm_deltaCap.up("2025",regi,"wind","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"wind"));
   vm_deltaCap.up("2025",regi,"spv","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"spv"));
+  vm_cap.up("2025",regi,"spv","1")=0.12;
 );
+$endIf.tech_bounds_2025
+
 
 *' These bounds account for historic gas power development.
-vm_capTotal.up("2015",regi,"pegas","seel")$(sameas(regi,"DEU"))=30/1000;
-vm_capTotal.up("2020",regi,"pegas","seel")$(sameas(regi,"DEU"))=34/1000;
+vm_prodSEtotal.up("2020",regi,"pegas","seel")$(sameAs(regi,"DEU"))= 0.36*sm_EJ_2_TWa;
+vm_prodSEtotal.up("2025",regi,"pegas","seel")$(sameAs(regi,"DEU"))= 0.4*sm_EJ_2_TWa;
 
 *' These bounds account for historic coal power development.
 vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"DEU"))) = 38.028/1000;
+*' This limits early retirement of coal power in Germany in 2020s to avoid extremly fast phase-out.
+vm_capEarlyReti.up('2025',regi,'pc')$(sameAs(regi,"DEU")) = 0.65;
 
-*' These bounds account for historic and near-term gas power development and prevent too sudden coal to gas switch in Germany by 2025.
-loop(regi$(sameAs(regi,"DEU")),
-vm_deltaCap.up("2015",regi,"ngcc","1") = 0.002;
-vm_deltaCap.up("2020",regi,"ngcc","1") = 0.0015;
-vm_deltaCap.up("2025",regi,"ngcc","1") = 0.0015;
-*' Along the same lines, this limits early retirement of coal power in Germany in 2020s to avoid extremly fast phase-out.
-vm_capEarlyReti.up('2025',regi,'pc') = 0.65; 
-);
-
-
-*' This limits coal-power capacity to at least 5 GW in 2030 to account for emissions 
-*' from fossil waste (~20 MtCO2/yr as of 2020) in 2030 target as waste currently subsumed under coal-power in REMIND.
-*' Waste power plants will not be phase-out by 2030. 
-*' Rough calculation with REMIND parameters:
-*' 5 GW * 8760 (hours per year) * 0.5 (capacity factor) / 0.4 (conversion efficiency) * 1e-3 * 0.35 MtCO2/TWh (emissions factor coal) ~ 20 Mt CO2/yr.
-vm_capTotal.lo("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=5/1000;
+*' DEU coal-power capacity phase-out, upper bounds following the Kohleausstiegsgesetz from 2020.
+*' https://www.bmuv.de/faqs/kohleausstiegsgesetz
+    vm_capTotal.up("2025",regi,"pecoal","seel")$(sameas(regi,"DEU"))=25/1000;
+    vm_capTotal.up("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=17/1000;
+    vm_capTotal.up("2035",regi,"pecoal","seel")$(sameas(regi,"DEU"))=6/1000;
+    vm_capTotal.up("2040",regi,"pecoal","seel")$(sameas(regi,"DEU"))=1.1/1000;
 
 
 *' This aligns 2020 chp capcities for Germany with historic data (AGEB)
@@ -126,7 +125,7 @@ loop(regi$(sameAs(regi,"DEU")),
     );
 );
 
-
+*' ####### Carbon Management
 
 *' This limits CO2 underground injection up to 2030 in line with recent developments as of 2023. 
 vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU"))) = 1e-3;
@@ -145,7 +144,7 @@ vm_emiTeDetail.up(t,regi,peFos,entySe,teFosCCS,"cco2")$((sameas(regi,"DEU")) AND
 vm_emiCdrAll.up(t,regi)$((cm_deuCDRmax ge 0) AND (sameas(regi,"DEU"))) = cm_deuCDRmax / 1000 / sm_c_2_co2;
 
 
-*' ###### Bounds for German Energy Security Scenario (activated by switches)
+*' Bounds for German Energy Security Scenario (activated by switches)
 
 *' Background: The energy security scenario used for the Ariadne Report on energy sovereignity in 2022 assumes that there is a continued gas crisis after 2022/23 in Germany
 *' with higher gas prices (see cm_EnSecScen_price) or limits to gas consumption (see cm_EnSecScen_limit switch) in the medium-term.
