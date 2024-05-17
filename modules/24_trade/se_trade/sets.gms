@@ -46,4 +46,12 @@ tradeSe("seh2") = YES;
 tradeSe("seliqsyn") = YES;
 $endif.import_nzero_EU
 
+$ifthen.import_nzero_bio_EU "%cm_import_EU%" == "nzero_bio"
+*** Defining secondary energy commoditites that are tradeable in this scenario 
+tradeSe(all_enty) = NO;
+tradeSe("seh2") = YES;
+tradeSe("seliqsyn") = YES;
+tradeSe("seliqbio") = YES;
+$endif.import_nzero_bio_EU
+
 *** EOF ./modules/24_trade/se_trade/sets.gms
