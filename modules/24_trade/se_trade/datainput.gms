@@ -182,7 +182,7 @@ $endif.import_h2_EU
 
 $ifthen.import_nzero_EU "%cm_import_EU%" == "nzero"
 
-*** NZero scenario with with 2050 levels for: 
+*** NZero scenario with 2050 levels for: 
 *** - h2 imports -> DEU: 100 TWh/yr, EWN: ~75 TWh/yr; total EU: ~0.63 EJ
 *** - seliqsyn imports -> DEU: 100 TWh/yr, other EU regions proportional to aviation and chemicals FE demand; Total EU: ~ 2 EJ by 2050
 
@@ -251,7 +251,7 @@ $endif.import_nzero_EU
 
 $ifthen.import_nzero_bio_EU "%cm_import_EU%" == "nzero_bio"
 
-*** NZero scenario for high biomass available sensitivy with 2050 levels for: 
+*** EU net-zero trade scenario for high biomass availability sensitivity with 2050 levels for: 
 *** - h2 imports -> DEU: 100 TWh/yr, EWN: ~75 TWh/yr; total EU: ~0.63 EJ
 *** - seliqsyn imports (reduced pull due to bioliquids availability) -> DEU: 50 TWh/yr, other EU regions proportional to aviation and chemicals FE demand; Total EU: ~ 1 EJ by 2050
 *** - seliqbio imports -> EU: 7.44 EJ (~ 8 EJ of biomass primary energy, assuming pebioil.seliqbio.biodiesel eta)
