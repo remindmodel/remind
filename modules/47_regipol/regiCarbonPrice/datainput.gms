@@ -140,7 +140,8 @@ $offdelim
 
   loop((t,ext_regi,entyFe,entySe,sector)$f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t),
     loop(regi$regi_groupExt(ext_regi,regi),
-      pm_implicitPriceTarget(t,regi,entyFe,entySe,sector)=f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t)*sm_DpGJ_2_TDpTWa;
+      !! convert data from US$2005 to US$2017
+      pm_implicitPriceTarget(t,regi,entyFe,entySe,sector) = s_D2005_2_D2017 * f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t)*sm_DpGJ_2_TDpTWa;
     );
   );
 
@@ -174,7 +175,8 @@ $offdelim
 
   loop((t,ext_regi,entyPe)$f47_implicitPePriceTarget("%cm_implicitPePriceTarget%",ext_regi,entyPe,t),
     loop(regi$regi_groupExt(ext_regi,regi),
-      pm_implicitPePriceTarget(t,regi,entyPe)=f47_implicitPePriceTarget("%cm_implicitPePriceTarget%",ext_regi,entyPe,t)*sm_DpGJ_2_TDpTWa;
+      !! convert data from US$2005 to US$2017
+      pm_implicitPePriceTarget(t,regi,entyPe) = s_D2005_2_D2017 * f47_implicitPePriceTarget("%cm_implicitPePriceTarget%",ext_regi,entyPe,t)*sm_DpGJ_2_TDpTWa;
     );
   );
 

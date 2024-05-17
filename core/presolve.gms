@@ -346,8 +346,8 @@ p_macLevFree(ttot,regi,enty)$( ttot.val gt 2005 )
 
 $IFTHEN.scaleEmiHist %c_scaleEmiHistorical% == "on"
 
-**p_macLevFree(ttot,regi,emiMacMagpie(enty))=0;
-* Set minimum abatment levels based on historical emissions
+*** p_macLevFree(ttot,regi,emiMacMagpie(enty))=0;
+*** Set minimum abatment levels based on historical emissions
 p_macLevFree("2010",regi,enty)$(p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst"))) = max( 0, 1 - (p_histEmiSector("2010",regi,"ch4","agriculture","process")+p_histEmiSector("2010",regi,"ch4","lulucf","process"))/(p_histEmiSector("2005",regi,"ch4","agriculture","process")+p_histEmiSector("2005",regi,"ch4","lulucf","process")));
 p_macLevFree(ttot,regi,enty)$((ttot.val ge 2015) AND p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst"))) = max( 0, 1 - (p_histEmiSector("2015",regi,"ch4","agriculture","process")+p_histEmiSector("2015",regi,"ch4","lulucf","process"))/(p_histEmiSector("2005",regi,"ch4","agriculture","process")+p_histEmiSector("2005",regi,"ch4","lulucf","process")) );
 p_macLevFree("2010",regi,enty)$(p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp"))) = max( 0, 1 - (p_histEmiSector("2010",regi,"n2o","agriculture","process")+p_histEmiSector("2010",regi,"n2o","lulucf","process"))/(p_histEmiSector("2005",regi,"n2o","agriculture","process")+p_histEmiSector("2005",regi,"n2o","lulucf","process")) );
@@ -373,7 +373,7 @@ pm_macAbatLev(ttot,regi,enty)$( ttot.val gt 2015 )
         pm_macAbat(ttot,regi,enty,steps)
       ),
       p_macLevFree(ttot,regi,enty)
-	);
+    );
 
 pm_macAbatLev("2015",regi,"co2luc") = 0;
 pm_macAbatLev("2020",regi,"co2luc") = 0;
@@ -391,7 +391,7 @@ loop (ttot$( ttot.val ge 2015 ),
 
 Display "computed abatement levels at carbon price", pm_macAbatLev;
 
-    
+
 ***--------------------------------------
 *** MAC costs
 ***--------------------------------------
