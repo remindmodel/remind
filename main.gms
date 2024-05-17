@@ -1413,10 +1413,10 @@ $setGlobal cm_trade_SE_exog off !! def off
 *** The parameter a defines how fast the tax increases with increasing share, with 4/a being the percentage point range over which the tax value increases from 12% to 88%
 *** The parameter b defines at which share the tax is halfway between the value at 0 share and the maximum value (defined by a region's electricity tax and the electricity grid cost) that it converges to for high shares.
 *** Example use: 
-*** cm_SEtaxRampUpParam = "GLO.elh2.a 0.4, GLO.elh2.b 20" sets the logistic function parameter values a=0.4 and b=20 for electrolysis (elh2) to all model regions (GLO). 
+*** cm_SEtaxRampUpParam = "GLO.elh2.a 0.2, GLO.elh2.b 20" sets the logistic function parameter values a=0.2 and b=20 for electrolysis (elh2) to all model regions (GLO). 
 *** cm_SEtaxRampUpParam = "off" disables v21_tau_SE_tax 
 *** For details, please see ./modules/21_tax/on/equations.gms.
-$setGlobal cm_SEtaxRampUpParam  GLO.elh2.a 0.4, GLO.elh2.b 20    !! def = GLO.elh2.a 0.4, GLO.elh2.b 30
+$setGlobal cm_SEtaxRampUpParam  GLO.elh2.a 0.2, GLO.elh2.b 20    !! def = GLO.elh2.a 0.2, GLO.elh2.b 20
 *** cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
 *** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
 *** switch to activate energy security scenario assumptions for Germany including additional tax on gas/oil
