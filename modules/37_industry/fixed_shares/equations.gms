@@ -11,23 +11,23 @@
 ***---------------------------------------------------------------------------
 *'  Industry Final Energy Balance
 ***---------------------------------------------------------------------------
-q37_demFeIndst(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2Sector(entyFe,"indst"))) .. 
-  sum((entySe,te)$(se2fe(entySe,entyFe,te)), 
+q37_demFeIndst(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2Sector(entyFe,"indst"))) ..
+  sum((entySe,te)$(se2fe(entySe,entyFe,te)),
     vm_demFeSector_afterTax(ttot,regi,entySe,entyFe,"indst",emiMkt)
-  ) 
+  )
   =e=
   sum(in$(fe2ppfEn(entyFe,in) and ppfen_industry_dyn37(in)),
       ( vm_cesIO(ttot,regi,in)
         + pm_cesdata(ttot,regi,in,"offset_quantity")
       ) * sum(secInd37$secInd37_emiMkt(secInd37,emiMkt), p37_shIndFE(regi,in,secInd37))
-  ) 
+  )
 ;
 
-*' Baseline (emitted and captured) emissions by final energy carrier and 
-*' industry subsector are calculated from final energy use in industry, the 
-*' subsectors' shares in that final energy carriers use, and the emission 
-*' factor the final energy carrier. 
-q37_emiIndBase(ttot,regi,entyFe,secInd37)$( ttot.val ge cm_startyear  ) .. 
+*' Baseline (emitted and captured) emissions by final energy carrier and
+*' industry subsector are calculated from final energy use in industry, the
+*' subsectors' shares in that final energy carriers use, and the emission
+*' factor the final energy carrier.
+q37_emiIndBase(ttot,regi,entyFe,secInd37)$( ttot.val ge cm_startyear  ) ..
   vm_emiIndBase(ttot,regi,entyFe,secInd37)
   =e=
     sum((fe2ppfEn(entyFe,in),ces_industry_dyn37("enhi",in))$(entyFeCC37(entyFe)),
@@ -38,9 +38,9 @@ q37_emiIndBase(ttot,regi,entyFe,secInd37)$( ttot.val ge cm_startyear  ) ..
 ;
 
 *' The maximum abatable emissions of a given type (industry subsector, fuel or
-*' process) are calculated from the baseline emissions and the possible 
-*' abatement level (depending on the carbon price of the previous iteration). 
-q37_emiIndCCSmax(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) .. 
+*' process) are calculated from the baseline emissions and the possible
+*' abatement level (depending on the carbon price of the previous iteration).
+q37_emiIndCCSmax(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
   v37_emiIndCCSmax(ttot,regi,emiInd37)
   =e=
     sum(emiMac2mac(emiInd37,macInd37),
@@ -56,18 +56,18 @@ q37_emiIndCCSmax(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
   )
 ;
 
-*' Industry CCS is limited to below the maximum abatable emissions. 
-q37_IndCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) .. 
+*' Industry CCS is limited to below the maximum abatable emissions.
+q37_IndCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
   vm_emiIndCCS(ttot,regi,emiInd37)
   =l=
   v37_emiIndCCSmax(ttot,regi,emiInd37)
 ;
 
-*' The CCS capture rates of cement fuel and process emissions are identical, 
-*' as they are captured in the same installation. 
+*' The CCS capture rates of cement fuel and process emissions are identical,
+*' as they are captured in the same installation.
 q37_cementCCS(ttot,regi)$( ttot.val ge cm_startyear
                           AND pm_macSwitch("co2cement")
-                          AND pm_macAbatLev(ttot,regi,"co2cement") ) .. 
+                          AND pm_macAbatLev(ttot,regi,"co2cement") ) ..
     vm_emiIndCCS(ttot,regi,"co2cement")
   * v37_emiIndCCSmax(ttot,regi,"co2cement_process")
   =e=
@@ -75,33 +75,33 @@ q37_cementCCS(ttot,regi)$( ttot.val ge cm_startyear
   * v37_emiIndCCSmax(ttot,regi,"co2cement")
 ;
 
-*' Industry CCS costs (by subsector) are equal to the integral below the MAC 
+*' Industry CCS costs (by subsector) are equal to the integral below the MAC
 *' cost curve.
 *' For the calculation, consider this figure:
 *' ![MAC curve example](MAC_costs.png)
-*' To make the calculations involving MAC curves leaner, they are discretised 
-*' into 5 $/tC steps (parameter `sm_dmac`) and transformed into step-wise 
+*' To make the calculations involving MAC curves leaner, they are discretised
+*' into 5 $/tC steps (parameter `sm_dmac`) and transformed into step-wise
 *' curves.  The parameter `pm_macStep` holds the current step on the MAC curve
-*' the model is on (given the CO~2~ price of the last iteration), and 
-*' `pm_macAbat` holds the abatement level (as a fraction) on that step.  The 
-*' emission abatement equals the area under the MAC curve (turqoise area in the 
-*' figure).  To calculate it, `pm_macStep` is multiplied by `pm_macAbat` (the 
-*' horizontal and vertical lines enclosing the coloured rectangle in the 
-*' figure).  The `sum(steps$( ord(steps) eq pm_macStep ... )` part simply 
+*' the model is on (given the CO~2~ price of the last iteration), and
+*' `pm_macAbat` holds the abatement level (as a fraction) on that step.  The
+*' emission abatement equals the area under the MAC curve (turqoise area in the
+*' figure).  To calculate it, `pm_macStep` is multiplied by `pm_macAbat` (the
+*' horizontal and vertical lines enclosing the coloured rectangle in the
+*' figure).  The `sum(steps$( ord(steps) eq pm_macStep ... )` part simply
 *' selects the right step within the MAC curve.  From this product (rectangle),
-*' the area above the MAC curve (pink) is subtractad.  To calculate it, the 
-*' abatement level at each MAC step up to and including the current step is 
-*' summed up.  The area is subdivided into `pm_macStep` rectangles of height 
-*' `1 sm_dmac` and width `pm_macAbat(steps)` (which is zero for the first $n$ 
-*' steps at which price level no abatement is available). 
-*' Multiplying the area under the curve with the step width `sm_dmac` and the 
+*' the area above the MAC curve (pink) is subtractad.  To calculate it, the
+*' abatement level at each MAC step up to and including the current step is
+*' summed up.  The area is subdivided into `pm_macStep` rectangles of height
+*' `1 sm_dmac` and width `pm_macAbat(steps)` (which is zero for the first $n$
+*' steps at which price level no abatement is available).
+*' Multiplying the area under the curve with the step width `sm_dmac` and the
 *' baseline emissions (before mitigation) converts the units to $/tC and GtC.
 *'
-*' Example:  The carbon price is 43.6 $/tCO~2~, which translates to step 32 on 
-*' the discrete MAC curve (43.6 $/tCO~2~ * (44/12 tCO~2~/tC) / (5 $/step)). 
+*' Example:  The carbon price is 43.6 $/tCO~2~, which translates to step 32 on
+*' the discrete MAC curve (43.6 $/tCO~2~ * (44/12 tCO~2~/tC) / (5 $/step)).
 *' The calculation then is:
 *' ```
-*' vm_emiIndCCS = 
+*' vm_emiIndCCS =
 *'     0.001
 *'   * vm_emiIndBase
 *'   * sm_dmac
@@ -113,7 +113,7 @@ q37_cementCCS(ttot,regi)$( ttot.val ge cm_startyear
 *'     )
 *'
 
-q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) .. 
+q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
   vm_IndCCSCost(ttot,regi,emiInd37)
   =e=
     1e-3
@@ -149,13 +149,13 @@ q37_costAddTeInv(t,regi,te)$(sameAs(te,"tdh2s"))..
 
 
 ***---------------------------------------------------------------------------
-*'  Additional hydrogen phase-in cost at low H2 penetration levels 
+*'  Additional hydrogen phase-in cost at low H2 penetration levels
 ***---------------------------------------------------------------------------
 q37_costAddH2PhaseIn(t,regi)..
   v37_costAddTeInvH2(t,regi,"tdh2s")
   =e=
-    (1 / (1 + (3 ** v37_costExponent(t,regi)))) 
-  * ( s37_costAddH2Inv 
+    (1 / (1 + (3 ** v37_costExponent(t,regi))))
+  * ( s37_costAddH2Inv
     * sm_TWa_2_kWh / sm_trillion_2_non
     * sum(emiMkt, vm_demFeSector_afterTax(t,regi,"seh2","feh2s","indst",emiMkt))
     )
@@ -172,14 +172,14 @@ q37_auxCostAddTeInv(t,regi)..
 
 *' Hydrogen fe share in industry gases use (natural gas + hydrogen)
 q37_H2Share(t,regi)..
-  v37_H2share(t,regi) 
-  * sum(emiMkt, 
-      sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feh2s") OR SAMEAS(entyFe,"fegas")),   
+  v37_H2share(t,regi)
+  * sum(emiMkt,
+      sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feh2s") OR SAMEAS(entyFe,"fegas")),
         vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)))
   =e=
-  sum(emiMkt, 
-      sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feh2s"),   
-        vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt))) 
+  sum(emiMkt,
+      sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feh2s"),
+        vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)))
 ;
 
 ***---------------------------------------------------------------------------

@@ -144,7 +144,7 @@ loop (industry_ue_calibration_target_dyn37(out),
     );
   );
 
-  loop (regi_group(ext_regi,regi)$( 
+  loop (regi_group(ext_regi,regi)$(
                      smax(ttot, p37_energy_limit_def(ttot,ext_regi,out)) ne 0 ),
     !! maximum "efficiency gain", from 2015 baseline value to theoretical limit
     sm_tmp2 = smax(ttot, p37_energy_limit_def(ttot,ext_regi,out));
@@ -182,6 +182,8 @@ $endif.no_calibration
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
 pm_macSwitch(emiInd37)      = NO;
+*** CCS cost is accounted for via vm_IndCCSCost
+pm_macCostSwitch(emiInd37) =0 ;
 
 *** turn on CCS for industry emissions
 if (cm_IndCCSscen eq 1,
@@ -213,6 +215,7 @@ emiMacSector("co2otherInd") = NO;
 pm_macSwitch("co2otherInd") = NO;
 emiMac2mac("co2otherInd","co2otherInd") = NO;
 
+
 *** data on maximum secondary steel production
 *** The steel recycling rate limit is assumed to increase from 90 to 99 %.
   p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)
@@ -241,7 +244,8 @@ p37_clinker_cement_ratio(t,regi)
   * (min(t.val, 2100) - 2005)
   / (2100             - 2005);
 
-*** Cement demand reduction is implicit in the production function, so no extra
+*** pm_CementDemandReductionCost is only used in fixed_shares.
+*** In subsecttors, cement demand reduction is implicit in the production function, so no extra
 *** costs have to be calculated.
 pm_CementDemandReductionCost(ttot,regi) = 0;
 

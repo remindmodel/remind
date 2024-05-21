@@ -6,14 +6,32 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/fixed_shares/presolve.gms
 
-*** zero out a ghost
-vm_macBase.fx(ttot,regi,emiInd37_fuel) = 0;
+vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
+  = ( pm_pop(ttot,regi)
+    * ( (1 - pm_switch_cement(ttot,regi))
+      * pm_emineg_econometric(regi,"co2cement_process","p1")
+      * ( (1000
+          * pm_inv_gdx(ttot,regi)
+          / ( pm_pop(ttot,regi)
+            * pm_shPPPMER(regi)
+            )
+          ) ** pm_emineg_econometric(regi,"co2cement_process","p2")
+         )
+      + ( pm_switch_cement(ttot,regi)
+        * pm_emineg_econometric(regi,"co2cement_process","p3")
+        )
+       )
+    )$(pm_inv_gdx(ttot,regi) ne 0)
+;
+
+vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
+= vm_macBase.lo(ttot,regi,"co2cement_process");
 
 *** adjust CO2 cement process emissions
 if (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1,
 
   !! lowest price for which abatement equals current abatement
-  pm_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
+  p37_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
   = max(0,
         smin(steps$(   pm_abatparam_Ind(ttot,regi,"co2cement",steps)
                     ge pm_macAbatLev(ttot,regi,"co2cement") ),
@@ -23,51 +41,51 @@ if (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1,
   * sm_dmac;
 
   display "Marginal cost of Cement Demand Reduction [$/tC]",
-          pm_CementAbatementPrice;
+          p37_CementAbatementPrice;
 
   !! mix prices of residual and abated emissions
-  pm_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
+  p37_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
   = ( (1 - pm_macAbatLev(ttot,regi,"co2cement")) * pm_priceCO2forMAC(ttot,regi,"co2cement")
     + ( pm_macAbatLev(ttot,regi,"co2cement")
-      * pm_CementAbatementPrice(ttot,regi)
+      * p37_CementAbatementPrice(ttot,regi)
       )
     )
   / sm_c_2_co2;
 
   display "Mixed price of CO2 for Cement Demand Reduction [$/tCO2]",
-          pm_CementAbatementPrice;
+          p37_CementAbatementPrice;
 
-  pm_ResidualCementDemand("2005",regi) = 1;
-  pm_ResidualCementDemand(ttot,regi)$( ttot.val gt 2005 )
-  = 160 / (pm_CementAbatementPrice(ttot,regi) + 200) + 0.2;
+  p37_ResidualCementDemand("2005",regi) = 1;
+  p37_ResidualCementDemand(ttot,regi)$( ttot.val gt 2005 )
+  = 160 / (p37_CementAbatementPrice(ttot,regi) + 200) + 0.2;
 
-  display "Cement Demand Reduction as computed", pm_ResidualCementDemand;
-  
+  display "Cement Demand Reduction as computed", p37_ResidualCementDemand;
+
   !! Demand can only be reduced by 1% p.a.
   loop (ttot$( ttot.val gt 2005 ),
-    pm_ResidualCementDemand(ttot,regi)
-    = max(pm_ResidualCementDemand(ttot,regi),
-          ( pm_ResidualCementDemand(ttot-1,regi)
+    p37_ResidualCementDemand(ttot,regi)
+    = max(p37_ResidualCementDemand(ttot,regi),
+          ( p37_ResidualCementDemand(ttot-1,regi)
           - 0.01 * (pm_ttot_val(ttot) - pm_ttot_val(ttot-1))
           )
       );
   );
 
   display "Cement Demand Reduction, limited to 1% p.a.",
-          pm_ResidualCementDemand;
+          p37_ResidualCementDemand;
 
-  pm_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
-  = 160 / (pm_ResidualCementDemand(ttot,regi) - 0.2) - 200;
+  p37_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
+  = 160 / (p37_ResidualCementDemand(ttot,regi) - 0.2) - 200;
 
   display "Cement Demand Reduction, price of limited reduction",
-          pm_CementAbatementPrice;
+          p37_CementAbatementPrice;
 
   pm_CementDemandReductionCost(ttot,regi)$( ttot.val ge 2005 )
-  = ( 160 * log(pm_CementAbatementPrice(ttot,regi) + 200) 
-    + 0.2 * pm_CementAbatementPrice(ttot,regi)
+  = ( 160 * log(p37_CementAbatementPrice(ttot,regi) + 200)
+    + 0.2 * p37_CementAbatementPrice(ttot,regi)
     - 160 * log(200)
-    - pm_ResidualCementDemand(ttot,regi) * pm_CementAbatementPrice(ttot,regi)
-    )$( pm_CementAbatementPrice(ttot,regi) gt 0 )
+    - p37_ResidualCementDemand(ttot,regi) * p37_CementAbatementPrice(ttot,regi)
+    )$( p37_CementAbatementPrice(ttot,regi) gt 0 )
   / 1000
   * vm_macBase.lo(ttot,regi,"co2cement_process");
 
@@ -75,12 +93,75 @@ if (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1,
 
   vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
   = vm_macBase.lo(ttot,regi,"co2cement_process")
-  * pm_ResidualCementDemand(ttot,regi);
+  * p37_ResidualCementDemand(ttot,regi);
+
+  vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
+  = vm_macBase.lo(ttot,regi,"co2cement_process");
+
+
+else
+
+*** Cement (clinker) production causes process emissions of the order of
+*** 0.5 t CO2/t Cement. As cement prices are of the magnitude of 100 $/t, CO2
+*** pricing leads to significant price markups.
+
+  p37_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
+  = pm_priceCO2forMAC(ttot,regi,"co2cement") / sm_c_2_co2;
+
+  display "CO2 price for computing Cement Demand Reduction [$/tC]",
+          p37_CementAbatementPrice;
+
+  !! The demand reduction function a = 160 / (p + 200) + 0.2 assumes that demand
+  !!  for cement is reduced by 40% if the price doubles (CO2 price of $200) and
+  !!  that demand reductions of 80% can be achieved in the limit.
+  p37_ResidualCementDemand("2005",regi) = 1;
+  p37_ResidualCementDemand(ttot,regi)$( ttot.val gt 2005 )
+  = 160 / (p37_CementAbatementPrice(ttot,regi) + 200) + 0.2;
+
+  display "Cement Demand Reduction as computed", p37_ResidualCementDemand;
+
+  !! Demand can only be reduced by 1% p.a.
+  loop (ttot$( ttot.val gt 2005 ),
+    p37_ResidualCementDemand(ttot,regi)
+    = max(p37_ResidualCementDemand(ttot,regi),
+          ( p37_ResidualCementDemand(ttot-1,regi)
+          - 0.01 * (pm_ttot_val(ttot) - pm_ttot_val(ttot-1))
+          )
+      );
+  );
+
+  display "Cement Demand Reduction, limited to 1% p.a.",
+          p37_ResidualCementDemand;
+
+  p37_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
+  = 160 / (p37_ResidualCementDemand(ttot,regi) - 0.2) - 200;
+
+  display "Cement Demand Reduction, price of limited reduction",
+          p37_CementAbatementPrice;
+
+  !! Costs of cement demand reduction are the integral under the activity
+  !! reduction curve times baseline emissions.
+  !! a = 160 / (p + 200) + 0.2
+  !! A = 160 ln(p + 200) + 0.2p
+  !! A_MAC(p*) = A(p*) - A(0) - a(p*)p*
+  pm_CementDemandReductionCost(ttot,regi)$( ttot.val ge 2005 )
+  = ( 160 * log(p37_CementAbatementPrice(ttot,regi) + 200)
+    + 0.2 * p37_CementAbatementPrice(ttot,regi)
+    - 160 * log(200)
+    - p37_ResidualCementDemand(ttot,regi) * p37_CementAbatementPrice(ttot,regi)
+    )$( p37_CementAbatementPrice(ttot,regi) gt 0 )
+  / 1000
+  * vm_macBase.lo(ttot,regi,"co2cement_process");
+
+  display "Cement Demand Reduction cost", pm_CementDemandReductionCost;
+
+  vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
+  = vm_macBase.lo(ttot,regi,"co2cement_process")
+  * p37_ResidualCementDemand(ttot,regi);
 
   vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
   = vm_macBase.lo(ttot,regi,"co2cement_process");
 );
-
 
 *** EOF ./modules/37_industry/fixed_shares/presolve.gms
 
