@@ -16,6 +16,8 @@ scalars
 Parameters
   pm_abatparam_Ind(ttot,all_regi,all_enty,steps)         "industry CCS MAC curves [ratio @ US$2005]"
 
+  p37_ResidualCementDemand(tall,all_regi)               "reduction in cemend demand (and thus process emissions) due to climate policy [0...1]"
+  p37_CementAbatementPrice(ttot,all_regi)               "CO2 price used during calculation of cement demand reduction [$/tCO2]"
 
   pm_ue_eff_target(all_in)   "energy efficiency target trajectories [% p.a.]"
   /   /

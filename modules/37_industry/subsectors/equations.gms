@@ -81,28 +81,32 @@ $endif.exogDem_scen
 *' energy mix, as that is what can be captured); vm_emiIndBase itself is not used for emission
 *' accounting, just as a CCS baseline.
 ***------------------------------------------------------
-q37_emiIndBase(t,regi,entyFe,secInd37) ..
-  vm_emiIndBase(t,regi,entyFe,secInd37)
+q37_emiIndBase(t,regi,enty,secInd37)$( entyFeCC37(enty) OR sameas(enty,"co2cement_process") ) ..
+    vm_emiIndBase(t,regi,enty,secInd37)
   =e=
-    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),
-         fe2ppfEn(entyFeCC37(entyFe),in)),
+    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfEn(entyFeCC37(enty),in)),
       ( vm_cesIO(t,regi,in)
-      * ( 1
-        - p37_chemicals_feedstock_share(t,regi)$( in_chemicals_feedstock_37(in) )
-        )
+      * ( 1 - p37_chemicals_feedstock_share(t,regi)$( in_chemicals_feedstock_37(in) ))
       )
-    * sum(se2fe(entySeFos,entyFe,te),
-        pm_emifac(t,regi,entySeFos,entyFe,te,"co2")
+      * sum(se2fe(entySeFos,enty,te),
+            pm_emifac(t,regi,entySeFos,enty,te,"co2")
       )
-    )$( NOT secInd37Prc(secInd37) )
-  + sum((entyFeCC37(entyFe),
-         sefe(entySe,entyFe),
+    )$(NOT secInd37Prc(secInd37))
+    +
+    (s37_clinker_process_CO2
+    * p37_clinker_cement_ratio(t,regi)
+    * vm_cesIO(t,regi,"ue_cement")
+    / sm_c_2_co2)$(sameas(enty,"co2cement_process") AND sameas(secInd37,"cement"))
+    +
+    sum((entyFeCC37(enty),
+         sefe(entySe,enty),
          secInd37_emiMkt(secInd37,emiMkt)),
-      vm_incinerationEmi_Base(t,regi,entySe,entyFe,emiMkt)
+      vm_incinerationEmi_Base(t,regi,entySe,enty,emiMkt)
     )$( sameas(secInd37,"chemicals") )
-  + sum((secInd37_tePrc(secInd37,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
-      v37_emiPrc(t,regi,entyFe,tePrc,opmoPrc)
-  )$( secInd37Prc(secInd37) )
+    +
+    sum((secInd37_tePrc(secInd37,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
+        v37_emiPrc(t,regi,enty,tePrc,opmoPrc)
+    )$(secInd37Prc(secInd37))
 ;
 
 ***------------------------------------------------------

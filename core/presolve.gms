@@ -19,48 +19,48 @@ pm_emissions0(ttot,regi,enty)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq
 
 *LB* moved here from datainput to be updated based on the gdp-path
 *** calculate econometric emission data: p2
-p_emineg_econometric(regi,"co2cement_process","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10) = 0.3744788;
-p_emineg_econometric(regi,"ch4wstl","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10)   = 0.5702590;
-p_emineg_econometric(regi,"ch4wstl","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)   = 0.2057304;
-p_emineg_econometric(regi,"ch4wsts","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10)   = 0.5702590;
-p_emineg_econometric(regi,"ch4wsts","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)   = 0.2057304;
-p_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10)  = 0.3813973;
-p_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)  = 0.1686718;
+pm_emineg_econometric(regi,"co2cement_process","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10) = 0.3744788;
+pm_emineg_econometric(regi,"ch4wstl","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10)   = 0.5702590;
+pm_emineg_econometric(regi,"ch4wstl","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)   = 0.2057304;
+pm_emineg_econometric(regi,"ch4wsts","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10)   = 0.5702590;
+pm_emineg_econometric(regi,"ch4wsts","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)   = 0.2057304;
+pm_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10)  = 0.3813973;
+pm_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)  = 0.1686718;
 
-*JeS CO2 emissions from cement production. p_switch_cement describes an s-curve to provide a smooth switching from the short-term
+*JeS CO2 emissions from cement production. pm_switch_cement describes an s-curve to provide a smooth switching from the short-term
 *** behavior (depending on per capita capital investments) to the long-term behavior (constant per capita emissions).
-p_switch_cement(ttot,regi)$(ttot.val ge 2005) = 1 / ( 1 + exp( - (s_c_so2 / s_tau_cement)
-                                          *(1000 * p_inv_gdx(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)) - p_emineg_econometric(regi,"co2cement_process","p4"))
+pm_switch_cement(ttot,regi)$(ttot.val ge 2005) = 1 / ( 1 + exp( - (s_c_so2 / s_tau_cement)
+                                          *(1000 * pm_inv_gdx(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)) - pm_emineg_econometric(regi,"co2cement_process","p4"))
                                         )
                               );
-display p_switch_cement;
+display pm_switch_cement;
 
 *** calculate p1
-p_emineg_econometric(regi,"co2cement_process","p1")$( p_switch_cement("2005",regi) < 0.999 )
+pm_emineg_econometric(regi,"co2cement_process","p1")$( pm_switch_cement("2005",regi) < 0.999 )
   = ( (p_macBase2005(regi,"co2cement_process") / pm_pop("2005",regi))
-    - ( p_switch_cement("2005",regi)
-      * p_emineg_econometric(regi,"co2cement_process","p3")
+    - ( pm_switch_cement("2005",regi)
+      * pm_emineg_econometric(regi,"co2cement_process","p3")
       )
     )
-  / ( (1 - p_switch_cement("2005",regi))
+  / ( (1 - pm_switch_cement("2005",regi))
     * ( ( 1000
           !! use default per-capita investments if no investment data in gdx
           !! (due to different region settings)
-        * ( (p_inv_gdx("2005",regi) / pm_pop("2005",regi))$( p_inv_gdx("2005",regi) )
-          + 4$( NOT p_inv_gdx("2005",regi) )
+        * ( (pm_inv_gdx("2005",regi) / pm_pop("2005",regi))$( pm_inv_gdx("2005",regi) )
+          + 4$( NOT pm_inv_gdx("2005",regi) )
           )
         / pm_shPPPMER(regi)
         )
-     ** p_emineg_econometric(regi,"co2cement_process","p2")
+     ** pm_emineg_econometric(regi,"co2cement_process","p2")
       )
     );
-p_emineg_econometric(regi,"n2owaste","p1") = p_macBase2005(regi,"n2owaste") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"n2owaste","p2"));
-p_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10) = p_macBase2005(regi,"ch4wstl") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2"));
-p_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10) = p_macBase2005(regi,"ch4wsts") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wsts","p2"));
-p_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10) = p_macBase1990(regi,"ch4wstl") / (pm_pop("1990",regi) * (1000*pm_gdp("1990",regi) / (pm_pop("1990",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2"));
-p_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10) = p_macBase1990(regi,"ch4wsts") / (pm_pop("1990",regi) * (1000*pm_gdp("1990",regi) / (pm_pop("1990",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wsts","p2"));
+pm_emineg_econometric(regi,"n2owaste","p1") = p_macBase2005(regi,"n2owaste") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**pm_emineg_econometric(regi,"n2owaste","p2"));
+pm_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10) = p_macBase2005(regi,"ch4wstl") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**pm_emineg_econometric(regi,"ch4wstl","p2"));
+pm_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10) = p_macBase2005(regi,"ch4wsts") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**pm_emineg_econometric(regi,"ch4wsts","p2"));
+pm_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10) = p_macBase1990(regi,"ch4wstl") / (pm_pop("1990",regi) * (1000*pm_gdp("1990",regi) / (pm_pop("1990",regi)*pm_shPPPMER(regi)))**pm_emineg_econometric(regi,"ch4wstl","p2"));
+pm_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10) = p_macBase1990(regi,"ch4wsts") / (pm_pop("1990",regi) * (1000*pm_gdp("1990",regi) / (pm_pop("1990",regi)*pm_shPPPMER(regi)))**pm_emineg_econometric(regi,"ch4wsts","p2"));
 
-display p_emineg_econometric;
+display pm_emineg_econometric;
 
 ***--------------------------------------
 *** calculate some emission factors
@@ -98,10 +98,10 @@ display p_efFossilFuelExtr;
 ***--------------------------------------
 *** Non-energy emissions reductions (MAC)
 ***--------------------------------------
-*JeS CO2 emissions from cement production. p_switch_cement describes an s-curve to provide a smooth switching from the short-term
+*JeS CO2 emissions from cement production. pm_switch_cement describes an s-curve to provide a smooth switching from the short-term
 *** behavior (depending on per capita capital investments) to the long-term behavior (constant per capita emissions).
-p_switch_cement(ttot,regi)$(ttot.val ge 1990)=1/(1+exp(-(s_c_so2/s_tau_cement)*(1000*p_inv_gdx(ttot,regi)/(pm_pop(ttot,regi)*pm_shPPPMER(regi))-p_emineg_econometric(regi,"co2cement_process","p4"))));
-display p_switch_cement;
+pm_switch_cement(ttot,regi)$(ttot.val ge 1990)=1/(1+exp(-(s_c_so2/s_tau_cement)*(1000*pm_inv_gdx(ttot,regi)/(pm_pop(ttot,regi)*pm_shPPPMER(regi))-pm_emineg_econometric(regi,"co2cement_process","p4"))));
+display pm_switch_cement;
 
 *** scale CO2 luc baselines from MAgPIE to EDGAR v4.2 2005 data in REMIND standalone runs: linear, phase out within 20 years
 ***$if %cm_MAgPIE_coupling% == "off" pm_macBaseMagpie(ttot,regi,"co2luc")$(ttot.val lt 2030) = pm_macBaseMagpie(ttot,regi,"co2luc") + ( (p_macBase2005(regi,"co2luc") - pm_macBaseMagpie("2005",regi,"co2luc")) * (1-(ttot.val - 2005)/20) );
@@ -117,14 +117,14 @@ loop(regi,
 
 p_priceCO2(ttot,regi) = pm_taxCO2eqSum(ttot,regi) * 1000;
 
-*** Define co2 price for entities that are used in MAC. 
+*** Define co2 price for entities that are used in MAC.
 loop((enty,enty2)$emiMac2mac(enty,enty2), !! make sure that both mac sectors and mac curves have prices asigned as both sets are used in calculations below
   pm_priceCO2forMAC(ttot,regi,enty) = p_priceCO2(ttot,regi);
   pm_priceCO2forMAC(ttot,regi,enty2) = p_priceCO2(ttot,regi);
 );
 
 *** Redefine the MAC price for regions with emission tax defined by the regipol module
-$IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
+$IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
  loop(ext_regi$regiEmiMktTarget(ext_regi),
   loop(regi$regi_groupExt(ext_regi,regi),
 *** average CO2 price aggregated by FE
@@ -165,94 +165,9 @@ display p_priceCO2,pm_priceCO2forMAC;
 ***--------------------------------------
 *** endogenous in equations.gms
 *** econometric
-vm_macBase.fx(ttot,regi,"ch4wsts")$(ttot.val ge 2005) = p_emineg_econometric(regi,"ch4wsts","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wsts","p2");
-vm_macBase.fx(ttot,regi,"ch4wstl")$(ttot.val ge 2005) = p_emineg_econometric(regi,"ch4wstl","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2");
-vm_macBase.fx(ttot,regi,"n2owaste")$(ttot.val ge 2005) = p_emineg_econometric(regi,"n2owaste","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"n2owaste","p2");
-
-vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 ) 
-  = ( pm_pop(ttot,regi)
-    * ( (1 - p_switch_cement(ttot,regi))
-      * p_emineg_econometric(regi,"co2cement_process","p1")
-      * ( (1000
-          * p_inv_gdx(ttot,regi)
-          / ( pm_pop(ttot,regi)
-            * pm_shPPPMER(regi)
-            )
-          ) ** p_emineg_econometric(regi,"co2cement_process","p2")
-         )
-      + ( p_switch_cement(ttot,regi)
-        * p_emineg_econometric(regi,"co2cement_process","p3")
-        )
-       )
-    )$(p_inv_gdx(ttot,regi) ne 0)
-;
-
-vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
-= vm_macBase.lo(ttot,regi,"co2cement_process");
-
-* *** Reduction of cement demand due to CO2 price markups *** *
-if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
-*** Cement (clinker) production causes process emissions of the order of
-*** 0.5 t CO2/t Cement. As cement prices are of the magnitude of 100 $/t, CO2
-*** pricing leads to significant price markups.
-
-  pm_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
-  = pm_priceCO2forMAC(ttot,regi,"co2cement") / sm_c_2_co2;
-
-  display "CO2 price for computing Cement Demand Reduction [$/tC]",
-          pm_CementAbatementPrice;
-
-  !! The demand reduction function a = 160 / (p + 200) + 0.2 assumes that demand 
-  !!  for cement is reduced by 40% if the price doubles (CO2 price of $200) and
-  !!  that demand reductions of 80% can be achieved in the limit.
-  pm_ResidualCementDemand("2005",regi) = 1;
-  pm_ResidualCementDemand(ttot,regi)$( ttot.val gt 2005 )
-  = 160 / (pm_CementAbatementPrice(ttot,regi) + 200) + 0.2;
-
-  display "Cement Demand Reduction as computed", pm_ResidualCementDemand;
-
-  !! Demand can only be reduced by 1% p.a.
-  loop (ttot$( ttot.val gt 2005 ),
-    pm_ResidualCementDemand(ttot,regi)
-    = max(pm_ResidualCementDemand(ttot,regi),
-          ( pm_ResidualCementDemand(ttot-1,regi)
-          - 0.01 * (pm_ttot_val(ttot) - pm_ttot_val(ttot-1))
-          )
-      );
-  );
-
-  display "Cement Demand Reduction, limited to 1% p.a.",
-          pm_ResidualCementDemand;
-
-  pm_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
-  = 160 / (pm_ResidualCementDemand(ttot,regi) - 0.2) - 200;
-
-  display "Cement Demand Reduction, price of limited reduction",
-          pm_CementAbatementPrice;
-
-  !! Costs of cement demand reduction are the integral under the activity 
-  !! reduction curve times baseline emissions.
-  !! a = 160 / (p + 200) + 0.2
-  !! A = 160 ln(p + 200) + 0.2p
-  !! A_MAC(p*) = A(p*) - A(0) - a(p*)p*
-  pm_CementDemandReductionCost(ttot,regi)$( ttot.val ge 2005 )
-  = ( 160 * log(pm_CementAbatementPrice(ttot,regi) + 200)
-    + 0.2 * pm_CementAbatementPrice(ttot,regi)
-    - 160 * log(200)
-    - pm_ResidualCementDemand(ttot,regi) * pm_CementAbatementPrice(ttot,regi)
-    )$( pm_CementAbatementPrice(ttot,regi) gt 0 )
-  / 1000
-  * vm_macBase.lo(ttot,regi,"co2cement_process");
-
-  display "Cement Demand Reduction cost", pm_CementDemandReductionCost;
-
-  vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
-  = vm_macBase.lo(ttot,regi,"co2cement_process")
-  * pm_ResidualCementDemand(ttot,regi);
-
-  vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
-  = vm_macBase.lo(ttot,regi,"co2cement_process");
-);
+vm_macBase.fx(ttot,regi,"ch4wsts")$(ttot.val ge 2005) = pm_emineg_econometric(regi,"ch4wsts","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**pm_emineg_econometric(regi,"ch4wsts","p2");
+vm_macBase.fx(ttot,regi,"ch4wstl")$(ttot.val ge 2005) = pm_emineg_econometric(regi,"ch4wstl","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**pm_emineg_econometric(regi,"ch4wstl","p2");
+vm_macBase.fx(ttot,regi,"n2owaste")$(ttot.val ge 2005) = pm_emineg_econometric(regi,"n2owaste","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**pm_emineg_econometric(regi,"n2owaste","p2");
 
 
 *** exogenous
@@ -270,6 +185,10 @@ vm_macBase.fx(ttot,regi,enty)$((ttot.val gt 2100)$((NOT emiMacMagpie(enty)) AND 
 *DK: baseline continuation not necessary for magpie-emissions as the exogenous data reaches until 2150
 * JeS: exclude endgenous baseline calculation, i.e. emiFuEx and n2ofertin
 
+!! industry uses vm_emiIndBase instead (both for ccs cost and for emission accounting)
+!! (exception: in the fixed_shares realization, for co2cement_process; here, vm_macBase.fx is overwritten in presolve)
+vm_macBase.fx(ttot,regi,emiInd37) = 0;
+
 
 ***--------------------------------------
 *** MAC abatement
@@ -282,7 +201,7 @@ pm_macAbat(ttot,regi,enty,steps)
 ;
 pm_macAbat(ttot,regi,enty,steps)$(ttot.val gt 2100) = pm_macAbat("2100",regi,enty,steps);
 
-*** Abatement options are in steps of length sm_dmac; options at zero price are 
+*** Abatement options are in steps of length sm_dmac; options at zero price are
 *** in the first step
 pm_macStep(ttot,regi,enty)$(MacSector(enty))
   = min(801, ceil(pm_priceCO2forMAC(ttot,regi,enty) / sm_dmac) + 1);
@@ -294,8 +213,8 @@ p_priceGas(ttot,regi)=q_balPe.m(ttot,regi,"pegas")/(qm_budget.m(ttot,regi)+sm_ep
 pm_macStep(ttot,regi,"ch4gas")
   = min(801, ceil(max(pm_priceCO2forMAC(ttot,regi,"ch4gas") * (25/s_gwpCH4), max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);
 pm_macStep(ttot,regi,"ch4coal")
-  = min(801, ceil(max(pm_priceCO2forMAC(ttot,regi,"ch4coal") * (25/s_gwpCH4), 0.5 * max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);    
-  
+  = min(801, ceil(max(pm_priceCO2forMAC(ttot,regi,"ch4coal") * (25/s_gwpCH4), 0.5 * max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);
+
 *** limit yearly increase of MAC usage to sm_macChange
 p_macAbat_lim(ttot,regi,enty)
   = sum(steps$(ord(steps) eq pm_macStep(ttot-1,regi,enty)),
@@ -304,7 +223,7 @@ p_macAbat_lim(ttot,regi,enty)
   + sm_macChange * pm_ts(ttot)
 ;
 
-*** if intended abatement pm_macAbat is higher than this limit, pm_macStep has to 
+*** if intended abatement pm_macAbat is higher than this limit, pm_macStep has to
 *** be set to the highest step number where pm_macAbat is still lower or equal to
 *** this limit
 loop ((ttot,regi,MacSector(enty))$(NOT sameas(enty,"co2luc")),
@@ -317,7 +236,7 @@ loop ((ttot,regi,MacSector(enty))$(NOT sameas(enty,"co2luc")),
   );
 );
 
-*** In USA, EUR and JPN, abatement measures for CH4 emissions from waste started 
+*** In USA, EUR and JPN, abatement measures for CH4 emissions from waste started
 *** in 1990. These levels of abatement are enforced as a minimum in all
 *** scenarios including BAU.
 p_macUse2005(regi,enty) = 0.0;
@@ -329,7 +248,7 @@ p_macUse2005(regi,"ch4wsts")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) ge 10)
 *** This includes sum of sub-categories from MAgPIE (see mapping emiMac2mac).
 pm_macAbat(ttot,regi,MacSectorMagpie(enty),"1") = 0;
 
-*** phase in use of zero cost abatement options until 2040 if there is no 
+*** phase in use of zero cost abatement options until 2040 if there is no
 *** carbon price
 p_macLevFree(ttot,regi,enty)$( ttot.val gt 2005 )
   =
@@ -391,7 +310,7 @@ loop (ttot$( ttot.val ge 2015 ),
 
 Display "computed abatement levels at carbon price", pm_macAbatLev;
 
-    
+
 ***--------------------------------------
 *** MAC costs
 ***--------------------------------------

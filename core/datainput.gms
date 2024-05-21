@@ -110,7 +110,7 @@ p_developmentState(tall,all_regi) = f_developmentState(tall,all_regi,"%c_GDPpcSc
 Execute_Loadpoint 'input'      vm_cesIO, vm_invMacro;
 
 pm_gdp_gdx(ttot,regi)    = vm_cesIO.l(ttot,regi,"inco");
-p_inv_gdx(ttot,regi)     = vm_invMacro.l(ttot,regi,"kap");
+pm_inv_gdx(ttot,regi)    = vm_invMacro.l(ttot,regi,"kap");
 
 
 *------------------------------------------------------------------------------------
@@ -1331,7 +1331,6 @@ if(c_macscen eq 2,
 if(c_macscen eq 1,
   pm_macSwitch(emiMacSector) = 1;
 );
-*pm_macCostSwitch(enty)=pm_macSwitch(enty);
 
 *** for NDC and NPi switch off landuse MACs
 $if %carbonprice% == "off"      pm_macSwitch(emiMacMagpie) = 0;
@@ -1359,19 +1358,18 @@ $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("co2luc") = 0;
 $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("n2ofertsom") = 0;
 
 pm_macCostSwitch(enty)=pm_macSwitch(enty);
-pm_macSwitch("co2cement_process") =0 ;
-pm_macCostSwitch("co2cement_process") =0 ;
 
 *** load econometric emission data
 *** read in p3 and p4
-table p_emineg_econometric(all_regi,all_enty,p)        "parameters for ch4 and n2o emissions from waste baseline and co2 emissions from cement production"
+*** the co2cement_process part is only used in subsectors
+table pm_emineg_econometric(all_regi,all_enty,p)        "parameters for ch4 and n2o emissions from waste baseline and co2 emissions from cement production"
 $ondelim
 $include "./core/input/p_emineg_econometric.cs3r"
 $offdelim
 ;
-p_emineg_econometric(regi,"co2cement_process","p4")$(p_emineg_econometric(regi,"co2cement_process","p4") eq 0) = sm_eps;
-p_emineg_econometric(regi,enty,"p1") = 0;
-p_emineg_econometric(regi,enty,"p2") = 0;
+pm_emineg_econometric(regi,"co2cement_process","p4")$(pm_emineg_econometric(regi,"co2cement_process","p4") eq 0) = sm_eps;
+pm_emineg_econometric(regi,enty,"p1") = 0;
+pm_emineg_econometric(regi,enty,"p2") = 0;
 *** p2 is calculated in presolve
 
 parameter p_macBase2005(all_regi,all_enty)        "baseline emissions of mac options in 2005"
