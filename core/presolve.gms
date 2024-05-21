@@ -170,7 +170,6 @@ vm_macBase.fx(ttot,regi,"ch4wstl")$(ttot.val ge 2005) = pm_emineg_econometric(re
 vm_macBase.fx(ttot,regi,"n2owaste")$(ttot.val ge 2005) = pm_emineg_econometric(regi,"n2owaste","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**pm_emineg_econometric(regi,"n2owaste","p2");
 
 
-
 *** exogenous
 vm_macBase.fx(ttot,regi,enty)$emiMacMagpie(enty) = pm_macBaseMagpie(ttot,regi,enty);
 vm_macBase.fx(ttot,regi,enty)$emiMacExo(enty) = p_macBaseExo(ttot,regi,enty);
