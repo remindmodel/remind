@@ -62,7 +62,8 @@ expectFailStatus <- function(output) {
 }
 
 skipIfPreviousFailed <- function() {
-    if (helperSkipFailed) {
+    # skip if previous failed, but not if running full tests
+    if (helperSkipFailed && identical(Sys.getenv("TESTTHAT_RUN_SLOW"), "")) {
         skip("A previous test failed.")
     } else {
         return(invisible(TRUE))
