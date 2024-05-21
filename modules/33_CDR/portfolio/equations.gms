@@ -165,5 +165,6 @@ q33_EW_LimEmi(t,regi)..
     =l=
     cm_LimRock * p33_LimRock(regi)
     ;
-
+	
+*' @stop
 *** EOF ./modules/33_CDR/portfolio/equations.gms

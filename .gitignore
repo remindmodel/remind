@@ -84,3 +84,6 @@ runtime.rds
 slurm-[0-9]*.log
 slurm-[0-9]*.out
 calibration_results/
+
+# ignore test logs
+tests/test-full*.log

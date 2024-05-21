@@ -110,63 +110,73 @@ else
   execute_loadpoint "input_ref.gdx" p37_cesIO_baseline = vm_cesIO.l;
 );
 
-sm_tmp2 = 0.75;   !! maximum "efficiency gain", from 2015 baseline value to
-                  !! thermodynamic limit
-sm_tmp  = 2050;   !! period in which closing could be achieved
+Parameter
+  p37_energy_limit_def(ttot,ext_regi,all_in)   "input data for calculating p37_energy_limit_slope"
+  /
+    $$ifthen.cm_ind_energy_limit "%cm_ind_energy_limit%" == "default"
 
-*** Specific energy demand limits for steel and cement relative to thermodynamic limit from input data
-loop (industry_ue_calibration_target_dyn37(out)$( pm_energy_limit(out) ),
-  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
-  = ( ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
-      / p37_cesIO_baseline("2015",regi,out)
-      )
-    - pm_energy_limit(out)
-    )
-  * exp((2015 - ttot.val) / ((2015 - sm_tmp) / log(1 - sm_tmp2)))
-  + pm_energy_limit(out);
+    2050 . GLO . (ue_cement, ue_steel_primary, ue_steel_secondary)   0.75
+    2100 . GLO . (ue_chemicals, ue_otherInd)                         0.90
 
-  !! To account for strong 2015-20 drops due to imperfect 2020 energy data,
-  !! use the lower of the calculated curve, or 95 % of the baseline specific
-  !! energy demand
-  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
-  = min(
-      p37_energy_limit_slope(ttot,regi,out),
-      ( 0.95
-      * ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline(ttot,regi,in))
-        / p37_cesIO_baseline(ttot,regi,out)
-	)
-      )
-    );
+    $$elseif.cm_ind_energy_limit "%cm_ind_energy_limit%" == "manual"
+
+    %cm_ind_energy_limit_manual%
+
+    $$else.cm_ind_energy_limit
+    $$abort Unknown cm_ind_energy_limit value
+    $$endif.cm_ind_energy_limit
+  /
+;
+
+if (smax((ttot,ext_regi,in)$( NOT industry_ue_calibration_target_dyn37(in) ),
+      p37_energy_limit_def(ttot,ext_regi,in)),
+  execute_unload "abort.gdx";
+  display p37_energy_limit_def;
+  abort "p37_energy_limit_def defined for element not in industry_ue_calibration_target_dyn37";
 );
 
-*** Specific energy demand limits for other industry and chemicals in TWa/trUSD
-*** exponential decrease of minimum specific energy demand per value added up to 90% by 2100
-sm_tmp2 = 0.9;   !! maximum "efficiency gain" relative to 2015 baseline value
-sm_tmp  = 2100;   !! period in which closing could be achieved
-
-loop (industry_ue_calibration_target_dyn37(out)$( sameas(out,"ue_chemicals") OR  sameas(out,"ue_otherInd")),
-  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
-  = ( ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
-      / p37_cesIO_baseline("2015",regi,out)
-      )
-    )
-  * exp((2015 - ttot.val) / ((2015 - sm_tmp) / log(1 - sm_tmp2)));
-
-  !! To account for strong 2015-20 drops due to imperfect 2020 energy data,
-  !! use the lower of the calculated curve, or 95 % of the baseline specific
-  !! energy demand
-  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
-  = min(
-      p37_energy_limit_slope(ttot,regi,out),
-      ( 0.95
-      * ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline(ttot,regi,in))
-        / p37_cesIO_baseline(ttot,regi,out)
-	)
-      )
+loop (industry_ue_calibration_target_dyn37(out),
+  loop (ext_regi,
+    if (sum(ttot, p37_energy_limit_def(ttot,ext_regi,out) ne 0) gt 1,
+      execute_unload "abort.gdx"
+      display p37_energy_limit_def;
+      abort "more than one convergence point defined for some region/subsector combination in p37_energy_limit_def";
     );
+  );
+
+  loop (regi_group(ext_regi,regi)$(
+                     smax(ttot, p37_energy_limit_def(ttot,ext_regi,out)) ne 0 ),
+    !! maximum "efficiency gain", from 2015 baseline value to theoretical limit
+    sm_tmp2 = smax(ttot, p37_energy_limit_def(ttot,ext_regi,out));
+    !! period in which closing could be achieved
+    loop (ttot, sm_tmp$( p37_energy_limit_def(ttot,ext_regi,out) ) = ttot.val);
+
+    !! calculate slope
+    p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+    = ( ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
+        / p37_cesIO_baseline("2015",regi,out)
+        )
+      - pm_energy_limit(out)
+      )
+    * exp((2015 - ttot.val) / ((2015 - sm_tmp) / log(1 - sm_tmp2)))
+    + pm_energy_limit(out);
+
+    !! To account for strong 2015–20 drops due to imperfect 2020 energy data,
+    !! use the lower of the calculated curve, or 95 % of the baseline specific
+    !! energy demand.
+    p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+    = min(
+        p37_energy_limit_slope(ttot,regi,out),
+        ( 0.95
+        * ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline(ttot,regi,in))
+          / p37_cesIO_baseline(ttot,regi,out)
+          )
+        )
+      );
+  );
 );
 
-display p37_energy_limit_slope;
+display p37_energy_limit_def, p37_energy_limit_slope;
 $endif.no_calibration
 
 *** CCS for industry is off by default
@@ -575,7 +585,10 @@ $endif.cm_subsec_model_steel
 !!TODO: Think about accounting of integrated plants / casting & rolling
 p37_specFeDemTarget(all_enty,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+
 !! numbers are given in MWh/t and converted to Remind units TWa/Gt with the factors after that (divided by 8.76)
+!! carbon capture mass is given in tCO2 and converted to tC after that
+
 !! reduction: 504 m^3; heat 242 m^3; conversion: x / 11.126 m^3/kg * 0.0333 MWh/kg
 p37_specFeDemTarget("feh2s","idr","h2")           = 2.23 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Rechberger et al 2020, Section 4.2 (per tDRI)
 p37_specFeDemTarget("feels","idr","h2")           = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Just before Table 1 (per tHBI)
@@ -600,14 +613,14 @@ p37_specFeDemTarget("fegas","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga
 p37_specFeDemTarget("feels","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
 p37_specFeDemTarget("fehos","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
 
-!! per tC for cc tech!!
-p37_specFeDemTarget("feels","bfcc","standard")    = 0.11 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Tsupari2013
-p37_specFeDemTarget("fegas","bfcc","standard")    = 0.92 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Tsupari2013 / Yun2021
+!! carbon capture FE demand is given per tCO2 and converted to per tC after that
+p37_specFeDemTarget("feels","bfcc","standard")    = 0.11 * sm_c_2_co2 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Tsupari2013
+p37_specFeDemTarget("fegas","bfcc","standard")    = 0.92 * sm_c_2_co2 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Tsupari2013 / Yun2021
 
 !! World Steel Factsheet says no additional equipment needed --> very cheap and no energy demand
 !! IEA Steel Roadmap Fig 2.11 also shows very little additional fuel cost
-p37_specFeDemTarget("feels","idrcc","ng")         = 0.11 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc
-p37_specFeDemTarget("fegas","idrcc","ng")         = 0.92 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc
+p37_specFeDemTarget("feels","idrcc","ng")         = 0.11 * sm_c_2_co2 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc
+p37_specFeDemTarget("fegas","idrcc","ng")         = 0.92 * sm_c_2_co2 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc, but seems to be quite universal. See e.g. Rochelle 2016, who has slightly lower values.
 $endif.cm_subsec_model_steel
 
 *** --------------------------------
@@ -620,10 +633,13 @@ $endif.cm_subsec_model_steel
 
 *** --------------------------------
 
-p37_captureRate(all_te,opmoPrc) = 0.;
+p37_captureRate(all_te) = 0.;
+p37_selfCaptureRate(all_te) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-p37_captureRate("bfcc","standard") = 0.73; !! Source: Witecka 2023, Figure 18
-p37_captureRate("idrcc","ng")      = 0.85; !! Source: IEA Steel Roadmap Fig. 2.11
+p37_captureRate("bfcc")  = 0.73; !! Source: Witecka 2023, Figure 18
+p37_captureRate("idrcc") = 0.85; !! Source: IEA Steel Roadmap Fig. 2.11
+p37_selfCaptureRate("bfcc")  = 0.9;
+p37_selfCaptureRate("idrcc") = 0.9;
 $endif.cm_subsec_model_steel
 
 *** --------------------------------

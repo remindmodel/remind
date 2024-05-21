@@ -99,7 +99,7 @@ fixOnMif <- function(outputdir) {
   tmpfile <- paste0(mifs[[1]], "fixOnMif")
   quitte::write.mif(d, tmpfile)
   file.rename(tmpfile, mifs[[1]])
-  remind2::deletePlus(mifs[[1]], writemif = TRUE)
+  piamutils::deletePlus(mifs[[1]], writemif = TRUE)
   message("Keep in mind to update the runs that use this as `path_gdx_ref` as well.")
   return(NULL)
 }

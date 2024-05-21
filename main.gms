@@ -982,6 +982,11 @@ parameter
   cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 *'
 parameter
+  c_teNoLearngConvEndYr      "Year at which regional costs of non-learning technologies converge"
+;
+  c_teNoLearngConvEndYr  = 2070;   !! def = 2070
+*'
+parameter
   cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
 ;
   cm_TaxConvCheck = 1;  !! def = 1, which means tax convergence check is on  !! regexp = 0|1
@@ -1330,9 +1335,10 @@ $setglobal cm_in_limit_price_change "ue_steel_primary, kap_steel_primary"   !! d
 *** cm_calibration_string "def = off, else = additional string to include in the calibration name to be used" label for your calibration run to keep calibration files with different setups apart (e.g. with low elasticities, high elasticities)
 $setglobal cm_calibration_string  off    !!  def  =  off
 *** cm_techcosts -     use regionalized or globally homogenous technology costs for certain technologies
-*** (REG) regionalized technology costs
+*** (REG) regionalized technology costs with linear convergence between 2020 and year c_teNoLearngConvEndYr
+*** (REG2040) regionalized technology costs given by p_inco0 until 2040, then stable without convergence
 *** (GLO) globally homogenous technology costs
-$setglobal cm_techcosts  REG       !! def = REG
+$setglobal cm_techcosts  REG       !! def = REG  !! regexp = REG|REG2040|GLO
 *** cfg$gms$cm_EDGEtr_scen  "the EDGE-T scenario"  # def <- "Mix1". For calibration runs: Mix1. Mix2, Mix3, Mix4 also available - numbers after the "mix" denote policy strength, with 1 corresponding roughly to Baseline/NPI, 2= NDC, 3= Budg1500, 4 = Budg800
 ***  The following descriptions are based on scenario results for EUR in 2050 unless specified otherwise.
 ***  Whenever we give numbers, please be aware that they are just there to estimate the ballpark.
@@ -1382,7 +1388,7 @@ $setGlobal cm_import_tax off !! def = off  !! regexp = .*(worldPricemarkup|CO2ta
 *** cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 *** EU-specific SE import assumptions (used for ariadne)
 *** different exogenous hydrogen import scenarios for EU regions (developed in ARIADNE project)
-*** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf"
+*** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf", "nzero"
 *** see 24_trade/se_trade/datainput for H2 import assumptions, this switch only works if the trade realization "se_trade" is selected
 $setGlobal cm_import_EU  off !! def off
 *** cm_import_ariadne        "Germany-specific H2 imports assumptions for Ariadne project (needs cm_import_EU to be on)"
@@ -1401,6 +1407,16 @@ $setGlobal cm_import_ariadne  off !! def off
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "2030.2050.MEA.EU27_regi.seh2 0.5, 2030.2050.MEA.DEU.seh2 0.3".
 $setGlobal cm_trade_SE_exog off !! def off
+*** This allows to manually adjust the ramp-up curve of the SE tax on electricity. It is mainly used for taxing electricity going into electrolysis for green hydrogen production.
+*** The ramp-up curve is a logistic function that determines how fast taxes increase with increasing share of technology in total power demand.
+*** This essentially makes an assumption about to what extend the power demand of electrolysis will be taxed and how much tax exemptions there will be at low shares of green hydrogen production.
+*** The parameter a defines how fast the tax increases with increasing share, with 4/a being the percentage point range over which the tax value increases from 12% to 88%
+*** The parameter b defines at which share the tax is halfway between the value at 0 share and the maximum value (defined by a region's electricity tax and the electricity grid cost) that it converges to for high shares.
+*** Example use:
+*** cm_SEtaxRampUpParam = "GLO.elh2.a 0.2, GLO.elh2.b 20" sets the logistic function parameter values a=0.2 and b=20 for electrolysis (elh2) to all model regions (GLO).
+*** cm_SEtaxRampUpParam = "off" disables v21_tau_SE_tax
+*** For details, please see ./modules/21_tax/on/equations.gms.
+$setGlobal cm_SEtaxRampUpParam  GLO.elh2.a 0.2, GLO.elh2.b 20    !! def = GLO.elh2.a 0.2, GLO.elh2.b 20
 *** cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
 *** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
 *** switch to activate energy security scenario assumptions for Germany including additional tax on gas/oil
@@ -1555,6 +1571,25 @@ $setGlobal cm_CESMkup_build  standard  !! def = standard
 *** addressed in cm_CESMkup_ind_data.
 $setGlobal cm_CESMkup_ind        standard  !! def = standard
 $setGlobal cm_CESMkup_ind_data   ""        !! def = ""
+
+*** cm_ind_energy_limit Switch for setting upper limits on industry energy
+*** efficiency improvements.  See ./modules/37_subsectors/datainput.gms for
+*** implementation.
+*** "default" applies the following limits:
+***
+*** ext_regi |     subsector      | period | maximum "efficiency gain" [0-1]
+*** ---------+--------------------+--------+--------------------------------
+*** GLO      | ue_cement          |  2050  | 0.75
+*** GLO      | ue_steel_primary   |  2050  | 0.75
+*** GLO      | ue_steel_secondary |  2050  | 0.75
+*** GLO      | ue_chemicals       |  2100  | 0.90
+*** GLO      | ue_otherInd        |  2100  | 0.90
+***
+*** "manual" uses the data present in cm_ind_energy_limit_manual (has the same
+*** data as "default" to clarify the format)
+$setglobal cm_ind_energy_limit          default   !! def = default   !! regexp = default|manual
+$setglobal cm_ind_energy_limit_manual   "2050 . GLO . (ue_cement, ue_steel_primary, ue_steel_secondary)   0.75, 2100 . GLO . (ue_chemicals, ue_otherInd)   0.90"
+
 *** cm_feedstockEmiUnknownFate, account for chemical feedstock emissions with unknown fate
 *** off: assume that these emissions are trapped and do not account for total anthropogenic emissions
 *** on: account for chemical feedstock emissions with unknown fate as re-emitted to the atmosphere
@@ -1635,7 +1670,7 @@ $setGlobal c_regi_nucscen  all  !! def = all
 ***  c_regi_capturescen              "regions to apply cm_ccapturescen to (availability of carbon capture technologies), e.g. c_regi_nucscen <- "JPN,USA"
 $setGlobal c_regi_capturescen  all  !! def = all
 *** cm_subsec_model_steel      "switch between ces-based and process-based steel implementation in subsectors realisation of industry module"
-$setglobal cm_subsec_model_steel  ces  !! def = ces  !! regexp = ces|processes
+$setglobal cm_subsec_model_steel  processes  !! def = processes  !! regexp = processes|ces
 *** set conopt version. Warning: conopt4 is in beta
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
 *' c_empty_model  "Short-circuit the model, just use the input as solution"

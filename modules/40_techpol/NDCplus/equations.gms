@@ -6,13 +6,15 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/40_techpol/NDCplus/equations.gms
 
+*' @equations
+
 q40_ElecBioBound(t,regi)$(t.val gt 2015)..
 ***am minimum targets for certain technologies
     sum(te2rlf(te,rlf)$(sameas(te,"biochp") OR sameas(te,"bioigcc") OR sameas(te,"bioigccc")), vm_cap(t,regi,te,rlf))
       * 1000 =g= p40_ElecBioBound(t,regi);	 
 
 q40_windBound(t,regi)$(t.val gt 2025)..
-**making target apply to both wind onshore and offshore, when offshore switch is on
+***making target apply to both wind onshore and offshore, when offshore switch is on
 sum(teWind(te), vm_cap(t,regi,te,"1")) 
     =g= p40_TechBound(t,regi,"wind")*0.001
 ;
@@ -82,4 +84,6 @@ q40_CoalBound(t,regi)$(t.val gt 2016 AND sameas(regi,"USA"))..
  + (sum(te$(sameas(te,"pc")), sum(te2rlf(te,rlf), vm_deltaCap(t,regi,te,rlf)))*1000)
  + (sum(te$(sameas(te,"coalchp")), sum(te2rlf(te,rlf), vm_deltaCap(t,regi,te,rlf)))*1000)
     =l= (1000-sum(iso_regi$map_iso_regi(iso_regi,regi),p40_CoalBound(t,iso_regi))) ;
+
+*' @stop
 *** EOF ./modules/40_techpol/NDCplus/equations.gms

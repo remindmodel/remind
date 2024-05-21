@@ -6,6 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/subsectors/equations.gms
 
+*' @equations
+
 *** ---------------------------------------------------------------------------
 ***        1. CES-Based (mostly)
 *** ---------------------------------------------------------------------------
@@ -13,41 +15,28 @@
 ***------------------------------------------------------
 *' Industry final energy balance
 ***------------------------------------------------------
-*' Industry final energy demand is calculated by (entySe,entyFe,out,secIind37)
-*' tuple, where out is the root of the CES subtree (e.g. ue_cement).  The
-*' (entyFe,out) tuple is equivalent to ppfen, and necessary to deal with
-*' process-based steel, which is not part of the CES tree below
-*' ue_steel_primary/ue_steel_secondary.
-q37_demFeIndst_intermediate(t,regi,entyFe,out,secInd37,emiMkt)$(
-                                      entyFe_out_emiMkt(entyFe,out,emiMkt)
-                                  AND secInd37_emiMkt(secInd37,emiMkt)
-                                  AND secInd37_2_pf(secInd37,out)          ) ..
-  sum(sefe(entySe,entyFe),
-    v37_demFeIndst(t,regi,entySe,entyFe,out,emiMkt)
+q37_demFeIndst(t,regi,entyFe,emiMkt)$( entyFe2Sector(entyFe,"indst") ) ..
+  sum(se2fe(entySe,entyFe,te),
+    vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
   )
   =e=
-    sum((ue_industry_2_pf(out,in),
-         fe2ppfEn(entyFe,in)),
-      vm_cesIO(t,regi,in)
-    + pm_cesdata(t,regi,in,"offset_quantity")
+  sum(fe2ppfEn(entyFe,ppfen_industry_dyn37(in)),
+    sum((secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in)),
+      (
+          vm_cesIO(t,regi,in)
+        + pm_cesdata(t,regi,in,"offset_quantity")
+      )$(NOT secInd37Prc(secInd37))
     )
-  + sum(tePrc2ue(tePrc,opmoPrc,out),
-      pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc)
-    * vm_outflowPrc(t,regi,tePrc,opmoPrc)
-    )
-;
-
-q37_demFeIndst(t,regi,entySe,entyFe,emiMkt)$(
-                                             sefe(entySe,entyFe)
-                                         AND entyFe2Sector(entyFe,"indst")
-                                         AND sector2emiMkt("indst",emiMkt) ) ..
-  vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
-  =e=
-  sum(entyFe_out_emiMkt(entyFe,out,emiMkt),
-    v37_demFeIndst(t,regi,entySe,entyFe,out,emiMkt)
+  )
+  +
+  sum((secInd37_emiMkt(secInd37Prc,emiMkt),
+       secInd37_tePrc(secInd37Prc,tePrc),
+       tePrc2opmoPrc(tePrc,opmoPrc)),
+    pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc)
+    *
+    vm_outflowPrc(t,regi,tePrc,opmoPrc)
   )
 ;
-
 
 ***------------------------------------------------------
 *' Thermodynamic limits on subsector energy demand
@@ -228,32 +217,50 @@ q37_chemicals_feedstocks_limit(t,regi) ..
   * p37_chemicals_feedstock_share(t,regi)
 ;
 
-*' Define the flow of non-energy feedstocks. It is used for emissions accounting
-*' and calculating plastics production
-q37_demFeFeedstockChemIndst(t,regi,entySe,entyFe,emiMkt)$(
-                         sefe(entySe,entyFe)
-                     AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
-  vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
+*' Define the flow of non-energy feedstocks. It is used for emissions accounting and calculating plastics production
+q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt)$(
+                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
+  sum(se2fe(entySe,entyFe,te),
+    vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
+  )
   =e=
-    sum(entyFe_out_emiMkt(entyFe,out,emiMkt)$( sameas(out,"ue_chemicals") ),
-      v37_demFeIndst(t,regi,entySe,entyFe,out,emiMkt)
+  sum((fe2ppfEn(entyFe,ppfen_industry_dyn37(in)),
+       secInd37_emiMkt(secInd37,emiMkt),
+       secInd37_2_pf(secInd37,in_chemicals_feedstock_37(in))),
+    ( vm_cesIO(t,regi,in)
+    + pm_cesdata(t,regi,in,"offset_quantity")
     )
   * p37_chemicals_feedstock_share(t,regi)
+  )
 ;
 
 *' Feedstocks flow has to be lower than total energy flow into the industry
-q37_feedstocksLimit(t,regi,entySe,entyFe,out,emiMkt)$(
-                                       sefe(entySe,entyFe)
-                                   AND entyFe_out_emiMkt(entyFe,out,emiMkt)
-                                   AND sameas(out,"ue_chemicals")
-                                   AND entyFeCC37(entyFe)                   ) ..
-  sum((ue_industry_2_pf(out,in),
-       fe2ppfEn(entyFe,in)),
-    vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
-  )
-  =l=
-  v37_demFeIndst(t,regi,entySe,entyFe,out,emiMkt)
+q37_feedstocksLimit(t,regi,entySe,entyFe,emiMkt)$(
+                                             sefe(entySe,entyFe)
+                                         AND sector2emiMkt("indst",emiMkt)
+                                         AND entyFe2Sector(entyFe,"indst")
+                                         AND entyFeCC37(entyFe)            ) ..
+  vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
+  =g=
+  vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
 ;
+
+*' Feedstocks have identical fossil/biomass/synfuel shares as industry FE
+q37_feedstocksShares(t,regi,entySe,entyFe,emiMkt)$(
+                         sum(te, se2fe(entySe,entyFe,te))
+                     AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
+                     AND cm_emiscen ne 1                                   ) ..
+    vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
+  * sum(se2fe(entySe2,entyFe,te),
+      vm_demFENonEnergySector(t,regi,entySe2,entyFe,"indst",emiMkt)
+    )
+  =e=
+    vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
+  * sum(se2fe2(entySe2,entyFe,te),
+      vm_demFeSector_afterTax(t,regi,entySe2,entyFe,"indst",emiMkt)
+    )
+;
+
 
 *' Calculate mass of carbon contained in chemical feedstocks
 q37_FeedstocksCarbon(t,regi,sefe(entySe,entyFe),emiMkt)$(
@@ -382,11 +389,12 @@ q37_prodMat(t,regi,mat)$( matOut(mat) ) ..
 ***------------------------------------------------------
 *' Hand-over to CES
 ***------------------------------------------------------
-q37_mat2ue(t,regi,all_in)$( ppfUePrc(all_in) ) ..
-    vm_cesIO(t,regi,all_in)
+q37_mat2ue(t,regi,in)$( ppfUePrc(in) ) ..
+    vm_cesIO(t,regi,in)
+    + pm_cesdata(t,regi,in,"offset_quantity")
   =e=
-    sum(mat2ue(mat,all_in),
-      p37_mat2ue(mat,all_in)
+    sum(mat2ue(mat,in),
+      p37_mat2ue(mat,in)
       *
       v37_matFlow(t,regi,mat)
     )
@@ -420,18 +428,28 @@ q37_emiPrc(t,regi,entyFe,tePrc,opmoPrc) ..
     vm_outflowPrc(t,regi,tePrc,opmoPrc)
 ;
 
+
 ***------------------------------------------------------
-*' Carbon capture processes can only capture as much co2 as the base process emits
+*' Carbon capture processes can only capture as much co2 as the base process and the CCS process combined emit
 ***------------------------------------------------------
-q37_limitOutflowCCPrc(t,regi,tePrc) ..
-    sum((entyFe,tePrc2opmoPrc(tePrc,opmoPrc)),
-      v37_emiPrc(t,regi,entyFe,tePrc,opmoPrc))
-  =g=
-    sum(tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc),
-      1. / p37_captureRate(teCCPrc,opmoCCPrc)
-      *
+q37_limitOutflowCCPrc(t,regi,teCCPrc)$(
+                sum((tePrc,opmoPrc,opmoCCPrc),tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)) ) ..
+    sum(tePrc2opmoPrc(teCCPrc,opmoCCPrc),
       vm_outflowPrc(t,regi,teCCPrc,opmoCCPrc)
     )
+  =e=
+    p37_captureRate(teCCPrc)
+    *
+    sum((entyFe,tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)),
+      v37_shareWithCC(t,regi,tePrc,opmoPrc)
+      *
+      v37_emiPrc(t,regi,entyFe,tePrc,opmoPrc)
+    )
+    +
+    p37_selfCaptureRate(teCCPrc)
+    *
+    sum((entyFe,tePrc2opmoPrc(teCCPrc,opmoCCPrc)),
+      v37_emiPrc(t,regi,entyFe,teCCPrc,opmoCCPrc))
 ;
 
 ***------------------------------------------------------
@@ -448,4 +466,5 @@ q37_emiCCPrc(t,regi,emiInd37)$(
     )
 ;
 
+*' @stop
 *** EOF ./modules/37_industry/subsectors/equations.gms
