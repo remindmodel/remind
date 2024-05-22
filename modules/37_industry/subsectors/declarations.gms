@@ -28,10 +28,10 @@ Parameters
   pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc)                          "Actual specific final-energy demand of a tech; blends between IEA data and Target [TWa/Gt_output]"
   p37_specFeDemTarget(all_enty,all_te,opmoPrc)                                  "Best available technology (will be reached in convergence year) [TWa/Gt_output]"
   pm_outflowPrcIni(all_regi,all_te,opmoPrc)                                    "Exogenously prescribed production volume of processes in start year (from IEA data)"
-  p37_mat2ue(all_enty,all_in)                                                  "Contribution of process output to ue in CES tree [Gt/Gt]. Trivial if just one material per UE, as in steel"
+  p37_mat2ue(all_enty,all_in)                                                  "Contribution of process output to ue in CES tree; Trivial if just one material per UE, as in steel [Gt/Gt]"
   p37_captureRate(all_te)                                                      "Capture rate of CCS technology"
   p37_selfCaptureRate(all_te)                                                  "Share of emissions from fossil fuels used for a CCS process which are captured by the CCS process itself"
-  p37_priceMat(all_enty)                                                       "Prices of external material input [2005$/kg] = [trn2005$/Gt]"
+  p37_priceMat(all_enty)                                                       "Prices of external material input [2005$/kg = trn2005$/Gt]"
 
   p37_chemicals_feedstock_share(ttot,all_regi)               "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
   p37_FeedstockCarbonContent(ttot,all_regi,all_enty)         "carbon content of feedstocks [GtC/TWa]"
@@ -77,7 +77,7 @@ $endIf.cm_wasteIncinerationCCSshare
 ;
 
 Positive Variables
-  vm_emiIndBase(ttot,all_regi,all_enty,secInd37)                            "industry CCS baseline emissions [GtC/a]; Not used for emission accounting outside CCS"
+  vm_emiIndBase(ttot,all_regi,all_enty,secInd37)                            "industry CCS baseline emissions; Not used for emission accounting outside CCS [GtC/a]"
   vm_emiIndCCS(ttot,all_regi,all_enty)                                      "industry CCS emissions [GtC/a]"
   vm_IndCCSCost(ttot,all_regi,all_enty)                                     "industry CCS cost"
   v37_emiIndCCSmax(ttot,all_regi,emiInd37)                                  "maximum abatable industry emissions"
@@ -123,7 +123,7 @@ $endif.no_calibration
   q37_prodMat(tall,all_regi,mat)                                                    "Production volume of processes equals material flow of output material"
   q37_mat2ue(tall,all_regi,all_in)                                                  "Connect materials production to ue ces tree nodes"
   q37_limitCapMat(tall,all_regi,all_te)                                             "Material-flow conversion is limited by capacities"
-  q37_emiPrc(ttot,all_regi,all_enty,all_te,opmoPrc)                                 "Local industry emissions [GtC/a] pre-capture; Only used as baseline for CCS"
+  q37_emiPrc(ttot,all_regi,all_enty,all_te,opmoPrc)                                 "Local industry emissions pre-capture; Only used as baseline for CCS [GtC/a]"
   q37_emiCCPrc(tall,all_regi,emiInd37)                                              "Captured emissions from CCS"
   q37_limitOutflowCCPrc(tall,all_regi,all_te)                                       "Carbon capture processes can only capture as much co2 as the base process emits"
   q37_costMat(tall,all_regi)                                                        "External material cost (non-energy)"
