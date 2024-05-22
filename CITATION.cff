@@ -251,8 +251,8 @@ authors:
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 title: REMIND - REgional Model of INvestments and Development
-version: "3.3.0.dev183"
-date-released: 2024-05-21
+version: "3.3.0.dev189"
+date-released: 2024-05-22
 repository-code: https://github.com/remindmodel/remind
 keywords:
   - energy
