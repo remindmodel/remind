@@ -343,4 +343,47 @@ display p24_seTradeCapacity;
 
 $endif.import_nzero_bio_EU
 
+$ifthen.high_bio "%cm_import_EU%" == "high_bio"
+
+*** EU net-zero trade scenario for high biomass availability sensitivity with 2050 levels for: 
+*** - seliqbio imports -> EU: 7.44 EJ (~ 8 EJ of biomass primary energy, assuming pebioil.seliqbio.biodiesel eta)
+
+*** bio-liquids trade:
+***   All regions (EU-27 and UKI) import proportionally to their 2050 FE|Transport|Pass|Aviation + FE|Industry|Chemicals|Liquids in the reference NPi run.
+***   Exporting regions: SSA and LAM (half each)
+***   Import quantities: exponential increase from 0.3 EJ by 2030 to 7.44 EJ by 2050 for EU-27
+
+execute_load "input_ref.gdx", p24_demFeForEsReference = vm_demFeForEs.l;
+execute_load "input_ref.gdx", p24_demFeIndSubReference = o37_demFeIndSub;
+
+*** calculating share of FE aviation and chemicals demand at each region group
+  p24_aviationAndChemicalsFE(ttot,regi) = p24_demFeForEsReference(ttot,regi,"fedie","esdie_pass_lo","te_esdie_pass_lo") + !! aviation FE demand
+    sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,"indst") AND sector2emiMkt("indst",emiMkt) AND (sameas("fehos",entyFe))), p24_demFeIndSubReference(ttot,regi,entySe,entyFe,"chemicals",emiMkt)); !! chemicals FE demand
+  p24_aviationAndChemicalsFEShareInRegion(ttot,ext_regi,regi)$(regi_group(ext_regi,regi) and p24_aviationAndChemicalsFE(ttot,regi)) = 
+    p24_aviationAndChemicalsFE(ttot,regi) / sum(regi2$regi_group(ext_regi,regi2), p24_aviationAndChemicalsFE(ttot,regi2));
+
+* display p24_aviationAndChemicalsFEShareInRegion;
+
+*** defining EU-27 & UK seliqbio trade import flows
+  loop(regi$(sameas(regi,"SSA") or sameas(regi,"LAM")),
+*** 2050 and onward
+    p24_seTradeCapacity(t,regi,regi2,"seliqbio")$(t.val ge 2050) = 
+      ( (7.44 * sm_EJ_2_TWa) / sum(regi3$regi_group("EU27_regi",regi3),p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi",regi3)) ) !! total EUR imports based on EU-27 values
+      * p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi",regi2) 
+      * 1/2; !! each supplier region provide half of total imports
+*** 2030 
+    p24_seTradeCapacity("2030",regi,regi2,"seliqbio") = 
+      ( (0.3 * sm_EJ_2_TWa) / sum(regi3$regi_group("EU27_regi",regi3),p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi",regi3)) ) !! total EUR imports based on EU-27 values
+      * p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi",regi2) 
+      * 1/2;
+  );
+
+*** exponential curve for years in between
+  p24_seTradeCapacity(t,regi,regi2,"seliqbio")$(p24_seTradeCapacity("2050",regi,regi2,"seliqbio") and (t.val gt 2030 and t.val lt 2050)) = 
+    p24_seTradeCapacity("2030",regi,regi2,"seliqbio") * ((sqrt(sqrt(p24_seTradeCapacity("2050",regi,regi2,"seliqbio") / p24_seTradeCapacity("2030",regi,regi2,"seliqbio")))) ** ((t.val - 2030)/5)) ;
+
+display p24_seTradeCapacity;
+
+$endif.high_bio
+
 *** EOF ./modules/24_trade/se_trade/datainput.gms
