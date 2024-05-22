@@ -1,5 +1,6 @@
 cff-version: 1.0.3
 message: If you use this model, please cite it as below.
+type: software
 authors:
 
 - family-names: "Luderer"
@@ -258,5 +259,6 @@ keywords:
   - energy
   - economy
   - modeling
+  - model
 license: AGPL-3.0-or-later
 url: https://www.pik-potsdam.de/research/transformation-pathways/models/remind
