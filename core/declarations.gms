@@ -94,6 +94,8 @@ pm_shPerm(tall, all_regi)                            "emission permit shares"
 pm_emicapglob(tall)                                  "global emission cap"
 p_adj_coeff(ttot,all_regi,all_te)                    "coefficient for adjustment costs"
 p_adj_coeff_glob(all_te)                             "coefficient for adjustment costs - global scale"
+p_adj_helper_a(ttot,all_regi,all_te)                 "helper parameter that contains different parameters of adjustment cost to facilitate readability of code"
+p_adj_helper_b(ttot,all_regi,all_te)                 "helper parameter that contains different parameters of adjustment cost to facilitate readability of code"
 p_switch_cement(ttot,all_regi)                       "describes an s-curve to provide a smooth switching from the short-term behavior (depending on per capita capital investments) to the long-term behavior (constant per capita emissions) of CO2 emissions from cement production"
 p_cint(all_regi,all_enty,all_enty,rlf)               "additional emissions of GHG from mining, on top of emissions from combustion"
 
@@ -215,6 +217,8 @@ p_CapFixFromRWfix(ttot,all_regi,all_te)              "parameter for fixing capac
 p_deltaCapFromRWfix(ttot,all_regi,all_te)            "parameter with resulting deltacap values resulting from fixing capacity to real-world values in 2010/2015"
 
 o_margAdjCostInv(ttot,all_regi,all_te)               "marginal adjustment cost calculated in postsolve for diagnostics"
+o_margAdjCostInv_prev(ttot,all_regi,all_te)          "1st term of marginal adjustment cost calculated in postsolve for diagnostics. Refers to marginal cost due to change of vm_deltaCap from previous to current time step."
+o_margAdjCostInv_next(ttot,all_regi,all_te)          "2nd term marginal adjustment cost calculated in postsolve for diagnostics. Refers to marginal cost due to change of vm_deltaCap from current to next time step."
 o_avgAdjCostInv(ttot,all_regi,all_te)                "average adjustment cost calculated in postsolve for diagnostics"
 o_avgAdjCost_2_InvCost_ratioPc(ttot,all_regi,all_te)   "ratio in % of average adj cost compared to direct inv costs"
 

@@ -556,16 +556,38 @@ loop(ttot$(ttot.val ge 2005),
 pm_GDPGross(tall,regi)$(tall.val ge 2150) = pm_GDPGross("2149",regi); 
 
 
-*** CG: calculate marginal adjustment cost for capacity investment: d(vm_costInvTeAdj) / d(vm_deltaCap)  !!!! the closed formula only holds when v_adjFactorGlob.fx(t,regi,te) = 0;
-o_margAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te)) =  vm_costTeCapital.l(ttot,regi,te) * p_adj_coeff(ttot,regi,te)
-    * 2 * (sum(te2rlf(te,rlf), vm_deltaCap.l(ttot,regi,te,rlf)) - sum(te2rlf(te,rlf), vm_deltaCap.l(ttot-1,regi,te,rlf)))
-    / power((pm_ttot_val(ttot) - pm_ttot_val(ttot-1)), 2)
-    / (sum(te2rlf(te,rlf), vm_deltaCap.l(ttot-1,regi,te,rlf)) + p_adj_seed_reg(ttot,regi) * p_adj_seed_te(ttot,regi,te)
-      + p_adj_deltacapoffset("2010",regi,te)$(ttot.val eq 2010) + p_adj_deltacapoffset("2015",regi,te)$(ttot.val eq 2015)
-      + p_adj_deltacapoffset("2020",regi,te)$(ttot.val eq 2020) + p_adj_deltacapoffset("2025",regi,te)$(ttot.val eq 2025)
-    )
-    * (1 + 0.02/pm_ies(regi) + pm_prtp(regi)) ** (pm_ts(ttot) / 2)
-;
+*** Marginal Adjustment Cost Calculation
+*** Marginal adjustment cost consist of two terms.
+*** 1st term: d(v_costInvTeAdj(vm_deltaCap(t),vm_deltaCap(t-1))) / d(vm_deltaCap(t))
+*** This calculates marginal adjustment cost due to the change in vm_deltaCap between the current time step t and the previous time step t-1. (same as o_margAdjCostInv above)
+*** 2nd term: d(v_costInvTeAdj(vm_deltaCap(t+1),vm_deltaCap(t))) / d(vm_deltaCap(t))
+*** This calculates marginal adjustment cost due to the change in vm_deltaCap between the next time step t+1 and the current time step.
+*** calculate some helper parameters first to ease readability
+p_adj_helper_a(ttot,regi,te) = p_adj_coeff(ttot,regi,te) * (1.02 + pm_prtp(regi) ) ** (pm_ts(ttot) / 2);
+p_adj_helper_b(ttot,regi,te) = p_adj_seed_reg(ttot,regi) * p_adj_seed_te(ttot,regi,te)
+                                          + p_adj_deltacapoffset("2010",regi,te)$(ttot.val eq 2010) + p_adj_deltacapoffset("2015",regi,te)$(ttot.val eq 2015)
+                                          + p_adj_deltacapoffset("2020",regi,te)$(ttot.val eq 2020) + p_adj_deltacapoffset("2025",regi,te)$(ttot.val eq 2025);
+*** With those helper parameters a and b, adjustment cost v_costInvTeAdj can be written as (see q_eqadj and q_costInvTeAdj equations):
+*** v_costInvTeAdj(vm_deltaCap(t),vm_deltaCap(t-1)) = vm_costTeCapital * a * [ (vm_deltaCap(t) - vm_deltaCap(t-1)) / (pm_ttot_val(t) - pm_ttot_val(t-1)) ]^2 / (vm_deltaCap(t-1)+b)
+*** 1st term, marginal adjustment cost due to previous time step:
+o_margAdjCostInv_prev(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te)) = vm_costTeCapital.l(ttot,regi,te)
+                                                                                            * p_adj_helper_a(ttot,regi,te)
+                                                                                            / power((pm_ttot_val(ttot) - pm_ttot_val(ttot-1)), 2)
+                                                                                            * 2 * ( sum(te2rlf(te,rlf), vm_deltaCap.l(ttot,regi,te,rlf)) - sum(te2rlf(te,rlf), vm_deltaCap.l(ttot-1,regi,te,rlf)) )
+                                                                                            / ( sum(te2rlf(te,rlf), vm_deltaCap.l(ttot-1,regi,te,rlf)) + p_adj_helper_b(ttot,regi,te));
+*** 2nd term, marginal adjustment cost due to next time step:
+o_margAdjCostInv_next(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te)) = - vm_costTeCapital.l(ttot,regi,te)
+                                                                                              * p_adj_helper_a(ttot,regi,te)
+                                                                                              / power((pm_ttot_val(ttot+1) - pm_ttot_val(ttot)), 2)
+                                                                                              / power(  sum(te2rlf(te,rlf), vm_deltaCap.l(ttot,regi,te,rlf)) + p_adj_helper_b(ttot,regi,te), 2 )
+                                                                                              * ( 2 * ( sum(te2rlf(te,rlf), vm_deltaCap.l(ttot+1,regi,te,rlf)) - sum(te2rlf(te,rlf), vm_deltaCap.l(ttot,regi,te,rlf))  )
+                                                                                                * ( sum(te2rlf(te,rlf), vm_deltaCap.l(ttot,regi,te,rlf)) + p_adj_helper_b(ttot,regi,te) )
+                                                                                              + power( sum(te2rlf(te,rlf), vm_deltaCap.l(ttot+1,regi,te,rlf)) - sum(te2rlf(te,rlf), vm_deltaCap.l(ttot,regi,te,rlf))  , 2)  );
+
+
+
+*** total marginal adjustment cost are sum of marginal adjustment cost of change from previous time step and marginal adjustment cost of change to next time step
+o_margAdjCostInv(ttot,regi,te) = o_margAdjCostInv_prev(ttot,regi,te) + o_margAdjCostInv_next(ttot,regi,te);
 
 *** CG: calculate average adjustment cost for capacity investment: vm_costInvTeAdj / vm_deltaCap
 o_avgAdjCostInv(ttot,regi,te)$(ttot.val ge 2010 AND teAdj(te) AND
