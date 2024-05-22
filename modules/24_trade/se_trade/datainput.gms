@@ -180,6 +180,23 @@ $ifthen.import_h2_EU "%cm_Ger_Pol%" == "ensec"
   p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2030) = p24_seTrade_Quantity(regi,regi2,entySe)*0.2;
 $endif.import_h2_EU
 
+*** parameters used in cm_import_EU scenarios nzero, nzero_bio and high_bio
+
+*** calculating the share of FE demand per carrier for each region in each region group
+p24_seAggReference(ttot,regi,seAgg) = sum(enty$seAgg2se(seAgg,enty), sum(se2fe(enty,enty2,te), pm_prodFEReference(ttot,regi,enty,enty2,te)));
+p24_FEShareInRegion(ttot,ext_regi,regi,seAgg)$(regi_group(ext_regi,regi) and p24_seAggReference(ttot,regi,seAgg)) = p24_seAggReference(ttot,regi,seAgg) / sum(regi2$regi_group(ext_regi,regi2), p24_seAggReference(ttot,regi2,seAgg));
+
+execute_load "input_ref.gdx", p24_demFeForEsReference = vm_demFeForEs.l;
+execute_load "input_ref.gdx", p24_demFeIndSubReference = o37_demFeIndSub;
+
+*** calculating share of FE aviation and chemicals demand at each region group
+p24_aviationAndChemicalsFE(ttot,regi) = p24_demFeForEsReference(ttot,regi,"fedie","esdie_pass_lo","te_esdie_pass_lo") + !! aviation FE demand
+  sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,"indst") AND sector2emiMkt("indst",emiMkt) AND (sameas("fehos",entyFe))), p24_demFeIndSubReference(ttot,regi,entySe,entyFe,"chemicals",emiMkt)); !! chemicals FE demand
+p24_aviationAndChemicalsFEShareInRegion(ttot,ext_regi,regi)$(regi_group(ext_regi,regi) and p24_aviationAndChemicalsFE(ttot,regi)) = 
+  p24_aviationAndChemicalsFE(ttot,regi) / sum(regi2$regi_group(ext_regi,regi2), p24_aviationAndChemicalsFE(ttot,regi2));
+
+* display p24_aviationAndChemicalsFEShareInRegion;
+
 $ifthen.import_nzero_EU "%cm_import_EU%" == "nzero"
 
 *** NZero scenario with 2050 levels for: 
@@ -191,9 +208,6 @@ $ifthen.import_nzero_EU "%cm_import_EU%" == "nzero"
 ***   Exporting regions: UK, Norway and Spain (one-third each)
 ***   exponential curve starting at 12 TWh by 2030 for Germany
 
-*** calculating the share of FE demand per carrier for each region in each region group
-  p24_seAggReference(ttot,regi,seAgg) = sum(enty$seAgg2se(seAgg,enty), sum(se2fe(enty,enty2,te), pm_prodFEReference(ttot,regi,enty,enty2,te)));
-  p24_FEShareInRegion(ttot,ext_regi,regi,seAgg)$(regi_group(ext_regi,regi) and p24_seAggReference(ttot,regi,seAgg)) = p24_seAggReference(ttot,regi,seAgg) / sum(regi2$regi_group(ext_regi,regi2), p24_seAggReference(ttot,regi2,seAgg));
 
 *** defining Germany H2 trade import flows
 *** 2050 and onward
@@ -215,17 +229,6 @@ $ifthen.import_nzero_EU "%cm_import_EU%" == "nzero"
 ***   All regions (EU-27 and UKI) import proportionally to their 2050 FE|Transport|Pass|Aviation + FE|Industry|Chemicals|Liquids in the reference NPi run.
 ***   Exporting regions: SSA, LAM and MEA (one-third each)
 ***   Import quantities: exponential increase from 1.2 TWh/yr by 2030 to 100 TWh/yr by 2050 for Germany
-
-execute_load "input_ref.gdx", p24_demFeForEsReference = vm_demFeForEs.l;
-execute_load "input_ref.gdx", p24_demFeIndSubReference = o37_demFeIndSub;
-
-*** calculating share of FE aviation and chemicals demand at each region group
-  p24_aviationAndChemicalsFE(ttot,regi) = p24_demFeForEsReference(ttot,regi,"fedie","esdie_pass_lo","te_esdie_pass_lo") + !! aviation FE demand
-    sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,"indst") AND sector2emiMkt("indst",emiMkt) AND (sameas("fehos",entyFe))), p24_demFeIndSubReference(ttot,regi,entySe,entyFe,"chemicals",emiMkt)); !! chemicals FE demand
-  p24_aviationAndChemicalsFEShareInRegion(ttot,ext_regi,regi)$(regi_group(ext_regi,regi) and p24_aviationAndChemicalsFE(ttot,regi)) = 
-    p24_aviationAndChemicalsFE(ttot,regi) / sum(regi2$regi_group(ext_regi,regi2), p24_aviationAndChemicalsFE(ttot,regi2));
-
-* display p24_aviationAndChemicalsFEShareInRegion;
 
 *** defining Germany seliqsyn trade import flows
   loop(regi$(sameas(regi,"SSA") or sameas(regi,"LAM") or sameas(regi,"MEA")), 
@@ -261,10 +264,6 @@ $ifthen.import_nzero_bio_EU "%cm_import_EU%" == "nzero_bio"
 ***   Exporting regions: UK, Norway and Spain (one-third each)
 ***   exponential curve starting at 12 TWh by 2030 for Germany
 
-*** calculating the share of FE demand per carrier for each region in each region group
-  p24_seAggReference(ttot,regi,seAgg) = sum(enty$seAgg2se(seAgg,enty), sum(se2fe(enty,enty2,te), pm_prodFEReference(ttot,regi,enty,enty2,te)));
-  p24_FEShareInRegion(ttot,ext_regi,regi,seAgg)$(regi_group(ext_regi,regi) and p24_seAggReference(ttot,regi,seAgg)) = p24_seAggReference(ttot,regi,seAgg) / sum(regi2$regi_group(ext_regi,regi2), p24_seAggReference(ttot,regi2,seAgg));
-
 *** defining Germany H2 trade import flows
 *** 2050 and onward
   p24_seTradeCapacity(t,regi,"DEU","seh2")$((t.val ge 2050) and (sameas(regi,"UKI") or sameas(regi,"NEN") or sameas(regi,"ESW"))) = (100 / sm_TWa_2_TWh) * 1/3; !! each supplier region provides one-third of the imports
@@ -285,17 +284,6 @@ $ifthen.import_nzero_bio_EU "%cm_import_EU%" == "nzero_bio"
 ***   All regions (EU-27 and UKI) import proportionally to their 2050 FE|Transport|Pass|Aviation + FE|Industry|Chemicals|Liquids in the reference NPi run.
 ***   Exporting regions: SSA, LAM and MEA (one-third each)
 ***   Import quantities: exponential increase from 0.6 TWh/yr by 2030 to 50 TWh/yr by 2050 for Germany
-
-execute_load "input_ref.gdx", p24_demFeForEsReference = vm_demFeForEs.l;
-execute_load "input_ref.gdx", p24_demFeIndSubReference = o37_demFeIndSub;
-
-*** calculating share of FE aviation and chemicals demand at each region group
-  p24_aviationAndChemicalsFE(ttot,regi) = p24_demFeForEsReference(ttot,regi,"fedie","esdie_pass_lo","te_esdie_pass_lo") + !! aviation FE demand
-    sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,"indst") AND sector2emiMkt("indst",emiMkt) AND (sameas("fehos",entyFe))), p24_demFeIndSubReference(ttot,regi,entySe,entyFe,"chemicals",emiMkt)); !! chemicals FE demand
-  p24_aviationAndChemicalsFEShareInRegion(ttot,ext_regi,regi)$(regi_group(ext_regi,regi) and p24_aviationAndChemicalsFE(ttot,regi)) = 
-    p24_aviationAndChemicalsFE(ttot,regi) / sum(regi2$regi_group(ext_regi,regi2), p24_aviationAndChemicalsFE(ttot,regi2));
-
-* display p24_aviationAndChemicalsFEShareInRegion;
 
 *** defining Germany seliqsyn trade import flows
   loop(regi$(sameas(regi,"SSA") or sameas(regi,"LAM") or sameas(regi,"MEA")),
@@ -352,17 +340,6 @@ $ifthen.high_bio "%cm_import_EU%" == "high_bio"
 ***   All regions (EU-27 and UKI) import proportionally to their 2050 FE|Transport|Pass|Aviation + FE|Industry|Chemicals|Liquids in the reference NPi run.
 ***   Exporting regions: SSA and LAM (half each)
 ***   Import quantities: exponential increase from 0.3 EJ by 2030 to 7.44 EJ by 2050 for EU-27
-
-execute_load "input_ref.gdx", p24_demFeForEsReference = vm_demFeForEs.l;
-execute_load "input_ref.gdx", p24_demFeIndSubReference = o37_demFeIndSub;
-
-*** calculating share of FE aviation and chemicals demand at each region group
-  p24_aviationAndChemicalsFE(ttot,regi) = p24_demFeForEsReference(ttot,regi,"fedie","esdie_pass_lo","te_esdie_pass_lo") + !! aviation FE demand
-    sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,"indst") AND sector2emiMkt("indst",emiMkt) AND (sameas("fehos",entyFe))), p24_demFeIndSubReference(ttot,regi,entySe,entyFe,"chemicals",emiMkt)); !! chemicals FE demand
-  p24_aviationAndChemicalsFEShareInRegion(ttot,ext_regi,regi)$(regi_group(ext_regi,regi) and p24_aviationAndChemicalsFE(ttot,regi)) = 
-    p24_aviationAndChemicalsFE(ttot,regi) / sum(regi2$regi_group(ext_regi,regi2), p24_aviationAndChemicalsFE(ttot,regi2));
-
-* display p24_aviationAndChemicalsFEShareInRegion;
 
 *** defining EU-27 & UK seliqbio trade import flows
   loop(regi$(sameas(regi,"SSA") or sameas(regi,"LAM")),
