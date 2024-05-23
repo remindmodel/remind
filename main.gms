@@ -1566,6 +1566,7 @@ $setGlobal cm_CESMkup_ind_data   ""        !! def = ""
 *** default cm_fxIndUe = off -> endogenous demand, cm_fxIndUe = on -> exogenous demand fixed to baseline/NPi level (read in from input.gdx)
 *** cm_fxIndUeReg indicates the regions under which the industry demand will be fixed 
 *** for example, cm_fxIndUe = on and cm_fxIndUeReg = SSA,NEU,CHA,IND,OAS,MEA,LAM gives a scenario where all non global north (non-OECD) industry demand is fixed to baseline
+*** cm_fxIndUeReg = GLO fixes industry demand to input.gdx everywhere
 $setGlobal cm_fxIndUe        off  !! def = off
 $setGlobal cm_fxIndUeReg     "GLO"       !! def = ""
 
