@@ -717,7 +717,7 @@ if (cm_startyear gt 2005,
 );
 $endif.cm_subsec_model_steel
 
-Execute_Loadpoint "input_bau" p37_bau_uedemand = vm_cesIO.l;
+Execute_Loadpoint "input_ref" p37_bau_uedemand = vm_cesIO.l;
 
 
 
