@@ -2,8 +2,11 @@
 	"_TITLE_": "Profiles for compareScenarios2",
 	"_NOTE_": "Entries on the top level with a name starting with _ are ignored.",
 	"_DESCRIPTION_": "The top level entries identify the profiles for compareScenarios2 (cs2) when called via 'Rscript output.R'. The sub-entries define the arguments passed to piamPlotComparison::compareScenarios(). See the R help page of this function for the meaning of the arguments. The values of the sub-entries are strings, i.e., they start and end with a double quote. These strings will be evaluated as R-code. Use single quotes inside these expressions when quotes are needed. The expressions may contain a variable named '.'. It refers to the value of the variable before applying the profile, e.g., setting outputFile to paste0(., '-suffix') will add a suffix to the file name. For more details, see 'scripts/cs2/run_compareScenarios2.R' and 'output/comparison/compareScenarios2.R'.",
-	"default": {},
+	"default": {
+		"projectLibrary": "'remind2'"
+	},
 	"defaultHTML": {
+		"projectLibrary": "'remind2'",
 		"outputFormat": "'html'"
 	},
 	"H12": {
