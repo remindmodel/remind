@@ -589,7 +589,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-regi_fxDem37(all_regi) "regions under which we fix UE demand to baseline demand"
+regi_fxDem37(ext_regi) "regions under which we fix UE demand to baseline demand"
   /
 $ifthen.fixedUE_scenario "%cm_fxIndUe%" == "on"
     %cm_fxIndUeReg%

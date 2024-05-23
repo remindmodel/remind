@@ -1563,8 +1563,8 @@ $setGlobal cm_CESMkup_ind        standard  !! def = standard
 $setGlobal cm_CESMkup_ind_data   ""        !! def = ""
 
 *** cm_fxIndUe "switch for fixing UE demand in industry to baseline level - no endogenous demand adjustment"
-$setGlobal cm_fxIndUe        on  !! def = off
-$setGlobal cm_fxIndUeReg     "CHA"       !! def = ""
+$setGlobal cm_fxIndUe        off  !! def = off
+$setGlobal cm_fxIndUeReg     "GLO"       !! def = ""
 
 *** cm_wasteIncinerationCCSshare, proportion of waste incineration emissions that is captured and geologically stored at a given year and region
 *** off: means that all plastics incineration emissions in the World goes back to the atmosphere.
