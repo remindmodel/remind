@@ -727,8 +727,9 @@ if (cm_startyear gt 2005,
 );
 $endif.cm_subsec_model_steel
 
+if (cm_startyear gt 2005,
 Execute_Loadpoint "input_ref" p37_bau_uedemand = vm_cesIO.l;
-
+);
 
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms
