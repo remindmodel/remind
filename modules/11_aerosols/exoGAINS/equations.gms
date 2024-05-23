@@ -8,6 +8,8 @@
 ***--------------------------------------------------------------------------
 *** JeS: factor 0.000001 converts units from M$ to T$: e.g. for sulfur units are [TgS/TWa]*[TWa]*[$/pm_ts]
 
+*' @equations
+
 q11_costpollution(t,regi)..
 vm_costpollution(t,regi)=e=sum(emi2te(enty,enty2,te,enty3),
     0.000001*pm_ts(t)
@@ -43,5 +45,7 @@ vm_costpollution(t,regi)=e=sum(emi2te(enty,enty2,te,enty3),
       )$(sectorEndoEmi2te(enty,enty2,te,"trans") AND pe2se(enty,enty2,te) )
    )
                              );
+
+*' @stop
 
 *** EOF ./modules/11_aerosols/exoGAINS/equations.gms
