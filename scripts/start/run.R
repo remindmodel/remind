@@ -121,7 +121,7 @@ run <- function() {
     cat("\nREMIND run finished!\n\n")
 
     # Create solution report for Nash runs
-    if (cfg$gms$optimization == "nash" && cfg$gms$cm_nash_mode != "debug" && file.exists("fulldata.gdx")) {
+    if (cfg$gms$optimization == "nash" && cfg$gms$cm_nash_mode != 1 && file.exists("fulldata.gdx")) {
       system("gdxdump fulldata.gdx Format=gamsbas Delim=comma Output=output_nash.gms")
       file.append("full.lst", "output_nash.gms")
       file.remove("output_nash.gms")

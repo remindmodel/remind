@@ -105,6 +105,16 @@ p21_tau_pe2se_tax(ttot,regi,te)$(ttot.val ge 2005)    = p21_tau_pe2se_tax(ttot,r
 p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val ge 2005)    = p21_tau_pe2se_sub(ttot,regi,te)    * 0.001 / sm_EJ_2_TWa;
 p21_tau_pe2se_inconv(ttot,regi,te)$(ttot.val ge 2005) = p21_tau_pe2se_inconv(ttot,regi,te) * 0.001 / sm_EJ_2_TWa;
 
+*** SE electricity tax rate tech specific ramp up logistic function parameters
+p21_tau_SE_tax_rampup(t,regi,te,teSeTax_coeff) = 0;
+$ifThen.SEtaxRampUpParam not "%cm_SEtaxRampUpParam%" == "off" 
+  loop((ext_regi,te,teSeTax_coeff)$p21_SEtaxRampUpParameters(ext_regi,te,teSeTax_coeff),
+    loop(regi$regi_groupExt(ext_regi,regi),
+      p21_tau_SE_tax_rampup(t,regi,te,teSeTax_coeff) = p21_SEtaxRampUpParameters(ext_regi,te,teSeTax_coeff);
+    );
+  );
+$endif.SEtaxRampUpParam
+
 ***cb 20110923 load paths for ressource export taxes
 ***cb* file for resource export taxes, not used in default settings
 Parameter p21_tau_xpres_tax(tall,all_regi,all_enty) "tax path for ressource export"

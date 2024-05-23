@@ -73,8 +73,9 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     cfg_rem$title          <- paste0(runname,"-rem-",i)
     
     # Switch off generation of needless output for all but the last REMIND iteration
+    output_all_iter <- c("reporting", "reportingREMIND2MAgPIE", "emulator", "rds_report", "fixOnRef", "checkProjectSummations")
     if (i < max_iterations) {
-      cfg_rem$output <- intersect(cfg_rem_original, c("reporting", "reportingREMIND2MAgPIE", "emulator", "rds_report"))
+      cfg_rem$output <- intersect(cfg_rem_original, output_all_iter)
     } else {
       cfg_rem$output <- cfg_rem_original
     }
@@ -260,7 +261,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
         }
         slurmOptions <- combine_slurmConfig(paste0("--qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", logfile,
            " --open-mode=append --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", subseq.env$numberOfTasks,
-          if (subseq.env$numberOfTasks == 1) " --mem=16000"), subseq.env$sbatch)
+          if (subseq.env$numberOfTasks == 1) " --mem=8000"), subseq.env$sbatch)
         subsequentcommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
         message(subsequentcommand)
         if (length(needfulldatagdx) > 0) {
@@ -311,7 +312,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       cs_name <- paste0("compScen-rem-1-", max_iterations, "_", runname)
       cs_qos <- if (!isFALSE(run_compareScenarios)) run_compareScenarios else "short"
       cs_command <- paste0("sbatch --qos=", cs_qos, " --job-name=", cs_name, " --output=", cs_name, ".out --error=",
-      cs_name, ".out --mail-type=END --time=60 --wrap='Rscript scripts/cs2/run_compareScenarios2.R outputDirs=",
+      cs_name, ".out --mail-type=END --time=60 --mem=8000 --wrap='Rscript scripts/cs2/run_compareScenarios2.R outputDirs=",
       paste(cs_runs, collapse=","), " profileName=REMIND-MAgPIE outFileName=", cs_name,
       " regionList=World,LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA mainRegName=World'")
       if (! isFALSE(run_compareScenarios)) {

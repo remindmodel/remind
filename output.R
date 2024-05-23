@@ -47,7 +47,7 @@ helpText <- "
 #'                     folders, comma-separated, such as remind_dir=.,../otherremind
 #'   slurmConfig=      use slurmConfig=priority, short or standby to specify slurm
 #'                     selection. You may also pass complicated arguments such as
-#'                     slurmConfig='--qos=priority --mem=16000'
+#'                     slurmConfig='--qos=priority --mem=8000'
 "
 
 argv <- get0("argv", ifnotfound = commandArgs(trailingOnly = TRUE))
@@ -86,16 +86,20 @@ if ("--help" %in% flags) {
 
 choose_slurmConfig_output <- function(output) {
   slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
-                     "--qos=priority --mem=16000", "--qos=short --mem=16000",
-                     "--qos=standby --mem=16000", "--qos=priority --mem=32000")
+                     "--qos=priority --mem=8000", "--qos=short --mem=8000",
+                     "--qos=standby --mem=8000", "--qos=priority --mem=32000")
 
   if (!isSlurmAvailable())
     return("direct")
 
-  # Modify slurm options for ar6 reporting, since we want to run MAGICC in parallel and we'll need a lot of memory
-  if ("ar6Climate" %in% output) slurm_options <- paste(slurm_options[1:3], "--tasks-per-node=12 --mem=32000")
-  # reporting.R, in particular remind2::convGDX2MIF, requires at least --mem=8000 of memory
-  if ("reporting" %in% output) slurm_options <- grep("--mem=[0-9]*[0-9]{3}", slurm_options, value = TRUE)
+  # Modify slurm options for reporting options that run in parallel (MAGICC) or need more memory
+  if ("MAGICC7_AR6" %in% output) {
+    slurm_options <- paste(slurm_options[1:3], "--tasks-per-node=12 --mem=32000")
+  } else if ("nashAnalysis" %in% output) {
+    slurm_options <- paste(slurm_options[1:3], "--mem=32000")
+  } else if ("reporting" %in% output) {
+    slurm_options <- grep("--mem=[0-9]*[0-9]{3}", slurm_options, value = TRUE)
+  }
 
   if (length(slurm_options) == 1) {
     return(slurm_options[[1]])
@@ -127,13 +131,13 @@ if (isTRUE(comp)) comp <- "comparison"
 
 if (! exists("output")) {
   modules <- gsub("\\.R$", "", grep("\\.R$", list.files(paste0("./scripts/output/", if (isFALSE(comp)) "single" else comp)), value = TRUE))
-  output <- chooseFromList(modules, type = "modules to be used for output generation", addAllPattern = FALSE)
+  output <- if (length(modules) == 1) modules else chooseFromList(modules, type = "modules to be used for output generation", addAllPattern = FALSE)
 }
 
 # Select output directories if not defined by readArgs
 if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
-                         "plot_compare_iterations", "varListHtml", "fixOnRef")
+                         "plot_compare_iterations", "varListHtml", "fixOnRef", "MAGICC7_AR6")
   needingMif <- any(modulesNeedingMif %in% output)
   if (exists("remind_dir")) {
     dir_folder <- c(file.path(remind_dir, "output"), remind_dir)
@@ -156,10 +160,11 @@ if (! exists("outputdir")) {
   outputdirs <- if (length(dir_folder) == 1) file.path(dir_folder, selectedDirs) else selectedDirs
 
   if ("policyCosts" %in% output) {
-    policyrun <- chooseFromList(dirnames, type = "reference run to which policy run will be compared",
+    policyrun <- chooseFromList(c("--- only here to avoid that folder numbers change ---", dirnames),
+                                type = "reference run to which policy run will be compared",
                                 userinfo = "Select a single reference run.",
                                 returnBoolean = TRUE, multiple = FALSE)
-    outputdirs <- c(rbind(outputdirs, dirs[policyrun])) # generate 3,1,4,1,5,1 out of 3,4,5 and policyrun 1
+    outputdirs <- c(rbind(outputdirs, dirs[policyrun[-1]])) # generate 3,1,4,1,5,1 out of 3,4,5 and policyrun 1
   }
 } else {
   outputdirs <- outputdir
@@ -275,12 +280,13 @@ if (comp %in% c("comparison", "export")) {
     } else {
       message("\nStarting output generation for ", outputdir, "\n")
       name <- paste0(output, ".R")
+      scriptsfound <- file.exists(paste0("scripts/output/single/", name))
       if ("--test" %in% flags) {
         message("Test mode, not executing scripts/output/single/", paste(name, collapse = ", "))
-      } else if (all(file.exists(paste0("scripts/output/single/", name)))) {
+      } else {
         if (slurmConfig == "direct") {
           # execute output script directly (without sending it to slurm)
-          for (n in name) {
+          for (n in name[scriptsfound]) {
             message("Executing ", n)
             tmp.env <- new.env()
             tmp.error <- try(sys.source(paste0("scripts/output/single/", n), envir = tmp.env))
@@ -302,9 +308,10 @@ if (comp %in% c("comparison", "export")) {
         }
         # finished
         message("\nFinished ", ifelse(slurmConfig == "direct", "", "starting job for "), "output generation for ", outputdir, "!\n")
-      } else {
-        warning("Skipping ", outputdir, " because some output script selected could not be found ",
-                "in scripts/output/single: ", name[! name %in% dir("scripts/output/single")])
+      }
+      if (any(! scriptsfound)) {
+        warning("Skipping those output script selected that could not be found in scripts/output/single: ",
+                name[! scriptsfound])
       }
     }
 

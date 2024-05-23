@@ -51,7 +51,6 @@ pm_pvp,input,questionnaire
 pm_taxemiMkt,input,questionnaire
 pm_taxemiMkt_iteration,input,questionnaire
 vm_Mport,input,questionnaire
-vm_deltaCap, variable, ???
 sm_TWa_2_MWh,input,questionnaire
 vm_emiCO2Sector,input,questionnaire
 pm_taxCO2eqSum,input,questionnare
@@ -70,3 +69,6 @@ vm_costInvTeDir,input,only needed if tax is on
 vm_costInvTeAdj,input,only needed if tax is on
 pm_cintraw,input,only needed if tax is on
 pm_gdp,input,only needed if tax is on
+pm_cf,input,only needed if tax is on
+vm_shDemSeel,input,only needed if tax is on
+pm_teAnnuity,input,only needed if tax is on

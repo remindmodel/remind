@@ -9,7 +9,7 @@ skipIfPreviousFailed()
 
 test_that("output.R -> single -> reporting works", {
   output <- localSystem2("Rscript", c("output.R", "comp=single", "output=reporting", "outputdir=output/testOneRegi",
-                                      "slurmConfig='--qos=priority --mem=16000 --wait'"))
+                                      "slurmConfig='--qos=priority --mem=8000 --wait'"))
   printIfFailed(output)
   expectSuccessStatus(output)
   expect_true(file.exists("../../output/testOneRegi/REMIND_generic_testOneRegi.mif"))

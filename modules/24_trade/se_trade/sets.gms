@@ -28,8 +28,7 @@ tradePe(all_enty)           "Traded primary energy commodities"
 
 tradeSe(all_enty)           "Traded secondary energy commodities"
 /
-***    seel,
-    seh2
+    null
 /
 
 tradeCap(all_enty)          "Commodities traded via capacity mode."
@@ -37,5 +36,14 @@ tradeCap(all_enty)          "Commodities traded via capacity mode."
     null
 /
 ;
+
+tradeSe("seh2") = YES;
+
+$ifthen.import_nzero_EU "%cm_import_EU%" == "nzero"
+*** Defining secondary energy commoditites that are tradeable in this scenario 
+tradeSe(all_enty) = NO;
+tradeSe("seh2") = YES;
+tradeSe("seliqsyn") = YES;
+$endif.import_nzero_EU
 
 *** EOF ./modules/24_trade/se_trade/sets.gms

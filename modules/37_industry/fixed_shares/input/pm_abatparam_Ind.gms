@@ -34,7 +34,12 @@ $endif.cm_subsec_model_steel
     if (cm_optimisticMAC eq 1,
 
       !! logarithmic curve through 0.75 @ $50 and 0.9 @ $150, limited to 0.95
-      pm_abatparam_Ind(ttot,regi,emiInd37,steps)
+      pm_abatparam_Ind(ttot,regi,emiInd37,steps)$( 
+                                              YES
+        $$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
+                                          AND NOT sameas(emiInd37,"co2steel")
+        $$endif.cm_subsec_model_steel
+                                                                              )
       = max(0, min(0.95, 0.2159 + 0.1365 * log(sm_tmp)));
 
     else

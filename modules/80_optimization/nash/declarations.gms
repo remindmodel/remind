@@ -55,6 +55,7 @@ p80_handle(all_regi)                       "parallel mode handle parameter"
 p80_repy(all_regi,solveinfo80)             "summary report from solver "
 p80_repy_iteration(all_regi,solveinfo80,iteration) "summary report from solver in iteration"
 p80_repyLastOptim(all_regi,solveinfo80)    "p80_repy from last iteration"
+p80_repy_thisSolitr(all_regi,solveinfo80)    "p80_repy from the current solitr - only shows results for regions that were run in this solItr"
 p80_repy_nashitr_solitr(all_regi,solveinfo80,iteration,sol_itr)   "summary report from solver in nash iteration and solver iteration"
 p80_messageFailedMarket(tall,all_enty)     "nash display helper"
 p80_messageShow(convMessage80)             "nash display helper"
@@ -128,7 +129,7 @@ s80_numberIterations                       "display helper"
 s80_bool                                   "helper"
 s80_converged                              "if nash converged, this is 1"
 s80_cnptfile                               "parameter that indicates which optimality tolerance will be used"      /1/
-
+s80_runInDebug                             "Is 1 if regions stayed infeasible in nash and start in debug mode automatically following the parallel mode" /0/
 ;
 
 *' defining specific output formats:

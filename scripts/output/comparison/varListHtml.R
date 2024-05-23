@@ -31,12 +31,12 @@ mifs <- c(
 
 details <- 
   readr::read_delim(
-    "https://raw.githubusercontent.com/pik-piam/project_interfaces/master/ar6/mapping_template_AR6.csv",
+    "https://raw.githubusercontent.com/pik-piam/piamInterfaces/master/inst/mappings/mapping_AR6.csv",
     delim = ";",
-    col_select = c(r21m42, Definition),
+    col_select = c(piam_variable, Definition),
     col_types = "cc"
   ) |>
-  dplyr::rename(name = r21m42)
+  dplyr::rename(name = piam_variable)
 
 remind2::createVarListHtml(
   x = mifs,

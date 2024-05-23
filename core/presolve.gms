@@ -117,14 +117,14 @@ loop(regi,
 
 p_priceCO2(ttot,regi) = pm_taxCO2eqSum(ttot,regi) * 1000;
 
-*** Define co2 price for entities that are used in MAC. 
+*** Define co2 price for entities that are used in MAC.
 loop((enty,enty2)$emiMac2mac(enty,enty2), !! make sure that both mac sectors and mac curves have prices asigned as both sets are used in calculations below
   pm_priceCO2forMAC(ttot,regi,enty) = p_priceCO2(ttot,regi);
   pm_priceCO2forMAC(ttot,regi,enty2) = p_priceCO2(ttot,regi);
 );
 
 *** Redefine the MAC price for regions with emission tax defined by the regipol module
-$IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
+$IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
  loop(ext_regi$regiEmiMktTarget(ext_regi),
   loop(regi$regi_groupExt(ext_regi,regi),
 *** average CO2 price aggregated by FE
@@ -169,7 +169,9 @@ vm_macBase.fx(ttot,regi,"ch4wsts")$(ttot.val ge 2005) = p_emineg_econometric(reg
 vm_macBase.fx(ttot,regi,"ch4wstl")$(ttot.val ge 2005) = p_emineg_econometric(regi,"ch4wstl","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2");
 vm_macBase.fx(ttot,regi,"n2owaste")$(ttot.val ge 2005) = p_emineg_econometric(regi,"n2owaste","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"n2owaste","p2");
 
-vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 ) 
+
+$ifthen.fixed_shares "%industry%" == "fixed_shares"
+vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
   = ( pm_pop(ttot,regi)
     * ( (1 - p_switch_cement(ttot,regi))
       * p_emineg_econometric(regi,"co2cement_process","p1")
@@ -189,6 +191,7 @@ vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
 
 vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
 = vm_macBase.lo(ttot,regi,"co2cement_process");
+$endif.fixed_shares
 
 * *** Reduction of cement demand due to CO2 price markups *** *
 if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
@@ -202,7 +205,7 @@ if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
   display "CO2 price for computing Cement Demand Reduction [$/tC]",
           pm_CementAbatementPrice;
 
-  !! The demand reduction function a = 160 / (p + 200) + 0.2 assumes that demand 
+  !! The demand reduction function a = 160 / (p + 200) + 0.2 assumes that demand
   !!  for cement is reduced by 40% if the price doubles (CO2 price of $200) and
   !!  that demand reductions of 80% can be achieved in the limit.
   pm_ResidualCementDemand("2005",regi) = 1;
@@ -230,7 +233,7 @@ if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
   display "Cement Demand Reduction, price of limited reduction",
           pm_CementAbatementPrice;
 
-  !! Costs of cement demand reduction are the integral under the activity 
+  !! Costs of cement demand reduction are the integral under the activity
   !! reduction curve times baseline emissions.
   !! a = 160 / (p + 200) + 0.2
   !! A = 160 ln(p + 200) + 0.2p
@@ -282,7 +285,7 @@ pm_macAbat(ttot,regi,enty,steps)
 ;
 pm_macAbat(ttot,regi,enty,steps)$(ttot.val gt 2100) = pm_macAbat("2100",regi,enty,steps);
 
-*** Abatement options are in steps of length sm_dmac; options at zero price are 
+*** Abatement options are in steps of length sm_dmac; options at zero price are
 *** in the first step
 pm_macStep(ttot,regi,enty)$(MacSector(enty))
   = min(801, ceil(pm_priceCO2forMAC(ttot,regi,enty) / sm_dmac) + 1);
@@ -294,8 +297,8 @@ p_priceGas(ttot,regi)=q_balPe.m(ttot,regi,"pegas")/(qm_budget.m(ttot,regi)+sm_ep
 pm_macStep(ttot,regi,"ch4gas")
   = min(801, ceil(max(pm_priceCO2forMAC(ttot,regi,"ch4gas") * (25/s_gwpCH4), max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);
 pm_macStep(ttot,regi,"ch4coal")
-  = min(801, ceil(max(pm_priceCO2forMAC(ttot,regi,"ch4coal") * (25/s_gwpCH4), 0.5 * max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);    
-  
+  = min(801, ceil(max(pm_priceCO2forMAC(ttot,regi,"ch4coal") * (25/s_gwpCH4), 0.5 * max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);
+
 *** limit yearly increase of MAC usage to sm_macChange
 p_macAbat_lim(ttot,regi,enty)
   = sum(steps$(ord(steps) eq pm_macStep(ttot-1,regi,enty)),
@@ -304,7 +307,7 @@ p_macAbat_lim(ttot,regi,enty)
   + sm_macChange * pm_ts(ttot)
 ;
 
-*** if intended abatement pm_macAbat is higher than this limit, pm_macStep has to 
+*** if intended abatement pm_macAbat is higher than this limit, pm_macStep has to
 *** be set to the highest step number where pm_macAbat is still lower or equal to
 *** this limit
 loop ((ttot,regi,MacSector(enty))$(NOT sameas(enty,"co2luc")),
@@ -317,7 +320,7 @@ loop ((ttot,regi,MacSector(enty))$(NOT sameas(enty,"co2luc")),
   );
 );
 
-*** In USA, EUR and JPN, abatement measures for CH4 emissions from waste started 
+*** In USA, EUR and JPN, abatement measures for CH4 emissions from waste started
 *** in 1990. These levels of abatement are enforced as a minimum in all
 *** scenarios including BAU.
 p_macUse2005(regi,enty) = 0.0;
@@ -329,7 +332,7 @@ p_macUse2005(regi,"ch4wsts")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) ge 10)
 *** This includes sum of sub-categories from MAgPIE (see mapping emiMac2mac).
 pm_macAbat(ttot,regi,MacSectorMagpie(enty),"1") = 0;
 
-*** phase in use of zero cost abatement options until 2040 if there is no 
+*** phase in use of zero cost abatement options until 2040 if there is no
 *** carbon price
 p_macLevFree(ttot,regi,enty)$( ttot.val gt 2005 )
   =
@@ -391,7 +394,7 @@ loop (ttot$( ttot.val ge 2015 ),
 
 Display "computed abatement levels at carbon price", pm_macAbatLev;
 
-    
+
 ***--------------------------------------
 *** MAC costs
 ***--------------------------------------
@@ -423,44 +426,6 @@ pm_macCost(ttot,regi,emiMacSector(enty))
 *** conversion factor MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 (BP statistical review)
 p_macPE(ttot,regi,enty) = 0.0;
 p_macPE(ttot,regi,"pegas")$(ttot.val gt 2005) = s_MtCH4_2_TWa * 0.5 * (vm_macBase.l(ttot,regi,"ch4coal")-vm_emiMacSector.l(ttot,regi,"ch4coal"));
-
-
-***------------ adjust adjustment costs for advanced vehicles according to CO2 price in the previous time step ----------------------
-*** (same as in postsolve - if you change it here, also change in postsolve)
-*** this represents the concept that with stringent climate policies (as represented by high CO2 prices), all market actors will have a clearer expectation that
-*** transport shifts to low-carbon vehicles, thus companies will be more likely to invest into new zero-carbon vehicle models, charging infrastructure, etc.
-*** Also, gov'ts will be more likely to implement additional support policies that overcome existing barriers & irrationalities and thereby facilitate deployment
-*** of advanced vehicles, e.g. infrastructure for charging, setting phase-out dates that encourage car manufacturers to develop more advanced fuel models, etc.
-*** Use the CO2 price from the previous time step to represent inertia
-
-$iftheni.CO2priceDependent_AdjCosts %c_CO2priceDependent_AdjCosts% == "on"
-
-loop(ttot$( (ttot.val > cm_startyear) AND (ttot.val > 2020) ),  !! only change values in the unfixed time steps of the current run, and not in the past
-  loop(regi,
-    if( pm_taxCO2eq(ttot-1,regi) le (40 * sm_DptCO2_2_TDpGtC) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.1;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 4;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (40 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (80 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.25;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 2.5;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (80 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (160 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.5;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 1.5;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (160 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (320 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 1;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 1;
-    elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (320 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (640 * sm_DptCO2_2_TDpGtC) ) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 2;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.5;
-    elseif ( pm_taxCO2eq(ttot-1,regi) gt (640 * sm_DptCO2_2_TDpGtC) ) ,
-      p_varyAdj_mult_adjSeedTe(ttot,regi) = 4;
-      p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.25;
-    );
-  );
-);
-display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adjCoeff;
-
-$endif.CO2priceDependent_AdjCosts
 
 
 *** EOF ./core/presolve.gms
