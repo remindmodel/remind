@@ -182,14 +182,14 @@ $endif.import_h2_EU
 
 *** parameters used in cm_import_EU scenarios nzero, nzero_bio and high_bio
 
-*** calculating the share of FE demand per carrier for each region in each region group
+*** calculate regional share of each region in the total of region group ext_regi, with respect to FE demand, for each aggregated carrier (liquids, gases,solids)
 p24_seAggReference(ttot,regi,seAgg) = sum(enty$seAgg2se(seAgg,enty), sum(se2fe(enty,enty2,te), pm_prodFEReference(ttot,regi,enty,enty2,te)));
-p24_FEShareInRegion(ttot,ext_regi,regi,seAgg)$(regi_group(ext_regi,regi) and p24_seAggReference(ttot,regi,seAgg)) = p24_seAggReference(ttot,regi,seAgg) / sum(regi2$regi_group(ext_regi,regi2), p24_seAggReference(ttot,regi2,seAgg));
+p24_FEregiShareInRegiGroup(ttot,ext_regi,regi,seAgg)$(regi_group(ext_regi,regi) and p24_seAggReference(ttot,regi,seAgg)) = p24_seAggReference(ttot,regi,seAgg) / sum(regi2$regi_group(ext_regi,regi2), p24_seAggReference(ttot,regi2,seAgg));
 
 execute_load "input_ref.gdx", p24_demFeForEsReference = vm_demFeForEs.l;
 execute_load "input_ref.gdx", p24_demFeIndSubReference = o37_demFeIndSub;
 
-*** calculating share of FE aviation and chemicals demand at each region group
+*** calculate regional share of each region in the total of region group ext_regi with respect to FE demand, for chemicals + aviation liquids
 p24_aviationAndChemicalsFE(ttot,regi) = p24_demFeForEsReference(ttot,regi,"fedie","esdie_pass_lo","te_esdie_pass_lo") + !! aviation FE demand
   sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,"indst") AND sector2emiMkt("indst",emiMkt) AND (sameas("fehos",entyFe))), p24_demFeIndSubReference(ttot,regi,entySe,entyFe,"chemicals",emiMkt)); !! chemicals FE demand
 p24_aviationAndChemicalsFEShareInRegion(ttot,ext_regi,regi)$(regi_group(ext_regi,regi) and p24_aviationAndChemicalsFE(ttot,regi)) = 
@@ -217,9 +217,9 @@ $ifthen.import_nzero_EU "%cm_import_EU%" == "nzero"
 
 *** defining EWN H2 trade import flows
 *** 2050 and onward
-  p24_seTradeCapacity(t,regi,"EWN","seh2")$((t.val ge 2050) and (sameas(regi,"UKI") or sameas(regi,"NEN") or sameas(regi,"ESW"))) = (100 / sm_TWa_2_TWh) * (p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega")/p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega")) * 1/3;
+  p24_seTradeCapacity(t,regi,"EWN","seh2")$((t.val ge 2050) and (sameas(regi,"UKI") or sameas(regi,"NEN") or sameas(regi,"ESW"))) = (100 / sm_TWa_2_TWh) * (p24_FEregiShareInRegiGroup("2050","EUR_regi","EWN","all_sega")/p24_FEregiShareInRegiGroup("2050","EUR_regi","DEU","all_sega")) * 1/3;
 *** 2030
-  p24_seTradeCapacity("2030",regi,"EWN","seh2")$((sameas(regi,"UKI") or sameas(regi,"NEN") or sameas(regi,"ESW"))) = (12 / sm_TWa_2_TWh) * (p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega")/p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega")) * 1/3;
+  p24_seTradeCapacity("2030",regi,"EWN","seh2")$((sameas(regi,"UKI") or sameas(regi,"NEN") or sameas(regi,"ESW"))) = (12 / sm_TWa_2_TWh) * (p24_FEregiShareInRegiGroup("2050","EUR_regi","EWN","all_sega")/p24_FEregiShareInRegiGroup("2050","EUR_regi","DEU","all_sega")) * 1/3;
 
 *** exponential curve for years in between
   p24_seTradeCapacity(t,regi,regi2,"seh2")$(p24_seTradeCapacity("2050",regi,regi2,"seh2") and (t.val gt 2030 and t.val lt 2050)) = 
@@ -272,9 +272,9 @@ $ifthen.import_nzero_bio_EU "%cm_import_EU%" == "nzero_bio"
 
 *** defining EWN H2 trade import flows
 *** 2050 and onward
-  p24_seTradeCapacity(t,regi,"EWN","seh2")$((t.val ge 2050) and (sameas(regi,"UKI") or sameas(regi,"NEN") or sameas(regi,"ESW"))) = (100 / sm_TWa_2_TWh) * (p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega")/p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega")) * 1/3;
+  p24_seTradeCapacity(t,regi,"EWN","seh2")$((t.val ge 2050) and (sameas(regi,"UKI") or sameas(regi,"NEN") or sameas(regi,"ESW"))) = (100 / sm_TWa_2_TWh) * (p24_FEregiShareInRegiGroup("2050","EUR_regi","EWN","all_sega")/p24_FEregiShareInRegiGroup("2050","EUR_regi","DEU","all_sega")) * 1/3;
 *** 2030
-  p24_seTradeCapacity("2030",regi,"EWN","seh2")$((sameas(regi,"UKI") or sameas(regi,"NEN") or sameas(regi,"ESW"))) = (12 / sm_TWa_2_TWh) * (p24_FEShareInRegion("2050","EUR_regi","EWN","all_sega")/p24_FEShareInRegion("2050","EUR_regi","DEU","all_sega")) * 1/3;
+  p24_seTradeCapacity("2030",regi,"EWN","seh2")$((sameas(regi,"UKI") or sameas(regi,"NEN") or sameas(regi,"ESW"))) = (12 / sm_TWa_2_TWh) * (p24_FEregiShareInRegiGroup("2050","EUR_regi","EWN","all_sega")/p24_FEregiShareInRegiGroup("2050","EUR_regi","DEU","all_sega")) * 1/3;
 
 *** exponential curve for years in between
   p24_seTradeCapacity(t,regi,regi2,"seh2")$(p24_seTradeCapacity("2050",regi,regi2,"seh2") and (t.val gt 2030 and t.val lt 2050)) = 

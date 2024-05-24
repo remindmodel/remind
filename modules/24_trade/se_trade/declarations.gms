@@ -28,7 +28,7 @@ pm_XPortsPrice(tall,all_regi,all_enty)              "Secondary energy export pri
 
 *** parameters used in cm_import_EU scenarios nzero, nzero_bio and high_bio
 p24_seAggReference(ttot,all_regi,seAgg)                                        "Secondary energy per carrier (seAgg) in the reference run [TWa]"
-p24_FEShareInRegion(ttot,ext_regi,all_regi,seAgg)                              "Region share of total final energy demand per carrier (seAgg) within the region group (ext_regi) [%]"
+p24_FEregiShareInRegiGroup(ttot,ext_regi,all_regi,seAgg)                       "Region share of total final energy demand per carrier (seAgg) within the region group (ext_regi) [%]"
 p24_demFeForEsReference(ttot,all_regi,all_enty,all_esty,all_teEs)              "Final energy which will be used in the ES layer in the reference run [TWa]"
 p24_demFeIndSubReference(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)  "Final energy demand per industry subsector, FE carrier, SE carrier, emissions market in the reference run [TWa]"
 p24_aviationAndChemicalsFE(ttot,all_regi)                                      "Final energy of aviation and chemicals liquids demand [TWa]"

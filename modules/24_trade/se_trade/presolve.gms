@@ -24,11 +24,11 @@ display pm_XPortsPrice;
 
 *** Setting Xport price bound to avoid unrealists trading prices.
 *** Lower bound: avoiding epsilon values (caused by using equation marginals for setting prices) or unrealistic small values for secondary energy prices
-*** - H2 and seliqsyn exporting prices -> minimun price = 1$/kg (1$/kg = 0.030769231 $/Kwh = 0.030769231 / (10^12/10^9*8760) T$/TWa = 0.26953846356 T$/TWa)
-*** - seliqbio exporting prices -> minimun price = 5 US$2005/GJ (5/31.71 = 0.157678966 T$/TWa)
-pm_XPortsPrice(t,regi,"seh2") = max(0.26953846356,pm_XPortsPrice(t,regi,"seh2"));
-pm_XPortsPrice(t,regi,"seliqsyn") = max(0.26953846356,pm_XPortsPrice(t,regi,"seliqsyn"));
-pm_XPortsPrice(t,regi,"seliqbio") = max(0.157678966,pm_XPortsPrice(t,regi,"seliqbio"));
+*** - H2 and seliqsyn exporting prices -> minimun price = 1$/kg (1$/kg = 0.0301 $/Kwh = 0.0301 / (10^12/10^9*8760) T$/TWa = 0.264 T$/TWa)
+*** - seliqbio exporting prices -> minimun price = 5 US$2005/GJ (5/31.71 = 0.158 T$/TWa)
+pm_XPortsPrice(t,regi,"seh2") = max(0.264, pm_XPortsPrice(t,regi,"seh2"));
+pm_XPortsPrice(t,regi,"seliqsyn") = max(0.264, pm_XPortsPrice(t,regi,"seliqsyn"));
+pm_XPortsPrice(t,regi,"seliqbio") = max(0.158, pm_XPortsPrice(t,regi,"seliqbio"));
 
 display pm_XPortsPrice;
 
