@@ -198,7 +198,7 @@ logMsg <- paste0(
   "  climateTempDir        = '", climateTempDir, "' exists? ", dir.exists(climateTempDir), "\n",
   "  baseFn                = '", baseFn, "'\n",
   "  probabilisticFile     = '", probabilisticFile, "' exists? ", file.exists(probabilisticFile), "\n",
-  "  probabilisticFileModified = '", probabilisticFileModified, "' exists? ", file.exists(probabilisticFileModified), 
+  "  probabilisticFileModified = '", probabilisticFileModified, "' exists? ", file.exists(probabilisticFileModified),
   "\n",
   "  infillingDatabaseFile = '", infillingDatabaseFile, "' exists? ", file.exists(infillingDatabaseFile), "\n",
   "  scriptsDir            = '", scriptsDir, "' exists? ", dir.exists(scriptsDir), "\n",
@@ -267,10 +267,6 @@ tirf <- rbind(
     tirf
   ) %>%
   filter(period >= 2010)
-
-saveRDS(tirf, "newtirf.rds")
-tirf <- readRDS("newtirf.rds")
-write.table(tirf, "newtirf.csv", sep = ";", row.names = FALSE)
 
 # NOTE the result for 2150 is just zero, don't know why. work around by assuming the TIRF in 2150 is equal to the one 
 # in 2130. From 2150 to 2250, assume the same.
