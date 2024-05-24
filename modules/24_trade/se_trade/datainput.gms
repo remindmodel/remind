@@ -306,7 +306,7 @@ $ifthen.import_nzero_bio_EU "%cm_import_EU%" == "nzero_bio"
 
 *** bio-liquids trade:
 ***   All regions (EU-27 and UKI) import proportionally to their 2050 FE|Transport|Pass|Aviation + FE|Industry|Chemicals|Liquids in the reference NPi run.
-***   Exporting regions: SSA and LAM (half each)
+***   Exporting regions: SSA and LAM (half each). LAM and SSA as exporting regions were chosen based on this paper: https://doi.org/10.1111/gcbb.12614
 ***   Import quantities: exponential increase from 0.3 EJ by 2030 to 7.44 EJ by 2050 for EU-27
 
 *** defining EU-27 & UK seliqbio trade import flows
@@ -338,7 +338,7 @@ $ifthen.high_bio "%cm_import_EU%" == "high_bio"
 
 *** bio-liquids trade:
 ***   All regions (EU-27 and UKI) import proportionally to their 2050 FE|Transport|Pass|Aviation + FE|Industry|Chemicals|Liquids in the reference NPi run.
-***   Exporting regions: SSA and LAM (half each)
+***   Exporting regions: SSA and LAM (half each). LAM and SSA as exporting regions were chosen based on this paper: https://doi.org/10.1111/gcbb.12614
 ***   Import quantities: exponential increase from 0.3 EJ by 2030 to 7.44 EJ by 2050 for EU-27
 
 *** defining EU-27 & UK seliqbio trade import flows
