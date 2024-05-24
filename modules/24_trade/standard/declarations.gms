@@ -14,8 +14,8 @@ pm_Xport0(tall,all_regi,all_enty)           "Reference level value of export."
 pm_IO_trade(tall,all_regi,all_enty,char)    "Energy trade bounds based on IEA data."
 p24_Mport2005correct(all_regi,all_enty)     "Correction factor to match fossil supply and internal region energy demand in the initial year"
 
-pm_MPortsPrice(tall,all_regi,tradeSe)              "Secondary energy import price for region. Calculated in the postsolve and assuming that trade is distributed uniformetly according existent capacities defined at p24_seTradeCapacity [T$/TWa]"
-pm_XPortsPrice(tall,all_regi,tradeSe)              "Secondary energy export price for region. Calculated in the postsolve and corresponding to the region secondary energy price [T$/TWa]"
+pm_MPortsPrice(tall,all_regi,all_enty)              "Secondary energy import price for region. Calculated in the postsolve and assuming that trade is distributed uniformetly according existent capacities defined at p24_seTradeCapacity [T$/TWa]"
+pm_XPortsPrice(tall,all_regi,all_enty)              "Secondary energy export price for region. Calculated in the postsolve and corresponding to the region secondary energy price [T$/TWa]"
 ;
 ***-------------------------------------------------------------------------------
 ***                                   VARIABLES

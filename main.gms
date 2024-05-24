@@ -1260,6 +1260,9 @@ $setGlobal cm_regiExoPrice  off    !! def = off
 ***   Example on how to use:
 ***     cm_emiMktTarget = '2020.2050.EU27_regi.all.budget.netGHG_noBunkers 72, 2020.2050.DEU.all.year.netGHG_noBunkers 0.1'
 ***     sets a 72 GtCO2eq budget target for European 27 countries (EU27_regi), for all GHG emissions excluding bunkers between 2020 and 2050; and a 100 MtCO2 CO2eq emission target for the year 2050, for Germany"
+***     cm_emiMktTarget = 'nzero'
+***     loads hard-coded options for regional target scenarios defined in the module '47_regipol/regiCarbonPrice' declarations file. 
+***     The 'nzero' scenario applies declared net-zero targets for countries explicitly handled by the model (DEU, CHA, USA, IND, JPN, UKI, FRA and EU27_regi)  
 ***     Requires regiCarbonPrice realization in regipol module
 $setGlobal cm_emiMktTarget  off    !! def = off
 *** cm_quantity_regiCO2target "emissions quantity upper bound from specific year for region group."
@@ -1388,7 +1391,7 @@ $setGlobal cm_import_tax off !! def = off  !! regexp = .*(worldPricemarkup|CO2ta
 *** cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 *** EU-specific SE import assumptions (used for ariadne)
 *** different exogenous hydrogen import scenarios for EU regions (developed in ARIADNE project)
-*** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf"
+*** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf", "nzero"
 *** see 24_trade/se_trade/datainput for H2 import assumptions, this switch only works if the trade realization "se_trade" is selected
 $setGlobal cm_import_EU  off !! def off
 *** cm_import_ariadne        "Germany-specific H2 imports assumptions for Ariadne project (needs cm_import_EU to be on)"
@@ -1407,6 +1410,16 @@ $setGlobal cm_import_ariadne  off !! def off
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "2030.2050.MEA.EU27_regi.seh2 0.5, 2030.2050.MEA.DEU.seh2 0.3".
 $setGlobal cm_trade_SE_exog off !! def off
+*** This allows to manually adjust the ramp-up curve of the SE tax on electricity. It is mainly used for taxing electricity going into electrolysis for green hydrogen production.
+*** The ramp-up curve is a logistic function that determines how fast taxes increase with increasing share of technology in total power demand.
+*** This essentially makes an assumption about to what extend the power demand of electrolysis will be taxed and how much tax exemptions there will be at low shares of green hydrogen production.
+*** The parameter a defines how fast the tax increases with increasing share, with 4/a being the percentage point range over which the tax value increases from 12% to 88%
+*** The parameter b defines at which share the tax is halfway between the value at 0 share and the maximum value (defined by a region's electricity tax and the electricity grid cost) that it converges to for high shares.
+*** Example use: 
+*** cm_SEtaxRampUpParam = "GLO.elh2.a 0.2, GLO.elh2.b 20" sets the logistic function parameter values a=0.2 and b=20 for electrolysis (elh2) to all model regions (GLO). 
+*** cm_SEtaxRampUpParam = "off" disables v21_tau_SE_tax 
+*** For details, please see ./modules/21_tax/on/equations.gms.
+$setGlobal cm_SEtaxRampUpParam  GLO.elh2.a 0.2, GLO.elh2.b 20    !! def = GLO.elh2.a 0.2, GLO.elh2.b 20
 *** cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
 *** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
 *** switch to activate energy security scenario assumptions for Germany including additional tax on gas/oil
@@ -1561,6 +1574,25 @@ $setGlobal cm_CESMkup_build  standard  !! def = standard
 *** addressed in cm_CESMkup_ind_data.
 $setGlobal cm_CESMkup_ind        standard  !! def = standard
 $setGlobal cm_CESMkup_ind_data   ""        !! def = ""
+
+*** cm_ind_energy_limit Switch for setting upper limits on industry energy
+*** efficiency improvements.  See ./modules/37_subsectors/datainput.gms for
+*** implementation.
+*** "default" applies the following limits:
+*** 
+*** ext_regi |     subsector      | period | maximum "efficiency gain" [0-1]
+*** ---------+--------------------+--------+--------------------------------
+*** GLO      | ue_cement          |  2050  | 0.75
+*** GLO      | ue_steel_primary   |  2050  | 0.75
+*** GLO      | ue_steel_secondary |  2050  | 0.75
+*** GLO      | ue_chemicals       |  2100  | 0.90
+*** GLO      | ue_otherInd        |  2100  | 0.90
+***
+*** "manual" uses the data present in cm_ind_energy_limit_manual (has the same
+*** data as "default" to clarify the format)
+$setglobal cm_ind_energy_limit          default   !! def = default   !! regexp = default|manual
+$setglobal cm_ind_energy_limit_manual   "2050 . GLO . (ue_cement, ue_steel_primary, ue_steel_secondary)   0.75, 2100 . GLO . (ue_chemicals, ue_otherInd)   0.90"
+
 *** cm_wasteIncinerationCCSshare, proportion of waste incineration emissions that is captured and geologically stored at a given year and region
 *** off: means that all plastics incineration emissions in the World goes back to the atmosphere.
 *** 2050.GLO 0.5, 2050.EUR 0.8: means that 50% of waste incineration emissions are captured for all regions from 2050 onward, except for Europe that has 80% of its waste incineration emissions captured.
@@ -1646,7 +1678,7 @@ $setGlobal c_regi_nucscen  all  !! def = all
 ***  c_regi_capturescen              "regions to apply cm_ccapturescen to (availability of carbon capture technologies), e.g. c_regi_nucscen <- "JPN,USA"
 $setGlobal c_regi_capturescen  all  !! def = all
 *** cm_subsec_model_steel      "switch between ces-based and process-based steel implementation in subsectors realisation of industry module"
-$setglobal cm_subsec_model_steel  ces  !! def = ces  !! regexp = ces|processes
+$setglobal cm_subsec_model_steel  processes  !! def = processes  !! regexp = processes|ces
 *** set conopt version. Warning: conopt4 is in beta
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
 *' c_empty_model  "Short-circuit the model, just use the input as solution"

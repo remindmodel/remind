@@ -5,7 +5,8 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-# Only output messages to the log if it is the first run of exoGAINS to avoid repetion in the log.txt file 
+
+# Only output messages to the log if it is the first run of exoGAINS to avoid repetition in the log.txt file
 firstIteration = FALSE
 if (file.exists("log.txt")){
   if(!any(grepl("ExoGAINS - log for first iteration...", readLines("log.txt")))){
@@ -18,7 +19,7 @@ if (file.exists("log.txt")){
 #rm(list=ls())
 
 # load required packages
-for (pkg in c('madrat', 'dplyr', 'luscale', 'remind2', 'gdx')) {
+for (pkg in c('madrat', 'dplyr', 'remind2', 'gdx')) {
   suppressPackageStartupMessages(require(pkg, character.only = TRUE))
 }
 
@@ -50,7 +51,7 @@ message("- reportFE")
 rem_in_mo <- mbind(rem_in_mo,reportFE(gdx)[,t,])
 
 # delete "+" and "++" from variable names
-rem_in_mo <- deletePlus(rem_in_mo)
+rem_in_mo <- piamutils::deletePlus(rem_in_mo)
 
 # for easier debugging use rem_in in the remainder of the script
 rem_in <- rem_in_mo
@@ -129,7 +130,7 @@ ela[,,] <- tmp
 ##############################################################
 RA_limited <- RA / (setYears(RA[,2015,] +1E-10))
 RA_limited[RA_limited>5] <- 5
-          
+
 E <- ( ef_gains[,,ssp_scenario] / (setYears(ef_gains[,2015,ssp_scenario])+1E-10) + noef ) * setYears(emi_gains[,2015,ssp_scenario])  * ( RA_limited) ^ela
 
 # Calcualte emissions using different formula: for emisions that have no ef_gains
@@ -163,7 +164,7 @@ map_GAINSsec2REMINDsec <- na.omit(map_GAINSsec2REMINDsec)
 # not necessary, since speed_aggregate seems to remove duplicates
 #map_GAINSsec2REMINDsec <- map_GAINSsec2REMINDsec[-which(duplicated(map_GAINSsec2REMINDsec)),]
 
-E_rem <- speed_aggregate(x=E,weight = NULL, dim=3.1, rel = map_GAINSsec2REMINDsec, from="GAINS_mixed",to="REMINDsectors")
+E_rem <- madrat::toolAggregate(x = E, weight = NULL, dim = 3.1, rel = map_GAINSsec2REMINDsec, from = "GAINS_mixed", to = "REMINDsectors")
 
 getNames(E_rem,dim=2) <- gsub("VOC","NMVOC",getNames(E_rem,dim=2)) # rename emissions to names defined in emiRCP
 
@@ -214,9 +215,9 @@ writeGDX(out,file="pm_emiAPexsolve.gdx",period_with_y = FALSE)
 #   p<-ggplot(data=dat, aes(x=Year, y=Value)) +  geom_line(aes(colour=Data2)) + facet_wrap(~Region,scales = "free_y")
 #   ggsave(filename=paste0("Regions_",sec,".png"),p,scale=1.5,width=32,height=18,unit="cm",dpi=150)
 # }
-# 
+#
 # stop()
-# 
+#
 # # Add missing Int. Shipping sector from extra ECLIPSE file
 # RA_ship <- setNames(rem_in["GLO",,"FE|Transport|Liquids (EJ/yr)"],NULL)
 # # calculate shippin emission the same way as gains emissions
@@ -224,7 +225,7 @@ writeGDX(out,file="pm_emiAPexsolve.gdx",period_with_y = FALSE)
 # E_rem <- add_columns(E_rem,addnm = getNames(ship_E,dim=1)) # filled with NA
 # gases <- getNames(E_rem,dim=2)
 # E_rem["GLO",,getNames(tmp)] <- ship_E[,,gases][,,ssp_scenario]
-# 
+#
 # # Add BC and NOx for missing Int. Aviation sector from extra file from Steve
 # RA_avi <- collapseNames(time_interpolate(rem_in["GLO",,"Final Energy|Transportation|Liquids (EJ/yr)"][,,scenario], interpolated_year=getYears(ef_gains), integrate_interpolated_years=TRUE, extrapolation_type="constant"))
 # # calculate aviation emission the same way as gains emissions
