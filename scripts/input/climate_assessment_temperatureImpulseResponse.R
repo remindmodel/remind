@@ -189,8 +189,7 @@ runClimateEmulatorCmd <- paste(
 )
 
 # Get conda environment folder
-condaDir <- file.path(dirname(dirname(outputDir)), "ca_env/")
-
+condaDir <- "/p/projects/rd3mod/python/environments/scm_magicc7"
 # Command to activate the conda environment
 condaCmd <- paste0("module load conda/2023.09; source activate ", condaDir, ";")
 
