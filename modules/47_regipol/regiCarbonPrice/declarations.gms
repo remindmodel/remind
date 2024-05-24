@@ -31,7 +31,18 @@ Parameters
 ***--------------------------------------------------
 $ifThen.emiMkt not "%cm_emiMktTarget%" == "off" 
 Parameter
+
+$ifThen.emiMktTargetType "%cm_emiMktTarget%" == "nzero" 
+  pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) "region emissions target [GtCO2 or GtCO2eq]" / 
+    2020.2030.EU27_regi.all.year.netGHG_LULUCFGrassi_intraRegBunker 2.221  !! European Union 2030 GHG target
+    2020.2030.DEU.all.year.netGHG_noLULUCF_noBunkers 0.44                  !! Germany 2030 GHG target
+    2035.(2050.EU27_regi,2045.DEU).all.year.netGHG_LULUCFGrassi 0.001      !! European Union and Germany 2050 GHG_LULUCFGrassi target
+    2020.2050.(JPN,UKI,USA).all.year.netGHG 0.001                          !! Japan, UK and USA 2050 GHG target
+    2020.(2060.CHA,2070.IND).all.year.netCO2 0.001                         !! China 2060 and India 2070 CO2 target
+  /
+$else.emiMktTargetType
   pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) "region emissions target [GtCO2 or GtCO2eq]" / %cm_emiMktTarget% /
+$endif.emiMktTargetType
 
 *** Initialization parameters (load data from the gdx)
   p47_taxemiMkt_init(ttot,all_regi,emiMkt)  "emiMkt CO2eq prices loaded from ref gdx, in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
