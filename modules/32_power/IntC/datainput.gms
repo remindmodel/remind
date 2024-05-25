@@ -44,7 +44,6 @@ f32_factorStorage(all_regi,"windoff") = f32_factorStorage(all_regi,"wind");
 f32_factorStorage(all_regi,"wind")      = 1.35 * f32_factorStorage(all_regi,"wind"); 
 $ENDIF.WindOff
 p32_factorStorage(all_regi,all_te) = f32_factorStorage(all_regi,all_te);
-p32_factorStorage(all_regi,"spv") = f32_factorStorage(all_regi,"spv") *1.3;
 
 $if not "%cm_storageFactor%" == "off" p32_factorStorage(all_regi,all_te)=%cm_storageFactor%*p32_factorStorage(all_regi,all_te);
 
