@@ -75,10 +75,10 @@ edgetOutputDir <- file.path(outputdir, "EDGE-T")
 if(file.exists(edgetOutputDir)) {
   if (! file.exists(file.path(edgetOutputDir, "demandF_plot_pkm.RDS"))) {
     message("EDGE-T reporting files are missing, probably because the run was killed.")
-    message("Rerunning toolIterativeEDGETransport(reporting = TRUE).")
+    message("Rerunning toolIterativeEDGETransport().")
     savewd <- getwd()
     setwd(outputdir)
-    edgeTransport::toolIterativeEDGETransport(reporting = TRUE)
+    edgeTransport::toolIterativeEDGETransport()
     setwd(savewd)
   }
   message("start generation of EDGE-T reporting")
