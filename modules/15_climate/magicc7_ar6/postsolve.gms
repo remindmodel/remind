@@ -66,7 +66,7 @@ $ifthen.cm_magicc_tirf "%cm_magicc_temperatureImpulseResponse%" == "on"
 * thus only compute TIRF after each of the first 10 iterations, then only every fifth iteration. 
 * runtime is ca 30s, so switching on TIRF adds ca 10min to runtime
 if( ((iteration.val le 10) or ( mod(iteration.val,5 ) eq 0)) ,
-    execute "Rscript run_magicc_temperatureImpulseResponse.R";
+    execute "Rscript climate_assessment_temperatureImpulseResponse.R";
     execute_loadpoint 'pm_magicc_temperatureImpulseResponse'  pm_temperatureImpulseResponseCO2 = pm_temperatureImpulseResponse;
 );
 *NOTE the MAGICC results (*.OUT files) are from  the last pulse experiment now, so take care if reading them in after this point.
