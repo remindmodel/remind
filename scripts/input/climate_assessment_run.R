@@ -40,7 +40,7 @@ if (!file.exists(logFile)) {
     createdLogFile <- FALSE
 }
 
-climateTempDir <- file.path(outputDir, "climate_assessment_data")
+climateTempDir <- file.path(outputDir, "climate-assessment-data")
 if (!dir.exists(climateTempDir)) {
     dir.create(climateTempDir, showWarnings = FALSE)
     createdClimateTempDir <- TRUE
@@ -382,14 +382,14 @@ timeStopArchive <- Sys.time()
 
 logMsg <- paste0(
     date(), " Done writing GDX files\n",
-    date(), " Runtime report: ", paste0("'iteration_", timestamp, ".tar.gz'\n"),
+    date(), " Runtime report: ", paste0("iteration_", timestamp, "\n"),
     "\tRuntime set_up_script: ",
     difftime(timeStopSetUpScript, timeStartSetUpScript, units = "secs"), "s\n",
     "\tRuntime preprocessing: ",
     difftime(timeStopPreprocessing, timeStartPreprocessing, units = "secs"), "s\n",
     "\tRuntime set_up_assessment: ",
     difftime(timeStopSetUpAssessment, timeStartSetUpAssessment, units = "secs"), "s\n",
-    "\tRuntime harmonization & infilling: ",
+    "\tRuntime harmonization_infilling: ",
     difftime(timeStopHarmInf, timeStartHarmInf, units = "secs"), "s\n",
     "\tRuntime emulation: ",
     difftime(timeStopEmulation, timeStartEmulation, units = "secs"), "s\n",
@@ -398,6 +398,8 @@ logMsg <- paste0(
     "\tRuntime write_gdx: ",
     difftime(timeStopWriteGdx, timeStartWriteGdx, units = "secs"), "s\n",
     "\tRuntime archive_data: ",
+    difftime(timeStopArchive, timeStartArchive, units = "secs"), "s\n",
+    "\tRuntime total: ",
     difftime(timeStopArchive, timeStartSetUpScript, units = "secs"), "s\n",
     date(), " climate_assessment_run.R: Done\n"
 )
