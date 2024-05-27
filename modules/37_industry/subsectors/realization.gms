@@ -58,7 +58,6 @@ $Ifi "%phase%" == "datainput" $include "./modules/37_industry/subsectors/datainp
 $Ifi "%phase%" == "equations" $include "./modules/37_industry/subsectors/equations.gms"
 $Ifi "%phase%" == "preloop" $include "./modules/37_industry/subsectors/preloop.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/37_industry/subsectors/bounds.gms"
-$Ifi "%phase%" == "presolve" $include "./modules/37_industry/subsectors/presolve.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/37_industry/subsectors/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/37_industry/subsectors/realization.gms

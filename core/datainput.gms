@@ -53,9 +53,9 @@ pm_tall_2_ttot(tall, ttot)$((ttot.val lt tall.val) AND (pm_ttot_val(ttot+1) gt t
 pm_ttot_2_tall(ttot,tall)$((ttot.val = tall.val) ) = Yes;
 
 *** define pm_prtp according to cm_prtpScen:
-if(cm_prtpScen eq 1, pm_prtp(regi) = 0.01);
+if(cm_prtpScen eq 1, pm_prtp(regi) = 0.015);
 if(cm_prtpScen eq 3, pm_prtp(regi) = 0.03);
-pm_ies(regi) = 0.5;
+pm_ies(regi) = 2./3.;
 
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
@@ -293,7 +293,7 @@ loop(te$(fm_dataglob("constrTme",te) > 0),
 $ifthen %cm_techcosts% == "GLO"
     (1 + 0.02/pm_ies(regi) +  pm_prtp(regi) )                               ** (integ.val - 0.5) - 1
 $else
-    (1 + 0.02/pm_ies(regi) + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1  
+    (1 + 0.02/pm_ies(regi) + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
 $endif
       )
 );
@@ -369,8 +369,8 @@ $else
     pm_data(regi,"learnMult_wFC","spv")        = pm_data(regi,"incolearn","spv") / (sum(regi2,p_capCum("2020",regi2,"spv")) ** pm_data(regi,"learnExp_wFC","spv"));
 $endif
 
-*FS initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020) 
-* equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost) 
+*FS initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020)
+* equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost)
 pm_data(regi,"learnMult_wFC",te)$( pm_data(regi,"tech_stat",te) eq 4 )
   = pm_data(regi,"incolearn",te)
   / ( fm_dataglob("ccap0",te)
@@ -431,7 +431,7 @@ $ifthen.REG_techcosts "%cm_techcosts%" == "REG"   !! cm_techcosts REG
           )
           / (c_teNoLearngConvEndYr - 2020);
       );
-    
+
       pm_inco0_t(ttot,regi,te)$( ttot.val gt c_teNoLearngConvEndYr ) = fm_dataglob("inco0",te);
     );
 
@@ -697,8 +697,8 @@ pm_cf(ttot,regi,"bf") = 0.8;
 pm_cf(ttot,regi,"bfcc") = 0.8;
 pm_cf(ttot,regi,"bof") = 0.8;
 pm_cf(ttot,regi,"idr") = 0.8;
-pm_cf(ttot,regi,"idrcc") = 0.8;
-pm_cf(ttot,regi,"eaf") = 0.8;
+pm_cf(ttot,regi,"idrcc") = 1.0; !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
+pm_cf(ttot,regi,"eaf") = 1.0;   !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
 
 *RP* phasing down the ngt cf to "peak load" cf of 5%
 pm_cf(ttot,regi,"ngt")$(ttot.val eq 2025) = 0.9 * pm_cf(ttot,regi,"ngt");
@@ -1470,16 +1470,9 @@ $offdelim
 /
 ;
 
-pm_emifacNonEnergy(ttot,regi,"segafos","fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,"sesofos", "fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids")  / s_zj_2_twa;
 pm_emifacNonEnergy(ttot,regi,"seliqfos","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"sesofos","fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids") / s_zj_2_twa;
-
-pm_emifacNonEnergy(ttot,regi,"segabio","fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"seliqbio","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"sesobio","fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids") / s_zj_2_twa;
-
-pm_emifacNonEnergy(ttot,regi,"segasyn","fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"seliqsyn","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,"segafos", "fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases")   / s_zj_2_twa;
 
 ***------ Read in projections for incineration rates of plastic waste---
 *** "incineration rates [fraction]"
@@ -1585,7 +1578,7 @@ sm_globalBudget_dev = 1;
 *' load production values from reference gdx to allow penalizing changes vs reference run in the first time step via q_changeProdStartyearCost/q21_taxrevChProdStartYear
 if (cm_startyear gt 2005,
 execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
-execute_load "input_ref.gdx", p_prodFEReference = vm_prodFe.l;
+execute_load "input_ref.gdx", pm_prodFEReference = vm_prodFe.l;
 execute_load "input_ref.gdx", p_prodUeReference = v_prodUe.l;
 execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
 );
@@ -1593,7 +1586,7 @@ execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
 p_prodAllReference(t,regi,te) =
     sum(pe2se(enty,enty2,te),  p_prodSeReference(t,regi,enty,enty2,te) )
   + sum(se2se(enty,enty2,te),  p_prodSeReference(t,regi,enty,enty2,te) )
-  + sum(se2fe(enty,enty2,te),  p_prodFEReference(t,regi,enty,enty2,te) )
+  + sum(se2fe(enty,enty2,te),  pm_prodFEReference(t,regi,enty,enty2,te) )
   + sum(fe2ue(enty,enty2,te),  p_prodUeReference(t,regi,enty,enty2,te) )
   + sum(ccs2te(enty,enty2,te), sum(teCCS2rlf(te,rlf), p_co2CCSReference(t,regi,enty,enty2,te,rlf) ) )
 ;

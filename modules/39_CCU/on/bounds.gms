@@ -17,9 +17,10 @@ vm_co2capture.up(t,regi,"cco2","ico2","ccsinje","1") = 50;
 vm_cap.lo(t,regi,te_ccu39,"1")=0;
 vm_cap.lo(t,regi,te_ccu39,"1")$(t.val gt 2031)=1e-7;
 
-*** CCU technologies will not be used at scale before 2035
-vm_cap.up(t,regi,te_ccu39,"1")$(t.val le 2030)=1e-6;
-
+*** CCU technologies will not be used at scale before 2030
+vm_cap.up(t,regi,te_ccu39,"1")$(t.val le 2025)=1e-6;
+*** CCU technologies will not be used at scale in 2030 (for non potential exporting regions)
+vm_cap.up(t,regi,te_ccu39,"1")$((t.val eq 2030) and (not(sameas(regi,"SSA") or sameas(regi,"LAM") or sameas(regi,"MEA"))))=1e-6;
 
 *** FS: switch off CCU in baseline runs (as CO2 capture technologies teCCS are also switched off)
 if(cm_emiscen = 1,

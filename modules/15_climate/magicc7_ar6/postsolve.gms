@@ -26,7 +26,7 @@ Execute_Loadpoint 'p15_forc_magicc'  p15_forc_magicc;
 Execute_Loadpoint 'p15_magicc_temp' pm_globalMeanTemperature = pm_globalMeanTemperature;
 
 *** climate_assessment only reports until 2100:
-pm_globalMeanTemperature(tall)$(tall.val gt 2100) = 0;
+pm_globalMeanTemperature(tall)$(tall.val gt 2100) = pm_globalMeanTemperature("2100");
 );
 
 ***---------------------------------------------------------------------------

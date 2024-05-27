@@ -6,6 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/equations.gms
 
+*' @equations
 
 *'  Transportation Final Energy Balance
 q35_demFeTrans(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2Sector(entyFe,"trans"))) ..
@@ -25,5 +26,7 @@ q35_transGDPshare(ttot,regi)$(ttot.val ge cm_startyear)..
   (p35_transportGDPshare("2005",regi)*pm_gdp("2005",regi))
 ;
 $ENDIF.transpGDPscale
+
+*' @stop
 
 *** EOF ./modules/35_transport/edge_esm/equations.gms
