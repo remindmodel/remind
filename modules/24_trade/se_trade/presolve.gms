@@ -20,10 +20,17 @@ vm_Mport.l(t,regi,entySe)$(sum(regi2,p24_seTradeCapacity(t,regi2,regi,entySe)) g
 *** Xport price
 pm_XPortsPrice(t,regi,tradeSe) = pm_SEPrice(t,regi,tradeSe);
 
+display pm_XPortsPrice;
+
 *** Setting Xport price bound to avoid unrealists trading prices.
-*** Lower bound: avoiding epsilon values (caused by using equation marginals for setting prices) or unrealistic small value for H2 exporting prices -> minimun price = 1$/kg (1$/kg = 0.030769231 $/Kwh = 0.030769231 / (10^12/10^9*8760) T$/TWa = 0.26953846356 T$/TWa) 
-pm_XPortsPrice(t,regi,"seh2") = min(0.26953846356,pm_XPortsPrice(t,regi,"seh2"));
-pm_XPortsPrice(t,regi,"seliqsyn") = min(0.26953846356,pm_XPortsPrice(t,regi,"seliqsyn"));
+*** Lower bound: avoiding epsilon values (caused by using equation marginals for setting prices) or unrealistic small values for secondary energy prices
+*** - H2 and seliqsyn exporting prices -> minimun price = 1$/kg (1$/kg = 0.0301 $/Kwh = 0.0301 / (10^12/10^9*8760) T$/TWa = 0.264 T$/TWa)
+*** - seliqbio exporting prices -> minimun price = 5 US$2005/GJ (5/31.71 = 0.158 T$/TWa)
+pm_XPortsPrice(t,regi,"seh2") = max(0.264, pm_XPortsPrice(t,regi,"seh2"));
+pm_XPortsPrice(t,regi,"seliqsyn") = max(0.264, pm_XPortsPrice(t,regi,"seliqsyn"));
+pm_XPortsPrice(t,regi,"seliqbio") = max(0.158, pm_XPortsPrice(t,regi,"seliqbio"));
+
+display pm_XPortsPrice;
 
 $ontext
 *** Mports from where? Mports from regi to regi2, assuming that trade is distributed uniformetly according existent trade capacities
@@ -68,6 +75,6 @@ pm_MPortsPrice(t,regi,tradeSe)$(sum(regi2,p24_seTradeCapacity(t,regi2,regi,trade
   )
 ;
 
-display  p24_seTradeCapacity, pm_MPortsPrice, pm_XPortsPrice, pm_SEPrice; 
+display  p24_seTradeCapacity, pm_MPortsPrice, pm_SEPrice; 
 
 *** EOF ./modules/24_trade/se_trade/presolve.gms

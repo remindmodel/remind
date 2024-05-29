@@ -588,6 +588,13 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     feels . (feel_steel_primary, feel_steel_secondary)
 $endif.cm_subsec_model_steel
   /
+
+regi_fxDem37(ext_regi) "regions under which we fix UE demand to baseline demand"
+  /
+$ifthen.fixedUE_scenario "%cm_fxIndUe%" == "on"
+    %cm_fxIndUeReg%
+$endif.fixedUE_scenario
+  /
 ;
 
 *** ---------------------------------------------------------------------------
