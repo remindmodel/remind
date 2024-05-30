@@ -42,7 +42,6 @@ Parameters
   p37_IndFeBal_FeedStock_RH(ttot,all_regi,all_enty,emiMkt)   "testing parameter Ind FE Balance right-hand side feedstock term"
   p37_EmiEnDemand_NonEnCorr(ttot,all_regi)                   "energy demand co2 emissions with non-energy correction"
   p37_EmiEnDemand(ttot,all_regi)                             "energy demand co2 emissions without non-energy correction"
-  p37_bau_uedemand(ttot,all_regi,all_in)	             "baseline UE demand in industry"
 *** output parameters only for reporting
   o37_cementProcessEmissions(ttot,all_regi,all_enty)                     "cement process emissions [GtC/a]"
   o37_demFeIndTotEn(ttot,all_regi,all_enty,all_emiMkt)                   "total FE per energy carrier and emissions market in industry (sum over subsectors)"
