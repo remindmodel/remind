@@ -104,20 +104,7 @@ $ifThen.SEtaxRampUpParam not "%cm_SEtaxRampUpParam%" == "off"
   );
 $endif.SEtaxRampUpParam
 
-***cb 20110923 load paths for ressource export taxes
-***cb* file for resource export taxes, not used in default settings
-Parameter p21_tau_xpres_tax(tall,all_regi,all_enty) "tax path for ressource export"
-  /
-$ondelim
-$include "./modules/21_tax/on/input/p21_tau_xpres_tax.cs4r"
-$offdelim
-  / ;
-*** converted to T$/TWyr   
-p21_tau_xpres_tax(ttot,regi,"peoil")$(ttot.val ge 2005) = p21_tau_xpres_tax(ttot,regi,"peoil") * sm_DpGJ_2_TDpTWa;
-*LB* use 0 for all regions as default
-p21_tau_xpres_tax(ttot,regi,all_enty) = 0;
-
-*JeS for SO2 tax case: tax path in 10^12$/TgS (= 10^6 $/t S) @ GDP/cap of 1000$/cap  (value gets scaled by GDP/cap)
+***JeS for SO2 tax case: tax path in 10^12$/TgS (= 10^6 $/t S) @ GDP/cap of 1000$/cap  (value gets scaled by GDP/cap)
 if((cm_so2tax_scen eq 0),
 s21_so2_tax_2010=0.0;
 elseif(cm_so2tax_scen eq 1),

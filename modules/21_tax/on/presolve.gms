@@ -40,7 +40,6 @@ p21_taxrevCES0(ttot,regi,in) = pm_tau_ces_tax(ttot,regi,in) * vm_cesIO.l(ttot,re
 p21_taxrevPE2SE0(ttot,regi) = sum(pe2se(enty,enty2,te),
                                     (p21_tau_pe2se_tax(ttot,regi,te) + p21_tau_pe2se_sub(ttot,regi,te)) * vm_prodSe.l(ttot,regi,enty,enty2,te)
                                   ); 
-p21_taxrevXport0(ttot,regi) = sum(tradePe(enty), p21_tau_xpres_tax(ttot,regi,enty) * vm_Xport.l(ttot,regi,enty));
 p21_taxrevSO20(ttot,regi) = p21_tau_so2_tax(ttot,regi) * vm_emiTe.l(ttot,regi,"so2");
 p21_taxrevBio0(ttot,regi) = v21_tau_bio.l(ttot) * vm_pebiolc_price.l(ttot,regi) * vm_fuExtr.l(ttot,regi,"pebiolc","1")
                             + p21_bio_EF(ttot,regi) * pm_taxCO2eq(ttot,regi) * (vm_fuExtr.l(ttot,regi,"pebiolc","1") - (vm_Xport.l(ttot,regi,"pebiolc")-vm_Mport.l(ttot,regi,"pebiolc")));
