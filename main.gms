@@ -1636,6 +1636,12 @@ $setGLobal c_agricult_base_shift off !! def off
 *** Note that all regions to which this switch is not applied receive the default parameter values.
 *** For details, please see ./modules/21_tax/on/equations.gms.
 $setGLobal cm_elh2_tax_rampup standard !! def standard
+*** H2 policy flag
+*** Allows to set specific H2-related policies
+*** Options:
+*** off -> no additional policy
+*** Refuel_EU -> minimum e-fuel demand of 8 TWh/yr in 2030 by aviation ReFUEL-EU quota in EU27, distributed by GDP to EU regions
+$setGLobal cm_H2_policy off !! def off
 *** wind offshore switch
 *** cm_wind_offshore  1, wind energy is represented by "wind" and "windoff", where "wind" means wind onshore. Later this will be the default and the name "wind" will be made to change to windon
 *** cm_wind_offshore  0, means wind energy is only represented by "wind", which is a mixture of both wind onshore and wind offshore
