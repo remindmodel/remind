@@ -235,6 +235,24 @@ Parameter
 ;
 $endIf.regiExoPrice
 
+***---------------------------------------------------------------------------
+*** Exogenous CO2 tax level from another run:
+***---------------------------------------------------------------------------
+$ifThen.regiExoPrice_fromFile not "%cm_regiExoPrice_fromFile%" == "off"
+
+File co2price_scenario /                                  "%cm_regiExoPrice_fromFile%" /;
+
+Parameter
+  p47_exoCo2tax_fromFile(ttot,all_regi,emiMkt)   "Exogenous CO2 tax level from of GDX file. Overrides carbon prices in pm_taxCO2eq, only if explicitly defined. [T$/GtC]"
+
+;
+
+Execute_Loadpoint "%cm_regiExoPrice_fromFile%" p47_exoCo2tax_fromFile = pm_taxemiMkt;
+
+execute_unload "exoCO2Tax_fromFile", p47_exoCo2tax_fromFile;
+display p47_exoCo2tax_fromFile;
+
+$endIf.regiExoPrice_fromFile
 
 
 Variable

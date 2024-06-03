@@ -858,4 +858,30 @@ loop((ttot,ext_regi)$p47_exoCo2tax(ext_regi,ttot),
 display 'update of CO2 prices due to exogenously given CO2 prices in p47_exoCo2tax', pm_taxCO2eq;
 $endIf.regiExoPrice
 
+
+$ifThen.regiExoPrice_fromFile not "%cm_regiExoPrice_fromFile%" == "off"
+
+
+*** Removing the existent co2 tax parameters for regions with exogenous set prices
+  pm_taxCO2eqSum(ttot,regi)$(ttot.val ge cm_startyear) = 0;
+  pm_taxCO2eq(ttot,regi)$(ttot.val ge cm_startyear) = 0;
+  pm_taxCO2eqRegi(ttot,regi)$(ttot.val ge cm_startyear)= 0;
+  pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge cm_startyear) = 0;
+
+  pm_taxrevGHG0(ttot,regi)$(ttot.val ge cm_startyear) = 0;
+  pm_taxrevCO2Sector0(ttot,regi,emi_sectors)$(ttot.val ge cm_startyear) = 0;
+  pm_taxrevCO2LUC0(ttot,regi)$(ttot.val ge cm_startyear) = 0;
+  pm_taxrevNetNegEmi0(ttot,regi)$(ttot.val ge cm_startyear) = 0;
+
+  pm_taxemiMkt(ttot,regi,emiMkt)$(ttot.val ge cm_startyear) = 0;
+
+
+*** setting exogenous CO2 prices from GDX file
+  pm_taxCO2eq(t,regi) = p47_exoCo2tax_fromFile(t,regi,"ETS");
+  pm_taxCO2eqSum(t,regi) = pm_taxCO2eq(t,regi);
+
+execute_unload "postsolve_pm_taxCO2eq_fromFile", pm_taxCO2eq;
+display pm_taxCO2eq;
+$endIf.regiExoPrice_fromFile
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/postsolve.gms
