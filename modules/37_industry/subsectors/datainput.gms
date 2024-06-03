@@ -608,18 +608,6 @@ execute_load "input_ref.gdx", vm_demFeSector_afterTax;
 *** initialize maximum biomass share in all industry subsectors at 100%
 p37_BioShareMaxSubsec(t,regi,entyFeCC37,secInd37)=1;
 
-
-*** for steel to prevent too fast switch to biomass, set maximum biomass shares in near-term
-p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val gt 2015 AND t.val le 2025)=0.3;
-p37_BioShareMaxSubsec("2030",regi,"fesos","steel")=0.4;
-p37_BioShareMaxSubsec("2035",regi,"fesos","steel")=0.7;
-p37_BioShareMaxSubsec("2040",regi,"fesos","steel")=1;
-
-
-*** for Germany set maximum biomass share of solids in steel to 10% at all times
-***p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val ge 2020 AND sameas(regi,"DEU"))=0.1;
-
-
 * Define carbon capture and storage share in waste incineration emissions
 * capture rate increases linearly from zero in 2025 to value the set in the switch for the defined year, and it is kept constant for years afterwards
 p37_regionalWasteIncinerationCCSshare(ttot,all_regi) = 0;
