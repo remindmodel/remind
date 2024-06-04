@@ -368,13 +368,17 @@ $endif.high_bio
 
 
 $IFTHEN.trade_SE_shareDemand not "%cm_trade_SE_shareDemand%" == "off"
+loop( (regi,ext_regi,enty)$(p24_trade_SE_shareDemand_input(regi,ext_regi,enty)),
+*** add enty to tradeSe set such that the commodity is traded
+    tradeSe(enty) = YES;
 *** set importing shares of aggregated ext_regi region to all corresponding subregions from 2030 on
-loop( (regi,ext_regi,tradeSe)$(p24_trade_SE_shareDemand_input(regi,ext_regi,tradeSe)),
     loop(regi2$regi_groupExt(ext_regi,regi2),
-       p24_trade_SE_shareDemand(ttot,regi,regi2,tradeSe)$(ttot.val ge 2030) = p24_trade_SE_shareDemand_input(regi,ext_regi,tradeSe);
+       p24_trade_SE_shareDemand(ttot,regi,regi2,enty)$(ttot.val ge 2030) = p24_trade_SE_shareDemand_input(regi,ext_regi,enty);
     );
 );
 $ENDIF.trade_SE_shareDemand
+
+
 
 
 *** EOF ./modules/24_trade/se_trade/datainput.gms

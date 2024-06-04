@@ -142,4 +142,6 @@ $ENDIF.trade_SE_shareDemand
 vm_Mport.up(t,regi,entySe) = sum(regi2,p24_seTradeCapacity(t,regi2,regi,entySe));
 vm_Xport.up(t,regi,entySe) = sum(regi2,p24_seTradeCapacity(t,regi,regi2,entySe));
 
+execute_unload "after_se_trade_bounds.gdx";
+
 *** EOF ./modules/24_trade/se_trade/bounds.gms
