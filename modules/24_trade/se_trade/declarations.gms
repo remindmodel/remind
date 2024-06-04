@@ -33,6 +33,17 @@ p24_demFeForEsReference(ttot,all_regi,all_enty,all_esty,all_teEs)              "
 p24_demFeIndSubReference(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)  "Final energy demand per industry subsector, FE carrier, SE carrier, emissions market in the reference run [TWa]"
 p24_aviationAndChemicalsFE(ttot,all_regi)                                      "Final energy of aviation and chemicals liquids demand [TWa]"
 p24_aviationAndChemicalsFEShareInRegion(ttot,ext_regi,all_regi)                "Region share of total final energy aviation and chemicals liquids demand within the region group (ext_regi) [%]"
+
+$IFTHEN.trade_SE_shareDemand not "%cm_trade_SE_shareDemand%" == "off"
+p24_trade_SE_shareDemand_input(all_regi,ext_regi,all_enty)   "parameter to read in import shares from config for SE share demand implementation" / %cm_trade_SE_shareDemand% /
+p24_trade_SE_shareDemand(ttot,all_regi,all_regi,all_enty)    "share of total SE demand in importing region to be imported from exporting region"
+p24_Imp_shareDemand(ttot,all_regi,all_regi,all_enty)   "Share of SE demand to be imported by second region from first region"
+p24_SEdemand(ttot,all_regi,all_enty)                   "Total SE demand per carrier, needed for share import implementation [TWa/yr]"
+p24_seTradeCapacity_iter(ttot,all_regi,all_regi,all_enty,iteration) "save trade capacities over iterations for diagnostics"
+p24_SEPrice_iter(ttot,all_regi,all_enty,iteration)                  "save SE price over iterations for diagnostics"
+p24_Mport_iter(ttot,all_regi,all_enty,iteration)                    "save SE imports over iterations for diagnostics"
+p24_Mport_iter_relChange(ttot,all_regi,all_enty,iteration)          "save relative change of SE imports over iterations for convergence check and diagnostics"
+$ENDIF.trade_SE_shareDemand
 ;
 
 ***-------------------------------------------------------------------------------

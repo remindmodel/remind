@@ -1439,6 +1439,11 @@ $setGlobal cm_import_ariadne  off !! def off
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "2030.2050.MEA.EU27_regi.seh2 0.5, 2030.2050.MEA.DEU.seh2 0.3".
 $setGlobal cm_trade_SE_exog off !! def off
+*** cm_trade_SE_shareDemand
+*** set SE trade flows based on a fix share of the demand in the importing region
+*** e.g. "MEA.EU27_regi.seliqsyn 0.3" means that all regions in EU27 region will import 30% of their synfuel demand (seliqsyn) from MEA
+*** Note: requires se_trade realization of trade module to be on, only works for single exporting regions. It only works for the SE carriers seel, seh2 and seliqsyn.
+$setGlobal cm_trade_SE_shareDemand off !! def off
 *** This allows to manually adjust the ramp-up curve of the SE tax on electricity. It is mainly used for taxing electricity going into electrolysis for green hydrogen production.
 *** The ramp-up curve is a logistic function that determines how fast taxes increase with increasing share of technology in total power demand.
 *** This essentially makes an assumption about to what extend the power demand of electrolysis will be taxed and how much tax exemptions there will be at low shares of green hydrogen production.

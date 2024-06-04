@@ -124,6 +124,20 @@ if (cm_phaseoutBiolc eq 1,
    vm_Xport.up(t,regi,"pebiolc")$(t.val ge cm_startyear) = 1e-6;
 );
 
+
+
+$IFTHEN.trade_SE_shareDemand not "%cm_trade_SE_shareDemand%" == "off"
+*** total SE Demand
+p24_SEdemand(t,regi,tradeSe) = sum(se2fe(tradeSe,enty3,te), vm_demSe.l(t,regi,tradeSe,enty3,te))
+                                + sum(se2se(tradeSe,enty3,te), vm_demSe.l(t,regi,tradeSe,enty3,te));
+
+*** set SE trade capacity to share of SE demand in importing region
+p24_seTradeCapacity(t,regi,regi2,tradeSe) = p24_trade_SE_shareDemand(t,regi,regi2,tradeSe) * p24_SEdemand(t,regi2,tradeSe);
+
+*** save to parameter to track over iterations
+p24_seTradeCapacity_iter(t,regi,regi2,tradeSe,iteration)=p24_seTradeCapacity(t,regi,regi2,tradeSe);
+$ENDIF.trade_SE_shareDemand
+
 *** set maximum import and export secondary energy trade based on trading capacities 
 vm_Mport.up(t,regi,entySe) = sum(regi2,p24_seTradeCapacity(t,regi2,regi,entySe));
 vm_Xport.up(t,regi,entySe) = sum(regi2,p24_seTradeCapacity(t,regi,regi2,entySe));
