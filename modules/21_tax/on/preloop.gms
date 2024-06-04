@@ -140,6 +140,8 @@ display p21_tau_fe_tax;
 display p21_tau_pe2se_sub, p21_tau_fuEx_sub;
 
 *** SE Tax
+p21_tau_SE_tax(t,regi,te) = 0;
+$ifThen.SEtaxRampUpParam not "%cm_SEtaxRampUpParam%" == "off" 
 *** SE tax is currently used to tax electricity going into electrolysis. There is a maximum tax rate that is assumed
 *** to be the sum of the industry electricity FE tax and the investment cost per unit electricity of the grid (grid fee). 
 *** There is a ramp up of the SE electricity tax for electrolysis depending on the share of electrolysis in total electricity demand
@@ -147,29 +149,14 @@ display p21_tau_pe2se_sub, p21_tau_fuEx_sub;
 *** as the technology has system benefits in this domain. At higher shares this rapidly increases and converges towards the maximum tax rate.
 *** See the equations file of the tax module for more information on the SE tax.
 *** Parameter datainput needs to happen here because pm_tau_fe_tax, the final energy tax rate, is set in this file and not in the datainput file.
-p21_tau_SE_tax(t,regi,"elh2") = p21_tau_fe_tax(t,regi,"indst","feels")
+  p21_tau_SE_tax(t,regi,"elh2") = p21_tau_fe_tax(t,regi,"indst","feels")
 *** calculate grid fees as levelized cost of CAPEX from tdels, the electricity transmission and distribution grid
 *** by annualising the CAPEX and dividing by the capacity factor
                                   + pm_inco0_t(t,regi,"tdels") 
                                   * pm_teAnnuity("tdels")
                                   / pm_cf(t,regi,"tdels");
+$endif.SEtaxRampUpParam
 
-*** default parameters of logistic tax ramp-up curve
-p21_tau_SE_tax_rampup(t,regi,te,"a") = 0.4;
-p21_tau_SE_tax_rampup(t,regi,te,"b") = 10;
-
-
-*** overwrite parameters of logistic tax ramp-up curve for electrolysis with input from cm_elh2_tax_rampup
-$IFTHEN.elh2_tax_rampup not "%cm_elh2_tax_rampup%" == "standard"
-
-  loop((ext_regi,teSeTax_coeff)$(p21_tau_elh2_tax_rampup_input(ext_regi,teSeTax_coeff)),
-    loop(regi$regi_groupExt(ext_regi,regi),
-      p21_tau_SE_tax_rampup(t,regi,"elh2",teSeTax_coeff)$(p21_tau_elh2_tax_rampup_input(ext_regi,teSeTax_coeff)) =
-        p21_tau_elh2_tax_rampup_input(ext_regi,teSeTax_coeff);
-    );
-  );
-
-$ENDIF.elh2_tax_rampup
 
 *LB* initialization of vm_emiMac
 vm_emiMac.l(ttot,regi,enty) = 0;

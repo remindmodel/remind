@@ -1280,6 +1280,9 @@ $setGlobal cm_regiExoPrice  off    !! def = off
 ***   Example on how to use:
 ***     cm_emiMktTarget = '2020.2050.EU27_regi.all.budget.netGHG_noBunkers 72, 2020.2050.DEU.all.year.netGHG_noBunkers 0.1'
 ***     sets a 72 GtCO2eq budget target for European 27 countries (EU27_regi), for all GHG emissions excluding bunkers between 2020 and 2050; and a 100 MtCO2 CO2eq emission target for the year 2050, for Germany"
+***     cm_emiMktTarget = 'nzero'
+***     loads hard-coded options for regional target scenarios defined in the module '47_regipol/regiCarbonPrice' declarations file. 
+***     The 'nzero' scenario applies declared net-zero targets for countries explicitly handled by the model (DEU, CHA, USA, IND, JPN, UKI, FRA and EU27_regi)  
 ***     Requires regiCarbonPrice realization in regipol module
 $setGlobal cm_emiMktTarget  off    !! def = off
 *** cm_regipol_LUC "user-defined shift of land-use change emissions from Magpie trajectories when employing cm_emiMktTarget with the Grassi offset (LULUCFGrassi option)"
@@ -1436,6 +1439,16 @@ $setGlobal cm_import_ariadne  off !! def off
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "2030.2050.MEA.EU27_regi.seh2 0.5, 2030.2050.MEA.DEU.seh2 0.3".
 $setGlobal cm_trade_SE_exog off !! def off
+*** This allows to manually adjust the ramp-up curve of the SE tax on electricity. It is mainly used for taxing electricity going into electrolysis for green hydrogen production.
+*** The ramp-up curve is a logistic function that determines how fast taxes increase with increasing share of technology in total power demand.
+*** This essentially makes an assumption about to what extend the power demand of electrolysis will be taxed and how much tax exemptions there will be at low shares of green hydrogen production.
+*** The parameter a defines how fast the tax increases with increasing share, with 4/a being the percentage point range over which the tax value increases from 12% to 88%
+*** The parameter b defines at which share the tax is halfway between the value at 0 share and the maximum value (defined by a region's electricity tax and the electricity grid cost) that it converges to for high shares.
+*** Example use: 
+*** cm_SEtaxRampUpParam = "GLO.elh2.a 0.2, GLO.elh2.b 20" sets the logistic function parameter values a=0.2 and b=20 for electrolysis (elh2) to all model regions (GLO). 
+*** cm_SEtaxRampUpParam = "off" disables v21_tau_SE_tax 
+*** For details, please see ./modules/21_tax/on/equations.gms.
+$setGlobal cm_SEtaxRampUpParam  GLO.elh2.a 0.2, GLO.elh2.b 20    !! def = GLO.elh2.a 0.2, GLO.elh2.b 20
 *** cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
 *** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
 *** switch to activate energy security scenario assumptions for Germany including additional tax on gas/oil
@@ -1590,6 +1603,33 @@ $setGlobal cm_CESMkup_build  standard  !! def = standard
 *** addressed in cm_CESMkup_ind_data.
 $setGlobal cm_CESMkup_ind        standard  !! def = standard
 $setGlobal cm_CESMkup_ind_data   ""        !! def = ""
+
+*** cm_fxIndUe "switch for fixing UE demand in industry to baseline level - no endogenous demand adjustment"
+*** default cm_fxIndUe = off -> endogenous demand, cm_fxIndUe = on -> exogenous demand fixed to baseline/NPi level (read in from input_ref.gdx)
+*** cm_fxIndUeReg indicates the regions under which the industry demand will be fixed 
+*** for example, cm_fxIndUe = on and cm_fxIndUeReg = SSA,NEU,CHA,IND,OAS,MEA,LAM gives a scenario where all non global north (non-OECD) industry demand is fixed to baseline
+*** cm_fxIndUeReg = GLO fixes industry demand to baseline level everywhere
+$setGlobal cm_fxIndUe        off  !! def = off
+$setGlobal cm_fxIndUeReg     ""       !! def = ""
+
+*** cm_ind_energy_limit Switch for setting upper limits on industry energy
+*** efficiency improvements.  See ./modules/37_subsectors/datainput.gms for
+*** implementation.
+*** "default" applies the following limits:
+*** 
+*** ext_regi |     subsector      | period | maximum "efficiency gain" [0-1]
+*** ---------+--------------------+--------+--------------------------------
+*** GLO      | ue_cement          |  2050  | 0.75
+*** GLO      | ue_steel_primary   |  2050  | 0.75
+*** GLO      | ue_steel_secondary |  2050  | 0.75
+*** GLO      | ue_chemicals       |  2100  | 0.90
+*** GLO      | ue_otherInd        |  2100  | 0.90
+***
+*** "manual" uses the data present in cm_ind_energy_limit_manual (has the same
+*** data as "default" to clarify the format)
+$setglobal cm_ind_energy_limit          default   !! def = default   !! regexp = default|manual
+$setglobal cm_ind_energy_limit_manual   "2050 . GLO . (ue_cement, ue_steel_primary, ue_steel_secondary)   0.75, 2100 . GLO . (ue_chemicals, ue_otherInd)   0.90"
+
 *** cm_wasteIncinerationCCSshare, proportion of waste incineration emissions that is captured and geologically stored at a given year and region
 *** off: means that all plastics incineration emissions in the World goes back to the atmosphere.
 *** 2050.GLO 0.5, 2050.EUR 0.8: means that 50% of waste incineration emissions are captured for all regions from 2050 onward, except for Europe that has 80% of its waste incineration emissions captured.

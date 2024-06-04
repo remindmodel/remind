@@ -166,4 +166,13 @@ v37_shareWithCC.lo(t,regi,tePrc,opmoPrc) = 0.;
 v37_shareWithCC.up(t,regi,tePrc,opmoPrc) = 1.;
 $endif.cm_subsec_model_steel
 
+$ifthen.fixedUE_scenario "%cm_fxIndUe%" == "on"
+
+loop ((ue_industry_dyn37(in),regi_groupExt(regi_fxDem37(ext_regi),regi)),
+  vm_cesIO.fx(t,regi,in)$( p37_cesIO_baseline(t,regi,in) )
+  = p37_cesIO_baseline(t,regi,in);
+);
+$endif.fixedUE_scenario
+
+
 *** EOF ./modules/37_industry/subsectors/bounds.gms

@@ -6,8 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/39_CCU/on/equations.gms
 
+*' @equations
+
 *** ---------------------------------------------------------
-*** calculate CCU emissions (= CO2 demand of CCU technologies)
+*' calculate CCU emissions (= CO2 demand of CCU technologies)
 *** ---------------------------------------------------------
 
 q39_emiCCU(t,regi,te)$(te_ccu39(te)).. 
@@ -21,12 +23,11 @@ q39_emiCCU(t,regi,te)$(te_ccu39(te))..
   )
 ;
 
-
-*** calculate v39_shSynLiq, share of synthetic (hydrogen-based) liquids in all SE liquids if cm_shSynLiq switch used 
+*' calculate v39_shSynLiq, share of synthetic (hydrogen-based) liquids in all SE liquids if cm_shSynLiq switch used 
 q39_shSynLiq(t,regi)$(cm_shSynLiq gt 0)..
     (
-	sum(pe2se(entyPe,entySe,te)$seAgg2se("all_seliq",entySe), vm_prodSe(t,regi,entyPe,entySe,te))
-	+ sum(se2se(entySe,entySe2,te)$seAgg2se("all_seliq",entySe2), vm_prodSe(t,regi,entySe,entySe2,te))
+    sum(pe2se(entyPe,entySe,te)$seAgg2se("all_seliq",entySe), vm_prodSe(t,regi,entyPe,entySe,te))
+    + sum(se2se(entySe,entySe2,te)$seAgg2se("all_seliq",entySe2), vm_prodSe(t,regi,entySe,entySe2,te))
     ) * v39_shSynLiq(t,regi)
     =e=
   sum(se2se(entySe,entySe2,te)$(sameAs(entySe, "seh2") AND 
@@ -35,11 +36,11 @@ q39_shSynLiq(t,regi)$(cm_shSynLiq gt 0)..
     vm_prodSe(t,regi,entySe,entySe2,te))
 ;
 
-*** calculate v39_shSynGas, share of synthetic (hydrogen-based) gas in all SE gases if cm_shSynGas switch used 
+*' calculate v39_shSynGas, share of synthetic (hydrogen-based) gas in all SE gases if cm_shSynGas switch used 
 q39_shSynGas(t,regi)$(cm_shSynGas gt 0)..
     (
-	sum(pe2se(entyPe,entySe,te)$seAgg2se("all_sega",entySe), vm_prodSe(t,regi,entyPe,entySe,te))
-	+ sum(se2se(entySe,entySe2,te)$seAgg2se("all_sega",entySe2), vm_prodSe(t,regi,entySe,entySe2,te))
+    sum(pe2se(entyPe,entySe,te)$seAgg2se("all_sega",entySe), vm_prodSe(t,regi,entyPe,entySe,te))
+    + sum(se2se(entySe,entySe2,te)$seAgg2se("all_sega",entySe2), vm_prodSe(t,regi,entySe,entySe2,te))
     ) * v39_shSynGas(t,regi)
     =e=
   sum(se2se(entySe,entySe2,te)$(sameAs(entySe, "seh2") AND 
@@ -48,4 +49,5 @@ q39_shSynGas(t,regi)$(cm_shSynGas gt 0)..
     vm_prodSe(t,regi,entySe,entySe2,te))
 ;
 
+*' @stop
 *** EOF ./modules/39_CCU/on/equations.gms

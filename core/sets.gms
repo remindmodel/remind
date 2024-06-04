@@ -1738,39 +1738,39 @@ peReComp(all_enty) "Renewable PE used by several technologies, thus the competit
         pesol        "PE solar"
 /
 
-entySe(all_enty)       "secondary energy types"
+entySe(all_enty)   "secondary energy types"
 /
-        seliqbio     "secondary energy liquids from biomass"
-        seliqfos     "secondary energy liquids from fossil primary energy"
-        seliqsyn     "secondary energy synthetic liquids from H2"
-        sesobio      "secondary energy solids from biomass"
-        sesofos      "secondary energy solids from fossil primary energy"
-        seel         "SE electricity"
-        seh2         "SE hydrogen"
-        segabio      "secondary energy gas from biomass"
-        segafos      "secondary energy gas from fossil primary energy"
-        segasyn      "secondary energy synthetic gas from H2"
-        sehe         "SE district heating nd heat pumps"
+  sesofos    "secondary energy solids from fossil primary energy"
+  sesobio    "secondary energy solids from biomass"
+  seliqfos   "secondary energy liquids from fossil primary energy"
+  seliqbio   "secondary energy liquids from biomass"
+  seliqsyn   "secondary energy synthetic liquids from H2"
+  segafos    "secondary energy gas from fossil primary energy"
+  segabio    "secondary energy gas from biomass"
+  segasyn    "secondary energy synthetic gas from H2"
+  seh2       "SE hydrogen"
+  sehe       "SE district heating nd heat pumps"
+  seel       "SE electricity"
 /
 
-entySeBio(all_enty)       "biomass secondary energy types"
+entySeFos(all_enty)   "secondary energy types from fossil primary energy"
 /
-        seliqbio     "secondary energy liquids from biomass"
-        sesobio      "secondary energy solids from biomass"
-        segabio      "secondary energy gas from biomass"
+  sesofos    "secondary energy solids from fossil primary energy"
+  seliqfos   "secondary energy liquids from fossil primary energy"
+  segafos    "secondary energy gas from fossil primary energy"
+/
+
+entySeBio(all_enty)   "biomass secondary energy types"
+/
+  sesobio    "secondary energy solids from biomass"
+  seliqbio   "secondary energy liquids from biomass"
+  segabio    "secondary energy gas from biomass"
 /
 
 entySeSyn(all_enty)   "synfuel secondary energy types"
 /
   seliqsyn   "secondary energy liquids from H2"
   segasyn    "secondary energy gas from H2"
-/
-
-entySeFos(all_enty) "secondary energy types from fossil primary energy"
-/
-        seliqfos     "secondary energy liquids from fossil primary energy"
-        sesofos      "secondary energy solids from fossil primary energy"
-        segafos      "secondary energy gas from fossil primary energy"
 /
 
 entyFe(all_enty)      "final energy types."

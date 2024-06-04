@@ -1478,16 +1478,9 @@ $offdelim
 /
 ;
 
-pm_emifacNonEnergy(ttot,regi,"segafos","fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,"sesofos", "fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids")  / s_zj_2_twa;
 pm_emifacNonEnergy(ttot,regi,"seliqfos","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"sesofos","fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids") / s_zj_2_twa;
-
-pm_emifacNonEnergy(ttot,regi,"segabio","fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"seliqbio","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"sesobio","fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids") / s_zj_2_twa;
-
-pm_emifacNonEnergy(ttot,regi,"segasyn","fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"seliqsyn","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,"segafos", "fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases")   / s_zj_2_twa;
 
 ***------ Read in projections for incineration rates of plastic waste---
 *** "incineration rates [fraction]"
