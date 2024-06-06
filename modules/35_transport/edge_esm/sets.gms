@@ -118,24 +118,15 @@ ces_transport_dyn35(all_in,all_in)   "CES tree structure - edge transport"
 
 EDGE_scenario_all    "EDGE-T scenarios"
 /
-ConvCase
-ConvCaseWise
-ElecEra
-ElecEraWise
-HydrHype
-HydrHype4
-HydrHypeWise
-Mix
-MixWise
-Mix1Wise
-Mix2Wise
-Mix3Wise
-Mix4Wise
 Mix1
+Mix1ICEban
 Mix2
+Mix2ICEban
 Mix3
+Mix3ICEban
 Mix4
-PhOP
+Mix4ICEban
+HydrHype4
 ECEMF_HighEl_HighEff
 ECEMF_HighEl_ModEff
 ECEMF_HighEl_LifestCha
