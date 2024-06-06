@@ -39,7 +39,7 @@ projects <- list(
   NAVIGATE_coupled = list(mapping = c("NAVIGATE", "NAVIGATE_coupled")),
   NGFS       = list(model = "REMIND-MAgPIE 3.3-4.7",
                     mapping = c("AR6", "AR6_NGFS"),
-                    iiasatemplate = "../ngfs-phase-4-internal-workflow/definitions/variable/variables.yaml",
+                    iiasatemplate = "../iiasa-workflow/definitions/variable/variables.yaml",
                     removeFromScen = "C_|_bIT|_bit|_bIt"),
   SHAPE      = list(mapping = c("NAVIGATE", "SHAPE")),
   TESTTHAT   = list(mapping = "AR6")

@@ -29,7 +29,7 @@ test_that("start.R --gamscompile works on all configs and scenarios", {
     csvfiles <- Sys.glob(c(file.path("../../config/scenario_config*.csv"),
                            file.path("../../config", "*", "scenario_config*.csv")))
   }
-  csvfiles <- normalizePath(grep("^scenario_config_coupled.*", csvfiles, invert = TRUE, value = TRUE))
+  csvfiles <- normalizePath(grep("scenario_config_coupled.*", csvfiles, invert = TRUE, value = TRUE))
   expect_true(length(csvfiles) > 0)
   testthat::with_mocked_bindings(
     for (csvfile in csvfiles) {

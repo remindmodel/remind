@@ -1309,7 +1309,7 @@ $setGlobal cm_loadFromGDX_implicitQttyTargetTax  off  !! def = off  !! regexp = 
 ***   (3) start only after regional emission target is close to convergence, by setting "cm_implicitQttyTarget_delay = emiRegiConv x", which forces the quantity target to start only after x times the cm_emiMktTarget_tolerance is achieved.
 ***      e.g., if "cm_emiMktTarget_tolerance = 0.01", i.e. 1% of deviation, and "cm_implicitQttyTarget_delay = emiRegiConv 5", the quantity target algorithm will only start after the emission target achieved a number lower than 5% (0.01 * 5)."
 ***      option 3 should only be used if the target is defined for a region that has its carbon pricing controlled by cm_emiMktTarget in the 47_regipol module.
-$setGlobal cm_implicitQttyTarget_delay  iteration 3  !! def = iteration 3, quantity targets only start after iteration 3
+$setGlobal cm_implicitQttyTarget_delay  iteration 15  !! def = iteration 15, quantity targets only start after iteration 15
 *** cm_implicitPriceTarget "define tax/subsidies to match FE prices defined in the pm_implicitPriceTarget parameter."
 ***   Acceptable values: "off", "initial", "elecPrice", "H2Price", "highElec", "highGasandLiq", "highPrice", "lowElec", "lowPrice"
 $setGlobal cm_implicitPriceTarget  off  !! def = off  !! regexp = off|initial|elecPrice|H2Price|highElec|highGasandLiq|highPrice|lowElec|lowPrice
@@ -1574,6 +1574,14 @@ $setGlobal cm_CESMkup_build  standard  !! def = standard
 *** addressed in cm_CESMkup_ind_data.
 $setGlobal cm_CESMkup_ind        standard  !! def = standard
 $setGlobal cm_CESMkup_ind_data   ""        !! def = ""
+
+*** cm_fxIndUe "switch for fixing UE demand in industry to baseline level - no endogenous demand adjustment"
+*** default cm_fxIndUe = off -> endogenous demand, cm_fxIndUe = on -> exogenous demand fixed to baseline/NPi level (read in from input_ref.gdx)
+*** cm_fxIndUeReg indicates the regions under which the industry demand will be fixed 
+*** for example, cm_fxIndUe = on and cm_fxIndUeReg = SSA,NEU,CHA,IND,OAS,MEA,LAM gives a scenario where all non global north (non-OECD) industry demand is fixed to baseline
+*** cm_fxIndUeReg = GLO fixes industry demand to baseline level everywhere
+$setGlobal cm_fxIndUe        off  !! def = off
+$setGlobal cm_fxIndUeReg     ""       !! def = ""
 
 *** cm_ind_energy_limit Switch for setting upper limits on industry energy
 *** efficiency improvements.  See ./modules/37_subsectors/datainput.gms for
