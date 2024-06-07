@@ -265,11 +265,11 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
 
     # testOneRegi settings
     if (any(c("--quick", "--testOneRegi") %in% flags) & length(config.file) == 0) {
-      cfg$title            <- "testOneRegi"
+      cfg$title            <- scen
       cfg$description      <- "A REMIND run with default settings using testOneRegi"
       cfg$gms$optimization <- "testOneRegi"
       cfg$output           <- NA
-      cfg$results_folder   <- "output/testOneRegi"
+      cfg$results_folder   <- paste0("output/", cfg$title)
       # delete existing Results directory
       cfg$force_replace    <- TRUE
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
