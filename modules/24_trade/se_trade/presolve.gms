@@ -32,15 +32,15 @@ pm_XPortsPrice(t,regi,"seliqbio") = max( 5 / sm_trillion_2_non * sm_GJ_2_TWa, pm
 
 display pm_XPortsPrice;
 
-*** Upper bound: model marginal prices are not necessarily competitive when we enforce exogenously traded quantitites.
+*** Upper bound: model marginal prices are not necessarily competitive when we enforce exogenously traded quantities.
 *** This could cause the secondary energy trade flows to "eat" a bigger amount of the country trade budget than they should,
-*** which could cause infeasiblities in the equations `q23_limit_debt_growth` and `qm_budget`.
+*** which could cause infeasibilities in the equations `q23_limit_debt_growth` and `qm_budget`.
 *** The below upper bounds limits avoids this issue by enforcing a maximum secondary energy traded price.
 *** - H2 and seliqsyn maximum exporting prices = 2$/kg
 *** - seliqbio maximum exporting prices = 10 US$2005/GJ
-pm_XPortsPrice(t,regi,"seh2")     = max( 2 / sm_h2kg_2_h2kWh * sm_TWa_2_kWh / sm_trillion_2_non, pm_XPortsPrice(t,regi,"seh2"));
-pm_XPortsPrice(t,regi,"seliqsyn") = max( 2 / sm_h2kg_2_h2kWh * sm_TWa_2_kWh / sm_trillion_2_non, pm_XPortsPrice(t,regi,"seliqsyn"));
-pm_XPortsPrice(t,regi,"seliqbio") = max( 10 / sm_trillion_2_non * sm_GJ_2_TWa, pm_XPortsPrice(t,regi,"seliqbio"));
+pm_XPortsPrice(t,regi,"seh2")     = min( 2 / sm_h2kg_2_h2kWh * sm_TWa_2_kWh / sm_trillion_2_non, pm_XPortsPrice(t,regi,"seh2"));
+pm_XPortsPrice(t,regi,"seliqsyn") = min( 2 / sm_h2kg_2_h2kWh * sm_TWa_2_kWh / sm_trillion_2_non, pm_XPortsPrice(t,regi,"seliqsyn"));
+pm_XPortsPrice(t,regi,"seliqbio") = min( 10 / sm_trillion_2_non * sm_GJ_2_TWa, pm_XPortsPrice(t,regi,"seliqbio"));
 
 display pm_XPortsPrice;
 
