@@ -23,7 +23,7 @@ Parameter
 *** parameters to track regipol emissions calculation
 Parameters
   p47_emiTargetMkt(ttot,all_regi,emiMktExt,emi_type_47)            "CO2 or GHG Emissions per emission market used for target level [GtC]"
-  p47_emiTarget_grossEnCO2_noBunkers_iter(iteration,ttot,all_regi) "parameter to save value of gross energy emissions target over iterations to check whether values converge"
+  p47_emiTargetMkt_iter(iteration,ttot,all_regi,emiMktExt,emi_type_47) "parameter to save value of CO2 or GHG Emissions per emission market used for target level [GtC]"
 ;
 
 ***--------------------------------------------------
@@ -60,11 +60,12 @@ $endif.emiMktTargetType
   p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi)    "auxiliary parameter to store reference iteration used for calculating slope of current mititgation cost [#]"
   pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) "multiplicative tax rescale factor that rescales emiMkt carbon price from iteration to iteration to reach regipol targets [%]"
   p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugging purposes [%]"
-
+  p47_clampedRescaleSlope(iteration,ttot,ttot2,ext_regi,emiMktExt) "auxiliary parameter to save the slope value before clamping for debugging purposes [#]"
+  
 *** Parameters necessary to define the CO2 tax curve shape   
   p47_targetConverged(ttot,ext_regi)                 "boolean to store if emission target has converged [0 or 1]"
   p47_targetConverged_iter(iteration,ttot,ext_regi)  "parameter to save p47_targetConverged across iterations [0 or 1]"
-  p47_allTargetsConverged(ext_regi)                  "boolean to store if all emission targets converged at least once [0 or 1]"
+  pm_allTargetsConverged(ext_regi)                  "boolean to store if all emission targets converged at least once [0 or 1]"
   p47_allTargetsConverged_iter(iteration,ext_regi)   "parameter to save p47_allTargetsConverged across iterations [0 or 1]"
   p47_firstTargetYear(ext_regi)                      "first year with a pre defined policy emission target in the region [year]"
   p47_lastTargetYear(ext_regi)                       "last year with a pre defined policy emission target in the region [year]"
@@ -111,7 +112,7 @@ Parameter
 
   pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)  "quantity target [absolute: TWa or GtC; or percentage: 0.1]"  / %cm_implicitQttyTarget% /
 
-  pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup)  "1 (one) if there is a hard bound on the model that does not allow the tax to change further the quantity"
+  pm_implicitQttyTarget_isLimited(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)  "1 (one) if there is a hard bound on the model that does not allow the tax to change further the quantity"
 
   p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) "initial year of quantity target for a given region [year]"
 

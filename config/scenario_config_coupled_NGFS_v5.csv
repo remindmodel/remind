@@ -1,5 +1,6 @@
-title;start;copyConfigFrom;oldrun;path_report;qos;magpie_scen;no_ghgprices_land_until;cm_nash_autoconverge_lastrun;path_gdx;path_gdx_ref;path_gdx_bau
-SSP2-Base;NGFS;;SSP2-Base;;;SSP2|NPI|nocc_hist|rcp4p5;y2150;;;;
+title;start;copyConfigFrom;oldrun;path_report;qos;magpie_scen;no_ghgprices_land_until;.cm_nash_autoconverge_lastrun;path_gdx;path_gdx_ref;path_gdx_bau
+SSP2-Base;;;SSP2-Base;;;SSP2|NPI|nocc_hist|rcp4p5;y2150;;;;
+h_cpol_noUkr;NGFS;;h_cpol;;;SSP2|NPI|nocc_hist|rcp4p5;y2150;2;;;
 h_cpol;NGFS;;h_cpol;;;SSP2|NPI|nocc_hist|rcp4p5;y2150;2;;;
 h_ndc;NGFS;;h_ndc;;;SSP2|NDC|nocc_hist|rcp4p5;y2150;2;;;
 o_1p5c;NGFS;;o_1p5c;;;SSP2|NDC|nocc_hist|rcp1p9;y2030;2;;;
