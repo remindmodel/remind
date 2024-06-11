@@ -63,6 +63,9 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
     );
   );
   
+*** load emiMkt CO2eq prices from input gdx
+Execute_Loadpoint 'input' p47_tau_taxemiMkt = pm_taxemiMkt;
+
 *** initialize carbon taxes based on reference runs
 ***  p47_taxemiMkt_init saves information from reference runs about pm_taxCO2eq (carbon price defined on the carbonprice module) and/or
 ***  pm_taxemiMkt (regipol carbon price) so the carbon tax can be initialized for regions with CO2 tax controlled by cm_emiMktTarget  

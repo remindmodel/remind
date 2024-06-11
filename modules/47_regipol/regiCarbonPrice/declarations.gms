@@ -45,6 +45,7 @@ $else.emiMktTargetType
 $endif.emiMktTargetType
 
 *** Initialization parameters (load data from the gdx)
+  p47_tau_taxemiMkt(ttot,all_regi,emiMkt)   "emiMkt CO2eq prices loaded from input gdx, in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
   p47_taxemiMkt_init(ttot,all_regi,emiMkt)  "emiMkt CO2eq prices loaded from ref gdx, in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
   p47_taxCO2eq_ref(ttot,all_regi)           "CO2eq prices loaded from ref gdx, in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
 

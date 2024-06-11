@@ -127,10 +127,10 @@ pm_eta_conv(t,regi,"tdsyngas")$(sameAs(regi,"DEU") and t.val ge 2020) = 0.975;
 *** initialize exogenous CO2 prices 
 $ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"
 
-*** setting exogenous CO2 prices from the reference gdx
+*** setting exogenous CO2 prices from the input gdx
 $ifThen.regiExoPriceType "%cm_regiExoPrice%" == "gdx" 
-  p47_taxemiMkt(t,regi,emiMkt) = p47_taxemiMkt_init(t,regi,emiMkt);
-  pm_taxCO2eq(t,regi) = p47_taxCO2eq_ref(t,regi);
+  p47_taxemiMkt(t,regi,emiMkt) = p47_tau_taxemiMkt(t,regi,emiMkt);
+  pm_taxCO2eq(t,regi) = pm_tau_CO2_tax_gdx(t,regi);
 *** Removing economy wide co2 tax parameters for regions within the emiMKt controlled targets (this is necessary here to remove any calculation made in other modules after the last run in the postsolve)
   loop((t,regi,emiMkt)$pm_taxemiMkt(t,regi,emiMkt),
     pm_taxCO2eq(t,regi) = 0;
