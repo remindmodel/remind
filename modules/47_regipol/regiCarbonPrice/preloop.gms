@@ -120,5 +120,57 @@ pm_eta_conv("2010",regi,"tdsyngas")$(sameAs(regi,"DEU")) = 0.949;
 pm_eta_conv("2015",regi,"tdsyngas")$(sameAs(regi,"DEU")) = 0.962;
 pm_eta_conv(t,regi,"tdsyngas")$(sameAs(regi,"DEU") and t.val ge 2020) = 0.975;
 
+***---------------------------------------------------------------------------
+*** Exogenous CO2 tax level:
+***---------------------------------------------------------------------------
+
+*** initialize exogenous CO2 prices 
+$ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"
+
+*** setting exogenous CO2 prices from the reference gdx
+$ifThen.regiExoPriceType "%cm_regiExoPrice%" == "gdx" 
+  p47_taxemiMkt(t,regi,emiMkt) = p47_taxemiMkt_init(t,regi,emiMkt);
+  pm_taxCO2eq(t,regi) = p47_taxCO2eq_ref(t,regi);
+*** Removing economy wide co2 tax parameters for regions within the emiMKt controlled targets (this is necessary here to remove any calculation made in other modules after the last run in the postsolve)
+  loop((t,regi,emiMkt)$pm_taxemiMkt(t,regi,emiMkt),
+    pm_taxCO2eq(t,regi) = 0;
+  );
+*** Redefining the pm_taxCO2eqSum parameter
+  pm_taxCO2eqSum(t,regi) = pm_taxCO2eq(t,regi);
+*** Removing additional co2 tax parameters
+  pm_taxCO2eqRegi(t,regi) = 0;
+  pm_taxCO2eqSCC(t,regi) = 0;
+  pm_taxrevGHG0(t,regi) = 0;
+  pm_taxrevCO2Sector0(t,regi,emi_sectors) = 0;
+  pm_taxrevCO2LUC0(t,regi) = 0;
+  pm_taxrevNetNegEmi0(t,regi) = 0;
+display 'update of CO2 prices to exogenously given CO2 prices defined in the reference gdx', pm_taxCO2eq, pm_taxemiMkt;
+
+*** setting exogenous CO2 prices from switch cm_regiExoPrice
+$else.regiExoPriceType
+loop((t,ext_regi)$p47_exoCo2tax(ext_regi,t),
+  loop(regi$regi_group(ext_regi,regi),
+*** Removing the existent co2 tax parameters for regions with exogenous set prices
+    pm_taxCO2eqSum(t,regi) = 0;
+    pm_taxCO2eq(t,regi) = 0;
+    pm_taxCO2eqRegi(t,regi) = 0;
+    pm_taxCO2eqSCC(t,regi) = 0;
+
+    pm_taxrevGHG0(t,regi) = 0;
+    pm_taxrevCO2Sector0(t,regi,emi_sectors) = 0;
+    pm_taxrevCO2LUC0(t,regi) = 0;
+    pm_taxrevNetNegEmi0(t,regi) = 0;
+
+    pm_taxemiMkt(t,regi,emiMkt) = 0;
+
+*** setting exogenous CO2 prices
+    pm_taxCO2eq(t,regi) = p47_exoCo2tax(ext_regi,t)*sm_DptCO2_2_TDpGtC;
+    pm_taxCO2eqSum(t,regi) = pm_taxCO2eq(t,regi);
+  );
+);
+display 'update of CO2 prices due to exogenously given CO2 prices in p47_exoCo2tax', pm_taxCO2eq;
+$endIf.regiExoPriceType
+$endIf.regiExoPrice
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/preloop.gms
 

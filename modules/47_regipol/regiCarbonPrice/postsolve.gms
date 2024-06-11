@@ -882,8 +882,14 @@ $ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"
 
 *** setting exogenous CO2 prices from the reference gdx
 $ifThen.regiExoPriceType "%cm_regiExoPrice%" == "gdx" 
-  Execute_Loadpoint 'input_ref' pm_taxCO2eq = pm_taxCO2eq;
-  Execute_Loadpoint 'input_ref' pm_taxemiMkt = pm_taxemiMkt;
+  p47_taxemiMkt(t,regi,emiMkt) = p47_taxemiMkt_init(t,regi,emiMkt);
+  pm_taxCO2eq(t,regi) = p47_taxCO2eq_ref(t,regi);
+*** Removing economy wide co2 tax parameters for regions within the emiMKt controlled targets (this is necessary here to remove any calculation made in other modules after the last run in the postsolve)
+  loop((t,regi,emiMkt)$pm_taxemiMkt(t,regi,emiMkt),
+    pm_taxCO2eq(t,regi) = 0;
+  );
+*** Redefining the pm_taxCO2eqSum parameter
+  pm_taxCO2eqSum(t,regi) = pm_taxCO2eq(t,regi);
 *** Removing additional co2 tax parameters
   pm_taxCO2eqRegi(t,regi) = 0;
   pm_taxCO2eqSCC(t,regi) = 0;
@@ -891,12 +897,6 @@ $ifThen.regiExoPriceType "%cm_regiExoPrice%" == "gdx"
   pm_taxrevCO2Sector0(t,regi,emi_sectors) = 0;
   pm_taxrevCO2LUC0(t,regi) = 0;
   pm_taxrevNetNegEmi0(t,regi) = 0;
-*** Removing economy wide co2 tax parameters for regions within the emiMKt controlled targets (this is necessary here to remove any calculation made in other modules after the last run in the postsolve)
-  loop((t,regi,emiMkt)$pm_taxemiMkt(t,regi,emiMkt),
-    pm_taxCO2eq(t,regi) = 0;
-  );
-*** Redefining the pm_taxCO2eqSum parameter
-  pm_taxCO2eqSum(t,regi) = pm_taxCO2eq(t,regi);
 display 'update of CO2 prices to exogenously given CO2 prices defined in the reference gdx', pm_taxCO2eq, pm_taxemiMkt;
 
 *** setting exogenous CO2 prices from switch cm_regiExoPrice
