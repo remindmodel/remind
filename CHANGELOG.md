@@ -20,7 +20,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** enhance output script `reportCEScalib` to include additional plot formats [[#1671](https://github.com/remindmodel/remind/pull/1671)
 
 ### added
-- **24_trade** add optinal trade scenario for EUR hydrogen and e-liquids imports [[#1666](https://github.com/remindmodel/remind/pull/1666)] 
+- **24_trade** add optional trade scenario for EUR hydrogen and e-liquids imports [[#1666](https://github.com/remindmodel/remind/pull/1666)] 
+- **24_trade** add optional trade scenario for EUR bio-fuels imports [[#1678](https://github.com/remindmodel/remind/pull/1678)] 
+- **47_regipol** add support for scenario based regional emission targets and add net-zero pledges scenario [[#1674](https://github.com/remindmodel/remind/pull/1674)]
+- **47_regipol** add support for loading exogenous CO2 price from the input gdx [[#1698](https://github.com/remindmodel/remind/pull/1698)] 
 
 ## [3.3.0] - 2024-03-28
 
