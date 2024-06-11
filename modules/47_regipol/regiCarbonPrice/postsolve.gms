@@ -892,32 +892,34 @@ $ifThen.regiExoPriceType "%cm_regiExoPrice%" == "gdx"
   pm_taxrevCO2LUC0(t,regi) = 0;
   pm_taxrevNetNegEmi0(t,regi) = 0;
 *** Removing economy wide co2 tax parameters for regions within the emiMKt controlled targets (this is necessary here to remove any calculation made in other modules after the last run in the postsolve)
-  loop((ttot,regi,emiMkt)$pm_taxemiMkt(ttot,regi,emiMkt),
-    pm_taxCO2eq(ttot,regi) = 0;
+  loop((t,regi,emiMkt)$pm_taxemiMkt(t,regi,emiMkt),
+    pm_taxCO2eq(t,regi) = 0;
   );
 *** Redefining the pm_taxCO2eqSum parameter
-  pm_taxCO2eqSum(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = pm_taxCO2eq(ttot,regi);
+  pm_taxCO2eqSum(t,regi) = pm_taxCO2eq(t,regi);
 display 'update of CO2 prices to exogenously given CO2 prices defined in the reference gdx', pm_taxCO2eq, pm_taxemiMkt;
 
 *** setting exogenous CO2 prices from switch cm_regiExoPrice
 $else.regiExoPriceType
-loop((ttot,ext_regi)$p47_exoCo2tax(ext_regi,ttot),
+loop((t,ext_regi)$p47_exoCo2tax(ext_regi,t),
+  loop(regi$regi_group(ext_regi,regi),
 *** Removing the existent co2 tax parameters for regions with exogenous set prices
-  pm_taxCO2eqSum(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
-  pm_taxCO2eq(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
-  pm_taxCO2eqRegi(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
-  pm_taxCO2eqSCC(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
+    pm_taxCO2eqSum(t,regi) = 0;
+    pm_taxCO2eq(t,regi) = 0;
+    pm_taxCO2eqRegi(t,regi) = 0;
+    pm_taxCO2eqSCC(t,regi) = 0;
 
-  pm_taxrevGHG0(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
-  pm_taxrevCO2Sector0(ttot,regi,emi_sectors)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
-  pm_taxrevCO2LUC0(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
-  pm_taxrevNetNegEmi0(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
+    pm_taxrevGHG0(t,regi) = 0;
+    pm_taxrevCO2Sector0(t,regi,emi_sectors) = 0;
+    pm_taxrevCO2LUC0(t,regi) = 0;
+    pm_taxrevNetNegEmi0(t,regi) = 0;
 
-  pm_taxemiMkt(ttot,regi,emiMkt)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
+    pm_taxemiMkt(t,regi,emiMkt) = 0;
 
 *** setting exogenous CO2 prices
-  pm_taxCO2eq(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = p47_exoCo2tax(ext_regi,ttot)*sm_DptCO2_2_TDpGtC;
-  pm_taxCO2eqSum(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = pm_taxCO2eq(ttot,regi);
+    pm_taxCO2eq(t,regi) = p47_exoCo2tax(ext_regi,t)*sm_DptCO2_2_TDpGtC;
+    pm_taxCO2eqSum(t,regi) = pm_taxCO2eq(t,regi);
+  );
 );
 display 'update of CO2 prices due to exogenously given CO2 prices in p47_exoCo2tax', pm_taxCO2eq;
 $endIf.regiExoPriceType
