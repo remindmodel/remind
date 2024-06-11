@@ -179,7 +179,7 @@ capture.output(cat(logmsg), file = logFile, append = TRUE)
 
 ############################# HARMONIZATION/INFILLING #############################
 
-system(runHarmoniseAndInfillCmd)
+system(paste(runHarmoniseAndInfillCmd, "&>>", logFile))
 
 logmsg <- paste0(date(), "  Done with harmonization & infilling\n")
 cat(logmsg)
@@ -196,7 +196,7 @@ logmsg <- paste0(
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)
 
-system(runClimateEmulatorCmd)
+system(paste(runClimateEmulatorCmd, "&>>", logFile))
 
 ############################# POSTPROCESS CLIMATE OUTPUT #############################
 climateAssessmentOutput <- file.path(
