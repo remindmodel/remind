@@ -114,18 +114,16 @@ q37_emiIndCCSmax(t,regi,emiInd37)$(
             NOT sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
   v37_emiIndCCSmax(t,regi,emiInd37)
   =e=
-    !! map sub-sector emissions to sub-sector MACs
-    !! otherInd has no CCS, therefore no MAC, cement has both fuel and process
-    !! emissions under the same MAC
-    sum(emiMac2mac(emiInd37,macInd37),
-      !! add cement process emissions, which are calculated in core/preloop
-      !! from a econometric fit and might not correspond to energy use (FIXME)
-      ( sum((secInd37_2_emiInd37(secInd37,emiInd37),entyFe),
-          vm_emiIndBase(t,regi,entyFe,secInd37)
-        )$( NOT sameas(emiInd37,"co2cement_process") )
-      + ( vm_emiIndBase(t,regi,"co2cement_process","cement")
-        )$( sameas(emiInd37,"co2cement_process") )
-      )
+  !! map sub-sector emissions to sub-sector MACs
+  !! otherInd has no CCS, therefore no MAC, cement has both fuel and process
+  !! emissions under the same MAC
+  sum(emiMac2mac(emiInd37,macInd37),
+    ( sum((secInd37_2_emiInd37(secInd37,emiInd37),entyFeCC37),
+        vm_emiIndBase(t,regi,entyFeCC37,secInd37)
+      )$( NOT sameas(emiInd37,"co2cement_process") )
+    + ( vm_emiIndBase(t,regi,"co2cement_process","cement")
+      )$( sameas(emiInd37,"co2cement_process") )
+    )
     * pm_macSwitch(macInd37)              !! sub-sector CCS available or not
     * pm_macAbatLev(t,regi,macInd37)   !! abatement level at current price
   )
