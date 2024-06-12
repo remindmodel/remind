@@ -261,6 +261,9 @@ p_inco0(ttot,regi,te)               = s_DpKW_2_TDpTW       * p_inco0(ttot,regi,t
 fm_dataglob("inco0","csp")              = 0.7 * fm_dataglob("inco0","csp");
 fm_dataglob("incolearn","csp")          = 0.7 * fm_dataglob("incolearn","csp");
 
+*KK* adjust costs for oae from USD/GtCaO to USD/GtC
+fm_dataglob("inco0", "oae") = fm_dataglob("inco0", "oae") / (cm_33_oae_eff / sm_c_2_co2);
+fm_dataglob("omf", "oae")   = fm_dataglob("omf", "oae") / (cm_33_oae_eff / sm_c_2_co2);
 
 *** --------------------------------------------------------------------------------
 *** Regionalize technology investment cost data

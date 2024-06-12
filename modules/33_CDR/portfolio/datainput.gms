@@ -50,14 +50,14 @@ p33_fedem("weathering", "fedie") = 0.3;
 *' Factor distributing the global rock limit across regions according to population
 p33_LimRock(regi) = pm_pop("2005",regi) / sum(regi2,pm_pop("2005",regi2));
 
-*** ocean alkalinity enhancement input data
+*** ocean alkalinity enhancement input data (Kowalczyk et al., 2024)
 
 !! An assumption; generally the efficiency might vary between 1.2-1.8 tCO2/tCaO,
 !! depending on e.g., ocean chemistry and currents in a given region
 s33_OAE_efficiency = cm_33_oae_eff / sm_c_2_co2; !!   GtC (ocean uptake) per unit of GtCaO
 
 !! 0.78 tCO2 are emitted in the decomposition of limestone to produce 1 tCaO
-s33_OAE_chem_decomposition = 0.78 / sm_c_2_co2 / s33_oae_efficiency; !! GtC from decomposition per 1GtC taken by the ocean
+s33_OAE_chem_decomposition = 0.78 / sm_c_2_co2 / s33_oae_efficiency; !! GtC from decomposition per 1GtC taken by the ocean, 0.78 t/tCaO
 
 p33_fedem("oae", "feels") = 1.0 / s33_OAE_efficiency; !! 996 MJ/tCaO
 p33_fedem("oae", "fehes") = 3.1 / s33_OAE_efficiency; !! 3100 MJ/tCaO
@@ -76,8 +76,6 @@ $ifthen.OAE_glo_limit not %cm_33_OAE_lim% == "off"
 *** note that an alternative to using this is the qttyTarget (preferred)
 s33_OAE_glo_limit = %cm_33_OAE_lim% / 1000 / sm_c_2_co2;
 $endif.OAE_glo_limit
-
-vm_costTeCapital.fx(t,regi,"oae") = pm_inco0_t(t, regi, "oae") / s33_OAE_efficiency;
 
 *' @stop
 
