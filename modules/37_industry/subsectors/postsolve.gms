@@ -78,8 +78,8 @@ pm_IndstCO2Captured(ttot,regi,entySe,entyFe(entyFeCC37),secInd37,emiMkt)$(
       vm_emiIndCCS.l(ttot,regi,emiInd37)
       ) !! subsector captured energy emissions
 
-    / sum(entyFE2,
-        vm_emiIndBase.l(ttot,regi,entyFE2,secInd37)
+    / sum(entyFeCC37_2,
+        vm_emiIndBase.l(ttot,regi,entyFeCC37_2,secInd37)
       ) !! subsector total energy emissions
     ) !! subsector capture share
 ;
