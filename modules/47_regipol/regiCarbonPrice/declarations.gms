@@ -23,7 +23,7 @@ Parameter
 *** parameters to track regipol emissions calculation
 Parameters
   p47_emiTargetMkt(ttot,all_regi,emiMktExt,emi_type_47)            "CO2 or GHG Emissions per emission market used for target level [GtC]"
-  p47_emiTarget_grossEnCO2_noBunkers_iter(iteration,ttot,all_regi) "parameter to save value of gross energy emissions target over iterations to check whether values converge"
+  p47_emiTargetMkt_iter(iteration,ttot,all_regi,emiMktExt,emi_type_47) "parameter to save value of CO2 or GHG Emissions per emission market used for target level [GtC]"
 ;
 
 ***--------------------------------------------------
@@ -31,7 +31,18 @@ Parameters
 ***--------------------------------------------------
 $ifThen.emiMkt not "%cm_emiMktTarget%" == "off" 
 Parameter
+
+$ifThen.emiMktTargetType "%cm_emiMktTarget%" == "nzero" 
+  pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) "region emissions target [GtCO2 or GtCO2eq]" / 
+    2020.2030.EU27_regi.all.year.netGHG_LULUCFGrassi_intraRegBunker 2.221  !! European Union 2030 GHG target
+    2020.2030.DEU.all.year.netGHG_noLULUCF_noBunkers 0.44                  !! Germany 2030 GHG target
+    2035.(2050.EU27_regi,2045.DEU).all.year.netGHG_LULUCFGrassi 0.001      !! European Union and Germany 2050 GHG_LULUCFGrassi target
+    2020.2050.(JPN,UKI,USA).all.year.netGHG 0.001                          !! Japan, UK and USA 2050 GHG target
+    2020.(2060.CHA,2070.IND).all.year.netCO2 0.001                         !! China 2060 and India 2070 CO2 target
+  /
+$else.emiMktTargetType
   pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) "region emissions target [GtCO2 or GtCO2eq]" / %cm_emiMktTarget% /
+$endif.emiMktTargetType
 
 *** Initialization parameters (load data from the gdx)
   p47_taxemiMkt_init(ttot,all_regi,emiMkt)  "emiMkt CO2eq prices loaded from ref gdx, in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
@@ -49,11 +60,12 @@ Parameter
   p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi)    "auxiliary parameter to store reference iteration used for calculating slope of current mititgation cost [#]"
   pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) "multiplicative tax rescale factor that rescales emiMkt carbon price from iteration to iteration to reach regipol targets [%]"
   p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugging purposes [%]"
-
+  p47_clampedRescaleSlope(iteration,ttot,ttot2,ext_regi,emiMktExt) "auxiliary parameter to save the slope value before clamping for debugging purposes [#]"
+  
 *** Parameters necessary to define the CO2 tax curve shape   
   p47_targetConverged(ttot,ext_regi)                 "boolean to store if emission target has converged [0 or 1]"
   p47_targetConverged_iter(iteration,ttot,ext_regi)  "parameter to save p47_targetConverged across iterations [0 or 1]"
-  p47_allTargetsConverged(ext_regi)                  "boolean to store if all emission targets converged at least once [0 or 1]"
+  pm_allTargetsConverged(ext_regi)                  "boolean to store if all emission targets converged at least once [0 or 1]"
   p47_allTargetsConverged_iter(iteration,ext_regi)   "parameter to save p47_allTargetsConverged across iterations [0 or 1]"
   p47_firstTargetYear(ext_regi)                      "first year with a pre defined policy emission target in the region [year]"
   p47_lastTargetYear(ext_regi)                       "last year with a pre defined policy emission target in the region [year]"
@@ -100,7 +112,7 @@ Parameter
 
   pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)  "quantity target [absolute: TWa or GtC; or percentage: 0.1]"  / %cm_implicitQttyTarget% /
 
-  pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup)  "1 (one) if there is a hard bound on the model that does not allow the tax to change further the quantity"
+  pm_implicitQttyTarget_isLimited(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)  "1 (one) if there is a hard bound on the model that does not allow the tax to change further the quantity"
 
   p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) "initial year of quantity target for a given region [year]"
 

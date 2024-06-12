@@ -1339,7 +1339,7 @@ $if %carbonprice% == "NDC"      pm_macSwitch(emiMacMagpie) = 0;
 $if %carbonprice% == "NPi"      pm_macSwitch(emiMacMagpie) = 0;
 
 *** Load historical carbon prices defined in $/t CO2, need to be rescaled to right unit
-pm_taxCO2eq(t,regi)$(t.val le 2020) = 0;
+pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = 0;
 parameter f_taxCO2eqHist(ttot,all_regi)       "historic CO2 prices ($/tCO2)"
 /
 $ondelim
@@ -1347,7 +1347,7 @@ $include "./core/input/pm_taxCO2eqHist.cs4r"
 $offdelim
 /
 ;
-pm_taxCO2eq(t,regi)$(t.val le 2020) = f_taxCO2eqHist(t,regi) * sm_DptCO2_2_TDpGtC;
+pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = f_taxCO2eqHist(ttot,regi) * sm_DptCO2_2_TDpGtC;
 
 
 *DK* LU emissions are abated in MAgPIE in coupling mode
@@ -1355,7 +1355,7 @@ pm_taxCO2eq(t,regi)$(t.val le 2020) = f_taxCO2eqHist(t,regi) * sm_DptCO2_2_TDpGt
 $if %cm_MAgPIE_coupling% == "on"  pm_macSwitch(enty)$emiMacMagpie(enty) = 0;
 *** As long as there is hardly any CO2 LUC reduction in MAgPIE we dont need MACs in REMIND
 $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("co2luc") = 0;
-*** The tiny fraction n2ofertsom of total land use n2o can get slitghliy negative in some cases. Ignore MAC for n2ofertsom by default.
+*** The tiny fraction n2ofertsom of total land use n2o can get slightly negative in some cases. Ignore MAC for n2ofertsom by default.
 $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("n2ofertsom") = 0;
 
 pm_macCostSwitch(enty)=pm_macSwitch(enty);
@@ -1470,16 +1470,9 @@ $offdelim
 /
 ;
 
-pm_emifacNonEnergy(ttot,regi,"segafos","fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,"sesofos", "fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids")  / s_zj_2_twa;
 pm_emifacNonEnergy(ttot,regi,"seliqfos","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"sesofos","fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids") / s_zj_2_twa;
-
-pm_emifacNonEnergy(ttot,regi,"segabio","fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"seliqbio","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"sesobio","fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids") / s_zj_2_twa;
-
-pm_emifacNonEnergy(ttot,regi,"segasyn","fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"seliqsyn","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,"segafos", "fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases")   / s_zj_2_twa;
 
 ***------ Read in projections for incineration rates of plastic waste---
 *** "incineration rates [fraction]"

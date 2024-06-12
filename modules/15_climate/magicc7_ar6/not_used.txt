@@ -4,10 +4,6 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-test_that("start.R works", {
-  skipIfFast()
-  skipIfPreviousFailed()
-  output <- localSystem2("Rscript", c("start.R", "titletag=AMT", "config/tests/scenario_config_default.csv"))
-  printIfFailed(output)
-  expectSuccessStatus(output)
-})
+name, type, reason
+sm_budgetCO2eqGlob, parameter, Deprecated
+pm_budgetCO2eq, parameter, Deprecated
