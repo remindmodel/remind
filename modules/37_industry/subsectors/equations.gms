@@ -176,8 +176,8 @@ q37_IndCCSCost(t,regi,emiInd37)$(
   =e=
     1e-3
   * pm_macSwitch(emiInd37)
-  * ( sum((enty,secInd37_2_emiInd37(secInd37,emiInd37)),
-        vm_emiIndBase(t,regi,enty,secInd37)
+  * ( sum((entyFeCC37,secInd37_2_emiInd37(secInd37,emiInd37)),
+        vm_emiIndBase(t,regi,entyFeCC37,secInd37)
       )$( NOT sameas(emiInd37,"co2cement_process") )
     + ( vm_emiIndBase(t,regi,"co2cement_process","cement")
       )$( sameas(emiInd37,"co2cement_process") )
