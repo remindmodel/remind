@@ -631,7 +631,7 @@ alias(opmoPrc,opmoCCPrc);
 alias(opmoPrc,opmoPrc1);
 alias(opmoPrc,opmoPrc2);
 alias(route,route2);
-
+alias(entyFeCC37,entyFeCC37_2);
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfEn37,fe2ppfEn37_2);
 *** EOF ./modules/37_industry/subsectors/sets.gms
