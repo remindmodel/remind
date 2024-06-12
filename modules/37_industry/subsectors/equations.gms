@@ -81,8 +81,9 @@ $endif.exogDem_scen
 *' energy mix, as that is what can be captured); vm_emiIndBase itself is not used for emission
 *' accounting, just as a CCS baseline.
 ***------------------------------------------------------
-q37_emiIndBase(t,regi,enty,secInd37)$( entyFeCC37(enty) OR sameas(enty,"co2cement_process") ) ..
-    vm_emiIndBase(t,regi,enty,secInd37)
+q37_emiIndBase(t,regi,enty,secInd37)$(   entyFeCC37(enty) 
+                                      OR sameas(enty,"co2cement_process") ) ..
+  vm_emiIndBase(t,regi,enty,secInd37)
   =e=
     sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfEn(entyFeCC37(enty),in)),
       ( vm_cesIO(t,regi,in)
@@ -90,20 +91,18 @@ q37_emiIndBase(t,regi,enty,secInd37)$( entyFeCC37(enty) OR sameas(enty,"co2cemen
         * vm_cesIO(t,regi,in)
         )$( in_chemicals_feedstock_37(in) )
       )
-        *
-        sum(se2fe(entySeFos,enty,te),
-            pm_emifac(t,regi,entySeFos,enty,te,"co2")
-        )
-    )$(NOT secInd37Prc(secInd37))
-    +
-    (s37_clinker_process_CO2
+    * sum(se2fe(entySeFos,enty,te),
+        pm_emifac(t,regi,entySeFos,enty,te,"co2")
+      )
+    )$( NOT secInd37Prc(secInd37) )
+  + ( s37_clinker_process_CO2
     * p37_clinker_cement_ratio(t,regi)
     * vm_cesIO(t,regi,"ue_cement")
-    / sm_c_2_co2)$(sameas(enty,"co2cement_process") AND sameas(secInd37,"cement"))
-    +
-    sum((secInd37_tePrc(secInd37,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
-        v37_emiPrc(t,regi,enty,tePrc,opmoPrc)
-    )$(secInd37Prc(secInd37))
+    / sm_c_2_co2
+    )$( sameas(enty,"co2cement_process") AND sameas(secInd37,"cement") )
+  + sum((secInd37_tePrc(secInd37,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
+      v37_emiPrc(t,regi,enty,tePrc,opmoPrc)
+    )$( secInd37Prc(secInd37) )
 ;
 
 ***------------------------------------------------------
@@ -111,7 +110,7 @@ q37_emiIndBase(t,regi,enty,secInd37)$( entyFeCC37(enty) OR sameas(enty,"co2cemen
 *' CO2 price.
 ***------------------------------------------------------
 q37_emiIndCCSmax(t,regi,emiInd37)$(
-            NOT sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
+           NOT sum(secInd37Prc, secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
   v37_emiIndCCSmax(t,regi,emiInd37)
   =e=
   !! map sub-sector emissions to sub-sector MACs
