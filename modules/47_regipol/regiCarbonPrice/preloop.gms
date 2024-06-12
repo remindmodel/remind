@@ -139,7 +139,7 @@ $ifThen.regiExoPriceType "%cm_regiExoPrice%" == "gdx"
   pm_taxrevCO2Sector0(t,regi,emi_sectors) = 0;
   pm_taxrevCO2LUC0(t,regi) = 0;
   pm_taxrevNetNegEmi0(t,regi) = 0;
-display 'update of CO2 prices to exogenously given CO2 prices defined in the reference gdx', pm_taxCO2eq, pm_taxemiMkt;
+display 'update of CO2 prices to exogenously given CO2 prices defined in the input gdx', pm_taxCO2eq, pm_taxemiMkt;
 
 *** setting exogenous CO2 prices from switch cm_regiExoPrice
 $else.regiExoPriceType
