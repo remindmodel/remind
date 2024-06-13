@@ -19,7 +19,8 @@ p51_scc(tall)$((tall.val ge 2020) and (tall.val le 2150)) = 1000 *
 	* pm_consPC(tall,regi2)/pm_consPC(tall2,regi2) 
 	* pm_GDPGross(tall2,regi2)
 	* pm_temperatureImpulseResponseCO2(tall2,tall)
-	* pm_damageMarginal(tall2,regi2)
+*	* pm_damageMarginal(tall2,regi2)
+	* sum(regi2iso(regi2,iso),pm_damageMarginalIsoPerc(tall2,iso,"%cm_KotzWenzPerc%")*pm_GDPfrac(tall2,iso))
     )
    )
 ;
