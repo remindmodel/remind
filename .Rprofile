@@ -16,6 +16,7 @@ renvVersion <- "1.0.7"
 if (packageVersion("renv") != renvVersion) {
   renvLockExisted <- file.exists(renv::paths$lockfile())
   renv::install(paste0("renv@", renvVersion))
+  message("Downloading 'renv/activate.R' of renv version 1.0.7")
   download.file("https://raw.githubusercontent.com/remindmodel/remind/b83bb1811ff08d8ee5ba8e834af5dd0080d10e66/renv/activate.R", "renv/activate.R")
   if (!renvLockExisted) {
     unlink(renv::paths$lockfile())
