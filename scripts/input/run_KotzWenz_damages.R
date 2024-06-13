@@ -11,9 +11,12 @@ require(dplyr)
 require(gdxrrw)
 igdx(system("dirname $( which gams )", intern = TRUE))
 
-beta1 <- read.csv("../../modules/50_damages/KotzWenz/input/PERC_scaling_coefs_ssp2_ssp585_lagdiff_lintren_fix_spec_NL_8_9_10_movfix_30_Nboot1000_beta1.csv") %>% select(-"X")
-beta2 <- read.csv("../../modules/50_damages/KotzWenz/input/PERC_scaling_coefs_ssp2_ssp585_lagdiff_lintren_fix_spec_NL_8_9_10_movfix_30_Nboot1000_beta2.csv") %>% select(-"X")
-maxtemp <- read.csv("../../modules/50_damages/KotzWenz/input/PERC_scaling_coefs_ssp2_ssp585_lagdiff_lintren_fix_spec_NL_8_9_10_movfix_30_Nboot1000_maxGMT.csv") %>% select(-"X")
+#beta1 <- read.csv("../../modules/50_damages/KotzWenz/input/PERC_scaling_coefs_ssp2_ssp585_lagdiff_lintren_fix_spec_NL_8_9_10_movfix_30_Nboot1000_beta1.csv") %>% select(-"X")
+#beta2 <- read.csv("../../modules/50_damages/KotzWenz/input/PERC_scaling_coefs_ssp2_ssp585_lagdiff_lintren_fix_spec_NL_8_9_10_movfix_30_Nboot1000_beta2.csv") %>% select(-"X")
+#maxtemp <- read.csv("../../modules/50_damages/KotzWenz/input/PERC_scaling_coefs_ssp2_ssp585_lagdiff_lintren_fix_spec_NL_8_9_10_movfix_30_Nboot1000_maxGMT.csv") %>% select(-"X")
+beta1 <- read.csv("../../modules/50_damages/KotzWenz/input/f50_KLW_df_beta1.cs4r") %>% select(-"X")
+beta2 <- read.csv("../../modules/50_damages/KotzWenz/input/f50_KLW_df_beta2.cs4r") %>% select(-"X")
+maxtemp <- read.csv("../../modules/50_damages/KotzWenz/input/f50_KLW_df_maxGMT.cs4r") %>% select(-"X")
 
 getTemperatureMagicc = function(file = "./magicc/DAT_SURFACE_TEMP.OUT"){
   x = read.table(file, skip = 19,header = T)
