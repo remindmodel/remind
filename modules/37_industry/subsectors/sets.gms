@@ -624,14 +624,10 @@ pf_quan_target_dyn29(pf_quan_target_dyn37)  = YES;
 $endif.calibrate
 
 teMat2rlf(tePrc,"1") = YES;
-alias(tePrc,teCCPrc);
-alias(tePrc,tePrc1);
-alias(tePrc,tePrc2);
-alias(opmoPrc,opmoCCPrc);
-alias(opmoPrc,opmoPrc1);
-alias(opmoPrc,opmoPrc2);
+alias(tePrc,teCCPrc,tePrc1,tePrc2);
+alias(opmoPrc,opmoCCPrc,opmoPrc1,opmoPrc2);
 alias(route,route2);
-
+alias(entyFeCC37,entyFeCC37_2);
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfEn37,fe2ppfEn37_2);
 *** EOF ./modules/37_industry/subsectors/sets.gms
