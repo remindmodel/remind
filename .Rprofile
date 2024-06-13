@@ -10,6 +10,9 @@ if (file.exists("renv.lock") && file.exists("README.md") && !file.exists("renv/o
   message("moved legacy renv.lock to renv/old_renv.lock")
 }
 
+# do not check if library and renv.lock are in sync, because normally renv.lock does not exist
+options(renv.config.synchronized.check = FALSE)
+
 source("renv/activate.R")
 
 renvVersion <- "1.0.7"
