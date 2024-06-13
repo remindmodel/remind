@@ -727,4 +727,8 @@ if (cm_startyear gt 2005,
 );
 $endif.cm_subsec_model_steel
 
+if (cm_startyear gt 2005,
+  execute_load "input_ref.gdx" v37_plasticWaste.l = v37_plasticWaste.l;
+);
+
 *** EOF ./modules/37_industry/subsectors/datainput.gms
