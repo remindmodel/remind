@@ -12,10 +12,11 @@ if (file.exists("renv.lock") && file.exists("README.md") && !file.exists("renv/o
 
 source("renv/activate.R")
 
-renvVersion <- "0.16.0"
+renvVersion <- "1.0.7"
 if (packageVersion("renv") != renvVersion) {
   renvLockExisted <- file.exists(renv::paths$lockfile())
-  renv::upgrade(version = renvVersion, reload = TRUE, prompt = FALSE)
+  renv::install(paste0("renv@", renvVersion))
+  download.file("https://raw.githubusercontent.com/remindmodel/remind/b83bb1811ff08d8ee5ba8e834af5dd0080d10e66/renv/activate.R", "renv/activate.R")
   if (!renvLockExisted) {
     unlink(renv::paths$lockfile())
   }
