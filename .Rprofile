@@ -15,6 +15,8 @@ options(renv.config.synchronized.check = FALSE)
 
 source("renv/activate.R")
 
+# when increasing renvVersion first commit new version's activate script and
+# put that commit's hash into the download.file call below
 renvVersion <- "1.0.7"
 if (packageVersion("renv") != renvVersion) {
   renvLockExisted <- file.exists(renv::paths$lockfile())
