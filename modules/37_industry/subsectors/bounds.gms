@@ -133,6 +133,10 @@ $ifthen.policy_scenario "%cm_indstExogScen_set%" == "YES"
 $endif.policy_scenario
 $drop cm_indstExogScen_set
 
+!! fix plastic waste to zero in historic years
+v37_plasticWaste.fx(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
+                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
+                     AND ttot.val lt max(2015, cm_startyear)               ) = 0.;
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 !! fix processes procudction in historic years
