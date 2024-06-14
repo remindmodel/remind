@@ -19,7 +19,7 @@ parameters
 p35_esCapCost(tall,all_regi,all_GDPscen,all_demScen,EDGE_scenario_all,all_teEs) "Capital costs for the transport system [$/pkm or $/tkm]"
 /
 $ondelim
-$include "./modules/35_transport/edge_esm/input/esCapCost.cs4r"
+$include "./modules/35_transport/edge_esm/input/f35_esCapCost.cs4r"
 $offdelim
 /
 
@@ -40,7 +40,7 @@ $offdelim
 p35_demByTech(tall,all_regi,all_GDPscen,all_demScen,EDGE_scenario_all,all_enty,all_in,all_teEs) "Aggregate FE Demand per transport fuel technology [TWa]"
 /
 $ondelim
-$include "./modules/35_transport/edge_esm/input/p35_demByTech.cs4r"
+$include "./modules/35_transport/edge_esm/input/f35_demByTech.cs4r"
 $offdelim
 /
 
@@ -49,7 +49,7 @@ p35_shFeCes(tall,all_regi,all_GDPscen,all_demScen,EDGE_scenario_all,all_enty,all
 ;
 
 *** calculate shares for fuels by CES node
-p35_shFeCes(ttot,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%",entyFe,ppfen_dyn35,teEs_dyn35)$(fe2ces_dyn35(entyFe,ppfen_dyn35,teEs_dyn35) AND (ttot.val ge 1995)) =
+p35_shFeCes(ttot,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%",entyFe,ppfen_dyn35,teEs_dyn35)$(fe2ces_dyn35(entyFe,ppfen_dyn35,teEs_dyn35) AND (ttot.val ge 2005)) =
         p35_demByTech(ttot,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%",entyFe,ppfen_dyn35,teEs_dyn35) / sum((entyFe2,teEs_dyn35_2)$fe2ces_dyn35(entyFe2,ppfen_dyn35,teEs_dyn35_2),p35_demByTech(ttot,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%",entyFe2,ppfen_dyn35,teEs_dyn35_2));
 
 
