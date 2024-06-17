@@ -65,7 +65,12 @@ o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
 pm_IndstCO2Captured(ttot,regi,entySe,entyFe(entyFeCC37),secInd37,emiMkt)$(
                      emiInd37_fe2sec(entyFe,secInd37)
                  AND sum(entyFE2, vm_emiIndBase.l(ttot,regi,entyFE2,secInd37)) )
-  = ( o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
+  = (
+      ( o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
+        !! substract FE non-energy use in chemicals which is not combusted
+      - vm_demFENonEnergySector.l(ttot,regi,entySe,entyFe,"indst",emiMkt)$( sameas(secInd37,"chemicals") )
+      )
+
     * sum(se2fe(entySE2,entyFe,te),
         !! collapse entySe dimension, so emission factors apply to all entyFe
         !! regardless or origin, and therefore entySEbio and entySEsyn have
