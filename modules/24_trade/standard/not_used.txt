@@ -15,3 +15,7 @@ pm_ttot_val,parameter,only used in capacity realization
 pm_ts,parameter,only used in capacity realization
 pm_prodFEReference, parameter, not needed
 sm_TWa_2_TWh, parameter, not needed
+sm_trillion_2_non, parameter, not needed
+sm_GJ_2_TWa, parameter, not needed
+sm_TWa_2_kWh, parameter, not needed
+sm_h2kg_2_h2kWh, parameter, not needed
