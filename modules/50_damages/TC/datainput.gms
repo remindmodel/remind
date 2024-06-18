@@ -43,8 +43,8 @@ $include "./modules/50_damages/TC/input/f50_gdp.cs3r"
 $offdelim
 ;
 
-*calculate and interpolate country GDP fraction of regional GDP for SSP2EU scenario, country GDP is in PPP, regional GDP in trl MER!
-pm_GDPfrac(tall,iso)=f50_countryGDP(tall,iso,"gdp_SSP2EU")/1000000/sum(regi2iso(regi,iso),pm_gdp(tall,regi)/pm_shPPPMER(regi));
+*calculate and interpolate country GDP fraction of regional GDP for SSP2 scenario, country GDP is in PPP, regional GDP in trl MER!
+pm_GDPfrac(tall,iso)=f50_countryGDP(tall,iso,"gdp_SSP2")/1000000/sum(regi2iso(regi,iso),pm_gdp(tall,regi)/pm_shPPPMER(regi));
 loop(ttot$(ttot.val ge 2005),
 	loop(tall$(pm_tall_2_ttot(tall,ttot)),
 		pm_GDPfrac(tall,iso) = 

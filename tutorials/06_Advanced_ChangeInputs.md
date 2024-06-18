@@ -46,7 +46,7 @@ If you want to peek inside the archive to debug something or out of curiosity yo
 3. Start the script with `Rscript submit_preprocessing.R`.
 The .log file lists the progress and potential errors. This process might take a while (currently >8 hours).
 
-4. If the process terminates without errors, do a test run with the new input data. To do this, clone the REMIND repo and update the data input version `cfg$revision` in `config/default.cfg` using your recently created data revision number file and run one scenario (e.g. SSP2EU-Base).
+4. If the process terminates without errors, do a test run with the new input data. To do this, clone the REMIND repo and update the data input version `cfg$revision` in `config/default.cfg` using your recently created data revision number file and run one scenario (e.g. SSP2-Base).
 
 4.a ATTENTION: If your new input data change FE pathways, population, GDP trajectories or substantial behaviour of REMIND, you need to rerun the CES parameter calibration (see tutorial 12_Calibrating_CES_Parameters) and adjust the input data revision together with the updated CES parameters.
 
