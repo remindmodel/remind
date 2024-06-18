@@ -178,16 +178,6 @@ loop (industry_ue_calibration_target_dyn37(out),
   );
 );
 
-*** for ARIADNE scenarios, set minimum energy limit (FE/industry production) in policy runs to energy limit of reference (Npi) run from 2025
-*** as this is already quite optimsitic especially in the near-term
-if (cm_startyear gt 2005,
-  loop (industry_ue_calibration_target_dyn37(out),
-    p37_energy_limit_slope(t,regi,out)$(t.val ge 2025) = sum(ces_eff_target_dyn37(out,in),
-                                                            p37_cesIO_baseline(t,regi,in))
-                                                          / p37_cesIO_baseline(t,regi,out);
-  );
-);
-
 display p37_energy_limit_def, p37_energy_limit_slope;
 
 $endif.no_calibration
