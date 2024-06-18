@@ -428,7 +428,7 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
 		      display "#### Just trying a different gdx may help.";
 	      );	 
 	      if(sameas(convMessage80, "taxconv"),
-		      display "#### 4.) Taxes did not converge in all regions and time steps. Absolute level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_convNashTaxrev_iter below.";
+		      display "#### 4.) Taxes did not converge in all regions and time steps. Absolute level of tax revenue must be smaller than 0.1 percent of GDP. Check p80_convNashTaxrev_iter below.";
 	      );
         if(sameas(convMessage80, "DevPriceAnticip"),
 		      display "#### 5.) The total monetary value of the price anticipation term times the traded amount are larger than the goods imbalance threshold * 0.1";
@@ -547,7 +547,7 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
 	     );	 
 	     if(sameas(convMessage80, "taxconv"),
 		 display "####";
-		 display "#### 4.) Taxes did not converge in all regions and time steps. Absolut level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_convNashTaxrev_iter.";
+		 display "#### 4.) Taxes did not converge in all regions and time steps. Absolut level of tax revenue must be smaller than 0.1 percent of GDP. Check p80_convNashTaxrev_iter.";
 	     );	
       if(sameas(convMessage80, "anticip"),
 		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";
