@@ -38,7 +38,10 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
 *** Auxiliar parameters based on emission targets information
   loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47), !!calculated sets that depends on data parameter
     regiEmiMktTarget(ext_regi) = yes; !! assigning values to set containing extended regions that have regional emission targets  
-    regiANDperiodEmiMktTarget_47(ttot2,ext_regi) = yes; !! assigning values to set containing extended regions and terminal years of regional emission targets  
+    regiANDperiodEmiMktTarget_47(ttot2,ext_regi) = yes; !! assigning values to set containing extended regions and terminal years of regional emission targets 
+    loop(regi$regi_groupExt(ext_regi,regi),
+      regiNativeEmiMktTarget(regi) = yes; !! assigning values to set containing native regions that have regional emission targets  
+    );
   );
 
 *** Calculating set containing regions that should be controlled by a given regional emission target. 
@@ -324,10 +327,24 @@ $endif.exogDemScen
 ***---------------------------------------------------------------------------
 *** Exogenous CO2 tax level:
 ***---------------------------------------------------------------------------
+$ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"
 $ifThen.regiExoPriceType "%cm_regiExoPrice%" == "gdx" 
 *** load emiMkt CO2eq prices from input gdx
 Execute_Loadpoint 'input' p47_tau_taxemiMkt = pm_taxemiMkt;
+*** assigning values to set containing native regions that have exogenously fixed emission market co2 prices
+loop((t,regi,emiMkt)$p47_tau_taxemiMkt(t,regi,emiMkt),
+  regiNativeEmiMktTarget(regi) = yes;
+);
+$else.regiExoPriceType
+*** assigning values to set containing native regions that have exogenously fixed emission market co2 prices
+loop((t,ext_regi)$p47_exoCo2tax(ext_regi,t),
+  loop(regi$regi_group(ext_regi,regi),
+    regiNativeEmiMktTarget(regi) = yes;
+  );
+);
 $endIf.regiExoPriceType
+$endIf.regiExoPrice
+
 
 
 

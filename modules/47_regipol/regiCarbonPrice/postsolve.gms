@@ -145,19 +145,17 @@ p47_emiTargetMkt_iter(iteration,ttot,regi, emiMktExt,emi_type_47) = p47_emiTarge
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
 
 *** Removing economy wide co2 tax parameters for regions within the emiMKt controlled targets (this is necessary here to remove any calculation made in other modules after the last run in the postsolve)
-  loop(ext_regi$regiEmiMktTarget(ext_regi),
-    loop(regi$regi_groupExt(ext_regi,regi),
+  loop(regi$regiNativeEmiMktTarget(regi),
 *** Removing the economy wide co2 tax parameters for regions within the ETS markets
-      pm_taxCO2eqSum(t,regi) = 0;
-      pm_taxCO2eq(t,regi) = 0;
-      pm_taxCO2eqRegi(t,regi) = 0;
-      pm_taxCO2eqSCC(t,regi) = 0;
+    pm_taxCO2eqSum(t,regi) = 0;
+    pm_taxCO2eq(t,regi) = 0;
+    pm_taxCO2eqRegi(t,regi) = 0;
+    pm_taxCO2eqSCC(t,regi) = 0;
 
-      pm_taxrevGHG0(t,regi) = 0;
-      pm_taxrevCO2Sector0(t,regi,emi_sectors) = 0;
-      pm_taxrevCO2LUC0(t,regi) = 0;
-      pm_taxrevNetNegEmi0(t,regi) = 0;
-    );
+    pm_taxrevGHG0(t,regi) = 0;
+    pm_taxrevCO2Sector0(t,regi,emi_sectors) = 0;
+    pm_taxrevCO2LUC0(t,regi) = 0;
+    pm_taxrevNetNegEmi0(t,regi) = 0;
   );
 
 *** Calculating the current emission levels...

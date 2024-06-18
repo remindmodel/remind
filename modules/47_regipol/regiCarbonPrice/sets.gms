@@ -19,6 +19,7 @@ emi_type_47 "emission type used in regional target"
 *** Emission markets
 $ifThen.emiMkt not "%cm_emiMktTarget%" == "off" 
   regiEmiMktTarget(ext_regi)                   "regions with emiMkt targets" / /
+  regiNativeEmiMktTarget(all_regi)             "native regions with emiMkt targets" / /
   regiANDperiodEmiMktTarget_47(ttot,ext_regi)  "regions and periods with emiMkt targets" / /
   regiEmiMktTarget2regi_47(ext_regi,all_regi)  "regions controlled by emiMkt market set to ext_regi" / / 
   rescaleType                                  "carbon price scaling types" / "squareDev_firstIteration", "squareDev_perfectMatch", "squareDev_smallChange", "squareDev_noChange", "slope_prevIteration", "slope_firstIteration"/
