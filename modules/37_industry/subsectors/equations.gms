@@ -306,6 +306,15 @@ q37_incinerationEmi(t,regi,sefe(entySe,entyFe),emiMkt)$(
   * (1 - p37_regionalWasteIncinerationCCSshare(t,regi))
 ;
 
+q37_incinerationCCS(t,regi,sefe(entySe,entyFe),emiMkt)$(
+                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
+  vm_incinerationCCS(t,regi,entySe,entyFe,emiMkt)
+  =e=
+    v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
+  * pm_incinerationRate(t,regi)
+  * p37_regionalWasteIncinerationCCSshare(t,regi)
+;
+
 *' calculate carbon contained in non-incinerated plastics
 *' this is used in emissions accounting to subtract the carbon that gets
 *' sequestered in plastic products

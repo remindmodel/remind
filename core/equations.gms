@@ -819,6 +819,10 @@ q_balcapture(t,regi,ccs2te(ccsCo2(enty),enty2,te)) ..
   + sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
     !! carbon captured from industry
   + sum(emiInd37, vm_emiIndCCS(t,regi,emiInd37))
+  + sum((sefe(entySe,entyFe),emiMkt)$( 
+                            entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ),
+      vm_incinerationCCS(t,regi,entySe,entyFe,emiMkt)
+    )
 ;
 
 ***---------------------------------------------------------------------------
