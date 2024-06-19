@@ -7,6 +7,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### changed
+
+### added
+
+### fixed
+
+### removed
+
+## [3.3.1] - 2024-06-18
+
+### changed
 - new inptu data (6.77) including new GDP and population data([#83](https://github.com/pik-piam/mrdrivers/pull/83)) [[#1684]](https://github.com/remindmodel/remind/pull/1684)
 - **37_industry** remove subsector-specific shares of SE
   origins in FE carriers for performance reasons [[#1659]](https://github.com/remindmodel/remind/pull/1659)
