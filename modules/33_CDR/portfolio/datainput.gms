@@ -63,11 +63,11 @@ p33_fedem("oae", "feels") = 1.0 / s33_OAE_efficiency; !! 996 MJ/tCaO
 p33_fedem("oae", "fehes") = 3.1 / s33_OAE_efficiency; !! 3100 MJ/tCaO
 
 if(cm_33_OAE_scen = 0, !! pessimistic scenario for distribution, high diesel demand
-    p33_fedem("oae", "fedie") = 2.6 / s33_OAE_efficiency; !! 2600 MJ/tCaO
+    p33_fedem("oae", "fedie") = 2.6 / s33_OAE_efficiency; !! 2600 MJ/tCaO (corresponds to discharge rate of 30 t/h)
 );
 
 if(cm_33_OAE_scen = 1, !! optimistic scenario for distribution, lower diesel demand
-    p33_fedem("oae", "fedie") = 0.7 / s33_OAE_efficiency; !! 674 MJ/tCaO
+    p33_fedem("oae", "fedie") = 0.77 / s33_OAE_efficiency; !! 770 MJ/tCaO (corresponds to the discharge rate of 100 t/h)
 );
 
 $ifthen.OAE_glo_limit not %cm_33_OAE_lim% == "off"

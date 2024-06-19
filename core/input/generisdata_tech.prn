@@ -158,6 +158,7 @@ lifetime              45          45          45
 +             weathering         dac      oae_ng      oae_el
 tech_stat                          4
 <<<<<<< HEAD
+<<<<<<< HEAD
 inco0               0.01       18800         200         400
 mix0                   0           0           0           0
 eta                 1.00        1.00        1.00        1.00
@@ -168,6 +169,12 @@ mix0                   0           0           0
 eta                 1.00        1.00        1.00
 omf                 0.84       0.025         0.2
 >>>>>>> a171f380 (Update OAE costs)
+=======
+inco0               0.01       18800         200
+mix0                   0           0           0
+eta                 1.00        1.00        1.00
+omf                 0.84       0.025        0.07
+>>>>>>> 8228b98d (Update parameters, matching to OAE NG, lower omf)
 omv                    0
 lifetime              20          20          25          25
 incolearn                      14000

@@ -1597,7 +1597,7 @@ $setglobal cm_renewables_floor_cost  off  !! def = off
 ***  (off):             no bound
 ***  (5000):            (default) global limit of 5GtCO2 per yr
 ***  (any value ge 0):  set maximum to that value
-$setglobal cm_33_OAE_lim  5000  !! def = 5000  !! regexp = off|is.nonnegative
+$setglobal cm_33_OAE_lim  off !! def = 5000  !! regexp = off|is.nonnegative
 *** cm_sehe_upper "secondary energy district heating and heat pumps upper bound"
 ***   def <- "off" = no additional limit for district heating and heat pumps.
 ***   or number (ex. 2), district heating and heat pumps are limited to an upper bound of 2 times the 2020 model values.
