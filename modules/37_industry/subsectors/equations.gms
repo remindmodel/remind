@@ -295,15 +295,15 @@ q37_plasticWaste(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
   + v37_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)$( ttot.val gt 2070 )
   ;
 
-*' emissions from plastics incineration as a share of total plastic waste, discounted by captured amount
+*' emissions from plastics incineration as a share of total plastic waste,
+*' discounted by captured amount
 q37_incinerationEmi(t,regi,sefe(entySe,entyFe),emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)) ..
+                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
   vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
   =e=
-  (
     v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
   * pm_incinerationRate(t,regi)
-  ) * (1 - p37_regionalWasteIncinerationCCSshare(t,regi))
+  * (1 - p37_regionalWasteIncinerationCCSshare(t,regi))
 ;
 
 *' calculate carbon contained in non-incinerated plastics
