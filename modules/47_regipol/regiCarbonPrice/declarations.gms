@@ -251,7 +251,7 @@ $endIf.regiExoPrice
 ***---------------------------------------------------------------------------
 
 Variable
-vm_prodSEtotal(ttot,all_regi,all_enty,all_enty) "total SE production per PE and SE over all technologies"
+v47_prodSEtotal(ttot,all_regi,all_enty,all_enty) "total SE production per PE and SE over all technologies"
 ;
 
 Equation

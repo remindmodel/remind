@@ -130,7 +130,7 @@ $endIf.cm_CCSmaxBound
 ***---------------------------------------------------------------------------
 
 q47_prodSEtotal(t,regi,entyPe,entySe)$(enty_pe2se(entyPe,entySe))..
-  vm_prodSEtotal(t,regi,entyPe,entySe)
+  v47_prodSEtotal(t,regi,entyPe,entySe)
   =e=
   sum(pe2se(entyPe,entySe,te),
     vm_prodSe(t,regi,entyPe,entySe,te));
