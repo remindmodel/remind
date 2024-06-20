@@ -264,7 +264,6 @@ run <- function() {
     message("Using ", normalizePath(renv::project()), " as renv project")
     argv <- c(get0("argv"), paste0("--renv=", renv::project()))
   }
-  
 
   sys.source("output.R",envir=new.env())
   # get runtime for output
