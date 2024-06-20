@@ -259,10 +259,11 @@ run <- function() {
   # make sure the renv used for the run is also used for generating output
   if (!is.null(renv::project())) {
     if (normalizePath(renv::project()) != normalizePath(outputdir)) {
-      stop("loaded renv=", normalizePath(renv::project()), " and outputdir=", normalizePath(outputdir), " must be equal.")
+      warning("loaded renv=", normalizePath(renv::project()), " and outputdir=", normalizePath(outputdir), " must be equal.")
     }
     argv <- c(get0("argv"), paste0("--renv=", renv::project()))
   }
+  message("Using ", normalizePath(renv::project()), " as renv project")
 
   sys.source("output.R",envir=new.env())
   # get runtime for output
