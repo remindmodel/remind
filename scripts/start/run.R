@@ -261,6 +261,7 @@ run <- function() {
     if (normalizePath(renv::project()) != normalizePath(outputdir)) {
       warning("loaded renv=", normalizePath(renv::project()), " and outputdir=", normalizePath(outputdir), " must be equal.")
     }
+    message("Using ", normalizePath(renv::project()), " as renv project")
     argv <- c(get0("argv"), paste0("--renv=", renv::project()))
   }
 
