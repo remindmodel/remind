@@ -1093,9 +1093,9 @@ parameter
 *'
 
 parameter
-  c_sharemaxCCScap2030         "switch to adjust the share of realised CCS capacities from total announced/planned projects from database in 2030"
+  c_fracRealfromAnnouncedCCScap2030         "switch to adjust the share of realised CCS capacities from total announced/planned projects from database in 2030"
 ;
-  c_sharemaxCCScap2030 = 0.4; !! def = 0.4
+  c_fracRealfromAnnouncedCCScap2030 = 0.4; !! def = 0.4
 *' This switch changes the assumption about the share of timely realised capacities from sum of announced/planned in 2030 from the IEA CCS data base
 *' Default assumption is that only 40% of announced or planned capacities will be realised, either due to discontinuation or delay
 

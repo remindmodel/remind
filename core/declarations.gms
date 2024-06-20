@@ -587,6 +587,7 @@ sm_dmac                                               "step in MAC functions [US
 sm_macChange                                           "maximum yearly increase of relative abatement in percentage points of maximum abatement. [0..1]"      /0.05/
 sm_tgn_2_pgc                                           "conversion factor 100-yr GWP from TgN to PgCeq"
 sm_tgch4_2_pgc                                         "conversion factor 100-yr GWP from TgCH4 to PgCeq"
+s_MtCO2_2_GtC                                         "conversion factor from MtCO2 to native REMIND emission unit GtC" /2.727e-04/
 
 s_MtCH4_2_TWa                                        "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
 

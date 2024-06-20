@@ -401,8 +401,9 @@ $endif
 *** -------------------------------------------------------------------------------------------------------------
 
 if ( c_ccsinjecratescen gt 0,
-  vm_co2CCS.lo(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = pm_boundCapCCS(t,regi,"low")$(t.val le 2030) / (1000*11/3);
-  vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = (pm_boundCapCCS(t,regi,"low")$(t.val le 2030) + (pm_boundCapCCS(t,regi,"up")$(t.val le 2030) - pm_boundCapCCS(t,regi,"low")$(t.val le 2030)) * c_sharemaxCCScap2030) / (1000*11/3);
+  vm_co2CCS.fx(t,regi,"cco2","ico2","ccsinje","1")$(t.val lt 2025) = 0;
+  vm_co2CCS.lo(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = pm_boundCapCCS(t,regi,"low")$(t.val le 2030) * s_MtCO2_2_GtC;
+  vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = (pm_boundCapCCS(t,regi,"low")$(t.val le 2030) + (pm_boundCapCCS(t,regi,"up")$(t.val le 2030) - pm_boundCapCCS(t,regi,"low")$(t.val le 2030)) * c_fracRealfromAnnouncedCCScap2030) / (1000*11/3);
 );
 
 loop(regi,
