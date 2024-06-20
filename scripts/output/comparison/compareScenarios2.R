@@ -94,7 +94,8 @@ if (! exists("profileNames") || ! all(profileNames %in% names(profiles))) {
   profileNames <- names(profiles)[gms::chooseFromList(
     ifelse(names(profiles) %in% profileNamesDefault, crayon::cyan(names(profiles)), names(profiles)),
     type = "profiles for cs2",
-    userinfo = paste0("Leave empty for ", crayon::cyan("cyan"), " default profiles."),
+    userinfo = paste0("Leave empty for ", crayon::cyan("cyan"), " default profiles.\n",
+                      "For a tutorial, see https://pik-piam.r-universe.dev/articles/remind2/compareScenariosRemind2.html"),
     returnBoolean = TRUE
   )]
 }
