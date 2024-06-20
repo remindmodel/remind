@@ -101,9 +101,12 @@ timeStopSetUpScript <- Sys.time()
 
 #
 # Run emissions report here
+# Includes air pollutant emissions from reportEmiAirPol()
 #
 timeStartPreprocessing <- Sys.time()
-emiReport <- reportEmi(gdxPath)
+emiReport <- reportEmi(gdxPath, basicmode=TRUE)
+emiAPReport <- reportEmiAirPol(gdxPath)
+emiReport <-mbind(emiReport,emiAPReport[,getYears(emiReport),])
 
 logMsg <- paste0(
   date(), " climate_assessment_prepare.R: Done reportEmi, start to wrangle emissions report into shape\n"

@@ -17,9 +17,11 @@
 *' @code
 
 * Run only on first iteration to avoid incomplete GDXs
-if (iteration.val ge 2,
-* Run the climate assessment script. Takes around 2-3m for a single parameter set, including harmonization and infilling
 Execute_unload 'fulldata_postsolve';
+* if (iteration.val ge 2,
+if (iteration.val ge 1,
+* Run the climate assessment script. Takes around 2-3m for a single parameter set, including harmonization and infilling
+* Execute_unload 'fulldata_postsolve';
 Execute "Rscript climate_assessment_run.R";
 * Read in results
 Execute_Loadpoint 'p15_forc_magicc'  p15_forc_magicc;
