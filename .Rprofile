@@ -13,7 +13,7 @@ if (file.exists("renv.lock") && file.exists("README.md") && !file.exists("renv/o
 # do not check if library and renv.lock are in sync, because normally renv.lock does not exist
 options(renv.config.synchronized.check = FALSE)
 
-# always set the renv project to the current direcotry (formerly done by renv/activate.R under version 0.16.0) 
+# always set the renv project to the current directory (formerly done by renv/activate.R under version 0.16.0) 
 Sys.setenv("RENV_PROJECT" = getwd())
 
 source("renv/activate.R")
