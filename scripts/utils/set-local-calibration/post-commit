@@ -94,7 +94,8 @@ else
         newLine='cfg$CESandGDXversion <- "'"${commit_hash}"'"'
 
         echo -e "File $configFile currently contains:\n\t$oldLine"
-        read -p "Do you want to update it automatically with the new hash (Y/n)? " confirm
+        printf "%s" "Do you want to update it automatically with the new hash (Y/n)? "
+        read confirm
         if echo $confirm | grep '^[Yy]\?$'
         then
             sed --in-place "s/$configRegex/$newLine/" $configFile
