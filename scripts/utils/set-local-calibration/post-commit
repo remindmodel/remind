@@ -85,6 +85,22 @@ else
     git branch -vv | grep -q "^\* .* [0-9a-f]\+ \[.*\]" && git push 
     
     # report hash
-    echo -e "\n'CESandGDXversion' to include in REMIND configuration:" \
-	    "$commit_hash\n"
+    echo -e "\n'CESandGDXversion' to include in REMIND configuration: $commit_hash"
+
+    configFile=../config/default.cfg
+    configRegex='^cfg.CESandGDXversion .*'
+    if [ -f $configFile ] && oldLine=$(grep -E "$configRegex" $configFile) && [[ $oldLine ]]
+    then
+        newLine='cfg$CESandGDXversion <- "'"${commit_hash}"'"'
+
+        echo -e "File $configFile currently contains:\n\t$oldLine"
+        read -p "Do you want to update it automatically with the new hash (Y/n)? " confirm
+        if echo $confirm | grep '^[Yy]\?$'
+        then
+            sed --in-place "s/$configRegex/$newLine/" $configFile
+            echo -e "File $configFile now contains:\n\t$(grep -E "$configRegex" $configFile)"
+        else 
+            echo "Please manually set 'CESandGDXversion' to: $commit_hash"
+        fi
+    fi
 fi
