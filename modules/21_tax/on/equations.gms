@@ -105,7 +105,7 @@ v21_taxrevCCS(t,regi)
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevNetNegEmi(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevNetNegEmi(t,regi) =e= cm_frac_NetNegEmi * pm_taxCO2eqSum(t,regi) * v21_emiALLco2neg(t,regi)
+v21_taxrevNetNegEmi(t,regi) =e= cm_frac_NetNegEmi * p_priceCO2(t,regi) * v21_emiALLco2neg(t,regi)
                                  - pm_taxrevNetNegEmi0(t,regi);
 
 ***---------------------------------------------------------------------------
