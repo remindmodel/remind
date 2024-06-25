@@ -399,7 +399,7 @@ $endif
 *LP* if c_ccsinjecratescen=0 --> no CCS at all and vm_co2CCS is fixed to 0 before, therefore the upper bound is only set if there should be CCS!
 *** -------------------------------------------------------------------------------------------------------------
 
-if ( c_ccsinjecratescen gt 0,
+if ( (c_ccsinjecratescen gt 0) AND (NOT cm_emiscen eq 1),
   vm_co2CCS.lo(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = pm_boundCapCCS(t,regi,"low")$(t.val le 2030) * s_MtCO2_2_GtC;
   vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = (pm_boundCapCCS(t,regi,"low")$(t.val le 2030) + (pm_boundCapCCS(t,regi,"up")$(t.val le 2030) - pm_boundCapCCS(t,regi,"low")$(t.val le 2030)) * c_fracRealfromAnnouncedCCScap2030) * s_MtCO2_2_GtC;
 );
