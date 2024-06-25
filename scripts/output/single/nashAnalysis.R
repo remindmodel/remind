@@ -9,7 +9,7 @@ library(remind2)
 
 if (!exists("outputdir")) {
   # Define arguments that can be read from command line
-  readArgs("outputdir")
+  lucode2::readArgs("outputdir")
 }
 
 gdx_name <- "fulldata.gdx"

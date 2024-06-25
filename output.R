@@ -130,15 +130,19 @@ if (isFALSE(comp)) comp <- "single" # legacy from times only two comp modes exis
 if (isTRUE(comp)) comp <- "comparison"
 
 if (! exists("output")) {
+  # search for R scripts in scripts/output subfolders
   modules <- gsub("\\.R$", "", grep("\\.R$", list.files(paste0("./scripts/output/", if (isFALSE(comp)) "single" else comp)), value = TRUE))
+  # if more than one option exists, let user choose
   output <- if (length(modules) == 1) modules else chooseFromList(modules, type = "modules to be used for output generation", addAllPattern = FALSE)
+  # move "reporting" to first position, if it exists
+  output <- c(if ("reporting" %in% output) "reporting", output[! output %in% "reporting"])
 }
 
 # Select output directories if not defined by readArgs
 if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
                          "plot_compare_iterations", "varListHtml", "fixOnRef", "MAGICC7_AR6")
-  needingMif <- any(modulesNeedingMif %in% output)
+  needingMif <- any(modulesNeedingMif %in% output) && ! "reporting" %in% output[[1]]
   if (exists("remind_dir")) {
     dir_folder <- c(file.path(remind_dir, "output"), remind_dir)
   } else {

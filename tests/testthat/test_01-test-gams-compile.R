@@ -7,8 +7,10 @@
 test_that(
   'gams -a=c works on stock configuration',
   {
+    lockID <- gms::model_lock(folder = "../..")
     expect_equal(
       attr(localSystem2('gams', 'main.gms -a=c -errmsg=1 -pw=185 -ps=0'),
-	   'status'),
+           'status'),
       0)
+    gms::model_unlock(lockID)
   })

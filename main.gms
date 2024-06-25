@@ -1091,6 +1091,14 @@ parameter
 *' * (0) none
 *' * (1) no fossil carbon and capture in Germany
 *'
+
+parameter
+  c_fracRealfromAnnouncedCCScap2030         "switch to adjust the share of realised CCS capacities from total announced/planned projects from database in 2030"
+;
+  c_fracRealfromAnnouncedCCScap2030 = 0.4; !! def = 0.4
+*' This switch changes the assumption about the share of timely realised capacities from sum of announced/planned in 2030 from the IEA CCS data base
+*' Default assumption is that only 40% of announced or planned capacities will be realised, either due to discontinuation or delay
+
 parameter
   cm_startIter_EDGET          "starting iteration of EDGE-T"
 ;
@@ -1309,7 +1317,7 @@ $setGlobal cm_loadFromGDX_implicitQttyTargetTax  off  !! def = off  !! regexp = 
 ***   (3) start only after regional emission target is close to convergence, by setting "cm_implicitQttyTarget_delay = emiRegiConv x", which forces the quantity target to start only after x times the cm_emiMktTarget_tolerance is achieved.
 ***      e.g., if "cm_emiMktTarget_tolerance = 0.01", i.e. 1% of deviation, and "cm_implicitQttyTarget_delay = emiRegiConv 5", the quantity target algorithm will only start after the emission target achieved a number lower than 5% (0.01 * 5)."
 ***      option 3 should only be used if the target is defined for a region that has its carbon pricing controlled by cm_emiMktTarget in the 47_regipol module.
-$setGlobal cm_implicitQttyTarget_delay  iteration 3  !! def = iteration 3, quantity targets only start after iteration 3
+$setGlobal cm_implicitQttyTarget_delay  iteration 15  !! def = iteration 15, quantity targets only start after iteration 15
 *** cm_implicitPriceTarget "define tax/subsidies to match FE prices defined in the pm_implicitPriceTarget parameter."
 ***   Acceptable values: "off", "initial", "elecPrice", "H2Price", "highElec", "highGasandLiq", "highPrice", "lowElec", "lowPrice"
 $setGlobal cm_implicitPriceTarget  off  !! def = off  !! regexp = off|initial|elecPrice|H2Price|highElec|highGasandLiq|highPrice|lowElec|lowPrice
@@ -1701,7 +1709,7 @@ $setGlobal c_scaleEmiHistorical  on  !! def = on  !! regexp = off|on
 $SetGlobal cm_quick_mode  off          !! def = off  !! regexp = off|on
 $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
 $setGlobal cm_APscen  SSP2          !! def = SSP2
-$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_industry_FE_target  1
 *' setting which region is to be tested in the one-region test run (80_optimization = testOneRegi)

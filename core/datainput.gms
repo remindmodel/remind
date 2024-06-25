@@ -577,9 +577,9 @@ pm_emifac(ttot,regi,enty,enty2,te,"cco2")$emi2te(enty,enty2,te,"cco2") = fm_data
 *JeS scale N2O energy emissions to EDGAR
 pm_emifac(ttot,regi,enty,enty2,te,"n2o")$emi2te(enty,enty2,te,"n2o") = 0.905 * fm_dataemiglob(enty,enty2,te,"n2o");
 
-*JeS from IPCC http://www.ipcc-nggip.iges.or.jp/public/gp/bgp/2_2_Non-CO2_Stationary_Combustion.pdf:
-*JeS CH4: 300 kg/TJ = 0.3 Mt/EJ * 31.536 EJ/TWa = 9.46 Mt /TWa
-*JeS N2O: 1 kg/TJ = 0.001 Mt/EJ * 31.536 EJ/TWa = 0.031536 Mt / TWa
+***JeS from IPCC http://www.ipcc-nggip.iges.or.jp/public/gp/bgp/2_2_Non-CO2_Stationary_Combustion.pdf:
+***JeS CH4: 300 kg/TJ = 0.3 Mt/EJ * 31.536 EJ/TWa = 9.46 Mt /TWa
+***JeS N2O: 1 kg/TJ = 0.001 Mt/EJ * 31.536 EJ/TWa = 0.031536 Mt / TWa
 *** coal 1.4 kg/TJ = 0.04415 Mt/TWa
 *** gas 0.1 kg/TJ = 0.00315 Mt/TWa
 *** oil 0.6 kg/TJ = 0.01892 Mt/TWa
@@ -708,8 +708,7 @@ pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
 
-*SB* Region- and tech-specific early retirement rates
-***Regional*
+*** Region- and tech-specific early retirement rates
 loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi),
   pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi)) = pm_extRegiEarlyRetiRate(ext_regi);
 );
@@ -730,7 +729,7 @@ loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
 );
 $endif.tech_earlyreti
 
-*SB* Time-dependent early retirement rates in Baseline scenarios
+*** Time-dependent early retirement rates in Baseline scenarios
 $ifthen.Base_Cprice %carbonprice% == "none"
 $ifthen.Base_techpol %techpol% == "none"
 *** CG: Allow no early retirement in future periods under baseline for developing countries
@@ -1331,7 +1330,7 @@ $if %carbonprice% == "NDC"      pm_macSwitch(emiMacMagpie) = 0;
 $if %carbonprice% == "NPi"      pm_macSwitch(emiMacMagpie) = 0;
 
 *** Load historical carbon prices defined in $/t CO2, need to be rescaled to right unit
-pm_taxCO2eq(t,regi)$(t.val le 2020) = 0;
+pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = 0;
 parameter f_taxCO2eqHist(ttot,all_regi)       "historic CO2 prices ($/tCO2)"
 /
 $ondelim
@@ -1339,14 +1338,14 @@ $include "./core/input/pm_taxCO2eqHist.cs4r"
 $offdelim
 /
 ;
-pm_taxCO2eq(t,regi)$(t.val le 2020) = f_taxCO2eqHist(t,regi) * sm_DptCO2_2_TDpGtC;
+pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = f_taxCO2eqHist(ttot,regi) * sm_DptCO2_2_TDpGtC;
 
 *DK* LU emissions are abated in MAgPIE in coupling mode
 *** An alternative to the approach below could be to introduce a new value for c_macswitch that only deactivates the LU MACs
 $if %cm_MAgPIE_coupling% == "on"  pm_macSwitch(enty)$emiMacMagpie(enty) = 0;
 *** As long as there is hardly any CO2 LUC reduction in MAgPIE we dont need MACs in REMIND
 $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("co2luc") = 0;
-*** The tiny fraction n2ofertsom of total land use n2o can get slitghliy negative in some cases. Ignore MAC for n2ofertsom by default.
+*** The tiny fraction n2ofertsom of total land use n2o can get slightly negative in some cases. Ignore MAC for n2ofertsom by default.
 $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("n2ofertsom") = 0;
 
 pm_macCostSwitch(enty)=pm_macSwitch(enty);

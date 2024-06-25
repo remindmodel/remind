@@ -49,7 +49,7 @@ pm_emiMktCurrent,               input,      ??
 pm_taxemiMkt_iteration,         input,      ??
 pm_emiMktTarget_dev,            parameter,  ???
 pm_emiMktRefYear,               parameter,  ???
-pm_implicitQttyTarget_isLimited, parameter,  ???
+pm_implicitQttyTarget_isLimited, parameter, ???
 pm_implicitQttyTarget_dev,      parameter,  ???
 pm_implicitQttyTarget,          parameter,  ???
 pm_implicitPriceTarget,         parameter,  not needed
@@ -58,9 +58,10 @@ pm_implicitPrice_ignConv,       parameter,  not needed
 pm_implicitPePriceTarget,       parameter,  not needed
 pm_implicitPePrice_NotConv,     parameter,  not needed
 pm_implicitPePrice_ignConv,     parameter,  not needed
-cm_maxFadeOutPriceAnticip,      parameter,   ???
-cm_sccConvergence,		   switch,      not needed
-pm_sccConvergenceMaxDeviation,	   parameter,   ???
-pm_gmt_conv,	   parameter,   ???
-cm_tempConvergence,		   switch,      not needed
-cm_LearningSpillover,input,learning spillover only implemented in nash
+cm_maxFadeOutPriceAnticip,      parameter,  ???
+cm_sccConvergence,		        switch,     not needed
+pm_sccConvergenceMaxDeviation,	parameter,  ???
+pm_gmt_conv,	                parameter,  ???
+cm_tempConvergence,		        switch,     not needed
+cm_LearningSpillover,           input,      learning spillover only implemented in nash
+pm_allTargetsConverged,         parameter,  only relevant for nash
