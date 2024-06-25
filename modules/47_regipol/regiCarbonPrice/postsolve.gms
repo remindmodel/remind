@@ -862,6 +862,7 @@ $endIf.regiExoPrice
 $ifThen.regiExoPrice_fromFile not "%cm_regiExoPrice_fromFile%" == "off"
 
 
+loop((ttot,regi,emiMkt)$p47_exoCo2tax_fromFile(ttot,regi,emiMkt),
 *** Removing the existent co2 tax parameters for regions with exogenous set prices
   pm_taxCO2eqSum(ttot,regi)$(ttot.val ge cm_startyear) = 0;
   pm_taxCO2eq(ttot,regi)$(ttot.val ge cm_startyear) = 0;
@@ -879,6 +880,7 @@ $ifThen.regiExoPrice_fromFile not "%cm_regiExoPrice_fromFile%" == "off"
 *** setting exogenous CO2 prices from GDX file
   pm_taxCO2eq(t,regi) = p47_exoCo2tax_fromFile(t,regi,"ETS");
   pm_taxCO2eqSum(t,regi) = pm_taxCO2eq(t,regi);
+);
 
 execute_unload "postsolve_pm_taxCO2eq_fromFile", pm_taxCO2eq;
 display pm_taxCO2eq;
