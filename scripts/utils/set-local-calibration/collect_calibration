@@ -74,8 +74,7 @@ do
 	fi
 done
 
-# if there where errors during copying, show the user the files that where
-# staged
+# if there where errors during copying, show staged files to the user
 if [ 0 -ne $(( all_errors )) ]
 then
 	echo " "
