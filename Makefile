@@ -109,4 +109,4 @@ test-validation: ## Run validation tests, requires a full set of runs in the out
 
 set-local-calibration:		## set up local calibration results directory
 	@./scripts/utils/set-local-calibration.sh
-	$(info use `collect_calibration` script in calibration_results/ directory )
+	$(info Local calibration has been set. Now use `collect_calibration` script in calibration_results/ directory )
