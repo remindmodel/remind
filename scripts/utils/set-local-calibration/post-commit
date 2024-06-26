@@ -87,17 +87,20 @@ else
     # report hash
     echo -e "\n'CESandGDXversion' to include in REMIND configuration: $commit_hash"
 
+    # if default.cfg is easy to find, paste hash there automatically
     configFile=../config/default.cfg
     configRegex='^cfg.CESandGDXversion .*'
     if [ -f $configFile ] && oldLine=$(grep -E "$configRegex" $configFile) && [[ $oldLine ]]
     then
-        newLine='cfg$CESandGDXversion <- "'"${commit_hash}"'"'
-
         echo -e "File $configFile currently contains:\n\t$oldLine"
-        printf "%s" "Do you want to update it automatically with the new hash (Y/n)? "
-        read confirm
-        if echo $confirm | grep '^[Yy]\?$'
+
+        # ask confirmation to user (https://stackoverflow.com/a/54866905/8072168)
+        read -p "Do you want to update it automatically with the new hash (Y/n)? " -n 1 -r < /dev/tty
+        echo
+        if echo $REPLY | grep '^[Yy]\?$' > /dev/null
         then
+            newLine='cfg$CESandGDXversion <- "'"${commit_hash}"'"'
+            # replace old hash by new hash
             sed --in-place "s/$configRegex/$newLine/" $configFile
             echo -e "File $configFile now contains:\n\t$(grep -E "$configRegex" $configFile)"
         else 
