@@ -111,6 +111,11 @@ p47_taxemiMkt_init(ttot,regi,emiMkt)$(p47_taxCO2eq_ref(ttot,regi) and (NOT(p47_t
     );
   );
 
+*** initialize required parameter for cm_emiMktTarget slope calculation. This is necessary to allow logical if statement checks not trowing an error before the parameter is assigned for the first time in the postsolve code.
+p47_factorRescaleSlope_iter("1","2020","2030",ext_regi,emiMktExt) = 0;
+*** initialize required parameter for cm_emiMktTarget rescale oscillation dampening.
+p47_factorRescaleemiMktCO2Tax_iter("1","2020","2030",ext_regi,emiMktExt) = 0;
+
 $ENDIF.emiMkt
 
 ***---------------------------------------------------------------------------
