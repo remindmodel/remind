@@ -21,7 +21,8 @@ new CES parameters and GDX files
 
 # add descriptions for parameter sources as needed
 # comments starting with '#' are ignored
-# quit the editor without saving to abort the commit (use \`:cq\` in vim)
+# to confirm the commit, save the file (use \`:wq\` in vim)
+# to abort the commit, quit the editor without saving (use \`:cq\` in vim)
 
 parameters based on calibrations:" > commit-message.txt
 
@@ -73,8 +74,7 @@ do
 	fi
 done
 
-# if there where errors during copying, show the user the files that where
-# staged
+# if there where errors during copying, show staged files to the user
 if [ 0 -ne $(( all_errors )) ]
 then
 	echo " "
