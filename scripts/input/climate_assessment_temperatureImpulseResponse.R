@@ -178,7 +178,7 @@ fileAllPulsesClimate <- paste0(normalizePath(climateTempDir), "/allpulses_IAMC_c
 
 # BUILD climate-assessment RUN COMMAND
 runClimateEmulatorCmd <- paste(
-  "python", file.path(scriptsDir, "run_clim.py"),
+  "python3.9", file.path(scriptsDir, "run_clim.py"),
   fileAllPulsesScen,
   climateTempDir,
   # Note: Option --year-filter-last requires https://github.com/gabriel-abrahao/climate-assessment/tree/yearfilter
