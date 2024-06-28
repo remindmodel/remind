@@ -143,7 +143,7 @@ Sys.setenv(MAGICC_WORKER_NUMBER = 1) # TODO: Get this from slurm or nproc
 #deactivate_venv_cmd <- "deactivate"
 
 runHarmoniseAndInfillCmd <- paste(
-  "python", file.path(scriptsFolder, "run_harm_inf.py"),
+  "python3.9", file.path(scriptsFolder, "run_harm_inf.py"),
   climateAssessmentEmi,
   climateAssessmentFolder,
   "--no-inputcheck",
@@ -151,8 +151,8 @@ runHarmoniseAndInfillCmd <- paste(
 )
 
 runClimateEmulatorCmd <- paste(
-  "python", file.path(scriptsFolder, "run_clim.py"),
-  normalizePath(file.path(climateAssessmentFolder, paste0(baseFileName, "_harmonized_infilled.csv"))),
+  "python3.9", file.path(scriptsFolder, "run_clim.py"),
+  normalizePath(file.path(climateAssessmentFolder, paste0(baseFileName, "_harmonized_infilled.csv")), mustWork = FALSE),
   climateAssessmentFolder,
   "--num-cfgs", nparsets,
   "--scenario-batch-size", 1,
@@ -172,7 +172,7 @@ logmsg <- paste0(
   "  MAGICC_WORKER_ROOT_DIR = ", Sys.getenv("MAGICC_WORKER_ROOT_DIR") ,"\n",
   "  MAGICC_WORKER_NUMBER   = ", Sys.getenv("MAGICC_WORKER_NUMBER") ,"\n",
   date(), " =================== RUN climate-assessment infilling & harmonization ===================\n",
-  runHarmoniseAndInfillCmd, "'\n"
+  runHarmoniseAndInfillCmd, "\n"
 )
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)

@@ -204,7 +204,7 @@ if (any(!alreadySet)) do.call(Sys.setenv, as.list(environmentVariables[!alreadyS
 # BUILD climate-assessment RUN COMMANDS
 #
 runHarmoniseAndInfillCmd <- paste(
-  "python", file.path(scriptsDir, "run_harm_inf.py"),
+  "python3.9", file.path(scriptsDir, "run_harm_inf.py"),
   climateAssessmentEmi,
   climateTempDir,
   "--no-inputcheck",
@@ -212,7 +212,7 @@ runHarmoniseAndInfillCmd <- paste(
 )
 
 runClimateEmulatorCmd <- paste(
-  "python", file.path(scriptsDir, "run_clim.py"),
+  "python3.9", file.path(scriptsDir, "run_clim.py"),
   normalizePath(file.path(climateTempDir, paste0(baseFn, "_harmonized_infilled.csv"))),
   climateTempDir,
   "--num-cfgs", nparsets,
