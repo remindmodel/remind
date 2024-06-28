@@ -152,7 +152,7 @@ runHarmoniseAndInfillCmd <- paste(
 
 runClimateEmulatorCmd <- paste(
   "python", file.path(scriptsFolder, "run_clim.py"),
-  normalizePath(file.path(climateAssessmentFolder, paste0(baseFileName, "_harmonized_infilled.csv"))),
+  normalizePath(file.path(climateAssessmentFolder, paste0(baseFileName, "_harmonized_infilled.csv")), mustWork = FALSE),
   climateAssessmentFolder,
   "--num-cfgs", nparsets,
   "--scenario-batch-size", 1,
