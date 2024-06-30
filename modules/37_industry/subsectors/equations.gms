@@ -279,6 +279,8 @@ q37_plasticsCarbon(t,regi,sefe(entySe,entyFe),emiMkt)$(
   * s37_plasticsShare
 ;
 
+
+$ontext
 *' calculate plastic waste generation, shifted by mean lifetime of plastic products
 *' shift by 2 time steps when we have 5-year steps and 1 when we have 10-year steps
 *' allocate averge of 2055 and 2060 to 2070
@@ -294,6 +296,17 @@ q37_plasticWaste(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
     / 2
     )$( ttot.val eq 2070 )
   + v37_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)$( ttot.val gt 2070 )
+  ;
+$offtext
+
+*' calculate plastic waste generation,
+*' assume that all plastics end up in plastic waste in same time step
+q37_plasticWaste(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
+                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
+                     AND ttot.val ge max(2015, cm_startyear)               ) ..
+  v37_plasticWaste(ttot,regi,entySe,entyFe,emiMkt)
+  =e=
+  v37_plasticsCarbon(ttot,regi,entySe,entyFe,emiMkt)
   ;
 
 *' emissions from plastics incineration as a share of total plastic waste, discounted by captured amount
