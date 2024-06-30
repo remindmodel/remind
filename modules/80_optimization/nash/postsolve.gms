@@ -331,8 +331,7 @@ loop(regi,
 *** additional criterion: Were regional climate targets reached? 
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off" 
 loop((ttot,ttot2,ext_regi,emiMktExt)$pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt),
-*** regipol targets must be met within 1% of target deviation, deviation for budget targets is measured relative to target value, while for year targets it is relative to 2015 emissions
-  if(( abs(pm_emiMktTarget_dev_iter(iteration,ttot,ttot2,ext_regi,emiMktExt)) gt cm_emiMktTarget_tolerance),
+  if(NOT(pm_allTargetsConverged(ext_regi) eq 1),
     s80_bool = 0;
     p80_messageShow("regiTarget") = YES;
   );
@@ -346,7 +345,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
   if(abs(p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)) gt cm_implicitQttyTarget_tolerance,
     if(NOT ((sameas(taxType,"tax") and p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 0) 
         OR  (sameas(taxType,"sub") and p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) gt 0)),
-      if(NOT(pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) eq 1), !!no tax update either by reaching target or due to tax changes not affecting quantitties  
+      if(NOT(pm_implicitQttyTarget_isLimited(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) eq 1), !!no tax update either by reaching target or due to tax changes not affecting quantitties  
         s80_bool = 0;
         p80_messageShow("implicitEnergyTarget") = YES;
       );
@@ -448,7 +447,7 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
 		      display "#### Just trying a different gdx may help.";
 	      );	 
 	      if(sameas(convMessage80, "taxconv"),
-		      display "#### 4.) Taxes did not converge in all regions and time steps. Absolute level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_convNashTaxrev_iter below.";
+		      display "#### 4.) Taxes did not converge in all regions and time steps. Absolute level of tax revenue must be smaller than 0.1 percent of GDP. Check p80_convNashTaxrev_iter below.";
 	      );
         if(sameas(convMessage80, "DevPriceAnticip"),
 		      display "#### 5.) The total monetary value of the price anticipation term times the traded amount are larger than the goods imbalance threshold * 0.1";
@@ -567,7 +566,7 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
 	     );	 
 	     if(sameas(convMessage80, "taxconv"),
 		 display "####";
-		 display "#### 4.) Taxes did not converge in all regions and time steps. Absolut level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_convNashTaxrev_iter.";
+		 display "#### 4.) Taxes did not converge in all regions and time steps. Absolut level of tax revenue must be smaller than 0.1 percent of GDP. Check p80_convNashTaxrev_iter.";
 	     );	
       if(sameas(convMessage80, "anticip"),
 		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";

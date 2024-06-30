@@ -37,9 +37,9 @@ projects <- list(
                     iiasatemplate = "ENGAGE_CD-LINKS_template_2019-08-22.xlsx",
                     removeFromScen = "_diff|_expoLinear|-all_regi"),
   NAVIGATE_coupled = list(mapping = c("NAVIGATE", "NAVIGATE_coupled")),
-  NGFS       = list(model = "REMIND-MAgPIE 3.3-4.7",
+  NGFS       = list(model = "REMIND-MAgPIE 3.3-4.8",
                     mapping = c("AR6", "AR6_NGFS"),
-                    iiasatemplate = "../ngfs-phase-4-internal-workflow/definitions/variable/variables.yaml",
+                    iiasatemplate = "../iiasa-workflow/definitions/variable/variables.yaml",
                     removeFromScen = "C_|_bIT|_bit|_bIt"),
   SHAPE      = list(mapping = c("NAVIGATE", "SHAPE")),
   TESTTHAT   = list(mapping = "AR6")

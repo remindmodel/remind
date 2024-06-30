@@ -131,7 +131,7 @@ used.
 The main output of the CES calibration are a .gdx file and an .inc file with all
 the CES parameters.  They are named based on the CES configuration, the
 GDP/population scenarios, the capital market module realisation and the region
-configuration (e.g. `indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7`).
+configuration (e.g. `indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7`).
 You don't need to change these names, they are matched automatically using the
 switch `cm_CES_configuration`.  The parameter files also include a counter for
 the calibration iteration they resulted from (e.g. `_ITERATION_10.inc`).

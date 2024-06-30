@@ -1,7 +1,7 @@
 Package: remindmodel
 Title: REMIND - REgional Model of INvestments and Development
 Version: 0.1
-Date: 2024-03-27
+Date: 2024-06-18
 Description: This is not a package yet, the purpose of this file is to
     document metadata, notably dependencies.
 License: file LICENSE
@@ -40,7 +40,7 @@ Imports:
     luscale,
     lusweave,
     magclass,
-    magpie4,
+    magpie4 (>= 2.3.10),
     magpiesets,
     mip (>= 0.148.12),
     modelstats,
