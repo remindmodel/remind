@@ -30,7 +30,7 @@ solvestat, modelstat, resusd, objval
 
 convMessage80   "contains all convergence criteria"
 /
-infes,surplus,nonopt,taxconv,anticip,target,regiTarget,implicitEnergyTarget,cm_implicitPriceTarget,cm_implicitPePriceTarget,damage,DevPriceAnticip
+infes,surplus,nonopt,taxconv,anticip,target,regiTarget,implicitEnergyTarget,cm_implicitPriceTarget,cm_implicitPePriceTarget,damage,DevPriceAnticip,se_trade
 /
 ;
 

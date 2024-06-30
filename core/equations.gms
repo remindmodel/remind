@@ -478,9 +478,9 @@ q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND
 *' EMF27 limits on fluctuating renewables, only turned on for special EMF27 and AWP 2 scenarios, not for SSP
 ***---------------------------------------------------------------------------
 *** this is to prevent that in the long term, all solids are supplied by biomass. Residential solids can be fully supplied by biomass (-> wood pellets), so the FE residential demand is subtracted
-q_limitBiotrmod(t,regi)$(NO)..
-    vm_prodSe(t,regi,"pebiolc","sesobio","biotrmod")
-   - sum (in$sameAs("fesob",in), vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity"))
+q_limitBiotrmod(t,regi)$(NO).. 
+    vm_prodSe(t,regi,"pebiolc","sesobio","biotrmod") 
+   - sum (in$sameAs("fesob",in), vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")) 
    - sum (fe2es(entyFe,esty,teEs)$buildMoBio(esty), vm_demFeForEs(t,regi,entyFe,esty,teEs) )
     =l=
     (2 +  max(0,min(1,( 2100 - pm_ttot_val(t)) / ( 2100 - 2020 ))) * 3) !! 5 in 2020 and 2 in 2100
@@ -519,10 +519,10 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
                         OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
   vm_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
   =e=
-    sum(emi2te(enty,enty2,te,enty3),
-      ( sum(pe2se(enty,enty2,te),
-          pm_emifac(t,regi,enty,enty2,te,enty3)
-        * vm_demPe(t,regi,enty,enty2,te)
+  sum(emi2te(enty,enty2,te,enty3),
+    ( sum(pe2se(enty,enty2,te),
+        pm_emifac(t,regi,enty,enty2,te,enty3)
+      * vm_demPe(t,regi,enty,enty2,te)
       )
     + sum((ccs2Leak(enty,enty2,te,enty3),teCCS2rlf(te,rlf)),
         pm_emifac(t,regi,enty,enty2,te,enty3)
@@ -538,9 +538,9 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
         !! not create energy-related emissions
       - sum(entyFE2sector2emiMkt_NonEn(enty2,sector,emiMkt),
           vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
-        )
       )
     )
+  )
 ;
 
 ***--------------------------------------------------
@@ -576,7 +576,7 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
       vm_emiTeDetailMkt(t,regi,enty2,enty3,te,enty,emiMkt)
     )
     !! energy emissions fuel extraction
-  + v_emiEnFuelEx(t,regi,enty)$(sameas(emiMkt,"ETS"))
+  + v_emiEnFuelEx(t,regi,enty)$( sameas(emiMkt,"ETS") )
     !! Industry CCS emissions
   - sum(emiInd37_fuel,
       vm_emiIndCCS(t,regi,emiInd37_fuel)
@@ -603,8 +603,8 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
     !! CO2 from short-term CCU (short term CCU co2 is emitted again in a time
     !! period shorter than 5 years)
   + sum(teCCU2rlf(te2,rlf),
-      vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)$( sameas(enty,"co2") )
-    )$(sameas(emiMkt,"ETS"))
+      vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)
+    )$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
 ;
 
 ***--------------------------------------------------
@@ -887,7 +887,7 @@ q_changeProdStartyear(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) 
   =e=
   sum(pe2se(enty,enty2,te),   vm_prodSe(t,regi,enty,enty2,te)  - p_prodSeReference(t,regi,enty,enty2,te) )
   + sum(se2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te)  - p_prodSeReference(t,regi,enty,enty2,te) )
-  + sum(se2fe(enty,enty2,te), vm_prodFe(t,regi,enty,enty2,te)  - p_prodFEReference(t,regi,enty,enty2,te) )
+  + sum(se2fe(enty,enty2,te), vm_prodFe(t,regi,enty,enty2,te)  - pm_prodFEReference(t,regi,enty,enty2,te) )
   + sum(fe2ue(enty,enty2,te), v_prodUe (t,regi,enty,enty2,te)  - p_prodUeReference(t,regi,enty,enty2,te) )
   + sum(ccs2te(enty,enty2,te), sum(teCCS2rlf(te,rlf), vm_co2CCS(t,regi,enty,enty2,te,rlf) - p_co2CCSReference(t,regi,enty,enty2,te,rlf) ) )
 ;

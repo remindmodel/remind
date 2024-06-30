@@ -7,12 +7,6 @@ updateInputData <- function(cfg, remindPath = ".", gamsCompile = FALSE) {
   # write name of corresponding CES file to datainput.gms
 
   cfg$gms$cm_CES_configuration <- calculate_CES_configuration(cfg, path = remindPath)
-  replace_in_file(file    = file.path(remindPath, "modules/29_CES_parameters/load/datainput.gms"),
-                  content = paste0('$include "',
-                                   "./modules/29_CES_parameters/load/input/",
-                                   cfg$gms$cm_CES_configuration, ".inc\""),
-                  subject = "CES INPUT")
-
 
   if(file.exists("input/source_files.log")) {
       input_old     <- readLines(file.path(remindPath, "input/source_files.log"))[c(1,2,3)]

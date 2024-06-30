@@ -392,6 +392,25 @@ $ifthen.internalizeDamages not "%internalizeDamages%" == "off"
    );
 $endIf.internalizeDamages
 
+$IFTHEN.trade_SE_shareDemand not "%cm_trade_SE_shareDemand%" == "off"
+*** Check whether SE trade has converged if trade is set by share of demand
+*** Check after ten iterations for the first time
+*** Change in SE import quantities over last two iterations must be within 1% for all years, regions and energy carriers for convergence
+if (iteration.val gt 10,
+  loop((t,regi,tradeSe)$p24_Mport_iter(t,regi,tradeSe,iteration),
+    if(       p24_Mport_iter_relChange(t,regi,tradeSe,iteration) gt 1.01
+          OR  p24_Mport_iter_relChange(t,regi,tradeSe,iteration) lt 0.99
+          OR  p24_Mport_iter_relChange(t,regi,tradeSe,iteration-1) gt 1.01
+          OR  p24_Mport_iter_relChange(t,regi,tradeSe,iteration-1) lt 0.99,
+    s80_bool = 0;
+    p80_messageShow("se_trade") = YES;
+    );
+  );
+);
+
+$ENDIF.trade_SE_shareDemand
+
+
 display "####";
 display "Convergence diagnostics";
 display "Iteration number: ";

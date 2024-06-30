@@ -352,15 +352,6 @@ ppfen_MkupCost37(all_in)   "primary production factors in industry on which CES 
   /
   /
 
-  entyFe_out_emiMkt(all_enty,all_in,all_emiMkt) "link FE demand to subsector production to emission markets"
-  /
-    (fesos, fehos, fegas, feh2s,        feels) . ue_cement          . ETS
-    (fesos, fehos, fegas, feh2s,        feels) . ue_chemicals       . ETS
-    (fesos, fehos, fegas, feh2s,        feels) . ue_steel_primary   . ETS
-                                        feels  . ue_steel_secondary . ETS
-    (fesos, fehos, fegas, feh2s, fehes, feels) . ue_otherInd        . ES
-  /
-
 
 *** ---------------------------------------------------------------------------
 ***        2. Process-Based
@@ -597,6 +588,13 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     feels . (feel_steel_primary, feel_steel_secondary)
 $endif.cm_subsec_model_steel
   /
+
+regi_fxDem37(ext_regi) "regions under which we fix UE demand to baseline demand"
+  /
+$ifthen.fixedUE_scenario "%cm_fxIndUe%" == "on"
+    %cm_fxIndUeReg%
+$endif.fixedUE_scenario
+  /
 ;
 
 *** ---------------------------------------------------------------------------
@@ -626,14 +624,10 @@ pf_quan_target_dyn29(pf_quan_target_dyn37)  = YES;
 $endif.calibrate
 
 teMat2rlf(tePrc,"1") = YES;
-alias(tePrc,teCCPrc);
-alias(tePrc,tePrc1);
-alias(tePrc,tePrc2);
-alias(opmoPrc,opmoCCPrc);
-alias(opmoPrc,opmoPrc1);
-alias(opmoPrc,opmoPrc2);
+alias(tePrc,teCCPrc,tePrc1,tePrc2);
+alias(opmoPrc,opmoCCPrc,opmoPrc1,opmoPrc2);
 alias(route,route2);
-
+alias(entyFeCC37,entyFeCC37_2);
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfEn37,fe2ppfEn37_2);
 *** EOF ./modules/37_industry/subsectors/sets.gms

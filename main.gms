@@ -308,7 +308,7 @@ $setglobal CES_parameters  load   !! def = load
 *'---------------------    30_biomass    ----------------------------------------
 *'
 *' * (magpie_40): using supply curves derived from MAgpIE 4.0
-$setglobal biomass  magpie_40     !! def = magpie_hightccost
+$setglobal biomass  magpie_40     !! def = magpie_40
 *'---------------------    31_fossil    ----------------------------------------
 *'
 *' * (timeDepGrades): time-dependent grade structure of fossil resources (oil & gas only)
@@ -982,6 +982,11 @@ parameter
   cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 *'
 parameter
+  c_teNoLearngConvEndYr      "Year at which regional costs of non-learning technologies converge"
+;
+  c_teNoLearngConvEndYr  = 2070;   !! def = 2070
+*'
+parameter
   cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
 ;
   cm_TaxConvCheck = 1;  !! def = 1, which means tax convergence check is on  !! regexp = 0|1
@@ -1277,6 +1282,9 @@ $setGlobal cm_regiExoPrice_fromFile  off    !! def = off
 ***   Example on how to use:
 ***     cm_emiMktTarget = '2020.2050.EU27_regi.all.budget.netGHG_noBunkers 72, 2020.2050.DEU.all.year.netGHG_noBunkers 0.1'
 ***     sets a 72 GtCO2eq budget target for European 27 countries (EU27_regi), for all GHG emissions excluding bunkers between 2020 and 2050; and a 100 MtCO2 CO2eq emission target for the year 2050, for Germany"
+***     cm_emiMktTarget = 'nzero'
+***     loads hard-coded options for regional target scenarios defined in the module '47_regipol/regiCarbonPrice' declarations file. 
+***     The 'nzero' scenario applies declared net-zero targets for countries explicitly handled by the model (DEU, CHA, USA, IND, JPN, UKI, FRA and EU27_regi)  
 ***     Requires regiCarbonPrice realization in regipol module
 $setGlobal cm_emiMktTarget  off    !! def = off
 *** cm_regipol_LUC "user-defined shift of land-use change emissions from Magpie trajectories when employing cm_emiMktTarget with the Grassi offset (LULUCFGrassi option)"
@@ -1361,9 +1369,10 @@ $setglobal cm_in_limit_price_change "ue_steel_primary, kap_steel_primary"   !! d
 *** cm_calibration_string "def = off, else = additional string to include in the calibration name to be used" label for your calibration run to keep calibration files with different setups apart (e.g. with low elasticities, high elasticities)
 $setglobal cm_calibration_string  off    !!  def  =  off
 *** cm_techcosts -     use regionalized or globally homogenous technology costs for certain technologies
-*** (REG) regionalized technology costs
+*** (REG) regionalized technology costs with linear convergence between 2020 and year c_teNoLearngConvEndYr
+*** (REG2040) regionalized technology costs given by p_inco0 until 2040, then stable without convergence
 *** (GLO) globally homogenous technology costs
-$setglobal cm_techcosts  REG       !! def = REG
+$setglobal cm_techcosts  REG       !! def = REG  !! regexp = REG|REG2040|GLO
 *** cfg$gms$cm_EDGEtr_scen  "the EDGE-T scenario"  # def <- "Mix1". For calibration runs: Mix1. Mix2, Mix3, Mix4 also available - numbers after the "mix" denote policy strength, with 1 corresponding roughly to Baseline/NPI, 2= NDC, 3= Budg1500, 4 = Budg800
 ***  The following descriptions are based on scenario results for EUR in 2050 unless specified otherwise.
 ***  Whenever we give numbers, please be aware that they are just there to estimate the ballpark.
@@ -1413,7 +1422,7 @@ $setGlobal cm_import_tax off !! def = off  !! regexp = .*(worldPricemarkup|CO2ta
 *** cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 *** EU-specific SE import assumptions (used for ariadne)
 *** different exogenous hydrogen import scenarios for EU regions (developed in ARIADNE project)
-*** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf"
+*** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf", "nzero"
 *** see 24_trade/se_trade/datainput for H2 import assumptions, this switch only works if the trade realization "se_trade" is selected
 $setGlobal cm_import_EU  off !! def off
 *** cm_import_ariadne        "Germany-specific H2 imports assumptions for Ariadne project (needs cm_import_EU to be on)"
@@ -1432,6 +1441,21 @@ $setGlobal cm_import_ariadne  off !! def off
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "2030.2050.MEA.EU27_regi.seh2 0.5, 2030.2050.MEA.DEU.seh2 0.3".
 $setGlobal cm_trade_SE_exog off !! def off
+*** cm_trade_SE_shareDemand
+*** set SE trade flows based on a fix share of the demand in the importing region
+*** e.g. "MEA.EU27_regi.seliqsyn 0.3" means that all regions in EU27 region will import 30% of their synfuel demand (seliqsyn) from MEA
+*** Note: requires se_trade realization of trade module to be on, only works for single exporting regions. It only works for the SE carriers seel, seh2 and seliqsyn.
+$setGlobal cm_trade_SE_shareDemand off !! def off
+*** This allows to manually adjust the ramp-up curve of the SE tax on electricity. It is mainly used for taxing electricity going into electrolysis for green hydrogen production.
+*** The ramp-up curve is a logistic function that determines how fast taxes increase with increasing share of technology in total power demand.
+*** This essentially makes an assumption about to what extend the power demand of electrolysis will be taxed and how much tax exemptions there will be at low shares of green hydrogen production.
+*** The parameter a defines how fast the tax increases with increasing share, with 4/a being the percentage point range over which the tax value increases from 12% to 88%
+*** The parameter b defines at which share the tax is halfway between the value at 0 share and the maximum value (defined by a region's electricity tax and the electricity grid cost) that it converges to for high shares.
+*** Example use: 
+*** cm_SEtaxRampUpParam = "GLO.elh2.a 0.2, GLO.elh2.b 20" sets the logistic function parameter values a=0.2 and b=20 for electrolysis (elh2) to all model regions (GLO). 
+*** cm_SEtaxRampUpParam = "off" disables v21_tau_SE_tax 
+*** For details, please see ./modules/21_tax/on/equations.gms.
+$setGlobal cm_SEtaxRampUpParam  GLO.elh2.a 0.2, GLO.elh2.b 20    !! def = GLO.elh2.a 0.2, GLO.elh2.b 20
 *** cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
 *** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
 *** switch to activate energy security scenario assumptions for Germany including additional tax on gas/oil
@@ -1586,13 +1610,40 @@ $setGlobal cm_CESMkup_build  standard  !! def = standard
 *** addressed in cm_CESMkup_ind_data.
 $setGlobal cm_CESMkup_ind        standard  !! def = standard
 $setGlobal cm_CESMkup_ind_data   ""        !! def = ""
+
+*** cm_fxIndUe "switch for fixing UE demand in industry to baseline level - no endogenous demand adjustment"
+*** default cm_fxIndUe = off -> endogenous demand, cm_fxIndUe = on -> exogenous demand fixed to baseline/NPi level (read in from input_ref.gdx)
+*** cm_fxIndUeReg indicates the regions under which the industry demand will be fixed 
+*** for example, cm_fxIndUe = on and cm_fxIndUeReg = SSA,NEU,CHA,IND,OAS,MEA,LAM gives a scenario where all non global north (non-OECD) industry demand is fixed to baseline
+*** cm_fxIndUeReg = GLO fixes industry demand to baseline level everywhere
+$setGlobal cm_fxIndUe        off  !! def = off
+$setGlobal cm_fxIndUeReg     ""       !! def = ""
+
+*** cm_ind_energy_limit Switch for setting upper limits on industry energy
+*** efficiency improvements.  See ./modules/37_subsectors/datainput.gms for
+*** implementation.
+*** "default" applies the following limits:
+*** 
+*** ext_regi |     subsector      | period | maximum "efficiency gain" [0-1]
+*** ---------+--------------------+--------+--------------------------------
+*** GLO      | ue_cement          |  2050  | 0.75
+*** GLO      | ue_steel_primary   |  2050  | 0.75
+*** GLO      | ue_steel_secondary |  2050  | 0.75
+*** GLO      | ue_chemicals       |  2100  | 0.90
+*** GLO      | ue_otherInd        |  2100  | 0.90
+***
+*** "manual" uses the data present in cm_ind_energy_limit_manual (has the same
+*** data as "default" to clarify the format)
+$setglobal cm_ind_energy_limit          default   !! def = default   !! regexp = default|manual
+$setglobal cm_ind_energy_limit_manual   "2050 . GLO . (ue_cement, ue_steel_primary, ue_steel_secondary)   0.75, 2100 . GLO . (ue_chemicals, ue_otherInd)   0.90"
+
 *** cm_wasteIncinerationCCSshare, proportion of waste incineration emissions that is captured and geologically stored at a given year and region
 *** off: means that all plastics incineration emissions in the World goes back to the atmosphere.
 *** 2050.GLO 0.5, 2050.EUR 0.8: means that 50% of waste incineration emissions are captured for all regions from 2050 onward, except for Europe that has 80% of its waste incineration emissions captured.
 *** The CCS share of waste incineration increases linearly from zero, in 2025, to the value set at the switch, and it is kept constant for years afterwards.
 $setglobal cm_wasteIncinerationCCSshare  off      !! def = off
 *** cm_feedstockEmiUnknownFate, account for chemical feedstock emissions with unknown fate
-*** off: assume that these emissions are trapped and do not account for total anthropogenic emissions 
+*** off: assume that these emissions are trapped and do not account for total anthropogenic emissions
 *** on: account for chemical feedstock emissions with unknown fate as re-emitted to the atmosphere
 $setglobal cm_feedstockEmiUnknownFate  off      !! def = off
 *** cm_feShareLimits <-   "off"  # def <- "off", limit the electricity final energy share to be in line with the industry maximum electrification levels (60% by 2050 in the electric scenario), 10% lower (=50% in 2050) in an increased efficiency World, or 20% lower (40% in 2050) in an incumbents future (incumbents). The incumbents scenario also limits a minimal coverage of buildings heat provided by gas and liquids (25% by 2050).
@@ -1632,6 +1683,12 @@ $setGLobal c_agricult_base_shift off !! def off
 *** Note that all regions to which this switch is not applied receive the default parameter values.
 *** For details, please see ./modules/21_tax/on/equations.gms.
 $setGLobal cm_elh2_tax_rampup standard !! def standard
+*** H2 policy flag
+*** Allows to set specific H2-related policies
+*** Options:
+*** off -> no additional policy
+*** Refuel_EU -> minimum e-fuel demand of 8 TWh/yr in 2030 by aviation ReFUEL-EU quota in EU27, distributed by GDP to EU regions
+$setGLobal cm_H2_policy off !! def off
 *** wind offshore switch
 *** cm_wind_offshore  1, wind energy is represented by "wind" and "windoff", where "wind" means wind onshore. Later this will be the default and the name "wind" will be made to change to windon
 *** cm_wind_offshore  0, means wind energy is only represented by "wind", which is a mixture of both wind onshore and wind offshore
@@ -1681,7 +1738,7 @@ $setGlobal c_regi_nucscen  all  !! def = all
 ***  c_regi_capturescen              "regions to apply cm_ccapturescen to (availability of carbon capture technologies), e.g. c_regi_nucscen <- "JPN,USA"
 $setGlobal c_regi_capturescen  all  !! def = all
 *** cm_subsec_model_steel      "switch between ces-based and process-based steel implementation in subsectors realisation of industry module"
-$setglobal cm_subsec_model_steel  ces  !! def = ces  !! regexp = ces|processes
+$setglobal cm_subsec_model_steel  processes  !! def = processes  !! regexp = processes|ces
 *** set conopt version. Warning: conopt4 is in beta
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
 *' c_empty_model  "Short-circuit the model, just use the input as solution"
@@ -1706,8 +1763,8 @@ $setglobal cm_taxrc_RE  none   !! def = none   !! regexp = none|REdirect
 *' cm_repeatNonOpt       "should nonoptimal regions be solved again?"
 *'
 *' *  (off): no, only infeasable regions are repeated, standard setting
-*' *  (yes):  also non-optimal regions are solved again, up to cm_solver_try_max
-$setglobal cm_repeatNonOpt off
+*' *  (on):  also non-optimal regions are solved again, up to cm_solver_try_max
+$setglobal cm_repeatNonOpt off      !! def = off  !! regexp = off|on
 
 *' @stop
 

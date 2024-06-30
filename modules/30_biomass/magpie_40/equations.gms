@@ -126,5 +126,6 @@ q30_BioPEProdTotal(t,regi)..
           vm_fuExtr(t,regi,enty,rlf))
 ;
 
+*' @stop
 
 *** EOF ./modules/30_biomass/magpie_40/equations.gms

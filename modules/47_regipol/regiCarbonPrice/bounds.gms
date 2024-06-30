@@ -273,6 +273,20 @@ vm_cap.up("2030",regi,"MeOH","1")$(regi_group("EU27_regi",regi))= 4.0 / pm_cf("2
                                                                       / sum(regi2$(regi_group("EU27_regi",regi2)),pm_gdp("2015",regi2));
 
 
+*** E-fuel Upscaling if ReFUEL-EU policy is activated
+*** Assume that minimum e-fuel demand by long-distance transport in EU27 of 8 TWh/yr
+$IFTHEN.Refuel_EU "%cm_H2_policy%" == "Refuel_EU"
+*' remove upper bound on 2030 electrolysis production
+vm_cap.up("2030",regi,"elh2","1")$(regi_group("EU27_regi",regi))= INF;
+*' remove upper bound on 2030 e-fuel production
+vm_cap.up("2030",regi,"MeOH","1")$(regi_group("EU27_regi",regi))= INF;
+*' add lower bound of 8 TWh/yr for 2030 e-fuel demand in long-distance transport
+vm_demFeSector.lo("2030",regi,"seliqsyn","fedie","trans","other")$(regi_group("EU27_regi",regi))=8 / sm_TWa_2_TWh
+                                                                                                    * pm_gdp("2015",regi)
+                                                                                                    / sum(regi2$(regi_group("EU27_regi",regi2)),pm_gdp("2015",regi2));
+$ENDIF.Refuel_EU
+
+
 *' This bounds fixes CES function quantity trajectories to exogenous data if cm_exogDem_scen is activated.
 *' It is used, for example, to hit specific, steel and cement production trajectories in policy scenarios
 *' for project-specific scenarios. It is not necessarily a policy but a different (exogenuous) assumption

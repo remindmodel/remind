@@ -6,12 +6,6 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/39_CCU/on/bounds.gms
 
-*** -------------------------------------------------------------------------------------------------------------
-***LP* Narrowing down the solution space for vm_co2capture for CCU
-*** -------------------------------------------------------------------------------------------------------------
-
-vm_co2capture.up(t,regi,"cco2","ico2","ccsinje","1") = 50;
-
 *** FS: switch off CCU in baseline runs (as CO2 capture technologies teCCS are also switched off)
 if(cm_emiscen = 1,
   vm_cap.fx(t,regi,te_ccu39,rlf) = 0;

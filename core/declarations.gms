@@ -94,6 +94,8 @@ pm_shPerm(tall, all_regi)                            "emission permit shares"
 pm_emicapglob(tall)                                  "global emission cap"
 p_adj_coeff(ttot,all_regi,all_te)                    "coefficient for adjustment costs"
 p_adj_coeff_glob(all_te)                             "coefficient for adjustment costs - global scale"
+p_adj_helper_a(ttot,all_regi,all_te)                 "helper parameter that contains different parameters of adjustment cost to facilitate readability of code"
+p_adj_helper_b(ttot,all_regi,all_te)                 "helper parameter that contains different parameters of adjustment cost to facilitate readability of code"
 p_switch_cement(ttot,all_regi)                       "describes an s-curve to provide a smooth switching from the short-term behavior (depending on per capita capital investments) to the long-term behavior (constant per capita emissions) of CO2 emissions from cement production"
 p_cint(all_regi,all_enty,all_enty,rlf)               "additional emissions of GHG from mining, on top of emissions from combustion"
 
@@ -215,6 +217,8 @@ p_CapFixFromRWfix(ttot,all_regi,all_te)              "parameter for fixing capac
 p_deltaCapFromRWfix(ttot,all_regi,all_te)            "parameter with resulting deltacap values resulting from fixing capacity to real-world values in 2010/2015"
 
 o_margAdjCostInv(ttot,all_regi,all_te)               "marginal adjustment cost calculated in postsolve for diagnostics"
+o_margAdjCostInv_prev(ttot,all_regi,all_te)          "1st term of marginal adjustment cost calculated in postsolve for diagnostics. Refers to marginal cost due to change of vm_deltaCap from previous to current time step."
+o_margAdjCostInv_next(ttot,all_regi,all_te)          "2nd term marginal adjustment cost calculated in postsolve for diagnostics. Refers to marginal cost due to change of vm_deltaCap from current to next time step."
 o_avgAdjCostInv(ttot,all_regi,all_te)                "average adjustment cost calculated in postsolve for diagnostics"
 o_avgAdjCost_2_InvCost_ratioPc(ttot,all_regi,all_te)   "ratio in % of average adj cost compared to direct inv costs"
 
@@ -227,7 +231,7 @@ pm_share_CCS_CCO2(ttot,all_regi)                      "share of stored CO2 from 
 pm_delta_histCap(tall,all_regi,all_te)                "parameter to store data of historic capacity additions [TW/yr]"
 
 p_prodSeReference(ttot,all_regi,all_enty,all_enty,all_te)         "Secondary Energy output of a te in the reference run [TWa]"
-p_prodFEReference(ttot,all_regi,all_enty,all_enty,all_te)         "Final Energy output of a te in the reference run [TWa]"
+pm_prodFEReference(ttot,all_regi,all_enty,all_enty,all_te)         "Final Energy output of a te in the reference run [TWa]"
 p_prodUeReference(ttot,all_regi,all_enty,all_enty,all_te)         "Useful Energy output of a te in the reference run [TWa]"
 p_co2CCSReference(ttot,all_regi,all_enty,all_enty,all_te,rlf)     "Captured CO2 put through the CCS chain in ccs2te (pipelines/injection) in the reference run [GtC]"
 p_prodAllReference(ttot,all_regi,all_te)                          "Sum of the above in the reference run. As each te has only one type of output, the differing units should not be a problem"
@@ -572,6 +576,7 @@ sm_trillion_2_non                                     "trillion to non"         
 s_zj_2_twa                                            "zeta joule to tw year"                              /31.7098/,
 sm_EJ_2_TWa                                           "multiplicative factor to convert from EJ to TWa"    /31.71e-03/,
 sm_GJ_2_TWa                                           "multiplicative factor to convert from GJ to TWa"    /31.71e-12/,
+sm_TWa_2_TWh                                          "tera Watt year to Tera Watt hour"                    /8.76e+3/,
 sm_TWa_2_MWh                                          "tera Watt year to Mega Watt hour"                    /8.76e+9/,
 sm_TWa_2_kWh                                          "tera Watt year to kilo Watt hour"                    /8.76e+12/,
 *RP* all these new conversion factors with the form "s_xxx_2_yyy" are multplicative factors. Thus, if you have a number in Unit xxx, you have to

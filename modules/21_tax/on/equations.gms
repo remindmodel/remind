@@ -6,6 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/21_tax/on/equations.gms
 
+*' @equations
+
 ***---------------------------------------------------------------------------
 *'  The dynamic bioenergy sustainability tax is calculated: it scales linearly
 *'  with the bioenergy demand starting at 0 at 0EJ to the level defined in
@@ -103,7 +105,7 @@ v21_taxrevCCS(t,regi)
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevNetNegEmi(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevNetNegEmi(t,regi) =e= cm_frac_NetNegEmi * pm_taxCO2eqSum(t,regi) * v21_emiALLco2neg(t,regi)
+v21_taxrevNetNegEmi(t,regi) =e= cm_frac_NetNegEmi * p_priceCO2(t,regi) * v21_emiALLco2neg(t,regi)
                                  - pm_taxrevNetNegEmi0(t,regi);
 
 ***---------------------------------------------------------------------------
@@ -388,5 +390,6 @@ q21_SeTaxRate(t,regi,te)$(teSeTax(te))..
   )
 ;
 
+*' @stop
 
 *** EOF ./modules/21_tax/on/equations.gms
