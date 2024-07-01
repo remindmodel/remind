@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### added
 
 ### fixed
+- included CCS from plastic waste incineration in CCS mass flows so it is
+    subject to injection constraints (but did not add CCS costs, see
+    https://github.com/remindmodel/development_issues/issues/274
 
 ### removed
 
