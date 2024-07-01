@@ -9,28 +9,35 @@
 print("Calculating damages and marginal damages for SCC ")
 require(dplyr)
 require(gdxrrw)
+require(quitte)
 igdx(system("dirname $( which gams )", intern = TRUE))
 
 #beta1 <- read.csv("../../modules/50_damages/KotzWenz/input/PERC_scaling_coefs_ssp2_ssp585_lagdiff_lintren_fix_spec_NL_8_9_10_movfix_30_Nboot1000_beta1.csv") %>% select(-"X")
 #beta2 <- read.csv("../../modules/50_damages/KotzWenz/input/PERC_scaling_coefs_ssp2_ssp585_lagdiff_lintren_fix_spec_NL_8_9_10_movfix_30_Nboot1000_beta2.csv") %>% select(-"X")
 #maxtemp <- read.csv("../../modules/50_damages/KotzWenz/input/PERC_scaling_coefs_ssp2_ssp585_lagdiff_lintren_fix_spec_NL_8_9_10_movfix_30_Nboot1000_maxGMT.csv") %>% select(-"X")
-beta1 <- read.csv("../../modules/50_damages/KotzWenz/input/f50_KLW_df_beta1.cs4r") %>% select(-"X")
-beta2 <- read.csv("../../modules/50_damages/KotzWenz/input/f50_KLW_df_beta2.cs4r") %>% select(-"X")
-maxtemp <- read.csv("../../modules/50_damages/KotzWenz/input/f50_KLW_df_maxGMT.cs4r") %>% select(-"X")
+beta1 <- read.csv("../../modules/50_damages/KotzWenz/input/f50_KLW_df_beta1.cs4r",skip=4,header=FALSE) %>% rename(iso=V1,realization=V2,value=V3)
+beta2 <- read.csv("../../modules/50_damages/KotzWenz/input/f50_KLW_df_beta2.cs4r",skip=4,header=FALSE) %>% rename(iso=V1,realization=V2,value=V3)
+maxtemp <- read.csv("../../modules/50_damages/KotzWenz/input/f50_KLW_df_maxGMT.cs4r",skip=4,header=FALSE) %>% rename(iso=V1,realization=V2,value=V3)
 
-getTemperatureMagicc = function(file = "./magicc/DAT_SURFACE_TEMP.OUT"){
-  x = read.table(file, skip = 19,header = T)
-  x = x[,c(1,2)]
-  names(x) = c('period','value')
-  x$period = as.integer(as.character(x$period))
+#getTemperatureMagicc = function(file = "./magicc/DAT_SURFACE_TEMP.OUT"){
+#  x = read.table(file, skip = 19,header = T)
+#  x = x[,c(1,2)]
+#  names(x) = c('period','value')
+#  x$period = as.integer(as.character(x$period))
+#  # Get relevant years
+#  years <- x[x$period >= 2005 & x$period <= 2300,1]
+#  return(x[x$period %in% years,])
+#}
+getTemperatureMagicc = function(file="./p15_magicc_temp.gdx"){
+  x <- read.gdx("p15_magicc_temp.gdx","pm_globalMeanTemperature") %>% rename(period=tall)
   # Get relevant years
-  years <- x[x$period >= 2005 & x$period <= 2300,1]
-  return(x[x$period %in% years,])
+  return(subset(x,period >= 2005 & period <= 2300))	
 }
 
 temp <- getTemperatureMagicc() %>% subset(period >= 2020) %>% mutate(value=value-value[1])
 
-countries <- colnames(beta1)
+#countries <- colnames(beta1)
+countries <- unique(beta1$iso)
 
 # calculate damage and marginal damage for mean, median, 5th and 95th percentile of damage distribution for each country
 # if country temperature is above the robust range of the damages (indicated by maxtemp) the temperature is set to maxtemp
@@ -39,7 +46,9 @@ alldam <- tibble(tall=integer(),iso=character(),low=double(),med=double(),mean=d
 alldam_marg <- tibble(tall=integer(),iso=character(),low_marg=double(),med_marg=double(),mean_marg=double(),high_marg=double())
 
 for(i in countries){
-  df <- as.data.frame(cbind(beta1[,i],beta2[,i],maxtemp[,i])) %>%
+#  df <- as.data.frame(cbind(beta1[,i],beta2[,i],maxtemp[,i])) %>%
+#    rename(beta1=V1,beta2=V2,maxtemp=V3)
+  df <- as.data.frame(cbind(subset(beta1,iso==i)$value,subset(beta2,iso==i)$value,subset(maxtemp,iso==i)$value)) %>%
     rename(beta1=V1,beta2=V2,maxtemp=V3)
   dam <- merge(temp,df) 
   dam[which(dam$maxtemp < dam$value),]$value <- 
