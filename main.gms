@@ -374,7 +374,7 @@ $setglobal emicapregi  none           !! def = none
 *' * (none): no tax policy (combined with all emiscens except emiscen = 9)
 *' * (exponential): 5% exponential increase over time of the tax level in 2020 set via cm_co2_tax_2020 (combined with emiscen = 9 and cm_co2_tax_2020>0)
 *' * (expoLinear): 5% exponential increase until c_expoLinear_yearStart, linear increase thereafter
-*' * (exogenous): carbon price is specified using an external input file or using the switch cm_regiExoPrice
+*' * (exogenous): carbon price is specified using an external input file or using the switch cm_regiExoPrice. Requires cm_emiscen = 9 and cm_iterative_target_adj = 0
 *' * (linear): linear increase over time of the tax level in 2020 set via cm_co2_tax_2020 (combined with emiscen = 9 and cm_co2_tax_2020>0)
 *' * (temperatureNotToExceed): [test and verify before using it!] Find the optimal carbon carbon tax (set cm_emiscen = 1, iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
 *' * (diffCurvPhaseIn2Lin): [REMIND 2.1 default for validation peakBudget runs, in combination with iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
@@ -1093,6 +1093,14 @@ parameter
 *' * (0) none
 *' * (1) no fossil carbon and capture in Germany
 *'
+
+parameter
+  c_fracRealfromAnnouncedCCScap2030         "switch to adjust the share of realised CCS capacities from total announced/planned projects from database in 2030"
+;
+  c_fracRealfromAnnouncedCCScap2030 = 0.4; !! def = 0.4
+*' This switch changes the assumption about the share of timely realised capacities from sum of announced/planned in 2030 from the IEA CCS data base
+*' Default assumption is that only 40% of announced or planned capacities will be realised, either due to discontinuation or delay
+
 parameter
   cm_startIter_EDGET          "starting iteration of EDGE-T"
 ;
