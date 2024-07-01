@@ -25,6 +25,7 @@ Variables
 Positive Variables
   v36_expSlack(ttot,all_regi)              "slack variable to avoid overflow on too high logistic function exponent"
   v36_H2share(ttot,all_regi)               "H2 share in gases"
+  v36_avgH2share(ttot, all_regi)           "Average of the H2 share from this and the previous time period"
   v36_costAddH2LowPen(ttot,all_regi)       "low penetration H2 mark up component"
   v36_costAddTeInvH2(ttot,all_regi,all_te) "Additional H2 phase-in cost at low H2 penetration levels [trUSD]"
 ;
@@ -32,8 +33,11 @@ Positive Variables
 Equations
   q36_demFeBuild(ttot,all_regi,all_enty,all_emiMkt) "buildings final energy demand"
   q36_H2Share(ttot,all_regi)                        "H2 share in gases"
-  q36_auxCostAddTeInv(ttot,all_regi)                "logistic function exponent calculation for additional cost at low H2 penetration"  
+  q36_avgH2share(ttot, all_regi)                    "Computation of average of the H2 share from this and the previous time period"
+  q36_auxCostAddTeInv(ttot,all_regi)                "logistic function exponent calculation for additional cost at low H2 penetration"
+$ifthen.no_calibration NOT "%CES_parameters%" == "calibrate"   !! CES_parameters
   q36_costAddH2LowPen(ttot,all_regi)                "additional annual investment costs under low H2 penetration in buildings"
+$endif.no_calibration
   q36_costAddH2PhaseIn(ttot,all_regi)               "additional industry H2 t&d cost at low H2 penetration in buildings" 
   q36_costCESmarkup(ttot,all_regi,all_in)           "calculation of additional CES markup cost that are accounted in the budget (GDP) to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps"
   q36_costAddTeInv(ttot,all_regi,all_te)            "summation of sector-specific demand-side cost"
