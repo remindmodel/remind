@@ -268,7 +268,8 @@ climateAssessmentOutput <- file.path(
 )
 
 assessmentData <- read.quitte(climateAssessmentOutput)
-usePeriods <- as.numeric(grep("[0-9]+", names(climateAssessmentInputData), value = TRUE))
+# usePeriods <- as.numeric(grep("[0-9]+", names(climateAssessmentInputData), value = TRUE))
+usePeriods <- unique(assessmentData[["period"]])
 logMsg <- paste0(
   " =================== POSTPROCESS climate-assessment output ==================\n",
   date(), "Read climate assessment output file '", climateAssessmentOutput, "' file containing ",
