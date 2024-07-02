@@ -99,6 +99,8 @@ choose_slurmConfig_output <- function(output) {
     slurm_options <- paste(slurm_options[1:3], "--mem=32000")
   } else if ("reporting" %in% output) {
     slurm_options <- grep("--mem=[0-9]*[0-9]{3}", slurm_options, value = TRUE)
+  } else if ("fixOnRef" %in% output && length(output) == 1) {
+    slurm_options <- c("direct", slurm_options)
   }
 
   if (length(slurm_options) == 1) {
@@ -220,11 +222,10 @@ if (comp %in% c("comparison", "export")) {
   }
 } else { # comp = single
     # define slurm class or direct execution
-  outputInteractive <- c("plotIterations", "fixOnRef", "integratedDamageCosts")
+  outputInteractive <- c("plotIterations", "integratedDamageCosts")
   if (! exists("source_include")) {
     if (any(output %in% outputInteractive)) {
       slurmConfig <- "direct"
-      flags <- c(flags, "--interactive") # to tell scripts they can run in interactive mode
     }
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
@@ -234,6 +235,9 @@ if (comp %in% c("comparison", "export")) {
     }
     if (slurmConfig %in% c("priority", "short", "standby")) {
       slurmConfig <- paste0("--qos=", slurmConfig, " --nodes=1 --tasks-per-node=1")
+    }
+    if (isTRUE(slurmConfig %in% "direct")) {
+      flags <- c(flags, "--interactive") # to tell scripts they can run in interactive mode
     }
   } else {
     # if being sourced by another script execute the output scripts directly without sending them to the cluster
@@ -279,7 +283,7 @@ if (comp %in% c("comparison", "export")) {
 
     # output creation for --testOneRegi was switched off in start.R in this commit:
     # https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
-    if (all(is.na(output)) || output == "NA") {
+    if (all(output %in% c(NA, "NA"))) {
       message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
     } else {
       message("\nStarting output generation for ", outputdir, "\n")

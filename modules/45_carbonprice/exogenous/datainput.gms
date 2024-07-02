@@ -9,7 +9,7 @@
 *** CO2 Tax level
 ***----------------------------
 
-if((cm_emiscen eq 9),
+if((cm_emiscen eq 9 AND cm_iterative_target_adj eq 0),
 
 p45_tau_co2_tax(ttot, regi) = 0;
 
@@ -21,7 +21,7 @@ pm_taxCO2eq(ttot,regi)$(ttot.val ge 2005) = p45_tau_co2_tax(ttot,regi);
 
 else
   pm_taxCO2eq(ttot,regi)$(ttot.val ge 2005) = 0;
-abort "Error: Please set cm_emiscen to 9";
+abort "Error: Please set cm_emiscen to 9 and cm_iterative_target_adj to 0";
 );
 
 *** EOF ./modules/45_carbonprice/exogenous/datainput.gms
