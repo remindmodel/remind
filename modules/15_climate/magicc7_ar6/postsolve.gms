@@ -17,9 +17,8 @@
 *' @code
 
 * Run only on first iteration to avoid incomplete GDXs
-if (iteration.val ge 2,
-* Run the climate assessment script. Takes around 2-3m for a single parameter set, including harmonization and infilling
 Execute_unload 'fulldata_postsolve';
+* Run the climate assessment script. Takes around 2-3m for a single parameter set, including harmonization and infilling
 Execute "Rscript climate_assessment_run.R";
 * Read in results
 Execute_Loadpoint 'p15_forc_magicc'  p15_forc_magicc;
@@ -27,7 +26,6 @@ Execute_Loadpoint 'p15_magicc_temp' pm_globalMeanTemperature = pm_globalMeanTemp
 
 *** climate_assessment only reports until 2100:
 pm_globalMeanTemperature(tall)$(tall.val gt 2100) = pm_globalMeanTemperature("2100");
-);
 
 ***---------------------------------------------------------------------------
 *' Raw temperature (GMT anomaly) from MAGICC is further calibrated to match HADCRUT4 in 2000. 

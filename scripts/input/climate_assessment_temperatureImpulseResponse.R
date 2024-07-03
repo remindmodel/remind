@@ -178,16 +178,15 @@ fileAllPulsesClimate <- paste0(normalizePath(climateTempDir), "/allpulses_IAMC_c
 
 # BUILD climate-assessment RUN COMMAND
 runClimateEmulatorCmd <- paste(
-  "python", file.path(scriptsDir, "run_clim.py"),
+  "python climate_assessment_openscm_run.py ",
   fileAllPulsesScen,
-  climateTempDir,
+  "--climatetempdir", climateTempDir,
   # Note: Option --year-filter-last requires https://github.com/gabriel-abrahao/climate-assessment/tree/yearfilter
-  "--year-filter-last", 2305,
+  "--endyear", 2200,
   "--num-cfgs", nparsets,
   "--scenario-batch-size", 1,
   "--probabilistic-file", probabilisticFileModified
 )
-
 # Get conda environment folder
 condaDir <- "/p/projects/rd3mod/python/environments/scm_magicc7"
 # Command to activate the conda environment
@@ -226,7 +225,8 @@ system(paste0(condaCmd, runClimateEmulatorCmd))
 timeStopEmulation <- Sys.time()
 
 # Actual runs done, read the output, already filtering what we need
-temperatureVarName <- "AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile"
+# temperatureVarName <- "AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile"
+temperatureVarName <- "Surface Air Temperature Change"
 mifAllPulsesClimate <- read.quitte(fileAllPulsesClimate) %>%
   filter(variable == temperatureVarName) %>%
   filter(between(period, 2020, 2300))
@@ -322,3 +322,4 @@ writeToGdx <- function(file = "pm_magicc_temperatureImpulseResponse", df) {
 # write to GDX:
 writeToGdx("pm_magicc_temperatureImpulseResponse", oupt)
 print("...done.")
+

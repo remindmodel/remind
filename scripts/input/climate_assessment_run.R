@@ -101,9 +101,10 @@ timeStopSetUpScript <- Sys.time()
 
 #
 # Run emissions report here
+# Includes air pollutant emissions from reportEmiAirPol()
 #
 timeStartPreprocessing <- Sys.time()
-emiReport <- reportEmi(gdxPath)
+emiReport <- reportEmiForClimateAssessment(gdxPath)
 
 logMsg <- paste0(
   date(), " climate_assessment_prepare.R: Done reportEmi, start to wrangle emissions report into shape\n"
@@ -267,7 +268,8 @@ climateAssessmentOutput <- file.path(
 )
 
 assessmentData <- read.quitte(climateAssessmentOutput)
-usePeriods <- as.numeric(grep("[0-9]+", names(climateAssessmentInputData), value = TRUE))
+# usePeriods <- as.numeric(grep("[0-9]+", names(climateAssessmentInputData), value = TRUE))
+usePeriods <- unique(assessmentData[["period"]])
 logMsg <- paste0(
   " =================== POSTPROCESS climate-assessment output ==================\n",
   date(), "Read climate assessment output file '", climateAssessmentOutput, "' file containing ",
