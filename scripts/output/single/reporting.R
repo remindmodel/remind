@@ -7,7 +7,7 @@
 
 library(magclass)
 # library(remind2)
-devtools::load_all("/p/tmp/katarkow/remind2/syntra-low-risk")
+devtools::load_all("/p/tmp/katarkow/remind2/ng-el-OAE")
 library(lucode2)
 library(gms)
 library(methods)

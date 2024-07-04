@@ -13,7 +13,7 @@ prepare <- function() {
   #require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   require(tools, quietly = TRUE,warn.conflicts =FALSE)
-  devtools::load_all("/p/tmp/katarkow/remind2/syntra-low-risk")
+  devtools::load_all("/p/tmp/katarkow/remind2/ng-el-OAE")
   # require(remind2)
   require(mrremind)
   require(mrvalidation)
@@ -436,11 +436,14 @@ prepare <- function() {
 
     #KK CDR module realizations
     levs_manipulateThis <- c(levs_manipulateThis,
-      list(c("rockgrind", "weathering")), list(c("grindrock", "weathering")))
+      list(c("rockgrind", "weathering")), list(c("grindrock", "weathering")),
+      list(c("\"oae\"", "\"oae_ng\"")))
     fixings_manipulateThis <- c(fixings_manipulateThis,
-      list(c("rockgrind", "weathering")), list(c("grindrock", "weathering")))
+      list(c("rockgrind", "weathering")), list(c("grindrock", "weathering")),
+      list(c("\"oae\"", "\"oae_ng\"")))
     margs_manipulateThis <- c(margs_manipulateThis,
-      list(c("rockgrind", "weathering")), list(c("grindrock", "weathering")))
+      list(c("rockgrind", "weathering")), list(c("grindrock", "weathering")),
+      list(c("\"oae\"", "\"oae_ng\"")))
 
     if(cfg$gms$CDR == 'DAC'){
       fixings_manipulateThis <- c(fixings_manipulateThis,
@@ -524,6 +527,7 @@ prepare <- function() {
                                 list(c("q33_DAC_ccsbal.M", "!!q33_DAC_ccsbal.M")),
                                 list(c("q33_ccsbal.M", "!!q33_ccsbal.M")),
                                 list(c("q33_H2bio_lim.M", "!!q33_H2bio_lim.M")),
+                                list(c("q33_OAE_FEdemand.M", "!!q33_OAE_FEdemand.M")),
                                 list(c("q33_demFeCDR.M", "!!q33_demFeCDR.M")),
                                 list(c("q33_emicdrregi.M", "!!q33_emicdrregi.M")),
                                 list(c("q33_otherFEdemand.M", "!!q33_otherFEdemand.M")))

@@ -51,7 +51,7 @@ q33_EW_potential(ttot,all_regi,rlf)  "limits the total potential of EW per regio
 q33_EW_emi(ttot,all_regi)  "calculates amount of carbon captured by EW"
 q33_EW_LimEmi(ttot,all_regi)  "limits EW to a maximal annual amount of ground rock of cm_LimRock"
 
-q33_OAE_FEdemand(ttot,all_regi,all_enty)  "calculates final energy demand for ocean alkalinity enhancement"
+q33_OAE_FEdemand(ttot,all_regi,all_enty,all_te) "calculates final energy demand for ocean alkalinity enhancement"
 ;
 
 *** EOF ./modules/33_CDR/portfolio/declarations.gms

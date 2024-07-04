@@ -11,7 +11,8 @@ prepare_NDC<-function(gdx, cfg){
   library(luplot,quietly=TRUE,warn.conflicts =FALSE)
   library(lucode2,quietly=TRUE,warn.conflicts =FALSE)
   library(gdx,quietly=TRUE,warn.conflicts =FALSE)
-  devtools::load_all("/p/tmp/katarkow/remind2/syntra-low-risk")
+  devtools::load_all("/p/tmp/katarkow/remind2/ng-el-OAE")
+  # library(remind2)
 
   ############################# BASIC CONFIGURATION #############################
 

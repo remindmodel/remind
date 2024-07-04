@@ -497,7 +497,7 @@ p47_implicitQttyTargetTax0(t,regi) =
       ( sum(ccs2te(ccsCo2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(t,regi,enty,enty2,te,rlf)))
       )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"all"))
       +
-      ( -vm_emiCdrTeDetail.l(t,regi,"oae")
+      ( sum(te_oae33, -vm_emiCdrTeDetail.l(t,regi,te_oae33))
       )$(sameas(qttyTarget,"oae") AND sameas(qttyTargetGroup,"all"))
       +
       (( !! Supply side BECCS
@@ -530,7 +530,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
       ( sum(regi$regi_groupExt(ext_regi,regi), sum(ccs2te(ccsCo2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf))))
       )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"all"))
       +
-      ( sum(regi$regi_groupExt(ext_regi,regi), -vm_emiCdrTeDetail.l(ttot,regi,"oae"))
+      ( sum(regi$regi_groupExt(ext_regi,regi), sum(te_oae33, -vm_emiCdrTeDetail.l(ttot,regi,te_oae33)))
       )$(sameas(qttyTarget,"oae") AND sameas(qttyTargetGroup,"all"))
       +
       sum(regi$regi_groupExt(ext_regi,regi), ( !! Supply side BECCS

@@ -262,8 +262,8 @@ fm_dataglob("inco0","csp")              = 0.7 * fm_dataglob("inco0","csp");
 fm_dataglob("incolearn","csp")          = 0.7 * fm_dataglob("incolearn","csp");
 
 *KK* adjust costs for oae from USD/GtCaO to USD/GtC
-fm_dataglob("inco0", "oae") = fm_dataglob("inco0", "oae") / (cm_33_oae_eff / sm_c_2_co2);
-fm_dataglob("omf", "oae")   = fm_dataglob("omf", "oae") / (cm_33_oae_eff / sm_c_2_co2);
+fm_dataglob("inco0", "oae_ng") = fm_dataglob("inco0", "oae_ng") / (cm_33_oae_eff / sm_c_2_co2);
+fm_dataglob("inco0", "oae_el") = fm_dataglob("inco0", "oae_el") / (cm_33_oae_eff / sm_c_2_co2);
 
 *** --------------------------------------------------------------------------------
 *** Regionalize technology investment cost data
@@ -733,7 +733,8 @@ pm_cf(ttot,regi,"idrcc") = 1.0; !! capex is derived from numbers per ton of CO2,
 pm_cf(ttot,regi,"eaf") = 1.0;   !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
 
 *KK TODO move to mrremind*
-pm_cf(ttot,regi,"oae") = 0.8;
+pm_cf(ttot,regi,"oae_ng") = 0.8;
+pm_cf(ttot,regi,"oae_el") = 0.8;
 
 *RP* phasing down the ngt cf to "peak load" cf of 5%
 pm_cf(ttot,regi,"ngt")$(ttot.val eq 2025) = 0.9 * pm_cf(ttot,regi,"ngt");
@@ -1207,7 +1208,8 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,"coalftcrec")      = 0.25;
   p_adj_seed_te(ttot,regi,"coaltr")          = 4.00;
   p_adj_seed_te(ttot,regi,'dac')             = 0.25;
-  p_adj_seed_te(ttot,regi,'oae')             = 0.25;
+  p_adj_seed_te(ttot,regi,'oae_ng')          = 0.25;
+  p_adj_seed_te(ttot,regi,'oae_el')          = 0.25;
   p_adj_seed_te(ttot,regi,'geohe')           = 0.33;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   p_adj_seed_te(ttot,regi,"bfcc")            = 0.05;
@@ -1255,7 +1257,8 @@ $ifthen.WindOff %cm_wind_offshore% == "1"
 $endif.WindOff
 
   p_adj_coeff(ttot,regi,"dac")             = 0.8;
-  p_adj_coeff(ttot,regi,'oae')             = 0.8;
+  p_adj_coeff(ttot,regi,'oae_ng')          = 0.8;
+  p_adj_coeff(ttot,regi,'oae_el')          = 0.8;
   p_adj_coeff(ttot,regi,teGrid)            = 0.3;
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
 );

@@ -59,7 +59,7 @@ q33_ccsbal(t, regi, ccs2te(ccsCo2(enty), enty2, te))..
     =e=
     - vm_emiCdrTeDetail(t, regi, "dac")
     + (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * sum(fe2cdr("fegas",entyFe2,te_used33), v33_FEdemand(t,regi,"fegas", entyFe2,te_used33))
-    - s33_OAE_chem_decomposition * vm_emiCdrTeDetail(t, regi, "oae")
+    - s33_OAE_chem_decomposition * sum(te_oae33, vm_emiCdrTeDetail(t, regi, te_oae33))
     ;
 
 ***---------------------------------------------------------------------------
@@ -179,10 +179,10 @@ q33_EW_LimEmi(t,regi)..
 *'  Calculation of FE demand for OAE, i.e., electricity for rock preprocessing,
 *'  and heat for calcination.
 ***---------------------------------------------------------------------------
-q33_OAE_FEdemand(t,regi,entyFe2)$sum(entyFe, fe2cdr(entyFe,entyFe2,"oae"))..
-    sum(fe2cdr(entyFe,entyFe2,"oae"), v33_FEdemand(t,regi,entyFe,entyFe2,"oae"))
+q33_OAE_FEdemand(t,regi,entyFe2, te_oae33)$sum(entyFe, fe2cdr(entyFe,entyFe2,te_oae33))..
+    sum(fe2cdr(entyFe, entyFe2, te_oae33), v33_FEdemand(t, regi, entyFe, entyFe2, te_oae33))
     =e=
-    p33_fedem("oae", entyFe2) * sm_EJ_2_TWa * (- vm_emiCdrTeDetail(t,regi,"oae"))
+    p33_fedem(te_oae33, entyFe2) * sm_EJ_2_TWa * (- vm_emiCdrTeDetail(t, regi, te_oae33))
     ;
 
 *' @stop
