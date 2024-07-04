@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/diffExp2Lin/realization.gms
 
-*#' @description: This realization implements an exponential increase in carbon price from the predefined 2020 level. Optional carbon price differentiation and quadratic phase-in can be activated via switch cm_co2_tax_spread.
+*#' @description: This realization implements exponentially increasing carbon price - either until 2100 or until peak year (constant or linear thereafter). Optional carbon price differentiation and quadratic phase-in can be activated via switch cm_co2_tax_spread.
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "declarations" $include "./modules/45_carbonprice/diffExp2Lin/declarations.gms"

@@ -6,6 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/diffLin2Lin/realization.gms
 
+*#' @description: This realization implements linearly increasing carbon price - either until 2100 or until peak year (constant or linear thereafter). Optional carbon price differentiation and quadratic phase-in can be activated via switch cm_co2_tax_spread.
+
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "declarations" $include "./modules/45_carbonprice/diffLin2Lin/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/diffLin2Lin/datainput.gms"
