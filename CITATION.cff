@@ -116,6 +116,12 @@ authors:
 
 - family-names: "Koch"
   given-names:  "Johannes"
+  orcid: https://orcid.org/0000-0003-2920-8086
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: "Köhler-Schindler"
+  given-names:  "Laurin"
+  orcid: https://orcid.org/0000-0003-4268-3084
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: "Körner"
