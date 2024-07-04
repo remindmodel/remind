@@ -16,16 +16,20 @@ options(renv.config.synchronized.check = FALSE)
 # always set the renv project to the current directory (formerly done by renv/activate.R under version 0.16.0) 
 Sys.setenv("RENV_PROJECT" = getwd())
 
+# when increasing renvVersion first commit new version's activate script and
+# put that commit's hash into the git checkout call below
+renvVersion <- "1.0.7"
+
+# reset renv/activate.R to match renv 1.0.7
+if (Sys.getenv("RESET_RENV_ACTIVATE_SCRIPT", unset = "TRUE") == "TRUE") {
+  system("git checkout b83bb1811ff08d8ee5ba8e834af5dd0080d10e66 -- renv/activate.R")
+}
+
 source("renv/activate.R")
 
-# when increasing renvVersion first commit new version's activate script and
-# put that commit's hash into the download.file call below
-renvVersion <- "1.0.7"
 if (packageVersion("renv") != renvVersion) {
   renvLockExisted <- file.exists(renv::paths$lockfile())
   renv::install(paste0("renv@", renvVersion))
-  message("Downloading 'renv/activate.R' of renv version 1.0.7")
-  download.file("https://raw.githubusercontent.com/remindmodel/remind/b83bb1811ff08d8ee5ba8e834af5dd0080d10e66/renv/activate.R", "renv/activate.R")
   if (!renvLockExisted) {
     unlink(renv::paths$lockfile())
   }
@@ -39,7 +43,7 @@ if (!"https://rse.pik-potsdam.de/r/packages" %in% getOption("repos")) {
 if (isTRUE(rownames(installed.packages(priority = "NA")) == "renv")) {
   message("R package dependencies are not installed in this renv, installing now...")
   renv::install("rmarkdown", prompt = FALSE) # rmarkdown is required to find dependencies in Rmd files
-  renv::hydrate() # auto-detect and install all dependencies
+  renv::hydrate(prompt = FALSE, report = FALSE) # auto-detect and install all dependencies
   message("Finished installing R package dependencies.")
 }
 
