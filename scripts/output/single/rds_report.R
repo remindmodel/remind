@@ -58,6 +58,6 @@ if(file.exists(runstatistics) & dir.exists(resultsarchive)) {
   saveRDS(q,file=paste0(resultsarchive,"/",stats$id,".rds"))
   cwd <- getwd()
   setwd(resultsarchive)
-  system("ls 1*.rds > files")
+  system("find -type f -name '1*.rds' -printf '%f\n' | sort > files")
   setwd(cwd)
 }
