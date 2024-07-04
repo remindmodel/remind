@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### changed
 
 ### added
+- added realizations diffExp2Lin and diffLin2Lin to 45_carbonprice [#1723](https://github.com/remindmodel/remind/pull/1723)
 
 ### fixed
 - included CCS from plastic waste incineration in CCS mass flows so it is
