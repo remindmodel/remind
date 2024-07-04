@@ -24,3 +24,4 @@ cm_CO2priceRegConvEndYr,input,questionnaire
 cm_NDC_divergentScenario,input,questionnaire
 vm_demFeSector,input,questionnaire
 pm_emifac,input,questionnaire
+cm_co2_tax_spread,input,No carbon price differentiation in this realization
