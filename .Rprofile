@@ -24,7 +24,7 @@ renvVersion <- "1.0.7"
 gitRoot <- system2("git", c("rev-parse", "--show-toplevel"), stdout = TRUE)
 if (Sys.getenv("RESET_RENV_ACTIVATE_SCRIPT", unset = "TRUE") == "TRUE" &&
       normalizePath(gitRoot) == normalizePath(".")) {
-  system("git checkout b83bb1811ff08d8ee5ba8e834af5dd0080d10e66 -- renv/activate.R")
+  system2("git", c("checkout", "b83bb1811ff08d8ee5ba8e834af5dd0080d10e66", "--", "renv/activate.R"))
 }
 
 source("renv/activate.R")
