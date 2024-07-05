@@ -98,12 +98,12 @@ modelSummary <- function(folder = ".", gams_runtime = NULL) {
       message("No failed markets in fulldata.gdx.")
     }
     failedtaxes <- quitte::as.quitte(readGDX(file.path(folder, "fulldata.gdx"), "p80_convNashTaxrev_iter"))
-    failedtaxes <- droplevels(dplyr::filter(failedtaxes, !!rlang::sym("value") == 1))
+    failedtaxes <- droplevels(dplyr::filter(failedtaxes, as.numeric(!!rlang::sym("iteration")) == max_iter_fd, abs(!!rlang::sym("value")) > 0.001))
     if (nrow(failedtaxes) > 0) {
       message("Failed tax convergence in fulldata.gdx:")
       for (r in levels(failedtaxes$region)) {
         rf <- failedtaxes$period[failedtaxes$region == r]
-        message(" - ", r, ": ", paste0(rf[1:mif(length(rf), 10)], collapse = ", "), if (length(rf) > 10) " ...")
+        message(" - ", r, ": ", paste0(rf[1:min(length(rf), 10)], collapse = ", "), if (length(rf) > 10) " ...")
       }
     } else {
       message("No failed tax convergence in fulldata.gdx.")
