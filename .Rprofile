@@ -13,7 +13,7 @@ if (file.exists("renv.lock") && file.exists("README.md") && !file.exists("renv/o
 # do not check if library and renv.lock are in sync, because normally renv.lock does not exist
 options(renv.config.synchronized.check = FALSE)
 
-# always set the renv project to the current directory (formerly done by renv/activate.R under version 0.16.0) 
+# always set the renv project to the current directory
 Sys.setenv("RENV_PROJECT" = getwd())
 
 # when increasing renvVersion first commit new version's activate script and
@@ -21,7 +21,9 @@ Sys.setenv("RENV_PROJECT" = getwd())
 renvVersion <- "1.0.7"
 
 # reset renv/activate.R to match renv 1.0.7
-if (Sys.getenv("RESET_RENV_ACTIVATE_SCRIPT", unset = "TRUE") == "TRUE") {
+gitRoot <- system2("git", c("rev-parse", "--show-toplevel"), stdout = TRUE)
+if (Sys.getenv("RESET_RENV_ACTIVATE_SCRIPT", unset = "TRUE") == "TRUE" &&
+      normalizePath(gitRoot) == normalizePath(".")) {
   system("git checkout b83bb1811ff08d8ee5ba8e834af5dd0080d10e66 -- renv/activate.R")
 }
 
