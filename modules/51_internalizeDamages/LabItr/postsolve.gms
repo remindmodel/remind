@@ -59,7 +59,7 @@ p51_scc(tall)$((tall.val ge 2020) and (tall.val le 2150)) = 1000 *
 *if(cm_iterative_target_adj eq 10 and cm_emiscen eq 9 and  mod(iteration.val,2) eq 1,   !! update only every uneven iteration to prevent zig-zagging
 
 pm_taxCO2eqSCC(ttot,regi) = 0;
-pm_taxCO2eqSCC(t,regi)$(t.val ge 2020) = p51_scc(t) * (44/12)/1000;
+pm_taxCO2eqSCC(t,regi)$(t.val ge 2025) = p51_scc(t) * sm_c_2_co2/1000;
 
 *);
 

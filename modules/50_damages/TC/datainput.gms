@@ -12,28 +12,22 @@ p50_damageFuncCoefTC2(isoTC) = 0;
 
 *** load TC damage parameter data (Krichene et al. 2022)
 
-*parameter f50_TCconst(iso,all_TCpers,all_TCspec)	"damage parameter for TC, constant"
 parameter f50_TCconst(iso,all_TCspec)	"damage parameter for TC, constant"
 /
 $ondelim
-*$include "./modules/50_damages/TC/input/f50_TC_df_const.cs4r"
-$include "./modules/50_damages/TC/input/f50_TC_df_const_new.csv"
+$include "./modules/50_damages/TC/input/f50_TC_df_const.cs4r"
 $offdelim
 /
 ;
 
-*parameter f50_TCtasK(iso,all_TCpers,all_TCspec)	"damage parameter for TC, linear with temperature"
 parameter f50_TCtasK(iso,all_TCspec)	"damage parameter for TC, linear with temperature"
 /
 $ondelim
-*$include "./modules/50_damages/TC/input/f50_TC_df_tasK.cs4r"
-$include "./modules/50_damages/TC/input/f50_TC_df_tasK_new.csv"
+$include "./modules/50_damages/TC/input/f50_TC_df_tasK.cs4r"
 $offdelim
 /
 ;
 
-*p50_damageFuncCoefTC0(iso) = f50_TCconst(iso,"%cm_TCpers%","%cm_TCspec%")/100;
-*p50_damageFuncCoefTC1(iso) = f50_TCtasK(iso,"%cm_TCpers%","%cm_TCspec%")/100;
 p50_damageFuncCoefTC0(iso) = f50_TCconst(iso,"%cm_TCspec%");
 p50_damageFuncCoefTC1(iso) = f50_TCtasK(iso,"%cm_TCspec%");
 
