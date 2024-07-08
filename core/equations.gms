@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -809,21 +809,22 @@ q_budgetCO2eqGlob$(cm_emiscen=6)..
 *' Definition of carbon capture :
 ***---------------------------------------------------------------------------
 q_balcapture(t,regi,ccs2te(ccsCo2(enty),enty2,te)) ..
-  sum(teCCS2rlf(te,rlf),vm_co2capture(t,regi,enty,enty2,te,rlf))
+  sum(teCCS2rlf(te,rlf), vm_co2capture(t,regi,enty,enty2,te,rlf))
   =e=
-*** Carbon captured in energy sector
+    !! carbon captured in energy sector
     sum(emi2te(enty3,enty4,te2,enty),
       vm_emiTeDetail(t,regi,enty3,enty4,te2,enty)
     )
-*** Carbon captured from CDR technologies in CDR module
-  + sum(teCCS2rlf(te,rlf),
-      vm_ccs_cdr(t,regi,enty,enty2,te,rlf)
-    )
-*** Carbon captured from industry
-  + sum(emiInd37,
-      vm_emiIndCCS(t,regi,emiInd37)
+    !! carbon captured from CDR technologies in CDR module
+  + sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
+    !! carbon captured from industry
+  + sum(emiInd37, vm_emiIndCCS(t,regi,emiInd37))
+  + sum((sefe(entySe,entyFe),emiMkt)$( 
+                            entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ),
+      vm_incinerationCCS(t,regi,entySe,entyFe,emiMkt)
     )
 ;
+
 ***---------------------------------------------------------------------------
 *' Definition of splitting of captured CO2 to CCS, CCU and a valve (the valve
 *' accounts for different lifetimes of capture, CCS and CCU technologies s.t.

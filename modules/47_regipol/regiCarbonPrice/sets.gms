@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -21,7 +21,10 @@ $ifThen.emiMkt not "%cm_emiMktTarget%" == "off"
   regiEmiMktTarget(ext_regi)                   "regions with emiMkt targets" / /
   regiANDperiodEmiMktTarget_47(ttot,ext_regi)  "regions and periods with emiMkt targets" / /
   regiEmiMktTarget2regi_47(ext_regi,all_regi)  "regions controlled by emiMkt market set to ext_regi" / / 
-  rescaleType                                  "carbon price scaling types" / "squareDev_firstIteration", "squareDev_perfectMatch", "squareDev_smallChange", "squareDev_noChange", "slope_prevIteration", "slope_firstIteration"/
+  rescaleType                                  "emi mkt carbon price scaling factor calculation methods" / 
+    "squareDev_firstIteration", "squareDev_perfectMatch", "squareDev_smallChange", "squareDev_noChange", 
+    "slope_refIteration", "slope_firstIteration", "slope_repeatPrev", "slope_repeatPrev_positiveSlope", 
+    "squareDev_noSlope", "squareDev_noNonPositiveSlope"/
   regiEmiMktRescaleType(iteration,ttot,ttot,ext_regi,emiMktExt,rescaleType) "saving scaling type used in iteration" / /
   convergenceType                              "emiMkt target non convergence reason" / "lowerThanTolerance", "smallPrice" / 
   regiEmiMktconvergenceType(iteration,ttot,ttot,ext_regi,emiMktExt,convergenceType) "saving convergence type in iteration" / /

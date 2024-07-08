@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -372,12 +372,14 @@ $setglobal emicapregi  none           !! def = none
 *' This module defines the carbon price pm_taxCO2eq, with behaviour across regions governed by similar principles (e.g. global targets, or all following NDC or NPi policies).
 *'
 *' * (none): no tax policy (combined with all emiscens except emiscen = 9)
-*' * (exponential): 5% exponential increase over time of the tax level in 2020 set via cm_co2_tax_2020 (combined with emiscen = 9 and cm_co2_tax_2020>0)
-*' * (expoLinear): 5% exponential increase until c_expoLinear_yearStart, linear increase thereafter
-*' * (exogenous): carbon price is specified using an external input file or using the switch cm_regiExoPrice
+*' * (exponential): 4.5% exponential increase over time of the tax level in 2020 set via cm_co2_tax_2020 (combined with emiscen = 9 and cm_co2_tax_2020>0)
+*' * (expoLinear): 4.5% exponential increase until c_expoLinear_yearStart, linear increase thereafter
+*' * (exogenous): carbon price is specified using an external input file or using the switch cm_regiExoPrice. Requires cm_emiscen = 9 and cm_iterative_target_adj = 0
 *' * (linear): linear increase over time of the tax level in 2020 set via cm_co2_tax_2020 (combined with emiscen = 9 and cm_co2_tax_2020>0)
 *' * (temperatureNotToExceed): [test and verify before using it!] Find the optimal carbon carbon tax (set cm_emiscen = 1, iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
 *' * (diffCurvPhaseIn2Lin): [REMIND 2.1 default for validation peakBudget runs, in combination with iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
+*' * (diffExp2Lin): quadratic convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; starting level of differentiation in cm_startyear is given by cm_co2_tax_spread; developed countries have exponential path until peak year (with iterative_target_adj = 9) or until 2100 (with iterative_target_adj = 5);
+*' * (diffLin2Lin): [Variant of diffCurvPhaseIn2Lin, will be further developed before becoming the new default] quadratic convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; starting level of differentiation in cm_startyear is given by cm_co2_tax_spread; developed countries have linear path until peak year (with iterative_target_adj = 9) or until 2100 (with iterative_target_adj = 5);
 *' * (NDC): implements a carbon price trajectory consistent with the NDC targets (up to 2030) and a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). Choose version using cm_NDC_version "2023_cond", "2023_uncond", or replace 2023 by 2022, 2021 or 2018 to get all NDC published until end of these years.
 *' * (NPi): National Policies Implemented, extrapolation of historical (until 2020) carbon prices
 $setglobal carbonprice  none           !! def = none
@@ -401,6 +403,7 @@ $setglobal regipol  none              !! def = none
 *' * (off): no damages on GDP
 *' * (DiceLike): DICE-like damages (linear-quadratic damages on GDP). Choose specification via cm_damage_DiceLike_specification
 *' * (BurkeLike): Burke-like damages (growth rate damages on GDP). Choose specification via cm_damage_BurkeLike_specification and cm_damage_BurkeLike_persistenceTime
+*' * (KotzWenz): damage function based on Kotz et al. (2024)
 *' * (KWLike): Damage function based on Kalkuhl & Wenz (2020)
 *' * (KW_SE): Damage function based on Kalkuhl & Wenz (2020), but for the upper bound of the damages based on their standard error calculation
 *' * (KWTCint): Combines aggregate damages from Kalkuhl & Wenz (2020) and tropical cyclone damages from Krichene et al. (2022)
@@ -412,6 +415,7 @@ $setGlobal damages  off               !! def = off
 *' * (off):
 *' * (DiceLikeItr): Internalize DICE-like damages (calculate the SCC) adjust cm_damages_SccHorizon. Requires cm_emiscen set to 9 for now.
 *' * (BurkeLikeItr): Internalize Burke-like damages (calculate the SCC) adjust cm_damages_SccHorizo. Requires cm_emiscen set to 9 for now.
+*' * (KotzWenzItr): Internalize KotzWenz damages (calculate the SCC). Requires cm_emiscen set to 9. 
 *' * (KWlikeItr): Internalize damage function based on Kalkuhl & Wenz (2020). Requires cm_emiscen set to 9 for now.
 *' * (KWlikeItrCPnash): Internalize damage function based on Kalkuhl & Wenz (2020), but with Nash SCC, i.e. each region only internalizes its own damages. Requires cm_emiscen set to 9 for now.
 *' * (KWlikeItrCPreg): Internalize damage function based on Kalkuhl & Wenz (2020), but with regional SCC instead of a global uniform price. Requires cm_emiscen set to 9 for now.
@@ -508,8 +512,8 @@ parameter
 parameter
   cm_co2_tax_growth         "growth rate of carbon tax"
 ;
-  cm_co2_tax_growth = 1.05;            !! def = 1.05  !! regexp = is.numeric
-*'  (any number >= 0): rate of exponential increase over time
+  cm_co2_tax_growth = 1.045;            !! def = 1.045  !! regexp = is.numeric
+*'  (any number >= 0): rate of exponential increase over time, default value chosen to be consistent with interest rate
 parameter
   c_macscen                 "scenario switch on whether or not to use MAC (Marginal Abatement Cost) for certain sectors not related to direct combustion of fossil fuel, e.g. fugitive emissions from old mines, forestry, agriculture and cement"
 ;
@@ -977,10 +981,19 @@ parameter
   c_taxCO2inc_after_peakBudgYr = 0; !! def = 0 . For weak targets (higher than 1100 Peak Budget), this value might need to increased to prevent continually increasing temperatures
 *'
 parameter
-  cm_CO2priceRegConvEndYr      "Year at which regional CO2 taxes converge in module 45 realization diffCurvPhaseIn2Lin"
+  cm_CO2priceRegConvEndYr      "Year at which regional CO2 taxes converge in module 45 for realizations with differentiated carbon prices"
 ;
-  cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
+  cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050    
 *'
+parameter
+  cm_co2_tax_spread            "spread of carbon prices in 2025 given as a factor"
+;
+  cm_co2_tax_spread        = 10;     !! def = 10  !! regexp = 1|10|20
+*'  Initial spread of carbon prices (in 2025) between the regions with highest respectively lowest GDP per capita (PPP)
+*' * (1) Uniform carbon pricing, i.e. no differentiation
+*' * (10) Spread of carbon prices in 2025 is equal to 10
+*' * (20) Spread of carbon prices in 2025 is equal to 20
+
 parameter
   c_teNoLearngConvEndYr      "Year at which regional costs of non-learning technologies converge"
 ;
@@ -1091,6 +1104,14 @@ parameter
 *' * (0) none
 *' * (1) no fossil carbon and capture in Germany
 *'
+
+parameter
+  c_fracRealfromAnnouncedCCScap2030         "switch to adjust the share of realised CCS capacities from total announced/planned projects from database in 2030"
+;
+  c_fracRealfromAnnouncedCCScap2030 = 0.4; !! def = 0.4
+*' This switch changes the assumption about the share of timely realised capacities from sum of announced/planned in 2030 from the IEA CCS data base
+*' Default assumption is that only 40% of announced or planned capacities will be realised, either due to discontinuation or delay
+
 parameter
   cm_startIter_EDGET          "starting iteration of EDGE-T"
 ;
@@ -1665,6 +1686,8 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off  !! 
 $setGlobal cm_magicc_config  OLDDEFAULT    !! def = OLDDEFAULT ; {OLDDEFAULT, RCP26_[5,15,..,95], TCRE_[LOWEST,LOW,MEDIUM,HIGH,HIGHEST] }
 *'  climate damages (HowardNonCatastrophic, DICE2013R, DICE2016, HowardNonCatastrophic, HowardInclCatastrophic, KWcross, KWpanelPop}
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
+***cfg$gms$cm_KotzWenzPerc <- mean #def = mean; {low,med,mean,high} the percentile of the damage distribution from Kotz et al. (2024), low = 5th, high = 95th percentile
+$setGlobal cm_KotzWenzPerc mean !! def = mean !! regexp = low|med|mean|high
 *** cfg$gms$cm_damage_Labor_exposure <- "low" # def = "low"; {low,high}
 $setGlobal cm_damage_Labor_exposure  low    !! def = low  !! regexp = low|high
 *** cfg$gms$cm_TCssp <- "SSP2"  #def = "SSP2"; {SSP2,SSP5} the scenario for which the damage function is specified - currently only SSP2 and SSP5 are available

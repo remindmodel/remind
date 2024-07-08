@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -417,6 +417,7 @@ vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
 
 vm_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)      "Carbon flow: carbon contained in feedstocks with unknown fate (not plastics)(assumed to go back into the atmosphere) [GtC]"
 vm_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "Emissions from incineration of plastic waste [GtC]"
+vm_incinerationCCS(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "CCS from incineration of plastic waste [GtC]"
 vm_nonIncineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)       "Carbon flow: carbon contained in plastics that are not incinerated [GtC]"
 
 v_changeProdStartyearAdj(ttot,all_regi,all_te)       "Absolute effect size of changing output with respect to the reference run for each te"
@@ -587,8 +588,11 @@ sm_dmac                                               "step in MAC functions [US
 sm_macChange                                           "maximum yearly increase of relative abatement in percentage points of maximum abatement. [0..1]"      /0.05/
 sm_tgn_2_pgc                                           "conversion factor 100-yr GWP from TgN to PgCeq"
 sm_tgch4_2_pgc                                         "conversion factor 100-yr GWP from TgCH4 to PgCeq"
+s_MtCO2_2_GtC                                         "conversion factor from MtCO2 to native REMIND emission unit GtC" /2.727e-04/
 
 s_MtCH4_2_TWa                                        "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
+
+sm_h2kg_2_h2kWh                                      "convert kilogramme of hydrogen to kwh energy value." /32.5/
 
 s_D2015_2_D2005                                      "Convert $2015 to $2005 by dividing by 1.2: 1/1.2 = 0.8333"      /0.8333/
 sm_DptCO2_2_TDpGtC                                    "Conversion multiplier to go from $/tCO2 to T$/GtC: 44/12/1000"     /0.00366667/

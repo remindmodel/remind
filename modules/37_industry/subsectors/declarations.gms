@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -112,6 +112,7 @@ $endif.no_calibration
   q37_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)                    "calculate carbon contained in plastics [GtC]"
   q37_plasticWaste(ttot,all_regi,all_enty,all_enty,all_emiMkt)                      "calculate carbon contained in plastic waste [GtC]"
   q37_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)                   "calculate carbon contained in plastics that are incinerated [GtC]"
+  q37_incinerationCCS(ttot,all_regi,all_enty,all_enty,all_emiMkt)                   "calculate carbon captured from plastics that are incinerated [GtC]"
   q37_nonIncineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "calculate carbon contained in plastics that are not incinerated [GtC]"
   q37_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)           "calculate carbon contained in chemical feedstock with unknown fate [GtC]"
   q37_feedstocksLimit(ttot,all_regi,all_enty,all_enty,all_emiMkt)                   "restrict feedstocks flow to total energy flows into industry"

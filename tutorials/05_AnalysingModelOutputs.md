@@ -182,7 +182,7 @@ In both cases, you can choose from the list of available model scenarios, for wh
 
 Now, the selected scripts are executed. After completion, the results are written in the respective folder of the run (combination of **model title** name and the **current date** inside the **output** folder of the model).
 
-One recommended script for comparison of different scenarios is `compareScenarios2`. After you selected folder names, specified a `filename_prefix`, the priority on the cluster, and a *profile* (describes some output parameters) it produces a large PDF (or HTML if a respective profile is chosen) in the `./remind/` folder.
+One recommended script for comparison of different scenarios is `compareScenarios2`, see [the specific tutorial](https://pik-piam.r-universe.dev/articles/remind2/compareScenariosRemind2.html). After you selected folder names, specified a `filename_prefix`, the priority on the cluster, and a *profile* (describes some output parameters) it produces a large PDF (or HTML if a respective profile is chosen) in the `./remind/` folder.
 
 You can also specify the parameters in the command line, for example starting a `compareScenario2` run without any prefix as:
 

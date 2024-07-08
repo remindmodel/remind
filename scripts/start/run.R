@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -259,8 +259,9 @@ run <- function() {
   # make sure the renv used for the run is also used for generating output
   if (!is.null(renv::project())) {
     if (normalizePath(renv::project()) != normalizePath(outputdir)) {
-      stop("loaded renv=", normalizePath(renv::project()), " and outputdir=", normalizePath(outputdir), " must be equal.")
+      warning("loaded renv=", normalizePath(renv::project()), " and outputdir=", normalizePath(outputdir), " must be equal.")
     }
+    message("Using ", normalizePath(renv::project()), " as renv project")
     argv <- c(get0("argv"), paste0("--renv=", renv::project()))
   }
 

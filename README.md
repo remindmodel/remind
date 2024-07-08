@@ -40,7 +40,7 @@ Tutorials can be found in the form of markdown files in the repository:
 https://github.com/remindmodel/remind/tree/develop/tutorials
 
 ## COPYRIGHT
-Copyright 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+Copyright 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 
 ## LICENSE
 This program is free software: you can redistribute it and/or modify

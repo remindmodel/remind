@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -450,7 +450,7 @@ $endif.REG_techcosts
 
 
 *------------------------------------------------------------------------------------
-*   END of Technology cost data input read-in and manipulation in core
+***   END of Technology cost data input read-in and manipulation in core
 *------------------------------------------------------------------------------------
 *** Note: in modules/05_initialCap/on/preloop.gms, there are additional adjustment to investment
 *** cost in the near term due to calibration of historical energy conversion efficiencies based on
@@ -548,7 +548,7 @@ table f_dataetaglob(tall,all_te)                      "global eta data"
 $include "./core/input/generisdata_varying_eta.prn"
 ;
 
-* Read in mac historical emissions to calibrate MAC reference emissions
+*** Read in mac historical emissions to calibrate MAC reference emissions
 parameter p_histEmiMac(tall,all_regi,all_enty)    "historical emissions per MAC"
 /
 $ondelim
@@ -556,7 +556,7 @@ $include "./core/input/p_histEmiMac.cs4r"
 $offdelim
 /
 ;
-* Read in historical emissions per sector to calibrate MAC reference emissions
+*** Read in historical emissions per sector to calibrate MAC reference emissions
 parameter p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types)    "historical emissions per sector"
 /
 $ondelim
@@ -584,9 +584,9 @@ pm_emifac(ttot,regi,enty,enty2,te,"cco2")$emi2te(enty,enty2,te,"cco2") = fm_data
 *JeS scale N2O energy emissions to EDGAR
 pm_emifac(ttot,regi,enty,enty2,te,"n2o")$emi2te(enty,enty2,te,"n2o") = 0.905 * fm_dataemiglob(enty,enty2,te,"n2o");
 
-*JeS from IPCC http://www.ipcc-nggip.iges.or.jp/public/gp/bgp/2_2_Non-CO2_Stationary_Combustion.pdf:
-*JeS CH4: 300 kg/TJ = 0.3 Mt/EJ * 31.536 EJ/TWa = 9.46 Mt /TWa
-*JeS N2O: 1 kg/TJ = 0.001 Mt/EJ * 31.536 EJ/TWa = 0.031536 Mt / TWa
+***JeS from IPCC http://www.ipcc-nggip.iges.or.jp/public/gp/bgp/2_2_Non-CO2_Stationary_Combustion.pdf:
+***JeS CH4: 300 kg/TJ = 0.3 Mt/EJ * 31.536 EJ/TWa = 9.46 Mt /TWa
+***JeS N2O: 1 kg/TJ = 0.001 Mt/EJ * 31.536 EJ/TWa = 0.031536 Mt / TWa
 *** coal 1.4 kg/TJ = 0.04415 Mt/TWa
 *** gas 0.1 kg/TJ = 0.00315 Mt/TWa
 *** oil 0.6 kg/TJ = 0.01892 Mt/TWa
@@ -715,8 +715,8 @@ pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
 
-*SB* Region- and tech-specific early retirement rates
-*Regional*
+*** Region- and tech-specific early retirement rates
+***Regional*
 loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi),
   pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi)) = pm_extRegiEarlyRetiRate(ext_regi);
 );
@@ -737,7 +737,7 @@ loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
 );
 $endif.tech_earlyreti
 
-*SB* Time-dependent early retirement rates in Baseline scenarios
+*** Time-dependent early retirement rates in Baseline scenarios
 $ifthen.Base_Cprice %carbonprice% == "none"
 $ifthen.Base_techpol %techpol% == "none"
 *** CG: Allow no early retirement in future periods under baseline for developing countries

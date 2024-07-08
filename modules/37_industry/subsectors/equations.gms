@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -295,15 +295,24 @@ q37_plasticWaste(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
   + v37_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)$( ttot.val gt 2070 )
   ;
 
-*' emissions from plastics incineration as a share of total plastic waste, discounted by captured amount
+*' emissions from plastics incineration as a share of total plastic waste,
+*' discounted by captured amount
 q37_incinerationEmi(t,regi,sefe(entySe,entyFe),emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)) ..
+                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
   vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
   =e=
-  (
     v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
   * pm_incinerationRate(t,regi)
-  ) * (1 - p37_regionalWasteIncinerationCCSshare(t,regi))
+  * (1 - p37_regionalWasteIncinerationCCSshare(t,regi))
+;
+
+q37_incinerationCCS(t,regi,sefe(entySe,entyFe),emiMkt)$(
+                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
+  vm_incinerationCCS(t,regi,entySe,entyFe,emiMkt)
+  =e=
+    v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
+  * pm_incinerationRate(t,regi)
+  * p37_regionalWasteIncinerationCCSshare(t,regi)
 ;
 
 *' calculate carbon contained in non-incinerated plastics

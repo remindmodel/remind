@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -94,7 +94,8 @@ if (! exists("profileNames") || ! all(profileNames %in% names(profiles))) {
   profileNames <- names(profiles)[gms::chooseFromList(
     ifelse(names(profiles) %in% profileNamesDefault, crayon::cyan(names(profiles)), names(profiles)),
     type = "profiles for cs2",
-    userinfo = paste0("Leave empty for ", crayon::cyan("cyan"), " default profiles."),
+    userinfo = paste0("Leave empty for ", crayon::cyan("cyan"), " default profiles.\n",
+                      "For a tutorial, see https://pik-piam.r-universe.dev/articles/remind2/compareScenariosRemind2.html"),
     returnBoolean = TRUE
   )]
 }
