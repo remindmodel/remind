@@ -8,17 +8,8 @@
 
 *' @description Aggregate GDP damages based on Kotz et al. (2024). They are calculated on country level for 1000 Monte Carlo realizations, then the chosen percentile of this damage distribution is used in the further calculations. The damages are calculated with respect to temperature changes compared to 2020, assuming that the 2020 GDP already includes all climate damages.
 
-*' @limitations: Unless the realization "KotzWenzItr" is used for module 51_internalizeDamages, the damages are not actually part of the optimization, but just enter as a fixed variable reducing output, updated in between iterations.  
+*' @limitations: Unless the realization "KotzWenzItr" is used for module 51_internalizeDamages, the damages are not actually part of the optimization, but just enter as a fixed variable reducing output, updated in between iterations.
 
-*####################### R SECTION START (PHASES) ##############################
-$Ifi "%phase%" == "sets" $include "./modules/50_damages/TC/sets.gms"
-$Ifi "%phase%" == "declarations" $include "./modules/50_damages/TC/declarations.gms"
-$Ifi "%phase%" == "datainput" $include "./modules/50_damages/TC/datainput.gms"
-$Ifi "%phase%" == "bounds" $include "./modules/50_damages/TC/bounds.gms"
-$Ifi "%phase%" == "postsolve" $include "./modules/50_damages/TC/postsolve.gms"
-*######################## R SECTION END (PHASES) ###############################
-
-*** EOF ./modules/50_damages/TC/realization.gms
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/50_damages/KotzWenz/sets.gms"
 $Ifi "%phase%" == "declarations" $include "./modules/50_damages/KotzWenz/declarations.gms"

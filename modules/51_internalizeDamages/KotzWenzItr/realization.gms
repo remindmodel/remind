@@ -9,7 +9,6 @@
 *' @description Based on the analytic expression derived in @Schultes2020 the social cost of carbon corresponding to the aggregate output damages from Kotz et al (2024), as calculated in module 50_damages/KotzWenz.
 
 *####################### R SECTION START (PHASES) ##############################
-*####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "declarations" $include "./modules/51_internalizeDamages/KotzWenzItr/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/51_internalizeDamages/KotzWenzItr/datainput.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/51_internalizeDamages/KotzWenzItr/postsolve.gms"
