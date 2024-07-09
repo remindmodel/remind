@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -656,7 +656,7 @@ if (! "--test" %in% flags && ! "--gamscompile" %in% flags) {
   cs_name <- paste0("compScen-all-rem-", max_iterations)
   cs_qos <- if (! isFALSE(run_compareScenarios)) run_compareScenarios else "short"
   cs_command <- paste0("sbatch --qos=", cs_qos, " --job-name=", cs_name, " --output=", cs_name, ".out --error=",
-    cs_name, ".out --mail-type=END --time=60 --wrap='Rscript scripts/cs2/run_compareScenarios2.R outputDirs=",
+    cs_name, ".out --mail-type=END --time=60 --mem=8000 --wrap='Rscript scripts/cs2/run_compareScenarios2.R outputDirs=",
     cs_runs, " profileName=REMIND-MAgPIE outFileName=", cs_name,
     " regionList=World,LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA mainRegName=World'")
   message("\n### To start a compareScenario once everything is finished, run:")

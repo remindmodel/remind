@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -48,10 +48,6 @@ vm_capEarlyReti.up('2025',regi,'pc') = 0.65;
 *' Rough calculation with REMIND parameters:
 *' 5 GW * 8760 (hours per year) * 0.5 (capacity factor) / 0.4 (conversion efficiency) * 1e-3 * 0.35 MtCO2/TWh (emissions factor coal) ~ 20 Mt CO2/yr.
 vm_capTotal.lo("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=5/1000;
-
-
-*' This limits CO2 underground injection up to 2030 in line with recent developments as of 2023. 
-vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU"))) = 1e-3;
 
 *' ###### Bounds for Germany-specific Policies (activated by switches)
 

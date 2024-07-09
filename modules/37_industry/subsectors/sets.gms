@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -588,6 +588,13 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     feels . (feel_steel_primary, feel_steel_secondary)
 $endif.cm_subsec_model_steel
   /
+
+regi_fxDem37(ext_regi) "regions under which we fix UE demand to baseline demand"
+  /
+$ifthen.fixedUE_scenario "%cm_fxIndUe%" == "on"
+    %cm_fxIndUeReg%
+$endif.fixedUE_scenario
+  /
 ;
 
 *** ---------------------------------------------------------------------------
@@ -617,14 +624,10 @@ pf_quan_target_dyn29(pf_quan_target_dyn37)  = YES;
 $endif.calibrate
 
 teMat2rlf(tePrc,"1") = YES;
-alias(tePrc,teCCPrc);
-alias(tePrc,tePrc1);
-alias(tePrc,tePrc2);
-alias(opmoPrc,opmoCCPrc);
-alias(opmoPrc,opmoPrc1);
-alias(opmoPrc,opmoPrc2);
+alias(tePrc,teCCPrc,tePrc1,tePrc2);
+alias(opmoPrc,opmoCCPrc,opmoPrc1,opmoPrc2);
 alias(route,route2);
-
+alias(entyFeCC37,entyFeCC37_2);
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfEn37,fe2ppfEn37_2);
 *** EOF ./modules/37_industry/subsectors/sets.gms

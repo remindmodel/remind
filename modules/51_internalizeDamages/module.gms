@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -21,6 +21,8 @@ $Ifi "%internalizeDamages%" == "KW_SEitr" $include "./modules/51_internalizeDama
 $Ifi "%internalizeDamages%" == "KWlikeItr" $include "./modules/51_internalizeDamages/KWlikeItr/realization.gms"
 $Ifi "%internalizeDamages%" == "KWlikeItrCPnash" $include "./modules/51_internalizeDamages/KWlikeItrCPnash/realization.gms"
 $Ifi "%internalizeDamages%" == "KWlikeItrCPreg" $include "./modules/51_internalizeDamages/KWlikeItrCPreg/realization.gms"
+$Ifi "%internalizeDamages%" == "KotzWenzCPreg" $include "./modules/51_internalizeDamages/KotzWenzCPreg/realization.gms"
+$Ifi "%internalizeDamages%" == "KotzWenzItr" $include "./modules/51_internalizeDamages/KotzWenzItr/realization.gms"
 $Ifi "%internalizeDamages%" == "LabItr" $include "./modules/51_internalizeDamages/LabItr/realization.gms"
 $Ifi "%internalizeDamages%" == "TCitr" $include "./modules/51_internalizeDamages/TCitr/realization.gms"
 $Ifi "%internalizeDamages%" == "off" $include "./modules/51_internalizeDamages/off/realization.gms"

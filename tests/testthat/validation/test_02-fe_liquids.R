@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -19,9 +19,9 @@ test_that("liquids demand in buildings in NPi and NDC is not higher than baselin
     }
   }
 
-  if (all(c("SSP2EU-Base", "SSP2EU-NPi", "SSP2EU-NDC") %in% getNames(data, dim = 1))) {
-    xBase <- as.quitte(data[, , "SSP2EU-Base"])
-    x <- as.quitte(data[, , c("SSP2EU-NPi", "SSP2EU-NDC")])
+  if (all(c("SSP2-Base", "SSP2-NPi", "SSP2-NDC") %in% getNames(data, dim = 1))) {
+    xBase <- as.quitte(data[, , "SSP2-Base"])
+    x <- as.quitte(data[, , c("SSP2-NPi", "SSP2-NDC")])
     # data frame with all data points where Base value is greater than NPi/NDC value,
     # excluding historical values
     x <- left_join(x, xBase, by = c("model", "region", "variable", "unit", "period")) %>%

@@ -35,9 +35,9 @@ scenarioAndReference=("SDP_EI-PkBudg650" "SDP_EI-NPi" \
 "SDP_MC-NPi" "SDP_MC-NPi" \
 "SDP_RC-PkBudg650" "SDP_RC-NPi" \
 "SDP_RC-NPi" "SDP_RC-NPi" \
-"SSP2EU-NDC" "SSP2EU-NPi" \
-"SSP2EU-PkBudg650" "SSP2EU-NPi"
-"SSP2EU-NPi" "SSP2EU-NPi"
+"SSP2-NDC" "SSP2-NPi" \
+"SSP2-PkBudg650" "SSP2-NPi"
+"SSP2-NPi" "SSP2-NPi"
 )
 
 # generate scenario selection string as expected by policyCosts

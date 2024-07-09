@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -99,6 +99,8 @@ choose_slurmConfig_output <- function(output) {
     slurm_options <- paste(slurm_options[1:3], "--mem=32000")
   } else if ("reporting" %in% output) {
     slurm_options <- grep("--mem=[0-9]*[0-9]{3}", slurm_options, value = TRUE)
+  } else if ("fixOnRef" %in% output && length(output) == 1) {
+    slurm_options <- c("direct", slurm_options)
   }
 
   if (length(slurm_options) == 1) {
@@ -130,15 +132,19 @@ if (isFALSE(comp)) comp <- "single" # legacy from times only two comp modes exis
 if (isTRUE(comp)) comp <- "comparison"
 
 if (! exists("output")) {
+  # search for R scripts in scripts/output subfolders
   modules <- gsub("\\.R$", "", grep("\\.R$", list.files(paste0("./scripts/output/", if (isFALSE(comp)) "single" else comp)), value = TRUE))
+  # if more than one option exists, let user choose
   output <- if (length(modules) == 1) modules else chooseFromList(modules, type = "modules to be used for output generation", addAllPattern = FALSE)
+  # move "reporting" to first position, if it exists
+  output <- c(if ("reporting" %in% output) "reporting", output[! output %in% "reporting"])
 }
 
 # Select output directories if not defined by readArgs
 if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
                          "plot_compare_iterations", "varListHtml", "fixOnRef", "MAGICC7_AR6")
-  needingMif <- any(modulesNeedingMif %in% output)
+  needingMif <- any(modulesNeedingMif %in% output) && ! "reporting" %in% output[[1]]
   if (exists("remind_dir")) {
     dir_folder <- c(file.path(remind_dir, "output"), remind_dir)
   } else {
@@ -216,11 +222,10 @@ if (comp %in% c("comparison", "export")) {
   }
 } else { # comp = single
     # define slurm class or direct execution
-  outputInteractive <- c("plotIterations", "fixOnRef", "integratedDamageCosts")
+  outputInteractive <- c("plotIterations", "integratedDamageCosts")
   if (! exists("source_include")) {
     if (any(output %in% outputInteractive)) {
       slurmConfig <- "direct"
-      flags <- c(flags, "--interactive") # to tell scripts they can run in interactive mode
     }
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
@@ -230,6 +235,9 @@ if (comp %in% c("comparison", "export")) {
     }
     if (slurmConfig %in% c("priority", "short", "standby")) {
       slurmConfig <- paste0("--qos=", slurmConfig, " --nodes=1 --tasks-per-node=1")
+    }
+    if (isTRUE(slurmConfig %in% "direct")) {
+      flags <- c(flags, "--interactive") # to tell scripts they can run in interactive mode
     }
   } else {
     # if being sourced by another script execute the output scripts directly without sending them to the cluster
@@ -275,7 +283,7 @@ if (comp %in% c("comparison", "export")) {
 
     # output creation for --testOneRegi was switched off in start.R in this commit:
     # https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
-    if (all(is.na(output)) || output == "NA") {
+    if (all(output %in% c(NA, "NA"))) {
       message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
     } else {
       message("\nStarting output generation for ", outputdir, "\n")

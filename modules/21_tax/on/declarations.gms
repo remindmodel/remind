@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -68,9 +68,11 @@ p21_tau_CO2_tax_gdx_bau(ttot,all_regi)       "tax path from gdx, may overwrite d
 
 p21_implicitDiscRateMarg(ttot,all_regi,all_in)  "Difference between the normal discount rate and the implicit discount rate"
 
-p21_tau_SE_tax_rampup(ttot,all_regi,all_te,teSeTax_coeff)  "Paramters of logistic function to describe relationship between SE electricity tax rate and share of technology in total electricity demand"
+p21_tau_SE_tax_rampup(ttot,all_regi,all_te,teSeTax_coeff)  "Parameters of logistic function to describe relationship between SE electricity tax rate and share of technology in total electricity demand"
+$ifThen.SEtaxRampUpParam not "%cm_SEtaxRampUpParam%" == "off" 
+  p21_SEtaxRampUpParameters(ext_regi,all_te,teSeTax_coeff)   "config values for SE electricity tax rate tech specific ramp up logistic function parameters" / %cm_SEtaxRampUpParam% /
+$endif.SEtaxRampUpParam
 ;
-
 
 $ifThen.import not "%cm_import_tax%" == "off" 
 Parameter

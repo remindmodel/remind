@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -45,5 +45,19 @@ tradeSe(all_enty) = NO;
 tradeSe("seh2") = YES;
 tradeSe("seliqsyn") = YES;
 $endif.import_nzero_EU
+
+$ifthen.import_nzero_bio_EU "%cm_import_EU%" == "nzero_bio"
+*** Defining secondary energy commoditites that are tradeable in this scenario 
+tradeSe(all_enty) = NO;
+tradeSe("seh2") = YES;
+tradeSe("seliqsyn") = YES;
+tradeSe("seliqbio") = YES;
+$endif.import_nzero_bio_EU
+
+$ifthen.high_bio "%cm_import_EU%" == "high_bio"
+*** Defining secondary energy commoditites that are tradeable in this scenario 
+tradeSe(all_enty) = NO;
+tradeSe("seliqbio") = YES;
+$endif.high_bio
 
 *** EOF ./modules/24_trade/se_trade/sets.gms

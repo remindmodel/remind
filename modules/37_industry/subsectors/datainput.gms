@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -672,14 +672,14 @@ pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
 pm_outflowPrcIni(all_regi,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 if (cm_startyear eq 2005,
-  pm_outflowPrcIni(regi,'bof','unheated') = pm_fedemand('2005',regi,'ue_steel_primary');
-  pm_outflowPrcIni(regi,'bf','standard') = p37_specMatDem("pigiron","bof","unheated") * pm_outflowPrcIni(regi,'bof','unheated');
-  pm_outflowPrcIni(regi,'eaf','sec') = pm_fedemand('2005',regi,'ue_steel_secondary');
-  pm_outflowPrcIni(regi,'eaf','pri') = 0.;
-  pm_outflowPrcIni(regi,'idr','ng') = 0.;
-  pm_outflowPrcIni(regi,'idr','h2') = 0.;
-  pm_outflowPrcIni(regi,'bfcc','standard') = 0.;
-  pm_outflowPrcIni(regi,'idrcc','ng') = 0.;
+  pm_outflowPrcIni(regi,"bof","unheated") = pm_fedemand("2005",regi,"ue_steel_primary");
+  pm_outflowPrcIni(regi,"bf","standard") = p37_specMatDem("pigiron","bof","unheated") * pm_outflowPrcIni(regi,"bof","unheated");
+  pm_outflowPrcIni(regi,"eaf","sec") = pm_fedemand("2005",regi,"ue_steel_secondary");
+  pm_outflowPrcIni(regi,"eaf","pri") = 0.;
+  pm_outflowPrcIni(regi,"idr","ng") = 0.;
+  pm_outflowPrcIni(regi,"idr","h2") = 0.;
+  pm_outflowPrcIni(regi,"bfcc","standard") = 0.;
+  pm_outflowPrcIni(regi,"idrcc","ng") = 0.;
 
   loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
     pm_specFeDem(ttot,regi,"feh2s","idr","h2") = p37_specFeDemTarget("feh2s","idr","h2");
@@ -694,12 +694,12 @@ if (cm_startyear eq 2005,
     pm_specFeDem(ttot,regi,"fegas","idrcc","ng") = p37_specFeDemTarget("fegas","idrcc","ng");
     pm_specFeDem(ttot,regi,"feels","idrcc","ng") = p37_specFeDemTarget("feels","idrcc","ng");
 
-    pm_specFeDem(ttot,regi,"fesos","bf","standard") = pm_fedemand(ttot,regi,'feso_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
-    pm_specFeDem(ttot,regi,"fehos","bf","standard") = pm_fedemand(ttot,regi,'feli_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
-    pm_specFeDem(ttot,regi,"fegas","bf","standard") = pm_fedemand(ttot,regi,'fega_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
-    pm_specFeDem(ttot,regi,"feels","bf","standard") = pm_fedemand(ttot,regi,'feel_steel_primary') * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+    pm_specFeDem(ttot,regi,"fesos","bf","standard") = pm_fedemand(ttot,regi,"feso_steel")         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,"ue_steel_primary") );
+    pm_specFeDem(ttot,regi,"fehos","bf","standard") = pm_fedemand(ttot,regi,"feli_steel")         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,"ue_steel_primary") );
+    pm_specFeDem(ttot,regi,"fegas","bf","standard") = pm_fedemand(ttot,regi,"fega_steel")         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,"ue_steel_primary") );
+    pm_specFeDem(ttot,regi,"feels","bf","standard") = pm_fedemand(ttot,regi,"feel_steel_primary") * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,"ue_steel_primary") );
 
-    pm_specFeDem(ttot,regi,"feels","eaf","sec") = pm_fedemand(ttot,regi,'feel_steel_secondary') * sm_EJ_2_TWa / pm_fedemand(ttot,regi,'ue_steel_secondary');
+    pm_specFeDem(ttot,regi,"feels","eaf","sec") = pm_fedemand(ttot,regi,"feel_steel_secondary") * sm_EJ_2_TWa / pm_fedemand(ttot,regi,"ue_steel_secondary");
     pm_specFeDem(ttot,regi,"feels","eaf","pri") = pm_specFeDem(ttot,regi,"feels","eaf","sec");
   );
 
@@ -723,8 +723,12 @@ if (cm_startyear eq 2005,
 );
 
 if (cm_startyear gt 2005,
-  Execute_Loadpoint 'input_ref' pm_specFeDem = pm_specFeDem;
+  Execute_Loadpoint "input_ref" pm_specFeDem = pm_specFeDem;
 );
 $endif.cm_subsec_model_steel
+
+if (cm_startyear gt 2005,
+  execute_load "input_ref.gdx" v37_plasticWaste.l = v37_plasticWaste.l;
+);
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms

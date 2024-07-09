@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -136,6 +136,8 @@ p47_emiTargetMkt(ttot,regi, emiMktExt,"netGHG_LULUCFGrassi_intraRegBunker") =
   )$((regi_group("EUR_regi",regi)) and (sameas(emiMktExt,"other") or sameas(emiMktExt,"all")));
 
 
+p47_emiTargetMkt_iter(iteration,ttot,regi, emiMktExt,emi_type_47) = p47_emiTargetMkt(ttot,regi,emiMktExt,emi_type_47);
+
 ***--------------------------------------------------
 *** Emission markets (EU Emission trading system and Effort Sharing)
 ***--------------------------------------------------
@@ -192,13 +194,19 @@ pm_emiMktTarget_dev_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_emiMktTar
 
 *** Checking sequentially if targets converged
 loop((ext_regi,ttot2)$regiANDperiodEmiMktTarget_47(ttot2,ext_regi),
-  p47_targetConverged(ttot2,ext_regi) = 1;
+  p47_targetConverged(ttot2,ext_regi) = 0;
   loop((ttot,emiMktExt,target_type_47,emi_type_47)$((pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47))),
     loop(regi$regi_groupExt(ext_regi,regi),
       loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
-***     if emiMKt target did not converged and we are not forcing negative prices (if the price is at minimal level (1$/tCO2) and current emissions are lower than the target) 
-        if(((abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) gt cm_emiMktTarget_tolerance) and (not ((pm_taxemiMkt(ttot2,regi,emiMkt) eq 1*sm_DptCO2_2_TDpGtC) and (pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) lt 0)))), !! if emiMKt target did not converged and 
-          p47_targetConverged(ttot2,ext_regi) = 0;
+***     target converged: 
+***     if the price is at minimal level (<1$/tCO2 + 10% of tolerance) and current emissions are lower than the target (avoid pushing to negative price values)
+        if((((pm_taxemiMkt(ttot2,regi,emiMkt) - 1*sm_DptCO2_2_TDpGtC) lt 0.1*sm_DptCO2_2_TDpGtC) and (pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) lt 0)),
+          regiEmiMktconvergenceType(iteration,ttot,ttot2,ext_regi,emiMktExt,"smallPrice") = YES;
+          p47_targetConverged(ttot2,ext_regi) = 1;
+***     if current absolute emissions minus the target (=deviation) is lower than the tolerance
+        elseif(abs(pm_emiMktTarget_dev_iter(iteration,ttot,ttot2,ext_regi,emiMktExt)) le cm_emiMktTarget_tolerance),
+          regiEmiMktconvergenceType(iteration,ttot,ttot2,ext_regi,emiMktExt,"lowerThanTolerance") = YES;
+          p47_targetConverged(ttot2,ext_regi) = 1;
         );
       );
     );
@@ -208,20 +216,20 @@ p47_targetConverged_iter(iteration,ttot2,ext_regi) = p47_targetConverged(ttot2,e
 
 *** Checking if all targets for the region converged
 loop(ext_regi$regiEmiMktTarget(ext_regi),
-  p47_allTargetsConverged(ext_regi) = 1;
+  pm_allTargetsConverged(ext_regi) = 1;
   loop((ttot)$regiANDperiodEmiMktTarget_47(ttot,ext_regi),
     if(p47_targetConverged(ttot,ext_regi) eq 0,
-      p47_allTargetsConverged(ext_regi) = 0;
+      pm_allTargetsConverged(ext_regi) = 0;
     );
   );
 );
-p47_allTargetsConverged_iter(iteration,ext_regi) = p47_allTargetsConverged(ext_regi);
+p47_allTargetsConverged_iter(iteration,ext_regi) = pm_allTargetsConverged(ext_regi);
 
 *** define current target to be solved
 p47_currentConvergence_iter(iteration,ttot,ext_regi) = 0;
 loop(ext_regi$regiEmiMktTarget(ext_regi),
 *** solving targets sequentially, i.e. only apply target convergence algorithm if previous yearly targets were already achieved
-  if(not(p47_allTargetsConverged(ext_regi) eq 1), !!no rescale need if all targets already converged
+  if(not(pm_allTargetsConverged(ext_regi) eq 1), !!no rescale need if all targets already converged
 *** define current target to be solved
     loop((ttot)$regiANDperiodEmiMktTarget_47(ttot,ext_regi),
       p47_currentConvergencePeriod(ext_regi) = ttot.val;
@@ -248,56 +256,125 @@ loop((ext_regi,ttot)$regiANDperiodEmiMktTarget_47(ttot,ext_regi),
   );
 );
 
-
-*** Calculating the emissions tax rescale factor based on previous iterations emission reduction
-loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47),
-  loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
-    loop(regi$regi_groupExt(ext_regi,regi),
-      loop(iteration2$((iteration2.val le iteration.val) and (iteration2.val eq p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi))), !!reference iteration for slope calculation
-***     if it is the first iteration or the reference iteration changed, initialize the rescale factor based on remaining deviation
-        if(iteration.val eq p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi),
-          pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
-***     else if for the extreme case of a perfect match with no change between the two iterations emisssion taxes used in the slope calculation, in order to avoid a division by zero error assume the rescale factor based on remaining deviation
-        elseif((pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) eq pm_taxemiMkt_iteration(iteration2,ttot2,regi,emiMkt))),
-          pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
-***     else if emission tax variation in relation to base iteration is very small, assume the rescale factor based on the remaining deviation to avoid very slow improvements 
-        elseif(abs((pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration(iteration2,ttot2,regi,emiMkt))) lt 1e-2),
-          pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
-***     else, use previous iteration information to define rescale factor  
-        else
-***       calculate the slope of previous iterations mitigation levels when compared to relative price difference    
-          p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = 
-            (p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - p47_emiMktCurrent_iter(iteration2,ttot,ttot2,ext_regi,emiMktExt))
-            /
-            (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration(iteration2,ttot2,regi,emiMkt));
-***       if the slope is positive, recalculate the slope based on the initial iteration instead of the reference one because we assume a trade-off between tax and emission levels 
-          if(p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) gt 0, 
-            p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = 
-              (p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - p47_emiMktCurrent_iter("1",ttot,ttot2,ext_regi,emiMktExt))
-              /
-              (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration("1",ttot2,regi,emiMkt));
-          );
-***       clamp negative slopes to avoid extreme changes on a single iteration (avoid corner cases where other parts of the model changes causing undesirable fluctuations on the calculated slope)
-          p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = min(-0.3, p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt));
-***       calculate the tax rescale factor using the above calculated slope
-          pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = 
-            (
-              (pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) - p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt))
-              / 
-              (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) * pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt))
-            ) + 1;
+*** resetting rescale factor for the next iteration
+p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = 0;
+pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = 0;
+*** Calculating the emissions tax rescale factor based on previous iterations emission reduction for current targets
+loop(ext_regi$regiEmiMktTarget(ext_regi),
+  loop((ttot2)$(ttot2.val eq p47_currentConvergencePeriod(ext_regi)),
+    if(not(p47_targetConverged(ttot2,ext_regi) eq 1), !!no rescale factor calculation need if the target already converged
+      loop((ttot,emiMktExt,target_type_47,emi_type_47)$(pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)),
+        loop(emiMkt$emiMktGroup(emiMktExt,emiMkt),
+          loop(regi$regiEmiMktTarget2regi_47(ext_regi,regi),
+***         if rescale factor was already calculated for ext_regi, there is no need to recalculate it  
+            continue$(pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt));
+***         calculating the rescale factor   
+            loop(iteration2$((iteration2.val le iteration.val) and (iteration2.val eq p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi))), !!reference iteration for slope calculation
+***           if it is the first iteration or the reference iteration changed, initialize the rescale factor based on remaining deviation
+              if((iteration.val - iteration2.val) eq 0,
+                regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_firstIteration") = YES;
+                pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
+***           else if for the extreme case of a perfect match with no change between the two iterations emisssion taxes used in the slope calculation, in order to avoid a division by zero error assume the rescale factor based on remaining deviation
+              elseif((pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration(iteration2,ttot2,regi,emiMkt) eq 0) 
+                     AND
+                     (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration("1",ttot2,regi,emiMkt) eq 0)),
+                regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_perfectMatch") = YES;
+                pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
+***           else if emission tax variation in relation to base iteration is very small, assume the rescale factor based on the remaining deviation to avoid very slow improvements 
+              elseif((abs(pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration(iteration2,ttot2,regi,emiMkt)) lt 1e-2)
+                     AND
+                     (abs(pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration("1",ttot2,regi,emiMkt)) lt 1e-2)),
+                regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_smallChange") = YES;
+                pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
+***           else, calculate rescale factor using quantities and prices slope changes  
+              else
+***             if denominator in relation to reference is not close to zero, calculate the price slope in relation to the reference iteration mitigation and price levels
+                if(NOT(abs(pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration(iteration2,ttot2,regi,emiMkt)) lt 1e-2),
+                  regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"slope_refIteration") = YES;
+                  p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = 
+                    (p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - p47_emiMktCurrent_iter(iteration2,ttot,ttot2,ext_regi,emiMktExt))
+                    /
+                    (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration(iteration2,ttot2,regi,emiMkt));
+***             else if denominator in relation to first iteration is not close to zero, calculate the price slope in relation to the first iteration mitigation and price levels instead
+                elseif(NOT(abs(pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration("1",ttot2,regi,emiMkt)) lt 1e-2)),
+                  regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"slope_firstIteration") = YES;
+                  p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = 
+                    (p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - p47_emiMktCurrent_iter("1",ttot,ttot2,ext_regi,emiMktExt))
+                    /
+                    (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration("1",ttot2,regi,emiMkt));
+***             else if there is a previous iteration calculated slope, repeat the previous iteration slope                       
+                elseif((iteration.val gt 1) and (p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) - p47_slopeReferenceIteration_iter(iteration-1,ttot,ext_regi) eq 0)),
+                  regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"slope_repeatPrev") = YES;
+                  p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleSlope_iter(iteration-1,ttot,ttot2,ext_regi,emiMktExt);
+***             else slope is not available, set the rescale factor based on remaining deviation
+                else
+                  regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_noSlope") = YES;
+                  pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
+                );
+***             if we are using the slope
+                if(NOT(regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_noSlope")),
+***               if the slope is positive
+                  if(p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) gt 0, 
+                    regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,rescaleType) = NO;
+***                 if there is a previous iteration calculated slope, repeat the previous iteration slope to avoid the positive value because we assume a trade-off between tax and emission levels 
+                    if((iteration.val gt 1) and (p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) - p47_slopeReferenceIteration_iter(iteration-1,ttot,ext_regi) eq 0),
+                      regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"slope_repeatPrev_positiveSlope") = YES;
+                      p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleSlope_iter(iteration-1,ttot,ttot2,ext_regi,emiMktExt);
+***                 else slope is not available, set the rescale factor based on remaining deviation
+                    else
+                      regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_noNonPositiveSlope") = YES;
+                      pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
+                    );
+                  );
+***               if we are still using the slope
+                  if(NOT(regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_noNonPositiveSlope")),
+***                 clamp slopes values to avoid extreme changes (or no change) on a single iteration (avoid corner cases where other parts of the model changes causing undesirable fluctuations on the calculated slope)
+                    if((p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) gt -0.3) OR (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) lt -5),
+                      p47_clampedRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt);
+                    );
+                    p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = max(-5,min(-0.3, p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)));               
+***                 calculate the tax rescale factor using the above calculated slope
+                    pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = 
+                      (
+                        (pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) - p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt))
+                        / 
+                        (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) * pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt))
+                      ) + 1;
+                  );
+                );
+              );
+            );
+***         dampen if rescale oscillates
+            if( (iteration.val > 3) , 
+              if ( ( 
+                      ( ( ( p47_factorRescaleemiMktCO2Tax_iter(iteration-1,ttot,ttot2,ext_regi,emiMktExt) - 1 ) 
+                          * ( pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) - 1 ) ) < 0 
+                      ) AND  !! test if rescale changed from >1 to <1 or vice versa between iteration -1 and current iteration
+                      ( ( ( p47_factorRescaleemiMktCO2Tax_iter(iteration-1,ttot,ttot2,ext_regi,emiMktExt) - 1 )
+                          * ( p47_factorRescaleemiMktCO2Tax_iter(iteration-2,ttot,ttot2,ext_regi,emiMktExt) -1 ) ) < 0
+                    ) !! test if rescale changed from >1 to <1 or vice versa between iteration -2 and iteration -1
+                  ) ,
+                p47_dampedFactorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt);
+                pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) =
+                  1 + ( ( pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) - 1 ) / 2 ) 
+                ; !! this brings the value closer to one. The formulation works reasonably well within the range of 0.5..2
+                put_utility "msg" / "Reducing pm_factorRescaleemiMktCO2Tax due to oscillation in the previous 3 iterations: "; 
+                put_utility "msg" / ttot.tl " " ttot2.tl " " ext_regi.tl " "  emiMktExt.tl " " pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt):10:3; 
+              );
+            );  
+          );    
         );
       );
-    );    
+    );
   );
 );
 p47_factorRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt);
 p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt); !!save rescale factor across iterations for debugging of target convergence issues
 
-*** updating periods under current target
+*** updating tax values under current targets
 loop(ext_regi$regiEmiMktTarget(ext_regi),
 *** solving targets sequentially, i.e. only apply target convergence algorithm if previous yearly targets were already achieved
-  if(not(p47_allTargetsConverged(ext_regi) eq 1), !!no rescale need if all targets already converged
+  if(not(pm_allTargetsConverged(ext_regi) eq 1), !!no rescale need if all targets already converged
 *** updating the emiMkt co2 tax for the first non converged yearly target  
     loop((ttot,ttot2,emiMktExt,target_type_47,emi_type_47)$(pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) AND (ttot2.val eq p47_currentConvergencePeriod(ext_regi))),
       loop(emiMkt$emiMktGroup(emiMktExt,emiMkt),
@@ -335,7 +412,7 @@ loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$(pm_emiMktTarget
 
 *** updating periods after current target
 loop(ext_regi$regiEmiMktTarget(ext_regi),
-  if(not(p47_allTargetsConverged(ext_regi) eq 1), !!no rescale need if all targets already converged
+  if(not(pm_allTargetsConverged(ext_regi) eq 1), !!no rescale need if all targets already converged
     loop((ttot,ttot2,emiMktExt,target_type_47,emi_type_47)$(pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) AND (ttot2.val eq p47_currentConvergencePeriod(ext_regi))),
       loop(emiMkt$emiMktGroup(emiMktExt,emiMkt),
         loop(regi$regiEmiMktTarget2regi_47(ext_regi,regi),
@@ -628,7 +705,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
 p47_implicitQttyTargetTaxRescale_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup);
 
 *** updating quantity targets implicit tax
-pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) = 0;
+pm_implicitQttyTarget_isLimited(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) = 0;
 loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup), !! initialize before first year auxiliary parameter for targets
     loop(ttot2$(ttot2.val eq cm_startyear), 
         p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) =  max(2020,pm_ttot_val(ttot2-1));
@@ -641,7 +718,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
 ***   terminal year onward tax
       if(sameas(taxType,"tax"),
         if((p47_implicitQttyTargetTax_prevIter(ttot,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 1e-10), !! assuring that the updated tax is positive, i.e. the target is achieved without the need for any additional tax
-          pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) = 1;
+          pm_implicitQttyTarget_isLimited(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) = 1;
           p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = 1e-10;
         else
           p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup); 
@@ -649,7 +726,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
       );
       if(sameas(taxType,"sub"),
         if((p47_implicitQttyTargetTax_prevIter(ttot,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt -1e-10), !! assuring that the updated tax is negative (subsidy), i.e. the target is achieved without the need for any additional subsidy
-          pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) = 1;
+          pm_implicitQttyTarget_isLimited(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) = 1;
           p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = -1e-10;
         else
           p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup); 
@@ -667,10 +744,10 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
 ***   checking if there is a hard bound on the model that does not allow the tax to change further the energy usage
 ***   if current value (p47_implicitQttyTargetCurrent) is unchanged in relation to previous iteration when the rescale factor of the previous iteration was different than one, price changes did not affected quantity and therefore the tax level is reseted to the previous iteration value to avoid unecessary tax increase without target achievment gains.  
       if((iteration.val gt 3),
-        if( ((p47_implicitQttyTargetCurrent_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 1e-10) AND (p47_implicitQttyTargetCurrent_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt -1e-10) ) 
+        if( ((p47_implicitQttyTargetCurrent_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 1e-5) AND (p47_implicitQttyTargetCurrent_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt -1e-5) ) 
           and (NOT( p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 0.0001 and p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) gt -0.0001 )),
           p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup);
-          pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) = 1;
+          pm_implicitQttyTarget_isLimited(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) = 1;
         );
       );
     );

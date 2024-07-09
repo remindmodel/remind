@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -541,10 +541,10 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
                         OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
   vm_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
   =e=
-    sum(emi2te(enty,enty2,te,enty3),
-      ( sum(pe2se(enty,enty2,te),
-          pm_emifac(t,regi,enty,enty2,te,enty3)
-        * vm_demPe(t,regi,enty,enty2,te)
+  sum(emi2te(enty,enty2,te,enty3),
+    ( sum(pe2se(enty,enty2,te),
+        pm_emifac(t,regi,enty,enty2,te,enty3)
+      * vm_demPe(t,regi,enty,enty2,te)
       )
     + sum((ccs2Leak(enty,enty2,te,enty3),teCCS2rlf(te,rlf)),
         pm_emifac(t,regi,enty,enty2,te,enty3)
@@ -560,9 +560,9 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
         !! not create energy-related emissions
       - sum(entyFE2sector2emiMkt_NonEn(enty2,sector,emiMkt),
           vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
-        )
       )
     )
+  )
 ;
 
 ***--------------------------------------------------
@@ -598,29 +598,26 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
       vm_emiTeDetailMkt(t,regi,enty2,enty3,te,enty,emiMkt)
     )
     !! energy emissions fuel extraction
-  + v_emiEnFuelEx(t,regi,enty)$(sameas(emiMkt,"ETS"))
+  + v_emiEnFuelEx(t,regi,enty)$( sameas(emiMkt,"ETS") )
     !! Industry CCS emissions
-	- sum(emiInd37_fuel,
-		  vm_emiIndCCS(t,regi,emiInd37_fuel)
-		)$( sameas(enty,"co2") AND sameas(emiMkt,"ETS"))
-    !! substract carbon from biogenic or synthetic origin contained in
-    !! plastics that don't get incinerated ("plastic removals")
-  - sum(entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-      sum(se2fe(entySe,entyFe,te)$( entySeBio(entySe) OR entySeSyn(entySe) ),
-        vm_nonIncineratedPlastics(t,regi,entySe,entyFe,emiMkt)
-      )
+  - sum(emiInd37_fuel,
+      vm_emiIndCCS(t,regi,emiInd37_fuel)
+    )$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
+    !! substract carbon from non-fossil origin contained in plastics that don't
+    !! get incinerated ("plastic removals")
+  - sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+         se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
+      vm_nonIncineratedPlastics(t,regi,entySe,entyFe,emiMkt)
     )$( sameas(enty,"co2") )
-    !! add emissions from plastics incineration. CHECK FOR DOUBLE-COUNTING RISK
-  + sum(entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-      sum(se2fe(entySe,entyFe,te),
-        vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
-      )
+    !! add fossil emissions from plastics incineration. 
+  + sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+         se2fe(entySe,entyFe,te))$( entySeFos(entySe) ),
+      vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
     )$( sameas(enty,"co2") )
-    !! add emissions from chemical feedstock with unknown fate
-  + sum(entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-      sum(se2fe(entySe,entyFe,te),
-        vm_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
-      )
+    !! add fossil emissions from chemical feedstock with unknown fate
+  + sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+         se2fe(entySe,entyFe,te))$( entySeFos(entySe) ),
+      vm_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
     )$( sameas(enty,"co2") )
     !! Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS
     !! capacity don't have the same lifetime
@@ -628,8 +625,8 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
     !! CO2 from short-term CCU (short term CCU co2 is emitted again in a time
     !! period shorter than 5 years)
   + sum(teCCU2rlf(te2,rlf),
-      vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)$( sameas(enty,"co2") )
-    )$(sameas(emiMkt,"ETS"))
+      vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)
+    )$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
 ;
 
 ***--------------------------------------------------
@@ -656,9 +653,6 @@ q_emiAllMkt(t,regi,emi,emiMkt) ..
       vm_demFENonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
     * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
     )
-    !!emissions from plastics incineration
-
-    !!emissions from chemical feedstock with unknown fate (assumed to go into the atmosphere)
 ;
 
 
@@ -837,21 +831,22 @@ q_budgetCO2eqGlob$(cm_emiscen=6)..
 *' Definition of carbon capture :
 ***---------------------------------------------------------------------------
 q_balcapture(t,regi,ccs2te(ccsCo2(enty),enty2,te)) ..
-  sum(teCCS2rlf(te,rlf),vm_co2capture(t,regi,enty,enty2,te,rlf))
+  sum(teCCS2rlf(te,rlf), vm_co2capture(t,regi,enty,enty2,te,rlf))
   =e=
-*** Carbon captured in energy sector
+    !! carbon captured in energy sector
     sum(emi2te(enty3,enty4,te2,enty),
       vm_emiTeDetail(t,regi,enty3,enty4,te2,enty)
     )
-*** Carbon captured from CDR technologies in CDR module
-  + sum(teCCS2rlf(te,rlf),
-      vm_ccs_cdr(t,regi,enty,enty2,te,rlf)
-    )
-*** Carbon captured from industry
-  + sum(emiInd37,
-      vm_emiIndCCS(t,regi,emiInd37)
+    !! carbon captured from CDR technologies in CDR module
+  + sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
+    !! carbon captured from industry
+  + sum(emiInd37, vm_emiIndCCS(t,regi,emiInd37))
+  + sum((sefe(entySe,entyFe),emiMkt)$( 
+                            entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ),
+      vm_incinerationCCS(t,regi,entySe,entyFe,emiMkt)
     )
 ;
+
 ***---------------------------------------------------------------------------
 *' Definition of splitting of captured CO2 to CCS, CCU and a valve (the valve
 *' accounts for different lifetimes of capture, CCS and CCU technologies s.t.
