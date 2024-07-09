@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/diffCurvPhaseIn2Lin/datainput.gms
 ***------------------------------------------------------------------------------------------------------------------------
-*** *BS* 20190930 linear convergence with starting points differentiated by GDP/capita, global price from 2040
+*** linear convergence with starting points differentiated by GDP/capita, global price from 2050
 ***-----------------------------------------------------------------------------------------------------------------------
 
 
@@ -31,31 +31,32 @@ if(cm_co2_tax_2020 lt 0,
   abort "please choose a valid cm_co2_tax_2020"
 elseif cm_co2_tax_2020 ge 0,
 *** convert tax value from $/t CO2eq to T$/GtC
-  p45_CO2priceTrajDeveloped("2040")= 3 * cm_co2_tax_2020 * sm_DptCO2_2_TDpGtC;  !! shifted to 2040 to make sure that even in delay scenarios the fixpoint of the linear price path is inside the "t" range, otherwise the CO2 prices from reference run may be overwritten
+  p45_CO2priceTrajDeveloped("2040") = 3 * cm_co2_tax_2020 * sm_DptCO2_2_TDpGtC;
+*** shifted to 2040 to make sure that even in delay scenarios the fixpoint of the linear price path is inside the "t" range, otherwise the CO2 prices from reference run may be overwritten
 *** The factor 3 comes from shifting the 2020 value 20 years into the future at linear increase of 10% of 2020 value per year.
 );
 
 
 
-p45_CO2priceTrajDeveloped(ttot)$((ttot.val gt 2005) AND (ttot.val ge cm_startyear)) = p45_CO2priceTrajDeveloped("2040")*( 1 + 0.1/3 * (ttot.val-2040)); !! no CO2 price in 2005 and only change CO2 prices after ; 
+p45_CO2priceTrajDeveloped(t)$(t.val gt 2005) = p45_CO2priceTrajDeveloped("2040")*( 1 + 0.1/3 * (t.val-2040)); !! no CO2 price in 2005 and only change CO2 prices afterwards
 *** annual increase by (10/3)% of the 2040 value is the same as a 10% increase of the 2020 value is the same as a linear increase from 0 in 2010 to the 2020/2040 value
 
 
 *** Then create regional phase-in:
-loop(ttot$((ttot.val ge cm_startyear) AND (ttot.val le cm_CO2priceRegConvEndYr) ),
-  p45_regCO2priceFactor(ttot,regi) = 
+loop(t$(t.val le cm_CO2priceRegConvEndYr),
+  p45_regCO2priceFactor(t,regi) =
    min(1,
-       max(0, 
-	        p45_phasein_2025ratio(regi) + (1 - p45_phasein_2025ratio(regi)) 
-			                               * Power( 
-										       ( (ttot.val - 2025) + (cm_CO2priceRegConvEndYr - 2025) * 0.1 ) 
+       max(0,
+	        p45_phasein_2025ratio(regi) + (1 - p45_phasein_2025ratio(regi))
+			                               * Power(
+										       ( (t.val - 2025) + (cm_CO2priceRegConvEndYr - 2025) * 0.1 )
                                                / ( (cm_CO2priceRegConvEndYr - 2025) * 1.1 )
 											   , 2
 											 ) !! use Power instead of ** to allow ttot be smaller than 2025, and thus the base to be negative
-       )											 
+       )
    );
 );
-p45_regCO2priceFactor(ttot,regi)$(ttot.val ge cm_CO2priceRegConvEndYr) = 1;
+p45_regCO2priceFactor(t,regi)$(t.val ge cm_CO2priceRegConvEndYr) = 1;
 
 
 *** transition to global price - starting point depends on GDP/cap
