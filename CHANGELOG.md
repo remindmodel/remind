@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### changed
+- plastic waste by default does not lag plastics production by ten years
+    anymore; can be re-activated using `cm_wastelag`
 
 ### added
 - added realizations diffExp2Lin and diffLin2Lin to 45_carbonprice [#1723](https://github.com/remindmodel/remind/pull/1723)

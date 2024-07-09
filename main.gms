@@ -1629,7 +1629,7 @@ $setglobal cm_ind_energy_limit_manual   "2050 . GLO . (ue_cement, ue_steel_prima
 $setglobal cm_wasteIncinerationCCSshare  off      !! def = off
 *** cm_wastelag, does waste from plastics lag ten years behind plastics
 *** production, or not?
-$setglobal cm_wastelag YES   !! def = YES   !! regexp = YES|NO
+$setglobal cm_wastelag NO   !! def = NO   !! regexp = YES|NO
 *** cm_feedstockEmiUnknownFate, account for chemical feedstock emissions with unknown fate
 *** off: assume that these emissions are trapped and do not account for total anthropogenic emissions
 *** on: account for chemical feedstock emissions with unknown fate as re-emitted to the atmosphere
