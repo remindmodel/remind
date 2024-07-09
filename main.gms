@@ -1000,6 +1000,11 @@ parameter
   c_teNoLearngConvEndYr  = 2070;   !! def = 2070
 *'
 parameter
+  c_earlyRetiValidYr         "Year before which the early retirement rate designated by c_tech_earlyreti_rate holds"
+;
+  c_earlyRetiValidYr  = 2035;   !! def = 2035
+*'
+parameter
   cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
 ;
   cm_TaxConvCheck = 1;  !! def = 1, which means tax convergence check is on  !! regexp = 0|1
