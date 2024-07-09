@@ -354,17 +354,6 @@ pm_data(regi,"floorcost",teLearn(te))$(p_maxPPP2050 ne 0) = p_oldFloorCostdata(r
 p_newFloorCostdata(regi,teLearn(te))$(p_maxPPP2050 ne 0) = p_oldFloorCostdata(regi,te) * p_gdppcap2050_PPP(regi) / p_maxPPP2050;
 $endif.floorscen
 
-
-*** In case regionally differentiated investment costs should be used, the corresponding entries are revised:
-$if %cm_techcosts% == "REG"   pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2015",regi,teRegTechCosts);
-loop(teRegTechCosts$(sameas(teRegTechCosts,"spv") ),
-$if %cm_techcosts% == "REG"   pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2020",regi,teRegTechCosts);
-);
-p_maxSpvCost = SMax(regi, p_inco0("2020",regi,"spv"));
-$if %cm_techcosts% == "REG"   pm_data(regi,"inco0","storspv") = p_inco0("2020",regi,"spv")/p_maxSpvCost * pm_data(regi,"inco0","storspv");
-
-$if %cm_techcosts% == "REG"   pm_data(regi,"incolearn",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"floorcost",te) ;
-
 *** In case regionally differentiated investment costs should be used the corresponding entries are revised:
 $ifthen.REG_techcosts not "%cm_techcosts%" == "GLO"   !! cm_techcosts is REG or REG2040
     pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2015",regi,teRegTechCosts);
