@@ -1627,6 +1627,9 @@ $setglobal cm_ind_energy_limit_manual   "2050 . GLO . (ue_cement, ue_steel_prima
 *** 2050.GLO 0.5, 2050.EUR 0.8: means that 50% of waste incineration emissions are captured for all regions from 2050 onward, except for Europe that has 80% of its waste incineration emissions captured.
 *** The CCS share of waste incineration increases linearly from zero, in 2025, to the value set at the switch, and it is kept constant for years afterwards.
 $setglobal cm_wasteIncinerationCCSshare  off      !! def = off
+*** cm_wastelag, does waste from plastics lag ten years behind plastics
+*** production, or not?
+$setglobal cm_wastelag YES   !! def = YES   !! regexp = YES|NO
 *** cm_feedstockEmiUnknownFate, account for chemical feedstock emissions with unknown fate
 *** off: assume that these emissions are trapped and do not account for total anthropogenic emissions
 *** on: account for chemical feedstock emissions with unknown fate as re-emitted to the atmosphere
