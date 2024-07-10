@@ -1,10 +1,10 @@
 
 execute "Rscript run_KotzWenz_damages.R"
 execute_loadpoint 'pm_KotzWenz_damageIso' p50_damageIsoPerc=pm_damageIso;
-execute_loadpoint 'pm_KotzWenz_damageMarginalIso' pm_damageMarginalIsoPerc=pm_damageMarginalIso;
+execute_loadpoint 'pm_KotzWenz_damageMarginalIso' p50_damageMarginalIsoPerc=pm_damageMarginalIso;
 
 pm_damageMarginal(tall,regi)$(tall.val gt 2020 and tall.val le 2300) = 
-	sum(regi2iso(regi,iso),pm_damageMarginalIsoPerc(tall,iso,"%cm_KotzWenzPerc%")*pm_GDPfrac(tall,iso))
+	sum(regi2iso(regi,iso),p50_damageMarginalIsoPerc(tall,iso,"%cm_KotzWenzPerc%")*pm_GDPfrac(tall,iso))
 ;
 
 *regional damage using SSP country level GDP as weight
