@@ -449,6 +449,7 @@ q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND
   	  ** pm_data(regi,"learnExp_wFC",teLearn)
     )$( (t.val gt 2005) AND (t.val lt 2020) )
 
+$ifthen.floorscen %cm_floorCostScen% == "default"
 ***  assuming linear convergence of regional learning curves to global values until 2050
   + ( (pm_ttot_val(t) - 2020) / 30 * fm_dataglob("learnMult_wFC",teLearn)
     * ( sum(regi2, vm_capCum(t,regi2,teLearn))
@@ -462,14 +463,35 @@ q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND
       )
 	  ** pm_data(regi,"learnExp_wFC",teLearn)
     )$( t.val ge 2020 AND t.val le 2050 )
+$endif.floorscen
 
+$ifthen.floorscen %cm_floorCostScen% == "pricestruc"
+  + ( pm_data(regi,"learnMult_wFC",teLearn)
+    * ( sum(regi2, vm_capCum(t,regi2,teLearn))
+      + pm_capCumForeign(t,regi,teLearn)
+      )
+          ** pm_data(regi,"learnExp_wFC",teLearn)
+    )$( t.val ge 2020 AND t.val le 2100 )
+$endif.floorscen
+
+$ifthen.floorscen %cm_floorCostScen% == "techtrans"
+  + ( pm_data(regi,"learnMult_wFC",teLearn)
+    * ( sum(regi2, vm_capCum(t,regi2,teLearn))
+      + pm_capCumForeign(t,regi,teLearn)
+      )
+          ** pm_data(regi,"learnExp_wFC",teLearn)
+    )$( t.val ge 2020 AND t.val le 2100 )
+$endif.floorscen
+
+$ifthen.floorscen %cm_floorCostScen% == "default"
 *** globally harmonized costs after 2050
   + ( fm_dataglob("learnMult_wFC",teLearn)
      * (sum(regi2, vm_capCum(t,regi2,teLearn)) + pm_capCumForeign(t,regi,teLearn) )
        **(fm_dataglob("learnExp_wFC",teLearn))
 	)$(t.val gt 2050)
+$endif.floorscen
 
-***  floor costs - calculated such that they coincide for all regions
+***  floor costs
   + pm_data(regi,"floorcost",teLearn)
 ;
 
