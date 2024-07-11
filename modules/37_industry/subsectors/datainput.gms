@@ -146,17 +146,20 @@ loop (industry_ue_calibration_target_dyn37(out),
     );
   );
 
-  loop (regi_group(ext_regi,regi)$( 
-                     smax(ttot, p37_energy_limit_def(ttot,ext_regi,out)) ne 0 ),
+  loop ((ext_regi,all_regi(regi))$(
+                (sameas(all_regi,ext_regi) OR regi_group(ext_regi,all_regi))
+            AND smax(ttot, p37_energy_limit_def(ttot,ext_regi,out)) ne 0     ),
     !! maximum "efficiency gain", from 2015 baseline value to theoretical limit
     sm_tmp2 = smax(ttot, p37_energy_limit_def(ttot,ext_regi,out));
     !! period in which closing could be achieved
     loop (ttot, sm_tmp$( p37_energy_limit_def(ttot,ext_regi,out) ) = ttot.val);
 
     !! calculate slope
-    p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
-    = ( ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
-        / p37_cesIO_baseline("2015",regi,out)
+    p37_energy_limit_slope(ttot,all_regi,out)$( ttot.val ge 2015 )
+    = ( ( sum(ces_eff_target_dyn37(out,in),
+            p37_cesIO_baseline("2015",all_regi,in)
+          )
+        / p37_cesIO_baseline("2015",all_regi,out)
         )
       - pm_energy_limit(out)
       )
@@ -166,20 +169,19 @@ loop (industry_ue_calibration_target_dyn37(out),
     !! To account for strong 2015–20 drops due to imperfect 2020 energy data,
     !! use the lower of the calculated curve, or 95 % of the baseline specific
     !! energy demand.
-    p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+    p37_energy_limit_slope(ttot,all_regi,out)$( ttot.val ge 2015 )
     = min(
-        p37_energy_limit_slope(ttot,regi,out),
+        p37_energy_limit_slope(ttot,all_regi,out),
         ( 0.95
-        * ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline(ttot,regi,in))
-          / p37_cesIO_baseline(ttot,regi,out)
+        * ( sum(ces_eff_target_dyn37(out,in),
+              p37_cesIO_baseline(ttot,all_regi,in)
+            )
+          / p37_cesIO_baseline(ttot,all_regi,out)
           )
         )
       );
   );
 );
-
-display p37_energy_limit_def, p37_energy_limit_slope;
-
 $endif.no_calibration
 
 *** CCS for industry is off by default
