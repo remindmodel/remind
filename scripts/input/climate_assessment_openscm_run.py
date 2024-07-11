@@ -18,8 +18,8 @@ import json
 
 # TONN REMOVE start
 # If these are already set, it shouldn't override it. We actually may not want to have a default but just throw an error if not set
-os.environ["MAGICC_EXECUTABLE_7"]       =   "/p/projects/piam/abrahao/scratch/module_climate_tests/climate-assessment-files/magicc-v7.5.3/bin/magicc"
-os.environ["MAGICC_WORKER_ROOT_DIR"]    =   "/p/projects/piam/abrahao/scratch/methane/methane_scm/workers"
+os.environ["MAGICC_EXECUTABLE_7"]       =   "/p/projects/rd3mod/climate-assessment-files/magicc-v7.5.3/bin/magicc"
+os.environ["MAGICC_WORKER_ROOT_DIR"]    =   os.environ["PTMP"] + "/"
 
 LOGGER = logging.getLogger(__name__) # We don't need this
 # TONN REMOVE end
@@ -189,10 +189,3 @@ runresults.filter(region = "World"
                   ).to_excel(
                       outfilename
                       )
-
-# # # %%
-# # # Show basic results
-# # runresults.filter(
-# #     variable = "Surface Air Temperature Change",
-# #     region = "World"
-# #     ).lineplot()
