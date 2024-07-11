@@ -65,11 +65,8 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
   
 *** Assigning convergence tolerance to active regional targets
   parameter f_emiMktTarget_tolerance(ext_regi) "tolerance for regipol emission target deviations convergence [#]" / %cm_emiMktTarget_tolerance% /;
-  loop(ext_regi$f_emiMktTarget_tolerance(ext_regi),
-    loop(regi$regi_groupExt(ext_regi,regi),
-      pm_emiMktTarget_tolerance(ext_regi2)$sameas(ext_regi2,regi) = f_emiMktTarget_tolerance(ext_regi);
-    );
-  );
+  pm_emiMktTarget_tolerance(ext_regi)$(regiEmiMktTarget(ext_regi) and f_emiMktTarget_tolerance("GLO"))= f_emiMktTarget_tolerance("GLO");
+  pm_emiMktTarget_tolerance(ext_regi)$(regiEmiMktTarget(ext_regi) and f_emiMktTarget_tolerance(ext_regi)) = f_emiMktTarget_tolerance(ext_regi);
   display pm_emiMktTarget_tolerance;
 
 *** initialize carbon taxes based on reference runs
