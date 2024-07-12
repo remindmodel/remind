@@ -314,7 +314,7 @@ if (comp %in% c("comparison", "export")) {
           logfile <- file.path(outputdir, "log_output.txt")
           Rscripts <- paste0("Rscript scripts/output/single/", name, " outputdir=", outputdir, collapse = "; ")
           slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
-                       " --mail-type=END --comment=output.R --wrap='", Rscripts, "'")
+                       " --mail-type=END,FAIL --comment=output.R --wrap='", Rscripts, "'")
           message("Sending to slurm: ", paste(name, collapse = ", "), ". Find log in ", logfile)
           system(slurmcmd)
         }
