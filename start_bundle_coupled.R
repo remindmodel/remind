@@ -638,7 +638,7 @@ for (scen in common) {
         runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
       }
       slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
-        " --open-mode=append --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
+        " --open-mode=append --mail-type=END,FAIL --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
         if (runEnv$numberOfTasks == 1) " --mem=8000"), runEnv$sbatch)
       slurmCommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
       message(slurmCommand)
@@ -656,7 +656,7 @@ if (! "--test" %in% flags && ! "--gamscompile" %in% flags) {
   cs_name <- paste0("compScen-all-rem-", max_iterations)
   cs_qos <- if (! isFALSE(run_compareScenarios)) run_compareScenarios else "short"
   cs_command <- paste0("sbatch --qos=", cs_qos, " --job-name=", cs_name, " --output=", cs_name, ".out --error=",
-    cs_name, ".out --mail-type=END --time=60 --mem=8000 --wrap='Rscript scripts/cs2/run_compareScenarios2.R outputDirs=",
+    cs_name, ".out --mail-type=END,FAIL --time=60 --mem=8000 --wrap='Rscript scripts/cs2/run_compareScenarios2.R outputDirs=",
     cs_runs, " profileName=REMIND-MAgPIE outFileName=", cs_name,
     " regionList=World,LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA mainRegName=World'")
   message("\n### To start a compareScenario once everything is finished, run:")
