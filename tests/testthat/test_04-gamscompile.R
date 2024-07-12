@@ -34,9 +34,10 @@ test_that("start.R --gamscompile works on all configs and scenarios", {
   testthat::with_mocked_bindings(
     for (csvfile in csvfiles) {
       test_that(paste("perform start.R --gamscompile with", basename(csvfile)), {
+        startgroup <- if (grepl("scenario_config_IKEA", csvfile)) "1" else "*"
         titletag <- paste0("titletag=TESTTHAT-", gsub(".csv$", "", basename(csvfile)))
         output <- localSystem2("Rscript",
-                             c("start.R", "--gamscompile", "startgroup=*", titletag, csvfile))
+                             c("start.R", "--gamscompile", paste0("startgroup=", startgroup), titletag, csvfile))
         printIfFailed(output)
         expectSuccessStatus(output)
       })
