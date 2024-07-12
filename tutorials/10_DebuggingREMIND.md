@@ -124,9 +124,9 @@ An explanation of the modelstat and solvestat numbers can be found in the tables
 |Modelstat = 6 | Intermediate Infeasible|
 |Modelstat = 7 | Intermediate Nonoptimal|
 | | |
-|Solvestat = 1 | Normal Completion|
-|Solvestat = 2 | Iteration Interrupt|
-|Solvestat = 3 | Resource Interrupt|
+|Solvestat = 1 | Normal Completion   |
+|Solvestat = 2 | Iteration Interrupt |
+|Solvestat = 3 | Resource Interrupt  |
 |Solvestat = 4 | Terminated by Solver|
 
 |Desirable Status in REMIND|
@@ -134,6 +134,7 @@ An explanation of the modelstat and solvestat numbers can be found in the tables
 |Solve + Model stat = 1 + 2 | solution found|
 |Solve + Model stat = 4 + 7 | feasible but slow convergence|
 
+Further possible error codes can be found in [the GAMS documentation](https://www.gams.com/latest/docs/UG_GAMSOutput.html#UG_GAMSOutput_SolverStatus).
 If infeasibilities show up already in the first iteration, it may be related to a wrong `input.gdx` (specified with `path_gdx` in the `scenario_config_XYZ.csv`) or some general error in the GAMS code. Via the international trade, infeasibilities in one region may propagate to other regions in later iterations, but then it is worth knowing where it started.
 
 There are different types of solver infeasibilities: pre-triangular and optimization infeasibilities. In pre-triangular infeasibilities, GAMS shows you in the solution report the equations that are incompatible with each other. For optimization infeasibilies, the CONOPT solver tries to reduce the infeasibility to the thing that less affects the objective function. It does not show all affected equations, as it is not a simple problem as a non-square system of equations like in the pre-triangular case. You need to check if it is bound-related: the variables bounds, and the equation bounds starting from the infeasibility and going through the variables that have relation with it. You can always force in another run the variable that is infeasible to a feasible value to see what else is affected by it. But this is usually not necessary as just checking the logic behind the equation and the infeasible variable is usually sufficient to find the limitation.
