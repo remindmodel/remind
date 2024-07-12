@@ -223,7 +223,7 @@ runClimateEmulatorCmd <- paste(
   normalizePath(file.path(climateTempDir, paste0(baseFn, "_harmonized_infilled.csv"))),
   "--climatetempdir", climateTempDir,
   # Note: Option --year-filter-last requires https://github.com/gabriel-abrahao/climate-assessment/tree/yearfilter
-  "--endyear", 2200,
+  "--endyear", 2250,
   "--num-cfgs", nparsets,
   "--scenario-batch-size", 1,
   "--probabilistic-file", probabilisticFile
