@@ -10,7 +10,8 @@ library(remind2)
 library(lucode2)
 library(gms)
 library(methods)
-library(reportTransport)
+library(edgeTransport)
+library(reporttransport)
 library(quitte)
 library(piamutils)
 ############################# BASIC CONFIGURATION #############################
@@ -78,7 +79,7 @@ if(file.exists(edgetOutputDir)) {
     message("Rerunning toolIterativeEDGETransport().")
     savewd <- getwd()
     setwd(outputdir)
-    edgeTransport::iterativeEDGETransport()
+    edgeTransport::iterativeEdgeTransport()
     setwd(savewd)
   }
   message("start generation of EDGE-T reporting")
@@ -96,7 +97,6 @@ if(file.exists(edgetOutputDir)) {
                       isTransportExtendedReported = TRUE, 
                       gdxPath = file.path(outputdir, "fulldata.gdx"),
                       isStored = TRUE)
-
 
   message("end generation of EDGE-T reporting")
 }
