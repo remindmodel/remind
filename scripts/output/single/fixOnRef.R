@@ -13,7 +13,7 @@ suppressPackageStartupMessages(library(tidyverse))
 if(! exists("source_include")) {
   # Define arguments that can be read from command line
   outputdir <- "."
-  flags <- readArgs("outputdir", .flags = c(i = "--interactive"))
+  flags <- lucode2::readArgs("outputdir", .flags = c(i = "--interactive"))
 }
 
 findRefMif <- function(outputdir, envi) {

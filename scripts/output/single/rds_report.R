@@ -61,3 +61,4 @@ if(file.exists(runstatistics) & dir.exists(resultsarchive)) {
   system("find -type f -name '1*.rds' -printf '%f\n' | sort > fileListForShinyresults")
   setwd(cwd)
 }
+message("report.rds written and data submitted to runstatistics")
