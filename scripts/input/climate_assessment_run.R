@@ -204,6 +204,12 @@ if (any(!alreadySet)) do.call(Sys.setenv, as.list(environmentVariables[!alreadyS
 #
 # BUILD climate-assessment RUN COMMANDS
 #
+
+expectedHarmInfFile <- file.path(
+  climateTempDir,
+  paste0(baseFn, "_harmonized_infilled.xlsx")
+)
+
 runHarmoniseAndInfillCmd <- paste(
   "python", file.path(scriptsDir, "run_harm_inf.py"),
   climateAssessmentEmi,
@@ -213,13 +219,32 @@ runHarmoniseAndInfillCmd <- paste(
 )
 
 runClimateEmulatorCmd <- paste(
-  "python", file.path(scriptsDir, "run_clim.py"),
+  "python climate_assessment_openscm_run.py ",
   normalizePath(file.path(climateTempDir, paste0(baseFn, "_harmonized_infilled.csv"))),
-  climateTempDir,
+  "--climatetempdir", climateTempDir,
+  # Note: Option --year-filter-last requires https://github.com/gabriel-abrahao/climate-assessment/tree/yearfilter
+  "--endyear", 2200,
   "--num-cfgs", nparsets,
   "--scenario-batch-size", 1,
   "--probabilistic-file", probabilisticFile
 )
+# runClimateEmulatorCmd <- paste(
+#   "python", file.path(scriptsDir, "run_clim.py"),
+#   normalizePath(file.path(climateTempDir, paste0(baseFn, "_harmonized_infilled.csv"))),
+#   climateTempDir,
+#   "--num-cfgs", nparsets,
+#   "--scenario-batch-size", 1,
+#   "--probabilistic-file", probabilisticFile
+# )
+
+# Get conda environment folder
+condaDir <- "/p/projects/rd3mod/python/environments/scm_magicc7"
+# Command to activate the conda environment, changes depending on the cluster
+if (file.exists("/p/system/modulefiles/defaults/piam/1.25")) {
+  condaCmd <- paste0("module load conda/2023.09; source activate ", condaDir, ";")
+} else {
+  condaCmd <- paste0("module load anaconda/2023.09; source activate ", condaDir, ";")
+}
 
 logMsg <- paste0(
   date(), "  CLIMATE-ASSESSMENT ENVIRONMENT:\n",
@@ -230,6 +255,7 @@ logMsg <- paste0(
   "  scriptsDir            = '", scriptsDir, "' exists? ", dir.exists(scriptsDir), "\n",
   "  magiccBinFile         = '", magiccBinFile, "' exists? ", file.exists(magiccBinFile), "\n",
   "  magiccWorkersDir      = '", magiccWorkersDir, "' exists? ", dir.exists(magiccWorkersDir), "\n\n",
+  "  condaCmd              = '", condaCmd, "'\n",
   "  ENVIRONMENT VARIABLES:\n",
   "  MAGICC_EXECUTABLE_7    = ", Sys.getenv("MAGICC_EXECUTABLE_7"), "\n",
   "  MAGICC_WORKER_ROOT_DIR = ", Sys.getenv("MAGICC_WORKER_ROOT_DIR"), "\n",
@@ -244,7 +270,7 @@ timeStopSetUpAssessment <- Sys.time()
 ############################# HARMONIZATION/INFILLING #############################
 
 timeStartHarmInf <- Sys.time()
-system(paste(runHarmoniseAndInfillCmd, "&>>", logFile))
+system(paste(condaCmd, runHarmoniseAndInfillCmd, "&>>", logFile))
 timeStopHarmInf <- Sys.time()
 
 ############################# RUNNING MODEL #############################
@@ -258,7 +284,7 @@ logMsg <- paste0(
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 
 timeStartEmulation <- Sys.time()
-system(paste(runClimateEmulatorCmd, "&>>", logFile))
+system(paste(condaCmd, runClimateEmulatorCmd, "&>>", logFile))
 timeStopEmulation <- Sys.time()
 
 ############################# POSTPROCESS CLIMATE OUTPUT #############################
@@ -283,12 +309,13 @@ timeStartPostProcessing <- Sys.time()
 # mutliple files, add another entry to the list. TODO: This could config file...
 associateVariablesAndFiles <- as.data.frame(rbind(
   c(
-    magicc7Variable = "AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile",
+    # magicc7Variable = "AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile",
+    magicc7Variable = "Surface Air Temperature Change",
     gamsVariable = "pm_globalMeanTemperature",
     fileName = "p15_magicc_temp"
   ),
   c(
-    magicc7Variable = "AR6 climate diagnostics|Effective Radiative Forcing|Basket|Anthropogenic|MAGICCv7.5.3|50.0th Percentile",
+    magicc7Variable = "Effective Radiative Forcing|Anthropogenic",
     gamsVariable = "p15_forc_magicc",
     fileName = "p15_forc_magicc"
   )
