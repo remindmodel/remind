@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -13,7 +13,7 @@ suppressPackageStartupMessages(library(tidyverse))
 if(! exists("source_include")) {
   # Define arguments that can be read from command line
   outputdir <- "."
-  flags <- readArgs("outputdir", .flags = c(i = "--interactive"))
+  flags <- lucode2::readArgs("outputdir", .flags = c(i = "--interactive"))
 }
 
 findRefMif <- function(outputdir, envi) {
@@ -81,7 +81,7 @@ fixOnMif <- function(outputdir) {
   dref <- quitte::as.quitte(refmif)
   d <- fixMAGICC(d, dref, startyear, title)
   failfile <- file.path(outputdir, "log_fixOnRef.csv")
-  fixeddata <- piamInterfaces::fixOnRef(d, dref, ret = "TRUE_or_fixed", startyear = startyear, failfile = failfile)
+  fixeddata <- piamInterfaces::fixOnRef(d, dref, ret = "TRUE_or_fixed", startyear = startyear, failfile = failfile, relDiff = 0.00002)
 
   update <- paste0("MAGICC data. ", if (! isTRUE(fixeddata)) "Run output.R -> single -> fixOnRef to fix the rest.")
   if (! isTRUE(fixeddata) && isTRUE(envi$cfg$fixOnRefAuto)) {
@@ -99,7 +99,7 @@ fixOnMif <- function(outputdir) {
   tmpfile <- paste0(mifs[[1]], "fixOnMif")
   quitte::write.mif(d, tmpfile)
   file.rename(tmpfile, mifs[[1]])
-  remind2::deletePlus(mifs[[1]], writemif = TRUE)
+  piamutils::deletePlus(mifs[[1]], writemif = TRUE)
   message("Keep in mind to update the runs that use this as `path_gdx_ref` as well.")
   return(NULL)
 }

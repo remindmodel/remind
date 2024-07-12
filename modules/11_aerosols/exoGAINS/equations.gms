@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -7,6 +7,8 @@
 *** SOF ./modules/11_aerosols/exoGAINS/equations.gms
 ***--------------------------------------------------------------------------
 *** JeS: factor 0.000001 converts units from M$ to T$: e.g. for sulfur units are [TgS/TWa]*[TWa]*[$/pm_ts]
+
+*' @equations
 
 q11_costpollution(t,regi)..
 vm_costpollution(t,regi)=e=sum(emi2te(enty,enty2,te,enty3),
@@ -43,5 +45,7 @@ vm_costpollution(t,regi)=e=sum(emi2te(enty,enty2,te,enty3),
       )$(sectorEndoEmi2te(enty,enty2,te,"trans") AND pe2se(enty,enty2,te) )
    )
                              );
+
+*' @stop
 
 *** EOF ./modules/11_aerosols/exoGAINS/equations.gms

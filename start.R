@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -243,6 +243,10 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     slurmConfig <- "direct"
     message("\nTrying to compile ", nrow(scenarios), " selected runs...")
     lockID <- gms::model_lock()
+    if (length(missingInputData()) > 0) {
+      # try to fix missing input data, but only once at the beginning, not for every scenario
+      updateInputData(readDefaultConfig("."), remindPath = ".", gamsCompile = FALSE)
+    }
   }
   if (! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% flags)
       | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
@@ -265,11 +269,11 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
 
     # testOneRegi settings
     if (any(c("--quick", "--testOneRegi") %in% flags) & length(config.file) == 0) {
-      cfg$title            <- "testOneRegi"
+      cfg$title            <- scen
       cfg$description      <- "A REMIND run with default settings using testOneRegi"
       cfg$gms$optimization <- "testOneRegi"
       cfg$output           <- NA
-      cfg$results_folder   <- "output/testOneRegi"
+      cfg$results_folder   <- paste0("output/", cfg$title)
       # delete existing Results directory
       cfg$force_replace    <- TRUE
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region

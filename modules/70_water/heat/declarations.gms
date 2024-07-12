@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -19,7 +19,7 @@ p70_cap_vintages(ttot, all_regi, all_te, ttot2)                 "capacity build 
 p70_cap_vintages_share(ttot, all_regi, all_te, ttot2)           "fraction of capacity build in ttot2 still standing in ttot out of total capacity in ttot. Unit: 0-1"
 p70_heat(ttot,all_regi,all_enty,all_enty,all_te)                "excess heat. Unit: TWa"
 p70_water_con(all_regi, all_te, coolte70)                       "water consumption coefficients per excess heat. Unit: m3/MWh"
-p70_water_wtd(all_regi, all_te, coolte70)                       "water withdrawal coefficients per excess heat. Unit: m3/MWh)"
+p70_water_wtd(all_regi, all_te, coolte70)                       "water withdrawal coefficients per excess heat. Unit: m3/MWh"
 
 p70_water_output(ttot,all_regi,descr_water_ext)                          "output"
 

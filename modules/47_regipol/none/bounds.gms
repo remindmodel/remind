@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -37,4 +37,9 @@ vm_deltaCap.up("2025",regi,"ngcc","1") = 0.0015;
 *** limit early retirement of coal power in Germany in 2020s to avoid extremly fast phase-out
 vm_capEarlyReti.up('2025',regi,'pc') = 0.65; 
 );
+
+*' This bound avoids hydrogen production from gas in the European region (unlikely to happen after recent gas trade changes)
+vm_deltaCap.up(t,regi,"gasftrec",rlf)$((t.val gt 2005) and (regi_group("EUR_regi",regi))) = 0;
+vm_deltaCap.up(t,regi,"gasftcrec",rlf)$((t.val gt 2005) and (regi_group("EUR_regi",regi))) = 0;
+
 *** EOF ./modules/47_regipol/none/bounds.gms

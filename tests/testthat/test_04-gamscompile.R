@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -29,14 +29,15 @@ test_that("start.R --gamscompile works on all configs and scenarios", {
     csvfiles <- Sys.glob(c(file.path("../../config/scenario_config*.csv"),
                            file.path("../../config", "*", "scenario_config*.csv")))
   }
-  csvfiles <- normalizePath(grep("^scenario_config_coupled.*", csvfiles, invert = TRUE, value = TRUE))
+  csvfiles <- normalizePath(grep("scenario_config_coupled.*", csvfiles, invert = TRUE, value = TRUE))
   expect_true(length(csvfiles) > 0)
   testthat::with_mocked_bindings(
     for (csvfile in csvfiles) {
       test_that(paste("perform start.R --gamscompile with", basename(csvfile)), {
+        startgroup <- if (grepl("scenario_config_IKEA", csvfile)) "1" else "*"
         titletag <- paste0("titletag=TESTTHAT-", gsub(".csv$", "", basename(csvfile)))
         output <- localSystem2("Rscript",
-                             c("start.R", "--gamscompile", "startgroup=*", titletag, csvfile))
+                             c("start.R", "--gamscompile", paste0("startgroup=", startgroup), titletag, csvfile))
         printIfFailed(output)
         expectSuccessStatus(output)
       })

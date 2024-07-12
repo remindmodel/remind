@@ -1,10 +1,12 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/23_capitalMarket/imperfect/equations.gms
+
+*' @equations
 
 *ML 20181220* cumulated trade deficit must not be greater than some percentage of GDP and the growth rate of trade deficit must not exceed a certain percentage of GDP
 
@@ -28,5 +30,7 @@ q23_limit_debt_growth(t,regi)..
   + sum(tradeSe, pm_MPortsPrice(t,regi,tradeSe) * vm_Mport(t,regi,tradeSe)) - sum(tradeSe, pm_XPortsPrice(t,regi,tradeSe) * vm_Xport(t,regi,tradeSe)) 
   + vm_budgetTradeM(t,regi) - vm_budgetTradeX(t,regi)
 ;
+
+*' @stop
 
 *** EOF ./modules/23_capitalMarket/imperfect/equations.gms

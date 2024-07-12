@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -53,9 +53,9 @@ pm_tall_2_ttot(tall, ttot)$((ttot.val lt tall.val) AND (pm_ttot_val(ttot+1) gt t
 pm_ttot_2_tall(ttot,tall)$((ttot.val = tall.val) ) = Yes;
 
 *** define pm_prtp according to cm_prtpScen:
-if(cm_prtpScen eq 1, pm_prtp(regi) = 0.01);
+if(cm_prtpScen eq 1, pm_prtp(regi) = 0.015);
 if(cm_prtpScen eq 3, pm_prtp(regi) = 0.03);
-pm_ies(regi) = 0.5;
+pm_ies(regi) = 2./3.;
 
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
@@ -293,7 +293,7 @@ loop(te$(fm_dataglob("constrTme",te) > 0),
 $ifthen %cm_techcosts% == "GLO"
     (1 + 0.02/pm_ies(regi) +  pm_prtp(regi) )                               ** (integ.val - 0.5) - 1
 $else
-    (1 + 0.02/pm_ies(regi) + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1  
+    (1 + 0.02/pm_ies(regi) + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
 $endif
       )
 );
@@ -321,9 +321,38 @@ p_inco0(ttot,regi,teRegTechCosts)  = (1 + p_tkpremused(regi,teRegTechCosts) ) * 
 *** take region average p_tkpremused for global convergence price
 fm_dataglob("inco0",te)       = (1 + sum(regi, p_tkpremused(regi,te))/sum(regi, 1)) * fm_dataglob("inco0",te);
 
+*** ====================== floor cost scenarios ===========================
 *** calculate default floor costs for learning technologies
 pm_data(regi,"floorcost",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
 
+*** report old floor costs pre manipulation in non-default scenario
+$ifthen.floorscen NOT %cm_floorCostScen% == "default"
+p_oldFloorCostdata(regi,teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
+$endif.floorscen
+
+*** calculate floor costs for learning technologies if historical price structure prevails
+$ifthen.floorscen %cm_floorCostScen% == "pricestruc"
+** compute maximum tech cost in 2015 for a given tech among regions
+p_maxRegTechCost2015(teRegTechCosts) = SMax(regi, p_inco0("2015",regi,teRegTechCosts));
+*take the ratio of the tech cost in 2015 and the maximum cost, and multiply with the global floor to get new floorcost that preserves the price structure
+pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
+* for newer data than 2015, use these
+p_maxRegTechCost2020(teRegTechCosts) = SMax(regi, p_inco0("2020",regi,teRegTechCosts));
+pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
+* report the new floor cost data
+p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
+p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
+$endif.floorscen
+
+*** calculate floor costs for learning technologies if there is technology transfer
+$ifthen.floorscen %cm_floorCostScen% == "techtrans"
+** compute maximum income GDP PPP per capita among regions in 2050
+p_gdppcap2050_PPP(regi) = pm_gdp("2050",regi) / pm_shPPPMER(regi) / pm_pop("2050",regi);
+p_maxPPP2050 = SMax(regi, p_gdppcap2050_PPP(regi));
+*take the ratio of the PPP income and the maximum income, and multiply with the global floor to get new floorcost that simulates tech transfer where costs are solely dependent on local wages, not on IP rent
+pm_data(regi,"floorcost",teLearn(te))$(p_maxPPP2050 ne 0) = p_oldFloorCostdata(regi,te) * p_gdppcap2050_PPP(regi) / p_maxPPP2050;
+p_newFloorCostdata(regi,teLearn(te))$(p_maxPPP2050 ne 0) = p_oldFloorCostdata(regi,te) * p_gdppcap2050_PPP(regi) / p_maxPPP2050;
+$endif.floorscen
 
 *** In case regionally differentiated investment costs should be used the corresponding entries are revised:
 $ifthen.REG_techcosts not "%cm_techcosts%" == "GLO"   !! cm_techcosts is REG or REG2040
@@ -347,7 +376,7 @@ pm_data(regi,"learnExp_wFC",teLearn(te))     = pm_data(regi,"inco0",te) / pm_dat
 
 *** global factor
 *** parameter calculation for global level, that regional values can gradually converge to
-fm_dataglob("learnMult_wFC",teLearn(te)) = fm_dataglob("incolearn",te)/(fm_dataglob("ccap0",te)**fm_dataglob("learnExp_wFC", te));
+fm_dataglob("learnMult_wFC",teLearn(te)) = fm_dataglob("incolearn",te) / (fm_dataglob("ccap0",te) ** fm_dataglob("learnExp_wFC", te));
 
 *** regional factor
 *NB* read in vm_capCum(t0,regi,teLearn) from input.gdx to have info available for the recalibration of 2005 investment costs
@@ -369,8 +398,8 @@ $else
     pm_data(regi,"learnMult_wFC","spv")        = pm_data(regi,"incolearn","spv") / (sum(regi2,p_capCum("2020",regi2,"spv")) ** pm_data(regi,"learnExp_wFC","spv"));
 $endif
 
-*FS initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020) 
-* equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost) 
+*FS initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020)
+* equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost)
 pm_data(regi,"learnMult_wFC",te)$( pm_data(regi,"tech_stat",te) eq 4 )
   = pm_data(regi,"incolearn",te)
   / ( fm_dataglob("ccap0",te)
@@ -431,7 +460,7 @@ $ifthen.REG_techcosts "%cm_techcosts%" == "REG"   !! cm_techcosts REG
           )
           / (c_teNoLearngConvEndYr - 2020);
       );
-    
+
       pm_inco0_t(ttot,regi,te)$( ttot.val gt c_teNoLearngConvEndYr ) = fm_dataglob("inco0",te);
     );
 
@@ -450,7 +479,7 @@ $endif.REG_techcosts
 
 
 *------------------------------------------------------------------------------------
-*   END of Technology cost data input read-in and manipulation in core
+***   END of Technology cost data input read-in and manipulation in core
 *------------------------------------------------------------------------------------
 *** Note: in modules/05_initialCap/on/preloop.gms, there are additional adjustment to investment
 *** cost in the near term due to calibration of historical energy conversion efficiencies based on
@@ -548,7 +577,7 @@ table f_dataetaglob(tall,all_te)                      "global eta data"
 $include "./core/input/generisdata_varying_eta.prn"
 ;
 
-* Read in mac historical emissions to calibrate MAC reference emissions
+*** Read in mac historical emissions to calibrate MAC reference emissions
 parameter p_histEmiMac(tall,all_regi,all_enty)    "historical emissions per MAC"
 /
 $ondelim
@@ -556,7 +585,7 @@ $include "./core/input/p_histEmiMac.cs4r"
 $offdelim
 /
 ;
-* Read in historical emissions per sector to calibrate MAC reference emissions
+*** Read in historical emissions per sector to calibrate MAC reference emissions
 parameter p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types)    "historical emissions per sector"
 /
 $ondelim
@@ -584,9 +613,9 @@ pm_emifac(ttot,regi,enty,enty2,te,"cco2")$emi2te(enty,enty2,te,"cco2") = fm_data
 *JeS scale N2O energy emissions to EDGAR
 pm_emifac(ttot,regi,enty,enty2,te,"n2o")$emi2te(enty,enty2,te,"n2o") = 0.905 * fm_dataemiglob(enty,enty2,te,"n2o");
 
-*JeS from IPCC http://www.ipcc-nggip.iges.or.jp/public/gp/bgp/2_2_Non-CO2_Stationary_Combustion.pdf:
-*JeS CH4: 300 kg/TJ = 0.3 Mt/EJ * 31.536 EJ/TWa = 9.46 Mt /TWa
-*JeS N2O: 1 kg/TJ = 0.001 Mt/EJ * 31.536 EJ/TWa = 0.031536 Mt / TWa
+***JeS from IPCC http://www.ipcc-nggip.iges.or.jp/public/gp/bgp/2_2_Non-CO2_Stationary_Combustion.pdf:
+***JeS CH4: 300 kg/TJ = 0.3 Mt/EJ * 31.536 EJ/TWa = 9.46 Mt /TWa
+***JeS N2O: 1 kg/TJ = 0.001 Mt/EJ * 31.536 EJ/TWa = 0.031536 Mt / TWa
 *** coal 1.4 kg/TJ = 0.04415 Mt/TWa
 *** gas 0.1 kg/TJ = 0.00315 Mt/TWa
 *** oil 0.6 kg/TJ = 0.01892 Mt/TWa
@@ -697,8 +726,8 @@ pm_cf(ttot,regi,"bf") = 0.8;
 pm_cf(ttot,regi,"bfcc") = 0.8;
 pm_cf(ttot,regi,"bof") = 0.8;
 pm_cf(ttot,regi,"idr") = 0.8;
-pm_cf(ttot,regi,"idrcc") = 0.8;
-pm_cf(ttot,regi,"eaf") = 0.8;
+pm_cf(ttot,regi,"idrcc") = 1.0; !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
+pm_cf(ttot,regi,"eaf") = 1.0;   !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
 
 *RP* phasing down the ngt cf to "peak load" cf of 5%
 pm_cf(ttot,regi,"ngt")$(ttot.val eq 2025) = 0.9 * pm_cf(ttot,regi,"ngt");
@@ -715,8 +744,8 @@ pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
 
-*SB* Region- and tech-specific early retirement rates
-*Regional*
+*** Region- and tech-specific early retirement rates
+***Regional*
 loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi),
   pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi)) = pm_extRegiEarlyRetiRate(ext_regi);
 );
@@ -733,11 +762,11 @@ pm_regiEarlyRetiRate(t,regi,"biohp")   = 0.5 * pm_regiEarlyRetiRate(t,regi,"bioh
 
 $ifthen.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
 loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
-  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi) and (t.val lt 2035 or sameas(ext_regi,"GLO"))) = p_techEarlyRetiRate(ext_regi,te);
+  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi) and (t.val lt c_earlyRetiValidYr or sameas(ext_regi,"GLO"))) = p_techEarlyRetiRate(ext_regi,te);
 );
 $endif.tech_earlyreti
 
-*SB* Time-dependent early retirement rates in Baseline scenarios
+*** Time-dependent early retirement rates in Baseline scenarios
 $ifthen.Base_Cprice %carbonprice% == "none"
 $ifthen.Base_techpol %techpol% == "none"
 *** CG: Allow no early retirement in future periods under baseline for developing countries
@@ -1339,7 +1368,7 @@ $if %carbonprice% == "NDC"      pm_macSwitch(emiMacMagpie) = 0;
 $if %carbonprice% == "NPi"      pm_macSwitch(emiMacMagpie) = 0;
 
 *** Load historical carbon prices defined in $/t CO2, need to be rescaled to right unit
-pm_taxCO2eq(t,regi)$(t.val le 2020) = 0;
+pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = 0;
 parameter f_taxCO2eqHist(ttot,all_regi)       "historic CO2 prices ($/tCO2)"
 /
 $ondelim
@@ -1347,7 +1376,7 @@ $include "./core/input/pm_taxCO2eqHist.cs4r"
 $offdelim
 /
 ;
-pm_taxCO2eq(t,regi)$(t.val le 2020) = f_taxCO2eqHist(t,regi) * sm_DptCO2_2_TDpGtC;
+pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = f_taxCO2eqHist(ttot,regi) * sm_DptCO2_2_TDpGtC;
 
 
 *DK* LU emissions are abated in MAgPIE in coupling mode
@@ -1355,7 +1384,7 @@ pm_taxCO2eq(t,regi)$(t.val le 2020) = f_taxCO2eqHist(t,regi) * sm_DptCO2_2_TDpGt
 $if %cm_MAgPIE_coupling% == "on"  pm_macSwitch(enty)$emiMacMagpie(enty) = 0;
 *** As long as there is hardly any CO2 LUC reduction in MAgPIE we dont need MACs in REMIND
 $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("co2luc") = 0;
-*** The tiny fraction n2ofertsom of total land use n2o can get slitghliy negative in some cases. Ignore MAC for n2ofertsom by default.
+*** The tiny fraction n2ofertsom of total land use n2o can get slightly negative in some cases. Ignore MAC for n2ofertsom by default.
 $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("n2ofertsom") = 0;
 
 pm_macCostSwitch(enty)=pm_macSwitch(enty);
@@ -1470,16 +1499,9 @@ $offdelim
 /
 ;
 
-pm_emifacNonEnergy(ttot,regi,"segafos","fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,"sesofos", "fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids")  / s_zj_2_twa;
 pm_emifacNonEnergy(ttot,regi,"seliqfos","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"sesofos","fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids") / s_zj_2_twa;
-
-pm_emifacNonEnergy(ttot,regi,"segabio","fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"seliqbio","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"sesobio","fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids") / s_zj_2_twa;
-
-pm_emifacNonEnergy(ttot,regi,"segasyn","fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"seliqsyn","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,"segafos", "fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases")   / s_zj_2_twa;
 
 ***------ Read in projections for incineration rates of plastic waste---
 *** "incineration rates [fraction]"
@@ -1585,7 +1607,7 @@ sm_globalBudget_dev = 1;
 *' load production values from reference gdx to allow penalizing changes vs reference run in the first time step via q_changeProdStartyearCost/q21_taxrevChProdStartYear
 if (cm_startyear gt 2005,
 execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
-execute_load "input_ref.gdx", p_prodFEReference = vm_prodFe.l;
+execute_load "input_ref.gdx", pm_prodFEReference = vm_prodFe.l;
 execute_load "input_ref.gdx", p_prodUeReference = v_prodUe.l;
 execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
 );
@@ -1593,7 +1615,7 @@ execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
 p_prodAllReference(t,regi,te) =
     sum(pe2se(enty,enty2,te),  p_prodSeReference(t,regi,enty,enty2,te) )
   + sum(se2se(enty,enty2,te),  p_prodSeReference(t,regi,enty,enty2,te) )
-  + sum(se2fe(enty,enty2,te),  p_prodFEReference(t,regi,enty,enty2,te) )
+  + sum(se2fe(enty,enty2,te),  pm_prodFEReference(t,regi,enty,enty2,te) )
   + sum(fe2ue(enty,enty2,te),  p_prodUeReference(t,regi,enty,enty2,te) )
   + sum(ccs2te(enty,enty2,te), sum(teCCS2rlf(te,rlf), p_co2CCSReference(t,regi,enty,enty2,te,rlf) ) )
 ;

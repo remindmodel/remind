@@ -1,11 +1,11 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 calculate_CES_configuration <- function(cfg, path = getwd(), check = FALSE) {
-    CESstring <- paste0("indu_", cfg$gms$industry,ifelse(cfg$gms$cm_subsec_model_steel=="processes","pbs",""),"-",
+    CESstring <- paste0("indu_", cfg$gms$industry,ifelse(cfg$gms$cm_subsec_model_steel=="ces","CesSteel",""),"-",  # remove CesSteel suffix after process-based has been default for some months
                         "buil_", cfg$gms$buildings,"-",
                         "tran_", cfg$gms$transport,"-",
                         "POP_",  cfg$gms$cm_POPscen, "-",

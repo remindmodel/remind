@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -128,4 +128,7 @@ $elseif.cm_oil_scen %cm_oil_scen% == "6"          +(10)$(cm_startyear eq 2015 AN
 $elseif.cm_oil_scen %cm_oil_scen% == "4"          +(10)$(cm_startyear eq 2015 AND pm_ttot_val(ttot+1) eq 2015 AND ((sameas(enty,"peoil") AND sameas(rlf,"7")) OR (sameas(enty,"pegas") AND sameas(rlf,"6"))))
 $endif.cm_oil_scen
 ;
+
+*' @stop
+
 *** EOF ./modules/31_fossil/MOFEX/equations.gms

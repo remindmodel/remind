@@ -1,3 +1,10 @@
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
+library(piamutils)
 library(piamInterfaces)
 library(quitte)
 suppressPackageStartupMessages(library(tidyverse))
@@ -31,8 +38,8 @@ for (mapping in c("AR6", "NAVIGATE")) {
   mappingVariables <- mapping %>%
     getMappingVariables(paste0("RT", if (any(grepl("^MAgPIE", levels(mifdata$model)))) "M")) %>%
     unique() %>%
-    removePlus()
-  computedVariables <- unique(paste0(removePlus(mifdata$variable), " (", gsub("^$", "unitless", mifdata$unit), ")"))
+    deletePlus()
+  computedVariables <- unique(paste0(deletePlus(mifdata$variable), " (", gsub("^$", "unitless", mifdata$unit), ")"))
   missingVariables <- sort(setdiff(mappingVariables, computedVariables))
   if (length(missingVariables) > 0) {
     message("# The following ", length(missingVariables), " variables are expected in the piamInterfaces package ",

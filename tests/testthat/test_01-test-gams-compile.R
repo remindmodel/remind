@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -7,8 +7,10 @@
 test_that(
   'gams -a=c works on stock configuration',
   {
+    lockID <- gms::model_lock(folder = "../..")
     expect_equal(
       attr(localSystem2('gams', 'main.gms -a=c -errmsg=1 -pw=185 -ps=0'),
-	   'status'),
+           'status'),
       0)
+    gms::model_unlock(lockID)
   })

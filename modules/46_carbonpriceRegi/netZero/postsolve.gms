@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -110,7 +110,7 @@ p46_emi_actual(nz_reg2080(all_regi))$(nz_reg_CO2(all_regi))
       );
 
 ***calculate relative change of overall price required to bring emissions to zero
-p46_factorRescaleCO2Tax(nz_reg)=(1+((p46_emi_actual(nz_reg)-p46_offset(nz_reg))/p46_emi_2020(nz_reg)))**2;
+p46_factorRescaleCO2Tax(nz_reg)=(max(0.3, (1+((p46_emi_actual(nz_reg)-p46_offset(nz_reg))/p46_emi_2020(nz_reg)))))**2;
 
 ***calculate relative change in markup, taking into account change in tax
 ***add a small amount at the end to avoid division by zero in case of mark-up being not necessary

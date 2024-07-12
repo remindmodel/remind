@@ -1,11 +1,13 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/31_fossil/grades2poly/equations.gms
-*NB/LB/BB/GL* 
+
+*' @equations
+
 *' Uranium extraction costs parameterized as 3rd order polynomial with short-term calibrated adjustment costs which capture inertias, e.g. from infrastructure
 q31_costFuExPol(ttot,regi,peExPol(enty))$(ttot.val ge cm_startyear)..
   vm_costFuEx(ttot,regi,enty)
@@ -80,5 +82,7 @@ q31_totfuex_dummy..
   (s31_max_disp_peur - sum(regi, v31_fuExtrCumMax(regi, "peur", "1"))) *
   (s31_max_disp_peur - sum(regi, v31_fuExtrCumMax(regi, "peur", "1")))
 ;
+
+*' @stop
 
 *** EOF ./modules/31_fossil/grades2poly/equations.gms

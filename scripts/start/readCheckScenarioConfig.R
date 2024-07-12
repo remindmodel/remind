@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -26,6 +26,10 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   scenConf <- scenConf[! is.na(scenConf[1]), ]
   rownames(scenConf) <- scenConf[, 1]
   scenConf[1] <- NULL
+  colduplicates <- grep("\\.[1-9]$", colnames(scenConf), value = TRUE)
+  if (length(colduplicates) > 0) {
+    warning("These colnames are signs of duplicated columns: ", paste(colduplicates, collapse = ", "))
+  }
   toolong <- nchar(rownames(scenConf)) > 75
   if (any(toolong)) {
     warning("These titles are too long: ",
@@ -120,7 +124,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   scenConf[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenConf)]] <- NA
 
   # collect errors
-  errorsfound <- sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors + missingRealizations
+  errorsfound <- length(colduplicates) + sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors + missingRealizations
 
   # check column names
   knownColumnNames <- c(names(cfg$gms), setdiff(names(cfg), "gms"), names(path_gdx_list),

@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -141,7 +141,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
  
   rep <- read.report(path_to_report,as.list=FALSE)
   if (length(getNames(rep,dim="scenario"))!=1) stop("getReportData: MAgPIE data contains more or less than 1 scenario.")
-  rep <- collapseNames(rep) # get rid of scenrio and model dimension if they exist
+  rep <- collapseNames(rep) # get rid of scenario and model dimension if they exist
   years <- 2000+5*(1:30)
   mag <- time_interpolate(rep,years)
   pricBio <- .bioenergy_price(mag)

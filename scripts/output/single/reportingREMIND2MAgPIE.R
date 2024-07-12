@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -10,6 +10,7 @@ library(remind2)
 library(lucode2)
 library(gms)
 library(methods)
+library(piamutils)
 ############################# BASIC CONFIGURATION #############################
 gdx_name     <- "fulldata.gdx"             # name of the gdx
 
@@ -49,7 +50,7 @@ if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
   tmp_mag$scenario <- paste0(scenario)
   tmp_rem_mag <- rbind(tmp_rem, tmp_mag)
   quitte::write.mif(tmp_rem_mag, path = remind_reporting_file)
-  deletePlus(remind_reporting_file, writemif = TRUE)
+  piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 }
 
 message("### end generation of mif files at ", Sys.time())

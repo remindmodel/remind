@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -132,7 +132,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
     exitCode <- system(paste0("sbatch --job-name=",
                               cfg$title,
                               " --output=log.txt --open-mode=append", # append for requeued jobs
-                              " --mail-type=END",
+                              " --mail-type=END,FAIL",
                               " --comment=REMIND",
                               " --wrap=\"Rscript prepareAndRun.R \" ",
                               cfg$slurmConfig))

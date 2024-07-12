@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -104,6 +104,16 @@ p21_tau_pe2se_inconv(ttot,regi,te)$(ttot.val ge 2005)=0.000000;
 p21_tau_pe2se_tax(ttot,regi,te)$(ttot.val ge 2005)    = p21_tau_pe2se_tax(ttot,regi,te)    * 0.001 / sm_EJ_2_TWa;
 p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val ge 2005)    = p21_tau_pe2se_sub(ttot,regi,te)    * 0.001 / sm_EJ_2_TWa;
 p21_tau_pe2se_inconv(ttot,regi,te)$(ttot.val ge 2005) = p21_tau_pe2se_inconv(ttot,regi,te) * 0.001 / sm_EJ_2_TWa;
+
+*** SE electricity tax rate tech specific ramp up logistic function parameters
+p21_tau_SE_tax_rampup(t,regi,te,teSeTax_coeff) = 0;
+$ifThen.SEtaxRampUpParam not "%cm_SEtaxRampUpParam%" == "off" 
+  loop((ext_regi,te,teSeTax_coeff)$p21_SEtaxRampUpParameters(ext_regi,te,teSeTax_coeff),
+    loop(regi$regi_groupExt(ext_regi,regi),
+      p21_tau_SE_tax_rampup(t,regi,te,teSeTax_coeff) = p21_SEtaxRampUpParameters(ext_regi,te,teSeTax_coeff);
+    );
+  );
+$endif.SEtaxRampUpParam
 
 ***cb 20110923 load paths for ressource export taxes
 ***cb* file for resource export taxes, not used in default settings

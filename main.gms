@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -308,7 +308,7 @@ $setglobal CES_parameters  load   !! def = load
 *'---------------------    30_biomass    ----------------------------------------
 *'
 *' * (magpie_40): using supply curves derived from MAgpIE 4.0
-$setglobal biomass  magpie_40     !! def = magpie_hightccost
+$setglobal biomass  magpie_40     !! def = magpie_40
 *'---------------------    31_fossil    ----------------------------------------
 *'
 *' * (timeDepGrades): time-dependent grade structure of fossil resources (oil & gas only)
@@ -372,12 +372,14 @@ $setglobal emicapregi  none           !! def = none
 *' This module defines the carbon price pm_taxCO2eq, with behaviour across regions governed by similar principles (e.g. global targets, or all following NDC or NPi policies).
 *'
 *' * (none): no tax policy (combined with all emiscens except emiscen = 9)
-*' * (exponential): 5% exponential increase over time of the tax level in 2020 set via cm_co2_tax_2020 (combined with emiscen = 9 and cm_co2_tax_2020>0)
-*' * (expoLinear): 5% exponential increase until c_expoLinear_yearStart, linear increase thereafter
-*' * (exogenous): carbon price is specified using an external input file or using the switch cm_regiExoPrice
+*' * (exponential): 4.5% exponential increase over time of the tax level in 2020 set via cm_co2_tax_2020 (combined with emiscen = 9 and cm_co2_tax_2020>0)
+*' * (expoLinear): 4.5% exponential increase until c_expoLinear_yearStart, linear increase thereafter
+*' * (exogenous): carbon price is specified using an external input file or using the switch cm_regiExoPrice. Requires cm_emiscen = 9 and cm_iterative_target_adj = 0
 *' * (linear): linear increase over time of the tax level in 2020 set via cm_co2_tax_2020 (combined with emiscen = 9 and cm_co2_tax_2020>0)
 *' * (temperatureNotToExceed): [test and verify before using it!] Find the optimal carbon carbon tax (set cm_emiscen = 1, iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
 *' * (diffCurvPhaseIn2Lin): [REMIND 2.1 default for validation peakBudget runs, in combination with iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
+*' * (diffExp2Lin): quadratic convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; starting level of differentiation in cm_startyear is given by cm_co2_tax_spread; developed countries have exponential path until peak year (with iterative_target_adj = 9) or until 2100 (with iterative_target_adj = 5);
+*' * (diffLin2Lin): [Variant of diffCurvPhaseIn2Lin, will be further developed before becoming the new default] quadratic convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; starting level of differentiation in cm_startyear is given by cm_co2_tax_spread; developed countries have linear path until peak year (with iterative_target_adj = 9) or until 2100 (with iterative_target_adj = 5);
 *' * (NDC): implements a carbon price trajectory consistent with the NDC targets (up to 2030) and a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). Choose version using cm_NDC_version "2023_cond", "2023_uncond", or replace 2023 by 2022, 2021 or 2018 to get all NDC published until end of these years.
 *' * (NPi): National Policies Implemented, extrapolation of historical (until 2020) carbon prices
 $setglobal carbonprice  none           !! def = none
@@ -401,6 +403,7 @@ $setglobal regipol  none              !! def = none
 *' * (off): no damages on GDP
 *' * (DiceLike): DICE-like damages (linear-quadratic damages on GDP). Choose specification via cm_damage_DiceLike_specification
 *' * (BurkeLike): Burke-like damages (growth rate damages on GDP). Choose specification via cm_damage_BurkeLike_specification and cm_damage_BurkeLike_persistenceTime
+*' * (KotzWenz): damage function based on Kotz et al. (2024)
 *' * (KWLike): Damage function based on Kalkuhl & Wenz (2020)
 *' * (KW_SE): Damage function based on Kalkuhl & Wenz (2020), but for the upper bound of the damages based on their standard error calculation
 *' * (KWTCint): Combines aggregate damages from Kalkuhl & Wenz (2020) and tropical cyclone damages from Krichene et al. (2022)
@@ -412,6 +415,7 @@ $setGlobal damages  off               !! def = off
 *' * (off):
 *' * (DiceLikeItr): Internalize DICE-like damages (calculate the SCC) adjust cm_damages_SccHorizon. Requires cm_emiscen set to 9 for now.
 *' * (BurkeLikeItr): Internalize Burke-like damages (calculate the SCC) adjust cm_damages_SccHorizo. Requires cm_emiscen set to 9 for now.
+*' * (KotzWenzItr): Internalize KotzWenz damages (calculate the SCC). Requires cm_emiscen set to 9. 
 *' * (KWlikeItr): Internalize damage function based on Kalkuhl & Wenz (2020). Requires cm_emiscen set to 9 for now.
 *' * (KWlikeItrCPnash): Internalize damage function based on Kalkuhl & Wenz (2020), but with Nash SCC, i.e. each region only internalizes its own damages. Requires cm_emiscen set to 9 for now.
 *' * (KWlikeItrCPreg): Internalize damage function based on Kalkuhl & Wenz (2020), but with regional SCC instead of a global uniform price. Requires cm_emiscen set to 9 for now.
@@ -508,8 +512,8 @@ parameter
 parameter
   cm_co2_tax_growth         "growth rate of carbon tax"
 ;
-  cm_co2_tax_growth = 1.05;            !! def = 1.05  !! regexp = is.numeric
-*'  (any number >= 0): rate of exponential increase over time
+  cm_co2_tax_growth = 1.045;            !! def = 1.045  !! regexp = is.numeric
+*'  (any number >= 0): rate of exponential increase over time, default value chosen to be consistent with interest rate
 parameter
   c_macscen                 "scenario switch on whether or not to use MAC (Marginal Abatement Cost) for certain sectors not related to direct combustion of fossil fuel, e.g. fugitive emissions from old mines, forestry, agriculture and cement"
 ;
@@ -977,14 +981,28 @@ parameter
   c_taxCO2inc_after_peakBudgYr = 0; !! def = 0 . For weak targets (higher than 1100 Peak Budget), this value might need to increased to prevent continually increasing temperatures
 *'
 parameter
-  cm_CO2priceRegConvEndYr      "Year at which regional CO2 taxes converge in module 45 realization diffCurvPhaseIn2Lin"
+  cm_CO2priceRegConvEndYr      "Year at which regional CO2 taxes converge in module 45 for realizations with differentiated carbon prices"
 ;
-  cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
+  cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050    
 *'
+parameter
+  cm_co2_tax_spread            "spread of carbon prices in 2025 given as a factor"
+;
+  cm_co2_tax_spread        = 10;     !! def = 10  !! regexp = 1|10|20
+*'  Initial spread of carbon prices (in 2025) between the regions with highest respectively lowest GDP per capita (PPP)
+*' * (1) Uniform carbon pricing, i.e. no differentiation
+*' * (10) Spread of carbon prices in 2025 is equal to 10
+*' * (20) Spread of carbon prices in 2025 is equal to 20
+
 parameter
   c_teNoLearngConvEndYr      "Year at which regional costs of non-learning technologies converge"
 ;
   c_teNoLearngConvEndYr  = 2070;   !! def = 2070
+*'
+parameter
+  c_earlyRetiValidYr         "Year before which the early retirement rate designated by c_tech_earlyreti_rate holds"
+;
+  c_earlyRetiValidYr  = 2035;   !! def = 2035
 *'
 parameter
   cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
@@ -1091,6 +1109,14 @@ parameter
 *' * (0) none
 *' * (1) no fossil carbon and capture in Germany
 *'
+
+parameter
+  c_fracRealfromAnnouncedCCScap2030         "switch to adjust the share of realised CCS capacities from total announced/planned projects from database in 2030"
+;
+  c_fracRealfromAnnouncedCCScap2030 = 0.4; !! def = 0.4
+*' This switch changes the assumption about the share of timely realised capacities from sum of announced/planned in 2030 from the IEA CCS data base
+*' Default assumption is that only 40% of announced or planned capacities will be realised, either due to discontinuation or delay
+
 parameter
   cm_startIter_EDGET          "starting iteration of EDGE-T"
 ;
@@ -1217,7 +1243,7 @@ $setGLobal cm_bioprod_regi_lim off  !! def off
 *' * pop_SSP3    "SSP3 population scenario"
 *' * pop_SSP4    "SSP4 population scenario"
 *' * pop_SSP5    "SSP5 population scenario"
-$setglobal cm_POPscen  pop_SSP2EU  !! def = pop_SSP2EU
+$setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
 *' cm_GDPscen  "assumptions about future GDP development, linked to population development (cm_POPscen)"
 *'
 *' * (gdp_SSP1):  SSP1 fastGROWTH medCONV
@@ -1226,7 +1252,7 @@ $setglobal cm_POPscen  pop_SSP2EU  !! def = pop_SSP2EU
 *' * (gdp_SSP3):  SSP3 slowGROWTH slowCONV
 *' * (gdp_SSP4):  SSP4  medGROWTH mixedCONV
 *' * (gdp_SSP5):  SSP5 fastGROWTH fastCONV
-$setglobal cm_GDPscen  gdp_SSP2EU  !! def = gdp_SSP2EU
+$setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
 *** cm_oil_scen      "assumption on oil availability"
 ***  (lowOil): low
 ***  (medOil): medium (this is the new case)
@@ -1260,6 +1286,9 @@ $setGlobal cm_regiExoPrice  off    !! def = off
 ***   Example on how to use:
 ***     cm_emiMktTarget = '2020.2050.EU27_regi.all.budget.netGHG_noBunkers 72, 2020.2050.DEU.all.year.netGHG_noBunkers 0.1'
 ***     sets a 72 GtCO2eq budget target for European 27 countries (EU27_regi), for all GHG emissions excluding bunkers between 2020 and 2050; and a 100 MtCO2 CO2eq emission target for the year 2050, for Germany"
+***     cm_emiMktTarget = 'nzero'
+***     loads hard-coded options for regional target scenarios defined in the module '47_regipol/regiCarbonPrice' declarations file. 
+***     The 'nzero' scenario applies declared net-zero targets for countries explicitly handled by the model (DEU, CHA, USA, IND, JPN, UKI, FRA and EU27_regi)  
 ***     Requires regiCarbonPrice realization in regipol module
 $setGlobal cm_emiMktTarget  off    !! def = off
 *** cm_quantity_regiCO2target "emissions quantity upper bound from specific year for region group."
@@ -1306,7 +1335,7 @@ $setGlobal cm_loadFromGDX_implicitQttyTargetTax  off  !! def = off  !! regexp = 
 ***   (3) start only after regional emission target is close to convergence, by setting "cm_implicitQttyTarget_delay = emiRegiConv x", which forces the quantity target to start only after x times the cm_emiMktTarget_tolerance is achieved.
 ***      e.g., if "cm_emiMktTarget_tolerance = 0.01", i.e. 1% of deviation, and "cm_implicitQttyTarget_delay = emiRegiConv 5", the quantity target algorithm will only start after the emission target achieved a number lower than 5% (0.01 * 5)."
 ***      option 3 should only be used if the target is defined for a region that has its carbon pricing controlled by cm_emiMktTarget in the 47_regipol module.
-$setGlobal cm_implicitQttyTarget_delay  iteration 3  !! def = iteration 3, quantity targets only start after iteration 3
+$setGlobal cm_implicitQttyTarget_delay  iteration 15  !! def = iteration 15, quantity targets only start after iteration 15
 *** cm_implicitPriceTarget "define tax/subsidies to match FE prices defined in the pm_implicitPriceTarget parameter."
 ***   Acceptable values: "off", "initial", "elecPrice", "H2Price", "highElec", "highGasandLiq", "highPrice", "lowElec", "lowPrice"
 $setGlobal cm_implicitPriceTarget  off  !! def = off  !! regexp = off|initial|elecPrice|H2Price|highElec|highGasandLiq|highPrice|lowElec|lowPrice
@@ -1339,6 +1368,11 @@ $setglobal cm_calibration_string  off    !!  def  =  off
 *** (REG2040) regionalized technology costs given by p_inco0 until 2040, then stable without convergence
 *** (GLO) globally homogenous technology costs
 $setglobal cm_techcosts  REG       !! def = REG  !! regexp = REG|REG2040|GLO
+*** cm_floorCostScen regionally differentiated floor cost scenarios
+*** (default) uniform floor cost (almost no regional differentiation)
+*** (pricestruc) regionally differentiated floor costs, the differentiated costs have the same ratio between regions as the ratio between 2020 tech cost values
+*** (techtrans) regionally differentiated floor costs, which are the universal global floor costs in the default case time the MER PPP price ratios. new floor cost = MER/PPP * old floor cost
+$setglobal cm_floorCostScen default       !! def = default
 *** cfg$gms$cm_EDGEtr_scen  "the EDGE-T scenario"  # def <- "Mix1". For calibration runs: Mix1. Mix2, Mix3, Mix4 also available - numbers after the "mix" denote policy strength, with 1 corresponding roughly to Baseline/NPI, 2= NDC, 3= Budg1500, 4 = Budg800
 ***  The following descriptions are based on scenario results for EUR in 2050 unless specified otherwise.
 ***  Whenever we give numbers, please be aware that they are just there to estimate the ballpark.
@@ -1388,7 +1422,7 @@ $setGlobal cm_import_tax off !! def = off  !! regexp = .*(worldPricemarkup|CO2ta
 *** cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 *** EU-specific SE import assumptions (used for ariadne)
 *** different exogenous hydrogen import scenarios for EU regions (developed in ARIADNE project)
-*** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf"
+*** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf", "nzero"
 *** see 24_trade/se_trade/datainput for H2 import assumptions, this switch only works if the trade realization "se_trade" is selected
 $setGlobal cm_import_EU  off !! def off
 *** cm_import_ariadne        "Germany-specific H2 imports assumptions for Ariadne project (needs cm_import_EU to be on)"
@@ -1407,6 +1441,16 @@ $setGlobal cm_import_ariadne  off !! def off
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "2030.2050.MEA.EU27_regi.seh2 0.5, 2030.2050.MEA.DEU.seh2 0.3".
 $setGlobal cm_trade_SE_exog off !! def off
+*** This allows to manually adjust the ramp-up curve of the SE tax on electricity. It is mainly used for taxing electricity going into electrolysis for green hydrogen production.
+*** The ramp-up curve is a logistic function that determines how fast taxes increase with increasing share of technology in total power demand.
+*** This essentially makes an assumption about to what extend the power demand of electrolysis will be taxed and how much tax exemptions there will be at low shares of green hydrogen production.
+*** The parameter a defines how fast the tax increases with increasing share, with 4/a being the percentage point range over which the tax value increases from 12% to 88%
+*** The parameter b defines at which share the tax is halfway between the value at 0 share and the maximum value (defined by a region's electricity tax and the electricity grid cost) that it converges to for high shares.
+*** Example use: 
+*** cm_SEtaxRampUpParam = "GLO.elh2.a 0.2, GLO.elh2.b 20" sets the logistic function parameter values a=0.2 and b=20 for electrolysis (elh2) to all model regions (GLO). 
+*** cm_SEtaxRampUpParam = "off" disables v21_tau_SE_tax 
+*** For details, please see ./modules/21_tax/on/equations.gms.
+$setGlobal cm_SEtaxRampUpParam  GLO.elh2.a 0.2, GLO.elh2.b 20    !! def = GLO.elh2.a 0.2, GLO.elh2.b 20
 *** cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
 *** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
 *** switch to activate energy security scenario assumptions for Germany including additional tax on gas/oil
@@ -1561,11 +1605,41 @@ $setGlobal cm_CESMkup_build  standard  !! def = standard
 *** addressed in cm_CESMkup_ind_data.
 $setGlobal cm_CESMkup_ind        standard  !! def = standard
 $setGlobal cm_CESMkup_ind_data   ""        !! def = ""
+
+*** cm_fxIndUe "switch for fixing UE demand in industry to baseline level - no endogenous demand adjustment"
+*** default cm_fxIndUe = off -> endogenous demand, cm_fxIndUe = on -> exogenous demand fixed to baseline/NPi level (read in from input_ref.gdx)
+*** cm_fxIndUeReg indicates the regions under which the industry demand will be fixed 
+*** for example, cm_fxIndUe = on and cm_fxIndUeReg = SSA,NEU,CHA,IND,OAS,MEA,LAM gives a scenario where all non global north (non-OECD) industry demand is fixed to baseline
+*** cm_fxIndUeReg = GLO fixes industry demand to baseline level everywhere
+$setGlobal cm_fxIndUe        off  !! def = off
+$setGlobal cm_fxIndUeReg     ""       !! def = ""
+
+*** cm_ind_energy_limit Switch for setting upper limits on industry energy
+*** efficiency improvements.  See ./modules/37_subsectors/datainput.gms for
+*** implementation.
+*** "default" applies the following limits:
+*** 
+*** ext_regi |     subsector      | period | maximum "efficiency gain" [0-1]
+*** ---------+--------------------+--------+--------------------------------
+*** GLO      | ue_cement          |  2050  | 0.75
+*** GLO      | ue_steel_primary   |  2050  | 0.75
+*** GLO      | ue_steel_secondary |  2050  | 0.75
+*** GLO      | ue_chemicals       |  2100  | 0.90
+*** GLO      | ue_otherInd        |  2100  | 0.90
+***
+*** "manual" uses the data present in cm_ind_energy_limit_manual (has the same
+*** data as "default" to clarify the format)
+$setglobal cm_ind_energy_limit          default   !! def = default   !! regexp = default|manual
+$setglobal cm_ind_energy_limit_manual   "2050 . GLO . (ue_cement, ue_steel_primary, ue_steel_secondary)   0.75, 2100 . GLO . (ue_chemicals, ue_otherInd)   0.90"
+
 *** cm_wasteIncinerationCCSshare, proportion of waste incineration emissions that is captured and geologically stored at a given year and region
 *** off: means that all plastics incineration emissions in the World goes back to the atmosphere.
 *** 2050.GLO 0.5, 2050.EUR 0.8: means that 50% of waste incineration emissions are captured for all regions from 2050 onward, except for Europe that has 80% of its waste incineration emissions captured.
 *** The CCS share of waste incineration increases linearly from zero, in 2025, to the value set at the switch, and it is kept constant for years afterwards.
 $setglobal cm_wasteIncinerationCCSshare  off      !! def = off
+*** cm_wastelag, does waste from plastics lag ten years behind plastics
+*** production, or not?
+$setglobal cm_wastelag NO   !! def = NO   !! regexp = YES|NO
 *** cm_feedstockEmiUnknownFate, account for chemical feedstock emissions with unknown fate
 *** off: assume that these emissions are trapped and do not account for total anthropogenic emissions
 *** on: account for chemical feedstock emissions with unknown fate as re-emitted to the atmosphere
@@ -1625,6 +1699,8 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off  !! 
 $setGlobal cm_magicc_config  OLDDEFAULT    !! def = OLDDEFAULT ; {OLDDEFAULT, RCP26_[5,15,..,95], TCRE_[LOWEST,LOW,MEDIUM,HIGH,HIGHEST] }
 *'  climate damages (HowardNonCatastrophic, DICE2013R, DICE2016, HowardNonCatastrophic, HowardInclCatastrophic, KWcross, KWpanelPop}
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
+***cfg$gms$cm_KotzWenzPerc <- mean #def = mean; {low,med,mean,high} the percentile of the damage distribution from Kotz et al. (2024), low = 5th, high = 95th percentile
+$setGlobal cm_KotzWenzPerc mean !! def = mean !! regexp = low|med|mean|high
 *** cfg$gms$cm_damage_Labor_exposure <- "low" # def = "low"; {low,high}
 $setGlobal cm_damage_Labor_exposure  low    !! def = low  !! regexp = low|high
 *** cfg$gms$cm_TCssp <- "SSP2"  #def = "SSP2"; {SSP2,SSP5} the scenario for which the damage function is specified - currently only SSP2 and SSP5 are available
@@ -1646,7 +1722,7 @@ $setGlobal c_regi_nucscen  all  !! def = all
 ***  c_regi_capturescen              "regions to apply cm_ccapturescen to (availability of carbon capture technologies), e.g. c_regi_nucscen <- "JPN,USA"
 $setGlobal c_regi_capturescen  all  !! def = all
 *** cm_subsec_model_steel      "switch between ces-based and process-based steel implementation in subsectors realisation of industry module"
-$setglobal cm_subsec_model_steel  ces  !! def = ces  !! regexp = ces|processes
+$setglobal cm_subsec_model_steel  processes  !! def = processes  !! regexp = processes|ces
 *** set conopt version. Warning: conopt4 is in beta
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
 *' c_empty_model  "Short-circuit the model, just use the input as solution"
@@ -1655,13 +1731,13 @@ $setGlobal cm_conoptv  conopt3    !! def = conopt3
 *' (on): no model operation, instead input.gdx is copied to fulldata.gdx
 $setGlobal c_empty_model   off    !! def = off  !! regexp = off|on
 $setglobal cm_secondary_steel_bound  scenario   !! def = scenario
-$setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen)
-$setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
+$setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen)
+$setglobal cm_demScen  gdp_SSP2     !! def = gdp_SSP2
 $setGlobal c_scaleEmiHistorical  on  !! def = on  !! regexp = off|on
 $SetGlobal cm_quick_mode  off          !! def = off  !! regexp = off|on
 $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
 $setGlobal cm_APscen  SSP2          !! def = SSP2
-$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_industry_FE_target  1
 *' setting which region is to be tested in the one-region test run (80_optimization = testOneRegi)

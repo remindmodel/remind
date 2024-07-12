@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -6,49 +6,51 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/32_power/IntC/equations.gms
 
+*' @equations
+
 ***---------------------------------------------------------------------------
-*** Balance equation for electricity secondary energy type:
+*' Balance equation for electricity secondary energy type:
 ***---------------------------------------------------------------------------
 q32_balSe(t,regi,enty2)$(sameas(enty2,"seel"))..
-	sum(pe2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te) )
-	+ sum(se2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te) )
-	+ sum(pc2te(enty,entySe(enty3),te,enty2), 
-		pm_prodCouple(regi,enty,enty3,te,enty2) * vm_prodSe(t,regi,enty,enty3,te) )
-	+ sum(pc2te(enty4,entyFe(enty5),te,enty2), 
-		pm_prodCouple(regi,enty4,enty5,te,enty2) * vm_prodFe(t,regi,enty4,enty5,te) )
-	+ sum(pc2te(enty,enty3,te,enty2),
-		sum(teCCS2rlf(te,rlf),
-			pm_prodCouple(regi,enty,enty3,te,enty2) * vm_co2CCS(t,regi,enty,enty3,te,rlf) ) )
-	+ vm_Mport(t,regi,enty2)
+    sum(pe2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te) )
+  + sum(se2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te) )
+  + sum(pc2te(enty,entySe(enty3),te,enty2), 
+        pm_prodCouple(regi,enty,enty3,te,enty2) * vm_prodSe(t,regi,enty,enty3,te) )
+  + sum(pc2te(enty4,entyFe(enty5),te,enty2), 
+        pm_prodCouple(regi,enty4,enty5,te,enty2) * vm_prodFe(t,regi,enty4,enty5,te) )
+  + sum(pc2te(enty,enty3,te,enty2),
+        sum(teCCS2rlf(te,rlf),
+            pm_prodCouple(regi,enty,enty3,te,enty2) * vm_co2CCS(t,regi,enty,enty3,te,rlf) ) )
+    + vm_Mport(t,regi,enty2)
   =e=
     sum(se2fe(enty2,enty3,te), vm_demSe(t,regi,enty2,enty3,te) )
-	+ sum(se2se(enty2,enty3,te), vm_demSe(t,regi,enty2,enty3,te) )
-	+ sum(teVRE, v32_storloss(t,regi,teVRE) )
-	+ sum(pe2rlf(enty3,rlf2), (pm_fuExtrOwnCons(regi, enty2, enty3) * vm_fuExtr(t,regi,enty3,rlf2))$(pm_fuExtrOwnCons(regi, enty2, enty3) gt 0))$(t.val > 2005) !! do not use in 2005 because this demand is not contained in 05_initialCap
-	+ vm_Xport(t,regi,enty2)
+  + sum(se2se(enty2,enty3,te), vm_demSe(t,regi,enty2,enty3,te) )
+  + sum(teVRE, v32_storloss(t,regi,teVRE) )
+  + sum(pe2rlf(enty3,rlf2), (pm_fuExtrOwnCons(regi, enty2, enty3) * vm_fuExtr(t,regi,enty3,rlf2))$(pm_fuExtrOwnCons(regi, enty2, enty3) gt 0))$(t.val > 2005) !! do not use in 2005 because this demand is not contained in 05_initialCap
+  + vm_Xport(t,regi,enty2)
 ;
 
 
 *' This equation calculates the total usable output from all seel-producing technology after deducting storage losses
 q32_usableSe(t,regi,entySe)$(sameas(entySe,"seel"))..
-	vm_usableSe(t,regi,entySe)
-	=e=
-	sum(pe2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) )
-	+ sum(se2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) ) 
-	+ sum(pc2te(entyPe,entySe(enty3),te,entySe)$(pm_prodCouple(regi,entyPe,enty3,te,entySe) gt 0),
-		pm_prodCouple(regi,entyPe,enty3,te,entySe)*vm_prodSe(t,regi,entyPe,enty3,te) )
-	- sum(teVRE, v32_storloss(t,regi,teVRE) )
+    vm_usableSe(t,regi,entySe)
+    =e=
+    sum(pe2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) )
+  + sum(se2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) ) 
+  + sum(pc2te(entyPe,entySe(enty3),te,entySe)$(pm_prodCouple(regi,entyPe,enty3,te,entySe) gt 0),
+        pm_prodCouple(regi,entyPe,enty3,te,entySe)*vm_prodSe(t,regi,entyPe,enty3,te) )
+  - sum(teVRE, v32_storloss(t,regi,teVRE) )
 ;
 
 *' This equation calculates the total usable output from a seel-producing technology, meaning "after storage losses"
 q32_usableSeTe(t,regi,entySe,te)$(sameas(entySe,"seel") AND teVRE(te))..
- 	vm_usableSeTe(t,regi,entySe,te)
- 	=e=
- 	sum(pe2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) )
-	+ sum(se2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) )
- 	+ sum(pc2te(enty,entySe(enty3),te,entySe)$(pm_prodCouple(regi,enty,enty3,te,entySe) gt 0),
-		pm_prodCouple(regi,enty,enty3,te,entySe) * vm_prodSe(t,regi,enty,enty3,te) )
- 	- sum(teVRE$sameas(te,teVRE), v32_storloss(t,regi,teVRE) )
+     vm_usableSeTe(t,regi,entySe,te)
+     =e=
+     sum(pe2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) )
+   + sum(se2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) )
+   + sum(pc2te(enty,entySe(enty3),te,entySe)$(pm_prodCouple(regi,enty,enty3,te,entySe) gt 0),
+         pm_prodCouple(regi,enty,enty3,te,entySe) * vm_prodSe(t,regi,enty,enty3,te) )
+   - sum(teVRE$sameas(te,teVRE), v32_storloss(t,regi,teVRE) )
 ;
 
 ***---------------------------------------------------------------------------
@@ -96,7 +98,7 @@ q32_h2turbVREcapfromTestorUp(t,regi)..
 
 
 ***---------------------------------------------------------------------------
-*** Definition of capacity constraints for CHP technologies:
+*' Definition of capacity constraints for CHP technologies:
 ***---------------------------------------------------------------------------
 q32_limitCapTeChp(t,regi)..
     sum(pe2se(enty,"seel",teChp(te)), vm_prodSe(t,regi,enty,"seel",te) )
@@ -104,9 +106,9 @@ q32_limitCapTeChp(t,regi)..
     p32_shCHP(t,regi) 
     * sum(pe2se(enty,"seel",te), vm_prodSe(t,regi,enty,"seel",te) )
 ;
-		 
+
 ***---------------------------------------------------------------------------
-*** Calculation of necessary grid installations for centralized renewables:
+*' Calculation of necessary grid installations for centralized renewables:
 ***---------------------------------------------------------------------------
 *' Additional grid expansion to integrate VRE are driven linearly by VRE output 
 q32_limitCapTeGrid(t,regi)$( t.val ge 2020 ) .. 
@@ -122,7 +124,7 @@ $ENDIF.WindOff
 ;
 
 ***---------------------------------------------------------------------------
-*** Calculation of share of electricity production of a technology:
+*' Calculation of share of electricity production of a technology:
 ***---------------------------------------------------------------------------
 q32_shSeEl(t,regi,teVRE)..
     vm_shSeEl(t,regi,teVRE) / 100 * vm_usableSe(t,regi,"seel")
@@ -131,7 +133,7 @@ q32_shSeEl(t,regi,teVRE)..
 ;
 
 ***---------------------------------------------------------------------------
-*** Calculation of necessary storage electricity production:
+*' Calculation of necessary storage electricity production:
 ***---------------------------------------------------------------------------
 *' v32_shStor is an aggregated measure for the SPECIFIC (= per kWh) integration challenge of one teVRE. It currently increases linearly in VRE share as p32_storexp is set to 1
 *' For solar technologies that have a very strong temporal mathching (PV, CSP), the share of the other technology also increases integration challenges by a reduced factor.    
@@ -191,30 +193,29 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 $ENDIF.WindOff
 ;
 
-
 ***---------------------------------------------------------------------------
-*** Operating reserve constraint
+*' Operating reserve constraint
 ***---------------------------------------------------------------------------
 q32_operatingReserve(t,regi)$(t.val ge 2010)..
 ***1 is the chosen load coefficient
-	vm_usableSe(t,regi,"seel")
-	=l=    
+    vm_usableSe(t,regi,"seel")
+    =l=    
 ***Variable renewable coefficients could be expected to be negative because they are variable.
 ***However they are modeled positive because storage conditions make variable renewables controllable.
-	sum(pe2se(enty,"seel",te)$(NOT teVRE(te)),
-		pm_data(regi,"flexibility",te) * vm_prodSe(t,regi,enty,"seel",te) )
-	+ sum(se2se(enty,"seel",te)$(NOT teVRE(te)),
-		pm_data(regi,"flexibility",te) * vm_prodSe(t,regi,enty,"seel",te) )
-	+ sum(pe2se(enty,"seel",teVRE),
-		pm_data(regi,"flexibility",teVRE) * (vm_prodSe(t,regi,enty,"seel",teVRE)-v32_storloss(t,regi,teVRE)) )
-	+
-	sum(pe2se(enty,"seel",teVRE),
-		sum(VRE2teStor(teVRE,teStor),
-			pm_data(regi,"flexibility",teStor) * (vm_prodSe(t,regi,enty,"seel",teVRE)-v32_storloss(t,regi,teVRE)) ) )
+   sum(pe2se(enty,"seel",te)$(NOT teVRE(te)),
+       pm_data(regi,"flexibility",te) * vm_prodSe(t,regi,enty,"seel",te) )
+ + sum(se2se(enty,"seel",te)$(NOT teVRE(te)),
+       pm_data(regi,"flexibility",te) * vm_prodSe(t,regi,enty,"seel",te) )
+ + sum(pe2se(enty,"seel",teVRE),
+       pm_data(regi,"flexibility",teVRE) * (vm_prodSe(t,regi,enty,"seel",teVRE)-v32_storloss(t,regi,teVRE)) )
+   +
+   sum(pe2se(enty,"seel",teVRE),
+       sum(VRE2teStor(teVRE,teStor),
+           pm_data(regi,"flexibility",teStor) * (vm_prodSe(t,regi,enty,"seel",teVRE)-v32_storloss(t,regi,teVRE)) ) )
 ;
 
 ***----------------------------------------------------------------------------
-*** FS: calculate flexibility adjustment used in flexibility tax for technologies with electricity input 
+*'  calculate flexibility adjustment used in flexibility tax for technologies with electricity input 
 ***----------------------------------------------------------------------------
 
 *** This equation calculates the minimal flexible electricity price that flexible technologies (like elh2) can see. It is reached when the VRE share is 100%.
@@ -286,9 +287,6 @@ q32_flexPriceShare(t,regi,te)$(teFlex(te))..
       * vm_shDemSeel(t,regi,te) 
 ;
 
-
-
-
 *** Note: This equation is not active by default. This means that there is no change in electricity prices for inflexible technologies.
 *** The equation is only active if cm_FlexTaxFeedback = 1.
 *** This balance ensures that the lower electricity prices of flexible technologies are compensated 
@@ -302,7 +300,6 @@ q32_flexPriceBalance(t,regi)$(cm_FlexTaxFeedback eq 1)..
   sum(en2en(enty,enty2,te)$(teFlexTax(te)), 
   	vm_demSe(t,regi,enty,enty2,te) * v32_flexPriceShare(t,regi,te)) 
 ;
-
 
 *** This calculates the flexibility benefit or cost per unit electricity input 
 *** of flexibile or inflexible technology.  Flexible technologies benefit
@@ -323,4 +320,5 @@ q32_flexAdj(t,regi,te)$(teFlexTax(te))..
   )$( cm_flex_tax eq 1 AND t.val ge 2025 )
 ;
 
+*' @stop
 *** EOF ./modules/32_power/IntC/equations.gms
