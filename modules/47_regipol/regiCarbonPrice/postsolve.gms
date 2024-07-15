@@ -480,7 +480,7 @@ $ENDIF.emiMkt
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 
 *** saving previous iteration value for implicit tax revenue recycling
-*** the same line exists in presolve.gms, don't forget to update there
+*** similar lines exists in equations.gms and presolve.gms, don't forget to update there
 p47_implicitQttyTargetTax_prevIter(t,regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup);
 p47_implicitQttyTargetTax0(t,regi) =
   sum((qttyTarget,qttyTargetGroup)$p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup),
