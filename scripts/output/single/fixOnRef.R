@@ -38,8 +38,8 @@ findRefMif <- function(outputdir, envi) {
 }
 
 fixMAGICC <- function(d, dref, startyear, scen) {
-  magiccgrep <- "^Forcing|^Temperature|^Concentration"
-  message("Fixing MAGICC6 data before ", startyear)
+  magiccgrep <- "^Forcing|^Temperature|^Concentration|^MAGICC7 AR6"
+  message("Fixing MAGICC6 and 7 data before ", startyear)
   dnew <-
     rbind(
       filter(dref, grepl(magiccgrep, .data$variable),
