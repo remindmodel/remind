@@ -18,6 +18,8 @@ if(! exists("source_include")) {
 scen <- lucode2::getScenNames(outputdir)
 mif  <- file.path(outputdir, paste0("REMIND_generic_", scen, ".mif"))
 mifdata <- as.quitte(mif)
+envi <- new.env()
+load(file.path(outputdir, "config.Rdata"), env =  envi)
 
 stopmessage <- NULL
 
@@ -57,6 +59,7 @@ for (mapping in c("AR6", "NAVIGATE")) {
     droplevels()
   
   csregi <- d %>%
+    filter(.data$region %in% unique(c("GLO", "World", read.csv2(envi$cfg$regionmapping)$RegionCode))) %>%
     checkSummationsRegional(skipUnits = TRUE) %>%
     rename(World = "total") %>%
     droplevels()
