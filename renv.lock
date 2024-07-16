@@ -971,25 +971,31 @@
     },
     "edgeTransport": {
       "Package": "edgeTransport",
-      "Version": "1.5.8",
-      "Source": "Local",
-      "RemoteType": "local",
-      "RemoteUrl": "/p/projects/edget/Refactoring/lib/edgeTransport",
+      "Version": "1.5.5",
+      "Source": "Repository",
+      "Repository": "https://rse.pik-potsdam.de/r/packages",
       "Requirements": [
         "R",
         "data.table",
         "gdx",
         "gdxdt",
         "gdxrrw",
+        "ggplot2",
         "madrat",
         "magclass",
         "magrittr",
-        "reporttransport",
+        "quitte",
+        "readxl",
+        "remind2",
+        "rlang",
+        "rmarkdown",
         "rmndt",
         "rootSolve",
+        "yaml",
+        "ymlthis",
         "zoo"
       ],
-      "Hash": "a13096bdea9a3480b67686b0752cbf8e"
+      "Hash": "56d0bbf54a5cc2f8e6bbc2c613114041"
     },
     "ellipsis": {
       "Package": "ellipsis",
@@ -2083,9 +2089,9 @@
     },
     "magpie4": {
       "Package": "magpie4",
-      "Version": "2.6.0",
+      "Version": "2.6.2",
       "Source": "Repository",
-      "Repository": "https://rse.pik-potsdam.de/r/packages",
+      "Repository": "pik",
       "Requirements": [
         "R",
         "dplyr",
@@ -2106,7 +2112,7 @@
         "stringr",
         "utils"
       ],
-      "Hash": "da5b18a8d31561279fa197ec86b54c79"
+      "Hash": "6fbd931e612f96e428a1b3629a5dcdbc"
     },
     "magpiesets": {
       "Package": "magpiesets",
@@ -2235,7 +2241,7 @@
     },
     "modelstats": {
       "Package": "modelstats",
-      "Version": "0.21.17",
+      "Version": "0.21.18",
       "Source": "Repository",
       "Repository": "pik",
       "Requirements": [
@@ -2252,11 +2258,11 @@
         "utils",
         "withr"
       ],
-      "Hash": "a3ede6b83a75b2bb52bb6baa6e0825e6"
+      "Hash": "a7feca223dbfeba9671af5a4158db26f"
     },
     "mrcommons": {
       "Package": "mrcommons",
-      "Version": "1.42.0",
+      "Version": "1.42.2",
       "Source": "Repository",
       "Repository": "pik",
       "Requirements": [
@@ -2290,7 +2296,7 @@
         "withr",
         "zoo"
       ],
-      "Hash": "e7d596b0d87a9c82826d7c9b21badaae"
+      "Hash": "a37b5c4516213f1b8cca2f542452597d"
     },
     "mrdrivers": {
       "Package": "mrdrivers",
@@ -2456,7 +2462,7 @@
     },
     "mrremind": {
       "Package": "mrremind",
-      "Version": "0.182.7",
+      "Version": "0.182.10",
       "Source": "Repository",
       "Repository": "pik",
       "Requirements": [
@@ -2491,7 +2497,7 @@
         "tidyselect",
         "zoo"
       ],
-      "Hash": "962954c581d9fbc9a8ebe77a80715e99"
+      "Hash": "2f19b808c8429d506e9588a41c2bf188"
     },
     "mrsoil": {
       "Package": "mrsoil",
@@ -2571,16 +2577,16 @@
     },
     "mstools": {
       "Package": "mstools",
-      "Version": "0.7.0",
+      "Version": "0.8.0",
       "Source": "Repository",
-      "Repository": "https://rse.pik-potsdam.de/r/packages",
+      "Repository": "pik",
       "Requirements": [
         "madrat",
         "magclass",
         "magpiesets",
         "stringr"
       ],
-      "Hash": "165b80319ada805d71c8a50077ac3b3e"
+      "Hash": "4bcc0a145d29f0fa084186203371c307"
     },
     "munsell": {
       "Package": "munsell",
@@ -2760,7 +2766,7 @@
     },
     "piamInterfaces": {
       "Package": "piamInterfaces",
-      "Version": "0.20.15",
+      "Version": "0.20.18",
       "Source": "Repository",
       "Repository": "pik",
       "Requirements": [
@@ -2777,7 +2783,7 @@
         "tidyr",
         "yaml"
       ],
-      "Hash": "882978af6d41fd49e92306d2d7794d62"
+      "Hash": "50583df4c3542191a6389f1e0113bed5"
     },
     "piamPlotComparison": {
       "Package": "piamPlotComparison",
@@ -3276,8 +3282,9 @@
     "remind2": {
       "Package": "remind2",
       "Version": "1.147.0",
-      "Source": "Repository",
-      "Repository": "pik",
+      "Source": "Local",
+      "RemoteType": "local",
+      "RemoteUrl": "/p/projects/edget/Refactoring/lib/remind2",
       "Requirements": [
         "abind",
         "assertr",
@@ -3313,7 +3320,7 @@
         "withr",
         "yaml"
       ],
-      "Hash": "48b8ec8f83f6ce58f26823c4ecda636c"
+      "Hash": "261c7707a334ca862a3058374a6e6994"
     },
     "remotes": {
       "Package": "remotes",
@@ -3362,10 +3369,9 @@
     },
     "reporttransport": {
       "Package": "reporttransport",
-      "Version": "0.0.5",
-      "Source": "Local",
-      "RemoteType": "local",
-      "RemoteUrl": "/p/projects/edget/Refactoring/lib/reporttransport",
+      "Version": "0.0.10",
+      "Source": "Repository",
+      "Repository": "pik",
       "Requirements": [
         "R",
         "data.table",
@@ -3380,7 +3386,7 @@
         "yaml",
         "ymlthis"
       ],
-      "Hash": "e1ea0de80526a526769fe882d694a960"
+      "Hash": "b6869908aa94adf79177244d201f215d"
     },
     "reprex": {
       "Package": "reprex",

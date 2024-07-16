@@ -86,6 +86,7 @@ if(file.exists(edgetOutputDir)) {
   EDGET_output <- reportEdgeTransport(edgetOutputDir,
                                       isTransportExtendedReported = FALSE, 
                                       modelName = "REMIND",
+				      scenarioName = scenario,
                                       gdxPath = file.path(outputdir, "fulldata.gdx"),
                                       isStored = FALSE)
 
