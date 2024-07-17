@@ -38,10 +38,12 @@ $include "./modules/32_power/IntC/input/f32_factorStorage.cs4r"
 $offdelim
 /
 ;
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-f32_factorStorage(all_regi,"windoff") = f32_factorStorage(all_regi,"wind");
-f32_factorStorage(all_regi,"wind")      = 1.35 * f32_factorStorage(all_regi,"wind"); 
-$ENDIF.WindOff
+
+*** windoffshore-todo
+f32_factorStorage(all_regi,"windon") $ (f32_factorStorage(all_regi,"windon") eq 0) = f32_factorStorage(all_regi,"wind");
+f32_factorStorage(all_regi,"windoff") = f32_factorStorage(all_regi,"windon");
+f32_factorStorage(all_regi,"windon")  = 1.35 * f32_factorStorage(all_regi,"windon"); 
+
 p32_factorStorage(all_regi,all_te) = f32_factorStorage(all_regi,all_te);
 
 $if not "%cm_storageFactor%" == "off" p32_factorStorage(all_regi,all_te)=%cm_storageFactor%*p32_factorStorage(all_regi,all_te);
@@ -49,25 +51,19 @@ $if not "%cm_storageFactor%" == "off" p32_factorStorage(all_regi,all_te)=%cm_sto
 ***parameter p32_storexp(all_regi,all_te) - exponent that determines how curtailment and storage requirements per kW increase with market share of wind and solar. 1 means specific marginal costs increase linearly
 p32_storexp(regi,"spv")     = 1;
 p32_storexp(regi,"csp")     = 1;
-p32_storexp(regi,"wind")    = 1;
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-p32_storexp(regi,"windoff")    = 1;
-$ENDIF.WindOff
+p32_storexp(regi,"windon")  = 1;
+p32_storexp(regi,"windoff") = 1;
 
 
 ***parameter p32_gridexp(all_regi,all_te) - exponent that determines how grid requirement per kW increases with market share of wind and solar. 1 means specific marginal costs increase linearly
 p32_gridexp(regi,"spv")     = 1;
 p32_gridexp(regi,"csp")     = 1;
-p32_gridexp(regi,"wind")    = 1;
+p32_gridexp(regi,"windon")  = 1;
 
 
 table f32_storageCap(char, all_te)  "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
 $include "./modules/32_power/IntC/input/f32_storageCap.prn"
 ;
-
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-f32_storageCap(char,"windoff") = f32_storageCap(char,"wind");
-$ENDIF.WindOff 
 
 p32_storageCap(te,char) = f32_storageCap(char,te);
 display p32_storageCap;

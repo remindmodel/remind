@@ -8,15 +8,17 @@
 
 *' @equations
 
-q40_ElecBioBound(t,regi)$(t.val gt 2015)..
-***am minimum targets for certain technologies
-    sum(te2rlf(te,rlf)$(sameas(te,"biochp") OR sameas(te,"bioigcc") OR sameas(te,"bioigccc")), vm_cap(t,regi,te,rlf))
-      * 1000 =g= p40_ElecBioBound(t,regi);	 
 
+***am minimum targets for certain technologies
+q40_ElecBioBound(t,regi)$(t.val gt 2015)..
+    sum(te2rlf(te,rlf)$(sameas(te,"biochp") OR sameas(te,"bioigcc") OR sameas(te,"bioigccc")), vm_cap(t,regi,te,rlf))
+      =g= p40_ElecBioBound(t,regi) * 0.001
+;	 
+
+*** windoffshore-todo: separate onshore and offshore NDC targets
 q40_windBound(t,regi)$(t.val gt 2025)..
-***making target apply to both wind onshore and offshore, when offshore switch is on
-sum(teWind(te), vm_cap(t,regi,te,"1")) 
-    =g= p40_TechBound(t,regi,"wind")*0.001
+  sum(teWind(te)$(sameas(te,"windon") OR sameas(te,"windoff")), vm_cap(t,regi,te,"1")) 
+    =g= p40_TechBound(t,regi,"windon") * 0.001
 ;
 
 q40_PEgasBound(t,regi)$(t.val gt 2015 AND (sameas(regi,"CHN") OR sameas(regi,"CHA")))..

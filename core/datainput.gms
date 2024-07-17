@@ -135,7 +135,8 @@ pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 ***          Technology data input read-in and manipulation
 *------------------------------------------------------------------------------------
 *** Note: future to be its own module perhaps
-*** Note: in module 5 there are more cost manipulation after initial capacities are calculated, be aware those can overwrite your technology values for policy runs if you set them here in the core
+*** Note: in module 5 there are more cost manipulation after initial capacities are calculated, 
+***       be aware those can overwrite your technology values for policy runs if you set them here in the core
 ***---------------------------------------------------------------------------
 *** Reading in and initializing global data
 ***---------------------------------------------------------------------------
@@ -145,7 +146,10 @@ $include "./core/input/generisdata_tech.prn"
 $include "./core/input/generisdata_trade.prn"
 ;
 
-*** CG warning: some of the SSP1 and SSP5 costs are not consistent with the story line (e.g. under SSP1 blue H2 and some fossil fuel CCS technologies have lower costs than in SSP2). This is to be fixed in the future when new SSP storylines are implemented, unclear when (29-1-2024). In the future, SSP1 and SSP5 data should be implemented as switches to avoid errors
+*** CG warning: some of the SSP1 and SSP5 costs are not consistent with the story line 
+***    (e.g. under SSP1 blue H2 and some fossil fuel CCS technologies have lower costs than in SSP2). 
+***    This is to be fixed in the future when new SSP storylines are implemented, unclear when (29-1-2024). 
+***    In the future, SSP1 and SSP5 data should be implemented as switches to avoid errors
 *JH* SSP energy technology scenario
 table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
 $include "./core/input/generisdata_tech_SSP1.prn"
@@ -156,16 +160,6 @@ $include "./core/input/generisdata_tech_SSP5.prn"
 $include "./core/input/generisdata_trade.prn"
 ;
 
-$ifthen.WindOff %cm_wind_offshore% == "1"
-*CG* set wind offshore, storage and grid to be the same as wind onshore (later should be integrated into input data)
-* main difference between onshore and offshore is the difference in f32_factorStorage
-fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
-fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
-f_dataglob_SSP1(char,"storwindoff") = f_dataglob_SSP1(char,"storwind");
-f_dataglob_SSP1(char,"gridwindoff") = f_dataglob_SSP1(char,"gridwind");
-f_dataglob_SSP5(char,"storwindoff") = f_dataglob_SSP5(char,"storwind");
-f_dataglob_SSP5(char,"gridwindoff") = f_dataglob_SSP5(char,"gridwind");
-$endif.WindOff
 
 ***---------------------------------------------------------------------------
 *** Reading in and initializing regional cost data
@@ -215,10 +209,6 @@ if (c_techAssumptScen eq 3,
 
 *RP* include global flexibility parameters
 $include "./core/input/generisdata_flexibility.prn"
-$ifthen.WindOff %cm_wind_offshore% == "1"
-fm_dataglob("flexibility","storwindoff")  = 1.93;
-fm_dataglob("flexibility","windoff")  = -1;
-$endif.WindOff
 
 display fm_dataglob;
 
@@ -663,20 +653,8 @@ p_cint(regi,"co2","peoil","6")=0.1775748800;
 p_cint(regi,"co2","peoil","7")=0.2283105600;
 p_cint(regi,"co2","peoil","8")=0.4153983800;
 
-$ifthen.WindOff %cm_wind_offshore% == "0"
 ** historical installed capacity
-*** read-in of pm_histCap.cs3r
-$Offlisting
-table   pm_histCap(tall,all_regi,all_te)     "historical installed capacity"
-$ondelim
-$include "./core/input/pm_histCap.cs3r"
-$offdelim
-;
-$Onlisting
-$endif.WindOff
-
-$ifthen.WindOff %cm_wind_offshore% == "1"
-*** read-in of pm_histCap_windoff.cs3r
+*** read-in of pm_histCap_windoff.cs3r *** windoffshore-todo
 $Offlisting
 table   pm_histCap(tall,all_regi,all_te)     "historical installed capacity"
 $ondelim
@@ -684,7 +662,11 @@ $include "./core/input/pm_histCap_windoff.cs3r"
 $offdelim
 ;
 $Onlisting
-$endif.WindOff
+
+*** windoffshore-todo 
+pm_histCap(tall,all_regi,"windon") $ (pm_histCap(tall,all_regi,"windon") eq 0) = pm_histCap(tall,all_regi,"wind");
+
+
 
 *** calculate historic capacity additions
 pm_delta_histCap(tall,regi,te) = pm_histCap(tall,regi,te) - pm_histCap(tall-1,regi,te);
@@ -708,10 +690,14 @@ $offdelim
 $Onlisting
 
 
-*CG* setting wind off capacity factor to be the same as onshore here (later adjusting it in vm_capFac)
-$ifthen.WindOff %cm_wind_offshore% == "1"
-f_cf(ttot,regi,"windoff") = f_cf(ttot,regi,"wind");
-$endif.WindOff
+*CG* setting wind offshore capacity factor to be the same as onshore here (later adjusting it in vm_capFac)
+*** windoffshore-todo 
+f_cf(ttot,regi,"windon") $ (f_cf(ttot,regi,"windon") eq 0) = f_cf(ttot,regi,"wind");
+f_cf(ttot,regi,"storwindon") $ (f_cf(ttot,regi,"storwindon") eq 0) = f_cf(ttot,regi,"storwind");
+f_cf(ttot,regi,"gridwindon") $ (f_cf(ttot,regi,"gridwindon") eq 0) = f_cf(ttot,regi,"gridwind");
+f_cf(ttot,regi,"windoff") = f_cf(ttot,regi,"windon");
+f_cf(ttot,regi,"storwindoff") = f_cf(ttot,regi,"storwindon");
+f_cf(ttot,regi,"gridwindoff") = f_cf(ttot,regi,"gridwindon");
 
 pm_cf(ttot,regi,te) =  f_cf(ttot,regi,te);
 ***pm_cf(ttot,regi,"h2turbVRE") = 0.15;
@@ -963,8 +949,8 @@ $if %cm_MAgPIE_coupling% == "on" p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0
 
 display p_efFossilFuelExtr;
 
-pm_dataren(regi,"nur",rlf,te)     = f_datarenglob("nur",rlf,te);
 pm_dataren(regi,"maxprod",rlf,te) = sm_EJ_2_TWa * f_datarenglob("maxprod",rlf,te);
+pm_dataren(regi,"nur",rlf,te)     = f_datarenglob("nur",rlf,te);
 
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
 table f_maxProdGradeRegiHydro(all_regi,char,rlf)                  "input of regionalized maximum from hydro [EJ/a]"
@@ -976,17 +962,17 @@ pm_dataren(all_regi,"maxprod",rlf,"hydro") = sm_EJ_2_TWa * f_maxProdGradeRegiHyd
 pm_dataren(all_regi,"nur",rlf,"hydro")     = f_maxProdGradeRegiHydro(all_regi,"nur",rlf);
 
 *CG* separating input of wind onshore and offshore
+*** windoffshore-todo
 table f_maxProdGradeRegiWindOn(all_regi,char,rlf)                  "input of regionalized maximum from wind onshore [EJ/a]"
 $ondelim
 $include "./core/input/f_maxProdGradeRegiWindOn.cs3r"
 $offdelim
 ;
 
-pm_dataren(all_regi,"maxprod",rlf,"wind") = sm_EJ_2_TWa * f_maxProdGradeRegiWindOn(all_regi,"maxprod",rlf);
-pm_dataren(all_regi,"nur",rlf,"wind")     = f_maxProdGradeRegiWindOn(all_regi,"nur",rlf);
+pm_dataren(all_regi,"maxprod",rlf,"windon") = sm_EJ_2_TWa * f_maxProdGradeRegiWindOn(all_regi,"maxprod",rlf);
+pm_dataren(all_regi,"nur",rlf,"windon")     = f_maxProdGradeRegiWindOn(all_regi,"nur",rlf);
 
 
-$ifthen.WindOff %cm_wind_offshore% == "1"
 table f_maxProdGradeRegiWindOff(all_regi,char,rlf)                  "input of regionalized maximum from wind offshore [EJ/a]"
 $ondelim
 $include "./core/input/f_maxProdGradeRegiWindOff.cs3r"
@@ -1007,8 +993,6 @@ pm_shareWindOff("2035",regi) = 0.8;
 pm_shareWindOff("2040",regi) = 0.9;
 pm_shareWindOff("2045",regi) = 0.95;
 pm_shareWindOff(ttot,regi)$((ttot.val ge 2050)) = 1;
-
-$endif.WindOff
 
 
 table f_dataRegiSolar(all_regi,char,all_te,rlf)                  "input of regionalized data for solar"
@@ -1066,17 +1050,7 @@ loop(regi,
 
 display p_aux_capToDistr, s_aux_cap_remaining, p_aux_capThisGrade, p_avCapFac2015, p_inco0;
 
-$ifthen.WindOff %cm_wind_offshore% == "0"
-parameter p_histCapFac(tall,all_regi,all_te)     "Capacity factor (fraction of the year that a plant is running) of installed capacity in 2015"
-/
-$ondelim
-$include "./core/input/p_histCapFac.cs4r"
-$offdelim
-/
-;
-$endif.WindOff
 
-$ifthen.WindOff %cm_wind_offshore% == "1"
 parameter p_histCapFac(tall,all_regi,all_te)     "Capacity factor (fraction of the year that a plant is running) of installed capacity in 2015"
 /
 $ondelim
@@ -1084,45 +1058,32 @@ $include "./core/input/p_histCapFac_windoff.cs4r"
 $offdelim
 /
 ;
-$endif.WindOff
 
+*** windoffshore-todo
+p_histCapFac(tall,all_regi,"windon") $ (p_histCapFac(tall,all_regi,"windon") eq 0) = p_histCapFac(tall,all_regi,"wind");
 
-*** RP rescale wind capacity factors in REMIND to account for very different real-world CF (potentially partially due to assumed low-wind turbine set-ups in the NREL data)
-*** Because of the lag effect (turbines in the 2000s were much smaller and thus yielded lower CFs), only implement half of the calculated ratio of historic to REMIND capFac as rescaling for the new CFs - realised as (x+1)/2
+*** RP rescale wind capacity factors in REMIND to account for very different real-world CF 
+*** (potentially partially due to assumed low-wind turbine set-ups in the NREL data)
+*** Because of the lag effect (turbines in the 2000s were much smaller and thus yielded lower CFs),
+*** only implement half of the calculated ratio of historic to REMIND capFac as rescaling for the new CFs - realised as (x+1)/2
 
 *cb* CF calibration analogously for wind and spv: calibrate 2015, and assume gradual phase-in of grade-based CF (until 2045 for wind, until 2030 for spv)
-p_aux_capacityFactorHistOverREMIND(regi,"wind")$p_avCapFac2015(regi,"wind") =  p_histCapFac("2015",regi,"wind") / p_avCapFac2015(regi,"wind");
-$ifthen.WindOff %cm_wind_offshore% == "1"
+p_aux_capacityFactorHistOverREMIND(regi,"windon")$p_avCapFac2015(regi,"windon") =  p_histCapFac("2015",regi,"windon") / p_avCapFac2015(regi,"windon");
 p_aux_capacityFactorHistOverREMIND(regi,"windoff")$p_avCapFac2015(regi,"windoff") =  p_histCapFac("2015",regi,"windoff") / p_avCapFac2015(regi,"windoff");
-$endif.WindOff
 
-$ifthen.WindOff %cm_wind_offshore% == "0"
-loop(t$(t.val ge 2015 AND t.val le 2035 ),
-pm_cf(t,regi,"wind") =
-(2035 - pm_ttot_val(t)) / 20 * p_aux_capacityFactorHistOverREMIND(regi,"wind") *pm_cf(t,regi,"wind")
-+
-(pm_ttot_val(t) - 2015) / 20 * pm_cf(t,regi,"wind")
+
+loop(te$(sameas(te,"windon") OR sameas(te,"windoff")),
+  loop(t$(t.val ge 2015 AND t.val le 2035 ),
+    pm_cf(t,regi,te) =
+    (2035 - pm_ttot_val(t)) / 20 * p_aux_capacityFactorHistOverREMIND(regi,te) *pm_cf(t,regi,te)
+    +
+    (pm_ttot_val(t) - 2015) / 20 * pm_cf(t,regi,te)
+  );
 );
-$endif.WindOff
-
-
-$ifthen.WindOff %cm_wind_offshore% == "1"
-loop(te$(sameas(te,"wind") OR sameas(te,"windoff")),
-loop(t$(t.val ge 2015 AND t.val le 2035 ),
-pm_cf(t,regi,te) =
-(2035 - pm_ttot_val(t)) / 20 * p_aux_capacityFactorHistOverREMIND(regi,te) *pm_cf(t,regi,te)
-+
-(pm_ttot_val(t) - 2015) / 20 * pm_cf(t,regi,te)
-);
-);
-$endif.WindOff
-
 
 *CG* set storage and grid of windoff to be the same as windon
-$ifthen.WindOff %cm_wind_offshore% == "1"
-pm_cf(t,regi,"storwindoff") = pm_cf(t,regi,"storwind");
-pm_cf(t,regi,"gridwindoff") = pm_cf(t,regi,"gridwind");
-$endif.WindOff
+pm_cf(t,regi,"storwindoff") = pm_cf(t,regi,"storwindon");
+pm_cf(t,regi,"gridwindoff") = pm_cf(t,regi,"gridwindon");
 
 p_aux_capacityFactorHistOverREMIND(regi,"spv")$p_avCapFac2015(regi,"spv") =  p_histCapFac("2015",regi,"spv") / p_avCapFac2015(regi,"spv");
 pm_cf("2015",regi,"spv") = pm_cf("2015",regi,"spv") * p_aux_capacityFactorHistOverREMIND(regi,"spv");
@@ -1180,9 +1141,9 @@ $offdelim
 ;
 p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
 
-$ifthen.WindOff %cm_wind_offshore% == "1"
-p_adj_deltacapoffset(t,regi,"windoff")= p_adj_deltacapoffset(t,regi,"wind");
-$endif.WindOff
+*** windoffshore-todo
+p_adj_deltacapoffset(t,regi,"windon") ? (p_adj_deltacapoffset(t,regi,"windon") eq 0) = p_adj_deltacapoffset(t,regi,"wind");
+p_adj_deltacapoffset(t,regi,"windoff")= p_adj_deltacapoffset(t,regi,"windon");
 
 *** share of PE2SE capacities in 2005 depends on GDP-MER
 p_adj_seed_reg(t,regi) = pm_gdp(t,regi) * 1e-4;
@@ -1195,6 +1156,7 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,"hydro")           = 0.25;
   p_adj_seed_te(ttot,regi,"csp")             = 0.25;
   p_adj_seed_te(ttot,regi,"spv")             = 2.00;
+  p_adj_seed_te(ttot,regi,"windoff")         = 0.5;
   p_adj_seed_te(ttot,regi,"gasftrec")        = 0.25;
   p_adj_seed_te(ttot,regi,"gasftcrec")       = 0.25;
   p_adj_seed_te(ttot,regi,"coalftrec")       = 0.25;
@@ -1206,10 +1168,6 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   p_adj_seed_te(ttot,regi,"bfcc")            = 0.05;
   p_adj_seed_te(ttot,regi,"idrcc")           = 0.05;
 $endif.cm_subsec_model_steel
-
-$ifthen.WindOff %cm_wind_offshore% == "1"
-  p_adj_seed_te(ttot,regi,"windoff") = 0.5;
-$endif.WindOff
 
 *RP: for comparison of different technologies:
 *** pm_conv_cap_2_MioLDV <- 650  # The world has slightly below 800million cars in 2005 (IEA TECO2), so with a global vm_cap of 1.2, this gives ~650
@@ -1235,17 +1193,13 @@ $endif.WindOff
   p_adj_coeff(ttot,regi,teCCS)             = 1.0;
   p_adj_coeff(ttot,regi,"ccsinje")         = 1.0;
   p_adj_coeff(ttot,regi,"spv")             = 0.15;
-  p_adj_coeff(ttot,regi,"wind")            = 0.25;
+  p_adj_coeff(ttot,regi,"windon")          = 0.25;
+  p_adj_coeff(ttot,regi,"windoff")         = 0.35;
   p_adj_coeff(ttot,regi,"geohe")           = 0.6;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   p_adj_coeff(ttot,regi,"bfcc")            = 1.0;
   p_adj_coeff(ttot,regi,"idrcc")           = 1.0;
 $endif.cm_subsec_model_steel
-
-$ifthen.WindOff %cm_wind_offshore% == "1"
-
-  p_adj_coeff(ttot,regi,"windoff")         = 0.35;
-$endif.WindOff
 
   p_adj_coeff(ttot,regi,"dac")             = 0.8;
   p_adj_coeff(ttot,regi,teGrid)            = 0.3;
@@ -1549,11 +1503,6 @@ display p_regi_2_MAGICC_regions ;
 table p_vintage_glob_in(opTimeYr,all_te)         "read-in of global historical vintage structure. Unit: arbitrary (automatic rescaling to 1 in REMIND)"
 $include "./core/input/generisdata_vintages.prn"
 ;
-
-*CG* wind offshore has the same vintage structure as onshore
-$ifthen.WindOff %cm_wind_offshore% == "1"
-p_vintage_glob_in(opTimeYr,"windoff") = p_vintage_glob_in(opTimeYr,"wind");
-$endif.WindOff
 
 pm_vintage_in(regi,opTimeYr,te) = p_vintage_glob_in(opTimeYr,te);
 

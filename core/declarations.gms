@@ -146,10 +146,9 @@ p_aux_capacityFactorHistOverREMIND(all_regi,all_te)         "aux. param. to calc
 p_aux_scaleEmiHistorical_n2o(all_regi)                      "aux. param. to rescale MAgPIE n2o emissions to historical values"
 p_aux_scaleEmiHistorical_ch4(all_regi)                      "aux. param. to rescale MAgPIE ch4 emissions to historical values"
 
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+*** windoffshore-todo
 pm_shareWindPotentialOff2On(all_regi)                 "ratio of technical potential of windoff to windon"
 pm_shareWindOff(ttot,all_regi)                        "windoff rollout as a fraction of technical potential"
-$ENDIF.WindOff
 
 pm_fe2es(tall,all_regi,all_teEs)                     "Conversion factor from final energies to energy services. Default is 1."
 
@@ -200,7 +199,7 @@ p_efFossilFuelExtrGlo(all_enty,all_enty)             "global emission factor for
 pm_dataren(all_regi,char,rlf,all_te)                 "Array including both regional renewable potential and capacity factor"
 p_datapot(all_regi,char,rlf,all_enty)                "Total land area usable for the solar technologies PV and CSP. [km^2]"
 p_adj_seed_reg(tall,all_regi)                        "market capacity that can be built from 0 and gives v_adjFactor=1"
-p_adj_seed_te(ttot,all_regi,all_te)                                "technology-dependent multiplicative prefactor to the v_adjFactor seed value. Smaller means slower scale-up"
+p_adj_seed_te(ttot,all_regi,all_te)                  "technology-dependent multiplicative prefactor to the v_adjFactor seed value. Smaller means slower scale-up"
 *** appears in q_esm2macro and q_balFeForCes. This energy category is 0 in LAM, IND and AFR in 2005, but a value > 0 is needed for the calculation of CES parameters.
 *** Accordingly, a value of sm_eps is inserted in pm_cesdata to allow calculation of the CES parameters.
 p_datacs(all_regi,all_enty)                          "fossil energy that is not oxidized (=carbon stored)"
@@ -458,10 +457,9 @@ q_cap(tall,all_regi,all_te,rlf)                      "definition of available ca
 q_capDistr(tall,all_regi,all_te)                     "distribute available capacities across grades"
 q_capTotal(ttot,all_regi,all_enty,all_enty)          "calculation of vm_capTotal as total capacity without technology differentation for technologies where there exists differentation"
 
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+*** windoffshore-todo
 q_windoff_low(tall,all_regi)                         "semi-endogenous offshore wind power generation as a share of onshore wind energy, which is proportional to more than half of maxprod ratio"
 q_windoff_high(tall,all_regi)                        "semi-endogenous offshore wind power generation as a share of onshore wind energy, which is proportional to less than twice of maxprod ratio"
-$ENDIF.WindOff
 
 q_limitCapSe(ttot,all_regi,all_enty,all_enty,all_te)    "capacity constraint for se production"
 q_limitCapSe2se(ttot,all_regi,all_enty,all_enty,all_te) "capacity constraint for se to se transformation"

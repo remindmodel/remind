@@ -198,6 +198,7 @@ all_te          "all energy technologies, including from modules"
         geohe           "geothermal heat"
         hydro           "hydro electric"
         wind            "wind power converters"
+        windon          "wind onshore power converters"
         windoff         "wind offshore power converters"
         spv             "solar photovoltaic"
         csp             "concentrating solar power"
@@ -254,17 +255,15 @@ all_te          "all energy technologies, including from modules"
 *RP* Storage technology:
         storspv         "storage technology for photo voltaic (PV)"
         storwind        "storage technology for wind onshore"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        storwindon      "storage technology for wind onshore"
         storwindoff     "storage technology for wind offshore"
-$ENDIF.WindOff
         storcsp         "storage technology for concentrating solar power (CSP)"
 *RP* grid technology
         gridspv         "grid between areas with high pv production and the rest"
         gridcsp         "grid between areas with high csp production and the rest"
         gridwind        "grid between areas with high wind onshore production and the rest"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        gridwindon      "grid between areas with high wind onshore production and the rest"
         gridwindoff     "grid between areas with high wind offshore production and the rest"
-$ENDIF.WindOff
 
         weathering      "enhanced weathering"
         dac             "direct air capture"
@@ -1166,9 +1165,8 @@ te(all_te)              "energy technologies"
         geohe           "geothermal heat"
         hydro           "hydro electric"
         wind            "wind power converters"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windon          "wind onshore power converters"
         windoff         "wind offshore power converters"
-$ENDIF.WindOff
         spv             "solar photovoltaic"
         csp             "concentrating solar power"
         solhe           "solar thermal heat generation"
@@ -1212,17 +1210,15 @@ $ENDIF.WindOff
 
         storspv         "storage technology for photo voltaic"
         storwind        "storage technology for wind onshore"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        storwindon      "storage technology for wind onshore"
         storwindoff     "storage technology for wind offshore"
-$ENDIF.WindOff
         storcsp         "storage technology for concentrating solar power"
 
         gridspv         "grid between areas with high pv production and the rest"
         gridcsp         "grid between areas with high csp production and the rest"
         gridwind        "grid between areas with high wind onshore production and the rest"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        gridwindon      "grid between areas with high wind onshore production and the rest"
         gridwindoff     "grid between areas with high wind offshore production and the rest"
-$ENDIF.WindOff
         pipe_gas        "Pipelines transporting natural gas"
         termX_lng       "Export terminals for LNG (liquification)"
         termM_lng       "Import terminals for LNG (regasification)"
@@ -1279,9 +1275,8 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
   geohe           "geothermal heat"
   hydro           "hydro electric"
   wind            "wind onshore power converters"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+  windon          "wind onshore power converters"
   windoff         "wind offshore power converters"
-$ENDIF.WindOff
   spv             "solar photovoltaic"
   csp             "concentrating solar power"
   solhe           "solar thermal heat generation"
@@ -1297,9 +1292,8 @@ $ENDIF.WindOff
 
   storspv         "storage technology for PV"
   storwind        "storage technology for wind onshore"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+  storwindon      "storage technology for wind onshore"
   storwindoff     "storage technology for wind offshore"
-$ENDIF.WindOff
   storcsp         "storage technology for CSP"
 
   refliq          "refinery oil to SE liquids"
@@ -1307,9 +1301,8 @@ $ENDIF.WindOff
   gridspv         "grid between areas with high pv production and the rest"
   gridcsp         "grid between areas with high csp production and the rest"
   gridwind        "grid between areas with high wind onshore production and the rest"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+  gridwindon      "grid between areas with high wind onshore production and the rest"
   gridwindoff     "grid between areas with high wind offshore production and the rest"
-$ENDIF.WindOff
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   bfcc            "Blast furnace CCS"
   idrcc           "Direct reduction CCS"
@@ -1327,16 +1320,14 @@ teRLDCDisp(all_te)     "RLDC Dispatchable technologies that produce seel"
 teLearn(all_te)     "Learning technologies (for which investment costs are reduced endogenously through capacity deployment)."
 /
         wind        "wind onshore power converters"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windon      "wind onshore power converters"
         windoff     "wind offshore power converters"
-$ENDIF.WindOff
         spv         "solar photovoltaic"
         csp         "concentrating solar power"
         storspv     "storage technology for spv"
         storwind    "storage technology for wind onshore"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        storwindon  "storage technology for wind onshore"
         storwindoff "storage technology for wind offshore"
-$ENDIF.WindOff
         storcsp     "storage technology for csp"
         elh2        "hydrogen elecrolysis"
 /
@@ -1415,6 +1406,8 @@ teRe(all_te)     "renewable technologies including biomass"
         geohe       "geothermal heat"
         hydro       "hydro electric"
         wind        "wind power converters"
+        windon      "wind onshore power converters"
+        windoff     "wind offshore power converters"
         spv         "solar photovoltaic"
         csp         "concentrating solar power"
         solhe       "solar thermal heat generation"
@@ -1425,9 +1418,8 @@ teReNoBio(all_te) "renewable technologies except for biomass"
         geohe       "geothermal heat"
         hydro       "hydro electric"
         wind        "wind power converters"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windon      "wind onshore power converters"
         windoff     "wind offshore power converters"
-$ENDIF.WindOff
         spv         "solar photovoltaic"
         csp         "concentrating solar power"
 ***        solhe       "solar thermal heat generation"
@@ -1437,9 +1429,8 @@ teNoRe(all_te)        "Non renewable energy technologies"
 teVRE(all_te)      "technologies requiring storage"
 /
         wind        "wind power converters"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windon      "wind onshore power converters"
         windoff     "wind offshore power converters"
-$ENDIF.WindOff
         spv         "solar photovoltaic"
         csp         "concentrating solar power"
 /
@@ -1447,9 +1438,8 @@ $ENDIF.WindOff
 teWind(all_te)        "Onshore and offshore wind technologies"
 /
         wind        "wind power converters"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windon      "wind onshore power converters"
         windoff     "wind offshore power converters"
-$ENDIF.WindOff
 /
 
 
@@ -1457,28 +1447,25 @@ teStor(all_te)        "storage technologies"
 /
         storspv     "storage technology for spv"
         storwind    "storage technology for wind onshore"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        storwindon  "storage technology for wind onshore"
         storwindoff "storage technology for wind offshore"
-$ENDIF.WindOff
         storcsp     "storage technology for csp"
 /
 teLoc(all_te)      "centralized technologies which require grid"
 /
-        wind        "wind power converters"
         spv         "solar photovoltaic"
         csp         "concentrating solar power"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        wind        "wind power converters"
+        windon      "wind onshore power converters"
         windoff     "wind offshore power converters"
-$ENDIF.WindOff
 /
 teGrid(all_te)      "grid between areas"
 /
     gridspv     "grid between areas with high pv production and the rest"
     gridcsp     "grid between areas with high csp production and the rest"
     gridwind    "grid between areas with high wind onshore production and the rest"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+    gridwindon  "grid between areas with high wind onshore production and the rest"
     gridwindoff "grid between areas with high wind offshore production and the rest"
-$ENDIF.WindOff
 /
 teFosCCS(all_te)    "fossil technologies with CCS"
 /
@@ -1528,17 +1515,15 @@ teNoTransform(all_te) "all technologies that do not transform energy but still h
 /
        storspv       "storage technology for photo voltaic (PV)"
        storwind      "storage technology for wind onshore"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+       storwindon    "storage technology for wind onshore"
        storwindoff   "storage technology for wind offshore"
-$ENDIF.WindOff
        storcsp       "storage technology for concentrating solar power (CSP)"
 
        gridspv       "grid between areas with high pv production and the rest"
        gridcsp       "grid between areas with high csp production and the rest"
        gridwind        "grid between areas with high wind onshore production and the rest"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+       gridwindon      "grid between areas with high wind onshore production and the rest"
        gridwindoff     "grid between areas with high wind offshore production and the rest"
-$ENDIF.WindOff
 /
 teRegTechCosts(all_te) "all technologies for which we differantiate tech costs"
 /
@@ -2419,9 +2404,8 @@ pe2se(all_enty,all_enty,all_te) "map primary energy carriers to secondary"
         pegeo.sehe.geohe
         pehyd.seel.hydro
         pewin.seel.wind
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        pewin.seel.windon
         pewin.seel.windoff
-$ENDIF.WindOff
         pesol.seel.spv
         pesol.seel.csp
         pesol.sehe.solhe
@@ -2460,9 +2444,8 @@ VRE2teStor(all_te,teStor)   "mapping to know which technology uses which storage
 /
         spv.storspv
         wind.storwind
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windon.storwindon
         windoff.storwindoff
-$ENDIF.WindOff
         csp.storcsp
 /
 
@@ -2477,9 +2460,8 @@ VRE2teGrid(all_te,teGrid)              "mapping to know which technology needs w
 /
         spv.gridspv
         wind.gridwind
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windon.gridwindon
         windoff.gridwindoff
-$ENDIF.WindOff
         csp.gridcsp
 /
 
@@ -2487,10 +2469,10 @@ te2teLoclinked(teLoc,teLoc2)   "mapping between the technologies requiring grids
 /
         spv.csp
         csp.spv
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
         windoff.wind
         wind.windoff
-$ENDIF.WindOff
+        windoff.windon
+        windon.windoff
 /
 
 se2se(all_enty,all_enty,all_te)  "map secondary energy to secondary energy using a technology"
@@ -2805,11 +2787,7 @@ prodSeOth2te(all_enty,all_te)      "map other se production not directly followi
 
 teSe2rlf(all_te,rlf)        "mapping for techologies to grades. Currently, the information was shifted to teRe2rlfDetail. Thus, teSe2rlf now only has '1' for the rlf values"
 /
-      (wind
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-        windoff
-$ENDIF.WindOff
-        spv,csp,refliq,hydro,geohe,geohdr,solhe,ngcc,ngccc,ngt,gaschp,gashp,gash2,gash2c,gastr,gasftrec,gasftcrec,dot,
+      (wind,windon,windoff,spv,csp,refliq,hydro,geohe,geohdr,solhe,ngcc,ngccc,ngt,gaschp,gashp,gash2,gash2c,gastr,gasftrec,gasftcrec,dot,
        igcc,igccc,pc,coaltr,coalgas,coalh2,coalh2c,coalchp,coalhp,coalftrec,coalftcrec,
        biotr,biotrmod,biogas,biogasc,bioftrec,bioftcrec,bioh2,bioh2c,biohp,biochp,bioigcc,bioigccc,
        elh2,h2turb,elh2VRE,h2turbVRE,bioethl,bioeths,biodiesel,tnrs,fnrs
@@ -2819,9 +2797,8 @@ $ENDIF.WindOff
 teRe2rlfDetail(all_te,rlf)        "mapping for se techologies to grades"
 /
         wind.(1*9)
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windon.(1*9)
         windoff.(1*9)
-$ENDIF.WindOff
         spv.(1*9)
         csp.(1*9)
         hydro.(1*5)
@@ -2853,11 +2830,7 @@ teCCS2rlf(all_te,rlf)     "mapping for CCS technologies to grades"
 
 teNoTransform2rlf(all_te,rlf)         "mapping for no transformation technologies to grades"
 /
-      (storspv,storwind
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-storwindoff,gridwindoff
-$ENDIF.WindOff
-        storcsp,gridspv,gridwind,gridcsp,h2curt) . 1
+      (storspv,storcsp,storwind,storwindon,storwindoff,gridwind,gridwindon,gridwindoff,gridspv,gridcsp,h2curt) . 1
 /
 
 

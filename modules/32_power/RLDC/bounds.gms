@@ -12,12 +12,12 @@
 
 vm_usableSe.lo(t,regi,"seel")  = 1e-6;
 
-v32_capLoB.up(t,regi,te,LoB)        =   2;    !! The total power system has maximum demand of 1
-v32_LoBheight.up(t,regi,LoB)        =   2;    !! The total power system has maximum demand of 1
-v32_LoBheightCum.up(t,regi,LoB)     =   2;    !! The total power system has maximum demand of 1.5 (should be one, but the reforming of the baseload band leads to
+v32_capLoB.up(t,regi,te,LoB)       =   2;    !! The total power system has maximum demand of 1
+v32_LoBheight.up(t,regi,LoB)       =   2;    !! The total power system has maximum demand of 1
+v32_LoBheightCum.up(t,regi,LoB)    =   2;    !! The total power system has maximum demand of 1.5 (should be one, but the reforming of the baseload band leads to
 v32_shTh.up(t,regi,teVRE)          =   2;    !! Worlds with higher than twice the total energy demand coming from either wind or solar (before curtailment) are unrealistic
 
-v32_scaleCap.up(t,regi)             = 100;    !! no power system will be larger than 100 TW
+v32_scaleCap.up(t,regi)            = 100;    !! no power system will be larger than 100 TW
 v32_scaleCap.up(t,regi)            = 20;
 v32_scaleCap.lo(t,regi)            = 1e-4;   !! Make sure REMIND does not try to shrink a power system to zero
 v32_scaleCap.lo(t,regi)            = 0.01;
@@ -120,8 +120,8 @@ v32_LoBheightCum.lo("2010",regi,"2") = 0.48;
 v32_LoBheightCum.lo("2010",regi,"3") = 0.38;
 v32_LoBheightCum.lo("2010",regi,"4") = 0.26;
 
-v32_shTh.lo(t,regi,"spv")$(t.val > 2020)           =   0.01;
-v32_shTh.lo(t,regi,"wind")$(t.val > 2020)          =   0.01;
+v32_shTh.lo(t,regi,"spv")$(t.val > 2020)    = 0.01;
+v32_shTh.lo(t,regi,"windon")$(t.val > 2020) = 0.01;
 
 v32_curt.up(t,regi)  = 100;
 $if %cm_Full_Integration% == "on"  v32_curt.fx(t,regi)  = 0;
@@ -146,9 +146,9 @@ v32_capLoB.fx(t,regi,"tnrs","3")$(t.val > 2010)    = 0;
 
 *** facilitiate finding sulutions in the ADVANCE Full_Integration run
 $if %cm_Full_Integration% == "on"  v32_capLoB.lo(t,regi,"spv",LoB)$(t.val > 2030)        =   1e-6;
-$if %cm_Full_Integration% == "on"  v32_capLoB.lo(t,regi,"wind",LoB)$(t.val > 2030)       =   1e-6;
+$if %cm_Full_Integration% == "on"  v32_capLoB.lo(t,regi,"windon",LoB)$(t.val > 2030)       =   1e-6;
 $if %cm_Full_Integration% == "on"  vm_cap.lo(t,regi,"spv",LoB)$(t.val > 2030)        =   1e-3;
-$if %cm_Full_Integration% == "on"  vm_cap.lo(t,regi,"wind",LoB)$(t.val > 2030)       =   1e-3;
+$if %cm_Full_Integration% == "on"  vm_cap.lo(t,regi,"windon",LoB)$(t.val > 2030)       =   1e-3;
 
 ***No slow ramping technologies as peaking plants
 v32_capLoB.fx(t,regi,te,"1")$teNotLoB1(te)     = 0;
@@ -171,10 +171,8 @@ $if %cm_Full_Integration% == "on"  vm_prodSeOth.fx(t,regi,"seh2","h2curt")   = 0
 vm_cap.fx(t,regi,"gridspv","1")$(t.val > 2070)           = 0;
 vm_cap.fx(t,regi,"gridcsp","1")$(t.val > 2070)           = 0;
 vm_cap.fx(t,regi,"storcsp","1")$(t.val > 2070)           = 0;
-vm_cap.fx(t,regi,"storwind","1")$(t.val > 2070)           = 0;
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+vm_cap.fx(t,regi,"storwindon","1")$(t.val > 2070)           = 0;
 vm_cap.fx(t,regi,"storwindoff","1")$(t.val > 2070)           = 0;
-$ENDIF.WindOff
 
 $if %cm_Full_Integration% == "on" vm_cap.fx(t,regi,"storspv","1")               = 0;
 $if %cm_Full_Integration% == "on" vm_deltaCap.fx(t,regi,"storspv","1")           = 0;

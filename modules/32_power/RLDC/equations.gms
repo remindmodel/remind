@@ -85,21 +85,22 @@ q32_curt(t,regi)..
     + v32_overProdCF(t,regi,"csp") * vm_cap(t,regi,"csp","1")  !! add the unused CSP production that is not reflected in seprod
 ;
 
+*** windoffshore-todo: should it be windon+windoff?
 q32_curtFit(t,regi)..  !! calculate curtailment as fitted from the DIMES-Results 
     v32_curtFit(t,regi)   !! v32_curtFit can go below 0
     =e=
     p32_curtOn(regi) 
     * (
           p32_RLDCcoeff(regi,"p00","curtShVRE")
-        + p32_RLDCcoeff(regi,"p10","curtShVRE") * v32_shTh(t,regi,"wind")$teVRE("wind")
-        + p32_RLDCcoeff(regi,"p01","curtShVRE")                                              * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
-        + p32_RLDCcoeff(regi,"p20","curtShVRE") * v32_shTh(t,regi,"wind")$teVRE("wind") ** 2
-        + p32_RLDCcoeff(regi,"p11","curtShVRE") * v32_shTh(t,regi,"wind")$teVRE("wind")      * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
-        + p32_RLDCcoeff(regi,"p02","curtShVRE")                                              * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 2
-        + p32_RLDCcoeff(regi,"p30","curtShVRE") * v32_shTh(t,regi,"wind")$teVRE("wind") ** 3
-        + p32_RLDCcoeff(regi,"p21","curtShVRE") * v32_shTh(t,regi,"wind")$teVRE("wind") ** 2 * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
-        + p32_RLDCcoeff(regi,"p12","curtShVRE") * v32_shTh(t,regi,"wind")$teVRE("wind")      * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 2
-        + p32_RLDCcoeff(regi,"p03","curtShVRE")                                              * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 3
+        + p32_RLDCcoeff(regi,"p10","curtShVRE") * v32_shTh(t,regi,"windon")$teVRE("windon")
+        + p32_RLDCcoeff(regi,"p01","curtShVRE")                                                  * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
+        + p32_RLDCcoeff(regi,"p20","curtShVRE") * v32_shTh(t,regi,"windon")$teVRE("windon") ** 2
+        + p32_RLDCcoeff(regi,"p11","curtShVRE") * v32_shTh(t,regi,"windon")$teVRE("windon")      * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
+        + p32_RLDCcoeff(regi,"p02","curtShVRE")                                                  * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 2
+        + p32_RLDCcoeff(regi,"p30","curtShVRE") * v32_shTh(t,regi,"windon")$teVRE("windon") ** 3
+        + p32_RLDCcoeff(regi,"p21","curtShVRE") * v32_shTh(t,regi,"windon")$teVRE("windon") ** 2 * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
+        + p32_RLDCcoeff(regi,"p12","curtShVRE") * v32_shTh(t,regi,"windon")$teVRE("windon")      * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 2
+        + p32_RLDCcoeff(regi,"p03","curtShVRE")                                                  * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 3
    )
 ;
 
@@ -115,19 +116,20 @@ $if %cm_Full_Integration% == "on" + v32_FullIntegrationSlack(t,regi)
 ***---------------------------------------------------------------------------
 *' Load Band
 ***---------------------------------------------------------------------------
+*** windoffshore-todo: should it be windon+windoff?
 q32_LoBheightCumExact(t,regi,LoB)..   
     v32_LoBheightCumExact(t,regi,LoB)
     =e=
       p32_RLDCcoeff(regi,"p00",LoB)
-    + p32_RLDCcoeff(regi,"p10",LoB) * v32_shTh(t,regi,"wind")$teVRE("wind")
-    + p32_RLDCcoeff(regi,"p01",LoB)                                              * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
-    + p32_RLDCcoeff(regi,"p20",LoB) * v32_shTh(t,regi,"wind")$teVRE("wind") ** 2                             
-    + p32_RLDCcoeff(regi,"p11",LoB) * v32_shTh(t,regi,"wind")$teVRE("wind")      * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
-    + p32_RLDCcoeff(regi,"p02",LoB)                                              * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 2
-    + p32_RLDCcoeff(regi,"p30",LoB) * v32_shTh(t,regi,"wind")$teVRE("wind") ** 3                             
-    + p32_RLDCcoeff(regi,"p21",LoB) * v32_shTh(t,regi,"wind")$teVRE("wind") ** 2 * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
-    + p32_RLDCcoeff(regi,"p12",LoB) * v32_shTh(t,regi,"wind")$teVRE("wind")      * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 2
-    + p32_RLDCcoeff(regi,"p03",LoB)                                              * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 3
+    + p32_RLDCcoeff(regi,"p10",LoB) * v32_shTh(t,regi,"windon")$teVRE("windon")
+    + p32_RLDCcoeff(regi,"p01",LoB)                                                  * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
+    + p32_RLDCcoeff(regi,"p20",LoB) * v32_shTh(t,regi,"windon")$teVRE("windon") ** 2                             
+    + p32_RLDCcoeff(regi,"p11",LoB) * v32_shTh(t,regi,"windon")$teVRE("windon")      * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
+    + p32_RLDCcoeff(regi,"p02",LoB)                                                  * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 2
+    + p32_RLDCcoeff(regi,"p30",LoB) * v32_shTh(t,regi,"windon")$teVRE("windon") ** 3                             
+    + p32_RLDCcoeff(regi,"p21",LoB) * v32_shTh(t,regi,"windon")$teVRE("windon") ** 2 * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
+    + p32_RLDCcoeff(regi,"p12",LoB) * v32_shTh(t,regi,"windon")$teVRE("windon")      * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 2
+    + p32_RLDCcoeff(regi,"p03",LoB)                                                  * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 3
 ;
 
 q32_LoBheightCumExactNEW(t,regi,LoB)..    !! introduce slack so that v32_LoBheightCum stay > 0
@@ -178,21 +180,22 @@ q32_capFacTER(t,regi,te)$( teReNoBio(te) AND teRLDCDisp(te) AND t.val > 2000).. 
 ***---------------------------------------------------------------------------
 *' Short Term Storage Requirements (from RLDC Fit)
 ***---------------------------------------------------------------------------
+*** windoffshore-todo: should it be windon+windoff?
 q32_stor_pv(t,regi)$(t.val > 2010)..
     vm_cap(t,regi,"storspv","1")
     =g=
     v32_scaleCap(t,regi) * 
     ( 
          p32_RLDCcoeff(regi,"p00","STScost")
-       + p32_RLDCcoeff(regi,"p10","STScost") * v32_shTh(t,regi,"wind")$teVRE("wind")
-       + p32_RLDCcoeff(regi,"p01","STScost")                                              * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
-       + p32_RLDCcoeff(regi,"p20","STScost") * v32_shTh(t,regi,"wind")$teVRE("wind") ** 2
-       + p32_RLDCcoeff(regi,"p11","STScost") * v32_shTh(t,regi,"wind")$teVRE("wind")      * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
-       + p32_RLDCcoeff(regi,"p02","STScost")                                              * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 2
-       + p32_RLDCcoeff(regi,"p30","STScost") * v32_shTh(t,regi,"wind")$teVRE("wind") ** 3
-       + p32_RLDCcoeff(regi,"p21","STScost") * v32_shTh(t,regi,"wind")$teVRE("wind") ** 2 * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
-       + p32_RLDCcoeff(regi,"p12","STScost") * v32_shTh(t,regi,"wind")$teVRE("wind")      * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 2
-       + p32_RLDCcoeff(regi,"p03","STScost")                                              * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 3
+       + p32_RLDCcoeff(regi,"p10","STScost") * v32_shTh(t,regi,"windon")$teVRE("windon")
+       + p32_RLDCcoeff(regi,"p01","STScost")                                                  * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
+       + p32_RLDCcoeff(regi,"p20","STScost") * v32_shTh(t,regi,"windon")$teVRE("windon") ** 2
+       + p32_RLDCcoeff(regi,"p11","STScost") * v32_shTh(t,regi,"windon")$teVRE("windon")      * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
+       + p32_RLDCcoeff(regi,"p02","STScost")                                                  * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 2
+       + p32_RLDCcoeff(regi,"p30","STScost") * v32_shTh(t,regi,"windon")$teVRE("windon") ** 3
+       + p32_RLDCcoeff(regi,"p21","STScost") * v32_shTh(t,regi,"windon")$teVRE("windon") ** 2 * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
+       + p32_RLDCcoeff(regi,"p12","STScost") * v32_shTh(t,regi,"windon")$teVRE("windon")      * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 2
+       + p32_RLDCcoeff(regi,"p03","STScost")                                                  * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 3
     ) 
 ;
 
@@ -200,19 +203,20 @@ q32_stor_pv(t,regi)$(t.val > 2010)..
 *' Peak capacity equations
 ***---------------------------------------------------------------------------
 
+*** windoffshore-todo: should it be windon+windoff?
 q32_peakCap(t,regi)..
     v32_peakCap(t,regi)
     =e=
       p32_RLDCcoeff(regi,"p00","peak")
-    + p32_RLDCcoeff(regi,"p10","peak") * v32_shTh(t,regi,"wind")$teVRE("wind")
-    + p32_RLDCcoeff(regi,"p01","peak")                                              * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
-    + p32_RLDCcoeff(regi,"p20","peak") * v32_shTh(t,regi,"wind")$teVRE("wind") ** 2
-    + p32_RLDCcoeff(regi,"p11","peak") * v32_shTh(t,regi,"wind")$teVRE("wind")      * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
-    + p32_RLDCcoeff(regi,"p02","peak")                                              * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 2
-    + p32_RLDCcoeff(regi,"p30","peak") * v32_shTh(t,regi,"wind")$teVRE("wind") ** 3
-    + p32_RLDCcoeff(regi,"p21","peak") * v32_shTh(t,regi,"wind")$teVRE("wind") ** 2 * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
-    + p32_RLDCcoeff(regi,"p12","peak") * v32_shTh(t,regi,"wind")$teVRE("wind")      * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 2
-    + p32_RLDCcoeff(regi,"p03","peak")                                              * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 3
+    + p32_RLDCcoeff(regi,"p10","peak") * v32_shTh(t,regi,"windon")$teVRE("windon")
+    + p32_RLDCcoeff(regi,"p01","peak")                                                  * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
+    + p32_RLDCcoeff(regi,"p20","peak") * v32_shTh(t,regi,"windon")$teVRE("windon") ** 2
+    + p32_RLDCcoeff(regi,"p11","peak") * v32_shTh(t,regi,"windon")$teVRE("windon")      * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
+    + p32_RLDCcoeff(regi,"p02","peak")                                                  * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 2
+    + p32_RLDCcoeff(regi,"p30","peak") * v32_shTh(t,regi,"windon")$teVRE("windon") ** 3
+    + p32_RLDCcoeff(regi,"p21","peak") * v32_shTh(t,regi,"windon")$teVRE("windon") ** 2 * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") )
+    + p32_RLDCcoeff(regi,"p12","peak") * v32_shTh(t,regi,"windon")$teVRE("windon")      * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 2
+    + p32_RLDCcoeff(regi,"p03","peak")                                                  * ( v32_shTh(t,regi,"spv")$teVRE("spv") + v32_shTh(t,regi,"csp")$teVRE("csp") ) ** 3
 ;
 
 q32_capAdeq(t,regi)$(t.val > 2005)..    
@@ -317,16 +321,14 @@ q32_limitCapTeChp(t,regi)..
 ***---------------------------------------------------------------------------
 *' Calculation of necessary grid installations for centralized renewables:
 ***---------------------------------------------------------------------------
-q32_limitCapTeGrid(t,regi)$( t.val ge 2015 ) ..
-   vm_cap(t,regi,"gridwind",'1')      !! Technology is now parameterized to yield marginal costs of ~3.5$/MWh VRE electricity
-    / p32_grid_factor(regi)                     !! It is assumed that large regions require higher grid investment
+q32_limitCapTeGrid(t,regi)$( t.val ge 2020 ) ..
+    vm_cap(t,regi,"gridwindon",'1')    !! Technology is now parameterized to yield marginal costs of ~3.5$/MWh VRE electricity
+    / p32_grid_factor(regi)            !! It is assumed that large regions require higher grid investment
     =g=
     vm_prodSe(t,regi,"pesol","seel","spv")
     + vm_prodSe(t,regi,"pesol","seel","csp")
-    + 1.5 * vm_prodSe(t,regi,"pewin","seel","wind")                 !! wind has larger variations accross space, so adding grid is more important for wind (result of REMIX runs for ADVANCE project)
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-    + 1.5 * vm_prodSe(t,regi,"pewin","seel","windoff")
-$ENDIF.WindOff
+    + 1.5 * vm_prodSe(t,regi,"pewin","seel","windon")  !! wind has larger variations accross space, so adding grid is more important for wind (result of REMIX runs for ADVANCE project)
+    + 3   * vm_prodSe(t,regi,"pewin","seel","windoff") !! Getting offshore wind connected has even higher grid costs  
 ;
 
 ***---------------------------------------------------------------------------
