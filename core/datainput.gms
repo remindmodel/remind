@@ -968,7 +968,6 @@ $ondelim
 $include "./core/input/f_maxProdGradeRegiWindOn.cs3r"
 $offdelim
 ;
-
 pm_dataren(all_regi,"maxprod",rlf,"windon") = sm_EJ_2_TWa * f_maxProdGradeRegiWindOn(all_regi,"maxprod",rlf);
 pm_dataren(all_regi,"nur",rlf,"windon")     = f_maxProdGradeRegiWindOn(all_regi,"nur",rlf);
 
@@ -1142,7 +1141,7 @@ $offdelim
 p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
 
 *** windoffshore-todo
-p_adj_deltacapoffset(t,regi,"windon") ? (p_adj_deltacapoffset(t,regi,"windon") eq 0) = p_adj_deltacapoffset(t,regi,"wind");
+p_adj_deltacapoffset(t,regi,"windon") $ (p_adj_deltacapoffset(t,regi,"windon") eq 0) = p_adj_deltacapoffset(t,regi,"wind");
 p_adj_deltacapoffset(t,regi,"windoff")= p_adj_deltacapoffset(t,regi,"windon");
 
 *** share of PE2SE capacities in 2005 depends on GDP-MER
