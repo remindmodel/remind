@@ -51,11 +51,9 @@ p47_implicitQttyTargetTax0(t,regi) =
       ( sum(ccs2te(ccsCo2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(t,regi,enty,enty2,te,rlf)))
       )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"all"))
       +
-      (( !! Supply side BECCS
-        sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail.l(t,regi,enty,enty2,te,enty3))
-        !! Industry BECCS (using biofuels in Industry with CCS)
-      + sum((emiMkt,entySe,secInd37,entyFe)$entySeBio(entySe), pm_IndstCO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt))
-      ) * pm_share_CCS_CCO2(t,regi) )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"biomass"))
+      ( !! Only supply side BECCS
+        sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail.l(t,regi,enty,enty2,te,enty3)) * pm_share_CCS_CCO2(t,regi)
+      )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"biomass"))
     )
   )
 ;

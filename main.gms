@@ -1331,7 +1331,7 @@ $setGlobal cm_vehiclesSubsidies  off !! def = off
 ***     cm_implicitQttyTarget "2050.GLO.sub.s.FE.electricity 0.8". The p47_implicitQttyTargetTax parameter will contain the subsidy necessary to achieve that goal.
 ***       Enforce a subsidy (sub) that guarantees a minimum share (s) of electricity in final energy (FE.electricity) equal to 80% (0.8) from 2050 (2050) onward in all World (GLO) regions.
 ***       The p47_implicitQttyTargetTax parameter will contain the subsidy necessary to achieve that goal.
-***     To limit CCS to 8 GtCO2 and BECCS to 5 GtCO2, use "2050.GLO.tax.t.CCS.all 8000, 2050.GLO.tax.t.CCS.biomass 5000"
+***     To limit CCS to 8 GtCO2 and BECCS (only Pe2Se, not industry) to 5 GtCO2, use "2050.GLO.tax.t.CCS.all 8000, 2050.GLO.tax.t.CCS.biomass 5000"
 ***   Example on how to use the switch with cm_implicitQttyTargetType = scenario:
 ***     cm_implicitQttyTarget  "EU27_RpEUEff,EU27_bio4"
 ***       "EU27_RpEUEff" -> Enforce a tax that guarantees total FE will be lower or equal to the RePowerEU target for 2030.
