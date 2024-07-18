@@ -16,7 +16,7 @@ $onlisting
 
 p40_TechBound(ttot,all_regi,all_te) = f40_TechBound(ttot,all_regi,"%cm_NDC_version%",all_te);
 *** windoffshore-todo
-p40_TechBound(ttot,all_regi,"windon") $ (p40_TechBound(ttot,all_regi,"windon") eq 0) = p40_TechBound(ttot,all_regi,"wind")
+p40_TechBound(ttot,all_regi,"windon") $ (p40_TechBound(ttot,all_regi,"windon") eq 0) = p40_TechBound(ttot,all_regi,"wind");
 
 p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
 

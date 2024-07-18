@@ -764,20 +764,20 @@ sets
    ext_regi "extended regions list (includes subsets of H12 regions)"
       /
         GLO,
-        LAM_regi,OAS_regi,SSA_regi,EUR_regi,NEU_regi,MEA_regi,REF_regi,CAZ_regi,CHA_regi,IND_regi,JPN_regi,USA_regi,
-        LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA
+        LAM_regi,OAS_regi,SSA_regi,EUR_regi,NEU_regi,MEA_regi,REF_regi,CAZ_regi,CHA_regi,IND_regi,JPN_regi,USA_regi,EU27_regi,NEU_UKI_regi,
+        OAS,ENC,NES,MEA,SSA,LAM,REF,CAZ,EWN,ECS,CHA,ESC,ECE,FRA,DEU,UKI,NEN,IND,JPN,ESW,USA
       /
 
-   all_regi "all regions" /LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA/
+   all_regi "all regions" /OAS,ENC,NES,MEA,SSA,LAM,REF,CAZ,EWN,ECS,CHA,ESC,ECE,FRA,DEU,UKI,NEN,IND,JPN,ESW,USA/
 
    regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"
       /
-        GLO.( LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA )
+        GLO.( OAS,ENC,NES,MEA,SSA,LAM,REF,CAZ,EWN,ECS,CHA,ESC,ECE,FRA,DEU,UKI,NEN,IND,JPN,ESW,USA )
         LAM_regi .(LAM)
         OAS_regi .(OAS)
         SSA_regi .(SSA)
-        EUR_regi .(EUR)
-        NEU_regi .(NEU)
+        EUR_regi .(ENC,EWN,ECS,ESC,ECE,FRA,DEU,UKI,ESW)
+        NEU_regi .(NES,NEN)
         MEA_regi .(MEA)
         REF_regi .(REF)
         CAZ_regi .(CAZ)
@@ -785,102 +785,110 @@ sets
         IND_regi .(IND)
         JPN_regi .(JPN)
         USA_regi .(USA)
+        EU27_regi .(ENC,EWN,ECS,ESC,ECE,FRA,DEU,ESW)
+        NEU_UKI_regi .(NES,NEN,UKI)
       /
 
    iso "list of iso countries" /
-       ABW,AFG,AGO,AIA,ALA,ALB,AND,ARE,ARG,ARM,
-       ASM,ATA,ATF,ATG,AUS,AUT,AZE,BDI,BEL,BEN,
-       BES,BFA,BGD,BGR,BHR,BHS,BIH,BLM,BLR,BLZ,
-       BMU,BOL,BRA,BRB,BRN,BTN,BVT,BWA,CAF,CAN,
-       CCK,CHN,CHE,CHL,CIV,CMR,COD,COG,COK,COL,
-       COM,CPV,CRI,CUB,CUW,CXR,CYM,CYP,CZE,DEU,
-       DJI,DMA,DNK,DOM,DZA,ECU,EGY,ERI,ESH,ESP,
-       EST,ETH,FIN,FJI,FLK,FRA,FRO,FSM,GAB,GBR,
-       GEO,GGY,GHA,GIB,GIN,GLP,GMB,GNB,GNQ,GRC,
-       GRD,GRL,GTM,GUF,GUM,GUY,HKG,HMD,HND,HRV,
-       HTI,HUN,IDN,IMN,IND,IOT,IRL,IRN,IRQ,ISL,
-       ISR,ITA,JAM,JEY,JOR,JPN,KAZ,KEN,KGZ,KHM,
-       KIR,KNA,KOR,KWT,LAO,LBN,LBR,LBY,LCA,LIE,
-       LKA,LSO,LTU,LUX,LVA,MAC,MAF,MAR,MCO,MDA,
-       MDG,MDV,MEX,MHL,MKD,MLI,MLT,MMR,MNE,MNG,
-       MNP,MOZ,MRT,MSR,MTQ,MUS,MWI,MYS,MYT,NAM,
-       NCL,NER,NFK,NGA,NIC,NIU,NLD,NOR,NPL,NRU,
-       NZL,OMN,PAK,PAN,PCN,PER,PHL,PLW,PNG,POL,
-       PRI,PRK,PRT,PRY,PSE,PYF,QAT,REU,ROU,RUS,
-       RWA,SAU,SDN,SEN,SGP,SGS,SHN,SJM,SLB,SLE,
-       SLV,SMR,SOM,SPM,SRB,SSD,STP,SUR,SVK,SVN,
-       SWE,SWZ,SXM,SYC,SYR,TCA,TCD,TGO,THA,TJK,
-       TKL,TKM,TLS,TON,TTO,TUN,TUR,TUV,TWN,TZA,
-       UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,
-       VIR,VNM,VUT,WLF,WSM,YEM,ZAF,ZMB,ZWE /
+       AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,
+       ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,
+       BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,
+       BVT,BRA,IOT,BRN,BGR,BFA,BDI,KHM,CMR,CAN,
+       CPV,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,
+       COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,
+       DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,
+       ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,
+       GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,
+       GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,
+       HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,
+       JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,
+       KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,
+       MAC,MKD,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,
+       MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,
+       MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,
+       NER,NGA,NIU,NFK,MNP,NOR,OMN,PAK,PLW,PSE,
+       PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,
+       REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,
+       VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,
+       SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,
+       SDN,SUR,SJM,SWZ,SWE,CHE,SYR,TWN,TJK,TZA,
+       THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,
+       TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,
+       VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE /
 
    regi2iso(all_regi,iso) "mapping regions to iso countries"
       /
-       LAM . (ABW,AIA,ARG,ATA,ATG,BES,BHS,BLM,BLZ,BMU)
-       LAM . (BOL,BRA,BRB,BVT,CHL,COL,CRI,CUB,CUW,CYM)
-       LAM . (DMA,DOM,ECU,FLK,GLP,GRD,GTM,GUF,GUY,HND)
-       LAM . (HTI,JAM,KNA,LCA,MAF,MEX,MSR,MTQ,NIC,PAN)
-       LAM . (PER,PRI,PRY,SGS,SLV,SUR,SXM,TCA,TTO,URY)
-       LAM . (VCT,VEN,VGB,VIR)
-       OAS . (AFG,ASM,ATF,BGD,BRN,BTN,CCK,COK,CXR,FJI)
-       OAS . (FSM,GUM,IDN,IOT,KHM,KIR,KOR,LAO,LKA,MDV)
-       OAS . (MHL,MMR,MNG,MNP,MYS,NCL,NFK,NIU,NPL,NRU)
-       OAS . (PAK,PCN,PHL,PLW,PNG,PRK,PYF,SGP,SLB,THA)
-       OAS . (TKL,TLS,TON,TUV,UMI,VNM,VUT,WLF,WSM)
-       SSA . (AGO,BDI,BEN,BFA,BWA,CAF,CIV,CMR,COD,COG)
-       SSA . (COM,CPV,DJI,ERI,ETH,GAB,GHA,GIN,GMB,GNB)
-       SSA . (GNQ,KEN,LBR,LSO,MDG,MLI,MOZ,MRT,MUS,MWI)
-       SSA . (MYT,NAM,NER,NGA,REU,RWA,SEN,SHN,SLE,SOM)
-       SSA . (SSD,STP,SWZ,SYC,TCD,TGO,TZA,UGA,ZAF,ZMB)
-       SSA . (ZWE)
-       EUR . (ALA,AUT,BEL,BGR,CYP,CZE,DEU,DNK,ESP,EST)
-       EUR . (FIN,FRA,FRO,GBR,GGY,GIB,GRC,HRV,HUN,IMN)
-       EUR . (IRL,ITA,JEY,LTU,LUX,LVA,MLT,NLD,POL,PRT)
-       EUR . (ROU,SVK,SVN,SWE)
-       NEU . (ALB,AND,BIH,CHE,GRL,ISL,LIE,MCO,MKD,MNE)
-       NEU . (NOR,SJM,SMR,SRB,TUR,VAT)
-       MEA . (ARE,BHR,DZA,EGY,ESH,IRN,IRQ,ISR,JOR,KWT)
-       MEA . (LBN,LBY,MAR,OMN,PSE,QAT,SAU,SDN,SYR,TUN)
+       OAS . (AFG,ASM,BGD,BTN,IOT,BRN,KHM,CXR,CCK,COK)
+       OAS . (FJI,PYF,ATF,GUM,IDN,KIR,PRK,KOR,LAO,MYS)
+       OAS . (MDV,MHL,FSM,MNG,MMR,NRU,NPL,NCL,NIU,NFK)
+       OAS . (MNP,PAK,PLW,PNG,PHL,PCN,WSM,SGP,SLB,LKA)
+       OAS . (THA,TLS,TKL,TON,TUV,UMI,VUT,VNM,WLF)
+       ENC . (ALA,DNK,FRO,FIN,SWE)
+       NES . (ALB,AND,BIH,VAT,MKD,MCO,MNE,SMR,SRB,TUR)
+       MEA . (DZA,BHR,EGY,IRN,IRQ,ISR,JOR,KWT,LBN,LBY)
+       MEA . (MAR,OMN,PSE,QAT,SAU,SDN,SYR,TUN,ARE,ESH)
        MEA . (YEM)
+       SSA . (AGO,BEN,BWA,BFA,BDI,CMR,CPV,CAF,TCD,COM)
+       SSA . (COG,COD,CIV,DJI,GNQ,ERI,ETH,GAB,GMB,GHA)
+       SSA . (GIN,GNB,KEN,LSO,LBR,MDG,MWI,MLI,MRT,MUS)
+       SSA . (MYT,MOZ,NAM,NER,NGA,REU,RWA,SHN,STP,SEN)
+       SSA . (SYC,SLE,SOM,ZAF,SSD,SWZ,TZA,TGO,UGA,ZMB)
+       SSA . (ZWE)
+       LAM . (AIA,ATA,ATG,ARG,ABW,BHS,BRB,BLZ,BMU,BOL)
+       LAM . (BES,BVT,BRA,CYM,CHL,COL,CRI,CUB,CUW,DMA)
+       LAM . (DOM,ECU,SLV,FLK,GUF,GRD,GLP,GTM,GUY,HTI)
+       LAM . (HND,JAM,MTQ,MEX,MSR,NIC,PAN,PRY,PER,PRI)
+       LAM . (BLM,KNA,LCA,MAF,VCT,SXM,SGS,SUR,TTO,TCA)
+       LAM . (URY,VEN,VGB,VIR)
        REF . (ARM,AZE,BLR,GEO,KAZ,KGZ,MDA,RUS,TJK,TKM)
        REF . (UKR,UZB)
        CAZ . (AUS,CAN,HMD,NZL,SPM)
+       EWN . (AUT,BEL,LUX,NLD)
+       ECS . (BGR,HRV,HUN,ROU,SVN)
        CHA . (CHN,HKG,MAC,TWN)
+       ESC . (CYP,GRC,ITA,MLT)
+       ECE . (CZE,EST,LVA,LTU,POL,SVK)
+       FRA . (FRA)
+       DEU . (DEU)
+       UKI . (GIB,GGY,IRL,IMN,JEY,GBR)
+       NEN . (GRL,ISL,LIE,NOR,SJM,CHE)
        IND . (IND)
        JPN . (JPN)
+       ESW . (PRT,ESP)
        USA . (USA)
       /
 iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
-       ABW,AFG,AGO,AIA,ALA,ALB,AND,ARE,ARG,ARM,
-       ASM,ATA,ATF,ATG,AUS,AUT,AZE,BDI,BEL,BEN,
-       BES,BFA,BGD,BGR,BHR,BHS,BIH,BLM,BLR,BLZ,
-       BMU,BOL,BRA,BRB,BRN,BTN,BVT,BWA,CAF,CAN,
-       CCK,CHN,CHE,CHL,CIV,CMR,COD,COG,COK,COL,
-       COM,CPV,CRI,CUB,CUW,CXR,CYM,CYP,CZE,DEU,
-       DJI,DMA,DNK,DOM,DZA,ECU,EGY,ERI,ESH,ESP,
-       EST,ETH,FIN,FJI,FLK,FRA,FRO,FSM,GAB,GBR,
-       GEO,GGY,GHA,GIB,GIN,GLP,GMB,GNB,GNQ,GRC,
-       GRD,GRL,GTM,GUF,GUM,GUY,HKG,HMD,HND,HRV,
-       HTI,HUN,IDN,IMN,IND,IOT,IRL,IRN,IRQ,ISL,
-       ISR,ITA,JAM,JEY,JOR,JPN,KAZ,KEN,KGZ,KHM,
-       KIR,KNA,KOR,KWT,LAO,LBN,LBR,LBY,LCA,LIE,
-       LKA,LSO,LTU,LUX,LVA,MAC,MAF,MAR,MCO,MDA,
-       MDG,MDV,MEX,MHL,MKD,MLI,MLT,MMR,MNE,MNG,
-       MNP,MOZ,MRT,MSR,MTQ,MUS,MWI,MYS,MYT,NAM,
-       NCL,NER,NFK,NGA,NIC,NIU,NLD,NOR,NPL,NRU,
-       NZL,OMN,PAK,PAN,PCN,PER,PHL,PLW,PNG,POL,
-       PRI,PRK,PRT,PRY,PSE,PYF,QAT,REU,ROU,RUS,
-       RWA,SAU,SDN,SEN,SGP,SGS,SHN,SJM,SLB,SLE,
-       SLV,SMR,SOM,SPM,SRB,SSD,STP,SUR,SVK,SVN,
-       SWE,SWZ,SXM,SYC,SYR,TCA,TCD,TGO,THA,TJK,
-       TKL,TKM,TLS,TON,TTO,TUN,TUR,TUV,TWN,TZA,
-       UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,
-       VIR,VNM,VUT,WLF,WSM,YEM,ZAF,ZMB,ZWE /
+       AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,
+       ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,
+       BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,
+       BVT,BRA,IOT,BRN,BGR,BFA,BDI,KHM,CMR,CAN,
+       CPV,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,
+       COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,
+       DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,
+       ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,
+       GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,
+       GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,
+       HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,
+       JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,
+       KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,
+       MAC,MKD,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,
+       MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,
+       MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,
+       NER,NGA,NIU,NFK,MNP,NOR,OMN,PAK,PLW,PSE,
+       PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,
+       REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,
+       VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,
+       SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,
+       SDN,SUR,SJM,SWZ,SWE,CHE,SYR,TWN,TJK,TZA,
+       THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,
+       TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,
+       VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE /
 
    map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
          /
-       EUR . EUR
        CHA . CHA
+       FRA . FRA
+       DEU . DEU
        IND . IND
        JPN . JPN
        USA . USA
@@ -1274,7 +1282,7 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
   geohdr          "geothermal electric hot dry rock"
   geohe           "geothermal heat"
   hydro           "hydro electric"
-  wind            "wind onshore power converters"
+***  wind            "wind onshore power converters"
   windon          "wind onshore power converters"
   windoff         "wind offshore power converters"
   spv             "solar photovoltaic"
@@ -1291,7 +1299,7 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
 *** ccsmoni         "monitoring of co2, CCS related"
 
   storspv         "storage technology for PV"
-  storwind        "storage technology for wind onshore"
+***  storwind        "storage technology for wind onshore"
   storwindon      "storage technology for wind onshore"
   storwindoff     "storage technology for wind offshore"
   storcsp         "storage technology for CSP"
@@ -1300,7 +1308,7 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
 
   gridspv         "grid between areas with high pv production and the rest"
   gridcsp         "grid between areas with high csp production and the rest"
-  gridwind        "grid between areas with high wind onshore production and the rest"
+***  gridwind        "grid between areas with high wind onshore production and the rest"
   gridwindon      "grid between areas with high wind onshore production and the rest"
   gridwindoff     "grid between areas with high wind offshore production and the rest"
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -1319,13 +1327,13 @@ teRLDCDisp(all_te)     "RLDC Dispatchable technologies that produce seel"
 *** Note: technologies without endogenous learning can also have decreasing (or increasing) capital cost over time, due to for example convergence to global value
 teLearn(all_te)     "Learning technologies (for which investment costs are reduced endogenously through capacity deployment)."
 /
-        wind        "wind onshore power converters"
+***        wind        "wind onshore power converters"
         windon      "wind onshore power converters"
         windoff     "wind offshore power converters"
         spv         "solar photovoltaic"
         csp         "concentrating solar power"
         storspv     "storage technology for spv"
-        storwind    "storage technology for wind onshore"
+***        storwind    "storage technology for wind onshore"
         storwindon  "storage technology for wind onshore"
         storwindoff "storage technology for wind offshore"
         storcsp     "storage technology for csp"
@@ -1405,7 +1413,7 @@ teRe(all_te)     "renewable technologies including biomass"
         geohdr      "geothermal electric hot dry rock"
         geohe       "geothermal heat"
         hydro       "hydro electric"
-        wind        "wind power converters"
+***        wind        "wind power converters"
         windon      "wind onshore power converters"
         windoff     "wind offshore power converters"
         spv         "solar photovoltaic"
@@ -1417,7 +1425,7 @@ teReNoBio(all_te) "renewable technologies except for biomass"
         geohdr      "geothermal electric hot dry rock"
         geohe       "geothermal heat"
         hydro       "hydro electric"
-        wind        "wind power converters"
+***        wind        "wind power converters"
         windon      "wind onshore power converters"
         windoff     "wind offshore power converters"
         spv         "solar photovoltaic"
@@ -1428,7 +1436,7 @@ teNoRe(all_te)        "Non renewable energy technologies"
 
 teVRE(all_te)      "technologies requiring storage"
 /
-        wind        "wind power converters"
+***        wind        "wind power converters"
         windon      "wind onshore power converters"
         windoff     "wind offshore power converters"
         spv         "solar photovoltaic"
@@ -1437,7 +1445,7 @@ teVRE(all_te)      "technologies requiring storage"
 
 teWind(all_te)        "Onshore and offshore wind technologies"
 /
-        wind        "wind power converters"
+***        wind        "wind power converters"
         windon      "wind onshore power converters"
         windoff     "wind offshore power converters"
 /
@@ -1446,7 +1454,7 @@ teWind(all_te)        "Onshore and offshore wind technologies"
 teStor(all_te)        "storage technologies"
 /
         storspv     "storage technology for spv"
-        storwind    "storage technology for wind onshore"
+***        storwind    "storage technology for wind onshore"
         storwindon  "storage technology for wind onshore"
         storwindoff "storage technology for wind offshore"
         storcsp     "storage technology for csp"
@@ -1455,7 +1463,7 @@ teLoc(all_te)      "centralized technologies which require grid"
 /
         spv         "solar photovoltaic"
         csp         "concentrating solar power"
-        wind        "wind power converters"
+***        wind        "wind power converters"
         windon      "wind onshore power converters"
         windoff     "wind offshore power converters"
 /
@@ -1463,7 +1471,7 @@ teGrid(all_te)      "grid between areas"
 /
     gridspv     "grid between areas with high pv production and the rest"
     gridcsp     "grid between areas with high csp production and the rest"
-    gridwind    "grid between areas with high wind onshore production and the rest"
+***    gridwind    "grid between areas with high wind onshore production and the rest"
     gridwindon  "grid between areas with high wind onshore production and the rest"
     gridwindoff "grid between areas with high wind offshore production and the rest"
 /
@@ -1514,14 +1522,14 @@ teBioPebiolc(all_te)      "biomass technologies using pebiolc"
 teNoTransform(all_te) "all technologies that do not transform energy but still have investment and O&M costs (like storage or grid)"
 /
        storspv       "storage technology for photo voltaic (PV)"
-       storwind      "storage technology for wind onshore"
+***       storwind      "storage technology for wind onshore"
        storwindon    "storage technology for wind onshore"
        storwindoff   "storage technology for wind offshore"
        storcsp       "storage technology for concentrating solar power (CSP)"
 
        gridspv       "grid between areas with high pv production and the rest"
        gridcsp       "grid between areas with high csp production and the rest"
-       gridwind        "grid between areas with high wind onshore production and the rest"
+***       gridwind        "grid between areas with high wind onshore production and the rest"
        gridwindon      "grid between areas with high wind onshore production and the rest"
        gridwindoff     "grid between areas with high wind offshore production and the rest"
 /
@@ -2443,7 +2451,7 @@ capTotal(all_enty,all_enty)    "mapping of input to output carriers for calculat
 VRE2teStor(all_te,teStor)   "mapping to know which technology uses which storage technology"
 /
         spv.storspv
-        wind.storwind
+***        wind.storwind
         windon.storwindon
         windoff.storwindoff
         csp.storcsp
@@ -2459,7 +2467,7 @@ VRE2teVRElinked(all_te,all_te)    "mapping between the technologies requiring st
 VRE2teGrid(all_te,teGrid)              "mapping to know which technology needs which grid technology (length/siting)"
 /
         spv.gridspv
-        wind.gridwind
+***        wind.gridwind
         windon.gridwindon
         windoff.gridwindoff
         csp.gridcsp
@@ -2469,8 +2477,8 @@ te2teLoclinked(teLoc,teLoc2)   "mapping between the technologies requiring grids
 /
         spv.csp
         csp.spv
-        windoff.wind
-        wind.windoff
+***        windoff.wind
+***        wind.windoff
         windoff.windon
         windon.windoff
 /
@@ -2787,7 +2795,8 @@ prodSeOth2te(all_enty,all_te)      "map other se production not directly followi
 
 teSe2rlf(all_te,rlf)        "mapping for techologies to grades. Currently, the information was shifted to teRe2rlfDetail. Thus, teSe2rlf now only has '1' for the rlf values"
 /
-      (wind,windon,windoff,spv,csp,refliq,hydro,geohe,geohdr,solhe,ngcc,ngccc,ngt,gaschp,gashp,gash2,gash2c,gastr,gasftrec,gasftcrec,dot,
+*** wind
+      (windon,windoff,spv,csp,refliq,hydro,geohe,geohdr,solhe,ngcc,ngccc,ngt,gaschp,gashp,gash2,gash2c,gastr,gasftrec,gasftcrec,dot,
        igcc,igccc,pc,coaltr,coalgas,coalh2,coalh2c,coalchp,coalhp,coalftrec,coalftcrec,
        biotr,biotrmod,biogas,biogasc,bioftrec,bioftcrec,bioh2,bioh2c,biohp,biochp,bioigcc,bioigccc,
        elh2,h2turb,elh2VRE,h2turbVRE,bioethl,bioeths,biodiesel,tnrs,fnrs
@@ -2796,7 +2805,7 @@ teSe2rlf(all_te,rlf)        "mapping for techologies to grades. Currently, the i
 
 teRe2rlfDetail(all_te,rlf)        "mapping for se techologies to grades"
 /
-        wind.(1*9)
+***        wind.(1*9)
         windon.(1*9)
         windoff.(1*9)
         spv.(1*9)
@@ -2830,7 +2839,8 @@ teCCS2rlf(all_te,rlf)     "mapping for CCS technologies to grades"
 
 teNoTransform2rlf(all_te,rlf)         "mapping for no transformation technologies to grades"
 /
-      (storspv,storcsp,storwind,storwindon,storwindoff,gridwind,gridwindon,gridwindoff,gridspv,gridcsp,h2curt) . 1
+*** storwind, gridwind
+      (storspv,storcsp,storwindon,storwindoff,gridwindon,gridwindoff,gridspv,gridcsp,h2curt) . 1
 /
 
 

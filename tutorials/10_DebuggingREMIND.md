@@ -47,7 +47,7 @@ If full.log exists, this is the next place to look at. Either open it in your fa
 ```bash
 less full.log
 ```
-and then type `G` to get to the end of the file. `q` finishes looking at the file.
+and then type `G` to get to the end of the file. Type `q` to close the file.
 Another option is to use the editor `vi` by typing `vi full.log`, in which case `:q` closes the editor. `less` is generally faster when looking at large file, but doesn’t offer color coding.
 
 You may find:
