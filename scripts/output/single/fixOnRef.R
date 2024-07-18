@@ -13,7 +13,7 @@ suppressPackageStartupMessages(library(tidyverse))
 if(! exists("source_include")) {
   # Define arguments that can be read from command line
   outputdir <- "."
-  flags <- readArgs("outputdir", .flags = c(i = "--interactive"))
+  flags <- lucode2::readArgs("outputdir", .flags = c(i = "--interactive"))
 }
 
 findRefMif <- function(outputdir, envi) {
@@ -81,7 +81,7 @@ fixOnMif <- function(outputdir) {
   dref <- quitte::as.quitte(refmif)
   d <- fixMAGICC(d, dref, startyear, title)
   failfile <- file.path(outputdir, "log_fixOnRef.csv")
-  fixeddata <- piamInterfaces::fixOnRef(d, dref, ret = "TRUE_or_fixed", startyear = startyear, failfile = failfile)
+  fixeddata <- piamInterfaces::fixOnRef(d, dref, ret = "TRUE_or_fixed", startyear = startyear, failfile = failfile, relDiff = 0.00002)
 
   update <- paste0("MAGICC data. ", if (! isTRUE(fixeddata)) "Run output.R -> single -> fixOnRef to fix the rest.")
   if (! isTRUE(fixeddata) && isTRUE(envi$cfg$fixOnRefAuto)) {

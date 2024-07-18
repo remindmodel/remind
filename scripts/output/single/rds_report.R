@@ -58,6 +58,7 @@ if(file.exists(runstatistics) & dir.exists(resultsarchive)) {
   saveRDS(q,file=paste0(resultsarchive,"/",stats$id,".rds"))
   cwd <- getwd()
   setwd(resultsarchive)
-  system("find -type f -name '1*.rds' -printf '%f\n' | sort > files")
+  system("find -type f -name '1*.rds' -printf '%f\n' | sort > fileListForShinyresults")
   setwd(cwd)
 }
+message("report.rds written and data submitted to runstatistics")

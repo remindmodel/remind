@@ -7,37 +7,52 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### changed
+- plastic waste by default does not lag plastics production by ten years
+    anymore; can be re-activated using `cm_wastelag`
 
 ### added
-- added realizations diffExp2Lin and diffLin2Lin to 45_carbonprice [#1723](https://github.com/remindmodel/remind/pull/1723)
+- **50_damages**, **51_internalizeDamages** add KotzWenz realization based on Kotz & Wenz (2024)
+    [[#1601](https://github.com/remindmodel/remind/pull/1601)]
+- **45_carbonprice** added realizations diffExp2Lin and diffLin2Lin
+    [[#1723](https://github.com/remindmodel/remind/pull/1723)]
+- **scripts** define defaults for script selections in output.R
+    [[#1739](https://github.com/remindmodel/remind/pull/1739)]
+- **scripts** fail transparently on duplicated column names in scenario_config*.csv files
+    [[#1742](https://github.com/remindmodel/remind/pull/1742)]
 
 ### fixed
 - included CCS from plastic waste incineration in CCS mass flows so it is
     subject to injection constraints (but did not add CCS costs, see
     https://github.com/remindmodel/development_issues/issues/274
+- **scripts** fix tax convergence reporting in modelSummary
+    [[#1728](https://github.com/remindmodel/remind/pull/1728)]
+- **scripts** cleanup non-existing realizations from settings_config.csv
+    [[#1718](https://github.com/remindmodel/remind/pull/1718)]
 
 ### removed
 
 ## [3.3.2] - 2024-07-04
 
 ### changed
-- fix output generation [[#1715]] (https://github.com/remindmodel/remind/pull/1715)
+- fix output generation [[#1715](https://github.com/remindmodel/remind/pull/1715)]
 
 ## [3.3.1] - 2024-06-18
 
 ### changed
-- new input data (6.77) including new GDP and population data([#83](https://github.com/pik-piam/mrdrivers/pull/83)) [[#1684]](https://github.com/remindmodel/remind/pull/1684)
+- new input data (6.77) including new GDP and population data
+    [[#83](https://github.com/pik-piam/mrdrivers/pull/83)] [[#1684](https://github.com/remindmodel/remind/pull/1684)]
 - **37_industry** remove subsector-specific shares of SE
-  origins in FE carriers for performance reasons [[#1659]](https://github.com/remindmodel/remind/pull/1659)
-- **37_industry** make process-based steel production model the default over the ces-based model [[#1663]](https://github.com/remindmodel/remind/pull/1663)
+  origins in FE carriers for performance reasons [[#1659](https://github.com/remindmodel/remind/pull/1659)]
+- **37_industry** make process-based steel production model the default over the ces-based model [[#1663](https://github.com/remindmodel/remind/pull/1663)]
 - **37_industry** fixed incineration of plastic and non-plastic waste causing
   non-zero emissions for biomass and synfuels
-  [[#1682]](https://github.com/remindmodel/remind/pull/1682)
-- **core** another change of preference parameters and associated computation of interest rates/mark ups [[#1663]](https://github.com/remindmodel/remind/pull/1663)
+  [[#1682](https://github.com/remindmodel/remind/pull/1682)]
+- **core** another change of preference parameters and associated computation of interest rates/mark ups [[#1663](https://github.com/remindmodel/remind/pull/1663)]
 - **scripts** do not check anymore that MAgPIE uses renv
   [[1646](https://github.com/remindmodel/remind/pull/1646)]
-- **scripts** adjust function calls after moving functionality from `remind2` [[#578]]](https://github.com/pik-piam/remind2/pull/578) to `piamPlotComparison` and `piamutils` [[#1661](https://github.com/remindmodel/remind/pull/1661)
-- **scripts** enhance output script `reportCEScalib` to include additional plot formats [[#1671](https://github.com/remindmodel/remind/pull/1671)
+- **scripts** adjust function calls after moving functionality from `remind2`
+  [[#578](https://github.com/pik-piam/remind2/pull/578)] to `piamPlotComparison` and `piamutils` [[#1661](https://github.com/remindmodel/remind/pull/1661)]
+- **scripts** enhance output script `reportCEScalib` to include additional plot formats [[#1671](https://github.com/remindmodel/remind/pull/1671)]
 
 ### added
 - **24_trade** add optinal trade scenario for EUR hydrogen and e-liquids imports [[#1666](https://github.com/remindmodel/remind/pull/1666)] 
@@ -46,7 +61,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### changed
 - **37_industry** changed industry to have subsector-specific shares of SE
-  origins in FE carriers [[#1620]](https://github.com/remindmodel/remind/pull/1620)
+  origins in FE carriers [[#1620](https://github.com/remindmodel/remind/pull/1620)]
 
 ### added
 - **config** regex tests for many parameters [[#1356](https://github.com/remindmodel/remind/pull/1356)]

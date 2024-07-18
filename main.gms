@@ -1000,6 +1000,11 @@ parameter
   c_teNoLearngConvEndYr  = 2070;   !! def = 2070
 *'
 parameter
+  c_earlyRetiValidYr         "Year before which the early retirement rate designated by c_tech_earlyreti_rate holds"
+;
+  c_earlyRetiValidYr  = 2035;   !! def = 2035
+*'
+parameter
   cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
 ;
   cm_TaxConvCheck = 1;  !! def = 1, which means tax convergence check is on  !! regexp = 0|1
@@ -1363,6 +1368,11 @@ $setglobal cm_calibration_string  off    !!  def  =  off
 *** (REG2040) regionalized technology costs given by p_inco0 until 2040, then stable without convergence
 *** (GLO) globally homogenous technology costs
 $setglobal cm_techcosts  REG       !! def = REG  !! regexp = REG|REG2040|GLO
+*** cm_floorCostScen regionally differentiated floor cost scenarios
+*** (default) uniform floor cost (almost no regional differentiation)
+*** (pricestruc) regionally differentiated floor costs, the differentiated costs have the same ratio between regions as the ratio between 2020 tech cost values
+*** (techtrans) regionally differentiated floor costs, which are the universal global floor costs in the default case time the MER PPP price ratios. new floor cost = MER/PPP * old floor cost
+$setglobal cm_floorCostScen default       !! def = default
 *** cfg$gms$cm_EDGEtr_scen  "the EDGE-T scenario"  # def <- "Mix1". For calibration runs: Mix1. Mix2, Mix3, Mix4 also available - numbers after the "mix" denote policy strength, with 1 corresponding roughly to Baseline/NPI, 2= NDC, 3= Budg1500, 4 = Budg800
 ***  The following descriptions are based on scenario results for EUR in 2050 unless specified otherwise.
 ***  Whenever we give numbers, please be aware that they are just there to estimate the ballpark.
@@ -1627,6 +1637,9 @@ $setglobal cm_ind_energy_limit_manual   "2050 . GLO . (ue_cement, ue_steel_prima
 *** 2050.GLO 0.5, 2050.EUR 0.8: means that 50% of waste incineration emissions are captured for all regions from 2050 onward, except for Europe that has 80% of its waste incineration emissions captured.
 *** The CCS share of waste incineration increases linearly from zero, in 2025, to the value set at the switch, and it is kept constant for years afterwards.
 $setglobal cm_wasteIncinerationCCSshare  off      !! def = off
+*** cm_wastelag, does waste from plastics lag ten years behind plastics
+*** production, or not?
+$setglobal cm_wastelag NO   !! def = NO   !! regexp = YES|NO
 *** cm_feedstockEmiUnknownFate, account for chemical feedstock emissions with unknown fate
 *** off: assume that these emissions are trapped and do not account for total anthropogenic emissions
 *** on: account for chemical feedstock emissions with unknown fate as re-emitted to the atmosphere
