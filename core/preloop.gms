@@ -81,8 +81,8 @@ if(cm_iterative_target_adj eq 9,
 *** Save the original functional form of the CO2 price trajectory so values for all times can be accessed even if the peakBudgYr is shifted. 
 *** Then change to linear increasing CO2 price after peaking time 
   p_taxCO2eq_until2150(t,regi) = pm_taxCO2eq(t,regi);
-  loop(t2$(t2.val eq c_peakBudgYr),
-    pm_taxCO2eq(t,regi)$(t.val gt c_peakBudgYr) = p_taxCO2eq_until2150(t2,regi) + (t.val - t2.val) * c_taxCO2inc_after_peakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by c_taxCO2inc_after_peakBudgYr per year
+  loop(t2$(t2.val eq cm_peakBudgYr),
+    pm_taxCO2eq(t,regi)$(t.val gt cm_peakBudgYr) = p_taxCO2eq_until2150(t2,regi) + (t.val - t2.val) * c_taxCO2inc_after_peakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by c_taxCO2inc_after_peakBudgYr per year
   );
 );
 
