@@ -317,10 +317,8 @@ $setglobal biomass  magpie_40     !! def = magpie_40
 *' * (MOFEX)        : contains the standalone version of MOFEX (Model Of Fossil EXtraction), which minimizes the discounted extraction and trade costs of fossils while balancing trade for each time step. Not to be run within a REMIND run but instead through the standalone architecture or soft-linked with REMIND (not yet implemented)
 $setglobal fossil  grades2poly        !! def = grades2poly
 *'---------------------    32_power    ----------------------------------------
-*'
+*' 
 *' * (IntC)      :    Power sector formulation with Integration Cost (IntC) markups and curtailment for VRE integration - linearly increasing with VRE share -, and fixed capacity factors for dispatchable power plants
-*' * (RLDC)      :    Power sector formulation with Residual Load Duration Curve (RLDC) formulation for VRE power integration, and flexible capacity factors for dispatchable power plants
-*' * (DTcoup)    :    (currently not merged, only a copy of IntC) Power sector formulation with iterative coupling to hourly power-sector model DIETER: REMIND gives DIETER costs of technologies, power demand, CO2 price and capacity bounds; DIETER gives REMIND markups of generation, capacity factors, peak hourly residual demand
 $setglobal power  IntC        !! def = IntC
 *'---------------------    33_CDR       ----------------------------------------
 *'

@@ -443,6 +443,7 @@ $if  %c_SSP_forcing_adjust% == "forcing_SSP1"    vm_deltaCap.up(t,regi,"coalgas"
 *** -------------------------------------------------------------
 *** H2 Curtailment
 *** -------------------------------------------------------------
+*** RLDC removal
 ***Fixing h2curt value to zero to avoid the model to generate SE out of nothing.
 ***Models that have additional se production channels should release this variable (eg. RLDC power module).
 loop(prodSeOth2te(enty,te),

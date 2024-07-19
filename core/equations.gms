@@ -156,12 +156,12 @@ q_balSe(t,regi,enty2)$( entySe(enty2) AND (NOT (sameas(enty2,"seel"))) )..
       - vm_emiMacSector(t,regi,"ch4wstl")
       )
     )$( sameas(enty2,"segabio") AND t.val gt 2005 )
-  + sum(prodSeOth2te(enty2,te), vm_prodSeOth(t,regi,enty2,te) )
+  + sum(prodSeOth2te(enty2,te), vm_prodSeOth(t,regi,enty2,te) ) !! *** RLDC removal
   + vm_Mport(t,regi,enty2)
   =e=
     sum(se2fe(enty2,enty3,te), vm_demSe(t,regi,enty2,enty3,te))
   + sum(se2se(enty2,enty3,te), vm_demSe(t,regi,enty2,enty3,te))
-  + sum(demSeOth2te(enty2,te), vm_demSeOth(t,regi,enty2,te) )
+  + sum(demSeOth2te(enty2,te), vm_demSeOth(t,regi,enty2,te) ) !! *** RLDC removal
   + vm_Xport(t,regi,enty2)
 ;
 
@@ -259,37 +259,34 @@ q_shFeCes(t,regi,entyFe,in,teEs)$feViaEs2ppfen(entyFe,in,teEs)..
 *' Definition of capacity constraints for primary energy to secondary energy transformation:
 ***--------------------------------------------------------------------------
 q_limitCapSe(t,regi,pe2se(enty,enty2,te))..
-        vm_prodSe(t,regi,enty,enty2,te)
-        =e=
-        sum(teSe2rlf(te,rlf),
-               vm_capFac(t,regi,te) * pm_dataren(regi,"nur",rlf,te)
-               * vm_cap(t,regi,te,rlf)
-        )$(NOT teReNoBio(te))
-    +
-        sum(teRe2rlfDetail(te,rlf),
-               ( 1$teRLDCDisp(te) +  pm_dataren(regi,"nur",rlf,te)$(NOT teRLDCDisp(te)) ) * vm_capFac(t,regi,te)
-               * vm_capDistr(t,regi,te,rlf)
-        )$(teReNoBio(te))
+  vm_prodSe(t,regi,enty,enty2,te)
+  =e=
+  sum(teSe2rlf(te,rlf),
+    vm_capFac(t,regi,te) * pm_dataren(regi,"nur",rlf,te) * vm_cap(t,regi,te,rlf)
+  )$(NOT teReNoBio(te))
+  +
+  sum(teRe2rlfDetail(te,rlf),
+    pm_dataren(regi,"nur",rlf,te) * vm_capFac(t,regi,te) * vm_capDistr(t,regi,te,rlf)
+  )$(teReNoBio(te))
 ;
 
 ***----------------------------------------------------------------------------
 *' Definition of capacity constraints for secondary energy to secondary energy transformation:
 ***---------------------------------------------------------------------------
 q_limitCapSe2se(t,regi,se2se(enty,enty2,te))..
-         vm_prodSe(t,regi,enty,enty2,te)
-         =e=
-         sum(teSe2rlf(te,rlf),
-                vm_capFac(t,regi,te) * pm_dataren(regi,"nur",rlf,te)
-                * vm_cap(t,regi,te,rlf)
-         );
+  vm_prodSe(t,regi,enty,enty2,te)
+  =e=
+  sum(teSe2rlf(te,rlf),
+    vm_capFac(t,regi,te) * pm_dataren(regi,"nur",rlf,te) * vm_cap(t,regi,te,rlf)
+  );
 
 ***---------------------------------------------------------------------------
 *' Definition of capacity constraints for secondary energy to final energy transformation:
 ***---------------------------------------------------------------------------
 q_limitCapFe(t,regi,te)..
-         sum((entySe,entyFe)$(se2fe(entySe,entyFe,te)), vm_prodFe(t,regi,entySe,entyFe,te))
-         =l=
-         sum(teFe2rlf(te,rlf), vm_capFac(t,regi,te) * vm_cap(t,regi,te,rlf));
+  sum((entySe,entyFe)$(se2fe(entySe,entyFe,te)), vm_prodFe(t,regi,entySe,entyFe,te))
+  =l=
+  sum(teFe2rlf(te,rlf), vm_capFac(t,regi,te) * vm_cap(t,regi,te,rlf));
 
 ***---------------------------------------------------------------------------
 *' Definition of capacity constraints for CCS technologies:
@@ -408,7 +405,7 @@ qm_fuel2pe(t,regi,peRicardian(enty))..
 q_limitProd(t,regi,teRe2rlfDetail(teReNoBio(te),rlf))..
   pm_dataren(regi,"maxprod",rlf,te)
   =g=
-  ( 1$teRLDCDisp(te) +  pm_dataren(regi,"nur",rlf,te)$(NOT teRLDCDisp(te)) ) * vm_capFac(t,regi,te) * vm_capDistr(t,regi,te,rlf);
+  pm_dataren(regi,"nur",rlf,te) * vm_capFac(t,regi,te) * vm_capDistr(t,regi,te,rlf);
 
 ***-----------------------------------------------------------------------------
 *' Definition of competition for geographical potential for renewable energy types:

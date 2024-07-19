@@ -412,6 +412,7 @@ v_prodUe (ttot,all_regi,all_enty,all_enty,all_te)    "Useful energy production [
 
 vm_capEarlyReti(tall,all_regi,all_te)                "fraction of early retired capital"
 
+*** RLDC removal
 vm_demSeOth(ttot,all_regi,all_enty,all_te)	         "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
 vm_prodSeOth(ttot,all_regi,all_enty,all_te)	         "other sety production from certain technologies, have to be calculated in additional equations [TWa]"
 
