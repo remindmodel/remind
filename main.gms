@@ -1009,13 +1009,6 @@ parameter
   cm_H2targets = 0; !! def 0
 *'
 parameter
-  cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
-;
-  cm_PriceDurSlope_elh2 = 15;  !! def = 15
-*' cm_PriceDurSlope_elh2, slope of price duration curve for electrolysis (increase means more flexibility subsidy for electrolysis H2)
-*' This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1
-*' Default value is based on data from German Langfristszenarien (see ./modules/32_power/IntC/datainput.gms).
-parameter
   cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildings and industry electricity prices is on"
 ;
   cm_FlexTaxFeedback = 0;  !! def = 0  !! regexp = 0|1
@@ -1401,6 +1394,10 @@ $setGlobal cm_import_EU  off !! def off
 *** (on) ARIADNE-specific H2 imports for Germany, rest EU has H2 imports from cm_import_EU switch
 *** (off) no ARIADNE-specific H2 imports for Germany
 $setGlobal cm_import_ariadne  off !! def off
+*** cm_PriceDurSlope_elh2, slope of price duration curve for electrolysis (increase means more flexibility subsidy for electrolysis H2)
+*** This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1
+*** Default value is based on data from German Langfristszenarien (see ./modules/32_power/IntC/datainput.gms).
+$setGlobal cm_PriceDurSlope_elh2 GLO 15 !! def = GLO 15
 *** cm_trade_SE_exog
 *** set exogenous SE trade scenarios (requires se_trade realization of modul 24 to be active)
 *** e.g. "2030.2050.MEA.DEU.seh2 0.5", means import of SE hydrogen from MEA to Germany from 2050 onwards of 0.5 EJ/yr,

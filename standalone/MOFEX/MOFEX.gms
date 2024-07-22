@@ -200,7 +200,6 @@ cm_biotrade_phaseout        "switch for phaseing out biomass trade in the respec
 cm_bioprod_histlim			"regional parameter to limit biomass (pebiolc.1) production to a multiple of the 2015 production"
 cm_flex_tax                 "switch for enabling flexibility tax"
 cm_H2targets                "switches on capacity targets for electrolysis in NDC techpol following national Hydrogen Strategies"
-cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
 cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildings and industry electricity prices is on"
 cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bleak (3) assumptions on VRE supply"
 cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/ 100 /Kwh)"
@@ -365,8 +364,9 @@ $setGlobal cm_import_EU  off !! def off
 
 *** flex tax switches
 cm_flex_tax = 0; !! def 0
-cm_PriceDurSlope_elh2 = 20; !! def 10
+$setGlobal cm_PriceDurSlope_elh2  GLO 15 !! def = GLO 15
 cm_FlexTaxFeedback = 0; !! def 0
+
 
 *** VRE switch
 cm_VRE_supply_assumptions = 0; !! 0 - default, 1 - optimistic, 2 - sombre, 3 - bleak
