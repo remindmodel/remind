@@ -892,12 +892,6 @@ parameter
   cm_postTargetIncrease    = 0;      !! def = 0
 *'
 parameter
-  cm_emiMktTarget_tolerance "tolerance for regipol emission target deviations convergence."
-;
-  cm_emiMktTarget_tolerance    = 0.01;       !! def = 0.01, i.e. regipol emission targets must be met within 1% of target deviation
-*'  For budget targets the tolerance is measured relative to the target value. For year targets the tolerance is relative to 2005 emissions.
-*'
-parameter
   cm_implicitQttyTarget_tolerance "tolerance for regipol implicit quantity target deviations convergence."
 ;
   cm_implicitQttyTarget_tolerance    = 0.01;       !! def = 0.01, i.e. regipol implicit quantity targets must be met within 1% of target deviation
@@ -1300,6 +1294,12 @@ $setGlobal cm_regiExoPrice  off    !! def = off
 ***     The 'nzero' scenario applies declared net-zero targets for countries explicitly handled by the model (DEU, CHA, USA, IND, JPN, UKI, FRA and EU27_regi)  
 ***     Requires regiCarbonPrice realization in regipol module
 $setGlobal cm_emiMktTarget  off    !! def = off
+*** Tolerance for regipol emission target deviations convergence.
+*** For budget targets the tolerance is measured relative to the target value. For year targets the tolerance is relative to 2005 emissions.
+***   def = GLO 0.01, i.e. regipol emission targets must be met within 1% of target deviation
+***   Example on how to use:
+***      cm_emiMktTarget_tolerance = 'GLO 0.004, DEU 0.01'. All regional emission targets will be considered converged if they have at most 0.4% of the target deviation, except for Germany that requires 1%.
+$setGlobal cm_emiMktTarget_tolerance  GLO 0.01    !! def = GLO 0.01 
 *** cm_quantity_regiCO2target "emissions quantity upper bound from specific year for region group."
 ***   Example on how to use:
 ***     '2050.EUR_regi.netGHG 0.000001, obliges European GHG emissions to be approximately zero from 2050 onward"

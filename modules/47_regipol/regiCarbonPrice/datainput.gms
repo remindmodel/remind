@@ -63,6 +63,13 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
     );
   );
   
+*** Assigning convergence tolerance to active regional targets
+  parameter f47_emiMktTarget_tolerance(ext_regi) "tolerance for regipol emission target deviations convergence [#]" / %cm_emiMktTarget_tolerance% /;
+  pm_emiMktTarget_tolerance(ext_regi)$(regiEmiMktTarget(ext_regi)) = 0.01; !! if no value is assigned to GLO, the default devation tolerance is set to 1%
+  pm_emiMktTarget_tolerance(ext_regi)$(regiEmiMktTarget(ext_regi) and f47_emiMktTarget_tolerance("GLO")) = f47_emiMktTarget_tolerance("GLO"); !! if available, assign GLO value as default to all regional target tolerances
+  pm_emiMktTarget_tolerance(ext_regi)$(regiEmiMktTarget(ext_regi) and f47_emiMktTarget_tolerance(ext_regi)) = f47_emiMktTarget_tolerance(ext_regi); !! set specific defined regional target tolerances
+  display pm_emiMktTarget_tolerance;
+
 *** initialize carbon taxes based on reference runs
 ***  p47_taxemiMkt_init saves information from reference runs about pm_taxCO2eq (carbon price defined on the carbonprice module) and/or
 ***  pm_taxemiMkt (regipol carbon price) so the carbon tax can be initialized for regions with CO2 tax controlled by cm_emiMktTarget  
