@@ -136,7 +136,6 @@ $drop cm_indstExogScen_set
 v37_regionalWasteIncinerationCCSshare.lo(t,regi) = 0.;
 v37_regionalWasteIncinerationCCSshare.up(t,regi) = p37_regionalWasteIncinerationCCSMaxShare(t,regi);
 
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 !! fix processes procudction in historic years
 if (cm_startyear eq 2005,
     loop((ttot,regi,tePrc2opmoPrc(tePrc,opmoPrc))$(ttot.val ge 2005 AND ttot.val le 2020),
@@ -145,13 +144,13 @@ if (cm_startyear eq 2005,
 );
 
 !! Switch to turn off steel CCS
+!! TODO Qianzhi: sector dependence is wrong
 if (cm_CCS_steel ne 1 OR cm_IndCCSscen ne 1,
   vm_cap.fx(t,regi,teCCPrc,rlf) = 0.;
 );
 
 v37_shareWithCC.lo(t,regi,tePrc,opmoPrc) = 0.;
 v37_shareWithCC.up(t,regi,tePrc,opmoPrc) = 1.;
-$endif.cm_subsec_model_steel
 
 $ifthen.fixedUE_scenario "%cm_fxIndUe%" == "on"
 

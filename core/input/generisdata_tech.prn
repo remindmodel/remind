@@ -166,6 +166,14 @@ incolearn                      14000
 ccap0                         0.0008
 learn                           0.15
 
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+!! TODO Qianzhi
++                chemOld     chemNew
+!! documentation & sources: see below
+inco0               1100         900
+omf                 0.06        0.06
+lifetime              20          20
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 +                     bf         bof         idr         eaf
 !! documentation & sources: see below

@@ -22,9 +22,11 @@ Parameters
         en_cement                    0.3   !! non-electric, electric
           en_cement_non_electric     2.0   !! solids, liquids, gases, hydrogen
 
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
       ue_chemicals                   1.7   !! energy, capital
         en_chemicals                 0.3   !! fuels and high-temperature heat, electricity
           en_chemicals_fhth          3.0   !! solids, liquids, gases, electricity
+$endif.cm_subsec_model_chemicals
 
       ue_steel                       5     !! primary steel, secondary steel
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
@@ -48,10 +50,12 @@ pm_cesdata_sigma(ttot,"en_cement_non_electric")$ (ttot.val eq 2030) = 1.3;
 pm_cesdata_sigma(ttot,"en_cement_non_electric")$ (ttot.val eq 2035) = 1.7;
 pm_cesdata_sigma(ttot,"en_cement_non_electric")$ (ttot.val eq 2040) = 2.0;
 
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
 pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val le 2025) = 0.7;
 pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val eq 2030) = 1.3;
 pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val eq 2035) = 2.0;
 pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val eq 2040) = 3.0;
+$endif.cm_subsec_model_chemicals
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 pm_cesdata_sigma(ttot,"en_steel_furnace")$ (ttot.val le 2025) = 0.5;
@@ -69,7 +73,7 @@ pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2040) = 2.0;
 
 loop ((ttot,steps)$( ttot.val ge 2005 ),
 
-  sm_tmp = steps.val * sm_dmac / sm_c_2_co2;   !! CO2 price at MAC step [$/tCO2] 
+  sm_tmp = steps.val * sm_dmac / sm_c_2_co2;   !! CO2 price at MAC step [$/tCO2]
 
 $ifthen NOT "%cm_Industry_CCS_markup%" == "off"
   sm_tmp = sm_tmp / %cm_Industry_CCS_markup%;
@@ -95,7 +99,7 @@ $endif.cm_subsec_model_steel
     if (cm_optimisticMAC eq 1,
 
       !! logarithmic curve through 0.75 @ $50 and 0.9 @ $150, limited to 0.95
-      pm_abatparam_Ind(ttot,regi,emiInd37,steps)$( 
+      pm_abatparam_Ind(ttot,regi,emiInd37,steps)$(
                                               YES
         $$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
                                           AND NOT sameas(emiInd37,"co2steel")
@@ -253,11 +257,13 @@ if (cm_IndCCSscen eq 1,
     emiMac2mac("co2cement_process","co2cement") = YES;
   );
 
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
   if (cm_CCS_chemicals eq 1,
     emiMacSector("co2chemicals") = YES;
     pm_macSwitch("co2chemicals") = YES;
     emiMac2mac("co2chemicals","co2chemicals") = YES;
   );
+$endif.cm_subsec_model_chemicals
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
   if (cm_CCS_steel eq 1,
@@ -315,12 +321,14 @@ Parameter
   p37_arcane_FE_limits(all_in,all_in)   "minimum ratio of feelhth/feelwlth and feh2/fega (may be needed for calibration)"
   /
     feh2_cement       . fega_cement          1e-5
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
     feh2_chemicals    . fega_chemicals       1e-5
+    feelhth_chemicals . feelwlth_chemicals   1e-5
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     feh2_steel        . fega_steel           1e-5
 $endif.cm_subsec_model_steel
     feh2_otherInd     . fega_otherInd        1e-5
-    feelhth_chemicals . feelwlth_chemicals   1e-5
     feelhth_otherInd  . feelwlth_otherInd    1e-5
   /
 ;
@@ -439,9 +447,11 @@ pm_calibrate_eff_scale("feelhth_otherInd","fega_otherInd","width")       = 15;
 pm_calibrate_eff_scale("feh2_cement","fega_cement","level")              = 1.1;
 pm_calibrate_eff_scale("feh2_cement","fega_cement","midperiod")          = 2050;
 pm_calibrate_eff_scale("feh2_cement","fega_cement","width")              = 22;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
 pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","level")        = 1.1;
 pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","midperiod")    = 2050;
 pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","width")        = 22;
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 pm_calibrate_eff_scale("feh2_steel","fega_steel","level")                = 1.1;
 pm_calibrate_eff_scale("feh2_steel","fega_steel","midperiod")            = 2050;
@@ -487,20 +497,24 @@ p37_CESMkup(ttot,regi,in) = 0;
 *' Default industry mark-up cost without budget effect:
 *' mark-up cost on electrification (hth_electricity inputs), to reach > 1 MRS to
 *' gas/liquids as technical efficiency gains from electrification
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
 pm_tau_ces_tax(t,regi,"feelhth_chemicals")    = 100 * sm_TWa_2_MWh * 1e-12;
-pm_tau_ces_tax(t,regi,"feelhth_otherInd")     = 300 * sm_TWa_2_MWh * 1e-12;
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 pm_tau_ces_tax(t,regi,"feel_steel_secondary") = 100 * sm_TWa_2_MWh * 1e-12;
 $endif.cm_subsec_model_steel
+pm_tau_ces_tax(t,regi,"feelhth_otherInd")     = 300 * sm_TWa_2_MWh * 1e-12;
 
 *' mark-up cost on H2 inputs, to reach MRS around 1 to gas/liquids as similar
 *' technical efficiency
+pm_tau_ces_tax(t,regi,"feh2_cement")    = 100 * sm_TWa_2_MWh * 1e-12;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
 pm_tau_ces_tax(t,regi,"feh2_chemicals") = 100 * sm_TWa_2_MWh * 1e-12;
-pm_tau_ces_tax(t,regi,"feh2_otherInd")  =  50 * sm_TWa_2_MWh * 1e-12;
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 pm_tau_ces_tax(t,regi,"feh2_steel")     =  50 * sm_TWa_2_MWh * 1e-12;
 $endif.cm_subsec_model_steel
-pm_tau_ces_tax(t,regi,"feh2_cement")    = 100 * sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feh2_otherInd")  =  50 * sm_TWa_2_MWh * 1e-12;
 
 
 *' overwrite or extent CES markup cost if specified by switch
@@ -632,6 +646,8 @@ $endIf.cm_wasteIncinerationCCSshare
 *** ---------------------------------------------------------------------------
 
 p37_specMatDem(mat,all_te,opmoPrc) = 0.;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_specMatDem("dripell","idr","ng")        = 1.44;                                           !! Source: POSTED / Average of Devlin2022, Otto2017, Volg2018, Rechberge2020
 p37_specMatDem("dripell","idr","h2")        = 1.44;                                           !! Source: POSTED / Copy from ng opMode
@@ -650,6 +666,11 @@ $endif.cm_subsec_model_steel
 
 !!TODO: Think about accounting of integrated plants / casting & rolling
 p37_specFeDemTarget(all_enty,all_te,opmoPrc) = 0.;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+!! TODO Qianzhi
+p37_specFeDemTarget("feh2s","chemOld","standard")  = 2.23 / (sm_TWa_2_MWh/sm_giga_2_non);    !!
+p37_specFeDemTarget("feh2s","chemNew","standard")  = 2.23 / (sm_TWa_2_MWh/sm_giga_2_non);    !!
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 
 !! numbers are given in MWh/t and converted to Remind units TWa/Gt with the factors after that (divided by 8.76)
@@ -692,6 +713,14 @@ $endif.cm_subsec_model_steel
 *** --------------------------------
 
 p37_mat2ue(all_enty,all_in) = 0.;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+!! TODO Qianzhi: refine
+!! ue_chemicals is measured in value_added (trn$2005), whilst olanadar is measured in Gt
+!! So this is the price of olandar in trn$2005/Gt = $2005/kg
+!! In this first dummy step, the process replaces all of chemistry, so olandar is only a dummy product reprenting the whole chemicals sector. It chould be much more expensive than olefines, since lots of the chemicals sector is much less energy intensive but has higher value added than olefines production
+!! quick back-of-the envelope calculation: globall 5 trn value added, 2.4 bln tonnes petrochemicals --> maybe 3.3 bn tonnes total chemicals --> ratio is 1.5
+p37_mat2ue("olandar","ue_chemicals") = 1.5;
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_mat2ue("sesteel","ue_steel_secondary") = 1.;
 p37_mat2ue("prsteel","ue_steel_primary")   = 1.;
@@ -757,9 +786,21 @@ $endif.cm_subsec_model_steel
 *** --------------------------------
 
 pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
-pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) = 0.;
-p37_matFlowHist(tall,all_regi,mat) = 0.;
+pm_outflowPrcIni(all_regi,all_te,opmoPrc) = 0.;
 if (cm_startyear eq 2005,
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+!! TODO Qianzhi
+$endif.cm_subsec_model_chemicals
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+  pm_outflowPrcIni(regi,"bof","unheated") = pm_fedemand("2005",regi,"ue_steel_primary");
+  pm_outflowPrcIni(regi,"bf","standard") = p37_specMatDem("pigiron","bof","unheated") * pm_outflowPrcIni(regi,"bof","unheated");
+  pm_outflowPrcIni(regi,"eaf","sec") = pm_fedemand("2005",regi,"ue_steel_secondary");
+  pm_outflowPrcIni(regi,"eaf","pri") = 0.;
+  pm_outflowPrcIni(regi,"idr","ng") = 0.;
+  pm_outflowPrcIni(regi,"idr","h2") = 0.;
+  pm_outflowPrcIni(regi,"bfcc","standard") = 0.;
+  pm_outflowPrcIni(regi,"idrcc","ng") = 0.;
+
   loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
 
     !! 2nd stage tech
@@ -808,6 +849,7 @@ if (cm_startyear eq 2005,
     );
 
   );
+$endif.cm_subsec_model_steel
 
   !! loop over other years and blend
   loop((entyFeStat(all_enty), tePrc(all_te), opmoPrc),

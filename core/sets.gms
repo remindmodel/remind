@@ -326,7 +326,7 @@ all_te          "all energy technologies, including from modules"
         seceaf       "Route: Scrap-loaded EAF"
         pcc          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
         pco          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
-*** transport technologies for deleted realization complex of module 35_transport 
+*** transport technologies for deleted realization complex of module 35_transport
 *** only here to make it possible to process input data that still includes data for these obsolete transport technologies
         apCarPeT        "outdated transport technology"
         apCarDiT        "outdated transport technology"
@@ -867,7 +867,7 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
        UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,
        VIR,VNM,VUT,WLF,WSM,YEM,ZAF,ZMB,ZWE /
 
-   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
+   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country"
          /
        EUR . EUR
        CHA . CHA
@@ -1240,6 +1240,10 @@ te(all_te)              "energy technologies"
         termX_lng       "Export terminals for LNG (liquification)"
         termM_lng       "Import terminals for LNG (regasification)"
         vess_lng        "Vessels transporting LNG"
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+        chemOld
+        chemNew
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
         idr             "Iron direct reduction"
         eaf             "Electric-arc furnace"
@@ -1896,7 +1900,9 @@ MacSector(all_enty)  "sectors for which mac curves exist. Some MACs are used for
         n2owaste   "waste (domestic sewage)"
         co2luc     "land use change"
         co2cement  "cement production (only process emissions)"
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
         co2chemicals
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
         co2steel
 $endif.cm_subsec_model_steel
@@ -2689,7 +2695,9 @@ emiMac2mac(all_enty,all_enty)            "mapping of emission sources to MACs - 
         co2luc.co2luc
         co2cement_process. co2cement   "process emissions are captured by kiln CCS too"
         co2cement    . co2cement
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
         co2chemicals . co2chemicals
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
         co2steel     . co2steel
 $endif.cm_subsec_model_steel
@@ -2708,7 +2716,10 @@ emiMac2sector(all_enty,emi_sectors,sector_types,all_enty)            "mapping of
         (n2ofertin, n2ofertcr, n2ofertsom, n2oanwstc, n2oanwstm, n2oanwstp, n2oagwaste).agriculture.process.n2o
         (n2oforest, n2osavan, n2opeatland).lulucf.process.n2o
 
-        (co2cement_process,co2cement,co2chemicals).indst.process.co2
+        (co2cement_process,co2cement).indst.process.co2
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
+        co2chemicals.indst.process.co2
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
         co2steel.indst.process.co2
 $endif.cm_subsec_model_steel
