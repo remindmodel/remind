@@ -317,7 +317,11 @@ $setglobal biomass  magpie_40     !! def = magpie_40
 *' * (MOFEX)        : contains the standalone version of MOFEX (Model Of Fossil EXtraction), which minimizes the discounted extraction and trade costs of fossils while balancing trade for each time step. Not to be run within a REMIND run but instead through the standalone architecture or soft-linked with REMIND (not yet implemented)
 $setglobal fossil  grades2poly        !! def = grades2poly
 *'---------------------    32_power    ----------------------------------------
-*' 
+*' Warning: vm_capDistr appears only in "core" even though it is supposed to be an interface!
+*' Warning: vm_demSeOth appears only in "core" even though it is supposed to be an interface!
+*' Warning: vm_prodSeOth appears only in "core" even though it is supposed to be an interface!
+*' Warning: pm_boundCapCCS appears only in "core" even though it is supposed to be an interface!
+*' Warning: pm_cap0 appears only in "initialCap" even though it is supposed to be an interface!
 *' * (IntC)      :    Power sector formulation with Integration Cost (IntC) markups and curtailment for VRE integration - linearly increasing with VRE share -, and fixed capacity factors for dispatchable power plants
 $setglobal power  IntC        !! def = IntC
 *'---------------------    33_CDR       ----------------------------------------

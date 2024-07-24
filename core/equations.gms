@@ -156,12 +156,12 @@ q_balSe(t,regi,enty2)$( entySe(enty2) AND (NOT (sameas(enty2,"seel"))) )..
       - vm_emiMacSector(t,regi,"ch4wstl")
       )
     )$( sameas(enty2,"segabio") AND t.val gt 2005 )
-  + sum(prodSeOth2te(enty2,te), vm_prodSeOth(t,regi,enty2,te) ) !! *** RLDC removal
+  + sum(prodSeOth2te(enty2,te), v_prodSeOth(t,regi,enty2,te) ) !! *** RLDC removal
   + vm_Mport(t,regi,enty2)
   =e=
     sum(se2fe(enty2,enty3,te), vm_demSe(t,regi,enty2,enty3,te))
   + sum(se2se(enty2,enty3,te), vm_demSe(t,regi,enty2,enty3,te))
-  + sum(demSeOth2te(enty2,te), vm_demSeOth(t,regi,enty2,te) ) !! *** RLDC removal
+  + sum(demSeOth2te(enty2,te), v_demSeOth(t,regi,enty2,te) ) !! *** RLDC removal
   + vm_Xport(t,regi,enty2)
 ;
 
@@ -266,7 +266,7 @@ q_limitCapSe(t,regi,pe2se(enty,enty2,te))..
   )$(NOT teReNoBio(te))
   +
   sum(teRe2rlfDetail(te,rlf),
-    pm_dataren(regi,"nur",rlf,te) * vm_capFac(t,regi,te) * vm_capDistr(t,regi,te,rlf)
+    pm_dataren(regi,"nur",rlf,te) * vm_capFac(t,regi,te) * v_capDistr(t,regi,te,rlf)
   )$(teReNoBio(te))
 ;
 
@@ -324,7 +324,7 @@ q_cap(ttot,regi,te2rlf(te,rlf))$(ttot.val ge cm_startyear)..
 
 
 q_capDistr(t,regi,teReNoBio(te))..
-    sum(teRe2rlfDetail(te,rlf), vm_capDistr(t,regi,te,rlf) )
+    sum(teRe2rlfDetail(te,rlf), v_capDistr(t,regi,te,rlf) )
     =e=
     vm_cap(t,regi,te,"1")
 ;
@@ -395,9 +395,12 @@ q_capCumNet(t0,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4))..
 qm_fuel2pe(t,regi,peRicardian(enty))..
   vm_prodPe(t,regi,enty)
   =e=
-  sum(pe2rlf(enty,rlf2),vm_fuExtr(t,regi,enty,rlf2))-(vm_Xport(t,regi,enty)-(1-pm_costsPEtradeMp(regi,enty))*vm_Mport(t,regi,enty))$(tradePe(enty)) -
-                      sum(pe2rlf(enty2,rlf2), (pm_fuExtrOwnCons(regi, enty, enty2) * vm_fuExtr(t,regi,enty2,rlf2))$(pm_fuExtrOwnCons(regi, enty, enty2) gt 0));
-
+  sum(pe2rlf(enty,rlf2), vm_fuExtr(t,regi,enty,rlf2))
+  - (vm_Xport(t,regi,enty) - (1-pm_costsPEtradeMp(regi,enty)) * vm_Mport(t,regi,enty))$(tradePe(enty))
+  - sum(pe2rlf(enty2,rlf2), 
+      (pm_fuExtrOwnCons(regi, enty, enty2) * vm_fuExtr(t,regi,enty2,rlf2))$(pm_fuExtrOwnCons(regi, enty, enty2) gt 0)
+    )
+;
 ***---------------------------------------------------------------------------
 *' Definition of resource constraints for renewable energy types:
 ***---------------------------------------------------------------------------
@@ -405,7 +408,7 @@ qm_fuel2pe(t,regi,peRicardian(enty))..
 q_limitProd(t,regi,teRe2rlfDetail(teReNoBio(te),rlf))..
   pm_dataren(regi,"maxprod",rlf,te)
   =g=
-  pm_dataren(regi,"nur",rlf,te) * vm_capFac(t,regi,te) * vm_capDistr(t,regi,te,rlf);
+  pm_dataren(regi,"nur",rlf,te) * vm_capFac(t,regi,te) * v_capDistr(t,regi,te,rlf);
 
 ***-----------------------------------------------------------------------------
 *' Definition of competition for geographical potential for renewable energy types:
@@ -414,32 +417,34 @@ q_limitProd(t,regi,teRe2rlfDetail(teReNoBio(te),rlf))..
 q_limitGeopot(t,regi,peReComp(enty),rlf)..
   p_datapot(regi,"limitGeopot",rlf,enty)
   =g=
-  sum(te$teReComp2pe(enty,te,rlf), (vm_capDistr(t,regi,te,rlf) / (pm_data(regi,"luse",te)/1000)));
+  sum(te$teReComp2pe(enty,te,rlf), (v_capDistr(t,regi,te,rlf) / (pm_data(regi,"luse",te)/1000)));
 
-***  learning curve for investment costs
-***  deactivate learning for tech_stat 4 technologies before 2025 as they are not built before
+***---------------------------------------------------------------------------
+*' Learning curve for investment costs:
+*' (deactivate learning for tech_stat 4 technologies before 2025 as they are not built before)
+***---------------------------------------------------------------------------
 q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND t.val le 2020)) ..
   vm_costTeCapital(t,regi,teLearn)
   =e=
-***  special treatment for first time steps: using global estimates better
-***  matches historic values
-    ( fm_dataglob("learnMult_wFC",teLearn)
+*** floor costs defined regionally
+  pm_data(regi,"floorcost",teLearn)
+*** until 2005: using global estimates better matches historic values
+  + ( fm_dataglob("learnMult_wFC",teLearn)
     * ( ( sum(regi2, vm_capCum(t,regi2,teLearn))
           + pm_capCumForeign(t,regi,teLearn)
         )
         ** fm_dataglob("learnExp_wFC",teLearn)
       )
     )$( t.val le 2005 )
-***  special treatment for 2010, 2015: start divergence of regional values by using a
-***  t-split of global 2005 to regional 2020 in order to phase-in the observed 2020 regional
-***  variation from input-data
-  + ( (2020 - t.val)/15 * fm_dataglob("learnMult_wFC",teLearn)
+*** 2005 to 2020: linear transition from global 2005 to regional 2020
+*** to phase-in the observed 2020 regional variation from input-data
+  + ( (2020 - t.val) / (2020-2015) * fm_dataglob("learnMult_wFC",teLearn)
       * ( sum(regi2, vm_capCum(t,regi2,teLearn))
         + pm_capCumForeign(t,regi,teLearn)
         )
         ** fm_dataglob("learnExp_wFC",teLearn)
 
-    + (t.val - 2005)/15 * pm_data(regi,"learnMult_wFC",teLearn)
+    + (t.val - 2005) / (2020-2015) * pm_data(regi,"learnMult_wFC",teLearn)
       * ( sum(regi2, vm_capCum(t,regi2,teLearn))
         + pm_capCumForeign(t,regi,teLearn)
         )
@@ -447,14 +452,14 @@ q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND
     )$( (t.val gt 2005) AND (t.val lt 2020) )
 
 $ifthen.floorscen %cm_floorCostScen% == "default"
-***  assuming linear convergence of regional learning curves to global values until 2050
-  + ( (pm_ttot_val(t) - 2020) / 30 * fm_dataglob("learnMult_wFC",teLearn)
+*** 2020 to 2050: assuming linear convergence of regional learning curves to global values
+  + ( (pm_ttot_val(t) - 2020) / (2050-2020) * fm_dataglob("learnMult_wFC",teLearn)
     * ( sum(regi2, vm_capCum(t,regi2,teLearn))
       + pm_capCumForeign(t,regi,teLearn)
       )
       ** fm_dataglob("learnExp_wFC",teLearn)
 
-    + (2050 - pm_ttot_val(t)) / 30 * pm_data(regi,"learnMult_wFC",teLearn)
+    + (2050 - pm_ttot_val(t)) / (2050-2020) * pm_data(regi,"learnMult_wFC",teLearn)
     * ( sum(regi2, vm_capCum(t,regi2,teLearn))
       + pm_capCumForeign(t,regi,teLearn)
       )
@@ -481,15 +486,12 @@ $ifthen.floorscen %cm_floorCostScen% == "techtrans"
 $endif.floorscen
 
 $ifthen.floorscen %cm_floorCostScen% == "default"
-*** globally harmonized costs after 2050
+*** after 2050: globally harmonized costs
   + ( fm_dataglob("learnMult_wFC",teLearn)
      * (sum(regi2, vm_capCum(t,regi2,teLearn)) + pm_capCumForeign(t,regi,teLearn) )
        **(fm_dataglob("learnExp_wFC",teLearn))
 	)$(t.val gt 2050)
 $endif.floorscen
-
-***  floor costs
-  + pm_data(regi,"floorcost",teLearn)
 ;
 
 

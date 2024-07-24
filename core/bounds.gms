@@ -43,16 +43,16 @@ loop(se2se(enty,enty2,te),
 loop(regi,
   loop(teRe2rlfDetail(te,rlf),
     if( (pm_dataren(regi,"maxprod",rlf,te) gt 0),
-        vm_capDistr.lo(t,regi,te,rlf)$(t.val gt 2011) = 1e-8;
+        v_capDistr.lo(t,regi,te,rlf)$(t.val gt 2011) = 1e-8;
 *cb* make sure that grade distribution in early time steps with capacity fixing is close to optimal one assumed for vm_capFac calibration, divide by p_aux_capacityFactorHistOverREMIND to correct for deviation of REMIND capacity factors from historic capacity factors
-      vm_capDistr.lo("2015",regi,te,rlf) = 0.90 / max(1, p_aux_capacityFactorHistOverREMIND(regi,te)) * p_aux_capThisGrade(regi,te,rlf);
-      vm_capDistr.lo("2020",regi,te,rlf) = 0.90 / max(1, p_aux_capacityFactorHistOverREMIND(regi,te)) * p_aux_capThisGrade(regi,te,rlf);
+      v_capDistr.lo("2015",regi,te,rlf) = 0.90 / max(1, p_aux_capacityFactorHistOverREMIND(regi,te)) * p_aux_capThisGrade(regi,te,rlf);
+      v_capDistr.lo("2020",regi,te,rlf) = 0.90 / max(1, p_aux_capacityFactorHistOverREMIND(regi,te)) * p_aux_capThisGrade(regi,te,rlf);
     );
   );
 );
 
 *' Make sure no grades > 9 are used. Only cosmetic to avoid entries in lst file
-vm_capDistr.fx(t,regi,te,rlf)$(rlf.val gt 9) = 0;
+v_capDistr.fx(t,regi,te,rlf)$(rlf.val gt 9) = 0;
 
 *' No battery storage in 2010:
 vm_cap.up("2010",regi,teStor,"1") = 0;
@@ -404,13 +404,13 @@ $endif
 *** -------------------------------------------------------------------------------------------------------------
 
 if ( (c_ccsinjecratescen gt 0) AND (NOT cm_emiscen eq 1),
-  vm_co2CCS.lo(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = pm_boundCapCCS(t,regi,"low")$(t.val le 2030) * s_MtCO2_2_GtC;
-  vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = (pm_boundCapCCS(t,regi,"low")$(t.val le 2030) + (pm_boundCapCCS(t,regi,"up")$(t.val le 2030) - pm_boundCapCCS(t,regi,"low")$(t.val le 2030)) * c_fracRealfromAnnouncedCCScap2030) * s_MtCO2_2_GtC;
+  vm_co2CCS.lo(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = p_boundCapCCS(t,regi,"low")$(t.val le 2030) * s_MtCO2_2_GtC;
+  vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = (p_boundCapCCS(t,regi,"low")$(t.val le 2030) + (p_boundCapCCS(t,regi,"up")$(t.val le 2030) - p_boundCapCCS(t,regi,"low")$(t.val le 2030)) * c_fracRealfromAnnouncedCCScap2030) * s_MtCO2_2_GtC;
 );
 
 loop(regi,
   loop(t$(t.val le 2030),
-    if( ( pm_boundCapCCS(t,regi,"up") eq 0),
+    if( ( p_boundCapCCS(t,regi,"up") eq 0),
       vm_cap.fx(t,regi,teCCS,rlf) = 0;
     );
   );
@@ -447,7 +447,7 @@ $if  %c_SSP_forcing_adjust% == "forcing_SSP1"    vm_deltaCap.up(t,regi,"coalgas"
 ***Fixing h2curt value to zero to avoid the model to generate SE out of nothing.
 ***Models that have additional se production channels should release this variable (eg. RLDC power module).
 loop(prodSeOth2te(enty,te),
-  vm_prodSeOth.fx(t,regi,"seh2","h2curt") = 0;
+  v_prodSeOth.fx(t,regi,"seh2","h2curt") = 0;
 );
 
 
