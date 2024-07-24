@@ -353,7 +353,7 @@ $setglobal CCU  on      !! def = on
 *' * (coalPhaseout): [works only with Negishi] global phase-out of new freely-emitting coal conversion, caps all coal routes with the exception of coaltr: coal solids can still expand
 *' * (coalPhaseoutRegional): [works only with Negishi] global phase-out of new freely-emitting coal conversion, caps all coal routes with the exception of coaltr: coal solids can still expand
 *' * (CombLowCandCoalPO): [works only with Negishi] combination of lowCarbonPush and coalPhaseout
-*' * (NDC): Technology targets for 2030 for spv,wind,tnrs.
+*' * (NDC): Technology targets for 2030 for spv,windon,tnrs.
 *' * (NPi): Reference technology targets, mostly already enacted (N)ational (P)olicies (i)mplemented, mostly for 2020
 *' * (EVmandates): mandate for electric vehicles - used for UBA project
 $setglobal techpol  none           !! def = none
@@ -1510,8 +1510,8 @@ $setglobal cm_eni  off  !! def = off
 $setglobal cm_enb  off  !! def = off
 ***  cm_incolearn "change floor investment cost value"
 ***   Example on how to use:
-***     cm_incolearn  "wind=1600,spv=5160,csp=9500"
-***       floor investment costs from learning set to 17000 for EVs; and 1600, 5160 and 9500 for wind, solar pv and solar csp respectively.
+***     cm_incolearn  "windon=1600,spv=5160,csp=9500"
+***       floor investment costs from learning set to 17000 for EVs; and 1600, 5160 and 9500 for windon, solar pv and solar csp respectively.
 $setglobal cm_incolearn  off !! def = off
 *** cm_storageFactor "scale curtailment and storage requirements. [factor]"
 ***   def <- "off" = no change for curtailment and storage requirements;
@@ -1535,11 +1535,11 @@ $setglobal cm_adj_coeff  off
 $setglobal cm_adj_coeff_cont  off
 *** cm_adj_seed_multiplier "rescale adjustment cost seed value relative to default value. [factor]. Smaller means slower scale-up."
 ***   def <- "off" = use default adj seed values.
-***   or list of techs to change adj_seed value by a multiplication factor. (ex. "spv 0.5, storspv 0.5, wind 0.25")
+***   or list of techs to change adj_seed value by a multiplication factor. (ex. "spv 0.5, storspv 0.5, windon 0.25")
 $setglobal cm_adj_seed_multiplier  off
 *** cm_adj_coeff_multiplier "rescale adjustment cost coefficient value relative to default value. [factor]. Higher means higher adjustment cost."
 ***   def <- "off" = use default adj coefficient values.
-***   or list of techs to change adj_cost value by a multiplication factor. (ex. "spv 2, storspv 2, wind 4")
+***   or list of techs to change adj_cost value by a multiplication factor. (ex. "spv 2, storspv 2, windon 4")
 *** A note on adjustment cost changes: A common practice of changing the adjustment cost parameterization is by using the same factor to
 *** increase the adjustment cost coefficent and to decrease the adjustment cost seed value at the same time.
 $setglobal cm_adj_coeff_multiplier  off
@@ -1550,7 +1550,7 @@ $setglobal cm_adj_coeff_multiplier  off
 $setglobal cm_inco0Factor  off !! def = off
 *** cm_inco0RegiFactor "change investment costs regionalized technology values. [factor]."
 *' *  def <- "off" = use default p_inco0 values.
-*' *  or list of techs with respective factor to change p_inco0 value by a multiplication factor. (ex. "wind 0.33, spv 0.33" makes investment costs for wind and spv 3 times cheaper)
+*' *  or list of techs with respective factor to change p_inco0 value by a multiplication factor. (ex. "windon 0.33, spv 0.33" makes investment costs for windon and spv 3 times cheaper)
 *' *  (note: if %cm_techcosts% == "GLO", switch will not work for policy runs, i.e. cm_startyear > 2005, for pc, ngt and ngcc as this gets overwritten in 05_initialCap module)
 $setglobal cm_inco0RegiFactor  off  !! def = off
 *** cm_CCS_markup "multiplicative factor for CSS cost markup"
@@ -1661,11 +1661,9 @@ $setglobal cm_feedstockEmiUnknownFate  off      !! def = off
 *** cm_feShareLimits <-   "off"  # def <- "off", limit the electricity final energy share to be in line with the industry maximum electrification levels (60% by 2050 in the electric scenario), 10% lower (=50% in 2050) in an increased efficiency World, or 20% lower (40% in 2050) in an incumbents future (incumbents). The incumbents scenario also limits a minimal coverage of buildings heat provided by gas and liquids (25% by 2050).
 $setglobal cm_feShareLimits  off  !! def = off
 *** VRE potential switches
-*** rescaling factor for sensitivity analysis on renewable potentials, this factor rescales all grades of a renewable technology which have not been used by 2020 (to avoid infeasiblities swith existing capacities)
-*** (ex. "spv 0.5, wind 0.75" rescales solar and wind potential by the respective factors)
 *** rescaling factor for sensitivity analysis on renewable potentials.
 *** This factor rescales all grades of a renewable technology which have not been used by 2020 (to avoid infeasiblities with existing capacities)
-*** (example: "spv 0.5, wind 0.75" rescales solar and wind potential by the respective factors)
+*** (example: "spv 0.5, windon 0.75" rescales solar and wind potential by the respective factors)
 $setGlobal c_VREPot_Factor  off  !! def = off
 *** FE tax switches, allows scaling up or down FE taxes on all sectors, energy carriers flexibly
 ***   cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
@@ -1685,22 +1683,23 @@ $setGlobal cm_FEtax_trajectory_rel  off !! def = off
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "DEU -0.2, EU27_regi -0.4".
 $setGLobal c_agricult_base_shift off !! def off
-*** wind offshore switch
 *** windoffshore-todo
 *** x get rid of cm_wind_offshore conditions
 *** x search "wind" and replace all references by "windon"
 *** x same with storwind, gridwind
 *** x generisdata_nur_ren need to be updated
+*** x check pewin
 *** - merge pm_histCap_windoff.cs3r into pm_histCap, same with p_histCapFac_windoff
 *** - search for $include to check which mrremind files need modification
 *** - update mrremind to give windon instead of wind: f_cf.cs3r, f40_NDC+REN21+CHN_NUC.cs3r
 *** - remove wind in all_te set
 *** - check vm_capFac pm_cf.*win
 *** - *CG* set wind offshore, storage and grid to be the same as wind onshore (later should be integrated into input data) main difference between onshore and offshore is the difference in f32_factorStorage
-*** - 
+*** - f32_storageCap
 *** cm_wind_offshore  1, wind energy is represented by "wind" and "windoff", where "wind" means wind onshore. Later this will be the default and the name "wind" will be made to change to windon
 *** cm_wind_offshore  0, means wind energy is only represented by "wind", which is a mixture of both wind onshore and wind offshore
-$setglobal cm_wind_offshore  1      !! def = 1
+*** $setglobal cm_wind_offshore  1      !! def = 1
+***
 ***  cm_INCONV_PENALTY  on     !! def = on
 *** *RP* 2012-03-06 Flag to turn on inconvenience penalties, e.g. for air pollution
 $setglobal cm_INCONV_PENALTY  on         !! def = on  !! regexp = off|on
