@@ -112,8 +112,13 @@ Parameter
   p47_implicitQttyTargetTaxRescale_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) "rescale factor for current implicit quantity target tax after the given iteration"    
   p47_implicitQttyTargetCurrent_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)    "current iteration total value for an specific quantity target per iteration"   
 
+$ifThen.cm_implicitQttyTargetType "%cm_implicitQttyTargetType%" == "config"
   pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)  "quantity target [absolute: TWa or GtC; or percentage: 0.1]"  / %cm_implicitQttyTarget% /
-
+$else.cm_implicitQttyTargetType
+  pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)  "quantity target [absolute: TWa or GtC; or percentage: 0.1]"
+  p47_implicitQttyTargetScenario(qttyTargetScenario,ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) "hard-coded quantity scenarios types [absolute: TWa or GtC; or percentage: 0.1]"
+$endif.cm_implicitQttyTargetType
+ 
   pm_implicitQttyTarget_isLimited(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)  "1 (one) if there is a hard bound on the model that does not allow the tax to change further the quantity"
 
   p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) "initial year of quantity target for a given region [year]"

@@ -1320,15 +1320,23 @@ $setGlobal cm_CCSRegiPol     off   !! def = off
 $setGlobal cm_vehiclesSubsidies  off !! def = off
 *** cm_implicitQttyTarget - Define quantity target for primary, secondary, final energy or CCS (PE, SE and FE in TWa, or CCS in Mt CO2) per target group (total, biomass, fossil, VRE, renewables, synthetic, ...).
 ***   The target is achieved by an endogenous calculated markup in the form or a tax or subsidy in between iterations.
-***   Example on how to use:
+***   If cm_implicitQttyTargetType is set to "config", the quantity targets will be defined directly in this switch. Check below for examples on how to do this.
+***   If cm_implicitQttyTargetType is set to "scenario", you should define the list of pre-defined scenarios hard-coded in module '47_regipol' that should be active for the current run (this avoids reaching the 255 characters limit in more complex definitions).  
+***   Example on how to use the switch with cm_implicitQttyTargetType = config:
 ***     cm_implicitQttyTarget  "2030.EU27_regi.tax.t.FE.all 1.03263"
 ***       Enforce a tax (tax) that guarantees that the total (t=total) Final Energy (FE.all) in 2030 (2030) is at most the Final energy target in the Fit For 55 regulation in the European Union (EU27_regi) (1.03263 Twa).
 ***       The p47_implicitQttyTargetTax parameter will contain the tax necessary to achieve that goal. (777.8 Mtoe = 777.8 * 1e6 toe = 777.8 * 1e6 * 41.868 GJ = 777.8 * 1e6 * 41.868 * 1e-9 EJ = 777.8 * 1e6 * 41.868 * 1e-9 * 0.03171 TWa = 1.03263 TWa)
-***     cm_implicitQttyTarget to "2050.GLO.sub.s.FE.electricity 0.8". The p47_implicitQttyTargetTax parameter will contain the subsidy necessary to achieve that goal.
+***     cm_implicitQttyTarget "2050.GLO.sub.s.FE.electricity 0.8". The p47_implicitQttyTargetTax parameter will contain the subsidy necessary to achieve that goal.
 ***       Enforce a subsidy (sub) that guarantees a minimum share (s) of electricity in final energy (FE.electricity) equal to 80% (0.8) from 2050 (2050) onward in all World (GLO) regions.
 ***       The p47_implicitQttyTargetTax parameter will contain the subsidy necessary to achieve that goal.
 ***     To limit CCS to 8 GtCO2 and BECCS to 5 GtCO2, use "2050.GLO.tax.t.CCS.all 8000, 2050.GLO.tax.t.CCS.biomass 5000"
+***   Example on how to use the switch with cm_implicitQttyTargetType = scenario:
+***     cm_implicitQttyTarget  "EU27_RpEUEff,EU27_bio4"
+***       "EU27_RpEUEff" -> Enforce a tax that guarantees total FE will be lower or equal to the RePowerEU target for 2030.
+***       "EU27_bio4" -> Enforce a tax that garantees that EU27 biomass use will be lower or equal to the 4EJ in 20235 and 2050.
 $setGlobal cm_implicitQttyTarget  off !! def = off
+***  cm_implicitQttyTargetType - Define if the quantity target switch cm_implicitQttyTarget contains explicit values for defining the targets (config) or if it contains scenario names to reflect hard-coded options (scenario).
+$setGlobal cm_implicitQttyTargetType  config !! def = config !! regexp = config|scenario
 *** cm_loadFromGDX_implicitQttyTargetTax "load p47_implicitQttyTargetTax values from gdx for first iteration. Usefull for policy runs."
 $setGlobal cm_loadFromGDX_implicitQttyTargetTax  off  !! def = off  !! regexp = off|on
 *** cm_implicitQttyTarget_delay "delay the start of the quantity target algorithm either to:
