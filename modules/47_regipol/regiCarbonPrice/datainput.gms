@@ -13,11 +13,6 @@ option pm_taxemiMkt_iteration:3:3:1;
 
 *** initialize regipol target deviation parameter
 pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
-$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
-p47_implicitQttyTargetTaxRescale_iter("1", "2030",ext_regi,qttyTarget,qttyTargetGroup) = 0;
-p47_implicitQttyTargetReferenceIteration(ext_regi) = 0;
-p47_implicitQttyTargetIterationCount(ext_regi) = 0;
-$endIf.cm_implicitQttyTarget
 
 *** RR this should be replaced as soon as non-energy is treated endogenously in the model
 *** non-energy use values are calculated by taking the time path as contained in pm_fe_nechem.cs4r (where eg the 2030 value for EU27 is 91.6% of the 2020 value) and rescaling that with historic non-energy values from Eurostat
@@ -129,8 +124,36 @@ $ENDIF.emiMkt
 *** Implicit tax/subsidy necessary to achieve quantity target for primary, secondary, final energy and/or CCS
 ***---------------------------------------------------------------------------
 
-*** intialize energy type bound implicit target parameters
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
+
+*** assign cm_implicitQttyTarget values if not defined yet
+$ifThen.cm_implicitQttyTargetType "%cm_implicitQttyTargetType%" == "scenario"
+*** define quantity target scenario values
+  p47_implicitQttyTargetScenario("EU27_eedEff" ,"2030","EU27_regi","tax","t","FE_wo_b_wo_n_e","all") = 1.1235;
+  p47_implicitQttyTargetScenario("EU27_ff55Eff","2030","EU27_regi","tax","t","FE_wo_b_wo_n_e","all") = 1.0452;
+  p47_implicitQttyTargetScenario("EU27_RpEUEff","2030","EU27_regi","tax","t","FE_wo_b_wo_n_e","all") = 0.9960;
+
+  p47_implicitQttyTargetScenario("EU27_bio4"  ,"2035","EU27_regi","tax","t","PE","biomass") = 0.19;
+  p47_implicitQttyTargetScenario("EU27_bio4"  ,"2050","EU27_regi","tax","t","PE","biomass") = 0.126667;
+  p47_implicitQttyTargetScenario("EU27_bio7p5",t     ,"EU27_regi","tax","t","PE","biomass")$((t.val ge 2035) AND (t.val le 2050)) = 0.237825;
+  p47_implicitQttyTargetScenario("EU27_bio12" ,t     ,"EU27_regi","tax","t","PE","biomass")$((t.val ge 2035) AND (t.val le 2050)) = 0.38;
+
+  p47_implicitQttyTargetScenario("EU27_limVRE" ,"2025","EU27_regi","tax","t","PE","wind")  = 0.072;
+  p47_implicitQttyTargetScenario("EU27_limVRE" ,"2050","EU27_regi","tax","t","PE","wind")  = 0.201;
+  p47_implicitQttyTargetScenario("EU27_limVRE" ,"2025","EU27_regi","tax","t","PE","solar") = 0.04;
+  p47_implicitQttyTargetScenario("EU27_limVRE" ,"2050","EU27_regi","tax","t","PE","solar") = 0.168;
+*** assign active scenarios to the current run
+loop(qttyTargetActiveScenario,
+  pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$p47_implicitQttyTargetScenario(qttyTargetActiveScenario,ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetScenario(qttyTargetActiveScenario,ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup);
+);
+display pm_implicitQttyTarget;
+$endif.cm_implicitQttyTargetType
+
+*** intialize auxiliar parameters
+  p47_implicitQttyTargetTaxRescale_iter("1", "2030",ext_regi,qttyTarget,qttyTargetGroup) = 0;
+  p47_implicitQttyTargetReferenceIteration(ext_regi) = 0;
+  p47_implicitQttyTargetIterationCount(ext_regi) = 0;
+*** intialize energy type bound implicit target parameters
   pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"CCS",qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"CCS",qttyTargetGroup) = pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"CCS",qttyTargetGroup)/(sm_c_2_co2*1000);
 	p47_implicitQttyTargetTax0(t,all_regi) = 0;
 $endIf.cm_implicitQttyTarget
