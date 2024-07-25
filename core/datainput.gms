@@ -367,16 +367,17 @@ $endif.REG_techcosts
 
 *** global exponent
 *** parameter calculation for global level, that regional values can gradually converge to
-fm_dataglob("learnExp_wFC",teLearn(te)) = fm_dataglob("inco0",te)/fm_dataglob("incolearn",te) * log(1-fm_dataglob("learn", te))/log(2);
+fm_dataglob("learnExp_woFC",teLearn(te))  = log(1 - fm_dataglob("learn",te)) / log(2);
+*RP* adjust exponent parameter learnExp_woFC to take floor costs into account
+fm_dataglob("learnExp_wFC",teLearn(te))   = fm_dataglob("inco0",te) / fm_dataglob("incolearn",te) * fm_dataglob("learnExp_woFC",te);
 
 *** regional exponent
-pm_data(regi,"learnExp_woFC",teLearn(te))    = log(1-pm_data(regi,"learn", te))/log(2);
-*RP* adjust exponent parameter learnExp_woFC to take floor costs into account
-pm_data(regi,"learnExp_wFC",teLearn(te))     = pm_data(regi,"inco0",te) / pm_data(regi,"incolearn",te) * log(1-pm_data(regi,"learn", te))/log(2);
+pm_data(regi,"learnExp_woFC",teLearn(te)) = log(1 - pm_data(regi,"learn",te)) / log(2);
+pm_data(regi,"learnExp_wFC",teLearn(te))  = pm_data(regi,"inco0",te) / pm_data(regi,"incolearn",te) * pm_data(regi,"learnExp_woFC",te);
 
 *** global factor
 *** parameter calculation for global level, that regional values can gradually converge to
-fm_dataglob("learnMult_wFC",teLearn(te)) = fm_dataglob("incolearn",te) / (fm_dataglob("ccap0",te) ** fm_dataglob("learnExp_wFC", te));
+fm_dataglob("learnMult_wFC",teLearn(te))  = fm_dataglob("incolearn",te) / (fm_dataglob("ccap0",te) ** fm_dataglob("learnExp_wFC", te));
 
 *** regional factor
 *NB* read in vm_capCum(t0,regi,teLearn) from input.gdx to have info available for the recalibration of 2005 investment costs
