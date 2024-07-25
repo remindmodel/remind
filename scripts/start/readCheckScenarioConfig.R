@@ -22,7 +22,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     cfg <- gms::readDefaultConfig(remindPath)
   }
   scenConf <- read.csv2(filename, stringsAsFactors = FALSE, na.strings = "", comment.char = "#",
-                                  strip.white = TRUE, blank.lines.skip = TRUE)
+                                  strip.white = TRUE, blank.lines.skip = TRUE, check.names = FALSE)
   scenConf <- scenConf[! is.na(scenConf[1]), ]
   rownames(scenConf) <- scenConf[, 1]
   scenConf[1] <- NULL
@@ -133,8 +133,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
                           "magpie_empty")
-    # identify MAgPIE switches by "cfg_mag" and add them
-    knownColumnNames <- c(knownColumnNames, grep("cfg_mag", names(scenConf), value = TRUE))
+    # identify MAgPIE switches by "cfg_mag" and "magpie_scen" and add them
+    knownColumnNames <- c(knownColumnNames, grep("cfg_mag|magpie_scen", names(scenConf), value = TRUE))
   }
   unknownColumnNames <- names(scenConf)[! names(scenConf) %in% knownColumnNames]
   if (length(unknownColumnNames) > 0) {

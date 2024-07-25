@@ -375,22 +375,39 @@ for(scen in common){
   rm(cfg)
   cfg_mag$title <- scen
 
-  # configure MAgPIE according to scenarios provided in magpie_scen (scenario needs to be available in scenario_config.cfg)
-  if(!is.null(scenarios_coupled[scen, "magpie_scen"])) {
-    cfg_mag <- setScenario(cfg_mag, c(trimws(unlist(strsplit(scenarios_coupled[scen, "magpie_scen"], split = ",|\\|"))), "coupling"),
-                           scenario_config = file.path(path_magpie, "config", "scenario_config.csv"))
+  # extract magpie scenario_config*.csv and scenario names from coupled config
+  magpieScenarios <- scenarios_coupled[scen, ] %>% select(contains("magpie_scen"))
+
+  # configure MAgPIE selecting scenarios defined in the respective scenario_config*.csv
+  if (nrow(magpieScenarios) > 0) {
+    # for each column in coupled config: set scenarios defined in the
+    for (i in seq_len(ncol(magpieScenarios))) {
+      pathToScenrioConfig <- gsub("magpie_scen=", "", colnames(magpieScenarios)[i])
+      scenarioList <- magpieScenarios[,i]
+      cfg_mag <- setScenario(cfg_mag, trimws(unlist(strsplit(scenarioList, split = ",|\\|"))),
+                             scenario_config = file.path(path_magpie, pathToScenrioConfig))
+    }
   }
 
+  # always select 'coupling' scenario
+  cfg_mag <- setScenario(cfg_mag, "coupling", scenario_config = file.path(path_magpie, "config", "scenario_config.csv"))
+
+  # configure MAgPIE selecting scenarios (predefined in scenario_cofig.csv) and specified in magpie_scen
+  # if(!is.null(scenarios_coupled[scen, "magpie_scen"])) {
+  #   cfg_mag <- setScenario(cfg_mag, c(trimws(unlist(strsplit(scenarios_coupled[scen, "magpie_scen"], split = ",|\\|"))), "coupling"),
+  #                          scenario_config = file.path(path_magpie, "config", "scenario_config.csv"))
+  # }
+
   # extract magpie switches from coupled config
-  scenario_config_MAgPIE_table <- scenarios_coupled %>% select(contains("cfg_mag")) %>% t() %>% as.data.frame()
+  magpieSwitches <- scenarios_coupled %>% select(contains("cfg_mag")) %>% t() %>% as.data.frame()
 
   # configure MAgPIE according to individual switches provided in scenario_config_coupled*.csv
-  if (nrow(scenario_config_MAgPIE_table) > 0) {
+  if (nrow(magpieSwitches) > 0) {
     # remove prefix "cfg_mag." from switch names to yield original MAgPIE names
-    row.names(scenario_config_MAgPIE_table) <- gsub("cfg_mag.", "", row.names(scenario_config_MAgPIE_table))
-    # replace "." with "$" which has been removed by R when reading in the scenarios_coupled
-    row.names(scenario_config_MAgPIE_table) <- gsub("\\.", "$", row.names(scenario_config_MAgPIE_table))
-    cfg_mag <- setScenario(cfg_mag, scen, scenario_config = scenario_config_MAgPIE_table)
+    row.names(magpieSwitches) <- gsub("cfg_mag.", "", row.names(magpieSwitches))
+    # replace "." with "$" which has been removed by R when reading the scenarios_coupled
+    row.names(magpieSwitches) <- gsub("\\.", "$", row.names(magpieSwitches))
+    cfg_mag <- setScenario(cfg_mag, scen, scenario_config = magpieSwitches)
   }
 
   cfg_mag <- check_config(cfg_mag, reference_file=file.path(path_magpie, "config", "default.cfg"),
