@@ -133,6 +133,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
                           "magpie_empty")
+    # identify MAgPIE switches by "cfg_mag" and add them
+    knownColumnNames <- c(knownColumnNames, grep("cfg_mag", names(scenConf), value = TRUE))
   }
   unknownColumnNames <- names(scenConf)[! names(scenConf) %in% knownColumnNames]
   if (length(unknownColumnNames) > 0) {
@@ -187,7 +189,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
         if (testmode) {
           warning("Unknown column names: ", paste(unknownColumnNamesNoComments, collapse = ", "))
         } else if (errorsfound == 0) {
-          message("Do you want to continue and simply ignore them? Y/n")
+          message("Do you want to continue keeping the columns? Y/n")
           userinput <- tolower(gms::getLine())
           if (! userinput %in% c("y", "")) stop("Ok, so let's stop.")
         }

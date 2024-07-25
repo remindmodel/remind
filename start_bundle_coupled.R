@@ -375,11 +375,24 @@ for(scen in common){
   rm(cfg)
   cfg_mag$title <- scen
 
-  # configure MAgPIE according to magpie_scen (scenario needs to be available in scenario_config.cfg)
+  # configure MAgPIE according to scenarios provided in magpie_scen (scenario needs to be available in scenario_config.cfg)
   if(!is.null(scenarios_coupled[scen, "magpie_scen"])) {
     cfg_mag <- setScenario(cfg_mag, c(trimws(unlist(strsplit(scenarios_coupled[scen, "magpie_scen"], split = ",|\\|"))), "coupling"),
                            scenario_config = file.path(path_magpie, "config", "scenario_config.csv"))
   }
+
+  # extract magpie switches from coupled config
+  scenario_config_MAgPIE_table <- scenarios_coupled %>% select(contains("cfg_mag")) %>% t() %>% as.data.frame()
+
+  # configure MAgPIE according to individual switches provided in scenario_config_coupled*.csv
+  if (nrow(scenario_config_MAgPIE_table) > 0) {
+    # remove prefix "cfg_mag." from switch names to yield original MAgPIE names
+    row.names(scenario_config_MAgPIE_table) <- gsub("cfg_mag.", "", row.names(scenario_config_MAgPIE_table))
+    # replace "." with "$" which has been removed by R when reading in the scenarios_coupled
+    row.names(scenario_config_MAgPIE_table) <- gsub("\\.", "$", row.names(scenario_config_MAgPIE_table))
+    cfg_mag <- setScenario(cfg_mag, scen, scenario_config = scenario_config_MAgPIE_table)
+  }
+
   cfg_mag <- check_config(cfg_mag, reference_file=file.path(path_magpie, "config", "default.cfg"),
                           modulepath = file.path(path_magpie, "modules"))
 
@@ -398,7 +411,7 @@ for(scen in common){
       cfg_rem[[switchname]] <- settings_remind[scen, switchname]
     }
   }
-  
+
   # Set reporting scripts
   if ("output" %in% names(settings_remind) && ! is.na(settings_remind[scen, "output"])) {
     scenoutput <- gsub('c\\("|\\)|"', '', trimws(unlist(strsplit(settings_remind[scen, "output"], split = ','))))
@@ -515,7 +528,7 @@ for(scen in common){
         cfg_rem$files2export$start["input.gdx"] <- paste0(runname, "-rem-", i-1)
       }
     }
-    
+
       # If the preceding run has already finished (= its gdx file exist) start
       # the current run immediately. This might be the case e.g. if you started
       # the NDC run in a first batch and now want to start the subsequent policy
@@ -523,7 +536,7 @@ for(scen in common){
     if (i == start_iter_first && ! start_now && all(file.exists(cfg_rem$files2export$start[path_gdx_list]) | unlist(gdx_na))) {
       start_now <- TRUE
     }
-    
+
     foldername <- file.path("output", fullrunname)
     if ((i > start_iter_first || !scenarios_coupled[scen, "start_magpie"]) && file.exists(foldername)) {
       if (errorsfound == 0 && ! any(c("--test", "--gamscompile") %in% flags)) {
