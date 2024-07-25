@@ -535,14 +535,17 @@ prepare <- function() {
 
     if(cfg$gms$CDR == 'portfolio'){
       fixings_manipulateThis <- c(fixings_manipulateThis,
+                                  list(c("vm_ccs_cdr.FX", "vm_co2capture_cdr.FX")),
                                   list(c("vm_otherFEdemand.FX", "!!vm_otherFEdemand.FX")),
                                   list(c("v33_emi.FX", "vm_emiCdrTeDetail.FX")))
 
       levs_manipulateThis <- c(levs_manipulateThis,
+                               list(c("vm_ccs_cdr.L", "vm_co2capture_cdr.L")),
                                list(c("vm_otherFEdemand.L", "!!vm_otherFEdemand.L")),
                                list(c("v33_emi.L", "vm_emiCdrTeDetail.L")))
 
       margs_manipulateThis <- c(margs_manipulateThis,
+                                list(c("vm_ccs_cdr.M", "vm_co2capture_cdr.M")),
                                 list(c("vm_otherFEdemand.M", "!!vm_otherFEdemand.M")),
                                 list(c("q33_DAC_capconst.M", "q33_DAC_emi.M")))
     }

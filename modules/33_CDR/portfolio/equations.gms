@@ -48,18 +48,27 @@ q33_capconst(t, regi, te_used33)$(not sameAs(te_used33, "weathering"))..
     ;
 
 ***---------------------------------------------------------------------------
+*'  The CO2 captured from the gas used for heat production
+*'  required for all CDR and from limestone decomposition ocean alkalinity enhancement,
+*'  assuming a certain capture rate s33_capture rate.
+***---------------------------------------------------------------------------
+q33_co2capture_non_atm(t, regi)..
+    v33_co2capture_non_atm(t, regi)
+    =e=
+    fm_dataemiglob("pegas","seh2","gash2c","cco2") * sum(fe2cdr("fegas",entyFe2,te_used33), v33_FEdemand(t,regi,"fegas", entyFe2,te_used33))
+    - s33_OAE_chem_decomposition * sum(te_oae33, vm_emiCdrTeDetail(t, regi, te_oae33))
+    ;
+
+***---------------------------------------------------------------------------
 *'  Preparation of captured emissions to enter the CCUS chain.
 *'  The first part of the equation describes emissions captured from the ambient air,
-*'  the second part calculates the CO2 captured from the gas used for heat production
-*'  required for all CDR assuming 90% capture rate. The third part is the CCS needed for
-*'  limestone decomposition emissions for ocean alkalinity enhancement.
+*'  the second part is non-atmospheric CO2 (e.g., from energy usage).
 ***---------------------------------------------------------------------------
 q33_ccsbal(t, regi, ccs2te(ccsCo2(enty), enty2, te))..
-    sum(teCCS2rlf(te, rlf), vm_ccs_cdr(t, regi, enty, enty2, te, rlf))
+    sum(teCCS2rlf(te, rlf), vm_co2capture_cdr(t, regi, enty, enty2, te, rlf))
     =e=
     - vm_emiCdrTeDetail(t, regi, "dac")
-    + (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * sum(fe2cdr("fegas",entyFe2,te_used33), v33_FEdemand(t,regi,"fegas", entyFe2,te_used33))
-    - s33_OAE_chem_decomposition * sum(te_oae33, vm_emiCdrTeDetail(t, regi, te_oae33))
+    + v33_co2capture_non_atm(t, regi)
     ;
 
 ***---------------------------------------------------------------------------

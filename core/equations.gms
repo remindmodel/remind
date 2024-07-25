@@ -742,7 +742,7 @@ q_emiCdrAll(t,regi)..
   vm_emiCdrAll(t,regi)
        =e= !! BECC + DACC
   (sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail(t,regi,enty,enty2,te,enty3))
-  + sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,"cco2","ico2","ccsinje",rlf)))
+  + sum(teCCS2rlf(te,rlf), vm_co2capture_cdr(t,regi,"cco2","ico2","ccsinje",rlf)))
   !! scaled by the fraction that gets stored geologically
   * (sum(teCCS2rlf(te,rlf),
         vm_co2CCS(t,regi,"cco2","ico2",te,rlf)) /
@@ -751,7 +751,7 @@ q_emiCdrAll(t,regi)..
   !! net negative emissions from co2luc
   -  p_macBaseMagpieNegCo2(t,regi)
        !! negative emissions from the cdr module that are not stored geologically
-       -       (vm_emiCdr(t,regi,"co2") + sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,"cco2","ico2","ccsinje",rlf)))
+       -       (vm_emiCdr(t,regi,"co2") + sum(teCCS2rlf(te,rlf), vm_co2capture_cdr(t,regi,"cco2","ico2","ccsinje",rlf)))
 ;
 
 
@@ -838,7 +838,7 @@ q_balcapture(t,regi,ccs2te(ccsCo2(enty),enty2,te)) ..
       vm_emiTeDetail(t,regi,enty3,enty4,te2,enty)
     )
     !! carbon captured from CDR technologies in CDR module
-  + sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
+  + sum(teCCS2rlf(te,rlf), vm_co2capture_cdr(t,regi,enty,enty2,te,rlf))
     !! carbon captured from industry
   + sum(emiInd37, vm_emiIndCCS(t,regi,emiInd37))
   + sum((sefe(entySe,entyFe),emiMkt)$( 

@@ -16,7 +16,7 @@ if(card(te_used33) eq 0,
 
 *** Fix CCS from CDR if there're no technologies that require CCS
 if(card(te_ccs33) eq 0,
-    vm_ccs_cdr.fx(t,regi,enty,enty2,te,rlf)$ccs2te(enty,enty2,te) = 0;
+    vm_co2capture_cdr.fx(t,regi,enty,enty2,te,rlf)$ccs2te(enty,enty2,te) = 0;
 );
 
 *** Fix negative emissions and FE demand to zero for all the technologies that are not used
@@ -31,7 +31,7 @@ vm_emiCdr.fx(t,regi,"co2")$(t.val lt 2025) = 0;
 vm_omcosts_cdr.fx(t,regi)$((t.val lt 2025)) = 0;
 vm_cap.fx(t,regi,"weathering",rlf)$(t.val lt 2025) = 0;
 *** vm_cap for dac is fixed for t<2025 in core/bounds.gms (tech_stat eq 4)
-vm_ccs_cdr.fx(t,regi,enty,enty2,te,rlf)$(ccs2te(enty,enty2,te) AND t.val lt 2025) = 0;
+vm_co2capture_cdr.fx(t,regi,enty,enty2,te,rlf)$(ccs2te(enty,enty2,te) AND t.val lt 2025) = 0;
 
 
 *** Set minimum DAC capacities (if available) to help the solver find the technology 

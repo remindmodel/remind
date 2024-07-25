@@ -869,22 +869,22 @@ parameter
 *' * (0): not included
 *'
 parameter
-  cm_33_OAE_eff             "OAE efficiency measured in tCO2 uptaken by the ocean per tCaO. Typically between 0.9-1.4. [tCO2/tCaO]"
+  cm_33_OAE_eff             "OAE efficiency measured in tCO2 uptaken by the ocean per tCaO. Typically between 0.9-1.4 (which corresponds to 1.2-1.8 molCO2/molCaO). [tCO2/tCaO]"
 ;
-  cm_33_OAE_eff            = 0.9; !! def = 0.9
+  cm_33_OAE_eff            = 1.2; !! def = 1.2
 *'
 parameter
   cm_33_OAE_scen            "OAE distribution scenarios"
 ;
-  cm_33_OAE_scen           = 0; !! def = 0
+  cm_33_OAE_scen           = 1; !! def = 1
 *' *  (0): pessimistic: a rather low discharge rate (30 tCaO per h), corresponding to high distribution costs
 *' *  (1): optimistic: a high discharge rate (250 tCaO per h), corresponding to lower distribution costs
 *'
 parameter
   cm_33_OAE_startyr         "The year when OAE could start being deployed [year]"
 ;
-  cm_33_OAE_startyr        = 2025; !! def = 2025  !! regexp = 2025|20[3-9](0|5)
-*' *  (2025): earliest year when OAE could be deployed
+  cm_33_OAE_startyr        = 2030; !! def = 2030  !! regexp = 20[3-9](0|5)
+*' *  (2030): earliest year when OAE could be deployed
 *' *  (....): later timesteps
 *'
 parameter
