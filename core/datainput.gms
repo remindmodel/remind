@@ -889,7 +889,7 @@ if(pm_NuclearConstraint("2020",regi,"tnrs")<0,
 parameter pm_boundCapCCS(ttot,all_regi,bounds)        "installed and planned capacity of CCS"
 /
 $ondelim
-$include "./core/input/pm_boundCapCCS.cs4r"
+$include "./core/input/p_boundCapCCS.cs4r"
 $offdelim
 /
 ;
