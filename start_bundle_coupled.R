@@ -402,8 +402,6 @@ for(scen in common){
   if (nrow(magpieSwitches) > 0) {
     # remove prefix "cfg_mag$" from switch names to yield original MAgPIE names
     row.names(magpieSwitches) <- gsub("cfg_mag\\$", "", row.names(magpieSwitches))
-    # replace "." with "$" which has been removed by R when reading the scenarios_coupled
-    row.names(magpieSwitches) <- gsub("\\.", "$", row.names(magpieSwitches))
     cfg_mag <- setScenario(cfg_mag, scen, scenario_config = magpieSwitches)
   }
 
