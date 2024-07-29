@@ -865,6 +865,11 @@ parameter
   cm_33OAE                  "choose whether OAE (ocean alkalinity enhancement) should be included into the CDR portfolio. 0 = OAE not used, 1 = used"
 ;
   cm_33OAE                 = 0;   !! def = 0
+*' Since OAE is quite a cheap CDR option, runs might not converge because the model tries to deploy
+*' a lot of OAE. In this case, use a quantity target to limit OAE by adding something like:
+*' (2070,2080,2090,2100).GLO.tax.t.oae.all 5000 to cm_implicitQttyTarget in your config file,
+*' starting from the year in which OAE is deployed above 5000 MtCO2 / yr. This will limit the global
+*' deployment to 5000 Mt / yr in timesteps 2070-2100.
 *' * (1): ocean alkalinity enhancement is included
 *' * (0): not included
 *'
