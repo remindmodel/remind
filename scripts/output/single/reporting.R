@@ -6,8 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 
 library(magclass)
-# library(remind2)
-devtools::load_all("/p/tmp/katarkow/remind2/ng-el-OAE")
+library(remind2)
 library(lucode2)
 library(gms)
 library(methods)
