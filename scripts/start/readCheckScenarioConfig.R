@@ -189,7 +189,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
         if (testmode) {
           warning("Unknown column names: ", paste(unknownColumnNamesNoComments, collapse = ", "))
         } else if (errorsfound == 0) {
-          message("Do you want to continue keeping the columns? Y/n")
+          message("Do you want to continue and simply ignore them? Y/n")
           userinput <- tolower(gms::getLine())
           if (! userinput %in% c("y", "")) stop("Ok, so let's stop.")
         }
