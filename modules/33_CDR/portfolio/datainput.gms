@@ -71,5 +71,4 @@ if(cm_33_OAE_scen = 1, !! optimistic scenario for distribution, lower diesel dem
 );
 
 *' @stop
-
 *** EOF ./modules/33_CDR/portfolio/datainput.gms
