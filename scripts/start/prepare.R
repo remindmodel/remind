@@ -13,8 +13,7 @@ prepare <- function() {
   #require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   require(tools, quietly = TRUE,warn.conflicts =FALSE)
-  devtools::load_all("/p/tmp/katarkow/remind2/ng-el-OAE")
-  # require(remind2)
+  require(remind2,quietly = TRUE,warn.conflicts =FALSE)
   require(mrremind)
   require(mrvalidation)
 
@@ -529,6 +528,7 @@ prepare <- function() {
                                 list(c("q33_H2bio_lim.M", "!!q33_H2bio_lim.M")),
                                 list(c("q33_OAE_FEdemand.M", "!!q33_OAE_FEdemand.M")),
                                 list(c("q33_demFeCDR.M", "!!q33_demFeCDR.M")),
+                                list(c("q33_co2capture_non_atm.M", "!!q33_co2capture_non_atm.M")),
                                 list(c("q33_emicdrregi.M", "!!q33_emicdrregi.M")),
                                 list(c("q33_otherFEdemand.M", "!!q33_otherFEdemand.M")))
     }
@@ -537,15 +537,18 @@ prepare <- function() {
       fixings_manipulateThis <- c(fixings_manipulateThis,
                                   list(c("vm_ccs_cdr.FX", "vm_co2capture_cdr.FX")),
                                   list(c("vm_otherFEdemand.FX", "!!vm_otherFEdemand.FX")),
+                                  list(c("v33_co2capture_non_atm.FX", "!!v33_co2capture_non_atm.FX")),
                                   list(c("v33_emi.FX", "vm_emiCdrTeDetail.FX")))
 
       levs_manipulateThis <- c(levs_manipulateThis,
                                list(c("vm_ccs_cdr.L", "vm_co2capture_cdr.L")),
+                               list(c("v33_co2capture_non_atm.L", "!!v33_co2capture_non_atm.L")),
                                list(c("vm_otherFEdemand.L", "!!vm_otherFEdemand.L")),
                                list(c("v33_emi.L", "vm_emiCdrTeDetail.L")))
 
       margs_manipulateThis <- c(margs_manipulateThis,
                                 list(c("vm_ccs_cdr.M", "vm_co2capture_cdr.M")),
+                                list(c("v33_co2capture_non_atm.M", "!!v33_co2capture_non_atm.M")),
                                 list(c("vm_otherFEdemand.M", "!!vm_otherFEdemand.M")),
                                 list(c("q33_DAC_capconst.M", "q33_DAC_emi.M")))
     }

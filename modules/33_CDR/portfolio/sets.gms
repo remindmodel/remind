@@ -11,8 +11,8 @@ te_all33(all_te)  "all CDR technologies"
 /
     weathering	"enhanced weathering"
     dac		"direct air capture"
-    oae_ng          "ocean akalinity ehnacement via ocean liming using a traditional calciner"
-    oae_el          "ocean akalinity ehnacement via ocean liming using a novel calciner technology"
+    oae_ng        "ocean akalinity ehnacement via ocean liming using a traditional calciner"
+    oae_el        "ocean akalinity ehnacement via ocean liming using a novel calciner technology"
 /
 
 te_used33(all_te) "used CDR technologies (specified by switches)"

@@ -30,7 +30,7 @@ v33_EW_onfield(ttot,all_regi,rlf,rlf)  "amount of ground rock spread on fields i
 v33_EW_onfield_tot(ttot,all_regi,rlf,rlf)  "total amount of ground rock on fields, for each climate zone and transportation distance [Gt]"
 v33_FEdemand(ttot,all_regi,all_enty,all_enty,all_te)  "FE demand of each technology [TWa]"
 vm_co2capture_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "total emissions captured through technologies in the CDR module that enter the CCUS chain + captured emissions from associated FE demand [GtC / a]"
-v33_co2emi_non_atm(ttot,all_regi,all_te)  "captured CO2 from CDR-related acitivites that does not come from the atmosphere [GtC / a]"
+v33_co2emi_non_atm(ttot,all_regi,all_te)  "CO2 from CDR-related acitivites that does not come from the atmosphere [GtC / a]"
 ;
 
 negative variables
