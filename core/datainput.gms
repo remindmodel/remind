@@ -1032,7 +1032,8 @@ loop(regi,
   loop(teReNoBio(te),
     p_aux_capToDistr(regi,te) = pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
     s_aux_cap_remaining = p_aux_capToDistr(regi,te);
-*RP* fill up the renewable grades to calculate the total capacity needed to produce the amount calculated in initialcap2, assuming the best grades are filled first (with 20% of each grade not yet used)
+*RP* fill up the renewable grades to calculate the total capacity needed to produce the amount calculated in initialcap2,
+*    assuming the best grades are filled first (with 20% of each grade not yet used)
 
     loop(teRe2rlfDetail(te,rlf)$(pm_dataren(regi,"nur",rlf,te) > 0),
       if(s_aux_cap_remaining > 0,
@@ -1067,17 +1068,15 @@ p_histCapFac(tall,all_regi,"windon") $ (p_histCapFac(tall,all_regi,"windon") eq 
 *** only implement half of the calculated ratio of historic to REMIND capFac as rescaling for the new CFs - realised as (x+1)/2
 
 *cb* CF calibration analogously for wind and spv: calibrate 2015, and assume gradual phase-in of grade-based CF (until 2045 for wind, until 2030 for spv)
-p_aux_capacityFactorHistOverREMIND(regi,"windon")$p_avCapFac2015(regi,"windon") =  p_histCapFac("2015",regi,"windon") / p_avCapFac2015(regi,"windon");
-p_aux_capacityFactorHistOverREMIND(regi,"windoff")$p_avCapFac2015(regi,"windoff") =  p_histCapFac("2015",regi,"windoff") / p_avCapFac2015(regi,"windoff");
+p_aux_capacityFactorHistOverREMIND(regi,"windon")  $ p_avCapFac2015(regi,"windon")  = p_histCapFac("2015",regi,"windon")  / p_avCapFac2015(regi,"windon");
+p_aux_capacityFactorHistOverREMIND(regi,"windoff") $ p_avCapFac2015(regi,"windoff") = p_histCapFac("2015",regi,"windoff") / p_avCapFac2015(regi,"windoff");
 
-
-loop(te$(sameas(te,"windon") OR sameas(te,"windoff")),
-  loop(t$(t.val ge 2015 AND t.val le 2035 ),
-    pm_cf(t,regi,te) =
-    (2035 - pm_ttot_val(t)) / 20 * p_aux_capacityFactorHistOverREMIND(regi,te) *pm_cf(t,regi,te)
+*** linear phase-in of Remind capacity factors instead of historical ones
+loop(t$(t.val ge 2015 AND t.val le 2035),
+  pm_cf(t,regi,teWind) =
+    (2035 - pm_ttot_val(t)) / (2035-2015) * pm_cf(t,regi,teWind) * p_aux_capacityFactorHistOverREMIND(regi,teWind)
     +
-    (pm_ttot_val(t) - 2015) / 20 * pm_cf(t,regi,te)
-  );
+    (pm_ttot_val(t) - 2015) / (2035-2015) * pm_cf(t,regi,teWind)
 );
 
 *CG* set storage and grid of windoff to be the same as windon
@@ -1089,10 +1088,11 @@ pm_cf("2015",regi,"spv") = pm_cf("2015",regi,"spv") * p_aux_capacityFactorHistOv
 pm_cf("2020",regi,"spv") = pm_cf("2020",regi,"spv") * (p_aux_capacityFactorHistOverREMIND(regi,"spv")+1)/2;
 pm_cf("2025",regi,"spv") = pm_cf("2025",regi,"spv") * (p_aux_capacityFactorHistOverREMIND(regi,"spv")+3)/4;
 
-*** RP rescale CSP capacity factors in REMIND - in the DLR resource data input files, the numbers are based on a SM3/12h setup, while the cost data from IEA seems rather based on a SM2/6h setup (with 40% average CF)
+*** RP rescale CSP capacity factors in REMIND - in the DLR resource data input files, the numbers are based on a SM3/12h setup,
+*** while the cost data from IEA seems rather based on a SM2/6h setup (with 40% average CF)
 *** Accordingly, decrease CF in REMIND to 2/3 of the DLR values (no need to correct maxprod, as here no miscalculation of total energy yield takes place, in contrast to wind)
 loop(te$sameas(te,"csp"),
-  pm_dataren(regi,"nur",rlf,te)     = pm_dataren(regi,"nur",rlf,te)     * 2/3 ;
+  pm_dataren(regi,"nur",rlf,te) = pm_dataren(regi,"nur",rlf,te) * 2/3;
 );
 
 display p_aux_capacityFactorHistOverREMIND, pm_dataren;

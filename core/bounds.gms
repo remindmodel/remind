@@ -262,11 +262,11 @@ vm_emiMac.fx(t,regi,"oc") = 0;
 
 *** fix capacities for wind, spv and csp to real world historical values:
 loop(teVRE,
-  vm_cap.lo("2015",regi,te,"1") = 0.95 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
-  vm_cap.up("2015",regi,te,"1") = 1.05 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
-  vm_cap.lo("2020",regi,te,"1") = 0.95 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
-  vm_cap.up("2020",regi,te,"1") = 1.05 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
-  vm_cap.up("2025",regi,te,"1")$(pm_histCap("2025",regi,te) gt 1e-6) = 1.05 * pm_histCap("2025",regi,te)$(pm_histCap("2025",regi,te) gt 1e-10); !! only set a bound if values >1MW are in pm_histCap
+  vm_cap.lo("2015",regi,teVRE,"1") = 0.95 * pm_histCap("2015",regi,teVRE)$(pm_histCap("2015",regi,teVRE) gt 1e-10);
+  vm_cap.up("2015",regi,teVRE,"1") = 1.05 * pm_histCap("2015",regi,teVRE)$(pm_histCap("2015",regi,teVRE) gt 1e-10);
+  vm_cap.lo("2020",regi,teVRE,"1") = 0.95 * pm_histCap("2020",regi,teVRE)$(pm_histCap("2020",regi,teVRE) gt 1e-10);
+  vm_cap.up("2020",regi,teVRE,"1") = 1.05 * pm_histCap("2020",regi,teVRE)$(pm_histCap("2020",regi,teVRE) gt 1e-10);
+  vm_cap.up("2025",regi,teVRE,"1")$(pm_histCap("2025",regi,teVRE) gt 1e-6) = 1.05 * pm_histCap("2025",regi,teVRE)$(pm_histCap("2025",regi,teVRE) gt 1e-10); !! only set a bound if values >1MW are in pm_histCap
 );
 
 *** lower bound on capacities for ngcc and ngt and gaschp for regions defined at the pm_histCap file

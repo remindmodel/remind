@@ -1683,23 +1683,6 @@ $setGlobal cm_FEtax_trajectory_rel  off !! def = off
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "DEU -0.2, EU27_regi -0.4".
 $setGLobal c_agricult_base_shift off !! def off
-*** windoffshore-todo
-*** x get rid of cm_wind_offshore conditions
-*** x search "wind" and replace all references by "windon"
-*** x same with storwind, gridwind
-*** x generisdata_nur_ren need to be updated
-*** x check pewin
-*** - merge pm_histCap_windoff.cs3r into pm_histCap, same with p_histCapFac_windoff
-*** - search for $include to check which mrremind files need modification
-*** - update mrremind to give windon instead of wind: f_cf.cs3r, f40_NDC+REN21+CHN_NUC.cs3r
-*** - remove wind in all_te set
-*** - check vm_capFac pm_cf.*win
-*** - *CG* set wind offshore, storage and grid to be the same as wind onshore (later should be integrated into input data) main difference between onshore and offshore is the difference in f32_factorStorage
-*** - f32_storageCap
-*** cm_wind_offshore  1, wind energy is represented by "wind" and "windoff", where "wind" means wind onshore. Later this will be the default and the name "wind" will be made to change to windon
-*** cm_wind_offshore  0, means wind energy is only represented by "wind", which is a mixture of both wind onshore and wind offshore
-*** $setglobal cm_wind_offshore  1      !! def = 1
-***
 ***  cm_INCONV_PENALTY  on     !! def = on
 *** *RP* 2012-03-06 Flag to turn on inconvenience penalties, e.g. for air pollution
 $setglobal cm_INCONV_PENALTY  on         !! def = on  !! regexp = off|on
