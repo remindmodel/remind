@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -152,7 +152,7 @@ runHarmoniseAndInfillCmd <- paste(
 
 runClimateEmulatorCmd <- paste(
   "python", file.path(scriptsFolder, "run_clim.py"),
-  normalizePath(file.path(climateAssessmentFolder, paste0(baseFileName, "_harmonized_infilled.csv"))),
+  normalizePath(file.path(climateAssessmentFolder, paste0(baseFileName, "_harmonized_infilled.csv")), mustWork = FALSE),
   climateAssessmentFolder,
   "--num-cfgs", nparsets,
   "--scenario-batch-size", 1,

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -9,7 +9,8 @@
 pm_damageGrowthRateIso(tall,iso) = 0;
 
 *the current damage function is estimated for "baseline" TC effect plus climate change effect - need to subtract the baseline effect as in Burke by doing delta(T)-delta(T0)
-pm_damageGrowthRateIso(tall,isoTC)$(tall.val ge 2000 and tall.val le 2300) = p50_damageFuncCoefTC1(isoTC) * (pm_globalMeanTemperatureZeroed1900(tall)-pm_globalMeanTemperatureZeroed1900("2000")) + p50_damageFuncCoefTC2(isoTC) * (pm_globalMeanTemperatureZeroed1900(tall)**2-pm_globalMeanTemperatureZeroed1900("2000")**2); 
+*pm_damageGrowthRateIso(tall,isoTC)$(tall.val ge 2000 and tall.val le 2300) = p50_damageFuncCoefTC1(isoTC) * (pm_globalMeanTemperatureZeroed1900(tall)-pm_globalMeanTemperatureZeroed1900("2000")) + p50_damageFuncCoefTC2(isoTC) * (pm_globalMeanTemperatureZeroed1900(tall)**2-pm_globalMeanTemperatureZeroed1900("2000")**2); 
+pm_damageGrowthRateIso(tall,isoTC)$(tall.val ge 2000 and tall.val le 2300) = p50_damageFuncCoefTC1(isoTC) * (pm_globalMeanTemperatureZeroed1900(tall)-pm_globalMeanTemperatureZeroed1900("2010")); 
 
 * no damages before 2020 to match observed GDP
 pm_damageGrowthRateIso(tall,iso)$(tall.val le 2020) = 0;
@@ -40,7 +41,8 @@ display pm_damage,pm_GDPfrac,p50_test;
 
 * derivative of damage function w.r.t. temperature (used in 51_internalizeDamages)
 pm_damageMarginal(tall,iso)=0;
-pm_damageMarginal(tall,isoTC)$(tall.val ge 2000 and tall.val le 2300) =  p50_damageFuncCoefTC1(isoTC)+2*p50_damageFuncCoefTC2(isoTC)*(pm_globalMeanTemperatureZeroed1900(tall)-pm_globalMeanTemperatureZeroed1900("2000"));
+*pm_damageMarginal(tall,isoTC)$(tall.val ge 2000 and tall.val le 2300) =  p50_damageFuncCoefTC1(isoTC)+2*p50_damageFuncCoefTC2(isoTC)*(pm_globalMeanTemperatureZeroed1900(tall)-pm_globalMeanTemperatureZeroed1900("2000"));
+pm_damageMarginal(tall,isoTC)$(tall.val ge 2000 and tall.val le 2300) =  p50_damageFuncCoefTC1(isoTC);
 
 display pm_damageMarginal;
 *** EOF ./modules/50_damages/TC/postsolve.gms

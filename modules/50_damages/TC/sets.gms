@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -28,12 +28,6 @@ regi2isoTC(all_regi,isoTC) "map regions to TC countries"
 all_TCspec "TC damage distribution quantiles" 
 */estimates_mean,estimates_median,estimates_95,estimates_83,estimates_17,estimates_05/
 /mean,median,95,83,17,05/
-
-all_SSPscen "all 5 SSP scenarios" 
-/SSP1,SSP2,SSP3,SSP4,SSP5/
-
-all_TCpers "all possible persistencies of TC damages"
-/0,1,2,3,4,5,6,7,8,9/
 
 ;
 

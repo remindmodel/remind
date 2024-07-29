@@ -1,3 +1,9 @@
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
 #' take a REMIND cfg, runs some consistency checks and automatically fix some wrong settings
 #' The regexp check loads the code from main.gms and looks for 'regexp = ' patterns.
 #' It then checks whether the current cfg matches those patterns.

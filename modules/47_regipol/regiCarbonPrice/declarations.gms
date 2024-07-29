@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -60,8 +60,9 @@ $endif.emiMktTargetType
   p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi)    "auxiliary parameter to store reference iteration used for calculating slope of current mititgation cost [#]"
   pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) "multiplicative tax rescale factor that rescales emiMkt carbon price from iteration to iteration to reach regipol targets [%]"
   p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugging purposes [%]"
-  p47_clampedRescaleSlope(iteration,ttot,ttot2,ext_regi,emiMktExt) "auxiliary parameter to save the slope value before clamping for debugging purposes [#]"
-  
+  p47_clampedRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "auxiliary parameter to save the slope value before clamping. Useful for debugging purposes [#]"
+  p47_dampedFactorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "auxiliary parameter to save the rescale factor value before dampening. Useful for debugging purposes [#]"  
+
 *** Parameters necessary to define the CO2 tax curve shape   
   p47_targetConverged(ttot,ext_regi)                 "boolean to store if emission target has converged [0 or 1]"
   p47_targetConverged_iter(iteration,ttot,ext_regi)  "parameter to save p47_targetConverged across iterations [0 or 1]"

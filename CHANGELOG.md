@@ -7,8 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### changed
+- plastic waste by default does not lag plastics production by ten years
+    anymore; can be re-activated using `cm_wastelag`
 
 ### added
+- added realizations diffExp2Lin and diffLin2Lin to 45_carbonprice [#1723](https://github.com/remindmodel/remind/pull/1723)
 
 ### fixed
 - included CCS from plastic waste incineration in CCS mass flows so it is
@@ -17,10 +20,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### removed
 
+## [3.3.2] - 2024-07-04
+
+### changed
+- fix output generation [[#1715]] (https://github.com/remindmodel/remind/pull/1715)
+
 ## [3.3.1] - 2024-06-18
 
 ### changed
-- new inptu data (6.77) including new GDP and population data([#83](https://github.com/pik-piam/mrdrivers/pull/83)) [[#1684]](https://github.com/remindmodel/remind/pull/1684)
+- new input data (6.77) including new GDP and population data([#83](https://github.com/pik-piam/mrdrivers/pull/83)) [[#1684]](https://github.com/remindmodel/remind/pull/1684)
 - **37_industry** remove subsector-specific shares of SE
   origins in FE carriers for performance reasons [[#1659]](https://github.com/remindmodel/remind/pull/1659)
 - **37_industry** make process-based steel production model the default over the ces-based model [[#1663]](https://github.com/remindmodel/remind/pull/1663)
