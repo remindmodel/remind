@@ -740,18 +740,19 @@ q_emiMac(t,regi,emiMac) ..
 ***--------------------------------------------------
 q_emiCdrAll(t,regi)..
   vm_emiCdrAll(t,regi)
-       =e= !! BECC + DACC
-  (sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail(t,regi,enty,enty2,te,enty3))
-  + sum(teCCS2rlf(te,rlf), vm_co2capture_cdr(t,regi,"cco2","ico2","ccsinje",rlf)))
-  !! scaled by the fraction that gets stored geologically
-  * (sum(teCCS2rlf(te,rlf),
-        vm_co2CCS(t,regi,"cco2","ico2",te,rlf)) /
-  (sum(teCCS2rlf(te,rlf),
-        vm_co2capture(t,regi,"cco2","ico2","ccsinje",rlf))+sm_eps))
+  =e=
+  ( !! BECC + DACC
+    sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail(t,regi,enty,enty2,te,enty3))
+    - vm_emiCdrTeDetail(t, regi, "dac") !! this is a negative value
+  )
+  * ( !! scaled by the fraction that gets stored geologically
+    sum(teCCS2rlf(te, rlf), vm_co2CCS(t, regi, "cco2", "ico2", te, rlf))
+    / (sum(teCCS2rlf(te, rlf), vm_co2capture(t, regi, "cco2", "ico2", "ccsinje", rlf)) + sm_eps)
+  )
   !! net negative emissions from co2luc
   -  p_macBaseMagpieNegCo2(t,regi)
-       !! negative emissions from the cdr module that are not stored geologically
-       -       (vm_emiCdr(t,regi,"co2") + sum(teCCS2rlf(te,rlf), vm_co2capture_cdr(t,regi,"cco2","ico2","ccsinje",rlf)))
+  !! negative emissions from the cdr module that are not stored geologically
+  -  (vm_emiCdr(t,regi,"co2") - vm_emiCdrTeDetail(t, regi, "dac"))
 ;
 
 

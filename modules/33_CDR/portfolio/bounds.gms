@@ -17,6 +17,7 @@ if(card(te_used33) eq 0,
 *** Fix CCS from CDR if there're no technologies that require CCS
 if(card(te_ccs33) eq 0,
     vm_co2capture_cdr.fx(t,regi,enty,enty2,te,rlf)$ccs2te(enty,enty2,te) = 0;
+    v33_co2emi_non_atm.fx(t,regi,te_all33) = 0;
 );
 
 *** Fix negative emissions and FE demand to zero for all the technologies that are not used
@@ -27,6 +28,7 @@ v33_FEdemand.fx(t,regi,entyFe,entyFe2,te_all33)$(not te_used33(te_all33) and fe2
 *** to reduce unnecessary freedom (and likelyhood of spontaneous solver infeasibilities)
 vm_emiCdrTeDetail.fx(t,regi,te_used33)$(t.val lt 2025) = 0.0;
 v33_FEdemand.fx(t,regi,entyFe,entyFe2,te_used33)$(fe2cdr(entyFe,entyFe2,te_used33) AND (t.val lt 2025)) = 0.0;
+v33_co2emi_non_atm.fx(t,regi,te_used33)$(t.val lt 2025) = 0;
 vm_emiCdr.fx(t,regi,"co2")$(t.val lt 2025) = 0;
 vm_omcosts_cdr.fx(t,regi)$((t.val lt 2025)) = 0;
 vm_cap.fx(t,regi,"weathering",rlf)$(t.val lt 2025) = 0;
