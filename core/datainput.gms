@@ -262,8 +262,8 @@ fm_dataglob("inco0","csp")              = 0.7 * fm_dataglob("inco0","csp");
 fm_dataglob("incolearn","csp")          = 0.7 * fm_dataglob("incolearn","csp");
 
 *KK* adjust costs for oae from USD/GtCaO to USD/GtC
-fm_dataglob("inco0", "oae_ng") = fm_dataglob("inco0", "oae_ng") / (cm_33_oae_eff / sm_c_2_co2);
-fm_dataglob("inco0", "oae_el") = fm_dataglob("inco0", "oae_el") / (cm_33_oae_eff / sm_c_2_co2);
+fm_dataglob("inco0", "oae_ng") = fm_dataglob("inco0", "oae_ng") / (cm_33_OAE_eff / sm_c_2_co2);
+fm_dataglob("inco0", "oae_el") = fm_dataglob("inco0", "oae_el") / (cm_33_OAE_eff / sm_c_2_co2);
 
 *** --------------------------------------------------------------------------------
 *** Regionalize technology investment cost data
