@@ -25,7 +25,7 @@ Imports:
     gdxdt,
     gdxrrw,
     ggplot2,
-    gms (>= 0.30.7),
+    gms (>= 0.32.0),
     goxygen (>= 1.4.4),
     gridExtra,
     gtools,
