@@ -378,7 +378,7 @@ for(scen in common){
   # extract columns from coupled config that define magpie scenarios
   # the column must be named 'magpie_scen' (then the default config/scenario_config.csv will be loaded)
   # or they have to have the path to a scenario_config*.csv as their name
-  magpieScenarios <- scenarios_coupled[scen, grepl("scenario_config|magpie_scen", colnames(scenarios_coupled))]
+  magpieScenarios <- scenarios_coupled[scen, grepl("scenario_config|magpie_scen", colnames(scenarios_coupled)), drop = FALSE]
 
   # configure MAgPIE using the scenarios extracted above
   if (nrow(magpieScenarios) > 0) {
