@@ -5,7 +5,7 @@ SSP1-NDC;0;;;;SSP1|NDC|nocc_hist;y2150;;;
 SSP1-NPi;0;;;;SSP1|NPI|nocc_hist;y2150;;;
 SSP1-PkBudg1050;0;;;;SSP1|NDC|nocc_hist;y2030;;;
 SSP1-PkBudg650;0;;;;SSP1|NDC|nocc_hist;y2030;;;
-SSP2-Base;1;;;;SSP2|NPI|nocc_hist;y2150;;;
+SSP2-Base;0;;;;SSP2|NPI|nocc_hist;y2150;;;
 SSP2-NDC;0;;;;SSP2|NDC|nocc_hist;y2150;;;
 SSP2-NPi;0;;;;SSP2|NPI|nocc_hist;y2150;;;
 SSP2-PkBudg1050;0;;;;SSP2|NDC|nocc_hist;y2030;;;
