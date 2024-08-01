@@ -383,20 +383,22 @@ for(scen in common){
   # configure MAgPIE using the scenarios extracted above
   if (nrow(magpieScenarios) > 0) {
     for (i in seq_len(ncol(magpieScenarios))) {
-      pathToScenrioConfig <- colnames(magpieScenarios)[i]
+      pathToScenarioConfig <- colnames(magpieScenarios)[i]
       # backwards compatibility: if the column name is 'magpie_scen' use the 'config/scenario_config.csv'
-      pathToScenrioConfig <- ifelse(pathToScenrioConfig == "magpie_scen", "config/scenario_config.csv", pathToScenrioConfig)
+      pathToScenarioConfig <- ifelse(pathToScenarioConfig == "magpie_scen", "config/scenario_config.csv", pathToScenarioConfig)
       scenarioList <- magpieScenarios[,i]
-      cfg_mag <- setScenario(cfg_mag, trimws(unlist(strsplit(scenarioList, split = ",|\\|"))),
-                             scenario_config = file.path(path_magpie, pathToScenrioConfig))
+      if(!is.na(scenarioList)) {
+        cfg_mag <- setScenario(cfg_mag, trimws(unlist(strsplit(scenarioList, split = ",|\\|"))),
+                               scenario_config = file.path(path_magpie, pathToScenarioConfig))
+      }
     }
   }
 
   # always select 'coupling' scenario
   cfg_mag <- setScenario(cfg_mag, "coupling", scenario_config = file.path(path_magpie, "config", "scenario_config.csv"))
 
-  # extract magpie switches from coupled config
-  magpieSwitches <- scenarios_coupled %>% select(contains("cfg_mag")) %>% t() %>% as.data.frame()
+  # extract magpie switches from coupled config, replace NA otherwise setScenario complains
+  magpieSwitches <- scenarios_coupled %>% select(contains("cfg_mag")) %>% t() %>% as.data.frame() %>% replace(is.na(.), "")
 
   # configure MAgPIE according to individual switches provided in scenario_config_coupled*.csv
   if (nrow(magpieSwitches) > 0) {
@@ -662,7 +664,8 @@ for (scen in common) {
         sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j'"), intern = TRUE)
         runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
       }
-      slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
+      slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, if (runEnv$qos %in% "priority") " --partition=priority",
+        " --job-name=", fullrunname, " --output=", logfile,
         " --open-mode=append --mail-type=END,FAIL --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
         if (runEnv$numberOfTasks == 1) " --mem=8000"), runEnv$sbatch)
       slurmCommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
