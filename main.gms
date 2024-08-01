@@ -1008,6 +1008,12 @@ parameter
   c_earlyRetiValidYr  = 2035;   !! def = 2035
 *'
 parameter
+  c_seFeSectorShareDevScale "penalization value of the incentive for sectors to have similar shares of secondary energy fuels, for the square deviation methods, 
+                                       or scaling factor of the penalization value, for the min-max fomulation, to reduce the penalization effect on the objective function."
+;
+  c_seFeSectorShareDevScale = 1e-5;  !! def = 1e-5
+*'
+parameter
   cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
 ;
   cm_TaxConvCheck = 1;  !! def = 1, which means tax convergence check is on  !! regexp = 0|1
@@ -1695,6 +1701,19 @@ $setglobal cm_INCONV_PENALTY  on         !! def = on  !! regexp = off|on
 *** cm_INCONV_PENALTY_FESwitch  off     !! def = off
 *** flag to trun on inconvenience penalty to avoid switching shares on buildings, transport and industry biomass use if costs are relatively close (seLiqbio, sesobio, segabio)
 $setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on  !! regexp = off|on
+*** cm_seFeSectorShareDevMethod "Switch to enable an optimization incentive for sectors to have similar shares of secondary energy fuels and detemrine the method used for the incentive." 
+*** Possible values: off or the method name (sqSectorShare, sqSectorAvrgShare or minMaxAvrgShare)
+***  off               "the model is completely free to choose where to allocate bio/syn/fossil fuels between sectors. If it is not off, a penalization term is added so sectors have an
+***                     incentive to apply similar shares to bio-fuels, synfuels and fossils used in each sector."
+***  sqSectorShare     "square share penalty"
+***  sqSectorAvrgShare "square deviation from average share penalty"
+***  minMaxAvrgShare   "min-max deviation from average share penalty"
+$setglobal cm_seFeSectorShareDevMethod  minMaxAvrgShare !! def = minMaxAvrgShare  !! regexp = off|sqSectorShare|sqSectorAvrgShare|minMaxAvrgShare
+*** c_seFeSectorShareDevUnit "Defines if the penalization term is applied over fuel shares or energy units." 
+***  share,  "the square penalization is applied over the share values directly. Different sized regions will have different penalization relative incentives, but the range of penalization values will vary less from the solver perspective."
+***  energy, "the square penalization is applied over the share values multiplied by the energy demand. Penalizations should be better scalled over different size regions, 
+***           but there would be an increased risk of the penlizations being ignored, and the shares not being enforced, by the solver if the values range is too small."
+$setglobal c_seFeSectorShareDevUnit  share !! def = share  !! regexp = share|energy
 ***  cm_MOFEX  off    !! def=off
 *** *JH/LB* Activate MOFEX partial fossil fuel extraction cost minimization model
 *** * Warning: Use a well-converged run since the model uses vm_prodPe from the input GDX

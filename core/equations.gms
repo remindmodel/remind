@@ -1054,31 +1054,48 @@ q_shBioTrans(t,regi)..
 ;
 
 ***---------------------------------------------------------------------------
-*' Share of final energy carrier in sector
+*' Shares of final energy carrier in sector
 ***---------------------------------------------------------------------------
 
 q_shfe(t,regi,entyFe,sector)$(pm_shfe_up(t,regi,entyFe,sector) OR pm_shfe_lo(t,regi,entyFe,sector))..
   v_shfe(t,regi,entyFe,sector)
   * sum(emiMkt$sector2emiMkt(sector,emiMkt),
       sum(se2fe(entySe,entyFe2,te)$(entyFe2Sector(entyFe2,sector)),
-        vm_demFeSector(t,regi,entySe,entyFe2,sector,emiMkt)))
+        vm_demFeSector_afterTax(t,regi,entySe,entyFe2,sector,emiMkt)))
   =e=
   sum(emiMkt$sector2emiMkt(sector,emiMkt),
       sum(se2fe(entySe,entyFe,te),
-        vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))
+        vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
 ;
+
+q_shSeFe(t,regi,entySe,entyFe)$sefe(entySe,entyFe)..
+  v_shSefe(t,regi,entySe,entyFe) 
+  * sum((entySe2,sector,emiMkt)$(sefe(entySe2,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector)),
+      vm_demFeSector_afterTax(t,regi,entySe2,entyFe,sector,emiMkt)
+    )
+  =e=
+  sum((sector,emiMkt)$(sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector)),
+    vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)
+  );
+
+q_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector))..
+  v_shSefeSector(t,regi,entySe,entyFe,sector,emiMkt)
+  * sum(entySe2$sefe(entySe2,entyFe), 
+      vm_demFeSector_afterTax(t,regi,entySe2,entyFe,sector,emiMkt)
+    )
+  =e=
+  vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt);
 
 q_shGasLiq_fe(t,regi,sector)$(pm_shGasLiq_fe_up(t,regi,sector) OR pm_shGasLiq_fe_lo(t,regi,sector))..
   v_shGasLiq_fe(t,regi,sector)
   * sum(emiMkt$sector2emiMkt(sector,emiMkt),
       sum(se2fe(entySe,entyFe,te)$(entyFe2Sector(entyFe,sector)),
-        vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))
+        vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
   =e=
   sum(emiMkt$sector2emiMkt(sector,emiMkt),
     sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"fegas") OR SAMEAS(entyFe,"fehos")),
-      vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))
+      vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
 ;
-
 
 *limit secondary energy district heating and heat pumps
 $IFTHEN.sehe_upper not "%cm_sehe_upper%" == "off"
@@ -1116,17 +1133,61 @@ q_limitCapFeH2BI(t,regi,sector)$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst"
 q_shbiofe_up(t,regi,entyFe,sector,emiMkt)$((sameas(entyFe,"fegas") or sameas(entyFe,"fehos") or sameas(entyFe,"fesos")) and entyFe2Sector(entyFe,sector) and sector2emiMkt(sector,emiMkt) and (t.val le 2015))..
   (pm_secBioShare(t,regi,entyFe,sector) + 0.02)
   *
-  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
+  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt))
   =g=
-  sum((entySeBio,te)$se2fe(entySeBio,entyFe,te), vm_demFeSector(t,regi,entySeBio,entyFe,sector,emiMkt))
+  sum((entySeBio,te)$se2fe(entySeBio,entyFe,te), vm_demFeSector_afterTax(t,regi,entySeBio,entyFe,sector,emiMkt))
 ;
 
 q_shbiofe_lo(t,regi,entyFe,sector,emiMkt)$((sameas(entyFe,"fegas") or sameas(entyFe,"fehos") or sameas(entyFe,"fesos")) and entyFe2Sector(entyFe,sector) and sector2emiMkt(sector,emiMkt) and (t.val le 2015))..
   (pm_secBioShare(t,regi,entyFe,sector) - 0.02)
   *
-  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
+  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt))
   =l=
-  sum((entySeBio,te)$se2fe(entySeBio,entyFe,te), vm_demFeSector(t,regi,entySeBio,entyFe,sector,emiMkt))
+  sum((entySeBio,te)$se2fe(entySeBio,entyFe,te), vm_demFeSector_afterTax(t,regi,entySeBio,entyFe,sector,emiMkt))
 ;
+
+***---------------------------------------------------------------------------
+*' Penalty for secondary energy share deviation in sectors 
+***---------------------------------------------------------------------------
+
+$ifthen.seFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "sqSectorShare"
+q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector) AND (sameas(entySe,"seliqbio") OR sameas(entySe,"seliqsyn")))..
+  v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+  =e=
+  rpower( v_shSefeSector(t,regi,entySe,entyFe,sector,emiMkt) ,2)
+  * (1$sameas("%c_seFeSectorShareDevUnit%","share") +  vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)$(sameas("%c_seFeSectorShareDevUnit%","energy")) )
+;
+$elseIf.seFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "sqSectorAvrgShare"
+q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector) AND (sameas(entySe,"seliqbio") OR sameas(entySe,"seliqsyn")))..
+  v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+  =e=
+  rpower( v_shSefe(t,regi,entySe,entyFe) - v_shSefeSector(t,regi,entySe,entyFe,sector,emiMkt) ,2) 
+  * (1$sameas("%c_seFeSectorShareDevUnit%","share") +  vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)$(sameas("%c_seFeSectorShareDevUnit%","energy")) )
+;
+$elseIf.seFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgShare"
+q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector) AND (sameas(entySe,"seliqbio") OR sameas(entySe,"seliqsyn")))..
+  v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+  =e=
+  v_NegPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt) - v_PosPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+;
+q_minMaxPenSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector) AND (sameas(entySe,"seliqbio") OR sameas(entySe,"seliqsyn")))..
+  v_shSefe(t,regi,entySe,entyFe) 
+  - v_shSefeSector(t,regi,entySe,entyFe,sector,emiMkt)
+  + v_NegInconvPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+  - v_PosInconvPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+  =e= 0
+;
+$endif.seFeSectorShareDev
+
+$ifthen.penSeFeSectorShareDevCost not "%cm_seFeSectorShareDevMethod%" == "off"
+q_penSeFeSectorShareDevCost(t,regi)..
+ vm_penSeFeSectorShareDevCost(t,regi)
+ =e=
+ sum((t,regi,entyFe,entySe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector)),
+  v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+ ) * c_seFeSectorShareDevScale
+;
+$endif.penSeFeSectorShareDevCost
+
 
 *** EOF ./core/equations.gms
