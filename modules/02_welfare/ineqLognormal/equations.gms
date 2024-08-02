@@ -66,7 +66,7 @@ $ifthen "%cm_INCONV_PENALTY_FESwitch%" == "on"
 $endif
 $ifthen not "%cm_seFeSectorShareDevMethod%" == "off"
         !! penalizing secondary energy share deviation in sectors  
-        - vm_penSeFeSectorShareDevCost(t,regi)
+        - vm_penSeFeSectorShareDevCost(ttot,regi)
 $endif
       )
     )
