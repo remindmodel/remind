@@ -1008,7 +1008,7 @@ parameter
   c_earlyRetiValidYr  = 2035;   !! def = 2035
 *'
 parameter
-  c_seFeSectorShareDevScale "scale factor of the objective function penalization to incentive sectors to have similar shares of secondary energy fuels."
+  c_seFeSectorShareDevScale "scale factor in the objective function of the penalization to incentive sectors to have similar shares of secondary energy fuels."
 ;
   c_seFeSectorShareDevScale = 1e-5;  !! def = 1e-5
 *'
@@ -1700,18 +1700,17 @@ $setglobal cm_INCONV_PENALTY  on         !! def = on  !! regexp = off|on
 *** cm_INCONV_PENALTY_FESwitch  off     !! def = off
 *** flag to trun on inconvenience penalty to avoid switching shares on buildings, transport and industry biomass use if costs are relatively close (seLiqbio, sesobio, segabio)
 $setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on  !! regexp = off|on
-*** cm_seFeSectorShareDevMethod "Switch to enable an optimization incentive for sectors to have similar shares of secondary energy fuels and detemrine the method used for the incentive." 
-*** Possible values: off or the method name (sqSectorShare, sqSectorAvrgShare or minMaxAvrgShare)
-***  off               "the model is completely free to choose where to allocate bio/syn/fossil fuels between sectors. If it is not off, a penalization term is added so sectors have an
-***                     incentive to apply similar shares to bio-fuels, synfuels and fossils used in each sector."
-***  sqSectorShare     "square share penalty"
-***  sqSectorAvrgShare "square deviation from average share penalty"
-***  minMaxAvrgShare   "min-max deviation from average share penalty"
-$setglobal cm_seFeSectorShareDevMethod  minMaxAvrgShare !! def = minMaxAvrgShare  !! regexp = off|sqSectorShare|sqSectorAvrgShare|minMaxAvrgShare
+*** cm_seFeSectorShareDevMethod "Switch to enable an optimization incentive for sectors to have similar shares of secondary energy fuels and determine the method used for the incentive." 
+*** Possible values: off or the method name (sqSectorShare, sqSectorAvrgShare, or minMaxAvrgShare)
+***  off               "The model can freely allocate bio/syn/fossil fuels between sectors. If not off, a penalization term is added so sectors are incentivized to apply similar shares of bio-fuels, synfuels, and fossils in each sector."
+***  sqSectorShare     "Square share penalty"
+***  sqSectorAvrgShare "Square deviation from average share penalty"
+***  minMaxAvrgShare   "Min-max deviation from average share penalty"
+*** The relative effect of the penalization term in the objective function is scaled to avoid affecting optimization results. This scaling factor can be defined using the switch c_seFeSectorShareDevScale.
+$setglobal cm_seFeSectorShareDevMethod  minMaxAvrgShare !! def = minMaxAvrgShare  !! regexp = 
 *** c_seFeSectorShareDevUnit "Defines if the penalization term is applied over fuel shares or energy units." 
-***  share,  "the square penalization is applied over the share values directly. Different sized regions will have different penalization relative incentives, but the range of penalization values will vary less from the solver perspective."
-***  energy, "the square penalization is applied over the share values multiplied by the energy demand. Penalizations should be better scalled over different size regions, 
-***           but there would be an increased risk of the penlizations being ignored, and the shares not being enforced, by the solver if the values range is too small."
+***  share,  "The square penalization is applied directly to the share values. This results in different-sized regions having varying relative penalization incentives, but the range of penalization values will be more consistent from the solver's perspective."
+***  energy, "The square penalization is applied to the share values multiplied by the energy demand. This approach scales penalizations better across different-sized regions, but there is a higher risk of the penalizations being ignored and the shares not being enforced if the value range is too small."
 $setglobal c_seFeSectorShareDevUnit  share !! def = share  !! regexp = share|energy
 ***  cm_MOFEX  off    !! def=off
 *** *JH/LB* Activate MOFEX partial fossil fuel extraction cost minimization model
