@@ -1183,7 +1183,7 @@ $ifthen.penSeFeSectorShareDevCost not "%cm_seFeSectorShareDevMethod%" == "off"
 q_penSeFeSectorShareDevCost(t,regi)..
  vm_penSeFeSectorShareDevCost(t,regi)
  =e=
- sum((regi,entyFe,entySe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector)),
+ sum((entyFe,entySe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector)),
   v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
  ) * c_seFeSectorShareDevScale
 ;
