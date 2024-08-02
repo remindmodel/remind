@@ -1168,13 +1168,13 @@ $elseIf.seFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgShare"
 q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector) AND (sameas(entySe,"seliqbio") OR sameas(entySe,"seliqsyn")))..
   v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
   =e=
-  v_NegPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt) - v_PosPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+  v_NegPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt) + v_PosPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
 ;
 q_minMaxPenSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector) AND (sameas(entySe,"seliqbio") OR sameas(entySe,"seliqsyn")))..
   v_shSefe(t,regi,entySe,entyFe) 
   - v_shSefeSector(t,regi,entySe,entyFe,sector,emiMkt)
-  + v_NegInconvPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
-  - v_PosInconvPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+  + v_NegPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+  - v_PosPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
   =e= 0
 ;
 $endif.seFeSectorShareDev

@@ -189,4 +189,18 @@ if (cm_startyear gt 2005,
 Execute_Loadpoint 'input_ref' vm_capEarlyReti.l = vm_capEarlyReti.l;
 );
 
+*** initialize secondary energy shares in sectors if deviations are penalized, i.e., if cm_seFeSectorShareDevMethod is enabled
+$ifthen.penSeFeSectorShareDevCost not "%cm_seFeSectorShareDevMethod%" == "off"
+
+p_shSefe(t,regi,entySe,entyFe)$(sum((entySe2,sector,emiMkt)$(sefe(entySe2,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt))) = 
+  sum((sector,emiMkt)$(sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt) )
+  / 
+  sum((entySe2,sector,emiMkt)$(sefe(entySe2,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt) );
+
+vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt) = sum(entySe2$(sefe(entySe2,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt))  * p_shSefe(t,regi,entySe,entyFe);
+
+display p_shSefe,vm_demFeSector.l;
+
+$endif.penSeFeSectorShareDevCost
+
 *** EOF ./core/preloop.gms

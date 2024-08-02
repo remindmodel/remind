@@ -265,6 +265,10 @@ p_FEPrice_by_Sector_iter(iteration,ttot,all_regi,all_enty,sector)               
 p_FEPrice_by_EmiMkt_iter(iteration,ttot,all_regi,all_enty,emiMkt)               "parameter to save iteration FE marginal price per emission market (tr$2005/TWa)"
 p_FEPrice_by_FE_iter(iteration,ttot,all_regi,all_enty)                          "parameter to save iteration FE marginal price (tr$2005/TWa)"
 
+$ifthen.penSeFeSectorShareDevCost not "%cm_seFeSectorShareDevMethod%" == "off"
+p_shSefe(ttot,all_regi,all_enty,all_enty)             "initial share of secondary energy on total final energy [0..1]"
+$endif.penSeFeSectorShareDevCost
+
 *** climate related
 pm_globalMeanTemperature(tall)                       "global mean temperature anomaly"
 pm_globalMeanTemperatureZeroed1900(tall)             "global mean temperature anomaly, zeroed around 1900"
@@ -445,6 +449,10 @@ $ifthen.seFeSectorShareDev not "%cm_seFeSectorShareDevMethod%" == "off"
   vm_penSeFeSectorShareDevCost(ttot,all_regi) "total penalty cost for secondary energy share deviation in sectors"
 $endif.seFeSectorShareDev
 
+$ifthen.minMaxSeFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgShare"
+  v_NegPenSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max negative penalty for secondary energy share deviation in sectors"
+  v_PosPenSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max positive penalty for secondary energy share deviation in sectors"
+$endif.minMaxSeFeSectorShareDev
 ;
 ***----------------------------------------------------------------------------------------
 ***                                   EQUATIONS
