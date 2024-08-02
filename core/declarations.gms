@@ -573,7 +573,7 @@ $endif.seFeSectorShareDev
 
 $ifthen.minMaxSeFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgShare"
   q_minMaxPenSeFeSectorShareDev(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max penalty balance for secondary energy share deviation in sectors"
-$endif.seFeSectorShareDev
+$endif.minMaxSeFeSectorShareDev
 
 ***----------------------------------------------------------------------------------------
 ***----------------------------------------------trade module------------------------------
