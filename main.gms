@@ -1008,8 +1008,7 @@ parameter
   c_earlyRetiValidYr  = 2035;   !! def = 2035
 *'
 parameter
-  c_seFeSectorShareDevScale "penalization value of the incentive for sectors to have similar shares of secondary energy fuels, for the square deviation methods, 
-                                       or scaling factor of the penalization value, for the min-max fomulation, to reduce the penalization effect on the objective function."
+  c_seFeSectorShareDevScale "scale factor of the objective function penalization to incentive sectors to have similar shares of secondary energy fuels."
 ;
   c_seFeSectorShareDevScale = 1e-5;  !! def = 1e-5
 *'
