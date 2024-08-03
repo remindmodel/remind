@@ -76,7 +76,7 @@ edgetOutputDir <- file.path(outputdir, "EDGE-T")
 if(file.exists(edgetOutputDir)) {
   if (! file.exists(file.path(edgetOutputDir, "4_Output", "vehSalesAndModeShares.RDS"))) {
     message("EDGE-T reporting files are missing, probably because the run was killed.")
-    message("Rerunning toolIterativeEDGETransport().")
+    message("Rerunning iterativeEdgeTransport().")
     savewd <- getwd()
     setwd(outputdir)
     edgeTransport::iterativeEdgeTransport()
