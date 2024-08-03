@@ -152,7 +152,8 @@ pm_shareWindOff(ttot,all_regi)                        "windoff rollout as a frac
 $ENDIF.WindOff
 
 pm_fe2es(tall,all_regi,all_teEs)                     "Conversion factor from final energies to energy services. Default is 1."
-
+p_shSefe(ttot,all_regi,all_enty,all_enty)             "initial share of secondary energy on total final energy [0..1]"
+p_shSefeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "initial share of secondary energy in sector total final energy per emission market [0..1]"
 pm_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)   "Final energy shares for CES nodes"
 
 pm_shfe_up(ttot,all_regi,all_enty,emi_sectors)       "Final energy shares exogenous upper bounds per sector"
@@ -264,10 +265,6 @@ p_FEPrice_by_SE_iter(iteration,ttot,all_regi,entySe,all_enty)                   
 p_FEPrice_by_Sector_iter(iteration,ttot,all_regi,all_enty,sector)               "parameter to save iteration FE marginal price per sector (tr$2005/TWa)"
 p_FEPrice_by_EmiMkt_iter(iteration,ttot,all_regi,all_enty,emiMkt)               "parameter to save iteration FE marginal price per emission market (tr$2005/TWa)"
 p_FEPrice_by_FE_iter(iteration,ttot,all_regi,all_enty)                          "parameter to save iteration FE marginal price (tr$2005/TWa)"
-
-$ifthen.penSeFeSectorShareDevCost not "%cm_seFeSectorShareDevMethod%" == "off"
-p_shSefe(ttot,all_regi,all_enty,all_enty)             "initial share of secondary energy on total final energy [0..1]"
-$endif.penSeFeSectorShareDevCost
 
 *** climate related
 pm_globalMeanTemperature(tall)                       "global mean temperature anomaly"
