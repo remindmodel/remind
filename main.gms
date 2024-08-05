@@ -533,7 +533,8 @@ parameter
 parameter
   cm_nucscen                "nuclear option choice"
 ;
-  cm_nucscen       = 2;        !! def = 2  !! regexp = 2|5|6
+  cm_nucscen       = 2;        !! def = 2  !! regexp = 1|2|5|6
+*' *  (1): default, no restriction, let nuclear be endogenously invested
 *' *  (2): no fnrs, tnrs with restricted new builds until 2030 (based on current data on plants under construction, planned or proposed)
 *' *  (5): no new nuclear investments after 2020
 *' *  (6): +33% investment costs for tnrs under SSP5, uranium resources increased by a factor of 10
