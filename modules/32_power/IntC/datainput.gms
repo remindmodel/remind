@@ -44,7 +44,7 @@ f32_factorStorage(all_regi,"windon") $ (f32_factorStorage(all_regi,"windon") eq 
 f32_factorStorage(all_regi,"windoff") = f32_factorStorage(all_regi,"windon");
 f32_factorStorage(all_regi,"windon")  = 1.35 * f32_factorStorage(all_regi,"windon"); 
 
-p32_factorStorage(all_regi,all_te) = f32_factorStorage(all_regi,all_te);
+p32_factorStorage(all_regi,teVRE) = f32_factorStorage(all_regi,teVRE);
 
 $if not "%cm_storageFactor%" == "off" p32_factorStorage(all_regi,all_te)=%cm_storageFactor%*p32_factorStorage(all_regi,all_te);
 
@@ -59,6 +59,7 @@ p32_storexp(regi,"windoff") = 1;
 p32_gridexp(regi,"spv")     = 1;
 p32_gridexp(regi,"csp")     = 1;
 p32_gridexp(regi,"windon")  = 1;
+p32_gridexp(regi,"windoff")  = 1;
 
 
 table f32_storageCap(char, all_te)  "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"

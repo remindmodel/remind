@@ -172,6 +172,10 @@ $offdelim
 /
 ;
 
+*** windoffshore-todo 
+p_inco0(ttot,all_regi,"windon") $ (p_inco0(ttot,all_regi,"windon") eq 0) = p_inco0(ttot,all_regi,"wind");
+p_inco0(ttot,all_regi,"wind") = 0;
+
 *** initializing energy service capital
 pm_esCapCost(tall,all_regi,all_teEs) = 0;
 
@@ -665,7 +669,7 @@ $Onlisting
 
 *** windoffshore-todo 
 pm_histCap(tall,all_regi,"windon") $ (pm_histCap(tall,all_regi,"windon") eq 0) = pm_histCap(tall,all_regi,"wind");
-
+pm_histCap(tall,all_regi,"wind") = 0;
 
 
 *** calculate historic capacity additions
@@ -698,6 +702,9 @@ f_cf(ttot,regi,"gridwindon") $ (f_cf(ttot,regi,"gridwindon") eq 0) = f_cf(ttot,r
 f_cf(ttot,regi,"windoff") = f_cf(ttot,regi,"windon");
 f_cf(ttot,regi,"storwindoff") = f_cf(ttot,regi,"storwindon");
 f_cf(ttot,regi,"gridwindoff") = f_cf(ttot,regi,"gridwindon");
+f_cf(ttot,regi,"wind") = 0;
+f_cf(ttot,regi,"storwind") = 0;
+f_cf(ttot,regi,"gridwind") = 0;
 
 pm_cf(ttot,regi,te) =  f_cf(ttot,regi,te);
 ***pm_cf(ttot,regi,"h2turbVRE") = 0.15;
@@ -1061,6 +1068,7 @@ $offdelim
 
 *** windoffshore-todo
 p_histCapFac(tall,all_regi,"windon") $ (p_histCapFac(tall,all_regi,"windon") eq 0) = p_histCapFac(tall,all_regi,"wind");
+p_histCapFac(tall,all_regi,"wind") = 0;
 
 *** RP rescale wind capacity factors in REMIND to account for very different real-world CF 
 *** (potentially partially due to assumed low-wind turbine set-ups in the NREL data)
@@ -1143,6 +1151,7 @@ p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
 *** windoffshore-todo
 p_adj_deltacapoffset(t,regi,"windon") $ (p_adj_deltacapoffset(t,regi,"windon") eq 0) = p_adj_deltacapoffset(t,regi,"wind");
 p_adj_deltacapoffset(t,regi,"windoff")= p_adj_deltacapoffset(t,regi,"windon");
+p_adj_deltacapoffset(t,regi,"wind") = 0;
 
 *** share of PE2SE capacities in 2005 depends on GDP-MER
 p_adj_seed_reg(t,regi) = pm_gdp(t,regi) * 1e-4;

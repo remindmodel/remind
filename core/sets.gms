@@ -251,14 +251,14 @@ all_te          "all energy technologies, including from modules"
         tdhei           "transmission and distribution for heat to industry"
         tdheb           "transmission and distribution for heat to buildings"
 
-         ccsinje         "injection of co2"
+        ccsinje         "injection of co2"
 *RP* Storage technology:
         storspv         "storage technology for photo voltaic (PV)"
         storwind        "storage technology for wind onshore"
         storwindon      "storage technology for wind onshore"
         storwindoff     "storage technology for wind offshore"
         storcsp         "storage technology for concentrating solar power (CSP)"
-*RP* grid technology
+*RP* grid technology:
         gridspv         "grid between areas with high pv production and the rest"
         gridcsp         "grid between areas with high csp production and the rest"
         gridwind        "grid between areas with high wind onshore production and the rest"
@@ -1550,6 +1550,7 @@ teRegTechCosts(all_te) "all technologies for which we differantiate tech costs"
        spv
        csp
        wind
+       windon
 /
 
 teFlex(all_te)       "all technologies which can benefit from flexibility tax"
