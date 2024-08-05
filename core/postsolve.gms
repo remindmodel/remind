@@ -486,7 +486,7 @@ if (cm_iterative_target_adj eq 9,
 	    o_taxCO2eq_afterPeakShiftLoop_Itr_1regi(t,iteration+1) = pm_taxCO2eq(t,regi); 
 	);
 	
-    display o_delay_increase_peakBudgYear, o_reached_until2150pricepath, pm_taxCO2eq, o_peakBudgYr_Itr, o_taxCO2eq_afterPeakShiftLoop_Itr_1regi, o_pkBudgYr_flipflop;
+    display o_delay_increase_peakBudgYear, o_reached_until2150pricepath, pm_taxCO2eq, o_peakBudgYr_Itr, o_taxCO2eq_afterPeakShiftLoop_Itr_1regi, o_pkBudgYr_flipflop, cm_peakBudgYr;
   ); !! if cm_emiscen eq 9,
 );   !! if cm_iterative_target_adj eq 9,
 
