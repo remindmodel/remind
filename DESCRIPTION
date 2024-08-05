@@ -36,7 +36,7 @@ Imports:
     knitr,
     lazyeval,
     lpjclass,
-    lucode2 (>= 0.47.8),
+    lucode2 (>= 0.47.9),
     luplot,
     luscale,
     lusweave,

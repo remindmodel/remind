@@ -10,12 +10,7 @@ test_that("manipulate config with default configuration does not change main.gms
   diffresult <- NULL
   diffavailable <- ! Sys.which("diff") == ""
   if (diffavailable) {
-    diffresult <- suppressWarnings(system(paste("diff -b ../../main.gms", tmpfile), intern = TRUE))
-    # drop all sorts of comments until https://github.com/pik-piam/lucode2/issues/121 is fixed
-    drop <- c("^< \\*\\*\\*", "^> \\*\\*\\*", "^> \\*' \\*", "^< \\*' \\*", "^---$", "^[0-9,]+c[0-9,]+$")
-    for (d in drop) {
-      diffresult <- grep(d, diffresult, value = TRUE, invert = TRUE)
-    }
+    diffresult <- suppressWarnings(system(paste("diff ../../main.gms", tmpfile), intern = TRUE))
     if (length(diffresult) > 0) {
       warning("Applying manipulateConfig with the default configuration leads to this diff between main.gms and ",
               basename(tmpfile), ":\n",
