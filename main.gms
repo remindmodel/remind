@@ -797,7 +797,7 @@ parameter
 parameter
   c_ccsinjecratescen        "CCS injection rate factor applied to total regional storage potentials, yielding an upper bound on annual injection"
 ;
-  c_ccsinjecratescen    = 1;         !! def = 1  !! regexp = [0-5]
+  c_ccsinjecratescen    = 1;         !! def = 1  !! regexp = [0-6]
 *' This switch determines the upper bound of the annual CCS injection rate.
 *' CCS here refers to carbon sequestration, carbon capture is modelled separately.
 *' *   (0) no "CCS" as in no carbon sequestration at all
@@ -806,6 +806,7 @@ parameter
 *' *   (3) upper estimate: 0.0075; max 29.5 GtCO2/yr globally
 *' *   (4) unconstrained: 1; max 3900 GtCO2/yr globally
 *' *   (5) sustainability case: 0.001; max 3.9 GtCO2/yr globally
+*' *   (6) intermediate estimate: 0.0022; max 8.6 GtCO2/yr globally
 *'
 parameter
   c_ccscapratescen          "CCS capture rate"
