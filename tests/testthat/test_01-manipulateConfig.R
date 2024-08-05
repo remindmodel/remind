@@ -1,0 +1,56 @@
+test_that("manipulate config with default configuration does not change main.gms", {
+  # copy main file and manipulate it based on default settings
+  cfg_init <- gms::readDefaultConfig("../..")
+  tmpfile <- tempfile(pattern = "main", tmpdir = "../..", fileext = ".gms")
+  file.copy("../../main.gms", tmpfile)
+  lucode2::manipulateConfig(tmpfile, cfg_init$gms)
+  cfg_after <- gms::readDefaultConfig("../..", basename(tmpfile))
+
+  # check diff
+  diffavailable <- ! Sys.which("diff") == ""
+  if (diffavailable) {
+    diffresult <- suppressWarnings(system(paste("diff -b ../../main.gms", tmpfile), intern = TRUE))
+    # drop all sorts of comments until https://github.com/pik-piam/lucode2/issues/121 is fixed
+    drop <- c("^< \\*\\*\\*", "^> \\*\\*\\*", "^> \\*' \\*", "^< \\*' \\*", "^---$", "^[0-9,]+c[0-9,]+$")
+    for (d in drop) {
+      diffresult <- grep(d, diffresult, value = TRUE, invert = TRUE)
+    }
+    if (length(diffresult) > 0) {
+      warning("Applying manipulateConfig with the default configuration leads to this diff between main.gms and ", tmpfile, ":\n",
+              paste(diffresult, collapse = "\n"))
+    }
+    expect_equal(length(diffresult), 0)
+  }
+
+  # check for switches missing in the new cfg
+  removedgms <- setdiff(names(cfg_init$gms), names(cfg_after$gms))
+  if (length(removedgms) > 0) {
+    warning("These cfg$gms switches can't be found after manipulation of main.gms, see ", tmpfile, ".\n",
+            "Please file an issue in the gms package and try to adjust the code until the error goes away:\n",
+            paste("-", removedgms, collapse = "\n"))
+  }
+  expect_equal(length(removedgms), 0)
+
+  # check for switches added to the new cfg
+  addedgms <- setdiff(names(cfg_after$gms), names(cfg_init$gms))
+  if (length(addedgms) > 0) {
+    warning("These cfg$gms switches were somehow added by manipulateConfig to main.gms, see ", tmpfile, ".\n",
+            "Please file an issue in the gms package and try to adjust the code until the error goes away:\n",
+            paste("-", addedgms, collapse = "\n"))
+  }
+  expect_equal(length(addedgms), 0)
+
+  # check for switches with different content between old and new cfg
+  joinednames <- intersect(names(cfg_after$gms), names(cfg_init$gms))
+  contentdiff <- joinednames[! unlist(cfg_init$gms[joinednames]) == unlist(cfg_after$gms[joinednames])]
+  if (length(contentdiff) > 0) {
+    warning("After file manipulation, the following cfg$gms switches differ, see ", tmpfile, ":\n",
+            paste0("- ", contentdiff, ": ", unlist(cfg_init$gms[contentdiff]), " -> ", unlist(cfg_after$gms[contentdiff]), collapse = "\n"))
+  }
+  expect_equal(length(contentdiff), 0)
+
+  # cleanup if no error found
+  if (length(addedgms) + length(removedgms) + length(contentdiff) + length(diffresult) == 0) {
+    file.remove(tmpfile)
+  }
+})

@@ -454,7 +454,7 @@ parameter
 *' *  (2): parallel  - all regions are run in parallel
 *'
 parameter
-  cm_iteration_max          "number of iterations, if optimization is set to negishi or testOneRegi; is overwritten in Nash mode, except for cm_nash_autoconverge = 0"
+  cm_iteration_max          "number of iterations, if optimization is set to negishi or testOneRegi; is overwritten in Nash mode, except if cm_nash_autoconverge is set to 0"
 ;
   cm_iteration_max       = 1;     !! def = 1
 *'
@@ -1621,12 +1621,14 @@ $setGlobal cm_CESMkup_ind        standard  !! def = standard
 $setGlobal cm_CESMkup_ind_data   ""        !! def = ""
 
 *** cm_fxIndUe "switch for fixing UE demand in industry to baseline level - no endogenous demand adjustment"
-*** default cm_fxIndUe = off -> endogenous demand, cm_fxIndUe = on -> exogenous demand fixed to baseline/NPi level (read in from input_ref.gdx)
-*** cm_fxIndUeReg indicates the regions under which the industry demand will be fixed 
-*** for example, cm_fxIndUe = on and cm_fxIndUeReg = SSA,NEU,CHA,IND,OAS,MEA,LAM gives a scenario where all non global north (non-OECD) industry demand is fixed to baseline
-*** cm_fxIndUeReg = GLO fixes industry demand to baseline level everywhere
-$setGlobal cm_fxIndUe        off  !! def = off
-$setGlobal cm_fxIndUeReg     ""       !! def = ""
+*** off: endogenous demand.
+*** on: exogenous demand fixed to baseline/NPi level (read in from input_ref.gdx)
+*** cm_fxIndUeReg "indicates the regions under which the industry demand will be fixed, requires cm_fxIndUe set to on"
+*** examples:
+*** SSA,NEU,CHA,IND,OAS,MEA,LAM: gives a scenario where all non global north (non-OECD) industry demand is fixed to baseline
+*** GLO: fixes industry demand to baseline level everywhere
+$setGlobal cm_fxIndUe        off   !! def = off  !! regexp = off|on
+$setGlobal cm_fxIndUeReg     ""    !! def = ""
 
 *** cm_ind_energy_limit Switch for setting upper limits on industry energy
 *** efficiency improvements.  See ./modules/37_subsectors/datainput.gms for
