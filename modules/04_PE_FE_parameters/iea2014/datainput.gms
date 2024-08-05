@@ -29,6 +29,8 @@ if (smin((t,regi,pe2se(entyPe,entySe,te)), f04_IO_input(t,regi,entyPe,entySe,te)
 f04_IO_input(tall,regi,entyPe,entySe,te)$(f04_IO_input(tall,regi,entyPe,entySe,te) lt 0) = 0;
 
 *** windoffshore-todo
+f04_IO_input(tall,all_regi,"pewin","seel","windon") $ (f04_IO_input(tall,all_regi,"pewin","seel","windon") eq 0) = f04_IO_input(tall,all_regi,"pewin","seel","wind") = 0;
+f04_IO_input(tall,all_regi,"pewin","seel","wind") = 0;
 *CG* setting historical production from wind offshore to 0 (due to the scarcity of offshore wind before 2015)
 f04_IO_input(tall,all_regi,"pewin","seel","windoff") = 0;
 
@@ -55,6 +57,9 @@ if (smin((t,regi,pe2se(entyPe,entySe,te)), f04_IO_output(t,regi,entyPe,entySe,te
 *' overwrite negative values with 0 to allow the model to solve. In the mid-term, the input data/mapping needs to be improved to prevent negative values
 f04_IO_output(tall,regi,entyPe,entySe,te)$(f04_IO_output(tall,regi,entyPe,entySe,te) lt 0) = 0;
 
+*** windoffshore-todo
+f04_IO_output(tall,all_regi,"pewin","seel","windon") $ (f04_IO_output(tall,all_regi,"pewin","seel","windon") eq 0) = f04_IO_output(tall,all_regi,"pewin","seel","wind") = 0;
+f04_IO_output(tall,all_regi,"pewin","seel","wind") = 0;
 
 
 
