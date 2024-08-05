@@ -493,6 +493,7 @@ if (c_ccsinjecratescen eq 2, s_ccsinjecrate = s_ccsinjecrate *   0.50 ); !! Lowe
 if (c_ccsinjecratescen eq 3, s_ccsinjecrate = s_ccsinjecrate *   1.50 ); !! Upper estimate
 if (c_ccsinjecratescen eq 4, s_ccsinjecrate = s_ccsinjecrate * 200    ); !! remove flow constraint for DAC runs
 if (c_ccsinjecratescen eq 5, s_ccsinjecrate = s_ccsinjecrate *   0.20 ); !! sustainable estimate
+if (c_ccsinjecratescen eq 6, s_ccsinjecrate = s_ccsinjecrate *   0.44 ); !! Intermediate estimate
 pm_ccsinjecrate(regi) = s_ccsinjecrate;
 
 *** OR: overwrite with regional values of ccs injection rate
