@@ -146,6 +146,12 @@ fete(entyFe,te) = YES;
 sefe(entySe,entyFe) = YES;
 );
 
+loop(seAgg2se(seAgg,entySe),
+  loop(sefe(entySe,entyFe),
+    seAgg2fe(seAgg,entyFe) = YES;
+  );
+);
+
 *** extended region group set
 regi_groupExt(ext_regi,all_regi)$regi_group(ext_regi,all_regi) = Yes;
 loop(all_regi,

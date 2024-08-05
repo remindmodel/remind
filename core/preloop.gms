@@ -190,19 +190,23 @@ Execute_Loadpoint 'input_ref' vm_capEarlyReti.l = vm_capEarlyReti.l;
 );
 
 *** initialize secondary energy shares in sectors if deviations are penalized, i.e., if cm_seFeSectorShareDevMethod is enabled
-p_shSefe(t,regi,entySe,entyFe)$(sum((entySe2,sector,emiMkt)$(sefe(entySe2,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt))) = 
-  sum((sector,emiMkt)$(sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt) )
-  / 
-  sum((entySe2,sector,emiMkt)$(sefe(entySe2,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt) );
-v_shSefe.l(t,regi,entySe,entyFe) = p_shSefe(t,regi,entySe,entyFe);
-$ifthen.penSeFeSectorShareDevCost not "%cm_seFeSectorShareDevMethod%" == "off"
-vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt) = sum(entySe2$(sefe(entySe2,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt))  * p_shSefe(t,regi,entySe,entyFe);
-$endif.penSeFeSectorShareDevCost
-p_shSefeSector(t,regi,entySe,entyFe,sector,emiMkt)$sum(entySe2$sefe(entySe2,entyFe), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt)) =
-  vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)
+p_shSefe(t,regi,entySe,seAgg)$(seAgg2se(seAgg,entySe) AND sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), sum(entyFe$(seAgg2fe(seAgg,entyFe) AND entyFe2Sector(entyFe,sector)), sum(entySe2$(seAgg2se(seAgg,entySe2) AND sefe(entySe2,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt))))) =
+  sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), sum(entyFe$(seAgg2fe(seAgg,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))
   /
-  sum(entySe2$sefe(entySe2,entyFe), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt))  ;
-v_shSefeSector.l(t,regi,entySe,entyFe,sector,emiMkt) = p_shSefeSector(t,regi,entySe,entyFe,sector,emiMkt);
+  sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), sum(entyFe$(seAgg2fe(seAgg,entyFe) AND entyFe2Sector(entyFe,sector)), sum(entySe2$(seAgg2se(seAgg,entySe2) AND sefe(entySe2,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt))));
+v_shSefe.l(t,regi,entySe,seAgg) = p_shSefe(t,regi,entySe,seAgg);
+$ifthen.penSeFeSectorShareDevCost not "%cm_seFeSectorShareDevMethod%" == "off"
+loop(seAgg,
+  vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)$(seAgg2se(seAgg,entySe) AND sum(entySe2$seAgg2se(seAgg,entySe2), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt))) =
+    sum(entySe2$(sefe(entySe2,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt))  * p_shSefe(t,regi,entySe,seAgg);
+);
+vm_demFeSector_afterTax.l(t,regi,entySe,entyFe,sector,emiMkt) = vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt);
+$endif.penSeFeSectorShareDevCost
+p_shSefeSector(t,regi,entySe,seAgg,sector,emiMkt)$(seAgg2se(seAgg,entySe) AND sum(entyFe$(seAgg2fe(seAgg,entyFe) AND entyFe2Sector(entyFe,sector)), sum(entySe2$(seAgg2se(seAgg,entySe2) AND sefe(entySe2,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt)))) =
+  sum(entyFe$(seAgg2fe(seAgg,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt))
+  /
+  sum(entyFe$(seAgg2fe(seAgg,entyFe) AND entyFe2Sector(entyFe,sector)), sum(entySe2$(seAgg2se(seAgg,entySe2) AND sefe(entySe2,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt)));
+v_shSefeSector.l(t,regi,entySe,seAgg,sector,emiMkt) = p_shSefeSector(t,regi,entySe,seAgg,sector,emiMkt);
 display p_shSefe,p_shSefeSector,vm_demFeSector.l;
 
 *** EOF ./core/preloop.gms

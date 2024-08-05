@@ -2448,6 +2448,8 @@ seAgg2se(all_enty,all_enty) "map secondary energy aggregation to se"
       all_sega.segasyn
 /
 
+seAgg2fe(all_enty,all_enty) "map secondary energy aggregation to fe"
+
 capTotal(all_enty,all_enty)    "mapping of input to output carriers for calculating total capacities without technology differentiation vm_capTotal"
 /
         pecoal.seel
