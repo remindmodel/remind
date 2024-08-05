@@ -7,6 +7,7 @@ test_that("manipulate config with default configuration does not change main.gms
   cfg_after <- gms::readDefaultConfig("../..", basename(tmpfile))
 
   # check diff
+  diffresult <- NULL
   diffavailable <- ! Sys.which("diff") == ""
   if (diffavailable) {
     diffresult <- suppressWarnings(system(paste("diff -b ../../main.gms", tmpfile), intern = TRUE))
@@ -16,7 +17,8 @@ test_that("manipulate config with default configuration does not change main.gms
       diffresult <- grep(d, diffresult, value = TRUE, invert = TRUE)
     }
     if (length(diffresult) > 0) {
-      warning("Applying manipulateConfig with the default configuration leads to this diff between main.gms and ", tmpfile, ":\n",
+      warning("Applying manipulateConfig with the default configuration leads to this diff between main.gms and ",
+              basename(tmpfile), ":\n",
               paste(diffresult, collapse = "\n"))
     }
     expect_equal(length(diffresult), 0)
@@ -25,7 +27,7 @@ test_that("manipulate config with default configuration does not change main.gms
   # check for switches missing in the new cfg
   removedgms <- setdiff(names(cfg_init$gms), names(cfg_after$gms))
   if (length(removedgms) > 0) {
-    warning("These cfg$gms switches can't be found after manipulation of main.gms, see ", tmpfile, ".\n",
+    warning("These cfg$gms switches can't be found after manipulation of main.gms, see ", basename(tmpfile), ".\n",
             "Please file an issue in the gms package and try to adjust the code until the error goes away:\n",
             paste("-", removedgms, collapse = "\n"))
   }
@@ -34,7 +36,7 @@ test_that("manipulate config with default configuration does not change main.gms
   # check for switches added to the new cfg
   addedgms <- setdiff(names(cfg_after$gms), names(cfg_init$gms))
   if (length(addedgms) > 0) {
-    warning("These cfg$gms switches were somehow added by manipulateConfig to main.gms, see ", tmpfile, ".\n",
+    warning("These cfg$gms switches were somehow added by manipulateConfig to main.gms, see ", basename(tmpfile), ".\n",
             "Please file an issue in the gms package and try to adjust the code until the error goes away:\n",
             paste("-", addedgms, collapse = "\n"))
   }
@@ -44,7 +46,7 @@ test_that("manipulate config with default configuration does not change main.gms
   joinednames <- intersect(names(cfg_after$gms), names(cfg_init$gms))
   contentdiff <- joinednames[! unlist(cfg_init$gms[joinednames]) == unlist(cfg_after$gms[joinednames])]
   if (length(contentdiff) > 0) {
-    warning("After file manipulation, the following cfg$gms switches differ, see ", tmpfile, ":\n",
+    warning("After file manipulation, the following cfg$gms switches differ, see ", basename(tmpfile), ":\n",
             paste0("- ", contentdiff, ": ", unlist(cfg_init$gms[contentdiff]), " -> ", unlist(cfg_after$gms[contentdiff]), collapse = "\n"))
   }
   expect_equal(length(contentdiff), 0)
