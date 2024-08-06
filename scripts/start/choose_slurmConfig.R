@@ -35,9 +35,11 @@ choose_slurmConfig <- function(identifier = FALSE, flags = NULL) {
 
     if (! identifier %in% paste(seq(1:16))) {
       wasselect <- TRUE
-      cat("\nCurrent cluster utilization:\n")
-      system("sclass")
-      cat("\n")
+      if (! Sys.which("sclass") == "") {
+        cat("\nCurrent cluster utilization:\n")
+        system("sclass")
+        cat("\n")
+      }
       cat("\nPlease choose the SLURM configuration for your submission:\n")
       cat("    QOS             tasks per node   suitable for\n=======================================================================\n")
       #cat(paste(1:length(modes), modes, sep=": " ),sep="\n")

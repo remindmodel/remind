@@ -1,8 +1,17 @@
 test_that("manipulate config with default configuration does not change main.gms", {
   # copy main file and manipulate it based on default settings
   cfg_init <- gms::readDefaultConfig("../..")
-  tmpfile <- tempfile(pattern = "main", tmpdir = "../..", fileext = ".gms")
+  tmpfile <- tempfile(pattern = "main-TESTTHAT-", tmpdir = "../..", fileext = ".gms")
   file.copy("../../main.gms", tmpfile)
+
+  # generate arbitrary settings, manipulate file, read them again and check identity
+  cfg_new <- cfg_init
+  cfg_new$gms[names(cfg_new$gms)] <- rep(c(0, 1, "asdf", "bc3", "3bc"), length(cfg_new$gms))[1:length(cfg_new$gms)]
+  lucode2::manipulateConfig(tmpfile, cfg_new$gms)
+  cfg_new_after <- gms::readDefaultConfig("../..", basename(tmpfile))
+  expect_equal(cfg_new_after, cfg_new)
+
+  # reset to initial setting and check that nothing has changed at all in the file
   lucode2::manipulateConfig(tmpfile, cfg_init$gms)
   cfg_after <- gms::readDefaultConfig("../..", basename(tmpfile))
 
@@ -10,12 +19,7 @@ test_that("manipulate config with default configuration does not change main.gms
   diffresult <- NULL
   diffavailable <- ! Sys.which("diff") == ""
   if (diffavailable) {
-    diffresult <- suppressWarnings(system(paste("diff -b ../../main.gms", tmpfile), intern = TRUE))
-    # drop all sorts of comments until https://github.com/pik-piam/lucode2/issues/121 is fixed
-    drop <- c("^< \\*\\*\\*", "^> \\*\\*\\*", "^> \\*' \\*", "^< \\*' \\*", "^---$", "^[0-9,]+c[0-9,]+$")
-    for (d in drop) {
-      diffresult <- grep(d, diffresult, value = TRUE, invert = TRUE)
-    }
+    diffresult <- suppressWarnings(system(paste("diff ../../main.gms", tmpfile), intern = TRUE))
     if (length(diffresult) > 0) {
       warning("Applying manipulateConfig with the default configuration leads to this diff between main.gms and ",
               basename(tmpfile), ":\n",
@@ -53,6 +57,6 @@ test_that("manipulate config with default configuration does not change main.gms
 
   # cleanup if no error found
   if (length(addedgms) + length(removedgms) + length(contentdiff) + length(diffresult) == 0) {
-    file.remove(tmpfile)
+    file.remove(list.files(pattern = "main-TESTTHAT.*gms"))
   }
 })
