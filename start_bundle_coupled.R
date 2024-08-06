@@ -375,11 +375,38 @@ for(scen in common){
   rm(cfg)
   cfg_mag$title <- scen
 
-  # configure MAgPIE according to magpie_scen (scenario needs to be available in scenario_config.cfg)
-  if(!is.null(scenarios_coupled[scen, "magpie_scen"])) {
-    cfg_mag <- setScenario(cfg_mag, c(trimws(unlist(strsplit(scenarios_coupled[scen, "magpie_scen"], split = ",|\\|"))), "coupling"),
-                           scenario_config = file.path(path_magpie, "config", "scenario_config.csv"))
+  # extract columns from coupled config that define magpie scenarios
+  # the column must be named 'magpie_scen' (then the default config/scenario_config.csv will be loaded)
+  # or they have to have the path to a scenario_config*.csv as their name
+  magpieScenarios <- scenarios_coupled[scen, grepl("scenario_config|magpie_scen", colnames(scenarios_coupled)), drop = FALSE]
+
+  # configure MAgPIE using the scenarios extracted above
+  if (nrow(magpieScenarios) > 0) {
+    for (i in seq_len(ncol(magpieScenarios))) {
+      pathToScenarioConfig <- colnames(magpieScenarios)[i]
+      # backwards compatibility: if the column name is 'magpie_scen' use the 'config/scenario_config.csv'
+      pathToScenarioConfig <- ifelse(pathToScenarioConfig == "magpie_scen", "config/scenario_config.csv", pathToScenarioConfig)
+      scenarioList <- magpieScenarios[,i]
+      if(!is.na(scenarioList)) {
+        cfg_mag <- setScenario(cfg_mag, trimws(unlist(strsplit(scenarioList, split = ",|\\|"))),
+                               scenario_config = file.path(path_magpie, pathToScenarioConfig))
+      }
+    }
   }
+
+  # always select 'coupling' scenario
+  cfg_mag <- setScenario(cfg_mag, "coupling", scenario_config = file.path(path_magpie, "config", "scenario_config.csv"))
+
+  # extract magpie switches from coupled config, replace NA otherwise setScenario complains
+  magpieSwitches <- scenarios_coupled %>% select(contains("cfg_mag")) %>% t() %>% as.data.frame() %>% replace(is.na(.), "")
+
+  # configure MAgPIE according to individual switches provided in scenario_config_coupled*.csv
+  if (nrow(magpieSwitches) > 0) {
+    # remove prefix "cfg_mag$" from switch names to yield original MAgPIE names
+    row.names(magpieSwitches) <- gsub("cfg_mag\\$", "", row.names(magpieSwitches))
+    cfg_mag <- setScenario(cfg_mag, scen, scenario_config = magpieSwitches)
+  }
+
   cfg_mag <- check_config(cfg_mag, reference_file=file.path(path_magpie, "config", "default.cfg"),
                           modulepath = file.path(path_magpie, "modules"))
 
@@ -398,7 +425,7 @@ for(scen in common){
       cfg_rem[[switchname]] <- settings_remind[scen, switchname]
     }
   }
-  
+
   # Set reporting scripts
   if ("output" %in% names(settings_remind) && ! is.na(settings_remind[scen, "output"])) {
     scenoutput <- gsub('c\\("|\\)|"', '', trimws(unlist(strsplit(settings_remind[scen, "output"], split = ','))))
@@ -515,7 +542,7 @@ for(scen in common){
         cfg_rem$files2export$start["input.gdx"] <- paste0(runname, "-rem-", i-1)
       }
     }
-    
+
       # If the preceding run has already finished (= its gdx file exist) start
       # the current run immediately. This might be the case e.g. if you started
       # the NDC run in a first batch and now want to start the subsequent policy
@@ -523,7 +550,7 @@ for(scen in common){
     if (i == start_iter_first && ! start_now && all(file.exists(cfg_rem$files2export$start[path_gdx_list]) | unlist(gdx_na))) {
       start_now <- TRUE
     }
-    
+
     foldername <- file.path("output", fullrunname)
     if ((i > start_iter_first || !scenarios_coupled[scen, "start_magpie"]) && file.exists(foldername)) {
       if (errorsfound == 0 && ! any(c("--test", "--gamscompile") %in% flags)) {
@@ -637,7 +664,8 @@ for (scen in common) {
         sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j'"), intern = TRUE)
         runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
       }
-      slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
+      slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, if (runEnv$qos %in% "priority") " --partition=priority",
+        " --job-name=", fullrunname, " --output=", logfile,
         " --open-mode=append --mail-type=END,FAIL --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
         if (runEnv$numberOfTasks == 1) " --mem=8000"), runEnv$sbatch)
       slurmCommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")

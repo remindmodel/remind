@@ -24,13 +24,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1723](https://github.com/remindmodel/remind/pull/1723)]
 - **scripts** define defaults for script selections in output.R
     [[#1739](https://github.com/remindmodel/remind/pull/1739)]
-- **scripts** fail transparently on duplicated column names in scenario_config*.csv files
+- **scripts** fail transparently on duplicated column names in `scenario_config*.csv` files
     [[#1742](https://github.com/remindmodel/remind/pull/1742)]
+- **testthat** fail if manipulating main.gms with default cfg drops/changes switches
+    [[#1764](https://github.com/remindmodel/remind/pull/1764)]
 
 ### fixed
 - included CCS from plastic waste incineration in CCS mass flows so it is
     subject to injection constraints (but did not add CCS costs, see
     https://github.com/remindmodel/development_issues/issues/274
+- **MAGICC7** fix climate data for t < cm_startyear on reference run
+    [[#1744](https://github.com/remindmodel/remind/pull/1744)]
 - **scripts** fix tax convergence reporting in modelSummary
     [[#1728](https://github.com/remindmodel/remind/pull/1728)]
 - **scripts** cleanup non-existing realizations from settings_config.csv
