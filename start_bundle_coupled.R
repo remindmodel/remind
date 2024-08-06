@@ -665,7 +665,8 @@ for (scen in common) {
         sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j'"), intern = TRUE)
         runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
       }
-      slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, if (runEnv$qos %in% "priority") " --partition=priority",
+      slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos,
+        if (runEnv$qos %in% c("priority", "standby")) " --partition=priority",
         " --job-name=", fullrunname, " --output=", logfile,
         " --open-mode=append --mail-type=END,FAIL --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
         if (runEnv$numberOfTasks == 1) " --mem=8000"), runEnv$sbatch)
