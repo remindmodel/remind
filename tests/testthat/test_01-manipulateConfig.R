@@ -1,7 +1,7 @@
 test_that("manipulate config with default configuration does not change main.gms", {
   # copy main file and manipulate it based on default settings
   cfg_init <- gms::readDefaultConfig("../..")
-  tmpfile <- tempfile(pattern = "main", tmpdir = "../..", fileext = ".gms")
+  tmpfile <- tempfile(pattern = "main-TESTTHAT-", tmpdir = "../..", fileext = ".gms")
   file.copy("../../main.gms", tmpfile)
   lucode2::manipulateConfig(tmpfile, cfg_init$gms)
   cfg_after <- gms::readDefaultConfig("../..", basename(tmpfile))
@@ -48,6 +48,6 @@ test_that("manipulate config with default configuration does not change main.gms
 
   # cleanup if no error found
   if (length(addedgms) + length(removedgms) + length(contentdiff) + length(diffresult) == 0) {
-    file.remove(tmpfile)
+    file.remove(list.files(pattern = "main-TESTTHAT.*gms"))
   }
 })
