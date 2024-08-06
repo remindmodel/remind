@@ -21,12 +21,12 @@ elseif cm_co2_tax_startyear gt 0,
 *LB* calculate tax path until cm_expoLinear_yearStart (defaults to 2060)
 pm_taxCO2eq(ttot,regi)$(ttot.val ge cm_startyear) = s45_co2_tax_startyear*cm_co2_tax_growth**(ttot.val-cm_startyear);
 *LB* use linear tax path from cm_expoLinear_yearStart on
-p45_tau_co2_tax_inc(regi) = sum(ttot$(ttot.val eq cm_expoLinear_yearStart),((pm_taxCO2eq(ttot, regi) - pm_taxCO2eq(ttot - 1, regi)) / (pm_ttot_val(ttot) - pm_ttot_val(ttot - 1)))); 
-pm_taxCO2eq(ttot,regi)$(ttot.val gt cm_expoLinear_yearStart) = sum(t$(t.val eq cm_expoLinear_yearStart), pm_taxCO2eq(t, regi) +  p45_tau_co2_tax_inc(regi) * (pm_ttot_val(ttot) - pm_ttot_val(t)))  ;
+s45_tau_co2_tax_inc = sum(ttot$(ttot.val eq cm_expoLinear_yearStart),((pm_taxCO2eq(ttot, regi) - pm_taxCO2eq(ttot - 1, regi)) / (pm_ttot_val(ttot) - pm_ttot_val(ttot - 1)))); 
+pm_taxCO2eq(ttot,regi)$(ttot.val gt cm_expoLinear_yearStart) = sum(t$(t.val eq cm_expoLinear_yearStart), pm_taxCO2eq(t, regi) +  s45_tau_co2_tax_inc * (pm_ttot_val(ttot) - pm_ttot_val(t)))  ;
 *** set carbon price constant after 2110 to prevent huge carbon prices which lead to convergence problems
 pm_taxCO2eq(ttot,regi)$(ttot.val gt 2110) = pm_taxCO2eq("2110",regi);
 
 display pm_taxCO2eq;
-display p45_tau_co2_tax_inc;
+display s45_tau_co2_tax_inc;
 
 *** EOF ./modules/45_carbonprice/expoLinear/datainput.gms
