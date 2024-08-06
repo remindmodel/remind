@@ -39,6 +39,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1728](https://github.com/remindmodel/remind/pull/1728)]
 - **scripts** cleanup non-existing realizations from settings_config.csv
     [[#1718](https://github.com/remindmodel/remind/pull/1718)]
+- **scripts** REMIND-MAgPIE start scripts now correctly use all non-gms cfg switches
+    [[#1768](https://github.com/remindmodel/remind/pull/1768)]
 
 ### removed
 
