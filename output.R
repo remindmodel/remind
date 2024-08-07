@@ -85,9 +85,9 @@ if ("--help" %in% flags) {
 }
 
 choose_slurmConfig_output <- function(output) {
-  slurm_options <- c("--qos=priority --partition=priority", "--qos=short", "--qos=standby --partition=priority",
-                     "--qos=priority --partition=priority --mem=8000", "--qos=short --mem=8000",
-                     "--qos=standby --partition=priority --mem=8000", "--qos=priority --partition=priority --mem=32000")
+  slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
+                     "--qos=priority --mem=8000", "--qos=short --mem=8000",
+                     "--qos=standby --mem=8000", "--qos=priority --mem=32000")
 
   if (!isSlurmAvailable())
     return("direct")
@@ -198,8 +198,7 @@ if (comp %in% c("comparison", "export")) {
   }
   if (exists("slurmConfig")) {
     if (slurmConfig %in% c("priority", "short", "standby")) {
-      slurmConfig <- paste0("--qos=", slurmConfig,
-                            if (slurmConfig %in% c("priority", "standby")) " --partition=priority")
+      slurmConfig <- paste0("--qos=", slurmConfig)
     }
   }
 
@@ -239,8 +238,7 @@ if (comp %in% c("comparison", "export")) {
       if (slurmConfig != "direct") slurmConfig <- combine_slurmConfig("--nodes=1 --tasks-per-node=1", slurmConfig)
     }
     if (slurmConfig %in% c("priority", "short", "standby")) {
-      slurmConfig <- paste0("--nodes=1 --tasks-per-node=1 --qos=", slurmConfig,
-                            if (slurmConfig %in% c("priority", "standby")) " --partition=priority")
+      slurmConfig <- paste0("--nodes=1 --tasks-per-node=1 --qos=", slurmConfig)
     }
     if (isTRUE(slurmConfig %in% "direct")) {
       flags <- c(flags, "--interactive") # to tell scripts they can run in interactive mode
