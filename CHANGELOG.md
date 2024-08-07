@@ -26,6 +26,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1739](https://github.com/remindmodel/remind/pull/1739)]
 - **scripts** fail transparently on duplicated column names in `scenario_config*.csv` files
     [[#1742](https://github.com/remindmodel/remind/pull/1742)]
+- **scripts** checkProjectSummations now also checks whether global intensive variables (prices)
+    lie between regional min/max
+    [[#1773](https://github.com/remindmodel/remind/pull/1773)]
 - **testthat** fail if manipulating main.gms with default cfg drops/changes switches and comments
     [[#1764](https://github.com/remindmodel/remind/pull/1764)] and
     [[#1767](https://github.com/remindmodel/remind/pull/1767)]
