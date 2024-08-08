@@ -219,7 +219,7 @@ nodamagefolder <- "output"
 nodamagescenarios <- c("d_delfrag", "d_strain", "o_2c", "h_cpol", "o_lowdem", "o_1p5c", "h_ndc")
 curpol <- "h_cpol"
 stopifnot(curpol %in% nodamagescenarios)
-nodamageiter <- 3
+nodamageiter <- 5
 nodamagemifs <- file.path(nodamagefolder, paste0("C_", nodamagescenarios, "-rem-", nodamageiter),
                           paste0("REMIND_generic_C_", nodamagescenarios, "-rem-", nodamageiter, ".mif"))
 nodamage <- quitte::as.quitte(nodamagemifs)

@@ -52,7 +52,7 @@ helpText <- "
 # Please provide all files and paths relative to the folder where start_coupled is executed
 path_remind <- getwd()   # provide path to REMIND. Default: the actual path which the script is started from
 path_magpie <- normalizePath(file.path(getwd(), "magpie"), mustWork = FALSE)
-if (! dir.exists(path_magpie)) path_magpie <- normalizePath(file.path(getwd(), "..", "magpie"))
+if (! dir.exists(path_magpie)) path_magpie <- normalizePath(file.path(getwd(), "..", "magpie"), mustWork = FALSE)
 
 # Paths to the files where scenarios are defined
 # path_settings_remind contains the detailed configuration of the REMIND scenarios

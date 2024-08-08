@@ -40,7 +40,7 @@ projects <- list(
   NGFS       = list(model = "REMIND-MAgPIE 3.3-4.8",
                     mapping = c("AR6", "AR6_NGFS"),
                     iiasatemplate = "https://files.ece.iiasa.ac.at/ngfs-phase-5/ngfs-phase-5-template.xlsx",
-                    removeFromScen = "C_|_bIT|_bit|_bIt"),
+                    removeFromScen = "C_|_bIT|_bit|_bIt|_KLW"),
   SHAPE      = list(mapping = c("NAVIGATE", "SHAPE")),
   TESTTHAT   = list(mapping = "AR6")
 )
