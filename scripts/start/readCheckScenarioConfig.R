@@ -83,8 +83,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   }
 
   if (fillWithDefault) {
-    for (switchname in intersect(names(scenConf), names(cfg$gms))) {
-      scenConf[is.na(scenConf[, switchname]), switchname] <- cfg$gms[[switchname]]
+    for (switch in intersect(names(scenConf), c(names(cfg), names(cfg$gms)))) {
+      scenConf[is.na(scenConf[, switch]), switch] <- ifelse(switch %in% names(cfg), cfg[[switch]], cfg$gms[[switch]])
     }
   }
 
