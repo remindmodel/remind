@@ -26,6 +26,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1739](https://github.com/remindmodel/remind/pull/1739)]
 - **scripts** fail transparently on duplicated column names in `scenario_config*.csv` files
     [[#1742](https://github.com/remindmodel/remind/pull/1742)]
+- **33_CDR** added ocean alkalinity enhancement to the CDR portfolio (OAE is turned off by default)
+    [[#1777](https://github.com/remindmodel/remind/pull/1777)]
 
 ### fixed
 - included CCS from plastic waste incineration in CCS mass flows so it is
