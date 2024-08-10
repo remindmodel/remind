@@ -13,7 +13,7 @@ prepare <- function() {
   #require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   require(tools, quietly = TRUE,warn.conflicts =FALSE)
-  require(remind2,quietly = TRUE,warn.conflicts =FALSE)
+  require(remind2, quietly = TRUE,warn.conflicts =FALSE)
   require(mrremind)
   require(mrvalidation)
 
