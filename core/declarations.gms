@@ -185,6 +185,10 @@ $ifthen.VREPot_Factor not "%c_VREPot_Factor%" == "off"
   p_VREPot_Factor(all_te) "Rescale factor for renewable potentials" / %c_VREPot_Factor% /
 $endif.VREPot_Factor
 
+$ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
+  pm_scaleDemand(ttot,ttot,all_regi)   "Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
+$endif.scaleDemand
+
 p_boundtmp(tall,all_regi,all_te,rlf)                 "read-in bound on capacities"
 p_bound_cap(tall,all_regi,all_te,rlf)                "read-in bound on capacities"
 pm_data(all_regi,char,all_te)                        "Large array for most technical parameters of technologies; more detail on the individual technical parameters can be found in the declaration of the set 'char' "
