@@ -98,6 +98,7 @@ $offdelim
 pm_gdp(tall,all_regi) = f_gdp(tall,all_regi,"%cm_GDPscen%") * pm_shPPPMER(all_regi) / 1000000;  !! rescale from million US$ to trillion US$
 
 *** load level of development
+*** Values in 2020 SSP2: SSA=0.1745, IND=0.3686, OAS=0.5136, MEA=0.6568, REF=0.836, LAM=0.8763, NEU=0.9962, EUR=1, CAZ=1, CHA=1, JPN=1, USA=1
 table f_developmentState(tall,all_regi,all_GDPpcScen) "level of development based on GDP per capita"
 $ondelim
 $include "./core/input/f_developmentState.cs3r"
@@ -1598,9 +1599,21 @@ $include "./core/input/f_fedemand_build.cs4r"
 $offdelim
 /;
 
-pm_fedemand(t,regi,cal_ppf_buildings_dyn36) =
-  f_fedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
+pm_fedemand(t,regi,cal_ppf_buildings_dyn36) = f_fedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 $endif.cm_rcp_scen_build
+
+
+*** Scale FE demand across industry and building sectors
+$ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
+  loop((t,t3,all_regi) $ pm_scaleDemand(t,t3,all_regi),
+      loop(t2,
+*FL*      rescaled demand             = normal demand               * [ scaling factor                + (1-scaling factor)                * remaining phase-in, between zero and one       ]
+          pm_fedemand(t2,all_regi,in) = pm_fedemand(t2,all_regi,in) * ( pm_scaleDemand(t,t3,all_regi) + (1-pm_scaleDemand(t,t3,all_regi)) * min(1, max(0, t3.val-t2.val) / (t3.val-t.val)) );
+      ) 
+  );
+$endif.scaleDemand
+
+
 
 *** initialize global target deviation scalar
 sm_globalBudget_dev = 1;

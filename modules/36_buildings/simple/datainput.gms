@@ -57,6 +57,17 @@ $offdelim
 ;
 p36_uedemand_build(ttot,regi,in) = f36_uedemand_build(ttot,regi,"%cm_demScen%","%cm_rcp_scen_build%",in);
 
+*** Scale UE demand and floor space in the building sector
+$ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
+  loop((t,t3,regi) $ pm_scaleDemand(t,t3,regi),
+      loop(t2,
+*FL*      rescaled demand               = normal demand                 * [ scaling factor            + (1-scaling factor)            * remaining phase-in, between zero and one       ]
+          p36_uedemand_build(t,regi,in) = p36_uedemand_build(t,regi,in) * ( pm_scaleDemand(t,t3,regi) + (1-pm_scaleDemand(t,t3,regi)) * min(1, max(0, t3.val-t2.val) / (t3.val-t.val)) );
+          p36_floorspace(t,regi)        = p36_floorspace(t,regi)        * ( pm_scaleDemand(t,t3,regi) + (1-pm_scaleDemand(t,t3,regi)) * min(1, max(0, t3.val-t2.val) / (t3.val-t.val)) );
+      ) 
+  );
+$endif.scaleDemand
+
 
 *** scale default elasticity of substitution on enb level
 $IFTHEN.cm_enb not "%cm_enb%" == "off" 
