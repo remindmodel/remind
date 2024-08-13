@@ -454,7 +454,7 @@ parameter
 *' *  (2): parallel  - all regions are run in parallel
 *'
 parameter
-  cm_iteration_max          "number of iterations, if optimization is set to negishi or testOneRegi; is overwritten in Nash mode, except for cm_nash_autoconverge = 0"
+  cm_iteration_max          "number of iterations, if optimization is set to negishi or testOneRegi; is overwritten in Nash mode, except if cm_nash_autoconverge is set to 0"
 ;
   cm_iteration_max       = 1;     !! def = 1
 *'
@@ -533,7 +533,8 @@ parameter
 parameter
   cm_nucscen                "nuclear option choice"
 ;
-  cm_nucscen       = 2;        !! def = 2  !! regexp = 2|5|6
+  cm_nucscen       = 2;        !! def = 2  !! regexp = 1|2|5|6
+*' *  (1): default, no restriction, let nuclear be endogenously invested
 *' *  (2): no fnrs, tnrs with restricted new builds until 2030 (based on current data on plants under construction, planned or proposed)
 *' *  (5): no new nuclear investments after 2020
 *' *  (6): +33% investment costs for tnrs under SSP5, uranium resources increased by a factor of 10
@@ -685,7 +686,7 @@ parameter
   cm_prtpScen               "pure rate of time preference standard values"
 ;
   cm_prtpScen         = 1;         !! def = 1  !! regexp = 1|3
-*' *  (1): 1 %
+*' *  (1): 1.5 %
 *' *  (3): 3 %
 *'
 parameter
@@ -796,7 +797,7 @@ parameter
 parameter
   c_ccsinjecratescen        "CCS injection rate factor applied to total regional storage potentials, yielding an upper bound on annual injection"
 ;
-  c_ccsinjecratescen    = 1;         !! def = 1  !! regexp = [0-5]
+  c_ccsinjecratescen    = 1;         !! def = 1  !! regexp = [0-6]
 *' This switch determines the upper bound of the annual CCS injection rate.
 *' CCS here refers to carbon sequestration, carbon capture is modelled separately.
 *' *   (0) no "CCS" as in no carbon sequestration at all
@@ -805,6 +806,7 @@ parameter
 *' *   (3) upper estimate: 0.0075; max 29.5 GtCO2/yr globally
 *' *   (4) unconstrained: 1; max 3900 GtCO2/yr globally
 *' *   (5) sustainability case: 0.001; max 3.9 GtCO2/yr globally
+*' *   (6) intermediate estimate: 0.0022; max 8.6 GtCO2/yr globally
 *'
 parameter
   c_ccscapratescen          "CCS capture rate"
@@ -1621,12 +1623,14 @@ $setGlobal cm_CESMkup_ind        standard  !! def = standard
 $setGlobal cm_CESMkup_ind_data   ""        !! def = ""
 
 *** cm_fxIndUe "switch for fixing UE demand in industry to baseline level - no endogenous demand adjustment"
-*** default cm_fxIndUe = off -> endogenous demand, cm_fxIndUe = on -> exogenous demand fixed to baseline/NPi level (read in from input_ref.gdx)
-*** cm_fxIndUeReg indicates the regions under which the industry demand will be fixed 
-*** for example, cm_fxIndUe = on and cm_fxIndUeReg = SSA,NEU,CHA,IND,OAS,MEA,LAM gives a scenario where all non global north (non-OECD) industry demand is fixed to baseline
-*** cm_fxIndUeReg = GLO fixes industry demand to baseline level everywhere
-$setGlobal cm_fxIndUe        off  !! def = off
-$setGlobal cm_fxIndUeReg     ""       !! def = ""
+*** off: endogenous demand.
+*** on: exogenous demand fixed to baseline/NPi level (read in from input_ref.gdx)
+*** cm_fxIndUeReg "indicates the regions under which the industry demand will be fixed, requires cm_fxIndUe set to on"
+*** examples:
+*** SSA,NEU,CHA,IND,OAS,MEA,LAM: gives a scenario where all non global north (non-OECD) industry demand is fixed to baseline
+*** GLO: fixes industry demand to baseline level everywhere
+$setGlobal cm_fxIndUe        off   !! def = off  !! regexp = off|on
+$setGlobal cm_fxIndUeReg     ""    !! def = ""
 
 *** cm_ind_energy_limit Switch for setting upper limits on industry energy
 *** efficiency improvements.  See ./modules/37_subsectors/datainput.gms for

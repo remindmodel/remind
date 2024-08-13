@@ -56,7 +56,7 @@ computeCostsScen <- function(i_data, scenBaseNoDamage, scenNoDamage, scenDamage,
         pivot_wider(names_from = "variable", values_from = "value") %>%
         mutate(value = `GDP|MER` * `Damage factor`) %>%
         mutate(variable = "GDP|MER") %>%
-        mutate(unit = "billion US$2010/yr") %>%
+        mutate(unit = "billion US$2005/yr") %>%
         select(-scenario, -`GDP|MER`, -`Damage factor`) %>%
         select(model, region, variable, unit, period, value) %>%
         rename(value_ref = value),
@@ -186,6 +186,11 @@ calculateDamages <- function(mifdata, damagestrings, scenBaseNoDamage, keepNoDam
       mutate(region = "World")
   )
 
+  # remove now old data from calculations
+  mifdata <- mifdata %>%
+    filter(! grepl("chronic physical risk damage estimate|Macro-Economic Climate Damage", variable))
+
+  # remove later from new calculations
   deleteFromMifdata <- c("Policy Cost|GDP Loss", "Policy Cost and Macro-Economic Climate Damage|GDP Change",
                          "Macro-Economic Climate Damage|GDP Change", "Policy Cost|Consumption Loss")
   deleteFromCostdata <- c("GDP|PPP", "GDP|MER", "Damage factor", "Macro-Economic Climate Damage|GDP Change",
@@ -193,6 +198,7 @@ calculateDamages <- function(mifdata, damagestrings, scenBaseNoDamage, keepNoDam
   # Compute costs
   cat("Compute costs...\n")
   returndata <- NULL
+
   for (s in seq_along(scenDamages)) {
     costdata <- computeCostsScen(mifdata, scenBaseNoDamage, scenNoDamages[s], scenDamages[s], names(scenDamages)[s]) %>%
         filter(! (variable == "Policy Cost|Consumption Loss" & is.na(value))) %>%
@@ -211,23 +217,26 @@ calculateDamages <- function(mifdata, damagestrings, scenBaseNoDamage, keepNoDam
 
 nodamagefolder <- "output"
 nodamagescenarios <- c("d_delfrag", "d_strain", "o_2c", "h_cpol", "o_lowdem", "o_1p5c", "h_ndc")
-remmagiter <- 6
-nodamagemifs <- file.path(nodamagefolder, paste0("C_", nodamagescenarios, "-rem-", remmagiter),
-                          paste0("REMIND_generic_C_", nodamagescenarios, "-rem-", remmagiter, ".mif"))
+curpol <- "h_cpol"
+stopifnot(curpol %in% nodamagescenarios)
+nodamageiter <- 5
+nodamagemifs <- file.path(nodamagefolder, paste0("C_", nodamagescenarios, "-rem-", nodamageiter),
+                          paste0("REMIND_generic_C_", nodamagescenarios, "-rem-", nodamageiter, ".mif"))
 nodamage <- quitte::as.quitte(nodamagemifs)
 levels(nodamage$scenario) <- gsub("-rem-[0-9]+", "", levels(nodamage$scenario))
 
 runnames <- lucode2::getScenNames(outputdir)
 
-damagestrings <- c(medium = "_d50", high = "_d95high")
+damagestrings <- c(medium = "_KLW_d50")
 
 for (r in runnames) {
   message("\n## Deriving mif for ", r)
   mif <- file.path(outputdir, paste0("REMIND_generic_", r, ".mif"))
-  file.copy(mif, gsub("REMIND_generic", "REMIND_beforedamagecosts", mif))
+  filebeforedamagecosts <- gsub("REMIND_generic", "REMIND_beforedamagecosts", mif)
+  if (! file.exists(filebeforedamagecosts)) file.copy(mif, filebeforedamagecosts)
   q <- quitte::as.quitte(mif)
   levels(q$scenario) <- gsub("-rem-[0-9]+", "", levels(q$scenario))
-  damcosts <- calculateDamages(rbind(q, nodamage), damagestrings, "C_h_cpol", keepNoDamages = FALSE)
+  damcosts <- calculateDamages(rbind(q, nodamage), damagestrings, paste0("C_", curpol), keepNoDamages = FALSE)
   q <- quitte::as.quitte(damcosts)
   message("Finished this run (should only be a single name): ", paste(levels(q$scenario), collapse = ", "))
   levels(q$scenario) <- r

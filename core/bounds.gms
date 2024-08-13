@@ -323,6 +323,8 @@ vm_capEarlyReti.up(ttot,regi,te) = 1e-6;
 vm_capEarlyReti.up(ttot,regi,te)$(teFosNoCCS(te)) = 1;
 *** FS: allow nuclear early retirement (for nucscen 7)
 vm_capEarlyReti.up(ttot,regi,"tnrs") = 1;
+*** allow early retirement of biomass used in electricity
+vm_capEarlyReti.up(ttot,regi,"bioigcc") = 1;
 
 ***restrict early retirement to the modeling time frame (to reduce runtime, the early retirement equations are phased out after 2110)
 vm_capEarlyReti.up(ttot,regi,te)$(ttot.val lt 2009 or ttot.val gt 2111) = 0;
