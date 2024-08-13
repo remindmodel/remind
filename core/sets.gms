@@ -2412,7 +2412,7 @@ pe2se(all_enty,all_enty,all_te) "map primary energy carriers to secondary"
         pegeo.seel.geohdr
         pegeo.sehe.geohe
         pehyd.seel.hydro
-        pewin.seel.wind
+***        pewin.seel.wind
         pewin.seel.windon
         pewin.seel.windoff
         pesol.seel.spv
