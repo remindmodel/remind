@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --qos=priority
-#SBATCH --partition=priority
 #SBATCH --time=06:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=12

@@ -142,7 +142,7 @@ report_transfers <- function(pol_mif, ref_mif) {
   # Get gdploss
   gdploss <- pol_run[[1]][["REMIND"]][, , "Policy Cost|GDP Loss (billion US$2005/yr)"]
   # Add rel gdploss (not in percent)
-  gdploss_rel <- magclass::setNames(pol_run[[1]][["REMIND"]][, , "Policy Cost|GDP Loss|Relative to Reference GDP (percent)"] / 100,
+  gdploss_rel <- magclass::setNames(pol_run[[1]][["REMIND"]][, , "Policy Cost|GDP Loss|Relative to Reference GDP (%)"] / 100,
                                     "Policy Cost|GDP Loss|Relative to Reference GDP")
   # Get gdp
   gdp_ref <- ref_run[[1]][["REMIND"]][ , , "GDP|MER (billion US$2005/yr)"]
@@ -154,7 +154,7 @@ report_transfers <- function(pol_mif, ref_mif) {
   delta_transfer <- magclass::setNames(delta_gdploss * gdp_ref,
                                        "Policy Cost|Transfers equal effort (billion US$2005/yr)")
   delta_transfer_rel <- 100 * magclass::setNames(delta_transfer / gdp_ref,
-                                                 "Policy Cost|Transfers equal effort|Relative to Reference GDP (percent)")
+                                                 "Policy Cost|Transfers equal effort|Relative to Reference GDP (%)")
 
 
   # Calculate new gdp variables
@@ -163,7 +163,7 @@ report_transfers <- function(pol_mif, ref_mif) {
   gdploss_withtransfers <- magclass::setNames(gdp_ref - gdp_withtransfers,
                                               "Policy Cost|GDP Loss|w/ transfers equal effort (billion US$2005/yr)")
   gdploss_withtransfers_rel <- 100 * magclass::setNames(gdploss_withtransfers/gdp_ref,
-                                                        "Policy Cost|GDP Loss|w/ transfers equal effort|Relative to Reference GDP (percent)")
+                                                        "Policy Cost|GDP Loss|w/ transfers equal effort|Relative to Reference GDP (%)")
 
   # Correct sets and bind together
   my_list <- list(delta_transfer, delta_transfer_rel, gdp_withtransfers, gdploss_withtransfers, gdploss_withtransfers_rel)
