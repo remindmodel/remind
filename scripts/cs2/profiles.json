@@ -62,7 +62,7 @@
 		"projectLibrary": "'reporttransport'",
 		"reg": "c('OAS', 'MEA', 'SSA', 'LAM', 'REF', 'CAZ', 'CHA', 'IND', 'JPN', 'USA', 'NEU', 'EUR', 'World')",
 		"sections": "c(0,1,2,3,4,5,99)",
-		"mainReg": "World"
+		"mainReg": "'World'"
 	},
 	"mySection": {
 		"sections": "0",
