@@ -184,17 +184,17 @@ pm_esCapCost(tall,all_regi,all_teEs) = 0;
 ***---------------------------------------------------------------------------
 *** Manipulating global or regional cost technology data - absolute value
 ***---------------------------------------------------------------------------
-!! Modify spv and storspv parameters for optimistic VRE supply assumptions
-if (cm_VRE_supply_assumptions eq 1,
+*** Modify spv and storspv parameters for optimistic VRE supply assumptions
+if (cm_VRE_supply_assumptions eq 1,       !! "optimistic" assumptions on VRE supply
     fm_dataglob("learn","spv") = 0.257;
     fm_dataglob("inco0","storspv") = 7000;
     fm_dataglob("incolearn","storspv") = 4240;
     fm_dataglob("learn","storspv") = 0.12;
 );
-if (cm_VRE_supply_assumptions eq 2,
+if (cm_VRE_supply_assumptions eq 2,       !! "sombre" assumptions on VRE supply
     fm_dataglob("incolearn","spv") = 5010;
 );
-if (cm_VRE_supply_assumptions eq 3,
+if (cm_VRE_supply_assumptions eq 3,       !! "bleak" assumptions on VRE supply
     fm_dataglob("incolearn","spv") = 4960;
 );
 
@@ -321,40 +321,38 @@ pm_data(regi,"floorcost",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,
 
 *** report old floor costs pre manipulation in non-default scenario
 $ifthen.floorscen NOT %cm_floorCostScen% == "default"
-p_oldFloorCostdata(regi,teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
+    p_oldFloorCostdata(regi,teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
 $endif.floorscen
 
 *** calculate floor costs for learning technologies if historical price structure prevails
 $ifthen.floorscen %cm_floorCostScen% == "pricestruc"
 ** compute maximum tech cost in 2015 for a given tech among regions
-p_maxRegTechCost2015(teRegTechCosts) = SMax(regi, p_inco0("2015",regi,teRegTechCosts));
+    p_maxRegTechCost2015(teRegTechCosts) = SMax(regi, p_inco0("2015",regi,teRegTechCosts));
 *take the ratio of the tech cost in 2015 and the maximum cost, and multiply with the global floor to get new floorcost that preserves the price structure
-pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
+    pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
 * for newer data than 2015, use these
-p_maxRegTechCost2020(teRegTechCosts) = SMax(regi, p_inco0("2020",regi,teRegTechCosts));
-pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
+    p_maxRegTechCost2020(teRegTechCosts) = SMax(regi, p_inco0("2020",regi,teRegTechCosts));
+    pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
 * report the new floor cost data
-p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
-p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
+    p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
+    p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
 $endif.floorscen
 
 *** calculate floor costs for learning technologies if there is technology transfer
 $ifthen.floorscen %cm_floorCostScen% == "techtrans"
 ** compute maximum income GDP PPP per capita among regions in 2050
-p_gdppcap2050_PPP(regi) = pm_gdp("2050",regi) / pm_shPPPMER(regi) / pm_pop("2050",regi);
-p_maxPPP2050 = SMax(regi, p_gdppcap2050_PPP(regi));
+    p_gdppcap2050_PPP(regi) = pm_gdp("2050",regi) / pm_shPPPMER(regi) / pm_pop("2050",regi);
+    p_maxPPP2050 = SMax(regi, p_gdppcap2050_PPP(regi));
 *take the ratio of the PPP income and the maximum income, and multiply with the global floor to get new floorcost that simulates tech transfer where costs are solely dependent on local wages, not on IP rent
-pm_data(regi,"floorcost",teLearn(te))$(p_maxPPP2050 ne 0) = p_oldFloorCostdata(regi,te) * p_gdppcap2050_PPP(regi) / p_maxPPP2050;
-p_newFloorCostdata(regi,teLearn(te))$(p_maxPPP2050 ne 0) = p_oldFloorCostdata(regi,te) * p_gdppcap2050_PPP(regi) / p_maxPPP2050;
+    pm_data(regi,"floorcost",teLearn(te))$(p_maxPPP2050 ne 0) = p_oldFloorCostdata(regi,te) * p_gdppcap2050_PPP(regi) / p_maxPPP2050;
+    p_newFloorCostdata(regi,teLearn(te))$(p_maxPPP2050 ne 0) = p_oldFloorCostdata(regi,te) * p_gdppcap2050_PPP(regi) / p_maxPPP2050;
 $endif.floorscen
 
 *** In case regionally differentiated investment costs should be used the corresponding entries are revised:
 $ifthen.REG_techcosts not "%cm_techcosts%" == "GLO"   !! cm_techcosts is REG or REG2040
     pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2015",regi,teRegTechCosts);
-    loop(teRegTechCosts$(sameas(teRegTechCosts,"spv") ),
-        pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2020",regi,teRegTechCosts);
-    );
-    pm_data(regi,"incolearn",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"floorcost",te) ;
+    pm_data(regi,"inco0","spv")          = p_inco0("2020",regi,"spv");
+    pm_data(regi,"incolearn",teLearn)    = pm_data(regi,"inco0",teLearn) - pm_data(regi,"floorcost",teLearn) ;
 $endif.REG_techcosts
 
 *** Calculate learning parameters:
@@ -702,9 +700,6 @@ f_cf(ttot,regi,"gridwindon") $ (f_cf(ttot,regi,"gridwindon") eq 0) = f_cf(ttot,r
 f_cf(ttot,regi,"windoff") = f_cf(ttot,regi,"windon");
 f_cf(ttot,regi,"storwindoff") = f_cf(ttot,regi,"storwindon");
 f_cf(ttot,regi,"gridwindoff") = f_cf(ttot,regi,"gridwindon");
-f_cf(ttot,regi,"wind") = 0;
-f_cf(ttot,regi,"storwind") = 0;
-f_cf(ttot,regi,"gridwind") = 0;
 
 pm_cf(ttot,regi,te) =  f_cf(ttot,regi,te);
 ***pm_cf(ttot,regi,"h2turbVRE") = 0.15;

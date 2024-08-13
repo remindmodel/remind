@@ -1549,7 +1549,7 @@ teRegTechCosts(all_te) "all technologies for which we differantiate tech costs"
        hydro
        spv
        csp
-       wind
+***       wind
        windon
 /
 
