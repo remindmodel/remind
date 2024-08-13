@@ -72,7 +72,6 @@ qttyTargetGroup "quantity target aggregated categories"
   heat
 /
 
-*** windoffshore-todo
 energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,all_enty) "set combining possible energy level (PE, SE or FE), energy types and energy carriers"
 /
 *** Primary energy type categories

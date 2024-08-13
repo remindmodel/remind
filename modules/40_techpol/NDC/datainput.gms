@@ -14,7 +14,7 @@ $offdelim
 $onlisting
 ;
 
-p40_TechBound(ttot,all_regi,te) = f40_TechBound(ttot,all_regi,"%cm_NDC_version%",all_te);
+p40_TechBound(ttot,all_regi,te) = f40_TechBound(ttot,all_regi,"%cm_NDC_version%",te);
 *** windoffshore-todo
 p40_TechBound(ttot,all_regi,"windon") $ (p40_TechBound(ttot,all_regi,"windon") eq 0) = f40_TechBound(ttot,all_regi,"%cm_NDC_version%","wind");
 
