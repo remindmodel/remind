@@ -58,6 +58,12 @@
     "sections": "0",
     "userSectionPath": "normalizePath('./scripts/cs2/MAGICC7_AR6.Rmd')"
   },
+	"EDGE-Transport": {
+		"projectLibrary": "'reporttransport'",
+		"reg": "c('OAS', 'MEA', 'SSA', 'LAM', 'REF', 'CAZ', 'CHA', 'IND', 'JPN', 'USA', 'NEU', 'EUR', 'World')",
+		"sections": "c(0,1,2,3,4,5,99)",
+		"mainReg": "World"
+	},
 	"mySection": {
 		"sections": "0",
 		"userSectionPath": "normalizePath('./scripts/cs2/mySection.Rmd')"
