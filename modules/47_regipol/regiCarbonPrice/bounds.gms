@@ -41,13 +41,6 @@ vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"DEU"))
 *' This limits early retirement of coal power in Germany in 2020s to avoid extremly fast phase-out.
 vm_capEarlyReti.up('2025',regi,'pc')$(sameAs(regi,"DEU")) = 0.65;
 
-*' DEU coal-power capacity phase-out, upper bounds following the Kohleausstiegsgesetz from 2020.
-*' https://www.bmuv.de/faqs/kohleausstiegsgesetz
-    vm_capTotal.up("2025",regi,"pecoal","seel")$(sameas(regi,"DEU"))=25/1000;
-    vm_capTotal.up("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=17/1000;
-    vm_capTotal.up("2035",regi,"pecoal","seel")$(sameas(regi,"DEU"))=6/1000;
-    vm_capTotal.up("2040",regi,"pecoal","seel")$(sameas(regi,"DEU"))=1.1/1000;
-
 
 *' This aligns 2020 chp capcities for Germany with historic data (AGEB)
 *' most of district heating is provided by CHP plants.
