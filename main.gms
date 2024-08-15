@@ -1741,6 +1741,7 @@ $setGlobal c_regi_nucscen  all  !! def = all
 $setGlobal c_regi_capturescen  all  !! def = all
 *** cm_subsec_model_steel      "switch between ces-based and process-based steel implementation in subsectors realisation of industry module"
 $setglobal cm_subsec_model_steel  processes  !! def = processes  !! regexp = processes|ces
+*** cm_tech_bounds_2025
 *** activate bounds for 2025 for fast-growing technologies (spv, wind etc.) based on 2023 statistics
 *** (off) no bounds for 2025
 *** (on) some generous bounds for 2025 assuming that certain developments are not possible anymore even for fast growing technologies given 2023 data

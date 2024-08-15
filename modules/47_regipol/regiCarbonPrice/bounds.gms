@@ -34,7 +34,9 @@ $endIf.tech_bounds_2025
 
 *' These bounds account for historic gas power development.
 v47_prodSEtotal.up("2020",regi,"pegas","seel")$(sameAs(regi,"DEU"))= 0.36*sm_EJ_2_TWa;
+$ifThen.tech_bounds_2025 "%cm_tech_bounds_2025%" == "on"
 v47_prodSEtotal.up("2025",regi,"pegas","seel")$(sameAs(regi,"DEU"))= 0.4*sm_EJ_2_TWa;
+$endIf.tech_bounds_2025
 
 *' These bounds account for historic coal power development.
 vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"DEU"))) = 38.028/1000;
