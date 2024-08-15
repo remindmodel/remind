@@ -39,7 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - included CCS from plastic waste incineration in CCS mass flows so it is
     subject to injection constraints (but did not add CCS costs, see
     https://github.com/remindmodel/development_issues/issues/274
-- **MAGICC7** fix climate data for t < cm_startyear on reference run
+- **MAGICC7** fix climate data for time before cm_startyear on reference run
     [[#1744](https://github.com/remindmodel/remind/pull/1744)]
 - **scripts** fix tax convergence reporting in modelSummary
     [[#1728](https://github.com/remindmodel/remind/pull/1728)]
@@ -47,6 +47,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1718](https://github.com/remindmodel/remind/pull/1718)]
 - **scripts** REMIND-MAgPIE start scripts now correctly use all non-gms cfg switches
     [[#1768](https://github.com/remindmodel/remind/pull/1768)]
+- **scripts** limit slurm runtime of output.R scripts to 5 hours
+    [[1783](https://github.com/remindmodel/remind/pull/1783)]
 
 ### removed
 

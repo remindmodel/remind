@@ -235,7 +235,7 @@ if (comp %in% c("comparison", "export")) {
     # choose the slurm options
     if (!exists("slurmConfig")) {
       slurmConfig <- choose_slurmConfig_output(output = output)
-      if (slurmConfig != "direct") slurmConfig <- combine_slurmConfig("--nodes=1 --tasks-per-node=1", slurmConfig)
+      if (slurmConfig != "direct") slurmConfig <- combine_slurmConfig("--nodes=1 --tasks-per-node=1 --time=300", slurmConfig)
     }
     if (slurmConfig %in% c("priority", "short", "standby")) {
       slurmConfig <- paste0("--nodes=1 --tasks-per-node=1 --qos=", slurmConfig)
