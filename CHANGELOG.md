@@ -47,7 +47,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1718](https://github.com/remindmodel/remind/pull/1718)]
 - **scripts** REMIND-MAgPIE start scripts now correctly use all non-gms cfg switches
     [[#1768](https://github.com/remindmodel/remind/pull/1768)]
-- **scripts** limit slurm runtime of output.R scripts to 5 hours
+- **scripts** limit slurm runtime of output.R scripts to 2 hours
     [[1783](https://github.com/remindmodel/remind/pull/1783)]
 
 ### removed
