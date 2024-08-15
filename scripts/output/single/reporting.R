@@ -124,6 +124,8 @@ if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
   piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 }
 
+invisible(quitte::reportDuplicates(piamutils::deletePlus(quitte::read.quitte(remind_reporting_file, check.duplicates = FALSE))))
+
 message("### end generation of mif files at ", Sys.time())
 
 ## produce REMIND LCOE reporting *.csv based on gdx information
