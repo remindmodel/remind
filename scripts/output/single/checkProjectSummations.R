@@ -60,7 +60,7 @@ for (mapping in c("AR6", "NAVIGATE")) {
   
   csregi <- d %>%
     filter(.data$region %in% unique(c("GLO", "World", read.csv2(envi$cfg$regionmapping)$RegionCode))) %>%
-    checkSummationsRegional(skipUnits = TRUE) %>%
+    checkSummationsRegional(intensiveUnits = TRUE) %>%
     rename(World = "total") %>%
     droplevels()
   checkyear <- 2050

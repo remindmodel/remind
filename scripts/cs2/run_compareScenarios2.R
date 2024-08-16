@@ -34,7 +34,12 @@ run_compareScenarios2 <- function(
   outDir <- normalizePath(outFileName, mustWork = TRUE)
 
   outputDirs <- unique(normalizePath(outputDirs, mustWork = TRUE))
-  mifPath <- remind2::getMifScenPath(outputDirs, mustWork = TRUE)
+
+  if (profileName == "EDGE-Transport") {
+    mifPath <- normalizePath(file.path(outputDirs, "EDGE-T", "Transport.mif"), mustWork = TRUE)
+  } else {
+    mifPath <- remind2::getMifScenPath(outputDirs, mustWork = TRUE)
+  }
   histPath <- remind2::getMifHistPath(outputDirs[1], mustWork = TRUE)
   scenConfigPath <- remind2::getCfgScenPath(outputDirs, mustWork = TRUE)
 
