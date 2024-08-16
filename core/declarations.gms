@@ -152,12 +152,13 @@ pm_shareWindOff(ttot,all_regi)                        "windoff rollout as a frac
 $ENDIF.WindOff
 
 pm_fe2es(tall,all_regi,all_teEs)                     "Conversion factor from final energies to energy services. Default is 1."
-p_shSefe(ttot,all_regi,all_enty,all_enty)             "initial share of secondary energy on total final energy [0..1]"
-p_shSefeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "initial share of secondary energy in sector total final energy per emission market [0..1]"
+
 pm_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)   "Final energy shares for CES nodes"
 
 pm_shfe_up(ttot,all_regi,all_enty,emi_sectors)       "Final energy shares exogenous upper bounds per sector"
 pm_shfe_lo(ttot,all_regi,all_enty,emi_sectors)       "Final energy shares exogenous lower bounds per sector"
+p_shSeFe(ttot,all_regi,all_enty)                     "initial share of secondary energy on total secondary energy type (liquids, solids and gases) [0..1]"
+p_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "initial share of secondary energy on secondary energy type (liquids, solids and gases) per final energy, sector and emission market [0..1]"
 pm_shGasLiq_fe_up(ttot,all_regi,emi_sectors)         "Final energy gases plus liquids shares exogenous upper bounds per sector"
 pm_shGasLiq_fe_lo(ttot,all_regi,emi_sectors)         "Final energy gases plus liquids shares exogenous lower bounds per sector"
 
@@ -420,9 +421,8 @@ v_shGreenH2(ttot,all_regi)   "share of green hydrogen in all hydrogen by 2030 [0
 v_shBioTrans(ttot,all_regi)    "Share of biofuels in transport liquids from 2025 onwards. Value between 0 and 1."
 
 v_shfe(ttot,all_regi,all_enty,emi_sectors)           "share of final energy in sector total final energy [0..1]"
-v_shSefe(ttot,all_regi,all_enty,all_enty)            "share of secondary energy on total final energy [0..1]"
-v_shSefeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "share of secondary energy in sector total final energy per emission market [0..1]"
-
+v_shSeFe(ttot,all_regi,all_enty)                      "share of secondary energy on total secondary energy type (liquids, solids and gases) [0..1]"
+v_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)    "share of secondary energy on secondary energy type (liquids, solids and gases) per final energy, sector and emission market [0..1]"
 v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids in sector final energy [0..1]"
 
 vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
@@ -443,7 +443,7 @@ vm_transpGDPscale(ttot,all_regi)                            "dampening factor to
 
 $ifthen.seFeSectorShareDev not "%cm_seFeSectorShareDevMethod%" == "off"
   v_penSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "penalty for secondary energy share deviation in sectors"
-  vm_penSeFeSectorShareDevCost(ttot,all_regi) "total penalty cost for secondary energy share deviation in sectors"
+  vm_penSeFeSectorShareDevCost(ttot,all_regi)        "total penalty cost for secondary energy share deviation in sectors"
 $endif.seFeSectorShareDev
 
 $ifthen.minMaxSeFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgShare"
@@ -451,6 +451,7 @@ $ifthen.minMaxSeFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgS
   v_PosPenSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max positive penalty for secondary energy share deviation in sectors"
 $endif.minMaxSeFeSectorShareDev
 ;
+
 ***----------------------------------------------------------------------------------------
 ***                                   EQUATIONS
 ***----------------------------------------------------------------------------------------
@@ -556,8 +557,8 @@ q_shGreenH2(ttot,all_regi)  "share of green hydrogen in all hydrogen"
 q_shBioTrans(ttot,all_regi)  "Define the share of biofuels in transport liquids from 2025 on."
 
 q_shfe(ttot,all_regi,all_enty,emi_sectors)            "share of final energy carrier in the sector final energy"
-q_shSeFe(ttot,all_regi,all_enty,all_enty)             "share of secondary energy on total final energy"
-q_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "share of secondary energy in sector total final energy per emission market"
+q_shSeFe(ttot,all_regi,all_enty)                      "share of secondary energy on total secondary energy type (liquids, solids and gases)"
+q_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "share of secondary energy on secondary energy type (liquids, solids and gases) per final energy, sector and emission market"
 q_shGasLiq_fe(ttot,all_regi,emi_sectors)              "share of gases and liquids in sector final energy"
 
 q_shbiofe_up(ttot,all_regi,all_enty,emi_sectors,all_emiMkt) "share of biomass per carrier in sector final energy (upper bound)"
@@ -572,8 +573,8 @@ q_heat_limit(ttot,all_regi)  "equation to limit maximum level of secondary energ
 $ENDIF.sehe_upper
 
 $ifthen.seFeSectorShareDev not "%cm_seFeSectorShareDevMethod%" == "off"
-  q_penSeFeSectorShareDev(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "penalty for secondary energy share deviation in sectors"
   q_penSeFeSectorShareDevCost(ttot,all_regi) "total penalty cost for secondary energy share deviation in sectors"
+  q_penSeFeSectorShareDev(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "penalty for secondary energy share deviation in sectors"
 $endif.seFeSectorShareDev
 
 $ifthen.minMaxSeFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgShare"

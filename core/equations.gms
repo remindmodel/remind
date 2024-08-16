@@ -1068,26 +1068,25 @@ q_shfe(t,regi,entyFe,sector)$(pm_shfe_up(t,regi,entyFe,sector) OR pm_shfe_lo(t,r
         vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
 ;
 
-q_shSeFe(t,regi,entySe,seAgg)$seAgg2se(seAgg,entySe)..
-  v_shSefe(t,regi,entySe,seAgg) 
-  * sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt),
-      sum(entyFe$(seAgg2fe(seAgg,entyFe) AND entyFe2Sector(entyFe,sector)),
-        sum(entySe2$(seAgg2se(seAgg,entySe2) AND sefe(entySe2,entyFe) AND entyFe2Sector(entyFe,sector)),
-          vm_demFeSector_afterTax(t,regi,entySe2,entyFe,sector,emiMkt))))
+q_shSeFe(t,regi,entySe)$(entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)).. !!secondary energy carriers shares in final energy demand calculated only for entySeBio, entySeSyn and entySeFos
+  v_shSeFe(t,regi,entySe) 
+  * sum(seAgg$seAgg2se(seAgg,entySe), !!controlling the list of secondary energy carriers to sum up 
+      sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt),
+        sum(entySe2$seAgg2se(seAgg,entySe2),
+          sum(entyFe$(sefe(entySe2,entyFe) AND entyFe2Sector(entyFe,sector)),
+            vm_demFeSector_afterTax(t,regi,entySe2,entyFe,sector,emiMkt)))))
   =e=
   sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt),
-    sum(entyFe$(seAgg2fe(seAgg,entyFe) AND entyFe2Sector(entyFe,sector)),
+    sum(entyFe$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector)),
       vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
 ;
-  
-q_shSeFeSector(t,regi,entySe,seAgg,sector,emiMkt)$(seAgg2se(seAgg,entySe) AND sector2emiMkt(sector,emiMkt))..
-  v_shSefeSector(t,regi,entySe,seAgg,sector,emiMkt)
-  * sum(entyFe$(seAgg2fe(seAgg,entyFe) AND entyFe2Sector(entyFe,sector)),
-      sum(entySe2$(seAgg2se(seAgg,entySe2) AND sefe(entySe2,entyFe) AND entyFe2Sector(entyFe,sector)),
-        vm_demFeSector_afterTax(t,regi,entySe2,entyFe,sector,emiMkt)))
+
+q_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt)$((entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) AND (sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)))..
+  v_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt) 
+  * sum(entySe2$sefe(entySe2,entyFe),
+      vm_demFeSector_afterTax(t,regi,entySe2,entyFe,sector,emiMkt))
   =e=
-  sum(entyFe$(seAgg2fe(seAgg,entyFe) AND entyFe2Sector(entyFe,sector)),
-    vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt))
+  vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)
 ;
 
 q_shGasLiq_fe(t,regi,sector)$(pm_shGasLiq_fe_up(t,regi,sector) OR pm_shGasLiq_fe_lo(t,regi,sector))..
@@ -1155,43 +1154,86 @@ q_shbiofe_lo(t,regi,entyFe,sector,emiMkt)$((sameas(entyFe,"fegas") or sameas(ent
 ***---------------------------------------------------------------------------
 
 $ifthen.seFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "sqSectorShare"
-q_penSeFeSectorShareDev(t,regi,entySe,seAgg,sector,emiMkt)$(seAgg2se(seAgg,entySe) AND sector2emiMkt(sector,emiMkt) AND (entySeBio(entySe) OR entySeSyn(entySe)))..
-  v_penSeFeSectorShare(t,regi,entySe,seAgg,sector,emiMkt)
+q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
+    ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
+    ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
+    (    (NOT(sameas(sector,"build") AND (t.val le 2025))) 
+      OR (NOT(sameas(sector,"indst") AND (t.val le 2025)))
+      OR (NOT(sameas(sector,"cdr") AND (t.val le 2025)))
+    ) AND !!disable historical year share incentives to buildings, industry and CDR  
+    ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
+  )..
+  v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
   =e=
-  power(v_shSefeSector(t,regi,entySe,seAgg,sector,emiMkt) ,2)
-  * (1$sameas("%c_seFeSectorShareDevUnit%","share") 
-     + (sum(entyFe$(seAgg2fe(seAgg,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))$(sameas("%c_seFeSectorShareDevUnit%","energy")) )
+  power(v_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt) ,2)
+  * (1$sameas("%c_seFeSectorShareDevUnit%","share") + ( vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt) )$(sameas("%c_seFeSectorShareDevUnit%","energy")) ) !!define deviation in share or energy units 
 ;
 $elseIf.seFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "sqSectorAvrgShare"
-q_penSeFeSectorShareDev(t,regi,entySe,seAgg,sector,emiMkt)$(seAgg2se(seAgg,entySe) AND sector2emiMkt(sector,emiMkt) AND (entySeBio(entySe) OR entySeSyn(entySe)))..
-  v_penSeFeSectorShare(t,regi,entySe,seAgg,sector,emiMkt)
+q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
+    ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
+    ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
+    (    (NOT(sameas(sector,"build") AND (t.val le 2025))) 
+      OR (NOT(sameas(sector,"indst") AND (t.val le 2025)))
+      OR (NOT(sameas(sector,"cdr") AND (t.val le 2025)))
+    ) AND !!disable historical year share incentives to buildings, industry and CDR  
+    ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
+  )..
+  v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
   =e=
-  power(v_shSefe(t,regi,entySe,seAgg) - v_shSefeSector(t,regi,entySe,seAgg,sector,emiMkt) ,2)
-  * (1$sameas("%c_seFeSectorShareDevUnit%","share") 
-     + (sum(entyFe$(seAgg2fe(seAgg,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))$(sameas("%c_seFeSectorShareDevUnit%","energy")) )
+  power(v_shSeFe(t,regi,entySe) - v_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt) ,2)
+  * (1$sameas("%c_seFeSectorShareDevUnit%","share") + ( vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt) )$(sameas("%c_seFeSectorShareDevUnit%","energy")) ) !!define deviation in share or energy units 
 ;
 $elseIf.seFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgShare"
-q_penSeFeSectorShareDev(t,regi,entySe,seAgg,sector,emiMkt)$(seAgg2se(seAgg,entySe) AND sector2emiMkt(sector,emiMkt) AND (entySeBio(entySe) OR entySeSyn(entySe)))..
-  v_penSeFeSectorShare(t,regi,entySe,seAgg,sector,emiMkt)
+q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
+    ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
+    ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
+    (    (NOT(sameas(sector,"build") AND (t.val le 2025))) 
+      OR (NOT(sameas(sector,"indst") AND (t.val le 2025)))
+      OR (NOT(sameas(sector,"cdr") AND (t.val le 2025)))
+    ) AND !!disable historical year share incentives to buildings, industry and CDR  
+    ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
+  )..
+  v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
   =e=
-  v_NegPenSeFeSectorShare(t,regi,entySe,seAgg,sector,emiMkt) + v_PosPenSeFeSectorShare(t,regi,entySe,seAgg,sector,emiMkt)
+    v_NegPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt) 
+  + v_PosPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
 ;
-q_minMaxPenSeFeSectorShareDev(t,regi,entySe,seAgg,sector,emiMkt)$(seAgg2se(seAgg,entySe) AND sector2emiMkt(sector,emiMkt) AND (entySeBio(entySe) OR entySeSyn(entySe)))..
-  v_shSefe(t,regi,entySe,seAgg) 
-  - v_shSefeSector(t,regi,entySe,seAgg,sector,emiMkt)
-  + v_NegPenSeFeSectorShare(t,regi,entySe,seAgg,sector,emiMkt)
-  - v_PosPenSeFeSectorShare(t,regi,entySe,seAgg,sector,emiMkt)
-  =e= 0
+
+q_minMaxPenSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
+    ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
+    ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
+    (    (NOT(sameas(sector,"build") AND (t.val le 2025))) 
+      OR (NOT(sameas(sector,"indst") AND (t.val le 2025)))
+      OR (NOT(sameas(sector,"cdr") AND (t.val le 2025)))
+    ) AND !!disable historical year share incentives to buildings, industry and CDR  
+    ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
+  )..
+  (
+    v_shSeFe(t,regi,entySe)
+    - v_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt)
+    + v_NegPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt) 
+    - v_PosPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+  )
+  * !!define deviation in share or energy units 
+    ( 1$sameas("%c_seFeSectorShareDevUnit%","share") +
+      (sum(seAgg$seAgg2se(seAgg,entySe),
+        sum(entyFe2$(seAgg2fe(seAgg,entyFe2) AND entyFe2Sector(entyFe2,sector)),
+          sum(entySe2$(seAgg2se(seAgg,entySe2) AND sefe(entySe2,entyFe2) AND entyFe2Sector(entyFe2,sector)),
+              vm_demFeSector_afterTax(t,regi,entySe2,entyFe2,sector,emiMkt))))
+      )$sameas("%c_seFeSectorShareDevUnit%","energy")
+    ) 
+  =e=
+  0
 ;
 $endif.seFeSectorShareDev
 
 $ifthen.penSeFeSectorShareDevCost not "%cm_seFeSectorShareDevMethod%" == "off"
 q_penSeFeSectorShareDevCost(t,regi)..
- vm_penSeFeSectorShareDevCost(t,regi)
- =e=
- sum((entySe,seAgg,sector,emiMkt)$(seAgg2se(seAgg,entySe) AND sector2emiMkt(sector,emiMkt) AND (entySeBio(entySe) OR entySeSyn(entySe))),
-  v_penSeFeSectorShare(t,regi,entySe,seAgg,sector,emiMkt)
- ) * c_seFeSectorShareDevScale
+  vm_penSeFeSectorShareDevCost(t,regi)
+  =e=
+  sum((entySe,entyFe,sector,emiMkt)$( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ),
+    v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+  ) * c_seFeSectorShareDevScale
 ;
 $endif.penSeFeSectorShareDevCost
 
