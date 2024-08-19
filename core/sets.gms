@@ -310,6 +310,13 @@ all_te          "all energy technologies, including from modules"
         termX_nh3   "Export terminals for liquid ammonia (liquification)"
         termM_nh3   "Import terminals for liquid ammonia (regasification)"
         vess_nh3    "Vessels transporting liquid ammonia"
+
+*** TOCHECK: Qianzhi      
+*** PCV: technologies related to chemical
+        chemOld
+        chemNew
+        chemRo_old
+        chemRo_new
 *** PCV: technologies related to steel
         ironMine     "Mining of iron ore"
         idr          "Iron direct reduction"
@@ -413,6 +420,8 @@ all_enty             "all types of quantities"
         driron       "Direct reduced iron"
         ironore      "Iron ore"
         dripell      "DRI pellets"
+        !! TOCHECK: QIANZHI
+        olandar
 
         !! emissions
         co2          "carbon dioxide emissions"
@@ -867,7 +876,7 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
        UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,
        VIR,VNM,VUT,WLF,WSM,YEM,ZAF,ZMB,ZWE /
 
-   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country"
+   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
          /
        EUR . EUR
        CHA . CHA

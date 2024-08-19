@@ -572,8 +572,8 @@ $endif.cm_subsec_model_steel
 tePrc2ue(tePrc,opmoPrc,all_in)   "Mapping of industry process technologies to the UE ces nodes they directly or indirectly feed into"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-   chemOld . ue_chemicals
-   chemNew . ue_chemicals
+   chemOld . standard . ue_chemicals
+   chemNew . standard . ue_chemicals
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    (bf,bfcc)  . standard . ue_steel_primary

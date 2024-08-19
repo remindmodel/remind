@@ -667,9 +667,17 @@ $endif.cm_subsec_model_steel
 !!TODO: Think about accounting of integrated plants / casting & rolling
 p37_specFeDemTarget(all_enty,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-!! TODO Qianzhi
-p37_specFeDemTarget("feh2s","chemOld","standard")  = 2.23 / (sm_TWa_2_MWh/sm_giga_2_non);    !!
-p37_specFeDemTarget("feh2s","chemNew","standard")  = 2.23 / (sm_TWa_2_MWh/sm_giga_2_non);    !!
+!! TODO Qianzhi 1MWh NH3,LHV = 0.19355 tons
+p37_specFeDemTarget("fegas","chemOld","standard")  = 7.65 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: IEA, The Future of Hydrogen 2019
+p37_specFeDemTarget("feels","chemOld","standard")  = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: IEA, The Future of Hydrogen 2019
+p37_specFeDemTarget("fesos","chemOld","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+p37_specFeDemTarget("fehos","chemOld","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+!!p37_specFeDemTarget("feh2s","chemOld","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
+
+
+p37_specFeDemTarget("feh2s","chemNew","standard")  = 5.93 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
+p37_specFeDemTarget("feels","chemNew","standard")  = 0.73 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
+
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 
@@ -719,7 +727,10 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 !! So this is the price of olandar in trn$2005/Gt = $2005/kg
 !! In this first dummy step, the process replaces all of chemistry, so olandar is only a dummy product reprenting the whole chemicals sector. It chould be much more expensive than olefines, since lots of the chemicals sector is much less energy intensive but has higher value added than olefines production
 !! quick back-of-the envelope calculation: globall 5 trn value added, 2.4 bln tonnes petrochemicals --> maybe 3.3 bn tonnes total chemicals --> ratio is 1.5
-p37_mat2ue("olandar","ue_chemicals") = 1.5;
+
+!! new calculation value added: Global plastic production volume 400.3 Mt Global plastic market size 712bn USD in 2022 https://www.statista.com/topics/5266/plastics-industry/#:~:text=Since%20the%20mass%20production%20of%20plastic%20products%20began,to%20experience%20considerable%20growth%20over%20the%20next%20decade.
+
+p37_mat2ue("olandar","ue_chemicals") = 1.27;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_mat2ue("sesteel","ue_steel_secondary") = 1.;
@@ -790,6 +801,21 @@ pm_outflowPrcIni(all_regi,all_te,opmoPrc) = 0.;
 if (cm_startyear eq 2005,
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 !! TODO Qianzhi
+  pm_outflowPrcIni(regi,"ChemOld","standard") = pm_fedemand("2005",regi,"ue_chemicals") / p37_mat2ue("olandar","ue_chemicals");
+  pm_outflowPrcIni(regi,"ChemNew","standard") = 0;
+
+  loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
+    pm_specFeDem(ttot,regi,"feh2s","ChemNew","standard") = p37_specFeDemTarget("feh2s","ChemNew","standard");
+    pm_specFeDem(ttot,regi,"feels","ChemNew","standard") = p37_specFeDemTarget("feels","ChemNew","standard");
+
+    pm_specFeDem(ttot,regi,"fegas","ChemOld","standard") = pm_fedemand(ttot,regi,"fega_chemicals") * sm_EJ_2_TWa * p37_mat2ue("olandar","ue_chemicals") / pm_fedemand(ttot,regi,"ue_chemicals");
+    pm_specFeDem(ttot,regi,"fesos","ChemOld","standard") = pm_fedemand(ttot,regi,"feso_chemicals") * sm_EJ_2_TWa * p37_mat2ue("olandar","ue_chemicals") / pm_fedemand(ttot,regi,"ue_chemicals");
+    pm_specFeDem(ttot,regi,"fehos","ChemOld","standard") = pm_fedemand(ttot,regi,"feli_chemicals") * sm_EJ_2_TWa * p37_mat2ue("olandar","ue_chemicals") / pm_fedemand(ttot,regi,"ue_chemicals");
+    pm_specFeDem(ttot,regi,"feels","ChemOld","standard") = (pm_fedemand(ttot,regi,"feelhth_chemicals") + pm_fedemand(ttot,regi,"feelwlth_chemicals")) * sm_EJ_2_TWa * p37_mat2ue("olandar","ue_chemicals") / pm_fedemand(ttot,regi,"ue_chemicals");
+    !!pm_specFeDem(ttot,regi,"feels","ChemOld","standard") = pm_fedemand(ttot,regi,"feel_chemicals") * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,"ue_steel_primary") );
+
+    );
+
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   pm_outflowPrcIni(regi,"bof","unheated") = pm_fedemand("2005",regi,"ue_steel_primary");
