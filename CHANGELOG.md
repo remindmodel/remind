@@ -41,6 +41,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     https://github.com/remindmodel/development_issues/issues/274
 - **MAGICC7** fix climate data for time before cm_startyear on reference run
     [[#1744](https://github.com/remindmodel/remind/pull/1744)]
+- **regipol** fix recycling of implicit tax from BECCS qtty target
+    [[#1745](https://github.com/remindmodel/remind/pull/1745)]
 - **scripts** fix tax convergence reporting in modelSummary
     [[#1728](https://github.com/remindmodel/remind/pull/1728)]
 - **scripts** cleanup non-existing realizations from settings_config.csv

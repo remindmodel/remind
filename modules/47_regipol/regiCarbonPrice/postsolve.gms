@@ -480,7 +480,7 @@ $ENDIF.emiMkt
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 
 *** saving previous iteration value for implicit tax revenue recycling
-*** the same line exists in presolve.gms, don't forget to update there
+*** similar lines exists in equations.gms and presolve.gms, don't forget to update there
 p47_implicitQttyTargetTax_prevIter(t,regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup);
 p47_implicitQttyTargetTax0(t,regi) =
   sum((qttyTarget,qttyTargetGroup)$p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup),
@@ -497,11 +497,9 @@ p47_implicitQttyTargetTax0(t,regi) =
       ( sum(ccs2te(ccsCo2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(t,regi,enty,enty2,te,rlf)))
       )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"all"))
       +
-      (( !! Supply side BECCS
-        sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail.l(t,regi,enty,enty2,te,enty3))
-        !! Industry BECCS (using biofuels in Industry with CCS)
-      + sum((emiMkt,entySe,secInd37,entyFe)$entySeBio(entySe), pm_IndstCO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt))
-      ) * pm_share_CCS_CCO2(t,regi) )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"biomass"))
+      ( !! Only supply side BECCS
+        sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail.l(t,regi,enty,enty2,te,enty3)) * pm_share_CCS_CCO2(t,regi)
+      )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"biomass"))
     )
   )
 ;
@@ -529,8 +527,6 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
       +
       sum(regi$regi_groupExt(ext_regi,regi), ( !! Supply side BECCS
         sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail.l(ttot,regi,enty,enty2,te,enty3))
-        !! Industry BECCS (using biofuels in Industry with CCS)
-      + sum((emiMkt,entySe,secInd37,entyFe)$entySeBio(entySe), pm_IndstCO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt))
       ) * pm_share_CCS_CCO2(ttot,regi))$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"biomass"))
   );
   if(sameas(targetType,"s"), !!relative target (s=share) (not applied to CCS)
