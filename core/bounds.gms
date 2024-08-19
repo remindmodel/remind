@@ -449,6 +449,10 @@ loop(prodSeOth2te(enty,te),
   vm_prodSeOth.fx(t,regi,"seh2","h2curt") = 0;
 );
 
+loop(demSeOth2te(enty,te),
+  vm_demSeOth.fx(t,regi,enty,te) = 0;
+);
+
 
 ***---------------------------------------------------------------------------
 ***                 Lower bounds on hydro
