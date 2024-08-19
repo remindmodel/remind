@@ -33,6 +33,7 @@ $endIf.tech_bounds_2025
 
 
 *' These bounds account for historic gas power development.
+*' TODO: Historical fixings should be done in the core the via input data from mrremind, this still needs to be moved
 v47_prodSEtotal.up("2020",regi,"pegas","seel")$(sameAs(regi,"DEU"))= 0.36*sm_EJ_2_TWa;
 $ifThen.tech_bounds_2025 "%cm_tech_bounds_2025%" == "on"
 v47_prodSEtotal.up("2025",regi,"pegas","seel")$(sameAs(regi,"DEU"))= 0.4*sm_EJ_2_TWa;
@@ -49,6 +50,7 @@ vm_capEarlyReti.up('2025',regi,'pc')$(sameAs(regi,"DEU")) = 0.65;
 *' coal share of chp heat output to be between 20-25% of total district heating demand
 *' gas share of chp heat output to be between 50-55% of total district heating demand
 *' bio share of chp heat output to be between 15-25% of total district heating demand
+*' TODO: Historical fixings should be done in the core via input data from mrremind, this still needs to be moved
 loop(regi$(sameAs(regi,"DEU")),
     loop(t$(t.val eq 2020),
         vm_cap.lo(t,regi,"coalchp","1")= 0.2
