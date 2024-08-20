@@ -1758,6 +1758,11 @@ $setGlobal c_regi_nucscen  all  !! def = all
 $setGlobal c_regi_capturescen  all  !! def = all
 *** cm_subsec_model_steel      "switch between ces-based and process-based steel implementation in subsectors realisation of industry module"
 $setglobal cm_subsec_model_steel  processes  !! def = processes  !! regexp = processes|ces
+*** cm_tech_bounds_2025
+*** activate bounds for 2025 for fast-growing technologies (spv, wind etc.) based on 2023 statistics
+*** (off) no bounds for 2025
+*** (on) some generous bounds for 2025 assuming that certain developments are not possible anymore even for fast growing technologies given 2023 data
+$setglobal cm_tech_bounds_2025  on  !! def = on  !! regexp = on|off
 *** set conopt version. Warning: conopt4 is in beta
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
 *' c_empty_model  "Short-circuit the model, just use the input as solution"

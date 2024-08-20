@@ -170,6 +170,5 @@ $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
   );
 $endIf.cm_implicitQttyTarget
 
-
 *** EOF ./modules/47_regipol/regiCarbonPrice/sets.gms
 
