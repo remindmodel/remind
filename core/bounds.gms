@@ -343,28 +343,33 @@ vm_deltaCap.fx(t,regi,te,rlf)$(t.val le 2025 AND pm_data(regi,"tech_stat",te) eq
 *** allow non zero early retirement for all technologies to avoid mathematical errors
 vm_capEarlyReti.up(ttot,regi,te) = 1e-6;
 
-
 ***generally allow full early retiremnt for all fossil technologies without CCS
-vm_capEarlyReti.up(ttot,regi,te)$(teFosNoCCS(te)) = 1;
-*** FS: allow nuclear early retirement (for nucscen 7)
-vm_capEarlyReti.up(ttot,regi,"tnrs") = 1;
+vm_capEarlyReti.up(t,regi,te)$(teFosNoCCS(te)) = 1;
+*** allow nuclear early retirement
+vm_capEarlyReti.up(t,regi,"tnrs") = 1;
 *** allow early retirement of biomass used in electricity
-vm_capEarlyReti.up(ttot,regi,"bioigcc") = 1;
-vm_capEarlyReti.up(ttot,regi,"biohp") = 1;
-vm_capEarlyReti.up(ttot,regi,"biochp") = 1;
+vm_capEarlyReti.up(t,regi,"bioigcc") = 1;
+*** allow early retirement of biomass used for heat and power
+vm_capEarlyReti.up(t,regi,"biohp") = 1;
+vm_capEarlyReti.up(t,regi,"biochp") = 1;
+
+*** allow early retirement for techs added to the c_tech_earlyreti_rate switch
+$ifthen.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
+loop((ext_Regi,te)$p_techEarlyRetiRate(ext_regi,all_te),
+  vm_capEarlyReti.up(t,regi,te)$(regi_group(ext_regi,regi))= 1;
+);
+$endif.tech_earlyreti
 
 ***restrict early retirement to the modeling time frame (to reduce runtime, the early retirement equations are phased out after 2110)
 vm_capEarlyReti.up(ttot,regi,te)$(ttot.val lt 2009 or ttot.val gt 2111) = 0;
 
-*cb 20120224 lower bound of 0.01% to help the model to be aware of the early retirement option
-vm_capEarlyReti.lo(ttot,regi,te)$(teFosNoCCS(te) AND ttot.val gt 2011 AND ttot.val lt 2111) = 0.0001;
-vm_capEarlyReti.lo(ttot,regi,"tnrs")$(ttot.val gt 2011 AND ttot.val lt 2111) = 0.0001;
+* lower bound of 0.01% to help the model to be aware of the early retirement option
+vm_capEarlyReti.lo(t,regi,te)$((vm_capEarlyReti.up(t,regi,te) ge 1) and (t.val gt 2010) and (t.val le 2100)) = 1e-4;
 
 *cb 20120301 no early retirement for dot, they are used despite their economic non-competitiveness for various reasons.
 vm_capEarlyReti.fx(ttot,regi,"dot")=0;
 *rp 20210118 no investment into oil turbines in Europe
 vm_deltaCap.up(t,regi,"dot","1")$( (t.val gt 2005) AND regi_group("EUR_regi",regi) )  = 1e-6;
-
 
 *' @code{extrapage: "00_model_assumptions"}
 *** -----------------------------------------------------------------------------
