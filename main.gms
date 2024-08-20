@@ -1703,7 +1703,7 @@ $setglobal cm_wind_offshore  1      !! def = 1
 $setglobal cm_INCONV_PENALTY  on         !! def = on  !! regexp = off|on
 *** cm_INCONV_PENALTY_FESwitch  off     !! def = off
 *** flag to trun on inconvenience penalty to avoid switching shares on buildings, transport and industry biomass use if costs are relatively close (seLiqbio, sesobio, segabio)
-$setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on  !! regexp = off|on
+$setglobal cm_INCONV_PENALTY_FESwitch  off !! def = on  !! regexp = off|on
 *** cm_seFeSectorShareDevMethod "Switch to enable an optimization incentive for sectors to have similar shares of secondary energy fuels and determine the method used for the incentive." 
 *** Possible values: off or the method name (sqSectorShare, sqSectorAvrgShare, or minMaxAvrgShare)
 ***  off               "The model can freely allocate bio/syn/fossil fuels between sectors. If not off, a penalization term is added so sectors are incentivized to apply similar shares of bio-fuels, synfuels, and fossils in each sector."
