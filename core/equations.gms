@@ -1157,9 +1157,9 @@ $ifthen.seFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "sqSectorShare"
 q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
     ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
     ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
-    (    (NOT(sameas(sector,"build") AND (t.val le 2025))) 
-      OR (NOT(sameas(sector,"indst") AND (t.val le 2025)))
-      OR (NOT(sameas(sector,"cdr") AND (t.val le 2025)))
+    (    (NOT(sameas(sector,"build") AND (t.val le 2020))) 
+      OR (NOT(sameas(sector,"indst") AND (t.val le 2020)))
+      OR (NOT(sameas(sector,"cdr") AND (t.val le 2020)))
     ) AND !!disable historical year share incentives to buildings, industry and CDR  
     ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
   )..
@@ -1172,9 +1172,9 @@ $elseIf.seFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "sqSectorAvrgShare
 q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
     ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
     ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
-    (    (NOT(sameas(sector,"build") AND (t.val le 2025))) 
-      OR (NOT(sameas(sector,"indst") AND (t.val le 2025)))
-      OR (NOT(sameas(sector,"cdr") AND (t.val le 2025)))
+    (    (NOT(sameas(sector,"build") AND (t.val le 2020))) 
+      OR (NOT(sameas(sector,"indst") AND (t.val le 2020)))
+      OR (NOT(sameas(sector,"cdr") AND (t.val le 2020)))
     ) AND !!disable historical year share incentives to buildings, industry and CDR  
     ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
   )..
@@ -1187,9 +1187,9 @@ $elseIf.seFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgShare"
 q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
     ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
     ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
-    (    (NOT(sameas(sector,"build") AND (t.val le 2025))) 
-      OR (NOT(sameas(sector,"indst") AND (t.val le 2025)))
-      OR (NOT(sameas(sector,"cdr") AND (t.val le 2025)))
+    (    (NOT(sameas(sector,"build") AND (t.val le 2020))) 
+      OR (NOT(sameas(sector,"indst") AND (t.val le 2020)))
+      OR (NOT(sameas(sector,"cdr") AND (t.val le 2020)))
     ) AND !!disable historical year share incentives to buildings, industry and CDR  
     ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
   )..
@@ -1202,9 +1202,9 @@ q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
 q_minMaxPenSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
     ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
     ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
-    (    (NOT(sameas(sector,"build") AND (t.val le 2025))) 
-      OR (NOT(sameas(sector,"indst") AND (t.val le 2025)))
-      OR (NOT(sameas(sector,"cdr") AND (t.val le 2025)))
+    (    (NOT(sameas(sector,"build") AND (t.val le 2020))) 
+      OR (NOT(sameas(sector,"indst") AND (t.val le 2020)))
+      OR (NOT(sameas(sector,"cdr") AND (t.val le 2020)))
     ) AND !!disable historical year share incentives to buildings, industry and CDR  
     ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
   )..
