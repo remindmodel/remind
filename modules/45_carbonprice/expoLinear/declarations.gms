@@ -6,9 +6,11 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/expoLinear/declarations.gms
 
-scalars
-s45_tau_co2_tax_inc                          "Linear annual increase in carbon price T$/GtC/yr"
-s45_co2_tax_startyear                       "level of CO2 tax in start year converted from $/t CO2eq to T$/GtC"
+scalar
+s45_co2_tax_startyear                       "level of CO2 tax in start year in T$/GtC"
+;
+parameter
+p45_tau_co2_tax_inc(all_regi)     "Linear annual increase in carbon price T$/GtC/yr"
 ;
 
 *** EOF ./modules/45_carbonprice/expoLinear/declarations.gms

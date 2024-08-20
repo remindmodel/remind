@@ -9,8 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### input data/calibration
 - new input data rev6.84 [[#1757]] (https://github.com/remindmodel/remind/pull/1757)
 - CES parameter and gdx files calibrated with new default diffLin2Lin for NPi 
-    [[#1747]] (https://github.com/remindmodel/remind/pull/1747) and
-    [[#1757]] (https://github.com/remindmodel/remind/pull/1757)
+    [[#1747](https://github.com/remindmodel/remind/pull/1747)] and
+    [[#1757](https://github.com/remindmodel/remind/pull/1757)]
 
 ### changed
 - plastic waste by default does not lag plastics production by ten years
@@ -26,17 +26,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1739](https://github.com/remindmodel/remind/pull/1739)]
 - **scripts** fail transparently on duplicated column names in `scenario_config*.csv` files
     [[#1742](https://github.com/remindmodel/remind/pull/1742)]
+- **scripts** checkProjectSummations now also checks whether global intensive variables (prices)
+    lie between regional min/max
+    [[#1773](https://github.com/remindmodel/remind/pull/1773)]
+- **scripts** add support for EDGE-Transport standalone results to cs2 
+    [[#1780](https://github.com/remindmodel/remind/pull/1780)]
+- **testthat** fail if manipulating main.gms with default cfg drops/changes switches and comments
+    [[#1764](https://github.com/remindmodel/remind/pull/1764)] and
+    [[#1767](https://github.com/remindmodel/remind/pull/1767)]
 
 ### fixed
 - included CCS from plastic waste incineration in CCS mass flows so it is
     subject to injection constraints (but did not add CCS costs, see
     https://github.com/remindmodel/development_issues/issues/274
-- **MAGICC7** fix climate data for t < cm_startyear on reference run
+- **MAGICC7** fix climate data for time before cm_startyear on reference run
     [[#1744](https://github.com/remindmodel/remind/pull/1744)]
 - **scripts** fix tax convergence reporting in modelSummary
     [[#1728](https://github.com/remindmodel/remind/pull/1728)]
 - **scripts** cleanup non-existing realizations from settings_config.csv
     [[#1718](https://github.com/remindmodel/remind/pull/1718)]
+- **scripts** REMIND-MAgPIE start scripts now correctly use all non-gms cfg switches
+    [[#1768](https://github.com/remindmodel/remind/pull/1768)]
+- **scripts** limit slurm runtime of output.R scripts to 2 hours
+    [[1783](https://github.com/remindmodel/remind/pull/1783)]
 
 ### removed
 
