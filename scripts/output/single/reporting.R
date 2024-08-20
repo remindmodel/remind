@@ -119,10 +119,14 @@ if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
   }
   # harmonize scenario name from -mag-xx to -rem-xx
   tmp_mag$scenario <- paste0(scenario)
+  tmp_mag$value[! is.finite(tmp_mag$value)] <- NA # MAgPIE reports Inf https://github.com/pik-piam/magpie4/issues/70
   tmp_rem_mag <- rbind(tmp_rem, tmp_mag)
   quitte::write.mif(tmp_rem_mag, path = remind_reporting_file)
   piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 }
+
+# warn if duplicates in mif
+reportDuplicates(read.quitte(sub("\\.mif$", "_withoutPlus.mif", remind_reporting_file), check.duplicates = FALSE))
 
 message("### end generation of mif files at ", Sys.time())
 
