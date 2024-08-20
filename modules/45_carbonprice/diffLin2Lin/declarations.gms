@@ -9,7 +9,7 @@
 *** regional prices are initially differentiated by GDP/capita and converge using quadratic phase-in, 
 *** global price from cm_CO2priceRegConvEndYr (default = 2050)
 *** carbon price of developed regions increases linearly until peak year (with iterative_target_adj = 9) or until 2100 (with iterative_target_adj = 5)
-*** linear carbon price curve of developed regions starts at 0 in 2020 
+*** linear carbon price curve of developed regions starts at 25$/t CO2eq in 2020 (corresponding to historical CO2 price for EUR, which is the highest among regions)
 ***----------------------------------------------------------------------------------------------------------------------------------------------------
 
 parameters
@@ -18,6 +18,11 @@ p45_phasein_2025ratio(all_regi)             "ratio of CO2 price to that of devel
 
 p45_regCO2priceFactor(ttot,all_regi)                    "regional multiplicative factor to the CO2 price of the developed countries"
 p45_CO2priceTrajDeveloped(ttot)                         "CO2 price trajectory for developed/rich countries"
+;
+
+scalars
+s45_co2_tax_startyear                       "level of CO2 tax in start year converted from $/t CO2eq to T$/GtC"
+s45_co2_tax_2020                            "level of CO2 tax in 2020 converted from $/t CO2eq to T$/GtC"
 ;
 
 

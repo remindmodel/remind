@@ -27,6 +27,9 @@ maxtemp <- read.csv("../../modules/50_damages/KotzWenz/input/f50_KLW_df_maxGMT.c
 #}
 getTemperatureMagicc = function(file="./p15_magicc_temp.gdx"){
   x <- read.gdx("p15_magicc_temp.gdx","pm_globalMeanTemperature") %>% rename(period=tall)
+  if(max(x$period) == 2100){
+    x <- rbind(x,tibble(period= seq(2101,2300,1),value=subset(x,period == 2100)$value))
+  }
   # Get relevant years
   return(subset(x,period >= 2005 & period <= 2300))	
 }

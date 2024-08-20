@@ -29,8 +29,6 @@ ppf(all_in)                           "All primary production factors"
 ipf(all_in)                           "All intermediate production factors"
 ppfKap(all_in)                        "Primary production factors capital"   / kap /
 ppfEn(all_in)                         "Primary production factors energy"
-
-in_enerSerAdj(all_in)                 "Energy services factors which should be constrained by adjustment costs" //
 ;
 
 alias(cesOut2cesIn,cesOut2cesIn2,cesOut2cesIn3);

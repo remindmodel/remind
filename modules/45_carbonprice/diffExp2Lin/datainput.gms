@@ -9,7 +9,6 @@
 *** regional prices are initially differentiated by GDP/capita and converge using quadratic phase-in, 
 *** global price from cm_CO2priceRegConvEndYr (default = 2050)
 *** carbon price of developed regions increases exponentially with rate given by cm_co2_tax_growth until peak year (with iterative_target_adj = 9) or until 2100 (with iterative_target_adj = 5)
-*** linear carbon price curve of developed regions starts at 0 in 2020 
 ***---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -27,18 +26,18 @@ if(cm_co2_tax_spread eq 10,
 p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) le 3.5) = 0.1; !! SSA
 p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 3.5 and p45_gdppcap2015_PPP(regi) le 5)  = 0.2; !! IND
 p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 5   and p45_gdppcap2015_PPP(regi) le 10) = 0.3; !! OAS
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 10  and p45_gdppcap2015_PPP(regi) le 15) = 0.5; !! CHA, REF, LAM
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 15  and p45_gdppcap2015_PPP(regi) le 20) = 0.7; !! MEA, NEU
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 20) = 1; !! EUR, JPN, USA, CAZ
+p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 10  and p45_gdppcap2015_PPP(regi) le 15) = 0.5; !! CHA, LAM, MEA
+p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 15  and p45_gdppcap2015_PPP(regi) le 20) = 0.7; !! REF
+p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 20) = 1; !! EUR, JPN, USA, CAZ, NEU
 );
 
 if(cm_co2_tax_spread eq 20,
 p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) le 3.5) = 0.05; !! SSA
 p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 3.5 and p45_gdppcap2015_PPP(regi) le 5)  = 0.1; !! IND
 p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 5   and p45_gdppcap2015_PPP(regi) le 10) = 0.2; !! OAS
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 10  and p45_gdppcap2015_PPP(regi) le 15) = 0.4; !! CHA, REF, LAM
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 15  and p45_gdppcap2015_PPP(regi) le 20) = 0.6; !! MEA, NEU
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 20) = 1; !! EUR, JPN, USA, CAZ
+p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 10  and p45_gdppcap2015_PPP(regi) le 15) = 0.4; !! CHA, LAM, MEA
+p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 15  and p45_gdppcap2015_PPP(regi) le 20) = 0.6; !! REF
+p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 20) = 1; !! EUR, JPN, USA, CAZ, NEU
 );
 display p45_phasein_2025ratio;
 
@@ -47,15 +46,16 @@ display p45_phasein_2025ratio;
 *** according to Asian Modeling Excercise tax case setup, 30$/t CO2eq in 2020 = 0.110 k$/tC
 
 *** for the current implementation, use the following trajectory for rich countries:
-*** price increases exponentially from cm_co2_tax_2020 in 2020
-if(cm_co2_tax_2020 lt 0,
-abort "please choose a valid cm_co2_tax_2020"
-elseif cm_co2_tax_2020 ge 0,
+*** price increases exponentially with growth rate cm_co2_tax_growth from cm_co2_tax_startyear in startyear
+*** for peak budget runs (if cm_iterative_target_adj = 6|7|9), the adjustment of the CO2 price trajectory after the peak year is made in core/postsolve.gms
+if(cm_co2_tax_startyear le 0,
+  abort "please choose a valid cm_co2_tax_startyear"
+elseif cm_co2_tax_startyear gt 0,
 *** convert tax value from $/t CO2eq to T$/GtC
-p45_CO2priceTrajDeveloped("2020") = cm_co2_tax_2020 * sm_DptCO2_2_TDpGtC;
+  s45_co2_tax_startyear = cm_co2_tax_startyear * sm_DptCO2_2_TDpGtC;
 );
 
-p45_CO2priceTrajDeveloped(t)$(t.val gt 2005) = p45_CO2priceTrajDeveloped("2020") * cm_co2_tax_growth**(t.val-2020);
+p45_CO2priceTrajDeveloped(t) = s45_co2_tax_startyear * cm_co2_tax_growth**(t.val-cm_startyear);
 p45_CO2priceTrajDeveloped(t)$(t.val gt 2110) = p45_CO2priceTrajDeveloped("2110"); !! to prevent huge taxes after 2110 and the resulting convergence problems, set taxes after 2110 equal to 2110 value
 
 *** Then create regional phase-in:

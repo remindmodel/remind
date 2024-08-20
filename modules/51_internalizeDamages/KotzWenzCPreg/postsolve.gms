@@ -18,8 +18,7 @@ p51_scc(tall,regi)$((tall.val ge 2020) and (tall.val le 2150)) = 1000 *
 	* pm_consPC(tall,regi)/pm_consPC(tall2,regi2) 
 	* pm_GDPGross(tall2,regi2)
 	* pm_temperatureImpulseResponseCO2(tall2,tall)
-*	* pm_damageMarginal(tall2,regi2)
-	* sum(regi2iso(regi2,iso),pm_damageMarginalIsoPerc(tall2,iso,"%cm_KotzWenzPerc%")*pm_GDPfrac(tall2,iso))
+	* pm_damageMarginal(tall2,regi2)
    ))
 ;
 
@@ -28,7 +27,7 @@ p51_scc(tall,regi)$((tall.val ge 2020) and (tall.val le 2150)) = 1000 *
 p51_scc(tall,regi) = p51_sccLastItr(tall,regi) *  min(max( (p51_scc(tall,regi)/max(p51_sccLastItr(tall,regi),1e-8)),1 - 0.5*0.95**iteration.val),1 + 0.95**iteration.val);
 
 pm_taxCO2eqSCC(ttot,regi) = 0;
-pm_taxCO2eqSCC(t,regi)$(t.val ge 2025) = max(0, p51_scc(t) * sm_c_2_co2/1000);
+pm_taxCO2eqSCC(t,regi)$(t.val ge 2025) = max(0, p51_scc(t,regi) * sm_c_2_co2/1000);
 
 *);
 

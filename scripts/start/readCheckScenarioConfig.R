@@ -22,10 +22,14 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     cfg <- gms::readDefaultConfig(remindPath)
   }
   scenConf <- read.csv2(filename, stringsAsFactors = FALSE, na.strings = "", comment.char = "#",
-                                  strip.white = TRUE, blank.lines.skip = TRUE)
+                                  strip.white = TRUE, blank.lines.skip = TRUE, check.names = FALSE)
   scenConf <- scenConf[! is.na(scenConf[1]), ]
   rownames(scenConf) <- scenConf[, 1]
   scenConf[1] <- NULL
+  colduplicates <- grep("\\.[1-9]$", colnames(scenConf), value = TRUE)
+  if (length(colduplicates) > 0) {
+    warning("These colnames are signs of duplicated columns: ", paste(colduplicates, collapse = ", "))
+  }
   toolong <- nchar(rownames(scenConf)) > 75
   if (any(toolong)) {
     warning("These titles are too long: ",
@@ -79,8 +83,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   }
 
   if (fillWithDefault) {
-    for (switchname in intersect(names(scenConf), names(cfg$gms))) {
-      scenConf[is.na(scenConf[, switchname]), switchname] <- cfg$gms[[switchname]]
+    for (switch in intersect(names(scenConf), c(names(cfg), names(cfg$gms)))) {
+      scenConf[is.na(scenConf[, switch]), switch] <- ifelse(switch %in% names(cfg), cfg[[switch]], cfg$gms[[switch]])
     }
   }
 
@@ -100,7 +104,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
       scenNeedsBau <- scenNeedsBau | scenConf[[n]] %in% needBau[[n]]
     }
     BAUbutNotNeeded <- ! is.na(scenConf$path_gdx_bau) & ! (scenNeedsBau)
-    if (sum(BAUbutNotNeeded) > 0) {
+    if (sum(BAUbutNotNeeded) > 0 && ! grepl("scenario_config_coupled", filename)) {
       msg <- paste0("In ", sum(BAUbutNotNeeded), " scenarios, 'path_gdx_bau' is not empty although no realization is selected that needs it.\n",
                     "To avoid unnecessary dependencies to other runs, automatically setting 'path_gdx_bau' to NA for:\n",
                     paste(rownames(scenConf)[BAUbutNotNeeded], collapse = ", "))
@@ -120,7 +124,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   scenConf[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenConf)]] <- NA
 
   # collect errors
-  errorsfound <- sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors + missingRealizations
+  errorsfound <- length(colduplicates) + sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors + missingRealizations
 
   # check column names
   knownColumnNames <- c(names(cfg$gms), setdiff(names(cfg), "gms"), names(path_gdx_list),
@@ -129,12 +133,15 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
                           "magpie_empty")
+    # identify MAgPIE switches by "cfg_mag" and "scenario_config"
+    knownColumnNames <- c(knownColumnNames, grep("cfg_mag|scenario_config", names(scenConf), value = TRUE))
   }
   unknownColumnNames <- names(scenConf)[! names(scenConf) %in% knownColumnNames]
   if (length(unknownColumnNames) > 0) {
     message("")
     forbiddenColumnNames <- list(   # specify forbidden column name and what should be done with it
        "c_budgetCO2" = "Rename to c_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
+       "c_peakBudgYr" = "Rename to cm_peakBudgYr, see https://github.com/remindmodel/remind/pull/1747",
        "c_budgetCO2FFI" = "Rename to c_budgetCO2from2020FFI, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
        "cm_bioenergy_tax" = "Rename to cm_bioenergy_SustTax, see https://github.com/remindmodel/remind/pull/1003",
        "cm_bioenergymaxscen" = "Use more flexible cm_maxProdBiolc switch instead, see https://github.com/remindmodel/remind/pull/1054",

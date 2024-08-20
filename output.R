@@ -125,7 +125,8 @@ if (exists("source_include")) {
   comp <- "single"
 } else if (! exists("comp")) {
   modes <- c("single" = "Output for single run", "comparison" = "Comparison across runs", "export" = "Export", "exit" = "Exit")
-  comp <- names(modes)[which(chooseFromList(unname(modes), type = "output mode", multiple = FALSE, returnBoolean = TRUE))]
+  comp <- names(modes)[which(chooseFromList(unname(modes), type = "output mode", multiple = FALSE, returnBoolean = TRUE, userinfo = "Leave empty for 'single'."))]
+  if (length(comp) == 0) comp <- names(modes)[[1]]
   if (comp == "exit") q()
 }
 if (isFALSE(comp)) comp <- "single" # legacy from times only two comp modes existed
@@ -133,9 +134,12 @@ if (isTRUE(comp)) comp <- "comparison"
 
 if (! exists("output")) {
   # search for R scripts in scripts/output subfolders
-  modules <- gsub("\\.R$", "", grep("\\.R$", list.files(paste0("./scripts/output/", if (isFALSE(comp)) "single" else comp)), value = TRUE))
+  modules <- gsub("\\.R$", "", grep("\\.R$", list.files(paste0("./scripts/output/", comp)), value = TRUE))
   # if more than one option exists, let user choose
-  output <- if (length(modules) == 1) modules else chooseFromList(modules, type = "modules to be used for output generation", addAllPattern = FALSE)
+  defaultoutput <- switch(comp, "single" = gms::readDefaultConfig(".")$output, "comparison" = "compareScenarios2", "export" = "xlsx_IIASA")
+  userinfo <- paste("Leave empty for", paste(defaultoutput, collapse = ", "))
+  output <- if (length(modules) == 1) modules else chooseFromList(modules, type = "modules to be used for output generation", addAllPattern = FALSE, userinfo = userinfo)
+  if (length(output) == 0) output <- defaultoutput
   # move "reporting" to first position, if it exists
   output <- c(if ("reporting" %in% output) "reporting", output[! output %in% "reporting"])
 }
@@ -209,7 +213,7 @@ if (comp %in% c("comparison", "export")) {
       if ("--test" %in% flags) {
         message("Test mode, not executing ", paste0("scripts/output/", comp, "/", name))
       } else {
-        message(paste("Executing", name))
+        message("\n\n## Executing ", name)
         tmp.env <- new.env()
         tmp.error <- try(sys.source(paste0("scripts/output/", comp, "/", name), envir = tmp.env))
         rm(tmp.env)
@@ -231,10 +235,10 @@ if (comp %in% c("comparison", "export")) {
     # choose the slurm options
     if (!exists("slurmConfig")) {
       slurmConfig <- choose_slurmConfig_output(output = output)
-      if (slurmConfig != "direct") slurmConfig <- combine_slurmConfig("--nodes=1 --tasks-per-node=1", slurmConfig)
+      if (slurmConfig != "direct") slurmConfig <- combine_slurmConfig("--nodes=1 --tasks-per-node=1 --time=120", slurmConfig)
     }
     if (slurmConfig %in% c("priority", "short", "standby")) {
-      slurmConfig <- paste0("--qos=", slurmConfig, " --nodes=1 --tasks-per-node=1")
+      slurmConfig <- paste0("--nodes=1 --tasks-per-node=1 --qos=", slurmConfig)
     }
     if (isTRUE(slurmConfig %in% "direct")) {
       flags <- c(flags, "--interactive") # to tell scripts they can run in interactive mode
@@ -310,7 +314,7 @@ if (comp %in% c("comparison", "export")) {
           logfile <- file.path(outputdir, "log_output.txt")
           Rscripts <- paste0("Rscript scripts/output/single/", name, " outputdir=", outputdir, collapse = "; ")
           slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
-                       " --mail-type=END --comment=output.R --wrap='", Rscripts, "'")
+                       " --mail-type=END,FAIL --comment=output.R --wrap='", Rscripts, "'")
           message("Sending to slurm: ", paste(name, collapse = ", "), ". Find log in ", logfile)
           system(slurmcmd)
         }

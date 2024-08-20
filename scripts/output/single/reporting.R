@@ -10,6 +10,7 @@ library(remind2)
 library(lucode2)
 library(gms)
 library(methods)
+library(edgeTransport)
 library(reporttransport)
 library(quitte)
 library(piamutils)
@@ -72,17 +73,18 @@ if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
 ## REMIND_generic_<scenario>_withoutPlus.MIF is replaced.
 
 edgetOutputDir <- file.path(outputdir, "EDGE-T")
-if(file.exists(edgetOutputDir)) {
+if (file.exists(edgetOutputDir)) {
     savewd <- getwd()
     setwd(outputdir)
-    edgeTransport::iterativeEDGETransport()
+    edgeTransport::iterativeEdgeTransport()
     setwd(savewd)
-  }
+}
 
   message("start generation of EDGE-T reporting")
   EDGET_output <- reportEdgeTransport(edgetOutputDir,
                                       isTransportExtendedReported = FALSE, 
                                       modelName = "REMIND",
+				      scenarioName = scenario,
                                       gdxPath = file.path(outputdir, "fulldata.gdx"),
                                       isStored = FALSE
                                       isHarmonized = TRUE)
@@ -95,7 +97,6 @@ if(file.exists(edgetOutputDir)) {
                       isTransportExtendedReported = TRUE, 
                       gdxPath = file.path(outputdir, "fulldata.gdx"),
                       isStored = TRUE)
-
 
   message("end generation of EDGE-T reporting")
 }
