@@ -259,7 +259,8 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
           sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j' | grep -v ", fullrunname), intern = TRUE)
           subseq.env$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
         }
-        slurmOptions <- combine_slurmConfig(paste0("--qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", logfile,
+        slurmOptions <- combine_slurmConfig(paste0("--qos=", subseq.env$qos,
+           " --job-name=", subseq.env$fullrunname, " --output=", logfile,
            " --open-mode=append --mail-type=END,FAIL --comment=REMIND-MAgPIE --tasks-per-node=", subseq.env$numberOfTasks,
           if (subseq.env$numberOfTasks == 1) " --mem=8000"), subseq.env$sbatch)
         subsequentcommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")

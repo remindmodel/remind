@@ -496,6 +496,7 @@ if (c_ccsinjecratescen eq 2, s_ccsinjecrate = s_ccsinjecrate *   0.50 ); !! Lowe
 if (c_ccsinjecratescen eq 3, s_ccsinjecrate = s_ccsinjecrate *   1.50 ); !! Upper estimate
 if (c_ccsinjecratescen eq 4, s_ccsinjecrate = s_ccsinjecrate * 200    ); !! remove flow constraint for DAC runs
 if (c_ccsinjecratescen eq 5, s_ccsinjecrate = s_ccsinjecrate *   0.20 ); !! sustainable estimate
+if (c_ccsinjecratescen eq 6, s_ccsinjecrate = s_ccsinjecrate *   0.44 ); !! Intermediate estimate
 pm_ccsinjecrate(regi) = s_ccsinjecrate;
 
 *** OR: overwrite with regional values of ccs injection rate
@@ -761,7 +762,7 @@ pm_regiEarlyRetiRate(t,regi,"biochp")  = 0.5 * pm_regiEarlyRetiRate(t,regi,"bioc
 pm_regiEarlyRetiRate(t,regi,"gashp")   = 0.5 * pm_regiEarlyRetiRate(t,regi,"gashp") ; !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
 pm_regiEarlyRetiRate(t,regi,"coalhp")  = 0.5 * pm_regiEarlyRetiRate(t,regi,"coalhp"); !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
 pm_regiEarlyRetiRate(t,regi,"biohp")   = 0.5 * pm_regiEarlyRetiRate(t,regi,"biohp") ; !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
-
+pm_regiEarlyRetiRate(t,regi,"bioigcc")   = 0.25 * pm_regiEarlyRetiRate(t,regi,"bioigcc") ; !! reduce bio early retirement rate
 
 $ifthen.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
 loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),

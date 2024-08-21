@@ -129,5 +129,18 @@ q47_CCSmaxBound(t,regi)$p47_CCSmaxBound(regi)..
 
 $endIf.cm_CCSmaxBound
 
+***---------------------------------------------------------------------------
+*' total SE generation per PE carrier (useful for setting historical bounds)
+***---------------------------------------------------------------------------
+
+q47_prodSEtotal(t,regi,entyPe,entySe)$(pese(entyPe,entySe))..
+  v47_prodSEtotal(t,regi,entyPe,entySe)
+  =e=
+  sum(pe2se(entyPe,entySe,te),
+    vm_prodSe(t,regi,entyPe,entySe,te));
+
+
+
+
 *' @stop
 *** EOF ./modules/47_regipol/regiCarbonPrice/equations.gms

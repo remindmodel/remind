@@ -27,7 +27,7 @@ p51_scc(tall,regi)$((tall.val ge 2020) and (tall.val le 2150)) = 1000 *
 p51_scc(tall,regi) = p51_sccLastItr(tall,regi) *  min(max( (p51_scc(tall,regi)/max(p51_sccLastItr(tall,regi),1e-8)),1 - 0.5*0.95**iteration.val),1 + 0.95**iteration.val);
 
 pm_taxCO2eqSCC(ttot,regi) = 0;
-pm_taxCO2eqSCC(t,regi)$(t.val ge 2025) = max(0, p51_scc(t) * sm_c_2_co2/1000);
+pm_taxCO2eqSCC(t,regi)$(t.val ge 2025) = max(0, p51_scc(t,regi) * sm_c_2_co2/1000);
 
 *);
 

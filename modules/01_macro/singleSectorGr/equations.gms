@@ -45,7 +45,6 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
   + sum(tradeCap, vm_costTradeCap(ttot,regi,tradeCap))
   + vm_taxrev(ttot,regi)$(ttot.val ge 2010)
   + vm_costAdjNash(ttot,regi)
-  + sum(in_enerSerAdj(in), v01_enerSerAdj(ttot,regi,in))
   + sum(teEs, vm_esCapInv(ttot,regi,teEs))
   + vm_costpollution(ttot,regi)
   + pm_totLUcosts(ttot,regi)

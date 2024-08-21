@@ -104,7 +104,7 @@ if (is.null(cfg$climate_assessment_magicc_bin)) cfg$climate_assessment_magicc_bi
 if (is.null(cfg$climate_assessment_magicc_prob_file_reporting)) cfg$climate_assessment_magicc_prob_file_reporting <- "/p/projects/rd3mod/climate-assessment-files/parsets/0fd0f62-derived-metrics-id-f023edb-drawnset.json"
 
 # All climate-assessment files will be written to this folder
-climateAssessmentFolder <- normalizePath(file.path(outputdir, "climate-assessment-data"))
+climateAssessmentFolder <- normalizePath(file.path(outputdir, "climate-assessment-data"), mustWork = FALSE)
 dir.create(climateAssessmentFolder, showWarnings = FALSE)
 
 # The base name, that climate-assessment uses to derive it's output names
