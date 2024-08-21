@@ -513,10 +513,9 @@ parameter
   cm_co2_tax_startyear    "level of co2 tax in start year in $ per t CO2eq"
 ;
   cm_co2_tax_startyear = -1;     !! def = -1  !! regexp = -1|is.nonnegative
-*' * Parameter for realizations 'diffLin2Lin' and 'diffExp2Lin' of 45_carbonprice
-*' * (-1): default setting equivalent to no carbon tax
-*' * (any number >= 0): co2 tax in start year [if cm_iterative_target_adj eq 0]; 
-*' *                    exogenous initialization of co2 tax in start year [if cm_iterative_target_adj ne 0]
+*' * (-1): default setting equivalent to no carbon tax 
+*' * (any number >= 0): co2 tax in start year [if cm_iterative_target_adj eq 0];
+*' *                    initialization of co2 tax in start year [if cm_iterative_target_adj ne 0]
 *'
 parameter
   cm_co2_tax_growth         "growth rate of carbon tax"
@@ -822,7 +821,7 @@ parameter
   c_export_tax_scen     = 0;         !! def = 0  !! regexp = 0|1
 *'
 parameter
-  cm_iterative_target_adj   "settings on iterative adjustment for CO2 tax based on in-iteration emission or forcing level. Allow iteratively generated endogenous global CO2 tax under peak budget constraint."
+  cm_iterative_target_adj   "settings on iterative adjustment for CO2 tax based on in-iteration emission or forcing level. Allow iteratively generated endogenous global CO2 tax under peak budget constraint or end-of-century budget constraint."
 ;
   cm_iterative_target_adj = 0;      !! def = 0  !! regexp = 0|2|3|4|5|6|7|9
 *' * (0): no iterative adjustment of CO2 tax (terminology: CO2 price and CO2 tax in REMIND is used interchangeably)
@@ -832,7 +831,7 @@ parameter
 *' * (5): iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission budget(2020-2100), for runs with emission budget or CO2 tax constraints. See core/postsolve.gms for direct algorithms
 *' * (6): iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission peak budget, for runs with emission budget or CO2 tax constraints. See core/postsolve.gms for direct algorithms
 *' * (7): iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission peak budget, for runs with emission budget or CO2 tax constraints. Features: results in a peak budget with zero net CO2 emissions after peak budget is reached. See core/postsolve.gms for direct algorithms
-*' * (9): [require the right settings in 45_carbonprice] iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission peak budget, for runs with emission budget or CO2 tax constraints. Features: 1) after the year when budget peaks, CO2 tax has an annual increase by c_taxCO2inc_after_peakBudgYr, 2) automatically shifts cm_peakBudgYr to find the correct year of budget peaking for a given budget. For REMIND version v2.1 or above.
+*' * (9): [require the right settings in 45_carbonprice] iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission peak budget, for runs with emission budget or CO2 tax constraints. Features: 1) after the year when budget peaks, CO2 tax has an annual increase by cm_taxCO2inc_after_peakBudgYr, 2) automatically shifts cm_peakBudgYr to find the correct year of budget peaking for a given budget. For REMIND version v2.1 or above.
 *'
 parameter
   cm_NDC_divergentScenario  "choose scenario about convergence of CO2eq prices [45_carbonprice = NDC]"
@@ -966,9 +965,9 @@ parameter
   cm_DiscRateScen        = 0;  !! def = 0  !! regexp = [0-4]
 *' * (0) Baseline without higher discount rate: No additional discount rate
 *' * (1) Baseline with higher discount rate: Increase the discount rate by 10%pts from 2005 until the end
-*' * (2) Energy Efficiency policy: 10%pts higher discount rate until cm_start_year and 0 afterwards.
-*' * (3) Energy Efficiency policy: higher discount rate until cm_start_year and 25% of the initial value afterwards.
-*' * (4) Energy Efficiency policy: higher discount rate until cm_start_year, decreasing to 25% value linearly until 2030.
+*' * (2) Energy Efficiency policy: 10%pts higher discount rate until cm_startyear and 0 afterwards.
+*' * (3) Energy Efficiency policy: higher discount rate until cm_startyear and 25% of the initial value afterwards.
+*' * (4) Energy Efficiency policy: higher discount rate until cm_startyear, decreasing to 25% value linearly until 2030.
 *'
 parameter
   c_H2InBuildOnlyAfter "Switch to fix H2 in buildings to zero until given year"
@@ -979,11 +978,12 @@ parameter
   cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 ;
   cm_peakBudgYr            = 2050;   !! def = 2050
-*'   time of net-zero CO2 emissions (peak budget), requires emiscen to 9 and cm_iterative_target_adj to 7, will potentially be adjusted by algorithms
+*' time of net-zero CO2 emissions (peak budget)
+*' endogenous adjustment by algorithms in core/postsolve.gms requires (emiscen = 9) and (cm_iterative_target_adj = 7 or 9)
 parameter
-  c_taxCO2inc_after_peakBudgYr "annual increase of CO2 tax after the Peak Budget Year in $ per tCO2"
+  cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 tax after the Peak Budget Year in $ per tCO2"
 ;
-  c_taxCO2inc_after_peakBudgYr = 0; !! def = 0 . For weak targets (higher than 1100 Peak Budget), this value might need to increased to prevent continually increasing temperatures
+  cm_taxCO2inc_after_peakBudgYr = 0; !! def = 0 . For weak targets (higher than 1100 Peak Budget), this value might need to increased to prevent continually increasing temperatures
 *'
 parameter
   cm_CO2priceRegConvEndYr      "Year at which regional CO2 taxes converge in module 45 for realizations with differentiated carbon prices"
@@ -1631,6 +1631,15 @@ $setGlobal cm_CESMkup_ind_data   ""        !! def = ""
 *** GLO: fixes industry demand to baseline level everywhere
 $setGlobal cm_fxIndUe        off   !! def = off  !! regexp = off|on
 $setGlobal cm_fxIndUeReg     ""    !! def = ""
+
+*' * cm_co2_tax_hist "switch for setting historical level of CO2 tax (in $ per t CO2eq) that is used as starting point in diffLin2Lin of 45_carbonprice"
+*' * (gdx_ref): level of CO2 tax (defined as maximum of pm_taxCO2eq over all regions) from path_gdx_ref in cm_year_co2_tax_hist
+*' * (any number >= 0): level of co2 tax in cm_co2_tax_hist_year
+$setglobal cm_co2_tax_hist  gdx_ref    !! def = "gdx_ref"  !! regexp = gdx_ref|is.nonnegative
+*' * cm_year_co2_tax_hist  "switch for setting the year of cm_co2_tax_hist"
+*' * (last): last time period before start year (e.g. 2025 if start year is 2030)
+*' * (any number >= 2005 and < cm_startyear): year for which historical level of CO2 tax (cm_co2_tax_hist) is provided (e.g. 2024)
+$setglobal cm_year_co2_tax_hist  last    !! def = "last"  !! regexp = last|is.nonnegative
 
 *** cm_ind_energy_limit Switch for setting upper limits on industry energy
 *** efficiency improvements.  See ./modules/37_subsectors/datainput.gms for

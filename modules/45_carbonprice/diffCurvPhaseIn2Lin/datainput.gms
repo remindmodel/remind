@@ -26,7 +26,7 @@ display p45_phasein_2025ratio;
 
 
 *** for the current implementation, use the following trajectory for rich countries:
-*** global price is linear from 2010 until the pkBudgYr, then increases with c_taxCO2inc_after_peakBudgYr
+*** global price is linear from 2010 until the pkBudgYr, then increases with cm_taxCO2inc_after_peakBudgYr
 if(cm_co2_tax_2020 lt 0,
   abort "please choose a valid cm_co2_tax_2020"
 elseif cm_co2_tax_2020 ge 0,

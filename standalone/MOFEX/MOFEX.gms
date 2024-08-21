@@ -189,7 +189,7 @@ cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshoot
 
 cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
 c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
-c_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
+cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffCurvPhaseIn2Lin"
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
@@ -318,7 +318,7 @@ $setGlobal cm_emiMktTarget  off   !! def = off
 cm_postTargetIncrease    = 0;      !! def = 0
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 c_peakBudgYr            = 2050;   !! def = 2050
-c_taxCO2inc_after_peakBudgYr = 2; !! def = 2
+cm_taxCO2inc_after_peakBudgYr = 2; !! def = 2
 cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 
 $setGlobal cm_NucRegiPol	 off   !! def = off		
