@@ -186,7 +186,7 @@ $ifthen.VREPot_Factor not "%c_VREPot_Factor%" == "off"
 $endif.VREPot_Factor
 
 $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
-  pm_scaleDemand(ttot,ttot,all_regi)   "Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
+  pm_scaleDemand(tall,tall,all_regi)   "Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
 $endif.scaleDemand
 
 p_boundtmp(tall,all_regi,all_te,rlf)                 "read-in bound on capacities"
