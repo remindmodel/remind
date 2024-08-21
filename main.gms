@@ -864,6 +864,37 @@ parameter
 *' * (0): not included
 *'
 parameter
+  cm_33OAE                  "choose whether OAE (ocean alkalinity enhancement) should be included into the CDR portfolio. 0 = OAE not used, 1 = used"
+;
+  cm_33OAE                 = 0;   !! def = 0
+*' Since OAE is quite a cheap CDR option, runs might not converge because the model tries to deploy
+*' a lot of OAE. In this case, use a quantity target to limit OAE by adding something like:
+*' (2070,2080,2090,2100).GLO.tax.t.oae.all 5000 to cm_implicitQttyTarget in your config file,
+*' starting from the year in which OAE is deployed above 5000 MtCO2 / yr. This will limit the global
+*' deployment to 5000 Mt / yr in timesteps 2070-2100.
+*' * (1): ocean alkalinity enhancement is included
+*' * (0): not included
+*'
+parameter
+  cm_33_OAE_eff             "OAE efficiency measured in tCO2 uptaken by the ocean per tCaO. Typically between 0.9-1.4 (which corresponds to 1.2-1.8 molCO2/molCaO). [tCO2/tCaO]"
+;
+  cm_33_OAE_eff            = 1.2; !! def = 1.2
+*'
+parameter
+  cm_33_OAE_scen            "OAE distribution scenarios"
+;
+  cm_33_OAE_scen           = 1; !! def = 1
+*' *  (0): pessimistic: a rather low discharge rate (30 tCaO per h), corresponding to high distribution costs
+*' *  (1): optimistic: a high discharge rate (250 tCaO per h), corresponding to lower distribution costs
+*'
+parameter
+  cm_33_OAE_startyr         "The year when OAE could start being deployed [year]"
+;
+  cm_33_OAE_startyr        = 2030; !! def = 2030  !! regexp = 20[3-9](0|5)
+*' *  (2030): earliest year when OAE could be deployed
+*' *  (....): later timesteps
+*'
+parameter
   cm_gs_ew                  "grain size (for enhanced weathering, CDR module) [micrometre]"
 ;
   cm_gs_ew                 = 20;     !! def = 20  !! regexp = is.numeric
@@ -1320,7 +1351,7 @@ $setGlobal cm_proNucRegiPol   off   !! def = off
 $setGlobal cm_CCSRegiPol     off   !! def = off
 *** cm_vehiclesSubsidies - If "on" applies country specific BEV and FCEV subsidies from 2020 onwards
 $setGlobal cm_vehiclesSubsidies  off !! def = off
-*** cm_implicitQttyTarget - Define quantity target for primary, secondary, final energy or CCS (PE, SE and FE in TWa, or CCS in Mt CO2) per target group (total, biomass, fossil, VRE, renewables, synthetic, ...).
+*** cm_implicitQttyTarget - Define quantity target for primary, secondary, final energy or CCS (PE, SE and FE in TWa, or CCS and OAE in Mt CO2) per target group (total, biomass, fossil, VRE, renewables, synthetic, ...).
 ***   The target is achieved by an endogenous calculated markup in the form or a tax or subsidy in between iterations.
 ***   If cm_implicitQttyTargetType is set to "config", the quantity targets will be defined directly in this switch. Check below for examples on how to do this.
 ***   If cm_implicitQttyTargetType is set to "scenario", you should define the list of pre-defined scenarios hard-coded in module '47_regipol' that should be active for the current run (this avoids reaching the 255 characters limit in more complex definitions).  

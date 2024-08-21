@@ -756,7 +756,7 @@ o_capture_energy_other(ttot,regi,"co2")$(ttot.val ge 2005) =
 ***Carbon Management|Carbon Capture|Process|Direct Air Capture (Mt CO2/yr)
 o_capture_cdr(ttot,regi,"co2")$(ttot.val ge 2005) =
     sum(teCCS2rlf("ccsinje",rlf),
-      vm_ccs_cdr.l(ttot,regi,"cco2","ico2","ccsinje",rlf)
+      vm_co2capture_cdr.l(ttot,regi,"cco2","ico2","ccsinje",rlf)
     )*o_emi_conv("co2");
 
 ***Carbon Management|Carbon Capture|Process|Industrial Processes (Mt CO2/yr)
