@@ -84,10 +84,11 @@ if (file.exists(edgetOutputDir)) {
   EDGET_output <- reportEdgeTransport(edgetOutputDir,
                                       isTransportExtendedReported = FALSE, 
                                       modelName = "REMIND",
-				      scenarioName = scenario,
+				                              scenarioName = scenario,
                                       gdxPath = file.path(outputdir, "fulldata.gdx"),
-                                      isStored = FALSE
-                                      isHarmonized = TRUE)
+                                      isStored = FALSE,
+                                      isHarmonized = TRUE,
+                                      remindReportingFile = remind_reporting_file)
 
   write.mif(EDGET_output, remind_reporting_file, append = TRUE)
   piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
