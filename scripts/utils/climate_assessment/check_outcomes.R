@@ -25,16 +25,12 @@ require(quitte)
 require(gdx)
 require(yaml)
 
-# The scenarios to be checked. Needs the full folder names in the output folder,
-# including the timestamp if there is one
-checkscenarios <- c(
-    "C_o_2c_KLW_d50_newmagicc-rem-6",
-    "C_o_cba_2c_KLW_d5-rem-6",
-    "C_o_cba_2c_KLW_d50-rem-6"
-    # "C_o_cba_2c_KLW_d95-rem-6"
-)
-
-runfolders <- file.path("output",checkscenarios)
+if(! exists("source_include")) {
+  # Define arguments that can be read from command line
+  outputdir <- "."
+  flags <- lucode2::readArgs("outputdir", .flags = c(i = "--interactive"))
+}
+runfolders <- outputdir
 
 # Get a value from the cfg file in a folder
 get_cfgval <- function(runfolder, name) {
