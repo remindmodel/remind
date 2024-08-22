@@ -100,7 +100,6 @@ if (file.exists(edgetOutputDir)) {
                       isStored = TRUE)
 
   message("end generation of EDGE-T reporting")
-}
 
 envir <- new.env()
 load(file.path(outputdir, "config.Rdata"), envir = envir)
