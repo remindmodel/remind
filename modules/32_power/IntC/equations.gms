@@ -100,7 +100,7 @@ q32_h2turbVREcapfromTestorUp(t,regi)..
 q32_elh2VREcapfromTestor(t,regi)..
   vm_cap(t,regi,"elh2","1")
   =g=
-  sum(te$testor(te), p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") ) * p32_phaseInElh2VREcap(t)
+  sum(te$teStor(te), p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") ) * p32_phaseInElh2VREcap(t)
 ;
 
 
