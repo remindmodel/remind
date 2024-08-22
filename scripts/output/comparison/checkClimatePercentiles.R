@@ -28,7 +28,7 @@ require(yaml)
 cat("===================== STARTING checkClimatePercentiles.R", "\n")
 cat("===================== see output for final location of output files", "\n")
 lucode2::readArgs("outputdirs")
-runfolders <- outputdir
+runfolders <- outputdirs
 
 checkscenarios <- basename(runfolders)
 cat("checkscenarios", checkscenarios, "\n")
