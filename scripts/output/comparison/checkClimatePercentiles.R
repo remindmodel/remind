@@ -27,13 +27,7 @@ require(yaml)
 
 cat("===================== STARTING checkClimatePercentiles.R", "\n")
 cat("===================== see output for final location of output files", "\n")
-if(! exists("source_include")) {
-  # Define arguments that can be read from command line
-  outputdir <- "."
-  flags <- lucode2::readArgs("outputdir", .flags = c(i = "--interactive"))
-} else {
-  outputdir <- outputdirs
-}
+lucode2::readArgs("outputdirs")
 runfolders <- outputdir
 
 checkscenarios <- basename(runfolders)
