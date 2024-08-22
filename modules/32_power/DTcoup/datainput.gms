@@ -73,6 +73,12 @@ p32_storageCap(te,char) = f32_storageCap(char,te);
 display p32_storageCap;
 
 *** initialize p32_PriceDurSlope parameter
-p32_PriceDurSlope(regi,"elh2") = cm_PriceDurSlope_elh2;
+parameter f32_cm_PriceDurSlope_elh2(ext_regi) "slope of price duration curve for electrolysis [#]" / %cm_PriceDurSlope_elh2% /;
+p32_PriceDurSlope(regi,"elh2") = f32_cm_PriceDurSlope_elh2("GLO");
+loop(ext_regi$f32_cm_PriceDurSlope_elh2(ext_regi),
+  loop(regi$regi_groupExt(ext_regi,regi),
+    p32_PriceDurSlope(regi,"elh2") = f32_cm_PriceDurSlope_elh2(ext_regi);
+  );
+); 
 
 *** EOF ./modules/32_power/DTcoup/datainput.gms

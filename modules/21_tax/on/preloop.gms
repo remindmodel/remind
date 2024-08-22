@@ -10,10 +10,6 @@
 pm_taxemiMkt(t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
 pm_taxemiMkt_iteration(iteration,t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
 
-*LB* set CO2 tax in 2005 and 2010 to 0
-pm_taxCO2eq("2005",regi)=0;
-pm_taxCO2eq("2010",regi)=0;
-
 ***-------------------------------------------------------------------
 ***           overwrite default targets with gdx values
 ***-------------------------------------------------------------------

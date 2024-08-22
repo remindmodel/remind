@@ -152,14 +152,14 @@ eta                 1.00        1.00        1.00
 omf                 0.02        0.02        0.02
 lifetime              45          45          45
 
-+             weathering         dac
++             weathering         dac      oae_ng      oae_el
 tech_stat                          4
-inco0               0.01       18800
-mix0                   0           0
-eta                 1.00        1.00
-omf                 0.84       0.025
+inco0               0.01       18800         200         400
+mix0                   0           0           0           0
+eta                 1.00        1.00        1.00        1.00
+omf                 0.84       0.025        0.35        0.17
 omv                    0
-lifetime              20          20
+lifetime              20          20          25          25
 incolearn                      14000
 ccap0                         0.0008
 learn                           0.15

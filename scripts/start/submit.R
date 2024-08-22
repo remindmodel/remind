@@ -132,7 +132,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
     exitCode <- system(paste0("sbatch --job-name=",
                               cfg$title,
                               " --output=log.txt --open-mode=append", # append for requeued jobs
-                              " --mail-type=END",
+                              " --mail-type=END,FAIL",
                               " --comment=REMIND",
                               " --wrap=\"Rscript prepareAndRun.R \" ",
                               cfg$slurmConfig))

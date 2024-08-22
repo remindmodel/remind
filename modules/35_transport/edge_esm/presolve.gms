@@ -10,7 +10,7 @@ if( (ord(iteration) le 25 and ord(iteration) ge cm_startIter_EDGET and (mod(ord(
     or (ord(iteration) le 45  and ord(iteration) gt 25 and  (mod(ord(iteration), 5) eq 0))
     or (ord(iteration)  gt 45 and  (mod(ord(iteration), 8) eq 0)),
 
-    Execute "Rscript -e 'edgeTransport::toolIterativeEDGETransport()'";
+    Execute "Rscript -e 'edgeTransport::iterativeEdgeTransport()'";
 
     Execute_Loadpoint 'p35_esCapCost' p35_esCapCost;
     !! convert transport costs from US$2005 to US$2017

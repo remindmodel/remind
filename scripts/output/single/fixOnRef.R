@@ -13,7 +13,7 @@ suppressPackageStartupMessages(library(tidyverse))
 if(! exists("source_include")) {
   # Define arguments that can be read from command line
   outputdir <- "."
-  flags <- readArgs("outputdir", .flags = c(i = "--interactive"))
+  flags <- lucode2::readArgs("outputdir", .flags = c(i = "--interactive"))
 }
 
 findRefMif <- function(outputdir, envi) {
@@ -38,8 +38,8 @@ findRefMif <- function(outputdir, envi) {
 }
 
 fixMAGICC <- function(d, dref, startyear, scen) {
-  magiccgrep <- "^Forcing|^Temperature|^Concentration"
-  message("Fixing MAGICC6 data before ", startyear)
+  magiccgrep <- "^Forcing|^Temperature|^Concentration|^MAGICC7 AR6"
+  message("Fixing MAGICC6 and 7 data before ", startyear)
   dnew <-
     rbind(
       filter(dref, grepl(magiccgrep, .data$variable),

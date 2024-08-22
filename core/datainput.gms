@@ -314,8 +314,37 @@ p_inco0(ttot,regi,teRegTechCosts)  = (1 + p_tkpremused(regi,teRegTechCosts) ) * 
 *** take region average p_tkpremused for global convergence price
 fm_dataglob("inco0",te)       = (1 + sum(regi, p_tkpremused(regi,te))/sum(regi, 1)) * fm_dataglob("inco0",te);
 
+*** ====================== floor cost scenarios ===========================
 *** calculate default floor costs for learning technologies
 pm_data(regi,"floorcost",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
+
+*** report old floor costs pre manipulation in non-default scenario
+$ifthen.floorscen NOT %cm_floorCostScen% == "default"
+p_oldFloorCostdata(regi,teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
+$endif.floorscen
+*** calculate floor costs for learning technologies if historical price structure prevails
+$ifthen.floorscen %cm_floorCostScen% == "pricestruc"
+** compute maximum tech cost in 2015 for a given tech among regions
+p_maxRegTechCost2015(teRegTechCosts) = SMax(regi, p_inco0("2015",regi,teRegTechCosts));
+*take the ratio of the tech cost in 2015 and the maximum cost, and multiply with the global floor to get new floorcost that preserves the price structure
+pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
+* for newer data than 2015, use these
+p_maxRegTechCost2020(teRegTechCosts) = SMax(regi, p_inco0("2020",regi,teRegTechCosts));
+pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
+* report the new floor cost data
+p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
+p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
+$endif.floorscen
+
+*** calculate floor costs for learning technologies if there is technology transfer
+$ifthen.floorscen %cm_floorCostScen% == "techtrans"
+** compute maximum income GDP PPP per capita among regions in 2050
+p_gdppcap2050_PPP(regi) = pm_gdp("2050",regi) / pm_shPPPMER(regi) / pm_pop("2050",regi);
+p_maxPPP2050 = SMax(regi, p_gdppcap2050_PPP(regi));
+*take the ratio of the PPP income and the maximum income, and multiply with the global floor to get new floorcost that simulates tech transfer where costs are solely dependent on local wages, not on IP rent
+pm_data(regi,"floorcost",teLearn(te))$(p_maxPPP2050 ne 0) = p_oldFloorCostdata(regi,te) * p_gdppcap2050_PPP(regi) / p_maxPPP2050;
+p_newFloorCostdata(regi,teLearn(te))$(p_maxPPP2050 ne 0) = p_oldFloorCostdata(regi,te) * p_gdppcap2050_PPP(regi) / p_maxPPP2050;
+$endif.floorscen
 
 *** In case regionally differentiated investment costs should be used the corresponding entries are revised:
 $ifthen.REG_techcosts not "%cm_techcosts%" == "GLO"   !! cm_techcosts is REG or REG2040
@@ -340,7 +369,7 @@ pm_data(regi,"learnExp_wFC",teLearn(te))     = pm_data(regi,"inco0",te) / pm_dat
 
 *** global factor
 *** parameter calculation for global level, that regional values can gradually converge to
-fm_dataglob("learnMult_wFC",teLearn(te)) = fm_dataglob("incolearn",te)/(fm_dataglob("ccap0",te)**fm_dataglob("learnExp_wFC", te));
+fm_dataglob("learnMult_wFC",teLearn(te)) = fm_dataglob("incolearn",te) / (fm_dataglob("ccap0",te) ** fm_dataglob("learnExp_wFC", te));
 
 *** regional factor
 *NB* read in vm_capCum(t0,regi,teLearn) from input.gdx to have info available for the recalibration of 2005 investment costs
@@ -725,7 +754,7 @@ pm_regiEarlyRetiRate(t,regi,"biohp")   = 0.5 * pm_regiEarlyRetiRate(t,regi,"bioh
 
 $ifthen.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
 loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
-  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi) and (t.val lt 2035 or sameas(ext_regi,"GLO"))) = p_techEarlyRetiRate(ext_regi,te);
+  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi) and (t.val lt c_earlyRetiValidYr or sameas(ext_regi,"GLO"))) = p_techEarlyRetiRate(ext_regi,te);
 );
 $endif.tech_earlyreti
 
@@ -852,7 +881,7 @@ if(pm_NuclearConstraint("2020",regi,"tnrs")<0,
 parameter pm_boundCapCCS(ttot,all_regi,bounds)        "installed and planned capacity of CCS"
 /
 $ondelim
-$include "./core/input/pm_boundCapCCS.cs4r"
+$include "./core/input/p_boundCapCCS.cs4r"
 $offdelim
 /
 ;
@@ -963,12 +992,12 @@ pm_shareWindPotentialOff2On(all_regi) = sum(rlf,f_maxProdGradeRegiWindOff(all_re
 
 pm_shareWindOff("2010",regi) = 0.05;
 pm_shareWindOff("2015",regi) = 0.1;
-pm_shareWindOff("2020",regi) = 0.15;
-pm_shareWindOff("2025",regi) = 0.2;
-pm_shareWindOff("2030",regi) = 0.35;
-pm_shareWindOff("2035",regi) = 0.5;
-pm_shareWindOff("2040",regi) = 0.65;
-pm_shareWindOff("2045",regi) = 0.8;
+pm_shareWindOff("2020",regi) = 0.2;
+pm_shareWindOff("2025",regi) = 0.4;
+pm_shareWindOff("2030",regi) = 0.6;
+pm_shareWindOff("2035",regi) = 0.8;
+pm_shareWindOff("2040",regi) = 0.9;
+pm_shareWindOff("2045",regi) = 0.95;
 pm_shareWindOff(ttot,regi)$((ttot.val ge 2050)) = 1;
 
 $endif.WindOff

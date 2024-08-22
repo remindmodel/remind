@@ -53,6 +53,7 @@ $endif.emiMktTargetType
   p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktCurrent across iterations  [GtCO2 or GtCO2eq]"
   pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt)    "emissions in reference year 2005, used for calculating target deviation of year targets [GtCO2 or GtCO2eq]"
   pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktTarget_dev across iterations (1 is 100%)"
+  pm_emiMktTarget_tolerance(ext_regi)                "tolerance for regipol emission target deviations convergence [#]"
 
 *** Parameters necessary to calculate the emission tax rescaling factor
   p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)     "auxiliary parameter to save the slope corresponding to the observed mitigation derivative regarding to co2tax level changes from the two previous iterations [#]"
@@ -111,8 +112,13 @@ Parameter
   p47_implicitQttyTargetTaxRescale_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) "rescale factor for current implicit quantity target tax after the given iteration"    
   p47_implicitQttyTargetCurrent_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)    "current iteration total value for an specific quantity target per iteration"   
 
+$ifThen.cm_implicitQttyTargetType "%cm_implicitQttyTargetType%" == "config"
   pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)  "quantity target [absolute: TWa or GtC; or percentage: 0.1]"  / %cm_implicitQttyTarget% /
-
+$else.cm_implicitQttyTargetType
+  pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)  "quantity target [absolute: TWa or GtC; or percentage: 0.1]"
+  p47_implicitQttyTargetScenario(qttyTargetScenario,ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) "hard-coded quantity scenarios types [absolute: TWa or GtC; or percentage: 0.1]"
+$endif.cm_implicitQttyTargetType
+ 
   pm_implicitQttyTarget_isLimited(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)  "1 (one) if there is a hard bound on the model that does not allow the tax to change further the quantity"
 
   p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) "initial year of quantity target for a given region [year]"

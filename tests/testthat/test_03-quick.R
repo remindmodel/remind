@@ -9,4 +9,5 @@ test_that("start.R config/tests/scenario_config_quick.csv works", {
   output <- localSystem2("Rscript", c("start.R", "config/tests/scenario_config_quick.csv"))
   printIfFailed(output)
   expectSuccessStatus(output)
+  expect_true(file.exists("../../output/testOneRegi/REMIND_generic_testOneRegi.mif"))
 })

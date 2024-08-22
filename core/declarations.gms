@@ -63,7 +63,7 @@ o_change_totCO2emi_peakBudgYr                         "Measure for how much the 
 p_factorRescale_taxCO2(iteration)                     "Multiplicative factor for rescaling the CO2 price to reach the target"
 p_factorRescale_taxCO2_Funneled(iteration)            "Multiplicative factor for rescaling the CO2 price to reach the target - limited by an iteration-dependent funnel"
 o_taxCO2eq_Itr_1regi(ttot,iteration)                  "CO2 taxed in the last region, tracked over iterations for debugging"
-o_pkBudgYr_flipflop(iteration)                        "Counter that tracks if flipfloping of c_peakBudgYr occured in the last iterations"
+o_pkBudgYr_flipflop(iteration)                        "Counter that tracks if flipfloping of cm_peakBudgYr occured in the last iterations"
 o_taxCO2eq_afterPeakShiftLoop_Itr_1regi(ttot, iteration) "CO2 taxed in the last region, after the loop that shifts peakBudgYr, tracked over iterations for debugging"
 
 ***----------------------------------------------------------------------------------------
@@ -110,6 +110,14 @@ $IFTHEN.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
 p_techEarlyRetiRate(ext_regi,all_te)                 "Technology specific early retirement rate" / %c_tech_earlyreti_rate% /
 $ENDIF.tech_earlyreti
 pm_regiEarlyRetiRate(ttot,all_regi,all_te)                "regional early retirement rate (model native regions)"
+
+p_maxRegTechCost2015(all_te)                         "highest historical regional tech cost in 2015"
+p_maxRegTechCost2020(all_te)                         "highest historical regional tech cost in 2020"
+p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data"
+p_newFloorCostdata(all_regi,all_te)                  "print new floor cost data"
+p_gdppcap2050_PPP(all_regi)	                     "regional GDP PPP per capita in 2050"
+p_maxPPP2050					     "maximum income GDP PPP among regions in 2050"
+p_maxSpvCost                                         "maximum spv investment cost among regions"
 
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]"
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1"
@@ -605,7 +613,7 @@ s_c_so2                                               "constant, see S. Smith, 2
 s_ccsinjecrate                                        "CCS injection rate factor. [1/a]"
 
 s_t_start                                             "start year of emission budget"
-c_peakBudgYr                                         "date of net-zero CO2 emissions for peak budget runs without overshoot"
+cm_peakBudgYr                                         "date of net-zero CO2 emissions for peak budget runs without overshoot"
 
 sm_endBudgetCO2eq                                     "end time step of emission budget period 1"
 sm_budgetCO2eqGlob                                    "budget for global energy-emissions in period 1"

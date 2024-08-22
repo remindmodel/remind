@@ -26,6 +26,10 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   scenConf <- scenConf[! is.na(scenConf[1]), ]
   rownames(scenConf) <- scenConf[, 1]
   scenConf[1] <- NULL
+  colduplicates <- grep("\\.[1-9]$", colnames(scenConf), value = TRUE)
+  if (length(colduplicates) > 0) {
+    warning("These colnames are signs of duplicated columns: ", paste(colduplicates, collapse = ", "))
+  }
   toolong <- nchar(rownames(scenConf)) > 75
   if (any(toolong)) {
     warning("These titles are too long: ",
@@ -120,7 +124,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   scenConf[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenConf)]] <- NA
 
   # collect errors
-  errorsfound <- sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors + missingRealizations
+  errorsfound <- length(colduplicates) + sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors + missingRealizations
 
   # check column names
   knownColumnNames <- c(names(cfg$gms), setdiff(names(cfg), "gms"), names(path_gdx_list),
@@ -135,6 +139,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     message("")
     forbiddenColumnNames <- list(   # specify forbidden column name and what should be done with it
        "c_budgetCO2" = "Rename to c_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
+       "c_peakBudgYr" = "Rename to cm_peakBudgYr, see https://github.com/remindmodel/remind/pull/1747",
        "c_budgetCO2FFI" = "Rename to c_budgetCO2from2020FFI, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
        "cm_bioenergy_tax" = "Rename to cm_bioenergy_SustTax, see https://github.com/remindmodel/remind/pull/1003",
        "cm_bioenergymaxscen" = "Use more flexible cm_maxProdBiolc switch instead, see https://github.com/remindmodel/remind/pull/1054",

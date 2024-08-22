@@ -70,6 +70,10 @@ vm_deltaCap.fx(t,regi,"pcc",rlf) = 0;
 vm_cap.fx(t,regi,"pco",rlf)     = 0;
 vm_deltaCap.fx(t,regi,"pco",rlf) = 0;
 
+*' Switch off grey hydrogen investments in gash2 technology from 2025. Our current seh2 hydrogen represents only additional (clean) hydrogen use cases to current ones
+*' and there are no plans to expand grey hydrogen production for that.
+*' It is allowed before 2020 to not make the model infeasible for low demands of hydrogen in that year.
+vm_deltaCap.up(t,regi,"gash2",rlf)$((t.val ge 2025)) = 1e-8;
 *' @stop
 
 *** -----------------------------------------------------------------------------------------------------------------
@@ -536,6 +540,5 @@ $ENDIF.transpGDPscale
 
 v_changeProdStartyearSlack.up(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = + c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
 v_changeProdStartyearSlack.lo(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = - c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
-
 
 *** EOF ./core/bounds.gms

@@ -204,7 +204,7 @@ loop((ext_regi,ttot2)$regiANDperiodEmiMktTarget_47(ttot2,ext_regi),
           regiEmiMktconvergenceType(iteration,ttot,ttot2,ext_regi,emiMktExt,"smallPrice") = YES;
           p47_targetConverged(ttot2,ext_regi) = 1;
 ***     if current absolute emissions minus the target (=deviation) is lower than the tolerance
-        elseif(abs(pm_emiMktTarget_dev_iter(iteration,ttot,ttot2,ext_regi,emiMktExt)) le cm_emiMktTarget_tolerance),
+        elseif(abs(pm_emiMktTarget_dev_iter(iteration,ttot,ttot2,ext_regi,emiMktExt)) le pm_emiMktTarget_tolerance(ext_regi)),
           regiEmiMktconvergenceType(iteration,ttot,ttot2,ext_regi,emiMktExt,"lowerThanTolerance") = YES;
           p47_targetConverged(ttot2,ext_regi) = 1;
         );
@@ -597,13 +597,13 @@ $else.cm_implicitQttyTarget_delay
     );
 $ifThen.emiMkt not "%cm_emiMktTarget%" == "off"
     loop(ext_regi,
-      if((smax((ttot,ttot2,emiMktExt),abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt))) gt cm_emiMktTarget_tolerance), !! resetting active state if regipol target is defined and it did not converged
+      if((smax((ttot,ttot2,emiMktExt),abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt))) gt pm_emiMktTarget_tolerance(ext_regi)), !! resetting active state if regipol target is defined and it did not converged
         p47_implicitQttyTargetActive_iter(iteration,ext_regi) = 0;
       );
     );
   elseif(p47_implicitQttyTarget_delay("emiRegiConv")), !!emiTarget delay is defined and deviation is lower than tolerance times p47_implicitQttyTarget_delay("emiRegiConv")
     loop(ext_regi,
-      if((smax((ttot,ttot2,emiMktExt),abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt))) lt (cm_emiMktTarget_tolerance * p47_implicitQttyTarget_delay("emiRegiConv"))),
+      if((smax((ttot,ttot2,emiMktExt),abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt))) lt (pm_emiMktTarget_tolerance(ext_regi) * p47_implicitQttyTarget_delay("emiRegiConv"))),
         p47_implicitQttyTargetActive_iter(iteration,ext_regi) = 1;
       );
     );
