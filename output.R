@@ -147,7 +147,8 @@ if (! exists("output")) {
 # Select output directories if not defined by readArgs
 if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
-                         "plot_compare_iterations", "varListHtml", "fixOnRef", "MAGICC7_AR6")
+                         "plot_compare_iterations", "varListHtml", "fixOnRef", "MAGICC7_AR6",
+                         "validateScenarios")
   needingMif <- any(modulesNeedingMif %in% output) && ! "reporting" %in% output[[1]]
   if (exists("remind_dir")) {
     dir_folder <- c(file.path(remind_dir, "output"), remind_dir)
@@ -192,7 +193,7 @@ if (comp %in% c("comparison", "export")) {
   }
 
   # choose the slurm options. If you use command line arguments, use slurmConfig=priority or standby
-  modules_using_slurmConfig <- c("compareScenarios2")
+  modules_using_slurmConfig <- c("compareScenarios2", "validateScenarios")
   if (!exists("slurmConfig") && any(modules_using_slurmConfig %in% output)) {
     slurmConfig <- choose_slurmConfig_output(output = output)
   }
@@ -248,7 +249,7 @@ if (comp %in% c("comparison", "export")) {
     slurmConfig <- "direct"
   }
 
-  # Execute outputscripts for all choosen folders
+  # Execute outputscripts for all chosen folders
   for (outputdir in outputdirs) {
 
     if (exists("cfg")) {
