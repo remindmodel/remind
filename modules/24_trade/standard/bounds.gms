@@ -86,7 +86,7 @@ $ENDIF.fossil_realization
 
 
 *** bounds on oil, gas and coal trade in 2010 and 2015 (+-10% from historical IEA values)
-loop( ttot$(ttot.val eq 2010 OR ttot.val eq 2015),
+loop( ttot$(ttot.val eq 2010 OR ttot.val eq 2015 OR ttot.val eq 2020),
 	loop( peFos,
 		vm_Xport.lo(ttot,regi,peFos) = 0.9 * pm_IO_trade(ttot,regi,peFos,"Xport");
 		vm_Xport.up(ttot,regi,peFos) = 1.1 * pm_IO_trade(ttot,regi,peFos,"Xport");
