@@ -25,12 +25,59 @@ q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr"))..
 
 ***---------------------------------------------------------------------------
 *'  Sum of all CDR emissions other than BECCS and afforestation, which are calculated in the core.
+*'  The negative emissions are discounted by emissions that are released due to <100 percent capture
+*'  rate, as they are unavoidable (1-s33_capture_rate of the emissions that are possible to capture).
 *'  Note that this includes all atmospheric CO2 captured in this module that enters the CCUS chain.
 ***---------------------------------------------------------------------------
 q33_emiCDR(t,regi)..
     vm_emiCdr(t,regi,"co2")
     =e=
     sum(te_used33, vm_emiCdrTeDetail(t,regi,te_used33))
+    + (1 - s33_capture_rate) * (
+        sum(te_ccs33, v33_co2emi_non_atm_gas(t, regi, te_ccs33))
+        + sum(te_oae33, v33_co2emi_non_atm_calcination(t, regi, te_oae33))
+    )
+    ;
+
+***---------------------------------------------------------------------------
+*'  Calculation of gross (negative) CO2 emissions from capacity.
+*'  Negative emissions from enhanced weathering also result from decaying rock
+*'  spread in previous timesteps, so emissions do not equal to the capacity
+*'  (i.e., how much rock is spread in a given timestep).
+***---------------------------------------------------------------------------
+q33_capconst(t, regi, te_used33)$(not sameAs(te_used33, "weathering"))..
+    vm_emiCdrTeDetail(t, regi, te_used33)
+    =e=
+    - sum(teNoTransform2rlf33(te_used33, rlf),
+        vm_capFac(t, regi, te_used33) * vm_cap(t, regi, te_used33, rlf)
+    )
+    ;
+
+***---------------------------------------------------------------------------
+*'  The CO2 captured from gas used for heat production (DAC, OAE).
+***---------------------------------------------------------------------------
+q33_co2emi_non_atm_gas(t, regi, te_ccs33)..
+    v33_co2emi_non_atm_gas(t, regi, te_ccs33)
+    =e=
+    fm_dataemiglob("pegas","seh2","gash2c","cco2") !! conversion from PE to emissions
+        * (1 / pm_eta_conv(t,regi,"gash2c")) !! conversion from PE to FE
+        * sum(fe2cdr("fegas", entyFe2, te_ccs33), v33_FEdemand(t, regi,"fegas", entyFe2, te_ccs33)) !! FE gas used
+    ;
+
+***---------------------------------------------------------------------------
+*'  Preparation of captured emissions to enter the CCUS chain.
+*'  The first part of the equation describes emissons captured from the ambient air,
+*'  the second part is non-atmospheric CO2 (e.g., from energy usage and calcination),
+*'  assuming a capture rate s33_capture_rate.
+***---------------------------------------------------------------------------
+q33_ccsbal(t, regi, ccs2te(ccsCo2(enty), enty2, te))..
+    sum(teCCS2rlf(te, rlf), vm_co2capture_cdr(t, regi, enty, enty2, te, rlf))
+    =e=
+    - vm_emiCdrTeDetail(t, regi, "dac")
+    + s33_capture_rate * (
+        sum(te_ccs33, v33_co2emi_non_atm_gas(t, regi, te_ccs33))
+        + sum(te_oae33, v33_co2emi_non_atm_calcination(t, regi, te_oae33))
+    )
     ;
 
 ***---------------------------------------------------------------------------
@@ -38,37 +85,14 @@ q33_emiCDR(t,regi)..
 *'  It's a sustainability bound to prevent a large demand for biomass.
 ***---------------------------------------------------------------------------
 q33_H2bio_lim(t,regi)..
-    sum(pe2se("pebiolc","seh2",te), vm_prodSe(t,regi,"pebiolc","seh2",te))
+    sum(pe2se("pebiolc","seh2",te), vm_prodSE(t,regi,"pebiolc","seh2",te))
     =l=
-    vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - sum(fe2cdr("feh2s",entyFe2,te_used33), v33_FEdemand(t,regi,"feh2s",entyFe2,te_used33))
+    vm_prodFe(t,regi,"seh2","feh2s","tdh2s")
+    - sum(fe2cdr("feh2s",entyFe2,te_used33), v33_FEdemand(t,regi,"feh2s",entyFe2,te_used33))
     ;
 
 ***---------------------------------------------------------------------------
 *' #### DAC equations
-
-***---------------------------------------------------------------------------
-*'  Calculation of (negative) atmospheric CO2 captured by direct air capture.
-***---------------------------------------------------------------------------
-q33_DAC_emi(t,regi)..
-    vm_emiCdrTeDetail(t,regi,"dac")
-    =e=
-    - sum(teNoTransform2rlf33("dac",rlf),
-        vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf)
-    )
-    ;
-
-***---------------------------------------------------------------------------
-*'  Preparation of captured emissions to enter the CCUS chain.
-*'  The first part of the equation describes emissions captured from the ambient air,
-*'  the second part calculates the CO2 captured from the gas used for heat production
-*'  assuming 90% capture rate.
-***---------------------------------------------------------------------------
-q33_DAC_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
-    sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
-    =e=
-    - vm_emiCdrTeDetail(t,regi,"dac")
-    + (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * sum(fe2cdr("fegas",entyFe2,te_used33), v33_FEdemand(t,regi,"fegas", entyFe2,te_used33))
-    ;
 
 ***---------------------------------------------------------------------------
 *'  Calculation of FE demand for DAC, i.e., electricity demand for ventilation,
@@ -166,5 +190,28 @@ q33_EW_LimEmi(t,regi)..
     cm_LimRock * p33_LimRock(regi)
     ;
 	
+
+***---------------------------------------------------------------------------
+*' #### OAE equations
+
+***---------------------------------------------------------------------------
+*'  Calculation of FE demand for OAE, i.e., electricity for rock preprocessing,
+*'  and heat for calcination.
+***---------------------------------------------------------------------------
+q33_OAE_FEdemand(t,regi,entyFe2,te_oae33)$sum(entyFe, fe2cdr(entyFe,entyFe2,te_oae33))..
+    sum(fe2cdr(entyFe, entyFe2, te_oae33), v33_FEdemand(t, regi, entyFe, entyFe2, te_oae33))
+    =e=
+    p33_fedem(te_oae33, entyFe2) * sm_EJ_2_TWa * (- vm_emiCdrTeDetail(t, regi, te_oae33))
+    ;
+
+***---------------------------------------------------------------------------
+*'  The CO2 captured from limestone decomposition (OAE technologies only).
+***---------------------------------------------------------------------------
+q33_OAE_co2emi_non_atm_calcination(t, regi, te_oae33)..
+    v33_co2emi_non_atm_calcination(t, regi, te_oae33)
+    =e=
+    - s33_OAE_chem_decomposition * vm_emiCdrTeDetail(t, regi, te_oae33)
+    ;
+
 *' @stop
 *** EOF ./modules/33_CDR/portfolio/equations.gms

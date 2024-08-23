@@ -34,6 +34,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **testthat** fail if manipulating main.gms with default cfg drops/changes switches and comments
     [[#1764](https://github.com/remindmodel/remind/pull/1764)] and
     [[#1767](https://github.com/remindmodel/remind/pull/1767)]
+- **33_CDR** added ocean alkalinity enhancement to the CDR portfolio (OAE is turned off by default)
+    [[#1777](https://github.com/remindmodel/remind/pull/1777)]
 
 ### fixed
 - included CCS from plastic waste incineration in CCS mass flows so it is
