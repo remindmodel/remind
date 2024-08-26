@@ -26,7 +26,9 @@ require(yaml)
 cat("===================== STARTING checkClimatePercentiles.R", "\n")
 cat("===================== see output for final location of output files", "\n")
 lucode2::readArgs("outputdirs")
-runFolders <- normalizePath(lucode2::readArgs("outputdirs")) # Remove trailing slashes
+cat("outputdirs: ",outputdirs)
+runFolders <- normalizePath(outputdirs) # Remove trailing slashes
+runFolders <- normalizePath(outputdirs) # Remove trailing slashes
 
 # checkscenarios <- basename(runFolders)
 cat("Checking scenarios:\n\t", paste0(basename(runFolders), collapse = "\n\t"), "\n")
