@@ -255,6 +255,9 @@ p_inco0(ttot,regi,te)               = s_DpKW_2_TDpTW       * p_inco0(ttot,regi,t
 fm_dataglob("inco0","csp")              = 0.7 * fm_dataglob("inco0","csp");
 fm_dataglob("incolearn","csp")          = 0.7 * fm_dataglob("incolearn","csp");
 
+*KK* adjust costs for oae from USD/GtCaO to USD/GtC
+fm_dataglob("inco0", "oae_ng") = fm_dataglob("inco0", "oae_ng") / (cm_33_OAE_eff / sm_c_2_co2);
+fm_dataglob("inco0", "oae_el") = fm_dataglob("inco0", "oae_el") / (cm_33_OAE_eff / sm_c_2_co2);
 
 *** --------------------------------------------------------------------------------
 *** Regionalize technology investment cost data
@@ -1167,6 +1170,8 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,"coalftcrec")      = 0.25;
   p_adj_seed_te(ttot,regi,"coaltr")          = 4.00;
   p_adj_seed_te(ttot,regi,'dac')             = 0.25;
+  p_adj_seed_te(ttot,regi,'oae_ng')          = 0.25;
+  p_adj_seed_te(ttot,regi,'oae_el')          = 0.25;
   p_adj_seed_te(ttot,regi,'geohe')           = 0.33;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   p_adj_seed_te(ttot,regi,"bfcc")            = 0.05;
@@ -1206,6 +1211,8 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
 
   p_adj_coeff(ttot,regi,"dac")             = 0.8;
+  p_adj_coeff(ttot,regi,'oae_ng')          = 0.8;
+  p_adj_coeff(ttot,regi,'oae_el')          = 0.8;
   p_adj_coeff(ttot,regi,teGrid)            = 0.3;
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
 );

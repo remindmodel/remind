@@ -2422,6 +2422,9 @@ pe2se(all_enty,all_enty,all_te) "map primary energy carriers to secondary"
         peur.seel.fnrs
 /
 
+pese(all_enty,all_enty) "map primary to secondary energy carriers without technology dimension"
+//
+
 seAgg(all_enty) "secondary energy aggregations"
 /
         all_seliq

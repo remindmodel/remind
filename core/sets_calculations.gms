@@ -56,6 +56,10 @@ loop(fe2ue(entyFe,entyUe,te),
 display feForUe;
 
 
+loop ( pe2se(entyPe,entySe,te),
+   pese(entyPe,entySe) = YES;
+);
+
 period4(ttot) = ttot(ttot) - tsu(ttot) - period1(ttot) - period2(ttot) - period3(ttot);
 period12(ttot) = period1(ttot) + period2(ttot);
 period123(ttot) = period1(ttot) + period2(ttot) + period3(ttot);
