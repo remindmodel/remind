@@ -17,8 +17,7 @@
 # variables to `REMIND_generic_*.mif`. To verify the output, check the figures in `check_output_figures.pdf` and the 
 # table in `check_output_summary.csv`
 #
-require(purrr)
-require(stringr)
+require(tidyverse)
 require(quitte)
 require(gdx)
 require(yaml)
