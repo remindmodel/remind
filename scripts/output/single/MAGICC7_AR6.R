@@ -229,10 +229,20 @@ as.quitte(remindReportingFile) %>%
   write.mif(remindReportingFile)
 
 piamutils::deletePlus(remindReportingFile, writemif = TRUE)
+logmsg <- paste0(date(), " postprocessing done! Results appended to REMIND mif '", remindReportingFile, "'\n")
 
-logmsg <- paste0(
-  date(), " postprocessing done! Results appended to REMIND mif '", remindReportingFile, "'\n",
-  "MAGICC7_AR6.R finished\n"
-)
+############################# CLEAN UP WORKERS FOLDER ##########################
+# openscm_runner not remnove up temp dirs. Do this manually since we keep running into file ownership issues
+workersFolder <- file.path(climateAssessmentFolder, "workers")  # replace with your directory path
+if (dir.exists(workersFolder)) {
+  # Check if directory is empty
+  if (length(list.files(workersFolder)) == 0) {
+    # Remove directory. Option recursive must be TRUE for some reason, otherwise unlink won't do its job
+    unlink(workersFolder, recursive = TRUE)
+    logmsg <- paste0(logmsg, date(), "  Removed workers folder '", workersFolder, "'\n")
+  }
+}
+
+logmsg <- paste0(logmsg, date(), "MAGICC7_AR6.R finished\n")
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)
