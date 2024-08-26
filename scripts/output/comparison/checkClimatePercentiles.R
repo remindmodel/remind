@@ -63,7 +63,7 @@ mifData <- read.quitte(mifFiles) %>%
         "MAGICC7 AR6|Surface Temperature (GSAT)|10.0th Percentile",
         "MAGICC7 AR6|Surface Temperature (GSAT)|33.0th Percentile",
         "MAGICC7 AR6|Surface Temperature (GSAT)|50.0th Percentile",
-        "MAGICC7 AR6|Surface Temperature (GSAT)|66.0th Percentile",
+        "MAGICC7 AR6|Surface Temperature (GSAT)|67.0th Percentile",
         "MAGICC7 AR6|Surface Temperature (GSAT)|90.0th Percentile"
         )) %>%
     mutate(model = "MAGICC7 AR6", variable = str_split_i(variable,"\\|",3))
