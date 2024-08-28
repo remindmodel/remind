@@ -429,7 +429,7 @@ for(scen in common){
   } else if (scenarios_coupled[scen, "var_luc"] %in% c("smooth", "raw")) {
     cfg_rem$var_luc <- scenarios_coupled[scen, "var_luc"]
   } else {
-    stop(paste0("Unkown setting for 'var_luc': `", scenarios_coupled[scen, "var_luc"], "`. Please chose either `smooth` or `raw`"))
+    stop(paste0("Unkown setting in coupled config file for 'var_luc': `", scenarios_coupled[scen, "var_luc"], "`. Please chose either `smooth` or `raw`"))
   }
 
   # Edit remind main model file, region settings and input data revision based on scenarios table, if cell non-empty
