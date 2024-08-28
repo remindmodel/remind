@@ -1605,12 +1605,11 @@ $endif.cm_rcp_scen_build
 
 *** Scale FE demand across industry and building sectors
 $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
-  loop((t,t3,all_regi) $ pm_scaleDemand(t,t3,all_regi),
-*FL*      rescaled demand                 = normal demand                   * [ scaling factor                + (1-scaling factor)                * remaining phase-in, between zero and one       ]
-          pm_fedemand(t2,all_regi,all_in) = pm_fedemand(t2,all_regi,all_in) * ( pm_scaleDemand(t,t3,all_regi) + (1-pm_scaleDemand(t,t3,all_regi)) * min(1, max(0, t3.val-t2.val) / (t3.val-t.val)) );
+  loop((tall,tall2,all_regi) $ pm_scaleDemand(tall,tall2,all_regi),
+*FL*  rescaled demand                = normal demand                  * [ scaling factor                      + (1-scaling factor)                      * remaining phase-in, between zero and one               ]
+      pm_fedemand(t,all_regi,all_in) = pm_fedemand(t,all_regi,all_in) * ( pm_scaleDemand(tall,tall2,all_regi) + (1-pm_scaleDemand(tall,tall2,all_regi)) * min(1, max(0, tall2.val-t.val) / (tall2.val-tall.val)) );
   );
 $endif.scaleDemand
-
 
 
 *** initialize global target deviation scalar
