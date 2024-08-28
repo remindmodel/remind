@@ -21,51 +21,53 @@
 *** Step 1: Define regional multiplicative factors between regional CO2 price and CO2 price of the developed countries
 *** Warning regarding code changes: This first step also appears in diffLin2Lin and should be changed simultaneously.
 
-*** Step 1.1: Define regional multiplicative CO2 price factors for 2025
+*** Step 1.1: Define initial regional multiplicative CO2 price factors
 
 *** based on GDP per capita (in 1e3 $ PPP 2005) in 2015 (benchmark year kept at 2015 since 2020 not suitable) 
 p45_gdppcap2015_PPP(regi) = pm_gdp("2015",regi)/pm_shPPPMER(regi) / pm_pop("2015",regi);
 
 *** Selection of differentiation scheme via cm_co2_tax_spread
 if(cm_co2_tax_spread eq 1,
-p45_phasein_2025ratio(regi) = 1; !! all regions
+p45_phasein_ratio(regi) = 1; !! all regions
 );
 
 if(cm_co2_tax_spread eq 10,
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) le 3.5) = 0.1; !! SSA
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 3.5 and p45_gdppcap2015_PPP(regi) le 5)  = 0.2; !! IND
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 5   and p45_gdppcap2015_PPP(regi) le 10) = 0.3; !! OAS
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 10  and p45_gdppcap2015_PPP(regi) le 15) = 0.5; !! CHA, LAM, MEA
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 15  and p45_gdppcap2015_PPP(regi) le 20) = 0.7; !! REF
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 20) = 1; !! EUR, JPN, USA, CAZ, NEU
+p45_phasein_ratio(regi)$(p45_gdppcap2015_PPP(regi) le 3.5) = 0.1; !! SSA
+p45_phasein_ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 3.5 and p45_gdppcap2015_PPP(regi) le 5)  = 0.2; !! IND
+p45_phasein_ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 5   and p45_gdppcap2015_PPP(regi) le 10) = 0.3; !! OAS
+p45_phasein_ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 10  and p45_gdppcap2015_PPP(regi) le 15) = 0.5; !! CHA, LAM, MEA
+p45_phasein_ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 15  and p45_gdppcap2015_PPP(regi) le 20) = 0.7; !! REF
+p45_phasein_ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 20) = 1; !! EUR, JPN, USA, CAZ, NEU
 );
 
 if(cm_co2_tax_spread eq 20,
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) le 3.5) = 0.05; !! SSA
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 3.5 and p45_gdppcap2015_PPP(regi) le 5)  = 0.1; !! IND
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 5   and p45_gdppcap2015_PPP(regi) le 10) = 0.2; !! OAS
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 10  and p45_gdppcap2015_PPP(regi) le 15) = 0.4; !! CHA, LAM, MEA
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 15  and p45_gdppcap2015_PPP(regi) le 20) = 0.6; !! REF
-p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 20) = 1; !! EUR, JPN, USA, CAZ, NEU
+p45_phasein_ratio(regi)$(p45_gdppcap2015_PPP(regi) le 3.5) = 0.05; !! SSA
+p45_phasein_ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 3.5 and p45_gdppcap2015_PPP(regi) le 5)  = 0.1; !! IND
+p45_phasein_ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 5   and p45_gdppcap2015_PPP(regi) le 10) = 0.2; !! OAS
+p45_phasein_ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 10  and p45_gdppcap2015_PPP(regi) le 15) = 0.4; !! CHA, LAM, MEA
+p45_phasein_ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 15  and p45_gdppcap2015_PPP(regi) le 20) = 0.6; !! REF
+p45_phasein_ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 20) = 1; !! EUR, JPN, USA, CAZ, NEU
 );
 
-*** Step 1.2: Create regional multiplicative CO2 price factors from 2030 onward
+*** Step 1.2: Create regional multiplicative CO2 price factors for quadratic convergence between s45_CO2priceRegConvStartYr and cm_CO2priceRegConvEndYr
 
-*** Set regional CO2 price factor equal to p45_phasein_2025ratio until 2025:
-p45_regCO2priceFactor(t,regi)$(t.val le 2025) = p45_phasein_2025ratio(regi);
-*** Create quadratic phase-in until cm_CO2priceRegConvEndYr:
-loop(t$((t.val gt 2025) and (t.val le cm_CO2priceRegConvEndYr)),
+*** Set year until which initial ratios of CO2 prices are applied and after which convergence starts to 2030
+s45_CO2priceRegConvStartYr = 2030;
+*** Set regional CO2 price factor equal to p45_phasein_ratio until s45_CO2priceRegConvStartYr:
+p45_regCO2priceFactor(t,regi)$(t.val le s45_CO2priceRegConvStartYr) = p45_phasein_ratio(regi);
+*** Create quadratic phase-in between s45_CO2priceRegConvStartYr and cm_CO2priceRegConvEndYr:
+loop(t$((t.val gt s45_CO2priceRegConvStartYr) and (t.val le cm_CO2priceRegConvEndYr)),
   p45_regCO2priceFactor(t,regi) = 
    min(1,
        max(0, 
-	        p45_phasein_2025ratio(regi) + (1 - p45_phasein_2025ratio(regi)) * Power( (t.val - 2025) / (cm_CO2priceRegConvEndYr - 2025), 2) 
+	        p45_phasein_ratio(regi) + (1 - p45_phasein_ratio(regi)) * Power( (t.val - s45_CO2priceRegConvStartYr) / (cm_CO2priceRegConvEndYr - s45_CO2priceRegConvStartYr), 2) 
        )				 
    );
 );
 *** Set regional CO2 price factor equal to 1 after cm_CO2priceRegConvEndYr:
 p45_regCO2priceFactor(t,regi)$(t.val gt cm_CO2priceRegConvEndYr) = 1;
 
-display p45_gdppcap2015_PPP, p45_phasein_2025ratio, p45_regCO2priceFactor;
+display p45_gdppcap2015_PPP, p45_phasein_ratio, p45_regCO2priceFactor;
 
 *** Step 2: Create CO2 price trajectory for developed countries
 
