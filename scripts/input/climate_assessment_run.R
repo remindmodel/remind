@@ -409,9 +409,21 @@ if (archiveClimateAssessmentData) {
   capture.output(cat(logMsg), file = logFile, append = TRUE)
 }
 timeStopArchive <- Sys.time()
+logMsg <- paste0(date(), " Done writing GDX files\n")
 
-logMsg <- paste0(
-  date(), " Done writing GDX files\n",
+############################# CLEAN UP WORKERS FOLDER ##########################
+# openscm_runner not remnove up temp dirs. Do this manually since we keep running into file ownership issues
+workersFolder <- file.path(climateTempDir, "workers")  # replace with your directory path
+if (dir.exists(workersFolder)) {
+  # Check if directory is empty
+  if (length(list.files(workersFolder)) == 0) {
+    # Remove directory. Option recursive must be TRUE for some reason, otherwise unlink won't do its job
+    unlink(workersFolder, recursive = TRUE)
+    logMsg <- paste0(logMsg, date(), "  Removed workers folder '", workersFolder, "'\n")
+  }
+}
+
+logMsg <- paste0(logMsg,
   date(), " Runtime report: ", paste0("iteration_", timestamp, "\n"),
   "\tRuntime set_up_script: ",
   difftime(timeStopSetUpScript, timeStartSetUpScript, units = "secs"), "s\n",
