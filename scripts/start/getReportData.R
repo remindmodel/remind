@@ -49,7 +49,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
     } else if (var_luc == "raw") {
       emi_co2_luc <- "Emissions|CO2|Land RAW|+|Land-use Change (Mt CO2/yr)"
     } else {
-      stop(paste0("Unkown setting for 'var_luc': `", var_luc, "`. Please chose either `smooth` or `raw`"))
+      stop(paste0("Unkown setting for 'var_luc': `", var_luc, "`. Only `smooth` or `raw` are allowed."))
     }
 
     # define three columns of dataframe:
