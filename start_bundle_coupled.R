@@ -419,6 +419,19 @@ for(scen in common){
     cfg_mag$mute_ghgprices_until <- scenarios_coupled[scen, "no_ghgprices_land_until"]
   }
 
+  # Write choice of land-use change variable to config. Use smoothed variable
+  # if not specified otherwise in coupled config, i.e. if the column is missing
+  # completely or if the row entry is empty.
+  if (!("var_luc" %in% names(scenarios_coupled))) {
+    cfg_rem$var_luc <- "smooth"
+  } else if (is.na(scenarios_coupled[scen, "var_luc"])) {
+    cfg_rem$var_luc <- "smooth"
+  } else if (scenarios_coupled[scen, "var_luc"] %in% c("smooth", "raw")) {
+    cfg_rem$var_luc <- scenarios_coupled[scen, "var_luc"]
+  } else {
+    stop(paste0("Unkown setting for 'var_luc': `", scenarios_coupled[scen, "var_luc"], "`. Please chose either `smooth` or `raw`"))
+  }
+
   # Edit remind main model file, region settings and input data revision based on scenarios table, if cell non-empty
   cfg_rem_options <- c("model", "regionmapping", "extramappings_historic", "inputRevision", setdiff(names(cfg_rem), c("gms", "output")))
   for (switchname in intersect(cfg_rem_options, names(settings_remind))) {
@@ -611,6 +624,7 @@ for(scen in common){
   }
   message("path_report   : ",ifelse(file.exists(path_report),green,red), path_report, NC)
   message("no_ghgprices_land_until: ", cfg_mag$gms$c56_mute_ghgprices_until)
+  message("var_luc: ", cfg_rem$var_luc)
 
   if ("--gamscompile" %in% flags) {
     message("Compiling ", fullrunname)
