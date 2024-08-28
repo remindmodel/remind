@@ -422,7 +422,7 @@ for(scen in common){
   # Write choice of land-use change variable to config. Use smoothed variable
   # if not specified otherwise in coupled config, i.e. if the column is missing
   # completely or if the row entry is empty.
-  if (! "var_luc" %in% names(scenarios_coupled) || is.na(scenarios_coupled[scen, "var_luc"]) {
+  if (! "var_luc" %in% names(scenarios_coupled) || is.na(scenarios_coupled[scen, "var_luc"])) {
     cfg_rem$var_luc <- "smooth"
   } else if (scenarios_coupled[scen, "var_luc"] %in% c("smooth", "raw")) {
     cfg_rem$var_luc <- scenarios_coupled[scen, "var_luc"]
