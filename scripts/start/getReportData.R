@@ -46,8 +46,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
     # Select the LUC variable according to setting.
     if (var_luc == "smooth") {
       emi_co2_luc <- "Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr)"
-    }
-    else if (var_luc == "raw") {
+    } else if (var_luc == "raw") {
       emi_co2_luc <- "Emissions|CO2|Land RAW|+|Land-use Change (Mt CO2/yr)"
     } else {
       stop(paste0("Unkown setting for 'var_luc': `", var_luc, "`. Please chose either `smooth` or `raw`"))
