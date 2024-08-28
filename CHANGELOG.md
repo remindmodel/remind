@@ -32,7 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** add support for EDGE-Transport standalone results to cs2 
     [[#1780](https://github.com/remindmodel/remind/pull/1780)]
 - **scripts** add option to use raw land-use change emissions variable in coupled runs
-    [[#1796]](https://github.com/remindmodel/remind/pull/1796)
+    [[#1796](https://github.com/remindmodel/remind/pull/1796)]
 - **testthat** fail if manipulating main.gms with default cfg drops/changes switches and comments
     [[#1764](https://github.com/remindmodel/remind/pull/1764)] and
     [[#1767](https://github.com/remindmodel/remind/pull/1767)]
