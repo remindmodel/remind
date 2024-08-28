@@ -119,15 +119,15 @@ solve initialcap2 using cns;
 
 display v05_INIdemEn0.l, v05_INIcap0.l;
 
-pm_cap0(regi,te) = v05_INIcap0.l(regi,te);
+p05_cap0(regi,te) = v05_INIcap0.l(regi,te);
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-pm_cap0(regi,'bof') = pm_outflowPrcIni(regi,'bof','unheated') / pm_cf("2005",regi,'bof');
-pm_cap0(regi,'bf')  = pm_outflowPrcIni(regi,'bf','standard')  / pm_cf("2005",regi,'bf');
-pm_cap0(regi,'eaf') = pm_outflowPrcIni(regi,'eaf','sec')      / pm_cf("2005",regi,'eaf');
-pm_cap0(regi,'idr') = 0.;
-pm_cap0(regi,"bfcc") =0.;
-pm_cap0(regi,"idrcc") =0.;
+p05_cap0(regi,'bof') = pm_outflowPrcIni(regi,'bof','unheated') / pm_cf("2005",regi,'bof');
+p05_cap0(regi,'bf')  = pm_outflowPrcIni(regi,'bf','standard')  / pm_cf("2005",regi,'bf');
+p05_cap0(regi,'eaf') = pm_outflowPrcIni(regi,'eaf','sec')      / pm_cf("2005",regi,'eaf');
+p05_cap0(regi,'idr') = 0.;
+p05_cap0(regi,"bfcc") =0.;
+p05_cap0(regi,"idrcc") =0.;
 $endif.cm_subsec_model_steel
 
 *RP keep energy demand for the Kyoto target calibration
@@ -171,7 +171,7 @@ vm_deltaCap.fx("2005",regi,te,rlf)$(te2rlf(te,rlf)) = 0;
 loop(regi,
   loop(teReNoBio(te),
     s05_aux_tot_prod
-    = pm_cap0(regi,te)
+    = p05_cap0(regi,te)
     * pm_cf("2005",regi,te)
     * pm_dataren(regi,"nur","1",te);
 
@@ -211,8 +211,8 @@ loop(regi,
 loop(regi,
   loop(opTimeYr2te(te,opTimeYr)$(NOT teReNoBio(te)),
     loop(tsu2opTime5(ttot,opTimeYr),
-      loop(pe2se(entyPe,entySe,te), o_INI_DirProdSeTe(regi,entySe,te) = pm_cap0(regi,te) * pm_cf("2005",regi,te) * pm_dataren(regi,"nur","1",te) );
-      sm_tmp = 1 / pm_ts(ttot) * pm_cap0(regi,te) * p05_vintage(regi,opTimeYr,te);
+      loop(pe2se(entyPe,entySe,te), o_INI_DirProdSeTe(regi,entySe,te) = p05_cap0(regi,te) * pm_cf("2005",regi,te) * pm_dataren(regi,"nur","1",te) );
+      sm_tmp = 1 / pm_ts(ttot) * p05_cap0(regi,te) * p05_vintage(regi,opTimeYr,te);
 
       vm_deltaCap.lo(ttot,regi,te,"1") = sm_tmp;
       vm_deltaCap.up(ttot,regi,te,"1") = sm_tmp;
@@ -257,7 +257,7 @@ display pm_aux_capLowerLimit;
 ***---------------------------------------------------------------------------
 
 loop(regi,
-  o_INI_TotalCap(regi)            = sum(pe2se(enty,"seel",te), pm_cap0(regi,te) );
+  o_INI_TotalCap(regi)            = sum(pe2se(enty,"seel",te), p05_cap0(regi,te) );
   o_INI_TotalDirProdSe(regi,entySe) = sum(pe2se(enty,entySe,te), o_INI_DirProdSeTe(regi,entySe,te) );
   o_INI_AvCapFac(regi)            = o_INI_TotalDirProdSe(regi,"seel") / o_INI_TotalCap(regi);
 );
@@ -267,7 +267,7 @@ o_INI_DirProdSeTe
 o_INI_TotalCap
 o_INI_TotalDirProdSe
 o_INI_AvCapFac
-pm_cap0
+p05_cap0
 ;
 
 ***---------------------------------------------------------------------------
@@ -293,7 +293,7 @@ display pm_dataeta;
 p05_eta_correct_factor(regi,te) = 1;
 
 loop(regi,
-  loop(te$((teEtaIncr(te)) AND (pm_cap0(regi,te) > 1.E-8)),
+  loop(te$((teEtaIncr(te)) AND (p05_cap0(regi,te) > 1.E-8)),
     p05_initial_capacity(regi,te)
     = sum(ttot$sameas(ttot,"2005"),
         sum(teSe2rlf(te,rlf),
@@ -501,11 +501,11 @@ loop(regi,
   p05_emi2005_from_initialcap2(regi,emiTe) =
     sum(pe2se(enty,enty2,te),
       pm_emifac("2005",regi,enty,enty2,te,emiTe)
-      * 1/(pm_data(regi,"eta",te)) * pm_cf("2005",regi,te) * pm_cap0(regi,te)
+      * 1/(pm_data(regi,"eta",te)) * pm_cf("2005",regi,te) * p05_cap0(regi,te)
     )
     +
     sum(se2fe(enty,enty2,te),
-      pm_emifac("2005",regi,enty,enty2,te,emiTe) * pm_cf("2005",regi,te) * pm_cap0(regi,te)
+      pm_emifac("2005",regi,enty,enty2,te,emiTe) * pm_cf("2005",regi,te) * p05_cap0(regi,te)
     );
 *** no CCS leakage in the first time step
 );

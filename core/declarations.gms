@@ -379,7 +379,7 @@ vm_esCapInv(ttot,all_regi,all_teEs)                   "investment for energy end
 vm_costEnergySys(ttot,all_regi)                      "energy system costs"
 
 vm_cap(tall,all_regi,all_te,rlf)                     "net total capacities"
-vm_capDistr(tall,all_regi,all_te,rlf)                "net capacities, distributed to the different grades for renewables"
+v_capDistr(tall,all_regi,all_te,rlf)                "net capacities, distributed to the different grades for renewables"
 vm_capTotal(ttot,all_regi,all_enty,all_enty)         "total capacity without technology differentation for technologies where there exists differentation [TW]"
 vm_capFac(ttot,all_regi,all_te)                      "capacity factor of conversion technologies"
 vm_deltaCap(tall,all_regi,all_te,rlf)                "capacity additions"
@@ -412,8 +412,9 @@ v_prodUe (ttot,all_regi,all_enty,all_enty,all_te)    "Useful energy production [
 
 vm_capEarlyReti(tall,all_regi,all_te)                "fraction of early retired capital"
 
-vm_demSeOth(ttot,all_regi,all_enty,all_te)	         "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
-vm_prodSeOth(ttot,all_regi,all_enty,all_te)	         "other sety production from certain technologies, have to be calculated in additional equations [TWa]"
+*** RLDC removal
+v_demSeOth(ttot,all_regi,all_enty,all_te)	         "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
+v_prodSeOth(ttot,all_regi,all_enty,all_te)	         "other sety production from certain technologies, have to be calculated in additional equations [TWa]"
 
 v_shGreenH2(ttot,all_regi)   "share of green hydrogen in all hydrogen by 2030 [0..1]"
 v_shBioTrans(ttot,all_regi)    "Share of biofuels in transport liquids from 2025 onwards. Value between 0 and 1."
