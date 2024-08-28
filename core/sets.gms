@@ -2039,7 +2039,7 @@ ppfEn2Sector(all_in,emi_sectors) "primary energy production factors mapping to s
     fegai.cdr
 /
 
-entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy (stationary) and sector mapping to detailed final energy enty split by buildings and industry"
+entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy and sector mapping to detailed final energy enty split in IO"
 /
   fegas.build.fegab
   fegas.indst.fegai
@@ -2053,6 +2053,16 @@ entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy (stationary)
   fehes.indst.fehei
 ***  feh2s.build.feh2b
 ***  feh2s.indst.feh2i
+  fepet.trans.fepet
+  fedie.trans.fedie
+***  feh2t.trans
+  feelt.trans.feelt
+  fegat.trans.fegat
+***  feels.cdr
+***  fehes.cdr
+***  fegas.cdr
+***  feh2s.cdr
+***  fedie.cdr
 /
 
 all_emiMkt      "emission markets"
@@ -2447,6 +2457,8 @@ seAgg2se(all_enty,all_enty) "map secondary energy aggregation to SE"
       all_sega.segafos
       all_sega.segasyn
 /
+
+seAgg2fe(all_enty,all_enty) "map secondary energy aggregation to fe"
 
 capTotal(all_enty,all_enty)    "mapping of input to output carriers for calculating total capacities without technology differentiation vm_capTotal"
 /
