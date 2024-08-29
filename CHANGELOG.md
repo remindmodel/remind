@@ -38,6 +38,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1767](https://github.com/remindmodel/remind/pull/1767)]
 - **33_CDR** added ocean alkalinity enhancement to the CDR portfolio (OAE is turned off by default)
     [[#1777](https://github.com/remindmodel/remind/pull/1777)]
+- **scripts** integrate automated scenario validation via piamValidation as output script
+    [[#1790]](https://github.com/remindmodel/remind/pull/1790)
 
 ### fixed
 - included CCS from plastic waste incineration in CCS mass flows so it is

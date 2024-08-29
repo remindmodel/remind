@@ -184,6 +184,8 @@ Now, the selected scripts are executed. After completion, the results are writte
 
 One recommended script for comparison of different scenarios is `compareScenarios2`, see [the specific tutorial](https://pik-piam.r-universe.dev/articles/remind2/compareScenariosRemind2.html). After you selected folder names, specified a `filename_prefix`, the priority on the cluster, and a *profile* (describes some output parameters) it produces a large PDF (or HTML if a respective profile is chosen) in the `./remind/` folder.
 
+Another useful script it `validateScenarios`, which performs an automated check of the scenario data against thresholds defined in a `validationConfig` and returns an html report with interactive heat maps in a traffic-light evaluation format. After choosing `validateScenarios` as a `comparison` script, you are prompted to select one of the configs that are shipped with the `piamValidation` package. The `default` config is a good starting point for any REMIND run and the `AMT` config is specifically tailored towards the automated model testruns. If you want to perform a more personalized validation, follow the instructions in the [vignette](https://pik-piam.r-universe.dev/articles/piamValidation/validateScenarios.html).
+
 You can also specify the parameters in the command line, for example starting a `compareScenario2` run without any prefix as:
 
 ``` bash
