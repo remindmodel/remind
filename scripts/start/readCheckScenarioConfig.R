@@ -132,7 +132,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   if (grepl("scenario_config_coupled", filename)) {
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
-                          "magpie_empty")
+                          "magpie_empty", "var_luc")
     # identify MAgPIE switches by "cfg_mag" and "scenario_config"
     knownColumnNames <- c(knownColumnNames, grep("cfg_mag|scenario_config", names(scenConf), value = TRUE))
   }
@@ -160,7 +160,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_calibration_FE" = "Deleted, only used for old hand made industry trajectories, see https://github.com/remindmodel/remind/pull/1468",
        "cm_DAC_eff" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/1487",
        "cm_peakBudgYr" = "Rename to c_peakBudgYr, see https://github.com/remindmodel/remind/pull/1488",
-       "cm_taxCO2inc_after_peakBudgYr" = "Rename to c_taxCO2inc_after_peakBudgYr, see https://github.com/remindmodel/remind/pull/1488",
+       "c_taxCO2inc_after_peakBudgYr" = "Rename to cm_taxCO2inc_after_peakBudgYr, see https://github.com/remindmodel/remind/pull/1776",
        "c_solscen" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/1515",
        "cm_regNetNegCO2" = "Deleted, not used, see https://github.com/remindmodel/remind/pull/1517",
        "cm_solwindenergyscen"= "Deleted, not used, see https://github.com/remindmodel/remind/pull/1532",

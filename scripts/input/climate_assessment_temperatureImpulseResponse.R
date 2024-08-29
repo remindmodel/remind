@@ -321,5 +321,19 @@ writeToGdx <- function(file = "pm_magicc_temperatureImpulseResponse", df) {
 
 # write to GDX:
 writeToGdx("pm_magicc_temperatureImpulseResponse", oupt)
-print("...done.")
+logMsg <- paste0(date(), " Wrote results to 'pm_magicc_temperatureImpulseResponse.gdx'\n")
 
+############################# CLEAN UP WORKERS FOLDER ##########################
+# openscm_runner not remnove up temp dirs. Do this manually since we keep running into file ownership issues
+workersFolder <- file.path(climateTempDir, "workers")  # replace with your directory path
+if (dir.exists(workersFolder)) {
+  # Check if directory is empty
+  if (length(list.files(workersFolder)) == 0) {
+    # Remove directory. Option recursive must be TRUE for some reason, otherwise unlink won't do its job
+    unlink(workersFolder, recursive = TRUE)
+    logMsg <- paste0(logMsg, date(), "  Removed workers folder '", workersFolder, "'\n")
+  }
+}
+logMsg <- paste0(logMsg, date(), " climate_assessment_temperatureImpulseResponse.R finished\n")
+cat(logMsg)
+capture.output(cat(logMsg), file = logFile, append = TRUE)

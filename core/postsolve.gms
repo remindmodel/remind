@@ -253,7 +253,7 @@ display p_actualbudgetco2;
         if(  ( (o_totCO2emi_peakBudgYr(iteration) < -(0.1) ) AND (cm_peakBudgYr > 2040) ), !! no peaking time before 2040
         display "shift peakBudgYr left";
 		  o_peakBudgYr_Itr(iteration+1) =  pm_ttot_val(ttot - 1);                
-***          pm_taxCO2eq(t,regi)$(t.val gt pm_ttot_val(ttot - 1)) = p_taxCO2eq_until2150(ttot-1,regi) + (t.val - pm_ttot_val(ttot - 1)) * c_taxCO2inc_after_peakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by c_taxCO2inc_after_peakBudgYr per year after peakBudgYr
+***          pm_taxCO2eq(t,regi)$(t.val gt pm_ttot_val(ttot - 1)) = p_taxCO2eq_until2150(ttot-1,regi) + (t.val - pm_ttot_val(ttot - 1)) * cm_taxCO2inc_after_peakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year after peakBudgYr
 *** if tax after cm_peakBudgYr is higher than normal increase rate (exceeding a 20% tolerance): shift right
 		elseif( ( sum(regi, sum(t2$(t2.val = pm_ttot_val(ttot+1)),pm_taxCO2eq(t2,regi))) > sum(regi,sum(t2$(t2.val = pm_ttot_val(ttot+1)),p_taxCO2eq_until2150(t2,regi)))*1.2 ) AND (cm_peakBudgYr < 2100) ), !! if peaking time would be after 2100, keep 2100 budget year
           if(  (iteration.val > 2) AND ( o_peakBudgYr_Itr(iteration - 1) > o_peakBudgYr_Itr(iteration) ) AND ( o_peakBudgYr_Itr(iteration - 2) = o_peakBudgYr_Itr(iteration) ) , !! if the target year was just shifted left after being shifted right
@@ -290,7 +290,7 @@ display p_actualbudgetco2;
 *** ---------------------------------------------------------------------------------------------------------------
 
 if (cm_iterative_target_adj eq 9,
-*' Update Iteratively update regional CO2 tax trajectories / regional CO2 budget to reach the target for global peak budget, with a linear increase afterwards given by `c_taxCO2inc_after_peakBudgYr`.  The
+*' Update Iteratively update regional CO2 tax trajectories / regional CO2 budget to reach the target for global peak budget, with a linear increase afterwards given by `cm_taxCO2inc_after_peakBudgYr`.  The
 *' peak budget year is determined automatically (within the time window 2040--2100)
 
 *' `p_actualbudgetco2(ttot)` includes emissions from 2020 to `ttot` (inclusive).
@@ -350,7 +350,7 @@ if (cm_iterative_target_adj eq 9,
       p_taxCO2eq_until2150(t,regi) = max(1* sm_DptCO2_2_TDpGtC, p_taxCO2eq_until2150(t,regi) * p_factorRescale_taxCO2_Funneled(iteration) );
       pm_taxCO2eq(t,regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxCO2eq(t,regi) * p_factorRescale_taxCO2_Funneled(iteration) );  !! rescale co2tax
       loop(t2$(t2.val eq cm_peakBudgYr),
-	    pm_taxCO2eq(t,regi)$(t.val gt cm_peakBudgYr) = p_taxCO2eq_until2150(t2,regi) + (t.val - t2.val) * c_taxCO2inc_after_peakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by c_taxCO2inc_after_peakBudgYr per year
+	    pm_taxCO2eq(t,regi)$(t.val gt cm_peakBudgYr) = p_taxCO2eq_until2150(t2,regi) + (t.val - t2.val) * cm_taxCO2inc_after_peakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year
 	  );
 
       display p_factorRescale_taxCO2, p_factorRescale_taxCO2_Funneled;
@@ -407,7 +407,7 @@ if (cm_iterative_target_adj eq 9,
         if(  ( (o_totCO2emi_peakBudgYr(iteration) < -(0.1 + o_change_totCO2emi_peakBudgYr(iteration)) ) AND (cm_peakBudgYr > 2040) ), !! no peaking time before 2040
           display "shift peakBudgYr left";
 		  o_peakBudgYr_Itr(iteration+1) =  pm_ttot_val(ttot - 1);                
-          pm_taxCO2eq(t,regi)$(t.val gt pm_ttot_val(ttot - 1)) = p_taxCO2eq_until2150(ttot-1,regi) + (t.val - pm_ttot_val(ttot - 1)) * c_taxCO2inc_after_peakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by c_taxCO2inc_after_peakBudgYr per year after peakBudgYr
+          pm_taxCO2eq(t,regi)$(t.val gt pm_ttot_val(ttot - 1)) = p_taxCO2eq_until2150(ttot-1,regi) + (t.val - pm_ttot_val(ttot - 1)) * cm_taxCO2inc_after_peakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year after peakBudgYr
         
 		elseif ( ( o_totCO2emi_peakBudgYr(iteration) > (0.1 + o_change_totCO2emi_peakBudgYr(iteration)) ) AND (cm_peakBudgYr < 2100) ), !! if peaking time would be after 2100, keep 2100 budget year
           if(  (o_pkBudgYr_flipflop(iteration) eq 1), !! if the target year was just shifted left after being shifted right, and would now be shifted right again
@@ -422,7 +422,7 @@ if (cm_iterative_target_adj eq 9,
             o_peakBudgYr_Itr(iteration+1) =  pm_ttot_val(ttot + 1);  !! ttot+1 is the new peakBudgYr
 			loop(t$(t.val ge pm_ttot_val(ttot + 1)),
               pm_taxCO2eq(t,regi) = p_taxCO2eq_until2150(ttot+1,regi) 
-			                        + (t.val - pm_ttot_val(ttot + 1)) * c_taxCO2inc_after_peakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by c_taxCO2inc_after_peakBudgYr per year 
+			                        + (t.val - pm_ttot_val(ttot + 1)) * cm_taxCO2inc_after_peakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year 
             );
 		  );
         
@@ -474,7 +474,7 @@ if (cm_iterative_target_adj eq 9,
           );
         
           display o_factorRescale_taxCO2_afterPeakBudgYr;
-		  pm_taxCO2eq(t,regi)$(t.val gt t2.val) = pm_taxCO2eq(t2,regi) + (t.val - t2.val) * c_taxCO2inc_after_peakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by c_taxCO2inc_after_peakBudgYr per year
+		  pm_taxCO2eq(t,regi)$(t.val gt t2.val) = pm_taxCO2eq(t2,regi) + (t.val - t2.val) * cm_taxCO2inc_after_peakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year
 		  
         ); !! loop t2$(t2.val eq pm_ttot_val(ttot+1)),  !! set t2 to the following time step
       );  !! loop ttot$(ttot.val eq cm_peakBudgYr),  !! set ttot to the current peakBudgYr 
