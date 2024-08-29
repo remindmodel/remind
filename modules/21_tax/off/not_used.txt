@@ -24,7 +24,6 @@ cm_fetaxscen, switch, ???
 cm_gdximport_target, switch, ???
 pm_pop,parameter,???
 cm_so2tax_scen,switch,???
-sm_DpGJ_2_TDpTWa,switch,???
 vm_cesIO,variable,???
 vm_co2eq,variable,???
 cm_emiscen,input,questionnaire
@@ -72,3 +71,4 @@ pm_gdp,input,only needed if tax is on
 pm_cf,input,only needed if tax is on
 vm_shDemSeel,input,only needed if tax is on
 pm_teAnnuity,input,only needed if tax is on
+sm_D2005_2_D2017,input,no conversion needed

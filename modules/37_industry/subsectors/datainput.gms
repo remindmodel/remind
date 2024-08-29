@@ -662,12 +662,12 @@ p37_priceMat(all_enty) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 !! IEA STeel Roadmap Fig 1.3 Caption: Scrap price 200-300 $/t
 !! => take 250 $/t, unit 2020$US
-p37_priceMat("eafscrap") = s_D2020_2_D2017 * 0.250 ;
-p37_priceMat("bofscrap") = s_D2020_2_D2017 * 0.250;
+p37_priceMat("eafscrap") = sm_D2020_2_D2017 * 0.250 ;
+p37_priceMat("bofscrap") = sm_D2020_2_D2017 * 0.250;
 !! Agora KSV-Rechner: 114 €2023/tSteel / (tn$ /bn t)
-p37_priceMat("ironore")  = s_EURO2023_2_D2017 * 0.114;
+p37_priceMat("ironore")  = sm_EURO2023_2_D2017 * 0.114;
 !! Agora KSV-Rechner: 154 €2023/tSteel / (tn$ /bn t)
-p37_priceMat("dripell")  = s_EURO2023_2_D2017 * 0.154;
+p37_priceMat("dripell")  = sm_EURO2023_2_D2017 * 0.154;
 $endif.cm_subsec_model_steel
 
 *** --------------------------------

@@ -34,3 +34,5 @@ vm_incinerationCCS,          variable,   does not want to play
 vm_incinerationEmi,          variable,   not needed
 vm_nonIncineratedPlastics,   variable,   not needed
 vm_outflowPrc,               variable,   not needed
+sm_D2020_2_D2017,input,no conversion needed
+sm_EURO2023_2_D2017,input,no conversion needed
