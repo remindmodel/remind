@@ -505,7 +505,7 @@ qm_co2eqCum(all_regi)                                "cumulate regional emission
 q_budgetCO2eqGlob                                    "global emission budget balance"
 
 q_emiTeDetailMkt(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "detailed energy specific emissions per region and market"
-q_emiTeMkt(ttot,all_regi,all_enty,all_emiMkt)			             "total energy-emissions per region and market"
+q_emiTeMkt(ttot,all_regi,all_enty,all_emiMkt)        "total energy-emissions per region and market"
 q_emiEnFuelEx(ttot,all_regi,all_enty)                "energy emissions from fuel extraction"
 q_emiAllMkt(ttot,all_regi,all_enty,all_emiMkt)       "total regional emissions for each emission market"
 
@@ -561,9 +561,6 @@ $IFTHEN.sehe_upper not "%cm_sehe_upper%" == "off"
 q_heat_limit(ttot,all_regi)  "equation to limit maximum level of secondary energy district heating and heat pumps use"
 $ENDIF.sehe_upper
 
-***----------------------------------------------------------------------------------------
-***----------------------------------------------trade module------------------------------
-
 ;
 ***----------------------------------------------------------------------------------------
 ***                                   SCALARS
@@ -571,11 +568,6 @@ $ENDIF.sehe_upper
 scalars
 o_modelstat                                           "critical solver status for solution"
 
-***----------------------------------------------------------------------------------------
-***------------------------------------------------MACRO module----------------------------
-
-***----------------------------------------------------------------------------------------
-***-----------------------------------------------ESM module-------------------------------
 pm_conv_TWa_EJ                                        "conversion from TWa to EJ"               /31.536/,
 sm_c_2_co2                                            "conversion from c to co2"                /3.666666666667/,
 *** conversion factors of time units
@@ -632,16 +624,13 @@ sm_globalBudget_dev                                   "actual level of global cu
 sm_eps                                                "small number: 1e-9 "  /1e-9/
 
 sm_CES_calibration_iteration                          "current calibration iteration number, loaded from environment variable cm_CES_calibration_iteration"  /0/
-
-***----------------------------------------------------------------------------------------
-***----------------------------------------------trade module------------------------------
 ;
 
+sm_dmac = s_D2005_2_D2017 * sm_dmac
 sm_tgn_2_pgc = (44/28) * s_gwpN2O * (12/44) * 0.001;
 sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 
-***----------------------------------------------------------------------------------------
-*----------------------------------------------carbon intensities of coal, oil, and gas
+*** carbon intensities of coal, oil, and gas
 pm_cintraw("pecoal") = 26.1 / s_zj_2_twa;
 pm_cintraw("peoil")  = 20.0 / s_zj_2_twa;
 pm_cintraw("pegas")  = 15.0 / s_zj_2_twa;

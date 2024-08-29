@@ -222,9 +222,9 @@ $if "%cm_ccsinjeCost%" == "high" fm_dataglob("inco0","ccsinje") = 550;
 $if not "%cm_incolearn%" == "off"       parameter p_new_incolearn(all_te) / %cm_incolearn% /;
 $if not "%cm_incolearn%" == "off"                 fm_dataglob("incolearn",te)$p_new_incolearn(te) = p_new_incolearn(te);
 $if not "%cm_inco0Factor%" == "off"     parameter p_new_inco0Factor(all_te) / %cm_inco0Factor% /;
-$if not "%cm_inco0Factor%" == "off"               fm_dataglob("inco0",te)$p_new_inco0Factor(te) = p_new_inco0Factor(te)*fm_dataglob("inco0",te);
+$if not "%cm_inco0Factor%" == "off"               fm_dataglob("inco0",te)$p_new_inco0Factor(te) = p_new_inco0Factor(te) * fm_dataglob("inco0",te);
 $if not "%cm_learnRate%" == "off"       parameter p_new_learnRate(all_te) / %cm_learnRate% /;
-$if not "%cm_learnRate%" == "off"                 fm_dataglob("learn",te)$p_new_learnRate(te)=p_new_learnRate(te);
+$if not "%cm_learnRate%" == "off"                 fm_dataglob("learn",te)$p_new_learnRate(te) = p_new_learnRate(te);
 
 *** generisdata_tech is in $2015. Needs to be converted to $2017
 fm_dataglob("inco0",te)              = s_D2015_2_D2017 * fm_dataglob("inco0",te);
@@ -243,7 +243,7 @@ $offdelim
 ;
 
 $if not "%cm_inco0RegiFactor%" == "off" parameter p_new_inco0RegiFactor(all_te) / %cm_inco0RegiFactor% /;
-$if not "%cm_inco0RegiFactor%" == "off"           p_inco0(ttot,regi,te)$(p_inco0(ttot,regi,te) and p_new_inco0RegiFactor(te)) = p_new_inco0RegiFactor(te)*p_inco0(ttot,regi,te);
+$if not "%cm_inco0RegiFactor%" == "off"           p_inco0(ttot,regi,te)$(p_inco0(ttot,regi,te) and p_new_inco0RegiFactor(te)) = p_new_inco0RegiFactor(te) * p_inco0(ttot,regi,te);
 
 *** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for ccs-related tech or $/(t/a) for process-based industry)
 *** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for ccs-related tech or T$/(Gt/a) for process-based industry)
@@ -254,7 +254,7 @@ $if not "%cm_inco0RegiFactor%" == "off"           p_inco0(ttot,regi,te)$(p_inco0
 fm_dataglob("inco0","csp")     = 0.7 * fm_dataglob("inco0","csp");
 fm_dataglob("incolearn","csp") = 0.7 * fm_dataglob("incolearn","csp");
 
-*KK* adjust costs for oae from USD/GtCaO to USD/GtC
+*** adjust costs for oae from USD/GtCaO to USD/GtC
 fm_dataglob("inco0", "oae_ng") = fm_dataglob("inco0", "oae_ng") / (cm_33_OAE_eff / sm_c_2_co2);
 fm_dataglob("inco0", "oae_el") = fm_dataglob("inco0", "oae_el") / (cm_33_OAE_eff / sm_c_2_co2);
 *** --------------------------------------------------------------------------------
@@ -324,24 +324,24 @@ p_oldFloorCostdata(regi,teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"
 $endif.floorscen
 *** calculate floor costs for learning technologies if historical price structure prevails
 $ifthen.floorscen %cm_floorCostScen% == "pricestruc"
-** compute maximum tech cost in 2015 for a given tech among regions
+*** compute maximum tech cost in 2015 for a given tech among regions
 p_maxRegTechCost2015(teRegTechCosts) = SMax(regi, p_inco0("2015",regi,teRegTechCosts));
-*take the ratio of the tech cost in 2015 and the maximum cost, and multiply with the global floor to get new floorcost that preserves the price structure
+*** take the ratio of the tech cost in 2015 and the maximum cost, and multiply with the global floor to get new floorcost that preserves the price structure
 pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
-* for newer data than 2015, use these
+*** for newer data than 2015, use these
 p_maxRegTechCost2020(teRegTechCosts) = SMax(regi, p_inco0("2020",regi,teRegTechCosts));
 pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
-* report the new floor cost data
+*** report the new floor cost data
 p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
 p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
 $endif.floorscen
 
 *** calculate floor costs for learning technologies if there is technology transfer
 $ifthen.floorscen %cm_floorCostScen% == "techtrans"
-** compute maximum income GDP PPP per capita among regions in 2050
+*** compute maximum income GDP PPP per capita among regions in 2050
 p_gdppcap2050_PPP(regi) = pm_gdp("2050",regi) / pm_shPPPMER(regi) / pm_pop("2050",regi);
 p_maxPPP2050 = SMax(regi, p_gdppcap2050_PPP(regi));
-*take the ratio of the PPP income and the maximum income, and multiply with the global floor to get new floorcost that simulates tech transfer where costs are solely dependent on local wages, not on IP rent
+*** take the ratio of the PPP income and the maximum income, and multiply with the global floor to get new floorcost that simulates tech transfer where costs are solely dependent on local wages, not on IP rent
 pm_data(regi,"floorcost",teLearn(te))$(p_maxPPP2050 ne 0) = p_oldFloorCostdata(regi,te) * p_gdppcap2050_PPP(regi) / p_maxPPP2050;
 p_newFloorCostdata(regi,teLearn(te))$(p_maxPPP2050 ne 0) = p_oldFloorCostdata(regi,te) * p_gdppcap2050_PPP(regi) / p_maxPPP2050;
 $endif.floorscen
@@ -406,7 +406,7 @@ display pm_data;
 *** end learning parameters
 *** -------------------------------------------------------------------------------
 
-*RP* 2012-03-07: Markup for advanced technologies
+*** Markup for advanced technologies
 table p_costMarkupAdvTech(s_statusTe,tall)              "Multiplicative investment cost markup for early time periods (until 2030) on advanced technologies (CCS, Hydrogen) that are not modeled through endogenous learning"
 $include "./core/input/p_costMarkupAdvTech.prn"
 ;
@@ -711,12 +711,12 @@ $endif.WindOff
 pm_cf(ttot,regi,te) =  f_cf(ttot,regi,te);
 ***pm_cf(ttot,regi,"h2turbVRE") = 0.15;
 pm_cf(ttot,regi,"elh2VRE") = 0.6;
-*short-term fix for new synfuel td technologies
+*** short-term fix for new synfuel td technologies
 pm_cf(ttot,regi,"tdsyngas") = 0.65;
 pm_cf(ttot,regi,"tdsynhos") = 0.6;
 pm_cf(ttot,regi,"tdsynpet") = 0.7;
 pm_cf(ttot,regi,"tdsyndie") = 0.7;
-*JD eternal short-term fix for process-based industry
+*** eternal short-term fix for process-based industry
 pm_cf(ttot,regi,"bf") = 0.8;
 pm_cf(ttot,regi,"bfcc") = 0.8;
 pm_cf(ttot,regi,"bof") = 0.8;
