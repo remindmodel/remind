@@ -82,13 +82,13 @@ if (file.exists(edgetOutputDir)) {
 
   message("start generation of EDGE-T reporting")
   EDGET_output <- reportEdgeTransport(edgetOutputDir,
-                                      isTransportExtendedReported = FALSE, 
+                                      isTransportExtendedReported = FALSE,
                                       modelName = "REMIND",
 				                              scenarioName = scenario,
                                       gdxPath = file.path(outputdir, "fulldata.gdx"),
                                       isStored = FALSE,
                                       isHarmonized = TRUE,
-                                      remindReportingFile = file.path(outputdir, 
+                                      remindReportingFile = file.path(outputdir,
                                       paste0("REMIND_generic_", scenario,"_withoutPlus.mif")))
 
   write.mif(EDGET_output, remind_reporting_file, append = TRUE)
