@@ -602,7 +602,8 @@ s_D2005_2_D2017                                         "Convert $2005 to $2017"
 s_D2020_2_D2017                                         "Convert $2020 to $2017"      /0.9469/
 s_EURO2023_2_D2017                                      "Convert EURO 2023 to $2017"  /0.8915/
 
-sm_h2kg_2_h2kWh                                      "convert kilogramme of hydrogen to kwh energy value." /32.5/sm_DptCO2_2_TDpGtC                                    "Conversion multiplier to go from $/tCO2 to T$/GtC: 44/12/1000"     /0.00366667/
+sm_h2kg_2_h2kWh                                      "convert kilogramme of hydrogen to kwh energy value." /32.5/
+sm_DptCO2_2_TDpGtC                                    "Conversion multiplier to go from $/tCO2 to T$/GtC: 44/12/1000"     /0.00366667/
 
 s_co2pipe_leakage                                     "Leakage rate of CO2 pipelines. [0..1]"
 s_tau_cement                                          "range of per capita investments for switching from short-term to long-term behavior in CO2 cement emissions"                / 12000 /
