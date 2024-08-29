@@ -627,7 +627,7 @@ sm_eps                                                "small number: 1e-9 "  /1e
 sm_CES_calibration_iteration                          "current calibration iteration number, loaded from environment variable cm_CES_calibration_iteration"  /0/
 ;
 
-sm_dmac = s_D2005_2_D2017 * sm_dmac
+sm_dmac = s_D2005_2_D2017 * sm_dmac;
 sm_tgn_2_pgc = (44/28) * s_gwpN2O * (12/44) * 0.001;
 sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 
