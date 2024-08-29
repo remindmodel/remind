@@ -10,7 +10,7 @@
 *'
 *' @description The 33_CDR module adds further options to remove CO2 from the atmosphere beyond BECCS
 *' and afforestation, which are calculated in the core. Currently, direct air carbon capture and storage (DACCS)
-*' and enhanced weathering of rocks (EW) are available, ocean alkalinization will follow soon.
+*' and enhanced weathering of rocks (EW) are available, ocean alkalinization (OAE) implemented as ocean liming.
 *' All options can be switched on and off individually via the switches called cm_33[option abbreviation].
 *' The module calculates capacities, emissions (including captured carbon), energy demand & supply, costs,
 *' and limitations associated with the different options.

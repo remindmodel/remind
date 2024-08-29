@@ -22,7 +22,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     cfg <- gms::readDefaultConfig(remindPath)
   }
   scenConf <- read.csv2(filename, stringsAsFactors = FALSE, na.strings = "", comment.char = "#",
-                                  strip.white = TRUE, blank.lines.skip = TRUE)
+                                  strip.white = TRUE, blank.lines.skip = TRUE, check.names = FALSE)
   scenConf <- scenConf[! is.na(scenConf[1]), ]
   rownames(scenConf) <- scenConf[, 1]
   scenConf[1] <- NULL
@@ -83,8 +83,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   }
 
   if (fillWithDefault) {
-    for (switchname in intersect(names(scenConf), names(cfg$gms))) {
-      scenConf[is.na(scenConf[, switchname]), switchname] <- cfg$gms[[switchname]]
+    for (switch in intersect(names(scenConf), c(names(cfg), names(cfg$gms)))) {
+      scenConf[is.na(scenConf[, switch]), switch] <- ifelse(switch %in% names(cfg), cfg[[switch]], cfg$gms[[switch]])
     }
   }
 
@@ -104,7 +104,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
       scenNeedsBau <- scenNeedsBau | scenConf[[n]] %in% needBau[[n]]
     }
     BAUbutNotNeeded <- ! is.na(scenConf$path_gdx_bau) & ! (scenNeedsBau)
-    if (sum(BAUbutNotNeeded) > 0) {
+    if (sum(BAUbutNotNeeded) > 0 && ! grepl("scenario_config_coupled", filename)) {
       msg <- paste0("In ", sum(BAUbutNotNeeded), " scenarios, 'path_gdx_bau' is not empty although no realization is selected that needs it.\n",
                     "To avoid unnecessary dependencies to other runs, automatically setting 'path_gdx_bau' to NA for:\n",
                     paste(rownames(scenConf)[BAUbutNotNeeded], collapse = ", "))
@@ -133,6 +133,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
                           "magpie_empty")
+    # identify MAgPIE switches by "cfg_mag" and "scenario_config"
+    knownColumnNames <- c(knownColumnNames, grep("cfg_mag|scenario_config", names(scenConf), value = TRUE))
   }
   unknownColumnNames <- names(scenConf)[! names(scenConf) %in% knownColumnNames]
   if (length(unknownColumnNames) > 0) {

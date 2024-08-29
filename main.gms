@@ -454,7 +454,7 @@ parameter
 *' *  (2): parallel  - all regions are run in parallel
 *'
 parameter
-  cm_iteration_max          "number of iterations, if optimization is set to negishi or testOneRegi; is overwritten in Nash mode, except for cm_nash_autoconverge = 0"
+  cm_iteration_max          "number of iterations, if optimization is set to negishi or testOneRegi; is overwritten in Nash mode, except if cm_nash_autoconverge is set to 0"
 ;
   cm_iteration_max       = 1;     !! def = 1
 *'
@@ -533,7 +533,8 @@ parameter
 parameter
   cm_nucscen                "nuclear option choice"
 ;
-  cm_nucscen       = 2;        !! def = 2  !! regexp = 2|5|6
+  cm_nucscen       = 2;        !! def = 2  !! regexp = 1|2|5|6
+*' *  (1): default, no restriction, let nuclear be endogenously invested
 *' *  (2): no fnrs, tnrs with restricted new builds until 2030 (based on current data on plants under construction, planned or proposed)
 *' *  (5): no new nuclear investments after 2020
 *' *  (6): +33% investment costs for tnrs under SSP5, uranium resources increased by a factor of 10
@@ -685,7 +686,7 @@ parameter
   cm_prtpScen               "pure rate of time preference standard values"
 ;
   cm_prtpScen         = 1;         !! def = 1  !! regexp = 1|3
-*' *  (1): 1 %
+*' *  (1): 1.5 %
 *' *  (3): 3 %
 *'
 parameter
@@ -796,7 +797,7 @@ parameter
 parameter
   c_ccsinjecratescen        "CCS injection rate factor applied to total regional storage potentials, yielding an upper bound on annual injection"
 ;
-  c_ccsinjecratescen    = 1;         !! def = 1  !! regexp = [0-5]
+  c_ccsinjecratescen    = 1;         !! def = 1  !! regexp = [0-6]
 *' This switch determines the upper bound of the annual CCS injection rate.
 *' CCS here refers to carbon sequestration, carbon capture is modelled separately.
 *' *   (0) no "CCS" as in no carbon sequestration at all
@@ -805,6 +806,7 @@ parameter
 *' *   (3) upper estimate: 0.0075; max 29.5 GtCO2/yr globally
 *' *   (4) unconstrained: 1; max 3900 GtCO2/yr globally
 *' *   (5) sustainability case: 0.001; max 3.9 GtCO2/yr globally
+*' *   (6) intermediate estimate: 0.0022; max 8.6 GtCO2/yr globally
 *'
 parameter
   c_ccscapratescen          "CCS capture rate"
@@ -860,6 +862,37 @@ parameter
   cm_33EW                  = 0;   !! def = 0    !! regexp = 0|1
 *' * (1): enhanced weathering is included
 *' * (0): not included
+*'
+parameter
+  cm_33OAE                  "choose whether OAE (ocean alkalinity enhancement) should be included into the CDR portfolio. 0 = OAE not used, 1 = used"
+;
+  cm_33OAE                 = 0;   !! def = 0
+*' Since OAE is quite a cheap CDR option, runs might not converge because the model tries to deploy
+*' a lot of OAE. In this case, use a quantity target to limit OAE by adding something like:
+*' (2070,2080,2090,2100).GLO.tax.t.oae.all 5000 to cm_implicitQttyTarget in your config file,
+*' starting from the year in which OAE is deployed above 5000 MtCO2 / yr. This will limit the global
+*' deployment to 5000 Mt / yr in timesteps 2070-2100.
+*' * (1): ocean alkalinity enhancement is included
+*' * (0): not included
+*'
+parameter
+  cm_33_OAE_eff             "OAE efficiency measured in tCO2 uptaken by the ocean per tCaO. Typically between 0.9-1.4 (which corresponds to 1.2-1.8 molCO2/molCaO). [tCO2/tCaO]"
+;
+  cm_33_OAE_eff            = 1.2; !! def = 1.2
+*'
+parameter
+  cm_33_OAE_scen            "OAE distribution scenarios"
+;
+  cm_33_OAE_scen           = 1; !! def = 1
+*' *  (0): pessimistic: a rather low discharge rate (30 tCaO per h), corresponding to high distribution costs
+*' *  (1): optimistic: a high discharge rate (250 tCaO per h), corresponding to lower distribution costs
+*'
+parameter
+  cm_33_OAE_startyr         "The year when OAE could start being deployed [year]"
+;
+  cm_33_OAE_startyr        = 2030; !! def = 2030  !! regexp = 20[3-9](0|5)
+*' *  (2030): earliest year when OAE could be deployed
+*' *  (....): later timesteps
 *'
 parameter
   cm_gs_ew                  "grain size (for enhanced weathering, CDR module) [micrometre]"
@@ -1318,7 +1351,7 @@ $setGlobal cm_proNucRegiPol   off   !! def = off
 $setGlobal cm_CCSRegiPol     off   !! def = off
 *** cm_vehiclesSubsidies - If "on" applies country specific BEV and FCEV subsidies from 2020 onwards
 $setGlobal cm_vehiclesSubsidies  off !! def = off
-*** cm_implicitQttyTarget - Define quantity target for primary, secondary, final energy or CCS (PE, SE and FE in TWa, or CCS in Mt CO2) per target group (total, biomass, fossil, VRE, renewables, synthetic, ...).
+*** cm_implicitQttyTarget - Define quantity target for primary, secondary, final energy or CCS (PE, SE and FE in TWa, or CCS and OAE in Mt CO2) per target group (total, biomass, fossil, VRE, renewables, synthetic, ...).
 ***   The target is achieved by an endogenous calculated markup in the form or a tax or subsidy in between iterations.
 ***   If cm_implicitQttyTargetType is set to "config", the quantity targets will be defined directly in this switch. Check below for examples on how to do this.
 ***   If cm_implicitQttyTargetType is set to "scenario", you should define the list of pre-defined scenarios hard-coded in module '47_regipol' that should be active for the current run (this avoids reaching the 255 characters limit in more complex definitions).  
@@ -1621,12 +1654,14 @@ $setGlobal cm_CESMkup_ind        standard  !! def = standard
 $setGlobal cm_CESMkup_ind_data   ""        !! def = ""
 
 *** cm_fxIndUe "switch for fixing UE demand in industry to baseline level - no endogenous demand adjustment"
-*** default cm_fxIndUe = off -> endogenous demand, cm_fxIndUe = on -> exogenous demand fixed to baseline/NPi level (read in from input_ref.gdx)
-*** cm_fxIndUeReg indicates the regions under which the industry demand will be fixed 
-*** for example, cm_fxIndUe = on and cm_fxIndUeReg = SSA,NEU,CHA,IND,OAS,MEA,LAM gives a scenario where all non global north (non-OECD) industry demand is fixed to baseline
-*** cm_fxIndUeReg = GLO fixes industry demand to baseline level everywhere
-$setGlobal cm_fxIndUe        off  !! def = off
-$setGlobal cm_fxIndUeReg     ""       !! def = ""
+*** off: endogenous demand.
+*** on: exogenous demand fixed to baseline/NPi level (read in from input_ref.gdx)
+*** cm_fxIndUeReg "indicates the regions under which the industry demand will be fixed, requires cm_fxIndUe set to on"
+*** examples:
+*** SSA,NEU,CHA,IND,OAS,MEA,LAM: gives a scenario where all non global north (non-OECD) industry demand is fixed to baseline
+*** GLO: fixes industry demand to baseline level everywhere
+$setGlobal cm_fxIndUe        off   !! def = off  !! regexp = off|on
+$setGlobal cm_fxIndUeReg     ""    !! def = ""
 
 *** cm_ind_energy_limit Switch for setting upper limits on industry energy
 *** efficiency improvements.  See ./modules/37_subsectors/datainput.gms for
@@ -1737,6 +1772,11 @@ $setGlobal c_regi_nucscen  all  !! def = all
 $setGlobal c_regi_capturescen  all  !! def = all
 *** cm_subsec_model_steel      "switch between ces-based and process-based steel implementation in subsectors realisation of industry module"
 $setglobal cm_subsec_model_steel  processes  !! def = processes  !! regexp = processes|ces
+*** cm_tech_bounds_2025
+*** activate bounds for 2025 for fast-growing technologies (spv, wind etc.) based on 2023 statistics
+*** (off) no bounds for 2025
+*** (on) some generous bounds for 2025 assuming that certain developments are not possible anymore even for fast growing technologies given 2023 data
+$setglobal cm_tech_bounds_2025  on  !! def = on  !! regexp = on|off
 *** set conopt version. Warning: conopt4 is in beta
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
 *' c_empty_model  "Short-circuit the model, just use the input as solution"

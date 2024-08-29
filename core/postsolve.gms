@@ -450,16 +450,13 @@ if (cm_iterative_target_adj eq 9,
             o_delay_increase_peakBudgYear(iteration+1) = 0;  !! probably is not necessary
             o_reached_until2150pricepath(iteration) = 0;
             o_peakBudgYr_Itr(iteration+1) = t2.val;        !! shift PeakBudgYear to the following time step
-            cm_peakBudgYr = o_peakBudgYr_Itr(iteration+1);
             pm_taxCO2eq(t2,regi) = p_taxCO2eq_until2150(t2,regi) ;  !! set CO2 price in t2 to value in the "continuous path"
       
-            display cm_peakBudgYr;
 		  elseif ( ( o_reached_until2150pricepath(iteration-1) eq 1 ) AND ( o_totCO2emi_peakBudgYr(iteration) < (0.1 + o_change_totCO2emi_peakBudgYr(iteration)) ) ), 
             display "New intermediate price in timestep after cm_peakBudgYr is sufficient to stabilize peaking year - go back to normal loop";	
 			o_delay_increase_peakBudgYear(iteration+1) = 0;  !! probably is not necessary
             o_reached_until2150pricepath(iteration) = 0;
 			o_peakBudgYr_Itr(iteration+1) = o_peakBudgYr_Itr(iteration);  
-            cm_peakBudgYr = o_peakBudgYr_Itr(iteration+1);
           else      !! either didn't reach the continued "until2150"-price path in last iteration, or the increase was high enough to get emissions to 0. 
 		            !! in this case, keep PeakBudgYr, and adjust the price in the year after the peakBudgYr to get emissions close to 0,
 			o_delay_increase_peakBudgYear(iteration+1) = 1; !! make sure next iteration peakBudgYr is not shifted right again
@@ -489,7 +486,7 @@ if (cm_iterative_target_adj eq 9,
 	    o_taxCO2eq_afterPeakShiftLoop_Itr_1regi(t,iteration+1) = pm_taxCO2eq(t,regi); 
 	);
 	
-    display o_delay_increase_peakBudgYear, o_reached_until2150pricepath, pm_taxCO2eq, o_peakBudgYr_Itr, o_taxCO2eq_afterPeakShiftLoop_Itr_1regi, o_pkBudgYr_flipflop;
+    display o_delay_increase_peakBudgYear, o_reached_until2150pricepath, pm_taxCO2eq, o_peakBudgYr_Itr, o_taxCO2eq_afterPeakShiftLoop_Itr_1regi, o_pkBudgYr_flipflop, cm_peakBudgYr;
   ); !! if cm_emiscen eq 9,
 );   !! if cm_iterative_target_adj eq 9,
 
@@ -759,7 +756,7 @@ o_capture_energy_other(ttot,regi,"co2")$(ttot.val ge 2005) =
 ***Carbon Management|Carbon Capture|Process|Direct Air Capture (Mt CO2/yr)
 o_capture_cdr(ttot,regi,"co2")$(ttot.val ge 2005) =
     sum(teCCS2rlf("ccsinje",rlf),
-      vm_ccs_cdr.l(ttot,regi,"cco2","ico2","ccsinje",rlf)
+      vm_co2capture_cdr.l(ttot,regi,"cco2","ico2","ccsinje",rlf)
     )*o_emi_conv("co2");
 
 ***Carbon Management|Carbon Capture|Process|Industrial Processes (Mt CO2/yr)
