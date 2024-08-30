@@ -32,6 +32,10 @@ q47_implicitQttyTargetTax(t,regi)$(t.val ge max(2010,cm_startyear))..
     ( 
       p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(ccs2te(ccsCo2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS(t,regi,enty,enty2,te,rlf)))
     )$(sameas(qttyTarget,"CCS"))  
+    +
+    (
+      p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * (-sum(te_oae33, vm_emiCdrTeDetail(t,regi,te_oae33)))
+    )$(sameas(qttyTarget,"oae"))
   )
   -
   p47_implicitQttyTargetTax0(t,regi)

@@ -16,6 +16,7 @@
 #' @author Oliver Richters
 #' @return list with scenario config content
 readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE, fillWithDefault = FALSE) {
+  coupling <- if (grepl("scenario_config_coupled", filename)) "MAgPIE" else FALSE
   if (testmode) {
     cfg <- suppressWarnings(gms::readDefaultConfig(remindPath))
   } else {
@@ -127,14 +128,15 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   errorsfound <- length(colduplicates) + sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors + missingRealizations
 
   # check column names
-  knownColumnNames <- c(names(cfg$gms), setdiff(names(cfg), "gms"), names(path_gdx_list),
-                        "start", "model", "copyConfigFrom")
-  if (grepl("scenario_config_coupled", filename)) {
+  knownColumnNames <- c(names(path_gdx_list), "start", "model", "copyConfigFrom")
+  if (coupling %in% "MAgPIE") {
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
-                          "magpie_empty")
+                          "magpie_empty", "var_luc")
     # identify MAgPIE switches by "cfg_mag" and "scenario_config"
     knownColumnNames <- c(knownColumnNames, grep("cfg_mag|scenario_config", names(scenConf), value = TRUE))
+  } else { # not a coupling config
+    knownColumnNames <- c(knownColumnNames, names(cfg$gms), setdiff(names(cfg), "gms"))
   }
   unknownColumnNames <- names(scenConf)[! names(scenConf) %in% knownColumnNames]
   if (length(unknownColumnNames) > 0) {
@@ -160,7 +162,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_calibration_FE" = "Deleted, only used for old hand made industry trajectories, see https://github.com/remindmodel/remind/pull/1468",
        "cm_DAC_eff" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/1487",
        "cm_peakBudgYr" = "Rename to c_peakBudgYr, see https://github.com/remindmodel/remind/pull/1488",
-       "cm_taxCO2inc_after_peakBudgYr" = "Rename to c_taxCO2inc_after_peakBudgYr, see https://github.com/remindmodel/remind/pull/1488",
+       "c_taxCO2inc_after_peakBudgYr" = "Rename to cm_taxCO2inc_after_peakBudgYr, see https://github.com/remindmodel/remind/pull/1776",
        "c_solscen" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/1515",
        "cm_regNetNegCO2" = "Deleted, not used, see https://github.com/remindmodel/remind/pull/1517",
        "cm_solwindenergyscen"= "Deleted, not used, see https://github.com/remindmodel/remind/pull/1532",
@@ -179,11 +181,11 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     # sort out known but forbidden names from unknown
     unknownColumnNames <- setdiff(unknownColumnNames, names(forbiddenColumnNames))
     if (length(unknownColumnNames) > 0) {
-      message("\nAutomated checks did not find counterparts in main.gms and default.cfg for these columns in ",
-              basename(filename), ":")
+      message("\nAutomated checks did not understand these columns in ", basename(filename), ":")
       message("  ", paste(unknownColumnNames, collapse = ", "))
-      message("This check was added Jan. 2022. ",
-              "If you find false positives, add them to knownColumnNames in scripts/start/readCheckScenarioConfig.R.\n")
+      if (isFALSE(coupling)) message("These are no cfg or cfg$gms switches found in main.gms and default.cfg.")
+      if (coupling %in% "MAgPIE") message("Maybe you specified REMIND switches in coupled config, which does not work.")
+      message("If you find false positives, add them to knownColumnNames in scripts/start/readCheckScenarioConfig.R.\n")
       unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
       if (length(unknownColumnNamesNoComments) > 0) {
         if (testmode) {

@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### input data/calibration
-- new input data rev6.84 [[#1757]] (https://github.com/remindmodel/remind/pull/1757)
+- new input data rev6.84 [[#1757](https://github.com/remindmodel/remind/pull/1757)]
 - CES parameter and gdx files calibrated with new default diffLin2Lin for NPi 
     [[#1747](https://github.com/remindmodel/remind/pull/1747)] and
     [[#1757](https://github.com/remindmodel/remind/pull/1757)]
@@ -15,7 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### changed
 - plastic waste by default does not lag plastics production by ten years
     anymore; can be re-activated using `cm_wastelag`
-- moved to edgeTransport 2.0 version [[#1749](https://github.com/remindmodel/remind/pull/1749]
+- moved to edgeTransport 2.0 version [[#1749](https://github.com/remindmodel/remind/pull/1749)]
 
 ### added
 - **50_damages**, **51_internalizeDamages** add KotzWenz realization based on Kotz & Wenz (2024)
@@ -31,9 +31,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1773](https://github.com/remindmodel/remind/pull/1773)]
 - **scripts** add support for EDGE-Transport standalone results to cs2 
     [[#1780](https://github.com/remindmodel/remind/pull/1780)]
+- **scripts** add option to use raw land-use change emissions variable in coupled runs
+    [[#1796](https://github.com/remindmodel/remind/pull/1796)]
 - **testthat** fail if manipulating main.gms with default cfg drops/changes switches and comments
     [[#1764](https://github.com/remindmodel/remind/pull/1764)] and
     [[#1767](https://github.com/remindmodel/remind/pull/1767)]
+- **33_CDR** added ocean alkalinity enhancement to the CDR portfolio (OAE is turned off by default)
+    [[#1777](https://github.com/remindmodel/remind/pull/1777)]
+- **scripts** integrate automated scenario validation via piamValidation as output script
+    [[#1790](https://github.com/remindmodel/remind/pull/1790)]
 
 ### fixed
 - included CCS from plastic waste incineration in CCS mass flows so it is
