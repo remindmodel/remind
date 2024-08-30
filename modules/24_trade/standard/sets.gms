@@ -36,7 +36,7 @@ tradeCap(all_enty)          "Commodities traded via capacity mode."
     null
 /
 
-tradeConst
+tradeConst                  "set to distinguish import constraints"
 
 /
 import_cokecoal              "constrained to require cokeing coal to be imported, important for India"
