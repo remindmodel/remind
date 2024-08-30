@@ -425,6 +425,13 @@ loop(regi,
   );
 );
 
+*** -------------------------------------------------------------------------------------------------------------
+*AM* Limit REMINDs ability to vent captured CO2 to 1 MtCO2 per yr per region. This happens otherwise to a great extend in stringent climate 
+*AM* policy scenarios if CCS and CCU capacities are limited in early years, to lower overall adjustment costs of capture technologies.
+*AM* In reality, people don't have perfect foresight and without storage or usage capacities, no capture facilities will be built.
+v_co2capturevalve.up(t,regi) = 1 * s_MtCO2_2_GtC;
+
+
 *AL* fixing prodFE in 2005 to the value contained in pm_cesdata("2005",regi,in,"quantity"). This is done to ensure that the energy system will reproduce the 2005 calibration values.
 *** Fixing will produce clearly attributable errors (good for debugging) when using inconsistent data, as the GAMS accuracy when comparing fixed results is very high (< 1e-8).
 ***vm_prodFe.fx("2005",regi,se2fe(enty,enty2,te)) = sum(fe2ppfEn(enty2,in), pm_cesdata("2005",regi,in,"quantity") );
