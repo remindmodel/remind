@@ -20,10 +20,11 @@
 * active only after 2020; otherwise potential interference with constrained historic vm_Mport()
 * The constraint avoids Indian coal imports to drop to zero immediately
 
-q24_peimport_demandside(t,regi,enty)$(t.val gt 2020 AND sameas(regi, "IND") AND sameas(enty, "pecoal"))..
+q24_peimport_demandside(t,regi,enty,tradeConst)$(t.val gt 2020 AND p24_trade_constraints(regi,enty,tradeConst) ne 0)..
    vm_Mport(t,regi,enty) 
    =g= 
-   sum((secInd37_tePrc("steel",tePrc),
+   p24_trade_constraints(regi,enty,tradeConst)*
+      sum((secInd37_tePrc("steel",tePrc),
         tePrc2opmoPrc(tePrc,opmoPrc)),
            pm_specFeDem(t,regi,"fesos",tePrc,opmoPrc) *
            vm_outflowPrc(t,regi,tePrc,opmoPrc)
