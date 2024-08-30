@@ -90,7 +90,7 @@ if(file.exists(edgetOutputDir)) {
                                       gdxPath = file.path(outputdir, "fulldata.gdx"),
                                       isStored = FALSE)
 
-  REMINDoutput <- as.data.table(read.quitte(paste0("REMIND_generic_", scenario,"_withoutPlus.mif")))
+  REMINDoutput <- as.data.table(read.quitte(file.path(outputdir, paste0("REMIND_generic_", scenario,"_withoutPlus.mif"))))
   sharedVariables <- EDGET_output[variable %in% REMINDoutput$variable & grepl(".*edge", variable)]
   EDGET_output <- EDGET_output[!variable %in% REMINDoutput$variable]
   message("The following variables will be dropped from the EDGE-Transport reporting because
