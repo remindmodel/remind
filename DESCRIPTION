@@ -17,7 +17,7 @@ Imports:
     data.table,
     devtools,
     dplyr,
-    edgeTransport (>= 2.0),
+    edgeTransport (>= 2.3.0),
     reporttransport (>= 0.0.11),
     flexdashboard,
     GDPuc,

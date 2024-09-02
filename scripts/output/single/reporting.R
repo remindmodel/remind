@@ -92,7 +92,7 @@ if(file.exists(edgetOutputDir)) {
 
   REMINDoutput <- as.data.table(read.quitte(file.path(outputdir, paste0("REMIND_generic_", scenario,"_withoutPlus.mif"))))
   sharedVariables <- EDGET_output[variable %in% REMINDoutput$variable | grepl(".*edge", variable)]
-  EDGET_output <- EDGET_output[!variable %in% REMINDoutput$variable]
+  EDGET_output <- EDGET_output[!(variable %in% REMINDoutput$variable | grepl(".*edge", variable))]
   message("The following variables will be dropped from the EDGE-Transport reporting because
                 they are in the REMIND reporting: ", paste(unique(sharedVariables$variable), collapse = ", "))
 
