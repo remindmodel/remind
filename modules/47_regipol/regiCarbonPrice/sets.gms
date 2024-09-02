@@ -153,6 +153,8 @@ exogDemScen       "exogenuous FE and ES demand scenarios that can be activated b
 /
         ariadne_bal
         ariadne_ensec
+        ariadne_highDem
+        ariadne_lowDem
 /
 $endif.exogDemScen
 
