@@ -149,12 +149,12 @@ if (cm_IndCCSscen ne 1,
 );
 !! TOCHECK:Qianzhi
 if (cm_CCS_steel ne 1,
-  loop(tePrc$(teCCPrc(tePrc) AND secInd37_tePrc("steel", tePrc)), 
+  loop(tePrc$(teCCPrc(tePrc) AND secInd37_tePrc("steel", tePrc)),
     vm_cap.fx(t,regi,tePrc,rlf) = 0.;
   );
 );
 if (cm_CCS_chemicals ne 1,
-  loop(tePrc$(teCCPrc(tePrc) AND secInd37_tePrc("chemicals", tePrc)), 
+  loop(tePrc$(teCCPrc(tePrc) AND secInd37_tePrc("chemicals", tePrc)),
     vm_cap.fx(t,regi,tePrc,rlf) = 0.;
   );
 );

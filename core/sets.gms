@@ -311,12 +311,23 @@ all_te          "all energy technologies, including from modules"
         termM_nh3   "Import terminals for liquid ammonia (regasification)"
         vess_nh3    "Vessels transporting liquid ammonia"
 
-*** TOCHECK: Qianzhi      
+*** TOCHECK: Qianzhi
 *** PCV: technologies related to chemical
         chemOld
         chemNew
         chemRo_old
         chemRo_new
+
+        AmSyCoal   !! ammonia tech QIANZHI
+        AmSyNG
+        AmSyCoalcc
+        AmSyNGcc
+        AmSyH2
+        AmSyRo_Coal
+        AmSyRo_NG
+        AmSyRo_Coal_ccs
+        AmSyRo_NG_ccs
+        AmSyRo_H2
 *** PCV: technologies related to steel
         ironMine     "Mining of iron ore"
         idr          "Iron direct reduction"
@@ -422,6 +433,7 @@ all_enty             "all types of quantities"
         dripell      "DRI pellets"
         !! TOCHECK: QIANZHI
         olandar
+        ammonia
 
         !! emissions
         co2          "carbon dioxide emissions"
@@ -498,7 +510,7 @@ all_enty             "all types of quantities"
         perm         "Carbon permit"
         peog         "aggregated oil and gas, only relevant for calibration because IEA only provides aggregated data"
         bfco2        "CO2 emission from blast furnace"
-        
+
         !! outdated entries, still used in module 04 until structuremappings are fixed
         fesoi        "industry use of solid energy carriers"
         fehoi        "industry use of liquid energy carriers"
@@ -876,7 +888,7 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
        UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,
        VIR,VNM,VUT,WLF,WSM,YEM,ZAF,ZMB,ZWE /
 
-   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
+   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country"
          /
        EUR . EUR
        CHA . CHA
@@ -1095,7 +1107,7 @@ ttot(tall)    "time index with spin-up, years between 1900 and 2150 with 5 to 20
 ***     10-year intervals from 2060 to 2110,
 ***     20-year intervals from 2110 to 2150.
 /
-        1900, 1905, 1910, 1915, 1920, 1925, 1930, 1935, 1940, 1945, 1950, 1955, 1960, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 
+        1900, 1905, 1910, 1915, 1920, 1925, 1930, 1935, 1940, 1945, 1950, 1955, 1960, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000,
         2005, 2010, 2015, 2020, 2025, 2030, 2035, 2040, 2045, 2050, 2055,
         2060, 2070, 2080, 2090, 2100,
         2110, 2130, 2150
@@ -1252,6 +1264,11 @@ te(all_te)              "energy technologies"
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
         chemOld
         chemNew
+        AmSyCoal !! ammonia tech QIANZHI
+        AmSyNG
+        AmSyCoalcc
+        AmSyNGcc
+        AmSyH2
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
         idr             "Iron direct reduction"
@@ -1333,6 +1350,10 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
 ***  gridwind        "grid between areas with high wind onshore production and the rest"
   gridwindon      "grid between areas with high wind onshore production and the rest"
   gridwindoff     "grid between areas with high wind offshore production and the rest"
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+  AmSyCoalcc      "Ammonia by Coal CCS" !! ammonia tech QIANZHI
+  AmSyNGcc        "Ammonia by Gas CCS"
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   bfcc            "Blast furnace CCS"
   idrcc           "Direct reduction CCS"

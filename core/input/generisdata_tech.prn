@@ -167,10 +167,16 @@ ccap0                         0.0008
 learn                           0.15
 
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-!! TODO Qianzhi
-+                chemOld     chemNew
+!! ammonia tech QIANZHI
++                chemOld     chemNew     AmSyCoal     AmSyNG     AmSyH2
 !! documentation & sources: see below
-inco0               1100         900
+inco0               1100         900        1100        1100         900
+omf                 0.06        0.06        0.06        0.06        0.06
+lifetime              20          20          20          20          20
+
++                AmSyCoalcc  AmSyNGcc
+!! documentation & sources: see below
+inco0               1800        1800
 omf                 0.06        0.06
 lifetime              20          20
 $endif.cm_subsec_model_chemicals

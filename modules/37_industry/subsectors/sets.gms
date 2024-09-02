@@ -384,6 +384,12 @@ tePrc(all_te)  "Technologies used in process-based model (including CCS)"
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     chemOld
     chemNew
+
+    AmSyCoal !! ammonia tech QIANZHI 
+    AmSyNG
+    AmSyCoalcc
+    AmSyNGcc
+    AmSyH2
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bf
@@ -409,6 +415,7 @@ mat(all_enty)   "Materials considered in process-based model; Can be input and/o
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     olandar
+    ammonia !! ammonia tech QIANZHI 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     prsteel
@@ -440,6 +447,7 @@ matOut(all_enty)   "Materials which serve as output of a process"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     olandar
+    ammonia !! ammonia tech QIANZHI 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     prsteel
@@ -452,7 +460,8 @@ $endif.cm_subsec_model_steel
 matFin(mat)   "Final products of a process-based production route"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-    olandar
+   olandar
+   ammonia !! ammonia tech QIANZHI 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    prsteel
@@ -490,6 +499,12 @@ route(all_te)  "Process routes; Currently only used for reporting"
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     chemRo_old
     chemRo_new
+
+    AmSyRo_Coal !! ammonia tech QIANZHI 
+    AmSyRo_NG
+    AmSyRo_Coal_ccs
+    AmSyRo_NG_ccs
+    AmSyRo_H2
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idreaf_ng
@@ -530,6 +545,12 @@ tePrc2opmoPrc(tePrc,opmoPrc)   "Mapping of technologies onto available operation
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     chemOld . standard
     chemNew . standard
+
+    AmSyCoal . standard !! ammonia tech QIANZHI 
+    AmSyNG . standard
+    AmSyCoalcc . standard
+    AmSyNGcc . standard
+    AmSyH2 . standard
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idr . (ng,h2)
@@ -559,6 +580,12 @@ tePrc2matOut(tePrc,opmoPrc,mat)   "Mapping of industry process technologies onto
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
    chemOld . standard . olandar
    chemNew . standard . olandar
+
+   AmSyCoal . standard . ammonia !! ammonia tech QIANZHI 
+   AmSyNG . standard . ammonia
+   AmSyCoalcc . standard . ammonia
+   AmSyNGcc . standard . ammonia
+   AmSyH2 . standard . ammonia
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    bf  . standard . pigiron
@@ -573,21 +600,27 @@ tePrc2ue(tePrc,opmoPrc,all_in)   "Mapping of industry process technologies to th
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
    chemOld . standard . ue_chemicals
-   chemNew . standard . ue_chemicals
+   chemNew . standard . ue_chemicals 
+
+   (AmSyCoal,AmSyCoalcc) . standard . ue_chemicals
+   (AmSyNG,AmSyNGcc) . standard . ue_chemicals !! ammonia tech QIANZHI 
+   AmSyH2 . standard . ue_chemicals 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-   (bf,bfcc)  . standard . ue_steel_primary
-   bof . unheated . ue_steel_primary
-   idr . (h2,ng) . ue_steel_primary
-   idrcc . ng . ue_steel_primary
-   eaf . pri . ue_steel_primary
-   eaf . sec . ue_steel_secondary
+   (bf,bfcc)  . standard        . ue_steel_primary
+   bof        . unheated        . ue_steel_primary
+   idr        . (h2,ng)         . ue_steel_primary
+   idrcc      . ng              . ue_steel_primary
+   eaf        . pri             . ue_steel_primary
+   eaf        . sec             . ue_steel_secondary
 $endif.cm_subsec_model_steel
   /
 
 tePrc2teCCPrc(tePrc,opmoPrc,tePrc,opmoPrc)  "Mapping of base technologies to CCS technologies"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+    AmSyCoal  . standard . AmSyCoalcc  . standard !! ammonia tech QIANZHI 
+    AmSyNG    . standard . AmSyNGcc    . standard
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bf  . standard . bfcc  . standard
@@ -600,6 +633,12 @@ tePrc2route(tePrc,opmoPrc,route)  "Mapping of technologies onto the production r
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
    chemOld . standard . chemRo_old
    chemNew . standard . chemRo_new
+
+   AmSyCoal . standard . AmSyRo_Coal !! ammonia tech QIANZHI 
+   AmSyNG . standard . AmSyRo_NG
+   AmSyCoalcc . standard . AmSyRo_Coal_ccs
+   AmSyNGcc . standard . AmSyRo_NG_ccs
+   AmSyH2 . standard . AmSyRo_H2
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     eaf . sec . seceaf
@@ -622,6 +661,7 @@ mat2ue(mat,all_in)   "Mapping of materials (final route products) onto the UE ce
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
    olandar . ue_chemicals
+   ammonia . ue_chemicals !! ammonia tech QIANZHI 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    prsteel . ue_steel_primary
@@ -634,6 +674,12 @@ fe2mat(all_enty,all_enty,all_te)   "Set of industry technologies to be included 
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     entydummy.entydummy.chemOld
     entydummy.entydummy.chemNew
+
+    entydummy.entydummy.AmSyCoal !! ammonia tech QIANZHI 
+    entydummy.entydummy.AmSyNG
+    entydummy.entydummy.AmSyCoalcc
+    entydummy.entydummy.AmSyNGcc
+    entydummy.entydummy.AmSyH2
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     entydummy.entydummy.bf
@@ -650,6 +696,12 @@ secInd37_tePrc(secInd37,tePrc)   "Mapping of technologies onto industry subsecto
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     chemicals . chemOld
     chemicals . chemNew
+
+    chemicals . AmSyCoal !! ammonia tech QIANZHI 
+    chemicals . AmSyNG
+    chemicals . AmSyCoalcc
+    chemicals . AmSyNGcc
+    chemicals . AmSyH2
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     steel . idr

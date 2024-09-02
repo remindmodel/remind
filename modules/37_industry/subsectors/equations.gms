@@ -81,9 +81,8 @@ $endif.exogDem_scen
 *' energy mix, as that is what can be captured); vm_emiIndBase itself is not used for emission
 *' accounting, just as a CCS baseline.
 ***------------------------------------------------------
-q37_emiIndBase(t,regi,enty,secInd37)$(
-                                   entyFeCC37(enty)
-                                OR sameas(enty,"co2cement_process") ) ..
+q37_emiIndBase(t,regi,enty,secInd37)$(   entyFeCC37(enty)
+                                      OR sameas(enty,"co2cement_process") ) ..
   vm_emiIndBase(t,regi,enty,secInd37)
   =e=
     sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfEn(entyFeCC37(enty),in)),
@@ -456,6 +455,22 @@ q37_mat2ue(t,regi,mat,in)$( ppfUePrc(in) ) ..
       v37_matFlow(t,regi,mat)
     )
 ;
+
+***------------------------------------------------------
+*' Fixed share of final materials in ue !! ammonia tech QIANZHI
+***------------------------------------------------------
+q37_ue_share(t,regi,mat,in)$( ppfUePrc(in) ) ..
+    (vm_cesIO(t,regi,in)
+    + pm_cesdata(t,regi,in,"offset_quantity"))
+    * p37_ue_share(mat,in)
+  =e=
+    sum(mat2ue(mat,in),
+      p37_mat2ue(mat,in)
+      *
+      v37_matFlow(t,regi,mat)
+    )
+;
+
 
 ***------------------------------------------------------
 *' Definition of capacity constraints
