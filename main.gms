@@ -1212,14 +1212,9 @@ $setglobal cm_MAgPIE_coupling  off     !! def = "off"  !! regexp = off|on
 *' *  (rcp85): RCP8.5
 $setglobal cm_rcp_scen  none         !! def = "none"  !! regexp = none|rcp20|rcp26|rcp37|rcp45|rcp60|rcp85
 *' cm_NDC_version            "choose version year of NDC targets as well as conditional vs. unconditional targets"
-*' *  (2023_cond):   all NDCs conditional to international financial support published until February 24, 2023
-*' *  (2023_uncond): all NDCs independent of international financial support published until February 24, 2023
-*' *  (2022_cond):   all NDCs conditional to international financial support published until December 31, 2022
-*' *  (2022_uncond): all NDCs independent of international financial support published until December 31, 2022
-*' *  (2021_cond):   all NDCs conditional to international financial support published until December 31, 2021
-*' *  (2021_uncond): all NDCs independent of international financial support published until December 31, 2021
-*' *  (2018_cond):   all NDCs conditional to international financial support published until December 31, 2018
-*' *  (2018_uncond): all NDCs independent of international financial support published until December 31, 2018
+*' *  (2023_cond):   all NDCs conditional to international financial support published until December 31, 2023
+*' *  (2023_uncond): all NDCs independent of international financial support published until December 31, 2023
+*' *  Other supported years are 2022, 2021 and 2018, always containing NDCs published until December 31 of that year
 $setglobal cm_NDC_version  2023_cond    !! def = "2023_cond"  !! regexp = 20(18|2[1-3])_(un)?cond
 *' cm_netZeroScen     "choose scenario of net zero targets of netZero realization of module 46_carbonpriceRegi"
 *'
@@ -1532,7 +1527,9 @@ $setGlobal cm_indstExogScen  off !! def off
 *** (off)              default, no fixing
 *** (ariadne_bal)      steel and cement production trajectories for Germany used in the Ariadne "Balanced" scenario
 *** (ariadne_ensec)    steel and cement production trajectories for Germany used in the Ariadne "EnSec" (energy security) scenario
-$setGLobal cm_exogDem_scen off !! def off
+*** (ariadne_highDem)
+*** (ariadne_lowDem)
+$setGLobal cm_exogDem_scen off !! def off  !! regexp = off|ariadne_(bal|ensec|highDem|lowDem)
 *** cm_Ger_Pol               "switch for selecting different policies for Germany used in the ARIADNE scenarios"
 *** switch for Germany-specific policies
 *** (off) default
