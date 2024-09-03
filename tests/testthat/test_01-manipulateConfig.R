@@ -57,6 +57,6 @@ test_that("manipulate config with default configuration does not change main.gms
 
   # cleanup if no error found
   if (length(addedgms) + length(removedgms) + length(contentdiff) + length(diffresult) == 0) {
-    file.remove(list.files(pattern = "main-TESTTHAT.*gms"))
+    file.remove(list.files(path = "../..", pattern = "main-TESTTHAT.*gms", full.names = TRUE))
   }
 })
