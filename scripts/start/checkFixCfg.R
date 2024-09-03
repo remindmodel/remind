@@ -107,7 +107,7 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
     }
   } else {
     if (! is.na(cfg$files2export$start["input_bau.gdx"])) {
-      message("According to 'scripts/start/needBau.R, you use no realization that requires 'path_gdx_bau' but you have specified it. ",
+      message("According to 'scripts/start/needBau.R', you use no realization that requires 'path_gdx_bau' but you have specified it. ",
               "To avoid an unnecessary dependency to another run, you can set 'path_gdx_bau' to NA.")
     }
   }

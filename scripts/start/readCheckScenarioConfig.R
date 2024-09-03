@@ -97,30 +97,24 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
         ", no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
     message(msg)
   }
-  if ("path_gdx_bau" %in% names(scenConf)) {
-    # fix if bau given despite not needed. needBau is defined in needBau.R
-    # initialize vector with FALSE everywhere and turn elements to TRUE if a scenario config row setting matches a needBau element
-    scenNeedsBau <- rep(FALSE, nrow(scenConf))
-    for (n in intersect(names(needBau), names(scenConf))) {
-      scenNeedsBau <- scenNeedsBau | scenConf[[n]] %in% needBau[[n]]
-    }
-    BAUbutNotNeeded <- ! is.na(scenConf$path_gdx_bau) & ! (scenNeedsBau)
-    if (sum(BAUbutNotNeeded) > 0 && ! grepl("scenario_config_coupled", filename)) {
-      message("In ", sum(BAUbutNotNeeded), " scenarios, 'path_gdx_bau' is not empty although no realization is selected that needs it.\n",
-              "Either adjust 'scripts/start/needBau.R' or set 'path_gdx_bau' to NA to avoid unnecessary dependencies to other runs for:\n",
-              paste(rownames(scenConf)[BAUbutNotNeeded], collapse = ", "))
-    }
-    # fail if bau not given but needed
-    noBAUbutNeeded <- is.na(scenConf$path_gdx_bau) & (scenNeedsBau)
-    if (sum(noBAUbutNeeded) > 0) {
-      pathgdxerrors <- pathgdxerrors + sum(noBAUbutNeeded)
-      warning("In ", sum(noBAUbutNeeded), " scenarios, a reference gdx in 'path_gdx_bau' is needed, but it is empty. ",
-              "These realizations need it: ",
-              paste0(names(needBau), ": ", sapply(needBau, paste, collapse = ", "), ".", collapse = " "))
-    }
-  }
+
   # make sure every path gdx column exists
   scenConf[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenConf)]] <- NA
+
+  # check if path_gdx_bau is needed, based on needBau.R
+  # initialize vector with FALSE everywhere and turn elements to TRUE if a scenario config row setting matches a needBau element
+  scenNeedsBau <- rep(FALSE, nrow(scenConf))
+  for (n in intersect(names(needBau), names(scenConf))) {
+    scenNeedsBau <- scenNeedsBau | scenConf[[n]] %in% needBau[[n]]
+  }
+  # fail if bau not given but needed
+  noBAUbutNeeded <- is.na(scenConf$path_gdx_bau) & (scenNeedsBau)
+  if (sum(noBAUbutNeeded) > 0) {
+    pathgdxerrors <- pathgdxerrors + sum(noBAUbutNeeded)
+    warning("In ", sum(noBAUbutNeeded), " scenarios, a reference gdx in 'path_gdx_bau' is needed, but it is empty. ",
+            "These realizations need it: ",
+            paste0(names(needBau), ": ", sapply(needBau, paste, collapse = ", "), ".", collapse = " "))
+  }
 
   # collect errors
   errorsfound <- length(colduplicates) + sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors + missingRealizations
