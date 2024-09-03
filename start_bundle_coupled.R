@@ -368,6 +368,7 @@ for(scen in common){
   cfg_rem <- cfg
   rm(cfg)
   cfg_rem$title <- scen
+  cfg_rem$files2export$start <- c(cfg_rem$files2export$start, path_settings_coupled, path_settings_remind)
   rem_filesstart <- cfg_rem$files2export$start     # save to reset it to that later
 
   source(file.path(path_magpie, "config", "default.cfg")) # retrieve MAgPIE settings

@@ -16,6 +16,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - plastic waste by default does not lag plastics production by ten years
     anymore; can be re-activated using `cm_wastelag`
 - moved to edgeTransport 2.0 version [[#1749](https://github.com/remindmodel/remind/pull/1749)]
+- **scripts** in readCheckScenarioConfig(), do not automatically remove path_gdx_bau if allegedly 'not needed'
+    [[#1809](https://github.com/remindmodel/remind/pull/1809)]
 
 ### added
 - **50_damages**, **51_internalizeDamages** add KotzWenz realization based on Kotz & Wenz (2024)
