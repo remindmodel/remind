@@ -106,11 +106,9 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     }
     BAUbutNotNeeded <- ! is.na(scenConf$path_gdx_bau) & ! (scenNeedsBau)
     if (sum(BAUbutNotNeeded) > 0 && ! grepl("scenario_config_coupled", filename)) {
-      msg <- paste0("In ", sum(BAUbutNotNeeded), " scenarios, 'path_gdx_bau' is not empty although no realization is selected that needs it.\n",
-                    "To avoid unnecessary dependencies to other runs, automatically setting 'path_gdx_bau' to NA for:\n",
-                    paste(rownames(scenConf)[BAUbutNotNeeded], collapse = ", "))
-      message(msg)
-      scenConf$path_gdx_bau[BAUbutNotNeeded] <- NA
+      message("In ", sum(BAUbutNotNeeded), " scenarios, 'path_gdx_bau' is not empty although no realization is selected that needs it.\n",
+              "Either adjust 'scripts/start/needBau.R' or set 'path_gdx_bau' to NA to avoid unnecessary dependencies to other runs for:\n",
+              paste(rownames(scenConf)[BAUbutNotNeeded], collapse = ", "))
     }
     # fail if bau not given but needed
     noBAUbutNeeded <- is.na(scenConf$path_gdx_bau) & (scenNeedsBau)
@@ -168,11 +166,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_solwindenergyscen"= "Deleted, not used, see https://github.com/remindmodel/remind/pull/1532",
      NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
-      if (testmode) {
-        warning("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
-      } else {
-        message("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
-      }
+      msg <- paste0("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
+      if (testmode) warning(msg) else message(msg)
     }
     if (any(names(forbiddenColumnNames) %in% unknownColumnNames)) {
       warning("Outdated column names found that must not be used.")
