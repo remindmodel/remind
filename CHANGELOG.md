@@ -40,6 +40,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1767](https://github.com/remindmodel/remind/pull/1767)]
 - **33_CDR** added ocean alkalinity enhancement to the CDR portfolio (OAE is turned off by default)
     [[#1777](https://github.com/remindmodel/remind/pull/1777)]
+- **32_power** increase minimum required dispatchable back-up capacity for VRE integration
+    [[#1789](https://github.com/remindmodel/remind/pull/1789)]
 - **scripts** integrate automated scenario validation via piamValidation as output script
     [[#1790](https://github.com/remindmodel/remind/pull/1790)]
 
