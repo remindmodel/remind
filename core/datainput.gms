@@ -97,8 +97,9 @@ $offdelim
 ;
 pm_gdp(tall,all_regi) = f_gdp(tall,all_regi,"%cm_GDPscen%") * pm_shPPPMER(all_regi) / 1000000;  !! rescale from million US$ to trillion US$
 
-*** load level of development
-table f_developmentState(tall,all_regi,all_GDPpcScen) "level of development based on GDP per capita"
+*** load level of development based on GDP PPP per capita: 0 is low income, 1 is high income.
+*** Values in 2020 SSP2: SSA=0.1745, IND=0.3686, OAS=0.5136, MEA=0.6568, REF=0.836, LAM=0.8763, NEU=0.9962, EUR=1, CAZ=1, CHA=1, JPN=1, USA=1
+table f_developmentState(tall,all_regi,all_GDPpcScen) "level of development based on GDP PPP per capita"
 $ondelim
 $include "./core/input/f_developmentState.cs3r"
 $offdelim
@@ -243,23 +244,23 @@ $if not "%cm_learnRate%" == "off" parameter p_new_learnRate(all_te) / %cm_learnR
 $if not "%cm_learnRate%" == "off" fm_dataglob("learn",te)$p_new_learnRate(te)=p_new_learnRate(te);
 
 *RP* the new cost data in generisdata_tech is now in $2015. As long as the model runs in $2005, these values have first to be converted to D2005 by dividing by 1.2 downwards
-fm_dataglob("inco0",te)              = s_D2015_2_D2005 * fm_dataglob("inco0",te);
-fm_dataglob("incolearn",te)          = s_D2015_2_D2005 * fm_dataglob("incolearn",te);
-fm_dataglob("omv",te)                = s_D2015_2_D2005 * fm_dataglob("omv",te);
-p_inco0(ttot,regi,te)               = s_D2015_2_D2005 * p_inco0(ttot,regi,te);
+fm_dataglob("inco0",te)        = s_D2015_2_D2005 * fm_dataglob("inco0",te);
+fm_dataglob("incolearn",te)    = s_D2015_2_D2005 * fm_dataglob("incolearn",te);
+fm_dataglob("omv",te)          = s_D2015_2_D2005 * fm_dataglob("omv",te);
+p_inco0(ttot,regi,te)          = s_D2015_2_D2005 * p_inco0(ttot,regi,te);
 
 *** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for ccs-related tech or $/(t/a) for process-based industry)
 *** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for ccs-related tech or T$/(Gt/a) for process-based industry)
 *** note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
-fm_dataglob("inco0",te)              = s_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
-fm_dataglob("incolearn",te)          = s_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
-fm_dataglob("omv",te)                = s_DpKWa_2_TDpTWa      * fm_dataglob("omv",te);
-p_inco0(ttot,regi,te)               = s_DpKW_2_TDpTW       * p_inco0(ttot,regi,te);
+fm_dataglob("inco0",te)        = s_DpKW_2_TDpTW   * fm_dataglob("inco0",te);
+fm_dataglob("incolearn",te)    = s_DpKW_2_TDpTW   * fm_dataglob("incolearn",te);
+fm_dataglob("omv",te)          = s_DpKWa_2_TDpTWa * fm_dataglob("omv",te);
+p_inco0(ttot,regi,te)          = s_DpKW_2_TDpTW   * p_inco0(ttot,regi,te);
 
 *RP* rescale the global CSP investment costs in REMIND: Originally we assume a SM3/12h setup, while the cost data from IEA for the short term seems rather based on a SM2/6h setup (with 40% average CF)
 *** Accordingly, also decrease long-term costs in REMIND to 0.7 of the current values
-fm_dataglob("inco0","csp")              = 0.7 * fm_dataglob("inco0","csp");
-fm_dataglob("incolearn","csp")          = 0.7 * fm_dataglob("incolearn","csp");
+fm_dataglob("inco0","csp")     = 0.7 * fm_dataglob("inco0","csp");
+fm_dataglob("incolearn","csp") = 0.7 * fm_dataglob("incolearn","csp");
 
 *KK* adjust costs for oae from USD/GtCaO to USD/GtC
 fm_dataglob("inco0", "oae_ng") = fm_dataglob("inco0", "oae_ng") / (cm_33_OAE_eff / sm_c_2_co2);
@@ -370,16 +371,17 @@ $endif.REG_techcosts
 
 *** global exponent
 *** parameter calculation for global level, that regional values can gradually converge to
-fm_dataglob("learnExp_wFC",teLearn(te)) = fm_dataglob("inco0",te)/fm_dataglob("incolearn",te) * log(1-fm_dataglob("learn", te))/log(2);
+fm_dataglob("learnExp_woFC",teLearn(te))  = log(1 - fm_dataglob("learn",te)) / log(2);
+*RP* adjust exponent parameter learnExp_woFC to take floor costs into account
+fm_dataglob("learnExp_wFC",teLearn(te))   = fm_dataglob("inco0",te) / fm_dataglob("incolearn",te) * fm_dataglob("learnExp_woFC",te);
 
 *** regional exponent
-pm_data(regi,"learnExp_woFC",teLearn(te))    = log(1-pm_data(regi,"learn", te))/log(2);
-*RP* adjust exponent parameter learnExp_woFC to take floor costs into account
-pm_data(regi,"learnExp_wFC",teLearn(te))     = pm_data(regi,"inco0",te) / pm_data(regi,"incolearn",te) * log(1-pm_data(regi,"learn", te))/log(2);
+pm_data(regi,"learnExp_woFC",teLearn(te)) = log(1 - pm_data(regi,"learn",te)) / log(2);
+pm_data(regi,"learnExp_wFC",teLearn(te))  = pm_data(regi,"inco0",te) / pm_data(regi,"incolearn",te) * pm_data(regi,"learnExp_woFC",te);
 
 *** global factor
 *** parameter calculation for global level, that regional values can gradually converge to
-fm_dataglob("learnMult_wFC",teLearn(te)) = fm_dataglob("incolearn",te) / (fm_dataglob("ccap0",te) ** fm_dataglob("learnExp_wFC", te));
+fm_dataglob("learnMult_wFC",teLearn(te))  = fm_dataglob("incolearn",te) / (fm_dataglob("ccap0",te) ** fm_dataglob("learnExp_wFC", te));
 
 *** regional factor
 *NB* read in vm_capCum(t0,regi,teLearn) from input.gdx to have info available for the recalibration of 2005 investment costs
@@ -755,14 +757,14 @@ loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi),
 );
 *Tech-specific*
 *RP*: reduce early retirement for technologies with additional characteristics that are difficult to represent in REMIND, eg. industries built around heating/CHP plants, or flexibility from ngt plants
-pm_regiEarlyRetiRate(t,regi,"ngt")     = 0.3 * pm_regiEarlyRetiRate(t,regi,"ngt")    ; !! ngt should only be phased out very slowly, as they provide flexibility - which REMIND is not too good at capturing endogeneously
-pm_regiEarlyRetiRate(t,regi,"gaschp")  = 0.5 * pm_regiEarlyRetiRate(t,regi,"gaschp") ; !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
-pm_regiEarlyRetiRate(t,regi,"coalchp") = 0.5 * pm_regiEarlyRetiRate(t,regi,"coalchp"); !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
-pm_regiEarlyRetiRate(t,regi,"biochp")  = 0.5 * pm_regiEarlyRetiRate(t,regi,"biochp") ; !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
-pm_regiEarlyRetiRate(t,regi,"gashp")   = 0.5 * pm_regiEarlyRetiRate(t,regi,"gashp") ; !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
-pm_regiEarlyRetiRate(t,regi,"coalhp")  = 0.5 * pm_regiEarlyRetiRate(t,regi,"coalhp"); !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
-pm_regiEarlyRetiRate(t,regi,"biohp")   = 0.5 * pm_regiEarlyRetiRate(t,regi,"biohp") ; !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
-pm_regiEarlyRetiRate(t,regi,"bioigcc")   = 0.25 * pm_regiEarlyRetiRate(t,regi,"bioigcc") ; !! reduce bio early retirement rate
+pm_regiEarlyRetiRate(t,regi,"ngt")     = 0.3 * pm_regiEarlyRetiRate(t,regi,"ngt");      !! ngt should only be phased out very slowly, as they provide flexibility - which REMIND is not too good at capturing endogeneously
+pm_regiEarlyRetiRate(t,regi,"gaschp")  = 0.5 * pm_regiEarlyRetiRate(t,regi,"gaschp");   !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
+pm_regiEarlyRetiRate(t,regi,"coalchp") = 0.5 * pm_regiEarlyRetiRate(t,regi,"coalchp");  !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
+pm_regiEarlyRetiRate(t,regi,"gashp")   = 0.5 * pm_regiEarlyRetiRate(t,regi,"gashp");    !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
+pm_regiEarlyRetiRate(t,regi,"coalhp")  = 0.5 * pm_regiEarlyRetiRate(t,regi,"coalhp");   !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
+pm_regiEarlyRetiRate(t,regi,"biohp")   = 0.25 * pm_regiEarlyRetiRate(t,regi,"biohp");   !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
+pm_regiEarlyRetiRate(t,regi,"biochp")  = 0.25 * pm_regiEarlyRetiRate(t,regi,"biochp");  !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
+pm_regiEarlyRetiRate(t,regi,"bioigcc") = 0.25 * pm_regiEarlyRetiRate(t,regi,"bioigcc"); !! reduce bio early retirement rate
 
 $ifthen.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
 loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
@@ -890,7 +892,7 @@ if(pm_NuclearConstraint("2020",regi,"tnrs")<0,
 );
 
 *** read in data on CCS capacities and announced projects used as upper and lower bound on vm_co2CCS in 2025 and 2030
-parameter pm_boundCapCCS(ttot,all_regi,bounds)        "installed and planned capacity of CCS"
+parameter p_boundCapCCS(ttot,all_regi,bounds)        "installed and planned capacity of CCS"
 /
 $ondelim
 $include "./core/input/p_boundCapCCS.cs4r"
@@ -1605,9 +1607,18 @@ $include "./core/input/f_fedemand_build.cs4r"
 $offdelim
 /;
 
-pm_fedemand(t,regi,cal_ppf_buildings_dyn36) =
-  f_fedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
+pm_fedemand(t,regi,cal_ppf_buildings_dyn36) = f_fedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 $endif.cm_rcp_scen_build
+
+
+*** Scale FE demand across industry and building sectors
+$ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
+  loop((tall,tall2,all_regi) $ pm_scaleDemand(tall,tall2,all_regi),
+*FL*  rescaled demand                = normal demand                  * [ scaling factor                      + (1-scaling factor)                      * remaining phase-in, between zero and one               ]
+      pm_fedemand(t,all_regi,all_in) = pm_fedemand(t,all_regi,all_in) * ( pm_scaleDemand(tall,tall2,all_regi) + (1-pm_scaleDemand(tall,tall2,all_regi)) * min(1, max(0, tall2.val-t.val) / (tall2.val-tall.val)) );
+  );
+$endif.scaleDemand
+
 
 *** initialize global target deviation scalar
 sm_globalBudget_dev = 1;

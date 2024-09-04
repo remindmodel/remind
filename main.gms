@@ -317,10 +317,8 @@ $setglobal biomass  magpie_40     !! def = magpie_40
 *' * (MOFEX)        : contains the standalone version of MOFEX (Model Of Fossil EXtraction), which minimizes the discounted extraction and trade costs of fossils while balancing trade for each time step. Not to be run within a REMIND run but instead through the standalone architecture or soft-linked with REMIND (not yet implemented)
 $setglobal fossil  grades2poly        !! def = grades2poly
 *'---------------------    32_power    ----------------------------------------
-*'
+*' 
 *' * (IntC)      :    Power sector formulation with Integration Cost (IntC) markups and curtailment for VRE integration - linearly increasing with VRE share -, and fixed capacity factors for dispatchable power plants
-*' * (RLDC)      :    Power sector formulation with Residual Load Duration Curve (RLDC) formulation for VRE power integration, and flexible capacity factors for dispatchable power plants
-*' * (DTcoup)    :    (currently not merged, only a copy of IntC) Power sector formulation with iterative coupling to hourly power-sector model DIETER: REMIND gives DIETER costs of technologies, power demand, CO2 price and capacity bounds; DIETER gives REMIND markups of generation, capacity factors, peak hourly residual demand
 $setglobal power  IntC        !! def = IntC
 *'---------------------    33_CDR       ----------------------------------------
 *'
@@ -1209,14 +1207,9 @@ $setglobal cm_MAgPIE_coupling  off     !! def = "off"  !! regexp = off|on
 *' *  (rcp85): RCP8.5
 $setglobal cm_rcp_scen  none         !! def = "none"  !! regexp = none|rcp20|rcp26|rcp37|rcp45|rcp60|rcp85
 *' cm_NDC_version            "choose version year of NDC targets as well as conditional vs. unconditional targets"
-*' *  (2023_cond):   all NDCs conditional to international financial support published until February 24, 2023
-*' *  (2023_uncond): all NDCs independent of international financial support published until February 24, 2023
-*' *  (2022_cond):   all NDCs conditional to international financial support published until December 31, 2022
-*' *  (2022_uncond): all NDCs independent of international financial support published until December 31, 2022
-*' *  (2021_cond):   all NDCs conditional to international financial support published until December 31, 2021
-*' *  (2021_uncond): all NDCs independent of international financial support published until December 31, 2021
-*' *  (2018_cond):   all NDCs conditional to international financial support published until December 31, 2018
-*' *  (2018_uncond): all NDCs independent of international financial support published until December 31, 2018
+*' *  (2023_cond):   all NDCs conditional to international financial support published until December 31, 2023
+*' *  (2023_uncond): all NDCs independent of international financial support published until December 31, 2023
+*' *  Other supported years are 2022, 2021 and 2018, always containing NDCs published until December 31 of that year
 $setglobal cm_NDC_version  2023_cond    !! def = "2023_cond"  !! regexp = 20(18|2[1-3])_(un)?cond
 *' cm_netZeroScen     "choose scenario of net zero targets of netZero realization of module 46_carbonpriceRegi"
 *'
@@ -1326,6 +1319,10 @@ $setGlobal cm_emiMktTarget  off    !! def = off
 ***   Example on how to use:
 ***      cm_emiMktTarget_tolerance = 'GLO 0.004, DEU 0.01'. All regional emission targets will be considered converged if they have at most 0.4% of the target deviation, except for Germany that requires 1%.
 $setGlobal cm_emiMktTarget_tolerance  GLO 0.01    !! def = GLO 0.01 
+*** cm_scaleDemand - Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window.
+***   Example on how to use:
+***     cm_scaleDemand = '2020.2040.(EUR,NEU,USA,JPN,CAZ) 0.75' applies a 25% demand reduction on those regions progressively between 2020 (100% demand) and 2040 (75% demand).
+$setGlobal cm_scaleDemand  off    !! def = off
 *** cm_quantity_regiCO2target "emissions quantity upper bound from specific year for region group."
 ***   Example on how to use:
 ***     '2050.EUR_regi.netGHG 0.000001, obliges European GHG emissions to be approximately zero from 2050 onward"
@@ -1525,7 +1522,9 @@ $setGlobal cm_indstExogScen  off !! def off
 *** (off)              default, no fixing
 *** (ariadne_bal)      steel and cement production trajectories for Germany used in the Ariadne "Balanced" scenario
 *** (ariadne_ensec)    steel and cement production trajectories for Germany used in the Ariadne "EnSec" (energy security) scenario
-$setGLobal cm_exogDem_scen off !! def off
+*** (ariadne_highDem)
+*** (ariadne_lowDem)
+$setGLobal cm_exogDem_scen off !! def off  !! regexp = off|ariadne_(bal|ensec|highDem|lowDem)
 *** cm_Ger_Pol               "switch for selecting different policies for Germany used in the ARIADNE scenarios"
 *** switch for Germany-specific policies
 *** (off) default
