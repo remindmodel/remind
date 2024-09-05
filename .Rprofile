@@ -88,14 +88,6 @@ if ("" != remindReposDirs) {
   use_cluster_defaults <- FALSE
 }
 
-# default to cluster directories
-if (use_cluster_defaults && all(file.exists(c("/p/projects/rd3mod/inputdata/output_1.27",
-                                              "/p/projects/remind/inputdata/CESparametersAndGDX")))) {
-  options(remind_repos = list(
-    "/p/projects/rd3mod/inputdata/output_1.27" = NULL,
-    "/p/projects/remind/inputdata/CESparametersAndGDX" = NULL))
-}
-
 # Include local calibration results, if they exist, from either the main
 # directory or output directories.
 path <- file.path(
