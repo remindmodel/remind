@@ -11,3 +11,7 @@ pm_omeg,parameter,only used in capacity realization
 pm_data,parameter,only used in capacity realization
 pm_tsu2opTimeYr,parameter,only used in capacity realization
 pm_ttot_val,parameter,only used in capacity realization
+pm_specFeDem,parameter,only used in standard realization
+vm_outflowPrc, variable, only used in standard realization
+p24_trade_constraints, variable, only used in standard realization
+
