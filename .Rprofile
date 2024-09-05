@@ -3,13 +3,6 @@ local({
 # for some reason this also has implications for symlinking into the global cache
 Sys.setenv(RENV_PATHS_LIBRARY = "renv/library")
 
-# remind's renv integration previously relied on renv.lock, but now it should generally not be used anymore
-# this can safely be removed in January 2024
-if (file.exists("renv.lock") && file.exists("README.md") && !file.exists("renv/old_renv.lock")) {
-  file.rename("renv.lock", "renv/old_renv.lock")
-  message("moved legacy renv.lock to renv/old_renv.lock")
-}
-
 # do not check if library and renv.lock are in sync, because normally renv.lock does not exist
 options(renv.config.synchronized.check = FALSE)
 
@@ -83,51 +76,16 @@ if (!dir.exists(".venv/")
 # REMIND_repos_dirs="C:\my\first\path;D:\my\second\path"
 remindReposDirs <- Sys.getenv("REMIND_repos_dirs")
 
-# for scp targets, you need to set three environment variables
-# on linux e.g. (separate multiple paths by semicolons)
-# REMIND_repos_scp="scp://cluster.pik-potsdam.de/p/projects/rd3mod/inputdata/output;scp://cluster.pik-potsdam.de/p/projects/remind/inputdata/CESparametersAndGDX"
-# REMIND_repos_scp_user="myusername"  # use your user name on the scp target, e.g. the cluster
-# REMIND_repos_scp_key="/home/myusername/.ssh/id_ed25519"  # path to your your ssh private key on your laptop
-# on windows e.g.
-# REMIND_repos_scp="scp://cluster.pik-potsdam.de/p/projects/rd3mod/inputdata/output;scp://cluster.pik-potsdam.de/p/projects/remind/inputdata/CESparametersAndGDX"
-# REMIND_repos_scp_user="myusername"  # use your user name on the scp target, e.g. the cluster
-# REMIND_repos_scp_key="C:\Users\myusername\.ssh\id_ed25519"  # path to your your ssh private key on your laptop
-remindReposSCP <- Sys.getenv("REMIND_repos_scp") # scp URL
-remindReposSCPUser <- Sys.getenv("REMIND_repos_scp_user")  # ssh user name
-remindReposSCPKey <- Sys.getenv("REMIND_repos_scp_key")  # ssh key path
-
 # unless specified otherwise, use cluster defaults
 use_cluster_defaults <- TRUE
 
 # add local directories, if any
 if ("" != remindReposDirs) {
-  directories <- unlist(strsplit(remindReposDirs, .Platform$path.sep,
-                                 fixed = TRUE))
+  directories <- unlist(strsplit(remindReposDirs, .Platform$path.sep, fixed = TRUE))
   directoriesList <- rep(list(NULL), length(directories))
   names(directoriesList) <- directories
-
   options(remind_repos = c(options("remind_repos")[[1]], directoriesList))
   use_cluster_defaults <- FALSE
-}
-
-# add remote directories, if any remote directory and username and SSH key are set
-if ("" != remindReposSCP && "" != remindReposSCPUser && "" != remindReposSCPKey) {
-  SCPUrls <- unlist(strsplit(remindReposSCP, ";", fixed = TRUE))
-  config <- list(list(username = remindReposSCPUser, ssh_private_keyfile = remindReposSCPKey))
-  for (SCPUrl in SCPUrls) {
-    names(config) <- SCPUrl
-    options(remind_repos = c(options("remind_repos")[[1]], config))
-  }
-  use_cluster_defaults <- FALSE
-}
-
-# default to cluster directories
-if (use_cluster_defaults &&
-    all(file.exists(c("/p/projects/rd3mod/inputdata/output",
-                      "/p/projects/remind/inputdata/CESparametersAndGDX")))) {
-  options(remind_repos = list(
-    "/p/projects/rd3mod/inputdata/output" = NULL,
-    "/p/projects/remind/inputdata/CESparametersAndGDX" = NULL))
 }
 
 # Include local calibration results, if they exist, from either the main
