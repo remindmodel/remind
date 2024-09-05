@@ -459,7 +459,7 @@ parameter
 parameter
   cm_abortOnConsecFail      "number of iterations of consecutive infeasibilities/failures to solve for one region, after which the run automatically switches to serial debug mode"
 ;
-  cm_abortOnConsecFail   = 5;     !! def = 5
+  cm_abortOnConsecFail   = 2;     !! def = 2  !! regexp = [0-9]+
 *'
 parameter
   cm_solver_try_max          "maximum number of inner iterations within one Negishi iteration (<10)"
