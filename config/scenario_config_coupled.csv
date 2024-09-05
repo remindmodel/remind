@@ -1,4 +1,4 @@
-title;start;oldrun;path_report;qos;magpie_scen;no_ghgprices_land_until;path_gdx;path_gdx_bau;path_gdx_ref
+title;start;oldrun;path_report;qos;config/scenario_config.csv;no_ghgprices_land_until;path_gdx;path_gdx_bau;path_gdx_ref
 SDP_MC-NPi;0;;;;SDP-MC|NPI|nocc_hist;y2150;;;
 SDP_MC-PkBudg650;0;;;;SDP-MC|NDC|nocc_hist;y2030;;;
 SSP1-NDC;0;;;;SSP1|NDC|nocc_hist;y2150;;;
