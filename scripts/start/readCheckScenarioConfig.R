@@ -16,6 +16,7 @@
 #' @author Oliver Richters
 #' @return list with scenario config content
 readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE, fillWithDefault = FALSE) {
+  coupling <- if (grepl("scenario_config_coupled", filename)) "MAgPIE" else FALSE
   if (testmode) {
     cfg <- suppressWarnings(gms::readDefaultConfig(remindPath))
   } else {
@@ -96,45 +97,38 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
         ", no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
     message(msg)
   }
-  if ("path_gdx_bau" %in% names(scenConf)) {
-    # fix if bau given despite not needed. needBau is defined in needBau.R
-    # initialize vector with FALSE everywhere and turn elements to TRUE if a scenario config row setting matches a needBau element
-    scenNeedsBau <- rep(FALSE, nrow(scenConf))
-    for (n in intersect(names(needBau), names(scenConf))) {
-      scenNeedsBau <- scenNeedsBau | scenConf[[n]] %in% needBau[[n]]
-    }
-    BAUbutNotNeeded <- ! is.na(scenConf$path_gdx_bau) & ! (scenNeedsBau)
-    if (sum(BAUbutNotNeeded) > 0 && ! grepl("scenario_config_coupled", filename)) {
-      msg <- paste0("In ", sum(BAUbutNotNeeded), " scenarios, 'path_gdx_bau' is not empty although no realization is selected that needs it.\n",
-                    "To avoid unnecessary dependencies to other runs, automatically setting 'path_gdx_bau' to NA for:\n",
-                    paste(rownames(scenConf)[BAUbutNotNeeded], collapse = ", "))
-      message(msg)
-      scenConf$path_gdx_bau[BAUbutNotNeeded] <- NA
-    }
-    # fail if bau not given but needed
-    noBAUbutNeeded <- is.na(scenConf$path_gdx_bau) & (scenNeedsBau)
-    if (sum(noBAUbutNeeded) > 0) {
-      pathgdxerrors <- pathgdxerrors + sum(noBAUbutNeeded)
-      warning("In ", sum(noBAUbutNeeded), " scenarios, a reference gdx in 'path_gdx_bau' is needed, but it is empty. ",
-              "These realizations need it: ",
-              paste0(names(needBau), ": ", sapply(needBau, paste, collapse = ", "), ".", collapse = " "))
-    }
-  }
+
   # make sure every path gdx column exists
   scenConf[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenConf)]] <- NA
+
+  # check if path_gdx_bau is needed, based on needBau.R
+  # initialize vector with FALSE everywhere and turn elements to TRUE if a scenario config row setting matches a needBau element
+  scenNeedsBau <- rep(FALSE, nrow(scenConf))
+  for (n in intersect(names(needBau), names(scenConf))) {
+    scenNeedsBau <- scenNeedsBau | scenConf[[n]] %in% needBau[[n]]
+  }
+  # fail if bau not given but needed
+  noBAUbutNeeded <- is.na(scenConf$path_gdx_bau) & (scenNeedsBau)
+  if (sum(noBAUbutNeeded) > 0) {
+    pathgdxerrors <- pathgdxerrors + sum(noBAUbutNeeded)
+    warning("In ", sum(noBAUbutNeeded), " scenarios, a reference gdx in 'path_gdx_bau' is needed, but it is empty. ",
+            "These realizations need it: ",
+            paste0(names(needBau), ": ", sapply(needBau, paste, collapse = ", "), ".", collapse = " "))
+  }
 
   # collect errors
   errorsfound <- length(colduplicates) + sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors + missingRealizations
 
   # check column names
-  knownColumnNames <- c(names(cfg$gms), setdiff(names(cfg), "gms"), names(path_gdx_list),
-                        "start", "model", "copyConfigFrom")
-  if (grepl("scenario_config_coupled", filename)) {
+  knownColumnNames <- c(names(path_gdx_list), "start", "model", "copyConfigFrom")
+  if (coupling %in% "MAgPIE") {
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
                           "magpie_empty", "var_luc")
     # identify MAgPIE switches by "cfg_mag" and "scenario_config"
     knownColumnNames <- c(knownColumnNames, grep("cfg_mag|scenario_config", names(scenConf), value = TRUE))
+  } else { # not a coupling config
+    knownColumnNames <- c(knownColumnNames, names(cfg$gms), setdiff(names(cfg), "gms"))
   }
   unknownColumnNames <- names(scenConf)[! names(scenConf) %in% knownColumnNames]
   if (length(unknownColumnNames) > 0) {
@@ -166,11 +160,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_solwindenergyscen"= "Deleted, not used, see https://github.com/remindmodel/remind/pull/1532",
      NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
-      if (testmode) {
-        warning("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
-      } else {
-        message("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
-      }
+      msg <- paste0("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
+      if (testmode) warning(msg) else message(msg)
     }
     if (any(names(forbiddenColumnNames) %in% unknownColumnNames)) {
       warning("Outdated column names found that must not be used.")
@@ -179,11 +170,11 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     # sort out known but forbidden names from unknown
     unknownColumnNames <- setdiff(unknownColumnNames, names(forbiddenColumnNames))
     if (length(unknownColumnNames) > 0) {
-      message("\nAutomated checks did not find counterparts in main.gms and default.cfg for these columns in ",
-              basename(filename), ":")
+      message("\nAutomated checks did not understand these columns in ", basename(filename), ":")
       message("  ", paste(unknownColumnNames, collapse = ", "))
-      message("This check was added Jan. 2022. ",
-              "If you find false positives, add them to knownColumnNames in scripts/start/readCheckScenarioConfig.R.\n")
+      if (isFALSE(coupling)) message("These are no cfg or cfg$gms switches found in main.gms and default.cfg.")
+      if (coupling %in% "MAgPIE") message("Maybe you specified REMIND switches in coupled config, which does not work.")
+      message("If you find false positives, add them to knownColumnNames in scripts/start/readCheckScenarioConfig.R.\n")
       unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
       if (length(unknownColumnNamesNoComments) > 0) {
         if (testmode) {

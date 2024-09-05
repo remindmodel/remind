@@ -38,7 +38,6 @@ test_that("readCheckScenarioConfig fails on error-loaden config", {
   expect_match(w, "Do not use 'NA' as scenario name", all = FALSE, fixed = TRUE)
   expect_match(w, "For module carbonprice.*notNDC_but_has_path_gdx_bau", all = FALSE, fixed = FALSE)
   expect_match(m, "no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead", all = FALSE, fixed = TRUE)
-  expect_match(m, "is not empty although no realization is selected that needs it", all = FALSE, fixed = TRUE)
   copiedFromPBS <- c("c_budgetCO2", "path_gdx", "path_gdx_ref")
   expect_identical(unlist(scenConf["PBS", copiedFromPBS]),
                    unlist(scenConf["PBScopy", copiedFromPBS]))
