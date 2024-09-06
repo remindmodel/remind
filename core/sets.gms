@@ -318,6 +318,22 @@ all_te          "all energy technologies, including from modules"
         chemRo_old
         chemRo_new
 
+        MeSySol    !! methanol tech QIANZHI
+        MeSyNG
+        MeSyLiq
+        MeSySolcc
+        MeSyNGcc
+        MeSyLiqcc
+        MeSyH2
+        MeSyRo_Sol_greyh2
+        MeSyRo_Sol_gh2
+        MeSyRo_Sol_ccs
+        MeSyRo_NG
+        MeSyRo_NG_ccs
+        MeSyRo_Liq
+        MeSyRo_Liq_ccs
+        MeSyRo_H2
+
         AmSyCoal   !! ammonia tech QIANZHI
         AmSyNG
         AmSyCoalcc
@@ -432,6 +448,7 @@ all_enty             "all types of quantities"
         ironore      "Iron ore"
         dripell      "DRI pellets"
         !! TOCHECK: QIANZHI
+        otherchem
         olandar
         ammonia
 
@@ -1264,6 +1281,13 @@ te(all_te)              "energy technologies"
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
         chemOld
         chemNew
+        MeSySol !! methanol tech QIANZHI
+        MeSyNG
+        MeSyLiq
+        MeSySolcc
+        MeSyNGcc
+        MeSyLiqcc
+        MeSyH2
         AmSyCoal !! ammonia tech QIANZHI
         AmSyNG
         AmSyCoalcc
@@ -1351,6 +1375,9 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
   gridwindon      "grid between areas with high wind onshore production and the rest"
   gridwindoff     "grid between areas with high wind offshore production and the rest"
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+  MeSySolcc       "Methanol by Soilds CCS" !! methanol tech QIANZHI
+  MeSyNGcc        "Methanol by Gas CCS"
+  MeSyLiqcc       "Methanol by Liquids CCS"
   AmSyCoalcc      "Ammonia by Coal CCS" !! ammonia tech QIANZHI
   AmSyNGcc        "Ammonia by Gas CCS"
 $endif.cm_subsec_model_chemicals
