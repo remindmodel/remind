@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - CES parameter and gdx files calibrated with new default diffLin2Lin for NPi 
     [[#1747](https://github.com/remindmodel/remind/pull/1747)] and
     [[#1757](https://github.com/remindmodel/remind/pull/1757)]
+- Update of NDC goals with cutoff data August 31, 2024
+    [[#1816](https://github.com/remindmodel/remind/pull/1816)]
 
 ### changed
 - plastic waste by default does not lag plastics production by ten years
