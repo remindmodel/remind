@@ -654,10 +654,27 @@ p37_ue_share("prsteel","ue_steel_primary")   = 1.;
 $endif.cm_subsec_model_steel
 loop(ppfUePrc(in),
   if(abs(sum(mat,p37_ue_share(mat,in))-1.) gt sm_eps,
+    display p37_ue_share;
     abort "p37_ue_share must add to one for each ue";
   );
 );
 
+*** --------------------------------
+p37_teMatShareHist(tePrc,opmoPrc,mat) = 0.;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+p37_teMatShareHist("bof","unheated","prsteel") = 1.;
+p37_teMatShareHist("eaf","sec","sesteel") = 1.;
+$endif.cm_subsec_model_steel
+loop(matFin(mat),
+  if(abs(sum((tePrc,opmoPrc),p37_teMatShareHist(tePrc,opmoPrc,mat))-1.) gt sm_eps,
+    display p37_teMatShareHist;
+    abort "p37_teMatShareHist must add to one for each matFin";
+  );
+);
+if(sum((tePrc,opmoPrc,mat)$(not matFin(mat)), p37_teMatShareHist(tePrc,opmoPrc,mat)) gt sm_eps,
+  display p37_teMatShareHist;
+  abort "p37_teMatShareHist must only be non-zero for matFin";
+);
 *** --------------------------------
 
 p37_captureRate(all_te) = 0.;
@@ -686,19 +703,27 @@ $endif.cm_subsec_model_steel
 *** --------------------------------
 
 pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
-pm_outflowPrcIni(all_regi,all_te,opmoPrc) = 0.;
+pm_outflowPrcHist(ttot,all_regi,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 if (cm_startyear eq 2005,
-  pm_outflowPrcIni(regi,"bof","unheated") = pm_fedemand("2005",regi,"ue_steel_primary");
-  pm_outflowPrcIni(regi,"bf","standard") = p37_specMatDem("pigiron","bof","unheated") * pm_outflowPrcIni(regi,"bof","unheated");
-  pm_outflowPrcIni(regi,"eaf","sec") = pm_fedemand("2005",regi,"ue_steel_secondary");
-  pm_outflowPrcIni(regi,"eaf","pri") = 0.;
-  pm_outflowPrcIni(regi,"idr","ng") = 0.;
-  pm_outflowPrcIni(regi,"idr","h2") = 0.;
-  pm_outflowPrcIni(regi,"bfcc","standard") = 0.;
-  pm_outflowPrcIni(regi,"idrcc","ng") = 0.;
-
   loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
+
+
+    !! 2nd stage tech
+    loop((tePrc2matOut(tePrc,opmoPrc,mat), mat2ue(mat,in)),
+      pm_outflowPrcHist(ttot,regi,tePrc,opmoPrc) = pm_fedemand(ttot,regi,in) / p37_mat2ue(mat,in) * p37_teMatShareHist(tePrc,opmoPrc,mat);
+    );
+
+    !! 1st stage tech
+    loop((tePrc1,opmoPrc1,mat)$(
+                    sum((tePrc2,opmoPrc2), tePrc2matIn(tePrc2,opmoPrc2,mat))
+                AND tePrc2matOut(tePrc1,opmoPrc1,mat)),
+      pm_outflowPrcHist(ttot,regi,tePrc1,opmoPrc1)
+        = sum((tePrc2matOut(tePrc1,opmoPrc1,mat),
+               tePrc2matIn(tePrc2,opmoPrc2,mat)),
+            p37_specMatDem(mat,tePrc2,opmoPrc2) * pm_outflowPrcHist(ttot,regi,tePrc2,opmoPrc2) );
+    );
+    !! CC tech implicitly set to zero, since not part of the above sets
     pm_specFeDem(ttot,regi,"feh2s","idr","h2") = p37_specFeDemTarget("feh2s","idr","h2");
     pm_specFeDem(ttot,regi,"feels","idr","h2") = p37_specFeDemTarget("feels","idr","h2");
 
@@ -721,22 +746,19 @@ if (cm_startyear eq 2005,
   );
 
   !! loop over other years and blend
-  loop(entyFeStat(all_enty),
-    loop(tePrc(all_te),
-      loop(opmoPrc,
-        if( (p37_specFeDemTarget(all_enty,all_te,opmoPrc) gt 0.),
-          loop(ttot$(ttot.val > 2020),
-            !! fedemand in excess of BAT halves until 2055
-            !! gams cannot handle float exponents, so pre-compute 0.5^(1/(2055-2020)) = 0.9804
-            pm_specFeDem(ttot,regi,all_enty,all_te,opmoPrc)
-            = p37_specFeDemTarget(all_enty,all_te,opmoPrc)
-            + (pm_specFeDem("2020",regi,all_enty,all_te,opmoPrc) - p37_specFeDemTarget(all_enty,all_te,opmoPrc))
-            * power(0.9804, ttot.val - 2020) ;
-          );
-        );
+  loop((entyFeStat(all_enty), tePrc(all_te), opmoPrc),
+    if( (p37_specFeDemTarget(all_enty,all_te,opmoPrc) gt 0.),
+      loop(ttot$(ttot.val > 2020),
+        !! fedemand in excess of BAT halves until 2055
+        !! gams cannot handle float exponents, so pre-compute 0.5^(1/(2055-2020)) = 0.9804
+        pm_specFeDem(ttot,regi,all_enty,all_te,opmoPrc)
+        = p37_specFeDemTarget(all_enty,all_te,opmoPrc)
+        + (pm_specFeDem("2020",regi,all_enty,all_te,opmoPrc) - p37_specFeDemTarget(all_enty,all_te,opmoPrc))
+        * power(0.9804, ttot.val - 2020) ;
       );
     );
   );
+
 );
 
 if (cm_startyear gt 2005,

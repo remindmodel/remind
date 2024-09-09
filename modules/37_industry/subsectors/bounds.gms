@@ -137,21 +137,9 @@ $drop cm_indstExogScen_set
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 !! fix processes procudction in historic years
 if (cm_startyear eq 2005,
-  loop(regi,
-    loop(tePrc2opmoPrc(tePrc,opmoPrc),
-      vm_outflowPrc.fx("2005",regi,tePrc,opmoPrc) = pm_outflowPrcIni(regi,tePrc,opmoPrc);
+    loop((ttot,regi,tePrc2opmoPrc(tePrc,opmoPrc))$(ttot.val ge 2005 AND ttot.val le 2020),
+      vm_outflowPrc.fx(ttot,regi,tePrc,opmoPrc) = pm_outflowPrcHist(ttot,regi,tePrc,opmoPrc);
     );
-  );
-
-  loop(regi,
-    loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
-      vm_outflowPrc.fx(ttot,regi,"eaf","pri") = 0.;
-      vm_outflowPrc.fx(ttot,regi,"idr","ng") = 0.;
-      vm_outflowPrc.fx(ttot,regi,"idr","h2") = 0.;
-      vm_outflowPrc.fx(ttot,regi,"bfcc","standard") = 0.;
-      vm_outflowPrc.fx(ttot,regi,"idrcc","ng") = 0.;
-    );
-  );
 );
 
 !! Switch to turn off steel CCS
@@ -173,7 +161,7 @@ $endif.fixedUE_scenario
 
 *** fix plastic waste to zero until 2010, and possible to reference scenario
 *** values between 2015 and cm_startyear
-v37_plasticWaste.fx(t,regi,entySe,entyFe,emiMkt)$( 
+v37_plasticWaste.fx(t,regi,entySe,entyFe,emiMkt)$(
                             t.val lt max(2015, cm_startyear)
                         AND sefe(entySe,entyFe)
                         AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) )
