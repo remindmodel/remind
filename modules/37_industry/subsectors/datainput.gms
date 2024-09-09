@@ -647,6 +647,19 @@ $endif.cm_subsec_model_steel
 
 *** --------------------------------
 
+p37_ue_share(all_enty,all_in) = 0.;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+p37_ue_share("sesteel","ue_steel_secondary") = 1.;
+p37_ue_share("prsteel","ue_steel_primary")   = 1.;
+$endif.cm_subsec_model_steel
+loop(ppfUePrc(in),
+  if(abs(sum(mat,p37_ue_share(mat,in))-1.) gt sm_eps,
+    abort "p37_ue_share must add to one for each ue";
+  );
+);
+
+*** --------------------------------
+
 p37_captureRate(all_te) = 0.;
 p37_selfCaptureRate(all_te) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"

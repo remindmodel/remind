@@ -29,6 +29,7 @@ Parameters
   p37_specFeDemTarget(all_enty,all_te,opmoPrc)                                  "Best available technology (will be reached in convergence year) [TWa/Gt_output]"
   pm_outflowPrcIni(all_regi,all_te,opmoPrc)                                    "Exogenously prescribed production volume of processes in start year (from IEA data)"
   p37_mat2ue(all_enty,all_in)                                                  "Contribution of process output to ue in CES tree; Trivial if just one material per UE, as in steel [Gt/Gt]"
+  p37_ue_share(all_enty,all_in)                                                "Fixed share of material in ue"
   p37_captureRate(all_te)                                                      "Capture rate of CCS technology"
   p37_selfCaptureRate(all_te)                                                  "Share of emissions from fossil fuels used for a CCS process which are captured by the CCS process itself"
   p37_priceMat(all_enty)                                                       "Prices of external material input [2005$/kg = trn2005$/Gt]"
@@ -121,7 +122,7 @@ $endif.no_calibration
   !! process-based implementation
   q37_demMatPrc(tall,all_regi,mat)                                                  "Material demand of processes"
   q37_prodMat(tall,all_regi,mat)                                                    "Production volume of processes equals material flow of output material"
-  q37_mat2ue(tall,all_regi,all_in)                                                  "Connect materials production to ue ces tree nodes"
+  q37_mat2ue(tall,all_regi,mat,all_in)                                              "Connect materials production to ue ces tree nodes"
   q37_limitCapMat(tall,all_regi,all_te)                                             "Material-flow conversion is limited by capacities"
   q37_emiPrc(ttot,all_regi,all_enty,all_te,opmoPrc)                                 "Local industry emissions pre-capture; Only used as baseline for CCS [GtC/a]"
   q37_emiCCPrc(tall,all_regi,emiInd37)                                              "Captured emissions from CCS"
