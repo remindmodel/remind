@@ -1,5 +1,5 @@
 title;start;qos;oldrun;path_report;config/scenario_config.csv;config/projects/scenario_config_gcs.csv;no_ghgprices_land_until;path_gdx;path_gdx_ref;path_gdx_bau;path_mif_ghgprice_land
-SSP2-Base;0;priority;;;SSP2|NPI|nocc;;y2150;/p/projects/piam/abrahao/runs_gcsf/phase2_dec/remind/output/C_SSP2-Base-rem-1/fulldata.gdx;;;
+SSP2-Base;0;priority;;;SSP2|NPI|nocc;;y2150;;;;
 SSP2-Tall-PkBudg750;0;priority;;;SSP2|NDC|cc|rcp1p9;Tland|GCSF;y2020;SSP2-NDC;SSP2-NPi;SSP2-Base;
 SSP2-NDC;0;short;;;SSP2|NDC|cc|rcp4p5;GCSF;y2150;SSP2-Base;SSP2-Base;SSP2-Base;
 SSP2-NPi;0;priority;;;SSP2|NPI|cc|rcp4p5;GCSF;y2150;SSP2-NDC;SSP2-Base;SSP2-Base;
@@ -8,7 +8,7 @@ SSP2-ENEcp;0;short;;;SSP2|NPI|cc|rcp2p6;GCSF;y2150;SSP2-NDC;SSP2-NPi;SSP2-Base;
 SSP2-ENEelec;0;short;;;SSP2|NPI|cc|rcp2p6;GCSF;y2150;SSP2-NDC;SSP2-NPi;SSP2-Base;
 SSP2-ENEcp-ENEcc;0;short;;;SSP2|NPI|cc|rcp2p6;GCSF;y2150;SSP2-NDC;SSP2-NPi;SSP2-Base;
 SSP2-Tene;0;priority;;;SSP2|NPI|cc|rcp2p6;GCSF;y2150;SSP2-NDC;SSP2-NPi;SSP2-Base;
-SSP2-Tpc;0;priority;;;SSP2|NPI|cc|rcp2p6;GCSF;y2150;/p/projects/piam/abrahao/runs_gcsf/phase2_biofix/remind/output/bkp_tpcfix/C_SSP2-Tpc-rem-5/fulldata.gdx;SSP2-NPi;SSP2-Base;
+SSP2-Tpc;0;priority;;;SSP2|NPI|cc|rcp2p6;GCSF;y2150;SSP2-NDC;SSP2-NPi;SSP2-Base;
 SSP2-LNDcp;0;short;;;SSP2|NPI|cc|rcp2p6;GCSF;y2020;SSP2-Tall-PkBudg750;SSP2-NPi;SSP2-Base;SSP2-Tall-PkBudg750
 SSP2-LNDndc;0;short;;;SSP2|NDC|cc|rcp2p6;GCSF;y2150;SSP2-NDC;SSP2-NPi;SSP2-Base;
 SSP2-LNDlbs;0;short;;;SSP2|NPI|cc|rcp2p6;LNDlbs|GCSF;y2020;SSP2-Tall-PkBudg750;SSP2-NPi;SSP2-Base;SSP2-Tall-PkBudg750
@@ -26,7 +26,7 @@ SDP-Tall-PkBudg750;0;short;;;SDP|NDC|cc|rcp1p9;Tland|GCSF;y2020;SSP2-NDC;SSP2-NP
 SDP-Tall-exoCP;0;short;;;SDP|NDC|cc|rcp1p9;Tland|GCSF;y2020;SSP2-Tall-PkBudg750;SSP2-NPi;SSP2-Base;SSP2-Tall-PkBudg750
 SSP1-Tall-exoCP;0;short;;;SSP1|NDC|cc|rcp1p9;Tland|GCSF;y2020;SSP2-Tall-PkBudg750;SSP2-NPi;SSP2-Base;SSP2-Tall-PkBudg750
 SSP2-Tene-rcp45;0;short;;;SSP2|NPI|cc|rcp4p5;GCSF;y2150;SSP2-NDC;SSP2-NPi;SSP2-Base;
-SSP2-Tpc-rcp45;0;priority;;;SSP2|NPI|cc|rcp4p5;GCSF;y2150;/p/projects/piam/abrahao/runs_gcsf/phase2_biofix/remind/output/bkp_tpcfix/C_SSP2-Tpc-rem-5/fulldata.gdx;SSP2-NPi;SSP2-Base;
+SSP2-Tpc-rcp45;0;priority;;;SSP2|NPI|cc|rcp4p5;GCSF;y2150;SSP2-NDC;SSP2-NPi;SSP2-Base;
 SSP2-Tland-rcp45;0;short;;;SSP2|NDC|cc|rcp4p5;Tland|GCSF;y2020;SSP2-Tall-PkBudg750;SSP2-NPi;SSP2-Base;SSP2-Tall-PkBudg750
 SSP2-LNDndc-rcp45;0;short;;;SSP2|NDC|cc|rcp4p5;GCSF;y2150;SSP2-NDC;SSP2-NPi;SSP2-Base;
 SSP2-LNDlbs-rcp45;0;short;;;SSP2|NPI|cc|rcp4p5;LNDlbs|GCSF;y2020;SSP2-Tall-PkBudg750;SSP2-NPi;SSP2-Base;SSP2-Tall-PkBudg750
@@ -42,7 +42,7 @@ SSP2-notrans-PkBudg750;0;short;;;SSP2|NDC|cc|rcp2p6;GCSF;y2020;SSP2-Tall-PkBudg7
 SSP2-notrans-PkBudg500;0;short;;;SSP2|NDC|cc|rcp2p6;GCSF;y2020;SSP2-Tall-PkBudg750;SSP2-NPi;SSP2-Base;
 SSP2-CPonly;0;short;;;SSP2|NPI|cc|rcp2p6;GCSF;y2020;SSP2-Tall-PkBudg750;SSP2-NPi;SSP2-Base;SSP2-Tall-PkBudg750
 SSP2-lowEnBase;0;short;;;SSP2|NPI|nocc;GCSF;y2150;;;;
-SSP2-sens-Tall-PkBudg750;0;short;;;SSP2|NDC|cc|rcp1p9;Tland|GCSF;y2020;/p/projects/piam/abrahao/runs_gcsf/phase2_dec/remind/output/C_SSP2-Tall-PkBudg820-rem-5/fulldata.gdx;SSP2-Base;SSP2-Base;
-SSP2-sens-Tall-PkBudg700;0;short;;;SSP2|NDC|cc|rcp1p9;Tland|GCSF;y2020;/p/projects/piam/abrahao/runs_gcsf/phase2_dec/remind/output/C_SSP2-Tall-PkBudg820-rem-5/fulldata.gdx;SSP2-Base;SSP2-Base;
-SSP2-sens-Tall-PkBudg650;0;short;;;SSP2|NDC|cc|rcp1p9;Tland|GCSF;y2020;/p/projects/piam/abrahao/runs_gcsf/phase2_dec/remind/output/C_SSP2-Tall-PkBudg820-rem-5/fulldata.gdx;SSP2-Base;SSP2-Base;
-SSP2-sens-Tall-PkBudg600;0;short;;;SSP2|NDC|cc|rcp1p9;Tland|GCSF;y2020;/p/projects/piam/abrahao/runs_gcsf/phase2_dec/remind/output/C_SSP2-Tall-PkBudg820-rem-5/fulldata.gdx;SSP2-Base;SSP2-Base;
+SSP2-sens-Tall-PkBudg750;0;short;;;SSP2|NDC|cc|rcp1p9;Tland|GCSF;y2020;SSP2-Tall-PkBudg750;SSP2-Base;SSP2-Base;
+SSP2-sens-Tall-PkBudg700;0;short;;;SSP2|NDC|cc|rcp1p9;Tland|GCSF;y2020;SSP2-Tall-PkBudg750;SSP2-Base;SSP2-Base;
+SSP2-sens-Tall-PkBudg650;0;short;;;SSP2|NDC|cc|rcp1p9;Tland|GCSF;y2020;SSP2-Tall-PkBudg750;SSP2-Base;SSP2-Base;
+SSP2-sens-Tall-PkBudg600;0;short;;;SSP2|NDC|cc|rcp1p9;Tland|GCSF;y2020;SSP2-Tall-PkBudg750;SSP2-Base;SSP2-Base;

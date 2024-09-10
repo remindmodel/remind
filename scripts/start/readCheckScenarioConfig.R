@@ -116,6 +116,17 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
             paste0(names(needBau), ": ", sapply(needBau, paste, collapse = ", "), ".", collapse = " "))
   }
 
+  if (isTRUE(testmode)) {
+    for (n in intersect(names(path_gdx_list), names(scenConf))) {
+      missingPath <- ! (is.na(scenConf[, n]) | scenConf[, n] %in% rownames(scenConf))
+      if (any(missingPath)) {
+         warning("Those scenarios link to a non-existing ", n, ": ",
+                 paste0(rownames(scenConf)[missingPath], collapse = ", "))
+         pathgdxerrors <- pathgdxerrors + sum(missingPath)
+      }
+    }
+  }
+
   # collect errors
   errorsfound <- length(colduplicates) + sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors + missingRealizations
 
