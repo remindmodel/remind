@@ -29,13 +29,13 @@ postfix <- paste0(ifelse(filename_prefix == "", "", "-"), filename_prefix, timeS
 
 histPath <- remind2::getMifHistPath(outputdirs[1], mustWork = TRUE)
 
-scenario <- lucode2::getScenNames(outputdirs)
-mifs     <- file.path(outputdirs, paste0("REMIND_generic_", scenario, ".mif"))
-newnames <- make.unique(basename(outputdirs), sep = "_")
+scenarios <- lucode2::getScenNames(outputdirs)
+mifs      <- file.path(outputdirs, paste0("REMIND_generic_", scenarios, ".mif"))
+newnames  <- make.unique(basename(outputdirs), sep = "_")
 message("Do you want to remove the timestamp from scenario names and shorten coupled runs? y/N")
 if (tolower(gms::getLine()) %in% c("y", "yes")) {
-  newnames <- make.unique(gsub("^C_", "", gsub("-rem-([0-9]+)$", "-\\1", scenario)), sep = "_")
-  duplicates <- duplicated(scenario) | duplicated(scenario, fromLast = TRUE)
+  newnames <- make.unique(gsub("^C_", "", gsub("-rem-([0-9]+)$", "-\\1", scenarios)), sep = "_")
+  duplicates <- duplicated(scenarios) | duplicated(scenarios, fromLast = TRUE)
   if (any(duplicates)) {
     message("\nAvoiding duplicates:\n",
             paste(paste(basename(outputdirs), "->", newnames)[duplicates], collapse = "\n"))
@@ -43,7 +43,10 @@ if (tolower(gms::getLine()) %in% c("y", "yes")) {
 }
 
 message("\nLoading data...")
-mifs     <- lapply(seq_along(mifs), function(x) mutate(as.quitte(mifs[x]), scenario = factor(newnames[x])))
+loadAdjust <- function(x) {
+  mutate(as.quitte(mifs[x]), model = factor("REMIND"), scenario = factor(newnames[x]))
+}
+mifs <- lapply(seq_along(mifs), loadAdjust)
 
 plotIntercomparison(list(mifs, histPath), summationsFile = "extractVariableGroups",
                     outputDirectory = "output/plots",
