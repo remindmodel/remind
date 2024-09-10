@@ -1207,10 +1207,12 @@ $setglobal cm_MAgPIE_coupling  off     !! def = "off"  !! regexp = off|on
 *' *  (rcp85): RCP8.5
 $setglobal cm_rcp_scen  none         !! def = "none"  !! regexp = none|rcp20|rcp26|rcp37|rcp45|rcp60|rcp85
 *' cm_NDC_version            "choose version year of NDC targets as well as conditional vs. unconditional targets"
+*' *  (2024_cond):   all NDCs conditional to international financial support published until August 31, 2024
+*' *  (2024_uncond): all NDCs independent of international financial support published until August 31, 2024
 *' *  (2023_cond):   all NDCs conditional to international financial support published until December 31, 2023
 *' *  (2023_uncond): all NDCs independent of international financial support published until December 31, 2023
 *' *  Other supported years are 2022, 2021 and 2018, always containing NDCs published until December 31 of that year
-$setglobal cm_NDC_version  2023_cond    !! def = "2023_cond"  !! regexp = 20(18|2[1-3])_(un)?cond
+$setglobal cm_NDC_version  2023_cond    !! def = "2023_cond"  !! regexp = 20(18|2[1-4])_(un)?cond
 *' cm_netZeroScen     "choose scenario of net zero targets of netZero realization of module 46_carbonpriceRegi"
 *'
 *'  (NGFS_v4):        settings used for NGFS v4, 2023
