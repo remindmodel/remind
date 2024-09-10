@@ -9,6 +9,7 @@
 Scalar
   s37_clinker_process_CO2   "CO2 emissions per unit of clinker production"
   s37_plasticsShare         "share of carbon cointained in feedstocks for the chemicals subsector that goes to plastics"
+  s37_shareHistFeDemPenalty "Share of the addiotional historic specific FE demand compared with BAT which is applied to non-historic tech"
 ;
 
 Parameters
@@ -26,10 +27,14 @@ Parameters
   !! process-based implementation
   p37_specMatDem(mat,all_te,opmoPrc)                                           "Specific materials demand of a production technology and operation mode [t_input/t_output]"
   pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc)                          "Actual specific final-energy demand of a tech; blends between IEA data and Target [TWa/Gt_output]"
+  p37_demFeTarget(tall,all_regi,all_enty,all_in)                               "Total Fe demand that would be have been consumed historically for production of a UE if all tech had BAT efficiency"
+  p37_demFeActual(tall,all_regi,all_enty,all_in)                               "Total historic Fe demand consumed for production of a UE"
   p37_specFeDemTarget(all_enty,all_te,opmoPrc)                                 "Best available technology (will be reached in convergence year) [TWa/Gt_output]"
   pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc)                              "Exogenously prescribed production volume of processes in start year (from IEA data)"
+  p37_matFlowHist(tall,all_regi,all_enty)                                      "Historic material flows"
   p37_mat2ue(all_enty,all_in)                                                  "Contribution of process output to ue in CES tree; Trivial if just one material per UE, as in steel [Gt/Gt]"
   p37_ue_share(all_enty,all_in)                                                "Fixed share of material in ue"
+  p37_demFeRatio(tall,all_regi,all_in)                                         "Ratio of historic Fe demand and Fe demand calculated from historic production and BAT specific demand"
   p37_teMatShareHist(all_te,opmoPrc,mat)                                       "Share that a tePrc/opmoPrc historically contibrutes to production of a matFin"
   p37_captureRate(all_te)                                                      "Capture rate of CCS technology"
   p37_selfCaptureRate(all_te)                                                  "Share of emissions from fossil fuels used for a CCS process which are captured by the CCS process itself"
