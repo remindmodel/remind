@@ -148,7 +148,7 @@ if (! exists("output")) {
 if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
                          "plot_compare_iterations", "varListHtml", "fixOnRef", "MAGICC7_AR6",
-                         "validateScenarios", "checkClimatePercentiles")
+                         "validateScenarios", "checkClimatePercentiles", "selectPlots")
   needingMif <- any(modulesNeedingMif %in% output) && ! "reporting" %in% output[[1]]
   if (exists("remind_dir")) {
     dir_folder <- c(file.path(remind_dir, "output"), remind_dir)
@@ -183,7 +183,7 @@ if (! exists("outputdir")) {
 
 if (comp %in% c("comparison", "export")) {
   # ask for filename_prefix, if one of the modules that use it is selected
-  modules_using_filename_prefix <- c("compareScenarios2", "xlsx_IIASA", "varListHtml")
+  modules_using_filename_prefix <- c("compareScenarios2", "xlsx_IIASA", "varListHtml", "selectPlots")
   if (!exists("filename_prefix")) {
     if (any(modules_using_filename_prefix %in% output)) {
       filename_prefix <- choose_filename_prefix(modules = intersect(modules_using_filename_prefix, output))

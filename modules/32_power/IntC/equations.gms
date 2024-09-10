@@ -96,6 +96,13 @@ q32_h2turbVREcapfromTestorUp(t,regi)..
       p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
 ;
 
+*** build additional electrolysis capacities with stored VRE electricity, phase-in from 2030 to 2040
+q32_elh2VREcapfromTestor(t,regi)..
+  vm_cap(t,regi,"elh2","1")
+  =g=
+  sum(te$teStor(te), p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") ) * p32_phaseInElh2VREcap(t)
+;
+
 
 ***---------------------------------------------------------------------------
 *' Definition of capacity constraints for CHP technologies:
