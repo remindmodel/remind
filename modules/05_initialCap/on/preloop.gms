@@ -121,14 +121,9 @@ display v05_INIdemEn0.l, v05_INIcap0.l;
 
 p05_cap0(regi,te) = v05_INIcap0.l(regi,te);
 
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-p05_cap0(regi,'bof') = pm_outflowPrcHist("2005",regi,'bof','unheated') / pm_cf("2005",regi,'bof');
-p05_cap0(regi,'bf')  = pm_outflowPrcHist("2005",regi,'bf','standard')  / pm_cf("2005",regi,'bf');
-p05_cap0(regi,'eaf') = pm_outflowPrcHist("2005",regi,'eaf','sec')      / pm_cf("2005",regi,'eaf');
-p05_cap0(regi,'idr') = 0.;
-p05_cap0(regi,"bfcc") =0.;
-p05_cap0(regi,"idrcc") =0.;
-$endif.cm_subsec_model_steel
+loop(tePrc,
+  p05_cap0(regi,tePrc) = sum(tePrc2opmoPrc(tePrc,opmoPrc), pm_outflowPrcHist("2005",regi,tePrc,opmoPrc)) / pm_cf("2005",regi,tePrc);
+);
 
 *RP keep energy demand for the Kyoto target calibration
 pm_EN_demand_from_initialcap2(regi,enty) = v05_INIdemEn0.l(regi,enty);

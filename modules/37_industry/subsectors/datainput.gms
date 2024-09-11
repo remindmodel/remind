@@ -707,7 +707,6 @@ $endif.cm_subsec_model_steel
 pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
 pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) = 0.;
 p37_matFlowHist(tall,all_regi,mat) = 0.;
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 if (cm_startyear eq 2005,
   loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
 
@@ -777,7 +776,6 @@ if (cm_startyear eq 2005,
 if (cm_startyear gt 2005,
   Execute_Loadpoint "input_ref" pm_specFeDem = pm_specFeDem;
 );
-$endif.cm_subsec_model_steel
 
 if (cm_startyear gt 2005,
   execute_load "input_ref.gdx" v37_plasticWaste.l = v37_plasticWaste.l;
