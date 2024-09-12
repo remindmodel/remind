@@ -27,6 +27,18 @@ $ondelim
 $include "./modules/24_trade/standard/input/pm_costsTradePeFinancial.cs3r"
 $offdelim
 ;
+
+*NB* import assumptions for the activation of trade constraints
+parameter p24_trade_constraints(all_regi,all_enty,tradeConst)  "parameter for the region specific trade constraints, values different to 1 activate constraints and the value is used as effectiveness to varying degress such as percentage numbers"
+/
+$ondelim
+$include "./modules/24_trade/standard/input/p24_trade_constraints.cs4r"
+$offdelim
+/
+;
+
+display p24_trade_constraints;
+
 pm_costsTradePeFinancial(regi,"XportElasticity", tradePe(enty)) = 100;
 pm_costsTradePeFinancial(regi, "tradeFloor", tradePe(enty))     = 0.0125;
 pm_costsTradePeFinancial(regi,"Mport","peur")                   = 1e-06;
