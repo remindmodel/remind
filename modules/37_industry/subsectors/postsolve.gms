@@ -84,6 +84,13 @@ pm_IndstCO2Captured(ttot,regi,entySe,entyFe(entyFeCC37),secInd37,emiMkt)$(
     ) !! subsector capture share
 ;
 
+*' calculate carbon contained in non-incinerated plastics
+o37_nonIncineratedPlastics(t,regi,entySe,entyFe,emiMkt)$(
+                        sefe(entySe,entyFe)
+                    AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) )
+  = v37_plasticWaste.l(t,regi,entySe,entyFe,emiMkt)
+  * (1 - pm_incinerationRate(t,regi))
+;
 
 *** ---------------------------------------------------------------------------
 *** Process-Based

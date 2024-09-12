@@ -271,7 +271,7 @@ q37_FeedstocksCarbon(t,regi,sefe(entySe,entyFe),emiMkt)$(
 *' Calculate carbon contained in plastics as a share of carbon in feedstock [GtC]
 q37_plasticsCarbon(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
-  v37_plasticsCarbon(t,regi,entySe,entyFe,emiMkt)
+  vm_plasticsCarbon(t,regi,entySe,entyFe,emiMkt)
   =e=
     v37_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
   * s37_plasticsShare
@@ -288,15 +288,15 @@ q37_plasticWaste(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
   v37_plasticWaste(ttot,regi,entySe,entyFe,emiMkt)
   =e=
     !! prompt waste
-    v37_plasticsCarbon(ttot,regi,entySe,entyFe,emiMkt)$( NOT %cm_wastelag% )
+    vm_plasticsCarbon(ttot,regi,entySe,entyFe,emiMkt)$( NOT %cm_wastelag% )
     !! lagged waste
-  + ( v37_plasticsCarbon(ttot-2,regi,entySe,entyFe,emiMkt)$( ttot.val lt 2070 )
-    + ( ( v37_plasticsCarbon(ttot-2,regi,entySe,entyFe,emiMkt)
-        + v37_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)
+  + ( vm_plasticsCarbon(ttot-2,regi,entySe,entyFe,emiMkt)$( ttot.val lt 2070 )
+    + ( ( vm_plasticsCarbon(ttot-2,regi,entySe,entyFe,emiMkt)
+        + vm_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)
         )
       / 2
       )$( ttot.val eq 2070 )
-    + v37_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)$( ttot.val gt 2070 )
+    + vm_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)$( ttot.val gt 2070 )
     )$( %cm_wastelag% )
 ;
 
@@ -319,17 +319,6 @@ q37_incinerationCCS(t,regi,sefe(entySe,entyFe),emiMkt)$(
   * pm_incinerationRate(t,regi)
   * v37_regionalWasteIncinerationCCSshare(t,regi)
 ;
-
-*' calculate carbon contained in non-incinerated plastics
-*' this is used in emissions accounting to subtract the carbon that gets
-*' sequestered in plastic products
-q37_nonIncineratedPlastics(t,regi,sefe(entySe,entyFe),emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
-  vm_nonIncineratedPlastics(t,regi,entySe,entyFe,emiMkt)
-  =e=
-    v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
-  * (1 - pm_incinerationRate(t,regi))
-  ;
 
 *' calculate flow of carbon contained in chemical feedstock with unknown fate
 *' it is assumed that this carbon is re-emitted in the same timestep if cm_feedstockEmiUnknownFate is enabled (=on)
