@@ -589,6 +589,16 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
+ue2ppfenPrc(all_in,all_in)   "correspondant to ces_eff_target_dyn37, but for use in process-based context, i.e. contained subsectors are complements"
+  /
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+    ue_steel_primary . (feso_steel, feli_steel, fega_steel, feh2_steel,
+                        feel_steel_primary)
+
+    ue_steel_secondary . feel_steel_secondary
+$endif.cm_subsec_model_steel
+  /
+
 regi_fxDem37(ext_regi) "regions under which we fix UE demand to baseline demand"
   /
 $ifthen.fixedUE_scenario "%cm_fxIndUe%" == "on"
