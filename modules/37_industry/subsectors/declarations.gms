@@ -68,9 +68,9 @@ $ifthen.sec_steel_scen NOT "%cm_steel_secondary_max_share_scenario%" == "off"   
   / %cm_steel_secondary_max_share_scenario% /
 $endif.sec_steel_scen
 
-  p37_regionalWasteIncinerationCCSshare(ttot,all_regi)    "regional proportion of waste incineration that is captured [%]"
+  p37_regionalWasteIncinerationCCSMaxShare(ttot,all_regi)    "upper bound on regional proportion of waste incineration that is captured [%]"
 $ifthen.cm_wasteIncinerationCCSshare not "%cm_wasteIncinerationCCSshare%" == "off"
-  p37_wasteIncinerationCCSshare(ttot,ext_regi)            "switch values for proportion of waste incineration that is captured [%]"
+  p37_wasteIncinerationCCSMaxShare(ttot,ext_regi)            "switch values for proportion of waste incineration that is captured [%]"
   / %cm_wasteIncinerationCCSshare% /
 $endIf.cm_wasteIncinerationCCSshare
 ;
@@ -83,6 +83,7 @@ Positive Variables
   v37_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)          "Carbon flow: carbon contained in chemical feedstocks [GtC]"
   v37_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "Carbon flow: carbon contained in plastics [GtC]"
   v37_plasticWaste(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "Carbon flow: carbon contained in plastic waste [GtC]"
+  v37_regionalWasteIncinerationCCSshare(tall,all_regi)                      "share of waste incineration that is captured [%]"
 
   !! process-based implementation
   vm_outflowPrc(tall,all_regi,all_te,opmoPrc)                               "Production volume of processes in process-based model [Gt/a]"

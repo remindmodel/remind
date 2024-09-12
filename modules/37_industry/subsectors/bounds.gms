@@ -133,6 +133,8 @@ $ifthen.policy_scenario "%cm_indstExogScen_set%" == "YES"
 $endif.policy_scenario
 $drop cm_indstExogScen_set
 
+v37_regionalWasteIncinerationCCSshare.lo(t,regi) = 0.;
+v37_regionalWasteIncinerationCCSshare.up(t,regi) = p37_regionalWasteIncinerationCCSMaxShare(t,regi);
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 !! fix processes procudction in historic years
@@ -173,7 +175,7 @@ $endif.fixedUE_scenario
 
 *** fix plastic waste to zero until 2010, and possible to reference scenario
 *** values between 2015 and cm_startyear
-v37_plasticWaste.fx(t,regi,entySe,entyFe,emiMkt)$( 
+v37_plasticWaste.fx(t,regi,entySe,entyFe,emiMkt)$(
                             t.val lt max(2015, cm_startyear)
                         AND sefe(entySe,entyFe)
                         AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) )
