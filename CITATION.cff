@@ -58,7 +58,7 @@ authors:
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: "Dietrich"
-  given-names:  "Jan"
+  given-names:  "Jan Philipp"
   orcid: https://orcid.org/0000-0002-4309-6431
   affiliation: "Potsdam Institute for Climate Impact Research"
 
@@ -220,6 +220,10 @@ authors:
 
 - family-names: "Rottoli"
   given-names:  "Marianna"
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: "Rüter"
+  given-names:  "Tonn"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: "Schmidt"
