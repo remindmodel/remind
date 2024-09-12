@@ -139,21 +139,9 @@ v37_regionalWasteIncinerationCCSshare.up(t,regi) = p37_regionalWasteIncineration
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 !! fix processes procudction in historic years
 if (cm_startyear eq 2005,
-  loop(regi,
-    loop(tePrc2opmoPrc(tePrc,opmoPrc),
-      vm_outflowPrc.fx("2005",regi,tePrc,opmoPrc) = pm_outflowPrcIni(regi,tePrc,opmoPrc);
+    loop((ttot,regi,tePrc2opmoPrc(tePrc,opmoPrc))$(ttot.val ge 2005 AND ttot.val le 2020),
+      vm_outflowPrc.fx(ttot,regi,tePrc,opmoPrc) = pm_outflowPrcHist(ttot,regi,tePrc,opmoPrc);
     );
-  );
-
-  loop(regi,
-    loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
-      vm_outflowPrc.fx(ttot,regi,"eaf","pri") = 0.;
-      vm_outflowPrc.fx(ttot,regi,"idr","ng") = 0.;
-      vm_outflowPrc.fx(ttot,regi,"idr","h2") = 0.;
-      vm_outflowPrc.fx(ttot,regi,"bfcc","standard") = 0.;
-      vm_outflowPrc.fx(ttot,regi,"idrcc","ng") = 0.;
-    );
-  );
 );
 
 !! Switch to turn off steel CCS

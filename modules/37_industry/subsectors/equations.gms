@@ -403,9 +403,10 @@ q37_prodMat(t,regi,mat)$( matOut(mat) ) ..
 ***------------------------------------------------------
 *' Hand-over to CES
 ***------------------------------------------------------
-q37_mat2ue(t,regi,in)$( ppfUePrc(in) ) ..
-    vm_cesIO(t,regi,in)
-    + pm_cesdata(t,regi,in,"offset_quantity")
+q37_mat2ue(t,regi,mat,in)$( ppfUePrc(in) ) ..
+    (vm_cesIO(t,regi,in)
+    + pm_cesdata(t,regi,in,"offset_quantity"))
+    * p37_ue_share(mat,in)
   =e=
     sum(mat2ue(mat,in),
       p37_mat2ue(mat,in)
