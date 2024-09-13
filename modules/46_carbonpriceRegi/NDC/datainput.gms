@@ -13,7 +13,7 @@ p46_taxCO2eqGlobal2030 = 0 * sm_DptCO2_2_TDpGtC;
 Scalar p46_taxCO2eqYearlyIncrease "yearly multiplicative increase of co2 tax, write 3% as 1.03" /1/;
 
 *** load NDC data
-Table f46_factorTargetyear(tall,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region"
+Table f46_factorTargetyear(tall,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]"
 $offlisting
 $ondelim
 $include "./modules/46_carbonpriceRegi/NDC/input/fm_factorTargetyear.cs3r"
@@ -21,12 +21,12 @@ $offdelim
 $onlisting
 ;
 
-Parameter p46_factorTargetyear(ttot,all_regi) "Multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region";
+Parameter p46_factorTargetyear(ttot,all_regi) "Multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]";
 p46_factorTargetyear(t,all_regi) = f46_factorTargetyear(t,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
 
 display p46_factorTargetyear;
 
-Table f46_2005shareTarget(tall,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with 2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years"
+Table f46_2005shareTarget(tall,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with 2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [1]"
 $offlisting
 $ondelim
 $include "./modules/46_carbonpriceRegi/NDC/input/fm_2005shareTarget.cs3r"
@@ -34,12 +34,12 @@ $offdelim
 $onlisting
 ;
 
-Parameter p46_2005shareTarget(ttot,all_regi) "2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years";
+Parameter p46_2005shareTarget(ttot,all_regi) "2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [1]";
 p46_2005shareTarget(t,all_regi) = f46_2005shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
 
 display p46_2005shareTarget;
 
-Table f46_histShare(tall,all_regi,NDC_version) "Table for all NDC versions with GHG emissions share of countries with quantifyable 2030 target, time dimension specifies historic record"
+Table f46_histShare(tall,all_regi,NDC_version) "Table for all NDC versions with GHG emissions share of countries with quantifyable 2030 target, time dimension specifies historic record [0..1]"
 $offlisting
 $ondelim
 $include "./modules/46_carbonpriceRegi/NDC/input/fm_histShare.cs3r"
@@ -47,12 +47,12 @@ $offdelim
 $onlisting
 ;
 
-Parameter p46_histShare(tall,all_regi) "GHG emissions share of countries with quantifyable 2030 target, time dimension specifies historic record";
+Parameter p46_histShare(tall,all_regi) "GHG emissions share of countries with quantifyable 2030 target, time dimension specifies historic record [0..1]";
 p46_histShare(tall,all_regi) = f46_histShare(tall,all_regi,"%cm_NDC_version%");
 
 display p46_histShare;
 
-Parameter p46_BAU_reg_emi_wo_LU_bunkers(ttot,all_regi) "regional GHG emissions (without LU and bunkers) in BAU scenario"
+Parameter p46_BAU_reg_emi_wo_LU_bunkers(ttot,all_regi) "regional GHG emissions (without LU and bunkers) in BAU scenario [MtCO2eq/yr]"
   /
 $ondelim
 $ifthen exist "./modules/46_carbonpriceRegi/NDC/input/pm_BAU_reg_emi_wo_LU_bunkers.cs4r"
@@ -99,16 +99,16 @@ $endif.p46_netZero
 
 
 *** parameters for selecting NDC years
-Scalar p46_ignoreNDCbefore          "NDC targets before this years are ignored, for example to exclude 2030 targets" /2028/;
+Scalar p46_ignoreNDCbefore          "NDC targets before this years are ignored, for example to exclude 2030 targets [year]" /2028/;
 p46_ignoreNDCbefore = max(p46_ignoreNDCbefore, cm_startyear)
-Scalar p46_ignoreNDCafter           "NDC targets after  this years are ignored, for example to exclude 2050 net zero targets" /2100/;
-Scalar p46_minRatioOfCoverageToMax  "only targets whose coverage is this times p46_bestNDCcoverage are considered. Use 1 for only best." /0.7/;
-Scalar p46_useSingleYearCloseTo     "if 0: use all. If > 0: use only one single NDC target per country closest to this year (use 2030.4 to prefer 2030 over 2035 over 2025)" /0/;
+Scalar p46_ignoreNDCafter           "NDC targets after  this years are ignored, for example to exclude 2050 net zero targets [year]" /2100/;
+Scalar p46_minRatioOfCoverageToMax  "only targets whose coverage is this times p46_bestNDCcoverage are considered. Use 1 for only best. [0..1]" /0.7/;
+Scalar p46_useSingleYearCloseTo     "if 0: use all. If > 0: use only one single NDC target per country closest to this year (use 2030.4 to prefer 2030 over 2035 over 2025) [year]" /0/;
 
 Set p46_NDCyearSet(ttot,all_regi)               "YES for years whose NDC targets is used";
-Parameter p46_bestNDCcoverage(all_regi)         "highest coverage of NDC targets within region";
-Parameter p46_distanceToOptyear(ttot,all_regi)  "distance to p46_useSingleYearCloseTo to favor years in case of multiple equally good targets";
-Parameter p46_minDistanceToOptyear(all_regi)    "minimal distance to p46_useSingleYearCloseTo per region";
+Parameter p46_bestNDCcoverage(all_regi)         "highest coverage of NDC targets within region [0..1]";
+Parameter p46_distanceToOptyear(ttot,all_regi)  "distance to p46_useSingleYearCloseTo to favor years in case of multiple equally good targets [year]";
+Parameter p46_minDistanceToOptyear(all_regi)    "minimal distance to p46_useSingleYearCloseTo per region [year]";
 
 p46_bestNDCcoverage(regi) = smax(t$(t.val <= p46_ignoreNDCafter AND t.val >= p46_ignoreNDCbefore), p46_2005shareTarget(t,regi));
 display p46_bestNDCcoverage;
@@ -122,9 +122,9 @@ if(p46_useSingleYearCloseTo > 0,
 );
 
 *** first and last NDC year as a number
-Parameter p46_firstNDCyear(all_regi) "last year with NDC coverage within region";
+Parameter p46_firstNDCyear(all_regi) "last year with NDC coverage within region [year]";
 p46_firstNDCyear(regi) = smin( p46_NDCyearSet(t, regi), t.val );
-Parameter p46_lastNDCyear(all_regi)  "last year with NDC coverage within region";
+Parameter p46_lastNDCyear(all_regi)  "last year with NDC coverage within region [year]";
 p46_lastNDCyear(regi)  = smax( p46_NDCyearSet(t, regi), t.val );
 
 display p46_NDCyearSet,p46_firstNDCyear,p46_lastNDCyear;
