@@ -113,7 +113,9 @@
 *' Sets are treated differently: instead of a prefix, sets exclusively used within a module get that module's
 *' number added as a suffix. If the set is used in more than one module no suffix is given.
 *'
-*' The units (e.g., TWa, EJ, GtC, GtCO2, ...) of variables and parameters are documented in the declaration files.
+*' The units (e.g., TWa, EJ, GtC, GtCO2, ...) of variables and parameters are
+*' documented in the declaration files using square brackets at the end of the
+*' explanatory text (e.g. `v_var(set1,set2)   "variable [unit]"`).
 *'
 *' For the labels of parameters, scalars and set, use double quotes only.
 *'
