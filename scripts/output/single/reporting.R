@@ -47,7 +47,7 @@ if (length(remind_policy_reporting_file) > 0) {
 }
 
 # produce REMIND reporting *.mif based on gdx information
-message("\n### start generation of mif files at ", Sys.time())
+message("\n### start generation of mif files at ", round(Sys.time()))
 convGDX2MIF(gdx, gdx_refpolicycost = gdx_refpolicycost, file = remind_reporting_file, scenario = scenario, gdx_ref = gdx_ref)
 
 # MAGICC code not working with REMIND-EU
@@ -84,18 +84,24 @@ if(file.exists(edgetOutputDir)) {
   }
   message("start generation of EDGE-T reporting")
   EDGET_output <- reportEdgeTransport(edgetOutputDir,
-                                      isTransportExtendedReported = FALSE, 
+                                      isTransportExtendedReported = FALSE,
                                       modelName = "REMIND",
-				      scenarioName = scenario,
+				                              scenarioName = scenario,
                                       gdxPath = file.path(outputdir, "fulldata.gdx"),
                                       isStored = FALSE)
+
+  REMINDoutput <- as.data.table(read.quitte(file.path(outputdir, paste0("REMIND_generic_", scenario,"_withoutPlus.mif"))))
+  sharedVariables <- EDGET_output[variable %in% REMINDoutput$variable | grepl(".*edge", variable)]
+  EDGET_output <- EDGET_output[!(variable %in% REMINDoutput$variable | grepl(".*edge", variable))]
+  message("The following variables will be dropped from the EDGE-Transport reporting because
+                they are in the REMIND reporting: ", paste(unique(sharedVariables$variable), collapse = ", "))
 
   write.mif(EDGET_output, remind_reporting_file, append = TRUE)
   piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 
   #Generate transport extended mif
   reportEdgeTransport(edgetOutputDir,
-                      isTransportExtendedReported = TRUE, 
+                      isTransportExtendedReported = TRUE,
                       gdxPath = file.path(outputdir, "fulldata.gdx"),
                       isStored = TRUE)
 
@@ -128,20 +134,21 @@ if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
 # warn if duplicates in mif
 reportDuplicates(read.quitte(sub("\\.mif$", "_withoutPlus.mif", remind_reporting_file), check.duplicates = FALSE))
 
-message("### end generation of mif files at ", Sys.time())
+message("### end generation of mif files at ", round(Sys.time()))
 
 ## produce REMIND LCOE reporting *.csv based on gdx information
-message("### start generation of LCOE reporting at ", Sys.time())
+message("### start generation of LCOE reporting at ", round(Sys.time()))
 tmp <- try(convGDX2CSV_LCOE(gdx, file = LCOE_reporting_file, scen = scenario)) # execute convGDX2MIF_LCOE
-message("### end generation of LCOE reporting at ", Sys.time())
+message("### end generation of LCOE reporting at ", round(Sys.time()))
 
 ## generate DIETER reporting if it is needed
 ## the reporting is appended to REMIND_generic_<scenario>.MIF in "DIETER" Sub Directory
 DIETERGDX <- "report_DIETER.gdx"
 if(file.exists(file.path(outputdir, DIETERGDX))){
-  message("### start generation of DIETER reporting at ", Sys.time())
+  message("### start generation of DIETER reporting at ", round(Sys.time()))
   remind2::reportDIETER(DIETERGDX,outputdir)
-  message("### end generation of DIETER reporting at ", Sys.time())
+  message("### end generation of DIETER reporting at ", round(Sys.time()))
 }
 
 message("### reporting finished.")
+

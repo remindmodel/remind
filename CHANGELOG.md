@@ -11,11 +11,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - CES parameter and gdx files calibrated with new default diffLin2Lin for NPi 
     [[#1747](https://github.com/remindmodel/remind/pull/1747)] and
     [[#1757](https://github.com/remindmodel/remind/pull/1757)]
+- Update of NDC goals with cutoff data August 31, 2024
+    [[#1816](https://github.com/remindmodel/remind/pull/1816)]
 
 ### changed
 - plastic waste by default does not lag plastics production by ten years
     anymore; can be re-activated using `cm_wastelag`
 - moved to edgeTransport 2.0 version [[#1749](https://github.com/remindmodel/remind/pull/1749)]
+- **scripts** in readCheckScenarioConfig(), do not automatically remove path_gdx_bau if allegedly 'not needed'
+    [[#1809](https://github.com/remindmodel/remind/pull/1809)]
 
 ### added
 - **50_damages**, **51_internalizeDamages** add KotzWenz realization based on Kotz & Wenz (2024)
@@ -38,8 +42,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1767](https://github.com/remindmodel/remind/pull/1767)]
 - **33_CDR** added ocean alkalinity enhancement to the CDR portfolio (OAE is turned off by default)
     [[#1777](https://github.com/remindmodel/remind/pull/1777)]
+- **32_power** increase minimum required dispatchable back-up capacity for VRE integration
+    [[#1789](https://github.com/remindmodel/remind/pull/1789)]
 - **scripts** integrate automated scenario validation via piamValidation as output script
     [[#1790](https://github.com/remindmodel/remind/pull/1790)]
+- **scripts** add interactive plotting script 'selectPlots'
+    [[#1815](https://github.com/remindmodel/remind/pull/1815)]
+- **scripts** in readCheckScenarioConfig() while running tests, check if all scenarios stated in path_gdx* columns exist
+    [[#1818](https://github.com/remindmodel/remind/pull/1818)]
 
 ### fixed
 - included CCS from plastic waste incineration in CCS mass flows so it is

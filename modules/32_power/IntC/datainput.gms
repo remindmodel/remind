@@ -116,4 +116,10 @@ loop(ext_regi$f32_cm_PriceDurSlope_elh2(ext_regi),
 *** The value of 1.1 is derived from the regression of the German Langfristzenarien.
 p32_flexSeelShare_slope(t,regi,"elh2") = 1.1;
 
+*** Elh2VREcap phase-in factor
+p32_phaseInElh2VREcap(t)$(t.val < 2030) = 0;
+p32_phaseInElh2VREcap("2030") = 0.25;
+p32_phaseInElh2VREcap("2035") = 0.5;
+p32_phaseInElh2VREcap(t)$(t.val > 2035) = 1;
+
 *** EOF ./modules/32_power/IntC/datainput.gms

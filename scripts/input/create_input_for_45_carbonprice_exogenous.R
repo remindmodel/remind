@@ -42,7 +42,7 @@ create_input_for_45_carbonprice_exogenous<-function(gdx){
   cat("*=              Exogenous CO2 tax level                      =*\n", file = p_fpath, append = TRUE)
   cat("*=============================================================*\n", file = p_fpath, append = TRUE)
   cat("*= author: dklein@pik-potsdam.de                             =*\n", file = p_fpath, append = TRUE)
-  cat(paste("*= date  : ", Sys.time(), "                               =*\n", sep=""), file = p_fpath, append = TRUE)
+  cat(paste("*= date  : ", round(Sys.time()), "                               =*\n", sep=""), file = p_fpath, append = TRUE)
   cat("*= generated with:                                           =*\n", file = p_fpath, append = TRUE)
   cat("*= scripts/input/create_input_for_45_carbonprice_exogenous.R =*\n", file = p_fpath, append = TRUE)
   cat(paste0("*= from file: ", normalizePath(gdx), " =*\n"), file = p_fpath, append = TRUE)
