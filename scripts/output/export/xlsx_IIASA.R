@@ -21,7 +21,7 @@ model <- paste("REMIND", paste0(strsplit(gms::readDefaultConfig(".")$model_versi
 
 
 removeFromScen <- ""                           # you can use regex such as: "_diff|_expoLinear"
-renameScen <- NULL                             # c(newname1 = "oldname1", …), without the `C_` and `-rem-[0-9]` stuff
+renameScen <- NULL                             # c(oldname1 = "newname1", …), without the `C_` and `-rem-[0-9]` stuff
 addToScen <- NULL                              # is added at the beginning
 
 # filenames relative to REMIND main directory (or use absolute path) 
@@ -46,7 +46,7 @@ projects <- list(
   ScenarioMIP = list(model = "REMIND-MAgPIE 3.4-4.8",
                      mapping = "ScenarioMIP",
                      iiasatemplate = "https://files.ece.iiasa.ac.at/ssp-submission/ssp-submission-template.xlsx",
-                     renameScen = c(laurin = "SMIPv03-M-SSP2-NPi-def"),
+                     renameScen = c("SMIPv03-M-SSP2-NPi-def" = "laurin", "SMIPv03-LOS-SSP2-EcBudg400-def" = "newname"),
                      checkSummation = "NAVIGATE"),
   SHAPE      = list(mapping = c("NAVIGATE", "SHAPE")),
   TESTTHAT   = list(mapping = "AR6")
@@ -138,11 +138,13 @@ withCallingHandlers({ # piping messages to logFile
     mifdata <- rbind(mifdata, thismifdata)
   }
 
-  levels(mifdata$scenario) <- gsub("^C_|-rem-[0-9]+", "", levels(mifdata$scenario))
+  mifdata$scenario <- gsub("^C_", "", mifdata$scenario)
+  message("Old names: ", sort(unique(mifdata$scenario)))
   for (i in names(renameScen)) {
     message("Rename scenario: ", i, " -> ", renameScen[[i]])
-    levels(mifdata$scenario)[i == levels(mifdata$scenario)] == renameScen[[i]]
+    mifdata$scenario[i == mifdata$scenario] <- renameScen[[i]]
   }
+  message("New names: ", sort(unique(mifdata$scenario)))
 
   message("# ", length(temporarydelete), " variables are in the list to be temporarily deleted, ",
           length(unique(mifdata$variable[mifdata$variable %in% temporarydelete])), " were deleted.")
