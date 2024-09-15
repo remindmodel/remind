@@ -741,8 +741,8 @@ pm_cf(ttot,regi,"AmSyCoalcc") = 0.8;
 pm_cf(ttot,regi,"AmSyNGcc") = 0.8;
 pm_cf(ttot,regi,"AmSyH2") = 0.8;
 
-!!pm_cf(ttot,regi,"MtOMtA") = 0.8;
-!!pm_cf(ttot,regi,"FertProd") = 0.8;
+pm_cf(ttot,regi,"MtOMtA") = 0.8;
+pm_cf(ttot,regi,"FertProd") = 0.8;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 pm_cf(ttot,regi,"bf") = 0.8;

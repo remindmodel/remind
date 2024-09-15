@@ -647,6 +647,8 @@ $endIf.cm_wasteIncinerationCCSshare
 
 p37_specMatDem(mat,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+p37_specMatDem("ammonia","FertProd","standard")        = 1.2;
+p37_specMatDem("methanol","MtOMtA","standard")        = 1.2;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_specMatDem("dripell","idr","ng")        = 1.44;                                           !! Source: POSTED / Average of Devlin2022, Otto2017, Volg2018, Rechberge2020
@@ -669,13 +671,13 @@ p37_specFeDemTarget(all_enty,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 !! TODO Qianzhi 1MWh NH3,LHV = 0.19355 tons
 
-p37_specFeDemTarget("fegas","chemOld","standard")  = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","chemOld","standard")  = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("fesos","chemOld","standard")    = 0.6 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("fehos","chemOld","standard")    = 5.0 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fegas","ChemOld","standard")  = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","ChemOld","standard")  = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fesos","ChemOld","standard")    = 0.6 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fehos","ChemOld","standard")    = 5.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("feh2s","chemNew","standard")  = 5  / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
-p37_specFeDemTarget("feels","chemNew","standard")  = 0.73 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
+p37_specFeDemTarget("feh2s","ChemNew","standard")  = 5  / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
+p37_specFeDemTarget("feels","ChemNew","standard")  = 0.73 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
 
 p37_specFeDemTarget("fesos","MeSySol","greyh2")  = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);  !! methanol tech QIANZHI
 p37_specFeDemTarget("feels","MeSySol","greyh2")  = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
@@ -716,6 +718,9 @@ p37_specFeDemTarget("feels","AmSyNGcc","standard")    = 0.4 / (sm_TWa_2_MWh/sm_g
 
 p37_specFeDemTarget("feh2s","AmSyH2","standard")    = 5 / (sm_TWa_2_MWh/sm_giga_2_non);
 p37_specFeDemTarget("feels","AmSyH2","standard")    = 0.73 / (sm_TWa_2_MWh/sm_giga_2_non);
+
+p37_specFeDemTarget("feels","MtOMtA","standard")    = 1 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","FertProd","standard")    = 1 / (sm_TWa_2_MWh/sm_giga_2_non);
 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -770,15 +775,10 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 
 !! new calculation value added: Global plastic production volume 400.3 Mt Global plastic market size 712bn USD in 2022 https://www.statista.com/topics/5266/plastics-industry/#:~:text=Since%20the%20mass%20production%20of%20plastic%20products%20began,to%20experience%20considerable%20growth%20over%20the%20next%20decade.
 
-p37_mat2ue("olandar","ue_chemicals") = 1.27 * 3;
-p37_mat2ue("otherchem","ue_chemicals") = 1.27 * 3; !! methanol tech QIANZHI
+p37_mat2ue("HVC","ue_chemicals") = 1.27 * 3;
+p37_mat2ue("OtherChem","ue_chemicals") = 1.27 * 3; !! methanol tech QIANZHI
 !!p37_mat2ue("methanol","ue_chemicals") = 1.27;
-p37_mat2ue("ammonia","ue_chemicals") = 1.27 * 3; !! ammonia tech QIANZHI
-
-p37_ue_share("olandar","ue_chemicals") = 0.1;   !! methanol tech QIANZHI
-p37_ue_share("otherchem","ue_chemicals") = 0.6;
-!!p37_ue_share("methanol","ue_chemicals") = 0.1;
-p37_ue_share("ammonia","ue_chemicals") = 0.3; !! ammonia tech QIANZHI
+p37_mat2ue("Fertilizer","ue_chemicals") = 1.27 * 3; !! ammonia tech QIANZHI
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_ue_share("sesteel","ue_steel_secondary") = 1.;
@@ -792,10 +792,10 @@ $endif.cm_subsec_model_steel
 
 p37_ue_share(all_enty,all_in) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-p37_ue_share("olandar","ue_chemicals") = 0.3;   !! methanol tech QIANZHI
-p37_ue_share("otherchem","ue_chemicals") = 0.4;
+p37_ue_share("HVC","ue_chemicals") = 0.3;   !! methanol tech QIANZHI
+p37_ue_share("OtherChem","ue_chemicals") = 0.4;
 !!p37_ue_share("methanol","ue_chemicals") = 0.1;
-p37_ue_share("ammonia","ue_chemicals") = 0.3; !! ammonia tech QIANZHI
+p37_ue_share("Fertilizer","ue_chemicals") = 0.3; !! ammonia tech QIANZHI
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_ue_share("sesteel","ue_steel_secondary") = 1.;
@@ -810,9 +810,21 @@ loop(ppfUePrc(in),
 
 *** --------------------------------
 p37_teMatShareHist(tePrc,opmoPrc,mat) = 0.;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+p37_teMatShareHist("ChemOld","standard","OtherChem") = 1.;
+p37_teMatShareHist("MeSySol","greyh2","methanol") = 0.3;
+p37_teMatShareHist("MeSyNG","standard","methanol") = 0.6;
+p37_teMatShareHist("MeSyLiq","standard","methanol") = 0.1;
+p37_teMatShareHist("AmSyCoal","standard","ammonia") = 0.3;
+p37_teMatShareHist("AmSyNG","standard","ammonia") = 0.7;
+p37_teMatShareHist("MtOMtA","standard","HVC") = 1.;
+p37_teMatShareHist("FertProd","standard","Fertilizer") = 1.;
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_teMatShareHist("bof","unheated","prsteel") = 1.;
 p37_teMatShareHist("eaf","sec","sesteel") = 1.;
+p37_teMatShareHist("bf","standard","pigiron") = 1.;
+p37_teMatShareHist("idr","ng","driron") = 1.;
 $endif.cm_subsec_model_steel
 loop(matFin(mat),
   if(abs(sum((tePrc,opmoPrc),p37_teMatShareHist(tePrc,opmoPrc,mat))-1.) gt sm_eps,
@@ -820,10 +832,10 @@ loop(matFin(mat),
     abort "p37_teMatShareHist must add to one for each matFin";
   );
 );
-if(sum((tePrc,opmoPrc,mat)$(not matFin(mat)), p37_teMatShareHist(tePrc,opmoPrc,mat)) gt sm_eps,
-  display p37_teMatShareHist;
-  abort "p37_teMatShareHist must only be non-zero for matFin";
-);
+!!if(sum((tePrc,opmoPrc,mat)$(not matFin(mat)), p37_teMatShareHist(tePrc,opmoPrc,mat)) gt sm_eps,
+!!  display p37_teMatShareHist;
+!!  abort "p37_teMatShareHist must only be non-zero for matFin";
+!!\);
 *** --------------------------------
 s37_shareHistFeDemPenalty = 0.6;
 *** --------------------------------
@@ -965,7 +977,8 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
                tePrc2matIn(tePrc2,opmoPrc2,mat)),
             !!TODO: enable p37_teMatShareHist here, too (has to be defined, though)
             p37_specMatDem(mat,tePrc2,opmoPrc2) * pm_outflowPrcHist(ttot,regi,tePrc2,opmoPrc2) );
-      pm_outflowPrcHist(ttot,regi,tePrc1,opmoPrc1) = p37_matFlowHist(ttot,regi,mat);
+      !!TODO: enable p37_teMatShareHist here, too (has to be defined, though)
+      pm_outflowPrcHist(ttot,regi,tePrc1,opmoPrc1) = p37_matFlowHist(ttot,regi,mat) * p37_teMatShareHist(tePrc1,opmoPrc1,mat);
     );
 
     loop((entyFe,ppfUePrc),

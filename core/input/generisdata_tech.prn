@@ -178,6 +178,12 @@ lifetime              20          20          20          20          20        
 inco0                  1400        1400         1200        1200         1200
 omf                    0.06        0.06         0.06        0.06         0.06
 lifetime                 20          20           20          20           20
+
++                    MtOMtA    FertProd
+!! documentation & sources: see below
+inco0                   500         500
+omf                    0.06        0.06
+lifetime                 20          20
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 +                     bf         bof         idr         eaf

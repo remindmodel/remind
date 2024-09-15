@@ -344,6 +344,11 @@ all_te          "all energy technologies, including from modules"
         AmSyRo_Coal_ccs
         AmSyRo_NG_ccs
         AmSyRo_H2
+
+        MtOMtA
+        MtOMtA_Ro
+        FertProd
+        FertProd_Ro
 *** PCV: technologies related to steel
         ironMine     "Mining of iron ore"
         idr          "Iron direct reduction"
@@ -448,8 +453,10 @@ all_enty             "all types of quantities"
         ironore      "Iron ore"
         dripell      "DRI pellets"
         !! TOCHECK: QIANZHI
-        otherchem
-        olandar
+        OtherChem
+        HVC
+        Fertilizer
+        methanol
         ammonia
 
         !! emissions
@@ -1294,8 +1301,8 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
         AmSyNGcc
         AmSyH2
 
-        !!MtOMtA
-        !!FertProd
+        MtOMtA
+        FertProd
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
         idr             "Iron direct reduction"
