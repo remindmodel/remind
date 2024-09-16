@@ -81,7 +81,7 @@ $endif.exogDem_scen
 *' energy mix, as that is what can be captured); vm_emiIndBase itself is not used for emission
 *' accounting, just as a CCS baseline.
 ***------------------------------------------------------
-q37_emiIndBase(t,regi,enty,secInd37)$(   entyFeCC37(enty) 
+q37_emiIndBase(t,regi,enty,secInd37)$(   entyFeCC37(enty)
                                       OR sameas(enty,"co2cement_process") ) ..
   vm_emiIndBase(t,regi,enty,secInd37)
   =e=
@@ -309,7 +309,7 @@ q37_incinerationEmi(t,regi,sefe(entySe,entyFe),emiMkt)$(
   =e=
     v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
   * pm_incinerationRate(t,regi)
-  * (1 - p37_regionalWasteIncinerationCCSshare(t,regi))
+  * (1 - v37_regionalWasteIncinerationCCSshare(t,regi))
 ;
 
 q37_incinerationCCS(t,regi,sefe(entySe,entyFe),emiMkt)$(
@@ -318,7 +318,7 @@ q37_incinerationCCS(t,regi,sefe(entySe,entyFe),emiMkt)$(
   =e=
     v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
   * pm_incinerationRate(t,regi)
-  * p37_regionalWasteIncinerationCCSshare(t,regi)
+  * v37_regionalWasteIncinerationCCSshare(t,regi)
 ;
 
 *' calculate carbon contained in non-incinerated plastics
@@ -403,9 +403,10 @@ q37_prodMat(t,regi,mat)$( matOut(mat) ) ..
 ***------------------------------------------------------
 *' Hand-over to CES
 ***------------------------------------------------------
-q37_mat2ue(t,regi,in)$( ppfUePrc(in) ) ..
-    vm_cesIO(t,regi,in)
-    + pm_cesdata(t,regi,in,"offset_quantity")
+q37_mat2ue(t,regi,mat,in)$( ppfUePrc(in) ) ..
+    (vm_cesIO(t,regi,in)
+    + pm_cesdata(t,regi,in,"offset_quantity"))
+    * p37_ue_share(mat,in)
   =e=
     sum(mat2ue(mat,in),
       p37_mat2ue(mat,in)

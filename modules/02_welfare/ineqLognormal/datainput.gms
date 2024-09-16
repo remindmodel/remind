@@ -27,7 +27,7 @@ display p02_inconvpen_lap;
 $ENDIF.INCONV
 
 *BS* 2020-03-12: additional inputs for inequality
-*** To Do: rename file, then also in "files" and moinput::fullREMIND.R
+*** To Do: rename file, then also in "files" and mrremind::fullREMIND.R
 parameter f02_ineqTheil(tall,all_regi,all_GDPscen)        "Gini data"
 /
 $ondelim
@@ -39,23 +39,19 @@ p02_ineqTheil(ttot,regi)$(ttot.val ge 2005) = f02_ineqTheil(ttot,regi,"%cm_GDPsc
 display p02_ineqTheil;
 
 
-* for a policy run, we need to load values coming from the baseline for consumption, tax revenues and energy expenditures:
+*** for a policy run, we need to load values coming from the baseline for consumption, tax revenues and energy expenditures:
 if ((cm_emiscen ne 1),
     Execute_Loadpoint 'input_ref' p02_taxrev_redistr0_ref=v02_taxrev_Add.l;
     Execute_Loadpoint 'input_ref' p02_cons_ref=vm_cons.l;
     Execute_Loadpoint 'input_ref' p02_energyExp_ref=v02_energyExp.l;
     Execute_Loadpoint 'input_ref' p02_damageFactor_ref=vm_damageFactor.l;
- 
-* if energy system costs are used:
-*    Execute_Loadpoint 'input_ref' p02_energyExp_ref=vm_costEnergySys.l;
-   
 );
 
-* income elasticity of tax revenues redistribution.
+*** income elasticity of tax revenues redistribution.
 p02_distrBeta(ttot,regi)$(ttot.val ge 2005) = cm_distrBeta;
 
 
-* for a baseline we need the following variables to be 0:
+*** for a baseline we need the following variables to be 0:
 p02_energyExp_ref(ttot,regi)$(cm_emiscen eq 1)=0;
 p02_taxrev_redistr0_ref(ttot,regi)$(cm_emiscen eq 1)=0;
 v02_taxrev_Add.l(ttot,regi)$(cm_emiscen eq 1)=0;
@@ -63,13 +59,13 @@ v02_energyExp_Add.l(ttot,regi)$(cm_emiscen eq 1)=0;
 v02_energyexpShare.l(ttot,regi)$(cm_emiscen eq 1)=0;
 v02_revShare.l(ttot,regi)$(cm_emiscen eq 1)=0;
 
-* For runs that are not baseline, we need to initialize:
-* taxrev_Add, because they are used in the condition sign:
+*** For runs that are not baseline, we need to initialize:
+*** taxrev_Add, because they are used in the condition sign:
 v02_taxrev_Add.l(ttot,regi)$(cm_emiscen ne 1)=0;
-* and v02_energyExp to the level in the baseline so the model can have a start value
+*** and v02_energyExp to the level in the baseline so the model can have a start value
 v02_energyExp.l(ttot,regi)$(cm_emiscen eq 1)=p02_energyExp_ref(ttot,regi)$(cm_emiscen eq 1);
 
-*parameters for translating output damage into consumption loss
+*** parameters for translating output damage into consumption loss
 parameter f02_damConsFactor(all_regi,dam_factors)    "for translating output to consumption losses from KW damage function"
 /
 $ondelim

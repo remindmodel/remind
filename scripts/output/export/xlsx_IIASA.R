@@ -73,7 +73,8 @@ if (is.null(mapping)) {
 if (length(mapping) == 0 || ! all(file.exists(mapping) | mapping %in% names(mappingNames()))) {
   stop("mapping='", paste(mapping, collapse = ", "), "' not found.")
 }
-if (exists("iiasatemplate") && ! is.null(iiasatemplate) && ! file.exists(iiasatemplate)) {
+if (exists("iiasatemplate") && ! is.null(iiasatemplate) && ! file.exists(iiasatemplate) &&
+    ! grepl("^https:\\/\\/files\\.ece\\.iiasa\\.ac\\.at\\/.*\\.xlsx$", iiasatemplate)) {
   stop("iiasatemplate=", iiasatemplate, " not found.")
 }
 

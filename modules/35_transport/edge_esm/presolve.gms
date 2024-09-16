@@ -13,8 +13,7 @@ if( (ord(iteration) le 25 and ord(iteration) ge cm_startIter_EDGET and (mod(ord(
     Execute "Rscript -e 'edgeTransport::iterativeEdgeTransport()'";
 
     Execute_Loadpoint 'p35_esCapCost' p35_esCapCost;
-    !! convert transport costs from US$2005 to US$2017
-    pm_esCapCost(t,regi,teEs_dyn35)$(t.val gt 2010 AND t.val ge cm_startyear AND t.val le 2100) = sm_D2005_2_D2017 * p35_esCapCost(t,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%",teEs_dyn35);
+    pm_esCapCost(t,regi,teEs_dyn35)$(t.val gt 2010 AND t.val le 2100) = p35_esCapCost(t,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%",teEs_dyn35);
 
     !! load FE-to-ES results from EDGE-Transport into auxilliary parameter
     Execute_Loadpoint "p35_fe2es", p35_fe2es_aux = p35_fe2es;
