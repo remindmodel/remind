@@ -19,7 +19,7 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
   NC    <- "\033[0m"   # No Color
 
   refcfg <- gms::readDefaultConfig(remindPath)
-  remindextras <- c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
+  remindextras <- c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun", "var_luc",
                                "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
                                "gms$cm_CES_configuration", "gms$c_description", "model", "renvLockFromPrecedingRun")
   fail <- tryCatch(gms::check_config(cfg, reference_file = refcfg, modulepath = file.path(remindPath, "modules"),
@@ -107,9 +107,8 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
     }
   } else {
     if (! is.na(cfg$files2export$start["input_bau.gdx"])) {
-      message("You have specified no realization that requires 'path_gdx_bau' but you have specified it. ",
-              "To avoid an unnecessary dependency to another run, setting 'path_gdx_bau' to NA.")
-      cfg$files2export$start["input_bau.gdx"] <- NA
+      message("According to 'scripts/start/needBau.R', you use no realization that requires 'path_gdx_bau' but you have specified it. ",
+              "To avoid an unnecessary dependency to another run, you can set 'path_gdx_bau' to NA.")
     }
   }
 

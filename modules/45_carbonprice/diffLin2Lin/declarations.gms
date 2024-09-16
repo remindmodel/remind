@@ -19,7 +19,7 @@
 
 parameters
 p45_gdppcap2015_PPP(all_regi)               "2015 GDP per capita (k $ PPP 2005)"
-p45_phasein_2025ratio(all_regi)             "ratio of CO2 price to that of developed region in 2025"
+p45_phasein_ratio(all_regi)                 "inital ratio of CO2 price to that of developed region"
 
 p45_regCO2priceFactor(ttot,all_regi)        "regional multiplicative factor to the CO2 price of the developed countries"
 p45_CO2priceTrajDeveloped(ttot)             "CO2 price trajectory for developed/rich countries"
@@ -31,6 +31,7 @@ scalars
 s45_year_co2_tax_hist                       "year of s45_co2_tax_hist"
 s45_co2_tax_hist                            "historical level of CO2 tax converted from $/t CO2eq to T$/GtC"
 s45_co2_tax_startyear                       "level of CO2 tax in start year converted from $/t CO2eq to T$/GtC"
+s45_CO2priceRegConvStartYr                  "year until which initial ratios of CO2 prices are applied and after which convergence starts"
 ;
 
 *** EOF ./modules/45_carbonprice/diffLin2Lin/declarations.gms

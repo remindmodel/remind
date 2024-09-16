@@ -8,6 +8,6 @@
 # and the realizations that require a 'path_gdx_bau' as elements
 # This allows readCheckScenarioConfig and checkFixConfig to set it to NA
 # if not needed, and complain if it is missing.
-needBau <- list(carbonprice = c("NDC"),
+needBau <- list(carbonprice = "NDC",
                 carbonpriceRegi = "NDC",
                 emicapregi = "AbilityToPay")

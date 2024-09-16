@@ -1,4 +1,4 @@
-title;start;c_empty_model;path_gdx_ref;path_gdx_bau;output
-TESTTHAT-SSP2-Base;1;on;;;reportingREMIND2MAgPIE
-TESTTHAT-SSP2-NDC;1;on;TESTTHAT-SSP2-Base;TESTTHAT-SSP2-Base;reportingREMIND2MAgPIE
-TESTTHAT-SSP2-Policy;2;on;TESTTHAT-SSP2-Base;TESTTHAT-SSP2-Base;reportingREMIND2MAgPIE
+title;start;c_empty_model;path_gdx_ref;output
+TESTTHAT-SSP2-Base;1;on;;reportingREMIND2MAgPIE
+TESTTHAT-SSP2-NDC;1;on;TESTTHAT-SSP2-Base;reportingREMIND2MAgPIE
+TESTTHAT-SSP2-Policy;2;on;TESTTHAT-SSP2-Base;reportingREMIND2MAgPIE

@@ -5,7 +5,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc="costs") {
+getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc="costs",var_luc="smooth") {
   
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   
@@ -43,6 +43,15 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
   }
   
   .emissions_mac <- function(mag) {
+    # Select the LUC variable according to setting.
+    if (var_luc == "smooth") {
+      emi_co2_luc <- "Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr)"
+    } else if (var_luc == "raw") {
+      emi_co2_luc <- "Emissions|CO2|Land RAW|+|Land-use Change (Mt CO2/yr)"
+    } else {
+      stop(paste0("Unkown setting for 'var_luc': `", var_luc, "`. Only `smooth` or `raw` are allowed."))
+    }
+
     # define three columns of dataframe:
     #   emirem (remind emission names)
     #   emimag (magpie emission names)
@@ -53,7 +62,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
     map <- data.frame(emirem=NULL,emimag=NULL,factor_mag2rem=NULL,stringsAsFactors=FALSE)
     if("Emissions|N2O|Land|Agriculture|+|Animal Waste Management (Mt N2O/yr)" %in% getNames(mag)) {
       # MAgPIE 4 (up to date)
-      map <- rbind(map,data.frame(emimag="Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr)",                                               emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
+      map <- rbind(map,data.frame(emimag=emi_co2_luc,                                                                                      emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|+|Animal Waste Management (Mt N2O/yr)",                           emirem="n2oanwstm", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Inorganic Fertilizers (Mt N2O/yr)",          emirem="n2ofertin", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Manure applied to Croplands (Mt N2O/yr)",    emirem="n2oanwstc", factor_mag2rem=28/44,stringsAsFactors=FALSE))

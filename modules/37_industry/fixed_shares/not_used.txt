@@ -12,7 +12,7 @@ pm_emifacNonEnergy,          parameter,  not needed
 pm_exogDemScen,              input,      added by codeCheck
 pm_fedemand,                 parameter,  not needed
 pm_incinerationRate,         parameter,  not needed
-pm_outflowPrcIni,            parameter,  not needed
+pm_outflowPrcHist,           parameter,  not needed
 pm_secBioShare,              parameter,  not needed
 pm_specFeDem,                parameter,  not needed
 pm_tau_ces_tax,              input,      questionnaire
