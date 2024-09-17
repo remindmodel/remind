@@ -248,6 +248,10 @@ $if not "%cm_inco0RegiFactor%" == "off"           p_inco0(ttot,regi,te)$(p_inco0
 *** inco0 (and incolearn) are given in $/kW (or $/(tC/a) for ccs-related tech or $/(t/a) for process-based industry)
 *** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for ccs-related tech or T$/(Gt/a) for process-based industry)
 *** note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
+fm_dataglob("inco0",te)        = s_DpKW_2_TDpTW   * fm_dataglob("inco0",te);
+fm_dataglob("incolearn",te)    = s_DpKW_2_TDpTW   * fm_dataglob("incolearn",te);
+fm_dataglob("omv",te)          = s_DpKWa_2_TDpTWa * fm_dataglob("omv",te);
+p_inco0(ttot,regi,te)          = s_DpKW_2_TDpTW   * p_inco0(ttot,regi,te);
 
 *RP* rescale the global CSP investment costs in REMIND: Originally we assume a SM3/12h setup, while the cost data from IEA for the short term seems rather based on a SM2/6h setup (with 40% average CF)
 *** Accordingly, also decrease long-term costs in REMIND to 0.7 of the current values
