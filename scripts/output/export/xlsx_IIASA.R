@@ -139,12 +139,12 @@ withCallingHandlers({ # piping messages to logFile
   }
 
   mifdata$scenario <- gsub("^C_", "", mifdata$scenario)
-  message("Old names: ", sort(unique(mifdata$scenario)))
+  message("Old names: ", paste(sort(unique(mifdata$scenario)), collapse = ", "))
   for (i in names(renameScen)) {
     message("Rename scenario: ", i, " -> ", renameScen[[i]])
     mifdata$scenario[i == mifdata$scenario] <- renameScen[[i]]
   }
-  message("New names: ", sort(unique(mifdata$scenario)))
+  message("New names: ", paste(sort(unique(mifdata$scenario)), collapse = ", "))
 
   message("# ", length(temporarydelete), " variables are in the list to be temporarily deleted, ",
           length(unique(mifdata$variable[mifdata$variable %in% temporarydelete])), " were deleted.")
