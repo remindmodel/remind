@@ -565,13 +565,13 @@ p_PECarriers_CarbonContent(peFos)=pm_cintraw(peFos);
 *** Convert to GtC/TWa
 p_PECarriers_CarbonContent("pebiolc")=25 / s_zj_2_twa;
 loop(pe2se(entyPe,entySe,te)$(p_tech_co2capturerate(te)),
-  if(p_tech_CO2capturerate(te) gt 0,
-    if(p_tech_CO2capturerate(te) ge 1,
+  if(p_tech_co2capturerate(te) gt 0,
+    if(p_tech_co2capturerate(te) ge 1,
 		  abort "Error: Inconsistent switch usage. A CO2 capture rate is greater than 1. Check c_tech_CO2capturerate.";
 	  );
 *** Alter CO2 capture rate in fm_dataemiglob
 *** fm_dataemiglob is given in GtC/ZJ
-    fm_dataemiglob(entyPe,entySe,te,"cco2") = p_tech_CO2capturerate(te) * p_PECarriers_CarbonContent(entyPe) * s_zj_2_twa;
+    fm_dataemiglob(entyPe,entySe,te,"cco2") = p_tech_co2capturerate(te) * p_PECarriers_CarbonContent(entyPe) * s_zj_2_twa;
     if(sameAs(entyPe,"pebiolc"),
       fm_dataemiglob(entyPe,entySe,te,"co2") = -fm_dataemiglob(entyPe,entySe,te,"cco2") ;
     else

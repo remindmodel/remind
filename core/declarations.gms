@@ -120,7 +120,7 @@ p_maxPPP2050					     "maximum income GDP PPP among regions in 2050"
 p_maxSpvCost                                         "maximum spv investment cost among regions"
 
 $ifthen.tech_CO2capturerate not "%c_tech_CO2capturerate%" == "off"
-p_tech_CO2capturerate(all_te)                 "Technology specific CO2 capture rate" / %c_tech_CO2capturerate% /
+p_tech_co2capturerate(all_te)                 "Technology specific CO2 capture rate" / %c_tech_CO2capturerate% /
 p_PECarriers_CarbonContent(all_enty)	  "Carbon content of PE carriers [GtC/TWa]"
 $endif.tech_CO2capturerate
 
