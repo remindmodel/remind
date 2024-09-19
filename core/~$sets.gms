@@ -1052,6 +1052,7 @@ Sets
     2023_cond, 2023_uncond,
     2024_cond, 2024_uncond
   /
+  bounds "helper set to define upper and lower bounds read in from input data" /low, up/
 ;
 
 ***-----------------------------------------------------------------------------
