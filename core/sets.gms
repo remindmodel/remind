@@ -77,7 +77,7 @@ gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures (ele + act + tec)"
 gdp_SSP2EU_CAMP_weak   "CAMPAIGNers scenario with low ambition lifestyle change"
 gdp_SSP2EU_CAMP_strong "CAMPAIGNers scenario with high ambition lifestyle change"
 gdp_SSP2_demDiffer_IKEA "Demand reduction in Global North (CAZ,EUR,JPN,NEU,USA) and demand increase in Emerging regions (IND,LAM,OAS,SSA). Reduction follows the factor f of demRedStrong scenario, while increase uses factor 2-f."
-gdp_SSP2EU_demRedStrong "edget internal demScen, might be removed soon"
+gdp_SSP2_demRedStrong "edget internal demScen, might be removed soon"
 /
 
 all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
