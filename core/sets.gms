@@ -76,7 +76,6 @@ gdp_SSP2EU_NAV_lce "NAVIGATE demand scenarios: Low consumption energy (act + tec
 gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures (ele + act + tec)"
 gdp_SSP2EU_CAMP_weak   "CAMPAIGNers scenario with low ambition lifestyle change"
 gdp_SSP2EU_CAMP_strong "CAMPAIGNers scenario with high ambition lifestyle change"
-gdp_SSP2EU_demRedStrong "edget internal demScen, might be removed soon"
 /
 
 all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
