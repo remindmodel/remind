@@ -1039,6 +1039,12 @@ RCP_regions_world(RCP_regions_world_bunkers) "five RCP regions plus total (world
 ***-----------------------------------------------------------------------------
 Sets
   counter   "helper set to facilitate looping in defined order"   / 1 * 20 /
+  project_status "project status read in from input data to define upper and lower near-term capacitiy bounds for CCS"
+  /
+    "operational",
+    "construction",
+    "planned"
+  /
   NDC_version "NDC data version for NDC realizations of 40_techpol and 45_carbonprice"
   /
     2018_cond, 2018_uncond,
@@ -1047,7 +1053,6 @@ Sets
     2023_cond, 2023_uncond,
     2024_cond, 2024_uncond
   /
-  bounds "helper set to define upper and lower bounds read in from input data" /low, up/
 ;
 
 ***-----------------------------------------------------------------------------
