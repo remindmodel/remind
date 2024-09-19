@@ -404,22 +404,26 @@ $endif
 
 
 *** -------------------------------------------------------------------------------------------------------------
-*AM* Lower limit for 2020-2030 is capacities of all projects that are operational (2020-2030) and under construction (2025-2030) from project data base
-*AM* Upper limit for 2025 and 2030 additionally includes 40% (default, or changed by c_fracRealfromAnnouncedCCScap2030) announced/planned projects from project data base
-*AM* In nash-mode regions cannot easily share ressources, therefore CCS potentials are redistributed in Europe: 
+*AM* Lower limit for 2020-2030 is capacities of all projects that are operational (2020-2030) from project data base
+*AM* Upper limit for 2025 and 2030 additionally includes all projects under construction and 30% 
+*AM* (default, or changed by c_fracRealfromAnnouncedCCScap2030) of announced/planned projects from project data base
+*AM* See also corresponding code in input validation data preparation in mrremind/R/calcProjectPipeline.R.
+*AM* In nash-mode regions cannot easily share ressources, therefore CCS potentials are redistributed in Europe in data preprocessing in mrremind:
 *AM* Potential of EU27 regions is pooled and redistributed according to GDP (Only upper limit for 2030)
 *AM* Norway and UK announced to store CO2 for EU27 countries. So 50% of Norway and UK potential in 2030 is attributed to EU27-Pool
 *LP* if c_ccsinjecratescen=0 --> no CCS at all and vm_co2CCS is fixed to 0 before, therefore the upper bound is only set if there should be CCS!
 *** -------------------------------------------------------------------------------------------------------------
 
 if ( (c_ccsinjecratescen gt 0) AND (NOT cm_emiscen eq 1),
-  vm_co2CCS.lo(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = p_boundCapCCS(t,regi,"low")$(t.val le 2030) * s_MtCO2_2_GtC;
-  vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = (p_boundCapCCS(t,regi,"low")$(t.val le 2030) + (p_boundCapCCS(t,regi,"up")$(t.val le 2030) - p_boundCapCCS(t,regi,"low")$(t.val le 2030)) * c_fracRealfromAnnouncedCCScap2030) * s_MtCO2_2_GtC;
+  vm_co2CCS.lo(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = p_boundCapCCS(t,regi,"operational")$(t.val le 2030) * s_MtCO2_2_GtC;
+  vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = (p_boundCapCCS(t,regi,"operational")$(t.val le 2030) + p_boundCapCCS(t,regi,"construction")$(t.val le 2030) + p_boundCapCCS(t,regi,"planned")$(t.val le 2030) * c_fracRealfromAnnouncedCCScap2030) * s_MtCO2_2_GtC;
 );
 
+*AM* Fix capacities of technologies with carbon capture to zero if there are no CCS projects in the pipeline in that region
+*AM* This is only reasonable, as long as we also don't expect any CCU projects in the early years.
 loop(regi,
   loop(t$(t.val le 2030),
-    if( ( p_boundCapCCS(t,regi,"up") eq 0),
+    if( ((p_boundCapCCS(t,regi,"operational") + p_boundCapCCS(t,regi,"construction") + p_boundCapCCS(t,regi,"planned")) eq 0),
       vm_cap.fx(t,regi,teCCS,rlf) = 0;
     );
   );
