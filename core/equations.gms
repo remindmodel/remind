@@ -1068,11 +1068,11 @@ q_shfe(t,regi,entyFe,sector)$(pm_shfe_up(t,regi,entyFe,sector) OR pm_shfe_lo(t,r
         vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
 ;
 
-q_shSeFe(t,regi,entySe)$(entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)).. !!secondary energy carriers shares in final energy demand calculated only for entySeBio, entySeSyn and entySeFos
+q_shSeFe(t,regi,entySe)$(entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)).. !! share of energy carrier subtype in final energy demand of the aggregated carrier type (eg 'the share of bio-based FE liquids in all FE liquids')
   v_shSeFe(t,regi,entySe) 
-  * sum(seAgg$seAgg2se(seAgg,entySe), !!controlling the list of secondary energy carriers to sum up 
-      sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt),
-        sum(entySe2$seAgg2se(seAgg,entySe2),
+  * sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt),
+      sum(seAgg$seAgg2se(seAgg,entySe), !! determining the aggregate SE carrier type (liquids, gases, ...)
+        sum(entySe2$seAgg2se(seAgg,entySe2), !! summing over the bio/fos/syn variants of the chosen SE carrier"
           sum(entyFe$(sefe(entySe2,entyFe) AND entyFe2Sector(entyFe,sector)),
             vm_demFeSector_afterTax(t,regi,entySe2,entyFe,sector,emiMkt)))))
   =e=
@@ -1160,7 +1160,7 @@ q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
     (    (NOT(sameas(sector,"build") AND (t.val le 2020))) 
       OR (NOT(sameas(sector,"indst") AND (t.val le 2020)))
       OR (NOT(sameas(sector,"cdr") AND (t.val le 2020)))
-    ) AND !!disable historical year share incentives to buildings, industry and CDR  
+    ) AND !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds   
     ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
   )..
   v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
@@ -1175,7 +1175,7 @@ q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
     (    (NOT(sameas(sector,"build") AND (t.val le 2020))) 
       OR (NOT(sameas(sector,"indst") AND (t.val le 2020)))
       OR (NOT(sameas(sector,"cdr") AND (t.val le 2020)))
-    ) AND !!disable historical year share incentives to buildings, industry and CDR  
+    ) AND !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds   
     ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
   )..
   v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
@@ -1190,7 +1190,7 @@ q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
     (    (NOT(sameas(sector,"build") AND (t.val le 2020))) 
       OR (NOT(sameas(sector,"indst") AND (t.val le 2020)))
       OR (NOT(sameas(sector,"cdr") AND (t.val le 2020)))
-    ) AND !!disable historical year share incentives to buildings, industry and CDR  
+    ) AND !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds   
     ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
   )..
   v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
@@ -1205,7 +1205,7 @@ q_minMaxPenSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
     (    (NOT(sameas(sector,"build") AND (t.val le 2020))) 
       OR (NOT(sameas(sector,"indst") AND (t.val le 2020)))
       OR (NOT(sameas(sector,"cdr") AND (t.val le 2020)))
-    ) AND !!disable historical year share incentives to buildings, industry and CDR  
+    ) AND !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds   
     ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
   )..
   (

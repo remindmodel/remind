@@ -426,8 +426,8 @@ v_shGreenH2(ttot,all_regi)   "share of green hydrogen in all hydrogen by 2030 [0
 v_shBioTrans(ttot,all_regi)    "Share of biofuels in transport liquids from 2025 onwards. Value between 0 and 1."
 
 v_shfe(ttot,all_regi,all_enty,emi_sectors)           "share of final energy in sector total final energy [0..1]"
-v_shSeFe(ttot,all_regi,all_enty)                      "share of secondary energy on total secondary energy type (liquids, solids and gases) [0..1]"
-v_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)    "share of secondary energy on secondary energy type (liquids, solids and gases) per final energy, sector and emission market [0..1]"
+v_shSeFe(ttot,all_regi,all_enty)                     "share of energy carrier subtype in final energy demand of the aggregated carrier type (eg 'the share of bio-based FE liquids in all FE liquids') [0..1]"
+v_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "share of energy carrier subtype in final energy demand of the aggregated carrier type per sector/emiMarket combination (eg 'the share of bio-based FE liquids in all FE liquids used in ETS-covered transport') [0..1]"
 v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids in sector final energy [0..1]"
 
 vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
