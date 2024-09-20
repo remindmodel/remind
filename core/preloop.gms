@@ -189,7 +189,7 @@ if (cm_startyear gt 2005,
 Execute_Loadpoint 'input_ref' vm_capEarlyReti.l = vm_capEarlyReti.l;
 );
 
-*** initialize secondary energy shares in sectors if deviations are penalized, i.e., if cm_seFeSectorShareDevMethod is enabled
+*** initialize the carrier subtype shares in final energy demand such that the starting point for the model is "all sectors have the same bio/fos/syn shares for a given carrier type" when cm_seFeSectorShareDevMethod is enabled
 p_shSeFe(t,regi,entySe)$((entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) AND sum(seAgg$seAgg2se(seAgg,entySe), sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), sum(entySe2$seAgg2se(seAgg,entySe2), sum(entyFe$(sefe(entySe2,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt))))) ) =
   sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), sum(entyFe$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))
   /
