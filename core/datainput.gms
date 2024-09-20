@@ -173,7 +173,8 @@ $offdelim
 /
 ;
 
-*** windoffshore-todo 
+*** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated 
 p_inco0(ttot,all_regi,"windon") $ (p_inco0(ttot,all_regi,"windon") eq 0) = p_inco0(ttot,all_regi,"wind");
 p_inco0(ttot,all_regi,"wind") = 0;
 
@@ -672,6 +673,7 @@ $offdelim
 $Onlisting
 
 *** windoffshore-todo 
+*** allow input data with either "wind" or "windon" until mrremind is updated 
 pm_histCap(tall,all_regi,"windon") $ (pm_histCap(tall,all_regi,"windon") eq 0) = pm_histCap(tall,all_regi,"wind");
 pm_histCap(tall,all_regi,"wind") = 0;
 
@@ -700,6 +702,7 @@ $Onlisting
 
 *CG* setting wind offshore capacity factor to be the same as onshore here (later adjusting it in vm_capFac)
 *** windoffshore-todo 
+*** allow input data with either "wind" or "windon" until mrremind is updated 
 f_cf(ttot,regi,"windon") $ (f_cf(ttot,regi,"windon") eq 0) = f_cf(ttot,regi,"wind");
 f_cf(ttot,regi,"storwindon") $ (f_cf(ttot,regi,"storwindon") eq 0) = f_cf(ttot,regi,"storwind");
 f_cf(ttot,regi,"gridwindon") $ (f_cf(ttot,regi,"gridwindon") eq 0) = f_cf(ttot,regi,"gridwind");
@@ -1068,6 +1071,7 @@ $offdelim
 ;
 
 *** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated 
 p_histCapFac(tall,all_regi,"windon") $ (p_histCapFac(tall,all_regi,"windon") eq 0) = p_histCapFac(tall,all_regi,"wind");
 p_histCapFac(tall,all_regi,"wind") = 0;
 
@@ -1150,6 +1154,7 @@ $offdelim
 p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
 
 *** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated 
 p_adj_deltacapoffset(t,regi,"windon") $ (p_adj_deltacapoffset(t,regi,"windon") eq 0) = p_adj_deltacapoffset(t,regi,"wind");
 p_adj_deltacapoffset(t,regi,"windoff")= p_adj_deltacapoffset(t,regi,"windon");
 p_adj_deltacapoffset(t,regi,"wind") = 0;

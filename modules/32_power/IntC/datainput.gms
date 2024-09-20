@@ -38,6 +38,7 @@ $offdelim
 ;
 
 *** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated 
 f32_factorStorage(all_regi,"windon") $ (f32_factorStorage(all_regi,"windon") eq 0) = f32_factorStorage(all_regi,"wind");
 f32_factorStorage(all_regi,"windoff") = f32_factorStorage(all_regi,"windon");
 f32_factorStorage(all_regi,"windon")  = 1.35 * f32_factorStorage(all_regi,"windon"); 

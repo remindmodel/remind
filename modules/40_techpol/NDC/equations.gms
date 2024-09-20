@@ -17,7 +17,7 @@ q40_ElecBioBound(t,regi)$(t.val gt 2015)..
 
 *** windoffshore-todo: separate onshore and offshore NDC targets
 q40_windBound(t,regi)$(t.val gt 2025)..
-  sum(teWind(te)$(sameas(te,"windon") OR sameas(te,"windoff")), vm_cap(t,regi,te,"1")) 
+  sum(teWind, vm_cap(t,regi,teWind,"1")) 
     =g= p40_TechBound(t,regi,"windon") * 0.001
 ;
 

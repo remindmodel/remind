@@ -15,6 +15,7 @@ $offdelim
 ;
 
 *** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated 
 f04_IO_input(tall,all_regi,"pewin","seel","windon") $ (f04_IO_input(tall,all_regi,"pewin","seel","windon") eq 0) = f04_IO_input(tall,all_regi,"pewin","seel","wind");
 f04_IO_input(tall,all_regi,"pewin","seel","wind") = 0;
 *CG* setting historical production from wind offshore to 0 (due to the scarcity of offshore wind before 2015)
@@ -44,6 +45,7 @@ $offdelim
 ;
 
 *** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated 
 f04_IO_output(tall,all_regi,"pewin","seel","windon") $ (f04_IO_output(tall,all_regi,"pewin","seel","windon") eq 0) = f04_IO_output(tall,all_regi,"pewin","seel","wind");
 f04_IO_output(tall,all_regi,"pewin","seel","wind") = 0;
 
