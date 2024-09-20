@@ -597,10 +597,10 @@ s_MtCO2_2_GtC                                         "conversion factor from Mt
 
 s_MtCH4_2_TWa                                        "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
 
-s_D2015_2_D2017                                         "Convert $2015 to $2017"      /1.0292/
-sm_D2005_2_D2017                                         "Convert $2005 to $2017"      /1.231/
-sm_D2020_2_D2017                                         "Convert $2020 to $2017"      /0.9469/
-sm_EURO2023_2_D2017                                      "Convert EURO 2023 to $2017"  /0.8915/
+s_D2015_2_D2017                                         "Convert US$2015 to US$2017"      /1.0292/
+sm_D2005_2_D2017                                         "Convert US$2005 to US$2017"      /1.231/
+sm_D2020_2_D2017                                         "Convert US$2020 to US$2017"      /0.9469/
+sm_EURO2023_2_D2017                                      "Convert EURO 2023 to US$2017"  /0.8915/
 
 sm_h2kg_2_h2kWh                                      "convert kilogramme of hydrogen to kwh energy value." /32.5/
 sm_DptCO2_2_TDpGtC                                    "Conversion multiplier to go from $/tCO2 to T$/GtC: 44/12/1000"     /0.00366667/
