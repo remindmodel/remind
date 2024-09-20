@@ -170,6 +170,7 @@ vm_macBase.fx(ttot,regi,"ch4wstl")$(ttot.val ge 2005) = p_emineg_econometric(reg
 vm_macBase.fx(ttot,regi,"n2owaste")$(ttot.val ge 2005) = p_emineg_econometric(regi,"n2owaste","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"n2owaste","p2");
 
 
+vm_macBase.lo(ttot,regi,"co2cement_process")$( ttot.val ge 2005 ) = 0;
 $ifthen.fixed_shares "%industry%" == "fixed_shares"
 vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
   = ( pm_pop(ttot,regi)
