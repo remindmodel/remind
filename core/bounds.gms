@@ -43,16 +43,16 @@ loop(se2se(enty,enty2,te),
 loop(regi,
   loop(teRe2rlfDetail(te,rlf),
     if( (pm_dataren(regi,"maxprod",rlf,te) gt 0),
-        vm_capDistr.lo(t,regi,te,rlf)$(t.val gt 2011) = 1e-8;
+        v_capDistr.lo(t,regi,te,rlf)$(t.val gt 2011) = 1e-8;
 *cb* make sure that grade distribution in early time steps with capacity fixing is close to optimal one assumed for vm_capFac calibration, divide by p_aux_capacityFactorHistOverREMIND to correct for deviation of REMIND capacity factors from historic capacity factors
-      vm_capDistr.lo("2015",regi,te,rlf) = 0.90 / max(1, p_aux_capacityFactorHistOverREMIND(regi,te)) * p_aux_capThisGrade(regi,te,rlf);
-      vm_capDistr.lo("2020",regi,te,rlf) = 0.90 / max(1, p_aux_capacityFactorHistOverREMIND(regi,te)) * p_aux_capThisGrade(regi,te,rlf);
+      v_capDistr.lo("2015",regi,te,rlf) = 0.90 / max(1, p_aux_capacityFactorHistOverREMIND(regi,te)) * p_aux_capThisGrade(regi,te,rlf);
+      v_capDistr.lo("2020",regi,te,rlf) = 0.90 / max(1, p_aux_capacityFactorHistOverREMIND(regi,te)) * p_aux_capThisGrade(regi,te,rlf);
     );
   );
 );
 
 *' Make sure no grades > 9 are used. Only cosmetic to avoid entries in lst file
-vm_capDistr.fx(t,regi,te,rlf)$(rlf.val gt 9) = 0;
+v_capDistr.fx(t,regi,te,rlf)$(rlf.val gt 9) = 0;
 
 *' No battery storage in 2010:
 vm_cap.up("2010",regi,teStor,"1") = 0;
@@ -70,6 +70,10 @@ vm_deltaCap.fx(t,regi,"pcc",rlf) = 0;
 vm_cap.fx(t,regi,"pco",rlf)     = 0;
 vm_deltaCap.fx(t,regi,"pco",rlf) = 0;
 
+*' Switch off grey hydrogen investments in gash2 technology from 2025. Our current seh2 hydrogen represents only additional (clean) hydrogen use cases to current ones
+*' and there are no plans to expand grey hydrogen production for that.
+*' It is allowed before 2020 to not make the model infeasible for low demands of hydrogen in that year.
+vm_deltaCap.up(t,regi,"gash2",rlf)$((t.val ge 2025)) = 1e-8;
 *' @stop
 
 *** -----------------------------------------------------------------------------------------------------------------
@@ -337,26 +341,35 @@ vm_deltaCap.fx(t,regi,te,rlf)$(t.val le 2025 AND pm_data(regi,"tech_stat",te) eq
 *CB allow for early retirement at the start of free model time
 *CB ------------------------------------------------------------
 *** allow non zero early retirement for all technologies to avoid mathematical errors
-vm_capEarlyReti.up(ttot,regi,te) = 1e-6;
-
+vm_capEarlyReti.up(t,regi,te) = 1e-6;
 
 ***generally allow full early retiremnt for all fossil technologies without CCS
-vm_capEarlyReti.up(ttot,regi,te)$(teFosNoCCS(te)) = 1;
-*** FS: allow nuclear early retirement (for nucscen 7)
-vm_capEarlyReti.up(ttot,regi,"tnrs") = 1;
+vm_capEarlyReti.up(t,regi,te)$(teFosNoCCS(te)) = 1;
+*** allow nuclear early retirement
+vm_capEarlyReti.up(t,regi,"tnrs") = 1;
+*** allow early retirement of biomass used in electricity
+vm_capEarlyReti.up(t,regi,"bioigcc") = 1;
+*** allow early retirement of biomass used for heat and power
+vm_capEarlyReti.up(t,regi,"biohp") = 1;
+vm_capEarlyReti.up(t,regi,"biochp") = 1;
+
+*** allow early retirement for techs added to the c_tech_earlyreti_rate switch
+$ifthen.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
+loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
+  vm_capEarlyReti.up(t,regi,te)$(regi_group(ext_regi,regi))= 1;
+);
+$endif.tech_earlyreti
 
 ***restrict early retirement to the modeling time frame (to reduce runtime, the early retirement equations are phased out after 2110)
 vm_capEarlyReti.up(ttot,regi,te)$(ttot.val lt 2009 or ttot.val gt 2111) = 0;
 
-*cb 20120224 lower bound of 0.01% to help the model to be aware of the early retirement option
-vm_capEarlyReti.lo(ttot,regi,te)$(teFosNoCCS(te) AND ttot.val gt 2011 AND ttot.val lt 2111) = 0.0001;
-vm_capEarlyReti.lo(ttot,regi,"tnrs")$(ttot.val gt 2011 AND ttot.val lt 2111) = 0.0001;
+* lower bound of 0.01% to help the model to be aware of the early retirement option
+vm_capEarlyReti.lo(t,regi,te)$((vm_capEarlyReti.up(t,regi,te) ge 1) and (t.val gt 2010) and (t.val le 2100)) = 1e-4;
 
 *cb 20120301 no early retirement for dot, they are used despite their economic non-competitiveness for various reasons.
-vm_capEarlyReti.fx(ttot,regi,"dot")=0;
+vm_capEarlyReti.fx(t,regi,"dot")=0;
 *rp 20210118 no investment into oil turbines in Europe
 vm_deltaCap.up(t,regi,"dot","1")$( (t.val gt 2005) AND regi_group("EUR_regi",regi) )  = 1e-6;
-
 
 *' @code{extrapage: "00_model_assumptions"}
 *** -----------------------------------------------------------------------------
@@ -391,22 +404,26 @@ $endif
 
 
 *** -------------------------------------------------------------------------------------------------------------
-*AM* Lower limit for 2020-2030 is capacities of all projects that are operational (2020-2030) and under construction (2025-2030) from project data base
-*AM* Upper limit for 2025 and 2030 additionally includes 40% (default, or changed by c_fracRealfromAnnouncedCCScap2030) announced/planned projects from project data base
-*AM* In nash-mode regions cannot easily share ressources, therefore CCS potentials are redistributed in Europe: 
+*AM* Lower limit for 2020-2030 is capacities of all projects that are operational (2020-2030) from project data base
+*AM* Upper limit for 2025 and 2030 additionally includes all projects under construction and 30% 
+*AM* (default, or changed by c_fracRealfromAnnouncedCCScap2030) of announced/planned projects from project data base
+*AM* See also corresponding code in input validation data preparation in mrremind/R/calcProjectPipeline.R.
+*AM* In nash-mode regions cannot easily share ressources, therefore CCS potentials are redistributed in Europe in data preprocessing in mrremind:
 *AM* Potential of EU27 regions is pooled and redistributed according to GDP (Only upper limit for 2030)
 *AM* Norway and UK announced to store CO2 for EU27 countries. So 50% of Norway and UK potential in 2030 is attributed to EU27-Pool
 *LP* if c_ccsinjecratescen=0 --> no CCS at all and vm_co2CCS is fixed to 0 before, therefore the upper bound is only set if there should be CCS!
 *** -------------------------------------------------------------------------------------------------------------
 
 if ( (c_ccsinjecratescen gt 0) AND (NOT cm_emiscen eq 1),
-  vm_co2CCS.lo(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = pm_boundCapCCS(t,regi,"low")$(t.val le 2030) * s_MtCO2_2_GtC;
-  vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = (pm_boundCapCCS(t,regi,"low")$(t.val le 2030) + (pm_boundCapCCS(t,regi,"up")$(t.val le 2030) - pm_boundCapCCS(t,regi,"low")$(t.val le 2030)) * c_fracRealfromAnnouncedCCScap2030) * s_MtCO2_2_GtC;
+  vm_co2CCS.lo(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = p_boundCapCCS(t,regi,"operational")$(t.val le 2030) * s_MtCO2_2_GtC;
+  vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = (p_boundCapCCS(t,regi,"operational")$(t.val le 2030) + p_boundCapCCS(t,regi,"construction")$(t.val le 2030) + p_boundCapCCS(t,regi,"planned")$(t.val le 2030) * c_fracRealfromAnnouncedCCScap2030) * s_MtCO2_2_GtC;
 );
 
+*AM* Fix capacities of technologies with carbon capture to zero if there are no CCS projects in the pipeline in that region
+*AM* This is only reasonable, as long as we also don't expect any CCU projects in the early years.
 loop(regi,
   loop(t$(t.val le 2030),
-    if( ( pm_boundCapCCS(t,regi,"up") eq 0),
+    if( ((p_boundCapCCS(t,regi,"operational") + p_boundCapCCS(t,regi,"construction") + p_boundCapCCS(t,regi,"planned")) eq 0),
       vm_cap.fx(t,regi,teCCS,rlf) = 0;
     );
   );
@@ -418,6 +435,13 @@ loop(regi,
 	vm_cap.fx("2030",regi,teCCS,rlf) = 0;
   );
 );
+
+*** -------------------------------------------------------------------------------------------------------------
+*AM* Limit REMINDs ability to vent captured CO2 to 1 MtCO2 per yr per region. This happens otherwise to a great extend in stringent climate 
+*AM* policy scenarios if CCS and CCU capacities are limited in early years, to lower overall adjustment costs of capture technologies.
+*AM* In reality, people don't have perfect foresight and without storage or usage capacities, no capture facilities will be built.
+v_co2capturevalve.up(t,regi) = 1 * s_MtCO2_2_GtC;
+
 
 *AL* fixing prodFE in 2005 to the value contained in pm_cesdata("2005",regi,in,"quantity"). This is done to ensure that the energy system will reproduce the 2005 calibration values.
 *** Fixing will produce clearly attributable errors (good for debugging) when using inconsistent data, as the GAMS accuracy when comparing fixed results is very high (< 1e-8).
@@ -439,10 +463,11 @@ $if  %c_SSP_forcing_adjust% == "forcing_SSP1"    vm_deltaCap.up(t,regi,"coalgas"
 *** -------------------------------------------------------------
 *** H2 Curtailment
 *** -------------------------------------------------------------
+*** RLDC removal
 ***Fixing h2curt value to zero to avoid the model to generate SE out of nothing.
 ***Models that have additional se production channels should release this variable (eg. RLDC power module).
 loop(prodSeOth2te(enty,te),
-  vm_prodSeOth.fx(t,regi,"seh2","h2curt") = 0;
+  v_prodSeOth.fx(t,regi,"seh2","h2curt") = 0;
 );
 
 
@@ -536,6 +561,5 @@ $ENDIF.transpGDPscale
 
 v_changeProdStartyearSlack.up(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = + c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
 v_changeProdStartyearSlack.lo(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = - c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
-
 
 *** EOF ./core/bounds.gms

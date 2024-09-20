@@ -18,36 +18,115 @@
 *'
 *' ###### Bounds for Historic and Near-term Alignment
 
+*' ####### Power Sector
+
+$ifThen.tech_bounds_2025 "%cm_tech_bounds_2025%" == "on"
 *' This limits wind and solar PV capacity additions for 2025 in light of recent slow developments as of 2023.
 *' Upper bound is double the historic maximum capacity addition in 2011-2020.
+*' In addition: Limit solar PV capacity to 120 GW in 2025 (2023-2027 average) given that we are at only 76 GW PV in 2023
 loop(regi$(sameAs(regi,"DEU")),
   vm_deltaCap.up("2025",regi,"wind","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"wind"));
   vm_deltaCap.up("2025",regi,"spv","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"spv"));
+  vm_cap.up("2025",regi,"spv","1")=0.12;
 );
+$endIf.tech_bounds_2025
+
 
 *' These bounds account for historic gas power development.
-vm_capTotal.up("2015",regi,"pegas","seel")$(sameas(regi,"DEU"))=30/1000;
-vm_capTotal.up("2020",regi,"pegas","seel")$(sameas(regi,"DEU"))=34/1000;
+*' TODO: Historical fixings should be done in the core the via input data from mrremind, this still needs to be moved
+v47_prodSEtotal.up("2020",regi,"pegas","seel")$(sameAs(regi,"DEU"))= 0.36*sm_EJ_2_TWa;
+$ifThen.tech_bounds_2025 "%cm_tech_bounds_2025%" == "on"
+v47_prodSEtotal.up("2025",regi,"pegas","seel")$(sameAs(regi,"DEU"))= 0.4*sm_EJ_2_TWa;
+$endIf.tech_bounds_2025
 
 *' These bounds account for historic coal power development.
 vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"DEU"))) = 38.028/1000;
+*' This limits early retirement of coal power in Germany in 2020s to avoid extremly fast phase-out.
+vm_capEarlyReti.up('2025',regi,'pc')$(sameAs(regi,"DEU")) = 0.65;
 
-*' These bounds account for historic and near-term gas power development and prevent too sudden coal to gas switch in Germany by 2025.
+
+*' This aligns 2020 chp capcities for Germany with historic data (AGEB)
+*' most of district heating is provided by CHP plants.
+*' coal share of chp heat output to be between 20-25% of total district heating demand
+*' gas share of chp heat output to be between 50-55% of total district heating demand
+*' bio share of chp heat output to be between 15-25% of total district heating demand
+*' TODO: Historical fixings should be done in the core via input data from mrremind, this still needs to be moved
 loop(regi$(sameAs(regi,"DEU")),
-vm_deltaCap.up("2015",regi,"ngcc","1") = 0.002;
-vm_deltaCap.up("2020",regi,"ngcc","1") = 0.0015;
-vm_deltaCap.up("2025",regi,"ngcc","1") = 0.0015;
-*' Along the same lines, this limits early retirement of coal power in Germany in 2020s to avoid extremly fast phase-out.
-vm_capEarlyReti.up('2025',regi,'pc') = 0.65; 
+    loop(t$(t.val eq 2020),
+        vm_cap.lo(t,regi,"coalchp","1")= 0.2
+*** total FE heat demand from industry and buildings calibration trajectories
+                                            * (pm_cesdata(t,regi,"feheb","quantity")
+                                                + pm_cesdata(t,regi,"feheb","quantity"))
+*** divide by tdhes efficiency get from FE heat to SE heat, i.e. take into account heat transmission losses
+                                            / pm_eta_conv(t,regi,"tdhes")
+*** divide by pm_prodCouple to get from heat production to production of seel
+                                            /  pm_prodCouple(regi,"pecoal","seel","coalchp","sehe")
+*** divide by capacity factor to get from seel production in TWa to capacity in TW
+                                            / pm_cf(t,regi,"coalchp");
+
+        vm_cap.up(t,regi,"coalchp","1")= 0.25
+*** total FE heat demand from industry and buildings calibration trajectories
+                                            * (pm_cesdata(t,regi,"feheb","quantity")
+                                                + pm_cesdata(t,regi,"feheb","quantity"))
+*** divide by tdhes efficiency get from FE heat to SE heat, i.e. take into account heat transmission losses
+                                            / pm_eta_conv(t,regi,"tdhes")
+*** divide by pm_prodCouple to get from heat production to production of seel
+                                            /  pm_prodCouple(regi,"pecoal","seel","coalchp","sehe")
+*** divide by capacity factor to get from seel production in TWa to capacity in TW
+                                            / pm_cf(t,regi,"coalchp");
+        vm_cap.lo(t,regi,"gaschp","1")= 0.5
+*** total FE heat demand from industry and buildings calibration trajectories
+                                            * (pm_cesdata(t,regi,"feheb","quantity")
+                                                + pm_cesdata(t,regi,"feheb","quantity"))
+*** divide by tdhes efficiency get from FE heat to SE heat, i.e. take into account heat transmission losses
+                                            / pm_eta_conv(t,regi,"tdhes")
+*** divide by pm_prodCouple to get from heat production to production of seel
+                                            /  pm_prodCouple(regi,"pegas","seel","gaschp","sehe")
+*** divide by capacity factor to get from seel production in TWa to capacity in TW
+                                            / pm_cf(t,regi,"gaschp");
+
+        vm_cap.up(t,regi,"gaschp","1")= 0.55
+*** total FE heat demand from industry and buildings calibration trajectories
+                                            * (pm_cesdata(t,regi,"feheb","quantity")
+                                                + pm_cesdata(t,regi,"feheb","quantity"))
+*** divide by tdhes efficiency get from FE heat to SE heat, i.e. take into account heat transmission losses
+                                            / pm_eta_conv(t,regi,"tdhes")
+*** divide by pm_prodCouple to get from heat production to production of seel
+                                            /  pm_prodCouple(regi,"pegas","seel","gaschp","sehe")
+*** divide by capacity factor to get from seel production in TWa to capacity in TW
+                                            / pm_cf(t,regi,"gaschp");
+
+        vm_cap.lo(t,regi,"biochp","1")= 0.15
+*** total FE heat demand from industry and buildings calibration trajectories
+                                            * (pm_cesdata(t,regi,"feheb","quantity")
+                                                + pm_cesdata(t,regi,"feheb","quantity"))
+*** divide by tdhes efficiency get from FE heat to SE heat, i.e. take into account heat transmission losses
+                                            / pm_eta_conv(t,regi,"tdhes")
+*** divide by pm_prodCouple to get from heat production to production of seel
+                                            /  pm_prodCouple(regi,"pebiolc","seel","biochp","sehe")
+*** divide by capacity factor to get from seel production in TWa to capacity in TW
+                                            / pm_cf(t,regi,"biochp");
+
+        vm_cap.up(t,regi,"biochp","1")= 0.25
+*** total FE heat demand from industry and buildings calibration trajectories
+                                            * (pm_cesdata(t,regi,"feheb","quantity")
+                                                + pm_cesdata(t,regi,"feheb","quantity"))
+*** divide by tdhes efficiency get from FE heat to SE heat, i.e. take into account heat transmission losses
+                                            / pm_eta_conv(t,regi,"tdhes")
+*** divide by pm_prodCouple to get from heat production to production of seel
+                                            /  pm_prodCouple(regi,"pebiolc","seel","biochp","sehe")
+*** divide by capacity factor to get from seel production in TWa to capacity in TW
+                                            / pm_cf(t,regi,"biochp");
+
+
+    );
 );
 
+*' ####### Carbon Management
 
-*' This limits coal-power capacity to at least 5 GW in 2030 to account for emissions 
-*' from fossil waste (~20 MtCO2/yr as of 2020) in 2030 target as waste currently subsumed under coal-power in REMIND.
-*' Waste power plants will not be phase-out by 2030. 
-*' Rough calculation with REMIND parameters:
-*' 5 GW * 8760 (hours per year) * 0.5 (capacity factor) / 0.4 (conversion efficiency) * 1e-3 * 0.35 MtCO2/TWh (emissions factor coal) ~ 20 Mt CO2/yr.
-vm_capTotal.lo("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=5/1000;
+*' only start industry carbon capture in Germany by 2030 as status of projects for 2025 unclear,
+*' see IEA CCUS database https://www.iea.org/data-and-statistics/data-tools/ccus-projects-explorer
+vm_emiIndCCS.up(t,regi,emiInd37)$(sameAs(regi,"DEU") AND t.val lt 2030)=0;
 
 *' ###### Bounds for Germany-specific Policies (activated by switches)
 
@@ -59,7 +138,7 @@ vm_emiTeDetail.up(t,regi,peFos,entySe,teFosCCS,"cco2")$((sameas(regi,"DEU")) AND
 vm_emiCdrAll.up(t,regi)$((cm_deuCDRmax ge 0) AND (sameas(regi,"DEU"))) = cm_deuCDRmax / 1000 / sm_c_2_co2;
 
 
-*' ###### Bounds for German Energy Security Scenario (activated by switches)
+*' Bounds for German Energy Security Scenario (activated by switches)
 
 *' Background: The energy security scenario used for the Ariadne Report on energy sovereignity in 2022 assumes that there is a continued gas crisis after 2022/23 in Germany
 *' with higher gas prices (see cm_EnSecScen_price) or limits to gas consumption (see cm_EnSecScen_limit switch) in the medium-term.

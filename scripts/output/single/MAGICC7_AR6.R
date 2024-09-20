@@ -104,7 +104,7 @@ if (is.null(cfg$climate_assessment_magicc_bin)) cfg$climate_assessment_magicc_bi
 if (is.null(cfg$climate_assessment_magicc_prob_file_reporting)) cfg$climate_assessment_magicc_prob_file_reporting <- "/p/projects/rd3mod/climate-assessment-files/parsets/0fd0f62-derived-metrics-id-f023edb-drawnset.json"
 
 # All climate-assessment files will be written to this folder
-climateAssessmentFolder <- normalizePath(file.path(outputdir, "climate-assessment-data"))
+climateAssessmentFolder <- normalizePath(file.path(outputdir, "climate-assessment-data"), mustWork = FALSE)
 dir.create(climateAssessmentFolder, showWarnings = FALSE)
 
 # The base name, that climate-assessment uses to derive it's output names
@@ -229,10 +229,20 @@ as.quitte(remindReportingFile) %>%
   write.mif(remindReportingFile)
 
 piamutils::deletePlus(remindReportingFile, writemif = TRUE)
+logmsg <- paste0(date(), " postprocessing done! Results appended to REMIND mif '", remindReportingFile, "'\n")
 
-logmsg <- paste0(
-  date(), " postprocessing done! Results appended to REMIND mif '", remindReportingFile, "'\n",
-  "MAGICC7_AR6.R finished\n"
-)
+############################# CLEAN UP WORKERS FOLDER ##########################
+# openscm_runner not remnove up temp dirs. Do this manually since we keep running into file ownership issues
+workersFolder <- file.path(climateAssessmentFolder, "workers")  # replace with your directory path
+if (dir.exists(workersFolder)) {
+  # Check if directory is empty
+  if (length(list.files(workersFolder)) == 0) {
+    # Remove directory. Option recursive must be TRUE for some reason, otherwise unlink won't do its job
+    unlink(workersFolder, recursive = TRUE)
+    logmsg <- paste0(logmsg, date(), "  Removed workers folder '", workersFolder, "'\n")
+  }
+}
+
+logmsg <- paste0(logmsg, date(), "MAGICC7_AR6.R finished\n")
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)

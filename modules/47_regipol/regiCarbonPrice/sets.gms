@@ -30,7 +30,7 @@ $ifThen.emiMkt not "%cm_emiMktTarget%" == "off"
   regiEmiMktconvergenceType(iteration,ttot,ttot,ext_regi,emiMktExt,convergenceType) "saving convergence type in iteration" / /
 $ENDIF.emiMkt
 
-*** Implicit tax/subsidy necessary to achieve quantity target for primary, secondary, final energy and/or CCS
+*** Implicit tax/subsidy necessary to achieve quantity target for primary, secondary, final energy and/or CCS and/or OAE
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 
 taxType "PE, SE or FE tax type"
@@ -45,7 +45,7 @@ targetType "PE, SE or FE target type"
   s  "relative target (s=share)"
 /
 
-qttyTarget "quantity target for energy carrier level (primary, secondary, final energy) or CCS"
+qttyTarget "quantity target for energy carrier level (primary, secondary, final energy) or CCS or OAE"
 /
   PE              "Primary Energy"
   SE              "Secondary Energy"
@@ -54,6 +54,7 @@ qttyTarget "quantity target for energy carrier level (primary, secondary, final 
   FE_wo_n_e       "Final Energy without non-energy"
   FE_wo_b_wo_n_e  "Final Energy without bunkers and non-energy"
   CCS             "carbon capture and storage"
+  oae             "ocean alkalinity enhancement"
 /
 
 qttyTargetGroup "quantity target aggregated categories"
@@ -107,6 +108,23 @@ qttyDelayType_47 "options to define different delay rules for starting the quant
   emiConv      "quantity targets are only active after emission targets defined at the carbon price modules and at the regipol modules converged"
   emiRegiConv  "quantity targets are only active after regional emission targets achieved given deviation levels"
 /
+
+$ifThen.cm_implicitQttyTargetType "%cm_implicitQttyTargetType%" == "scenario"
+qttyTargetScenario  "hard-coded quantity scenarios"
+/
+  EU27_eedEff  "2018 energy efficiency directive    (846 Mtoe final energy by 2030)"
+  EU27_ff55Eff "Fit for 55 energy efficiency target (787 Mtoe final energy by 2030)"
+  EU27_RpEUEff "RePowerEU energy efficiency target  (750 Mtoe final energy by 2030)"
+
+  EU27_bio4    "EU-27 primary energy biomass limited to 6 EJ by 2035 and 4 EJ by 2050"
+  EU27_bio7p5  "EU-27 primary energy biomass limited to 7.5 EJ by 2035 and 2050"
+  EU27_bio12   "EU-27 primary energy biomass limited to 12 EJ by 2035 and 2050"
+
+  EU27_limVRE  "wind and solar limited to linear extrapolation of 2021-2022 growth of generation capacity by 2025 and 2050"
+/
+qttyTargetActiveScenario(qttyTargetScenario) "current run active quantity scenarios" / %cm_implicitQttyTarget% / 
+$endif.cm_implicitQttyTargetType
+
 $endIf.cm_implicitQttyTarget
 
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
@@ -135,6 +153,8 @@ exogDemScen       "exogenuous FE and ES demand scenarios that can be activated b
 /
         ariadne_bal
         ariadne_ensec
+        ariadne_highDem
+        ariadne_lowDem
 /
 $endif.exogDemScen
 
@@ -152,7 +172,6 @@ $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
     energyQttyTargetANDGroup2enty("FE","all",entySe) = YES;
   );
 $endIf.cm_implicitQttyTarget
-
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/sets.gms
 

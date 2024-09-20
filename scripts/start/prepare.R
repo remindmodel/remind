@@ -123,7 +123,12 @@ prepare <- function() {
   # If a path to a MAgPIE report is supplied use it as REMIND input (used for REMIND-MAgPIE coupling)
   # ATTENTION: modifying gms files
   if (!is.null(cfg$pathToMagpieReport)) {
-    getReportData(path_to_report = cfg$pathToMagpieReport,inputpath_mag=cfg$gms$biomass,inputpath_acc=cfg$gms$agCosts)
+    getReportData(
+      path_to_report = cfg$pathToMagpieReport,
+      inputpath_mag  = cfg$gms$biomass,
+      inputpath_acc  = cfg$gms$agCosts,
+      var_luc        = cfg$var_luc
+    )
   }
 
   # Update module paths in GAMS code
@@ -434,112 +439,18 @@ prepare <- function() {
     }
 
     #KK CDR module realizations
-    levs_manipulateThis <- c(levs_manipulateThis,
-      list(c("rockgrind", "weathering")), list(c("grindrock", "weathering")))
     fixings_manipulateThis <- c(fixings_manipulateThis,
-      list(c("rockgrind", "weathering")), list(c("grindrock", "weathering")))
+                                list(c("vm_ccs_cdr.FX", "vm_co2capture_cdr.FX")),
+                                list(c("v33_emi.FX", "vm_emiCdrTeDetail.FX")))
+
+    levs_manipulateThis <- c(levs_manipulateThis,
+                              list(c("vm_ccs_cdr.L", "vm_co2capture_cdr.L")),
+                              list(c("v33_emi.L", "vm_emiCdrTeDetail.L")))
+
     margs_manipulateThis <- c(margs_manipulateThis,
-      list(c("rockgrind", "weathering")), list(c("grindrock", "weathering")))
-
-    if(cfg$gms$CDR == 'DAC'){
-      fixings_manipulateThis <- c(fixings_manipulateThis,
-                                  list(c("v33_emiEW.FX", "!!v33_emiEW.FX")),
-                                  list(c("v33_weathering_onfield.FX", "!!v33_grindrock_onfield.FX")),
-                                  list(c("v33_weathering_onfield_tot.FX", "!!v33_grindrock_onfield_tot.FX")))
-
-      levs_manipulateThis <- c(levs_manipulateThis,
-                               list(c("v33_emiEW.L", "!!v33_emiEW.L")),
-                               list(c("v33_weathering_onfield.L", "!!v33_grindrock_onfield.L")),
-                               list(c("v33_weathering_onfield_tot.L", "!!v33_grindrock_onfield_tot.L")))
-
-      margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("v33_emiEW.M", "!!v33_emiEW.M")),
-                                list(c("v33_weathering_onfield.M", "!!v33_grindrock_onfield.M")),
-                                list(c("v33_weathering_onfield_tot.M", "!!v33_grindrock_onfield_tot.M")),
-                                list(c("q33_capconst_weathering.M", "!!q33_capconst_grindrock.M")),
-                                list(c("q33_weathering_onfield_tot.M", "!!q33_grindrock_onfield_tot.M")),
-                                list(c("q33_omcosts.M", "!!q33_omcosts.M")),
-                                list(c("q33_potential.M", "!!q33_potential.M")),
-                                list(c("q33_emiEW.M", "!!q33_emiEW.M")),
-                                list(c("q33_LimEmiEW.M", "!!q33_LimEmiEW.M")))
-    }
-
-    if(cfg$gms$CDR == 'weathering'){
-      fixings_manipulateThis <- c(fixings_manipulateThis,
-                                  list(c("v33_emiDAC.FX", "!!v33_emiDAC.FX")),
-                                  list(c("v33_DacFEdemand_el.FX", "!!v33_DacFEdemand_el.FX")),
-                                  list(c("v33_DacFEdemand_heat.FX", "!!v33_DacFEdemand_heat.FX")))
-
-      levs_manipulateThis <- c(levs_manipulateThis,
-                               list(c("v33_emiDAC.L", "!!v33_emiDAC.L")),
-                               list(c("v33_DacFEdemand_el.L", "!!v33_DacFEdemand_el.L")),
-                               list(c("v33_DacFEdemand_heat.L", "!!v33_DacFEdemand_heat.L")))
-
-      margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("v33_emiDAC.M", "!!v33_emiDAC.")),
-                                list(c("v33_DacFEdemand_el.M", "!!v33_DacFEdemand_el.M")),
-                                list(c("v33_DacFEdemand_heat.M", "!!v33_DacFEdemand_heat.M")),
-                                list(c("q33_DacFEdemand_heat.M", "!!q33_DacFEdemand_heat.M")),
-                                list(c("q33_DacFEdemand_el.M", "!!q33_DacFEdemand_el.M")),
-                                list(c("q33_capconst_dac.M", "!!q33_capconst_dac.M")),
-                                list(c("q33_ccsbal.M", "!!q33_ccsbal.M")),
-                                list(c("q33_H2bio_lim.M", "!!q33_H2bio_lim.M")))
-    }
-
-    if(cfg$gms$CDR == 'off' || cfg$gms$CDR == 'portfolio'){
-      fixings_manipulateThis <- c(fixings_manipulateThis,
-                                  list(c("v33_emiDAC.FX", "!!v33_emiDAC.FX")),
-                                  list(c("v33_emiEW.FX", "!!v33_emiEW.FX")),
-                                  list(c("v33_DacFEdemand_el.FX", "!!v33_DacFEdemand_el.FX")),
-                                  list(c("v33_DacFEdemand_heat.FX", "!!v33_DacFEdemand_heat.FX")),
-                                  list(c("v33_weathering_onfield.FX", "!!v33_grindrock_onfield.FX")),
-                                  list(c("v33_weathering_onfield_tot.FX", "!!v33_grindrock_onfield_tot.FX")))
-
-      levs_manipulateThis <- c(levs_manipulateThis,
-                               list(c("v33_emiDAC.L", "!!v33_emiDAC.L")),
-                               list(c("v33_emiEW.L", "!!v33_emiEW.L")),
-                               list(c("v33_DacFEdemand_el.L", "!!v33_DacFEdemand_el.L")),
-                               list(c("v33_DacFEdemand_heat.L", "!!v33_DacFEdemand_heat.L")),
-                               list(c("v33_weathering_onfield.L", "!!v33_grindrock_onfield.L")),
-                               list(c("v33_weathering_onfield_tot.L", "!!v33_grindrock_onfield_tot.L")))
-
-      margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("v33_emiDAC.M", "!!v33_emiDAC.M")),
-                                list(c("v33_emiEW.M", "!!v33_emiEW.M")),
-                                list(c("v33_weathering_onfield.M", "!!v33_grindrock_onfield.M")),
-                                list(c("v33_weathering_onfield_tot.M", "!!v33_grindrock_onfield_tot.M")),
-                                list(c("v33_DacFEdemand_el.M", "!!v33_DacFEdemand_el.M")),
-                                list(c("v33_DacFEdemand_heat.M", "!!v33_DacFEdemand_heat.M")),
-                                list(c("q33_capconst_weathering.M", "!!q33_capconst_grindrock.M")),
-                                list(c("q33_weathering_onfield_tot.M", "!!q33_grindrock_onfield_tot.M")),
-                                list(c("q33_omcosts.M", "!!q33_omcosts.M")),
-                                list(c("q33_potential.M", "!!q33_potential.M")),
-                                list(c("q33_emiEW.M", "!!q33_emiEW.M")),
-                                list(c("q33_LimEmiEW.M", "!!q33_LimEmiEW.M")),
-                                list(c("q33_DacFEdemand_heat.M", "!!q33_DacFEdemand_heat.M")),
-                                list(c("q33_DacFEdemand_el.M", "!!q33_DacFEdemand_el.M")),
-                                list(c("q33_capconst_dac.M", "!!q33_capconst_dac.M")),
-                                list(c("q33_ccsbal.M", "!!q33_ccsbal.M")),
-                                list(c("q33_H2bio_lim.M", "!!q33_H2bio_lim.M")),
-                                list(c("q33_demFeCDR.M", "!!q33_demFeCDR.M")),
-                                list(c("q33_emicdrregi.M", "!!q33_emicdrregi.M")),
-                                list(c("q33_otherFEdemand.M", "!!q33_otherFEdemand.M")))
-    }
-
-    if(cfg$gms$CDR == 'portfolio'){
-      fixings_manipulateThis <- c(fixings_manipulateThis,
-                                  list(c("vm_otherFEdemand.FX", "!!vm_otherFEdemand.FX")),
-                                  list(c("v33_emi.FX", "vm_emiCdrTeDetail.FX")))
-
-      levs_manipulateThis <- c(levs_manipulateThis,
-                               list(c("vm_otherFEdemand.L", "!!vm_otherFEdemand.L")),
-                               list(c("v33_emi.L", "vm_emiCdrTeDetail.L")))
-
-      margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("vm_otherFEdemand.M", "!!vm_otherFEdemand.M")),
-                                list(c("q33_DAC_capconst.M", "q33_DAC_emi.M")))
-    }
-
+                              list(c("vm_ccs_cdr.M", "vm_co2capture_cdr.M")),
+                              list(c("q33_DAC_ccsbal.M", "!!q33_DAC_ccsbal.M")),
+                              list(c("q33_DAC_emi.M", "!!q33_DAC_emi.M")))
     # end of CDR module realizations
 
     levs_manipulateThis <- c(levs_manipulateThis,

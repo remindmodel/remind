@@ -155,14 +155,14 @@ eta                 1.00        1.00        1.00
 omf                 0.02        0.02        0.02
 lifetime              45          45          45
 
-+             weathering         dac
++             weathering         dac      oae_ng      oae_el
 tech_stat                          4
-inco0               0.01       18800
-mix0                   0           0
-eta                 1.00        1.00
-omf                 0.84       0.025
+inco0               0.01       18800         200         400
+mix0                   0           0           0           0
+eta                 1.00        1.00        1.00        1.00
+omf                 0.84       0.025        0.35        0.17
 omv                    0
-lifetime              20          20
+lifetime              20          20          25          25
 incolearn                      14000
 ccap0                         0.0008
 learn                           0.15
@@ -210,6 +210,18 @@ Assume that all 400 USD/tCO2 are investment cost as current plants runs with was
 Assume floor cost 100 USD/tCO2.
 100 USD/tCO2 * 0.9 (capacity factor) / (0.07 1/yr) (annuity factor, stretch cost over plant lifetime)
 * 3.66 (tCO2 to tC) ~ 4800 USD/(tC/yr) -> incolearn = 14000
+
+Ocean Liming - oae
+annuity factor = 0.07 for lifetime 25 years (lifetime of a cement plant) and r = 0.05, capacity factor = 0.9
+CAPEX (Kowalczyk et al., 2024): 16 USD/tCaO (NG calciner) and 31 USD/tCaO (electric calciner)
+--- oae_ng
+inco0: 16 (USD/tCaO) * 0.9 / 0.07 (1/yr) ~ 200 USD / tCaO
+omf: 60 (USD/tCaO production) + ~10 (USD/tCaO distribution)
+--- oae_el
+inco0: 31 (USD/tCaO) * 0.9 / 0.07 (1/yr) ~ 400 USD / tCaO
+omf: 60 (USD/tCaO production) + ~10 (USD/tCaO distribution)
+Costs per tC removed is calculated in the code as it depends on the efficiency (tCO2/tCaO; exogenous):
+    cost (USD/tC) = inco0 (USD/tCaO) / ( efficiency (tCO2/tCaO) / 3.66 (tCO2/tC) )
 
 --- process-based industry: ---
 annuity factor = r * (1+r)^lifetime/(-1+(1+r)^lifetime), factor to annualize total investment cost of plant, discounting r = 0.05

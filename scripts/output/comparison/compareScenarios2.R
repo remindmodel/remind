@@ -18,7 +18,7 @@ source("./scripts/start/isSlurmAvailable.R")
 if (!exists("outputdirs")) {
   stop(
     "Variable outputdirs does not exist. ",
-    "Please call comapreScenarios.R via output.R, which defines outputdirs.")
+    "Please call compareScenarios.R via output.R, which defines outputdirs.")
 }
 
 # Find a suitable default cs2 profile depending on config.RData.
@@ -60,7 +60,8 @@ startComp <- function(
       " --comment=compareScenarios2",
       " --output=", jobName, ".out",
       " --error=", jobName, ".out",
-      " --mail-type=END,FAIL --time=200 --mem-per-cpu=8000",
+      " --mail-type=END,FAIL --time=200",
+      if (!grepl("--mem", slurmConfig)) " --mem=8000",
       " --wrap=\"Rscript ", script,
       " outputDirs=", paste(outputDirs, collapse = ","),
       " profileName=", profileName,

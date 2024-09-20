@@ -204,7 +204,7 @@ loop((ext_regi,ttot2)$regiANDperiodEmiMktTarget_47(ttot2,ext_regi),
           regiEmiMktconvergenceType(iteration,ttot,ttot2,ext_regi,emiMktExt,"smallPrice") = YES;
           p47_targetConverged(ttot2,ext_regi) = 1;
 ***     if current absolute emissions minus the target (=deviation) is lower than the tolerance
-        elseif(abs(pm_emiMktTarget_dev_iter(iteration,ttot,ttot2,ext_regi,emiMktExt)) le cm_emiMktTarget_tolerance),
+        elseif(abs(pm_emiMktTarget_dev_iter(iteration,ttot,ttot2,ext_regi,emiMktExt)) le pm_emiMktTarget_tolerance(ext_regi)),
           regiEmiMktconvergenceType(iteration,ttot,ttot2,ext_regi,emiMktExt,"lowerThanTolerance") = YES;
           p47_targetConverged(ttot2,ext_regi) = 1;
         );
@@ -497,6 +497,9 @@ p47_implicitQttyTargetTax0(t,regi) =
       ( sum(ccs2te(ccsCo2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(t,regi,enty,enty2,te,rlf)))
       )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"all"))
       +
+      ( sum(te_oae33, -vm_emiCdrTeDetail.l(t,regi,te_oae33))
+      )$(sameas(qttyTarget,"oae") AND sameas(qttyTargetGroup,"all"))
+      +
       (( !! Supply side BECCS
         sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail.l(t,regi,enty,enty2,te,enty3))
         !! Industry BECCS (using biofuels in Industry with CCS)
@@ -526,6 +529,9 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
       +
       ( sum(regi$regi_groupExt(ext_regi,regi), sum(ccs2te(ccsCo2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf))))
       )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"all"))
+      +
+      ( sum(regi$regi_groupExt(ext_regi,regi), sum(te_oae33, -vm_emiCdrTeDetail.l(ttot,regi,te_oae33)))
+      )$(sameas(qttyTarget,"oae") AND sameas(qttyTargetGroup,"all"))
       +
       sum(regi$regi_groupExt(ext_regi,regi), ( !! Supply side BECCS
         sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail.l(ttot,regi,enty,enty2,te,enty3))
@@ -597,13 +603,13 @@ $else.cm_implicitQttyTarget_delay
     );
 $ifThen.emiMkt not "%cm_emiMktTarget%" == "off"
     loop(ext_regi,
-      if((smax((ttot,ttot2,emiMktExt),abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt))) gt cm_emiMktTarget_tolerance), !! resetting active state if regipol target is defined and it did not converged
+      if((smax((ttot,ttot2,emiMktExt),abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt))) gt pm_emiMktTarget_tolerance(ext_regi)), !! resetting active state if regipol target is defined and it did not converged
         p47_implicitQttyTargetActive_iter(iteration,ext_regi) = 0;
       );
     );
   elseif(p47_implicitQttyTarget_delay("emiRegiConv")), !!emiTarget delay is defined and deviation is lower than tolerance times p47_implicitQttyTarget_delay("emiRegiConv")
     loop(ext_regi,
-      if((smax((ttot,ttot2,emiMktExt),abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt))) lt (cm_emiMktTarget_tolerance * p47_implicitQttyTarget_delay("emiRegiConv"))),
+      if((smax((ttot,ttot2,emiMktExt),abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt))) lt (pm_emiMktTarget_tolerance(ext_regi) * p47_implicitQttyTarget_delay("emiRegiConv"))),
         p47_implicitQttyTargetActive_iter(iteration,ext_regi) = 1;
       );
     );

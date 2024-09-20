@@ -38,8 +38,8 @@ findRefMif <- function(outputdir, envi) {
 }
 
 fixMAGICC <- function(d, dref, startyear, scen) {
-  magiccgrep <- "^Forcing|^Temperature|^Concentration"
-  message("Fixing MAGICC6 data before ", startyear)
+  magiccgrep <- "^Forcing|^Temperature|^Concentration|^MAGICC7 AR6"
+  message("Fixing MAGICC6 and 7 data before ", startyear)
   dnew <-
     rbind(
       filter(dref, grepl(magiccgrep, .data$variable),
@@ -84,7 +84,7 @@ fixOnMif <- function(outputdir) {
   fixeddata <- piamInterfaces::fixOnRef(d, dref, ret = "TRUE_or_fixed", startyear = startyear, failfile = failfile, relDiff = 0.00002)
 
   update <- paste0("MAGICC data. ", if (! isTRUE(fixeddata)) "Run output.R -> single -> fixOnRef to fix the rest.")
-  if (! isTRUE(fixeddata) && isTRUE(envi$cfg$fixOnRefAuto)) {
+  if (! isTRUE(fixeddata) && envi$cfg$fixOnRefAuto %in% c(TRUE, "TRUE")) {
     d <- fixeddata
     update <- "data from reference run because cfg$fixOnRefAuto=TRUE."
   } else if (! isTRUE(fixeddata) && exists("flags") && isTRUE("--interactive" %in% flags)) {

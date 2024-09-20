@@ -63,7 +63,7 @@ o_change_totCO2emi_peakBudgYr                         "Measure for how much the 
 p_factorRescale_taxCO2(iteration)                     "Multiplicative factor for rescaling the CO2 price to reach the target"
 p_factorRescale_taxCO2_Funneled(iteration)            "Multiplicative factor for rescaling the CO2 price to reach the target - limited by an iteration-dependent funnel"
 o_taxCO2eq_Itr_1regi(ttot,iteration)                  "CO2 taxed in the last region, tracked over iterations for debugging"
-o_pkBudgYr_flipflop(iteration)                        "Counter that tracks if flipfloping of c_peakBudgYr occured in the last iterations"
+o_pkBudgYr_flipflop(iteration)                        "Counter that tracks if flipfloping of cm_peakBudgYr occured in the last iterations"
 o_taxCO2eq_afterPeakShiftLoop_Itr_1regi(ttot, iteration) "CO2 taxed in the last region, after the loop that shifts peakBudgYr, tracked over iterations for debugging"
 
 ***----------------------------------------------------------------------------------------
@@ -185,11 +185,15 @@ $ifthen.VREPot_Factor not "%c_VREPot_Factor%" == "off"
   p_VREPot_Factor(all_te) "Rescale factor for renewable potentials" / %c_VREPot_Factor% /
 $endif.VREPot_Factor
 
+$ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
+  pm_scaleDemand(tall,tall,all_regi) "Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
+$endif.scaleDemand
+
 p_boundtmp(tall,all_regi,all_te,rlf)                 "read-in bound on capacities"
 p_bound_cap(tall,all_regi,all_te,rlf)                "read-in bound on capacities"
 pm_data(all_regi,char,all_te)                        "Large array for most technical parameters of technologies; more detail on the individual technical parameters can be found in the declaration of the set 'char' "
 pm_cf(tall,all_regi,all_te)                          "Installed capacity availability - capacity factor (fraction of the year that a plant is running)"
-p_tkpremused(all_regi,all_te)                       "turn-key cost premium used in the model (with a discount rate of 3+ pure rate of time preference); in comparison to overnight costs)"
+p_tkpremused(all_regi,all_te)                        "turn-key cost premium used in the model (with a discount rate of 3+ pure rate of time preference); in comparison to overnight costs)"
 p_aux_tlt(all_te)                                    "auxilliary parameter to determine maximal lifetime of a technology"
 p_aux_check_omeg(all_te)                             "auxiliary parameter for an automated check that no technology is erroneously entered with pm_omeg('1') value of 0"
 p_aux_check_tlt(all_te)                              "auxiliary parameter for an automated check that the pm_omeg calculation and filling of the opTimeYr2te mapping is in accordance"
@@ -200,7 +204,7 @@ p_efFossilFuelExtrGlo(all_enty,all_enty)             "global emission factor for
 pm_dataren(all_regi,char,rlf,all_te)                 "Array including both regional renewable potential and capacity factor"
 p_datapot(all_regi,char,rlf,all_enty)                "Total land area usable for the solar technologies PV and CSP. [km^2]"
 p_adj_seed_reg(tall,all_regi)                        "market capacity that can be built from 0 and gives v_adjFactor=1"
-p_adj_seed_te(ttot,all_regi,all_te)                                "technology-dependent multiplicative prefactor to the v_adjFactor seed value. Smaller means slower scale-up"
+p_adj_seed_te(ttot,all_regi,all_te)                  "technology-dependent multiplicative prefactor to the v_adjFactor seed value. Smaller means slower scale-up"
 *** appears in q_esm2macro and q_balFeForCes. This energy category is 0 in LAM, IND and AFR in 2005, but a value > 0 is needed for the calculation of CES parameters.
 *** Accordingly, a value of sm_eps is inserted in pm_cesdata to allow calculation of the CES parameters.
 p_datacs(all_regi,all_enty)                          "fossil energy that is not oxidized (=carbon stored)"
@@ -217,7 +221,7 @@ p_capCum(tall, all_regi,all_te)                      "vm_capCum from input.gdx f
 pm_capCumForeign(ttot,all_regi,all_te)               "parameter for learning externality (cumulated capacity of other regions except regi)"
 pm_SolNonInfes(all_regi)                             "model status from last iteration. 1 means status 2 or 7, 0 for all other status codes"
 
-pm_cintraw(all_enty)                                  "carbon intensity of fossils [GtC per TWa]"
+pm_cintraw(all_enty)                                 "carbon intensity of fossils [GtC per TWa]"
 
 p_CapFixFromRWfix(ttot,all_regi,all_te)              "parameter for fixing capacity variable to Real-World values in 2010/2015"
 p_deltaCapFromRWfix(ttot,all_regi,all_te)            "parameter with resulting deltacap values resulting from fixing capacity to real-world values in 2010/2015"
@@ -379,7 +383,7 @@ vm_esCapInv(ttot,all_regi,all_teEs)                   "investment for energy end
 vm_costEnergySys(ttot,all_regi)                      "energy system costs"
 
 vm_cap(tall,all_regi,all_te,rlf)                     "net total capacities"
-vm_capDistr(tall,all_regi,all_te,rlf)                "net capacities, distributed to the different grades for renewables"
+v_capDistr(tall,all_regi,all_te,rlf)                "net capacities, distributed to the different grades for renewables"
 vm_capTotal(ttot,all_regi,all_enty,all_enty)         "total capacity without technology differentation for technologies where there exists differentation [TW]"
 vm_capFac(ttot,all_regi,all_te)                      "capacity factor of conversion technologies"
 vm_deltaCap(tall,all_regi,all_te,rlf)                "capacity additions"
@@ -412,8 +416,9 @@ v_prodUe (ttot,all_regi,all_enty,all_enty,all_te)    "Useful energy production [
 
 vm_capEarlyReti(tall,all_regi,all_te)                "fraction of early retired capital"
 
-vm_demSeOth(ttot,all_regi,all_enty,all_te)	         "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
-vm_prodSeOth(ttot,all_regi,all_enty,all_te)	         "other sety production from certain technologies, have to be calculated in additional equations [TWa]"
+*** RLDC removal
+v_demSeOth(ttot,all_regi,all_enty,all_te)	         "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
+v_prodSeOth(ttot,all_regi,all_enty,all_te)	         "other sety production from certain technologies, have to be calculated in additional equations [TWa]"
 
 v_shGreenH2(ttot,all_regi)   "share of green hydrogen in all hydrogen by 2030 [0..1]"
 v_shBioTrans(ttot,all_regi)    "Share of biofuels in transport liquids from 2025 onwards. Value between 0 and 1."
@@ -611,7 +616,7 @@ s_c_so2                                               "constant, see S. Smith, 2
 s_ccsinjecrate                                        "CCS injection rate factor. [1/a]"
 
 s_t_start                                             "start year of emission budget"
-c_peakBudgYr                                         "date of net-zero CO2 emissions for peak budget runs without overshoot"
+cm_peakBudgYr                                         "date of net-zero CO2 emissions for peak budget runs without overshoot"
 
 sm_endBudgetCO2eq                                     "end time step of emission budget period 1"
 sm_budgetCO2eqGlob                                    "budget for global energy-emissions in period 1"
