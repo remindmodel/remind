@@ -1751,9 +1751,9 @@ $setglobal cm_INCONV_PENALTY_FESwitch  off !! def = on  !! regexp = off|on
 *** cm_seFeSectorShareDevMethod "Switch to enable an optimization incentive for sectors to have similar shares of secondary energy fuels and determine the method used for the incentive." 
 *** Possible values: off or the method name (sqSectorShare, sqSectorAvrgShare, or minMaxAvrgShare)
 ***  off               "The model can freely allocate bio/syn/fossil fuels between sectors. If not off, a penalization term is added so sectors are incentivized to apply similar shares of bio-fuels, synfuels, and fossils in each sector."
-***  sqSectorShare     "Square share penalty"
-***  sqSectorAvrgShare "Square deviation from average share penalty"
-***  minMaxAvrgShare   "Min-max deviation from average share penalty"
+***  sqSectorShare     "Square share penalty. This method is not recommended as it also creates an unwanted incentive for the model to have equal total fos/syn/bio shares, as higher shares are penalized more than lower ones. Runs will be more sensible to the chosen c_seFeSectorShareDevScale values for this reason."
+***  sqSectorAvrgShare "Square deviation from average share penalty. Recomended over sqSectorShare (see above)."
+***  minMaxAvrgShare   "Min-max deviation from average share penalty."
 *** The relative effect of the penalization term in the objective function is scaled to avoid affecting optimization results. This scaling factor can be defined using the switch c_seFeSectorShareDevScale.
 $setglobal cm_seFeSectorShareDevMethod  sqSectorAvrgShare !! def = sqSectorAvrgShare  !! regexp = off|sqSectorShare|sqSectorAvrgShare|minMaxAvrgShare
 *** c_seFeSectorShareDevUnit "Defines if the penalization term is applied over fuel shares or energy units." 
