@@ -167,23 +167,23 @@ ccap0                         0.0008
 learn                           0.15
 
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-+                chemOld     chemNew     AmSyCoal     AmSyNG      AmSyH2     MeSySol     MeSyNG     MeSyLiq     MeSyH2   
-!! documentation & sources: see below
-inco0               1100         900        1100        1100         900         900        900         900        900
-omf                 0.06        0.06        0.06        0.06        0.06        0.06       0.06        0.06       0.06
-lifetime              20          20          20          20          20          20         20          20         20
++                ChemSol     ChemNG    ChemLiq      ChemH2      StCrNG      StCrLiq      AmSyCoal      AmSyNG      AmSyLiq      AmSyH2     MeSySol     MeSyNG     MeSyLiq     MeSyH2 
+!! documentation & sources: see below 
+inco0               1100       1100       1100        1100        1500         1500          1100        1100         1100        1100         900        900         900        900
+omf                 0.06       0.06       0.06        0.06        0.06         0.06          0.06        0.06         0.06        0.06        0.06       0.06        0.06       0.06
+lifetime              20         20         20          20          20           20            20          20           20          20          20         20          20         20
 
-+                AmSyCoalcc    AmSyNGcc    MeSySolcc    MeSyNGcc    MeSyLiqcc
++                AmSyCoalcc    AmSyNGcc     AmSyLiqcc    MeSySolcc    MeSyNGcc    MeSyLiqcc
 !! documentation & sources: see below
-inco0                  1400        1400         1200        1200         1200
-omf                    0.06        0.06         0.06        0.06         0.06
-lifetime                 20          20           20          20           20
+inco0                  1400        1400          1400         1200        1200         1200
+omf                    0.06        0.06          0.06         0.06        0.06         0.06      
+lifetime                 20          20            20           20          20           20
 
-+                    MtOMtA    FertProd
++                    MtOMtA    FertProd    AmToFinal    MeToFinal
 !! documentation & sources: see below
-inco0                   500         500
-omf                    0.06        0.06
-lifetime                 20          20
+inco0                   500         500          500          500
+omf                    0.06        0.06         0.06         0.06
+lifetime                 20          20           20           20
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 +                     bf         bof         idr         eaf
