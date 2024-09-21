@@ -597,7 +597,7 @@ $offdelim
 *** Import and set regional data
 ***---------------------------------------------------------------------------
 
-*RP* 2012-07-24: CO2-technologies don't have own emissions, but the pipeline leakage rate (s_co2pipe_leakage) is multiplied on the individual pe2se
+*** CO2-technologies don't have own emissions, but the pipeline leakage rate (s_co2pipe_leakage) is multiplied on the individual pe2se
 s_co2pipe_leakage = 0.01;
 
 loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
