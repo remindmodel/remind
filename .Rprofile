@@ -76,16 +76,12 @@ if (!dir.exists(".venv/")
 # REMIND_repos_dirs="C:\my\first\path;D:\my\second\path"
 remindReposDirs <- Sys.getenv("REMIND_repos_dirs")
 
-# unless specified otherwise, use cluster defaults
-use_cluster_defaults <- TRUE
-
 # add local directories, if any
 if ("" != remindReposDirs) {
   directories <- unlist(strsplit(remindReposDirs, .Platform$path.sep, fixed = TRUE))
   directoriesList <- rep(list(NULL), length(directories))
   names(directoriesList) <- directories
   options(remind_repos = c(options("remind_repos")[[1]], directoriesList))
-  use_cluster_defaults <- FALSE
 }
 
 # Include local calibration results, if they exist, from either the main

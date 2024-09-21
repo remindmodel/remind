@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1757](https://github.com/remindmodel/remind/pull/1757)]
 - Update of NDC goals with cutoff data August 31, 2024
     [[#1816](https://github.com/remindmodel/remind/pull/1816)]
+- Prepare to make input data available for externals. Do not stop on missing validation data.
+  [[1828]][(https://github.com/remindmodel/remind/pull/1828)]
 
 ### changed
 - plastic waste by default does not lag plastics production by ten years
