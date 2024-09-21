@@ -157,6 +157,8 @@ pm_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)   "Final energy shares for CE
 
 pm_shfe_up(ttot,all_regi,all_enty,emi_sectors)       "Final energy shares exogenous upper bounds per sector"
 pm_shfe_lo(ttot,all_regi,all_enty,emi_sectors)       "Final energy shares exogenous lower bounds per sector"
+p_shSeFe(ttot,all_regi,all_enty)                     "Initial share of energy carrier subtype in final energy demand of the aggregated carrier type (eg 'the share of bio-based FE liquids in all FE liquids') [0..1]"
+p_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Initial share of energy carrier subtype in final energy demand of the aggregated carrier type for each sector/emiMarket combination (eg 'bio-based FE liquids share in all FE liquids within ETS transport') [0..1]"
 pm_shGasLiq_fe_up(ttot,all_regi,emi_sectors)         "Final energy gases plus liquids shares exogenous upper bounds per sector"
 pm_shGasLiq_fe_lo(ttot,all_regi,emi_sectors)         "Final energy gases plus liquids shares exogenous lower bounds per sector"
 
@@ -424,6 +426,8 @@ v_shGreenH2(ttot,all_regi)   "share of green hydrogen in all hydrogen by 2030 [0
 v_shBioTrans(ttot,all_regi)    "Share of biofuels in transport liquids from 2025 onwards. Value between 0 and 1."
 
 v_shfe(ttot,all_regi,all_enty,emi_sectors)           "share of final energy in sector total final energy [0..1]"
+v_shSeFe(ttot,all_regi,all_enty)                     "share of energy carrier subtype in final energy demand of the aggregated carrier type (eg 'the share of bio-based FE liquids in all FE liquids') [0..1]"
+v_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "share of energy carrier subtype in final energy demand of the aggregated carrier type per sector/emiMarket combination (eg 'the share of bio-based FE liquids in all FE liquids used in ETS-covered transport') [0..1]"
 v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids in sector final energy [0..1]"
 
 vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
@@ -442,7 +446,17 @@ vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which 
 vm_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
 vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"  
 
+$ifthen.seFeSectorShareDev not "%cm_seFeSectorShareDevMethod%" == "off"
+  v_penSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "penalty cost for secondary energy share deviation between sectors, for each sector/emiMarket combination"
+  vm_penSeFeSectorShareDevCost(ttot,all_regi)        "total penalty cost for secondary energy share deviation between sectors"
+$endif.seFeSectorShareDev
+
+$ifthen.minMaxSeFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgShare"
+  v_NegPenSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max negative penalty for secondary energy share deviation in sectors"
+  v_PosPenSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max positive penalty for secondary energy share deviation in sectors"
+$endif.minMaxSeFeSectorShareDev
 ;
+
 ***----------------------------------------------------------------------------------------
 ***                                   EQUATIONS
 ***----------------------------------------------------------------------------------------
@@ -548,6 +562,8 @@ q_shGreenH2(ttot,all_regi)  "share of green hydrogen in all hydrogen"
 q_shBioTrans(ttot,all_regi)  "Define the share of biofuels in transport liquids from 2025 on."
 
 q_shfe(ttot,all_regi,all_enty,emi_sectors)            "share of final energy carrier in the sector final energy"
+q_shSeFe(ttot,all_regi,all_enty)                      "share of energy carrier subtype in final energy demand of the aggregated carrier type (eg 'the share of bio-based FE liquids in all FE liquids')"
+q_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "share of energy carrier subtype in final energy demand of the aggregated carrier type for each sector/emiMarket combination (eg 'the share of bio-based FE liquids in all FE liquids within ETS-covered transport"
 q_shGasLiq_fe(ttot,all_regi,emi_sectors)              "share of gases and liquids in sector final energy"
 
 q_shbiofe_up(ttot,all_regi,all_enty,emi_sectors,all_emiMkt) "share of biomass per carrier in sector final energy (upper bound)"
@@ -560,6 +576,15 @@ q_limitCapFeH2BI(ttot,all_regi,emi_sectors)               "capacity limit equati
 $IFTHEN.sehe_upper not "%cm_sehe_upper%" == "off"
 q_heat_limit(ttot,all_regi)  "equation to limit maximum level of secondary energy district heating and heat pumps use"
 $ENDIF.sehe_upper
+
+$ifthen.seFeSectorShareDev not "%cm_seFeSectorShareDevMethod%" == "off"
+  q_penSeFeSectorShareDevCost(ttot,all_regi) "total penalty cost for secondary energy share deviation in sectors"
+  q_penSeFeSectorShareDev(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "penalty for secondary energy share deviation in sectors"
+$endif.seFeSectorShareDev
+
+$ifthen.minMaxSeFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgShare"
+  q_minMaxPenSeFeSectorShareDev(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max penalty balance for secondary energy share deviation in sectors"
+$endif.minMaxSeFeSectorShareDev
 
 ***----------------------------------------------------------------------------------------
 ***----------------------------------------------trade module------------------------------

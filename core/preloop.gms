@@ -189,4 +189,35 @@ if (cm_startyear gt 2005,
 Execute_Loadpoint 'input_ref' vm_capEarlyReti.l = vm_capEarlyReti.l;
 );
 
+*** initialize the carrier subtype shares in final energy demand such that the starting point for the model is "all sectors have the same bio/fos/syn shares for a given carrier type" when cm_seFeSectorShareDevMethod is enabled
+p_shSeFe(t,regi,entySe)$((entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) AND sum(seAgg$seAgg2se(seAgg,entySe), sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), sum(entySe2$seAgg2se(seAgg,entySe2), sum(entyFe$(sefe(entySe2,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt))))) ) =
+  sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), sum(entyFe$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))
+  /
+  sum(seAgg$seAgg2se(seAgg,entySe), sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), sum(entySe2$seAgg2se(seAgg,entySe2), sum(entyFe$(sefe(entySe2,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt)))));
+v_shSeFe.l(t,regi,entySe)$p_shSeFe(t,regi,entySe) = p_shSeFe(t,regi,entySe);
+
+$ifthen.penSeFeSectorShareDevCost not "%cm_seFeSectorShareDevMethod%" == "off"
+vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)$(
+  ( p_shSeFe(t,regi,entySe) ) AND
+  ( entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe) ) AND !! only redefine vm_demFeSector for entySeBio, entySeSyn and entySeFos items
+  ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
+    ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
+    (    (NOT(sameas(sector,"build") AND (t.val le 2020))) 
+      OR (NOT(sameas(sector,"indst") AND (t.val le 2020)))
+      OR (NOT(sameas(sector,"cdr") AND (t.val le 2020)))
+    ) AND !!disable historical year share incentives to buildings, industry and CDR  
+    ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
+) =
+  sum(entySe2$sefe(entySe2,entyFe), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt))
+  * p_shSeFe(t,regi,entySe);  
+vm_demFeSector_afterTax.l(t,regi,entySe,entyFe,sector,emiMkt) = vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt);
+$endif.penSeFeSectorShareDevCost
+
+p_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt)$((entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) AND (sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)) AND sum(entySe2$sefe(entySe2,entyFe), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt)) ) =
+  vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)
+  /
+  sum(entySe2$sefe(entySe2,entyFe), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt))
+;
+v_shSeFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)$p_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt) = p_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt);
+
 *** EOF ./core/preloop.gms
