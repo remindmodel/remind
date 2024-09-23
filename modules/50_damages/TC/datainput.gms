@@ -33,18 +33,17 @@ p50_damageFuncCoefTC1(iso) = f50_TCtasK(iso,"%cm_TCspec%");
 
 display p50_damageFuncCoefTC0;
 
-*initialize
+*** initialize
 pm_damage(tall,regi) = 1;
 
-*read in GDP to calculate GDP fraction of countries in a region and convert to MER
+*** read in GDP to calculate GDP fraction of countries in a region and convert to MER
 table f50_countryGDP(tall,iso,all_GDPscen)	"ratio of country to regional GDP"
 $ondelim
 $include "./modules/50_damages/TC/input/f50_gdp.cs3r"
 $offdelim
 ;
 
-
-*calculate and interpolate country GDP fraction of regional GDP for SSP2 scenario, country GDP is in PPP, regional GDP in trl MER!
+*** calculate and interpolate country GDP fraction of regional GDP for SSP2 scenario, country GDP is in PPP, regional GDP in trl MER!
 pm_GDPfrac(tall,iso)=f50_countryGDP(tall,iso,"gdp_SSP2")/1000000/sum(regi2iso(regi,iso),pm_gdp(tall,regi)/pm_shPPPMER(regi));
 
 loop(ttot$(ttot.val ge 2005),

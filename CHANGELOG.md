@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### input data/calibration
 - new input data rev6.84 [[#1757](https://github.com/remindmodel/remind/pull/1757)]
+- new input data rev6.95 in US$2017[[#1812]] (https://github.com/remindmodel/remind/pull/1812) 
 - CES parameter and gdx files calibrated with new default diffLin2Lin for NPi 
     [[#1747](https://github.com/remindmodel/remind/pull/1747)] and
     [[#1757](https://github.com/remindmodel/remind/pull/1757)]
@@ -17,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   [[1828]][(https://github.com/remindmodel/remind/pull/1828)]
 
 ### changed
+- shift base unit from US$2005 to US$2017 [[#1812]] (https://github.com/remindmodel/remind/pull/1812)
 - plastic waste by default does not lag plastics production by ten years
     anymore; can be re-activated using `cm_wastelag`
 - moved to edgeTransport 2.0 version [[#1749](https://github.com/remindmodel/remind/pull/1749)]

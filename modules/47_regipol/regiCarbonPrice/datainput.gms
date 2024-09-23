@@ -176,7 +176,8 @@ $offdelim
 
   loop((t,ext_regi,entyFe,entySe,sector)$f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t),
     loop(regi$regi_groupExt(ext_regi,regi),
-      pm_implicitPriceTarget(t,regi,entyFe,entySe,sector)=f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t)*sm_DpGJ_2_TDpTWa;
+      !! convert data from US$2005 to US$2017
+      pm_implicitPriceTarget(t,regi,entyFe,entySe,sector) = sm_D2005_2_D2017 * f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t)*sm_DpGJ_2_TDpTWa;
     );
   );
 
@@ -210,7 +211,8 @@ $offdelim
 
   loop((t,ext_regi,entyPe)$f47_implicitPePriceTarget("%cm_implicitPePriceTarget%",ext_regi,entyPe,t),
     loop(regi$regi_groupExt(ext_regi,regi),
-      pm_implicitPePriceTarget(t,regi,entyPe)=f47_implicitPePriceTarget("%cm_implicitPePriceTarget%",ext_regi,entyPe,t)*sm_DpGJ_2_TDpTWa;
+      !! convert data from US$2005 to US$2017
+      pm_implicitPePriceTarget(t,regi,entyPe) = sm_D2005_2_D2017 * f47_implicitPePriceTarget("%cm_implicitPePriceTarget%",ext_regi,entyPe,t)*sm_DpGJ_2_TDpTWa;
     );
   );
 
@@ -302,32 +304,32 @@ p47_LULUCFEmi_GrassiShift(t,regi)$(p47_EmiLULUCFCountryAcc("2020",regi)) =
 
 *PW* charge tax on PE gas,oil,coal in energy security scenario for Germany (in trUSD/TWa) to hit Ariadne energy security price trajectories
 $ifThen.cm_EnSecScen_price "%cm_EnSecScen_price%" == "on"
-  pm_tau_pe_tax("2025",regi,"pegas")$(sameAs(regi,"DEU")) = 0.32;
-  pm_tau_pe_tax("2030",regi,"pegas")$(sameAs(regi,"DEU")) = 0.24;
-  pm_tau_pe_tax("2035",regi,"pegas")$(sameAs(regi,"DEU")) = 0.2;
-  pm_tau_pe_tax("2040",regi,"pegas")$(sameAs(regi,"DEU")) = 0.16;
-  pm_tau_pe_tax("2045",regi,"pegas")$(sameAs(regi,"DEU")) = 0.16;
-  pm_tau_pe_tax("2050",regi,"pegas")$(sameAs(regi,"DEU")) = 0.16;
-  pm_tau_pe_tax("2055",regi,"pegas")$(sameAs(regi,"DEU")) = 0.12;
-  pm_tau_pe_tax("2060",regi,"pegas")$(sameAs(regi,"DEU")) = 0.08;
+  pm_tau_pe_tax("2025",regi,"pegas")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.32;
+  pm_tau_pe_tax("2030",regi,"pegas")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.24;
+  pm_tau_pe_tax("2035",regi,"pegas")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.2;
+  pm_tau_pe_tax("2040",regi,"pegas")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.16;
+  pm_tau_pe_tax("2045",regi,"pegas")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.16;
+  pm_tau_pe_tax("2050",regi,"pegas")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.16;
+  pm_tau_pe_tax("2055",regi,"pegas")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.12;
+  pm_tau_pe_tax("2060",regi,"pegas")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.08;
 
-  pm_tau_pe_tax("2025",regi,"peoil")$(sameAs(regi,"DEU")) = 0.08;
-  pm_tau_pe_tax("2030",regi,"peoil")$(sameAs(regi,"DEU")) = 0.08;
-  pm_tau_pe_tax("2035",regi,"peoil")$(sameAs(regi,"DEU")) = 0.12;
-  pm_tau_pe_tax("2040",regi,"peoil")$(sameAs(regi,"DEU")) = 0.16;
-  pm_tau_pe_tax("2045",regi,"peoil")$(sameAs(regi,"DEU")) = 0.16;
-  pm_tau_pe_tax("2050",regi,"peoil")$(sameAs(regi,"DEU")) = 0.16;
-  pm_tau_pe_tax("2055",regi,"peoil")$(sameAs(regi,"DEU")) = 0.12;
-  pm_tau_pe_tax("2060",regi,"peoil")$(sameAs(regi,"DEU")) = 0.08;
+  pm_tau_pe_tax("2025",regi,"peoil")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.08;
+  pm_tau_pe_tax("2030",regi,"peoil")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.08;
+  pm_tau_pe_tax("2035",regi,"peoil")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.12;
+  pm_tau_pe_tax("2040",regi,"peoil")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.16;
+  pm_tau_pe_tax("2045",regi,"peoil")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.16;
+  pm_tau_pe_tax("2050",regi,"peoil")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.16;
+  pm_tau_pe_tax("2055",regi,"peoil")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.12;
+  pm_tau_pe_tax("2060",regi,"peoil")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.08;
 
-  pm_tau_pe_tax("2025",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.024;
-  pm_tau_pe_tax("2030",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.016;
-  pm_tau_pe_tax("2035",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.016;
-  pm_tau_pe_tax("2040",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.016;
-  pm_tau_pe_tax("2045",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.016;
-  pm_tau_pe_tax("2050",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.016;
-  pm_tau_pe_tax("2055",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.008;
-  pm_tau_pe_tax("2060",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.008;
+  pm_tau_pe_tax("2025",regi,"pecoal")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.024;
+  pm_tau_pe_tax("2030",regi,"pecoal")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.016;
+  pm_tau_pe_tax("2035",regi,"pecoal")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.016;
+  pm_tau_pe_tax("2040",regi,"pecoal")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.016;
+  pm_tau_pe_tax("2045",regi,"pecoal")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.016;
+  pm_tau_pe_tax("2050",regi,"pecoal")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.016;
+  pm_tau_pe_tax("2055",regi,"pecoal")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.008;
+  pm_tau_pe_tax("2060",regi,"pecoal")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.008;
 $endIf.cm_EnSecScen_price
 
 *** adapt parameters that determine the ratio of wind onshore and wind offshore installation for Germany
