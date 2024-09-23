@@ -569,9 +569,6 @@ $endif
 fm_dataemiglob(enty,enty2,te,"co2")$pe2se(enty,enty2,te)       = 1/s_zj_2_twa * fm_dataemiglob(enty,enty2,te,"co2");
 fm_dataemiglob(enty,enty2,te,"cco2")                           = 1/s_zj_2_twa * fm_dataemiglob(enty,enty2,te,"cco2");
 
-table f_datarenglob(char,rlf,*)                    "global nur and ren data"
-$include "./core/input/generisdata_nur_ren.prn"
-;
 table f_dataetaglob(tall,all_te)                      "global eta data"
 $include "./core/input/generisdata_varying_eta.prn"
 ;
@@ -961,8 +958,11 @@ $if %cm_MAgPIE_coupling% == "on" p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0
 
 display p_efFossilFuelExtr;
 
-pm_dataren(regi,"nur",rlf,te)     = f_datarenglob("nur",rlf,te);
-pm_dataren(regi,"maxprod",rlf,te) = sm_EJ_2_TWa * f_datarenglob("maxprod",rlf,te);
+*** capacity factors (nur) are 1 by default
+pm_dataren(regi,"nur",rlf,te)     = 1;
+
+*** value copied from old file generisdata_nur_ren.prn (50EJ = 1.5855TWa)
+pm_dataren(regi,"maxprod","1","geohe") = 1.5855; 
 
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
 table f_maxProdGradeRegiHydro(all_regi,char,rlf)                  "input of regionalized maximum from hydro [EJ/a]"
@@ -1014,12 +1014,18 @@ $ondelim
 $include "./core/input/f_dataRegiSolar.cs3r"
 $offdelim
 ;
-pm_dataren(all_regi,"maxprod",rlf,"csp")    = sm_EJ_2_TWa * f_dataRegiSolar(all_regi,"maxprod","csp",rlf);
-pm_dataren(all_regi,"maxprod",rlf,"spv")    = sm_EJ_2_TWa * f_dataRegiSolar(all_regi,"maxprod","spv",rlf);
-pm_dataren(all_regi,"nur",rlf,"csp")        = f_dataRegiSolar(all_regi,"nur","csp",rlf);
-pm_dataren(all_regi,"nur",rlf,"spv")        = f_dataRegiSolar(all_regi,"nur","spv",rlf);
+pm_dataren(all_regi,"maxprod",rlf,"csp")      = sm_EJ_2_TWa * f_dataRegiSolar(all_regi,"maxprod","csp",rlf);
+pm_dataren(all_regi,"maxprod",rlf,"spv")      = sm_EJ_2_TWa * f_dataRegiSolar(all_regi,"maxprod","spv",rlf);
+pm_dataren(all_regi,"nur",rlf,"spv")          = f_dataRegiSolar(all_regi,"nur","spv",rlf);
 p_datapot(all_regi,"limitGeopot",rlf,"pesol") = f_dataRegiSolar(all_regi,"limitGeopot","spv",rlf);
-pm_data(all_regi,"luse","spv")              = f_dataRegiSolar(all_regi,"luse","spv","1")/1000;
+pm_data(all_regi,"luse","spv")                = 0.001 * f_dataRegiSolar(all_regi,"luse","spv","1");
+
+*** RP: rescale CSP capacity factors in REMIND
+*** In the DLR resource data input files, the numbers are based on a SM3/12h setup,
+*** while the cost data from IEA seems rather based on a SM2/6h setup (with 40% average CF).
+*** Accordingly, decrease CF in REMIND to 2/3 of the DLR values (no need to correct maxprod,
+*** as here no miscalculation of total energy yield takes place, in contrast to wind)
+pm_dataren(all_regi,"nur",rlf,"csp")          = 2/3 * f_dataRegiSolar(all_regi,"nur","csp",rlf);
 
 
 table f_maxProdGeothermal(all_regi,char)                  "input of regionalized maximum from geothermal [EJ/a]"
@@ -1033,10 +1039,6 @@ pm_dataren(all_regi,"maxprod","1","geohdr") = 1e-5; !!minimal production potenti
 pm_dataren(all_regi,"maxprod","1","geohdr")$f_maxProdGeothermal(all_regi,"maxprod") = sm_EJ_2_TWa * f_maxProdGeothermal(all_regi,"maxprod");
 *** FS: temporary fix: set minimum geothermal potential across all regions to 10 PJ (still negligible even in small regions) to get rid of infeasibilities
 pm_dataren(all_regi,"maxprod","1","geohdr")$(f_maxProdGeothermal(all_regi,"maxprod") <= 0.01) = sm_EJ_2_TWa * 0.01;
-
-
-*mh* set 'nur' for all non renewable technologies to '1':
-pm_dataren(regi,"nur",rlf,teNoRe)    = 1;
 
 display p_datapot, pm_dataren;
 
@@ -1127,11 +1129,6 @@ pm_cf("2015",regi,"spv") = pm_cf("2015",regi,"spv") * p_aux_capacityFactorHistOv
 pm_cf("2020",regi,"spv") = pm_cf("2020",regi,"spv") * (p_aux_capacityFactorHistOverREMIND(regi,"spv")+1)/2;
 pm_cf("2025",regi,"spv") = pm_cf("2025",regi,"spv") * (p_aux_capacityFactorHistOverREMIND(regi,"spv")+3)/4;
 
-*** RP rescale CSP capacity factors in REMIND - in the DLR resource data input files, the numbers are based on a SM3/12h setup, while the cost data from IEA seems rather based on a SM2/6h setup (with 40% average CF)
-*** Accordingly, decrease CF in REMIND to 2/3 of the DLR values (no need to correct maxprod, as here no miscalculation of total energy yield takes place, in contrast to wind)
-loop(te$sameas(te,"csp"),
-  pm_dataren(regi,"nur",rlf,te)     = pm_dataren(regi,"nur",rlf,te)     * 2/3 ;
-);
 
 display p_aux_capacityFactorHistOverREMIND, pm_dataren;
 
