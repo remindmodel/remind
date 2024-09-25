@@ -15,9 +15,8 @@ $onlisting
 ;
 
 p40_TechBound(ttot,all_regi,te) = f40_TechBound(ttot,all_regi,"%cm_NDC_version%",te);
-*** windoffshore-todo
-*** allow input data with either "wind" or "pewin" until mrremind is updated 
-p40_TechBound(ttot,all_regi,"pewin") $ (p40_TechBound(ttot,all_regi,"pewin") eq 0) = f40_TechBound(ttot,all_regi,"%cm_NDC_version%","wind");
+*** windoffshore-todo: separate NDC targets for windon and windoff
+p40_TechBound(ttot,all_regi,"wind") = f40_TechBound(ttot,all_regi,"%cm_NDC_version%","wind");
 
 p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
 
