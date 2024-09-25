@@ -335,7 +335,7 @@ $ENDIF.WindOff
         seceaf       "Route: Scrap-loaded EAF"
         pcc          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
         pco          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
-*** transport technologies for deleted realization complex of module 35_transport 
+*** transport technologies for deleted realization complex of module 35_transport
 *** only here to make it possible to process input data that still includes data for these obsolete transport technologies
         apCarPeT        "outdated transport technology"
         apCarDiT        "outdated transport technology"
@@ -415,6 +415,8 @@ all_enty             "all types of quantities"
         ueelTt       "transport useful energy for electric trains"
 
         !! materials, feedstock, and industrial goods
+        co2f         "feedstock CO2"
+
         prsteel      "Primary steel"
         sesteel      "Secondary steel"
         dri          "Directly reduced iron"

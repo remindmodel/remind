@@ -381,7 +381,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-  teCCPrc(tePrc)   "Technologies used in process-based model (only CCS)"
+  teCCPrc(all_te)   "Technologies used in process-based model (only CCS)"
   /
     $$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bfcc
@@ -389,9 +389,13 @@ $endif.cm_subsec_model_steel
     $$endif.cm_subsec_model_steel
   /
 
+teCUPrc(all_te)   "Technologies using CO2 as a feedstock"
+  /
+  /
 
 mat(all_enty)   "Materials considered in process-based model; Can be input and/or output of a process"
   /
+    co2f
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     prsteel
     sesteel
@@ -406,6 +410,7 @@ $endif.cm_subsec_model_steel
 
 matIn(all_enty)   "Materials which serve as input to a process"
   /
+    co2f
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     eafscrap   "Steel scrap used in EAF"
     bofscrap   "Steel scrap used in BOF"
