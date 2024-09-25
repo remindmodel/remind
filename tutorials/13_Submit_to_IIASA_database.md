@@ -97,6 +97,16 @@ The following functions from `piamInterfaces` might be helpful for further analy
 - [`fixOnRef()`](https://github.com/pik-piam/piamInterfaces/blob/master/R/fixOnRef.R) checks whether the runs are correctly fixed on their reference run for delayed transition scenarios.
 - [`plotIntercomparison()`](https://github.com/pik-piam/piamInterfaces/blob/master/R/plotIntercomparison.R) plots area and line plots of selected variables.
 
+If you like to generate a 'historical.mif' file for a different regional resolution than the REMIND one to pass it to plotIntercomparison, you can use the [regionmapping](https://github.com/pik-piam/piamInterfaces/tree/master/inst/regionmapping) ISO files from piamInterfaces or a similarly formatted file, for example like this:
+```
+library(madrat)
+library(mrremind)
+setConfig(regionmapping = system.file("regionmapping/ISO_2_R10.csv", package = "piamInterfaces"))
+d <- madrat::retrieveData("VALIDATIONREMIND")
+system(paste("tar xvf", d))
+quitte::write.mif(piamInterfaces::convertHistoricalData("historical.mif", "ScenarioMIP"), "historical_R10.mif")
+```
+
 ## Further Information
 
 Please refer to [this repository](https://gitlab.pik-potsdam.de/REMIND/miptemplate) for a showcase of all the tools and best practices when working with data from the IIASA database, including:
