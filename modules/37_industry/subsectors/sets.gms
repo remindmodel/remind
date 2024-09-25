@@ -423,7 +423,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-  teCCPrc(tePrc)   "Technologies used in process-based model (only CCS)"
+  teCCPrc(all_te)   "Technologies used in process-based model (only CCS)"
   /
     $$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bfcc
@@ -431,6 +431,9 @@ $endif.cm_subsec_model_steel
     $$endif.cm_subsec_model_steel
   /
 
+teCUPrc(all_te)   "Technologies using CO2 as a feedstock"
+  /
+  /
 
 mat(all_enty)   "Materials considered in process-based model; Can be input and/or output of a process"
   /
@@ -442,8 +445,8 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     ammonia !! ammonia tech QIANZHI
     MethFinal
     AmmoFinal
-
 $endif.cm_subsec_model_chemicals
+    co2f
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     prsteel
     sesteel
@@ -462,6 +465,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     methanol
     ammonia
 $endif.cm_subsec_model_chemicals
+    co2f
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     eafscrap   "Steel scrap used in EAF"
     bofscrap   "Steel scrap used in BOF"
@@ -479,7 +483,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     HVC
     Fertilizer
     methanol
-    ammonia !! ammonia tech 
+    ammonia !! ammonia tech
     MethFinal
     AmmoFinal
 $endif.cm_subsec_model_chemicals
@@ -608,8 +612,8 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     ChemLiq . standard
     ChemH2 . standard
 
-    StCrNG . standard  
-    StCrLiq . standard  
+    StCrNG . standard
+    StCrLiq . standard
 
     MeSySol . (greyh2,greenh2)  !! methanol tech QIANZHI
     MeSyNG . standard
@@ -701,7 +705,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
    ChemNG . standard . ue_chemicals
    ChemLiq . standard . ue_chemicals
    ChemH2 . standard . ue_chemicals
-    
+
    StCrNG . standard . ue_chemicals
    StCrLiq . standard . ue_chemicals
 
@@ -720,7 +724,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
    FertProd . standard . ue_chemicals
    MeToFinal . standard . ue_chemicals
    AmToFinal . standard . ue_chemicals
-   
+
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    (bf,bfcc)  . standard        . ue_steel_primary

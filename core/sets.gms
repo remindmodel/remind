@@ -460,6 +460,8 @@ all_enty             "all types of quantities"
         entydummy    "dummy FE for process based industry implementation"
 
         !! materials, feedstock, and industrial goods
+        co2f         "feedstock CO2"
+
         prsteel      "Primary steel"
         sesteel      "Secondary steel"
         dri          "Directly reduced iron"
