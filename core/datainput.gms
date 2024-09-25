@@ -751,6 +751,7 @@ pm_cf(ttot,regi,"AmSyH2") = 0.8;
 
 pm_cf(ttot,regi,"MtOMtA") = 0.8;
 pm_cf(ttot,regi,"FertProd") = 0.8;
+pm_cf(ttot,regi,"FertProdH2") = 0.8;
 pm_cf(ttot,regi,"MeToFinal") = 0.8;
 pm_cf(ttot,regi,"AmToFinal") = 0.8;
 

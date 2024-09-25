@@ -361,11 +361,15 @@ all_te          "all energy technologies, including from modules"
         MtOMtA
         MtOMtA_Ro
         FertProd
+        FertProdH2
         FertProd_Ro
+        FertProdH2_Ro
         MeToFinal
         MeToFinal_Ro
         AmToFinal
         AmToFinal_Ro
+        AmToFinalH2
+        AmToFinalH2_Ro
 *** PCV: technologies related to steel
         ironMine     "Mining of iron ore"
         idr          "Iron direct reduction"
@@ -477,6 +481,7 @@ all_enty             "all types of quantities"
         Fertilizer
         methanol
         ammonia
+        ammoniaH2
         MethFinal
         AmmoFinal
 
@@ -1330,7 +1335,9 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 
         MtOMtA
         FertProd
+        FertProdH2
         AmToFinal
+        AmToFinalH2
         MeToFinal
 
 $endif.cm_subsec_model_chemicals

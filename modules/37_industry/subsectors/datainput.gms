@@ -647,8 +647,16 @@ $endIf.cm_wasteIncinerationCCSshare
 
 p37_specMatDem(mat,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+p37_specMatDem("ammonia","FertProd","standard")        = 0.57;
+p37_specMatDem("ammoniaH2","FertProdH2","standard")        = 0.57;
+
+p37_specMatDem("methanol","MtOMtA","standard")        = 4.5;
 p37_specMatDem("ammonia","AmToFinal","standard")        = 1;
+p37_specMatDem("ammoniaH2","AmToFinal","standard")        = 1;
 p37_specMatDem("methanol","MeToFinal","standard")        = 1;
+
+p37_specMatDem("co2f","FertProdH2","standard")        = 0.73;
+p37_specMatDem("co2f","MeSyH2","standard")        = 1.373;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_specMatDem("dripell","idr","ng")        = 1.44;                                           !! Source: POSTED / Average of Devlin2022, Otto2017, Volg2018, Rechberge2020
@@ -737,6 +745,7 @@ p37_specFeDemTarget("feels","AmSyH2","standard")    = 0.7 / (sm_TWa_2_MWh/sm_gig
 
 p37_specFeDemTarget("feels","MtOMtA","standard")    = 1.4 / (sm_TWa_2_MWh/sm_giga_2_non);
 p37_specFeDemTarget("feels","FertProd","standard")    = 0.2 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","FertProdH2","standard")    = 0.2 / (sm_TWa_2_MWh/sm_giga_2_non);
 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"

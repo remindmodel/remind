@@ -179,11 +179,11 @@ inco0                  2500        1200          1600         1100         700  
 omf                    0.06        0.06          0.06         0.06        0.06         0.06      
 lifetime                 20          20            20           20          20           20
 
-+                    MtOMtA    FertProd    AmToFinal    MeToFinal
++                    MtOMtA    FertProd    FertProdH2    AmToFinal    AmToFinalH2    MeToFinal
 !! documentation & sources: see below
-inco0                   500         500          500          500
-omf                    0.06        0.06         0.06         0.06
-lifetime                 20          20           20           20
+inco0                   500         500           500          500           500           500
+omf                    0.06        0.06          0.06         0.06          0.06          0.06
+lifetime                 20          20            20           20            20            20
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 +                     bf         bof         idr         eaf
