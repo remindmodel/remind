@@ -25,8 +25,14 @@ vm_costTeCapital.fx(t,regi,teNoLearn)     = pm_inco0_t(t,regi,teNoLearn);
 
 *' #### Model Bounds in Core
 *' Lower limit on all P2SE technologies capacities to 100 kW of all technologies and all time steps
-loop(pe2se(enty,enty2,te)$((not sameas(te,"biotr"))  AND (not sameas(te,"biodiesel")) AND (not sameas(te,"bioeths")) AND (not sameas(te,"gasftcrec")) AND (not sameas(te,"gasftrec"))
-AND (not sameas(te,"tnrs"))),
+loop(pe2se(enty,enty2,te) $ (
+    (not sameas(te,"biotr")) AND
+    (not sameas(te,"biodiesel")) AND
+    (not sameas(te,"bioeths")) AND
+    (not sameas(te,"gasftcrec")) AND
+    (not sameas(te,"gasftrec")) AND
+    (not sameas(te,"tnrs"))
+  ),
   vm_cap.lo(t,regi,te,"1")$(t.val gt 2026 AND t.val le 2070) = 1e-7;
   if( (NOT teCCS(te)), 
     vm_deltaCap.lo(t,regi,te,"1")$(t.val gt 2026 AND t.val le 2070) = 1e-8;
@@ -58,17 +64,23 @@ v_capDistr.fx(t,regi,te,rlf)$(rlf.val gt 9) = 0;
 vm_cap.up("2010",regi,teStor,"1") = 0;
 
 *' completely switching off technologies that are not used in the current version of REMIND, although their parameters are declared:
-vm_cap.fx(t,regi,"solhe",rlf)     = 0;
-vm_deltaCap.fx(t,regi,"solhe",rlf) = 0;
+loop(all_te $ (
+    sameas(all_te, "solhe") OR
+    sameas(all_te, "fnrs") OR
+    sameas(all_te, "pcc") OR
+    sameas(all_te, "pco") OR
+    sameas(all_te, "wind") OR
+    sameas(all_te, "storwind") OR
+    sameas(all_te, "gridwind")
+  ),
+  vm_cap.fx(t,regi,all_te,rlf)      = 0;
+  vm_deltaCap.fx(t,regi,all_te,rlf) = 0;
+);
 
-vm_cap.fx(t,regi,"fnrs",rlf)     = 0;
-vm_deltaCap.fx(t,regi,"fnrs",rlf) = 0;
-
-vm_cap.fx(t,regi,"pcc",rlf)     = 0;
-vm_deltaCap.fx(t,regi,"pcc",rlf) = 0;
-
-vm_cap.fx(t,regi,"pco",rlf)     = 0;
-vm_deltaCap.fx(t,regi,"pco",rlf) = 0;
+vm_demPe.fx(t,regi,"pecoal","seel","pcc") = 0;
+vm_demPe.fx(t,regi,"pecoal","seel","pco") = 0;
+*** windoffshore-todo: to remove when removing wind from all_te
+vm_demPe.fx(t,regi,"pewin","seel","wind") = 0;
 
 *' Switch off grey hydrogen investments in gash2 technology from 2025. Our current seh2 hydrogen represents only additional (clean) hydrogen use cases to current ones
 *' and there are no plans to expand grey hydrogen production for that.
