@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/04_PE_FE_parameters/iea2014/datainput.gms
 
-parameter f04_IO_input(tall,all_regi,all_enty,all_enty,all_te)        "Energy input based on IEA data"
+parameter f04_IO_input(tall,all_regi,all_enty,all_enty,all_te) "Energy input based on IEA data"
 /
 $ondelim
 $include "./modules/04_PE_FE_parameters/iea2014/input/f04_IO_input.cs4r"
@@ -36,7 +36,9 @@ if (smin((t,regi,pe2se(entyPe,entySe,te)), f04_IO_input(t,regi,entyPe,entySe,te)
 f04_IO_input(tall,regi,entyPe,entySe,te)$(f04_IO_input(tall,regi,entyPe,entySe,te) lt 0) = 0;
 
 
-parameter f04_IO_output(tall,all_regi,all_enty,all_enty,all_te)        "Energy output based on IEA data"
+*** RP 2019-02-19: From rev 8352 on, f04_IO_output contains gross generation for power plants. Power plant autoconsumption is contained in t&d losses. 
+*** This facilitates comparison with other sources which usually report gross electricity generation as well as gross capacity factors
+parameter f04_IO_output(tall,all_regi,all_enty,all_enty,all_te) "Energy output based on IEA data"
 /
 $ondelim
 $include "./modules/04_PE_FE_parameters/iea2014/input/f04_IO_output.cs4r"
@@ -252,9 +254,6 @@ loop(regi,
      );
 );
 
-***------------------ allocate own power consumption to electricity technologies -----------------------------
-*RP 2019-02-19: This is now changed starting from rev 8352. Power plant output is from now on gross production instead of net, and power plant autoconsumption is shifted to t&d losses
-*RP This was done to facilitate comparison with other sources which usually report gross electricity generation as well as gross capacity factors
 
 display pm_IO_input, p04_IO_output;
 
