@@ -647,15 +647,8 @@ $endIf.cm_wasteIncinerationCCSshare
 
 p37_specMatDem(mat,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-<<<<<<< HEAD
-p37_specMatDem("ammonia","FertProd","standard")        = 1.2;
-p37_specMatDem("methanol","MtOMtA","standard")        = 1.2;
-=======
-p37_specMatDem("ammonia","FertProd","standard")        = 1.2; 
-p37_specMatDem("methanol","MtOMtA","standard")        = 1.2; 
-p37_specMatDem("ammonia","AmToFinal","standard")        = 1; 
-p37_specMatDem("methanol","MeToFinal","standard")        = 1; 
->>>>>>> 45946528 (First version of the structure of the Chemical Processes module)
+p37_specMatDem("ammonia","AmToFinal","standard")        = 1;
+p37_specMatDem("methanol","MeToFinal","standard")        = 1;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_specMatDem("dripell","idr","ng")        = 1.44;                                           !! Source: POSTED / Average of Devlin2022, Otto2017, Volg2018, Rechberge2020
@@ -678,72 +671,72 @@ p37_specFeDemTarget(all_enty,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 !! TODO Qianzhi 1MWh NH3,LHV = 0.19355 tons
 
-p37_specFeDemTarget("fesos","ChemSol","standard")  = 3.2/ (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","ChemSol","standard")  = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fesos","ChemSol","standard")  = 10./ (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","ChemSol","standard")  = 1. / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fegas","ChemNG","standard")  = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","ChemNG","standard")  = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fegas","ChemNG","standard")  = 10. / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","ChemNG","standard")  = 1. / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fehos","ChemLiq","standard")    = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","ChemLiq","standard")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fehos","ChemLiq","standard")    = 10. / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","ChemLiq","standard")    = 1. / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("feh2s","ChemH2","standard")  = 5  / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
-p37_specFeDemTarget("feels","ChemH2","standard")  = 0.73 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
+p37_specFeDemTarget("feh2s","ChemH2","standard")  = 10.  / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
+p37_specFeDemTarget("feels","ChemH2","standard")  = 1. / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
 
-p37_specFeDemTarget("fegas","StCrNG","standard")    = 5.0 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","StCrNG","standard")  = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fegas","StCrNG","standard")    = 22.0 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","StCrNG","standard")  = 0.15 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fehos","StCrLiq","standard")    = 5.0 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","StCrLiq","standard")  = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fehos","StCrLiq","standard")    = 41.2 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","StCrLiq","standard")  = 0.04 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fesos","MeSySol","greyh2")  = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);  !! methanol tech QIANZHI
-p37_specFeDemTarget("feels","MeSySol","greyh2")  = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fesos","MeSySol","greyh2")  = 13.0 / (sm_TWa_2_MWh/sm_giga_2_non);  !! methanol tech QIANZHI
+p37_specFeDemTarget("feels","MeSySol","greyh2")  = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fesos","MeSySol","greenh2")  = 1.6 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feh2s","MeSySol","greenh2")  = 1.6 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","MeSySol","greenh2")  = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fesos","MeSySol","greenh2")  = 4.0 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feh2s","MeSySol","greenh2")  = 4.5 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","MeSySol","greenh2")  = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fegas","MeSyNG","standard")    = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","MeSyNG","standard")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fegas","MeSyNG","standard")    = 9.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","MeSyNG","standard")    = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fehos","MeSyLiq","standard")  = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","MeSyLiq","standard")  = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fehos","MeSyLiq","standard")  = 10.3 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","MeSyLiq","standard")  = 1.4 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fesos","MeSySolcc","greyh2")    = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fesos","MeSySolcc","greyh2")    = 13.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 p37_specFeDemTarget("feels","MeSySolcc","greyh2")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fegas","MeSyNGcc","standard")  = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","MeSyNGcc","standard")  = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fegas","MeSyNGcc","standard")  = 9.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","MeSyNGcc","standard")  = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fehos","MeSyLiqcc","standard")    = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","MeSyLiqcc","standard")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fehos","MeSyLiqcc","standard")    = 10.3 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","MeSyLiqcc","standard")    = 1.4 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("feh2s","MeSyH2","standard")  = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","MeSyH2","standard")  = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feh2s","MeSyH2","standard")  = 6.7 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","MeSyH2","standard")  = 0.2 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fesos","AmSyCoal","standard")  = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);    !! ammonia tech QIANZHI
-p37_specFeDemTarget("feels","AmSyCoal","standard")  = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fesos","AmSyCoal","standard")  = 10.4 / (sm_TWa_2_MWh/sm_giga_2_non);    !! ammonia tech QIANZHI
+p37_specFeDemTarget("feels","AmSyCoal","standard")  =  1.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fegas","AmSyNG","standard")    = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","AmSyNG","standard")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fegas","AmSyNG","standard")    = 7.7 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","AmSyNG","standard")    = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fehos","AmSyLiq","standard")    = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","AmSyLiq","standard")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fehos","AmSyLiq","standard")    = 11.5 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","AmSyLiq","standard")    =  1.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fesos","AmSyCoalcc","standard")  = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","AmSyCoalcc","standard")  = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fesos","AmSyCoalcc","standard")  = 10.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","AmSyCoalcc","standard")  =  1.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fegas","AmSyNGcc","standard")    = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","AmSyNGcc","standard")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fegas","AmSyNGcc","standard")    = 7.7 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","AmSyNGcc","standard")    = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fehos","AmSyLiqcc","standard")    = 3.2 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","AmSyLiqcc","standard")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fehos","AmSyLiqcc","standard")    = 11.5 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","AmSyLiqcc","standard")    =  1.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("feh2s","AmSyH2","standard")    = 5 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","AmSyH2","standard")    = 0.73 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feh2s","AmSyH2","standard")    = 5.9 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","AmSyH2","standard")    = 0.7 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("feels","MtOMtA","standard")    = 1 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","FertProd","standard")    = 1 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","MtOMtA","standard")    = 1.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","FertProd","standard")    = 0.2 / (sm_TWa_2_MWh/sm_giga_2_non);
 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -819,8 +812,8 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 p37_ue_share("HVC","ue_chemicals") = 0.4;   !! methanol tech QIANZHI
 p37_ue_share("OtherChem","ue_chemicals") = 0.2;
 p37_ue_share("Fertilizer","ue_chemicals") = 0.2; !! ammonia tech QIANZHI
-p37_ue_share("MethFinal","ue_chemicals") = 0.1; 
-p37_ue_share("AmmoFinal","ue_chemicals") = 0.1; 
+p37_ue_share("MethFinal","ue_chemicals") = 0.1;
+p37_ue_share("AmmoFinal","ue_chemicals") = 0.1;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_ue_share("sesteel","ue_steel_secondary") = 1.;
