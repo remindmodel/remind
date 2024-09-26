@@ -134,17 +134,19 @@ withCallingHandlers({ # piping messages to logFile
   for (mif in mif_path) {
     thismifdata <- read.quitte(mif, factors = FALSE)
     # remove -rem-xx and mag-xx from scenario names
-    thismifdata$scenario <- gsub("-(rem|mag)-[0-9]{1,2}", "", thismifdata$scenario)
+    thismifdata$scenario <- gsub("^C_|-(rem|mag)-[0-9]{1,2}$", "", thismifdata$scenario)
     mifdata <- rbind(mifdata, thismifdata)
   }
 
-  mifdata$scenario <- gsub("^C_", "", mifdata$scenario)
-  message("Old names: ", paste(sort(unique(mifdata$scenario)), collapse = ", "))
-  for (i in names(renameScen)) {
-    message("Rename scenario: ", i, " -> ", renameScen[[i]])
-    mifdata$scenario[i == mifdata$scenario] <- renameScen[[i]]
+  # rename scenarios
+  if (! is.null(renameScen)) {
+    message("Old names: ", paste(sort(unique(mifdata$scenario)), collapse = ", "))
+    for (i in names(renameScen)) {
+      message("Rename scenario: ", i, " -> ", renameScen[[i]])
+      mifdata$scenario[i == mifdata$scenario] <- renameScen[[i]]
+    }
+    message("New names: ", paste(sort(unique(mifdata$scenario)), collapse = ", "))
   }
-  message("New names: ", paste(sort(unique(mifdata$scenario)), collapse = ", "))
 
   message("# ", length(temporarydelete), " variables are in the list to be temporarily deleted, ",
           length(unique(mifdata$variable[mifdata$variable %in% temporarydelete])), " were deleted.")
