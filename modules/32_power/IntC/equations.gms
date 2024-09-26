@@ -85,21 +85,26 @@ q32_h2turbVREcapfromTestor(t,regi)..
   vm_cap(t,regi,"h2turbVRE","1")
   + vm_cap(t,regi,"ngt","1")
   =g=
-  sum(teStor, p32_storageCap(teStor,"h2turbVREcapratio") * vm_cap(t,regi,teStor,"1") )
+  sum(teStor,
+    p32_storageCap(teStor,"h2turbVREcapratio") * vm_cap(t,regi,teStor,"1") )
 ;
 
 *** h2turbVRE hydrogen turbines should only be built in conjunction with storage capacities and not on its own
 q32_h2turbVREcapfromTestorUp(t,regi)..
   vm_cap(t,regi,"h2turbVRE","1")
   =l=
-  sum(teStor, p32_storageCap(teStor,"h2turbVREcapratio") * vm_cap(t,regi,teStor,"1") )
+  sum(teStor,
+    p32_storageCap(teStor,"h2turbVREcapratio") * vm_cap(t,regi,teStor,"1") )
 ;
 
 *** build additional electrolysis capacities with stored VRE electricity, phase-in from 2030 to 2040
 q32_elh2VREcapfromTestor(t,regi)..
   vm_cap(t,regi,"elh2","1")
   =g=
-  sum(teStor, p32_storageCap(teStor,"elh2VREcapratio") * vm_cap(t,regi,teStor,"1") ) * p32_phaseInElh2VREcap(t)
+  sum(teStor,
+    p32_storageCap(teStor,"elh2VREcapratio") * vm_cap(t,regi,teStor,"1")
+  )
+  * p32_phaseInElh2VREcap(t)
 ;
 
 
