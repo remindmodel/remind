@@ -56,7 +56,7 @@ q32_usableSeTe(t,regi,entySe,te)$(sameas(entySe,"seel") AND teVRE(te))..
 ***---------------------------------------------------------------------------
 *' Definition of capacity constraints for storage:
 ***---------------------------------------------------------------------------
-*' This equation calculates the storage cpacity for each teStor that needs to be installed based on the amount of
+*' This equation calculates the storage capacity for each teStor that needs to be installed based on the amount of
 *' v32_storloss that is calculated below in q32_storloss. Multiplying v32_storloss with "eta/(1-eta)" yields
 *' the total output of a storage technology; this output has to be smaller than cap * capfac.  
 q32_limitCapTeStor(t,regi,teStor)$( t.val ge 2020 ) ..
