@@ -82,7 +82,7 @@ p47_taxemiMkt_init(ttot,regi,emiMkt)$(p47_taxCO2eq_ref(ttot,regi) and (NOT(p47_t
   loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47),
     loop(regi$regi_groupExt(ext_regi,regi),
       loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
-        p47_taxemiMkt_init(t,regi,emiMkt)$(t.val gt 2020) = (20*sm_DptCO2_2_TDpGtC) + (1*sm_DptCO2_2_TDpGtC)*(t.val-2020);
+        p47_taxemiMkt_init(t,regi,emiMkt)$(t.val gt 2020) = (20*sm_D2005_2_D2017*sm_DptCO2_2_TDpGtC) + (1*sm_DptCO2_2_TDpGtC)*(t.val-2020);
       );
     );
   );
@@ -93,23 +93,23 @@ p47_taxemiMkt_init(ttot,regi,emiMkt)$(p47_taxCO2eq_ref(ttot,regi) and (NOT(p47_t
     loop(regi$(regi_groupExt(ext_regi,regi) and regi_groupExt("EUR_regi",regi)), !!second condition is necessary to support also country targets
       if((cm_startyear le 2010),
         p47_taxemiMkt_init("2010",regi,emiMkt) = 0;
-        p47_taxemiMkt_init("2010",regi,"ETS")  = 15*sm_DptCO2_2_TDpGtC;
+        p47_taxemiMkt_init("2010",regi,"ETS")  = 15*sm_D2005_2_D2017*sm_DptCO2_2_TDpGtC;
       );
       if((cm_startyear le 2015),
         p47_taxemiMkt_init("2015",regi,emiMkt) = 0;
-        p47_taxemiMkt_init("2015",regi,"ETS")  = 8*sm_DptCO2_2_TDpGtC;
+        p47_taxemiMkt_init("2015",regi,"ETS")  = 8*sm_D2005_2_D2017*sm_DptCO2_2_TDpGtC;
       );
       if((cm_startyear le 2020),
         p47_taxemiMkt_init("2020",regi,emiMkt) = 0;
 ***     p47_taxemiMkt_init("2020",regi,"ETS")   = 41.28*sm_DptCO2_2_TDpGtC; !! 2018 = 16.5€/tCO2, 2019 = 25€/tCO2, 2020 = 25€/tCO2, 2021 = 53.65€/tCO2, 2022 = 80€/tCO2 -> average 2020 = 40€/tCO2 -> 40*1.032 $/tCO2 = 41.28 $/t CO2
-        p47_taxemiMkt_init("2020",regi,"ETS")  = 30*sm_DptCO2_2_TDpGtC;
+        p47_taxemiMkt_init("2020",regi,"ETS")  = 30*sm_D2005_2_D2017*sm_DptCO2_2_TDpGtC;
 ***     p47_taxemiMkt_init("2020",regi,"ES")   = 30*sm_DptCO2_2_TDpGtC;
 ***     p47_taxemiMkt_init("2020",regi,"other")= 30*sm_DptCO2_2_TDpGtC;
       );
 ***   intialize EUR price trajectory after 2020 with an yearly increase of 1$/tCO2 from a base value of 30$/tCO2 when no price is available.
 ***   p47_taxemiMkt_init(t,regi,emiMkt)$(not(p47_taxemiMkt_init(t,regi,emiMkt)) and (t.val gt 2020)) = (30*sm_DptCO2_2_TDpGtC) + (1*sm_DptCO2_2_TDpGtC)*(t.val-2020);
 ***   intialize EUR price trajectory after 2020 with a yearly increase of 1$/tCO2 from a base value of 30$/tCO2
-      p47_taxemiMkt_init(t,regi,emiMkt)$(t.val gt 2020) = (30*sm_DptCO2_2_TDpGtC) + (1*sm_DptCO2_2_TDpGtC)*(t.val-2020);
+      p47_taxemiMkt_init(t,regi,emiMkt)$(t.val gt 2020) = (30*sm_D2005_2_D2017*sm_DptCO2_2_TDpGtC) + (1*sm_D2005_2_D2017*sm_DptCO2_2_TDpGtC)*(t.val-2020);
     );
   );
 
