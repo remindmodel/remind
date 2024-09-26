@@ -154,23 +154,6 @@ $include "./core/input/generisdata_tech_SSP5.prn"
 $include "./core/input/generisdata_trade.prn"
 ;
 
-
-***---------------------------------------------------------------------------
-*** Reading in and initializing regional cost data
-***---------------------------------------------------------------------------
-parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit: USD$/KW"
-/
-$ondelim
-$include "./core/input/p_inco0.cs4r"
-$offdelim
-/
-;
-
-*** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated 
-p_inco0(ttot,all_regi,"windon") $ (p_inco0(ttot,all_regi,"windon") eq 0) = p_inco0(ttot,all_regi,"wind");
-p_inco0(ttot,all_regi,"wind") = 0;
-
 *** initializing energy service capital
 pm_esCapCost(tall,all_regi,all_teEs) = 0;
 
@@ -243,6 +226,12 @@ $include "./core/input/p_inco0.cs4r"
 $offdelim
 /
 ;
+
+*** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated 
+p_inco0(ttot,all_regi,"windon") $ (p_inco0(ttot,all_regi,"windon") eq 0) = p_inco0(ttot,all_regi,"wind");
+p_inco0(ttot,all_regi,"wind") = 0;
+
 
 $if not "%cm_inco0RegiFactor%" == "off" parameter p_new_inco0RegiFactor(all_te) / %cm_inco0RegiFactor% /;
 $if not "%cm_inco0RegiFactor%" == "off"           p_inco0(ttot,regi,te)$(p_inco0(ttot,regi,te) and p_new_inco0RegiFactor(te)) = p_new_inco0RegiFactor(te) * p_inco0(ttot,regi,te);
