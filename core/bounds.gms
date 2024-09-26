@@ -79,8 +79,11 @@ loop(all_te $ (
 
 vm_demPe.fx(t,regi,"pecoal","seel","pcc") = 0;
 vm_demPe.fx(t,regi,"pecoal","seel","pco") = 0;
+vm_prodSe.fx(t,regi,"pecoal","seel","pcc") = 0;
+vm_prodSe.fx(t,regi,"pecoal","seel","pco") = 0;
 *** windoffshore-todo: to remove when removing wind from all_te
 vm_demPe.fx(t,regi,"pewin","seel","wind") = 0;
+vm_prodSe.fx(t,regi,"pewin","seel","wind") = 0;
 
 *' Switch off grey hydrogen investments in gash2 technology from 2025. Our current seh2 hydrogen represents only additional (clean) hydrogen use cases to current ones
 *' and there are no plans to expand grey hydrogen production for that.
