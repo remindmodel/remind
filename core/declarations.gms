@@ -146,10 +146,9 @@ p_aux_capacityFactorHistOverREMIND(all_regi,all_te)         "aux. param. to calc
 p_aux_scaleEmiHistorical_n2o(all_regi)                      "aux. param. to rescale MAgPIE n2o emissions to historical values"
 p_aux_scaleEmiHistorical_ch4(all_regi)                      "aux. param. to rescale MAgPIE ch4 emissions to historical values"
 
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+*** windoffshore-todo
 pm_shareWindPotentialOff2On(all_regi)                 "ratio of technical potential of windoff to windon"
 pm_shareWindOff(ttot,all_regi)                        "windoff rollout as a fraction of technical potential"
-$ENDIF.WindOff
 
 pm_fe2es(tall,all_regi,all_teEs)                     "Conversion factor from final energies to energy services. Default is 1."
 
@@ -463,10 +462,9 @@ q_cap(tall,all_regi,all_te,rlf)                      "definition of available ca
 q_capDistr(tall,all_regi,all_te)                     "distribute available capacities across grades"
 q_capTotal(ttot,all_regi,all_enty,all_enty)          "calculation of vm_capTotal as total capacity without technology differentation for technologies where there exists differentation"
 
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+*** windoffshore-todo
 q_windoff_low(tall,all_regi)                         "semi-endogenous offshore wind power generation as a share of onshore wind energy, which is proportional to more than half of maxprod ratio"
 q_windoff_high(tall,all_regi)                        "semi-endogenous offshore wind power generation as a share of onshore wind energy, which is proportional to less than twice of maxprod ratio"
-$ENDIF.WindOff
 
 q_limitCapSe(ttot,all_regi,all_enty,all_enty,all_te)    "capacity constraint for se production"
 q_limitCapSe2se(ttot,all_regi,all_enty,all_enty,all_te) "capacity constraint for se to se transformation"
