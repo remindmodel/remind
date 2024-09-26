@@ -961,8 +961,9 @@ display p_efFossilFuelExtr;
 *** capacity factors (nur) are 1 by default
 pm_dataren(regi,"nur",rlf,te)     = 1;
 
-*** value copied from old file generisdata_nur_ren.prn (50EJ = 1.5855TWa)
-pm_dataren(regi,"maxprod","1","geohe") = 1.5855; 
+*** geothermal heatpumps (geohe) do not get maxprod and nur from f_maxProdGradeRegi files
+***   we set regional maxprod to 200EJ = 6.342TWa to represent unlimited potential
+pm_dataren(regi,"maxprod","1","geohe") = 6.342;
 
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
 table f_maxProdGradeRegiHydro(all_regi,char,rlf)                  "input of regionalized maximum from hydro [EJ/a]"
