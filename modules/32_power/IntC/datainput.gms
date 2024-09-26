@@ -83,19 +83,6 @@ p32_shThresholdTotVREAddIntCost(t)$(t.val > 2045) = 95;
 
 p32_FactorAddIntCostTotVRE = 1.5;
 
-$ontext
-parameter p32_flex_maxdiscount(all_regi,all_te) "maximum electricity price discount for flexible technologies reached at high VRE shares"
-/
-$ondelim
-$include "./modules/32_power/IntC/input/p32_flex_maxdiscount.cs4r"
-$offdelim
-/
-; 
-*** convert from USD2015/MWh to trUSD2005/TWa
-p32_flex_maxdiscount(regi,te) = p32_flex_maxdiscount(regi,te) * sm_TWa_2_MWh * s_D2015_2_D2005 * 1e-12;
-display p32_flex_maxdiscount;
-$offtext
-
 *** Flexibility Tax Parameter
 
 *** Both flexibility tax parameters are based on a regression analysis with hourly dispatch data from high-VRE scenarios of the Langfristszenarien

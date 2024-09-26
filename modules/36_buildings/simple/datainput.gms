@@ -120,10 +120,10 @@ p36_CESMkup(ttot,regi,in) = 0;
 *' mark-up cost on heat pumps and district heating are incurred as actual cost to the budget (see option (a) above)
 *' place markup cost on heat pumps electricity of 200 USD/MWh(el) to represent demand-side cost of electrification
 *' and reach higher efficiency during calibration to model higher energy efficiency of heat pumps
-p36_CESMkup(ttot,regi,"feelhpb") = 200 * sm_TWa_2_MWh * 1e-12;
+p36_CESMkup(ttot,regi,"feelhpb") = 200 * sm_D2005_2_D2017 * sm_TWa_2_MWh * 1e-12;
 *' place markup cost on district heating of 25 USD/MWh(heat) to represent additional t&d cost of expanding district heating networks for buildings
 *' which makes district heating in buildings more expensive than in industry
-p36_CESMkup(ttot,regi,"feheb") = 25 * sm_TWa_2_MWh * 1e-12;
+p36_CESMkup(ttot,regi,"feheb") = 25 * sm_D2005_2_D2017 * sm_TWa_2_MWh * 1e-12;
 
 *' overwrite or extent CES markup cost if specified by switch
 $ifThen.CESMkup not "%cm_CESMkup_build%" == "standard"
