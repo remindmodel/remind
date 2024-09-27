@@ -12,7 +12,7 @@
 pm_taxCO2eq(ttot,regi)$( (ttot.val ge 2025) AND (ttot.val le 2100)) =
   pm_taxCO2eq("2020",regi) 
   + ( 
-      ( 25 * sm_DptCO2_2_TDpGtC - pm_taxCO2eq("2020",regi) )
+      ( 25 * sm_D2005_2_D2017 * sm_DptCO2_2_TDpGtC - pm_taxCO2eq("2020",regi) )
       * ( 
           (ttot.val - 2020) / (2100 - 2020)
         ) ** 2 
