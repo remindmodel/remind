@@ -825,13 +825,13 @@ p_FEPrice_by_SE_Sector_EmiMkt(t,regi,entySe,entyFe,sector,emiMkt)$(abs (qm_budge
 loop((t,regi,entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector)),
 
 *** initialize prices
-  p_FEPrice_by_Sector_EmiMkt(t,regi,entyFe,sector,emiMkt)=0;
-  pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector)=0;
-  p_FEPrice_by_SE_EmiMkt(t,regi,entySe,entyFe,emiMkt)=0;
-  p_FEPrice_by_SE(t,regi,entySe,entyFe)=0;
-  p_FEPrice_by_Sector(t,regi,entyFe,sector)=0;
-  p_FEPrice_by_EmiMkt(t,regi,entyFe,emiMkt)=0;
-  p_FEPrice_by_FE(t,regi,entyFe)=0;
+  p_FEPrice_by_Sector_EmiMkt(t,regi,entyFe,sector,emiMkt) = 0;
+  pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector)    = 0;
+  p_FEPrice_by_SE_EmiMkt(t,regi,entySe,entyFe,emiMkt)     = 0;
+  p_FEPrice_by_SE(t,regi,entySe,entyFe)                   = 0;
+  p_FEPrice_by_Sector(t,regi,entyFe,sector)               = 0;
+  p_FEPrice_by_EmiMkt(t,regi,entyFe,emiMkt)               = 0;
+  p_FEPrice_by_FE(t,regi,entyFe)                          = 0;
 
 *** lower level marginal price is equal to non-zero, non-eps minimal price at higher level 
   loop(entySe2, 

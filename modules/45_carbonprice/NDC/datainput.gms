@@ -12,9 +12,9 @@ Execute_Loadpoint "input_ref" p45_taxCO2eq_bau = pm_taxCO2eq;
 pm_taxCO2eq(t,regi) = p45_taxCO2eq_bau(t,regi)
 
 *** parameters for exponential increase after NDC targets
-Scalar p45_taxCO2eqGlobal2030 "startprice in 2030 (unit TDpGtC) of global CO2eq taxes towards which countries converge";
-p45_taxCO2eqGlobal2030 = 30 * sm_DptCO2_2_TDpGtC;
-Scalar p45_taxCO2eqYearlyIncrease "yearly multiplicative increase of co2 tax, write 3% as 1.03" /1.0125/;
+Scalar p45_taxCO2eqGlobal2030 "startprice in 2030 of global CO2eq taxes towards which countries converge [T$/GtC]";
+p45_taxCO2eqGlobal2030 = 30 * sm_D2005_2_D2017 * sm_DptCO2_2_TDpGtC;
+Scalar p45_taxCO2eqYearlyIncrease "yearly multiplicative increase of co2 tax, write 3% as 1.03 [1]" /1.0125/;
 
 Scalar p45_taxCO2eqConvergenceYear "year until which CO2eq taxes have converged globally" /2100/;
 *** set Years for CO2eq taxes to converge after 2030

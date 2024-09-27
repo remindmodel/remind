@@ -80,3 +80,4 @@ vm_prodSe,input,not needed
 pm_cesdata,input,not needed
 pm_prodCouple,input,not needed
 vm_emiIndCCS,input,not needed
+sm_D2005_2_D2017,input,no conversion needed

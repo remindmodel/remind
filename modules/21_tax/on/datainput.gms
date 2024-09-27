@@ -77,33 +77,22 @@ if(cm_fetaxscen eq 0,
 *** -------------------------PE2SE Taxes--------------------------(Primary to secondary energy technology taxes, specified by technology)
 *** cb 20110923 load paths for technology taxes, subsidies and inconvenience costs 
 p21_tau_pe2se_tax(tall,regi,te) = 0;
-p21_tau_pe2se_inconv(tall,regi,te) = 0;
 p21_tau_pe2se_sub(tall,regi,te)= 0;
 
 *RP* FILE changed by hand after introduction of SO2 taxes and inconvenience penalties on 2012-03-08
-*GL* Values try to account for excessive water use, further pollution
-*GL* Taxes are given in USD(2005) per GJ 
-p21_tau_pe2se_tax(ttot,regi,"igcc")$(ttot.val ge 2005)       = 0.25;
-p21_tau_pe2se_tax(ttot,regi,"igccc")$(ttot.val ge 2005)      = 0.25;
-p21_tau_pe2se_tax(ttot,regi,"coalftrec")$(ttot.val ge 2005)  = 1.0;
-p21_tau_pe2se_tax(ttot,regi,"coalftcrec")$(ttot.val ge 2005) = 1.0;
-p21_tau_pe2se_tax(ttot,regi,"coalh2")$(ttot.val ge 2005)     = 0.5;
-p21_tau_pe2se_tax(ttot,regi,"coalh2c")$(ttot.val ge 2005)    = 0.5;
-p21_tau_pe2se_tax(ttot,regi,"coalgas")$(ttot.val ge 2005)    = 0.5;
-
-***JaS* Introduces inconvenience costs as taxes for the transformation of primary to secondary energy types
-***JaS* Taxes are given in USD(2005) per GJ 
-*cb* to be exchanged for file with values if needed 
-p21_tau_pe2se_inconv(ttot,regi,te)$(ttot.val ge 2005)=0.000000;
-*** description: Taxes/subsidies are given in USD(2005) per GJ
-*** unit: USD(2005) per GJ
-p21_tau_pe2se_inconv(ttot,regi,te)$(ttot.val ge 2005)=0.000000;
-
+*** Values try to account for excessive water use, further pollution
+*** Taxes are given in USD(2005) and converted to USD(2017) per GJ 
+p21_tau_pe2se_tax(ttot,regi,"igcc")$(ttot.val ge 2005)       = sm_D2005_2_D2017 * 0.25;
+p21_tau_pe2se_tax(ttot,regi,"igccc")$(ttot.val ge 2005)      = sm_D2005_2_D2017 * 0.25;
+p21_tau_pe2se_tax(ttot,regi,"coalftrec")$(ttot.val ge 2005)  = sm_D2005_2_D2017 * 1.0;
+p21_tau_pe2se_tax(ttot,regi,"coalftcrec")$(ttot.val ge 2005) = sm_D2005_2_D2017 * 1.0;
+p21_tau_pe2se_tax(ttot,regi,"coalh2")$(ttot.val ge 2005)     = sm_D2005_2_D2017 * 0.5;
+p21_tau_pe2se_tax(ttot,regi,"coalh2c")$(ttot.val ge 2005)    = sm_D2005_2_D2017 * 0.5;
+p21_tau_pe2se_tax(ttot,regi,"coalgas")$(ttot.val ge 2005)    = sm_D2005_2_D2017 * 0.5;
 
 ***cb20110923 rescaling of PE2SE parameters from $/GJ to trillion $ / TWa 
 p21_tau_pe2se_tax(ttot,regi,te)$(ttot.val ge 2005)    = p21_tau_pe2se_tax(ttot,regi,te)    * 0.001 / sm_EJ_2_TWa;
 p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val ge 2005)    = p21_tau_pe2se_sub(ttot,regi,te)    * 0.001 / sm_EJ_2_TWa;
-p21_tau_pe2se_inconv(ttot,regi,te)$(ttot.val ge 2005) = p21_tau_pe2se_inconv(ttot,regi,te) * 0.001 / sm_EJ_2_TWa;
 
 *** SE electricity tax rate tech specific ramp up logistic function parameters
 p21_tau_SE_tax_rampup(t,regi,te,teSeTax_coeff) = 0;
@@ -115,20 +104,7 @@ $ifThen.SEtaxRampUpParam not "%cm_SEtaxRampUpParam%" == "off"
   );
 $endif.SEtaxRampUpParam
 
-***cb 20110923 load paths for ressource export taxes
-***cb* file for resource export taxes, not used in default settings
-Parameter p21_tau_xpres_tax(tall,all_regi,all_enty) "tax path for ressource export"
-  /
-$ondelim
-$include "./modules/21_tax/on/input/p21_tau_xpres_tax.cs4r"
-$offdelim
-  / ;
-*** converted to T$/TWyr   
-p21_tau_xpres_tax(ttot,regi,"peoil")$(ttot.val ge 2005) = p21_tau_xpres_tax(ttot,regi,"peoil") * sm_DpGJ_2_TDpTWa;
-*LB* use 0 for all regions as default
-p21_tau_xpres_tax(ttot,regi,all_enty) = 0;
-
-*JeS for SO2 tax case: tax path in 10^12$/TgS (= 10^6 $/t S) @ GDP/cap of 1000$/cap  (value gets scaled by GDP/cap)
+***JeS for SO2 tax case: tax path in 10^12$/TgS (= 10^6 $/t S) @ GDP/cap of 1000$/cap  (value gets scaled by GDP/cap)
 if((cm_so2tax_scen eq 0),
 s21_so2_tax_2010=0.0;
 elseif(cm_so2tax_scen eq 1),
