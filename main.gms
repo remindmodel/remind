@@ -1405,7 +1405,7 @@ $setGlobal cm_CCSmaxBound    off  !! def = off
 ***   to 40%. The capture rate here is measured as carbon captured relative to the total carbon content of the input fuel (including carbon that is converted into the output fuel).
 ***   Note: The change in capture rate via this switch follows directly after reading in the generisdata_emi.prn file. Hence, the subsequent corrections of the capture rate
 ***   related to CO2 pipeline leakage still come on top of this.
-$setGlobal c_tech_CO2capturerate    "bioh2c 0.8"  !! def = off
+$setGlobal c_tech_CO2capturerate    off  !! def = off
 *** c_CES_calibration_new_structure      <-   0        switch to 1 if you want to calibrate a CES structure different from input gdx
 $setglobal c_CES_calibration_new_structure  0     !!  def  =  0  !! regexp = 0|1
 *** c_CES_calibration_write_prices       <-   0       switch to 1 if you want to generate price file, you can use this as new p29_cesdata_price.cs4r price input file
