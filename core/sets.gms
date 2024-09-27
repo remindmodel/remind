@@ -1061,14 +1061,10 @@ Sets
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
 
-*** There are several temporal dimensions in REMIND, see the set descriptions below.
-*** Choice of set:
-***     For declaration a parameter, variable, or equation, you can only use declared sets: tall (avoid) or ttot (preferable).
-***     Elsewhere, prefer using t over ttot, and avoid using tall unless absolutely necessary.
-*** Memory efficiency:
-***     Only assign values to parameters and variables for years actively used by the model.
-***     Define equations only for the relevant years to minimize memory usage and reduce the overhead from GAMS and solver pre-processing.
-*** More information in https://github.com/remindmodel/development_issues/issues/244
+*** There are several temporal dimensions in REMIND, see the set descriptions below. Be careful to select the smallest set possible to improve memory efficiency and reduce the overhead from GAMS and solver pre-processing.
+*** Rules for the choice of set:
+***     For declaring a parameter, variable, or equation, you can only use declared sets: tall (avoid) or ttot (preferable).
+***     For assigning values, it is preferred to use t, which is a subset of ttot starting at cm_startyear. This avoids overwriting values from path_gdx_ref for < cm_startyear. Use ttot together with $(ttot.val ge 2005) if you want to define parameters etc. over all model years. Avoid using tall unless absolutely necessary.
 
 
 SETS
