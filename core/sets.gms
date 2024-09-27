@@ -1081,7 +1081,7 @@ tall    "time index, each year from 1900 to 3000"
 
 ttot(tall)    "time index with spin-up, years between 1900 and 2150 with 5 to 20 years time steps"
 *** This set represents the periods that can be used in REMIND model equations. ttot is a subset of tall and contains only elements defined in tall.
-*** It includes both historical (1990-2000) and modeled years (2005-2150). Time steps are:
+*** It includes both historical (1900-2000) and modeled years (2005-2150). Time steps are:
 ***      5-year intervals from 1990 to 2060,
 ***     10-year intervals from 2060 to 2110,
 ***     20-year intervals from 2110 to 2150.
