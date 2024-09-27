@@ -1061,52 +1061,65 @@ Sets
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
 
-SETS
-tall            "time index"
-        /
-        1900*3000
-        /
+*** There are several temporal dimensions in REMIND, see the set descriptions below.
+*** Choice of set:
+***     For declaration a parameter, variable, or equation, you can only use declared sets: tall (avoid) or ttot (preferable).
+***     Elsewhere, prefer using t over ttot, and avoid using tall unless absolutely necessary.
+*** Memory optimisation:
+***     Only assign values to parameters and variables for years actively used by the model.
+***     Define equations only for the relevant years to minimize memory usage and reduce the overhead from GAMS and solver pre-processing.
+*** More information in https://github.com/remindmodel/development_issues/issues/244
 
-*AJS* Defining ttot as sum of t and tsu will give errors from compiler, so do
-*** it manually instead:
-ttot(tall)      "time index with spin up"
+
+SETS
+
+tall    "time index, each year from 1900 to 3000"
+*** This set includes all potential years that could be considered in the model, spanning from 1900 to 3000 (e.g., 1900, 1901, 1902, ..., 2998, 2999, 3000).
+*** Usage warning:
+***     Avoid using tall directly in parameter, equation, or variable definitions unless there is a specific requirement to compute something that depends on historical years rather than the periods used in REMIND.
+***     Using tall can lead to excessive memory allocation due to the large number of years it covers. When necessary, ensure that you only define values for a relevant subset of years.
+***     It is preferable to aggregate any year-dependent data to the REMIND periods defined in ttot (see below) during data preparation, rather than loading tall-based data directly into the model.
 /
-        1900, 1905, 1910, 1915, 1920, 1925,
-        1930, 1935, 1940, 1945, 1950, 1955,
-        1960, 1965, 1970, 1975, 1980, 1985,
-        1990, 1995,
-        2000, 2005, 2010,
-        2015,
-        2020,
-        2025,
-        2030,
-        2035,
-        2040,
-        2045,
-        2050,
-        2055,
-        2060,
-        2070,
-        2080,
-        2090,
-        2100,
+        1900*3000
+/
+
+ttot(tall)    "time index with spin-up, years between 1900 and 2150 with 5 to 20 years time steps"
+*** This set represents the periods that can be used in REMIND model equations. ttot is a subset of tall and contains only elements defined in tall.
+*** It includes both historical (1990-2000) and modeled years (2005-2150). Time steps are:
+***      5-year intervals from 1990 to 2060,
+***     10-year intervals from 2060 to 2110,
+***     20-year intervals from 2110 to 2150.
+/
+        1900, 1905, 1910, 1915, 1920, 1925, 1930, 1935, 1940, 1945, 1950, 1955, 1960, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 
+        2005, 2010, 2015, 2020, 2025, 2030, 2035, 2040, 2045, 2050, 2055,
+        2060, 2070, 2080, 2090, 2100,
         2110, 2130, 2150
 /
 
-*cb the content of those subsets is defined 16 lines further down
-t(ttot) "modeling time, usually starting in 2005, but later for fixed delay runs",
-tsu(ttot) "spin up-time before 2005",
 
-opTimeYr            "actual life time of ??? in years"
+t0(tall)    "start of modelling time, not optimization"
+/
+    2005
+/
+
+t(ttot) "modeling time, years between cm_startyear and 2150 with 5 to 20 years time steps",
+*** This set includes only the active modeled years, which are the years from ttot greater than or equal to the model run year defined in cm_startyear.
+*** t is a subset of ttot and contains only elements defined in ttot.
+*** It is a dynamic set:
+***    Values are calculated dynamically in GAMS, see a few lines below.
+***    t may not be used in certain operations like declarations or lag terms.
+
+tsu(ttot) "spin up-time before 2005",
+*** This set includes only the historical years of ttot: 1900, 1905, ..., 1995, 2000
+
+opTimeYr          "actual life time of ??? in years"
 /
         1*100
 /
-opTime5(opTimeYr)            "actual life time of ??? in years - 5 years time steps for the past to calculate vintages (???)"
-
+opTime5(opTimeYr) "actual life time of ??? in years - 5 years time steps for the past to calculate vintages (???)"
 /
         1,6,11,16,21,26,31,36,41,46,51,56,61,66,71,76,81,86,91,96
 /
-t0(tall)   "start of modelling time, not optimization" /2005/
 
 ;
 
