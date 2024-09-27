@@ -1103,7 +1103,7 @@ t(ttot)     "optimisation time, years between cm_startyear and 2150 with 5 to 20
 *** t is a subset of ttot and contains only elements defined in ttot.
 *** It is a dynamic set:
 ***    Values are calculated dynamically in GAMS, see a few lines below.
-***    t may not be used in certain operations like declarations or lag terms.
+***    t may not be used in certain operations like declarations or equations including lag terms.
 
 tsu(ttot) "spin up-time before 2005",
 *** This set includes only the historical years of ttot: 1900, 1905, ..., 1995, 2000
