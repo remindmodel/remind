@@ -381,17 +381,21 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-  teCCPrc(tePrc)   "Technologies used in process-based model (only CCS)"
+teCCPrc(all_te)   "Technologies used in process-based model (only CCS)"
   /
-    $$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bfcc
     idrcc
-    $$endif.cm_subsec_model_steel
+$endif.cm_subsec_model_steel
   /
 
+teCUPrc(all_te)   "Technologies using CO2 as a feedstock"
+  /
+  /
 
 mat(all_enty)   "Materials considered in process-based model; Can be input and/or output of a process"
   /
+    co2f
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     prsteel
     sesteel
@@ -406,6 +410,7 @@ $endif.cm_subsec_model_steel
 
 matIn(all_enty)   "Materials which serve as input to a process"
   /
+    co2f
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     eafscrap   "Steel scrap used in EAF"
     bofscrap   "Steel scrap used in BOF"
@@ -482,7 +487,7 @@ $endif.cm_subsec_model_steel
 *** B) mappings
 *** -----------------------
 
-tePrc2opmoPrc(tePrc,opmoPrc)   "Mapping of technologies onto available operation modes"
+tePrc2opmoPrc(all_te,opmoPrc)   "Mapping of technologies onto available operation modes"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idr . (ng,h2)
@@ -494,7 +499,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-tePrc2matIn(tePrc,opmoPrc,mat)   "Mapping of technologies onto input materials"
+tePrc2matIn(all_te,opmoPrc,mat)   "Mapping of technologies onto input materials"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idr . (h2,ng) . dripell
@@ -505,7 +510,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-tePrc2matOut(tePrc,opmoPrc,mat)   "Mapping of industry process technologies onto their output materials"
+tePrc2matOut(all_te,opmoPrc,mat)   "Mapping of industry process technologies onto their output materials"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    bf  . standard . pigiron
@@ -516,7 +521,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-tePrc2ue(tePrc,opmoPrc,all_in)   "Mapping of industry process technologies to the UE ces nodes they directly or indirectly feed into"
+tePrc2ue(all_te,opmoPrc,all_in)   "Mapping of industry process technologies to the UE ces nodes they directly or indirectly feed into"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    (bf,bfcc)  . standard . ue_steel_primary
@@ -528,7 +533,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-tePrc2teCCPrc(tePrc,opmoPrc,tePrc,opmoPrc)  "Mapping of base technologies to CCS technologies"
+tePrc2teCCPrc(all_te,opmoPrc,all_te,opmoPrc)  "Mapping of base technologies to CCS technologies"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bf  . standard . bfcc  . standard
@@ -536,7 +541,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-tePrc2route(tePrc,opmoPrc,route)  "Mapping of technologies onto the production routes they belong to"
+tePrc2route(all_te,opmoPrc,route)  "Mapping of technologies onto the production routes they belong to"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     eaf . sec . seceaf
@@ -575,7 +580,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-secInd37_tePrc(secInd37,tePrc)   "Mapping of technologies onto industry subsectors"
+secInd37_tePrc(secInd37,all_te)   "Mapping of technologies onto industry subsectors"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     steel . idr
