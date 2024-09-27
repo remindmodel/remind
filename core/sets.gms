@@ -1061,18 +1061,21 @@ Sets
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
 
-*** There are several temporal dimensions in REMIND, see the set descriptions below. Be careful to select the smallest set possible to improve memory efficiency and reduce the overhead from GAMS and solver pre-processing.
-*** Rules for the choice of set:
-***     For declaring a parameter, variable, or equation, you can only use declared sets: tall (avoid) or ttot (preferable).
-***     For assigning values, it is preferred to use t, which is a subset of ttot starting at cm_startyear. This avoids overwriting values from path_gdx_ref for < cm_startyear. Use ttot together with $(ttot.val ge 2005) if you want to define parameters etc. over all model years. Avoid using tall unless absolutely necessary.
-
+*** There are several temporal dimensions in REMIND, see the set descriptions below.
+*** Be careful to select the smallest set possible to improve memory efficiency and reduce the overhead from GAMS and solver pre-processing.
+*** Rules for the choice of set for parameters, variables, or equations:
+***     For declaration, you can only use declared sets: tall (avoid) or ttot (preferable).
+***     For assignment:
+***         prefer using t to avoid overwriting values from path_gdx_ref for years before cm_startyear.
+***         if it needs a vlue for all model years, use ttot together with $(ttot.val ge 2005).
+***         avoid using tall unless absolutely necessary.
 
 SETS
 
 tall    "time index, each year from 1900 to 3000"
 *** This set includes all potential years that could be considered in the model, spanning from 1900 to 3000 (e.g., 1900, 1901, 1902, ..., 2998, 2999, 3000).
 *** Usage warning:
-***     Avoid using tall directly in parameter, equation, or variable definitions unless there is a specific requirement to compute something that depends on historical years rather than the periods used in REMIND.
+***     Avoid using tall directly in parameter, equation, or variable declaration unless there is a specific requirement to compute something that depends on historical years rather than the periods used in REMIND.
 ***     Using tall can lead to excessive memory allocation due to the large number of years it covers. When necessary, ensure that you only define values for a relevant subset of years.
 ***     It is preferable to aggregate any year-dependent data to the REMIND periods defined in ttot (see below) during data preparation, rather than loading tall-based data directly into the model.
 /
@@ -1119,8 +1122,8 @@ opTime5(opTimeYr) "actual life time of ??? in years - 5 years time steps for the
 
 ;
 
-t(ttot)$(ttot.val ge cm_startyear)=Yes;
-tsu(ttot)$(ttot.val lt 2005)=Yes;
+t(ttot) $ (ttot.val ge cm_startyear) = Yes;
+tsu(ttot) $ (ttot.val lt 2005) = Yes;
 display ttot;
 
 *** time sets used for MAGICC
