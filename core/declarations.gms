@@ -119,6 +119,11 @@ p_gdppcap2050_PPP(all_regi)	                     "regional GDP PPP per capita in
 p_maxPPP2050					     "maximum income GDP PPP among regions in 2050"
 p_maxSpvCost                                         "maximum spv investment cost among regions"
 
+$ifthen.tech_CO2capturerate not "%c_tech_CO2capturerate%" == "off"
+p_tech_co2capturerate(all_te)                 "Technology specific CO2 capture rate" / %c_tech_CO2capturerate% /
+p_PECarriers_CarbonContent(all_enty)	  "Carbon content of PE carriers [GtC/TWa]"
+$endif.tech_CO2capturerate
+
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]"
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1"
 p_actualbudgetco2(tall)                              "actual level of cumulated emissions starting from 2020 [GtCO2]"

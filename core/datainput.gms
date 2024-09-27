@@ -541,6 +541,29 @@ pm_share_trans("2130",regi) = 0.865;
 pm_share_trans("2150",regi) = 0.872;
 
 
+$ifthen.tech_CO2capturerate not "%c_tech_CO2capturerate%" == "off"
+p_PECarriers_CarbonContent(peFos)=pm_cintraw(peFos);
+*** From conversation: 25 GtC/ZJ is the assumed carbon content of PE biomass (makes default bioh2c capture rate 90%)
+*** Convert to GtC/TWa
+p_PECarriers_CarbonContent("pebiolc")=25 / s_zj_2_twa;
+loop(pe2se(entyPe,entySe,te)$(p_tech_co2capturerate(te)),
+  if(p_tech_co2capturerate(te) gt 0,
+    if(p_tech_co2capturerate(te) ge 1,
+		  abort "Error: Inconsistent switch usage. A CO2 capture rate is greater than 1. Check c_tech_CO2capturerate.";
+	  );
+*** Alter CO2 capture rate in fm_dataemiglob
+*** fm_dataemiglob is given in GtC/ZJ
+    fm_dataemiglob(entyPe,entySe,te,"cco2") = p_tech_co2capturerate(te) * p_PECarriers_CarbonContent(entyPe) * s_zj_2_twa;
+    if(sameAs(entyPe,"pebiolc"),
+      fm_dataemiglob(entyPe,entySe,te,"co2") = -fm_dataemiglob(entyPe,entySe,te,"cco2") ;
+    else
+    fm_dataemiglob(entyPe,entySe,te,"co2") = p_PECarriers_CarbonContent(entyPe) - fm_dataemiglob(entyPe,entySe,te,"cco2") ;
+	);
+  );
+);
+display fm_dataemiglob;
+$endif.tech_CO2capturerate
+
 *** CO2 capture rate of CCS technologies (new SSP5 assumptions)
 if (c_ccscapratescen eq 2,
   fm_dataemiglob("pecoal","seel","igccc","co2")    = 0.2;
