@@ -146,10 +146,9 @@ p_aux_capacityFactorHistOverREMIND(all_regi,all_te)         "aux. param. to calc
 p_aux_scaleEmiHistorical_n2o(all_regi)                      "aux. param. to rescale MAgPIE n2o emissions to historical values"
 p_aux_scaleEmiHistorical_ch4(all_regi)                      "aux. param. to rescale MAgPIE ch4 emissions to historical values"
 
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+*** windoffshore-todo
 pm_shareWindPotentialOff2On(all_regi)                 "ratio of technical potential of windoff to windon"
 pm_shareWindOff(ttot,all_regi)                        "windoff rollout as a fraction of technical potential"
-$ENDIF.WindOff
 
 pm_fe2es(tall,all_regi,all_teEs)                     "Conversion factor from final energies to energy services. Default is 1."
 
@@ -245,7 +244,7 @@ p_co2CCSReference(ttot,all_regi,all_enty,all_enty,all_te,rlf)     "Captured CO2 
 p_prodAllReference(ttot,all_regi,all_te)                          "Sum of the above in the reference run. As each te has only one type of output, the differing units should not be a problem"
 
 
-* Energy carrier Prices
+*** Energy carrier Prices
 pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)      "parameter to capture all FE prices across sectors and markets (tr$2005/TWa)"
 pm_FEPrice_iter(iteration,ttot,all_regi,all_enty,sector,emiMkt) "parameter to capture all FE prices across sectors and markets (tr$2005/TWa) across iterations"
 pm_SEPrice(ttot,all_regi,all_enty)                    "parameter to capture all SE prices (tr$2005/TWa)"
@@ -463,10 +462,9 @@ q_cap(tall,all_regi,all_te,rlf)                      "definition of available ca
 q_capDistr(tall,all_regi,all_te)                     "distribute available capacities across grades"
 q_capTotal(ttot,all_regi,all_enty,all_enty)          "calculation of vm_capTotal as total capacity without technology differentation for technologies where there exists differentation"
 
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+*** windoffshore-todo
 q_windoff_low(tall,all_regi)                         "semi-endogenous offshore wind power generation as a share of onshore wind energy, which is proportional to more than half of maxprod ratio"
 q_windoff_high(tall,all_regi)                        "semi-endogenous offshore wind power generation as a share of onshore wind energy, which is proportional to less than twice of maxprod ratio"
-$ENDIF.WindOff
 
 q_limitCapSe(ttot,all_regi,all_enty,all_enty,all_te)    "capacity constraint for se production"
 q_limitCapSe2se(ttot,all_regi,all_enty,all_enty,all_te) "capacity constraint for se to se transformation"
@@ -505,7 +503,7 @@ qm_co2eqCum(all_regi)                                "cumulate regional emission
 q_budgetCO2eqGlob                                    "global emission budget balance"
 
 q_emiTeDetailMkt(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "detailed energy specific emissions per region and market"
-q_emiTeMkt(ttot,all_regi,all_enty,all_emiMkt)			             "total energy-emissions per region and market"
+q_emiTeMkt(ttot,all_regi,all_enty,all_emiMkt)        "total energy-emissions per region and market"
 q_emiEnFuelEx(ttot,all_regi,all_enty)                "energy emissions from fuel extraction"
 q_emiAllMkt(ttot,all_regi,all_enty,all_emiMkt)       "total regional emissions for each emission market"
 
@@ -561,9 +559,6 @@ $IFTHEN.sehe_upper not "%cm_sehe_upper%" == "off"
 q_heat_limit(ttot,all_regi)  "equation to limit maximum level of secondary energy district heating and heat pumps use"
 $ENDIF.sehe_upper
 
-***----------------------------------------------------------------------------------------
-***----------------------------------------------trade module------------------------------
-
 ;
 ***----------------------------------------------------------------------------------------
 ***                                   SCALARS
@@ -571,11 +566,6 @@ $ENDIF.sehe_upper
 scalars
 o_modelstat                                           "critical solver status for solution"
 
-***----------------------------------------------------------------------------------------
-***------------------------------------------------MACRO module----------------------------
-
-***----------------------------------------------------------------------------------------
-***-----------------------------------------------ESM module-------------------------------
 pm_conv_TWa_EJ                                        "conversion from TWa to EJ"               /31.536/,
 sm_c_2_co2                                            "conversion from c to co2"                /3.666666666667/,
 *** conversion factors of time units
@@ -605,9 +595,12 @@ s_MtCO2_2_GtC                                         "conversion factor from Mt
 
 s_MtCH4_2_TWa                                        "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
 
-sm_h2kg_2_h2kWh                                      "convert kilogramme of hydrogen to kwh energy value." /32.5/
+s_D2015_2_D2017                                         "Convert US$2015 to US$2017"      /1.0292/
+sm_D2005_2_D2017                                         "Convert US$2005 to US$2017"      /1.231/
+sm_D2020_2_D2017                                         "Convert US$2020 to US$2017"      /0.9469/
+sm_EURO2023_2_D2017                                      "Convert EURO 2023 to US$2017"  /0.8915/
 
-s_D2015_2_D2005                                      "Convert $2015 to $2005 by dividing by 1.2: 1/1.2 = 0.8333"      /0.8333/
+sm_h2kg_2_h2kWh                                      "convert kilogramme of hydrogen to kwh energy value." /32.5/
 sm_DptCO2_2_TDpGtC                                    "Conversion multiplier to go from $/tCO2 to T$/GtC: 44/12/1000"     /0.00366667/
 
 s_co2pipe_leakage                                     "Leakage rate of CO2 pipelines. [0..1]"
@@ -630,16 +623,13 @@ sm_globalBudget_dev                                   "actual level of global cu
 sm_eps                                                "small number: 1e-9 "  /1e-9/
 
 sm_CES_calibration_iteration                          "current calibration iteration number, loaded from environment variable cm_CES_calibration_iteration"  /0/
-
-***----------------------------------------------------------------------------------------
-***----------------------------------------------trade module------------------------------
 ;
 
+sm_dmac = sm_D2005_2_D2017 * sm_dmac;
 sm_tgn_2_pgc = (44/28) * s_gwpN2O * (12/44) * 0.001;
 sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 
-***----------------------------------------------------------------------------------------
-*----------------------------------------------carbon intensities of coal, oil, and gas
+*** carbon intensities of coal, oil, and gas
 pm_cintraw("pecoal") = 26.1 / s_zj_2_twa;
 pm_cintraw("peoil")  = 20.0 / s_zj_2_twa;
 pm_cintraw("pegas")  = 15.0 / s_zj_2_twa;

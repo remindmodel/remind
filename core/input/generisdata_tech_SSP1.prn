@@ -1,6 +1,5 @@
 *** SOF ./core/input/generisdata_tech_SSP1.prn
 $ontext
-IMPORTANT: all costs are now given in $2015! As long as the model runs in $2005, the values need to be converted in datainput.gms
 tech_stat   technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'
 inco0       Initial investment costs given in $[2015] / kW[output] capacity; for dac: $[2015] / (tC[captured]/a)
 constrTme   Construction time in years, needed to calculate turn-key cost premium compared to overnight costs
@@ -55,7 +54,7 @@ omv                                       30.11       25.00       31.50       50
 lifetime              35         35          40          40          40          40          40         40        35          35          35          35          35          35          35
 
 
-+                geohdr       geohe       hydro        wind         windoff     spv       solhe         csp
++                geohdr       geohe       hydro       windon      windoff        spv       solhe         csp
 tech_stat            1
 inco0               3600        1200        2700        2400         5000       5160        9999       10320
 constrTme            4           1           5            1            4          1           1          3
@@ -136,22 +135,23 @@ omf                 0.03        0.03
 omv                   36          76
 lifetime              50          50
 
-+                storspv    storwind     storcsp
-inco0               8350        3250        2520
-mix0                0.00        0.00        0.00
-eta                 0.78        0.89        0.83
-omf                 0.02        0.02        0.02
-lifetime              25          25          25
-incolearn           7000        2430        1940
-ccap0            0.00005     0.00005     0.00005
-learn               0.10        0.10        0.10
 
-+                gridspv    gridwind     gridcsp
-inco0               2400         720        3120
-mix0                0.00        0.00        0.00
-eta                 1.00        1.00        1.00
-omf                 0.02        0.02        0.02
-lifetime              45          45          45
++                storspv     storcsp    storwindon    storwindoff
+inco0               8350        2520          3250           3250  
+mix0                0.00        0.00          0.00           0.00
+eta                 0.78        0.83          0.89           0.89  
+omf                 0.02        0.02          0.02           0.02
+lifetime              25          25            25             25
+incolearn           7000        1940          2430           2430    
+ccap0            0.00005     0.00005       0.00005        0.00005
+learn               0.10        0.10          0.10           0.10
+
++                gridspv    gridcsp     gridwindon    gridwindoff
+inco0               2400        3120           720            720     
+mix0                0.00        0.00          0.00           0.00
+eta                 1.00        1.00          1.00           1.00
+omf                 0.02        0.02          0.02           0.02
+lifetime              45          45            45             45              
 
 +             weathering         dac      oae_ng      oae_el
 tech_stat                          4
