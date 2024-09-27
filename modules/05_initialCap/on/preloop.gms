@@ -557,6 +557,5 @@ loop(entySe$(sameas(entySe,"segafos") OR sameas(entySe,"seliqfos") OR sameas(ent
 );
 
 display pm_emifac;
-execute_unload 'after_emifacAdj_IniCap.gdx', pm_emifac, pm_eta_conv ;
 
 *** EOF ./modules/05_initialCap/on/preloop.gms
