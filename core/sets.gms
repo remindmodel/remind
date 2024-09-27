@@ -1065,7 +1065,7 @@ Sets
 *** Choice of set:
 ***     For declaration a parameter, variable, or equation, you can only use declared sets: tall (avoid) or ttot (preferable).
 ***     Elsewhere, prefer using t over ttot, and avoid using tall unless absolutely necessary.
-*** Memory optimisation:
+*** Memory efficiency:
 ***     Only assign values to parameters and variables for years actively used by the model.
 ***     Define equations only for the relevant years to minimize memory usage and reduce the overhead from GAMS and solver pre-processing.
 *** More information in https://github.com/remindmodel/development_issues/issues/244
@@ -1102,7 +1102,7 @@ t0(tall)    "start of modelling time, not optimization"
     2005
 /
 
-t(ttot) "modeling time, years between cm_startyear and 2150 with 5 to 20 years time steps",
+t(ttot)     "optimisation time, years between cm_startyear and 2150 with 5 to 20 years time steps",
 *** This set includes only the active modeled years, which are the years from ttot greater than or equal to the model run year defined in cm_startyear.
 *** t is a subset of ttot and contains only elements defined in ttot.
 *** It is a dynamic set:
