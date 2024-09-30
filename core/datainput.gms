@@ -1168,7 +1168,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   p_adj_seed_te(ttot,regi,"bfcc")            = 0.05;
   p_adj_seed_te(ttot,regi,"idrcc")           = 0.05;
 $endif.cm_subsec_model_steel
-  p_adj_seed_te(ttot,regi,"elh2") = 0.33;
+  p_adj_seed_te(ttot,regi,"elh2") = 0.5;
   p_adj_seed_te(ttot,regi,"MeOH") = 0.5;
   p_adj_seed_te(ttot,regi,"h22ch4") = 0.5;
 
@@ -1209,7 +1209,7 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,teGrid)            = 0.3;
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
   
-  p_adj_coeff(ttot,regi,"elh2")            = 0.75;
+  p_adj_coeff(ttot,regi,"elh2")            = 0.5;
   p_adj_coeff(ttot,regi,"MeOH")            = 0.5;
   p_adj_coeff(ttot,regi,"h22ch4")            = 0.5;
 
