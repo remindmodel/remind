@@ -1003,8 +1003,10 @@ $offdelim
 pm_dataren(all_regi,"maxprod",rlf,"windoff") = sm_EJ_2_TWa * f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf);
 pm_dataren(all_regi,"nur",rlf,"windoff")     = 1.25 * f_maxProdGradeRegiWindOff(all_regi,"nur",rlf);  !! increase wind offshore capacity factors by 25% as the NREL values seem to underestimate offshore capacity factors compared to historic values
 
-pm_shareWindPotentialOff2On(all_regi) = sum(rlf,f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf)$(rlf.val le 8)) /
-                      sum(rlf,f_maxProdGradeRegiWindOn(all_regi,"maxprod",rlf)$(rlf.val le 8));
+pm_shareWindPotentialOff2On(all_regi) =
+    sum(rlf $ (rlf.val le 8), f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf))
+  /
+    sum(rlf $ (rlf.val le 8), f_maxProdGradeRegiWindOn( all_regi,"maxprod",rlf));
 
 pm_shareWindOff("2010",regi) = 0.05;
 pm_shareWindOff("2015",regi) = 0.1;
@@ -1055,20 +1057,28 @@ display p_datapot, pm_dataren;
 *** --------------------------------------------------------------------------
 loop(regi,
   loop(teReNoBio(te),
-    p_aux_capToDistr(regi,te) = pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
-    s_aux_cap_remaining = p_aux_capToDistr(regi,te);
-*RP* fill up the renewable grades to calculate the total capacity needed to produce the amount calculated in initialcap2,
-***    assuming the best grades are filled first (with 20% of each grade not yet used)
+    p_aux_capToDistr(regi,te) = pm_histCap("2015",regi,te) $ (pm_histCap("2015",regi,te) gt 1e-10);
 
-    loop(teRe2rlfDetail(te,rlf)$(pm_dataren(regi,"nur",rlf,te) > 0),
+*** Knowing the historical capacity (pm_histCap) in 2015, let us estimate on which grades this capacity was distributed.
+*** We assume that the best grades were filled first, but only up to 80% of their potential.
+    s_aux_cap_remaining = p_aux_capToDistr(regi,te);
+    loop(teRe2rlfDetail(te,rlf) $ (pm_dataren(regi,"nur",rlf,te) > 0),
       if(s_aux_cap_remaining > 0,
-        p_aux_capThisGrade(regi,te,rlf) = min(s_aux_cap_remaining, ( (pm_dataren(regi,"maxprod",rlf,te) * 0.8) / pm_dataren(regi,"nur",rlf,te) ) );
-        s_aux_cap_remaining         = s_aux_cap_remaining - p_aux_capThisGrade(regi,te,rlf);
+        p_aux_capThisGrade(regi,te,rlf) = min(
+            s_aux_cap_remaining,
+            0.8 * pm_dataren(regi,"maxprod",rlf,te) / pm_dataren(regi,"nur",rlf,te)); !! installedCapacity = maxprod / capacityFactor 
+        s_aux_cap_remaining = s_aux_cap_remaining - p_aux_capThisGrade(regi,te,rlf);
       );
     );  !! teRe2rlfDetail
 
-    p_avCapFac2015(regi,te) = sum(teRe2rlfDetail(te,rlf), p_aux_capThisGrade(regi,te,rlf) * pm_dataren(regi,"nur",rlf,te) )
-                                 / ( sum(teRe2rlfDetail(te,rlf), p_aux_capThisGrade(regi,te,rlf) ) + 1e-10)
+*** With this estimated distribution of capacity across grades (p_aux_capThisGrade),
+*** let us compute the average capacity factor of each technology in 2015 (p_avCapFac2015).
+    p_avCapFac2015(regi,te) =
+        sum(teRe2rlfDetail(te,rlf),
+          p_aux_capThisGrade(regi,te,rlf) * pm_dataren(regi,"nur",rlf,te))
+      / 
+        (sum(teRe2rlfDetail(te,rlf), p_aux_capThisGrade(regi,te,rlf))
+        + 1e-10)
   );    !! teReNoBio
 );      !! regi
 
@@ -1093,11 +1103,15 @@ p_histCapFac(tall,all_regi,"wind") = 0;
 *** (potentially partially due to assumed low-wind turbine set-ups in the NREL data)
 *** Because of the lag effect (turbines in the 2000s were much smaller and thus yielded lower CFs),
 *** only implement half of the calculated ratio of historic to REMIND capFac as rescaling for the new CFs - realised as (x+1)/2
+*** Analogously for wind and spv: calibrate 2015, and assume gradual phase-in of grade-based CF (until 2035 for wind, until 2030 for spv)
+p_aux_capacityFactorHistOverREMIND(regi,"spv") $ p_avCapFac2015(regi,"spv") = p_histCapFac("2015",regi,"spv") / p_avCapFac2015(regi,"spv");
+pm_cf("2015",regi,"spv") = pm_cf("2015",regi,"spv") * p_aux_capacityFactorHistOverREMIND(regi,"spv");
+pm_cf("2020",regi,"spv") = pm_cf("2020",regi,"spv") * (p_aux_capacityFactorHistOverREMIND(regi,"spv")+1)/2;
+pm_cf("2025",regi,"spv") = pm_cf("2025",regi,"spv") * (p_aux_capacityFactorHistOverREMIND(regi,"spv")+3)/4;
 
-*cb* CF calibration analogously for wind and spv: calibrate 2015, and assume gradual phase-in of grade-based CF (until 2045 for wind, until 2030 for spv)
-p_aux_capacityFactorHistOverREMIND(regi,"windon")  $ p_avCapFac2015(regi,"windon")  = p_histCapFac("2015",regi,"windon")  / p_avCapFac2015(regi,"windon");
-p_aux_capacityFactorHistOverREMIND(regi,"windoff") $ p_avCapFac2015(regi,"windoff") = p_histCapFac("2015",regi,"windoff") / p_avCapFac2015(regi,"windoff");
 
+p_aux_capacityFactorHistOverREMIND(regi,teWind) = 1;
+p_aux_capacityFactorHistOverREMIND(regi,teWind) $ p_avCapFac2015(regi,teWind) = p_histCapFac("2015",regi,teWind) / p_avCapFac2015(regi,teWind);
 *** linear phase-in of Remind capacity factors instead of historical ones
 loop(t$(t.val ge 2015 AND t.val le 2035),
   pm_cf(t,regi,teWind) =
@@ -1110,10 +1124,6 @@ loop(t$(t.val ge 2015 AND t.val le 2035),
 pm_cf(t,regi,"storwindoff") = pm_cf(t,regi,"storwindon");
 pm_cf(t,regi,"gridwindoff") = pm_cf(t,regi,"gridwindon");
 
-p_aux_capacityFactorHistOverREMIND(regi,"spv")$p_avCapFac2015(regi,"spv") =  p_histCapFac("2015",regi,"spv") / p_avCapFac2015(regi,"spv");
-pm_cf("2015",regi,"spv") = pm_cf("2015",regi,"spv") * p_aux_capacityFactorHistOverREMIND(regi,"spv");
-pm_cf("2020",regi,"spv") = pm_cf("2020",regi,"spv") * (p_aux_capacityFactorHistOverREMIND(regi,"spv")+1)/2;
-pm_cf("2025",regi,"spv") = pm_cf("2025",regi,"spv") * (p_aux_capacityFactorHistOverREMIND(regi,"spv")+3)/4;
 
 
 display p_aux_capacityFactorHistOverREMIND, pm_dataren;
