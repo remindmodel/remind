@@ -71,6 +71,7 @@ enty(enty_ccu39)							   = YES;
 te(te_ccu39)								   = YES;
 se2se(se2se_ccu39)							   = YES;
 teSe2rlf(teCCU2rlf)					   		   = YES;
+teAdj(te_ccu39)								   = YES;
 
 *** EOF ./modules/39_CCU/on/sets.gms
 
