@@ -24,6 +24,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - moved to edgeTransport 2.0 version [[#1749](https://github.com/remindmodel/remind/pull/1749)]
 - **scripts** in readCheckScenarioConfig(), do not automatically remove path_gdx_bau if allegedly 'not needed'
     [[#1809](https://github.com/remindmodel/remind/pull/1809)]
+- **core** changed adjustment cost of geohe (central heat pumps), elh2 (electrolysis), MeOH (FT-Synthesis: H2-to-Liquids)
+    and h22ch4 (methanation: H2-to-Gas) to better reflect upscaling dynamics
+    [[#1823](https://github.com/remindmodel/remind/pull/1823)]
 
 ### added
 - **50_damages**, **51_internalizeDamages** add KotzWenz realization based on Kotz & Wenz (2024)
