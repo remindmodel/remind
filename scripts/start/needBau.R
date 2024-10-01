@@ -9,5 +9,5 @@
 # This allows readCheckScenarioConfig and checkFixConfig to set it to NA
 # if not needed, and complain if it is missing.
 needBau <- list(carbonprice = "NDC",
-                carbonpriceRegi = "NDC",
+                carbonpriceRegi = c("NDC", "netZero"),
                 emicapregi = "AbilityToPay")

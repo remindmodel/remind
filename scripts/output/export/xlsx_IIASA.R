@@ -34,7 +34,8 @@ lucode2::readArgs("project")
 
 projects <- list(
   ELEVATE    = list(mapping = c("NAVIGATE", "ELEVATE"),
-                    iiasatemplate = "https://files.ece.iiasa.ac.at/elevate/elevate-template.xlsx"),
+                    iiasatemplate = "https://files.ece.iiasa.ac.at/elevate/elevate-template.xlsx",
+                    removeFromScen = "C_|eoc"),
   ENGAGE_4p5 = list(mapping = c("AR6", "AR6_NGFS"),
                     iiasatemplate = "ENGAGE_CD-LINKS_template_2019-08-22.xlsx",
                     removeFromScen = "_diff|_expoLinear|-all_regi"),

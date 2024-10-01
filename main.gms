@@ -1219,8 +1219,8 @@ $setglobal cm_NDC_version  2024_cond    !! def = "2024_cond"  !! regexp = 20(18|
 *'
 *'  (NGFS_v4):        settings used for NGFS v4, 2023
 *'  (NGFS_v4_20pc):   settings used for NGFS v4, 2023, with still 20% of 2020 emissions in netZero year
-*'  (ENGAGE4p5_GlP):  settings used for ENGAGE 4.5 Glasgow+ scenario
-$setglobal cm_netZeroScen  NGFS_v4     !! def = "NGFS_v4"  !! regexp = NGFS_v4|NGFS_v4_20pc|ENGAGE4p5_GlP
+*'  (ELEVATE2p3):     settings used for ELEVATE2p3 LTS and NDC-LTS scenario
+$setglobal cm_netZeroScen  NGFS_v4     !! def = "NGFS_v4"  !! regexp = NGFS_v4|NGFS_v4_20pc|ELEVATE2p3
 *' *  c_regi_earlyreti_rate  "maximum percentage of capital stock that can be retired early (before reaching their expected lifetimes) in one year in specified regions, if they are not economically viable. It is applied to all techs unless otherwise specified in c_tech_earlyreti_rate."
 *' *  GLO 0.09, EUR_regi 0.15: default value. (0.09 means full retirement after 11 years, 10% standing after 10 years)
 $setglobal c_regi_earlyreti_rate  GLO 0.09, EUR_regi 0.15      !! def = GLO 0.09, EUR_regi 0.15
