@@ -959,9 +959,9 @@ $offdelim
 
 $if %cm_LU_emi_scen% == "SSP1"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0047/sm_EJ_2_TWa;
 $if %cm_LU_emi_scen% == "SSP2"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0079/sm_EJ_2_TWa;
+$if %cm_LU_emi_scen% == "SSP3"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0079/sm_EJ_2_TWa;
 $if %cm_LU_emi_scen% == "SSP5"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0066/sm_EJ_2_TWa;
-*BS* added SDP, copied SSP1 number
-$if %cm_LU_emi_scen% == "SDP"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0047/sm_EJ_2_TWa;
+$if %cm_LU_emi_scen% == "SDP"    p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0047/sm_EJ_2_TWa;
 
 *DK* In case REMIND is coupled to MAgPIE emissions are obtained from the MAgPIE reporting. Thus, emission factors are set to zero
 $if %cm_MAgPIE_coupling% == "on" p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0;
@@ -1058,7 +1058,7 @@ loop(regi,
     p_aux_capToDistr(regi,te) = pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
     s_aux_cap_remaining = p_aux_capToDistr(regi,te);
 *RP* fill up the renewable grades to calculate the total capacity needed to produce the amount calculated in initialcap2,
-*    assuming the best grades are filled first (with 20% of each grade not yet used)
+***    assuming the best grades are filled first (with 20% of each grade not yet used)
 
     loop(teRe2rlfDetail(te,rlf)$(pm_dataren(regi,"nur",rlf,te) > 0),
       if(s_aux_cap_remaining > 0,
@@ -1131,7 +1131,7 @@ $endif.VREPot_Factor
 
 pm_dataeta(tall,regi,te) = f_dataetaglob(tall,te);
 
-*RP* 20100620 adjust which technologies have time-varying etas
+*** adjust which technologies have time-varying etas
 display f_dataetaglob;
 display teEtaIncr;
 loop(te,
@@ -1151,7 +1151,7 @@ $offdelim
 ***-----------------------------------------------------------------------------
 *** adjustment cost parameter
 ***-----------------------------------------------------------------------------
-***RP 20100531 import regional offset for adjustment cost calculations
+*** import regional offset for adjustment cost calculations
 parameter p_adj_deltacapoffset(tall,all_regi,all_te)     "adjustment cost offset to prevent delay of capacity addition"
 /
 $ondelim
