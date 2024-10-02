@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/45_carbonprice/NPi2025/datainput.gms
+*** SOF ./modules/45_carbonprice/NPi2025_EUR55/datainput.gms
 
 ***----------------------------
 *** CO2 Tax level growing exponentially from 2025 value taken from input data
@@ -20,4 +20,4 @@ loop(ext_regi$sameas(ext_regi, "EUR_regi"),
 
 pm_taxCO2eq(t,regi)$(t.val gt 2110) = pm_taxCO2eq("2110",regi); !! to prevent huge taxes after 2110 and the resulting convergence problems, set taxes after 2110 equal to 2110 value
 
-*** EOF ./modules/45_carbonprice/NPi2025/datainput.gms
+*** EOF ./modules/45_carbonprice/NPi2025_EUR55/datainput.gms
