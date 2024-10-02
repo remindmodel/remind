@@ -6,9 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/NPi2025_EUR55/realization.gms
 
-*#' @description: This realization implements an exponential increase in carbon price from the predefined 2025 level. 
+*#' @description: This realization takes the carbon prices until 2025 from the input data (for EUR until 2030) and implements an exponentially growing path afterwards
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/NPi2025_EUR55/datainput.gms"
 *######################## R SECTION END (PHASES) ###############################
+
 *** EOF ./modules/45_carbonprice/NPi2025_EUR55/realization.gms
