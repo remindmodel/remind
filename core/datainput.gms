@@ -1001,7 +1001,9 @@ $include "./core/input/f_maxProdGradeRegiWindOff.cs3r"
 $offdelim
 ;
 pm_dataren(all_regi,"maxprod",rlf,"windoff") = sm_EJ_2_TWa * f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf);
-pm_dataren(all_regi,"nur",rlf,"windoff")     = 1.25 * f_maxProdGradeRegiWindOff(all_regi,"nur",rlf);  !! increase wind offshore capacity factors by 25% as the NREL values seem to underestimate offshore capacity factors compared to historic values
+*** increase wind offshore capacity factors by 25% to account for very different real-world values
+*** NREL values seem underestimated, potentially partially due to assuming low turbines
+pm_dataren(all_regi,"nur",rlf,"windoff")     = 1.25 * f_maxProdGradeRegiWindOff(all_regi,"nur",rlf);
 
 pm_shareWindPotentialOff2On(all_regi) =
     sum(rlf $ (rlf.val le 8), f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf))
@@ -1099,25 +1101,22 @@ $offdelim
 p_histCapFac(tall,all_regi,"windon") $ (p_histCapFac(tall,all_regi,"windon") eq 0) = p_histCapFac(tall,all_regi,"wind");
 p_histCapFac(tall,all_regi,"wind") = 0;
 
-*** RP rescale wind capacity factors in REMIND to account for very different real-world CF 
-*** (potentially partially due to assumed low-wind turbine set-ups in the NREL data)
-*** Because of the lag effect (turbines in the 2000s were much smaller and thus yielded lower CFs),
-*** only implement half of the calculated ratio of historic to REMIND capFac as rescaling for the new CFs - realised as (x+1)/2
-*** Analogously for wind and spv: calibrate 2015, and assume gradual phase-in of grade-based CF (until 2035 for wind, until 2030 for spv)
-p_aux_capacityFactorHistOverREMIND(regi,"spv") $ p_avCapFac2015(regi,"spv") = p_histCapFac("2015",regi,"spv") / p_avCapFac2015(regi,"spv");
-pm_cf("2015",regi,"spv") = pm_cf("2015",regi,"spv") * p_aux_capacityFactorHistOverREMIND(regi,"spv");
-pm_cf("2020",regi,"spv") = pm_cf("2020",regi,"spv") * (p_aux_capacityFactorHistOverREMIND(regi,"spv")+1)/2;
-pm_cf("2025",regi,"spv") = pm_cf("2025",regi,"spv") * (p_aux_capacityFactorHistOverREMIND(regi,"spv")+3)/4;
 
+*** Capacity factor for wind and solar
+*** Effective capacity factor pm_dataren("nur") * pm_cf scales from historical values in 2015 to grade-based values in 2030
+***   pm_dataren("nur",rlf) is the capacity factor of a given rlf grade
+***   pm_cf is a multiplier that scales linearly from p_aux_capacityFactorHistOverREMIND in 2015 to 1 in 2030
+*** This scaling accounts for lag effects, for instance turbines in the 2000s were much smaller hence yielding lower capacity factors
+p_aux_capacityFactorHistOverREMIND(regi,teVRE) = 1;
+p_aux_capacityFactorHistOverREMIND(regi,teVRE) $ (p_histCapFac("2015",regi,teVRE) and p_avCapFac2015(regi,teVRE)) =
+  p_histCapFac("2015",regi,teVRE) / p_avCapFac2015(regi,teVRE);
 
-p_aux_capacityFactorHistOverREMIND(regi,teWind) = 1;
-p_aux_capacityFactorHistOverREMIND(regi,teWind) $ p_avCapFac2015(regi,teWind) = p_histCapFac("2015",regi,teWind) / p_avCapFac2015(regi,teWind);
-*** linear phase-in of Remind capacity factors instead of historical ones
-loop(t$(t.val ge 2015 AND t.val le 2035),
-  pm_cf(t,regi,teWind) =
-    (2035 - pm_ttot_val(t)) / (2035-2015) * pm_cf(t,regi,teWind) * p_aux_capacityFactorHistOverREMIND(regi,teWind)
-    +
-    (pm_ttot_val(t) - 2015) / (2035-2015) * pm_cf(t,regi,teWind)
+loop(t $ (t.val ge 2015 AND t.val lt 2030),
+  pm_cf(t,regi,teVRE) =
+    pm_cf(t,regi,teVRE) !! always 1 for VRE in f_cf, but could be modified by modules
+    * ( (2030 - pm_ttot_val(t)) * p_aux_capacityFactorHistOverREMIND(regi,teVRE)
+      + (pm_ttot_val(t) - 2015)
+    ) / (2030 - 2015) 
 );
 
 *CG* set storage and grid of windoff to be the same as windon
@@ -1126,7 +1125,7 @@ pm_cf(t,regi,"gridwindoff") = pm_cf(t,regi,"gridwindon");
 
 
 
-display p_aux_capacityFactorHistOverREMIND, pm_dataren;
+display p_aux_capacityFactorHistOverREMIND, pm_dataren, pm_cf;
 
 
 *** FS: sensitivity scenarios for renewable potentials
