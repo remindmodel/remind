@@ -15,7 +15,7 @@ pm_taxCO2eq(ttot,regi)$(ttot.val le 2025) = fm_taxCO2eqHist(ttot,regi) * sm_DptC
 pm_taxCO2eq(t,regi)$(t.val gt 2025) = sum(ttot, pm_taxCO2eq(ttot,regi)$(ttot.val eq 2025)) * cm_co2_tax_growth**(t.val - 2025);
 
 loop(ext_regi$sameas(ext_regi, "EUR_regi"),
-  pm_taxCO2eq(t,regi)$(t.val ge 2030) = fm_taxCO2eqHist("2030",regi) * cm_co2_tax_growth**(t.val - 2030);
+  pm_taxCO2eq(t,regi)$(t.val ge 2030 AND regi_group(ext_regi,regi)) = fm_taxCO2eqHist("2030",regi) * sm_DptCO2_2_TDpGtC * cm_co2_tax_growth**(t.val - 2030);
 );
 
 pm_taxCO2eq(t,regi)$(t.val gt 2110) = pm_taxCO2eq("2110",regi); !! to prevent huge taxes after 2110 and the resulting convergence problems, set taxes after 2110 equal to 2110 value
