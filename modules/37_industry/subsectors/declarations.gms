@@ -13,7 +13,7 @@ Scalar
 ;
 
 Parameters
-  pm_abatparam_Ind(ttot,all_regi,all_enty,steps)                               "industry CCS MAC curves [ratio @ US$2005]"
+  pm_abatparam_Ind(ttot,all_regi,all_enty,steps)                               "industry CCS MAC curves [ratio @ US$2017]"
   pm_energy_limit(all_in)                                                      "thermodynamic/technical limits of subsector energy use [GJ/t product]"
   p37_energy_limit_slope(tall,all_regi,all_in)                                 "limit for subsector specific energy demand that converges towards the thermodynamic/technical limit [GJ/t product]"
   p37_clinker_cement_ratio(ttot,all_regi)                                      "clinker content per unit cement used"
@@ -97,7 +97,7 @@ Positive Variables
   v37_matFlow(tall,all_regi,all_enty)                                       "Production of materials [Gt/a]"
   v37_emiPrc(tall,all_regi,all_enty,all_te,opmoPrc)                         "Emissions per process and operation mode [GtC/a]"
   v37_shareWithCC(tall,all_regi,all_te,opmoPrc)                             "Share of process and operation mode equipped with carbon capture technology"
-  vm_costMatPrc(tall,all_regi)                                              "Cost of external material inputs such as iron ore in process-based industry [trn $2005/a]"
+  vm_costMatPrc(tall,all_regi)                                              "Cost of external material inputs such as iron ore in process-based industry [trn $2017/a]"
 ;
 
 Equations

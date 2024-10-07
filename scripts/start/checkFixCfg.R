@@ -97,8 +97,14 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
   if (! isTRUE(cfg$gms$CES_parameters == "calibrate")) {
     cfg$output <- setdiff(cfg$output, "reportCEScalib")
   }
-  
-  # Make sure that an input_bau.gdx has been specified if and only if needed.
+
+  # remove rev at the beginning of inputRevision
+  if (grepl("^rev", cfg$inputRevision)) {
+    cfg$inputRevision <- sub("^rev", "", cfg$inputRevision)
+    warning("cfg$inputRevision started with 'rev', but this will be added automatically. Removed it.")
+  }
+
+  # Make sure that an input_bau.gdx has been specified if needed.
   isBauneeded <- isTRUE(length(unlist(lapply(names(needBau), function(x) intersect(cfg$gms[[x]], needBau[[x]])))) > 0)
   if (isBauneeded) {
     if (is.na(cfg$files2export$start["input_bau.gdx"])) {

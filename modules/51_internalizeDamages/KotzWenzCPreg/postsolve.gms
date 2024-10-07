@@ -5,7 +5,7 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 
-*** SOF ./modules/51_internalizeDamages/KotzWenzItr/postsolve.gms
+*** SOF ./modules/51_internalizeDamages/KotzWenzCPreg/postsolve.gms
 
 
 p51_sccLastItr(tall,regi) = p51_scc(tall,regi);
@@ -44,6 +44,6 @@ pm_sccConvergenceMaxDeviation=0;
 pm_sccConvergenceMaxDeviation = 100 * smax(regi,smax(tall$(tall.val ge cm_startyear and tall.val lt 2150),abs(p51_scc(tall,regi)/max(p51_sccLastItr(tall,regi),1e-8) - 1) ));
 display pm_sccConvergenceMaxDeviation;
 
-*** EOF ./modules/51_internalizeDamages/KotzWenzItr/postsolve.gms
+*** EOF ./modules/51_internalizeDamages/KotzWenzCPreg/postsolve.gms
 
 

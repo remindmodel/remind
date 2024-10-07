@@ -116,6 +116,15 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
             paste0(names(needBau), ": ", sapply(needBau, paste, collapse = ", "), ".", collapse = " "))
   }
 
+  startyearmismatch <- NULL
+  if ("cm_startyear" %in% names(scenConf)) {
+    startyearmismatch <- subset(rownames(scenConf), scenConf[,"cm_startyear"] < scenConf[scenConf[["path_gdx_ref"]], "cm_startyear"])
+    if (length(startyearmismatch) > 0) {
+      warning("Those scenarios have cm_startyear earlier than their path_gdx_ref run, which is not supported: ",
+              paste(startyearmismatch, collapse = ", "))
+    }
+  }
+
   if (isTRUE(testmode)) {
     for (n in intersect(names(path_gdx_list), names(scenConf))) {
       missingPath <- ! (is.na(scenConf[, n]) | scenConf[, n] %in% rownames(scenConf))
@@ -128,7 +137,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   }
 
   # collect errors
-  errorsfound <- length(colduplicates) + sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors + missingRealizations
+  errorsfound <- length(colduplicates) + sum(toolong) + sum(regionname) + sum(nameisNA) + sum(illegalchars) + whitespaceErrors +
+                 copyConfigFromErrors + pathgdxerrors + missingRealizations + length(startyearmismatch)
 
   # check column names
   knownColumnNames <- c(names(path_gdx_list), "start", "model", "copyConfigFrom")

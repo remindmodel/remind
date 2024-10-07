@@ -1,0 +1,8 @@
+#!/bin/bash
+if [ -f SOFEOF ]; then
+  cd ../..
+fi
+for i in core/*.gms modules/*.gms modules/*/*.gms modules/*/*/*.gms
+do
+  sed -i "s>\*\*\* *SOF.*$>\*\*\* SOF ./${i}>g;s>\*\*\* *EOF.*$>\*\*\* EOF ./${i}>g" $i
+done

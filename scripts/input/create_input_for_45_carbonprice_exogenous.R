@@ -26,7 +26,7 @@ create_input_for_45_carbonprice_exogenous<-function(gdx){
   # ---- Convert data ----
   
   #select right temporal/variable scope 
-  pr <- pr[,,c( "Price|Carbon (US$2005/t CO2)")]
+  pr <- pr[,,c( "Price|Carbon (US$2017/t CO2)")]
   # convert from $/tCO2 to $/kgC (or T$/GtC)
   pr <- pr / 1000 * 44/12
   # remove GLO region if it exists
@@ -46,7 +46,7 @@ create_input_for_45_carbonprice_exogenous<-function(gdx){
   cat("*= generated with:                                           =*\n", file = p_fpath, append = TRUE)
   cat("*= scripts/input/create_input_for_45_carbonprice_exogenous.R =*\n", file = p_fpath, append = TRUE)
   cat(paste0("*= from file: ", normalizePath(gdx), " =*\n"), file = p_fpath, append = TRUE)
-  cat("*= unit: 10^12 US$(2005)/GtC                                 =*\n", file = p_fpath, append = TRUE)
+  cat("*= unit: 10^12 US$(2017)/GtC                                 =*\n", file = p_fpath, append = TRUE)
   cat("*=============================================================*\n", file = p_fpath, append = TRUE)
   cat("\n", file = p_fpath, append = TRUE)
   

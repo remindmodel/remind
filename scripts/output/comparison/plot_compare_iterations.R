@@ -68,7 +68,7 @@ plot_iterations <- function(runname) {
   message("Reading ", length(report_path), " REMIND reports.")
   reports <- NULL
   for (rep in report_path) {
-    reports <- mbind(reports, read.report(rep, as.list=FALSE)) #[,,"Price|Carbon (US$2005/t CO2)"])
+    reports <- mbind(reports, read.report(rep, as.list=FALSE)) #[,,"Price|Carbon (US$2017/t CO2)"])
   }
 
   # ---- Settings ----
@@ -83,7 +83,7 @@ plot_iterations <- function(runname) {
   
   # ---- Plot: MAgPIE prices for purpose grown bioenergy ----
   
-  var <- "Internal|Price|Biomass|MAgPIE (US$2005/GJ)"
+  var <- "Internal|Price|Biomass|MAgPIE (US$2017/GJ)"
 
   p_price_mag <- myplot(reports[r, years, var], ylab = "$/GJ", title = paste(runname, var, sep = "\n"))
   
@@ -91,7 +91,7 @@ plot_iterations <- function(runname) {
   # ---- Plot: MAgPIE co2luc ----
 
   # core/datainput.gms
-  # $if %cm_MAgPIE_coupling% == "on"  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
+  # $if %cm_MAgPIE_coupling% == "on"  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2017) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
   # core/presolve.gms
   # vm_macBase.fx(ttot,regi,"co2luc") = pm_macBaseMagpie(ttot,regi,"co2luc")-p_macPolCO2luc(ttot,regi);
   # core/equations.gms
@@ -153,7 +153,7 @@ plot_iterations <- function(runname) {
   
   # ---- Plot: REMIND co2 price ----
   
-  var <- "Price|Carbon (US$2005/t CO2)"
+  var <- "Price|Carbon (US$2017/t CO2)"
   title <- paste(runname, var, sep = "\n")
 
   p_price_carbon      <- myplot(reports[r, years, var], ylab = "$/tCO2", title = title)

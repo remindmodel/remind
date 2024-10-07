@@ -14,7 +14,7 @@ scalars
 ;
 
 Parameters
-  pm_abatparam_Ind(ttot,all_regi,all_enty,steps)         "industry CCS MAC curves [ratio @ US$2005]"
+  pm_abatparam_Ind(ttot,all_regi,all_enty,steps)         "industry CCS MAC curves [ratio @ US$2017]"
 
 
   pm_ue_eff_target(all_in)   "energy efficiency target trajectories [% p.a.]"

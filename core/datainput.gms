@@ -1355,14 +1355,14 @@ $if %carbonprice% == "NPi"      pm_macSwitch(emiMacMagpie) = 0;
 
 *** Load historical carbon prices defined in $/t CO2, need to be rescaled to right unit
 pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = 0;
-parameter f_taxCO2eqHist(ttot,all_regi)       "historic CO2 prices ($/tCO2)"
+parameter fm_taxCO2eqHist(ttot,all_regi)       "historic CO2 prices [$/tCO2]"
 /
 $ondelim
 $include "./core/input/pm_taxCO2eqHist.cs4r"
 $offdelim
 /
 ;
-pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = f_taxCO2eqHist(ttot,regi) * sm_DptCO2_2_TDpGtC;
+pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = fm_taxCO2eqHist(ttot,regi) * sm_DptCO2_2_TDpGtC;
 
 *DK* LU emissions are abated in MAgPIE in coupling mode
 *** An alternative to the approach below could be to introduce a new value for c_macswitch that only deactivates the LU MACs
