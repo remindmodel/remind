@@ -12,3 +12,7 @@ ELV-SSP2-400Feoc;1;;;;SSP2|NDC|nocc_hist|rcp1p9;y2150;2;;;;
 ELV-SSP2-CP-D0;1;;;priority;SSP2|NPI|nocc_hist|rcp4p5;y2150;2;;;;
 ELV-SSP2-CP-D1;1;;;priority;SSP2|NPI|nocc_hist|rcp4p5;y2150;2;;;;
 ELV-SSP2-CP-D3;1;;;priority;SSP2|NPI|nocc_hist|rcp4p5;y2150;2;;;;
+ELV-SSP2-CP-D1_Mix1;1;;;priority;SSP2|NPI|nocc_hist|rcp4p5;y2150;2;;;;
+ELV-SSP2-CP-D1_Mix2;1;;;priority;SSP2|NPI|nocc_hist|rcp4p5;y2150;2;;;;
+ELV_CurPol_T44_Mix1;1;;;priority;SSP2|NPI|nocc_hist|rcp4p5;y2150;2;;;;
+ELV_CurPol_T44_Mix2;1;;;priority;SSP2|NPI|nocc_hist|rcp4p5;y2150;2;;;;
