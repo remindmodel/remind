@@ -9,14 +9,12 @@
 *** CO2 Tax level
 ***----------------------------
 
-*** CO2 tax level is calculated at a 5% exponential increase from the tax level before cm_startyear
-
-*GL: tax path in 10^12$/GtC = 1000 $/tC
-*** according to Asian Modeling Excercise tax case setup, 30$/t CO2eq in 2020 = 0.110 k$/tC
+*** CO2 tax level is calculated at an exponential increase from the tax level before cm_startyear
 
 Execute_Loadpoint "input_ref" pm_taxCO2eq = pm_taxCO2eq;
 
-pm_taxCO2eq(t,regi) = sum(ttot, pm_taxCO2eq(ttot,regi)$(ttot.val eq cm_startyear - 5)) * cm_co2_tax_growth**(t.val-cm_startyear+5);
+*** calculate pm_taxCO2eq for year before startyear
+pm_taxCO2eq(t,regi) = sum(ttot, pm_taxCO2eq(ttot,regi)$(ttot.val eq smax(ttot2$( ttot2.val lt cm_startyear ), ttot2.val))) * cm_co2_tax_growth**(t.val-smax(ttot2$( ttot2.val lt cm_startyear ), ttot2.val));
 pm_taxCO2eq(t,regi)$(t.val gt 2110) = pm_taxCO2eq("2110",regi); !! to prevent huge taxes after 2110 and the resulting convergence problems, set taxes after 2110 equal to 2110 value
 
 
