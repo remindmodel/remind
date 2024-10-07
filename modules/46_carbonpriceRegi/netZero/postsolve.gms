@@ -26,7 +26,7 @@ $ifthen.offsets "%cm_netZeroScen%" == "ELEVATE2p3"
   p46_offset(nz_reg)$(sameas(nz_reg, "MEA")) = (1 - 0.40) * p46_ref_co2eq("2055", nz_reg) * sm_c_2_co2 * 1000;
   p46_offset(nz_reg)$(sameas(nz_reg, "NEU")) = (1 - 0.83) * p46_ref_co2eq("2055", nz_reg) * sm_c_2_co2 * 1000;
   p46_offset(nz_reg)$(sameas(nz_reg, "OAS")) = (1 - 0.88) * p46_ref_co2eq("2055", nz_reg) * sm_c_2_co2 * 1000;
-  p46_offset(nz_reg)$(sameas(nz_reg, "SSA")) = (1 - 0.66) * p46_ref_co2eq("2055", nz_reg) * sm_c_2_co2 * 1000;
+  p46_offset(nz_reg)$(sameas(nz_reg, "SSA")) = (1 - 0.58) * p46_ref_co2eq("2055", nz_reg) * sm_c_2_co2 * 1000;
   p46_offset(nz_reg)$(sameas(nz_reg, "REF")) = (1 - 0.83) * p46_ref_co2eq("2060", nz_reg) * sm_c_2_co2 * 1000;
 
 $elseif.offsets "%cm_netZeroScen%" == "NGFS_v4_20pc"

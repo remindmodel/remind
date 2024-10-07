@@ -132,7 +132,7 @@
 *'
 *' #### Sets
 *'
-*' * Don't use set element names with three capital letters (like `ETS` or `ESR`), otherwise the maglcass R
+*' * Don't use set element names with three capital letters (like `ETS` or `ESR`), otherwise the magclass R
 *' library might interpret this as a region name when reading in GDX data
 *'
 *'
