@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/NPiexpo/realization.gms
 
-*' @description: This realization imeplents an exponential increase in carbon price from the predefined 2020 level.
+*' @description: This realization implements an exponential increase in carbon price from the tax level before cm_startyear.
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/NPiexpo/datainput.gms"

@@ -9,7 +9,7 @@
 *** CO2 Tax level
 ***----------------------------
 
-*** CO2 tax level is calculated at a 5% exponential increase from the 2020 tax level exogenously defined
+*** CO2 tax level is calculated at a 5% exponential increase from the tax level before cm_startyear
 
 *GL: tax path in 10^12$/GtC = 1000 $/tC
 *** according to Asian Modeling Excercise tax case setup, 30$/t CO2eq in 2020 = 0.110 k$/tC

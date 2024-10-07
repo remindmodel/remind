@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/linear/realization.gms
 
-*' @description: This realization imeplents an linear increase in carbon price from the predefined 2020 level.
+*' @description: This realization implements an linear increase in carbon price from the predefined 2020 level.
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/linear/datainput.gms"
