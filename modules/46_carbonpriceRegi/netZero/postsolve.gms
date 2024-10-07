@@ -19,7 +19,9 @@ $ifthen.offsets "%cm_netZeroScen%" == "ELEVATE2p3"
 
 
   Execute_Loadpoint 'input_bau' p46_ref_co2eq = vm_co2eq.l;
-*** shares calculated by Rahel based on excel file
+*** Coverage shares are calculated using PBL's Net-Zero Calculator based on https://zerotracker.net/
+*** (methodology and more information at https://zerotracker.net/methodology) and further
+*** adaptations based on Climate Action Tracker information, literature or expert opinion.
   p46_offset(nz_reg)$(sameas(nz_reg, "LAM")) = (1 - 0.68) * p46_ref_co2eq("2050", nz_reg) * sm_c_2_co2 * 1000;
   p46_offset(nz_reg)$(sameas(nz_reg, "MEA")) = (1 - 0.40) * p46_ref_co2eq("2055", nz_reg) * sm_c_2_co2 * 1000;
   p46_offset(nz_reg)$(sameas(nz_reg, "NEU")) = (1 - 0.83) * p46_ref_co2eq("2055", nz_reg) * sm_c_2_co2 * 1000;
