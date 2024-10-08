@@ -121,10 +121,10 @@ for (y in years) {
 swlatex(pdf,"\\section{Bioenergy demand and prices}")
 
 var_price_shapes = c(
-  "Internal|Price|Biomass|MAgPIE (US$2005/GJ)" = 0,
-  "Internal|Price|Biomass|Emulator presolve (US$2005/GJ)" = 1,
-  "Internal|Price|Biomass|Emulator presolve shifted (US$2005/GJ)" = 2,
-  "Internal|Price|Biomass|Emulator shifted (US$2005/GJ)" = 4
+  "Internal|Price|Biomass|MAgPIE (US$2017/GJ)" = 0,
+  "Internal|Price|Biomass|Emulator presolve (US$2017/GJ)" = 1,
+  "Internal|Price|Biomass|Emulator presolve shifted (US$2017/GJ)" = 2,
+  "Internal|Price|Biomass|Emulator shifted (US$2017/GJ)" = 4
 )
 
 # bring GLO to front
@@ -149,10 +149,10 @@ for (r in regions){
     plot.title<-paste0("\\subsection{Bioenergy prices (",r,")}")
     swlatex(pdf,plot.title)
     var_price = c(
-      "Internal|Price|Biomass|MAgPIE (US$2005/GJ)",
-      "Internal|Price|Biomass|Emulator presolve (US$2005/GJ)",
-      "Internal|Price|Biomass|Emulator presolve shifted (US$2005/GJ)",
-      "Internal|Price|Biomass|Emulator shifted (US$2005/GJ)"
+      "Internal|Price|Biomass|MAgPIE (US$2017/GJ)",
+      "Internal|Price|Biomass|Emulator presolve (US$2017/GJ)",
+      "Internal|Price|Biomass|Emulator presolve shifted (US$2017/GJ)",
+      "Internal|Price|Biomass|Emulator shifted (US$2017/GJ)"
     )
     dat<-as.ggplot(csv[r,years,var_price])
     
@@ -178,9 +178,9 @@ for (r in regions){
 
 swlatex(pdf,"\\section{Bioenergy costs}")
 
-var_pe = c("Costs|Biomass|MAgPIE (billion US$2005/yr)",
-           "Costs|Biomass|Price integral presolve (billion US$2005/yr)",
-           "Costs|Biomass|Price integral (billion US$2005/yr)")
+var_pe = c("Costs|Biomass|MAgPIE (billion US$2017/yr)",
+           "Costs|Biomass|Price integral presolve (billion US$2017/yr)",
+           "Costs|Biomass|Price integral (billion US$2017/yr)")
 var_pe <- intersect(getNames(csv,dim="variable"),var_pe) # take only existing variables
 
 if (!identical(var_pe, character(0))) {
@@ -188,7 +188,7 @@ if (!identical(var_pe, character(0))) {
     swlatex(pdf,plot.title)
     dat<-as.ggplot(csv[,years,var_pe]["GLO",,invert=TRUE])
     
-    p <- ggplot(data=dat, aes(x=Year, y=Value)) + geom_line(aes(colour=Data3),size=1) + labs(y="billion US$2005") +
+    p <- ggplot(data=dat, aes(x=Year, y=Value)) + geom_line(aes(colour=Data3),size=1) + labs(y="billion US$2017") +
       geom_point(aes(colour=Data3),size=1) +
       guides(color = guide_legend(nrow = length(var_pe))) +
       theme(legend.position="top", legend.title=element_blank()) +

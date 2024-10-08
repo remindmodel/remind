@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/15_climate/magicc/postsolve.gms
+*** SOF ./modules/15_climate/magicc7_ar6/postsolve.gms
 
 ***---------------------------------------------------------------------------
 *' The MAGICC scenario generation is set in `./core/magicc.gms`, but runs here.
@@ -106,4 +106,4 @@ if (cm_iterative_target_adj eq 2, !! otherwise adjustment happens in core/postso
     );
 );
 *' @stop
-*** EOF ./modules/15_climate/magicc/postsolve.gms
+*** EOF ./modules/15_climate/magicc7_ar6/postsolve.gms
