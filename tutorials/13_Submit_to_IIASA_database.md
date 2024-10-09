@@ -101,10 +101,12 @@ If you like to generate a 'historical.mif' file for a different regional resolut
 ```
 library(madrat)
 library(mrremind)
-setConfig(regionmapping = system.file("regionmapping/ISO_2_R10.csv", package = "piamInterfaces"))
+stopifnot(utils::packageVersion("piamInterfaces") >= "0.35.3")
+setConfig(regionmapping = system.file("regionmapping/ISO_2_ISO.csv", package = "piamInterfaces"))
 d <- madrat::retrieveData("VALIDATIONREMIND")
 system(paste("tar xvf", d))
-quitte::write.mif(piamInterfaces::convertHistoricalData("historical.mif", "ScenarioMIP"), "historical_R10.mif")
+quitte::write.mif(piamInterfaces::convertHistoricalData("historical.mif", "ScenarioMIP", "ISO_2_R10"), "historical_R10.mif")
+quitte::write.mif(piamInterfaces::convertHistoricalData("historical.mif", "ScenarioMIP", "ISO_2_R5"), "historical_R5.mif")
 ```
 
 ## Further Information
