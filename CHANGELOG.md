@@ -65,7 +65,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1818](https://github.com/remindmodel/remind/pull/1818)]
 - **scripts** fail transparently if cm_startyear is earlier than that of path_gdx_ref
     [[#1851](https://github.com/remindmodel/remind/pull/1851)]
-
+- **testthat** ignore missing historical.mif in tests because it is an optional input file
+    [[#1857](https://github.com/remindmodel/remind/pull/1857)]
+    
 ### fixed
 - included CCS from plastic waste incineration in CCS mass flows so it is
     subject to injection constraints (but did not add CCS costs, see
