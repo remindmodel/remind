@@ -395,7 +395,7 @@ qm_fuel2pe(t,regi,peRicardian(enty))..
   =e=
   sum(pe2rlf(enty,rlf2), vm_fuExtr(t,regi,enty,rlf2))
   - (vm_Xport(t,regi,enty) - (1-pm_costsPEtradeMp(regi,enty)) * vm_Mport(t,regi,enty))$(tradePe(enty))
-  - sum(pe2rlf(enty2,rlf2),
+  - sum(pe2rlf(enty2,rlf2), 
       (pm_fuExtrOwnCons(regi, enty, enty2) * vm_fuExtr(t,regi,enty2,rlf2))$(pm_fuExtrOwnCons(regi, enty, enty2) gt 0)
     )
 ;
@@ -641,12 +641,12 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
     !! substract carbon from non-fossil origin contained in plastics that don't
     !! get incinerated ("plastic removals")
   - sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-         se2fe(entySe,entyFe,te)),
-      vm_plasticsCarbon(t,regi,entySe,entyFe,emiMkt)
+         se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
+      vm_nonIncineratedPlastics(t,regi,entySe,entyFe,emiMkt)
     )$( sameas(enty,"co2") )
-    !! add fossil emissions from plastics incineration.
+    !! add fossil emissions from plastics incineration. 
   + sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-         se2fe(entySe,entyFe,te)),
+         se2fe(entySe,entyFe,te))$( entySeFos(entySe) ),
       vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
     )$( sameas(enty,"co2") )
     !! add fossil emissions from chemical feedstock with unknown fate
@@ -872,7 +872,7 @@ q_balcapture(t,regi,ccs2te(ccsCo2(enty),enty2,te)) ..
   + sum(teCCS2rlf(te,rlf), vm_co2capture_cdr(t,regi,enty,enty2,te,rlf))
     !! carbon captured from industry
   + sum(emiInd37, vm_emiIndCCS(t,regi,emiInd37))
-  + sum((sefe(entySe,entyFe),emiMkt)$(
+  + sum((sefe(entySe,entyFe),emiMkt)$( 
                             entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ),
       vm_incinerationCCS(t,regi,entySe,entyFe,emiMkt)
     )
