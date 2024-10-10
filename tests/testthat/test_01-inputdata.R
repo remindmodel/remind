@@ -8,10 +8,10 @@ test_that("Are all input data files present?", {
   missinginput <- missingInputData(path = "../..")
   if (length(missinginput) > 0) {
     lockID <- gms::model_lock(folder = "../..")
-    w <- capture_warning(updateInputData(cfg = gms::readDefaultConfig("../.."), remindPath = "../.."))
+    w <- capture_warnings(updateInputData(cfg = gms::readDefaultConfig("../.."), remindPath = "../.."))
     # ignore warning about missing historical.mif, raise warning if there were other wargnings
     ignore <- "File historical.mif seems to be missing!"
-    if (!w$message %in% ignore) {
+    if (!w %in% ignore) {
       warning(paste0("'updateInputData' raised the following wargnings\n", paste(w, collapse = "\n")))
     }
     gms::model_unlock(lockID)
