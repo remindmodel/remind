@@ -10,7 +10,6 @@ sm_DptCO2_2_TDpGtC,input,questionnaire
 vm_co2eq,input,questionnaire
 vm_emiFgas,input,questionnaire
 pm_ttot_val,input,questionnaire
-cm_co2_tax_2020,input,questionnaire
 cm_co2_tax_growth,input,questionnaire
 cm_startyear,input,questionnaire
 cm_iterative_target_adj,input,questionnaire
