@@ -111,7 +111,7 @@ else
   abort "please initialize cm_co2_tax_startyear by setting it to a positive value"
 );
 *** make sure that the initial CO2 price trajectory is increasing
-if(s45_co2_tax_startyear le s45_co2_tax_hist,
+if(s45_co2_tax_startyear lt s45_co2_tax_hist,
   abort "please choose a value for cm_co2_tax_startyear that is larger than the value provided by cm_co2_tax_hist"
 );
 display s45_co2_tax_startyear;
