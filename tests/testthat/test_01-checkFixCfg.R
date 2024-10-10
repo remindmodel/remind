@@ -22,7 +22,7 @@ test_that("checkFixCfg works", {
     "cm_rcp_scen" = "apocalypse",
     "c_testOneRegi_region" = "LOONG",
     "c_shGreenH2" = "1.5",
-    "cm_co2_tax_2020" = "-2",
+    "cm_co2_tax_startyear" = "-2",
   NULL)
 
   cfg <- savecfg

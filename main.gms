@@ -268,7 +268,7 @@ $setGlobal climate  off               !! def = off
 *'---------------------    16_downscaleTemperature    --------------------------
 *'
 *' * (off)
-*' * (CMIP5): downscale GMT to regional temperature based on CMIP5 data (between iterations, no runtime impact). [Requires climate = off, cm_rcp_scen = none, iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
+*' * (CMIP5): downscale GMT to regional temperature based on CMIP5 data (between iterations, no runtime impact). [Requires climate = off, cm_rcp_scen = none, iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path through (cm_year_co2_tax_hist, cm_co2_tax_hist) and (cm_startyear, cm_co2_tax_startyear);
 $setGlobal downscaleTemperature  off  !! def = off
 *'---------------------    20_growth    ------------------------------------------
 *'
@@ -384,13 +384,13 @@ $setglobal emicapregi  none           !! def = none
 *' *             choose cm_peakBudgYr = 2110 for no adaptation of carbonprice path until end of century
 *' * (expoLinear): 4.5% exponential increase until cm_expoLinear_yearStart, transitioning into linear increase thereafter
 *' * (exogenous): carbon price is specified using an external input file or using the switch cm_regiExoPrice. Requires cm_emiscen = 9 and cm_iterative_target_adj = 0
-*' * (temperatureNotToExceed): [test and verify before using it!] Find the optimal carbon carbon tax (set cm_emiscen = 1, iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
+*' * (temperatureNotToExceed): [test and verify before using it!] Find the optimal carbon carbon tax (set cm_emiscen = 1, iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path through (cm_year_co2_tax_hist, cm_co2_tax_hist) and (cm_startyear, cm_co2_tax_startyear);
 *' * (NDC): implements a carbon price trajectory consistent with the NDC targets (up to 2030) and a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). Choose version using cm_NDC_version "2023_cond", "2023_uncond", or replace 2023 by 2022, 2021 or 2018 to get all NDC published until end of these years.
 *' * (NPi): National Policies Implemented, extrapolation of historical (until 2020) carbon prices
 *' * (none): no tax policy (combined with all emiscens except emiscen = 9)
 
-***  (exponential) is superseded by (diffExp2Lin): For a globally uniform, exponentially increasing carbonprice path, set cm_co2_tax_spread = 1, set cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_co2_tax_startyear. 
-***  (linear) is superseded by (diffLin2Lin): For a globally uniform, linearly increasing carbonprice path, set cm_co2_tax_spread = 1, set cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_co2_tax_startyear. [Adjust historical reference point (cm_year_co2_tax_hist, cm_co2_tax_hist) if needed.]
+***  (exponential) is superseded by (diffExp2Lin): For a globally uniform, exponentially increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_co2_tax_spread = 1, set cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_co2_tax_startyear. 
+***  (linear) is superseded by (diffLin2Lin): For a globally uniform, linearly increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_co2_tax_spread = 1, set cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_co2_tax_startyear. [Adjust historical reference point (cm_year_co2_tax_hist, cm_co2_tax_hist) if needed.]
 
 $setglobal carbonprice  none           !! def = none
 *'---------------------    46_carbonpriceRegi  ---------------------------------
@@ -449,8 +449,7 @@ $setGlobal optimization  nash         !! def = nash
 *'---------------------    81_codePerformance    -------------------------------
 *'
 *' * (off): nothing happens
-*' * (on):  test code performance: noumerous (30) succesive runs performed in a triangle, tax0, tax30, tax150, all growing exponentially,
-*'                      therefore use carbonprice|exponential, c_emiscen|9, and cm_co2_tax_2020|0.
+*' * (on):  test code performance: noumerous (30) succesive runs performed in a triangle, tax0, tax30, tax150, all growing exponentially.
 $setGlobal codePerformance  off       !! def = off
 
 ***-----------------------------------------------------------------------------
@@ -508,16 +507,9 @@ parameter
 *' *  (1): BAU
 *' *  (4): emission time path
 *' *  (6): budget
-*' *  (9): tax scenario (requires running module 21_tax "on"), tax level controlled by module 45_carbonprice and cm_co2_tax_2020, other GHG etc. controlled by cm_rcp_scen
+*' *  (9): tax scenario (requires running module 21_tax "on"), tax level controlled by module 45_carbonprice and cm_co2_tax_startyear, other GHG etc. controlled by cm_rcp_scen
 *' *  (10): used for cost-benefit analysis
 *' *JeS* WARNING: data for cm_emiscen 4 only exists for multigas_scen 2 bau scenarios and for multigas_scen 1
-*'
-parameter
-  cm_co2_tax_2020           "level of co2 tax in year 2020 in $ per t CO2eq [emiscen = 9 and 45_carbonprice = exponential]"
-;
-  cm_co2_tax_2020   = -1;              !! def = -1  !! regexp = -1|is.nonnegative
-*' * (-1): default setting equivalent to no carbon tax
-*' * (any number >= 0): tax level in 2020, with 5% exponential increase over time
 *'
 parameter
   cm_co2_tax_startyear    "level of co2 tax in start year in $ per t CO2eq"
