@@ -180,6 +180,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_regNetNegCO2" = "Deleted, not used, see https://github.com/remindmodel/remind/pull/1517",
        "cm_solwindenergyscen" = "Deleted, not used, see https://github.com/remindmodel/remind/pull/1532",
        "cm_wind_offshore" = "Deleted, not used, see https://github.com/remindmodel/development_issues/issues/272",
+       "cm_co2_tax_2020" = "Use cm_co2_tax_startyear instead, see https://github.com/remindmodel/remind/pull/1858",
      NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       msg <- paste0("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
