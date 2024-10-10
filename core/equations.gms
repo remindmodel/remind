@@ -395,7 +395,7 @@ qm_fuel2pe(t,regi,peRicardian(enty))..
   =e=
   sum(pe2rlf(enty,rlf2), vm_fuExtr(t,regi,enty,rlf2))
   - (vm_Xport(t,regi,enty) - (1-pm_costsPEtradeMp(regi,enty)) * vm_Mport(t,regi,enty))$(tradePe(enty))
-  - sum(pe2rlf(enty2,rlf2), 
+  - sum(pe2rlf(enty2,rlf2),
       (pm_fuExtrOwnCons(regi, enty, enty2) * vm_fuExtr(t,regi,enty2,rlf2))$(pm_fuExtrOwnCons(regi, enty, enty2) gt 0)
     )
 ;
@@ -556,7 +556,7 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
         !! substract FE used for non-energy purposes (as feedstocks) so it does
         !! not create energy-related emissions
       - sum(entyFE2sector2emiMkt_NonEn(enty2,sector,emiMkt),
-          vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
+          vm_demFeNonEnergySector(t,regi,enty,enty2,sector,emiMkt))
       )
     )
   )
@@ -600,22 +600,8 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
   - sum(emiInd37_fuel,
       vm_emiIndCCS(t,regi,emiInd37_fuel)
     )$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
-    !! substract carbon from non-fossil origin contained in plastics that don't
-    !! get incinerated ("plastic removals")
-  - sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-         se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
-      vm_nonIncineratedPlastics(t,regi,entySe,entyFe,emiMkt)
-    )$( sameas(enty,"co2") )
-    !! add fossil emissions from plastics incineration. 
-  + sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-         se2fe(entySe,entyFe,te))$( entySeFos(entySe) ),
-      vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
-    )$( sameas(enty,"co2") )
-    !! add fossil emissions from chemical feedstock with unknown fate
-  + sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-         se2fe(entySe,entyFe,te))$( entySeFos(entySe) ),
-      vm_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
-    )$( sameas(enty,"co2") )
+    !! plastic waste incineration; can be positive (fossil non-ccs) or negative (bio/syn w/ CCS)
+  + vm_wasteIncinerationEmiBalance(t,regi,enty,emiMkt)
     !! Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS
     !! capacity don't have the same lifetime
   + v_co2capturevalve(t,regi)$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
@@ -644,12 +630,9 @@ q_emiAllMkt(t,regi,emi,emiMkt) ..
   + vm_emiCdr(t,regi,emi)$( sameas(emi,"co2") AND sameas(emiMkt,"ETS") )
     !! Exogenous emissions
   + pm_emiExog(t,regi,emi)$( sameas(emiMkt,"other") )
-    !! non energy emi from chem sector (process emissions from feedstocks):
-  + sum((entyFE2sector2emiMkt_NonEn(entyFe,sector,emiMkt),
-         se2fe(entySe,entyFe,te)),
-      vm_demFENonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
-    * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
-    )
+    !! emission balance of carbon feedstocks contained in chemicals.
+    !! can be positive (fossil, emitted) or negative (non-fossil, stored in products)
+  + vm_feedstocksEmiBalance(t,regi,emi,emiMkt)
 ;
 
 
@@ -839,7 +822,7 @@ q_balcapture(t,regi,ccs2te(ccsCo2(enty),enty2,te)) ..
   + sum(teCCS2rlf(te,rlf), vm_co2capture_cdr(t,regi,enty,enty2,te,rlf))
     !! carbon captured from industry
   + sum(emiInd37, vm_emiIndCCS(t,regi,emiInd37))
-  + sum((sefe(entySe,entyFe),emiMkt)$( 
+  + sum((sefe(entySe,entyFe),emiMkt)$(
                             entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ),
       vm_incinerationCCS(t,regi,entySe,entyFe,emiMkt)
     )
