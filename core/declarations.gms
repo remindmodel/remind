@@ -144,16 +144,17 @@ p_ef_dem(all_regi,all_enty)                                 "Demand side emissio
 pm_secBioShare(ttot,all_regi,all_enty,emi_sectors)           "share of biomass per carrier for each sector"
 
 p_avCapFac2015(all_regi,all_te)                             "average capacity factor of non-bio renewables in 2015 in REMIND"
-p_aux_capToDistr(all_regi,all_te)                           "aux. param. to calculate p_avCapFac2015; The historic capacity in 2015"
-s_aux_cap_remaining                                         "aux. param. to calculate p_avCapFac2015; countdown parameter"
-p_aux_capThisGrade(all_regi,all_te,rlf)                     "aux. param. to calculate p_avCapFac2015; How the historic 2015 capacity is distributed among grades"
-p_aux_capacityFactorHistOverREMIND(all_regi,all_te)         "aux. param. to calculate capacity factors correction (wind and spv): the ratio of historic over REMIND CapFac in 2015"
-p_aux_scaleEmiHistorical_n2o(all_regi)                      "aux. param. to rescale MAgPIE n2o emissions to historical values"
-p_aux_scaleEmiHistorical_ch4(all_regi)                      "aux. param. to rescale MAgPIE ch4 emissions to historical values"
+p_aux_capToDistr(all_regi,all_te)                           "auxiliary parameter to calculate p_avCapFac2015; The historic capacity in 2015"
+s_aux_cap_remaining                                         "auxiliary parameter to calculate p_avCapFac2015; countdown parameter"
+p_aux_capThisGrade(all_regi,all_te,rlf)                     "auxiliary parameter to calculate p_avCapFac2015; How the historic 2015 capacity is distributed among grades"
+p_aux_capacityFactorHistOverREMIND(all_regi,all_te)         "auxiliary parameter to calculate capacity factors correction (wind and spv): the ratio of historic over REMIND CapFac in 2015"
+
+p_aux_scaleEmiHistorical_n2o(all_regi)                      "auxiliary parameter to rescale MAgPIE n2o emissions to historical values"
+p_aux_scaleEmiHistorical_ch4(all_regi)                      "auxiliary parameter to rescale MAgPIE ch4 emissions to historical values"
 
 *** windoffshore-todo
-pm_shareWindPotentialOff2On(all_regi)                 "ratio of technical potential of windoff to windon"
-pm_shareWindOff(ttot,all_regi)                        "windoff rollout as a fraction of technical potential"
+pm_shareWindPotentialOff2On(all_regi)                "ratio of technical potential of windoff to windon"
+pm_shareWindOff(ttot,all_regi)                       "windoff rollout as a fraction of technical potential"
 
 pm_fe2es(tall,all_regi,all_teEs)                     "Conversion factor from final energies to energy services. Default is 1."
 
