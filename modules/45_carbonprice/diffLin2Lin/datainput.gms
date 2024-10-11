@@ -14,7 +14,7 @@
 ***                                         carbon price of developed countries increases linearly with fixed annual increase given by cm_taxCO2inc_after_peakBudgYr (default = 0, i.e. constant)
 ***       (with iterative_target_adj = 5):  carbon price of developed countries keeps increasing linearly (with same slope) until end of century, i.e. no change after peak year 
 ***       (with iterative_target_adj = 0):  after year given by cm_peakBudgYr (default = 2050), carbon price of developed countries increases linearly with fixed annual increase given by cm_taxCO2inc_after_peakBudgYr (default = 0, i.e. constant),
-***                                         for linearly increasing carbon price (with same slope) until end of century, set cm_peakBudgYr = 2100         
+***                                         for linearly increasing carbon price (with same slope) until end of century, set cm_peakBudgYr = 2110         
 ***--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *** Step 1: Define regional multiplicative factors between regional CO2 price and CO2 price of the developed countries
@@ -111,7 +111,7 @@ else
   abort "please initialize cm_co2_tax_startyear by setting it to a positive value"
 );
 *** make sure that the initial CO2 price trajectory is increasing
-if(s45_co2_tax_startyear le s45_co2_tax_hist,
+if(s45_co2_tax_startyear lt s45_co2_tax_hist,
   abort "please choose a value for cm_co2_tax_startyear that is larger than the value provided by cm_co2_tax_hist"
 );
 display s45_co2_tax_startyear;
@@ -122,14 +122,14 @@ p45_CO2priceTrajDeveloped(t) = s45_co2_tax_hist
                                 + (s45_co2_tax_startyear - s45_co2_tax_hist) / (cm_startyear - s45_year_co2_tax_hist) !! Yearly increase of CO2 price 
                                   * (t.val - s45_year_co2_tax_hist) ;
 *** for peak budget runs (if cm_iterative_target_adj = 6|7|9), the adjustment of the CO2 price trajectory after the peak year is made in core/postsolve.gms
-*** for runs without iterative carbon price adjustment (if cm_iterative_target_adj = 0), price increases linearly with fixed annual increase given by cm_taxCO2inc_after_peakBudgYr after year given by cm_peakBudgYr (for linearly increasing carbon price (with same slope) until end of century, set cm_peakBudgYr = 2100)
+*** for runs without iterative carbon price adjustment (if cm_iterative_target_adj = 0), price increases linearly with fixed annual increase given by cm_taxCO2inc_after_peakBudgYr after year given by cm_peakBudgYr (for linearly increasing carbon price (with same slope) until end of century, set cm_peakBudgYr = 2110)
 if((cm_iterative_target_adj eq 0),
   p45_CO2priceTrajDeveloped(t)$(t.val gt cm_peakBudgYr) 
                                   = sum(t2$(t2.val eq cm_peakBudgYr), p45_CO2priceTrajDeveloped(t2))
                                     +  (t.val - cm_peakBudgYr) * cm_taxCO2inc_after_peakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year 
 );
-*** set taxes after 2100 equal to 2100 value
-p45_CO2priceTrajDeveloped(t)$(t.val gt 2100) = p45_CO2priceTrajDeveloped("2100");
+*** set taxes after 2110 equal to 2110 value
+p45_CO2priceTrajDeveloped(t)$(t.val gt 2110) = p45_CO2priceTrajDeveloped("2110");
 display p45_CO2priceTrajDeveloped;
 
 *** Step 3: Create regional CO2 price trajectories using 1) regional multiplicative CO2 price factors and 2) CO2 price trajectory for developed countries
