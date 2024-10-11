@@ -105,7 +105,7 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
   }
   # check if RCP scenario other than (none), (rcp20), (rcp26), or (rcp45) is used
   if (! isTRUE(cfg$gms$cm_rcp_scen %in% c("none","rcp20","rcp26","rcp45") )) {
-    warning("Chosen RCP scenario might currently not be fully operational: test and verify before using it!")
+    warning("Chosen RCP scenario '", cfg$gms$cm_rcp_scen, "' might currently not be fully operational: test and verify before using it!")
   }
   # Make sure that an input_bau.gdx has been specified if needed.
   isBauneeded <- isTRUE(length(unlist(lapply(names(needBau), function(x) intersect(cfg$gms[[x]], needBau[[x]])))) > 0)
