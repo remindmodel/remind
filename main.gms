@@ -1205,10 +1205,10 @@ $setglobal cm_MAgPIE_coupling  off     !! def = "off"  !! regexp = off|on
 *' *  (none): no RCP scenario, standard setting
 *' *  (rcp20): RCP2.0
 *' *  (rcp26): RCP2.6
-*' *  (rcp37): RCP3.7
+*' *  (rcp37): RCP3.7 [currently not operational: test and verify before using it!]
 *' *  (rcp45): RCP4.5
-*' *  (rcp60): RCP6.0
-*' *  (rcp85): RCP8.5
+*' *  (rcp60): RCP6.0 [currently not operational: test and verify before using it!]
+*' *  (rcp85): RCP8.5 [currently not operational: test and verify before using it!]
 $setglobal cm_rcp_scen  none         !! def = "none"  !! regexp = none|rcp20|rcp26|rcp37|rcp45|rcp60|rcp85
 *' cm_NDC_version            "choose version year of NDC targets as well as conditional vs. unconditional targets"
 *' *  (2024_cond):   all NDCs conditional to international financial support published until August 31, 2024
