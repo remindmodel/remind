@@ -82,6 +82,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[1783](https://github.com/remindmodel/remind/pull/1783)]
 
 ### removed
+- **45_carbonprice** removed superseded realizations linear, exponential and diffCurvPhaseIn2Lin
+    [[#1858](https://github.com/remindmodel/remind/pull/1858)]
 
 ## [3.3.2] - 2024-07-04
 
