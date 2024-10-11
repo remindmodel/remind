@@ -314,7 +314,7 @@ pm_cesdata(t,regi,"feh2b","quantity")$(t.val gt c_H2InBuildOnlyAfter) =
     * pm_cesdata(t,regi,"fegab","quantity");
 
 *** for the years that H2 buildings is fixed to zero, set offset to the exact value of the calibrated quantity to ignore it after calibration
-pm_cesdata(t,regi,"feh2b","quantity") = 1e-6;
+pm_cesdata(t,regi,"feh2b","quantity")$(t.val le c_H2InBuildOnlyAfter) = 1e-6;
 pm_cesdata(t,regi,"feh2b","offset_quantity")$(t.val le c_H2InBuildOnlyAfter) = - pm_cesdata(t,regi,"feh2b","quantity");
 
 $endif.build_H2_offset
