@@ -43,13 +43,17 @@ q36_costAddH2PhaseIn(t,regi)..
   + (v36_expSlack(t,regi) * 1e-8)
 ;
 
+
 *' barrier cost for low penetration
+$ifthen.no_calibration NOT "%CES_parameters%" == "calibrate"   !! CES_parameters
 q36_costAddH2LowPen(t,regi)..
   v36_costAddH2LowPen(t,regi)
   =e=
-  cm_build_H2costAddH2Inv * sm_TWa_2_kWh / sm_trillion_2_non
+  cm_build_H2costAddH2Inv
+  * sm_TWa_2_kWh / sm_trillion_2_non
   / (1 + 3**v36_costExponent(t,regi)) 
 ;
+$endif.no_calibration
 
 
 *' Logistic function exponent for additional cost for hydrogen at low penetration cost equation
@@ -57,18 +61,28 @@ q36_auxCostAddTeInv(t,regi)..
   v36_costExponent(t,regi)
   =e=
   10 / (cm_build_H2costDecayEnd - cm_build_H2costDecayStart) 
-  * (v36_H2share(t,regi) + 1e-7
+  * (v36_avgH2share(t,regi) + 1e-7
      - (cm_build_H2costDecayEnd + cm_build_H2costDecayStart) / 2
     )
   - v36_expSlack(t,regi)
 ;
 
 
-*' Hydrogen fe share in buildings gases use (natural gas + hydrogen)
+*' Average of the H2 share from this and the previous time period
+q36_avgH2share(ttot, regi)$(ttot.val ge cm_startyear)..
+  v36_avgH2share(ttot, regi)
+  =e=
+  (v36_H2share(ttot, regi)
+  + v36_H2share(ttot-1, regi)$(ttot.val > cm_startyear)
+  + v36_H2share(ttot, regi)$(ttot.val = cm_startyear))
+  / 2
+;
+
+
+*' Hydrogen fe share in buildings energy use
 q36_H2Share(t,regi)..
   v36_H2share(t,regi) 
-  * sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feh2s")
-                                 OR SAMEAS(entyFe,"fegas")),   
+  * sum(se2fe(entySe,entyFe,te)$(entyFe36(entyFe)),   
         vm_demFeSector_afterTax(t,regi,entySe,entyFe,"build","ES"))
   =e=
   sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feh2s"),
