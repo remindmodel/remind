@@ -73,22 +73,23 @@ if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
 ## REMIND_generic_<scenario>_withoutPlus.MIF is replaced.
 
 edgetOutputDir <- file.path(outputdir, "EDGE-T")
-if(file.exists(edgetOutputDir)) {
-  if (! file.exists(file.path(edgetOutputDir, "4_Output", "vehSalesAndModeShares.RDS"))) {
-    message("EDGE-T reporting files are missing, probably because the run was killed.")
-    message("Rerunning toolIterativeEDGETransport().")
+if (file.exists(edgetOutputDir)) {
     savewd <- getwd()
     setwd(outputdir)
     edgeTransport::iterativeEdgeTransport()
     setwd(savewd)
-  }
+}
+
   message("start generation of EDGE-T reporting")
   EDGET_output <- reportEdgeTransport(edgetOutputDir,
                                       isTransportExtendedReported = FALSE,
                                       modelName = "REMIND",
 				                              scenarioName = scenario,
                                       gdxPath = file.path(outputdir, "fulldata.gdx"),
-                                      isStored = FALSE)
+                                      isStored = FALSE,
+                                      isHarmonized = TRUE,
+                                      remindReportingFile = file.path(outputdir, 
+                                      paste0("REMIND_generic_", scenario,"_withoutPlus.mif")))
 
   REMINDoutput <- as.data.table(read.quitte(file.path(outputdir, paste0("REMIND_generic_", scenario,"_withoutPlus.mif"))))
   sharedVariables <- EDGET_output[variable %in% REMINDoutput$variable | grepl(".*edge", variable)]
@@ -106,7 +107,6 @@ if(file.exists(edgetOutputDir)) {
                       isStored = TRUE)
 
   message("end generation of EDGE-T reporting")
-}
 
 envir <- new.env()
 load(file.path(outputdir, "config.Rdata"), envir = envir)
