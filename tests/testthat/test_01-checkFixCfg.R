@@ -32,5 +32,6 @@ test_that("checkFixCfg works", {
     expect_match(w, paste0(n, "=", wrongsetting[[n]]), all = FALSE, fixed = TRUE)
   }
   expect_match(w, paste0(length(wrongsetting), " errors found"), all = FALSE, fixed = TRUE)
-  expect_equal(length(w), length(wrongsetting) + 1)
+  expect_match(w, "Chosen RCP scenario 'apocalypse' might currently not be fully operational", all = FALSE, fixed = TRUE)
+  expect_equal(length(w), length(wrongsetting) + 2)
 })
