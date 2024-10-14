@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/diffExp2Lin/realization.gms
 
-*' @description: This realization implements exponentially increasing carbon price - either until 2100 or until peak year (constant or linear thereafter). Optional carbon price differentiation and quadratic phase-in can be activated via switch cm_co2_tax_spread.
+*' @description: This realization implements exponentially increasing carbon price - either until end of century or until peak year (constant or linear thereafter). Optional carbon price differentiation and quadratic phase-in can be activated via switch cm_co2_tax_spread.
 
 ***--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** diff: regional prices are initially differentiated by GDP/capita and converge using quadratic phase-in until cm_CO2priceRegConvEndYr (default = 2050), globally uniform price thereafter,

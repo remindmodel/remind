@@ -21,7 +21,7 @@
 if((cm_iterative_target_adj ne 0),
 *** re-create the linear carbon price trajectory for developed countries to ensure that it 
 *** starts at historical level given by cm_co2_tax_hist in year cm_year_co2_tax_hist, and
-*** ends at the endogenously adjusted tax level in the peak year (with iterative_target_adj = 6|7|9) or in 2100 (otherwise)
+*** ends at the endogenously adjusted tax level in the peak year (with iterative_target_adj = 6|7|9) or in 2110 (otherwise)
 if((cm_iterative_target_adj eq 6) or (cm_iterative_target_adj eq 7) or (cm_iterative_target_adj eq 9),
    loop(regi$(p45_gdppcap2015_PPP(regi) gt 20), !! This doesn't need to be a loop, but it will be correct for any cycle of the loop, so also for the last cycle.
       p45_CO2priceTrajDeveloped(t)$(t.val le cm_peakBudgYr) 
@@ -32,11 +32,11 @@ if((cm_iterative_target_adj eq 6) or (cm_iterative_target_adj eq 7) or (cm_itera
     );
   else
     loop(regi$(p45_gdppcap2015_PPP(regi) gt 20), !! This doesn't need to be a loop, but it will be correct for any cycle of the loop, so also for the last cycle.
-      p45_CO2priceTrajDeveloped(t)$(t.val le 2100) 
+      p45_CO2priceTrajDeveloped(t)$(t.val le 2110) 
                                   = s45_co2_tax_hist 
-                                    + (pm_taxCO2eq("2100",regi) - s45_co2_tax_hist) / (2100 - s45_year_co2_tax_hist) !! Yearly increase of CO2 price that interpolates between s45_co2_tax_hist in s45_year_co2_tax_hist and pm_taxCO2eq in 2100
+                                    + (pm_taxCO2eq("2110",regi) - s45_co2_tax_hist) / (2110 - s45_year_co2_tax_hist) !! Yearly increase of CO2 price that interpolates between s45_co2_tax_hist in s45_year_co2_tax_hist and pm_taxCO2eq in 2110
                                       * (t.val - s45_year_co2_tax_hist) ;
-      p45_CO2priceTrajDeveloped(t)$(t.val gt 2100) = pm_taxCO2eq(t,regi);
+      p45_CO2priceTrajDeveloped(t)$(t.val gt 2110) = pm_taxCO2eq(t,regi);
     );
 );
 

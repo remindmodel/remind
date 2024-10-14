@@ -6,7 +6,6 @@
 # |  Contact: remind@pik-potsdam.de
 name,type,reason
 cm_emiscen, switch, ???
-cm_co2_tax_2020, switch, ???
 pm_ttot_val,parameter,???
 cm_co2_tax_growth,switch,???
 cm_expoLinear_yearStart,switch,???
