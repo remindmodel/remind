@@ -903,6 +903,12 @@ parameter
 ;
   cm_LimRock               = 1000;   !! def = 1000
 *'
+
+parameter
+  cm_33_EW_upScalingRateLimit    "Annual growth rate limit on upscaling of mining & spreading rocks on fields"
+;
+  cm_33_EW_upScalingRateLimit = 0.2;  !! def = 20% 
+
 parameter
   cm_expoLinear_yearStart   "time at which carbon price increases linearly instead of exponentially"
 ;
