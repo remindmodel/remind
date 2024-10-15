@@ -909,6 +909,11 @@ parameter
 ;
   cm_33_EW_upScalingRateLimit = 0.2;  !! def = 20% 
 
+parameter 
+  cm_33_EW_shortTermLimit         "Limit on 2030 potential for enhanced weathering, defined as % of land on which EW is applied. Default 0.5% of land"
+;
+  cm_33_EW_shortTermLimit = 0.005; 
+
 parameter
   cm_expoLinear_yearStart   "time at which carbon price increases linearly instead of exponentially"
 ;

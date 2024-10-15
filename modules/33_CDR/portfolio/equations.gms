@@ -189,7 +189,17 @@ q33_EW_LimEmi(t,regi)..
     =l=
     cm_LimRock * p33_LimRock(regi)
     ;
-	
+
+***---------------------------------------------------------------------------
+*' Short term bound on spreading of rock
+***---------------------------------------------------------------------------
+
+q33_EW_ShortTermBound(t, regi)$(t.val eq 2030)..
+    sum((rlf_cz33, rlf), v33_EW_onfield(t,regi,rlf_cz33,rlf))
+    =l=
+    p33_EW_shortTermEW_Limit(regi) 
+    ;
+
 ***---------------------------------------------------------------------------
 *' Limits on the upscaling rate of mining and spreading of rocks. 
 *' Current cost parameters do not include cost of additional mining being developed, 
