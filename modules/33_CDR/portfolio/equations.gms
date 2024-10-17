@@ -189,7 +189,27 @@ q33_EW_LimEmi(t,regi)..
     =l=
     cm_LimRock * p33_LimRock(regi)
     ;
-	
+
+***---------------------------------------------------------------------------
+*' Short term bound on spreading of rock
+***---------------------------------------------------------------------------
+
+q33_EW_ShortTermBound(t, regi)$(t.val eq 2030)..
+    sum((rlf_cz33, rlf), v33_EW_onfield(t,regi,rlf_cz33,rlf))
+    =l=
+    p33_EW_shortTermEW_Limit(regi) 
+    ;
+
+***---------------------------------------------------------------------------
+*' Limits on the upscaling rate of mining and spreading of rocks. 
+*' Current cost parameters do not include cost of additional mining being developed, 
+*' thus adjustment cost are not effective.
+***---------------------------------------------------------------------------	
+q33_EW_upscaling_rate(ttot,regi)$(ord(ttot) lt card(ttot) AND pm_ttot_val(ttot) gt 2030)..
+   sum((rlf_cz33, rlf), v33_EW_onfield(ttot,regi,rlf_cz33,rlf))
+    =l=
+   (1+p33_EW_upScalingLimit(ttot))**pm_dt(ttot) * sum((rlf_cz33, rlf), v33_EW_onfield(ttot-1,regi,rlf_cz33,rlf))
+;
 
 ***---------------------------------------------------------------------------
 *' #### OAE equations
