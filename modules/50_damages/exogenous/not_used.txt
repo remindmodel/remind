@@ -1,0 +1,27 @@
+name,type,reason
+pm_shPPPMER,input,added by codeCheck
+pm_gdp,input,added by codeCheck
+pm_globalMeanTemperatureZeroed1900,input,added by codeCheck
+pm_temperatureImpulseResponseCO2,input,added by codeCheck
+pm_GDPGross,input,added by codeCheck
+pm_interpolWeight_ttot_tall,input,added by codeCheck
+pm_tall_2_ttot,input,added by codeCheck
+cm_damages_BurkeLike_specification,input,added by codeCheck
+cm_damages_BurkeLike_persistenceTime,input,added by codeCheck
+cm_damage_KWSE,input,added by codeCheck
+pm_regionalTemperature,input,added by codeCheck
+pm_tempScaleGlob2Reg,input,added by codeCheck
+pm_damageGrowthRate,input,added by codeCheck
+pm_damageMarginal,input,added by codeCheck
+pm_GDPfrac,input,added by codeCheck
+pm_damageImp,input,added by codeCheck
+pm_damageMarginalT,input,added by codeCheck
+pm_damageMarginalTm1,input,added by codeCheck
+pm_damageMarginalTm2,input,added by codeCheck
+pm_damageProd,input,added by codeCheck
+pm_damageTC,input,added by codeCheck
+pm_damageGrowthRateTC,input,added by codeCheck
+pm_damageMarginalTC,input,added by codeCheck
+pm_GDPGrossIso,input,added by codeCheck
+pm_damageIso,input,added by codeCheck
+pm_damageGrowthRateIso,input,added by codeCheck

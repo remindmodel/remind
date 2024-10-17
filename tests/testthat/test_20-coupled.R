@@ -264,5 +264,7 @@ test_that("start_bundle_coupled.R --test succeeds on all configs", {
 test_that("delete files to leave clean state", {
   # leave clean state
   skipIfPreviousFailed()
+  skip_if_not(all(file.exists(deleteallfiles)),
+              message = "Not all expected files for coupled tests exist, not deleting anything.")
   expect_true(0 == unlink(deleteallfiles, recursive = TRUE))
 })
