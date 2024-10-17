@@ -34,7 +34,6 @@ missingVariables <- checkMissingVars(mifdata, TRUE, sources)
 if (length(missingVariables) > 0) message("Check piamInterfaces::variableInfo('variablename') etc.")
 
 checkMappings <- list( # list(mappings, summationsFile, skipBunkers)
-  list(c("AR6", "AR6_NGFS"), "AR6", TRUE),
   list(c("NAVIGATE", "ELEVATE"), "NAVIGATE", FALSE),
   list("ScenarioMIP", NULL, FALSE)
 )
