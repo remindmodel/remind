@@ -31,6 +31,36 @@ When using REMIND, you might encounter warnings about the inability to verify th
 
 Conda is an open-source package and environment management system for Windows, macOS, and Linux. It simplifies installing and managing Python dependencies and environments, making it ideal for running REMIND. For users running REMIND on their desktop, any Python installation will do; however, we recommend using Conda for its ease of managing dependencies and environments.
 
+### `conda` Environment for REMIND/MAGICC7 Operation on the Cluster
+
+To ensure `climate-assessment` and `MAGICC7` are available when running REMIND on the clusters, follow these steps after logging in and before initiating a REMIND run that requires MAGICC7 (e.g., climate reporting). On the new cluster (`foote.pik-potsdam.de`) do:
+
+1. Load the necessary `module`s:
+    ```sh
+    # Make sure module_load_piam is already active, otherwise run
+    # source /p/system/modulefiles/defaults/piam/module_load_piam
+    module load anaconda/2023.09
+    ```
+
+2. Configure the terminal prompt to avoid unnecessary length. This only has to run once!
+    ```sh
+    conda config --set env_prompt '({name})'
+    ```
+
+3. Activate the conda environment:
+    ```sh
+    source activate /p/projects/rd3mod/python/environments/scm_magicc7_hpc
+    ```
+This setup ensures the correct Python versions are available. To deactivate the conda environment, type `conda deactivate`. **Please do not alter the conda environment as changes would affect all users.**
+
+With the conda environment activated, you can start a climate assessment report from your REMIND folder with:
+
+```sh
+Rscript output.R
+```
+
+and navigate through the selection process as usual.
+
 ### Installing Conda
 
 This is not necessary when running REMIND on the PIK cluster. If you are on a Desktop machine or are using another shared computing infrastructure, ask your local IT department if `conda` is available for your system. For Desktop users here's a brief overview of how to install Conda. Follow these steps:
