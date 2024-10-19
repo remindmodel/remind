@@ -26,16 +26,7 @@ update-renv:     ## Upgrade all pik-piam packages in your renv to the respective
 
 update-renv-all: ## Upgrade all packages (including CRAN packages) in your renv
                  ## to the respective latest release, write renv.lock archive
-                 ## Upgrade all packages in python venv, if python venv exists
 	@Rscript -e 'renv::update(exclude = "renv"); piamenv::archiveRenv()'
-	@if [ -e "./venv/bin/python" ]; then \
-		pv_maj=$$( .venv/bin/python -V | sed 's/^Python \([0-9]\).*/\1/' ); \
-		pv_min=$$( .venv/bin/python -V | sed 's/^Python [0-9]\.\([0-9]\+\).*/\1/' ); \
-		if (( 3 == $$pv_maj )) && (( 7 <= $$pv_min )) && (( $pv_min < 11 )); then \
-			.venv/bin/python -mpip install --upgrade pip wheel; \
-			.venv/bin/python -mpip install --upgrade --upgrade-strategy eager -r requirements.txt; \
-		fi \
-	fi
 
 revert-dev-packages: ## All PIK-PIAM packages that are development versions, i.e.
                      ## that have a non-zero fourth version number component, are
@@ -47,13 +38,6 @@ ensure-reqs:     ## Ensure the REMIND library requirements are fulfilled
                  ## by installing updates and new libraries as necessary. Does not
                  ## install updates unless it is required.
 	@Rscript -e 'source("scripts/start/ensureRequirementsInstalled.R"); ensureRequirementsInstalled(rerunPrompt="make ensure-reqs")'
-	@if [ -e "./venv/bin/python" ]; then \
-		pv_maj=$$( .venv/bin/python -V | sed 's/^Python \([0-9]\).*/\1/' ); \
-		pv_min=$$( .venv/bin/python -V | sed 's/^Python [0-9]\.\([0-9]\+\).*/\1/' ); \
-		if (( 3 == $$pv_maj )) && (( 7 <= $$pv_min )) && (( $pv_min < 11 )); then \
-			.venv/bin/python -mpip -qq install -r requirements.txt; \
-		fi \
-	fi
 
 archive-renv:    ## Write renv.lock into archive.
 	Rscript -e 'piamenv::archiveRenv()'
