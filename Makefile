@@ -46,6 +46,45 @@ restore-renv:    ## Restore renv to the state described in interactively
                  ## selected renv.lock from the archive or a run folder.
 	Rscript -e 'piamenv::restoreRenv()'
 
+clone-conda: ## Clone the specified conda environment or the active environment to a new environment in the user's home directory or specified DEST
+	@if [ -z "$$ENV" ] && [ -z "$$CONDA_DEFAULT_ENV" ]; then \
+		echo "No Conda environment specified and no active Conda environment found."; \
+		exit 1; \
+	elif [ -z "$$ENV" ]; then \
+		ENV=$$CONDA_DEFAULT_ENV; \
+	fi; \
+	TIMESTAMP=$$(date +%Y%m%d); \
+	BASENAME=$$(basename $$ENV); \
+	DEFAULT_CONDA_ENV_DIR=~/.conda/envs; \
+	CLONE_DIR=$${DEST:-$$DEFAULT_CONDA_ENV_DIR/$$BASENAME-clone-$$TIMESTAMP}; \
+	echo "Cloning Conda environment: $$ENV"; \
+	echo "Cloning to: $$CLONE_DIR"; \
+	echo "This might take a few minutes..."; \
+	if conda create --prefix $$CLONE_DIR --clone $$ENV; then \
+		echo "Done!"; \
+		conda env export --prefix $$CLONE_DIR > $$CLONE_DIR.yml; \
+		echo "Cloned environment saved to $$CLONE_DIR.yml"; \
+	else \
+		echo "Cloning failed or was interrupted."; \
+		exit 1; \
+	fi;
+
+create-conda: ## Create a conda environment from the config/py_requirements.txt file
+	@if [ ! -f config/py_requirements.txt ]; then \
+		echo "Requirements file not found: config/py_requirements.txt"; \
+		exit 1; \
+	fi; \
+	ENV=$${ENV:-remind}; \
+	DEST=$${DEST:-$$HOME/.conda/envs}; \
+	echo "Creating Conda environment: $$DEST/$$ENV with Python 3.11"; \
+	mkdir -p $$DEST; \
+	conda create --prefix $$DEST/$$ENV python=3.11 -y; \
+	echo "Activating Conda environment: $$ENV"; \
+	. $$(conda info --base)/etc/profile.d/conda.sh && conda activate $$DEST/$$ENV && \
+	echo "Installing requirements from config/py_requirements.txt"; \
+	pip install -r config/py_requirements.txt; \
+	echo "Conda environment $$ENV created and requirements installed successfully in $$DEST with Python 3.11.";
+
 check:           ## Check if the GAMS code follows the coding etiquette
                  ## using gms::codeCheck
 	Rscript -e 'options(warn = 1); invisible(gms::codeCheck(strict = TRUE));'
