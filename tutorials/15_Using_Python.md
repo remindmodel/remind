@@ -1,25 +1,31 @@
-# Using Python to Interface with Other Models
+# Python support in REMIND
 Mika Pflüger (mika.pflueger@pik-potsdam.de)
 Tonn Rüter (tonn.rueter@pik-potsdam.de)
 
-## Introduction
+Python is a high-level, interpreted programming language known for its readability and versatility. In REMIND, Python is essential for coupling to specialized models, such as those used for climate assessment reporting. These models often require advanced data processing and integration with other tools, which Python in conjecture with R `reticulate` facilitates efficiently.
 
-To interface with other models or libraries, it is often necessary to call Python code because the model itself is written in Python or bindings are available in Python.
-REMIND has Python support via [reticulate](https://rstudio.github.io/reticulate/) using virtual environments, but it is disabled by default.
+## REMIND Python Doctrine
 
-## Using Python in REMIND
+Python support is enabled by default in REMIND and is necessary for some climate assessment reporting. This can be verified in the `default.cfg` file where `cfg$pythonEnabled` is set to `"on"`. Users need to set the `cfg$pythonPath` variable to point to the appropriate Python environment. On the PIK cluster, the `conda` environment can be found in `/p/projects/rd3mod/python/environments/scm_magicc7_hpc/`. It is best practice to clone this default environment into one's home directory when using the PIK cluster, see [`make` commands below](#environment-creation-integrity-and-archiving). Further management of the Python environment, such as updating Python packages environments, is a responsibility of the user. 
 
-First, you have to make sure that you have Python installed and available in your environment.
-Run `Rscript scripts/utils/checkSetup.R` to check if REMIND finds your Python.
-If not, repair that by installing Python and making sure it is on your PATH.
+REMIND scripts do not alter the Python environment, ensuring that the environment remains stable and predictable throughout the usage of REMIND. For repeatability, Python environments are archived for every run. This ensures that the exact environment used for a specific run can be recreated if needed to ensure repeatability. In case a virtual environment is used, REMIND activates it automatically, ensuring the correct environment is in use. Before starting a REMIND run, checks ensure that all necessary dependencies are available.
 
-Next, you have to enable REMIND's Python integration by setting `cfg$pythonEnabled` to `on` in `config/default.cfg`.
+### Environment Creation, Integrity, and Archiving
 
-Add Python libraries you want to use to the `requirements.txt` file in the main remind folder.
-They will be installed into the Python virtual environment on the next start of REMIND.
+REMIND supports using your system Python installation via `pip`, but also `venv` and `conda` *virtual Python environments*. Among these, `conda` is the preferred option due to its ease of use and robust package management. For more details on installing Conda, refer to the [Installing Conda](#installing-conda) section.
 
-Then you can use Python via [reticulate](https://rstudio.github.io/reticulate/).
-For example, execute an R script from GAMS, then use `reticulate::import` to import Python libraries, the python virtual environment will automatically be used.
+The provided Makefile includes targets to create or clone a Python environment:
+- `make conda-create`: Creates a new Conda environment based on the `py_requirements.txt` file.
+- `make conda-clone`: Clones an existing Conda environment.
+- `make pip-create`: Installs all of REMIND's Python dependencies using `pip` based on the `config/py_requirements.txt` file. *Note*: Only use this when you are managing a non-`conda` environment.
+
+### Leveraging `reticulate`
+
+To interface with other models or libraries, it is often necessary to call Python code because the model itself is written in Python or bindings are available in Python. REMIND has Python support via the R library `reticulate`. One can, for example, execute an R script from GAMS, then use `reticulate::import` to import Python libraries. For more information on using `reticulate`, refer to the [Documentation](https://rstudio.github.io/reticulate/).
+
+### Handling Warnings
+
+When using REMIND, you might encounter warnings about the inability to verify the version of certain Python packages installed from specific repositories. These warnings occur because the installed Python packages do not retain information about their origin, only their version number. This version number is meaningless if the package was installed from a dedicated repository. Therefore, when using the PIK cluster default REMIND Python environment, you can safely disregard these warnings. They are simply a result of the package management system's inability to verify the origin of the installed packages.
 
 ## REMIND & Anaconda
 
