@@ -4,7 +4,7 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [3.3.3] - 2024-10-21
 
 ### input data/calibration
 - new input data rev6.84 [[#1757](https://github.com/remindmodel/remind/pull/1757)]

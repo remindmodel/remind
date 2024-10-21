@@ -7,7 +7,7 @@
 #' construct list of input data files
 #' @param cfg list of configs
 
-defineInputData <- function(cfg) {
+defineInputData <- function(cfg, remindPath = ".") {
 
   regicode <- madrat::regionscode(file.path(remindPath, cfg$regionmapping))
   cfg$input <- c(paste0("rev",cfg$inputRevision,"_",regicode,"_", tolower(cfg$model_name),".tgz"),

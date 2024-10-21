@@ -20,7 +20,7 @@ updateInputData <- function(cfg, remindPath = ".", gamsCompile = FALSE) {
       input_old     <- "no_data"
   }
   
-  cfg <- defineInputData(cfg)
+  cfg <- defineInputData(cfg, remindPath)
   
   # check if all input files are already there
   missinginput <- if (isTRUE(gamsCompile)) NULL else missingInputData()
