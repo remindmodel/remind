@@ -8,24 +8,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### input data/calibration
 - new input data rev6.84 [[#1757](https://github.com/remindmodel/remind/pull/1757)]
+- new input data rev6.95 in US$2017[[#1812]] (https://github.com/remindmodel/remind/pull/1812) 
 - CES parameter and gdx files calibrated with new default diffLin2Lin for NPi 
     [[#1747](https://github.com/remindmodel/remind/pull/1747)] and
     [[#1757](https://github.com/remindmodel/remind/pull/1757)]
 - Update of NDC goals with cutoff data August 31, 2024
     [[#1816](https://github.com/remindmodel/remind/pull/1816)]
+- Prepare to make input data available for externals. Do not stop on missing validation data.
+  [[1828]][(https://github.com/remindmodel/remind/pull/1828)]
 
 ### changed
+- shift base unit from US$2005 to US$2017 [[#1812]] (https://github.com/remindmodel/remind/pull/1812)
 - plastic waste by default does not lag plastics production by ten years
     anymore; can be re-activated using `cm_wastelag`
 - moved to edgeTransport 2.0 version [[#1749](https://github.com/remindmodel/remind/pull/1749)]
 - **scripts** in readCheckScenarioConfig(), do not automatically remove path_gdx_bau if allegedly 'not needed'
     [[#1809](https://github.com/remindmodel/remind/pull/1809)]
+- **scripts** adjust MAgPIE coupling to US$2005 -> 2017 shift
+    [[#1851](https://github.com/remindmodel/remind/pull/1851)]
+- **core** changed adjustment cost of geohe (central heat pumps), elh2 (electrolysis), MeOH (FT-Synthesis: H2-to-Liquids)
+    and h22ch4 (methanation: H2-to-Gas) to better reflect upscaling dynamics
+    [[#1823](https://github.com/remindmodel/remind/pull/1823)]
 
 ### added
-- **50_damages**, **51_internalizeDamages** add KotzWenz realization based on Kotz & Wenz (2024)
-    [[#1601](https://github.com/remindmodel/remind/pull/1601)]
+- **32_power** increase minimum required dispatchable back-up capacity for VRE integration
+    [[#1789](https://github.com/remindmodel/remind/pull/1789)]
+- **33_CDR** added ocean alkalinity enhancement to the CDR portfolio (OAE is turned off by default)
+    [[#1777](https://github.com/remindmodel/remind/pull/1777)]
 - **45_carbonprice** added realizations diffExp2Lin and diffLin2Lin
     [[#1723](https://github.com/remindmodel/remind/pull/1723)]
+-_**45_carbonprice** added realizations NPi2025_EUR55 and NPiexpo
+    [[#1851](https://github.com/remindmodel/remind/pull/1851)]
+- **50_damages**, **51_internalizeDamages** add KotzWenz realization based on Kotz & Wenz (2024)
+    [[#1601](https://github.com/remindmodel/remind/pull/1601)]
+- **config** add ELEVATE2p3 config
+    [[#1851](https://github.com/remindmodel/remind/pull/1851)]
 - **scripts** define defaults for script selections in output.R
     [[#1739](https://github.com/remindmodel/remind/pull/1739)]
 - **scripts** fail transparently on duplicated column names in `scenario_config*.csv` files
@@ -40,17 +57,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **testthat** fail if manipulating main.gms with default cfg drops/changes switches and comments
     [[#1764](https://github.com/remindmodel/remind/pull/1764)] and
     [[#1767](https://github.com/remindmodel/remind/pull/1767)]
-- **33_CDR** added ocean alkalinity enhancement to the CDR portfolio (OAE is turned off by default)
-    [[#1777](https://github.com/remindmodel/remind/pull/1777)]
-- **32_power** increase minimum required dispatchable back-up capacity for VRE integration
-    [[#1789](https://github.com/remindmodel/remind/pull/1789)]
 - **scripts** integrate automated scenario validation via piamValidation as output script
     [[#1790](https://github.com/remindmodel/remind/pull/1790)]
 - **scripts** add interactive plotting script 'selectPlots'
     [[#1815](https://github.com/remindmodel/remind/pull/1815)]
 - **scripts** in readCheckScenarioConfig() while running tests, check if all scenarios stated in path_gdx* columns exist
     [[#1818](https://github.com/remindmodel/remind/pull/1818)]
-
+- **scripts** fail transparently if cm_startyear is earlier than that of path_gdx_ref
+    [[#1851](https://github.com/remindmodel/remind/pull/1851)]
+- **testthat** ignore missing historical.mif in tests because it is an optional input file
+    [[#1857](https://github.com/remindmodel/remind/pull/1857)]
+    
 ### fixed
 - included CCS from plastic waste incineration in CCS mass flows so it is
     subject to injection constraints (but did not add CCS costs, see
@@ -67,6 +84,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[1783](https://github.com/remindmodel/remind/pull/1783)]
 
 ### removed
+- **45_carbonprice** removed superseded realizations linear, exponential and diffCurvPhaseIn2Lin
+    [[#1858](https://github.com/remindmodel/remind/pull/1858)]
 
 ## [3.3.2] - 2024-07-04
 

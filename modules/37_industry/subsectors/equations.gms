@@ -81,8 +81,10 @@ $endif.exogDem_scen
 *' energy mix, as that is what can be captured); vm_emiIndBase itself is not used for emission
 *' accounting, just as a CCS baseline.
 ***------------------------------------------------------
-q37_emiIndBase(t,regi,enty,secInd37)$(   entyFeCC37(enty)
-                                      OR sameas(enty,"co2cement_process") ) ..
+q37_emiIndBase(t,regi,enty,secInd37)$(
+                                   entyFeCC37(enty)
+                                OR (    sameas(enty,"co2cement_process") 
+                                    AND cm_CCS_cement eq 1               ) ) ..
   vm_emiIndBase(t,regi,enty,secInd37)
   =e=
     sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfEn(entyFeCC37(enty),in)),
@@ -346,18 +348,6 @@ $ifthen.cm_feedstockEmiUnknownFate not "%cm_feedstockEmiUnknownFate%" == "off"
 $else.cm_feedstockEmiUnknownFate
   0
 $endIf.cm_feedstockEmiUnknownFate
-;
-
-*' in baseline runs, all industrial feedstocks should come from fossil energy
-*' carriers, no biofuels or synfuels
-q37_FossilFeedstock_Base(t,regi,entyFe,emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
-                     AND cm_emiscen eq 1                                   ) ..
-  sum(entySe, vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt))
-  =e=
-  sum(entySeFos,
-    vm_demFENonEnergySector(t,regi,entySeFos,entyFe,"indst",emiMkt)
-  )
 ;
 
 *** ---------------------------------------------------------------------------

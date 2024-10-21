@@ -34,7 +34,11 @@ lucode2::readArgs("project")
 
 projects <- list(
   ELEVATE    = list(mapping = c("NAVIGATE", "ELEVATE"),
-                    iiasatemplate = "https://files.ece.iiasa.ac.at/elevate/elevate-template.xlsx"),
+                    iiasatemplate = "https://files.ece.iiasa.ac.at/elevate/elevate-template.xlsx",
+                    removeFromScen = "C_|eoc"),
+  ELEVATE_coupled = list(mapping = c("NAVIGATE", "NAVIGATE_coupled", "ELEVATE"),
+                    iiasatemplate = "https://files.ece.iiasa.ac.at/elevate/elevate-template.xlsx",
+                    removeFromScen = "C_|eoc"),
   ENGAGE_4p5 = list(mapping = c("AR6", "AR6_NGFS"),
                     iiasatemplate = "ENGAGE_CD-LINKS_template_2019-08-22.xlsx",
                     removeFromScen = "_diff|_expoLinear|-all_regi"),
@@ -134,17 +138,19 @@ withCallingHandlers({ # piping messages to logFile
   for (mif in mif_path) {
     thismifdata <- read.quitte(mif, factors = FALSE)
     # remove -rem-xx and mag-xx from scenario names
-    thismifdata$scenario <- gsub("-(rem|mag)-[0-9]{1,2}", "", thismifdata$scenario)
+    thismifdata$scenario <- gsub("^C_|-(rem|mag)-[0-9]{1,2}$", "", thismifdata$scenario)
     mifdata <- rbind(mifdata, thismifdata)
   }
 
-  mifdata$scenario <- gsub("^C_", "", mifdata$scenario)
-  message("Old names: ", paste(sort(unique(mifdata$scenario)), collapse = ", "))
-  for (i in names(renameScen)) {
-    message("Rename scenario: ", i, " -> ", renameScen[[i]])
-    mifdata$scenario[i == mifdata$scenario] <- renameScen[[i]]
+  # rename scenarios
+  if (! is.null(renameScen)) {
+    message("Old names: ", paste(sort(unique(mifdata$scenario)), collapse = ", "))
+    for (i in names(renameScen)) {
+      message("Rename scenario: ", i, " -> ", renameScen[[i]])
+      mifdata$scenario[i == mifdata$scenario] <- renameScen[[i]]
+    }
+    message("New names: ", paste(sort(unique(mifdata$scenario)), collapse = ", "))
   }
-  message("New names: ", paste(sort(unique(mifdata$scenario)), collapse = ", "))
 
   message("# ", length(temporarydelete), " variables are in the list to be temporarily deleted, ",
           length(unique(mifdata$variable[mifdata$variable %in% temporarydelete])), " were deleted.")

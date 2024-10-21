@@ -132,7 +132,7 @@
 *'
 *' #### Sets
 *'
-*' * Don't use set element names with three capital letters (like `ETS` or `ESR`), otherwise the maglcass R
+*' * Don't use set element names with three capital letters (like `ETS` or `ESR`), otherwise the magclass R
 *' library might interpret this as a region name when reading in GDX data
 *'
 *'
@@ -268,7 +268,7 @@ $setGlobal climate  off               !! def = off
 *'---------------------    16_downscaleTemperature    --------------------------
 *'
 *' * (off)
-*' * (CMIP5): downscale GMT to regional temperature based on CMIP5 data (between iterations, no runtime impact). [Requires climate = off, cm_rcp_scen = none, iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
+*' * (CMIP5): downscale GMT to regional temperature based on CMIP5 data (between iterations, no runtime impact). [Requires climate = off, cm_rcp_scen = none, iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path through (cm_year_co2_tax_hist, cm_co2_tax_hist) and (cm_startyear, cm_co2_tax_startyear);
 $setGlobal downscaleTemperature  off  !! def = off
 *'---------------------    20_growth    ------------------------------------------
 *'
@@ -353,7 +353,7 @@ $setglobal CCU  on      !! def = on
 *' * (coalPhaseout): [works only with Negishi] global phase-out of new freely-emitting coal conversion, caps all coal routes with the exception of coaltr: coal solids can still expand
 *' * (coalPhaseoutRegional): [works only with Negishi] global phase-out of new freely-emitting coal conversion, caps all coal routes with the exception of coaltr: coal solids can still expand
 *' * (CombLowCandCoalPO): [works only with Negishi] combination of lowCarbonPush and coalPhaseout
-*' * (NDC): Technology targets for 2030 for spv,wind,tnrs.
+*' * (NDC): Technology targets for 2030 for spv,windon,tnrs.
 *' * (NPi): Reference technology targets, mostly already enacted (N)ational (P)olicies (i)mplemented, mostly for 2020
 *' * (EVmandates): mandate for electric vehicles - used for UBA project
 $setglobal techpol  none           !! def = none
@@ -371,17 +371,27 @@ $setglobal emicapregi  none           !! def = none
 *'
 *' This module defines the carbon price pm_taxCO2eq, with behaviour across regions governed by similar principles (e.g. global targets, or all following NDC or NPi policies).
 *'
-*' * (none): no tax policy (combined with all emiscens except emiscen = 9)
-*' * (exponential): [please use new diffExp2Lin with cm_co2_tax_spread = 1 and iterative_target_adj = 5 for exponential carbon pricing until end of century (without regional differentiation)] 4.5% exponential increase over time of the tax level in 2020 set via cm_co2_tax_2020 (combined with emiscen = 9 and cm_co2_tax_2020>0)
-*' * (expoLinear): 4.5% exponential increase until c_expoLinear_yearStart, transitioning into linear increase thereafter
+*' * (diffExp2Lin) and (diffLin2Lin): standard carbonprice realizations for ambitious climate policy scenarios [REMIND default for peak budget runs: diffLin2Lin in combination with iterative_target_adj = 9], 
+*' * three main design choices:
+*' *    [diff]: level of regional carbonprice differentiation in 2030 determined by cm_co2_tax_spread (default = 10); quadratic phase-in to reach globally uniform carbonprices in cm_CO2priceRegConvEndYr
+*' *    [Exp or Lin]: functional form of carbonprice path for developed regions:
+*' *        [Exp]: exponential increase with rate given by cm_co2_tax_growth, (initial) value in cm_startyear is given by cm_co2_tax_startyear
+*' *        [Lin]: linear increase starting at historical level given by cm_co2_tax_hist in year cm_year_co2_tax_hist, (initial) value in cm_startyear set by cm_co2_tax_startyear
+*' *    [2Lin]: post-peak behaviour depending on cm_iterative_target_adj
+*' *        [9]: after the (endogenously adjusted) peak year, carbonprice path increases linearly with fixed annual increase given by cm_taxCO2inc_after_peakBudgYr (default = 0, i.e. constant)                                     
+*' *        [5]: no adaptation of carbonprice path after peak year
+*' *        [0]: after the (exogenously fixed) peak year, carbonprice path increases linearly with fixed annual increase given by cm_taxCO2inc_after_peakBudgYr (default = 0, i.e. constant);
+*' *             choose cm_peakBudgYr = 2110 for no adaptation of carbonprice path until end of century
+*' * (expoLinear): 4.5% exponential increase until cm_expoLinear_yearStart, transitioning into linear increase thereafter
 *' * (exogenous): carbon price is specified using an external input file or using the switch cm_regiExoPrice. Requires cm_emiscen = 9 and cm_iterative_target_adj = 0
-*' * (linear): [please use new diffLin2Lin with cm_co2_tax_spread = 1 and iterative_target_adj = 5 for linear carbon pricing until end of century (without regional differentiation)] linear increase over time of the tax level in 2020 set via cm_co2_tax_2020 (combined with emiscen = 9 and cm_co2_tax_2020>0)
-*' * (temperatureNotToExceed): [test and verify before using it!] Find the optimal carbon carbon tax (set cm_emiscen = 1, iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
-*' * (diffCurvPhaseIn2Lin): [please use new diffLin2Lin] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
-*' * (diffExp2Lin): quadratic convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; starting level of differentiation in cm_startyear is given by cm_co2_tax_spread; developed countries have exponential path until peak year (with iterative_target_adj = 9) or until 2100 (with iterative_target_adj = 5);
-*' * (diffLin2Lin): [default for peak budget runs, in combination with iterative_target_adj = 9, derived from diffCurvPhaseIn2Lin] quadratic convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; starting level of differentiation in cm_startyear is given by cm_co2_tax_spread; developed countries have linear path until peak year (with iterative_target_adj = 9) or until 2100 (with iterative_target_adj = 5);
+*' * (temperatureNotToExceed): [test and verify before using it!] Find the optimal carbon carbon tax (set cm_emiscen = 1, iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path through (cm_year_co2_tax_hist, cm_co2_tax_hist) and (cm_startyear, cm_co2_tax_startyear);
 *' * (NDC): implements a carbon price trajectory consistent with the NDC targets (up to 2030) and a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). Choose version using cm_NDC_version "2023_cond", "2023_uncond", or replace 2023 by 2022, 2021 or 2018 to get all NDC published until end of these years.
 *' * (NPi): National Policies Implemented, extrapolation of historical (until 2020) carbon prices
+*' * (none): no tax policy (combined with all emiscens except emiscen = 9)
+
+***  (exponential) is superseded by (diffExp2Lin): For a globally uniform, exponentially increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_co2_tax_spread = 1, set cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_co2_tax_startyear. 
+***  (linear) is superseded by (diffLin2Lin): For a globally uniform, linearly increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_co2_tax_spread = 1, set cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_co2_tax_startyear. [Adjust historical reference point (cm_year_co2_tax_hist, cm_co2_tax_hist) if needed.]
+
 $setglobal carbonprice  none           !! def = none
 *'---------------------    46_carbonpriceRegi  ---------------------------------
 *'
@@ -439,8 +449,7 @@ $setGlobal optimization  nash         !! def = nash
 *'---------------------    81_codePerformance    -------------------------------
 *'
 *' * (off): nothing happens
-*' * (on):  test code performance: noumerous (30) succesive runs performed in a triangle, tax0, tax30, tax150, all growing exponentially,
-*'                      therefore use carbonprice|exponential, c_emiscen|9, and cm_co2_tax_2020|0.
+*' * (on):  test code performance: noumerous (30) succesive runs performed in a triangle, tax0, tax30, tax150, all growing exponentially.
 $setGlobal codePerformance  off       !! def = off
 
 ***-----------------------------------------------------------------------------
@@ -498,16 +507,9 @@ parameter
 *' *  (1): BAU
 *' *  (4): emission time path
 *' *  (6): budget
-*' *  (9): tax scenario (requires running module 21_tax "on"), tax level controlled by module 45_carbonprice and cm_co2_tax_2020, other GHG etc. controlled by cm_rcp_scen
+*' *  (9): tax scenario (requires running module 21_tax "on"), tax level controlled by module 45_carbonprice and cm_co2_tax_startyear, other GHG etc. controlled by cm_rcp_scen
 *' *  (10): used for cost-benefit analysis
 *' *JeS* WARNING: data for cm_emiscen 4 only exists for multigas_scen 2 bau scenarios and for multigas_scen 1
-*'
-parameter
-  cm_co2_tax_2020           "level of co2 tax in year 2020 in $ per t CO2eq [emiscen = 9 and 45_carbonprice = exponential]"
-;
-  cm_co2_tax_2020   = -1;              !! def = -1  !! regexp = -1|is.nonnegative
-*' * (-1): default setting equivalent to no carbon tax
-*' * (any number >= 0): tax level in 2020, with 5% exponential increase over time
 *'
 parameter
   cm_co2_tax_startyear    "level of co2 tax in start year in $ per t CO2eq"
@@ -903,6 +905,17 @@ parameter
 ;
   cm_LimRock               = 1000;   !! def = 1000
 *'
+
+parameter
+  cm_33_EW_upScalingRateLimit    "Annual growth rate limit on upscaling of mining & spreading rocks on fields"
+;
+  cm_33_EW_upScalingRateLimit = 0.2;  !! def = 20% !! regexp = is.nonnegative
+
+parameter 
+  cm_33_EW_shortTermLimit         "Limit on 2030 potential for enhanced weathering, defined as % of land on which EW is applied. Default 0.5% of land"
+;
+  cm_33_EW_shortTermLimit = 0.005; !! def = 0.5% !! regexp = is.nonnegative
+
 parameter
   cm_expoLinear_yearStart   "time at which carbon price increases linearly instead of exponentially"
 ;
@@ -1001,9 +1014,9 @@ parameter
 *' * (4) Energy Efficiency policy: higher discount rate until cm_startyear, decreasing to 25% value linearly until 2030.
 *'
 parameter
-  c_H2InBuildOnlyAfter "Switch to fix H2 in buildings to zero until given year"
+  cm_H2InBuildOnlyAfter "Switch to fix H2 in buildings to zero until given year"
 ;
-  c_H2InBuildOnlyAfter = 2150;   !! def = 2150 (rule out H2 in buildings)
+  cm_H2InBuildOnlyAfter = 2150;   !! def = 2150 (rule out H2 in buildings)
 *' For all years until the given year, FE demand for H2 in buildings is set to zero
 parameter
   cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
@@ -1022,13 +1035,13 @@ parameter
   cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 *'
 parameter
-  cm_co2_tax_spread            "spread of carbon prices in 2025 given as a factor"
+  cm_co2_tax_spread            "spread of carbon prices in 2030 given as a factor"
 ;
   cm_co2_tax_spread        = 10;     !! def = 10  !! regexp = 1|10|20
-*'  Initial spread of carbon prices (in 2025) between the regions with highest respectively lowest GDP per capita (PPP)
-*' * (1) Uniform carbon pricing, i.e. no differentiation
-*' * (10) Spread of carbon prices in 2025 is equal to 10
-*' * (20) Spread of carbon prices in 2025 is equal to 20
+*'  Initial spread of carbon prices (in 2030) between the regions with highest respectively lowest GDP per capita (PPP)
+*' * (1 - uniform) Uniform carbon pricing, i.e. no differentiation
+*' * (10 - medium) Spread of carbon prices in 2025 is equal to 10
+*' * (20 - strong) Spread of carbon prices in 2025 is equal to 20
 
 parameter
   c_teNoLearngConvEndYr      "Year at which regional costs of non-learning technologies converge"
@@ -1208,10 +1221,10 @@ $setglobal cm_MAgPIE_coupling  off     !! def = "off"  !! regexp = off|on
 *' *  (none): no RCP scenario, standard setting
 *' *  (rcp20): RCP2.0
 *' *  (rcp26): RCP2.6
-*' *  (rcp37): RCP3.7
+*' *  (rcp37): RCP3.7 [currently not operational: test and verify before using it!]
 *' *  (rcp45): RCP4.5
-*' *  (rcp60): RCP6.0
-*' *  (rcp85): RCP8.5
+*' *  (rcp60): RCP6.0 [currently not operational: test and verify before using it!]
+*' *  (rcp85): RCP8.5 [currently not operational: test and verify before using it!]
 $setglobal cm_rcp_scen  none         !! def = "none"  !! regexp = none|rcp20|rcp26|rcp37|rcp45|rcp60|rcp85
 *' cm_NDC_version            "choose version year of NDC targets as well as conditional vs. unconditional targets"
 *' *  (2024_cond):   all NDCs conditional to international financial support published until August 31, 2024
@@ -1219,13 +1232,13 @@ $setglobal cm_rcp_scen  none         !! def = "none"  !! regexp = none|rcp20|rcp
 *' *  (2023_cond):   all NDCs conditional to international financial support published until December 31, 2023
 *' *  (2023_uncond): all NDCs independent of international financial support published until December 31, 2023
 *' *  Other supported years are 2022, 2021 and 2018, always containing NDCs published until December 31 of that year
-$setglobal cm_NDC_version  2023_cond    !! def = "2023_cond"  !! regexp = 20(18|2[1-4])_(un)?cond
+$setglobal cm_NDC_version  2024_cond    !! def = "2024_cond"  !! regexp = 20(18|2[1-4])_(un)?cond
 *' cm_netZeroScen     "choose scenario of net zero targets of netZero realization of module 46_carbonpriceRegi"
 *'
 *'  (NGFS_v4):        settings used for NGFS v4, 2023
 *'  (NGFS_v4_20pc):   settings used for NGFS v4, 2023, with still 20% of 2020 emissions in netZero year
-*'  (ENGAGE4p5_GlP):  settings used for ENGAGE 4.5 Glasgow+ scenario
-$setglobal cm_netZeroScen  NGFS_v4     !! def = "NGFS_v4"  !! regexp = NGFS_v4|NGFS_v4_20pc|ENGAGE4p5_GlP
+*'  (ELEVATE2p3):     settings used for ELEVATE2p3 LTS and NDC-LTS scenario
+$setglobal cm_netZeroScen  NGFS_v4     !! def = "NGFS_v4"  !! regexp = NGFS_v4|NGFS_v4_20pc|ELEVATE2p3
 *' *  c_regi_earlyreti_rate  "maximum percentage of capital stock that can be retired early (before reaching their expected lifetimes) in one year in specified regions, if they are not economically viable. It is applied to all techs unless otherwise specified in c_tech_earlyreti_rate."
 *' *  GLO 0.09, EUR_regi 0.15: default value. (0.09 means full retirement after 11 years, 10% standing after 10 years)
 $setglobal c_regi_earlyreti_rate  GLO 0.09, EUR_regi 0.15      !! def = GLO 0.09, EUR_regi 0.15
@@ -1237,7 +1250,7 @@ $setglobal c_tech_earlyreti_rate  GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(
 ***  (SSP2): emissions (from SSP2 scenario in MAgPIE)
 ***  (SSP5): emissions (from SSP5 scenario in MAgPIE)
 ***  (SDP):
-$setglobal cm_LU_emi_scen  SSP2   !! def = SSP2  !! regexp = SSP(1|2|5)|SDP
+$setglobal cm_LU_emi_scen  SSP2   !! def = SSP2  !! regexp = SSP(1|2|3|5)|SDP
 *** cm_regi_bioenergy_EFTax  "region(s) in which bioenergy is charged with an emission-factor-based tax"
 ***  This switch has only an effect if 21_tax is on and cm_bioenergy_EF_for_tax
 ***  is not zero. It reads in the regions that are affected by the emission-
@@ -1310,7 +1323,7 @@ $setglobal c_ccsinjecrateRegi  off  !! def = "off"
 ***   ("forcing_SSP1") settings consistent with SSP 1
 ***   ("forcing_SSP2") settings consistent with SSP 2
 ***   ("forcing_SSP5") settings consistent with SSP 5
-$setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2  !! regexp = forcing_SSP(1|2|5)
+$setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2  !! regexp = forcing_SSP(1|2|3|5)
 *** cm_regiExoPrice "set exogenous co2 tax path for specific regions using a switch, require regipol module to be set to regiCarbonPrice (e.g. GLO.(2025 38,2030 49,2035 63,2040 80,2045 102,2050 130,2055 166,2060 212,2070 346,2080 563,2090 917,2100 1494,2110 1494,2130 1494,2150 1494) )"
 $setGlobal cm_regiExoPrice  off    !! def = off
 *** cm_emiMktTarget "set a budget or year emission target, for all (all) or specific emission markets (ETS, ESD or other), and specific regions (e.g. DEU) or region groups (e.g. EU27)"
@@ -1403,6 +1416,14 @@ $setGlobal cm_VREminShare    off !! def = off
 ***     amount of Carbon Capture and Storage (including DACCS and BECCS) is limited to a maximum of 2GtCO2 per yr globally, and 250 Mt CO2 per yr in EU28.
 ***   This switch only works for model native regions. If you want to apply it to a group region use cm_implicitQttyTarget instead.
 $setGlobal cm_CCSmaxBound    off  !! def = off
+*** c_tech_CO2capturerate "changes CO2 capture rate of carbon capture technologies"
+***   Example on how to use:
+***     c_tech_CO2capturerate   bioh2c 0.8, bioftcrec 0.4
+***   This sets the CO2 capture rate of the bioh2c technology to 80% and the capture of bioftcrec (Bio-based Fischer-Tropsch with carbon capture)
+***   to 40%. The capture rate here is measured as carbon captured relative to the total carbon content of the input fuel (including carbon that is converted into the output fuel).
+***   Note: The change in capture rate via this switch follows directly after reading in the generisdata_emi.prn file. Hence, the subsequent corrections of the capture rate
+***   related to CO2 pipeline leakage still come on top of this.
+$setGlobal c_tech_CO2capturerate    off  !! def = off
 *** c_CES_calibration_new_structure      <-   0        switch to 1 if you want to calibrate a CES structure different from input gdx
 $setglobal c_CES_calibration_new_structure  0     !!  def  =  0  !! regexp = 0|1
 *** c_CES_calibration_write_prices       <-   0       switch to 1 if you want to generate price file, you can use this as new p29_cesdata_price.cs4r price input file
@@ -1552,8 +1573,8 @@ $setglobal cm_eni  off  !! def = off
 $setglobal cm_enb  off  !! def = off
 ***  cm_incolearn "change floor investment cost value"
 ***   Example on how to use:
-***     cm_incolearn  "wind=1600,spv=5160,csp=9500"
-***       floor investment costs from learning set to 17000 for EVs; and 1600, 5160 and 9500 for wind, solar pv and solar csp respectively.
+***     cm_incolearn  "windon=1600,spv=5160,csp=9500"
+***       floor investment costs from learning set to 1600 for wind onshore, 5160 for solar photovoltaic and 9500 for concentrated solar power.
 $setglobal cm_incolearn  off !! def = off
 *** cm_storageFactor "scale curtailment and storage requirements. [factor]"
 ***   def <- "off" = no change for curtailment and storage requirements;
@@ -1577,11 +1598,11 @@ $setglobal cm_adj_coeff  off
 $setglobal cm_adj_coeff_cont  off
 *** cm_adj_seed_multiplier "rescale adjustment cost seed value relative to default value. [factor]. Smaller means slower scale-up."
 ***   def <- "off" = use default adj seed values.
-***   or list of techs to change adj_seed value by a multiplication factor. (ex. "spv 0.5, storspv 0.5, wind 0.25")
+***   or list of techs to change adj_seed value by a multiplication factor. (ex. "spv 0.5, storspv 0.5, windon 0.25")
 $setglobal cm_adj_seed_multiplier  off
 *** cm_adj_coeff_multiplier "rescale adjustment cost coefficient value relative to default value. [factor]. Higher means higher adjustment cost."
 ***   def <- "off" = use default adj coefficient values.
-***   or list of techs to change adj_cost value by a multiplication factor. (ex. "spv 2, storspv 2, wind 4")
+***   or list of techs to change adj_cost value by a multiplication factor. (ex. "spv 2, storspv 2, windon 4")
 *** A note on adjustment cost changes: A common practice of changing the adjustment cost parameterization is by using the same factor to
 *** increase the adjustment cost coefficent and to decrease the adjustment cost seed value at the same time.
 $setglobal cm_adj_coeff_multiplier  off
@@ -1592,7 +1613,7 @@ $setglobal cm_adj_coeff_multiplier  off
 $setglobal cm_inco0Factor  off !! def = off
 *** cm_inco0RegiFactor "change investment costs regionalized technology values. [factor]."
 *' *  def <- "off" = use default p_inco0 values.
-*' *  or list of techs with respective factor to change p_inco0 value by a multiplication factor. (ex. "wind 0.33, spv 0.33" makes investment costs for wind and spv 3 times cheaper)
+*' *  or list of techs with respective factor to change p_inco0 value by a multiplication factor. (ex. "windon 0.33, spv 0.33" makes investment costs for windon and spv 3 times cheaper)
 *' *  (note: if %cm_techcosts% == "GLO", switch will not work for policy runs, i.e. cm_startyear > 2005, for pc, ngt and ngcc as this gets overwritten in 05_initialCap module)
 $setglobal cm_inco0RegiFactor  off  !! def = off
 *** cm_CCS_markup "multiplicative factor for CSS cost markup"
@@ -1714,11 +1735,9 @@ $setglobal cm_feedstockEmiUnknownFate  off      !! def = off
 *** cm_feShareLimits <-   "off"  # def <- "off", limit the electricity final energy share to be in line with the industry maximum electrification levels (60% by 2050 in the electric scenario), 10% lower (=50% in 2050) in an increased efficiency World, or 20% lower (40% in 2050) in an incumbents future (incumbents). The incumbents scenario also limits a minimal coverage of buildings heat provided by gas and liquids (25% by 2050).
 $setglobal cm_feShareLimits  off  !! def = off
 *** VRE potential switches
-*** rescaling factor for sensitivity analysis on renewable potentials, this factor rescales all grades of a renewable technology which have not been used by 2020 (to avoid infeasiblities swith existing capacities)
-*** (ex. "spv 0.5, wind 0.75" rescales solar and wind potential by the respective factors)
 *** rescaling factor for sensitivity analysis on renewable potentials.
 *** This factor rescales all grades of a renewable technology which have not been used by 2020 (to avoid infeasiblities with existing capacities)
-*** (example: "spv 0.5, wind 0.75" rescales solar and wind potential by the respective factors)
+*** (example: "spv 0.5, windon 0.75" rescales solar and wind potential by the respective factors)
 $setGlobal c_VREPot_Factor  off  !! def = off
 *** FE tax switches, allows scaling up or down FE taxes on all sectors, energy carriers flexibly
 ***   cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
@@ -1738,10 +1757,6 @@ $setGlobal cm_FEtax_trajectory_rel  off !! def = off
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "DEU -0.2, EU27_regi -0.4".
 $setGLobal c_agricult_base_shift off !! def off
-*** wind offshore switch
-*** cm_wind_offshore  1, wind energy is represented by "wind" and "windoff", where "wind" means wind onshore. Later this will be the default and the name "wind" will be made to change to windon
-*** cm_wind_offshore  0, means wind energy is only represented by "wind", which is a mixture of both wind onshore and wind offshore
-$setglobal cm_wind_offshore  1      !! def = 1
 ***  cm_INCONV_PENALTY  on     !! def = on
 *** *RP* 2012-03-06 Flag to turn on inconvenience penalties, e.g. for air pollution
 $setglobal cm_INCONV_PENALTY  on         !! def = on  !! regexp = off|on

@@ -613,6 +613,11 @@ prepare <- function() {
     create_fixing_files(cfg = cfg, input_ref_file = "input_ref.gdx")
   }
 
+  if (cfg$gms$cm_startyear > 2005) {
+    cm_startyear_ref <- as.integer(readGDX("input_ref.gdx", name = "cm_startyear", format = "simplest"))
+    if (cfg$gms$cm_startyear < cm_startyear_ref) stop("cm_startyear must be larger than its counterpart in input_ref.gdx")
+  }
+
   timePrepareEnd <- Sys.time()
   # Save run statistics to local file
   cat("Saving timePrepareStart and timePrepareEnd to runstatistics.rda\n")

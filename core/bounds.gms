@@ -25,8 +25,14 @@ vm_costTeCapital.fx(t,regi,teNoLearn)     = pm_inco0_t(t,regi,teNoLearn);
 
 *' #### Model Bounds in Core
 *' Lower limit on all P2SE technologies capacities to 100 kW of all technologies and all time steps
-loop(pe2se(enty,enty2,te)$((not sameas(te,"biotr"))  AND (not sameas(te,"biodiesel")) AND (not sameas(te,"bioeths")) AND (not sameas(te,"gasftcrec")) AND (not sameas(te,"gasftrec"))
-AND (not sameas(te,"tnrs"))),
+loop(pe2se(enty,enty2,te) $ (
+    (not sameas(te,"biotr")) AND
+    (not sameas(te,"biodiesel")) AND
+    (not sameas(te,"bioeths")) AND
+    (not sameas(te,"gasftcrec")) AND
+    (not sameas(te,"gasftrec")) AND
+    (not sameas(te,"tnrs"))
+  ),
   vm_cap.lo(t,regi,te,"1")$(t.val gt 2026 AND t.val le 2070) = 1e-7;
   if( (NOT teCCS(te)), 
     vm_deltaCap.lo(t,regi,te,"1")$(t.val gt 2026 AND t.val le 2070) = 1e-8;
@@ -58,17 +64,26 @@ v_capDistr.fx(t,regi,te,rlf)$(rlf.val gt 9) = 0;
 vm_cap.up("2010",regi,teStor,"1") = 0;
 
 *' completely switching off technologies that are not used in the current version of REMIND, although their parameters are declared:
-vm_cap.fx(t,regi,"solhe",rlf)     = 0;
-vm_deltaCap.fx(t,regi,"solhe",rlf) = 0;
+loop(all_te $ (
+    sameas(all_te, "solhe") OR
+    sameas(all_te, "fnrs") OR
+    sameas(all_te, "pcc") OR
+    sameas(all_te, "pco") OR
+    sameas(all_te, "wind") OR
+    sameas(all_te, "storwind") OR
+    sameas(all_te, "gridwind")
+  ),
+  vm_cap.fx(t,regi,all_te,rlf)      = 0;
+  vm_deltaCap.fx(t,regi,all_te,rlf) = 0;
+);
 
-vm_cap.fx(t,regi,"fnrs",rlf)     = 0;
-vm_deltaCap.fx(t,regi,"fnrs",rlf) = 0;
-
-vm_cap.fx(t,regi,"pcc",rlf)     = 0;
-vm_deltaCap.fx(t,regi,"pcc",rlf) = 0;
-
-vm_cap.fx(t,regi,"pco",rlf)     = 0;
-vm_deltaCap.fx(t,regi,"pco",rlf) = 0;
+vm_demPe.fx(t,regi,"pecoal","seel","pcc") = 0;
+vm_demPe.fx(t,regi,"pecoal","seel","pco") = 0;
+vm_prodSe.fx(t,regi,"pecoal","seel","pcc") = 0;
+vm_prodSe.fx(t,regi,"pecoal","seel","pco") = 0;
+*** windoffshore-todo: to remove when removing wind from all_te
+vm_demPe.fx(t,regi,"pewin","seel","wind") = 0;
+vm_prodSe.fx(t,regi,"pewin","seel","wind") = 0;
 
 *' Switch off grey hydrogen investments in gash2 technology from 2025. Our current seh2 hydrogen represents only additional (clean) hydrogen use cases to current ones
 *' and there are no plans to expand grey hydrogen production for that.
@@ -259,38 +274,13 @@ vm_emiMac.fx(t,regi,"oc") = 0;
 *** -------------------------------------------------------------------------
 *** Exogenous values:
 *** -------------------------------------------------------------------------
-***----
-*RP* fix capacities for wind, spv and csp to real world 2010 and 2015 values:
-*CG* adding 2020 values
-***----
-loop(te$(sameas(te,"csp")),
-  vm_cap.lo("2015",regi,te,"1") = 0.95 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
-  vm_cap.up("2015",regi,te,"1") = 1.05 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
-);
 
-
-$IFTHEN.WindOff %cm_wind_offshore% == "0"
-loop(te$(sameas(te,"spv") OR sameas(te,"wind") ),
-  vm_cap.lo("2015",regi,te,"1") = 0.95 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
-  vm_cap.up("2015",regi,te,"1") = 1.05 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
-  vm_cap.lo("2020",regi,te,"1") = 0.95 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
-  vm_cap.up("2020",regi,te,"1") = 1.05 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
-  vm_cap.up("2025",regi,te,"1")$(pm_histCap("2025",regi,te) gt 1e-6) = 1.05 * pm_histCap("2025",regi,te)$(pm_histCap("2025",regi,te) gt 1e-6); !! only set a bound if values >1MW are in pm_histCap
-);
-
-$ENDIF.WindOff
-
-
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-loop(te$(sameas(te,"spv") OR sameas(te,"wind") OR sameas(te,"windoff")),
-  vm_cap.lo("2015",regi,te,"1") = 0.95 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
-  vm_cap.up("2015",regi,te,"1") = 1.05 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
-  vm_cap.lo("2020",regi,te,"1") = 0.95 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
-  vm_cap.up("2020",regi,te,"1") = 1.05 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
-  vm_cap.up("2025",regi,te,"1")$(pm_histCap("2025",regi,te) gt 1e-6) = 1.05 * pm_histCap("2025",regi,te)$(pm_histCap("2025",regi,te) gt 1e-10); !! only set a bound if values >1MW are in pm_histCap
-);
-
-$ENDIF.WindOff
+*** fix capacities for wind, spv and csp to real world historical values:
+vm_cap.lo("2015",regi,teVRE,"1") = 0.95 * pm_histCap("2015",regi,teVRE)$(pm_histCap("2015",regi,teVRE) gt 1e-10);
+vm_cap.up("2015",regi,teVRE,"1") = 1.05 * pm_histCap("2015",regi,teVRE)$(pm_histCap("2015",regi,teVRE) gt 1e-10);
+vm_cap.lo("2020",regi,teVRE,"1") = 0.95 * pm_histCap("2020",regi,teVRE)$(pm_histCap("2020",regi,teVRE) gt 1e-10);
+vm_cap.up("2020",regi,teVRE,"1") = 1.05 * pm_histCap("2020",regi,teVRE)$(pm_histCap("2020",regi,teVRE) gt 1e-10);
+vm_cap.up("2025",regi,teVRE,"1")$(pm_histCap("2025",regi,teVRE) gt 1e-6) = 1.05 * pm_histCap("2025",regi,teVRE)$(pm_histCap("2025",regi,teVRE) gt 1e-10); !! only set a bound if values >1MW are in pm_histCap
 
 *** lower bound on capacities for ngcc and ngt and gaschp for regions defined at the pm_histCap file
 loop(te$(sameas(te,"ngcc") OR sameas(te,"ngt") OR sameas(te,"gaschp")),
@@ -360,10 +350,10 @@ loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
 );
 $endif.tech_earlyreti
 
-***restrict early retirement to the modeling time frame (to reduce runtime, the early retirement equations are phased out after 2110)
+*** restrict early retirement to the modeling time frame (to reduce runtime, the early retirement equations are phased out after 2110)
 vm_capEarlyReti.up(ttot,regi,te)$(ttot.val lt 2009 or ttot.val gt 2111) = 0;
 
-* lower bound of 0.01% to help the model to be aware of the early retirement option
+*** lower bound of 0.01% to help the model to be aware of the early retirement option
 vm_capEarlyReti.lo(t,regi,te)$((vm_capEarlyReti.up(t,regi,te) ge 1) and (t.val gt 2010) and (t.val le 2100)) = 1e-4;
 
 *cb 20120301 no early retirement for dot, they are used despite their economic non-competitiveness for various reasons.
@@ -378,16 +368,13 @@ vm_deltaCap.up(t,regi,"dot","1")$( (t.val gt 2005) AND regi_group("EUR_regi",reg
 *' DK 20100929: default value (pm_ccsinjecrate= 0.5%) is consistent with Interview Gerling (BGR)
 *' (http://www.iz-klima.de/aktuelles/archiv/news-2010/mai/news-05052010-2/): 
 *' 12 Gt storage potential in Germany, 50-75 Mt/a injection => 60 Mt/a => 60/12000=0.005
-*LP* if c_ccsinjecratescen=0 --> no CCS at all and vm_co2CCS is fixed to 0 before, therefore the upper bound is only set if there should be CCS!
+*** if c_ccsinjecratescen=0 --> no CCS at all and vm_co2CCS is fixed to 0 before, therefore the upper bound is only set if there should be CCS!
 *** -----------------------------------------------------------------------------
 
 if ( c_ccsinjecratescen gt 0,
-
-	loop(regi,
-***vm_co2CCS.up(t,regi,"tco2","ico2","ccsinje","1") = pm_dataccs(regi,"quan","1")*pm_ccsinjecrate(regi)
-		vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1") = pm_dataccs(regi,"quan","1") * pm_ccsinjecrate(regi);
-	);
-
+    loop(regi,
+       vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1") = pm_dataccs(regi,"quan","1") * pm_ccsinjecrate(regi);
+    );
 );
 *' @stop
 
@@ -402,16 +389,15 @@ if(cm_emiscen gt 1,
 );
 $endif
 
-
 *** -------------------------------------------------------------------------------------------------------------
-*AM* Lower limit for 2020-2030 is capacities of all projects that are operational (2020-2030) from project data base
-*AM* Upper limit for 2025 and 2030 additionally includes all projects under construction and 30% 
-*AM* (default, or changed by c_fracRealfromAnnouncedCCScap2030) of announced/planned projects from project data base
-*AM* See also corresponding code in input validation data preparation in mrremind/R/calcProjectPipeline.R.
-*AM* In nash-mode regions cannot easily share ressources, therefore CCS potentials are redistributed in Europe in data preprocessing in mrremind:
-*AM* Potential of EU27 regions is pooled and redistributed according to GDP (Only upper limit for 2030)
-*AM* Norway and UK announced to store CO2 for EU27 countries. So 50% of Norway and UK potential in 2030 is attributed to EU27-Pool
-*LP* if c_ccsinjecratescen=0 --> no CCS at all and vm_co2CCS is fixed to 0 before, therefore the upper bound is only set if there should be CCS!
+*** Lower limit for 2020-2030 is capacities of all projects that are operational (2020-2030) from project data base
+*** Upper limit for 2025 and 2030 additionally includes all projects under construction and 30% 
+*** (default, or changed by c_fracRealfromAnnouncedCCScap2030) of announced/planned projects from project data base
+*** See also corresponding code in input validation data preparation in mrremind/R/calcProjectPipeline.R.
+*** In nash-mode regions cannot easily share ressources, therefore CCS potentials are redistributed in Europe in data preprocessing in mrremind:
+*** Potential of EU27 regions is pooled and redistributed according to GDP (Only upper limit for 2030)
+*** Norway and UK announced to store CO2 for EU27 countries. So 50% of Norway and UK potential in 2030 is attributed to EU27-Pool
+*** if c_ccsinjecratescen=0 --> no CCS at all and vm_co2CCS is fixed to 0 before, therefore the upper bound is only set if there should be CCS!
 *** -------------------------------------------------------------------------------------------------------------
 
 if ( (c_ccsinjecratescen gt 0) AND (NOT cm_emiscen eq 1),
@@ -419,8 +405,8 @@ if ( (c_ccsinjecratescen gt 0) AND (NOT cm_emiscen eq 1),
   vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1")$(t.val le 2030) = (p_boundCapCCS(t,regi,"operational")$(t.val le 2030) + p_boundCapCCS(t,regi,"construction")$(t.val le 2030) + p_boundCapCCS(t,regi,"planned")$(t.val le 2030) * c_fracRealfromAnnouncedCCScap2030) * s_MtCO2_2_GtC;
 );
 
-*AM* Fix capacities of technologies with carbon capture to zero if there are no CCS projects in the pipeline in that region
-*AM* This is only reasonable, as long as we also don't expect any CCU projects in the early years.
+*** Fix capacities of technologies with carbon capture to zero if there are no CCS projects in the pipeline in that region
+*** This is only reasonable, as long as we also don't expect any CCU projects in the early years.
 loop(regi,
   loop(t$(t.val le 2030),
     if( ((p_boundCapCCS(t,regi,"operational") + p_boundCapCCS(t,regi,"construction") + p_boundCapCCS(t,regi,"planned")) eq 0),
@@ -432,31 +418,20 @@ loop(regi,
 loop(regi,
   if( (p_boundCapCCSindicator(regi) eq 0),
     vm_cap.fx("2025",regi,teCCS,rlf) = 0;
-	vm_cap.fx("2030",regi,teCCS,rlf) = 0;
+    vm_cap.fx("2030",regi,teCCS,rlf) = 0;
   );
 );
 
 *** -------------------------------------------------------------------------------------------------------------
-*AM* Limit REMINDs ability to vent captured CO2 to 1 MtCO2 per yr per region. This happens otherwise to a great extend in stringent climate 
-*AM* policy scenarios if CCS and CCU capacities are limited in early years, to lower overall adjustment costs of capture technologies.
-*AM* In reality, people don't have perfect foresight and without storage or usage capacities, no capture facilities will be built.
+*** Limit REMINDs ability to vent captured CO2 to 1 MtCO2 per yr per region. This happens otherwise to a great extend in stringent climate 
+*** policy scenarios if CCS and CCU capacities are limited in early years, to lower overall adjustment costs of capture technologies.
+*** In reality, people don't have perfect foresight and without storage or usage capacities, no capture facilities will be built.
 v_co2capturevalve.up(t,regi) = 1 * s_MtCO2_2_GtC;
 
 
-*AL* fixing prodFE in 2005 to the value contained in pm_cesdata("2005",regi,in,"quantity"). This is done to ensure that the energy system will reproduce the 2005 calibration values.
+*** fixing prodFE in 2005 to the value contained in pm_cesdata("2005",regi,in,"quantity"). This is done to ensure that the energy system will reproduce the 2005 calibration values.
 *** Fixing will produce clearly attributable errors (good for debugging) when using inconsistent data, as the GAMS accuracy when comparing fixed results is very high (< 1e-8).
-***vm_prodFe.fx("2005",regi,se2fe(enty,enty2,te)) = sum(fe2ppfEn(enty2,in), pm_cesdata("2005",regi,in,"quantity") );
-
-$ontext
-*** -------------------------------------------------------------
-*** *RP* Chinese depoyment of coal power plants and coal use in industry was probably not only demand-driven, but also policy-driven (faster than demand). Therefore, we implement lower bounds on coal power plants and solid coal use:
-*** -------------------------------------------------------------
-if (cm_startyear le 2015,
-vm_cap.lo("2015","CHN","pc","1")            = 0.75;  !! WEO says 826GW in 2013, 980 in 2020
-vm_cap.lo("2010","CHN","coaltr","1")        = 0.79;  !! IEA says ~27EJ in 2010. In REMIND, a coaltr cap of 0.647 is equivalent to an FE solids coal level of 20.5 EJ, thus 25*0.647/20.5 = 0.79
-vm_cap.lo("2015","CHN","coaltr","1")        = 0.88;  !! IEA says ~29.7EJ in 2012. In REMIND, a coaltr cap of 0.647 is equivalent to an FE solids coal level of 20.5 EJ, thus 28*0.647/20.5 = 0.88
-);
-$offtext
+*** vm_prodFe.fx("2005",regi,se2fe(enty,enty2,te)) = sum(fe2ppfEn(enty2,in), pm_cesdata("2005",regi,in,"quantity") );
 
 $if  %c_SSP_forcing_adjust% == "forcing_SSP1"    vm_deltaCap.up(t,regi,"coalgas",rlf)$(t.val gt 2010) = 0.00001;
 
@@ -464,8 +439,8 @@ $if  %c_SSP_forcing_adjust% == "forcing_SSP1"    vm_deltaCap.up(t,regi,"coalgas"
 *** H2 Curtailment
 *** -------------------------------------------------------------
 *** RLDC removal
-***Fixing h2curt value to zero to avoid the model to generate SE out of nothing.
-***Models that have additional se production channels should release this variable (eg. RLDC power module).
+*** Fixing h2curt value to zero to avoid the model to generate SE out of nothing.
+*** Models that have additional se production channels should release this variable (eg. RLDC power module).
 loop(prodSeOth2te(enty,te),
   v_prodSeOth.fx(t,regi,"seh2","h2curt") = 0;
 );
@@ -498,9 +473,9 @@ vm_emiFgas.fx(ttot,all_regi,all_enty) = f_emiFgas(ttot,all_regi,"%c_SSP_forcing_
 display vm_emiFgas.L;
 
 
-*AL* Bugfix. For some reason the model cannot reduce the production of district heating to 0
-*AL* where it should be 0. Not fixings can account for this
-*AL* Fixing vm_prodSe to 0 avoids the problem
+*** Bugfix. For some reason the model cannot reduce the production of district heating to 0
+*** where it should be 0. Not fixings can account for this
+*** Fixing vm_prodSe to 0 avoids the problem
 loop ((in,in2) $ (sameAs(in,"feheb") and sameAs(in2,"fehei")),
 loop ((t, regi) $ ( (sameAs(t,"2010") OR sameAs(t,"2015"))
                      AND
@@ -545,8 +520,8 @@ v_shfe.lo(t,regi,entyFe,sector)$pm_shfe_lo(t,regi,entyFe,sector) = pm_shfe_lo(t,
 v_shGasLiq_fe.up(t,regi,sector)$pm_shGasLiq_fe_up(t,regi,sector) = pm_shGasLiq_fe_up(t,regi,sector);
 v_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_fe_lo(t,regi,sector);
 
-*** RH: Fix H2 in buildings to zero until given year (always zero by default)
-vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le c_H2InBuildOnlyAfter) = 0;
+*** Set H2 upper bound in buildings for years defined at cm_H2InBuildOnlyAfter
+vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le cm_H2InBuildOnlyAfter) = 1e-6;
 
 ***----------------------------------------------------------------------------
 ***  Controlling if active, dampening factor to align edge-t non-energy transportation costs with historical GDP data

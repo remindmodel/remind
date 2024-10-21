@@ -17,15 +17,15 @@ $endif
   !! short-term (until 2025)
   if (ttot.val le 2025,
 
-    pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge  95 ) = 0.63;
-    pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge 133 ) = 0.756;
+    pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge  sm_D2005_2_D2017 * 95 ) = 0.63;
+    pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge sm_D2005_2_D2017 *133 ) = 0.756;
 
-    pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge 78 ) = 0.121;
-    pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge 80 ) = 0.572;
+    pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 *78 ) = 0.121;
+    pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 *80 ) = 0.572;
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
-    pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge 59 ) = 0.117;
-    pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge 82 ) = 0.234;
+    pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge sm_D2005_2_D2017 *59 ) = 0.117;
+    pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge sm_D2005_2_D2017 *82 ) = 0.234;
 $endif.cm_subsec_model_steel
 
   !! long-term (from 2030 on)
@@ -43,16 +43,16 @@ $endif.cm_subsec_model_steel
       = max(0, min(0.95, 0.2159 + 0.1365 * log(sm_tmp)));
 
     else
-      pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge  54 ) = 0.702;
-      pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge 133 ) = 0.756;
+      pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge  sm_D2005_2_D2017 * 54 ) = 0.702;
+      pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge sm_D2005_2_D2017 * 133 ) = 0.756;
 
-      pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge 46 ) = 0.363;
-      pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge 78 ) = 0.484;
-      pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge 80 ) = 0.572;
+      pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 * 46 ) = 0.363;
+      pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 * 78 ) = 0.484;
+      pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 *80 )  = 0.572;
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
-      pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge 48 ) = 0.117;
-      pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge 62 ) = 0.275;
+      pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge sm_D2005_2_D2017 *48 ) = 0.117;
+      pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge sm_D2005_2_D2017 *62 ) = 0.275;
 $endif.cm_subsec_model_steel
     );
   );
