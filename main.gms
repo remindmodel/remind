@@ -1014,9 +1014,9 @@ parameter
 *' * (4) Energy Efficiency policy: higher discount rate until cm_startyear, decreasing to 25% value linearly until 2030.
 *'
 parameter
-  c_H2InBuildOnlyAfter "Switch to fix H2 in buildings to zero until given year"
+  cm_H2InBuildOnlyAfter "Switch to fix H2 in buildings to zero until given year"
 ;
-  c_H2InBuildOnlyAfter = 2150;   !! def = 2150 (rule out H2 in buildings)
+  cm_H2InBuildOnlyAfter = 2150;   !! def = 2150 (rule out H2 in buildings)
 *' For all years until the given year, FE demand for H2 in buildings is set to zero
 parameter
   cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
