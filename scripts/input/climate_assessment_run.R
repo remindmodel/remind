@@ -214,7 +214,6 @@ runHarmoniseAndInfillCmd <- paste(
   "python", file.path(scriptsDir, "run_harm_inf.py"),
   climateAssessmentEmi,
   climateTempDir,
-  "--no-inputcheck",
   "--infilling-database", infillingDatabaseFile
 )
 
