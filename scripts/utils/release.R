@@ -1,19 +1,19 @@
-# Was ist mit dem tag? Muss man Release auf github? Muss der per Hand gemacht werden?
-# Vielleicht so:   -l, --label name           Add labels by name
+# This script is part of a longer workflow described here
+# https://gitlab.pik-potsdam.de/rse/rse-internal/-/wikis/PublishModel
 
 release <- function(newVersion) {
   if (Sys.which("sbatch") == "") {
     stop("release must be created on cluster")
   }
-
+  
   releaseDate <- format(Sys.time(), "%Y-%m-%d")
-
+  
   # Get old version from CITATION.cff
   oldVersion <- readLines("CITATION.cff") |>
     grep(pattern = "^version: (.*)$", value = TRUE) |>
     sub(pattern = "^version: (.*)$", replacement = "\\1") |>
     sub(pattern = "dev", replacement = "")
-
+  
   # Update CHANGELOG.md
   githubUrl <- "https://github.com/remindmodel/remind/compare/"
   readLines("CHANGELOG.md") |>
@@ -24,22 +24,23 @@ release <- function(newVersion) {
         replacement = paste0("[Unreleased]: ", githubUrl, "v", newVersion, "...develop\n",
                              "[", newVersion, "]: ", githubUrl, "v\\1...v", newVersion)) |>
     writeLines("CHANGELOG.md")
-
+  
   # Update version and release date in CITATION.cff
   readLines("CITATION.cff") |>
     sub(pattern = "^version:.*$", replacement = paste("version:", newVersion)) |>
     sub(pattern = "^date-released:.*$", replacement = paste("date-released:", releaseDate)) |>
     writeLines("CITATION.cff")
-
+  
   # Update version in README.md
   readLines("README.md") |>
     gsub(pattern = oldVersion, replacement = newVersion) |>
     writeLines("README.md")
-
+  
   # Create documentation
   message("creating documentation using goxygen...")
   goxygen::goxygen(unitPattern = c("\\[","\\]"), 
-                   includeCore = TRUE, 
+                   includeCore = TRUE,
+                   output = "html",
                    max_num_edge_labels = "adjust", 
                    max_num_nodes_for_edge_labels = 15, 
                    startType = NULL)
@@ -49,22 +50,25 @@ release <- function(newVersion) {
   exitCode <- system(paste0("rsync -e ssh -avz doc/html/* ",
                             "rse@rse.pik-potsdam.de:/webservice/doc/remind/", newVersion))
   stopifnot(exitCode == 0)
-
+  
   # Upload input data to RSE server
-  message("uploading input data to RSE server")
+  message("Uploading input data to RSE server")
+  source("config/default.cfg")
   cfg <- defineInputData(cfg)
   # Keep mandatory input files only
   cfg$input <- cfg$input[cfg$stopOnMissing]
   gms::publish_data(cfg,target = "dataupload@rse.pik-potsdam.de:/remind/public")
-
+  
   message("Please perform the two following steps manually:\n",
           "1. CHANGELOG.md: sort lines in each category: changed, added, removed, fixed; remove empty categories\n",
           "2. git add -p\n",
           "--> When done press ENTER to commit, push and create PR")
   gms::getLine()
-
+  
+  message("Committing and pushing changes")
   gert::git_commit(paste("remind release", newVersion))
   gert::git_push()
+  message("Creating a PR on GitHub")
   system(paste0("gh pr create --base master --title 'remind release ", newVersion, "' --body ''"))
 }
 
