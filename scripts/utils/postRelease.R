@@ -33,14 +33,16 @@ postRelease <- function() {
     sub(pattern = "^(version:.*)$", replacement = "\\1dev") |>
     writeLines("CITATION.cff")
 
-  citation::cff2zenodo("CITATION.cff")
-
-  message("TODO: git add -p\n",
-          "Press enter when done to commit, push and create PR")
+  message("Please perform the following step manually:\n",
+          "git add -p\n",
+          "--> When done press ENTER to commit, push and create PR")
   gms::getLine()
 
   gert::git_commit("merge master into develop")
   gert::git_push()
+  # gh pr create --help
+  # --base branch The branch into which you want your code merged
+  # --head branch The branch that contains commits for your pull request (default [current branch])
   system(paste0("gh pr create --base develop --title 'merge master into develop' --body ''"))
 }
 

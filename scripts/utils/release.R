@@ -69,6 +69,9 @@ release <- function(newVersion) {
   gert::git_commit(paste("remind release", newVersion))
   gert::git_push()
   message("Creating a PR on GitHub")
+  # gh pr create --help
+  # --base branch The branch into which you want your code merged
+  # --head branch The branch that contains commits for your pull request (default [current branch])
   system(paste0("gh pr create --base master --title 'remind release ", newVersion, "' --body ''"))
 }
 
