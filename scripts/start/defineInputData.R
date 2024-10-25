@@ -6,6 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 #' construct list of input data files
 #' @param cfg list of configs
+#' @param remindPath path to REMIND main folder
 
 defineInputData <- function(cfg, remindPath = ".") {
 
