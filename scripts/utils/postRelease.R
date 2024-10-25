@@ -1,3 +1,6 @@
+# This script is part of a longer workflow described here
+# https://gitlab.pik-potsdam.de/rse/rse-internal/-/wikis/PublishModel
+
 postRelease <- function() {
   gert::git_fetch("upstream")
   gert::git_merge("upstream/master")
