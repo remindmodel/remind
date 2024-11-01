@@ -55,7 +55,7 @@ REMIND uses [renv](https://rstudio.github.io/renv/) for managing required R pack
 The `piamenv` functions explained earlier should cover all common tasks, use the following for more control.
 - `renv::install("package@2.3.4")` install specific package version
 - `renv::install("githubuser/package", ref = "<commit hash>")` install package from GitHub, optionally provide commit hash
-- `renv::install("/p/tmp/username/yourpackagefolder")` install package from sources
+- `renv::install("/p/tmp/username/yourpackagefolder")` install package from sources. Always use an absolute path!
 - `renv::remove("package")` uninstall package
 - `renv::update(exclude = "renv")` (`make update-renv-all`) update all packages except renv (please do not update renv itself)
 - `renv::update("package")` update package

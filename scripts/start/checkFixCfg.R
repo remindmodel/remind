@@ -1,3 +1,9 @@
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
 #' take a REMIND cfg, runs some consistency checks and automatically fix some wrong settings
 #' The regexp check loads the code from main.gms and looks for 'regexp = ' patterns.
 #' It then checks whether the current cfg matches those patterns.
@@ -13,7 +19,7 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
   NC    <- "\033[0m"   # No Color
 
   refcfg <- gms::readDefaultConfig(remindPath)
-  remindextras <- c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
+  remindextras <- c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun", "var_luc",
                                "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
                                "gms$cm_CES_configuration", "gms$c_description", "model", "renvLockFromPrecedingRun")
   fail <- tryCatch(gms::check_config(cfg, reference_file = refcfg, modulepath = file.path(remindPath, "modules"),
@@ -91,8 +97,17 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
   if (! isTRUE(cfg$gms$CES_parameters == "calibrate")) {
     cfg$output <- setdiff(cfg$output, "reportCEScalib")
   }
-  
-  # Make sure that an input_bau.gdx has been specified if and only if needed.
+
+  # remove rev at the beginning of inputRevision
+  if (grepl("^rev", cfg$inputRevision)) {
+    cfg$inputRevision <- sub("^rev", "", cfg$inputRevision)
+    warning("cfg$inputRevision started with 'rev', but this will be added automatically. Removed it.")
+  }
+  # check if RCP scenario other than (none), (rcp20), (rcp26), or (rcp45) is used
+  if (! isTRUE(cfg$gms$cm_rcp_scen %in% c("none","rcp20","rcp26","rcp45") )) {
+    warning("Chosen RCP scenario '", cfg$gms$cm_rcp_scen, "' might currently not be fully operational: test and verify before using it!")
+  }
+  # Make sure that an input_bau.gdx has been specified if needed.
   isBauneeded <- isTRUE(length(unlist(lapply(names(needBau), function(x) intersect(cfg$gms[[x]], needBau[[x]])))) > 0)
   if (isBauneeded) {
     if (is.na(cfg$files2export$start["input_bau.gdx"])) {
@@ -101,9 +116,8 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
     }
   } else {
     if (! is.na(cfg$files2export$start["input_bau.gdx"])) {
-      message("You have specified no realization that requires 'path_gdx_bau' but you have specified it. ",
-              "To avoid an unnecessary dependency to another run, setting 'path_gdx_bau' to NA.")
-      cfg$files2export$start["input_bau.gdx"] <- NA
+      message("According to 'scripts/start/needBau.R', you use no realization that requires 'path_gdx_bau' but you have specified it. ",
+              "To avoid an unnecessary dependency to another run, you can set 'path_gdx_bau' to NA.")
     }
   }
 

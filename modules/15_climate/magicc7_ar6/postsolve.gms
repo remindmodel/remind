@@ -1,10 +1,10 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/15_climate/magicc/postsolve.gms
+*** SOF ./modules/15_climate/magicc7_ar6/postsolve.gms
 
 ***---------------------------------------------------------------------------
 *' The MAGICC scenario generation is set in `./core/magicc.gms`, but runs here.
@@ -17,9 +17,8 @@
 *' @code
 
 * Run only on first iteration to avoid incomplete GDXs
-if (iteration.val ge 2,
-* Run the climate assessment script. Takes around 2-3m for a single parameter set, including harmonization and infilling
 Execute_unload 'fulldata_postsolve';
+* Run the climate assessment script. Takes around 2-3m for a single parameter set, including harmonization and infilling
 Execute "Rscript climate_assessment_run.R";
 * Read in results
 Execute_Loadpoint 'p15_forc_magicc'  p15_forc_magicc;
@@ -27,7 +26,6 @@ Execute_Loadpoint 'p15_magicc_temp' pm_globalMeanTemperature = pm_globalMeanTemp
 
 *** climate_assessment only reports until 2100:
 pm_globalMeanTemperature(tall)$(tall.val gt 2100) = pm_globalMeanTemperature("2100");
-);
 
 ***---------------------------------------------------------------------------
 *' Raw temperature (GMT anomaly) from MAGICC is further calibrated to match HADCRUT4 in 2000. 
@@ -108,4 +106,4 @@ if (cm_iterative_target_adj eq 2, !! otherwise adjustment happens in core/postso
     );
 );
 *' @stop
-*** EOF ./modules/15_climate/magicc/postsolve.gms
+*** EOF ./modules/15_climate/magicc7_ar6/postsolve.gms

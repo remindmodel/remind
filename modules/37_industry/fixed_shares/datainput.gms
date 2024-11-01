@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -61,7 +61,7 @@ $offdelim
 $include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
 
 $IFTHEN.Industry_CCS_markup not "%cm_Industry_CCS_markup%" == "off" 
-	pm_abatparam_Ind(ttot,regi,all_enty,steps)$pm_abatparam_Ind(ttot,regi,all_enty,steps) = (1/%cm_Industry_CCS_markup%)*pm_abatparam_Ind(ttot,regi,all_enty,steps);
+   pm_abatparam_Ind(ttot,regi,all_enty,steps)$pm_abatparam_Ind(ttot,regi,all_enty,steps) = (1/%cm_Industry_CCS_markup%)*pm_abatparam_Ind(ttot,regi,all_enty,steps);
 $ENDIF.Industry_CCS_markup
 
 *** fill in share of other industry sector

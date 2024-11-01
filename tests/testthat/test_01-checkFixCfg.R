@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -22,7 +22,7 @@ test_that("checkFixCfg works", {
     "cm_rcp_scen" = "apocalypse",
     "c_testOneRegi_region" = "LOONG",
     "c_shGreenH2" = "1.5",
-    "cm_co2_tax_2020" = "-2",
+    "cm_co2_tax_startyear" = "-2",
   NULL)
 
   cfg <- savecfg
@@ -32,5 +32,6 @@ test_that("checkFixCfg works", {
     expect_match(w, paste0(n, "=", wrongsetting[[n]]), all = FALSE, fixed = TRUE)
   }
   expect_match(w, paste0(length(wrongsetting), " errors found"), all = FALSE, fixed = TRUE)
-  expect_equal(length(w), length(wrongsetting) + 1)
+  expect_match(w, "Chosen RCP scenario 'apocalypse' might currently not be fully operational", all = FALSE, fixed = TRUE)
+  expect_equal(length(w), length(wrongsetting) + 2)
 })

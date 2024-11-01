@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -10,7 +10,6 @@ sm_DptCO2_2_TDpGtC,input,questionnaire
 vm_co2eq,input,questionnaire
 vm_emiFgas,input,questionnaire
 pm_ttot_val,input,questionnaire
-cm_co2_tax_2020,input,questionnaire
 cm_co2_tax_growth,input,questionnaire
 cm_startyear,input,questionnaire
 cm_iterative_target_adj,input,questionnaire
@@ -22,3 +21,9 @@ cm_CO2priceRegConvEndYr,input,questionnaire
 cm_NDC_divergentScenario,input,questionnaire
 vm_demFeSector,input,questionnaire
 pm_emifac,input,questionnaire
+cm_co2_tax_spread,input,no carbon price differentiation in this realization
+cm_co2_tax_startyear,input,added by codeCheck
+cm_peakBudgYr,input,added by codeCheck
+cm_taxCO2inc_after_peakBudgYr,input,added by codeCheck
+sm_D2005_2_D2017,input,not needed
+fm_taxCO2eqHist,input,not needed

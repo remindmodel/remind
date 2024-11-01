@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -86,7 +86,7 @@ $ENDIF.fossil_realization
 
 
 *** bounds on oil, gas and coal trade in 2010 and 2015 (+-10% from historical IEA values)
-loop( ttot$(ttot.val eq 2010 OR ttot.val eq 2015),
+loop( ttot$(ttot.val eq 2010 OR ttot.val eq 2015 OR ttot.val eq 2020),
 	loop( peFos,
 		vm_Xport.lo(ttot,regi,peFos) = 0.9 * pm_IO_trade(ttot,regi,peFos,"Xport");
 		vm_Xport.up(ttot,regi,peFos) = 1.1 * pm_IO_trade(ttot,regi,peFos,"Xport");

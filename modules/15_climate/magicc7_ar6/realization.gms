@@ -1,10 +1,10 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/15_climate/magicc/realization.gms
+*** SOF ./modules/15_climate/magicc7_ar6/realization.gms
 
 *' @description 
 *' In this realization, concentration, forcing, and temperature values are calculated using a version of the 
@@ -35,4 +35,4 @@ $Ifi "%phase%" == "declarations" $include "./modules/15_climate/magicc7_ar6/decl
 $Ifi "%phase%" == "datainput" $include "./modules/15_climate/magicc7_ar6/datainput.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/15_climate/magicc7_ar6/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/15_climate/magicc/realization.gms
+*** EOF ./modules/15_climate/magicc7_ar6/realization.gms

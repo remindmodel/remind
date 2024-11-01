@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -32,6 +32,10 @@ q47_implicitQttyTargetTax(t,regi)$(t.val ge max(2010,cm_startyear))..
     ( 
       p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(ccs2te(ccsCo2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS(t,regi,enty,enty2,te,rlf)))
     )$(sameas(qttyTarget,"CCS"))  
+    +
+    (
+      p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * (-sum(te_oae33, vm_emiCdrTeDetail(t,regi,te_oae33)))
+    )$(sameas(qttyTarget,"oae"))
   )
   -
   p47_implicitQttyTargetTax0(t,regi)
@@ -124,6 +128,19 @@ q47_CCSmaxBound(t,regi)$p47_CCSmaxBound(regi)..
 ;
 
 $endIf.cm_CCSmaxBound
+
+***---------------------------------------------------------------------------
+*' total SE generation per PE carrier (useful for setting historical bounds)
+***---------------------------------------------------------------------------
+
+q47_prodSEtotal(t,regi,entyPe,entySe)$(pese(entyPe,entySe))..
+  v47_prodSEtotal(t,regi,entyPe,entySe)
+  =e=
+  sum(pe2se(entyPe,entySe,te),
+    vm_prodSe(t,regi,entyPe,entySe,te));
+
+
+
 
 *' @stop
 *** EOF ./modules/47_regipol/regiCarbonPrice/equations.gms

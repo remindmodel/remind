@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -7,13 +7,13 @@
 *** SOF ./modules/39_CCU/on/declarations.gms
 
 parameters
-p39_co2_dem(ttot,all_regi,all_enty,all_enty,all_te)					"CO2 demand of CCU technologies, unit: tC/TWa(output)"
+p39_co2_dem(ttot,all_regi,all_enty,all_enty,all_te)					"CO2 demand of CCU technologies [tC/TWa (output)]"
 ;
 
 positive variables
-vm_co2CCUshort(ttot,all_regi,all_enty,all_enty,all_te,rlf)           "CO2 captured in CCU te that have a persistence for co2 storage shorter than 5 years. Unit GtC/a"
-v39_shSynLiq(ttot,all_regi)                                        "Share of synthetic liquids in all SE liquids. Value between 0 and 1."
-v39_shSynGas(ttot,all_regi)                                          "Share of synthetic gas in all SE gases. Value between 0 and 1."
+vm_co2CCUshort(ttot,all_regi,all_enty,all_enty,all_te,rlf)           "CO2 captured in CCU te that have a persistence for co2 storage shorter than 5 years [GtC/a]"
+v39_shSynLiq(ttot,all_regi)                                        "Share of synthetic liquids in all SE liquids [0..1]"
+v39_shSynGas(ttot,all_regi)                                          "Share of synthetic gas in all SE gases [0..1]"
 ;
 
 equations

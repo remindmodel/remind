@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -58,6 +58,7 @@ if(file.exists(runstatistics) & dir.exists(resultsarchive)) {
   saveRDS(q,file=paste0(resultsarchive,"/",stats$id,".rds"))
   cwd <- getwd()
   setwd(resultsarchive)
-  system("ls 1*.rds > files")
+  system("find -type f -name '1*.rds' -printf '%f\n' | sort > fileListForShinyresults")
   setwd(cwd)
 }
+message("report.rds written and data submitted to runstatistics")

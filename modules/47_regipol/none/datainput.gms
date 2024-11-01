@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -23,7 +23,7 @@ loop(ext_regi$altFeEmiFac_regi(ext_regi),
 $endif.altFeEmiFac
 
 *** VRE capacity factor adjustments for Germany in line with results from detailed models in ARIADNE project
- loop(te$sameas(te,"wind"),
+ loop(te$sameas(te,"windon"),
   loop(regi$sameas(regi,"DEU"),
     pm_cf("2025",regi,te) =  1.04 * pm_cf("2025",regi,te);
     pm_cf("2030",regi,te) =  1.08 * pm_cf("2030",regi,te);
