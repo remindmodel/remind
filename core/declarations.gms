@@ -566,7 +566,7 @@ q_heat_limit(ttot,all_regi)  "equation to limit maximum level of secondary energ
 $ENDIF.sehe_upper
 
 $ifthen.limitSolidsFossilRegi not %cm_limitSolidsFossilRegi% == "off"
-  q_fossilSolidsLimitReg(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)  "limit solids fossil to be lower or equal to previous year values"
+  q_fossilSolidsLimitReg(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)  "limit solids fossil to be lower or equal to previous year values in each (sector x emiMkt) combination"
 $endif.limitSolidsFossilRegi
 ;
 ***----------------------------------------------------------------------------------------

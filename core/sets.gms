@@ -923,8 +923,8 @@ set
 $endif.altFeEmiFac
 
 $ifthen.limitSolidsFossilRegi not %cm_limitSolidsFossilRegi% == "off"
-  set limitSolidsFossilextRegi(ext_regi) "set to store ext_regi regions that should have solids fossil upper bound limited by previous year" / %cm_limitSolidsFossilRegi% /
-      limitSolidsFossilRegi(all_regi)    "set to store regi regions that should have solids fossil upper bound limited by previous year"
+  set limitSolidsFossilextRegi(ext_regi) "set to store ext_regi regions where fossil solids use in each (sector x emiMkt) is limited by the amount used in the previous year" / %cm_limitSolidsFossilRegi% /
+      limitSolidsFossilRegi(all_regi)    "set to store regi regions where fossil solids use in each (sector x emiMkt) is limited by the amount used in the previous year"
   ;
   loop(ext_regi$limitSolidsFossilextRegi(ext_regi),
     limitSolidsFossilRegi(all_regi)$(regi_group(ext_regi,all_regi)) = YES;
