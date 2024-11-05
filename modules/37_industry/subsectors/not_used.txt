@@ -24,3 +24,4 @@ pm_shfe_up,parameter,not needed
 sm_trillion_2_non,input,questionnaire
 sm_TWa_2_kWh,input,questionnaire
 vm_macBase,input,questionnaire
+sm_D2005_2_D2017,input,no conversion needed

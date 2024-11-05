@@ -1,9 +1,6 @@
-title;start;oldrun;path_report;qos;magpie_scen;no_ghgprices_land_until;path_gdx;path_gdx_bau;path_gdx_ref
-SDP_MC-Base;0;;;;SDP-MC|NPI|nocc_hist;y2150;;;
-SDP_MC-NDC;0;;;;SDP-MC|NDC|nocc_hist;y2150;;;
+title;start;oldrun;path_report;qos;config/scenario_config.csv;no_ghgprices_land_until;path_gdx;path_gdx_bau;path_gdx_ref
 SDP_MC-NPi;0;;;;SDP-MC|NPI|nocc_hist;y2150;;;
 SDP_MC-PkBudg650;0;;;;SDP-MC|NDC|nocc_hist;y2030;;;
-SSP1-Base;0;;;;SSP1|NPI|nocc_hist;y2150;;;
 SSP1-NDC;0;;;;SSP1|NDC|nocc_hist;y2150;;;
 SSP1-NPi;0;;;;SSP1|NPI|nocc_hist;y2150;;;
 SSP1-PkBudg1050;0;;;;SSP1|NDC|nocc_hist;y2030;;;
@@ -13,7 +10,6 @@ SSP2-NDC;0;;;;SSP2|NDC|nocc_hist;y2150;;;
 SSP2-NPi;0;;;;SSP2|NPI|nocc_hist;y2150;;;
 SSP2-PkBudg1050;0;;;;SSP2|NDC|nocc_hist;y2030;;;
 SSP2-PkBudg650;0;;;;SSP2|NDC|nocc_hist;y2030;;;
-SSP5-Base;0;;;;SSP5|NPI|nocc_hist;y2150;;;
 SSP5-NDC;0;;;;SSP5|NDC|nocc_hist;y2150;;;
 SSP5-NPi;0;;;;SSP5|NPI|nocc_hist;y2150;;;
 SSP5-PkBudg1050;0;;;;SSP5|NDC|nocc_hist;y2030;;;

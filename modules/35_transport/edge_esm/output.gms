@@ -7,7 +7,7 @@
 *** SOF ./modules/35_transport/edge_esm/output.gms
 
 $ifthen.calibrate %CES_parameters% == "load"
-  Execute "Rscript -e 'edgeTransport::toolIterativeEDGETransport(reporting=TRUE)'";
+  Execute "Rscript -e 'edgeTransport::iterativeEdgeTransport()'";
 $endif.calibrate
 
 *** EOF ./modules/35_transport/edge_esm/output.gms

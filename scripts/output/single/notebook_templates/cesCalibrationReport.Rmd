@@ -1,11 +1,3 @@
-<!--
-|  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
-|  authors, and contributors see CITATION.cff file. This file is part
-|  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
-|  AGPL-3.0, you are granted additional permissions described in the
-|  REMIND License Exception, version 1.0 (see LICENSE file).
-|  Contact: remind@pik-potsdam.de
--->
 ---
 title: "`r params$doctitle`"
 date: "`r format(Sys.Date())`"
@@ -152,7 +144,7 @@ knitr::kable(df, caption = "Prices below 0.01")
 ```{r line plots}
 te <- c(
   "gastr", "refliq", "biotr", "coaltr", "hydro", "ngcc", "ngt",
-  "pc", "dot", "gaschp", "wind", "tnrs"
+  "pc", "dot", "gaschp", "windon", "tnrs"
 )
 in_set <- readGDX(gdx, "in", "sets")
 structure <- sort(intersect(in_set, getColValues(ces, "pf")))
