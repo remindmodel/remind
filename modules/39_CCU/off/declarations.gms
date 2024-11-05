@@ -13,7 +13,7 @@
 *-----------------------------------------------ESM module------------------------
 
 positive variables
-vm_co2CCUshort(ttot,all_regi,all_enty,all_enty,all_te,rlf)           "CO2 captured in CCU te that have a persistence for co2 storage shorter than 5 years. Unit GtC/a"
+vm_co2CCUshort(ttot,all_regi,all_enty,all_enty,all_te,rlf)           "CO2 captured in CCU te that have a persistence for co2 storage shorter than 5 years [GtC/a]"
 ;
 
 *** EOF ./modules/39_CCU/off/declarations.gms

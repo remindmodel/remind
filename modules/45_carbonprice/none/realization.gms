@@ -7,7 +7,7 @@
 *** SOF ./modules/45_carbonprice/none/realization.gms
 
 
-*#' @description: This realization is for runs without carbon prices (BAU). 
+*' @description: This realization is for runs without carbon prices.
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/none/datainput.gms"

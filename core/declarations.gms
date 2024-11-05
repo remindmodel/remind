@@ -83,9 +83,9 @@ pm_macCost(tall,all_regi,all_enty)                   "abatement costs for all em
 pm_macStep(tall,all_regi,all_enty)                   "step number of abatement level [integer]"
 pm_macSwitch(all_enty)                               "switch to include mac option in the code"
 pm_macCostSwitch(all_enty)                           "switch to include mac costs in the code (e.g. in coupled scenarios, we want to include the costs in REMIND, but MAC effects on emissions are calculated in MAgPIE)"
-p_priceCO2(tall,all_regi)                           "carbon price [$/tC]"
-pm_priceCO2forMAC(tall,all_regi,all_enty)             "carbon price defined for MAC gases [$/tC]"
-p_priceGas(tall,all_regi)                            "gas price in [$/tCeq] for ch4gas MAC"
+p_priceCO2(tall,all_regi)                            "carbon price [$/tC]"
+pm_priceCO2forMAC(tall,all_regi,all_enty)            "carbon price defined for MAC gases [$/tC]"
+p_priceGas(tall,all_regi)                            "gas price for ch4gas MAC [$/tCeq]"
 pm_ResidualCementDemand(tall,all_regi)               "reduction in cemend demand (and thus process emissions) due to climate policy [0...1]"
 pm_CementAbatementPrice(ttot,all_regi)               "CO2 price used during calculation of cement demand reduction [$/tCO2]"
 pm_CementDemandReductionCost(tall,all_regi)          "cost of reducing cement demand [tn$2005]"
@@ -119,6 +119,11 @@ p_gdppcap2050_PPP(all_regi)	                     "regional GDP PPP per capita in
 p_maxPPP2050					     "maximum income GDP PPP among regions in 2050"
 p_maxSpvCost                                         "maximum spv investment cost among regions"
 
+$ifthen.tech_CO2capturerate not "%c_tech_CO2capturerate%" == "off"
+p_tech_co2capturerate(all_te)                 "Technology specific CO2 capture rate" / %c_tech_CO2capturerate% /
+p_PECarriers_CarbonContent(all_enty)	  "Carbon content of PE carriers [GtC/TWa]"
+$endif.tech_CO2capturerate
+
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]"
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1"
 p_actualbudgetco2(tall)                              "actual level of cumulated emissions starting from 2020 [GtCO2]"
@@ -139,17 +144,17 @@ p_ef_dem(all_regi,all_enty)                                 "Demand side emissio
 pm_secBioShare(ttot,all_regi,all_enty,emi_sectors)           "share of biomass per carrier for each sector"
 
 p_avCapFac2015(all_regi,all_te)                             "average capacity factor of non-bio renewables in 2015 in REMIND"
-p_aux_capToDistr(all_regi,all_te)                           "aux. param. to calculate p_avCapFac2015; The historic capacity in 2015"
-s_aux_cap_remaining                                         "aux. param. to calculate p_avCapFac2015; countdown parameter"
-p_aux_capThisGrade(all_regi,all_te,rlf)                     "aux. param. to calculate p_avCapFac2015; How the historic 2015 capacity is distributed among grades"
-p_aux_capacityFactorHistOverREMIND(all_regi,all_te)         "aux. param. to calculate capacity factors correction (wind and spv): the ratio of historic over REMIND CapFac in 2015"
-p_aux_scaleEmiHistorical_n2o(all_regi)                      "aux. param. to rescale MAgPIE n2o emissions to historical values"
-p_aux_scaleEmiHistorical_ch4(all_regi)                      "aux. param. to rescale MAgPIE ch4 emissions to historical values"
+p_aux_capToDistr(all_regi,all_te)                           "auxiliary parameter to calculate p_avCapFac2015; The historic capacity in 2015"
+s_aux_cap_remaining                                         "auxiliary parameter to calculate p_avCapFac2015; countdown parameter"
+p_aux_capThisGrade(all_regi,all_te,rlf)                     "auxiliary parameter to calculate p_avCapFac2015; How the historic 2015 capacity is distributed among grades"
+p_aux_capacityFactorHistOverREMIND(all_regi,all_te)         "auxiliary parameter to calculate capacity factors correction (wind and spv): the ratio of historic over REMIND CapFac in 2015"
 
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-pm_shareWindPotentialOff2On(all_regi)                 "ratio of technical potential of windoff to windon"
-pm_shareWindOff(ttot,all_regi)                        "windoff rollout as a fraction of technical potential"
-$ENDIF.WindOff
+p_aux_scaleEmiHistorical_n2o(all_regi)                      "auxiliary parameter to rescale MAgPIE n2o emissions to historical values"
+p_aux_scaleEmiHistorical_ch4(all_regi)                      "auxiliary parameter to rescale MAgPIE ch4 emissions to historical values"
+
+*** windoffshore-todo
+pm_shareWindPotentialOff2On(all_regi)                "ratio of technical potential of windoff to windon"
+pm_shareWindOff(ttot,all_regi)                       "windoff rollout as a fraction of technical potential"
 
 pm_fe2es(tall,all_regi,all_teEs)                     "Conversion factor from final energies to energy services. Default is 1."
 
@@ -246,28 +251,28 @@ p_prodAllReference(ttot,all_regi,all_te)                          "Sum of the ab
 
 
 *** Energy carrier Prices
-pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)      "parameter to capture all FE prices across sectors and markets (tr$2005/TWa)"
-pm_FEPrice_iter(iteration,ttot,all_regi,all_enty,sector,emiMkt) "parameter to capture all FE prices across sectors and markets (tr$2005/TWa) across iterations"
-pm_SEPrice(ttot,all_regi,all_enty)                    "parameter to capture all SE prices (tr$2005/TWa)"
-pm_PEPrice(ttot,all_regi,all_enty)                    "parameter to capture all PE prices (tr$2005/TWa)"
+pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)      "parameter to capture all FE prices across sectors and markets [tr$2005/TWa]"
+pm_FEPrice_iter(iteration,ttot,all_regi,all_enty,sector,emiMkt) "parameter to capture all FE prices across sectors and markets [tr$2005/TWa] across iterations"
+pm_SEPrice(ttot,all_regi,all_enty)                    "parameter to capture all SE prices [tr$2005/TWa]"
+pm_PEPrice(ttot,all_regi,all_enty)                    "parameter to capture all PE prices [tr$2005/TWa]"
 
-p_FEPrice_by_SE_Sector_EmiMkt(ttot,all_regi,entySe,all_enty,sector,emiMkt) "parameter to save FE price per SE, sector and emission market (tr$2005/TWa)"
-p_FEPrice_by_Sector_EmiMkt(ttot,all_regi,all_enty,sector,emiMkt) "parameter to save FE marginal price per sector and emission market (tr$2005/TWa)"
-pm_FEPrice_by_SE_Sector(ttot,all_regi,entySe,all_enty,sector)     "parameter to save FE marginal price per SE and sector (tr$2005/TWa)"
-p_FEPrice_by_SE_EmiMkt(ttot,all_regi,entySe,all_enty,emiMkt)     "parameter to save FE marginal price per SE and emission market (tr$2005/TWa)"
-p_FEPrice_by_SE(ttot,all_regi,entySe,all_enty)                   "parameter to save FE marginal price per SE (tr$2005/TWa)"
-p_FEPrice_by_Sector(ttot,all_regi,all_enty,sector)               "parameter to save FE marginal price per sector (tr$2005/TWa)"
-p_FEPrice_by_EmiMkt(ttot,all_regi,all_enty,emiMkt)               "parameter to save FE marginal price per emission market (tr$2005/TWa)"
-p_FEPrice_by_FE(ttot,all_regi,all_enty)                          "parameter to save FE marginal price (tr$2005/TWa)"
+p_FEPrice_by_SE_Sector_EmiMkt(ttot,all_regi,entySe,all_enty,sector,emiMkt) "parameter to save FE price per SE, sector and emission market [tr$2005/TWa]"
+p_FEPrice_by_Sector_EmiMkt(ttot,all_regi,all_enty,sector,emiMkt) "parameter to save FE marginal price per sector and emission market [tr$2005/TWa]"
+pm_FEPrice_by_SE_Sector(ttot,all_regi,entySe,all_enty,sector)     "parameter to save FE marginal price per SE and sector [tr$2005/TWa]"
+p_FEPrice_by_SE_EmiMkt(ttot,all_regi,entySe,all_enty,emiMkt)     "parameter to save FE marginal price per SE and emission market [tr$2005/TWa]"
+p_FEPrice_by_SE(ttot,all_regi,entySe,all_enty)                   "parameter to save FE marginal price per SE [tr$2005/TWa]"
+p_FEPrice_by_Sector(ttot,all_regi,all_enty,sector)               "parameter to save FE marginal price per sector [tr$2005/TWa]"
+p_FEPrice_by_EmiMkt(ttot,all_regi,all_enty,emiMkt)               "parameter to save FE marginal price per emission market [tr$2005/TWa]"
+p_FEPrice_by_FE(ttot,all_regi,all_enty)                          "parameter to save FE marginal price [tr$2005/TWa]"
 
-p_FEPrice_by_SE_Sector_EmiMkt_iter(iteration,ttot,all_regi,entySe,all_enty,sector,emiMkt) "parameter to save iteration FE marginal price per SE, sector and emission market (tr$2005/TWa)"
-p_FEPrice_by_Sector_EmiMkt_iter(iteration,ttot,all_regi,all_enty,sector,emiMkt) "parameter to save iteration FE marginal price per sector and emission market (tr$2005/TWa)"
-p_FEPrice_by_SE_Sector_iter(iteration,ttot,all_regi,entySe,all_enty,sector)     "parameter to save iteration FE marginal price per SE and sector (tr$2005/TWa)"
-p_FEPrice_by_SE_EmiMkt_iter(iteration,ttot,all_regi,entySe,all_enty,emiMkt)     "parameter to save iteration FE marginal price per SE and emission market (tr$2005/TWa)"
-p_FEPrice_by_SE_iter(iteration,ttot,all_regi,entySe,all_enty)                   "parameter to save iteration FE marginal price per SE (tr$2005/TWa)"
-p_FEPrice_by_Sector_iter(iteration,ttot,all_regi,all_enty,sector)               "parameter to save iteration FE marginal price per sector (tr$2005/TWa)"
-p_FEPrice_by_EmiMkt_iter(iteration,ttot,all_regi,all_enty,emiMkt)               "parameter to save iteration FE marginal price per emission market (tr$2005/TWa)"
-p_FEPrice_by_FE_iter(iteration,ttot,all_regi,all_enty)                          "parameter to save iteration FE marginal price (tr$2005/TWa)"
+p_FEPrice_by_SE_Sector_EmiMkt_iter(iteration,ttot,all_regi,entySe,all_enty,sector,emiMkt) "parameter to save iteration FE marginal price per SE, sector and emission market [tr$2005/TWa]"
+p_FEPrice_by_Sector_EmiMkt_iter(iteration,ttot,all_regi,all_enty,sector,emiMkt) "parameter to save iteration FE marginal price per sector and emission market [tr$2005/TWa]"
+p_FEPrice_by_SE_Sector_iter(iteration,ttot,all_regi,entySe,all_enty,sector)     "parameter to save iteration FE marginal price per SE and sector [tr$2005/TWa]"
+p_FEPrice_by_SE_EmiMkt_iter(iteration,ttot,all_regi,entySe,all_enty,emiMkt)     "parameter to save iteration FE marginal price per SE and emission market [tr$2005/TWa]"
+p_FEPrice_by_SE_iter(iteration,ttot,all_regi,entySe,all_enty)                   "parameter to save iteration FE marginal price per SE [tr$2005/TWa]"
+p_FEPrice_by_Sector_iter(iteration,ttot,all_regi,all_enty,sector)               "parameter to save iteration FE marginal price per sector [tr$2005/TWa]"
+p_FEPrice_by_EmiMkt_iter(iteration,ttot,all_regi,all_enty,emiMkt)               "parameter to save iteration FE marginal price per emission market [tr$2005/TWa]"
+p_FEPrice_by_FE_iter(iteration,ttot,all_regi,all_enty)                          "parameter to save iteration FE marginal price [tr$2005/TWa]"
 
 *** climate related
 pm_globalMeanTemperature(tall)                       "global mean temperature anomaly"
@@ -463,10 +468,9 @@ q_cap(tall,all_regi,all_te,rlf)                      "definition of available ca
 q_capDistr(tall,all_regi,all_te)                     "distribute available capacities across grades"
 q_capTotal(ttot,all_regi,all_enty,all_enty)          "calculation of vm_capTotal as total capacity without technology differentation for technologies where there exists differentation"
 
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
+*** windoffshore-todo
 q_windoff_low(tall,all_regi)                         "semi-endogenous offshore wind power generation as a share of onshore wind energy, which is proportional to more than half of maxprod ratio"
 q_windoff_high(tall,all_regi)                        "semi-endogenous offshore wind power generation as a share of onshore wind energy, which is proportional to less than twice of maxprod ratio"
-$ENDIF.WindOff
 
 q_limitCapSe(ttot,all_regi,all_enty,all_enty,all_te)    "capacity constraint for se production"
 q_limitCapSe2se(ttot,all_regi,all_enty,all_enty,all_te) "capacity constraint for se to se transformation"

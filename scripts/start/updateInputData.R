@@ -29,9 +29,10 @@ updateInputData <- function(cfg, remindPath = ".", gamsCompile = FALSE) {
   
   # check if all input files are already there
   missinginput <- if (isTRUE(gamsCompile)) NULL else missingInputData()
+  requiredinput <- grep("config\\/gdx-files|modules\\/29_CES_parameters\\/load\\/input", missinginput, value = TRUE, invert = TRUE)
 
   # download and distribute needed data
-  if (! setequal(input_new, input_old) || isTRUE(cfg$force_download) || length(missinginput) > 0) {
+  if (! setequal(input_new, input_old) || isTRUE(cfg$force_download) || length(requiredinput) > 0) {
       message(if (isTRUE(gamsCompile)) paste0("     ", cfg$title, ": "),
               if (isTRUE(cfg$force_download)) "You set 'cfg$force_download = TRUE'"
               else "Your input data are outdated, incomplete or in a different regional resolution",

@@ -17,8 +17,8 @@ test_that("there are no negative electricity prices in historic years in EU regi
         read.report(mifs[1], as.list = FALSE)[
           , ,
           c(
-            "Price|Secondary Energy|Electricity (US$2005/GJ)",
-            "Price|Final Energy|Industry|Electricity (US$2005/GJ)"
+            "Price|Secondary Energy|Electricity (US$2017/GJ)",
+            "Price|Final Energy|Industry|Electricity (US$2017/GJ)"
           )
         ]
       )

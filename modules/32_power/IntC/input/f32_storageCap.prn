@@ -1,7 +1,7 @@
 *** SOF ./modules/32_power/IntC/input/storageCap.prn
-                     storspv     storwind     storcsp
-elh2VREcapratio         0.16       0.12          0.12 
-h2turbVREcapratio       1.2        0.90          0.90
-batteryVREcapRatio       3          1.1           0
+                     storspv       storcsp   storwindon  storwindoff
+elh2VREcapratio         0.16          0.12         0.12         0.12
+h2turbVREcapratio        1.2           0.9          0.9          0.9
+batteryVREcapRatio         3             0          1.1          1.1
  
 *** EOF ./modules/32_power/IntC/input/storageCap.prn

@@ -1,4 +1,4 @@
-title;start;c_empty_model;path_gdx_ref;output
-TESTTHAT-SSP2-Base;1;on;;reportingREMIND2MAgPIE
-TESTTHAT-SSP2-NDC;1;on;TESTTHAT-SSP2-Base;reportingREMIND2MAgPIE
-TESTTHAT-SSP2-Policy;2;on;TESTTHAT-SSP2-Base;reportingREMIND2MAgPIE
+title;start;c_empty_model;path_gdx_ref;output;cm_startyear;regipol
+TESTTHAT-SSP2-Base;1;on;;reportingREMIND2MAgPIE;2005;regiCarbonPrice
+TESTTHAT-SSP2-NDC;1;on;TESTTHAT-SSP2-Base;reportingREMIND2MAgPIE;2020;regiCarbonPrice
+TESTTHAT-SSP2-Policy;2;on;TESTTHAT-SSP2-Base;reportingREMIND2MAgPIE;2025;regiCarbonPrice

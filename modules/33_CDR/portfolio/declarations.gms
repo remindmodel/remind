@@ -23,6 +23,8 @@ parameters
 p33_fedem(all_te,all_enty)               "final energy demand of each technology [EJ/GtC] (for EW the unit is [EJ/Gt stone])"
 p33_LimRock(all_regi)                    "regional share of EW limit [fraction], calculated ex ante for a maximal annual amount of 8 Gt rock in D:\projects\CEMICS\paper_technical\supply_curve_transport_remind_regions.m"
 p33_co2_rem_rate(rlf)                    "carbon removal rate [fraction of annual reduction of total carbon removal potential], multiplied with grade factor"
+p33_EW_upScalingLimit(ttot)              "Annual growth rate limit on upscaling of mining & spreading rocks on fields"
+p33_EW_shortTermEW_Limit(all_regi)       "Limit on 2030 potential for enhanced weathering, defined in Gt rocks, based on % of land on which EW is applied"
 ;
 
 positive variables
@@ -55,6 +57,8 @@ q33_EW_FEdemand(ttot,all_regi,all_enty)  "calculates final energy demand from en
 q33_EW_potential(ttot,all_regi,rlf)  "limits the total potential of EW per region and grade"
 q33_EW_emi(ttot,all_regi)  "calculates amount of carbon captured by EW"
 q33_EW_LimEmi(ttot,all_regi)  "limits EW to a maximal annual amount of ground rock of cm_LimRock"
+q33_EW_upscaling_rate(ttot, all_regi) "limits spreading of rock to a steep but credible upscaling rate"
+q33_EW_ShortTermBound(ttot,all_regi)   "Limits short term potential for enhanced weathering"
 
 q33_OAE_FEdemand(ttot,all_regi,all_enty,all_te) "calculates final energy demand for ocean alkalinity enhancement"
 q33_OAE_co2emi_non_atm_calcination(ttot,all_regi,all_te)   "calculates the CO2 that comes from calcination (limestone decomposition)"

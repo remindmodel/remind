@@ -506,24 +506,14 @@ loop(regi,
 );
 display pm_EN_demand_from_initialcap2, p05_emi2005_from_initialcap2;
 
-*** To be moved to new emiAccounting module
-* Discounting se2fe emissions from pe2se emission factors
-loop(entySe$(sameas(entySe,"segafos") OR sameas(entySe,"seliqfos") OR sameas(entySe,"sesofos")),
-  pm_emifac(ttot,regi,entyPe,entySe,te,"co2")$pm_emifac(ttot,regi,entyPe,entySe,te,"co2") =
-    pm_emifac(ttot,regi,entyPe,entySe,te,"co2")
-    - pm_eta_conv(ttot,regi,te)
-      *( sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"), pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2")*pm_eta_conv(ttot,regi,te2))/sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"),1)  );
 );
 
-display pm_emifac;
 
-);
 
 *** if cm_startyear > 2005, load outputs of InitialCap from input_ref.gdx
 if (cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' pm_eta_conv = pm_eta_conv;
   Execute_Loadpoint 'input_ref' o_INI_DirProdSeTe = o_INI_DirProdSeTe;
-  Execute_Loadpoint 'input_ref' pm_emifac = pm_emifac;
   Execute_Loadpoint 'input_ref' pm_EN_demand_from_initialcap2 = pm_EN_demand_from_initialcap2;
   Execute_Loadpoint 'input_ref' pm_pedem_res = pm_pedem_res;
   Execute_Loadpoint 'input_ref' pm_dataeta = pm_dataeta;
@@ -556,5 +546,16 @@ $ifThen %cm_techcosts% == "GLO"
                             OR sameas(te,"ngcc") ) ) = p05_inco0_t_ref(t,regi,te);
 $endIf
 );
+
+*** To be moved to new emiAccounting module
+* Discounting se2fe emissions from pe2se emission factors
+loop(entySe$(sameas(entySe,"segafos") OR sameas(entySe,"seliqfos") OR sameas(entySe,"sesofos")),
+  pm_emifac(ttot,regi,entyPe,entySe,te,"co2")$pm_emifac(ttot,regi,entyPe,entySe,te,"co2") =
+    pm_emifac(ttot,regi,entyPe,entySe,te,"co2")
+    - pm_eta_conv(ttot,regi,te)
+      *( sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"), pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2")*pm_eta_conv(ttot,regi,te2))/sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"),1)  );
+);
+
+display pm_emifac;
 
 *** EOF ./modules/05_initialCap/on/preloop.gms

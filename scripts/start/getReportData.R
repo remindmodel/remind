@@ -13,10 +13,10 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
     notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
     if("Demand|Bioenergy|++|2nd generation (EJ/yr)" %in% getNames(mag)) {
       # MAgPIE 4
-      out <- mag[,,"Prices|Bioenergy (US$05/GJ)"]*0.0315576 # with transformation factor from US$2005/GJ to US$2005/Wa
+      out <- mag[,,"Prices|Bioenergy (US$2017/GJ)"]*0.0315576 # with transformation factor from US$2017/GJ to US$2017/Wa
     } else {
       # MAgPIE 3
-      out <- mag[,,"Price|Primary Energy|Biomass (US$2005/GJ)"]*0.0315576 # with transformation factor from US$2005/GJ to US$2005/Wa
+      out <- mag[,,"Price|Primary Energy|Biomass (US$2017/GJ)"]*0.0315576 # with transformation factor from US$2017/GJ to US$2017/Wa
     }
     out["JPN",is.na(out["JPN",,]),] <- 0
     tmp <- out
@@ -128,11 +128,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
   
   .agriculture_costs <- function(mag){
     notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
-    if ("Costs Without Incentives (million US$05/yr)" %in% getNames(mag)) {
-      out <- mag[,,"Costs Without Incentives (million US$05/yr)"]/1000/1000 # with transformation factor from 10E6 US$2005 to 10E12 US$2005
-    } else {
-      out <- mag[,,"Costs|MainSolve w/o GHG Emissions (million US$05/yr)"]/1000/1000 # old reporting
-    }
+    out <- mag[,,"Costs Without Incentives (million US$2017/yr)"]/1000/1000 # with transformation factor from 10E6 US$2017 to 10E12 US$2017
     out["JPN",is.na(out["JPN",,]),] <- 0
     tmp <- out
     dimnames(out)[[3]] <- NULL #Delete variable name to prevent it from being written into output file
@@ -142,7 +138,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
   
   .agriculture_tradebal <- function(mag){
     notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
-    out <- mag[,,"Trade|Agriculture|Trade Balance (billion US$2005/yr)"]/1000 # with transformation factor from 10E9 US$2005 to 10E12 US$2005
+    out <- mag[,,"Trade|Agriculture|Trade Balance (billion US$2017/yr)"]/1000 # with transformation factor from 10E9 US$2017 to 10E12 US$2017
     out["JPN",is.na(out["JPN",,]),] <- 0
     dimnames(out)[[3]] <- NULL
     write.magpie(out[notGLO,,],paste0("./modules/26_agCosts/",inputpath_acc,"/input/trade_bal_reg.rem.csv"),file_type="csvr")

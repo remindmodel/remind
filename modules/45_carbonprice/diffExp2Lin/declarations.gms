@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/45_carbonprice/diffExp2Lin/datainput.gms
+*** SOF ./modules/45_carbonprice/diffExp2Lin/declarations.gms
 ***--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** diff: regional prices are initially differentiated by GDP/capita and converge using quadratic phase-in until cm_CO2priceRegConvEndYr (default = 2050), globally uniform price thereafter,
 ***       level of regional carbon price differentiation (uniform, medium, strong) can be chosen via cm_co2_tax_spread
