@@ -5,7 +5,12 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/expoLinear/declarations.gms
-parameter
-p45_tau_co2_tax_inc(all_regi)     "Linear annual increase in carbon price T$/GtC/yr"
+
+scalar
+s45_co2_tax_startyear                       "level of CO2 tax in start year [T$/GtC]"
 ;
+parameter
+p45_tau_co2_tax_inc(all_regi)     "Linear annual increase in carbon price [T$/GtC/yr]"
+;
+
 *** EOF ./modules/45_carbonprice/expoLinear/declarations.gms

@@ -81,8 +81,10 @@ $endif.exogDem_scen
 *' energy mix, as that is what can be captured); vm_emiIndBase itself is not used for emission
 *' accounting, just as a CCS baseline.
 ***------------------------------------------------------
-q37_emiIndBase(t,regi,enty,secInd37)$(   entyFeCC37(enty) 
-                                      OR sameas(enty,"co2cement_process") ) ..
+q37_emiIndBase(t,regi,enty,secInd37)$(
+                                   entyFeCC37(enty)
+                                OR (    sameas(enty,"co2cement_process") 
+                                    AND cm_CCS_cement eq 1               ) ) ..
   vm_emiIndBase(t,regi,enty,secInd37)
   =e=
     sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfEn(entyFeCC37(enty),in)),
@@ -215,9 +217,9 @@ q37_chemicals_feedstocks_limit(t,regi) ..
   * p37_chemicals_feedstock_share(t,regi)
 ;
 
-*' Define the flow of non-energy feedstocks. It is used for emissions accounting and calculating plastics production
-q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
+*' Define the flow of non-energy feedstocks. It is used for emissions
+*' accounting and calculating plastics production
+q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt) ..
   sum(se2fe(entySe,entyFe,te),
     vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
   )
@@ -229,15 +231,13 @@ q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt)$(
     + pm_cesdata(t,regi,in,"offset_quantity")
     )
   * p37_chemicals_feedstock_share(t,regi)
-  )
+  )$( entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) )
 ;
 
 *' Feedstocks flow has to be lower than total energy flow into the industry
 q37_feedstocksLimit(t,regi,entySe,entyFe,emiMkt)$(
-                                             sefe(entySe,entyFe)
-                                         AND sector2emiMkt("indst",emiMkt)
-                                         AND entyFe2Sector(entyFe,"indst")
-                                         AND entyFeCC37(entyFe)            ) ..
+                         sefe(entySe,entyFe)
+                     AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
   vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
   =g=
   vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
@@ -309,7 +309,7 @@ q37_incinerationEmi(t,regi,sefe(entySe,entyFe),emiMkt)$(
   =e=
     v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
   * pm_incinerationRate(t,regi)
-  * (1 - p37_regionalWasteIncinerationCCSshare(t,regi))
+  * (1 - v37_regionalWasteIncinerationCCSshare(t,regi))
 ;
 
 q37_incinerationCCS(t,regi,sefe(entySe,entyFe),emiMkt)$(
@@ -318,7 +318,7 @@ q37_incinerationCCS(t,regi,sefe(entySe,entyFe),emiMkt)$(
   =e=
     v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
   * pm_incinerationRate(t,regi)
-  * p37_regionalWasteIncinerationCCSshare(t,regi)
+  * v37_regionalWasteIncinerationCCSshare(t,regi)
 ;
 
 *' calculate carbon contained in non-incinerated plastics
@@ -346,18 +346,6 @@ $ifthen.cm_feedstockEmiUnknownFate not "%cm_feedstockEmiUnknownFate%" == "off"
 $else.cm_feedstockEmiUnknownFate
   0
 $endIf.cm_feedstockEmiUnknownFate
-;
-
-*' in baseline runs, all industrial feedstocks should come from fossil energy
-*' carriers, no biofuels or synfuels
-q37_FossilFeedstock_Base(t,regi,entyFe,emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
-                     AND cm_emiscen eq 1                                   ) ..
-  sum(entySe, vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt))
-  =e=
-  sum(entySeFos,
-    vm_demFENonEnergySector(t,regi,entySeFos,entyFe,"indst",emiMkt)
-  )
 ;
 
 *** ---------------------------------------------------------------------------
@@ -403,9 +391,10 @@ q37_prodMat(t,regi,mat)$( matOut(mat) ) ..
 ***------------------------------------------------------
 *' Hand-over to CES
 ***------------------------------------------------------
-q37_mat2ue(t,regi,in)$( ppfUePrc(in) ) ..
-    vm_cesIO(t,regi,in)
-    + pm_cesdata(t,regi,in,"offset_quantity")
+q37_mat2ue(t,regi,mat,in)$( ppfUePrc(in) ) ..
+    (vm_cesIO(t,regi,in)
+    + pm_cesdata(t,regi,in,"offset_quantity"))
+    * p37_ue_share(mat,in)
   =e=
     sum(mat2ue(mat,in),
       p37_mat2ue(mat,in)

@@ -52,7 +52,7 @@ helpText <- "
 # Please provide all files and paths relative to the folder where start_coupled is executed
 path_remind <- getwd()   # provide path to REMIND. Default: the actual path which the script is started from
 path_magpie <- normalizePath(file.path(getwd(), "magpie"), mustWork = FALSE)
-if (! dir.exists(path_magpie)) path_magpie <- normalizePath(file.path(getwd(), "..", "magpie"))
+if (! dir.exists(path_magpie)) path_magpie <- normalizePath(file.path(getwd(), "..", "magpie"), mustWork = FALSE)
 
 # Paths to the files where scenarios are defined
 # path_settings_remind contains the detailed configuration of the REMIND scenarios
@@ -368,6 +368,7 @@ for(scen in common){
   cfg_rem <- cfg
   rm(cfg)
   cfg_rem$title <- scen
+  cfg_rem$files2export$start <- c(cfg_rem$files2export$start, path_settings_coupled, path_settings_remind)
   rem_filesstart <- cfg_rem$files2export$start     # save to reset it to that later
 
   source(file.path(path_magpie, "config", "default.cfg")) # retrieve MAgPIE settings
@@ -375,11 +376,38 @@ for(scen in common){
   rm(cfg)
   cfg_mag$title <- scen
 
-  # configure MAgPIE according to magpie_scen (scenario needs to be available in scenario_config.cfg)
-  if(!is.null(scenarios_coupled[scen, "magpie_scen"])) {
-    cfg_mag <- setScenario(cfg_mag, c(trimws(unlist(strsplit(scenarios_coupled[scen, "magpie_scen"], split = ",|\\|"))), "coupling"),
-                           scenario_config = file.path(path_magpie, "config", "scenario_config.csv"))
+  # extract columns from coupled config that define magpie scenarios
+  # the column must be named 'magpie_scen' (then the default config/scenario_config.csv will be loaded)
+  # or they have to have the path to a scenario_config*.csv as their name
+  magpieScenarios <- scenarios_coupled[scen, grepl("scenario_config|magpie_scen", colnames(scenarios_coupled)), drop = FALSE]
+
+  # configure MAgPIE using the scenarios extracted above
+  if (nrow(magpieScenarios) > 0) {
+    for (i in seq_len(ncol(magpieScenarios))) {
+      pathToScenarioConfig <- colnames(magpieScenarios)[i]
+      # backwards compatibility: if the column name is 'magpie_scen' use the 'config/scenario_config.csv'
+      pathToScenarioConfig <- ifelse(pathToScenarioConfig == "magpie_scen", "config/scenario_config.csv", pathToScenarioConfig)
+      scenarioList <- magpieScenarios[,i]
+      if(!is.na(scenarioList)) {
+        cfg_mag <- setScenario(cfg_mag, trimws(unlist(strsplit(scenarioList, split = ",|\\|"))),
+                               scenario_config = file.path(path_magpie, pathToScenarioConfig))
+      }
+    }
   }
+
+  # always select 'coupling' scenario
+  cfg_mag <- setScenario(cfg_mag, "coupling", scenario_config = file.path(path_magpie, "config", "scenario_config.csv"))
+
+  # extract magpie switches from coupled config, replace NA otherwise setScenario complains
+  magpieSwitches <- scenarios_coupled %>% select(contains("cfg_mag")) %>% t() %>% as.data.frame() %>% replace(is.na(.), "")
+
+  # configure MAgPIE according to individual switches provided in scenario_config_coupled*.csv
+  if (nrow(magpieSwitches) > 0) {
+    # remove prefix "cfg_mag$" from switch names to yield original MAgPIE names
+    row.names(magpieSwitches) <- gsub("cfg_mag\\$", "", row.names(magpieSwitches))
+    cfg_mag <- setScenario(cfg_mag, scen, scenario_config = magpieSwitches)
+  }
+
   cfg_mag <- check_config(cfg_mag, reference_file=file.path(path_magpie, "config", "default.cfg"),
                           modulepath = file.path(path_magpie, "modules"))
 
@@ -392,13 +420,25 @@ for(scen in common){
     cfg_mag$mute_ghgprices_until <- scenarios_coupled[scen, "no_ghgprices_land_until"]
   }
 
+  # Write choice of land-use change variable to config. Use smoothed variable
+  # if not specified otherwise in coupled config, i.e. if the column is missing
+  # completely or if the row entry is empty.
+  if (! "var_luc" %in% names(scenarios_coupled) || is.na(scenarios_coupled[scen, "var_luc"])) {
+    cfg_rem$var_luc <- "smooth"
+  } else if (scenarios_coupled[scen, "var_luc"] %in% c("smooth", "raw")) {
+    cfg_rem$var_luc <- scenarios_coupled[scen, "var_luc"]
+  } else {
+    stop(paste0("Unkown setting in coupled config file for 'var_luc': `", scenarios_coupled[scen, "var_luc"], "`. Please chose either `smooth` or `raw`"))
+  }
+
   # Edit remind main model file, region settings and input data revision based on scenarios table, if cell non-empty
-  for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "inputRevision"), names(settings_remind))) {
+  cfg_rem_options <- c("model", "regionmapping", "extramappings_historic", "inputRevision", setdiff(names(cfg_rem), c("gms", "output")))
+  for (switchname in intersect(cfg_rem_options, names(settings_remind))) {
     if ( ! is.na(settings_remind[scen, switchname] )) {
       cfg_rem[[switchname]] <- settings_remind[scen, switchname]
     }
   }
-  
+
   # Set reporting scripts
   if ("output" %in% names(settings_remind) && ! is.na(settings_remind[scen, "output"])) {
     scenoutput <- gsub('c\\("|\\)|"', '', trimws(unlist(strsplit(settings_remind[scen, "output"], split = ','))))
@@ -515,7 +555,7 @@ for(scen in common){
         cfg_rem$files2export$start["input.gdx"] <- paste0(runname, "-rem-", i-1)
       }
     }
-    
+
       # If the preceding run has already finished (= its gdx file exist) start
       # the current run immediately. This might be the case e.g. if you started
       # the NDC run in a first batch and now want to start the subsequent policy
@@ -523,7 +563,7 @@ for(scen in common){
     if (i == start_iter_first && ! start_now && all(file.exists(cfg_rem$files2export$start[path_gdx_list]) | unlist(gdx_na))) {
       start_now <- TRUE
     }
-    
+
     foldername <- file.path("output", fullrunname)
     if ((i > start_iter_first || !scenarios_coupled[scen, "start_magpie"]) && file.exists(foldername)) {
       if (errorsfound == 0 && ! any(c("--test", "--gamscompile") %in% flags)) {
@@ -583,6 +623,7 @@ for(scen in common){
   }
   message("path_report   : ",ifelse(file.exists(path_report),green,red), path_report, NC)
   message("no_ghgprices_land_until: ", cfg_mag$gms$c56_mute_ghgprices_until)
+  message("var_luc: ", cfg_rem$var_luc)
 
   if ("--gamscompile" %in% flags) {
     message("Compiling ", fullrunname)
@@ -637,7 +678,8 @@ for (scen in common) {
         sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j'"), intern = TRUE)
         runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
       }
-      slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
+      slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos,
+        " --job-name=", fullrunname, " --output=", logfile,
         " --open-mode=append --mail-type=END,FAIL --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
         if (runEnv$numberOfTasks == 1) " --mem=8000"), runEnv$sbatch)
       slurmCommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")

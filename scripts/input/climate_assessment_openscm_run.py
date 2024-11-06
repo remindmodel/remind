@@ -17,9 +17,21 @@ import xarray as xr
 import json
 
 # TONN REMOVE start
-# If these are already set, it shouldn't override it. We actually may not want to have a default but just throw an error if not set
-os.environ["MAGICC_EXECUTABLE_7"]       =   "/p/projects/piam/abrahao/scratch/module_climate_tests/climate-assessment-files/magicc-v7.5.3/bin/magicc"
-os.environ["MAGICC_WORKER_ROOT_DIR"]    =   "/p/projects/piam/abrahao/scratch/methane/methane_scm/workers"
+class EnvironmentError(Exception):  
+    pass  
+
+for env_var in ["MAGICC_EXECUTABLE_7", "MAGICC_WORKER_ROOT_DIR"]:  
+    if os.environ.get(env_var, '') == '':  
+        # If clause covers both cases in which the env var is not set at all 
+        # as well as the case in which it is set to an empty string
+        # If these are already set, it shouldn't override it. We actually may not want to have a default but just throw an error if not set
+        os.environ["MAGICC_EXECUTABLE_7"]       =   "/p/projects/rd3mod/climate-assessment-files/magicc-v7.5.3/bin/magicc"
+        os.environ["MAGICC_WORKER_ROOT_DIR"]    =   os.environ["PTMP"] + "/"  
+        raise EnvironmentError(f"{env_var} does not exist")  
+
+
+    # Optional debug prints  
+    print(f"Found '{env_var}' = '{os.environ.get(env_var)}' ") 
 
 LOGGER = logging.getLogger(__name__) # We don't need this
 # TONN REMOVE end
@@ -171,6 +183,7 @@ runresults = openscm_runner.run(
     },
     output_variables=(
         "Surface Air Temperature Change",
+        "Effective Radiative Forcing|Anthropogenic",
         "Net Atmosphere to Land Flux|CO2"
     ),
 scenarios = scmdata.ScmRun(basescen)
@@ -189,10 +202,3 @@ runresults.filter(region = "World"
                   ).to_excel(
                       outfilename
                       )
-
-# # # %%
-# # # Show basic results
-# # runresults.filter(
-# #     variable = "Surface Air Temperature Change",
-# #     region = "World"
-# #     ).lineplot()

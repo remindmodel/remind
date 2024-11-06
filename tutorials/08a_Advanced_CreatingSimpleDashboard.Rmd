@@ -65,7 +65,7 @@ download.file("http://rse.pik-potsdam.de/data/example/REMIND_generic_BAU.mif", "
     ylab("Mt CO2/yr")
 
   # CO2 price
-  plot$CO2price <- mipLineHistorical(data["EUR",,"Price|Carbon (US$2005/t CO2)"],x_hist=NULL,ylab='US$2005/t CO2') + 
+  plot$CO2price <- mipLineHistorical(data["EUR",,"Price|Carbon (US$2017/t CO2)"],x_hist=NULL,ylab='US$2017/t CO2') + 
     theme_minimal()
   
   # Electricity mix

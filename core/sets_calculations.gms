@@ -56,6 +56,10 @@ loop(fe2ue(entyFe,entyUe,te),
 display feForUe;
 
 
+loop ( pe2se(entyPe,entySe,te),
+   pese(entyPe,entySe) = YES;
+);
+
 period4(ttot) = ttot(ttot) - tsu(ttot) - period1(ttot) - period2(ttot) - period3(ttot);
 period12(ttot) = period1(ttot) + period2(ttot);
 period123(ttot) = period1(ttot) + period2(ttot) + period3(ttot);
@@ -144,6 +148,12 @@ display "ES layer sets:", ppfenFromEs, feForEs, feViaEs2ppfen;
 loop ( se2fe(entySe,entyFe,te),
 fete(entyFe,te) = YES;
 sefe(entySe,entyFe) = YES;
+);
+
+loop(seAgg2se(seAgg,entySe),
+  loop(sefe(entySe,entyFe),
+    seAgg2fe(seAgg,entyFe) = YES;
+  );
 );
 
 *** extended region group set

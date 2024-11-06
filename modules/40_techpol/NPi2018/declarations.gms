@@ -21,7 +21,7 @@ Equation q40_ElecBioBound                              "equation low-carbon push
 Equation q40_PEgasBound                                "Mandating minimum PE gas share";
 Equation q40_PElowcarbonBound                          "Lower bound on low carbon share";
 Equation q40_FE_RenShare                               "Lower bound on renewable share";
-Equation q40_windBound				       "lower bound on combined wind onshore and offshore";
+Equation q40_windBound				                   "lower bound on combined wind onshore and offshore";
 
 *** EOF ./modules/40_techpol/NPi2018/declarations.gms
 

@@ -9,7 +9,7 @@
 *' @title Codeperformance
 *'
 *' @description The realization codeperformance can be used to test the performance of the model. test code performance: noumerous (30) succesive runs
-*' performed in a triangle, tax0, tax30, tax150, all growing exponentially, therefore use carbonprice|exponential, c_emiscen|9, and cm_co2_tax_2020|0.
+*' performed in a triangle, tax0, tax30, tax150, all growing exponentially.
 *'
 *' @authors Anastasis Giannousakis, Robert Pietzcker
 

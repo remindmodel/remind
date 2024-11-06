@@ -13,11 +13,6 @@ option pm_taxemiMkt_iteration:3:3:1;
 
 *** initialize regipol target deviation parameter
 pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
-$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
-p47_implicitQttyTargetTaxRescale_iter("1", "2030",ext_regi,qttyTarget,qttyTargetGroup) = 0;
-p47_implicitQttyTargetReferenceIteration(ext_regi) = 0;
-p47_implicitQttyTargetIterationCount(ext_regi) = 0;
-$endIf.cm_implicitQttyTarget
 
 *** RR this should be replaced as soon as non-energy is treated endogenously in the model
 *** non-energy use values are calculated by taking the time path as contained in pm_fe_nechem.cs4r (where eg the 2030 value for EU27 is 91.6% of the 2020 value) and rescaling that with historic non-energy values from Eurostat
@@ -63,6 +58,13 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
     );
   );
   
+*** Assigning convergence tolerance to active regional targets
+  parameter f47_emiMktTarget_tolerance(ext_regi) "tolerance for regipol emission target deviations convergence [#]" / %cm_emiMktTarget_tolerance% /;
+  pm_emiMktTarget_tolerance(ext_regi)$(regiEmiMktTarget(ext_regi)) = 0.01; !! if no value is assigned to GLO, the default devation tolerance is set to 1%
+  pm_emiMktTarget_tolerance(ext_regi)$(regiEmiMktTarget(ext_regi) and f47_emiMktTarget_tolerance("GLO")) = f47_emiMktTarget_tolerance("GLO"); !! if available, assign GLO value as default to all regional target tolerances
+  pm_emiMktTarget_tolerance(ext_regi)$(regiEmiMktTarget(ext_regi) and f47_emiMktTarget_tolerance(ext_regi)) = f47_emiMktTarget_tolerance(ext_regi); !! set specific defined regional target tolerances
+  display pm_emiMktTarget_tolerance;
+
 *** initialize carbon taxes based on reference runs
 ***  p47_taxemiMkt_init saves information from reference runs about pm_taxCO2eq (carbon price defined on the carbonprice module) and/or
 ***  pm_taxemiMkt (regipol carbon price) so the carbon tax can be initialized for regions with CO2 tax controlled by cm_emiMktTarget  
@@ -80,7 +82,7 @@ p47_taxemiMkt_init(ttot,regi,emiMkt)$(p47_taxCO2eq_ref(ttot,regi) and (NOT(p47_t
   loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47),
     loop(regi$regi_groupExt(ext_regi,regi),
       loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
-        p47_taxemiMkt_init(t,regi,emiMkt)$(t.val gt 2020) = (20*sm_DptCO2_2_TDpGtC) + (1*sm_DptCO2_2_TDpGtC)*(t.val-2020);
+        p47_taxemiMkt_init(t,regi,emiMkt)$(t.val gt 2020) = (20*sm_D2005_2_D2017*sm_DptCO2_2_TDpGtC) + (1*sm_DptCO2_2_TDpGtC)*(t.val-2020);
       );
     );
   );
@@ -91,23 +93,23 @@ p47_taxemiMkt_init(ttot,regi,emiMkt)$(p47_taxCO2eq_ref(ttot,regi) and (NOT(p47_t
     loop(regi$(regi_groupExt(ext_regi,regi) and regi_groupExt("EUR_regi",regi)), !!second condition is necessary to support also country targets
       if((cm_startyear le 2010),
         p47_taxemiMkt_init("2010",regi,emiMkt) = 0;
-        p47_taxemiMkt_init("2010",regi,"ETS")  = 15*sm_DptCO2_2_TDpGtC;
+        p47_taxemiMkt_init("2010",regi,"ETS")  = 15*sm_D2005_2_D2017*sm_DptCO2_2_TDpGtC;
       );
       if((cm_startyear le 2015),
         p47_taxemiMkt_init("2015",regi,emiMkt) = 0;
-        p47_taxemiMkt_init("2015",regi,"ETS")  = 8*sm_DptCO2_2_TDpGtC;
+        p47_taxemiMkt_init("2015",regi,"ETS")  = 8*sm_D2005_2_D2017*sm_DptCO2_2_TDpGtC;
       );
       if((cm_startyear le 2020),
         p47_taxemiMkt_init("2020",regi,emiMkt) = 0;
 ***     p47_taxemiMkt_init("2020",regi,"ETS")   = 41.28*sm_DptCO2_2_TDpGtC; !! 2018 = 16.5€/tCO2, 2019 = 25€/tCO2, 2020 = 25€/tCO2, 2021 = 53.65€/tCO2, 2022 = 80€/tCO2 -> average 2020 = 40€/tCO2 -> 40*1.032 $/tCO2 = 41.28 $/t CO2
-        p47_taxemiMkt_init("2020",regi,"ETS")  = 30*sm_DptCO2_2_TDpGtC;
+        p47_taxemiMkt_init("2020",regi,"ETS")  = 30*sm_D2005_2_D2017*sm_DptCO2_2_TDpGtC;
 ***     p47_taxemiMkt_init("2020",regi,"ES")   = 30*sm_DptCO2_2_TDpGtC;
 ***     p47_taxemiMkt_init("2020",regi,"other")= 30*sm_DptCO2_2_TDpGtC;
       );
 ***   intialize EUR price trajectory after 2020 with an yearly increase of 1$/tCO2 from a base value of 30$/tCO2 when no price is available.
 ***   p47_taxemiMkt_init(t,regi,emiMkt)$(not(p47_taxemiMkt_init(t,regi,emiMkt)) and (t.val gt 2020)) = (30*sm_DptCO2_2_TDpGtC) + (1*sm_DptCO2_2_TDpGtC)*(t.val-2020);
 ***   intialize EUR price trajectory after 2020 with a yearly increase of 1$/tCO2 from a base value of 30$/tCO2
-      p47_taxemiMkt_init(t,regi,emiMkt)$(t.val gt 2020) = (30*sm_DptCO2_2_TDpGtC) + (1*sm_DptCO2_2_TDpGtC)*(t.val-2020);
+      p47_taxemiMkt_init(t,regi,emiMkt)$(t.val gt 2020) = (30*sm_D2005_2_D2017*sm_DptCO2_2_TDpGtC) + (1*sm_D2005_2_D2017*sm_DptCO2_2_TDpGtC)*(t.val-2020);
     );
   );
 
@@ -122,9 +124,38 @@ $ENDIF.emiMkt
 *** Implicit tax/subsidy necessary to achieve quantity target for primary, secondary, final energy and/or CCS
 ***---------------------------------------------------------------------------
 
-*** intialize energy type bound implicit target parameters
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
+
+*** assign cm_implicitQttyTarget values if not defined yet
+$ifThen.cm_implicitQttyTargetType "%cm_implicitQttyTargetType%" == "scenario"
+*** define quantity target scenario values
+  p47_implicitQttyTargetScenario("EU27_eedEff" ,"2030","EU27_regi","tax","t","FE_wo_b_wo_n_e","all") = 1.1235;
+  p47_implicitQttyTargetScenario("EU27_ff55Eff","2030","EU27_regi","tax","t","FE_wo_b_wo_n_e","all") = 1.0452;
+  p47_implicitQttyTargetScenario("EU27_RpEUEff","2030","EU27_regi","tax","t","FE_wo_b_wo_n_e","all") = 0.9960;
+
+  p47_implicitQttyTargetScenario("EU27_bio4"  ,"2035","EU27_regi","tax","t","PE","biomass") = 0.19;
+  p47_implicitQttyTargetScenario("EU27_bio4"  ,"2050","EU27_regi","tax","t","PE","biomass") = 0.126667;
+  p47_implicitQttyTargetScenario("EU27_bio7p5",t     ,"EU27_regi","tax","t","PE","biomass")$((t.val ge 2035) AND (t.val le 2050)) = 0.237825;
+  p47_implicitQttyTargetScenario("EU27_bio12" ,t     ,"EU27_regi","tax","t","PE","biomass")$((t.val ge 2035) AND (t.val le 2050)) = 0.38;
+
+  p47_implicitQttyTargetScenario("EU27_limVRE" ,"2025","EU27_regi","tax","t","PE","wind")  = 0.072;
+  p47_implicitQttyTargetScenario("EU27_limVRE" ,"2050","EU27_regi","tax","t","PE","wind")  = 0.201;
+  p47_implicitQttyTargetScenario("EU27_limVRE" ,"2025","EU27_regi","tax","t","PE","solar") = 0.04;
+  p47_implicitQttyTargetScenario("EU27_limVRE" ,"2050","EU27_regi","tax","t","PE","solar") = 0.168;
+*** assign active scenarios to the current run
+loop(qttyTargetActiveScenario,
+  pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$p47_implicitQttyTargetScenario(qttyTargetActiveScenario,ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetScenario(qttyTargetActiveScenario,ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup);
+);
+display pm_implicitQttyTarget;
+$endif.cm_implicitQttyTargetType
+
+*** intialize auxiliar parameters
+  p47_implicitQttyTargetTaxRescale_iter("1", "2030",ext_regi,qttyTarget,qttyTargetGroup) = 0;
+  p47_implicitQttyTargetReferenceIteration(ext_regi) = 0;
+  p47_implicitQttyTargetIterationCount(ext_regi) = 0;
+*** intialize energy type bound implicit target parameters
   pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"CCS",qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"CCS",qttyTargetGroup) = pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"CCS",qttyTargetGroup)/(sm_c_2_co2*1000);
+  pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"oae",qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"oae",qttyTargetGroup) = pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"oae",qttyTargetGroup)/(sm_c_2_co2*1000);
 	p47_implicitQttyTargetTax0(t,all_regi) = 0;
 $endIf.cm_implicitQttyTarget
 
@@ -145,7 +176,8 @@ $offdelim
 
   loop((t,ext_regi,entyFe,entySe,sector)$f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t),
     loop(regi$regi_groupExt(ext_regi,regi),
-      pm_implicitPriceTarget(t,regi,entyFe,entySe,sector)=f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t)*sm_DpGJ_2_TDpTWa;
+      !! convert data from US$2005 to US$2017
+      pm_implicitPriceTarget(t,regi,entyFe,entySe,sector) = sm_D2005_2_D2017 * f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t)*sm_DpGJ_2_TDpTWa;
     );
   );
 
@@ -179,7 +211,8 @@ $offdelim
 
   loop((t,ext_regi,entyPe)$f47_implicitPePriceTarget("%cm_implicitPePriceTarget%",ext_regi,entyPe,t),
     loop(regi$regi_groupExt(ext_regi,regi),
-      pm_implicitPePriceTarget(t,regi,entyPe)=f47_implicitPePriceTarget("%cm_implicitPePriceTarget%",ext_regi,entyPe,t)*sm_DpGJ_2_TDpTWa;
+      !! convert data from US$2005 to US$2017
+      pm_implicitPePriceTarget(t,regi,entyPe) = sm_D2005_2_D2017 * f47_implicitPePriceTarget("%cm_implicitPePriceTarget%",ext_regi,entyPe,t)*sm_DpGJ_2_TDpTWa;
     );
   );
 
@@ -220,7 +253,7 @@ loop(ext_regi$altFeEmiFac_regi(ext_regi),
 $endif.altFeEmiFac
 
 *** VRE capacity factor adjustments for Germany in line with results from detailed models in ARIADNE project
- loop(te$sameas(te,"wind"),
+ loop(te$sameas(te,"windon"),
   loop(regi$sameas(regi,"DEU"),
     pm_cf("2025",regi,te) =  1.04 * pm_cf("2025",regi,te);
     pm_cf("2030",regi,te) =  1.08 * pm_cf("2030",regi,te);
@@ -271,32 +304,32 @@ p47_LULUCFEmi_GrassiShift(t,regi)$(p47_EmiLULUCFCountryAcc("2020",regi)) =
 
 *PW* charge tax on PE gas,oil,coal in energy security scenario for Germany (in trUSD/TWa) to hit Ariadne energy security price trajectories
 $ifThen.cm_EnSecScen_price "%cm_EnSecScen_price%" == "on"
-  pm_tau_pe_tax("2025",regi,"pegas")$(sameAs(regi,"DEU")) = 0.32;
-  pm_tau_pe_tax("2030",regi,"pegas")$(sameAs(regi,"DEU")) = 0.24;
-  pm_tau_pe_tax("2035",regi,"pegas")$(sameAs(regi,"DEU")) = 0.2;
-  pm_tau_pe_tax("2040",regi,"pegas")$(sameAs(regi,"DEU")) = 0.16;
-  pm_tau_pe_tax("2045",regi,"pegas")$(sameAs(regi,"DEU")) = 0.16;
-  pm_tau_pe_tax("2050",regi,"pegas")$(sameAs(regi,"DEU")) = 0.16;
-  pm_tau_pe_tax("2055",regi,"pegas")$(sameAs(regi,"DEU")) = 0.12;
-  pm_tau_pe_tax("2060",regi,"pegas")$(sameAs(regi,"DEU")) = 0.08;
+  pm_tau_pe_tax("2025",regi,"pegas")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.32;
+  pm_tau_pe_tax("2030",regi,"pegas")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.24;
+  pm_tau_pe_tax("2035",regi,"pegas")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.2;
+  pm_tau_pe_tax("2040",regi,"pegas")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.16;
+  pm_tau_pe_tax("2045",regi,"pegas")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.16;
+  pm_tau_pe_tax("2050",regi,"pegas")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.16;
+  pm_tau_pe_tax("2055",regi,"pegas")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.12;
+  pm_tau_pe_tax("2060",regi,"pegas")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.08;
 
-  pm_tau_pe_tax("2025",regi,"peoil")$(sameAs(regi,"DEU")) = 0.08;
-  pm_tau_pe_tax("2030",regi,"peoil")$(sameAs(regi,"DEU")) = 0.08;
-  pm_tau_pe_tax("2035",regi,"peoil")$(sameAs(regi,"DEU")) = 0.12;
-  pm_tau_pe_tax("2040",regi,"peoil")$(sameAs(regi,"DEU")) = 0.16;
-  pm_tau_pe_tax("2045",regi,"peoil")$(sameAs(regi,"DEU")) = 0.16;
-  pm_tau_pe_tax("2050",regi,"peoil")$(sameAs(regi,"DEU")) = 0.16;
-  pm_tau_pe_tax("2055",regi,"peoil")$(sameAs(regi,"DEU")) = 0.12;
-  pm_tau_pe_tax("2060",regi,"peoil")$(sameAs(regi,"DEU")) = 0.08;
+  pm_tau_pe_tax("2025",regi,"peoil")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.08;
+  pm_tau_pe_tax("2030",regi,"peoil")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.08;
+  pm_tau_pe_tax("2035",regi,"peoil")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.12;
+  pm_tau_pe_tax("2040",regi,"peoil")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.16;
+  pm_tau_pe_tax("2045",regi,"peoil")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.16;
+  pm_tau_pe_tax("2050",regi,"peoil")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.16;
+  pm_tau_pe_tax("2055",regi,"peoil")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.12;
+  pm_tau_pe_tax("2060",regi,"peoil")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.08;
 
-  pm_tau_pe_tax("2025",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.024;
-  pm_tau_pe_tax("2030",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.016;
-  pm_tau_pe_tax("2035",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.016;
-  pm_tau_pe_tax("2040",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.016;
-  pm_tau_pe_tax("2045",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.016;
-  pm_tau_pe_tax("2050",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.016;
-  pm_tau_pe_tax("2055",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.008;
-  pm_tau_pe_tax("2060",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.008;
+  pm_tau_pe_tax("2025",regi,"pecoal")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.024;
+  pm_tau_pe_tax("2030",regi,"pecoal")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.016;
+  pm_tau_pe_tax("2035",regi,"pecoal")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.016;
+  pm_tau_pe_tax("2040",regi,"pecoal")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.016;
+  pm_tau_pe_tax("2045",regi,"pecoal")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.016;
+  pm_tau_pe_tax("2050",regi,"pecoal")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.016;
+  pm_tau_pe_tax("2055",regi,"pecoal")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.008;
+  pm_tau_pe_tax("2060",regi,"pecoal")$(sameAs(regi,"DEU")) = sm_D2005_2_D2017 * 0.008;
 $endIf.cm_EnSecScen_price
 
 *** adapt parameters that determine the ratio of wind onshore and wind offshore installation for Germany

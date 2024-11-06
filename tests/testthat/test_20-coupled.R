@@ -142,6 +142,7 @@ test_that("runs coupled to MAgPIE work", {
     expect_true(lengthwithmag > lengthwithoutmag && lengthwithmag > 700000)
     # check main mif
     qscen <- quitte::as.quitte(paste0("../../output/C_", scen, ".mif"))
+    expect_no_warning(quitte::reportDuplicates(piamutils::deletePlus(qscen)))
     expect_true(all(grepl("^REMIND-MAgPIE", levels(qscen$model))))
     expect_true(nrow(qscen) == lengthwithmag)
     # here we could add checks which variables etc. must be in the mif file

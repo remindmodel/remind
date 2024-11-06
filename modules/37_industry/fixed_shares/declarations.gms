@@ -14,7 +14,7 @@ scalars
 ;
 
 Parameters
-  pm_abatparam_Ind(ttot,all_regi,all_enty,steps)         "industry CCS MAC curves [ratio @ US$2005]"
+  pm_abatparam_Ind(ttot,all_regi,all_enty,steps)         "industry CCS MAC curves [ratio @ US$2017]"
 
 
   pm_ue_eff_target(all_in)   "energy efficiency target trajectories [% p.a.]"
@@ -31,7 +31,7 @@ Parameters
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)  "FE demand per industry subsector, FE carrier, SE carrier, emissions market"
 
   !! empty parameters from subsectors
-  pm_energy_limit(all_in)    ""   / /
+  pm_energy_limit(all_in)    "empty parameter"   / /
 
   p37_CESMkup_input(all_in)  "markup cost parameter read in from config for CES levels in industry to influence demand-side cost and efficiencies in CES tree [trUSD/CES input]"
   /

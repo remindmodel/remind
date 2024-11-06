@@ -1,4 +1,4 @@
-
+*** SOF ./modules/50_damages/KotzWenz/datainput.gms
 table f50_countryGDP(tall,iso,all_GDPscen)	"country level GDP from SSPs"
 $ondelim
 $include "./modules/50_damages/KotzWenz/input/f50_gdp.cs3r"
@@ -21,3 +21,4 @@ display pm_GDPfrac;
 
 pm_GDPfrac(tall,iso)$(tall.val ge 2150) = pm_GDPfrac("2150",iso);
 
+*** EOF ./modules/50_damages/KotzWenz/datainput.gms
