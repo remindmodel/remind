@@ -1127,4 +1127,14 @@ q_shbiofe_lo(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector) 
   sum((entySeBio,te)$se2fe(entySeBio,entyFe,te), vm_demFeSector_afterTax(t,regi,entySeBio,entyFe,sector,emiMkt))
 ;
 
+***---------------------------------------------------------------------------
+*' Limit solids fossil to be lower or equal to previous year values  
+***---------------------------------------------------------------------------
+$ifthen.limitSolidsFossilRegi not %cm_limitSolidsFossilRegi% == "off"
+q_fossilSolidsLimitReg(ttot,regi,entySe,entyFe,sector,emiMkt)$(limitSolidsFossilRegi(regi) and (ttot.val ge max(2020, cm_startyear)) AND sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt) AND (sameas(sector,"indst") OR sameas(sector,"build")) AND sameas(entySe,"sesofos"))..
+  vm_demFeSector_afterTax(ttot,regi,entySe,entyFe,sector,emiMkt)
+  =le=
+  vm_demFeSector_afterTax(ttot-1,regi,entySe,entyFe,sector,emiMkt);
+$endif.limitSolidsFossilRegi
+
 *** EOF ./core/equations.gms
