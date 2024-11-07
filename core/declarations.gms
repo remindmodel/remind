@@ -590,6 +590,9 @@ $ifthen.minMaxSeFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgS
   q_minMaxPenSeFeSectorShareDev(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max penalty balance for secondary energy share deviation in sectors"
 $endif.minMaxSeFeSectorShareDev
 
+$ifthen.limitSolidsFossilRegi not %cm_limitSolidsFossilRegi% == "off"
+  q_fossilSolidsLimitReg(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)  "limit solids fossil to be lower or equal to previous year values in each (sector x emiMkt) combination"
+$endif.limitSolidsFossilRegi
 ;
 ***----------------------------------------------------------------------------------------
 ***                                   SCALARS
