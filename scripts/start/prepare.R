@@ -81,23 +81,6 @@ prepare <- function() {
   # Is the run performed on the cluster?
   on_cluster    <- file.exists('/p')
 
-  # Copy MAGICC
-  if ( !file.exists(cfg$magicc_template)
-     & file.exists(path.expand(Sys.getenv('MAGICC'))))
-      cfg$magicc_template <- path.expand(Sys.getenv('MAGICC'))
-
-  if (file.exists(cfg$magicc_template)) {
-      cat("Copying MAGICC files from",cfg$magicc_template,"to results folder\n")
-      system(paste0("cp -nrp ",cfg$magicc_template," ",cfg$results_folder))
-      system(paste0("cp -nrp core/magicc/* ",cfg$results_folder,"/magicc/"))
-    } else {
-      cat("Could not copy",cfg$magicc_template,"because it does not exist\n")
-    }
-
-  # Make sure all MAGICC files have LF line endings, so Fortran won't crash
-  if (on_cluster)
-    system(paste0("find ",cfg$results_folder,"/magicc/ -type f | xargs dos2unix -q"))
-
   ################## M O D E L   L O C K ###################################
   # Lock the directory for other instances of the start scripts
   lock_id <- model_lock(timeout1 = 1)
@@ -280,10 +263,6 @@ prepare <- function() {
   setwd(cfg$results_folder)
 
   write_yaml(cfg,file="cfg.txt")
-  try(file.copy("magicc/run_magicc.R","run_magicc.R"))
-  try(file.copy("magicc/run_magicc_temperatureImpulseResponse.R","run_magicc_temperatureImpulseResponse.R"))
-  try(file.copy("magicc/read_DAT_TOTAL_ANTHRO_RF.R","read_DAT_TOTAL_ANTHRO_RF.R"))
-  try(file.copy("magicc/read_DAT_SURFACE_TEMP.R","read_DAT_SURFACE_TEMP.R"))
 
   # Function to create the levs.gms, fixings.gms, and margs.gms files, used in
   # delay scenarios.
@@ -600,13 +579,6 @@ prepare <- function() {
     # Perform actual manipulation on full.gms, in single parse of the text.
     manipulateFile("full.gms", full_manipulateThis, fixed = TRUE)
   }
-
-  #AJS set MAGCFG file
-  magcfgFile = paste0('./magicc/MAGCFG_STORE/','MAGCFG_USER_',toupper(cfg$gms$cm_magicc_config),'.CFG')
-  if(!file.exists(magcfgFile)){
-      stop(paste('ERROR in MAGGICC configuration: Could not find file ',magcfgFile))
-  }
-  system(paste0('cp ',magcfgFile,' ','./magicc/MAGCFG_USER.CFG'))
 
   # Prepare the files containing the fixings for delay scenarios (for fixed runs)
   if (  cfg$gms$cm_startyear > 2005  & (!file.exists("levs.gms.gz") | !file.exists("levs.gms"))) {
