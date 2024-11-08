@@ -1910,7 +1910,6 @@ $include    "./core/loop.gms";
 $ifthen.c_skip_output %c_skip_output% == "off"
 $include    "./core/output.gms";
 $batinclude "./modules/include.gms"    output
-$include "./core/magicc.gms";    !!connection to MAGICC, needed for post-processing
 $endif.c_skip_output
 
 *** EOF ./main.gms
