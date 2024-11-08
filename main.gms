@@ -905,6 +905,17 @@ parameter
 ;
   cm_LimRock               = 1000;   !! def = 1000
 *'
+
+parameter
+  cm_33_EW_upScalingRateLimit    "Annual growth rate limit on upscaling of mining & spreading rocks on fields"
+;
+  cm_33_EW_upScalingRateLimit = 0.2;  !! def = 20% !! regexp = is.nonnegative
+
+parameter 
+  cm_33_EW_shortTermLimit         "Limit on 2030 potential for enhanced weathering, defined as % of land on which EW is applied. Default 0.5% of land"
+;
+  cm_33_EW_shortTermLimit = 0.005; !! def = 0.5% !! regexp = is.nonnegative
+
 parameter
   cm_expoLinear_yearStart   "time at which carbon price increases linearly instead of exponentially"
 ;
@@ -1003,9 +1014,9 @@ parameter
 *' * (4) Energy Efficiency policy: higher discount rate until cm_startyear, decreasing to 25% value linearly until 2030.
 *'
 parameter
-  c_H2InBuildOnlyAfter "Switch to fix H2 in buildings to zero until given year"
+  cm_H2InBuildOnlyAfter "Switch to fix H2 in buildings to zero until given year"
 ;
-  c_H2InBuildOnlyAfter = 2150;   !! def = 2150 (rule out H2 in buildings)
+  cm_H2InBuildOnlyAfter = 2150;   !! def = 2150 (rule out H2 in buildings)
 *' For all years until the given year, FE demand for H2 in buildings is set to zero
 parameter
   cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
@@ -1041,6 +1052,11 @@ parameter
   c_earlyRetiValidYr         "Year before which the early retirement rate designated by c_tech_earlyreti_rate holds"
 ;
   c_earlyRetiValidYr  = 2035;   !! def = 2035
+*'
+parameter
+  c_seFeSectorShareDevScale "scale factor in the objective function of the penalization to incentive sectors to have similar shares of secondary energy fuels."
+;
+  c_seFeSectorShareDevScale = 1e-3;  !! def = 1e-3
 *'
 parameter
   cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
@@ -1747,10 +1763,27 @@ $setglobal cm_INCONV_PENALTY  on         !! def = on  !! regexp = off|on
 *** cm_INCONV_PENALTY_FESwitch  off     !! def = off
 *** flag to trun on inconvenience penalty to avoid switching shares on buildings, transport and industry biomass use if costs are relatively close (seLiqbio, sesobio, segabio)
 $setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on  !! regexp = off|on
+*** cm_seFeSectorShareDevMethod "Switch to enable an optimization incentive for sectors to have similar shares of secondary energy fuels and determine the method used for the incentive." 
+*** Possible values: off or the method name (sqSectorShare, sqSectorAvrgShare, or minMaxAvrgShare)
+***  off               "The model can freely allocate bio/syn/fossil fuels between sectors. If not off, a penalization term is added so sectors are incentivized to apply similar shares of bio-fuels, synfuels, and fossils in each sector."
+***  sqSectorShare     "Square share penalty. This method is not recommended as it also creates an unwanted incentive for the model to have equal total fos/syn/bio shares, as higher shares are penalized more than lower ones. Runs will be more sensible to the chosen c_seFeSectorShareDevScale values for this reason."
+***  sqSectorAvrgShare "Square deviation from average share penalty. Recomended over sqSectorShare (see above)."
+***  minMaxAvrgShare   "Min-max deviation from average share penalty."
+*** The relative effect of the penalization term in the objective function is scaled to avoid affecting optimization results. This scaling factor can be defined using the switch c_seFeSectorShareDevScale.
+$setglobal cm_seFeSectorShareDevMethod  off !! def = sqSectorAvrgShare  !! regexp = off|sqSectorShare|sqSectorAvrgShare|minMaxAvrgShare
+*** c_seFeSectorShareDevUnit "Defines if the penalization term is applied over fuel shares or energy units." 
+***  share,  "The square penalization is applied directly to the share values. This results in different-sized regions having varying relative penalization incentives, but the range of penalization values will be more consistent from the solver's perspective."
+***  energy, "The square penalization is applied to the share values multiplied by the energy demand. This approach scales penalizations better across different-sized regions, but there is a higher risk of the penalizations being ignored and the shares not being enforced if the value range is too small."
+$setglobal c_seFeSectorShareDevUnit  share !! def = share  !! regexp = share|energy
 ***  cm_MOFEX  off    !! def=off
 *** *JH/LB* Activate MOFEX partial fossil fuel extraction cost minimization model
 *** * Warning: Use a well-converged run since the model uses vm_prodPe from the input GDX
 $setGlobal cm_MOFEX  off        !! def = off  !! regexp = off|on
+*** cm_limitSolidsFossilRegi off   !! def=off
+*** starting in max(2020, cm_startyear), fossil solids use in each (sector x emiMkt) has to decrease compared to the previous time step for each region included in the switch cm_limitSolidsFossilRegi
+*** aceptable values: any of the ext_regi set elements
+*** e.g. "EUR_regi, USA"  "solids fossil in industry and buildings for regions within EUR_regi and USA have to be lower or equal to the previous time step from 2020 or cm_startyear onward."
+$setGlobal cm_limitSolidsFossilRegi off
 *** cm_Full_Integration
 ***    use "on" to treat wind and solar as fully dispatchable electricity production technologies
 $setGlobal cm_Full_Integration  off     !! def = off  !! regexp = off|on

@@ -50,6 +50,12 @@ p33_fedem("weathering", "fedie") = 0.3;
 *' Factor distributing the global rock limit across regions according to population
 p33_LimRock(regi) = pm_pop("2005",regi) / sum(regi2,pm_pop("2005",regi2));
 
+*' Annual growth rate limit on upscaling of mining & spreading rocks on fields
+p33_EW_upScalingLimit(ttot) = cm_33_EW_upScalingRateLimit;
+
+*' Calculation of short term limit on rocks spread on field in terms of Gt rocks that can be spread. 
+p33_EW_shortTermEW_Limit(regi) = cm_33_EW_shortTermLimit * sum(rlf, f33_maxProdGradeRegiWeathering(regi, rlf));
+
 *** ocean alkalinity enhancement input data (Kowalczyk et al., 2024)
 
 !! An assumption; generally the efficiency might vary between 0.9-1.4 tCO2/tCaO (1.2-1.8 molCO2/molCaO),

@@ -52,7 +52,7 @@ projects <- list(
                      iiasatemplate = "https://files.ece.iiasa.ac.at/ssp-submission/ssp-submission-template.xlsx",
                      renameScen = c("SMIPv03-M-SSP2-NPi-def" = "SSP2 - Medium Emissions", "SMIPv03-LOS-SSP2-EcBudg400-def" = "SSP2 - Low Overshoot", "SMIPv03-ML-SSP2-PkPrice200-fromL" = "SSP2 - Medium-Low Emissions","SMIPv03-L-SSP2-PkPrice265-inc6-def" = "SSP2 - Low Emissions", "SMIPv03-VL-SSP2_SDP_MC-PkPrice300-def" = "SSP2 - Very Low Emissions"),
                      checkSummation = "NAVIGATE"),
-  SHAPE      = list(mapping = c("NAVIGATE", "SHAPE")),
+  SHAPE      = list(mapping = c("NAVIGATE", "NAVIGATE_coupled", "SHAPE")),
   TESTTHAT   = list(mapping = "AR6")
 )
 
