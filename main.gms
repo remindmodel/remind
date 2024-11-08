@@ -262,8 +262,7 @@ $setGlobal aerosols  exoGAINS         !! def = exoGAINS
 *'---------------------    15_climate    ---------------------------------------
 *'
 *' * (off): no climate coupling
-*' * (magicc): MAGICC - iterative coupling of MAGICC climate model.
-*' * (box): Petschel-Held
+*' * (magicc7_ar6): MAGICC7 - iterative coupling of MAGICC7 simple climate model.
 $setGlobal climate  off               !! def = off
 *'---------------------    16_downscaleTemperature    --------------------------
 *'
