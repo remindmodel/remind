@@ -16,7 +16,7 @@ $offtext
 
                    ngcc       ngccc         ngt       gastr      gaschp       gashp       gash2      gash2c       gasftrec    gasftcrec
 tech_stat                        2                                                           0           1           2            3
-inco0                950        1350         500          60        1200         400        900         1400        2030        2400
+inco0                950        1350         500          60        1200         400        900         1400        1600        1700
 constrTme             3          3            2           1          3            2           2           2           3           3
 mix0                                                                                        0.70        0.00        0.00        0.00
 eta                 0.57        0.49        0.38        1.00        0.47        0.80        0.73        0.70        0.73        0.70
@@ -45,12 +45,12 @@ lifetime              40          40          40          40          40        
 
 +                 biotr   biotrmod      biochp       biohp     bioigcc    bioigccc      biogas       biogasc      bioh2      bioh2c     bioethl     bioeths   biodiesel    bioftrec   bioftcrec
 tech_stat                                                           1           3           1            3          2           3           2                                   3           3
-inco0                 10        300        3000         550        2450        3150        1200        1230        1680        2040        2860         590         160        3000        3600
+inco0                 10        300        3000         550        2450        3150        1200        1230        1680        2040        2860         590         160        2800        3100
 constrTme              0          1          4           2           4          5            4           4           4           4           4           2          2           4           5
 mix0                           0.00
 eta                 1.00       0.95        0.35        0.72        0.39        0.28        0.55        0.55        0.59        0.55        0.36        0.55        0.93        0.41        0.41
 omf                            0.03        0.04        0.04        0.04        0.04        0.04        0.06        0.07        0.08        0.07        0.11        0.05        0.05        0.06
-omv                                       30.11       25.00       31.50       50.50       10.90       12.80       10.60       10.60       97.27       38.99        5.05                   10.60
+omv                                       30.11       25.00       31.50       50.50       10.90       12.80       10.60       10.60       97.27       38.99        5.05       10.60        10.60
 lifetime              35         35          40          40          40          40          40          40          35          35          35          35          35          35          35
 
 
@@ -70,12 +70,12 @@ luse                                                                            
 
 +                  elh2         dot         dhp       h2turb      h2curt       h2turbVRE  elh2VRE      h22ch4      MeOH
 tech_stat            4                                    5           5            5                     3          3
-inco0               1350         480         360         510         700          510      0.1          700       1300
+inco0               1350         480         360         510         700          510      0.1          700        800
 constrTme            2            2           1           2           2            2        1            2          2
 mix0
 eta                 0.73        0.30        0.80        0.40        0.62         0.40      0.73         0.8        0.7
-omf                 0.05        0.03        0.03        0.03        0.05         0.03      0.00        0.04       0.05
-omv                    3          12          12          24           0          24                      3         25
+omf                 0.05        0.03        0.03        0.03        0.05         0.03      0.00        0.03       0.03
+omv                    3          12          12          24           0          24                     12         12
 lifetime              30          25          25          30          30          30        30           30         30
 incolearn           1200
 ccap0             0.0065
@@ -196,6 +196,40 @@ Ueckerdt et al. (2021), https://doi.org/10.1038/s41558-021-01032-7, Fig. S3).
 800 EUR/kW(el) / 0.65 (elh2 efficiency) * 1.1 (EUR to USD, 2015) ~ 1350 USD/kW(H2) = inco0
 Assume floor cost: 100 EUR/kW(el)
 100 EUR/kW(el) / 0.75 (long-term elh2 efficiency) * 1.1 (EUR to USD, 2015) ~ 150 USD/kW(H2) -> incolearn = 1200
+
+(CCU-based) Fischer-Tropsch Synthesis (H2-to-Liquids) - MeOH
+inco0: 800 USD/kW following Agora (2018), Figs. 16-17,
+https://www.agora-energiewende.de/fileadmin/Projekte/2017/SynKost_2050/Agora_SynKost_Study_EN_WEB.pdf
+omf/omv: choose same as for refineries
+eta: 0.7, following Agora (2018) and Tremel et al. (2015), https://doi.org/10.1016/j.ijhydene.2015.01.097
+
+Methanation (H2-to-Gas) - h22ch4
+inco0: 700 USD/kW, long-term value following review by Agora (2018), Fig. 13,
+https://www.agora-energiewende.de/fileadmin/Projekte/2017/SynKost_2050/Agora_SynKost_Study_EN_WEB.pdf
+omf: 0.03 of CAPEX, following Agora (2018)
+omv: choose same as for refineries
+eta: 0.8, following Agora (2018), p. 67
+
+
+Bio-based Fischer-Tropsch Synthesis (Biomass-to-Liquids) - bioftrec
+(Biomass gasification + FT synthesis)
+inco0: 2800 USD/kW, following Liu et al. (2011), Table 7 gives CAPEX per kW(input), convert with 0.41 efficiency
+eta: 0.41, following Liu et al., Fig. 11
+
+
+Bio-based Fischer-Tropsch Synthesis (Biomass-to-Liquids) with carbon capture - bioftcrec
+(Biomass gasification + FT synthesis)
+inco0: 3100 USD/kW, 300 USD/kW mark-up for CO2 capture
+eta: 0.41, same as without carbon capture
+
+Biomass Methanation (Biomass-to-Gas) - biogas
+inco0: 1200 USD/kW, following e.g. Aranda et al. (2014)
+https://www.biosng.com/fileadmin/biosng/user/documents/reports/The_Economy_of_Large_Scale_Biomass_to_Bio-Methane.pdf
+eta: 0.55, following Michailos et al. (2019), https://doi.org/10.1016/j.bej.2019.107290
+
+Biomass Methanation (Biomass-to-Gas) with carbon capture - biogasc
+inco: 1230 USD/kW, add 30 USD/kW for carbon capture
+eta: 0.55, same as without carbon capture
 
 Direct Air Capture - dac
 learning parameterization:
