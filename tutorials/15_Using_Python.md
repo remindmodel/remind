@@ -6,18 +6,17 @@ Python is a high-level, interpreted programming language known for its readabili
 
 ## REMIND Python Doctrine
 
-Python support is enabled by default in REMIND and is necessary for some climate assessment reporting. This can be verified in the `default.cfg` file where `cfg$pythonEnabled` is set to `"on"`. Users need to set the `cfg$pythonPath` variable to point to the appropriate Python environment. On the PIK cluster, the `conda` environment can be found in `/p/projects/rd3mod/python/environments/scm_magicc7_hpc/`. It is best practice to clone this default environment into one's home directory when using the PIK cluster, see [`make` commands below](#environment-creation-integrity-and-archiving). Further management of the Python environment, such as updating Python packages environments, is a responsibility of the user. 
+Python support is enabled by default in REMIND and is necessary to couple to specialized models, e.g. for climate assessment reporting. This can be verified in the `default.cfg` file where `cfg$pythonEnabled` is set to `"on"`. Users need to set the `cfg$pythonPath` variable to point to an appropriate Python environment. On the PIK cluster, the `conda` environment can be found in `/p/projects/rd3mod/python/environments/scm_magicc7_hpc/`. It is best practice to clone this default environment into one's home directory when using the PIK cluster, see [`make` commands below](#environment-creation-integrity-and-archiving). Further management of the Python environment, such as updating Python packages environments, is a responsibility of the user. 
 
-REMIND scripts do not alter the Python environment, ensuring that the environment remains stable and predictable throughout the usage of REMIND. For repeatability, Python environments are archived for every run. This ensures that the exact environment used for a specific run can be recreated if needed to ensure repeatability. In case a virtual environment is used, REMIND activates it automatically, ensuring the correct environment is in use. Before starting a REMIND run, checks ensure that all necessary dependencies are available.
+REMIND scripts do not alter the Python environment, ensuring that the environment remains stable and predictable throughout the usage of REMIND. For repeatability a lockfile is generated for each REMIND run that archives the state of the Python environment. This ensures that the exact environment used for a specific run can be recreated if needed to ensure repeatability. In case a virtual Python environment like `conda` or `venv` is used, the user needs to make sure to activate it before starting a REMIND run. After starting a REMIND run, checks ensure that all necessary dependencies are available.
 
 ### Environment Creation, Integrity, and Archiving
 
-REMIND supports using your system Python installation via `pip`, but also `venv` and `conda` *virtual Python environments*. Among these, `conda` is the preferred option due to its ease of use and robust package management. For more details on installing Conda, refer to the [Installing Conda](#installing-conda) section.
+REMIND supports using your system Python installation via `pip`, but also *virtual Python environments* like `conda` and `venv`. Among these, `conda` is the preferred option due to its ease of use and robust package management. For more details on installing `conda`, refer to the [Installing `conda`](#installing-conda) section.
 
 The provided Makefile includes targets to create or clone a Python environment:
-- `make conda-create`: Creates a new Conda environment based on the `py_requirements.txt` file.
-- `make conda-clone`: Clones an existing Conda environment.
-- `make pip-create`: Installs all of REMIND's Python dependencies using `pip` based on the `config/py_requirements.txt` file. *Note*: Only use this when you are managing a non-`conda` environment.
+- `make clone-conda`: Clones an existing `conda` environment. Note: Users of the PIK cluster should activate the default environment at `/p/projects/rd3mod/python/environments/scm_magicc7_hpc/`, then use `make conda-clone` to create their own version
+- `make create-conda`: Creates a new `conda` environment based on the `py_requirements.txt` file.
 
 ### Leveraging `reticulate`
 
@@ -29,7 +28,7 @@ When using REMIND, you might encounter warnings about the inability to verify th
 
 ## REMIND & Anaconda
 
-Conda is an open-source package and environment management system for Windows, macOS, and Linux. It simplifies installing and managing Python dependencies and environments, making it ideal for running REMIND. For users running REMIND on their desktop, any Python installation will do; however, we recommend using Conda for its ease of managing dependencies and environments.
+`conda` is an open-source package and environment management system for Windows, macOS, and Linux. It simplifies installing and managing Python dependencies and environments, making it ideal for running REMIND. For users running REMIND on their desktop, any Python installation will do; however, we recommend using `conda` for its ease of managing dependencies and environments.
 
 ### `conda` Environment for REMIND/MAGICC7 Operation on the Cluster
 
@@ -42,7 +41,7 @@ To ensure `climate-assessment` and `MAGICC7` are available when running REMIND o
     module load anaconda/2023.09
     ```
 
-2. Configure the terminal prompt to avoid unnecessary length. This only has to run once!
+2. *Optional:* Configure the terminal prompt to avoid unnecessary length. This only has to run once!
     ```sh
     conda config --set env_prompt '({name})'
     ```
@@ -61,16 +60,16 @@ Rscript output.R
 
 and navigate through the selection process as usual.
 
-### Installing Conda
+### Installing `conda`
 
-This is not necessary when running REMIND on the PIK cluster. If you are on a Desktop machine or are using another shared computing infrastructure, ask your local IT department if `conda` is available for your system. For Desktop users here's a brief overview of how to install Conda. Follow these steps:
+This is not necessary when running REMIND on the PIK cluster. If you are on a Desktop machine or are using another shared computing infrastructure, ask your local IT department if `conda` is available for your system. For Desktop users here's a brief overview of how to install `conda`. Follow these steps:
 
-1. **Download the Conda installer**:
-    - For Anaconda (includes Conda and many scientific packages): [Anaconda Distribution](https://www.anaconda.com/products/distribution#download-section)
-    - For Miniconda (a minimal installer for Conda): [Miniconda Distribution](https://docs.conda.io/en/latest/miniconda.html)
+1. **Download the `conda` installer**:
+    - *Recommended*: For Miniconda (a minimal installer for `conda`): [Miniconda Distribution](https://docs.conda.io/en/latest/miniconda.html)
+    - *Optional*: For Anaconda (includes `conda` and many scientific packages): [Anaconda Distribution](https://www.anaconda.com/products/distribution#download-section)
 
 2. **Run the installer**:
-    - On Windows, double-click the `.exe` file. Follow the instructions
+    - On Windows, double-click the `.exe` file
     - On macOS and Linux, open a terminal and run:
         ```sh
         bash path/to/installer.sh
@@ -83,9 +82,9 @@ This is not necessary when running REMIND on the PIK cluster. If you are on a De
     conda --version
     ```
 
-### Creating a Conda Environment from `py_requirements.txt`
+### Creating a `conda` Environment from `py_requirements.txt`
 
-To create a new Conda environment from the `config/py_requirements.txt` file that comes with REMIND, you can use the `make create-conda` target in the Makefile. This will create a new Conda environment with Python 3.11 and the packages specified in the requirements file.
+To create a new `conda` environment from the `config/py_requirements.txt` file that comes with REMIND, you can use the `make create-conda` target in the Makefile. This will create a new `conda` environment with Python 3.11 and the packages specified in the requirements file.
 
 - Create a new environment with the default name `remind` in the default directory (`$HOME/.conda/envs`):
     ```sh
@@ -109,22 +108,22 @@ To create a new Conda environment from the `config/py_requirements.txt` file tha
 
 ### Cloning the REMIND `conda` environment on the PIK cluster
 
-To clone a Conda environment, you can use the `make clone-conda-env` target in the Makefile. This will clone the specified Conda environment or the active environment to a new environment in the user's home directory or a specified destination.
+To clone a `conda` environment, you can use the `make clone-conda` target in the Makefile. This will clone the specified `conda` environment or the active environment to a new environment in the user's home directory or a specified destination.
 
 - Clone the active environment:
     ```sh
-    make clone-conda-env
+    make clone-conda
     ```
 - Clone a specified environment:
     ```sh
-    make clone-conda-env ENV=my_env
+    make clone-conda ENV=my_env
     ```
 - Clone a specified environment to a custom directory:
     ```sh
-    make clone-conda-env ENV=my_env DEST=~/my_custom_directory
+    make clone-conda ENV=my_env DEST=~/my_custom_directory
     ```
 
-#### Renaming a Conda Environment
+#### Renaming a `conda` Environment
 If you need to rename the cloned environment, follow these steps:
 
 1. Activate the cloned environment:
@@ -132,7 +131,7 @@ If you need to rename the cloned environment, follow these steps:
     conda activate /path/to/cloned-env
     ```
 
-2. Export the environment to a YAML file:
+2. Export the environment state to a YAML file:
     ```sh
     conda env export > cloned-env.yml
     ```
@@ -147,4 +146,4 @@ If you need to rename the cloned environment, follow these steps:
     conda remove --prefix /path/to/cloned-env --all
     ```
 
-These steps ensure that the environment is properly renamed without breaking Conda's environment management
+These steps ensure that the environment is properly renamed without breaking `conda`'s environment management
