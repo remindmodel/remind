@@ -288,7 +288,7 @@ loop(te$(sameas(te,"ngcc") OR sameas(te,"ngt") OR sameas(te,"gaschp")),
   vm_cap.lo("2020",regi,te,"1")$pm_histCap("2020",regi,te) = 0.95 * pm_histCap("2020",regi,te);
 );
 
-*** fix capacities for BECCS technologies to  zero in 2020
+*** fix capacities for advanced bio carbon capture technologies to zero in 2020 (i.e. no BECCS in 2020)
 vm_cap.fx("2020",regi,te,rlf)$(sameas(te,"bioigccc") OR sameas(te,"bioftcrec") OR sameas(te,"bioh2c") OR sameas(te,"biogasc")) = 0;
 
 *** fix emissions to historical emissions in 2010
