@@ -371,14 +371,14 @@ $setglobal emicapregi  none           !! def = none
 *'
 *' This module defines the carbon price pm_taxCO2eq, with behaviour across regions governed by similar principles (e.g. global targets, or all following NDC or NPi policies).
 *'
-*' * (diffExp2Lin) and (diffLin2Lin): standard carbonprice realizations for ambitious climate policy scenarios [REMIND default for peak budget runs: diffLin2Lin in combination with iterative_target_adj = 9], 
+*' * (diffExp2Lin) and (diffLin2Lin): standard carbonprice realizations for ambitious climate policy scenarios [REMIND default for peak budget runs: diffLin2Lin in combination with iterative_target_adj = 9],
 *' * three main design choices:
 *' *    [diff]: level of regional carbonprice differentiation in 2030 determined by cm_co2_tax_spread (default = 10); quadratic phase-in to reach globally uniform carbonprices in cm_CO2priceRegConvEndYr
 *' *    [Exp or Lin]: functional form of carbonprice path for developed regions:
 *' *        [Exp]: exponential increase with rate given by cm_co2_tax_growth, (initial) value in cm_startyear is given by cm_co2_tax_startyear
 *' *        [Lin]: linear increase starting at historical level given by cm_co2_tax_hist in year cm_year_co2_tax_hist, (initial) value in cm_startyear set by cm_co2_tax_startyear
 *' *    [2Lin]: post-peak behaviour depending on cm_iterative_target_adj
-*' *        [9]: after the (endogenously adjusted) peak year, carbonprice path increases linearly with fixed annual increase given by cm_taxCO2inc_after_peakBudgYr (default = 0, i.e. constant)                                     
+*' *        [9]: after the (endogenously adjusted) peak year, carbonprice path increases linearly with fixed annual increase given by cm_taxCO2inc_after_peakBudgYr (default = 0, i.e. constant)
 *' *        [5]: no adaptation of carbonprice path after peak year
 *' *        [0]: after the (exogenously fixed) peak year, carbonprice path increases linearly with fixed annual increase given by cm_taxCO2inc_after_peakBudgYr (default = 0, i.e. constant);
 *' *             choose cm_peakBudgYr = 2110 for no adaptation of carbonprice path until end of century
@@ -389,7 +389,7 @@ $setglobal emicapregi  none           !! def = none
 *' * (NPi): National Policies Implemented, extrapolation of historical (until 2020) carbon prices
 *' * (none): no tax policy (combined with all emiscens except emiscen = 9)
 
-***  (exponential) is superseded by (diffExp2Lin): For a globally uniform, exponentially increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_co2_tax_spread = 1, set cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_co2_tax_startyear. 
+***  (exponential) is superseded by (diffExp2Lin): For a globally uniform, exponentially increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_co2_tax_spread = 1, set cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_co2_tax_startyear.
 ***  (linear) is superseded by (diffLin2Lin): For a globally uniform, linearly increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_co2_tax_spread = 1, set cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_co2_tax_startyear. [Adjust historical reference point (cm_year_co2_tax_hist, cm_co2_tax_hist) if needed.]
 
 $setglobal carbonprice  none           !! def = none
@@ -911,7 +911,7 @@ parameter
 ;
   cm_33_EW_upScalingRateLimit = 0.2;  !! def = 20% !! regexp = is.nonnegative
 
-parameter 
+parameter
   cm_33_EW_shortTermLimit         "Limit on 2030 potential for enhanced weathering, defined as % of land on which EW is applied. Default 0.5% of land"
 ;
   cm_33_EW_shortTermLimit = 0.005; !! def = 0.5% !! regexp = is.nonnegative
@@ -1518,14 +1518,14 @@ $setGlobal cm_trade_SE_exog off !! def off
 *** The ramp-up curve is a logistic function that determines how fast taxes increase with increasing share of technology in total power demand.
 *** This essentially makes an assumption about to what extend the power demand of electrolysis will be taxed and how much tax exemptions there will be at low shares of green hydrogen production
 *** The parameter a defines how fast the tax increases with increasing share, with 4/a being the percentage point range over which the tax value increases from 12% to 88%
-*** The parameter b defines at which share the tax is halfway between the value at 0 share and 
+*** The parameter b defines at which share the tax is halfway between the value at 0 share and
 *** the maximum value (defined by a region's electricity tax and the electricity grid cost) that it converges to for high shares.
 *** Example use:
 *** cm_SEtaxRampUpParam = "GLO.elh2.a 0.2, GLO.elh2.b 20" sets the logistic function parameter values a=0.2 and b=20 for electrolysis (elh2) to all model regions (GLO).
 *** cm_SEtaxRampUpParam = "off" disables v21_tau_SE_tax
 *** Default:
 *** cm_SEtaxRampUpParam = "GLO.elh2.a 0.2, GLO.elh2.b 20, EUR_regi.elh2.a 0.15, EUR_regi.elh2.b 40"
-*** This means that electrolysis tax is at half of electricity taxation at 40% electrolysis share in power demand for European regions, and half at 20% share for the rest of the world. 
+*** This means that electrolysis tax is at half of electricity taxation at 40% electrolysis share in power demand for European regions, and half at 20% share for the rest of the world.
 *** We anticipate this lower taxation share in Europe, because Europe has particularly high electricity taxes compared to the rest of the world.
 *** For details, please see ./modules/21_tax/on/equations.gms.
 $setGlobal cm_SEtaxRampUpParam  GLO.elh2.a 0.2, GLO.elh2.b 20, EUR_regi.elh2.a 0.15, EUR_regi.elh2.b 40    !! def = GLO.elh2.a 0.2, GLO.elh2.b 20, EUR_regi.elh2.a 0.15, EUR_regi.elh2.b 40
