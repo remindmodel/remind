@@ -289,7 +289,7 @@ loop(te$(sameas(te,"ngcc") OR sameas(te,"ngt") OR sameas(te,"gaschp")),
 );
 
 *** fix capacities for advanced bio carbon capture technologies to zero in 2020 (i.e. no BECCS in 2020)
-vm_cap.fx("2020",regi,te,rlf)$(sameas(te,"bioigccc") OR sameas(te,"bioftcrec") OR sameas(te,"bioh2c") OR sameas(te,"biogasc")) = 0;
+vm_cap.fx("2020",regi,te,rlf)$(teBio(te) AND teCCS(te)) = 0;
 
 *** fix emissions to historical emissions in 2010
 *** RP: turned off in March 2018, as it produces substantial negative side-effects (requiring strong early retirement in 2010, which influences the future investments even in Reference scenarios)
