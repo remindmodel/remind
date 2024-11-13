@@ -8,9 +8,8 @@ Agenda 11/2024
 
 ## Day 1 - Wed 20.11. - 9:00-12:30
 
-### 9:00 - 10:00 SESSION 1 - REMIND OVERVIEW 
-*Renato Rodrigues*
-- Macro, welfare, CES function, Nash
+### 9:00 - 10:00 SESSION 1 - REMIND OVERVIEW (Renato Rodrigues)
+- Macro, welfare, Constant Elasticity of Substitution (CES) function, Nash
 - Energy system, overview of sectors
 - Coupled models
 - Limitations
@@ -27,7 +26,7 @@ Agenda 11/2024
 ### 11:15-11:30 BREAK
 
 ### 11:30-12:30 HANDS-ON SESSION 3 - REMIND SET-UP (Tonn Rüter)
-- Installing REMIND and components on your local computer
+- Installing & testing REMIND and components on your local computer
 
 ## Day 2 - Thu 21.11. - 9:00-12:30
 
@@ -47,26 +46,24 @@ Agenda 11/2024
 ### 11:15-11:30 BREAK 
 
 ### 11:30-12:30 HANDS-ON SESSION 3 - SCENARIO CONFIGURATION (David Klein)
-- Basics of scenario configuration (default.cfg, scenario_confing.csv, input data)
-- Running REMIND (including iterations)
-- Solve problems installing REMIND (Tonn/Falk)
+- Basics of scenario configuration
+- Running REMIND
 
 ## Day 3 - Fri 22.11. - 9:00-12:30
 
 ### 9:00 - 10:00 SESSION 1 - CALIBRATION (Jakob Dürrwächter)
-- CES function and what is loaded/calibrated
-- CES parameter realization "load" vs. "calibrate" (when and why to calibrate)
+- CES function
+- CES parameter realization "load" vs. "calibrate"
 - How to calibrate
 
 ### 10:00-10:15 BREAK
 
 ### 10:15-10:45 SESSION 2 - CONTRIBUTING TO REMIND (David Klein)
-- make your changes to code
-- run make test
-- use PRs with template
+- Make changes to REMIND code
+- Run `make test`
+- Use pull requests with templates
 
 ### 10:45-11:00 BREAK 
 
-### 11:00-12:30 HANDS-ON SESSION 3 - VIEWING RESULTS (Pascal Weigmann, Falk Benke)
-- Viewing the results
-- Solve problems with result visualization
+### 11:00-12:30 HANDS-ON SESSION 3 - VIEWING RESULTS (Falk Benke)
+- Visualization of REMIND results
