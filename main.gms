@@ -1513,14 +1513,19 @@ $setGlobal cm_PriceDurSlope_elh2 GLO 15 !! def = GLO 15
 $setGlobal cm_trade_SE_exog off !! def off
 *** This allows to manually adjust the ramp-up curve of the SE tax on electricity. It is mainly used for taxing electricity going into electrolysis for green hydrogen production.
 *** The ramp-up curve is a logistic function that determines how fast taxes increase with increasing share of technology in total power demand.
-*** This essentially makes an assumption about to what extend the power demand of electrolysis will be taxed and how much tax exemptions there will be at low shares of green hydrogen production.
+*** This essentially makes an assumption about to what extend the power demand of electrolysis will be taxed and how much tax exemptions there will be at low shares of green hydrogen production
 *** The parameter a defines how fast the tax increases with increasing share, with 4/a being the percentage point range over which the tax value increases from 12% to 88%
-*** The parameter b defines at which share the tax is halfway between the value at 0 share and the maximum value (defined by a region's electricity tax and the electricity grid cost) that it converges to for high shares.
+*** The parameter b defines at which share the tax is halfway between the value at 0 share and 
+*** the maximum value (defined by a region's electricity tax and the electricity grid cost) that it converges to for high shares.
 *** Example use:
 *** cm_SEtaxRampUpParam = "GLO.elh2.a 0.2, GLO.elh2.b 20" sets the logistic function parameter values a=0.2 and b=20 for electrolysis (elh2) to all model regions (GLO).
 *** cm_SEtaxRampUpParam = "off" disables v21_tau_SE_tax
+*** Default:
+*** cm_SEtaxRampUpParam = "GLO.elh2.a 0.2, GLO.elh2.b 20, EUR_regi.elh2.a 0.15, EUR_regi.elh2.b 40"
+*** This means that electrolysis tax is at half of electricity taxation at 40% electrolysis share in power demand for European regions, and half at 20% share for the rest of the world. 
+*** We anticipate this lower taxation share in Europe, because Europe has particularly high electricity taxes compared to the rest of the world.
 *** For details, please see ./modules/21_tax/on/equations.gms.
-$setGlobal cm_SEtaxRampUpParam  GLO.elh2.a 0.2, GLO.elh2.b 20    !! def = GLO.elh2.a 0.2, GLO.elh2.b 20
+$setGlobal cm_SEtaxRampUpParam  GLO.elh2.a 0.2, GLO.elh2.b 20, EUR_regi.elh2.a 0.15, EUR_regi.elh2.b 40    !! def = GLO.elh2.a 0.2, GLO.elh2.b 20, EUR_regi.elh2.a 0.15, EUR_regi.elh2.b 40
 *** cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
 *** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
 *** switch to activate energy security scenario assumptions for Germany including additional tax on gas/oil
