@@ -67,6 +67,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1851](https://github.com/remindmodel/remind/pull/1851)]
 - **testthat** ignore missing historical.mif in tests because it is an optional input file
     [[#1857](https://github.com/remindmodel/remind/pull/1857)]
+- **scripts** Add scripts for preparing a release
+    [[#1871](https://github.com/remindmodel/remind/pull/1871)]
     
 ### fixed
 - included CCS from plastic waste incineration in CCS mass flows so it is
