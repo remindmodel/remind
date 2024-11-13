@@ -1499,9 +1499,12 @@ $setGlobal cm_import_EU  off !! def off
 *** (off) no ARIADNE-specific H2 imports for Germany
 $setGlobal cm_import_ariadne  off !! def off
 *** cm_PriceDurSlope_elh2, slope of price duration curve for electrolysis (increase means more flexibility subsidy for electrolysis H2)
+*** It parameterizes how much the electricity price for electrolysis is reduced relative to the annual average electricity price
 *** This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1
-*** Default value is based on data from German Langfristszenarien (see ./modules/32_power/IntC/datainput.gms).
-$setGlobal cm_PriceDurSlope_elh2 GLO 15 !! def = GLO 15
+*** Default value is based on data from German Langfristszenarien derived by the power system model Enertile.
+*** It is derived by fitting a linear function to capture the relation between electrolysis electricity price and electrolysis share in total electricity demand
+*** See https://github.com/remindmodel/development_issues/issues/404 for details.
+$setGlobal cm_PriceDurSlope_elh2 GLO 20 !! def = GLO 20
 *** cm_trade_SE_exog
 *** set exogenous SE trade scenarios (requires se_trade realization of modul 24 to be active)
 *** e.g. "2030.2050.MEA.DEU.seh2 0.5", means import of SE hydrogen from MEA to Germany from 2050 onwards of 0.5 EJ/yr,
