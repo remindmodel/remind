@@ -744,7 +744,7 @@ q_emiCdrAll(t,regi)..
   )
   * ( !! scaled by the fraction that gets stored geologically
     sum(teCCS2rlf(te, rlf), vm_co2CCS(t, regi, "cco2", "ico2", te, rlf))
-    / (sum(teCCS2rlf(te, rlf), vm_co2capture(t, regi, "cco2", "ico2", "ccsinje", rlf)) + sm_eps)
+    / (sum(teCCS2rlf(te, rlf), v_co2capture(t, regi, "cco2", "ico2", "ccsinje", rlf)) + sm_eps)
   )
   !! net negative emissions from co2luc
   -  p_macBaseMagpieNegCo2(t,regi)
@@ -829,7 +829,7 @@ q_budgetCO2eqGlob$(cm_emiscen=6)..
 *' Definition of carbon capture :
 ***---------------------------------------------------------------------------
 q_balcapture(t,regi,ccs2te(ccsCo2(enty),enty2,te)) ..
-  sum(teCCS2rlf(te,rlf), vm_co2capture(t,regi,enty,enty2,te,rlf))
+  sum(teCCS2rlf(te,rlf), v_co2capture(t,regi,enty,enty2,te,rlf))
   =e=
     !! carbon captured in energy sector
     sum(emi2te(enty3,enty4,te2,enty),
@@ -852,7 +852,7 @@ q_balcapture(t,regi,ccs2te(ccsCo2(enty),enty2,te)) ..
 *' atmosphere)
 ***---------------------------------------------------------------------------
 q_balCCUvsCCS(t,regi) ..
-  sum(teCCS2rlf(te,rlf), vm_co2capture(t,regi,"cco2","ico2",te,rlf))
+  sum(teCCS2rlf(te,rlf), v_co2capture(t,regi,"cco2","ico2",te,rlf))
   =e=
     sum(teCCS2rlf(te,rlf), vm_co2CCS(t,regi,"cco2","ico2",te,rlf))
   + sum(teCCU2rlf(te,rlf), vm_co2CCUshort(t,regi,"cco2","ccuco2short",te,rlf))
