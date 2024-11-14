@@ -96,13 +96,6 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
                stdout = renvLogPath, stderr = "2>&1")
     }
 
-    if (cfg$pythonEnabled == "on") {
-      piamenv::createResultsfolderPythonVirtualEnv(normalizePath(cfg$results_folder))
-    } else {
-      # create empty .venv folder so that new venv won't be initialized automatically by .Rprofile
-      dir.create(file.path(cfg$results_folder, ".venv"))
-    }
-
     # Save the cfg (with the updated name of the result folder) into the results folder.
     # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it
     # might be needed to restart subsequent runs manually and should not contain the time stamp in this case.
