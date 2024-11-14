@@ -4,14 +4,11 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-name, type, reason
-sm_budgetCO2eqGlob, parameter, ??
+name,type,reason
 pm_taxCO2eq, parameter, ??
-pm_budgetCO2eq, parameter, ??
 cm_emiscen, switch, ???
 cm_startyear, switch, ???
 cm_iterative_target_adj, switch, ???
 pm_globalMeanTemperatureZeroed1900,input,questionnaire
 pm_temperatureImpulseResponseCO2,input,questionnaire
 pm_globalMeanTemperature,input,questionnaire
-

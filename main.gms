@@ -262,8 +262,7 @@ $setGlobal aerosols  exoGAINS         !! def = exoGAINS
 *'---------------------    15_climate    ---------------------------------------
 *'
 *' * (off): no climate coupling
-*' * (magicc): MAGICC - iterative coupling of MAGICC climate model.
-*' * (box): Petschel-Held
+*' * (magicc7_ar6): MAGICC7 - iterative coupling of MAGICC7 simple climate model.
 $setGlobal climate  off               !! def = off
 *'---------------------    16_downscaleTemperature    --------------------------
 *'
@@ -1911,7 +1910,6 @@ $include    "./core/loop.gms";
 $ifthen.c_skip_output %c_skip_output% == "off"
 $include    "./core/output.gms";
 $batinclude "./modules/include.gms"    output
-$include "./core/magicc.gms";    !!connection to MAGICC, needed for post-processing
 $endif.c_skip_output
 
 *** EOF ./main.gms
