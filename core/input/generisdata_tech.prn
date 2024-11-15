@@ -188,11 +188,11 @@ Explanations:
 
 Electrolysis - elh2
 learning parameterization:
-Initialize learning curve for electrolysis at 0.5 GW(el) installed globally at CAPEX of 3000 USD/kW(el) in 2020.
+Initialize learning curve for electrolysis at 0.5 GW(el) installed globally at CAPEX of 2300 USD/kW(el) in 2020.
 Based on Ramboll 2023, https://energycentral.com/system/files/ece/nodes/658117/ghpp.pdf
 and IEA 2024 Hydrogen Review, https://www.iea.org/reports/global-hydrogen-review-2024
-0.5 GW(el) * 0.65 (elh2 efficiency) * 1e-3 ~ 0.00077 TW(H2) = ccap0
-2300 USD/kW(el) / 0.65 (elh2 efficiency)  ~ 3500 USD/kW(H2) = inco0
+0.5 GW(el) * 0.65 (elh2 efficiency) * 1e-3 ~ 0.00077 TW(H2) = ccap0 (for 2020)
+2300 USD/kW(el) / 0.65 (elh2 efficiency)  ~ 3500 USD/kW(H2) = inco0 (for 2020)
 Assume floor cost: 100 USD/kW(el)
 100 USD/kW(el) / 0.75 (long-term elh2 efficiency) ~ 133 USD/kW(H2) -> incolearn = 3370
 
