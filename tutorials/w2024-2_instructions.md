@@ -33,3 +33,15 @@ The REMIND installation procedure is mediated by the version control software gi
 
 # GAMS license
 
+We have acquired a GAMS license for all participants in the REMIND Workshop for external users. Please note that the license will expire on *December 06, 2024*. To install the license, copy the following six lines to the clipboard. Then, open GAMS Studio and click on `Help > GAMS Licensing` or `Help > About GAMS`, depending on your version of GAMS Studio. A message box will notify you that a GAMS license has been found on the clipboard. If 'Yes' is clicked, the new license will be installed automatically and presented via the "About GAMS" dialog.
+
+```
+Course_License_________________________________S241106|0002AO-GEN
+Potsdam-Institut_f._Klimafolgenforschung_e.V.,___________________
+1382890301BACOCPKNM5GEPTSN_______________________________________
+21250202010101010101010101_______________________________________
+DCE3853______g_7_______________________________A_Course__________
+License_Admin:_Lavinia.Baumstark@pik-potsdam.de__________________
+```
+
+For more detailed installation instructions, you can please consult the [GAMS Support Website](https://www.gams.com/latest/docs/UG_MAIN.html#UG_INSTALL)
