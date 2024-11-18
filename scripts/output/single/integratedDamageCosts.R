@@ -31,7 +31,7 @@ computeCostsScen <- function(i_data, scenBaseNoDamage, scenNoDamage, scenDamage,
     mutate(`GDP|PPP|w/ Macro-Economic Climate Damage` = `GDP|PPP` * `Damage factor`) %>%
     mutate(`GDP|PPP|including chronic physical risk damage estimate` = `GDP|PPP|w/ Macro-Economic Climate Damage`) %>%
     mutate(`GDP|MER|including chronic physical risk damage estimate` = `GDP|MER|w/ Macro-Economic Climate Damage`) %>%
-    mutate(unit = "billion US$2005/yr") %>%
+    mutate(unit = "billion US$2017/yr") %>%
     select(-`GDP|MER`, -`GDP|PPP`, -`Damage factor`) %>%
     pivot_longer(names_to="variable", values_to="value", cols=c(-"model", -"scenario", -"region", -"unit", -"period")) %>%
     select(model, scenario, region, variable, unit, period, value)
@@ -45,7 +45,7 @@ computeCostsScen <- function(i_data, scenBaseNoDamage, scenNoDamage, scenDamage,
     pivot_wider(names_from="variable", values_from="value") %>%
     mutate(value = `GDP|MER` * `Damage factor`) %>%
     mutate(variable = "GDP|MER") %>%
-    mutate(unit = "billion US$2005/yr") %>%
+    mutate(unit = "billion US$2017/yr") %>%
     select(-`GDP|MER`, -`Damage factor`) %>%
     select(model, scenario, region, variable, unit, period, value) %>%
     left_join(
@@ -56,7 +56,7 @@ computeCostsScen <- function(i_data, scenBaseNoDamage, scenNoDamage, scenDamage,
         pivot_wider(names_from = "variable", values_from = "value") %>%
         mutate(value = `GDP|MER` * `Damage factor`) %>%
         mutate(variable = "GDP|MER") %>%
-        mutate(unit = "billion US$2005/yr") %>%
+        mutate(unit = "billion US$2017/yr") %>%
         select(-scenario, -`GDP|MER`, -`Damage factor`) %>%
         select(model, region, variable, unit, period, value) %>%
         rename(value_ref = value),

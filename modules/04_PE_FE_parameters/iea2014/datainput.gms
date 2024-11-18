@@ -6,13 +6,20 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/04_PE_FE_parameters/iea2014/datainput.gms
 
-parameter f04_IO_input(tall,all_regi,all_enty,all_enty,all_te)        "Energy input based on IEA data"
+parameter f04_IO_input(tall,all_regi,all_enty,all_enty,all_te) "Energy input based on IEA data"
 /
 $ondelim
 $include "./modules/04_PE_FE_parameters/iea2014/input/f04_IO_input.cs4r"
 $offdelim
 /
 ;
+
+*** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated 
+f04_IO_input(tall,all_regi,"pewin","seel","windon") $ (f04_IO_input(tall,all_regi,"pewin","seel","windon") eq 0) = f04_IO_input(tall,all_regi,"pewin","seel","wind");
+f04_IO_input(tall,all_regi,"pewin","seel","wind") = 0;
+*CG* setting historical production from wind offshore to 0 (due to the scarcity of offshore wind before 2015)
+f04_IO_input(tall,all_regi,"pewin","seel","windoff") = 0;
 
 if (smin((t,regi,pe2se(entyPe,entySe,te)), f04_IO_input(t,regi,entyPe,entySe,te)) lt 0,
   put_utility "msg" / "**""** input data problem: f04_IO_input has negative values that are overwritten";
@@ -28,18 +35,21 @@ if (smin((t,regi,pe2se(entyPe,entySe,te)), f04_IO_input(t,regi,entyPe,entySe,te)
 *' overwrite negative values with 0 to allow the model to solve. In the mid-term, the input data/mapping needs to be improved to prevent negative values
 f04_IO_input(tall,regi,entyPe,entySe,te)$(f04_IO_input(tall,regi,entyPe,entySe,te) lt 0) = 0;
 
-*CG* setting historical production from wind offshore to 0 (due to the scarcity of offshore wind before 2015)
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-f04_IO_input(tall,all_regi,"pewin","seel","windoff") = 0;
-$ENDIF.WindOff
 
-parameter f04_IO_output(tall,all_regi,all_enty,all_enty,all_te)        "Energy output based on IEA data"
+*** RP 2019-02-19: From rev 8352 on, f04_IO_output contains gross generation for power plants. Power plant autoconsumption is contained in t&d losses. 
+*** This facilitates comparison with other sources which usually report gross electricity generation as well as gross capacity factors
+parameter f04_IO_output(tall,all_regi,all_enty,all_enty,all_te) "Energy output based on IEA data"
 /
 $ondelim
 $include "./modules/04_PE_FE_parameters/iea2014/input/f04_IO_output.cs4r"
 $offdelim
 /
 ;
+
+*** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated 
+f04_IO_output(tall,all_regi,"pewin","seel","windon") $ (f04_IO_output(tall,all_regi,"pewin","seel","windon") eq 0) = f04_IO_output(tall,all_regi,"pewin","seel","wind");
+f04_IO_output(tall,all_regi,"pewin","seel","wind") = 0;
 
 if (smin((t,regi,pe2se(entyPe,entySe,te)), f04_IO_output(t,regi,entyPe,entySe,te)) lt 0,
   put_utility "msg" / "**""** input data problem: f04_IO_output has negative values that are overwritten" /
@@ -55,7 +65,6 @@ if (smin((t,regi,pe2se(entyPe,entySe,te)), f04_IO_output(t,regi,entyPe,entySe,te
 
 *' overwrite negative values with 0 to allow the model to solve. In the mid-term, the input data/mapping needs to be improved to prevent negative values
 f04_IO_output(tall,regi,entyPe,entySe,te)$(f04_IO_output(tall,regi,entyPe,entySe,te) lt 0) = 0;
-
 
 
 
@@ -245,12 +254,7 @@ loop(regi,
      );
 );
 
-*RP 2019-02-19: This is now changed starting from rev 8352. Power plant output is from now on gross production instead of net, and power plant autoconsumption is shifted to t&d losses
-*RP This was done to facilitate comparison with other sources which usually report gross electricity generation as well as gross capacity factors
-***------------------ allocate own power consumption to electricity technologies -----------------------------
-***p04_IO_output(regi,enty,enty2,te)$(sameas(enty2,"seel") AND (NOT sameas(te,"wind")) AND (NOT sameas(te,"spv")) )  = p04_IO_output(regi,enty,enty2,te)
-***                                                           - ( p04_IO_output(regi,enty,enty2,te) / sum(pe2se(enty3,enty2,te2)$((NOT sameas(te2,"wind")) AND (NOT sameas(te2,"spv"))), p04_IO_output(regi,enty3,enty2,te2)) ) 
-***                                                             * f04_IO_output("2005",regi,"seel","feel","o_feel");
+
 display pm_IO_input, p04_IO_output;
 
 *** ----------------------------------------------------------------------------------------------------------

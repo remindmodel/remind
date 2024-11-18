@@ -128,7 +128,7 @@ c_solver_try_max      "maximum number of inner iterations within one Negishi ite
 c_keep_iteration_gdxes   "save intermediate iteration gdxes"
 cm_nash_autoconverge  "choice of nash convergence mode"
 cm_emiscen            "policy scenario choice"
-cm_co2_tax_2020       "level of co2 tax in year 2020 in $ per t CO2eq, makes sense only for emiscen eq 9 and 45_carbonprice exponential"
+cm_co2_tax_startyear  "level of co2 tax in start year in $ per t CO2eq"
 cm_co2_tax_growth     "growth rate of carbon tax"
 c_macscen            "use of mac"
 cm_nucscen            "nuclear option choice"
@@ -194,7 +194,7 @@ cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshoot
 cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
 c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
-cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffCurvPhaseIn2Lin"
+cm_CO2priceRegConvEndYr     "Year at which regional CO2 taxes converge in module 45 for realizations with differentiated carbon prices"
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
 c_regi_synfuelscen			"region to apply synfuelscen to"
@@ -246,7 +246,7 @@ $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
 cm_emiscen        = 1;         !! def = 1
 $setglobal cm_rcp_scen  none   !! def = "none"
-cm_co2_tax_2020   = -1;        !! def = -1
+cm_co2_tax_startyear = -1;     !! def = -1
 cm_co2_tax_growth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
@@ -483,7 +483,6 @@ $setglobal cm_feShareLimits  off  !! def = off
 $setglobal c_fuelprice_init  off !! def = off
 $setglobal cm_seTradeScenario  off  !! def = off
 
-$setglobal cm_wind_offshore  0      !! def = 0
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                                  END OF WARNING ZONE

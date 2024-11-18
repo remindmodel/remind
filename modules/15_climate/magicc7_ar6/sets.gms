@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/15_climate/magicc/sets.gms
+*** SOF ./modules/15_climate/magicc7_ar6/sets.gms
 $ontext
 TODO: Rename
     t_magiccttot    MAGICC_ttot
@@ -19,4 +19,4 @@ TODO: Rename
 $offtext
 
 
-*** EOF ./modules/15_climate/magicc/sets.gms
+*** EOF ./modules/15_climate/magicc7_ar6/sets.gms

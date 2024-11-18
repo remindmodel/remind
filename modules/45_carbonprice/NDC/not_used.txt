@@ -6,7 +6,6 @@
 # |  Contact: remind@pik-potsdam.de
 name,type,reason
 cm_emiscen, switch, ???
-cm_co2_tax_2020, switch, ???
 pm_ttot_val,parameter,???
 cm_co2_tax_growth,switch,???
 cm_expoLinear_yearStart,switch,???
@@ -25,3 +24,4 @@ cm_co2_tax_spread,switch,no carbon price differentiation in this realization
 cm_co2_tax_startyear,input,added by codeCheck
 cm_peakBudgYr,input,added by codeCheck
 cm_taxCO2inc_after_peakBudgYr,input,added by codeCheck
+fm_taxCO2eqHist,input,not needed

@@ -305,15 +305,18 @@ $ifthen.build_H2_offset "%buildings%" == "simple"
 *);
 
 *** RK: feh2b offset scaled from 1% in 2025 to 50% in 2050 of fegab quantity
-loop ((t,regi),
-	pm_cesdata(t,regi,"feh2b","offset_quantity")
-  = - (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
-      * pm_cesdata(t,regi,"fegab","quantity")
-    - pm_cesdata(t,regi,"feh2b","quantity");
-      pm_cesdata(t,regi,"feh2b","quantity")
-  = (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
-      * pm_cesdata(t,regi,"fegab","quantity");
-);
+pm_cesdata(t,regi,"feh2b","offset_quantity")$(t.val gt cm_H2InBuildOnlyAfter) =
+  - (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
+    * pm_cesdata(t,regi,"fegab","quantity")
+  - pm_cesdata(t,regi,"feh2b","quantity");
+pm_cesdata(t,regi,"feh2b","quantity")$(t.val gt cm_H2InBuildOnlyAfter) = 
+  (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
+    * pm_cesdata(t,regi,"fegab","quantity");
+
+*** for the years that H2 buildings is fixed to zero, set offset to the exact value of the calibrated quantity to ignore it after calibration
+pm_cesdata(t,regi,"feh2b","quantity")$(t.val le cm_H2InBuildOnlyAfter) = 1e-6;
+pm_cesdata(t,regi,"feh2b","offset_quantity")$(t.val le cm_H2InBuildOnlyAfter) = - pm_cesdata(t,regi,"feh2b","quantity");
+
 $endif.build_H2_offset
 
 *** Add an epsilon to the values which are 0 so that they can fit in the CES
