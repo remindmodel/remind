@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/NPi2025/realization.gms
 
-*' @description: This realization takes the carbon prices until 2025 from the input data (for EUR until 2030) and implements a linear growth up to 20US until 2100 afterwards
+*' @description: This realization uses the carbon prices from the input (/p/projects/rd3mod/inputdata/sources/ExpertGuess) data up to 2025 (and for EUR, up to 2030) and assumes a linear increase to 20 USD by 2100.
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/NPi2025/datainput.gms"
