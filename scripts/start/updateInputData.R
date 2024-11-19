@@ -21,7 +21,7 @@ updateInputData <- function(cfg, remindPath = ".", gamsCompile = FALSE) {
   }
   regicode <- madrat::regionscode(file.path(remindPath, cfg$regionmapping))
   input_new <- c(paste0("rev",cfg$inputRevision,"_",regicode,"_", tolower(cfg$model_name),".tgz"),
-                 paste0("rev",cfg$inputRevision,"_",regicode,ifelse(cfg$extramappings_historic == "","",paste0("-", madrat::regionscode(cfg$extramappings_historic))),"_", tolower(cfg$validationmodel_name),".tgz"),
+                 paste0("validation_workshop2024.tgz"),
                  paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
   
   # Specify for each element of input_new whether to stop if the respective file could not be downloaded
