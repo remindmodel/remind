@@ -4,12 +4,12 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/45_carbonprice/NPi2025_EUR55/realization.gms
+*** SOF ./modules/45_carbonprice/NPi2025expo/realization.gms
 
 *' @description: This realization takes the carbon prices until 2025 from the input data (for EUR until 2030) and implements an exponentially growing path afterwards
 
 *####################### R SECTION START (PHASES) ##############################
-$Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/NPi2025_EUR55/datainput.gms"
+$Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/NPi2025expo/datainput.gms"
 *######################## R SECTION END (PHASES) ###############################
 
-*** EOF ./modules/45_carbonprice/NPi2025_EUR55/realization.gms
+*** EOF ./modules/45_carbonprice/NPi2025expo/realization.gms

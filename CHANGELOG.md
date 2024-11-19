@@ -38,8 +38,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1777](https://github.com/remindmodel/remind/pull/1777)]
 - **45_carbonprice** added realizations diffExp2Lin and diffLin2Lin
     [[#1723](https://github.com/remindmodel/remind/pull/1723)]
--_**45_carbonprice** added realizations NPi2025_EUR55 and NPiexpo
-    [[#1851](https://github.com/remindmodel/remind/pull/1851)]
+- **45_carbonprice** added realizations NPi2025, NPi2025expo and NPiexpo
+    [[#1851](https://github.com/remindmodel/remind/pull/1851)] and
+    [[#1888](https://github.com/remindmodel/remind/pull/1888)]
 - **50_damages**, **51_internalizeDamages** add KotzWenz realization based on Kotz & Wenz (2024)
     [[#1601](https://github.com/remindmodel/remind/pull/1601)]
 - **config** add ELEVATE2p3 config
