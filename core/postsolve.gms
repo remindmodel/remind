@@ -581,7 +581,7 @@ pm_PEPrice(ttot,regi,entyPe)$(abs (qm_budget.m(ttot,regi)) gt sm_eps) =
        q_balPe.m(ttot,regi,entyPe) / qm_budget.m(ttot,regi);
 
 *** calculate share of stored CO2 from captured CO2
-pm_share_CCS_CCO2(t,regi) = sum(teCCS2rlf(te,rlf), vm_co2CCS.l(t,regi,"cco2","ico2",te,rlf)) / (sum(teCCS2rlf(te,rlf), vm_co2capture.l(t,regi,"cco2","ico2",te,rlf))+sm_eps);
+pm_share_CCS_CCO2(t,regi) = sum(teCCS2rlf(te,rlf), vm_co2CCS.l(t,regi,"cco2","ico2",te,rlf)) / (sum(teCCS2rlf(te,rlf), v_co2capture.l(t,regi,"cco2","ico2",te,rlf))+sm_eps);
 
 *** emissions reporting helper parameters
 o_emissions_bunkers(ttot,regi,emi)$(ttot.val ge 2005) = 
@@ -732,7 +732,7 @@ o_emissions_other(ttot,regi,emi)$(ttot.val ge 2005) =
 ***Carbon Management|Carbon Capture (Mt CO2/yr)
 o_capture(ttot,regi,"co2")$(ttot.val ge 2005) =
     sum(teCCS2rlf(te,rlf),
-        vm_co2capture.l(ttot,regi,"cco2","ico2","ccsinje",rlf)
+        v_co2capture.l(ttot,regi,"cco2","ico2","ccsinje",rlf)
     )*o_emi_conv("co2");
 
 ***Carbon Management|Carbon Capture|Process|Energy (Mt CO2/yr)

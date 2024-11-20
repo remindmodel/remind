@@ -38,10 +38,10 @@ $offdelim
 ;
 
 *** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** allow input data with either "wind" or "windon" until mrremind is updated
 f32_factorStorage(all_regi,"windon") $ (f32_factorStorage(all_regi,"windon") eq 0) = f32_factorStorage(all_regi,"wind");
 f32_factorStorage(all_regi,"windoff") = f32_factorStorage(all_regi,"windon");
-f32_factorStorage(all_regi,"windon")  = 1.35 * f32_factorStorage(all_regi,"windon"); 
+f32_factorStorage(all_regi,"windon")  = 1.35 * f32_factorStorage(all_regi,"windon");
 
 p32_factorStorage(all_regi,teVRE) = f32_factorStorage(all_regi,teVRE);
 
@@ -60,7 +60,7 @@ $include "./modules/32_power/IntC/input/f32_storageCap.prn"
 p32_storageCap(te,char) = f32_storageCap(char,te);
 display p32_storageCap;
 
-*** set total VRE share threshold above which additional integration challenges arise: 
+*** set total VRE share threshold above which additional integration challenges arise:
 p32_shThresholdTotVREAddIntCost(t)$(t.val < 2030) = 50;
 p32_shThresholdTotVREAddIntCost("2030") = 60;
 p32_shThresholdTotVREAddIntCost("2035") = 70;
@@ -70,21 +70,23 @@ p32_shThresholdTotVREAddIntCost(t)$(t.val > 2045) = 95;
 
 p32_FactorAddIntCostTotVRE = 1.5;
 
-*** Flexibility Tax Parameter
+*** Flexibility Tax Parameters
 
+*** The flexibility tax for electrolysis reduces the electricity price electrolysis sees via a subsidy. It is determined by two parameters
+*** 1) p32_PriceDurSlope determines the minimum electricity price of electrolysis (relative to average elec. price) at an electrolysis share in electricity demand of 0 (and high VRE share)
+*** 2) p32_flexSeelShare_slope determines the slope of the linear function at which the electrolysis el. price increases at higher electrolysis shares
 *** Both flexibility tax parameters are based on a regression analysis with hourly dispatch data from high-VRE scenarios of the Langfristszenarien
-*** for Germany provided by the Enertile power system model.
-*** See: https://langfristszenarien.de/enertile-explorer-de/szenario-explorer/angebot.php
+*** for Germany provided by the Enertile power system model ( https://langfristszenarien.de/enertile-explorer-de/szenario-explorer/angebot.php).
+*** See https://github.com/remindmodel/development_issues/issues/404 for details.
 
-*** This parameter determines by the maximum electricity price reduction for electrolysis at 100% VRE share and 0% share of electrolysis in total electricity demand.
-*** Standard value is derived based on the regression of the German Langfristzenarien.
+*** p32_PriceDurSlope can be chosen by a switch. The standard value can be found in main.gms.
 parameter f32_cm_PriceDurSlope_elh2(ext_regi) "slope of price duration curve for electrolysis [#]" / %cm_PriceDurSlope_elh2% /;
 p32_PriceDurSlope(regi,"elh2") = f32_cm_PriceDurSlope_elh2("GLO");
 loop(ext_regi$f32_cm_PriceDurSlope_elh2(ext_regi),
   loop(regi$regi_groupExt(ext_regi,regi),
     p32_PriceDurSlope(regi,"elh2") = f32_cm_PriceDurSlope_elh2(ext_regi);
   );
-); 
+);
 
 *** Slope of increase of electricity price for electrolysis with increasing share of electrolysis in power system
 *** The value of 1.1 is derived from the regression of the German Langfristzenarien.
