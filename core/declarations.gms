@@ -286,9 +286,6 @@ pm_taxCO2eqSCC(ttot,all_regi)                        "carbon tax component due t
 pm_GDPGross(tall,all_regi)                           "gross GDP (before damages)"
 
 ***----------------------------------------------------------------------------------------
-*** ----- Parameters needed for MAGICC ----------------------------------------------------
-p_MAGICC_emi(tall,RCP_regions_world_bunkers,emiRCP)  "emission data to export"
-***----------------------------------------------------------------------------------------
 ***---------------------------parameter for output-----------------------------------------
 o_DirlcoCCS(ttot,all_regi,all_te)                    "Annuity per sequestered CO2 by CCS technology, calc. from investment costs and fixOM. [$/tCO2]"
 o_DirlcoCCS_total(ttot,all_regi)                     "Total annuity per sequestered CO2. [$/tCO2]"
