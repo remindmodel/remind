@@ -88,8 +88,8 @@ i30_bioen_price_b(ttot,regi)$(regi_group("EUR_regi",regi)) = cm_BioSupply_Adjust
 
 *RP* in 2005 and 2010, we always want to use bau values
 loop(ttot$( (ttot.val = 2005) OR (ttot.val = 2010) ),
-    i30_bioen_price_a(ttot,regi)  =  f30_bioen_price(ttot,regi,"%cm_LU_emi_scen%","none","a");
-    i30_bioen_price_b(ttot,regi)  =  f30_bioen_price(ttot,regi,"%cm_LU_emi_scen%","none","b");
+    i30_bioen_price_a(ttot,regi)  =  f30_bioen_price(ttot,regi,"%cm_LU_emi_scen%","rcp45","a");
+    i30_bioen_price_b(ttot,regi)  =  f30_bioen_price(ttot,regi,"%cm_LU_emi_scen%","rcp45","b");
 );
 display i30_bioen_price_a, i30_bioen_price_b;
 
