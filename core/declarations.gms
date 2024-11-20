@@ -416,7 +416,7 @@ vm_costAddTeInv(tall,all_regi,all_te,emi_sectors)    "additional sector-specific
 
 vm_co2CCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)       "all different ccs. [GtC/a]"
 
-vm_co2capture(ttot,all_regi,all_enty,all_enty,all_te,rlf)   "all captured CO2. [GtC/a]"
+v_co2capture(ttot,all_regi,all_enty,all_enty,all_te,rlf)   "all captured CO2. [GtC/a]"
 v_co2capturevalve(ttot,all_regi)                            "CO2 emitted right after capture [GtC/a] (in q_balCCUvsCCS to account for different lifetimes of capture and CCU/CCS te and capacities)"
 
 v_prodUe (ttot,all_regi,all_enty,all_enty,all_te)    "Useful energy production [TWa]"
