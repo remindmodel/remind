@@ -302,6 +302,8 @@ vm_cap.lo("2025",regi,"elh2","1")= 2 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2
 vm_cap.up("2025",regi,"elh2","1")= 10 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2025",regi)
                                          / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
 
+*** fix capacities for advanced bio carbon capture technologies to zero in 2020 (i.e. no BECCS in 2020)
+vm_cap.fx("2020",regi,te,rlf)$(teBio(te) AND teCCS(te)) = 0;
 
 *** fix emissions to historical emissions in 2010
 *** RP: turned off in March 2018, as it produces substantial negative side-effects (requiring strong early retirement in 2010, which influences the future investments even in Reference scenarios)
