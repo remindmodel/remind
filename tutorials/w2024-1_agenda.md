@@ -59,9 +59,9 @@ Agenda 11/2024
 ### 10:00-10:15 BREAK
 
 ### 10:15-10:45 SESSION 2 - CONTRIBUTING TO REMIND (David Klein)
-- Make changes to REMIND code
+- git workflow (fork, clone, pull, push)
 - Run `make test`
-- Use pull requests with templates
+- Use pull requests on GitHub with templates
 
 ### 10:45-11:00 BREAK 
 
