@@ -371,7 +371,6 @@ $setglobal emicapregi  none           !! def = none
 *'
 *' This module defines the carbon price pm_taxCO2eq, with behaviour across regions governed by similar principles (e.g. global targets, or all following NDC or NPi policies).
 *'
-
 *' * (functionalForm): [REMIND default for peak budget and end-of-century budget runs]
 *' * Carbon price trajectory follows a prescribed functional form (linear/exponential) - either until peak year or until end-of-century - 
 *' * and can be endogenously adjusted to meet CO2 budget targets  - either peak or end-of-century - that are formulated in terms of total cumulated CO2 emissions from 2020 (cm_budgetCO2from2020).
