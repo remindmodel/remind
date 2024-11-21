@@ -39,8 +39,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1789](https://github.com/remindmodel/remind/pull/1789)]
 - **33_CDR** added ocean alkalinity enhancement to the CDR portfolio (OAE is turned off by default)
     [[#1777](https://github.com/remindmodel/remind/pull/1777)]
-- **45_carbonprice** added realizations diffExp2Lin and diffLin2Lin
-    [[#1723](https://github.com/remindmodel/remind/pull/1723)]
+- **45_carbonprice** added realization functionalForm
+    [[#1874](https://github.com/remindmodel/remind/pull/1874)] and [[#1723](https://github.com/remindmodel/remind/pull/1723)]
 - **45_carbonprice** added realizations NPi2025, NPi2025expo and NPiexpo
     [[#1851](https://github.com/remindmodel/remind/pull/1851)] and
     [[#1888](https://github.com/remindmodel/remind/pull/1888)]
