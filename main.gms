@@ -371,6 +371,7 @@ $setglobal emicapregi  none           !! def = none
 *'
 *' This module defines the carbon price pm_taxCO2eq, with behaviour across regions governed by similar principles (e.g. global targets, or all following NDC or NPi policies).
 *'
+
 *' * (functionalForm): [REMIND default for peak budget and end-of-century budget runs]
 *' * Carbon price trajectory follows a prescribed functional form (linear/exponential) - either until peak year or until end-of-century - 
 *' * and can be endogenously adjusted to meet CO2 budget targets  - either peak or end-of-century - that are formulated in terms of total cumulated CO2 emissions from 2020 (cm_budgetCO2from2020).
@@ -932,7 +933,7 @@ parameter
 ;
   cm_33_EW_upScalingRateLimit = 0.2;  !! def = 20% !! regexp = is.nonnegative
 
-parameter 
+parameter
   cm_33_EW_shortTermLimit         "Limit on 2030 potential for enhanced weathering, defined as % of land on which EW is applied. Default 0.5% of land"
 ;
   cm_33_EW_shortTermLimit = 0.005; !! def = 0.5% !! regexp = is.nonnegative
@@ -1485,9 +1486,12 @@ $setGlobal cm_import_EU  off !! def off
 *** (off) no ARIADNE-specific H2 imports for Germany
 $setGlobal cm_import_ariadne  off !! def off
 *** cm_PriceDurSlope_elh2, slope of price duration curve for electrolysis (increase means more flexibility subsidy for electrolysis H2)
+*** It parameterizes how much the electricity price for electrolysis is reduced relative to the annual average electricity price
 *** This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1
-*** Default value is based on data from German Langfristszenarien (see ./modules/32_power/IntC/datainput.gms).
-$setGlobal cm_PriceDurSlope_elh2 GLO 15 !! def = GLO 15
+*** Default value is based on data from German Langfristszenarien derived by the power system model Enertile.
+*** It is derived by fitting a linear function to capture the relation between electrolysis electricity price and electrolysis share in total electricity demand
+*** See https://github.com/remindmodel/development_issues/issues/404 for details.
+$setGlobal cm_PriceDurSlope_elh2 GLO 20 !! def = GLO 20
 *** cm_trade_SE_exog
 *** set exogenous SE trade scenarios (requires se_trade realization of modul 24 to be active)
 *** e.g. "2030.2050.MEA.DEU.seh2 0.5", means import of SE hydrogen from MEA to Germany from 2050 onwards of 0.5 EJ/yr,
@@ -1499,14 +1503,19 @@ $setGlobal cm_PriceDurSlope_elh2 GLO 15 !! def = GLO 15
 $setGlobal cm_trade_SE_exog off !! def off
 *** This allows to manually adjust the ramp-up curve of the SE tax on electricity. It is mainly used for taxing electricity going into electrolysis for green hydrogen production.
 *** The ramp-up curve is a logistic function that determines how fast taxes increase with increasing share of technology in total power demand.
-*** This essentially makes an assumption about to what extend the power demand of electrolysis will be taxed and how much tax exemptions there will be at low shares of green hydrogen production.
+*** This essentially makes an assumption about to what extend the power demand of electrolysis will be taxed and how much tax exemptions there will be at low shares of green hydrogen production
 *** The parameter a defines how fast the tax increases with increasing share, with 4/a being the percentage point range over which the tax value increases from 12% to 88%
-*** The parameter b defines at which share the tax is halfway between the value at 0 share and the maximum value (defined by a region's electricity tax and the electricity grid cost) that it converges to for high shares.
+*** The parameter b defines at which share the tax is halfway between the value at 0 share and
+*** the maximum value (defined by a region's electricity tax and the electricity grid cost) that it converges to for high shares.
 *** Example use:
 *** cm_SEtaxRampUpParam = "GLO.elh2.a 0.2, GLO.elh2.b 20" sets the logistic function parameter values a=0.2 and b=20 for electrolysis (elh2) to all model regions (GLO).
 *** cm_SEtaxRampUpParam = "off" disables v21_tau_SE_tax
+*** Default:
+*** cm_SEtaxRampUpParam = "GLO.elh2.a 0.2, GLO.elh2.b 20, EUR_regi.elh2.a 0.15, EUR_regi.elh2.b 40"
+*** This means that electrolysis tax is at half of electricity taxation at 40% electrolysis share in power demand for European regions, and half at 20% share for the rest of the world.
+*** We anticipate this lower taxation share in Europe, because Europe has particularly high electricity taxes compared to the rest of the world.
 *** For details, please see ./modules/21_tax/on/equations.gms.
-$setGlobal cm_SEtaxRampUpParam  GLO.elh2.a 0.2, GLO.elh2.b 20    !! def = GLO.elh2.a 0.2, GLO.elh2.b 20
+$setGlobal cm_SEtaxRampUpParam  GLO.elh2.a 0.2, GLO.elh2.b 20, EUR_regi.elh2.a 0.15, EUR_regi.elh2.b 40    !! def = GLO.elh2.a 0.2, GLO.elh2.b 20, EUR_regi.elh2.a 0.15, EUR_regi.elh2.b 40
 *** cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
 *** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
 *** switch to activate energy security scenario assumptions for Germany including additional tax on gas/oil

@@ -30,6 +30,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **core** changed adjustment cost of geohe (central heat pumps), elh2 (electrolysis), MeOH (FT-Synthesis: H2-to-Liquids)
     and h22ch4 (methanation: H2-to-Gas) to better reflect upscaling dynamics
     [[#1823](https://github.com/remindmodel/remind/pull/1823)]
+- **core** increase electrolysis CAPEX and slightly adjust default setting for electrolysis taxation and flexibility benefit,
+    add near-term bounds for electrolysis and synthetic fuel deployment
+    [[#1882](https://github.com/remindmodel/remind/pull/1882)]
 
 ### added
 - **32_power** increase minimum required dispatchable back-up capacity for VRE integration
