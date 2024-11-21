@@ -86,7 +86,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** REMIND-MAgPIE start scripts now correctly use all non-gms cfg switches
     [[#1768](https://github.com/remindmodel/remind/pull/1768)]
 - **scripts** limit slurm runtime of output.R scripts to 2 hours
-    [[1783](https://github.com/remindmodel/remind/pull/1783)]
+    [[#1783](https://github.com/remindmodel/remind/pull/1783)]
+- **30_biomass** reset 1st gen. biofuel bound from 2045 to 2030
+    [[#1890](https://github.com/remindmodel/remind/pull/1890)]
 
 ### removed
 - **45_carbonprice** removed superseded realizations linear, exponential and diffCurvPhaseIn2Lin
