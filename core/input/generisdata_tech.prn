@@ -196,6 +196,10 @@ and IEA 2024 Hydrogen Review, https://www.iea.org/reports/global-hydrogen-review
 Assume floor cost: 100 USD/kW(el)
 100 USD/kW(el) / 0.75 (long-term elh2 efficiency) ~ 133 USD/kW(H2) -> incolearn = 3370
 
+Photovoltaics - spv
+overall learning rate was increased to 25% and floor costs decreased to 50$2015/kW, as recent
+(2024) prices in various IEA-PVPS reports or other market reports show learning was faster than expected.
+
 Direct Air Capture - dac
 learning parameterization:
 Assume that 3 MtCO2/yr DAC capacity installed gobally by 2025 (https://www.iea.org/reports/direct-air-capture)
