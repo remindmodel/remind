@@ -1783,7 +1783,7 @@ $setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on  !! regexp = off|on
 ***  sqSectorAvrgShare "Square deviation from average share penalty. Recomended over sqSectorShare (see above)."
 ***  minMaxAvrgShare   "Min-max deviation from average share penalty."
 *** The relative effect of the penalization term in the objective function is scaled to avoid affecting optimization results. This scaling factor can be defined using the switch c_seFeSectorShareDevScale.
-$setglobal cm_seFeSectorShareDevMethod  off !! def = sqSectorAvrgShare  !! regexp = off|sqSectorShare|sqSectorAvrgShare|minMaxAvrgShare
+$setglobal cm_seFeSectorShareDevMethod  sqSectorAvrgShare !! def = sqSectorAvrgShare  !! regexp = off|sqSectorShare|sqSectorAvrgShare|minMaxAvrgShare
 *** c_seFeSectorShareDevUnit "Defines if the penalization term is applied over fuel shares or energy units." 
 ***  share,  "The square penalization is applied directly to the share values. This results in different-sized regions having varying relative penalization incentives, but the range of penalization values will be more consistent from the solver's perspective."
 ***  energy, "The square penalization is applied to the share values multiplied by the energy demand. This approach scales penalizations better across different-sized regions, but there is a higher risk of the penalizations being ignored and the shares not being enforced if the value range is too small."
