@@ -79,6 +79,7 @@ gdp_SSP2EU_CAMP_strong "CAMPAIGNers scenario with high ambition lifestyle change
 gdp_SSP2_demDiffer_IKEA "Demand reduction in Global North (CAZ,EUR,JPN,NEU,USA) and demand increase in Emerging regions (IND,LAM,OAS,SSA). Reduction follows the factor f of demRedStrong scenario, while increase uses factor 2-f."
 gdp_SSP2_demRedStrong "edget internal demScen, might be removed soon"
 gdp_SSP2_demRedWeak
+gdp_SSP2_highDemDEU
 /
 
 all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
@@ -135,16 +136,17 @@ SLCF_building_transport
 
 all_LU_emi_scen  "all emission baselines for CH4 and N2O land use emissions from MAgPIE"
 /
-    SDP         "very low emissions (from SDP scenario in MAgPIE)"
-          SDP_EI
-          SDP_MC
-          SDP_RC
-    SSP1        "low    emissions (from SSP1 scenario in MAgPIE)"
-    SSP2        "medium emissions (from SSP2 scenario in MAgPIE)"
-    SSP2EU
-          SSP3        "currently not available"
-    SSP4        "currently not available"
-    SSP5        "high   emissions (from SSP5 scenario in MAgPIE)"
+SDP         "very low emissions (from SDP scenario in MAgPIE)"
+SDP_EI
+SDP_MC
+SDP_RC
+SSP1        "low    emissions (from SSP1 scenario in MAgPIE)"
+SSP2        "medium emissions (from SSP2 scenario in MAgPIE)"
+SSP2EU
+SSP2_lowEn
+SSP3        "currently not available"
+SSP4        "currently not available"
+SSP5        "high   emissions (from SSP5 scenario in MAgPIE)"
 /
 
 all_fossilScen    "all possible scenarios for fossils"

@@ -267,7 +267,7 @@ $setGlobal climate  off               !! def = off
 *'---------------------    16_downscaleTemperature    --------------------------
 *'
 *' * (off)
-*' * (CMIP5): downscale GMT to regional temperature based on CMIP5 data (between iterations, no runtime impact). [Requires climate = off, cm_rcp_scen = none, iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path through (cm_year_co2_tax_hist, cm_co2_tax_hist) and (cm_startyear, cm_co2_tax_startyear);
+*' * (CMIP5): downscale GMT to regional temperature based on CMIP5 data (between iterations, no runtime impact). [Requires climate = off, cm_rcp_scen = none, iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_taxCO2_regiDiff_endYr; developed countries have linear path through (cm_taxCO2_historicalYr, cm_taxCO2_historical) and (cm_startyear, cm_taxCO2_startyear);
 $setGlobal downscaleTemperature  off  !! def = off
 *'---------------------    20_growth    ------------------------------------------
 *'
@@ -370,26 +370,30 @@ $setglobal emicapregi  none           !! def = none
 *'
 *' This module defines the carbon price pm_taxCO2eq, with behaviour across regions governed by similar principles (e.g. global targets, or all following NDC or NPi policies).
 *'
-*' * (diffExp2Lin) and (diffLin2Lin): standard carbonprice realizations for ambitious climate policy scenarios [REMIND default for peak budget runs: diffLin2Lin in combination with iterative_target_adj = 9], 
-*' * three main design choices:
-*' *    [diff]: level of regional carbonprice differentiation in 2030 determined by cm_co2_tax_spread (default = 10); quadratic phase-in to reach globally uniform carbonprices in cm_CO2priceRegConvEndYr
-*' *    [Exp or Lin]: functional form of carbonprice path for developed regions:
-*' *        [Exp]: exponential increase with rate given by cm_co2_tax_growth, (initial) value in cm_startyear is given by cm_co2_tax_startyear
-*' *        [Lin]: linear increase starting at historical level given by cm_co2_tax_hist in year cm_year_co2_tax_hist, (initial) value in cm_startyear set by cm_co2_tax_startyear
-*' *    [2Lin]: post-peak behaviour depending on cm_iterative_target_adj
-*' *        [9]: after the (endogenously adjusted) peak year, carbonprice path increases linearly with fixed annual increase given by cm_taxCO2inc_after_peakBudgYr (default = 0, i.e. constant)                                     
-*' *        [5]: no adaptation of carbonprice path after peak year
-*' *        [0]: after the (exogenously fixed) peak year, carbonprice path increases linearly with fixed annual increase given by cm_taxCO2inc_after_peakBudgYr (default = 0, i.e. constant);
-*' *             choose cm_peakBudgYr = 2110 for no adaptation of carbonprice path until end of century
+*' * (functionalForm): [REMIND default for peak budget and end-of-century budget runs]
+*' * Carbon price trajectory follows a prescribed functional form (linear/exponential) - either until peak year or until end-of-century - 
+*' * and can be endogenously adjusted to meet CO2 budget targets  - either peak or end-of-century - that are formulated in terms of total cumulated CO2 emissions from 2020 (cm_budgetCO2from2020).
+*' * Flexible choices for regional carbon price differentiation.
+*' * Four main design choices: 
+*' *    [Global anchor trajectory]: The realization uses a global anchor trajectory based on which the regional carbon price trajectories are defined.
+*' *                                The functional form (linear/exponential) of the global anchor trajectory is chosen via cm_taxCO2_functionalForm [default = linear]. 
+*' *                                The (initial) carbon price in cm_startyear is chosen via cm_taxCO2_startyear. This value is endogenously adjusted to meet CO2 budget targets if cm_iterative_target_adj is set to 5, 7, or 9.
+*' *                                (linear):      The linear curve is determined by the two points (cm_taxCO2_historicalYr, cm_taxCO2_historical) and (cm_startyear, cm_taxCO2_startyear). 
+*' *                                               By default, cm_taxCO2_historicalYr is the last timestep before cm_startyear, and cm_taxCO2_historical is the carbon price in that timestep in the reference run (path_gdx_ref) - computed as the maximum of pm_taxCO2eq over all regions.
+*' *                                (exponential): The exponential curve is determined by exponential growth rate (cm_taxCO2_expGrowth).
+*' *    [Post-peak behaviour]:      The global anchor trajectory can be adjusted after reaching the peak of global CO2 emissions in cm_peakBudgYr. See cm_iterative_target_adj and 45_carbonprice/functionalForm/realization.gms for details.
+*' *    [Regional differentiation]: Regional carbon price differentiation relative to global anchor trajectory is chosen via cm_taxCO2_regiDiff [default = initialSpread10].
+*' *    [Interpolation from path_gdx_ref]: To smoothen a potential jump of carbon prices in cm_startyear, an interpolation between (a) the carbon prices before cm_startyear procided by path_gdx_ref and (b) the carbon prices from cm_startyear onward defined by parts I-III can be chosen via cm_taxCO2_interpolation [default = off].
+*' *                                       In addition, the carbon prices provided by path_gdx_ref can be used as a lower bound based on the switch cm_taxCO2_lowerBound_path_gdx_ref [def = on].
 *' * (expoLinear): 4.5% exponential increase until cm_expoLinear_yearStart, transitioning into linear increase thereafter
 *' * (exogenous): carbon price is specified using an external input file or using the switch cm_regiExoPrice. Requires cm_emiscen = 9 and cm_iterative_target_adj = 0
-*' * (temperatureNotToExceed): [test and verify before using it!] Find the optimal carbon carbon tax (set cm_emiscen = 1, iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path through (cm_year_co2_tax_hist, cm_co2_tax_hist) and (cm_startyear, cm_co2_tax_startyear);
+*' * (temperatureNotToExceed): [test and verify before using it!] Find the optimal carbon carbon tax (set cm_emiscen = 1, iterative_target_adj = 9] curved convergence of CO2 prices between regions until cm_taxCO2_regiDiff_endYr; developed countries have linear path through (cm_taxCO2_historicalYr, cm_taxCO2_historical) and (cm_startyear, cm_taxCO2_startyear);
 *' * (NDC): implements a carbon price trajectory consistent with the NDC targets (up to 2030) and a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). Choose version using cm_NDC_version "2023_cond", "2023_uncond", or replace 2023 by 2022, 2021 or 2018 to get all NDC published until end of these years.
 *' * (NPi): National Policies Implemented, extrapolation of historical (until 2020) carbon prices
 *' * (none): no tax policy (combined with all emiscens except emiscen = 9)
 
-***  (exponential) is superseded by (diffExp2Lin): For a globally uniform, exponentially increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_co2_tax_spread = 1, set cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_co2_tax_startyear. 
-***  (linear) is superseded by (diffLin2Lin): For a globally uniform, linearly increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_co2_tax_spread = 1, set cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_co2_tax_startyear. [Adjust historical reference point (cm_year_co2_tax_hist, cm_co2_tax_hist) if needed.]
+***  (exponential) is superseded by (functionalForm): For a globally uniform, exponentially increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_taxCO2_functionalForm = exponential, cm_taxCO2_regiDiff = none, cm_taxCO2_interpolation = off, cm_taxCO2_lowerBound_path_gdx_ref = off, cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_taxCO2_startyear. 
+***  (linear) is superseded by (functionalForm): For a globally uniform, linearly increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_taxCO2_functionalForm = linear, cm_taxCO2_regiDiff = none, cm_taxCO2_interpolation = off, cm_taxCO2_lowerBound_path_gdx_ref = off, cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_taxCO2_startyear. [Adjust historical reference point (cm_taxCO2_historicalYr, cm_taxCO2_historical) if needed.]
 
 $setglobal carbonprice  none           !! def = none
 *'---------------------    46_carbonpriceRegi  ---------------------------------
@@ -506,23 +510,42 @@ parameter
 *' *  (1): BAU
 *' *  (4): emission time path
 *' *  (6): budget
-*' *  (9): tax scenario (requires running module 21_tax "on"), tax level controlled by module 45_carbonprice and cm_co2_tax_startyear, other GHG etc. controlled by cm_rcp_scen
+*' *  (9): tax scenario (requires running module 21_tax "on"), tax level controlled by module 45_carbonprice and cm_taxCO2_startyear, other GHG etc. controlled by cm_rcp_scen
 *' *  (10): used for cost-benefit analysis
 *' *JeS* WARNING: data for cm_emiscen 4 only exists for multigas_scen 2 bau scenarios and for multigas_scen 1
-*'
 parameter
-  cm_co2_tax_startyear    "level of co2 tax in start year in $ per t CO2eq"
+  cm_taxCO2_startyear    "level of co2 tax in start year in $ per t CO2eq"
 ;
-  cm_co2_tax_startyear = -1;     !! def = -1  !! regexp = -1|is.nonnegative
+  cm_taxCO2_startyear = -1;     !! def = -1  !! regexp = -1|is.nonnegative
 *' * (-1): default setting equivalent to no carbon tax
-*' * (any number >= 0): co2 tax in start year [if cm_iterative_target_adj eq 0];
-*' *                    initialization of co2 tax in start year [if cm_iterative_target_adj ne 0]
+*' * (any number >= 0): CO2 tax in start year [if cm_iterative_target_adj eq 0];
+*' *                    initialization of CO2 tax in start year [if cm_iterative_target_adj eq 5, 7 or 9]
+parameter
+  cm_taxCO2_expGrowth         "growth rate of carbon tax"
+;
+  cm_taxCO2_expGrowth = 1.045;            !! def = 1.045  !! regexp = is.numeric
+*'  (any number >= 0): rate of exponential increase over time, default value chosen to be consistent with interest rate
+parameter
+  cm_budgetCO2from2020   "CO2 budget for all economic sectors starting from 2020 (GtCO2). It can be either peak budget, but can also be an end-of-century budget"
+;
+  cm_budgetCO2from2020      = 1150;   !! def = 1150
+*'  budgets from AR6 for 2020-2100 (including 2020), for 1.5 C: 500 Gt CO2 peak budget (400 Gt CO2 end of century), for 2 C: 1150 Gt CO2
+parameter
+  cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
+;
+  cm_peakBudgYr            = 2050;   !! def = 2050
+*' time of net-zero CO2 emissions (peak budget)
+*' endogenous adjustment by algorithms in 45_carbonprice/functionalForm/postsolve.gms [requires emiscen = 9 and cm_iterative_target_adj = 7 or 9]
+parameter
+  cm_taxCO2_IncAfterPeakBudgYr "annual increase of CO2 tax after cm_peakBudgYr in $ per tCO2"
+;
+  cm_taxCO2_IncAfterPeakBudgYr = 0; !! def = 0 . For weak targets (higher than 1100 Peak Budget), this value might need to increased to prevent continually increasing temperatures
 *'
 parameter
-  cm_co2_tax_growth         "growth rate of carbon tax"
+  cm_expoLinear_yearStart   "time at which carbon price increases linearly instead of exponentially"
 ;
-  cm_co2_tax_growth = 1.045;            !! def = 1.045  !! regexp = is.numeric
-*'  (any number >= 0): rate of exponential increase over time, default value chosen to be consistent with interest rate
+  cm_expoLinear_yearStart  = 2050;   !! def = 2050
+*'
 parameter
   c_macscen                 "scenario switch on whether or not to use MAC (Marginal Abatement Cost) for certain sectors not related to direct combustion of fossil fuel, e.g. fugitive emissions from old mines, forestry, agriculture and cement"
 ;
@@ -824,15 +847,13 @@ parameter
 parameter
   cm_iterative_target_adj   "settings on iterative adjustment for CO2 tax based on in-iteration emission or forcing level. Allow iteratively generated endogenous global CO2 tax under peak budget constraint or end-of-century budget constraint."
 ;
-  cm_iterative_target_adj = 0;      !! def = 0  !! regexp = 0|2|3|4|5|6|7|9
+  cm_iterative_target_adj = 0;      !! def = 0  !! regexp = 0|2|3|5|7|9
 *' * (0): no iterative adjustment of CO2 tax (terminology: CO2 price and CO2 tax in REMIND is used interchangeably)
 *' * (2): iterative adjustment of CO2 tax or cumulative emission based on climate forcing calculated by climate model magicc, for runs with budget or CO2 tax constraints. See ./modules/45_carbonprice/NDC/postsolve.gms for direct algorithm
 *' * (3): [requires 45_carbonprice = NDC and emiscen = 9] iterative adjustment of CO2 tax based on 2025 or 2030 regionally differentiated emissions, for runs with emission budget or CO2 tax constraints. See ./modules/45_carbonprice/NDC/postsolve.gms for direct algorithm
-*' * (4): iterative adjustment of CO2 tax based on CO2 FF&I cumulative emission budget (i.e. without landuse emissions) (2020-2100), for runs with emission budget or CO2 tax constraints. See core/postsolve.gms for direct algorithms for runs with budget or CO2 tax constraints
-*' * (5): iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission budget(2020-2100), for runs with emission budget or CO2 tax constraints. See core/postsolve.gms for direct algorithms
-*' * (6): iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission peak budget, for runs with emission budget or CO2 tax constraints. See core/postsolve.gms for direct algorithms
-*' * (7): iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission peak budget, for runs with emission budget or CO2 tax constraints. Features: results in a peak budget with zero net CO2 emissions after peak budget is reached. See core/postsolve.gms for direct algorithms
-*' * (9): [require the right settings in 45_carbonprice] iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission peak budget, for runs with emission budget or CO2 tax constraints. Features: 1) after the year when budget peaks, CO2 tax has an annual increase by cm_taxCO2inc_after_peakBudgYr, 2) automatically shifts cm_peakBudgYr to find the correct year of budget peaking for a given budget. For REMIND version v2.1 or above.
+*' * (5): [requires 45_carbonprice = functionalForm and emiscen = 9] iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission budget(2020-2100), for runs with emission budget or CO2 tax constraints. [see 45_carbonprice/functionalForm/postsolve.gms for direct algorithm]
+*' * (7): [requires 45_carbonprice = functionalForm and emiscen = 9] iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission peak budget, for runs with emission budget or CO2 tax constraints. Features: results in a peak budget with zero net CO2 emissions after peak budget is reached. See core/postsolve.gms for direct algorithms [see 45_carbonprice/functionalForm/postsolve.gms for direct algorithm]
+*' * (9): [requires 45_carbonprice = functionalForm and emiscen = 9] iterative adjustment of CO2 tax based on economy-wide CO2 cumulative emission peak budget, for runs with emission budget or CO2 tax constraints. Features: 1) after the year when budget peaks, CO2 tax has an annual increase by cm_taxCO2_IncAfterPeakBudgYr, 2) automatically shifts cm_peakBudgYr to find the correct year of budget peaking for a given budget. [see 45_carbonprice/functionalForm/postsolve.gms for direct algorithm]
 *'
 parameter
   cm_NDC_divergentScenario  "choose scenario about convergence of CO2eq prices [45_carbonprice = NDC]"
@@ -910,26 +931,11 @@ parameter
 ;
   cm_33_EW_upScalingRateLimit = 0.2;  !! def = 20% !! regexp = is.nonnegative
 
-parameter 
+parameter
   cm_33_EW_shortTermLimit         "Limit on 2030 potential for enhanced weathering, defined as % of land on which EW is applied. Default 0.5% of land"
 ;
   cm_33_EW_shortTermLimit = 0.005; !! def = 0.5% !! regexp = is.nonnegative
-
-parameter
-  cm_expoLinear_yearStart   "time at which carbon price increases linearly instead of exponentially"
-;
-  cm_expoLinear_yearStart  = 2050;   !! def = 2050
 *'
-parameter
-  c_budgetCO2from2020FFI "carbon budget for CO2 emissions starting from 2020 from fossil fuels & industry (FFI), i.e. without land-use (in GtCO2). It can be either peak budget, but can also be an end-of-century budget"
-;
-  c_budgetCO2from2020FFI   = 700;    !! def = 700
-*'
-parameter
-  c_budgetCO2from2020   "CO2 budget for all economic sectors starting from 2020 (GtCO2). It can be either peak budget, but can also be an end-of-century budget"
-;
-  c_budgetCO2from2020      = 1150;   !! def = 1150
-*'  budgets from AR6 for 2020-2100 (including 2020), for 1.5 C: 500 Gt CO2 peak budget (400 Gt CO2 end of century), for 2 C: 1150 Gt CO2
 parameter
   cm_postTargetIncrease     "carbon price increase per year after regipol emission target is reached (euro per tCO2)"
 ;
@@ -1017,31 +1023,6 @@ parameter
 ;
   cm_H2InBuildOnlyAfter = 2150;   !! def = 2150 (rule out H2 in buildings)
 *' For all years until the given year, FE demand for H2 in buildings is set to zero
-parameter
-  cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
-;
-  cm_peakBudgYr            = 2050;   !! def = 2050
-*' time of net-zero CO2 emissions (peak budget)
-*' endogenous adjustment by algorithms in core/postsolve.gms requires (emiscen = 9) and (cm_iterative_target_adj = 7 or 9)
-parameter
-  cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 tax after the Peak Budget Year in $ per tCO2"
-;
-  cm_taxCO2inc_after_peakBudgYr = 0; !! def = 0 . For weak targets (higher than 1100 Peak Budget), this value might need to increased to prevent continually increasing temperatures
-*'
-parameter
-  cm_CO2priceRegConvEndYr      "Year at which regional CO2 taxes converge in module 45 for realizations with differentiated carbon prices"
-;
-  cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
-*'
-parameter
-  cm_co2_tax_spread            "spread of carbon prices in 2030 given as a factor"
-;
-  cm_co2_tax_spread        = 10;     !! def = 10  !! regexp = 1|10|20
-*'  Initial spread of carbon prices (in 2030) between the regions with highest respectively lowest GDP per capita (PPP)
-*' * (1 - uniform) Uniform carbon pricing, i.e. no differentiation
-*' * (10 - medium) Spread of carbon prices in 2025 is equal to 10
-*' * (20 - strong) Spread of carbon prices in 2025 is equal to 20
-
 parameter
   c_teNoLearngConvEndYr      "Year at which regional costs of non-learning technologies converge"
 ;
@@ -1249,7 +1230,7 @@ $setglobal c_tech_earlyreti_rate  GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(
 ***  (SSP2): emissions (from SSP2 scenario in MAgPIE)
 ***  (SSP5): emissions (from SSP5 scenario in MAgPIE)
 ***  (SDP):
-$setglobal cm_LU_emi_scen  SSP2   !! def = SSP2  !! regexp = SSP(1|2|3|5)|SDP
+$setglobal cm_LU_emi_scen  SSP2   !! def = SSP2  !! regexp = SSP(1|2|3|5)|SDP |SSP2_lowEn
 *** cm_regi_bioenergy_EFTax  "region(s) in which bioenergy is charged with an emission-factor-based tax"
 ***  This switch has only an effect if 21_tax is on and cm_bioenergy_EF_for_tax
 ***  is not zero. It reads in the regions that are affected by the emission-
@@ -1503,9 +1484,12 @@ $setGlobal cm_import_EU  off !! def off
 *** (off) no ARIADNE-specific H2 imports for Germany
 $setGlobal cm_import_ariadne  off !! def off
 *** cm_PriceDurSlope_elh2, slope of price duration curve for electrolysis (increase means more flexibility subsidy for electrolysis H2)
+*** It parameterizes how much the electricity price for electrolysis is reduced relative to the annual average electricity price
 *** This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1
-*** Default value is based on data from German Langfristszenarien (see ./modules/32_power/IntC/datainput.gms).
-$setGlobal cm_PriceDurSlope_elh2 GLO 15 !! def = GLO 15
+*** Default value is based on data from German Langfristszenarien derived by the power system model Enertile.
+*** It is derived by fitting a linear function to capture the relation between electrolysis electricity price and electrolysis share in total electricity demand
+*** See https://github.com/remindmodel/development_issues/issues/404 for details.
+$setGlobal cm_PriceDurSlope_elh2 GLO 20 !! def = GLO 20
 *** cm_trade_SE_exog
 *** set exogenous SE trade scenarios (requires se_trade realization of modul 24 to be active)
 *** e.g. "2030.2050.MEA.DEU.seh2 0.5", means import of SE hydrogen from MEA to Germany from 2050 onwards of 0.5 EJ/yr,
@@ -1517,14 +1501,19 @@ $setGlobal cm_PriceDurSlope_elh2 GLO 15 !! def = GLO 15
 $setGlobal cm_trade_SE_exog off !! def off
 *** This allows to manually adjust the ramp-up curve of the SE tax on electricity. It is mainly used for taxing electricity going into electrolysis for green hydrogen production.
 *** The ramp-up curve is a logistic function that determines how fast taxes increase with increasing share of technology in total power demand.
-*** This essentially makes an assumption about to what extend the power demand of electrolysis will be taxed and how much tax exemptions there will be at low shares of green hydrogen production.
+*** This essentially makes an assumption about to what extend the power demand of electrolysis will be taxed and how much tax exemptions there will be at low shares of green hydrogen production
 *** The parameter a defines how fast the tax increases with increasing share, with 4/a being the percentage point range over which the tax value increases from 12% to 88%
-*** The parameter b defines at which share the tax is halfway between the value at 0 share and the maximum value (defined by a region's electricity tax and the electricity grid cost) that it converges to for high shares.
+*** The parameter b defines at which share the tax is halfway between the value at 0 share and
+*** the maximum value (defined by a region's electricity tax and the electricity grid cost) that it converges to for high shares.
 *** Example use:
 *** cm_SEtaxRampUpParam = "GLO.elh2.a 0.2, GLO.elh2.b 20" sets the logistic function parameter values a=0.2 and b=20 for electrolysis (elh2) to all model regions (GLO).
 *** cm_SEtaxRampUpParam = "off" disables v21_tau_SE_tax
+*** Default:
+*** cm_SEtaxRampUpParam = "GLO.elh2.a 0.2, GLO.elh2.b 20, EUR_regi.elh2.a 0.15, EUR_regi.elh2.b 40"
+*** This means that electrolysis tax is at half of electricity taxation at 40% electrolysis share in power demand for European regions, and half at 20% share for the rest of the world.
+*** We anticipate this lower taxation share in Europe, because Europe has particularly high electricity taxes compared to the rest of the world.
 *** For details, please see ./modules/21_tax/on/equations.gms.
-$setGlobal cm_SEtaxRampUpParam  GLO.elh2.a 0.2, GLO.elh2.b 20    !! def = GLO.elh2.a 0.2, GLO.elh2.b 20
+$setGlobal cm_SEtaxRampUpParam  GLO.elh2.a 0.2, GLO.elh2.b 20, EUR_regi.elh2.a 0.15, EUR_regi.elh2.b 40    !! def = GLO.elh2.a 0.2, GLO.elh2.b 20, EUR_regi.elh2.a 0.15, EUR_regi.elh2.b 40
 *** cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
 *** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
 *** switch to activate energy security scenario assumptions for Germany including additional tax on gas/oil
@@ -1692,14 +1681,38 @@ $setGlobal cm_CESMkup_ind_data   ""        !! def = ""
 $setGlobal cm_fxIndUe        off   !! def = off  !! regexp = off|on
 $setGlobal cm_fxIndUeReg     ""    !! def = ""
 
-*' * cm_co2_tax_hist "switch for setting historical level of CO2 tax (in $ per t CO2eq) that is used as starting point in diffLin2Lin of 45_carbonprice"
-*' * (gdx_ref): level of CO2 tax (defined as maximum of pm_taxCO2eq over all regions) from path_gdx_ref in cm_year_co2_tax_hist
-*' * (any number >= 0): level of co2 tax in cm_co2_tax_hist_year
-$setglobal cm_co2_tax_hist  gdx_ref    !! def = "gdx_ref"  !! regexp = gdx_ref|is.nonnegative
-*' * cm_year_co2_tax_hist  "switch for setting the year of cm_co2_tax_hist"
-*' * (last): last time period before start year (e.g. 2025 if start year is 2030)
-*' * (any number >= 2005 and < cm_startyear): year for which historical level of CO2 tax (cm_co2_tax_hist) is provided (e.g. 2024)
-$setglobal cm_year_co2_tax_hist  last    !! def = "last"  !! regexp = last|is.nonnegative
+*** cm_taxCO2_functionalForm "switch for choosing the functional form of the global anchor trajectory in 45_carbonprice/functionalForm"
+*** (linear): The linear curve is determined by the two points (cm_taxCO2_historicalYr, cm_taxCO2_historical) and (cm_startyear, cm_taxCO2_startyear). 
+*** (exponential): The exponential curve is determined by the point (cm_startyear, cm_taxCO2_startyear) and the exponential growth rate (cm_taxCO2_expGrowth).
+$setglobal cm_taxCO2_functionalForm   linear    !! def = "linear"  !! regexp = linear|exponential
+*** cm_taxCO2_historical "switch for setting historical level of CO2 tax (in $ per t CO2eq) that is used if functional form is linear"
+*** (gdx_ref): level of CO2 tax (defined as maximum of pm_taxCO2eq over all regions) from path_gdx_ref in cm_taxCO2_historicalYr
+*** (any number >= 0): level of co2 tax in cm_taxCO2_historicalYr
+$setglobal cm_taxCO2_historical       gdx_ref    !! def = "gdx_ref"  !! regexp = gdx_ref|is.nonnegative
+*** cm_taxCO2_historicalYr  "switch for setting the year of cm_taxCO2_historical"
+*** (last): last time period before start year (e.g. 2025 if start year is 2030)
+*** (any number >= 2005 and < cm_startyear): year for which historical level of CO2 tax (cm_taxCO2_historical) is provided (e.g. 2024)
+$setglobal cm_taxCO2_historicalYr     last    !! def = "last"  !! regexp = last|is.nonnegative
+*** cm_taxCO2_regiDiff "switch for choosing the regional carbon price differentiation scheme in 45_carbonprice/functionalForm"
+*** (none): No regional differetiation, i.e. uniform carbon pricing
+*** (initialSpread10): Maximal initial spread of carbon prices in 2030 between OECD regions and poorest region is equal to 10. Initial spread for each region determined based on GDP per capita (PPP) in 2015. Carbon prices converge using quadratic phase-in until cm_taxCO2_regiDiff_endYr (default = 2050).
+*** (initialSpread20): Maximal initial spread of carbon prices in 2030 between OECD regions and poorest region is equal to 20. Initial spread for each region determined based on GDP per capita (PPP) in 2015. Carbon prices converge using quadratic phase-in until cm_taxCO2_regiDiff_endYr (default = 2050).
+*** (gdpSpread): Regional differentiation based on GDP per capita (PPP) throughout the century. Uses current GDP per capita (PPP) of OECD countries - around 50'000 US$2017 - as threshold for application of full carbon price.
+$setglobal cm_taxCO2_regiDiff         initialSpread10    !! def = "initialSpread10"  !! regexp = none|initialSpread10|initialSpread20|gdpSpread
+*** cm_taxCO2_regiDiff_endYr "switch for choosing convergence year of regionally differentiated carbon prices when using initialSpread10 or initialSpread20 in 45_carbonprice/functionalForm"
+*** Setting cm_taxCO2_regiDiff_endYr to GLO 2050, IND 2070, SSA 2100 means that convergence year is delayed for IND to 2070 and for SSA to 2100
+$setglobal cm_taxCO2_regiDiff_endYr   "GLO 2050"    !! def = "GLO 2050"
+*** cm_co2_tax_interpolation "switch for interpolation between (a) carbonprice trajectory given by path_gdx_ref and (b) carbonprice trajectory defined in 45_carbonprice"
+*** (off): no interpolation, i.e. (b) is used from cm_startyear onward
+*** (one_step): linear interpolation within 10 years between (a) and (b). For example, if cm_startyear = 2030, it uses (a) until 2025, the average of (a) and (b) in 2030, and (b) from 2035.
+*** (two_steps): linear interpolation within 15 years between (a) and (b). For example, if cm_startyear = 2030, it uses (a) until 2025, weighted averages of (a) and (b) in 2030 and 2035, and (b) from 2040.
+*** Setting cm_co2_tax_interpolation to GLO.2025.2050 2, EUR.2025.2040 1 means that interpolation between (a) and (b) in quadratic [exponent = 2], starts in 2025, and ends in 2050 for all regions, except for Europe that has linear interpolation [exponent = 1] starting in 2025 and ending in 2040
+$setglobal cm_taxCO2_interpolation  off    !! def = "one_step"
+*** cm_taxCO2_lowerBound_path_gdx_ref "switch for choosing if carbon price trajectories from path_gdx_ref are used as lower bound"
+*** (on): carbon price trajectories (pm_taxCO2eq) from path_gdx_ref is used as lower bound for pm_taxCO2eq
+*** (off): no lower bound
+$setglobal cm_taxCO2_lowerBound_path_gdx_ref  on    !! def = "on" !! regexp = on|off
+
 
 *** cm_ind_energy_limit Switch for setting upper limits on industry energy
 *** efficiency improvements.  See ./modules/37_subsectors/datainput.gms for
