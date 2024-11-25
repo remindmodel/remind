@@ -230,6 +230,10 @@ Biomass Methanation (Biomass-to-Gas) with carbon capture - biogasc
 inco: 1230 USD/kW, add 30 USD/kW for carbon capture
 eta: 0.55, same as without carbon capture
 
+Photovoltaics - spv
+overall learning rate was increased to 25% and floor costs decreased to 50$2015/kW, as recent
+(2024) prices in various IEA-PVPS reports or other market reports show learning was faster than expected.
+
 Direct Air Capture - dac
 learning parameterization:
 Assume that 3 MtCO2/yr DAC capacity installed gobally by 2025 (https://www.iea.org/reports/direct-air-capture)

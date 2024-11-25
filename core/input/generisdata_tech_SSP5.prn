@@ -61,9 +61,9 @@ mix0
 eta                 1.00        1.00        1.00        1.00       1.00         1.00        1.00        1.00
 omf                 0.04        0.06        0.025       0.02       0.03         0.02                   0.025
 lifetime              30          25         130          25         25           30          25          30
-incolearn                                               1800       3600         4910                    8290
+incolearn                                               1900       3600         5010                    8290
 ccap0                                                   0.06     0.0007        0.005                  0.0002
-learn                                                   0.084     0.096         0.17                    0.08
+learn                                                   0.09     0.096         0.20                    0.08
 luse                                                                            0.09                   0.021
 
 +                   elh2         dot         dhp      h2turb      h2curt    h2turbVRE   elh2VRE         h22ch4      MeOH
