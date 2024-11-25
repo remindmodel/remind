@@ -7,10 +7,10 @@
 *** SOF ./modules/45_carbonprice/expoLinear/declarations.gms
 
 scalar
-s45_co2_tax_startyear                       "level of CO2 tax in start year [T$/GtC]"
+s45_taxCO2_startyear                        "CO2 tax provided by cm_taxCO2_startyear converted from $/t CO2eq to T$/GtC"
 ;
 parameter
-p45_tau_co2_tax_inc(all_regi)     "Linear annual increase in carbon price [T$/GtC/yr]"
+p45_taxCO2eq_expoLinearIncrease(all_regi)     "Linear annual increase in carbon price [T$/GtC/yr] right before cm_expoLinear_yearStart"
 ;
 
 *** EOF ./modules/45_carbonprice/expoLinear/declarations.gms
