@@ -145,7 +145,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   if (coupling %in% "MAgPIE") {
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
-                          "magpie_empty", "var_luc","cfg$gms$s15_elastic_demand")
+                          "magpie_empty", "var_luc","cfg_mag$gms$s15_elastic_demand")
     # identify MAgPIE switches by "cfg_mag" and "scenario_config"
     knownColumnNames <- c(knownColumnNames, grep("cfg_mag|scenario_config", names(scenConf), value = TRUE))
   } else { # not a coupling config
