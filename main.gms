@@ -810,9 +810,9 @@ parameter
 *' *  (4): so2 tax intermediary between 1 and 2, multiplying (1) tax by the ratio (3) and (2)
 *'
 parameter
-  c_techAssumptScen         "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
+  c_techAssumptScen         "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5, 4: SSP3"
 ;
-  c_techAssumptScen     = 1;         !! def = 1  !! regexp = [1-3]
+  c_techAssumptScen     = 1;         !! def = 1  !! regexp = [1-4]
 *' This flag defines an energy technology scenario according to SSP scenario
 *' *   (1) SSP2: reference scenario - default investment costs & learning rates for pv, csp and wind
 *' *   (2) SSP1: advanced renewable energy techno., pessimistic for nuclear and CCS
