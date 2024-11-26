@@ -15,7 +15,7 @@ pegas.seh2.gash2               15.3             0.00315
 pegas.seh2.gash2c               1.5      13.8   0.00315
 pegas.sehe.gashp               15.3             0.00315
 pegas.seliqfos.gasftrec        15.3           
-pegas.seliqfos.gasftcrec       13.8       1.5
+pegas.seliqfos.gasftcrec       15.1       0.2
 pecoal.seel.igcc               26.1             0.04415
 pecoal.seel.pc                 26.1             0.04415
 pecoal.seel.igccc               2.6      23.5   0.04415
@@ -24,13 +24,13 @@ pecoal.sehe.coalhp             26.1             0.04415
 pecoal.seh2.coalh2             26.1             0.04415
 pecoal.seh2.coalh2c             2.6      23.5   0.04415
 pecoal.seliqfos.coalftrec      26.1           
-pecoal.seliqfos.coalftcrec      7.8      18.3
+pecoal.seliqfos.coalftcrec     10.3      15.8
 pecoal.sesofos.coaltr          26.1             0.04415
 pecoal.segafos.coalgas         26.1             0.04415
 pebiolc.seel.bioigccc         -20.0      20.0
 pebiolc.seel.bioigcc
-pebiolc.segabio.biogasc        -9.5       9.5
-pebiolc.seliqbio.bioftcrec    -12.0      12.0 
+pebiolc.segabio.biogasc       -14.1      14.1
+pebiolc.seliqbio.bioftcrec    -14.6      14.6
 pebiolc.seh2.bioh2c           -22.5      22.5   
 pebiolc.seel.biochp                             
 pebiolc.seh2.bioh2                              
@@ -42,5 +42,25 @@ peoil.seliqfos.refliq          20
 peoil.seel.dot                 20             0.01892
 seh2.segasyn.h22ch4                                              0.395
 seh2.seliqsyn.MeOH                                               0.53
+
+$ontext
+Parameterization of CO2 Capture Rates of X-to-Liquids and X-to-Gas technologies including carbon capture:
+The capture rates need to be consistent with the capture rate of X-to-H2 technologies
+and the carbon efficiency (carbon in output / carbon in input) of CCU-Technologies (see ./modules/39_CCU/on/datainput.gms)
+that convert H2 + CO2 to Liquids/Gases.
+For the capture rate of the combined process, we take into account the parameterization of the individual steps:
+1. Production of synthesis gas/h2, here we assume 90% capture rate in line with our parameterization of
+Bio-to-H2 (bioh2c), Gas-to-H2 (gash2c) with carbon capture technologies
+2. Conversion of synthesis gas to liquid fuels / methane via Fischer-Tropsch synthesis / methanation
+at a carbon efficiency of 95% in line with the CCU technologies.
+We calculate the CO2 capture rates of the X-to-Liquids and X-to-Gas technologies as
+the difference between the captured carbon of the first step and the carbon used in the second step:
+Capture Rate(tech) = Emifac(input) * 0.9 - Emifac(output) / 0.95 * Efficiency(tech)
+Technology-specific CO2 capture rates:
+Capture Rate(bioftcrec) = 25 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.41 ~ 14.6 GtC/ZJ(PE) (58% of carbon input)
+Capture Rate(biogasc) = 25 GtC/ZJ * 0.9 - 14.6 GtC/ZJ(FE) / 0.95 * 0.55 ~ 14.1 GtC/ZJ(PE) (56% of carbon input)
+Capture Rate(coalftcrec) = 26.1 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.4 ~ 15.8 GtC/ZJ(PE) (60% of carbon input)
+Capture Rate(gasftcrec) = 15.3 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.7 ~ 0.2 GtC/ZJ(PE) (1.3% of carbon input)
+$offtext
 
 *** EOF ./core/input/generisdata_emi.prn
