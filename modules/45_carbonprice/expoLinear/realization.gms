@@ -15,6 +15,7 @@
 *' A Hotelling price path can only be considered optimal until the time of net-zero emissions.
 *' Afterwards, a moderate carbon price increase is sufficient to avoid a return of fossil fuels.
 *' Therefore, we choose an exponentially increasing carbon price until the expected time of net-zero emissions and a linear increase at the rate of 2050 or 2060 afterwards.
+*** Not compatible with iterative adjustment of CO2 tax [i.e. requires cm_iterative_target_adj = 0]
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "declarations" $include "./modules/45_carbonprice/expoLinear/declarations.gms"

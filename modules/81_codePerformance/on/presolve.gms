@@ -9,15 +9,15 @@
 LOOP(run  $(ord(run)<(c81_runs+1)),
 
 IF(MOD(ord(run)+2,3) EQ 0,
-cm_co2_tax_startyear = 0;
+cm_taxCO2_startyear = 0;
 ELSEIF MOD(ord(run)+2,3) EQ 1,
-cm_co2_tax_startyear = 30;
+cm_taxCO2_startyear = 30;
 ELSEIF MOD(ord(run)+2,3) EQ 2,
-cm_co2_tax_startyear = 150;
+cm_taxCO2_startyear = 150;
 );
 
 *** Globally uniform, exponentially increasing carbonprice starting from the tax level (exogenously defined above) in the start year
-pm_taxCO2eq(t,regi) = cm_co2_tax_startyear * sm_DptCO2_2_TDpGtC * cm_co2_tax_growth**(t.val-cm_startyear); 
+pm_taxCO2eq(t,regi) = cm_taxCO2_startyear * sm_DptCO2_2_TDpGtC * cm_taxCO2_expGrowth**(t.val-cm_startyear); 
 pm_taxCO2eq("2005",regi)=0;
 
 display pm_taxCO2eq;

@@ -107,6 +107,10 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
   if (! isTRUE(cfg$gms$cm_rcp_scen %in% c("none","rcp20","rcp26","rcp45") )) {
     warning("Chosen RCP scenario '", cfg$gms$cm_rcp_scen, "' might currently not be fully operational: test and verify before using it!")
   }
+  # check if cm_iterative_target_adj 5, 7, or 9 is used without carbonprice being set to functionalForm
+  if (isTRUE(cfg$gms$cm_iterative_target_adj %in% c("5","7","9")) && ! isTRUE(cfg$gms$carbonprice == "functionalForm") ) {
+    warning("Chosen iterative target adjustment algorithm '", cfg$gms$cm_iterative_target_adj, "' will not be applied without using realization 45_carbonprice/functionalForm!")
+  }
   # Make sure that an input_bau.gdx has been specified if needed.
   isBauneeded <- isTRUE(length(unlist(lapply(names(needBau), function(x) intersect(cfg$gms[[x]], needBau[[x]])))) > 0)
   if (isBauneeded) {

@@ -145,7 +145,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   if (coupling %in% "MAgPIE") {
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
-                          "magpie_empty", "var_luc")
+                          "magpie_empty", "var_luc","cfg_mag$gms$s15_elastic_demand","cfg_mag$gms$s32_npi_ndc_reversal",
+                          "cfg_mag$gms$s35_npi_ndc_reversal")
     # identify MAgPIE switches by "cfg_mag" and "scenario_config"
     knownColumnNames <- c(knownColumnNames, grep("cfg_mag|scenario_config", names(scenConf), value = TRUE))
   } else { # not a coupling config
@@ -155,9 +156,11 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   if (length(unknownColumnNames) > 0) {
     message("")
     forbiddenColumnNames <- list(   # specify forbidden column name and what should be done with it
-       "c_budgetCO2" = "Rename to c_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
+       "c_budgetCO2" = "Rename to cm_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
+       "c_budgetCO2from2020" = "Rename to cm_budgetCO2from2020, see https://github.com/remindmodel/remind/pull/1874",
+       "c_budgetCO2from2020FFI" = "Deleted, use cm_budgetCO2from2020 instead, and adapt emission budgets, see https://github.com/remindmodel/remind/pull/1874",
        "c_peakBudgYr" = "Rename to cm_peakBudgYr, see https://github.com/remindmodel/remind/pull/1747",
-       "c_budgetCO2FFI" = "Rename to c_budgetCO2from2020FFI, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
+       "c_budgetCO2FFI" = "Deleted, use cm_budgetCO2from2020 instead, and adapt emission budgets, see https://github.com/remindmodel/remind/pull/1874",
        "cm_bioenergy_tax" = "Rename to cm_bioenergy_SustTax, see https://github.com/remindmodel/remind/pull/1003",
        "cm_bioenergymaxscen" = "Use more flexible cm_maxProdBiolc switch instead, see https://github.com/remindmodel/remind/pull/1054",
        "cm_tradecost_bio" = "Use more flexible cm_tradecostBio switch, see https://github.com/remindmodel/remind/pull/1054",
@@ -174,13 +177,22 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_fixCO2price" = "Was never in use, removed in https://github.com/remindmodel/remind/pull/1369",
        "cm_calibration_FE" = "Deleted, only used for old hand made industry trajectories, see https://github.com/remindmodel/remind/pull/1468",
        "cm_DAC_eff" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/1487",
-       "cm_peakBudgYr" = "Rename to c_peakBudgYr, see https://github.com/remindmodel/remind/pull/1488",
-       "c_taxCO2inc_after_peakBudgYr" = "Rename to cm_taxCO2inc_after_peakBudgYr, see https://github.com/remindmodel/remind/pull/1776",
+       "c_taxCO2inc_after_peakBudgYr" = "Rename to cm_taxCO2_IncAfterPeakBudgYr, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_taxCO2inc_after_peakBudgYr" = "Rename to cm_taxCO2_IncAfterPeakBudgYr, see https://github.com/remindmodel/remind/pull/1874",
        "c_solscen" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/1515",
        "cm_regNetNegCO2" = "Deleted, not used, see https://github.com/remindmodel/remind/pull/1517",
        "cm_solwindenergyscen" = "Deleted, not used, see https://github.com/remindmodel/remind/pull/1532",
        "cm_wind_offshore" = "Deleted, not used, see https://github.com/remindmodel/development_issues/issues/272",
        "cm_co2_tax_2020" = "Use cm_co2_tax_startyear instead, see https://github.com/remindmodel/remind/pull/1858",
+       "cm_co2_tax_startyear" = "Rename to cm_taxCO2_startyear, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_co2_tax_growth" = "Rename to cm_taxCO2_expGrowth, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_co2_tax_spread" = "Use cm_taxCO2_regiDiff instead, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_co2_tax_hist" = "Rename to cm_taxCO2_historical, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_year_co2_tax_hist" = "Rename to cm_taxCO2_historicalYr, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_CO2priceRegConvEndYr" = "Use cm_taxCO2_regiDiff_endYr instead, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_year_co2_tax_hist" = "Use cm_taxCO2_historicalYr instead, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_co2_tax_hist" = "Use cm_taxCO2_historical instead, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_taxCO2inc_after_peakBudgYr" = "Use cm_taxCO2_IncAfterPeakBudgYr instead, see https://github.com/remindmodel/remind/pull/1874",    
      NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       msg <- paste0("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
