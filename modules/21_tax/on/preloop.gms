@@ -53,14 +53,22 @@ if(cm_fetaxscen ne 0,
     loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax(ttot,regi,sector,entyFe) = p21_tau_fe_tax("2005",regi,sector,entyFe));
   );
 ***CASE 2: constant TAXES except for the final energies and regions defined at the f21_tax_convergence.cs4r file
-  if(cm_fetaxscen eq 2,
+  if(cm_fetaxscen eq 2 OR cm_fetaxscen eq 5,
 	loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax(ttot,regi,sector,entyFe) = p21_tau_fe_tax("2005",regi,sector,entyFe));
 
-	s21_tax_time  = 2050;
-	p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2050",regi,entyFe) AND ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
-	=
-    p21_tau_fe_tax("2005",regi,sector,entyFe)+((f21_tax_convergence("2050",regi,entyFe)*0.001/sm_EJ_2_TWa-p21_tau_fe_tax("2005",regi,sector,entyFe))*((ttot.val-2015)/(s21_tax_time-2015)));
-    p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2050",regi,entyFe) AND ttot.val >(s21_tax_time)) = f21_tax_convergence("2050",regi,entyFe)*0.001/sm_EJ_2_TWa;
+	if(cm_fetaxscen eq 2, s21_tax_time  = 2050;
+           p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2050",regi,entyFe) AND ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
+	   =
+           p21_tau_fe_tax("2005",regi,sector,entyFe)+((f21_tax_convergence("2050",regi,entyFe)*0.001/sm_EJ_2_TWa-p21_tau_fe_tax("2005",regi,sector,entyFe))*((ttot.val-2015)/(s21_tax_time-2015)));
+           p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2050",regi,entyFe) AND ttot.val >(s21_tax_time)) = f21_tax_convergence("2050",regi,entyFe)*0.001/sm_EJ_2_TWa;
+        );
+     	if(cm_fetaxscen eq 5, s21_tax_time  = 2035;
+           p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2035",regi,entyFe) AND ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
+	   =
+           p21_tau_fe_tax("2005",regi,sector,entyFe)+((f21_tax_convergence("2035",regi,entyFe)*0.001/sm_EJ_2_TWa-p21_tau_fe_tax("2005",regi,sector,entyFe))*((ttot.val-2015)/(s21_tax_time-2015)));
+           p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2035",regi,entyFe) AND ttot.val >(s21_tax_time)) = f21_tax_convergence("2050",regi,entyFe)*0.001/sm_EJ_2_TWa;
+        );
+
   );
 
 ***----- SUBSIDIES  ----------------------------------
@@ -72,7 +80,7 @@ if(cm_fetaxscen ne 0,
     loop(ttot$(ttot.val ge 2005), p21_tau_fuEx_sub(ttot,regi,entyPe)=p21_tau_fuEx_sub("2005",regi,entyPe));
   );
 *** CASE 2 and 3 and 4: Global subsidies phase-out by 2030 (SSP1, SDP) and 2050 (SSP2) respectively
-  if(cm_fetaxscen eq 2 OR cm_fetaxscen eq 3 OR cm_fetaxscen eq 4,
+  if(cm_fetaxscen eq 2 OR cm_fetaxscen eq 3 OR cm_fetaxscen eq 4 OR cm_fetaxscen eq 5,
      p21_tau_fe_sub(ttot,regi,sector,entyFe)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_fe_sub("2005",regi,sector,entyFe);
      p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_pe2se_sub("2005",regi,te);
      p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_fuEx_sub("2005",regi,entyPe);

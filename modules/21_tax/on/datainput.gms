@@ -33,7 +33,12 @@ $offdelim
 Parameter f21_tax_convergence(tall,all_regi,all_enty) "Tax convergence level for specific regions, year and final energy type"
   /
 $ondelim
+if(cm_fetaxscen ne 5,
 $include "./modules/21_tax/on/input/f21_tax_convergence.cs4r"
+);
+if(cm_fetaxscen eq 5,
+$include "./modules/21_tax/on/input/f21_tax_convergence_SSP3.cs4r"
+);
 $offdelim
   /
 ;
@@ -82,6 +87,7 @@ p21_tau_pe2se_sub(tall,regi,te)= 0;
 *RP* FILE changed by hand after introduction of SO2 taxes and inconvenience penalties on 2012-03-08
 *** Values try to account for excessive water use, further pollution
 *** Taxes are given in USD(2005) and converted to USD(2017) per GJ 
+if(cm_fetaxscen ne 5,
 p21_tau_pe2se_tax(ttot,regi,"igcc")$(ttot.val ge 2005)       = sm_D2005_2_D2017 * 0.25;
 p21_tau_pe2se_tax(ttot,regi,"igccc")$(ttot.val ge 2005)      = sm_D2005_2_D2017 * 0.25;
 p21_tau_pe2se_tax(ttot,regi,"coalftrec")$(ttot.val ge 2005)  = sm_D2005_2_D2017 * 1.0;
@@ -89,7 +95,7 @@ p21_tau_pe2se_tax(ttot,regi,"coalftcrec")$(ttot.val ge 2005) = sm_D2005_2_D2017 
 p21_tau_pe2se_tax(ttot,regi,"coalh2")$(ttot.val ge 2005)     = sm_D2005_2_D2017 * 0.5;
 p21_tau_pe2se_tax(ttot,regi,"coalh2c")$(ttot.val ge 2005)    = sm_D2005_2_D2017 * 0.5;
 p21_tau_pe2se_tax(ttot,regi,"coalgas")$(ttot.val ge 2005)    = sm_D2005_2_D2017 * 0.5;
-
+);
 ***cb20110923 rescaling of PE2SE parameters from $/GJ to trillion $ / TWa 
 p21_tau_pe2se_tax(ttot,regi,te)$(ttot.val ge 2005)    = p21_tau_pe2se_tax(ttot,regi,te)    * 0.001 / sm_EJ_2_TWa;
 p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val ge 2005)    = p21_tau_pe2se_sub(ttot,regi,te)    * 0.001 / sm_EJ_2_TWa;
