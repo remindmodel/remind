@@ -33,6 +33,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **core** increase electrolysis CAPEX and slightly adjust default setting for electrolysis taxation and flexibility benefit,
     add near-term bounds for electrolysis and synthetic fuel deployment
     [[#1882](https://github.com/remindmodel/remind/pull/1882)]
+- **core** update co2 capture rates and cost of biomass liquids and gas and some other X-to-Liq/Gas technologies to be internally consistent
+    [[#1881](https://github.com/remindmodel/remind/pull/1881)]
 
 ### added
 - **32_power** increase minimum required dispatchable back-up capacity for VRE integration
