@@ -45,7 +45,7 @@ $offdelim
   /
 ;
 if(cm_fetaxscen eq 5,
-f21_tax_convergence(ttot,regi,enty) = Parameter f21_tax_convergence_SSP3(ttot,regi,enty);
+f21_tax_convergence(ttot,regi,enty) = f21_tax_convergence_SSP3(ttot,regi,enty);
 );
 
 Parameter f21_max_fe_sub(tall,all_regi,all_enty) "maximum final energy subsidy levels (in $/Gj) from REMIND version prior to rev. 5429"
