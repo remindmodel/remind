@@ -154,10 +154,14 @@ loop (industry_ue_calibration_target_dyn37(out),
 
     !! calculate slope
     p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
-    = ( ( sum(ces_eff_target_dyn37(out,in),
-            p37_cesIO_baseline("2015",regi,in)
+    = ( max(
+          !! use the larger of 2015/2020 specific energy demand
+          ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
+          / p37_cesIO_baseline("2015",regi,out)
+          ),
+          ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2020",regi,in))
+          / p37_cesIO_baseline("2020",regi,out)
           )
-        / p37_cesIO_baseline("2015",regi,out)
         )
       - pm_energy_limit(out)
       )

@@ -154,6 +154,11 @@ table f_dataglob_SSP5(char,all_te)        "Techno-economic assumptions consisten
 $include "./core/input/generisdata_tech_SSP5.prn"
 $include "./core/input/generisdata_trade.prn"
 ;
+table f_dataglob_SSP3(char,all_te)        "Techno-economic assumptions consistent with SSP3"
+$include "./core/input/generisdata_tech_SSP3.prn"
+$include "./core/input/generisdata_trade.prn"
+;
+
 
 *** initializing energy service capital
 pm_esCapCost(tall,all_regi,all_teEs) = 0;
@@ -187,6 +192,9 @@ if (c_techAssumptScen eq 2,
 );
 if (c_techAssumptScen eq 3,
                fm_dataglob(char,te) = f_dataglob_SSP5(char,te)
+);
+if (c_techAssumptScen eq 4,
+               fm_dataglob(char,te) = f_dataglob_SSP3(char,te)
 );
 
 *RP* include global flexibility parameters
