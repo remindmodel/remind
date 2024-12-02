@@ -217,9 +217,9 @@ q37_chemicals_feedstocks_limit(t,regi) ..
   * p37_chemicals_feedstock_share(t,regi)
 ;
 
-*' Define the flow of non-energy feedstocks. It is used for emissions accounting and calculating plastics production
-q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
+*' Define the flow of non-energy feedstocks. It is used for emissions
+*' accounting and calculating plastics production
+q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt) ..
   sum(se2fe(entySe,entyFe,te),
     vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
   )
@@ -231,15 +231,13 @@ q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt)$(
     + pm_cesdata(t,regi,in,"offset_quantity")
     )
   * p37_chemicals_feedstock_share(t,regi)
-  )
+  )$( entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) )
 ;
 
 *' Feedstocks flow has to be lower than total energy flow into the industry
 q37_feedstocksLimit(t,regi,entySe,entyFe,emiMkt)$(
-                                             sefe(entySe,entyFe)
-                                         AND sector2emiMkt("indst",emiMkt)
-                                         AND entyFe2Sector(entyFe,"indst")
-                                         AND entyFeCC37(entyFe)            ) ..
+                         sefe(entySe,entyFe)
+                     AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
   vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
   =g=
   vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)

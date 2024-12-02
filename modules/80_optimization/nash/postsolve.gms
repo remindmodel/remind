@@ -442,7 +442,7 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
         if(sameas(convMessage80, "target"),
 		      display "#### 6.) A global climate target has not been reached yet.";
           display "#### check out sm_globalBudget_dev, it must within 0.99 and 1.01 to reach convergence, as well as";
-          display "#### pm_taxCO2eq_iterationdiff_tmp and pm_taxCO2eq_iterationdiff in diagnostics section below."; 
+          display "#### pm_taxCO2eq_anchor_iterationdiff_tmp and pm_taxCO2eq_anchor_iterationdiff in diagnostics section below."; 
           display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
           display sm_globalBudget_dev;
 	      );
@@ -507,7 +507,7 @@ display p80_surplus;
 OPTION decimals = 3;
 
 display "Tax difference to last iteration for global targets of core/postsolve";
-display pm_taxCO2eq_iterationdiff_tmp, pm_taxCO2eq_iterationdiff;
+display pm_taxCO2eq_anchor_iterationdiff_tmp, pm_taxCO2eq_anchor_iterationdiff;
 
 *RP* display effect of additional convergence push
 display "display effect of additional convergence push";
@@ -555,7 +555,7 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
         if(sameas(convMessage80, "target"),
 		      display "#### 6.) A global climate target has not been reached yet.";
           display "#### check out sm_globalBudget_dev, must within 0.99 and 1.01 to reach convergence, as well as";
-          display "#### pm_taxCO2eq_iterationdiff_tmp and pm_taxCO2eq_iterationdiff in diagnostics section below."; 
+          display "#### pm_taxCO2eq_anchor_iterationdiff_tmp and pm_taxCO2eq_anchor_iterationdiff in diagnostics section below."; 
           display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
           display sm_globalBudget_dev;
 	      );

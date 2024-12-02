@@ -128,8 +128,8 @@ c_solver_try_max      "maximum number of inner iterations within one Negishi ite
 c_keep_iteration_gdxes   "save intermediate iteration gdxes"
 cm_nash_autoconverge  "choice of nash convergence mode"
 cm_emiscen            "policy scenario choice"
-cm_co2_tax_startyear  "level of co2 tax in start year in $ per t CO2eq"
-cm_co2_tax_growth     "growth rate of carbon tax"
+cm_taxCO2_startyear  "level of co2 tax in start year in $ per t CO2eq"
+cm_taxCO2_expGrowth     "growth rate of carbon tax"
 c_macscen            "use of mac"
 cm_nucscen            "nuclear option choice"
 cm_ccapturescen       "carbon capture option choice"
@@ -193,8 +193,8 @@ cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshoot
 
 cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
 c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
-cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
-cm_CO2priceRegConvEndYr     "Year at which regional CO2 taxes converge in module 45 for realizations with differentiated carbon prices"
+cm_taxCO2_IncAfterPeakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
+cm_taxCO2_regiDiff_endYr     "Year at which regional CO2 taxes converge in module 45 for realizations with differentiated carbon prices"
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
 c_regi_synfuelscen			"region to apply synfuelscen to"
@@ -246,8 +246,8 @@ $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
 cm_emiscen        = 1;         !! def = 1
 $setglobal cm_rcp_scen  none   !! def = "none"
-cm_co2_tax_startyear = -1;     !! def = -1
-cm_co2_tax_growth = 1.05;      !! def = 1.05
+cm_taxCO2_startyear = -1;     !! def = -1
+cm_taxCO2_expGrowth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
@@ -323,8 +323,8 @@ $setGlobal cm_emiMktTarget  off   !! def = off
 cm_postTargetIncrease    = 0;      !! def = 0
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 c_peakBudgYr            = 2050;   !! def = 2050
-cm_taxCO2inc_after_peakBudgYr = 2; !! def = 2
-cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
+cm_taxCO2_IncAfterPeakBudgYr = 2; !! def = 2
+cm_taxCO2_regiDiff_endYr  = 2050;   !! def = 2050
 
 $setGlobal cm_NucRegiPol	 off   !! def = off		
 $setGlobal cm_CoalRegiPol	 off   !! def = off		

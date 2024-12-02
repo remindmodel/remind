@@ -19,6 +19,7 @@ parameters
 ***prices
 pm_pvp(ttot,all_enty)                                "Price on commodity markets",
 p_pvpRef(ttot,all_enty)                              "Price on commodity markets - imported from REF gdx",
+pm_ies(all_regi)                                     "intertemporal elasticity of substitution",
 
 p_pvpRegiBeforeStartYear(ttot,all_regi,all_enty)     "prices of traded commodities before start year - regional. only used for permit trade"
 
@@ -28,11 +29,9 @@ pm_gdp_gdx(tall,all_regi)                            "GDP path from gdx, updated
 p_inv_gdx(tall,all_regi)                             "macro-investments path from gdx, updated iteratively."
 pm_taxCO2eq(ttot,all_regi)                           "CO2 tax path in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
 pm_taxCO2eqRegi(tall,all_regi)                       "additional regional CO2 tax path in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
+pm_taxCO2eq_anchor_iterationdiff(ttot)               "help parameter for iterative adjustment of taxes"
+pm_taxCO2eq_anchor_iterationdiff_tmp(ttot)           "help parameter for iterative adjustment of taxes"
 pm_taxCO2eqSum(tall,all_regi)                        "sum of pm_taxCO2eq, pm_taxCO2eqRegi, pm_taxCO2eqSCC in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
-p_taxCO2eq_iteration(iteration,ttot,all_regi)       "save CO2eq tax used in iteration"
-pm_taxCO2eq_iterationdiff(ttot,all_regi)              "help parameter for iterative adjustment of taxes"
-pm_taxCO2eq_iterationdiff_tmp(ttot,all_regi)          "help parameter for iterative adjustment of taxes"
-o_taxCO2eq_iterDiff_Itr(iteration,all_regi) "track p_taxCO2eq_iterationdiff over iterations"
 pm_taxemiMkt(ttot,all_regi,all_emiMkt)                "CO2 or CO2eq region and emission market specific emission tax"
 pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt) "CO2 or CO2eq region and emission market specific emission tax per iteration"
 pm_emissionsForeign(tall,all_regi,all_enty)          "total emissions of other regions (nash relevant)"
@@ -50,21 +49,6 @@ pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per un
 *** If sigma is larger than 1, the more one product is used, the less the others are used, i.e. the products are substitutes"
 pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution." 
 p_r(ttot,all_regi)                                   "calculating capital interest rate"
-
-o_diff_to_Budg(iteration)                             "Difference between actual CO2 budget and target CO2 budget"
-o_totCO2emi_peakBudgYr(iteration)                     "Total CO2 emissions in the peakBudgYr"
-o_peakBudgYr_Itr(iteration)                           "Year in which the CO2 budget is supposed to peak. Is changed in iterative_target_adjust = 9"
-o_factorRescale_taxCO2_afterPeakBudgYr(iteration)     "Multiplicative factor for rescaling the CO2 price in the year after peakBudgYr - only needed if flip-flopping of peakBudgYr occurs"
-o_delay_increase_peakBudgYear(iteration)              "Counter that tracks if flip-flopping of peakBudgYr happened. Starts an inner loop to try and overcome this"
-o_reached_until2150pricepath(iteration)               "Counter that tracks if the inner loop of increasing the CO2 price AFTER peakBudgYr goes beyond the initial trajectory"
-p_taxCO2eq_until2150(ttot,all_regi)                   "CO2 price trajectory continued until 2150 - as if there was no change in trajectory after peakBudgYr. Needed to recalculate CO2 price trajectory after peakBudgYr was shifted right"
-o_totCO2emi_allYrs(ttot,iteration)                    "Global CO2 emissions over time and iterations. Needed to check the procedure to find the peakBudgYr"
-o_change_totCO2emi_peakBudgYr                         "Measure for how much the CO2 emissions change around the peakBudgYr"
-p_factorRescale_taxCO2(iteration)                     "Multiplicative factor for rescaling the CO2 price to reach the target"
-p_factorRescale_taxCO2_Funneled(iteration)            "Multiplicative factor for rescaling the CO2 price to reach the target - limited by an iteration-dependent funnel"
-o_taxCO2eq_Itr_1regi(ttot,iteration)                  "CO2 taxed in the last region, tracked over iterations for debugging"
-o_pkBudgYr_flipflop(iteration)                        "Counter that tracks if flipfloping of cm_peakBudgYr occured in the last iterations"
-o_taxCO2eq_afterPeakShiftLoop_Itr_1regi(ttot, iteration) "CO2 taxed in the last region, after the loop that shifts peakBudgYr, tracked over iterations for debugging"
 
 ***----------------------------------------------------------------------------------------
 ***-----------------------------------------------ESM module-------------------------------
@@ -126,7 +110,6 @@ $endif.tech_CO2capturerate
 
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]"
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1"
-p_actualbudgetco2(tall)                              "actual level of cumulated emissions starting from 2020 [GtCO2]"
 
 pm_dataccs(all_regi,char,rlf)                               "maximum CO2 storage capacity using CCS technology. [GtC]"
 pm_ccsinjecrate(all_regi)                                   "Regional CCS injection rate factor. 1/a."
@@ -162,6 +145,8 @@ pm_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)   "Final energy shares for CE
 
 pm_shfe_up(ttot,all_regi,all_enty,emi_sectors)       "Final energy shares exogenous upper bounds per sector"
 pm_shfe_lo(ttot,all_regi,all_enty,emi_sectors)       "Final energy shares exogenous lower bounds per sector"
+p_shSeFe(ttot,all_regi,all_enty)                     "Initial share of energy carrier subtype in final energy demand of the aggregated carrier type (eg 'the share of bio-based FE liquids in all FE liquids') [0..1]"
+p_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Initial share of energy carrier subtype in final energy demand of the aggregated carrier type for each sector/emiMarket combination (eg 'bio-based FE liquids share in all FE liquids within ETS transport') [0..1]"
 pm_shGasLiq_fe_up(ttot,all_regi,emi_sectors)         "Final energy gases plus liquids shares exogenous upper bounds per sector"
 pm_shGasLiq_fe_lo(ttot,all_regi,emi_sectors)         "Final energy gases plus liquids shares exogenous lower bounds per sector"
 
@@ -414,7 +399,7 @@ vm_costAddTeInv(tall,all_regi,all_te,emi_sectors)    "additional sector-specific
 
 vm_co2CCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)       "all different ccs. [GtC/a]"
 
-vm_co2capture(ttot,all_regi,all_enty,all_enty,all_te,rlf)   "all captured CO2. [GtC/a]"
+v_co2capture(ttot,all_regi,all_enty,all_enty,all_te,rlf)   "all captured CO2. [GtC/a]"
 v_co2capturevalve(ttot,all_regi)                            "CO2 emitted right after capture [GtC/a] (in q_balCCUvsCCS to account for different lifetimes of capture and CCU/CCS te and capacities)"
 
 v_prodUe (ttot,all_regi,all_enty,all_enty,all_te)    "Useful energy production [TWa]"
@@ -429,6 +414,8 @@ v_shGreenH2(ttot,all_regi)   "share of green hydrogen in all hydrogen by 2030 [0
 v_shBioTrans(ttot,all_regi)    "Share of biofuels in transport liquids from 2025 onwards. Value between 0 and 1."
 
 v_shfe(ttot,all_regi,all_enty,emi_sectors)           "share of final energy in sector total final energy [0..1]"
+v_shSeFe(ttot,all_regi,all_enty)                     "share of energy carrier subtype in final energy demand of the aggregated carrier type (eg 'the share of bio-based FE liquids in all FE liquids') [0..1]"
+v_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "share of energy carrier subtype in final energy demand of the aggregated carrier type per sector/emiMarket combination (eg 'the share of bio-based FE liquids in all FE liquids used in ETS-covered transport') [0..1]"
 v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids in sector final energy [0..1]"
 
 vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
@@ -447,7 +434,17 @@ vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which 
 vm_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
 vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"  
 
+$ifthen.seFeSectorShareDev not "%cm_seFeSectorShareDevMethod%" == "off"
+  v_penSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "penalty cost for secondary energy share deviation between sectors, for each sector/emiMarket combination"
+  vm_penSeFeSectorShareDevCost(ttot,all_regi)        "total penalty cost for secondary energy share deviation between sectors"
+$endif.seFeSectorShareDev
+
+$ifthen.minMaxSeFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgShare"
+  v_NegPenSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max negative penalty for secondary energy share deviation in sectors"
+  v_PosPenSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max positive penalty for secondary energy share deviation in sectors"
+$endif.minMaxSeFeSectorShareDev
 ;
+
 ***----------------------------------------------------------------------------------------
 ***                                   EQUATIONS
 ***----------------------------------------------------------------------------------------
@@ -552,6 +549,8 @@ q_shGreenH2(ttot,all_regi)  "share of green hydrogen in all hydrogen"
 q_shBioTrans(ttot,all_regi)  "Define the share of biofuels in transport liquids from 2025 on."
 
 q_shfe(ttot,all_regi,all_enty,emi_sectors)            "share of final energy carrier in the sector final energy"
+q_shSeFe(ttot,all_regi,all_enty)                      "share of energy carrier subtype in final energy demand of the aggregated carrier type (eg 'the share of bio-based FE liquids in all FE liquids')"
+q_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "share of energy carrier subtype in final energy demand of the aggregated carrier type for each sector/emiMarket combination (eg 'the share of bio-based FE liquids in all FE liquids within ETS-covered transport"
 q_shGasLiq_fe(ttot,all_regi,emi_sectors)              "share of gases and liquids in sector final energy"
 
 q_shbiofe_up(ttot,all_regi,all_enty,emi_sectors,all_emiMkt) "share of biomass per carrier in sector final energy (upper bound)"
@@ -565,6 +564,18 @@ $IFTHEN.sehe_upper not "%cm_sehe_upper%" == "off"
 q_heat_limit(ttot,all_regi)  "equation to limit maximum level of secondary energy district heating and heat pumps use"
 $ENDIF.sehe_upper
 
+$ifthen.seFeSectorShareDev not "%cm_seFeSectorShareDevMethod%" == "off"
+  q_penSeFeSectorShareDevCost(ttot,all_regi) "total penalty cost for secondary energy share deviation in sectors"
+  q_penSeFeSectorShareDev(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "penalty for secondary energy share deviation in sectors"
+$endif.seFeSectorShareDev
+
+$ifthen.minMaxSeFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgShare"
+  q_minMaxPenSeFeSectorShareDev(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max penalty balance for secondary energy share deviation in sectors"
+$endif.minMaxSeFeSectorShareDev
+
+$ifthen.limitSolidsFossilRegi not %cm_limitSolidsFossilRegi% == "off"
+  q_fossilSolidsLimitReg(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)  "limit solids fossil to be lower or equal to previous year values in each (sector x emiMkt) combination"
+$endif.limitSolidsFossilRegi
 ;
 ***----------------------------------------------------------------------------------------
 ***                                   SCALARS
@@ -620,9 +631,6 @@ cm_peakBudgYr                                         "date of net-zero CO2 emis
 sm_endBudgetCO2eq                                     "end time step of emission budget period 1"
 sm_budgetCO2eqGlob                                    "budget for global energy-emissions in period 1"
 p_emi_budget1_gdx                                     "budget for global energy-emissions in period 1 from gdx, may overwrite default values"
-
-s_actualbudgetco2                                     "actual level of 2020-2100 cumulated emissions, including all CO2 for last iteration"
-s_actualbudgetco2_last                                "actual level of 2020-2100 cumulated emissions for previous iteration" /0/
 
 sm_globalBudget_dev                                   "actual level of global cumulated emissions budget divided by target budget"
 

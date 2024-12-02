@@ -301,10 +301,6 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
         cfg$slurmConfig      <- slurmConfig
         if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
       }
-      # Make sure all python requirements are installed
-      if (cfg$pythonEnabled == "on") {
-        piamenv::updatePythonVirtualEnv()
-      }
       # Directly start runs that have a gdx file location given as path_gdx... or where this field is empty
       gdx_specified <- grepl(".gdx", cfg$files2export$start[path_gdx_list], fixed = TRUE)
       gdx_na <- is.na(cfg$files2export$start[path_gdx_list])
