@@ -1068,13 +1068,13 @@ q_shfe(t,regi,entyFe,sector)$(pm_shfe_up(t,regi,entyFe,sector) OR pm_shfe_lo(t,r
 
 q_shSeFe(t,regi,entySe)$(entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)).. !! share of energy carrier subtype in final energy demand of the aggregated carrier type (eg 'the share of bio-based FE liquids in all FE liquids')
   v_shSeFe(t,regi,entySe) 
-  * sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt),
+  * sum((sector,emiMkt)$(sector2emiMkt(sector,emiMkt) AND (NOT(sameas(sector,"CDR")))),
       sum(seAgg$seAgg2se(seAgg,entySe), !! determining the aggregate SE carrier type (liquids, gases, ...)
         sum(entySe2$seAgg2se(seAgg,entySe2), !! summing over the bio/fos/syn variants of the chosen SE carrier"
           sum(entyFe$(sefe(entySe2,entyFe) AND entyFe2Sector(entyFe,sector)),
             vm_demFeSector_afterTax(t,regi,entySe2,entyFe,sector,emiMkt)))))
   =e=
-  sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt),
+  sum((sector,emiMkt)$(sector2emiMkt(sector,emiMkt) AND (NOT(sameas(sector,"CDR")))),
     sum(entyFe$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector)),
       vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
 ;
