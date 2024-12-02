@@ -25,8 +25,9 @@ pm_temperatureImpulseResponseCO2(tall,tall) = 0;
 vm_demFeForEs.L(t,regi,entyFe,esty,teEs) = 0;
 vm_demFeForEs.L(t,regi,fe2es(entyFe,esty,teEs)) = 0.1;
 
-pm_taxCO2eq_iterationdiff(t,regi) = 0;
-pm_taxCO2eq_iterationdiff_tmp(t,regi) = 0;
+*** -------- initial declaration of parameters for iterative target adjustment
+pm_taxCO2eq_anchor_iterationdiff(t) = 0;
+pm_taxCO2eq_anchor_iterationdiff_tmp(t) = 0;
 
 *------------------------------------------------------------------------------------
 ***                        calculations based on sets
@@ -153,6 +154,11 @@ table f_dataglob_SSP5(char,all_te)        "Techno-economic assumptions consisten
 $include "./core/input/generisdata_tech_SSP5.prn"
 $include "./core/input/generisdata_trade.prn"
 ;
+table f_dataglob_SSP3(char,all_te)        "Techno-economic assumptions consistent with SSP3"
+$include "./core/input/generisdata_tech_SSP3.prn"
+$include "./core/input/generisdata_trade.prn"
+;
+
 
 *** initializing energy service capital
 pm_esCapCost(tall,all_regi,all_teEs) = 0;
@@ -186,6 +192,9 @@ if (c_techAssumptScen eq 2,
 );
 if (c_techAssumptScen eq 3,
                fm_dataglob(char,te) = f_dataglob_SSP5(char,te)
+);
+if (c_techAssumptScen eq 4,
+               fm_dataglob(char,te) = f_dataglob_SSP3(char,te)
 );
 
 *RP* include global flexibility parameters
@@ -959,6 +968,7 @@ $offdelim
 
 $if %cm_LU_emi_scen% == "SSP1"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0047/sm_EJ_2_TWa;
 $if %cm_LU_emi_scen% == "SSP2"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0079/sm_EJ_2_TWa;
+$if %cm_LU_emi_scen% == "SSP2_lowEn"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0079/sm_EJ_2_TWa;
 $if %cm_LU_emi_scen% == "SSP3"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0079/sm_EJ_2_TWa;
 $if %cm_LU_emi_scen% == "SSP5"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0066/sm_EJ_2_TWa;
 $if %cm_LU_emi_scen% == "SDP"    p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0047/sm_EJ_2_TWa;
@@ -1556,8 +1566,6 @@ loop(te,
 );
 
 
-*** -------- initial declaration of parameters for iterative target adjustment
-o_reached_until2150pricepath(iteration) = 0;
 
 *** ---- FE demand trajectories for calibration -------------------------------
 *** also used for limiting secondary steel demand in baseline and policy
