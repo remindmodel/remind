@@ -304,9 +304,16 @@ loop(te$(sameas(te,"ngcc") OR sameas(te,"ngt") OR sameas(te,"gaschp")),
 *' 2 GW(el) at least globally in 2025, about operational capacity as of 2023
 vm_cap.lo("2025",regi,"elh2","1")= 2 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2025",regi)
                                          / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
-*' 10 GW(el) at maximum globally in 2025
-vm_cap.up("2025",regi,"elh2","1")= 10 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2025",regi)
+*' 20 GW(el) at maximum globally in 2025 (be more generous to not overconstrain regions which scale-up fastest)
+vm_cap.up("2025",regi,"elh2","1")= 20 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2025",regi)
                                          / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
+
+*** bounds on biomass technologies
+*' set upper bounds on biomass gasification for h2 production, which is not deployed as of 2025
+*' set maximum of 0.1 EJ/yr production by 2030 for each technology
+vm_cap.up("2030",regi,"bioh2","1")= 0.1 / 3.66 * 1e3 / 8760 * pm_gdp("2030",regi) / sum(regi2,pm_gdp("2030",regi2));
+vm_cap.up("2030",regi,"bioh2c","1")= 0.1 / 3.66 * 1e3 / 8760 * pm_gdp("2030",regi) / sum(regi2,pm_gdp("2030",regi2));
+
 
 *** fix capacities for advanced bio carbon capture technologies to zero in 2020 (i.e. no BECCS in 2020)
 vm_cap.fx("2020",regi,te,rlf)$(teBio(te) AND teCCS(te)) = 0;
