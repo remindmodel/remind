@@ -809,9 +809,9 @@ parameter
 *' *  (4): so2 tax intermediary between 1 and 2, multiplying (1) tax by the ratio (3) and (2)
 *'
 parameter
-  c_techAssumptScen         "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
+  c_techAssumptScen         "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5, 4: SSP3"
 ;
-  c_techAssumptScen     = 1;         !! def = 1  !! regexp = [1-3]
+  c_techAssumptScen     = 1;         !! def = 1  !! regexp = [1-4]
 *' This flag defines an energy technology scenario according to SSP scenario
 *' *   (1) SSP2: reference scenario - default investment costs & learning rates for pv, csp and wind
 *' *   (2) SSP1: advanced renewable energy techno., pessimistic for nuclear and CCS
@@ -1230,7 +1230,7 @@ $setglobal c_tech_earlyreti_rate  GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(
 ***  (SSP2): emissions (from SSP2 scenario in MAgPIE)
 ***  (SSP5): emissions (from SSP5 scenario in MAgPIE)
 ***  (SDP):
-$setglobal cm_LU_emi_scen  SSP2   !! def = SSP2  !! regexp = SSP(1|2|3|5)|SDP |SSP2_lowEn
+$setglobal cm_LU_emi_scen  SSP2   !! def = SSP2  !! regexp = SSP(1|2|3|5)|SDP|SSP2_lowEn
 *** cm_regi_bioenergy_EFTax  "region(s) in which bioenergy is charged with an emission-factor-based tax"
 ***  This switch has only an effect if 21_tax is on and cm_bioenergy_EF_for_tax
 ***  is not zero. It reads in the regions that are affected by the emission-
@@ -1782,7 +1782,7 @@ $setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on  !! regexp = off|on
 ***  sqSectorAvrgShare "Square deviation from average share penalty. Recomended over sqSectorShare (see above)."
 ***  minMaxAvrgShare   "Min-max deviation from average share penalty."
 *** The relative effect of the penalization term in the objective function is scaled to avoid affecting optimization results. This scaling factor can be defined using the switch c_seFeSectorShareDevScale.
-$setglobal cm_seFeSectorShareDevMethod  off !! def = sqSectorAvrgShare  !! regexp = off|sqSectorShare|sqSectorAvrgShare|minMaxAvrgShare
+$setglobal cm_seFeSectorShareDevMethod  sqSectorAvrgShare !! def = sqSectorAvrgShare  !! regexp = off|sqSectorShare|sqSectorAvrgShare|minMaxAvrgShare
 *** c_seFeSectorShareDevUnit "Defines if the penalization term is applied over fuel shares or energy units." 
 ***  share,  "The square penalization is applied directly to the share values. This results in different-sized regions having varying relative penalization incentives, but the range of penalization values will be more consistent from the solver's perspective."
 ***  energy, "The square penalization is applied to the share values multiplied by the energy demand. This approach scales penalizations better across different-sized regions, but there is a higher risk of the penalizations being ignored and the shares not being enforced if the value range is too small."
