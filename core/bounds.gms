@@ -85,10 +85,16 @@ vm_prodSe.fx(t,regi,"pecoal","seel","pco") = 0;
 vm_demPe.fx(t,regi,"pewin","seel","wind") = 0;
 vm_prodSe.fx(t,regi,"pewin","seel","wind") = 0;
 
-*' Switch off grey hydrogen investments in gash2 technology from 2025. Our current seh2 hydrogen represents only additional (clean) hydrogen use cases to current ones
-*' and there are no plans to expand grey hydrogen production for that.
+*' Switch off coal-h2 hydrogen investments. Our current seh2 hydrogen represents only additional (clean) hydrogen use cases to current ones.
+*' However, as we have too high H2 demand in 2025 and 2030 from the input data, we need to allow grey hydrogen for these time periods to meet the hydrogen demand
+*' which cannot be fully met by incoming low-carbon H2 techologies. This should be removed once FE H2 industry input data is adapted.
 *' It is allowed before 2020 to not make the model infeasible for low demands of hydrogen in that year.
-vm_deltaCap.up(t,regi,"gash2",rlf)$((t.val ge 2025)) = 1e-8;
+vm_deltaCap.fx(t,regi,"coalh2",rlf) = 0;
+vm_deltaCap.fx(t,regi,"gash2",rlf)$((t.val gt 2030)) = 0;
+*' upper bound of 0.5 EJ/yr on grey hydrogen to prevent building too much grey H2 before 2020, distributed to regions via GDP share
+vm_cap.up("2020",regi,"gash2","1") =  0.5 / 3.66 * 1e3 / 8760 * pm_gdp("2020",regi) / sum(regi2,pm_gdp("2020",regi2));
+
+
 *' @stop
 
 *** -----------------------------------------------------------------------------------------------------------------
