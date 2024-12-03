@@ -648,14 +648,6 @@ pm_cintraw("pegas")  = 15.0 / s_zj_2_twa;
 ***----------------------------------------------------------------------------------------
 ***                                   F I L E S
 ***----------------------------------------------------------------------------------------
-file magicc_scenario /                                   "./magicc/REMIND_%c_expname%.SCEN" /;
-
-magicc_scenario.ap = 0;
-magicc_scenario.pw = 3000;
-
-file magicc_sed_script /                                 "./magicc/modify_MAGCFG_USER_CFG.sed" /;
-
-magicc_sed_script.ap = 0;
 
 *** emissions reporting helper parameters
 
