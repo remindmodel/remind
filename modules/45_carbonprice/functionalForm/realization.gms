@@ -20,7 +20,7 @@
 *'  Part II (Post-peak behaviour): The global anchor trajectory can be adjusted after reaching the peak of global CO2 emissions in cm_peakBudgYr.
 *'                                 The (initial) choice of cm_peakBudgYr is endogenously adjusted if cm_iterative_target_adj is set to 7 or 9.
 *'                                     (with iterative_target_adj = 0): after cm_peakBudgYr, the global anchor trajectory increases linearly with fixed annual increase given by cm_taxCO2_IncAfterPeakBudgYr (default = 0, i.e. constant),
-*'                                                                      set cm_peakBudgYr = 2110 to avoid adjustment
+*'                                                                      set cm_peakBudgYr = 2100 to avoid adjustment
 *'                                     (with iterative_target_adj = 5): no adjustment to the functional form after cm_peakBudgYr
 *'                                     (with iterative_target_adj = 7): after cm_peakBudgYr, the global anchor trajectory is adjusted so that global net CO2 emissions stay close to zero
 *'                                     (with iterative_target_adj = 9): after cm_peakBudgYr, the global anchor trajectory increases linearly with fixed annual increase given by cm_taxCO2_IncAfterPeakBudgYr (default = 0, i.e. constant)

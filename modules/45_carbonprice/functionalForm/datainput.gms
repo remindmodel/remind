@@ -83,7 +83,7 @@ $endIf.taxCO2globalAnchor
 *** Part II (Post-peak behaviour): The global anchor trajectory can be adjusted after reaching the peak of global CO2 emissions in cm_peakBudgYr.
 ***                                The (initial) choice of cm_peakBudgYr is endogenously adjusted if cm_iterative_target_adj is set to 7 or 9.
 ***                                    (with iterative_target_adj = 0): after cm_peakBudgYr, the global anchor trajectory increases linearly with fixed annual increase given by cm_taxCO2_IncAfterPeakBudgYr (default = 0, i.e. constant),
-***                                                                     set cm_peakBudgYr = 2110 to avoid adjustment
+***                                                                     set cm_peakBudgYr = 2100 to avoid adjustment
 ***                                    (with iterative_target_adj = 5): no adjustment to the functional form after cm_peakBudgYr
 ***                                    (with iterative_target_adj = 7): after cm_peakBudgYr, the global anchor trajectory is adjusted so that global net CO2 emissions stay close to zero
 ***                                    (with iterative_target_adj = 9): after cm_peakBudgYr, the global anchor trajectory increases linearly with fixed annual increase given by cm_taxCO2_IncAfterPeakBudgYr (default = 0, i.e. constant)
@@ -98,8 +98,8 @@ if((cm_iterative_target_adj = 0) or (cm_iterative_target_adj = 9),
                                                   + (t.val - cm_peakBudgYr) * cm_taxCO2_IncAfterPeakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year 
 );
 
-*** Always set carbon price constant after 2110 to prevent huge taxes after 2110 and the resulting convergence problems
-p45_taxCO2eq_anchor(t)$(t.val gt 2110) = p45_taxCO2eq_anchor("2110");
+*** Always set carbon price constant after 2100 to prevent huge taxes after 2100 and the resulting convergence problems
+p45_taxCO2eq_anchor(t)$(t.val gt 2100) = p45_taxCO2eq_anchor("2100");
 display p45_taxCO2eq_anchor_until2150, p45_taxCO2eq_anchor;
 
 ***-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
