@@ -1137,13 +1137,6 @@ t(ttot) $ (ttot.val ge cm_startyear) = Yes;
 tsu(ttot) $ (ttot.val lt 2005) = Yes;
 display ttot;
 
-*** time sets used for MAGICC
-Sets
-  t_magiccttot(tall) "time periods including spin-up"
-  t_magicc(tall)     "time periods exported to magicc"
-  t_extra(tall)      "averaging between REMIND and MAGICC" / 2000 * 2004 /
-;
-
 
 
 
@@ -2220,18 +2213,6 @@ xirog       "parameters decribing exhaustible extraction coss including long-run
 *** This is a work-around to ensure emissions are printed in correct order.
   numberEmiRCP "number of emission types" / 1 * 23 /
 
-  unitsMagicc "units used for MAGICC"
-  /
-    GtC
-    kt
-    Mt
-    MtCH4
-    MtCO
-    MtN
-    MtN2O-N
-    MtS
-  /
-
 ***-----------------------------------------------------------------------------
 *** Definition of the main characteristics set 'char':
 ***-----------------------------------------------------------------------------
@@ -2960,68 +2941,6 @@ sectorEndoEmi2te(all_enty,all_enty,all_te,sectorEndoEmi)   "map sectors to techn
         seliqbio.fepet.tdbiopet.trans
         seliqfos.fepet.tdfospet.trans
         seliqsyn.fepet.tdsynpet.trans
-/
-emiRCP2emiREMIND "mapping between emission types expected by MAGICC and provided by REMIND"
-/
-    CO    . CO
-    NMVOC . VOC
-    NOx   . NOx
-    SOx   . SO2
-    BC    . BC
-    OC    . OC
-/
-emiFgas2emiRCP(all_enty,emiRCP)   "match F-gases to MAGICC emissions"
-/
-    emiFgasCF4       . CF4
-    emiFgasC2F6      . C2F6
-    emiFgasC6F14     . C6F14
-    emiFgasHFC23     . HFC23
-    emiFgasHFC32     . HFC32
-    emiFgasHFC43-10  . HFC43-10
-    emiFgasHFC125    . HFC125
-    emiFgasHFC134a   . HFC134a
-    emiFgasHFC143a   . HFC143a
-    emiFgasHFC227ea  . HFC227ea
-    emiFgasHFC245fa  . HFC245fa
-    emiFgasSF6       . SF6
-/
-emiRCP2order "order of emission types expected by MAGICC"
-/
-    FossilCO2 .  1
-    OtherCO2  .  2
-    CH4       .  3
-    N2O       .  4
-    SOx       .  5
-    CO        .  6
-    NMVOC     .  7
-    NOx       .  8
-    BC        .  9
-    OC        . 10
-    NH3       . 11
-    CF4       . 12
-    C2F6      . 13
-    C6F14     . 14
-    HFC23     . 15
-    HFC32     . 16
-    HFC43-10  . 17
-    HFC125    . 18
-    HFC134a   . 19
-    HFC143a   . 20
-    HFC227ea  . 21
-    HFC245fa  . 22
-    SF6       . 23
-/
-
-emiRCP2unitsMagicc(emiRCP,unitsMagicc) "match units to emission types"
-/
-    (FossilCO2,OtherCO2)  . GtC
-    (CH4)                 . MtCH4
-    (N2O)                 . MtN2O-N
-    (SOx)                 . MtS
-    (CO)                  . MtCO
-    (NH3,NOx)             . MtN
-    (NMVOC,BC,OC)         . Mt
-    (CF4,C2F6,C6F14,HFC23,HFC32,HFC43-10,HFC125,HFC134a,HFC143a,HFC227ea,HFC245fa,SF6) . kt
 /
 
 

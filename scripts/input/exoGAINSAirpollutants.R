@@ -192,7 +192,7 @@ out <- E_rem[,,all_sectorEmi]["GLO",,invert=TRUE]
 
 # construct attributes that are required by writeGDX
 gdxdata <- list()
-gdxdata$name <- "pm_emiAPexsolve"
+gdxdata$name <- "p11_emiAPexsolve"
 gdxdata$type <- "parameter"
 gdxdata$form <- "sparse"
 gdxdata$domains <- c("tall", "all_regi", "all_sectorEmi", "emiRCP")
@@ -201,8 +201,8 @@ gdxdata$domains <- c("tall", "all_regi", "all_sectorEmi", "emiRCP")
 # add newly created attributes to existing ones
 attributes(out) <- c(attributes(out),list(gdxdata =gdxdata))
 
-# Write gdx with following dimensions: pm_emiAPexsolve(tall,all_regi,all_sectorEmi,emiRCP)
-writeGDX(out,file="pm_emiAPexsolve.gdx",period_with_y = FALSE)
+# Write gdx with following dimensions: p11_emiAPexsolve(tall,all_regi,all_sectorEmi,emiRCP)
+writeGDX(out,file="p11_emiAPexsolve",period_with_y = FALSE)
 
 # Use this to produce file with start values for REMIND
 #out_cs4r <- add_dimension(out,add = "ssp", nm = ssp_scenario,dim=3.3)
