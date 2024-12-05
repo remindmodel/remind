@@ -45,6 +45,21 @@ if ((cm_emiscen eq 6) AND (cm_iterative_target_adj eq 5),
 *** Only run adjustment of carbon price trajectory if cm_emiscen eq 9 and if cm_iterative_target_adj is equal to 5,7 or 9.
 if((cm_emiscen eq 9) AND ((cm_iterative_target_adj eq 5) OR (cm_iterative_target_adj eq 7) OR (cm_iterative_target_adj eq 9)),
 
+*** Save pm_taxCO2eq and p45_taxCO2eq_anchor over iterations for debugging
+p45_taxCO2eq_iteration(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);
+p45_taxCO2eq_anchor_iteration(iteration,t) = p45_taxCO2eq_anchor(t);
+
+*** Compute deviation of actual budget from target budget
+if(abs(cm_budgetCO2from2020) ge 200, !! Use relative deviation for budgets larger than 200 Gt
+  sm_globalBudget_dev = s45_actualbudgetco2 / cm_budgetCO2from2020; 
+else !! Use absolute deviation for budgets smaller than 200 Gt
+  if(abs(s45_actualbudgetco2 - cm_budgetCO2from2020) le 2, !! sufficiently close to budget target
+    sm_globalBudget_dev = 1; 
+  else !! budget target not reached, choose arbitrary value bigger than 1.01
+    sm_globalBudget_dev = 2;
+  );
+);
+
 ***--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** Part I and II (Global anchor trajectory and post-peak behaviour): Adjustment of global anchor trajectory to meet (peak or end-of-century) CO2 budget target prescribed via cm_budgetCO2from2020.
 ***    If iterative_target_adj = 7 or 9, cm_peakBudgYr automatically adjusted (within the time window 2040--2100)
@@ -63,7 +78,7 @@ if((cm_iterative_target_adj eq 5) OR (cm_iterative_target_adj eq 9),
     s45_factorRescale_taxCO2_exponent_from10 = 1;
   );
 
-  if( (o_modelstat ne 2) OR (abs(cm_budgetCO2from2020 - s45_actualbudgetco2) < 2) OR (ord(iteration) = cm_iteration_max), 
+  if( (o_modelstat ne 2) OR (abs(sm_globalBudget_dev -1) le 0.01) OR (ord(iteration) = cm_iteration_max), 
     !! keep CO2 tax constant if model was not optimal, if maximal number of iterations is reached, or if budget already reached
     p45_factorRescale_taxCO2(iteration)          = 1;
     p45_factorRescale_taxCO2_Funneled(iteration) = p45_factorRescale_taxCO2(iteration);
@@ -100,10 +115,7 @@ if((cm_iterative_target_adj eq 5) OR (cm_iterative_target_adj eq 9),
 
     !! Apply CO2 tax rescale factor
     p45_taxCO2eq_anchor_until2150(t) = max(1* sm_DptCO2_2_TDpGtC, p45_taxCO2eq_anchor_until2150(t) * p45_factorRescale_taxCO2_Funneled(iteration) );
-    !! Save difference between iterations for debugging (note that p45_taxCO2eq_anchor was not yet rescaled up to this point)
-    pm_taxCO2eq_anchor_iterationdiff(t) = max(1* sm_DptCO2_2_TDpGtC, p45_taxCO2eq_anchor(t) * p45_factorRescale_taxCO2_Funneled(iteration) ) - p45_taxCO2eq_anchor(t);
-    o45_taxCO2eq_anchor_iterDiff_Itr(iteration) = pm_taxCO2eq_anchor_iterationdiff("2100");
-    display p45_taxCO2eq_anchor_until2150, pm_taxCO2eq_anchor_iterationdiff, o45_taxCO2eq_anchor_iterDiff_Itr;
+    display p45_taxCO2eq_anchor_until2150;
 
     !! If functionalForm is linear, re-adjust global anchor trajectory to go through the point (cm_taxCO2_historicalYr, cm_taxCO2_historical) 
 $ifThen.taxCO2functionalForm4 "%cm_taxCO2_functionalForm%" == "linear"
@@ -122,9 +134,14 @@ $endIf.taxCO2functionalForm4
     );  
     !! Always set carbon price constant after 2100 to prevent huge taxes after 2100 and the resulting convergence problems
     p45_taxCO2eq_anchor(t)$(t.val gt 2100) = p45_taxCO2eq_anchor("2100");
-    display p45_taxCO2eq_anchor;
 
-  ); !! if( (o_modelstat ne 2) OR (abs(cm_budgetCO2from2020 - s45_actualbudgetco2) < 2) OR (ord(iteration) = cm_iteration_max), 
+    !! Compute difference for debugging
+    pm_taxCO2eq_anchor_iterationdiff(t) = p45_taxCO2eq_anchor(t) - p45_taxCO2eq_anchor_iteration(iteration,t);
+    o45_taxCO2eq_anchor_iterDiff_Itr(iteration) = pm_taxCO2eq_anchor_iterationdiff("2100");
+
+    display p45_taxCO2eq_anchor, pm_taxCO2eq_anchor_iterationdiff, o45_taxCO2eq_anchor_iterDiff_Itr;
+
+  ); !! if( (o_modelstat ne 2) OR (abs(sm_globalBudget_dev -1) le 0.01) OR (ord(iteration) = cm_iteration_max), 
 ); !! if((cm_iterative_target_adj eq 5) OR (cm_iterative_target_adj eq 9),
 
 
@@ -353,10 +370,6 @@ $ifthen.lowerBound "%cm_taxCO2_lowerBound_path_gdx_ref%" == "on"
   pm_taxCO2eq(t,regi) = max(pm_taxCO2eq(t,regi), p45_taxCO2eq_path_gdx_ref(t,regi));
 $endIf.lowerBound
 display pm_taxCO2eq;
-
-*** Save pm_taxCO2eq and p45_taxCO2eq_anchor over iterations for debugging
-p45_taxCO2eq_iteration(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);
-p45_taxCO2eq_anchor_iteration(iteration,t) = p45_taxCO2eq_anchor(t);
 
 ); !! if((cm_emiscen eq 9) AND ((cm_iterative_target_adj eq 5) OR (cm_iterative_target_adj eq 7) OR (cm_iterative_target_adj eq 9)),
 *** EOF ./modules/45_carbonprice/functionalForm/postsolve.gms
