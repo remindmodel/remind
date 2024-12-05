@@ -1,5 +1,9 @@
-# This script is part of a longer workflow described here
-# https://gitlab.pik-potsdam.de/rse/rse-internal/-/wikis/PublishModel
+# This script is part of a longer workflow. 
+# Before running this script please perform the steps described here
+# https://gitlab.pik-potsdam.de/REMIND/remind-rse/-/wikis/How-to-create-a-REMIND-release
+
+# in your fork switch to temporary branch (e.g. release-candidate) and
+# execute this script in the main folder Rscript scripts/utils/release.R x.y.z
 
 release <- function(newVersion) {
   if (Sys.which("sbatch") == "") {
@@ -59,8 +63,8 @@ release <- function(newVersion) {
   cfg$input <- cfg$input[cfg$stopOnMissing]
   gms::publish_data(cfg,target = "dataupload@rse.pik-potsdam.de:/remind/public")
   
-  message("Please perform the two following steps manually:\n",
-          "1. CHANGELOG.md: sort lines in each category: changed, added, removed, fixed; remove empty categories\n",
+  message("If not already done please perform the two following steps manually now:\n",
+          "1. CHANGELOG.md: sort lines in each category: input data/calibration, changed, added, removed, fixed; remove empty categories\n",
           "2. git add -p\n",
           "--> When done press ENTER to commit, push and create PR")
   gms::getLine()
@@ -68,6 +72,12 @@ release <- function(newVersion) {
   message("Committing and pushing changes")
   gert::git_commit(paste("remind release", newVersion))
   gert::git_push()
+
+  message("Creating tag")
+  tag <- paste0("v",newVersion)
+  git_tag_create(name = tag, message = "new tag", repo = ".")
+  git_tag_push(name = tag, repo = ".")
+  
   message("Creating a PR on GitHub")
   # gh pr create --help
   # --base branch The branch into which you want your code merged
