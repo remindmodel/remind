@@ -1852,6 +1852,11 @@ $setglobal cm_demScen  gdp_SSP2     !! def = gdp_SSP2
 $setGlobal c_scaleEmiHistorical  on  !! def = on  !! regexp = off|on
 $SetGlobal cm_quick_mode  off          !! def = off  !! regexp = off|on
 $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
+*' cm_APscen "air polution scenario"
+*' (SSP2):
+*' (SSP5):
+*' (CLE): Current Legislation Emissions
+*' (MFR): Maximum Feasible Reductions
 $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
