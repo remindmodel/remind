@@ -18,6 +18,6 @@ loop(ext_regi$sameas(ext_regi, "EUR_regi"),
   pm_taxCO2eq(t,regi)$(t.val ge 2030 AND regi_group(ext_regi,regi)) = (fm_taxCO2eqHist("2030",regi)+ (t.val - 2030) * (20/75)) * sm_DptCO2_2_TDpGtC;
  );
 
-pm_taxCO2eq(t,regi)$(t.val gt 2110) = pm_taxCO2eq("2110",regi); !! to prevent huge taxes after 2110 and the resulting convergence problems, set taxes after 2110 equal to 2110 value
+pm_taxCO2eq(t,regi)$(t.val gt 2100) = pm_taxCO2eq("2100",regi); !! to prevent huge taxes after 2100 and the resulting convergence problems, set taxes after 2100 equal to 2100 value
 
 *** EOF ./modules/45_carbonprice/NPi2025/datainput.gms

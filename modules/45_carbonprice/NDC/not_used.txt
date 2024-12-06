@@ -21,7 +21,6 @@ pm_gdp,input,questionnaire
 cm_peakBudgYr,input,added by codeCheck
 fm_taxCO2eqHist,input,not needed
 sm_budgetCO2eqGlob,input,no iterative target adjustment
-sm_globalBudget_dev,input,no iterative target adjustment
 vm_emiTe,input,no iterative target adjustment
 vm_emiCdr,input,no iterative target adjustment
 vm_emiMac,input,no iterative target adjustment
@@ -35,3 +34,4 @@ cm_taxCO2_IncAfterPeakBudgYr,input,added by codeCheck
 cm_budgetCO2from2020,input,no iterative target adjustment
 pm_taxCO2eq_anchor_iterationdiff,input,no iterative target adjustment
 pm_taxCO2eq_anchor_iterationdiff_tmp,input,no iterative target adjustment
+sm_globalBudget_dev,input,no target adjustement

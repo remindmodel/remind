@@ -49,7 +49,6 @@ gdx <- args[[1]]
 # renaming parameter and variables
 if (length(args) == 1) {
   gdx_rename(gdx,
-    magicc_emi        = 'p_MAGICC_emi',
     ts                = 'pm_ts',
     s_earlyreti       = 'sm_earlyreti', 
     s_tgn2pgc         = 'sm_tgn2pgc', 

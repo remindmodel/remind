@@ -9,8 +9,7 @@ test_that("each output folder contains standard mif files", {
   for (dir in dirs) {
     d <- paste0("../../../output/", dir)
     r <- expect_true(
-      length(list.files(path = d, pattern = "REMIND_generic_.*.mif")) == 2 &&
-        length(list.files(path = d, pattern = "REMIND_climate_.*.mif")) == 1
+      length(list.files(path = d, pattern = "REMIND_generic_.*.mif")) == 2
     )
 
     if (!r) {

@@ -1,5 +1,8 @@
-# This script is part of a longer workflow described here
-# https://gitlab.pik-potsdam.de/rse/rse-internal/-/wikis/PublishModel
+# This script is part of a longer workflow. 
+# Before running this script please perform the steps described here
+# https://gitlab.pik-potsdam.de/REMIND/remind-rse/-/wikis/How-to-create-a-REMIND-release
+
+# in your fork switch to develop and execute this script in the main folder Rscript scripts/utils/postRelease.R
 
 postRelease <- function() {
   gert::git_fetch("upstream")
@@ -11,6 +14,8 @@ postRelease <- function() {
                      "",
                      "",
                      "## [Unreleased]",
+                     "",
+                     "### input data/calibration",
                      "",
                      "### changed",
                      "-",
@@ -28,10 +33,6 @@ postRelease <- function() {
   readLines("CHANGELOG.md") |>
     sub(pattern = pattern, replacement = paste0(pattern, textToAdd), fixed = TRUE) |>
     writeLines("CHANGELOG.md")
-
-  readLines("CITATION.cff") |>
-    sub(pattern = "^(version:.*)$", replacement = "\\1dev") |>
-    writeLines("CITATION.cff")
 
   message("Please perform the following step manually:\n",
           "git add -p\n",

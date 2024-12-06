@@ -262,8 +262,7 @@ $setGlobal aerosols  exoGAINS         !! def = exoGAINS
 *'---------------------    15_climate    ---------------------------------------
 *'
 *' * (off): no climate coupling
-*' * (magicc): MAGICC - iterative coupling of MAGICC climate model.
-*' * (box): Petschel-Held
+*' * (magicc7_ar6): MAGICC7 - iterative coupling of MAGICC7 simple climate model.
 $setGlobal climate  off               !! def = off
 *'---------------------    16_downscaleTemperature    --------------------------
 *'
@@ -393,8 +392,8 @@ $setglobal emicapregi  none           !! def = none
 *' * (NPi): National Policies Implemented, extrapolation of historical (until 2020) carbon prices
 *' * (none): no tax policy (combined with all emiscens except emiscen = 9)
 
-***  (exponential) is superseded by (functionalForm): For a globally uniform, exponentially increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_taxCO2_functionalForm = exponential, cm_taxCO2_regiDiff = none, cm_taxCO2_interpolation = off, cm_taxCO2_lowerBound_path_gdx_ref = off, cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_taxCO2_startyear. 
-***  (linear) is superseded by (functionalForm): For a globally uniform, linearly increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_taxCO2_functionalForm = linear, cm_taxCO2_regiDiff = none, cm_taxCO2_interpolation = off, cm_taxCO2_lowerBound_path_gdx_ref = off, cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_taxCO2_startyear. [Adjust historical reference point (cm_taxCO2_historicalYr, cm_taxCO2_historical) if needed.]
+***  (exponential) is superseded by (functionalForm): For a globally uniform, exponentially increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_taxCO2_functionalForm = exponential, cm_taxCO2_regiDiff = none, cm_taxCO2_interpolation = off, cm_taxCO2_lowerBound_path_gdx_ref = off, cm_peakBudgYr = 2100, and choose the initial carbonprice in cm_startyear via cm_taxCO2_startyear. 
+***  (linear) is superseded by (functionalForm): For a globally uniform, linearly increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_taxCO2_functionalForm = linear, cm_taxCO2_regiDiff = none, cm_taxCO2_interpolation = off, cm_taxCO2_lowerBound_path_gdx_ref = off, cm_peakBudgYr = 2100, and choose the initial carbonprice in cm_startyear via cm_taxCO2_startyear. [Adjust historical reference point (cm_taxCO2_historicalYr, cm_taxCO2_historical) if needed.]
 
 $setglobal carbonprice  none           !! def = none
 *'---------------------    46_carbonpriceRegi  ---------------------------------
@@ -1229,9 +1228,9 @@ $setglobal c_tech_earlyreti_rate  GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(
 *** cm_LU_emi_scen   "choose emission baseline for CO2, CH4, and N2O land use emissions from MAgPIE"
 ***  (SSP1): emissions (from SSP1 scenario in MAgPIE)
 ***  (SSP2): emissions (from SSP2 scenario in MAgPIE)
+***  (SSP3): emissions (from SSP3 scenario in MAgPIE)
 ***  (SSP5): emissions (from SSP5 scenario in MAgPIE)
-***  (SDP):
-$setglobal cm_LU_emi_scen  SSP2   !! def = SSP2  !! regexp = SSP(1|2|3|5)|SDP|SSP2_lowEn
+$setglobal cm_LU_emi_scen  SSP2   !! def = SSP2  !! regexp = SSP(1|2|3|5)|SSP2_lowEn
 *** cm_regi_bioenergy_EFTax  "region(s) in which bioenergy is charged with an emission-factor-based tax"
 ***  This switch has only an effect if 21_tax is on and cm_bioenergy_EF_for_tax
 ***  is not zero. It reads in the regions that are affected by the emission-
@@ -1853,6 +1852,11 @@ $setglobal cm_demScen  gdp_SSP2     !! def = gdp_SSP2
 $setGlobal c_scaleEmiHistorical  on  !! def = on  !! regexp = off|on
 $SetGlobal cm_quick_mode  off          !! def = off  !! regexp = off|on
 $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
+*' cm_APscen "air polution scenario"
+*' (SSP2):
+*' (SSP5):
+*' (CLE): Current Legislation Emissions
+*' (MFR): Maximum Feasible Reductions
 $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
@@ -1924,7 +1928,6 @@ $include    "./core/loop.gms";
 $ifthen.c_skip_output %c_skip_output% == "off"
 $include    "./core/output.gms";
 $batinclude "./modules/include.gms"    output
-$include "./core/magicc.gms";    !!connection to MAGICC, needed for post-processing
 $endif.c_skip_output
 
 *** EOF ./main.gms

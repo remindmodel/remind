@@ -1210,7 +1210,6 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   p_adj_seed_te(ttot,regi,"bfcc")            = 0.05;
   p_adj_seed_te(ttot,regi,"idrcc")           = 0.05;
 $endif.cm_subsec_model_steel
-  p_adj_seed_te(ttot,regi,"elh2") = 0.5;
   p_adj_seed_te(ttot,regi,"MeOH") = 0.5;
   p_adj_seed_te(ttot,regi,"h22ch4") = 0.5;
 
@@ -1251,7 +1250,6 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,teGrid)            = 0.3;
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
   
-  p_adj_coeff(ttot,regi,"elh2")            = 0.5;
   p_adj_coeff(ttot,regi,"MeOH")            = 0.5;
   p_adj_coeff(ttot,regi,"h22ch4")            = 0.5;
 
@@ -1521,31 +1519,6 @@ pm_incinerationRate(ttot,all_regi)=f_incinerationShares(ttot,all_regi);
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!
 pm_cesdata(ttot,regi,in,"offset_quantity")$(ttot.val ge 2005)       = 0;
-
-*** ----- MAGICC RCP scenario emission data -----------------------------------
-*** load default values from the scenario depending on cm_rcp_scen
-*** (0): no RCP scenario, standard setting
-*** (1): RCP2.6 - this only works with emiscen = 8
-*** (2): RCP3.7 - this only works with emiscen = 5
-*** (3): RCP4.5 - this only works with emiscen = 5
-*** (4): RCP6.0 - this only works with emiscen = 5
-*** (5): RCP8.5 - this only works with emiscen = 5
-*** (6): RCP2.0 - this only works with emiscen = 8
-
-$include "./core/magicc/magicc_scen_bau.inc";
-$include "./core/magicc/magicc_scen_450.inc";
-$include "./core/magicc/magicc_scen_550.inc";
-
-*** ----- Parameters needed for MAGICC ----------------------------------------
-
-table p_regi_2_MAGICC_regions(all_regi,RCP_regions_world_bunkers)    "map REMIND to MAGICC regions"
-$ondelim
-$include "./core/input/p_regi_2_MAGICC_regions.cs3r"
-$offdelim
-;
-p_regi_2_MAGICC_regions(regi,"WORLD") = 1;
-p_regi_2_MAGICC_regions(regi,"BUNKERS") = 0;
-display p_regi_2_MAGICC_regions ;
 
 ***-----------------------------------------------------------------
 *RP* vintages

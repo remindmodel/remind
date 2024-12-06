@@ -32,7 +32,6 @@ scenario <- getScenNames(outputdir)
 ###############################################################################
 # paths of the reporting files
 remind_reporting_file <- file.path(outputdir,paste0("MOFEX_",scenario,".mif"))
-# magicc_reporting_file <- file.path(outputdir,paste0("REMIND_climate_", scenario, ".mif"))
 # LCOE_reporting_file   <- file.path(outputdir,paste0("REMIND_LCOE_", scenario, ".mif"))
 
 # produce REMIND reporting *.mif based on gdx information
