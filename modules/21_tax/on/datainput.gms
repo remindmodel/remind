@@ -37,15 +37,15 @@ $include "./modules/21_tax/on/input/f21_tax_convergence.cs4r"
 $offdelim
   /
 ;
-Parameter f21_tax_convergence_SSP3(tall,all_regi,all_enty) "Tax convergence level for specific regions, year and final energy type"
+Parameter f21_tax_convergence_rollback(tall,all_regi,all_enty) "Tax convergence level for specific regions, year and final energy type"
   /
 $ondelim
-$include "./modules/21_tax/on/input/f21_tax_convergence_SSP3.cs4r"
+$include "./modules/21_tax/on/input/f21_tax_convergence_rollback.cs4r"
 $offdelim
   /
 ;
 if(cm_fetaxscen eq 5,
-f21_tax_convergence(ttot,regi,enty) = f21_tax_convergence_SSP3(ttot,regi,enty);
+f21_tax_convergence(ttot,regi,enty) = f21_tax_convergence_rollback(ttot,regi,enty);
 );
 
 Parameter f21_max_fe_sub(tall,all_regi,all_enty) "maximum final energy subsidy levels (in $/Gj) from REMIND version prior to rev. 5429"

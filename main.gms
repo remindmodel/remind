@@ -716,13 +716,14 @@ parameter
 parameter
   cm_fetaxscen              "choice of final energy tax path, subsidy path and inconvenience cost path, values other than zero enable final energy tax"
 ;
-  cm_fetaxscen        = 3;         !! def = 3  !! regexp = [0-4]
+  cm_fetaxscen        = 3;         !! def = 3  !! regexp = [0-5]
 *' even if set to 0, the PE inconvenience cost per SO2-cost for coal are always on if module 21_tax is on
 *' * (0): no tax, sub, inconv
 *' * (1): constant t,s,i (used in SSP 5 and ADVANCE WP3.1 HighOilSub)
 *' * (2): converging tax, phased out sub (-2030), no inconvenience cost so far (used in SSP 1)
 *' * (3): constant tax, phased out sub (-2050), no inconvenience cost so far (used in SSP 2)
 *' * (4): constant tax, phased out sub (-2030), no inconvenience cost so far (used in SDP)
+*' * (5): roll back of final energy taxes to get back to a no-policy case (previously known as BAU)
 *'
 parameter
   cm_distrBeta              "elasticity of tax revenue redistribution"
