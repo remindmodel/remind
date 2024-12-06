@@ -51,6 +51,13 @@ $else.taxCO2interpolation1
 p45_interpolation_data(ext_regi,ttot,ttot2)  "regional exponent and timewindow for interpolation"
 / %cm_taxCO2_interpolation% /
 $endIf.taxCO2interpolation1
+*** Only assigning values to p45_taxCO2eq_startYearValue if cm_taxCO2_startYearValue is not off
+$ifThen.taxCO2startYearValue1 "%cm_taxCO2_startYearValue%" == "off"
+$else.taxCO2startYearValue1
+p45_taxCO2eq_startYearValue_data(ext_regi)    "input data for manually chosen regional carbon price in cm_startyear in $/t CO2eq"
+/ %cm_taxCO2_startYearValue% /
+p45_taxCO2eq_startYearValue(all_regi)         "manually chosen regional carbon price in cm_startyear in $/t CO2eq"
+$endIf.taxCO2startYearValue1
 ;          
 
 

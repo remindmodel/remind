@@ -202,9 +202,23 @@ loop((ext_regi,ttot,ttot2)$p45_interpolation_data(ext_regi,ttot,ttot2),
   );
 );
 $endIf.CO2taxInterpolation2
+
+$ifThen.taxCO2startYearValue2 "%cm_taxCO2_startYearValue%" == "off"
+$else.taxCO2startYearValue2
+*** Set manually chosen regional carbon price in cm_startyear
+loop((ext_regi)$p45_taxCO2eq_startYearValue_data(ext_regi),
+  loop(regi$regi_groupExt(ext_regi,regi),
+    p45_taxCO2eq_startYearValue(regi) = p45_taxCO2eq_startYearValue_data(ext_regi) * sm_DptCO2_2_TDpGtC; !! Converted from $/t CO2eq to T$/GtC  
+  );
+);
+display p45_taxCO2eq_startYearValue;
+*** Set interpolation start to cm_startyear
+p45_interpolation_startYr(regi) = cm_startyear;
+$endIf.taxCO2startYearValue2
 display p45_interpolation_exponent, p45_interpolation_startYr, p45_interpolation_endYr;
 
 *** Step IV.2: Create interpolation
+$ifThen.taxCO2startYearValue3 "%cm_taxCO2_startYearValue%" == "off"
 loop(regi,
   pm_taxCO2eq(ttot,regi) = p45_taxCO2eq_path_gdx_ref(ttot,regi); !! Initialize pm_taxCO2eq with p45_taxCO2eq_path_gdx_ref. Then overwrite all time steps after cm_startyear and p45_interpolation_startYr(regi) 
   pm_taxCO2eq(t,regi)$((t.val ge p45_interpolation_startYr(regi)) and (t.val lt p45_interpolation_endYr(regi))) = 
@@ -214,6 +228,17 @@ loop(regi,
       * rPower( (t.val - p45_interpolation_startYr(regi)) / (p45_interpolation_endYr(regi) - p45_interpolation_startYr(regi)), p45_interpolation_exponent(regi));
   pm_taxCO2eq(t,regi)$(t.val ge p45_interpolation_endYr(regi)) = p45_taxCO2eq_regiDiff(t,regi);
 );
+$else.taxCO2startYearValue3
+loop(regi,
+  pm_taxCO2eq(ttot,regi) = p45_taxCO2eq_path_gdx_ref(ttot,regi); !! Initialize pm_taxCO2eq with p45_taxCO2eq_path_gdx_ref. Then overwrite all time steps after cm_startyear
+  pm_taxCO2eq(t,regi)$(t.val lt p45_interpolation_endYr(regi)) = 
+      p45_taxCO2eq_startYearValue(regi)
+      * (1 - rPower( (t.val - cm_startyear) / (p45_interpolation_endYr(regi) - cm_startyear), p45_interpolation_exponent(regi)))
+    + sum(t2$(t2.val eq p45_interpolation_endYr(regi)), p45_taxCO2eq_regiDiff(t2,regi)) !! value of p45_taxCO2eq_regiDiff in p45_interpolation_endYr
+      * rPower( (t.val - cm_startyear) / (p45_interpolation_endYr(regi) - cm_startyear), p45_interpolation_exponent(regi));
+  pm_taxCO2eq(t,regi)$(t.val ge p45_interpolation_endYr(regi)) = p45_taxCO2eq_regiDiff(t,regi);
+);
+$endIf.taxCO2startYearValue3
 display pm_taxCO2eq;
 
 *** Step IV.3: Lower bound pm_taxCO2eq by p45_taxCO2eq_path_gdx_ref if switch cm_taxCO2_lowerBound_path_gdx_ref is on
