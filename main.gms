@@ -179,7 +179,7 @@
 *' * When declaring a parameter/variable/equation always add the sets it is declared for,
 *' e.g. `parameter test(x,y);` instead of `parameter test;`
 *' * do not set variables for all set entries to zero (if not necessary), as this will blow up memory requirements.
-*'
+*' test
 
 
 *##################### R SECTION START (VERSION INFO) ##########################
