@@ -8,9 +8,9 @@ SMIPv04-VLHO-SSP2-EcBudg400-def;1;;rcp26;5;globallyOptimal;400;functionalForm;ex
 SMIPv04-VLLO-SSP1-PkBudg650-def;1;;rcp20;9;globallyOptimal;650;functionalForm;linear;75;2055;55;2028;initialSpread10;GLO 2050;;0;9;2;100;1;0;0.5;5;5;;;;2050.GLO 0.9;NDC;regiCarbonPrice;2030.EUR_regi.tax.t.FE_wo_b_wo_n_e.all 1.2809;on;on;EUR_regi, NEU_regi;pop_SSP1;gdp_SSP1;gdp_SSP1;lowOil;lowGas;lowCoal;2;GLO 0.12, EUR_regi 0.15;2;4;2;SSP1;1;1;forcing_SSP1;MFR;Mix4ICEban;2030;;SMIPv04-M-SSP2-NPi2025-def;;SMIPv04-M-SSP2-NPi2025-def;
 #___ScenarioMIP_SSP_variants___;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 SMIPv04-M-SSP1-NPi2025-var;1;SMIPv04-M-SSP2-NPi2025-def;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;pop_SSP1;gdp_SSP1;gdp_SSP1;lowOil;lowGas;lowCoal;2;GLO 0.12, EUR_regi 0.15;;4;;SSP1;;;forcing_SSP1;;;2030;;SMIPv04-M-SSP2-NPi2025-def;;;
-SMIPv04-M-SSP2_lowEn-NPi2025-var;1;SMIPv04-M-SSP2-NPi2025-def;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;gdp_SSP2_lowEn;;;;;GLO 0.09, EUR_regi 0.15;;;;SSP2_lowEn;;;;;;;;;;;
-SMIPv04-M-SSP3-NPi2025-var;1;SMIPv04-M-SSP2-NPi2025-def;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;pop_SSP3;gdp_SSP3;gdp_SSP3;medOil;medGas;highCoal;4;GLO 0.09, EUR_regi 0.15;;0;;SSP3;;;forcing_SSP3;;;;;;;;
-SMIPv04-L-SSP1-PkBudg1000-var;1;SMIPv04-L-SSP2-PkBudg1000-def;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;pop_SSP1;gdp_SSP1;gdp_SSP1;lowOil;lowGas;lowCoal;2;GLO 0.12, EUR_regi 0.15;;4;;SSP1;;;forcing_SSP1;;;;;SMIPv04-M-SSP2-NPi2025-def;;;
+SMIPv04-M-SSP2_lowEn-NPi2025-var;1;SMIPv04-M-SSP2-NPi2025-def;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;gdp_SSP2_lowEn;;;;;GLO 0.09, EUR_regi 0.15;;;;SSP2_lowEn;;;;;;2030;;SMIPv04-M-SSP2-NPi2025-def;;;
+SMIPv04-M-SSP3-NPi2025-var;1;SMIPv04-M-SSP2-NPi2025-def;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;pop_SSP3;gdp_SSP3;gdp_SSP3;medOil;medGas;highCoal;4;GLO 0.09, EUR_regi 0.15;;0;;SSP3;;;forcing_SSP3;;;2030;;SMIPv04-M-SSP2-NPi2025-def;;;
+SMIPv04-L-SSP1-PkBudg1000-var;1;SMIPv04-L-SSP2-PkBudg1000-def;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;pop_SSP1;gdp_SSP1;gdp_SSP1;lowOil;lowGas;lowCoal;2;GLO 0.12, EUR_regi 0.15;;4;;SSP1;;;forcing_SSP1;;;;;;;;
 SMIPv04-VLLO-SSP2-PkBudg650-var;1;SMIPv04-VLLO-SSP1-PkBudg650-def;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;pop_SSP2;gdp_SSP2;gdp_SSP2;medOil;medGas;medCoal;1;GLO 0.09, EUR_regi 0.15;;1;;SSP2;;;forcing_SSP2;;;;;;;;
 SMIPv04-VLLO-SSP2_lowEn-PkBudg650-var;1;SMIPv04-VLLO-SSP1-PkBudg650-def;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;pop_SSP2;gdp_SSP2;gdp_SSP2_lowEn;medOil;medGas;medCoal;1;GLO 0.09, EUR_regi 0.15;;1;;SSP2;;;forcing_SSP2;;;;;;;;
 #___RIKEN___;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
