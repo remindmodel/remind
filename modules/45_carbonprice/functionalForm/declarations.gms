@@ -51,6 +51,13 @@ $else.taxCO2interpolation1
 p45_interpolation_data(ext_regi,ttot,ttot2)  "regional exponent and timewindow for interpolation"
 / %cm_taxCO2_interpolation% /
 $endIf.taxCO2interpolation1
+*** Only assigning values to p45_taxCO2eq_startYearValue if cm_taxCO2_startYearValue is not off
+$ifThen.taxCO2startYearValue1 "%cm_taxCO2_startYearValue%" == "off"
+$else.taxCO2startYearValue1
+p45_taxCO2eq_startYearValue_data(ext_regi)    "input data for manually chosen regional carbon price in cm_startyear in $/t CO2eq"
+/ %cm_taxCO2_startYearValue% /
+p45_taxCO2eq_startYearValue(all_regi)         "manually chosen regional carbon price in cm_startyear in $/t CO2eq"
+$endIf.taxCO2startYearValue1
 ;          
 
 
@@ -59,15 +66,17 @@ $endIf.taxCO2interpolation1
 scalars
 s45_actualbudgetco2                                     "actual level of 2020-2100 cumulated emissions, including all CO2 for last iteration"
 s45_actualbudgetco2_last                                "actual level of 2020-2100 cumulated emissions for previous iteration" /0/
+s45_factorRescale_taxCO2_exponent_before10              "exponent determining sensitivity    before iteration 10"
+s45_factorRescale_taxCO2_exponent_from10                "exponent determining sensitivity of CO2 price adjustment to CO2 budget deviation from iteration 10"
 ;
 
 *** Parameters only used in functionForm/postsolve.gms
 parameters 
 p45_actualbudgetco2(ttot)                               "actual level of cumulated emissions starting from 2020 [GtCO2]"
 
-p45_taxCO2eq_iteration(iteration,ttot,all_regi)         "save pm_taxCO2eq from each iteration for debugging"
-p45_taxCO2eq_anchor_iteration(iteration,ttot)           "save p45_taxCO2eq_anchor from each iteration for debugging"
-o45_taxCO2eq_anchor_iterDiff_Itr(iteration)             "track pm_taxCO2eq_anchor_iterationdiff over iterations"
+p45_taxCO2eq_iteration(iteration,ttot,all_regi)         "save pm_taxCO2eq in each iteration (before entering functionalForm/postsolve.gms) for debugging"
+p45_taxCO2eq_anchor_iteration(iteration,ttot)           "save p45_taxCO2eq_anchor in each iteration (before entering functionalForm/postsolve.gms) for debugging"
+o45_taxCO2eq_anchor_iterDiff_Itr(iteration)             "track pm_taxCO2eq_anchor_iterationdiff in 2100 over iterations"
 
 o45_diff_to_Budg(iteration)                             "Difference between actual CO2 budget and target CO2 budget"
 o45_totCO2emi_peakBudgYr(iteration)                     "Total CO2 emissions in the peakBudgYr"

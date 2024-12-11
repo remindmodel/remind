@@ -164,12 +164,6 @@ loop(all_regi,
   );
 );
 
-*** MAGICC related sets
-t_magiccttot(tall) = ttot(tall) + t_extra(tall);
-t_magicc(t_magiccttot)$(t_magiccttot.val ge 2005) = Yes;
-
-display "MAGICC related sets", t_magicc, t_extra, t;
-
 *** Alias of mapping
 en2en2(enty,enty2,te) = en2en(enty,enty2,te);
 

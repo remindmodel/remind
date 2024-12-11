@@ -4,6 +4,4 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-name, type, reason
-sm_budgetCO2eqGlob, parameter, Deprecated
-pm_budgetCO2eq, parameter, Deprecated
+name,type,reason

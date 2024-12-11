@@ -37,6 +37,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1881](https://github.com/remindmodel/remind/pull/1881)]
 
 ### added
+- **config** add ScenarioMIP config
+    [[#1894](https://github.com/remindmodel/remind/pull/1894)] and [[#1920](https://github.com/remindmodel/remind/pull/1920)]
 - **32_power** increase minimum required dispatchable back-up capacity for VRE integration
     [[#1789](https://github.com/remindmodel/remind/pull/1789)]
 - **33_CDR** added ocean alkalinity enhancement to the CDR portfolio (OAE is turned off by default)
@@ -74,6 +76,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1851](https://github.com/remindmodel/remind/pull/1851)]
 - **testthat** ignore missing historical.mif in tests because it is an optional input file
     [[#1857](https://github.com/remindmodel/remind/pull/1857)]
+- **scripts** Add scripts for preparing a release
+    [[#1871](https://github.com/remindmodel/remind/pull/1871)]
     
 ### fixed
 - included CCS from plastic waste incineration in CCS mass flows so it is

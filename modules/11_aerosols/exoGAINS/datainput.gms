@@ -32,13 +32,13 @@ p11_emiAPexoAgricult(t,regi,enty,all_exogEmi) = f11_emiAPexoAgricult(t,regi,enty
 
 
 if ( (cm_startyear gt 2005),
-Execute_Loadpoint 'input_ref' pm_emiAPexo =  pm_emiAPexo;
+Execute_Loadpoint 'input_ref' p11_emiAPexo =  p11_emiAPexo;
 );
 
-pm_emiAPexo(t,regi,enty,"Agriculture")      = p11_emiAPexoAgricult(t,regi,enty,"Agriculture");
-pm_emiAPexo(t,regi,enty,"AgWasteBurning")   = p11_emiAPexoAgricult(t,regi,enty,"AgWasteBurning");
-pm_emiAPexo(t,regi,enty,"ForestBurning")    = p11_emiAPexoAgricult(t,regi,enty,"ForestBurning");
-pm_emiAPexo(t,regi,enty,"GrasslandBurning") = p11_emiAPexoAgricult(t,regi,enty,"GrasslandBurning");
+p11_emiAPexo(t,regi,enty,"Agriculture")      = p11_emiAPexoAgricult(t,regi,enty,"Agriculture");
+p11_emiAPexo(t,regi,enty,"AgWasteBurning")   = p11_emiAPexoAgricult(t,regi,enty,"AgWasteBurning");
+p11_emiAPexo(t,regi,enty,"ForestBurning")    = p11_emiAPexoAgricult(t,regi,enty,"ForestBurning");
+p11_emiAPexo(t,regi,enty,"GrasslandBurning") = p11_emiAPexoAgricult(t,regi,enty,"GrasslandBurning");
 
 
 parameter f11_emiAPexoGlob(tall,all_rcp_scen,all_enty,all_exogEmi)                     "exogenous emissions for aviation and international shipping from RCP scenarios"
@@ -47,7 +47,7 @@ $ondelim
 $include "./modules/11_aerosols/exoGAINS/input/f11_emiAPexoGlob.cs4r";
 $offdelim
 /;
-pm_emiAPexoGlob(ttot,enty,all_exogEmi) = f11_emiAPexoGlob(ttot,"rcp60",enty,all_exogEmi);
+p11_emiAPexoGlob(ttot,enty,all_exogEmi) = f11_emiAPexoGlob(ttot,"rcp60",enty,all_exogEmi);
 
 parameter f11_emiAPexo(tall,all_regi,all_rcp_scen,all_enty,all_exogEmi)    "exogenous emissions from RCP scenarios"
 /
@@ -55,10 +55,10 @@ $ondelim
 $include "./modules/11_aerosols/exoGAINS/input/f11_emiAPexo.cs4r"
 $offdelim
 /;
-pm_emiAPexo(ttot,regi,enty,"Waste") = f11_emiAPexo(ttot,regi,"rcp60",enty,"Waste");
-display pm_emiAPexoGlob,pm_emiAPexo;
+p11_emiAPexo(ttot,regi,enty,"Waste") = f11_emiAPexo(ttot,regi,"rcp60",enty,"Waste");
+display p11_emiAPexoGlob,p11_emiAPexo;
 
-parameter pm_emiAPexsolve(tall,all_regi,all_sectorEmi,emiRCP) "???";
+parameter p11_emiAPexsolve(tall,all_regi,all_sectorEmi,emiRCP) "???";
 parameter f11_emiAPexsolve(tall,all_regi,all_sectorEmi,emiRCP,all_APscen) "ECLIPSE emission factors of air pollutants"
 /
 $ondelim
@@ -66,33 +66,33 @@ $include "./modules/11_aerosols/exoGAINS/input/f11_emiAPexsolve.cs4r"
 $offdelim
 /
 ;
-pm_emiAPexsolve(tall,all_regi,all_sectorEmi,emiRCP) = f11_emiAPexsolve(tall,all_regi,all_sectorEmi,emiRCP,"%cm_APscen%");
+p11_emiAPexsolve(tall,all_regi,all_sectorEmi,emiRCP) = f11_emiAPexsolve(tall,all_regi,all_sectorEmi,emiRCP,"%cm_APscen%");
 
 *JS* exogenous air pollutant emissions from land use, land use change, and industry processes
-pm_emiExog(t,regi,"SO2") = pm_emiAPexo(t,regi,"SO2","AgWasteBurning")
-                         + pm_emiAPexo(t,regi,"SO2","Agriculture")
-                         + pm_emiAPexo(t,regi,"SO2","ForestBurning")
-                         + pm_emiAPexo(t,regi,"SO2","GrasslandBurning")
-                         + pm_emiAPexo(t,regi,"SO2","Waste")
-                         + pm_emiAPexsolve(t,regi,"solvents","SOx")
-                         + pm_emiAPexsolve(t,regi,"extraction","SOx")
-                         + pm_emiAPexsolve(t,regi,"indprocess","SOx");
-pm_emiExog(t,regi,"BC") = pm_emiAPexo(t,regi,"BC","AgWasteBurning")
-                        + pm_emiAPexo(t,regi,"BC","Agriculture")
-                        + pm_emiAPexo(t,regi,"BC","ForestBurning")
-                        + pm_emiAPexo(t,regi,"BC","GrasslandBurning")
-                        + pm_emiAPexo(t,regi,"BC","Waste")
-                        + pm_emiAPexsolve(t,regi,"solvents","BC")
-                        + pm_emiAPexsolve(t,regi,"extraction","BC")
-                        + pm_emiAPexsolve(t,regi,"indprocess","BC");
-pm_emiExog(t,regi,"OC") = pm_emiAPexo(t,regi,"OC","AgWasteBurning")
-                        + pm_emiAPexo(t,regi,"OC","Agriculture")
-                        + pm_emiAPexo(t,regi,"OC","ForestBurning")
-                        + pm_emiAPexo(t,regi,"OC","GrasslandBurning")
-                        + pm_emiAPexo(t,regi,"OC","Waste")
-                        + pm_emiAPexsolve(t,regi,"solvents","OC")
-                        + pm_emiAPexsolve(t,regi,"extraction","OC")
-                        + pm_emiAPexsolve(t,regi,"indprocess","OC");
+pm_emiExog(t,regi,"SO2") = p11_emiAPexo(t,regi,"SO2","AgWasteBurning")
+                         + p11_emiAPexo(t,regi,"SO2","Agriculture")
+                         + p11_emiAPexo(t,regi,"SO2","ForestBurning")
+                         + p11_emiAPexo(t,regi,"SO2","GrasslandBurning")
+                         + p11_emiAPexo(t,regi,"SO2","Waste")
+                         + p11_emiAPexsolve(t,regi,"solvents","SOx")
+                         + p11_emiAPexsolve(t,regi,"extraction","SOx")
+                         + p11_emiAPexsolve(t,regi,"indprocess","SOx");
+pm_emiExog(t,regi,"BC") = p11_emiAPexo(t,regi,"BC","AgWasteBurning")
+                        + p11_emiAPexo(t,regi,"BC","Agriculture")
+                        + p11_emiAPexo(t,regi,"BC","ForestBurning")
+                        + p11_emiAPexo(t,regi,"BC","GrasslandBurning")
+                        + p11_emiAPexo(t,regi,"BC","Waste")
+                        + p11_emiAPexsolve(t,regi,"solvents","BC")
+                        + p11_emiAPexsolve(t,regi,"extraction","BC")
+                        + p11_emiAPexsolve(t,regi,"indprocess","BC");
+pm_emiExog(t,regi,"OC") = p11_emiAPexo(t,regi,"OC","AgWasteBurning")
+                        + p11_emiAPexo(t,regi,"OC","Agriculture")
+                        + p11_emiAPexo(t,regi,"OC","ForestBurning")
+                        + p11_emiAPexo(t,regi,"OC","GrasslandBurning")
+                        + p11_emiAPexo(t,regi,"OC","Waste")
+                        + p11_emiAPexsolve(t,regi,"solvents","OC")
+                        + p11_emiAPexsolve(t,regi,"extraction","OC")
+                        + p11_emiAPexsolve(t,regi,"indprocess","OC");
 
 display p11_emiFacAP;
 display pm_emiExog;
