@@ -75,8 +75,8 @@ release <- function(newVersion) {
 
   message("Creating tag")
   tag <- paste0("v",newVersion)
-  git_tag_create(name = tag, message = "new tag", repo = ".")
-  git_tag_push(name = tag, repo = ".")
+  gert::git_tag_create(name = tag, message = "new tag", repo = ".")
+  gert::git_tag_push(name = tag, repo = ".")
   
   message("Creating a PR on GitHub")
   # gh pr create --help
