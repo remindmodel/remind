@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -178,16 +178,15 @@ fileAllPulsesClimate <- paste0(normalizePath(climateTempDir), "/allpulses_IAMC_c
 
 # BUILD climate-assessment RUN COMMAND
 runClimateEmulatorCmd <- paste(
-  "python", file.path(scriptsDir, "run_clim.py"),
+  "python climate_assessment_openscm_run.py ",
   fileAllPulsesScen,
-  climateTempDir,
+  "--climatetempdir", climateTempDir,
   # Note: Option --year-filter-last requires https://github.com/gabriel-abrahao/climate-assessment/tree/yearfilter
-  "--year-filter-last", 2305,
+  "--endyear", 2200,
   "--num-cfgs", nparsets,
   "--scenario-batch-size", 1,
   "--probabilistic-file", probabilisticFileModified
 )
-
 # Get conda environment folder
 condaDir <- "/p/projects/rd3mod/python/environments/scm_magicc7"
 # Command to activate the conda environment
@@ -226,7 +225,8 @@ system(paste0(condaCmd, runClimateEmulatorCmd))
 timeStopEmulation <- Sys.time()
 
 # Actual runs done, read the output, already filtering what we need
-temperatureVarName <- "AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile"
+# temperatureVarName <- "AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile"
+temperatureVarName <- "Surface Air Temperature Change"
 mifAllPulsesClimate <- read.quitte(fileAllPulsesClimate) %>%
   filter(variable == temperatureVarName) %>%
   filter(between(period, 2020, 2300))
@@ -321,4 +321,19 @@ writeToGdx <- function(file = "pm_magicc_temperatureImpulseResponse", df) {
 
 # write to GDX:
 writeToGdx("pm_magicc_temperatureImpulseResponse", oupt)
-print("...done.")
+logMsg <- paste0(date(), " Wrote results to 'pm_magicc_temperatureImpulseResponse.gdx'\n")
+
+############################# CLEAN UP WORKERS FOLDER ##########################
+# openscm_runner not remnove up temp dirs. Do this manually since we keep running into file ownership issues
+workersFolder <- file.path(climateTempDir, "workers")  # replace with your directory path
+if (dir.exists(workersFolder)) {
+  # Check if directory is empty
+  if (length(list.files(workersFolder)) == 0) {
+    # Remove directory. Option recursive must be TRUE for some reason, otherwise unlink won't do its job
+    unlink(workersFolder, recursive = TRUE)
+    logMsg <- paste0(logMsg, date(), "  Removed workers folder '", workersFolder, "'\n")
+  }
+}
+logMsg <- paste0(logMsg, date(), " climate_assessment_temperatureImpulseResponse.R finished\n")
+cat(logMsg)
+capture.output(cat(logMsg), file = logFile, append = TRUE)

@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -96,13 +96,6 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
                stdout = renvLogPath, stderr = "2>&1")
     }
 
-    if (cfg$pythonEnabled == "on") {
-      piamenv::createResultsfolderPythonVirtualEnv(normalizePath(cfg$results_folder))
-    } else {
-      # create empty .venv folder so that new venv won't be initialized automatically by .Rprofile
-      dir.create(file.path(cfg$results_folder, ".venv"))
-    }
-
     # Save the cfg (with the updated name of the result folder) into the results folder.
     # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it
     # might be needed to restart subsequent runs manually and should not contain the time stamp in this case.
@@ -132,7 +125,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
     exitCode <- system(paste0("sbatch --job-name=",
                               cfg$title,
                               " --output=log.txt --open-mode=append", # append for requeued jobs
-                              " --mail-type=END",
+                              " --mail-type=END,FAIL",
                               " --comment=REMIND",
                               " --wrap=\"Rscript prepareAndRun.R \" ",
                               cfg$slurmConfig))

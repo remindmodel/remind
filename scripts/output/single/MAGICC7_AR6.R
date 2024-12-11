@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -104,7 +104,7 @@ if (is.null(cfg$climate_assessment_magicc_bin)) cfg$climate_assessment_magicc_bi
 if (is.null(cfg$climate_assessment_magicc_prob_file_reporting)) cfg$climate_assessment_magicc_prob_file_reporting <- "/p/projects/rd3mod/climate-assessment-files/parsets/0fd0f62-derived-metrics-id-f023edb-drawnset.json"
 
 # All climate-assessment files will be written to this folder
-climateAssessmentFolder <- normalizePath(file.path(outputdir, "climate-assessment-data"))
+climateAssessmentFolder <- normalizePath(file.path(outputdir, "climate-assessment-data"), mustWork = FALSE)
 dir.create(climateAssessmentFolder, showWarnings = FALSE)
 
 # The base name, that climate-assessment uses to derive it's output names
@@ -146,13 +146,12 @@ runHarmoniseAndInfillCmd <- paste(
   "python", file.path(scriptsFolder, "run_harm_inf.py"),
   climateAssessmentEmi,
   climateAssessmentFolder,
-  "--no-inputcheck",
   "--infilling-database", infillingDatabaseFile
 )
 
 runClimateEmulatorCmd <- paste(
   "python", file.path(scriptsFolder, "run_clim.py"),
-  normalizePath(file.path(climateAssessmentFolder, paste0(baseFileName, "_harmonized_infilled.csv"))),
+  normalizePath(file.path(climateAssessmentFolder, paste0(baseFileName, "_harmonized_infilled.csv")), mustWork = FALSE),
   climateAssessmentFolder,
   "--num-cfgs", nparsets,
   "--scenario-batch-size", 1,
@@ -229,10 +228,20 @@ as.quitte(remindReportingFile) %>%
   write.mif(remindReportingFile)
 
 piamutils::deletePlus(remindReportingFile, writemif = TRUE)
+logmsg <- paste0(date(), " postprocessing done! Results appended to REMIND mif '", remindReportingFile, "'\n")
 
-logmsg <- paste0(
-  date(), " postprocessing done! Results appended to REMIND mif '", remindReportingFile, "'\n",
-  "MAGICC7_AR6.R finished\n"
-)
+############################# CLEAN UP WORKERS FOLDER ##########################
+# openscm_runner not remnove up temp dirs. Do this manually since we keep running into file ownership issues
+workersFolder <- file.path(climateAssessmentFolder, "workers")  # replace with your directory path
+if (dir.exists(workersFolder)) {
+  # Check if directory is empty
+  if (length(list.files(workersFolder)) == 0) {
+    # Remove directory. Option recursive must be TRUE for some reason, otherwise unlink won't do its job
+    unlink(workersFolder, recursive = TRUE)
+    logmsg <- paste0(logmsg, date(), "  Removed workers folder '", workersFolder, "'\n")
+  }
+}
+
+logmsg <- paste0(logmsg, date(), "MAGICC7_AR6.R finished\n")
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)

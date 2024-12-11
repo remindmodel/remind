@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -26,31 +26,50 @@ helpText <- "
 #'
 #' [options] can be the following flags:
 #'
-#'   --help, -h:      show this help text and exit
-#'   --test, -t:      tests output.R without actually starting any run
-#'   --renv=<path>    load the renv located at <path>, incompatible with --update
-#'   --update         update packages in renv first, incompatible with --renv=<path>
+#'   --help, -h   show this help text and exit
+#'   --test, -t   tests output.R without actually starting any run
+#'   --update     update packages in renv first, incompatible with --renv=<path>
 #'
 #' [options] can also specify the following variables. If they are not specified
 #' but needed, the scripts will ask the user.
 #'
-#'   comp=             comp=single means output for single runs (reporting, …)
-#'                     comp=comparison means scripts to compare runs (compareScenarios2, …)
-#'                     comp=export means scripts to export runs (xlsx_IIASA, …)
-#'   filename_prefix=  string to be added to filenames by some output scripts
-#'                     (compareScenarios, xlsx_IIASA)
-#'   output=           output=compareScenarios2 directly selects the specific script
-#'   outputdir=        Can be used to specify the output directories to be used.
-#'                     Example: outputdir=./output/SSP2-Base-rem-1,./output/NDC-rem-1
-#'   remind_dir=       path to remind or output folder(s) where runs can be found.
-#'                     Defaults to ./output but can also be used to specify multiple
-#'                     folders, comma-separated, such as remind_dir=.,../otherremind
-#'   slurmConfig=      use slurmConfig=priority, short or standby to specify slurm
-#'                     selection. You may also pass complicated arguments such as
-#'                     slurmConfig='--qos=priority --mem=8000'
+#'   --comp=              comp=single means output for single runs
+#'                        (e.g. reporting, ...)
+#'                        comp=comparison means scripts to compare runs
+#'                        (e.g. compareScenarios2, ...)
+#'                        comp=export means scripts to export runs
+#'                        (e..g xlsx_IIASA, ...)
+#'
+#'   --filename_prefix=   string to be added to filenames by some output scripts
+#'                        (compareScenarios, xlsx_IIASA)
+#'
+#'   --output=            output=compareScenarios2 directly selects the specific
+#'                        script
+#'
+#'   --outputdir=         Can be used to specify the output directories to be
+#'                        used directly, bypassing run selection, as a
+#'                        comma-separated list
+#'                        (e.g. outputdir=./output/SSP2-Base-rem-1,./output/NDC-rem-1)
+#'
+#'   --remind_dir=        path to remind or output directories where runs can be
+#'                        found.  Defaults to ./output but can also be used to
+#'                        specify multiple  folders, comma-separated, such as
+#'                        remind_dir=.,../otherremind
+#'
+#'   --renv=<path>        load the renv located at <path>, incompatible with
+#'                        --update
+#'
+#'   --slurmConfig=       use slurmConfig=priority, short or standby to specify
+#'                        slurm selection.  You may also pass complicated
+#'                        arguments such as slurmConfig='--qos=priority --mem=8000'
 "
 
 argv <- get0("argv", ifnotfound = commandArgs(trailingOnly = TRUE))
+
+if (any(c("-h", "--help") %in% argv)) {
+  message(gsub("#' ?", '', helpText))
+  q()
+}
 
 # run updates before loading any packages
 if ("--update" %in% argv) {
@@ -79,11 +98,6 @@ if (!exists("source_include")) {
                     .flags = c(t = "--test", h = "--help"))
 }
 
-if ("--help" %in% flags) {
-  message(gsub("#' ?", '', helpText))
-  q()
-}
-
 choose_slurmConfig_output <- function(output) {
   slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
                      "--qos=priority --mem=8000", "--qos=short --mem=8000",
@@ -99,6 +113,8 @@ choose_slurmConfig_output <- function(output) {
     slurm_options <- paste(slurm_options[1:3], "--mem=32000")
   } else if ("reporting" %in% output) {
     slurm_options <- grep("--mem=[0-9]*[0-9]{3}", slurm_options, value = TRUE)
+  } else if ("fixOnRef" %in% output && length(output) == 1) {
+    slurm_options <- c("direct", slurm_options)
   }
 
   if (length(slurm_options) == 1) {
@@ -123,22 +139,31 @@ if (exists("source_include")) {
   comp <- "single"
 } else if (! exists("comp")) {
   modes <- c("single" = "Output for single run", "comparison" = "Comparison across runs", "export" = "Export", "exit" = "Exit")
-  comp <- names(modes)[which(chooseFromList(unname(modes), type = "output mode", multiple = FALSE, returnBoolean = TRUE))]
+  comp <- names(modes)[which(chooseFromList(unname(modes), type = "output mode", multiple = FALSE, returnBoolean = TRUE, userinfo = "Leave empty for 'single'."))]
+  if (length(comp) == 0) comp <- names(modes)[[1]]
   if (comp == "exit") q()
 }
 if (isFALSE(comp)) comp <- "single" # legacy from times only two comp modes existed
 if (isTRUE(comp)) comp <- "comparison"
 
 if (! exists("output")) {
-  modules <- gsub("\\.R$", "", grep("\\.R$", list.files(paste0("./scripts/output/", if (isFALSE(comp)) "single" else comp)), value = TRUE))
-  output <- if (length(modules) == 1) modules else chooseFromList(modules, type = "modules to be used for output generation", addAllPattern = FALSE)
+  # search for R scripts in scripts/output subfolders
+  modules <- gsub("\\.R$", "", grep("\\.R$", list.files(paste0("./scripts/output/", comp)), value = TRUE))
+  # if more than one option exists, let user choose
+  defaultoutput <- switch(comp, "single" = gms::readDefaultConfig(".")$output, "comparison" = "compareScenarios2", "export" = "xlsx_IIASA")
+  userinfo <- paste("Leave empty for", paste(defaultoutput, collapse = ", "))
+  output <- if (length(modules) == 1) modules else chooseFromList(modules, type = "modules to be used for output generation", addAllPattern = FALSE, userinfo = userinfo)
+  if (length(output) == 0) output <- defaultoutput
+  # move "reporting" to first position, if it exists
+  output <- c(if ("reporting" %in% output) "reporting", output[! output %in% "reporting"])
 }
 
 # Select output directories if not defined by readArgs
 if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
-                         "plot_compare_iterations", "varListHtml", "fixOnRef", "MAGICC7_AR6")
-  needingMif <- any(modulesNeedingMif %in% output)
+                         "plot_compare_iterations", "varListHtml", "fixOnRef", "MAGICC7_AR6",
+                         "validateScenarios", "checkClimatePercentiles", "selectPlots")
+  needingMif <- any(modulesNeedingMif %in% output) && ! "reporting" %in% output[[1]]
   if (exists("remind_dir")) {
     dir_folder <- c(file.path(remind_dir, "output"), remind_dir)
   } else {
@@ -172,7 +197,7 @@ if (! exists("outputdir")) {
 
 if (comp %in% c("comparison", "export")) {
   # ask for filename_prefix, if one of the modules that use it is selected
-  modules_using_filename_prefix <- c("compareScenarios2", "xlsx_IIASA", "varListHtml")
+  modules_using_filename_prefix <- c("compareScenarios2", "xlsx_IIASA", "varListHtml", "selectPlots")
   if (!exists("filename_prefix")) {
     if (any(modules_using_filename_prefix %in% output)) {
       filename_prefix <- choose_filename_prefix(modules = intersect(modules_using_filename_prefix, output))
@@ -182,7 +207,7 @@ if (comp %in% c("comparison", "export")) {
   }
 
   # choose the slurm options. If you use command line arguments, use slurmConfig=priority or standby
-  modules_using_slurmConfig <- c("compareScenarios2")
+  modules_using_slurmConfig <- c("compareScenarios2", "validateScenarios")
   if (!exists("slurmConfig") && any(modules_using_slurmConfig %in% output)) {
     slurmConfig <- choose_slurmConfig_output(output = output)
   }
@@ -203,7 +228,7 @@ if (comp %in% c("comparison", "export")) {
       if ("--test" %in% flags) {
         message("Test mode, not executing ", paste0("scripts/output/", comp, "/", name))
       } else {
-        message(paste("Executing", name))
+        message("\n\n## Executing ", name)
         tmp.env <- new.env()
         tmp.error <- try(sys.source(paste0("scripts/output/", comp, "/", name), envir = tmp.env))
         rm(tmp.env)
@@ -216,27 +241,29 @@ if (comp %in% c("comparison", "export")) {
   }
 } else { # comp = single
     # define slurm class or direct execution
-  outputInteractive <- c("plotIterations", "fixOnRef", "integratedDamageCosts")
+  outputInteractive <- c("plotIterations", "integratedDamageCosts")
   if (! exists("source_include")) {
     if (any(output %in% outputInteractive)) {
       slurmConfig <- "direct"
-      flags <- c(flags, "--interactive") # to tell scripts they can run in interactive mode
     }
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
     if (!exists("slurmConfig")) {
       slurmConfig <- choose_slurmConfig_output(output = output)
-      if (slurmConfig != "direct") slurmConfig <- combine_slurmConfig("--nodes=1 --tasks-per-node=1", slurmConfig)
+      if (slurmConfig != "direct") slurmConfig <- combine_slurmConfig("--nodes=1 --tasks-per-node=1 --time=120", slurmConfig)
     }
     if (slurmConfig %in% c("priority", "short", "standby")) {
-      slurmConfig <- paste0("--qos=", slurmConfig, " --nodes=1 --tasks-per-node=1")
+      slurmConfig <- paste0("--nodes=1 --tasks-per-node=1 --qos=", slurmConfig)
+    }
+    if (isTRUE(slurmConfig %in% "direct")) {
+      flags <- c(flags, "--interactive") # to tell scripts they can run in interactive mode
     }
   } else {
     # if being sourced by another script execute the output scripts directly without sending them to the cluster
     slurmConfig <- "direct"
   }
 
-  # Execute outputscripts for all choosen folders
+  # Execute outputscripts for all chosen folders
   for (outputdir in outputdirs) {
 
     if (exists("cfg")) {
@@ -302,7 +329,7 @@ if (comp %in% c("comparison", "export")) {
           logfile <- file.path(outputdir, "log_output.txt")
           Rscripts <- paste0("Rscript scripts/output/single/", name, " outputdir=", outputdir, collapse = "; ")
           slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
-                       " --mail-type=END --comment=output.R --wrap='", Rscripts, "'")
+                       " --mail-type=END,FAIL --comment=output.R --wrap='", Rscripts, "'")
           message("Sending to slurm: ", paste(name, collapse = ", "), ". Find log in ", logfile)
           system(slurmcmd)
         }

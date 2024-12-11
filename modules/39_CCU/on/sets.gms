@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -71,6 +71,7 @@ enty(enty_ccu39)							   = YES;
 te(te_ccu39)								   = YES;
 se2se(se2se_ccu39)							   = YES;
 teSe2rlf(teCCU2rlf)					   		   = YES;
+teAdj(te_ccu39)								   = YES;
 
 *** EOF ./modules/39_CCU/on/sets.gms
 

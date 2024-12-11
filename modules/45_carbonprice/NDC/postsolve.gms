@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -76,7 +76,7 @@ pm_taxCO2eq(t,regi)$(t.val gt p45_lastNDCyear(regi))
       )/(p45_taxCO2eqConvergenceYear - p45_lastNDCyear(regi));
 
 ***as a minimum, use BAU and have linear price increase starting from 1$ in 2030
-pm_taxCO2eq(t,regi)$(t.val gt 2030) = max(
+pm_taxCO2eq(t,regi)$(t.val ge 2030) = max(
                  pm_taxCO2eq(t,regi),
                  p45_taxCO2eq_bau(t,regi),
                  1 * sm_DptCO2_2_TDpGtC * (1+(t.val-2030)*9/7), p45_taxCO2eq_bau(t,regi)

@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -142,6 +142,7 @@ test_that("runs coupled to MAgPIE work", {
     expect_true(lengthwithmag > lengthwithoutmag && lengthwithmag > 700000)
     # check main mif
     qscen <- quitte::as.quitte(paste0("../../output/C_", scen, ".mif"))
+    expect_no_warning(quitte::reportDuplicates(piamutils::deletePlus(qscen)))
     expect_true(all(grepl("^REMIND-MAgPIE", levels(qscen$model))))
     expect_true(nrow(qscen) == lengthwithmag)
     # here we could add checks which variables etc. must be in the mif file

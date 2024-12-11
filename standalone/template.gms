@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -124,8 +124,8 @@ cm_solver_try_max      "maximum number of inner iterations within one Negishi it
 c_keep_iteration_gdxes   "save intermediate iteration gdxes"
 cm_nash_autoconverge  "choice of nash convergence mode"
 cm_emiscen            "policy scenario choice"
-cm_co2_tax_2020       "level of co2 tax in year 2020 in $ per t CO2eq, makes sense only for emiscen eq 9 and 45_carbonprice exponential"
-cm_co2_tax_growth     "growth rate of carbon tax"
+cm_taxCO2_startyear    "level of co2 tax in start year in $ per t CO2eq"
+cm_taxCO2_expGrowth     "growth rate of carbon tax"
 c_macscen            "use of mac"
 cm_nucscen            "nuclear option choice"
 cm_ccapturescen       "carbon capture option choice"
@@ -197,8 +197,8 @@ $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
 cm_emiscen        = 1;         !! def = 1
 $setglobal cm_rcp_scen  none   !! def = "none"
-cm_co2_tax_2020   = -1;        !! def = -1
-cm_co2_tax_growth = 1.05;      !! def = 1.05
+cm_taxCO2_startyear   = -1;   !! def = -1
+cm_taxCO2_expGrowth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
 cm_nucscen       = 2;        !! def = 2

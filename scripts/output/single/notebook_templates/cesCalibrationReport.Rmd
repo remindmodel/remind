@@ -144,7 +144,7 @@ knitr::kable(df, caption = "Prices below 0.01")
 ```{r line plots}
 te <- c(
   "gastr", "refliq", "biotr", "coaltr", "hydro", "ngcc", "ngt",
-  "pc", "dot", "gaschp", "wind", "tnrs"
+  "pc", "dot", "gaschp", "windon", "tnrs"
 )
 in_set <- readGDX(gdx, "in", "sets")
 structure <- sort(intersect(in_set, getColValues(ces, "pf")))

@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -42,7 +42,6 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
   cfg_mag <- check_config(cfg_mag, file.path(path_magpie, "config", "default.cfg"), file.path(path_magpie,"modules"))
   cfg_mag$sequential <- TRUE
   cfg_mag$force_replace <- TRUE
-  cfg_mag$output     <- c("rds_report") # ,"remind","report") # rds_report: MAgPIE4; remind,report: MAgPIE3 (glo.modelstat.csv)
   # if provided use ghg prices for land (MAgPIE) from a different REMIND run than the one MAgPIE runs coupled to
   use_external_ghgprices <- ifelse(is.na(cfg_mag$path_to_report_ghgprices), FALSE, TRUE)
 
@@ -259,8 +258,9 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
           sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j' | grep -v ", fullrunname), intern = TRUE)
           subseq.env$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
         }
-        slurmOptions <- combine_slurmConfig(paste0("--qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", logfile,
-           " --open-mode=append --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", subseq.env$numberOfTasks,
+        slurmOptions <- combine_slurmConfig(paste0("--qos=", subseq.env$qos,
+           " --job-name=", subseq.env$fullrunname, " --output=", logfile,
+           " --open-mode=append --mail-type=END,FAIL --comment=REMIND-MAgPIE --tasks-per-node=", subseq.env$numberOfTasks,
           if (subseq.env$numberOfTasks == 1) " --mem=8000"), subseq.env$sbatch)
         subsequentcommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
         message(subsequentcommand)
@@ -312,7 +312,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       cs_name <- paste0("compScen-rem-1-", max_iterations, "_", runname)
       cs_qos <- if (!isFALSE(run_compareScenarios)) run_compareScenarios else "short"
       cs_command <- paste0("sbatch --qos=", cs_qos, " --job-name=", cs_name, " --output=", cs_name, ".out --error=",
-      cs_name, ".out --mail-type=END --time=60 --mem=8000 --wrap='Rscript scripts/cs2/run_compareScenarios2.R outputDirs=",
+      cs_name, ".out --mail-type=END,FAIL --time=60 --mem=8000 --wrap='Rscript scripts/cs2/run_compareScenarios2.R outputDirs=",
       paste(cs_runs, collapse=","), " profileName=REMIND-MAgPIE outFileName=", cs_name,
       " regionList=World,LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA mainRegName=World'")
       if (! isFALSE(run_compareScenarios)) {

@@ -7,10 +7,11 @@ Many projects have to upload their scenario data to the database provided by [II
 ## Step 1: model registration
 
 At the beginning of the project, there should be a process to get access to the project Internal Scenario Explorer. In case of problems, contact [Daniel Huppmann](https://iiasa.ac.at/staff/daniel-huppmann).
-
-Model, scenarios and project variables should be registered in the IIASA database. Often, the variable list is based on the `AR6` template once generated for the IPCC Sixth Assessment Report, or the new template for the NAVIGATE project.
-
-A template file containing the list of variables and associated units may be provided as yaml or xlsx file. It can be used to check the variable names and units of your submission. Save it in your REMIND repository, the suggested place is `./output/export/`.
+REMIND model registration files can be found in the [mappings](https://github.com/IAMconsortium/common-definitions/tree/main/mappings) and the [region](https://github.com/IAMconsortium/common-definitions/tree/main/definitions/region/native_regions) folder of the common-definitions repository, or in [piamInterfaces](https://github.com/pik-piam/piamInterfaces/tree/master/inst/registration).
+Scenarios and project variables should be registered in the IIASA database.
+Often, the variable list is based on the `AR6` template once generated for the IPCC Sixth Assessment Report, or the new template for the NAVIGATE project.
+This template file contains the list of variables and associated units may be provided as yaml or xlsx file.
+It can be used to check the variable names and units of your submission.
 
 ## Step 2: generate file to upload
 
@@ -20,7 +21,7 @@ You can generate the file to be uploaded by either calling [`piamInterfaces::gen
 
 - `mifs`: vector of .mif files or directories that contain the .mif files
 - `model`: model name as registered in the database, such as "REMIND-MAgPIE 3.2-4.6"
-- `iiasatemplate`: optional path to the xlsx or yaml file obtained in the project with the variables and units that are accepted in the database
+- `iiasatemplate`: optional path to the xlsx or yaml file obtained in the project with the variables and units that are accepted in the database. If you received a link of the form `https://files.ece.iiasa.ac.at/project-name/projectname-template.xlsx`, you can use that directly and it will be automatically downloaded.
 - `addToScen`: optional string added in front of all scenario names
 - `removeFromScen`: optional regular expression of parts to be deleted from the scenario names, such as "C_|_bIT|_bit|_bIt"
 - `mapping`: vector of mappings from [this directory](https://github.com/pik-piam/piamInterfaces/tree/master/inst/mappings) (such as `c("AR6", "AR6_NGFS")` or `c("NAVIGATE", "SHAPE")`) or a local file with identical structure.
@@ -95,6 +96,18 @@ The following functions from `piamInterfaces` might be helpful for further analy
 - [`checkSummationsRegional()`](https://github.com/pik-piam/piamInterfaces/blob/master/R/checkSummationsRegional.R) checks whether regional aggregation is correct.
 - [`fixOnRef()`](https://github.com/pik-piam/piamInterfaces/blob/master/R/fixOnRef.R) checks whether the runs are correctly fixed on their reference run for delayed transition scenarios.
 - [`plotIntercomparison()`](https://github.com/pik-piam/piamInterfaces/blob/master/R/plotIntercomparison.R) plots area and line plots of selected variables.
+
+If you like to generate a 'historical.mif' file for a different regional resolution and variable naming scheme than the REMIND one to pass it to plotIntercomparison, you can use the [regionmapping](https://github.com/pik-piam/piamInterfaces/tree/master/inst/regionmapping) ISO files from piamInterfaces or a similarly formatted file, for example like this:
+```
+library(madrat); library(mrremind); library(quitte); library(piamInterfaces)
+stopifnot(utils::packageVersion("piamInterfaces") >= "0.36.2")
+setConfig(regionmapping = system.file("regionmapping/ISO_2_ISO.csv", package = "piamInterfaces"))
+d <- madrat::retrieveData("VALIDATIONREMIND")
+system(paste("tar -xvf", d, "./historical.mif"))
+hist <- read.snapshot("historical.mif")
+write.mif(convertHistoricalData(hist, "ScenarioMIP", "ISO_2_R10"), "historical_R10.mif")
+write.mif(convertHistoricalData(hist, "ScenarioMIP", "ISO_2_R5"), "historical_R5.mif")
+```
 
 ## Further Information
 

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -65,6 +65,7 @@ t_29(ttot)     "time steps considered in the calibration"
 
 pf_eff_target_dyn29(all_in)    "production factors with efficiency target"    / /
 pf_quan_target_dyn29(all_in)   "production factors with quantity target"      / /
+p29_building_relaxed_bounds_dyn(all_in) "quantity calibration in the building sector" /feelrhb, feelcb, fesob, fegab, feh2b/
 
 capUnitType  "Type of technological data: for investments or for the standing capital"
 /

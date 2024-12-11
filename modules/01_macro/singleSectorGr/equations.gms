@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -45,7 +45,6 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
   + sum(tradeCap, vm_costTradeCap(ttot,regi,tradeCap))
   + vm_taxrev(ttot,regi)$(ttot.val ge 2010)
   + vm_costAdjNash(ttot,regi)
-  + sum(in_enerSerAdj(in), v01_enerSerAdj(ttot,regi,in))
   + sum(teEs, vm_esCapInv(ttot,regi,teEs))
   + vm_costpollution(ttot,regi)
   + pm_totLUcosts(ttot,regi)

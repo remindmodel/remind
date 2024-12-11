@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -7,7 +7,7 @@
 *** SOF ./modules/05_initialCap/on/declarations.gms
 
 Parameter
-  pm_cap0(all_regi,all_te)                           "standing capacity in 2005 as calculated by the initialization routine generisinical. Unit: TWa"
+  p05_cap0(all_regi,all_te)                           "standing capacity in 2005 as calculated by the initialization routine generisinical. Unit: TWa"
   p05_emi2005_from_initialcap2(all_regi,emiTe)       "regional energy emissions 2005 resulting from the initialcap routine. Unit: GtC"
   p05_initial_capacity(all_regi,all_te)              "capacitiy at t=2005, calculated from past deltacaps"
   p05_inital_input(all_regi,all_te)                  "input in 2005, calculated from past deltacaps and initial time-variable eta"

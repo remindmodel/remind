@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -19,7 +19,7 @@ test_that("Non-ESM Investments never drop more than 50% in comparison to previou
     if (length(mifs) == 1) {
       m <- suppressWarnings(
         read.report(mifs[1], as.list = FALSE)
-      )[reg, , "Investments|Non-ESM (billion US$2005/yr)"]
+      )[reg, , "Investments|Non-ESM (billion US$2017/yr)"]
       data <- mbind(data, m)
     }
   }

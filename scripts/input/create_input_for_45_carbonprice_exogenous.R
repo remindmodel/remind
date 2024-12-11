@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -26,7 +26,7 @@ create_input_for_45_carbonprice_exogenous<-function(gdx){
   # ---- Convert data ----
   
   #select right temporal/variable scope 
-  pr <- pr[,,c( "Price|Carbon (US$2005/t CO2)")]
+  pr <- pr[,,c( "Price|Carbon (US$2017/t CO2)")]
   # convert from $/tCO2 to $/kgC (or T$/GtC)
   pr <- pr / 1000 * 44/12
   # remove GLO region if it exists
@@ -42,11 +42,11 @@ create_input_for_45_carbonprice_exogenous<-function(gdx){
   cat("*=              Exogenous CO2 tax level                      =*\n", file = p_fpath, append = TRUE)
   cat("*=============================================================*\n", file = p_fpath, append = TRUE)
   cat("*= author: dklein@pik-potsdam.de                             =*\n", file = p_fpath, append = TRUE)
-  cat(paste("*= date  : ", Sys.time(), "                               =*\n", sep=""), file = p_fpath, append = TRUE)
+  cat(paste("*= date  : ", round(Sys.time()), "                               =*\n", sep=""), file = p_fpath, append = TRUE)
   cat("*= generated with:                                           =*\n", file = p_fpath, append = TRUE)
   cat("*= scripts/input/create_input_for_45_carbonprice_exogenous.R =*\n", file = p_fpath, append = TRUE)
   cat(paste0("*= from file: ", normalizePath(gdx), " =*\n"), file = p_fpath, append = TRUE)
-  cat("*= unit: 10^12 US$(2005)/GtC                                 =*\n", file = p_fpath, append = TRUE)
+  cat("*= unit: 10^12 US$(2017)/GtC                                 =*\n", file = p_fpath, append = TRUE)
   cat("*=============================================================*\n", file = p_fpath, append = TRUE)
   cat("\n", file = p_fpath, append = TRUE)
   

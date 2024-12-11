@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -12,7 +12,7 @@
 pm_taxCO2eq(ttot,regi)$( (ttot.val ge 2025) AND (ttot.val le 2100)) =
   pm_taxCO2eq("2020",regi) 
   + ( 
-      ( 25 * sm_DptCO2_2_TDpGtC - pm_taxCO2eq("2020",regi) )
+      ( 25 * sm_D2005_2_D2017 * sm_DptCO2_2_TDpGtC - pm_taxCO2eq("2020",regi) )
       * ( 
           (ttot.val - 2020) / (2100 - 2020)
         ) ** 2 

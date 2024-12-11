@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -57,5 +57,14 @@ loop (pf_industry_relaxed_bounds_dyn37(in),
     )$( sm_CES_calibration_iteration le sm_tmp )
   + INF$( sm_CES_calibration_iteration gt sm_tmp );
 );
+
+loop(p29_building_relaxed_bounds_dyn(in),
+  vm_cesIO.lo(t,regi_dyn29(regi),in)$(t.val gt 2020 AND SAMEAS(regi, "MEA"))
+  = pm_cesdata(t,regi,in,"quantity") * 0.95 ;
+
+  vm_cesIO.up(t,regi_dyn29(regi),in)$(t.val gt 2020 AND SAMEAS(regi, "MEA"))
+  = pm_cesdata(t,regi,in,"quantity")* 1.05;
+);
+
 
 *** EOF ./modules/29_CES_parameters/calibrate/bounds.gms

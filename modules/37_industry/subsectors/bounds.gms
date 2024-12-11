@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -118,7 +118,7 @@ vm_cesIO.lo(t,regi_dyn29(regi),in_industry_dyn37(in))$(
 *' higher) of baseline solids
 *' Cement CCS might otherwise become a compelling BioCCS option under very high
 *' carbon prices due to missing adjustment costs.
-if (cm_startyear gt 2005,   !! not a baeline or NPi scenario
+if (cm_startyear gt 2005,   !! not a baseline or NPi scenario
   vm_demFeSector_afterTax.up(t,regi,"sesobio","fesos","indst","ETS")
   = max(0.25 , smax(t2, pm_secBioShare(t2,regi,"fesos","indst") ) )
     * p37_BAU_industry_ETS_solids(t,regi);
@@ -133,25 +133,15 @@ $ifthen.policy_scenario "%cm_indstExogScen_set%" == "YES"
 $endif.policy_scenario
 $drop cm_indstExogScen_set
 
+v37_regionalWasteIncinerationCCSshare.lo(t,regi) = 0.;
+v37_regionalWasteIncinerationCCSshare.up(t,regi) = p37_regionalWasteIncinerationCCSMaxShare(t,regi);
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 !! fix processes procudction in historic years
 if (cm_startyear eq 2005,
-  loop(regi,
-    loop(tePrc2opmoPrc(tePrc,opmoPrc),
-      vm_outflowPrc.fx("2005",regi,tePrc,opmoPrc) = pm_outflowPrcIni(regi,tePrc,opmoPrc);
+    loop((ttot,regi,tePrc2opmoPrc(tePrc,opmoPrc))$(ttot.val ge 2005 AND ttot.val le 2020),
+      vm_outflowPrc.fx(ttot,regi,tePrc,opmoPrc) = pm_outflowPrcHist(ttot,regi,tePrc,opmoPrc);
     );
-  );
-
-  loop(regi,
-    loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
-      vm_outflowPrc.fx(ttot,regi,"eaf","pri") = 0.;
-      vm_outflowPrc.fx(ttot,regi,"idr","ng") = 0.;
-      vm_outflowPrc.fx(ttot,regi,"idr","h2") = 0.;
-      vm_outflowPrc.fx(ttot,regi,"bfcc","standard") = 0.;
-      vm_outflowPrc.fx(ttot,regi,"idrcc","ng") = 0.;
-    );
-  );
 );
 
 !! Switch to turn off steel CCS
@@ -173,7 +163,7 @@ $endif.fixedUE_scenario
 
 *** fix plastic waste to zero until 2010, and possible to reference scenario
 *** values between 2015 and cm_startyear
-v37_plasticWaste.fx(t,regi,entySe,entyFe,emiMkt)$( 
+v37_plasticWaste.fx(t,regi,entySe,entyFe,emiMkt)$(
                             t.val lt max(2015, cm_startyear)
                         AND sefe(entySe,entyFe)
                         AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) )
