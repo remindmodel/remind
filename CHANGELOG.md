@@ -37,6 +37,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1881](https://github.com/remindmodel/remind/pull/1881)]
 
 ### added
+- **config** add ScenarioMIP config
+    [[#1894](https://github.com/remindmodel/remind/pull/1894)] and [[#1920](https://github.com/remindmodel/remind/pull/1920)]
 - **32_power** increase minimum required dispatchable back-up capacity for VRE integration
     [[#1789](https://github.com/remindmodel/remind/pull/1789)]
 - **33_CDR** added ocean alkalinity enhancement to the CDR portfolio (OAE is turned off by default)
