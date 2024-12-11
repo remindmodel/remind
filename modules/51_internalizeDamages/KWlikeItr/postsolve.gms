@@ -20,7 +20,7 @@ p51_sccLastItr(tall) = p51_scc(tall);
 * Add an epsilon to pm_consPC to avoid division by zero in case of INFES in the reference data
 p51_sccParts(tall,tall2,regi2)$((tall.val ge 2010) and (tall.val le 2150) and (tall2.val ge tall.val) and (tall2.val le 2250)) = 
 	 (1 + pm_prtp(regi2) )**(-(tall2.val - tall.val))
-	* pm_consPC(tall,regi2)/(pm_consPC(tall2,regi2) + 0.0000001) 
+	* (pm_consPC(tall,regi2)/(pm_consPC(tall2,regi2) + sm_eps))**(1/pm_ies(regi2))
         * pm_damage(tall2,regi2) * pm_GDPGross(tall2,regi2) 
 	* p51_marginalDamageCumul(tall,tall2,regi2) 
 	* pm_sccIneq(tall2,regi2)

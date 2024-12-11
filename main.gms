@@ -715,13 +715,14 @@ parameter
 parameter
   cm_fetaxscen              "choice of final energy tax path, subsidy path and inconvenience cost path, values other than zero enable final energy tax"
 ;
-  cm_fetaxscen        = 3;         !! def = 3  !! regexp = [0-4]
+  cm_fetaxscen        = 3;         !! def = 3  !! regexp = [0-5]
 *' even if set to 0, the PE inconvenience cost per SO2-cost for coal are always on if module 21_tax is on
 *' * (0): no tax, sub, inconv
 *' * (1): constant t,s,i (used in SSP 5 and ADVANCE WP3.1 HighOilSub)
 *' * (2): converging tax, phased out sub (-2030), no inconvenience cost so far (used in SSP 1)
 *' * (3): constant tax, phased out sub (-2050), no inconvenience cost so far (used in SSP 2)
 *' * (4): constant tax, phased out sub (-2030), no inconvenience cost so far (used in SDP)
+*' * (5): roll back of final energy taxes to get back to a no-policy case (previously known as BAU)
 *'
 parameter
   cm_distrBeta              "elasticity of tax revenue redistribution"
@@ -1702,12 +1703,16 @@ $setglobal cm_taxCO2_regiDiff         initialSpread10    !! def = "initialSpread
 *** cm_taxCO2_regiDiff_endYr "switch for choosing convergence year of regionally differentiated carbon prices when using initialSpread10 or initialSpread20 in 45_carbonprice/functionalForm"
 *** Setting cm_taxCO2_regiDiff_endYr to GLO 2050, IND 2070, SSA 2100 means that convergence year is delayed for IND to 2070 and for SSA to 2100
 $setglobal cm_taxCO2_regiDiff_endYr   "GLO 2050"    !! def = "GLO 2050"
-*** cm_co2_tax_interpolation "switch for interpolation between (a) carbonprice trajectory given by path_gdx_ref and (b) carbonprice trajectory defined in 45_carbonprice"
+*** cm_co2_tax_interpolation "switch for interpolation between (a) carbonprice trajectory given by path_gdx_ref (or manually chosen regional carbon price in cm_startyear - see cm_taxCO2_startYearValue) and (b) carbonprice trajectory defined in 45_carbonprice"
 *** (off): no interpolation, i.e. (b) is used from cm_startyear onward
 *** (one_step): linear interpolation within 10 years between (a) and (b). For example, if cm_startyear = 2030, it uses (a) until 2025, the average of (a) and (b) in 2030, and (b) from 2035.
 *** (two_steps): linear interpolation within 15 years between (a) and (b). For example, if cm_startyear = 2030, it uses (a) until 2025, weighted averages of (a) and (b) in 2030 and 2035, and (b) from 2040.
 *** Setting cm_co2_tax_interpolation to GLO.2025.2050 2, EUR.2025.2040 1 means that interpolation between (a) and (b) in quadratic [exponent = 2], starts in 2025, and ends in 2050 for all regions, except for Europe that has linear interpolation [exponent = 1] starting in 2025 and ending in 2040
-$setglobal cm_taxCO2_interpolation  off    !! def = "one_step"
+$setglobal cm_taxCO2_interpolation  off    !! def = "off"
+*** cm_taxCO2_startYearValue  "switch for manually choosing regional carbon prices in cm_startyear that are used as starting point for interpolation"
+*** (off): no manual values provided, i.e. carbonprice trajectory given by path_gdx_ref is used for interpolation
+*** Setting cm_taxCO2_startYearValue to GLO 50, SSA 5, CHA 40 means that in cm_startyear, SSA has carbon price of 5$/tCO2,  CHA has carbon price of 40$/tCO2, and all other regions have carbon price of 50$/tCO2.
+$setglobal cm_taxCO2_startYearValue !! def = "off"
 *** cm_taxCO2_lowerBound_path_gdx_ref "switch for choosing if carbon price trajectories from path_gdx_ref are used as lower bound"
 *** (on): carbon price trajectories (pm_taxCO2eq) from path_gdx_ref is used as lower bound for pm_taxCO2eq
 *** (off): no lower bound
