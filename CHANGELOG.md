@@ -78,7 +78,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1871](https://github.com/remindmodel/remind/pull/1871)]
     
 ### fixed
-- included CCS from plastic waste incineration in CCS mass flows so it is
+- **30_biomass** reset 1st gen. biofuel bound from 2045 to 2030
+    [[#1890](https://github.com/remindmodel/remind/pull/1890)]
+- **37_industry** included CCS from plastic waste incineration in CCS mass flows so it is
     subject to injection constraints (but did not add CCS costs, see
     https://github.com/remindmodel/development_issues/issues/274
 - **MAGICC7** fix climate data for time before cm_startyear on reference run
@@ -91,8 +93,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1768](https://github.com/remindmodel/remind/pull/1768)]
 - **scripts** limit slurm runtime of output.R scripts to 2 hours
     [[#1783](https://github.com/remindmodel/remind/pull/1783)]
-- **30_biomass** reset 1st gen. biofuel bound from 2045 to 2030
-    [[#1890](https://github.com/remindmodel/remind/pull/1890)]
 
 ### removed
 - **45_carbonprice** removed superseded realizations linear, exponential and diffCurvPhaseIn2Lin
