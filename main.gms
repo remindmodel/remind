@@ -76,7 +76,6 @@
 *' OUTPUT
 *' ```
 *'
-*'
 *' The GAMS code follows a Coding Etiquette:
 *'
 *' #### Naming conventions:
