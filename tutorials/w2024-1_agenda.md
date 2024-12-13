@@ -6,6 +6,8 @@ Agenda 11/2024
 
 - Date: Wed 20.11. - Fri 22.11.2024, 9:00-12:30
 
+All presentations from this workshop are available [here](https://rse.pik-potsdam.de/data/remind/public/workshop_presentations/)
+
 ## Day 1 - Wed 20.11. - 9:00-12:30
 
 ### 9:00 - 10:00 SESSION 1 - REMIND OVERVIEW (Renato Rodrigues)
