@@ -1304,7 +1304,11 @@ $setglobal c_ccsinjecrateRegi  off  !! def = "off"
 ***   ("forcing_SSP2") settings consistent with SSP 2
 ***   ("forcing_SSP5") settings consistent with SSP 5
 $setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2  !! regexp = forcing_SSP(1|2|3|5)
-*** cm_regiExoPrice "set exogenous co2 tax path for specific regions using a switch, require regipol module to be set to regiCarbonPrice (e.g. GLO.(2025 38,2030 49,2035 63,2040 80,2045 102,2050 130,2055 166,2060 212,2070 346,2080 563,2090 917,2100 1494,2110 1494,2130 1494,2150 1494) )"
+*** cm_regiExoPrice "set exogenous co2 tax path for specific regions using a switch or load the values from the input gdx. This feature requires regipol module to be set to regiCarbonPrice. 
+***   ("gdx") CO2 prices will be exogenously fixed to the values found in the input gdx, both for pm_taxCO2eq and pm_taxemiMkt parameters.
+***   ("<regigroup>.<year> <value>, <regigroup>.<year2> <value2>" or "<regigroup>.(<year1> <value>,<year2> <value>") CO2 prices will be exogenously defined
+***      only for the regions, periods and values defined in the switch cm_regiExoPrice
+***      e.g. "GLO.(2025 38,2030 49,2035 63,2040 80,2045 102,2050 130,2055 166,2060 212,2070 346,2080 563,2090 917,2100 1494,2110 1494,2130 1494,2150 1494)" 
 $setGlobal cm_regiExoPrice  off    !! def = off
 *** cm_emiMktTarget "set a budget or year emission target, for all (all) or specific emission markets (ETS, ESD or other), and specific regions (e.g. DEU) or region groups (e.g. EU27)"
 ***   Example on how to use:
