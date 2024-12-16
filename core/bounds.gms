@@ -299,20 +299,20 @@ loop(te$(sameas(te,"ngcc") OR sameas(te,"ngt") OR sameas(te,"gaschp")),
 *' set lower and upper bounds for 2025 based on projects annoucements
 *' from IEA Hydryogen project database:
 *' https://www.iea.org/data-and-statistics/data-product/hydrogen-production-and-infrastructure-projects-database
-*' distribute to regions via GDP share
+*' distribute to regions via GDP share from 2020
 *' in future this should be differentiated by region based on regionalized input data of project announcements
 *' 2 GW(el) at least globally in 2025, about operational capacity as of 2023
-vm_cap.lo("2025",regi,"elh2","1")= 2 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2025",regi)
+vm_cap.lo("2025",regi,"elh2","1")= 2 * pm_eta_conv("2020",regi,"elh2")*pm_gdp("2020",regi)
                                          / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
 *' 20 GW(el) at maximum globally in 2025 (be more generous to not overconstrain regions which scale-up fastest)
-vm_cap.up("2025",regi,"elh2","1")= 20 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2025",regi)
+vm_cap.up("2025",regi,"elh2","1")= 20 * pm_eta_conv("2020",regi,"elh2")*pm_gdp("2020",regi)
                                          / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
 
 *** bounds on biomass technologies
 *' set upper bounds on biomass gasification for h2 production, which is not deployed as of 2025
-*' allow for small production of 0.1 EJ/yr at by 2030 for each technology globally, distributed to regions by GDP share
-vm_cap.up("2030",regi,"bioh2","1")= 0.1 / 3.66 * 1e3 / 8760 * pm_gdp("2030",regi) / sum(regi2,pm_gdp("2030",regi2));
-vm_cap.up("2030",regi,"bioh2c","1")= 0.1 / 3.66 * 1e3 / 8760 * pm_gdp("2030",regi) / sum(regi2,pm_gdp("2030",regi2));
+*' allow for small production of 0.1 EJ/yr at by 2030 for each technology globally, distributed to regions by GDP share in 2020
+vm_cap.up("2030",regi,"bioh2","1")= 0.1 / 3.66 * 1e3 / 8760 * pm_gdp("2020",regi) / sum(regi2,pm_gdp("2020",regi2));
+vm_cap.up("2030",regi,"bioh2c","1")= 0.1 / 3.66 * 1e3 / 8760 * pm_gdp("2020",regi) / sum(regi2,pm_gdp("2020",regi2));
 *' allow zero vm_deltaCap for bio-H2 up to 2030 to be consistent with above bounds
 vm_deltaCap.lo(t,regi,"bioh2","1")$(t.val le 2030) = 0;
 vm_deltaCap.lo(t,regi,"bioh2c","1")$(t.val le 2030) = 0;
