@@ -13,7 +13,7 @@
 *** `p45_actualbudgetco2(ttot)` includes emissions from 2020 to `ttot` (inclusive).
 p45_actualbudgetco2(ttot)$( 2020 lt ttot.val )
   = sum((regi,ttot2)$( 2020 le ttot2.val AND ttot2.val le ttot.val ),
-      ( vm_emiTe.l(ttot2,regi,"co2") + vm_emiCdr.l(ttot2,regi,"co2") + vm_emiMac.l(ttot2,regi,"co2"))
+      vm_emiAll.l(ttot2,regi,"co2")
       * ( (0.5 + pm_ts(ttot2) / 2)$( ttot2.val eq 2020 ) !! second half of the 2020 period (mid 2020 - end 2022) plus 0.5 to account fo beginning 2020 - mid 2020  
         + (pm_ts(ttot2))$( 2020 lt ttot2.val AND ttot2.val lt ttot.val ) !! entire middle periods
         + ((pm_ttot_val(ttot) - pm_ttot_val(ttot-1)) / 2 + 0.5)$(ttot2.val eq ttot.val ) !! first half of the final period plus 0.5 to account fo mid - end of final year
@@ -354,6 +354,7 @@ display p45_taxCO2eq_regiDiff;
 ***-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 *** Re-reate interpolation for all timesteps after cm_startyear
+$ifThen.taxCO2startYearValue4 "%cm_taxCO2_startYearValue%" == "off"
 loop(regi,
   pm_taxCO2eq(t,regi)$(t.val lt p45_interpolation_startYr(regi)) = p45_taxCO2eq_path_gdx_ref(t,regi);
   pm_taxCO2eq(t,regi)$((t.val ge p45_interpolation_startYr(regi)) and (t.val lt p45_interpolation_endYr(regi))) = 
@@ -363,6 +364,17 @@ loop(regi,
       * rPower( (t.val - p45_interpolation_startYr(regi)) / (p45_interpolation_endYr(regi) - p45_interpolation_startYr(regi)), p45_interpolation_exponent(regi));
   pm_taxCO2eq(t,regi)$(t.val ge p45_interpolation_endYr(regi)) = p45_taxCO2eq_regiDiff(t,regi);
 );
+$else.taxCO2startYearValue4
+loop(regi,
+  pm_taxCO2eq(t,regi)$(t.val lt p45_interpolation_startYr(regi)) = p45_taxCO2eq_path_gdx_ref(t,regi);
+  pm_taxCO2eq(t,regi)$(t.val lt p45_interpolation_endYr(regi)) = 
+      p45_taxCO2eq_startYearValue(regi)
+      * (1 - rPower( (t.val - cm_startyear) / (p45_interpolation_endYr(regi) - cm_startyear), p45_interpolation_exponent(regi)))
+    + sum(t2$(t2.val eq p45_interpolation_endYr(regi)), p45_taxCO2eq_regiDiff(t2,regi)) !! value of p45_taxCO2eq_regiDiff in p45_interpolation_endYr
+      * rPower( (t.val - cm_startyear) / (p45_interpolation_endYr(regi) - cm_startyear), p45_interpolation_exponent(regi));
+  pm_taxCO2eq(t,regi)$(t.val ge p45_interpolation_endYr(regi)) = p45_taxCO2eq_regiDiff(t,regi);
+);
+$endIf.taxCO2startYearValue4
 display pm_taxCO2eq;
 
 *** Re-introduce lower bound pm_taxCO2eq by p45_taxCO2eq_path_gdx_ref if switch cm_taxCO2_lowerBound_path_gdx_ref is on
