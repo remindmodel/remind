@@ -26,8 +26,4 @@ q80_budg_intertemp(all_regi)                        "interemporal trade balance 
 q80_costAdjNash(ttot,all_regi)                      "plays a dummy role for now, allowing fixing to Nash GDX files"
 ;
 
-scalar
-s80_cnptfile                                       "parameter that indicates which optimality tolerance will be used"      /1/
-;
-
 *** EOF ./modules/80_optimization/testOneRegi/declarations.gms

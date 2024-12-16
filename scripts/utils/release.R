@@ -63,15 +63,15 @@ release <- function(newVersion) {
   cfg$input <- cfg$input[cfg$stopOnMissing]
   gms::publish_data(cfg,target = "dataupload@rse.pik-potsdam.de:/remind/public")
   
-  message("If not already done please perform the two following steps manually now:\n",
+  message("If not already done please perform the first step manually now. Please perform step two in any case:\n",
           "1. CHANGELOG.md: sort lines in each category: input data/calibration, changed, added, removed, fixed; remove empty categories\n",
-          "2. git add -p\n",
+          "2. git add -p (in another terminal)\n",
           "--> When done press ENTER to commit, push and create PR")
   gms::getLine()
   
-  message("Committing and pushing changes")
-  gert::git_commit(paste("remind release", newVersion))
-  gert::git_push()
+  #message("Committing and pushing changes")
+  #gert::git_commit(paste("remind release", newVersion))
+  #gert::git_push()
 
   message("Creating tag")
   tag <- paste0("v",newVersion)
