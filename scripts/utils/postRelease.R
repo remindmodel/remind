@@ -44,7 +44,7 @@ postRelease <- function() {
   # gh pr create --help
   # --base branch The branch into which you want your code merged
   # --head branch The branch that contains commits for your pull request (default [current branch])
-  system(paste0("gh pr create --base develop --title 'merge master into develop' --body ''"))
+  system(paste0("gh pr create --base develop --title 'merge master with new release into develop' --body ''"))
 }
 
 postRelease()
