@@ -128,7 +128,6 @@ s80_after                                  "value of time step after current int
 s80_numberIterations                       "display helper"
 s80_bool                                   "helper"
 s80_converged                              "if nash converged, this is 1"
-s80_cnptfile                               "parameter that indicates which optimality tolerance will be used"      /1/
 s80_runInDebug                             "Is 1 if regions stayed infeasible in nash and start in debug mode automatically following the parallel mode" /0/
 ;
 

@@ -754,18 +754,13 @@ q_emiCdrAll(t,regi)..
 
 
 ***------------------------------------------------------
-*' Total regional emissions are the sum of emissions from technologies, MAC-curves, CDR-technologies and emissions that are exogenously given for REMIND.
+*' Total regional emissions are computed as the sum of total emissions over all emission markets.
 ***------------------------------------------------------
-*LB* calculate total emissions for each region at each time step
-q_emiAll(t,regi,emi(enty))..
-  vm_emiAll(t,regi,enty)
+q_emiAll(t,regi,emi)..
+  vm_emiAll(t,regi,emi)
   =e=
-    vm_emiTe(t,regi,enty)
-  + vm_emiMac(t,regi,enty)
-  + vm_emiCdr(t,regi,enty)
-  + pm_emiExog(t,regi,enty)
+  sum(emiMkt, vm_emiAllMkt(t,regi,emi,emiMkt))
 ;
-
 
 ***------------------------------------------------------
 *' Total regional emissions in CO2 equivalents that are part of the climate policy  are computed based on regional GHG

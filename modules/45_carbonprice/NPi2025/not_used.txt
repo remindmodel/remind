@@ -29,9 +29,6 @@ pm_emifac,input,questionnaire
 cm_peakBudgYr,input,not needed
 sm_D2005_2_D2017,input,not needed
 sm_budgetCO2eqGlob,input,added by codeCheck
-vm_emiTe,input,added by codeCheck
-vm_emiCdr,input,added by codeCheck
-vm_emiMac,input,added by codeCheck
 vm_emiAll,input,added by codeCheck
 pm_taxCO2eq_anchor_iterationdiff,input,added by codeCheck
 pm_taxCO2eq_anchor_iterationdiff_tmp,input,added by codeCheck
