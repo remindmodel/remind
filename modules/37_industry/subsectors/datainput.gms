@@ -604,7 +604,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 !! carbon capture mass is given in tCO2 and converted to tC after that
 
 !! reduction: 504 m^3; heat 242 m^3; conversion: x / 11.126 m^3/kg * 0.0333 MWh/kg
-p37_specFeDemTarget("feh2s","idr","h2")           = 2.09 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Rechberger et al 2020, Section 4.2 (per tDRI)
+p37_specFeDemTarget("feh2s","idr","h2")           = 2.23 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Rechberger et al 2020, Section 4.2 (per tDRI)
 p37_specFeDemTarget("feels","idr","h2")           = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Just before Table 1 (per tHBI)
 
 p37_specFeDemTarget("fegas","idr","ng")           = 2.69 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Page 7 (9.7 GJ) (per tHBI)
