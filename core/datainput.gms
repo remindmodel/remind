@@ -375,7 +375,8 @@ pm_data(regi,"learnExp_wFC",teLearn(te))  = pm_data(regi,"inco0",te) / pm_data(r
 $ifthen %cm_techcosts% == "GLO"
     pm_data(regi,"learnMult_wFC",teLearn(te)) = pm_data(regi,"incolearn",te) / (sum(regi2,pm_data(regi2,"ccap0",te)) ** pm_data(regi,"learnExp_wFC",te));
 
-$else !! cm_techcosts is REG or REG2040
+$else
+!! cm_techcosts is REG or REG2040
 *NB* read in vm_capCum(t0,regi,teLearn) from input.gdx to have info available for the recalibration of 2005 investment costs
   Execute_Loadpoint 'input' p_capCum = vm_capCum.l;
 *** FS: in case technologies did not exist in gdx, set intial capacities to global initial value
