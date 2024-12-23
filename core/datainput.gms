@@ -323,9 +323,10 @@ fm_dataglob("inco0",te)       = (1 + sum(regi, p_tkpremused(regi,te))/sum(regi, 
 pm_data(regi,"floorcost",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
 
 *** report old floor costs pre manipulation in non-default scenario
-$ifthen.floorscen NOT %cm_floorCostScen% == "default"
-    p_oldFloorCostdata(regi,teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
+$ifthen.floorscen not %cm_floorCostScen% == "default"
+    p_oldFloorCostdata(regi,teLearn(te)) = pm_data(regi,"floorcost",te);
 $endif.floorscen
+
 *** calculate floor costs for learning technologies if historical price structure prevails
 $ifthen.floorscen %cm_floorCostScen% == "pricestruc"
 *** compute maximum tech cost in 2015 for a given tech among regions
@@ -358,51 +359,44 @@ $ifthen.REG_techcosts not "%cm_techcosts%" == "GLO"   !! cm_techcosts is REG or 
 $endif.REG_techcosts
 
 *** -------------------------------------------------------------------------------
-*** Calculate learning parameters:
+*** Calculate learning parameters
+*** See equations.gms for documentation of learning equations and floor costs
 *** -------------------------------------------------------------------------------
-*** global exponent
-*** parameter calculation for global level, that regional values can gradually converge to
-fm_dataglob("learnExp_woFC",teLearn(te))  = log(1 - fm_dataglob("learn",te)) / log(2);
-*RP* adjust exponent parameter learnExp_woFC to take floor costs into account
-fm_dataglob("learnExp_wFC",teLearn(te))   = fm_dataglob("inco0",te) / fm_dataglob("incolearn",te) * fm_dataglob("learnExp_woFC",te);
 
-*** regional exponent
-pm_data(regi,"learnExp_woFC",teLearn(te)) = log(1 - pm_data(regi,"learn",te)) / log(2);
-pm_data(regi,"learnExp_wFC",teLearn(te))  = pm_data(regi,"inco0",te) / pm_data(regi,"incolearn",te) * pm_data(regi,"learnExp_woFC",te);
+*** global parameters: calculation for global level, that regional values can gradually converge to
+*** b' = \frac{I_0}{I_0 - F} b = \frac{I_0}{I_0 - F} \log_2(1-\lambda)
+fm_dataglob("learnExp_wFC",teLearn(te)) = fm_dataglob("inco0",te) / fm_dataglob("incolearn",te) * log(1 - fm_dataglob("learn",te)) / log(2);
+*** a' = \frac{I_0 - F}{C_0^{b'}}
+fm_dataglob("learnMult_wFC",teLearn(te)) = fm_dataglob("incolearn",te) / (fm_dataglob("ccap0",te) ** fm_dataglob("learnExp_wFC", te));
 
-*** global factor
-*** parameter calculation for global level, that regional values can gradually converge to
-fm_dataglob("learnMult_wFC",teLearn(te))  = fm_dataglob("incolearn",te) / (fm_dataglob("ccap0",te) ** fm_dataglob("learnExp_wFC", te));
+*** regional parameters
+pm_data(regi,"learnExp_wFC",teLearn(te))  = pm_data(regi,"inco0",te) / pm_data(regi,"incolearn",te) * log(1 - pm_data(regi,"learn",te)) / log(2);
 
-*** regional factor
-*NB* read in vm_capCum(t0,regi,teLearn) from input.gdx to have info available for the recalibration of 2005 investment costs
-Execute_Loadpoint 'input' p_capCum = vm_capCum.l;
-*** FS: in case technologies did not exist in gdx, set intial capacities to global initial value
-p_capCum(tall,regi,te)$( NOT p_capCum(tall,regi,te)) = fm_dataglob("ccap0",te)/card(regi);
-*RP overwrite p_capCum by exogenous values for 2020
-p_capCum("2020",regi,"spv")  = 0.6 / card(regi2);  !! roughly 600GW in 2020
-
-pm_data(regi,"learnMult_woFC",teLearn(te))   = pm_data(regi,"incolearn",te)/sum(regi2,(pm_data(regi2,"ccap0",te))**(pm_data(regi,"learnExp_woFC",te)));
-*RP* adjust parameter learnMult_woFC to take floor costs into account
 $ifthen %cm_techcosts% == "GLO"
-    pm_data(regi,"learnMult_wFC",teLearn(te))  = pm_data(regi,"incolearn",te)    / (sum(regi2,pm_data(regi2,"ccap0",te))    ** pm_data(regi,"learnExp_wFC",te));
-$else
-!! cm_techcosts is REG or REG2040
+    pm_data(regi,"learnMult_wFC",teLearn(te)) = pm_data(regi,"incolearn",te) / (sum(regi2,pm_data(regi2,"ccap0",te)) ** pm_data(regi,"learnExp_wFC",te));
+
+$else !! cm_techcosts is REG or REG2040
+*NB* read in vm_capCum(t0,regi,teLearn) from input.gdx to have info available for the recalibration of 2005 investment costs
+  Execute_Loadpoint 'input' p_capCum = vm_capCum.l;
+*** FS: in case technologies did not exist in gdx, set intial capacities to global initial value
+  p_capCum(tall,regi,te)$(not p_capCum(tall,regi,te)) = fm_dataglob("ccap0",te) / card(regi);
+*RP overwrite p_capCum by exogenous values for 2020
+  p_capCum("2020",regi,"spv")  = 0.6 / card(regi2);  !! roughly 600GW in 2020 globally
 *NB* this is the correction of the original parameter calibration
-    pm_data(regi,"learnMult_wFC",teLearn(te))  = pm_data(regi,"incolearn",te)    / (sum(regi2,p_capCum("2015",regi2,te))    ** pm_data(regi,"learnExp_wFC",te));
+  pm_data(regi,"learnMult_wFC",teLearn(te))  = pm_data(regi,"incolearn",te)    / (sum(regi2,p_capCum("2015",regi2,te))    ** pm_data(regi,"learnExp_wFC",te));
 *** initialize spv learning curve in 2020
-    pm_data(regi,"learnMult_wFC","spv")        = pm_data(regi,"incolearn","spv") / (sum(regi2,p_capCum("2020",regi2,"spv")) ** pm_data(regi,"learnExp_wFC","spv"));
+  pm_data(regi,"learnMult_wFC","spv")        = pm_data(regi,"incolearn","spv") / (sum(regi2,p_capCum("2020",regi2,"spv")) ** pm_data(regi,"learnExp_wFC","spv"));
+display p_capCum;
 $endif
 
 *FS* initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020)
-*** equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost)
+*** equally for all regions based on global cumulative capacity of ccap0 and incolearn (difference between initial investment cost and floor cost)
 pm_data(regi,"learnMult_wFC",te)$( pm_data(regi,"tech_stat",te) eq 4 )
   = pm_data(regi,"incolearn",te)
   / ( fm_dataglob("ccap0",te)
    ** pm_data(regi,"learnExp_wFC",te)
     );
 
-display p_capCum;
 display pm_data;
 *** -------------------------------------------------------------------------------
 *** end learning parameters
@@ -1559,7 +1553,7 @@ pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
 pm_fedemand(tall,all_regi,ppfen_no_ces_use) = f_fedemand(tall,all_regi,"%cm_demScen%",ppfen_no_ces_use);
 
 *** RCP-dependent demands in buildings (climate impact)
-$ifthen.cm_rcp_scen_build NOT "%cm_rcp_scen_build%" == "none"
+$ifthen.cm_rcp_scen_build not "%cm_rcp_scen_build%" == "none"
 Parameter f_fedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in) "RCP-dependent final energy demand in buildings"
 /
 $ondelim
