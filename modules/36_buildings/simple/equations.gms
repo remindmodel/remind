@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -65,7 +65,7 @@ q36_auxCostAddTeInv(t,regi)..
 
 
 *' Hydrogen fe share in buildings gases use (natural gas + hydrogen)
-q36_H2Share(t,regi)..
+q36_H2Share(t,regi)$(t.val ge 2020)..
   v36_H2share(t,regi) 
   * sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feh2s")
                                  OR SAMEAS(entyFe,"fegas")),   

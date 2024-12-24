@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -52,7 +52,7 @@ pm_damageMarginalT(tall,regi)           = 0;
 pm_damageMarginalTm1(tall,regi)           = 0;
 pm_damageMarginalTm2(tall,regi)           = 0;
 
-*read in GDP to calculate fraction of countries in a region
+*** read in GDP to calculate fraction of countries in a region
 table f50_countryGDP(tall,iso,all_GDPscen)	"ratio country to regional GDP"
 $ondelim
 $include "./modules/50_damages/KWTCint/input/f50_gdp.cs3r"

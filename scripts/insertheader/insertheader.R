@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -104,7 +104,7 @@ insertheader <- function(maindir=".",
     if(length(grep("^$",f,invert=TRUE))==0) warning("Empty file: ",file ,call. = FALSE)
 
     # update header with current year
-    header <- sub('^\\(C\\) 2006-2022',
+    header <- sub('^\\(C\\) 2006-2023',
                   paste0('(C) 2006-', format(Sys.Date(), '%Y')),
                   header)
 

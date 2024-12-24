@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -25,6 +25,11 @@ vm_Xport(tall,all_regi,all_enty)            "Export of traded commodity."
 vm_Mport(tall,all_regi,all_enty)            "Import of traded commodity."
 vm_costTradeCap(ttot,all_regi,all_enty)     "Trade technology and transportation cost"
 vm_capacityTradeBalance(tall,all_regi)      "Capacity trade balance term"
+;
+
+
+Equations
+q24_peimport_demandside(tall,all_regi,all_enty,tradeConst)   "Constraint on imports due to domestic requirements"
 ;
 
 *** EOF ./modules/24_trade/standard/declarations.gms

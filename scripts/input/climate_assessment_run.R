@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -101,9 +101,10 @@ timeStopSetUpScript <- Sys.time()
 
 #
 # Run emissions report here
+# Includes air pollutant emissions from reportEmiAirPol()
 #
 timeStartPreprocessing <- Sys.time()
-emiReport <- reportEmi(gdxPath)
+emiReport <- reportEmiForClimateAssessment(gdxPath)
 
 logMsg <- paste0(
   date(), " climate_assessment_prepare.R: Done reportEmi, start to wrangle emissions report into shape\n"
@@ -203,22 +204,39 @@ if (any(!alreadySet)) do.call(Sys.setenv, as.list(environmentVariables[!alreadyS
 #
 # BUILD climate-assessment RUN COMMANDS
 #
+
+expectedHarmInfFile <- file.path(
+  climateTempDir,
+  paste0(baseFn, "_harmonized_infilled.xlsx")
+)
+
 runHarmoniseAndInfillCmd <- paste(
   "python", file.path(scriptsDir, "run_harm_inf.py"),
   climateAssessmentEmi,
   climateTempDir,
-  "--no-inputcheck",
   "--infilling-database", infillingDatabaseFile
 )
 
 runClimateEmulatorCmd <- paste(
-  "python", file.path(scriptsDir, "run_clim.py"),
+  "python climate_assessment_openscm_run.py ",
   normalizePath(file.path(climateTempDir, paste0(baseFn, "_harmonized_infilled.csv"))),
-  climateTempDir,
+  "--climatetempdir", climateTempDir,
+  # Note: Option --year-filter-last requires https://github.com/gabriel-abrahao/climate-assessment/tree/yearfilter
+  "--endyear", 2250,
   "--num-cfgs", nparsets,
   "--scenario-batch-size", 1,
   "--probabilistic-file", probabilisticFile
 )
+
+
+# Get conda environment folder
+condaDir <- "/p/projects/rd3mod/python/environments/scm_magicc7"
+# Command to activate the conda environment, changes depending on the cluster
+if (file.exists("/p/system/modulefiles/defaults/piam/1.25")) {
+  condaCmd <- paste0("module load conda/2023.09; source activate ", condaDir, ";")
+} else {
+  condaCmd <- paste0("module load anaconda/2023.09; source activate ", condaDir, ";")
+}
 
 logMsg <- paste0(
   date(), "  CLIMATE-ASSESSMENT ENVIRONMENT:\n",
@@ -229,6 +247,7 @@ logMsg <- paste0(
   "  scriptsDir            = '", scriptsDir, "' exists? ", dir.exists(scriptsDir), "\n",
   "  magiccBinFile         = '", magiccBinFile, "' exists? ", file.exists(magiccBinFile), "\n",
   "  magiccWorkersDir      = '", magiccWorkersDir, "' exists? ", dir.exists(magiccWorkersDir), "\n\n",
+  "  condaCmd              = '", condaCmd, "'\n",
   "  ENVIRONMENT VARIABLES:\n",
   "  MAGICC_EXECUTABLE_7    = ", Sys.getenv("MAGICC_EXECUTABLE_7"), "\n",
   "  MAGICC_WORKER_ROOT_DIR = ", Sys.getenv("MAGICC_WORKER_ROOT_DIR"), "\n",
@@ -243,7 +262,7 @@ timeStopSetUpAssessment <- Sys.time()
 ############################# HARMONIZATION/INFILLING #############################
 
 timeStartHarmInf <- Sys.time()
-system(paste(runHarmoniseAndInfillCmd, "&>>", logFile))
+system(paste(condaCmd, runHarmoniseAndInfillCmd, "&>>", logFile))
 timeStopHarmInf <- Sys.time()
 
 ############################# RUNNING MODEL #############################
@@ -257,7 +276,7 @@ logMsg <- paste0(
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 
 timeStartEmulation <- Sys.time()
-system(paste(runClimateEmulatorCmd, "&>>", logFile))
+system(paste(condaCmd, runClimateEmulatorCmd, "&>>", logFile))
 timeStopEmulation <- Sys.time()
 
 ############################# POSTPROCESS CLIMATE OUTPUT #############################
@@ -267,7 +286,8 @@ climateAssessmentOutput <- file.path(
 )
 
 assessmentData <- read.quitte(climateAssessmentOutput)
-usePeriods <- as.numeric(grep("[0-9]+", names(climateAssessmentInputData), value = TRUE))
+# usePeriods <- as.numeric(grep("[0-9]+", names(climateAssessmentInputData), value = TRUE))
+usePeriods <- unique(assessmentData[["period"]])
 logMsg <- paste0(
   " =================== POSTPROCESS climate-assessment output ==================\n",
   date(), "Read climate assessment output file '", climateAssessmentOutput, "' file containing ",
@@ -281,12 +301,13 @@ timeStartPostProcessing <- Sys.time()
 # mutliple files, add another entry to the list. TODO: This could config file...
 associateVariablesAndFiles <- as.data.frame(rbind(
   c(
-    magicc7Variable = "AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile",
+    # magicc7Variable = "AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile",
+    magicc7Variable = "Surface Air Temperature Change",
     gamsVariable = "pm_globalMeanTemperature",
     fileName = "p15_magicc_temp"
   ),
   c(
-    magicc7Variable = "AR6 climate diagnostics|Effective Radiative Forcing|Basket|Anthropogenic|MAGICCv7.5.3|50.0th Percentile",
+    magicc7Variable = "Effective Radiative Forcing|Anthropogenic",
     gamsVariable = "p15_forc_magicc",
     fileName = "p15_forc_magicc"
   )
@@ -380,9 +401,21 @@ if (archiveClimateAssessmentData) {
   capture.output(cat(logMsg), file = logFile, append = TRUE)
 }
 timeStopArchive <- Sys.time()
+logMsg <- paste0(date(), " Done writing GDX files\n")
 
-logMsg <- paste0(
-  date(), " Done writing GDX files\n",
+############################# CLEAN UP WORKERS FOLDER ##########################
+# openscm_runner not remnove up temp dirs. Do this manually since we keep running into file ownership issues
+workersFolder <- file.path(climateTempDir, "workers")  # replace with your directory path
+if (dir.exists(workersFolder)) {
+  # Check if directory is empty
+  if (length(list.files(workersFolder)) == 0) {
+    # Remove directory. Option recursive must be TRUE for some reason, otherwise unlink won't do its job
+    unlink(workersFolder, recursive = TRUE)
+    logMsg <- paste0(logMsg, date(), "  Removed workers folder '", workersFolder, "'\n")
+  }
+}
+
+logMsg <- paste0(logMsg,
   date(), " Runtime report: ", paste0("iteration_", timestamp, "\n"),
   "\tRuntime set_up_script: ",
   difftime(timeStopSetUpScript, timeStartSetUpScript, units = "secs"), "s\n",

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -21,7 +21,7 @@ Equation q40_ElecBioBound                              "equation low-carbon push
 Equation q40_PEgasBound                                "Mandating minimum PE gas share";
 Equation q40_PElowcarbonBound                          "Lower bound on low carbon share";
 Equation q40_FE_RenShare                               "Lower bound on renewable share";
-Equation q40_windBound				       "lower bound on combined wind onshore and offshore";
+Equation q40_windBound				                   "lower bound on combined wind onshore and offshore";
 
 *** EOF ./modules/40_techpol/NPi2018/declarations.gms
 

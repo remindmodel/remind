@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -381,6 +381,15 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
+  teCCPrc(tePrc)   "Technologies used in process-based model (only CCS)"
+  /
+    $$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+    bfcc
+    idrcc
+    $$endif.cm_subsec_model_steel
+  /
+
+
 mat(all_enty)   "Materials considered in process-based model; Can be input and/or output of a process"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -589,6 +598,16 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
+ue2ppfenPrc(all_in,all_in)   "correspondant to ces_eff_target_dyn37, but for use in process-based context, i.e. contained subsectors are complements"
+  /
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+    ue_steel_primary . (feso_steel, feli_steel, fega_steel, feh2_steel,
+                        feel_steel_primary)
+
+    ue_steel_secondary . feel_steel_secondary
+$endif.cm_subsec_model_steel
+  /
+
 regi_fxDem37(ext_regi) "regions under which we fix UE demand to baseline demand"
   /
 $ifthen.fixedUE_scenario "%cm_fxIndUe%" == "on"
@@ -624,7 +643,7 @@ pf_quan_target_dyn29(pf_quan_target_dyn37)  = YES;
 $endif.calibrate
 
 teMat2rlf(tePrc,"1") = YES;
-alias(tePrc,teCCPrc,tePrc1,tePrc2);
+alias(tePrc,tePrc1,tePrc2);
 alias(opmoPrc,opmoCCPrc,opmoPrc1,opmoPrc2);
 alias(route,route2);
 alias(entyFeCC37,entyFeCC37_2);

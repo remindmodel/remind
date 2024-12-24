@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -32,7 +32,6 @@ scenario <- getScenNames(outputdir)
 ###############################################################################
 # paths of the reporting files
 remind_reporting_file <- file.path(outputdir,paste0("MOFEX_",scenario,".mif"))
-# magicc_reporting_file <- file.path(outputdir,paste0("REMIND_climate_", scenario, ".mif"))
 # LCOE_reporting_file   <- file.path(outputdir,paste0("REMIND_LCOE_", scenario, ".mif"))
 
 # produce REMIND reporting *.mif based on gdx information

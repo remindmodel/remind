@@ -47,7 +47,7 @@ If full.log exists, this is the next place to look at. Either open it in your fa
 ```bash
 less full.log
 ```
-and then type `G` to get to the end of the file. `q` finishes looking at the file.
+and then type `G` to get to the end of the file. Type `q` to close the file.
 Another option is to use the editor `vi` by typing `vi full.log`, in which case `:q` closes the editor. `less` is generally faster when looking at large file, but doesn’t offer color coding.
 
 You may find:
@@ -89,13 +89,14 @@ Again, tutorials such as as the [McCarl GAMS User Guide](https://www.gams.com/mc
 If not, it is worth looking at the `.gms` file this equation is part of, by searching for `SOF` (start of file) and `EOF` (end of file) marks above and below the equation. Then navigate to this file in github and see in the history whether it was recently changed, which may have caused this error.
 But it is important that the error may have first appeared in this equation, but may have been caused somewhere else.
 
-If you find out that your run stopped specifically in iteration 14, you likely have a problem with the EDGE-T transport model. It runs iteratively with REMIND, but only after iteration 14. It calls [`edgeTransport::toolIterativeEDGETransport`](https://github.com/pik-piam/edgeTransport/blob/master/R/iterativeEDGETransport.R) and its input/output data are in the `EDGE-T` subfolder. You should find an error message in `log.txt`.
+If you find out that your run stopped specifically in iteration 14, you likely have a problem with the EDGE-T transport model. It runs iteratively with REMIND, but only after iteration 14. It calls [`edgeTransport::iterativeEdgeTransport()`](https://github.com/pik-piam/edgeTransport/blob/master/R/iterativeEDGETransport.R) and its input/output data are in the `EDGE-T` subfolder. You should find an error message in `log.txt`.
 If this is not helpful, try opening that script in an interactive `R` session (on your run’s folder) and run it line by line, you’ll have a better idea of what the problem actually was. Forcing the model to redownload its input data (see above) can help if something in either model changed when you created that folder.
 Also make sure that the R packages installed in your renv are up-to-date. The EDGE-T model makes heavy use of specific libraries that are updated constantly. So you’ll often find that a newer EDGE-T library won’t work with a REMIND folder that is even a few days old.
 
 The file `abort.gdx` contains the latest data at the point GAMS aborted execution, which can be analysed using GAMS Studio.
 
-After a certain number of consecutive infeasibilities (default: `cm_abortOnConsecFail` = 5) REMIND will stop automatically, to avoid loosing too much time on an already doomed run. While REMIND sometimes is able to recover from a region being infes for 1 or 2 iterations, more will likely mean that the run will fail. In this case an `execution error` will be raised and the message `Run was aborted because the maximum number of consecutive failures was reached in at least one region!` can be found in the `full.log` and `full.lst` files. Continue with "Case 3" to solve the infeasibility.
+After a certain number of consecutive infeasibilities (default: `cm_abortOnConsecFail` = 2) REMIND will switch to the debug mode in which infeasibility are listed (and can be shown with `listinfes`).
+In case this does not help, it stops automatically, to avoid loosing too much time on an already doomed run. While REMIND sometimes is able to recover from a region being infes for 1 or 2 iterations, more will likely mean that the run will fail. In this case an `execution error` will be raised and the message `Run was aborted because the maximum number of consecutive failures was reached in at least one region!` can be found in the `full.log` and `full.lst` files. Continue with "Case 3" to solve the infeasibility.
 
 ### Case 2c: GDX or R file missing
 
@@ -124,9 +125,9 @@ An explanation of the modelstat and solvestat numbers can be found in the tables
 |Modelstat = 6 | Intermediate Infeasible|
 |Modelstat = 7 | Intermediate Nonoptimal|
 | | |
-|Solvestat = 1 | Normal Completion|
-|Solvestat = 2 | Iteration Interrupt|
-|Solvestat = 3 | Resource Interrupt|
+|Solvestat = 1 | Normal Completion   |
+|Solvestat = 2 | Iteration Interrupt |
+|Solvestat = 3 | Resource Interrupt  |
 |Solvestat = 4 | Terminated by Solver|
 
 |Desirable Status in REMIND|
@@ -134,6 +135,7 @@ An explanation of the modelstat and solvestat numbers can be found in the tables
 |Solve + Model stat = 1 + 2 | solution found|
 |Solve + Model stat = 4 + 7 | feasible but slow convergence|
 
+Further possible error codes can be found in [the GAMS documentation](https://www.gams.com/latest/docs/UG_GAMSOutput.html#UG_GAMSOutput_SolverStatus).
 If infeasibilities show up already in the first iteration, it may be related to a wrong `input.gdx` (specified with `path_gdx` in the `scenario_config_XYZ.csv`) or some general error in the GAMS code. Via the international trade, infeasibilities in one region may propagate to other regions in later iterations, but then it is worth knowing where it started.
 
 There are different types of solver infeasibilities: pre-triangular and optimization infeasibilities. In pre-triangular infeasibilities, GAMS shows you in the solution report the equations that are incompatible with each other. For optimization infeasibilies, the CONOPT solver tries to reduce the infeasibility to the thing that less affects the objective function. It does not show all affected equations, as it is not a simple problem as a non-square system of equations like in the pre-triangular case. You need to check if it is bound-related: the variables bounds, and the equation bounds starting from the infeasibility and going through the variables that have relation with it. You can always force in another run the variable that is infeasible to a feasible value to see what else is affected by it. But this is usually not necessary as just checking the logic behind the equation and the infeasible variable is usually sufficient to find the limitation.

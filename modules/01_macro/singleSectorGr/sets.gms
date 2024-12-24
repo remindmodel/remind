@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -29,8 +29,6 @@ ppf(all_in)                           "All primary production factors"
 ipf(all_in)                           "All intermediate production factors"
 ppfKap(all_in)                        "Primary production factors capital"   / kap /
 ppfEn(all_in)                         "Primary production factors energy"
-
-in_enerSerAdj(all_in)                 "Energy services factors which should be constrained by adjustment costs" //
 ;
 
 alias(cesOut2cesIn,cesOut2cesIn2,cesOut2cesIn3);

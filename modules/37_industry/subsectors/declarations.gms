@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -9,10 +9,11 @@
 Scalar
   s37_clinker_process_CO2   "CO2 emissions per unit of clinker production"
   s37_plasticsShare         "share of carbon cointained in feedstocks for the chemicals subsector that goes to plastics"
+  s37_shareHistFeDemPenalty "Share of the addiotional historic specific FE demand compared with BAT which is applied to non-historic tech"
 ;
 
 Parameters
-  pm_abatparam_Ind(ttot,all_regi,all_enty,steps)                               "industry CCS MAC curves [ratio @ US$2005]"
+  pm_abatparam_Ind(ttot,all_regi,all_enty,steps)                               "industry CCS MAC curves [ratio @ US$2017]"
   pm_energy_limit(all_in)                                                      "thermodynamic/technical limits of subsector energy use [GJ/t product]"
   p37_energy_limit_slope(tall,all_regi,all_in)                                 "limit for subsector specific energy demand that converges towards the thermodynamic/technical limit [GJ/t product]"
   p37_clinker_cement_ratio(ttot,all_regi)                                      "clinker content per unit cement used"
@@ -26,12 +27,18 @@ Parameters
   !! process-based implementation
   p37_specMatDem(mat,all_te,opmoPrc)                                           "Specific materials demand of a production technology and operation mode [t_input/t_output]"
   pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc)                          "Actual specific final-energy demand of a tech; blends between IEA data and Target [TWa/Gt_output]"
-  p37_specFeDemTarget(all_enty,all_te,opmoPrc)                                  "Best available technology (will be reached in convergence year) [TWa/Gt_output]"
-  pm_outflowPrcIni(all_regi,all_te,opmoPrc)                                    "Exogenously prescribed production volume of processes in start year (from IEA data)"
+  p37_demFeTarget(tall,all_regi,all_enty,all_in)                               "Total Fe demand that would be have been consumed historically for production of a UE if all tech had BAT efficiency"
+  p37_demFeActual(tall,all_regi,all_enty,all_in)                               "Total historic Fe demand consumed for production of a UE"
+  p37_specFeDemTarget(all_enty,all_te,opmoPrc)                                 "Best available technology (will be reached in convergence year) [TWa/Gt_output]"
+  pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc)                              "Exogenously prescribed production volume of processes in start year (from IEA data)"
+  p37_matFlowHist(tall,all_regi,all_enty)                                      "Historic material flows"
   p37_mat2ue(all_enty,all_in)                                                  "Contribution of process output to ue in CES tree; Trivial if just one material per UE, as in steel [Gt/Gt]"
+  p37_ue_share(all_enty,all_in)                                                "Fixed share of material in ue"
+  p37_demFeRatio(tall,all_regi,all_in)                                         "Ratio of historic Fe demand and Fe demand calculated from historic production and BAT specific demand"
+  p37_teMatShareHist(all_te,opmoPrc,mat)                                       "Share that a tePrc/opmoPrc historically contibrutes to production of a matFin"
   p37_captureRate(all_te)                                                      "Capture rate of CCS technology"
   p37_selfCaptureRate(all_te)                                                  "Share of emissions from fossil fuels used for a CCS process which are captured by the CCS process itself"
-  p37_priceMat(all_enty)                                                       "Prices of external material input [2005$/kg = trn2005$/Gt]"
+  p37_priceMat(all_enty)                                                       "Prices of external material input [US$/kg] = [trn$US/Gt]"
 
   p37_chemicals_feedstock_share(ttot,all_regi)               "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
   p37_FeedstockCarbonContent(ttot,all_regi,all_enty)         "carbon content of feedstocks [GtC/TWa]"
@@ -68,9 +75,9 @@ $ifthen.sec_steel_scen NOT "%cm_steel_secondary_max_share_scenario%" == "off"   
   / %cm_steel_secondary_max_share_scenario% /
 $endif.sec_steel_scen
 
-  p37_regionalWasteIncinerationCCSshare(ttot,all_regi)    "regional proportion of waste incineration that is captured [%]"
+  p37_regionalWasteIncinerationCCSMaxShare(ttot,all_regi)    "upper bound on regional proportion of waste incineration that is captured [%]"
 $ifthen.cm_wasteIncinerationCCSshare not "%cm_wasteIncinerationCCSshare%" == "off"
-  p37_wasteIncinerationCCSshare(ttot,ext_regi)            "switch values for proportion of waste incineration that is captured [%]"
+  p37_wasteIncinerationCCSMaxShare(ttot,ext_regi)            "switch values for proportion of waste incineration that is captured [%]"
   / %cm_wasteIncinerationCCSshare% /
 $endIf.cm_wasteIncinerationCCSshare
 ;
@@ -83,13 +90,14 @@ Positive Variables
   v37_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)          "Carbon flow: carbon contained in chemical feedstocks [GtC]"
   v37_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "Carbon flow: carbon contained in plastics [GtC]"
   v37_plasticWaste(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "Carbon flow: carbon contained in plastic waste [GtC]"
+  v37_regionalWasteIncinerationCCSshare(tall,all_regi)                      "share of waste incineration that is captured [%]"
 
   !! process-based implementation
   vm_outflowPrc(tall,all_regi,all_te,opmoPrc)                               "Production volume of processes in process-based model [Gt/a]"
   v37_matFlow(tall,all_regi,all_enty)                                       "Production of materials [Gt/a]"
   v37_emiPrc(tall,all_regi,all_enty,all_te,opmoPrc)                         "Emissions per process and operation mode [GtC/a]"
   v37_shareWithCC(tall,all_regi,all_te,opmoPrc)                             "Share of process and operation mode equipped with carbon capture technology"
-  vm_costMatPrc(tall,all_regi)                                              "Cost of external material inputs such as iron ore in process-based industry [trn $2005/a]"
+  vm_costMatPrc(tall,all_regi)                                              "Cost of external material inputs such as iron ore in process-based industry [trn $2017/a]"
 ;
 
 Equations
@@ -107,11 +115,11 @@ $endif.no_calibration
   q37_costCESmarkup(ttot,all_regi,all_in)                                           "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
   q37_chemicals_feedstocks_limit(ttot,all_regi)                                     "lower bound on feso/feli/fega in chemicals FE input for feedstocks"
   q37_demFeFeedstockChemIndst(ttot,all_regi,all_enty,all_emiMkt)                    "defines energy flow of non-energy feedstocks for the chemicals industry. It is used for emissions accounting"
-  q37_FossilFeedstock_Base(ttot,all_regi,all_enty,all_emiMkt)                       "in baseline runs feedstocks only come from fossil energy carriers"
   q37_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)                  "calculate carbon contained in feedstocks [GtC]"
   q37_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)                    "calculate carbon contained in plastics [GtC]"
   q37_plasticWaste(ttot,all_regi,all_enty,all_enty,all_emiMkt)                      "calculate carbon contained in plastic waste [GtC]"
   q37_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)                   "calculate carbon contained in plastics that are incinerated [GtC]"
+  q37_incinerationCCS(ttot,all_regi,all_enty,all_enty,all_emiMkt)                   "calculate carbon captured from plastics that are incinerated [GtC]"
   q37_nonIncineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "calculate carbon contained in plastics that are not incinerated [GtC]"
   q37_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)           "calculate carbon contained in chemical feedstock with unknown fate [GtC]"
   q37_feedstocksLimit(ttot,all_regi,all_enty,all_enty,all_emiMkt)                   "restrict feedstocks flow to total energy flows into industry"
@@ -120,7 +128,7 @@ $endif.no_calibration
   !! process-based implementation
   q37_demMatPrc(tall,all_regi,mat)                                                  "Material demand of processes"
   q37_prodMat(tall,all_regi,mat)                                                    "Production volume of processes equals material flow of output material"
-  q37_mat2ue(tall,all_regi,all_in)                                                  "Connect materials production to ue ces tree nodes"
+  q37_mat2ue(tall,all_regi,mat,all_in)                                              "Connect materials production to ue ces tree nodes"
   q37_limitCapMat(tall,all_regi,all_te)                                             "Material-flow conversion is limited by capacities"
   q37_emiPrc(ttot,all_regi,all_enty,all_te,opmoPrc)                                 "Local industry emissions pre-capture; Only used as baseline for CCS [GtC/a]"
   q37_emiCCPrc(tall,all_regi,emiInd37)                                              "Captured emissions from CCS"

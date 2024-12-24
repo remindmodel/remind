@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -53,6 +53,7 @@ $endif.emiMktTargetType
   p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktCurrent across iterations  [GtCO2 or GtCO2eq]"
   pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt)    "emissions in reference year 2005, used for calculating target deviation of year targets [GtCO2 or GtCO2eq]"
   pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktTarget_dev across iterations (1 is 100%)"
+  pm_emiMktTarget_tolerance(ext_regi)                "tolerance for regipol emission target deviations convergence [#]"
 
 *** Parameters necessary to calculate the emission tax rescaling factor
   p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)     "auxiliary parameter to save the slope corresponding to the observed mitigation derivative regarding to co2tax level changes from the two previous iterations [#]"
@@ -60,8 +61,9 @@ $endif.emiMktTargetType
   p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi)    "auxiliary parameter to store reference iteration used for calculating slope of current mititgation cost [#]"
   pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) "multiplicative tax rescale factor that rescales emiMkt carbon price from iteration to iteration to reach regipol targets [%]"
   p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugging purposes [%]"
-  p47_clampedRescaleSlope(iteration,ttot,ttot2,ext_regi,emiMktExt) "auxiliary parameter to save the slope value before clamping for debugging purposes [#]"
-  
+  p47_clampedRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "auxiliary parameter to save the slope value before clamping. Useful for debugging purposes [#]"
+  p47_dampedFactorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "auxiliary parameter to save the rescale factor value before dampening. Useful for debugging purposes [#]"
+
 *** Parameters necessary to define the CO2 tax curve shape   
   p47_targetConverged(ttot,ext_regi)                 "boolean to store if emission target has converged [0 or 1]"
   p47_targetConverged_iter(iteration,ttot,ext_regi)  "parameter to save p47_targetConverged across iterations [0 or 1]"
@@ -110,8 +112,13 @@ Parameter
   p47_implicitQttyTargetTaxRescale_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) "rescale factor for current implicit quantity target tax after the given iteration"    
   p47_implicitQttyTargetCurrent_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)    "current iteration total value for an specific quantity target per iteration"   
 
+$ifThen.cm_implicitQttyTargetType "%cm_implicitQttyTargetType%" == "config"
   pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)  "quantity target [absolute: TWa or GtC; or percentage: 0.1]"  / %cm_implicitQttyTarget% /
-
+$else.cm_implicitQttyTargetType
+  pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)  "quantity target [absolute: TWa or GtC; or percentage: 0.1]"
+  p47_implicitQttyTargetScenario(qttyTargetScenario,ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) "hard-coded quantity scenarios types [absolute: TWa or GtC; or percentage: 0.1]"
+$endif.cm_implicitQttyTargetType
+ 
   pm_implicitQttyTarget_isLimited(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)  "1 (one) if there is a hard bound on the model that does not allow the tax to change further the quantity"
 
   p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) "initial year of quantity target for a given region [year]"
@@ -237,6 +244,21 @@ Parameter
   p47_exoCo2tax(ext_regi,ttot)   "Exogenous CO2 tax level. Overrides carbon prices in pm_taxCO2eq, only if explicitly defined. Regions and region groups allowed. Format: '<regigroup>.<year> <value>, <regigroup>.<year2> <value2>' or '<regigroup>.(<year1> <value>,<year2> <value>'). [$/tCO2]" / %cm_regiExoPrice% /
 ;
 $endIf.regiExoPrice
+
+
+***---------------------------------------------------------------------------
+*** Total SE per PE calculation used for setting bounds
+***---------------------------------------------------------------------------
+
+Variable
+v47_prodSEtotal(ttot,all_regi,all_enty,all_enty) "total SE production per PE and SE over all technologies"
+;
+
+Equation
+q47_prodSEtotal(ttot,all_regi,all_enty,all_enty) "calculate total SE production per PE and SE over all technologies"
+;
+
+
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/declarations.gms

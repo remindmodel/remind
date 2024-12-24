@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -60,9 +60,13 @@ $ifthen "%cm_INCONV_PENALTY_FESwitch%" == "on"
                                 AND sector2emiMkt(sector,emiMkt) 
                                 AND (entySeBio(entySe) OR  entySeFos(entySe)) ),
           v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
-    + v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
-    )
-      / 1e3	
+          + v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+          )
+          / 1e3	
+$endif
+$ifthen not "%cm_seFeSectorShareDevMethod%" == "off"
+        !! penalizing secondary energy share deviation in sectors  
+        - vm_penSeFeSectorShareDevCost(ttot,regi)
 $endif
       )
     )

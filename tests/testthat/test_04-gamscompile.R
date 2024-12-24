@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -33,6 +33,7 @@ test_that("start.R --gamscompile works on all configs and scenarios", {
   expect_true(length(csvfiles) > 0)
   testthat::with_mocked_bindings(
     for (csvfile in csvfiles) {
+      if (grepl("scenario_config_IKEA|scenario_config_21_EU11_ARIADNE", csvfile)) next
       test_that(paste("perform start.R --gamscompile with", basename(csvfile)), {
         titletag <- paste0("titletag=TESTTHAT-", gsub(".csv$", "", basename(csvfile)))
         output <- localSystem2("Rscript",

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -50,6 +50,9 @@ p47_implicitQttyTargetTax0(t,regi) =
       +
       ( sum(ccs2te(ccsCo2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(t,regi,enty,enty2,te,rlf)))
       )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"all"))
+      +
+      ( sum(te_oae33, -vm_emiCdrTeDetail.l(t,regi,te_oae33))
+      )$(sameas(qttyTarget,"oae") AND sameas(qttyTargetGroup,"all"))
       +
       (( !! Supply side BECCS
         sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail.l(t,regi,enty,enty2,te,enty3))

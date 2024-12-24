@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -9,4 +9,5 @@ test_that("start.R config/tests/scenario_config_quick.csv works", {
   output <- localSystem2("Rscript", c("start.R", "config/tests/scenario_config_quick.csv"))
   printIfFailed(output)
   expectSuccessStatus(output)
+  expect_true(file.exists("../../output/testOneRegi/REMIND_generic_testOneRegi.mif"))
 })

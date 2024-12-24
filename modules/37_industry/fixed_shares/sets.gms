@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -142,11 +142,11 @@ Sets
   /
 
   !! empty sets for subsectors compatibility
-  industry_ue_calibration_target_dyn37(all_in)   ""   / /
-  ppfKap_industry_dyn37(all_in)                  ""   / /
-  ue_industry_dyn37(all_in)                      ""   / /
-  ces_eff_target_dyn37(all_in,all_in)            ""   / /
-  pf_industry_relaxed_bounds_dyn37(all_in)       ""   / /
+  industry_ue_calibration_target_dyn37(all_in)   "empty set"   / /
+  ppfKap_industry_dyn37(all_in)                  "empty set"   / /
+  ue_industry_dyn37(all_in)                      "empty set"   / /
+  ces_eff_target_dyn37(all_in,all_in)            "empty set"   / /
+  pf_industry_relaxed_bounds_dyn37(all_in)       "empty set"   / /
 ;
 
 *** add module specific sets and mappings to the global sets and mappings

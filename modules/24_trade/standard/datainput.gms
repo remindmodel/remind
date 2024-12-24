@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -27,6 +27,18 @@ $ondelim
 $include "./modules/24_trade/standard/input/pm_costsTradePeFinancial.cs3r"
 $offdelim
 ;
+
+*NB* import assumptions for the activation of trade constraints
+parameter p24_trade_constraints(all_regi,all_enty,tradeConst)  "parameter for the region specific trade constraints, values different to 1 activate constraints and the value is used as effectiveness to varying degress such as percentage numbers"
+/
+$ondelim
+$include "./modules/24_trade/standard/input/p24_trade_constraints.cs4r"
+$offdelim
+/
+;
+
+display p24_trade_constraints;
+
 pm_costsTradePeFinancial(regi,"XportElasticity", tradePe(enty)) = 100;
 pm_costsTradePeFinancial(regi, "tradeFloor", tradePe(enty))     = 0.0125;
 pm_costsTradePeFinancial(regi,"Mport","peur")                   = 1e-06;

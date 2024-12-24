@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -24,10 +24,6 @@ vm_costAdjNash(ttot,all_regi)               "Adjustment costs for deviation from
 equations
 q80_budg_intertemp(all_regi)                        "interemporal trade balance (Nash mode only)"
 q80_costAdjNash(ttot,all_regi)                      "plays a dummy role for now, allowing fixing to Nash GDX files"
-;
-
-scalar
-s80_cnptfile                                       "parameter that indicates which optimality tolerance will be used"      /1/
 ;
 
 *** EOF ./modules/80_optimization/testOneRegi/declarations.gms

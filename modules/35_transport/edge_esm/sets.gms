@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -118,24 +118,15 @@ ces_transport_dyn35(all_in,all_in)   "CES tree structure - edge transport"
 
 EDGE_scenario_all    "EDGE-T scenarios"
 /
-ConvCase
-ConvCaseWise
-ElecEra
-ElecEraWise
-HydrHype
-HydrHype4
-HydrHypeWise
-Mix
-MixWise
-Mix1Wise
-Mix2Wise
-Mix3Wise
-Mix4Wise
 Mix1
+Mix1ICEban
 Mix2
+Mix2ICEban
 Mix3
+Mix3ICEban
 Mix4
-PhOP
+Mix4ICEban
+HydrHype4
 ECEMF_HighEl_HighEff
 ECEMF_HighEl_ModEff
 ECEMF_HighEl_LifestCha
@@ -149,6 +140,7 @@ NAV_lce
 NAV_all
 CAMP_lscWeak
 CAMP_lscStrong
+CAMP_lscLow
 /
 
 EDGE_scenario(EDGE_scenario_all) "Selected EDGE-T scenario"
