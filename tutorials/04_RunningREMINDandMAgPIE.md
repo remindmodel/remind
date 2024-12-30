@@ -55,7 +55,7 @@ Here's an example of a simple case. If you start a new coupled run with the scen
 
 This process will continue until for as many iterations as set in `max_iterations` in `start_bundle_coupled.R` (see Check the Convergence below). The last iteration will run REMIND only, so REMIND will have run `max_iterations` times and MAgPIE wil have run `max_iterations - 1` times. So, if `max_iterations` is 5, the last REMIND run in this case will be `C_Base-rem-5` and the last MAgPIE iteration will be `C_Base-mag-4`.
 
-The output of both models can be analyzed normally from these two runs. The REMIND .mif file contains also the MAgPIE variables. Additionally, at the end of a successful coupled run the coupling script will automatically merge the reports of the last runs of both models in a `.mif` file located in the root of REMIND's output folder, using the joint model name "REMIND-MAgPIE". In our example, that file will be `path_remind/output/C_SSP-Base.mif`.
+The output of both models can be analyzed normally from these two runs. The REMIND `.mif` file contains also the MAgPIE variables. Additionally, at the end of a successful coupled run the coupling script will automatically merge the reports of the last runs of both models in a `.mif` file located in the root of REMIND's output folder, using the joint model name "REMIND-MAgPIE". In our example, that file will be `path_remind/output/C_SSP-Base.mif`.
 
 So, in the end of the coupled run in this example, you should have a directory structure like:
 
