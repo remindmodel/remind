@@ -334,8 +334,6 @@ $setglobal transport  edge_esm           !! def = edge_esm
 $setglobal buildings  simple      !! def = simple
 *'---------------------    37_industry    ----------------------------------
 *'
-*' * (fixed_shares): fixed shares of industry sub-sectors (cement, chemicals,
-*'                   steel, other) in industry FE use
 *' * (subsectors):   models industry subsectors explicitly with individual CES nests
 *'                   for cement, chemicals, steel, and otherInd production.
 $setglobal industry  subsectors   !! def = subsectors
@@ -1551,14 +1549,6 @@ $setGLobal cm_exogDem_scen off !! def off  !! regexp = off|ariadne_(bal|ensec|hi
 $setGlobal cm_Ger_Pol  off !! def off
 *** cm_altFeEmiFac <- "off"  # def <- "off", regions that should use alternative data from "umweltbundesamt" on emission factors for final energy carriers (ex. "EUR_regi, NEU_regi")
 $setGlobal cm_altFeEmiFac  off        !! def = off
-*** cm_eni "multiplicative factor applied to industry energy (eni) elasticity parameter sigma used in fixed_shares realization. [factor]"
-***   def <- "off" = no change for industry energy elasticity (eni);
-***   or number (ex. 2) = multiply by 2 the default value used in REMIND.
-$setglobal cm_eni  off  !! def = off
-*** cm_enb "multiplicative factor applied to building energy (enb) elasticity parameter sigma used in fixed_shares realization. [factor]"
-***   def <- "off" = no change for buildings energy elasticity (eni);
-***   or number (ex. 2) = multiply by 2 the default value used in REMIND.
-$setglobal cm_enb  off  !! def = off
 ***  cm_incolearn "change floor investment cost value"
 ***   Example on how to use:
 ***     cm_incolearn  "windon=1600,spv=5160,csp=9500"
@@ -1653,7 +1643,6 @@ $setGlobal cm_CESMkup_build  standard  !! def = standard
 ***
 *** realisation  | ppfen                | markup
 *** -------------+----------------------+-------------
-*** fixed_shares | feeli                |  57 $/MWh(el)
 *** subsectors   | feelhth_chemicals    | 100 $/MWh(el)
 *** subsectors   | feel_steel_secondary | 100 $/MWh(el)
 *** subsectors   | feelhth_otherInd     | 300 $/MWh(el)
@@ -1663,9 +1652,9 @@ $setGlobal cm_CESMkup_build  standard  !! def = standard
 *** subsectors   | feh2_otherInd        |  50 $/MWh(th)
 ***
 *** To change them to any specific value, either define a new setting besides
-*** "standard" in ./modules/37_industry/(fixed_shares|subsectors)/datainput.gms,
-*** or use the setting "manual" and set cm_CESMkup_ind_data to e.g. "feeli 0.8".
-*** This would apply a cost markup of 0.8 $tr/TWa (91 $/MWh(el)) to the feeli
+*** "standard" in ./modules/37_industry/subsectors/datainput.gms,
+*** or use the setting "manual" and set cm_CESMkup_ind_data to e.g. "feelhth_chemicals 0.8".
+*** This would apply a cost markup of 0.8 $tr/TWa (100 $/MWh(el)) to the feelhth_chemicals
 *** CES node.  Standard markup costs are not effected unless specifically
 *** addressed in cm_CESMkup_ind_data.
 $setGlobal cm_CESMkup_ind        standard  !! def = standard

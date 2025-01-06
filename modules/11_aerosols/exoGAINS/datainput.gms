@@ -97,24 +97,6 @@ pm_emiExog(t,regi,"OC") = p11_emiAPexo(t,regi,"OC","AgWasteBurning")
 display p11_emiFacAP;
 display pm_emiExog;
 
-$IFTHEN.sectorshares %CES_structure% == "stationary_transport"
-*** Define sector shares
-p11_share_sector(ttot,sectorEndoEmi2te(enty,enty2,te,sectorEndoEmi),regi) = 1.0;
-p11_share_sector(ttot,"seliqfos","fehos","tdfoshos","indst",regi)  = pm_share_ind_fehos(ttot,regi);
-p11_share_sector(ttot,"seliqfos","fehos","tdfoshos","res",regi)    = 1-pm_share_ind_fehos(ttot,regi);
-p11_share_sector(ttot,"pebiolc","sesobio","biotr","indst",regi) = pm_share_ind_fesos_bio(ttot,regi);
-p11_share_sector(ttot,"pebiolc","sesobio","biotr","res",regi)   = 1-pm_share_ind_fesos_bio(ttot,regi);
-p11_share_sector(ttot,"pecoal","sesofos","coaltr","indst",regi) = pm_share_ind_fesos(ttot,regi);
-p11_share_sector(ttot,"pecoal","sesofos","coaltr","res",regi)   = 1-pm_share_ind_fesos(ttot,regi);
-p11_share_sector(ttot,"pegas","segafos","gastr","indst",regi)   = pm_share_ind_fehos(ttot,regi);
-p11_share_sector(ttot,"pegas","segafos","gastr","res",regi)     = 1-pm_share_ind_fehos(ttot,regi);
-p11_share_sector(ttot,"peoil","seliqfos","refliq","trans",regi) = pm_share_trans(ttot,regi);
-p11_share_sector(ttot,"peoil","seliqfos","refliq","indst",regi) = (1-pm_share_trans(ttot,regi))*pm_share_ind_fehos(ttot,regi);
-p11_share_sector(ttot,"peoil","seliqfos","refliq","res",regi)   = (1-pm_share_trans(ttot,regi))*(1-pm_share_ind_fehos(ttot,regi));
-
-$ELSE.sectorshares
-
-
 if (cm_startyear eq 2005,
   Execute_Loadpoint 'input'      p11_cesIO = vm_cesIO.l;
 else
@@ -193,7 +175,7 @@ loop ((t,regi)$( t.val ge 2005 ),
   p11_share_sector(t,"pegas","segafos","gastr","res",regi)
   = 1 - p11_share_sector(t,"pegas","segafos","gastr","indst",regi);
 );
-$ENDIF.sectorshares
+
 
 display p11_share_sector;
 

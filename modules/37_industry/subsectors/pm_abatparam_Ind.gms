@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms
+*** SOF ./modules/37_industry/subsectors/input/pm_abatparam_Ind.gms
 
 loop ((ttot,steps)$( ttot.val ge 2005 ),
 
@@ -58,5 +58,5 @@ $endif.cm_subsec_model_steel
   );
 );
 
-*** EOF ./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms
+*** EOF ./modules/37_industry/subsectors/input/pm_abatparam_Ind.gms
 

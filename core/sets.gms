@@ -379,20 +379,16 @@ all_enty             "all types of quantities"
         feso
         fesos        "FE solids stationary"
         fesob
-        fesoi
         fehos        "FE heating oil stationary"
         fehob
-        fehoi
         fega
         fegas        "FE gas stationary"
         fegab
-        fegai
         fegat
         feh2s        "FE hydrogen stationary"
         feh2t        "FE hydrogen transport"
         fehes        "FE district heating (including combined heat and power), and heat pumps stationary"
         feheg
-        fehei
         feheb
         fehe
         feel
@@ -401,19 +397,12 @@ all_enty             "all types of quantities"
         feelcb       "buildings use of conventional electricity (all but space heating)"
         feelhpb      "buildings use of electricity for space heating with heat pumps"
         feelrhb      "buildings use of electricity for space heating with resistive heating"
-        feeli
         feelt        "final energy electricity for transport"
         fepet        "FE petrol transport"
         fedie        "FE diesel transport"
         felit        "FE liquids for transport (includes diesel and petrol)"
         fetf         "FE transport fuels"
-        fehoi_cs     "final energy in industry diesel - carbon stored"
-        fegai_cs     "final energy in industry natural gas - carbon stored "
         entydummy    "dummy FE for process based industry implementation"
-
-        ueHDVt       "transport useful energy heavy duty vehicles"
-        ueLDVt       "transport useful energy light duty vehicles"
-        ueelTt       "transport useful energy for electric trains"
 
         !! materials, feedstock, and industrial goods
         prsteel      "Primary steel"
@@ -589,12 +578,6 @@ all_in   "all inputs and outputs of the CES function"
   eni                     "industry energy use"
   enhi                    "industry heat energy use"
   enhgai                  "industry heat gaseous energy use (fegab and feh2b)"
-  fesoi                   "industry use of solid energy carriers"
-  fehoi                   "industry use of liquid energy carriers"
-  fegai                   "industry use of gaseous energy carriers"
-  feh2i                   "industry use of hydrogen"
-  fehei                   "industry use of district heat"
-  feeli                   "industry use of electricity"
 
   fehcsob                 "buildings heating and cooking solids final energy"
   fehcelb                 "buildings heating and cooking electricity final energy"
@@ -629,10 +612,7 @@ all_in   "all inputs and outputs of the CES function"
 *** FIXME this should be reworked with Robert when revising the transport module
   entrp                   "transport energy use"
   fetf                    "transport fuel use"
-  ueLDVt                  "transport useful energy light duty vehicles"
-  ueHDVt                  "transport useful energy heavy duty vehicles"
   feh2t                   "transport hydrogen use"
-  ueelTt                  "transport useful energy for electric trains"
 
   entrp_pass              "passenger transport"
   entrp_frgt              "freight transport"
@@ -2032,53 +2012,17 @@ entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation
     fedie.cdr
 /
 
-ppfEn2Sector(all_in,emi_sectors) "primary energy production factors mapping to sectors"
-/
-    fegab.build
-    fegai.indst
-    fehob.build
-    fehoi.indst
-    fesob.build
-    fesoi.indst
-    feelb.build
-    feeli.indst
-    feheb.build
-    fehei.indst
-    feh2b.build
-    feh2i.indst
-    ueHDVt.trans
-    ueLDVt.trans
-    ueelTt.trans
-    feeli.cdr
-    fehei.cdr
-    feh2i.cdr
-    fegai.cdr
-/
-
 entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy and sector mapping to detailed final energy enty split in IO"
 /
   fegas.build.fegab
-  fegas.indst.fegai
   fehos.build.fehob
-  fehos.indst.fehoi
   fesos.build.fesob
-  fesos.indst.fesoi
   feels.build.feelb
-  feels.indst.feeli
   fehes.build.feheb
-  fehes.indst.fehei
-***  feh2s.build.feh2b
-***  feh2s.indst.feh2i
   fepet.trans.fepet
   fedie.trans.fedie
-***  feh2t.trans
   feelt.trans.feelt
   fegat.trans.fegat
-***  feels.cdr
-***  fehes.cdr
-***  fegas.cdr
-***  feh2s.cdr
-***  fedie.cdr
 /
 
 all_emiMkt      "emission markets"

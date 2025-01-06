@@ -68,20 +68,6 @@ $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
 $endif.scaleDemand
 
 
-*** scale default elasticity of substitution on enb level
-$IFTHEN.cm_enb not "%cm_enb%" == "off" 
-  pm_cesdata_sigma(ttot,"enb")$pm_cesdata_sigma(ttot,"enb") =
-    pm_cesdata_sigma(ttot,"enb") * %cm_enb%;
-*** avoid the elasticity of substitution parameter to be too close to one, which could cause undesired numerical behavior: if the resulting scaled parameter is between 0.8 and 1, make it 0.8; if it is between 1 and 1.2, make it 1.2. 
-  pm_cesdata_sigma(ttot,"enb")$(pm_cesdata_sigma(ttot,"enb") gt 0.8
-                                AND pm_cesdata_sigma(ttot,"enb") lt 1) =
-    0.8; 
-  pm_cesdata_sigma(ttot,"enb")$(pm_cesdata_sigma(ttot,"enb") ge 1
-                                AND pm_cesdata_sigma(ttot,"enb") lt 1.2) =
-    1.2;  
-$ENDIF.cm_enb
-
-
 ***-----------------------------------------------------------------------------
 * FE Share Bounds
 ***-----------------------------------------------------------------------------

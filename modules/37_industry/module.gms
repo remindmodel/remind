@@ -15,7 +15,6 @@
 
 
 *###################### R SECTION START (MODULETYPES) ##########################
-$Ifi "%industry%" == "fixed_shares" $include "./modules/37_industry/fixed_shares/realization.gms"
 $Ifi "%industry%" == "subsectors" $include "./modules/37_industry/subsectors/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
 *** EOF ./modules/37_industry/module.gms

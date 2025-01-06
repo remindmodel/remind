@@ -321,7 +321,7 @@ vm_costSubsidizeLearning(ttot,all_regi)              "regional cost of subsidy f
 vm_dummyBudget(ttot,all_regi)                        "auxiliary variable that helps to meet permit allocation equation in nash case"
 ***----------------------------------------------------------------------------------------
 ***-------------------------------------------------ESM module-----------------------------
-vm_macBase(ttot,all_regi,all_enty)                   "baseline emissions for all emissions subject to MACCs (type emismac)"
+v_macBase(ttot,all_regi,all_enty)                   "baseline emissions for all emissions subject to MACCs (type emismac)"
 vm_emiCO2Sector(ttot,all_regi,emi_sectors)           "total CO2 emissions from individual sectors [GtC]"
 vm_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty)  "energy-related emissions per region and technology"
 vm_emiTe(ttot,all_regi,all_enty)                     "total energy-related emissions of each region. [GtC, Mt CH4, Mt N]"

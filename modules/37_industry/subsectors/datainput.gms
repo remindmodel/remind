@@ -66,7 +66,7 @@ pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2035) = 1.7;
 pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2040) = 2.0;
 
 *** abatement parameters for industry CCS MACs
-$include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
+$include "./modules/37_industry/subsectors/pm_abatparam_Ind.gms";
 
 if (cm_IndCCSscen eq 1,
   if (cm_CCS_cement eq 1,

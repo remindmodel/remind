@@ -307,8 +307,7 @@ q02_inconvPenCoalSolids(t,regi)$(t.val > 2005)..
     v02_inconvPenCoalSolids(t,regi)
   =g=
 *' local air pollution for coal: inconvinienve penalty applies only for buildings use; slack variable ensures that v02_inconvPen can stay > 0
-    p02_inconvpen_lap(t,regi,"coaltr") * (vm_prodSe(t,regi,"pecoal","sesofos","coaltr")
-  - vm_cesIO(t,regi,"fesoi"))
+    p02_inconvpen_lap(t,regi,"coaltr") * vm_prodSe(t,regi,"pecoal","sesofos","coaltr")
   + v02_sesoInconvPenSlack(t,regi)
 ;
 $ENDIF.INCONV

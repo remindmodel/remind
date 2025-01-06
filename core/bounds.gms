@@ -505,28 +505,6 @@ vm_emiFgas.fx(ttot,all_regi,all_enty) = f_emiFgas(ttot,all_regi,"%c_SSP_forcing_
 display vm_emiFgas.L;
 
 
-*** Bugfix. For some reason the model cannot reduce the production of district heating to 0
-*** where it should be 0. Not fixings can account for this
-*** Fixing vm_prodSe to 0 avoids the problem
-loop ((in,in2) $ (sameAs(in,"feheb") and sameAs(in2,"fehei")),
-loop ((t, regi) $ ( (sameAs(t,"2010") OR sameAs(t,"2015"))
-                     AND
-                    ((pm_cesdata(t,regi,in,"quantity") + pm_cesdata(t,regi,in,"offset_quantity")
-                    + pm_cesdata(t,regi,in2,"quantity") + pm_cesdata(t,regi,in2,"offset_quantity")
-                    ) eq 0)
-                    AND
-                    (sum(ttot$(ttot.val lt 2005), vm_deltaCap.up(ttot,regi,"biochp","1")) eq 0)) ,
-      vm_prodSe.up(t,regi,"pegas"  ,"seel","gaschp")  = 0;
-      vm_prodSe.up(t,regi,"pecoal" ,"seel","coalchp") = 0;
-      vm_prodSe.up(t,regi,"pecoal" ,"sehe","coalhp")  = 0;
-      vm_prodSe.up(t,regi,"pegeo"  ,"sehe","geohe")   = 0;
-      vm_prodSe.up(t,regi,"pesol"  ,"sehe","solhe")   = 0;
-      vm_prodSe.up(t,regi,"pebiolc","seel","biochp")  = 0;
-      vm_prodSe.up(t,regi,"pebiolc","sehe","biohp")   = 0;
-      vm_prodSe.up(t,regi,"pegas","sehe","gashp")   = 0;
-);
-);
-
 ***----------------------------------------------------------------------------
 *** lower bound on share of green hydrogen starting from 2030 (c_greenH2)
 ***----------------------------------------------------------------------------
