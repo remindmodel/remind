@@ -754,6 +754,7 @@ pm_cf(ttot,regi,"FertProd") = 0.8;
 pm_cf(ttot,regi,"FertProdH2") = 0.8;
 pm_cf(ttot,regi,"MeToFinal") = 0.8;
 pm_cf(ttot,regi,"AmToFinal") = 0.8;
+pm_cf(ttot,regi,"AmToFinalH2") = 0.8;
 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"

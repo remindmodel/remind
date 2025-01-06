@@ -652,7 +652,7 @@ p37_specMatDem("ammoniaH2","FertProdH2","standard")        = 0.57;
 
 p37_specMatDem("methanol","MtOMtA","standard")        = 4.5;
 p37_specMatDem("ammonia","AmToFinal","standard")        = 1;
-p37_specMatDem("ammoniaH2","AmToFinal","standard")        = 1;
+p37_specMatDem("ammoniaH2","AmToFinalH2","standard")        = 1;
 p37_specMatDem("methanol","MeToFinal","standard")        = 1;
 
 p37_specMatDem("co2f","FertProdH2","standard")        = 0.73;
