@@ -421,6 +421,44 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
 *' Learning curve for investment costs:
 *' (deactivate learning for tech_stat 4 technologies before 2025 as they are not built before)
 ***---------------------------------------------------------------------------
+
+*' Learning technologies follow a “one-factor learning curve”[^1] (or “experience curve”).
+*' This widely-used formulation derives from empirical observations across different energy
+*' technologies of a log-linear relationship between the unit cost $I$ of the technology and its
+*' cumulative production or installed capacity $C$ (see for example empirical paper[^2]).
+*' [^1]: Edward S. Rubin, Iness M.L. Azevedo, Paulina Jaramillo, and Sonia Yeh. A review of learning rates for electricity supply technologies. Energy Policy, 86:198-218, 2015.
+*' [^2]: Alan McDonald and Leo Schrattenholzer. Learning rates for energy technologies. Energy Policy, 29(4):255–261, 2001.
+
+*' Learning rate $\lambda$ is defined as the fractional reduction in cost associated with a doubling of cumulative capacity.
+*' Let $I_0$ be the initial cost when cumulative capacity is $C_0$, and $I_d$ be the cost when cumulative capacity is
+*' $C_d=2\times C_0$, then the learning rate is defined as:
+*' $$ \lambda = 1 - \frac{I_d}{I_0} \in [0,1] $$
+*' Hence \textbf{Wright's law} relating investment cost $I$ and cumulative capacity $C$:
+*' $$ \frac{I}{I_0} = \left(1-\lambda \right)^{\log_2\left(\frac{C}{C_0}\right)} = \left(\frac{C}{C_0}\right)^{\log_2(1-\lambda )} $$
+*' Defining the learning exponent $b = \log_2(1-\lambda)$ and the cost of the first unit $a = \frac{I_0}{C_0^b}$,
+*' the learning equation simplifies into:
+*' $$ I = a \times C^{b} $$
+
+*' Now suppose there is a floor cost $F$ such that $I\geq F\geq 0$, irrespective of the capacity.
+*' Then the learning only applies to learnable costs $I'=I-F$, and the learning equation becomes
+*' $$ I = a'\times C^{b'} + F $$ with $a' = \frac{I_0 - F}{C_0^{b'}}$.
+*' By design, REMIND learning equations ensure that the initial slope of learning is independent of the floor cost.
+*' Mathematically, the slopes are given by the derivative of $I$ and $I'$ with respect to $C$:
+*' $$ \frac{dI}{dC} = a \times b \times C^{b-1} = I_0 \times b \times \left(\frac{C}{C_0}\right)^{b-1} $$ 
+*' $$ \frac{dI'}{dC} = a' \times b' \times C^{b'-1} = (I_0-F) \times b' \times \left(\frac{C}{C_0}\right)^{b'-1} $$
+*' For the two curves to have the same slope initially, we want the two derivatives to be equal for $C=C_0$. 
+*' This means $I_0 \times b = (I_0-F) \times b'$, that we rewrite as:
+*' $$ b' = \frac{I_0}{I_0-F}b $$
+
+*' In datainput.gms, `fm_dataglob` external data provides the observed learning rate `learn` ($\lambda$),
+*' the initial investment costs `inco0` ($I_0$), the learnable cost `incolearn` ($I'_0=I_0-F$) and
+*' the cumulative capacity in 2015 `ccap0` ($C_0$).
+*' The other learning parameters are computed using the equations described above:
+*' `learnExp_wFC` ($b'$), `learnMult_wFC` ($a'$).
+
+*' In equations.gms, the investment costs equation `q_costTeCapital` corresponds to $I = a'\times C^{b'} + F$,
+*' with variations depending on time period and floor cost scenarios.
+
 q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND t.val le 2020)) ..
   vm_costTeCapital(t,regi,teLearn)
   =e=
