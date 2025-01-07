@@ -1384,9 +1384,9 @@ $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("co2luc") = 0;
 *** The tiny fraction n2ofertsom of total land use n2o can get slightly negative in some cases. Ignore MAC for n2ofertsom by default.
 $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("n2ofertsom") = 0;
 
-pm_macCostSwitch(enty)=pm_macSwitch(enty);
+p_macCostSwitch(enty)=pm_macSwitch(enty);
 pm_macSwitch("co2cement_process") =0 ;
-pm_macCostSwitch("co2cement_process") =0 ;
+p_macCostSwitch("co2cement_process") =0 ;
 
 *** load econometric emission data
 *** read in p3 and p4

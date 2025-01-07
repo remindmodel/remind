@@ -1101,21 +1101,6 @@ parameter
   cm_build_H2costDecayEnd = 0.1;  !! def = 0.1
 *'
 parameter
-  cm_indst_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 3.25$kg = 0.1 $/kWh)"
-;
-  cm_indst_H2costAddH2Inv = 0.1;  !! def = 3.25$/kg = 0.1 $/Kwh
-*'
-parameter
-  cm_indst_costDecayStart     "simplified logistic function end of full value   (ex. 5%  -> between 0 and 5% the simplified logistic function will have the value 1). [%]"
-;
-  cm_indst_costDecayStart = 0.05; !! def = 5%
-*'
-parameter
-  cm_indst_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> between 10% and 100% the simplified logistic function will have the value 0). [%]"
-;
-  cm_indst_H2costDecayEnd = 0.1;  !! def 10%
-*'
-parameter
   cm_BioSupply_Adjust_EU      "factor for scaling sub-EU bioenergy supply curves"
 ;
   cm_BioSupply_Adjust_EU = 3; !! def 3, 3*bioenergy supply slope obtained from input data
