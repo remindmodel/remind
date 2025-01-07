@@ -97,6 +97,15 @@ pm_emiExog(t,regi,"OC") = p11_emiAPexo(t,regi,"OC","AgWasteBurning")
 display p11_emiFacAP;
 display pm_emiExog;
 
+parameter p11_share_ind_fehos(tall,all_regi)               "Share of heating oil used in the industry (rest is residential)"
+/
+$ondelim
+$include "./core/input/p11_share_ind_fehos.cs4r"
+$offdelim
+/
+;
+
+
 if (cm_startyear eq 2005,
   Execute_Loadpoint 'input'      p11_cesIO = vm_cesIO.l;
 else
@@ -120,16 +129,9 @@ loop ((t,regi)$( t.val ge 2005 ),
     p11_share_sector(t,"pecoal","sesofos","coaltr","indst",regi)
     = pm_share_ind_fesos(t,regi);
 
-    if (sum(fe_tax_sub_sbi("fesoi",in), p11_cesIO("2005",regi,in)) gt 0,
-      p11_share_sector(t,"pebiolc","sesobio","biotr","indst",regi)
-      = pm_share_ind_fesos_bio(t,regi)
-      * sum(fe_tax_sub_sbi("fesoi",in), p11_cesIO(t,regi,in))
-      / sum(fe_tax_sub_sbi("fesoi",in), p11_cesIO("2005",regi,in));
-    else
-      !! When calibrating to a new region set with insufficient data coverage in
-      !! the gdx, vm_cesIO will be all zero.  In that case, simply split 50/50.
-      p11_share_sector(t,"pebiolc","sesobio","biotr","indst",regi) = 0.5;
-    );
+    !! When calibrating to a new region set with insufficient data coverage in
+    !! the gdx, vm_cesIO will be all zero.  In that case, simply split 50/50.
+    p11_share_sector(t,"pebiolc","sesobio","biotr","indst",regi) = 0.5;
   );
 
   p11_share_sector(ttot,"pecoal","sesofos","coaltr","res",regi)
@@ -139,14 +141,8 @@ loop ((t,regi)$( t.val ge 2005 ),
   = 1 - p11_share_sector(ttot,"pebiolc","sesobio","biotr","indst",regi);
 
   !! share in liquids
-  if (sum(fe2ppfEn("fehos",in), p11_cesIO(t,regi,in)) gt 0,
-    p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi)
-    = sum(fe_tax_sub_sbi("fehoi",in), p11_cesIO(t,regi,in))
-    / sum(fe2ppfEn("fehos",in), p11_cesIO(t,regi,in));
-  else
-    p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi)
-    = pm_share_ind_fehos(t,regi)
-  );
+  p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi)
+    = p11_share_ind_fehos(t,regi)
 
   p11_share_sector(t,"seliqfos","fehos","tdfoshos","res",regi)
   = 1 - p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi);
@@ -163,14 +159,8 @@ loop ((t,regi)$( t.val ge 2005 ),
   * (1 - p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi));
 
   !! share in gases
-  if (sum(fe2ppfEn("fegas",in), p11_cesIO(t,regi,in)) gt 0,
-    p11_share_sector(t,"pegas","segafos","gastr","indst",regi)
-    = sum(fe_tax_sub_sbi("fegai",in), p11_cesIO(t,regi,in))
-    / sum(fe2ppfEn("fegas",in), p11_cesIO(t,regi,in));
-  else
-    p11_share_sector(t,"pegas","segafos","gastr","indst",regi)
-    = pm_share_ind_fehos(t,regi);
-  );
+  p11_share_sector(t,"pegas","segafos","gastr","indst",regi)
+    = p11_share_ind_fehos(t,regi);
 
   p11_share_sector(t,"pegas","segafos","gastr","res",regi)
   = 1 - p11_share_sector(t,"pegas","segafos","gastr","indst",regi);
@@ -202,8 +192,8 @@ pm_emifac(ttot,regi,"peoil",enty2,"refliq","SO2") =
   pm_share_trans(ttot,regi) * p11_emiFacAP(ttot,regi,"peoil",enty2,"refliq","trans","SO2")
   + (1-pm_share_trans(ttot,regi)) 
   * (
-         pm_share_ind_fehos(ttot,regi)  * p11_emiFacAP(ttot,regi,"peoil",enty2,"refliq","indst","SO2")
-    + (1-pm_share_ind_fehos(ttot,regi)) * p11_emiFacAP(ttot,regi,"peoil",enty2,"refliq","res",  "SO2")
+         p11_share_ind_fehos(ttot,regi)  * p11_emiFacAP(ttot,regi,"peoil",enty2,"refliq","indst","SO2")
+    + (1-p11_share_ind_fehos(ttot,regi)) * p11_emiFacAP(ttot,regi,"peoil",enty2,"refliq","res",  "SO2")
   );
 
 ***-- BC/OC specific -----			
@@ -220,8 +210,8 @@ loop(emiAP,
     pm_emifac(ttot,regi,"pebiolc",enty2,"biotr",emiAP);
 *JeS* emissions factors on final energy to be able to take into account synthetic liquids.
   pm_emifac(ttot,regi,"seliqfos","fehos","tdfoshos",emiAP) =
-         pm_share_ind_fehos(ttot,regi)  * p11_emiFacAP(ttot,regi,"seliqfos","fehos","tdfoshos","indst", emiAP)
-    + (1-pm_share_ind_fehos(ttot,regi)) * p11_emiFacAP(ttot,regi,"seliqfos","fehos","tdfoshos","res",   emiAP);
+         p11_share_ind_fehos(ttot,regi)  * p11_emiFacAP(ttot,regi,"seliqfos","fehos","tdfoshos","indst", emiAP)
+    + (1-p11_share_ind_fehos(ttot,regi)) * p11_emiFacAP(ttot,regi,"seliqfos","fehos","tdfoshos","res",   emiAP);
   pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie",emiAP) = 
     p11_emiFacAP(ttot,regi,"seliqfos","fedie","tdfosdie","trans",emiAP);
   pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet",emiAP) = 

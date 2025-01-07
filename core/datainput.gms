@@ -516,13 +516,6 @@ $offdelim
 /
 ;
 
-parameter pm_share_ind_fehos(tall,all_regi)               "Share of heating oil used in the industry (rest is residential)"
-/
-$ondelim
-$include "./core/input/p_share_ind_fehos.cs4r"
-$offdelim
-/
-;
 *** initialize pm_share_trans with the global value, will be updated after each negishi/nash iteration
 pm_share_trans("2005",regi) = 0.617;
 pm_share_trans("2010",regi) = 0.625;
