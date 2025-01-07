@@ -249,10 +249,6 @@ p37_clinker_cement_ratio(t,regi)
   * (min(t.val, 2100) - 2005)
   / (2100             - 2005);
 
-*** Cement demand reduction is implicit in the production function, so no extra
-*** costs have to be calculated.
-pm_CementDemandReductionCost(ttot,regi) = 0;
-
 *** Exogenous share of carbon in chemical feedstock that is embeded into plastics
 ** calculated based on energy flows in REMIND, plastics production from (Geyer et.al., 2017) and stoichiometric calculations
 ** Specifically, historical production of plastics, energy demand for chemicals sector,

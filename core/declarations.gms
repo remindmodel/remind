@@ -72,7 +72,6 @@ p_priceCO2forMAC(tall,all_regi,all_enty)             "carbon price defined for M
 p_priceGas(tall,all_regi)                            "gas price for ch4gas MAC [$/tCeq]"
 p_ResidualCementDemand(tall,all_regi)                "reduction in cemend demand (and thus process emissions) due to climate policy [0...1]"
 p_CementAbatementPrice(ttot,all_regi)                "CO2 price used during calculation of cement demand reduction [$/tCO2]"
-pm_CementDemandReductionCost(tall,all_regi)          "cost of reducing cement demand [tn$2005]"
 p_macPE(ttot,all_regi,all_enty)                      "pe from MACs"
 pm_shPerm(tall, all_regi)                            "emission permit shares"
 pm_emicapglob(tall)                                  "global emission cap"

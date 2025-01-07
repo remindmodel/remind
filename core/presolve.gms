@@ -213,22 +213,6 @@ if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
   display "Cement Demand Reduction, price of limited reduction",
           p_CementAbatementPrice;
 
-  !! Costs of cement demand reduction are the integral under the activity
-  !! reduction curve times baseline emissions.
-  !! a = 160 / (p + 200) + 0.2
-  !! A = 160 ln(p + 200) + 0.2p
-  !! A_MAC(p*) = A(p*) - A(0) - a(p*)p*
-  pm_CementDemandReductionCost(ttot,regi)$( ttot.val ge 2005 )
-  = ( 160 * log(p_CementAbatementPrice(ttot,regi) + 200)
-    + 0.2 * p_CementAbatementPrice(ttot,regi)
-    - 160 * log(200)
-    - p_ResidualCementDemand(ttot,regi) * p_CementAbatementPrice(ttot,regi)
-    )$( p_CementAbatementPrice(ttot,regi) gt 0 )
-  / 1000
-  * v_macBase.lo(ttot,regi,"co2cement_process");
-
-  display "Cement Demand Reduction cost", pm_CementDemandReductionCost;
-
   v_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
   = v_macBase.lo(ttot,regi,"co2cement_process")
   * p_ResidualCementDemand(ttot,regi);
