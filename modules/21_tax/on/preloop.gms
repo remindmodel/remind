@@ -13,11 +13,11 @@ pm_taxemiMkt_iteration(iteration,t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
 ***-------------------------------------------------------------------
 ***           overwrite default targets with gdx values
 ***-------------------------------------------------------------------
-Execute_Loadpoint 'input' p21_tau_CO2_tax_gdx = pm_taxCO2eq;
+Execute_Loadpoint 'input' pm_tau_CO2_tax_gdx = pm_taxCO2eq;
 if (cm_gdximport_target eq 1,
 *** only if tax rates not all equal to zero
-if (smax((t,regi),p21_tau_CO2_tax_gdx(t,regi)$(t.val gt 2030)) gt 0,
-pm_taxCO2eq(t,regi) = p21_tau_CO2_tax_gdx(t,regi);
+if (smax((t,regi),pm_tau_CO2_tax_gdx(t,regi)$(t.val gt 2030)) gt 0,
+pm_taxCO2eq(t,regi) = pm_tau_CO2_tax_gdx(t,regi);
 );
 );
 if (cm_emiscen ne 9,

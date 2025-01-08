@@ -15,7 +15,8 @@ emi_type_47 "emission type used in regional target"
   netGHG, netGHG_noBunkers, netGHG_noLULUCF_noBunkers, netGHG_LULUCFGrassi, netGHG_LULUCFGrassi_noBunkers, netGHG_LULUCFGrassi_intraRegBunker, netGHG_noLULUCF,
   grossEnCO2_noBunkers 
 /
-
+regiNativeEmiMktTarget(all_regi)             "native regions with emiMkt targets" / /
+  
 *** Emission markets
 $ifThen.emiMkt not "%cm_emiMktTarget%" == "off" 
   regiEmiMktTarget(ext_regi)                   "regions with emiMkt targets" / /

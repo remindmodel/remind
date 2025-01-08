@@ -60,7 +60,7 @@ p21_CO2TaxSectorMarkup(ttot,all_regi,emi_sectors)          "CO2 tax markup in bu
 
 p21_deltarev(iteration,all_regi)             "convergence criteria for iteration on tax revenue recycling"
 
-p21_tau_CO2_tax_gdx(ttot,all_regi)           "tax path from gdx, may overwrite default values"
+pm_tau_CO2_tax_gdx(ttot,all_regi)           "tax path from gdx, may overwrite default values"
 p21_tau_CO2_tax_gdx_bau(ttot,all_regi)       "tax path from gdx, may overwrite default values"
 
 p21_implicitDiscRateMarg(ttot,all_regi,all_in)  "Difference between the normal discount rate and the implicit discount rate"

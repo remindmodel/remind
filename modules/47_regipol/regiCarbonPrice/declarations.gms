@@ -240,9 +240,15 @@ $endIf.cm_CCSmaxBound
 *** Exogenous CO2 tax level:
 ***---------------------------------------------------------------------------
 $ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"
+
 Parameter
+$ifThen.regiExoPriceType "%cm_regiExoPrice%" == "gdx" 
+  p47_tau_taxemiMkt(ttot,all_regi,emiMkt)   "emiMkt CO2eq prices loaded from input gdx, in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
+$else.regiExoPriceType
   p47_exoCo2tax(ext_regi,ttot)   "Exogenous CO2 tax level. Overrides carbon prices in pm_taxCO2eq, only if explicitly defined. Regions and region groups allowed. Format: '<regigroup>.<year> <value>, <regigroup>.<year2> <value2>' or '<regigroup>.(<year1> <value>,<year2> <value>'). [$/tCO2]" / %cm_regiExoPrice% /
+$endIf.regiExoPriceType
 ;
+
 $endIf.regiExoPrice
 
 
