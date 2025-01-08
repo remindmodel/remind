@@ -92,10 +92,13 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   pathgdxerrors <- 0
   # fix missing path_gdx and inconsistencies
   if ("path_gdx_ref" %in% names(scenConf) && ! "path_gdx_refpolicycost" %in% names(scenConf)) {
+    if (! isFALSE(coupling)) {
+      stop("Your ", basename(filename), " does contain a path_gdx_ref, but no path_gdx_refpolicycost column. ",
+          "For REMIND standalone, ref is copied to refpolicycost, but for coupled runs this lead to confusion. ",
+          "Please add a path_gdx_refpolicycost column to your config file, see tutorial 4.")
+    }
     scenConf$path_gdx_refpolicycost <- scenConf$path_gdx_ref
-    msg <- paste0("In ", filename,
-        ", no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
-    message(msg)
+    message("In ", filename, ", no column path_gdx_refpolicycost found, using path_gdx_ref instead.")
   }
 
   # make sure every path gdx column exists
