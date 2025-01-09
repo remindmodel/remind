@@ -1123,6 +1123,7 @@ tsu(ttot) "spin up-time before 2005",
 *** This set includes only the historical years of ttot: 1900, 1905, ..., 1995, 2000
 
 opTimeYr "actual lifetime of a built technology in years"
+*** Has to be as large as the maximum lifetime of a technology
 /
         1*100
 /
