@@ -76,7 +76,6 @@
 *' OUTPUT
 *' ```
 *'
-*'
 *' The GAMS code follows a Coding Etiquette:
 *'
 *' #### Naming conventions:
@@ -262,8 +261,7 @@ $setGlobal aerosols  exoGAINS         !! def = exoGAINS
 *'---------------------    15_climate    ---------------------------------------
 *'
 *' * (off): no climate coupling
-*' * (magicc): MAGICC - iterative coupling of MAGICC climate model.
-*' * (box): Petschel-Held
+*' * (magicc7_ar6): MAGICC7 - iterative coupling of MAGICC7 simple climate model.
 $setGlobal climate  off               !! def = off
 *'---------------------    16_downscaleTemperature    --------------------------
 *'
@@ -393,8 +391,8 @@ $setglobal emicapregi  none           !! def = none
 *' * (NPi): National Policies Implemented, extrapolation of historical (until 2020) carbon prices
 *' * (none): no tax policy (combined with all emiscens except emiscen = 9)
 
-***  (exponential) is superseded by (functionalForm): For a globally uniform, exponentially increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_taxCO2_functionalForm = exponential, cm_taxCO2_regiDiff = none, cm_taxCO2_interpolation = off, cm_taxCO2_lowerBound_path_gdx_ref = off, cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_taxCO2_startyear. 
-***  (linear) is superseded by (functionalForm): For a globally uniform, linearly increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_taxCO2_functionalForm = linear, cm_taxCO2_regiDiff = none, cm_taxCO2_interpolation = off, cm_taxCO2_lowerBound_path_gdx_ref = off, cm_peakBudgYr = 2110, and choose the initial carbonprice in cm_startyear via cm_taxCO2_startyear. [Adjust historical reference point (cm_taxCO2_historicalYr, cm_taxCO2_historical) if needed.]
+***  (exponential) is superseded by (functionalForm): For a globally uniform, exponentially increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_taxCO2_functionalForm = exponential, cm_taxCO2_regiDiff = none, cm_taxCO2_interpolation = off, cm_taxCO2_lowerBound_path_gdx_ref = off, cm_peakBudgYr = 2100, and choose the initial carbonprice in cm_startyear via cm_taxCO2_startyear. 
+***  (linear) is superseded by (functionalForm): For a globally uniform, linearly increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_taxCO2_functionalForm = linear, cm_taxCO2_regiDiff = none, cm_taxCO2_interpolation = off, cm_taxCO2_lowerBound_path_gdx_ref = off, cm_peakBudgYr = 2100, and choose the initial carbonprice in cm_startyear via cm_taxCO2_startyear. [Adjust historical reference point (cm_taxCO2_historicalYr, cm_taxCO2_historical) if needed.]
 
 $setglobal carbonprice  none           !! def = none
 *'---------------------    46_carbonpriceRegi  ---------------------------------
@@ -716,13 +714,14 @@ parameter
 parameter
   cm_fetaxscen              "choice of final energy tax path, subsidy path and inconvenience cost path, values other than zero enable final energy tax"
 ;
-  cm_fetaxscen        = 3;         !! def = 3  !! regexp = [0-4]
+  cm_fetaxscen        = 3;         !! def = 3  !! regexp = [0-5]
 *' even if set to 0, the PE inconvenience cost per SO2-cost for coal are always on if module 21_tax is on
 *' * (0): no tax, sub, inconv
 *' * (1): constant t,s,i (used in SSP 5 and ADVANCE WP3.1 HighOilSub)
 *' * (2): converging tax, phased out sub (-2030), no inconvenience cost so far (used in SSP 1)
 *' * (3): constant tax, phased out sub (-2050), no inconvenience cost so far (used in SSP 2)
 *' * (4): constant tax, phased out sub (-2030), no inconvenience cost so far (used in SDP)
+*' * (5): roll back of final energy taxes to get back to a no-policy case (previously known as BAU)
 *'
 parameter
   cm_distrBeta              "elasticity of tax revenue redistribution"
@@ -810,9 +809,9 @@ parameter
 *' *  (4): so2 tax intermediary between 1 and 2, multiplying (1) tax by the ratio (3) and (2)
 *'
 parameter
-  c_techAssumptScen         "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
+  c_techAssumptScen         "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5, 4: SSP3"
 ;
-  c_techAssumptScen     = 1;         !! def = 1  !! regexp = [1-3]
+  c_techAssumptScen     = 1;         !! def = 1  !! regexp = [1-4]
 *' This flag defines an energy technology scenario according to SSP scenario
 *' *   (1) SSP2: reference scenario - default investment costs & learning rates for pv, csp and wind
 *' *   (2) SSP1: advanced renewable energy techno., pessimistic for nuclear and CCS
@@ -1229,9 +1228,9 @@ $setglobal c_tech_earlyreti_rate  GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(
 *** cm_LU_emi_scen   "choose emission baseline for CO2, CH4, and N2O land use emissions from MAgPIE"
 ***  (SSP1): emissions (from SSP1 scenario in MAgPIE)
 ***  (SSP2): emissions (from SSP2 scenario in MAgPIE)
+***  (SSP3): emissions (from SSP3 scenario in MAgPIE)
 ***  (SSP5): emissions (from SSP5 scenario in MAgPIE)
-***  (SDP):
-$setglobal cm_LU_emi_scen  SSP2   !! def = SSP2  !! regexp = SSP(1|2|3|5)|SDP|SSP2_lowEn
+$setglobal cm_LU_emi_scen  SSP2   !! def = SSP2  !! regexp = SSP(1|2|3|5)|SSP2_lowEn
 *** cm_regi_bioenergy_EFTax  "region(s) in which bioenergy is charged with an emission-factor-based tax"
 ***  This switch has only an effect if 21_tax is on and cm_bioenergy_EF_for_tax
 ***  is not zero. It reads in the regions that are affected by the emission-
@@ -1703,12 +1702,16 @@ $setglobal cm_taxCO2_regiDiff         initialSpread10    !! def = "initialSpread
 *** cm_taxCO2_regiDiff_endYr "switch for choosing convergence year of regionally differentiated carbon prices when using initialSpread10 or initialSpread20 in 45_carbonprice/functionalForm"
 *** Setting cm_taxCO2_regiDiff_endYr to GLO 2050, IND 2070, SSA 2100 means that convergence year is delayed for IND to 2070 and for SSA to 2100
 $setglobal cm_taxCO2_regiDiff_endYr   "GLO 2050"    !! def = "GLO 2050"
-*** cm_co2_tax_interpolation "switch for interpolation between (a) carbonprice trajectory given by path_gdx_ref and (b) carbonprice trajectory defined in 45_carbonprice"
+*** cm_co2_tax_interpolation "switch for interpolation between (a) carbonprice trajectory given by path_gdx_ref (or manually chosen regional carbon price in cm_startyear - see cm_taxCO2_startYearValue) and (b) carbonprice trajectory defined in 45_carbonprice"
 *** (off): no interpolation, i.e. (b) is used from cm_startyear onward
 *** (one_step): linear interpolation within 10 years between (a) and (b). For example, if cm_startyear = 2030, it uses (a) until 2025, the average of (a) and (b) in 2030, and (b) from 2035.
 *** (two_steps): linear interpolation within 15 years between (a) and (b). For example, if cm_startyear = 2030, it uses (a) until 2025, weighted averages of (a) and (b) in 2030 and 2035, and (b) from 2040.
 *** Setting cm_co2_tax_interpolation to GLO.2025.2050 2, EUR.2025.2040 1 means that interpolation between (a) and (b) in quadratic [exponent = 2], starts in 2025, and ends in 2050 for all regions, except for Europe that has linear interpolation [exponent = 1] starting in 2025 and ending in 2040
-$setglobal cm_taxCO2_interpolation  off    !! def = "one_step"
+$setglobal cm_taxCO2_interpolation  off    !! def = "off"
+*** cm_taxCO2_startYearValue  "switch for manually choosing regional carbon prices in cm_startyear that are used as starting point for interpolation"
+*** (off): no manual values provided, i.e. carbonprice trajectory given by path_gdx_ref is used for interpolation
+*** Setting cm_taxCO2_startYearValue to GLO 50, SSA 5, CHA 40 means that in cm_startyear, SSA has carbon price of 5$/tCO2,  CHA has carbon price of 40$/tCO2, and all other regions have carbon price of 50$/tCO2.
+$setglobal cm_taxCO2_startYearValue !! def = "off"
 *** cm_taxCO2_lowerBound_path_gdx_ref "switch for choosing if carbon price trajectories from path_gdx_ref are used as lower bound"
 *** (on): carbon price trajectories (pm_taxCO2eq) from path_gdx_ref is used as lower bound for pm_taxCO2eq
 *** (off): no lower bound
@@ -1853,6 +1856,11 @@ $setglobal cm_demScen  gdp_SSP2     !! def = gdp_SSP2
 $setGlobal c_scaleEmiHistorical  on  !! def = on  !! regexp = off|on
 $SetGlobal cm_quick_mode  off          !! def = off  !! regexp = off|on
 $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
+*' cm_APscen "air polution scenario"
+*' (SSP2):
+*' (SSP5):
+*' (CLE): Current Legislation Emissions
+*' (MFR): Maximum Feasible Reductions
 $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
@@ -1924,7 +1932,6 @@ $include    "./core/loop.gms";
 $ifthen.c_skip_output %c_skip_output% == "off"
 $include    "./core/output.gms";
 $batinclude "./modules/include.gms"    output
-$include "./core/magicc.gms";    !!connection to MAGICC, needed for post-processing
 $endif.c_skip_output
 
 *** EOF ./main.gms

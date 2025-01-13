@@ -94,19 +94,6 @@ run_compareScenarios <- "short"
 magpie_empty <- FALSE
 
 ########################################################################################################
-#################################  install magpie dependencies  ########################################
-########################################################################################################
-if (!is.null(renv::project())) {
-  magpieDeps <- renv::dependencies(path_magpie)
-  installedPackages <- installed.packages()[, "Package"]
-  missingDeps <- setdiff(unique(magpieDeps$Package), installedPackages)
-  if (length(missingDeps) > 0) {
-    message("Installing missing MAgPIE dependencies ", paste(missingDeps, collapse = ", "))
-    renv::install(missingDeps)
-  }
-}
-
-########################################################################################################
 #################################  load command line arguments  ########################################
 ########################################################################################################
 
@@ -153,6 +140,8 @@ dir.create(file.path(path_remind, "output"), showWarnings = FALSE)
 dir.create(file.path(path_magpie, "output"), showWarnings = FALSE)
 
 ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
+
+piamenv::installDeps(path_magpie)
 
 errorsfound <- 0
 startedRuns <- NULL

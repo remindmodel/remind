@@ -4,22 +4,40 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+
 ## [Unreleased]
 
 ### input data/calibration
+
+### changed
+- **scripts** for MAgPIE coupled runs, if the coupled config contains a `path_gdx_ref` column, it needs a `path_gdx_refpolicycost` column as well.
+    [[#1940](https://github.com/remindmodel/remind/pull/1940)]
+
+### added
+-
+
+### removed
+-
+
+### fixed
+-
+
+## [3.4.0] - 2024-12-11
+
+### input data/calibration
 - new input data rev6.84 [[#1757](https://github.com/remindmodel/remind/pull/1757)]
-- new input data rev6.95 in US$2017[[#1812]] (https://github.com/remindmodel/remind/pull/1812) 
-- new input data rev7.13 including new MAgPIE emulators [[#1886]] (https://github.com/remindmodel/remind/pull/1886)
+- new input data rev6.95 in US$2017 [[#1812](https://github.com/remindmodel/remind/pull/1812)]
+- new input data rev7.13 including new MAgPIE emulators [[#1886](https://github.com/remindmodel/remind/pull/1886)]
 - CES parameter and gdx files calibrated with new default diffLin2Lin for NPi 
     [[#1747](https://github.com/remindmodel/remind/pull/1747)] and
     [[#1757](https://github.com/remindmodel/remind/pull/1757)]
 - Update of NDC goals with cutoff data August 31, 2024
     [[#1816](https://github.com/remindmodel/remind/pull/1816)]
 - Prepare to make input data available for externals. Do not stop on missing validation data.
-  [[1828]][(https://github.com/remindmodel/remind/pull/1828)]
+    [[1828](https://github.com/remindmodel/remind/pull/1828)]
 
 ### changed
-- shift base unit from US$2005 to US$2017 [[#1812]] (https://github.com/remindmodel/remind/pull/1812)
+- shift base unit from US$2005 to US$2017 [[#1812](https://github.com/remindmodel/remind/pull/1812)]
 - plastic waste by default does not lag plastics production by ten years
     anymore; can be re-activated using `cm_wastelag`
 - moved to edgeTransport 2.0 version [[#1749](https://github.com/remindmodel/remind/pull/1749)]
@@ -37,6 +55,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1881](https://github.com/remindmodel/remind/pull/1881)]
 
 ### added
+- **config** add ScenarioMIP config
+    [[#1894](https://github.com/remindmodel/remind/pull/1894)] and [[#1920](https://github.com/remindmodel/remind/pull/1920)]
 - **32_power** increase minimum required dispatchable back-up capacity for VRE integration
     [[#1789](https://github.com/remindmodel/remind/pull/1789)]
 - **33_CDR** added ocean alkalinity enhancement to the CDR portfolio (OAE is turned off by default)
@@ -74,9 +94,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1851](https://github.com/remindmodel/remind/pull/1851)]
 - **testthat** ignore missing historical.mif in tests because it is an optional input file
     [[#1857](https://github.com/remindmodel/remind/pull/1857)]
+- **scripts** Add scripts for preparing a release
+    [[#1871](https://github.com/remindmodel/remind/pull/1871)]
     
 ### fixed
-- included CCS from plastic waste incineration in CCS mass flows so it is
+- **30_biomass** reset 1st gen. biofuel bound from 2045 to 2030
+    [[#1890](https://github.com/remindmodel/remind/pull/1890)]
+- **37_industry** included CCS from plastic waste incineration in CCS mass flows so it is
     subject to injection constraints (but did not add CCS costs, see
     https://github.com/remindmodel/development_issues/issues/274
 - **MAGICC7** fix climate data for time before cm_startyear on reference run
@@ -89,8 +113,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1768](https://github.com/remindmodel/remind/pull/1768)]
 - **scripts** limit slurm runtime of output.R scripts to 2 hours
     [[#1783](https://github.com/remindmodel/remind/pull/1783)]
-- **30_biomass** reset 1st gen. biofuel bound from 2045 to 2030
-    [[#1890](https://github.com/remindmodel/remind/pull/1890)]
 
 ### removed
 - **45_carbonprice** removed superseded realizations linear, exponential and diffCurvPhaseIn2Lin
@@ -144,7 +166,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** add script to automatically check project summations from piamInterfaces
     [[#1587](https://github.com/remindmodel/remind/pull/1587)]
 - **scripts** add MAGICCv7.5.3 with AR6 settings as output script, add compareScenarios2 option
-    [[#1475](https://github.com/remindmodel/remind/pull/1475), [[#1615](https://github.com/remindmodel/remind/pull/1615)]
+    [[#1475](https://github.com/remindmodel/remind/pull/1475)], [[#1615](https://github.com/remindmodel/remind/pull/1615)]
 - **scripts** add 'make test-fix' which runs codeCheck in interactive mode, adjusting not_used.txt files
     [[#1625](https://github.com/remindmodel/remind/pull/1625)]
 - **testthat** test and compile all config files [[#1356](https://github.com/remindmodel/remind/pull/1356)]
