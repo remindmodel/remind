@@ -668,9 +668,9 @@ q_emiAllMkt(t,regi,emi,emiMkt) ..
   + vm_emiCdr(t,regi,emi)$( sameas(emi,"co2") AND sameas(emiMkt,"ETS") )
     !! Exogenous emissions
   + pm_emiExog(t,regi,emi)$( sameas(emiMkt,"other") )
-    !! emission balance of carbon feedstocks contained in chemicals.
+    !! emissions of carbon feedstocks contained in chemicals that are not energy-related,
     !! can be positive (fossil, emitted) or negative (non-fossil, stored in products)
-  + vm_feedstocksEmiBalance(t,regi,emi,emiMkt)
+  + vm_emiFeedstockNoEnergy(t,regi,emi,emiMkt)
 ;
 
 

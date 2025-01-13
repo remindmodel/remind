@@ -1168,6 +1168,10 @@ parameter
 *' * so for small regions learning is very slow. This is a very pessimistic interpretation of 'no learning spillovers',
 *' * as every region has to climb up the global learning curve all by itself.
 *' * In combination with endogenous carbon pricing (e.g., in NDC), the deactivated Learningspillover will lead to higher overall carbon prices. Can be solved by setting carbonprice to exogenous (config).
+parameter
+  cm_nonPlasticFeedstockEmiShare      "Share of non-plastic carbon that gets emitted, rest is stored permanently, [share]"
+;
+  cm_nonPlasticFeedstockEmiShare = 1; !! def 1 = all carbon in non-plastics gets emitted
 *'
 *'
 *'
@@ -1722,10 +1726,6 @@ $setglobal cm_wasteIncinerationCCSshare  off      !! def = off
 *** cm_wastelag, does waste from plastics lag ten years behind plastics
 *** production, or not?
 $setglobal cm_wastelag NO   !! def = NO   !! regexp = YES|NO
-*** cm_feedstockEmiUnknownFate, account for chemical feedstock emissions with unknown fate
-*** off: assume that these emissions are trapped and do not account for total anthropogenic emissions
-*** on: account for chemical feedstock emissions with unknown fate as re-emitted to the atmosphere
-$setglobal cm_feedstockEmiUnknownFate  off      !! def = off
 *** cm_feShareLimits <-   "off"  # def <- "off", limit the electricity final energy share to be in line with the industry maximum electrification levels (60% by 2050 in the electric scenario), 10% lower (=50% in 2050) in an increased efficiency World, or 20% lower (40% in 2050) in an incumbents future (incumbents). The incumbents scenario also limits a minimal coverage of buildings heat provided by gas and liquids (25% by 2050).
 $setglobal cm_feShareLimits  off  !! def = off
 *** VRE potential switches

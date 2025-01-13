@@ -260,6 +260,7 @@ q37_feedstocksShares(t,regi,entySe,entyFe,emiMkt)$(
 
 
 *' Calculate mass of carbon contained in chemical feedstocks
+*' (not including carbon that gets lost as chemical process emissions)
 q37_FeedstocksCarbon(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
   v37_feedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
@@ -282,6 +283,7 @@ q37_plasticsCarbon(t,regi,sefe(entySe,entyFe),emiMkt)$(
 *' 10-year steps allocate averge of 2055 and 2060 to 2070, unless `cm_wastelag`
 *' is `NO`, in which case waste is incurred in the same period plastics are
 *' produced
+*** TODO: is there a specific reason that this equation only starts in 2015? (at least if wastelag is off, it can start in 2005, right?)
 q37_plasticWaste(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
                      AND ttot.val ge max(2015, cm_startyear)               ) ..
@@ -328,53 +330,60 @@ q37_incinerationCCS(t,regi,sefe(entySe,entyFe),emiMkt)$(
   * v37_regionalWasteIncinerationCCSshare(t,regi)
 ;
 
-*' calculate flow of carbon contained in chemical feedstock with unknown fate
-*' it is assumed that this carbon is re-emitted in the same timestep if cm_feedstockEmiUnknownFate is enabled (=on)
-q37_feedstockEmiUnknownFate(t,regi,sefe(entySe,entyFe),emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
-  v37_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
+
+*' calculate chemical process emissions as carbon that does not end up in product but is emitted during conversion processes
+q37_emiChemicalsProcess(t,regi,emi,emiMkt)..
+  v37_emiChemicalsProcess(t,regi,emi,emiMkt)
   =e=
-$ifthen.cm_feedstockEmiUnknownFate not "%cm_feedstockEmiUnknownFate%" == "off"
-  (
-    v37_feedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
-  * (1 - s37_plasticsShare)
+  sum((entyFE2sector2emiMkt_NonEn(entyFe,sector,emiMkt),
+         se2fe(entySe,entyFe,te)),
+  vm_demFeNonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
+  * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
   )
-$else.cm_feedstockEmiUnknownFate
-  0
-$endIf.cm_feedstockEmiUnknownFate
 ;
 
-*' sum feedstocks emission balance up in order not to clutter the core
-q37_feedstocksEmiBalance(t,regi,emi,emiMkt) ..
-  vm_feedstocksEmiBalance(t,regi,emi,emiMkt)
+*' calculate negative emissions from non-fossil carbon in plastics
+*' that do not get incinerated ("plastic removals")
+q37_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)..
+  v37_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)
   =e=
-    !! non energy emi from chem sector (process emissions from feedstocks):
-  + sum((entyFE2sector2emiMkt_NonEn(entyFe,sector,emiMkt),
-         se2fe(entySe,entyFe,te)),
-      vm_demFeNonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
-    * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
-    )
-    !! substract carbon from non-fossil origin contained in plastics that don't
-    !! get incinerated ("plastic removals")
+  sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+         se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
+*' substract all non-fossil plastics carbon
+    - v37_plasticsCarbon(t,regi,entySe,entyFe,emiMkt)
+*' add non-fossil incinerated plastics carbon
+    + v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
+      * pm_incinerationRate(t,regi)
+  )$( sameas(emi,"co2") )
+;
+
+*' calculate emissions from non-plastic waste
+q37_emiNonPlasticWaste(t,regi,emi,emiMkt)..
+  v37_emiNonPlasticWaste(t,regi,emi,emiMkt)
+  =e=
+  (  sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+         se2fe(entySe,entyFe,te))$(entySeFos(entySe)),
+*' fossil carbon in non-plastic waste that gets emitted to the atmosphere
+      v37_feedstocksCarbon(t,regi,entySe,entyFe,emiMkt)  * (1 - s37_plasticsShare) * cm_nonPlasticFeedstockEmiShare)
   - sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
          se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
-      v37_feedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
-    )$( sameas(emi,"co2") )
-    !! substract carbon from non-fossil origin contained in plastics that don't
-    !! get incinerated ("plastic removals")
-  + sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-         se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
-      v37_incineratedPlastics(t,regi,entySe,entyFe,emiMkt)
-    )$( sameas(emi,"co2") )
-    !! add fossil emissions from chemical feedstock with unknown fate
-  + sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-         se2fe(entySe,entyFe,te)),
-      v37_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
-    )$( sameas(emi,"co2") )
+*' non-fossil carbon in non-plastic waste that does not get emitted to the atmosphere (i.e. is stored permanently)
+      v37_feedstocksCarbon(t,regi,entySe,entyFe,emiMkt) * (1 - s37_plasticsShare) * (1 - cm_nonPlasticFeedstockEmiShare) )
+  )$( sameas(emi,"co2") )
 ;
 
-*' sum feedstocks incineration emissions up in order not to clutter the core;
-*' separate from the other feedstock emission balance, as it is accounted as energy-related
+*' sum all emissions from feedstocks that are not accounted as energy-related emissions
+*' (i.e. no combustion or combustion without energy recovery)
+*** TODO: Waste CO2 Emissions outside the energy sector would need to be accounted to ESR instead of ETS?
+q37_emiFeedstockNoEnergy(t,regi,emi,emiMkt)..
+  vm_emiFeedstockNoEnergy(t,regi,emi,emiMkt)
+  =e=
+   v37_emiChemicalsProcess(t,regi,emi,emiMkt)
+ + v37_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)
+ + v37_emiNonPlasticWaste(t,regi,emi,emiMkt)
+;
+
+*' sum feedstocks incineration emissions up, accouned as energy-related emissions
 q37_wasteIncinerationEmiBalance(t,regi,emiTe(enty),emiMkt) ..
   vm_wasteIncinerationEmiBalance(t,regi,enty,emiMkt)
   =e=

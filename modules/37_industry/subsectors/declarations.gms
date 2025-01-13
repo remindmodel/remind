@@ -89,7 +89,6 @@ Positive Variables
   v37_emiIndCCSmax(ttot,all_regi,emiInd37)                                  "maximum abatable industry emissions"
 
   !! feedstocks
-  v37_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)   "Carbon flow: carbon contained in feedstocks with unknown fate (not plastics)(assumed to go back into the atmosphere) [GtC]"
   v37_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)           "Emissions from incineration of plastic waste [GtC]"
   vm_incinerationCCS(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "CCS from incineration of plastic waste [GtC]"
   v37_incineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)       "Carbon flow: carbon contained in plastics that are not incinerated [GtC]"
@@ -97,8 +96,8 @@ Positive Variables
   v37_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "Carbon flow: carbon contained in plastics [GtC]"
   v37_plasticWaste(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "Carbon flow: carbon contained in plastic waste [GtC]"
   v37_regionalWasteIncinerationCCSshare(tall,all_regi)                      "Share of waste incineration that is captured [%]"
-  vm_feedstocksEmiBalance(tall,all_regi,all_enty,all_emiMkt)                "Sum of chemical feedstock related emissions (positive and negative) that are accounted as non-energy, i.e. non-waste-incineration [GtC]"
   vm_wasteIncinerationEmiBalance(tall,all_regi,all_enty,all_emiMkt)         "Sum of plastics waste incineration related emissions (positive and negative) [GtC]"
+  v37_emiChemicalsProcess(ttot,all_regi,all_enty,all_emiMkt)                "Chemical process emissions, so far only CO2 emissions [GtC]"
 
   !! process-based implementation
   vm_outflowPrc(tall,all_regi,all_te,opmoPrc)                               "Production volume of processes in process-based model [Gt/a]"
@@ -106,6 +105,13 @@ Positive Variables
   v37_emiPrc(tall,all_regi,all_enty,all_te,opmoPrc)                         "Emissions per process and operation mode [GtC/a]"
   v37_shareWithCC(tall,all_regi,all_te,opmoPrc)                             "Share of process and operation mode equipped with carbon capture technology"
   vm_costMatPrc(tall,all_regi)                                              "Cost of external material inputs such as iron ore in process-based industry [trn $2017/a]"
+;
+
+Variables
+!! feedstocks
+vm_emiFeedstockNoEnergy(ttot,all_regi,all_enty,all_emiMkt)                "Emissions from feedstocks that are not accounted as energy-related emissions, so far only CO2 emissions [GtC]"
+v37_emiNonFosNonIncineratedPlastics(ttot,all_regi,all_enty,all_emiMkt)    "Negative CO2 emissions from non-fossil carbon in non-incinerated plastics [GtC]"
+v37_emiNonPlasticWaste(ttot,all_regi,all_enty,all_emiMkt)                 "Emissions from non-plastic waste, so far only CO2 emissions [GtC]"
 ;
 
 Equations
@@ -129,11 +135,13 @@ $endif.no_calibration
   q37_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)                   "calculate carbon contained in plastics that are incinerated [GtC]"
   q37_incinerationCCS(ttot,all_regi,all_enty,all_enty,all_emiMkt)                   "calculate carbon captured from plastics that are incinerated [GtC]"
   q37_incineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)               "calculate carbon contained in plastics that are not incinerated [GtC]"
-  q37_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)           "calculate carbon contained in chemical feedstock with unknown fate [GtC]"
   q37_feedstocksLimit(ttot,all_regi,all_enty,all_enty,all_emiMkt)                   "restrict feedstocks flow to total energy flows into industry"
   q37_feedstocksShares(ttot,all_regi,all_enty,all_enty,all_emiMkt)                  "identical fossil/biomass/synfuel shares for FE and feedstocks"
-  q37_feedstocksEmiBalance(tall,all_regi,all_enty,all_emiMkt)                       "sum feedstocks emission balance up in order not to clutter the core"
   q37_wasteIncinerationEmiBalance(tall,all_regi,all_enty,all_emiMkt)                "sum feedstocks incineration emissions up in order not to clutter the core"
+  q37_emiChemicalsProcess(ttot,all_regi,all_enty,all_emiMkt)                        "calculate chemicals process emissions"
+  q37_emiNonFosNonIncineratedPlastics(ttot,all_regi,all_enty,all_emiMkt)            "calculate negative emissions from non-fossil non-incinerated plastics"
+  q37_emiNonPlasticWaste(ttot,all_regi,all_enty,all_emiMkt)                         "calculate emissions from non-plastic waste"
+  q37_emiFeedstockNoEnergy(ttot,all_regi,all_enty,all_emiMkt)                       "calculate total emissions from feedstocks that are not accounted as energy-related emissions"
 
   !! process-based implementation
   q37_demMatPrc(tall,all_regi,mat)                                                  "Material demand of processes"
