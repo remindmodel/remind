@@ -100,7 +100,7 @@ display pm_emiExog;
 parameter p11_share_ind_fehos(tall,all_regi)               "Share of heating oil used in the industry (rest is residential)"
 /
 $ondelim
-$include "./core/input/p11_share_ind_fehos.cs4r"
+$include "./modules/11_aerosols/exoGAINS/input/p11_share_ind_fehos.cs4r"
 $offdelim
 /
 ;
@@ -142,7 +142,7 @@ loop ((t,regi)$( t.val ge 2005 ),
 
   !! share in liquids
   p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi)
-    = p11_share_ind_fehos(t,regi)
+    = p11_share_ind_fehos(t,regi);
 
   p11_share_sector(t,"seliqfos","fehos","tdfoshos","res",regi)
   = 1 - p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi);

@@ -32,7 +32,7 @@ loop ((t,regi)$( t.val ge 2005 ),
 
   !! share in liquids
   p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi)
-    = p11_share_ind_fehos(t,regi)
+    = p11_share_ind_fehos(t,regi);
 
   p11_share_sector(t,"seliqfos","fehos","tdfoshos","res",regi)
   = 1 - p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi);

@@ -490,6 +490,13 @@ all_enty             "all types of quantities"
         perm         "Carbon permit"
         peog         "aggregated oil and gas, only relevant for calibration because IEA only provides aggregated data"
         bfco2        "CO2 emission from blast furnace"
+        
+        !! outdated entries, still used in module 04 until structuremappings are fixed
+        fesoi        "industry use of solid energy carriers"
+        fehoi        "industry use of liquid energy carriers"
+        fegai        "industry use of gaseous energy carriers"
+        fehei        "industry use of district heat"
+        feeli        "industry use of electricity"
 /
 
 all_esty "energy services"
