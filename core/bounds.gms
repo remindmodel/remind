@@ -90,8 +90,10 @@ vm_prodSe.fx(t,regi,"pewin","seel","wind") = 0;
 *' which cannot be fully met by incoming low-carbon H2 techologies. This should be removed once FE H2 industry input data is adapted.
 *' It is allowed before 2020 to not make the model infeasible for low demands of hydrogen in that year.
 *' After 2020/2030, it is not fixed to 0 but rather kept below 1e-7 to prevent infeasibilities with the lower bound on vm_cap for all techs.
-vm_deltaCap.up(t,regi,"coalh2",rlf)$(t.val ge 2020) = 1e-7;
-vm_deltaCap.up(t,regi,"gash2",rlf)$(t.val gt 2030)  = 1e-7;
+vm_deltaCap.fx(t,regi,"coalh2",rlf)$(t.val ge 2020) = 0;
+vm_deltaCap.fx(t,regi,"gash2",rlf)$(t.val gt 2030)  = 0;
+vm_cap.lo(t,regi,"coalh2",rlf)$(t.val ge 2020) = 0;
+vm_cap.lo(t,regi,"gash2",rlf)$(t.val gt 2030)  = 0;
 
 
 *' upper bound of 0.5 EJ/yr on grey hydrogen to prevent building too much grey H2 before 2020, distributed to regions via GDP share
