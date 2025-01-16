@@ -1550,7 +1550,7 @@ $setGLobal cm_exogDem_scen off !! def off  !! regexp = off|ariadne_(bal|ensec|hi
 *** (ensec) policies for energy security scenario, e.g. faster hydrogen upscaling
 $setGlobal cm_Ger_Pol  off !! def off
 *** cm_altFeEmiFac <- "off"  # def <- "off", regions that should use alternative data from "umweltbundesamt" on emission factors for final energy carriers (ex. "EUR_regi, NEU_regi")
-$setGlobal cm_altFeEmiFac  "EUR_regi, NEU_regi"        !! def = "EUR_regi, NEU_regi"
+$setGlobal cm_altFeEmiFac  EUR_regi, NEU_regi        !! def = "EUR_regi, NEU_regi"
 *** cm_eni "multiplicative factor applied to industry energy (eni) elasticity parameter sigma used in fixed_shares realization. [factor]"
 ***   def <- "off" = no change for industry energy elasticity (eni);
 ***   or number (ex. 2) = multiply by 2 the default value used in REMIND.
