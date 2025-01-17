@@ -595,6 +595,9 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
         !! not create energy-related emissions
       - sum(entyFE2sector2emiMkt_NonEn(enty2,sector,emiMkt),
           vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
+        !! substract FE used in CDR module that is captured and not released
+      - sum(entyFe2Sector(enty2,"CDR")$(sameas(emiMkt,"ETS")),
+          sm_capture_rate_cdrmodule * vm_demFeSector(t,regi,enty,enty2,sector,emiMkt))
       )
     )
   )

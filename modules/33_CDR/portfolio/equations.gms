@@ -33,7 +33,7 @@ q33_emiCDR(t,regi)..
     vm_emiCdr(t,regi,"co2")
     =e=
     sum(te_used33, vm_emiCdrTeDetail(t,regi,te_used33))
-    + (1 - s33_capture_rate) * (
+    + (1 - sm_capture_rate_cdrmodule) * (
         sum(te_ccs33, v33_co2emi_non_atm_gas(t, regi, te_ccs33))
         + sum(te_oae33, v33_co2emi_non_atm_calcination(t, regi, te_oae33))
     )
