@@ -310,7 +310,7 @@ q02_inconvPenSolidsBuild(t,regi)$(t.val > 2005)..
 *' Local air pollution and inconvenience of using coal and (modern) biomass: inconvenience penalty applies only for use in residential/buildings
 *' The inconvenience of using traditional biomass are accounted for in v02_inconvPen, and thus additional to the penalty on using solids in residential
   p02_inconvpen_lap(t,regi,"coaltr") * vm_demFeSector(t,regi,"sesofos","fesos","build","ES")
-  p02_inconvpen_lap(t,regi,"biotrmod") * vm_demFeSector(t,regi,"sesobio","fesos","build","ES")
+  + p02_inconvpen_lap(t,regi,"biotrmod") * vm_demFeSector(t,regi,"sesobio","fesos","build","ES")
 ;
 $ENDIF.INCONV
 
