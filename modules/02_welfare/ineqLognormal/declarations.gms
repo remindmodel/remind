@@ -104,7 +104,7 @@ q02_budget_second(ttot,all_regi)                 "making sure budget is positive
 
 $ifthen.inconv %cm_INCONV_PENALTY% == "on"
 q02_inconvPen(ttot,all_regi)                      "Calculate the inconvenience penalty v02_inconvPen"
-q02_inconvPenSolidsBuild(ttot,all_regi,all_te)      "Calculate the inconvenience penalty v02_inconvPenSolids for solids used in Buildings"
+q02_inconvPenSolidsBuild(ttot,all_regi)      "Calculate the inconvenience penalty v02_inconvPenSolids for solids used in Buildings"
 $endif.inconv
 
 $IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_FESwitch%" == "on"
