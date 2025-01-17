@@ -7,6 +7,7 @@
 name,type,reason
 v02_emitaxredistr,variable,???
 v02_energyExp,variable,???
+vm_cesIO,variable,???
 vm_damageFactor,variable,???
 vm_emiMacSector,variable,???
 vm_emiCdr,variable,???
