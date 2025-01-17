@@ -2020,6 +2020,7 @@ entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation
     fedie.cdr
 /
 
+
 entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy and sector mapping to detailed final energy enty split in IO"
 /
   fegas.build.fegab
@@ -2031,7 +2032,14 @@ entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy and sector m
   fedie.trans.fedie
   feelt.trans.feelt
   fegat.trans.fegat
+  !! outdated entries, still used in module 04 until structuremappings are fixed
+  fehos.indst.fehoi
+  fesos.indst.fesoi
+  feels.indst.feeli
+  fegas.indst.fegai
+  fehes.indst.fehei
 /
+
 
 all_emiMkt      "emission markets"
 /
