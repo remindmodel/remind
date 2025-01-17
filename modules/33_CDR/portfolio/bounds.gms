@@ -50,6 +50,7 @@ if(te_used33("weathering"),
     !! if cm_startyear > 2025 and input_ref.gdx used EW, this fixing will be overwritten in submit.R
     v33_EW_onfield.fx(ttot,regi,rlf_cz33,rlf)$(ttot.val lt max(2025,cm_startyear)) = 0.0; !! 
     v33_EW_onfield_tot.fx(ttot,regi,rlf_cz33,rlf)$(ttot.val lt max(2025,cm_startyear)) = 0.0; !! 
+    vm_emiCdrTeDetail.up(ttot,regi,"weathering")$(ttot.val gt 2040) = - sm_eps; !! force some minimum amount of EW to help the solver see it 
 else
     vm_omcosts_cdr.fx(t,regi) = 0;
     vm_cap.fx(t,regi,"weathering",rlf) = 0;
@@ -59,6 +60,7 @@ else
 if(card(te_oae33) ne 0,
     !! OAE starts in cm_33_OAE_startyear
     vm_cap.fx(t, regi, te_oae33, rlf)$(t.val lt cm_33_OAE_startyr) = 0;
+    vm_emiCdrTeDetail.up(ttot,regi,"oae_el")$(ttot.val gt 2040) = -sm_eps; !! force some minimum amount of OAE to help the solver see it 
 else
     v33_co2emi_non_atm_calcination.fx(t, regi, "oae_ng") = 0;
     v33_co2emi_non_atm_calcination.fx(t, regi, "oae_el") = 0;
