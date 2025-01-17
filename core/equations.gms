@@ -1115,9 +1115,9 @@ q_shSeFe(t,regi,entySe)$(entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(ent
 q_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt)$((entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) AND (sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)))..
   v_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt) 
   * sum(entySe2$sefe(entySe2,entyFe),
-      vm_demFeSector_afterTax(t,regi,entySe2,entyFe,sector,emiMkt))
+      vm_demFeSector_afterTax(t,regi,entySe2,entyFe,sector,emiMkt)*(1+999$(sameas(sector,"CDR"))))
   =e=
-  vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)
+  vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)*(1+999$(sameas(sector,"CDR")))
 ;
 
 q_shGasLiq_fe(t,regi,sector)$(pm_shGasLiq_fe_up(t,regi,sector) OR pm_shGasLiq_fe_lo(t,regi,sector))..
