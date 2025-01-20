@@ -11,7 +11,7 @@ REQUIREMENTS
 - input data
 - git
 - GAMS >= 39.1.0 with CONOPT license
-- R >= 4.0
+- R >= 4.0. We recommend R 4.3.2.
 - Windows only: RTools
 - LaTeX
 - pandoc
@@ -21,7 +21,13 @@ HOW TO INSTALL
 --------------
 
 To get the REMIND code first install git (<https://git-scm.com/downloads>).
-Then, to get the latest REMIND release:
+It is recommended to fork REMIND on your github user account.
+Then, on the PIK cluster, you can clone it using:
+```bash
+cloneremind https://github.com/yourusername/remind.git [remindfolder]
+```
+If you do not specify `[remindfolder]`, it uses `remind`.
+If you are not on the PIK cluster, to get the latest REMIND release:
 ```sh
 git clone -b master --filter=blob:limit=1m https://github.com/remindmodel/remind.git
 ```
