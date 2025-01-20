@@ -19,7 +19,6 @@ pm_emissions0(ttot,regi,enty)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq
 
 *LB* moved here from datainput to be updated based on the gdp-path
 *** calculate econometric emission data: p2
-p_emineg_econometric(regi,"co2cement_process","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10) = 0.3744788;
 p_emineg_econometric(regi,"ch4wstl","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10)   = 0.5702590;
 p_emineg_econometric(regi,"ch4wstl","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)   = 0.2057304;
 p_emineg_econometric(regi,"ch4wsts","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10)   = 0.5702590;
@@ -27,33 +26,7 @@ p_emineg_econometric(regi,"ch4wsts","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005"
 p_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10)  = 0.3813973;
 p_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)  = 0.1686718;
 
-*JeS CO2 emissions from cement production. p_switch_cement describes an s-curve to provide a smooth switching from the short-term
-*** behavior (depending on per capita capital investments) to the long-term behavior (constant per capita emissions).
-p_switch_cement(ttot,regi)$(ttot.val ge 2005) = 1 / ( 1 + exp( - (s_c_so2 / s_tau_cement)
-                                          *(1000 * p_inv_gdx(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)) - p_emineg_econometric(regi,"co2cement_process","p4"))
-                                        )
-                              );
-display p_switch_cement;
-
 *** calculate p1
-p_emineg_econometric(regi,"co2cement_process","p1")$( p_switch_cement("2005",regi) < 0.999 )
-  = ( (p_macBase2005(regi,"co2cement_process") / pm_pop("2005",regi))
-    - ( p_switch_cement("2005",regi)
-      * p_emineg_econometric(regi,"co2cement_process","p3")
-      )
-    )
-  / ( (1 - p_switch_cement("2005",regi))
-    * ( ( 1000
-          !! use default per-capita investments if no investment data in gdx
-          !! (due to different region settings)
-        * ( (p_inv_gdx("2005",regi) / pm_pop("2005",regi))$( p_inv_gdx("2005",regi) )
-          + 4$( NOT p_inv_gdx("2005",regi) )
-          )
-        / pm_shPPPMER(regi)
-        )
-     ** p_emineg_econometric(regi,"co2cement_process","p2")
-      )
-    );
 p_emineg_econometric(regi,"n2owaste","p1") = p_macBase2005(regi,"n2owaste") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"n2owaste","p2"));
 p_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10) = p_macBase2005(regi,"ch4wstl") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2"));
 p_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10) = p_macBase2005(regi,"ch4wsts") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wsts","p2"));
@@ -98,11 +71,6 @@ display p_efFossilFuelExtr;
 ***--------------------------------------
 *** Non-energy emissions reductions (MAC)
 ***--------------------------------------
-*JeS CO2 emissions from cement production. p_switch_cement describes an s-curve to provide a smooth switching from the short-term
-*** behavior (depending on per capita capital investments) to the long-term behavior (constant per capita emissions).
-p_switch_cement(ttot,regi)$(ttot.val ge 1990)=1/(1+exp(-(s_c_so2/s_tau_cement)*(1000*p_inv_gdx(ttot,regi)/(pm_pop(ttot,regi)*pm_shPPPMER(regi))-p_emineg_econometric(regi,"co2cement_process","p4"))));
-display p_switch_cement;
-
 *** scale CO2 luc baselines from MAgPIE to EDGAR v4.2 2005 data in REMIND standalone runs: linear, phase out within 20 years
 ***$if %cm_MAgPIE_coupling% == "off" pm_macBaseMagpie(ttot,regi,"co2luc")$(ttot.val lt 2030) = pm_macBaseMagpie(ttot,regi,"co2luc") + ( (p_macBase2005(regi,"co2luc") - pm_macBaseMagpie("2005",regi,"co2luc")) * (1-(ttot.val - 2005)/20) );
 

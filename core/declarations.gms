@@ -44,10 +44,10 @@ p_developmentState(tall,all_regi)                    "level of development based
 f_lab(tall,all_regi,all_POPscen)                     "labour data for all possible scenarios"
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
 pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer)"
-*** If elasticities of substitution (sigma) is below 1, the smaller it is the less the substitution replacement effect between different CES nodes. 
-*** The products become more and more complementary in the production, meaning that the more one product is used, the more the other one is demanded as well. 
+*** If elasticities of substitution (sigma) is below 1, the smaller it is the less the substitution replacement effect between different CES nodes.
+*** The products become more and more complementary in the production, meaning that the more one product is used, the more the other one is demanded as well.
 *** If sigma is larger than 1, the more one product is used, the less the others are used, i.e. the products are substitutes"
-pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution." 
+pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution."
 p_r(ttot,all_regi)                                   "calculating capital interest rate"
 
 ***----------------------------------------------------------------------------------------
@@ -77,7 +77,6 @@ pm_shPerm(tall, all_regi)                            "emission permit shares"
 pm_emicapglob(tall)                                  "global emission cap"
 p_adj_coeff(ttot,all_regi,all_te)                    "coefficient for adjustment costs"
 p_adj_coeff_glob(all_te)                             "coefficient for adjustment costs - global scale"
-p_switch_cement(ttot,all_regi)                       "describes an s-curve to provide a smooth switching from the short-term behavior (depending on per capita capital investments) to the long-term behavior (constant per capita emissions) of CO2 emissions from cement production"
 p_cint(all_regi,all_enty,all_enty,rlf)               "additional emissions of GHG from mining, on top of emissions from combustion"
 
 $IFTHEN.agricult_base_shift not "%c_agricult_base_shift%" == "off"
@@ -428,7 +427,7 @@ vm_changeProdStartyearCost(ttot,all_regi,all_te)     "Costs for changing output 
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
 
 vm_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
-vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"  
+vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"
 
 $ifthen.seFeSectorShareDev not "%cm_seFeSectorShareDevMethod%" == "off"
   v_penSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "penalty cost for secondary energy share deviation between sectors, for each sector/emiMarket combination"
