@@ -363,15 +363,6 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-  teCCPrc(tePrc)   "Technologies used in process-based model (only CCS)"
-  /
-    $$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-    bfcc
-    idrcc
-    $$endif.cm_subsec_model_steel
-  /
-
-
 mat(all_enty)   "Materials considered in process-based model; Can be input and/or output of a process"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -624,7 +615,7 @@ pf_quan_target_dyn29(pf_quan_target_dyn37)  = YES;
 $endif.calibrate
 
 teMat2rlf(tePrc,"1") = YES;
-alias(tePrc,tePrc1,tePrc2);
+alias(tePrc,teCCPrc,tePrc1,tePrc2);
 alias(opmoPrc,opmoCCPrc,opmoPrc1,opmoPrc2);
 alias(route,route2);
 alias(entyFeCC37,entyFeCC37_2);
