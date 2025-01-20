@@ -169,58 +169,7 @@ v_macBase.fx(ttot,regi,"ch4wsts")$(ttot.val ge 2005) = p_emineg_econometric(regi
 v_macBase.fx(ttot,regi,"ch4wstl")$(ttot.val ge 2005) = p_emineg_econometric(regi,"ch4wstl","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2");
 v_macBase.fx(ttot,regi,"n2owaste")$(ttot.val ge 2005) = p_emineg_econometric(regi,"n2owaste","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"n2owaste","p2");
 
-
 v_macBase.lo(ttot,regi,"co2cement_process")$( ttot.val ge 2005 ) = 0;
-
-
-* *** Reduction of cement demand due to CO2 price markups *** *
-if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
-*** Cement (clinker) production causes process emissions of the order of
-*** 0.5 t CO2/t Cement. As cement prices are of the magnitude of 100 $/t, CO2
-*** pricing leads to significant price markups.
-
-  p_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
-  = p_priceCO2forMAC(ttot,regi,"co2cement") / sm_c_2_co2;
-
-  display "CO2 price for computing Cement Demand Reduction [$/tC]",
-          p_CementAbatementPrice;
-
-  !! The demand reduction function a = 160 / (p + 200) + 0.2 assumes that demand
-  !!  for cement is reduced by 40% if the price doubles (CO2 price of $200) and
-  !!  that demand reductions of 80% can be achieved in the limit.
-  p_ResidualCementDemand("2005",regi) = 1;
-  p_ResidualCementDemand(ttot,regi)$( ttot.val gt 2005 )
-  = 160 / (p_CementAbatementPrice(ttot,regi) + 200) + 0.2;
-
-  display "Cement Demand Reduction as computed", p_ResidualCementDemand;
-
-  !! Demand can only be reduced by 1% p.a.
-  loop (ttot$( ttot.val gt 2005 ),
-    p_ResidualCementDemand(ttot,regi)
-    = max(p_ResidualCementDemand(ttot,regi),
-          ( p_ResidualCementDemand(ttot-1,regi)
-          - 0.01 * (pm_ttot_val(ttot) - pm_ttot_val(ttot-1))
-          )
-      );
-  );
-
-  display "Cement Demand Reduction, limited to 1% p.a.",
-          p_ResidualCementDemand;
-
-  p_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
-  = 160 / (p_ResidualCementDemand(ttot,regi) - 0.2) - 200;
-
-  display "Cement Demand Reduction, price of limited reduction",
-          p_CementAbatementPrice;
-
-  v_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
-  = v_macBase.lo(ttot,regi,"co2cement_process")
-  * p_ResidualCementDemand(ttot,regi);
-
-  vm_emiIndBase.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
-  = v_macBase.lo(ttot,regi,"co2cement_process");
-);
-
 
 *** exogenous
 v_macBase.fx(ttot,regi,enty)$emiMacMagpie(enty) = pm_macBaseMagpie(ttot,regi,enty);
