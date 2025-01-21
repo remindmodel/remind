@@ -74,7 +74,7 @@ q33_ccsbal(t, regi, ccs2te(ccsCo2(enty), enty2, te))..
     sum(teCCS2rlf(te, rlf), vm_co2capture_cdr(t, regi, enty, enty2, te, rlf))
     =e=
     - vm_emiCdrTeDetail(t, regi, "dac")
-    + s33_capture_rate * (
+    + sm_capture_rate_cdrmodule * (
         sum(te_ccs33, v33_co2emi_non_atm_gas(t, regi, te_ccs33))
         + sum(te_oae33, v33_co2emi_non_atm_calcination(t, regi, te_oae33))
     )
