@@ -953,14 +953,27 @@ $offdelim
 p_abatparam_CH4(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p_abatparam_CH4(tall,all_regi,all_enty,"201");
 p_abatparam_N2O(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p_abatparam_N2O(tall,all_regi,all_enty,"201");
 
-parameter p_emiFossilFuelExtr(all_regi,all_enty)          "methane emissions, needed for the calculation of p_efFossilFuelExtr"
+*** Read methane emissions from fossil fuel extraction for calculating emission factors. 
+*** The base year determines whether the data comes from CEDS or EDGAR
+$ifthen %cm_emifacs_baseyear% == "2005" 
+parameter p_emiFossilFuelExtr(all_regi,all_enty)          "methane emissions in 2005 [Mt CH4], needed for the calculation of p_efFossilFuelExtr"
 /
 $ondelim
 $include "./core/input/p_emiFossilFuelExtr.cs4r"
 $offdelim
 /
 ;
+$else
+parameter p_emiFossilFuelExtr(all_regi,all_enty)          "methane emissions in 2020 [Mt CH4], needed for the calculation of p_efFossilFuelExtr"
+/
+$ondelim
+$include "./core/input/p_emiFossilFuelExtr2020.cs4r"
+$offdelim
+/
+;
+$endif
 
+* GA: These hardcoded values were probably assuming 2005 as base year, TODO: check and adjust for 2020 case
 $if %cm_LU_emi_scen% == "SSP1"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0047/sm_EJ_2_TWa;
 $if %cm_LU_emi_scen% == "SSP2"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0079/sm_EJ_2_TWa;
 $if %cm_LU_emi_scen% == "SSP2_lowEn"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0079/sm_EJ_2_TWa;

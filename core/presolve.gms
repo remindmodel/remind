@@ -69,10 +69,10 @@ display p_emineg_econometric;
 loop (emi2fuel(entyPe,enty),
   p_efFossilFuelExtrGlo(entyPe,enty)
   = sum(regi, p_emiFossilFuelExtr(regi,entyPe))
-  / sum((rlf,regi), vm_fuExtr.l("2005",regi,entyPe,rlf));
+  / sum((rlf,regi), vm_fuExtr.l("%cm_emifacs_baseyear%",regi,entyPe,rlf));
 
   loop (regi,
-    sm_tmp =  sum(rlf, vm_fuExtr.l("2005",regi,entyPe,rlf));
+    sm_tmp =  sum(rlf, vm_fuExtr.l("%cm_emifacs_baseyear%",regi,entyPe,rlf));
 
     p_efFossilFuelExtr(regi,entyPe,enty)$( sm_tmp )
       = p_emiFossilFuelExtr(regi,entyPe) / sm_tmp;
