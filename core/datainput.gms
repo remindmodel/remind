@@ -1427,6 +1427,20 @@ $include "./core/input/p_macBase1990.cs4r"
 $offdelim
 /
 ;
+parameter p_macBaseCEDS2005(all_regi,all_enty)        "baseline emissions of mac options in 2005 from CEDS"
+/
+$ondelim
+$include "./core/input/p_macBaseCEDS2005.cs4r"
+$offdelim
+/
+;
+parameter p_macBaseCEDS2020(all_regi,all_enty)        "baseline emissions of mac options in 2020"
+/
+$ondelim
+$include "./core/input/p_macBaseCEDS2020.cs4r"
+$offdelim
+/
+;
 parameter p_macBaseVanv(tall,all_regi,all_enty)        "baseline emissions of N2O from transport, adipic acid production, and nitric acid production based on data from van Vuuren"
 /
 $ondelim
