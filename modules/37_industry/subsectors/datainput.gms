@@ -645,6 +645,20 @@ $endIf.cm_wasteIncinerationCCSshare
 ***        2. Process-Based
 *** ---------------------------------------------------------------------------
 
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+
+* Load secondary steel share limits
+Parameter
+  p37_chemical__input(tall,all_regi,all_te)   "Histrionic chemical data input"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_AllChem_Routes_Value_2015-2020.cs4r";
+$offdelim
+  /
+;
+
+$endif.cm_subsec_model_chemicals
+
 p37_specMatDem(mat,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 p37_specMatDem("ammonia","FertProd","standard")        = 0.57;
@@ -800,11 +814,11 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 
 !! new calculation value added: Global plastic production volume 400.3 Mt Global plastic market size 712bn USD in 2022 https://www.statista.com/topics/5266/plastics-industry/#:~:text=Since%20the%20mass%20production%20of%20plastic%20products%20began,to%20experience%20considerable%20growth%20over%20the%20next%20decade.
 
-p37_mat2ue("HVC","ue_chemicals") = 1.27 * 5;
-p37_mat2ue("OtherChem","ue_chemicals") = 1.27 * 5; !! methanol tech QIANZHI
-p37_mat2ue("Fertilizer","ue_chemicals") = 1.27 * 5; !! ammonia tech QIANZHI
-p37_mat2ue("MethFinal","ue_chemicals") = 1.27 * 5;
-p37_mat2ue("AmmoFinal","ue_chemicals") = 1.27 * 5;
+p37_mat2ue("HVC","ue_chemicals") = 0.52; #2005$/kg Source: https://businessanalytiq,com/procurementanalytics/index/propylene-price-index/ 2020 Global Average of Ethylene, Propylene and BTX
+p37_mat2ue("Fertilizer","ue_chemicals") = 0.58; #2005$/kgN Source: https://farmdocdaily,illinois,edu/wp-content/uploads/2023/06/06132023_fig1,png 2020 Global Average
+p37_mat2ue("MethFinal","ue_chemicals") = 0.21; #2005$/kg Source: https://www,methanex,com/about-methanol/pricing/ 2020 Global Average
+p37_mat2ue("AmmoFinal","ue_chemicals") = 0.28; #2005$/kg Source: https://businessanalytiq,com/procurementanalytics/index/ammonia-price-index/ 2020 Global Average
+p37_mat2ue("OtherChem","ue_chemicals") = 1.27 * 5;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_ue_share("sesteel","ue_steel_secondary") = 1.;
@@ -1001,9 +1015,9 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 
     !! 2nd stage tech
     loop(mat2ue(mat,in),
-      p37_matFlowHist(ttot,regi,mat) = pm_fedemand(ttot,regi,in) / p37_mat2ue(mat,in) * p37_ue_share(mat,in);
+      p37_matFlowHist(ttot,regi,mat) = pm_fedemand(ttot,regi,in) / p37_mat2ue(mat,in) * p37_ue_share(mat,in); #TODOQZ:: This is the sum of pm_outflowPrcHist
       loop(tePrc2matOut(tePrc,opmoPrc,mat),
-        pm_outflowPrcHist(ttot,regi,tePrc,opmoPrc) = p37_matFlowHist(ttot,regi,mat) * p37_teMatShareHist(tePrc,opmoPrc,mat);
+        pm_outflowPrcHist(ttot,regi,tePrc,opmoPrc) = p37_matFlowHist(ttot,regi,mat) * p37_teMatShareHist(tePrc,opmoPrc,mat); #TODOQZ:: Directly read data
       );
     );
 
@@ -1015,10 +1029,9 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
       p37_matFlowHist(ttot,regi,mat)
         = sum((tePrc2matOut(tePrc1,opmoPrc1,mat),
                tePrc2matIn(tePrc2,opmoPrc2,mat)),
-            !!TODO: enable p37_teMatShareHist here, too (has to be defined, though)
             p37_specMatDem(mat,tePrc2,opmoPrc2) * pm_outflowPrcHist(ttot,regi,tePrc2,opmoPrc2) );
       !!TODO: enable p37_teMatShareHist here, too (has to be defined, though)
-      pm_outflowPrcHist(ttot,regi,tePrc1,opmoPrc1) = p37_matFlowHist(ttot,regi,mat) * p37_teMatShareHist(tePrc1,opmoPrc1,mat);
+      pm_outflowPrcHist(ttot,regi,tePrc1,opmoPrc1) = p37_matFlowHist(ttot,regi,mat) * p37_teMatShareHist(tePrc1,opmoPrc1,mat); #TODOQZ:: Directly read data
     );
 
     loop((entyFe,ppfUePrc),
