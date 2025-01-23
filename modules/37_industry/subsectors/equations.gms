@@ -283,14 +283,13 @@ q37_plasticsCarbon(t,regi,sefe(entySe,entyFe),emiMkt)$(
 *' 10-year steps allocate averge of 2055 and 2060 to 2070, unless `cm_wastelag`
 *' is `NO`, in which case waste is incurred in the same period plastics are
 *' produced
-*** TODO: is there a specific reason that this equation only starts in 2015? (at least if wastelag is off, it can start in 2005, right?)
 q37_plasticWaste(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
                      AND ttot.val ge max(2015, cm_startyear)               ) ..
   v37_plasticWaste(ttot,regi,entySe,entyFe,emiMkt)
   =e=
-    !! prompt waste
-    v37_plasticsCarbon(ttot,regi,entySe,entyFe,emiMkt)$( NOT %cm_wastelag% )
+    !! prompt waste (for wastelag = off or timesteps 2005 and 2010 as there is no plastics carbon produced before)
+    v37_plasticsCarbon(ttot,regi,entySe,entyFe,emiMkt)$((NOT %cm_wastelag%) OR ttot.val lt 2015)
     !! lagged waste
   + ( v37_plasticsCarbon(ttot-2,regi,entySe,entyFe,emiMkt)$( ttot.val lt 2070 )
     + ( ( v37_plasticsCarbon(ttot-2,regi,entySe,entyFe,emiMkt)
@@ -299,7 +298,7 @@ q37_plasticWaste(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
       / 2
       )$( ttot.val eq 2070 )
     + v37_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)$( ttot.val gt 2070 )
-    )$( %cm_wastelag% )
+    )$( %cm_wastelag% AND ttot.val ge 2015)
 ;
 
 *' calculate carbon contained in incinerated plastics
