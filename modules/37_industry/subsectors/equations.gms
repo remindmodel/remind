@@ -344,37 +344,40 @@ q37_emiChemicalsProcess(t,regi,emi,emiMkt)..
 
 *' calculate negative emissions from non-fossil carbon in plastics
 *' that do not get incinerated ("plastic removals")
+*' attribute to ES market as we account these emissions in the waste sector (IPCC sector 5)
 q37_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)..
   v37_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)
   =e=
-  sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+  sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt2),
          se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
 *' substract all non-fossil plastics carbon
-    - v37_plasticsCarbon(t,regi,entySe,entyFe,emiMkt)
+    - v37_plasticsCarbon(t,regi,entySe,entyFe,emiMkt2)
 *' add non-fossil incinerated plastics carbon
-    + v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
+    + v37_plasticWaste(t,regi,entySe,entyFe,emiMkt2)
       * pm_incinerationRate(t,regi)
-  )$( sameas(emi,"co2") )
+  )$( sameas(emi,"co2") AND sameas(emiMkt,"ES") )
 ;
 
 *' calculate emissions from non-plastic waste
+*' attribute to ES market as we assume open burning without energy recovery or landfilling
+*' (depending on cm_nonPlasticFeedstockEmiShare) and therefore account these emissions
+*' in the waste sector (IPCC sector 5)
 q37_emiNonPlasticWaste(t,regi,emi,emiMkt)..
   v37_emiNonPlasticWaste(t,regi,emi,emiMkt)
   =e=
-  (  sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+  (  sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt2),
          se2fe(entySe,entyFe,te))$(entySeFos(entySe)),
 *' fossil carbon in non-plastic waste that gets emitted to the atmosphere
-      v37_feedstocksCarbon(t,regi,entySe,entyFe,emiMkt)  * (1 - s37_plasticsShare) * cm_nonPlasticFeedstockEmiShare)
-  - sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+      v37_feedstocksCarbon(t,regi,entySe,entyFe,emiMkt2)  * (1 - s37_plasticsShare) * cm_nonPlasticFeedstockEmiShare)
+  - sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt2),
          se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
 *' non-fossil carbon in non-plastic waste that does not get emitted to the atmosphere (i.e. is stored permanently)
-      v37_feedstocksCarbon(t,regi,entySe,entyFe,emiMkt) * (1 - s37_plasticsShare) * (1 - cm_nonPlasticFeedstockEmiShare) )
-  )$( sameas(emi,"co2") )
+      v37_feedstocksCarbon(t,regi,entySe,entyFe,emiMkt2) * (1 - s37_plasticsShare) * (1 - cm_nonPlasticFeedstockEmiShare) )
+  )$( sameas(emi,"co2") AND sameas(emiMkt,"ES") )
 ;
 
 *' sum all emissions from feedstocks that are not accounted as energy-related emissions
 *' (i.e. no combustion or combustion without energy recovery)
-*** TODO: Waste CO2 Emissions outside the energy sector would need to be accounted to ESR instead of ETS?
 q37_emiFeedstockNoEnergy(t,regi,emi,emiMkt)..
   vm_emiFeedstockNoEnergy(t,regi,emi,emiMkt)
   =e=
