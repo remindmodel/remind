@@ -152,7 +152,7 @@ q_balSe(t,regi,enty2)$( entySe(enty2) AND (NOT (sameas(enty2,"seel"))) )..
 ***   add (reused gas from waste landfills) to segas to not account for CO2
 ***   emissions - it comes from biomass
   + ( s_MtCH4_2_TWa
-    * ( vm_macBase(t,regi,"ch4wstl")
+    * ( v_macBase(t,regi,"ch4wstl")
       - vm_emiMacSector(t,regi,"ch4wstl")
       )
     )$( sameas(enty2,"segabio") AND t.val gt 2005 )
@@ -730,7 +730,7 @@ vm_emiCO2Sector(t,regi,sector)
 *' The endogenous baselines of non-energy emissions are calculated in the following equation:
 ***------------------------------------------------------
 q_macBase(t,regi,enty)$( emiFuEx(enty) OR sameas(enty,"n2ofertin") ) ..
-  vm_macBase(t,regi,enty)
+  v_macBase(t,regi,enty)
   =e=
     sum(emi2fuel(enty2,enty),
       p_efFossilFuelExtr(regi,enty2,enty)
@@ -749,7 +749,7 @@ q_emiMacSector(t,regi,emiMacSector(enty))..
   vm_emiMacSector(t,regi,enty)
   =e=
 
-    ( vm_macBase(t,regi,enty)
+    ( v_macBase(t,regi,enty)
     * sum(emiMac2mac(enty,enty2),
         1 - (pm_macSwitch(enty) * pm_macAbatLev(t,regi,enty2))
       )
@@ -1003,7 +1003,6 @@ q_costEnergySys(ttot,regi)$( ttot.val ge cm_startyear ) ..
     + v_costInv(ttot,regi)
     )
   + sum(emiInd37, vm_IndCCSCost(ttot,regi,emiInd37))
-  + pm_CementDemandReductionCost(ttot,regi)
 ;
 
 
