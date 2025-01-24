@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -29,7 +29,7 @@ for (year in years) {
     geom_point(data=gginput(x$rem_point[regions,year,],scatter = "variable"),aes(x=.value.x,y=.value.y,colour=scenario)) +
     geom_point(data=gginput(x$mag_point[regions,year,],scatter = "variable"),aes(x=.value.x,y=.value.y,colour=scenario),shape=5) +
     facet_wrap(~region) +
-    ggtitle(title) + ylab("$/GJ") + xlab("EJ") + coord_cartesian(xlim=c(0,80),ylim=c(0,30))
+    ggtitle(title) + ylab("$/GJ") + xlab("EJ") + coord_cartesian(xlim=c(0,60),ylim=c(0,15))
 
   swfigure(out,print,p,sw_option="height=9,width=12")
 }

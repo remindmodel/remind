@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -89,7 +89,7 @@ $setGlobal transport  edge_esm        !! def = edge_esm
 ***---------------------    36_buildings    -------------------------------------
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
-$setglobal industry  fixed_shares     !! def = simple
+$setglobal industry  subsectors     !! def = subsectors
 ***---------------------    39_CCU    --------------------------------------
 $setglobal CCU  on !! def = on
 ***---------------------    40_techpol  -----------------------------------------
@@ -118,13 +118,14 @@ $setGlobal codePerformance  off       !! def = off
 ***-----------------------------------------------------------------------------
 ***--------------- declaration of parameters for switches ----------------------
 parameters
+cm_nash_mode          "mode for solving nash problem, (1): debug (2): parallel"
 cm_iteration_max      "number of Negishi iterations"
 c_solver_try_max      "maximum number of inner iterations within one Negishi iteration (<10)"
 c_keep_iteration_gdxes   "save intermediate iteration gdxes"
 cm_nash_autoconverge  "choice of nash convergence mode"
 cm_emiscen            "policy scenario choice"
-cm_co2_tax_2020       "level of co2 tax in year 2020 in $ per t CO2eq, makes sense only for emiscen eq 9 and 45_carbonprice exponential"
-cm_co2_tax_growth     "growth rate of carbon tax"
+cm_taxCO2_startyear  "level of co2 tax in start year in $ per t CO2eq"
+cm_taxCO2_expGrowth     "growth rate of carbon tax"
 c_macscen            "use of mac"
 cm_nucscen            "nuclear option choice"
 cm_ccapturescen       "carbon capture option choice"
@@ -170,7 +171,7 @@ cm_iterative_target_adj "whether or not a tax or a budget target should be itera
 cm_gdximport_target   "whether or not the starting value for iteratively adjusted budgets, tax scenarios, or forcing targets (emiscen 5,6,8,9) should be read in from the input.gdx"
 cm_gs_ew              "grain size (for enhanced weathering, CDR module) [micrometre]"
 cm_LimRock             "limit amount of rock spread each year [Gt]"
-cm_expoLinear_yearStart "time at which carbon price increases lineraly instead of exponentially"
+cm_expoLinear_yearStart "time at which carbon price increases linearly instead of exponentially"
 
 c_budgetCO2FFI        "carbon budget for CO2 emissions from FFI (in GtCO2)"
 c_abtrdy              "first year in which advanced bio-energy technology are ready (unit is year; e.g. 2050)"
@@ -188,8 +189,8 @@ cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshoot
 
 cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
 c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
-c_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
-cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffCurvPhaseIn2Lin"
+cm_taxCO2_IncAfterPeakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
+cm_taxCO2_regiDiff_endYr     "Year at which regional CO2 taxes converge in module 45 for realizations with differentiated carbon prices"
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
 c_regi_synfuelscen			"region to apply synfuelscen to"
@@ -199,15 +200,11 @@ cm_biotrade_phaseout        "switch for phaseing out biomass trade in the respec
 cm_bioprod_histlim			"regional parameter to limit biomass (pebiolc.1) production to a multiple of the 2015 production"
 cm_flex_tax                 "switch for enabling flexibility tax"
 cm_H2targets                "switches on capacity targets for electrolysis in NDC techpol following national Hydrogen Strategies"
-cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
-cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
+cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildings and industry electricity prices is on"
 cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bleak (3) assumptions on VRE supply"
 cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/ 100 /Kwh)"
 cm_build_H2costDecayStart     "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
 cm_build_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> after 10% the function will have the value 0). [%]"
-cm_indst_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels. [3.25$/ 0.1 /kWh]"
-cm_indst_costDecayStart     "simplified logistic function end of full value   (ex. 5%  -> between 0 and 5% the simplified logistic function will have the value 1). [%]"
-cm_indst_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> between 10% and 100% the simplified logistic function will have the value 0). [%]"
 cm_BioSupply_Adjust_EU      "factor for scaling sub-EU bioenergy supply curves"
 cm_BioImportTax_EU          "factor for EU bioenergy import tax"
 cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
@@ -233,6 +230,7 @@ cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germa
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+cm_nash_mode           = 2;     !! def = 2  !! regexp = 1|2
 cm_iteration_max       = 1;     !! def = 1
 c_solver_try_max       = 2;     !! def = 2
 c_keep_iteration_gdxes = 0;     !! def = 0
@@ -241,8 +239,8 @@ $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
 cm_emiscen        = 1;         !! def = 1
 $setglobal cm_rcp_scen  none   !! def = "none"
-cm_co2_tax_2020   = -1;        !! def = -1
-cm_co2_tax_growth = 1.05;      !! def = 1.05
+cm_taxCO2_startyear   = -1;        !! def = -1
+cm_taxCO2_expGrowth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
@@ -317,8 +315,8 @@ $setGlobal cm_emiMktTarget  off   !! def = off
 cm_postTargetIncrease    = 0;      !! def = 0
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 c_peakBudgYr            = 2050;   !! def = 2050
-c_taxCO2inc_after_peakBudgYr = 2; !! def = 2
-cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
+cm_taxCO2_IncAfterPeakBudgYr = 2; !! def = 2
+cm_taxCO2_regiDiff_endYr  = 2050;   !! def = 2050
 
 $setGlobal cm_NucRegiPol	 off   !! def = off		
 $setGlobal cm_CoalRegiPol	 off   !! def = off		
@@ -363,8 +361,9 @@ $setGlobal cm_import_EU  off !! def off
 
 *** flex tax switches
 cm_flex_tax = 0; !! def 0
-cm_PriceDurSlope_elh2 = 20; !! def 10
+$setGlobal cm_PriceDurSlope_elh2  GLO 15 !! def = GLO 15
 cm_FlexTaxFeedback = 0; !! def 0
+
 
 *** VRE switch
 cm_VRE_supply_assumptions = 0; !! 0 - default, 1 - optimistic, 2 - sombre, 3 - bleak
@@ -373,10 +372,6 @@ cm_VRE_supply_assumptions = 0; !! 0 - default, 1 - optimistic, 2 - sombre, 3 - b
 cm_build_H2costAddH2Inv = 0.2;  !! def 6.5$/kg = 0.2 $/Kwh
 cm_build_H2costDecayStart = 0.05; !! def 5%
 cm_build_H2costDecayEnd = 0.1;  !! def 10%
-
-cm_indst_H2costAddH2Inv = 0.1;  !! def 6.5$/kg = 0.2 $/Kwh
-cm_indst_costDecayStart = 0.05; !! def 5%
-cm_indst_H2costDecayEnd = 0.1;  !! def 10%
 
 *** EU bioenergy switches
 cm_BioSupply_Adjust_EU = 3; !! def 1
@@ -421,7 +416,6 @@ cm_deuCDRmax = -1; !! def = -1
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *--------------------flags------------------------------------------------------------
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
-$setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGLobal cm_debug_preloop  off !! def = off
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setglobal cm_INCONV_PENALTY_bioSwitch  off !! def = off
@@ -437,7 +431,7 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
 
-$setglobal cm_CES_configuration  indu_fixed_shares-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_ccd632d33a   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_ccd632d33a   !! this will be changed by start_run()
 
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
@@ -449,9 +443,6 @@ $setglobal cm_calibration_string  off      !! def = off
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
 $setglobal cm_techcosts  REG       !! def = REG
-
-$setglobal cm_eni  off!! def = off
-$setglobal cm_enb  off!! def = off
 
 $setglobal cm_incolearn  off !! def = off
 $setglobal cm_storageFactor  off !! def = off
@@ -477,8 +468,6 @@ $setglobal cm_feShareLimits  off  !! def = off
 
 $setglobal c_fuelprice_init  off !! def = off
 $setglobal cm_seTradeScenario  off  !! def = off
-
-$setglobal cm_wind_offshore  0      !! def = 0
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------

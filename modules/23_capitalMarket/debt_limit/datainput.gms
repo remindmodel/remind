@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -6,7 +6,6 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/23_capitalMarket/debt_limit/datainput.gms
 
-pm_ies(regi) = 1;
 pm_risk_premium(regi) = 0.0;
 p23_debt_growthCoeff(regi) = 0.2 ;
 

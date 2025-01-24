@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -12,10 +12,10 @@ pm_damageGrowthRate(tall,all_regi)                   "damage function for growth
 pm_damageMarginalT(tall,all_regi)                    "damage function derivative for KW"
 pm_damageMarginalTm1(tall,all_regi)                  "damage function derivative for KW"
 pm_damageMarginalTm2(tall,all_regi)                  "damage function derivative for KW"
-p50_damageFuncCoefa1     "coef1 of damamge function",
-p50_damageFuncCoefa2     "coef2 of damamge function"
-p50_damageFuncCoefb1     "coef1 of damamge function",
-p50_damageFuncCoefb2     "coef2 of damamge function"
+p50_damageFuncCoefa1     "coef1 of damage function",
+p50_damageFuncCoefa2     "coef2 of damage function"
+p50_damageFuncCoefb1     "coef1 of damage function",
+p50_damageFuncCoefb2     "coef2 of damage function"
 ;
 
 positive variable

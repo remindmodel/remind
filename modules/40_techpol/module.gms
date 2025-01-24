@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -10,7 +10,7 @@
 *'
 *' @description  The 40_techpol module formulates technological policies. They can be part of a baseline or climate policy scenario.
 *'
-*' @authors Christoph Bertram, Falko Ueckertd
+*' @authors Christoph Bertram, Falko Ueckerdt
 
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%techpol%" == "CombLowCandCoalPO" $include "./modules/40_techpol/CombLowCandCoalPO/realization.gms"

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -65,10 +65,10 @@ loop (ue_29(ppf_29(out)),
 
   loop (cesOut2cesIn(out,in),
     if (ppfKap(in), sm_tmp  = sm_tmp  + 1);
-    if (ppfen(in),  sm_tmp2 = sm_tmp2 + 1);
+    if (ppfEn(in),  sm_tmp2 = sm_tmp2 + 1);
   );
 
-  !! in case one input is ppfen/FE and the other Kap
+  !! in case one input is ppfEn/FE and the other Kap
   if (sm_tmp eq 1 AND sm_tmp2 eq 1,
     ue_fe_kap_29(out) = YES;
   else
@@ -147,7 +147,7 @@ Parameter
 p29_trpdemand       "transport demand"
 /
 $ondelim
-$include "./modules/29_CES_parameters/calibrate/input/pm_trp_demand.cs4r"
+$include "./modules/29_CES_parameters/calibrate/input/f29_trpdemand.cs4r"
 $offdelim
 /
 
@@ -180,13 +180,6 @@ loop ((ttot,regi,ppfKap_industry_dyn37(in))$( t(ttot-1) AND t(ttot+1) ),
 
 display pm_fedemand;
 
-*** setting feh2i equal to 1% of fegai
-$ifthen.indst_H2_penetration "%industry%" == "fixed_shares"
-pm_fedemand(t,regi,"feh2i")$(t.val ge 2010) = 0.01*pm_fedemand(t,regi,"fegai");
-$endif.indst_H2_penetration
-
-display pm_fedemand;
-
 *** Change PPP for MER.
 p29_capitalQuantity(tall,all_regi,all_in)
  = p29_capitalQuantity(tall,all_regi,all_in)
@@ -215,8 +208,7 @@ p29_cesdata_load(t,regi,in,"rho")$( p29_cesdata_load(t,regi,in,"rho") eq 0) = 0.
 *** Load quantities and efficiency growth from the last run
 Execute_Loadpoint 'input'  p29_cesIO_load = vm_cesIO.l, p29_effGr = vm_effGr.l;
 
-*** DEBUG: Load vm_deltacap
-Execute_Loadpoint 'input' vm_deltacap;
+Execute_Loadpoint 'input' vm_deltaCap;
 
 *** Load exogenous Labour, GDP
 pm_cesdata(t,regi,"inco","quantity") = pm_gdp(t,regi);
@@ -282,21 +274,6 @@ loop (pf_quantity_shares_37(in,in2),
 );
 $endif.subsectors
 
-$ifthen.indst_H2_offset "%industry%" == "fixed_shares"
-
-*** Assuming feh2i minimun levels as 1% of fegai to avoid CES numerical calibration issues and allow more aligned efficiencies between gas and h2
-loop ((t,regi)$(pm_cesdata(t,regi,"feh2i","quantity") lt (0.01 * pm_cesdata(t,regi,"fegai","quantity"))),
-  pm_cesdata(t,regi,"feh2i","offset_quantity") = - (0.01 * pm_cesdata(t,regi,"fegai","quantity") - pm_cesdata(t,regi,"feh2i","quantity"));
-  pm_cesdata(t,regi,"feh2i","quantity") = 0.01 * pm_cesdata(t,regi,"fegai","quantity");
-);
-
-*** Special treatment for fehei, which is part of ppfen_industry_dyn37, yet
-*** needs an offset value for some regions under fixed_shares
-loop ((t,regi)$(pm_cesdata(t,regi,"fehei","quantity") lt 1e-5 ),
-  pm_cesdata(t,regi,"fehei","offset_quantity")  = pm_cesdata(t,regi,"fehei","quantity") - 1e-5;
-  pm_cesdata(t,regi,"fehei","quantity") = 1e-5;
-);
-$endif.indst_H2_offset
 
 $ifthen.build_H2_offset "%buildings%" == "simple"
 *** Assuming feh2b minimun levels as 5% of fegab to avoid CES numerical calibration issues and allow more aligned efficiencies between gas and h2
@@ -306,15 +283,18 @@ $ifthen.build_H2_offset "%buildings%" == "simple"
 *);
 
 *** RK: feh2b offset scaled from 1% in 2025 to 50% in 2050 of fegab quantity
-loop ((t,regi),
-	pm_cesdata(t,regi,"feh2b","offset_quantity")
-  = - (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
-      * pm_cesdata(t,regi,"fegab","quantity")
-    - pm_cesdata(t,regi,"feh2b","quantity");
-      pm_cesdata(t,regi,"feh2b","quantity")
-  = (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
-      * pm_cesdata(t,regi,"fegab","quantity");
-);
+pm_cesdata(t,regi,"feh2b","offset_quantity")$(t.val gt cm_H2InBuildOnlyAfter) =
+  - (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
+    * pm_cesdata(t,regi,"fegab","quantity")
+  - pm_cesdata(t,regi,"feh2b","quantity");
+pm_cesdata(t,regi,"feh2b","quantity")$(t.val gt cm_H2InBuildOnlyAfter) = 
+  (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
+    * pm_cesdata(t,regi,"fegab","quantity");
+
+*** for the years that H2 buildings is fixed to zero, set offset to the exact value of the calibrated quantity to ignore it after calibration
+pm_cesdata(t,regi,"feh2b","quantity")$(t.val le cm_H2InBuildOnlyAfter) = 1e-6;
+pm_cesdata(t,regi,"feh2b","offset_quantity")$(t.val le cm_H2InBuildOnlyAfter) = - pm_cesdata(t,regi,"feh2b","quantity");
+
 $endif.build_H2_offset
 
 *** Add an epsilon to the values which are 0 so that they can fit in the CES
@@ -322,8 +302,7 @@ $endif.build_H2_offset
 loop((t,regi,in)$(    (ppf(in) OR ppf_29(in))
                   AND pm_cesdata(t,regi,in,"quantity") lt 1e-5
                   AND NOT ppfen_industry_dyn37(in)
-                  AND NOT ppfkap_industry_dyn37(in)
-                  AND NOT SAMEAS(in,"feh2i")
+                  AND NOT ppfKap_industry_dyn37(in)
                   AND NOT SAMEAS(in,"feh2b")        ),
   pm_cesdata(t,regi,in,"offset_quantity")  = pm_cesdata(t,regi,in,"quantity")  - 1e-5;
   pm_cesdata(t,regi,in,"quantity") = 1e-5;

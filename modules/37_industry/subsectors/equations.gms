@@ -1,10 +1,12 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/subsectors/equations.gms
+
+*' @equations
 
 *** ---------------------------------------------------------------------------
 ***        1. CES-Based (mostly)
@@ -13,17 +15,16 @@
 ***------------------------------------------------------
 *' Industry final energy balance
 ***------------------------------------------------------
-q37_demFeIndst(ttot,regi,entyFE,emiMkt)$(    ttot.val ge cm_startyear
-                                         AND entyFE2Sector(entyFE,"indst") ) ..
-  sum(se2fe(entySE,entyFE,te),
-    vm_demFeSector_afterTax(ttot,regi,entySE,entyFE,"indst",emiMkt)
+q37_demFeIndst(t,regi,entyFe,emiMkt)$( entyFe2Sector(entyFe,"indst") ) ..
+  sum(se2fe(entySe,entyFe,te),
+    vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
   )
   =e=
-  sum(fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),
+  sum(fe2ppfEn(entyFe,ppfen_industry_dyn37(in)),
     sum((secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in)),
       (
-          vm_cesIO(ttot,regi,in)
-        + pm_cesdata(ttot,regi,in,"offset_quantity")
+          vm_cesIO(t,regi,in)
+        + pm_cesdata(t,regi,in,"offset_quantity")
       )$(NOT secInd37Prc(secInd37))
     )
   )
@@ -31,9 +32,9 @@ q37_demFeIndst(ttot,regi,entyFE,emiMkt)$(    ttot.val ge cm_startyear
   sum((secInd37_emiMkt(secInd37Prc,emiMkt),
        secInd37_tePrc(secInd37Prc,tePrc),
        tePrc2opmoPrc(tePrc,opmoPrc)),
-    pm_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
+    pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc)
     *
-    vm_outflowPrc(ttot,regi,tePrc,opmoPrc)
+    vm_outflowPrc(t,regi,tePrc,opmoPrc)
   )
 ;
 
@@ -41,39 +42,37 @@ q37_demFeIndst(ttot,regi,entyFE,emiMkt)$(    ttot.val ge cm_startyear
 *' Thermodynamic limits on subsector energy demand
 ***------------------------------------------------------
 $ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
-q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
-                             ttot.val gt 2020
-                             AND NOT ppfUePrc(out)
-			                       AND p37_energy_limit_slope(ttot,regi,out) ) ..
-  sum(ces_eff_target_dyn37(out,in), vm_cesIO(ttot,regi,in))
+q37_energy_limits(t,regi,industry_ue_calibration_target_dyn37(out))$(
+                                        t.val gt 2020
+                                    AND NOT ppfUePrc(out)
+                                    AND p37_energy_limit_slope(t,regi,out) ) ..
+  sum(ces_eff_target_dyn37(out,in), vm_cesIO(t,regi,in))
   =g=
-    vm_cesIO(ttot,regi,out)
-  * p37_energy_limit_slope(ttot,regi,out)
+    vm_cesIO(t,regi,out)
+  * p37_energy_limit_slope(t,regi,out)
 ;
 $endif.no_calibration
 
 ***------------------------------------------------------
 *' Limit the share of secondary steel to historic values, fading to 90 % in 2050
 ***------------------------------------------------------
-q37_limit_secondary_steel_share(ttot,regi)$(
-         ttot.val ge cm_startyear
-
+q37_limit_secondary_steel_share(t,regi)$(
+         YES
 $ifthen.fixed_production "%cm_import_EU%" == "bal"   !! cm_import_EU
          !! do not limit steel production shares for fixed production
-     AND p37_industry_quantity_targets(ttot,regi,"ue_steel_secondary") eq 0
+     AND p37_industry_quantity_targets(t,regi,"ue_steel_secondary") eq 0
 $endif.fixed_production
 $ifthen.exogDem_scen NOT "%cm_exogDem_scen%" == "off"
          !! do not limit steel production shares for fixed production
-     AND pm_exogDemScen(ttot,regi,"%cm_exogDem_scen%","ue_steel_secondary") eq 0
+     AND pm_exogDemScen(t,regi,"%cm_exogDem_scen%","ue_steel_secondary") eq 0
 $endif.exogDem_scen
-
                                                                             ) ..
-  vm_cesIO(ttot,regi,"ue_steel_secondary")
+  vm_cesIO(t,regi,"ue_steel_secondary")
   =l=
-    ( vm_cesIO(ttot,regi,"ue_steel_primary")
-    + vm_cesIO(ttot,regi,"ue_steel_secondary")
+    ( vm_cesIO(t,regi,"ue_steel_primary")
+    + vm_cesIO(t,regi,"ue_steel_secondary")
     )
-  * p37_steel_secondary_max_share(ttot,regi)
+  * p37_steel_secondary_max_share(t,regi)
 ;
 
 ***------------------------------------------------------
@@ -82,63 +81,68 @@ $endif.exogDem_scen
 *' energy mix, as that is what can be captured); vm_emiIndBase itself is not used for emission
 *' accounting, just as a CCS baseline.
 ***------------------------------------------------------
-q37_emiIndBase(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
-    vm_emiIndBase(ttot,regi,entyFE,secInd37)
+q37_emiIndBase(t,regi,enty,secInd37)$(
+                                   entyFeCC37(enty)
+                                OR sameas(enty,"co2cement_process") ) ..
+  vm_emiIndBase(t,regi,enty,secInd37)
   =e=
-    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfen(entyFECC37(entyFE),in)),
-      ( vm_cesIO(ttot,regi,in)
-      - ( p37_chemicals_feedstock_share(ttot,regi)
-        * vm_cesIO(ttot,regi,in)
-	)$( in_chemicals_feedstock_37(in) )
+    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfEn(entyFeCC37(enty),in)),
+      ( vm_cesIO(t,regi,in)
+      - ( p37_chemicals_feedstock_share(t,regi)
+        * vm_cesIO(t,regi,in)
+        )$( in_chemicals_feedstock_37(in) )
       )
-        *
-        sum(se2fe(entySEfos,entyFE,te),
-            pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")
-        )
-    )$(NOT secInd37Prc(secInd37))
-    +
-    sum((secInd37_tePrc(secInd37,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
-        v37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc)
-    )$(secInd37Prc(secInd37))
+    * sum(se2fe(entySeFos,enty,te),
+        pm_emifac(t,regi,entySeFos,enty,te,"co2")
+      )
+    )$( NOT secInd37Prc(secInd37) )
+  + ( s37_clinker_process_CO2
+    * p37_clinker_cement_ratio(t,regi)
+    * vm_cesIO(t,regi,"ue_cement")
+    / sm_c_2_co2
+    )$( sameas(enty,"co2cement_process") AND sameas(secInd37,"cement") )
+  + sum((secInd37_tePrc(secInd37,tePrc),tePrc2opmoPrc(tePrc,opmoPrc)),
+      v37_emiPrc(t,regi,enty,tePrc,opmoPrc)
+    )$( secInd37Prc(secInd37) )
 ;
 
 ***------------------------------------------------------
 *' Compute maximum possible CCS level in industry sub-sectors given the current
 *' CO2 price.
 ***------------------------------------------------------
-q37_emiIndCCSmax(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND NOT sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
-  v37_emiIndCCSmax(ttot,regi,emiInd37)
+q37_emiIndCCSmax(t,regi,emiInd37)$(
+           NOT sum(secInd37Prc, secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
+  v37_emiIndCCSmax(t,regi,emiInd37)
   =e=
-    !! map sub-sector emissions to sub-sector MACs
-    !! otherInd has no CCS, therefore no MAC, cement has both fuel and process
-    !! emissions under the same MAC
-    sum(emiMac2mac(emiInd37,macInd37),
-      !! add cement process emissions, which are calculated in core/preloop
-      !! from a econometric fit and might not correspond to energy use (FIXME)
-      ( sum((secInd37_2_emiInd37(secInd37,emiInd37),entyFE),
-          vm_emiIndBase(ttot,regi,entyFE,secInd37)
-        )$( NOT sameas(emiInd37,"co2cement_process") )
-      + ( vm_emiIndBase(ttot,regi,"co2cement_process","cement")
-        )$( sameas(emiInd37,"co2cement_process") )
-      )
+  !! map sub-sector emissions to sub-sector MACs
+  !! otherInd has no CCS, therefore no MAC, cement has both fuel and process
+  !! emissions under the same MAC
+  sum(emiMac2mac(emiInd37,macInd37),
+    ( sum((secInd37_2_emiInd37(secInd37,emiInd37),entyFeCC37),
+        vm_emiIndBase(t,regi,entyFeCC37,secInd37)
+      )$( NOT sameas(emiInd37,"co2cement_process") )
+    + ( vm_emiIndBase(t,regi,"co2cement_process","cement")
+      )$( sameas(emiInd37,"co2cement_process") )
+    )
     * pm_macSwitch(macInd37)              !! sub-sector CCS available or not
-    * pm_macAbatLev(ttot,regi,macInd37)   !! abatement level at current price
+    * pm_macAbatLev(t,regi,macInd37)   !! abatement level at current price
   )
 ;
 
 ***------------------------------------------------------
 *' Limit industry CCS to maximum possible CCS level.
 ***------------------------------------------------------
-q37_IndCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND NOT sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
-  vm_emiIndCCS(ttot,regi,emiInd37)
+q37_IndCCS(t,regi,emiInd37)$(
+            NOT sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
+  vm_emiIndCCS(t,regi,emiInd37)
   =l=
-  v37_emiIndCCSmax(ttot,regi,emiInd37)
+  v37_emiIndCCSmax(t,regi,emiInd37)
 ;
 
 ***------------------------------------------------------
 *' Limit industry CCS scale-up to sm_macChange (default: 5 % p.a.)
 ***------------------------------------------------------
-q37_limit_IndCCS_growth(ttot,regi,emiInd37) ..
+q37_limit_IndCCS_growth(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
   vm_emiIndCCS(ttot,regi,emiInd37)
   =l=
     vm_emiIndCCS(ttot-1,regi,emiInd37)
@@ -152,39 +156,39 @@ q37_limit_IndCCS_growth(ttot,regi,emiInd37) ..
 ***------------------------------------------------------
 *' Fix cement fuel and cement process emissions to the same abatement level.
 ***------------------------------------------------------
-q37_cementCCS(ttot,regi)$(    ttot.val ge cm_startyear
-                          AND pm_macswitch("co2cement")
-                          AND pm_macAbatLev(ttot,regi,"co2cement") ) ..
-    vm_emiIndCCS(ttot,regi,"co2cement")
-  * v37_emiIndCCSmax(ttot,regi,"co2cement_process")
+q37_cementCCS(t,regi)$(    pm_macSwitch("co2cement")
+                       AND pm_macAbatLev(t,regi,"co2cement") ) ..
+    vm_emiIndCCS(t,regi,"co2cement")
+  * v37_emiIndCCSmax(t,regi,"co2cement_process")
   =e=
-    vm_emiIndCCS(ttot,regi,"co2cement_process")
-  * v37_emiIndCCSmax(ttot,regi,"co2cement")
+    vm_emiIndCCS(t,regi,"co2cement_process")
+  * v37_emiIndCCSmax(t,regi,"co2cement")
 ;
 
 ***------------------------------------------------------
 *' Calculate industry CCS costs.
 ***------------------------------------------------------
-q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear AND NOT sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
-  vm_IndCCSCost(ttot,regi,emiInd37)
+q37_IndCCSCost(t,regi,emiInd37)$(
+            NOT sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
+  vm_IndCCSCost(t,regi,emiInd37)
   =e=
     1e-3
   * pm_macSwitch(emiInd37)
-  * ( sum((enty,secInd37_2_emiInd37(secInd37,emiInd37)),
-        vm_emiIndBase(ttot,regi,enty,secInd37)
+  * ( sum((entyFeCC37,secInd37_2_emiInd37(secInd37,emiInd37)),
+        vm_emiIndBase(t,regi,entyFeCC37,secInd37)
       )$( NOT sameas(emiInd37,"co2cement_process") )
-    + ( vm_emiIndBase(ttot,regi,"co2cement_process","cement")
+    + ( vm_emiIndBase(t,regi,"co2cement_process","cement")
       )$( sameas(emiInd37,"co2cement_process") )
     )
   * sm_dmac
   * sum(emiMac2mac(emiInd37,enty),
-      ( pm_macStep(ttot,regi,enty)
-      * sum(steps$( ord(steps) eq pm_macStep(ttot,regi,enty) ),
-          pm_macAbat(ttot,regi,enty,steps)
+      ( pm_macStep(t,regi,enty)
+      * sum(steps$( ord(steps) eq pm_macStep(t,regi,enty) ),
+          pm_macAbat(t,regi,enty,steps)
         )
       )
-    - sum(steps$( ord(steps) le pm_macStep(ttot,regi,enty) ),
-        pm_macAbat(ttot,regi,enty,steps)
+    - sum(steps$( ord(steps) le pm_macStep(t,regi,enty) ),
+        pm_macAbat(t,regi,enty,steps)
       )
     )
 ;
@@ -205,122 +209,142 @@ q37_costCESmarkup(t,regi,in)$(ppfen_industry_dyn37(in))..
 ***--------------------------------------------------------------------------
 
 *' Lower bound on feso/feli/fega in chemicals FE input for feedstocks
-q37_chemicals_feedstocks_limit(t,regi)$( t.val ge cm_startyear ) ..
+q37_chemicals_feedstocks_limit(t,regi) ..
   sum(in_chemicals_feedstock_37(in), vm_cesIO(t,regi,in))
   =g=
     sum(ces_eff_target_dyn37("ue_chemicals",in), vm_cesIO(t,regi,in))
   * p37_chemicals_feedstock_share(t,regi)
 ;
 
-*' Define the flow of non-energy feedstocks. It is used for emissions accounting and calculating plastics production
-q37_demFeFeedstockChemIndst(ttot,regi,entyFE,emiMkt)$(
-                         ttot.val ge cm_startyear
-                     AND entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
-  sum(se2fe(entySE,entyFE,te),
-    vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)
+*' Define the flow of non-energy feedstocks. It is used for emissions
+*' accounting and calculating plastics production
+q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt) ..
+  sum(se2fe(entySe,entyFe,te),
+    vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
   )
   =e=
-  sum((fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),
+  sum((fe2ppfEn(entyFe,ppfen_industry_dyn37(in)),
        secInd37_emiMkt(secInd37,emiMkt),
        secInd37_2_pf(secInd37,in_chemicals_feedstock_37(in))),
-    ( vm_cesIO(ttot,regi,in)
-    + pm_cesdata(ttot,regi,in,"offset_quantity")
+    ( vm_cesIO(t,regi,in)
+    + pm_cesdata(t,regi,in,"offset_quantity")
     )
-  * p37_chemicals_feedstock_share(ttot,regi)
-  )
+  * p37_chemicals_feedstock_share(t,regi)
+  )$( entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) )
 ;
 
 *' Feedstocks flow has to be lower than total energy flow into the industry
-q37_feedstocksLimit(ttot,regi,entySE,entyFE,emiMkt)$(
-                                             ttot.val ge cm_startyear
-                                         AND sefe(entySE,entyFE)
-                                         AND sector2emiMkt("indst",emiMkt)
-                                         AND entyFe2Sector(entyFe,"indst")
-                                         AND entyFeCC37(entyFe)            ) ..
-  vm_demFESector(ttot,regi,entySE,entyFE,"indst",emiMkt)
+q37_feedstocksLimit(t,regi,entySe,entyFe,emiMkt)$(
+                         sefe(entySe,entyFe)
+                     AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
+  vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
   =g=
-  vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)
+  vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
 ;
 
-*' Calculate mass of carbon contained in chemical feedstocks
-q37_FeedstocksCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
-  vm_FeedstocksCarbon(ttot,regi,entySE,entyFE,emiMkt)
+*' Feedstocks have identical fossil/biomass/synfuel shares as industry FE
+q37_feedstocksShares(t,regi,entySe,entyFe,emiMkt)$(
+                         sum(te, se2fe(entySe,entyFe,te))
+                     AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
+                     AND cm_emiscen ne 1                                   ) ..
+    vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
+  * sum(se2fe(entySe2,entyFe,te),
+      vm_demFENonEnergySector(t,regi,entySe2,entyFe,"indst",emiMkt)
+    )
   =e=
-    vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)
-  * p37_FeedstockCarbonContent(ttot,regi,entyFE)
+    vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
+  * sum(se2fe2(entySe2,entyFe,te),
+      vm_demFeSector_afterTax(t,regi,entySe2,entyFe,"indst",emiMkt)
+    )
+;
+
+
+*' Calculate mass of carbon contained in chemical feedstocks
+q37_FeedstocksCarbon(t,regi,sefe(entySe,entyFe),emiMkt)$(
+                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
+  v37_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
+  =e=
+    vm_demFENonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
+  * p37_FeedstockCarbonContent(t,regi,entyFe)
 ;
 
 *' Calculate carbon contained in plastics as a share of carbon in feedstock [GtC]
-q37_plasticsCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
-  vm_plasticsCarbon(ttot,regi,entySE,entyFE,emiMkt)
+q37_plasticsCarbon(t,regi,sefe(entySe,entyFe),emiMkt)$(
+                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
+  v37_plasticsCarbon(t,regi,entySe,entyFe,emiMkt)
   =e=
-    vm_FeedstocksCarbon(ttot,regi,entySE,entyFE,emiMkt)
+    v37_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
   * s37_plasticsShare
 ;
 
-*' calculate plastic waste generation, shifted by mean lifetime of plastic products
-*' shift by 2 time steps when we have 5-year steps and 1 when we have 10-year steps
-*' allocate averge of 2055 and 2060 to 2070
-q37_plasticWaste(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
-                        entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt)
-                    AND ttot.val ge cm_startyear                          ) ..
-  vm_plasticWaste(ttot,regi,entySE,entyFE,emiMkt)
+*' calculate plastic waste generation, shifted by mean lifetime of plastic
+*' products shift by 2 time steps when we have 5-year steps and 1 when we have
+*' 10-year steps allocate averge of 2055 and 2060 to 2070, unless `cm_wastelag`
+*' is `NO`, in which case waste is incurred in the same period plastics are
+*' produced
+q37_plasticWaste(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
+                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
+                     AND ttot.val ge max(2015, cm_startyear)               ) ..
+  v37_plasticWaste(ttot,regi,entySe,entyFe,emiMkt)
   =e=
-    vm_plasticsCarbon(ttot-2,regi,entySE,entyFE,emiMkt)$( ttot.val le 2060 )
-  + ( ( vm_plasticsCarbon(ttot-2,regi,entySE,entyFE,emiMkt)
-      + vm_plasticsCarbon(ttot-1,regi,entySE,entyFE,emiMkt)
-      )
-    / 2
-    )$( ttot.val eq 2070 )
-  + vm_plasticsCarbon(ttot-1,regi,entySE,entyFE,emiMkt)$( ttot.val gt 2070 )
-  ;
+    !! prompt waste
+    v37_plasticsCarbon(ttot,regi,entySe,entyFe,emiMkt)$( NOT %cm_wastelag% )
+    !! lagged waste
+  + ( v37_plasticsCarbon(ttot-2,regi,entySe,entyFe,emiMkt)$( ttot.val lt 2070 )
+    + ( ( v37_plasticsCarbon(ttot-2,regi,entySe,entyFe,emiMkt)
+        + v37_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)
+        )
+      / 2
+      )$( ttot.val eq 2070 )
+    + v37_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)$( ttot.val gt 2070 )
+    )$( %cm_wastelag% )
+;
 
-*' plastic waste in the past is not accounted for
-vm_plasticWaste.fx(ttot,regi,sefe(entySE,entyFE),emiMkt)$( ttot.val lt 2005 ) = 0 ;
-vm_plasticsCarbon.fx(ttot,regi,sefe(entySE,entyFE),emiMkt)$( ttot.val lt 2005 ) = 0 ;
-
-*' emissions from plastics incineration as a share of total plastic waste
-q37_incinerationEmi(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt)) ..
-  vm_incinerationEmi(ttot,regi,entySE,entyFE,emiMkt)
+*' emissions from plastics incineration as a share of total plastic waste,
+*' discounted by captured amount
+q37_incinerationEmi(t,regi,sefe(entySe,entyFe),emiMkt)$(
+                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
+  vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
   =e=
-    vm_plasticWaste(ttot,regi,entySE,entyFE,emiMkt)
-  * pm_incinerationRate(ttot,regi)
+    v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
+  * pm_incinerationRate(t,regi)
+  * (1 - v37_regionalWasteIncinerationCCSshare(t,regi))
+;
+
+q37_incinerationCCS(t,regi,sefe(entySe,entyFe),emiMkt)$(
+                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
+  vm_incinerationCCS(t,regi,entySe,entyFe,emiMkt)
+  =e=
+    v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
+  * pm_incinerationRate(t,regi)
+  * v37_regionalWasteIncinerationCCSshare(t,regi)
 ;
 
 *' calculate carbon contained in non-incinerated plastics
 *' this is used in emissions accounting to subtract the carbon that gets
 *' sequestered in plastic products
-q37_nonIncineratedPlastics(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
-  vm_nonIncineratedPlastics(ttot,regi,entySE,entyFE,emiMkt)
+q37_nonIncineratedPlastics(t,regi,sefe(entySe,entyFe),emiMkt)$(
+                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
+  vm_nonIncineratedPlastics(t,regi,entySe,entyFe,emiMkt)
   =e=
-    vm_plasticWaste(ttot,regi,entySE,entyFE,emiMkt)
-  * (1 - pm_incinerationRate(ttot,regi))
+    v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
+  * (1 - pm_incinerationRate(t,regi))
   ;
 
 *' calculate flow of carbon contained in chemical feedstock with unknown fate
-*' it is assumed that this carbon is re-emitted in the same timestep
-q37_feedstockEmiUnknownFate(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
-  vm_feedstockEmiUnknownFate(ttot,regi,entySE,entyFE,emiMkt)
+*' it is assumed that this carbon is re-emitted in the same timestep if cm_feedstockEmiUnknownFate is enabled (=on)
+q37_feedstockEmiUnknownFate(t,regi,sefe(entySe,entyFe),emiMkt)$(
+                         entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
+  vm_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
   =e=
-    vm_FeedstocksCarbon(ttot,regi,entySE,entyFE,emiMkt)
+$ifthen.cm_feedstockEmiUnknownFate not "%cm_feedstockEmiUnknownFate%" == "off"
+  (
+    v37_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
   * (1 - s37_plasticsShare)
-;
-
-*' in baseline runs, all industrial feedstocks should come from fossil energy
-*' carriers, no biofuels or synfuels
-q37_FossilFeedstock_Base(t,regi,entyFE,emiMkt)$(
-                         entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt)
-                     AND cm_emiscen eq 1                                   ) ..
-  sum(entySE, vm_demFENonEnergySector(t,regi,entySE,entyFE,"indst",emiMkt))
-  =e=
-  sum(entySEFos,
-    vm_demFENonEnergySector(t,regi,entySEfos,entyFE,"indst",emiMkt)
   )
+$else.cm_feedstockEmiUnknownFate
+  0
+$endIf.cm_feedstockEmiUnknownFate
 ;
 
 *** ---------------------------------------------------------------------------
@@ -330,104 +354,119 @@ q37_FossilFeedstock_Base(t,regi,entyFE,emiMkt)$(
 ***------------------------------------------------------
 *' Material input to production
 ***------------------------------------------------------
-q37_demMatPrc(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matIn(mat))..
-    v37_matFlow(ttot,regi,mat)
+q37_demMatPrc(t,regi,mat)$( matIn(mat) ) ..
+    v37_matFlow(t,regi,mat)
   =e=
     sum(tePrc2matIn(tePrc,opmoPrc,mat),
       p37_specMatDem(mat,tePrc,opmoPrc)
       *
-      vm_outflowPrc(ttot,regi,tePrc,opmoPrc)
+      vm_outflowPrc(t,regi,tePrc,opmoPrc)
     )
 ;
 
 ***------------------------------------------------------
 *' Material cost
 ***------------------------------------------------------
-q37_costMat(ttot,regi)$(ttot.val ge cm_startyear)..
-    vm_costMatPrc(ttot,regi)
+q37_costMat(t,regi) ..
+    vm_costMatPrc(t,regi)
   =e=
     sum(mat,
       p37_priceMat(mat)
       *
-      v37_matFlow(ttot,regi,mat))
+      v37_matFlow(t,regi,mat))
 ;
 
 ***------------------------------------------------------
 *' Output material production
 ***------------------------------------------------------
-q37_prodMat(ttot,regi,mat)$((ttot.val ge cm_startyear) AND matOut(mat))..
-    v37_matFlow(ttot,regi,mat)
+q37_prodMat(t,regi,mat)$( matOut(mat) ) ..
+    v37_matFlow(t,regi,mat)
   =e=
     sum(tePrc2matOut(tePrc,opmoPrc,mat),
-      vm_outflowPrc(ttot,regi,tePrc,opmoPrc)
+      vm_outflowPrc(t,regi,tePrc,opmoPrc)
     )
 ;
 
 ***------------------------------------------------------
 *' Hand-over to CES
 ***------------------------------------------------------
-q37_mat2ue(ttot,regi,all_in)$((ttot.val ge cm_startyear) AND ppfUePrc(all_in))..
-    vm_cesIO(ttot,regi,all_in)
+q37_mat2ue(t,regi,mat,in)$( ppfUePrc(in) ) ..
+    (vm_cesIO(t,regi,in)
+    + pm_cesdata(t,regi,in,"offset_quantity"))
+    * p37_ue_share(mat,in)
   =e=
-    sum(mat2ue(mat,all_in),
-      p37_mat2ue(mat,all_in)
+    sum(mat2ue(mat,in),
+      p37_mat2ue(mat,in)
       *
-      v37_matFlow(ttot,regi,mat)
+      v37_matFlow(t,regi,mat)
     )
 ;
 
 ***------------------------------------------------------
 *' Definition of capacity constraints
 ***------------------------------------------------------
-q37_limitCapMat(ttot,regi,tePrc)$(ttot.val ge cm_startyear) ..
+q37_limitCapMat(t,regi,tePrc) ..
     sum(tePrc2opmoPrc(tePrc,opmoPrc),
-      vm_outflowPrc(ttot,regi,tePrc,opmoPrc)
+      vm_outflowPrc(t,regi,tePrc,opmoPrc)
     )
     =l=
     sum(teMat2rlf(tePrc,rlf),
-      vm_capFac(ttot,regi,tePrc) * vm_cap(ttot,regi,tePrc,rlf)
+      vm_capFac(t,regi,tePrc)
+    * vm_cap(t,regi,tePrc,rlf)
     )
 ;
 
 ***------------------------------------------------------
 *' Emission from process based industry sector (pre CC)
 ***------------------------------------------------------
-q37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc)$(ttot.val ge cm_startyear ) ..
-    v37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc)
+q37_emiPrc(t,regi,entyFe,tePrc,opmoPrc) ..
+    v37_emiPrc(t,regi,entyFe,tePrc,opmoPrc)
   =e=
-    pm_specFeDem(ttot,regi,entyFE,tePrc,opmoPrc)
+    pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc)
     *
-    sum(se2fe(entySEfos,entyFE,te),
-      pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2"))
+    sum(se2fe(entySeFos,entyFe,te),
+      pm_emifac(t,regi,entySeFos,entyFe,te,"co2"))
     *
-    vm_outflowPrc(ttot,regi,tePrc,opmoPrc)
+    vm_outflowPrc(t,regi,tePrc,opmoPrc)
 ;
 
+
 ***------------------------------------------------------
-*' Carbon capture processes can only capture as much co2 as the base process emits
+*' Carbon capture processes can only capture as much co2 as the base process and the CCS process combined emit
 ***------------------------------------------------------
-q37_limitOutflowCCPrc(ttot,regi,tePrc)$(ttot.val ge cm_startyear ) ..
-    sum((entyFE,tePrc2opmoPrc(tePrc,opmoPrc)),
-      v37_emiPrc(ttot,regi,entyFE,tePrc,opmoPrc))
-  =g=
-    sum(tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc),
-      1. / p37_captureRate(teCCPrc,opmoCCPrc)
-      *
-      vm_outflowPrc(ttot,regi,teCCPrc,opmoCCPrc)
+q37_limitOutflowCCPrc(t,regi,teCCPrc)$(
+                sum((tePrc,opmoPrc,opmoCCPrc),tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)) ) ..
+    sum(tePrc2opmoPrc(teCCPrc,opmoCCPrc),
+      vm_outflowPrc(t,regi,teCCPrc,opmoCCPrc)
     )
+  =e=
+    p37_captureRate(teCCPrc)
+    *
+    sum((entyFe,tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)),
+      v37_shareWithCC(t,regi,tePrc,opmoPrc)
+      *
+      v37_emiPrc(t,regi,entyFe,tePrc,opmoPrc)
+    )
+    +
+    p37_selfCaptureRate(teCCPrc)
+    *
+    sum((entyFe,tePrc2opmoPrc(teCCPrc,opmoCCPrc)),
+      v37_emiPrc(t,regi,entyFe,teCCPrc,opmoCCPrc))
 ;
 
 ***------------------------------------------------------
 *' Emission captured from process based industry sector
 ***------------------------------------------------------
-q37_emiCCPrc(ttot,regi,emiInd37)$((ttot.val ge cm_startyear ) AND sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
-    vm_emiIndCCS(ttot,regi,emiInd37)
+q37_emiCCPrc(t,regi,emiInd37)$(
+                sum(secInd37Prc,secInd37_2_emiInd37(secInd37Prc,emiInd37)) ) ..
+    vm_emiIndCCS(t,regi,emiInd37)
   =e=
     sum((secInd37_2_emiInd37(secInd37Prc,emiInd37),
          secInd37_tePrc(secInd37Prc,tePrc),
          tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)),
-      vm_outflowPrc(ttot,regi,teCCPrc,opmoCCPrc)
+      vm_outflowPrc(t,regi,teCCPrc,opmoCCPrc)
     )
 ;
 
+*' @stop
 *** EOF ./modules/37_industry/subsectors/equations.gms

@@ -66,7 +66,7 @@ You can start a standalone model in the same manner as the main REMIND model by 
 
 There are a just a couple minor differences:
 
-**scenario-config**: it is recommended to create a new .csv file tailored to your model, including the following:
+**scenario-config**: it is recommended to create a new `.csv` file tailored to your model, including the following:
 * Add a column named **model** and set this to your standalone model's filepath (e.g. standalone/NewModel.gms). This tells the start_functions to run the standalone model instead of main.gms. 
 * Add a column named **output** and set this to your new reporting file(s) (e.g. reporting_NewModel,validationSummary)
 * **IF** running with start.R, edit **default.cfg** instead: set **cfg$model** to your model's filepath and **cfg$output** to your reporting file (e.g. c("reporting_NewModel","validationSummary"))

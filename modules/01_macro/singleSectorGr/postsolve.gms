@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -50,7 +50,7 @@ loop ((cesLevel2cesIO(counter,in),cesOut2cesIn(in,in2),cesOut2cesIn2(in2,in3)),
 *** compute marginal rate of substitution between primary production factors as
 *** ratio of CES prices provides the amount of in2 needed to subsitute one unit
 *** of in to generate the same economic value
-loop ((ttot,regi,cesOut2cesIn(out,ppfen(in)),cesOut2cesIn2(out,in2))$(
+loop ((ttot,regi,cesOut2cesIn(out,ppfEn(in)),cesOut2cesIn2(out,in2))$(
                                         o01_CESderivatives(ttot,regi,"inco",in2) ),
   o01_CESmrs(ttot,regi,in,in2)$(o01_CESderivatives(ttot,regi,"inco",in2) gt 0)
   = o01_CESderivatives(ttot,regi,"inco",in)

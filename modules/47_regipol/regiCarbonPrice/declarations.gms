@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -23,7 +23,7 @@ Parameter
 *** parameters to track regipol emissions calculation
 Parameters
   p47_emiTargetMkt(ttot,all_regi,emiMktExt,emi_type_47)            "CO2 or GHG Emissions per emission market used for target level [GtC]"
-  p47_emiTarget_grossEnCO2_noBunkers_iter(iteration,ttot,all_regi) "parameter to save value of gross energy emissions target over iterations to check whether values converge"
+  p47_emiTargetMkt_iter(iteration,ttot,all_regi,emiMktExt,emi_type_47) "parameter to save value of CO2 or GHG Emissions per emission market used for target level [GtC]"
 ;
 
 ***--------------------------------------------------
@@ -31,7 +31,18 @@ Parameters
 ***--------------------------------------------------
 $ifThen.emiMkt not "%cm_emiMktTarget%" == "off" 
 Parameter
+
+$ifThen.emiMktTargetType "%cm_emiMktTarget%" == "nzero" 
+  pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) "region emissions target [GtCO2 or GtCO2eq]" / 
+    2020.2030.EU27_regi.all.year.netGHG_LULUCFGrassi_intraRegBunker 2.221  !! European Union 2030 GHG target
+    2020.2030.DEU.all.year.netGHG_noLULUCF_noBunkers 0.44                  !! Germany 2030 GHG target
+    2035.(2050.EU27_regi,2045.DEU).all.year.netGHG_LULUCFGrassi 0.001      !! European Union and Germany 2050 GHG_LULUCFGrassi target
+    2020.2050.(JPN,UKI,USA).all.year.netGHG 0.001                          !! Japan, UK and USA 2050 GHG target
+    2020.(2060.CHA,2070.IND).all.year.netCO2 0.001                         !! China 2060 and India 2070 CO2 target
+  /
+$else.emiMktTargetType
   pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) "region emissions target [GtCO2 or GtCO2eq]" / %cm_emiMktTarget% /
+$endif.emiMktTargetType
 
 *** Initialization parameters (load data from the gdx)
   p47_taxemiMkt_init(ttot,all_regi,emiMkt)  "emiMkt CO2eq prices loaded from ref gdx, in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
@@ -42,6 +53,7 @@ Parameter
   p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktCurrent across iterations  [GtCO2 or GtCO2eq]"
   pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt)    "emissions in reference year 2005, used for calculating target deviation of year targets [GtCO2 or GtCO2eq]"
   pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktTarget_dev across iterations (1 is 100%)"
+  pm_emiMktTarget_tolerance(ext_regi)                "tolerance for regipol emission target deviations convergence [#]"
 
 *** Parameters necessary to calculate the emission tax rescaling factor
   p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)     "auxiliary parameter to save the slope corresponding to the observed mitigation derivative regarding to co2tax level changes from the two previous iterations [#]"
@@ -49,11 +61,13 @@ Parameter
   p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi)    "auxiliary parameter to store reference iteration used for calculating slope of current mititgation cost [#]"
   pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) "multiplicative tax rescale factor that rescales emiMkt carbon price from iteration to iteration to reach regipol targets [%]"
   p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugging purposes [%]"
+  p47_clampedRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "auxiliary parameter to save the slope value before clamping. Useful for debugging purposes [#]"
+  p47_dampedFactorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "auxiliary parameter to save the rescale factor value before dampening. Useful for debugging purposes [#]"
 
 *** Parameters necessary to define the CO2 tax curve shape   
   p47_targetConverged(ttot,ext_regi)                 "boolean to store if emission target has converged [0 or 1]"
   p47_targetConverged_iter(iteration,ttot,ext_regi)  "parameter to save p47_targetConverged across iterations [0 or 1]"
-  p47_allTargetsConverged(ext_regi)                  "boolean to store if all emission targets converged at least once [0 or 1]"
+  pm_allTargetsConverged(ext_regi)                  "boolean to store if all emission targets converged at least once [0 or 1]"
   p47_allTargetsConverged_iter(iteration,ext_regi)   "parameter to save p47_allTargetsConverged across iterations [0 or 1]"
   p47_firstTargetYear(ext_regi)                      "first year with a pre defined policy emission target in the region [year]"
   p47_lastTargetYear(ext_regi)                       "last year with a pre defined policy emission target in the region [year]"
@@ -98,9 +112,14 @@ Parameter
   p47_implicitQttyTargetTaxRescale_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) "rescale factor for current implicit quantity target tax after the given iteration"    
   p47_implicitQttyTargetCurrent_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)    "current iteration total value for an specific quantity target per iteration"   
 
+$ifThen.cm_implicitQttyTargetType "%cm_implicitQttyTargetType%" == "config"
   pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)  "quantity target [absolute: TWa or GtC; or percentage: 0.1]"  / %cm_implicitQttyTarget% /
-
-  pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup)  "1 (one) if there is a hard bound on the model that does not allow the tax to change further the quantity"
+$else.cm_implicitQttyTargetType
+  pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)  "quantity target [absolute: TWa or GtC; or percentage: 0.1]"
+  p47_implicitQttyTargetScenario(qttyTargetScenario,ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) "hard-coded quantity scenarios types [absolute: TWa or GtC; or percentage: 0.1]"
+$endif.cm_implicitQttyTargetType
+ 
+  pm_implicitQttyTarget_isLimited(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)  "1 (one) if there is a hard bound on the model that does not allow the tax to change further the quantity"
 
   p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) "initial year of quantity target for a given region [year]"
 
@@ -225,6 +244,21 @@ Parameter
   p47_exoCo2tax(ext_regi,ttot)   "Exogenous CO2 tax level. Overrides carbon prices in pm_taxCO2eq, only if explicitly defined. Regions and region groups allowed. Format: '<regigroup>.<year> <value>, <regigroup>.<year2> <value2>' or '<regigroup>.(<year1> <value>,<year2> <value>'). [$/tCO2]" / %cm_regiExoPrice% /
 ;
 $endIf.regiExoPrice
+
+
+***---------------------------------------------------------------------------
+*** Total SE per PE calculation used for setting bounds
+***---------------------------------------------------------------------------
+
+Variable
+v47_prodSEtotal(ttot,all_regi,all_enty,all_enty) "total SE production per PE and SE over all technologies"
+;
+
+Equation
+q47_prodSEtotal(ttot,all_regi,all_enty,all_enty) "calculate total SE production per PE and SE over all technologies"
+;
+
+
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/declarations.gms

@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -35,9 +35,11 @@ choose_slurmConfig <- function(identifier = FALSE, flags = NULL) {
 
     if (! identifier %in% paste(seq(1:16))) {
       wasselect <- TRUE
-      cat("\nCurrent cluster utilization:\n")
-      system("sclass")
-      cat("\n")
+      if (! Sys.which("sclass") == "") {
+        cat("\nCurrent cluster utilization:\n")
+        system("sclass")
+        cat("\n")
+      }
       cat("\nPlease choose the SLURM configuration for your submission:\n")
       cat("    QOS             tasks per node   suitable for\n=======================================================================\n")
       #cat(paste(1:length(modes), modes, sep=": " ),sep="\n")

@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -25,7 +25,7 @@ runGamsCompile <- function(modelFile, cfg, interactive = TRUE, testmode = FALSE)
   if (! testmode) {
     unlink(file.path("modules", c("45_carbonprice", "46_carbonpriceRegi"), "NDC", "input", "pm_BAU_reg_emi_wo_LU_bunkers.cs4r"))
     updateSets(cfg)
-    updateInputData(cfg, verbose = FALSE)
+    updateInputData(cfg, gamsCompile = TRUE)
   }
   lucode2::manipulateConfig(tmpModelFile, cfg$gms)
   exitcode <- system2(

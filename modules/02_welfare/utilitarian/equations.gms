@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -6,6 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/02_welfare/utilitarian/equations.gms
 
+*' @equations
 ***---------------------------------------------------------------------------
 *' The objective of the optimization is to maximize the total discounted intertemporal utility.
 *' It is summed over all regions. 
@@ -31,19 +32,19 @@ q02_welfare(regi) ..
     / ((1 + pm_prtp(regi)) ** (pm_ttot_val(ttot) - 2005))
     * ( ( pm_pop(ttot,regi) 
         * ( ( ( ( vm_cons(ttot,regi)
-	        / pm_pop(ttot,regi)
-		)
-	     ** (1 - 1 / pm_ies(regi))
-	      - 1
-	      )
-	    / (1 - 1 / pm_ies(regi))
-	    )$( pm_ies(regi) ne 1 )
-	  + log(vm_cons(ttot,regi) / pm_pop(ttot,regi))$( pm_ies(regi) eq 1 )
+            / pm_pop(ttot,regi)
+        )
+         ** (1 - 1 / pm_ies(regi))
+          - 1
+          )
+        / (1 - 1 / pm_ies(regi))
+        )$( pm_ies(regi) ne 1 )
+      + log(vm_cons(ttot,regi) / pm_pop(ttot,regi))$( pm_ies(regi) eq 1 )
           )
         )
 $ifthen %cm_INCONV_PENALTY% == "on"
       - v02_inconvPen(ttot,regi)
-      - v02_inconvPenCoalSolids(ttot,regi)
+      - v02_inconvPenSolidsBuild(ttot,regi)
 $endif
 $ifthen "%cm_INCONV_PENALTY_FESwitch%" == "on"
         !! inconvenience cost for fuel switching in FE between fossil,
@@ -55,9 +56,13 @@ $ifthen "%cm_INCONV_PENALTY_FESwitch%" == "on"
                                 AND sector2emiMkt(sector,emiMkt) 
                                 AND (entySeBio(entySe) OR  entySeFos(entySe)) ),
           v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
-	+ v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
-	)
-      / 1e3	
+          + v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+          )
+          / 1e3	!! heuristically determined rescaling factor so the dampening doesn't dominate the transformation
+$endif
+$ifthen not "%cm_seFeSectorShareDevMethod%" == "off"
+        !! penalizing secondary energy share deviation in sectors  
+        - vm_penSeFeSectorShareDevCost(ttot,regi)
 $endif
       )
     )
@@ -68,23 +73,25 @@ $endif
 ***---------------------------------------------------------------------------
 $IFTHEN.INCONV %cm_INCONV_PENALTY% == "on"
 q02_inconvPen(t,regi)$(t.val > 2005)..
-    v02_inconvPen(t,regi)
+  v02_inconvPen(t,regi)
   =g=
-*' local air pollution for all entySe production except for coal solids (=sesofos), which is treated separately (see below)
-    SUM(pe2se(enty,entySe,te)$(NOT sameas(entySe,"sesofos")),
-        p02_inconvpen_lap(t,regi,te) * (vm_prodSe(t,regi,enty,entySe,te))
-    )
+*' local air pollution / inconvenience for all entySe production except for coaltr and biotrmod solids, wich are treated separately (see below)
+  SUM(pe2se(enty,entySe,te)$( NOT (sameas(te,"coaltr") OR sameas(te,"biotrmod") ) ),
+    p02_inconvpen_lap(t,regi,te) * vm_prodSe(t,regi,enty,entySe,te)
+  )
 ;
 
-q02_inconvPenCoalSolids(t,regi)$(t.val > 2005)..
-    v02_inconvPenCoalSolids(t,regi)
+q02_inconvPenSolidsBuild(t,regi)$(t.val > 2005)..
+  v02_inconvPenSolidsBuild(t,regi)
   =g=
-*' local air pollution for coal: inconvinience penalty applies only for buildings use; slack variable ensures that v02_inconvPen can stay > 0 
-    p02_inconvpen_lap(t,regi,"coaltr") * (vm_prodSe(t,regi,"pecoal","sesofos","coaltr") 
-  - (vm_cesIO(t,regi,"fesoi") + pm_cesdata(t,regi,"fesoi","offset_quantity")))
-  + v02_sesoInconvPenSlack(t,regi)
+*' Local air pollution and inconvenience of using coal and (modern) biomass: inconvenience penalty applies only for use in residential/buildings
+*' The inconvenience of using traditional biomass are accounted for in v02_inconvPen, and thus additional to the penalty on using solids in residential
+  p02_inconvpen_lap(t,regi,"coaltr") * vm_demFeSector(t,regi,"sesofos","fesos","build","ES")
+  + p02_inconvpen_lap(t,regi,"biotrmod") * vm_demFeSector(t,regi,"sesobio","fesos","build","ES")
 ;
 $ENDIF.INCONV
+
+*' @stop
 
 *** small inconvenience penalty for increasing/decreasing biomass/synfuel use
 *** between two time steps in buildings and industry and emissison markets

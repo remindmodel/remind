@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -234,7 +234,7 @@ p70_water_output(ttot,regi,"Water Consumption|Electricity|Solar; km3/yr;") =
 ;
 
 p70_water_output(ttot,regi,"Water Consumption|Electricity|Wind; km3/yr;") = 
-  sum(te_elcool70$(sameas(te_elcool70,"wind")), 
+  sum(te_elcool70$(sameas(te_elcool70,"windon")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
@@ -426,7 +426,7 @@ p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Solar; km3/yr;") =
 ;
 
 p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Wind; km3/yr;") = 
-  sum(te_elcool70$(sameas(te_elcool70,"wind")), 
+  sum(te_elcool70$(sameas(te_elcool70,"windon")), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 

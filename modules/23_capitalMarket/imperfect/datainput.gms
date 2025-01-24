@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -9,13 +9,14 @@
 *** ML 20181220* substitution elasticity and time preference adjusted to get initial consumption that matches historic consumption shares
 *** be careful with changing time preferences as this parameter is used also outside the welfare function
 
-parameter pm_ies(all_regi)        "intertemporal elasticity of substitution"
+parameter p23_ies_differentiated(all_regi)        "intertemporal elasticity of substitution"
 /
 $ondelim
 $include "./modules/23_capitalMarket/imperfect/input/pm_ies.cs4r"
 $offdelim
 /
 ;
+pm_ies(regi) = p23_ies_differentiated(regi);
 
 parameter p23_prtp(all_regi)       " regionally differentiated pure rate of time preference"
 /

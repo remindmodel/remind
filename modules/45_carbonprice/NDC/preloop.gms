@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -18,6 +18,8 @@ pm_taxCO2eq(t,regi)$(t.val gt p45_lastNDCyear(regi))
         !! global, weight going from 0 in NDC target year to 1 in and after 2100
       + p45_taxCO2eqGlobal2030          * p45_taxCO2eqYearlyIncrease**(t.val-2030)                    * (min(p45_taxCO2eqConvergenceYear,t.val) - p45_lastNDCyear(regi))
       )/(p45_taxCO2eqConvergenceYear - p45_lastNDCyear(regi));
+
+pm_taxCO2eq(t,regi) = max(pm_taxCO2eq(t,regi), p45_taxCO2eq_bau(t,regi));
 
 display pm_taxCO2eq;
 

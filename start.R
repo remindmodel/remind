@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -167,7 +167,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       # for debug, testOneRegi, quick: save original settings to cfg$backup; restore them from there if not set.
       if ("--debug" %in% flags) {
         if (is.null(cfg[["backup"]][["cm_nash_mode"]])) cfg$backup$cm_nash_mode <- cfg$gms$cm_nash_mode
-        cfg$gms$cm_nash_mode <- "debug"
+        cfg$gms$cm_nash_mode <- 1
       } else {
         if (! is.null(cfg[["backup"]][["cm_nash_mode"]])) cfg$gms$cm_nash_mode <- cfg$backup$cm_nash_mode
       }
@@ -243,11 +243,15 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     slurmConfig <- "direct"
     message("\nTrying to compile ", nrow(scenarios), " selected runs...")
     lockID <- gms::model_lock()
+    if (length(missingInputData()) > 0) {
+      # try to fix missing input data, but only once at the beginning, not for every scenario
+      updateInputData(readDefaultConfig("."), remindPath = ".", gamsCompile = FALSE)
+    }
   }
   if (! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% flags)
       | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
     slurmConfig <- choose_slurmConfig(flags = flags)
-    if ("--quick" %in% flags) slurmConfig <- combine_slurmConfig(slurmConfig, "--time=60")
+    if ("--quick" %in% flags && ! slurmConfig == "direct") slurmConfig <- combine_slurmConfig(slurmConfig, "--time=60")
     if (any(c("--debug", "--quick", "--testOneRegi") %in% flags) && ! length(config.file) == 0) {
       message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
     }
@@ -265,11 +269,11 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
 
     # testOneRegi settings
     if (any(c("--quick", "--testOneRegi") %in% flags) & length(config.file) == 0) {
-      cfg$title            <- "testOneRegi"
+      cfg$title            <- scen
       cfg$description      <- "A REMIND run with default settings using testOneRegi"
       cfg$gms$optimization <- "testOneRegi"
       cfg$output           <- NA
-      cfg$results_folder   <- "output/testOneRegi"
+      cfg$results_folder   <- paste0("output/", cfg$title)
       # delete existing Results directory
       cfg$force_replace    <- TRUE
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
@@ -297,10 +301,6 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
         cfg$slurmConfig      <- slurmConfig
         if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
       }
-      # Make sure all python requirements are installed
-      if (cfg$pythonEnabled == "on") {
-        piamenv::updatePythonVirtualEnv()
-      }
       # Directly start runs that have a gdx file location given as path_gdx... or where this field is empty
       gdx_specified <- grepl(".gdx", cfg$files2export$start[path_gdx_list], fixed = TRUE)
       gdx_na <- is.na(cfg$files2export$start[path_gdx_list])
@@ -312,7 +312,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     }
 
     if ("--debug" %in% flags) {
-      cfg$gms$cm_nash_mode <- "debug"
+      cfg$gms$cm_nash_mode <- 1
       cfg$slurmConfig      <- slurmConfig
     }
 

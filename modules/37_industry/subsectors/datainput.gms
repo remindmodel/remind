@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/subsectors/datainput.gms
 
-vm_emiIndBase.l(ttot,regi,entyFE,secInd37) = 0;
+vm_emiIndBase.l(ttot,regi,entyFe,secInd37) = 0;
 
 Parameters
 
@@ -66,7 +66,59 @@ pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2035) = 1.7;
 pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2040) = 2.0;
 
 *** abatement parameters for industry CCS MACs
-$include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
+
+loop ((ttot,steps)$( ttot.val ge 2005 ),
+
+  sm_tmp = steps.val * sm_dmac / sm_c_2_co2;   !! CO2 price at MAC step [$/tCO2] 
+
+$ifthen NOT "%cm_Industry_CCS_markup%" == "off"
+  sm_tmp = sm_tmp / %cm_Industry_CCS_markup%;
+$endif
+
+  !! short-term (until 2025)
+  if (ttot.val le 2025,
+
+    pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge  sm_D2005_2_D2017 * 95 ) = 0.63;
+    pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge sm_D2005_2_D2017 *133 ) = 0.756;
+
+    pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 *78 ) = 0.121;
+    pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 *80 ) = 0.572;
+
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
+    pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge sm_D2005_2_D2017 *59 ) = 0.117;
+    pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge sm_D2005_2_D2017 *82 ) = 0.234;
+$endif.cm_subsec_model_steel
+
+  !! long-term (from 2030 on)
+  else
+
+    if (cm_optimisticMAC eq 1,
+
+      !! logarithmic curve through 0.75 @ $50 and 0.9 @ $150, limited to 0.95
+      pm_abatparam_Ind(ttot,regi,emiInd37,steps)$( 
+                                              YES
+        $$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
+                                          AND NOT sameas(emiInd37,"co2steel")
+        $$endif.cm_subsec_model_steel
+                                                                              )
+      = max(0, min(0.95, 0.2159 + 0.1365 * log(sm_tmp)));
+
+    else
+      pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge  sm_D2005_2_D2017 * 54 ) = 0.702;
+      pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge sm_D2005_2_D2017 * 133 ) = 0.756;
+
+      pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 * 46 ) = 0.363;
+      pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 * 78 ) = 0.484;
+      pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 *80 )  = 0.572;
+
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
+      pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge sm_D2005_2_D2017 *48 ) = 0.117;
+      pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge sm_D2005_2_D2017 *62 ) = 0.275;
+$endif.cm_subsec_model_steel
+    );
+  );
+);
+
 
 if (cm_IndCCSscen eq 1,
   if (cm_CCS_cement eq 1,
@@ -110,63 +162,81 @@ else
   execute_loadpoint "input_ref.gdx" p37_cesIO_baseline = vm_cesIO.l;
 );
 
-sm_tmp2 = 0.75;   !! maximum "efficiency gain", from 2015 baseline value to
-                  !! thermodynamic limit
-sm_tmp  = 2050;   !! period in which closing could be achieved
+Parameter
+  p37_energy_limit_def(ttot,ext_regi,all_in)   "input data for calculating p37_energy_limit_slope"
+  /
+    $$ifthen.cm_ind_energy_limit "%cm_ind_energy_limit%" == "default"
 
-*** Specific energy demand limits for steel and cement relative to thermodynamic limit from input data
-loop (industry_ue_calibration_target_dyn37(out)$( pm_energy_limit(out) ),
-  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
-  = ( ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
-      / p37_cesIO_baseline("2015",regi,out)
-      )
-    - pm_energy_limit(out)
-    )
-  * exp((2015 - ttot.val) / ((2015 - sm_tmp) / log(1 - sm_tmp2)))
-  + pm_energy_limit(out);
+    2050 . GLO . (ue_cement, ue_steel_primary, ue_steel_secondary)   0.75
+    2100 . GLO . (ue_chemicals, ue_otherInd)                         0.90
 
-  !! To account for strong 2015-20 drops due to imperfect 2020 energy data,
-  !! use the lower of the calculated curve, or 95 % of the baseline specific
-  !! energy demand
-  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
-  = min(
-      p37_energy_limit_slope(ttot,regi,out),
-      ( 0.95
-      * ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline(ttot,regi,in))
-        / p37_cesIO_baseline(ttot,regi,out)
-	)
-      )
-    );
+    $$elseif.cm_ind_energy_limit "%cm_ind_energy_limit%" == "manual"
+
+    %cm_ind_energy_limit_manual%
+
+    $$else.cm_ind_energy_limit
+    $$abort Unknown cm_ind_energy_limit value
+    $$endif.cm_ind_energy_limit
+  /
+;
+
+if (smax((ttot,ext_regi,in)$( NOT industry_ue_calibration_target_dyn37(in) ),
+      p37_energy_limit_def(ttot,ext_regi,in)),
+  execute_unload "abort.gdx";
+  display p37_energy_limit_def;
+  abort "p37_energy_limit_def defined for element not in industry_ue_calibration_target_dyn37";
 );
 
-*** Specific energy demand limits for other industry and chemicals in TWa/trUSD
-*** exponential decrease of minimum specific energy demand per value added up to 90% by 2100
-sm_tmp2 = 0.9;   !! maximum "efficiency gain" relative to 2015 baseline value
-sm_tmp  = 2100;   !! period in which closing could be achieved
-
-loop (industry_ue_calibration_target_dyn37(out)$( sameas(out,"ue_chemicals") OR  sameas(out,"ue_otherInd")),
-  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
-  = ( ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
-      / p37_cesIO_baseline("2015",regi,out)
-      )
-    )
-  * exp((2015 - ttot.val) / ((2015 - sm_tmp) / log(1 - sm_tmp2)));
-
-  !! To account for strong 2015-20 drops due to imperfect 2020 energy data,
-  !! use the lower of the calculated curve, or 95 % of the baseline specific
-  !! energy demand
-  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
-  = min(
-      p37_energy_limit_slope(ttot,regi,out),
-      ( 0.95
-      * ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline(ttot,regi,in))
-        / p37_cesIO_baseline(ttot,regi,out)
-	)
-      )
+loop (industry_ue_calibration_target_dyn37(out),
+  loop (ext_regi,
+    if (sum(ttot, p37_energy_limit_def(ttot,ext_regi,out) ne 0) gt 1,
+      execute_unload "abort.gdx"
+      display p37_energy_limit_def;
+      abort "more than one convergence point defined for some region/subsector combination in p37_energy_limit_def";
     );
-);
+  );
 
-display p37_energy_limit_slope;
+  loop ((ext_regi,regi)$(
+                    (sameas(regi,ext_regi) OR regi_group(ext_regi,regi))
+                AND smax(ttot, p37_energy_limit_def(ttot,ext_regi,out)) ne 0 ),
+    !! maximum "efficiency gain", from 2015 baseline value to theoretical limit
+    sm_tmp2 = smax(ttot, p37_energy_limit_def(ttot,ext_regi,out));
+    !! period in which closing could be achieved
+    loop (ttot, sm_tmp$( p37_energy_limit_def(ttot,ext_regi,out) ) = ttot.val);
+
+    !! calculate slope
+    p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+    = ( max(
+          !! use the larger of 2015/2020 specific energy demand
+          ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
+          / p37_cesIO_baseline("2015",regi,out)
+          ),
+          ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2020",regi,in))
+          / p37_cesIO_baseline("2020",regi,out)
+          )
+        )
+      - pm_energy_limit(out)
+      )
+    * exp((2015 - ttot.val) / ((2015 - sm_tmp) / log(1 - sm_tmp2)))
+    + pm_energy_limit(out);
+
+    !! To account for strong 2015–20 drops due to imperfect 2020 energy data,
+    !! use the lower of the calculated curve, or 95 % of the baseline specific
+    !! energy demand.
+    p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+    = min(
+        p37_energy_limit_slope(ttot,regi,out),
+        ( 0.95
+        * ( sum(ces_eff_target_dyn37(out,in),
+              p37_cesIO_baseline(ttot,regi,in)
+            )
+          / p37_cesIO_baseline(ttot,regi,out)
+          )
+        )
+      );
+  );
+);
+display p37_energy_limit_def, p37_energy_limit_slope;
 $endif.no_calibration
 
 *** CCS for industry is off by default
@@ -230,10 +300,6 @@ p37_clinker_cement_ratio(t,regi)
     )
   * (min(t.val, 2100) - 2005)
   / (2100             - 2005);
-
-*** Cement demand reduction is implicit in the production function, so no extra
-*** costs have to be calculated.
-pm_CementDemandReductionCost(ttot,regi) = 0;
 
 *** Exogenous share of carbon in chemical feedstock that is embeded into plastics
 ** calculated based on energy flows in REMIND, plastics production from (Geyer et.al., 2017) and stoichiometric calculations
@@ -543,12 +609,23 @@ $offdelim
 
 *' load baseline industry ETS solids demand
 if (cm_startyear ne 2005,   !! not a BAU scenario
-execute_load "input_ref.gdx", vm_demFEsector;
+execute_load "input_ref.gdx", vm_demFeSector_afterTax;
   p37_BAU_industry_ETS_solids(t,regi)
-  = sum(se2fe(entySE,"fesos",te),
-      vm_demFEsector.l(t,regi,entySE,"fesos","indst","ETS")
+  = sum(se2fe(entySe,"fesos",te),
+      vm_demFeSector_afterTax.l(t,regi,entySe,"fesos","indst","ETS")
     );
 );
+
+* Define carbon capture and storage share in waste incineration emissions
+* capture rate increases linearly from zero in 2025 to value the set in the switch for the defined year, and it is kept constant for years afterwards
+p37_regionalWasteIncinerationCCSMaxShare(ttot,all_regi) = 0;
+$ifthen.cm_wasteIncinerationCCSshare not "%cm_wasteIncinerationCCSshare%" == "off"
+loop((ttot,ext_regi)$p37_wasteIncinerationCCSMaxShare(ttot,ext_regi),
+  loop(regi$regi_groupExt(ext_regi,regi),
+    p37_regionalWasteIncinerationCCSMaxShare(t,regi)$((t.val gt 2025)) = min(p37_wasteIncinerationCCSMaxShare(ttot,ext_regi), (p37_wasteIncinerationCCSMaxShare(ttot,ext_regi)/(ttot.val -  2025))*(t.val-2025));
+  );
+);
+$endIf.cm_wasteIncinerationCCSshare
 
 *** ---------------------------------------------------------------------------
 ***        2. Process-Based
@@ -574,7 +651,10 @@ $endif.cm_subsec_model_steel
 !!TODO: Think about accounting of integrated plants / casting & rolling
 p37_specFeDemTarget(all_enty,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+
 !! numbers are given in MWh/t and converted to Remind units TWa/Gt with the factors after that (divided by 8.76)
+!! carbon capture mass is given in tCO2 and converted to tC after that
+
 !! reduction: 504 m^3; heat 242 m^3; conversion: x / 11.126 m^3/kg * 0.0333 MWh/kg
 p37_specFeDemTarget("feh2s","idr","h2")           = 2.23 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Rechberger et al 2020, Section 4.2 (per tDRI)
 p37_specFeDemTarget("feels","idr","h2")           = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Just before Table 1 (per tHBI)
@@ -599,14 +679,14 @@ p37_specFeDemTarget("fegas","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga
 p37_specFeDemTarget("feels","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
 p37_specFeDemTarget("fehos","bf","standard")    = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: DUMMY
 
-!! per tC for cc tech!!
-p37_specFeDemTarget("feels","bfcc","standard")    = 0.11 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Tsupari2013
-p37_specFeDemTarget("fegas","bfcc","standard")    = 0.92 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Tsupari2013 / Yun2021
+!! carbon capture FE demand is given per tCO2 and converted to per tC after that
+p37_specFeDemTarget("feels","bfcc","standard")    = 0.11 * sm_c_2_co2 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Tsupari2013
+p37_specFeDemTarget("fegas","bfcc","standard")    = 0.92 * sm_c_2_co2 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: Tsupari2013 / Yun2021
 
 !! World Steel Factsheet says no additional equipment needed --> very cheap and no energy demand
 !! IEA Steel Roadmap Fig 2.11 also shows very little additional fuel cost
-p37_specFeDemTarget("feels","idrcc","ng")         = 0.11 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc
-p37_specFeDemTarget("fegas","idrcc","ng")         = 0.92 * 3.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc
+p37_specFeDemTarget("feels","idrcc","ng")         = 0.11 * sm_c_2_co2 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc
+p37_specFeDemTarget("fegas","idrcc","ng")         = 0.92 * sm_c_2_co2 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc, but seems to be quite universal. See e.g. Rochelle 2016, who has slightly lower values.
 $endif.cm_subsec_model_steel
 
 *** --------------------------------
@@ -619,10 +699,45 @@ $endif.cm_subsec_model_steel
 
 *** --------------------------------
 
-p37_captureRate(all_te,opmoPrc) = 0.;
+p37_ue_share(all_enty,all_in) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-p37_captureRate("bfcc","standard") = 0.73; !! Source: Witecka 2023, Figure 18
-p37_captureRate("idrcc","ng")      = 0.85; !! Source: IEA Steel Roadmap Fig. 2.11
+p37_ue_share("sesteel","ue_steel_secondary") = 1.;
+p37_ue_share("prsteel","ue_steel_primary")   = 1.;
+$endif.cm_subsec_model_steel
+loop(ppfUePrc(in),
+  if(abs(sum(mat,p37_ue_share(mat,in))-1.) gt sm_eps,
+    display p37_ue_share;
+    abort "p37_ue_share must add to one for each ue";
+  );
+);
+
+*** --------------------------------
+p37_teMatShareHist(tePrc,opmoPrc,mat) = 0.;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+p37_teMatShareHist("bof","unheated","prsteel") = 1.;
+p37_teMatShareHist("eaf","sec","sesteel") = 1.;
+$endif.cm_subsec_model_steel
+loop(matFin(mat),
+  if(abs(sum((tePrc,opmoPrc),p37_teMatShareHist(tePrc,opmoPrc,mat))-1.) gt sm_eps,
+    display p37_teMatShareHist;
+    abort "p37_teMatShareHist must add to one for each matFin";
+  );
+);
+if(sum((tePrc,opmoPrc,mat)$(not matFin(mat)), p37_teMatShareHist(tePrc,opmoPrc,mat)) gt sm_eps,
+  display p37_teMatShareHist;
+  abort "p37_teMatShareHist must only be non-zero for matFin";
+);
+*** --------------------------------
+s37_shareHistFeDemPenalty = 0.6;
+*** --------------------------------
+
+p37_captureRate(all_te) = 0.;
+p37_selfCaptureRate(all_te) = 0.;
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+p37_captureRate("bfcc")  = 0.73; !! Source: Witecka 2023, Figure 18
+p37_captureRate("idrcc") = 0.85; !! Source: IEA Steel Roadmap Fig. 2.11
+p37_selfCaptureRate("bfcc")  = 0.9;
+p37_selfCaptureRate("idrcc") = 0.9;
 $endif.cm_subsec_model_steel
 
 *** --------------------------------
@@ -630,74 +745,92 @@ $endif.cm_subsec_model_steel
 p37_priceMat(all_enty) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 !! IEA STeel Roadmap Fig 1.3 Caption: Scrap price 200-300 $/t
-!! => take 250 $/t, inflation 2005 --> 2020 / 1.33
-p37_priceMat("eafscrap") = 0.188;
-p37_priceMat("bofscrap") = 0.188;
-!! Agora KSV-Rechner: 114 €/tSteel / (1.4 2005$/2023€) / (tn$ /bn t)
-p37_priceMat("ironore")  = 0.081;
-!! Agora KSV-Rechner: 154 €/tSteel / (1.4 2005$/2023€) / (tn$ /bn t)
-p37_priceMat("dripell")  = 0.110;
+!! => take 250 $/t, unit 2020$US
+p37_priceMat("eafscrap") = sm_D2020_2_D2017 * 0.250 ;
+p37_priceMat("bofscrap") = sm_D2020_2_D2017 * 0.250;
+!! Agora KSV-Rechner: 114 €2023/tSteel / (tn$ /bn t)
+p37_priceMat("ironore")  = sm_EURO2023_2_D2017 * 0.114;
+!! Agora KSV-Rechner: 154 €2023/tSteel / (tn$ /bn t)
+p37_priceMat("dripell")  = sm_EURO2023_2_D2017 * 0.154;
 $endif.cm_subsec_model_steel
 
 *** --------------------------------
 
 pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
-pm_outflowPrcIni(all_regi,all_te,opmoPrc) = 0.;
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) = 0.;
+p37_matFlowHist(tall,all_regi,mat) = 0.;
 if (cm_startyear eq 2005,
-  pm_outflowPrcIni(regi,'bof','unheated') = pm_fedemand('2005',regi,'ue_steel_primary');
-  pm_outflowPrcIni(regi,'bf','standard') = p37_specMatDem("pigiron","bof","unheated") * pm_outflowPrcIni(regi,'bof','unheated');
-  pm_outflowPrcIni(regi,'eaf','sec') = pm_fedemand('2005',regi,'ue_steel_secondary');
-  pm_outflowPrcIni(regi,'eaf','pri') = 0.;
-  pm_outflowPrcIni(regi,'idr','ng') = 0.;
-  pm_outflowPrcIni(regi,'idr','h2') = 0.;
-  pm_outflowPrcIni(regi,'bfcc','standard') = 0.;
-  pm_outflowPrcIni(regi,'idrcc','ng') = 0.;
-
   loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
-    pm_specFeDem(ttot,regi,"feh2s","idr","h2") = p37_specFeDemTarget("feh2s","idr","h2");
-    pm_specFeDem(ttot,regi,"feels","idr","h2") = p37_specFeDemTarget("feels","idr","h2");
 
-    pm_specFeDem(ttot,regi,"fegas","idr","ng") = p37_specFeDemTarget("fegas","idr","ng");
-    pm_specFeDem(ttot,regi,"feels","idr","ng") = p37_specFeDemTarget("feels","idr","ng");
+    !! 2nd stage tech
+    loop(mat2ue(mat,in),
+      p37_matFlowHist(ttot,regi,mat) = pm_fedemand(ttot,regi,in) / p37_mat2ue(mat,in) * p37_ue_share(mat,in);
+      loop(tePrc2matOut(tePrc,opmoPrc,mat),
+        pm_outflowPrcHist(ttot,regi,tePrc,opmoPrc) = p37_matFlowHist(ttot,regi,mat) * p37_teMatShareHist(tePrc,opmoPrc,mat);
+      );
+    );
 
-    pm_specFeDem(ttot,regi,"fegas","bfcc","standard") = p37_specFeDemTarget("fegas","bfcc","standard");
-    pm_specFeDem(ttot,regi,"feels","bfcc","standard") = p37_specFeDemTarget("feels","bfcc","standard");
+    !! 1st stage tech
+    !! TODO: simply do this loop several times to fill more than two stages?
+    loop((tePrc1,opmoPrc1,mat)$(
+                    sum((tePrc2,opmoPrc2), tePrc2matIn(tePrc2,opmoPrc2,mat))
+                AND tePrc2matOut(tePrc1,opmoPrc1,mat)),
+      p37_matFlowHist(ttot,regi,mat)
+        = sum((tePrc2matOut(tePrc1,opmoPrc1,mat),
+               tePrc2matIn(tePrc2,opmoPrc2,mat)),
+            !!TODO: enable p37_teMatShareHist here, too (has to be defined, though)
+            p37_specMatDem(mat,tePrc2,opmoPrc2) * pm_outflowPrcHist(ttot,regi,tePrc2,opmoPrc2) );
+      pm_outflowPrcHist(ttot,regi,tePrc1,opmoPrc1) = p37_matFlowHist(ttot,regi,mat);
+    );
 
-    pm_specFeDem(ttot,regi,"fegas","idrcc","ng") = p37_specFeDemTarget("fegas","idrcc","ng");
-    pm_specFeDem(ttot,regi,"feels","idrcc","ng") = p37_specFeDemTarget("feels","idrcc","ng");
+    loop((entyFe,ppfUePrc),
+      p37_demFeTarget(ttot,regi,entyFe,ppfUePrc) = sum(tePrc2ue(tePrc,opmoPrc,ppfUePrc), pm_outflowPrcHist(ttot,regi,tePrc,opmoPrc) * p37_specFeDemTarget(entyFe,tePrc,opmoPrc));
+      p37_demFeActual(ttot,regi,entyFe,ppfUePrc) = sum((fe2ppfen_no_ces_use(entyFe,all_in),ue2ppfenPrc(ppfUePrc,all_in)), pm_fedemand(ttot,regi,all_in) * sm_EJ_2_TWa);
+    );
 
-    pm_specFeDem(ttot,regi,"fesos","bf","standard") = pm_fedemand(ttot,regi,'feso_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
-    pm_specFeDem(ttot,regi,"fehos","bf","standard") = pm_fedemand(ttot,regi,'feli_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
-    pm_specFeDem(ttot,regi,"fegas","bf","standard") = pm_fedemand(ttot,regi,'fega_steel')         * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
-    pm_specFeDem(ttot,regi,"feels","bf","standard") = pm_fedemand(ttot,regi,'feel_steel_primary') * sm_EJ_2_TWa / ( p37_specMatDem("pigiron","bof","unheated") * pm_fedemand(ttot,regi,'ue_steel_primary') );
+    p37_demFeRatio(ttot,regi,ppfUePrc) = sum(entyFe,p37_demFeActual(ttot,regi,entyFe,ppfUePrc)) / sum(entyFe,p37_demFeTarget(ttot,regi,entyFe,ppfUePrc));
 
-    pm_specFeDem(ttot,regi,"feels","eaf","sec") = pm_fedemand(ttot,regi,'feel_steel_secondary') * sm_EJ_2_TWa / pm_fedemand(ttot,regi,'ue_steel_secondary');
-    pm_specFeDem(ttot,regi,"feels","eaf","pri") = pm_specFeDem(ttot,regi,"feels","eaf","sec");
+    loop((tePrc2opmoPrc(tePrc,opmoPrc),regi,entyFe)$(p37_specFeDemTarget(entyFe,tePrc,opmoPrc) gt 0.01*sm_eps),
+      if((pm_outflowPrcHist(ttot,regi,tePrc,opmoPrc) gt sm_eps),
+        pm_specFeDem(ttot,regi,entyFe,tePrc,opmoPrc)
+          = p37_specFeDemTarget(entyFe,tePrc,opmoPrc)
+          * sum(tePrc2ue(tePrc,opmoPrc,in),
+              p37_demFeActual(ttot,regi,entyFe,in)
+              / p37_demFeTarget(ttot,regi,entyFe,in));
+      else
+        pm_specFeDem(ttot,regi,entyFe,tePrc,opmoPrc)
+          = p37_specFeDemTarget(entyFe,tePrc,opmoPrc)
+          * (1.
+             + s37_shareHistFeDemPenalty
+             * (sum(tePrc2ue(tePrc,opmoPrc,ppfUePrc), p37_demFeRatio(ttot,regi,ppfUePrc))
+               -1.));
+      );
+    );
+
   );
 
   !! loop over other years and blend
-  loop(entyFeStat(all_enty),
-    loop(tePrc(all_te),
-      loop(opmoPrc,
-        if( (p37_specFeDemTarget(all_enty,all_te,opmoPrc) gt 0.),
-          loop(ttot$(ttot.val > 2020),
-            !! fedemand in excess of BAT halves until 2055
-            !! gams cannot handle float exponents, so pre-compute 0.5^(1/(2055-2020)) = 0.9804
-            pm_specFeDem(ttot,regi,all_enty,all_te,opmoPrc)
-            = p37_specFeDemTarget(all_enty,all_te,opmoPrc)
-            + (pm_specFeDem("2020",regi,all_enty,all_te,opmoPrc) - p37_specFeDemTarget(all_enty,all_te,opmoPrc))
-            * power(0.9804, ttot.val - 2020) ;
-          );
-        );
+  loop((entyFeStat(all_enty), tePrc(all_te), opmoPrc),
+    if( (p37_specFeDemTarget(all_enty,all_te,opmoPrc) gt 0.),
+      loop(ttot$(ttot.val > 2020),
+        !! fedemand in excess of BAT halves until 2055
+        !! gams cannot handle float exponents, so pre-compute 0.5^(1/(2055-2020)) = 0.9804
+        pm_specFeDem(ttot,regi,all_enty,all_te,opmoPrc)
+        = p37_specFeDemTarget(all_enty,all_te,opmoPrc)
+        + (pm_specFeDem("2020",regi,all_enty,all_te,opmoPrc) - p37_specFeDemTarget(all_enty,all_te,opmoPrc))
+        * power(0.9804, ttot.val - 2020) ;
       );
     );
   );
+
 );
 
 if (cm_startyear gt 2005,
-  Execute_Loadpoint 'input_ref' pm_specFeDem = pm_specFeDem;
+  Execute_Loadpoint "input_ref" pm_specFeDem = pm_specFeDem;
 );
-$endif.cm_subsec_model_steel
+
+if (cm_startyear gt 2005,
+  execute_load "input_ref.gdx" v37_plasticWaste.l = v37_plasticWaste.l;
+);
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms

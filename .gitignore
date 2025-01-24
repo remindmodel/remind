@@ -19,6 +19,7 @@
 
 # Ignore everything in "input" folders
 input/
+!/scripts/input/
 
 # Ignore everything in root "output" folder
 /output/
@@ -58,6 +59,10 @@ core/magicc/
 !core/magicc/magicc_scen_450.inc
 !core/magicc/magicc_scen_550.inc
 
+# ignore climate assessment data
+scripts/utils/climate_assessment/PYTHONLOG*.out
+scripts/utils/climate_assessment/output_climate/
+
 # ignore GDX files in the gdx-files folder
 config/gdx-files/*.gdx
 
@@ -80,3 +85,6 @@ runtime.rds
 slurm-[0-9]*.log
 slurm-[0-9]*.out
 calibration_results/
+
+# ignore test logs
+tests/test-full*.log

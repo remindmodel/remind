@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/01_macro/singleSectorGr/equations.gms
 
-
+*' @equations
 ***---------------------------------------------------------------------------
 *' Usable macroeconomic output - net of climate change damages - is calculated from the macroeconomic output,
 *' taking into account export and import of the final good, taking specific trade costs into account,
@@ -45,7 +45,6 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
   + sum(tradeCap, vm_costTradeCap(ttot,regi,tradeCap))
   + vm_taxrev(ttot,regi)$(ttot.val ge 2010)
   + vm_costAdjNash(ttot,regi)
-  + sum(in_enerSerAdj(in), v01_enerSerAdj(ttot,regi,in))
   + sum(teEs, vm_esCapInv(ttot,regi,teEs))
   + vm_costpollution(ttot,regi)
   + pm_totLUcosts(ttot,regi)
@@ -54,8 +53,6 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
   + vm_costMatPrc(ttot,regi)
   + vm_costEnergySys(ttot,regi)
 ;
-
-
 
 ***---------------------------------------------------------------------------
 *' The labor available in every time step and every region comes from exogenous data.
@@ -154,10 +151,10 @@ q01_kapMo0(t0(t),regi,ppfKap(in))$(pm_cesdata(t,regi,in,"quantity") gt 0)..
     pm_cesdata(t,regi,in,"quantity");
 
 *' Limit the share of one ppfEn in total CES nest inputs:
-q01_limitShPpfen(t,regi,out,in)$( pm_ppfen_shares(t,regi,out,in) ) ..
+q01_limitShPpfen(t,regi,out,in)$( p01_ppfen_shares(t,regi,out,in) ) ..
     vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")
   =l=
-    pm_ppfen_shares(t,regi,out,in)
+    p01_ppfen_shares(t,regi,out,in)
   * (sum(cesOut2cesIn(out,in2), vm_cesIO(t,regi,in2) + pm_cesdata(t,regi,in2,"offset_quantity")))
 ;
 
@@ -168,5 +165,5 @@ q01_limtRatioPpfen(t,regi,in,in2)$( p01_ppfen_ratios(t,regi,in,in2) ) ..
     p01_ppfen_ratios(t,regi,in,in2)
   * (vm_cesIO(t,regi,in2) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
-
+*' @stop
 *** EOF ./modules/01_macro/singleSectorGr/equations.gms

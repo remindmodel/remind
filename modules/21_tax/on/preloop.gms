@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -9,10 +9,6 @@
 ***initialize co2 market taxes
 pm_taxemiMkt(t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
 pm_taxemiMkt_iteration(iteration,t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
-
-*LB* set CO2 tax in 2005 and 2010 to 0
-pm_taxCO2eq("2005",regi)=0;
-pm_taxCO2eq("2010",regi)=0;
 
 ***-------------------------------------------------------------------
 ***           overwrite default targets with gdx values
@@ -57,14 +53,22 @@ if(cm_fetaxscen ne 0,
     loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax(ttot,regi,sector,entyFe) = p21_tau_fe_tax("2005",regi,sector,entyFe));
   );
 ***CASE 2: constant TAXES except for the final energies and regions defined at the f21_tax_convergence.cs4r file
-  if(cm_fetaxscen eq 2,
+  if(cm_fetaxscen eq 2 OR cm_fetaxscen eq 5,
 	loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax(ttot,regi,sector,entyFe) = p21_tau_fe_tax("2005",regi,sector,entyFe));
 
-	s21_tax_time  = 2050;
-	p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2050",regi,entyFe) AND ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
-	=
-    p21_tau_fe_tax("2005",regi,sector,entyFe)+((f21_tax_convergence("2050",regi,entyFe)*0.001/sm_EJ_2_TWa-p21_tau_fe_tax("2005",regi,sector,entyFe))*((ttot.val-2015)/(s21_tax_time-2015)));
-    p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2050",regi,entyFe) AND ttot.val >(s21_tax_time)) = f21_tax_convergence("2050",regi,entyFe)*0.001/sm_EJ_2_TWa;
+	if(cm_fetaxscen eq 2, s21_tax_time  = 2050;
+           p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2050",regi,entyFe) AND ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
+	   =
+           p21_tau_fe_tax("2005",regi,sector,entyFe)+((f21_tax_convergence("2050",regi,entyFe)*0.001/sm_EJ_2_TWa-p21_tau_fe_tax("2005",regi,sector,entyFe))*((ttot.val-2015)/(s21_tax_time-2015)));
+           p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2050",regi,entyFe) AND ttot.val >(s21_tax_time)) = f21_tax_convergence("2050",regi,entyFe)*0.001/sm_EJ_2_TWa;
+        );
+     	if(cm_fetaxscen eq 5, s21_tax_time  = 2035;
+           p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2035",regi,entyFe) AND ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
+	   =
+           p21_tau_fe_tax("2005",regi,sector,entyFe)+((f21_tax_convergence("2035",regi,entyFe)*0.001/sm_EJ_2_TWa-p21_tau_fe_tax("2005",regi,sector,entyFe))*((ttot.val-2015)/(s21_tax_time-2015)));
+           p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2035",regi,entyFe) AND ttot.val >(s21_tax_time)) = f21_tax_convergence("2050",regi,entyFe)*0.001/sm_EJ_2_TWa;
+        );
+
   );
 
 ***----- SUBSIDIES  ----------------------------------
@@ -73,13 +77,13 @@ if(cm_fetaxscen ne 0,
   if(cm_fetaxscen eq 1,
     loop(ttot$(ttot.val ge 2005), p21_tau_fe_sub(ttot,regi,sector,entyFe)=p21_tau_fe_sub("2005",regi,sector,entyFe));
     loop(ttot$(ttot.val ge 2005), p21_tau_pe2se_sub(ttot,regi,te)=p21_tau_pe2se_sub("2005",regi,te));
-    loop(ttot$(ttot.val ge 2005), p21_tau_fuEx_sub(ttot,regi,entyPE)=p21_tau_fuEx_sub("2005",regi,entyPE));
+    loop(ttot$(ttot.val ge 2005), p21_tau_fuEx_sub(ttot,regi,entyPe)=p21_tau_fuEx_sub("2005",regi,entyPe));
   );
 *** CASE 2 and 3 and 4: Global subsidies phase-out by 2030 (SSP1, SDP) and 2050 (SSP2) respectively
-  if(cm_fetaxscen eq 2 OR cm_fetaxscen eq 3 OR cm_fetaxscen eq 4,
+  if(cm_fetaxscen eq 2 OR cm_fetaxscen eq 3 OR cm_fetaxscen eq 4 OR cm_fetaxscen eq 5,
      p21_tau_fe_sub(ttot,regi,sector,entyFe)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_fe_sub("2005",regi,sector,entyFe);
      p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_pe2se_sub("2005",regi,te);
-     p21_tau_fuEx_sub(ttot,regi,entyPE)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_fuEx_sub("2005",regi,entyPE);
+     p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_fuEx_sub("2005",regi,entyPe);
     if(cm_fetaxscen eq 2 OR cm_fetaxscen eq 4, s21_tax_time = 2030);
     if(cm_fetaxscen eq 3, s21_tax_time = 2050);
     s21_tax_value = 0;
@@ -95,10 +99,10 @@ if(cm_fetaxscen ne 0,
       p21_tau_pe2se_sub("2015",regi,te)+((s21_tax_value-p21_tau_pe2se_sub("2015",regi,te))*(ttot.val-2015)/(s21_tax_time-2015));
       p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val>(s21_tax_time)) = s21_tax_value;
 
-      p21_tau_fuEx_sub(ttot,regi,entyPE)$(ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
+      p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
       =
-      p21_tau_fuEx_sub("2015",regi,entyPE)+((s21_tax_value-p21_tau_fuEx_sub("2015",regi,entyPE))*(ttot.val-2015)/(s21_tax_time-2015));
-      p21_tau_fuEx_sub(ttot,regi,entyPE)$(ttot.val>(s21_tax_time)) = s21_tax_value;
+      p21_tau_fuEx_sub("2015",regi,entyPe)+((s21_tax_value-p21_tau_fuEx_sub("2015",regi,entyPe))*(ttot.val-2015)/(s21_tax_time-2015));
+      p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val>(s21_tax_time)) = s21_tax_value;
 
     );
   );
@@ -139,6 +143,24 @@ display p21_tau_fe_sub;
 display p21_tau_fe_tax;
 display p21_tau_pe2se_sub, p21_tau_fuEx_sub;
 
+*** SE Tax
+p21_tau_SE_tax(t,regi,te) = 0;
+$ifThen.SEtaxRampUpParam not "%cm_SEtaxRampUpParam%" == "off" 
+*** SE tax is currently used to tax electricity going into electrolysis. There is a maximum tax rate that is assumed
+*** to be the sum of the industry electricity FE tax and the investment cost per unit electricity of the grid (grid fee). 
+*** There is a ramp up of the SE electricity tax for electrolysis depending on the share of electrolysis in total electricity demand
+*** described by a logistic function. This results in low taxes for electrolysis at low shares of electrolysis in the power system
+*** as the technology has system benefits in this domain. At higher shares this rapidly increases and converges towards the maximum tax rate.
+*** See the equations file of the tax module for more information on the SE tax.
+*** Parameter datainput needs to happen here because pm_tau_fe_tax, the final energy tax rate, is set in this file and not in the datainput file.
+  p21_tau_SE_tax(t,regi,"elh2") = p21_tau_fe_tax(t,regi,"indst","feels")
+*** calculate grid fees as levelized cost of CAPEX from tdels, the electricity transmission and distribution grid
+*** by annualising the CAPEX and dividing by the capacity factor
+                                  + pm_inco0_t(t,regi,"tdels") 
+                                  * pm_teAnnuity("tdels")
+                                  / pm_cf(t,regi,"tdels");
+$endif.SEtaxRampUpParam
+
 *LB* initialization of vm_emiMac
 vm_emiMac.l(ttot,regi,enty) = 0;
 *LB* initialization of v21_emiALLco2neg
@@ -158,5 +180,8 @@ v21_taxrevImport.l(t,regi,tradePe) = 0;
 
 *** initialize taxrevImport
 v21_taxrevChProdStartYear.l(t,regi) = 0;
+
+*** initialize SE tax rate
+v21_tau_SE_tax.l(t,regi,te)=0;
 
 *** EOF ./modules/21_tax/on/preloop.gms

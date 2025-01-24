@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -39,7 +39,7 @@ loop(ttot$(ttot.val ge 2005),
         ( sm_fadeoutPriceAnticip*p80_etaXp(trade)
           * ( (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport.l(ttot,regi,trade) - vm_Mport.l(ttot,regi,trade))
               - p80_taxrev0(ttot,regi)$(ttot.val gt 2005)$(sameas(trade,"good")) + vm_taxrev.l(ttot,regi)$(ttot.val gt 2005)$(sameas(trade,"good"))
-		        )
+            )
           / (p80_normalize0(ttot,regi,trade) + sm_eps)
         )
       ;
@@ -126,9 +126,9 @@ if(iteration.val > 2,
 if(iteration.val > 2, 
   loop(ttot$(ttot.val ge 2005),
     loop(trade$(tradePe(trade) OR sameas(trade,"good") ),
-      if( ( Sign(p80_surplus(ttot,trade,iteration) ) eq Sign(p80_surplus(ttot,trade,iteration-1) ) ) AND 
-      ( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) ) ,
-           o80_trackSurplusSign(ttot,trade,iteration) = o80_trackSurplusSign(ttot,trade,iteration-1) +1;	  
+      if(     ( Sign(p80_surplus(ttot,trade,iteration) ) eq Sign(p80_surplus(ttot,trade,iteration-1) ) )  
+          AND ( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) ) ,
+        o80_trackSurplusSign(ttot,trade,iteration) = o80_trackSurplusSign(ttot,trade,iteration-1) +1;
       else
         o80_trackSurplusSign(ttot,trade,iteration) = 0;
       );
@@ -191,7 +191,7 @@ loop(trade$(NOT tradeSe(trade)),
         pm_pvp(ttot,trade)  = p80_pvp_itr(ttot,trade,iteration+1);
         pm_Xport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 1)  = vm_Xport.l(ttot,regi,trade);
         p80_Mport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 1) = vm_Mport.l(ttot,regi,trade);
-        p80_Mport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 0) = 1.2 * vm_Mport.l(ttot,regi,trade);	    
+        p80_Mport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 0) = 1.2 * vm_Mport.l(ttot,regi,trade);
     );
     );
 );
@@ -268,37 +268,37 @@ loop(trade$(NOT tradeSe(trade)),
      p80_messageShow("surplus") = YES;
       loop(ttot$((ttot.val ge cm_startyear) and (ttot.val gt 2100)),
        if( (abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) ),
-	   p80_messageFailedMarket(ttot,trade) = YES;
+          p80_messageFailedMarket(ttot,trade) = YES;
        );
       );
  );
 );
 
-*** critertion "infes": and are all solutions optimal?
+*** critertion "infes": is any region neither optimal nor intermediate non-optimal -> then it is infeasible 
 loop(regi,
-     if((p80_repy(regi,'modelstat') ne 2) and (p80_repy(regi,'modelstat') ne 7),
-         s80_bool = 0;
-         p80_messageShow("infes") = YES;
-     );
+  if( (p80_repy(regi,'modelstat') ne 2) and (p80_repy(regi,'modelstat') ne 7),    !! 2 is optimal, 7 nonopt,            
+    s80_bool = 0;
+    p80_messageShow("infes") = YES;
+  );
 *** critertion "nonopt": The next lines are a workaround for the status 7
 *** problem. If the objective value does not differ too much from the last known
 *** optimal solution, accept this solution as if it were optimal. 
-     p80_convNashObjVal_iter(iteration,regi) = p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval');
-     if (1 le iteration.val,
-        !! no last iteration if this is the first; NA value in p80_repyLastOptim is
-        !! sticky, so test this separately
-        if ( p80_repy(regi,'modelstat') eq 7
-           !! The 1E-4 are quite arbitrary. One should do more research on how
-           !! the solution differs over iteration when status 7 occurs. 
-           AND p80_convNashObjVal_iter(iteration,regi) lt - 1e-4,
-           s80_bool = 0;
-           p80_messageShow("nonopt") = YES;     
-           display "Not all regions were status 2 in the last iteration. The deviation of the objective function from the last optimal solution is too large to be accepted:";
-           s80_dummy = p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval');
-           display s80_dummy;
-        );
-     );
-); !!regi
+  p80_convNashObjVal_iter(iteration,regi) = p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval');
+  if (1 le iteration.val,
+    !! no last iteration if this is the first; NA value in p80_repyLastOptim is
+    !! sticky, so test this separately
+    if ( p80_repy(regi,'modelstat') eq 7
+        !! The 1E-4 are quite arbitrary. One should do more research on how
+        !! the solution differs over iteration when status 7 occurs. 
+        AND p80_convNashObjVal_iter(iteration,regi) lt - 1e-4,
+      s80_bool = 0;
+      p80_messageShow("nonopt") = YES;     
+      display "Not all regions were status 2 in the last iteration. The deviation of the objective function from the last optimal solution is too large to be accepted:";
+      s80_dummy = p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval');
+      display s80_dummy;
+    );
+  );
+); !! loop over regi
 
 *** criterion only for checking, not applied anymore: are the anticipation terms sufficienctly small?
 p80_fadeoutPriceAnticip_iter(iteration) = sm_fadeoutPriceAnticip;
@@ -331,8 +331,7 @@ loop(regi,
 *** additional criterion: Were regional climate targets reached? 
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off" 
 loop((ttot,ttot2,ext_regi,emiMktExt)$pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt),
-*** regipol targets must be met within 1% of target deviation, deviation for budget targets is measured relative to target value, while for year targets it is relative to 2015 emissions
-  if(( abs(pm_emiMktTarget_dev_iter(iteration,ttot,ttot2,ext_regi,emiMktExt)) gt cm_emiMktTarget_tolerance),
+  if(NOT(pm_allTargetsConverged(ext_regi) eq 1),
     s80_bool = 0;
     p80_messageShow("regiTarget") = YES;
   );
@@ -346,7 +345,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
   if(abs(p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)) gt cm_implicitQttyTarget_tolerance,
     if(NOT ((sameas(taxType,"tax") and p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 0) 
         OR  (sameas(taxType,"sub") and p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) gt 0)),
-      if(NOT(pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) eq 1), !!no tax update either by reaching target or due to tax changes not affecting quantitties  
+      if(NOT(pm_implicitQttyTarget_isLimited(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) eq 1), !!no tax update either by reaching target or due to tax changes not affecting quantitties  
         s80_bool = 0;
         p80_messageShow("implicitEnergyTarget") = YES;
       );
@@ -406,6 +405,7 @@ display p80_repy;
 
 display "trade convergence indicators";
 display p80_surplusMaxTolerance, p80_surplusMax2100;
+display p80_defic_trade, p80_defic_sum,p80_defic_sum_rel;
 
 display "Reasons for non-convergence in this iteration (if not yet converged)";
 
@@ -428,7 +428,7 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
 		      display "#### Just trying a different gdx may help.";
 	      );	 
 	      if(sameas(convMessage80, "taxconv"),
-		      display "#### 4.) Taxes did not converge in all regions and time steps. Absolute level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_convNashTaxrev_iter below.";
+		      display "#### 4.) Taxes did not converge in all regions and time steps. Absolute level of tax revenue must be smaller than 0.1 percent of GDP. Check p80_convNashTaxrev_iter below.";
 	      );
         if(sameas(convMessage80, "DevPriceAnticip"),
 		      display "#### 5.) The total monetary value of the price anticipation term times the traded amount are larger than the goods imbalance threshold * 0.1";
@@ -442,7 +442,7 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
         if(sameas(convMessage80, "target"),
 		      display "#### 6.) A global climate target has not been reached yet.";
           display "#### check out sm_globalBudget_dev, it must within 0.99 and 1.01 to reach convergence, as well as";
-          display "#### pm_taxCO2eq_iterationdiff_tmp and pm_taxCO2eq_iterationdiff in diagnostics section below."; 
+          display "#### pm_taxCO2eq_anchor_iterationdiff_tmp and pm_taxCO2eq_anchor_iterationdiff in diagnostics section below."; 
           display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
           display sm_globalBudget_dev;
 	      );
@@ -452,8 +452,8 @@ $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"
           display "#### Check out the pm_emiMktTarget_dev parameter of 47_regipol module.";
           display "#### For budget targets, the parameter gives the percentage deviation of current emissions in relation to the target value.";
           display "#### For yearly targets, the parameter gives the current emissions minus the target value in relative terms to the 2005 emissions.";
-          display "#### The deviation must to be less than cm_emiMktTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of 2005 emissions to reach convergence.";
-          display cm_emiMktTarget_tolerance, pm_emiMktTarget_dev, pm_factorRescaleemiMktCO2Tax, pm_emiMktCurrent, pm_emiMktTarget, pm_emiMktRefYear;
+          display "#### The deviation must to be less than pm_emiMktTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of 2005 emissions to reach convergence.";
+          display pm_emiMktTarget_tolerance, pm_emiMktTarget_dev, pm_factorRescaleemiMktCO2Tax, pm_emiMktCurrent, pm_emiMktTarget, pm_emiMktRefYear;
           display pm_emiMktTarget_dev_iter;
           display pm_taxemiMkt_iteration;
 	      );
@@ -462,7 +462,8 @@ $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
         if(sameas(convMessage80, "implicitEnergyTarget"),
 		      display "#### 10) A quantity target has not been reached yet.";
           display "#### Check out the pm_implicitQttyTarget_dev parameter of 47_regipol module.";
-          display "#### The deviation must to be less than cm_implicitQttyTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of the defined target.";
+          display "#### The relative deviation must to be less than cm_implicitQttyTarget_tolerance, which is 1 percent by default.";
+          display "#### For taxes, this means every value > +0.01, while for subsidies everything < -0.01 is problematic in the following lines.";
           display cm_implicitQttyTarget_tolerance, pm_implicitQttyTarget_dev;
 	      );
 $endif.cm_implicitQttyTarget
@@ -506,7 +507,7 @@ display p80_surplus;
 OPTION decimals = 3;
 
 display "Tax difference to last iteration for global targets of core/postsolve";
-display pm_taxCO2eq_iterationdiff_tmp, pm_taxCO2eq_iterationdiff;
+display pm_taxCO2eq_anchor_iterationdiff_tmp, pm_taxCO2eq_anchor_iterationdiff;
 
 *RP* display effect of additional convergence push
 display "display effect of additional convergence push";
@@ -546,7 +547,7 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
 	     );	 
 	     if(sameas(convMessage80, "taxconv"),
 		 display "####";
-		 display "#### 4.) Taxes did not converge in all regions and time steps. Absolut level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_convNashTaxrev_iter.";
+		 display "#### 4.) Taxes did not converge in all regions and time steps. Absolut level of tax revenue must be smaller than 0.1 percent of GDP. Check p80_convNashTaxrev_iter.";
 	     );	
       if(sameas(convMessage80, "anticip"),
 		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";
@@ -554,7 +555,7 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
         if(sameas(convMessage80, "target"),
 		      display "#### 6.) A global climate target has not been reached yet.";
           display "#### check out sm_globalBudget_dev, must within 0.99 and 1.01 to reach convergence, as well as";
-          display "#### pm_taxCO2eq_iterationdiff_tmp and pm_taxCO2eq_iterationdiff in diagnostics section below."; 
+          display "#### pm_taxCO2eq_anchor_iterationdiff_tmp and pm_taxCO2eq_anchor_iterationdiff in diagnostics section below."; 
           display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
           display sm_globalBudget_dev;
 	      );
@@ -564,8 +565,8 @@ $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"
           display "#### Check out the pm_emiMktTarget_dev parameter of 47_regipol module.";
           display "#### For budget targets, the parameter gives the percentage deviation of current emissions in relation to the target value.";
           display "#### For yearly targets, the parameter gives the current emissions minus the target value in relative terms to the 2005 emissions.";
-          display "#### The deviation must to be less than cm_emiMktTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of 2005 emissions to reach convergence.";
-          display cm_emiMktTarget_tolerance, pm_emiMktTarget_dev, pm_factorRescaleemiMktCO2Tax, pm_emiMktCurrent, pm_emiMktTarget, pm_emiMktRefYear;
+          display "#### The deviation must to be less than pm_emiMktTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of 2005 emissions to reach convergence.";
+          display pm_emiMktTarget_tolerance, pm_emiMktTarget_dev, pm_factorRescaleemiMktCO2Tax, pm_emiMktCurrent, pm_emiMktTarget, pm_emiMktRefYear;
           display pm_emiMktTarget_dev_iter;
           display pm_taxemiMkt_iteration;
 	      );
@@ -640,34 +641,46 @@ if(s80_bool eq 1,
 
 );
 
-
-*** check if any region has failed to solve consecutively for a certain number of times
-if(cm_abortOnConsecFail, !! execute only if consecutive failures switch is non-zero
-    loop(regi,
-        if(((p80_repy(regi,"solvestat") eq 1) and (p80_repy(regi,"modelstat") eq 2))
-        or ((p80_repy(regi,"solvestat") eq 4) and (p80_repy(regi,"modelstat") eq 7)), !! region was solved successfully
-            p80_trackConsecFail(regi) = 0;
-        else
-            p80_trackConsecFail(regi) = p80_trackConsecFail(regi) + 1;
-        );
+*** check if any region has failed to solve consecutively for
+*** cm_abortOnConsecFail times
+if (cm_abortOnConsecFail gt 0,
+  loop (regi,
+    if (   (    p80_repy_iteration(regi,"solvestat",iteration) eq 1
+            AND p80_repy_iteration(regi,"modelstat",iteration) eq 2)
+        OR (    p80_repy_iteration(regi,"solvestat",iteration) eq 4
+            AND p80_repy_iteration(regi,"modelstat",iteration) eq 7),
+      !! region was solved successfully
+      p80_trackConsecFail(regi) = 0;
+    else
+      !! region failed to solve
+      p80_trackConsecFail(regi) = p80_trackConsecFail(regi) + 1;
     );
-    loop(regi,
-        if(p80_trackConsecFail(regi) >= cm_abortOnConsecFail,
-            execute_unload "abort.gdx";
-            display p80_trackConsecFail;
-            abort "Run was aborted because the maximum number of consecutive failures was reached in at least one region!";
-        );
-    )
-)
+  );
 
+  if (smax(regi, p80_trackConsecFail(regi)) >= cm_abortOnConsecFail,
+    if ((s80_runInDebug eq 0) AND (cm_nash_mode ne 1), !! auto-start debug only if not already in debug mode
+      if (sum(regi, pm_SolNonInfes(regi) ne 0) eq 0, !! if all regions are infeasible debug makes no sense
+        execute_unload "abort.gdx";
+        abort "Run was aborted because the maximum number of consecutive failures was reached in at least one region! No debug started since all regions are infeasible.";
+      else !! start debug mode only if at leat one region was feasible
+        s80_runInDebug = 1;
+        cm_nash_mode = 1;
+        display "Starting nash in debug mode after maximum number of consecutive failures was reached in at least one region.";
+      );
+    else !! s80_runInDebug eq 1 AND/OR cm_nash_mode eq 1
+      execute_unload "abort.gdx";
+      abort "After debug mode run was aborted because the maximum number of consecutive failures was still reached in at least one region!";
+    );
+  else
+  !! Set nash mode back to parallel because all regions got feasible after they have been automatically restarted as debug
+    if (s80_runInDebug eq 1,
+      s80_runInDebug = 0;
+      cm_nash_mode = 2;
+      display "Set nash mode back to parallel after regions got feasible in auto-debug mode.";
+    );
+  );
+);
 
-
-
-
-***Fade out LT correction terms, they should only be important in the first iterations and might interfere with ST corrections.
-***p80_etaLT(trade) = p80_etaLT(trade)*0.5;
-
-                
 
 ***--------------------------
 ***  EMIOPT implementation
@@ -675,11 +688,11 @@ if(cm_abortOnConsecFail, !! execute only if consecutive failures switch is non-z
 $ifthen.emiopt %emicapregi% == 'none' 
 if(cm_emiscen eq 6,
 
-*mlb 20150609* nash emiopt algorithm
-***we iteratively reach the point where these two marginals are equal for each region by adjusting regional permit budgets:
-***marginal of cumulative emissions:
+*** nash emiopt algorithm
+*** we iteratively reach the point where these two marginals are equal for each region by adjusting regional permit budgets:
+*** marginal of cumulative emissions:
 p80_eoMargEmiCum(regi) = 5*(abs(qm_co2eqCum.m(regi)))$(pm_SolNonInfes(regi) eq 1);
-***marginal of permit budget :
+*** marginal of permit budget :
 p80_eoMargPermBudg(regi) = 5*(abs(q80_budgetPermRestr.m(regi)))$(pm_SolNonInfes(regi) eq 1);
 
 display pm_budgetCO2eq;
@@ -688,7 +701,7 @@ display pm_budgetCO2eq;
 loop(regi,
     p80_eoWeights(regi) = 1/max(abs(qm_budget.m("2050",regi)),1E-9);
 );
-***normalize sum to unity	
+***normalize sum to unity
 p80_eoWeights(regi) = p80_eoWeights(regi) / sum(regi2, p80_eoWeights(regi2) );
 
 

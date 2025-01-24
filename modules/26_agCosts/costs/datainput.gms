@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -34,7 +34,7 @@ $if %cm_MAgPIE_coupling% == "off" p26_totLUcosts_withMAC(ttot,regi) = p26_totLUc
 $if %cm_MAgPIE_coupling% == "on"  p26_totLUcosts_withMAC(ttot,regi) = p26_totLUcost_coupling(ttot,regi);
 
 *' **Land use emissions MAC cost**
-*' In *standalone runs* land use MAC costs are calcualted endogenously in REMIND. Since they are also included 
+*' In *standalone runs* land use MAC costs are calculated endogenously in REMIND. Since they are also included
 *' in the exogenous total landuse costs (p26_totLUcostLookup) they need to besubstracted from these total
 *' landuse costs. In coupled runs the land use MAC is deactivated in REMIND and MAC costs are included in the total land use
 *' costs that are transferred from MAgPIE.

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -22,7 +22,7 @@ p02_inconvPen_Switch_Track(t,regi)
 $ENDIF.INCONV_bioSwitch
 
 *for use in the SCC calculation
-pm_sccIneq(ttot,regi)$((pm_SolNonInfes(regi) eq 1)) = exp(-1*(2*cm_distrAlphaDam-(pm_ies(regi)+1))*0.5*pm_ies(regi)*v02_distrFinal_SigmaSq_postDam.l(ttot,regi));
+pm_sccIneq(ttot,regi)$((pm_SolNonInfes(regi) eq 1)) = exp(-1*(2*cm_distrAlphaDam-(pm_ies(regi)+1))*0.5*pm_ies(regi)*v02_distrFinal_sigmaSq_postDam.l(ttot,regi));
 
 *interpolate sigma
 loop(ttot$(ttot.val ge 2005),

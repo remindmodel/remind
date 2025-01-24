@@ -1,10 +1,12 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/36_buildings/simple/equations.gms
+
+*' @equations
 
 ***---------------------------------------------------------------------------
 *'  Buildings Final Energy Balance
@@ -63,7 +65,7 @@ q36_auxCostAddTeInv(t,regi)..
 
 
 *' Hydrogen fe share in buildings gases use (natural gas + hydrogen)
-q36_H2Share(t,regi)..
+q36_H2Share(t,regi)$(t.val ge 2020)..
   v36_H2share(t,regi) 
   * sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feh2s")
                                  OR SAMEAS(entyFe,"fegas")),   
@@ -99,4 +101,5 @@ q36_biotrBound(t,regi)$(t.val ge 2010 AND (pm_gdp("2005",regi)/pm_pop("2005",reg
   vm_prodSe(t,regi,"pebiolc","sesobio","biotr")
 ;
 
+*' @stop
 *** EOF ./modules/36_buildings/simple/equations.gms

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -6,7 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/exogenous/realization.gms
 
-*#' @description This realization implements carbon price trajectories from an exogenous file (p45_tau_co2_tax.inc).  
+*' @description This realization implements carbon price trajectories from an exogenous file (p45_tau_co2_tax.inc).
+*' Alternatively, specify in 'path_gdx_carbonprice' the run to be used
+*' Requires cm_emiscen = 9 and cm_iterative_target_adj = 0
 
 
 *####################### R SECTION START (PHASES) ##############################

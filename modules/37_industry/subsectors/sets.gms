@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -288,7 +288,7 @@ $endif.cm_subsec_model_steel
     ue_cement, ue_chemicals, ue_steel_primary, ue_steel_secondary, ue_otherInd
   /
 
-  fe2ppfen37(all_enty,all_in)   "match ESM entyFE to ppfen"
+  fe2ppfEn37(all_enty,all_in)   "match ESM entyFe to ppfen"
   /
     fesos . (feso_cement, feso_chemicals, feso_otherInd)
     fehos . (feli_cement, feli_chemicals, feli_otherInd)
@@ -306,24 +306,6 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 $endif.cm_subsec_model_steel
   /
 
- fe_tax_sub37(all_in,all_in)   "correspondence between tax and subsidy input data resolution and model sectoral resolution"
-  /
-    fesoi . (feso_cement, feso_chemicals, feso_otherInd)
-    fehoi . (feli_cement, feli_chemicals, feli_otherInd)
-    fegai . (fega_cement, fega_chemicals, fega_otherInd)
-    feh2i . (feh2_cement, feh2_chemicals, feh2_otherInd)
-    fehei . fehe_otherInd
-    feeli . (feel_cement, feelhth_chemicals, feelwlth_chemicals,
-             feelhth_otherInd, feelwlth_otherInd)
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
-    fesoi . feso_steel
-    fehoi . feli_steel
-    fegai . fega_steel
-    feh2i . feh2_steel
-    feeli . (feel_steel_primary, feel_steel_secondary)
-$endif.cm_subsec_model_steel
-  /
-
 energy_limits37(all_in,all_in)   "thermodynamic limit of energy"
   /
     ue_cement          . en_cement
@@ -333,7 +315,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 $endif.cm_subsec_model_steel
   /
 
-entyFECC37(all_enty)   "FE carriers in industry which can be used for CO2 capture"
+entyFeCC37(all_enty)   "FE carriers in industry which can be used for CO2 capture"
   /
     fesos
     fehos
@@ -380,6 +362,15 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idrcc
 $endif.cm_subsec_model_steel
   /
+
+  teCCPrc(tePrc)   "Technologies used in process-based model (only CCS)"
+  /
+    $$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+    bfcc
+    idrcc
+    $$endif.cm_subsec_model_steel
+  /
+
 
 mat(all_enty)   "Materials considered in process-based model; Can be input and/or output of a process"
   /
@@ -579,7 +570,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-fe2ppfen_no_ces_use(all_enty,all_in)   "Match ESM entyFE to ppfen that are not used in the CES tree, but for datainput for process-bases industry"
+fe2ppfen_no_ces_use(all_enty,all_in)   "Match ESM entyFe to ppfen that are not used in the CES tree, but for datainput for process-bases industry"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     fesos . feso_steel
@@ -587,6 +578,23 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     fegas . fega_steel
     feels . (feel_steel_primary, feel_steel_secondary)
 $endif.cm_subsec_model_steel
+  /
+
+ue2ppfenPrc(all_in,all_in)   "correspondant to ces_eff_target_dyn37, but for use in process-based context, i.e. contained subsectors are complements"
+  /
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+    ue_steel_primary . (feso_steel, feli_steel, fega_steel, feh2_steel,
+                        feel_steel_primary)
+
+    ue_steel_secondary . feel_steel_secondary
+$endif.cm_subsec_model_steel
+  /
+
+regi_fxDem37(ext_regi) "regions under which we fix UE demand to baseline demand"
+  /
+$ifthen.fixedUE_scenario "%cm_fxIndUe%" == "on"
+    %cm_fxIndUeReg%
+$endif.fixedUE_scenario
   /
 ;
 
@@ -600,12 +608,11 @@ ipf_industry_dyn37(in_industry_dyn37)                                  = YES;
 ipf_industry_dyn37(ppf_industry_dyn37)                                 = NO;
 in(in_industry_dyn37)                                                  = YES;
 ppfKap(ppfKap_industry_dyn37)                                          = YES;
-ppfen(ppfen_industry_dyn37)                                            = YES;
+ppfEn(ppfen_industry_dyn37)                                            = YES;
 cesOut2cesIn(ces_industry_dyn37)                                       = YES;
-fe2ppfen(fe2ppfen37)                                                   = YES;
-fe_tax_sub_sbi(fe_tax_sub37)                                           = YES;
+fe2ppfEn(fe2ppfEn37)                                                   = YES;
 pf_eff_target_dyn37(ppfen_industry_dyn37)                              = YES;
-pf_quan_target_dyn37(ppfkap_industry_dyn37)                            = YES;
+pf_quan_target_dyn37(ppfKap_industry_dyn37)                            = YES;
 pf_industry_relaxed_bounds_dyn37(ppf_industry_dyn37)                   = YES;
 pf_industry_relaxed_bounds_dyn37(industry_ue_calibration_target_dyn37) = YES;
 
@@ -617,14 +624,10 @@ pf_quan_target_dyn29(pf_quan_target_dyn37)  = YES;
 $endif.calibrate
 
 teMat2rlf(tePrc,"1") = YES;
-alias(tePrc,teCCPrc);
-alias(tePrc,tePrc1);
-alias(tePrc,tePrc2);
-alias(opmoPrc,opmoCCPrc);
-alias(opmoPrc,opmoPrc1);
-alias(opmoPrc,opmoPrc2);
+alias(tePrc,tePrc1,tePrc2);
+alias(opmoPrc,opmoCCPrc,opmoPrc1,opmoPrc2);
 alias(route,route2);
-
+alias(entyFeCC37,entyFeCC37_2);
 alias(secInd37_2_pf,secInd37_2_pf2);
-alias(fe2ppfen37,fe2ppfen37_2);
+alias(fe2ppfEn37,fe2ppfEn37_2);
 *** EOF ./modules/37_industry/subsectors/sets.gms

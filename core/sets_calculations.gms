@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -55,6 +55,10 @@ loop(fe2ue(entyFe,entyUe,te),
 );
 display feForUe;
 
+
+loop ( pe2se(entyPe,entySe,te),
+   pese(entyPe,entySe) = YES;
+);
 
 period4(ttot) = ttot(ttot) - tsu(ttot) - period1(ttot) - period2(ttot) - period3(ttot);
 period12(ttot) = period1(ttot) + period2(ttot);
@@ -125,8 +129,8 @@ loop (fe2ppfEn(entyFe,ppfEn),
 display "production function sets", cesOut2cesIn, cesOut2cesIn2, cesLevel2cesIO, cesRev2cesIO, ppf, ppfEn, ipf;
 
 *** Energy service layer sets
-loop(es2ppfen(esty,ppfen),
-    ppfenFromEs(ppfen) = yes;
+loop(es2ppfen(esty,ppfEn),
+    ppfenFromEs(ppfEn) = yes;
 );
 
 loop (fe2es(entyFe,esty,teEs),
@@ -134,8 +138,8 @@ loop (fe2es(entyFe,esty,teEs),
 );
 
 loop (fe2es(entyFe,esty,teEs),
-    loop(es2ppfen(esty,ppfen),
-	feViaEs2ppfen(entyFe,ppfen,teEs) = YES;
+    loop(es2ppfen(esty,ppfEn),
+	feViaEs2ppfen(entyFe,ppfEn,teEs) = YES;
 	);
 );
 
@@ -146,6 +150,12 @@ fete(entyFe,te) = YES;
 sefe(entySe,entyFe) = YES;
 );
 
+loop(seAgg2se(seAgg,entySe),
+  loop(sefe(entySe,entyFe),
+    seAgg2fe(seAgg,entyFe) = YES;
+  );
+);
+
 *** extended region group set
 regi_groupExt(ext_regi,all_regi)$regi_group(ext_regi,all_regi) = Yes;
 loop(all_regi,
@@ -153,12 +163,6 @@ loop(all_regi,
     regi_groupExt(ext_regi,all_regi) = Yes;
   );
 );
-
-*** MAGICC related sets
-t_magiccttot(tall) = ttot(tall) + t_extra(tall);
-t_magicc(t_magiccttot)$(t_magiccttot.val ge 2005) = Yes;
-
-display "MAGICC related sets", t_magicc, t_extra, t;
 
 *** Alias of mapping
 en2en2(enty,enty2,te) = en2en(enty,enty2,te);

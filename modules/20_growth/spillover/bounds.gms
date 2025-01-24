@@ -1,4 +1,4 @@
-*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -17,6 +17,6 @@ display pm_cesdata;
    vm_effGr.fx(t,regi,noRD(in)) = pm_cesdata(t,regi,in,"effgr");
 
    vm_effGr.fx(t,regi,"feelt") = 1;
-   vm_effGR.lo(t,regi,inRD20(in)) = 1;    
+   vm_effGr.lo(t,regi,inRD20(in)) = 1;    
 
 *** EOF ./modules/20_growth/spillover/bounds.gms

@@ -1,4 +1,4 @@
-# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -16,34 +16,48 @@ library(tidyr)
 
 options(warn = 1)
 
-model <- "REMIND 3.2"                          # modelname in final file
+model <- paste("REMIND", paste0(strsplit(gms::readDefaultConfig(".")$model_version, "\\.")[[1]][1:2], collapse = "."))
+# model <- "REMIND 3.3"                        # modelname in final file, overwrite if necessary
+
+
 removeFromScen <- ""                           # you can use regex such as: "_diff|_expoLinear"
+renameScen <- NULL                             # c(oldname1 = "newname1", …), without the `C_` and `-rem-[0-9]` stuff
 addToScen <- NULL                              # is added at the beginning
 
 # filenames relative to REMIND main directory (or use absolute path) 
 mapping <- NULL                                # file obtained from piamInterfaces, or AR6/SHAPE/NAVIGATE or NULL to get asked
 iiasatemplate <- NULL                          # provided for each project, can be yaml or xlsx with a column 'Variable'
+checkSummation <- TRUE                         # if TRUE, tries to use the one from mapping. Or specify here
 
 # note: you can also pass all these options to output.R, so 'Rscript output.R logFile=mylogfile.txt' works.
 lucode2::readArgs("project")
 
 projects <- list(
   ELEVATE    = list(mapping = c("NAVIGATE", "ELEVATE"),
-                    iiasatemplate = "elevate-workflow/definitions/variable/variable.yaml"),
+                    iiasatemplate = "https://files.ece.iiasa.ac.at/elevate/elevate-template.xlsx",
+                    removeFromScen = "C_|eoc"),
+  ELEVATE_coupled = list(mapping = c("NAVIGATE", "NAVIGATE_coupled", "ELEVATE"),
+                    iiasatemplate = "https://files.ece.iiasa.ac.at/elevate/elevate-template.xlsx",
+                    removeFromScen = "C_|eoc"),
   ENGAGE_4p5 = list(mapping = c("AR6", "AR6_NGFS"),
                     iiasatemplate = "ENGAGE_CD-LINKS_template_2019-08-22.xlsx",
                     removeFromScen = "_diff|_expoLinear|-all_regi"),
   NAVIGATE_coupled = list(mapping = c("NAVIGATE", "NAVIGATE_coupled")),
-  NGFS       = list(model = "REMIND-MAgPIE 3.2-4.6",
+  NGFS       = list(model = "REMIND-MAgPIE 3.3-4.8",
                     mapping = c("AR6", "AR6_NGFS"),
-                    iiasatemplate = "../ngfs-phase-4-internal-workflow/definitions/variable/variables.yaml",
-                    removeFromScen = "C_|_bIT|_bit|_bIt"),
-  SHAPE      = list(mapping = c("NAVIGATE", "SHAPE")),
+                    iiasatemplate = "https://files.ece.iiasa.ac.at/ngfs-phase-5/ngfs-phase-5-template.xlsx",
+                    removeFromScen = "C_|_bIT|_bit|_bIt|_KLW"),
+  ScenarioMIP = list(model = "REMIND-MAgPIE 3.4-4.8",
+                     mapping = "ScenarioMIP",
+                     iiasatemplate = "https://files.ece.iiasa.ac.at/ssp-submission/ssp-submission-template.xlsx",
+                     renameScen = c("SMIPv03-M-SSP2-NPi-def" = "SSP2 - Medium Emissions", "SMIPv03-LOS-SSP2-EcBudg400-def" = "SSP2 - Low Overshoot", "SMIPv03-ML-SSP2-PkPrice200-fromL" = "SSP2 - Medium-Low Emissions","SMIPv03-L-SSP2-PkPrice265-inc6-def" = "SSP2 - Low Emissions", "SMIPv03-VL-SSP2_SDP_MC-PkPrice300-def" = "SSP2 - Very Low Emissions"),
+                     checkSummation = "NAVIGATE"),
+  SHAPE      = list(mapping = c("NAVIGATE", "NAVIGATE_coupled", "SHAPE")),
   TESTTHAT   = list(mapping = "AR6")
 )
 
 # add pure mapping from piamInterfaces
-mappings <- setdiff(names(piamInterfaces::templateNames()), c(names(projects), "AR6_NGFS"))
+mappings <- setdiff(names(piamInterfaces::mappingNames()), c(names(projects), "AR6_NGFS"))
 projects <- c(projects,
               do.call(c, lapply(mappings, function(x) stats::setNames(list(list(mapping = x)), x))))
 
@@ -55,32 +69,29 @@ if (! exists("project")) {
 }
 projectdata <- projects[[project]]
 message("# Overwrite settings with project settings for '", project, "'.")
-varnames <- c("mapping", "iiasatemplate", "addToScen", "removeFromScen", "model", "outputFilename", "logFile")
+varnames <- c("mapping", "iiasatemplate", "addToScen", "removeFromScen", "renameScen",
+              "model", "outputFilename", "logFile", "checkSummation")
 for (p in intersect(varnames, names(projectdata))) {
   assign(p, projectdata[[p]])
 }
 
 # overwrite settings with those specified as command-line arguments
-lucode2::readArgs("outputdirs", "filename_prefix", "outputFilename", "model",
-                  "mapping", "logFile", "removeFromScen", "addToScen", "iiasatemplate")
+lucode2::readArgs("outputdirs", "filename_prefix", "outputFilename", "model", "mapping",
+                  "summationFile", "logFile", "removeFromScen", "addToScen", "iiasatemplate")
 
-if (exists("iiasatemplate") && ! is.null(iiasatemplate) && ! file.exists(iiasatemplate)) {
+if (is.null(mapping)) {
+  mapping <- gms::chooseFromList(names(piamInterfaces::mappingNames()), type = "mapping")
+}
+if (length(mapping) == 0 || ! all(file.exists(mapping) | mapping %in% names(mappingNames()))) {
+  stop("mapping='", paste(mapping, collapse = ", "), "' not found.")
+}
+if (exists("iiasatemplate") && ! is.null(iiasatemplate) && ! file.exists(iiasatemplate) &&
+    ! grepl("^https:\\/\\/files\\.ece\\.iiasa\\.ac\\.at\\/.*\\.xlsx$", iiasatemplate)) {
   stop("iiasatemplate=", iiasatemplate, " not found.")
 }
 
-# variables to be deleted although part of the template
+# variables to be deleted although part of the mapping
 temporarydelete <- NULL # example: c("GDP|MER", "GDP|PPP")
-
-### select mapping
-
-mappingFile <- NULL
-if (length(mapping) == 1 && file.exists(mapping)) {
-  mappingFile <- mapping
-  mapping <- NULL
-} else if (! all(mapping %in% names(templateNames())) || length(mapping) == 0) {
-  message("# Mapping = '", paste(mapping, collapse = ","), "' exists neither as file nor mapping name.")
-  mapping <- gms::chooseFromList(names(piamInterfaces::templateNames()), type = "mapping template")
-}
 
 ### define filenames
 
@@ -127,8 +138,18 @@ withCallingHandlers({ # piping messages to logFile
   for (mif in mif_path) {
     thismifdata <- read.quitte(mif, factors = FALSE)
     # remove -rem-xx and mag-xx from scenario names
-    thismifdata$scenario <- gsub("-(rem|mag)-[0-9]{1,2}", "", thismifdata$scenario)
+    thismifdata$scenario <- gsub("^C_|-(rem|mag)-[0-9]{1,2}$", "", thismifdata$scenario)
     mifdata <- rbind(mifdata, thismifdata)
+  }
+
+  # rename scenarios
+  if (! is.null(renameScen)) {
+    message("Old names: ", paste(sort(unique(mifdata$scenario)), collapse = ", "))
+    for (i in names(renameScen)) {
+      message("Rename scenario: ", i, " -> ", renameScen[[i]])
+      mifdata$scenario[i == mifdata$scenario] <- renameScen[[i]]
+    }
+    message("New names: ", paste(sort(unique(mifdata$scenario)), collapse = ", "))
   }
 
   message("# ", length(temporarydelete), " variables are in the list to be temporarily deleted, ",
@@ -140,9 +161,9 @@ withCallingHandlers({ # piping messages to logFile
   # message("\n### Generate joint mif, remind2 format: ", filename_remind2_mif)
   # write.mif(mifdata, filename_remind2_mif)
 
-  generateIIASASubmission(mifdata, mapping = mapping, model = model, mappingFile = mappingFile,
+  generateIIASASubmission(mifdata, mapping = mapping, model = model,
                           removeFromScen = removeFromScen, addToScen = addToScen,
-                          outputDirectory = outputFolder,
+                          outputDirectory = outputFolder, checkSummation = checkSummation,
                           logFile = logFile, outputFilename = basename(OUTPUT_xlsx),
                           iiasatemplate = iiasatemplate, generatePlots = TRUE)
 

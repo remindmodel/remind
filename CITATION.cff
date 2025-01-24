@@ -1,5 +1,6 @@
-cff-version: 1.0.3
+cff-version: 1.2.0
 message: If you use this model, please cite it as below.
+type: software
 authors:
 
 - family-names: "Luderer"
@@ -57,7 +58,7 @@ authors:
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: "Dietrich"
-  given-names:  "Jan"
+  given-names:  "Jan Philipp"
   orcid: https://orcid.org/0000-0002-4309-6431
   affiliation: "Potsdam Institute for Climate Impact Research"
 
@@ -115,6 +116,12 @@ authors:
 
 - family-names: "Koch"
   given-names:  "Johannes"
+  orcid: https://orcid.org/0000-0003-2920-8086
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: "Köhler-Schindler"
+  given-names:  "Laurin"
+  orcid: https://orcid.org/0000-0003-4268-3084
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: "Körner"
@@ -179,6 +186,7 @@ authors:
 
 - family-names: "Pehl"
   given-names:  "Michaja"
+  orcid: https://orcid.org/0000-0003-2349-6515
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: "Pflüger"
@@ -212,6 +220,10 @@ authors:
 
 - family-names: "Rottoli"
   given-names:  "Marianna"
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: "Rüter"
+  given-names:  "Tonn"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: "Schmidt"
@@ -251,12 +263,22 @@ authors:
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 title: REMIND - REgional Model of INvestments and Development
-version: "3.2.1.dev1064"
-date-released: 2024-02-20
+abstract: REMIND (REgional Model of Investment and Development) is a numerical
+  open source model that represents the future evolution of the world economies
+  with a special focus on the development of the energy sector and the implications
+  for our world climate. The goal of REMIND is to find the optimal mix of investments
+  in the economy and the energy sectors of each model region given a set of population,
+  technology, policy and climate constraints. It also accounts for regional trade 
+  characteristics on goods, energy fuels, and emissions allowances. All greenhouse 
+  gas emissions due to human activities are represented in the model.
+version: "3.4.0.dev124"
+date-released: 2025-01-23
 repository-code: https://github.com/remindmodel/remind
 keywords:
   - energy
   - economy
   - modeling
+  - model
+  - active-development
 license: AGPL-3.0-or-later
 url: https://www.pik-potsdam.de/research/transformation-pathways/models/remind
