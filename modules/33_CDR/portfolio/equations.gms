@@ -177,7 +177,8 @@ q33_EW_omcosts(t,regi)..
 q33_EW_potential(t,regi,rlf_cz33)..
     sum(rlf, v33_EW_onfield_tot(t,regi,rlf_cz33,rlf))
     =l=
-    f33_maxProdGradeRegiWeathering(regi,rlf_cz33)
+    p33_EW_maxShareOfCropland(regi) * f33_maxProdGradeRegiWeathering(regi,rlf_cz33)
+    ;
     ;
 
 ***---------------------------------------------------------------------------
