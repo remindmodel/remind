@@ -112,7 +112,7 @@ q33_DAC_FEdemand(t,regi,entyFe2)$sum(entyFe, fe2cdr(entyFe,entyFe2,"dac"))..
 ***---------------------------------------------------------------------------
 q33_EW_capconst(t,regi)..
     sum((rlf_cz33, rlf), v33_EW_onfield(t,regi,rlf_cz33,rlf))
-    =l=
+    =e=
     sum(teNoTransform2rlf33("weathering",rlf),
         vm_capFac(t,regi,"weathering") * vm_cap(t,regi,"weathering",rlf)
     )
