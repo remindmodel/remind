@@ -23,11 +23,16 @@ David Klein (<dklein@pik-potsdam.de>)
 
 ### Clone the models
 
+If you work on the PIK cluster, first fork both https://github.com/magpiemodel/magpie.git and https://github.com/remindmodel/remind.git on your own github account, and then run
 ```bash
-git clone https://github.com/magpiemodel/magpie.git
-git clone --filter=blob:limit=1m https://github.com/remindmodel/remind.git
+clonerempie githubuser [remindfolder]
 ```
-Note: On the PIK cluster, use `cloneremind https://github.com/remindmodel/remind.git` instead of `git clone --filter…` to clone REMIND.
+If `remindfolder` is not specified, it uses "remind".
+
+If you are not on the cluster, you can use the following to get a magpie folder within your remind folder:
+```bash
+git clone --filter=blob:limit=1m https://github.com/remindmodel/remind.git; cd remind; git clone https://github.com/magpiemodel/magpie.git
+```
 
 ### Switch to relevant branchs
 
