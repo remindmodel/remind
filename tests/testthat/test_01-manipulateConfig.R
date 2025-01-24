@@ -35,7 +35,7 @@ test_that("manipulate config with default configuration does not change main.gms
             "Please file an issue in the gms package and try to adjust the code until the error goes away:\n",
             paste("-", removedgms, collapse = "\n"))
   }
-  expect_equal(length(removedgms), 0)
+  expect_length(removedgms, 0)
 
   # check for switches added to the new cfg
   addedgms <- setdiff(names(cfg_after$gms), names(cfg_init$gms))
@@ -44,7 +44,7 @@ test_that("manipulate config with default configuration does not change main.gms
             "Please file an issue in the gms package and try to adjust the code until the error goes away:\n",
             paste("-", addedgms, collapse = "\n"))
   }
-  expect_equal(length(addedgms), 0)
+  expect_length(addedgms, 0)
 
   # check for switches with different content between old and new cfg
   joinednames <- intersect(names(cfg_after$gms), names(cfg_init$gms))
@@ -53,7 +53,7 @@ test_that("manipulate config with default configuration does not change main.gms
     warning("After file manipulation, the following cfg$gms switches differ, see ", basename(tmpfile), ":\n",
             paste0("- ", contentdiff, ": ", unlist(cfg_init$gms[contentdiff]), " -> ", unlist(cfg_after$gms[contentdiff]), collapse = "\n"))
   }
-  expect_equal(length(contentdiff), 0)
+  expect_length(contentdiff, 0)
 
   # cleanup if no error found
   if (length(addedgms) + length(removedgms) + length(contentdiff) + length(diffresult) == 0) {
