@@ -19,6 +19,7 @@
 
 # Ignore everything in "input" folders
 input/
+!input/files
 !/scripts/input/
 
 # Ignore everything in root "output" folder
