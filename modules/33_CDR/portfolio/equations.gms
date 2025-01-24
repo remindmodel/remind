@@ -179,7 +179,7 @@ q33_EW_potential(t,regi,rlf_cz33)..
     =l=
     p33_EW_maxShareOfCropland(regi) * f33_maxProdGradeRegiWeathering(regi,rlf_cz33)
     ;
-    ;
+
 
 ***---------------------------------------------------------------------------
 *'  An annual limit for the maximum global amount of rocks spread [Gt] can be set via cm_LimRock,
