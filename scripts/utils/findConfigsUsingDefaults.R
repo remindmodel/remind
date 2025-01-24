@@ -1,7 +1,8 @@
 
-# Use this script to update all config/scenario_config*.csv files if you want to change 
-# the default values in main.gms. It adjusts the scenario_config files so that the scenarios
-# are still configured in the same way as before the defaults were changed in main.gms.
+# Use this script to preserve scenario configuration in all config/scenario_config*.csv files if 
+# you want to change the default values in main.gms. It adjusts the scenario_config files so that
+# the scenarios are still configured in the same way as before the defaults were changed in main.gms.
+# Author: David Klein
 
 # What this script does:
 # The script performs the following steps for all config/scenario_config*.csv files:
@@ -46,7 +47,7 @@ comp <- mapply("%in%", cfgDefaultOLD$gms, cfgDefaultNEW$gms)
 
 if (all(comp)) stop("No differences found between main.gms and SSP2-NPi2025.")
 
-# settings that are different between old (main.gms) and new (e.g. SSP2-NPi2025) default
+# settings that are different between old default (main.gms) and new default (e.g. SSP2-NPi2025) 
 different <- rbind(data.frame(cfgDefaultOLD$gms[!comp], row.names = "old"), 
                    data.frame(cfgDefaultNEW$gms[!comp], row.names = "new"))
 
@@ -70,7 +71,7 @@ usingDefaults_NEW <- tibble()
 
 # ---- Loop over all scenario_config*.csv files
 
-# scenario_config files
+# list scenario_config files
 scenfiles <- grep(pattern = "^scenario_config.*.csv$", value = T, x = dir("config/"))
 
 for (filename in scenfiles) {
@@ -83,7 +84,7 @@ for (filename in scenfiles) {
   updated <- scenConf 
   
   # if it does not exist attach dummy column "copyConfigFrom" (will be dropped later by 'select(...)')
-  # to make the procedure further down work for all scenario config
+  # to make the procedure further down work also for scenario config that don't have this column
   if (! "copyConfigFrom" %in% names(updated)) {
     updated[, "copyConfigFrom"] <- NA
   }
@@ -99,7 +100,7 @@ for (filename in scenfiles) {
   # ---- Diagnostics: find configs that use old defaults ----
 
   # Individual steps
-  # 3. For switches only that differ from default (any_of(names(different)) count scenarios (sum()) that use the old default (is.na())
+  # 3. Only for switches whose default value will change (any_of(names(different))) count scenarios (sum()) that use the old default (is.na())
   # 4. Add a column with the name of the scenario_config*.csv
   # 5. Append row
   
@@ -112,7 +113,7 @@ for (filename in scenfiles) {
   # ---- Diagnostics: find configs that already use new defaults ----
   
   # Individual steps
-  # 3. For switches only that differ from default (any_of(names(different)) count scenarios (sum()) that use the new default (different[new,cur_column()])
+  # 3. Only for switches whose default value will change (any_of(names(different))) count scenarios (sum()) that use the new default (different[new,cur_column()])
   # 4. Add a column with the name of the scenario_config*.csv
   # 5. Append row
   
@@ -125,7 +126,7 @@ for (filename in scenfiles) {
   # ---- Update scenario_config*.csv file so that they work with new defaults in main.gms ----
   
   # Individual steps
-  # 3. Keep switches only where old and new defaults differ (also dropping 'copyConfigFrom' that might have been added above)
+  # 3. Keep switches only whose default values will change (also dropping 'copyConfigFrom' that might have been added above)
   # 4. For all columns set empty cells to old default 
   # 5. Set cells empty that already use the new default
   
@@ -140,8 +141,8 @@ for (filename in scenfiles) {
   scenConf <- rows_update(scenConf, updated, by = "title")
   
   # Write to file
-  write_delim(scenConf, file = gsub("\\.csv", "-DK.csv", filename), delim = ";", na = "", eol = "\r\n")
-  #write_delim(scenConf, file = file.path("config", filename),        delim = ";", na = "", eol = "\r\n")
+  #write_delim(scenConf, file = gsub("\\.csv", "-DK.csv", filename), delim = ";", na = "", eol = "\r\n")
+  write_delim(scenConf, file = file.path("config", filename),        delim = ";", na = "", eol = "\r\n")
 }
 
 # ---- Print diagnostics ----
