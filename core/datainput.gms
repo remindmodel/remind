@@ -1551,6 +1551,7 @@ $include "./core/input/f_fedemand_build.cs4r"
 $offdelim
 /;
 
+
 pm_fedemand(t,regi,cal_ppf_buildings_dyn36) = f_fedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 $endif.cm_rcp_scen_build
 
@@ -1567,12 +1568,15 @@ $endif.scaleDemand
 *** initialize global target deviation scalar
 sm_globalBudget_dev = 1;
 
-*' load production values from reference gdx to allow penalizing changes vs reference run in the first time step via q_changeProdStartyearCost/q21_taxrevChProdStartYear
+
 if (cm_startyear gt 2005,
+*' load production values from reference gdx to allow penalizing changes vs reference run in the first time step via q_changeProdStartyearCost/q21_taxrevChProdStartYear
 execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
 execute_load "input_ref.gdx", pm_prodFEReference = vm_prodFe.l;
 execute_load "input_ref.gdx", p_prodUeReference = v_prodUe.l;
 execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
+*' load MAC costs from reference gdx. Values for t (i.e. after cm_start_year) will be overwritten in core/presolve.gms 
+execute_load "input_ref.gdx" pm_macCost;
 );
 
 p_prodAllReference(t,regi,te) =
