@@ -1,5 +1,7 @@
 
-# Use this script to update all config/scenario_config*.csv files if you want to change default values in main.gms.
+# Use this script to update all config/scenario_config*.csv files if you want to change 
+# the default values in main.gms. It adjusts the scenario_config files so that the scenarios
+# are still configured in the same way as before the defaults were changed in main.gms.
 
 # What this script does:
 # The script performs the following steps for all config/scenario_config*.csv files:
