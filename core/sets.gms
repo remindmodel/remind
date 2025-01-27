@@ -1125,11 +1125,11 @@ tsu(ttot) "spin up-time before 2005",
 opTimeYr "actual lifetime of a built technology in years"
 *** Has to be as large as the maximum lifetime of a technology
 /
-        1*100
+        1*130
 /
 opTime5(opTimeYr) "actual lifetime of a built technology in years - 5 years time steps for the past to calculate vintages"
 /
-        1,6,11,16,21,26,31,36,41,46,51,56,61,66,71,76,81,86,91,96
+        1,6,11,16,21,26,31,36,41,46,51,56,61,66,71,76,81,86,91,96,101,106,111,116,121,126
 /
 
 ;
