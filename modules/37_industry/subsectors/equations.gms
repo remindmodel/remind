@@ -281,15 +281,15 @@ q37_plasticsCarbon(t,regi,sefe(entySe,entyFe),emiMkt)$(
 *' calculate plastic waste generation, shifted by mean lifetime of plastic
 *' products shift by 2 time steps when we have 5-year steps and 1 when we have
 *' 10-year steps allocate averge of 2055 and 2060 to 2070, unless `cm_wastelag`
-*' is `NO`, in which case waste is incurred in the same period plastics are
+*' is 0, in which case waste is incurred in the same period plastics are
 *' produced
 q37_plasticWaste(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
-                     AND ttot.val ge max(2015, cm_startyear)               ) ..
+                     AND ttot.val ge max(2005, cm_startyear)               ) ..
   v37_plasticWaste(ttot,regi,entySe,entyFe,emiMkt)
   =e=
     !! prompt waste (for wastelag = off or timesteps 2005 and 2010 as there is no plastics carbon produced before)
-    v37_plasticsCarbon(ttot,regi,entySe,entyFe,emiMkt)$((NOT %cm_wastelag%) OR ttot.val lt 2015)
+    v37_plasticsCarbon(ttot,regi,entySe,entyFe,emiMkt)$(cm_wastelag eq 0 OR ttot.val lt 2015)
     !! lagged waste
   + ( v37_plasticsCarbon(ttot-2,regi,entySe,entyFe,emiMkt)$( ttot.val lt 2070 )
     + ( ( v37_plasticsCarbon(ttot-2,regi,entySe,entyFe,emiMkt)
@@ -298,7 +298,7 @@ q37_plasticWaste(ttot,regi,sefe(entySe,entyFe),emiMkt)$(
       / 2
       )$( ttot.val eq 2070 )
     + v37_plasticsCarbon(ttot-1,regi,entySe,entyFe,emiMkt)$( ttot.val gt 2070 )
-    )$( %cm_wastelag% AND ttot.val ge 2015)
+    )$( cm_wastelag gt 0 AND ttot.val ge 2015)
 ;
 
 *' calculate carbon contained in incinerated plastics

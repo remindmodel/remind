@@ -1173,6 +1173,11 @@ parameter
 ;
   cm_nonPlasticFeedstockEmiShare = 1; !! def 1 = all carbon in non-plastics gets emitted
 *'
+parameter
+  cm_wastelag			"switch to decide whether waste from plastics lags ten years behind plastics production"
+;
+  cm_wastelag = 0;   !! def = 0 no waste lag  !! regexp = 1|0
+*'
 *'
 *'
 ***-----------------------------------------------------------------------------
@@ -1723,9 +1728,6 @@ $setglobal cm_ind_energy_limit_manual   "2050 . GLO . (ue_cement, ue_steel_prima
 *** 2050.GLO 0.5, 2050.EUR 0.8: means that 50% of waste incineration emissions are captured for all regions from 2050 onward, except for Europe that has 80% of its waste incineration emissions captured.
 *** The CCS share of waste incineration increases linearly from zero, in 2025, to the value set at the switch, and it is kept constant for years afterwards.
 $setglobal cm_wasteIncinerationCCSshare  off      !! def = off
-*** cm_wastelag, does waste from plastics lag ten years behind plastics
-*** production, or not?
-$setglobal cm_wastelag NO   !! def = NO   !! regexp = YES|NO
 *** cm_feShareLimits <-   "off"  # def <- "off", limit the electricity final energy share to be in line with the industry maximum electrification levels (60% by 2050 in the electric scenario), 10% lower (=50% in 2050) in an increased efficiency World, or 20% lower (40% in 2050) in an incumbents future (incumbents). The incumbents scenario also limits a minimal coverage of buildings heat provided by gas and liquids (25% by 2050).
 $setglobal cm_feShareLimits  off  !! def = off
 *** VRE potential switches
