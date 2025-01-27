@@ -34,7 +34,7 @@ Parameters
   p37_matFlowHist(tall,all_regi,all_enty)                                      "Historic material flows"
   p37_mat2ue(all_enty,all_in)                                                  "Contribution of process output to ue in CES tree; Trivial if just one material per UE, as in steel [Gt/Gt]"
   p37_demFeRatio(tall,all_regi,all_in)                                         "Ratio of historic Fe demand and Fe demand calculated from historic production and BAT specific demand"
-  p37_teMatShareHist(all_te,opmoPrc,mat)                                       "Share that a tePrc/opmoPrc historically contibrutes to production of a matFin"
+  p37_teMatShareHist(all_regi,all_te,opmoPrc,mat)                              "Share that a tePrc/opmoPrc historically contibrutes to production of a matFin"
   p37_captureRate(all_te)                                                      "Capture rate of CCS technology"
   p37_selfCaptureRate(all_te)                                                  "Share of emissions from fossil fuels used for a CCS process which are captured by the CCS process itself"
   p37_priceMat(all_enty)                                                       "Prices of external material input [US$/kg] = [trn$US/Gt]"

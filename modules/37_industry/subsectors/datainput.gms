@@ -801,8 +801,8 @@ $offdelim
 ;
 !! scale 2005 to 2015 with ue_chemicals
 loop(t$(t.val ge 2005 AND t.val le 2015),
-  pm_matFlowHist(t,regi,mat)
-  = pm_matFlowHist("2020",regi,mat)
+  p37_matFlowHist(t,regi,mat)
+  = p37_matFlowHist("2020",regi,mat)
   * pm_fedemand(t,regi,"ue_chemicals")
   / pm_fedemand("2020",regi,"ue_chemicals");
 );
@@ -841,11 +841,19 @@ $include "./modules/37_industry/subsectors/input/p37_AllChem_Energy_Value_2020.c
 $offdelim
   /
 ;
-loop((t$(t.val ge 2005 AND t.val le 2015),
+!!TODO: This is a hotfix!!
+loop(regi,
+  p37_demFePrcHist("2020",regi,"ChemNG","standard","feels") = p37_demFePrcHist("2020",regi,"ChemNG","standard","feels") /3.;
+  p37_demFePrcHist("2020",regi,"ChemLiq","standard","feels") = p37_demFePrcHist("2020",regi,"ChemLiq","standard","feels") /3.;
+  p37_demFePrcHist("2020",regi,"ChemSol","standard","feels") = p37_demFePrcHist("2020",regi,"ChemSol","standard","feels") /3.;
+);
+
+loop((t,
       regi,
-      tePrc2opmoPrc(tePrc,opmoPrc)$(secInd37_tePrc("chemicals",tePrc)),
-      ue2ppfenPrc("ue_chemicals",in2)
-      fe2ppfen_no_ces_use(entyFe,in2)),
+      tePrc2opmoPrc(tePrc,opmoPrc),
+      entyFe)$(    t.val ge 2005 AND t.val le 2015
+                AND secInd37_tePrc("chemicals",tePrc)
+                AND sum(in2,fe2ppfen_no_ces_use(entyFe,in2) AND ue2ppfenPrc("ue_chemicals",in2))),
   p37_demFePrcHist(t,regi,tePrc,opmoPrc,entyFe)
   = p37_demFePrcHist("2020",regi,tePrc,opmoPrc,entyFe)
   * sum(fe2ppfen_no_ces_use(entyFe,in), pm_fedemand(t,regi,in))
@@ -909,7 +917,7 @@ p37_teMatShareHist(regi,"eaf","sec","sesteel") = 1.;
 p37_teMatShareHist(regi,"bf","standard","pigiron") = 1.;
 p37_teMatShareHist(regi,"idr","ng","driron") = 1.;
 $endif.cm_subsec_model_steel
-loop((regi,matFin(mat)),
+loop((regi,matFin(mat))$(NOT mat2ue(mat,"ue_chemicals")),
   if(abs(sum((tePrc,opmoPrc),p37_teMatShareHist(regi,tePrc,opmoPrc,mat))-1.) gt sm_eps,
     display p37_teMatShareHist;
     abort "p37_teMatShareHist must add to one for each matFin";
@@ -983,7 +991,7 @@ if (cm_startyear eq 2005,
     loop((tePrc1,opmoPrc1,mat)$(
                     sum((tePrc2,opmoPrc2), tePrc2matIn(tePrc2,opmoPrc2,mat))
                 AND tePrc2matOut(tePrc1,opmoPrc1,mat)
-                AND secInd37_tePrc("steel",tePrc)),
+                AND secInd37_tePrc("steel",tePrc1)),
       p37_matFlowHist(t,regi,mat)
         = sum((tePrc2matOut(tePrc1,opmoPrc1,mat),
                tePrc2matIn(tePrc2,opmoPrc2,mat)),
@@ -991,14 +999,16 @@ if (cm_startyear eq 2005,
       pm_outflowPrcHist(t,regi,tePrc1,opmoPrc1) = p37_matFlowHist(t,regi,mat) * p37_teMatShareHist(regi,tePrc1,opmoPrc1,mat);
     );
 
-    loop((entyFe,ppfUePrc$(not sameas(ppfUePrc, "ue_chemicals"))),
+    loop((entyFe,ppfUePrc)$(not sameas(ppfUePrc, "ue_chemicals")),
       p37_demFeTarget(t,regi,entyFe,ppfUePrc) = sum(tePrc2ue(tePrc,opmoPrc,ppfUePrc), pm_outflowPrcHist(t,regi,tePrc,opmoPrc) * p37_specFeDemTarget(entyFe,tePrc,opmoPrc));
       p37_demFeActual(t,regi,entyFe,ppfUePrc) = sum((fe2ppfen_no_ces_use(entyFe,all_in),ue2ppfenPrc(ppfUePrc,all_in)), pm_fedemand(t,regi,all_in) * sm_EJ_2_TWa);
     );
 
     p37_demFeRatio(t,regi,ppfUePrc)$(not sameas(ppfUePrc, "ue_chemicals")) = sum(entyFe,p37_demFeActual(t,regi,entyFe,ppfUePrc)) / sum(entyFe,p37_demFeTarget(t,regi,entyFe,ppfUePrc));
 
-    loop((tePrc2opmoPrc(tePrc,opmoPrc),regi,entyFe)$(p37_specFeDemTarget(entyFe,tePrc,opmoPrc) gt 0.01*sm_eps and secInd37_tePrc("steel",tePrc)),
+    loop((tePrc2opmoPrc(tePrc,opmoPrc),regi,entyFe)$(
+                p37_specFeDemTarget(entyFe,tePrc,opmoPrc) gt 0.01*sm_eps
+            AND secInd37_tePrc("steel",tePrc)),
       if((pm_outflowPrcHist(t,regi,tePrc,opmoPrc) gt sm_eps),
         pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc)
           = p37_specFeDemTarget(entyFe,tePrc,opmoPrc)
