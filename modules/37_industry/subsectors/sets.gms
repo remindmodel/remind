@@ -306,24 +306,6 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 $endif.cm_subsec_model_steel
   /
 
- fe_tax_sub37(all_in,all_in)   "correspondence between tax and subsidy input data resolution and model sectoral resolution"
-  /
-    fesoi . (feso_cement, feso_chemicals, feso_otherInd)
-    fehoi . (feli_cement, feli_chemicals, feli_otherInd)
-    fegai . (fega_cement, fega_chemicals, fega_otherInd)
-    feh2i . (feh2_cement, feh2_chemicals, feh2_otherInd)
-    fehei . fehe_otherInd
-    feeli . (feel_cement, feelhth_chemicals, feelwlth_chemicals,
-             feelhth_otherInd, feelwlth_otherInd)
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
-    fesoi . feso_steel
-    fehoi . feli_steel
-    fegai . fega_steel
-    feh2i . feh2_steel
-    feeli . (feel_steel_primary, feel_steel_secondary)
-$endif.cm_subsec_model_steel
-  /
-
 energy_limits37(all_in,all_in)   "thermodynamic limit of energy"
   /
     ue_cement          . en_cement
@@ -629,7 +611,6 @@ ppfKap(ppfKap_industry_dyn37)                                          = YES;
 ppfEn(ppfen_industry_dyn37)                                            = YES;
 cesOut2cesIn(ces_industry_dyn37)                                       = YES;
 fe2ppfEn(fe2ppfEn37)                                                   = YES;
-fe_tax_sub_sbi(fe_tax_sub37)                                           = YES;
 pf_eff_target_dyn37(ppfen_industry_dyn37)                              = YES;
 pf_quan_target_dyn37(ppfKap_industry_dyn37)                            = YES;
 pf_industry_relaxed_bounds_dyn37(ppf_industry_dyn37)                   = YES;

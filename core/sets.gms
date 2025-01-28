@@ -77,9 +77,6 @@ gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures (ele + act + tec)"
 gdp_SSP2EU_CAMP_weak   "CAMPAIGNers scenario with low ambition lifestyle change"
 gdp_SSP2EU_CAMP_strong "CAMPAIGNers scenario with high ambition lifestyle change"
 gdp_SSP2_demDiffer_IKEA "Demand reduction in Global North (CAZ,EUR,JPN,NEU,USA) and demand increase in Emerging regions (IND,LAM,OAS,SSA). Reduction follows the factor f of demRedStrong scenario, while increase uses factor 2-f."
-gdp_SSP2_demRedStrong "edget internal demScen, might be removed soon"
-gdp_SSP2_demRedWeak
-gdp_SSP2_highDemDEU
 /
 
 all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
@@ -217,14 +214,11 @@ all_te          "all energy technologies, including from modules"
         h22ch4          "Methanation, H2 + 4 CO2 --> CH4 + 2 H20"
         MeOH            "Methanol production /liquid fuel, CO2 hydrogenation, CO2 + 3 H2 --> CH3OH + H20"
         tdels           "transmission and distribution for electricity to stationary users"
-        tdeli           "transmission and distribution for electricity to industry"
         tdelb           "transmission and distribution for electricity to buildings"
         tdelt           "transmission and distribution for electricity to transport"
         tdbiogas        "transmission and distribution for gas from biomass origin to stationary users"
         tdfosgas        "transmission and distribution for gas from fossil origin to stationary users"
         tdsyngas        "transmission and distribution for gas from synthetic origin to stationary users"
-        tdbiogai        "transmission and distribution for gas from biomass origin to industry"
-        tdfosgai        "transmission and distribution for gas from fossil origin to industry"
         tdbiogab        "transmission and distribution for gas from biomass origin to buildings"
         tdfosgab        "transmission and distribution for gas from fossil origin to buildings"
         tdbiogat        "transmission and distribution for gas from biomass origin to transportation"
@@ -233,8 +227,6 @@ all_te          "all energy technologies, including from modules"
         tdbiohos        "transmission and distribution for heating oil from biomass origin to transportation"
         tdfoshos        "transmission and distribution for heating oil from fossil origin to stationary users"
         tdsynhos        "transmission and distribution for heating oil from synthetic origin to stationary users"
-        tdbiohoi        "transmission and distribution for heating oil from biomass origin to industry"
-        tdfoshoi        "transmission and distribution for heating oil from fossil origin to industry"
         tdbiohob        "transmission and distribution for heating oil from biomass origin to buildings"
         tdfoshob        "transmission and distribution for heating oil from fossil origin to buildings"
         tdh2s           "transmission and distribution for hydrogen to stationary users"
@@ -247,12 +239,9 @@ all_te          "all energy technologies, including from modules"
         tdsynpet        "transmission and distribution for petrol from synthetic origin to stationary users"
         tdbiosos        "transmission and distribution for solids from biomass origin to stationary users"
         tdfossos        "transmission and distribution for solids from fossil origin to stationary users"
-        tdbiosoi        "transmission and distribution for solids from biomass origin to industry"
-        tdfossoi        "transmission and distribution for solids from fossil origin to industry"
         tdbiosob        "transmission and distribution for solids from biomass origin to buildings"
         tdfossob        "transmission and distribution for solids from fossil origin to buildings"
         tdhes           "transmission and distribution for heat to stationary users"
-        tdhei           "transmission and distribution for heat to industry"
         tdheb           "transmission and distribution for heat to buildings"
 
         ccsinje         "injection of co2"
@@ -345,6 +334,15 @@ all_te          "all energy technologies, including from modules"
         apCarH2T        "outdated transport technology"
         apCarElT        "outdated transport technology"
         apTrnElT        "outdated transport technology"
+        !! outdated entries, still used in module 04 until structuremappings are fixed
+        tdbiohoi        "transmission and distribution for heating oil from biomass origin to industry"
+        tdfoshoi        "transmission and distribution for heating oil from fossil origin to industry"
+        tdbiosoi        "transmission and distribution for solids from biomass origin to industry"
+        tdfossoi        "transmission and distribution for solids from fossil origin to industry"
+        tdbiogai        "transmission and distribution for gas from biomass origin to industry"
+        tdfosgai        "transmission and distribution for gas from fossil origin to industry"
+        tdhei           "transmission and distribution for heat to industry"
+        tdeli           "transmission and distribution for electricity to industry"
 /
 
 all_enty             "all types of quantities"
@@ -379,20 +377,16 @@ all_enty             "all types of quantities"
         feso
         fesos        "FE solids stationary"
         fesob
-        fesoi
         fehos        "FE heating oil stationary"
         fehob
-        fehoi
         fega
         fegas        "FE gas stationary"
         fegab
-        fegai
         fegat
         feh2s        "FE hydrogen stationary"
         feh2t        "FE hydrogen transport"
         fehes        "FE district heating (including combined heat and power), and heat pumps stationary"
         feheg
-        fehei
         feheb
         fehe
         feel
@@ -401,19 +395,12 @@ all_enty             "all types of quantities"
         feelcb       "buildings use of conventional electricity (all but space heating)"
         feelhpb      "buildings use of electricity for space heating with heat pumps"
         feelrhb      "buildings use of electricity for space heating with resistive heating"
-        feeli
         feelt        "final energy electricity for transport"
         fepet        "FE petrol transport"
         fedie        "FE diesel transport"
         felit        "FE liquids for transport (includes diesel and petrol)"
         fetf         "FE transport fuels"
-        fehoi_cs     "final energy in industry diesel - carbon stored"
-        fegai_cs     "final energy in industry natural gas - carbon stored "
         entydummy    "dummy FE for process based industry implementation"
-
-        ueHDVt       "transport useful energy heavy duty vehicles"
-        ueLDVt       "transport useful energy light duty vehicles"
-        ueelTt       "transport useful energy for electric trains"
 
         !! materials, feedstock, and industrial goods
         prsteel      "Primary steel"
@@ -501,6 +488,13 @@ all_enty             "all types of quantities"
         perm         "Carbon permit"
         peog         "aggregated oil and gas, only relevant for calibration because IEA only provides aggregated data"
         bfco2        "CO2 emission from blast furnace"
+        
+        !! outdated entries, still used in module 04 until structuremappings are fixed
+        fesoi        "industry use of solid energy carriers"
+        fehoi        "industry use of liquid energy carriers"
+        fegai        "industry use of gaseous energy carriers"
+        fehei        "industry use of district heat"
+        feeli        "industry use of electricity"
 /
 
 all_esty "energy services"
@@ -589,12 +583,6 @@ all_in   "all inputs and outputs of the CES function"
   eni                     "industry energy use"
   enhi                    "industry heat energy use"
   enhgai                  "industry heat gaseous energy use (fegab and feh2b)"
-  fesoi                   "industry use of solid energy carriers"
-  fehoi                   "industry use of liquid energy carriers"
-  fegai                   "industry use of gaseous energy carriers"
-  feh2i                   "industry use of hydrogen"
-  fehei                   "industry use of district heat"
-  feeli                   "industry use of electricity"
 
   fehcsob                 "buildings heating and cooking solids final energy"
   fehcelb                 "buildings heating and cooking electricity final energy"
@@ -629,10 +617,7 @@ all_in   "all inputs and outputs of the CES function"
 *** FIXME this should be reworked with Robert when revising the transport module
   entrp                   "transport energy use"
   fetf                    "transport fuel use"
-  ueLDVt                  "transport useful energy light duty vehicles"
-  ueHDVt                  "transport useful energy heavy duty vehicles"
   feh2t                   "transport hydrogen use"
-  ueelTt                  "transport useful energy for electric trains"
 
   entrp_pass              "passenger transport"
   entrp_frgt              "freight transport"
@@ -2032,54 +2017,26 @@ entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation
     fedie.cdr
 /
 
-ppfEn2Sector(all_in,emi_sectors) "primary energy production factors mapping to sectors"
-/
-    fegab.build
-    fegai.indst
-    fehob.build
-    fehoi.indst
-    fesob.build
-    fesoi.indst
-    feelb.build
-    feeli.indst
-    feheb.build
-    fehei.indst
-    feh2b.build
-    feh2i.indst
-    ueHDVt.trans
-    ueLDVt.trans
-    ueelTt.trans
-    feeli.cdr
-    fehei.cdr
-    feh2i.cdr
-    fegai.cdr
-/
 
 entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy and sector mapping to detailed final energy enty split in IO"
 /
   fegas.build.fegab
-  fegas.indst.fegai
   fehos.build.fehob
-  fehos.indst.fehoi
   fesos.build.fesob
-  fesos.indst.fesoi
   feels.build.feelb
-  feels.indst.feeli
   fehes.build.feheb
-  fehes.indst.fehei
-***  feh2s.build.feh2b
-***  feh2s.indst.feh2i
   fepet.trans.fepet
   fedie.trans.fedie
-***  feh2t.trans
   feelt.trans.feelt
   fegat.trans.fegat
-***  feels.cdr
-***  fehes.cdr
-***  fegas.cdr
-***  feh2s.cdr
-***  fedie.cdr
+  !! outdated entries, still used in module 04 until structuremappings are fixed
+  fehos.indst.fehoi
+  fesos.indst.fesoi
+  feels.indst.feeli
+  fegas.indst.fegai
+  fehes.indst.fehei
 /
+
 
 all_emiMkt      "emission markets"
 /
