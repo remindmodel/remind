@@ -7,6 +7,9 @@
 
 *** SOF ./modules/30_biomass/magpie_40/postsolve.gms
 
+*** Calcualte total primary energy to limit BECCS (see q30_limitTeBio)
+*** See also presolve.gms
+
 p30_demPe(ttot,regi) =
   sum(pe2se(enty,enty2,te)$(sameas(enty,"peoil") OR sameas(enty,"pecoal") OR sameas(enty,"pegas") OR sameas(enty,"pebiolc") OR sameas(enty,"pebios") OR sameas(enty,"pebioil")),
     vm_demPe.l(ttot,regi,enty,enty2,te)
