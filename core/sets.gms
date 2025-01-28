@@ -2877,9 +2877,9 @@ ppfen_CESMkup(all_in) "production factors of CES function to which CES markup co
 /
 /
 
-
-opTimeYr2te(all_te,opTimeYr) "mapping for technologies to yearly lifetime - is filled automatically in generisdata.inc from the lifetime values in generisdata_tech.prn"
-tsu2opTimeYr(ttot, opTimeYr) "mapping for opTimeYr to the used time ttot - will be filled automatically in generisdata.inc"
+*** sets filled automatically in datainput.gms from the lifetime values in generisdata_tech.prn
+opTimeYr2te(all_te,opTimeYr) "map each technology with its possible age"
+tsu2opTimeYr(ttot,opTimeYr) "map each model timestep with the possible age of technologies"
 
 tsu2opTime5(tall,opTimeYr) "mapping for spinup time index to lifetime index"
 /

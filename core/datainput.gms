@@ -827,18 +827,6 @@ pm_tsu2opTimeYr(ttot,opTimeYr) $ tsu2opTimeYr(ttot,opTimeYr) =
 
 display pm_tsu2opTimeYr;
 
-file diagnosis_opTimeYr2te;
-put diagnosis_opTimeYr2te;
-put "mapping opTimeYr2te, automatically filled in generisdata.inc from the lifetimes given in generisdata.prn" //;
-put "te", @15, "regi", @20, "opTimeYr", @27,  "pm_data(regi,'lifetime',te)"//;
-
-loop(regi,
-  loop(te,
-    put te.tl, @ 15, regi.tl, @20, p_lifetime_max(regi,te):3:1, @35, pm_data(regi,"lifetime",te):3:0 /;
-  )
-);
-putclose diagnosis_opTimeYr2te;
-
 
 *** Safety checks raising an error if:
 loop(regi,
@@ -851,7 +839,7 @@ loop(regi,
       abort "Technology has longer lifetime than allowed by opTimeYr", opTimeYr, p_lifetime_max);
 ***   - technology has remaining capacity beyond its lifetime
     if(
-      sum(opTimeYr $ (opTimeYr.val > smax(opTimeYr2te(te,opTimeYr), opTimeYr.val)),
+      sum(opTimeYr $ (opTimeYr.val > smax(opTimeYr2te(te,opTimeYr2), opTimeYr2.val)),
         pm_omeg(regi,opTimeYr,te)
       ) > 0,
         abort "Technology has remaining capacity beyond its lifetime", opTimeYr2te, pm_omeg);
