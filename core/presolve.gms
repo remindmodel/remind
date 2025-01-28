@@ -282,9 +282,9 @@ vm_macBase.fx(ttot,regi,enty)$emiMacExo(enty) = p_macBaseExo(ttot,regi,enty);
 vm_macBase.fx(ttot,regi,"co2luc") = pm_macBaseMagpie(ttot,regi,"co2luc")-p_macPolCO2luc(ttot,regi);
 vm_macBase.up(ttot,regi,"n2ofertin") = Inf;
 ***scale exogenous baselines from van Vuuren to EDGAR v4.2 2005 data
-vm_macBase.fx(ttot,regi,"n2otrans")$p_macBaseVanv("2005",regi,"n2otrans") = p_macBaseVanv(ttot,regi,"n2otrans") * (p_macBase2005(regi,"n2otrans") / p_macBaseVanv("2005",regi,"n2otrans"));
-vm_macBase.fx(ttot,regi,"n2oadac")$p_macBaseVanv("2005",regi,"n2oadac")  = p_macBaseVanv(ttot,regi,"n2oadac")  * (p_macBase2005(regi,"n2oacid")  / (p_macBaseVanv("2005",regi,"n2oadac") + p_macBaseVanv("2005",regi,"n2onitac")));
-vm_macBase.fx(ttot,regi,"n2onitac")$(p_macBaseVanv("2005",regi,"n2oadac") OR p_macBaseVanv("2005",regi,"n2onitac")) = p_macBaseVanv(ttot,regi,"n2onitac") * (p_macBase2005(regi,"n2oacid")  / (p_macBaseVanv("2005",regi,"n2oadac") + p_macBaseVanv("2005",regi,"n2onitac")));
+vm_macBase.fx(ttot,regi,"n2otrans")$p_macBaseIMAGE("2005",regi,"n2otrans") = p_macBaseIMAGE(ttot,regi,"n2otrans") * (p_macBase2005(regi,"n2otrans") / p_macBaseIMAGE("2005",regi,"n2otrans"));
+vm_macBase.fx(ttot,regi,"n2oadac")$p_macBaseIMAGE("2005",regi,"n2oadac")  = p_macBaseIMAGE(ttot,regi,"n2oadac")  * (p_macBase2005(regi,"n2oacid")  / (p_macBaseIMAGE("2005",regi,"n2oadac") + p_macBaseIMAGE("2005",regi,"n2onitac")));
+vm_macBase.fx(ttot,regi,"n2onitac")$(p_macBaseIMAGE("2005",regi,"n2oadac") OR p_macBaseIMAGE("2005",regi,"n2onitac")) = p_macBaseIMAGE(ttot,regi,"n2onitac") * (p_macBase2005(regi,"n2oacid")  / (p_macBaseIMAGE("2005",regi,"n2oadac") + p_macBaseIMAGE("2005",regi,"n2onitac")));
 
 *** baseline continuation after 2100
 vm_macBase.fx(ttot,regi,enty)$((ttot.val gt 2100)$((NOT emiMacMagpie(enty)) AND (NOT emiFuEx(enty)) AND (NOT sameas(enty,"n2ofertin")) ))=vm_macBase.l("2100",regi,enty);
