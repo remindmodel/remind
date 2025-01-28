@@ -52,7 +52,7 @@ pm_damageMarginalT(tall,regi)           = 0;
 pm_damageMarginalTm1(tall,regi)           = 0;
 pm_damageMarginalTm2(tall,regi)           = 0;
 
-*read in GDP to calculate fraction of countries in a region
+*** read in GDP to calculate fraction of countries in a region
 table f50_countryGDP(tall,iso,all_GDPscen)	"ratio country to regional GDP"
 $ondelim
 $include "./modules/50_damages/KWTCint/input/f50_gdp.cs3r"

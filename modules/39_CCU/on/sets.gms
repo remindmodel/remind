@@ -24,17 +24,6 @@ te_ccu39(all_te)                            "CCU technologies"
 /
 
 
-enty_BioSyn_39(all_enty,emi_sectors,emiMkt)	"FE, sector and emissions markets to which constraint on equal share of synfuels in biofuels+synfuels should be applied"
-/
-	fedie.trans.ETS
-	fedie.trans.ES
-	fedie.trans.other
-	fepet.trans.ETS
-	fepet.trans.ES
-	fepet.trans.other
-
-/
-
 ***-------------------------------------------------------------------------
 ***                  module specific mappings
 ***-------------------------------------------------------------------------
@@ -71,6 +60,7 @@ enty(enty_ccu39)							   = YES;
 te(te_ccu39)								   = YES;
 se2se(se2se_ccu39)							   = YES;
 teSe2rlf(teCCU2rlf)					   		   = YES;
+teAdj(te_ccu39)								   = YES;
 
 *** EOF ./modules/39_CCU/on/sets.gms
 

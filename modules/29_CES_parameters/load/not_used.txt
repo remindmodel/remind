@@ -22,3 +22,5 @@ pm_calibrate_eff_scale,parameter,not needed
 pm_fedemand,parameter,not needed
 pm_energy_limit,,
 sm_CES_calibration_iteration,scalar,only applicable during calibration
+cm_H2InBuildOnlyAfter,parameter,???
+p29_building_relaxed_bounds_dyn,set,not needed

@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/15_climate/magicc/datainput.gms
+*** SOF ./modules/15_climate/magicc7_ar6/datainput.gms
 *** cluster rcp_scen into overshoot and not-to-exceed targets
 $if %cm_rcp_scen% == "none"    s15_rcpCluster = 1;
 $if %cm_rcp_scen% == "rcp20"   s15_rcpCluster = 1;
@@ -43,14 +43,6 @@ s15_gr_forc_kyo     = 0;
 
 p15_forc_magicc(tall) = 0;
 
-$if  %cm_rcp_scen% == "rcp26"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp3pd.inc";
-$if  %cm_rcp_scen% == "rcp37"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp45.inc";
-$if  %cm_rcp_scen% == "rcp45"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp45.inc";
-$if  %cm_rcp_scen% == "rcp60"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp6.inc";
-$if  %cm_rcp_scen% == "rcp85"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp85.inc";
-$if  %cm_rcp_scen% == "rcp20"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp3pd.inc";
-$if  %cm_rcp_scen% == "none"     $include "./modules/15_climate/magicc/input/data_oghgf_rcp6.inc";
-
 pm_emicapglob(ttot) = 0;
 
 *** parameter pm_emicapglob is read in depending on cm_rcp_scen and cm_multigasscen
@@ -81,4 +73,4 @@ display pm_emicapglob;
 pm_gmt_conv=1;
 p15_gmt0(tall)=1;
 
-*** EOF ./modules/15_climate/magicc/datainput.gms
+*** EOF ./modules/15_climate/magicc7_ar6/datainput.gms

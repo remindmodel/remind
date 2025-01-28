@@ -66,7 +66,59 @@ pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2035) = 1.7;
 pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2040) = 2.0;
 
 *** abatement parameters for industry CCS MACs
-$include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
+
+loop ((ttot,steps)$( ttot.val ge 2005 ),
+
+  sm_tmp = steps.val * sm_dmac / sm_c_2_co2;   !! CO2 price at MAC step [$/tCO2] 
+
+$ifthen NOT "%cm_Industry_CCS_markup%" == "off"
+  sm_tmp = sm_tmp / %cm_Industry_CCS_markup%;
+$endif
+
+  !! short-term (until 2025)
+  if (ttot.val le 2025,
+
+    pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge  sm_D2005_2_D2017 * 95 ) = 0.63;
+    pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge sm_D2005_2_D2017 *133 ) = 0.756;
+
+    pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 *78 ) = 0.121;
+    pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 *80 ) = 0.572;
+
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
+    pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge sm_D2005_2_D2017 *59 ) = 0.117;
+    pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge sm_D2005_2_D2017 *82 ) = 0.234;
+$endif.cm_subsec_model_steel
+
+  !! long-term (from 2030 on)
+  else
+
+    if (cm_optimisticMAC eq 1,
+
+      !! logarithmic curve through 0.75 @ $50 and 0.9 @ $150, limited to 0.95
+      pm_abatparam_Ind(ttot,regi,emiInd37,steps)$( 
+                                              YES
+        $$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
+                                          AND NOT sameas(emiInd37,"co2steel")
+        $$endif.cm_subsec_model_steel
+                                                                              )
+      = max(0, min(0.95, 0.2159 + 0.1365 * log(sm_tmp)));
+
+    else
+      pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge  sm_D2005_2_D2017 * 54 ) = 0.702;
+      pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge sm_D2005_2_D2017 * 133 ) = 0.756;
+
+      pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 * 46 ) = 0.363;
+      pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 * 78 ) = 0.484;
+      pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 *80 )  = 0.572;
+
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
+      pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge sm_D2005_2_D2017 *48 ) = 0.117;
+      pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge sm_D2005_2_D2017 *62 ) = 0.275;
+$endif.cm_subsec_model_steel
+    );
+  );
+);
+
 
 if (cm_IndCCSscen eq 1,
   if (cm_CCS_cement eq 1,
@@ -154,10 +206,14 @@ loop (industry_ue_calibration_target_dyn37(out),
 
     !! calculate slope
     p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
-    = ( ( sum(ces_eff_target_dyn37(out,in),
-            p37_cesIO_baseline("2015",regi,in)
+    = ( max(
+          !! use the larger of 2015/2020 specific energy demand
+          ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
+          / p37_cesIO_baseline("2015",regi,out)
+          ),
+          ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2020",regi,in))
+          / p37_cesIO_baseline("2020",regi,out)
           )
-        / p37_cesIO_baseline("2015",regi,out)
         )
       - pm_energy_limit(out)
       )
@@ -244,10 +300,6 @@ p37_clinker_cement_ratio(t,regi)
     )
   * (min(t.val, 2100) - 2005)
   / (2100             - 2005);
-
-*** Cement demand reduction is implicit in the production function, so no extra
-*** costs have to be calculated.
-pm_CementDemandReductionCost(ttot,regi) = 0;
 
 *** Exogenous share of carbon in chemical feedstock that is embeded into plastics
 ** calculated based on energy flows in REMIND, plastics production from (Geyer et.al., 2017) and stoichiometric calculations
@@ -693,13 +745,13 @@ $endif.cm_subsec_model_steel
 p37_priceMat(all_enty) = 0.;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 !! IEA STeel Roadmap Fig 1.3 Caption: Scrap price 200-300 $/t
-!! => take 250 $/t, inflation 2005 --> 2020 / 1.33
-p37_priceMat("eafscrap") = 0.188;
-p37_priceMat("bofscrap") = 0.188;
-!! Agora KSV-Rechner: 114 €/tSteel / (1.4 2005$/2023€) / (tn$ /bn t)
-p37_priceMat("ironore")  = 0.081;
-!! Agora KSV-Rechner: 154 €/tSteel / (1.4 2005$/2023€) / (tn$ /bn t)
-p37_priceMat("dripell")  = 0.110;
+!! => take 250 $/t, unit 2020$US
+p37_priceMat("eafscrap") = sm_D2020_2_D2017 * 0.250 ;
+p37_priceMat("bofscrap") = sm_D2020_2_D2017 * 0.250;
+!! Agora KSV-Rechner: 114 €2023/tSteel / (tn$ /bn t)
+p37_priceMat("ironore")  = sm_EURO2023_2_D2017 * 0.114;
+!! Agora KSV-Rechner: 154 €2023/tSteel / (tn$ /bn t)
+p37_priceMat("dripell")  = sm_EURO2023_2_D2017 * 0.154;
 $endif.cm_subsec_model_steel
 
 *** --------------------------------

@@ -91,7 +91,7 @@ $setGlobal transport  edge_esm         !! def = edge_esm
 ***---------------------    36_buildings    -------------------------------------
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
-$setglobal industry  fixed_shares     !! def = simple
+$setglobal industry  subsectors     !! def = simple
 ***---------------------    38_stationary    --------------------------------------
 $setglobal stationary  off            !! def = simple
 ***---------------------    39_CCU    --------------------------------------
@@ -128,8 +128,8 @@ c_solver_try_max      "maximum number of inner iterations within one Negishi ite
 c_keep_iteration_gdxes   "save intermediate iteration gdxes"
 cm_nash_autoconverge  "choice of nash convergence mode"
 cm_emiscen            "policy scenario choice"
-cm_co2_tax_2020       "level of co2 tax in year 2020 in $ per t CO2eq, makes sense only for emiscen eq 9 and 45_carbonprice exponential"
-cm_co2_tax_growth     "growth rate of carbon tax"
+cm_taxCO2_startyear  "level of co2 tax in start year in $ per t CO2eq"
+cm_taxCO2_expGrowth     "growth rate of carbon tax"
 c_macscen            "use of mac"
 cm_nucscen            "nuclear option choice"
 cm_ccapturescen       "carbon capture option choice"
@@ -193,8 +193,8 @@ cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshoot
 
 cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
 c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
-cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
-cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffCurvPhaseIn2Lin"
+cm_taxCO2_IncAfterPeakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
+cm_taxCO2_regiDiff_endYr     "Year at which regional CO2 taxes converge in module 45 for realizations with differentiated carbon prices"
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
 c_regi_synfuelscen			"region to apply synfuelscen to"
@@ -209,9 +209,6 @@ cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bl
 cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/ 100 /Kwh)"
 cm_build_H2costDecayStart     "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
 cm_build_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> after 10% the function will have the value 0). [%]"
-cm_indst_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels. [3.25$/ 0.1 /kWh]"
-cm_indst_costDecayStart     "simplified logistic function end of full value   (ex. 5%  -> between 0 and 5% the simplified logistic function will have the value 1). [%]"
-cm_indst_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> between 10% and 100% the simplified logistic function will have the value 0). [%]"
 cm_BioSupply_Adjust_EU      "factor for scaling sub-EU bioenergy supply curves"
 cm_BioImportTax_EU          "factor for EU bioenergy import tax"
 cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
@@ -246,8 +243,8 @@ $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
 cm_emiscen        = 1;         !! def = 1
 $setglobal cm_rcp_scen  none   !! def = "none"
-cm_co2_tax_2020   = -1;        !! def = -1
-cm_co2_tax_growth = 1.05;      !! def = 1.05
+cm_taxCO2_startyear = -1;     !! def = -1
+cm_taxCO2_expGrowth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
@@ -323,8 +320,8 @@ $setGlobal cm_emiMktTarget  off   !! def = off
 cm_postTargetIncrease    = 0;      !! def = 0
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 c_peakBudgYr            = 2050;   !! def = 2050
-cm_taxCO2inc_after_peakBudgYr = 2; !! def = 2
-cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
+cm_taxCO2_IncAfterPeakBudgYr = 2; !! def = 2
+cm_taxCO2_regiDiff_endYr  = 2050;   !! def = 2050
 
 $setGlobal cm_NucRegiPol	 off   !! def = off		
 $setGlobal cm_CoalRegiPol	 off   !! def = off		
@@ -381,10 +378,6 @@ cm_VRE_supply_assumptions = 0; !! 0 - default, 1 - optimistic, 2 - sombre, 3 - b
 cm_build_H2costAddH2Inv = 0.2;  !! def 6.5$/kg = 0.2 $/Kwh
 cm_build_H2costDecayStart = 0.05; !! def 5%
 cm_build_H2costDecayEnd = 0.1;  !! def 10%
-
-cm_indst_H2costAddH2Inv = 0.1;  !! def 6.5$/kg = 0.2 $/Kwh
-cm_indst_costDecayStart = 0.05; !! def 5%
-cm_indst_H2costDecayEnd = 0.1;  !! def 10%
 
 *** EU bioenergy switches
 cm_BioSupply_Adjust_EU = 3; !! def 1
@@ -443,7 +436,7 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  stat_off-indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
@@ -454,9 +447,6 @@ $setglobal cm_calibration_string  off      !! def = off
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
 $setglobal cm_techcosts  REG       !! def = REG
-
-$setglobal cm_eni  off!! def = off
-$setglobal cm_enb  off!! def = off
 
 $setglobal cm_incolearn  off !! def = off
 $setglobal cm_storageFactor  off !! def = off
@@ -483,7 +473,6 @@ $setglobal cm_feShareLimits  off  !! def = off
 $setglobal c_fuelprice_init  off !! def = off
 $setglobal cm_seTradeScenario  off  !! def = off
 
-$setglobal cm_wind_offshore  0      !! def = 0
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                                  END OF WARNING ZONE

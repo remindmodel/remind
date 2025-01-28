@@ -1,4 +1,4 @@
-cff-version: 1.0.3
+cff-version: 1.2.0
 message: If you use this model, please cite it as below.
 type: software
 authors:
@@ -272,13 +272,14 @@ abstract: REMIND (REgional Model of Investment and Development) is a numerical
   technology, policy and climate constraints. It also accounts for regional trade 
   characteristics on goods, energy fuels, and emissions allowances. All greenhouse 
   gas emissions due to human activities are represented in the model.
-version: "3.3.2.dev592"
-date-released: 2024-09-17
+version: "3.4.0.dev150"
+date-released: 2025-01-27
 repository-code: https://github.com/remindmodel/remind
 keywords:
   - energy
   - economy
   - modeling
   - model
+  - active-development
 license: AGPL-3.0-or-later
 url: https://www.pik-potsdam.de/research/transformation-pathways/models/remind

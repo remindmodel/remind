@@ -9,27 +9,26 @@
 *' @title Carbonprice
 *'
 *' @description
-*' The carbonprice module sets (exogenously given price path or predefined 2020 level and linear/exponential increase afterwards)
-*' or adjusts carbon price trajectories between iterations s.t. the desired climate policy targets are met. The carbon price is the main indicator
-*' to reflect the increase in climate policy ambition over time.
+*' The carbonprice module sets or adjusts carbon price trajectories between iterations s.t. the desired climate policy targets are met.
+*' Carbon price trajectories either (a) follow  a prescribed funtional form (linear/exponential), (b) relect NPi or NDC targets, or (c) are set exogenously. 
+*' The carbon price is the main indicator to reflect the change in climate policy ambition over time.
 
 *' Carbon prices are potentially defined by three modules:
 *' - 45_carbonprice: define the carbon price necessary to reach global emission targets following specific price trajectories.
 *' - 46_carbonpriceRegi: add a markup pm_taxCO2eqRegi to 45_carbonprice estimations to reach specific NDC or net zero targets
 *' - 47_regipol: under the regiCarbonPrice realisation, define more detailed region or emissions market specific targets, overwriting the all other carbon prices for selected regions.
 
-*' @authors Christoph Bertram, Gunnar Luderer, Robert Pietzcker
+*' @authors Christoph Bertram, Laurin Koehler-Schindler, Gunnar Luderer, Rahel Mandaroux, Robert Pietzcker, Oliver Richters
 
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%carbonprice%" == "NDC" $include "./modules/45_carbonprice/NDC/realization.gms"
 $Ifi "%carbonprice%" == "NPi" $include "./modules/45_carbonprice/NPi/realization.gms"
-$Ifi "%carbonprice%" == "diffCurvPhaseIn2Lin" $include "./modules/45_carbonprice/diffCurvPhaseIn2Lin/realization.gms"
-$Ifi "%carbonprice%" == "diffExp2Lin" $include "./modules/45_carbonprice/diffExp2Lin/realization.gms"
-$Ifi "%carbonprice%" == "diffLin2Lin" $include "./modules/45_carbonprice/diffLin2Lin/realization.gms"
+$Ifi "%carbonprice%" == "NPi2025" $include "./modules/45_carbonprice/NPi2025/realization.gms"
+$Ifi "%carbonprice%" == "NPi2025expo" $include "./modules/45_carbonprice/NPi2025expo/realization.gms"
+$Ifi "%carbonprice%" == "NPiexpo" $include "./modules/45_carbonprice/NPiexpo/realization.gms"
 $Ifi "%carbonprice%" == "exogenous" $include "./modules/45_carbonprice/exogenous/realization.gms"
 $Ifi "%carbonprice%" == "expoLinear" $include "./modules/45_carbonprice/expoLinear/realization.gms"
-$Ifi "%carbonprice%" == "exponential" $include "./modules/45_carbonprice/exponential/realization.gms"
-$Ifi "%carbonprice%" == "linear" $include "./modules/45_carbonprice/linear/realization.gms"
+$Ifi "%carbonprice%" == "functionalForm" $include "./modules/45_carbonprice/functionalForm/realization.gms"
 $Ifi "%carbonprice%" == "none" $include "./modules/45_carbonprice/none/realization.gms"
 $Ifi "%carbonprice%" == "temperatureNotToExceed" $include "./modules/45_carbonprice/temperatureNotToExceed/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################

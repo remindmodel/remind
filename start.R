@@ -251,7 +251,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   if (! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% flags)
       | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
     slurmConfig <- choose_slurmConfig(flags = flags)
-    if ("--quick" %in% flags) slurmConfig <- combine_slurmConfig(slurmConfig, "--time=60")
+    if ("--quick" %in% flags && ! slurmConfig == "direct") slurmConfig <- combine_slurmConfig(slurmConfig, "--time=60")
     if (any(c("--debug", "--quick", "--testOneRegi") %in% flags) && ! length(config.file) == 0) {
       message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
     }
@@ -300,10 +300,6 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
         # overwrite slurmConfig settings provided in scenario config file with those selected by user
         cfg$slurmConfig      <- slurmConfig
         if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
-      }
-      # Make sure all python requirements are installed
-      if (cfg$pythonEnabled == "on") {
-        piamenv::updatePythonVirtualEnv()
       }
       # Directly start runs that have a gdx file location given as path_gdx... or where this field is empty
       gdx_specified <- grepl(".gdx", cfg$files2export$start[path_gdx_list], fixed = TRUE)

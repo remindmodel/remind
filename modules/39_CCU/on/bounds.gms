@@ -6,23 +6,40 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/39_CCU/on/bounds.gms
 
-*** -------------------------------------------------------------------------------------------------------------
-***LP* Narrowing down the solution space for vm_co2capture for CCU
-*** -------------------------------------------------------------------------------------------------------------
+*' no CCU technologies (liquid synfuel, synthetic gas) before 2025
+vm_cap.up(t,regi,te_ccu39,"1")$(t.val lt 2025) = 0;
 
-vm_co2capture.up(t,regi,"cco2","ico2","ccsinje","1") = 50;
+*' no synthetic gas production before 2030
+vm_cap.up(t,regi,"h22ch4","1")$(t.val lt 2030) = 0;
 
-*** FS: overwrite bounds of se2se technologies in core/bounds.gms and set synfuel lower bounds only from 2035 on
-*** (they are only there in case the solver misses to see the technologies)
-vm_cap.lo(t,regi,te_ccu39,"1")=0;
-vm_cap.lo(t,regi,te_ccu39,"1")$(t.val gt 2031)=1e-7;
+*' upper bounds for near-term trends on liquid synfuels (CCU-fuels) 2025 and 2030
+*' based on project announcements from IEA database
+*' https://www.iea.org/data-and-statistics/data-product/hydrogen-production-and-infrastructure-projects-database
+*' distribute to regions via GDP share of 2025
+*' in future this should be differentiated by region based on regionalized input data of project announcements
+*' 0.5 TWh/yr liquid synfuel production globally at minimum in 2025
+*' corresponds to projects operational as of 2024
+vm_cap.lo("2025",regi,"MeOH","1")= 0.5 / pm_cf("2025",regi,"MeOH") / 8760
+                                    * pm_gdp("2025",regi)
+                                    / sum(regi2,pm_gdp("2025",regi2));
 
-*** CCU technologies will not be used at scale before 2030
-vm_cap.up(t,regi,te_ccu39,"1")$(t.val le 2025)=1e-6;
-*** CCU technologies will not be used at scale in 2030 (for non potential exporting regions)
-vm_cap.up(t,regi,te_ccu39,"1")$((t.val eq 2030) and (not(sameas(regi,"SSA") or sameas(regi,"LAM") or sameas(regi,"MEA"))))=1e-6;
 
-*** FS: switch off CCU in baseline runs (as CO2 capture technologies teCCS are also switched off)
+*' 5 TWh/yr liquid synfuel production globally at maximum in 2025
+*' corresponds to about half of project announcements from IEA database
+vm_cap.up("2025",regi,"MeOH","1")= 5 / pm_cf("2025",regi,"MeOH") / 8760
+                                    * pm_gdp("2025",regi)
+                                    / sum(regi2,pm_gdp("2025",regi2));
+
+
+
+*' 30 TWh/yr liquid synfuel production globally at maximum in 2030,
+*' corresponds to about half of project announcements from IEA database
+vm_cap.up("2030",regi,"MeOH","1")= 30 / pm_cf("2030",regi,"MeOH") / 8760
+                                    * pm_gdp("2025",regi)
+                                    / sum(regi2,pm_gdp("2025",regi2));
+
+
+*** switch off CCU in baseline runs (as CO2 capture technologies teCCS are also switched off)
 if(cm_emiscen = 1,
   vm_cap.fx(t,regi,te_ccu39,rlf) = 0;
 );

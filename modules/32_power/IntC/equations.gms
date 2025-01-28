@@ -56,8 +56,9 @@ q32_usableSeTe(t,regi,entySe,te)$(sameas(entySe,"seel") AND teVRE(te))..
 ***---------------------------------------------------------------------------
 *' Definition of capacity constraints for storage:
 ***---------------------------------------------------------------------------
-*' This equation calculates the storage cpacity for each testor that needs to be installed based on the amount of v32_storloss that is calculated below in 
-*' q32_storloss. Multiplying v32_storloss with "eta/(1-eta)" yields the total output of a storage technology; this output has to be smaller than cap * capfac.  
+*' This equation calculates the storage capacity for each teStor that needs to be installed based on the amount of
+*' v32_storloss that is calculated below in q32_storloss. Multiplying v32_storloss with "eta/(1-eta)" yields
+*' the total output of a storage technology; this output has to be smaller than cap * capfac.  
 q32_limitCapTeStor(t,regi,teStor)$( t.val ge 2020 ) ..
     ( 0.5$( cm_VRE_supply_assumptions eq 1 )   !! reduce storage investment needs by half for VRE_supply_assumptions = 1 
     + 1$(   cm_VRE_supply_assumptions ne 1 )
@@ -68,23 +69,23 @@ q32_limitCapTeStor(t,regi,teStor)$( t.val ge 2020 ) ..
   =l=
   sum(te2rlf(teStor,rlf),
     vm_capFac(t,regi,teStor)
-  * pm_dataren(regi,"nur",rlf,teStor)
   * vm_cap(t,regi,teStor,rlf)
   )
 ;
 
 
-*** H2 storage implementation: Storage technologies (storspv, storwind etc.) also
-*** represent H2 storage. This is implemented by scaling up capacities of 
-*** H2 turbines (h2turbVRE, seh2 -> seel) with VRE capacities which require storage (according to q32_limitCapTeStor). 
+*** H2 storage implementation:
+*** Storage technologies (storspv, storwind etc.) also represent H2 storage.
+*** This is implemented by scaling up capacities of H2 turbines (h2turbVRE, seh2 -> seel)
+*** with VRE capacities which require storage (according to q32_limitCapTeStor). 
 *** These H2 turbines (h2turbVRE) do not have capital cost. Their cost are already considered in storage technologies.
-*** H2 turbines do not need be built if sufficient gas turbines (ngt) are available to provide flexibility. 
-*' Require a certain capacity  of either hydrogen or gas turbines as peaking backup capacity. The driver is the testor capacity, which in turn is determined by v32_storloss 
+*** H2 turbines are not needed if sufficient gas turbines (ngt) are available to provide flexibility. 
+*' Require a certain capacity of either hydrogen or gas turbines as peaking backup capacity. The driver is the teStor capacity, which in turn is determined by v32_storloss 
 q32_h2turbVREcapfromTestor(t,regi)..
   vm_cap(t,regi,"h2turbVRE","1")
   + vm_cap(t,regi,"ngt","1")
   =g=
-  sum(teStor, 
+  sum(teStor,
     p32_storageCap(teStor,"h2turbVREcapratio") * vm_cap(t,regi,teStor,"1") )
 ;
 
@@ -92,15 +93,18 @@ q32_h2turbVREcapfromTestor(t,regi)..
 q32_h2turbVREcapfromTestorUp(t,regi)..
   vm_cap(t,regi,"h2turbVRE","1")
   =l=
-  sum(te$teStor(te), 
-      p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
+  sum(teStor,
+    p32_storageCap(teStor,"h2turbVREcapratio") * vm_cap(t,regi,teStor,"1") )
 ;
 
 *** build additional electrolysis capacities with stored VRE electricity, phase-in from 2030 to 2040
 q32_elh2VREcapfromTestor(t,regi)..
   vm_cap(t,regi,"elh2","1")
   =g=
-  sum(te$teStor(te), p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") ) * p32_phaseInElh2VREcap(t)
+  sum(teStor,
+    p32_storageCap(teStor,"elh2VREcapratio") * vm_cap(t,regi,teStor,"1")
+  )
+  * p32_phaseInElh2VREcap(t)
 ;
 
 
@@ -119,15 +123,13 @@ q32_limitCapTeChp(t,regi)..
 ***---------------------------------------------------------------------------
 *' Additional grid expansion to integrate VRE are driven linearly by VRE output 
 q32_limitCapTeGrid(t,regi)$( t.val ge 2020 ) .. 
-    vm_cap(t,regi,"gridwind",'1')      !! Technology is now parameterized to yield marginal costs of ~3.5$/MWh VRE electricity
+    vm_cap(t,regi,"gridwindon",'1')    !! Technology is now parameterized to yield marginal costs of ~3.5$/MWh VRE electricity
     / p32_grid_factor(regi)            !! It is assumed that large regions require higher grid investment 
     =g=
     vm_prodSe(t,regi,"pesol","seel","spv")                
     + vm_prodSe(t,regi,"pesol","seel","csp")
-    + 1.5 * vm_prodSe(t,regi,"pewin","seel","wind")  !! wind has larger variations accross space, so adding grid is more important for wind (result of REMIX runs for ADVANCE project)
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-    + 3 * vm_prodSe(t,regi,"pewin","seel","windoff") !! Getting offshore wind connected has even higher grid costs 
-$ENDIF.WindOff
+    + 1.5 * vm_prodSe(t,regi,"pewin","seel","windon")  !! wind has larger variations accross space, so adding grid is more important for wind (result of REMIX runs for ADVANCE project)
+    + 3   * vm_prodSe(t,regi,"pewin","seel","windoff") !! Getting offshore wind connected has even higher grid costs 
 ;
 
 ***---------------------------------------------------------------------------
@@ -165,7 +167,7 @@ q32_shStor(t,regi,teVRE)$(t.val ge 2015)..
 *' as it drives storage investments and thus the additional costs seen by VRE. It depends linearly on the usableSE output from this VRE, and linearly on the 
 *' SPECIFIC integration challenges, which in turn are mainly the adjusted share of the technology itself (v32_shSTor), but also increase when the total VRE share 
 *' increases beyond a (time-dependent) threshold.
-*' The term "(1-eta)/eta" is equal to the ratio "losses of a testor" to "output of a testor". 
+*' The term "(1-eta)/eta" is equal to the ratio "losses of a teStor" to "output of a teStor". 
 *' An example: If the specific integration challenges (v32_shStor + p32_Fact * v32_shAddInt) of eg. PV would reach 100%, then ALL the usable output of PV 
 *' would have to be "stabilized" by going through storsp, so the total storage losses & curtailment would exactly represent the (1-eta) values of storspv. When
 *' the specific integration challenge term () is below 100%, the required storage and resulting losses are scaled down accordingly.    
@@ -187,7 +189,7 @@ q32_TotVREshare(t,regi)..
   )
 ;
 
-*' Calculate additional integration costs if total VRE share is above a certain threshold. (A system with only 40% VRE will be less challenged to handle 30% PV than
+*' Calculate additional integration costs if total VRE share is above a certain threshold. A system with only 40% VRE will be less challenged to handle 30% PV than
 *' a system with 70% VRE, because you have less thermal plants that can act as backup and provide inertia. This threshold increases over time to represent that 
 *' network operators learn about managing high-VRE systems, and that technologies such as grid-stabilizing VRE and batteries become widespread. 
 q32_shAddIntCostTotVRE(t,regi)..
@@ -195,9 +197,7 @@ q32_shAddIntCostTotVRE(t,regi)..
   =g=
   v32_TotVREshare(t,regi)
   - p32_shThresholdTotVREAddIntCost(t)
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
   - 0.5 * vm_shSeEl(t,regi,"windoff")  !! for offshore wind, the correlation with other VRE is much smaller, reducing the additional integration challenge
-$ENDIF.WindOff
 ;
 
 ***---------------------------------------------------------------------------

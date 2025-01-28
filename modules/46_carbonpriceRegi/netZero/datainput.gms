@@ -7,7 +7,7 @@
 *** SOF ./modules/46_carbonpriceRegi/netZero/datainput.gms
 
 p46_zeroYear = 2100;
-$ifthen.p46_zeroYear "%cm_netZeroScen%" == "ENGAGE4p5_GlP"
+$ifthen.p46_zeroYear "%cm_netZeroScen%" == "ELEVATE2p3"
   p46_zeroYear = 2200;
 $endif.p46_zeroYear
 

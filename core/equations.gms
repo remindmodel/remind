@@ -152,7 +152,7 @@ q_balSe(t,regi,enty2)$( entySe(enty2) AND (NOT (sameas(enty2,"seel"))) )..
 ***   add (reused gas from waste landfills) to segas to not account for CO2
 ***   emissions - it comes from biomass
   + ( s_MtCH4_2_TWa
-    * ( vm_macBase(t,regi,"ch4wstl")
+    * ( v_macBase(t,regi,"ch4wstl")
       - vm_emiMacSector(t,regi,"ch4wstl")
       )
     )$( sameas(enty2,"segabio") AND t.val gt 2005 )
@@ -343,22 +343,20 @@ q_capTotal(t,regi,entyPe,entySe)$( capTotal(entyPe,entySe))..
 
 ***---------------------------------------------------------------------------
 *' CG: implementing simple exogenous wind offshore energy production
-*'
+*** windoffshore-todo
 ***---------------------------------------------------------------------------
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
 q_windoff_low(t,regi)$(t.val > 2020)..
    sum(rlf, vm_deltaCap(t,regi,"windoff",rlf))
    =g=
-   pm_shareWindOff(t,regi) * pm_shareWindPotentialOff2On(regi) * 0.5 * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
+   pm_shareWindOff(t,regi) * pm_shareWindPotentialOff2On(regi) * 0.5 * sum(rlf, vm_deltaCap(t,regi,"windon",rlf))
 ;
 
 q_windoff_high(t,regi)$(t.val > 2020)..
    sum(rlf, vm_deltaCap(t,regi,"windoff",rlf))
    =l=
-   pm_shareWindOff(t,regi) * pm_shareWindPotentialOff2On(regi) * 2 * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
+   pm_shareWindOff(t,regi) * pm_shareWindPotentialOff2On(regi) * 2 * sum(rlf, vm_deltaCap(t,regi,"windon",rlf))
 ;
 
-$ENDIF.WindOff
 ***---------------------------------------------------------------------------
 *' Technological change is an important driver of the evolution of energy systems.
 *' For mature technologies, such as coal-fired power plants, the evolution
@@ -423,6 +421,44 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
 *' Learning curve for investment costs:
 *' (deactivate learning for tech_stat 4 technologies before 2025 as they are not built before)
 ***---------------------------------------------------------------------------
+
+*' Learning technologies follow a “one-factor learning curve”[^1] (or “experience curve”).
+*' This widely-used formulation derives from empirical observations across different energy
+*' technologies of a log-linear relationship between the unit cost $I$ of the technology and its
+*' cumulative production or installed capacity $C$ (see for example empirical paper[^2]).
+*' [^1]: Edward S. Rubin, Iness M.L. Azevedo, Paulina Jaramillo, and Sonia Yeh. A review of learning rates for electricity supply technologies. Energy Policy, 86:198-218, 2015.
+*' [^2]: Alan McDonald and Leo Schrattenholzer. Learning rates for energy technologies. Energy Policy, 29(4):255–261, 2001.
+
+*' Learning rate $\lambda$ is defined as the fractional reduction in cost associated with a doubling of cumulative capacity.
+*' Let $I_0$ be the initial cost when cumulative capacity is $C_0$, and $I_d$ be the cost when cumulative capacity is
+*' $C_d=2\times C_0$, then the learning rate is defined as:
+*' $$ \lambda = 1 - \frac{I_d}{I_0} \in [0,1] $$
+*' Hence \textbf{Wright's law} relating investment cost $I$ and cumulative capacity $C$:
+*' $$ \frac{I}{I_0} = \left(1-\lambda \right)^{\log_2\left(\frac{C}{C_0}\right)} = \left(\frac{C}{C_0}\right)^{\log_2(1-\lambda )} $$
+*' Defining the learning exponent $b = \log_2(1-\lambda)$ and the cost of the first unit $a = \frac{I_0}{C_0^b}$,
+*' the learning equation simplifies into:
+*' $$ I = a \times C^{b} $$
+
+*' Now suppose there is a floor cost $F$ such that $I\geq F\geq 0$, irrespective of the capacity.
+*' Then the learning only applies to learnable costs $I'=I-F$, and the learning equation becomes
+*' $$ I = a'\times C^{b'} + F $$ with $a' = \frac{I_0 - F}{C_0^{b'}}$.
+*' By design, REMIND learning equations ensure that the initial slope of learning is independent of the floor cost.
+*' Mathematically, the slopes are given by the derivative of $I$ and $I'$ with respect to $C$:
+*' $$ \frac{dI}{dC} = a \times b \times C^{b-1} = I_0 \times b \times \left(\frac{C}{C_0}\right)^{b-1} $$ 
+*' $$ \frac{dI'}{dC} = a' \times b' \times C^{b'-1} = (I_0-F) \times b' \times \left(\frac{C}{C_0}\right)^{b'-1} $$
+*' For the two curves to have the same slope initially, we want the two derivatives to be equal for $C=C_0$. 
+*' This means $I_0 \times b = (I_0-F) \times b'$, that we rewrite as:
+*' $$ b' = \frac{I_0}{I_0-F}b $$
+
+*' In datainput.gms, `fm_dataglob` external data provides the observed learning rate `learn` ($\lambda$),
+*' the initial investment costs `inco0` ($I_0$), the learnable cost `incolearn` ($I'_0=I_0-F$) and
+*' the cumulative capacity in 2015 `ccap0` ($C_0$).
+*' The other learning parameters are computed using the equations described above:
+*' `learnExp_wFC` ($b'$), `learnMult_wFC` ($a'$).
+
+*' In equations.gms, the investment costs equation `q_costTeCapital` corresponds to $I = a'\times C^{b'} + F$,
+*' with variations depending on time period and floor cost scenarios.
+
 q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND t.val le 2020)) ..
   vm_costTeCapital(t,regi,teLearn)
   =e=
@@ -694,7 +730,7 @@ vm_emiCO2Sector(t,regi,sector)
 *' The endogenous baselines of non-energy emissions are calculated in the following equation:
 ***------------------------------------------------------
 q_macBase(t,regi,enty)$( emiFuEx(enty) OR sameas(enty,"n2ofertin") ) ..
-  vm_macBase(t,regi,enty)
+  v_macBase(t,regi,enty)
   =e=
     sum(emi2fuel(enty2,enty),
       p_efFossilFuelExtr(regi,enty2,enty)
@@ -713,7 +749,7 @@ q_emiMacSector(t,regi,emiMacSector(enty))..
   vm_emiMacSector(t,regi,enty)
   =e=
 
-    ( vm_macBase(t,regi,enty)
+    ( v_macBase(t,regi,enty)
     * sum(emiMac2mac(enty,enty2),
         1 - (pm_macSwitch(enty) * pm_macAbatLev(t,regi,enty2))
       )
@@ -746,7 +782,7 @@ q_emiCdrAll(t,regi)..
   )
   * ( !! scaled by the fraction that gets stored geologically
     sum(teCCS2rlf(te, rlf), vm_co2CCS(t, regi, "cco2", "ico2", te, rlf))
-    / (sum(teCCS2rlf(te, rlf), vm_co2capture(t, regi, "cco2", "ico2", "ccsinje", rlf)) + sm_eps)
+    / (sum(teCCS2rlf(te, rlf), v_co2capture(t, regi, "cco2", "ico2", "ccsinje", rlf)) + sm_eps)
   )
   !! net negative emissions from co2luc
   -  p_macBaseMagpieNegCo2(t,regi)
@@ -756,18 +792,13 @@ q_emiCdrAll(t,regi)..
 
 
 ***------------------------------------------------------
-*' Total regional emissions are the sum of emissions from technologies, MAC-curves, CDR-technologies and emissions that are exogenously given for REMIND.
+*' Total regional emissions are computed as the sum of total emissions over all emission markets.
 ***------------------------------------------------------
-*LB* calculate total emissions for each region at each time step
-q_emiAll(t,regi,emi(enty))..
-  vm_emiAll(t,regi,enty)
+q_emiAll(t,regi,emi)..
+  vm_emiAll(t,regi,emi)
   =e=
-    vm_emiTe(t,regi,enty)
-  + vm_emiMac(t,regi,enty)
-  + vm_emiCdr(t,regi,enty)
-  + pm_emiExog(t,regi,enty)
+  sum(emiMkt, vm_emiAllMkt(t,regi,emi,emiMkt))
 ;
-
 
 ***------------------------------------------------------
 *' Total regional emissions in CO2 equivalents that are part of the climate policy  are computed based on regional GHG
@@ -831,7 +862,7 @@ q_budgetCO2eqGlob$(cm_emiscen=6)..
 *' Definition of carbon capture :
 ***---------------------------------------------------------------------------
 q_balcapture(t,regi,ccs2te(ccsCo2(enty),enty2,te)) ..
-  sum(teCCS2rlf(te,rlf), vm_co2capture(t,regi,enty,enty2,te,rlf))
+  sum(teCCS2rlf(te,rlf), v_co2capture(t,regi,enty,enty2,te,rlf))
   =e=
     !! carbon captured in energy sector
     sum(emi2te(enty3,enty4,te2,enty),
@@ -854,7 +885,7 @@ q_balcapture(t,regi,ccs2te(ccsCo2(enty),enty2,te)) ..
 *' atmosphere)
 ***---------------------------------------------------------------------------
 q_balCCUvsCCS(t,regi) ..
-  sum(teCCS2rlf(te,rlf), vm_co2capture(t,regi,"cco2","ico2",te,rlf))
+  sum(teCCS2rlf(te,rlf), v_co2capture(t,regi,"cco2","ico2",te,rlf))
   =e=
     sum(teCCS2rlf(te,rlf), vm_co2CCS(t,regi,"cco2","ico2",te,rlf))
   + sum(teCCU2rlf(te,rlf), vm_co2CCUshort(t,regi,"cco2","ccuco2short",te,rlf))
@@ -972,7 +1003,6 @@ q_costEnergySys(ttot,regi)$( ttot.val ge cm_startyear ) ..
     + v_costInv(ttot,regi)
     )
   + sum(emiInd37, vm_IndCCSCost(ttot,regi,emiInd37))
-  + pm_CementDemandReductionCost(ttot,regi)
 ;
 
 
@@ -1054,31 +1084,51 @@ q_shBioTrans(t,regi)..
 ;
 
 ***---------------------------------------------------------------------------
-*' Share of final energy carrier in sector
+*' Shares of final energy carrier in sector
 ***---------------------------------------------------------------------------
 
 q_shfe(t,regi,entyFe,sector)$(pm_shfe_up(t,regi,entyFe,sector) OR pm_shfe_lo(t,regi,entyFe,sector))..
   v_shfe(t,regi,entyFe,sector)
   * sum(emiMkt$sector2emiMkt(sector,emiMkt),
       sum(se2fe(entySe,entyFe2,te)$(entyFe2Sector(entyFe2,sector)),
-        vm_demFeSector(t,regi,entySe,entyFe2,sector,emiMkt)))
+        vm_demFeSector_afterTax(t,regi,entySe,entyFe2,sector,emiMkt)))
   =e=
   sum(emiMkt$sector2emiMkt(sector,emiMkt),
       sum(se2fe(entySe,entyFe,te),
-        vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))
+        vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
+;
+
+q_shSeFe(t,regi,entySe)$(entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)).. !! share of energy carrier subtype in final energy demand of the aggregated carrier type (eg 'the share of bio-based FE liquids in all FE liquids')
+  v_shSeFe(t,regi,entySe) 
+  * sum((sector,emiMkt)$(sector2emiMkt(sector,emiMkt) AND (NOT(sameas(sector,"CDR")))),
+      sum(seAgg$seAgg2se(seAgg,entySe), !! determining the aggregate SE carrier type (liquids, gases, ...)
+        sum(entySe2$seAgg2se(seAgg,entySe2), !! summing over the bio/fos/syn variants of the chosen SE carrier"
+          sum(entyFe$(sefe(entySe2,entyFe) AND entyFe2Sector(entyFe,sector)),
+            vm_demFeSector_afterTax(t,regi,entySe2,entyFe,sector,emiMkt)))))
+  =e=
+  sum((sector,emiMkt)$(sector2emiMkt(sector,emiMkt) AND (NOT(sameas(sector,"CDR")))),
+    sum(entyFe$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector)),
+      vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
+;
+
+q_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt)$((entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) AND (sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)) AND NOT(SAMEAS(sector,"CDR")))..
+  v_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt) 
+  * sum(entySe2$sefe(entySe2,entyFe),
+      vm_demFeSector_afterTax(t,regi,entySe2,entyFe,sector,emiMkt))
+  =e=
+  vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)
 ;
 
 q_shGasLiq_fe(t,regi,sector)$(pm_shGasLiq_fe_up(t,regi,sector) OR pm_shGasLiq_fe_lo(t,regi,sector))..
   v_shGasLiq_fe(t,regi,sector)
   * sum(emiMkt$sector2emiMkt(sector,emiMkt),
       sum(se2fe(entySe,entyFe,te)$(entyFe2Sector(entyFe,sector)),
-        vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))
+        vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
   =e=
   sum(emiMkt$sector2emiMkt(sector,emiMkt),
     sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"fegas") OR SAMEAS(entyFe,"fehos")),
-      vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))
+      vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
 ;
-
 
 *limit secondary energy district heating and heat pumps
 $IFTHEN.sehe_upper not "%cm_sehe_upper%" == "off"
@@ -1128,5 +1178,95 @@ q_shbiofe_lo(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector) 
   =l=
   sum((entySeBio,te)$se2fe(entySeBio,entyFe,te), vm_demFeSector_afterTax(t,regi,entySeBio,entyFe,sector,emiMkt))
 ;
+
+***---------------------------------------------------------------------------
+*' Penalty for secondary energy share deviation in sectors 
+***---------------------------------------------------------------------------
+
+$ifthen.seFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "sqSectorShare"
+q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
+    (t.val ge 2025) AND  !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds   
+    ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
+    ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
+    ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) AND !!disable buildings solids share incentives
+    ( NOT(sameas(sector,"CDR"))) !! disable share incentives for CDR sector as it leads to solver problems
+  )..
+  v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+  =e=
+  power(v_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt) ,2)
+  * (1$sameas("%c_seFeSectorShareDevUnit%","share") + ( vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt) )$(sameas("%c_seFeSectorShareDevUnit%","energy")) ) !!define deviation in share or energy units 
+;
+$elseIf.seFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "sqSectorAvrgShare"
+q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
+    (t.val ge 2025) AND  !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds
+    ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
+    ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
+    ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) AND !!disable buildings solids share incentives
+    ( NOT(sameas(sector,"CDR"))) !! disable share incentives for CDR sector as it leads to solver problems
+  )..
+  v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+  =e=
+  power(v_shSeFe(t,regi,entySe) - v_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt) ,2)
+  * (1$sameas("%c_seFeSectorShareDevUnit%","share") + ( vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt) )$(sameas("%c_seFeSectorShareDevUnit%","energy")) ) !!define deviation in share or energy units 
+;
+$elseIf.seFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgShare"
+q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
+    (t.val ge 2025) AND  !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds
+    ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
+    ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
+    ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) AND !!disable buildings solids share incentives
+    ( NOT(sameas(sector,"CDR"))) !! disable share incentives for CDR sector as it leads to solver problems
+  )..
+  v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+  =e=
+    v_NegPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt) 
+  + v_PosPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+;
+
+q_minMaxPenSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
+    (t.val ge 2025) AND  !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds
+    ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
+    ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
+    ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) AND !!disable buildings solids share incentives
+    ( NOT(sameas(sector,"CDR"))) !! disable share incentives for CDR sector as it leads to solver problems
+  )..
+  (
+    v_shSeFe(t,regi,entySe)
+    - v_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt)
+    + v_NegPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt) 
+    - v_PosPenSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+  )
+  * !!define deviation in share or energy units 
+    ( 1$sameas("%c_seFeSectorShareDevUnit%","share") +
+      (sum(seAgg$seAgg2se(seAgg,entySe),
+        sum(entyFe2$(seAgg2fe(seAgg,entyFe2) AND entyFe2Sector(entyFe2,sector)),
+          sum(entySe2$(seAgg2se(seAgg,entySe2) AND sefe(entySe2,entyFe2) AND entyFe2Sector(entyFe2,sector)),
+              vm_demFeSector_afterTax(t,regi,entySe2,entyFe2,sector,emiMkt))))
+      )$sameas("%c_seFeSectorShareDevUnit%","energy")
+    ) 
+  =e=
+  0
+;
+$endif.seFeSectorShareDev
+
+$ifthen.penSeFeSectorShareDevCost not "%cm_seFeSectorShareDevMethod%" == "off"
+q_penSeFeSectorShareDevCost(t,regi)..
+  vm_penSeFeSectorShareDevCost(t,regi)
+  =e=
+  sum((entySe,entyFe,sector,emiMkt)$( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) AND (NOT(sameas(sector,"CDR")))),
+    v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
+  ) * c_seFeSectorShareDevScale
+;
+$endif.penSeFeSectorShareDevCost
+
+***---------------------------------------------------------------------------
+*' Limit solids fossil to be lower or equal to previous year values  
+***---------------------------------------------------------------------------
+$ifthen.limitSolidsFossilRegi not %cm_limitSolidsFossilRegi% == "off"
+q_fossilSolidsLimitReg(ttot,regi,entySe,entyFe,sector,emiMkt)$(limitSolidsFossilRegi(regi) and (ttot.val ge max(2020, cm_startyear)) AND sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt) AND (sameas(sector,"indst") OR sameas(sector,"build")) AND sameas(entySe,"sesofos"))..
+  vm_demFeSector_afterTax(ttot,regi,entySe,entyFe,sector,emiMkt)
+  =l=
+  vm_demFeSector_afterTax(ttot-1,regi,entySe,entyFe,sector,emiMkt);
+$endif.limitSolidsFossilRegi
 
 *** EOF ./core/equations.gms

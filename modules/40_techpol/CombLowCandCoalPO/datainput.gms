@@ -9,16 +9,16 @@
 *cb targets for renewable upscaling: CSP and SPV from plausible extrapolation of current trends, Wind taken from Optimal immediate policy run (slightly optimistic at beginning)
 p40_NewRenBound("2015","csp")=2.267;
 p40_NewRenBound("2015","spv")=180;
-p40_NewRenBound("2015","wind")=506.022;
+p40_NewRenBound("2015","windon")=506.022;
 p40_NewRenBound("2020","csp")=4.5;
 p40_NewRenBound("2020","spv")=400;
-p40_NewRenBound("2020","wind")=826.341;
+p40_NewRenBound("2020","windon")=826.341;
 p40_NewRenBound("2025","csp")=8.5;
 p40_NewRenBound("2025","spv")=610;
-p40_NewRenBound("2025","wind")=1208.034;
+p40_NewRenBound("2025","windon")=1208.034;
 p40_NewRenBound("2030","csp")=18.5;
 p40_NewRenBound("2030","spv")=900;
-p40_NewRenBound("2030","wind")=1646.939;
+p40_NewRenBound("2030","windon")=1646.939;
 
 *cb plausible, quite conservative upscaling (much lower than in optimal immediate)
 p40_NewRenBound("2020","bioftcrec")=2.4;

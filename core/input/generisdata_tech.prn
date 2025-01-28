@@ -1,6 +1,5 @@
 *** SOF ./core/input/generisdata_tech.prn
 $ontext
-IMPORTANT: all costs are now given in $2015! As long as the model runs in $2005, the values need to be converted in datainput.gms
 tech_stat   technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'
 inco0       Initial investment costs given in $[2015] / kW[output] capacity; for dac/prc cc: $[2015] / (tC[captured]/a); for other indutry prc: $[2015]/(t[output]/a)
 constrTme   Construction time in years, needed to calculate turn-key cost premium compared to overnight costs
@@ -17,7 +16,7 @@ $offtext
 
                    ngcc       ngccc         ngt       gastr      gaschp       gashp       gash2      gash2c       gasftrec    gasftcrec
 tech_stat                        2                                                           0           1           2            3
-inco0                950        1350         500          60        1200         400        900         1400        2030        2400
+inco0                950        1350         500          60        1200         400        900         1400        1600        1700
 constrTme             3          3            2           1          3            2           2           2           3           3
 mix0                                                                                        0.70        0.00        0.00        0.00
 eta                 0.57        0.49        0.38        1.00        0.47        0.80        0.73        0.70        0.73        0.70
@@ -46,16 +45,16 @@ lifetime              40          40          40          40          40        
 
 +                 biotr   biotrmod      biochp       biohp     bioigcc    bioigccc      biogas       biogasc      bioh2      bioh2c     bioethl     bioeths   biodiesel    bioftrec   bioftcrec
 tech_stat                                                           1           3           1            3          2           3           2                                   3           3
-inco0                 10        300        3000         550        2450        3150        1200        1230        1680        2040        2860         590         160        3000        3600
+inco0                 10        300        3000         550        2450        3150        1200        1230        1680        2040        2860         590         160        2800        3100
 constrTme              0          1          4           2           4          5            4           4           4           4           4           2          2           4           5
 mix0                           0.00
 eta                 1.00       0.95        0.35        0.72        0.39        0.28        0.55        0.55        0.59        0.55        0.36        0.55        0.93        0.41        0.41
 omf                            0.03        0.04        0.04        0.04        0.04        0.04        0.06        0.07        0.08        0.07        0.11        0.05        0.05        0.06
-omv                                       30.11       25.00       31.50       50.50       10.90       12.80       10.60       10.60       97.27       38.99        5.05                   10.60
+omv                                       30.11       25.00       31.50       50.50       10.90       12.80       10.60       10.60       97.27       38.99        5.05       10.60        10.60
 lifetime              35         35          40          40          40          40          40          40          35          35          35          35          35          35          35
 
 
-+                geohdr       geohe       hydro        wind         windoff     spv       solhe         csp
++                geohdr       geohe       hydro        windon       windoff     spv       solhe         csp
 tech_stat            1
 inco0               3600        1200        2700        2400         5000       5160        9999       10320
 constrTme            4           1           5            1            4          1           1          3
@@ -63,23 +62,23 @@ mix0
 eta                 1.00        1.00        1.00        1.00         1.00       1.00        1.00        1.00
 omf                 0.04        0.06       0.025        0.02         0.03       0.02                   0.025
 lifetime              30          25         130          25           25         30          25          30
-incolearn                                               2000         4000       5060                    8760
+incolearn                                               2200         4000       5110                    8760
 ccap0                                                   0.06       0.0007      0.005                  0.0002
-learn                                                   0.108        0.12      0.207                   0.103
+learn                                                   0.12         0.12      0.25                    0.103
 luse                                                                            0.09                   0.021
 
 
 +                  elh2         dot         dhp       h2turb      h2curt       h2turbVRE  elh2VRE      h22ch4      MeOH
-tech_stat            4                                    5           5            5                     3          3
-inco0               1350         480         360         510         700          510      0.1          700       1300
+tech_stat            3                                    5           5            5                     3          3
+inco0               3500         480         360         510         700          510      0.1          700        800
 constrTme            2            2           1           2           2            2        1            2          2
 mix0
 eta                 0.73        0.30        0.80        0.40        0.62         0.40      0.73         0.8        0.7
-omf                 0.05        0.03        0.03        0.03        0.05         0.03      0.00        0.04       0.05
-omv                    3          12          12          24           0          24                      3         25
+omf                 0.05        0.03        0.03        0.03        0.05         0.03      0.00        0.03       0.03
+omv                    3          12          12          24           0          24                     12         12
 lifetime              30          25          25          30          30          30        30           30         30
-incolearn           1200
-ccap0             0.0065
+incolearn           3370
+ccap0            0.00077
 learn               0.15
 
 
@@ -138,22 +137,22 @@ omf                 0.03        0.03
 omv                   36          76
 lifetime              50          50
 
-+                storspv    storwind     storcsp
-inco0               7720        2940        2520
-mix0                0.00        0.00        0.00
-eta                 0.74        0.85        0.79
-omf                 0.02        0.02        0.02
-lifetime              25          25          25
-incolearn           5440        2090        1800
-ccap0            0.00005     0.00005     0.00005
-learn               0.10        0.10        0.10
++                storspv     storcsp    storwindon    storwindoff
+inco0               7720        2520          2940           2940  
+mix0                0.00        0.00          0.00           0.00
+eta                 0.74        0.79          0.85           0.85  
+omf                 0.02        0.02          0.02           0.02
+lifetime              25          25            25             25
+incolearn           5440        1800          2090           2090    
+ccap0            0.00005     0.00005       0.00005        0.00005
+learn               0.10        0.10          0.10           0.10
 
-+                gridspv    gridwind     gridcsp
-inco0               2400         720        3120
-mix0                0.00        0.00        0.00
-eta                 1.00        1.00        1.00
-omf                 0.02        0.02        0.02
-lifetime              45          45          45
++                gridspv    gridcsp     gridwindon    gridwindoff
+inco0               2400        3120           720            720     
+mix0                0.00        0.00          0.00           0.00
+eta                 1.00        1.00          1.00           1.00
+omf                 0.02        0.02          0.02           0.02
+lifetime              45          45            45             45
 
 +             weathering         dac      oae_ng      oae_el
 tech_stat                          4
@@ -189,14 +188,51 @@ Explanations:
 
 Electrolysis - elh2
 learning parameterization:
-Assume that 10 GW(el) electrolysis installed globally and CAPEX of 800 EUR/kW(el) in 2025
-(slightly optimistic due to recent policies, e.g. EU Hydrogen Bank and US Inflation Reduction Act)
-(Odenweller et al. (2022), https://doi.org/10.1038/s41560-022-01097-4,
-Ueckerdt et al. (2021), https://doi.org/10.1038/s41558-021-01032-7, Fig. S3).
-10 GW(el) * 0.65 (elh2 efficiency) * 1e-3 ~ 0.0065 TW(H2) = ccap0
-800 EUR/kW(el) / 0.65 (elh2 efficiency) * 1.1 (EUR to USD, 2015) ~ 1350 USD/kW(H2) = inco0
-Assume floor cost: 100 EUR/kW(el)
-100 EUR/kW(el) / 0.75 (long-term elh2 efficiency) * 1.1 (EUR to USD, 2015) ~ 150 USD/kW(H2) -> incolearn = 1200
+Initialize learning curve for electrolysis at 0.5 GW(el) installed globally at CAPEX of 2300 USD/kW(el) in 2020.
+Based on Ramboll 2023, https://energycentral.com/system/files/ece/nodes/658117/ghpp.pdf
+and IEA 2024 Hydrogen Review, https://www.iea.org/reports/global-hydrogen-review-2024
+0.5 GW(el) * 0.65 (elh2 efficiency) * 1e-3 ~ 0.00077 TW(H2) = ccap0 (for 2020)
+2300 USD/kW(el) / 0.65 (elh2 efficiency)  ~ 3500 USD/kW(H2) = inco0 (for 2020)
+Assume floor cost: 100 USD/kW(el)
+100 USD/kW(el) / 0.75 (long-term elh2 efficiency) ~ 133 USD/kW(H2) -> incolearn = 3370
+
+(CCU-based) Fischer-Tropsch Synthesis (H2-to-Liquids) - MeOH
+inco0: 800 USD/kW following Agora (2018), Figs. 16-17,
+https://www.agora-energiewende.de/fileadmin/Projekte/2017/SynKost_2050/Agora_SynKost_Study_EN_WEB.pdf
+omf/omv: choose same as for refineries
+eta: 0.7, following Agora (2018) and Tremel et al. (2015), https://doi.org/10.1016/j.ijhydene.2015.01.097
+
+Methanation (H2-to-Gas) - h22ch4
+inco0: 700 USD/kW, long-term value following review by Agora (2018), Fig. 13,
+https://www.agora-energiewende.de/fileadmin/Projekte/2017/SynKost_2050/Agora_SynKost_Study_EN_WEB.pdf
+omf: 0.03 of CAPEX, following Agora (2018)
+omv: choose same as for refineries
+eta: 0.8, following Agora (2018), p. 67
+
+
+Bio-based Fischer-Tropsch Synthesis (Biomass-to-Liquids) - bioftrec
+(Biomass gasification + FT synthesis)
+inco0: 2800 USD/kW, following Liu et al. (2011), Table 7 gives CAPEX per kW(input), convert with 0.41 efficiency
+eta: 0.41, following Liu et al., Fig. 11
+
+
+Bio-based Fischer-Tropsch Synthesis (Biomass-to-Liquids) with carbon capture - bioftcrec
+(Biomass gasification + FT synthesis)
+inco0: 3100 USD/kW, 300 USD/kW mark-up for CO2 capture
+eta: 0.41, same as without carbon capture
+
+Biomass Methanation (Biomass-to-Gas) - biogas
+inco0: 1200 USD/kW, following e.g. Aranda et al. (2014)
+https://www.biosng.com/fileadmin/biosng/user/documents/reports/The_Economy_of_Large_Scale_Biomass_to_Bio-Methane.pdf
+eta: 0.55, following Michailos et al. (2019), https://doi.org/10.1016/j.bej.2019.107290
+
+Biomass Methanation (Biomass-to-Gas) with carbon capture - biogasc
+inco: 1230 USD/kW, add 30 USD/kW for carbon capture
+eta: 0.55, same as without carbon capture
+
+Photovoltaics - spv
+overall learning rate was increased to 25% and floor costs decreased to 50$2015/kW, as recent
+(2024) prices in various IEA-PVPS reports or other market reports show learning was faster than expected.
 
 Direct Air Capture - dac
 learning parameterization:

@@ -214,7 +214,6 @@ runHarmoniseAndInfillCmd <- paste(
   "python", file.path(scriptsDir, "run_harm_inf.py"),
   climateAssessmentEmi,
   climateTempDir,
-  "--no-inputcheck",
   "--infilling-database", infillingDatabaseFile
 )
 
@@ -228,14 +227,7 @@ runClimateEmulatorCmd <- paste(
   "--scenario-batch-size", 1,
   "--probabilistic-file", probabilisticFile
 )
-# runClimateEmulatorCmd <- paste(
-#   "python", file.path(scriptsDir, "run_clim.py"),
-#   normalizePath(file.path(climateTempDir, paste0(baseFn, "_harmonized_infilled.csv"))),
-#   climateTempDir,
-#   "--num-cfgs", nparsets,
-#   "--scenario-batch-size", 1,
-#   "--probabilistic-file", probabilisticFile
-# )
+
 
 # Get conda environment folder
 condaDir <- "/p/projects/rd3mod/python/environments/scm_magicc7"

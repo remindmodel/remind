@@ -306,24 +306,6 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 $endif.cm_subsec_model_steel
   /
 
- fe_tax_sub37(all_in,all_in)   "correspondence between tax and subsidy input data resolution and model sectoral resolution"
-  /
-    fesoi . (feso_cement, feso_chemicals, feso_otherInd)
-    fehoi . (feli_cement, feli_chemicals, feli_otherInd)
-    fegai . (fega_cement, fega_chemicals, fega_otherInd)
-    feh2i . (feh2_cement, feh2_chemicals, feh2_otherInd)
-    fehei . fehe_otherInd
-    feeli . (feel_cement, feelhth_chemicals, feelwlth_chemicals,
-             feelhth_otherInd, feelwlth_otherInd)
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
-    fesoi . feso_steel
-    fehoi . feli_steel
-    fegai . fega_steel
-    feh2i . feh2_steel
-    feeli . (feel_steel_primary, feel_steel_secondary)
-$endif.cm_subsec_model_steel
-  /
-
 energy_limits37(all_in,all_in)   "thermodynamic limit of energy"
   /
     ue_cement          . en_cement
@@ -380,6 +362,15 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idrcc
 $endif.cm_subsec_model_steel
   /
+
+  teCCPrc(tePrc)   "Technologies used in process-based model (only CCS)"
+  /
+    $$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+    bfcc
+    idrcc
+    $$endif.cm_subsec_model_steel
+  /
+
 
 mat(all_enty)   "Materials considered in process-based model; Can be input and/or output of a process"
   /
@@ -620,7 +611,6 @@ ppfKap(ppfKap_industry_dyn37)                                          = YES;
 ppfEn(ppfen_industry_dyn37)                                            = YES;
 cesOut2cesIn(ces_industry_dyn37)                                       = YES;
 fe2ppfEn(fe2ppfEn37)                                                   = YES;
-fe_tax_sub_sbi(fe_tax_sub37)                                           = YES;
 pf_eff_target_dyn37(ppfen_industry_dyn37)                              = YES;
 pf_quan_target_dyn37(ppfKap_industry_dyn37)                            = YES;
 pf_industry_relaxed_bounds_dyn37(ppf_industry_dyn37)                   = YES;
@@ -634,7 +624,7 @@ pf_quan_target_dyn29(pf_quan_target_dyn37)  = YES;
 $endif.calibrate
 
 teMat2rlf(tePrc,"1") = YES;
-alias(tePrc,teCCPrc,tePrc1,tePrc2);
+alias(tePrc,tePrc1,tePrc2);
 alias(opmoPrc,opmoCCPrc,opmoPrc1,opmoPrc2);
 alias(route,route2);
 alias(entyFeCC37,entyFeCC37_2);

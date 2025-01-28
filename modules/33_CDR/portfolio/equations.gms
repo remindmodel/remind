@@ -112,7 +112,7 @@ q33_DAC_FEdemand(t,regi,entyFe2)$sum(entyFe, fe2cdr(entyFe,entyFe2,"dac"))..
 ***---------------------------------------------------------------------------
 q33_EW_capconst(t,regi)..
     sum((rlf_cz33, rlf), v33_EW_onfield(t,regi,rlf_cz33,rlf))
-    =l=
+    =e=
     sum(teNoTransform2rlf33("weathering",rlf),
         vm_capFac(t,regi,"weathering") * vm_cap(t,regi,"weathering",rlf)
     )
@@ -177,8 +177,9 @@ q33_EW_omcosts(t,regi)..
 q33_EW_potential(t,regi,rlf_cz33)..
     sum(rlf, v33_EW_onfield_tot(t,regi,rlf_cz33,rlf))
     =l=
-    f33_maxProdGradeRegiWeathering(regi,rlf_cz33)
+    p33_EW_maxShareOfCropland(regi) * f33_maxProdGradeRegiWeathering(regi,rlf_cz33)
     ;
+
 
 ***---------------------------------------------------------------------------
 *'  An annual limit for the maximum global amount of rocks spread [Gt] can be set via cm_LimRock,
@@ -189,7 +190,27 @@ q33_EW_LimEmi(t,regi)..
     =l=
     cm_LimRock * p33_LimRock(regi)
     ;
-	
+
+***---------------------------------------------------------------------------
+*' Short term bound on spreading of rock
+***---------------------------------------------------------------------------
+
+q33_EW_ShortTermBound(t, regi)$(t.val eq 2030)..
+    sum((rlf_cz33, rlf), v33_EW_onfield(t,regi,rlf_cz33,rlf))
+    =l=
+    p33_EW_shortTermEW_Limit(regi) 
+    ;
+
+***---------------------------------------------------------------------------
+*' Limits on the upscaling rate of mining and spreading of rocks. 
+*' Current cost parameters do not include cost of additional mining being developed, 
+*' thus adjustment cost are not effective.
+***---------------------------------------------------------------------------	
+q33_EW_upscaling_rate(ttot,regi)$(ord(ttot) lt card(ttot) AND pm_ttot_val(ttot) gt 2030)..
+   sum((rlf_cz33, rlf), v33_EW_onfield(ttot,regi,rlf_cz33,rlf))
+    =l=
+   (1+p33_EW_upScalingLimit(ttot))**pm_dt(ttot) * sum((rlf_cz33, rlf), v33_EW_onfield(ttot-1,regi,rlf_cz33,rlf)) + p33_EW_shortTermEW_Limit(regi)
+;
 
 ***---------------------------------------------------------------------------
 *' #### OAE equations
