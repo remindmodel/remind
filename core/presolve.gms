@@ -283,7 +283,7 @@ vm_macBase.fx(ttot,regi,"co2luc") = pm_macBaseMagpie(ttot,regi,"co2luc")-p_macPo
 vm_macBase.up(ttot,regi,"n2ofertin") = Inf;
 ***scale exogenous baselines from van Vuuren to EDGAR v4.2 2005 data
 vm_macBase.fx(ttot,regi,"n2otrans")$p_macBaseVanv("2005",regi,"n2otrans") = p_macBaseVanv(ttot,regi,"n2otrans") * (p_macBase2005(regi,"n2otrans") / p_macBaseVanv("2005",regi,"n2otrans"));
-vm_macBase.fx(ttot,regi,"n2oadac")$p_macBaseVanv("2005",regi,"n2otrans")  = p_macBaseVanv(ttot,regi,"n2oadac")  * (p_macBase2005(regi,"n2oacid")  / (p_macBaseVanv("2005",regi,"n2oadac") + p_macBaseVanv("2005",regi,"n2onitac")));
+vm_macBase.fx(ttot,regi,"n2oadac")$p_macBaseVanv("2005",regi,"n2oadac")  = p_macBaseVanv(ttot,regi,"n2oadac")  * (p_macBase2005(regi,"n2oacid")  / (p_macBaseVanv("2005",regi,"n2oadac") + p_macBaseVanv("2005",regi,"n2onitac")));
 vm_macBase.fx(ttot,regi,"n2onitac")$(p_macBaseVanv("2005",regi,"n2oadac") OR p_macBaseVanv("2005",regi,"n2onitac")) = p_macBaseVanv(ttot,regi,"n2onitac") * (p_macBase2005(regi,"n2oacid")  / (p_macBaseVanv("2005",regi,"n2oadac") + p_macBaseVanv("2005",regi,"n2onitac")));
 
 *** baseline continuation after 2100
