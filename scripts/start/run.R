@@ -136,7 +136,10 @@ run <- function() {
                          config     = cfg,
                          runtime    = gams_runtime,
                          setup_info = lucode2::setup_info(),
-                         submit     = cfg$runstatistics)
+                         submit     = cfg$runstatistics,
+                         timeGAMSStart = timeGAMSStart,
+                         timeGAMSEnd   = timeGAMSEnd
+  )
 
   if (modelSummaryData[["stoprun"]]) {
     stop("GAMS did not complete its run, so stopping here:\n       No output is generated, no subsequent runs are started.\n",
@@ -265,10 +268,8 @@ run <- function() {
   timeOutputEnd <- Sys.time()
 
   # Save run statistics to local file
-  cat("\nSaving timeGAMSStart, timeGAMSEnd, timeOutputStart and timeOutputStart to runstatistics.rda\n")
+  cat("\nSaving timeOutputStart and timeOutputEnd to runstatistics.rda\n")
   lucode2::runstatistics(file           = paste0(cfg$results_folder, "/runstatistics.rda"),
-                       timeGAMSStart   = timeGAMSStart,
-                       timeGAMSEnd     = timeGAMSEnd,
                        timeOutputStart = timeOutputStart,
                        timeOutputEnd   = timeOutputEnd)
 

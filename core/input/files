@@ -23,7 +23,6 @@ p_boundEmi.cs4r
 p_emiFossilFuelExtr.cs4r
 f_nechem_emissionFactors.cs4r
 f_incinerationShares.cs4r
-p_emineg_econometric.cs3r
 pm_histCap.cs3r
 p_histCapFac.cs4r
 p_histEmiMac.cs4r
@@ -42,7 +41,6 @@ pm_risk_premium.cs4r
 pm_shPPPMER.cs4r
 p_PE_histCap.cs3r
 p_regi_2_MAGICC_regions.cs3r
-p_share_ind_fehos.cs4r
 p_share_ind_fesos_bio.cs4r
 p_share_ind_fesos.cs4r
 pm_taxCO2eqHist.cs4r

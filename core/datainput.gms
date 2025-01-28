@@ -132,7 +132,7 @@ pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 *------------------------------------------------------------------------------------
 ***          Technology data input read-in and manipulation    START
 *------------------------------------------------------------------------------------
-*** In module 5 there are more cost manipulation after initial capacities are calculated, 
+*** In module 5 there are more cost manipulation after initial capacities are calculated,
 *** be aware those can overwrite your technology values for policy runs if you set them here in the core
 ***---------------------------------------------------------------------------
 *** Reading in and initializing global data
@@ -143,8 +143,8 @@ $include "./core/input/generisdata_tech.prn"
 $include "./core/input/generisdata_trade.prn"
 ;
 
-*** CG warning: some of the SSP1 and SSP5 costs are not consistent with the story line (e.g. under SSP1 blue H2 and some fossil fuel CCS technologies have lower costs than in SSP2). 
-*** This is to be fixed in the future when new SSP storylines are implemented, unclear when (29-1-2024). 
+*** CG warning: some of the SSP1 and SSP5 costs are not consistent with the story line (e.g. under SSP1 blue H2 and some fossil fuel CCS technologies have lower costs than in SSP2).
+*** This is to be fixed in the future when new SSP storylines are implemented, unclear when (29-1-2024).
 *** In the future, SSP1 and SSP5 data should be implemented as switches to avoid errors
 table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
 $include "./core/input/generisdata_tech_SSP1.prn"
@@ -237,7 +237,7 @@ $offdelim
 ;
 
 *** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** allow input data with either "wind" or "windon" until mrremind is updated
 p_inco0(ttot,all_regi,"windon") $ (p_inco0(ttot,all_regi,"windon") eq 0) = p_inco0(ttot,all_regi,"wind");
 p_inco0(ttot,all_regi,"wind") = 0;
 
@@ -516,13 +516,6 @@ $offdelim
 /
 ;
 
-parameter pm_share_ind_fehos(tall,all_regi)               "Share of heating oil used in the industry (rest is residential)"
-/
-$ondelim
-$include "./core/input/p_share_ind_fehos.cs4r"
-$offdelim
-/
-;
 *** initialize pm_share_trans with the global value, will be updated after each negishi/nash iteration
 pm_share_trans("2005",regi) = 0.617;
 pm_share_trans("2010",regi) = 0.625;
@@ -685,8 +678,8 @@ $offdelim
 ;
 $Onlisting
 
-*** windoffshore-todo 
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated
 pm_histCap(tall,all_regi,"windon") $ (pm_histCap(tall,all_regi,"windon") eq 0) = pm_histCap(tall,all_regi,"wind");
 pm_histCap(tall,all_regi,"wind") = 0;
 
@@ -714,8 +707,8 @@ $Onlisting
 
 
 *CG* setting wind offshore capacity factor to be the same as onshore here (later adjusting it in vm_capFac)
-*** windoffshore-todo 
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated
 f_cf(ttot,regi,"windon") $ (f_cf(ttot,regi,"windon") eq 0) = f_cf(ttot,regi,"wind");
 f_cf(ttot,regi,"storwindon") $ (f_cf(ttot,regi,"storwindon") eq 0) = f_cf(ttot,regi,"storwind");
 f_cf(ttot,regi,"gridwindon") $ (f_cf(ttot,regi,"gridwindon") eq 0) = f_cf(ttot,regi,"gridwind");
@@ -1073,7 +1066,7 @@ loop(regi,
       if(s_aux_cap_remaining > 0,
         p_aux_capThisGrade(regi,te,rlf) = min(
             s_aux_cap_remaining,
-            0.8 * pm_dataren(regi,"maxprod",rlf,te) / pm_dataren(regi,"nur",rlf,te)); !! installedCapacity = maxprod / capacityFactor 
+            0.8 * pm_dataren(regi,"maxprod",rlf,te) / pm_dataren(regi,"nur",rlf,te)); !! installedCapacity = maxprod / capacityFactor
         s_aux_cap_remaining = s_aux_cap_remaining - p_aux_capThisGrade(regi,te,rlf);
       );
     );  !! teRe2rlfDetail
@@ -1083,7 +1076,7 @@ loop(regi,
     p_avCapFac2015(regi,te) =
         sum(teRe2rlfDetail(te,rlf),
           p_aux_capThisGrade(regi,te,rlf) * pm_dataren(regi,"nur",rlf,te))
-      / 
+      /
         (sum(teRe2rlfDetail(te,rlf), p_aux_capThisGrade(regi,te,rlf))
         + 1e-10)
   );    !! teReNoBio
@@ -1102,7 +1095,7 @@ $offdelim
 ;
 
 *** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** allow input data with either "wind" or "windon" until mrremind is updated
 p_histCapFac(tall,all_regi,"windon") $ (p_histCapFac(tall,all_regi,"windon") eq 0) = p_histCapFac(tall,all_regi,"wind");
 p_histCapFac(tall,all_regi,"wind") = 0;
 
@@ -1121,7 +1114,7 @@ loop(t $ (t.val ge 2015 AND t.val lt 2030),
     pm_cf(t,regi,teVRE) !! always 1 for VRE in f_cf, but could be modified by modules
     * ( (2030 - pm_ttot_val(t)) * p_aux_capacityFactorHistOverREMIND(regi,teVRE)
       + (pm_ttot_val(t) - 2015)
-    ) / (2030 - 2015) 
+    ) / (2030 - 2015)
 );
 
 *CG* set storage and grid of windoff to be the same as windon
@@ -1176,7 +1169,7 @@ $offdelim
 p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
 
 *** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** allow input data with either "wind" or "windon" until mrremind is updated
 p_adj_deltacapoffset(t,regi,"windon") $ (p_adj_deltacapoffset(t,regi,"windon") eq 0) = p_adj_deltacapoffset(t,regi,"wind");
 p_adj_deltacapoffset(t,regi,"windoff")= p_adj_deltacapoffset(t,regi,"windon");
 p_adj_deltacapoffset(t,regi,"wind") = 0;
@@ -1244,7 +1237,7 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,'oae_el')          = 0.8;
   p_adj_coeff(ttot,regi,teGrid)            = 0.3;
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
-  
+
   p_adj_coeff(ttot,regi,"MeOH")            = 0.5;
   p_adj_coeff(ttot,regi,"h22ch4")            = 0.5;
 
@@ -1384,18 +1377,14 @@ $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("co2luc") = 0;
 *** The tiny fraction n2ofertsom of total land use n2o can get slightly negative in some cases. Ignore MAC for n2ofertsom by default.
 $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("n2ofertsom") = 0;
 
-pm_macCostSwitch(enty)=pm_macSwitch(enty);
+p_macCostSwitch(enty)=pm_macSwitch(enty);
 pm_macSwitch("co2cement_process") =0 ;
-pm_macCostSwitch("co2cement_process") =0 ;
+p_macCostSwitch("co2cement_process") =0 ;
 
 *** load econometric emission data
 *** read in p3 and p4
-table p_emineg_econometric(all_regi,all_enty,p)        "parameters for ch4 and n2o emissions from waste baseline and co2 emissions from cement production"
-$ondelim
-$include "./core/input/p_emineg_econometric.cs3r"
-$offdelim
+parameter p_emineg_econometric(all_regi,all_enty,p)        "parameters for ch4 and n2o emissions from waste baseline and co2 emissions from cement production"
 ;
-p_emineg_econometric(regi,"co2cement_process","p4")$(p_emineg_econometric(regi,"co2cement_process","p4") eq 0) = sm_eps;
 p_emineg_econometric(regi,enty,"p1") = 0;
 p_emineg_econometric(regi,enty,"p2") = 0;
 *** p2 is calculated in presolve
@@ -1562,6 +1551,7 @@ $include "./core/input/f_fedemand_build.cs4r"
 $offdelim
 /;
 
+
 pm_fedemand(t,regi,cal_ppf_buildings_dyn36) = f_fedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 $endif.cm_rcp_scen_build
 
@@ -1578,12 +1568,15 @@ $endif.scaleDemand
 *** initialize global target deviation scalar
 sm_globalBudget_dev = 1;
 
-*' load production values from reference gdx to allow penalizing changes vs reference run in the first time step via q_changeProdStartyearCost/q21_taxrevChProdStartYear
+
 if (cm_startyear gt 2005,
+*' load production values from reference gdx to allow penalizing changes vs reference run in the first time step via q_changeProdStartyearCost/q21_taxrevChProdStartYear
 execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
 execute_load "input_ref.gdx", pm_prodFEReference = vm_prodFe.l;
 execute_load "input_ref.gdx", p_prodUeReference = v_prodUe.l;
 execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
+*' load MAC costs from reference gdx. Values for t (i.e. after cm_start_year) will be overwritten in core/presolve.gms 
+execute_load "input_ref.gdx" pm_macCost;
 );
 
 p_prodAllReference(t,regi,te) =

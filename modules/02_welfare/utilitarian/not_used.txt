@@ -7,7 +7,6 @@
 name,type,reason
 v02_emitaxredistr,variable,???
 v02_energyExp,variable,???
-vm_cesIO,variable,???
 vm_damageFactor,variable,???
 vm_emiMacSector,variable,???
 vm_emiCdr,variable,???
@@ -25,3 +24,4 @@ sm_tgn_2_pgc,scalar,???
 sm_tgch4_2_pgc,scalar,???
 pm_taxCO2eqRegi,input,added by codeCheck
 pm_shPPPMER,input,questionnaire
+vm_cesIO,input,added by codeCheck

@@ -81,7 +81,6 @@ if (length(args) == 1) {
     c_SSP_forcing_adjust   = 'c_SSP_forcing_adjust',
     p_share_ind_fesos      = 'pm_share_ind_fesos', 
     p_share_ind_fesos_bio  = 'pm_share_ind_fesos_bio', 
-    p_share_ind_fehos      = 'pm_share_ind_fehos', 
     p_share_trans          = 'pm_share_trans',
     p_petradecost_Mp_en    = 'pm_costsPEtradeMp', 
     f_data_weathering_graderegi = 'f33_data_weathering_graderegi',
