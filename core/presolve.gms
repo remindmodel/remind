@@ -282,23 +282,23 @@ Display "computed abatement levels at carbon price", pm_macAbatLev;
 *** Integral under MAC cost curve
 *** costs = baseline emissions * price step * sum [over i to n] (q_n - q_i)
 *** q_i = abatement [fraction] at step i
-pm_macCost(ttot,regi,emiMacSector(enty))
+pm_macCost(t,regi,emiMacSector(enty))
   = 1e-3
   * p_macCostSwitch(enty)
   * p_emi_quan_conv_ar4(enty)
-  * v_macBase.l(ttot,regi,enty)
+  * v_macBase.l(t,regi,enty)
   * sm_dmac
   * ( ( sum(emiMac2mac(enty,enty2),
-          pm_macStep(ttot,regi,enty2)
+          pm_macStep(t,regi,enty2)
         )
       * sum(steps$( ord(steps) eq sum(emiMac2mac(enty,enty2),
-                                    pm_macStep(ttot,regi,enty2)) ),
-          sum(emiMac2mac(enty,enty2), pm_macAbat(ttot,regi,enty2,steps))
+                                    pm_macStep(t,regi,enty2)) ),
+          sum(emiMac2mac(enty,enty2), pm_macAbat(t,regi,enty2,steps))
         )
       )
     - sum(steps$( ord(steps) le sum(emiMac2mac(enty,enty2),
-                                  pm_macStep(ttot,regi,enty2)) ),
-        sum(emiMac2mac(enty,enty2), pm_macAbat(ttot,regi,enty2,steps))
+                                  pm_macStep(t,regi,enty2)) ),
+        sum(emiMac2mac(enty,enty2), pm_macAbat(t,regi,enty2,steps))
       )
     );
 
