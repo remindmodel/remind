@@ -37,7 +37,7 @@ display p50_damageFuncCoefTC0;
 pm_damage(tall,regi) = 1;
 
 *** read in GDP to calculate GDP fraction of countries in a region and convert to MER
-table f50_countryGDP(tall,iso,all_GDPscen)	"ratio of country to regional GDP"
+table f50_countryGDP(tall,iso,all_GDPpopScen)	"ratio of country to regional GDP"
 $ondelim
 $include "./modules/50_damages/TC/input/f50_gdp.cs3r"
 $offdelim

@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/declarations.gms
 Parameters
-p35_fe2es_aux(tall,all_regi,all_GDPscen,all_demScen,EDGE_scenario_all,all_teEs) "Aggregate energy efficiency of transport fuel technologies [trn pkm/Twa or trn tkm/Twa]"
+p35_fe2es_aux(tall,all_regi,all_GDPpopScen,all_demScen,EDGE_scenario_all,all_teEs) "Aggregate energy efficiency of transport fuel technologies [trn pkm/Twa or trn tkm/Twa]"
 ;
 Equations
 q35_demFeTrans(ttot,all_regi,all_enty,all_emiMkt) "Transport final energy demand"
