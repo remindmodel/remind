@@ -126,20 +126,20 @@ q33_EW_capconst(t,regi)..
 *'  remaining for the next time step, i.e. the fraction not weathering in the time step years. 
 *'  This fraction is generally calculated as (1-p33_rock_weath_rate)**(time_step_years).
 *'  For better solver solution, it is rewritten according to a**b = exp(log(a)*b) as
-*'  exp(-log(1-p33_rock_weath_rate) * time_step_years).
+*'  exp(log(1-p33_rock_weath_rate) * time_step_years).
 
 ***---------------------------------------------------------------------------
 q33_EW_onfield_tot(ttot,regi,rlf_cz33,rlf)$(ttot.val ge max(2025, cm_startyear))..
     v33_EW_onfield_tot(ttot,regi,rlf_cz33,rlf)
     =e=
-    v33_EW_onfield_tot(ttot-1,regi,rlf_cz33,rlf) * exp(-log(1-p33_rock_weath_rate(rlf_cz33)) * pm_ts(ttot))
+    v33_EW_onfield_tot(ttot-1,regi,rlf_cz33,rlf) * exp(log(1-p33_rock_weath_rate(rlf_cz33)) * pm_ts(ttot))
     + v33_EW_onfield(ttot-1,regi,rlf_cz33,rlf) * (
         sum(tall$(tall.val le (ttot.val - pm_ts(ttot)/2) and tall.val gt (ttot.val - pm_ts(ttot))),
-            exp(-log(1-p33_rock_weath_rate(rlf_cz33)) * (ttot.val - tall.val)))
+            exp(log(1-p33_rock_weath_rate(rlf_cz33)) * (ttot.val - tall.val)))
         )
     + v33_EW_onfield(ttot,regi,rlf_cz33,rlf) * (
         sum(tall$(tall.val le ttot.val and tall.val gt (ttot.val - pm_ts(ttot)/2)),
-            exp(-log(1-p33_rock_weath_rate(rlf_cz33)) * (ttot.val-tall.val)))
+            exp(log(1-p33_rock_weath_rate(rlf_cz33)) * (ttot.val-tall.val)))
     )
 ;
 
