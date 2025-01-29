@@ -10,10 +10,10 @@
 *** Calcualte total primary energy to limit BECCS (see q30_limitTeBio)
 *** This must be calculated outside the optimization and stored in a 
 *** parameter so as not to create an incentive to increase the total
-*** PE demand just to increase the BECCS limit (see also postsolve.gms).
+*** PE demand just to increase the BECCS limit.
 *** Using the substitution method to adjust vm_ prodSE from non-fossil
 *** energy sources to the primary energy inputs that would be needed
-*** if it was generated from fossil fuels. 
+*** if it was generated from fossil fuels with an average efficiency of 40%.
 
 p30_demPe(ttot,regi) =
   sum(pe2se(enty,enty2,te)$(sameas(enty,"peoil") OR sameas(enty,"pecoal") OR sameas(enty,"pegas") OR sameas(enty,"pebiolc") OR sameas(enty,"pebios") OR sameas(enty,"pebioil")),
