@@ -802,8 +802,10 @@ pm_data(regi,"lifetime","tdh2b") = pm_data(regi,"lifetime","tdh2s");
 *' Technologies depreciate over their lifetime.
 *' Their remaining capacity pm_omeg starts at 1 and decreases toward zero with a curve of exponent 4:
 *' slow depreciation during the first half of the lifetime and faster during the second half.
-*' The average lifetime of the technology is given in generisdata_tech.prn.
-*' This average corresponds to the area under the curve, hence the factor 5/4 calculated from an integral.
+*' The area under that curve (capacity * age) equals the average technical lifetime of the technology,
+*' provided in generisdata_tech.prn.
+*' There is still some non-zero capacity beyond the average lifetime, until the maximum lifetime p_lifetime_max
+*' (calculated from an integral as 5/4 times the average lifetime).
 p_lifetime_max(regi,te) = 5 / 4 * pm_data(regi,"lifetime",te);
 pm_omeg(regi,opTimeYr,te) = max(0, 1 - ((opTimeYr.val - 0.5) / p_lifetime_max(regi,te))**4);
 
