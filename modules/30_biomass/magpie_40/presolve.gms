@@ -10,7 +10,7 @@
 *** Calcualte total primary energy to limit BECCS (see q30_limitTeBio)
 *** This must be calculated outside the optimization and stored in a 
 *** parameter so as not to create an incentive to increase the total
-*** PE demand just to increase the BECCS limit (see also presolve.gms).
+*** PE demand just to increase the BECCS limit (see also postsolve.gms).
 *** Using the substitution method to adjust vm_ prodSE from non-fossil
 *** energy sources to the primary energy inputs that would be needed
 *** if it was generated from fossil fuels. 
