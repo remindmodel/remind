@@ -132,7 +132,7 @@ pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 *------------------------------------------------------------------------------------
 ***          Technology data input read-in and manipulation    START
 *------------------------------------------------------------------------------------
-*** In module 5 there are more cost manipulation after initial capacities are calculated, 
+*** In module 5 there are more cost manipulation after initial capacities are calculated,
 *** be aware those can overwrite your technology values for policy runs if you set them here in the core
 ***---------------------------------------------------------------------------
 *** Reading in and initializing global data
@@ -143,8 +143,8 @@ $include "./core/input/generisdata_tech.prn"
 $include "./core/input/generisdata_trade.prn"
 ;
 
-*** CG warning: some of the SSP1 and SSP5 costs are not consistent with the story line (e.g. under SSP1 blue H2 and some fossil fuel CCS technologies have lower costs than in SSP2). 
-*** This is to be fixed in the future when new SSP storylines are implemented, unclear when (29-1-2024). 
+*** CG warning: some of the SSP1 and SSP5 costs are not consistent with the story line (e.g. under SSP1 blue H2 and some fossil fuel CCS technologies have lower costs than in SSP2).
+*** This is to be fixed in the future when new SSP storylines are implemented, unclear when (29-1-2024).
 *** In the future, SSP1 and SSP5 data should be implemented as switches to avoid errors
 table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
 $include "./core/input/generisdata_tech_SSP1.prn"
@@ -237,7 +237,7 @@ $offdelim
 ;
 
 *** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** allow input data with either "wind" or "windon" until mrremind is updated
 p_inco0(ttot,all_regi,"windon") $ (p_inco0(ttot,all_regi,"windon") eq 0) = p_inco0(ttot,all_regi,"wind");
 p_inco0(ttot,all_regi,"wind") = 0;
 
@@ -516,13 +516,6 @@ $offdelim
 /
 ;
 
-parameter pm_share_ind_fehos(tall,all_regi)               "Share of heating oil used in the industry (rest is residential)"
-/
-$ondelim
-$include "./core/input/p_share_ind_fehos.cs4r"
-$offdelim
-/
-;
 *** initialize pm_share_trans with the global value, will be updated after each negishi/nash iteration
 pm_share_trans("2005",regi) = 0.617;
 pm_share_trans("2010",regi) = 0.625;
@@ -685,8 +678,8 @@ $offdelim
 ;
 $Onlisting
 
-*** windoffshore-todo 
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated
 pm_histCap(tall,all_regi,"windon") $ (pm_histCap(tall,all_regi,"windon") eq 0) = pm_histCap(tall,all_regi,"wind");
 pm_histCap(tall,all_regi,"wind") = 0;
 
@@ -714,8 +707,8 @@ $Onlisting
 
 
 *CG* setting wind offshore capacity factor to be the same as onshore here (later adjusting it in vm_capFac)
-*** windoffshore-todo 
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated
 f_cf(ttot,regi,"windon") $ (f_cf(ttot,regi,"windon") eq 0) = f_cf(ttot,regi,"wind");
 f_cf(ttot,regi,"storwindon") $ (f_cf(ttot,regi,"storwindon") eq 0) = f_cf(ttot,regi,"storwind");
 f_cf(ttot,regi,"gridwindon") $ (f_cf(ttot,regi,"gridwindon") eq 0) = f_cf(ttot,regi,"gridwind");
@@ -790,88 +783,64 @@ $endif.Base_Cprice
 display pm_regiEarlyRetiRate;
 
 ***---------------------------------------------------------------------------
-*RP* calculate omegs and opTimeYr2te
+*** Calculate lifetime parameters (omeg and opTimeYr2te)
 ***---------------------------------------------------------------------------
-*RP* use new lifetimes defined in generisdata_tech.prn:
-pm_omeg(regi,opTimeYr,te) = 0;
 
 *** FS: use lifetime of tdh2s for tdh2b and tdh2i technologies
 *** which are only helper technologies for consistent H2 use in industry and buildings
 pm_data(regi,"lifetime","tdh2i") = pm_data(regi,"lifetime","tdh2s");
 pm_data(regi,"lifetime","tdh2b") = pm_data(regi,"lifetime","tdh2s");
 
-loop(regi,
-        p_aux_lifetime(regi,te) = 5/4 * pm_data(regi,"lifetime",te);
-        loop(te,
+*** Compute the depreciation of technologies over their lifetime
+*' Technologies depreciate over their lifetime.
+*' Their remaining capacity pm_omeg starts at 1 and decreases toward zero with a curve of exponent 4:
+*' slow depreciation during the first half of the lifetime and faster during the second half.
+*' The area under that curve (capacity * age) equals the average technical lifetime of the technology,
+*' provided in generisdata_tech.prn.
+*' There is still some non-zero capacity beyond the average lifetime, until the maximum lifetime p_lifetime_max
+*' (calculated from an integral as 5/4 times the average lifetime).
+p_lifetime_max(regi,te) = 5 / 4 * pm_data(regi,"lifetime",te);
+pm_omeg(regi,opTimeYr,te) = max(0, 1 - ((opTimeYr.val - 0.5) / p_lifetime_max(regi,te))**4);
 
-                loop(opTimeYr,
-                        pm_omeg(regi,opTimeYr,te) = 1 - ((opTimeYr.val-0.5) / p_aux_lifetime(regi,te))**4 ;
-                        opTimeYr2te(te,opTimeYr)$(pm_omeg(regi,opTimeYr,te) > 0 ) =  yes;
-                        if( pm_omeg(regi,opTimeYr,te) <= 0,
-                                pm_omeg(regi,opTimeYr,te) = 0;
-                                opTimeYr2te(te,opTimeYr) =  no;
-                        );
-                )
-        );
+*** Map each technology with its possible age
+opTimeYr2te(te,opTimeYr) $ sum(regi $ (pm_omeg(regi,opTimeYr,te) > 0), 1) = yes;
+*** Map each model timestep with the possible age of technologies 
+tsu2opTimeYr(ttot,"1") = yes;
+loop((ttot,ttot2) $ (ord(ttot2) le ord(ttot)),
+  loop(opTimeYr $ (opTimeYr.val = pm_ttot_val(ttot) - pm_ttot_val(ttot2) + 1),
+    tsu2opTimeYr(ttot,opTimeYr) =  yes;
+  );
 );
 
-*** calculate mapping tsu2opTimeYr
-alias(ttot, tttot);
-tsu2opTimeYr(ttot,opTimeYr) =  no;
-tsu2opTimeYr(ttot,"1") =  yes;
-loop(ttot,
-   loop(opTimeYr,
-      loop(tttot $(ord(tttot) le ord(ttot)),
-         if(opTimeYr.val = pm_ttot_val(ttot)-pm_ttot_val(tttot)+1,
-            tsu2opTimeYr(ttot,opTimeYr) =  yes;
-         );
-      );
-   );
-);
+display pm_omeg, opTimeYr2te, tsu2opTimeYr;
 
-display pm_omeg,opTimeYr2te, tsu2opTimeYr;
-
-p_tsu2opTimeYr_h(ttot,opTimeYr) = 0;
-p_tsu2opTimeYr_h(ttot,opTimeYr) $tsu2opTimeYr(ttot,opTimeYr) = 1 ;
-pm_tsu2opTimeYr(ttot,opTimeYr)$tsu2opTimeYr(ttot,opTimeYr)
-= sum(opTimeYr2 $ (ord(opTimeYr2) le ord(opTimeYr)), p_tsu2opTimeYr_h(ttot,opTimeYr2));
+*** In year ttot, a technology of age opTimeYr has seen pm_tsu2opTimeYr model timesteps
+pm_tsu2opTimeYr(ttot,opTimeYr) $ tsu2opTimeYr(ttot,opTimeYr) =
+  sum(opTimeYr2 $ (    ord(opTimeYr2) le ord(opTimeYr)
+                   AND tsu2opTimeYr(ttot, opTimeYr2)),
+    1);
 
 display pm_tsu2opTimeYr;
 
-file diagnosis_opTimeYr2te;
-put diagnosis_opTimeYr2te;
-put "mapping opTimeYr2te, automatically filled in generisdata.inc from the lifetimes given in generisdata.prn" //;
-put "te", @15, "regi", @20, "opTimeYr", @27,  "pm_data(regi,'lifetime',te)", @60, "p_aux_lifetime"//;
-loop(regi,
-        loop(te,
-                loop(opTimeYr2te(te,opTimeYr),
-                        p_aux_tlt(te) = ord(opTimeYr);
-                )
-                put te.tl, @ 15, regi.tl, @20, p_aux_tlt(te):3:0, @35, pm_data(regi,"lifetime",te):3:0 , @65, p_aux_lifetime(regi,te):3:0 /;
-        )
-);
-putclose diagnosis_opTimeYr2te;
 
-
-*RP* safety check that no technology has zero life time - this should give a run-time error if omeg=0 for the first time step
-*RP* also check the previous calculation that pm_omeg is not >0 for a opTimeYr value greater than contained in opTimeYr2te
-*RP* for diagnosis, uncomment the putfile lines and you will find out which technologies have wrong inputs in generissets or generisdatadatacap
+*** Safety checks raising an error if:
 loop(regi,
   loop(te,
-    p_aux_check_omeg(te) = 1/pm_omeg(regi,'1',te);
-    p_aux_tlt_max(te) = 0;
-    loop(opTimeYr$(opTimeYr2te(te,opTimeYr)),
-      p_aux_tlt_max(te) = p_aux_tlt_max(te) + 1
-    );
-    if(p_aux_tlt_max(te) < 20,
-      loop(opTimeYr$(ord(opTimeYr) = p_aux_tlt_max(te)),
-        if(pm_omeg(regi,opTimeYr+1,te) > 0,
-          p_aux_check_tlt(te) = 1/0;
-        );
-      );
-    );
+***   - technology has zero life time (if pm_omeg is zero for the first time step)
+    if(pm_omeg(regi,"1",te) eq 0,
+      abort "Technology has zero lifetime", pm_omeg);
+***   - lifetime of technology is longer than allowed by opTimeYr
+    if(p_lifetime_max(regi,te) > smax(opTimeYr, opTimeYr.val),
+      abort "Technology has longer lifetime than allowed by opTimeYr", opTimeYr, p_lifetime_max);
+***   - technology has remaining capacity beyond its lifetime
+    if(
+      sum(opTimeYr $ (opTimeYr.val > smax(opTimeYr2te(te,opTimeYr2), opTimeYr2.val)),
+        pm_omeg(regi,opTimeYr,te)
+      ) > 0,
+        abort "Technology has remaining capacity beyond its lifetime", opTimeYr2te, pm_omeg);
   );
 );
+
 
 *RP* calculate annuity of a technology
 p_discountedLifetime(te) = sum(opTimeYr, (sum(regi, pm_omeg(regi,opTimeYr,te))/sum(regi,1)) / 1.06**opTimeYr.val );
@@ -1086,7 +1055,7 @@ loop(regi,
       if(s_aux_cap_remaining > 0,
         p_aux_capThisGrade(regi,te,rlf) = min(
             s_aux_cap_remaining,
-            0.8 * pm_dataren(regi,"maxprod",rlf,te) / pm_dataren(regi,"nur",rlf,te)); !! installedCapacity = maxprod / capacityFactor 
+            0.8 * pm_dataren(regi,"maxprod",rlf,te) / pm_dataren(regi,"nur",rlf,te)); !! installedCapacity = maxprod / capacityFactor
         s_aux_cap_remaining = s_aux_cap_remaining - p_aux_capThisGrade(regi,te,rlf);
       );
     );  !! teRe2rlfDetail
@@ -1096,7 +1065,7 @@ loop(regi,
     p_avCapFac2015(regi,te) =
         sum(teRe2rlfDetail(te,rlf),
           p_aux_capThisGrade(regi,te,rlf) * pm_dataren(regi,"nur",rlf,te))
-      / 
+      /
         (sum(teRe2rlfDetail(te,rlf), p_aux_capThisGrade(regi,te,rlf))
         + 1e-10)
   );    !! teReNoBio
@@ -1115,7 +1084,7 @@ $offdelim
 ;
 
 *** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** allow input data with either "wind" or "windon" until mrremind is updated
 p_histCapFac(tall,all_regi,"windon") $ (p_histCapFac(tall,all_regi,"windon") eq 0) = p_histCapFac(tall,all_regi,"wind");
 p_histCapFac(tall,all_regi,"wind") = 0;
 
@@ -1134,7 +1103,7 @@ loop(t $ (t.val ge 2015 AND t.val lt 2030),
     pm_cf(t,regi,teVRE) !! always 1 for VRE in f_cf, but could be modified by modules
     * ( (2030 - pm_ttot_val(t)) * p_aux_capacityFactorHistOverREMIND(regi,teVRE)
       + (pm_ttot_val(t) - 2015)
-    ) / (2030 - 2015) 
+    ) / (2030 - 2015)
 );
 
 *CG* set storage and grid of windoff to be the same as windon
@@ -1189,7 +1158,7 @@ $offdelim
 p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
 
 *** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** allow input data with either "wind" or "windon" until mrremind is updated
 p_adj_deltacapoffset(t,regi,"windon") $ (p_adj_deltacapoffset(t,regi,"windon") eq 0) = p_adj_deltacapoffset(t,regi,"wind");
 p_adj_deltacapoffset(t,regi,"windoff")= p_adj_deltacapoffset(t,regi,"windon");
 p_adj_deltacapoffset(t,regi,"wind") = 0;
@@ -1257,7 +1226,7 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,'oae_el')          = 0.8;
   p_adj_coeff(ttot,regi,teGrid)            = 0.3;
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
-  
+
   p_adj_coeff(ttot,regi,"MeOH")            = 0.5;
   p_adj_coeff(ttot,regi,"h22ch4")            = 0.5;
 
@@ -1397,18 +1366,14 @@ $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("co2luc") = 0;
 *** The tiny fraction n2ofertsom of total land use n2o can get slightly negative in some cases. Ignore MAC for n2ofertsom by default.
 $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("n2ofertsom") = 0;
 
-pm_macCostSwitch(enty)=pm_macSwitch(enty);
+p_macCostSwitch(enty)=pm_macSwitch(enty);
 pm_macSwitch("co2cement_process") =0 ;
-pm_macCostSwitch("co2cement_process") =0 ;
+p_macCostSwitch("co2cement_process") =0 ;
 
 *** load econometric emission data
 *** read in p3 and p4
-table p_emineg_econometric(all_regi,all_enty,p)        "parameters for ch4 and n2o emissions from waste baseline and co2 emissions from cement production"
-$ondelim
-$include "./core/input/p_emineg_econometric.cs3r"
-$offdelim
+parameter p_emineg_econometric(all_regi,all_enty,p)        "parameters for ch4 and n2o emissions from waste baseline and co2 emissions from cement production"
 ;
-p_emineg_econometric(regi,"co2cement_process","p4")$(p_emineg_econometric(regi,"co2cement_process","p4") eq 0) = sm_eps;
 p_emineg_econometric(regi,enty,"p1") = 0;
 p_emineg_econometric(regi,enty,"p2") = 0;
 *** p2 is calculated in presolve
@@ -1593,6 +1558,7 @@ $include "./core/input/f_fedemand_build.cs4r"
 $offdelim
 /;
 
+
 pm_fedemand(t,regi,cal_ppf_buildings_dyn36) = f_fedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 $endif.cm_rcp_scen_build
 
@@ -1609,12 +1575,15 @@ $endif.scaleDemand
 *** initialize global target deviation scalar
 sm_globalBudget_dev = 1;
 
-*' load production values from reference gdx to allow penalizing changes vs reference run in the first time step via q_changeProdStartyearCost/q21_taxrevChProdStartYear
+
 if (cm_startyear gt 2005,
+*' load production values from reference gdx to allow penalizing changes vs reference run in the first time step via q_changeProdStartyearCost/q21_taxrevChProdStartYear
 execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
 execute_load "input_ref.gdx", pm_prodFEReference = vm_prodFe.l;
 execute_load "input_ref.gdx", p_prodUeReference = v_prodUe.l;
 execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
+*' load MAC costs from reference gdx. Values for t (i.e. after cm_start_year) will be overwritten in core/presolve.gms 
+execute_load "input_ref.gdx" pm_macCost;
 );
 
 p_prodAllReference(t,regi,te) =

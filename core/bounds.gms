@@ -111,17 +111,17 @@ vm_deltaCap.fx(t,regi,"biotr",rlf)$(t.val gt 2005) = 0;
 *BS/DK* Developing regions (defined by GDP PPP threshold) phase out more slowly ( + varied by SSP)
 loop(regi,
   if ( (pm_gdp("2005",regi)/pm_pop("2005",regi) / pm_shPPPMER(regi)) lt 4,
-    vm_deltaCap.up("2010",regi,"biotr","1") = 1.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
-    vm_deltaCap.up("2015",regi,"biotr","1") = 0.9  * vm_deltaCap.lo("2005",regi,"biotr","1");
-    vm_deltaCap.up("2020",regi,"biotr","1") = 0.7  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.fx("2010",regi,"biotr","1") = 1.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.fx("2015",regi,"biotr","1") = 0.9  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.fx("2020",regi,"biotr","1") = 0.7  * vm_deltaCap.lo("2005",regi,"biotr","1");
 $ifthen NOT %cm_tradbio_phaseout% == "fast"   !! cm_tradbio_phaseout
-    vm_deltaCap.up("2025",regi,"biotr","1") = 0.5  * vm_deltaCap.lo("2005",regi,"biotr","1");
-    vm_deltaCap.up("2030",regi,"biotr","1") = 0.4  * vm_deltaCap.lo("2005",regi,"biotr","1");
-    vm_deltaCap.up("2035",regi,"biotr","1") = 0.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
-    vm_deltaCap.up("2040",regi,"biotr","1") = 0.2  * vm_deltaCap.lo("2005",regi,"biotr","1");
-    vm_deltaCap.up("2045",regi,"biotr","1") = 0.15 * vm_deltaCap.lo("2005",regi,"biotr","1");
-    vm_deltaCap.up("2050",regi,"biotr","1") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
-    vm_deltaCap.up("2055",regi,"biotr","1") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.fx("2025",regi,"biotr","1") = 0.5  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.fx("2030",regi,"biotr","1") = 0.4  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.fx("2035",regi,"biotr","1") = 0.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.fx("2040",regi,"biotr","1") = 0.2  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.fx("2045",regi,"biotr","1") = 0.15 * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.fx("2050",regi,"biotr","1") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    vm_deltaCap.fx("2055",regi,"biotr","1") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
 $endif
   );
 );
@@ -131,8 +131,8 @@ $if %cm_GDPscen% == "gdp_SDP" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020)
 $if %cm_GDPscen% == "gdp_SDP_EI" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0;
 $if %cm_GDPscen% == "gdp_SDP_MC" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0;
 $if %cm_GDPscen% == "gdp_SDP_RC" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SSP1" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
-$if %cm_GDPscen% == "gdp_SSP5" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SSP1" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SSP5" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
 
 
 *** ------------------------------------------------------------------------------------------
@@ -508,28 +508,6 @@ vm_cap.fx(ttot,regi,te,rlf)$((NOT rlf.val eq 1) AND ( teSe2rlf(te,"1") OR teFe2r
 vm_emiFgas.fx(ttot,all_regi,all_enty) = f_emiFgas(ttot,all_regi,"%c_SSP_forcing_adjust%","%cm_rcp_scen%","SPA0",all_enty);
 display vm_emiFgas.L;
 
-
-*** Bugfix. For some reason the model cannot reduce the production of district heating to 0
-*** where it should be 0. Not fixings can account for this
-*** Fixing vm_prodSe to 0 avoids the problem
-loop ((in,in2) $ (sameAs(in,"feheb") and sameAs(in2,"fehei")),
-loop ((t, regi) $ ( (sameAs(t,"2010") OR sameAs(t,"2015"))
-                     AND
-                    ((pm_cesdata(t,regi,in,"quantity") + pm_cesdata(t,regi,in,"offset_quantity")
-                    + pm_cesdata(t,regi,in2,"quantity") + pm_cesdata(t,regi,in2,"offset_quantity")
-                    ) eq 0)
-                    AND
-                    (sum(ttot$(ttot.val lt 2005), vm_deltaCap.up(ttot,regi,"biochp","1")) eq 0)) ,
-      vm_prodSe.up(t,regi,"pegas"  ,"seel","gaschp")  = 0;
-      vm_prodSe.up(t,regi,"pecoal" ,"seel","coalchp") = 0;
-      vm_prodSe.up(t,regi,"pecoal" ,"sehe","coalhp")  = 0;
-      vm_prodSe.up(t,regi,"pegeo"  ,"sehe","geohe")   = 0;
-      vm_prodSe.up(t,regi,"pesol"  ,"sehe","solhe")   = 0;
-      vm_prodSe.up(t,regi,"pebiolc","seel","biochp")  = 0;
-      vm_prodSe.up(t,regi,"pebiolc","sehe","biohp")   = 0;
-      vm_prodSe.up(t,regi,"pegas","sehe","gashp")   = 0;
-);
-);
 
 ***----------------------------------------------------------------------------
 *** lower bound on share of green hydrogen starting from 2030 (c_greenH2)
