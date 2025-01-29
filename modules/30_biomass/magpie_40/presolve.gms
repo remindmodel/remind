@@ -7,11 +7,13 @@
 
 *** SOF ./modules/30_biomass/magpie_40/presolve.gms
 
-*** Calcualte total primary energy to limit BECCS (see q30_limitTeBio)
+*** Calculate total primary energy to limit BECCS (see q30_limitTeBio)
+*** The summation is devided into actual primary energy carriers, e.g. coal or biomass, 
+*** and primary-energy-equivalent secondary energy carriers like wind and solar. 
 *** This must be calculated outside the optimization and stored in a 
-*** parameter so as not to create an incentive to increase the total
+*** parameter to not create an incentive to increase the total
 *** PE demand just to increase the BECCS limit.
-*** Using the substitution method to adjust vm_ prodSE from non-fossil
+*** Using the substitution method to adjust vm_prodSE from non-fossil
 *** energy sources to the primary energy inputs that would be needed
 *** if it was generated from fossil fuels with an average efficiency of 40%.
 
