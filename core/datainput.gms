@@ -94,7 +94,7 @@ $ondelim
 $include "./core/input/f_gdp.cs3r"
 $offdelim
 ;
-pm_gdp(tall,all_regi) = f_gdp(tall,all_regi,"%cm_GDPscen%") * pm_shPPPMER(all_regi) / 1000000;  !! rescale from million US$ to trillion US$
+pm_gdp(tall,all_regi) = f_gdp(tall,all_regi,"%cm_GDPpopScen%") * pm_shPPPMER(all_regi) / 1000000;  !! rescale from million US$ to trillion US$
 
 *** load level of development based on GDP PPP per capita: 0 is low income, 1 is high income.
 *** Values in 2020 SSP2: SSA=0.1745, IND=0.3686, OAS=0.5136, MEA=0.6568, REF=0.836, LAM=0.8763, NEU=0.9962, EUR=1, CAZ=1, CHA=1, JPN=1, USA=1
@@ -1537,7 +1537,7 @@ $offdelim
 ;
 
 *** use cm_demScen for Industry and Buildings
-*** cm_GDPscen will be used for Transport (EDGE-T) (see p29_trpdemand)
+*** cm_GDPpopScen will be used for Transport (EDGE-T) (see p29_trpdemand)
 pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
 *** data input for industry FE that is no part of the CES tree
 pm_fedemand(tall,all_regi,ppfen_no_ces_use) = f_fedemand(tall,all_regi,"%cm_demScen%",ppfen_no_ces_use);

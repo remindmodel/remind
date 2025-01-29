@@ -528,7 +528,7 @@ $offdelim
 ;
 
 p37_steel_secondary_max_share(t,regi)
-  = f37_steel_secondary_max_share(t,regi,"%cm_GDPscen%");
+  = f37_steel_secondary_max_share(t,regi,"%cm_GDPpopScen%");
 
 Parameter p37_steel_secondary_share(tall,all_regi) "endogenous values to fix rounding issues with p37_steel_secondary_max_share";
 

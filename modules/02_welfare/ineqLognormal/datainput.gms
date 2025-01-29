@@ -35,7 +35,7 @@ $include "./modules/02_welfare/ineqLognormal/input/f_ineqTheil.cs4r"
 $offdelim
 /
 ;
-p02_ineqTheil(ttot,regi)$(ttot.val ge 2005) = f02_ineqTheil(ttot,regi,"%cm_GDPscen%");
+p02_ineqTheil(ttot,regi)$(ttot.val ge 2005) = f02_ineqTheil(ttot,regi,"%cm_GDPpopScen%");
 display p02_ineqTheil;
 
 

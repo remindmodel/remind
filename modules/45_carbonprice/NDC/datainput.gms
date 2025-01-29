@@ -36,7 +36,7 @@ $onlisting
 ;
 
 Parameter p45_factorTargetyear(ttot,all_regi) "Multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]";
-p45_factorTargetyear(t,all_regi) = f45_factorTargetyear(t,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
+p45_factorTargetyear(t,all_regi) = f45_factorTargetyear(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
 display p45_factorTargetyear;
 
@@ -49,7 +49,7 @@ $onlisting
 ;
 
 Parameter p45_2005shareTarget(ttot,all_regi) "2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]";
-p45_2005shareTarget(t,all_regi) = f45_2005shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
+p45_2005shareTarget(t,all_regi) = f45_2005shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
 display p45_2005shareTarget;
 

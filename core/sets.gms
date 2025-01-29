@@ -17,7 +17,7 @@ numberOrder     "set to assure that numeric values follow ascending order in the
 *** Save select compiler flags as sets, to make them accessible from the final gdx
 c_expname       "c_expname as set for use in GDX"       /%c_expname%/
 c_description   "%c_description%"   /"for model description, see explanatory text"/
-cm_GDPscen      "cm_GDPscen as set for use in GDX"      /%cm_GDPscen%/
+cm_GDPpopScen   "cm_GDPpopScen as set for use in GDX"      /%cm_GDPpopScen%/
 
 
 all_GDPpopScen    "all possible GDP scenarios"
