@@ -1444,7 +1444,11 @@ $offdelim
 parameter p_macBaseIMAGE(tall,all_regi,all_enty)        "baseline emissions of N2O from transport, adipic acid production, and nitric acid production based on data from van Vuuren"
 /
 $ondelim
+$ifthen %cm_emifacs_baseyear% == "2005" 
 $include "./core/input/p_macBaseVanv.cs4r"
+$else
+$include "./core/input/p_macBaseHarmsen2022.cs4r"
+$endif
 $offdelim
 /
 ;
