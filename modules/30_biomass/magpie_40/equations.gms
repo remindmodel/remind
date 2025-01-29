@@ -111,7 +111,7 @@ q30_limitXpBio(t,regi)..
 ;
 
 *' ** Limit BECCS **
-*' To prevent regions with large carbon storage potential (RUS and MEA)
+*' To prevent regions with large carbon storage potential
 *' from demanding high amounts of biomass just because of their
 *' capacity to store negative emissions a general rule for all regions
 *' is applied that limits the PE demand of BECCS technologies to 50% of 
