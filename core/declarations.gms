@@ -53,7 +53,7 @@ p_r(ttot,all_regi)                                   "calculating capital intere
 ***----------------------------------------------------------------------------------------
 ***-----------------------------------------------ESM module-------------------------------
 pm_emiExog(tall,all_regi,all_enty)                   "exogenous emissions"
-pm_macBaseMagpie(tall,all_regi,all_enty)              "baseline emissions from MAgPIE (type emiMacMagpie)"
+pm_macBaseMagpie(tall,all_regi,all_enty)             "baseline emissions from MAgPIE (type emiMacMagpie)"
 p_macBaseMagpieNegCo2(tall,all_regi)                 "net negative emissions from co2luc"
 p_macBaseExo(tall,all_regi,all_enty)                 "exogenous baseline emissions (type emiMacExo)"
 pm_macAbat(tall,all_regi,all_enty,steps)             "abatement levels based on data from van Vuuren [fraction]"
@@ -91,7 +91,7 @@ pm_extRegiEarlyRetiRate(ext_regi)                    "regional early retirement 
 $IFTHEN.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
 p_techEarlyRetiRate(ext_regi,all_te)                 "Technology specific early retirement rate" / %c_tech_earlyreti_rate% /
 $ENDIF.tech_earlyreti
-pm_regiEarlyRetiRate(ttot,all_regi,all_te)                "regional early retirement rate (model native regions)"
+pm_regiEarlyRetiRate(ttot,all_regi,all_te)           "regional early retirement rate (model native regions)"
 
 p_maxRegTechCost2015(all_te)                         "highest historical regional tech cost in 2015"
 p_maxRegTechCost2020(all_te)                         "highest historical regional tech cost in 2020"
@@ -115,10 +115,10 @@ p_extRegiccsinjecrateRegi(ext_regi)                         "Regional CCS inject
 pm_dataeta(tall,all_regi,all_te)                            "regional eta data"
 p_emi_quan_conv_ar4(all_enty)                               "conversion factor for various gases to GtCeq"
 pm_emifac(tall,all_regi,all_enty,all_enty,all_te,all_enty)  "emission factor by technology for all types of emissions in emiTe"
-pm_emifacNonEnergy(ttot,all_regi,all_enty,all_enty,emi_sectors,all_enty)                "emission factor for non-energy fedstocks. For now only for Chemicals Industry [GtC per TWa]"
+pm_emifacNonEnergy(ttot,all_regi,all_enty,all_enty,emi_sectors,all_enty) "emission factor for non-energy fedstocks. For now only for Chemicals Industry [GtC per TWa]"
 pm_incinerationRate(ttot,all_regi)                          "share of plastic waste that gets incinerated [fraction]"
-pm_omeg (all_regi,opTimeYr,all_te)                          "technical depreciation parameter, gives the share of a capacity that is still usable after tlt. [none/share, value between 0 and 1]"
-p_aux_lifetime(all_regi,all_te)                             "auxiliary parameter for calculating life times, calculated externally in excel sheet"
+pm_omeg(all_regi,opTimeYr,all_te)                           "technical depreciation parameter, gives the share of a capacity that is still usable after technical life time. [none/share, value between 0 and 1]"
+p_lifetime_max(all_regi,all_te)                             "maximum lifetime of a technology (generisdata_tech gives the average lifetime) [years]"
 pm_pedem_res(ttot,all_regi,all_te)                          "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
 p_ef_dem(all_regi,all_enty)                                 "Demand side emission factor of final energy carriers [MtCO2/EJ]"
 
@@ -182,10 +182,6 @@ p_bound_cap(tall,all_regi,all_te,rlf)                "read-in bound on capacitie
 pm_data(all_regi,char,all_te)                        "Large array for most technical parameters of technologies; more detail on the individual technical parameters can be found in the declaration of the set 'char' "
 pm_cf(tall,all_regi,all_te)                          "Installed capacity availability - capacity factor (fraction of the year that a plant is running)"
 p_tkpremused(all_regi,all_te)                        "turn-key cost premium used in the model (with a discount rate of 3+ pure rate of time preference); in comparison to overnight costs)"
-p_aux_tlt(all_te)                                    "auxilliary parameter to determine maximal lifetime of a technology"
-p_aux_check_omeg(all_te)                             "auxiliary parameter for an automated check that no technology is erroneously entered with pm_omeg('1') value of 0"
-p_aux_check_tlt(all_te)                              "auxiliary parameter for an automated check that the pm_omeg calculation and filling of the opTimeYr2te mapping is in accordance"
-p_aux_tlt_max(all_te)                                "auxiliary parameter to find the last mapping in opTimeYr2te for each technology"
 pm_vintage_in(all_regi,opTimeYr,all_te)              "historical vintage structure. [arbitrary]"
 p_efFossilFuelExtr(all_regi,all_enty,all_enty)       "emission factor for CH4 from fossil fuel extraction and N2O from bioenergy"
 p_efFossilFuelExtrGlo(all_enty,all_enty)             "global emission factor for CH4 from fossil fuel extraction and N2O from bioenergy"
@@ -199,8 +195,7 @@ p_datacs(all_regi,all_enty)                          "fossil energy that is not 
 pm_inco0_t(ttot,all_regi,all_te)                     "New inco0 that is time-dependent for some technologies. [T$/TW]"
 *LB* calculate parameter pm_tsu2opTimeYr for the eq q_transPe2se and q_cap;
 ***this parameter counts backwards from time ttot - only the existing time steps
-p_tsu2opTimeYr_h(ttot,opTimeYr)                      "parameter to generate pm_tsu2opTimeYr",
-pm_tsu2opTimeYr(ttot,opTimeYr)                       "parameter that counts opTimeYr regarding tsu2opTimeYr apping"
+pm_tsu2opTimeYr(ttot,opTimeYr)                       "Counts the number of model timesteps between years ttot-opTimeYr and ttot"
 pm_emissions0(tall,all_regi,all_enty)                "Emissions in last iteration"
 pm_co2eq0(tall,all_regi)                             "vm_co2eq from last iteration"
 pm_capCum0(tall,all_regi,all_te)                     "vm_capCum from last iteration"
@@ -304,7 +299,7 @@ p_share_seh2_s(ttot,all_regi)                        "share of hydrogen used for
 p_share_seel_s(ttot,all_regi)                        "Share of electricity used for stationary sector (feels). [0..1]"
 
 p_discountedLifetime(all_te)                         "Sum over the discounted (@6%) depreciation factor (omega)"
-pm_teAnnuity(all_te)                                  "Annuity factor of a technology"
+pm_teAnnuity(all_te)                                 "Annuity factor of a technology"
 
 ;
 

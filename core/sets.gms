@@ -1108,13 +1108,14 @@ t(ttot)     "optimisation time, years between cm_startyear and 2150 with 5 to 20
 tsu(ttot) "spin up-time before 2005",
 *** This set includes only the historical years of ttot: 1900, 1905, ..., 1995, 2000
 
-opTimeYr          "actual life time of ??? in years"
+opTimeYr "actual lifetime of a built technology in years"
+*** Must be as large as the maximum lifetime of a technology (which is 5/4 times the average lifetime)
 /
-        1*100
+        1*130
 /
-opTime5(opTimeYr) "actual life time of ??? in years - 5 years time steps for the past to calculate vintages (???)"
+opTime5(opTimeYr) "actual lifetime of a built technology in years - 5 years time steps for the past to calculate vintages"
 /
-        1,6,11,16,21,26,31,36,41,46,51,56,61,66,71,76,81,86,91,96
+        1,6,11,16,21,26,31,36,41,46,51,56,61,66,71,76,81,86,91,96,101,106,111,116,121,126
 /
 
 ;
@@ -2188,7 +2189,7 @@ char            "characteristics of technologies"
   omf_d           "fixed o&m per 1000km"
   omv             "variable o&m"
   omv_d           "variable o&m per 1000km"
-  tlt             "techical life time"
+  tlt             "technical life time"
   delta           "depreciation rate"
   learn           "learning rate"
   learnMult_wFC   "multiplicative parameter in learning equation, adjusted to take Floor Costs into account"
@@ -2817,7 +2818,7 @@ teCCS2rlf(all_te,rlf)     "mapping for CCS technologies to grades"
       (ccsinje) . 1
 /
 
-teNoTransform2rlf(all_te,rlf)         "mapping for no transformation technologies to grades"
+teNoTransform2rlf(all_te,rlf) "mapping for no transformation technologies to grades"
 /
 *** storwind, gridwind
       (storspv,storcsp,storwindon,storwindoff,gridwindon,gridwindoff,gridspv,gridcsp,h2curt) . 1
@@ -2830,36 +2831,36 @@ sector2te_addTDCost(emi_sectors,all_te) "mapping of sectors to t&d technologies 
         build.tdh2s
 /
 
-ppfen_CESMkup(all_in)                   "production factors of CES function to which CES markup cost can be applied"
+ppfen_CESMkup(all_in) "production factors of CES function to which CES markup cost can be applied"
 /
 /
 
+*** sets filled automatically in datainput.gms from the lifetime values in generisdata_tech.prn
+opTimeYr2te(all_te,opTimeYr) "map each technology with its possible age"
+tsu2opTimeYr(ttot,opTimeYr) "map each model timestep with the possible age of technologies"
 
-opTimeYr2te(all_te,opTimeYr)        "mapping for technologies to yearly lifetime - is filled automatically in generisdata.inc from the lifetime values in generisdata_tech.prn"
-tsu2opTimeYr(ttot, opTimeYr)     "mapping for opTimeYr to the used time ttot - will be filled automatically in generisdata.inc"
-
-tsu2opTime5(tall,opTimeYr)     "mapping for spinup time index to lifetime index"
+tsu2opTime5(tall,opTimeYr) "mapping for spinup time index to lifetime index"
 /
-1910.96
-1915.91
-1920.86
-1925.81
-1930.76
-1935.71
-1940.66
-1945.61
-1950.56
-1955.51
-1960.46
-1965.41
-1970.36
-1975.31
-1980.26
-1985.21
-1990.16
-1995.11
-2000.6
-2005.1
+        1910.96
+        1915.91
+        1920.86
+        1925.81
+        1930.76
+        1935.71
+        1940.66
+        1945.61
+        1950.56
+        1955.51
+        1960.46
+        1965.41
+        1970.36
+        1975.31
+        1980.26
+        1985.21
+        1990.16
+        1995.11
+        2000.6
+        2005.1
 /
 
 sectorEndoEmi2te(all_enty,all_enty,all_te,sectorEndoEmi)   "map sectors to technologies"

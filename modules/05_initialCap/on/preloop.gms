@@ -206,7 +206,9 @@ loop(regi,
 loop(regi,
   loop(opTimeYr2te(te,opTimeYr)$(NOT teReNoBio(te)),
     loop(tsu2opTime5(ttot,opTimeYr),
-      loop(pe2se(entyPe,entySe,te), o_INI_DirProdSeTe(regi,entySe,te) = p05_cap0(regi,te) * pm_cf("2005",regi,te) * pm_dataren(regi,"nur","1",te) );
+      loop(pe2se(entyPe,entySe,te), 
+        o_INI_DirProdSeTe(regi,entySe,te) = p05_cap0(regi,te) * pm_cf("2005",regi,te) * pm_dataren(regi,"nur","1",te)
+      );
       sm_tmp = 1 / pm_ts(ttot) * p05_cap0(regi,te) * p05_vintage(regi,opTimeYr,te);
 
       vm_deltaCap.lo(ttot,regi,te,"1") = sm_tmp;
