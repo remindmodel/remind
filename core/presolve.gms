@@ -27,25 +27,6 @@ p_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005
 p_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)  = 0.1686718;
 
 *** calculate p1
-p_emineg_econometric(regi,"co2cement_process","p1")$( p_switch_cement("2005",regi) < 0.999 )
-  = ( (p_macBase2005(regi,"co2cement_process") / pm_pop("2005",regi))
-    - ( p_switch_cement("2005",regi)
-      * p_emineg_econometric(regi,"co2cement_process","p3")
-      )
-    )
-  / ( (1 - p_switch_cement("2005",regi))
-    * ( ( 1000
-          !! use default per-capita investments if no investment data in gdx
-          !! (due to different region settings)
-        * ( (p_inv_gdx("2005",regi) / pm_pop("2005",regi))$( p_inv_gdx("2005",regi) )
-          + 4$( NOT p_inv_gdx("2005",regi) )
-          )
-        / pm_shPPPMER(regi)
-        )
-     ** p_emineg_econometric(regi,"co2cement_process","p2")
-      )
-    );
-
 *** GA: p1 is based on GDP per capita. The older implementation assumes that
 *** richer countries (GPDpc > 10K USD) effectively have an older emission factor.
 *** The newer implementation, based on 2020 CEDS, assumes the same base year
@@ -175,20 +156,20 @@ v_macBase.fx(ttot,regi,"n2owaste")$(ttot.val ge 2005) = p_emineg_econometric(reg
 v_macBase.lo(ttot,regi,"co2cement_process")$( ttot.val ge 2005 ) = 0;
 
 *** exogenous
-vm_macBase.fx(ttot,regi,enty)$emiMacMagpie(enty) = pm_macBaseMagpie(ttot,regi,enty);
-vm_macBase.fx(ttot,regi,enty)$emiMacExo(enty) = p_macBaseExo(ttot,regi,enty);
-vm_macBase.fx(ttot,regi,"co2luc") = pm_macBaseMagpie(ttot,regi,"co2luc")-p_macPolCO2luc(ttot,regi);
-vm_macBase.up(ttot,regi,"n2ofertin") = Inf;
+v_macBase.fx(ttot,regi,enty)$emiMacMagpie(enty) = pm_macBaseMagpie(ttot,regi,enty);
+v_macBase.fx(ttot,regi,enty)$emiMacExo(enty) = p_macBaseExo(ttot,regi,enty);
+v_macBase.fx(ttot,regi,"co2luc") = pm_macBaseMagpie(ttot,regi,"co2luc")-p_macPolCO2luc(ttot,regi);
+v_macBase.up(ttot,regi,"n2ofertin") = Inf;
 ***scale exogenous baselines from van Vuuren to EDGAR v4.2 2005 data or CEDS2024 2020 data
 ***Since they are exogenous anyway, it's OK to scale to after cm_startyear, but something to watch out for
 $ifthen %cm_emifacs_baseyear% == "2005" 
-vm_macBase.fx(ttot,regi,"n2otrans")$p_macBaseIMAGE("2005",regi,"n2otrans") = p_macBaseIMAGE(ttot,regi,"n2otrans") * (p_macBase2005(regi,"n2otrans") / p_macBaseIMAGE("2005",regi,"n2otrans"));
-vm_macBase.fx(ttot,regi,"n2oadac")$p_macBaseIMAGE("2005",regi,"n2oadac")  = p_macBaseIMAGE(ttot,regi,"n2oadac")  * (p_macBase2005(regi,"n2oacid")  / (p_macBaseIMAGE("2005",regi,"n2oadac") + p_macBaseIMAGE("2005",regi,"n2onitac")));
-vm_macBase.fx(ttot,regi,"n2onitac")$(p_macBaseIMAGE("2005",regi,"n2oadac") OR p_macBaseIMAGE("2005",regi,"n2onitac")) = p_macBaseIMAGE(ttot,regi,"n2onitac") * (p_macBase2005(regi,"n2oacid")  / (p_macBaseIMAGE("2005",regi,"n2oadac") + p_macBaseIMAGE("2005",regi,"n2onitac")));
+v_macBase.fx(ttot,regi,"n2otrans")$p_macBaseIMAGE("2005",regi,"n2otrans") = p_macBaseIMAGE(ttot,regi,"n2otrans") * (p_macBase2005(regi,"n2otrans") / p_macBaseIMAGE("2005",regi,"n2otrans"));
+v_macBase.fx(ttot,regi,"n2oadac")$p_macBaseIMAGE("2005",regi,"n2oadac")  = p_macBaseIMAGE(ttot,regi,"n2oadac")  * (p_macBase2005(regi,"n2oacid")  / (p_macBaseIMAGE("2005",regi,"n2oadac") + p_macBaseIMAGE("2005",regi,"n2onitac")));
+v_macBase.fx(ttot,regi,"n2onitac")$(p_macBaseIMAGE("2005",regi,"n2oadac") OR p_macBaseIMAGE("2005",regi,"n2onitac")) = p_macBaseIMAGE(ttot,regi,"n2onitac") * (p_macBase2005(regi,"n2oacid")  / (p_macBaseIMAGE("2005",regi,"n2oadac") + p_macBaseIMAGE("2005",regi,"n2onitac")));
 $else
-vm_macBase.fx(ttot,regi,"n2otrans")$p_macBaseIMAGE("2020",regi,"n2otrans") = p_macBaseIMAGE(ttot,regi,"n2otrans") * (p_macBaseCEDS2020(regi,"n2otrans") / p_macBaseIMAGE("2020",regi,"n2otrans"));
-vm_macBase.fx(ttot,regi,"n2oadac")$p_macBaseIMAGE("2020",regi,"n2oadac")  = p_macBaseIMAGE(ttot,regi,"n2oadac")  * (p_macBaseCEDS2020(regi,"n2oacid")  / (p_macBaseIMAGE("2020",regi,"n2oadac") + p_macBaseIMAGE("2020",regi,"n2onitac")));
-vm_macBase.fx(ttot,regi,"n2onitac")$(p_macBaseIMAGE("2020",regi,"n2oadac") OR p_macBaseIMAGE("2020",regi,"n2onitac")) = p_macBaseIMAGE(ttot,regi,"n2onitac") * (p_macBaseCEDS2020(regi,"n2oacid")  / (p_macBaseIMAGE("2020",regi,"n2oadac") + p_macBaseIMAGE("2020",regi,"n2onitac")));
+v_macBase.fx(ttot,regi,"n2otrans")$p_macBaseIMAGE("2020",regi,"n2otrans") = p_macBaseIMAGE(ttot,regi,"n2otrans") * (p_macBaseCEDS2020(regi,"n2otrans") / p_macBaseIMAGE("2020",regi,"n2otrans"));
+v_macBase.fx(ttot,regi,"n2oadac")$p_macBaseIMAGE("2020",regi,"n2oadac")  = p_macBaseIMAGE(ttot,regi,"n2oadac")  * (p_macBaseCEDS2020(regi,"n2oacid")  / (p_macBaseIMAGE("2020",regi,"n2oadac") + p_macBaseIMAGE("2020",regi,"n2onitac")));
+v_macBase.fx(ttot,regi,"n2onitac")$(p_macBaseIMAGE("2020",regi,"n2oadac") OR p_macBaseIMAGE("2020",regi,"n2onitac")) = p_macBaseIMAGE(ttot,regi,"n2onitac") * (p_macBaseCEDS2020(regi,"n2oacid")  / (p_macBaseIMAGE("2020",regi,"n2oadac") + p_macBaseIMAGE("2020",regi,"n2onitac")));
 $endif
 *** baseline continuation after 2100
 v_macBase.fx(ttot,regi,enty)$((ttot.val gt 2100)$((NOT emiMacMagpie(enty)) AND (NOT emiFuEx(enty)) AND (NOT sameas(enty,"n2ofertin")) ))=v_macBase.l("2100",regi,enty);
