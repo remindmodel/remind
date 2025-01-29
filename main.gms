@@ -1171,7 +1171,7 @@ parameter
 parameter
   cm_nonPlasticFeedstockEmiShare      "Share of non-plastic carbon that gets emitted, rest is stored permanently, [share]"
 ;
-  cm_nonPlasticFeedstockEmiShare = 0.6; !! def 1 = all carbon in non-plastics gets emitted
+  cm_nonPlasticFeedstockEmiShare = 0.6; !! def 0.6 = 60 per cent of carbon in non-plastics gets emitted
 *'
 parameter
   cm_wastelag			"switch to decide whether waste from plastics lags ten years behind plastics production"
