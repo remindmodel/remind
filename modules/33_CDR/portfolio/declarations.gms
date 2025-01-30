@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/portfolio/declarations.gms
 scalars
-sm_capture_rate_cdrmodule            "CO2 capture rate for capturing emissions, e.g., from burning natural gas" / 0.9 /
+s33_capture_rate_cdrmodule            "CO2 capture rate for capturing emissions, e.g., from burning natural gas" / 0.9 /
 
 s33_co2_rem_pot             "specific carbon removal potential [Gt C per Gt ground rock]"
 s33_co2_rem_rate            "carbon removal rate [fraction of annual reduction of total carbon removal potential]"
