@@ -35,6 +35,8 @@ a1
 a2
 b1
 b2
+SSP2IndiaMedium
+SSP2IndiaHigh
 /
 
 all_demScen    "all possible demand scenarios"
