@@ -1819,7 +1819,7 @@ $setGlobal cm_conoptv  conopt3    !! def = conopt3
 *' (on): no model operation, instead input.gdx is copied to fulldata.gdx
 $setGlobal c_empty_model   off    !! def = off  !! regexp = off|on
 $setglobal cm_secondary_steel_bound  scenario   !! def = scenario
-$setglobal cm_demScen  gdp_SSP2     !! def = gdp_SSP2
+$setglobal cm_demScen  SSP2     !! def = SSP2
 $setGlobal c_scaleEmiHistorical  on  !! def = on  !! regexp = off|on
 $SetGlobal cm_quick_mode  off          !! def = off  !! regexp = off|on
 $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
