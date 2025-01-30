@@ -60,7 +60,7 @@ display sm_budgetCO2eqGlob;
 
 
 *cb adjustment of vintages to account for fast growth in developing countries
-*** adjust vintages for real fe growth in years 1995-2005
+*** adjust vintages for real FE growth in years 1995-2005
 *** 2005 capacity addition (regi,"1",te) is scaled with ratio between (growth rate + 1/lifetime) and 1/lifetime, 
 *** with an offset of 0.5% to account for the general growth assumed in generisdata_vintages; for  regions with declining FE, 10% is minimum ratio
 *** 2000 capacity addition (regi,"6",te) is scaled with the average of the above ratio and 1

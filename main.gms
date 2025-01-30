@@ -1836,6 +1836,10 @@ $setglobal c_CES_calibration_industry_FE_target  1
 $setglobal c_testOneRegi_region  EUR       !! def = EUR  !! regexp = [A-Z]{3}
 *' cm_taxrc_RE     "switch to define whether tax on (CO2 content of) energy imports is recycled to additional direct investments in renewables (wind, solar and storage)"
 $setglobal cm_taxrc_RE  none   !! def = none   !! regexp = none|REdirect
+*' cm_emifacs_baseyear "base year for deriving nonCO2 emission factors"
+*' (2005): Uses EDGAR data with 2005 as base year
+*' (2020): Uses CEDS2024 data with 2020 as base year
+$setGlobal cm_emifacs_baseyear  2005          !! def = 2005
 *' cm_repeatNonOpt       "should nonoptimal regions be solved again?"
 *'
 *' *  (off): no, only infeasable regions are repeated, standard setting
