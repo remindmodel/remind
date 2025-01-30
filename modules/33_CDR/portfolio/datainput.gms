@@ -56,6 +56,14 @@ p33_EW_upScalingLimit(ttot) = cm_33_EW_upScalingRateLimit;
 *' Calculation of short term limit on rocks spread on field in terms of Gt rocks that can be spread. 
 p33_EW_shortTermEW_Limit(regi) = cm_33_EW_shortTermLimit * sum(rlf, f33_maxProdGradeRegiWeathering(regi, rlf));
 
+*' Narrative switch: what share of cropland can be used for EW?
+parameter f33_EW_maxShareOfCropland(ext_regi) "Maximum share of cropland available for enhanced weathering by region" / %cm_33_EW_maxShareOfCropland% /;
+p33_EW_maxShareOfCropland(regi) = 1; !! if no value is assigned to GLO, the default share is set to 100%
+p33_EW_maxShareOfCropland(regi) = f33_EW_maxShareOfCropland("GLO"); !! if a value is assigned to GLO, this value is set for all regions
+loop(ext_regi$f33_EW_maxShareOfCropland(ext_regi),
+    p33_EW_maxShareOfCropland(regi)$(regi_groupExt(ext_regi, regi)) = f33_EW_maxShareOfCropland(ext_regi);
+  );
+
 *** ocean alkalinity enhancement input data (Kowalczyk et al., 2024)
 
 !! An assumption; generally the efficiency might vary between 0.9-1.4 tCO2/tCaO (1.2-1.8 molCO2/molCaO),

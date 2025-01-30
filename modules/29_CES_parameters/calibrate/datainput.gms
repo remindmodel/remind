@@ -180,13 +180,6 @@ loop ((ttot,regi,ppfKap_industry_dyn37(in))$( t(ttot-1) AND t(ttot+1) ),
 
 display pm_fedemand;
 
-*** setting feh2i equal to 1% of fegai
-$ifthen.indst_H2_penetration "%industry%" == "fixed_shares"
-pm_fedemand(t,regi,"feh2i")$(t.val ge 2010) = 0.01*pm_fedemand(t,regi,"fegai");
-$endif.indst_H2_penetration
-
-display pm_fedemand;
-
 *** Change PPP for MER.
 p29_capitalQuantity(tall,all_regi,all_in)
  = p29_capitalQuantity(tall,all_regi,all_in)
@@ -281,21 +274,6 @@ loop (pf_quantity_shares_37(in,in2),
 );
 $endif.subsectors
 
-$ifthen.indst_H2_offset "%industry%" == "fixed_shares"
-
-*** Assuming feh2i minimun levels as 1% of fegai to avoid CES numerical calibration issues and allow more aligned efficiencies between gas and h2
-loop ((t,regi)$(pm_cesdata(t,regi,"feh2i","quantity") lt (0.01 * pm_cesdata(t,regi,"fegai","quantity"))),
-  pm_cesdata(t,regi,"feh2i","offset_quantity") = - (0.01 * pm_cesdata(t,regi,"fegai","quantity") - pm_cesdata(t,regi,"feh2i","quantity"));
-  pm_cesdata(t,regi,"feh2i","quantity") = 0.01 * pm_cesdata(t,regi,"fegai","quantity");
-);
-
-*** Special treatment for fehei, which is part of ppfen_industry_dyn37, yet
-*** needs an offset value for some regions under fixed_shares
-loop ((t,regi)$(pm_cesdata(t,regi,"fehei","quantity") lt 1e-5 ),
-  pm_cesdata(t,regi,"fehei","offset_quantity")  = pm_cesdata(t,regi,"fehei","quantity") - 1e-5;
-  pm_cesdata(t,regi,"fehei","quantity") = 1e-5;
-);
-$endif.indst_H2_offset
 
 $ifthen.build_H2_offset "%buildings%" == "simple"
 *** Assuming feh2b minimun levels as 5% of fegab to avoid CES numerical calibration issues and allow more aligned efficiencies between gas and h2
@@ -325,7 +303,6 @@ loop((t,regi,in)$(    (ppf(in) OR ppf_29(in))
                   AND pm_cesdata(t,regi,in,"quantity") lt 1e-5
                   AND NOT ppfen_industry_dyn37(in)
                   AND NOT ppfKap_industry_dyn37(in)
-                  AND NOT SAMEAS(in,"feh2i")
                   AND NOT SAMEAS(in,"feh2b")        ),
   pm_cesdata(t,regi,in,"offset_quantity")  = pm_cesdata(t,regi,in,"quantity")  - 1e-5;
   pm_cesdata(t,regi,in,"quantity") = 1e-5;

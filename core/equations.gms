@@ -152,7 +152,7 @@ q_balSe(t,regi,enty2)$( entySe(enty2) AND (NOT (sameas(enty2,"seel"))) )..
 ***   add (reused gas from waste landfills) to segas to not account for CO2
 ***   emissions - it comes from biomass
   + ( s_MtCH4_2_TWa
-    * ( vm_macBase(t,regi,"ch4wstl")
+    * ( v_macBase(t,regi,"ch4wstl")
       - vm_emiMacSector(t,regi,"ch4wstl")
       )
     )$( sameas(enty2,"segabio") AND t.val gt 2005 )
@@ -174,24 +174,24 @@ q_balSe(t,regi,enty2)$( entySe(enty2) AND (NOT (sameas(enty2,"seel"))) )..
 ***---------------------------------------------------------------------------
 *MLB 05/2008* correction factor included to avoid pre-triangular infeasibility
 q_transPe2se(ttot,regi,pe2se(enty,enty2,te))$(ttot.val ge cm_startyear)..
-    vm_demPe(ttot,regi,enty,enty2,te)
-     =e=
-    (1 / pm_eta_conv(ttot,regi,te) * vm_prodSe(ttot,regi,enty,enty2,te))$teEtaConst(te)
-    +
+  vm_demPe(ttot,regi,enty,enty2,te)
+    =e=
+  (1 / pm_eta_conv(ttot,regi,te) * vm_prodSe(ttot,regi,enty,enty2,te))$teEtaConst(te)
+  +
 ***cb early retirement for some fossil technologies
-    (1 - vm_capEarlyReti(ttot,regi,te))
-    *
-    sum(teSe2rlf(teEtaIncr(te),rlf),
-            vm_capFac(ttot,regi,te)
-            * (
-                sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val ge 1)),
-                        pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1))
-                      / pm_dataeta(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te)
-                      * pm_omeg(regi,opTimeYr+1,te)
-                      * vm_deltaCap(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,rlf)
-                )
-            )
-    );
+  (1 - vm_capEarlyReti(ttot,regi,te))
+  *
+  sum(teSe2rlf(teEtaIncr(te),rlf),
+    vm_capFac(ttot,regi,te)
+    * (
+      sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val ge 1)),
+          pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1))
+        / pm_dataeta(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te)
+        * pm_omeg(regi,opTimeYr+1,te)
+        * vm_deltaCap(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,rlf)
+      )
+    )
+  );
 
 ***---------------------------------------------------------------------------
 *' Transformation from secondary to final energy:
@@ -309,15 +309,12 @@ q_limitCapCCS(t,regi,ccs2te(enty,enty2,te),rlf)$teCCS2rlf(te,rlf)..
 q_cap(ttot,regi,te2rlf(te,rlf))$(ttot.val ge cm_startyear)..
   vm_cap(ttot,regi,te,rlf)
   =e=
-!! early retirement for some fossil technologies
-  (1 - vm_capEarlyReti(ttot,regi,te))
-  * (
-      sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val ge 1)),
-            pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1))
-          * pm_omeg(regi,opTimeYr+1,te)
-          * vm_deltaCap(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,rlf)
-      )
-
+  (1 - vm_capEarlyReti(ttot,regi,te)) !! early retirement for some technologies
+  *
+  sum(opTimeYr2te(te,opTimeYr) $ (tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val ge 1)),
+      pm_ts(ttot - (pm_tsu2opTimeYr(ttot,opTimeYr) - 1))
+    * pm_omeg(regi,opTimeYr+1,te)
+    * vm_deltaCap(ttot - (pm_tsu2opTimeYr(ttot,opTimeYr) - 1),regi,te,rlf)
   )
 ;
 
@@ -395,7 +392,7 @@ qm_fuel2pe(t,regi,peRicardian(enty))..
   =e=
   sum(pe2rlf(enty,rlf2), vm_fuExtr(t,regi,enty,rlf2))
   - (vm_Xport(t,regi,enty) - (1-pm_costsPEtradeMp(regi,enty)) * vm_Mport(t,regi,enty))$(tradePe(enty))
-  - sum(pe2rlf(enty2,rlf2), 
+  - sum(pe2rlf(enty2,rlf2),
       (pm_fuExtrOwnCons(regi, enty, enty2) * vm_fuExtr(t,regi,enty2,rlf2))$(pm_fuExtrOwnCons(regi, enty, enty2) gt 0)
     )
 ;
@@ -417,6 +414,7 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
   =g=
   sum(te$teReComp2pe(enty,te,rlf), (v_capDistr(t,regi,te,rlf) / (pm_data(regi,"luse",te)/1000)));
 
+*' @equations
 ***---------------------------------------------------------------------------
 *' Learning curve for investment costs:
 *' (deactivate learning for tech_stat 4 technologies before 2025 as they are not built before)
@@ -529,6 +527,7 @@ $ifthen.floorscen %cm_floorCostScen% == "default"
 	)$(t.val gt 2050)
 $endif.floorscen
 ;
+*' @stop
 
 
 ***---------------------------------------------------------------------------
@@ -594,7 +593,7 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
         !! substract FE used for non-energy purposes (as feedstocks) so it does
         !! not create energy-related emissions
       - sum(entyFE2sector2emiMkt_NonEn(enty2,sector,emiMkt),
-          vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
+          vm_demFeNonEnergySector(t,regi,enty,enty2,sector,emiMkt))
       )
     )
   )
@@ -644,22 +643,8 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
   - sum(te_ccs33,
       vm_cco2_cdr_fromFE(t, regi, te_ccs33)
   )$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
-    !! substract carbon from non-fossil origin contained in plastics that don't
-    !! get incinerated ("plastic removals")
-  - sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-         se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
-      vm_nonIncineratedPlastics(t,regi,entySe,entyFe,emiMkt)
-    )$( sameas(enty,"co2") )
-    !! add fossil emissions from plastics incineration. 
-  + sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-         se2fe(entySe,entyFe,te))$( entySeFos(entySe) ),
-      vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
-    )$( sameas(enty,"co2") )
-    !! add fossil emissions from chemical feedstock with unknown fate
-  + sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-         se2fe(entySe,entyFe,te))$( entySeFos(entySe) ),
-      vm_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
-    )$( sameas(enty,"co2") )
+    !! plastic waste incineration; can be positive (fossil non-ccs) or negative (bio/syn w/ CCS)
+  + vm_wasteIncinerationEmiBalance(t,regi,enty,emiMkt)
     !! Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS
     !! capacity don't have the same lifetime
   + v_co2capturevalve(t,regi)$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
@@ -688,12 +673,9 @@ q_emiAllMkt(t,regi,emi,emiMkt) ..
   + vm_emiCdr(t,regi,emi)$( sameas(emi,"co2") AND sameas(emiMkt,"ETS") )
     !! Exogenous emissions
   + pm_emiExog(t,regi,emi)$( sameas(emiMkt,"other") )
-    !! non energy emi from chem sector (process emissions from feedstocks):
-  + sum((entyFE2sector2emiMkt_NonEn(entyFe,sector,emiMkt),
-         se2fe(entySe,entyFe,te)),
-      vm_demFENonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
-    * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
-    )
+    !! emissions of carbon feedstocks contained in chemicals that are not energy-related,
+    !! can be positive (fossil, emitted) or negative (non-fossil, stored in products)
+  + vm_emiFeedstockNoEnergy(t,regi,emi,emiMkt)
 ;
 
 
@@ -702,9 +684,9 @@ q_emiAllMkt(t,regi,emi,emiMkt) ..
 ***--------------------------------------------------
 
 *** CO2 emissions from (fossil) fuel combustion in buildings and transport (excl. bunker fuels)
-q_emiCO2Sector(t,regi,sector)$(sameAs(sector, "build") OR
-                                sameAs(sector, "trans"))..
-vm_emiCO2Sector(t,regi,sector)
+q_emiCO2Sector(t,regi,sector) $ (   sameAs(sector, "build")
+                                 OR sameAs(sector, "trans"))..
+  vm_emiCO2Sector(t,regi,sector)
   =e=
 *** calculate direct CO2 emissions per end-use sector
     sum(se2fe(entySe,entyFe,te),
@@ -736,7 +718,7 @@ vm_emiCO2Sector(t,regi,sector)
 *' The endogenous baselines of non-energy emissions are calculated in the following equation:
 ***------------------------------------------------------
 q_macBase(t,regi,enty)$( emiFuEx(enty) OR sameas(enty,"n2ofertin") ) ..
-  vm_macBase(t,regi,enty)
+  v_macBase(t,regi,enty)
   =e=
     sum(emi2fuel(enty2,enty),
       p_efFossilFuelExtr(regi,enty2,enty)
@@ -755,7 +737,7 @@ q_emiMacSector(t,regi,emiMacSector(enty))..
   vm_emiMacSector(t,regi,enty)
   =e=
 
-    ( vm_macBase(t,regi,enty)
+    ( v_macBase(t,regi,enty)
     * sum(emiMac2mac(enty,enty2),
         1 - (pm_macSwitch(enty) * pm_macAbatLev(t,regi,enty2))
       )
@@ -878,7 +860,7 @@ q_balcapture(t,regi,ccs2te(ccsCo2(enty),enty2,te)) ..
   + sum(teCCS2rlf(te,rlf), vm_co2capture_cdr(t,regi,enty,enty2,te,rlf))
     !! carbon captured from industry
   + sum(emiInd37, vm_emiIndCCS(t,regi,emiInd37))
-  + sum((sefe(entySe,entyFe),emiMkt)$( 
+  + sum((sefe(entySe,entyFe),emiMkt)$(
                             entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ),
       vm_incinerationCCS(t,regi,entySe,entyFe,emiMkt)
     )
@@ -1009,7 +991,6 @@ q_costEnergySys(ttot,regi)$( ttot.val ge cm_startyear ) ..
     + v_costInv(ttot,regi)
     )
   + sum(emiInd37, vm_IndCCSCost(ttot,regi,emiInd37))
-  + pm_CementDemandReductionCost(ttot,regi)
 ;
 
 
