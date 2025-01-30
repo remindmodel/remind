@@ -34,7 +34,7 @@ q33_emiCDR(t,regi)..
     =e=
     sum(te_used33, vm_emiCdrTeDetail(t,regi,te_used33))
     + (1 - sm_capture_rate_cdrmodule) * (
-        sum(te_ccs33, v33_co2emi_non_atm_gas(t, regi, te_ccs33))
+        sum(te_ccs33, vm_cco2_cdr_fromFE(t, regi, te_ccs33))
         + sum(te_oae33, v33_co2emi_non_atm_calcination(t, regi, te_oae33))
     )
     ;
@@ -54,28 +54,28 @@ q33_capconst(t, regi, te_used33)$(not sameAs(te_used33, "weathering"))..
     ;
 
 ***---------------------------------------------------------------------------
-*'  The CO2 captured from gas used for heat production (DAC, OAE).
+*'  Captured CO2 from fegas consumption for heat production (OAE and DAC)
 ***---------------------------------------------------------------------------
-q33_co2emi_non_atm_gas(t, regi, te_ccs33)..
-    v33_co2emi_non_atm_gas(t, regi, te_ccs33)
+q33_cco2_cdr_fromFE(t, regi, te_ccs33)..
+    vm_cco2_cdr_fromFE(t, regi, te_ccs33)
     =e=
-    fm_dataemiglob("pegas","seh2","gash2c","cco2") !! conversion from PE to emissions
-        * (1 / pm_eta_conv(t,regi,"gash2c")) !! conversion from PE to FE
-        * sum(fe2cdr("fegas", entyFe2, te_ccs33), v33_FEdemand(t, regi,"fegas", entyFe2, te_ccs33)) !! FE gas used
+    sm_capture_rate_cdrmodule
+    * pm_emifac(t,regi,"segafos","fegas","tdfosgas","co2")
+    * sum(fe2cdr("fegas", entyFe2, te_ccs33), v33_FEdemand(t, regi,"fegas", entyFe2, te_ccs33)) !! FE gas used
     ;
 
 ***---------------------------------------------------------------------------
 *'  Preparation of captured emissions to enter the CCUS chain.
 *'  The first part of the equation describes emissons captured from the ambient air,
-*'  the second part is non-atmospheric CO2 (e.g., from energy usage and calcination),
-*'  assuming a capture rate s33_capture_rate.
+*'  the second part is CO2 captured from energy usage (OAE or DAC)
+*'  the third part is CO2 captured from calcination for OAE
 ***---------------------------------------------------------------------------
 q33_ccsbal(t, regi, ccs2te(ccsCo2(enty), enty2, te))..
     sum(teCCS2rlf(te, rlf), vm_co2capture_cdr(t, regi, enty, enty2, te, rlf))
     =e=
     - vm_emiCdrTeDetail(t, regi, "dac")
+    + sum(te_ccs33, vm_cco2_cdr_fromFE(t, regi, te_ccs33))
     + sm_capture_rate_cdrmodule * (
-        sum(te_ccs33, v33_co2emi_non_atm_gas(t, regi, te_ccs33))
         + sum(te_oae33, v33_co2emi_non_atm_calcination(t, regi, te_oae33))
     )
     ;

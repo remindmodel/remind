@@ -32,8 +32,8 @@ v33_EW_onfield(ttot,all_regi,rlf,rlf)  "amount of ground rock spread on fields i
 v33_EW_onfield_tot(ttot,all_regi,rlf,rlf)  "total amount of ground rock on fields, for each climate zone and transportation distance [Gt]"
 v33_FEdemand(ttot,all_regi,all_enty,all_enty,all_te)  "FE demand of each technology [TWa]"
 vm_co2capture_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "total emissions captured through technologies in the CDR module that enter the CCUS chain + captured emissions from associated FE demand [GtC / a]"
-v33_co2emi_non_atm_gas(ttot,all_regi,all_te)  "CO2 from CDR-related acitivites that comes from energy demand [GtC / a]"
-v33_co2emi_non_atm_calcination(ttot,all_regi,all_te)  "CO2 from calcination [GtC / a]"
+vm_cco2_cdr_fromFE(ttot,all_regi,all_te)  "Captured CO2 from CDR-related acitivites that comes from energy demand [GtC / a]"
+v33_co2emi_non_atm_calcination(ttot,all_regi,all_te)  "Captured CO2 from calcination [GtC / a]"
 ;
 
 negative variables
@@ -45,7 +45,7 @@ q33_demFeCDR(ttot,all_regi,all_enty)  "CDR demand balance for final energy"
 q33_emiCDR(ttot,all_regi)  "aggregates the (negative) emissions captured by the CDR technologies"
 q33_H2bio_lim(ttot,all_regi)  "limits H2 from bioenergy to FE - H2 demand from CDR, i.e. no H2 from bioenergy for DAC"
 q33_capconst(ttot,all_regi,all_te)  "calculates amount of carbon captured by DAC and OAE"
-q33_co2emi_non_atm_gas(ttot,all_regi,all_te)   "calculates the share of captured CO2 that comes from burning gas"
+q33_cco2_cdr_fromFE(ttot,all_regi,all_te)   "calculates the amount of captured CO2 that comes from burning gas"
 q33_ccsbal(ttot,all_regi,all_enty,all_enty,all_te)  "calculates CCS emissions from CDR technologies"
 
 q33_DAC_FEdemand(ttot,all_regi,all_enty)  "calculates final energy demand from DAC"

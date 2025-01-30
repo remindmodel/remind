@@ -595,9 +595,6 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
         !! not create energy-related emissions
       - sum(entyFE2sector2emiMkt_NonEn(enty2,sector,emiMkt),
           vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
-        !! substract FE used in CDR module that is captured and not released
-      - sum(entyFe2Sector(enty2,"CDR")$(sameas(emiMkt,"ETS")),
-          sm_capture_rate_cdrmodule * vm_demFeSector(t,regi,enty,enty2,sector,emiMkt))
       )
     )
   )
@@ -637,10 +634,16 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
     )
     !! energy emissions fuel extraction
   + v_emiEnFuelEx(t,regi,enty)$( sameas(emiMkt,"ETS") )
-    !! Industry CCS emissions
+    !! CO2 captured from Industry sector energy consumption
+    !! Needs to be subtracted as vm_emiTeDetailMkt assumes all fuel 
+    !! is burned without capture (same for CDR sector, plastics, feedstocks)
   - sum(emiInd37_fuel,
       vm_emiIndCCS(t,regi,emiInd37_fuel)
     )$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
+    !! CO2 captured from CDR sector energy consumption (OAE and DAC)
+  - sum(te_ccs33,
+      vm_cco2_cdr_fromFE(t, regi, te_ccs33)
+  )$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
     !! substract carbon from non-fossil origin contained in plastics that don't
     !! get incinerated ("plastic removals")
   - sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
