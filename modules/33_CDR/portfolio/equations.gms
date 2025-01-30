@@ -33,7 +33,7 @@ q33_emiCDR(t,regi)..
     vm_emiCdr(t,regi,"co2")
     =e=
     sum(te_used33, vm_emiCdrTeDetail(t,regi,te_used33))
-    + (1 - sm_capture_rate_cdrmodule) * (
+    + (1 - s33_capture_rate_cdrmodule) * (
         sum(te_ccs33, vm_cco2_cdr_fromFE(t, regi, te_ccs33))
         + sum(te_oae33, v33_co2emi_non_atm_calcination(t, regi, te_oae33))
     )
@@ -59,7 +59,7 @@ q33_capconst(t, regi, te_used33)$(not sameAs(te_used33, "weathering"))..
 q33_cco2_cdr_fromFE(t, regi, te_ccs33)..
     vm_cco2_cdr_fromFE(t, regi, te_ccs33)
     =e=
-    sm_capture_rate_cdrmodule
+    s33_capture_rate_cdrmodule
     * pm_emifac(t,regi,"segafos","fegas","tdfosgas","co2")
     * sum(fe2cdr("fegas", entyFe2, te_ccs33), v33_FEdemand(t, regi,"fegas", entyFe2, te_ccs33)) !! FE gas used
     ;
@@ -75,7 +75,7 @@ q33_ccsbal(t, regi, ccs2te(ccsCo2(enty), enty2, te))..
     =e=
     - vm_emiCdrTeDetail(t, regi, "dac")
     + sum(te_ccs33, vm_cco2_cdr_fromFE(t, regi, te_ccs33))
-    + sm_capture_rate_cdrmodule * (
+    + s33_capture_rate_cdrmodule * (
         + sum(te_oae33, v33_co2emi_non_atm_calcination(t, regi, te_oae33))
     )
     ;
