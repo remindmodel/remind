@@ -128,6 +128,8 @@ pm_shfe_lo(ttot,regi,entyFe,sector)=0;
 pm_shGasLiq_fe_up(ttot,regi,sector)=0;
 pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 
+*** initialize upper bound on FE share parameter
+pm_shfetot_up(t,regi,entyFe,sector)=0;
 
 *** limit on expenses for net negative emissions as share of GDP
 parameter f_GDP_NetNeg_share(ext_regi) "TEXT" / %c_GDP_netNegCDR_maxShare% /; 

@@ -84,5 +84,10 @@ if(cm_33_OAE_scen = 1, !! optimistic scenario for distribution, lower diesel dem
     p33_fedem(te_oae33, "fedie") = 0.77 / s33_OAE_efficiency; !! 770 MJ/tCaO (corresponds to the discharge rate of 100 t/h)
 );
 
+*** Upper bound for FE share by CDR approaches
+pm_shfetot_up(t,regi,entyFe,sector)$(t.val ge 2040 AND sameAs(sector, "CDR") AND 
+                                            (sameAS(entyFe, "fedie") OR sameAS(entyFe, "feels") OR sameAS(entyFe, "fehes") 
+                                            OR sameAS(entyFe, "feh2s") OR sameAS(entyFe, "fegas"))) = cm_33_maxFeShare;
+
 *' @stop
 *** EOF ./modules/33_CDR/portfolio/datainput.gms

@@ -923,17 +923,21 @@ parameter
 ;
   cm_LimRock               = 1000;   !! def = 1000
 *'
-
 parameter
   cm_33_EW_upScalingRateLimit    "Annual growth rate limit on upscaling of mining & spreading rocks on fields"
 ;
   cm_33_EW_upScalingRateLimit = 0.2;  !! def = 20% !! regexp = is.nonnegative
-
+*' 
 parameter
   cm_33_EW_shortTermLimit         "Limit on 2030 potential for enhanced weathering, defined as % of land on which EW is applied. Default 0.5% of land"
 ;
   cm_33_EW_shortTermLimit = 0.005; !! def = 0.5% !! regexp = is.nonnegative
 *'
+parameter
+  cm_33_maxFeShare                "max share of the CDR sectors' FE demand in the region's total FE demand, by FE type"
+;
+  cm_33_maxFeShare = 1; !!  def = 1 !! regexp = is.nonnegative
+*' 
 parameter
   cm_postTargetIncrease     "carbon price increase per year after regipol emission target is reached (euro per tCO2)"
 ;
