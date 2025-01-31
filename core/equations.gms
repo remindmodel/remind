@@ -1251,4 +1251,14 @@ q_fossilSolidsLimitReg(ttot,regi,entySe,entyFe,sector,emiMkt)$(limitSolidsFossil
   vm_demFeSector_afterTax(ttot-1,regi,entySe,entyFe,sector,emiMkt);
 $endif.limitSolidsFossilRegi
 
+***---------------------------------------------------------------------------
+*' Limit spending on net negative emissions to a share of the region's GDP 
+***---------------------------------------------------------------------------
+q_CDRspending(t,regi)$(t.val ge max(2030,cm_startyear))..
+  v_NetNegEmi_expenses(t,regi)
+  =e=
+  (1-cm_frac_NetNegEmi) * pm_taxCO2eqSum(t,regi) * v21_emiALLco2neg(t,regi)
+;
+
+
 *** EOF ./core/equations.gms
