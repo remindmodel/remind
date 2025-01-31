@@ -36,7 +36,7 @@ p40_El_RenShare(t,iso_regi)           = 0;
 p40_CoalBound(t,iso_regi)             = 0;      
 p40_FE_RenShare(t,iso_regi)           = 0;
 
-*** Chinese PE targets are defined with substitution accounting method
+*** Chinese PE targets are defined with substitution accounting method (under review)
 p40_noncombust_acc_eff(t,"CHN",te)$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"windon") OR sameas(te,"windoff") OR sameas(te,"tnrs") OR sameas(te,"spv") OR sameas(te,"geohdr") OR sameas(te,"hydro")) = 0.38; !! substitution accounting for low-carbon electricity generation at coal efficiency of 38%
 p40_noncombust_acc_eff(t,"CHA",te)$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"windon") OR sameas(te,"windoff") OR sameas(te,"tnrs") OR sameas(te,"spv") OR sameas(te,"geohdr") OR sameas(te,"hydro")) = 0.38; !! substitution accounting for low-carbon electricity generation at coal efficiency of 38%
 *** lower bound on gas share in PE
