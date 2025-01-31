@@ -22,6 +22,7 @@ cm_GDPpopScen   "cm_GDPpopScen as set for use in GDX"      /%cm_GDPpopScen%/
 
 all_GDPpopScen    "all possible GDP scenarios"
 /
+SDP
 SDP_EI
 SDP_MC
 SDP_RC
