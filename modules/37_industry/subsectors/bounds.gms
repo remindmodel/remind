@@ -161,12 +161,4 @@ loop ((ue_industry_dyn37(in),regi_groupExt(regi_fxDem37(ext_regi),regi)),
 );
 $endif.fixedUE_scenario
 
-*** fix plastic waste to zero until 2010, and possible to reference scenario
-*** values between 2015 and cm_startyear
-v37_plasticWaste.fx(t,regi,entySe,entyFe,emiMkt)$(
-                            t.val lt max(2015, cm_startyear)
-                        AND sefe(entySe,entyFe)
-                        AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) )
-  = v37_plasticWaste.l(t,regi,entySe,entyFe,emiMkt)$( t.val ge 2015 );
-
 *** EOF ./modules/37_industry/subsectors/bounds.gms
