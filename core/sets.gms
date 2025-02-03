@@ -61,6 +61,7 @@ SSP2_NAV_all "NAVIGATE demand scenarios: All measures (ele + act + tec)"
 SSP2_CAMP_weak   "CAMPAIGNers scenario with low ambition lifestyle change"
 SSP2_CAMP_strong "CAMPAIGNers scenario with high ambition lifestyle change"
 SSP2_demDiffer_IKEA "Demand reduction in Global North (CAZ,EUR,JPN,NEU,USA) and demand increase in Emerging regions (IND,LAM,OAS,SSA). Reduction follows the factor f of demRedStrong scenario, while increase uses factor 2-f."
+SSP2_demDiffer
 SSP2_demRedStrong "edget internal demScen, might be removed soon"
 SSP2_demRedWeak
 SSP2_highDemDEU   "High-demand scenario in industry and transport for Germany, rest of the world has SSP2 standard demand trajectories"
