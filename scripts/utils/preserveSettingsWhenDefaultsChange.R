@@ -1,11 +1,12 @@
 
 # Use this script to preserve scenario configuration in all config/scenario_config*.csv files if 
 # you want to change the default values in main.gms. It adjusts the scenario_config files so that
-# the scenarios are still configured in the same way as before the defaults were changed in main.gms.
+# the scenarios will still be configured in the same way as before the defaults changed in main.gms.
 # Author: David Klein
 
 # What this script does:
 # The script performs the following steps for all config/scenario_config*.csv files:
+# 0. It lists the switches and their values that differ between main.gms and the new default
 # 1. It lists the switches and the number of cases where these switches
 #    1a. use the defaults from main.gms (are empty) before the change. 
 #        (these switches are affected if the defaults in the main.gms change)
@@ -25,6 +26,7 @@
 path_remind        <- "~/0_GIT-models/remind-develop"  # path to the REMIND main folder
 config.file        <- "config/scenario_config.csv"     # path to the scenario_config file you want to choose the new default from
 newDefaultScenario <- "SSP2-NPi2025"                   # scenario that defines the new default
+updateConfigs      <- FALSE                            # FALSE: show diagnostics only, TRUE: update all scenario_config*.csv files
 
 # ---- Script ---- 
 
@@ -33,6 +35,7 @@ library(readr)
 
 setwd(path_remind)
 
+# source all start scripts
 invisible(sapply(list.files("scripts/start", pattern = "\\.R$", full.names = TRUE), source))
 
 settings <- readCheckScenarioConfig(config.file, ".")
@@ -141,8 +144,10 @@ for (filename in scenfiles) {
   scenConf <- rows_update(scenConf, updated, by = "title")
   
   # Write to file
-  #write_delim(scenConf, file = gsub("\\.csv", "-DK.csv", filename), delim = ";", na = "", eol = "\r\n")
-  write_delim(scenConf, file = file.path("config", filename),        delim = ";", na = "", eol = "\r\n")
+  if (updateConfigs) {
+    #write_delim(scenConf, file = gsub("\\.csv", "-DK.csv", filename), delim = ";", na = "", eol = "\r\n")
+    write_delim(scenConf, file = file.path("config", filename),        delim = ";", na = "", eol = "\r\n")
+  }
 }
 
 # ---- Print diagnostics ----
@@ -155,3 +160,9 @@ print(usingDefaults_OLD |> filter(if_any(!any_of("name"), ~ !is.na(.)))) # keep 
 
 message("The following scenario_config*.csv files use what is about to become the new default in main.gms and can be set empty:")
 print(usingDefaults_NEW |> filter(if_any(!any_of("name"), ~ !is.na(.))))
+
+if (updateConfigs) {
+  message("Updated scenario_config*.csv files.")
+} else {
+  message("Only showing diagnostics. To actually update the scenario configs please set 'updateConfigs=TRUE'.")
+}
