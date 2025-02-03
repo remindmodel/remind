@@ -38,7 +38,6 @@ b1
 b2
 SSP2IndiaMedium
 SSP2IndiaHigh
-SSP2_NAV_all
 /
 
 all_demScen    "all possible demand scenarios"
@@ -54,13 +53,13 @@ SSP3        "SSP3 slowGROWTH slowCONV"
 SSP4        "SSP4  medGROWTH mixedCONV"
 SSP5        "SSP5 fastGROWTH fastCONV"
 SSP2_lowEn  "SSP2 with low energy"
-SSP2EU_NAV_ele "NAVIGATE demand scenarios: Electrification and fuel shift"
-SSP2EU_NAV_act "NAVIGATE demand scenarios: Activity reduction and activity shift"
-SSP2EU_NAV_tec "NAVIGATE demand scenarios: Technological improvements - energy efficiency"
-SSP2EU_NAV_lce "NAVIGATE demand scenarios: Low consumption energy (act + tec)"
-SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures (ele + act + tec)"
-SSP2EU_CAMP_weak   "CAMPAIGNers scenario with low ambition lifestyle change"
-SSP2EU_CAMP_strong "CAMPAIGNers scenario with high ambition lifestyle change"
+SSP2_NAV_ele "NAVIGATE demand scenarios: Electrification and fuel shift"
+SSP2_NAV_act "NAVIGATE demand scenarios: Activity reduction and activity shift"
+SSP2_NAV_tec "NAVIGATE demand scenarios: Technological improvements - energy efficiency"
+SSP2_NAV_lce "NAVIGATE demand scenarios: Low consumption energy (act + tec)"
+SSP2_NAV_all "NAVIGATE demand scenarios: All measures (ele + act + tec)"
+SSP2_CAMP_weak   "CAMPAIGNers scenario with low ambition lifestyle change"
+SSP2_CAMP_strong "CAMPAIGNers scenario with high ambition lifestyle change"
 SSP2_demDiffer_IKEA "Demand reduction in Global North (CAZ,EUR,JPN,NEU,USA) and demand increase in Emerging regions (IND,LAM,OAS,SSA). Reduction follows the factor f of demRedStrong scenario, while increase uses factor 2-f."
 SSP2_demRedStrong "edget internal demScen, might be removed soon"
 SSP2_demRedWeak
