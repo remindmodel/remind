@@ -18,7 +18,6 @@ $Ifi "%phase%" == "equations" $include "./modules/30_biomass/magpie_40/equations
 $Ifi "%phase%" == "preloop" $include "./modules/30_biomass/magpie_40/preloop.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/30_biomass/magpie_40/bounds.gms"
 $Ifi "%phase%" == "presolve" $include "./modules/30_biomass/magpie_40/presolve.gms"
-$Ifi "%phase%" == "postsolve" $include "./modules/30_biomass/magpie_40/postsolve.gms"
 $Ifi "%phase%" == "output" $include "./modules/30_biomass/magpie_40/output.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/30_biomass/magpie_40/realization.gms

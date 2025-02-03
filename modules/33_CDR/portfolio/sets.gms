@@ -74,6 +74,7 @@ if(cm_33EW eq 1,
       te_used33("weathering") = YES;
       teNoTransform33("weathering") = YES;
       teNoTransform2rlf33("weathering", "1") = YES;
+      teAdj33("weathering") = YES;
 );
 
 if(cm_33OAE eq 1,

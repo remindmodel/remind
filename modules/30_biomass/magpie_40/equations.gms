@@ -110,7 +110,13 @@ q30_limitXpBio(t,regi)..
          vm_fuExtr(t,regi,"pebiolc","1")
 ;
 
-*** Limit BECCS in policy runs to 35% of total PE in BAU or to 130% of bioenergy demand in BAU
+*' ** Limit BECCS **
+*' To prevent regions with large carbon storage potential
+*' from demanding high amounts of biomass just because of their
+*' capacity to store negative emissions a general rule for all regions
+*' is applied that limits the PE demand of BECCS technologies to 50% of 
+*' the total PE (see q30_limitTeBio)
+
 q30_limitTeBio(t,regi)$(cm_startyear gt 2005)..
         sum(pe2se(enty,enty2,teBio)$(teCCS(teBio)), vm_demPe(t,regi,enty,enty2,teBio))
         =l=
