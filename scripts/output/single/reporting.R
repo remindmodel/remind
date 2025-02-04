@@ -89,7 +89,7 @@ if (file.exists(edgetOutputDir)) {
                                       isStored = FALSE,
                                       isHarmonized = TRUE,
                                       remindReportingFile = file.path(outputdir,
-                                      paste0("REMIND_generic_", scenario,"_withoutPlus.mif")))
+                                      "REMIND_generic_", scenario,"_withoutPlus.mif"))
 
   write.mif(EDGET_output, remind_reporting_file, append = TRUE)
   piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
