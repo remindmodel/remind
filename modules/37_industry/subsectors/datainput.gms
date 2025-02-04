@@ -648,15 +648,15 @@ $endIf.cm_wasteIncinerationCCSshare
 p37_specMatDem(mat,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 p37_specMatDem("ammonia","FertProd","standard")        = 17/14; !!TODOQZ Used to verify that the data are equal
-p37_specMatDem("ammoniaH2","FertProdH2","standard")        = 17/14;  
+p37_specMatDem("ammoniaH2","FertProdH2","standard")        = 17/14;
 
-p37_specMatDem("methanol","MtOMtA","standard")        = 2.28; 
-p37_specMatDem("ammonia","AmToFinal","standard")        = 1; 
+p37_specMatDem("methanol","MtOMtA","standard")        = 2.28;
+p37_specMatDem("ammonia","AmToFinal","standard")        = 1;
 p37_specMatDem("ammoniaH2","AmToFinalH2","standard")        = 1;
-p37_specMatDem("methanol","MeToFinal","standard")        = 1; 
+p37_specMatDem("methanol","MeToFinal","standard")        = 1;
 
 p37_specMatDem("co2f","FertProdH2","standard")        = 1.52;
-p37_specMatDem("co2f","MeSyH2","standard")        = 1.373; 
+p37_specMatDem("co2f","MeSyH2","standard")        = 1.373;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_specMatDem("dripell","idr","ng")        = 1.44;                                           !! Source: POSTED / Average of Devlin2022, Otto2017, Volg2018, Rechberge2020
@@ -848,6 +848,7 @@ loop(regi,
   p37_demFePrcHist("2020",regi,"ChemSol","standard","feels") = p37_demFePrcHist("2020",regi,"ChemSol","standard","feels") /3.;
 );
 
+pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
 loop((t,
       regi,
       tePrc2opmoPrc(tePrc,opmoPrc),
@@ -973,8 +974,8 @@ $endif.cm_subsec_model_steel
 
 *** --------------------------------
 
-pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
-pm_outflowPrcIni(all_regi,all_te,opmoPrc) = 0.;
+!!pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) = 0.;
+!!p37_matFlowHist(tall,all_regi,mat) = 0.;
 if (cm_startyear eq 2005,
   loop(t$(t.val ge 2005 AND t.val le 2020),
 
