@@ -17,6 +17,8 @@ f_pop.cs3r
 p_abatparam_CH4.cs4r
 p_abatparam_CO2.cs4r
 p_abatparam_N2O.cs4r
+p_abatparam_SSP22022_CH4.cs4r
+p_abatparam_SSP22022_N2O.cs4r
 p_adj_deltacapoffset.cs4r
 p_boundCapCCSindicator.cs4r
 p_boundEmi.cs4r
