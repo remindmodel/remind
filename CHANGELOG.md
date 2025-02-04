@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### added
+- Possibility of using updated sources for baseline non-CO2 emissions calculation, controlled by `cm_emifacs_baseyear`
+
 ### input data/calibration
 - new input data rev7.21 including new MAgPIE data [[#1956](https://github.com/remindmodel/remind/pull/1956)]
 

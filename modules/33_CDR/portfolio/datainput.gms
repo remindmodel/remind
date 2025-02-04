@@ -38,10 +38,14 @@ s33_step = 2.5;
 s33_costs_fix = 0.0422;
 s33_co2_rem_pot = 0.3 * 12/44;       !! default for basalt, for Olivine 1.1
 
-*' carbon removal rate: eqs 2+c1 in strefler, amann et al. (2018): wr = grain surface area based WR (10^-10.53 mol m^-2 s^-1) * molar weight of basalt/forsterite (140.7 g/mol) * 3.155^7 s/a * SSA(gs)
-s33_co2_rem_rate = 10**(-10.53) * 125 * 3.155*10**7 * 69.18*(cm_gs_ew**(-1.24));
-p33_co2_rem_rate("1") = -log(1-s33_co2_rem_rate * 0.94);
-p33_co2_rem_rate("2") = -log(1-s33_co2_rem_rate * 0.29);
+*' rock weathering rate (i.e. fraction of rock weathering per year) at ambient temperature (25 degree C), based on 
+*' eq 2 in strefler, amann et al. (2018): 
+*' wr = grain surface area based weathering rate (10^-10.53 mol m^-2 s^-1) * molar weight of basalt/forsterite (140.7 g/mol) 
+*'      * 3.155^7 s/a * specific surface area(depending on grain size cm_gs_ew)
+s33_rock_weath_rate_ambientT = 10**(-10.53) * 125 * 3.155*10**7 * 69.18*(cm_gs_ew**(-1.24));
+*' rock weathering rate for different climate grades: SI Tab F-1 of strefler, amann et al. (2018)
+p33_rock_weath_rate("1") = s33_rock_weath_rate_ambientT * 0.94;
+p33_rock_weath_rate("2") = s33_rock_weath_rate_ambientT * 0.29;
 
 *' JeS FE demand fit from Thorben: SI D in strefler, amann et al. (2018)
 p33_fedem("weathering", "feels") = 6.62 * cm_gs_ew**(-1.16);
