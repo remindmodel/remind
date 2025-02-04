@@ -382,9 +382,8 @@ $endif.cm_subsec_model_steel
 tePrc(all_te)  "Technologies used in process-based model (including CCS)"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-    ChemSol
-    ChemNG
-    ChemLiq
+    ChemOld
+    ChemELec
     ChemH2
 
     StCrNG
@@ -558,9 +557,8 @@ $endif.cm_subsec_model_steel
 route(all_te)  "Process routes; Currently only used for reporting"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-    ChemRo_Sol
-    ChemRo_NG
-    ChemRo_Liq
+    ChemRo_Old
+    ChemRo_Elec
     ChemRo_H2
 
     StCrNG_Ro
@@ -627,9 +625,8 @@ $endif.cm_subsec_model_steel
 tePrc2opmoPrc(all_te,opmoPrc)   "Mapping of technologies onto available operation modes"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-    ChemSol . standard
-    ChemNG . standard
-    ChemLiq . standard
+    ChemOld . standard
+    ChemELec . standard
     ChemH2 . standard
 
     StCrNG . standard
@@ -690,9 +687,8 @@ $endif.cm_subsec_model_steel
 tePrc2matOut(all_te,opmoPrc,mat)   "Mapping of industry process technologies onto their output materials"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-   ChemSol . standard . OtherChem
-   ChemNG . standard . OtherChem
-   ChemLiq . standard . OtherChem
+   ChemOld . standard . OtherChem
+   ChemElec . standard . OtherChem
    ChemH2 . standard . OtherChem
 
    StCrNG . standard . HVC
@@ -727,9 +723,8 @@ $endif.cm_subsec_model_steel
 tePrc2ue(all_te,opmoPrc,all_in)   "Mapping of industry process technologies to the UE ces nodes they directly or indirectly feed into"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-   ChemSol . standard . ue_chemicals
-   ChemNG . standard . ue_chemicals
-   ChemLiq . standard . ue_chemicals
+   ChemOld . standard . ue_chemicals
+   ChemElec . standard . ue_chemicals
    ChemH2 . standard . ue_chemicals
 
    StCrNG . standard . ue_chemicals
@@ -784,9 +779,9 @@ $endif.cm_subsec_model_steel
 tePrc2route(all_te,opmoPrc,route)  "Mapping of technologies onto the production routes they belong to"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-   ChemSol . standard . ChemRo_Sol
-   ChemNG . standard . ChemRo_NG
-   ChemLiq . standard . ChemRo_Liq
+   ChemOld . standard . ChemRo_Old
+   ChemElec . standard . ChemRo_Elec
+   ChemH2 . standard . ChemRo_H2
 
    StCrNG . standard . StCrNG_Ro
    StCrLiq . standard . StCrLiq_Ro
@@ -856,9 +851,8 @@ $endif.cm_subsec_model_steel
 fe2mat(all_enty,all_enty,all_te)   "Set of industry technologies to be included in en2en, which connects capex and opex to budget"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-    entydummy.entydummy.ChemSol
-    entydummy.entydummy.ChemNG
-    entydummy.entydummy.ChemLiq
+    entydummy.entydummy.ChemOld
+    entydummy.entydummy.ChemELec
     entydummy.entydummy.ChemH2
 
     entydummy.entydummy.StCrNG
@@ -900,9 +894,8 @@ $endif.cm_subsec_model_steel
 secInd37_tePrc(secInd37,all_te)   "Mapping of technologies onto industry subsectors"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-    chemicals . ChemSol
-    chemicals . ChemNG
-    chemicals . ChemLiq
+    chemicals . ChemOld
+    chemicals . ChemElec
     chemicals . ChemH2
 
     chemicals . StCrNG

@@ -679,16 +679,21 @@ p37_specFeDemTarget(all_enty,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 !! TODO Qianzhi 1MWh NH3,LHV = 0.19355 tons
 
-p37_specFeDemTarget("fesos","ChemSol","standard")  = 10./ (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","ChemSol","standard")  = 1. / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fesos","ChemOld","standard")  = 10./ (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fegas","ChemOld","standard")  = 10. / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fehos","ChemOld","standard")    = 10. / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","ChemOld","standard")  = 1. / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fegas","ChemNG","standard")  = 10. / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","ChemNG","standard")  = 1. / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fehos","ChemLiq","standard")    = 10. / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","ChemLiq","standard")    = 1. / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fesos","ChemELec","standard")  = 9./ (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fegas","ChemElec","standard")  = 9. / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fehos","ChemElec","standard")    = 9. / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","ChemElec","standard")  = 2. / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
 
-p37_specFeDemTarget("feh2s","ChemH2","standard")  = 10.  / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
+p37_specFeDemTarget("fesos","ChemH2","standard")  = 9./ (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fegas","ChemH2","standard")  = 9. / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fehos","ChemH2","standard")    = 9. / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feh2s","ChemH2","standard")  = 1.  / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
 p37_specFeDemTarget("feels","ChemH2","standard")  = 1. / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
 
 p37_specFeDemTarget("fegas","StCrNG","standard")    = 22.0 / (sm_TWa_2_MWh/sm_giga_2_non);
@@ -841,12 +846,6 @@ $include "./modules/37_industry/subsectors/input/p37_AllChem_Energy_Value_2020.c
 $offdelim
   /
 ;
-!!TODO: This is a hotfix!!
-loop(regi,
-  p37_demFePrcHist("2020",regi,"ChemNG","standard","feels") = p37_demFePrcHist("2020",regi,"ChemNG","standard","feels") /3.;
-  p37_demFePrcHist("2020",regi,"ChemLiq","standard","feels") = p37_demFePrcHist("2020",regi,"ChemLiq","standard","feels") /3.;
-  p37_demFePrcHist("2020",regi,"ChemSol","standard","feels") = p37_demFePrcHist("2020",regi,"ChemSol","standard","feels") /3.;
-);
 
 pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
 loop((t,

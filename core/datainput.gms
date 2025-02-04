@@ -726,9 +726,8 @@ pm_cf(ttot,regi,"tdsynpet") = 0.7;
 pm_cf(ttot,regi,"tdsyndie") = 0.7;
 *** eternal short-term fix for process-based industry
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-pm_cf(ttot,regi,"ChemSol") = 0.8;
-pm_cf(ttot,regi,"ChemNG") = 0.8;
-pm_cf(ttot,regi,"ChemLiq") = 0.8;
+pm_cf(ttot,regi,"ChemOld") = 0.8;
+pm_cf(ttot,regi,"ChemELec") = 0.8;
 pm_cf(ttot,regi,"ChemH2") = 0.8;
 
 pm_cf(ttot,regi,"StCrNG") = 0.8;
