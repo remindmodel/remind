@@ -112,7 +112,7 @@ display p45_NDCyearSet,p45_firstNDCyear,p45_lastNDCyear;
 *** countries <- toolGetMapping("regionmappingREMIND.csv",where = "mappingfolder",type = "regional")
 *** LAMCountries <- countries$CountryCode[countries$RegionCode == "LAM"]
 *** shareWithinTargetCountries <- dummy1[LAMCountries,"y2030",] * ghgTarget[LAMCountries,"y2030",] / dimSums(dummy1[LAMCountries,"y2030",] * ghgTarget[LAMCountries,"y2030", ], dim=1)
-*** print(shareWithinTargetCountries["BRA",,]*(as.numeric(ghg["BRA","y2015"])/as.numeric(ghg["BRA","y2005"])-as.numeric(ghgfactor["BRA","y2030","gdp_SSP2"])))
+*** print(shareWithinTargetCountries["BRA",,]*(as.numeric(ghg["BRA","y2015"])/as.numeric(ghg["BRA","y2005"])-as.numeric(ghgfactor["BRA","y2030","SSP2"])))
 *** 0.2 is a rounded value valid for all except 2018_uncond, because Brazil had no unconditional target then.
 
 if (not sameas("%cm_NDC_version%","2018_uncond"),
