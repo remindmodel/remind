@@ -594,6 +594,9 @@ s_DpKW_2_TDpTW                                       "convert Dollar per kW to T
 sm_DpGJ_2_TDpTWa                                      "multipl. factor to convert (Dollar per GJoule) to (TerraDollar per TWyear)"    / 31.54e-03/
 s_gwpCH4                                              "Global Warming Potentials of CH4, AR5 WG1 CH08 Table 8.7"     /28/
 s_gwpN2O                                              "Global Warming Potentials of N2O, AR5 WG1 CH08 Table 8.7"     /265/
+s_gwpCH4_AR4                                          "Global Warming Potentials of CH4 as in the AR4, used in the MACCs"     /25/
+s_gwpN2O_AR4                                          "Global Warming Potentials of N2O as in the AR4, used in the MACCs"     /298/
+
 * GA sm_dmac changes depending on the choice of MACs in c_nonco2_macc_version
 sm_dmac                                               "step in MAC functions [US$]"                                                                   
 sm_macChange                                           "maximum yearly increase of relative abatement in percentage points of maximum abatement. [0..1]"      /0.05/
