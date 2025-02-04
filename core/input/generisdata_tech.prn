@@ -167,11 +167,11 @@ ccap0                         0.0008
 learn                           0.15
 
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-+                ChemSol     ChemNG    ChemLiq      ChemH2      StCrNG      StCrLiq      AmSyCoal      AmSyNG      AmSyLiq      AmSyH2     MeSySol     MeSyNG     MeSyLiq     MeSyH2 
++                ChemOld     ChemElec    ChemH2      StCrNG      StCrLiq      AmSyCoal      AmSyNG      AmSyLiq      AmSyH2     MeSySol     MeSyNG     MeSyLiq     MeSyH2 
 !! documentation & sources: see below 
-inco0               1100       1100       1100        1100        2000         3200          2100         900         1200         750         750        300         300        625
-omf                 0.06       0.06       0.06        0.06       0.025        0.025          0.05       0.025        0.025        0.04        0.05      0.025       0.025       0.04
-lifetime              20         20         20          20          25           25            25          25           25          25          25         25          25         25
+inco0               1100       1100       1100        2000         3200          2100         900         1200         750         750        300         300        625
+omf                 0.06       0.06       0.06       0.025        0.025          0.05       0.025        0.025        0.04        0.05      0.025       0.025       0.04
+lifetime              20         20         20          25           25            25          25           25          25          25         25          25         25
 
 +                AmSyCoalcc    AmSyNGcc     AmSyLiqcc    MeSySolcc    MeSyNGcc    MeSyLiqcc
 !! documentation & sources: see below
