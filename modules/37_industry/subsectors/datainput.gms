@@ -647,16 +647,16 @@ $endIf.cm_wasteIncinerationCCSshare
 
 p37_specMatDem(mat,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-p37_specMatDem("ammonia","FertProd","standard")        = 0.57;
-p37_specMatDem("ammoniaH2","FertProdH2","standard")        = 0.57;
+p37_specMatDem("ammonia","FertProd","standard")        = 17/14; !!TODOQZ Used to verify that the data are equal
+p37_specMatDem("ammoniaH2","FertProdH2","standard")        = 17/14;  
 
-p37_specMatDem("methanol","MtOMtA","standard")        = 4.5;
-p37_specMatDem("ammonia","AmToFinal","standard")        = 1;
+p37_specMatDem("methanol","MtOMtA","standard")        = 2.28; 
+p37_specMatDem("ammonia","AmToFinal","standard")        = 1; 
 p37_specMatDem("ammoniaH2","AmToFinalH2","standard")        = 1;
-p37_specMatDem("methanol","MeToFinal","standard")        = 1;
+p37_specMatDem("methanol","MeToFinal","standard")        = 1; 
 
-p37_specMatDem("co2f","FertProdH2","standard")        = 0.73;
-p37_specMatDem("co2f","MeSyH2","standard")        = 1.373;
+p37_specMatDem("co2f","FertProdH2","standard")        = 1.52;
+p37_specMatDem("co2f","MeSyH2","standard")        = 1.373; 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_specMatDem("dripell","idr","ng")        = 1.44;                                           !! Source: POSTED / Average of Devlin2022, Otto2017, Volg2018, Rechberge2020
