@@ -43,6 +43,7 @@ fe2cdr(all_enty,all_enty,all_te) "mapping of FE carriers supplying FE demand for
       feels.feels.oae_ng
       fedie.fedie.oae_ng
       fegas.fehes.oae_ng
+      feh2s.fehes.oae_ng
 
       feels.feels.oae_el
       fedie.fedie.oae_el
