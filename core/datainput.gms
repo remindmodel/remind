@@ -921,7 +921,6 @@ $offdelim
 ;
 $ELSEIF.MaccVersion %c_nonco2_macc_version% == "PBL_2022"
 * PBL_2022 MACs are discretized in steps of 20 $/tC
-sm_dmac = 20 ;
 * PBL_2022 includes three scenarios, read the big file into p_all_abatparam_CH4 and subset based on c_nonco2_macc_scenario
 * Create the set here, as it's not really used anywhere else
 set macc_scens "MAC scenarios for PBL_SSP2_2022 MACCs" /Default, Optimistic, Pessimistic/;
