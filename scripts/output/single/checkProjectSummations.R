@@ -28,7 +28,9 @@ options(width = 160)
 absDiff <- 0.00001
 relDiff <- 0.01
 
-sources <- paste0("RT", if (any(grepl("^MAgPIE", levels(mifdata$model)))) "M")
+sources <- paste0("R",
+                  if (isTRUE(envi$cfg$gms$CES_parameters == "load")) "T",
+                  if (any(grepl("^MAgPIE", levels(mifdata$model)))) "M")
 message("\n### Check existence of variables in mappings.")
 missingVariables <- checkMissingVars(mifdata, TRUE, sources)
 if (length(missingVariables) > 0) message("Check piamInterfaces::variableInfo('variablename') etc.")

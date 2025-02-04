@@ -6,7 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 
 # if you want to change the reference run for yourrun, you can run:
-# Rscript scripts/output/single/fixRefOn.R -i outputdir=yourrun,newreferencerun
+# Rscript scripts/output/single/fixOnRef.R -i outputdir=yourrun,newreferencerun
 
 suppressPackageStartupMessages(library(tidyverse))
 
@@ -56,7 +56,7 @@ fixOnMif <- function(outputdir) {
 
   gdxs    <- file.path(outputdir, "fulldata.gdx")
   configs <- file.path(outputdir, "config.Rdata")
-  message("### Checking if mif is correctly fixed on reference run for ", outputdir)
+  message("### Checking if mif is correctly fixed on reference run for ", outputdir[[1]])
   if (! all(file.exists(gdxs, configs))) stop("gdx or config.Rdata not found!")
   scens   <- lucode2::getScenNames(outputdir)
   mifs    <- file.path(outputdir, paste0("REMIND_generic_", scens, ".mif"))
@@ -77,14 +77,14 @@ fixOnMif <- function(outputdir) {
     stop("length(outputdir)=", length(outputdir), ", is bigger than 2.")
   }
   refname <- basename(dirname(refmif))
-  d <- quitte::as.quitte(mifs)
+  d <- quitte::as.quitte(mifs[[1]])
   dref <- quitte::as.quitte(refmif)
   d <- fixMAGICC(d, dref, startyear, title)
-  failfile <- file.path(outputdir, "log_fixOnRef.csv")
+  failfile <- file.path(outputdir[[1]], "log_fixOnRef.csv")
   fixeddata <- piamInterfaces::fixOnRef(d, dref, ret = "TRUE_or_fixed", startyear = startyear, failfile = failfile, relDiff = 0.00002)
 
   update <- paste0("MAGICC data. ", if (! isTRUE(fixeddata)) "Run output.R -> single -> fixOnRef to fix the rest.")
-  if (! isTRUE(fixeddata) && envi$cfg$fixOnRefAuto %in% c(TRUE, "TRUE")) {
+  if (! isTRUE(fixeddata) && isTRUE(envi$cfg$fixOnRefAuto %in% c(TRUE, "TRUE"))) {
     d <- fixeddata
     update <- "data from reference run because cfg$fixOnRefAuto=TRUE."
   } else if (! isTRUE(fixeddata) && exists("flags") && isTRUE("--interactive" %in% flags)) {
