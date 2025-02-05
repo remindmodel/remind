@@ -40,7 +40,7 @@ p11_emiAPexo(t,regi,enty,"AgWasteBurning")   = p11_emiAPexoAgricult(t,regi,enty,
 p11_emiAPexo(t,regi,enty,"ForestBurning")    = p11_emiAPexoAgricult(t,regi,enty,"ForestBurning");
 p11_emiAPexo(t,regi,enty,"GrasslandBurning") = p11_emiAPexoAgricult(t,regi,enty,"GrasslandBurning");
 
-
+*** this parameter is not part of the optimization, but just used in remind2::reportEmiAirPol() to for emissions only accounted at the global level
 parameter f11_emiAPexoGlob(tall,all_rcp_scen,all_enty,all_exogEmi)                     "exogenous emissions for aviation and international shipping from RCP scenarios"
 /
 $ondelim
@@ -125,7 +125,7 @@ loop ((t,regi)$( t.val ge 2005 ),
 
     p11_share_sector(t,"pebiolc","sesobio","biotr","indst",regi)
     = p11_share_sector(t,"pecoal","sesofos","coaltr","indst",regi);
-  else 
+  else
     p11_share_sector(t,"pecoal","sesofos","coaltr","indst",regi)
     = pm_share_ind_fesos(t,regi);
 
@@ -169,55 +169,55 @@ loop ((t,regi)$( t.val ge 2005 ),
 
 display p11_share_sector;
 
-*** Allocate emission factors for species whose emissions are part of the core equations (SO2, BC, OC). 
+*** Allocate emission factors for species whose emissions are part of the core equations (SO2, BC, OC).
 *** This is required by the box model (although a different implementation could be done)
 *** Emissions resulting from these EF should be computed in the external R script
 ***-- SO2/BC/OC -----
 loop(emiExog,
 ***-- Coal/Power ---
-  pm_emifac(ttot,regi,"pecoal",enty2,te,emiExog)$emi2te("pecoal",enty2,te,emiExog) = 
+  pm_emifac(ttot,regi,"pecoal",enty2,te,emiExog)$emi2te("pecoal",enty2,te,emiExog) =
     p11_emiFacAP(ttot,regi,"pecoal",enty2,te,"power",emiExog);
 ***-- Coal/Other ---
   pm_emifac(ttot,regi,"pecoal",enty2,"coaltr",emiExog)$emi2te("pecoal",enty2,"coaltr",emiExog) =
          pm_share_ind_fesos(ttot,regi)  * p11_emiFacAP(ttot,regi,"pecoal",enty2,"coaltr","indst",emiExog)
     + (1-pm_share_ind_fesos(ttot,regi)) * p11_emiFacAP(ttot,regi,"pecoal",enty2,"coaltr","res",  emiExog);
 ***-- Oil/Power ---
-  pm_emifac(ttot,regi,"peoil",enty2,"dot",emiExog)$emi2te("peoil",enty2,"dot",emiExog) = 
+  pm_emifac(ttot,regi,"peoil",enty2,"dot",emiExog)$emi2te("peoil",enty2,"dot",emiExog) =
     p11_emiFacAP(ttot,regi,"peoil",enty2,"dot","power",emiExog);
 );
 
 ***-- SO2 specific ----
 ***-- Oil/Other ---
-pm_emifac(ttot,regi,"peoil",enty2,"refliq","SO2") = 
+pm_emifac(ttot,regi,"peoil",enty2,"refliq","SO2") =
   pm_share_trans(ttot,regi) * p11_emiFacAP(ttot,regi,"peoil",enty2,"refliq","trans","SO2")
-  + (1-pm_share_trans(ttot,regi)) 
+  + (1-pm_share_trans(ttot,regi))
   * (
          p11_share_ind_fehos(ttot,regi)  * p11_emiFacAP(ttot,regi,"peoil",enty2,"refliq","indst","SO2")
     + (1-p11_share_ind_fehos(ttot,regi)) * p11_emiFacAP(ttot,regi,"peoil",enty2,"refliq","res",  "SO2")
   );
 
-***-- BC/OC specific -----			
+***-- BC/OC specific -----
 loop(emiAP,
 ***-- Biomass/Power ---
-  pm_emifac(ttot,regi,"pebiolc",enty2,te,emiAP)$emi2te("pebiolc",enty2,te,emiAP) = 
+  pm_emifac(ttot,regi,"pebiolc",enty2,te,emiAP)$emi2te("pebiolc",enty2,te,emiAP) =
     p11_emiFacAP(ttot,regi,"pebiolc",enty2,te,"power",emiAP);
-***-- Biomass/Other ---	
-  pm_emifac(ttot,regi,"pebiolc",enty2,"biotr",emiAP)$emi2te("pebiolc",enty2,"biotr",emiAP) = 
+***-- Biomass/Other ---
+  pm_emifac(ttot,regi,"pebiolc",enty2,"biotr",emiAP)$emi2te("pebiolc",enty2,"biotr",emiAP) =
          pm_share_ind_fesos_bio(ttot,regi)  * p11_emiFacAP(ttot,regi,"pebiolc",enty2,"biotr","indst",emiAP)
     + (1-pm_share_ind_fesos_bio(ttot,regi)) * p11_emiFacAP(ttot,regi,"pebiolc",enty2,"biotr","res",  emiAP);
-***-- Mordern Biomass/All ---		
-  pm_emifac(ttot,regi,"pebiolc",enty2,"biotrmod",emiAP)$emi2te("pebiolc",enty2,"biotrmod",emiAP) = 
+***-- Mordern Biomass/All ---
+  pm_emifac(ttot,regi,"pebiolc",enty2,"biotrmod",emiAP)$emi2te("pebiolc",enty2,"biotrmod",emiAP) =
     pm_emifac(ttot,regi,"pebiolc",enty2,"biotr",emiAP);
 *JeS* emissions factors on final energy to be able to take into account synthetic liquids.
   pm_emifac(ttot,regi,"seliqfos","fehos","tdfoshos",emiAP) =
          p11_share_ind_fehos(ttot,regi)  * p11_emiFacAP(ttot,regi,"seliqfos","fehos","tdfoshos","indst", emiAP)
     + (1-p11_share_ind_fehos(ttot,regi)) * p11_emiFacAP(ttot,regi,"seliqfos","fehos","tdfoshos","res",   emiAP);
-  pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie",emiAP) = 
+  pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie",emiAP) =
     p11_emiFacAP(ttot,regi,"seliqfos","fedie","tdfosdie","trans",emiAP);
-  pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet",emiAP) = 
+  pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet",emiAP) =
     p11_emiFacAP(ttot,regi,"seliqfos","fepet","tdfospet","trans",emiAP);
 );
-  
+
 display pm_emifac;
 
 *** calculation of air pollution costs
