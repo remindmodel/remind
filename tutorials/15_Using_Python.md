@@ -1,6 +1,6 @@
 # Python support in REMIND
-Mika Pflüger (mika.pflueger@pik-potsdam.de)
-Tonn Rüter (tonn.rueter@pik-potsdam.de)
+
+For support contact [Tonn Rüter](mailto:tonn.rueter@pik-potsdam.de)
 
 Python is a high-level, interpreted programming language known for its readability and versatility. In REMIND, Python is essential for coupling to specialized models, such as those used for climate assessment reporting. These models often require advanced data processing and integration with other tools, which Python in conjecture with R `reticulate` facilitates efficiently.
 
@@ -32,24 +32,14 @@ When using REMIND, you might encounter warnings about the inability to verify th
 
 ### `conda` Environment for REMIND/MAGICC7 Operation on the Cluster
 
-To ensure `climate-assessment` and `MAGICC7` are available when running REMIND on the clusters, follow these steps after logging in and before initiating a REMIND run that requires MAGICC7 (e.g., climate reporting). On the new cluster (`foote.pik-potsdam.de`) do:
+> **Note** This section assumes that you have access to the PIK HPC, have followed the instructions in the REMIND group-internal Wiki on [how to access the PIK HPC]((https://gitlab.pik-potsdam.de/rse/rsewiki/-/wikis/Cluster-Access)) and configure your [Python cluster environment](https://gitlab.pik-potsdam.de/rse/rsewiki/-/wikis/Cluster#for-python-users).
 
-1. Load the necessary `module`s:
-    ```sh
-    # Make sure module_load_piam is already active, otherwise run
-    # source /p/system/modulefiles/defaults/piam/module_load_piam
-    module load anaconda/2023.09
-    ```
+To ensure `climate-assessment` and `MAGICC7` are available when running REMIND on the PIK high performance cluster (HPC), follow these steps after logging in and before initiating a REMIND run that requires MAGICC7 (e.g., climate reporting). On the HPC (`foote.pik-potsdam.de`) activate the conda environment:
 
-2. *Optional:* Configure the terminal prompt to avoid unnecessary length. This only has to run once!
-    ```sh
-    conda config --set env_prompt '({name})'
-    ```
+```bash
+source activate /p/projects/rd3mod/python/environments/scm_magicc7_hpc
+```
 
-3. Activate the conda environment:
-    ```sh
-    source activate /p/projects/rd3mod/python/environments/scm_magicc7_hpc
-    ```
 This setup ensures the correct Python versions are available. To deactivate the conda environment, type `conda deactivate`. **Please do not alter the conda environment as changes would affect all users.**
 
 With the conda environment activated, you can start a climate assessment report from your REMIND folder with:
