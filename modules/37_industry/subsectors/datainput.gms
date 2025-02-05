@@ -853,11 +853,11 @@ loop((t,
       tePrc2opmoPrc(tePrc,opmoPrc),
       entyFe)$(    t.val ge 2005 AND t.val le 2015
                 AND secInd37_tePrc("chemicals",tePrc)
-                AND sum(in2,fe2ppfen_no_ces_use(entyFe,in2) AND ue2ppfenPrc("ue_chemicals",in2))),
+                AND sum(ppfen_no_ces_use,fe2ppfen_no_ces_use(entyFe,ppfen_no_ces_use) AND ue2ppfenPrc("ue_chemicals",ppfen_no_ces_use))),
   p37_demFePrcHist(t,regi,tePrc,opmoPrc,entyFe)
   = p37_demFePrcHist("2020",regi,tePrc,opmoPrc,entyFe)
-  * sum(fe2ppfen_no_ces_use(entyFe,in), pm_fedemand(t,regi,in))
-  / max(sm_eps, sum(fe2ppfen_no_ces_use(entyFe,in), pm_fedemand("2020",regi,in)));
+  * sum(fe2ppfen_no_ces_use(entyFe,ppfen_no_ces_use), pm_fedemand(t,regi,ppfen_no_ces_use))
+  / max(sm_eps, sum(fe2ppfen_no_ces_use(entyFe,ppfen_no_ces_use), pm_fedemand("2020",regi,ppfen_no_ces_use)));
 
   if(pm_outflowPrcHist(t,regi,tePrc,opmoPrc) gt sm_eps,
     pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc) = p37_demFePrcHist(t,regi,tePrc,opmoPrc,entyFe) / pm_outflowPrcHist(t,regi,tePrc,opmoPrc);
