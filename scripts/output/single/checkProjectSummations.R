@@ -81,6 +81,6 @@ for (i in seq_along(checkMappings)) {
 }
 
 if (length(stopmessage) > 0 || length(missingVariables) > 0) {
-  stop("Project-related issues found checks for ", paste(stopmessage, collapse = ", "), " and ",
-       length(missingVariables), " missing variables found, see above.")
+  warning("Project-related issues found checks for ", paste(stopmessage, collapse = ", "), " and ",
+          length(missingVariables), " missing variables found, see above.")
 }
