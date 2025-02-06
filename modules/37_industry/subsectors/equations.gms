@@ -456,21 +456,6 @@ q37_mat2ue(t,regi,mat,in)$( ppfUePrc(in) ) .. !!TODOQZ:: Seems like vm_cesIO(t,r
     )
 ;
 
-***------------------------------------------------------
-*' Fixed share of final materials in ue !! ammonia tech QIANZHI
-***------------------------------------------------------
-q37_ue_share(t,regi,mat,in)$( ppfUePrc(in) ) ..
-    (vm_cesIO(t,regi,in)
-    + pm_cesdata(t,regi,in,"offset_quantity"))
-    * p37_ue_share(mat,in)
-  =e=
-    sum(mat2ue(mat,in),
-      p37_mat2ue(mat,in)
-      *
-      v37_matFlow(t,regi,mat)
-    )
-;
-
 
 ***------------------------------------------------------
 *' Definition of capacity constraints

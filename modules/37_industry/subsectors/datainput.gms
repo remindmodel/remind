@@ -868,7 +868,7 @@ loop((t,
 $endif.cm_subsec_model_chemicals
 
 p37_mat2ue(all_enty,all_in) = 0.;
-p37_ue_share(all_enty,all_in) = 0.;
+!! p37_ue_share(all_enty,all_in) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 !! ue_chemicals is measured in value_added (trn$2005), whilst olandar is measured in Gt
 !! So this is the price of olandar in trn$2005/Gt = $2005/kg
@@ -884,8 +884,6 @@ p37_mat2ue("AmmoFinal","ue_chemicals") = 0.55; !!2005$/kg Source: https://busine
 p37_mat2ue("OtherChem","ue_chemicals") = 1.;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-p37_ue_share("sesteel","ue_steel_secondary") = 1.;
-p37_ue_share("prsteel","ue_steel_primary")   = 1.;
 
 p37_mat2ue("sesteel","ue_steel_secondary") = 1.;
 p37_mat2ue("prsteel","ue_steel_primary")   = 1.;
@@ -1026,7 +1024,6 @@ if (cm_startyear eq 2005,
     );
 
   );
-$endif.cm_subsec_model_steel
 
   !! loop over other years and blend
   loop((entyFeStat(all_enty), tePrc(all_te), opmoPrc),

@@ -480,6 +480,7 @@ matIn(all_enty)   "Materials which serve as input to a process"
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     methanol
     ammonia
+    ammoniaH2
     co2f
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
