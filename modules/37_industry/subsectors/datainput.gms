@@ -800,32 +800,22 @@ Parameter
   p37_matFlowHist(tall,all_regi,all_enty)   "TODO"
   /
 $ondelim
-$include "./modules/37_industry/subsectors/input/p37_AllChem_Flow_Value_2020.cs4r";
+$include "./modules/37_industry/subsectors/input/p37_AllChem_Flow_Value_2005_2020.cs4r";
 $offdelim
   /
 ;
-!! scale 2005 to 2015 with ue_chemicals
-loop(t$(t.val ge 2005 AND t.val le 2015),
-  p37_matFlowHist(t,regi,mat)
-  = p37_matFlowHist("2020",regi,mat)
-  * pm_fedemand(t,regi,"ue_chemicals")
-  / pm_fedemand("2020",regi,"ue_chemicals");
-);
+
 Parameter
   pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) "TODO"
   /
 $ondelim
-$include "./modules/37_industry/subsectors/input/p37_AllChem_Routes_Value_2020.cs4r";
+$include "./modules/37_industry/subsectors/input/p37_AllChem_Routes_Value_2005_2020.cs4r";
 $offdelim
   /
 ;
-!! scale 2005 to 2015 with ue_chemicals
-loop(t$(t.val ge 2005 AND t.val le 2015),
-  pm_outflowPrcHist(t,regi,tePrc,opmoPrc)
-  = pm_outflowPrcHist("2020",regi,tePrc,opmoPrc)
-  * pm_fedemand(t,regi,"ue_chemicals")
-  / pm_fedemand("2020",regi,"ue_chemicals");
-);
+
+pm_outflowPrcHist(tall,regi,"ChemOld","standard") = p37_matFlowHist(tall,regi,"OtherChem");
+
 Parameter
   p37_ue_share(tall,all_regi,all_enty,all_in) "TODO"
   /
@@ -842,29 +832,11 @@ Parameter
   p37_demFePrcHist(tall,all_regi,all_te,opmoPrc,all_enty) "TODO"
   /
 $ondelim
-$include "./modules/37_industry/subsectors/input/p37_AllChem_Energy_Value_2020.cs4r";
+$include "./modules/37_industry/subsectors/input/p37_AllChem_Energy_Value_2005_2020.cs4r";
 $offdelim
   /
 ;
 
-pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
-loop((t,
-      regi,
-      tePrc2opmoPrc(tePrc,opmoPrc),
-      entyFe)$(    t.val ge 2005 AND t.val le 2015
-                AND secInd37_tePrc("chemicals",tePrc)
-                AND sum(ppfen_no_ces_use,fe2ppfen_no_ces_use(entyFe,ppfen_no_ces_use) AND ue2ppfenPrc("ue_chemicals",ppfen_no_ces_use))),
-  p37_demFePrcHist(t,regi,tePrc,opmoPrc,entyFe)
-  = p37_demFePrcHist("2020",regi,tePrc,opmoPrc,entyFe)
-  * sum(fe2ppfen_no_ces_use(entyFe,ppfen_no_ces_use), pm_fedemand(t,regi,ppfen_no_ces_use))
-  / max(sm_eps, sum(fe2ppfen_no_ces_use(entyFe,ppfen_no_ces_use), pm_fedemand("2020",regi,ppfen_no_ces_use)));
-
-  if(pm_outflowPrcHist(t,regi,tePrc,opmoPrc) gt sm_eps,
-    pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc) = p37_demFePrcHist(t,regi,tePrc,opmoPrc,entyFe) / pm_outflowPrcHist(t,regi,tePrc,opmoPrc);
-  else
-    pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc) = p37_specFeDemTarget(entyFe,tePrc,opmoPrc);
-  );
-);
 $endif.cm_subsec_model_chemicals
 
 p37_mat2ue(all_enty,all_in) = 0.;
