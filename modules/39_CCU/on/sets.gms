@@ -52,13 +52,6 @@ teSeCCU2rlf(all_te,rlf)     "mapping for secondary energy CCU technologies to gr
 ***  add module specific sets and mappings to the global sets and mappings
 ***-------------------------------------------------------------------------
 
-<<<<<<< HEAD
-enty(enty_ccu39)							   = YES;
-te(te_ccu39)								   = YES;
-se2se(se2se_ccu39)							   = YES;
-teSe2rlf(teCCU2rlf)					   		   = YES;
-teAdj(te_ccu39)								   = YES;
-=======
 teCCU2rlf(teSeCCU2rlf)         = YES;
 teCCU2rlf(teCUPrc,"1")         = YES;
 
@@ -66,7 +59,7 @@ enty(enty_ccu39)               = YES;
 te(te_ccu39)                   = YES;
 se2se(se2se_ccu39)             = YES;
 teSe2rlf(teCCU2rlf)            = YES;
->>>>>>> 48492eac (industry ccu first empty implementation)
+teAdj(te_ccu39)		  				   = YES;
 
 *** EOF ./modules/39_CCU/on/sets.gms
 
