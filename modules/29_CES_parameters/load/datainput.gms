@@ -9,6 +9,9 @@
 *** Load CES parameters based on current model configuration
 $include "./modules/29_CES_parameters/load/input/%cm_CES_configuration%.inc"
 
+*** If desired, load pm_cesdata from input gdx
+$if %cm_CES_load_cesdata_from_input_gdx% == 1 Execute_loadpoint 'input' pm_cesdata;
+
 option pm_cesdata:8:3:1;
 display "loaded pm_cesdata", pm_cesdata;
 

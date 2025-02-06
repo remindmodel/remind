@@ -1843,6 +1843,7 @@ $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
 *' (MFR): Maximum Feasible Reductions
 $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_load_cesdata_from_input_gdx  0  !! def = 0
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_industry_FE_target  1
 *' setting which region is to be tested in the one-region test run (80_optimization = testOneRegi)
