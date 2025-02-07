@@ -275,7 +275,7 @@ emiMac2mac("co2otherInd","co2otherInd") = NO;
 
 *** data on maximum secondary steel production
 *** The steel recycling rate limit is assumed to increase from 90 to 99 %.
-  p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)
+  p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPpopScen)
   = pm_fedemand(tall,all_regi,"ue_steel_secondary")
   / 0.9
   * 0.99;
@@ -519,7 +519,7 @@ display pm_tau_ces_tax;
 
 * Load secondary steel share limits
 Parameter
-  f37_steel_secondary_max_share(tall,all_regi,all_GDPscen)   "maximum share of secondary steel production"
+  f37_steel_secondary_max_share(tall,all_regi,all_GDPpopScen)   "maximum share of secondary steel production"
   /
 $ondelim
 $include "./modules/37_industry/subsectors/input/p37_steel_secondary_max_share.cs4r";
@@ -528,7 +528,7 @@ $offdelim
 ;
 
 p37_steel_secondary_max_share(t,regi)
-  = f37_steel_secondary_max_share(t,regi,"%cm_GDPscen%");
+  = f37_steel_secondary_max_share(t,regi,"%cm_GDPpopScen%");
 
 Parameter p37_steel_secondary_share(tall,all_regi) "endogenous values to fix rounding issues with p37_steel_secondary_max_share";
 

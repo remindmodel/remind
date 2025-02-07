@@ -28,14 +28,14 @@ $ENDIF.INCONV
 
 *BS* 2020-03-12: additional inputs for inequality
 *** To Do: rename file, then also in "files" and mrremind::fullREMIND.R
-parameter f02_ineqTheil(tall,all_regi,all_GDPscen)        "Gini data"
+parameter f02_ineqTheil(tall,all_regi,all_GDPpopScen)        "Gini data"
 /
 $ondelim
 $include "./modules/02_welfare/ineqLognormal/input/f_ineqTheil.cs4r"
 $offdelim
 /
 ;
-p02_ineqTheil(ttot,regi)$(ttot.val ge 2005) = f02_ineqTheil(ttot,regi,"%cm_GDPscen%");
+p02_ineqTheil(ttot,regi)$(ttot.val ge 2005) = f02_ineqTheil(ttot,regi,"%cm_GDPpopScen%");
 display p02_ineqTheil;
 
 

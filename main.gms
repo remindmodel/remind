@@ -1251,24 +1251,14 @@ $setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.nonnegative
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "EU27_regi 7.5, DEU 1.5".
 $setGLobal cm_bioprod_regi_lim off  !! def off
-*' cm_POPscen      "Population growth scenarios from UN data and IIASA projection used in SSP"
+*' cm_GDPpopScen  "assumptions about future GDP and population development"
 *'
-*' * pop_SSP1    "SSP1 population scenario"
-*' * pop_SSP2    "SSP2 population scenario"
-*' * pop_SSP2EU    "SSP2 population scenario"
-*' * pop_SSP3    "SSP3 population scenario"
-*' * pop_SSP4    "SSP4 population scenario"
-*' * pop_SSP5    "SSP5 population scenario"
-$setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
-*' cm_GDPscen  "assumptions about future GDP development, linked to population development (cm_POPscen)"
-*'
-*' * (gdp_SSP1):  SSP1 fastGROWTH medCONV
-*' * (gdp_SSP2):  SSP2 medGROWTH medCONV
-*' * (gdp_SSP2EU):  SSP2 medGROWTH medCONV
-*' * (gdp_SSP3):  SSP3 slowGROWTH slowCONV
-*' * (gdp_SSP4):  SSP4  medGROWTH mixedCONV
-*' * (gdp_SSP5):  SSP5 fastGROWTH fastCONV
-$setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
+*' * (SSP1):  SSP1 fastGROWTH medCONV
+*' * (SSP2):  SSP2 medGROWTH medCONV
+*' * (SSP3):  SSP3 slowGROWTH slowCONV
+*' * (SSP4):  SSP4  medGROWTH mixedCONV
+*' * (SSP5):  SSP5 fastGROWTH fastCONV
+$setglobal cm_GDPpopScen   SSP2  !! def = SSP2
 *** cm_oil_scen      "assumption on oil availability"
 ***  (lowOil): low
 ***  (medOil): medium (this is the new case)
@@ -1831,8 +1821,7 @@ $setGlobal cm_conoptv  conopt3    !! def = conopt3
 *' (on): no model operation, instead input.gdx is copied to fulldata.gdx
 $setGlobal c_empty_model   off    !! def = off  !! regexp = off|on
 $setglobal cm_secondary_steel_bound  scenario   !! def = scenario
-$setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen)
-$setglobal cm_demScen  gdp_SSP2     !! def = gdp_SSP2
+$setglobal cm_demScen  SSP2     !! def = SSP2
 $setGlobal c_scaleEmiHistorical  on  !! def = on  !! regexp = off|on
 $SetGlobal cm_quick_mode  off          !! def = off  !! regexp = off|on
 $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
@@ -1842,7 +1831,7 @@ $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
 *' (CLE): Current Legislation Emissions
 *' (MFR): Maximum Feasible Reductions
 $setGlobal cm_APscen  SSP2          !! def = SSP2
-$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-GDPpop_SSP2-En_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_industry_FE_target  1
 *' setting which region is to be tested in the one-region test run (80_optimization = testOneRegi)

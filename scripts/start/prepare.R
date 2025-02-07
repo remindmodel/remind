@@ -75,9 +75,6 @@ prepare <- function() {
       stop("This title is too long or the name contains dots - GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now. ")
   }
 
-  # adjust GDPpcScen based on GDPscen
-  cfg$gms$c_GDPpcScen <- gsub("gdp_","",cfg$gms$cm_GDPscen)
-
   # Is the run performed on the cluster?
   on_cluster    <- file.exists('/p')
 
