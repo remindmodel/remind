@@ -792,118 +792,9 @@ p37_specFeDemTarget("feels","idrcc","ng")         = 0.11 * sm_c_2_co2 / (sm_TWa_
 p37_specFeDemTarget("fegas","idrcc","ng")         = 0.92 * sm_c_2_co2 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc, but seems to be quite universal. See e.g. Rochelle 2016, who has slightly lower values.
 $endif.cm_subsec_model_steel
 
-*** --------------------------------
-
-$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-* Load secondary steel share limits
-Parameter
-  p37_matFlowHist(tall,all_regi,all_enty)   "TODO"
-  /
-$ondelim
-$include "./modules/37_industry/subsectors/input/p37_AllChem_Flow_Value_2005_2020.cs4r";
-$offdelim
-  /
-;
-
-Parameter
-  pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) "TODO"
-  /
-$ondelim
-$include "./modules/37_industry/subsectors/input/p37_AllChem_Routes_Value_2005_2020.cs4r";
-$offdelim
-  /
-;
-
-pm_outflowPrcHist(tall,regi,"ChemOld","standard") = p37_matFlowHist(tall,regi,"OtherChem");
-
-Parameter
-  p37_ue_share(tall,all_regi,all_enty,all_in) "TODO"
-  /
-$ondelim
-$include "./modules/37_industry/subsectors/input/p37_AllChem_Ueshare_Value_2020.cs4r";
-$offdelim
-  /
-;
-loop(t,
-  p37_ue_share(t,regi,all_enty,all_in) = p37_ue_share("2020",regi,all_enty,all_in);
-);
-
-Parameter
-  p37_demFePrcHist(tall,all_regi,all_te,opmoPrc,all_enty) "TODO"
-  /
-$ondelim
-$include "./modules/37_industry/subsectors/input/p37_AllChem_Energy_Value_2005_2020.cs4r";
-$offdelim
-  /
-;
-
-$endif.cm_subsec_model_chemicals
-
-p37_mat2ue(all_enty,all_in) = 0.;
-!! p37_ue_share(all_enty,all_in) = 0.;
-$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-!! ue_chemicals is measured in value_added (trn$2005), whilst olandar is measured in Gt
-!! So this is the price of olandar in trn$2005/Gt = $2005/kg
-!! In this first dummy step, the process replaces all of chemistry, so olandar is only a dummy product reprenting the whole chemicals sector. It chould be much more expensive than olefines, since lots of the chemicals sector is much less energy intensive but has higher value added than olefines production
-!! quick back-of-the envelope calculation: globall 5 trn value added, 2.4 bln tonnes petrochemicals --> maybe 3.3 bn tonnes total chemicals --> ratio is 1.5
-
-!! new calculation value added: Global plastic production volume 400.3 Mt Global plastic market size 712bn USD in 2022 https://www.statista.com/topics/5266/plastics-industry/#:~:text=Since%20the%20mass%20production%20of%20plastic%20products%20began,to%20experience%20considerable%20growth%20over%20the%20next%20decade.
-
-p37_mat2ue("HVC","ue_chemicals") = 1.1; !!2005$/kg Source: https://businessanalytiq,com/procurementanalytics/index/propylene-price-index/ 2020 Global Average of Ethylene, Propylene and BTX
-p37_mat2ue("Fertilizer","ue_chemicals") = 0.58; !!2005$/kgN Source: https://farmdocdaily,illinois,edu/wp-content/uploads/2023/06/06132023_fig1,png 2020 Global Average
-p37_mat2ue("MethFinal","ue_chemicals") = 0.3; !!2005$/kg Source: https://www,methanex,com/about-methanol/pricing/ 2020 Global Average
-p37_mat2ue("AmmoFinal","ue_chemicals") = 0.55; !!2005$/kg Source: https://businessanalytiq,com/procurementanalytics/index/ammonia-price-index/ 2020 Global Average
-p37_mat2ue("OtherChem","ue_chemicals") = 1.;
-$endif.cm_subsec_model_chemicals
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-
-p37_mat2ue("sesteel","ue_steel_secondary") = 1.;
-p37_mat2ue("prsteel","ue_steel_primary")   = 1.;
-$endif.cm_subsec_model_steel
-
-*** --------------------------------
-
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-p37_ue_share(t,regi,"sesteel","ue_steel_secondary") = 1.;
-p37_ue_share(t,regi,"prsteel","ue_steel_primary")   = 1.;
-$endif.cm_subsec_model_steel
-loop((t,regi,ppfUePrc(in)),
-  if(abs(sum(mat,p37_ue_share(t,regi,mat,in))-1.) gt sm_eps,
-    display p37_ue_share;
-    abort "p37_ue_share must add to one for each ue";
-  );
-);
-
-*** --------------------------------
-p37_teMatShareHist(all_regi,tePrc,opmoPrc,mat) = 0.;
-!!$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-!!loop(tePrc$(secInd37_tePrc("chemicals",tePrc)),
-!!  p37_teMatShareHist(regi,tePrc,opmoPrc,mat) = pm_outflowPrcHist("2020",regi,tePrc,opmoPrc) / p37_matFlowHist("2020",regi,mat);
-!!);
-!!$endif.cm_subsec_model_chemicals
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-p37_teMatShareHist(regi,"bof","unheated","prsteel") = 1.;
-p37_teMatShareHist(regi,"eaf","sec","sesteel") = 1.;
-p37_teMatShareHist(regi,"bf","standard","pigiron") = 1.;
-p37_teMatShareHist(regi,"idr","ng","driron") = 1.;
-$endif.cm_subsec_model_steel
-loop((regi,matFin(mat))$(NOT mat2ue(mat,"ue_chemicals")),
-  if(abs(sum((tePrc,opmoPrc),p37_teMatShareHist(regi,tePrc,opmoPrc,mat))-1.) gt sm_eps,
-    display p37_teMatShareHist;
-    abort "p37_teMatShareHist must add to one for each matFin";
-  );
-);
-!!if(sum((tePrc,opmoPrc,mat)$(not matFin(mat)), p37_teMatShareHist(tePrc,opmoPrc,mat)) gt sm_eps,
-!!  display p37_teMatShareHist;
-!!  abort "p37_teMatShareHist must only be non-zero for matFin";
-!!\);
-*** --------------------------------
-s37_shareHistFeDemPenalty = 0.6;
-*** --------------------------------
 
 p37_captureRate(all_te) = 0.;
 p37_selfCaptureRate(all_te) = 0.;
-
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 p37_captureRate("MeSySolcc")  = 0.9; !! methanol tech QIANZHI
 p37_captureRate("MeSyNGcc") = 0.9;
@@ -940,6 +831,133 @@ p37_priceMat("ironore")  = sm_EURO2023_2_D2017 * 0.114;
 !! Agora KSV-Rechner: 154 €2023/tSteel / (tn$ /bn t)
 p37_priceMat("dripell")  = sm_EURO2023_2_D2017 * 0.154;
 $endif.cm_subsec_model_steel
+
+
+
+
+*** --------------------------------
+*** Plastics Production volumes
+*** --------------------------------
+
+
+!! 0. Data input
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+Parameter
+  pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) "TODO"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_AllChem_Routes_Value_2020.cs4r";
+$offdelim
+  /
+;
+$endif.cm_subsec_model_chemicals
+
+p37_mat2ue(all_enty,all_in) = 0.;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+!! ue_chemicals is measured in value_added (trn$2017), whilst material is measured in Gt
+!! So this is the price of material in trn$2005/Gt = $2017/kg
+
+!! new calculation value added: Global plastic production volume 400.3 Mt Global plastic market size 712bn USD in 2022 https://www.statista.com/topics/5266/plastics-industry/#:~:text=Since%20the%20mass%20production%20of%20plastic%20products%20began,to%20experience%20considerable%20growth%20over%20the%20next%20decade.
+
+!!TODO QIanzhi: Change to 2017$
+p37_mat2ue("HVC","ue_chemicals") = 1.1; !!2005$/kg Source: https://businessanalytiq,com/procurementanalytics/index/propylene-price-index/ 2020 Global Average of Ethylene, Propylene and BTX
+p37_mat2ue("Fertilizer","ue_chemicals") = 0.58; !!2005$/kgN Source: https://farmdocdaily,illinois,edu/wp-content/uploads/2023/06/06132023_fig1,png 2020 Global Average
+p37_mat2ue("MethFinal","ue_chemicals") = 0.3; !!2005$/kg Source: https://www,methanex,com/about-methanol/pricing/ 2020 Global Average
+p37_mat2ue("AmmoFinal","ue_chemicals") = 0.55; !!2005$/kg Source: https://businessanalytiq,com/procurementanalytics/index/ammonia-price-index/ 2020 Global Average
+p37_mat2ue("OtherChem","ue_chemicals") = 1.;
+$endif.cm_subsec_model_chemicals
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+
+p37_mat2ue("sesteel","ue_steel_secondary") = 1.;
+p37_mat2ue("prsteel","ue_steel_primary")   = 1.;
+$endif.cm_subsec_model_steel
+
+
+!! 1. Correct pm_outflowPrcHist, such that sum is consistent with UE
+p37_ueHistTmp("2020",regi)
+  = sum((tePrc2matOut(tePrc,opmoPrc,mat), mat2ue(mat,in))$(sameas("ue_chemicals",in)),
+         pm_outflowPrcHist("2020",regi,tePrc,opmoPrc)
+         * p37_mat2ue(mat,in)
+    );
+
+pm_outflowPrcHist("2020",regi,tePrc,opmoPrc)$(secInd37_tePrc("chemicals",tePrc))
+  = pm_outflowPrcHist("2020",regi,tePrc,opmoPrc)
+  * pm_fedemand("2020",regi,"ue_chemicals")
+  / p37_ueHistTmp("2020",regi);
+
+!! 2. scale 2005 to 2015 with ue_chemicals
+loop(t$(t.val ge 2005 AND t.val le 2015),
+  pm_outflowPrcHist(t,regi,tePrc,opmoPrc)
+  = pm_outflowPrcHist("2020",regi,tePrc,opmoPrc)
+  * pm_fedemand(t,regi,"ue_chemicals")
+  / pm_fedemand("2020",regi,"ue_chemicals");
+);
+
+!! 3. Calc MatflowHist
+p37_matFlowHist(t,regi,mat) =
+sum(tePrc2matOut(tePrc,opmoPrc,mat),
+      pm_outflowPrcHist(t,regi,tePrc,opmoPrc)
+    )
+;
+!! 4. Calc ue_share
+p37_ue_share(t,regi,mat,in)$(mat2ue(mat,in) AND sameas(in,"ue_chemicals") AND t.val le 2020) =
+  (p37_mat2ue(mat,in) * p37_matFlowHist(t,regi,mat))
+  / pm_cesdata(t,regi,in,"quantity");
+;
+p37_ue_share(t,regi,mat,in)$(t.val gt 2020) = p37_ue_share("2020",regi,mat,in);
+
+*** --------------------------------
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+p37_ue_share(t,regi,"sesteel","ue_steel_secondary") = 1.;
+p37_ue_share(t,regi,"prsteel","ue_steel_primary")   = 1.;
+$endif.cm_subsec_model_steel
+loop((t,regi,ppfUePrc(in)),
+  if(abs(sum(mat,p37_ue_share(t,regi,mat,in))-1.) gt sm_eps,
+    display p37_ue_share;
+    abort "p37_ue_share must add to one for each ue";
+  );
+);
+
+*** --------------------------------
+p37_teMatShareHist(all_regi,tePrc,opmoPrc,mat) = 0.;
+!!$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+!!loop(tePrc$(secInd37_tePrc("chemicals",tePrc)),
+!!  p37_teMatShareHist(regi,tePrc,opmoPrc,mat) = pm_outflowPrcHist("2020",regi,tePrc,opmoPrc) / p37_matFlowHist("2020",regi,mat);
+!!);
+!!$endif.cm_subsec_model_chemicals
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+p37_teMatShareHist(regi,"bof","unheated","prsteel") = 1.;
+p37_teMatShareHist(regi,"eaf","sec","sesteel") = 1.;
+p37_teMatShareHist(regi,"bf","standard","pigiron") = 1.;
+p37_teMatShareHist(regi,"idr","ng","driron") = 1.;
+$endif.cm_subsec_model_steel
+loop((regi,matFin(mat))$(NOT mat2ue(mat,"ue_chemicals")),
+  if(abs(sum((tePrc,opmoPrc),p37_teMatShareHist(regi,tePrc,opmoPrc,mat))-1.) gt sm_eps,
+    display p37_teMatShareHist;
+    abort "p37_teMatShareHist must add to one for each matFin";
+  );
+);
+!!if(sum((tePrc,opmoPrc,mat)$(not matFin(mat)), p37_teMatShareHist(tePrc,opmoPrc,mat)) gt sm_eps,
+!!  display p37_teMatShareHist;
+!!  abort "p37_teMatShareHist must only be non-zero for matFin";
+!!\);
+
+
+*** --------------------------------
+
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+Parameter
+  p37_demFePrcHist(tall,all_regi,all_te,opmoPrc,all_enty) "TODO"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_AllChem_Energy_Value_2005_2020.cs4r";
+$offdelim
+  /
+;
+
+$endif.cm_subsec_model_chemicals
+
+s37_shareHistFeDemPenalty = 0.6;
 
 *** --------------------------------
 
