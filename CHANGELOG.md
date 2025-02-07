@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### added
 - Possibility of using updated sources for baseline non-CO2 emissions calculation, controlled by `cm_emifacs_baseyear`
+- Add `readcoupledgdx` script that allows to print scalars from gdx files for all coupled runs
+    [[#1977](https://github.com/remindmodel/remind/pull/1977)]
 
 ### input data/calibration
 - new input data rev7.21 including new MAgPIE data [[#1956](https://github.com/remindmodel/remind/pull/1956)]
@@ -22,7 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -
 
 ### removed
-- **37_industry** removed superseded realization fixed_shares [[#1941]](https://github.com/remindmodel/remind/pull/1941)
+- **37_industry** removed superseded realization fixed_shares [[#1941](https://github.com/remindmodel/remind/pull/1941)]
 
 ### fixed
 - **37_industry** fix and restructure chemical feedstock balancing to account for all negative emissions from stored non-fossil carbon [[#1829](https://github.com/remindmodel/remind/pull/1829)]
