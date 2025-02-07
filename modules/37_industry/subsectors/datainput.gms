@@ -280,7 +280,7 @@ emiMac2mac("co2otherInd","co2otherInd") = NO;
   / 0.9
   * 0.99;
 
-s37_clinker_process_CO2 = 0.5262;
+s37_clinker_process_CO2 = 0.5262;  !! see Kermeli et al. (2019), doi: 10.1016/j.apenergy.2019.01.252
 
 *** Clinker-to-cement ratio
 Parameter
