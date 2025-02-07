@@ -31,10 +31,6 @@ SSP2        "SSP2 medGROWTH medCONV"
 SSP3        "SSP3 slowGROWTH slowCONV"
 SSP4        "SSP4  medGROWTH mixedCONV"
 SSP5        "SSP5 fastGROWTH fastCONV"
-a1
-a2
-b1
-b2
 SSP2IndiaMedium
 SSP2IndiaHigh
 /
