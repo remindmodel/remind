@@ -1284,7 +1284,7 @@ q_shfeSector_share(t,regi,entyFe,sector)$(pm_shfetot_up(t,regi,entyFe,sector))..
 q_CDRspending(t,regi)$(t.val ge max(2030,cm_startyear))..
   v_NetNegEmi_expenses(t,regi)
   =e=
-  (1-cm_frac_NetNegEmi) * pm_taxCO2eqSum(t,regi) * v21_emiALLco2neg(t,regi)
+  (1-cm_frac_NetNegEmi) * pm_taxCO2eqSum(t,regi) * vm_emiALLco2neg(t,regi)
 ;
 
 
