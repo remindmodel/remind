@@ -28,6 +28,7 @@ SDP_MC
 SDP_RC
 SSP1        "SSP1 fastGROWTH medCONV"
 SSP2        "SSP2 medGROWTH medCONV"
+SSP2EU
 SSP3        "SSP3 slowGROWTH slowCONV"
 SSP4        "SSP4  medGROWTH mixedCONV"
 SSP5        "SSP5 fastGROWTH fastCONV"
