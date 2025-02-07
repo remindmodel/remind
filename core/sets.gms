@@ -104,6 +104,7 @@ SDP_MC
 SDP_RC
 SSP1        "low    emissions (from SSP1 scenario in MAgPIE)"
 SSP2        "medium emissions (from SSP2 scenario in MAgPIE)"
+SSP2EU
 SSP2_lowEn
 SSP3        "currently not available"
 SSP4        "currently not available"
