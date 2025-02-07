@@ -152,14 +152,14 @@ $offdelim
 /
 
 parameter
-f29_capitalQuantity(tall,all_regi,all_GDPpopScen,all_in)          "capital quantities"
+f29_capitalQuantity(tall,all_regi,all_demScen,all_in)          "capital quantities"
 /
 $ondelim
 $include "./modules/29_CES_parameters/calibrate/input/f29_capitalQuantity.cs4r"
 $offdelim
 /
 ;
-p29_capitalQuantity(t,regi,ppfKap) = f29_capitalQuantity(t,regi,"%cm_GDPpopScen%",ppfKap);
+p29_capitalQuantity(t,regi,ppfKap) = f29_capitalQuantity(t,regi,"%cm_demScen%",ppfKap);
 
 *** fix industry energy efficiency capital for mrremind rounding
 loop ((ttot,regi,ppfKap_industry_dyn37(in))$( t(ttot-1) AND t(ttot+1) ),
