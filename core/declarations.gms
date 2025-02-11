@@ -110,6 +110,8 @@ $endif.tech_CO2capturerate
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]"
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1"
 
+pm_actualbudgetco2_iter(iteration,ttot)               "track actual level of cumulated emissions starting from 2020 over iterations [GtCO2]"
+
 pm_dataccs(all_regi,char,rlf)                               "maximum CO2 storage capacity using CCS technology. [GtC]"
 pm_ccsinjecrate(all_regi)                                   "Regional CCS injection rate factor. 1/a."
 p_extRegiccsinjecrateRegi(ext_regi)                         "Regional CCS injection rate factor. 1/a. (extended regions)"
@@ -618,7 +620,6 @@ sm_endBudgetCO2eq                                     "end time step of emission
 sm_budgetCO2eqGlob                                    "budget for global energy-emissions in period 1"
 p_emi_budget1_gdx                                     "budget for global energy-emissions in period 1 from gdx, may overwrite default values"
 
-pm_actualbudgetco2_iter(iteration,ttot)               "track actual level of cumulated emissions starting from 2020 over iterations [GtCO2]"
 sm_globalBudget_absDev                                "absolute deviation of global cumulated CO2 emissions budget from target budget"
 
 sm_eps                                                "small number: 1e-9 "  /1e-9/
