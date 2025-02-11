@@ -26,6 +26,7 @@ p33_rock_weath_rate(rlf)                 "fraction of stone weathering per year 
 p33_EW_upScalingLimit(ttot)              "Annual growth rate limit on upscaling of mining & spreading rocks on fields"
 p33_EW_shortTermEW_Limit(all_regi)       "Limit on 2030 potential for enhanced weathering, defined in Gt rocks, based on % of land on which EW is applied"
 p33_EW_maxShareOfCropland(all_regi)      "Share of cropland that can be used for enhanced weathering. Limits maximum amount of rocks weathering."
+p33_oae_eez_limit(all_regi)
 ;
 
 positive variables
@@ -63,6 +64,7 @@ q33_EW_ShortTermBound(ttot,all_regi)   "Limits short term potential for enhanced
 
 q33_OAE_FEdemand(ttot,all_regi,all_enty,all_te) "calculates final energy demand for ocean alkalinity enhancement"
 q33_OAE_co2emi_non_atm_calcination(ttot,all_regi,all_te)   "calculates the CO2 that comes from calcination (limestone decomposition)"
+q33_OAE_EEZ_limit(ttot,all_regi)  "sets upper bound on regional ocean uptake. A global limit is distributed according to size of the EEZ"
 ;
 
 *** EOF ./modules/33_CDR/portfolio/declarations.gms

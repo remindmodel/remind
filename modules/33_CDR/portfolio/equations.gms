@@ -238,5 +238,15 @@ q33_OAE_co2emi_non_atm_calcination(t, regi, te_oae33)..
     - s33_OAE_chem_decomposition * vm_emiCdrTeDetail(t, regi, te_oae33)
     ;
 
+***---------------------------------------------------------------------------
+*'  Limit OAE by region based on the regions' share of the exclusive economic zone
+***---------------------------------------------------------------------------
+q33_OAE_EEZ_limit(t,regi)$(t.val ge 2035)..
+    -p33_oae_eez_limit(regi) 
+    =l= 
+    sum(te_oae33,
+        vm_emiCdrTeDetail(t,regi, te_oae33))
+;
+
 *' @stop
 *** EOF ./modules/33_CDR/portfolio/equations.gms
