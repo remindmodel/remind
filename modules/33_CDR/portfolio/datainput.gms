@@ -101,7 +101,7 @@ $offdelim
 display p33_EEZdistribution;
 *' @code
 
-*' if global limit to be distributed by EEZ  
+*' Distribute global limit set for OAE based on size of EEZ
 if (cm_33_OAE_limit_EEZ gt 0,
     p33_oae_eez_limit(regi) = cm_33_OAE_limit_EEZ / (sm_c_2_co2 * 1000) * p33_EEZdistribution(regi) ; !! [Mt CO2] / [Mt CO2/Gt C] * fraction = [Gt C]
 else
