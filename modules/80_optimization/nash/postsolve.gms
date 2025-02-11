@@ -374,9 +374,9 @@ loop((t,regi,entyPe)$pm_implicitPePriceTarget(t,regi,entyPe),
 );  
 $endIf.cm_implicitPePriceTarget
 
-*** check global budget target from core/postsolve, must be within 1% of target value
-p80_globalBudget_dev_iter(iteration) = sm_globalBudget_dev;
-if (p80_globalBudget_dev_iter(iteration) gt 1.01 OR p80_globalBudget_dev_iter(iteration) lt 0.99,
+*** check global budget target from core/postsolve, must be within 2 Gt of target value
+p80_globalBudget_absDev_iter(iteration) = sm_globalBudget_absDev;
+if (abs(p80_globalBudget_absDev_iter(iteration)) gt 2,
   s80_bool = 0;
   p80_messageShow("target") = YES;
 );
@@ -441,10 +441,10 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
 	      );
         if(sameas(convMessage80, "target"),
 		      display "#### 6.) A global climate target has not been reached yet.";
-          display "#### check out sm_globalBudget_dev, it must within 0.99 and 1.01 to reach convergence, as well as";
+          display "#### check out sm_globalBudget_absDev, must be within 2 Gt of target to reach convergence, as well as";
           display "#### pm_taxCO2eq_anchor_iterationdiff_tmp and pm_taxCO2eq_anchor_iterationdiff in diagnostics section below."; 
           display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
-          display sm_globalBudget_dev;
+          display sm_globalBudget_absDev;
 	      );
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"       
         if(sameas(convMessage80, "regiTarget"),
@@ -554,10 +554,10 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
 	     );
         if(sameas(convMessage80, "target"),
 		      display "#### 6.) A global climate target has not been reached yet.";
-          display "#### check out sm_globalBudget_dev, must within 0.99 and 1.01 to reach convergence, as well as";
+          display "#### check out sm_globalBudget_absDev, must be within 2 Gt of target to reach convergence, as well as";
           display "#### pm_taxCO2eq_anchor_iterationdiff_tmp and pm_taxCO2eq_anchor_iterationdiff in diagnostics section below."; 
           display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
-          display sm_globalBudget_dev;
+          display sm_globalBudget_absDev;
 	      );
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"       
         if(sameas(convMessage80, "regiTarget"),

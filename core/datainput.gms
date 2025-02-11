@@ -1572,8 +1572,8 @@ $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
 $endif.scaleDemand
 
 
-*** initialize global target deviation scalar
-sm_globalBudget_dev = 1;
+*** initialize absolute deviation of global cumulated CO2 emissions budget from target budget
+sm_globalBudget_absDev = 0;
 
 
 if (cm_startyear gt 2005,

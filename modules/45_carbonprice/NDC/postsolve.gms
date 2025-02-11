@@ -22,7 +22,7 @@ p45_CO2eqwoLU_actual(p45_NDCyearSet(t,regi)) =
         * vm_demFeSector.l(t,regi,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
       ); 
 
-p45_taxCO2eq_iter(iteration,p45_NDCyearSet(t,regi)) = pm_taxCO2eq(t,regi);
+pm_taxCO2eq_iter(iteration,p45_NDCyearSet(t,regi)) = pm_taxCO2eq(t,regi);
 p45_CO2eqwoLU_actual_iter(iteration,p45_NDCyearSet(t,regi)) = p45_CO2eqwoLU_actual(t,regi);
 
 display vm_co2eq.l;

@@ -74,8 +74,7 @@ s45_factorRescale_taxCO2_exponent_from10                "exponent determining se
 parameters 
 p45_actualbudgetco2(ttot)                               "actual level of cumulated emissions starting from 2020 [GtCO2]"
 
-p45_taxCO2eq_iteration(iteration,ttot,all_regi)         "save pm_taxCO2eq in each iteration (before entering functionalForm/postsolve.gms) for debugging"
-p45_taxCO2eq_anchor_iteration(iteration,ttot)           "save p45_taxCO2eq_anchor in each iteration (before entering functionalForm/postsolve.gms) for debugging"
+p45_taxCO2eq_anchor_iter(iteration,ttot)                "save p45_taxCO2eq_anchor in each iteration (before entering functionalForm/postsolve.gms) for debugging"
 o45_taxCO2eq_anchor_iterDiff_Itr(iteration)             "track pm_taxCO2eq_anchor_iterationdiff in 2100 over iterations"
 
 o45_diff_to_Budg(iteration)                             "Difference between actual CO2 budget and target CO2 budget"
