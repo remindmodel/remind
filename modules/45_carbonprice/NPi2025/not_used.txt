@@ -31,7 +31,6 @@ sm_D2005_2_D2017,input,not needed
 sm_budgetCO2eqGlob,input,added by codeCheck
 vm_emiAll,input,added by codeCheck
 pm_taxCO2eq_anchor_iterationdiff,input,added by codeCheck
-pm_taxCO2eq_anchor_iterationdiff_tmp,input,added by codeCheck
 pm_budgetCO2eq,input,added by codeCheck
 pm_ts,input,added by codeCheck
 cm_iteration_max,input,added by codeCheck
@@ -42,3 +41,4 @@ cm_taxCO2_IncAfterPeakBudgYr,input,added by codeCheck
 sm_globalBudget_absDev,input,no target adjustement
 pm_actualbudgetco2_iter,input,added by codeCheck
 pm_taxCO2eq_iter,input,added by codeCheck
+cm_budgetCO2_absDevTol,input,added by codeCheck

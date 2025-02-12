@@ -68,4 +68,5 @@ cm_maxFadeOutPriceAnticip,         parameter,   ???
 cm_LearningSpillover,              input,       learning spillover only implemented in nash
 pm_allTargetsConverged,            parameter,   only relevant for nash
 pm_taxCO2eq_anchor_iterationdiff,input,no iterative target adjustment
-pm_taxCO2eq_anchor_iterationdiff_tmp,input,added by codeCheck
+pm_taxCO2eq_iter,input,added by codeCheck
+cm_budgetCO2_absDevTol,input,added by codeCheck

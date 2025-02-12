@@ -72,7 +72,7 @@ if((cm_iterative_target_adj eq 5) OR (cm_iterative_target_adj eq 9),
     s45_factorRescale_taxCO2_exponent_from10 = 1;
   );
 
-  if( (o_modelstat ne 2) OR (abs(sm_globalBudget_absDev) le 2) OR (ord(iteration) = cm_iteration_max), 
+  if( (o_modelstat ne 2) OR (abs(sm_globalBudget_absDev) le cm_budgetCO2_absDevTol) OR (ord(iteration) = cm_iteration_max), 
     !! keep CO2 tax constant if model was not optimal, if maximal number of iterations is reached, or if budget already reached
     p45_factorRescale_taxCO2(iteration)          = 1;
     p45_factorRescale_taxCO2_Funneled(iteration) = p45_factorRescale_taxCO2(iteration);
@@ -135,7 +135,7 @@ $endIf.taxCO2functionalForm4
 
     display p45_taxCO2eq_anchor, pm_taxCO2eq_anchor_iterationdiff, o45_taxCO2eq_anchor_iterDiff_Itr;
 
-  ); !! if( (o_modelstat ne 2) OR (abs(sm_globalBudget_absDev) le 2) OR (ord(iteration) = cm_iteration_max), 
+  ); !! if( (o_modelstat ne 2) OR (abs(sm_globalBudget_absDev) le cm_budgetCO2_absDevTol) OR (ord(iteration) = cm_iteration_max), 
 ); !! if((cm_iterative_target_adj eq 5) OR (cm_iterative_target_adj eq 9),
 
 
@@ -257,13 +257,13 @@ if(cm_iterative_target_adj eq 7,
 			else
 			    !! change in CO2 price through adjustment: new price - old price; the two instances of "p45_taxCO2eq_anchor" cancel out -> only the difference term
 				!! until cm_peakBudgYr: expolinear price trajectory
-				pm_taxCO2eq_anchor_iterationdiff_tmp(t) = 
+				p45_taxCO2eq_anchor_iterationdiff_tmp(t) = 
 				                      max(pm_taxCO2eq_anchor_iterationdiff(t) * min(max((cm_budgetCO2from2020 - s45_actualbudgetco2)/(s45_actualbudgetco2 - s45_actualbudgetco2_last),-2),2),-p45_taxCO2eq_anchor(t)/2);
 				p45_taxCO2eq_anchor(t)$(t.val le cm_peakBudgYr) = p45_taxCO2eq_anchor(t) + 
 				                      max(pm_taxCO2eq_anchor_iterationdiff(t) * min(max((cm_budgetCO2from2020 - s45_actualbudgetco2)/(s45_actualbudgetco2 - s45_actualbudgetco2_last),-2),2),-p45_taxCO2eq_anchor(t)/2);
 			  p45_taxCO2eq_anchor_until2150(t) = p45_taxCO2eq_anchor_until2150(t) + 
 				                      max(pm_taxCO2eq_anchor_iterationdiff(t) * min(max((cm_budgetCO2from2020 - s45_actualbudgetco2)/(s45_actualbudgetco2 - s45_actualbudgetco2_last),-2),2),-p45_taxCO2eq_anchor_until2150(t)/2);
-				pm_taxCO2eq_anchor_iterationdiff(t) = pm_taxCO2eq_anchor_iterationdiff_tmp(t);
+				pm_taxCO2eq_anchor_iterationdiff(t) = p45_taxCO2eq_anchor_iterationdiff_tmp(t);
 				!! after cm_peakBudgYr: adjustment so that emissions become zero: increase/decrease tax in each time step after cm_peakBudgYr by percentage of that year's total CO2 emissions of 2015 emissions
 			);
       o45_taxCO2eq_anchor_iterDiff_Itr(iteration) = pm_taxCO2eq_anchor_iterationdiff("2100");

@@ -528,6 +528,12 @@ parameter
   cm_budgetCO2from2020      = 0;   !! def = 0
 *'  budgets from AR6 for 2020-2100 (including 2020), for 1.5 C: 500 Gt CO2 peak budget (400 Gt CO2 end of century), for 2 C: 1150 Gt CO2
 parameter
+  cm_budgetCO2_absDevTol  "convergence criterion for global CO2 budget set via cm_budgetCO2from2020. It is formulated as an absolute deviation from the target budget [GtCO2]"
+;
+  cm_budgetCO2_absDevTol      = 2;   !! def = 2 !! regexp = is.nonnegative
+*' 
+
+parameter
   cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 ;
   cm_peakBudgYr            = 2050;   !! def = 2050

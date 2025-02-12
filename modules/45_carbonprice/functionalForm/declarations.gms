@@ -76,6 +76,7 @@ p45_actualbudgetco2(ttot)                               "actual level of cumulat
 
 p45_taxCO2eq_anchor_iter(iteration,ttot)                "save p45_taxCO2eq_anchor in each iteration (before entering functionalForm/postsolve.gms) for debugging"
 o45_taxCO2eq_anchor_iterDiff_Itr(iteration)             "track pm_taxCO2eq_anchor_iterationdiff in 2100 over iterations"
+p45_taxCO2eq_anchor_iterationdiff_tmp(ttot)             "help parameter for iterative adjustment of taxes"
 
 o45_diff_to_Budg(iteration)                             "Difference between actual CO2 budget and target CO2 budget"
 o45_totCO2emi_peakBudgYr(iteration)                     "Total CO2 emissions in the peakBudgYr"
