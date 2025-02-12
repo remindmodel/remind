@@ -11,6 +11,9 @@
 *** saving pm_taxemiMkt used in this iteration
 pm_taxemiMkt_iteration(iteration,ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt);
 
+*** Track pm_taxCO2eq over iterations
+pm_taxCO2eq_iter(iteration,t,regi) = pm_taxCO2eq(t,regi);
+
 if( (cm_emiscen eq 6), 
 $ifthen.neg %optimization% == 'negishi'     
     pm_taxCO2eqSum(ttot,regi) = abs((abs(q_co2eq.m(ttot,regi)) / pm_ts(ttot)) / (pm_pvp(ttot,"good") + sm_eps));

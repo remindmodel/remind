@@ -26,7 +26,6 @@ vm_demFeForEs.L(t,regi,entyFe,esty,teEs) = 0;
 vm_demFeForEs.L(t,regi,fe2es(entyFe,esty,teEs)) = 0.1;
 
 *** -------- initial declaration of parameters for iterative target adjustment
-pm_taxCO2eq_iter(iteration,t,regi) = 0; 
 pm_taxCO2eq_anchor_iterationdiff(t) = 0;
 
 *------------------------------------------------------------------------------------
