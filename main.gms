@@ -352,7 +352,7 @@ $setglobal CCU  on      !! def = on
 *' * (NDC): Technology targets for 2030 for spv,windon,tnrs.
 *' * (NPi): Reference technology targets, mostly already enacted (N)ational (P)olicies (i)mplemented, mostly for 2020
 *' * (EVmandates): mandate for electric vehicles - used for UBA project
-$setglobal techpol  none           !! def = none
+$setglobal techpol  NPi2018           !! def = NPi2018
 *'---------------------    41_emicapregi  ----------------------------------------
 *'
 *' * (none): no regional emission caps
@@ -392,7 +392,7 @@ $setglobal emicapregi  none           !! def = none
 ***  (exponential) is superseded by (functionalForm): For a globally uniform, exponentially increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_taxCO2_functionalForm = exponential, cm_taxCO2_regiDiff = none, cm_taxCO2_interpolation = off, cm_taxCO2_lowerBound_path_gdx_ref = off, cm_peakBudgYr = 2100, and choose the initial carbonprice in cm_startyear via cm_taxCO2_startyear.
 ***  (linear) is superseded by (functionalForm): For a globally uniform, linearly increasing carbonprice path until end of century [in combination with cm_iterative_target_adj = 0 or 5], set cm_taxCO2_functionalForm = linear, cm_taxCO2_regiDiff = none, cm_taxCO2_interpolation = off, cm_taxCO2_lowerBound_path_gdx_ref = off, cm_peakBudgYr = 2100, and choose the initial carbonprice in cm_startyear via cm_taxCO2_startyear. [Adjust historical reference point (cm_taxCO2_historicalYr, cm_taxCO2_historical) if needed.]
 
-$setglobal carbonprice  none           !! def = none
+$setglobal carbonprice  NPi2025           !! def = NPi2025
 *'---------------------    46_carbonpriceRegi  ---------------------------------
 *'
 *' This module applies a markup pm_taxCO2eqRegi on top of pm_taxCO2eq to achieve additional intermediate targets.
@@ -407,7 +407,7 @@ $setglobal carbonpriceRegi  none      !! def = none
 *'
 *' * (none): no regional policies
 *' * (regiCarbonPrice): region-specific policies and refinements (regional emissions targets, co2 prices, phase-out policies etc.)
-$setglobal regipol  none              !! def = none
+$setglobal regipol  regiCarbonPrice              !! def = regiCarbonPrice
 *'---------------------    50_damages    ---------------------------------------
 *'
 *' * (off): no damages on GDP
@@ -502,7 +502,7 @@ parameter
 parameter
   cm_emiscen                "policy scenario choice"
 ;
-  cm_emiscen        = 1;               !! def = 1  !!  regexp = 0|1|4|6|9|10
+  cm_emiscen        = 9;               !! def = 9  !!  regexp = 0|1|4|6|9|10
 *' *  (0): no global budget. Policy may still be prescribed by 41_emicaprei module.
 *' *  (1): BAU
 *' *  (4): emission time path
@@ -525,7 +525,7 @@ parameter
 parameter
   cm_budgetCO2from2020   "CO2 budget for all economic sectors starting from 2020 (GtCO2). It can be either peak budget, but can also be an end-of-century budget"
 ;
-  cm_budgetCO2from2020      = 1150;   !! def = 1150
+  cm_budgetCO2from2020      = 0;   !! def = 0
 *'  budgets from AR6 for 2020-2100 (including 2020), for 1.5 C: 500 Gt CO2 peak budget (400 Gt CO2 end of century), for 2 C: 1150 Gt CO2
 parameter
   cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
@@ -731,7 +731,7 @@ parameter
 parameter
   cm_multigasscen           "scenario on GHG portfolio to be included in permit trading scheme"
 ;
-  cm_multigasscen     = 2;         !! def = 2  !! regexp = [1-3]
+  cm_multigasscen     = 3;         !! def = 3  !! regexp = [1-3]
 *' *  (1): CO2 only
 *' *  (2): all GHG
 *' *  (3): all GHG excl CO2 emissions from LULUCF
@@ -1197,7 +1197,7 @@ $setglobal cm_MAgPIE_coupling  off     !! def = "off"  !! regexp = off|on
 *' *  (rcp45): RCP4.5
 *' *  (rcp60): RCP6.0 [currently not operational: test and verify before using it!]
 *' *  (rcp85): RCP8.5 [currently not operational: test and verify before using it!]
-$setglobal cm_rcp_scen  none         !! def = "none"  !! regexp = none|rcp20|rcp26|rcp37|rcp45|rcp60|rcp85
+$setglobal cm_rcp_scen  rcp45         !! def = "rcp45"  !! regexp = none|rcp20|rcp26|rcp37|rcp45|rcp60|rcp85
 *' cm_NDC_version            "choose version year of NDC targets as well as conditional vs. unconditional targets"
 *' *  (2024_cond):   all NDCs conditional to international financial support published until August 31, 2024
 *' *  (2024_uncond): all NDCs independent of international financial support published until August 31, 2024
@@ -1251,24 +1251,14 @@ $setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.nonnegative
 *** then the values from the region group disaggregation will be overwritten by this region-specific value.
 *** For example: "EU27_regi 7.5, DEU 1.5".
 $setGLobal cm_bioprod_regi_lim off  !! def off
-*' cm_POPscen      "Population growth scenarios from UN data and IIASA projection used in SSP"
+*' cm_GDPpopScen  "assumptions about future GDP and population development"
 *'
-*' * pop_SSP1    "SSP1 population scenario"
-*' * pop_SSP2    "SSP2 population scenario"
-*' * pop_SSP2EU    "SSP2 population scenario"
-*' * pop_SSP3    "SSP3 population scenario"
-*' * pop_SSP4    "SSP4 population scenario"
-*' * pop_SSP5    "SSP5 population scenario"
-$setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
-*' cm_GDPscen  "assumptions about future GDP development, linked to population development (cm_POPscen)"
-*'
-*' * (gdp_SSP1):  SSP1 fastGROWTH medCONV
-*' * (gdp_SSP2):  SSP2 medGROWTH medCONV
-*' * (gdp_SSP2EU):  SSP2 medGROWTH medCONV
-*' * (gdp_SSP3):  SSP3 slowGROWTH slowCONV
-*' * (gdp_SSP4):  SSP4  medGROWTH mixedCONV
-*' * (gdp_SSP5):  SSP5 fastGROWTH fastCONV
-$setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
+*' * (SSP1):  SSP1 fastGROWTH medCONV
+*' * (SSP2):  SSP2 medGROWTH medCONV
+*' * (SSP3):  SSP3 slowGROWTH slowCONV
+*' * (SSP4):  SSP4  medGROWTH mixedCONV
+*' * (SSP5):  SSP5 fastGROWTH fastCONV
+$setglobal cm_GDPpopScen   SSP2  !! def = SSP2
 *** cm_oil_scen      "assumption on oil availability"
 ***  (lowOil): low
 ***  (medOil): medium (this is the new case)
@@ -1334,9 +1324,9 @@ $setGlobal cm_dispatchSetyDown  off   !! def = off  The amount that te producing
 *** Example: "2040.EUR 0.6" will cap the share of secondary steel production at 60 % in EUR from 2040 onwards
 $setGlobal cm_dispatchSeelDown  off   !! def = off  The amount that te producing seel can dispatch less (in percent) (overrides cm_dispatchSetyDown for te producing seel)
 *' *   cm_NucRegiPol "enable European region specific nuclear phase-out and new capacitiy constraints"
-$setGlobal cm_NucRegiPol   off   !! def = off
+$setGlobal cm_NucRegiPol   on   !! def = on
 *' *  cm_CoalRegiPol "enable European region specific coal phase-out and new capacitiy constraints"
-$setGlobal cm_CoalRegiPol   off   !! def = off
+$setGlobal cm_CoalRegiPol   on   !! def = on
 *' *  cm_proNucRegiPol "enable European region specific pro nuclear capacitiy constraints"
 $setGlobal cm_proNucRegiPol   off   !! def = off
 *** cm_CCSRegiPol - year for earliest investment in Europe, with one timestep split between countries currently exploring - Norway (NEN), Netherlands (EWN) and UK (UKI) - and others
@@ -1447,7 +1437,7 @@ $setglobal cm_floorCostScen default       !! def = default
 ***  of Mix4.
 ***  ("HydrHype4") similar to Mix4 but with a strong focus on FCEVs in both passenger and freight sectors.
 ***  This information has been added on 4.10.22. Please contact the transport sector experts for more detail.
-$setGlobal cm_EDGEtr_scen  Mix1  !! def = Mix1
+$setGlobal cm_EDGEtr_scen  Mix2ICEban  !! def = Mix2ICEban
 *** industry
 *** maximum secondary steel share
 $setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for maximum secondary steel share
@@ -1546,7 +1536,7 @@ $setGLobal cm_exogDem_scen off !! def off  !! regexp = off|ariadne_(bal|ensec|hi
 *** (ensec) policies for energy security scenario, e.g. faster hydrogen upscaling
 $setGlobal cm_Ger_Pol  off !! def off
 *** cm_altFeEmiFac <- "off"  # def <- "off", regions that should use alternative data from "umweltbundesamt" on emission factors for final energy carriers (ex. "EUR_regi, NEU_regi")
-$setGlobal cm_altFeEmiFac  off        !! def = off
+$setGlobal cm_altFeEmiFac  EUR_regi, NEU_regi        !! def = "EUR_regi, NEU_regi"
 ***  cm_incolearn "change floor investment cost value"
 ***   Example on how to use:
 ***     cm_incolearn  "windon=1600,spv=5160,csp=9500"
@@ -1831,8 +1821,7 @@ $setGlobal cm_conoptv  conopt3    !! def = conopt3
 *' (on): no model operation, instead input.gdx is copied to fulldata.gdx
 $setGlobal c_empty_model   off    !! def = off  !! regexp = off|on
 $setglobal cm_secondary_steel_bound  scenario   !! def = scenario
-$setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen)
-$setglobal cm_demScen  gdp_SSP2     !! def = gdp_SSP2
+$setglobal cm_demScen  SSP2     !! def = SSP2
 $setGlobal c_scaleEmiHistorical  on  !! def = on  !! regexp = off|on
 $SetGlobal cm_quick_mode  off          !! def = off  !! regexp = off|on
 $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
@@ -1842,16 +1831,16 @@ $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
 *' (CLE): Current Legislation Emissions
 *' (MFR): Maximum Feasible Reductions
 $setGlobal cm_APscen  SSP2          !! def = SSP2
-$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-GDPpop_SSP2-En_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_industry_FE_target  1
 *' setting which region is to be tested in the one-region test run (80_optimization = testOneRegi)
 $setglobal c_testOneRegi_region  EUR       !! def = EUR  !! regexp = [A-Z]{3}
 *' cm_taxrc_RE     "switch to define whether tax on (CO2 content of) energy imports is recycled to additional direct investments in renewables (wind, solar and storage)"
 $setglobal cm_taxrc_RE  none   !! def = none   !! regexp = none|REdirect
-*' cm_emifacs_baseyear "base year for deriving nonCO2 emission factors"
-*' (2005): Uses EDGAR data with 2005 as base year
-*' (2020): Uses CEDS2024 data with 2020 as base year
+*' cm_emifacs_baseyear "base year for deriving nonCO2 emission factors/econometric estimates/scaling factors"
+*' (2005): Uses EDGAR data with 2005 as base year, and Lucas et al. 2007 IMAGE for N2O baselines
+*' (2020): Uses CEDS2024 data with 2020 as base year, and Harmsen et al. 2022 IMAGE for N2O baselines
 $setGlobal cm_emifacs_baseyear  2005          !! def = 2005
 *' cm_repeatNonOpt       "should nonoptimal regions be solved again?"
 *'
