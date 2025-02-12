@@ -26,6 +26,11 @@ p33_co2_rem_rate(rlf)                    "carbon removal rate [fraction of annua
 p33_EW_upScalingLimit(ttot)              "Annual growth rate limit on upscaling of mining & spreading rocks on fields"
 p33_EW_shortTermEW_Limit(all_regi)       "Limit on 2030 potential for enhanced weathering, defined in Gt rocks, based on % of land on which EW is applied"
 p33_EW_maxShareOfCropland(all_regi)      "Share of cropland that can be used for enhanced weathering. Limits maximum amount of rocks weathering."
+
+p33_shfetot_up(ttot,all_regi,entyFe,emi_sectors)      "Upper bound on share of a sector in final energy of a FE type"
+p33_FE_limit(ttot,all_regi,all_enty,sector)            "Maximum amount of FE for a sector based on p33_shfetot_up"
+p33_GDP_NetNeg_share(all_regi)                    "Upper bound on share of expenses for net negative emissions in GDP"
+
 ;
 
 positive variables
@@ -35,6 +40,12 @@ v33_FEdemand(ttot,all_regi,all_enty,all_enty,all_te)  "FE demand of each technol
 vm_co2capture_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "total emissions captured through technologies in the CDR module that enter the CCUS chain + captured emissions from associated FE demand [GtC / a]"
 v33_co2emi_non_atm_gas(ttot,all_regi,all_te)  "CO2 from CDR-related acitivites that comes from energy demand [GtC / a]"
 v33_co2emi_non_atm_calcination(ttot,all_regi,all_te)  "CO2 from calcination [GtC / a]"
+
+v33_shfeSector(ttot,all_regi,all_enty,emi_sectors)      "share of a sector's final energy type demand in the region's total FE type"
+v33_FEsector_total(ttot,all_regi,all_enty,emi_sectors)  "FE type demand by sector"
+v33_FE_total(ttot,all_regi,all_enty)                    "total FE demand in a region (aggregating similar fe types)"
+
+v33_NetNegEmi_expenses(ttot,all_regi)                  "expenses for net negative emissions"
 ;
 
 negative variables
@@ -63,6 +74,12 @@ q33_EW_ShortTermBound(ttot,all_regi)   "Limits short term potential for enhanced
 
 q33_OAE_FEdemand(ttot,all_regi,all_enty,all_te) "calculates final energy demand for ocean alkalinity enhancement"
 q33_OAE_co2emi_non_atm_calcination(ttot,all_regi,all_te)   "calculates the CO2 that comes from calcination (limestone decomposition)"
+
+q33_shfeSector_share(ttot,all_regi,all_enty,emi_sectors)             "share of a sector's final energy type demand in the region's total FE type"
+q33_shfeSector_SectorTotal(ttot,all_regi,all_enty,emi_sectors) "a sector's final energy type demand"
+q33_shfeSector_Total(ttot,all_regi,all_enty)                   "total FE demand in a region (aggregating similar fe types)"
+
+q33_CDRspending(ttot,all_regi)                             "expenses for net negative emissions relative to GDP"
 ;
 
 *** EOF ./modules/33_CDR/portfolio/declarations.gms

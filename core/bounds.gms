@@ -537,9 +537,6 @@ v_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_f
 *** Set H2 upper bound in buildings for years defined at cm_H2InBuildOnlyAfter
 vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le cm_H2InBuildOnlyAfter) = 1e-6;
 
-*** Set upper bound on the amount of FE available for a sector
-v_FEsector_total.up(t,regi,entyFe,sector)$pm_shfetot_up(t,regi,entyFe,sector) = p_FE_limit(t,regi,entyFE,sector);
-
 ***----------------------------------------------------------------------------
 ***  Controlling if active, dampening factor to align edge-t non-energy transportation costs with historical GDP data
 ***----------------------------------------------------------------------------

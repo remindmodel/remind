@@ -206,7 +206,4 @@ p_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt)$((entySeBio(entySe) OR entySe
 v_shSeFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)$(p_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt) AND NOT(sameas(sector,"CDR"))) = p_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt);
 v_shSeFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)$(p_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt) AND (sameas(sector,"CDR"))) = 0;
 
-*** initialize bound on final energy for a sector
-p_FE_limit(t,regi,entyFE,sector)$pm_shfetot_up(t,regi,entyFE,sector) = 1000;
-
 *** EOF ./core/preloop.gms

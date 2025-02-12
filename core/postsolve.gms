@@ -77,13 +77,6 @@ loop(ttot$(ttot.val ge 2005),
 *** assume GDP is flat from 2150 on (only enters damage calculations in the far future)
 pm_GDPGross(tall,regi)$(tall.val ge 2150) = pm_GDPGross("2149",regi); 
 
-*** update bound on spending on net negative emissions 
-v_NetNegEmi_expenses.up(t,regi) = p_GDP_NetNeg_share(regi) * pm_gdp_gdx(t,regi);
-
-*** update bound on final energy for a sector
-p_FE_limit(t,regi,entyFE,sector)$pm_shfetot_up(t,regi,entyFe,sector) = pm_shfetot_up(t,regi,entyFE,sector) * sum(entyFe2FeType(entyFe2,entyFe), v_FE_total.l(t,regi,entyFe2));
-v_FEsector_total.up(t,regi,entyFe,sector)$pm_shfetot_up(t,regi,entyFe,sector) = p_FE_limit(t,regi,entyFE,sector);
-
 *** CG: calculate marginal adjustment cost for capacity investment: d(vm_costInvTeAdj) / d(vm_deltaCap)  !!!! the closed formula only holds when v_adjFactorGlob.fx(t,regi,te) = 0;
 o_margAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te)) =  vm_costTeCapital.l(ttot,regi,te) * p_adj_coeff(ttot,regi,te)
     * 2 * (sum(te2rlf(te,rlf), vm_deltaCap.l(ttot,regi,te,rlf)) - sum(te2rlf(te,rlf), vm_deltaCap.l(ttot-1,regi,te,rlf)))

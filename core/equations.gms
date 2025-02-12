@@ -1251,41 +1251,6 @@ q_fossilSolidsLimitReg(ttot,regi,entySe,entyFe,sector,emiMkt)$(limitSolidsFossil
   vm_demFeSector_afterTax(ttot-1,regi,entySe,entyFe,sector,emiMkt);
 $endif.limitSolidsFossilRegi
 
-***---------------------------------------------------------------------------
-*' Limit the amount of FE for CDR to a given fraction of total FE 
-***---------------------------------------------------------------------------
-q_shfeSector_SectorTotal(t,regi,entyFe,sector)$(pm_shfetot_up(t,regi,entyFe,sector) AND entyFe2Sector(entyFe,sector))..
-  v_FEsector_total(t,regi,entyFe,sector) 
-   =e=
-     sum(emiMkt$sector2emiMkt(sector,emiMkt),
-      sum(entySe$(sefe(entySe,entyFe)),
-       vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
-;
-
-q_shfeSector_Total(t,regi,entyFe)..
-  v_FE_total(t,regi,entyFe) 
-   =e=
-     sum(sector2emiMkt(sector,emiMkt),
-      sum(entySe$(sefe(entySe,entyFe)),
-       vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)$entyFe2Sector(entyFe,sector)))
-;
-
-q_shfeSector_share(t,regi,entyFe,sector)$(pm_shfetot_up(t,regi,entyFe,sector))..
-  v_shfeSector(t,regi,entyFe,sector) *
-  v_FE_total(t,regi,entyFe) 
-  =e=
-    v_FEsector_total(t,regi,entyFe,sector) 
-;
-
-
-***---------------------------------------------------------------------------
-*' Limit spending on net negative emissions to a share of the region's GDP 
-***---------------------------------------------------------------------------
-q_CDRspending(t,regi)$(t.val ge max(2030,cm_startyear))..
-  v_NetNegEmi_expenses(t,regi)
-  =e=
-  (1-cm_frac_NetNegEmi) * pm_taxCO2eqSum(t,regi) * vm_emiALLco2neg(t,regi)
-;
 
 
 *** EOF ./core/equations.gms

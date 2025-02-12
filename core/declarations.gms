@@ -147,10 +147,6 @@ p_shSeFe(ttot,all_regi,all_enty)                     "Initial share of energy ca
 p_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Initial share of energy carrier subtype in final energy demand of the aggregated carrier type for each sector/emiMarket combination (eg 'bio-based FE liquids share in all FE liquids within ETS transport') [0..1]"
 pm_shGasLiq_fe_up(ttot,all_regi,emi_sectors)         "Final energy gases plus liquids shares exogenous upper bounds per sector"
 pm_shGasLiq_fe_lo(ttot,all_regi,emi_sectors)         "Final energy gases plus liquids shares exogenous lower bounds per sector"
-pm_shfetot_up(ttot,all_regi,entyFe,emi_sectors)      "Upper bound on share of a sector in final energy of a FE type"
-p_FE_limit(ttot,all_regi,all_enty,sector)            "Maximum amount of FE for a sector based on pm_shfetot_up"
-
-p_GDP_NetNeg_share(all_regi)                    "Upper bound on share of expenses for net negative emissions in GDP"
 
 p_adj_coeff_Orig(ttot,all_regi,all_te)               "initial value of p_adj_coeff"
 p_adj_seed_te_Orig(ttot,all_regi,all_te)             "initial value of p_adj_seed_te"
@@ -412,12 +408,7 @@ v_shSeFe(ttot,all_regi,all_enty)                     "share of energy carrier su
 v_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "share of energy carrier subtype in final energy demand of the aggregated carrier type per sector/emiMarket combination (eg 'the share of bio-based FE liquids in all FE liquids used in ETS-covered transport') [0..1]"
 v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids in sector final energy [0..1]"
 
-v_shfeSector(ttot,all_regi,all_enty,emi_sectors)      "share of a sector's final energy type demand in the region's total FE type"
-v_FEsector_total(ttot,all_regi,all_enty,emi_sectors)  "FE type demand by sector"
-v_FE_total(ttot,all_regi,all_enty)                    "total FE demand in a region (aggregating similar fe types)"
-
 vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
-v_NetNegEmi_expenses(ttot,all_regi)                  "expenses for net negative emissions"
 
 v_changeProdStartyearAdj(ttot,all_regi,all_te)       "Absolute effect size of changing output with respect to the reference run for each te"
 vm_changeProdStartyearCost(ttot,all_regi,all_te)     "Costs for changing output with respect to the reference run for each te"
@@ -550,10 +541,6 @@ q_shGasLiq_fe(ttot,all_regi,emi_sectors)              "share of gases and liquid
 q_shbiofe_up(ttot,all_regi,all_enty,emi_sectors,all_emiMkt) "share of biomass per carrier in sector final energy (upper bound)"
 q_shbiofe_lo(ttot,all_regi,all_enty,emi_sectors,all_emiMkt) "share of biomass per carrier in sector final energy (lower bound)"
 
-q_shfeSector_share(ttot,all_regi,all_enty,emi_sectors)             "share of a sector's final energy type demand in the region's total FE type"
-q_shfeSector_SectorTotal(ttot,all_regi,all_enty,emi_sectors) "a sector's final energy type demand"
-q_shfeSector_Total(ttot,all_regi,all_enty)                   "total FE demand in a region (aggregating similar fe types)"
-
 q_capH2BI(ttot,all_regi)                                  "H2 infrastructure capacities of buildings and industry need to add up to the total infrastructure of the stationary sector"
 q_limitCapFeH2BI(ttot,all_regi,emi_sectors)               "capacity limit equation for H2 infrastructure capacities of buildings and industry"
 
@@ -574,8 +561,6 @@ $endif.minMaxSeFeSectorShareDev
 $ifthen.limitSolidsFossilRegi not %cm_limitSolidsFossilRegi% == "off"
   q_fossilSolidsLimitReg(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)  "limit solids fossil to be lower or equal to previous year values in each (sector x emiMkt) combination"
 $endif.limitSolidsFossilRegi
-
-q_CDRspending(ttot,all_regi)                             "expenses for net negative emissions relative to GDP"
 ;
 ***----------------------------------------------------------------------------------------
 ***                                   SCALARS
