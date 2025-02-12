@@ -122,20 +122,24 @@ q33_EW_capconst(t,regi)..
 *'  Calculation of the total amount of ground rock on the fields in timestep t.
 *'  The first part of the equation describes the decay of the rocks added until that time,
 *'  the rest describes the newly added rocks.
+*'  The amounts already on or newly spread on the fields are multiplied with the total fraction 
+*'  remaining for the next time step, i.e. the fraction not weathering in the time step years. 
+*'  This fraction is generally calculated as (1-p33_rock_weath_rate)**(time_step_years).
+*'  For better solver solution, it is rewritten according to a**b = exp(log(a)*b) as
+*'  exp(log(1-p33_rock_weath_rate) * time_step_years).
+
 ***---------------------------------------------------------------------------
 q33_EW_onfield_tot(ttot,regi,rlf_cz33,rlf)$(ttot.val ge max(2025, cm_startyear))..
     v33_EW_onfield_tot(ttot,regi,rlf_cz33,rlf)
     =e=
-    v33_EW_onfield_tot(ttot-1,regi,rlf_cz33,rlf) * exp(-p33_co2_rem_rate(rlf_cz33) * pm_ts(ttot))
+    v33_EW_onfield_tot(ttot-1,regi,rlf_cz33,rlf) * exp(log(1-p33_rock_weath_rate(rlf_cz33)) * pm_ts(ttot))
     + v33_EW_onfield(ttot-1,regi,rlf_cz33,rlf) * (
         sum(tall$(tall.val le (ttot.val - pm_ts(ttot)/2) and tall.val gt (ttot.val - pm_ts(ttot))),
-            exp(-p33_co2_rem_rate(rlf_cz33) * (ttot.val - tall.val))
+            exp(log(1-p33_rock_weath_rate(rlf_cz33)) * (ttot.val - tall.val)))
         )
-    )
     + v33_EW_onfield(ttot,regi,rlf_cz33,rlf) * (
         sum(tall$(tall.val le ttot.val and tall.val gt (ttot.val - pm_ts(ttot)/2)),
-            exp(-p33_co2_rem_rate(rlf_cz33) * (ttot.val-tall.val))
-        )
+            exp(log(1-p33_rock_weath_rate(rlf_cz33)) * (ttot.val-tall.val)))
     )
 ;
 
@@ -146,8 +150,8 @@ q33_EW_emi(t,regi)..
     vm_emiCdrTeDetail(t,regi, "weathering")
     =e=
     sum((rlf_cz33, rlf),
-        - v33_EW_onfield_tot(t,regi,rlf_cz33,rlf) * s33_co2_rem_pot * (1 - exp(-p33_co2_rem_rate(rlf_cz33)))
-    )
+        - v33_EW_onfield_tot(t,regi,rlf_cz33,rlf) * s33_co2_rem_pot * p33_rock_weath_rate(rlf_cz33)
+        )
     ;
 
 ***---------------------------------------------------------------------------
