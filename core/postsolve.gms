@@ -77,6 +77,7 @@ loop(ttot$(ttot.val ge 2005),
 *** assume GDP is flat from 2150 on (only enters damage calculations in the far future)
 pm_GDPGross(tall,regi)$(tall.val ge 2150) = pm_GDPGross("2149",regi); 
 
+
 *** CG: calculate marginal adjustment cost for capacity investment: d(vm_costInvTeAdj) / d(vm_deltaCap)  !!!! the closed formula only holds when v_adjFactorGlob.fx(t,regi,te) = 0;
 o_margAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te)) =  vm_costTeCapital.l(ttot,regi,te) * p_adj_coeff(ttot,regi,te)
     * 2 * (sum(te2rlf(te,rlf), vm_deltaCap.l(ttot,regi,te,rlf)) - sum(te2rlf(te,rlf), vm_deltaCap.l(ttot-1,regi,te,rlf)))

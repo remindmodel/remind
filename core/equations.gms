@@ -1251,6 +1251,4 @@ q_fossilSolidsLimitReg(ttot,regi,entySe,entyFe,sector,emiMkt)$(limitSolidsFossil
   vm_demFeSector_afterTax(ttot-1,regi,entySe,entyFe,sector,emiMkt);
 $endif.limitSolidsFossilRegi
 
-
-
 *** EOF ./core/equations.gms
