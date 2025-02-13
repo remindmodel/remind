@@ -2039,20 +2039,6 @@ entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy and sector m
   fehes.indst.fehei
 /
 
-entyFe2FeType(all_enty,all_enty) "final energy categories mapping to final energyfor CDR"
-/
-    feels.feels
-    feelt.feels
-    fehes.fehes  
-    fedie.fedie
-    fepet.fedie
-    fehos.fedie    
-    feh2s.feh2s
-    feh2t.feh2s
-    fegas.fegas
-    fegat.fegas
-/
-
 all_emiMkt      "emission markets"
 /
   ETS     "ETS emission market"
