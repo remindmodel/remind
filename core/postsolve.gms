@@ -19,7 +19,7 @@ pm_actualbudgetco2(ttot)$( 2020 lt ttot.val )
     )
   * sm_c_2_co2;
 *** track `pm_actualbudgetco2(ttot)` over iterations
-pm_actualbudgetco2_iter(iteration,ttot)$( 2020 lt ttot.val) = pm_actualbudgetco2(ttot);
+p_actualbudgetco2_iter(iteration,ttot)$( 2020 lt ttot.val) = pm_actualbudgetco2(ttot);
 
 *** track pm_taxCO2eq over iterations - pm_taxCO2eq is adjusted in 45_carbonprice/functionalForm/postsolve.gms and consequently pm_taxCO2eq_iter gets overwritten there
 pm_taxCO2eq_iter(iteration,t,regi) = pm_taxCO2eq(t,regi);
