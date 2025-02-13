@@ -25,6 +25,10 @@ p21_taxrevCCS0(ttot,regi) = cm_frac_CCS * pm_data(regi,"omf","ccsinje") * pm_inc
                             * ( sum(teCCS2rlf(te,rlf), sum(ccs2te(ccsCo2(enty),enty2,te), vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf) ) ) )
                             * (1/pm_ccsinjecrate(regi)) * sum(teCCS2rlf(te,rlf), sum(ccs2te(ccsCo2(enty),enty2,te), vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf) ) ) / pm_dataccs(regi,"quan","1");
 pm_taxrevNetNegEmi0(ttot,regi) = cm_frac_NetNegEmi * pm_taxCO2eqSum(ttot,regi) * v21_emiALLco2neg.l(ttot,regi);
+
+*** Display for debugging
+display pm_taxrevNetNegEmi0, v21_emiALLco2neg.l, v21_emiALLco2neg_slack.l;
+
 p21_taxrevFE0(ttot,regi) = sum((entyFe,sector)$entyFe2Sector(entyFe,sector),
     ( p21_tau_fe_tax(ttot,regi,sector,entyFe) + p21_tau_fe_sub(ttot,regi,sector,entyFe) ) 
     * 
@@ -78,6 +82,15 @@ p21_taxrevFlex_iter(iteration+1,ttot,regi) = v21_taxrevFlex.l(ttot,regi);
 p21_taxrevImport_iter(iteration+1,ttot,regi,tradePe) = v21_taxrevImport.l(ttot,regi,tradePe);
 p21_taxrevChProdStartYear_iter(iteration+1,t,regi) = v21_taxrevChProdStartYear.l(t,regi);
 p21_taxrevSE_iter(iteration+1,t,regi) = v21_taxrevSE.l(t,regi);
+
+*** Compute gross emissions in current iteration - will be used to compute net-negative emissions tax in next iteration
+*** vm_emiCdrAll is a positive variable. Therefore, gross emissions are computed as net emissions plus CDR
+*** Taking the max should not be necessary, and could be removed if we are sure that vm_emiCdrAll contains all CDR
+p21_grossEmi0(t,regi) = max(vm_emiAll.l(t,regi,"co2") + vm_emiCdrAll.l(t,regi),0);
+
+*** Disply for debugging
+display p21_residualEmissions0, vm_emiCdrAll.l, vm_emiAll.l;
+
 
 display p21_taxrevFE_iter;
 

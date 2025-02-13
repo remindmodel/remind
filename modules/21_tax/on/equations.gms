@@ -110,11 +110,13 @@ v21_taxrevNetNegEmi(t,regi) =e= cm_frac_NetNegEmi * pm_taxCO2eqSum(t,regi) * v21
 ***---------------------------------------------------------------------------
 *'  Auxiliary calculation of net-negative emissions: 
 *'  v21_emiAllco2neg and v21_emiAllco2neg_slack are defined as positive variables
-*'  so as long as vm_emiAll is positive, v21_emiAllco2neg_slack adjusts so that sum is zero
-*'  if vm_emiAll is negative, in order to minimize tax v21_emiAllco2neg_slack becomes zero
+*'  so as long as vm_emiCdrAll is smaller than p21_grossEmi0, v21_emiAllco2neg_slack adjusts so that sum is zero
+*'  if vm_emiCdrAll is larger than p21_grossEmi0, in order to minimize tax v21_emiAllco2neg_slack becomes zero
+*'  Note that (vm_emiCdrAll(t,regi) - p21_grossEmi0(t,regi)) - CDR in current iteration minus gross CO2 emissions in previous iteration - 
+*'  is used instead of (-vm_emiAll(t,regi,"co2")) - minus net CO2 emissions - to avoid incentivizing higher gross emissions
 ***---------------------------------------------------------------------------
 q21_emiAllco2neg(t,regi)..
-v21_emiALLco2neg(t,regi) =e= -vm_emiAll(t,regi,"co2") + v21_emiALLco2neg_slack(t,regi);
+v21_emiALLco2neg(t,regi) =e= (vm_emiCdrAll(t,regi) - p21_grossEmi0(t,regi)) + v21_emiALLco2neg_slack(t,regi);
 
 ***---------------------------------------------------------------------------
 *'  Calculation of PE tax: tax rate times primary energy

@@ -166,6 +166,12 @@ vm_emiMac.l(ttot,regi,enty) = 0;
 *LB* initialization of v21_emiALLco2neg
 v21_emiALLco2neg.l(ttot,regi) =0;
 
+*** Initializations of p21_grossEmi0 
+* TODO: It would probably be better for the convergence to introduce the tax only from iteration 2 
+* instead of charging the tax for all CDR in the first iteration which is what happens with p21_grossEmi0 equal to 0
+p21_grossEmi0(ttot,regi) = 0;
+
+
 *DK initialize bioenergy tax
 v21_tau_bio.l(ttot) = 0;
 

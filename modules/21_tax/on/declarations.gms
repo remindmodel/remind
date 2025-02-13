@@ -65,6 +65,8 @@ p21_tau_CO2_tax_gdx_bau(ttot,all_regi)       "tax path from gdx, may overwrite d
 
 p21_implicitDiscRateMarg(ttot,all_regi,all_in)  "Difference between the normal discount rate and the implicit discount rate"
 
+p21_grossEmi0(ttot,all_regi)                       "Gross emissions from previous iteration"
+
 p21_tau_SE_tax_rampup(ttot,all_regi,all_te,teSeTax_coeff)  "Parameters of logistic function to describe relationship between SE electricity tax rate and share of technology in total electricity demand"
 $ifThen.SEtaxRampUpParam not "%cm_SEtaxRampUpParam%" == "off" 
   p21_SEtaxRampUpParameters(ext_regi,all_te,teSeTax_coeff)   "config values for SE electricity tax rate tech specific ramp up logistic function parameters" / %cm_SEtaxRampUpParam% /
