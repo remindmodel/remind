@@ -274,16 +274,24 @@ p04_prodCoupleGlob("pecoal","seel","coalchp","sehe")        = 0.61;
 p04_prodCoupleGlob("pegas","seel","gaschp","sehe")          = 0.42;
 p04_prodCoupleGlob("pecoal","seh2","coalh2","seel")         = 0.081;
 p04_prodCoupleGlob("pecoal","seh2","coalh2c","seel")        = 0.054;
+
 p04_prodCoupleGlob("pebiolc","seel","biochp","sehe")        = 0.72;
-p04_prodCoupleGlob("pebiolc","seliqbio","bioftrec","seel")  = 0.147; !! from Liu et al. 2011 (Making Fischer-Tropsch Fuels and Electricity from Coal and Biomass: Performance and Cost Analysis)
-p04_prodCoupleGlob("pebiolc","seliqbio","bioftcrec","seel") = 0.108; !! from Liu et al. 2011 (Making Fischer-Tropsch Fuels and Electricity from Coal and Biomass: Performance and Cost Analysis)
 p04_prodCoupleGlob("pebiolc","segabio","biogasc","seel")    = -0.07;
 p04_prodCoupleGlob("pebiolc","seliqbio","bioethl","seel")   = 0.153;
+
+*** Electricity co-production for this Fischer-Tropsch-based biomass-to-liquids route. Values taken from:
+*** - Liu et al. 2011 (Making Fischer-Tropsch Fuels and Electricity from Coal and Biomass: Performance and Cost Analysis) https://doi.org/10.1021/ef101184e
+*** broadly in line with the other studies:
+*** - Swanson et al. 2010 estimate 7-11% for a non-CCS facility https://doi.org/10.1016/j.fuel.2010.07.027
+*** - Meerman et al. 2011 give 23-26% for a non-CCS facility (with pellets as feedstocks, though) https://doi.org/10.1016/j.rser.2011.03.018 
+p04_prodCoupleGlob("pebiolc","seliqbio","bioftrec","seel")  = 0.147;
+p04_prodCoupleGlob("pebiolc","seliqbio","bioftcrec","seel") = 0.108;
+
 p04_prodCoupleGlob("segabio","fegas","tdbiogas","seel")     = -0.05;
 p04_prodCoupleGlob("segafos","fegas","tdfosgas","seel")     = -0.05;
 p04_prodCoupleGlob("pegeo","sehe","geohe","seel")           = -0.3;
 p04_prodCoupleGlob("cco2","ico2","ccsinje","seel")          = -0.005;
-*** use global data for coule products if regional data form IEA are 0
+*** use global data for couple products if regional data form IEA are 0
 loop(pc2te(enty,enty2,te,enty3),
     loop(regi,
        if(pm_prodCouple(regi,enty,enty2,te,enty3) eq 0,
