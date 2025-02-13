@@ -37,11 +37,11 @@ pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt) "CO2 or CO2eq region 
 pm_emissionsForeign(tall,all_regi,all_enty)          "total emissions of other regions (nash relevant)"
 pm_co2eqForeign(tall,all_regi)                       "emissions, which are part of the climate policy, of other regions (nash relevant)"
 pm_cesdata(tall,all_regi,all_in,cesParameter)        "parameters of the CES function"
-f_pop(tall,all_regi,all_POPscen)                     "population data for all possible scenarios"
+f_pop(tall,all_regi,all_GDPpopScen)                     "population data for all possible scenarios"
 pm_pop(tall,all_regi)                                "population data [bn people]"
 pm_gdp(tall,all_regi)                                "GDP data [trn US$ 2005]"
 p_developmentState(tall,all_regi)                    "level of development based on GDP per capita"
-f_lab(tall,all_regi,all_POPscen)                     "labour data for all possible scenarios"
+f_lab(tall,all_regi,all_GDPpopScen)                     "labour data for all possible scenarios"
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
 pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer)"
 *** If elasticities of substitution (sigma) is below 1, the smaller it is the less the substitution replacement effect between different CES nodes.

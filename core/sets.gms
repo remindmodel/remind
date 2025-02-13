@@ -17,72 +17,12 @@ numberOrder     "set to assure that numeric values follow ascending order in the
 *** Save select compiler flags as sets, to make them accessible from the final gdx
 c_expname       "c_expname as set for use in GDX"       /%c_expname%/
 c_description   "%c_description%"   /"for model description, see explanatory text"/
-cm_GDPscen      "cm_GDPscen as set for use in GDX"      /%cm_GDPscen%/
+cm_GDPpopScen   "cm_GDPpopScen as set for use in GDX"      /%cm_GDPpopScen%/
 
 
-all_POPscen     " all possible population scenarios"
+all_GDPpopScen    "all possible GDP scenarios"
 /
-pop_SDP         "SDP population scenario"
-pop_SDP_EI
-pop_SDP_MC
-pop_SDP_RC
-pop_SSP1        "SSP1 population scenario"
-pop_SSP2        "SSP2 population scenario"
-pop_SSP2EU
-pop_SSP3        "SSP3 population scenario"
-pop_SSP4        "SSP4 population scenario"
-pop_SSP5        "SSP5 population scenario"
-pop_a1
-pop_a2
-pop_b1
-pop_b2
-/
-
-all_GDPscen    "all possible GDP scenarios"
-/
-gdp_SDP         "SDP fastGROWTH medCONV"
-gdp_SDP_EI
-gdp_SDP_MC
-gdp_SDP_RC
-gdp_SSP1        "SSP1 fastGROWTH medCONV"
-gdp_SSP2        "SSP2 medGROWTH medCONV"
-gdp_SSP2EU
-gdp_SSP3        "SSP3 slowGROWTH slowCONV"
-gdp_SSP4        "SSP4  medGROWTH mixedCONV"
-gdp_SSP5        "SSP5 fastGROWTH fastCONV"
-gdp_a1
-gdp_a2
-gdp_b1
-gdp_b2
-/
-
-all_demScen    "all possible demand scenarios"
-/
-gdp_SDP         "SDP fastGROWTH medCONV"
-gdp_SDP_EI
-gdp_SDP_MC
-gdp_SDP_RC
-gdp_SSP1        "SSP1 fastGROWTH medCONV"
-gdp_SSP2        "SSP2 medGROWTH medCONV"
-gdp_SSP2EU
-gdp_SSP3        "SSP3 slowGROWTH slowCONV"
-gdp_SSP4        "SSP4  medGROWTH mixedCONV"
-gdp_SSP5        "SSP5 fastGROWTH fastCONV"
-gdp_SSP2_lowEn  "SSP2 with low energy"
-gdp_SSP2EU_NAV_ele "NAVIGATE demand scenarios: Electrification and fuel shift"
-gdp_SSP2EU_NAV_act "NAVIGATE demand scenarios: Activity reduction and activity shift"
-gdp_SSP2EU_NAV_tec "NAVIGATE demand scenarios: Technological improvements - energy efficiency"
-gdp_SSP2EU_NAV_lce "NAVIGATE demand scenarios: Low consumption energy (act + tec)"
-gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures (ele + act + tec)"
-gdp_SSP2EU_CAMP_weak   "CAMPAIGNers scenario with low ambition lifestyle change"
-gdp_SSP2EU_CAMP_strong "CAMPAIGNers scenario with high ambition lifestyle change"
-gdp_SSP2_demDiffer_IKEA "Demand reduction in Global North (CAZ,EUR,JPN,NEU,USA) and demand increase in Emerging regions (IND,LAM,OAS,SSA). Reduction follows the factor f of demRedStrong scenario, while increase uses factor 2-f."
-gdp_SSP2_highDemDEU "High-demand scenario in industry and transport for Germany, rest of the world has SSP2 standard demand trajectories"
-/
-
-all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
-/
-SDP         "SDP scenario"
+SDP
 SDP_EI
 SDP_MC
 SDP_RC
@@ -92,10 +32,34 @@ SSP2EU
 SSP3        "SSP3 slowGROWTH slowCONV"
 SSP4        "SSP4  medGROWTH mixedCONV"
 SSP5        "SSP5 fastGROWTH fastCONV"
-a1
-a2
-b1
-b2
+SSP2IndiaMedium
+SSP2IndiaHigh
+/
+
+all_demScen    "all possible demand scenarios"
+/
+SDP         "SDP fastGROWTH medCONV"
+SDP_EI
+SDP_MC
+SDP_RC
+SSP1        "SSP1 fastGROWTH medCONV"
+SSP2        "SSP2 medGROWTH medCONV"
+SSP3        "SSP3 slowGROWTH slowCONV"
+SSP4        "SSP4  medGROWTH mixedCONV"
+SSP5        "SSP5 fastGROWTH fastCONV"
+SSP2_lowEn  "SSP2 with low energy"
+SSP2_NAV_ele "NAVIGATE demand scenarios: Electrification and fuel shift"
+SSP2_NAV_act "NAVIGATE demand scenarios: Activity reduction and activity shift"
+SSP2_NAV_tec "NAVIGATE demand scenarios: Technological improvements - energy efficiency"
+SSP2_NAV_lce "NAVIGATE demand scenarios: Low consumption energy (act + tec)"
+SSP2_NAV_all "NAVIGATE demand scenarios: All measures (ele + act + tec)"
+SSP2_CAMP_weak   "CAMPAIGNers scenario with low ambition lifestyle change"
+SSP2_CAMP_strong "CAMPAIGNers scenario with high ambition lifestyle change"
+SSP2_demDiffer_IKEA "Demand reduction in Global North (CAZ,EUR,JPN,NEU,USA) and demand increase in Emerging regions (IND,LAM,OAS,SSA). Reduction follows the factor f of demRedStrong scenario, while increase uses factor 2-f."
+SSP2_demDiffer
+SSP2_demRedStrong "edget internal demScen, might be removed soon"
+SSP2_demRedWeak
+SSP2_highDemDEU   "High-demand scenario in industry and transport for Germany, rest of the world has SSP2 standard demand trajectories"
 /
 
 all_SSP_forcing_adjust  "all possible forcing targets and budgets according to SSP scenario such that magicc forcing meets the target"
@@ -246,13 +210,13 @@ all_te          "all energy technologies, including from modules"
         tdheb           "transmission and distribution for heat to buildings"
 
         ccsinje         "injection of co2"
-*RP* Storage technology:
+*** Storage technology:
         storspv         "storage technology for photo voltaic (PV)"
         storwind        "storage technology for wind onshore"
         storwindon      "storage technology for wind onshore"
         storwindoff     "storage technology for wind offshore"
         storcsp         "storage technology for concentrating solar power (CSP)"
-*RP* grid technology:
+*** grid technology:
         gridspv         "grid between areas with high pv production and the rest"
         gridcsp         "grid between areas with high csp production and the rest"
         gridwind        "grid between areas with high wind onshore production and the rest"
