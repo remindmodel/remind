@@ -208,17 +208,20 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
       errorsfound <- errorsfound + length(intersect(names(forbiddenColumnNames), unknownColumnNames))
     }
     # sort out known but forbidden names from unknown
-    unknownColumnNames <- setdiff(unknownColumnNames, names(forbiddenColumnNames))
+    commentColNames <- grep("^\\.", unknownColumnNames, value = TRUE)
+    if (length(commentColNames) > 0) {
+      message("readCheckScenarioConfig.R treats these columns starting with '.' as comments: ", paste(commentColNames, collapse = ", "))
+    }
+    unknownColumnNames <- setdiff(unknownColumnNames, c(commentColNames, names(forbiddenColumnNames)))
     if (length(unknownColumnNames) > 0) {
       message("\nAutomated checks did not understand these columns in ", basename(filename), ":")
       message("  ", paste(unknownColumnNames, collapse = ", "))
       if (isFALSE(coupling)) message("These are no cfg or cfg$gms switches found in main.gms and default.cfg.")
       if (coupling %in% "MAgPIE") message("Maybe you specified REMIND switches in coupled config, which does not work.")
       message("If you find false positives, add them to knownColumnNames in scripts/start/readCheckScenarioConfig.R.\n")
-      unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
-      if (length(unknownColumnNamesNoComments) > 0) {
+      if (length(unknownColumnNames) > 0) {
         if (testmode) {
-          warning("Unknown column names: ", paste(unknownColumnNamesNoComments, collapse = ", "))
+          warning("Unknown column names: ", paste(unknownColumnNames, collapse = ", "))
         } else if (errorsfound == 0) {
           message("Do you want to continue and simply ignore them? Y/n")
           userinput <- tolower(gms::getLine())
