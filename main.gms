@@ -1841,7 +1841,7 @@ $setglobal cm_taxrc_RE  none   !! def = none   !! regexp = none|REdirect
 *' cm_emifacs_baseyear "base year for deriving nonCO2 emission factors/econometric estimates/scaling factors"
 *' (2005): Uses EDGAR data with 2005 as base year, and Lucas et al. 2007 IMAGE for N2O baselines
 *' (2020): Uses CEDS2024 data with 2020 as base year, and Harmsen et al. 2022 IMAGE for N2O baselines
-$setGlobal cm_emifacs_baseyear  2005          !! def = 2005
+$setGlobal cm_emifacs_baseyear  2020          !! def = 2005
 *' cm_repeatNonOpt       "should nonoptimal regions be solved again?"
 *'
 *' *  (off): no, only infeasable regions are repeated, standard setting
