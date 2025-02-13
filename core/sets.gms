@@ -1234,10 +1234,7 @@ te(all_te)              "energy technologies"
         tdh2i           "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
         tdh2b           "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
 
-*        ccscomp         "compression of co2, CCS related"
-*        ccspipe         "transportation of co2, CCS related"
         ccsinje         "injection of co2, CCS related"
-*        ccsmoni         "monitoring of co2, CCS related"
 
         storspv         "storage technology for photo voltaic"
 ***        storwind        "storage technology for wind onshore"
@@ -1316,10 +1313,7 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
   elh2            "hydrogen elecrolysis"
   h2turb          "hydrogen turbine for electricity production"
   h2curt          "hydrogen production from curtailment"
-*** ccscomp         "compression of co2, CCS related"
-*** ccspipe         "transportation of co2, CCS related"
   ccsinje         "injection of co2, CCS related"
-*** ccsmoni         "monitoring of co2, CCS related"
 
   storspv         "storage technology for PV"
 ***  storwind        "storage technology for wind onshore"
@@ -2664,8 +2658,6 @@ emi2te(all_enty,all_enty,all_te,all_enty)    " map emissions to technologies"
         pebiolc.segabio.biogasc.n2o
         segabio.fegas.tdbiogas.ch4
         segafos.fegas.tdfosgas.ch4
-*        cco2.pco2.ccscomp.co2
-*        pco2.tco2.ccspipe.co2
         cco2.ico2.ccsinje.co2
         pebiolc.seel.bioigccc.co2
         pebiolc.seel.bioigccc.cco2
@@ -2772,18 +2764,12 @@ emi2fuelMine(all_enty,all_enty,rlf)   "missions from fossil fuel extraction"
 /
 ccs2te(all_enty,all_enty,all_te)   "chain for ccs"
 /
-*        cco2.pco2.ccscomp
-*        pco2.tco2.ccspipe
         cco2.ico2.ccsinje
-*        ico2.sco2.ccsmoni
 /
 
 ccs2Leak(all_enty,all_enty,all_te,all_enty)   "leakage along ccs chain"
 /
-*        cco2.pco2.ccscomp.co2
-*        pco2.tco2.ccspipe.co2
         cco2.ico2.ccsinje.co2
-*        ico2.sco2.ccsmoni.co2
 /
 
 pe2rlf(all_enty,rlf)     "map exhaustible energy to grades for qm_fuel2pe"
@@ -2856,7 +2842,6 @@ teMat2rlf(all_te,rlf)     "mapping for material production technologies to grade
 
 teCCS2rlf(all_te,rlf)     "mapping for CCS technologies to grades"
 /
-***      (ccscomp,ccspipe,ccsinje,ccsmoni) . 1
       (ccsinje) . 1
 /
 

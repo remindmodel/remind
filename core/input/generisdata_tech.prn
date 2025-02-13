@@ -110,15 +110,6 @@ eta                   1.00     1.00        0.90        1.00        1.00        1
 omf                   0.08     0.08        0.02        0.10        0.10        0.10        0.10       0.05
 lifetime                30       30          45          45          45          45          45         45
 
-
-*+               ccscomp     ccspipe     ccsinje     ccsmoni
-*tech_stat            1           1           2           2
-*inco0                0.1         100          75         0.1
-*mix0                1.00        1.00        1.00        1.00
-*eta                 1.00        1.00        1.00        1.00
-*omf                 0.00        0.02        0.08        0.00
-*lifetime              40          40          40          40
-
 +                 ccsinje
 tech_stat               0
 inco0                 350
