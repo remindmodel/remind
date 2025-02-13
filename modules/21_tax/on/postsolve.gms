@@ -89,7 +89,7 @@ p21_taxrevSE_iter(iteration+1,t,regi) = v21_taxrevSE.l(t,regi);
 p21_grossEmi0(t,regi) = max(vm_emiAll.l(t,regi,"co2") + vm_emiCdrAll.l(t,regi),0);
 
 *** Disply for debugging
-display p21_residualEmissions0, vm_emiCdrAll.l, vm_emiAll.l;
+display p21_grossEmi0, vm_emiCdrAll.l, vm_emiAll.l;
 
 
 display p21_taxrevFE_iter;
