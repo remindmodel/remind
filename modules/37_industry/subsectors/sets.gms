@@ -695,12 +695,12 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
    StCrNG . standard . HVC
    StCrLiq . standard . HVC
 
-   MeSySol   . (greyh2,greenh2) . methanol !! methanol tech QIANZHI
+   MeSySol   . (greyh2,greenh2) . methanol
    MeSyNG    . standard     . methanol
    MeSyLiq   . standard     . methanol
    MeSyH2    . standard     . methanol
 
-   AmSyCoal . standard . ammonia !! ammonia tech QIANZHI
+   AmSyCoal . standard . ammonia
    AmSyNG . standard . ammonia
    AmSyLiq . standard . ammonia
    AmSyH2 . standard . ammoniaH2
@@ -938,6 +938,12 @@ $endif.cm_subsec_model_steel
 
 fe2ppfen_no_ces_use(all_enty,all_in)   "Match ESM entyFe to ppfen that are not used in the CES tree, but for datainput for process-bases industry"
   /
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+    fesos . feso_chemicals
+    fehos . feli_chemicals
+    fegas . fega_chemicals
+    feels . (feelhth_chemicals, feelwlth_chemicals)
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     fesos . feso_steel
     fehos . feli_steel
