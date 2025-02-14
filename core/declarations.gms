@@ -28,20 +28,20 @@ pm_share_trans(tall,all_regi)                        "transportation share"
 pm_gdp_gdx(tall,all_regi)                            "GDP path from gdx, updated iteratively."
 p_inv_gdx(tall,all_regi)                             "macro-investments path from gdx, updated iteratively."
 pm_taxCO2eq(ttot,all_regi)                           "CO2 tax path in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
+pm_taxCO2eq_iter(iteration,ttot,all_regi)            "CO2 tax path (pm_taxCO2eq) tracked over iterations [T$/GtC]"
+pm_taxCO2eq_anchor_iterationdiff(ttot)               "difference in global anchor carbon price to the last iteration [T$/GtC]"
 pm_taxCO2eqRegi(tall,all_regi)                       "additional regional CO2 tax path in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
-pm_taxCO2eq_anchor_iterationdiff(ttot)               "help parameter for iterative adjustment of taxes"
-pm_taxCO2eq_anchor_iterationdiff_tmp(ttot)           "help parameter for iterative adjustment of taxes"
 pm_taxCO2eqSum(tall,all_regi)                        "sum of pm_taxCO2eq, pm_taxCO2eqRegi, pm_taxCO2eqSCC in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
 pm_taxemiMkt(ttot,all_regi,all_emiMkt)                "CO2 or CO2eq region and emission market specific emission tax"
 pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt) "CO2 or CO2eq region and emission market specific emission tax per iteration"
 pm_emissionsForeign(tall,all_regi,all_enty)          "total emissions of other regions (nash relevant)"
 pm_co2eqForeign(tall,all_regi)                       "emissions, which are part of the climate policy, of other regions (nash relevant)"
 pm_cesdata(tall,all_regi,all_in,cesParameter)        "parameters of the CES function"
-f_pop(tall,all_regi,all_POPscen)                     "population data for all possible scenarios"
+f_pop(tall,all_regi,all_GDPpopScen)                     "population data for all possible scenarios"
 pm_pop(tall,all_regi)                                "population data [bn people]"
 pm_gdp(tall,all_regi)                                "GDP data [trn US$ 2005]"
 p_developmentState(tall,all_regi)                    "level of development based on GDP per capita"
-f_lab(tall,all_regi,all_POPscen)                     "labour data for all possible scenarios"
+f_lab(tall,all_regi,all_GDPpopScen)                     "labour data for all possible scenarios"
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
 pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer)"
 *** If elasticities of substitution (sigma) is below 1, the smaller it is the less the substitution replacement effect between different CES nodes.
@@ -53,7 +53,7 @@ p_r(ttot,all_regi)                                   "calculating capital intere
 ***----------------------------------------------------------------------------------------
 ***-----------------------------------------------ESM module-------------------------------
 pm_emiExog(tall,all_regi,all_enty)                   "exogenous emissions"
-pm_macBaseMagpie(tall,all_regi,all_enty)              "baseline emissions from MAgPIE (type emiMacMagpie)"
+pm_macBaseMagpie(tall,all_regi,all_enty)             "baseline emissions from MAgPIE (type emiMacMagpie)"
 p_macBaseMagpieNegCo2(tall,all_regi)                 "net negative emissions from co2luc"
 p_macBaseExo(tall,all_regi,all_enty)                 "exogenous baseline emissions (type emiMacExo)"
 pm_macAbat(tall,all_regi,all_enty,steps)             "abatement levels based on data from van Vuuren [fraction]"
@@ -91,7 +91,7 @@ pm_extRegiEarlyRetiRate(ext_regi)                    "regional early retirement 
 $IFTHEN.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
 p_techEarlyRetiRate(ext_regi,all_te)                 "Technology specific early retirement rate" / %c_tech_earlyreti_rate% /
 $ENDIF.tech_earlyreti
-pm_regiEarlyRetiRate(ttot,all_regi,all_te)                "regional early retirement rate (model native regions)"
+pm_regiEarlyRetiRate(ttot,all_regi,all_te)           "regional early retirement rate (model native regions)"
 
 p_maxRegTechCost2015(all_te)                         "highest historical regional tech cost in 2015"
 p_maxRegTechCost2020(all_te)                         "highest historical regional tech cost in 2020"
@@ -109,16 +109,19 @@ $endif.tech_CO2capturerate
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]"
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1"
 
+pm_actualbudgetco2(ttot)                             "actual level of cumulated emissions starting from 2020 [GtCO2]"
+p_actualbudgetco2_iter(iteration,ttot)               "track actual level of cumulated emissions starting from 2020 over iterations [GtCO2]"
+
 pm_dataccs(all_regi,char,rlf)                               "maximum CO2 storage capacity using CCS technology. [GtC]"
 pm_ccsinjecrate(all_regi)                                   "Regional CCS injection rate factor. 1/a."
 p_extRegiccsinjecrateRegi(ext_regi)                         "Regional CCS injection rate factor. 1/a. (extended regions)"
 pm_dataeta(tall,all_regi,all_te)                            "regional eta data"
 p_emi_quan_conv_ar4(all_enty)                               "conversion factor for various gases to GtCeq"
 pm_emifac(tall,all_regi,all_enty,all_enty,all_te,all_enty)  "emission factor by technology for all types of emissions in emiTe"
-pm_emifacNonEnergy(ttot,all_regi,all_enty,all_enty,emi_sectors,all_enty)                "emission factor for non-energy fedstocks. For now only for Chemicals Industry [GtC per TWa]"
+pm_emifacNonEnergy(ttot,all_regi,all_enty,all_enty,emi_sectors,all_enty) "emission factor for non-energy fedstocks. For now only for Chemicals Industry [GtC per TWa]"
 pm_incinerationRate(ttot,all_regi)                          "share of plastic waste that gets incinerated [fraction]"
-pm_omeg (all_regi,opTimeYr,all_te)                          "technical depreciation parameter, gives the share of a capacity that is still usable after tlt. [none/share, value between 0 and 1]"
-p_aux_lifetime(all_regi,all_te)                             "auxiliary parameter for calculating life times, calculated externally in excel sheet"
+pm_omeg(all_regi,opTimeYr,all_te)                           "technical depreciation parameter, gives the share of a capacity that is still usable after technical life time. [none/share, value between 0 and 1]"
+p_lifetime_max(all_regi,all_te)                             "maximum lifetime of a technology (generisdata_tech gives the average lifetime) [years]"
 pm_pedem_res(ttot,all_regi,all_te)                          "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
 p_ef_dem(all_regi,all_enty)                                 "Demand side emission factor of final energy carriers [MtCO2/EJ]"
 
@@ -182,10 +185,6 @@ p_bound_cap(tall,all_regi,all_te,rlf)                "read-in bound on capacitie
 pm_data(all_regi,char,all_te)                        "Large array for most technical parameters of technologies; more detail on the individual technical parameters can be found in the declaration of the set 'char' "
 pm_cf(tall,all_regi,all_te)                          "Installed capacity availability - capacity factor (fraction of the year that a plant is running)"
 p_tkpremused(all_regi,all_te)                        "turn-key cost premium used in the model (with a discount rate of 3+ pure rate of time preference); in comparison to overnight costs)"
-p_aux_tlt(all_te)                                    "auxilliary parameter to determine maximal lifetime of a technology"
-p_aux_check_omeg(all_te)                             "auxiliary parameter for an automated check that no technology is erroneously entered with pm_omeg('1') value of 0"
-p_aux_check_tlt(all_te)                              "auxiliary parameter for an automated check that the pm_omeg calculation and filling of the opTimeYr2te mapping is in accordance"
-p_aux_tlt_max(all_te)                                "auxiliary parameter to find the last mapping in opTimeYr2te for each technology"
 pm_vintage_in(all_regi,opTimeYr,all_te)              "historical vintage structure. [arbitrary]"
 p_efFossilFuelExtr(all_regi,all_enty,all_enty)       "emission factor for CH4 from fossil fuel extraction and N2O from bioenergy"
 p_efFossilFuelExtrGlo(all_enty,all_enty)             "global emission factor for CH4 from fossil fuel extraction and N2O from bioenergy"
@@ -199,8 +198,7 @@ p_datacs(all_regi,all_enty)                          "fossil energy that is not 
 pm_inco0_t(ttot,all_regi,all_te)                     "New inco0 that is time-dependent for some technologies. [T$/TW]"
 *LB* calculate parameter pm_tsu2opTimeYr for the eq q_transPe2se and q_cap;
 ***this parameter counts backwards from time ttot - only the existing time steps
-p_tsu2opTimeYr_h(ttot,opTimeYr)                      "parameter to generate pm_tsu2opTimeYr",
-pm_tsu2opTimeYr(ttot,opTimeYr)                       "parameter that counts opTimeYr regarding tsu2opTimeYr apping"
+pm_tsu2opTimeYr(ttot,opTimeYr)                       "Counts the number of model timesteps between years ttot-opTimeYr and ttot"
 pm_emissions0(tall,all_regi,all_enty)                "Emissions in last iteration"
 pm_co2eq0(tall,all_regi)                             "vm_co2eq from last iteration"
 pm_capCum0(tall,all_regi,all_te)                     "vm_capCum from last iteration"
@@ -304,7 +302,7 @@ p_share_seh2_s(ttot,all_regi)                        "share of hydrogen used for
 p_share_seel_s(ttot,all_regi)                        "Share of electricity used for stationary sector (feels). [0..1]"
 
 p_discountedLifetime(all_te)                         "Sum over the discounted (@6%) depreciation factor (omega)"
-pm_teAnnuity(all_te)                                  "Annuity factor of a technology"
+pm_teAnnuity(all_te)                                 "Annuity factor of a technology"
 
 ;
 
@@ -380,7 +378,7 @@ vm_prodPe(ttot,all_regi,all_enty)                    "pe production. [TWa, Urani
 vm_demSe(ttot,all_regi,all_enty,all_enty,all_te)     "se demand. [TWa]"
 vm_prodSe(tall,all_regi,all_enty,all_enty,all_te)    "se production. [TWa]"
 vm_prodFe(ttot,all_regi,all_enty,all_enty,all_te)    "fe production. [TWa]"
-vm_demFENonEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "energy flows of non-energy feedstocks [TWa]"
+vm_demFeNonEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "energy flows of non-energy feedstocks [TWa]"
 vm_demFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)          "fe demand per sector and emission market. Taxes should be applied to this variable or variables closer to the supply side whenever possible so the marginal prices include the tax effects. [TWa]"
 vm_demFeSector_afterTax(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "fe demand per sector and emission market after tax. Demand sectors should use this variable in their fe balance equations so demand side marginals include taxes effects. [TWa]"
 v_costFu(ttot,all_regi)                              "fuel costs"
@@ -414,11 +412,6 @@ v_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "share of
 v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids in sector final energy [0..1]"
 
 vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
-
-vm_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)      "Carbon flow: carbon contained in feedstocks with unknown fate (not plastics)(assumed to go back into the atmosphere) [GtC]"
-vm_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "Emissions from incineration of plastic waste [GtC]"
-vm_incinerationCCS(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "CCS from incineration of plastic waste [GtC]"
-vm_nonIncineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)       "Carbon flow: carbon contained in plastics that are not incinerated [GtC]"
 
 v_changeProdStartyearAdj(ttot,all_regi,all_te)       "Absolute effect size of changing output with respect to the reference run for each te"
 vm_changeProdStartyearCost(ttot,all_regi,all_te)     "Costs for changing output with respect to the reference run for each te"
@@ -627,7 +620,7 @@ sm_endBudgetCO2eq                                     "end time step of emission
 sm_budgetCO2eqGlob                                    "budget for global energy-emissions in period 1"
 p_emi_budget1_gdx                                     "budget for global energy-emissions in period 1 from gdx, may overwrite default values"
 
-sm_globalBudget_dev                                   "actual level of global cumulated emissions budget divided by target budget"
+sm_globalBudget_absDev                                "absolute deviation of global cumulated CO2 emissions budget from target budget"
 
 sm_eps                                                "small number: 1e-9 "  /1e-9/
 

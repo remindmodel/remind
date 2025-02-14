@@ -61,7 +61,7 @@ constrTme            4           1           5            1            4        
 mix0
 eta                 1.00        1.00        1.00        1.00         1.00       1.00        1.00        1.00
 omf                 0.04        0.06       0.025        0.02         0.03       0.02                   0.025
-lifetime              30          25         130          25           25         30          25          30
+lifetime              30          25         100          25           25         30          25          30
 incolearn                                               2200         4000       5110                    8760
 ccap0                                                   0.06       0.0007      0.005                  0.0002
 learn                                                   0.12         0.12      0.25                    0.103
@@ -233,6 +233,10 @@ eta: 0.55, same as without carbon capture
 Photovoltaics - spv
 overall learning rate was increased to 25% and floor costs decreased to 50$2015/kW, as recent
 (2024) prices in various IEA-PVPS reports or other market reports show learning was faster than expected.
+
+Hydropower - hydro
+"Hydropower facilities typically have physical lifetimes of at least 100 years" (section 3.2, p31)
+https://ppp.worldbank.org/public-private-partnership/sites/default/files/2024-07/Handbook-for-Practitioners-and-Decision-Makers.pdf
 
 Direct Air Capture - dac
 learning parameterization:

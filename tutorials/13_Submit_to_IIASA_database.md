@@ -9,13 +9,14 @@ Many projects have to upload their scenario data to the database provided by [II
 At the beginning of the project, there should be a process to get access to the project Internal Scenario Explorer. In case of problems, contact [Daniel Huppmann](https://iiasa.ac.at/staff/daniel-huppmann).
 REMIND model registration files can be found in the [mappings](https://github.com/IAMconsortium/common-definitions/tree/main/mappings) and the [region](https://github.com/IAMconsortium/common-definitions/tree/main/definitions/region/native_regions) folder of the common-definitions repository, or in [piamInterfaces](https://github.com/pik-piam/piamInterfaces/tree/master/inst/registration).
 Scenarios and project variables should be registered in the IIASA database.
-Often, the variable list is based on the `AR6` template once generated for the IPCC Sixth Assessment Report, or the new template for the NAVIGATE project.
+Often, the variable list is based on the `AR6` template once generated for the IPCC Sixth Assessment Report, or the `NAVIGATE` or `ScenarioMIP` project.
 This template file contains the list of variables and associated units may be provided as yaml or xlsx file.
 It can be used to check the variable names and units of your submission.
 
 ## Step 2: generate file to upload
 
-You can generate the file to be uploaded by either calling [`piamInterfaces::generateIIASASubmission`](https://github.com/pik-piam/piamInterfaces/blob/master/R/generateIIASASubmission.R) or using a wrapper based on `output.R`
+You can generate the file to be uploaded by either calling [`piamInterfaces::generateIIASASubmission`](https://github.com/pik-piam/piamInterfaces/blob/master/R/generateIIASASubmission.R) or using a wrapper based on `output.R`.
+For more information on piamInterfaces and the mappings, check [its tutorial](https://github.com/pik-piam/piamInterfaces/blob/master/tutorial.md).
 
 `generateIIASASubmission` requires the following inputs:
 

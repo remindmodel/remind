@@ -178,6 +178,15 @@ Rscript scripts/output/comparison/plot_compare_iterations.R folder=another-outpu
 To compare the REMIND runs, a `compareScenario2` for each scenario is produced automatically in the main folder (look for `compScen_rem-1-5_Base.pdf` or similar).
 You can switch that off by setting `run_compareScenario` to `FALSE` in `start_bundle_coupled.R`.
 
+# Compare scalars from all coupled runs
+
+By running something like
+```bash
+Rscript --vanilla scripts/utils/readcoupledgdx.R cm_startyear,o_iterationNumber
+```
+you can get a compact overview of scalars (such as `cm_startyear`, `o_iterationNumber`, `s45_actualbudgetco2` or `cm_peakBudgYr`) for all coupled runs in your folder.
+PIK cluster users can use `readcoupledgdx yourvariable` as a shortcut.
+
 # Technical concept
 
 There are two components of the REMIND-MAgPIE coupling: the prominent dynamic part (models solve iteratively and exchange data via coupling script), the more hidden static part (exogenous assumptions derived from the other model, updated manually from time to time via [`mrcommons`](https://github.com/pik-piam/mrcommons/blob/master/R/readMAgPIE.R)).

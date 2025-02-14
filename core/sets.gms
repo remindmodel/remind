@@ -17,74 +17,12 @@ numberOrder     "set to assure that numeric values follow ascending order in the
 *** Save select compiler flags as sets, to make them accessible from the final gdx
 c_expname       "c_expname as set for use in GDX"       /%c_expname%/
 c_description   "%c_description%"   /"for model description, see explanatory text"/
-cm_GDPscen      "cm_GDPscen as set for use in GDX"      /%cm_GDPscen%/
+cm_GDPpopScen   "cm_GDPpopScen as set for use in GDX"      /%cm_GDPpopScen%/
 
 
-all_POPscen     " all possible population scenarios"
+all_GDPpopScen    "all possible GDP scenarios"
 /
-pop_SDP         "SDP population scenario"
-pop_SDP_EI
-pop_SDP_MC
-pop_SDP_RC
-pop_SSP1        "SSP1 population scenario"
-pop_SSP2        "SSP2 population scenario"
-pop_SSP2EU
-pop_SSP3        "SSP3 population scenario"
-pop_SSP4        "SSP4 population scenario"
-pop_SSP5        "SSP5 population scenario"
-pop_a1
-pop_a2
-pop_b1
-pop_b2
-/
-
-all_GDPscen    "all possible GDP scenarios"
-/
-gdp_SDP         "SDP fastGROWTH medCONV"
-gdp_SDP_EI
-gdp_SDP_MC
-gdp_SDP_RC
-gdp_SSP1        "SSP1 fastGROWTH medCONV"
-gdp_SSP2        "SSP2 medGROWTH medCONV"
-gdp_SSP2EU
-gdp_SSP3        "SSP3 slowGROWTH slowCONV"
-gdp_SSP4        "SSP4  medGROWTH mixedCONV"
-gdp_SSP5        "SSP5 fastGROWTH fastCONV"
-gdp_a1
-gdp_a2
-gdp_b1
-gdp_b2
-/
-
-all_demScen    "all possible demand scenarios"
-/
-gdp_SDP         "SDP fastGROWTH medCONV"
-gdp_SDP_EI
-gdp_SDP_MC
-gdp_SDP_RC
-gdp_SSP1        "SSP1 fastGROWTH medCONV"
-gdp_SSP2        "SSP2 medGROWTH medCONV"
-gdp_SSP2EU
-gdp_SSP3        "SSP3 slowGROWTH slowCONV"
-gdp_SSP4        "SSP4  medGROWTH mixedCONV"
-gdp_SSP5        "SSP5 fastGROWTH fastCONV"
-gdp_SSP2_lowEn  "SSP2 with low energy"
-gdp_SSP2EU_NAV_ele "NAVIGATE demand scenarios: Electrification and fuel shift"
-gdp_SSP2EU_NAV_act "NAVIGATE demand scenarios: Activity reduction and activity shift"
-gdp_SSP2EU_NAV_tec "NAVIGATE demand scenarios: Technological improvements - energy efficiency"
-gdp_SSP2EU_NAV_lce "NAVIGATE demand scenarios: Low consumption energy (act + tec)"
-gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures (ele + act + tec)"
-gdp_SSP2EU_CAMP_weak   "CAMPAIGNers scenario with low ambition lifestyle change"
-gdp_SSP2EU_CAMP_strong "CAMPAIGNers scenario with high ambition lifestyle change"
-gdp_SSP2_demDiffer_IKEA "Demand reduction in Global North (CAZ,EUR,JPN,NEU,USA) and demand increase in Emerging regions (IND,LAM,OAS,SSA). Reduction follows the factor f of demRedStrong scenario, while increase uses factor 2-f."
-gdp_SSP2_demRedStrong "edget internal demScen, might be removed soon"
-gdp_SSP2_demRedWeak
-gdp_SSP2_highDemDEU
-/
-
-all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
-/
-SDP         "SDP scenario"
+SDP
 SDP_EI
 SDP_MC
 SDP_RC
@@ -94,10 +32,34 @@ SSP2EU
 SSP3        "SSP3 slowGROWTH slowCONV"
 SSP4        "SSP4  medGROWTH mixedCONV"
 SSP5        "SSP5 fastGROWTH fastCONV"
-a1
-a2
-b1
-b2
+SSP2IndiaMedium
+SSP2IndiaHigh
+/
+
+all_demScen    "all possible demand scenarios"
+/
+SDP         "SDP fastGROWTH medCONV"
+SDP_EI
+SDP_MC
+SDP_RC
+SSP1        "SSP1 fastGROWTH medCONV"
+SSP2        "SSP2 medGROWTH medCONV"
+SSP3        "SSP3 slowGROWTH slowCONV"
+SSP4        "SSP4  medGROWTH mixedCONV"
+SSP5        "SSP5 fastGROWTH fastCONV"
+SSP2_lowEn  "SSP2 with low energy"
+SSP2_NAV_ele "NAVIGATE demand scenarios: Electrification and fuel shift"
+SSP2_NAV_act "NAVIGATE demand scenarios: Activity reduction and activity shift"
+SSP2_NAV_tec "NAVIGATE demand scenarios: Technological improvements - energy efficiency"
+SSP2_NAV_lce "NAVIGATE demand scenarios: Low consumption energy (act + tec)"
+SSP2_NAV_all "NAVIGATE demand scenarios: All measures (ele + act + tec)"
+SSP2_CAMP_weak   "CAMPAIGNers scenario with low ambition lifestyle change"
+SSP2_CAMP_strong "CAMPAIGNers scenario with high ambition lifestyle change"
+SSP2_demDiffer_IKEA "Demand reduction in Global North (CAZ,EUR,JPN,NEU,USA) and demand increase in Emerging regions (IND,LAM,OAS,SSA). Reduction follows the factor f of demRedStrong scenario, while increase uses factor 2-f."
+SSP2_demDiffer
+SSP2_demRedStrong "edget internal demScen, might be removed soon"
+SSP2_demRedWeak
+SSP2_highDemDEU   "High-demand scenario in industry and transport for Germany, rest of the world has SSP2 standard demand trajectories"
 /
 
 all_SSP_forcing_adjust  "all possible forcing targets and budgets according to SSP scenario such that magicc forcing meets the target"
@@ -248,13 +210,13 @@ all_te          "all energy technologies, including from modules"
         tdheb           "transmission and distribution for heat to buildings"
 
         ccsinje         "injection of co2"
-*RP* Storage technology:
+*** Storage technology:
         storspv         "storage technology for photo voltaic (PV)"
         storwind        "storage technology for wind onshore"
         storwindon      "storage technology for wind onshore"
         storwindoff     "storage technology for wind offshore"
         storcsp         "storage technology for concentrating solar power (CSP)"
-*RP* grid technology:
+*** grid technology:
         gridspv         "grid between areas with high pv production and the rest"
         gridcsp         "grid between areas with high csp production and the rest"
         gridwind        "grid between areas with high wind onshore production and the rest"
@@ -1110,13 +1072,14 @@ t(ttot)     "optimisation time, years between cm_startyear and 2150 with 5 to 20
 tsu(ttot) "spin up-time before 2005",
 *** This set includes only the historical years of ttot: 1900, 1905, ..., 1995, 2000
 
-opTimeYr          "actual life time of ??? in years"
+opTimeYr "actual lifetime of a built technology in years"
+*** Must be as large as the maximum lifetime of a technology (which is 5/4 times the average lifetime)
 /
-        1*100
+        1*130
 /
-opTime5(opTimeYr) "actual life time of ??? in years - 5 years time steps for the past to calculate vintages (???)"
+opTime5(opTimeYr) "actual lifetime of a built technology in years - 5 years time steps for the past to calculate vintages"
 /
-        1,6,11,16,21,26,31,36,41,46,51,56,61,66,71,76,81,86,91,96
+        1,6,11,16,21,26,31,36,41,46,51,56,61,66,71,76,81,86,91,96,101,106,111,116,121,126
 /
 
 ;
@@ -2190,7 +2153,7 @@ char            "characteristics of technologies"
   omf_d           "fixed o&m per 1000km"
   omv             "variable o&m"
   omv_d           "variable o&m per 1000km"
-  tlt             "techical life time"
+  tlt             "technical life time"
   delta           "depreciation rate"
   learn           "learning rate"
   learnMult_wFC   "multiplicative parameter in learning equation, adjusted to take Floor Costs into account"
@@ -2819,7 +2782,7 @@ teCCS2rlf(all_te,rlf)     "mapping for CCS technologies to grades"
       (ccsinje) . 1
 /
 
-teNoTransform2rlf(all_te,rlf)         "mapping for no transformation technologies to grades"
+teNoTransform2rlf(all_te,rlf) "mapping for no transformation technologies to grades"
 /
 *** storwind, gridwind
       (storspv,storcsp,storwindon,storwindoff,gridwindon,gridwindoff,gridspv,gridcsp,h2curt) . 1
@@ -2832,36 +2795,36 @@ sector2te_addTDCost(emi_sectors,all_te) "mapping of sectors to t&d technologies 
         build.tdh2s
 /
 
-ppfen_CESMkup(all_in)                   "production factors of CES function to which CES markup cost can be applied"
+ppfen_CESMkup(all_in) "production factors of CES function to which CES markup cost can be applied"
 /
 /
 
+*** sets filled automatically in datainput.gms from the lifetime values in generisdata_tech.prn
+opTimeYr2te(all_te,opTimeYr) "map each technology with its possible age"
+tsu2opTimeYr(ttot,opTimeYr) "map each model timestep with the possible age of technologies"
 
-opTimeYr2te(all_te,opTimeYr)        "mapping for technologies to yearly lifetime - is filled automatically in generisdata.inc from the lifetime values in generisdata_tech.prn"
-tsu2opTimeYr(ttot, opTimeYr)     "mapping for opTimeYr to the used time ttot - will be filled automatically in generisdata.inc"
-
-tsu2opTime5(tall,opTimeYr)     "mapping for spinup time index to lifetime index"
+tsu2opTime5(tall,opTimeYr) "mapping for spinup time index to lifetime index"
 /
-1910.96
-1915.91
-1920.86
-1925.81
-1930.76
-1935.71
-1940.66
-1945.61
-1950.56
-1955.51
-1960.46
-1965.41
-1970.36
-1975.31
-1980.26
-1985.21
-1990.16
-1995.11
-2000.6
-2005.1
+        1910.96
+        1915.91
+        1920.86
+        1925.81
+        1930.76
+        1935.71
+        1940.66
+        1945.61
+        1950.56
+        1955.51
+        1960.46
+        1965.41
+        1970.36
+        1975.31
+        1980.26
+        1985.21
+        1990.16
+        1995.11
+        2000.6
+        2005.1
 /
 
 sectorEndoEmi2te(all_enty,all_enty,all_te,sectorEndoEmi)   "map sectors to technologies"

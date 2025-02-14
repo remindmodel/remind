@@ -21,6 +21,7 @@ p_adj_deltacapoffset.cs4r
 p_boundCapCCSindicator.cs4r
 p_boundEmi.cs4r
 p_emiFossilFuelExtr.cs4r
+p_emiFossilFuelExtr2020.cs4r
 f_nechem_emissionFactors.cs4r
 f_incinerationShares.cs4r
 pm_histCap.cs3r
@@ -30,6 +31,9 @@ p_histEmiSector.cs4r
 p_inco0.cs4r
 p_macBase1990.cs4r
 p_macBase2005.cs4r
+p_macBaseCEDS2020.cs4r
+p_macBaseCEDS2005.cs4r
+p_macBaseHarmsen2022.cs4r
 p_macBaseVanv.cs4r
 p_macPolCO2luc.cs4r
 p_boundCapCCS.cs4r
