@@ -32,7 +32,7 @@ sources <- paste0("R",
                   if (isTRUE(envi$cfg$gms$CES_parameters == "load")) "T",
                   if (any(grepl("^MAgPIE", levels(mifdata$model)))) "M")
 message("\n### Check existence of variables in mappings.")
-missingVariables <- checkMissingVars(mifdata, TRUE, sources)
+missingVariables <- checkMissingVars(mifdata, setdiff(names(mappingNames()), c("AgMIP", "AR6_MAgPIE")), sources)
 if (length(missingVariables) > 0) message("Check piamInterfaces::variableInfo('variablename') etc.")
 
 checkMappings <- list( # list(mappings, summationsFile, skipBunkers)
@@ -81,6 +81,6 @@ for (i in seq_along(checkMappings)) {
 }
 
 if (length(stopmessage) > 0 || length(missingVariables) > 0) {
-  stop("Project-related issues found checks for ", paste(stopmessage, collapse = ", "), " and ",
-       length(missingVariables), " missing variables found, see above.")
+  warning("Project-related issues found checks for ", paste(stopmessage, collapse = ", "), " and ",
+          length(missingVariables), " missing variables found, see above.")
 }

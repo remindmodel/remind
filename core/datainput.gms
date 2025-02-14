@@ -27,7 +27,6 @@ vm_demFeForEs.L(t,regi,fe2es(entyFe,esty,teEs)) = 0.1;
 
 *** -------- initial declaration of parameters for iterative target adjustment
 pm_taxCO2eq_anchor_iterationdiff(t) = 0;
-pm_taxCO2eq_anchor_iterationdiff_tmp(t) = 0;
 
 *------------------------------------------------------------------------------------
 ***                        calculations based on sets
@@ -62,20 +61,20 @@ pm_ies(regi) = 2./3.;
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
 *** load population data
-table f_pop(tall,all_regi,all_POPscen)        "Population data"
+table f_pop(tall,all_regi,all_GDPpopScen)        "Population data"
 $ondelim
 $include "./core/input/f_pop.cs3r"
 $offdelim
 ;
-pm_pop(tall,all_regi) = f_pop(tall,all_regi,"%cm_POPscen%") / 1000;  !! rescale unit from [million people] to [billion] people
+pm_pop(tall,all_regi) = f_pop(tall,all_regi,"%cm_GDPpopScen%") / 1000;  !! rescale unit from [million people] to [billion] people
 
 *** load labour data
-table f_lab(tall,all_regi,all_POPscen)        "Labour data"
+table f_lab(tall,all_regi,all_GDPpopScen)        "Labour data"
 $ondelim
 $include "./core/input/f_lab.cs3r"
 $offdelim
 ;
-pm_lab(tall,all_regi) = f_lab(tall,all_regi,"%cm_POPscen%") / 1000; !! rescale unit from [million people] to [billion] people
+pm_lab(tall,all_regi) = f_lab(tall,all_regi,"%cm_GDPpopScen%") / 1000; !! rescale unit from [million people] to [billion] people
 
 display pm_pop, pm_lab;
 
@@ -89,21 +88,21 @@ $offdelim
 ;
 
 *** load GDP data
-table f_gdp(tall,all_regi,all_GDPscen)        "GDP data"
+table f_gdp(tall,all_regi,all_GDPpopScen)        "GDP data"
 $ondelim
 $include "./core/input/f_gdp.cs3r"
 $offdelim
 ;
-pm_gdp(tall,all_regi) = f_gdp(tall,all_regi,"%cm_GDPscen%") * pm_shPPPMER(all_regi) / 1000000;  !! rescale from million US$ to trillion US$
+pm_gdp(tall,all_regi) = f_gdp(tall,all_regi,"%cm_GDPpopScen%") * pm_shPPPMER(all_regi) / 1000000;  !! rescale from million US$ to trillion US$
 
 *** load level of development based on GDP PPP per capita: 0 is low income, 1 is high income.
 *** Values in 2020 SSP2: SSA=0.1745, IND=0.3686, OAS=0.5136, MEA=0.6568, REF=0.836, LAM=0.8763, NEU=0.9962, EUR=1, CAZ=1, CHA=1, JPN=1, USA=1
-table f_developmentState(tall,all_regi,all_GDPpcScen) "level of development based on GDP PPP per capita"
+table f_developmentState(tall,all_regi,all_GDPpopScen) "level of development based on GDP PPP per capita"
 $ondelim
 $include "./core/input/f_developmentState.cs3r"
 $offdelim
 ;
-p_developmentState(tall,all_regi) = f_developmentState(tall,all_regi,"%c_GDPpcScen%");
+p_developmentState(tall,all_regi) = f_developmentState(tall,all_regi,"%cm_GDPpopScen%");
 
 *** Load information from BAU run
 Execute_Loadpoint 'input'      vm_cesIO, vm_invMacro;
@@ -1544,7 +1543,7 @@ $offdelim
 ;
 
 *** use cm_demScen for Industry and Buildings
-*** cm_GDPscen will be used for Transport (EDGE-T) (see p29_trpdemand)
+*** cm_GDPpopScen will be used for Transport (EDGE-T) (see p29_trpdemand)
 pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
 *** data input for industry FE that is no part of the CES tree
 pm_fedemand(tall,all_regi,ppfen_no_ces_use) = f_fedemand(tall,all_regi,"%cm_demScen%",ppfen_no_ces_use);
@@ -1572,8 +1571,8 @@ $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
 $endif.scaleDemand
 
 
-*** initialize global target deviation scalar
-sm_globalBudget_dev = 1;
+*** initialize absolute deviation of global cumulated CO2 emissions budget from target budget
+sm_globalBudget_absDev = 0;
 
 
 if (cm_startyear gt 2005,
