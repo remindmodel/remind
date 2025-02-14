@@ -1,13 +1,9 @@
 Start running REMIND with default settings
 ================
-Felix Schreyer (<felix.schreyeru@pik-potsdam.de>), Lavinia Baumstark (<baumstark@pik-potsdam.de>), David Klein (<dklein@pik-potsdam.de>), Tonn Rüter (<tonn.rueter@pik-potsdam.de>)
-30 April, 2019
 
 - [Start running REMIND with default settings](#start-running-remind-with-default-settings)
 - [Your first run](#your-first-run)
   - [Default Configurations](#default-configurations)
-  - [Accessing the HPC](#accessing-the-hpc)
-  - [HPC terminal configuration: Adjust `.profile` and `.bashrc`](#hpc-terminal-configuration-adjust-profile-and-bashrc)
   - [Starting the run](#starting-the-run)
   - [Restarting runs](#restarting-runs)
 - [What happens during a REMIND run?](#what-happens-during-a-remind-run)
@@ -17,8 +13,9 @@ Felix Schreyer (<felix.schreyeru@pik-potsdam.de>), Lavinia Baumstark (<baumstark
   - [Optimization](#optimization)
   - [Output Processing](#output-processing)
 
-
 # Your first run
+
+> **Note** This tutorial assumes that you have access to the PIK HPC, have followed the instructions [in the REMIND group-internal Wiki](https://gitlab.pik-potsdam.de/rse/rsewiki/-/wikis/Cluster-Access) on how to access the PIK HPC and configure your cluster environment.
 
 This section will explain how you start your first REMIND run on the Potsdam Institute for Climate Impact Research (PIK) High Performance Cluster (HPC). Running REMIND on other hosts is theoretically possible but works slightly different depending on input data availability and operating system configuration.
 
@@ -38,46 +35,6 @@ b. The SWITCHES section contains setting parameters to control, for e.g., how ma
 c. The FLAGS section contains compilation flags (setGlobals) for further configuration, for e.g., which SSP to use.
 
 d. The last part includes all model parts from the core and modules.
-
-## Accessing the HPC
-
-Follow the instructions [in the PIK-internal Wiki](https://gitlab.pik-potsdam.de/rse/rsewiki/-/wikis/Cluster-Access) on how to access the HPC.
-
-## HPC terminal configuration: Adjust `.profile` and `.bashrc`
-
-In order to ready your HPC session for REMIND operation, you'll need to have a properly configured `.profile` file in your HPC home folder. Log into the HPC, then type
-
-```bash
-nano ~/.profile
-```
-
-Add these lines in the text editor:
-
-```bash
-umask 0002
-
-source /p/system/modulefiles/defaults/piam/module_load_piam
-module load anaconda/2024.10
-```
-
-Save the file and exit the editor by pressing <kbd>Ctrl</kbd> + <kbd>X</kbd> and confirm with <kbd>Enter</kbd>. Please note that `umask 0002` needs to be the first line in the `.profile`! This lines makes sure the files you create on the HPC will be writable by your coworkers. The subsequent lines load the `piam` environment, ensuring that all system libraries necessary to run REMIND are available. 
-
-For compatibility reasons you'll also need to add a `.bashrc` file in your home folder. It's the same procedure as with `.profile`: Open the file
-
-```bash
-nano ~/.bashrc
-```
-
-and add `umask 0002` as the first line. A typical `.bashrc` file might look like
-
-```bash
-umask 0002 # Must be the first line
-
-# Additional typical .bashrc configurations like aliases must come after
-alias ll="ls -la"
-```
-
-Again save the file by pressing <kbd>Ctrl</kbd> + <kbd>X</kbd> and confirm with <kbd>Enter</kbd>.
 
 ## Starting the run
 

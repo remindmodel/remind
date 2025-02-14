@@ -269,5 +269,9 @@ for (csvfile in csvfiles) {
 test_that("delete files to leave clean state", {
   # leave clean state
   skipIfPreviousFailed()
-  expect_true(0 == unlink(deleteallfiles, recursive = TRUE))
+  if (! all(file.exists(deleteallfiles))) {
+    skip("Not cleaning up coupled tests as not all required files exist.")
+  } else {
+    expect_true(0 == unlink(deleteallfiles, recursive = TRUE))
+  }
 })

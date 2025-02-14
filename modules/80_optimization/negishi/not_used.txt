@@ -51,7 +51,7 @@ sm_EJ_2_TWa,                       scalar,      ???
 sm_endBudgetCO2eq,                 scalar,      ???
 sm_eps,                            scalar,      ???
 sm_fadeoutPriceAnticip,            scalar,      ???
-sm_globalBudget_dev,               input,       questionnaire
+sm_globalBudget_absDev,            input,       questionnaire
 sm_tmp2,                           scalar,      not needed
 sm_tmp,                            scalar,      not needed
 vm_capacityTradeBalance,           variable,    not implemented yet
@@ -68,4 +68,5 @@ cm_maxFadeOutPriceAnticip,         parameter,   ???
 cm_LearningSpillover,              input,       learning spillover only implemented in nash
 pm_allTargetsConverged,            parameter,   only relevant for nash
 pm_taxCO2eq_anchor_iterationdiff,input,no iterative target adjustment
-pm_taxCO2eq_anchor_iterationdiff_tmp,input,added by codeCheck
+pm_taxCO2eq_iter,input,added by codeCheck
+cm_budgetCO2_absDevTol,input,added by codeCheck

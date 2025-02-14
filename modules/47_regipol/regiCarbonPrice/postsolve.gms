@@ -598,7 +598,7 @@ $else.cm_implicitQttyTarget_delay
       p47_implicitQttyTargetActive_iter(iteration,ext_regi) = 1;
     );
   elseif(p47_implicitQttyTarget_delay("emiConv")), !!only after emissions targets converged
-    if(abs(1-sm_globalBudget_dev) lt 0.1,
+    if(abs(sm_globalBudget_absDev) le cm_budgetCO2_absDevTol,
       p47_implicitQttyTargetActive_iter(iteration,ext_regi) = 1;
     );
 $ifThen.emiMkt not "%cm_emiMktTarget%" == "off"
