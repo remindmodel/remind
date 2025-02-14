@@ -8,7 +8,7 @@
 
 *' @equations
 
-** Léa to do: review equations, keep wind bound?, remove China?, adjut EU?
+** Léa to do: -review equations, -keep wind bound?, -remove China?, -adjut EU?
 
 ***am minimum targets for certain technologies
 q40_ElecBioBound(t,regi)$(t.val gt 2015)..

@@ -16,7 +16,7 @@ $onlisting
 
 p40_TechBound(ttot,all_regi,te) = f40_TechBound(ttot,all_regi,"%cm_NDC_version%",te);
 
-** Léa: why specific to 2030?? > umbrella term for various bio technology
+** Léa: to do: why specific to 2030? why a specific bound for bioenergy?
 p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
 
 *** In scenarios with 2nd generation bioenergy technology phaseout,

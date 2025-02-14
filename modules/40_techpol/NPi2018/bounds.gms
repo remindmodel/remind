@@ -7,9 +7,9 @@
 *** SOF ./modules/40_techpol/NPi2018/bounds.gms
 
 
-** > keep historical data until 2020 
 ** Léa to do: technologies still missing are "solar total" and "coal to electricity"
 
+*Keep historical data until 2020 
 *AM the lowbound of solar and pv for 2030 to be taken from the NDCs (in GW), therefore multiplying by 0.001 for TW*
 *NPi bounds are only applied after 2020, as NPi scenarios should always have cm_startyear higher than 2020.
 vm_cap.lo(t,regi,"spv","1")$(t.val gt 2025) = p40_TechBound(t,regi,"spv")*0.001;

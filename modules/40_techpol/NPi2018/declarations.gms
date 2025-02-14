@@ -7,8 +7,9 @@
 
 *** SOF ./modules/40_techpol/NPi2018/declarations.gms
 
-Parameter p40_TechBound(ttot,all_regi,all_te)          "NPI capacity targets for solar (total, pv, csp), wind (total, onshore, offshore),
-                                                        nuclear, hydro, biomass, nuclear, coal?? and H2-electrolysers (GW)";
+** Léa: to do: add total solar and coal?
+Parameter p40_TechBound(ttot,all_regi,all_te)          "NPI capacity targets for solar (pv, csp), wind (total, onshore, offshore),
+                                                        nuclear, hydro, biomass, nuclear, and H2-electrolysers (GW)";
 Parameter p40_ElecBioBound(ttot,all_regi)              "level for lower bound on biomass tech. absolute capacities, in GW";
 Parameter p40_noncombust_acc_eff(ttot,iso_regi,all_te) "Efficiency used for the accounting of non-combustibles PE, e.g. 0.45 for 45% under substitution method, eq 1 for all carriers under direct accounting method";
 Parameter p40_PEgasBound(ttot,iso_regi)                "level for lower bound of gas share in PE, e.g. 0.2 for 20%";
