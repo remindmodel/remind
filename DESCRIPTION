@@ -65,7 +65,7 @@ Imports:
     readr,
     readxl,
     remind2 (>= 1.162.1),
-    renv (>= 1.0.7),
+    renv (>= 1.1.1),
     reshape2,
     reticulate,
     rlang,
