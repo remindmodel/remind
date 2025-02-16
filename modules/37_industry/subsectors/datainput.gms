@@ -679,73 +679,78 @@ p37_specFeDemTarget(all_enty,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 !! TODO Qianzhi 1MWh NH3,LHV = 0.19355 tons
 
-p37_specFeDemTarget("fesos","ChemOld","standard")  = 1.5 * 3 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("fegas","ChemOld","standard")  = 3.0 * 3 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("fehos","ChemOld","standard")  = 3.9 * 3 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","ChemOld","standard")  = 2.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fesos","ChemOld","standard")  = 10./ (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fegas","ChemOld","standard")  = 10. / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fehos","ChemOld","standard")    = 10. / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","ChemOld","standard")  = 1. / (sm_TWa_2_MWh/sm_giga_2_non);
 
 
-p37_specFeDemTarget("fesos","ChemELec","standard")  = 1.2 * 3 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("fegas","ChemElec","standard")  = 2.7 * 3 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("fehos","ChemElec","standard")  = 3.3 * 3 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","ChemElec","standard")  = 3.6/ (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fesos","ChemELec","standard")  = 9./ (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fegas","ChemElec","standard")  = 9. / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fehos","ChemElec","standard")    = 9. / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","ChemElec","standard")  = 2. / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
 
-p37_specFeDemTarget("fesos","ChemH2","standard")  = 1.2 * 3 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("fegas","ChemH2","standard")  = 2.7 * 3 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("fehos","ChemH2","standard")  = 3.3 * 3/ (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feh2s","ChemH2","standard")  = 2.1/ (sm_TWa_2_MWh/sm_giga_2_non);   
-p37_specFeDemTarget("feels","ChemH2","standard")  = 1.8 / (sm_TWa_2_MWh/sm_giga_2_non);   
+p37_specFeDemTarget("fesos","ChemH2","standard")  = 9./ (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fegas","ChemH2","standard")  = 9. / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("fehos","ChemH2","standard")    = 9. / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feh2s","ChemH2","standard")  = 1.  / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
+p37_specFeDemTarget("feels","ChemH2","standard")  = 1. / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021
 
-p37_specFeDemTarget("fegas","StCrNG","standard")  = 16.5 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: A. Boulamanti and J. A. Moya, Renew. Sustain. Energy Rev., 2017, 68, 1205–1212. Table2
-p37_specFeDemTarget("feels","StCrNG","standard")  = 0.16 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: A. Boulamanti and J. A. Moya, Renew. Sustain. Energy Rev., 2017, 68, 1205–1212. Table2 Ethane is 0.14 and Propane & Butane is 0.18
+p37_specFeDemTarget("fegas","StCrNG","standard")    = 22.0 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","StCrNG","standard")  = 0.15 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fehos","StCrLiq","standard")  = 18.3 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Spallina17 Table 5
-p37_specFeDemTarget("feels","StCrLiq","standard")  = 0.26 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Spallina17 Table 5
+p37_specFeDemTarget("fehos","StCrLiq","standard")    = 41.2 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","StCrLiq","standard")  = 0.04 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fesos","MeSySol","greyh2")  = 11.3 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
-p37_specFeDemTarget("feels","MeSySol","greyh2")  = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("fesos","MeSySol","greyh2")  = 13.0 / (sm_TWa_2_MWh/sm_giga_2_non);  !! methanol tech QIANZHI
+p37_specFeDemTarget("feels","MeSySol","greyh2")  = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fesos","MeSySol","greenh2")  = 4.3 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Zhao Y, Energy Conversion and Management, 2022.Table 6
-p37_specFeDemTarget("feh2s","MeSySol","greenh2")  = 4.7 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Zhao Y, Energy Conversion and Management, 2022.Table 6
-p37_specFeDemTarget("feels","MeSySol","greenh2")  = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non); !! Same as MetSySol
+p37_specFeDemTarget("fesos","MeSySol","greenh2")  = 4.0 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feh2s","MeSySol","greenh2")  = 4.5 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","MeSySol","greenh2")  = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fegas","MeSyNG","standard")    = 8.75 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
-p37_specFeDemTarget("feels","MeSyNG","standard")    = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("fegas","MeSyNG","standard")    = 9.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","MeSyNG","standard")    = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fehos","MeSyLiq","standard")  = 9.7 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4 Assume Feedstock is 20Mwh
-p37_specFeDemTarget("feels","MeSyLiq","standard")  = 0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4
+p37_specFeDemTarget("fehos","MeSyLiq","standard")  = 10.3 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","MeSyLiq","standard")  = 1.4 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fesos","MeSySolcc","greyh2")  = 2.0 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
-p37_specFeDemTarget("feels","MeSySolcc","greyh2")    = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("fesos","MeSySolcc","greyh2")    = 13.0 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","MeSySolcc","greyh2")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("feels","MeSyNGcc","standard")  = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("fegas","MeSyNGcc","standard")  = 9.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","MeSyNGcc","standard")  = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("feels","MeSyLiqcc","standard")    = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non); !! Assume same as MeSyNGcc
+p37_specFeDemTarget("fehos","MeSyLiqcc","standard")    = 10.3 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","MeSyLiqcc","standard")    = 1.4 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("feh2s","MeSyH2","standard")  = 6.4 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: DEA Technology Data for Energy Carrier Generation and Conversion June 2017 98 Methanol from hydrogen
-p37_specFeDemTarget("feels","MeSyH2","standard")  = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: DEA Technology Data for Energy Carrier Generation and Conversion June 2017 98 Methanol from hydrogen
+p37_specFeDemTarget("feh2s","MeSyH2","standard")  = 6.7 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","MeSyH2","standard")  = 0.2 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fesos","AmSyCoal","standard")  = 10.6 / (sm_TWa_2_MWh/sm_giga_2_non);   !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
-p37_specFeDemTarget("feels","AmSyCoal","standard")  =  1.0 / (sm_TWa_2_MWh/sm_giga_2_non);   !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("fesos","AmSyCoal","standard")  = 10.4 / (sm_TWa_2_MWh/sm_giga_2_non);    !! ammonia tech QIANZHI
+p37_specFeDemTarget("feels","AmSyCoal","standard")  =  1.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fegas","AmSyNG","standard")    = 8.9 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 4
-p37_specFeDemTarget("feels","AmSyNG","standard")    = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 4
+p37_specFeDemTarget("fegas","AmSyNG","standard")    = 7.7 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","AmSyNG","standard")    = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fehos","AmSyLiq","standard")    =  10.6 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4
-p37_specFeDemTarget("feels","AmSyLiq","standard")    =  0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4
+p37_specFeDemTarget("fehos","AmSyLiq","standard")    = 11.5 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","AmSyLiq","standard")    =  1.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("feels","AmSyCoalcc","standard")  =  0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("fesos","AmSyCoalcc","standard")  = 10.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","AmSyCoalcc","standard")  =  1.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("feels","AmSyNGcc","standard")    = 0.3 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("fegas","AmSyNGcc","standard")    = 7.7 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","AmSyNGcc","standard")    = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("feels","AmSyLiqcc","standard")    =  0.3 / (sm_TWa_2_MWh/sm_giga_2_non); !! Assume same as AmSyNGcc
+p37_specFeDemTarget("fehos","AmSyLiqcc","standard")    = 11.5 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","AmSyLiqcc","standard")    =  1.0 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("feh2s","AmSyH2","standard")    = 6.0 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: DEA Technology Data for Energy Carrier Generation and Conversion June 2017 103 Hydrogen to Ammonia
-p37_specFeDemTarget("feels","AmSyH2","standard")    = 0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: GrinbergDana16 Supplementary Table 4
+p37_specFeDemTarget("feh2s","AmSyH2","standard")    = 5.9 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","AmSyH2","standard")    = 0.7 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("feels","MtOMtA","standard")    = 1.4 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Bazzanella17 Section 4.5.3
-p37_specFeDemTarget("feels","FertProd","standard")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Palys23 Section 2.3, Page 6
-p37_specFeDemTarget("feels","FertProdH2","standard")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Palys23 Section 2.3, Page 6
+p37_specFeDemTarget("feels","MtOMtA","standard")    = 1.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","FertProd","standard")    = 0.2 / (sm_TWa_2_MWh/sm_giga_2_non);
+p37_specFeDemTarget("feels","FertProdH2","standard")    = 0.2 / (sm_TWa_2_MWh/sm_giga_2_non);
 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -849,10 +854,6 @@ $endif.cm_subsec_model_chemicals
 
 p37_mat2ue(all_enty,all_in) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-
-pm_data("CHA","inco0","AmSyCoal") = 0.5* pm_data("CHA","inco0","AmSyCoal");
-pm_data("CHA","inco0","MeSySol")  = 0.5* pm_data("CHA","inco0","MeSySol");
-
 !! ue_chemicals is measured in value_added (trn$2017), whilst material is measured in Gt
 !! So this is the price of material in trn$2005/Gt = $2017/kg
 
@@ -1071,55 +1072,6 @@ if (cm_startyear eq 2005,
       );
     );
   );
-!! Hot fix on regional OtherChem Energy Demand
-$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
-
-  loop((entyFeStat(all_enty), opmoPrc),
-    if( (p37_specFeDemTarget(all_enty,"ChemOld",opmoPrc) gt 0.),
-      loop(t$(t.val > 2020),
-
-        !! Calc ChemOld
-        pm_specFeDem(t,regi,all_enty,"ChemOld",opmoPrc) = 
-        pm_specFeDem("2020",regi,all_enty,"ChemOld",opmoPrc);
-
-        !! Calc ChemElec
-        loop(entyFe$(NOT sameas(entyFe, "feels")),
-          pm_specFeDem(t, regi, entyFe, "ChemElec", opmoPrc) =
-              pm_specFeDem("2020", regi, entyFe, "ChemOld", opmoPrc)
-              * 0.65
-              * sum(entyFe2, pm_specFeDem("2020", regi, entyFe2, "ChemOld", opmoPrc))
-              / sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem("2020", regi, entyFe2, "ChemOld", opmoPrc))
-        );
-
-        !! Calc feels for ChemElec
-        pm_specFeDem(t, regi, "feels", "ChemElec", opmoPrc) =
-                  pm_specFeDem("2020", regi, "feels", "ChemElec", opmoPrc)
-                  + 0.85 * ( sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem("2020", regi, entyFe2, "ChemOld", opmoPrc))
-                          - sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem(t, regi, entyFe2, "ChemElec", opmoPrc)) );
-
-        !! Calc ChemH2 
-        loop(entyFe$(NOT sameas(entyFe, "feels")),
-          pm_specFeDem(t, regi, entyFe, "ChemH2", opmoPrc) =
-              pm_specFeDem("2020", regi, entyFe, "ChemOld", opmoPrc)
-              * 0.65
-              * sum(entyFe2, pm_specFeDem("2020", regi, entyFe2, "ChemOld", opmoPrc))
-              / sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem("2020", regi, entyFe2, "ChemOld", opmoPrc))
-        );
-
-        !! Calc feels for ChemH2
-        pm_specFeDem(t, regi, "feels", "ChemH2", opmoPrc) =
-            pm_specFeDem("2020", regi, "feels", "ChemOld", opmoPrc);
- 
-        !! Calc feh2s for ChemH2
-        pm_specFeDem(t, regi, "feh2s", "ChemH2", opmoPrc) =
-            sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem("2020", regi, entyFe2, "ChemOld", opmoPrc))
-            - sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem(t, regi, entyFe2, "ChemH2", opmoPrc));
-
-        );
-      );
-    );
-    
-$endif.cm_subsec_model_chemicals
 
 );
 
