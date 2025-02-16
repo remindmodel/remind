@@ -383,7 +383,7 @@ tePrc(all_te)  "Technologies used in process-based model (including CCS)"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     ChemOld
-    ChemELec
+    ChemElec
     ChemH2
 
     StCrNG
@@ -627,7 +627,7 @@ tePrc2opmoPrc(all_te,opmoPrc)   "Mapping of technologies onto available operatio
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     ChemOld . standard
-    ChemELec . standard
+    ChemElec . standard
     ChemH2 . standard
 
     StCrNG . standard
@@ -853,7 +853,7 @@ fe2mat(all_enty,all_enty,all_te)   "Set of industry technologies to be included 
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     entydummy.entydummy.ChemOld
-    entydummy.entydummy.ChemELec
+    entydummy.entydummy.ChemElec
     entydummy.entydummy.ChemH2
 
     entydummy.entydummy.StCrNG

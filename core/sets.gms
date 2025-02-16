@@ -278,7 +278,7 @@ all_te          "all energy technologies, including from modules"
 *** TOCHECK: Qianzhi
 *** PCV: technologies related to chemical
         ChemOld
-        ChemELec
+        ChemElec
         ChemH2
         ChemRo_Old
         ChemRo_Elec
@@ -1275,7 +1275,7 @@ te(all_te)              "energy technologies"
         vess_lng        "Vessels transporting LNG"
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
         ChemOld
-        ChemELec
+        ChemElec
         ChemH2
         StCrNG
         StCrLiq
@@ -1383,6 +1383,7 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
   gridwindon      "grid between areas with high wind onshore production and the rest"
   gridwindoff     "grid between areas with high wind offshore production and the rest"
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+  ChemElec          "Other chemicals by Hydrogen"
   ChemH2          "Other chemicals by Hydrogen"
   MeSySolcc       "Methanol by Soilds CCS" !! methanol tech QIANZHI
   MeSyNGcc        "Methanol by Gas CCS"
