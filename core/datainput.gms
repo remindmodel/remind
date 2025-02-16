@@ -1217,6 +1217,7 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,'oae_ng')          = 0.25;
   p_adj_seed_te(ttot,regi,'oae_el')          = 0.25;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+  p_adj_seed_te(ttot,regi,"ChemELec")        = 0.05;
   p_adj_seed_te(ttot,regi,"ChemH2")          = 0.05;
   p_adj_seed_te(ttot,regi,"MeSySolcc")       = 0.05;  !! methanol tech QIANZHI
   p_adj_seed_te(ttot,regi,"MeSyNGcc")        = 0.05;
@@ -1261,6 +1262,7 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,"windon")          = 0.25;
   p_adj_coeff(ttot,regi,"windoff")         = 0.35;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+  p_adj_coeff(ttot,regi,"ChemELec")        = 1.0;
   p_adj_coeff(ttot,regi,"ChemH2")          = 1.0;
   p_adj_coeff(ttot,regi,"MeSySolcc")       = 1.0;  !! methanol tech QIANZHI
   p_adj_coeff(ttot,regi,"MeSyNGcc")        = 1.0;
