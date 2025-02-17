@@ -13,6 +13,8 @@ incolearn   Difference from inco0 to floor investment costs, given in $[2015] / 
 ccap0       Cumulated capacity in 2005 given in TW
 learn       Learning rate given in percent cost reduction per doubling of cumulated capacity
 luse        land use factor of solar technologies
+flexibility by RP (parameterization after simple algorithm)
+
 $offtext
 
 
@@ -26,6 +28,7 @@ eta                 0.57        0.49        0.38        1.00        0.47        
 omf                 0.03        0.03        0.03        0.03        0.03        0.03        0.05        0.06        0.05        0.06
 omv                   15          30          24          30          42          24          20          25          43          43
 lifetime              35          35          30          35          35          35          35          35          35          35
+flexibility         0.95        0.85          16                    0.85
 
 
 *** oil technologies
@@ -36,6 +39,7 @@ eta                 0.91        0.30        0.80
 omf                 0.03        0.03        0.03  
 omv                12.00          12          12  
 lifetime              40          25          25  
+flexibility                        6
 
 
 *** coal technologies
@@ -48,6 +52,7 @@ eta                 0.42        0.33        0.41        0.38        0.75        
 omf                 0.03        0.03        0.03        0.03        0.03        0.03        0.03        0.05        0.06        0.05        0.06
 omv                   38          61          30          72          36                                  43          43           6           6
 lifetime              40          40          40          40          40          35          35          35          35          35          35
+flexibility         0.85         0.7         0.9        0.75
 
 
 *** biomass technologies
@@ -60,10 +65,11 @@ eta                 1.00       0.95        0.35        0.72        0.39        0
 omf                            0.03        0.04        0.04        0.04        0.04        0.04        0.06        0.07        0.08        0.07        0.11        0.05        0.05        0.06
 omv                                       30.11       25.00       31.50       50.50       10.90       12.80       10.60       10.60       97.27       38.99        5.05       10.60        10.60
 lifetime              35         35          40          40          40          40          40          40          35          35          35          35          35          35          35
+flexibility                                 0.7                    0.75         0.7
 
 
 *** hydrogen technologies
-+                   elh2     h2turb      h2curt       h2turbVRE  elh2VRE      h22ch4      MeOH
++                   elh2     h2turb      h2curt       h2turbVRE  elh2VRE    h22ch4      MeOH
 tech_stat              3         5           5            5                     3          3
 inco0               3500       510         700          510      0.1          700        800
 constrTme              2         2           2            2        1            2          2
@@ -74,6 +80,7 @@ lifetime              30        30          30          30        30           3
 floorcost            130
 ccap0            0.00077
 learn               0.15
+flexibility                     16                      16
 
 
 *** variable relewable energy
@@ -88,6 +95,7 @@ floorcost          200         1000         50       1560
 ccap0             0.06       0.0007      0.005     0.0002
 learn             0.12         0.12      0.25       0.103
 luse                                     0.09       0.021
+flexibility         -1           -1        -1          -1
 
 +           storwindon  storwindoff    storspv    storcsp       gridwindon
 inco0             2940         2940       7720       2520       720
@@ -98,6 +106,7 @@ lifetime            25           25         25         25       45
 floorcost          850          850       2280        720 
 ccap0          0.00005      0.00005    0.00005    0.00005 
 learn             0.10         0.10       0.10       0.10 
+flexibility       1.86         1.93       1.85       1.85
 
 
 *** other electricty
@@ -109,6 +118,7 @@ eta                 1.00        1.00        1.00    4.41
 omf                 0.04        0.06       0.025    0.03
 omv                                                   36
 lifetime              30          25         100      50
+flexibility          0.8                     1.2     0.6
 
 
 *** transmission and distribution
@@ -126,7 +136,7 @@ eta                  0.85        0.85        1.00        1.00        1.00       
 omf                  0.02        0.02        0.03        0.10        0.10        0.02        0.02
 lifetime               45          45          30          45          45          45          45   
 
-+                 tdbiosos  tdfossos       tdhes    tdbiodie    tdfosdie    tdbiopet    tdfospet      tdelt
++                 tdbiosos  tdfossos       tdhes    tdbiodie    tdfosdie    tdbiopet   tdfospet      tdelt
 inco0                   60       60         600         600         600         600         600       6000
 mix0                  1.00     1.00        1.00        1.00        1.00        1.00        1.00       1.00
 eta                   1.00     1.00        0.90        1.00        1.00        1.00        1.00       0.95
@@ -171,6 +181,7 @@ eta                 1.00    1012.00
 omf                         0.03
 omv                         76
 lifetime              25    50
+flexibility                 0.44
 
 
 $ontext
