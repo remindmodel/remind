@@ -934,9 +934,9 @@ parameter
   cm_33_EW_shortTermLimit = 0.005; !! def = 0.5% !! regexp = is.nonnegative
 *'
 parameter
-  cm_33_maxFeShare                "max share of the CDR sectors' FE demand in the region's total FE demand, by FE type"
+  cm_33_maxFeShare                "max share of the CDR sectors' FE demand in the region's total FE demand, by FE type. Default is 10%"
 ;
-  cm_33_maxFeShare = 1; !!  def = 1 !! regexp = is.nonnegative
+  cm_33_maxFeShare = 0.1; !!  def = 0.1 !! regexp = is.nonnegative
 *' 
 parameter
   cm_postTargetIncrease     "carbon price increase per year after regipol emission target is reached (euro per tCO2)"
