@@ -91,12 +91,11 @@ if(cm_33_OAE_scen = 1, !! optimistic scenario for distribution, lower diesel dem
 *' #### All CDR qoptions
 *' Upper bound for FE share by CDR approaches
 *** initialize upper bound on FE share parameter
-**p33_shfetot_up(t,regi,entyFe,sector)=0; !!--> unnecessary?
 p33_shfetot_up(t,regi,entyFe,sector)$(t.val ge 2040 AND sameAs(sector, "CDR") AND 
                                             (sameAS(entyFe, "fedie") OR sameAS(entyFe, "feels") OR sameAS(entyFe, "fehes") 
                                             OR sameAS(entyFe, "feh2s") OR sameAS(entyFe, "fegas"))) = cm_33_maxFeShare;
-*** initialize 
-v33_FE_total.l(t,regi,entyFe2) = 0;
+*** initialize total FE demand (all sectors)
+v33_FE_total.l(t,regi,entyFe) = 0;
 
 *** limit on expenses for net negative emissions as share of GDP
 parameter p33_GDP_NetNeg_share_s(ext_regi) "Maximum share of spending on NNE in GDP, global or region-specific" / %cm_33_GDP_netNegCDR_maxShare% /; 
