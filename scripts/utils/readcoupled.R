@@ -82,7 +82,8 @@ for (v in vars) {
           rfolder <- file.path(folder, paste0(runs[r], "-rem-", m))
           # define gdx and mif file with data
           gdx <- file.path(rfolder, "fulldata.gdx")
-          if (dir.exists(rfolder)) report <- file.path(rfolder, paste0("REMIND_generic_", getScenNames(rfolder), "_withoutPlus.mif"))
+          report <- FALSE
+          suppressWarnings(try(report <- file.path(rfolder, paste0("REMIND_generic_", getScenNames(rfolder), "_withoutPlus.mif")), silent = TRUE))
           data <- NA
           if (usegdx && file.exists(gdx)) { # read from fulldata.gdx
             data <- try(gdx::readGDX(gdx, v, react = "silent"), silent = TRUE)
@@ -92,7 +93,7 @@ for (v in vars) {
             } else { # transform to quitte
               data <- as.quitte(data)
             }
-          } else if (dir.exists(rfolder) && file.exists(report)) { # read from mif file
+          } else if (! isFALSE(report) && file.exists(report)) { # read from mif file
             data <- read.snapshot(report, list(variable = v))
           }
           if ("data.frame" %in% class(data)) {
