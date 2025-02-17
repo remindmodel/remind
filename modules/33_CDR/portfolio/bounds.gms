@@ -71,6 +71,6 @@ else
 
 
 *** Set upper bound on the amount of FE available for a sector
-v33_FEsector_total.up(t,regi,entyFe,sector)$p33_shfetot_up(t,regi,entyFe,sector) = p33_FE_limit(t,regi,entyFE,sector);
+v33_FEsector_total.up(t,regi,entyFe,sector)$p33_shfetot_up(t,regi,entyFe,sector) = p33_FE_limit(t,regi,entyFe,sector);
 
 *** EOF ./modules/33_CDR/portfolio/bounds.gms

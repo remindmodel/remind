@@ -7,6 +7,6 @@
 *** SOF ./modules/33_CDR/portfolio/preloop.gms
 
 *** initialize bound on final energy for a sector
-p33_FE_limit(t,regi,entyFE,sector)$p33_shfetot_up(t,regi,entyFE,sector) = 1000;
+p33_FE_limit(t,regi,entyFe,sector)$p33_shfetot_up(t,regi,entyFe,sector) = 1000;
 
 *** EOF ./modules/33_CDR/portfolio/preloop.gms
