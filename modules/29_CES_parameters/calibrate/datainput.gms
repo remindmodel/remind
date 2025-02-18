@@ -159,7 +159,7 @@ $include "./modules/29_CES_parameters/calibrate/input/f29_capitalQuantity.cs4r"
 $offdelim
 /
 ;
-p29_capitalQuantity(t,regi,ppfKap) = f29_capitalQuantity(t,regi,"%cm_GDPscen%",ppfKap);
+p29_capitalQuantity(t,regi,ppfKap) = f29_capitalQuantity(t,regi,"%cm_demScen%",ppfKap);
 
 *** fix industry energy efficiency capital for mrremind rounding
 loop ((ttot,regi,ppfKap_industry_dyn37(in))$( t(ttot-1) AND t(ttot+1) ),
@@ -227,8 +227,8 @@ $endif.industry_subsectors
 
 *** Load exogenous transport demand - required for the EDGE transport module
 $ifthen.edgesm %transport% ==  "edge_esm"
-pm_cesdata(t,regi,in,"quantity") $ p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%", in)
-           = p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%", in);
+pm_cesdata(t,regi,in,"quantity") $ p29_trpdemand(t,regi,"%cm_GDPpopScen%","%cm_demScen%","%cm_EDGEtr_scen%", in)
+           = p29_trpdemand(t,regi,"%cm_GDPpopScen%","%cm_demScen%","%cm_EDGEtr_scen%", in);
 $endif.edgesm
 
 *** Load capital quantities

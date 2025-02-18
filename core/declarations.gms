@@ -37,11 +37,11 @@ pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt) "CO2 or CO2eq region 
 pm_emissionsForeign(tall,all_regi,all_enty)          "total emissions of other regions (nash relevant)"
 pm_co2eqForeign(tall,all_regi)                       "emissions, which are part of the climate policy, of other regions (nash relevant)"
 pm_cesdata(tall,all_regi,all_in,cesParameter)        "parameters of the CES function"
-f_pop(tall,all_regi,all_POPscen)                     "population data for all possible scenarios"
+f_pop(tall,all_regi,all_GDPpopScen)                     "population data for all possible scenarios"
 pm_pop(tall,all_regi)                                "population data [bn people]"
 pm_gdp(tall,all_regi)                                "GDP data [trn US$ 2005]"
 p_developmentState(tall,all_regi)                    "level of development based on GDP per capita"
-f_lab(tall,all_regi,all_POPscen)                     "labour data for all possible scenarios"
+f_lab(tall,all_regi,all_GDPpopScen)                     "labour data for all possible scenarios"
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
 pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer)"
 *** If elasticities of substitution (sigma) is below 1, the smaller it is the less the substitution replacement effect between different CES nodes.
@@ -375,7 +375,7 @@ vm_prodPe(ttot,all_regi,all_enty)                    "pe production. [TWa, Urani
 vm_demSe(ttot,all_regi,all_enty,all_enty,all_te)     "se demand. [TWa]"
 vm_prodSe(tall,all_regi,all_enty,all_enty,all_te)    "se production. [TWa]"
 vm_prodFe(ttot,all_regi,all_enty,all_enty,all_te)    "fe production. [TWa]"
-vm_demFENonEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "energy flows of non-energy feedstocks [TWa]"
+vm_demFeNonEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "energy flows of non-energy feedstocks [TWa]"
 vm_demFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)          "fe demand per sector and emission market. Taxes should be applied to this variable or variables closer to the supply side whenever possible so the marginal prices include the tax effects. [TWa]"
 vm_demFeSector_afterTax(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "fe demand per sector and emission market after tax. Demand sectors should use this variable in their fe balance equations so demand side marginals include taxes effects. [TWa]"
 v_costFu(ttot,all_regi)                              "fuel costs"
@@ -409,11 +409,6 @@ v_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "share of
 v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids in sector final energy [0..1]"
 
 vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
-
-vm_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)      "Carbon flow: carbon contained in feedstocks with unknown fate (not plastics)(assumed to go back into the atmosphere) [GtC]"
-vm_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "Emissions from incineration of plastic waste [GtC]"
-vm_incinerationCCS(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "CCS from incineration of plastic waste [GtC]"
-vm_nonIncineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)       "Carbon flow: carbon contained in plastics that are not incinerated [GtC]"
 
 v_changeProdStartyearAdj(ttot,all_regi,all_te)       "Absolute effect size of changing output with respect to the reference run for each te"
 vm_changeProdStartyearCost(ttot,all_regi,all_te)     "Costs for changing output with respect to the reference run for each te"
