@@ -740,7 +740,7 @@ all_teEs                 "energy service technologies"
 /
 
 teEs(all_teEs)           "ES technologies which are actually used (to be filled by module realizations)."
-
+//
 ;
 
 ***-----------------------------------------------------------------------------
@@ -1823,8 +1823,11 @@ entyFe(all_enty)      "final energy types."
 /
 
 esty(all_esty)      "energy service types. Have to be added by modules."
+//
 buildMoBio(all_esty) "modern biomass in buildings"
+//
 entyUe(all_enty)      "Useful energy types"
+//
 
 entyFeStat(all_enty)  "final energy types from stationary sector"
 /
@@ -2311,8 +2314,9 @@ s_statusTe   "technology status: how close a technology is to market readiness. 
 sets
 
 fe_tax_sub_sbi(all_in,all_in) "correspondence between tax and subsidy input data resolution and model sectoral resolution. For FE which takes the pathway I to the CES "
+//
 fe_tax_subEs(all_in,all_esty) "correspondence between tax and subsidy input data resolution and model sectoral resolution. For FE which takes the pathway III to the CES "
-
+//
 
 ***-------------------------------------------------------------------------------
 ***                 SETS for fragmented policy regimes
@@ -2452,6 +2456,7 @@ pe2se(all_enty,all_enty,all_te) "map primary energy carriers to secondary"
 /
 
 pese(all_enty,all_enty) "map primary to secondary energy carriers without technology dimension"
+//
 
 seAgg(all_enty) "secondary energy aggregations"
 /
@@ -2555,8 +2560,10 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
 sefe(all_enty,all_enty) "map secondary energy to final energy"
 fete(all_enty,all_te) "map final energy to technologies"
 fe2ue(all_enty,all_enty,all_te)    "map FE carriers to ES via appliances"
+//
 
 fe2es(all_enty,all_esty,all_teEs)    "map FE carriers to ES via ES technologies"
+//
 
 pc2te(all_enty,all_enty,all_te,all_enty)    "mapping for own consumption of technologies"
 /
@@ -2851,8 +2858,10 @@ teFe2rlfH2BI(all_te,rlf) "mapping for final energy to grades of helper technolog
 /
 
 teue2rlf(all_te,rlf)     "mapping for ES production technologies to grades"
+//
 
 teMat2rlf(all_te,rlf)     "mapping for material production technologies to grades"
+//
 
 teCCS2rlf(all_te,rlf)     "mapping for CCS technologies to grades"
 /
@@ -2873,8 +2882,7 @@ sector2te_addTDCost(emi_sectors,all_te) "mapping of sectors to t&d technologies 
 /
 
 ppfen_CESMkup(all_in) "production factors of CES function to which CES markup cost can be applied"
-/
-/
+//
 
 *** sets filled automatically in datainput.gms from the lifetime values in generisdata_tech.prn
 opTimeYr2te(all_te,opTimeYr) "map each technology with its possible age"
@@ -2944,8 +2952,9 @@ sectorEndoEmi2te(all_enty,all_enty,all_te,sectorEndoEmi)   "map sectors to techn
 
 
 ue2ppfen(all_enty,all_in)      "matching UE in ESM to ppfEn in MACRO"
+//
 es2ppfen(all_esty,all_in)      "matching ES in ESM to ppfEn in MACRO"
-
+//
 ;
 
 ***-----------------------------------------------------------------------------

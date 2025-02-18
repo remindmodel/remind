@@ -147,7 +147,7 @@ $include "./core/input/generisdata_trade.prn"
 ;
 
 *** TODO: merge all grid types into one
-fm_dataglob(char,teGrid) = fm_dataglob("inco0","gridwindon");
+fm_dataglob(char,teGrid) = fm_dataglob(char,"gridwindon");
 
 
 parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit: USD$/kW"
@@ -176,7 +176,7 @@ $ifthen.c_techAssumptScen "%c_techAssumptScen%" == "SSP1"
 *** hampers nuclear a lot
     fm_dataglob("inco0","tnrs") =        1.7 * fm_dataglob("inco0","tnrs");
 *** favours transmission for non-ICE vehicules
-    fm_dataglob("inco0",te $ (sameas(te,"tdelt") or sameas(te,"tdh2t"))) = 0.7 * fm_dataglob("inco0",te);
+    fm_dataglob("inco0",te) $ (sameas(te,"tdelt") or sameas(te,"tdh2t")) = 0.7 * fm_dataglob("inco0",te);
 *** favours VRE and electricity storage
     fm_dataglob("learn",teVRE) =         1.1 * fm_dataglob("learn",teVRE);
     fm_dataglob("floorcost","spv") =     0.1 * fm_dataglob("inco0","spv");
@@ -198,9 +198,9 @@ $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP3"
     fm_dataglob("inco0","tnrs") =        1.2 * fm_dataglob("inco0","tnrs");
     fm_dataglob("lifetime","tnrs") =     0.8 * fm_dataglob("lifetime","tnrs");
 *** hampers transmission for non-ICE vehicules
-    fm_dataglob("inco0",te $ (sameas(te,"tdelt") or sameas(te,"tdh2t"))) = 2 * fm_dataglob("inco0",te);
+    fm_dataglob("inco0",te) $ (sameas(te,"tdelt") or sameas(te,"tdh2t")) = 2 * fm_dataglob("inco0",te);
 *** hampers VRE a lot, and electricity storage
-    fm_dataglob("learn",te(teVRE) $ not sameas(te,"spv")) = 0.5 * fm_dataglob("learn",te);
+    fm_dataglob("learn",teVRE) $ (not sameas(teVRE,"spv")) = 0.5 * fm_dataglob("learn",teVRE);
     fm_dataglob("learn","spv") =         0.8 * fm_dataglob("learn","spv");
     fm_dataglob("floorcost","spv") =     8   * fm_dataglob("inco0","spv");
     fm_dataglob("floorcost","csp") =     1.6 * fm_dataglob("inco0","csp");
@@ -263,7 +263,7 @@ fm_dataglob("floorcost","csp") = 0.7 * fm_dataglob("floorcost","csp");
 
 *** Overwrite default technology cost parameter values based on specific scenario configs
 $ifthen.cm_incolearn not "%cm_incolearn%" == "off"
-    parameter p_new_incolearn(all_te) / %cm_incolearn% /;
+    parameter p_new_incolearn(all_te) "value to overwrite incolearn parameters" / %cm_incolearn% /;
     fm_dataglob("floorcost",te) $ p_new_incolearn(te) = fm_dataglob("inco0",te) - p_new_incolearn(te);
 $endif.cm_incolearn
 
@@ -369,9 +369,6 @@ p_inco0(ttot,regi,teRegTechCosts)  = (1 + p_tkpremused(regi,teRegTechCosts) ) * 
 fm_dataglob("inco0",te)       = (1 + sum(regi, p_tkpremused(regi,te))/sum(regi, 1)) * fm_dataglob("inco0",te);
 
 *** ====================== floor cost scenarios ===========================
-*** calculate default learnable costs for learning technologies
-pm_data(regi,"incolearn",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
-
 *** report old floor costs pre manipulation in non-default scenario
 $ifthen.floorscen not %cm_floorCostScen% == "default"
     p_oldFloorCostdata(regi,teLearn(te)) = pm_data(regi,"floorcost",te);
@@ -405,13 +402,15 @@ $endif.floorscen
 $ifthen.REG_techcosts not "%cm_techcosts%" == "GLO"   !! cm_techcosts is REG or REG2040
     pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2015",regi,teRegTechCosts);
     pm_data(regi,"inco0","spv")          = p_inco0("2020",regi,"spv");
-    pm_data(regi,"incolearn",teLearn)    = pm_data(regi,"inco0",teLearn) - pm_data(regi,"floorcost",teLearn) ;
 $endif.REG_techcosts
 
 *** -------------------------------------------------------------------------------
 *** Calculate learning parameters
 *** See equations.gms for documentation of learning equations and floor costs
 *** -------------------------------------------------------------------------------
+*** calculate default learnable costs for learning technologies
+fm_dataglob("incolearn",te) = fm_dataglob("inco0",te) - fm_dataglob("floorcost",te);
+pm_data(regi,"incolearn",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"floorcost",te);
 
 *** global parameters: calculation for global level, that regional values can gradually converge to
 *** b' = \frac{I_0}{I_0 - F} b = \frac{I_0}{I_0 - F} \log_2(1-\lambda)
