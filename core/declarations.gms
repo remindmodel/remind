@@ -28,9 +28,9 @@ pm_share_trans(tall,all_regi)                        "transportation share"
 pm_gdp_gdx(tall,all_regi)                            "GDP path from gdx, updated iteratively."
 p_inv_gdx(tall,all_regi)                             "macro-investments path from gdx, updated iteratively."
 pm_taxCO2eq(ttot,all_regi)                           "CO2 tax path in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
+pm_taxCO2eq_iter(iteration,ttot,all_regi)            "CO2 tax path (pm_taxCO2eq) tracked over iterations [T$/GtC]"
+pm_taxCO2eq_anchor_iterationdiff(ttot)               "difference in global anchor carbon price to the last iteration [T$/GtC]"
 pm_taxCO2eqRegi(tall,all_regi)                       "additional regional CO2 tax path in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
-pm_taxCO2eq_anchor_iterationdiff(ttot)               "help parameter for iterative adjustment of taxes"
-pm_taxCO2eq_anchor_iterationdiff_tmp(ttot)           "help parameter for iterative adjustment of taxes"
 pm_taxCO2eqSum(tall,all_regi)                        "sum of pm_taxCO2eq, pm_taxCO2eqRegi, pm_taxCO2eqSCC in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
 pm_taxemiMkt(ttot,all_regi,all_emiMkt)                "CO2 or CO2eq region and emission market specific emission tax"
 pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt) "CO2 or CO2eq region and emission market specific emission tax per iteration"
@@ -108,6 +108,9 @@ $endif.tech_CO2capturerate
 
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]"
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1"
+
+pm_actualbudgetco2(ttot)                             "actual level of cumulated emissions starting from 2020 [GtCO2]"
+p_actualbudgetco2_iter(iteration,ttot)               "track actual level of cumulated emissions starting from 2020 over iterations [GtCO2]"
 
 pm_dataccs(all_regi,char,rlf)                               "maximum CO2 storage capacity using CCS technology. [GtC]"
 pm_ccsinjecrate(all_regi)                                   "Regional CCS injection rate factor. 1/a."
@@ -622,7 +625,7 @@ sm_endBudgetCO2eq                                     "end time step of emission
 sm_budgetCO2eqGlob                                    "budget for global energy-emissions in period 1"
 p_emi_budget1_gdx                                     "budget for global energy-emissions in period 1 from gdx, may overwrite default values"
 
-sm_globalBudget_dev                                   "actual level of global cumulated emissions budget divided by target budget"
+sm_globalBudget_absDev                                "absolute deviation of global cumulated CO2 emissions budget from target budget"
 
 sm_eps                                                "small number: 1e-9 "  /1e-9/
 
