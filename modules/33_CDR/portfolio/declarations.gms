@@ -8,10 +8,10 @@
 scalars
 s33_capture_rate            "CO2 capture rate for capturing emissions, e.g., from burning natural gas" / 0.9 /
 
-s33_co2_rem_pot             "specific carbon removal potential [Gt C per Gt ground rock]"
-s33_co2_rem_rate            "carbon removal rate [fraction of annual reduction of total carbon removal potential]"
-s33_costs_fix               "fixed costs for mining, grinding, spreading [T$/Gt stone]"
-s33_step                    "size of bins in v33_weathering_onfield [Gt stone]"
+s33_co2_rem_pot                 "specific carbon removal potential [Gt C per Gt ground rock]"
+s33_rock_weath_rate_ambientT    "fraction of stone weathering per year at ambient temperature (25 degree C)"
+s33_costs_fix                   "fixed costs for mining, grinding, spreading [T$/Gt stone]"
+s33_step                        "size of bins in v33_weathering_onfield [Gt stone]"
 *JeS* GJ/tCO2 = EJ/Gt CO2 = 44/12 EJ/Gt C.
 
 s33_OAE_efficiency          "the amount of rock required to sequester 1GtC [Gt rock / GtC]"
@@ -22,9 +22,10 @@ s33_OAE_glo_limit           "global limit for OAE [tC / a]"
 parameters
 p33_fedem(all_te,all_enty)               "final energy demand of each technology [EJ/GtC] (for EW the unit is [EJ/Gt stone])"
 p33_LimRock(all_regi)                    "regional share of EW limit [fraction], calculated ex ante for a maximal annual amount of 8 Gt rock in D:\projects\CEMICS\paper_technical\supply_curve_transport_remind_regions.m"
-p33_co2_rem_rate(rlf)                    "carbon removal rate [fraction of annual reduction of total carbon removal potential], multiplied with grade factor"
+p33_rock_weath_rate(rlf)                 "fraction of stone weathering per year depending on climate grade (warm or temperate)"
 p33_EW_upScalingLimit(ttot)              "Annual growth rate limit on upscaling of mining & spreading rocks on fields"
 p33_EW_shortTermEW_Limit(all_regi)       "Limit on 2030 potential for enhanced weathering, defined in Gt rocks, based on % of land on which EW is applied"
+p33_EW_maxShareOfCropland(all_regi)      "Share of cropland that can be used for enhanced weathering. Limits maximum amount of rocks weathering."
 ;
 
 positive variables

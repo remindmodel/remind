@@ -17,74 +17,12 @@ numberOrder     "set to assure that numeric values follow ascending order in the
 *** Save select compiler flags as sets, to make them accessible from the final gdx
 c_expname       "c_expname as set for use in GDX"       /%c_expname%/
 c_description   "%c_description%"   /"for model description, see explanatory text"/
-cm_GDPscen      "cm_GDPscen as set for use in GDX"      /%cm_GDPscen%/
+cm_GDPpopScen   "cm_GDPpopScen as set for use in GDX"      /%cm_GDPpopScen%/
 
 
-all_POPscen     " all possible population scenarios"
+all_GDPpopScen    "all possible GDP scenarios"
 /
-    pop_SDP         "SDP population scenario"
-    pop_SDP_EI
-    pop_SDP_MC
-    pop_SDP_RC
-    pop_SSP1        "SSP1 population scenario"
-    pop_SSP2        "SSP2 population scenario"
-    pop_SSP2EU
-    pop_SSP3        "SSP3 population scenario"
-    pop_SSP4        "SSP4 population scenario"
-    pop_SSP5        "SSP5 population scenario"
-    pop_a1
-    pop_a2
-    pop_b1
-    pop_b2
-/
-
-all_GDPscen    "all possible GDP scenarios"
-/
-    gdp_SDP         "SDP fastGROWTH medCONV"
-    gdp_SDP_EI
-    gdp_SDP_MC
-    gdp_SDP_RC
-    gdp_SSP1        "SSP1 fastGROWTH medCONV"
-    gdp_SSP2        "SSP2 medGROWTH medCONV"
-    gdp_SSP2EU
-    gdp_SSP3        "SSP3 slowGROWTH slowCONV"
-    gdp_SSP4        "SSP4  medGROWTH mixedCONV"
-    gdp_SSP5        "SSP5 fastGROWTH fastCONV"
-    gdp_a1
-    gdp_a2
-    gdp_b1
-    gdp_b2
-/
-
-all_demScen    "all possible demand scenarios"
-/
-    gdp_SDP         "SDP fastGROWTH medCONV"
-    gdp_SDP_EI
-    gdp_SDP_MC
-    gdp_SDP_RC
-    gdp_SSP1        "SSP1 fastGROWTH medCONV"
-    gdp_SSP2        "SSP2 medGROWTH medCONV"
-    gdp_SSP2EU
-    gdp_SSP3        "SSP3 slowGROWTH slowCONV"
-    gdp_SSP4        "SSP4  medGROWTH mixedCONV"
-    gdp_SSP5        "SSP5 fastGROWTH fastCONV"
-    gdp_SSP2_lowEn  "SSP2 with low energy"
-    gdp_SSP2EU_NAV_ele "NAVIGATE demand scenarios: Electrification and fuel shift"
-    gdp_SSP2EU_NAV_act "NAVIGATE demand scenarios: Activity reduction and activity shift"
-    gdp_SSP2EU_NAV_tec "NAVIGATE demand scenarios: Technological improvements - energy efficiency"
-    gdp_SSP2EU_NAV_lce "NAVIGATE demand scenarios: Low consumption energy (act + tec)"
-    gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures (ele + act + tec)"
-    gdp_SSP2EU_CAMP_weak   "CAMPAIGNers scenario with low ambition lifestyle change"
-    gdp_SSP2EU_CAMP_strong "CAMPAIGNers scenario with high ambition lifestyle change"
-    gdp_SSP2_demDiffer_IKEA "Demand reduction in Global North (CAZ,EUR,JPN,NEU,USA) and demand increase in Emerging regions (IND,LAM,OAS,SSA). Reduction follows the factor f of demRedStrong scenario, while increase uses factor 2-f."
-    gdp_SSP2_demRedStrong "edget internal demScen, might be removed soon"
-    gdp_SSP2_demRedWeak
-    gdp_SSP2_highDemDEU
-/
-
-all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
-/
-    SDP         "SDP scenario"
+    SDP
     SDP_EI
     SDP_MC
     SDP_RC
@@ -94,10 +32,34 @@ all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from
     SSP3        "SSP3 slowGROWTH slowCONV"
     SSP4        "SSP4  medGROWTH mixedCONV"
     SSP5        "SSP5 fastGROWTH fastCONV"
-    a1
-    a2
-    b1
-    b2
+    SSP2IndiaMedium
+    SSP2IndiaHigh
+/
+
+all_demScen    "all possible demand scenarios"
+/
+    SDP         "SDP fastGROWTH medCONV"
+    SDP_EI
+    SDP_MC
+    SDP_RC
+    SSP1        "SSP1 fastGROWTH medCONV"
+    SSP2        "SSP2 medGROWTH medCONV"
+    SSP3        "SSP3 slowGROWTH slowCONV"
+    SSP4        "SSP4  medGROWTH mixedCONV"
+    SSP5        "SSP5 fastGROWTH fastCONV"
+    SSP2_lowEn  "SSP2 with low energy"
+    SSP2_NAV_ele "NAVIGATE demand scenarios: Electrification and fuel shift"
+    SSP2_NAV_act "NAVIGATE demand scenarios: Activity reduction and activity shift"
+    SSP2_NAV_tec "NAVIGATE demand scenarios: Technological improvements - energy efficiency"
+    SSP2_NAV_lce "NAVIGATE demand scenarios: Low consumption energy (act + tec)"
+    SSP2_NAV_all "NAVIGATE demand scenarios: All measures (ele + act + tec)"
+    SSP2_CAMP_weak   "CAMPAIGNers scenario with low ambition lifestyle change"
+    SSP2_CAMP_strong "CAMPAIGNers scenario with high ambition lifestyle change"
+    SSP2_demDiffer_IKEA "Demand reduction in Global North (CAZ,EUR,JPN,NEU,USA) and demand increase in Emerging regions (IND,LAM,OAS,SSA). Reduction follows the factor f of demRedStrong scenario, while increase uses factor 2-f."
+    SSP2_demDiffer
+    SSP2_demRedStrong "edget internal demScen, might be removed soon"
+    SSP2_demRedWeak
+    SSP2_highDemDEU   "High-demand scenario in industry and transport for Germany, rest of the world has SSP2 standard demand trajectories"
 /
 
 all_SSP_forcing_adjust  "all possible forcing targets and budgets according to SSP scenario such that magicc forcing meets the target"
@@ -158,29 +120,29 @@ all_fossilScen    "all possible scenarios for fossils"
 all_te          "all energy technologies, including from modules"
 /
     ngcc            "natural gas combined cycle"
-    ngccc           "natural gas combined cycle with carbon capture"
+    ngccc           "natural gas combined cycle with capture"
     ngt             "natural gas turbine"
     gastr           "transformation of gases"
     gaschp          "combined heating power using gas"
     gashp           "heating plant using gas"
     gash2           "gas to hydrogen"
-    gash2c          "gas to hydrogen with carbon capture"
+    gash2c          "gas to hydrogen with capture"
     gasftrec        "gas based fischer-tropsch recycle"
-    gasftcrec       "gas based fischer-tropsch with carbon capture recycle"
+    gasftcrec       "gas based fischer-tropsch with capture recycle"
     refliq          "refinery oil to SE liquids"
     dot             "diesel oil turbine"
     dhp             "diesel oil heating plant"
     igcc            "integrated coal gasification combined cycle"
-    igccc           "integrated coal gasification combined cycle with carbon capture"
+    igccc           "integrated coal gasification combined cycle with capture"
     pc              "pulverised coal power plant"
     coalchp         "combined heat powercoal"
     coalhp          "heating plantcoal"
     coaltr          "tranformation of coal"
     coalgas         "coal gasification"
     coalftrec       "coal based fischer-tropsch recycle"
-    coalftcrec      "coal based fischer-tropsch with carbon capture recycle"
+    coalftcrec      "coal based fischer-tropsch with capture recycle"
     coalh2          "coal to hydrogen"
-    coalh2c         "coal to hydrogen with carbon capture"
+    coalh2c         "coal to hydrogen with capture"
     biotr           "transformation of biomass"
     biotrmod        "modern solids from biomass"
     biotrtradIEA    "only needed for reporting"
@@ -188,13 +150,13 @@ all_te          "all energy technologies, including from modules"
     biochp          "biomass combined heat and power"
     biohp           "biomass heating plant"
     bioigcc         "integrated biomass gasification combined cycle"
-    bioigccc        "integrated biomass gasification combined cycle with carbon capture"
+    bioigccc        "integrated biomass gasification combined cycle with CCS"
     biogas          "gasification of biomass"
-    biogasc         "gasification of biomass with carbon capture"
+    biogasc         "gasification of biomass with capture"
     bioftrec        "biomass based fischer-tropsch recycle"
-    bioftcrec       "biomass based fischer-tropsch with carbon capture recycle"
+    bioftcrec       "biomass based fischer-tropsch with capture recycle"
     bioh2           "biomass to hydrogen"
-    bioh2c          "biomass to hydrogen with carbon capture"
+    bioh2c          "biomass to hydrogen with capture"
     bioethl         "biomass to ethanol"
     bioeths         "sugar and starch biomass to ethanol"
     biodiesel       "oil biomass to biodiesel"
@@ -217,14 +179,11 @@ all_te          "all energy technologies, including from modules"
     h22ch4          "Methanation, H2 + 4 CO2 --> CH4 + 2 H20"
     MeOH            "Methanol production /liquid fuel, CO2 hydrogenation, CO2 + 3 H2 --> CH3OH + H20"
     tdels           "transmission and distribution for electricity to stationary users"
-    tdeli           "transmission and distribution for electricity to industry"
     tdelb           "transmission and distribution for electricity to buildings"
     tdelt           "transmission and distribution for electricity to transport"
     tdbiogas        "transmission and distribution for gas from biomass origin to stationary users"
     tdfosgas        "transmission and distribution for gas from fossil origin to stationary users"
     tdsyngas        "transmission and distribution for gas from synthetic origin to stationary users"
-    tdbiogai        "transmission and distribution for gas from biomass origin to industry"
-    tdfosgai        "transmission and distribution for gas from fossil origin to industry"
     tdbiogab        "transmission and distribution for gas from biomass origin to buildings"
     tdfosgab        "transmission and distribution for gas from fossil origin to buildings"
     tdbiogat        "transmission and distribution for gas from biomass origin to transportation"
@@ -233,8 +192,6 @@ all_te          "all energy technologies, including from modules"
     tdbiohos        "transmission and distribution for heating oil from biomass origin to transportation"
     tdfoshos        "transmission and distribution for heating oil from fossil origin to stationary users"
     tdsynhos        "transmission and distribution for heating oil from synthetic origin to stationary users"
-    tdbiohoi        "transmission and distribution for heating oil from biomass origin to industry"
-    tdfoshoi        "transmission and distribution for heating oil from fossil origin to industry"
     tdbiohob        "transmission and distribution for heating oil from biomass origin to buildings"
     tdfoshob        "transmission and distribution for heating oil from fossil origin to buildings"
     tdh2s           "transmission and distribution for hydrogen to stationary users"
@@ -247,22 +204,19 @@ all_te          "all energy technologies, including from modules"
     tdsynpet        "transmission and distribution for petrol from synthetic origin to stationary users"
     tdbiosos        "transmission and distribution for solids from biomass origin to stationary users"
     tdfossos        "transmission and distribution for solids from fossil origin to stationary users"
-    tdbiosoi        "transmission and distribution for solids from biomass origin to industry"
-    tdfossoi        "transmission and distribution for solids from fossil origin to industry"
     tdbiosob        "transmission and distribution for solids from biomass origin to buildings"
     tdfossob        "transmission and distribution for solids from fossil origin to buildings"
     tdhes           "transmission and distribution for heat to stationary users"
-    tdhei           "transmission and distribution for heat to industry"
     tdheb           "transmission and distribution for heat to buildings"
 
     ccsinje         "injection of co2"
-*RP* Storage technology:
+    *** Storage technology:
     storspv         "storage technology for photo voltaic (PV)"
     storwind        "storage technology for wind onshore"
     storwindon      "storage technology for wind onshore"
     storwindoff     "storage technology for wind offshore"
     storcsp         "storage technology for concentrating solar power (CSP)"
-*RP* grid technology:
+    *** grid technology:
     gridspv         "grid between areas with high pv production and the rest"
     gridcsp         "grid between areas with high csp production and the rest"
     gridwind        "grid between areas with high wind onshore production and the rest"
@@ -345,6 +299,15 @@ all_te          "all energy technologies, including from modules"
     apCarH2T        "outdated transport technology"
     apCarElT        "outdated transport technology"
     apTrnElT        "outdated transport technology"
+*** outdated entries, still used in module 04 until structuremappings are fixed
+    tdbiohoi        "transmission and distribution for heating oil from biomass origin to industry"
+    tdfoshoi        "transmission and distribution for heating oil from fossil origin to industry"
+    tdbiosoi        "transmission and distribution for solids from biomass origin to industry"
+    tdfossoi        "transmission and distribution for solids from fossil origin to industry"
+    tdbiogai        "transmission and distribution for gas from biomass origin to industry"
+    tdfosgai        "transmission and distribution for gas from fossil origin to industry"
+    tdhei           "transmission and distribution for heat to industry"
+    tdeli           "transmission and distribution for electricity to industry"
 /
 
 all_enty             "all types of quantities"
@@ -379,20 +342,16 @@ all_enty             "all types of quantities"
     feso
     fesos        "FE solids stationary"
     fesob
-    fesoi
     fehos        "FE heating oil stationary"
     fehob
-    fehoi
     fega
     fegas        "FE gas stationary"
     fegab
-    fegai
     fegat
     feh2s        "FE hydrogen stationary"
     feh2t        "FE hydrogen transport"
     fehes        "FE district heating (including combined heat and power), and heat pumps stationary"
     feheg
-    fehei
     feheb
     fehe
     feel
@@ -401,21 +360,14 @@ all_enty             "all types of quantities"
     feelcb       "buildings use of conventional electricity (all but space heating)"
     feelhpb      "buildings use of electricity for space heating with heat pumps"
     feelrhb      "buildings use of electricity for space heating with resistive heating"
-    feeli
     feelt        "final energy electricity for transport"
     fepet        "FE petrol transport"
     fedie        "FE diesel transport"
     felit        "FE liquids for transport (includes diesel and petrol)"
     fetf         "FE transport fuels"
-    fehoi_cs     "final energy in industry diesel - carbon stored"
-    fegai_cs     "final energy in industry natural gas - carbon stored "
     entydummy    "dummy FE for process based industry implementation"
 
-    ueHDVt       "transport useful energy heavy duty vehicles"
-    ueLDVt       "transport useful energy light duty vehicles"
-    ueelTt       "transport useful energy for electric trains"
-
-    !! materials, feedstock, and industrial goods
+*** materials, feedstock, and industrial goods
     prsteel      "Primary steel"
     sesteel      "Secondary steel"
     dri          "Directly reduced iron"
@@ -426,7 +378,7 @@ all_enty             "all types of quantities"
     ironore      "Iron ore"
     dripell      "DRI pellets"
 
-    !! emissions
+*** emissions
     co2          "carbon dioxide emissions"
     ch4          "methane emissions"
     n2o          "n2o emissions from the energy system"
@@ -470,13 +422,13 @@ all_enty             "all types of quantities"
     VOC          "volatile organic compound emissions"
     NH3          "ammonia emissions"
 
-    !! emissions from industry sub-sectors
+*** emissions from industry sub-sectors
     co2cement      "CO2 emissions from clinker and cement production"
     co2chemicals   "CO2 emissions from chemicals production"
     co2steel       "CO2 emissions from steel production"
     co2otherInd    "CO2 emissions from other industry (used only for reporting)"
 
-    !! various emissions
+*** various emissions
     emiFgasTotal    "XXX"
     emiFgasPFC      "XXX"
     emiFgasCF4      "XXX"
@@ -501,6 +453,13 @@ all_enty             "all types of quantities"
     perm         "Carbon permit"
     peog         "aggregated oil and gas, only relevant for calibration because IEA only provides aggregated data"
     bfco2        "CO2 emission from blast furnace"
+    
+*** outdated entries, still used in module 04 until structuremappings are fixed
+    fesoi        "industry use of solid energy carriers"
+    fehoi        "industry use of liquid energy carriers"
+    fegai        "industry use of gaseous energy carriers"
+    fehei        "industry use of district heat"
+    feeli        "industry use of electricity"
 /
 
 all_esty "energy services"
@@ -589,12 +548,6 @@ all_in   "all inputs and outputs of the CES function"
     eni                     "industry energy use"
     enhi                    "industry heat energy use"
     enhgai                  "industry heat gaseous energy use (fegab and feh2b)"
-    fesoi                   "industry use of solid energy carriers"
-    fehoi                   "industry use of liquid energy carriers"
-    fegai                   "industry use of gaseous energy carriers"
-    feh2i                   "industry use of hydrogen"
-    fehei                   "industry use of district heat"
-    feeli                   "industry use of electricity"
 
     fehcsob                 "buildings heating and cooking solids final energy"
     fehcelb                 "buildings heating and cooking electricity final energy"
@@ -629,10 +582,7 @@ all_in   "all inputs and outputs of the CES function"
 *** FIXME this should be reworked with Robert when revising the transport module
     entrp                   "transport energy use"
     fetf                    "transport fuel use"
-    ueLDVt                  "transport useful energy light duty vehicles"
-    ueHDVt                  "transport useful energy heavy duty vehicles"
     feh2t                   "transport hydrogen use"
-    ueelTt                  "transport useful energy for electric trains"
 
     entrp_pass              "passenger transport"
     entrp_frgt              "freight transport"
@@ -2051,54 +2001,26 @@ entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation
     fedie.cdr
 /
 
-ppfEn2Sector(all_in,emi_sectors) "primary energy production factors mapping to sectors"
-/
-    fegab.build
-    fegai.indst
-    fehob.build
-    fehoi.indst
-    fesob.build
-    fesoi.indst
-    feelb.build
-    feeli.indst
-    feheb.build
-    fehei.indst
-    feh2b.build
-    feh2i.indst
-    ueHDVt.trans
-    ueLDVt.trans
-    ueelTt.trans
-    feeli.cdr
-    fehei.cdr
-    feh2i.cdr
-    fegai.cdr
-/
 
 entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy and sector mapping to detailed final energy enty split in IO"
 /
   fegas.build.fegab
-  fegas.indst.fegai
   fehos.build.fehob
-  fehos.indst.fehoi
   fesos.build.fesob
-  fesos.indst.fesoi
   feels.build.feelb
-  feels.indst.feeli
   fehes.build.feheb
-  fehes.indst.fehei
-***  feh2s.build.feh2b
-***  feh2s.indst.feh2i
   fepet.trans.fepet
   fedie.trans.fedie
-***  feh2t.trans
   feelt.trans.feelt
   fegat.trans.fegat
-***  feels.cdr
-***  fehes.cdr
-***  fegas.cdr
-***  feh2s.cdr
-***  fedie.cdr
+  !! outdated entries, still used in module 04 until structuremappings are fixed
+  fehos.indst.fehoi
+  fesos.indst.fesoi
+  feels.indst.feeli
+  fegas.indst.fegai
+  fehes.indst.fehei
 /
+
 
 all_emiMkt      "emission markets"
 /

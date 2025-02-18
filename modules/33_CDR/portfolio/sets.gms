@@ -43,6 +43,7 @@ fe2cdr(all_enty,all_enty,all_te) "mapping of FE carriers supplying FE demand for
       feels.feels.oae_ng
       fedie.fedie.oae_ng
       fegas.fehes.oae_ng
+      feh2s.fehes.oae_ng
 
       feels.feels.oae_el
       fedie.fedie.oae_el
@@ -74,6 +75,7 @@ if(cm_33EW eq 1,
       te_used33("weathering") = YES;
       teNoTransform33("weathering") = YES;
       teNoTransform2rlf33("weathering", "1") = YES;
+      teAdj33("weathering") = YES;
 );
 
 if(cm_33OAE eq 1,

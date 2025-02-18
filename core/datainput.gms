@@ -27,7 +27,6 @@ vm_demFeForEs.L(t,regi,fe2es(entyFe,esty,teEs)) = 0.1;
 
 *** -------- initial declaration of parameters for iterative target adjustment
 pm_taxCO2eq_anchor_iterationdiff(t) = 0;
-pm_taxCO2eq_anchor_iterationdiff_tmp(t) = 0;
 
 *------------------------------------------------------------------------------------
 ***                        calculations based on sets
@@ -62,20 +61,20 @@ pm_ies(regi) = 2./3.;
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
 *** load population data
-table f_pop(tall,all_regi,all_POPscen)        "Population data"
+table f_pop(tall,all_regi,all_GDPpopScen)        "Population data"
 $ondelim
 $include "./core/input/f_pop.cs3r"
 $offdelim
 ;
-pm_pop(tall,all_regi) = f_pop(tall,all_regi,"%cm_POPscen%") / 1000;  !! rescale unit from [million people] to [billion] people
+pm_pop(tall,all_regi) = f_pop(tall,all_regi,"%cm_GDPpopScen%") / 1000;  !! rescale unit from [million people] to [billion] people
 
 *** load labour data
-table f_lab(tall,all_regi,all_POPscen)        "Labour data"
+table f_lab(tall,all_regi,all_GDPpopScen)        "Labour data"
 $ondelim
 $include "./core/input/f_lab.cs3r"
 $offdelim
 ;
-pm_lab(tall,all_regi) = f_lab(tall,all_regi,"%cm_POPscen%") / 1000; !! rescale unit from [million people] to [billion] people
+pm_lab(tall,all_regi) = f_lab(tall,all_regi,"%cm_GDPpopScen%") / 1000; !! rescale unit from [million people] to [billion] people
 
 display pm_pop, pm_lab;
 
@@ -89,21 +88,21 @@ $offdelim
 ;
 
 *** load GDP data
-table f_gdp(tall,all_regi,all_GDPscen)        "GDP data"
+table f_gdp(tall,all_regi,all_GDPpopScen)        "GDP data"
 $ondelim
 $include "./core/input/f_gdp.cs3r"
 $offdelim
 ;
-pm_gdp(tall,all_regi) = f_gdp(tall,all_regi,"%cm_GDPscen%") * pm_shPPPMER(all_regi) / 1000000;  !! rescale from million US$ to trillion US$
+pm_gdp(tall,all_regi) = f_gdp(tall,all_regi,"%cm_GDPpopScen%") * pm_shPPPMER(all_regi) / 1000000;  !! rescale from million US$ to trillion US$
 
 *** load level of development based on GDP PPP per capita: 0 is low income, 1 is high income.
 *** Values in 2020 SSP2: SSA=0.1745, IND=0.3686, OAS=0.5136, MEA=0.6568, REF=0.836, LAM=0.8763, NEU=0.9962, EUR=1, CAZ=1, CHA=1, JPN=1, USA=1
-table f_developmentState(tall,all_regi,all_GDPpcScen) "level of development based on GDP PPP per capita"
+table f_developmentState(tall,all_regi,all_GDPpopScen) "level of development based on GDP PPP per capita"
 $ondelim
 $include "./core/input/f_developmentState.cs3r"
 $offdelim
 ;
-p_developmentState(tall,all_regi) = f_developmentState(tall,all_regi,"%c_GDPpcScen%");
+p_developmentState(tall,all_regi) = f_developmentState(tall,all_regi,"%cm_GDPpopScen%");
 
 *** Load information from BAU run
 Execute_Loadpoint 'input'      vm_cesIO, vm_invMacro;
@@ -135,7 +134,7 @@ pm_esCapCost(tall,all_regi,all_teEs) = 0;
 *------------------------------------------------------------------------------------
 ***          Technology data input read-in and manipulation    START
 *------------------------------------------------------------------------------------
-*** In module 5 there are more cost manipulation after initial capacities are calculated, 
+*** In module 5 there are more cost manipulation after initial capacities are calculated,
 *** be aware those can overwrite your technology values for policy runs if you set them here in the core
 ***---------------------------------------------------------------------------
 *** Reading in and initializing global and regional data
@@ -565,13 +564,6 @@ $offdelim
 /
 ;
 
-parameter pm_share_ind_fehos(tall,all_regi)               "Share of heating oil used in the industry (rest is residential)"
-/
-$ondelim
-$include "./core/input/p_share_ind_fehos.cs4r"
-$offdelim
-/
-;
 *** initialize pm_share_trans with the global value, will be updated after each negishi/nash iteration
 pm_share_trans("2005",regi) = 0.617;
 pm_share_trans("2010",regi) = 0.625;
@@ -734,8 +726,8 @@ $offdelim
 ;
 $Onlisting
 
-*** windoffshore-todo 
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated
 pm_histCap(tall,all_regi,"windon") $ (pm_histCap(tall,all_regi,"windon") eq 0) = pm_histCap(tall,all_regi,"wind");
 pm_histCap(tall,all_regi,"wind") = 0;
 
@@ -763,8 +755,8 @@ $Onlisting
 
 
 *CG* setting wind offshore capacity factor to be the same as onshore here (later adjusting it in vm_capFac)
-*** windoffshore-todo 
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated
 f_cf(ttot,regi,"windon") $ (f_cf(ttot,regi,"windon") eq 0) = f_cf(ttot,regi,"wind");
 f_cf(ttot,regi,"storwindon") $ (f_cf(ttot,regi,"storwindon") eq 0) = f_cf(ttot,regi,"storwind");
 f_cf(ttot,regi,"gridwindon") $ (f_cf(ttot,regi,"gridwindon") eq 0) = f_cf(ttot,regi,"gridwind");
@@ -978,14 +970,27 @@ $offdelim
 p_abatparam_CH4(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p_abatparam_CH4(tall,all_regi,all_enty,"201");
 p_abatparam_N2O(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p_abatparam_N2O(tall,all_regi,all_enty,"201");
 
-parameter p_emiFossilFuelExtr(all_regi,all_enty)          "methane emissions, needed for the calculation of p_efFossilFuelExtr"
+*** Read methane emissions from fossil fuel extraction for calculating emission factors. 
+*** The base year determines whether the data comes from CEDS or EDGAR
+$ifthen %cm_emifacs_baseyear% == "2005" 
+parameter p_emiFossilFuelExtr(all_regi,all_enty)          "methane emissions in 2005 [Mt CH4], needed for the calculation of p_efFossilFuelExtr"
 /
 $ondelim
 $include "./core/input/p_emiFossilFuelExtr.cs4r"
 $offdelim
 /
 ;
+$else
+parameter p_emiFossilFuelExtr(all_regi,all_enty)          "methane emissions in 2020 [Mt CH4], needed for the calculation of p_efFossilFuelExtr"
+/
+$ondelim
+$include "./core/input/p_emiFossilFuelExtr2020.cs4r"
+$offdelim
+/
+;
+$endif
 
+* GA: These hardcoded values were probably assuming 2005 as base year, TODO: check and adjust for 2020 case
 $if %cm_LU_emi_scen% == "SSP1"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0047/sm_EJ_2_TWa;
 $if %cm_LU_emi_scen% == "SSP2"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0079/sm_EJ_2_TWa;
 $if %cm_LU_emi_scen% == "SSP2_lowEn"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0079/sm_EJ_2_TWa;
@@ -1098,7 +1103,7 @@ loop(regi,
       if(s_aux_cap_remaining > 0,
         p_aux_capThisGrade(regi,te,rlf) = min(
             s_aux_cap_remaining,
-            0.8 * pm_dataren(regi,"maxprod",rlf,te) / pm_dataren(regi,"nur",rlf,te)); !! installedCapacity = maxprod / capacityFactor 
+            0.8 * pm_dataren(regi,"maxprod",rlf,te) / pm_dataren(regi,"nur",rlf,te)); !! installedCapacity = maxprod / capacityFactor
         s_aux_cap_remaining = s_aux_cap_remaining - p_aux_capThisGrade(regi,te,rlf);
       );
     );  !! teRe2rlfDetail
@@ -1108,7 +1113,7 @@ loop(regi,
     p_avCapFac2015(regi,te) =
         sum(teRe2rlfDetail(te,rlf),
           p_aux_capThisGrade(regi,te,rlf) * pm_dataren(regi,"nur",rlf,te))
-      / 
+      /
         (sum(teRe2rlfDetail(te,rlf), p_aux_capThisGrade(regi,te,rlf))
         + 1e-10)
   );    !! teReNoBio
@@ -1127,7 +1132,7 @@ $offdelim
 ;
 
 *** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** allow input data with either "wind" or "windon" until mrremind is updated
 p_histCapFac(tall,all_regi,"windon") $ (p_histCapFac(tall,all_regi,"windon") eq 0) = p_histCapFac(tall,all_regi,"wind");
 p_histCapFac(tall,all_regi,"wind") = 0;
 
@@ -1146,7 +1151,7 @@ loop(t $ (t.val ge 2015 AND t.val lt 2030),
     pm_cf(t,regi,teVRE) !! always 1 for VRE in f_cf, but could be modified by modules
     * ( (2030 - pm_ttot_val(t)) * p_aux_capacityFactorHistOverREMIND(regi,teVRE)
       + (pm_ttot_val(t) - 2015)
-    ) / (2030 - 2015) 
+    ) / (2030 - 2015)
 );
 
 *CG* set storage and grid of windoff to be the same as windon
@@ -1201,7 +1206,7 @@ $offdelim
 p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
 
 *** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** allow input data with either "wind" or "windon" until mrremind is updated
 p_adj_deltacapoffset(t,regi,"windon") $ (p_adj_deltacapoffset(t,regi,"windon") eq 0) = p_adj_deltacapoffset(t,regi,"wind");
 p_adj_deltacapoffset(t,regi,"windoff")= p_adj_deltacapoffset(t,regi,"windon");
 p_adj_deltacapoffset(t,regi,"wind") = 0;
@@ -1269,7 +1274,7 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,'oae_el')          = 0.8;
   p_adj_coeff(ttot,regi,teGrid)            = 0.3;
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
-  
+
   p_adj_coeff(ttot,regi,"MeOH")            = 0.5;
   p_adj_coeff(ttot,regi,"h22ch4")          = 0.5;
 
@@ -1409,18 +1414,14 @@ $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("co2luc") = 0;
 *** The tiny fraction n2ofertsom of total land use n2o can get slightly negative in some cases. Ignore MAC for n2ofertsom by default.
 $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("n2ofertsom") = 0;
 
-pm_macCostSwitch(enty)=pm_macSwitch(enty);
+p_macCostSwitch(enty)=pm_macSwitch(enty);
 pm_macSwitch("co2cement_process") =0 ;
-pm_macCostSwitch("co2cement_process") =0 ;
+p_macCostSwitch("co2cement_process") =0 ;
 
 *** load econometric emission data
 *** read in p3 and p4
-table p_emineg_econometric(all_regi,all_enty,p)        "parameters for ch4 and n2o emissions from waste baseline and co2 emissions from cement production"
-$ondelim
-$include "./core/input/p_emineg_econometric.cs3r"
-$offdelim
+parameter p_emineg_econometric(all_regi,all_enty,p)        "parameters for ch4 and n2o emissions from waste baseline and co2 emissions from cement production"
 ;
-p_emineg_econometric(regi,"co2cement_process","p4")$(p_emineg_econometric(regi,"co2cement_process","p4") eq 0) = sm_eps;
 p_emineg_econometric(regi,enty,"p1") = 0;
 p_emineg_econometric(regi,enty,"p2") = 0;
 *** p2 is calculated in presolve
@@ -1439,10 +1440,28 @@ $include "./core/input/p_macBase1990.cs4r"
 $offdelim
 /
 ;
-parameter p_macBaseVanv(tall,all_regi,all_enty)        "baseline emissions of N2O from transport, adipic acid production, and nitric acid production based on data from van Vuuren"
+parameter p_macBaseCEDS2005(all_regi,all_enty)        "baseline emissions of mac options in 2005 from CEDS"
 /
 $ondelim
+$include "./core/input/p_macBaseCEDS2005.cs4r"
+$offdelim
+/
+;
+parameter p_macBaseCEDS2020(all_regi,all_enty)        "baseline emissions of mac options in 2020"
+/
+$ondelim
+$include "./core/input/p_macBaseCEDS2020.cs4r"
+$offdelim
+/
+;
+parameter p_macBaseIMAGE(tall,all_regi,all_enty)        "baseline emissions of N2O from transport, adipic acid production, and nitric acid production based on data from van Vuuren"
+/
+$ondelim
+$ifthen %cm_emifacs_baseyear% == "2005" 
 $include "./core/input/p_macBaseVanv.cs4r"
+$else
+$include "./core/input/p_macBaseHarmsen2022.cs4r"
+$endif
 $offdelim
 /
 ;
@@ -1573,7 +1592,7 @@ $offdelim
 ;
 
 *** use cm_demScen for Industry and Buildings
-*** cm_GDPscen will be used for Transport (EDGE-T) (see p29_trpdemand)
+*** cm_GDPpopScen will be used for Transport (EDGE-T) (see p29_trpdemand)
 pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
 *** data input for industry FE that is no part of the CES tree
 pm_fedemand(tall,all_regi,ppfen_no_ces_use) = f_fedemand(tall,all_regi,"%cm_demScen%",ppfen_no_ces_use);
@@ -1586,6 +1605,7 @@ $ondelim
 $include "./core/input/f_fedemand_build.cs4r"
 $offdelim
 /;
+
 
 pm_fedemand(t,regi,cal_ppf_buildings_dyn36) = f_fedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 $endif.cm_rcp_scen_build
@@ -1600,15 +1620,18 @@ $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
 $endif.scaleDemand
 
 
-*** initialize global target deviation scalar
-sm_globalBudget_dev = 1;
+*** initialize absolute deviation of global cumulated CO2 emissions budget from target budget
+sm_globalBudget_absDev = 0;
 
-*' load production values from reference gdx to allow penalizing changes vs reference run in the first time step via q_changeProdStartyearCost/q21_taxrevChProdStartYear
+
 if (cm_startyear gt 2005,
+*' load production values from reference gdx to allow penalizing changes vs reference run in the first time step via q_changeProdStartyearCost/q21_taxrevChProdStartYear
 execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
 execute_load "input_ref.gdx", pm_prodFEReference = vm_prodFe.l;
 execute_load "input_ref.gdx", p_prodUeReference = v_prodUe.l;
 execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
+*' load MAC costs from reference gdx. Values for t (i.e. after cm_start_year) will be overwritten in core/presolve.gms 
+execute_load "input_ref.gdx" pm_macCost;
 );
 
 p_prodAllReference(t,regi,te) =

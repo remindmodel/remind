@@ -89,7 +89,7 @@ $setGlobal transport  edge_esm        !! def = edge_esm
 ***---------------------    36_buildings    -------------------------------------
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
-$setglobal industry  fixed_shares     !! def = simple
+$setglobal industry  subsectors     !! def = subsectors
 ***---------------------    39_CCU    --------------------------------------
 $setglobal CCU  on !! def = on
 ***---------------------    40_techpol  -----------------------------------------
@@ -205,9 +205,6 @@ cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bl
 cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/ 100 /Kwh)"
 cm_build_H2costDecayStart     "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
 cm_build_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> after 10% the function will have the value 0). [%]"
-cm_indst_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels. [3.25$/ 0.1 /kWh]"
-cm_indst_costDecayStart     "simplified logistic function end of full value   (ex. 5%  -> between 0 and 5% the simplified logistic function will have the value 1). [%]"
-cm_indst_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> between 10% and 100% the simplified logistic function will have the value 0). [%]"
 cm_BioSupply_Adjust_EU      "factor for scaling sub-EU bioenergy supply curves"
 cm_BioImportTax_EU          "factor for EU bioenergy import tax"
 cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
@@ -273,9 +270,7 @@ cm_1stgen_phaseout      = 0;              !! def = 0
 $setglobal cm_tradbio_phaseout  default   !! def = default
 cm_phaseoutBiolc        = 0;              !! def = 0
 
-$setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
-$setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
-$setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
+$setglobal cm_GDPpopScen  SSP2  !! def = SSP2
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
 cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
@@ -300,7 +295,7 @@ cm_rentconvcoal     = 50;        !! def 50
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
-c_techAssumptScen     = 1;         !! def = 1
+$setGlobal c_techAssumptScen     = SSP2;         !! def = SSP2
 c_ccsinjecratescen    = 1;         !! def = 1
 c_ccscapratescen      = 1;         !! def = 1
 c_export_tax_scen     = 0;         !! def = 0
@@ -376,10 +371,6 @@ cm_build_H2costAddH2Inv = 0.2;  !! def 6.5$/kg = 0.2 $/Kwh
 cm_build_H2costDecayStart = 0.05; !! def 5%
 cm_build_H2costDecayEnd = 0.1;  !! def 10%
 
-cm_indst_H2costAddH2Inv = 0.1;  !! def 6.5$/kg = 0.2 $/Kwh
-cm_indst_costDecayStart = 0.05; !! def 5%
-cm_indst_H2costDecayEnd = 0.1;  !! def 10%
-
 *** EU bioenergy switches
 cm_BioSupply_Adjust_EU = 3; !! def 1
 cm_BioImportTax_EU = 1; !! def 0.25
@@ -438,7 +429,7 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
 
-$setglobal cm_CES_configuration  indu_fixed_shares-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_ccd632d33a   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-GDPpop_SSP2-Kap_perfect-Reg_ccd632d33a   !! this will be changed by start_run()
 
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
@@ -450,9 +441,6 @@ $setglobal cm_calibration_string  off      !! def = off
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
 $setglobal cm_techcosts  REG       !! def = REG
-
-$setglobal cm_eni  off!! def = off
-$setglobal cm_enb  off!! def = off
 
 $setglobal cm_incolearn  off !! def = off
 $setglobal cm_storageFactor  off !! def = off

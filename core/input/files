@@ -21,9 +21,9 @@ p_adj_deltacapoffset.cs4r
 p_boundCapCCSindicator.cs4r
 p_boundEmi.cs4r
 p_emiFossilFuelExtr.cs4r
+p_emiFossilFuelExtr2020.cs4r
 f_nechem_emissionFactors.cs4r
 f_incinerationShares.cs4r
-p_emineg_econometric.cs3r
 pm_histCap.cs3r
 p_histCapFac.cs4r
 p_histEmiMac.cs4r
@@ -31,6 +31,9 @@ p_histEmiSector.cs4r
 p_inco0.cs4r
 p_macBase1990.cs4r
 p_macBase2005.cs4r
+p_macBaseCEDS2020.cs4r
+p_macBaseCEDS2005.cs4r
+p_macBaseHarmsen2022.cs4r
 p_macBaseVanv.cs4r
 p_macPolCO2luc.cs4r
 p_boundCapCCS.cs4r
@@ -42,7 +45,6 @@ pm_risk_premium.cs4r
 pm_shPPPMER.cs4r
 p_PE_histCap.cs3r
 p_regi_2_MAGICC_regions.cs3r
-p_share_ind_fehos.cs4r
 p_share_ind_fesos_bio.cs4r
 p_share_ind_fesos.cs4r
 pm_taxCO2eqHist.cs4r

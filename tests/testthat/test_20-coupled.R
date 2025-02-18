@@ -235,34 +235,43 @@ test_that("Check path_mif_ghgprice_land with file", {
   }
 })
 
-test_that("start_bundle_coupled.R --test succeeds on all configs", {
-  skipIfPreviousFailed()
-  csvfiles <- system("git ls-files ../../config/scenario_config_coupled*.csv ../../config/*/scenario_config_coupled*.csv", intern = TRUE)
-  if (length(csvfiles) == 0) {
-    csvfiles <- Sys.glob(c(file.path("../../config/scenario_config_coupled*.csv"),
-                           file.path("../../config", "*", "scenario_config_coupled*.csv")))
-  }
-  skipfiles <- c("scenario_config_coupled_shortCascade", # fails on missing mif file which is present while running other tests
-                 "scenario_config_coupled_GCS")          # GCFS setting not in standard MAgPIE release
-  csvfiles <- normalizePath(grep(paste(skipfiles, collapse = "|"), csvfiles, invert = TRUE, value = TRUE))
+csvfiles <- system("git ls-files ../../config/scenario_config_coupled*.csv ../../config/*/scenario_config_coupled*.csv", intern = TRUE)
+if (length(csvfiles) == 0) {
+  csvfiles <- Sys.glob(c(file.path("../../config/scenario_config_coupled*.csv"),
+                         file.path("../../config", "*", "scenario_config_coupled*.csv")))
+}
+csvfiles <- normalizePath(csvfiles)
+test_that("coupled csv files found", {
   expect_true(length(csvfiles) > 0)
-  testthat::with_mocked_bindings(
-    for (csvfile in csvfiles) {
-      test_that(paste("perform start_bundle_coupled.R --test with", basename(csvfile)), {
+})
+
+skipfiles <- c("scenario_config_coupled_shortCascade") # fails on missing mif file which is present while running other tests
+
+for (csvfile in csvfiles) {
+  test_that(paste("start_bundle_coupled.R --test succeeds on", basename(csvfile)), {
+    skipIfPreviousFailed()
+    skip_if(grepl(paste(skipfiles, collapse = "|"), csvfile), message = paste(csvfile, "skipped."))
+    testthat::with_mocked_bindings(
+      {
         output <- localSystem2("Rscript",
-                             c("start_bundle_coupled.R", "--test", "startgroup=*", csvfile))
+                               c("start_bundle_coupled.R", "--test", "startgroup=*", csvfile))
         printIfFailed(output)
         expectSuccessStatus(output)
-      })
-    },
-    getLine = function() stop("getLine should not called."),
-    .package = "gms"
-  )
-  unlink("../../*TESTTHAT.RData")
-})
+      },
+      getLine = function() stop("getLine should not called."),
+      .package = "gms"
+    )
+    unlink("../../*TESTTHAT.RData")
+    expect_no_warning(config <- readCheckScenarioConfig(csvfile, remindPath <- file.path("..", "..")))
+  })
+}
 
 test_that("delete files to leave clean state", {
   # leave clean state
   skipIfPreviousFailed()
-  expect_true(0 == unlink(deleteallfiles, recursive = TRUE))
+  if (! all(file.exists(deleteallfiles))) {
+    skip("Not cleaning up coupled tests as not all required files exist.")
+  } else {
+    expect_true(0 == unlink(deleteallfiles, recursive = TRUE))
+  }
 })

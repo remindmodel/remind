@@ -44,7 +44,7 @@ q02_welfare(regi) ..
         )
 $ifthen %cm_INCONV_PENALTY% == "on"
       - v02_inconvPen(ttot,regi)
-      - v02_inconvPenCoalSolids(ttot,regi)
+      - v02_inconvPenSolidsBuild(ttot,regi)
 $endif
 $ifthen "%cm_INCONV_PENALTY_FESwitch%" == "on"
         !! inconvenience cost for fuel switching in FE between fossil,
@@ -58,7 +58,7 @@ $ifthen "%cm_INCONV_PENALTY_FESwitch%" == "on"
           v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
           + v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
           )
-          / 1e3	
+          / 1e3	!! heuristically determined rescaling factor so the dampening doesn't dominate the transformation
 $endif
 $ifthen not "%cm_seFeSectorShareDevMethod%" == "off"
         !! penalizing secondary energy share deviation in sectors  
@@ -73,21 +73,21 @@ $endif
 ***---------------------------------------------------------------------------
 $IFTHEN.INCONV %cm_INCONV_PENALTY% == "on"
 q02_inconvPen(t,regi)$(t.val > 2005)..
-    v02_inconvPen(t,regi)
+  v02_inconvPen(t,regi)
   =g=
-*' local air pollution for all entySe production except for coal solids (=sesofos), which is treated separately (see below)
-    SUM(pe2se(enty,entySe,te)$(NOT sameas(entySe,"sesofos")),
-        p02_inconvpen_lap(t,regi,te) * (vm_prodSe(t,regi,enty,entySe,te))
-    )
+*' local air pollution / inconvenience for all entySe production except for coaltr and biotrmod solids, wich are treated separately (see below)
+  SUM(pe2se(enty,entySe,te)$( NOT (sameas(te,"coaltr") OR sameas(te,"biotrmod") ) ),
+    p02_inconvpen_lap(t,regi,te) * vm_prodSe(t,regi,enty,entySe,te)
+  )
 ;
 
-q02_inconvPenCoalSolids(t,regi)$(t.val > 2005)..
-    v02_inconvPenCoalSolids(t,regi)
+q02_inconvPenSolidsBuild(t,regi)$(t.val > 2005)..
+  v02_inconvPenSolidsBuild(t,regi)
   =g=
-*' local air pollution for coal: inconvinience penalty applies only for buildings use; slack variable ensures that v02_inconvPen can stay > 0 
-    p02_inconvpen_lap(t,regi,"coaltr") * (vm_prodSe(t,regi,"pecoal","sesofos","coaltr") 
-  - (vm_cesIO(t,regi,"fesoi") + pm_cesdata(t,regi,"fesoi","offset_quantity")))
-  + v02_sesoInconvPenSlack(t,regi)
+*' Local air pollution and inconvenience of using coal and (modern) biomass: inconvenience penalty applies only for use in residential/buildings
+*' The inconvenience of using traditional biomass are accounted for in v02_inconvPen, and thus additional to the penalty on using solids in residential
+  p02_inconvpen_lap(t,regi,"coaltr") * vm_demFeSector(t,regi,"sesofos","fesos","build","ES")
+  + p02_inconvpen_lap(t,regi,"biotrmod") * vm_demFeSector(t,regi,"sesobio","fesos","build","ES")
 ;
 $ENDIF.INCONV
 

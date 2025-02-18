@@ -28,26 +28,26 @@ pm_share_trans(tall,all_regi)                        "transportation share"
 pm_gdp_gdx(tall,all_regi)                            "GDP path from gdx, updated iteratively."
 p_inv_gdx(tall,all_regi)                             "macro-investments path from gdx, updated iteratively."
 pm_taxCO2eq(ttot,all_regi)                           "CO2 tax path in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
+pm_taxCO2eq_iter(iteration,ttot,all_regi)            "CO2 tax path (pm_taxCO2eq) tracked over iterations [T$/GtC]"
+pm_taxCO2eq_anchor_iterationdiff(ttot)               "difference in global anchor carbon price to the last iteration [T$/GtC]"
 pm_taxCO2eqRegi(tall,all_regi)                       "additional regional CO2 tax path in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
-pm_taxCO2eq_anchor_iterationdiff(ttot)               "help parameter for iterative adjustment of taxes"
-pm_taxCO2eq_anchor_iterationdiff_tmp(ttot)           "help parameter for iterative adjustment of taxes"
 pm_taxCO2eqSum(tall,all_regi)                        "sum of pm_taxCO2eq, pm_taxCO2eqRegi, pm_taxCO2eqSCC in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
 pm_taxemiMkt(ttot,all_regi,all_emiMkt)                "CO2 or CO2eq region and emission market specific emission tax"
 pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt) "CO2 or CO2eq region and emission market specific emission tax per iteration"
 pm_emissionsForeign(tall,all_regi,all_enty)          "total emissions of other regions (nash relevant)"
 pm_co2eqForeign(tall,all_regi)                       "emissions, which are part of the climate policy, of other regions (nash relevant)"
 pm_cesdata(tall,all_regi,all_in,cesParameter)        "parameters of the CES function"
-f_pop(tall,all_regi,all_POPscen)                     "population data for all possible scenarios"
+f_pop(tall,all_regi,all_GDPpopScen)                     "population data for all possible scenarios"
 pm_pop(tall,all_regi)                                "population data [bn people]"
 pm_gdp(tall,all_regi)                                "GDP data [trn US$ 2005]"
 p_developmentState(tall,all_regi)                    "level of development based on GDP per capita"
-f_lab(tall,all_regi,all_POPscen)                     "labour data for all possible scenarios"
+f_lab(tall,all_regi,all_GDPpopScen)                     "labour data for all possible scenarios"
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
 pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer)"
-*** If elasticities of substitution (sigma) is below 1, the smaller it is the less the substitution replacement effect between different CES nodes. 
-*** The products become more and more complementary in the production, meaning that the more one product is used, the more the other one is demanded as well. 
+*** If elasticities of substitution (sigma) is below 1, the smaller it is the less the substitution replacement effect between different CES nodes.
+*** The products become more and more complementary in the production, meaning that the more one product is used, the more the other one is demanded as well.
 *** If sigma is larger than 1, the more one product is used, the less the others are used, i.e. the products are substitutes"
-pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution." 
+pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution."
 p_r(ttot,all_regi)                                   "calculating capital interest rate"
 
 ***----------------------------------------------------------------------------------------
@@ -66,19 +66,17 @@ p_macLevFree(tall,all_regi,all_enty)                 "Phase in of zero-cost MAC 
 pm_macCost(tall,all_regi,all_enty)                   "abatement costs for all emissions subject to MACCs (type emiMacSector) []"
 pm_macStep(tall,all_regi,all_enty)                   "step number of abatement level [integer]"
 pm_macSwitch(all_enty)                               "switch to include mac option in the code"
-pm_macCostSwitch(all_enty)                           "switch to include mac costs in the code (e.g. in coupled scenarios, we want to include the costs in REMIND, but MAC effects on emissions are calculated in MAgPIE)"
+p_macCostSwitch(all_enty)                            "switch to include mac costs in the code (e.g. in coupled scenarios, we want to include the costs in REMIND, but MAC effects on emissions are calculated in MAgPIE)"
 p_priceCO2(tall,all_regi)                            "carbon price [$/tC]"
-pm_priceCO2forMAC(tall,all_regi,all_enty)            "carbon price defined for MAC gases [$/tC]"
+p_priceCO2forMAC(tall,all_regi,all_enty)             "carbon price defined for MAC gases [$/tC]"
 p_priceGas(tall,all_regi)                            "gas price for ch4gas MAC [$/tCeq]"
-pm_ResidualCementDemand(tall,all_regi)               "reduction in cemend demand (and thus process emissions) due to climate policy [0...1]"
-pm_CementAbatementPrice(ttot,all_regi)               "CO2 price used during calculation of cement demand reduction [$/tCO2]"
-pm_CementDemandReductionCost(tall,all_regi)          "cost of reducing cement demand [tn$2005]"
+p_ResidualCementDemand(tall,all_regi)                "reduction in cemend demand (and thus process emissions) due to climate policy [0...1]"
+p_CementAbatementPrice(ttot,all_regi)                "CO2 price used during calculation of cement demand reduction [$/tCO2]"
 p_macPE(ttot,all_regi,all_enty)                      "pe from MACs"
 pm_shPerm(tall, all_regi)                            "emission permit shares"
 pm_emicapglob(tall)                                  "global emission cap"
 p_adj_coeff(ttot,all_regi,all_te)                    "coefficient for adjustment costs"
 p_adj_coeff_glob(all_te)                             "coefficient for adjustment costs - global scale"
-p_switch_cement(ttot,all_regi)                       "describes an s-curve to provide a smooth switching from the short-term behavior (depending on per capita capital investments) to the long-term behavior (constant per capita emissions) of CO2 emissions from cement production"
 p_cint(all_regi,all_enty,all_enty,rlf)               "additional emissions of GHG from mining, on top of emissions from combustion"
 
 $IFTHEN.agricult_base_shift not "%c_agricult_base_shift%" == "off"
@@ -110,6 +108,9 @@ $endif.tech_CO2capturerate
 
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]"
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1"
+
+pm_actualbudgetco2(ttot)                             "actual level of cumulated emissions starting from 2020 [GtCO2]"
+p_actualbudgetco2_iter(iteration,ttot)               "track actual level of cumulated emissions starting from 2020 over iterations [GtCO2]"
 
 pm_dataccs(all_regi,char,rlf)                               "maximum CO2 storage capacity using CCS technology. [GtC]"
 pm_ccsinjecrate(all_regi)                                   "Regional CCS injection rate factor. 1/a."
@@ -318,7 +319,7 @@ vm_costSubsidizeLearning(ttot,all_regi)              "regional cost of subsidy f
 vm_dummyBudget(ttot,all_regi)                        "auxiliary variable that helps to meet permit allocation equation in nash case"
 ***----------------------------------------------------------------------------------------
 ***-------------------------------------------------ESM module-----------------------------
-vm_macBase(ttot,all_regi,all_enty)                   "baseline emissions for all emissions subject to MACCs (type emismac)"
+v_macBase(ttot,all_regi,all_enty)                   "baseline emissions for all emissions subject to MACCs (type emismac)"
 vm_emiCO2Sector(ttot,all_regi,emi_sectors)           "total CO2 emissions from individual sectors [GtC]"
 vm_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty)  "energy-related emissions per region and technology"
 vm_emiTe(ttot,all_regi,all_enty)                     "total energy-related emissions of each region. [GtC, Mt CH4, Mt N]"
@@ -379,7 +380,7 @@ vm_prodPe(ttot,all_regi,all_enty)                    "pe production. [TWa, Urani
 vm_demSe(ttot,all_regi,all_enty,all_enty,all_te)     "se demand. [TWa]"
 vm_prodSe(tall,all_regi,all_enty,all_enty,all_te)    "se production. [TWa]"
 vm_prodFe(ttot,all_regi,all_enty,all_enty,all_te)    "fe production. [TWa]"
-vm_demFENonEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "energy flows of non-energy feedstocks [TWa]"
+vm_demFeNonEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "energy flows of non-energy feedstocks [TWa]"
 vm_demFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)          "fe demand per sector and emission market. Taxes should be applied to this variable or variables closer to the supply side whenever possible so the marginal prices include the tax effects. [TWa]"
 vm_demFeSector_afterTax(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "fe demand per sector and emission market after tax. Demand sectors should use this variable in their fe balance equations so demand side marginals include taxes effects. [TWa]"
 v_costFu(ttot,all_regi)                              "fuel costs"
@@ -414,11 +415,6 @@ v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids
 
 vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
 
-vm_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)      "Carbon flow: carbon contained in feedstocks with unknown fate (not plastics)(assumed to go back into the atmosphere) [GtC]"
-vm_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "Emissions from incineration of plastic waste [GtC]"
-vm_incinerationCCS(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "CCS from incineration of plastic waste [GtC]"
-vm_nonIncineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)       "Carbon flow: carbon contained in plastics that are not incinerated [GtC]"
-
 v_changeProdStartyearAdj(ttot,all_regi,all_te)       "Absolute effect size of changing output with respect to the reference run for each te"
 vm_changeProdStartyearCost(ttot,all_regi,all_te)     "Costs for changing output with respect to the reference run for each te"
 
@@ -426,7 +422,7 @@ vm_changeProdStartyearCost(ttot,all_regi,all_te)     "Costs for changing output 
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
 
 vm_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
-vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"  
+vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"
 
 $ifthen.seFeSectorShareDev not "%cm_seFeSectorShareDevMethod%" == "off"
   v_penSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "penalty cost for secondary energy share deviation between sectors, for each sector/emiMarket combination"
@@ -626,7 +622,7 @@ sm_endBudgetCO2eq            "end time step of emission budget period 1"
 sm_budgetCO2eqGlob           "budget for global energy-emissions in period 1"
 p_emi_budget1_gdx            "budget for global energy-emissions in period 1 from gdx, may overwrite default values"
 
-sm_globalBudget_dev          "actual level of global cumulated emissions budget divided by target budget"
+sm_globalBudget_absDev       "absolute deviation of global cumulated CO2 emissions budget from target budget"
 
 sm_eps                       "small number: 1e-9 "  /1e-9/
 
