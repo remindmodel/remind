@@ -809,13 +809,18 @@ parameter
 *' *  (4): so2 tax intermediary between 1 and 2, multiplying (1) tax by the ratio (3) and (2)
 *'
 parameter
-  c_techAssumptScen         "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5, 4: SSP3"
+  c_techAssumptScen         "scenario for assumptions of energy technologies based on SSP scenarios"
 ;
-  c_techAssumptScen     = 1;         !! def = 1  !! regexp = [1-4]
+  c_techAssumptScen     = SSP2;         !! def = SSP2  !! regexp = (SSP)?[1-5]
 *' This flag defines an energy technology scenario according to SSP scenario
 *' *   (1) SSP2: reference scenario - default investment costs & learning rates for pv, csp and wind
-*' *   (2) SSP1: advanced renewable energy techno., pessimistic for nuclear and CCS
-*' *   (3) SSP5: pessimistic techno-economic assumptions
+*' *   (2) old SSP1: advanced renewable energy techno., pessimistic for nuclear and CCS
+*' *   (3) old SSP5: pessimistic techno-economic assumptions
+*' *   (4) old SSP3
+*' *   (SSP1) advanced renewable energy techno., pessimistic for nuclear and CCS
+*' *   (SSP2) reference scenario - default investment costs & learning rates for pv, csp and wind
+*' *   (SSP3)
+*' *   (SSP5) 
 *'
 parameter
   c_ccsinjecratescen        "CCS injection rate factor applied to total regional storage potentials, yielding an upper bound on annual injection"
@@ -1075,17 +1080,13 @@ parameter
 *' This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1.
 *'
 parameter
-  cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bleak (3) assumptions on VRE supply"
+  cm_VRE_supply_assumptions        "default (0), optimistic (1), pessimistic (2), or very pessimistic (3) assumptions on VRE and storage costs"
 ;
-  cm_VRE_supply_assumptions = 0;  !! 0 - default, 1 - optimistic, 2 - sombre, 3 - bleak  !! regexp = [0-3]
-*' *   for 1 - optimistic
-*'      - investment cost (inco0), to-be-learned investment cost (incolearn), and learning rate parameters for spv and storspv are modified
-*'      - ease capacity constraints on power storage
-*'      - reduce necessary storage for electricity production
-*'  * for 2 - sombre
-*'      - change to-be-learned investment cost (incolearn) for solar PV (spv) to 5010 (150 $ per kW floor cost)
-*'  * for 3 - bleak
-*'      - change to-be-learned investment cost (incolearn) for solar PV (spv) to 4960 (200 $ per kW floor cost)
+  cm_VRE_supply_assumptions = 0;  !! def = 0  !! regexp = [0-3]
+*' Modifies investment cost (inco0), floorcost and learning rate parameters for VRE and storage.
+*' * (1) optimistic: reduces floor costs and investment costs and increases learning rates by around 10%. Also halves storage needs.
+*' * (2) pessimistic: increases floor costs and investment costs and decreases learning rates by around 10%.
+*' * (3) very pessimistic: increases floor costs and investment costs and decreases learning rates by around 30%.
 *'
 parameter
   cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/kg = 0.2 $/Kwh)"

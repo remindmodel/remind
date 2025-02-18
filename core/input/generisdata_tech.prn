@@ -9,7 +9,6 @@ omf         Fixed operation and maintenace costs given as a fraction of investme
 omv         Variable operation and maintenance costs given in $[2015] / (kW[output] * a) energy production
 lifetime    given in years
 floorcost   Floor investment costs, given in $[2015] / kW[output]; for dac: $[2015] / (tC[captured]/a)
-incolearn   Difference from inco0 to floor investment costs, given in $[2015] / kW[output]; for dac: $[2015] / (tC[captured]/a)
 ccap0       Cumulated capacity in 2005 given in TW
 learn       Learning rate given in percent cost reduction per doubling of cumulated capacity
 luse        land use factor of solar technologies
