@@ -1227,6 +1227,8 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
   p_adj_seed_te(ttot,regi,"AmSyNGcc")        = 0.05;
   p_adj_seed_te(ttot,regi,"AmSyLiqcc")       = 0.05;
   p_adj_seed_te(ttot,regi,"AmSyH2")          = 0.05;
+  p_adj_seed_te(ttot,regi,"MTOMTA")          = 0.05;
+  p_adj_seed_te(ttot,regi,"FertProdH2")      = 0.05;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   p_adj_seed_te(ttot,regi,"bfcc")            = 0.05;
@@ -1272,6 +1274,8 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
   p_adj_coeff(ttot,regi,"AmSyNGcc")        = 1.0;
   p_adj_coeff(ttot,regi,"AmSyLiqcc")       = 1.0;
   p_adj_coeff(ttot,regi,"AmSyH2")          = 1.0;
+  p_adj_coeff(ttot,regi,"MTOMTA")          = 1.0;
+  p_adj_coeff(ttot,regi,"FertProdH2")      = 1.0;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   p_adj_coeff(ttot,regi,"bfcc")            = 1.0;

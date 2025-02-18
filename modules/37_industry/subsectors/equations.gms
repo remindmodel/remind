@@ -222,13 +222,25 @@ q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt) ..
     vm_demFeNonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
   )
   =e=
-  sum((fe2ppfEn(entyFe,ppfen_industry_dyn37(in)),
-       secInd37_emiMkt(secInd37,emiMkt),
-       secInd37_2_pf(secInd37,in_chemicals_feedstock_37(in))),
-    ( vm_cesIO(t,regi,in)
-    + pm_cesdata(t,regi,in,"offset_quantity")
+   ( sum(secInd37$(not secInd37Prc(secInd37)),
+    sum((fe2ppfEn(entyFe,ppfen_industry_dyn37(in)),
+         secInd37_emiMkt(secInd37,emiMkt),
+         secInd37_2_pf(secInd37,in_chemicals_feedstock_37(in))),
+        ( vm_cesIO(t,regi,in)
+        + pm_cesdata(t,regi,in,"offset_quantity")
+        )
+      )
     )
-  * p37_chemicals_feedstock_share(t,regi)
+   +
+  sum(secInd37Prc$(sameas(secInd37Prc,"chemicals")),
+      sum((secInd37_emiMkt(secInd37Prc,emiMkt),
+          secInd37_tePrc(secInd37Prc,tePrc),
+          tePrc2opmoPrc(tePrc,opmoPrc)),
+          pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc)
+          * vm_outflowPrc(t,regi,tePrc,opmoPrc)
+          )
+      )
+      * p37_chemicals_feedstock_share(t,regi) 
   )$( entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) )
 ;
 
