@@ -227,7 +227,7 @@ $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP5"
     fm_dataglob("floorcost",teStor) =    2   * fm_dataglob("floorcost",teStor); 
 
 
-$endIf.c_techAssumptScen
+$endif.c_techAssumptScen
 
 
 

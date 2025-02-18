@@ -809,20 +809,6 @@ parameter
 *' *  (4): so2 tax intermediary between 1 and 2, multiplying (1) tax by the ratio (3) and (2)
 *'
 parameter
-  c_techAssumptScen         "scenario for assumptions of energy technologies based on SSP scenarios"
-;
-  c_techAssumptScen     = SSP2;         !! def = SSP2  !! regexp = (SSP)?[1-5]
-*' This flag defines an energy technology scenario according to SSP scenario
-*' *   (1) SSP2: reference scenario - default investment costs & learning rates for pv, csp and wind
-*' *   (2) old SSP1: advanced renewable energy techno., pessimistic for nuclear and CCS
-*' *   (3) old SSP5: pessimistic techno-economic assumptions
-*' *   (4) old SSP3
-*' *   (SSP1) advanced renewable energy techno., pessimistic for nuclear and CCS
-*' *   (SSP2) reference scenario - default investment costs & learning rates for pv, csp and wind
-*' *   (SSP3)
-*' *   (SSP5) 
-*'
-parameter
   c_ccsinjecratescen        "CCS injection rate factor applied to total regional storage potentials, yielding an upper bound on annual injection"
 ;
   c_ccsinjecratescen    = 1;         !! def = 1  !! regexp = [0-6]
@@ -1278,6 +1264,16 @@ $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
 *' * (gdp_SSP4):  SSP4  medGROWTH mixedCONV
 *' * (gdp_SSP5):  SSP5 fastGROWTH fastCONV
 $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
+*' c_techAssumptScen flag defines an energy technology scenario according to SSP narratives
+*' *   (1) SSP2: reference scenario - default investment costs & learning rates for pv, csp and wind
+*' *   (2) old SSP1: advanced renewable energy techno., pessimistic for nuclear and CCS
+*' *   (3) old SSP5: pessimistic techno-economic assumptions
+*' *   (4) old SSP3
+*' *   (SSP1) advanced renewable energy techno., pessimistic for nuclear and CCS
+*' *   (SSP2) reference scenario - default investment costs & learning rates for pv, csp and wind
+*' *   (SSP3)
+*' *   (SSP5) 
+$setglobal c_techAssumptScen SSP2 !! def = SSP2  !! regexp = (SSP)?[1-5]
 *** cm_oil_scen      "assumption on oil availability"
 ***  (lowOil): low
 ***  (medOil): medium (this is the new case)
