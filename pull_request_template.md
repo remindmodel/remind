@@ -1,17 +1,22 @@
 ## Purpose of this PR
 
+> **NOTE** Make sure to select the items relevant to your PR by placing an "x" in the brackets. *Delete* the parts that are left empty. This way the progress tracker accurately reflects the status of the PR. Leave *unfinished* elements in the checklist unchecked so we know how far along you are
 
 ## Type of change
 
-(Make sure to delete from the Type-of-change list the items not relevant to your PR)
+### Parts concerned:
+- [ ] Code
+- [ ] Documentation
+- [ ] Input Data
+- [ ] Other
 
-- [ ] Bug fix 
+### Impact:
+- [ ] Bug fix
 - [ ] Refactoring
-- [ ] New feature 
+- [ ] New feature
 - [ ] Minor change (default scenarios show only small differences)
 - [ ] Fundamental change
 - [ ] This change requires a documentation update
-
 
 ## Checklist:
 
@@ -29,4 +34,3 @@
 
 * Runs with these changes are here:
 * Comparison of results (what changes by this PR?): 
-
