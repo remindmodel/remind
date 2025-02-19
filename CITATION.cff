@@ -263,6 +263,16 @@ authors:
   orcid: https://orcid.org/0000-0001-8801-173X
   affiliation: "Potsdam Institute for Climate Impact Research"
 
+- family-names: "Hagen"
+  given-names:  "Alex"
+  orcid: https://orcid.org/0000-0003-4793-8664
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: "Müßel"
+  given-names:  "Jarusch"
+  orcid: https://orcid.org/0000-0002-1857-7866
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
 title: REMIND - REgional Model of INvestments and Development
 abstract: REMIND (REgional Model of Investment and Development) is a numerical
   open source model that represents the future evolution of the world economies
