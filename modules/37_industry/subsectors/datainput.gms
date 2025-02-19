@@ -850,15 +850,15 @@ $endif.cm_subsec_model_chemicals
 p37_mat2ue(all_enty,all_in) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 !! ue_chemicals is measured in value_added (trn$2017), whilst material is measured in Gt
-!! So this is the price of material in trn$2005/Gt = $2017/kg
+!! So this is the price of material in trn$2017/Gt = $2017/kg
 
 !! new calculation value added: Global plastic production volume 400.3 Mt Global plastic market size 712bn USD in 2022 https://www.statista.com/topics/5266/plastics-industry/#:~:text=Since%20the%20mass%20production%20of%20plastic%20products%20began,to%20experience%20considerable%20growth%20over%20the%20next%20decade.
 
 !!TODO QIanzhi: Change to 2017$
-p37_mat2ue("HVC","ue_chemicals") = 1.1; !!2005$/kg Source: https://businessanalytiq,com/procurementanalytics/index/propylene-price-index/ 2020 Global Average of Ethylene, Propylene and BTX
-p37_mat2ue("Fertilizer","ue_chemicals") = 0.58; !!2005$/kgN Source: https://farmdocdaily,illinois,edu/wp-content/uploads/2023/06/06132023_fig1,png 2020 Global Average
-p37_mat2ue("MethFinal","ue_chemicals") = 0.3; !!2005$/kg Source: https://www,methanex,com/about-methanol/pricing/ 2020 Global Average
-p37_mat2ue("AmmoFinal","ue_chemicals") = 0.55; !!2005$/kg Source: https://businessanalytiq,com/procurementanalytics/index/ammonia-price-index/ 2020 Global Average
+p37_mat2ue("HVC","ue_chemicals") = 1.38; !!2017$/kg Source: See new calculation value added
+p37_mat2ue("Fertilizer","ue_chemicals") = 0.73; !!2017$/kgN Source: https://farmdocdaily,illinois,edu/wp-content/uploads/2023/06/06132023_fig1,png 2020 Global Average
+p37_mat2ue("MethFinal","ue_chemicals") = 0.37; !!2017$/kg Source: https://www,methanex,com/about-methanol/pricing/ 2020 Global Average
+p37_mat2ue("AmmoFinal","ue_chemicals") = 0.69; !!2017$/kg Source: https://businessanalytiq,com/procurementanalytics/index/ammonia-price-index/ 2020 Global Average
 p37_mat2ue("OtherChem","ue_chemicals") = 1.;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -1055,18 +1055,21 @@ if (cm_startyear eq 2005,
   );
 
   !! loop over other years and blend
-  loop((entyFeStat(all_enty), tePrc(all_te), opmoPrc),
-    if( (p37_specFeDemTarget(all_enty,all_te,opmoPrc) gt 0.),
+  loop((regi(all_regi),entyFeStat(all_enty), tePrc(all_te), opmoPrc),
+    if( pm_specFeDem("2020",all_regi,all_enty,all_te,opmoPrc) gt 0.,
       loop(t$(t.val > 2020),
-        !! fedemand in excess of BAT halves until 2055
-        !! gams cannot handle float exponents, so pre-compute 0.5^(1/(2055-2020)) = 0.9804
+          !! fedemand in excess of BAT halves until 2055
+          !! gams cannot handle float exponents, so pre-compute 0.5^(1/(2055-2020)) = 0.9804
         pm_specFeDem(t,regi,all_enty,all_te,opmoPrc)
-        = p37_specFeDemTarget(all_enty,all_te,opmoPrc)
-        + (pm_specFeDem("2020",regi,all_enty,all_te,opmoPrc) - p37_specFeDemTarget(all_enty,all_te,opmoPrc))
-        * power(0.9804, t.val - 2020) ;
+          = p37_specFeDemTarget(all_enty,all_te,opmoPrc)
+            + (pm_specFeDem("2020",regi,all_enty,all_te,opmoPrc) - p37_specFeDemTarget(all_enty,all_te,opmoPrc))
+            * power(0.9804, t.val - 2020)
+          );
+        else
+          pm_specFeDem(t,regi,all_enty,all_te,opmoPrc) = p37_specFeDemTarget(all_enty,all_te,opmoPrc)
       );
     );
-  );
+
 
 !! Hot fix on regional OtherChem Energy Demand
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
@@ -1083,13 +1086,11 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
           pm_specFeDem(t, regi, entyFe, "ChemElec", "standard") =
               pm_specFeDem("2020", regi, entyFe, "ChemOld", "standard")
               * 0.65
-              * sum(entyFe2, pm_specFeDem("2020", regi, entyFe2, "ChemOld", "standard"))
-              / sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem("2020", regi, entyFe2, "ChemOld", "standard"))
         );
 
         !! Calc feels for ChemElec
         pm_specFeDem(t, regi, "feels", "ChemElec", "standard") =
-                  pm_specFeDem("2020", regi, "feels", "ChemElec", "standard")
+                  pm_specFeDem("2020", regi, "feels", "ChemOld", "standard")
                   + 0.85 * ( sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem("2020", regi, entyFe2, "ChemOld", "standard"))
                           - sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem(t, regi, entyFe2, "ChemElec", "standard")) );
 
@@ -1098,8 +1099,6 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
           pm_specFeDem(t, regi, entyFe, "ChemH2", "standard") =
               pm_specFeDem("2020", regi, entyFe, "ChemOld", "standard")
               * 0.65
-              * sum(entyFe2, pm_specFeDem("2020", regi, entyFe2, "ChemOld", "standard"))
-              / sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem("2020", regi, entyFe2, "ChemOld", "standard"))
         );
 
         !! Calc feels for ChemH2

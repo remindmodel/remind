@@ -1383,12 +1383,18 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
   gridwindon      "grid between areas with high wind onshore production and the rest"
   gridwindoff     "grid between areas with high wind offshore production and the rest"
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-  ChemElec        "Other chemicals by Hydrogen"
+  ChemElec        "Other chemicals by Electricity"
   ChemH2          "Other chemicals by Hydrogen"
+  MeSySol         "Methanol by Soilds" !! methanol tech QIANZHI
+  MeSyNG          "Methanol by Gas"
+  MeSyLiq         "Methanol by Liquids"
   MeSySolcc       "Methanol by Soilds CCS" !! methanol tech QIANZHI
   MeSyNGcc        "Methanol by Gas CCS"
   MeSyLiqcc       "Methanol by Liquids CCS"
   MeSyH2          "Methanol by Hydrogen"
+  AmSyCoal        "Ammonia by Coal" !! ammonia tech QIANZHI
+  AmSyNG          "Ammonia by Gas"
+  AmSyLiq         "Ammonia by Liquids"
   AmSyCoalcc      "Ammonia by Coal CCS" !! ammonia tech QIANZHI
   AmSyNGcc        "Ammonia by Gas CCS"
   AmSyLiqcc       "Ammonia by Liquids CCS"
