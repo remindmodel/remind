@@ -2,13 +2,13 @@
 $ontext
 tech_stat   technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'
 inco0       Initial investment costs given in $[2015] / kW[output] capacity; for dac/prc cc: $[2015] / (tC[captured]/a); for other indutry prc: $[2015]/(t[output]/a)
+floorcost   Floor investment costs, given in $[2015] / kW[output]; for dac: $[2015] / (tC[captured]/a)
 constrTme   Construction time in years, needed to calculate turn-key cost premium compared to overnight costs
+lifetime    Average lifetime of a technology, given in years. Effective maximum lifetime is longer than that.
 mix0        Fraction of output that is produced by this technology in 2005. This value can be overwritten in the calibration process; also, it often does not add up to 1.
 eta         Conversion efficieny, i.e. energy output divided by energy input (except for nuclear plants, where it is TW energy output over Mt Uranium input)
 omf         Fixed operation and maintenace costs given as a fraction of investment costs
 omv         Variable operation and maintenance costs given in $[2015] / (kW[output] * a) energy production
-lifetime    given in years
-floorcost   Floor investment costs, given in $[2015] / kW[output]; for dac: $[2015] / (tC[captured]/a)
 ccap0       Cumulated capacity in 2005 given in TW
 learn       Learning rate given in percent cost reduction per doubling of cumulated capacity
 luse        land use factor of solar technologies
@@ -18,94 +18,93 @@ $offtext
 
 
 *** gas technologies
-                   ngcc       ngccc         ngt       gastr      gaschp       gashp       gash2      gash2c       gasftrec    gasftcrec
-tech_stat                        2                                                           0           1           2            3
-inco0                950        1350         500          60        1200         400        900         1400        1600        1700
-constrTme             3          3            2           1          3            2           2           2           3           3
-mix0                                                                                        0.70        0.00        0.00        0.00
-eta                 0.57        0.49        0.38        1.00        0.47        0.80        0.73        0.70        0.73        0.70
-omf                 0.03        0.03        0.03        0.03        0.03        0.03        0.05        0.06        0.05        0.06
-omv                   15          30          24          30          42          24          20          25          43          43
-lifetime              35          35          30          35          35          35          35          35          35          35
-flexibility         0.95        0.85          16                    0.85
+                ngcc    ngccc     ngt      gastr    gaschp      gashp     gash2      gash2c    gasftrec   gasftcrec
+tech_stat                   2                                                 0           1           2           3
+inco0            950     1350     500         60      1200        400       900        1400        1600        1700
+constrTme          3        3       2          1         3          2         2           2           3           3
+lifetime          35       35      30         35        35         35        35          35          35          35
+mix0                                                                       0.70        0.00        0.00        0.00
+eta             0.57     0.49    0.38       1.00      0.47       0.80      0.73        0.70        0.73        0.70
+omf             0.03     0.03    0.03       0.03      0.03       0.03      0.05        0.06        0.05        0.06
+omv               15       30      24         30        42         24        20          25          43          43
+flexibility     0.95     0.85      16                 0.85
 
 
 *** oil technologies
-+                 refliq         dot         dhp   
-inco0                450         480         360  
-constrTme              2           2           1   
-eta                 0.91        0.30        0.80  
-omf                 0.03        0.03        0.03  
-omv                12.00          12          12  
-lifetime              40          25          25  
++                 refliq         dot
+inco0                450         480
+constrTme              2           2
+lifetime              40          25
+eta                 0.91        0.30
+omf                 0.03        0.03
+omv                12.00          12
 flexibility                        6
 
 
 *** coal technologies
-+                  igcc       igccc          pc       coalchp      coalhp      coaltr     coalgas   coalftrec  coalftcrec      coalh2     coalh2c
-tech_stat             1          2                                                                        1           3           1           2
-inco0               2300        2900        2000        2500         550         120        1440        1740        1820        1510        1720
-constrTme             4          5            4           4           2           1           4           4           4           4           4
-mix0                                                                                                    0.00        0.00        0.30        0.00
-eta                 0.42        0.33        0.41        0.38        0.75        0.95        0.60        0.40        0.40        0.57        0.53
-omf                 0.03        0.03        0.03        0.03        0.03        0.03        0.03        0.05        0.06        0.05        0.06
-omv                   38          61          30          72          36                                  43          43           6           6
-lifetime              40          40          40          40          40          35          35          35          35          35          35
-flexibility         0.85         0.7         0.9        0.75
++             igcc      igccc       pc     coalchp    coalhp    coaltr   coalgas   coalftrec   coalftcrec    coalh2    coalh2c
+tech_stat        1          2                                                              1            3         1          2
+inco0         2300       2900     2000        2500       550       120      1440        1740         1820      1510       1720
+constrTme        4          5        4           4         2         1         4           4            4         4          4
+lifetime        40         40       40          40        40        35        35          35           35        35         35
+mix0                                                                                    0.00         0.00      0.30       0.00
+eta           0.42       0.33     0.41        0.38      0.75      0.95      0.60        0.40         0.40      0.57       0.53
+omf           0.03       0.03     0.03        0.03      0.03      0.03      0.03        0.05         0.06      0.05       0.06
+omv             38         61       30          72        36                              43           43         6          6
+flexibility   0.85        0.7      0.9        0.75
 
 
 *** biomass technologies
-+                 biotr   biotrmod      biochp       biohp     bioigcc    bioigccc      biogas       biogasc      bioh2      bioh2c     bioethl     bioeths   biodiesel    bioftrec   bioftcrec
-tech_stat                                                           1           3           1            3          2           3           2                                   3           3
-inco0                 10        300        3000         550        2450        3150        1200        1230        1680        2040        2860         590         160        2800        3100
-constrTme              0          1          4           2           4          5            4           4           4           4           4           2          2           4           5
-mix0                           0.00
-eta                 1.00       0.95        0.35        0.72        0.39        0.28        0.55        0.55        0.59        0.55        0.36        0.55        0.93        0.41        0.41
-omf                            0.03        0.04        0.04        0.04        0.04        0.04        0.06        0.07        0.08        0.07        0.11        0.05        0.05        0.06
-omv                                       30.11       25.00       31.50       50.50       10.90       12.80       10.60       10.60       97.27       38.99        5.05       10.60        10.60
-lifetime              35         35          40          40          40          40          40          40          35          35          35          35          35          35          35
-flexibility                                 0.7                    0.75         0.7
++             biotr   biotrmod   biochp   biohp   bioigcc   bioigccc   biogas   biogasc   bioh2   bioh2c   bioethl   bioeths   biodiesel   bioftrec   bioftcrec
+tech_stat                                               1          3        1         3       2        3         2                                3           3
+inco0            10        300     3000     550      2450       3150     1200      1230    1680     2040      2860       590         160       2800        3100
+constrTme         0          1        4       2         4          5        4         4       4        4         4         2           2          4           5
+lifetime         35         35       40      40        40         40       40        40      35       35        35        35          35         35          35
+mix0                      0.00
+eta            1.00       0.95     0.35    0.72      0.39       0.28     0.55      0.55    0.59     0.55      0.36      0.55        0.93       0.41        0.41
+omf                       0.03     0.04    0.04      0.04       0.04     0.04      0.06    0.07     0.08      0.07      0.11        0.05       0.05        0.06
+omv                               30.11   25.00     31.50      50.50    10.90     12.80   10.60    10.60     97.27     38.99        5.05      10.60       10.60
+flexibility                         0.7              0.75        0.7
 
 
 *** hydrogen technologies
-+                   elh2     h2turb      h2curt       h2turbVRE  elh2VRE    h22ch4      MeOH
-tech_stat              3         5           5            5                     3          3
-inco0               3500       510         700          510      0.1          700        800
-constrTme              2         2           2            2        1            2          2
-eta                 0.73      0.40        0.62         0.40      0.73         0.8        0.7
-omf                 0.05      0.03        0.05         0.03      0.00        0.03       0.03
-omv                    3        24           0          24                     12         12
-lifetime              30        30          30          30        30           30         30
++                   elh2    h2turb      h2curt    h2turbVRE   elh2VRE    h22ch4    MeOH
+tech_stat              3         5           5            5                   3       3
+inco0               3500       510         700          510       0.1       700     800
 floorcost            130
+constrTme              2         2           2            2         1         2       2
+lifetime              30        30          30           30        30        30      30
+eta                 0.73      0.40        0.62         0.40      0.73       0.8     0.7
+omf                 0.05      0.03        0.05         0.03      0.00      0.03    0.03
+omv                    3        24           0           24                  12      12
 ccap0            0.00077
 learn               0.15
-flexibility                     16                      16
+flexibility                     16                       16
 
 
 *** variable relewable energy
-+                windon       windoff     spv        csp
-tech_stat        
-inco0             2400         5000       5160      10320
-constrTme           1            4          1         3
-eta               1.00         1.00       1.00       1.00
-omf               0.02         0.03       0.02      0.025
-lifetime            25           25         30         30
-floorcost          200         1000         50       1560
-ccap0             0.06       0.0007      0.005     0.0002
-learn             0.12         0.12      0.25       0.103
-luse                                     0.09       0.021
-flexibility         -1           -1        -1          -1
++                windon      windoff         spv        csp
+inco0              2400         5000        5160      10320
+floorcost           200         1000          50       1560
+constrTme             1            4           1          3
+eta                1.00         1.00        1.00       1.00
+omf                0.02         0.03        0.02      0.025
+lifetime             25           25          30         30
+ccap0              0.06       0.0007       0.005     0.0002
+learn              0.12         0.12        0.25      0.103
+luse                                        0.09      0.021
+flexibility          -1           -1         -1          -1
 
-+           storwindon  storwindoff    storspv    storcsp       gridwindon
-inco0             2940         2940       7720       2520       720
-mix0              0.00         0.00       0.00       0.00       
-eta               0.85         0.85       0.74       0.79       1
-omf               0.02         0.02       0.02       0.02       0.02
-lifetime            25           25         25         25       45
-floorcost          850          850       2280        720 
-ccap0          0.00005      0.00005    0.00005    0.00005 
-learn             0.10         0.10       0.10       0.10 
-flexibility       1.86         1.93       1.85       1.85
++            storwindon  storwindoff     storspv    storcsp       gridwindon
+inco0              2940         2940        7720       2520       720
+floorcost           850          850        2280        720 
+mix0               0.00         0.00        0.00       0.00       
+eta                0.85         0.85        0.74       0.79       1
+omf                0.02         0.02        0.02       0.02       0.02
+lifetime             25           25          25         25       45
+ccap0           0.00005      0.00005     0.00005    0.00005 
+learn              0.10         0.10        0.10       0.10 
+flexibility        1.86         1.93        1.85       1.85
 
 
 *** other electricty
@@ -121,38 +120,38 @@ flexibility          0.8                     1.2     0.6
 
 
 *** transmission and distribution
-+                 tdels     tdbiogas    tdfosgas    tdbiohos    tdfoshos       tdh2s       tdh2t
-inco0               1800         360         360          60          60        1080        3000
-mix0                1.00        1.00        1.00        1.00        1.00        1.00        1.00
-eta                 0.95        0.85        0.85        1.00        1.00        1.00        1.00
-omf                 0.03        0.02        0.02        0.03        0.03        0.02        0.06
-lifetime              45          45          45          30          30          45          45
++                  tdels   tdbiogas    tdfosgas    tdbiohos    tdfoshos       tdh2s       tdh2t
+inco0               1800        360         360          60          60        1080        3000
+mix0                1.00       1.00        1.00        1.00        1.00        1.00        1.00
+eta                 0.95       0.85        0.85        1.00        1.00        1.00        1.00
+omf                 0.03       0.02        0.02        0.03        0.03        0.02        0.06
+lifetime              45         45          45          30          30          45          45
 
-+                tdsyngas    tdsyngat    tdsynhos    tdsynpet    tdsyndie    tdbiogat    tdfosgat
-inco0                 360         360          60         600         600         360         360
-mix0                 1.00        1.00        1.00        1.00        1.00        1.00        1.00
-eta                  0.85        0.85        1.00        1.00        1.00        0.85        0.85
-omf                  0.02        0.02        0.03        0.10        0.10        0.02        0.02
-lifetime               45          45          30          45          45          45          45   
++                tdsyngas  tdsyngat    tdsynhos    tdsynpet    tdsyndie    tdbiogat    tdfosgat
+inco0                 360       360          60         600         600         360         360
+mix0                 1.00      1.00        1.00        1.00        1.00        1.00        1.00
+eta                  0.85      0.85        1.00        1.00        1.00        0.85        0.85
+omf                  0.02      0.02        0.03        0.10        0.10        0.02        0.02
+lifetime               45        45          30          45          45          45          45   
 
-+                 tdbiosos  tdfossos       tdhes    tdbiodie    tdfosdie    tdbiopet   tdfospet      tdelt
-inco0                   60       60         600         600         600         600         600       6000
-mix0                  1.00     1.00        1.00        1.00        1.00        1.00        1.00       1.00
-eta                   1.00     1.00        0.90        1.00        1.00        1.00        1.00       0.95
-omf                   0.08     0.08        0.02        0.10        0.10        0.10        0.10       0.05
-lifetime                30       30          45          45          45          45          45         45
++                tdbiosos   tdfossos      tdhes    tdbiodie    tdfosdie    tdbiopet    tdfospet      tdelt
+inco0                  60        60         600         600         600         600         600       6000
+mix0                 1.00      1.00        1.00        1.00        1.00        1.00        1.00       1.00
+eta                  1.00      1.00        0.90        1.00        1.00        1.00        1.00       0.95
+omf                  0.08      0.08        0.02        0.10        0.10        0.10        0.10       0.05
+lifetime               30        30          45          45          45          45          45         45
 
 
 *** carbon management
 +             ccsinje    weathering         dac      oae_ng      oae_el
 tech_stat           0                         4
 inco0             350          0.01       18800         200         400
+floorcost                                  4800
+constrTme           3
+lifetime           40            20          20          25          25
 mix0             1.00
 eta              1.00          1.00        1.00        1.00        1.00
 omf              0.06          0.84       0.025        0.35        0.17
-lifetime           40            20          20          25          25
-constrTme           3
-floorcost                                  4800
 ccap0                                    0.0008
 learn                                      0.15
 
@@ -172,14 +171,15 @@ lifetime              20          20
 $endif.cm_subsec_model_steel
 
 
+
 *** deprecated technologies
-+                  solhe    fnrs
-inco0               9999    6000
-constrTme             1     7
-eta                 1.00    1012.00
-omf                         0.03
-omv                         76
-lifetime              25    50
++                  solhe    fnrs      dhp  
+inco0               9999    6000      360  
+constrTme             1     7           1  
+lifetime              25    50         25  
+eta                 1.00    1012     0.80  
+omf                         0.03     0.03  
+omv                         76         12  
 flexibility                 0.44
 
 
@@ -208,6 +208,12 @@ Methanation (H2-to-Gas) - h22ch4
     omf: 0.03 of CAPEX, following Agora (2018)
     omv: choose same as for refineries
     eta: 0.8, following Agora (2018), p. 67
+
+Blue hydrogen from natural gas - gash2, gash2c
+    Today's costs for gash2 are 600-800 $2015.
+    Costs for gash2c depend on co2 capture rate: we have a high capture rate (90%) so 1200 to 1400 is fine in SSP2.
+    IEAGHG (2017). Techno - Economic Evaluation of SMR Based Standalone (Merchant) Hydrogen Plant with CCS.
+    Ueckerdt et al 2024. https://www.sciencedirect.com/science/article/pii/S2542435123004968
 
 
 Bio-based Fischer-Tropsch Synthesis (Biomass-to-Liquids) - bioftrec
