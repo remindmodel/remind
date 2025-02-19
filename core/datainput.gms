@@ -234,13 +234,13 @@ $endif.c_techAssumptScen
 *** Other technological assumptions (VRE, CCS...)
 ***---------------------------------------------------------------------------
 *** cm_ccsinjeCost cost scenarios
-*** TODO: make these costs relative to default values
+*** Warning: it applies absolute values; only use it in combination with default c_techAssumptScen SSP2. 
 *** low estimate: ccsinje cost prior to 03/2024; i.e. ~11 USD/tCO2 in 2025, decreasing to ~7.5USD/tCO2 as of 2035
 $if "%cm_ccsinjeCost%" == "low" fm_dataglob("tech_stat","ccsinje") = 2;
-$if "%cm_ccsinjeCost%" == "low" fm_dataglob("inco0","ccsinje") = 220 / 350 * fm_dataglob("inco0","ccsinje");
+$if "%cm_ccsinjeCost%" == "low" fm_dataglob("inco0","ccsinje") = 220;
 $if "%cm_ccsinjeCost%" == "low" fm_dataglob("constrTme","ccsinje") = 0;
 *** high estimate: ~20USD/tCO2 (constant), assuming upper end of storage cost and long transport distances
-$if "%cm_ccsinjeCost%" == "high" fm_dataglob("inco0","ccsinje") = 550 / 350 * fm_dataglob("inco0","ccsinje");
+$if "%cm_ccsinjeCost%" == "high" fm_dataglob("inco0","ccsinje") = 550;
 
 
 *** cm_VRE_supply_assumptions: Modify learning and floor costs for electricity storage and production of VRE

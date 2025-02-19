@@ -210,13 +210,13 @@ all_te          "all energy technologies, including from modules"
     tdheb           "transmission and distribution for heat to buildings"
 
     ccsinje         "injection of co2"
-    *** Storage technology:
+*** Storage technology:
     storspv         "storage technology for photo voltaic (PV)"
     storwind        "storage technology for wind onshore"
     storwindon      "storage technology for wind onshore"
     storwindoff     "storage technology for wind offshore"
     storcsp         "storage technology for concentrating solar power (CSP)"
-    *** grid technology:
+*** grid technology:
     gridspv         "grid between areas with high pv production and the rest"
     gridcsp         "grid between areas with high csp production and the rest"
     gridwind        "grid between areas with high wind onshore production and the rest"
