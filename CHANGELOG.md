@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### input data/calibration
 - new input data rev7.21 including new MAgPIE data [[#1956](https://github.com/remindmodel/remind/pull/1956)]
 - new input data rev7.24 including IEA update [[#1992](https://github.com/remindmodel/remind/pull/1992)]
+- add CES parameters for SSP3 with imperfect capital markets [[#1995](https://github.com/remindmodel/remind/pull/1995)] 
 
 ### changed
 - **scripts** for MAgPIE coupled runs, if the coupled config contains a `path_gdx_ref` column, it needs a `path_gdx_refpolicycost` column as well.
