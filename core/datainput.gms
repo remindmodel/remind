@@ -564,8 +564,8 @@ $endif.tech_CO2capturerate
 if (c_ccscapratescen eq 2,
   fm_dataemiglob("pecoal","seel","igccc","co2")    = 0.2;
   fm_dataemiglob("pecoal","seel","igccc","cco2")   = 25.9;
-  fm_dataemiglob("pecoal","seel","coalh2c","co2")  = 0.2;
-  fm_dataemiglob("pecoal","seel","coalh2c","cco2") = 25.9;
+  fm_dataemiglob("pecoal","seh2","coalh2c","co2")  = 0.2;
+  fm_dataemiglob("pecoal","seh2","coalh2c","cco2") = 25.9;
 $ifthen "%c_SSP_forcing_adjust%" == "forcing_SSP5"
    fm_dataemiglob("pegas","seel","ngccc","co2")  = 0.1;
    fm_dataemiglob("pegas","seel","ngccc","cco2") = 15.2;
