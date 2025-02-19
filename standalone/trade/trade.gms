@@ -274,10 +274,8 @@ cm_1stgen_phaseout      = 0;              !! def = 0
 $setglobal cm_tradbio_phaseout  default   !! def = default
 cm_phaseoutBiolc        = 0;              !! def = 0
 
-$setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
-$setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
+$setglobal cm_GDPpopScen  SSP2  !! def = SSP2
 $setglobal cm_demScen  gdp_SSP2  !! def = gdp_SSP2
-$setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
 cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
@@ -436,7 +434,7 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  stat_off-indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  stat_off-indu_subsectors-buil_simple-tran_edge_esm-GDPpop_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10

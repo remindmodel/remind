@@ -126,7 +126,7 @@ The calibration can further be adjusted using the following switches:
 
 The CES calibration outputs a `.gdx` file and an `.inc` file with all
 the CES parameters.  Their long name, for instance
-`indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7`
+`indu_subsectors-buil_simple-tran_edge_esm-GDPpop_SSP2-En_SSP2-Kap_debt_limit-Reg_62eff8f7`
 indicates the CES configuration, the GDP/population scenarios, the capital market
 module realisation and the [region configuration](17_Regions.md)
 (_62eff8f7_ for H12, _2b1450bc_ for EU21).

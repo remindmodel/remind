@@ -6,20 +6,19 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/50_damages/KWTCint/datainput.gms
 
-* satisfy dependencies
+*** satisfy dependencies
 $ifi not %downscaleTemperature% == 'CMIP5' abort "module damages=KWTCint requires downscaleTemperature=CMIP5";
 
-** damage specification
-    
+*** damage specification
 
-*default specification from Kalkuhl & Wenz 2020:
+*** default specification from Kalkuhl & Wenz 2020:
 p50_damageFuncCoefa1 =  0.00641;
 p50_damageFuncCoefa2 =  0.00345;
 p50_damageFuncCoefb1 = -0.00109;
 p50_damageFuncCoefb2 = -0.000718;
 
-* TC damage coefficients from Krichene et al. 2022 
- 
+*** TC damage coefficients from Krichene et al. 2022 
+
 p50_damageFuncCoefTC0(isoTC) = 0;
 p50_damageFuncCoefTC1(isoTC) = 0;
 
@@ -43,7 +42,7 @@ $offdelim
 p50_damageFuncCoefTC0(iso) = f50_TCconst(iso,"%cm_TCpers%","%cm_TCspec%")/100;
 p50_damageFuncCoefTC1(iso) = f50_TCtasK(iso,"%cm_TCpers%","%cm_TCspec%")/100;
 
-* initialize
+*** initialize
 pm_damage(tall,regi) = 1;
 pm_damageTC(tall,iso) = 1;
 pm_damageProd(tall,regi) = 1;
@@ -53,17 +52,17 @@ pm_damageMarginalTm1(tall,regi)           = 0;
 pm_damageMarginalTm2(tall,regi)           = 0;
 
 *** read in GDP to calculate fraction of countries in a region
-table f50_countryGDP(tall,iso,all_GDPscen)	"ratio country to regional GDP"
+table f50_countryGDP(tall,iso,all_GDPpopScen)	"ratio country to regional GDP"
 $ondelim
 $include "./modules/50_damages/KWTCint/input/f50_gdp.cs3r"
 $offdelim
 ;
-pm_GDPfrac(ttot,iso)$(ttot.val ge 2005) = f50_countryGDP(ttot,iso,"gdp_SSP2")/1000000/sum(regi2iso(regi,iso),pm_gdp(ttot,regi)/pm_shPPPMER(regi));
+pm_GDPfrac(ttot,iso)$(ttot.val ge 2005) = f50_countryGDP(ttot,iso,"SSP2")/1000000/sum(regi2iso(regi,iso),pm_gdp(ttot,regi)/pm_shPPPMER(regi));
 loop(ttot$(ttot.val ge 2005),
-	loop(tall$(pm_tall_2_ttot(tall,ttot)),
-		pm_GDPfrac(tall,iso) = 
-			(1-pm_interpolWeight_ttot_tall(tall))*pm_GDPfrac(ttot,iso)
-			+ pm_interpolWeight_ttot_tall(tall)*pm_GDPfrac(ttot+1,iso);
+    loop(tall$(pm_tall_2_ttot(tall,ttot)),
+        pm_GDPfrac(tall,iso) = 
+           (1-pm_interpolWeight_ttot_tall(tall))*pm_GDPfrac(ttot,iso)
+           + pm_interpolWeight_ttot_tall(tall)*pm_GDPfrac(ttot+1,iso);
 ));
 display pm_GDPfrac;
 pm_GDPfrac(tall,iso)$(tall.val ge 2150) = pm_GDPfrac("2150",iso);
