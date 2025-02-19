@@ -27,7 +27,6 @@ vm_demFeForEs.L(t,regi,fe2es(entyFe,esty,teEs)) = 0.1;
 
 *** -------- initial declaration of parameters for iterative target adjustment
 pm_taxCO2eq_anchor_iterationdiff(t) = 0;
-pm_taxCO2eq_anchor_iterationdiff_tmp(t) = 0;
 
 *------------------------------------------------------------------------------------
 ***                        calculations based on sets
@@ -1572,8 +1571,8 @@ $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
 $endif.scaleDemand
 
 
-*** initialize global target deviation scalar
-sm_globalBudget_dev = 1;
+*** initialize absolute deviation of global cumulated CO2 emissions budget from target budget
+sm_globalBudget_absDev = 0;
 
 
 if (cm_startyear gt 2005,
