@@ -919,9 +919,9 @@ $offdelim
 /
 ;
 $ELSEIF.MaccVersion %c_nonco2_macc_version% == "PBL_2022"
-* PBL_2022 MACs are discretized in steps of 20 $/tC
-* PBL_2022 includes three scenarios, read the big file into p_all_abatparam_CH4 and subset based on c_nonco2_macc_scenario
-* Create the set here, as it's not really used anywhere else
+*** PBL_2022 MACs are discretized in steps of 20 $/tC
+*** PBL_2022 includes three scenarios, read the big file into p_all_abatparam_CH4 and subset based on c_nonco2_macc_scenario
+*** Create the set here, as it's not really used anywhere else
 set macc_scens "MAC scenarios for PBL_SSP2_2022 MACCs" /Default, Optimistic, Pessimistic/;
 parameter p_all_abatparam_CH4(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for CH4 by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_CH4"
 /
@@ -931,7 +931,7 @@ $offdelim
 /
 ;
 parameter p_abatparam_CH4(tall,all_regi,all_enty,steps) "MAC costs for CH4 by source";
-* Pick MACC scenario
+*** Pick MACC scenario
 p_abatparam_CH4(tall,all_regi,all_enty,steps) = p_all_abatparam_CH4(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
 parameter p_all_abatparam_N2O(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for N2O by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_N2O"
 /
@@ -941,7 +941,7 @@ $offdelim
 /
 ;
 parameter p_abatparam_N2O(tall,all_regi,all_enty,steps) "MAC costs for N2O by source";
-* Pick MACC scenario
+*** Pick MACC scenario
 p_abatparam_N2O(tall,all_regi,all_enty,steps) = p_all_abatparam_N2O(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
 $ENDIF.MaccVersion
 ;
@@ -976,7 +976,7 @@ $offdelim
 ;
 $endif
 
-* GA: These hardcoded values were probably assuming 2005 as base year, TODO: check and adjust for 2020 case
+*** GA: These hardcoded values were probably assuming 2005 as base year, TODO: check and adjust for 2020 case
 $if %cm_LU_emi_scen% == "SSP1"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0047/sm_EJ_2_TWa;
 $if %cm_LU_emi_scen% == "SSP2"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0079/sm_EJ_2_TWa;
 $if %cm_LU_emi_scen% == "SSP2_lowEn"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0079/sm_EJ_2_TWa;
