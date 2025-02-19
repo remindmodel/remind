@@ -96,7 +96,7 @@ pm_NonFos_IndCC_fraction0(ttot,regi,secInd37) =
 ;
 
 pm_NonFos_IndCC_fraction_Emi0(ttot,regi,emiInd37) = 
-  sum(secInd37$secInd37_2_emiInd37(secInd37,emiInd37), pm_NonFos_IndCC_fraction0(ttot,regi,secInd37))
+  max(sum(secInd37$secInd37_2_emiInd37(secInd37,emiInd37), pm_NonFos_IndCC_fraction0(ttot,regi,secInd37)), 0)
 ;
 
 

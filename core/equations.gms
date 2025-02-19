@@ -755,70 +755,43 @@ q_emiMac(t,regi,emiMac) ..
 ***--------------------------------------------------
 *' All CDR emissions summed up
 ***--------------------------------------------------
-* OLD VERSION
-*q_emiCdrAll(t,regi)..
-*  vm_emiCdrAll(t,regi)
-*  =e=
-*  ( !! BECC + DACC
-*    sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail(t,regi,enty,enty2,te,enty3))
-*    - vm_emiCdrTeDetail(t, regi, "dac") !! this is a negative value
-*  )
-*  * ( !! scaled by the fraction that gets stored geologically
-*    sum(teCCS2rlf(te, rlf), vm_co2CCS(t, regi, "cco2", "ico2", te, rlf))
-*    / (sum(teCCS2rlf(te, rlf), v_co2capture(t, regi, "cco2", "ico2", "ccsinje", rlf)) + sm_eps)
-*  )
-*  !! net negative emissions from co2luc
-*  -  p_macBaseMagpieNegCo2(t,regi)
-* !! negative emissions from the cdr module that are not stored geologically
-*  -  (vm_emiCdr(t,regi,"co2") - vm_emiCdrTeDetail(t, regi, "dac"))
-*;
-
 q_emiCdrAll(t,regi)..
   vm_emiCdrAll(t,regi) !! positive value
   =e=
-  !!----------- LUC -- NET NEGATIVE EMI ------------------------------------------------------------
-  !! net negative emissions from co2luc --> exclude if we only want to address permanent CDR - not sure why we would do that though. Rather count it as net postive emissions, or only as 1/2
-  -  p_macBaseMagpieNegCo2(t,regi) !! negative value
+  !! ---- net LUC CDR
+  !! net negative emissions from co2luc
+  - p_macBaseMagpieNegCo2(t,regi) !! negative value
   
-  !!----------- NON-INDUSTRY CDR ------------------------------------------------------------
+  !! ---- gross non-industry CDR
   !! 1. directly geologically stored gross atmospheric removal from pe2se-BECCS + DACCS
-  +  ( !! pe2se-BECC DACC
-        sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail(t,regi,enty,enty2,te,enty3)) !! this is taking the cco2 value in emiBECCS2te --> is positive
+  + ( !! pe2se-BECC DACC
+      sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail(t,regi,enty,enty2,te,enty3)) !! positive value
         !! + gross DACC 
-        - sum(teCCS2rlf(te,rlf), vm_emiCdrTeDetail(t, regi, "dac")) !! negative value
-      )
+      - sum(teCCS2rlf(te,rlf), vm_emiCdrTeDetail(t, regi, "dac"))) !! negative value
       !! scaled by the fraction that gets stored geologically
-      *  v_ccsShare(t,regi) 
-
+     *  v_ccsShare(t,regi) 
   !! 2. gross CDR from Enhanced Weathering
   - vm_emiCdrTeDetail(t, regi, "weathering") !! negative value
-
   !! 3. gross ocean uptake from OAE (also excluding non-avoidable emi from calcination)
   - vm_emiCdrTeDetail(t, regi, "oae_ng")  !! negative value
   - vm_emiCdrTeDetail(t, regi, "oae_el")  !! negative value
   
-  !!----------- INDUSTRY ------------------------------------------------------------
-
+  !! ---- gross industry CDR
   !! 1. gross industry CCS-CDR  (from burning biogenic or synfuel + capturing + storing the co2)
   + sum(emiInd37$(not sameas(emiInd37,"co2cement_process")), 
-    vm_emiIndCCS(t,regi,emiInd37)$(not sameas(emiInd37,"co2cement_process")) !! positive value
+      vm_emiIndCCS(t,regi,emiInd37) !! positive value
     !! multiply with bio/syn share from previous iteration (computationally too expensive to incl. in optimization)
-    * pm_NonFos_IndCC_fraction_Emi0(t,regi, emiInd37)
-    )
-    !!* pm_macSwitch(emiInd37)              !! sub-sector CCS available or not --> @Industry do we need this?
+    * pm_NonFos_IndCC_fraction_Emi0(t,regi, emiInd37))
     !! multiply with ccs share 
     * v_ccsShare(t,regi) 
-
-  !! 2. FEEDSTOCKS
+  !! 2. Feedstocks
   !! 2a) plastics CDR --incinerated  waste that is captured + stored from  non-fossil feedstocks
-  + sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt), 
-            se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ), !! muss entySeSyn um fossil share discounted werden??
+  + sum((sefe(entySe,entyFe),emiMkt)$( entySeBio(entySe) OR entySeSyn(entySe) ),
       vm_incinerationCCS(t,regi,entySe,entyFe,emiMkt)) *  !! positive value
-     v_ccsShare(t,regi) 
-
+    v_ccsShare(t,regi) 
   !! 2b) plastics CDR -- landfilled waste from non-fossil feedstocks
-  - sum((emi,emiMkt), v37_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)) !! negative value
-
+  - sum((emi,emiMkt), 
+      v37_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)) !! negative value
   !! 2c) non-plastics materials CDR -- landfilled waste from non-fossil feedstocks 
   + sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt2),
           se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
