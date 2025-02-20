@@ -929,17 +929,21 @@ parameter
 ;
   cm_LimRock               = 1000;   !! def = 1000
 *'
-
 parameter
   cm_33_EW_upScalingRateLimit    "Annual growth rate limit on upscaling of mining & spreading rocks on fields"
 ;
   cm_33_EW_upScalingRateLimit = 0.2;  !! def = 20% !! regexp = is.nonnegative
-
+*' 
 parameter
   cm_33_EW_shortTermLimit         "Limit on 2030 potential for enhanced weathering, defined as % of land on which EW is applied. Default 0.5% of land"
 ;
   cm_33_EW_shortTermLimit = 0.005; !! def = 0.5% !! regexp = is.nonnegative
 *'
+parameter
+  cm_33_maxFeShare                "max share of the CDR sectors' FE demand in the region's total FE demand, by FE type. Default is 10%"
+;
+  cm_33_maxFeShare = 0.1; !!  def = 0.1 !! regexp = is.nonnegative
+*' 
 parameter
   cm_postTargetIncrease     "carbon price increase per year after regipol emission target is reached (euro per tCO2)"
 ;
@@ -1388,6 +1392,10 @@ $setGlobal cm_CCSmaxBound    off  !! def = off
 *** limit the share of cropland on which rocks can be spread. Affects the maximum total amount of rocks weathering on fields.
 *** example: "GLO 1, LAM 0.5" limits amount of rocks weathering on cropland in LAM to 50% of max value if all LAM cropland were used.
 $setglobal cm_33_EW_maxShareOfCropland GLO 1 !! def = GLO 1
+*** cm_33_GDP_netNegCDR_maxShare
+*** limit the expenses for net negative emissions based on share in GDP. Default is GLO 1, i.e. limit = total GDP
+*** example: "GLO 1, LAM 0.1" limits spending on net negative emissions to 10% of GDP for LAM
+$setglobal cm_33_GDP_netNegCDR_maxShare GLO 1 !! def = GLO 1
 *** c_tech_CO2capturerate "changes CO2 capture rate of carbon capture technologies"
 ***   Example on how to use:
 ***     c_tech_CO2capturerate   bioh2c 0.8, bioftcrec 0.4
