@@ -103,6 +103,8 @@ s21_tax_value                                "target level of tax, sub, inconv i
 ;
 
 variables
+v21_taxrevReal(ttot,all_regi)                   "difference between volume of real taxes and subsidies in current and previous iteration"
+v21_taxrevPseudo(ttot,all_regi)                 "difference between volume of pseudo taxes and subsidies in current and previous iteration"
 v21_tau_bio(ttot)                               "demand-dependent bioenergy tax"
 v21_taxrevGHG(ttot,all_regi)                    "tax on greenhouse gas emissions"
 v21_taxrevCO2Sector(ttot,all_regi,emi_sectors)  "sector markup tax on CO2 emissions"
@@ -131,7 +133,9 @@ v21_tau_SE_tax(ttot,all_regi,all_te)        "tax rate of tax on SE electricity d
 ;
 
 equations 
-q21_taxrev(ttot,all_regi)                       "calculation of difference in tax volume"
+q21_taxrev(ttot,all_regi)                       "calculation of difference in total tax volume"
+q21_taxrevReal(ttot,all_regi)                   "calculation of difference in volume of real taxes and subsidies"
+q21_taxrevPseudo(ttot,all_regi)                 "calculation of difference in volume of pseudo taxes and subsidies"
 q21_emiAllco2neg(ttot,all_regi)                 "calculates negative part of CO2 emissions"
 q21_tau_bio(ttot)                               "calculation of demand-dependent bioenergy tax"
 q21_taxrevGHG(ttot,all_regi)                    "calculation of tax on greenhouse gas emissions"
