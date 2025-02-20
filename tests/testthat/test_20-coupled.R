@@ -271,6 +271,7 @@ for (csvfile in csvfiles) {
 test_that("delete files to leave clean state", {
   # leave clean state
   skipIfPreviousFailed()
+  # Exclude NDC folders since they were deleted earlier to see if everything fails correctly if mag iteration is bigger than rem iteration.
   missingfiles <- setdiff(deleteallfiles[! file.exists(deleteallfiles)],
                           paste0("../../output/C_TESTTHAT-SSP2-NDC-rem-", seq(2)))
   if (length(missingfiles) > 0) {
