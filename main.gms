@@ -1017,16 +1017,6 @@ parameter
 *' * (1)   No effective CO2 tax once regional emissions turn net-negative. Hence regions never become net-negative.
 
 parameter
-  cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
-;
-  cm_DiscRateScen        = 0;  !! def = 0  !! regexp = [0-4]
-*' * (0) Baseline without higher discount rate: No additional discount rate
-*' * (1) Baseline with higher discount rate: Increase the discount rate by 10%pts from 2005 until the end
-*' * (2) Energy Efficiency policy: 10%pts higher discount rate until cm_startyear and 0 afterwards.
-*' * (3) Energy Efficiency policy: higher discount rate until cm_startyear and 25% of the initial value afterwards.
-*' * (4) Energy Efficiency policy: higher discount rate until cm_startyear, decreasing to 25% value linearly until 2030.
-*'
-parameter
   cm_H2InBuildOnlyAfter "Switch to fix H2 in buildings to zero until given year"
 ;
   cm_H2InBuildOnlyAfter = 2150;   !! def = 2150 (rule out H2 in buildings)

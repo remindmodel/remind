@@ -53,8 +53,7 @@ q21_taxrevPseudo(t,regi)$(t.val ge max(2010,cm_startyear))..
   + v21_taxrevFlex(t,regi)
   + v21_taxrevCCS(t,regi) 
   + v21_taxrevNetNegEmi(t,regi)
-  + v21_taxrevBio(t,regi)  
-  + v21_implicitDiscRate(t,regi)
+  + v21_taxrevBio(t,regi)
   + v21_taxrevChProdStartYear(t,regi)
   - vm_costSubsidizeLearning(t,regi)
   + sum(in, v21_taxrevCES(t,regi,in))
@@ -344,19 +343,6 @@ q21_tau_bio(t)$(t.val ge max(2010,cm_startyear))..
   =e=
   cm_bioenergy_SustTax / (200 * sm_EJ_2_TWa) * (sum(regi,vm_fuExtr(t,regi,"pebiolc","1") + pm_fuExtrForeign(t,regi,"pebiolc","1")))
 ;
-
-***---------------------------------------------------------------------------
-*'  Calculation of High implicit discount rates in energy efficiency capital 
-*'  which is also modeled as a tax to mirror the lack of incentive for cost-efficient renovations.
-*'  calculation is done via additional discount rate times input of capital at different levels
-***---------------------------------------------------------------------------
-q21_implicitDiscRate(t,regi)$(t.val ge max(2010,cm_startyear))..
- v21_implicitDiscRate(t,regi) 
- =e= sum(ppfKap(in),
-        p21_implicitDiscRateMarg(t,regi,in) 
-        * vm_cesIO(t,regi,in)
-        ) - p21_implicitDiscRate0(t,regi);
-;   
 
 ***---------------------------------------------------------------------------
 *'  Calculation of costs limiting the change compared to the reference run in cm_startyear.

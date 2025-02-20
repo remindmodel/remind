@@ -129,52 +129,6 @@ elseif(cm_so2tax_scen eq 4),
 s21_so2_tax_2010=0.000144;
 );
 
-*** Implicit discount rates mark-ups over the normal discount rate
-if ((cm_DiscRateScen eq 0),
-p21_implicitDiscRateMarg(ttot,regi,all_in) = 0;
- elseif (cm_DiscRateScen eq 1),
- p21_implicitDiscRateMarg(ttot,regi,all_in) = 0;
- p21_implicitDiscRateMarg(ttot,regi,"kaphc") = 0.05;  !! 5% for the efficiency capital for the building shell
- p21_implicitDiscRateMarg(ttot,regi,"kapsc") = 0.05;  !! 5% for the efficiency capital for the air conditioning
- p21_implicitDiscRateMarg(ttot,regi,"kapal") = 0.20;  !! 20% for the efficiency capital for appliances
- elseif (cm_DiscRateScen eq 2),
- p21_implicitDiscRateMarg(ttot,regi,all_in) = 0;
- p21_implicitDiscRateMarg(ttot,regi,"kaphc")$(ttot.val ge 2005 AND ttot.val lt cm_startyear) = 0.05;  !! 5% for the efficiency capital for the building shell
- p21_implicitDiscRateMarg(ttot,regi,"kapsc")$(ttot.val ge 2005 AND ttot.val lt cm_startyear) = 0.05;  !! 5% for the efficiency capital for the air conditioning
- p21_implicitDiscRateMarg(ttot,regi,"kapal")$(ttot.val ge 2005 AND ttot.val lt cm_startyear) = 0.20;  !! 20% for the efficiency capital for appliances
- elseif (cm_DiscRateScen eq 3),
- p21_implicitDiscRateMarg(ttot,regi,all_in) = 0;
- 
- p21_implicitDiscRateMarg(ttot,regi,"kaphc") = 0.05;  !! 5% for the efficiency capital for the building shell
- p21_implicitDiscRateMarg(ttot,regi,"kapsc") = 0.05;  !! 5% for the efficiency capital for the air conditioning
- p21_implicitDiscRateMarg(ttot,regi,"kapal") = 0.20;  !! 20% for the efficiency capital for appliances
-
- p21_implicitDiscRateMarg(ttot,regi,in)$(pm_ttot_val(ttot) ge cm_startyear 
-                                         AND (sameAs(in,"kaphc") 
-                                              OR sameAs(in,"kapsc") 
-                                              OR sameAs(in,"kapal")
-                                              )
-                                        )
-                        = 0.25 * p21_implicitDiscRateMarg(ttot,regi,in);
- 
-elseif (cm_DiscRateScen eq 4),
- p21_implicitDiscRateMarg(ttot,regi,all_in) = 0;
- 
- p21_implicitDiscRateMarg(ttot,regi,"kaphc") = 0.05;  !! 5% for the efficiency capital for the building shell
- p21_implicitDiscRateMarg(ttot,regi,"kapsc") = 0.05;  !! 5% for the efficiency capital for the air conditioning
- p21_implicitDiscRateMarg(ttot,regi,"kapal") = 0.20;  !! 20% for the efficiency capital for appliances
-
- p21_implicitDiscRateMarg(ttot,regi,"kaphc") = min(max((2030 - pm_ttot_val(ttot))/(2030 -2020),0),1)    !! lambda = 1 in 2020 and 0 in 2030; 
-                                               *  0.75 * p21_implicitDiscRateMarg(ttot,regi,"kaphc")
-                                               +  0.25 * p21_implicitDiscRateMarg(ttot,regi,"kaphc");   !! Reduction of 75% of the Efficiency gap
- p21_implicitDiscRateMarg(ttot,regi,"kapsc") = min(max((2030 - pm_ttot_val(ttot))/(2030 -2020),0),1)    !! lambda = 1 in 2020 and 0 in 2030; 
-                                               *  0.75 * p21_implicitDiscRateMarg(ttot,regi,"kapsc")
-                                               +  0.25 * p21_implicitDiscRateMarg(ttot,regi,"kapsc");   !! Reduction of 75% of the Efficiency gap
-  p21_implicitDiscRateMarg(ttot,regi,"kapal") = min(max((2030 - pm_ttot_val(ttot))/(2030 -2020),0),1)    !! lambda = 1 in 2020 and 0 in 2030; 
-                                               *  0.75 * p21_implicitDiscRateMarg(ttot,regi,"kapal")
-                                               +  0.25 * p21_implicitDiscRateMarg(ttot,regi,"kapal");   !! Reduction of 75% of the Efficiency gap
-);
-
 
 *** FS: import tax level
 *** works only on PEs at the moment as implementation requires pm_pvp

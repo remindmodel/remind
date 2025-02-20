@@ -34,9 +34,6 @@ pm_inco0_t,input,questionnaire
 cm_frac_CCS,input,questionnaire
 cm_frac_NetNegEmi,input,questionnaire
 pm_fuExtrForeign,input,questionnaire
-cm_DiscRateScen,input,questionnaire
-pm_ttot_val,input,questionnaire
-p21_implicitDiscRateMarg,input,questionnaire
 vm_emiMacSector,input,questionnaire
 cm_multigasscen,input,questionnaire
 vm_pebiolc_price,input,questionnaire
