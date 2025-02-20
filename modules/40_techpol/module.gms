@@ -17,6 +17,7 @@ $Ifi "%techpol%" == "CombLowCandCoalPO" $include "./modules/40_techpol/CombLowCa
 $Ifi "%techpol%" == "NDC" $include "./modules/40_techpol/NDC/realization.gms"
 $Ifi "%techpol%" == "NDCplus" $include "./modules/40_techpol/NDCplus/realization.gms"
 $Ifi "%techpol%" == "NPi2018" $include "./modules/40_techpol/NPi2018/realization.gms"
+$Ifi "%techpol%" == "NPi2025" $include "./modules/40_techpol/NPi2025/realization.gms"
 $Ifi "%techpol%" == "coalPhaseout" $include "./modules/40_techpol/coalPhaseout/realization.gms"
 $Ifi "%techpol%" == "coalPhaseoutRegional" $include "./modules/40_techpol/coalPhaseoutRegional/realization.gms"
 $Ifi "%techpol%" == "lowCarbonPush" $include "./modules/40_techpol/lowCarbonPush/realization.gms"

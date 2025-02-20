@@ -1211,6 +1211,12 @@ $setglobal cm_rcp_scen  rcp45         !! def = "rcp45"  !! regexp = none|rcp20|r
 *' *  (2023_uncond): all NDCs independent of international financial support published until December 31, 2023
 *' *  Other supported years are 2022, 2021 and 2018, always containing NDCs published until December 31 of that year
 $setglobal cm_NDC_version  2024_cond    !! def = "2024_cond"  !! regexp = 20(18|2[1-4])_(un)?cond
+
+*' cm_NPi_version            "choose version year of NPi targets for min and max targets in the form of conditional vs. unconditional"
+*' *  (2024_cond):   minimum technology targets are included from NewClimate latest policy modeling protocol in 2025
+*' *  (2024_uncond): maximal technology targets are included from NewClimate latest policy modeling protocol in 2025
+$setglobal cm_NPi_version  2025_cond    !! def = "2025_cond"  !! regexp = 2025_(un)?cond
+
 *' cm_netZeroScen     "choose scenario of net zero targets of netZero realization of module 46_carbonpriceRegi"
 *'
 *'  (NGFS_v4):        settings used for NGFS v4, 2023
