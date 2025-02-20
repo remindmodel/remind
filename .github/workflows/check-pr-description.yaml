@@ -1,0 +1,18 @@
+on:
+  pull_request:
+    types: [opened, edited]
+
+jobs:
+  check-pr-template:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR description
+        id: check_pr_description
+        run: |
+            PR_DESCRIPTION='${{ github.event.pull_request.body }}'
+            TYPE_OF_CHANGE_SECTION=$(echo "$PR_DESCRIPTION" | sed -n '/## Type of change/,/## Checklist:/p')
+            if echo "$TYPE_OF_CHANGE_SECTION" | grep -q "\[ \]"; then
+              echo "Unselected checkboxes found in the 'Type of change' section of the pull request description. Please delete unselected items in this section."
+              exit 1
+            fi
+
