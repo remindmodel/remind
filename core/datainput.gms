@@ -178,10 +178,10 @@ $ifthen.c_techAssumptScen "%c_techAssumptScen%" == "SSP1"
     fm_dataglob("inco0",te) $ (sameas(te,"tdelt") or sameas(te,"tdh2t")) = 0.7 * fm_dataglob("inco0",te);
 *** favours VRE and electricity storage
     fm_dataglob("learn",teVRE) =         1.1 * fm_dataglob("learn",teVRE);
-    fm_dataglob("floorcost","spv") =     0.1 * fm_dataglob("inco0","spv");
-    fm_dataglob("floorcost","csp") =     0.8 * fm_dataglob("inco0","csp");
-    fm_dataglob("floorcost","windon") =  0.5 * fm_dataglob("inco0","windon");
-    fm_dataglob("floorcost","windoff") = 0.6 * fm_dataglob("inco0","windoff");
+    fm_dataglob("floorcost","spv") =     0.1 * fm_dataglob("floorcost","spv");
+    fm_dataglob("floorcost","csp") =     0.8 * fm_dataglob("floorcost","csp");
+    fm_dataglob("floorcost","windon") =  0.5 * fm_dataglob("floorcost","windon");
+    fm_dataglob("floorcost","windoff") = 0.6 * fm_dataglob("floorcost","windoff");
     fm_dataglob("inco0",teStor) =        0.7 * fm_dataglob("inco0",teStor); 
     fm_dataglob("floorcost",teStor) =    0.7 * fm_dataglob("floorcost",teStor);
 
@@ -201,10 +201,10 @@ $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP3"
 *** hampers VRE a lot, and electricity storage
     fm_dataglob("learn",teVRE) $ (not sameas(teVRE,"spv")) = 0.5 * fm_dataglob("learn",teVRE);
     fm_dataglob("learn","spv") =         0.8 * fm_dataglob("learn","spv");
-    fm_dataglob("floorcost","spv") =     8   * fm_dataglob("inco0","spv");
-    fm_dataglob("floorcost","csp") =     1.6 * fm_dataglob("inco0","csp");
-    fm_dataglob("floorcost","windon") =  4.5 * fm_dataglob("inco0","windon");
-    fm_dataglob("floorcost","windoff") = 1.8 * fm_dataglob("inco0","windoff");
+    fm_dataglob("floorcost","spv") =     8   * fm_dataglob("floorcost","spv");
+    fm_dataglob("floorcost","csp") =     1.6 * fm_dataglob("floorcost","csp");
+    fm_dataglob("floorcost","windon") =  4.5 * fm_dataglob("floorcost","windon");
+    fm_dataglob("floorcost","windoff") = 1.8 * fm_dataglob("floorcost","windoff");
     fm_dataglob("inco0",teStor) =        2   * fm_dataglob("inco0",teStor); 
     fm_dataglob("floorcost",teStor) =    2   * fm_dataglob("floorcost",teStor); 
 
@@ -218,10 +218,10 @@ $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP5"
     fm_dataglob("inco0","tnrs") =        1.3 * fm_dataglob("inco0","tnrs");
 *** hampers VRE and electricity storage
     fm_dataglob("learn",teVRE) =         0.8 * fm_dataglob("learn",teVRE);
-    fm_dataglob("floorcost","spv") =     3   * fm_dataglob("inco0","spv");
-    fm_dataglob("floorcost","csp") =     1.3 * fm_dataglob("inco0","csp");
-    fm_dataglob("floorcost","windon") =  2.5 * fm_dataglob("inco0","windon");
-    fm_dataglob("floorcost","windoff") = 1.4 * fm_dataglob("inco0","windoff");
+    fm_dataglob("floorcost","spv") =     3   * fm_dataglob("floorcost","spv");
+    fm_dataglob("floorcost","csp") =     1.3 * fm_dataglob("floorcost","csp");
+    fm_dataglob("floorcost","windon") =  2.5 * fm_dataglob("floorcost","windon");
+    fm_dataglob("floorcost","windoff") = 1.4 * fm_dataglob("floorcost","windoff");
     fm_dataglob("inco0",teStor) =        2   * fm_dataglob("inco0",teStor); 
     fm_dataglob("floorcost",teStor) =    2   * fm_dataglob("floorcost",teStor); 
 
