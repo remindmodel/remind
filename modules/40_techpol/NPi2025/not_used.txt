@@ -1,0 +1,18 @@
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
+name,type,reason
+pm_ttot_val,parameter,???
+vm_deltaCap,input,questionnaire
+pm_NuclearConstraint,input,questionnaire
+vm_capEarlyReti,input,questionnaire
+pm_regiEarlyRetiRate,input,questionnaire
+pm_eta_conv,input,questionnaire
+cm_startyear,input,questionnaire
+cm_H2targets,input,questionnaire
+pm_pop,input,not needed
+pm_gdp,input,not needed
+p40_ElCap_RenShare,input,not needed
