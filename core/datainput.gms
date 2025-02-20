@@ -188,7 +188,7 @@ $ifthen.c_techAssumptScen "%c_techAssumptScen%" == "SSP1"
 
 $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP3"
 *** favours basic fossil technologies, reduce efficiency and maintenance costs
-    loop(te(teFosNoCCS) $ not teFischerTropsch(te),
+    loop(te(teFosNoCCS) $ (not teFischerTropsch(te)),
         fm_dataglob("inco0",te) =        0.8 * fm_dataglob("inco0",te);
         fm_dataglob("eta",te) =          0.9 * fm_dataglob("eta",te);
         fm_dataglob("omf",te) =          2/3 * fm_dataglob("omf",te);
@@ -299,13 +299,18 @@ p_inco0(ttot,regi,te)          = s_DpKW_2_TDpTW   * p_inco0(ttot,regi,te);
 ***---------------------------------------------------------------------------
 *** Data checks
 ***---------------------------------------------------------------------------
+file error_dataInput;
 
-*** cost of energy technology should never be lower with CCS than without
-loop(te2teCCS(te,teCCS),
-    if(fm_dataglob("inco0",teCCS) < fm_dataglob("inco0",te),
-        abort "Error: investment cost with CCS lower than without.", fm_dataglob;
-    );
+*** ensure that cost of energy technology is higher with CCS than without
+loop(te2teCCS(te,teCCS) $ (fm_dataglob("inco0",teCCS) < fm_dataglob("inco0",te)),
+    put error_dataInput te.tl, fm_dataglob("inco0",te) /;
+    put error_dataInput teCCS.tl, fm_dataglob("inco0",teCCS) / /;
+
+    display "Investment cost lower with CCS than without. See details in file error_dataInput.put";
+    fm_dataglob("inco0",teCCS) = fm_dataglob("inco0",te) * 1.01; !! make CCS version at least 1% more expensive
+***    abort "Error: Investment cost lower with CCS than without. See details in file error_dataInput.put", fm_dataglob;
 );
+putclose;
 
 display fm_dataglob;
 
