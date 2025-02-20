@@ -7,8 +7,9 @@
 ### Parts concerned:
 - [ ] Code
 - [ ] Documentation
-- [ ] Input Data
-- [ ] Other
+- [ ] Input data
+- [ ] CI/CD
+- [ ] Other (please give a description)
 
 ### Impact:
 - [ ] Bug fix
