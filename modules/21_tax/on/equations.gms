@@ -39,6 +39,7 @@ q21_taxrevReal(t,regi)$(t.val ge max(2010,cm_startyear))..
   + sum(emiMkt, v21_taxemiMkt(t,regi,emiMkt))  
   + sum(entyPe, v21_taxrevPE(t,regi,entyPe))
   + v21_taxrevResEx(t,regi) 
+  + v21_taxrevBioEF(t,regi)
   + v21_taxrevSE(t,regi)
   + v21_taxrevFE(t,regi)
   + sum(tradePe, v21_taxrevImport(t,regi,tradePe)) 
@@ -53,7 +54,7 @@ q21_taxrevPseudo(t,regi)$(t.val ge max(2010,cm_startyear))..
   + v21_taxrevFlex(t,regi)
   + v21_taxrevCCS(t,regi) 
   + v21_taxrevNetNegEmi(t,regi)
-  + v21_taxrevBio(t,regi)
+  + v21_taxrevBioSust(t,regi)
   + v21_taxrevChProdStartYear(t,regi)
   - vm_costSubsidizeLearning(t,regi)
   + sum(in, v21_taxrevCES(t,regi,in))
@@ -126,6 +127,39 @@ v21_taxrevResEx(t,regi) =e=  sum(pe2rlf(peEx(enty),rlf), p21_tau_fuEx_sub(t,regi
 ;
 
 ***---------------------------------------------------------------------------
+*'  Calculation of emission-factor-based tax on bioenergy:
+*'  The (potentially) region-specific emission-factor-based tax, which
+*'  is directly linked to the carbon price and does not directly
+*'  depend on the bioenergy production level. The tax level in monetary
+*'  terms per unit of bioenergy is derived by multiplying the emission
+*'  factor with the CO2 price. This tax is applied to biomass consumption
+*'  (i.e. after trade, applied within the region consuming the
+*'  bioenergy). By default this emission-factor-based bioenergy tax is
+*'  deactivated, since in coupled REMIND-MAgPIE policy runs we usually
+*'  assume that emissions associated with bioenergy production are
+*'  regulated (i.e. penalized) within the land-use sector with the carbon
+*'  price on terrestrial carbon emissions. In the absence of direct
+*'  emissions regulation within the land-use sector, however, this
+*'  undifferentiated emission-factor-based energy tax can be used as a
+*'  substitute for missing climate policies in the land-use sector in
+*'  order to close the regulation gap.
+*'  Please note that the associated emissions (bioenergy production *
+*'  emission factor) do NOT enter the emissions balance equations, since
+*'  land-use emissions are accounted for in MAgPIE (i.e. the emission
+*'  factor is only used to inform the tax level).
+*'  Units: p21_bio_EF(t,regi)                            [GtC per TWa]
+*'         pm_taxCO2eq(t,regi)                           [T$US per GtC]
+*'         -> p21_bio_EF(t,regi) * pm_taxCO2eq(t,regi)   [T$US per TWa]
+*'  Documentation of overall tax approach is above at q21_taxrev.
+***---------------------------------------------------------------------------
+q21_taxrevBioEF(t,regi)$(t.val ge max(2010,cm_startyear))..
+  v21_taxrevBioEF(t,regi)
+  =e= p21_bio_EF(t,regi) * pm_taxCO2eq(t,regi)
+    * (vm_fuExtr(t,regi,"pebiolc","1") - (vm_Xport(t,regi,"pebiolc")-vm_Mport(t,regi,"pebiolc")))
+  - p21_taxrevBioEF0(t,regi)
+;
+
+***---------------------------------------------------------------------------
 *' Calculation of SE tax: tax rate times secondary energy times secondary energy demand
 *' Typically, energy taxes are accounted on FE level. However, this tax is used to 
 *' account for taxes and grid fees for the electricity input to electrolysis, which is an SE2SE technology.  
@@ -190,7 +224,7 @@ q21_taxrevFE(t,regi)$(t.val ge max(2010,cm_startyear))..
 ;
 
 ***---------------------------------------------------------------------------
-*'  (PE) import tax 
+*'  Calculation of energy import tax:
 *'  can be used to place taxes on PE energy imports 
 *'  e.g. bioenergy import taxes due to sustainability concerns by importers
 ***---------------------------------------------------------------------------
@@ -289,52 +323,23 @@ q21_emiAllco2neg(t,regi)..
 ;
 
 ***---------------------------------------------------------------------------
-*'  Calculation of total bioenergy tax revenues. There are two tax types that
-*'  are independent of each other:
-*'     1. The global sustainability tax rate, which scales linearly with
-*'        bioenergy production (the higher the demand, the higher the tax
-*'        ratio v21_tau_bio).
-*'        Units: v21_tau_bio(t)                                [1]
-*'               vm_pebiolc_price(t,regi)                      [T$US per TWa]
-*'               -> v21_tau_bio(t)  * vm_pebiolc_price(t,regi) [T$US per TWa]
-*'     2. The (potentially) region-specific emission-factor-based tax, which
-*'        is directly linked to the carbon price and does not directly
-*'        depend on the bioenergy production level. The tax level in monetary
-*'        terms per unit of bioenergy is derived by multiplying the emission
-*'        factor with the CO2 price. This tax is applied to biomass consumption
-*'        (i.e. after trade, applied within the region consuming the
-*'        bioenergy). By default this emission-factor-based bioenergy tax is
-*'        deactivated, since in coupled REMIND-MAgPIE policy runs we usually
-*'        assume that emissions associated with bioenergy production are
-*'        regulated (i.e. penalized) within the land-use sector with the carbon
-*'        price on terrestrial carbon emissions. In the absence of direct
-*'        emissions regulation within the land-use sector, however, this
-*'        undifferentiated emission-factor-based energy tax can be used as a
-*'        substitute for missing climate policies in the land-use sector in
-*'        order to close the regulation gap.
-*'        Please note that the associated emissions (bioenergy production *
-*'        emission factor) do NOT enter the emissions balance equations, since
-*'        land-use emissions are accounted for in MAgPIE (i.e. the emission
-*'        factor is only used to inform the tax level).
-*'        Units: p21_bio_EF(t,regi)                            [GtC per TWa]
-*'               pm_taxCO2eq(t,regi)                           [T$US per GtC]
-*'               -> p21_bio_EF(t,regi) * pm_taxCO2eq(t,regi)   [T$US per TWa]
+*'  Calculation global sustainability tax on bioenergy:
+*'  The global sustainability tax rate scales linearly with bioenergy production
+*'  (the higher the demand, the higher the tax ratio v21_tau_bio).
+*'  Units: v21_tau_bio(t)                                [1]
+*'         vm_pebiolc_price(t,regi)                      [T$US per TWa]
+*'         -> v21_tau_bio(t)  * vm_pebiolc_price(t,regi) [T$US per TWa]
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
-q21_taxrevBio(t,regi)$(t.val ge max(2010,cm_startyear))..
-  v21_taxrevBio(t,regi)
-  =e=
-  !! 1. sustainability tax on production
-    v21_tau_bio(t)  * vm_pebiolc_price(t,regi)
-    * vm_fuExtr(t,regi,"pebiolc","1")
-  !! 2. emission-factor-based tax on consumption
-  + p21_bio_EF(t,regi) * pm_taxCO2eq(t,regi)
-    * (vm_fuExtr(t,regi,"pebiolc","1") - (vm_Xport(t,regi,"pebiolc")-vm_Mport(t,regi,"pebiolc")))
-  - p21_taxrevBio0(t,regi)
+
+q21_taxrevBioSust(t,regi)$(t.val ge max(2010,cm_startyear))..
+  v21_taxrevBioSust(t,regi)
+  =e= v21_tau_bio(t)  * vm_pebiolc_price(t,regi) * vm_fuExtr(t,regi,"pebiolc","1")
+  - p21_taxrevBioSust0(t,regi)
 ;
 
 ***---------------------------------------------------------------------------
-*'  The dynamic bioenergy sustainability tax is calculated: it scales linearly
+*'  The dynamic bioenergy sustainability tax rate is calculated: it scales linearly
 *'  with the bioenergy demand starting at 0 at 0EJ to the level defined in
 *'  cm_bioenergy_SustTax at 200 EJ.
 ***---------------------------------------------------------------------------
