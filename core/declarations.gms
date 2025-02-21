@@ -97,8 +97,8 @@ p_maxRegTechCost2015(all_te)                         "highest historical regiona
 p_maxRegTechCost2020(all_te)                         "highest historical regional tech cost in 2020"
 p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data"
 p_newFloorCostdata(all_regi,all_te)                  "print new floor cost data"
-p_gdppcap2050_PPP(all_regi)	                     "regional GDP PPP per capita in 2050"
-p_maxPPP2050					     "maximum income GDP PPP among regions in 2050"
+p_gdppcap2050_PPP(all_regi)	                         "regional GDP PPP per capita in 2050"
+p_maxPPP2050					                               "maximum income GDP PPP among regions in 2050"
 p_maxSpvCost                                         "maximum spv investment cost among regions"
 
 $ifthen.tech_CO2capturerate not "%c_tech_CO2capturerate%" == "off"
@@ -175,6 +175,8 @@ $endif
 $ifthen.VREPot_Factor not "%c_VREPot_Factor%" == "off"
   p_VREPot_Factor(all_te) "Rescale factor for renewable potentials" / %c_VREPot_Factor% /
 $endif.VREPot_Factor
+
+p_VRE_assumption_factor "factor of VRE costs due to cm_VRE_supply_assumptions switch (>1 means higher costs)"
 
 $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
   pm_scaleDemand(tall,tall,all_regi) "Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
@@ -569,67 +571,66 @@ $endif.limitSolidsFossilRegi
 ***                                   SCALARS
 ***----------------------------------------------------------------------------------------
 scalars
-o_modelstat                                           "critical solver status for solution"
+o_modelstat                  "critical solver status for solution"
 
-pm_conv_TWa_EJ                                        "conversion from TWa to EJ"               /31.536/,
-sm_c_2_co2                                            "conversion from c to co2"                /3.666666666667/,
+pm_conv_TWa_EJ               "conversion from TWa to EJ"               /31.536/,
+sm_c_2_co2                   "conversion from c to co2"                /3.666666666667/,
 *** conversion factors of time units
-sm_giga_2_non                                         "giga to non"                             /1e+9/,
-sm_trillion_2_non                                     "trillion to non"                         /1e+12/,
+sm_giga_2_non                "giga to non"                             /1e+9/,
+sm_trillion_2_non            "trillion to non"                         /1e+12/,
 *** conversion of energy units
 *** 1J = 1Ws ==> 1GJ = 10^9 / 3600 kWh = 277.77kWh = 277.77 / 8760 kWyr = 0.03171 kWyr
-s_zj_2_twa                                            "zeta joule to tw year"                              /31.7098/,
-sm_EJ_2_TWa                                           "multiplicative factor to convert from EJ to TWa"    /31.71e-03/,
-sm_GJ_2_TWa                                           "multiplicative factor to convert from GJ to TWa"    /31.71e-12/,
-sm_TWa_2_TWh                                          "tera Watt year to Tera Watt hour"                    /8.76e+3/,
-sm_TWa_2_MWh                                          "tera Watt year to Mega Watt hour"                    /8.76e+9/,
-sm_TWa_2_kWh                                          "tera Watt year to kilo Watt hour"                    /8.76e+12/,
+s_zj_2_twa                   "zeta joule to tw year"                              /31.7098/,
+sm_EJ_2_TWa                  "multiplicative factor to convert from EJ to TWa"    /31.71e-03/,
+sm_GJ_2_TWa                  "multiplicative factor to convert from GJ to TWa"    /31.71e-12/,
+sm_TWa_2_TWh                 "tera Watt year to Tera Watt hour"                    /8.76e+3/,
+sm_TWa_2_MWh                 "tera Watt year to Mega Watt hour"                    /8.76e+9/,
+sm_TWa_2_kWh                 "tera Watt year to kilo Watt hour"                    /8.76e+12/,
 *RP* all these new conversion factors with the form "s_xxx_2_yyy" are multplicative factors. Thus, if you have a number in Unit xxx, you have to
 *RP* multiply this number by the conversion factor s_xxx_2_yyy to get the new value in Unit yyy.
-s_NO2_2_N                                             "convert NO2 to N [14 / (14 + 2 * 16)]"   / .304 /
-s_DpKWa_2_TDpTWa                                      "convert Dollar per kWa to TeraDollar per TeraWattYear"       /0.001/
-s_DpKW_2_TDpTW                                       "convert Dollar per kW to TeraDollar per TeraWatt"            /0.001/
-sm_DpGJ_2_TDpTWa                                      "multipl. factor to convert (Dollar per GJoule) to (TerraDollar per TWyear)"    / 31.54e-03/
-s_gwpCH4                                              "Global Warming Potentials of CH4, AR5 WG1 CH08 Table 8.7"     /28/
-s_gwpN2O                                              "Global Warming Potentials of N2O, AR5 WG1 CH08 Table 8.7"     /265/
-s_gwpCH4_AR4                                          "Global Warming Potentials of CH4 as in the AR4, used in the MACCs"     /25/
-s_gwpN2O_AR4                                          "Global Warming Potentials of N2O as in the AR4, used in the MACCs"     /298/
+s_NO2_2_N                    "convert NO2 to N [14 / (14 + 2 * 16)]"   / .304 /
+s_DpKWa_2_TDpTWa             "convert Dollar per kWa to TeraDollar per TeraWattYear"       /0.001/
+s_DpKW_2_TDpTW               "convert Dollar per kW to TeraDollar per TeraWatt"            /0.001/
+sm_DpGJ_2_TDpTWa             "multipl. factor to convert (Dollar per GJoule) to (TerraDollar per TWyear)"    / 31.54e-03/
+s_gwpCH4                     "Global Warming Potentials of CH4, AR5 WG1 CH08 Table 8.7"     /28/
+s_gwpN2O                     "Global Warming Potentials of N2O, AR5 WG1 CH08 Table 8.7"     /265/
+s_gwpCH4_AR4                 "Global Warming Potentials of CH4 as in the AR4, used in the MACCs"     /25/
+s_gwpN2O_AR4                 "Global Warming Potentials of N2O as in the AR4, used in the MACCs"     /298/
 
 * GA sm_dmac changes depending on the choice of MACs in c_nonco2_macc_version
-sm_dmac                                               "step in MAC functions [US$]"                                                                   
-sm_macChange                                           "maximum yearly increase of relative abatement in percentage points of maximum abatement. [0..1]"      /0.05/
-sm_tgn_2_pgc                                           "conversion factor 100-yr GWP from TgN to PgCeq"
-sm_tgch4_2_pgc                                         "conversion factor 100-yr GWP from TgCH4 to PgCeq"
-s_MtCO2_2_GtC                                         "conversion factor from MtCO2 to native REMIND emission unit GtC" /2.727e-04/
+sm_dmac                      "step in MAC functions [US$]"                                                                   
+sm_macChange                 "maximum yearly increase of relative abatement in percentage points of maximum abatement. [0..1]"      /0.05/
+sm_tgn_2_pgc                 "conversion factor 100-yr GWP from TgN to PgCeq"
+sm_tgch4_2_pgc               "conversion factor 100-yr GWP from TgCH4 to PgCeq"
+s_MtCO2_2_GtC                "conversion factor from MtCO2 to native REMIND emission unit GtC" /2.727e-04/
+s_MtCH4_2_TWa                "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
 
-s_MtCH4_2_TWa                                        "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
+s_D2010_2_D2017              "Convert US$2010 to US$2017"      /1.1491/
+s_D2015_2_D2017              "Convert US$2015 to US$2017"      /1.0292/
+sm_D2005_2_D2017             "Convert US$2005 to US$2017"      /1.231/
+sm_D2020_2_D2017             "Convert US$2020 to US$2017"      /0.9469/
+sm_EURO2023_2_D2017          "Convert EURO 2023 to US$2017"    /0.8915/
 
-s_D2010_2_D2017                                         "Convert US$2010 to US$2017"      /1.1491/
-s_D2015_2_D2017                                         "Convert US$2015 to US$2017"      /1.0292/
-sm_D2005_2_D2017                                         "Convert US$2005 to US$2017"      /1.231/
-sm_D2020_2_D2017                                         "Convert US$2020 to US$2017"      /0.9469/
-sm_EURO2023_2_D2017                                      "Convert EURO 2023 to US$2017"  /0.8915/
+sm_h2kg_2_h2kWh              "convert kilogramme of hydrogen to kwh energy value." /32.5/
+sm_DptCO2_2_TDpGtC           "Conversion multiplier to go from $/tCO2 to T$/GtC: 44/12/1000"     /0.00366667/
 
-sm_h2kg_2_h2kWh                                      "convert kilogramme of hydrogen to kwh energy value." /32.5/
-sm_DptCO2_2_TDpGtC                                    "Conversion multiplier to go from $/tCO2 to T$/GtC: 44/12/1000"     /0.00366667/
+s_co2pipe_leakage            "Leakage rate of CO2 pipelines. [0..1]"
+s_tau_cement                 "range of per capita investments for switching from short-term to long-term behavior in CO2 cement emissions"                / 12000 /
+s_c_so2                      "constant, see S. Smith, 2004, Future Sulfur Dioxide Emissions"    /4.39445/
+s_ccsinjecrate               "CCS injection rate factor. [1/a]"
 
-s_co2pipe_leakage                                     "Leakage rate of CO2 pipelines. [0..1]"
-s_tau_cement                                          "range of per capita investments for switching from short-term to long-term behavior in CO2 cement emissions"                / 12000 /
-s_c_so2                                               "constant, see S. Smith, 2004, Future Sulfur Dioxide Emissions"    /4.39445/
-s_ccsinjecrate                                        "CCS injection rate factor. [1/a]"
+s_t_start                    "start year of emission budget"
+cm_peakBudgYr                "date of net-zero CO2 emissions for peak budget runs without overshoot"
 
-s_t_start                                             "start year of emission budget"
-cm_peakBudgYr                                         "date of net-zero CO2 emissions for peak budget runs without overshoot"
+sm_endBudgetCO2eq            "end time step of emission budget period 1"
+sm_budgetCO2eqGlob           "budget for global energy-emissions in period 1"
+p_emi_budget1_gdx            "budget for global energy-emissions in period 1 from gdx, may overwrite default values"
 
-sm_endBudgetCO2eq                                     "end time step of emission budget period 1"
-sm_budgetCO2eqGlob                                    "budget for global energy-emissions in period 1"
-p_emi_budget1_gdx                                     "budget for global energy-emissions in period 1 from gdx, may overwrite default values"
+sm_globalBudget_absDev       "absolute deviation of global cumulated CO2 emissions budget from target budget"
 
-sm_globalBudget_absDev                                "absolute deviation of global cumulated CO2 emissions budget from target budget"
+sm_eps                       "small number: 1e-9 "  /1e-9/
 
-sm_eps                                                "small number: 1e-9 "  /1e-9/
-
-sm_CES_calibration_iteration                          "current calibration iteration number, loaded from environment variable cm_CES_calibration_iteration"  /0/
+sm_CES_calibration_iteration "current calibration iteration number, loaded from environment variable cm_CES_calibration_iteration"  /0/
 ;
 
 * GA sm_dmac changes depending on the choice of MACs in c_nonco2_macc_version

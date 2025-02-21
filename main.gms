@@ -813,15 +813,6 @@ parameter
 *' *  (4): so2 tax intermediary between 1 and 2, multiplying (1) tax by the ratio (3) and (2)
 *'
 parameter
-  c_techAssumptScen         "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5, 4: SSP3"
-;
-  c_techAssumptScen     = 1;         !! def = 1  !! regexp = [1-4]
-*' This flag defines an energy technology scenario according to SSP scenario
-*' *   (1) SSP2: reference scenario - default investment costs & learning rates for pv, csp and wind
-*' *   (2) SSP1: advanced renewable energy techno., pessimistic for nuclear and CCS
-*' *   (3) SSP5: pessimistic techno-economic assumptions
-*'
-parameter
   c_ccsinjecratescen        "CCS injection rate factor applied to total regional storage potentials, yielding an upper bound on annual injection"
 ;
   c_ccsinjecratescen    = 1;         !! def = 1  !! regexp = [0-6]
@@ -1073,17 +1064,13 @@ parameter
 *' This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1.
 *'
 parameter
-  cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bleak (3) assumptions on VRE supply"
+  cm_VRE_supply_assumptions        "default (0), optimistic (1), pessimistic (2), or very pessimistic (3) assumptions on VRE and storage costs"
 ;
-  cm_VRE_supply_assumptions = 0;  !! 0 - default, 1 - optimistic, 2 - sombre, 3 - bleak  !! regexp = [0-3]
-*' *   for 1 - optimistic
-*'      - investment cost (inco0), to-be-learned investment cost (incolearn), and learning rate parameters for spv and storspv are modified
-*'      - ease capacity constraints on power storage
-*'      - reduce necessary storage for electricity production
-*'  * for 2 - sombre
-*'      - change to-be-learned investment cost (incolearn) for solar PV (spv) to 5010 (150 $ per kW floor cost)
-*'  * for 3 - bleak
-*'      - change to-be-learned investment cost (incolearn) for solar PV (spv) to 4960 (200 $ per kW floor cost)
+  cm_VRE_supply_assumptions = 0;  !! def = 0  !! regexp = [0-3]
+*' Modifies investment cost (inco0), floorcost and learning rate parameters for VRE and storage.
+*' * (1) optimistic: reduces floor costs and investment costs and increases learning rates by around 10%. Also halves storage needs.
+*' * (2) pessimistic: increases floor costs and investment costs and decreases learning rates by around 10%.
+*' * (3) very pessimistic: increases floor costs and investment costs and decreases learning rates by around 30%.
 *'
 parameter
   cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/kg = 0.2 $/Kwh)"
@@ -1252,13 +1239,18 @@ $setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.nonnegative
 *** For example: "EU27_regi 7.5, DEU 1.5".
 $setGLobal cm_bioprod_regi_lim off  !! def off
 *' cm_GDPpopScen  "assumptions about future GDP and population development"
-*'
-*' * (SSP1):  SSP1 fastGROWTH medCONV
-*' * (SSP2):  SSP2 medGROWTH medCONV
-*' * (SSP3):  SSP3 slowGROWTH slowCONV
-*' * (SSP4):  SSP4  medGROWTH mixedCONV
-*' * (SSP5):  SSP5 fastGROWTH fastCONV
+*'  * (SSP1):  SSP1 fastGROWTH medCONV
+*'  * (SSP2):  SSP2 medGROWTH medCONV
+*'  * (SSP3):  SSP3 slowGROWTH slowCONV
+*'  * (SSP4):  SSP4 medGROWTH mixedCONV
+*'  * (SSP5):  SSP5 fastGROWTH fastCONV
 $setglobal cm_GDPpopScen   SSP2  !! def = SSP2
+*' c_techAssumptScen flag defines an energy technology scenario according to SSP narratives
+*'  * (SSP1) optimistic for VRE, storage, BEV; pessimistic for nuclear and CCS
+*'  * (SSP2) reference scenario - default investment costs & learning rates
+*'  * (SSP3) optimistic for basic fossil technologies; pessimistic for nuclear and VRE
+*'  * (SSP5) optimistic for advanced fossil technologies and CCS; pessimistic for nuclear and VRE
+$setglobal c_techAssumptScen SSP2 !! def = SSP2  !! regexp = (SSP)?[1-5]
 *** cm_oil_scen      "assumption on oil availability"
 ***  (lowOil): low
 ***  (medOil): medium (this is the new case)
@@ -1276,10 +1268,10 @@ $setGlobal cm_gas_scen  medGas         !! def = medGas  !! regexp = lowGas|medGa
 ***  (medCoal): medium
 ***  (highCoal): high
 $setGlobal cm_coal_scen  medCoal        !! def = medCoal  !! regexp = 0|lowCoal|medCoal|highCoal
-*' *  c_ccsinjecrateRegi  "regional upper bound of the CCS injection rate, overwrites for specified regions the settings set with c_ccsinjecratescen"
-*' *  ("off") no regional differentiation
-*' *  ("GLO 0.005") reproduces c_ccsinjecratescen = 1
-*' *  ("GLO 0.00125, CAZ_regi 0.0045, CHA_regi 0.004, EUR_regi 0.0045, IND_regi 0.004, JPN_regi 0.002, USA_regi 0.002") "example that is taylored such that NDC goals are achieved without excessive CCS in a delayed transition scenario. Globally, 75% reduction, 10% reduction in CAZ etc. compared to reference case with c_ccsinjecratescen = 1"
+*' c_ccsinjecrateRegi  "regional upper bound of the CCS injection rate, overwrites for specified regions the settings set with c_ccsinjecratescen"
+*'  * ("off") no regional differentiation
+*'  * ("GLO 0.005") reproduces c_ccsinjecratescen = 1
+*'  * ("GLO 0.00125, CAZ_regi 0.0045, CHA_regi 0.004, EUR_regi 0.0045, IND_regi 0.004, JPN_regi 0.002, USA_regi 0.002") "example that is taylored such that NDC goals are achieved without excessive CCS in a delayed transition scenario. Globally, 75% reduction, 10% reduction in CAZ etc. compared to reference case with c_ccsinjecratescen = 1"
 $setglobal c_ccsinjecrateRegi  off  !! def = "off"
 *** c_SSP_forcing_adjust "chooses forcing target and budget according to SSP scenario such that magicc forcing meets the target";
 ***   ("forcing_SSP1") settings consistent with SSP 1
@@ -1590,7 +1582,11 @@ $setglobal cm_inco0RegiFactor  off  !! def = off
 ***   def <- "off" = use default CCS pm_inco0_t values.
 ***   or number (ex. 0.66), multiply by 0.66 the CSS cost markup
 $setglobal cm_ccsinjeCost med !! def = med !! regexp = med|low|high
-*** switch from standard to low and high CO2 transport & storage cost; approx. 12/7.5/20 USD/tCO2. Low equals cost prior to 03/2024
+*' switch from standard to low and high CO2 transport & storage cost.
+*' Warning: it applies absolute values; only use it in combination with default c_techAssumptScen SSP2. 
+*'  * (low): old estimate before 03/2024; ~7.5 USD/tCO2 in 2035. Also applies tech_stat=2 and constrTme=0
+*'  * (med): new main estimate; 12 USD/tCO2 at all times (similar to ~11.4 USD/tCO2 average of saline formations, on- and offshore DOG fields in Budinis et al 2017)
+*'  * (high): upper estimate; ~20USD/tCO2 (constant), assuming upper end of storage cost and long transport distances
 $setglobal cm_CCS_markup  off  !! def = off
 *** cm_Industry_CCS_markup "multiplicative factor for Industry CSS cost markup"
 ***   def <- "off"
