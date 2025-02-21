@@ -1521,7 +1521,7 @@ teNoTransform(all_te) "all technologies that do not transform energy but still h
     gridwindon      "grid between areas with high wind onshore production and the rest"
     gridwindoff     "grid between areas with high wind offshore production and the rest"
 /
-teRegTechCosts(all_te) "all technologies for which we differantiate tech costs"
+teRegTechCosts(all_te) "all technologies for which we differantiate tech costs by region"
 /
     pc
     igcc

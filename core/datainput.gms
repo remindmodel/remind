@@ -287,9 +287,10 @@ fm_dataglob("omv",te)          = s_D2015_2_D2017 * fm_dataglob("omv",te);
 fm_dataglob("inco0", "oae_ng") = fm_dataglob("inco0", "oae_ng") / (cm_33_OAE_eff / sm_c_2_co2);
 fm_dataglob("inco0", "oae_el") = fm_dataglob("inco0", "oae_el") / (cm_33_OAE_eff / sm_c_2_co2);
 
-*** inco0 (and floorcost) are given in $/kW (or $/(tC/a) for ccs-related tech or $/(t/a) for process-based industry)
-*** convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for ccs-related tech or T$/(Gt/a) for process-based industry)
-*** note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
+*** convert inco0, floorcost and omv to REMIND units by applying a factor 0.001
+***   category          energy technology   ccs technology    process-based industry 
+***   input data unit   $/kW                $/(tC/a)          $/(t/a)
+***   REMIND unit       T$/TW               T$/(GtC/a)        T$/(Gt/a)
 fm_dataglob("inco0",te)        = s_DpKW_2_TDpTW   * fm_dataglob("inco0",te);
 fm_dataglob("floorcost",te)    = s_DpKW_2_TDpTW   * fm_dataglob("floorcost",te);
 fm_dataglob("omv",te)          = s_DpKWa_2_TDpTWa * fm_dataglob("omv",te);
@@ -370,7 +371,7 @@ pm_data(regi,"floorcost",te)   = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"fl
 p_inco0(ttot,regi,teRegTechCosts)  = (1 + p_tkpremused(regi,teRegTechCosts) ) * p_inco0(ttot,regi,teRegTechCosts);
 
 *** take region average p_tkpremused for global convergence price
-fm_dataglob("inco0",te)       = (1 + sum(regi, p_tkpremused(regi,te))/sum(regi, 1)) * fm_dataglob("inco0",te);
+fm_dataglob("inco0",te)       = (1 + sum(regi, p_tkpremused(regi,te)) / card(regi)) * fm_dataglob("inco0",te);
 
 *** ====================== floor cost scenarios ===========================
 *** report old floor costs pre manipulation in non-default scenario
@@ -413,7 +414,7 @@ $endif.REG_techcosts
 *** See equations.gms for documentation of learning equations and floor costs
 *** -------------------------------------------------------------------------------
 *** calculate default learnable costs for learning technologies
-fm_dataglob("incolearn",te) = fm_dataglob("inco0",te) - fm_dataglob("floorcost",te);
+fm_dataglob("incolearn",teLearn(te))  = fm_dataglob("inco0",te)  - fm_dataglob("floorcost",te);
 pm_data(regi,"incolearn",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"floorcost",te);
 
 *** global parameters: calculation for global level, that regional values can gradually converge to
