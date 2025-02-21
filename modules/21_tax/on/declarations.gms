@@ -20,6 +20,7 @@ p21_taxrevPE2SE0(ttot,all_regi)                                     "reference l
 p21_taxrevSO20(ttot,all_regi)                                       "reference level value of SO2 tax"
 p21_taxrevBioSust0(ttot,all_regi)                                   "reference level value of global sustainability tax on bioenergy"
 p21_taxrevBioEF0(ttot,all_regi)                                     "reference level value of emission-factor-based tax on bioenergy"
+p21_taxrevBio0(ttot,all_regi)                                       "reference level value of sum of emission-factor-based tax and global sustainability tax on bioenergy" !! TO BE DELETED ONCE REMIND2 REPORTING IS ADJUSTED
 p21_taxemiMkt0(ttot,all_regi,all_emiMkt)                            "reference level value of co2 emission taxes per emission market"
 p21_taxrevFlex0(ttot,all_regi)                                      "reference level value of flexibility tax"
 p21_taxrevImport0(ttot,all_regi,all_enty,tax_import_type_21)        "reference level value of energy import tax"
@@ -49,7 +50,6 @@ p21_tau_CO2_tax_gdx_bau(ttot,all_regi)                              "tax path fr
 
 p21_tau_so2_tax(tall,all_regi)                                      "so2 tax path"
 p21_tau_pe2se_tax(tall,all_regi,all_te)                             "tax path for PE2SE technologies"
-p21_tau_pe2se_sub(tall,all_regi,all_te)                             "subsidy path for PE2SE technologies"
 p21_max_fe_sub(tall,all_regi,all_enty)                              "maximum final energy subsidy levels from REMIND version prior to rev. 5429 [$/TWa]"
 p21_prop_fe_sub(tall,all_regi,all_enty)                             "subsidy proportional cap to avoid liquids increasing dramatically"
 p21_tau_fuEx_sub(tall,all_regi,all_enty)                            "subsidy path for fuel extraction [$/TWa]"

@@ -37,16 +37,13 @@ $include "./modules/21_tax/on/input/f21_tax_convergence.cs4r"
 $offdelim
   /
 ;
-Parameter f21_tax_convergence_rollback(tall,all_regi,all_enty) "Tax convergence level for specific regions, year and final energy type"
+Parameter f21_tax_convergence_rollback(tall,all_regi,all_enty) "Tax convergence level for specific regions, year and final energy type in rollback scenario"
   /
 $ondelim
 $include "./modules/21_tax/on/input/f21_tax_convergence_rollback.cs4r"
 $offdelim
   /
 ;
-if(cm_fetaxscen eq 5,
-f21_tax_convergence(ttot,regi,enty) = f21_tax_convergence_rollback(ttot,regi,enty);
-);
 
 Parameter f21_max_fe_sub(tall,all_regi,all_enty) "maximum final energy subsidy levels (in $/Gj) from REMIND version prior to rev. 5429"
   /
@@ -79,21 +76,15 @@ $offdelim
   p21_max_fe_sub(ttot,all_regi,entyFe)$f21_max_fe_sub(ttot,all_regi,entyFe) = f21_max_fe_sub(ttot,all_regi,entyFe)*0.001/sm_EJ_2_TWa;
   p21_prop_fe_sub(ttot,all_regi,entyFe)$f21_prop_fe_sub(ttot,all_regi,entyFe) = f21_prop_fe_sub(ttot,all_regi,entyFe);
 
-if(cm_fetaxscen eq 0,
-  p21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe) = 0;
-  p21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe) = 0;
-  p21_tau_fuEx_sub(ttot,regi,all_enty) = 0;
-);
+
 
 *** -------------------------PE2SE Taxes--------------------------(Primary to secondary energy technology taxes, specified by technology)
 *** cb 20110923 load paths for technology taxes, subsidies and inconvenience costs 
 p21_tau_pe2se_tax(tall,regi,te) = 0;
-p21_tau_pe2se_sub(tall,regi,te)= 0;
 
 *RP* FILE changed by hand after introduction of SO2 taxes and inconvenience penalties on 2012-03-08
 *** Values try to account for excessive water use, further pollution
 *** Taxes are given in USD(2005) and converted to USD(2017) per GJ 
-if(cm_fetaxscen ne 5,
 p21_tau_pe2se_tax(ttot,regi,"igcc")$(ttot.val ge 2005)       = sm_D2005_2_D2017 * 0.25;
 p21_tau_pe2se_tax(ttot,regi,"igccc")$(ttot.val ge 2005)      = sm_D2005_2_D2017 * 0.25;
 p21_tau_pe2se_tax(ttot,regi,"coalftrec")$(ttot.val ge 2005)  = sm_D2005_2_D2017 * 1.0;
@@ -101,10 +92,8 @@ p21_tau_pe2se_tax(ttot,regi,"coalftcrec")$(ttot.val ge 2005) = sm_D2005_2_D2017 
 p21_tau_pe2se_tax(ttot,regi,"coalh2")$(ttot.val ge 2005)     = sm_D2005_2_D2017 * 0.5;
 p21_tau_pe2se_tax(ttot,regi,"coalh2c")$(ttot.val ge 2005)    = sm_D2005_2_D2017 * 0.5;
 p21_tau_pe2se_tax(ttot,regi,"coalgas")$(ttot.val ge 2005)    = sm_D2005_2_D2017 * 0.5;
-);
 ***cb20110923 rescaling of PE2SE parameters from $/GJ to trillion $ / TWa 
 p21_tau_pe2se_tax(ttot,regi,te)$(ttot.val ge 2005)    = p21_tau_pe2se_tax(ttot,regi,te)    * 0.001 / sm_EJ_2_TWa;
-p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val ge 2005)    = p21_tau_pe2se_sub(ttot,regi,te)    * 0.001 / sm_EJ_2_TWa;
 
 *** SE electricity tax rate tech specific ramp up logistic function parameters
 p21_tau_SE_tax_rampup(t,regi,te,teSeTax_coeff) = 0;
