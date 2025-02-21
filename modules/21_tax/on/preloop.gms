@@ -163,8 +163,8 @@ $endif.SEtaxRampUpParam
 
 *LB* initialization of vm_emiMac
 vm_emiMac.l(ttot,regi,enty) = 0;
-*LB* initialization of v21_emiALLco2neg
-v21_emiALLco2neg.l(ttot,regi) =0;
+*LB* initialization of vm_emiALLco2neg
+vm_emiALLco2neg.l(ttot,regi) =0;
 
 *DK initialize bioenergy tax
 v21_tau_bio.l(ttot) = 0;

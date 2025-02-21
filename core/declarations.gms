@@ -594,14 +594,18 @@ s_DpKW_2_TDpTW               "convert Dollar per kW to TeraDollar per TeraWatt" 
 sm_DpGJ_2_TDpTWa             "multipl. factor to convert (Dollar per GJoule) to (TerraDollar per TWyear)"    / 31.54e-03/
 s_gwpCH4                     "Global Warming Potentials of CH4, AR5 WG1 CH08 Table 8.7"     /28/
 s_gwpN2O                     "Global Warming Potentials of N2O, AR5 WG1 CH08 Table 8.7"     /265/
-sm_dmac                      "step in MAC functions [US$]"                                                                   /5/
+s_gwpCH4_AR4                 "Global Warming Potentials of CH4 as in the AR4, used in the MACCs"     /25/
+s_gwpN2O_AR4                 "Global Warming Potentials of N2O as in the AR4, used in the MACCs"     /298/
+
+* GA sm_dmac changes depending on the choice of MACs in c_nonco2_macc_version
+sm_dmac                      "step in MAC functions [US$]"                                                                   
 sm_macChange                 "maximum yearly increase of relative abatement in percentage points of maximum abatement. [0..1]"      /0.05/
 sm_tgn_2_pgc                 "conversion factor 100-yr GWP from TgN to PgCeq"
 sm_tgch4_2_pgc               "conversion factor 100-yr GWP from TgCH4 to PgCeq"
 s_MtCO2_2_GtC                "conversion factor from MtCO2 to native REMIND emission unit GtC" /2.727e-04/
-
 s_MtCH4_2_TWa                "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
 
+s_D2010_2_D2017              "Convert US$2010 to US$2017"      /1.1491/
 s_D2015_2_D2017              "Convert US$2015 to US$2017"      /1.0292/
 sm_D2005_2_D2017             "Convert US$2005 to US$2017"      /1.231/
 sm_D2020_2_D2017             "Convert US$2020 to US$2017"      /0.9469/
@@ -629,7 +633,16 @@ sm_eps                       "small number: 1e-9 "  /1e-9/
 sm_CES_calibration_iteration "current calibration iteration number, loaded from environment variable cm_CES_calibration_iteration"  /0/
 ;
 
-sm_dmac = sm_D2005_2_D2017 * sm_dmac;
+* GA sm_dmac changes depending on the choice of MACs in c_nonco2_macc_version
+$ifthen %c_nonco2_macc_version% == "PBL_2007"
+* PBL_2007 MACs are discretized in steps of 5 $2005/tCeq
+sm_dmac = 5 * sm_D2005_2_D2017;
+$elseif %c_nonco2_macc_version% == "PBL_2022"
+* PBL_2022 MACs are discretized in steps of 20 $2010/tCeq
+sm_dmac = 20 * s_D2010_2_D2017;;
+$endif
+;
+
 sm_tgn_2_pgc = (44/28) * s_gwpN2O * (12/44) * 0.001;
 sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 
