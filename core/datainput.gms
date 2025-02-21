@@ -254,12 +254,6 @@ if (cm_VRE_supply_assumptions > 0,
     fm_dataglob("floorcost",teStor) = p_VRE_assumption_factor * fm_dataglob("floorcost",teStor);
 );
 
-*RP* rescale the global CSP investment costs in REMIND: Originally we assume a SM3/12h setup, while the cost data from IEA for the short term seems rather based on a SM2/6h setup (with 40% average CF)
-*** Accordingly, also decrease long-term costs in REMIND to 0.7 of the current values
-fm_dataglob("inco0","csp")     = 0.7 * fm_dataglob("inco0","csp");
-fm_dataglob("floorcost","csp") = 0.7 * fm_dataglob("floorcost","csp");
-
-
 *** Overwrite default technology cost parameter values based on specific scenario configs
 $ifthen.cm_incolearn not "%cm_incolearn%" == "off"
     parameter p_new_incolearn(all_te) "value to overwrite incolearn parameters" / %cm_incolearn% /;

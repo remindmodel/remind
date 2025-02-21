@@ -84,8 +84,8 @@ flexibility                     16                       16
 
 *** variable relewable energy
 +                windon      windoff         spv        csp
-inco0              2400         5000        5160      10320
-floorcost           200         1000          50       1560
+inco0              2400         5000        5160       7224
+floorcost           200         1000          50       1092
 constrTme             1            4           1          3
 eta                1.00         1.00        1.00       1.00
 omf                0.02         0.03        0.02      0.025
@@ -239,6 +239,18 @@ Biomass Methanation (Biomass-to-Gas) with carbon capture - biogasc
 Photovoltaics - spv
     overall learning rate was increased to 25% and floor costs decreased to 50$2015/kW, as recent
     (2024) prices in various IEA-PVPS reports or other market reports show learning was faster than expected.
+
+Concentrating solar power - csp 
+    "When a CSP plant is combined with thermal storage, the size of the solar field is usually increased relative
+    to the generator size to generate enough solar thermal energy. This is measured in 'solar multiples' (SM):
+    A CSP plant with SM1 generates enough heat at reference irradiance to run the turbine at nominal power,
+    while a CSP plant with SM3 has a three times larger solar field and thus supplies three times the heat.
+    If such a plant is combined with thermal storage units, the additional heat can be stored to allow full turbine
+    operation for hours after irradiance levels drop below normal operation values. This substantially increases the
+    capacity factor, so that a CSP plant with SM4 and 18h of storage can reach a capacity factor similar to a base load plant."
+    https://doi.org/10.1016/j.apenergy.2014.08.011
+    Remind assumes a SM3/12h setup, while IEA cost data for the short term seems based on a SM2/6h setup (with 40% average CF)
+    Hence the need to rescale by factor 0.7 the global inco0 (from 10320 to 7224) and floorcost (from 1560 to 1092)
 
 Hydropower - hydro
     "Hydropower facilities typically have physical lifetimes of at least 100 years" (section 3.2, p31)
