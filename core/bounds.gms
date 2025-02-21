@@ -165,9 +165,6 @@ if ( c_ccsinjecratescen eq 0, !!no carbon sequestration at all
 if (cm_ccapturescen eq 2,  !! no carbon capture at all
   vm_cap.fx(t,regi_capturescen,"ngccc",rlf)        = 0;
   vm_cap.fx(t,regi_capturescen,"ccsinje",rlf)      = 0;
-***  vm_cap.fx(t,regi_capturescen,"ccscomp",rlf)      = 0; !! technologies disabled in REMIND 1.7
-***  vm_cap.fx(t,regi_capturescen,"ccspipe",rlf)      = 0; !! technologies disabled in REMIND 1.7
-***  vm_cap.fx(t,regi_capturescen,"ccsmoni",rlf)      = 0; !! technologies disabled in REMIND 1.7
   vm_cap.fx(t,regi_capturescen,"gash2c",rlf)       = 0;
   vm_cap.fx(t,regi_capturescen,"igccc",rlf)        = 0;
   vm_cap.fx(t,regi_capturescen,"coalftcrec",rlf)   = 0;
