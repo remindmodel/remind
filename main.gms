@@ -890,9 +890,11 @@ parameter
 *' a lot of OAE. In this case, use a quantity target to limit OAE by adding something like:
 *' (2070,2080,2090,2100).GLO.tax.t.oae.all 5000 to cm_implicitQttyTarget in your config file,
 *' starting from the year in which OAE is deployed above 5000 MtCO2 / yr. This will limit the global
-*' deployment to 5000 Mt / yr in timesteps 2070-2100. 
+*' deployment to 5000 Mt CO2 / yr in timesteps 2070-2100. 
 *' As an alternative to this cost-efficient allocation, a global limit can be set via cm_33_OAE_limit_EEZ which 
-*' distributes it between regions based on the size of the exclusive economic zones.
+*' distributes it between regions based on the size of the exclusive economic zones. This approach should only be
+*' chosen when the tax approach inhibits convergence. See q33_OAE_EEZ_limit for further reasoning.
+*' Both limitation approaches affect ocean uptake, i.e. gross OAE. 
 *' * (1): ocean alkalinity enhancement is included
 *' * (0): not included
 *'
