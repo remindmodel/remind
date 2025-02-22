@@ -381,7 +381,7 @@ q37_emiFeedstockNoEnergy(t,regi,emi,emiMkt)..
   vm_emiFeedstockNoEnergy(t,regi,emi,emiMkt)
   =e=
    v37_emiChemicalsProcess(t,regi,emi,emiMkt)
- + v37_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)
+ + vm_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)
  + v37_emiNonPlasticWaste(t,regi,emi,emiMkt)
 ;
 

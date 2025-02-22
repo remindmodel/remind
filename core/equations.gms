@@ -764,7 +764,7 @@ q_emiCdrAll(t,regi)..
   
   !! ---- gross non-industry CDR
   !! 1. directly geologically stored gross atmospheric removal from pe2se-BECCS + DACCS
-  + ( !! pe2se-BECC DACC
+  + ( !! pe2se-BECC 
       sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail(t,regi,enty,enty2,te,enty3)) !! positive value
         !! + gross DACC 
       - sum(teCCS2rlf(te,rlf), vm_emiCdrTeDetail(t, regi, "dac"))) !! negative value
@@ -785,13 +785,13 @@ q_emiCdrAll(t,regi)..
     !! multiply with ccs share 
     * v_ccsShare(t,regi) 
   !! 2. Feedstocks
-  !! 2a) plastics CDR --incinerated  waste that is captured + stored from  non-fossil feedstocks
+  !! 2a) plastics CDR -- incinerated  waste that is captured + stored from  non-fossil feedstocks
   + sum((sefe(entySe,entyFe),emiMkt)$( entySeBio(entySe) OR entySeSyn(entySe) ),
       vm_incinerationCCS(t,regi,entySe,entyFe,emiMkt)) *  !! positive value
     v_ccsShare(t,regi) 
   !! 2b) plastics CDR -- landfilled waste from non-fossil feedstocks
   - sum((emi,emiMkt), 
-      v37_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)) !! negative value
+      vm_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)) !! negative value
   !! 2c) non-plastics materials CDR -- landfilled waste from non-fossil feedstocks 
   + sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt2),
           se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),

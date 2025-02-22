@@ -112,7 +112,7 @@ Positive Variables
 Variables
 !! feedstocks
 vm_emiFeedstockNoEnergy(ttot,all_regi,all_enty,all_emiMkt)                "Emissions from feedstocks that are not accounted as energy-related emissions, so far only CO2 emissions [GtC]"
-v37_emiNonFosNonIncineratedPlastics(ttot,all_regi,all_enty,all_emiMkt)    "Negative CO2 emissions from non-fossil carbon in non-incinerated plastics [GtC]"
+vm_emiNonFosNonIncineratedPlastics(ttot,all_regi,all_enty,all_emiMkt)    "Negative CO2 emissions from non-fossil carbon in non-incinerated plastics [GtC]"
 v37_emiNonPlasticWaste(ttot,all_regi,all_enty,all_emiMkt)                 "Emissions from non-plastic waste, so far only CO2 emissions [GtC]"
 ;
 
