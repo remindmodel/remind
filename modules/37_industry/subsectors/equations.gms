@@ -437,7 +437,7 @@ q37_costMat(t,regi) ..
     vm_costMatPrc(t,regi)
   =e=
     sum(mat,
-      p37_priceMat(mat)
+      p37_priceMat(t,regi,mat)
       *
       v37_matFlow(t,regi,mat))
 ;

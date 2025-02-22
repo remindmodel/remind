@@ -655,6 +655,8 @@ p37_specMatDem("ammonia","AmToFinal","standard")        = 1;
 p37_specMatDem("ammoniaH2","AmToFinalH2","standard")        = 1;
 p37_specMatDem("methanol","MeToFinal","standard")        = 1;
 
+p37_specMatDem("naphtha","StCrLiq","standard")        = 0.95 * 20.56 / (sm_TWa_2_MWh/sm_giga_2_non); !!Assume 95% is feedstock
+
 p37_specMatDem("co2f","FertProdH2","standard")        = 1.52;
 p37_specMatDem("co2f","MeSyH2","standard")        = 1.373;
 $endif.cm_subsec_model_chemicals
@@ -684,7 +686,6 @@ p37_specFeDemTarget("fegas","ChemOld","standard")  = 3.0 / (sm_TWa_2_MWh/sm_giga
 p37_specFeDemTarget("fehos","ChemOld","standard")  = 3.9 / (sm_TWa_2_MWh/sm_giga_2_non);
 p37_specFeDemTarget("feels","ChemOld","standard")  = 2.4 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-
 p37_specFeDemTarget("fesos","ChemElec","standard")  = 1.2 / (sm_TWa_2_MWh/sm_giga_2_non);
 p37_specFeDemTarget("fegas","ChemElec","standard")  = 2.7 / (sm_TWa_2_MWh/sm_giga_2_non);
 p37_specFeDemTarget("fehos","ChemElec","standard")  = 3.3 / (sm_TWa_2_MWh/sm_giga_2_non);
@@ -697,9 +698,10 @@ p37_specFeDemTarget("feh2s","ChemH2","standard")  = 2.1 / (sm_TWa_2_MWh/sm_giga_
 p37_specFeDemTarget("feels","ChemH2","standard")  = 1.8 / (sm_TWa_2_MWh/sm_giga_2_non); 
 
 p37_specFeDemTarget("fegas","StCrNG","standard")  = 16.5 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: A. Boulamanti and J. A. Moya, Renew. Sustain. Energy Rev., 2017, 68, 1205–1212. Table2
+p37_specFeDemTarget("fehos","StCrNG","standard")  = 5.83 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: A. Boulamanti and J. A. Moya, Renew. Sustain. Energy Rev., 2017, 68, 1205–1212. Table2
 p37_specFeDemTarget("feels","StCrNG","standard")  = 0.16 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: A. Boulamanti and J. A. Moya, Renew. Sustain. Energy Rev., 2017, 68, 1205–1212. Table2 Ethane is 0.14 and Propane & Butane is 0.18
 
-p37_specFeDemTarget("fehos","StCrLiq","standard")  = 18.3 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Spallina17 Table 5
+p37_specFeDemTarget("fehos","StCrLiq","standard")  = 19.3 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Spallina17 Table 5 95%feedstock
 p37_specFeDemTarget("feels","StCrLiq","standard")  = 0.26 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Spallina17 Table 5
 
 p37_specFeDemTarget("fesos","MeSySol","greyh2")  = 11.3 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
@@ -815,16 +817,28 @@ $endif.cm_subsec_model_steel
 
 *** --------------------------------
 
-p37_priceMat(all_enty) = 0.;
+p37_priceMat(ttot,all_regi,all_enty) = 0.;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+Execute_Loadpoint "input" pm_FEPrice = pm_FEPrice;
+
+loop(t$(t.val > 2020),
+  loop(all_regi,
+    p37_priceMat(t,all_regi,"naphtha") = -0.5 * pm_FEPrice(t,all_regi,"fehos","indst","ETS");
+  );
+);
+$endif.cm_subsec_model_chemicals
+
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 !! IEA STeel Roadmap Fig 1.3 Caption: Scrap price 200-300 $/t
 !! => take 250 $/t, unit 2020$US
-p37_priceMat("eafscrap") = sm_D2020_2_D2017 * 0.250 ;
-p37_priceMat("bofscrap") = sm_D2020_2_D2017 * 0.250;
-!! Agora KSV-Rechner: 114 €2023/tSteel / (tn$ /bn t)
-p37_priceMat("ironore")  = sm_EURO2023_2_D2017 * 0.114;
-!! Agora KSV-Rechner: 154 €2023/tSteel / (tn$ /bn t)
-p37_priceMat("dripell")  = sm_EURO2023_2_D2017 * 0.154;
+loop(t$(t.val ge 2005),
+  p37_priceMat(t,all_regi,"eafscrap") = sm_D2020_2_D2017 * 0.250 ;
+  p37_priceMat(t,all_regi,"bofscrap") = sm_D2020_2_D2017 * 0.250;
+  !! Agora KSV-Rechner: 114 €2023/tSteel / (tn$ /bn t)
+  p37_priceMat(t,all_regi,"ironore")  = sm_EURO2023_2_D2017 * 0.114;
+  !! Agora KSV-Rechner: 154 €2023/tSteel / (tn$ /bn t)
+  p37_priceMat(t,all_regi,"dripell")  = sm_EURO2023_2_D2017 * 0.154;
+);
 $endif.cm_subsec_model_steel
 
 
@@ -855,7 +869,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 !! new calculation value added: Global plastic production volume 400.3 Mt Global plastic market size 712bn USD in 2022 https://www.statista.com/topics/5266/plastics-industry/#:~:text=Since%20the%20mass%20production%20of%20plastic%20products%20began,to%20experience%20considerable%20growth%20over%20the%20next%20decade.
 
 !!TODO QIanzhi: Change to 2017$
-p37_mat2ue("HVC","ue_chemicals") = 1.38; !!2017$/kg Source: See new calculation value added
+p37_mat2ue("HVC","ue_chemicals") = 0.66; !!2017$/kg Source: https://businessanalytiq,com/procurementanalytics/index/ethylene-price-index/
 p37_mat2ue("Fertilizer","ue_chemicals") = 0.73; !!2017$/kgN Source: https://farmdocdaily,illinois,edu/wp-content/uploads/2023/06/06132023_fig1,png 2020 Global Average
 p37_mat2ue("MethFinal","ue_chemicals") = 0.37; !!2017$/kg Source: https://www,methanex,com/about-methanol/pricing/ 2020 Global Average
 p37_mat2ue("AmmoFinal","ue_chemicals") = 0.69; !!2017$/kg Source: https://businessanalytiq,com/procurementanalytics/index/ammonia-price-index/ 2020 Global Average
@@ -921,6 +935,11 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_ue_share(t,regi,"sesteel","ue_steel_secondary") = 1.;
 p37_ue_share(t,regi,"prsteel","ue_steel_primary")   = 1.;
 $endif.cm_subsec_model_steel
+
+if (cm_startyear gt 2005,
+  Execute_Loadpoint "input_ref" p37_ue_share = p37_ue_share;
+);
+
 loop((t,regi,ppfUePrc(in)),
   if(abs(sum(mat,p37_ue_share(t,regi,mat,in))-1.) gt sm_eps,
     display p37_ue_share;

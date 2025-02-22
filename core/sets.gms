@@ -447,6 +447,7 @@ all_enty             "all types of quantities"
         MethFinal
         AmmoFinal
 
+        naphtha
         !! emissions
         co2          "carbon dioxide emissions"
         ch4          "methane emissions"
@@ -1398,7 +1399,9 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
   AmSyCoalcc      "Ammonia by Coal CCS" !! ammonia tech QIANZHI
   AmSyNGcc        "Ammonia by Gas CCS"
   AmSyLiqcc       "Ammonia by Liquids CCS"
-  AmSyH2          "Ammonia by Hydrogen"
+  AmSyH2          "Ammonia by Hydrogen" 
+  StCrLiq         "Steam cracking by Naphtha"
+  StCrNG          "Steam cracking by Natural Gas"
   MTOMTA          "Methanol to Olefins and Aromatics"
   FertProdH2      "Green Ammonia to Urea"
 $endif.cm_subsec_model_chemicals
