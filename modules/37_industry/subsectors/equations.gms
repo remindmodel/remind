@@ -312,7 +312,7 @@ q37_incineratedPlastics(t,regi,sefe(entySe,entyFe),emiMkt)$(
   ;
 
 *' emissions from plastics incineration as a share of total plastic waste,
-*' discounted by captured amount
+*' calculated as carbon in incinerated plastics discounted by captured amount
 q37_incinerationEmi(t,regi,sefe(entySe,entyFe),emiMkt)$(
                          entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
   v37_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
@@ -389,7 +389,7 @@ q37_emiFeedstockNoEnergy(t,regi,emi,emiMkt)..
 q37_wasteIncinerationEmiBalance(t,regi,emiTe(enty),emiMkt) ..
   vm_wasteIncinerationEmiBalance(t,regi,enty,emiMkt)
   =e=
-    !! add fossil emissions from plastics incineration without CCS.
+    !! add fossil emissions from plastics incineration without carbon capture.
   + sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
          se2fe(entySe,entyFe,te))$( entySeFos(entySe) ),
       v37_incinerationEmi(t,regi,entySe,entyFe,emiMkt)

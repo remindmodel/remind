@@ -663,7 +663,7 @@ q_emiAllMkt(t,regi,emi,emiMkt) ..
          macSector2emiMkt(emiMacSector,emiMkt)),
       vm_emiMacSector(t,regi,emiMacSector)
     )
-    !! CDR from CDR module
+    !! emissions from CDR module
   + vm_emiCdr(t,regi,emi)$( sameas(emi,"co2") AND sameas(emiMkt,"ETS") )
     !! Exogenous emissions
   + pm_emiExog(t,regi,emi)$( sameas(emiMkt,"other") )

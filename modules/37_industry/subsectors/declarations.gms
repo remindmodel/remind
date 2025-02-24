@@ -91,9 +91,9 @@ Positive Variables
   v37_emiIndCCSmax(ttot,all_regi,emiInd37)                                  "maximum abatable industry emissions"
 
   !! feedstocks
-  v37_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)           "Emissions from incineration of plastic waste [GtC]"
+  v37_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)           "Emissions from incineration of plastic waste, only carbon that is not captured [GtC]"
   vm_incinerationCCS(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "CCS from incineration of plastic waste [GtC]"
-  v37_incineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)       "Carbon flow: carbon contained in plastics that are not incinerated [GtC]"
+  v37_incineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)       "Carbon flow: carbon contained in plastics that are incinerated [GtC]"
   v37_feedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)          "Carbon flow: carbon contained in chemical feedstocks [GtC]"
   v37_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "Carbon flow: carbon contained in plastics [GtC]"
   v37_plasticWaste(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "Carbon flow: carbon contained in plastic waste [GtC]"
