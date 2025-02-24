@@ -449,7 +449,7 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
 *' $$ b' = \frac{I_0}{I_0-F}b $$
 
 *' In datainput.gms, `fm_dataglob` external data provides the observed learning rate `learn` ($\lambda$),
-*' the initial investment costs `inco0` ($I_0$), the learnable cost `incolearn` ($I'_0=I_0-F$) and
+*' the initial investment costs `inco0` ($I_0$), the floorcost ($F$) and
 *' the cumulative capacity in 2015 `ccap0` ($C_0$).
 *' The other learning parameters are computed using the equations described above:
 *' `learnExp_wFC` ($b'$), `learnMult_wFC` ($a'$).

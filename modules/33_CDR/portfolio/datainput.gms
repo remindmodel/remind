@@ -108,5 +108,22 @@ else
     p33_oae_eez_limit(regi) = 10; !! 10 Gt C ocean uptake effectively means no upper limit (i.e. 36.67 Gt CO2 by one region alone) 
 );
 
+*' #### All CDR qoptions
+*' Upper bound for FE share by CDR approaches
+*** initialize upper bound on FE share parameter
+p33_shfetot_up(t,regi,entyFe,sector)$(t.val ge 2040 AND sameAs(sector, "CDR") AND 
+                                            (sameAS(entyFe, "fedie") OR sameAS(entyFe, "feels") OR sameAS(entyFe, "fehes") 
+                                            OR sameAS(entyFe, "feh2s") OR sameAS(entyFe, "fegas"))) = cm_33_maxFeShare;
+*** initialize total FE demand (all sectors)
+v33_FE_total.l(t,regi,entyFe) = 0;
+
+*** limit on expenses for net negative emissions as share of GDP
+parameter p33_GDP_NetNeg_share_s(ext_regi) "Maximum share of spending on NNE in GDP, global or region-specific" / %cm_33_GDP_netNegCDR_maxShare% /; 
+p33_GDP_NetNeg_share(regi) = 1;  !! if no value assigned to GLO, default is 100%
+p33_GDP_NetNeg_share(regi) = p33_GDP_NetNeg_share_s("GLO"); !! if a value is assigned to GLO, this value is set for all regions
+loop(ext_regi$p33_GDP_NetNeg_share_s(ext_regi),
+    p33_GDP_NetNeg_share(regi)$(regi_groupExt(ext_regi, regi)) = p33_GDP_NetNeg_share_s(ext_regi);
+  );
+
 *' @stop
 *** EOF ./modules/33_CDR/portfolio/datainput.gms
