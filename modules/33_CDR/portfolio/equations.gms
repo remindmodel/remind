@@ -112,7 +112,7 @@ q33_DAC_FEdemand(t,regi,entyFe2)$sum(entyFe, fe2cdr(entyFe,entyFe2,"dac"))..
 ***---------------------------------------------------------------------------
 q33_EW_capconst(t,regi)..
     sum((rlf_cz33, rlf), v33_EW_onfield(t,regi,rlf_cz33,rlf))
-    =l=
+    =e=
     sum(teNoTransform2rlf33("weathering",rlf),
         vm_capFac(t,regi,"weathering") * vm_cap(t,regi,"weathering",rlf)
     )
@@ -122,20 +122,24 @@ q33_EW_capconst(t,regi)..
 *'  Calculation of the total amount of ground rock on the fields in timestep t.
 *'  The first part of the equation describes the decay of the rocks added until that time,
 *'  the rest describes the newly added rocks.
+*'  The amounts already on or newly spread on the fields are multiplied with the total fraction 
+*'  remaining for the next time step, i.e. the fraction not weathering in the time step years. 
+*'  This fraction is generally calculated as (1-p33_rock_weath_rate)**(time_step_years).
+*'  For better solver solution, it is rewritten according to a**b = exp(log(a)*b) as
+*'  exp(log(1-p33_rock_weath_rate) * time_step_years).
+
 ***---------------------------------------------------------------------------
 q33_EW_onfield_tot(ttot,regi,rlf_cz33,rlf)$(ttot.val ge max(2025, cm_startyear))..
     v33_EW_onfield_tot(ttot,regi,rlf_cz33,rlf)
     =e=
-    v33_EW_onfield_tot(ttot-1,regi,rlf_cz33,rlf) * exp(-p33_co2_rem_rate(rlf_cz33) * pm_ts(ttot))
+    v33_EW_onfield_tot(ttot-1,regi,rlf_cz33,rlf) * exp(log(1-p33_rock_weath_rate(rlf_cz33)) * pm_ts(ttot))
     + v33_EW_onfield(ttot-1,regi,rlf_cz33,rlf) * (
         sum(tall$(tall.val le (ttot.val - pm_ts(ttot)/2) and tall.val gt (ttot.val - pm_ts(ttot))),
-            exp(-p33_co2_rem_rate(rlf_cz33) * (ttot.val - tall.val))
+            exp(log(1-p33_rock_weath_rate(rlf_cz33)) * (ttot.val - tall.val)))
         )
-    )
     + v33_EW_onfield(ttot,regi,rlf_cz33,rlf) * (
         sum(tall$(tall.val le ttot.val and tall.val gt (ttot.val - pm_ts(ttot)/2)),
-            exp(-p33_co2_rem_rate(rlf_cz33) * (ttot.val-tall.val))
-        )
+            exp(log(1-p33_rock_weath_rate(rlf_cz33)) * (ttot.val-tall.val)))
     )
 ;
 
@@ -146,8 +150,8 @@ q33_EW_emi(t,regi)..
     vm_emiCdrTeDetail(t,regi, "weathering")
     =e=
     sum((rlf_cz33, rlf),
-        - v33_EW_onfield_tot(t,regi,rlf_cz33,rlf) * s33_co2_rem_pot * (1 - exp(-p33_co2_rem_rate(rlf_cz33)))
-    )
+        - v33_EW_onfield_tot(t,regi,rlf_cz33,rlf) * s33_co2_rem_pot * p33_rock_weath_rate(rlf_cz33)
+        )
     ;
 
 ***---------------------------------------------------------------------------
@@ -177,8 +181,9 @@ q33_EW_omcosts(t,regi)..
 q33_EW_potential(t,regi,rlf_cz33)..
     sum(rlf, v33_EW_onfield_tot(t,regi,rlf_cz33,rlf))
     =l=
-    f33_maxProdGradeRegiWeathering(regi,rlf_cz33)
+    p33_EW_maxShareOfCropland(regi) * f33_maxProdGradeRegiWeathering(regi,rlf_cz33)
     ;
+
 
 ***---------------------------------------------------------------------------
 *'  An annual limit for the maximum global amount of rocks spread [Gt] can be set via cm_LimRock,
@@ -232,6 +237,46 @@ q33_OAE_co2emi_non_atm_calcination(t, regi, te_oae33)..
     =e=
     - s33_OAE_chem_decomposition * vm_emiCdrTeDetail(t, regi, te_oae33)
     ;
+
+
+***---------------------------------------------------------------------------
+*' #### Equations limiting CDR in the entire model
+
+***---------------------------------------------------------------------------
+*' Limit the amount of FE for CDR to a given fraction of total FE 
+***---------------------------------------------------------------------------
+q33_shfeSector_SectorTotal(t,regi,entyFe,sector)$(p33_shfetot_up(t,regi,entyFe,sector) AND entyFe2Sector(entyFe,sector))..
+  v33_FEsector_total(t,regi,entyFe,sector) 
+   =e=
+     sum(emiMkt$sector2emiMkt(sector,emiMkt),
+      sum(entySe$(sefe(entySe,entyFe)),
+       vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
+;
+
+q33_shfeSector_Total(t,regi,entyFe)..
+  v33_FE_total(t,regi,entyFe) 
+   =e=
+     sum(sector2emiMkt(sector,emiMkt),
+      sum(entySe$(sefe(entySe,entyFe)),
+       vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)$entyFe2Sector(entyFe,sector)))
+;
+
+q33_shfeSector_share(t,regi,entyFe,sector)$(p33_shfetot_up(t,regi,entyFe,sector))..
+  v33_shfeSector(t,regi,entyFe,sector) *
+  v33_FE_total(t,regi,entyFe) 
+  =e=
+  v33_FEsector_total(t,regi,entyFe,sector) 
+;
+
+
+***---------------------------------------------------------------------------
+*' Limit spending on net negative emissions to a share of the region's GDP 
+***---------------------------------------------------------------------------
+q33_CDRspending(t,regi)$(t.val ge max(2035,cm_startyear))..
+  v33_NetNegEmi_expenses(t,regi)
+  =e=
+  (1-cm_frac_NetNegEmi) * pm_taxCO2eqSum(t,regi) * vm_emiALLco2neg(t,regi)
+;
 
 *' @stop
 *** EOF ./modules/33_CDR/portfolio/equations.gms

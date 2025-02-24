@@ -4,11 +4,9 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/37_industry/fixed_shares/preloop.gms
+*** SOF ./modules/33_CDR/portfolio/preloop.gms
 
-*** initialize captured CO2 parameter
-pm_IndstCO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt) = 0;
+*** initialize bound on final energy for a sector
+p33_FE_limit(t,regi,entyFe,sector)$p33_shfetot_up(t,regi,entyFe,sector) = 1000;
 
-
-*** EOF ./modules/37_industry/fixed_shares/preloop.gms
-
+*** EOF ./modules/33_CDR/portfolio/preloop.gms

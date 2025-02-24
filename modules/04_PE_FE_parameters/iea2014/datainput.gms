@@ -91,9 +91,6 @@ f04_IO_output("2005",regi,"seliqbio","fehob","tdbiohob")$(p04_IO_output_beforeFi
 f04_IO_output("2005",regi,"seliqfos","fehob","tdfoshob")$(p04_IO_output_beforeFix_Total("2005",regi,"fehob")) = p04_IO_output_beforeFix("2005",regi,"seliqfos","fehob","tdfoshob") * pm_fedemand("2005",regi,"fehob")/p04_IO_output_beforeFix_Total("2005",regi,"fehob");
 
 
-
-$ifthen.subsectors "%industry%" == "subsectors"   !! industry
-
 *** industry solids
 p04_IO_output_beforeFix_Total(t,regi,"fesoi") = p04_IO_output_beforeFix(t,regi,"sesobio","fesoi","tdbiosoi")
                                                   + p04_IO_output_beforeFix(t,regi,"sesofos","fesoi","tdfossoi");
@@ -165,7 +162,6 @@ f04_IO_output("2005",regi,"sehe","fehei","tdhei")$(p04_IO_output_beforeFix_Total
                                                               )
                                                             /  p04_IO_output_beforeFix_Total("2005",regi,"fehei");
 
-$endif.subsectors
 
 *** end adjustment of f04_IO_output to pm_fedemand values
 
@@ -194,7 +190,7 @@ loop(in2enty(all_enty,enty,all_te,te),
 );
 display pm_IO_input, p04_IO_output;
 
-***------------------ allocate all electricity produced from gas to ngt for initial calculation of average eta ----------------------------------------
+***------------------ allocate all electricity produced from gas (x_gas2elec) to ngcc for initial calculation of average eta. Some lines further down it is split to ngcc and ngt (search for "Distribute the initial gas numbers" ----------------------------------------
 pm_IO_input(regi,enty,enty2,"ngcc")  = pm_IO_input(regi,enty,enty2,"x_gas2elec");
 p04_IO_output(regi,enty,enty2,"ngcc") = p04_IO_output(regi,enty,enty2,"x_gas2elec");
 
@@ -372,8 +368,9 @@ pm_fuExtrOwnCons(regi, "seel", "peoil")  = f04_IO_input("2005", regi, "seel",  "
 pm_fuExtrOwnCons(regi, "seel", "pegas")  = f04_IO_input("2005", regi, "seel",  "pegas", "d_elec2gas")/p04_fuExtr(regi, "pegas");
 pm_fuExtrOwnCons(regi, "seel", "pecoal") = f04_IO_input("2005", regi, "seel",  "pecoal","d_elec2coal")/p04_fuExtr(regi, "pecoal");
 
-
+*** ----------------------------------------------------------------------------------------------------------
 *RP* Distribute the initial gas numbers to ngcc and ngt based on energy values:
+*** ----------------------------------------------------------------------------------------------------------
 loop(regi,
   if( pm_data(regi,"mix0","ngcc") < 0.1 ,  !! in regions where gas provides < 10% of electricity, distribute 80/20
     p04_shareNGTinGas(regi) = 0.15;

@@ -125,7 +125,7 @@ v21_taxrevSE(ttot,all_regi)                     "tax on SE electricity demand, u
 ;
 
 Positive Variable
-v21_emiALLco2neg(ttot,all_regi)             "negative part of total CO2 emissions"
+vm_emiALLco2neg(ttot,all_regi)             "negative part of total CO2 emissions"
 v21_emiALLco2neg_slack(ttot,all_regi)       "dummy variable to extract negatice CO2 emissions from emiAll"
 v21_tau_SE_tax(ttot,all_regi,all_te)        "tax rate of tax on SE electricity demand, used for taxes on electrolysis"
 ;

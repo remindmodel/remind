@@ -75,9 +75,6 @@ prepare <- function() {
       stop("This title is too long or the name contains dots - GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now. ")
   }
 
-  # adjust GDPpcScen based on GDPscen
-  cfg$gms$c_GDPpcScen <- gsub("gdp_","",cfg$gms$cm_GDPscen)
-
   # Is the run performed on the cluster?
   on_cluster    <- file.exists('/p')
 
@@ -440,31 +437,6 @@ prepare <- function() {
                                 list(c("vm_shBioFe.M", "!!vm_shBioFe.M")),
                                 list(c("q39_EqualSecShare_BioSyn.M", "!!q39_EqualSecShare_BioSyn.M")))
 
-    # OR: renamed for sectoral taxation
-    levs_manipulateThis <- c(levs_manipulateThis,
-                             list(c("vm_emiCO2_sector.L", "vm_emiCO2Sector.L")),
-                             list(c("v21_taxrevCO2_sector.L", "v21_taxrevCO2Sector.L")))
-    margs_manipulateThis <- c(margs_manipulateThis,
-                             list(c("vm_emiCO2_sector.M", "vm_emiCO2Sector.M")),
-                             list(c("v21_taxrevCO2_sector.M", "v21_taxrevCO2Sector.M")),
-                             list(c("q_emiCO2_sector.M", "q_emiCO2Sector.M")),
-                             list(c("q21_taxrevCO2_sector.M", "q21_taxrevCO2Sector.M")))
-    fixings_manipulateThis <- c(fixings_manipulateThis,
-                             list(c("vm_emiCO2_sector.FX", "vm_emiCO2Sector.FX")),
-                             list(c("v21_taxrevCO2_sector.FX", "v21_taxrevCO2Sector.FX")))
-
-    # OR: renamed in https://github.com/remindmodel/remind/pull/1495
-    levs_manipulateThis <- c(levs_manipulateThis,
-                             list(c("v_costInvTeDir.L", "vm_costInvTeDir.L")),
-                             list(c("v_costInvTeAdj.L", "vm_costInvTeAdj.L")))
-    margs_manipulateThis <- c(margs_manipulateThis,
-                             list(c("v_costInvTeDir.M", "vm_costInvTeDir.M")),
-                             list(c("v_costInvTeAdj.M", "vm_costInvTeAdj.M")))
-    fixings_manipulateThis <- c(fixings_manipulateThis,
-                             list(c("v_costInvTeDir.FX", "vm_costInvTeDir.FX")),
-                             list(c("v_costInvTeAdj.FX", "vm_costInvTeAdj.FX")))
-
-
     # renamed because of https://github.com/remindmodel/remind/pull/796
     manipulate_tradesets <- c(list(c("'gas_pipe'", "'pipe_gas'")),
                               list(c("'lng_liq'", "'termX_lng'")),
@@ -532,27 +504,6 @@ prepare <- function() {
                             list(c("v47_emiTarget.FX", "!!v47_emiTarget.FX")),
                             list(c("v47_emiTargetMkt.FX", "!!v47_emiTargetMkt.FX")),
                             list(c("vm_taxrevimplEnergyBoundTax.FX", "!!vm_taxrevimplEnergyBoundTax.FX")))
-
-    # renamed because of https://github.com/remindmodel/remind/pull/1106
-    levs_manipulateThis <- c(levs_manipulateThis,
-                             list(c("v21_taxrevBioImport.L", "!!v21_taxrevBioImport.L")))
-    margs_manipulateThis <- c(margs_manipulateThis,
-                             list(c("v21_taxrevBioImport.M", "!!v21_taxrevBioImport.M")),
-                             list(c("q21_taxrevBioImport.M", "!!q21_taxrevBioImport.M")),
-                             list(c("q30_limitProdtoHist.M", "!!q30_limitProdtoHist.M")))
-    fixings_manipulateThis <- c(fixings_manipulateThis,
-                            list(c("v21_taxrevBioImport.FX", "!!v21_taxrevBioImport.FX")))
-
-    # renamed because of https://github.com/remindmodel/remind/pull/1128
-    levs_manipulateThis <- c(levs_manipulateThis,
-                             list(c("v_emiTeDetailMkt.L", "!!v_emiTeDetailMkt.L")),
-                             list(c("v_emiTeMkt.L", "!!v_emiTeMkt.L")))
-    margs_manipulateThis <- c(margs_manipulateThis,
-                             list(c("v_emiTeDetailMkt.M", "!!v_emiTeDetailMkt.M")),
-                             list(c("v_emiTeMkt.M", "!!v_emiTeMkt.M")))
-    fixings_manipulateThis <- c(fixings_manipulateThis,
-                            list(c("v_emiTeDetailMkt.FX", "!!v_emiTeDetailMkt.FX")),
-                             list(c("v_emiTeMkt.FX", "!!v_emiTeMkt.FX")))
 
     # Include fixings (levels) and marginals in full.gms at predefined position
     # in core/loop.gms.

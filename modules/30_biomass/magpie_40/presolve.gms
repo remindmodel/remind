@@ -7,7 +7,15 @@
 
 *** SOF ./modules/30_biomass/magpie_40/presolve.gms
 
-*** save level value of all taxes
+*** Calculate total primary energy to limit BECCS (see q30_limitTeBio)
+*** The summation is devided into actual primary energy carriers, e.g. coal or biomass, 
+*** and primary-energy-equivalent secondary energy carriers like wind and solar. 
+*** This must be calculated outside the optimization and stored in a 
+*** parameter to not create an incentive to increase the total
+*** PE demand just to increase the BECCS limit.
+*** Using the substitution method to adjust vm_prodSE from non-fossil
+*** energy sources to the primary energy inputs that would be needed
+*** if it was generated from fossil fuels with an average efficiency of 40%.
 
 p30_demPe(ttot,regi) =
   sum(pe2se(enty,enty2,te)$(sameas(enty,"peoil") OR sameas(enty,"pecoal") OR sameas(enty,"pegas") OR sameas(enty,"pebiolc") OR sameas(enty,"pebios") OR sameas(enty,"pebioil")),

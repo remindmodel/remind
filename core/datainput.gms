@@ -27,7 +27,6 @@ vm_demFeForEs.L(t,regi,fe2es(entyFe,esty,teEs)) = 0.1;
 
 *** -------- initial declaration of parameters for iterative target adjustment
 pm_taxCO2eq_anchor_iterationdiff(t) = 0;
-pm_taxCO2eq_anchor_iterationdiff_tmp(t) = 0;
 
 *------------------------------------------------------------------------------------
 ***                        calculations based on sets
@@ -62,20 +61,20 @@ pm_ies(regi) = 2./3.;
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
 *** load population data
-table f_pop(tall,all_regi,all_POPscen)        "Population data"
+table f_pop(tall,all_regi,all_GDPpopScen)        "Population data"
 $ondelim
 $include "./core/input/f_pop.cs3r"
 $offdelim
 ;
-pm_pop(tall,all_regi) = f_pop(tall,all_regi,"%cm_POPscen%") / 1000;  !! rescale unit from [million people] to [billion] people
+pm_pop(tall,all_regi) = f_pop(tall,all_regi,"%cm_GDPpopScen%") / 1000;  !! rescale unit from [million people] to [billion] people
 
 *** load labour data
-table f_lab(tall,all_regi,all_POPscen)        "Labour data"
+table f_lab(tall,all_regi,all_GDPpopScen)        "Labour data"
 $ondelim
 $include "./core/input/f_lab.cs3r"
 $offdelim
 ;
-pm_lab(tall,all_regi) = f_lab(tall,all_regi,"%cm_POPscen%") / 1000; !! rescale unit from [million people] to [billion] people
+pm_lab(tall,all_regi) = f_lab(tall,all_regi,"%cm_GDPpopScen%") / 1000; !! rescale unit from [million people] to [billion] people
 
 display pm_pop, pm_lab;
 
@@ -89,21 +88,21 @@ $offdelim
 ;
 
 *** load GDP data
-table f_gdp(tall,all_regi,all_GDPscen)        "GDP data"
+table f_gdp(tall,all_regi,all_GDPpopScen)        "GDP data"
 $ondelim
 $include "./core/input/f_gdp.cs3r"
 $offdelim
 ;
-pm_gdp(tall,all_regi) = f_gdp(tall,all_regi,"%cm_GDPscen%") * pm_shPPPMER(all_regi) / 1000000;  !! rescale from million US$ to trillion US$
+pm_gdp(tall,all_regi) = f_gdp(tall,all_regi,"%cm_GDPpopScen%") * pm_shPPPMER(all_regi) / 1000000;  !! rescale from million US$ to trillion US$
 
 *** load level of development based on GDP PPP per capita: 0 is low income, 1 is high income.
 *** Values in 2020 SSP2: SSA=0.1745, IND=0.3686, OAS=0.5136, MEA=0.6568, REF=0.836, LAM=0.8763, NEU=0.9962, EUR=1, CAZ=1, CHA=1, JPN=1, USA=1
-table f_developmentState(tall,all_regi,all_GDPpcScen) "level of development based on GDP PPP per capita"
+table f_developmentState(tall,all_regi,all_GDPpopScen) "level of development based on GDP PPP per capita"
 $ondelim
 $include "./core/input/f_developmentState.cs3r"
 $offdelim
 ;
-p_developmentState(tall,all_regi) = f_developmentState(tall,all_regi,"%c_GDPpcScen%");
+p_developmentState(tall,all_regi) = f_developmentState(tall,all_regi,"%cm_GDPpopScen%");
 
 *** Load information from BAU run
 Execute_Loadpoint 'input'      vm_cesIO, vm_invMacro;
@@ -132,7 +131,7 @@ pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 *------------------------------------------------------------------------------------
 ***          Technology data input read-in and manipulation    START
 *------------------------------------------------------------------------------------
-*** In module 5 there are more cost manipulation after initial capacities are calculated, 
+*** In module 5 there are more cost manipulation after initial capacities are calculated,
 *** be aware those can overwrite your technology values for policy runs if you set them here in the core
 ***---------------------------------------------------------------------------
 *** Reading in and initializing global data
@@ -143,8 +142,8 @@ $include "./core/input/generisdata_tech.prn"
 $include "./core/input/generisdata_trade.prn"
 ;
 
-*** CG warning: some of the SSP1 and SSP5 costs are not consistent with the story line (e.g. under SSP1 blue H2 and some fossil fuel CCS technologies have lower costs than in SSP2). 
-*** This is to be fixed in the future when new SSP storylines are implemented, unclear when (29-1-2024). 
+*** CG warning: some of the SSP1 and SSP5 costs are not consistent with the story line (e.g. under SSP1 blue H2 and some fossil fuel CCS technologies have lower costs than in SSP2).
+*** This is to be fixed in the future when new SSP storylines are implemented, unclear when (29-1-2024).
 *** In the future, SSP1 and SSP5 data should be implemented as switches to avoid errors
 table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
 $include "./core/input/generisdata_tech_SSP1.prn"
@@ -237,7 +236,7 @@ $offdelim
 ;
 
 *** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** allow input data with either "wind" or "windon" until mrremind is updated
 p_inco0(ttot,all_regi,"windon") $ (p_inco0(ttot,all_regi,"windon") eq 0) = p_inco0(ttot,all_regi,"wind");
 p_inco0(ttot,all_regi,"wind") = 0;
 
@@ -323,9 +322,10 @@ fm_dataglob("inco0",te)       = (1 + sum(regi, p_tkpremused(regi,te))/sum(regi, 
 pm_data(regi,"floorcost",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
 
 *** report old floor costs pre manipulation in non-default scenario
-$ifthen.floorscen NOT %cm_floorCostScen% == "default"
-    p_oldFloorCostdata(regi,teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"incolearn",te);
+$ifthen.floorscen not %cm_floorCostScen% == "default"
+    p_oldFloorCostdata(regi,teLearn(te)) = pm_data(regi,"floorcost",te);
 $endif.floorscen
+
 *** calculate floor costs for learning technologies if historical price structure prevails
 $ifthen.floorscen %cm_floorCostScen% == "pricestruc"
 *** compute maximum tech cost in 2015 for a given tech among regions
@@ -358,51 +358,45 @@ $ifthen.REG_techcosts not "%cm_techcosts%" == "GLO"   !! cm_techcosts is REG or 
 $endif.REG_techcosts
 
 *** -------------------------------------------------------------------------------
-*** Calculate learning parameters:
+*** Calculate learning parameters
+*** See equations.gms for documentation of learning equations and floor costs
 *** -------------------------------------------------------------------------------
-*** global exponent
-*** parameter calculation for global level, that regional values can gradually converge to
-fm_dataglob("learnExp_woFC",teLearn(te))  = log(1 - fm_dataglob("learn",te)) / log(2);
-*RP* adjust exponent parameter learnExp_woFC to take floor costs into account
-fm_dataglob("learnExp_wFC",teLearn(te))   = fm_dataglob("inco0",te) / fm_dataglob("incolearn",te) * fm_dataglob("learnExp_woFC",te);
 
-*** regional exponent
-pm_data(regi,"learnExp_woFC",teLearn(te)) = log(1 - pm_data(regi,"learn",te)) / log(2);
-pm_data(regi,"learnExp_wFC",teLearn(te))  = pm_data(regi,"inco0",te) / pm_data(regi,"incolearn",te) * pm_data(regi,"learnExp_woFC",te);
+*** global parameters: calculation for global level, that regional values can gradually converge to
+*** b' = \frac{I_0}{I_0 - F} b = \frac{I_0}{I_0 - F} \log_2(1-\lambda)
+fm_dataglob("learnExp_wFC",teLearn(te)) = fm_dataglob("inco0",te) / fm_dataglob("incolearn",te) * log(1 - fm_dataglob("learn",te)) / log(2);
+*** a' = \frac{I_0 - F}{C_0^{b'}}
+fm_dataglob("learnMult_wFC",teLearn(te)) = fm_dataglob("incolearn",te) / (fm_dataglob("ccap0",te) ** fm_dataglob("learnExp_wFC", te));
 
-*** global factor
-*** parameter calculation for global level, that regional values can gradually converge to
-fm_dataglob("learnMult_wFC",teLearn(te))  = fm_dataglob("incolearn",te) / (fm_dataglob("ccap0",te) ** fm_dataglob("learnExp_wFC", te));
+*** regional parameters
+pm_data(regi,"learnExp_wFC",teLearn(te))  = pm_data(regi,"inco0",te) / pm_data(regi,"incolearn",te) * log(1 - pm_data(regi,"learn",te)) / log(2);
 
-*** regional factor
-*NB* read in vm_capCum(t0,regi,teLearn) from input.gdx to have info available for the recalibration of 2005 investment costs
-Execute_Loadpoint 'input' p_capCum = vm_capCum.l;
-*** FS: in case technologies did not exist in gdx, set intial capacities to global initial value
-p_capCum(tall,regi,te)$( NOT p_capCum(tall,regi,te)) = fm_dataglob("ccap0",te)/card(regi);
-*RP overwrite p_capCum by exogenous values for 2020
-p_capCum("2020",regi,"spv")  = 0.6 / card(regi2);  !! roughly 600GW in 2020
-
-pm_data(regi,"learnMult_woFC",teLearn(te))   = pm_data(regi,"incolearn",te)/sum(regi2,(pm_data(regi2,"ccap0",te))**(pm_data(regi,"learnExp_woFC",te)));
-*RP* adjust parameter learnMult_woFC to take floor costs into account
 $ifthen %cm_techcosts% == "GLO"
-    pm_data(regi,"learnMult_wFC",teLearn(te))  = pm_data(regi,"incolearn",te)    / (sum(regi2,pm_data(regi2,"ccap0",te))    ** pm_data(regi,"learnExp_wFC",te));
+    pm_data(regi,"learnMult_wFC",teLearn(te)) = pm_data(regi,"incolearn",te) / (sum(regi2,pm_data(regi2,"ccap0",te)) ** pm_data(regi,"learnExp_wFC",te));
+
 $else
 !! cm_techcosts is REG or REG2040
+*NB* read in vm_capCum(t0,regi,teLearn) from input.gdx to have info available for the recalibration of 2005 investment costs
+  Execute_Loadpoint 'input' p_capCum = vm_capCum.l;
+*** FS: in case technologies did not exist in gdx, set intial capacities to global initial value
+  p_capCum(tall,regi,te)$(not p_capCum(tall,regi,te)) = fm_dataglob("ccap0",te) / card(regi);
+*RP overwrite p_capCum by exogenous values for 2020
+  p_capCum("2020",regi,"spv")  = 0.6 / card(regi2);  !! roughly 600GW in 2020 globally
 *NB* this is the correction of the original parameter calibration
-    pm_data(regi,"learnMult_wFC",teLearn(te))  = pm_data(regi,"incolearn",te)    / (sum(regi2,p_capCum("2015",regi2,te))    ** pm_data(regi,"learnExp_wFC",te));
+  pm_data(regi,"learnMult_wFC",teLearn(te))  = pm_data(regi,"incolearn",te)    / (sum(regi2,p_capCum("2015",regi2,te))    ** pm_data(regi,"learnExp_wFC",te));
 *** initialize spv learning curve in 2020
-    pm_data(regi,"learnMult_wFC","spv")        = pm_data(regi,"incolearn","spv") / (sum(regi2,p_capCum("2020",regi2,"spv")) ** pm_data(regi,"learnExp_wFC","spv"));
+  pm_data(regi,"learnMult_wFC","spv")        = pm_data(regi,"incolearn","spv") / (sum(regi2,p_capCum("2020",regi2,"spv")) ** pm_data(regi,"learnExp_wFC","spv"));
+display p_capCum;
 $endif
 
 *FS* initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020)
-*** equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost)
+*** equally for all regions based on global cumulative capacity of ccap0 and incolearn (difference between initial investment cost and floor cost)
 pm_data(regi,"learnMult_wFC",te)$( pm_data(regi,"tech_stat",te) eq 4 )
   = pm_data(regi,"incolearn",te)
   / ( fm_dataglob("ccap0",te)
    ** pm_data(regi,"learnExp_wFC",te)
     );
 
-display p_capCum;
 display pm_data;
 *** -------------------------------------------------------------------------------
 *** end learning parameters
@@ -521,13 +515,6 @@ $offdelim
 /
 ;
 
-parameter pm_share_ind_fehos(tall,all_regi)               "Share of heating oil used in the industry (rest is residential)"
-/
-$ondelim
-$include "./core/input/p_share_ind_fehos.cs4r"
-$offdelim
-/
-;
 *** initialize pm_share_trans with the global value, will be updated after each negishi/nash iteration
 pm_share_trans("2005",regi) = 0.617;
 pm_share_trans("2010",regi) = 0.625;
@@ -577,8 +564,8 @@ $endif.tech_CO2capturerate
 if (c_ccscapratescen eq 2,
   fm_dataemiglob("pecoal","seel","igccc","co2")    = 0.2;
   fm_dataemiglob("pecoal","seel","igccc","cco2")   = 25.9;
-  fm_dataemiglob("pecoal","seel","coalh2c","co2")  = 0.2;
-  fm_dataemiglob("pecoal","seel","coalh2c","cco2") = 25.9;
+  fm_dataemiglob("pecoal","seh2","coalh2c","co2")  = 0.2;
+  fm_dataemiglob("pecoal","seh2","coalh2c","cco2") = 25.9;
 $ifthen "%c_SSP_forcing_adjust%" == "forcing_SSP5"
    fm_dataemiglob("pegas","seel","ngccc","co2")  = 0.1;
    fm_dataemiglob("pegas","seel","ngccc","cco2") = 15.2;
@@ -690,8 +677,8 @@ $offdelim
 ;
 $Onlisting
 
-*** windoffshore-todo 
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated
 pm_histCap(tall,all_regi,"windon") $ (pm_histCap(tall,all_regi,"windon") eq 0) = pm_histCap(tall,all_regi,"wind");
 pm_histCap(tall,all_regi,"wind") = 0;
 
@@ -719,8 +706,8 @@ $Onlisting
 
 
 *CG* setting wind offshore capacity factor to be the same as onshore here (later adjusting it in vm_capFac)
-*** windoffshore-todo 
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated
 f_cf(ttot,regi,"windon") $ (f_cf(ttot,regi,"windon") eq 0) = f_cf(ttot,regi,"wind");
 f_cf(ttot,regi,"storwindon") $ (f_cf(ttot,regi,"storwindon") eq 0) = f_cf(ttot,regi,"storwind");
 f_cf(ttot,regi,"gridwindon") $ (f_cf(ttot,regi,"gridwindon") eq 0) = f_cf(ttot,regi,"gridwind");
@@ -795,88 +782,64 @@ $endif.Base_Cprice
 display pm_regiEarlyRetiRate;
 
 ***---------------------------------------------------------------------------
-*RP* calculate omegs and opTimeYr2te
+*** Calculate lifetime parameters (omeg and opTimeYr2te)
 ***---------------------------------------------------------------------------
-*RP* use new lifetimes defined in generisdata_tech.prn:
-pm_omeg(regi,opTimeYr,te) = 0;
 
 *** FS: use lifetime of tdh2s for tdh2b and tdh2i technologies
 *** which are only helper technologies for consistent H2 use in industry and buildings
 pm_data(regi,"lifetime","tdh2i") = pm_data(regi,"lifetime","tdh2s");
 pm_data(regi,"lifetime","tdh2b") = pm_data(regi,"lifetime","tdh2s");
 
-loop(regi,
-        p_aux_lifetime(regi,te) = 5/4 * pm_data(regi,"lifetime",te);
-        loop(te,
+*** Compute the depreciation of technologies over their lifetime
+*' Technologies depreciate over their lifetime.
+*' Their remaining capacity pm_omeg starts at 1 and decreases toward zero with a curve of exponent 4:
+*' slow depreciation during the first half of the lifetime and faster during the second half.
+*' The area under that curve (capacity * age) equals the average technical lifetime of the technology,
+*' provided in generisdata_tech.prn.
+*' There is still some non-zero capacity beyond the average lifetime, until the maximum lifetime p_lifetime_max
+*' (calculated from an integral as 5/4 times the average lifetime).
+p_lifetime_max(regi,te) = 5 / 4 * pm_data(regi,"lifetime",te);
+pm_omeg(regi,opTimeYr,te) = max(0, 1 - ((opTimeYr.val - 0.5) / p_lifetime_max(regi,te))**4);
 
-                loop(opTimeYr,
-                        pm_omeg(regi,opTimeYr,te) = 1 - ((opTimeYr.val-0.5) / p_aux_lifetime(regi,te))**4 ;
-                        opTimeYr2te(te,opTimeYr)$(pm_omeg(regi,opTimeYr,te) > 0 ) =  yes;
-                        if( pm_omeg(regi,opTimeYr,te) <= 0,
-                                pm_omeg(regi,opTimeYr,te) = 0;
-                                opTimeYr2te(te,opTimeYr) =  no;
-                        );
-                )
-        );
+*** Map each technology with its possible age
+opTimeYr2te(te,opTimeYr) $ sum(regi $ (pm_omeg(regi,opTimeYr,te) > 0), 1) = yes;
+*** Map each model timestep with the possible age of technologies 
+tsu2opTimeYr(ttot,"1") = yes;
+loop((ttot,ttot2) $ (ord(ttot2) le ord(ttot)),
+  loop(opTimeYr $ (opTimeYr.val = pm_ttot_val(ttot) - pm_ttot_val(ttot2) + 1),
+    tsu2opTimeYr(ttot,opTimeYr) =  yes;
+  );
 );
 
-*** calculate mapping tsu2opTimeYr
-alias(ttot, tttot);
-tsu2opTimeYr(ttot,opTimeYr) =  no;
-tsu2opTimeYr(ttot,"1") =  yes;
-loop(ttot,
-   loop(opTimeYr,
-      loop(tttot $(ord(tttot) le ord(ttot)),
-         if(opTimeYr.val = pm_ttot_val(ttot)-pm_ttot_val(tttot)+1,
-            tsu2opTimeYr(ttot,opTimeYr) =  yes;
-         );
-      );
-   );
-);
+display pm_omeg, opTimeYr2te, tsu2opTimeYr;
 
-display pm_omeg,opTimeYr2te, tsu2opTimeYr;
-
-p_tsu2opTimeYr_h(ttot,opTimeYr) = 0;
-p_tsu2opTimeYr_h(ttot,opTimeYr) $tsu2opTimeYr(ttot,opTimeYr) = 1 ;
-pm_tsu2opTimeYr(ttot,opTimeYr)$tsu2opTimeYr(ttot,opTimeYr)
-= sum(opTimeYr2 $ (ord(opTimeYr2) le ord(opTimeYr)), p_tsu2opTimeYr_h(ttot,opTimeYr2));
+*** In year ttot, a technology of age opTimeYr has seen pm_tsu2opTimeYr model timesteps
+pm_tsu2opTimeYr(ttot,opTimeYr) $ tsu2opTimeYr(ttot,opTimeYr) =
+  sum(opTimeYr2 $ (    ord(opTimeYr2) le ord(opTimeYr)
+                   AND tsu2opTimeYr(ttot, opTimeYr2)),
+    1);
 
 display pm_tsu2opTimeYr;
 
-file diagnosis_opTimeYr2te;
-put diagnosis_opTimeYr2te;
-put "mapping opTimeYr2te, automatically filled in generisdata.inc from the lifetimes given in generisdata.prn" //;
-put "te", @15, "regi", @20, "opTimeYr", @27,  "pm_data(regi,'lifetime',te)", @60, "p_aux_lifetime"//;
-loop(regi,
-        loop(te,
-                loop(opTimeYr2te(te,opTimeYr),
-                        p_aux_tlt(te) = ord(opTimeYr);
-                )
-                put te.tl, @ 15, regi.tl, @20, p_aux_tlt(te):3:0, @35, pm_data(regi,"lifetime",te):3:0 , @65, p_aux_lifetime(regi,te):3:0 /;
-        )
-);
-putclose diagnosis_opTimeYr2te;
 
-
-*RP* safety check that no technology has zero life time - this should give a run-time error if omeg=0 for the first time step
-*RP* also check the previous calculation that pm_omeg is not >0 for a opTimeYr value greater than contained in opTimeYr2te
-*RP* for diagnosis, uncomment the putfile lines and you will find out which technologies have wrong inputs in generissets or generisdatadatacap
+*** Safety checks raising an error if:
 loop(regi,
   loop(te,
-    p_aux_check_omeg(te) = 1/pm_omeg(regi,'1',te);
-    p_aux_tlt_max(te) = 0;
-    loop(opTimeYr$(opTimeYr2te(te,opTimeYr)),
-      p_aux_tlt_max(te) = p_aux_tlt_max(te) + 1
-    );
-    if(p_aux_tlt_max(te) < 20,
-      loop(opTimeYr$(ord(opTimeYr) = p_aux_tlt_max(te)),
-        if(pm_omeg(regi,opTimeYr+1,te) > 0,
-          p_aux_check_tlt(te) = 1/0;
-        );
-      );
-    );
+***   - technology has zero life time (if pm_omeg is zero for the first time step)
+    if(pm_omeg(regi,"1",te) eq 0,
+      abort "Technology has zero lifetime", pm_omeg);
+***   - lifetime of technology is longer than allowed by opTimeYr
+    if(p_lifetime_max(regi,te) > smax(opTimeYr, opTimeYr.val),
+      abort "Technology has longer lifetime than allowed by opTimeYr", opTimeYr, p_lifetime_max);
+***   - technology has remaining capacity beyond its lifetime
+    if(
+      sum(opTimeYr $ (opTimeYr.val > smax(opTimeYr2te(te,opTimeYr2), opTimeYr2.val)),
+        pm_omeg(regi,opTimeYr,te)
+      ) > 0,
+        abort "Technology has remaining capacity beyond its lifetime", opTimeYr2te, pm_omeg);
   );
 );
+
 
 *RP* calculate annuity of a technology
 p_discountedLifetime(te) = sum(opTimeYr, (sum(regi, pm_omeg(regi,opTimeYr,te))/sum(regi,1)) / 1.06**opTimeYr.val );
@@ -934,6 +897,13 @@ $offdelim
 /
 ;
 
+
+* GA Read choice of non-CO2 MACs version
+* PBL_2007 is based on Lucas et al. (2007), and abatement is relative to that study's IMAGE baseline scenario emissions, asssumed relative to ours here
+* PBL_2022 is based on van Harmsen et al. (2022), and abatement is relative to that study's IMAGE SSP2 baseline scenario emissions, asssumed relative to ours here
+$IFTHEN.MaccVersion %c_nonco2_macc_version% == "PBL_2007"
+* PBL_2007 MACs are discretized in steps of 5 $/tC
+sm_dmac = 5 ;
 parameter p_abatparam_CH4(tall,all_regi,all_enty,steps)        "MAC costs for CH4 by source"
 /
 $ondelim
@@ -948,6 +918,34 @@ $include "./core/input/p_abatparam_N2O.cs4r"
 $offdelim
 /
 ;
+$ELSEIF.MaccVersion %c_nonco2_macc_version% == "PBL_2022"
+*** PBL_2022 MACs are discretized in steps of 20 $/tC
+*** PBL_2022 includes three scenarios, read the big file into p_all_abatparam_CH4 and subset based on c_nonco2_macc_scenario
+*** Create the set here, as it's not really used anywhere else
+set macc_scens "MAC scenarios for PBL_SSP2_2022 MACCs" /Default, Optimistic, Pessimistic/;
+parameter p_all_abatparam_CH4(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for CH4 by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_CH4"
+/
+$ondelim
+$include "./core/input/p_abatparam_SSP22022_CH4.cs4r"
+$offdelim
+/
+;
+parameter p_abatparam_CH4(tall,all_regi,all_enty,steps) "MAC costs for CH4 by source";
+*** Pick MACC scenario
+p_abatparam_CH4(tall,all_regi,all_enty,steps) = p_all_abatparam_CH4(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
+parameter p_all_abatparam_N2O(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for N2O by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_N2O"
+/
+$ondelim
+$include "./core/input/p_abatparam_SSP22022_N2O.cs4r"
+$offdelim
+/
+;
+parameter p_abatparam_N2O(tall,all_regi,all_enty,steps) "MAC costs for N2O by source";
+*** Pick MACC scenario
+p_abatparam_N2O(tall,all_regi,all_enty,steps) = p_all_abatparam_N2O(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
+$ENDIF.MaccVersion
+;
+
 parameter p_abatparam_CO2(tall,all_enty,steps)    "MAC costs for CO2 by source"
 /
 $ondelim
@@ -958,14 +956,27 @@ $offdelim
 p_abatparam_CH4(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p_abatparam_CH4(tall,all_regi,all_enty,"201");
 p_abatparam_N2O(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p_abatparam_N2O(tall,all_regi,all_enty,"201");
 
-parameter p_emiFossilFuelExtr(all_regi,all_enty)          "methane emissions, needed for the calculation of p_efFossilFuelExtr"
+*** Read methane emissions from fossil fuel extraction for calculating emission factors. 
+*** The base year determines whether the data comes from CEDS or EDGAR
+$ifthen %cm_emifacs_baseyear% == "2005" 
+parameter p_emiFossilFuelExtr(all_regi,all_enty)          "methane emissions in 2005 [Mt CH4], needed for the calculation of p_efFossilFuelExtr"
 /
 $ondelim
 $include "./core/input/p_emiFossilFuelExtr.cs4r"
 $offdelim
 /
 ;
+$else
+parameter p_emiFossilFuelExtr(all_regi,all_enty)          "methane emissions in 2020 [Mt CH4], needed for the calculation of p_efFossilFuelExtr"
+/
+$ondelim
+$include "./core/input/p_emiFossilFuelExtr2020.cs4r"
+$offdelim
+/
+;
+$endif
 
+*** GA: These hardcoded values were probably assuming 2005 as base year, TODO: check and adjust for 2020 case
 $if %cm_LU_emi_scen% == "SSP1"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0047/sm_EJ_2_TWa;
 $if %cm_LU_emi_scen% == "SSP2"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0079/sm_EJ_2_TWa;
 $if %cm_LU_emi_scen% == "SSP2_lowEn"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0079/sm_EJ_2_TWa;
@@ -1078,7 +1089,7 @@ loop(regi,
       if(s_aux_cap_remaining > 0,
         p_aux_capThisGrade(regi,te,rlf) = min(
             s_aux_cap_remaining,
-            0.8 * pm_dataren(regi,"maxprod",rlf,te) / pm_dataren(regi,"nur",rlf,te)); !! installedCapacity = maxprod / capacityFactor 
+            0.8 * pm_dataren(regi,"maxprod",rlf,te) / pm_dataren(regi,"nur",rlf,te)); !! installedCapacity = maxprod / capacityFactor
         s_aux_cap_remaining = s_aux_cap_remaining - p_aux_capThisGrade(regi,te,rlf);
       );
     );  !! teRe2rlfDetail
@@ -1088,7 +1099,7 @@ loop(regi,
     p_avCapFac2015(regi,te) =
         sum(teRe2rlfDetail(te,rlf),
           p_aux_capThisGrade(regi,te,rlf) * pm_dataren(regi,"nur",rlf,te))
-      / 
+      /
         (sum(teRe2rlfDetail(te,rlf), p_aux_capThisGrade(regi,te,rlf))
         + 1e-10)
   );    !! teReNoBio
@@ -1107,7 +1118,7 @@ $offdelim
 ;
 
 *** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** allow input data with either "wind" or "windon" until mrremind is updated
 p_histCapFac(tall,all_regi,"windon") $ (p_histCapFac(tall,all_regi,"windon") eq 0) = p_histCapFac(tall,all_regi,"wind");
 p_histCapFac(tall,all_regi,"wind") = 0;
 
@@ -1126,7 +1137,7 @@ loop(t $ (t.val ge 2015 AND t.val lt 2030),
     pm_cf(t,regi,teVRE) !! always 1 for VRE in f_cf, but could be modified by modules
     * ( (2030 - pm_ttot_val(t)) * p_aux_capacityFactorHistOverREMIND(regi,teVRE)
       + (pm_ttot_val(t) - 2015)
-    ) / (2030 - 2015) 
+    ) / (2030 - 2015)
 );
 
 *CG* set storage and grid of windoff to be the same as windon
@@ -1181,7 +1192,7 @@ $offdelim
 p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
 
 *** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated 
+*** allow input data with either "wind" or "windon" until mrremind is updated
 p_adj_deltacapoffset(t,regi,"windon") $ (p_adj_deltacapoffset(t,regi,"windon") eq 0) = p_adj_deltacapoffset(t,regi,"wind");
 p_adj_deltacapoffset(t,regi,"windoff")= p_adj_deltacapoffset(t,regi,"windon");
 p_adj_deltacapoffset(t,regi,"wind") = 0;
@@ -1249,7 +1260,7 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,'oae_el')          = 0.8;
   p_adj_coeff(ttot,regi,teGrid)            = 0.3;
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
-  
+
   p_adj_coeff(ttot,regi,"MeOH")            = 0.5;
   p_adj_coeff(ttot,regi,"h22ch4")            = 0.5;
 
@@ -1389,18 +1400,14 @@ $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("co2luc") = 0;
 *** The tiny fraction n2ofertsom of total land use n2o can get slightly negative in some cases. Ignore MAC for n2ofertsom by default.
 $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("n2ofertsom") = 0;
 
-pm_macCostSwitch(enty)=pm_macSwitch(enty);
+p_macCostSwitch(enty)=pm_macSwitch(enty);
 pm_macSwitch("co2cement_process") =0 ;
-pm_macCostSwitch("co2cement_process") =0 ;
+p_macCostSwitch("co2cement_process") =0 ;
 
 *** load econometric emission data
 *** read in p3 and p4
-table p_emineg_econometric(all_regi,all_enty,p)        "parameters for ch4 and n2o emissions from waste baseline and co2 emissions from cement production"
-$ondelim
-$include "./core/input/p_emineg_econometric.cs3r"
-$offdelim
+parameter p_emineg_econometric(all_regi,all_enty,p)        "parameters for ch4 and n2o emissions from waste baseline and co2 emissions from cement production"
 ;
-p_emineg_econometric(regi,"co2cement_process","p4")$(p_emineg_econometric(regi,"co2cement_process","p4") eq 0) = sm_eps;
 p_emineg_econometric(regi,enty,"p1") = 0;
 p_emineg_econometric(regi,enty,"p2") = 0;
 *** p2 is calculated in presolve
@@ -1419,10 +1426,28 @@ $include "./core/input/p_macBase1990.cs4r"
 $offdelim
 /
 ;
-parameter p_macBaseVanv(tall,all_regi,all_enty)        "baseline emissions of N2O from transport, adipic acid production, and nitric acid production based on data from van Vuuren"
+parameter p_macBaseCEDS2005(all_regi,all_enty)        "baseline emissions of mac options in 2005 from CEDS"
 /
 $ondelim
+$include "./core/input/p_macBaseCEDS2005.cs4r"
+$offdelim
+/
+;
+parameter p_macBaseCEDS2020(all_regi,all_enty)        "baseline emissions of mac options in 2020"
+/
+$ondelim
+$include "./core/input/p_macBaseCEDS2020.cs4r"
+$offdelim
+/
+;
+parameter p_macBaseIMAGE(tall,all_regi,all_enty)        "baseline emissions of N2O from transport, adipic acid production, and nitric acid production based on data from van Vuuren"
+/
+$ondelim
+$ifthen %cm_emifacs_baseyear% == "2005" 
 $include "./core/input/p_macBaseVanv.cs4r"
+$else
+$include "./core/input/p_macBaseHarmsen2022.cs4r"
+$endif
 $offdelim
 /
 ;
@@ -1553,19 +1578,20 @@ $offdelim
 ;
 
 *** use cm_demScen for Industry and Buildings
-*** cm_GDPscen will be used for Transport (EDGE-T) (see p29_trpdemand)
+*** cm_GDPpopScen will be used for Transport (EDGE-T) (see p29_trpdemand)
 pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
 *** data input for industry FE that is no part of the CES tree
 pm_fedemand(tall,all_regi,ppfen_no_ces_use) = f_fedemand(tall,all_regi,"%cm_demScen%",ppfen_no_ces_use);
 
 *** RCP-dependent demands in buildings (climate impact)
-$ifthen.cm_rcp_scen_build NOT "%cm_rcp_scen_build%" == "none"
+$ifthen.cm_rcp_scen_build not "%cm_rcp_scen_build%" == "none"
 Parameter f_fedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in) "RCP-dependent final energy demand in buildings"
 /
 $ondelim
 $include "./core/input/f_fedemand_build.cs4r"
 $offdelim
 /;
+
 
 pm_fedemand(t,regi,cal_ppf_buildings_dyn36) = f_fedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 $endif.cm_rcp_scen_build
@@ -1580,15 +1606,18 @@ $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
 $endif.scaleDemand
 
 
-*** initialize global target deviation scalar
-sm_globalBudget_dev = 1;
+*** initialize absolute deviation of global cumulated CO2 emissions budget from target budget
+sm_globalBudget_absDev = 0;
 
-*' load production values from reference gdx to allow penalizing changes vs reference run in the first time step via q_changeProdStartyearCost/q21_taxrevChProdStartYear
+
 if (cm_startyear gt 2005,
+*' load production values from reference gdx to allow penalizing changes vs reference run in the first time step via q_changeProdStartyearCost/q21_taxrevChProdStartYear
 execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
 execute_load "input_ref.gdx", pm_prodFEReference = vm_prodFe.l;
 execute_load "input_ref.gdx", p_prodUeReference = v_prodUe.l;
 execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
+*' load MAC costs from reference gdx. Values for t (i.e. after cm_start_year) will be overwritten in core/presolve.gms 
+execute_load "input_ref.gdx" pm_macCost;
 );
 
 p_prodAllReference(t,regi,te) =

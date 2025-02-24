@@ -37,9 +37,11 @@ v33_co2emi_non_atm_calcination.fx(t,regi,te_oae33)$(t.val lt 2025) = 0;
 *** vm_cap for dac is fixed for t<2025 in core/bounds.gms (tech_stat eq 4)
 vm_co2capture_cdr.fx(t,regi,enty,enty2,te,rlf)$(ccs2te(enty,enty2,te) AND t.val lt 2025) = 0;
 
-*** Set minimum DAC capacities (if available) to help the solver find the technology 
+*** Set minimum DAC capacities (if available) to help the solver find the technology and exclude fegas and feh2s for low-temperature dac
 if (te_used33("dac"),
     vm_cap.lo(t,regi,"dac",rlf)$(teNoTransform2rlf33("dac",rlf) AND (t.val ge 2030)) = sm_eps;
+    v33_FEdemand.fx(t,regi,"fegas","fehes","dac") = 0;
+    v33_FEdemand.fx(t,regi,"feh2s","fehes","dac") = 0;
 );
 
 *** Bounds for enhanced weathering
@@ -59,9 +61,16 @@ else
 if(card(te_oae33) ne 0,
     !! OAE starts in cm_33_OAE_startyear
     vm_cap.fx(t, regi, te_oae33, rlf)$(t.val lt cm_33_OAE_startyr) = 0;
+    !! exclude feh2s for oae_el
+    v33_FEdemand.fx(t,regi,"feh2s","feels","oae_el") = 0;
+    v33_FEdemand.fx(t,regi,"feh2s","fehes","oae_el") = 0;
 else
     v33_co2emi_non_atm_calcination.fx(t, regi, "oae_ng") = 0;
     v33_co2emi_non_atm_calcination.fx(t, regi, "oae_el") = 0;
 );
+
+
+*** Set upper bound on the amount of FE available for a sector
+v33_FEsector_total.up(t,regi,entyFe,sector)$p33_shfetot_up(t,regi,entyFe,sector) = p33_FE_limit(t,regi,entyFe,sector);
 
 *** EOF ./modules/33_CDR/portfolio/bounds.gms
