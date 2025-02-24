@@ -105,7 +105,7 @@ display p33_EEZdistribution;
 if (cm_33_OAE_limit_EEZ gt 0,
     p33_oae_eez_limit(regi) = cm_33_OAE_limit_EEZ / (sm_c_2_co2 * 1000) * p33_EEZdistribution(regi) ; !! [Mt CO2] / [Mt CO2/Gt C] * fraction = [Gt C]
 else
-    p33_oae_eez_limit(regi) = 10; !! 10 Gt C ocean uptake as hypothetical upper limit (i.e. 36.5 Gt CO2 by one region alone)
+    p33_oae_eez_limit(regi) = 10; !! 10 Gt C ocean uptake effectively means no upper limit (i.e. 36.67 Gt CO2 by one region alone) 
 );
 
 *' @stop
