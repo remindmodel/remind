@@ -716,16 +716,16 @@ parameter
 *' *  (3): 3 %
 *'
 parameter
-  cm_fetaxscen              "choice of final energy tax path, subsidy path and inconvenience cost path, values other than zero enable final energy tax"
+  cm_fetaxscen              "choice of final energy tax path and subsidy path, values other than zero enable final energy tax"
 ;
   cm_fetaxscen        = 3;         !! def = 3  !! regexp = [0-5]
 *' even if set to 0, the PE inconvenience cost per SO2-cost for coal are always on if module 21_tax is on
-*' * (0): no tax, sub, inconv
-*' * (1): constant t,s,i (used in SSP 5 and ADVANCE WP3.1 HighOilSub)
-*' * (2): converging tax, phased out sub (-2030), no inconvenience cost so far (used in SSP 1)
-*' * (3): constant tax, phased out sub (-2050), no inconvenience cost so far (used in SSP 2)
-*' * (4): constant tax, phased out sub (-2030), no inconvenience cost so far (used in SDP)
-*' * (5): roll back of final energy taxes to get back to a no-policy case (previously known as BAU)
+*' * (0): no FE tax, constant PE2SE tax,                    no FE and ResEx sub
+*' * (1): constant FE and PE2SE tax,                        constant FE and ResEx sub               (used in SSP3 and SSP 5)
+*' * (2): converging FE tax (-2050), constant PE2SE tax,    phased out FE and ResEx sub (-2035)     (used in SSP 1)
+*' * (3): constant FE and PE2SE tax,                        phased out FE and ResEx sub (-2050)     (used in SSP 2)
+*' * (4): constant FE and PE2SE tax,                        phased out FE and ResEx sub (-2035)
+*' * (5): rollback FE tax (-2035), no PE2SE tax,            constant FE and ResEx sub               (used in rollback scenarios to get back to a no-policy case (previously known as BAU))
 *'
 parameter
   cm_distrBeta              "elasticity of tax revenue redistribution"
@@ -1007,16 +1007,6 @@ parameter
 *' * (0.5) Halves the effective CO2 price when regional net CO2 emissions turn negative.
 *' * (1)   No effective CO2 tax once regional emissions turn net-negative. Hence regions never become net-negative.
 
-parameter
-  cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
-;
-  cm_DiscRateScen        = 0;  !! def = 0  !! regexp = [0-4]
-*' * (0) Baseline without higher discount rate: No additional discount rate
-*' * (1) Baseline with higher discount rate: Increase the discount rate by 10%pts from 2005 until the end
-*' * (2) Energy Efficiency policy: 10%pts higher discount rate until cm_startyear and 0 afterwards.
-*' * (3) Energy Efficiency policy: higher discount rate until cm_startyear and 25% of the initial value afterwards.
-*' * (4) Energy Efficiency policy: higher discount rate until cm_startyear, decreasing to 25% value linearly until 2030.
-*'
 parameter
   cm_H2InBuildOnlyAfter "Switch to fix H2 in buildings to zero until given year"
 ;
