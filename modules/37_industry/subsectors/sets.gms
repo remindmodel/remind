@@ -517,6 +517,16 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
+matPrimChem(all_enty)   "Materials which serve as output of a process"
+  /
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+    HVC
+    methanol
+    ammonia !! ammonia tech
+$endif.cm_subsec_model_chemicals
+
+  /
+
 matFin(mat)   "Final products of a process-based production route"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
@@ -670,6 +680,22 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
+tePrcFOopmoPrc(all_te,opmoPrc)   "Mapping of technologies onto available operation modes"
+  /
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+    StCrNG . standard
+    StCrLiq . standard
+
+    MeSySol . greyh2  !! methanol tech QIANZHI
+    MeSyNG . standard
+    MeSyLiq . standard
+
+    AmSyCoal . standard !! ammonia tech QIANZHI
+    AmSyNG . standard
+    AmSyLiq . standard
+$endif.cm_subsec_model_chemicals
+  /
+
 tePrc2matIn(all_te,opmoPrc,mat)   "Mapping of technologies onto input materials"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
@@ -725,6 +751,25 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    eaf . pri . prsteel
    eaf . sec . sesteel
 $endif.cm_subsec_model_steel
+  /
+
+tePrcPrim(all_te,opmoPrc,mat)   "Mapping of industry process technologies onto their output materials"
+  /
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+
+   StCrNG . standard . HVC
+   StCrLiq . standard . HVC
+
+   MeSySol   . greyh2    . methanol
+   MeSyNG    . standard  . methanol
+   MeSyLiq   . standard   . methanol
+
+
+   AmSyCoal . standard . ammonia
+   AmSyNG . standard . ammonia
+   AmSyLiq . standard . ammonia
+
+$endif.cm_subsec_model_chemicals
   /
 
 tePrc2ue(all_te,opmoPrc,all_in)   "Mapping of industry process technologies to the UE ces nodes they directly or indirectly feed into"

@@ -454,6 +454,28 @@ q37_prodMat(t,regi,mat)$( matOut(mat) ) ..
 ;
 
 ***------------------------------------------------------
+*' Output material production
+***------------------------------------------------------
+
+q37_prodMatPrim(t,regi,mat)$(matPrimChem(mat)) ..
+    v37_matFlowPrim(t,regi,mat)
+  =e=
+    sum((tePrc, opmoPrc)$(tePrcPrim(tePrc, opmoPrc, mat)), vm_outflowPrc(t,regi,tePrc,opmoPrc));
+;
+
+***------------------------------------------------------
+*' Output material production
+***------------------------------------------------------
+
+q37_teMatShare(t,regi,tePrc,opmoPrc,mat)$(t.val gt 2020 AND tePrcPrim(tePrc,opmoPrc,mat)) ..
+    vm_outflowPrc(t,regi,tePrc,opmoPrc) 
+    * p37_teMatShareFOHist(regi,mat)
+  =e=
+    p37_teMatShareHist(regi,tePrc,opmoPrc,mat) 
+    * v37_matFlowPrim(t,regi,mat)
+;
+
+***------------------------------------------------------
 *' Hand-over to CES
 ***------------------------------------------------------
 q37_mat2ue(t,regi,mat,in)$( ppfUePrc(in) ) .. 

@@ -949,11 +949,23 @@ loop((t,regi,ppfUePrc(in)),
 
 *** --------------------------------
 p37_teMatShareHist(all_regi,tePrc,opmoPrc,mat) = 0.;
-!!$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-!!loop(tePrc$(secInd37_tePrc("chemicals",tePrc)),
-!!  p37_teMatShareHist(regi,tePrc,opmoPrc,mat) = pm_outflowPrcHist("2020",regi,tePrc,opmoPrc) / p37_matFlowHist("2020",regi,mat);
-!!);
-!!$endif.cm_subsec_model_chemicals
+p37_teMatShareFOHist(all_regi,mat) = 0.;
+
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+loop(all_regi(regi),
+  loop(tePrc2matOut(tePrc, opmoPrc, mat),
+        if (p37_matFlowHist("2020", regi, mat) gt 0,
+          p37_teMatShareHist(regi, tePrc, opmoPrc, mat) = 
+            pm_outflowPrcHist("2020", regi, tePrc, opmoPrc) 
+            / p37_matFlowHist("2020", regi, mat);
+        else
+          p37_teMatShareHist(regi, tePrc, opmoPrc, mat) = 0;
+        );
+      );
+    );
+p37_teMatShareFOHist(regi,mat) = sum(tePrcFOopmoPrc(tePrc,opmoPrc),p37_teMatShareHist(regi,tePrc,opmoPrc,mat));
+$endif.cm_subsec_model_chemicals
+
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_teMatShareHist(regi,"bof","unheated","prsteel") = 1.;
 p37_teMatShareHist(regi,"eaf","sec","sesteel") = 1.;
