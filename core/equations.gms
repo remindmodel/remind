@@ -786,16 +786,13 @@ q_emiCdrAll(t,regi)..
     * v_ccsShare(t,regi) 
   !! 2. Feedstocks
   !! 2a) plastics CDR -- incinerated  waste that is captured + stored from  non-fossil feedstocks
-  + sum((sefe(entySe,entyFe),emiMkt)$( entySeBio(entySe) OR entySeSyn(entySe) ),
-      vm_incinerationCCS(t,regi,entySe,entyFe,emiMkt)) *  !! positive value
-    v_ccsShare(t,regi) 
+  + sum(emiMkt, 
+      vm_nonFosPlastic_incinCC(t,regi,emiMkt)  * v_ccsShare(t,regi)) !! positive value
   !! 2b) plastics CDR -- landfilled waste from non-fossil feedstocks
   - sum((emi,emiMkt), 
       vm_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)) !! negative value
   !! 2c) non-plastics materials CDR -- landfilled waste from non-fossil feedstocks 
-  + sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt2),
-          se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
-      v37_feedstocksCarbon(t,regi,entySe,entyFe,emiMkt2) * (1 - s37_plasticsShare) * (1 - cm_nonPlasticFeedstockEmiShare)) !! positive value
+  + vm_nonFosNonPlastic_landfilled(t,regi) !! positive value
 ;
 
 

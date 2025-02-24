@@ -329,23 +329,21 @@ q37_incinerationCCS(t,regi,sefe(entySe,entyFe),emiMkt)$(
   * v37_regionalWasteIncinerationCCSshare(t,regi)
 ;
 
-
-*' calculate chemical process emissions as carbon that does not end up in product but is emitted during conversion processes
-q37_emiChemicalsProcess(t,regi,emi,emiMkt)..
-  v37_emiChemicalsProcess(t,regi,emi,emiMkt)
+*' sum non-fossil carbon from plastics that get incinerated with carbon capture
+q37_nonFosPlastic_incinCC(t,regi,emiMkt).. 
+  vm_nonFosPlastic_incinCC(t,regi,emiMkt) 
   =e=
-  sum((entyFE2sector2emiMkt_NonEn(entyFe,sector,emiMkt),
-         se2fe(entySe,entyFe,te)),
-  vm_demFeNonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
-  * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
-  )
+  sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+         se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
+      vm_incinerationCCS(t,regi,entySe,entyFe,emiMkt)
+    )
 ;
 
 *' calculate negative emissions from non-fossil carbon in plastics
 *' that do not get incinerated ("plastic removals")
 *' attribute to ES market as we account these emissions in the waste sector (IPCC sector 5)
 q37_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)..
-  v37_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)
+  vm_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)
   =e=
   sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt2),
          se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
@@ -357,7 +355,17 @@ q37_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)..
   )$( sameas(emi,"co2") AND sameas(emiMkt,"ES") )
 ;
 
-*' calculate emissions from non-plastic waste
+*' calculate non-fossil carbon in non-plastic waste that does not get emitted to the atmosphere (i.e. is stored permanently)
+q37_nonFosNonPlastic_landfilled(t,regi)..
+ vm_nonFosNonPlastic_landfilled(t,regi)  
+ =e=
+   sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+          se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
+       v37_feedstocksCarbon(t,regi,entySe,entyFe,emiMkt) * (1 - s37_plasticsShare) * (1 - cm_nonPlasticFeedstockEmiShare) )
+
+;
+
+*' calculate net emissions from non-plastic waste
 *' attribute to ES market as we assume open burning without energy recovery or landfilling
 *' (depending on cm_nonPlasticFeedstockEmiShare) and therefore account these emissions
 *' in the waste sector (IPCC sector 5)
@@ -368,11 +376,20 @@ q37_emiNonPlasticWaste(t,regi,emi,emiMkt)..
          se2fe(entySe,entyFe,te))$(entySeFos(entySe)),
 *' fossil carbon in non-plastic waste that gets emitted to the atmosphere
       v37_feedstocksCarbon(t,regi,entySe,entyFe,emiMkt2)  * (1 - s37_plasticsShare) * cm_nonPlasticFeedstockEmiShare)
-  - sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt2),
-         se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
 *' non-fossil carbon in non-plastic waste that does not get emitted to the atmosphere (i.e. is stored permanently)
-      v37_feedstocksCarbon(t,regi,entySe,entyFe,emiMkt2) * (1 - s37_plasticsShare) * (1 - cm_nonPlasticFeedstockEmiShare) )
+  - vm_nonFosNonPlastic_landfilled(t,regi) 
   )$( sameas(emi,"co2") AND sameas(emiMkt,"ES") )
+;
+
+*' calculate chemical process emissions as carbon that does not end up in product but is emitted during conversion processes
+q37_emiChemicalsProcess(t,regi,emi,emiMkt)..
+  v37_emiChemicalsProcess(t,regi,emi,emiMkt)
+  =e=
+  sum((entyFE2sector2emiMkt_NonEn(entyFe,sector,emiMkt),
+         se2fe(entySe,entyFe,te)),
+  vm_demFeNonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
+  * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
+  )
 ;
 
 *' sum all emissions from feedstocks that are not accounted as energy-related emissions
@@ -395,11 +412,8 @@ q37_wasteIncinerationEmiBalance(t,regi,emiTe(enty),emiMkt) ..
       v37_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
     )$( sameas(enty,"co2") )
     !! substract carbon from non-fossil origin contained in plastics that
-    !! get incinerated with CCS
-  - sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
-         se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
-      vm_incinerationCCS(t,regi,entySe,entyFe,emiMkt)
-    )$( sameas(enty,"co2") )
+    !! get incinerated with carbon capture
+  - vm_nonFosPlastic_incinCC(t,regi,emiMkt)$( sameas(enty,"co2") )
 ;
 
 *** ---------------------------------------------------------------------------
