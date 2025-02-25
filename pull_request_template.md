@@ -1,13 +1,14 @@
 ## Purpose of this PR
 
-> **NOTE** Make sure to select the items relevant to your PR by placing an "x" in the brackets. *Delete* the parts that are left empty. This way the progress tracker accurately reflects the status of the PR. Leave *unfinished* elements in the checklist unchecked so we know how far along you are
+> **NOTE** Make sure to select the items relevant to your PR by placing an "x" in the brackets. *Delete* the lines you left empty. This way the progress tracker accurately reflects the status of the PR. Leave *unfinished* elements in the checklist unchecked so we know how far along you are.
 
 ## Type of change
 
 ### Parts concerned:
-- [ ] Code
+- [ ] GAMS Code
+- [ ] R-scripts
 - [ ] Documentation
-- [ ] Input data
+- [ ] Input data / CES parameters
 - [ ] CI/CD
 - [ ] Other (please give a description)
 
@@ -22,7 +23,6 @@
 ## Checklist:
 
 - [ ] My code follows the [coding etiquette](https://github.com/remindmodel/remind/blob/develop/main.gms#L80)
-- [ ] I performed a self-review of my own code
 - [ ] I explained my changes within the PR, particularly in hard-to-understand areas
 - [ ] I checked that the [in-code documentation](https://github.com/remindmodel/remind/blob/develop/main.gms#L120) is up-to-date
 - [ ] I adjusted the reporting in [`remind2`](https://github.com/pik-piam/remind2) where it was needed
