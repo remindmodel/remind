@@ -6,15 +6,18 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/40_techpol/NPi2018/datainput.gms
 
-Table f40_TechBound(ttot,all_regi,NDC_version,all_te) "Table for all NDC versions with NDC capacity targets (GW)"
+Table f40_TechBound(ttot,all_regi,NPi_version,all_te) "Table for all NDC versions with NDC capacity targets (GW)"
 $offlisting
 $ondelim
-$include "./modules/40_techpol/NPi2025/input/f40_NewClimat.cs3r"
+$include "./modules/40_techpol/NPi2025/input/f40_NewClimate.cs3r"
 $offdelim
 $onlisting
 ;
 
 p40_TechBound(ttot,all_regi,te) = f40_TechBound(ttot,all_regi,"%cm_NPi_version%",te);
+
+*** windoffshore-todo: separate NDC targets for windon and windoff
+p40_TechBound(ttot,all_regi,"wind") = f40_TechBound(ttot,all_regi,"%cm_NPi_version%","wind");
 
 p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
 
