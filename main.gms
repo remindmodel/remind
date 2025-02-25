@@ -716,16 +716,16 @@ parameter
 *' *  (3): 3 %
 *'
 parameter
-  cm_fetaxscen              "choice of final energy tax path, subsidy path and inconvenience cost path, values other than zero enable final energy tax"
+  cm_fetaxscen              "choice of final energy tax path and subsidy path, values other than zero enable final energy tax"
 ;
   cm_fetaxscen        = 3;         !! def = 3  !! regexp = [0-5]
 *' even if set to 0, the PE inconvenience cost per SO2-cost for coal are always on if module 21_tax is on
-*' * (0): no tax, sub, inconv
-*' * (1): constant t,s,i (used in SSP 5 and ADVANCE WP3.1 HighOilSub)
-*' * (2): converging tax, phased out sub (-2030), no inconvenience cost so far (used in SSP 1)
-*' * (3): constant tax, phased out sub (-2050), no inconvenience cost so far (used in SSP 2)
-*' * (4): constant tax, phased out sub (-2030), no inconvenience cost so far (used in SDP)
-*' * (5): roll back of final energy taxes to get back to a no-policy case (previously known as BAU)
+*' * (0): no FE tax, constant PE2SE tax,                    no FE and ResEx sub
+*' * (1): constant FE and PE2SE tax,                        constant FE and ResEx sub               (used in SSP3 and SSP 5)
+*' * (2): converging FE tax (-2050), constant PE2SE tax,    phased out FE and ResEx sub (-2035)     (used in SSP 1)
+*' * (3): constant FE and PE2SE tax,                        phased out FE and ResEx sub (-2050)     (used in SSP 2)
+*' * (4): constant FE and PE2SE tax,                        phased out FE and ResEx sub (-2035)
+*' * (5): rollback FE tax (-2035), no PE2SE tax,            constant FE and ResEx sub               (used in rollback scenarios to get back to a no-policy case (previously known as BAU))
 *'
 parameter
   cm_distrBeta              "elasticity of tax revenue redistribution"
@@ -811,15 +811,6 @@ parameter
 *' *  (2): so2 tax is standard
 *' *  (3): so2 tax is high
 *' *  (4): so2 tax intermediary between 1 and 2, multiplying (1) tax by the ratio (3) and (2)
-*'
-parameter
-  c_techAssumptScen         "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5, 4: SSP3"
-;
-  c_techAssumptScen     = 1;         !! def = 1  !! regexp = [1-4]
-*' This flag defines an energy technology scenario according to SSP scenario
-*' *   (1) SSP2: reference scenario - default investment costs & learning rates for pv, csp and wind
-*' *   (2) SSP1: advanced renewable energy techno., pessimistic for nuclear and CCS
-*' *   (3) SSP5: pessimistic techno-economic assumptions
 *'
 parameter
   c_ccsinjecratescen        "CCS injection rate factor applied to total regional storage potentials, yielding an upper bound on annual injection"
@@ -915,8 +906,8 @@ parameter
 parameter
   cm_33_OAE_startyr         "The year when OAE could start being deployed [year]"
 ;
-  cm_33_OAE_startyr        = 2030; !! def = 2030  !! regexp = 20[3-9](0|5)
-*' *  (2030): earliest year when OAE could be deployed
+  cm_33_OAE_startyr        = 2035; !! def = 2035  !! regexp = 20[3-9](0|5)
+*' *  (2035): earliest year when OAE could be deployed
 *' *  (....): later timesteps
 *'
 parameter
@@ -929,17 +920,21 @@ parameter
 ;
   cm_LimRock               = 1000;   !! def = 1000
 *'
-
 parameter
   cm_33_EW_upScalingRateLimit    "Annual growth rate limit on upscaling of mining & spreading rocks on fields"
 ;
   cm_33_EW_upScalingRateLimit = 0.2;  !! def = 20% !! regexp = is.nonnegative
-
+*' 
 parameter
   cm_33_EW_shortTermLimit         "Limit on 2030 potential for enhanced weathering, defined as % of land on which EW is applied. Default 0.5% of land"
 ;
   cm_33_EW_shortTermLimit = 0.005; !! def = 0.5% !! regexp = is.nonnegative
 *'
+parameter
+  cm_33_maxFeShare                "max share of the CDR sectors' FE demand in the region's total FE demand, by FE type. Default is 10%"
+;
+  cm_33_maxFeShare = 0.1; !!  def = 0.1 !! regexp = is.nonnegative
+*' 
 parameter
   cm_postTargetIncrease     "carbon price increase per year after regipol emission target is reached (euro per tCO2)"
 ;
@@ -1013,16 +1008,6 @@ parameter
 *' * (1)   No effective CO2 tax once regional emissions turn net-negative. Hence regions never become net-negative.
 
 parameter
-  cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
-;
-  cm_DiscRateScen        = 0;  !! def = 0  !! regexp = [0-4]
-*' * (0) Baseline without higher discount rate: No additional discount rate
-*' * (1) Baseline with higher discount rate: Increase the discount rate by 10%pts from 2005 until the end
-*' * (2) Energy Efficiency policy: 10%pts higher discount rate until cm_startyear and 0 afterwards.
-*' * (3) Energy Efficiency policy: higher discount rate until cm_startyear and 25% of the initial value afterwards.
-*' * (4) Energy Efficiency policy: higher discount rate until cm_startyear, decreasing to 25% value linearly until 2030.
-*'
-parameter
   cm_H2InBuildOnlyAfter "Switch to fix H2 in buildings to zero until given year"
 ;
   cm_H2InBuildOnlyAfter = 2150;   !! def = 2150 (rule out H2 in buildings)
@@ -1079,17 +1064,13 @@ parameter
 *' This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1.
 *'
 parameter
-  cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bleak (3) assumptions on VRE supply"
+  cm_VRE_supply_assumptions        "default (0), optimistic (1), pessimistic (2), or very pessimistic (3) assumptions on VRE and storage costs"
 ;
-  cm_VRE_supply_assumptions = 0;  !! 0 - default, 1 - optimistic, 2 - sombre, 3 - bleak  !! regexp = [0-3]
-*' *   for 1 - optimistic
-*'      - investment cost (inco0), to-be-learned investment cost (incolearn), and learning rate parameters for spv and storspv are modified
-*'      - ease capacity constraints on power storage
-*'      - reduce necessary storage for electricity production
-*'  * for 2 - sombre
-*'      - change to-be-learned investment cost (incolearn) for solar PV (spv) to 5010 (150 $ per kW floor cost)
-*'  * for 3 - bleak
-*'      - change to-be-learned investment cost (incolearn) for solar PV (spv) to 4960 (200 $ per kW floor cost)
+  cm_VRE_supply_assumptions = 0;  !! def = 0  !! regexp = [0-3]
+*' Modifies investment cost (inco0), floorcost and learning rate parameters for VRE and storage.
+*' * (1) optimistic: reduces floor costs and investment costs and increases learning rates by around 10%. Also halves storage needs.
+*' * (2) pessimistic: increases floor costs and investment costs and decreases learning rates by around 10%.
+*' * (3) very pessimistic: increases floor costs and investment costs and decreases learning rates by around 30%.
 *'
 parameter
   cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/kg = 0.2 $/Kwh)"
@@ -1264,13 +1245,18 @@ $setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.nonnegative
 *** For example: "EU27_regi 7.5, DEU 1.5".
 $setGLobal cm_bioprod_regi_lim off  !! def off
 *' cm_GDPpopScen  "assumptions about future GDP and population development"
-*'
-*' * (SSP1):  SSP1 fastGROWTH medCONV
-*' * (SSP2):  SSP2 medGROWTH medCONV
-*' * (SSP3):  SSP3 slowGROWTH slowCONV
-*' * (SSP4):  SSP4  medGROWTH mixedCONV
-*' * (SSP5):  SSP5 fastGROWTH fastCONV
+*'  * (SSP1):  SSP1 fastGROWTH medCONV
+*'  * (SSP2):  SSP2 medGROWTH medCONV
+*'  * (SSP3):  SSP3 slowGROWTH slowCONV
+*'  * (SSP4):  SSP4 medGROWTH mixedCONV
+*'  * (SSP5):  SSP5 fastGROWTH fastCONV
 $setglobal cm_GDPpopScen   SSP2  !! def = SSP2
+*' c_techAssumptScen flag defines an energy technology scenario according to SSP narratives
+*'  * (SSP1) optimistic for VRE, storage, BEV; pessimistic for nuclear and CCS
+*'  * (SSP2) reference scenario - default investment costs & learning rates
+*'  * (SSP3) optimistic for basic fossil technologies; pessimistic for nuclear and VRE
+*'  * (SSP5) optimistic for advanced fossil technologies and CCS; pessimistic for nuclear and VRE
+$setglobal c_techAssumptScen SSP2 !! def = SSP2  !! regexp = (SSP)?[1-5]
 *** cm_oil_scen      "assumption on oil availability"
 ***  (lowOil): low
 ***  (medOil): medium (this is the new case)
@@ -1288,10 +1274,10 @@ $setGlobal cm_gas_scen  medGas         !! def = medGas  !! regexp = lowGas|medGa
 ***  (medCoal): medium
 ***  (highCoal): high
 $setGlobal cm_coal_scen  medCoal        !! def = medCoal  !! regexp = 0|lowCoal|medCoal|highCoal
-*' *  c_ccsinjecrateRegi  "regional upper bound of the CCS injection rate, overwrites for specified regions the settings set with c_ccsinjecratescen"
-*' *  ("off") no regional differentiation
-*' *  ("GLO 0.005") reproduces c_ccsinjecratescen = 1
-*' *  ("GLO 0.00125, CAZ_regi 0.0045, CHA_regi 0.004, EUR_regi 0.0045, IND_regi 0.004, JPN_regi 0.002, USA_regi 0.002") "example that is taylored such that NDC goals are achieved without excessive CCS in a delayed transition scenario. Globally, 75% reduction, 10% reduction in CAZ etc. compared to reference case with c_ccsinjecratescen = 1"
+*' c_ccsinjecrateRegi  "regional upper bound of the CCS injection rate, overwrites for specified regions the settings set with c_ccsinjecratescen"
+*'  * ("off") no regional differentiation
+*'  * ("GLO 0.005") reproduces c_ccsinjecratescen = 1
+*'  * ("GLO 0.00125, CAZ_regi 0.0045, CHA_regi 0.004, EUR_regi 0.0045, IND_regi 0.004, JPN_regi 0.002, USA_regi 0.002") "example that is taylored such that NDC goals are achieved without excessive CCS in a delayed transition scenario. Globally, 75% reduction, 10% reduction in CAZ etc. compared to reference case with c_ccsinjecratescen = 1"
 $setglobal c_ccsinjecrateRegi  off  !! def = "off"
 *** c_SSP_forcing_adjust "chooses forcing target and budget according to SSP scenario such that magicc forcing meets the target";
 ***   ("forcing_SSP1") settings consistent with SSP 1
@@ -1394,6 +1380,10 @@ $setGlobal cm_CCSmaxBound    off  !! def = off
 *** limit the share of cropland on which rocks can be spread. Affects the maximum total amount of rocks weathering on fields.
 *** example: "GLO 1, LAM 0.5" limits amount of rocks weathering on cropland in LAM to 50% of max value if all LAM cropland were used.
 $setglobal cm_33_EW_maxShareOfCropland GLO 1 !! def = GLO 1
+*** cm_33_GDP_netNegCDR_maxShare
+*** limit the expenses for net negative emissions based on share in GDP. Default is GLO 1, i.e. limit = total GDP
+*** example: "GLO 1, LAM 0.1" limits spending on net negative emissions to 10% of GDP for LAM
+$setglobal cm_33_GDP_netNegCDR_maxShare GLO 1 !! def = GLO 1
 *** c_tech_CO2capturerate "changes CO2 capture rate of carbon capture technologies"
 ***   Example on how to use:
 ***     c_tech_CO2capturerate   bioh2c 0.8, bioftcrec 0.4
@@ -1598,7 +1588,11 @@ $setglobal cm_inco0RegiFactor  off  !! def = off
 ***   def <- "off" = use default CCS pm_inco0_t values.
 ***   or number (ex. 0.66), multiply by 0.66 the CSS cost markup
 $setglobal cm_ccsinjeCost med !! def = med !! regexp = med|low|high
-*** switch from standard to low and high CO2 transport & storage cost; approx. 12/7.5/20 USD/tCO2. Low equals cost prior to 03/2024
+*' switch from standard to low and high CO2 transport & storage cost.
+*' Warning: it applies absolute values; only use it in combination with default c_techAssumptScen SSP2. 
+*'  * (low): old estimate before 03/2024; ~7.5 USD/tCO2 in 2035. Also applies tech_stat=2 and constrTme=0
+*'  * (med): new main estimate; 12 USD/tCO2 at all times (similar to ~11.4 USD/tCO2 average of saline formations, on- and offshore DOG fields in Budinis et al 2017)
+*'  * (high): upper estimate; ~20USD/tCO2 (constant), assuming upper end of storage cost and long transport distances
 $setglobal cm_CCS_markup  off  !! def = off
 *** cm_Industry_CCS_markup "multiplicative factor for Industry CSS cost markup"
 ***   def <- "off"
@@ -1854,6 +1848,9 @@ $setglobal cm_taxrc_RE  none   !! def = none   !! regexp = none|REdirect
 *' (2005): Uses EDGAR data with 2005 as base year, and Lucas et al. 2007 IMAGE for N2O baselines
 *' (2020): Uses CEDS2024 data with 2020 as base year, and Harmsen et al. 2022 IMAGE for N2O baselines
 $setGlobal cm_emifacs_baseyear  2020          !! def = 2005
+*** Switches to choose Marginal Abatement Cost Curves (MACCs) version (PBL_2007, PBL_2022) and scenarios (Default, Pessismistic, Optimistic)
+$setGlobal c_nonco2_macc_version  PBL_2022    !! def = PBL_2007
+$setGlobal c_nonco2_macc_scenario  Default     !! def = Default
 *' cm_repeatNonOpt       "should nonoptimal regions be solved again?"
 *'
 *' *  (off): no, only infeasable regions are repeated, standard setting

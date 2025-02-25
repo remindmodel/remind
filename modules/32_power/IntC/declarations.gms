@@ -29,7 +29,7 @@ s32_storlink                                        "how strong is the influence
 positive variables
     v32_shStor(ttot,all_regi,all_te)         		"share of seel production from a VRE te that needs to be stored based on this te's share. Unit: ~Percent"
     v32_storloss(ttot,all_regi,all_te)         		"total energy loss from storage for a given technology [TWa]"
-    vm_shSeEl(ttot,all_regi,all_te)				"new share of electricity production in % [%]"
+    vm_shSeEl(ttot,all_regi,all_te)			     	"new share of electricity production in % [%]"
     v32_testdemSeShare(ttot,all_regi,all_te)        "test variable for tech share of SE electricity demand"
     v32_TotVREshare(ttot,all_regi)                  "Total VRE share as calculated by summing shSeEl. Unit: Percent"
     v32_shAddIntCostTotVRE(ttot,all_regi)           "Variable containing how much the total VRE share is above the threshold - needed to calculate additional integation costs due to total VRE share."
