@@ -781,7 +781,7 @@ q_emiCdrAll(t,regi)..
   + sum(emiInd37$(not sameas(emiInd37,"co2cement_process")), 
       vm_emiIndCCS(t,regi,emiInd37) !! positive value
     !! multiply with bio/syn share from previous iteration (computationally too expensive to incl. in optimization)
-    * pm_NonFos_IndCC_fraction_Emi0(t,regi, emiInd37))
+    * pm_NonFos_IndCC_fraction0(t,regi, emiInd37))
     !! multiply with ccs share 
     * v_ccsShare(t,regi) 
   !! 2. Feedstocks
