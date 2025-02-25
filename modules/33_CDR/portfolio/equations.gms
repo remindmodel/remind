@@ -242,5 +242,45 @@ q33_OAE_co2emi_non_atm_calcination(t, regi, te_oae33)..
     - s33_OAE_chem_decomposition * vm_emiCdrTeDetail(t, regi, te_oae33)
     ;
 
+
+***---------------------------------------------------------------------------
+*' #### Equations limiting CDR in the entire model
+
+***---------------------------------------------------------------------------
+*' Limit the amount of FE for CDR to a given fraction of total FE 
+***---------------------------------------------------------------------------
+q33_shfeSector_SectorTotal(t,regi,entyFe,sector)$(p33_shfetot_up(t,regi,entyFe,sector) AND entyFe2Sector(entyFe,sector))..
+  v33_FEsector_total(t,regi,entyFe,sector) 
+   =e=
+     sum(emiMkt$sector2emiMkt(sector,emiMkt),
+      sum(entySe$(sefe(entySe,entyFe)),
+       vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
+;
+
+q33_shfeSector_Total(t,regi,entyFe)..
+  v33_FE_total(t,regi,entyFe) 
+   =e=
+     sum(sector2emiMkt(sector,emiMkt),
+      sum(entySe$(sefe(entySe,entyFe)),
+       vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)$entyFe2Sector(entyFe,sector)))
+;
+
+q33_shfeSector_share(t,regi,entyFe,sector)$(p33_shfetot_up(t,regi,entyFe,sector))..
+  v33_shfeSector(t,regi,entyFe,sector) *
+  v33_FE_total(t,regi,entyFe) 
+  =e=
+  v33_FEsector_total(t,regi,entyFe,sector) 
+;
+
+
+***---------------------------------------------------------------------------
+*' Limit spending on net negative emissions to a share of the region's GDP 
+***---------------------------------------------------------------------------
+q33_CDRspending(t,regi)$(t.val ge max(2035,cm_startyear))..
+  v33_NetNegEmi_expenses(t,regi)
+  =e=
+  (1-cm_frac_NetNegEmi) * pm_taxCO2eqSum(t,regi) * vm_emiALLco2neg(t,regi)
+;
+
 *' @stop
 *** EOF ./modules/33_CDR/portfolio/equations.gms

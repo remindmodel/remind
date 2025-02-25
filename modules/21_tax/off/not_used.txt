@@ -34,9 +34,6 @@ pm_inco0_t,input,questionnaire
 cm_frac_CCS,input,questionnaire
 cm_frac_NetNegEmi,input,questionnaire
 pm_fuExtrForeign,input,questionnaire
-cm_DiscRateScen,input,questionnaire
-pm_ttot_val,input,questionnaire
-p21_implicitDiscRateMarg,input,questionnaire
 vm_emiMacSector,input,questionnaire
 cm_multigasscen,input,questionnaire
 vm_pebiolc_price,input,questionnaire
@@ -72,3 +69,4 @@ pm_cf,input,only needed if tax is on
 vm_shDemSeel,input,only needed if tax is on
 pm_teAnnuity,input,only needed if tax is on
 sm_D2005_2_D2017,input,no conversion needed
+vm_emiALLco2neg, variable, only needed if tax is on
