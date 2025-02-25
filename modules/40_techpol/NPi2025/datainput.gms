@@ -9,7 +9,7 @@
 Table f40_TechBound(ttot,all_regi,NDC_version,all_te) "Table for all NDC versions with NDC capacity targets (GW)"
 $offlisting
 $ondelim
-$include "./modules/40_techpol/NPi2025/input/f40_NewClimate.cs3r"
+$include "./modules/40_techpol/NPi2025/input/f40_NewClimat.cs3r"
 $offdelim
 $onlisting
 ;

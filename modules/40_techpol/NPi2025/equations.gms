@@ -16,10 +16,10 @@ q40_ElecBioBound(t,regi)$(t.val gt 2025)..
       =g= p40_ElecBioBound(t,regi) * 0.001
 ;	 
 
-*** ensure that the total wind bound is at least as large as the sum of windon and windoff
+*** windoffshore-todo: as long as there is a "wind" target, it is for the sum windon+windoff
 q40_windBound(t,regi)$(t.val gt 2025 AND p40_TechBound(t,regi,"wind") gt 0)..
-vm_cap(t,regi,"wind","1")) 
-    =g=sum(p40_TechBound(t,regi,"windon"), p40_TechBound(t,regi,"windoff"))* 0.001
+  sum(teWind, vm_cap(t,regi,teWind,"1")) 
+    =g= p40_TechBound(t,regi,"wind") * 0.001
 ;
 
   q40_FE_RenShare(t,regi)$(t.val ge 2025 AND sameas(regi,"EUR"))..
