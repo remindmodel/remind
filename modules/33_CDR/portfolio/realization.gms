@@ -42,6 +42,8 @@ $Ifi "%phase%" == "sets" $include "./modules/33_CDR/portfolio/sets.gms"
 $Ifi "%phase%" == "declarations" $include "./modules/33_CDR/portfolio/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/33_CDR/portfolio/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/33_CDR/portfolio/equations.gms"
+$Ifi "%phase%" == "preloop" $include "./modules/33_CDR/portfolio/preloop.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/33_CDR/portfolio/bounds.gms"
+$Ifi "%phase%" == "postsolve" $include "./modules/33_CDR/portfolio/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/33_CDR/portfolio/realization.gms

@@ -191,7 +191,6 @@ cm_carbonprice_temperatureLimit "not-to-exceed temperature target in degree abov
 cm_frac_CCS          "tax on carbon transport & storage (ccsinje) to reflect risk of leakage, formulated as fraction of ccsinje O&M costs"
 cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshooting, formulated as fraction of carbon price"
 
-cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
 c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 cm_taxCO2_IncAfterPeakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 cm_taxCO2_regiDiff_endYr     "Year at which regional CO2 taxes converge in module 45 for realizations with differentiated carbon prices"
@@ -300,7 +299,7 @@ cm_rentconvcoal     = 50;        !! def 50
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
-c_techAssumptScen     = 1;         !! def = 1
+$setGlobal c_techAssumptScen     = SSP2;         !! def = SSP2
 c_ccsinjecratescen    = 1;         !! def = 1
 c_ccscapratescen      = 1;         !! def = 1
 c_export_tax_scen     = 0;         !! def = 0
@@ -339,7 +338,6 @@ cm_damages_SccHorizon                 = 100;   !! def = 100
 cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 
-cm_DiscRateScen        = 0;!! def = 0
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 $setGlobal cm_pushCalib  none !! def = none
 $setGlobal cm_reducCostB  none !! def = none

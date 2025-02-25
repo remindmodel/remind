@@ -140,8 +140,8 @@ p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val ge cm_startyear+20) = p_pr
 *** 3. Reduce co2 price for land-use entities by level of development (uses the same data from MOINPUT as MAgPIE for im_development_state)
 p_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p_priceCO2forMAC(ttot,regi,MacSectorMagpie) * p_developmentState(ttot,regi);
 *** 4. Price for MACs was calculated with AR4 GWPs --> convert CO2 price with old GWPs here as well
-p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) = p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) * (298/s_gwpN2O);
-p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) = p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) * (25/s_gwpCH4);
+p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) = p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) * (s_gwpN2O_AR4/s_gwpN2O);
+p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) = p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) * (s_gwpCH4_AR4/s_gwpCH4);
 
 display p_priceCO2,p_priceCO2forMAC;
 ***--------------------------------------
