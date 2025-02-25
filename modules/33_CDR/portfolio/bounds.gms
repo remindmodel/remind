@@ -23,7 +23,7 @@ if(card(te_ccs33) eq 0,
 vm_emiCdrTeDetail.fx(t,regi,te_all33)$(not te_used33(te_all33)) = 0;
 v33_FEdemand.fx(t,regi,entyFe,entyFe2,te_all33)$(not te_used33(te_all33) and fe2cdr(entyFe,entyFe2,te_all33)) = 0;
 *** Fix non atmospheric emissions from CDR for all technologies that are not used
-vm_cco2_cdr_fromFE.fx(t,regi,te_all33)$(not te_ccs33(te_all33)) = 0;
+vm_co2emi_cdrFE_beforeCapture.fx(t,regi,te_all33)$(not te_ccs33(te_all33)) = 0;
 
 *** Fix all CDR-related variables to zero for early time steps t< 2025 (no CDR in the real world)
 *** to reduce unnecessary freedom (and likelyhood of spontaneous solver infeasibilities)
@@ -32,7 +32,7 @@ v33_FEdemand.fx(t,regi,entyFe,entyFe2,te_used33)$(fe2cdr(entyFe,entyFe2,te_used3
 vm_emiCdr.fx(t,regi,"co2")$(t.val lt 2025) = 0;
 vm_omcosts_cdr.fx(t,regi)$((t.val lt 2025)) = 0;
 vm_cap.fx(t,regi,"weathering",rlf)$(t.val lt 2025) = 0;
-vm_cco2_cdr_fromFE.fx(t,regi,te_used33)$(t.val lt 2025) = 0;
+vm_co2emi_cdrFE_beforeCapture.fx(t,regi,te_used33)$(t.val lt 2025) = 0;
 v33_co2emi_non_atm_calcination.fx(t,regi,te_oae33)$(t.val lt 2025) = 0;
 *** vm_cap for dac is fixed for t<2025 in core/bounds.gms (tech_stat eq 4)
 vm_co2capture_cdr.fx(t,regi,enty,enty2,te,rlf)$(ccs2te(enty,enty2,te) AND t.val lt 2025) = 0;

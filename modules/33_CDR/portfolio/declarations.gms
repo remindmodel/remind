@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/portfolio/declarations.gms
 scalars
-s33_capture_rate_cdrmodule            "CO2 capture rate for capturing emissions, e.g., from burning natural gas" / 0.9 /
+sm_capture_rate_cdrmodule       "CO2 capture rate for CDR energy and process emissions, i.e. fegas use in OAE and DAC and for calcination emissions in oae" / 0.9 /
 
 s33_co2_rem_pot                 "specific carbon removal potential [Gt C per Gt ground rock]"
 s33_rock_weath_rate_ambientT    "fraction of stone weathering per year at ambient temperature (25 degree C)"
@@ -33,8 +33,8 @@ v33_EW_onfield(ttot,all_regi,rlf,rlf)  "amount of ground rock spread on fields i
 v33_EW_onfield_tot(ttot,all_regi,rlf,rlf)  "total amount of ground rock on fields, for each climate zone and transportation distance [Gt]"
 v33_FEdemand(ttot,all_regi,all_enty,all_enty,all_te)  "FE demand of each technology [TWa]"
 vm_co2capture_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "total emissions captured through technologies in the CDR module that enter the CCUS chain + captured emissions from associated FE demand [GtC / a]"
-vm_cco2_cdr_fromFE(ttot,all_regi,all_te)  "Captured CO2 from CDR-related acitivites that comes from energy demand [GtC / a]"
-v33_co2emi_non_atm_calcination(ttot,all_regi,all_te)  "Captured CO2 from calcination [GtC / a]"
+vm_co2emi_cdrFE_beforeCapture(ttot,all_regi,all_te)  "CO2 emissions from energy use in CDR-sector, before capture [GtC / a]"
+v33_co2emi_non_atm_calcination(ttot,all_regi,all_te)  "CO2 emissions from calcination before capture [GtC / a]"
 ;
 
 negative variables

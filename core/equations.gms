@@ -640,8 +640,9 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
       vm_emiIndCCS(t,regi,emiInd37_fuel)
     )$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
     !! CO2 captured from CDR sector energy consumption (OAE and DAC)
-  - sum(te_ccs33,
-      vm_cco2_cdr_fromFE(t, regi, te_ccs33)
+  - sm_capture_rate_cdrmodule
+  * sum(te_ccs33,
+      vm_co2emi_cdrFE_beforeCapture(t, regi, te_ccs33)
   )$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
     !! plastic waste incineration; can be positive (fossil non-ccs) or negative (bio/syn w/ CCS)
   + vm_wasteIncinerationEmiBalance(t,regi,enty,emiMkt)
