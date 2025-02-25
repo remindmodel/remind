@@ -22,8 +22,8 @@ pm_taxrevCO2LUC0(t,regi) = pm_taxCO2eqSum(t,regi) * vm_emiMacSector.l(t,regi,"co
 p21_taxrevCCS0(ttot,regi) = cm_frac_CCS * pm_data(regi,"omf","ccsinje") * pm_inco0_t(ttot,regi,"ccsinje") 
                             * ( sum(teCCS2rlf(te,rlf), sum(ccs2te(ccsCo2(enty),enty2,te), vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf) ) ) )
                             * (1/pm_ccsinjecrate(regi)) * sum(teCCS2rlf(te,rlf), sum(ccs2te(ccsCo2(enty),enty2,te), vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf) ) ) / pm_dataccs(regi,"quan","1");
-pm_taxrevNetNegEmi0(ttot,regi) = cm_frac_NetNegEmi * pm_taxCO2eqSum(ttot,regi) * v21_emiALLco2neg.l(ttot,regi);
-p21_emiALLco2neg0(ttot,regi)  = v21_emiALLco2neg.l(ttot,regi);
+pm_taxrevNetNegEmi0(ttot,regi) = cm_frac_NetNegEmi * pm_taxCO2eqSum(ttot,regi) * vm_emiALLco2neg.l(ttot,regi);
+p21_emiALLco2neg0(ttot,regi)  = vm_emiALLco2neg.l(ttot,regi);
 p21_taxrevFE0(ttot,regi) = sum((entyFe,sector)$entyFe2Sector(entyFe,sector),
     ( p21_tau_fe_tax(ttot,regi,sector,entyFe) + p21_tau_fe_sub(ttot,regi,sector,entyFe) )
     *
@@ -37,13 +37,12 @@ p21_taxrevFE0(ttot,regi) = sum((entyFe,sector)$entyFe2Sector(entyFe,sector),
 p21_taxrevResEx0(ttot,regi) = sum(pe2rlf(peEx(enty),rlf), p21_tau_fuEx_sub(ttot,regi,enty) * vm_fuExtr.l(ttot,regi,enty,rlf));
 p21_taxrevPE0(ttot,regi,entyPe) = pm_tau_pe_tax(ttot,regi,entyPe) * vm_prodPe.l(ttot,regi,entyPe);
 p21_taxrevCES0(ttot,regi,in) = pm_tau_ces_tax(ttot,regi,in) * vm_cesIO.l(ttot,regi,in);
-p21_taxrevPE2SE0(ttot,regi) = sum(pe2se(enty,enty2,te),
-                                    (p21_tau_pe2se_tax(ttot,regi,te) + p21_tau_pe2se_sub(ttot,regi,te)) * vm_prodSe.l(ttot,regi,enty,enty2,te)
-                                  ); 
+p21_taxrevPE2SE0(ttot,regi) = sum(pe2se(enty,enty2,te), p21_tau_pe2se_tax(ttot,regi,te) * vm_prodSe.l(ttot,regi,enty,enty2,te)); 
 p21_taxrevSO20(ttot,regi) = p21_tau_so2_tax(ttot,regi) * vm_emiTe.l(ttot,regi,"so2");
-p21_taxrevBio0(ttot,regi) = v21_tau_bio.l(ttot) * vm_pebiolc_price.l(ttot,regi) * vm_fuExtr.l(ttot,regi,"pebiolc","1")
-                            + p21_bio_EF(ttot,regi) * pm_taxCO2eq(ttot,regi) * (vm_fuExtr.l(ttot,regi,"pebiolc","1") - (vm_Xport.l(ttot,regi,"pebiolc")-vm_Mport.l(ttot,regi,"pebiolc")));
-p21_implicitDiscRate0(ttot,regi) = sum(ppfKap(in),  p21_implicitDiscRateMarg(ttot,regi,in)  * vm_cesIO.l(ttot,regi,in) );
+p21_taxrevBioSust0(ttot,regi) = v21_tau_bio.l(ttot) * vm_pebiolc_price.l(ttot,regi) * vm_fuExtr.l(ttot,regi,"pebiolc","1");
+p21_taxrevBioEF0(ttot,regi) = p21_bio_EF(ttot,regi) * pm_taxCO2eq(ttot,regi) * (vm_fuExtr.l(ttot,regi,"pebiolc","1") - (vm_Xport.l(ttot,regi,"pebiolc")-vm_Mport.l(ttot,regi,"pebiolc")));
+p21_taxrevBio0(ttot,regi) = p21_taxrevBioSust0(ttot,regi) + p21_taxrevBioEF0(ttot,regi); !! TO BE DELETED ONCE REMIND2 REPORTING IS ADJUSTED
+p21_implicitDiscRate0(ttot,regi) = 0; !! TO BE DELETED ONCE REMIND2 REPORTING IS ADJUSTED
 p21_taxemiMkt0(ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt) * vm_co2eqMkt.l(ttot,regi,emiMkt);
 p21_taxrevFlex0(ttot,regi)   =  sum(en2en(enty,enty2,te)$(teFlexTax(te)),
                                         - vm_flexAdj.l(ttot,regi,te) * vm_demSe.l(ttot,regi,enty,enty2,te));
