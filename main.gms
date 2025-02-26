@@ -1373,7 +1373,7 @@ $setGlobal cm_CCSmaxBound    off  !! def = off
 *** cm_33_EW_maxShareOfCropland
 *** limit the share of cropland on which rocks can be spread. Affects the maximum total amount of rocks weathering on fields.
 *** example: "GLO 1, LAM 0.5" limits amount of rocks weathering on cropland in LAM to 50% of max value if all LAM cropland were used.
-$setglobal cm_33_EW_maxShareOfCropland GLO 1 !! def = GLO 1
+$setglobal cm_33_EW_maxShareOfCropland GLO 0.5 !! def = GLO 0.5
 *** cm_33_GDP_netNegCDR_maxShare
 *** limit the expenses for net negative emissions based on share in GDP. Default is GLO 1, i.e. limit = total GDP
 *** example: "GLO 1, LAM 0.1" limits spending on net negative emissions to 10% of GDP for LAM
