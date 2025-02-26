@@ -791,8 +791,8 @@ q_emiCdrAll(t,regi)..
   !! 2b) plastics CDR -- landfilled waste from non-fossil feedstocks
   - sum((emi,emiMkt), 
       vm_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)) !! negative value
-  !! 2c) non-plastics materials CDR -- landfilled waste from non-fossil feedstocks 
-  + vm_nonFosNonPlastic_landfilled(t,regi) !! positive value
+  !! 2c) non-plastics materials CDR -- bound carbon from non-fossil feedstocks 
+  + vm_nonFosNonPlasticNonEmitted(t,regi) !! positive value
 ;
 
 
