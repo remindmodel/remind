@@ -330,5 +330,9 @@ pm_macCost(t,regi,emiMacSector(enty))
 p_macPE(ttot,regi,enty) = 0.0;
 p_macPE(ttot,regi,"pegas")$(ttot.val gt 2005) = s_MtCH4_2_TWa * 0.5 * (v_macBase.l(ttot,regi,"ch4coal")-vm_emiMacSector.l(ttot,regi,"ch4coal"));
 
+*** ACM initialise se-fe shares in CDR sector (from CDR module: dac, OAE, EW) from other sector se-fe shares
+*** This is necessary as hydrocarbon FE demand for CDR sector may be zero or small and then leads to solver issues
+v_shSeFeSector.l(ttot,regi,entySe,"fedie","CDR","ETS") =  v_shSeFeSector.l(ttot,regi,entySe,"fedie","trans","ES");
+v_shSeFeSector.l(ttot,regi,entySe,"fegas","CDR","ETS") =  v_shSeFeSector.l(ttot,regi,entySe,"fegas","indst","ETS");
 
 *** EOF ./core/presolve.gms
