@@ -296,7 +296,7 @@ all_te          "all energy technologies, including from modules"
         MeSyNGcc
         MeSyLiqcc
         MeSyH2
-        MeSyRo_Sol_greyh2
+        MeSyRo_Sol
         MeSyRo_Sol_greenh2
         MeSyRo_Sol_ccs
         MeSyRo_NG
@@ -321,16 +321,20 @@ all_te          "all energy technologies, including from modules"
         AmSyRo_H2
 
         MtOMtA
+        MtOMtAH2
         MtOMtA_Ro
+        MtOMtAH2_Ro
         FertProd
         FertProdH2
         FertProd_Ro
         FertProdH2_Ro
         MeToFinal
+        MeToFinalH2
         MeToFinal_Ro
+        MeToFinalH2_Ro
         AmToFinal
-        AmToFinal_Ro
         AmToFinalH2
+        AmToFinal_Ro
         AmToFinalH2_Ro
 *** PCV: technologies related to steel
         ironMine     "Mining of iron ore"
@@ -442,6 +446,7 @@ all_enty             "all types of quantities"
         HVC
         Fertilizer
         methanol
+        methanolH2
         ammonia
         ammoniaH2
         MethFinal
@@ -1296,11 +1301,13 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
         AmSyH2
 
         MtOMtA
+        MtOMtAH2
         FertProd
         FertProdH2
         AmToFinal
         AmToFinalH2
         MeToFinal
+        MeToFinalH2
 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -1403,7 +1410,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
   StCrLiq         "Steam cracking by Naphtha"
   StCrNG          "Steam cracking by Natural Gas"
   MTOMTA          "Methanol to Olefins and Aromatics"
-  FertProdH2      "Green Ammonia to Urea"
+  MTOMTAH2        "Methanol to Olefins and Aromatics with Green hydrogen"
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   bfcc            "Blast furnace CCS"

@@ -651,9 +651,11 @@ p37_specMatDem("ammonia","FertProd","standard")        = 17/14; !!TODOQZ Used to
 p37_specMatDem("ammoniaH2","FertProdH2","standard")        = 17/14;
 
 p37_specMatDem("methanol","MtOMtA","standard")        = 2.624; !!Dutta2019 Figure 2, Page 196
+p37_specMatDem("methanolH2","MtOMtAH2","standard")        = 2.624; !!Dutta2019 Figure 2, Page 196
 p37_specMatDem("ammonia","AmToFinal","standard")        = 1;
 p37_specMatDem("ammoniaH2","AmToFinalH2","standard")        = 1;
 p37_specMatDem("methanol","MeToFinal","standard")        = 1;
+p37_specMatDem("methanolH2","MeToFinalH2","standard")        = 1;
 
 p37_specMatDem("naphtha","StCrLiq","standard")        = 0.95 * 20.56 / (sm_TWa_2_MWh/sm_giga_2_non); !!Assume 95% is feedstock
 
@@ -704,8 +706,8 @@ p37_specFeDemTarget("feels","StCrNG","standard")  = 0.16 / (sm_TWa_2_MWh/sm_giga
 p37_specFeDemTarget("fehos","StCrLiq","standard")  = 19.3 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Spallina17 Table 5 95%feedstock
 p37_specFeDemTarget("feels","StCrLiq","standard")  = 0.26 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Spallina17 Table 5
 
-p37_specFeDemTarget("fesos","MeSySol","greyh2")  = 11.3 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
-p37_specFeDemTarget("feels","MeSySol","greyh2")  = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("fesos","MeSySol","standard")  = 11.3 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("feels","MeSySol","standard")  = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
 
 p37_specFeDemTarget("fesos","MeSySol","greenh2")  = 4.3 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Zhao Y, Energy Conversion and Management, 2022.Table 6
 p37_specFeDemTarget("feh2s","MeSySol","greenh2")  = 4.7 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Zhao Y, Energy Conversion and Management, 2022.Table 6
@@ -717,8 +719,8 @@ p37_specFeDemTarget("feels","MeSyNG","standard")    = 0.1 / (sm_TWa_2_MWh/sm_gig
 p37_specFeDemTarget("fehos","MeSyLiq","standard")  = 9.7 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4 Assume Feedstock is 20Mwh
 p37_specFeDemTarget("feels","MeSyLiq","standard")  = 0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4
 
-p37_specFeDemTarget("fesos","MeSySolcc","greyh2")  = 2.0 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
-p37_specFeDemTarget("feels","MeSySolcc","greyh2")    = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("fesos","MeSySolcc","standard")  = 2.0 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("feels","MeSySolcc","standard")    = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
 
 p37_specFeDemTarget("feels","MeSyNGcc","standard")  = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
 
@@ -746,6 +748,7 @@ p37_specFeDemTarget("feh2s","AmSyH2","standard")    = 6.0 / (sm_TWa_2_MWh/sm_gig
 p37_specFeDemTarget("feels","AmSyH2","standard")    = 0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: GrinbergDana16 Supplementary Table 4
 
 p37_specFeDemTarget("feels","MtOMtA","standard")    = 1.4 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Bazzanella17 Section 4.5.3
+p37_specFeDemTarget("feels","MtOMtAH2","standard")    = 1.4 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Bazzanella17 Section 4.5.3
 p37_specFeDemTarget("feels","FertProd","standard")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Palys23 Section 2.3, Page 6
 p37_specFeDemTarget("feels","FertProdH2","standard")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Palys23 Section 2.3, Page 6
 

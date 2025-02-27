@@ -150,7 +150,8 @@ $endif.no_calibration
   q37_prodMat(tall,all_regi,mat)                                                    "Production volume of processes equals material flow of output material"
   q37_prodMatPrim(tall,all_regi,mat)                                                "Production volume of processes equals Primary material flow of output material"
   q37_mat2ue(tall,all_regi,mat,all_in)                                              "Connect materials production to ue ces tree nodes"
-  q37_teMatShare(tall,all_regi,all_te,opmoPrc,mat)                                  "Constraining the share of chemical fossil fuel technologies based on historical data"
+  q37_teMatShareLow(tall,all_regi,all_te,opmoPrc,mat)                               "Low Constraining the share of chemical fossil fuel technologies based on historical data"
+  q37_teMatShareUp(tall,all_regi,all_te,opmoPrc,mat)                                "Up Constraining the share of chemical fossil fuel technologies based on historical data"
 
   q37_limitCapMat(tall,all_regi,all_te)                                             "Material-flow conversion is limited by capacities"
   q37_emiPrc(ttot,all_regi,all_enty,all_te,opmoPrc)                                 "Local industry emissions pre-capture; Only used as baseline for CCS [GtC/a]"
