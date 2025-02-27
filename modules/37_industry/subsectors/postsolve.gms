@@ -86,16 +86,15 @@ pm_IndstCO2Captured(ttot,regi,entySe,entyFe(entyFeCC37),secInd37,emiMkt)$(
 
 
 *** calculate share of sebio- and sesyn-based co2 captured
-pm_NonFos_IndCC_fraction0(ttot,regi,emiInd37) = 
-sum(secInd37$secInd37_2_emiInd37(secInd37,emiInd37), 
+pm_NonFos_IndCC_fraction0(ttot,regi,emiInd37)$(
+              sum(secInd37$secInd37_2_emiInd37(secInd37,emiInd37),
+                  (sum((entySe,entyFe,emiMkt),
+                        pm_IndstCO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt))))) 
+  = sum(secInd37$secInd37_2_emiInd37(secInd37,emiInd37), 
         sum( (entySe,entyFe, emiMkt)$(NOT (entySeFos(entySe))), 
-          pm_IndstCO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt)
-          ) 
-        / 
-        max((sum((entySe,entyFe,emiMkt), 
-            pm_IndstCO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt))), 
-            1e-100)     !! somehow need to ensure that not 0 
-        )
+          pm_IndstCO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt)) 
+    / (sum((entySe,entyFe,emiMkt), 
+          pm_IndstCO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt))))
 ;
 
 
