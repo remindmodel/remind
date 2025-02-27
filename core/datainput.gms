@@ -544,7 +544,7 @@ loop((ext_regi)$p_extRegiccsinjecrateRegi(ext_regi),
 ;
 $endif.c_ccsinjecrateRegi
 
-table fm_dataemiglob(all_enty,all_enty,all_te,all_enty)  "read-in of emissions factors co2,cco2"
+table f_dataemiglob(all_enty,all_enty,all_te,all_enty)  "read-in of emissions factors co2,cco2"
 $include "./core/input/generisdata_emi.prn"
 ;
 
@@ -596,35 +596,35 @@ loop(pe2se(entyPe,entySe,te)$(p_tech_co2capturerate(te)),
     if(p_tech_co2capturerate(te) ge 1,
 		  abort "Error: Inconsistent switch usage. A CO2 capture rate is greater than 1. Check c_tech_CO2capturerate.";
 	  );
-*** Alter CO2 capture rate in fm_dataemiglob
-*** fm_dataemiglob is given in GtC/ZJ
-    fm_dataemiglob(entyPe,entySe,te,"cco2") = p_tech_co2capturerate(te) * p_PECarriers_CarbonContent(entyPe) * s_zj_2_twa;
+*** Alter CO2 capture rate in f_dataemiglob
+*** f_dataemiglob is given in GtC/ZJ
+    f_dataemiglob(entyPe,entySe,te,"cco2") = p_tech_co2capturerate(te) * p_PECarriers_CarbonContent(entyPe) * s_zj_2_twa;
     if(sameAs(entyPe,"pebiolc"),
-      fm_dataemiglob(entyPe,entySe,te,"co2") = -fm_dataemiglob(entyPe,entySe,te,"cco2") ;
+      f_dataemiglob(entyPe,entySe,te,"co2") = -f_dataemiglob(entyPe,entySe,te,"cco2") ;
     else
-      fm_dataemiglob(entyPe,entySe,te,"co2") = p_PECarriers_CarbonContent(entyPe) - fm_dataemiglob(entyPe,entySe,te,"cco2") ;
+      f_dataemiglob(entyPe,entySe,te,"co2") = p_PECarriers_CarbonContent(entyPe) - f_dataemiglob(entyPe,entySe,te,"cco2") ;
 	);
   );
 );
-display fm_dataemiglob;
+display f_dataemiglob;
 $endif.tech_CO2capturerate
 
 *** CO2 capture rate of CCS technologies (new SSP5 assumptions)
 if (c_ccscapratescen eq 2,
-  fm_dataemiglob("pecoal","seel","igccc","co2")    = 0.2;
-  fm_dataemiglob("pecoal","seel","igccc","cco2")   = 25.9;
-  fm_dataemiglob("pecoal","seh2","coalh2c","co2")  = 0.2;
-  fm_dataemiglob("pecoal","seh2","coalh2c","cco2") = 25.9;
+  f_dataemiglob("pecoal","seel","igccc","co2")    = 0.2;
+  f_dataemiglob("pecoal","seel","igccc","cco2")   = 25.9;
+  f_dataemiglob("pecoal","seh2","coalh2c","co2")  = 0.2;
+  f_dataemiglob("pecoal","seh2","coalh2c","cco2") = 25.9;
 $ifthen "%c_SSP_forcing_adjust%" == "forcing_SSP5"
-  fm_dataemiglob("pegas","seel","ngccc","co2")  = 0.1;
-  fm_dataemiglob("pegas","seel","ngccc","cco2") = 15.2;
-  fm_dataemiglob("pegas","seh2","gash2c","co2")  = 0.1;
-  fm_dataemiglob("pegas","seh2","gash2c","cco2") = 15.2;
+  f_dataemiglob("pegas","seel","ngccc","co2")  = 0.1;
+  f_dataemiglob("pegas","seel","ngccc","cco2") = 15.2;
+  f_dataemiglob("pegas","seh2","gash2c","co2")  = 0.1;
+  f_dataemiglob("pegas","seh2","gash2c","cco2") = 15.2;
 $endif
 );
 *nb* specific emissions of transformation technologies (co2 in gtc/zj -> conv. gtc/twyr):
-fm_dataemiglob(enty,enty2,te,"co2")$pe2se(enty,enty2,te)       = 1/s_zj_2_twa * fm_dataemiglob(enty,enty2,te,"co2");
-fm_dataemiglob(enty,enty2,te,"cco2")                           = 1/s_zj_2_twa * fm_dataemiglob(enty,enty2,te,"cco2");
+f_dataemiglob(enty,enty2,te,"co2")$pe2se(enty,enty2,te)       = 1/s_zj_2_twa * f_dataemiglob(enty,enty2,te,"co2");
+f_dataemiglob(enty,enty2,te,"cco2")                           = 1/s_zj_2_twa * f_dataemiglob(enty,enty2,te,"cco2");
 
 table f_dataetaglob(tall,all_te)                      "global eta data"
 $include "./core/input/generisdata_varying_eta.prn"
@@ -655,16 +655,16 @@ $offdelim
 s_co2pipe_leakage = 0.01;
 
 loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
-    fm_dataemiglob(enty,enty2,te,"co2")  = fm_dataemiglob(enty,enty2,te,"co2") + fm_dataemiglob(enty,enty2,te,"cco2") * s_co2pipe_leakage ;
-    fm_dataemiglob(enty,enty2,te,"cco2") = fm_dataemiglob(enty,enty2,te,"cco2") * (1 - s_co2pipe_leakage );
+    f_dataemiglob(enty,enty2,te,"co2")  = f_dataemiglob(enty,enty2,te,"co2") + f_dataemiglob(enty,enty2,te,"cco2") * s_co2pipe_leakage ;
+    f_dataemiglob(enty,enty2,te,"cco2") = f_dataemiglob(enty,enty2,te,"cco2") * (1 - s_co2pipe_leakage );
 );
 
 *** Allocate emission factors to pm_emifac
 option pm_emifac:3:3:1;
-pm_emifac(ttot,regi,enty,enty2,te,"co2")$emi2te(enty,enty2,te,"co2")   = fm_dataemiglob(enty,enty2,te,"co2");
-pm_emifac(ttot,regi,enty,enty2,te,"cco2")$emi2te(enty,enty2,te,"cco2") = fm_dataemiglob(enty,enty2,te,"cco2");
+pm_emifac(ttot,regi,enty,enty2,te,"co2")$emi2te(enty,enty2,te,"co2")   = f_dataemiglob(enty,enty2,te,"co2");
+pm_emifac(ttot,regi,enty,enty2,te,"cco2")$emi2te(enty,enty2,te,"cco2") = f_dataemiglob(enty,enty2,te,"cco2");
 *JeS scale N2O energy emissions to EDGAR
-pm_emifac(ttot,regi,enty,enty2,te,"n2o")$emi2te(enty,enty2,te,"n2o") = 0.905 * fm_dataemiglob(enty,enty2,te,"n2o");
+pm_emifac(ttot,regi,enty,enty2,te,"n2o")$emi2te(enty,enty2,te,"n2o") = 0.905 * f_dataemiglob(enty,enty2,te,"n2o");
 
 ***JeS from IPCC http://www.ipcc-nggip.iges.or.jp/public/gp/bgp/2_2_Non-CO2_Stationary_Combustion.pdf:
 ***JeS CH4: 300 kg/TJ = 0.3 Mt/EJ * 31.536 EJ/TWa = 9.46 Mt /TWa
@@ -1411,7 +1411,7 @@ $if  "%cm_rcp_scen%" == "none"    sm_budgetCO2eqGlob = 20000.0000;
 display sm_budgetCO2eqGlob;
 ***-----------------------------------------------------------------------------
 
-p_datacs(regi,"peoil") = 0;   !! RP: 0 turn off the explicit calculation of non-energy use, as it is included in the oil total. Emission correction happens through rescaling of fm_dataemiglob
+p_datacs(regi,"peoil") = 0;   !! RP: 0 turn off the explicit calculation of non-energy use, as it is included in the oil total. Emission correction happens through rescaling of f_dataemiglob
 
 ***------------------------------------------------------------------------------------
 ***                                ESM  MAC data

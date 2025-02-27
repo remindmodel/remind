@@ -633,10 +633,17 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
     )
     !! energy emissions fuel extraction
   + v_emiEnFuelEx(t,regi,enty)$( sameas(emiMkt,"ETS") )
-    !! Industry CCS emissions
+    !! CO2 captured from Industry sector energy consumption
+    !! Needs to be subtracted as vm_emiTeDetailMkt assumes all fuel 
+    !! is burned without capture (same for CDR sector, plastics, feedstocks)
   - sum(emiInd37_fuel,
       vm_emiIndCCS(t,regi,emiInd37_fuel)
     )$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
+    !! CO2 captured from CDR sector energy consumption (OAE and DAC)
+  - sm_capture_rate_cdrmodule
+  * sum(te_ccs33,
+      vm_co2emi_cdrFE_beforeCapture(t, regi, te_ccs33)
+  )$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
     !! plastic waste incineration; can be positive (fossil non-ccs) or negative (bio/syn w/ CCS)
   + vm_wasteIncinerationEmiBalance(t,regi,enty,emiMkt)
     !! Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS
