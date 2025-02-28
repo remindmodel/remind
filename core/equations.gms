@@ -784,8 +784,8 @@ q_emiCdrAll(t,regi)..
   - vm_emiCdrTeDetail(t, regi, "oae_el")  !! negative value
   !! 4. energy-related CDR from CDR sector (from burning biogenic or synfuel + capture + storage)
   +  pm_emifac(t,regi,"segafos","fegas","tdfosgas","co2") * sm_capture_rate_cdrmodule
-      * (vm_demFESector_afterTax(t,regi,"segabio","fegas","cdr","ETS") !! FE biogas
-          + vm_demFESector_afterTax(t,regi,"segasyn","fegas","cdr","ETS")) !! FE syngas
+      * (vm_demFeSector_afterTax(t,regi,"segabio","fegas","cdr","ETS") !! FE biogas
+          + vm_demFeSector_afterTax(t,regi,"segasyn","fegas","cdr","ETS")) !! FE syngas
       !! multiply with ccs share 
       * v_ccsShare(t,regi) 
 
