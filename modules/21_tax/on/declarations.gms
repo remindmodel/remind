@@ -21,7 +21,6 @@ p21_taxrevSO20(ttot,all_regi)                                       "reference l
 p21_taxrevBioSust0(ttot,all_regi)                                   "reference level value of global sustainability tax on bioenergy"
 p21_taxrevBioEF0(ttot,all_regi)                                     "reference level value of emission-factor-based tax on bioenergy"
 p21_taxrevBio0(ttot,all_regi)                                       "reference level value of sum of emission-factor-based tax and global sustainability tax on bioenergy" !! TO BE DELETED ONCE REMIND2 REPORTING IS ADJUSTED
-p21_implicitDiscRate0(ttot,all_regi)                                "reference level value of implicit tax on energy efficient capital" !! TO BE DELETED ONCE REMIND2 REPORTING IS ADJUSTED
 p21_taxemiMkt0(ttot,all_regi,all_emiMkt)                            "reference level value of co2 emission taxes per emission market"
 p21_taxrevFlex0(ttot,all_regi)                                      "reference level value of flexibility tax"
 p21_taxrevImport0(ttot,all_regi,all_enty,tax_import_type_21)        "reference level value of energy import tax"
