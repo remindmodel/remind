@@ -1116,11 +1116,13 @@ $include "./core/input/f_maxProdGeothermal.cs3r"
 $offdelim
 ;
 
-pm_dataren(all_regi,"maxprod","1","geohdr") = 1e-5; !!minimal production potential
+*** Ensure that all regions have at least a minimum potential of 0.01 EJ to prevent infeasibilities.
+*** Also increase the read-in potential by a factor of 3 to allow 2030/2050 NPI capacity targets to be met. 
+*** The current potential is calculated as "5x the 2015 generation" - given that geohdr is still a nascent technology, allowing stronger upscaling seems justified. 
+*** Even after the rescaling, no region can produce more than 1.5EJ/yr
 
-pm_dataren(all_regi,"maxprod","1","geohdr")$f_maxProdGeothermal(all_regi,"maxprod") = sm_EJ_2_TWa * f_maxProdGeothermal(all_regi,"maxprod");
-*** FS: temporary fix: set minimum geothermal potential across all regions to 10 PJ (still negligible even in small regions) to get rid of infeasibilities
-pm_dataren(all_regi,"maxprod","1","geohdr")$(f_maxProdGeothermal(all_regi,"maxprod") <= 0.01) = sm_EJ_2_TWa * 0.01;
+pm_dataren(all_regi,"maxprod","1","geohdr") = sm_EJ_2_TWa * max(0.01 , 3 * f_maxProdGeothermal(all_regi,"maxprod") ) ;
+
 
 display p_datapot, pm_dataren;
 
