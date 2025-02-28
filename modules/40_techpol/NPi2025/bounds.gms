@@ -4,14 +4,14 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/40_techpol/NPi2018/bounds.gms
+*** SOF ./modules/40_techpol/NPi2025/bounds.gms
 
 
-** Léa to do: technologies still missing are "solar total" and "coal to electricity"
+*** Léa to do: technologies still missing are h2 to electricity and "coal to electricity"
 
-*Keep historical data until 2020 
-*AM the lowbound of solar and pv for 2030 to be taken from the NDCs (in GW), therefore multiplying by 0.001 for TW*
-*NPi bounds are only applied after 2020, as NPi scenarios should always have cm_startyear higher than 2020.
+*** Keep historical data until 2020 
+*** AM the lowbound of solar and pv for 2030 to be taken from the NDCs (in GW), therefore multiplying by 0.001 for TW*
+*** NPi bounds are only applied after 2020, as NPi scenarios should always have cm_startyear higher than 2020.
 vm_cap.lo(t,regi,"spv","1")$(t.val gt 2025) = p40_TechBound(t,regi,"spv")*0.001;
 vm_cap.lo(t,regi,"csp","1")$(t.val gt 2025) = p40_TechBound(t,regi,"csp")*0.001;   
 vm_cap.lo(t,regi,"tnrs","1")$(t.val ge 2025) = p40_TechBound(t,regi,"tnrs")*0.001;
@@ -28,5 +28,5 @@ vm_cap.lo(t,regi,"geohdr","1")$(t.val gt 2025) = p40_TechBound(t,regi,"geohdr")*
 
 display vm_cap.lo;
 
-*** EOF ./modules/40_techpol/NPi2018/bounds.gms
+*** EOF ./modules/40_techpol/NPi2025/bounds.gms
 

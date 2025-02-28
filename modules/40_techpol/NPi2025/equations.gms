@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/40_techpol/NPi2018/equations.gms
+*** SOF ./modules/40_techpol/NPi2025/equations.gms
 
 *' @equations
 
@@ -23,7 +23,7 @@ q40_windBound(t,regi)$(t.val gt 2025 AND p40_TechBound(t,regi,"wind") gt 0)..
 ;
 
   q40_FE_RenShare(t,regi)$(t.val ge 2025 AND sameas(regi,"EUR"))..
-*cb for EUR, renewable SE must be greater than lowCarbonshare times total SE
+***cb for EUR, renewable SE must be greater than lowCarbonshare times total SE
   ( sum(pe2se(enty,enty2,te)$(sameas(enty,"pegeo") OR sameas(enty,"pehyd") OR sameas(enty,"pewin")  OR sameas(enty,"pesol")  OR sameas(enty,"pebiolc") OR sameas(enty,"pebios") OR sameas(enty,"pebioil")), vm_prodSe(t,regi,enty,enty2,te))
   + sum(pc2te(enty,enty2,te,entySe(enty3))$peBio(enty),
       max(0, pm_prodCouple(regi,enty,enty2,te,enty3)) * vm_prodSe(t,regi,enty,enty2,te))
@@ -36,4 +36,4 @@ q40_windBound(t,regi)$(t.val gt 2025 AND p40_TechBound(t,regi,"wind") gt 0)..
 
 *' @stop
 
-*** EOF ./modules/40_techpol/NPi2018/equations.gms
+*** EOF ./modules/40_techpol/NPi2025/equations.gms

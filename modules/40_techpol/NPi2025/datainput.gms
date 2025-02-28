@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/40_techpol/NPi2018/datainput.gms
 
-Table f40_TechBound(ttot,all_regi,NPi_version,all_te) "Table for all NDC versions with NDC capacity targets (GW)"
+Table f40_TechBound(ttot,all_regi,NPi_version,all_te) "Table for all NPi versions with NPi capacity targets (GW)"
 $offlisting
 $ondelim
 $include "./modules/40_techpol/NPi2025/input/f40_NewClimate.cs3r"
@@ -43,6 +43,6 @@ p40_FE_RenShare(t,"EUR")$(t.val ge 2030)=min(t.val,0.425); !!Renewable Energy Di
 display p40_ElecBioBound;
 display p40_TechBound; !! good to see if the input is displayed correctly
 
-*** EOF ./modules/40_techpol/NPi2018/datainput.gms
+*** EOF ./modules/40_techpol/NPi2025/datainput.gms
 
 
