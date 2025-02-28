@@ -749,13 +749,10 @@ pm_cf(ttot,regi,"AmSyLiqcc") = 0.8;
 pm_cf(ttot,regi,"AmSyH2") = 0.8;
 
 pm_cf(ttot,regi,"MtOMtA") = 0.8;
-pm_cf(ttot,regi,"MtOMtAH2") = 0.8;
 pm_cf(ttot,regi,"FertProd") = 0.8;
 pm_cf(ttot,regi,"FertProdH2") = 0.8;
 pm_cf(ttot,regi,"MeToFinal") = 0.8;
-pm_cf(ttot,regi,"MeToFinalH2") = 0.8;
 pm_cf(ttot,regi,"AmToFinal") = 0.8;
-pm_cf(ttot,regi,"AmToFinalH2") = 0.8;
 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -1221,22 +1218,22 @@ loop(ttot$(ttot.val ge 2005),
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 !!  p_adj_seed_te(ttot,regi,"ChemElec")        = 0.50;
 !!  p_adj_seed_te(ttot,regi,"ChemH2")          = 0.25;
-  p_adj_seed_te(ttot,regi,"MeSySol")         = 0.05;  !! methanol tech QIANZHI
-  p_adj_seed_te(ttot,regi,"MeSyNG")          = 0.05;
-  p_adj_seed_te(ttot,regi,"MeSyLiq")         = 0.05;
+  p_adj_seed_te(ttot,regi,"MeSySol")         = 0.001;  !! methanol tech QIANZHI
+  p_adj_seed_te(ttot,regi,"MeSyNG")          = 0.001;
+  p_adj_seed_te(ttot,regi,"MeSyLiq")         = 0.001;
 !!  p_adj_seed_te(ttot,regi,"MeSySolcc")       = 0.10;  !! methanol tech QIANZHI
 !!  p_adj_seed_te(ttot,regi,"MeSyNGcc")        = 0.10;
 !!  p_adj_seed_te(ttot,regi,"MeSyLiqcc")       = 0.10;
 !!  p_adj_seed_te(ttot,regi,"MeSyH2")          = 0.10;
-  p_adj_seed_te(ttot,regi,"AmSyCoal")        = 0.05;  !! ammonia tech QIANZHI
-  p_adj_seed_te(ttot,regi,"AmSyNG")          = 0.05;
-  p_adj_seed_te(ttot,regi,"AmSyLiq")         = 0.05;
+  p_adj_seed_te(ttot,regi,"AmSyCoal")        = 0.001;  !! ammonia tech QIANZHI
+  p_adj_seed_te(ttot,regi,"AmSyNG")          = 0.001;
+  p_adj_seed_te(ttot,regi,"AmSyLiq")         = 0.001;
 !!  p_adj_seed_te(ttot,regi,"AmSyCoalcc")      = 0.10;  !! ammonia tech QIANZHI
 !!  p_adj_seed_te(ttot,regi,"AmSyNGcc")        = 0.10;
 !!  p_adj_seed_te(ttot,regi,"AmSyLiqcc")       = 0.10;
 !!  p_adj_seed_te(ttot,regi,"AmSyH2")          = 0.25;
-  p_adj_seed_te(ttot,regi,"StCrLiq")         = 0.05;
-  p_adj_seed_te(ttot,regi,"StCrNG")          = 0.05;
+  p_adj_seed_te(ttot,regi,"StCrLiq")         = 0.001;
+  p_adj_seed_te(ttot,regi,"StCrNG")          = 0.001;
 !!  p_adj_seed_te(ttot,regi,"MTOMTA")          = 0.10;
 !!  p_adj_seed_te(ttot,regi,"FertProdH2")      = 0.10;
 $endif.cm_subsec_model_chemicals

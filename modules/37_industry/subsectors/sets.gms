@@ -406,13 +406,10 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     AmSyH2
 
     MtOMtA
-    MtOMtAH2
     FertProd
     FertProdH2
     MeToFinal
-    MeToFinalH2
     AmToFinal
-    AmToFinalH2
 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -670,14 +667,11 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     AmSyLiqcc . standard
     AmSyH2 . standard
 
-    MtOMtA . standard
-    MtOMtAH2 . standard
+    MtOMtA . (standard,greenh2)
     FertProd . standard
     FertProdH2 . standard
-    MeToFinal . standard
-    MeToFinalH2 . standard
-    AmToFinal . standard
-    AmToFinalH2 . standard
+    MeToFinal . (standard,greenh2)
+    AmToFinal . (standard,greenh2)
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idr . (ng,h2)
@@ -712,11 +706,11 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     FertProd . standard  . ammonia
     FertProdH2 . standard  . ammoniaH2
     MtOMtA . standard  . methanol
-    MtOMtAH2 . standard  . methanolH2
+    MtOMtA . greenh2  . methanolH2
     MeToFinal . standard  . methanol
-    MeToFinalH2 . standard  . methanolH2
+    MeToFinal . greenh2  . methanolH2
     AmToFinal . standard  . ammonia
-    AmToFinalH2 . standard  . ammoniaH2
+    AmToFinal . greenh2  . ammoniaH2
 
     StCrLiq . standard  . naphtha
 $endif.cm_subsec_model_chemicals
@@ -749,14 +743,11 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
    AmSyLiq . standard . ammonia
    AmSyH2 . standard . ammoniaH2
 
-   MtOMtA . standard . HVC
-   MtOMtAH2 . standard . HVC
+   MtOMtA . (standard,greenh2) . HVC
    FertProd . standard . Fertilizer
    FertProdH2 . standard . Fertilizer
-   MeToFinal . standard . MethFinal
-   MeToFinalH2 . standard . MethFinal
-   AmToFinal . standard . AmmoFinal
-   AmToFinalH2 . standard . AmmoFinal
+   MeToFinal . (standard,greenh2) . MethFinal
+   AmToFinal . (standard,greenh2) . AmmoFinal
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    bf  . standard . pigiron
@@ -807,14 +798,11 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
    (AmSyLiq,AmSyLiqcc) . standard . ue_chemicals
    AmSyH2 . standard . ue_chemicals
 
-   MtOMtA . standard . ue_chemicals
-   MtOMtAH2 . standard . ue_chemicals
+   MtOMtA . (standard,greenh2) . ue_chemicals
    FertProd . standard . ue_chemicals
    FertProdH2 . standard . ue_chemicals
-   MeToFinal . standard . ue_chemicals
-   MeToFinalH2 . standard . ue_chemicals
-   AmToFinal . standard . ue_chemicals
-   AmToFinalH2 . standard . ue_chemicals
+   MeToFinal . (standard,greenh2) . ue_chemicals
+   AmToFinal . (standard,greenh2) . ue_chemicals
 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -878,13 +866,13 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
    AmSyH2 . standard . AmSyRo_H2
 
    MtOMtA . standard . MtOMtA_Ro
-   MtOMtAH2 . standard . MtOMtAH2_Ro
+   MtOMtA . greenh2 . MtOMtAH2_Ro
    FertProd . standard . FertProd_Ro
    FertProdH2 . standard . FertProdH2_Ro
    MeToFinal . standard . MeToFinal_Ro
-   MeToFinalH2 . standard . MeToFinal_Ro
+   MeToFinal . greenh2 . MeToFinal_Ro
    AmToFinal . standard . AmToFinal_Ro
-   AmToFinalH2 . standard . AmToFinalH2_Ro
+   AmToFinal . greenh2 . AmToFinalH2_Ro
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     eaf . sec . seceaf
@@ -945,13 +933,10 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     entydummy.entydummy.AmSyH2
 
     entydummy.entydummy.MtOMtA
-    entydummy.entydummy.MtOMtAH2    
     entydummy.entydummy.FertProd
     entydummy.entydummy.FertProdH2
     entydummy.entydummy.MeToFinal
-    entydummy.entydummy.MeToFinalH2
     entydummy.entydummy.AmToFinal
-    entydummy.entydummy.AmToFinalH2
 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -991,13 +976,11 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     chemicals . AmSyH2
 
     chemicals . MtOMtA
-    chemicals . MtOMtAH2
     chemicals . FertProd
     chemicals . FertProdH2
     chemicals . MeToFinal
-    chemicals . MeToFinalH2
     chemicals . AmToFinal
-    chemicals . AmToFinalH2
+    
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     steel . idr

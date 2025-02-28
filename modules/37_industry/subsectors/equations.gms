@@ -457,30 +457,30 @@ q37_prodMat(t,regi,mat)$( matOut(mat) ) ..
 *' Output material production
 ***------------------------------------------------------
 
-q37_prodMatPrim(t,regi,mat)$(matPrimChem(mat)) ..
-    v37_matFlowPrim(t,regi,mat)
+q37_prodMatPrim(ttot,regi,mat)$(matPrimChem(mat)) ..
+    v37_matFlowPrim(ttot,regi,mat)
   =e=
-    sum((tePrc, opmoPrc)$(tePrcPrim(tePrc, opmoPrc, mat)), vm_outflowPrc(t,regi,tePrc,opmoPrc));
+    sum((tePrc, opmoPrc)$(tePrcPrim(tePrc, opmoPrc, mat)), vm_outflowPrc(ttot,regi,tePrc,opmoPrc));
 ;
 
 ***------------------------------------------------------
 *' Output material production
 ***------------------------------------------------------
 
-q37_teMatShareLow(t,regi,tePrc,opmoPrc,mat)$(t.val gt 2020 AND tePrcPrim(tePrc,opmoPrc,mat)) ..
-    vm_outflowPrc(t,regi,tePrc,opmoPrc) 
-    * p37_teMatShareFOHist(regi,mat)
-  =g=
-    (p37_teMatShareHist(regi,tePrc,opmoPrc,mat)-0.3) 
-    * v37_matFlowPrim(t,regi,mat)
+q37_teMatShareLow(ttot,regi,tePrc,opmoPrc,mat)$(ttot.val gt 2020 
+    AND tePrcPrim(tePrc,opmoPrc,mat)) ..
+    sum(rlf,vm_deltaCap(ttot,regi,tePrc,rlf)) * v37_matFlowPrim(ttot-1,regi,mat)
+  =g= 
+    -0.3
+    * vm_outflowPrc(ttot-1,regi,tePrc,opmoPrc) 
 ;
 
-q37_teMatShareUp(t,regi,tePrc,opmoPrc,mat)$(t.val gt 2020 AND tePrcPrim(tePrc,opmoPrc,mat)) ..
-    vm_outflowPrc(t,regi,tePrc,opmoPrc) 
-    * p37_teMatShareFOHist(regi,mat)
-  =l=
-    (p37_teMatShareHist(regi,tePrc,opmoPrc,mat)+0.3) 
-    * v37_matFlowPrim(t,regi,mat)
+q37_teMatShareUp(ttot,regi,tePrc,opmoPrc,mat)$(ttot.val gt 2020 
+    AND tePrcPrim(tePrc,opmoPrc,mat)) ..
+    sum(rlf,vm_deltaCap(ttot,regi,tePrc,rlf)) * v37_matFlowPrim(ttot-1,regi,mat)
+  =l= 
+    0.3
+    * vm_outflowPrc(ttot-1,regi,tePrc,opmoPrc);
 ;
 
 ***------------------------------------------------------
