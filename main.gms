@@ -1156,7 +1156,7 @@ parameter
 *' * as every region has to climb up the global learning curve all by itself.
 *' * In combination with endogenous carbon pricing (e.g., in NDC), the deactivated Learningspillover will lead to higher overall carbon prices. Can be solved by setting carbonprice to exogenous (config).
 parameter
-  cm_nonPlasticFeedstockEmiShare      "Share of non-plastic carbon that gets emitted, rest is stored permanently, [share]"
+  cm_nonPlasticFeedstockEmiShare      "Share of non-plastic carbon that gets emitted  rest is stored permanently, [share]"
 ;
   cm_nonPlasticFeedstockEmiShare = 0.6; !! def 0.6 = 60 per cent of carbon in non-plastics gets emitted
 *'
