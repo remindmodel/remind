@@ -670,7 +670,7 @@ q_emiAllMkt(t,regi,emi,emiMkt) ..
          macSector2emiMkt(emiMacSector,emiMkt)),
       vm_emiMacSector(t,regi,emiMacSector)
     )
-    !! emissions from CDR module
+    !! negative emissions from CDR module before re-release from CCU
   + vm_emiCdr(t,regi,emi)$( sameas(emi,"co2") AND sameas(emiMkt,"ETS") )
     !! Exogenous emissions
   + pm_emiExog(t,regi,emi)$( sameas(emiMkt,"other") )
@@ -782,7 +782,13 @@ q_emiCdrAll(t,regi)..
   !! 3. gross ocean uptake from OAE (also excluding non-avoidable emi from calcination)
   - vm_emiCdrTeDetail(t, regi, "oae_ng")  !! negative value
   - vm_emiCdrTeDetail(t, regi, "oae_el")  !! negative value
-  
+  !! 4. energy-related CDR from CDR sector (from burning biogenic or synfuel + capture + storage)
+  +  pm_emifac(t,regi,"segafos","fegas","tdfosgas","co2") * sm_capture_rate_cdrmodule
+      * (vm_demFESector_afterTax(t,regi,"segabio","fegas","cdr","ETS") !! FE biogas
+          + vm_demFESector_afterTax(t,regi,"segasyn","fegas","cdr","ETS")) !! FE syngas
+      !! multiply with ccs share 
+      * v_ccsShare(t,regi) 
+
   !! ---- gross industry CDR
   !! 1. gross industry CCS-CDR  (from burning biogenic or synfuel + capturing + storing the co2)
   + sum(emiInd37$(not sameas(emiInd37,"co2cement_process")), 
