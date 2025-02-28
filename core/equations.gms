@@ -644,7 +644,7 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
   * sum(te_ccs33,
       vm_co2emi_cdrFE_beforeCapture(t, regi, te_ccs33)
   )$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
-    !! plastic waste incineration; can be positive (fossil non-ccs) or negative (bio/syn w/ CCS)
+    !! plastic waste incineration; net from positive (fossil non-ccs) and negative (bio/syn w/ CCS)
   + vm_wasteIncinerationEmiBalance(t,regi,enty,emiMkt)
     !! Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS
     !! capacity don't have the same lifetime
@@ -670,7 +670,7 @@ q_emiAllMkt(t,regi,emi,emiMkt) ..
          macSector2emiMkt(emiMacSector,emiMkt)),
       vm_emiMacSector(t,regi,emiMacSector)
     )
-    !! CDR from CDR module
+    !! negative emissions from CDR module before re-release from CCU
   + vm_emiCdr(t,regi,emi)$( sameas(emi,"co2") AND sameas(emiMkt,"ETS") )
     !! Exogenous emissions
   + pm_emiExog(t,regi,emi)$( sameas(emiMkt,"other") )
@@ -763,20 +763,49 @@ q_emiMac(t,regi,emiMac) ..
 *' All CDR emissions summed up
 ***--------------------------------------------------
 q_emiCdrAll(t,regi)..
-  vm_emiCdrAll(t,regi)
+  vm_emiCdrAll(t,regi) !! positive value
   =e=
-  ( !! BECC + DACC
-    sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail(t,regi,enty,enty2,te,enty3))
-    - vm_emiCdrTeDetail(t, regi, "dac") !! this is a negative value
-  )
-  * ( !! scaled by the fraction that gets stored geologically
-    sum(teCCS2rlf(te, rlf), vm_co2CCS(t, regi, "cco2", "ico2", te, rlf))
-    / (sum(teCCS2rlf(te, rlf), v_co2capture(t, regi, "cco2", "ico2", "ccsinje", rlf)) + sm_eps)
-  )
+  !! ---- net LUC CDR
   !! net negative emissions from co2luc
-  -  p_macBaseMagpieNegCo2(t,regi)
-  !! negative emissions from the cdr module that are not stored geologically
-  -  (vm_emiCdr(t,regi,"co2") - vm_emiCdrTeDetail(t, regi, "dac"))
+  - p_macBaseMagpieNegCo2(t,regi) !! negative value
+  
+  !! ---- gross non-industry CDR
+  !! 1. directly geologically stored gross atmospheric removal from pe2se-BECCS + DACCS
+  + ( !! pe2se-BECC 
+      sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail(t,regi,enty,enty2,te,enty3)) !! positive value
+        !! + gross DACC 
+      - sum(teCCS2rlf(te,rlf), vm_emiCdrTeDetail(t, regi, "dac"))) !! negative value
+      !! scaled by the fraction that gets stored geologically
+     *  v_ccsShare(t,regi) 
+  !! 2. gross CDR from Enhanced Weathering
+  - vm_emiCdrTeDetail(t, regi, "weathering") !! negative value
+  !! 3. gross ocean uptake from OAE (also excluding non-avoidable emi from calcination)
+  - vm_emiCdrTeDetail(t, regi, "oae_ng")  !! negative value
+  - vm_emiCdrTeDetail(t, regi, "oae_el")  !! negative value
+  !! 4. energy-related CDR from CDR sector (from burning biogenic or synfuel + capture + storage)
+  +  pm_emifac(t,regi,"segafos","fegas","tdfosgas","co2") * sm_capture_rate_cdrmodule
+      * (vm_demFeSector_afterTax(t,regi,"segabio","fegas","cdr","ETS") !! FE biogas
+          + vm_demFeSector_afterTax(t,regi,"segasyn","fegas","cdr","ETS")) !! FE syngas
+      !! multiply with ccs share 
+      * v_ccsShare(t,regi) 
+
+  !! ---- gross industry CDR
+  !! 1. gross industry CCS-CDR  (from burning biogenic or synfuel + capturing + storing the co2)
+  + sum(emiInd37$(not sameas(emiInd37,"co2cement_process")), 
+      vm_emiIndCCS(t,regi,emiInd37) !! positive value
+    !! multiply with bio/syn share from previous iteration (computationally too expensive to incl. in optimization)
+    * pm_NonFos_IndCC_fraction0(t,regi, emiInd37))
+    !! multiply with ccs share 
+    * v_ccsShare(t,regi) 
+  !! 2. Feedstocks
+  !! 2a) plastics CDR -- incinerated  waste that is captured + stored from  non-fossil feedstocks
+  + sum(emiMkt, 
+      vm_nonFosPlastic_incinCC(t,regi,emiMkt)  * v_ccsShare(t,regi)) !! positive value
+  !! 2b) plastics CDR -- landfilled waste from non-fossil feedstocks
+  - sum((emi,emiMkt), 
+      vm_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)) !! negative value
+  !! 2c) non-plastics materials CDR -- bound carbon from non-fossil feedstocks 
+  + vm_nonFosNonPlasticNonEmitted(t,regi) !! positive value
 ;
 
 
@@ -879,6 +908,13 @@ q_balCCUvsCCS(t,regi) ..
     sum(teCCS2rlf(te,rlf), vm_co2CCS(t,regi,"cco2","ico2",te,rlf))
   + sum(teCCU2rlf(te,rlf), vm_co2CCUshort(t,regi,"cco2","ccuco2short",te,rlf))
   + v_co2capturevalve(t,regi)
+;
+
+q_ccsShare(t,regi) ..
+  sum(teCCS2rlf(te, rlf), v_co2capture(t, regi, "cco2", "ico2", "ccsinje", rlf))  * 
+  v_ccsShare(t,regi) 
+  =e=
+  sum(teCCS2rlf(te, rlf), vm_co2CCS(t, regi, "cco2", "ico2", te, rlf))
 ;
 
 ***---------------------------------------------------------------------------

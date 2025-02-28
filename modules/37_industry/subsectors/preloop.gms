@@ -8,6 +8,7 @@
 
 *** initialize captured CO2 parameter
 pm_IndstCO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt) = 0;
+pm_NonFos_IndCC_fraction0(ttot,all_regi,emiInd37) = 0;
 
 *' calculate carbon content of feedstock for chemicals subsector as difference between
 *' combustion emissions factor of FE and industrial process emissions factor
