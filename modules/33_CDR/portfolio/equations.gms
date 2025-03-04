@@ -242,6 +242,36 @@ q33_OAE_co2emi_non_atm_calcination(t, regi, te_oae33)..
     - s33_OAE_chem_decomposition * vm_emiCdrTeDetail(t, regi, te_oae33)
     ;
 
+***---------------------------------------------------------------------------
+*'  Limit OAE by region based on the regions' share of the exclusive economic zone.
+*'  There are still many uncertainties about whether OAE would more likely be done
+*'  outside or inside EEZ. The equation is thus deactivated by default. 
+*'  Arguments in favor of OAE being done in EEZ, which can justify the distribution by EEZ
+*'  in case the cost-efficient allocation via cm_implicitQttyTrgt is not feasible: 
+*'  1. Tides lead to better mixing of the waters, thus more contact of the more alkaline 
+*'       surface waters with the atmosphere, leading to an expected higher CO2 uptake efficiency.
+*'  2. The generally lower water depth compared to the high seas helps OAE efficiency as the more alkaline 
+*'       surface waters don't sink to the deep oceans as quickly/ easily.
+*'  3. Legal situation: likely easier to create a legal framework for EEZs than high seas, 
+*'       where a significantly larger number of countries would need to agree
+*'  Potential issues to consider:
+*'  1. available EEZ-area is limited through other uses (fishing, offshore wind, marine protection etc.). 
+*'       Esp. marine protected areas are uncertain, as they are supposed to cover 30% of lgobal oceans by 2030 and are
+*'       currently mainly in EEZ areas. Some could, however, also be primary target for OAE, e.g. with ecosystems 
+*'       susceptible to ocean acidification like coral reefs.
+*'  2. Sufficiency of available area: depending on deployment depth and time-scales until the new equilibrium is reached,
+*'      the total EEZ area may not suffice for chosen uptake targets. At the default uptake efficiency of
+*'      1.2 tCO2/tCaO, 5 GtCO2 ocean uptake/yr corresponds ~ to distribution of CaO once a year
+*'      on the entire EEZ area at 2m depth.
+*'  3. Uptake efficiency differs by local conditions, and high-efficiency areas may lie outside EEZ areas.
+***---------------------------------------------------------------------------
+q33_OAE_EEZ_limit(t,regi)..
+    -p33_oae_eez_limit(regi) 
+    =l= 
+    sum(te_oae33,
+        vm_emiCdrTeDetail(t,regi, te_oae33))
+;
+
 
 ***---------------------------------------------------------------------------
 *' #### Equations limiting CDR in the entire model
