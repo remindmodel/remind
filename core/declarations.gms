@@ -392,10 +392,10 @@ v_costInv(ttot,all_regi)                             "investment costs"
 vm_costTeCapital(ttot,all_regi,all_te)               "investment costs"
 vm_costAddTeInv(tall,all_regi,all_te,emi_sectors)    "additional sector-specific investment cost of demand-side transformation"
 
-vm_co2CCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)       "all different ccs. [GtC/a]"
-
-v_co2capture(ttot,all_regi,all_enty,all_enty,all_te,rlf)   "all captured CO2. [GtC/a]"
+v_co2capture(ttot,all_regi,all_enty,all_enty,all_te,rlf)    "all captured CO2. [GtC/a]"
 v_co2capturevalve(ttot,all_regi)                            "CO2 emitted right after capture [GtC/a] (in q_balCCUvsCCS to account for different lifetimes of capture and CCU/CCS te and capacities)"
+vm_co2CCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)       "all geologically stored co2 [GtC/a]"
+v_ccsShare(ttot,all_regi)                                 "fraction of captured CO2 that is stored geologically"
 
 v_prodUe (ttot,all_regi,all_enty,all_enty,all_te)    "Useful energy production [TWa]"
 
@@ -413,7 +413,7 @@ v_shSeFe(ttot,all_regi,all_enty)                     "share of energy carrier su
 v_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "share of energy carrier subtype in final energy demand of the aggregated carrier type per sector/emiMarket combination (eg 'the share of bio-based FE liquids in all FE liquids used in ETS-covered transport') [0..1]"
 v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids in sector final energy [0..1]"
 
-vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
+vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions; net for LUC gross for all other"
 
 v_changeProdStartyearAdj(ttot,all_regi,all_te)       "Absolute effect size of changing output with respect to the reference run for each te"
 vm_changeProdStartyearCost(ttot,all_regi,all_te)     "Costs for changing output with respect to the reference run for each te"
@@ -509,6 +509,7 @@ q_emiCdrAll(ttot,all_regi)                           "summing over all CDR emiss
 
 q_balcapture(ttot,all_regi,all_enty,all_enty,all_te)  "balance equation for carbon capture"
 q_balCCUvsCCS(ttot,all_regi)                          "balance equation for captured carbon to CCU or CCS or valve"
+q_ccsShare(ttot,all_regi)                             "calculate the share of captured CO2 that is stored geologically"
 
 q_limitSo2(ttot,all_regi)                             "prevent SO2 from rising again after 2050"
 

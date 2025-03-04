@@ -37,7 +37,7 @@ if (length(missingVariables) > 0) message("Check piamInterfaces::variableInfo('v
 
 checkMappings <- list( # list(mappings, summationsFile, skipBunkers)
   list(c("NAVIGATE", "ELEVATE"), "NAVIGATE", FALSE),
-  list("ScenarioMIP", NULL, FALSE)
+  list("ScenarioMIP", "ScenarioMIP", FALSE)
 )
 
 for (i in seq_along(checkMappings)) {

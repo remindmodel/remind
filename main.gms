@@ -1169,7 +1169,7 @@ parameter
 *' * as every region has to climb up the global learning curve all by itself.
 *' * In combination with endogenous carbon pricing (e.g., in NDC), the deactivated Learningspillover will lead to higher overall carbon prices. Can be solved by setting carbonprice to exogenous (config).
 parameter
-  cm_nonPlasticFeedstockEmiShare      "Share of non-plastic carbon that gets emitted, rest is stored permanently, [share]"
+  cm_nonPlasticFeedstockEmiShare      "Share of non-plastic carbon that gets emitted  rest is stored permanently, [share]"
 ;
   cm_nonPlasticFeedstockEmiShare = 0.6; !! def 0.6 = 60 per cent of carbon in non-plastics gets emitted
 *'
@@ -1205,6 +1205,12 @@ $setglobal cm_rcp_scen  rcp45         !! def = "rcp45"  !! regexp = none|rcp20|r
 *' *  (2023_uncond): all NDCs independent of international financial support published until December 31, 2023
 *' *  Other supported years are 2022, 2021 and 2018, always containing NDCs published until December 31 of that year
 $setglobal cm_NDC_version  2024_cond    !! def = "2024_cond"  !! regexp = 20(18|2[1-4])_(un)?cond
+
+*' cm_NPi_version            "choose version year of NPi targets for min and max targets in the form of conditional vs. unconditional"
+*' *  (2024_cond):   minimum technology targets are included from NewClimate latest policy modeling protocol in 2025
+*' *  (2024_uncond): maximal technology targets are included from NewClimate latest policy modeling protocol in 2025
+$setglobal cm_NPi_version  2025_cond    !! def = "2025_cond"  !! regexp = 2025_(un)?cond
+
 *' cm_netZeroScen     "choose scenario of net zero targets of netZero realization of module 46_carbonpriceRegi"
 *'
 *'  (NGFS_v4):        settings used for NGFS v4, 2023
@@ -1386,7 +1392,7 @@ $setGlobal cm_CCSmaxBound    off  !! def = off
 *** cm_33_EW_maxShareOfCropland
 *** limit the share of cropland on which rocks can be spread. Affects the maximum total amount of rocks weathering on fields.
 *** example: "GLO 1, LAM 0.5" limits amount of rocks weathering on cropland in LAM to 50% of max value if all LAM cropland were used.
-$setglobal cm_33_EW_maxShareOfCropland GLO 1 !! def = GLO 1
+$setglobal cm_33_EW_maxShareOfCropland GLO 0.5 !! def = GLO 0.5
 *** cm_33_GDP_netNegCDR_maxShare
 *** limit the expenses for net negative emissions based on share in GDP. Default is GLO 1, i.e. limit = total GDP
 *** example: "GLO 1, LAM 0.1" limits spending on net negative emissions to 10% of GDP for LAM

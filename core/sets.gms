@@ -60,6 +60,8 @@ all_demScen    "all possible demand scenarios"
     SSP2_demRedStrong "edget internal demScen, might be removed soon"
     SSP2_demRedWeak
     SSP2_highDemDEU   "High-demand scenario in industry and transport for Germany, rest of the world has SSP2 standard demand trajectories"
+    SSP2IndiaMedium
+    SSP2IndiaHigh
 /
 
 all_SSP_forcing_adjust  "all possible forcing targets and budgets according to SSP scenario such that magicc forcing meets the target"
@@ -1012,6 +1014,10 @@ sets
     2022_cond, 2022_uncond,
     2023_cond, 2023_uncond,
     2024_cond, 2024_uncond
+  /
+  NPi_version "NPi data version for NPi realizations of 40_techpol and 45_carbonprice"
+  /
+    2025_cond, 2025_uncond
   /
 ;
 
