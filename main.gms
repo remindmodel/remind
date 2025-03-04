@@ -352,7 +352,7 @@ $setglobal CCU  on      !! def = on
 *' * (NDC): Technology targets for 2030 for spv,windon,tnrs.
 *' * (NPi): Reference technology targets, mostly already enacted (N)ational (P)olicies (i)mplemented, mostly for 2020
 *' * (EVmandates): mandate for electric vehicles - used for UBA project
-$setglobal techpol  NPi2018           !! def = NPi2018
+$setglobal techpol  NPi2025           !! def = NPi2025
 *'---------------------    41_emicapregi  ----------------------------------------
 *'
 *' * (none): no regional emission caps
