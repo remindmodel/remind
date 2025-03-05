@@ -749,6 +749,7 @@ pm_cf(ttot,regi,"AmSyLiqcc") = 0.8;
 pm_cf(ttot,regi,"AmSyH2") = 0.8;
 
 pm_cf(ttot,regi,"MtOMtA") = 0.8;
+pm_cf(ttot,regi,"MtOMtAH2") = 0.8;
 pm_cf(ttot,regi,"FertProd") = 0.8;
 pm_cf(ttot,regi,"FertProdH2") = 0.8;
 pm_cf(ttot,regi,"MeToFinal") = 0.8;
@@ -1234,7 +1235,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 !!  p_adj_seed_te(ttot,regi,"AmSyH2")          = 0.25;
   p_adj_seed_te(ttot,regi,"StCrLiq")         = 0.001;
   p_adj_seed_te(ttot,regi,"StCrNG")          = 0.001;
-!!  p_adj_seed_te(ttot,regi,"MTOMTA")          = 0.10;
+  p_adj_seed_te(ttot,regi,"MTOMTA")          = 0.001;
 !!  p_adj_seed_te(ttot,regi,"FertProdH2")      = 0.10;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"

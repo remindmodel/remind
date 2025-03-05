@@ -321,6 +321,7 @@ all_te          "all energy technologies, including from modules"
         AmSyRo_H2
 
         MtOMtA
+        MtOMtAH2
         MtOMtA_Ro
         MtOMtAH2_Ro
         FertProd
@@ -1298,6 +1299,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
         AmSyH2
 
         MtOMtA
+        MtOMtAH2
         FertProd
         FertProdH2
         AmToFinal

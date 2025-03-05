@@ -651,7 +651,7 @@ p37_specMatDem("ammonia","FertProd","standard")        = 17/14; !!TODOQZ Used to
 p37_specMatDem("ammoniaH2","FertProdH2","standard")        = 17/14;
 
 p37_specMatDem("methanol","MtOMtA","standard")        = 2.624; !!Dutta2019 Figure 2, Page 196
-p37_specMatDem("methanolH2","MtOMtA","greenh2")        = 2.624; !!Dutta2019 Figure 2, Page 196
+p37_specMatDem("methanolH2","MtOMtAH2","standard")        = 2.624; !!Dutta2019 Figure 2, Page 196
 p37_specMatDem("ammonia","AmToFinal","standard")        = 1;
 p37_specMatDem("ammoniaH2","AmToFinal","greenh2")        = 1;
 p37_specMatDem("methanol","MeToFinal","standard")        = 1;
@@ -748,7 +748,7 @@ p37_specFeDemTarget("feh2s","AmSyH2","standard")    = 6.0 / (sm_TWa_2_MWh/sm_gig
 p37_specFeDemTarget("feels","AmSyH2","standard")    = 0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: GrinbergDana16 Supplementary Table 4
 
 p37_specFeDemTarget("feels","MtOMtA","standard")    = 1.4 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Bazzanella17 Section 4.5.3
-p37_specFeDemTarget("feels","MtOMtA","greenh2")    = 1.4 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Bazzanella17 Section 4.5.3
+p37_specFeDemTarget("feels","MtOMtAH2","standard")    = 1.4 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Bazzanella17 Section 4.5.3
 p37_specFeDemTarget("feels","FertProd","standard")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Palys23 Section 2.3, Page 6
 p37_specFeDemTarget("feels","FertProdH2","standard")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Palys23 Section 2.3, Page 6
 
@@ -826,7 +826,8 @@ Execute_Loadpoint "input" pm_FEPrice = pm_FEPrice;
 
 loop(t$(t.val > 2020),
   loop(all_regi,
-    p37_priceMat(t,all_regi,"naphtha") = -0.5 * pm_FEPrice(t,all_regi,"fehos","indst","ETS");
+    p37_priceMat(t,all_regi,"naphtha") = -0.4 * pm_FEPrice(t,all_regi,"fehos","indst","ETS");
+    p37_priceMat(t,all_regi,"co2f") = 10 * 0.3048 * (t.val-2024) ** (-0.623) ; !! Mahdi Fasihi 2024
   );
 );
 $endif.cm_subsec_model_chemicals
@@ -952,7 +953,6 @@ loop((t,regi,ppfUePrc(in)),
 
 *** --------------------------------
 p37_teMatShareHist(all_regi,tePrc,opmoPrc,mat) = 0.;
-p37_teMatShareFOHist(all_regi,mat) = 0.;
 
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 loop(all_regi(regi),
@@ -966,7 +966,7 @@ loop(all_regi(regi),
         );
       );
     );
-p37_teMatShareFOHist(regi,mat) = sum(tePrcFOopmoPrc(tePrc,opmoPrc),p37_teMatShareHist(regi,tePrc,opmoPrc,mat));
+
 $endif.cm_subsec_model_chemicals
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"

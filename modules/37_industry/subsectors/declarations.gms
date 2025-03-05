@@ -36,7 +36,6 @@ Parameters
   p37_ueHistTmp(tall,all_regi)                                                 "TODO"
   p37_demFeRatio(tall,all_regi,all_in)                                         "Ratio of historic Fe demand and Fe demand calculated from historic production and BAT specific demand"
   p37_teMatShareHist(all_regi,all_te,opmoPrc,mat)                              "Share that a tePrc/opmoPrc historically contibrutes to production of a matFin"
-  p37_teMatShareFOHist(all_regi,mat)                                           "Share that a tePrc/opmoPrc historically contibrutes to production of a Fossil mat"
   p37_captureRate(all_te)                                                      "Capture rate of CCS technology"
   p37_selfCaptureRate(all_te)                                                  "Share of emissions from fossil fuels used for a CCS process which are captured by the CCS process itself"
   p37_priceMat(tall,all_regi,all_enty)                                                  "Prices of external material input [US$/kg] = [trn$US/Gt]"
@@ -148,10 +147,9 @@ $endif.no_calibration
   !! process-based implementation
   q37_demMatPrc(tall,all_regi,mat)                                                  "Material demand of processes"
   q37_prodMat(tall,all_regi,mat)                                                    "Production volume of processes equals material flow of output material"
-  q37_prodMatPrim(tall,all_regi,mat)                                                "Production volume of processes equals Primary material flow of output material"
   q37_mat2ue(tall,all_regi,mat,all_in)                                              "Connect materials production to ue ces tree nodes"
-  q37_teMatShareLow(tall,all_regi,all_te,opmoPrc,mat)                               "Low Constraining the share of chemical fossil fuel technologies based on historical data"
-  q37_teMatShareUp(tall,all_regi,all_te,opmoPrc,mat)                                "Up Constraining the share of chemical fossil fuel technologies based on historical data"
+  q37_teMatShareLow(tall,all_regi,all_te,opmoPrc)                                   "Low Constraining the share of chemical fossil fuel technologies based on historical data"
+  q37_teMatShareUp(tall,all_regi,all_te,opmoPrc)                                    "Up Constraining the share of chemical fossil fuel technologies based on historical data"
 
   q37_limitCapMat(tall,all_regi,all_te)                                             "Material-flow conversion is limited by capacities"
   q37_emiPrc(ttot,all_regi,all_enty,all_te,opmoPrc)                                 "Local industry emissions pre-capture; Only used as baseline for CCS [GtC/a]"

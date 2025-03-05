@@ -181,12 +181,12 @@ omf                    0.05        0.05          0.05         0.05        0.05  
 constrTme                 1           1             1            1           1            1
 lifetime                 25          25            25           25          25           25
 
-+                    MtOMtA    FertProd   FertProdH2    AmToFinal    MeToFinal
++                    MtOMtA    MtOMtAH2    FertProd   FertProdH2    AmToFinal    MeToFinal
 !! documentation & sources: see below
-inco0                  1000         500          500          500          500        
-omf                    0.06        0.06         0.06         0.06         0.06
-constrTme                 3           3            3            3            3 
-lifetime                 30          30           30           30           30
+inco0                   500         500         500          500          500          500        
+omf                   0.025       0.025        0.06         0.06         0.06         0.06
+constrTme                 3           3           3            3            3            3 
+lifetime                 30          30          30           30           30           30
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 +                     bf         bof         idr         eaf

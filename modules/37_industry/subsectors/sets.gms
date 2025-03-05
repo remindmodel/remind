@@ -406,6 +406,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     AmSyH2
 
     MtOMtA
+    MtOMtAH2
     FertProd
     FertProdH2
     MeToFinal
@@ -651,7 +652,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     StCrNG . standard
     StCrLiq . standard
 
-    MeSySol . (greyh2,greenh2)  !! methanol tech QIANZHI
+    MeSySol . (standard,greenh2)  !! methanol tech QIANZHI
     MeSyNG . standard
     MeSyLiq . standard
     MeSySolcc . standard
@@ -667,7 +668,8 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     AmSyLiqcc . standard
     AmSyH2 . standard
 
-    MtOMtA . (standard,greenh2)
+    MtOMtA . standard
+    MtOMtAH2 . standard
     FertProd . standard
     FertProdH2 . standard
     MeToFinal . (standard,greenh2)
@@ -683,30 +685,13 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-tePrcFOopmoPrc(all_te,opmoPrc)   "Mapping of technologies onto available operation modes"
-  /
-$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-    StCrNG . standard
-    StCrLiq . standard
-    MtOMtA . standard
-
-    MeSySol . greyh2  !! methanol tech QIANZHI
-    MeSyNG . standard
-    MeSyLiq . standard
-
-    AmSyCoal . standard !! ammonia tech QIANZHI
-    AmSyNG . standard
-    AmSyLiq . standard
-$endif.cm_subsec_model_chemicals
-  /
-
 tePrc2matIn(all_te,opmoPrc,mat)   "Mapping of technologies onto input materials"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     FertProd . standard  . ammonia
     FertProdH2 . standard  . ammoniaH2
     MtOMtA . standard  . methanol
-    MtOMtA . greenh2  . methanolH2
+    MtOMtAH2 . standard  . methanolH2
     MeToFinal . standard  . methanol
     MeToFinal . greenh2  . methanolH2
     AmToFinal . standard  . ammonia
@@ -733,17 +718,18 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
    StCrNG . standard . HVC
    StCrLiq . standard . HVC
 
-   MeSySol   . (greyh2,greenh2) . methanol
+   MeSySol   . (standard,greenh2) . methanol
    MeSyNG    . standard     . methanol
    MeSyLiq   . standard     . methanol
-   MeSyH2    . standard     . methanol
+   MeSyH2    . standard     . methanolH2
 
    AmSyCoal . standard . ammonia
    AmSyNG . standard . ammonia
    AmSyLiq . standard . ammonia
    AmSyH2 . standard . ammoniaH2
 
-   MtOMtA . (standard,greenh2) . HVC
+   MtOMtA . standard . HVC
+   MtOMtAH2 . standard . HVC
    FertProd . standard . Fertilizer
    FertProdH2 . standard . Fertilizer
    MeToFinal . (standard,greenh2) . MethFinal
@@ -758,21 +744,21 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-tePrcPrim(all_te,opmoPrc,mat)   "Mapping of industry process technologies onto their output materials"
+tePrcPrim(all_te,opmoPrc)   "Mapping of industry process technologies onto their output materials"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 
-   StCrNG . standard . HVC
-   StCrLiq . standard . HVC
-   MTOMTA . standard . HVC
+   StCrNG . standard
+   StCrLiq . standard
+   MTOMTA . standard
 
-   MeSySol   . standard    . methanol
-   MeSyNG    . standard  . methanol
-   MeSyLiq   . standard   . methanol
+   MeSySol   . standard
+   MeSyNG    . standard
+   MeSyLiq   . standard
 
-   AmSyCoal . standard . ammonia
-   AmSyNG . standard . ammonia
-   AmSyLiq . standard . ammonia
+   AmSyCoal . standard
+   AmSyNG . standard
+   AmSyLiq . standard
 
 $endif.cm_subsec_model_chemicals
   /
@@ -787,7 +773,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
    StCrNG . standard . ue_chemicals
    StCrLiq . standard . ue_chemicals
 
-   MeSySol             . (greyh2,greenh2)     . ue_chemicals !! methanol tech QIANZHI
+   MeSySol             . (standard,greenh2)     . ue_chemicals !! methanol tech QIANZHI
    MeSySolcc           . standard           . ue_chemicals
    MeSyNG   . standard         . ue_chemicals
    (MeSyLiq,MeSyLiqcc) . standard         . ue_chemicals
@@ -798,7 +784,8 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
    (AmSyLiq,AmSyLiqcc) . standard . ue_chemicals
    AmSyH2 . standard . ue_chemicals
 
-   MtOMtA . (standard,greenh2) . ue_chemicals
+   MtOMtA . standard . ue_chemicals
+   MtOMtAH2 . standard . ue_chemicals
    FertProd . standard . ue_chemicals
    FertProdH2 . standard . ue_chemicals
    MeToFinal . (standard,greenh2) . ue_chemicals
@@ -843,8 +830,8 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
    StCrLiq . standard . StCrLiq_Ro
 
    MeSySol . greenh2 . MeSyRo_Sol_greenh2 !! methanol tech QIANZHI
-   MeSySol . greyh2 . MeSyRo_Sol
-   MeSySol . greyh2 . MeSyRo_Sol_ccs
+   MeSySol . standard . MeSyRo_Sol
+   MeSySol . standard . MeSyRo_Sol_ccs
    MeSyNG  . standard  . MeSyRo_NG
    MeSyNG  . standard  . MeSyRo_NG_ccs
    MeSyLiq . standard  . MeSyRo_Liq
@@ -866,7 +853,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
    AmSyH2 . standard . AmSyRo_H2
 
    MtOMtA . standard . MtOMtA_Ro
-   MtOMtA . greenh2 . MtOMtAH2_Ro
+   MtOMtAH2 . standard . MtOMtAH2_Ro
    FertProd . standard . FertProd_Ro
    FertProdH2 . standard . FertProdH2_Ro
    MeToFinal . standard . MeToFinal_Ro
@@ -933,6 +920,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     entydummy.entydummy.AmSyH2
 
     entydummy.entydummy.MtOMtA
+    entydummy.entydummy.MtOMtAH2
     entydummy.entydummy.FertProd
     entydummy.entydummy.FertProdH2
     entydummy.entydummy.MeToFinal
@@ -976,6 +964,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     chemicals . AmSyH2
 
     chemicals . MtOMtA
+    chemicals . MtOMtAH2
     chemicals . FertProd
     chemicals . FertProdH2
     chemicals . MeToFinal
