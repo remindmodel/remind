@@ -38,7 +38,8 @@ p40_CoalBound(t,iso_regi)             = 0;
 p40_FE_RenShare(t,iso_regi)           = 0;
 
 *** EU lower bound on renewable share in gross  final energy (=secondary energy in REMIND)
-p40_FE_RenShare(t,"EUR")$(t.val ge 2030)=min(t.val,0.425); !!Renewable Energy Directive EU/2023/2413
+*p40_FE_RenShare(t,"EUR")$(t.val ge 2030)=min(t.val,0.425); !!Renewable Energy Directive EU/2023/2413
+p40_FE_RenShare(t,"EUR")$(t.val ge 2030) = max(p40_FE_RenShare(t,"EUR"), 0.425);
 
 display p40_ElecBioBound;
 display p40_TechBound; !! good to see if the input is displayed correctly
