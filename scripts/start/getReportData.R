@@ -12,32 +12,37 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
   require(quitte,   quietly = TRUE,warn.conflicts =FALSE)
   require(readr,    quietly = TRUE,warn.conflicts =FALSE)
   
-  .bioenergy_price <- function(mag){
-    notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
-    if("Demand|Bioenergy|++|2nd generation (EJ/yr)" %in% getNames(mag)) {
-      # MAgPIE 4
-      out <- mag[,,"Prices|Bioenergy (US$2017/GJ)"]*0.0315576 # with transformation factor from US$2017/GJ to US$2017/Wa
-    } else {
-      # MAgPIE 3
-      out <- mag[,,"Price|Primary Energy|Biomass (US$2017/GJ)"]*0.0315576 # with transformation factor from US$2017/GJ to US$2017/Wa
-    }
-    out["JPN",is.na(out["JPN",,]),] <- 0
-    tmp <- out
-    dimnames(out)[[3]] <- NULL #Delete variable name to prevent it from being written into output file
-    write.magpie(out[notGLO,,],paste0("./modules/30_biomass/",inputpath_mag,"/input/p30_pebiolc_pricemag_coupling.csv"),file_type="csvr")
-    return(tmp[notGLO,,])
-  }
-  
-  .bioenergy_price_new <- function(mag, path_to_report, inputpath_mag) {
+  .bioenergy_price <- function(mag, file, path_to_report) {
     
     mag2rem <- tribble(
       ~mag,                                ~factorMag2Rem,
       "Prices|Bioenergy", 0.0315576
     )
+
+    rem <- mag |>
+      inner_join(mag2rem, by = c("variable" = "mag"))    |> # combine tables keeping relevant variables only
+      mutate(value = value * factorMag2Rem)              |> # apply unit conversion
+      mutate(value = round(value, digits = 11))          |> # limit number of decimals
+      relocate(period, .before = region)                 |> # put period in front of region for proper order for GAMS import
+      filter(period >= 2005, region != "World")          |> # keep REMIND time horizon and remove World region
+      select(period, region, value)                      |> # keep relevant columns only
+      tidyr::pivot_wider(names_from = region, values_from = value) |> # make 2D-table
+      readr::write_csv(file = file, col_names = TRUE)
     
-    filename <- paste0("./modules/30_biomass/",inputpath_mag,"/input/p30_pebiolc_pricemag_coupling_new.csv")
+    # in the old function NAs used to be filtered. Let's try without and re-introduce if occurring again.
+    # out["JPN",is.na(out["JPN",,]),] <- 0
     
-    mag <- as.quitte(mag)
+    write(paste0("*** EOF ", file ," ***"), file = file, append = TRUE)
+    
+    return(rem)
+  }
+
+  .bioenergy_production <- function(mag, file, path_to_report) {
+    
+    mag2rem <- tribble(
+      ~mag,                                ~factorMag2Rem,
+      "Demand|Bioenergy|2nd generation|++|Bioenergy crops", 1/31.536 # EJ to TWa
+    )
     
     rem <- mag |>
       inner_join(mag2rem, by = c("variable" = "mag"))    |> # combine tables keeping relevant variables only
@@ -47,115 +52,18 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
       filter(period >= 2005, region != "World")          |> # keep REMIND time horizon and remove World region
       select(period, region, value)                      |> # keep relevant columns only
       tidyr::pivot_wider(names_from = region, values_from = value) |> # make 2D-table
-      readr::write_csv(file = filename, col_names = TRUE)
+      readr::write_csv(file = file, col_names = TRUE)
     
-    write(paste0("*** EOF ", filename ," ***"), file = filename, append = TRUE)
+    # in the old function NAs and negative values used to be filtered. Let's try without and re-introduce if occurring again.
+    # out["JPN",is.na(out["JPN",,]),] <- 0
+    # out[which(out<0)] <- 0 # set negative values to zero since they cause errors in GMAS power function
+    
+    write(paste0("*** EOF ", file ," ***"), file = file, append = TRUE)
     
     return(rem)
   }
-
-  .bioenergy_production <- function(mag){
-    notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
-    if("Demand|Bioenergy|2nd generation|++|Bioenergy crops (EJ/yr)" %in% getNames(mag)) {
-      # MAgPIE 4
-      out <- mag[,,"Demand|Bioenergy|2nd generation|++|Bioenergy crops (EJ/yr)"]/31.536 # EJ to TWa
-    } else {
-      # MAgPIE 3
-      out <- mag[,,"Primary Energy Production|Biomass|Energy Crops (EJ/yr)"]/31.536 # EJ to TWa
-    }
-    out[which(out<0)] <- 0 # set negative values to zero since they cause errors in GMAS power function
-    out["JPN",is.na(out["JPN",,]),] <- 0
-    tmp <- out
-    dimnames(out)[[3]] <- NULL
-    write.magpie(out[notGLO,,],paste0("./modules/30_biomass/",inputpath_mag,"/input/pm_pebiolc_demandmag_coupling.csv"),file_type="csvr")
-    return(tmp[notGLO,,])
-  }
   
-  .emissions_mac <- function(mag) {
-    # Select the LUC variable according to setting.
-    if (var_luc == "smooth") {
-      emi_co2_luc <- "Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr)"
-    } else if (var_luc == "raw") {
-      emi_co2_luc <- "Emissions|CO2|Land RAW|+|Land-use Change (Mt CO2/yr)"
-    } else {
-      stop(paste0("Unkown setting for 'var_luc': `", var_luc, "`. Only `smooth` or `raw` are allowed."))
-    }
-
-    # define three columns of dataframe:
-    #   emirem (remind emission names)
-    #   emimag (magpie emission names)
-    #   factor_mag2rem (factor for converting magpie to remind emissions)
-    #   1/1000*28/44, # kt N2O/yr -> Mt N2O/yr -> Mt N/yr
-    #   28/44,        # Tg N2O/yr =  Mt N2O/yr -> Mt N/yr
-    #   1/1000*12/44, # Mt CO2/yr -> Gt CO2/yr -> Gt C/yr
-    map <- data.frame(emirem=NULL,emimag=NULL,factor_mag2rem=NULL,stringsAsFactors=FALSE)
-    if("Emissions|N2O|Land|Agriculture|+|Animal Waste Management (Mt N2O/yr)" %in% getNames(mag)) {
-      # MAgPIE 4 (up to date)
-      map <- rbind(map,data.frame(emimag=emi_co2_luc,                                                                                      emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|+|Animal Waste Management (Mt N2O/yr)",                           emirem="n2oanwstm", factor_mag2rem=28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Inorganic Fertilizers (Mt N2O/yr)",          emirem="n2ofertin", factor_mag2rem=28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Manure applied to Croplands (Mt N2O/yr)",    emirem="n2oanwstc", factor_mag2rem=28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Decay of Crop Residues (Mt N2O/yr)",         emirem="n2ofertcr", factor_mag2rem=28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Soil Organic Matter Loss (Mt N2O/yr)",       emirem="n2ofertsom",factor_mag2rem=28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Pasture (Mt N2O/yr)",                        emirem="n2oanwstp", factor_mag2rem=28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|+|Peatland (Mt N2O/yr)",                                                      emirem="n2opeatland", factor_mag2rem=28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Rice (Mt CH4/yr)",                                              emirem="ch4rice",   factor_mag2rem=1,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Animal waste management (Mt CH4/yr)",                           emirem="ch4anmlwst",factor_mag2rem=1,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Enteric fermentation (Mt CH4/yr)",                              emirem="ch4animals",factor_mag2rem=1,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|+|Peatland (Mt CH4/yr)",                                                      emirem="ch4peatland",factor_mag2rem=1,stringsAsFactors=FALSE))
-    } else if("Emissions|N2O-N|Land|Agriculture|+|Animal Waste Management (Mt N2O-N/yr)" %in% getNames(mag)) {
-      # MAgPIE 4 (intermediate - wrong units)
-      map <- rbind(map,data.frame(emimag="Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr)",                                               emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O-N|Land|Agriculture|+|Animal Waste Management (Mt N2O-N/yr)",                       emirem="n2oanwstm", factor_mag2rem=28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O-N|Land|Agriculture|Agricultural Soils|+|Inorganic Fertilizers (Mt N2O-N/yr)",      emirem="n2ofertin", factor_mag2rem=28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O-N|Land|Agriculture|Agricultural Soils|+|Manure applied to Croplands (Mt N2O-N/yr)",emirem="n2oanwstc", factor_mag2rem=28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O-N|Land|Agriculture|Agricultural Soils|+|Decay of Crop Residues (Mt N2O-N/yr)",     emirem="n2ofertcr", factor_mag2rem=28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O-N|Land|Agriculture|Agricultural Soils|+|Soil Organic Matter Loss (Mt N2O-N/yr)",   emirem="n2ofertsom",factor_mag2rem=28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O-N|Land|Agriculture|Agricultural Soils|+|Pasture (Mt N2O-N/yr)",                    emirem="n2oanwstp", factor_mag2rem=28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Rice (Mt CH4/yr)",                                              emirem="ch4rice",   factor_mag2rem=1,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Animal waste management (Mt CH4/yr)",                           emirem="ch4anmlwst",factor_mag2rem=1,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Enteric fermentation (Mt CH4/yr)",                              emirem="ch4animals",factor_mag2rem=1,stringsAsFactors=FALSE))
-    } else if("Emissions|CO2|Land Use (Mt CO2/yr)" %in% getNames(mag)) {
-      # MAgPIE 3
-      map <- rbind(map,data.frame(emimag="Emissions|CO2|Land Use (Mt CO2/yr)",                                                        emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land Use|Agriculture|AWM (kt N2O/yr)",                                        emirem="n2oanwstm", factor_mag2rem=1/1000*28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land Use|Agriculture|Cropland Soils|Inorganic Fertilizers (kt N2O/yr)",       emirem="n2ofertin", factor_mag2rem=1/1000*28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land Use|Agriculture|Cropland Soils|Manure applied to Croplands (kt N2O/yr)", emirem="n2oanwstc", factor_mag2rem=1/1000*28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land Use|Agriculture|Cropland Soils|Decay of crop residues (kt N2O/yr)",      emirem="n2ofertcr", factor_mag2rem=1/1000*28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land Use|Agriculture|Cropland Soils|Soil organic matter loss (kt N2O/yr)",    emirem="n2ofertsom",factor_mag2rem=1/1000*28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land Use|Agriculture|Cropland Soils|Lower N2O emissions of rice (kt N2O/yr)", emirem="n2ofertrb", factor_mag2rem=1/1000*28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land Use|Agriculture|Pasture (kt N2O/yr)",                                    emirem="n2oanwstp", factor_mag2rem=1/1000*28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land Use|Biomass Burning|Forest Burning (kt N2O/yr)",                         emirem="n2oforest", factor_mag2rem=1/1000*28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land Use|Biomass Burning|Savannah Burning (kt N2O/yr)",                       emirem="n2osavan",  factor_mag2rem=1/1000*28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land Use|Biomass Burning|Agricultural Waste Burning (kt N2O/yr)",             emirem="n2oagwaste",factor_mag2rem=1/1000*28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|CH4|Land Use|Agriculture|Rice (Mt CH4/yr)",                                       emirem="ch4rice",   factor_mag2rem=1,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|CH4|Land Use|Agriculture|AWM (Mt CH4/yr)",                                        emirem="ch4anmlwst",factor_mag2rem=1,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|CH4|Land Use|Agriculture|Enteric Fermentation (Mt CH4/yr)",                       emirem="ch4animals",factor_mag2rem=1,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|CH4|Land Use|Biomass Burning|Forest Burning (Mt CH4/yr)",                         emirem="ch4forest", factor_mag2rem=1,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|CH4|Land Use|Biomass Burning|Savannah Burning (Mt CH4/yr)",                       emirem="ch4savan",  factor_mag2rem=1,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|CH4|Land Use|Biomass Burning|Agricultural Waste Burning (Mt CH4/yr)",             emirem="ch4agwaste",factor_mag2rem=1,stringsAsFactors=FALSE))
-    } else {
-      stop("Emission data not found in MAgPIE report. Check MAgPIE reporting file.")
-    }
-
-    # Read data from MAgPIE report and convert to REMIND data, collect in 'out' object
-    out<-NULL
-    for (i in 1:nrow(map)) {
-        tmp<-setNames(mag[,,map[i,]$emimag],map[i,]$emirem)
-        tmp<-tmp*map[i,]$factor_mag2rem
-        # Add emission variable to full dataframe
-        out<-mbind(out,tmp)
-    }
-
-    # Write REMIND input file
-    notGLO   <- getRegions(mag)[!(getRegions(mag)=="GLO")]
-    filename <- paste0("./core/input/f_macBaseMagpie_coupling.cs4r")
-    write.magpie(out[notGLO,,],filename)
-    write(paste0("*** EOF ",filename," ***"),file=filename,append=TRUE)
-    return(out[notGLO,,])
-  }
-  
-  .emissions <- function(mag, var_luc, path_to_report) {
+  .emissions <- function(mag, file, var_luc, path_to_report) {
 
     # define three columns of dataframe:
     #   emimag (magpie emission names)
@@ -205,10 +113,6 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
       stop(paste0("Unkown setting for 'var_luc': `", var_luc, "`. Only `smooth` or `raw` are allowed."))
     }
 
-    filename <- "./core/input/f_macBaseMagpie_coupling_new.cs4r"
-    
-    mag <- as.quitte(mag)
-
     rem <- mag |>
       inner_join(mag2rem, by = c("variable" = "emimag")) |> # combine tables keeping relevant variables only
       mutate(value = value * factorMag2Rem)              |> # apply unit conversion
@@ -216,12 +120,11 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
       summarise(value = sum(value))                      |> # sum MAgPIE emissions (emimag) that have the same enty in remind (emirem)
       relocate(period, .before = region)                 |> # put period in front of region for proper order for GAMS import
       filter(period >= 2005, region != "World")          |> # keep REMIND time horizon and remove World region
-      readr::write_csv(file = filename, col_names = FALSE)
+      readr::write_csv(file = file, col_names = FALSE)
     
-    write(paste0("*** EOF ", filename ," ***"), file = filename, append = TRUE)
+    write(paste0("*** EOF ", file ," ***"), file = file, append = TRUE)
     
     return(rem)
-      
   }
   
   .agriculture_costs <- function(mag){
@@ -247,11 +150,13 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
   rep <- collapseNames(rep) # get rid of scenario and model dimension if they exist
   years <- 2000+5*(1:30)
   mag <- time_interpolate(rep,years)
-  pricBio <- .bioenergy_price(mag)
-  pricBio_new <- .bioenergy_price_new(mag, path_to_report, inputpath_mag)
-  #prodBio <- .bioenergy_production(mag)
-  emi     <- .emissions_mac(mag)
-  emi_new <- .emissions(mag, var_luc, path_to_report)
+  
+  magQuitte <- as.quitte(mag)
+  
+  pricBio  <- .bioenergy_price(magQuitte, file = paste0("./modules/30_biomass/",inputpath_mag,"/input/p30_pebiolc_pricemag_coupling_new.csv"), path_to_report)
+  emi      <- .emissions(magQuitte, file = "./core/input/f_macBaseMagpie_coupling_new.cs4r", var_luc, path_to_report)
+  prodBio  <- .bioenergy_production(magQuitte, file = paste0("./modules/30_biomass/",inputpath_mag,"/input/pm_pebiolc_demandmag_coupling.csv"))
+
   #cost    <- .agriculture_costs(mag)
   #tmp <- mbind(pricBio, prodBio, emi, cost)
   # needs to be updated to MAgPIE 4 interface
