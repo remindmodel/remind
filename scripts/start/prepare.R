@@ -123,6 +123,8 @@ prepare <- function() {
   # add info from cfg into cfg$gams so it ends up in gams.
   cfg$gms$c_expname <- cfg$title
   cfg$gms$c_description <- substr(cfg$description, 1, 255)
+  cfg$gms$c_results_folder <- substr(normalizePath(cfg$results_folder), 1, 255)
+  cfg$gms$c_model_version <- gsub("[^a-zA-Z0-9]", "-", substr(cfg$model_version, 1, 255))
   # create modified version
   tmpModelFile <- sub(".gms", paste0("_", cfg$title, ".gms"), cfg$model)
   file.copy(cfg$model, tmpModelFile, overwrite = TRUE)
