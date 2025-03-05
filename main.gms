@@ -232,6 +232,8 @@ foo_msg.nr = 1;   !! namely F-format (decimal) (and not E-format = scientific no
 ***---------------------    Run name and description    -------------------------
 $setGlobal c_expname  default
 $setGlobal c_description  REMIND run with default settings
+$setGlobal c_model_version  REMIND model version will be automatically added during prepare.R
+$setGlobal c_results_folder  REMIND results_folder will be automatically added during prepare.R
 
 ***------------------------------------------------------------------------------
 *' ####                      MODULES

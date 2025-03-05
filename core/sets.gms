@@ -15,9 +15,11 @@ sets
 numberOrder     "set to assure that numeric values follow ascending order in the GAMS entry order (e.g. iterations and years used in loop statements)" / 1*2200 /
 
 *** Save select compiler flags as sets, to make them accessible from the final gdx
-c_expname       "c_expname as set for use in GDX"       /%c_expname%/
-c_description   "%c_description%"   /"for model description, see explanatory text"/
-cm_GDPpopScen   "cm_GDPpopScen as set for use in GDX"      /%cm_GDPpopScen%/
+c_expname        "c_expname as set for use in GDX"       /%c_expname%/
+c_description    "%c_description%"   /"for model description, see explanatory text"/
+c_results_folder "%c_results_folder%"  /"for cfg$results_folder, see explanatory text"/
+c_model_version  "model version" /%c_model_version%/
+cm_GDPpopScen    "cm_GDPpopScen as set for use in GDX"      /%cm_GDPpopScen%/
 
 
 all_GDPpopScen    "all possible GDP scenarios"
