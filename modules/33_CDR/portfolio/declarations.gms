@@ -26,6 +26,7 @@ p33_rock_weath_rate(rlf)                 "fraction of stone weathering per year 
 p33_EW_upScalingLimit(ttot)              "Annual growth rate limit on upscaling of mining & spreading rocks on fields"
 p33_EW_shortTermEW_Limit(all_regi)       "Limit on 2030 potential for enhanced weathering, defined in Gt rocks, based on % of land on which EW is applied"
 p33_EW_maxShareOfCropland(all_regi)      "Share of cropland that can be used for enhanced weathering. Limits maximum amount of rocks weathering."
+p33_oae_eez_limit(all_regi)              "Regional limit on ocean uptake"
 
 p33_shfetot_up(ttot,all_regi,all_enty,sector)      "Upper bound on share of a sector in final energy of a FE type"
 p33_FE_limit(ttot,all_regi,all_enty,sector)            "Maximum amount of FE for a sector based on p33_shfetot_up"
@@ -74,6 +75,7 @@ q33_EW_ShortTermBound(ttot,all_regi)   "Limits short term potential for enhanced
 
 q33_OAE_FEdemand(ttot,all_regi,all_enty,all_te) "calculates final energy demand for ocean alkalinity enhancement"
 q33_OAE_co2emi_non_atm_calcination(ttot,all_regi,all_te)   "calculates the CO2 that comes from calcination (limestone decomposition)"
+q33_OAE_EEZ_limit(ttot,all_regi)  "sets upper bound on regional ocean uptake. A global limit is distributed according to size of the EEZ"
 
 q33_shfeSector_share(ttot,all_regi,all_enty,emi_sectors)             "share of a sector's final energy type demand in the region's total FE type"
 q33_shfeSector_SectorTotal(ttot,all_regi,all_enty,emi_sectors) "a sector's final energy type demand"
