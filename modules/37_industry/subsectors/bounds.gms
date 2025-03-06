@@ -170,4 +170,7 @@ loop ((ue_industry_dyn37(in),regi_groupExt(regi_fxDem37(ext_regi),regi)),
 );
 $endif.fixedUE_scenario
 
+v37_matShareChange.lo(t,regi,tePrc,opmoPrc,mat)$(tePrcFixedShare(tePrc,opmoPrc,mat)) = -cm_maxIndPrcShareChange;
+v37_matShareChange.up(t,regi,tePrc,opmoPrc,mat)$(tePrcFixedShare(tePrc,opmoPrc,mat)) =  cm_maxIndPrcShareChange;
+
 *** EOF ./modules/37_industry/subsectors/bounds.gms

@@ -1177,6 +1177,11 @@ parameter
   cm_wastelag			"switch to decide whether waste from plastics lags ten years behind plastics production"
 ;
   cm_wastelag = 0;   !! def = 0 no waste lag  !! regexp = 1|0
+parameter
+  cm_maxIndPrcShareChange  "Max change of share of certain industry processes between time steps"
+;
+  cm_maxIndPrcShareChange = 0.05; !! def 0.05 = 5 percent points change between timem steps
+*'
 *'
 *'
 *'

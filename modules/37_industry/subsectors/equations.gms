@@ -240,7 +240,7 @@ q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt) ..
           * vm_outflowPrc(t,regi,tePrc,opmoPrc)
           )
       )
-      * p37_chemicals_feedstock_share(t,regi) 
+      * p37_chemicals_feedstock_share(t,regi)
   )$( entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) )
 ;
 
@@ -454,29 +454,39 @@ q37_prodMat(t,regi,mat)$( matOut(mat) ) ..
 ;
 
 ***------------------------------------------------------
-*' Output material production
+*' Restrict share change of certain technology paths
+*' Structure of the equation:
+*' - define share s_i(t) = a_i(t) / sum_i a_i(t)
+*' - abs( s_i(t) - s_i(t-1) ) < max_change
+*' Changes to avoid division by zero:
+*' 1. replace by
+*'    s_i(t) - s_i(t-1) = change, with
+*'    change.low = -max_change and change.up = max_change
+*' 2. multiply both sides with sum_i a_i(t) * sum_i a_i(t-1)
 ***------------------------------------------------------
 
-q37_teMatShareLow(ttot,regi,tePrc,opmoPrc)$(ttot.val gt 2020 
-    AND tePrcPrim(tePrc,opmoPrc)) ..
-    vm_outflowPrc(ttot,regi,tePrc,opmoPrc) 
-  =g= 
-    0.7
-    * vm_outflowPrc(ttot-1,regi,tePrc,opmoPrc)
+q37_restrictMatShareChange(t,regi,tePrc,opmoPrc,mat)$(    t.val gt 2020
+                                                      AND tePrcStiffShare(tePrc,opmoPrc,mat)) ..
+  vm_outflowPrc(t,regi,tePrc,opmoPrc)
+  * sum((tePrc2,opmoPrc2)$(tePrcStiffShare(tePrc2,opmoPrc2,mat)),
+    vm_outflowPrc(t-1,regi,tePrc2,opmoPrc2))
+  -
+  vm_outflowPrc(t-1,regi,tePrc,opmoPrc)
+  * sum((tePrc2,opmoPrc2)$(tePrcStiffShare(tePrc2,opmoPrc2,mat)),
+    vm_outflowPrc(t,regi,tePrc2,opmoPrc2))
+=e=
+  v37_matShareChange(t,regi,tePrc,opmoPrc,mat)
+  * sum((tePrc2,opmoPrc2)$(tePrcStiffShare(tePrc2,opmoPrc2,mat)),
+    vm_outflowPrc(t,regi,tePrc2,opmoPrc2))
+  * sum((tePrc2,opmoPrc2)$(tePrcStiffShare(tePrc2,opmoPrc2,mat)),
+    vm_outflowPrc(t-1,regi,tePrc2,opmoPrc2))
 ;
 
-q37_teMatShareUp(ttot,regi,tePrc,opmoPrc)$(ttot.val gt 2020 
-    AND tePrcPrim(tePrc,opmoPrc)) ..
-    vm_outflowPrc(ttot,regi,tePrc,opmoPrc) 
-  =l= 
-    1.3
-    * vm_outflowPrc(ttot-1,regi,tePrc,opmoPrc) 
-;
 
 ***------------------------------------------------------
 *' Hand-over to CES
 ***------------------------------------------------------
-q37_mat2ue(t,regi,mat,in)$( ppfUePrc(in) ) .. 
+q37_mat2ue(t,regi,mat,in)$( ppfUePrc(in) ) ..
     (vm_cesIO(t,regi,in)
     + pm_cesdata(t,regi,in,"offset_quantity"))
     * p37_ue_share(t,regi,mat,in)

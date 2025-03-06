@@ -744,21 +744,21 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-tePrcPrim(all_te,opmoPrc)   "Mapping of industry process technologies onto their output materials"
+tePrcStiffShare(all_te,opmoPrc,all_enty)   "Industry process technologies with restricted change of relative shares"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 
-   StCrNG . standard
-   StCrLiq . standard
-   MTOMTA . standard
+   StCrNG  . standard . HVC
+   StCrLiq . standard . HVC
+   MTOMTA  . standard . HVC
 
-   MeSySol   . standard
-   MeSyNG    . standard
-   MeSyLiq   . standard
+   MeSySol . standard . methanol
+   MeSyNG  . standard . methanol
+   MeSyLiq . standard . methanol
 
-   AmSyCoal . standard
-   AmSyNG . standard
-   AmSyLiq . standard
+   AmSyCoal . standard . ammonia
+   AmSyNG   . standard . ammonia
+   AmSyLiq  . standard . ammonia
 
 $endif.cm_subsec_model_chemicals
   /
@@ -969,7 +969,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     chemicals . FertProdH2
     chemicals . MeToFinal
     chemicals . AmToFinal
-    
+
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     steel . idr
