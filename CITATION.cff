@@ -49,6 +49,16 @@ authors:
   given-names:  "Cornelia"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
+- family-names: "Bantje"
+  given-names:  "David"
+  orcid: https://orcid.org/0009-0005-8875-9496
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: "Beier"
+  given-names:  "Felicitas"
+  orcid: https://orcid.org/0000-0002-8725-7663
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
 - family-names: "Benke"
   given-names: "Falk"
   affiliation: "Potsdam Institute for Climate Impact Research"
@@ -110,9 +120,17 @@ authors:
   orcid: https://orcid.org/0000-0003-1818-3186
   affiliation: "Potsdam Institute for Climate Impact Research"
 
+- family-names: "Hayez"
+  given-names:  "Léa"
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
 - family-names: "Hilaire"
   given-names:  "Jerome"
   orcid: https://orcid.org/0000-0002-9879-6339
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: "Hofbauer"
+  given-names:  "Verena"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: "Hoppe"
@@ -144,6 +162,11 @@ authors:
 
 - family-names: "Kriegler"
   given-names:  "Elmar"
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: "Lécuyer"
+  given-names:  "Fabrice"
+  orcid: https://orcid.org/0000-0002-7364-999X
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: "Levesque"
@@ -242,6 +265,16 @@ authors:
   given-names:  "Tonn"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
+- family-names: "Salzwedel"
+  given-names:  "Robert"
+  orcid: https://orcid.org/0000-0002-7614-9210
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: "Sauer"
+  given-names:  "Pascal"
+  orcid: https://orcid.org/0000-0002-6856-8239
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
 - family-names: "Schmidt"
   given-names:  "Eva"
 
@@ -276,6 +309,11 @@ authors:
 - family-names: "Weigmann"
   given-names:  "Pascal"
   orcid: https://orcid.org/0000-0001-8801-173X
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: "Weiss"
+  given-names:  "Bennet"
+  orcid: https://orcid.org/0000-0002-7614-9210
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 title: REMIND - REgional Model of INvestments and Development
