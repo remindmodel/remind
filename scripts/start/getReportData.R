@@ -7,7 +7,6 @@
 
 getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc="costs",var_luc="smooth") {
   
-  require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   require(dplyr,    quietly = TRUE,warn.conflicts =FALSE)
   require(quitte,   quietly = TRUE,warn.conflicts =FALSE)
   require(readr,    quietly = TRUE,warn.conflicts =FALSE)
@@ -15,8 +14,8 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
   .bioenergy_price <- function(mag, file, path_to_report) {
     
     mag2rem <- tribble(
-      ~mag,                                ~factorMag2Rem,
-      "Prices|Bioenergy", 0.0315576
+      ~mag,              ~factorMag2Rem,
+      "Prices|Bioenergy", 0.0315576 # US$2017/GJ to US$2017/Wa
     )
 
     rem <- mag |>
@@ -33,14 +32,14 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
     # out["JPN",is.na(out["JPN",,]),] <- 0
     
     write(paste0("*** EOF ", file ," ***"), file = file, append = TRUE)
-    
+    #tidyr::pivot_longer(rem, 2:14, names_to = "region")
     return(rem)
   }
 
   .bioenergy_production <- function(mag, file, path_to_report) {
     
     mag2rem <- tribble(
-      ~mag,                                ~factorMag2Rem,
+      ~mag,                                                ~factorMag2Rem,
       "Demand|Bioenergy|2nd generation|++|Bioenergy crops", 1/31.536 # EJ to TWa
     )
     
@@ -127,39 +126,65 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
     return(rem)
   }
   
-  .agriculture_costs <- function(mag){
-    notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
-    out <- mag[,,"Costs Without Incentives (million US$2017/yr)"]/1000/1000 # with transformation factor from 10E6 US$2017 to 10E12 US$2017
-    out["JPN",is.na(out["JPN",,]),] <- 0
-    tmp <- out
-    dimnames(out)[[3]] <- NULL #Delete variable name to prevent it from being written into output file
-    write.magpie(out[notGLO,,],paste0("./modules/26_agCosts/",inputpath_acc,"/input/p26_totLUcost_coupling.csv"),file_type="csvr")
-    return(tmp[notGLO,,])
-  }
-  
-  .agriculture_tradebal <- function(mag){
-    notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
-    out <- mag[,,"Trade|Agriculture|Trade Balance (billion US$2017/yr)"]/1000 # with transformation factor from 10E9 US$2017 to 10E12 US$2017
-    out["JPN",is.na(out["JPN",,]),] <- 0
-    dimnames(out)[[3]] <- NULL
-    write.magpie(out[notGLO,,],paste0("./modules/26_agCosts/",inputpath_acc,"/input/trade_bal_reg.rem.csv"),file_type="csvr")
-  }
- 
-  rep <- read.report(path_to_report,as.list=FALSE)
-  if (length(getNames(rep,dim="scenario"))!=1) stop("getReportData: MAgPIE data contains more or less than 1 scenario.")
-  rep <- collapseNames(rep) # get rid of scenario and model dimension if they exist
-  years <- 2000+5*(1:30)
-  mag <- time_interpolate(rep,years)
-  
-  magQuitte <- as.quitte(mag)
-  
-  pricBio  <- .bioenergy_price(magQuitte, file = paste0("./modules/30_biomass/",inputpath_mag,"/input/p30_pebiolc_pricemag_coupling_new.csv"), path_to_report)
-  emi      <- .emissions(magQuitte, file = "./core/input/f_macBaseMagpie_coupling_new.cs4r", var_luc, path_to_report)
-  prodBio  <- .bioenergy_production(magQuitte, file = paste0("./modules/30_biomass/",inputpath_mag,"/input/pm_pebiolc_demandmag_coupling.csv"))
+  .agriculture_costs <- function(mag, file, path_to_report) {
+    
+    mag2rem <- tribble(
+      ~mag,                      ~factorMag2Rem,
+      "Costs Without Incentives", 1/1000/1000 # 10E6 US$2017 to 10E12 US$2017
+    )
+    
+    rem <- mag |>
+      inner_join(mag2rem, by = c("variable" = "mag"))    |> # combine tables keeping relevant variables only
+      mutate(value = value * factorMag2Rem)              |> # apply unit conversion
+      mutate(value = round(value, digits = 11))          |> # limit number of decimals
+      relocate(period, .before = region)                 |> # put period in front of region for proper order for GAMS import
+      filter(period >= 2005, region != "World")          |> # keep REMIND time horizon and remove World region
+      select(period, region, value)                      |> # keep relevant columns only
+      tidyr::pivot_wider(names_from = region, values_from = value) |> # make 2D-table
+      readr::write_csv(file = file, col_names = TRUE)
+    
+    # in the old function NAs used to be filtered. Let's try without and re-introduce if occurring again.
+    # out["JPN",is.na(out["JPN",,]),] <- 0
 
-  #cost    <- .agriculture_costs(mag)
-  #tmp <- mbind(pricBio, prodBio, emi, cost)
+    write(paste0("*** EOF ", file ," ***"), file = file, append = TRUE)
+    
+    return(rem)
+  }  
+    
+  .agriculture_tradebal <- function(mag, file, path_to_report) {
+    
+    mag2rem <- tribble(
+      ~mag,                      ~factorMag2Rem,
+      "Costs Accounting|+|Trade", 1/1000/1000 # 10E6 US$2017 to 10E12 US$2017
+    )
+    
+    rem <- mag |>
+      inner_join(mag2rem, by = c("variable" = "mag"))    |> # combine tables keeping relevant variables only
+      mutate(value = value * factorMag2Rem)              |> # apply unit conversion
+      mutate(value = round(value, digits = 11))          |> # limit number of decimals
+      relocate(period, .before = region)                 |> # put period in front of region for proper order for GAMS import
+      filter(period >= 2005, region != "World")          |> # keep REMIND time horizon and remove World region
+      select(period, region, value)                      |> # keep relevant columns only
+      tidyr::pivot_wider(names_from = region, values_from = value) |> # make 2D-table
+      readr::write_csv(file = file, col_names = TRUE)
+    
+    # in the old function NAs used to be filtered. Let's try without and re-introduce if occurring again.
+    # out["JPN",is.na(out["JPN",,]),] <- 0
+    
+    write(paste0("*** EOF ", file ," ***"), file = file, append = TRUE)
+    
+    return(rem)
+  }  
+
+  magQuitte <- quitte::read.quitte(path_to_report, check.duplicates = FALSE)
+
+  pricBio  <- .bioenergy_price(     magQuitte, file = paste0("./modules/30_biomass/",inputpath_mag,"/input/p30_pebiolc_pricemag_coupling_new.csv"), path_to_report)
+  prodBio  <- .bioenergy_production(magQuitte, file = paste0("./modules/30_biomass/",inputpath_mag,"/input/pm_pebiolc_demandmag_coupling_new.csv"))
+  cost     <- .agriculture_costs(   magQuitte, file = paste0("./modules/26_agCosts/",inputpath_acc,"/input/p26_totLUcost_coupling_new.csv"))
+  emi      <- .emissions(           magQuitte, file = paste0("./core/input/f_macBaseMagpie_coupling_new.cs4r"), var_luc, path_to_report)
   # needs to be updated to MAgPIE 4 interface
-  #.agriculture_tradebal(mag)
+  # trade <- .agriculture_tradebal(magQuitte, file = paste0("./modules/26_agCosts/",inputpath_acc,"/input/trade_bal_reg.rem.csv"), path_to_report)
+  
+  #tmp <- mbind(pricBio, prodBio, emi, cost)
   #return(invisible(tmp))
 }
