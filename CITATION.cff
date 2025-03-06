@@ -97,7 +97,7 @@ authors:
   orcid: https://orcid.org/0000-0002-6406-6266
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-  - family-names: "Hagen"
+- family-names: "Hagen"
   given-names:  "Alex"
   orcid: https://orcid.org/0000-0003-4793-8664
   affiliation: "Potsdam Institute for Climate Impact Research"
@@ -234,6 +234,11 @@ authors:
 - family-names: "Roming"
   given-names:  "Niklas"
 
+- family-names: "Rosemann"
+  given-names:  "Ricarda"
+  orcid: https://orcid.org/0009-0006-5939-3197
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
 - family-names: "Rottoli"
   given-names:  "Marianna"
   affiliation: "Potsdam Institute for Climate Impact Research"
@@ -257,6 +262,11 @@ authors:
 
 - family-names: "Schultes"
   given-names:  "Anselm"
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: "Sitarz"
+  given-names:  "Joanna"
+  orcid: https://orcid.org/0000-0002-8060-1097
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: "Sörgel"
