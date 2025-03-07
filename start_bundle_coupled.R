@@ -579,6 +579,10 @@ for(scen in common){
       errorsfound <- errorsfound + cfg_rem$errorsfoundInCheckFixCfg
     }
 
+    if (i == start_iter_first) {
+      errorsfound <- errorsfound + checkSettingsRemMag(cfg_rem, cfg_mag, testmode = "--test" %in% flags)
+    }
+
     if (! any(c("--test", "--gamscompile") %in% flags)) {
       Rdatafile <- paste0(fullrunname, ".RData")
       message("Save settings to ", Rdatafile)
