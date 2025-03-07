@@ -465,21 +465,21 @@ q37_prodMat(t,regi,mat)$( matOut(mat) ) ..
 *' 2. multiply both sides with sum_i a_i(t) * sum_i a_i(t-1)
 ***------------------------------------------------------
 
-q37_restrictMatShareChange(t,regi,tePrc,opmoPrc,mat)$(    t.val gt 2020
-                                                      AND tePrcStiffShare(tePrc,opmoPrc,mat)) ..
-  vm_outflowPrc(t,regi,tePrc,opmoPrc)
+q37_restrictMatShareChange(ttot,regi,tePrc,opmoPrc,mat)$(    ttot.val gt 2020
+                                                         AND tePrcStiffShare(tePrc,opmoPrc,mat)) ..
+  vm_outflowPrc(ttot,regi,tePrc,opmoPrc)
   * sum((tePrc2,opmoPrc2)$(tePrcStiffShare(tePrc2,opmoPrc2,mat)),
-    vm_outflowPrc(t-1,regi,tePrc2,opmoPrc2))
+    vm_outflowPrc(ttot-1,regi,tePrc2,opmoPrc2))
   -
-  vm_outflowPrc(t-1,regi,tePrc,opmoPrc)
+  vm_outflowPrc(ttot-1,regi,tePrc,opmoPrc)
   * sum((tePrc2,opmoPrc2)$(tePrcStiffShare(tePrc2,opmoPrc2,mat)),
-    vm_outflowPrc(t,regi,tePrc2,opmoPrc2))
+    vm_outflowPrc(ttot,regi,tePrc2,opmoPrc2))
 =e=
-  v37_matShareChange(t,regi,tePrc,opmoPrc,mat)
+  v37_matShareChange(ttot,regi,tePrc,opmoPrc,mat)
   * sum((tePrc2,opmoPrc2)$(tePrcStiffShare(tePrc2,opmoPrc2,mat)),
-    vm_outflowPrc(t,regi,tePrc2,opmoPrc2))
+    vm_outflowPrc(ttot,regi,tePrc2,opmoPrc2))
   * sum((tePrc2,opmoPrc2)$(tePrcStiffShare(tePrc2,opmoPrc2,mat)),
-    vm_outflowPrc(t-1,regi,tePrc2,opmoPrc2))
+    vm_outflowPrc(ttot-1,regi,tePrc2,opmoPrc2))
 ;
 
 
