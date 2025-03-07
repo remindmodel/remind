@@ -31,15 +31,15 @@ Parameters
   p37_demFeTarget(tall,all_regi,all_enty,all_in)                               "Total Fe demand that would be have been consumed historically for production of a UE if all tech had BAT efficiency"
   p37_demFeActual(tall,all_regi,all_enty,all_in)                               "Total historic Fe demand consumed for production of a UE"
   p37_specFeDemTarget(all_enty,all_te,opmoPrc)                                 "Best available technology (will be reached in convergence year) [TWa/Gt_output]"
-  pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc)                              "Exogenously prescribed production volume of processes in start year (from IEA data)"
-  p37_matFlowHist(tall,all_regi,all_enty)                                      "Historic material flows"
+  p37_matFlowHist(tall,all_regi,all_enty)                                      "TODO"
+  p37_ue_share(tall,all_regi,all_enty,all_in)                                  "TODO"
   p37_mat2ue(all_enty,all_in)                                                  "Contribution of process output to ue in CES tree; Trivial if just one material per UE, as in steel [Gt/Gt]"
-  p37_ue_share(all_enty,all_in)                                                "Fixed share of material in ue"
+  p37_ueHistTmp(tall,all_regi)                                                 "TODO"
   p37_demFeRatio(tall,all_regi,all_in)                                         "Ratio of historic Fe demand and Fe demand calculated from historic production and BAT specific demand"
-  p37_teMatShareHist(all_te,opmoPrc,mat)                                       "Share that a tePrc/opmoPrc historically contibrutes to production of a matFin"
+  p37_teMatShareHist(all_regi,all_te,opmoPrc,mat)                              "Share that a tePrc/opmoPrc historically contibrutes to production of a matFin"
   p37_captureRate(all_te)                                                      "Capture rate of CCS technology"
   p37_selfCaptureRate(all_te)                                                  "Share of emissions from fossil fuels used for a CCS process which are captured by the CCS process itself"
-  p37_priceMat(all_enty)                                                       "Prices of external material input [US$/kg] = [trn$US/Gt]"
+  p37_priceMat(tall,all_regi,all_enty)                                                  "Prices of external material input [US$/kg] = [trn$US/Gt]"
 
   p37_chemicals_feedstock_share(ttot,all_regi)               "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
   p37_FeedstockCarbonContent(ttot,all_regi,all_enty)         "carbon content of feedstocks [GtC/TWa]"
@@ -105,9 +105,11 @@ Positive Variables
   !! process-based implementation
   vm_outflowPrc(tall,all_regi,all_te,opmoPrc)                               "Production volume of processes in process-based model [Gt/a]"
   v37_matFlow(tall,all_regi,all_enty)                                       "Production of materials [Gt/a]"
+  v37_matFlowPrim(tall,all_regi,all_enty)                                   "Production of Primary materials [Gt/a]"
   v37_emiPrc(tall,all_regi,all_enty,all_te,opmoPrc)                         "Emissions per process and operation mode [GtC/a]"
   v37_shareWithCC(tall,all_regi,all_te,opmoPrc)                             "Share of process and operation mode equipped with carbon capture technology"
   vm_costMatPrc(tall,all_regi)                                              "Cost of external material inputs such as iron ore in process-based industry [trn $2017/a]"
+  v37_matShareChange(tall,all_regi,all_te,opmoPrc,all_enty)                 "Change of share of processes with rectricted relative share change"
 ;
 
 Variables
@@ -153,6 +155,8 @@ $endif.no_calibration
   q37_demMatPrc(tall,all_regi,mat)                                                  "Material demand of processes"
   q37_prodMat(tall,all_regi,mat)                                                    "Production volume of processes equals material flow of output material"
   q37_mat2ue(tall,all_regi,mat,all_in)                                              "Connect materials production to ue ces tree nodes"
+  q37_restrictMatShareChange(tall,all_regi,all_te,opmoPrc,all_enty)                 "Low Constraining the share of chemical fossil fuel technologies based on historical data"
+
   q37_limitCapMat(tall,all_regi,all_te)                                             "Material-flow conversion is limited by capacities"
   q37_emiPrc(ttot,all_regi,all_enty,all_te,opmoPrc)                                 "Local industry emissions pre-capture; Only used as baseline for CCS [GtC/a]"
   q37_emiCCPrc(tall,all_regi,emiInd37)                                              "Captured emissions from CCS"

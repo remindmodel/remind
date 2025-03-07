@@ -81,9 +81,8 @@ $endif.exogDem_scen
 *' energy mix, as that is what can be captured); vm_emiIndBase itself is not used for emission
 *' accounting, just as a CCS baseline.
 ***------------------------------------------------------
-q37_emiIndBase(t,regi,enty,secInd37)$(
-                                   entyFeCC37(enty)
-                                OR sameas(enty,"co2cement_process") ) ..
+q37_emiIndBase(t,regi,enty,secInd37)$(   entyFeCC37(enty)
+                                      OR sameas(enty,"co2cement_process") ) ..
   vm_emiIndBase(t,regi,enty,secInd37)
   =e=
     sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfEn(entyFeCC37(enty),in)),
@@ -223,13 +222,25 @@ q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt) ..
     vm_demFeNonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
   )
   =e=
-  sum((fe2ppfEn(entyFe,ppfen_industry_dyn37(in)),
-       secInd37_emiMkt(secInd37,emiMkt),
-       secInd37_2_pf(secInd37,in_chemicals_feedstock_37(in))),
-    ( vm_cesIO(t,regi,in)
-    + pm_cesdata(t,regi,in,"offset_quantity")
+   ( sum(secInd37$(not secInd37Prc(secInd37)),
+    sum((fe2ppfEn(entyFe,ppfen_industry_dyn37(in)),
+         secInd37_emiMkt(secInd37,emiMkt),
+         secInd37_2_pf(secInd37,in_chemicals_feedstock_37(in))),
+        ( vm_cesIO(t,regi,in)
+        + pm_cesdata(t,regi,in,"offset_quantity")
+        )
+      )
     )
-  * p37_chemicals_feedstock_share(t,regi)
+   +
+  sum(secInd37Prc$(sameas(secInd37Prc,"chemicals")),
+      sum((secInd37_emiMkt(secInd37Prc,emiMkt),
+          secInd37_tePrc(secInd37Prc,tePrc),
+          tePrc2opmoPrc(tePrc,opmoPrc)),
+          pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc)
+          * vm_outflowPrc(t,regi,tePrc,opmoPrc)
+          )
+      )
+      * p37_chemicals_feedstock_share(t,regi)
   )$( entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) )
 ;
 
@@ -440,7 +451,7 @@ q37_costMat(t,regi) ..
     vm_costMatPrc(t,regi)
   =e=
     sum(mat,
-      p37_priceMat(mat)
+      p37_priceMat(t,regi,mat)
       *
       v37_matFlow(t,regi,mat))
 ;
@@ -457,12 +468,42 @@ q37_prodMat(t,regi,mat)$( matOut(mat) ) ..
 ;
 
 ***------------------------------------------------------
+*' Restrict share change of certain technology paths
+*' Structure of the equation:
+*' - define share s_i(t) = a_i(t) / sum_i a_i(t)
+*' - abs( s_i(t) - s_i(t-1) ) < max_change
+*' Changes to avoid division by zero:
+*' 1. replace by
+*'    s_i(t) - s_i(t-1) = change, with
+*'    change.low = -max_change and change.up = max_change
+*' 2. multiply both sides with sum_i a_i(t) * sum_i a_i(t-1)
+***------------------------------------------------------
+
+q37_restrictMatShareChange(ttot,regi,tePrc,opmoPrc,mat)$(    ttot.val gt 2020
+                                                         AND tePrcStiffShare(tePrc,opmoPrc,mat)) ..
+  vm_outflowPrc(ttot,regi,tePrc,opmoPrc)
+  * sum((tePrc2,opmoPrc2)$(tePrcStiffShare(tePrc2,opmoPrc2,mat)),
+    vm_outflowPrc(ttot-1,regi,tePrc2,opmoPrc2))
+  -
+  vm_outflowPrc(ttot-1,regi,tePrc,opmoPrc)
+  * sum((tePrc2,opmoPrc2)$(tePrcStiffShare(tePrc2,opmoPrc2,mat)),
+    vm_outflowPrc(ttot,regi,tePrc2,opmoPrc2))
+=e=
+  v37_matShareChange(ttot,regi,tePrc,opmoPrc,mat)
+  * sum((tePrc2,opmoPrc2)$(tePrcStiffShare(tePrc2,opmoPrc2,mat)),
+    vm_outflowPrc(ttot,regi,tePrc2,opmoPrc2))
+  * sum((tePrc2,opmoPrc2)$(tePrcStiffShare(tePrc2,opmoPrc2,mat)),
+    vm_outflowPrc(ttot-1,regi,tePrc2,opmoPrc2))
+;
+
+
+***------------------------------------------------------
 *' Hand-over to CES
 ***------------------------------------------------------
 q37_mat2ue(t,regi,mat,in)$( ppfUePrc(in) ) ..
     (vm_cesIO(t,regi,in)
     + pm_cesdata(t,regi,in,"offset_quantity"))
-    * p37_ue_share(mat,in)
+    * p37_ue_share(t,regi,mat,in)
   =e=
     sum(mat2ue(mat,in),
       p37_mat2ue(mat,in)
@@ -470,6 +511,7 @@ q37_mat2ue(t,regi,mat,in)$( ppfUePrc(in) ) ..
       v37_matFlow(t,regi,mat)
     )
 ;
+
 
 ***------------------------------------------------------
 *' Definition of capacity constraints
@@ -503,8 +545,7 @@ q37_emiPrc(t,regi,entyFe,tePrc,opmoPrc) ..
 ***------------------------------------------------------
 *' Carbon capture processes can only capture as much co2 as the base process and the CCS process combined emit
 ***------------------------------------------------------
-q37_limitOutflowCCPrc(t,regi,teCCPrc)$(
-                sum((tePrc,opmoPrc,opmoCCPrc),tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)) ) ..
+q37_limitOutflowCCPrc(t,regi,teCCPrc) ..
     sum(tePrc2opmoPrc(teCCPrc,opmoCCPrc),
       vm_outflowPrc(t,regi,teCCPrc,opmoCCPrc)
     )

@@ -773,12 +773,45 @@ pm_cf(ttot,regi,"tdsynhos") = 0.6;
 pm_cf(ttot,regi,"tdsynpet") = 0.7;
 pm_cf(ttot,regi,"tdsyndie") = 0.7;
 *** eternal short-term fix for process-based industry
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+pm_cf(ttot,regi,"ChemOld") = 0.8;
+pm_cf(ttot,regi,"ChemElec") = 0.8;
+pm_cf(ttot,regi,"ChemH2") = 0.8;
+
+pm_cf(ttot,regi,"StCrNG") = 0.8;
+pm_cf(ttot,regi,"StCrLiq") = 0.8;
+
+pm_cf(ttot,regi,"MeSySol") = 0.8; !! methanol tech QIANZHI
+pm_cf(ttot,regi,"MeSyNG") = 0.8;
+pm_cf(ttot,regi,"MeSyLiq") = 0.8;
+pm_cf(ttot,regi,"MeSySolcc") = 0.8;
+pm_cf(ttot,regi,"MeSyNGcc") = 0.8;
+pm_cf(ttot,regi,"MeSyLiqcc") = 0.8;
+pm_cf(ttot,regi,"MeSyH2") = 0.8;
+pm_cf(ttot,regi,"AmSyCoal") = 0.8; !! ammonia tech QIANZHI
+pm_cf(ttot,regi,"AmSyNG") = 0.8;
+pm_cf(ttot,regi,"AmSyLiq") = 0.8;
+pm_cf(ttot,regi,"AmSyCoalcc") = 0.8;
+pm_cf(ttot,regi,"AmSyNGcc") = 0.8;
+pm_cf(ttot,regi,"AmSyLiqcc") = 0.8;
+pm_cf(ttot,regi,"AmSyH2") = 0.8;
+
+pm_cf(ttot,regi,"MtOMtA") = 0.8;
+pm_cf(ttot,regi,"MtOMtAH2") = 0.8;
+pm_cf(ttot,regi,"FertProd") = 0.8;
+pm_cf(ttot,regi,"FertProdH2") = 0.8;
+pm_cf(ttot,regi,"MeToFinal") = 0.8;
+pm_cf(ttot,regi,"AmToFinal") = 0.8;
+
+$endif.cm_subsec_model_chemicals
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 pm_cf(ttot,regi,"bf") = 0.8;
 pm_cf(ttot,regi,"bfcc") = 0.8;
 pm_cf(ttot,regi,"bof") = 0.8;
 pm_cf(ttot,regi,"idr") = 0.8;
 pm_cf(ttot,regi,"idrcc") = 1.0; !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
 pm_cf(ttot,regi,"eaf") = 1.0;   !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
+$endif.cm_subsec_model_steel
 
 *RP* phasing down the ngt cf to "peak load" cf of 5%
 pm_cf(ttot,regi,"ngt")$(ttot.val eq 2025) = 0.9 * pm_cf(ttot,regi,"ngt");
@@ -852,7 +885,7 @@ pm_omeg(regi,opTimeYr,te) = max(0, 1 - ((opTimeYr.val - 0.5) / p_lifetime_max(re
 
 *** Map each technology with its possible age
 opTimeYr2te(te,opTimeYr) $ sum(regi $ (pm_omeg(regi,opTimeYr,te) > 0), 1) = yes;
-*** Map each model timestep with the possible age of technologies 
+*** Map each model timestep with the possible age of technologies
 tsu2opTimeYr(ttot,"1") = yes;
 loop((ttot,ttot2) $ (ord(ttot2) le ord(ttot)),
   loop(opTimeYr $ (opTimeYr.val = pm_ttot_val(ttot) - pm_ttot_val(ttot2) + 1),
@@ -1005,9 +1038,9 @@ $offdelim
 p_abatparam_CH4(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p_abatparam_CH4(tall,all_regi,all_enty,"201");
 p_abatparam_N2O(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p_abatparam_N2O(tall,all_regi,all_enty,"201");
 
-*** Read methane emissions from fossil fuel extraction for calculating emission factors. 
+*** Read methane emissions from fossil fuel extraction for calculating emission factors.
 *** The base year determines whether the data comes from CEDS or EDGAR
-$ifthen %cm_emifacs_baseyear% == "2005" 
+$ifthen %cm_emifacs_baseyear% == "2005"
 parameter p_emiFossilFuelExtr(all_regi,all_enty)          "methane emissions in 2005 [Mt CH4], needed for the calculation of p_efFossilFuelExtr"
 /
 $ondelim
@@ -1268,6 +1301,28 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,'dac')             = 0.25;
   p_adj_seed_te(ttot,regi,'oae_ng')          = 0.25;
   p_adj_seed_te(ttot,regi,'oae_el')          = 0.25;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+!!  p_adj_seed_te(ttot,regi,"ChemElec")        = 0.50;
+!!  p_adj_seed_te(ttot,regi,"ChemH2")          = 0.25;
+  p_adj_seed_te(ttot,regi,"MeSySol")         = 0.001;  !! methanol tech QIANZHI
+  p_adj_seed_te(ttot,regi,"MeSyNG")          = 0.001;
+  p_adj_seed_te(ttot,regi,"MeSyLiq")         = 0.001;
+!!  p_adj_seed_te(ttot,regi,"MeSySolcc")       = 0.10;  !! methanol tech QIANZHI
+!!  p_adj_seed_te(ttot,regi,"MeSyNGcc")        = 0.10;
+!!  p_adj_seed_te(ttot,regi,"MeSyLiqcc")       = 0.10;
+!!  p_adj_seed_te(ttot,regi,"MeSyH2")          = 0.10;
+  p_adj_seed_te(ttot,regi,"AmSyCoal")        = 0.001;  !! ammonia tech QIANZHI
+  p_adj_seed_te(ttot,regi,"AmSyNG")          = 0.001;
+  p_adj_seed_te(ttot,regi,"AmSyLiq")         = 0.001;
+!!  p_adj_seed_te(ttot,regi,"AmSyCoalcc")      = 0.10;  !! ammonia tech QIANZHI
+!!  p_adj_seed_te(ttot,regi,"AmSyNGcc")        = 0.10;
+!!  p_adj_seed_te(ttot,regi,"AmSyLiqcc")       = 0.10;
+!!  p_adj_seed_te(ttot,regi,"AmSyH2")          = 0.25;
+  p_adj_seed_te(ttot,regi,"StCrLiq")         = 0.001;
+  p_adj_seed_te(ttot,regi,"StCrNG")          = 0.001;
+  p_adj_seed_te(ttot,regi,"MTOMTA")          = 0.001;
+!!  p_adj_seed_te(ttot,regi,"FertProdH2")      = 0.10;
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   p_adj_seed_te(ttot,regi,"bfcc")            = 0.05;
   p_adj_seed_te(ttot,regi,"idrcc")           = 0.05;
@@ -1301,6 +1356,28 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,"spv")             = 0.15;
   p_adj_coeff(ttot,regi,"windon")          = 0.25;
   p_adj_coeff(ttot,regi,"windoff")         = 0.35;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+  !!p_adj_coeff(ttot,regi,"ChemElec")        = 0.25;
+  !!p_adj_coeff(ttot,regi,"ChemH2")          = 1.0;
+  !!p_adj_coeff(ttot,regi,"MeSySol")         = 3.0;  !! methanol tech QIANZHI
+  !!p_adj_coeff(ttot,regi,"MeSyNG")          = 3.0;
+  !!p_adj_coeff(ttot,regi,"MeSyLiq")         = 3.0;
+  !!p_adj_coeff(ttot,regi,"MeSySolcc")       = 0.5;  !! methanol tech QIANZHI
+  !!p_adj_coeff(ttot,regi,"MeSyNGcc")        = 0.5;
+  !!p_adj_coeff(ttot,regi,"MeSyLiqcc")       = 0.5;
+  !!p_adj_coeff(ttot,regi,"MeSyH2")          = 1.0;
+  !!p_adj_coeff(ttot,regi,"AmSyCoal")        = 3.0;  !! ammonia tech QIANZHI
+  !!p_adj_coeff(ttot,regi,"AmSyNG")          = 3.0;
+  !!p_adj_coeff(ttot,regi,"AmSyLiq")         = 3.0;
+  !!p_adj_coeff(ttot,regi,"AmSyCoalcc")      = 0.5;  !! ammonia tech QIANZHI
+  !!p_adj_coeff(ttot,regi,"AmSyNGcc")        = 0.5;
+  !!p_adj_coeff(ttot,regi,"AmSyLiqcc")       = 0.5;
+  !!p_adj_coeff(ttot,regi,"AmSyH2")          = 1.0;
+  !!p_adj_coeff(ttot,regi,"StCrLiq")         = 3.0;
+  !!p_adj_coeff(ttot,regi,"StCrNG")          = 3.0;
+  !!p_adj_coeff(ttot,regi,"MTOMTA")          = 1.0;
+  !!p_adj_coeff(ttot,regi,"FertProdH2")      = 1.0;
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   p_adj_coeff(ttot,regi,"bfcc")            = 1.0;
   p_adj_coeff(ttot,regi,"idrcc")           = 1.0;
@@ -1494,7 +1571,7 @@ $offdelim
 parameter p_macBaseIMAGE(tall,all_regi,all_enty)        "baseline emissions of N2O from transport, adipic acid production, and nitric acid production based on data from van Vuuren"
 /
 $ondelim
-$ifthen %cm_emifacs_baseyear% == "2005" 
+$ifthen %cm_emifacs_baseyear% == "2005"
 $include "./core/input/p_macBaseVanv.cs4r"
 $else
 $include "./core/input/p_macBaseHarmsen2022.cs4r"
@@ -1667,7 +1744,7 @@ execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
 execute_load "input_ref.gdx", pm_prodFEReference = vm_prodFe.l;
 execute_load "input_ref.gdx", p_prodUeReference = v_prodUe.l;
 execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
-*' load MAC costs from reference gdx. Values for t (i.e. after cm_start_year) will be overwritten in core/presolve.gms 
+*' load MAC costs from reference gdx. Values for t (i.e. after cm_start_year) will be overwritten in core/presolve.gms
 execute_load "input_ref.gdx" pm_macCost;
 );
 

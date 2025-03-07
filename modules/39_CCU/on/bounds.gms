@@ -45,7 +45,7 @@ if(cm_emiscen = 1,
 );
 
 ***----------------------------------------------------------------------------
-*** force synthetic liquids in as a minimum share of total liquids if cm_shSynLiq switch used 
+*** force synthetic liquids in as a minimum share of total liquids if cm_shSynLiq switch used
 ***----------------------------------------------------------------------------
 
 if (cm_shSynLiq gt 0,
@@ -55,7 +55,7 @@ if (cm_shSynLiq gt 0,
 );
 
 ***----------------------------------------------------------------------------
-*** force synthetic gases in as a minimum share of total liquids if cm_shSynGas switch used 
+*** force synthetic gases in as a minimum share of total liquids if cm_shSynGas switch used
 ***----------------------------------------------------------------------------
 
 if (cm_shSynGas gt 0,

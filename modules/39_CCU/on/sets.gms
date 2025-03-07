@@ -37,30 +37,29 @@ se2se_ccu39(all_enty,all_enty,all_te)  			"map secondary energy to secondary ene
 
 teCCU2rlf(all_te,rlf)     "mapping for CCU technologies to grades"
 /
-      (h22ch4) . 1
-	  (MeOH) . 1
 /
 
 
 teSeCCU2rlf(all_te,rlf)     "mapping for secondary energy CCU technologies to grades"
 /
-      (h22ch4) . 1
-	  (MeOH) . 1
+    (h22ch4) . 1
+    (MeOH) . 1
 /
 ;
-
-alias(teCCU2rlf,teCCU2rlf2); 
 
 
 ***-------------------------------------------------------------------------
 ***  add module specific sets and mappings to the global sets and mappings
 ***-------------------------------------------------------------------------
 
-enty(enty_ccu39)							   = YES;
-te(te_ccu39)								   = YES;
-se2se(se2se_ccu39)							   = YES;
-teSe2rlf(teCCU2rlf)					   		   = YES;
-teAdj(te_ccu39)								   = YES;
+teCCU2rlf(teSeCCU2rlf)         = YES;
+teCCU2rlf(teCUPrc,"1")         = YES;
+
+enty(enty_ccu39)               = YES;
+te(te_ccu39)                   = YES;
+se2se(se2se_ccu39)             = YES;
+teSe2rlf(teCCU2rlf)            = YES;
+teAdj(te_ccu39)		  				   = YES;
 
 *** EOF ./modules/39_CCU/on/sets.gms
 
