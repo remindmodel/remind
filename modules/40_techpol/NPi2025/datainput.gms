@@ -14,16 +14,12 @@ $offdelim
 $onlisting
 ;
 
-p40_TechBound(ttot,all_regi,te) = f40_TechBound(ttot,all_regi,"%cm_NPi_version%",te);
+*** ensure that technology bounds are not decreasing
+p40_TechBound(ttot,all_regi,te) = smax(ttot2$(ttot2.val le ttot.val) , f40_TechBound(ttot2,all_regi,"%cm_NPi_version%",te));
 
 *** windoffshore-todo: separate NDC targets for windon and windoff
 p40_TechBound(ttot,all_regi,"wind") = f40_TechBound(ttot,all_regi,"%cm_NPi_version%","wind");
 p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
-
-*** ensure that technology bounds are not decreasing
-loop(ttot$(ttot.val > 2025),
-    p40_TechBound(ttot, all_regi, te) = max(p40_TechBound(ttot, all_regi, te), p40_TechBound(ttot-1, all_regi, te));
-);
 
 *** In scenarios with 2nd generation bioenergy technology phaseout,
 *** switch-off biomass capacity targets of NDC
