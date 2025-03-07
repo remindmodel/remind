@@ -27,6 +27,16 @@ checkSettingsRemMag <- function(cfg_rem, cfg_mag, testmode = FALSE) {
     errorsfound <- errorsfound + 1
   }
 
+  # damage settings
+  if (! isTRUE(cfg_mag$gms$c14_yields_scenario == "cc") &&
+      ! isTRUE(cfg_rem$gms$damages == "off")) {
+    text <- paste0("You did not select MAgPIE climate damages, but REMIND damages for ", cfg_rem$title, ":",
+                   "\n- cfg_mag$gms$c14_yields_scenario = ", cfg_mag$gms$c14_yields_scenario,
+                   "\n- cfg_rem$gms$damages = ", cfg_rem$gms$damages)
+    if (isTRUE(testmode)) warning(text) else message(text)
+    errorsfound <- errorsfound + 1
+  }
+
   if (errorsfound > 0) {
     if (testmode) warning(errorsfound, " errors found in checkSettingsRemMag.")
       else stop(errorsfound, " errors found in checkSettingsRemMag, see explanation in warnings.")
