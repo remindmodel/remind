@@ -21,7 +21,8 @@ vm_cap.lo(t,regi,"windon","1")$(t.val gt 2025) = p40_TechBound(t,regi,"windon")*
 vm_cap.lo(t,regi,"windoff","1")$(t.val gt 2025) = p40_TechBound(t,regi,"windoff")*0.001;
 vm_cap.lo(t,regi,"wind","1")$(t.val gt 2025) = p40_TechBound(t,regi,"wind")*0.001;
 *vm_cap.lo(t,regi,"elh2","1")$(t.val gt 2025) = p40_TechBound(t,regi,"elh2")*0.001;   
-vm_cap.lo(t,regi,"geohdr","1")$(t.val gt 2025) = p40_TechBound(t,regi,"geohdr")*0.001;  
+*vm_cap.lo(t,regi,"geohdr","1")$(t.val gt 2025) = p40_TechBound(t,regi,"geohdr")*0.001;  quick fix needs adjustments in the mrremind Inputdata generation including new IRENA
+vm_cap.lo(t,regi,"geohdr","1")$( (t.val gt 2025) AND sameas(regi, "OAS")) = p40_TechBound(t,regi,"geohdr")*0.001;
 *vm_cap.up(t,regi,"coalchp","1")$(t.val gt 2025) = p40_TechBound(t,regi,"coalchp")*0.001;  !!max bound for Canada use the netzero calculator, check coal phase out module
 *vm_cap.lo(t,regi,"bioigcc","1")$(t.val gt 2025) = p40_TechBound(t,regi,"bioigcc")*0.001; !!regular bioenergy bound
 

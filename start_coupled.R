@@ -125,7 +125,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
         stop("### COUPLING ### REMIND didn't produce any gdx. Coupling iteration stopped!")
       }
 
-      # In the coupling, at the end of each REMIND run, report.R already automatically appends the MAgPIE
+      # In the coupling, at the end of each REMIND run, reporting.R already automatically appends the MAgPIE
       # report of the previous MAgPIE run to the normal REMIND_generic reporting.
       # After the last coupling iteration: read this combined report from the REMIND output folder, set the 
       # model name to 'REMIND-MAgPIE' and write the combined report directly to the 'output' folder.
