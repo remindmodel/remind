@@ -698,6 +698,8 @@ if (! "--test" %in% flags && ! "--gamscompile" %in% flags) {
   message(cs_command)
 }
 
+warnings()
+
 message("#### Summary ####")
 message("\nDone.", if(any(c("--test", "--gamscompile") %in% flags)) " You are in TEST or gamscompile mode, no runs were actually started.")
 message("- ", length(finishedRuns), " runs already finished: ", paste(finishedRuns, collapse = ", "))
