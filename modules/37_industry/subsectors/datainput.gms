@@ -699,7 +699,7 @@ p37_specFeDemTarget("fehos","ChemH2","standard")  = 3.3 / (sm_TWa_2_MWh/sm_giga_
 p37_specFeDemTarget("feh2s","ChemH2","standard")  = 2.1 / (sm_TWa_2_MWh/sm_giga_2_non);   
 p37_specFeDemTarget("feels","ChemH2","standard")  = 1.8 / (sm_TWa_2_MWh/sm_giga_2_non); 
 
-p37_specFeDemTarget("fegas","StCrNG","standard")  = 16.5 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: A. Boulamanti and J. A. Moya, Renew. Sustain. Energy Rev., 2017, 68, 1205–1212. Table2
+p37_specFeDemTarget("fegas","StCrNG","standard")  = 17.0 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: A. Boulamanti and J. A. Moya, Renew. Sustain. Energy Rev., 2017, 68, 1205–1212. Table2
 p37_specFeDemTarget("fehos","StCrNG","standard")  = 5.83 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: A. Boulamanti and J. A. Moya, Renew. Sustain. Energy Rev., 2017, 68, 1205–1212. Table2
 p37_specFeDemTarget("feels","StCrNG","standard")  = 0.16 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: A. Boulamanti and J. A. Moya, Renew. Sustain. Energy Rev., 2017, 68, 1205–1212. Table2 Ethane is 0.14 and Propane & Butane is 0.18
 
