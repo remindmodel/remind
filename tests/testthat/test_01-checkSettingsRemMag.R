@@ -9,8 +9,9 @@ test_that("checkSettingsRemMag() works", {
                                c09_gdp_scenario = item[[2]],
                                c60_1stgen_biodem = "const2030"))
     cfg_rem <- list(gms = list(cm_GDPpopScen = item[[3]],
-                               cm_1stgen_phaseout = 0))
-    expect_equal(checkSettingsRemMag(cfg_rem, cfg_mag), 0)
+                               cm_1stgen_phaseout = 0,
+                               damages = "off"))
+    expect_equal(checkSettingsRemMag(cfg_rem, cfg_mag, testmode = TRUE), 0)
   }
   fails <- list(c("SSP2", "SSP2", "SSP3"),
                 c("SSP2", "SSP3", "SSP2"),
@@ -22,7 +23,8 @@ test_that("checkSettingsRemMag() works", {
                                c09_gdp_scenario = item[[2]],
                                c60_1stgen_biodem = "const2030"))
     cfg_rem <- list(gms = list(cm_GDPpopScen = item[[3]],
-                               cm_1stgen_phaseout = 0))
-    expect_error(checkSettingsRemMag(cfg_rem, cfg_mag))
+                               cm_1stgen_phaseout = 0,
+                               damages = "off"))
+    expect_error(checkSettingsRemMag(cfg_rem, cfg_mag, testmode = FALSE))
   }
 })
