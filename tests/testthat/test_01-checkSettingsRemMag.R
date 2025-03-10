@@ -21,7 +21,7 @@ test_that("checkSettingsRemMag() works", {
     cfg_mag <- list(gms = list(c09_pop_scenario = item[[1]],
                                c09_gdp_scenario = item[[2]],
                                c60_1stgen_biodem = "const2030"))
-    cfg_rem <- list(gms = list(cm_GDPpopScen = item[[3]]
+    cfg_rem <- list(gms = list(cm_GDPpopScen = item[[3]],
                                cm_1stgen_phaseout = 0))
     expect_error(checkSettingsRemMag(cfg_rem, cfg_mag))
   }

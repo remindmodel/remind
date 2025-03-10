@@ -1270,7 +1270,7 @@ $setGLobal cm_bioprod_regi_lim off  !! def off
 *'  * (SSP5):  SSP5 fastGROWTH fastCONV
 *'  * (SDP|SDP_EI|SDP_MC|SDP_RC):   SDP scenarios
 *'  * (SSP2IndiaMedium|SSP2IndiaHigh):   special India scenario
-$setglobal cm_GDPpopScen   SSP2  !! def = SSP2  !! regexp = (SSP[1-5]|SDP(_EI|_MC|_RC)?|SSP2IndiaMedium|SSP2IndiaHigh
+$setglobal cm_GDPpopScen   SSP2  !! def = SSP2  !! regexp = SSP[1-5]|SDP(_EI|_MC|_RC)?|SSP2IndiaMedium|SSP2IndiaHigh
 *' c_techAssumptScen flag defines an energy technology scenario according to SSP narratives
 *'  * (SSP1) optimistic for VRE, storage, BEV; pessimistic for nuclear and CCS
 *'  * (SSP2) reference scenario - default investment costs & learning rates
