@@ -321,44 +321,32 @@ pm_data(all_regi,char,te) = fm_dataglob(char,te);
 *** Regional risk premium during building time
 *** -------------------------------------------------------------------------------
 
-*RP* calculate turnkey costs (which are the sum of the overnight costs in generisdata_tech and the "interest during construction” (IDC) )
-
-*** in the version with regionalized technology costs, also use regionally differentiated financing costs
-*** First read in the regional market risks:
-parameter p_risk_premium_constr(all_regi)       "risk premium during construction time. Use same values as pm_risk_premium used in module 23_capital markets"
+parameter p_risk_premium_constr(all_regi) "risk premium during construction time. Use same values as pm_risk_premium used in module 23_capital markets"
 *RP* 2 parameters needed because pm_risk_premium is set to 0 in module 23 realization perfect".
 /
 $ondelim
 $include "./core/input/pm_risk_premium.cs4r"
 $offdelim
-/
-;
+/;
 
-*** then calculate the financing costs during construction
-loop(te$(fm_dataglob("constrTme",te) > 0),
-  p_tkpremused(regi,te) = 1/fm_dataglob("constrTme",te)
-    * sum(integ$(integ.val <= fm_dataglob("constrTme",te)),
-$ifthen %cm_techcosts% == "GLO"
-    (1 + 0.02/pm_ies(regi) +  pm_prtp(regi) )                               ** (integ.val - 0.5) - 1
-$else
-    (1 + 0.02/pm_ies(regi) + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
-$endif
-      )
-);
-
-*** nuclear sees 3% higher interest rates during construction time due to higher construction time risk, see "The economic future of nuclear power - A study conducted at The University of Chicago" (2004)
-loop(te$sameas(te,"tnrs"),
-  p_tkpremused(regi,te) = 1/fm_dataglob("constrTme",te)
-    * sum(integ$(integ.val <= fm_dataglob("constrTme",te)),
-$ifthen %cm_techcosts% == "GLO"
-    (1 + 0.02/pm_ies(regi) + 0.03 + pm_prtp(regi) )                                ** (integ.val - 0.5) - 1
-$else
-    (1 + 0.02/pm_ies(regi) + 0.03 + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
-$endif
-      )
+*** calculate turnkey costs, which are the sum of the overnight costs and the "interest during construction” (IDC)
+loop(te $ (fm_dataglob("constrTme",te) > 0),
+  p_tkpremused(regi,te) = 1 / fm_dataglob("constrTme",te)
+    * sum(integ $ (integ.val <= fm_dataglob("constrTme",te)),
+                              (1
+                                  + 0.02 / pm_ies(regi) !! intertemporal elasticity of substitution
+                                  + pm_prtp(regi) !! pure rate of time preference
+*** if technology costs are regionalised, also use regionalised financing costs
+$if not "%cm_techcosts%" == "GLO" + p_risk_premium_constr(regi)
+*** nuclear sees 3% higher interest rates during construction time due to higher construction time risk
+*** see "The economic future of nuclear power - A study conducted at The University of Chicago" (2004)
+                                  + 0.03 $ sameas(te,"tnrs")
+                              ) ** (integ.val - 0.5) - 1
+    );
 );
 
 display p_tkpremused;
+
 *** modify regionalized cost data using cost premium during construction time
 pm_data(regi,"inco0",te)       = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"inco0",te);
 pm_data(regi,"floorcost",te)   = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"floorcost",te);
@@ -418,7 +406,7 @@ fm_dataglob("learnExp_wFC",teLearn(te)) = fm_dataglob("inco0",te) / fm_dataglob(
 fm_dataglob("learnMult_wFC",teLearn(te)) = fm_dataglob("incolearn",te) / (fm_dataglob("ccap0",te) ** fm_dataglob("learnExp_wFC", te));
 
 *** regional parameters
-pm_data(regi,"learnExp_wFC",teLearn(te))  = pm_data(regi,"inco0",te) / pm_data(regi,"incolearn",te) * log(1 - pm_data(regi,"learn",te)) / log(2);
+pm_data(regi,"learnExp_wFC",teLearn(te)) = pm_data(regi,"inco0",te) / pm_data(regi,"incolearn",te) * log(1 - pm_data(regi,"learn",te)) / log(2);
 
 $ifthen %cm_techcosts% == "GLO"
     pm_data(regi,"learnMult_wFC",teLearn(te)) = pm_data(regi,"incolearn",te) / (sum(regi2,pm_data(regi2,"ccap0",te)) ** pm_data(regi,"learnExp_wFC",te));
