@@ -12,10 +12,10 @@ pm_damageGrowthRate(tall,all_regi)                   "damage function for growth
 pm_damageMarginalT(tall,all_regi)                    "damage function derivative for KW"
 pm_damageMarginalTm1(tall,all_regi)                  "damage function derivative for KW"
 pm_damageMarginalTm2(tall,all_regi)                  "damage function derivative for KW"
-p50_damageFuncCoefa1     "coef1 of damamge function",
-p50_damageFuncCoefa2     "coef2 of damamge function"
-p50_damageFuncCoefb1     "coef1 of damamge function",
-p50_damageFuncCoefb2     "coef2 of damamge function"
+p50_damageFuncCoefa1     "coef1 of damage function",
+p50_damageFuncCoefa2     "coef2 of damage function"
+p50_damageFuncCoefb1     "coef1 of damage function",
+p50_damageFuncCoefb2     "coef2 of damage function"
 p50_damageFuncCoefTC0(iso)	"coef0 for tropical cyclone damage function"
 p50_damageFuncCoefTC1(iso)	"coef1 for tropical cyclone damage function"
 pm_damageProd(tall,all_regi)	"damage from aggregate damage function"

@@ -23,7 +23,7 @@ loop(ext_regi$altFeEmiFac_regi(ext_regi),
 $endif.altFeEmiFac
 
 *** VRE capacity factor adjustments for Germany in line with results from detailed models in ARIADNE project
- loop(te$sameas(te,"wind"),
+ loop(te$sameas(te,"windon"),
   loop(regi$sameas(regi,"DEU"),
     pm_cf("2025",regi,te) =  1.04 * pm_cf("2025",regi,te);
     pm_cf("2030",regi,te) =  1.08 * pm_cf("2030",regi,te);

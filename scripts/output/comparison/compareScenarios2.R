@@ -18,7 +18,7 @@ source("./scripts/start/isSlurmAvailable.R")
 if (!exists("outputdirs")) {
   stop(
     "Variable outputdirs does not exist. ",
-    "Please call comapreScenarios.R via output.R, which defines outputdirs.")
+    "Please call compareScenarios.R via output.R, which defines outputdirs.")
 }
 
 # Find a suitable default cs2 profile depending on config.RData.

@@ -19,7 +19,7 @@ test_that("Non-ESM Investments never drop more than 50% in comparison to previou
     if (length(mifs) == 1) {
       m <- suppressWarnings(
         read.report(mifs[1], as.list = FALSE)
-      )[reg, , "Investments|Non-ESM (billion US$2005/yr)"]
+      )[reg, , "Investments|Non-ESM (billion US$2017/yr)"]
       data <- mbind(data, m)
     }
   }

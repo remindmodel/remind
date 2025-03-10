@@ -25,7 +25,7 @@ pm_fuExtrForeign(ttot,all_regi,all_enty,rlf) "foreign fuel extraction"
 
 positive variable
 *AJS* Adjustment costs for Nash trade algorithm.  Only non-zero in the Nash_test realization of 80_optimization module.
-vm_costAdjNash(ttot,all_regi)               "Adjustment costs for deviation from the trade structure of the last iteration." 
+vm_costAdjNash(ttot,all_regi)               "Adjustment costs for deviation from the trade structure of the last iteration."
 ;
 
 equations

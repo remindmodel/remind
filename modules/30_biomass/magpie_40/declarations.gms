@@ -55,7 +55,7 @@ Positive variable
 v30_priceshift(ttot,all_regi)      "Regional translation factor that shifts emulator prices to better fit actual MAgPIE prices [-]"
 v30_pricemult(ttot,all_regi)       "Regional multiplication factor that scales emulator prices to better fit actual MAgPIE prices [-]"
 v30_multcost(ttot,all_regi)        "Cost markup factor for deviations from demand of last coupling iteration [-]"
-v30_BioPEProdTotal(ttot,all_regi)  "total domestic PE biomass production [unit: TWyr]"
+v30_BioPEProdTotal(ttot,all_regi)  "total domestic PE biomass production [TWyr]"
 ***v30_pedem_BAU(tall,all_regi,all_enty,all_enty,all_te)    "Primary energy demand imported from refernce gdx [TWa]"
 ***v30_seprod_BAU(tall,all_regi,all_enty,all_enty,all_te)   "Secondary energy production imported from reference gdx [TWa]"
 

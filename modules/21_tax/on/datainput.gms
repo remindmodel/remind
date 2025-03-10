@@ -37,6 +37,14 @@ $include "./modules/21_tax/on/input/f21_tax_convergence.cs4r"
 $offdelim
   /
 ;
+Parameter f21_tax_convergence_rollback(tall,all_regi,all_enty) "Tax convergence level for specific regions, year and final energy type in rollback scenario"
+  /
+$ondelim
+$include "./modules/21_tax/on/input/f21_tax_convergence_rollback.cs4r"
+$offdelim
+  /
+;
+
 Parameter f21_max_fe_sub(tall,all_regi,all_enty) "maximum final energy subsidy levels (in $/Gj) from REMIND version prior to rev. 5429"
   /
 $ondelim
@@ -68,42 +76,24 @@ $offdelim
   p21_max_fe_sub(ttot,all_regi,entyFe)$f21_max_fe_sub(ttot,all_regi,entyFe) = f21_max_fe_sub(ttot,all_regi,entyFe)*0.001/sm_EJ_2_TWa;
   p21_prop_fe_sub(ttot,all_regi,entyFe)$f21_prop_fe_sub(ttot,all_regi,entyFe) = f21_prop_fe_sub(ttot,all_regi,entyFe);
 
-if(cm_fetaxscen eq 0,
-  p21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe) = 0;
-  p21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe) = 0;
-  p21_tau_fuEx_sub(ttot,regi,all_enty) = 0;
-);
+
 
 *** -------------------------PE2SE Taxes--------------------------(Primary to secondary energy technology taxes, specified by technology)
 *** cb 20110923 load paths for technology taxes, subsidies and inconvenience costs 
 p21_tau_pe2se_tax(tall,regi,te) = 0;
-p21_tau_pe2se_inconv(tall,regi,te) = 0;
-p21_tau_pe2se_sub(tall,regi,te)= 0;
 
 *RP* FILE changed by hand after introduction of SO2 taxes and inconvenience penalties on 2012-03-08
-*GL* Values try to account for excessive water use, further pollution
-*GL* Taxes are given in USD(2005) per GJ 
-p21_tau_pe2se_tax(ttot,regi,"igcc")$(ttot.val ge 2005)       = 0.25;
-p21_tau_pe2se_tax(ttot,regi,"igccc")$(ttot.val ge 2005)      = 0.25;
-p21_tau_pe2se_tax(ttot,regi,"coalftrec")$(ttot.val ge 2005)  = 1.0;
-p21_tau_pe2se_tax(ttot,regi,"coalftcrec")$(ttot.val ge 2005) = 1.0;
-p21_tau_pe2se_tax(ttot,regi,"coalh2")$(ttot.val ge 2005)     = 0.5;
-p21_tau_pe2se_tax(ttot,regi,"coalh2c")$(ttot.val ge 2005)    = 0.5;
-p21_tau_pe2se_tax(ttot,regi,"coalgas")$(ttot.val ge 2005)    = 0.5;
-
-***JaS* Introduces inconvenience costs as taxes for the transformation of primary to secondary energy types
-***JaS* Taxes are given in USD(2005) per GJ 
-*cb* to be exchanged for file with values if needed 
-p21_tau_pe2se_inconv(ttot,regi,te)$(ttot.val ge 2005)=0.000000;
-*** description: Taxes/subsidies are given in USD(2005) per GJ
-*** unit: USD(2005) per GJ
-p21_tau_pe2se_inconv(ttot,regi,te)$(ttot.val ge 2005)=0.000000;
-
-
+*** Values try to account for excessive water use, further pollution
+*** Taxes are given in USD(2005) and converted to USD(2017) per GJ 
+p21_tau_pe2se_tax(ttot,regi,"igcc")$(ttot.val ge 2005)       = sm_D2005_2_D2017 * 0.25;
+p21_tau_pe2se_tax(ttot,regi,"igccc")$(ttot.val ge 2005)      = sm_D2005_2_D2017 * 0.25;
+p21_tau_pe2se_tax(ttot,regi,"coalftrec")$(ttot.val ge 2005)  = sm_D2005_2_D2017 * 1.0;
+p21_tau_pe2se_tax(ttot,regi,"coalftcrec")$(ttot.val ge 2005) = sm_D2005_2_D2017 * 1.0;
+p21_tau_pe2se_tax(ttot,regi,"coalh2")$(ttot.val ge 2005)     = sm_D2005_2_D2017 * 0.5;
+p21_tau_pe2se_tax(ttot,regi,"coalh2c")$(ttot.val ge 2005)    = sm_D2005_2_D2017 * 0.5;
+p21_tau_pe2se_tax(ttot,regi,"coalgas")$(ttot.val ge 2005)    = sm_D2005_2_D2017 * 0.5;
 ***cb20110923 rescaling of PE2SE parameters from $/GJ to trillion $ / TWa 
 p21_tau_pe2se_tax(ttot,regi,te)$(ttot.val ge 2005)    = p21_tau_pe2se_tax(ttot,regi,te)    * 0.001 / sm_EJ_2_TWa;
-p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val ge 2005)    = p21_tau_pe2se_sub(ttot,regi,te)    * 0.001 / sm_EJ_2_TWa;
-p21_tau_pe2se_inconv(ttot,regi,te)$(ttot.val ge 2005) = p21_tau_pe2se_inconv(ttot,regi,te) * 0.001 / sm_EJ_2_TWa;
 
 *** SE electricity tax rate tech specific ramp up logistic function parameters
 p21_tau_SE_tax_rampup(t,regi,te,teSeTax_coeff) = 0;
@@ -115,20 +105,7 @@ $ifThen.SEtaxRampUpParam not "%cm_SEtaxRampUpParam%" == "off"
   );
 $endif.SEtaxRampUpParam
 
-***cb 20110923 load paths for ressource export taxes
-***cb* file for resource export taxes, not used in default settings
-Parameter p21_tau_xpres_tax(tall,all_regi,all_enty) "tax path for ressource export"
-  /
-$ondelim
-$include "./modules/21_tax/on/input/p21_tau_xpres_tax.cs4r"
-$offdelim
-  / ;
-*** converted to T$/TWyr   
-p21_tau_xpres_tax(ttot,regi,"peoil")$(ttot.val ge 2005) = p21_tau_xpres_tax(ttot,regi,"peoil") * sm_DpGJ_2_TDpTWa;
-*LB* use 0 for all regions as default
-p21_tau_xpres_tax(ttot,regi,all_enty) = 0;
-
-*JeS for SO2 tax case: tax path in 10^12$/TgS (= 10^6 $/t S) @ GDP/cap of 1000$/cap  (value gets scaled by GDP/cap)
+***JeS for SO2 tax case: tax path in 10^12$/TgS (= 10^6 $/t S) @ GDP/cap of 1000$/cap  (value gets scaled by GDP/cap)
 if((cm_so2tax_scen eq 0),
 s21_so2_tax_2010=0.0;
 elseif(cm_so2tax_scen eq 1),
@@ -139,52 +116,6 @@ elseif(cm_so2tax_scen eq 3),
 s21_so2_tax_2010=0.0006;   !! This tax level leads to 6000$/t S  @10,000$/cap
 elseif(cm_so2tax_scen eq 4),
 s21_so2_tax_2010=0.000144;
-);
-
-*** Implicit discount rates mark-ups over the normal discount rate
-if ((cm_DiscRateScen eq 0),
-p21_implicitDiscRateMarg(ttot,regi,all_in) = 0;
- elseif (cm_DiscRateScen eq 1),
- p21_implicitDiscRateMarg(ttot,regi,all_in) = 0;
- p21_implicitDiscRateMarg(ttot,regi,"kaphc") = 0.05;  !! 5% for the efficiency capital for the building shell
- p21_implicitDiscRateMarg(ttot,regi,"kapsc") = 0.05;  !! 5% for the efficiency capital for the air conditioning
- p21_implicitDiscRateMarg(ttot,regi,"kapal") = 0.20;  !! 20% for the efficiency capital for appliances
- elseif (cm_DiscRateScen eq 2),
- p21_implicitDiscRateMarg(ttot,regi,all_in) = 0;
- p21_implicitDiscRateMarg(ttot,regi,"kaphc")$(ttot.val ge 2005 AND ttot.val lt cm_startyear) = 0.05;  !! 5% for the efficiency capital for the building shell
- p21_implicitDiscRateMarg(ttot,regi,"kapsc")$(ttot.val ge 2005 AND ttot.val lt cm_startyear) = 0.05;  !! 5% for the efficiency capital for the air conditioning
- p21_implicitDiscRateMarg(ttot,regi,"kapal")$(ttot.val ge 2005 AND ttot.val lt cm_startyear) = 0.20;  !! 20% for the efficiency capital for appliances
- elseif (cm_DiscRateScen eq 3),
- p21_implicitDiscRateMarg(ttot,regi,all_in) = 0;
- 
- p21_implicitDiscRateMarg(ttot,regi,"kaphc") = 0.05;  !! 5% for the efficiency capital for the building shell
- p21_implicitDiscRateMarg(ttot,regi,"kapsc") = 0.05;  !! 5% for the efficiency capital for the air conditioning
- p21_implicitDiscRateMarg(ttot,regi,"kapal") = 0.20;  !! 20% for the efficiency capital for appliances
-
- p21_implicitDiscRateMarg(ttot,regi,in)$(pm_ttot_val(ttot) ge cm_startyear 
-                                         AND (sameAs(in,"kaphc") 
-                                              OR sameAs(in,"kapsc") 
-                                              OR sameAs(in,"kapal")
-                                              )
-                                        )
-                        = 0.25 * p21_implicitDiscRateMarg(ttot,regi,in);
- 
-elseif (cm_DiscRateScen eq 4),
- p21_implicitDiscRateMarg(ttot,regi,all_in) = 0;
- 
- p21_implicitDiscRateMarg(ttot,regi,"kaphc") = 0.05;  !! 5% for the efficiency capital for the building shell
- p21_implicitDiscRateMarg(ttot,regi,"kapsc") = 0.05;  !! 5% for the efficiency capital for the air conditioning
- p21_implicitDiscRateMarg(ttot,regi,"kapal") = 0.20;  !! 20% for the efficiency capital for appliances
-
- p21_implicitDiscRateMarg(ttot,regi,"kaphc") = min(max((2030 - pm_ttot_val(ttot))/(2030 -2020),0),1)    !! lambda = 1 in 2020 and 0 in 2030; 
-                                               *  0.75 * p21_implicitDiscRateMarg(ttot,regi,"kaphc")
-                                               +  0.25 * p21_implicitDiscRateMarg(ttot,regi,"kaphc");   !! Reduction of 75% of the Efficiency gap
- p21_implicitDiscRateMarg(ttot,regi,"kapsc") = min(max((2030 - pm_ttot_val(ttot))/(2030 -2020),0),1)    !! lambda = 1 in 2020 and 0 in 2030; 
-                                               *  0.75 * p21_implicitDiscRateMarg(ttot,regi,"kapsc")
-                                               +  0.25 * p21_implicitDiscRateMarg(ttot,regi,"kapsc");   !! Reduction of 75% of the Efficiency gap
-  p21_implicitDiscRateMarg(ttot,regi,"kapal") = min(max((2030 - pm_ttot_val(ttot))/(2030 -2020),0),1)    !! lambda = 1 in 2020 and 0 in 2030; 
-                                               *  0.75 * p21_implicitDiscRateMarg(ttot,regi,"kapal")
-                                               +  0.25 * p21_implicitDiscRateMarg(ttot,regi,"kapal");   !! Reduction of 75% of the Efficiency gap
 );
 
 

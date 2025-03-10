@@ -47,7 +47,7 @@ If full.log exists, this is the next place to look at. Either open it in your fa
 ```bash
 less full.log
 ```
-and then type `G` to get to the end of the file. `q` finishes looking at the file.
+and then type `G` to get to the end of the file. Type `q` to close the file.
 Another option is to use the editor `vi` by typing `vi full.log`, in which case `:q` closes the editor. `less` is generally faster when looking at large file, but doesn’t offer color coding.
 
 You may find:
@@ -95,7 +95,8 @@ Also make sure that the R packages installed in your renv are up-to-date. The ED
 
 The file `abort.gdx` contains the latest data at the point GAMS aborted execution, which can be analysed using GAMS Studio.
 
-After a certain number of consecutive infeasibilities (default: `cm_abortOnConsecFail` = 5) REMIND will stop automatically, to avoid loosing too much time on an already doomed run. While REMIND sometimes is able to recover from a region being infes for 1 or 2 iterations, more will likely mean that the run will fail. In this case an `execution error` will be raised and the message `Run was aborted because the maximum number of consecutive failures was reached in at least one region!` can be found in the `full.log` and `full.lst` files. Continue with "Case 3" to solve the infeasibility.
+After a certain number of consecutive infeasibilities (default: `cm_abortOnConsecFail` = 2) REMIND will switch to the debug mode in which infeasibility are listed (and can be shown with `listinfes`).
+In case this does not help, it stops automatically, to avoid loosing too much time on an already doomed run. While REMIND sometimes is able to recover from a region being infes for 1 or 2 iterations, more will likely mean that the run will fail. In this case an `execution error` will be raised and the message `Run was aborted because the maximum number of consecutive failures was reached in at least one region!` can be found in the `full.log` and `full.lst` files. Continue with "Case 3" to solve the infeasibility.
 
 ### Case 2c: GDX or R file missing
 

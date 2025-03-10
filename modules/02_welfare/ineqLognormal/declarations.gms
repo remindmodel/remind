@@ -53,12 +53,6 @@ v02_energyExp_Add(ttot,all_regi)                  "additional energy expenditure
 v02_distrAlpha(ttot,all_regi)                     "income elasticity of mitigation costs"
 v02_damageConsShare(ttot,all_regi)		  "share of consumption loss from damages in consumption"
 
-
-$ifthen.inconv %cm_INCONV_PENALTY% == "on"
-v02_inconvPen(ttot,all_regi)                      "Inconvenience penalty in the welfare function, e.g. for air pollution. Unit: ?Utils?"
-v02_inconvPenCoalSolids(ttot,all_regi)            "Inconvenience penalty in the welfare function, e.g. for air pollution. Unit: ?Utils?"
-v02_sesoInconvPenSlack(ttot,all_regi)             "Slack to avoid negative inconvenience penalty for Coal Solids"
-$endif.inconv
 ;
 
 positive variables
@@ -66,6 +60,12 @@ v02_distrFinal_sigmaSq(ttot,all_regi)                  "sigma^2 parameter of fin
 v02_distrFinal_sigmaSq_postDam(ttot,all_regi)                  "sigma^2 parameter of final lognormal distribution (after redistributional effects of taxes and damages)"
 v02_distrFinal_sigmaSq_limit(ttot,all_regi)        "Limit past which inequality improvements do not lead to welfare benefits"
 v02_distrFinal_sigmaSq_welfare(ttot,all_regi)       "sigma^2 entering welfare"
+
+
+$ifthen.inconv %cm_INCONV_PENALTY% == "on" 
+v02_inconvPen(ttot,all_regi)                      "Inconvenience penalty on pe2se in the welfare function, e.g. for air pollution, except for biotr and coaltr. Unit: ?Utils?"
+v02_inconvPenSolidsBuild(ttot,all_regi)             "Inconvenience penalty in the welfare function, e.g. for air pollution or inconvenience, for solids used in Buildings. Unit: ?Utils?"
+$endif.inconv
 
 $IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_FESwitch%" == "on"
 v02_NegInconvPenFeBioSwitch(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Negative inconvenience penalty in the welfare function for bio/synfuel shares switch between sectors and emissions markets"
@@ -104,7 +104,7 @@ q02_budget_second(ttot,all_regi)                 "making sure budget is positive
 
 $ifthen.inconv %cm_INCONV_PENALTY% == "on"
 q02_inconvPen(ttot,all_regi)                      "Calculate the inconvenience penalty v02_inconvPen"
-q02_inconvPenCoalSolids(ttot,all_regi)            "Calculate the inconvenience penalty v02_inconvPen"
+q02_inconvPenSolidsBuild(ttot,all_regi)      "Calculate the inconvenience penalty v02_inconvPenSolids for solids used in Buildings"
 $endif.inconv
 
 $IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_FESwitch%" == "on"

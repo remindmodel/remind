@@ -16,10 +16,10 @@ pm_damageGrowthRate(tall,all_regi)                   "damage function for growth
 pm_damageMarginalT(tall,all_regi)                    "damage function derivative for KW"
 pm_damageMarginalTm1(tall,all_regi)                  "damage function derivative for KW"
 pm_damageMarginalTm2(tall,all_regi)                  "damage function derivative for KW"
-p50_damageFuncCoefa1     "coef1 of damamge function",
-p50_damageFuncCoefa2     "coef2 of damamge function"
-p50_damageFuncCoefb1     "coef1 of damamge function",
-p50_damageFuncCoefb2     "coef2 of damamge function"
+p50_damageFuncCoefa1     "coef1 of damage function",
+p50_damageFuncCoefa2     "coef2 of damage function"
+p50_damageFuncCoefb1     "coef1 of damage function",
+p50_damageFuncCoefb2     "coef2 of damage function"
 p50_se(tall,all_regi)    "standard error for damages"
 p50_var_a1	         "variance of coef1"
 p50_var_a2		 "variance of coef2"

@@ -6,13 +6,20 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/04_PE_FE_parameters/iea2014/datainput.gms
 
-parameter f04_IO_input(tall,all_regi,all_enty,all_enty,all_te)        "Energy input based on IEA data"
+parameter f04_IO_input(tall,all_regi,all_enty,all_enty,all_te) "Energy input based on IEA data"
 /
 $ondelim
 $include "./modules/04_PE_FE_parameters/iea2014/input/f04_IO_input.cs4r"
 $offdelim
 /
 ;
+
+*** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated 
+f04_IO_input(tall,all_regi,"pewin","seel","windon") $ (f04_IO_input(tall,all_regi,"pewin","seel","windon") eq 0) = f04_IO_input(tall,all_regi,"pewin","seel","wind");
+f04_IO_input(tall,all_regi,"pewin","seel","wind") = 0;
+*CG* setting historical production from wind offshore to 0 (due to the scarcity of offshore wind before 2015)
+f04_IO_input(tall,all_regi,"pewin","seel","windoff") = 0;
 
 if (smin((t,regi,pe2se(entyPe,entySe,te)), f04_IO_input(t,regi,entyPe,entySe,te)) lt 0,
   put_utility "msg" / "**""** input data problem: f04_IO_input has negative values that are overwritten";
@@ -28,18 +35,21 @@ if (smin((t,regi,pe2se(entyPe,entySe,te)), f04_IO_input(t,regi,entyPe,entySe,te)
 *' overwrite negative values with 0 to allow the model to solve. In the mid-term, the input data/mapping needs to be improved to prevent negative values
 f04_IO_input(tall,regi,entyPe,entySe,te)$(f04_IO_input(tall,regi,entyPe,entySe,te) lt 0) = 0;
 
-*CG* setting historical production from wind offshore to 0 (due to the scarcity of offshore wind before 2015)
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-f04_IO_input(tall,all_regi,"pewin","seel","windoff") = 0;
-$ENDIF.WindOff
 
-parameter f04_IO_output(tall,all_regi,all_enty,all_enty,all_te)        "Energy output based on IEA data"
+*** RP 2019-02-19: From rev 8352 on, f04_IO_output contains gross generation for power plants. Power plant autoconsumption is contained in t&d losses. 
+*** This facilitates comparison with other sources which usually report gross electricity generation as well as gross capacity factors
+parameter f04_IO_output(tall,all_regi,all_enty,all_enty,all_te) "Energy output based on IEA data"
 /
 $ondelim
 $include "./modules/04_PE_FE_parameters/iea2014/input/f04_IO_output.cs4r"
 $offdelim
 /
 ;
+
+*** windoffshore-todo
+*** allow input data with either "wind" or "windon" until mrremind is updated 
+f04_IO_output(tall,all_regi,"pewin","seel","windon") $ (f04_IO_output(tall,all_regi,"pewin","seel","windon") eq 0) = f04_IO_output(tall,all_regi,"pewin","seel","wind");
+f04_IO_output(tall,all_regi,"pewin","seel","wind") = 0;
 
 if (smin((t,regi,pe2se(entyPe,entySe,te)), f04_IO_output(t,regi,entyPe,entySe,te)) lt 0,
   put_utility "msg" / "**""** input data problem: f04_IO_output has negative values that are overwritten" /
@@ -55,7 +65,6 @@ if (smin((t,regi,pe2se(entyPe,entySe,te)), f04_IO_output(t,regi,entyPe,entySe,te
 
 *' overwrite negative values with 0 to allow the model to solve. In the mid-term, the input data/mapping needs to be improved to prevent negative values
 f04_IO_output(tall,regi,entyPe,entySe,te)$(f04_IO_output(tall,regi,entyPe,entySe,te) lt 0) = 0;
-
 
 
 
@@ -81,9 +90,6 @@ f04_IO_output("2005",regi,"sesofos","fesob","tdfossob")$(p04_IO_output_beforeFix
 f04_IO_output("2005",regi,"seliqbio","fehob","tdbiohob")$(p04_IO_output_beforeFix_Total("2005",regi,"fehob")) = p04_IO_output_beforeFix("2005",regi,"seliqbio","fehob","tdbiohob") * pm_fedemand("2005",regi,"fehob")/p04_IO_output_beforeFix_Total("2005",regi,"fehob");
 f04_IO_output("2005",regi,"seliqfos","fehob","tdfoshob")$(p04_IO_output_beforeFix_Total("2005",regi,"fehob")) = p04_IO_output_beforeFix("2005",regi,"seliqfos","fehob","tdfoshob") * pm_fedemand("2005",regi,"fehob")/p04_IO_output_beforeFix_Total("2005",regi,"fehob");
 
-
-
-$ifthen.subsectors "%industry%" == "subsectors"   !! industry
 
 *** industry solids
 p04_IO_output_beforeFix_Total(t,regi,"fesoi") = p04_IO_output_beforeFix(t,regi,"sesobio","fesoi","tdbiosoi")
@@ -156,7 +162,6 @@ f04_IO_output("2005",regi,"sehe","fehei","tdhei")$(p04_IO_output_beforeFix_Total
                                                               )
                                                             /  p04_IO_output_beforeFix_Total("2005",regi,"fehei");
 
-$endif.subsectors
 
 *** end adjustment of f04_IO_output to pm_fedemand values
 
@@ -164,8 +169,8 @@ $endif.subsectors
 f04_IO_input(ttot,regi,all_enty,all_enty2,all_te) = f04_IO_input(ttot,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
 f04_IO_output(ttot,regi,all_enty,all_enty2,all_te) = f04_IO_output(ttot,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
 
-*** calculate bio share per carrier for buildings and industry (only for historically available years)
-pm_secBioShare(ttot,regi,entyFe,sector)$((sameas(entyFe,"fegas") or sameas(entyFe,"fehos") or sameas(entyFe,"fesos")) and entyFe2Sector(entyFe,sector)  and (ttot.val ge 2005 and ttot.val le 2015) and (sum((entySe,all_enty,all_te)$entyFeSec2entyFeDetail(entyFe,sector,all_enty), f04_IO_output(ttot,regi,entySe,all_enty,all_te) ) gt 0)) = 
+*** calculate bio share per fe carrier (only for historically available years)
+pm_secBioShare(ttot,regi,entyFe,sector)$((seAgg2fe("all_seso",entyFe) OR seAgg2fe("all_seliq",entyFe) OR seAgg2fe("all_sega",entyFe)) AND entyFe2Sector(entyFe,sector) and (ttot.val ge 2005 and ttot.val le 2020) and (sum((entySe,all_enty,all_te)$entyFeSec2entyFeDetail(entyFe,sector,all_enty), f04_IO_output(ttot,regi,entySe,all_enty,all_te) ) gt 0)) = 
   sum((entySeBio,all_enty,all_te)$entyFeSec2entyFeDetail(entyFe,sector,all_enty), f04_IO_output(ttot,regi,entySeBio,all_enty,all_te) ) 
   /
   sum((entySe,all_enty,all_te)$entyFeSec2entyFeDetail(entyFe,sector,all_enty), f04_IO_output(ttot,regi,entySe,all_enty,all_te) )
@@ -185,7 +190,7 @@ loop(in2enty(all_enty,enty,all_te,te),
 );
 display pm_IO_input, p04_IO_output;
 
-***------------------ allocate all electricity produced from gas to ngt for initial calculation of average eta ----------------------------------------
+***------------------ allocate all electricity produced from gas (x_gas2elec) to ngcc for initial calculation of average eta. Some lines further down it is split to ngcc and ngt (search for "Distribute the initial gas numbers" ----------------------------------------
 pm_IO_input(regi,enty,enty2,"ngcc")  = pm_IO_input(regi,enty,enty2,"x_gas2elec");
 p04_IO_output(regi,enty,enty2,"ngcc") = p04_IO_output(regi,enty,enty2,"x_gas2elec");
 
@@ -245,12 +250,7 @@ loop(regi,
      );
 );
 
-*RP 2019-02-19: This is now changed starting from rev 8352. Power plant output is from now on gross production instead of net, and power plant autoconsumption is shifted to t&d losses
-*RP This was done to facilitate comparison with other sources which usually report gross electricity generation as well as gross capacity factors
-***------------------ allocate own power consumption to electricity technologies -----------------------------
-***p04_IO_output(regi,enty,enty2,te)$(sameas(enty2,"seel") AND (NOT sameas(te,"wind")) AND (NOT sameas(te,"spv")) )  = p04_IO_output(regi,enty,enty2,te)
-***                                                           - ( p04_IO_output(regi,enty,enty2,te) / sum(pe2se(enty3,enty2,te2)$((NOT sameas(te2,"wind")) AND (NOT sameas(te2,"spv"))), p04_IO_output(regi,enty3,enty2,te2)) ) 
-***                                                             * f04_IO_output("2005",regi,"seel","feel","o_feel");
+
 display pm_IO_input, p04_IO_output;
 
 *** ----------------------------------------------------------------------------------------------------------
@@ -270,16 +270,24 @@ p04_prodCoupleGlob("pecoal","seel","coalchp","sehe")        = 0.61;
 p04_prodCoupleGlob("pegas","seel","gaschp","sehe")          = 0.42;
 p04_prodCoupleGlob("pecoal","seh2","coalh2","seel")         = 0.081;
 p04_prodCoupleGlob("pecoal","seh2","coalh2c","seel")        = 0.054;
+
 p04_prodCoupleGlob("pebiolc","seel","biochp","sehe")        = 0.72;
-p04_prodCoupleGlob("pebiolc","seliqbio","bioftrec","seel")  = 0.147; !! from Liu et al. 2011 (Making Fischer-Tropsch Fuels and Electricity from Coal and Biomass: Performance and Cost Analysis)
-p04_prodCoupleGlob("pebiolc","seliqbio","bioftcrec","seel") = 0.108; !! from Liu et al. 2011 (Making Fischer-Tropsch Fuels and Electricity from Coal and Biomass: Performance and Cost Analysis)
 p04_prodCoupleGlob("pebiolc","segabio","biogasc","seel")    = -0.07;
 p04_prodCoupleGlob("pebiolc","seliqbio","bioethl","seel")   = 0.153;
+
+*** Electricity co-production for this Fischer-Tropsch-based biomass-to-liquids route. Values taken from:
+*** - Liu et al. 2011 (Making Fischer-Tropsch Fuels and Electricity from Coal and Biomass: Performance and Cost Analysis) https://doi.org/10.1021/ef101184e
+*** broadly in line with the other studies:
+*** - Swanson et al. 2010 estimate 7-11% for a non-CCS facility https://doi.org/10.1016/j.fuel.2010.07.027
+*** - Meerman et al. 2011 give 23-26% for a non-CCS facility (with pellets as feedstocks, though) https://doi.org/10.1016/j.rser.2011.03.018 
+p04_prodCoupleGlob("pebiolc","seliqbio","bioftrec","seel")  = 0.147;
+p04_prodCoupleGlob("pebiolc","seliqbio","bioftcrec","seel") = 0.108;
+
 p04_prodCoupleGlob("segabio","fegas","tdbiogas","seel")     = -0.05;
 p04_prodCoupleGlob("segafos","fegas","tdfosgas","seel")     = -0.05;
 p04_prodCoupleGlob("pegeo","sehe","geohe","seel")           = -0.3;
 p04_prodCoupleGlob("cco2","ico2","ccsinje","seel")          = -0.005;
-*** use global data for coule products if regional data form IEA are 0
+*** use global data for couple products if regional data form IEA are 0
 loop(pc2te(enty,enty2,te,enty3),
     loop(regi,
        if(pm_prodCouple(regi,enty,enty2,te,enty3) eq 0,
@@ -368,8 +376,9 @@ pm_fuExtrOwnCons(regi, "seel", "peoil")  = f04_IO_input("2005", regi, "seel",  "
 pm_fuExtrOwnCons(regi, "seel", "pegas")  = f04_IO_input("2005", regi, "seel",  "pegas", "d_elec2gas")/p04_fuExtr(regi, "pegas");
 pm_fuExtrOwnCons(regi, "seel", "pecoal") = f04_IO_input("2005", regi, "seel",  "pecoal","d_elec2coal")/p04_fuExtr(regi, "pecoal");
 
-
+*** ----------------------------------------------------------------------------------------------------------
 *RP* Distribute the initial gas numbers to ngcc and ngt based on energy values:
+*** ----------------------------------------------------------------------------------------------------------
 loop(regi,
   if( pm_data(regi,"mix0","ngcc") < 0.1 ,  !! in regions where gas provides < 10% of electricity, distribute 80/20
     p04_shareNGTinGas(regi) = 0.15;

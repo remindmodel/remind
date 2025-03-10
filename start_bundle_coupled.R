@@ -94,19 +94,6 @@ run_compareScenarios <- "short"
 magpie_empty <- FALSE
 
 ########################################################################################################
-#################################  install magpie dependencies  ########################################
-########################################################################################################
-if (!is.null(renv::project())) {
-  magpieDeps <- renv::dependencies(path_magpie)
-  installedPackages <- installed.packages()[, "Package"]
-  missingDeps <- setdiff(unique(magpieDeps$Package), installedPackages)
-  if (length(missingDeps) > 0) {
-    message("Installing missing MAgPIE dependencies ", paste(missingDeps, collapse = ", "))
-    renv::install(missingDeps)
-  }
-}
-
-########################################################################################################
 #################################  load command line arguments  ########################################
 ########################################################################################################
 
@@ -153,6 +140,8 @@ dir.create(file.path(path_remind, "output"), showWarnings = FALSE)
 dir.create(file.path(path_magpie, "output"), showWarnings = FALSE)
 
 ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
+
+piamenv::installDeps(path_magpie)
 
 errorsfound <- 0
 startedRuns <- NULL
@@ -368,6 +357,7 @@ for(scen in common){
   cfg_rem <- cfg
   rm(cfg)
   cfg_rem$title <- scen
+  cfg_rem$files2export$start <- c(cfg_rem$files2export$start, path_settings_coupled, path_settings_remind)
   rem_filesstart <- cfg_rem$files2export$start     # save to reset it to that later
 
   source(file.path(path_magpie, "config", "default.cfg")) # retrieve MAgPIE settings
@@ -417,6 +407,17 @@ for(scen in common){
   } else {
     # To ensure backwards compatibility keep the old switch here for a while (has been transformed into a gms switch in MAgPIE)
     cfg_mag$mute_ghgprices_until <- scenarios_coupled[scen, "no_ghgprices_land_until"]
+  }
+
+  # Write choice of land-use change variable to config. Use smoothed variable
+  # if not specified otherwise in coupled config, i.e. if the column is missing
+  # completely or if the row entry is empty.
+  if (! "var_luc" %in% names(scenarios_coupled) || is.na(scenarios_coupled[scen, "var_luc"])) {
+    cfg_rem$var_luc <- "smooth"
+  } else if (scenarios_coupled[scen, "var_luc"] %in% c("smooth", "raw")) {
+    cfg_rem$var_luc <- scenarios_coupled[scen, "var_luc"]
+  } else {
+    stop(paste0("Unkown setting in coupled config file for 'var_luc': `", scenarios_coupled[scen, "var_luc"], "`. Please chose either `smooth` or `raw`"))
   }
 
   # Edit remind main model file, region settings and input data revision based on scenarios table, if cell non-empty
@@ -611,6 +612,7 @@ for(scen in common){
   }
   message("path_report   : ",ifelse(file.exists(path_report),green,red), path_report, NC)
   message("no_ghgprices_land_until: ", cfg_mag$gms$c56_mute_ghgprices_until)
+  message("var_luc: ", cfg_rem$var_luc)
 
   if ("--gamscompile" %in% flags) {
     message("Compiling ", fullrunname)

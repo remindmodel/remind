@@ -10,4 +10,5 @@ pm_emifac,input,questionnaire
 cm_emiscen,input,questionnaire
 cm_shSynGas,input,questionnaire
 vm_prodSe,input,questionnaire
-vm_co2capture,input,questionnaire
+pm_gdp,input,not used
+pm_cf,input,not used

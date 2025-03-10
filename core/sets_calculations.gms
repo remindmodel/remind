@@ -150,6 +150,12 @@ fete(entyFe,te) = YES;
 sefe(entySe,entyFe) = YES;
 );
 
+loop(seAgg2se(seAgg,entySe),
+  loop(sefe(entySe,entyFe),
+    seAgg2fe(seAgg,entyFe) = YES;
+  );
+);
+
 *** extended region group set
 regi_groupExt(ext_regi,all_regi)$regi_group(ext_regi,all_regi) = Yes;
 loop(all_regi,
@@ -157,12 +163,6 @@ loop(all_regi,
     regi_groupExt(ext_regi,all_regi) = Yes;
   );
 );
-
-*** MAGICC related sets
-t_magiccttot(tall) = ttot(tall) + t_extra(tall);
-t_magicc(t_magiccttot)$(t_magiccttot.val ge 2005) = Yes;
-
-display "MAGICC related sets", t_magicc, t_extra, t;
 
 *** Alias of mapping
 en2en2(enty,enty2,te) = en2en(enty,enty2,te);

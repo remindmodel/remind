@@ -234,7 +234,7 @@ p70_water_output(ttot,regi,"Water Consumption|Electricity|Solar; km3/yr;") =
 ;
 
 p70_water_output(ttot,regi,"Water Consumption|Electricity|Wind; km3/yr;") = 
-  sum(te_elcool70$(sameas(te_elcool70,"wind")), 
+  sum(te_elcool70$(sameas(te_elcool70,"windon")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
@@ -426,7 +426,7 @@ p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Solar; km3/yr;") =
 ;
 
 p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Wind; km3/yr;") = 
-  sum(te_elcool70$(sameas(te_elcool70,"wind")), 
+  sum(te_elcool70$(sameas(te_elcool70,"windon")), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 

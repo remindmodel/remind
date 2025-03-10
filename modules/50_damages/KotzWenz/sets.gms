@@ -1,3 +1,4 @@
+*** SOF ./modules/50_damages/KotzWenz/sets.gms
 SETS
 nboot		"boot strapping realisations of damage function parameters"
 	/
@@ -9,3 +10,4 @@ percentile	"possible percentiles of damage function as coded in the R script"
 	/
 
 ;
+*** EOF ./modules/50_damages/KotzWenz/sets.gms

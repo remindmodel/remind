@@ -92,23 +92,11 @@ Here **gdx** is the path to the gdx file, while the second argument is the **nam
 **In the following, we present several other tools and scripts that were developed to facilitate the output analysis:**
 
 
-## 4. Automated model validation
-
-### 4.1. Generation of summary and validation pdfs
-The automated model analysis (summary and validation) is an important example of output analysis based on model-internal scripts (see section 6). If these scripts are executed (either by selection via cfg$output as explained in 6.1. or by execution via command window as explained in 6.2.), standard evaluation pdfs are created. They validate numerous model outputs with historical data, either visually or via statistical tests.
-
-### 4.2 A Summary of Results
-For a first overview and for not getting lost in the huge amount of variables you can look at the *REMIND_summary_[title].pdf*. This .pdf-file will give you an overview on the model results and guides you through the story.
-
-### 4.3 The Whole Range of Validation
-A standard validation PDF *REMIND_validation_[title].pdf* consists of hundreds of evaluation outputs. By evaluating the model outputs on such a broad level rather than focusing only on key outputs, it allows getting a more complete picture of the corresponding scenario. The table of contents of the validation pdf gives a good overview about the breadth of model outputs that can be generated with a REMIND standard scenario, even though the validation pdf only shows a subset of possible model outputs.
-
-
-## 5. Interactive scenario analysis
+## 4. Interactive scenario analysis
 
 The automated model validation is a good tool for visually evaluating a broad range of model outputs. However, comparison between model runs, i.e. between different scenarios, is rather difficult and inconvenient if the model results are scattered across different large PDF files.
 
-### 5.1. AppResults
+### 4.1. AppResults
 
 To overcome this issue, we developed the interactive scenario analysis and evaluation tools appResults and appResultsLocal as part of the package **shinyresults** (<https://github.com/pik-piam/shinyresults>), which show evaluation plots for multiple scenarios including historical data and other projections based on an interactive selection of regions and variables.
 
@@ -151,9 +139,9 @@ Another tool for analyzing model output on your local computer is the scenario t
 mip::scenTool()
 ```
 
-## 6. Model-internal R-scripts for output analysis
+## 5. Model-internal R-scripts for output analysis
 
-### 6.1. Execution of model-internal output scripts via the REMIND configuration file
+### 5.1. Execution of model-internal output scripts via the REMIND configuration file
 
 In the file *config/default.cfg*, it is possible to indicate which R-scripts are executed for output analysis after a model run is finished. Scripts evaluating single runs are stored in the folder **scripts/output/[title-of-the-run]**. In the default REMIND configuration, the scripts *reporting*, *validation* (see section 2.3), *validationSummary*  (see section 2.3), *rds\_report* (to be used in appResults; see section 3), and *dashboard* are selected via cfg$output:
 
@@ -161,7 +149,7 @@ In the file *config/default.cfg*, it is possible to indicate which R-scripts are
 cfg$output <- c("reporting","validation","rds_report","validationSummary","dashboard")
 ```
 
-### 6.2. Execution of model-internal output scripts in the command window
+### 5.2. Execution of model-internal output scripts in the command window
 
 Output scripts that are included in the folders **scripts/output/single** and **scripts/output/comparison** can also be executed via a command window. To do so, windows users can open a command line prompt in the REMIND model folder by using **shift** + **right click** and then selecting *open command window here* option.
 
@@ -184,6 +172,8 @@ Now, the selected scripts are executed. After completion, the results are writte
 
 One recommended script for comparison of different scenarios is `compareScenarios2`, see [the specific tutorial](https://pik-piam.r-universe.dev/articles/remind2/compareScenariosRemind2.html). After you selected folder names, specified a `filename_prefix`, the priority on the cluster, and a *profile* (describes some output parameters) it produces a large PDF (or HTML if a respective profile is chosen) in the `./remind/` folder.
 
+Another useful script it `validateScenarios`, which performs an automated check of the scenario data against thresholds defined in a `validationConfig` and returns an html report with interactive heat maps in a traffic-light evaluation format. After choosing `validateScenarios` as a `comparison` script, you are prompted to select one of the configs that are shipped with the `piamValidation` package. The `default` config is a good starting point for any REMIND run and the `AMT` config is specifically tailored towards the automated model testruns. If you want to perform a more personalized validation, follow the instructions in the [vignette](https://pik-piam.r-universe.dev/articles/piamValidation/validateScenarios.html).
+
 You can also specify the parameters in the command line, for example starting a `compareScenario2` run without any prefix as:
 
 ``` bash
@@ -194,7 +184,7 @@ If you want to compare runs from different REMIND folders, add `remind_dir=.,../
 How to create new plots is described in the tutorial [8_Advanced_AnalysingModelOutputs.Rmd](./08_Advanced_AnalysingModelOutputs.Rmd).
 Another useful and compatible resource for generating plots (e.g. box plots) from REMIND results is UTokyo's *mipplot* R package: https://github.com/UTokyo-mip/mipplot.
 
-## 7. Analysis of outputs with the remind2 R package
+## 6. Analysis of outputs with the remind2 R package
 
 If you want to go beyond visual output analysis and predefined output evaluation facilitated by scripts in the model folders **scripts/output/single** and **scripts/output/comparison**, you can use the functionality of the R package *remind2* (https://github.com/pik-piam/remind2). This package contains a list of common functions for extracting outputs from the REMIND model which are also the basis for the generation of the automated validation pdf. For a quick overview on the functions which are included in the package, you can scan the folder **remind2/R** of the remind2 package source code.
 

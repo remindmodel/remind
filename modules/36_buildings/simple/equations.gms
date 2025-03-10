@@ -65,7 +65,7 @@ q36_auxCostAddTeInv(t,regi)..
 
 
 *' Hydrogen fe share in buildings gases use (natural gas + hydrogen)
-q36_H2Share(t,regi)..
+q36_H2Share(t,regi)$(t.val ge 2020)..
   v36_H2share(t,regi) 
   * sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feh2s")
                                  OR SAMEAS(entyFe,"fegas")),   

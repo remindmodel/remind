@@ -29,7 +29,7 @@ for (year in years) {
     geom_point(data=gginput(x$rem_point[regions,year,],scatter = "variable"),aes(x=.value.x,y=.value.y,colour=scenario)) +
     geom_point(data=gginput(x$mag_point[regions,year,],scatter = "variable"),aes(x=.value.x,y=.value.y,colour=scenario),shape=5) +
     facet_wrap(~region) +
-    ggtitle(title) + ylab("$/GJ") + xlab("EJ") + coord_cartesian(xlim=c(0,80),ylim=c(0,30))
+    ggtitle(title) + ylab("$/GJ") + xlab("EJ") + coord_cartesian(xlim=c(0,60),ylim=c(0,15))
 
   swfigure(out,print,p,sw_option="height=9,width=12")
 }

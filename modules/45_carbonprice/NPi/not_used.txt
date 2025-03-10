@@ -6,9 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 name,type,reason
 cm_emiscen, switch, ???
-cm_co2_tax_2020, switch, ???
 pm_ttot_val,parameter,???
-cm_co2_tax_growth,switch,???
 cm_expoLinear_yearStart,switch,???
 pm_globalMeanTemperature,input,questionnaire
 pm_temperatureImpulseResponseCO2,input,questionnaire
@@ -24,12 +22,22 @@ cm_iterative_target_adj,input,questionnaire
 pm_shPPPMER,input,questionnaire
 pm_pop,input,questionnaire
 pm_gdp,input,questionnaire
-cm_CO2priceRegConvEndYr,input,questionnaire
 cm_NDC_divergentScenario,input,questionnaire
 vm_demFeSector,input,questionnaire
 pm_emifac,input,questionnaire
 cm_startyear,input,added by codeCheck
-cm_co2_tax_spread,input,no carbon price differentiation in this realization
-cm_co2_tax_startyear,input,added by codeCheck
 cm_peakBudgYr,input,added by codeCheck
-cm_taxCO2inc_after_peakBudgYr,input,added by codeCheck
+fm_taxCO2eqHist,input,not needed
+sm_budgetCO2eqGlob,input,no iterative target adjustment
+vm_emiAll,input,no iterative target adjustment
+pm_budgetCO2eq,input,no iterative target adjustment
+cm_iteration_max,input,no iterative target adjustment
+cm_taxCO2_startyear,input,added by codeCheck
+cm_taxCO2_expGrowth,input,added by codeCheck
+cm_taxCO2_IncAfterPeakBudgYr,input,added by codeCheck
+cm_budgetCO2from2020,input,no iterative target adjustment
+pm_taxCO2eq_anchor_iterationdiff,input,no iterative target adjustment
+sm_globalBudget_absDev,input,no target adjustement
+pm_taxCO2eq_iter,input,added by codeCheck
+cm_budgetCO2_absDevTol,input,added by codeCheck
+pm_actualbudgetco2,input,added by codeCheck

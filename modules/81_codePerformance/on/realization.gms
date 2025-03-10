@@ -8,7 +8,6 @@
 
 
 *' @description BAU, tax30, and tax150 runs are set in a loop of 30 runs in total.
-*' The realization needs the realization "exogenous" of the 45_carbonprice module
     
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/81_codePerformance/on/sets.gms"

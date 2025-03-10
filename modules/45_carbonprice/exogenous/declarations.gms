@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/exogenous/declarations.gms
 parameters
-    p45_tau_co2_tax(ttot,all_regi)   "Exogenous CO2 tax level"
+    p45_tau_co2_tax(ttot,all_regi)   "Exogenous CO2 tax level [T$/GtC]"
 ;
 
 *** EOF ./modules/45_carbonprice/exogenous/declarations.gms

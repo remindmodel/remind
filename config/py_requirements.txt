@@ -1,0 +1,15 @@
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
+# Use Gabriels version of climate_assessment
+climate-assessment @ git+https://github.com/gabriel-abrahao/climate-assessment.git@5d4d81ffed1d2af9cb463608b9a41d91ed02ea63
+
+# netcdf for HDF5 support
+netCDF4>=1.6.0
+
+# No new numpy, no old pandas
+numpy<3
+pandas>2

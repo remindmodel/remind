@@ -1,3 +1,4 @@
+*** SOF ./modules/50_damages/KotzWenz/declarations.gms
 Parameters
 pm_GDPfrac(tall,iso)	"GDP fraction of a country in its region"
 p50_damageIsoPerc(tall,iso,percentile)	"damage factor for country and bootstrapping"
@@ -10,3 +11,4 @@ positive variable
 vm_damageFactor(ttot,all_regi)      "damage factor reducing GDP"
 vm_damageProdFactor(ttot,all_regi,all_in)      "damage factor reducing production factors"
 ;
+*** EOF ./modules/50_damages/KotzWenz/declarations.gms

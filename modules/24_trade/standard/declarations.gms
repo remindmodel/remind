@@ -27,4 +27,9 @@ vm_costTradeCap(ttot,all_regi,all_enty)     "Trade technology and transportation
 vm_capacityTradeBalance(tall,all_regi)      "Capacity trade balance term"
 ;
 
+
+Equations
+q24_peimport_demandside(tall,all_regi,all_enty,tradeConst)   "Constraint on imports due to domestic requirements"
+;
+
 *** EOF ./modules/24_trade/standard/declarations.gms

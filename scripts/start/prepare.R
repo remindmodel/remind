@@ -75,28 +75,8 @@ prepare <- function() {
       stop("This title is too long or the name contains dots - GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now. ")
   }
 
-  # adjust GDPpcScen based on GDPscen
-  cfg$gms$c_GDPpcScen <- gsub("gdp_","",cfg$gms$cm_GDPscen)
-
   # Is the run performed on the cluster?
   on_cluster    <- file.exists('/p')
-
-  # Copy MAGICC
-  if ( !file.exists(cfg$magicc_template)
-     & file.exists(path.expand(Sys.getenv('MAGICC'))))
-      cfg$magicc_template <- path.expand(Sys.getenv('MAGICC'))
-
-  if (file.exists(cfg$magicc_template)) {
-      cat("Copying MAGICC files from",cfg$magicc_template,"to results folder\n")
-      system(paste0("cp -nrp ",cfg$magicc_template," ",cfg$results_folder))
-      system(paste0("cp -nrp core/magicc/* ",cfg$results_folder,"/magicc/"))
-    } else {
-      cat("Could not copy",cfg$magicc_template,"because it does not exist\n")
-    }
-
-  # Make sure all MAGICC files have LF line endings, so Fortran won't crash
-  if (on_cluster)
-    system(paste0("find ",cfg$results_folder,"/magicc/ -type f | xargs dos2unix -q"))
 
   ################## M O D E L   L O C K ###################################
   # Lock the directory for other instances of the start scripts
@@ -123,7 +103,12 @@ prepare <- function() {
   # If a path to a MAgPIE report is supplied use it as REMIND input (used for REMIND-MAgPIE coupling)
   # ATTENTION: modifying gms files
   if (!is.null(cfg$pathToMagpieReport)) {
-    getReportData(path_to_report = cfg$pathToMagpieReport,inputpath_mag=cfg$gms$biomass,inputpath_acc=cfg$gms$agCosts)
+    getReportData(
+      path_to_report = cfg$pathToMagpieReport,
+      inputpath_mag  = cfg$gms$biomass,
+      inputpath_acc  = cfg$gms$agCosts,
+      var_luc        = cfg$var_luc
+    )
   }
 
   # Update module paths in GAMS code
@@ -138,6 +123,8 @@ prepare <- function() {
   # add info from cfg into cfg$gams so it ends up in gams.
   cfg$gms$c_expname <- cfg$title
   cfg$gms$c_description <- substr(cfg$description, 1, 255)
+  cfg$gms$c_results_folder <- substr(normalizePath(cfg$results_folder), 1, 255)
+  cfg$gms$c_model_version <- gsub("[^a-zA-Z0-9]", "-", substr(cfg$model_version, 1, 255))
   # create modified version
   tmpModelFile <- sub(".gms", paste0("_", cfg$title, ".gms"), cfg$model)
   file.copy(cfg$model, tmpModelFile, overwrite = TRUE)
@@ -275,10 +262,6 @@ prepare <- function() {
   setwd(cfg$results_folder)
 
   write_yaml(cfg,file="cfg.txt")
-  try(file.copy("magicc/run_magicc.R","run_magicc.R"))
-  try(file.copy("magicc/run_magicc_temperatureImpulseResponse.R","run_magicc_temperatureImpulseResponse.R"))
-  try(file.copy("magicc/read_DAT_TOTAL_ANTHRO_RF.R","read_DAT_TOTAL_ANTHRO_RF.R"))
-  try(file.copy("magicc/read_DAT_SURFACE_TEMP.R","read_DAT_SURFACE_TEMP.R"))
 
   # Function to create the levs.gms, fixings.gms, and margs.gms files, used in
   # delay scenarios.
@@ -456,31 +439,6 @@ prepare <- function() {
                                 list(c("vm_shBioFe.M", "!!vm_shBioFe.M")),
                                 list(c("q39_EqualSecShare_BioSyn.M", "!!q39_EqualSecShare_BioSyn.M")))
 
-    # OR: renamed for sectoral taxation
-    levs_manipulateThis <- c(levs_manipulateThis,
-                             list(c("vm_emiCO2_sector.L", "vm_emiCO2Sector.L")),
-                             list(c("v21_taxrevCO2_sector.L", "v21_taxrevCO2Sector.L")))
-    margs_manipulateThis <- c(margs_manipulateThis,
-                             list(c("vm_emiCO2_sector.M", "vm_emiCO2Sector.M")),
-                             list(c("v21_taxrevCO2_sector.M", "v21_taxrevCO2Sector.M")),
-                             list(c("q_emiCO2_sector.M", "q_emiCO2Sector.M")),
-                             list(c("q21_taxrevCO2_sector.M", "q21_taxrevCO2Sector.M")))
-    fixings_manipulateThis <- c(fixings_manipulateThis,
-                             list(c("vm_emiCO2_sector.FX", "vm_emiCO2Sector.FX")),
-                             list(c("v21_taxrevCO2_sector.FX", "v21_taxrevCO2Sector.FX")))
-
-    # OR: renamed in https://github.com/remindmodel/remind/pull/1495
-    levs_manipulateThis <- c(levs_manipulateThis,
-                             list(c("v_costInvTeDir.L", "vm_costInvTeDir.L")),
-                             list(c("v_costInvTeAdj.L", "vm_costInvTeAdj.L")))
-    margs_manipulateThis <- c(margs_manipulateThis,
-                             list(c("v_costInvTeDir.M", "vm_costInvTeDir.M")),
-                             list(c("v_costInvTeAdj.M", "vm_costInvTeAdj.M")))
-    fixings_manipulateThis <- c(fixings_manipulateThis,
-                             list(c("v_costInvTeDir.FX", "vm_costInvTeDir.FX")),
-                             list(c("v_costInvTeAdj.FX", "vm_costInvTeAdj.FX")))
-
-
     # renamed because of https://github.com/remindmodel/remind/pull/796
     manipulate_tradesets <- c(list(c("'gas_pipe'", "'pipe_gas'")),
                               list(c("'lng_liq'", "'termX_lng'")),
@@ -549,27 +507,6 @@ prepare <- function() {
                             list(c("v47_emiTargetMkt.FX", "!!v47_emiTargetMkt.FX")),
                             list(c("vm_taxrevimplEnergyBoundTax.FX", "!!vm_taxrevimplEnergyBoundTax.FX")))
 
-    # renamed because of https://github.com/remindmodel/remind/pull/1106
-    levs_manipulateThis <- c(levs_manipulateThis,
-                             list(c("v21_taxrevBioImport.L", "!!v21_taxrevBioImport.L")))
-    margs_manipulateThis <- c(margs_manipulateThis,
-                             list(c("v21_taxrevBioImport.M", "!!v21_taxrevBioImport.M")),
-                             list(c("q21_taxrevBioImport.M", "!!q21_taxrevBioImport.M")),
-                             list(c("q30_limitProdtoHist.M", "!!q30_limitProdtoHist.M")))
-    fixings_manipulateThis <- c(fixings_manipulateThis,
-                            list(c("v21_taxrevBioImport.FX", "!!v21_taxrevBioImport.FX")))
-
-    # renamed because of https://github.com/remindmodel/remind/pull/1128
-    levs_manipulateThis <- c(levs_manipulateThis,
-                             list(c("v_emiTeDetailMkt.L", "!!v_emiTeDetailMkt.L")),
-                             list(c("v_emiTeMkt.L", "!!v_emiTeMkt.L")))
-    margs_manipulateThis <- c(margs_manipulateThis,
-                             list(c("v_emiTeDetailMkt.M", "!!v_emiTeDetailMkt.M")),
-                             list(c("v_emiTeMkt.M", "!!v_emiTeMkt.M")))
-    fixings_manipulateThis <- c(fixings_manipulateThis,
-                            list(c("v_emiTeDetailMkt.FX", "!!v_emiTeDetailMkt.FX")),
-                             list(c("v_emiTeMkt.FX", "!!v_emiTeMkt.FX")))
-
     # Include fixings (levels) and marginals in full.gms at predefined position
     # in core/loop.gms.
     full_manipulateThis <- c(full_manipulateThis,
@@ -596,16 +533,14 @@ prepare <- function() {
     manipulateFile("full.gms", full_manipulateThis, fixed = TRUE)
   }
 
-  #AJS set MAGCFG file
-  magcfgFile = paste0('./magicc/MAGCFG_STORE/','MAGCFG_USER_',toupper(cfg$gms$cm_magicc_config),'.CFG')
-  if(!file.exists(magcfgFile)){
-      stop(paste('ERROR in MAGGICC configuration: Could not find file ',magcfgFile))
-  }
-  system(paste0('cp ',magcfgFile,' ','./magicc/MAGCFG_USER.CFG'))
-
   # Prepare the files containing the fixings for delay scenarios (for fixed runs)
   if (  cfg$gms$cm_startyear > 2005  & (!file.exists("levs.gms.gz") | !file.exists("levs.gms"))) {
     create_fixing_files(cfg = cfg, input_ref_file = "input_ref.gdx")
+  }
+
+  if (cfg$gms$cm_startyear > 2005) {
+    cm_startyear_ref <- as.integer(readGDX("input_ref.gdx", name = "cm_startyear", format = "simplest"))
+    if (cfg$gms$cm_startyear < cm_startyear_ref) stop("cm_startyear must be larger than its counterpart in input_ref.gdx")
   }
 
   timePrepareEnd <- Sys.time()

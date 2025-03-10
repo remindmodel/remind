@@ -25,7 +25,7 @@ $ifThen.tech_bounds_2025 "%cm_tech_bounds_2025%" == "on"
 *' Upper bound is double the historic maximum capacity addition in 2011-2020.
 *' In addition: Limit solar PV capacity to 120 GW in 2025 (2023-2027 average) given that we are at only 76 GW PV in 2023
 loop(regi$(sameAs(regi,"DEU")),
-  vm_deltaCap.up("2025",regi,"wind","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"wind"));
+  vm_deltaCap.up("2025",regi,"windon","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"windon"));
   vm_deltaCap.up("2025",regi,"spv","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"spv"));
   vm_cap.up("2025",regi,"spv","1")=0.12;
 );

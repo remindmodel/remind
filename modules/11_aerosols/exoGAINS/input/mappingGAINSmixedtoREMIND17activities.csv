@@ -1,11 +1,11 @@
 GAINS,REMIND,noef,elasticity
-CEMENT,GDP|MER (billion US$2005/yr),0,0.4
-CHEM,GDP|MER (billion US$2005/yr),1,0.4
-CHEMBULK,GDP|MER (billion US$2005/yr),1,0.4
-CUSM,GDP|MER (billion US$2005/yr),1,0.4
-NACID,GDP|MER (billion US$2005/yr),0,0.4
-PAPER,GDP|MER (billion US$2005/yr),0,0.4
-STEEL,GDP|MER (billion US$2005/yr),0,0.4
+CEMENT,GDP|MER (billion US$2017/yr),0,0.4
+CHEM,GDP|MER (billion US$2017/yr),1,0.4
+CHEMBULK,GDP|MER (billion US$2017/yr),1,0.4
+CUSM,GDP|MER (billion US$2017/yr),1,0.4
+NACID,GDP|MER (billion US$2017/yr),0,0.4
+PAPER,GDP|MER (billion US$2017/yr),0,0.4
+STEEL,GDP|MER (billion US$2017/yr),0,0.4
 End_Use_Industry_Bio_Trad,FE|Industry|Solids|Biomass|Traditional (EJ/yr),0,1
 End_Use_Industry_Coal,FE|Industry|Solids|Coal (EJ/yr),0,1
 End_Use_Industry_HLF,FE|Industry|Liquids (EJ/yr),0,1
@@ -35,7 +35,7 @@ Transformations_HLF,PE|Oil (EJ/yr),1,1
 Transformations_HLF_Refinery,PE|Oil (EJ/yr),0,1
 Transformations_LLF,PE|Oil (EJ/yr),0,1
 Transformations_NatGas,PE|Gas (EJ/yr),1,1
-Waste_Solid_Industrial,GDP|MER (billion US$2005/yr),1,0.4
-Waste_Solid_Municipal,GDP|MER (billion US$2005/yr),1,0.4
-Waste_Water_Industrial,GDP|MER (billion US$2005/yr),1,0.4
-Waste_Water_Municipal,GDP|MER (billion US$2005/yr),1,0.4
+Waste_Solid_Industrial,GDP|MER (billion US$2017/yr),1,0.4
+Waste_Solid_Municipal,GDP|MER (billion US$2017/yr),1,0.4
+Waste_Water_Industrial,GDP|MER (billion US$2017/yr),1,0.4
+Waste_Water_Municipal,GDP|MER (billion US$2017/yr),1,0.4

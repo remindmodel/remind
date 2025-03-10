@@ -6,9 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/exogenous/realization.gms
 
-*#' @description This realization implements carbon price trajectories from an exogenous file (p45_tau_co2_tax.inc).
-*#' Alternatively, specify in 'path_gdx_carbonprice' the run to be used
-*#' Requires cm_emiscen = 9 and cm_iterative_target_adj = 0
+*' @description This realization implements carbon price trajectories from an exogenous file (p45_tau_co2_tax.inc).
+*' Alternatively, specify in 'path_gdx_carbonprice' the run to be used
+*' Requires cm_emiscen = 9 and cm_iterative_target_adj = 0
 
 
 *####################### R SECTION START (PHASES) ##############################

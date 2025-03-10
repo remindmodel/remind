@@ -1,6 +1,5 @@
 *** SOF ./core/input/generisdata_trade.prn
 $ontext
-IMPORTANT: all costs are now given in $2015! As long as the model runs in $2005, the values need to be converted in datainput.gms
 tech_stat   Technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'.
 inco0       Initial investment costs given in $(2015)/kW(output) capacity. Independent of distance.
 inco0_d     Initial investment costs given in $(2015)/kW(output) capacity. Per 1000km.

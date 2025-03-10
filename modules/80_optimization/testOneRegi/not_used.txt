@@ -4,7 +4,7 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-name,                           type,       reason
+name,type,reason
 pm_pop,                         parameter,  ???
 vm_emiTe,                       variable,   ???
 sm_EJ_2_TWa,                    scalar,     ???
@@ -39,9 +39,7 @@ pm_nfa_start,                   input,      questionnaire
 vm_dummyBudget,                 input,      questionnaire
 vm_cesIO,                       variable,   ???
 cm_TaxConvCheck,                variable,   ??
-pm_taxCO2eq_iterationdiff,      input,      ??
-pm_taxCO2eq_iterationdiff_tmp,  input,      ??
-sm_globalBudget_dev,            input,      ??
+sm_globalBudget_absDev,         input,      ??
 pm_factorRescaleemiMktCO2Tax,   input,      ??
 pm_emiMktTarget,                input,      ??
 pm_emiMktTarget_dev_iter,       input,      ??
@@ -65,3 +63,6 @@ pm_gmt_conv,	                parameter,  ???
 cm_tempConvergence,		        switch,     not needed
 cm_LearningSpillover,           input,      learning spillover only implemented in nash
 pm_allTargetsConverged,         parameter,  only relevant for nash
+pm_taxCO2eq_anchor_iterationdiff,input,no iterative target adjustment
+pm_taxCO2eq_iter,input,added by codeCheck
+cm_budgetCO2_absDevTol,input,added by codeCheck

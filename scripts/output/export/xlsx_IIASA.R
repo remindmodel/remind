@@ -21,18 +21,24 @@ model <- paste("REMIND", paste0(strsplit(gms::readDefaultConfig(".")$model_versi
 
 
 removeFromScen <- ""                           # you can use regex such as: "_diff|_expoLinear"
+renameScen <- NULL                             # c(oldname1 = "newname1", …), without the `C_` and `-rem-[0-9]` stuff
 addToScen <- NULL                              # is added at the beginning
 
 # filenames relative to REMIND main directory (or use absolute path) 
 mapping <- NULL                                # file obtained from piamInterfaces, or AR6/SHAPE/NAVIGATE or NULL to get asked
 iiasatemplate <- NULL                          # provided for each project, can be yaml or xlsx with a column 'Variable'
+checkSummation <- TRUE                         # if TRUE, tries to use the one from mapping. Or specify here
 
 # note: you can also pass all these options to output.R, so 'Rscript output.R logFile=mylogfile.txt' works.
 lucode2::readArgs("project")
 
 projects <- list(
   ELEVATE    = list(mapping = c("NAVIGATE", "ELEVATE"),
-                    iiasatemplate = "https://files.ece.iiasa.ac.at/elevate/elevate-template.xlsx"),
+                    iiasatemplate = "https://files.ece.iiasa.ac.at/elevate/elevate-template.xlsx",
+                    removeFromScen = "C_|eoc"),
+  ELEVATE_coupled = list(mapping = c("NAVIGATE", "NAVIGATE_coupled", "ELEVATE"),
+                    iiasatemplate = "https://files.ece.iiasa.ac.at/elevate/elevate-template.xlsx",
+                    removeFromScen = "C_|eoc"),
   ENGAGE_4p5 = list(mapping = c("AR6", "AR6_NGFS"),
                     iiasatemplate = "ENGAGE_CD-LINKS_template_2019-08-22.xlsx",
                     removeFromScen = "_diff|_expoLinear|-all_regi"),
@@ -41,7 +47,17 @@ projects <- list(
                     mapping = c("AR6", "AR6_NGFS"),
                     iiasatemplate = "https://files.ece.iiasa.ac.at/ngfs-phase-5/ngfs-phase-5-template.xlsx",
                     removeFromScen = "C_|_bIT|_bit|_bIt|_KLW"),
-  SHAPE      = list(mapping = c("NAVIGATE", "SHAPE")),
+  ScenarioMIP = list(model = "REMIND-MAgPIE 3.4-4.8",
+                     mapping = "ScenarioMIP",
+                     iiasatemplate = "https://files.ece.iiasa.ac.at/ssp-submission/ssp-submission-template.xlsx",
+                     renameScen = c("SMIPv03-M-SSP2-NPi-def" = "SSP2 - Medium Emissions", "SMIPv03-LOS-SSP2-EcBudg400-def" = "SSP2 - Low Overshoot", "SMIPv03-ML-SSP2-PkPrice200-fromL" = "SSP2 - Medium-Low Emissions","SMIPv03-L-SSP2-PkPrice265-inc6-def" = "SSP2 - Low Emissions", "SMIPv03-VL-SSP2_SDP_MC-PkPrice300-def" = "SSP2 - Very Low Emissions"),
+                     checkSummation = "NAVIGATE"),
+  PRISMA = list(model = "REMIND-MAgPIE 3.4-4.8",
+                mapping = c("ScenarioMIP", "PRISMA"),
+                iiasatemplate = "https://files.ece.iiasa.ac.at/prisma/prisma-template.xlsx",  
+                renameScen = c("SMIPv04-M-SSP2-NPi2025-def" = "SSP2 - Medium Emissions", "SMIPv04-L-SSP2-PkBudg1000-def" = "SSP2 - Low Emissions"),
+                checkSummation = "NAVIGATE"),
+  SHAPE      = list(mapping = c("NAVIGATE", "NAVIGATE_coupled", "SHAPE")),
   TESTTHAT   = list(mapping = "AR6")
 )
 
@@ -58,14 +74,15 @@ if (! exists("project")) {
 }
 projectdata <- projects[[project]]
 message("# Overwrite settings with project settings for '", project, "'.")
-varnames <- c("mapping", "iiasatemplate", "addToScen", "removeFromScen", "model", "outputFilename", "logFile")
+varnames <- c("mapping", "iiasatemplate", "addToScen", "removeFromScen", "renameScen",
+              "model", "outputFilename", "logFile", "checkSummation")
 for (p in intersect(varnames, names(projectdata))) {
   assign(p, projectdata[[p]])
 }
 
 # overwrite settings with those specified as command-line arguments
-lucode2::readArgs("outputdirs", "filename_prefix", "outputFilename", "model",
-                  "mapping", "logFile", "removeFromScen", "addToScen", "iiasatemplate")
+lucode2::readArgs("outputdirs", "filename_prefix", "outputFilename", "model", "mapping",
+                  "summationFile", "logFile", "removeFromScen", "addToScen", "iiasatemplate")
 
 if (is.null(mapping)) {
   mapping <- gms::chooseFromList(names(piamInterfaces::mappingNames()), type = "mapping")
@@ -73,7 +90,8 @@ if (is.null(mapping)) {
 if (length(mapping) == 0 || ! all(file.exists(mapping) | mapping %in% names(mappingNames()))) {
   stop("mapping='", paste(mapping, collapse = ", "), "' not found.")
 }
-if (exists("iiasatemplate") && ! is.null(iiasatemplate) && ! file.exists(iiasatemplate)) {
+if (exists("iiasatemplate") && ! is.null(iiasatemplate) && ! file.exists(iiasatemplate) &&
+    ! grepl("^https:\\/\\/files\\.ece\\.iiasa\\.ac\\.at\\/.*\\.xlsx$", iiasatemplate)) {
   stop("iiasatemplate=", iiasatemplate, " not found.")
 }
 
@@ -125,8 +143,18 @@ withCallingHandlers({ # piping messages to logFile
   for (mif in mif_path) {
     thismifdata <- read.quitte(mif, factors = FALSE)
     # remove -rem-xx and mag-xx from scenario names
-    thismifdata$scenario <- gsub("-(rem|mag)-[0-9]{1,2}", "", thismifdata$scenario)
+    thismifdata$scenario <- gsub("^C_|-(rem|mag)-[0-9]{1,2}$", "", thismifdata$scenario)
     mifdata <- rbind(mifdata, thismifdata)
+  }
+
+  # rename scenarios
+  if (! is.null(renameScen)) {
+    message("Old names: ", paste(sort(unique(mifdata$scenario)), collapse = ", "))
+    for (i in names(renameScen)) {
+      message("Rename scenario: ", i, " -> ", renameScen[[i]])
+      mifdata$scenario[i == mifdata$scenario] <- renameScen[[i]]
+    }
+    message("New names: ", paste(sort(unique(mifdata$scenario)), collapse = ", "))
   }
 
   message("# ", length(temporarydelete), " variables are in the list to be temporarily deleted, ",
@@ -140,7 +168,7 @@ withCallingHandlers({ # piping messages to logFile
 
   generateIIASASubmission(mifdata, mapping = mapping, model = model,
                           removeFromScen = removeFromScen, addToScen = addToScen,
-                          outputDirectory = outputFolder,
+                          outputDirectory = outputFolder, checkSummation = checkSummation,
                           logFile = logFile, outputFilename = basename(OUTPUT_xlsx),
                           iiasatemplate = iiasatemplate, generatePlots = TRUE)
 

@@ -6,8 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/temperatureNotToExceed/realization.gms
 
-*#' @description This realization chooses a carbon price trajectory consistent with a (non-overshoot) temperature target  
-*#' by staying within a peak budget of cumulative CO2 emissions. 
+*' @description This realization chooses a carbon price trajectory consistent with a (non-overshoot) temperature target
+*' by staying within a peak budget of cumulative CO2 emissions.
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "declarations" $include "./modules/45_carbonprice/temperatureNotToExceed/declarations.gms"

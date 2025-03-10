@@ -10,20 +10,24 @@
 *** -------------------------------------------------------------
 *'  #### Bounds on 1st generation biomass annual production
 *** -------------------------------------------------------------
-
-*' Prescribe upper and lower limit for first generation biomass from 2045 on, so REMIND has freedom before.
-*' To avoid infeasibilities it was necessary to modify the initial vintage structure for bioeths.
-*' FS: changed the bounds to start only in 2045 in REMIND-EU to rule out some infeasibilities with EDGE-T
-*'
-vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2045)  = p30_datapebio(regi,"pebios","5","maxprod",t);
-vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2045) = p30_datapebio(regi,"pebioil","5","maxprod",t);
+*' Prescribe upper and lower limit for first generation biomass from 2030 on,
+*' so REMIND has some freedom before. After 2030 the production of 1st
+*' generation biofuels should be fixed (within a 90-100% range to avoid
+*' infeasibilities), since production values are exogenously harmonized with
+*' MAgPIE.
+*' Note: these bounds need to be updated since they are, in some regions, too
+*' strict to be compatible with historically installed capacities, such that
+*' the bounds in its current form can only be satisfied in combination with
+*' early retirement.
+vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2030)  = p30_datapebio(regi,"pebios","5","maxprod",t);
+vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t);
 
 if(cm_1stgen_phaseout=0,
-    vm_fuExtr.lo(t,regi,"pebios","5")$(t.val ge 2045)  = 0.9 * p30_datapebio(regi,"pebios","5","maxprod",t);
-    vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val ge 2045) = 0.9 * p30_datapebio(regi,"pebioil","5","maxprod",t);
+    vm_fuExtr.lo(t,regi,"pebios","5")$(t.val ge 2030)  = 0.9 * p30_datapebio(regi,"pebios","5","maxprod",t);
+    vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val ge 2030) = 0.9 * p30_datapebio(regi,"pebioil","5","maxprod",t);
 else                                                     
-    vm_fuExtr.lo(t,regi,"pebios","5")$(t.val eq 2045)  = 0.9 * p30_datapebio(regi,"pebios","5","maxprod",t);
-    vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val eq 2045) = 0.9 * p30_datapebio(regi,"pebioil","5","maxprod",t);
+    vm_fuExtr.lo(t,regi,"pebios","5")$(t.val eq 2030)  = 0.9 * p30_datapebio(regi,"pebios","5","maxprod",t);
+    vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val eq 2030) = 0.9 * p30_datapebio(regi,"pebioil","5","maxprod",t);
 );
 
 
@@ -109,7 +113,7 @@ if (cm_phaseoutBiolc eq 1,
             loop(te(teBioPebiolc),
                 loop(rlf,
                     if(vm_deltaCap.up(t,regi,te,rlf) eq INF,
-                       vm_deltaCap.up(t,regi,te,rlf) = 1e-5;
+                       vm_deltaCap.up(t,regi,te,rlf) = 1e-6;
                     );
                 );
             );

@@ -7,13 +7,15 @@
 *** SOF ./modules/39_CCU/on/declarations.gms
 
 parameters
-p39_co2_dem(ttot,all_regi,all_enty,all_enty,all_te)					"CO2 demand of CCU technologies, unit: tC/TWa(output)"
+p39_carbon_efficiency(ttot,all_regi,all_te)						"Carbon efficiency of CCU technologies, carbon content of output fuel divided by carbon input into production process  [share]"
+p39_co2_dem(ttot,all_regi,all_enty,all_enty,all_te)					"CO2 demand of CCU technologies [tC/TWa (output)]"
+
 ;
 
 positive variables
-vm_co2CCUshort(ttot,all_regi,all_enty,all_enty,all_te,rlf)           "CO2 captured in CCU te that have a persistence for co2 storage shorter than 5 years. Unit GtC/a"
-v39_shSynLiq(ttot,all_regi)                                        "Share of synthetic liquids in all SE liquids. Value between 0 and 1."
-v39_shSynGas(ttot,all_regi)                                          "Share of synthetic gas in all SE gases. Value between 0 and 1."
+vm_co2CCUshort(ttot,all_regi,all_enty,all_enty,all_te,rlf)           			"CO2 captured in CCU te that have a persistence for co2 storage shorter than 5 years [GtC/a]"
+v39_shSynLiq(ttot,all_regi)                                        			"Share of synthetic liquids in all SE liquids [0..1]"
+v39_shSynGas(ttot,all_regi)                                          			"Share of synthetic gas in all SE gases [0..1]"
 ;
 
 equations

@@ -26,16 +26,7 @@ update-renv:     ## Upgrade all pik-piam packages in your renv to the respective
 
 update-renv-all: ## Upgrade all packages (including CRAN packages) in your renv
                  ## to the respective latest release, write renv.lock archive
-                 ## Upgrade all packages in python venv, if python venv exists
-	@Rscript -e 'renv::update(exclude = "renv"); piamenv::archiveRenv()'
-	@if [ -e "./venv/bin/python" ]; then \
-		pv_maj=$$( .venv/bin/python -V | sed 's/^Python \([0-9]\).*/\1/' ); \
-		pv_min=$$( .venv/bin/python -V | sed 's/^Python [0-9]\.\([0-9]\+\).*/\1/' ); \
-		if (( 3 == $$pv_maj )) && (( 7 <= $$pv_min )) && (( $pv_min < 11 )); then \
-			.venv/bin/python -mpip install --upgrade pip wheel; \
-			.venv/bin/python -mpip install --upgrade --upgrade-strategy eager -r requirements.txt; \
-		fi \
-	fi
+	@Rscript -e 'renv::update(); piamenv::archiveRenv()'
 
 revert-dev-packages: ## All PIK-PIAM packages that are development versions, i.e.
                      ## that have a non-zero fourth version number component, are
@@ -47,13 +38,6 @@ ensure-reqs:     ## Ensure the REMIND library requirements are fulfilled
                  ## by installing updates and new libraries as necessary. Does not
                  ## install updates unless it is required.
 	@Rscript -e 'source("scripts/start/ensureRequirementsInstalled.R"); ensureRequirementsInstalled(rerunPrompt="make ensure-reqs")'
-	@if [ -e "./venv/bin/python" ]; then \
-		pv_maj=$$( .venv/bin/python -V | sed 's/^Python \([0-9]\).*/\1/' ); \
-		pv_min=$$( .venv/bin/python -V | sed 's/^Python [0-9]\.\([0-9]\+\).*/\1/' ); \
-		if (( 3 == $$pv_maj )) && (( 7 <= $$pv_min )) && (( $pv_min < 11 )); then \
-			.venv/bin/python -mpip -qq install -r requirements.txt; \
-		fi \
-	fi
 
 archive-renv:    ## Write renv.lock into archive.
 	Rscript -e 'piamenv::archiveRenv()'
@@ -61,6 +45,45 @@ archive-renv:    ## Write renv.lock into archive.
 restore-renv:    ## Restore renv to the state described in interactively
                  ## selected renv.lock from the archive or a run folder.
 	Rscript -e 'piamenv::restoreRenv()'
+
+clone-conda: ## Clone the specified conda environment or the active environment to a new environment in the user's home directory or specified DEST
+	@if [ -z "$$ENV" ] && [ -z "$$CONDA_DEFAULT_ENV" ]; then \
+		echo "No Conda environment specified and no active Conda environment found."; \
+		exit 1; \
+	elif [ -z "$$ENV" ]; then \
+		ENV=$$CONDA_DEFAULT_ENV; \
+	fi; \
+	TIMESTAMP=$$(date +%Y%m%d); \
+	BASENAME=$$(basename $$ENV); \
+	DEFAULT_CONDA_ENV_DIR=~/.conda/envs; \
+	CLONE_DIR=$${DEST:-$$DEFAULT_CONDA_ENV_DIR/$$BASENAME-clone-$$TIMESTAMP}; \
+	echo "Cloning Conda environment: $$ENV"; \
+	echo "Cloning to: $$CLONE_DIR"; \
+	echo "This might take a few minutes..."; \
+	if conda create --prefix $$CLONE_DIR --clone $$ENV; then \
+		echo "Done!"; \
+		conda env export --prefix $$CLONE_DIR > $$CLONE_DIR.yml; \
+		echo "Cloned environment saved to $$CLONE_DIR.yml"; \
+	else \
+		echo "Cloning failed or was interrupted."; \
+		exit 1; \
+	fi;
+
+create-conda: ## Create a conda environment from the config/py_requirements.txt file
+	@if [ ! -f config/py_requirements.txt ]; then \
+		echo "Requirements file not found: config/py_requirements.txt"; \
+		exit 1; \
+	fi; \
+	ENV=$${ENV:-remind}; \
+	DEST=$${DEST:-$$HOME/.conda/envs}; \
+	echo "Creating Conda environment: $$DEST/$$ENV with Python 3.11"; \
+	mkdir -p $$DEST; \
+	conda create --prefix $$DEST/$$ENV python=3.11 -y; \
+	echo "Activating Conda environment: $$ENV"; \
+	. $$(conda info --base)/etc/profile.d/conda.sh && conda activate $$DEST/$$ENV && \
+	echo "Installing requirements from config/py_requirements.txt"; \
+	pip install -r config/py_requirements.txt; \
+	echo "Conda environment $$ENV created and requirements installed successfully in $$DEST with Python 3.11.";
 
 check:           ## Check if the GAMS code follows the coding etiquette
                  ## using gms::codeCheck
@@ -79,6 +102,7 @@ test:            ## Test if the model compiles and runs without running a full
 test-fix:        ## First run codeCheck interactively, then test if the model compiles and runs without
                  ## running a full scenario. Tests take about 15 minutes to run.
 	$(info Tests take about 18 minutes to run, please be patient)
+	@./scripts/utils/SOFEOF
 	@Rscript -e 'rlang::with_options(warn = 1, invisible(gms::codeCheck(strict = TRUE, interactive = TRUE))); testthat::test_dir("tests/testthat");'
 	@echo "Do not forget to commit possible changes done by codeCheck to not_used.txt files"
 	@git add -p modules/*/*/not_used.txt

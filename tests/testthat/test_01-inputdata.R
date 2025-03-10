@@ -8,9 +8,17 @@ test_that("Are all input data files present?", {
   missinginput <- missingInputData(path = "../..")
   if (length(missinginput) > 0) {
     lockID <- gms::model_lock(folder = "../..")
-    updateInputData(cfg = gms::readDefaultConfig("../.."), remindPath = "../..")
+    w <- capture_warnings(updateInputData(cfg = gms::readDefaultConfig("../.."), remindPath = "../.."))
+    # ignore warning about missing historical.mif, raise warning if there were other warnings
+    ignore <- "File historical.mif seems to be missing!"
+    w <- setdiff(w, ignore)
+    if (length(w) > 0) {
+      warning(paste0("'updateInputData' raised the following warnings\n", paste(w, collapse = "\n")))
+    }
     gms::model_unlock(lockID)
     missinginput <- missingInputData(path = "../..")
+    # remove historical.mif since it is optional
+    missinginput <- grep("historical.mif", missinginput, invert = TRUE, value = TRUE)
     if (length(missinginput) > 0) {
       warning("Missing input files: ", paste(missinginput, collapse = ", "))
     }

@@ -19,9 +19,10 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
   NC    <- "\033[0m"   # No Color
 
   refcfg <- gms::readDefaultConfig(remindPath)
-  remindextras <- c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
-                               "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
-                               "gms$cm_CES_configuration", "gms$c_description", "model", "renvLockFromPrecedingRun")
+  remindextras <- c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun", "var_luc",
+                               "gms$c_expname", "restart_subsequent_runs",
+                               "gms$cm_CES_configuration", "gms$c_description", "model", "renvLockFromPrecedingRun",
+                               "gms$c_model_version", "gms$c_results_folder")
   fail <- tryCatch(gms::check_config(cfg, reference_file = refcfg, modulepath = file.path(remindPath, "modules"),
                      settings_config = file.path(remindPath, "config", "settings_config.csv"),
                      extras = remindextras),
@@ -97,8 +98,21 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
   if (! isTRUE(cfg$gms$CES_parameters == "calibrate")) {
     cfg$output <- setdiff(cfg$output, "reportCEScalib")
   }
-  
-  # Make sure that an input_bau.gdx has been specified if and only if needed.
+
+  # remove rev at the beginning of inputRevision
+  if (grepl("^rev", cfg$inputRevision)) {
+    cfg$inputRevision <- sub("^rev", "", cfg$inputRevision)
+    warning("cfg$inputRevision started with 'rev', but this will be added automatically. Removed it.")
+  }
+  # check if RCP scenario other than (none), (rcp20), (rcp26), or (rcp45) is used
+  if (! isTRUE(cfg$gms$cm_rcp_scen %in% c("none","rcp20","rcp26","rcp45") )) {
+    warning("Chosen RCP scenario '", cfg$gms$cm_rcp_scen, "' might currently not be fully operational: test and verify before using it!")
+  }
+  # check if cm_iterative_target_adj 5, 7, or 9 is used without carbonprice being set to functionalForm
+  if (isTRUE(cfg$gms$cm_iterative_target_adj %in% c("5","7","9")) && ! isTRUE(cfg$gms$carbonprice == "functionalForm") ) {
+    warning("Chosen iterative target adjustment algorithm '", cfg$gms$cm_iterative_target_adj, "' will not be applied without using realization 45_carbonprice/functionalForm!")
+  }
+  # Make sure that an input_bau.gdx has been specified if needed.
   isBauneeded <- isTRUE(length(unlist(lapply(names(needBau), function(x) intersect(cfg$gms[[x]], needBau[[x]])))) > 0)
   if (isBauneeded) {
     if (is.na(cfg$files2export$start["input_bau.gdx"])) {
@@ -107,9 +121,8 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
     }
   } else {
     if (! is.na(cfg$files2export$start["input_bau.gdx"])) {
-      message("You have specified no realization that requires 'path_gdx_bau' but you have specified it. ",
-              "To avoid an unnecessary dependency to another run, setting 'path_gdx_bau' to NA.")
-      cfg$files2export$start["input_bau.gdx"] <- NA
+      message("According to 'scripts/start/needBau.R', you use no realization that requires 'path_gdx_bau' but you have specified it. ",
+              "To avoid an unnecessary dependency to another run, you can set 'path_gdx_bau' to NA.")
     }
   }
 

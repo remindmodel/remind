@@ -363,7 +363,7 @@ if(length(fulldim(dyntax)[[2]][[3]])>1) dyntax <- collapseNames(dyntax) # only i
 	                           title=paste0("Demand-dependent bioenergy tax"))
 
 ############### READ DATA: PEBIOLC MARGINAL ################################
-	marginal <- read_all(outputdirs,read.reportEntry,entry="Price|Biomass|Primary Level (US$2005/GJ)",as.list=FALSE)
+	marginal <- read_all(outputdirs,read.reportEntry,entry="Price|Biomass|Primary Level (US$2017/GJ)",as.list=FALSE)
 	marginal <- collapseNames(marginal,collapsedim=2)
 	if(length(fulldim(marginal)[[2]][[3]])>1)	marginal <- collapseNames(marginal) # only if there is more than one scenario, otherwise keep single scenarioname
 	
@@ -396,7 +396,7 @@ if(length(fulldim(dyntax)[[2]][[3]])>1) dyntax <- collapseNames(dyntax) # only i
           text=element_text(size=txtsiz),axis.text.x=element_text(size=txtsiz))
                         
 ############### READ DATA: STATIC BIOENERGY TAX ################################
-ptax <- read_all(outputdirs,read.reportEntry,entry="Price|Biomass|Bioenergy tax (US$2005/GJ)",as.list=FALSE)
+ptax <- read_all(outputdirs,read.reportEntry,entry="Price|Biomass|Bioenergy tax (US$2017/GJ)",as.list=FALSE)
 ptax <- collapseNames(ptax,collapsedim=2)
 if(length(fulldim(ptax)[[2]][[3]])>1)	ptax <- collapseNames(ptax) # only if there is more than one scenario, otherwise keep single scenarioname
 
@@ -405,7 +405,7 @@ if(length(fulldim(ptax)[[2]][[3]])>1)	ptax <- collapseNames(ptax) # only if ther
 	y_limreg  <- c(0,max(ptax[,y,]["GLO",,,invert=TRUE]))
 	
 	p4t <- magpie2ggplot2(ptax_all[r,y,],geom='line',group=NULL,
-	                      ylab='US$2005/GJ',color='Data2',linetype="Data1",
+	                      ylab='US$2017/GJ',color='Data2',linetype="Data1",
 	                      scales='fixed',show_grid=TRUE,ncol=4,text_size=txtsiz,ylim=y_limreg,
 	                      title=paste0("Purpose grown bioenergy price: tax only"))
 	# Price|Biomass|Primary Level

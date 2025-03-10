@@ -26,31 +26,51 @@ helpText <- "
 #'
 #' [options] can be the following flags:
 #'
-#'   --help, -h:      show this help text and exit
-#'   --test, -t:      tests output.R without actually starting any run
-#'   --renv=<path>    load the renv located at <path>, incompatible with --update
-#'   --update         update packages in renv first, incompatible with --renv=<path>
+#'   --help, -h   show this help text and exit
+#'   --test, -t   tests output.R without actually starting any run
+#'   --update     update packages in renv first, incompatible with --renv=<path>
 #'
 #' [options] can also specify the following variables. If they are not specified
 #' but needed, the scripts will ask the user.
 #'
-#'   comp=             comp=single means output for single runs (reporting, …)
-#'                     comp=comparison means scripts to compare runs (compareScenarios2, …)
-#'                     comp=export means scripts to export runs (xlsx_IIASA, …)
-#'   filename_prefix=  string to be added to filenames by some output scripts
-#'                     (compareScenarios, xlsx_IIASA)
-#'   output=           output=compareScenarios2 directly selects the specific script
-#'   outputdir=        Can be used to specify the output directories to be used.
-#'                     Example: outputdir=./output/SSP2-Base-rem-1,./output/NDC-rem-1
-#'   remind_dir=       path to remind or output folder(s) where runs can be found.
-#'                     Defaults to ./output but can also be used to specify multiple
-#'                     folders, comma-separated, such as remind_dir=.,../otherremind
-#'   slurmConfig=      use slurmConfig=priority, short or standby to specify slurm
-#'                     selection. You may also pass complicated arguments such as
-#'                     slurmConfig='--qos=priority --mem=8000'
+#'   --comp=              comp=single means output for single runs
+#'                        (e.g. reporting, ...)
+#'                        comp=comparison means scripts to compare runs
+#'                        (e.g. compareScenarios2, ...)
+#'                        comp=export means scripts to export runs
+#'                        (e..g xlsx_IIASA, ...)
+#'
+#'   --filename_prefix=   string to be added to filenames by some output scripts
+#'                        (compareScenarios, xlsx_IIASA)
+#'
+#'   --output=            output=compareScenarios2 directly selects the specific
+#'                        script
+#'
+#'   --outputdir=         Can be used to specify the output directories to be
+#'                        used directly, bypassing run selection, as a
+#'                        comma-separated list
+#'                        (e.g. outputdir=./output/SSP2-Base-rem-1,./output/NDC-rem-1)
+#'
+#'   --remind_dir=        path to remind or output directories where runs can be
+#'                        found.  Defaults to ./output but can also be used to
+#'                        specify multiple  folders, comma-separated, such as
+#'                        remind_dir=.,../otherremind
+#'
+#'   --renv=<path>        load the renv located at <path>, incompatible with
+#'                        --update
+#'
+#'   --slurmConfig=       use slurmConfig=priority, short or standby to specify
+#'                        slurm selection.  You may also pass complicated
+#'                        arguments such as slurmConfig='--qos=priority --mem=8000'
 "
 
 argv <- get0("argv", ifnotfound = commandArgs(trailingOnly = TRUE))
+timestamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
+
+if (any(c("-h", "--help") %in% argv)) {
+  message(gsub("#' ?", '', helpText))
+  q()
+}
 
 # run updates before loading any packages
 if ("--update" %in% argv) {
@@ -77,11 +97,6 @@ if (!exists("source_include")) {
   # line arguments and let the user choose the slurm options
   flags <- readArgs("outputdir", "output", "comp", "remind_dir", "slurmConfig", "filename_prefix",
                     .flags = c(t = "--test", h = "--help"))
-}
-
-if ("--help" %in% flags) {
-  message(gsub("#' ?", '', helpText))
-  q()
 }
 
 choose_slurmConfig_output <- function(output) {
@@ -148,7 +163,7 @@ if (! exists("output")) {
 if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
                          "plot_compare_iterations", "varListHtml", "fixOnRef", "MAGICC7_AR6",
-                         "validateScenarios", "checkClimatePercentiles")
+                         "validateScenarios", "checkClimatePercentiles", "selectPlots")
   needingMif <- any(modulesNeedingMif %in% output) && ! "reporting" %in% output[[1]]
   if (exists("remind_dir")) {
     dir_folder <- c(file.path(remind_dir, "output"), remind_dir)
@@ -183,7 +198,7 @@ if (! exists("outputdir")) {
 
 if (comp %in% c("comparison", "export")) {
   # ask for filename_prefix, if one of the modules that use it is selected
-  modules_using_filename_prefix <- c("compareScenarios2", "xlsx_IIASA", "varListHtml")
+  modules_using_filename_prefix <- c("compareScenarios2", "xlsx_IIASA", "varListHtml", "selectPlots")
   if (!exists("filename_prefix")) {
     if (any(modules_using_filename_prefix %in% output)) {
       filename_prefix <- choose_filename_prefix(modules = intersect(modules_using_filename_prefix, output))
@@ -312,7 +327,7 @@ if (comp %in% c("comparison", "export")) {
           }
         } else {
           # send the output script to slurm
-          logfile <- file.path(outputdir, "log_output.txt")
+          logfile <- file.path(outputdir, paste0("log_output_", timestamp, ".txt"))
           Rscripts <- paste0("Rscript scripts/output/single/", name, " outputdir=", outputdir, collapse = "; ")
           slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
                        " --mail-type=END,FAIL --comment=output.R --wrap='", Rscripts, "'")

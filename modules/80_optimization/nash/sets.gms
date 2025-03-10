@@ -9,18 +9,14 @@
 sets
 learnte_dyn80(all_te)   "learnte for nash"
 /
-        wind        "wind onshore power converters"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-        windoff     "wind offshore power converters"
-$ENDIF.WindOff
         spv         "solar photovoltaic" 
         csp         "concentrating solar power"
+        windon      "wind onshore power converters"
+        windoff     "wind offshore power converters"
         storspv     "storage technology for spv"
-        storwind    "storage technology for wind onshore"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-        storwindoff "storage technology for wind offshore"
-$ENDIF.WindOff
         storcsp     "storage technology for csp"
+        storwindon  "storage technology for wind onshore"
+        storwindoff "storage technology for wind offshore"
 /,
 
 solveinfo80	"Nash solution stats"

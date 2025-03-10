@@ -24,7 +24,7 @@ Equation q40_FE_RenShare                               "Lower bound on renewable
 Equation q40_El_RenShare                               "Lower bound on low carbon share in electricity";
 Equation q40_CoalBound                                 "Restricting new coal power plants in regions with regulation";
 Equation q40_ElCap_RenShare                            "Lower bound on low carbon share in total installed capacity";
-Equation q40_windBound				       "lower bound on combined wind onshore and offshore";
+Equation q40_windBound			            	       "lower bound on combined wind onshore and offshore";
 
 *** EOF ./modules/40_techpol/NDCplus/declarations.gms
 

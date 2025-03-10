@@ -13,3 +13,6 @@ sm_trillion_2_non, parameter, not needed
 sm_GJ_2_TWa, parameter, not needed
 sm_TWa_2_kWh, parameter, not needed
 sm_h2kg_2_h2kWh, parameter, not needed
+pm_specFeDem,parameter,only used in standard realization
+vm_outflowPrc, variable, only used in standard realization
+p24_trade_constraints, variable, only used in standard realization

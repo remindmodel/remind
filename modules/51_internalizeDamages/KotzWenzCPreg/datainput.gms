@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/51_internalizeDamages/KotzWenzItr/datainput.gms
+*** SOF ./modules/51_internalizeDamages/KotzWenzCPreg/datainput.gms
 
 * satisfy dependencies
 $ifi not %damages% == 'KotzWenz' abort "module internalizeDamages=KotzWenzItr requires module damages=KotzWenz";
@@ -17,4 +17,4 @@ p51_scc(tall,regi)$(tall.val ge 2025 and tall.val le 2150) = p51_scc("2025",regi
 
 pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2010) = p51_scc(ttot,regi) * sm_c_2_co2/1000;
 
-*** EOF ./modules/51_internalizeDamages/KotzWenzItr/datainput.gms
+*** EOF ./modules/51_internalizeDamages/KotzWenzCPreg/datainput.gms

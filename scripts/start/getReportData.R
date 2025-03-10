@@ -5,7 +5,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc="costs") {
+getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc="costs",var_luc="smooth") {
   
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   
@@ -13,10 +13,10 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
     notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
     if("Demand|Bioenergy|++|2nd generation (EJ/yr)" %in% getNames(mag)) {
       # MAgPIE 4
-      out <- mag[,,"Prices|Bioenergy (US$05/GJ)"]*0.0315576 # with transformation factor from US$2005/GJ to US$2005/Wa
+      out <- mag[,,"Prices|Bioenergy (US$2017/GJ)"]*0.0315576 # with transformation factor from US$2017/GJ to US$2017/Wa
     } else {
       # MAgPIE 3
-      out <- mag[,,"Price|Primary Energy|Biomass (US$2005/GJ)"]*0.0315576 # with transformation factor from US$2005/GJ to US$2005/Wa
+      out <- mag[,,"Price|Primary Energy|Biomass (US$2017/GJ)"]*0.0315576 # with transformation factor from US$2017/GJ to US$2017/Wa
     }
     out["JPN",is.na(out["JPN",,]),] <- 0
     tmp <- out
@@ -43,6 +43,15 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
   }
   
   .emissions_mac <- function(mag) {
+    # Select the LUC variable according to setting.
+    if (var_luc == "smooth") {
+      emi_co2_luc <- "Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr)"
+    } else if (var_luc == "raw") {
+      emi_co2_luc <- "Emissions|CO2|Land RAW|+|Land-use Change (Mt CO2/yr)"
+    } else {
+      stop(paste0("Unkown setting for 'var_luc': `", var_luc, "`. Only `smooth` or `raw` are allowed."))
+    }
+
     # define three columns of dataframe:
     #   emirem (remind emission names)
     #   emimag (magpie emission names)
@@ -53,7 +62,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
     map <- data.frame(emirem=NULL,emimag=NULL,factor_mag2rem=NULL,stringsAsFactors=FALSE)
     if("Emissions|N2O|Land|Agriculture|+|Animal Waste Management (Mt N2O/yr)" %in% getNames(mag)) {
       # MAgPIE 4 (up to date)
-      map <- rbind(map,data.frame(emimag="Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr)",                                               emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
+      map <- rbind(map,data.frame(emimag=emi_co2_luc,                                                                                      emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|+|Animal Waste Management (Mt N2O/yr)",                           emirem="n2oanwstm", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Inorganic Fertilizers (Mt N2O/yr)",          emirem="n2ofertin", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Manure applied to Croplands (Mt N2O/yr)",    emirem="n2oanwstc", factor_mag2rem=28/44,stringsAsFactors=FALSE))
@@ -119,11 +128,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
   
   .agriculture_costs <- function(mag){
     notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
-    if ("Costs Without Incentives (million US$05/yr)" %in% getNames(mag)) {
-      out <- mag[,,"Costs Without Incentives (million US$05/yr)"]/1000/1000 # with transformation factor from 10E6 US$2005 to 10E12 US$2005
-    } else {
-      out <- mag[,,"Costs|MainSolve w/o GHG Emissions (million US$05/yr)"]/1000/1000 # old reporting
-    }
+    out <- mag[,,"Costs Without Incentives (million US$2017/yr)"]/1000/1000 # with transformation factor from 10E6 US$2017 to 10E12 US$2017
     out["JPN",is.na(out["JPN",,]),] <- 0
     tmp <- out
     dimnames(out)[[3]] <- NULL #Delete variable name to prevent it from being written into output file
@@ -133,7 +138,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
   
   .agriculture_tradebal <- function(mag){
     notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
-    out <- mag[,,"Trade|Agriculture|Trade Balance (billion US$2005/yr)"]/1000 # with transformation factor from 10E9 US$2005 to 10E12 US$2005
+    out <- mag[,,"Trade|Agriculture|Trade Balance (billion US$2017/yr)"]/1000 # with transformation factor from 10E9 US$2017 to 10E12 US$2017
     out["JPN",is.na(out["JPN",,]),] <- 0
     dimnames(out)[[3]] <- NULL
     write.magpie(out[notGLO,,],paste0("./modules/26_agCosts/",inputpath_acc,"/input/trade_bal_reg.rem.csv"),file_type="csvr")

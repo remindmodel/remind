@@ -1,4 +1,4 @@
-
+*** SOF ./modules/50_damages/KotzWenz/postsolve.gms
 execute "Rscript run_KotzWenz_damages.R"
 execute_loadpoint 'pm_KotzWenz_damageIso' p50_damageIsoPerc=pm_damageIso;
 execute_loadpoint 'pm_KotzWenz_damageMarginalIso' p50_damageMarginalIsoPerc=pm_damageMarginalIso;
@@ -13,4 +13,4 @@ pm_damage(tall,regi)$(tall.val gt 2020 and tall.val le 2300) =
 ;
 
 display pm_damage,pm_damageMarginal;
-
+*** EOF ./modules/50_damages/KotzWenz/postsolve.gms

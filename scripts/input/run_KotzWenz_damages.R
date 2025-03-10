@@ -16,15 +16,6 @@ beta1 <- read.csv("../../modules/50_damages/KotzWenz/input/f50_KLW_df_beta1.cs4r
 beta2 <- read.csv("../../modules/50_damages/KotzWenz/input/f50_KLW_df_beta2.cs4r",skip=4,header=FALSE) %>% rename(iso=V1,realization=V2,value=V3)
 maxtemp <- read.csv("../../modules/50_damages/KotzWenz/input/f50_KLW_df_maxGMT.cs4r",skip=4,header=FALSE) %>% rename(iso=V1,realization=V2,value=V3)
 
-#getTemperatureMagicc = function(file = "./magicc/DAT_SURFACE_TEMP.OUT"){
-#  x = read.table(file, skip = 19,header = T)
-#  x = x[,c(1,2)]
-#  names(x) = c('period','value')
-#  x$period = as.integer(as.character(x$period))
-#  # Get relevant years
-#  years <- x[x$period >= 2005 & x$period <= 2300,1]
-#  return(x[x$period %in% years,])
-#}
 getTemperatureMagicc = function(file="./p15_magicc_temp.gdx"){
   x <- read.gdx("p15_magicc_temp.gdx","pm_globalMeanTemperature") %>% rename(period=tall)
   if(max(x$period) == 2100){

@@ -9,13 +9,14 @@
 *** ML 20181220* substitution elasticity and time preference adjusted to get initial consumption that matches historic consumption shares
 *** be careful with changing time preferences as this parameter is used also outside the welfare function
 
-parameter pm_ies(all_regi)        "intertemporal elasticity of substitution"
+parameter p23_ies_differentiated(all_regi)        "intertemporal elasticity of substitution"
 /
 $ondelim
 $include "./modules/23_capitalMarket/imperfect/input/pm_ies.cs4r"
 $offdelim
 /
 ;
+pm_ies(regi) = p23_ies_differentiated(regi);
 
 parameter p23_prtp(all_regi)       " regionally differentiated pure rate of time preference"
 /

@@ -74,14 +74,14 @@ $offtext
 36       1.0
 41       1.0
 
-+       hydro          wind           spv         solhe           csp          elh2        geohdr         geohe     h2turb   h22ch4   MeOH
-1        5.0          10.0          10.0           4.5           1.0           1.0          10.0          10.0         1       1.0     1.0
-6        5.0           5.0           5.0           2.8           0.0                         5.0           5.0
-11       5.0           1.0           1.0           1.8           0.0                         1.0           1.0
-16       5.0                                       1.1           1.0
-21       5.0                                                     0.0
-26       5.0                                                     0.0
-31       5.0                                                     0.0
++       hydro       windon      windoff           spv         solhe           csp          elh2        geohdr         geohe     h2turb    h22ch4    MeOH
+1        5.0          10.0         10.0          10.0           4.5           1.0           1.0          10.0          10.0          1       1.0     1.0
+6        5.0           5.0          5.0           5.0           2.8           0.0                         5.0           5.0
+11       5.0           1.0          1.0           1.0           1.8           0.0                         1.0           1.0
+16       5.0                                      1.1           1.0
+21       5.0                                                    0.0
+26       5.0                                                    0.0
+31       5.0                                                    0.0
 36       5.0
 41       5.0
 46       5.0
@@ -141,8 +141,8 @@ $offtext
 
 
 
-+      storspv      storwind       storcsp       gridspv      gridwind       gridcsp
-1        1.0           1.0           1.0           1.0           1.0           1.0
++      storspv      storwindon  storwindoff       storcsp       gridspv      gridwindon   gridwindoff       gridcsp
+1          1.0             1.0          1.0           1.0           1.0             1.0           1.0           1.0
 
 +      ccsinje
 1         1.0
