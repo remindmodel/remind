@@ -17,8 +17,9 @@ checkSettingsRemMag <- function(cfg_rem, cfg_mag, testmode = FALSE) {
     errorsfound <- errorsfound + 1
   }
 
-  # allowed bioenergy phaseout options
-  allowed <- list(yes = c("phaseout2020", 1), no1 = c("const2030", 0), no2 = c("const2020", 0))
+  # allowed bioenergy phaseout (yes/no) options
+  allowed <- list(yes1 = c("phaseout2020", 1), yes2 = c("phaseout2030", 1),
+                  no1 = c("const2030", 0), no2 = c("const2020", 0))
   if (! list(c(cfg_mag$gms$c60_1stgen_biodem, cfg_rem$gms$cm_1stgen_phaseout)) %in% allowed) {
     text <- paste0("Those settings lead to an inconsistency on bioenergy phaseout for ", cfg_rem$title, ":",
                    "\n- cfg_mag$gms$c60_1stgen_biodem = ", cfg_mag$gms$c60_1stgen_biodem,
