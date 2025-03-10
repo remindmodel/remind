@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Possibility of using updated sources for baseline non-CO2 emissions calculation, controlled by `cm_emifacs_baseyear`
 - Add `readcoupled` script that allows to print data from gdx files or mif files for all coupled runs
     [[#1977](https://github.com/remindmodel/remind/pull/1977), [#1990](https://github.com/remindmodel/remind/pull/1990)]
+- Add `scripts/start/checkSettingsRemMag.R` to check compatibility of REMIND and MAgPIE settings with respect
+  to GDP, Population, bioenergy phaseout and damage settings
+    [[#2028](https://github.com/remindmodel/remind/pull/2028)]
 
 ### input data/calibration
 - new input data rev7.21 including new MAgPIE data [[#1956](https://github.com/remindmodel/remind/pull/1956)]
@@ -27,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### removed
 - **37_industry** removed superseded realization fixed_shares [[#1941](https://github.com/remindmodel/remind/pull/1941)]
+- last traces of SSP2EU scenario which is superseeded by SSP2 [[#2028](https://github.com/remindmodel/remind/pull/2028)]
 
 ### fixed
 - **37_industry** fix and restructure chemical feedstock balancing to account for all negative emissions from stored non-fossil carbon [[#1829](https://github.com/remindmodel/remind/pull/1829)]
