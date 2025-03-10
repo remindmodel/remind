@@ -348,12 +348,13 @@ $if not "%cm_techcosts%" == "GLO" + p_risk_premium_constr(regi)
 display p_tkpremused;
 
 *** modify regionalized cost data using cost premium during construction time
-pm_data(regi,"inco0",te)       = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"inco0",te);
-pm_data(regi,"floorcost",te)   = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"floorcost",te);
+pm_data(regi,"inco0",te)     = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"inco0",te);
+pm_data(regi,"floorcost",te) = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"floorcost",te);
 p_inco0(ttot,regi,teRegTechCosts)  = (1 + p_tkpremused(regi,teRegTechCosts) ) * p_inco0(ttot,regi,teRegTechCosts);
 
 *** take region average p_tkpremused for global convergence price
-fm_dataglob("inco0",te)       = (1 + sum(regi, p_tkpremused(regi,te)) / card(regi)) * fm_dataglob("inco0",te);
+fm_dataglob("inco0",te)      = (1 + sum(regi, p_tkpremused(regi,te)) / card(regi)) * fm_dataglob("inco0",te);
+fm_dataglob("floorcost",te)  = (1 + sum(regi, p_tkpremused(regi,te)) / card(regi)) * fm_dataglob("floorcost",te);
 
 *** ====================== floor cost scenarios ===========================
 *** report old floor costs pre manipulation in non-default scenario
