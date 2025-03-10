@@ -744,6 +744,15 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
+matStiffShare(all_enty)   "Materials with restricted change of relative process volume shares"
+  /
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+   HVC
+   methanol
+   ammonia
+$endif.cm_subsec_model_chemicals
+  /
+
 tePrcStiffShare(all_te,opmoPrc,all_enty)   "Industry process technologies with restricted change of relative shares"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"

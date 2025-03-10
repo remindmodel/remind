@@ -110,6 +110,7 @@ Positive Variables
   v37_shareWithCC(tall,all_regi,all_te,opmoPrc)                             "Share of process and operation mode equipped with carbon capture technology"
   vm_costMatPrc(tall,all_regi)                                              "Cost of external material inputs such as iron ore in process-based industry [trn $2017/a]"
   v37_matShareChange(tall,all_regi,all_te,opmoPrc,all_enty)                 "Change of share of processes with rectricted relative share change"
+  v37_sumOutflowPrcStiffShare(tall,all_regi,all_enty)                       "TODO"
 ;
 
 Variables
@@ -156,6 +157,7 @@ $endif.no_calibration
   q37_prodMat(tall,all_regi,mat)                                                    "Production volume of processes equals material flow of output material"
   q37_mat2ue(tall,all_regi,mat,all_in)                                              "Connect materials production to ue ces tree nodes"
   q37_restrictMatShareChange(tall,all_regi,all_te,opmoPrc,all_enty)                 "Low Constraining the share of chemical fossil fuel technologies based on historical data"
+  q37_sumMatShareChange(tall,all_regi,all_enty)                                     "TODO"
 
   q37_limitCapMat(tall,all_regi,all_te)                                             "Material-flow conversion is limited by capacities"
   q37_emiPrc(ttot,all_regi,all_enty,all_te,opmoPrc)                                 "Local industry emissions pre-capture; Only used as baseline for CCS [GtC/a]"

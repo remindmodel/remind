@@ -433,6 +433,9 @@ all_enty             "all types of quantities"
     entydummy    "dummy FE for process based industry implementation"
 
 *** materials, feedstock, and industrial goods
+
+    co2f         "feedstock CO2"
+
 *** chemicals
     OtherChem
     HVC
@@ -908,7 +911,7 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
        UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,
        VIR,VNM,VUT,WLF,WSM,YEM,ZAF,ZMB,ZWE /
 
-   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country"
+   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
          /
        EUR . EUR
        CHA . CHA

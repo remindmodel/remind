@@ -341,8 +341,8 @@ q37_incinerationCCS(t,regi,sefe(entySe,entyFe),emiMkt)$(
 ;
 
 *' sum non-fossil carbon from plastics that get incinerated with carbon capture
-q37_nonFosPlastic_incinCC(t,regi,emiMkt).. 
-  vm_nonFosPlastic_incinCC(t,regi,emiMkt) 
+q37_nonFosPlastic_incinCC(t,regi,emiMkt)..
+  vm_nonFosPlastic_incinCC(t,regi,emiMkt)
   =e=
   sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
          se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
@@ -368,7 +368,7 @@ q37_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)..
 
 *' calculate non-fossil carbon in non-plastic waste that does not get emitted to the atmosphere (i.e. is stored permanently)
 q37_nonFosNonPlasticNonEmitted(t,regi)..
- vm_nonFosNonPlasticNonEmitted(t,regi)  
+ vm_nonFosNonPlasticNonEmitted(t,regi)
  =e=
    sum((entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
           se2fe(entySe,entyFe,te))$( entySeBio(entySe) OR entySeSyn(entySe) ),
@@ -388,7 +388,7 @@ q37_emiNonPlasticWaste(t,regi,emi,emiMkt)..
 *' fossil carbon in non-plastic waste that gets emitted to the atmosphere
       v37_feedstocksCarbon(t,regi,entySe,entyFe,emiMkt2)  * (1 - s37_plasticsShare) * cm_nonPlasticFeedstockEmiShare)
 *' non-fossil carbon in non-plastic waste that does not get emitted to the atmosphere (i.e. is stored permanently)
-  - vm_nonFosNonPlasticNonEmitted(t,regi) 
+  - vm_nonFosNonPlasticNonEmitted(t,regi)
   )$( sameas(emi,"co2") AND sameas(emiMkt,"ES") )
 ;
 
@@ -482,20 +482,22 @@ q37_prodMat(t,regi,mat)$( matOut(mat) ) ..
 q37_restrictMatShareChange(ttot,regi,tePrc,opmoPrc,mat)$(    ttot.val gt 2020
                                                          AND tePrcStiffShare(tePrc,opmoPrc,mat)) ..
   vm_outflowPrc(ttot,regi,tePrc,opmoPrc)
-  * sum((tePrc2,opmoPrc2)$(tePrcStiffShare(tePrc2,opmoPrc2,mat)),
-    vm_outflowPrc(ttot-1,regi,tePrc2,opmoPrc2))
+  * v37_sumOutflowPrcStiffShare(ttot-1,regi,mat)
   -
   vm_outflowPrc(ttot-1,regi,tePrc,opmoPrc)
-  * sum((tePrc2,opmoPrc2)$(tePrcStiffShare(tePrc2,opmoPrc2,mat)),
-    vm_outflowPrc(ttot,regi,tePrc2,opmoPrc2))
+  * v37_sumOutflowPrcStiffShare(ttot,regi,mat)
 =e=
   v37_matShareChange(ttot,regi,tePrc,opmoPrc,mat)
-  * sum((tePrc2,opmoPrc2)$(tePrcStiffShare(tePrc2,opmoPrc2,mat)),
-    vm_outflowPrc(ttot,regi,tePrc2,opmoPrc2))
-  * sum((tePrc2,opmoPrc2)$(tePrcStiffShare(tePrc2,opmoPrc2,mat)),
-    vm_outflowPrc(ttot-1,regi,tePrc2,opmoPrc2))
+  * v37_sumOutflowPrcStiffShare(ttot,regi,mat)
+  * v37_sumOutflowPrcStiffShare(ttot-1,regi,mat)
 ;
 
+q37_sumMatShareChange(t,regi,mat)$(t.val gt 2020 and matStiffShare(mat)) ..
+  v37_sumOutflowPrcStiffShare(t,regi,mat)
+=e=
+  sum((tePrc,opmoPrc)$(tePrcStiffShare(tePrc,opmoPrc,mat)),
+    vm_outflowPrc(t,regi,tePrc,opmoPrc))
+;
 
 ***------------------------------------------------------
 *' Hand-over to CES
