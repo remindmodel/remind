@@ -28,12 +28,13 @@ checkSettingsRemMag <- function(cfg_rem, cfg_mag, testmode = FALSE) {
     errorsfound <- errorsfound + 1
   }
 
-  # damage settings
+  # damage settings: Make sure that if damages are not 'off' in REMIND, MAgPIE always uses 'cc'
   if (! isTRUE(cfg_mag$gms$c14_yields_scenario == "cc") &&
-      ! isTRUE(cfg_rem$gms$damages == "off")) {
+      ! isTRUE(cfg_rem$gms$damages %in% c("off"))) { # add damage variants compatible with nocc here
     text <- paste0("You did not select MAgPIE climate damages, but REMIND damages for ", cfg_rem$title, ":",
                    "\n- cfg_mag$gms$c14_yields_scenario = ", cfg_mag$gms$c14_yields_scenario,
-                   "\n- cfg_rem$gms$damages = ", cfg_rem$gms$damages)
+                   "\n- cfg_rem$gms$damages = ", cfg_rem$gms$damages,
+                   "\nIf that is intended, adjust scripts/start/checkSettingsRemMag.R")
     if (isTRUE(testmode)) warning(text) else message(text)
     errorsfound <- errorsfound + 1
   }
