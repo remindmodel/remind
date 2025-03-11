@@ -481,22 +481,10 @@ q37_prodMat(t,regi,mat)$( matOut(mat) ) ..
 
 q37_restrictMatShareChange(ttot,regi,tePrc,opmoPrc,mat)$(    ttot.val gt 2020
                                                          AND tePrcStiffShare(tePrc,opmoPrc,mat)) ..
-  vm_outflowPrc(ttot,regi,tePrc,opmoPrc)
-  * v37_sumOutflowPrcStiffShare(ttot-1,regi,mat)
-  -
-  vm_outflowPrc(ttot-1,regi,tePrc,opmoPrc)
-  * v37_sumOutflowPrcStiffShare(ttot,regi,mat)
+  (vm_outflowPrc(ttot,regi,tePrc,opmoPrc)+p_adj_seed_te(ttot,regi,tePrc))
 =e=
-  v37_matShareChange(ttot,regi,tePrc,opmoPrc,mat)
-  * v37_sumOutflowPrcStiffShare(ttot,regi,mat)
-  * v37_sumOutflowPrcStiffShare(ttot-1,regi,mat)
-;
-
-q37_sumMatShareChange(t,regi,mat)$(t.val gt 2020 and matStiffShare(mat)) ..
-  v37_sumOutflowPrcStiffShare(t,regi,mat)
-=e=
-  sum((tePrc,opmoPrc)$(tePrcStiffShare(tePrc,opmoPrc,mat)),
-    vm_outflowPrc(t,regi,tePrc,opmoPrc))
+  (1 + v37_matShareChange(ttot,regi,tePrc,opmoPrc,mat))
+  * (vm_outflowPrc(ttot-1,regi,tePrc,opmoPrc)+p_adj_seed_te(ttot-1,regi,tePrc))
 ;
 
 ***------------------------------------------------------
@@ -508,7 +496,7 @@ q37_mat2ue(t,regi,mat,in)$( ppfUePrc(in) ) ..
     * p37_ue_share(t,regi,mat,in)
   =e=
     sum(mat2ue(mat,in),
-      p37_mat2ue(mat,in)
+      p37_mat2ue(t,regi,mat,in)
       *
       v37_matFlow(t,regi,mat)
     )

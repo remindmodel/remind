@@ -865,24 +865,32 @@ $offdelim
 ;
 $endif.cm_subsec_model_chemicals
 
-p37_mat2ue(all_enty,all_in) = 0.;
+!!p37_mat2ue(tall,all_regi,all_enty,all_in) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+Parameter
+  p37_mat2ue(tall,all_regi,all_enty,all_in) "TODO"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_AllChemical_Mat2Ue.cs4r";
+$offdelim
+  /
+;
 !! ue_chemicals is measured in value_added (trn$2017), whilst material is measured in Gt
 !! So this is the price of material in trn$2017/Gt = $2017/kg
 
 !! new calculation value added: Global plastic production volume 400.3 Mt Global plastic market size 712bn USD in 2022 https://www.statista.com/topics/5266/plastics-industry/#:~:text=Since%20the%20mass%20production%20of%20plastic%20products%20began,to%20experience%20considerable%20growth%20over%20the%20next%20decade.
 
 !!TODO QIanzhi: Change to 2017$
-p37_mat2ue("HVC","ue_chemicals") = 0.66; !!2017$/kg Source: https://businessanalytiq,com/procurementanalytics/index/ethylene-price-index/
-p37_mat2ue("Fertilizer","ue_chemicals") = 0.73; !!2017$/kgN Source: https://farmdocdaily,illinois,edu/wp-content/uploads/2023/06/06132023_fig1,png 2020 Global Average
-p37_mat2ue("MethFinal","ue_chemicals") = 0.37; !!2017$/kg Source: https://www,methanex,com/about-methanol/pricing/ 2020 Global Average
-p37_mat2ue("AmmoFinal","ue_chemicals") = 0.69; !!2017$/kg Source: https://businessanalytiq,com/procurementanalytics/index/ammonia-price-index/ 2020 Global Average
-p37_mat2ue("OtherChem","ue_chemicals") = 1.;
+!!p37_mat2ue("HVC","ue_chemicals") = 0.66; !!2017$/kg Source: https://businessanalytiq,com/procurementanalytics/index/ethylene-price-index/
+!!p37_mat2ue("Fertilizer","ue_chemicals") = 0.73; !!2017$/kgN Source: https://farmdocdaily,illinois,edu/wp-content/uploads/2023/06/06132023_fig1,png 2020 Global Average
+!!p37_mat2ue("MethFinal","ue_chemicals") = 0.37; !!2017$/kg Source: https://www,methanex,com/about-methanol/pricing/ 2020 Global Average
+!!p37_mat2ue("AmmoFinal","ue_chemicals") = 0.69; !!2017$/kg Source: https://businessanalytiq,com/procurementanalytics/index/ammonia-price-index/ 2020 Global Average
+p37_mat2ue(t,all_regi,"OtherChem","ue_chemicals") = 1.;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 
-p37_mat2ue("sesteel","ue_steel_secondary") = 1.;
-p37_mat2ue("prsteel","ue_steel_primary")   = 1.;
+p37_mat2ue(t,all_regi,"sesteel","ue_steel_secondary") = 1.;
+p37_mat2ue(t,all_regi,"prsteel","ue_steel_primary")   = 1.;
 $endif.cm_subsec_model_steel
 
 !! HOT FIX
@@ -904,7 +912,7 @@ pm_outflowPrcHist("2020",regi,"MeToFinal","standard")
 p37_ueHistTmp("2020",regi)
   = sum((tePrc2matOut(tePrc,opmoPrc,mat), mat2ue(mat,in))$(sameas("ue_chemicals",in)),
          pm_outflowPrcHist("2020",regi,tePrc,opmoPrc)
-         * p37_mat2ue(mat,in)
+         * p37_mat2ue("2020",regi,mat,in)
     );
 
 pm_outflowPrcHist("2020",regi,tePrc,opmoPrc)$(secInd37_tePrc("chemicals",tePrc))
@@ -929,7 +937,7 @@ sum(tePrc2matOut(tePrc,opmoPrc,mat),
 ;
 !! 4. Calc ue_share
 p37_ue_share(t,regi,mat,in)$(mat2ue(mat,in) AND sameas(in,"ue_chemicals") AND t.val le 2020) =
-  (p37_mat2ue(mat,in) * p37_matFlowHist(t,regi,mat))
+  (p37_mat2ue(t,regi,mat,in) * p37_matFlowHist(t,regi,mat))
   / pm_cesdata(t,regi,in,"quantity");
 ;
 p37_ue_share(t,regi,mat,in)$(t.val gt 2020) = p37_ue_share("2020",regi,mat,in);
@@ -1041,7 +1049,7 @@ if (cm_startyear eq 2005,
 
     !! 2nd stage tech
     loop(mat2ue(mat,in)$(NOT sameas(in,"ue_chemicals")),
-      p37_matFlowHist(t,regi,mat) = pm_fedemand(t,regi,in) / p37_mat2ue(mat,in) * p37_ue_share(t,regi,mat,in);
+      p37_matFlowHist(t,regi,mat) = pm_fedemand(t,regi,in) / p37_mat2ue(t,regi,mat,in) * p37_ue_share(t,regi,mat,in);
       loop(tePrc2matOut(tePrc,opmoPrc,mat),
         pm_outflowPrcHist(t,regi,tePrc,opmoPrc) = p37_matFlowHist(t,regi,mat) * p37_teMatShareHist(regi,tePrc,opmoPrc,mat);
       );
