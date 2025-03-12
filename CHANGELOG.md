@@ -23,6 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### changed
 - **scripts** for MAgPIE coupled runs, if the coupled config contains a `path_gdx_ref` column, it needs a `path_gdx_refpolicycost` column as well.
     [[#1940](https://github.com/remindmodel/remind/pull/1940)]
+- **scripts** make the selection of variables and equations that are fixed on reference run automatic
+    [[#2033](https://github.com/remindmodel/remind/pull/2033)]
   **core** merge cm_GDPscen and cm_POPscen into cm_GDPpopScen [[#1973](https://github.com/remindmodel/remind/pull/1973)]
 
 ### added
