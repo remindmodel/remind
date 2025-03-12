@@ -681,8 +681,11 @@ parameter
   cm_1stgen_phaseout        "scenario setting for phase-out of 1st generation biofuels"
 ;
   cm_1stgen_phaseout  = 0;         !! def = 0  !! regexp = 0|1
-*' *  (0): no phase-out. Production of 1st generation biofuels after 2045 is bound from below by 90% of maximum resource potential ("maxprod")
-*' *  (1): phase-out. No new capacities for 1st generation biofuel technologies are built after 2030 (i.e. added capacity vm_deltaCap equals 0), in practice this means a slow phaseout of 1st generation biofuel due to lack of economic competitiveness. Bioenergy production is bound from below by 90% of maximum biomass resource potential in 2045
+*' *  (0): no phase-out. Production of 1st generation biofuels after 2045 is bound from below by 90% of maximum resource potential ("maxprod").
+*'         In MAgPIE, set 'c60_1stgen_biodem' to 'const20xx'.
+*' *  (1): phase-out. No new capacities for 1st generation biofuel technologies are built after 2030 (i.e. added capacity vm_deltaCap equals 0), in practice this means a slow phaseout of 1st generation biofuel due to lack of economic competitiveness. Bioenergy production is bound from below by 90% of maximum biomass resource potential in 2045.
+*'         In MAgPIE, set 'c60_1stgen_biodem' to 'phaseout20xx'.
+*' The consistency between REMIND and MAgPIE switches is checked by scripts/start/checkSettingsRemMag.R
 *'
 parameter
   cm_phaseoutBiolc          "Switch that allows for a full phaseout of all bioenergy technologies globally"
@@ -1270,7 +1273,9 @@ $setGLobal cm_bioprod_regi_lim off  !! def off
 *'  * (SSP3):  SSP3 slowGROWTH slowCONV
 *'  * (SSP4):  SSP4 medGROWTH mixedCONV
 *'  * (SSP5):  SSP5 fastGROWTH fastCONV
-$setglobal cm_GDPpopScen   SSP2  !! def = SSP2
+*'  * (SDP|SDP_EI|SDP_MC|SDP_RC):   SDP scenarios
+*'  * (SSP2IndiaMedium|SSP2IndiaHigh):   special India scenario
+$setglobal cm_GDPpopScen   SSP2  !! def = SSP2  !! regexp = SSP[1-5]|SDP(_EI|_MC|_RC)?|SSP2IndiaMedium|SSP2IndiaHigh
 *' c_techAssumptScen flag defines an energy technology scenario according to SSP narratives
 *'  * (SSP1) optimistic for VRE, storage, BEV; pessimistic for nuclear and CCS
 *'  * (SSP2) reference scenario - default investment costs & learning rates
