@@ -207,7 +207,7 @@ prepare <- function() {
   save(cfg, file = file.path(cfg$results_folder, "config.Rdata"))
 
   # Merge GAMS files
-  message("\nCreating full.gms")
+  message("\n", round(Sys.time()), ": Creating full.gms")
 
   # only compile the GAMS file to catch compilation errors and create a dump
   # file with the full code
@@ -269,6 +269,7 @@ prepare <- function() {
 
     # Start the clock.
     begin <- Sys.time()
+    message("\n", round(begin), ": Creating fixing files...")
 
     # Extract data from input_ref.gdx file and store in levs_margs_ref.gms.
     system(paste("gdxdump",
@@ -279,15 +280,21 @@ prepare <- function() {
     # Read data from levs_margs_ref.gms.
     ref_gdx_data <- suppressWarnings(readLines("levs_margs_ref.gms"))
     # Read variables and equations that are declared in this run
-    varsAndEqs <- gms::readDeclarations("full.gms", types = c("equation", "(positive |negative |)variable"))
-    # Drop these lines of undeclared variables
-    toberemoved <- grep(paste0("^\\$|^ (", paste(varsAndEqs[, "names"], collapse = "|"), ")\\.[ML] "), ref_gdx_data, value = TRUE, invert = TRUE)
-    ref_gdx_data <- ref_gdx_data[! ref_gdx_data %in% toberemoved]
+    varsAndEqs <- gms::readDeclarations("full.gms", types = c("equation", "(positive |negative |)variable"))[, "names"]
+    # Keep only lines with declared variables, gams operators or empty lines
+    ref_gdx_data_vars <- stringr::str_extract(ref_gdx_data, "[^ .]+")
+    keepVarsAndEqs <- c(varsAndEqs, "$onEmpty", "$offListing", "$offEmpty", "$onListing", NA)
+    toberemoved <- sort(setdiff(unique(ref_gdx_data_vars), keepVarsAndEqs))
+    notfixed <- sort(setdiff(varsAndEqs, ref_gdx_data_vars))
+    ref_gdx_data <- ref_gdx_data[ref_gdx_data_vars %in% keepVarsAndEqs]
     # Tell users which variables were removed
-    toberemoved <- setdiff(unique(gsub("^ |\\..*", "", toberemoved)), "")
     if (length(toberemoved) > 0) {
       message("Because they are not declared, the fixings for these variables and equations will be dropped:")
       message(paste0(toberemoved, collapse = ", "))
+    }
+    if (length(notfixed) > 0) {
+      message("Because they are not available in path_gdx_ref, these variables and equations cannot be fixed:")
+      message(paste0(notfixed, collapse = ", "))
     }
 
     # Create fixing files.
