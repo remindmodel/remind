@@ -358,19 +358,13 @@ prepare <- function() {
 
     # Include fixings (levels) and marginals in full.gms at predefined position
     # in core/loop.gms.
-    full_manipulateThis <- c(
-                             list(c("cb20150605readinpositionforlevelfile",
-                                    paste("first offlisting inclusion of levs.gms so that level value can be accessed",
-                                          "$offlisting",
-                                          "$include \"levs.gms\";",
-                                          "$onlisting", sep = "\n"))),
-                             list(c("cb20140305readinpositionforfixingfiles",
-                                                         paste("offlisting inclusion of levs.gms, fixings.gms, and margs.gms",
-                                                               "$offlisting",
-                                                               "$include \"levs.gms\";",
-                                                               "$include \"fixings.gms\";",
-                                                               "$include \"margs.gms\";",
-                                                               "$onlisting", sep = "\n"))))
+    full_manipulateThis <- list(c("cb20140305readinpositionforfixingfiles",
+                                  paste("offlisting inclusion of levs.gms, fixings.gms, and margs.gms",
+                                        "$offlisting",
+                                        "$include \"levs.gms\";",
+                                        "$include \"fixings.gms\";",
+                                        "$include \"margs.gms\";",
+                                        "$onlisting", sep = "\n")))
 
     # Perform actual manipulation on full.gms, in single parse of the text.
     manipulateFile("full.gms", full_manipulateThis, fixed = TRUE)
