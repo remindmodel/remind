@@ -89,3 +89,4 @@ calibration_results/
 
 # ignore test logs
 tests/test-full*.log
+tests/testthat/C_TESTTHAT_startlog_*.txt
