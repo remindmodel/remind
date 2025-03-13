@@ -20,8 +20,9 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
 
   refcfg <- gms::readDefaultConfig(remindPath)
   remindextras <- c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun", "var_luc",
-                               "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
-                               "gms$cm_CES_configuration", "gms$c_description", "model", "renvLockFromPrecedingRun")
+                               "gms$c_expname", "restart_subsequent_runs",
+                               "gms$cm_CES_configuration", "gms$c_description", "model", "renvLockFromPrecedingRun",
+                               "gms$c_model_version", "gms$c_results_folder")
   fail <- tryCatch(gms::check_config(cfg, reference_file = refcfg, modulepath = file.path(remindPath, "modules"),
                      settings_config = file.path(remindPath, "config", "settings_config.csv"),
                      extras = remindextras),

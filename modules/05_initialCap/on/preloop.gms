@@ -463,12 +463,12 @@ $endif
 );
 
 * quickest phaseout in SDP scenarios (no new capacities allowed), quick phaseout in SSP1 und SSP5
-$if %cm_GDPscen% == "gdp_SDP" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SDP_EI" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SDP_MC" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SDP_RC" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SSP1" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0.5 * p05_deltacap_res(t,regi,"biotr");
-$if %cm_GDPscen% == "gdp_SSP5" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0.5 * p05_deltacap_res(t,regi,"biotr");
+$if %cm_GDPpopScen% == "SDP" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
+$if %cm_GDPpopScen% == "SDP_EI" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
+$if %cm_GDPpopScen% == "SDP_MC" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
+$if %cm_GDPpopScen% == "SDP_RC" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
+$if %cm_GDPpopScen% == "SSP1" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0.5 * p05_deltacap_res(t,regi,"biotr");
+$if %cm_GDPpopScen% == "SSP5" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0.5 * p05_deltacap_res(t,regi,"biotr");
 
 display p05_deltacap_res;
 

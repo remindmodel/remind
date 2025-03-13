@@ -76,8 +76,7 @@ plot_iterations <- function(runname) {
   TWa2EJ <- 31.5576 # TWa to EJ (1 a = 365.25*24*3600 s = 31557600 s)
   txtsiz <- 10
   r      <- sort(c("SSA","CHA","EUR","NEU","IND","JPN","LAM","MEA","OAS","CAZ","REF","USA"))
-  y      <- paste0("y",2000+10*(1:10))
-  years  <- paste0("y",c(seq(2005,2060,5),seq(2070,2100,10)))
+  years  <- paste0("y",c(seq(2005,2060,5),seq(2070,2100,10), c(2110,2130,2150)))
   sm_tdptwyr2dpgj <- 31.71 # convert [TerraDollar per TWyear] to [Dollar per GJoule]
 
 
@@ -92,7 +91,7 @@ plot_iterations <- function(runname) {
 
   var <- "Emi|CO2|+|Land-Use Change (Mt CO2/yr)"
 
-  p_emi_mag <- myplot(reports[r, y, var], ylab = "Mt CO2/yr", title = paste(runname, var, sep = "\n"))
+  p_emi_mag <- myplot(reports[r, years, var], ylab = "Mt CO2/yr", title = paste(runname, var, sep = "\n"))
 
 
   # ---- Plot: REMIND Production of purpose grown bioenergy ----

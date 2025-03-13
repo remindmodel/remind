@@ -18,7 +18,7 @@ $ifthen.secondary_steel_bound "%cm_secondary_steel_bound%" == "yearly"
 vm_cesIO.up(ttot,regi,"ue_steel_secondary")
   = min(
       vm_cesIO.up(ttot,regi,"ue_steel_secondary"),
-      p37_cesIO_up_steel_secondary(ttot,regi,"%cm_GDPscen%")
+      p37_cesIO_up_steel_secondary(ttot,regi,"%cm_GDPpopScen%")
     );
 $elseif.secondary_steel_bound "%cm_secondary_steel_bound%" == "scenario"
 $ifthen.rcp_scen "%cm_rcp_scen%" == "none"
@@ -27,7 +27,7 @@ $ifthen.rcp_scen "%cm_rcp_scen%" == "none"
   !! steel production and the upper bound with increased recycling rates are
   !! available for increased production.
   vm_cesIO.up(t,regi,"ue_steel_secondary")
-    = ( ( p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPscen%")
+    = ( ( p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPpopScen%")
         / pm_fedemand(t,regi,"ue_steel_secondary")
         - 1
         )
@@ -41,7 +41,7 @@ $elseif.rcp_scen "%cm_rcp_scen%" == "rcp85"
   !! steel production and the upper bound with increased recycling rates are
   !! available for increased production.
   vm_cesIO.up(t,regi,"ue_steel_secondary")
-    = ( ( p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPscen%")
+    = ( ( p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPpopScen%")
         / pm_fedemand(t,regi,"ue_steel_secondary")
         - 1
         )
@@ -55,7 +55,7 @@ $elseif.rcp_scen "%cm_rcp_scen%" == "rcp60"
   !! steel production and the upper bound with increased recycling rates are
   !! available for increased production.
   vm_cesIO.up(t,regi,"ue_steel_secondary")
-    = ( ( p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPscen%")
+    = ( ( p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPpopScen%")
         / pm_fedemand(t,regi,"ue_steel_secondary")
         - 1
         )
@@ -69,7 +69,7 @@ $elseif.rcp_scen "%cm_rcp_scen%" == "rcp45"
   !! steel production and the upper bound with increased recycling rates are
   !! available for increased production.
   vm_cesIO.up(t,regi,"ue_steel_secondary")
-    = ( ( p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPscen%")
+    = ( ( p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPpopScen%")
         / pm_fedemand(t,regi,"ue_steel_secondary")
         - 1
         )
@@ -81,7 +81,7 @@ $else.rcp_scen
   !! In policy scenarios, secondary steel production can be increased up to the
   !! limit of theoretical scrap availability.
   vm_cesIO.up(t,regi,"ue_steel_secondary")
-    = p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPscen%");
+    = p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPpopScen%");
 $endif.rcp_scen
 $endif.secondary_steel_bound
 $endif.CES_parameters
@@ -160,5 +160,8 @@ loop ((ue_industry_dyn37(in),regi_groupExt(regi_fxDem37(ext_regi),regi)),
   = p37_cesIO_baseline(t,regi,in);
 );
 $endif.fixedUE_scenario
+
+!! Fix to avoid reoccurring random infeasibilities. May need to be excluded if e.g. synfuels (or something else) are set to zero.
+vm_demFeSector_afterTax.lo(t,regi,entySe,"fesos","indst",emiMkt)$(NOT sameAs(emiMkt, "other")) = 1e-16;
 
 *** EOF ./modules/37_industry/subsectors/bounds.gms
