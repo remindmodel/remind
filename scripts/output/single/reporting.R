@@ -71,12 +71,6 @@ if (!file.exists(edgetOutputDir)) {
                                       isStored = FALSE,
                                       isHarmonized = TRUE)
 
-  REMINDoutput <- as.data.table(read.quitte(file.path(outputdir, paste0("REMIND_generic_", scenario,"_withoutPlus.mif"))))
-  sharedVariables <- EDGET_output[variable %in% REMINDoutput$variable | grepl(".*edge", variable)]
-  EDGET_output <- EDGET_output[!(variable %in% REMINDoutput$variable | grepl(".*edge", variable))]
-  message("The following variables will be dropped from the EDGE-Transport reporting because
-                they are in the REMIND reporting: ", paste(unique(sharedVariables$variable), collapse = ", "))
-
   write.mif(EDGET_output, remind_reporting_file, append = TRUE)
   piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 
