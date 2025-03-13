@@ -511,7 +511,11 @@ q_balcapture(ttot,all_regi,all_enty,all_enty,all_te)  "balance equation for carb
 q_balCCUvsCCS(ttot,all_regi)                          "balance equation for captured carbon to CCU or CCS or valve"
 q_ccsShare(ttot,all_regi)                             "calculate the share of captured CO2 that is stored geologically"
 
-q_limitSo2(ttot,all_regi)                             "prevent SO2 from rising again after 2050"
+* RP: this equation is turned off as of 2025-03-11, because it has strong negative side
+*     effects on coal use - eg SSA strongly increases coal use until 2050 only because 
+*     it wants coal solids in 2070 and needs to ramp it up until 2050 due to this limit
+*     this limit 
+* q_limitSo2(ttot,all_regi)                             "prevent SO2 from rising again after 2050"
 
 q_limitGeopot(ttot,all_regi,all_enty,rlf)             "constraint on annual renewable production due to competition for the same geographical potential"
 
