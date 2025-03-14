@@ -22,10 +22,10 @@
 
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%carbonprice%" == "NDC" $include "./modules/45_carbonprice/NDC/realization.gms"
+$Ifi "%carbonprice%" == "NDCexpo" $include "./modules/45_carbonprice/NDCexpo/realization.gms"
 $Ifi "%carbonprice%" == "NPi" $include "./modules/45_carbonprice/NPi/realization.gms"
 $Ifi "%carbonprice%" == "NPi2025" $include "./modules/45_carbonprice/NPi2025/realization.gms"
 $Ifi "%carbonprice%" == "NPi2025expo" $include "./modules/45_carbonprice/NPi2025expo/realization.gms"
-$Ifi "%carbonprice%" == "NPiexpo" $include "./modules/45_carbonprice/NPiexpo/realization.gms"
 $Ifi "%carbonprice%" == "exogenous" $include "./modules/45_carbonprice/exogenous/realization.gms"
 $Ifi "%carbonprice%" == "expoLinear" $include "./modules/45_carbonprice/expoLinear/realization.gms"
 $Ifi "%carbonprice%" == "functionalForm" $include "./modules/45_carbonprice/functionalForm/realization.gms"

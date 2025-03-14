@@ -9,6 +9,7 @@
 *' @description: This realization implements an exponential increase in carbon price from the tax level before cm_startyear.
 
 *####################### R SECTION START (PHASES) ##############################
-$Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/NPiexpo/datainput.gms"
+$Ifi "%phase%" == "declarations" $include "./modules/45_carbonprice/NDCexpo/declarations.gms"
+$Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/NDCexpo/datainput.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/45_carbonprice/NPiexpo/realization.gms
