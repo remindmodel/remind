@@ -154,6 +154,10 @@ pm_tau_pe_tax(ttot,regi,all_enty) = 0;
 *** by default CES tax is zero
 pm_tau_ces_tax(ttot,regi,all_in) = 0;
 
+*** by default, environmental impacts taxes are zero
+pm_taxEI_SE(ttot,all_regi,all_te) = 0;
+pm_taxEI_PE(ttot,all_regi,all_enty) = 0;
+pm_taxEI_cap(ttot,all_regi,all_te) = 0;
 
 *** Read in bioenergy emission factor that is used to compute the emission-
 *** factor-based bioenergy tax and convert from kgCO2 per GJ to GtC per TWa.
