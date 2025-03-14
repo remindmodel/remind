@@ -4,7 +4,7 @@ SMIPv06-M-SSP2-NPi2025-def;0,M,SSP2,def,main;;;;;SSP2|NPI|AR-natveg|nocc_hist;y2
 SMIPv06-ML-SSP2-PkBudg1500-def;0,ML,SSP2,def,main;;;;;SSP2|NPI|AR-natveg|nocc_hist;y2040;raw;;;;;1;0.01;0.1;const2030
 SMIPv06-L-SSP2-PkBudg1000-def;0,L,SSP2,def,main;;;;;SSP2|NDC|AR-natveg|nocc_hist;y2030;raw;;;;;1;0.01;0.1;const2030
 SMIPv06-VLHO-SSP2-EcBudg400-def;0,VLHO,SSP2,def,main;;;;;SSP2|NDC|AR-plant|nocc_hist;y2030;raw;;;;;1;0.02;0.2;const2030
-SMIPv06-VLLO-SSP1-PkBudg650-def;0,VLLO,SSP1,def,main;;;;;VLLO|NDC|AR-natveg|nocc_hist;y2030;raw;;;;;1;0.02;0.2;const2030
+SMIPv06-VLLO-SSP1-PkBudg650-def;0,VLLO,SSP1,def,main;;;;;VLLO|SSP1-POP-GDP|NDC|AR-natveg|nocc_hist;y2030;raw;;;;;1;0.02;0.2;const2030
 SMIPv06-H-SSP2-rollBack-def;0,H,SSP2,def;SMIPv06-H-SSP3-rollBack-def;;;;SSP2|NPI-revert|AR-natveg|nocc_hist;;;;;;;;;;
 SMIPv06-VLLO-SSP2-PkBudg650-def;0,VLLO,SSP2,def;SMIPv06-VLLO-SSP1-PkBudg650-def;;;;VLLO|SSP2-POP-GDP|NDC|AR-natveg|nocc_hist;;;;;;;;;;
 SMIPv06-H-SSP1-rollBack-def;0,H,SSP1,def;SMIPv06-H-SSP3-rollBack-def;;;;SSP1|NPI-revert|AR-natveg|nocc_hist;;;;;;;;;;
