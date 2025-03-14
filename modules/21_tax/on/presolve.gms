@@ -53,7 +53,7 @@ p21_taxrevChProdStartYear0(t,regi) = sum(en2en(enty,enty2,te), vm_changeProdStar
 p21_taxrevSE0(t,regi) =     sum(se2se(enty,enty2,te)$(teSeTax(te)), 
                                     v21_tau_SE_tax.l(t,regi,te) 
                                   * vm_demSe.l(t,regi,enty,enty2,te));
-pm_taxrevEI0(t,regi) = sum(entyPe, pm_taxEI_PE(t,regi,entyPe) * vm_prodPe.l(t,regi,entyPe))
+p21_taxrevEI0(t,regi) = sum(entyPe, pm_taxEI_PE(t,regi,entyPe) * vm_prodPe.l(t,regi,entyPe))
                       + sum(pe2se(enty,enty2,te), pm_taxEI_SE(t,regi,te) * vm_prodSe.l(t,regi,enty,enty2,te))
                       + sum(se2se(enty,enty2,te), pm_taxEI_SE(t,regi,te) * vm_prodSe.l(t,regi,enty,enty2,te))
                       + sum(te2rlf(te,rlf), pm_taxEI_cap(t,regi,te) * vm_deltaCap.l(t,regi,te,rlf));

@@ -145,7 +145,7 @@ v21_taxrevEI(t,regi)
     + SUM(te2rlf(te,rlf),
           pm_taxEI_cap(t,regi,te) * vm_deltaCap(t,regi,te,rlf)
     )
-    - pm_taxrevEI0(t,regi)
+    - p21_taxrevEI0(t,regi)
 ;
 
 ***---------------------------------------------------------------------------
