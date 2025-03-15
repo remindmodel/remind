@@ -479,12 +479,20 @@ q37_prodMat(t,regi,mat)$( matOut(mat) ) ..
 *' 2. multiply both sides with sum_i a_i(t) * sum_i a_i(t-1)
 ***------------------------------------------------------
 
+p37_chemflow(t,regi,mat)$(sum((tePrc,opmoPrc), tePrcStiffShare(tePrc,opmoPrc,mat))) 
+  = pm_cesdata(t,regi,"ue_chemicals","quantity") 
+  * p37_ue_share(t,regi,mat,"ue_chemicals") 
+  / (p37_mat2ue(t,regi,mat,"ue_chemicals") + sm_eps);
+
 q37_restrictMatShareChange(ttot,regi,tePrc,opmoPrc,mat)$(    ttot.val gt 2020
                                                          AND tePrcStiffShare(tePrc,opmoPrc,mat)) ..
-  (vm_outflowPrc(ttot,regi,tePrc,opmoPrc)+p_adj_seed_te(ttot,regi,tePrc))
+  vm_outflowPrc(ttot,regi,tePrc,opmoPrc) * p37_chemflow(ttot-1,regi,mat)
+  -   
+  vm_outflowPrc(ttot-1,regi,tePrc,opmoPrc) * p37_chemflow(ttot,regi,mat)
 =e=
-  (1 + v37_matShareChange(ttot,regi,tePrc,opmoPrc,mat))
-  * (vm_outflowPrc(ttot-1,regi,tePrc,opmoPrc)+p_adj_seed_te(ttot-1,regi,tePrc))
+  v37_matShareChange(ttot,regi,tePrc,opmoPrc,mat)
+  * p37_chemflow(ttot,regi,mat)
+  * p37_chemflow(ttot-1,regi,mat)
 ;
 
 ***------------------------------------------------------
