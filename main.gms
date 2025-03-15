@@ -1185,7 +1185,7 @@ parameter
 parameter
   cm_maxIndPrcShareChange  "Max change of share of certain industry processes between time steps"
 ;
-  cm_maxIndPrcShareChange = 0.05; !! def 0.05 = 5 percent points change between timem steps
+  cm_maxIndPrcShareChange = 0.3; !! def 0.05 = 5 percent points change between timem steps
 *'
 *'
 *'

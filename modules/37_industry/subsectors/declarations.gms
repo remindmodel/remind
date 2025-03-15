@@ -33,7 +33,7 @@ Parameters
   p37_specFeDemTarget(all_enty,all_te,opmoPrc)                                 "Best available technology (will be reached in convergence year) [TWa/Gt_output]"
   p37_matFlowHist(tall,all_regi,all_enty)                                      "TODO"
   p37_ue_share(tall,all_regi,all_enty,all_in)                                  "TODO"
-  p37_mat2ue(all_enty,all_in)                                                  "Contribution of process output to ue in CES tree; Trivial if just one material per UE, as in steel [Gt/Gt]"
+  p37_mat2ue(tall,all_regi,all_enty,all_in)                                                  "Contribution of process output to ue in CES tree; Trivial if just one material per UE, as in steel [Gt/Gt]"
   p37_ueHistTmp(tall,all_regi)                                                 "TODO"
   p37_demFeRatio(tall,all_regi,all_in)                                         "Ratio of historic Fe demand and Fe demand calculated from historic production and BAT specific demand"
   p37_teMatShareHist(all_regi,all_te,opmoPrc,mat)                              "Share that a tePrc/opmoPrc historically contibrutes to production of a matFin"

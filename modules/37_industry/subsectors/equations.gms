@@ -496,7 +496,7 @@ q37_mat2ue(t,regi,mat,in)$( ppfUePrc(in) ) ..
     * p37_ue_share(t,regi,mat,in)
   =e=
     sum(mat2ue(mat,in),
-      p37_mat2ue(mat,in)
+      p37_mat2ue(t,regi,mat,in)
       *
       v37_matFlow(t,regi,mat)
     )

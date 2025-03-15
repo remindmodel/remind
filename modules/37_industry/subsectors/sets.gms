@@ -697,6 +697,8 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     AmToFinal . standard  . ammonia
     AmToFinal . greenh2  . ammoniaH2
 
+    MeSyH2 . standard  . co2f
+    FertProdH2 . standard  . co2f
     StCrLiq . standard  . naphtha
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
