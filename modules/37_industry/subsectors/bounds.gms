@@ -175,6 +175,5 @@ vm_demFeSector_afterTax.lo(t,regi,entySe,"fesos","indst",emiMkt)$(NOT sameAs(emi
 
 v37_matShareChange.lo(t,regi,tePrc,opmoPrc,mat)$(tePrcStiffShare(tePrc,opmoPrc,mat)) = -cm_maxIndPrcShareChange;
 v37_matShareChange.up(t,regi,tePrc,opmoPrc,mat)$(tePrcStiffShare(tePrc,opmoPrc,mat)) =  cm_maxIndPrcShareChange;
-v37_sumOutflowPrcStiffShare.lo(t,regi,mat)$(t.val gt 2020 and matStiffShare(mat)) = sm_eps;
 
 *** EOF ./modules/37_industry/subsectors/bounds.gms
