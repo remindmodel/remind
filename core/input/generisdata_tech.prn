@@ -281,6 +281,15 @@ Ocean Liming - oae
     Costs per tC removed is calculated in the code as it depends on the efficiency (tCO2/tCaO; exogenous):
         cost (USD/tC) = inco0 (USD/tCaO) / ( efficiency (tCO2/tCaO) / 3.66 (tCO2/tC) )
 
+Gas to Liquids (GtL) Fischer-Tropsch Process - gasftrec/gasftcrec
+    efficiency eta = 0.60 (0.57 with capture), estimation at higher end of efficiency spectrum
+    Details in Issue 518/PR 2034
+    https://ora.ox.ac.uk/objects/uuid:574a2d88-61ee-4097-8642-f154e7bbf813/files/m4061815393e7b6a9bae761fc1a066e4f
+    https://www.sciencedirect.com/science/article/pii/S1875510012000947?casa_token=C5TlNuFXo3wAAAAA:f0X5fTYzFMS2N71q3TAVMcdz62KMLe6ibBk-tDlB3fmmhF2IQ9BjASritXPHH3316R3XBR1m
+    https://onepetro.org/IPTCONF/proceedings/13IPTC/All-13IPTC/IPTC-17415-MS/153046
+    https://www.natgas.info/gas-information/what-is-natural-gas/gtl
+
+
 --- process-based industry: ---
 annuity factor = r * (1+r)^lifetime/(-1+(1+r)^lifetime), factor to annualize total investment cost of plant, discounting r = 0.05
 Assumption (for now): 20 yr lifetime for all techs (something in between plant lifetimes and retrofit intervals)
