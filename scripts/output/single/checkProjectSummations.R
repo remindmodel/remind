@@ -19,7 +19,7 @@ scen <- lucode2::getScenNames(outputdir)
 mif  <- file.path(outputdir, paste0("REMIND_generic_", scen, ".mif"))
 mifdata <- as.quitte(mif)
 envi <- new.env()
-load(file.path(outputdir, "config.Rdata"), env =  envi)
+load(file.path(outputdir, "config.Rdata"), envir = envi)
 
 stopmessage <- NULL
 
