@@ -78,7 +78,7 @@ fixOnMif <- function(outputdir) {
 
   # load config of first outputdir (the folder we are checking)
   envi <- new.env()
-  load(configs[[1]], env =  envi)
+  load(configs[[1]], envir = envi)
   title <- envi$cfg$title
   stopifnot(title == scens[[1]])
   startyear <- envi$cfg$gms$cm_startyear
