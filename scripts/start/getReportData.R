@@ -24,31 +24,51 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
       stop(paste0("Unkown setting for 'var_luc': `", var_luc, "`. Only `smooth` or `raw` are allowed."))
     }
     
+    # Stop if variables are missing
+    variablesMissing <- ! mapping$mag %in% mag$variable
+    if (any(variablesMissing)) {
+      stop("The following variables could not be found in the MAgPIE report: ", mapping$mag[variablesMissing])
+    }
+    
+    write(paste0("*** ", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), " Data transferred from ", path_to_report), file = file)
+    
     rem <- mag |>
-      inner_join(mapping, by = c("variable" = "mag"))    |> # combine tables keeping relevant variables only
+      inner_join(mapping, by = c("variable" = "mag"),       # combine tables keeping relevant variables only
+                 relationship = "many-to-one",              # each row in x (mag) matches at most 1 row in y (mapping)
+                 unmatched = c("drop", "error"))         |> # drop rows from x that are not in y, all rows in y must be in x
       mutate(value = value * factorMag2Rem)              |> # apply unit conversion
       group_by(period, region, rem)                      |> # define groups for summation
       summarise(value = sum(value))                      |> # sum MAgPIE emissions (mag) that have the same enty in remind (rem)
       relocate(period, .before = region)                 |> # put period in front of region for proper order for GAMS import
       filter(period >= 2005, region != "World")          |> # keep REMIND time horizon and remove World region
-      readr::write_csv(file = file, col_names = FALSE)
+      readr::write_csv(file = file, col_names = FALSE, append = TRUE)
     
     write(paste0("*** EOF ", file ," ***"), file = file, append = TRUE)
     
     return(rem)
   }
 
-  .convertAndWrite <- function(mag, mapping, file, path_to_report, format = "long") {
+  .convertAndWrite <- function(mag, mapping, file, path_to_report) {
     
+    # Stop if variables are missing
+    variablesMissing <- ! mapping$mag %in% mag$variable
+    if (any(variablesMissing)) {
+      stop("The following variables could not be found in the MAgPIE report: ", mapping$mag[variablesMissing])
+    }
+
+    write(paste0("*** ", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), " Data transferred from ", path_to_report), file = file)
+
     mag <- mag |>
-      inner_join(mapping, by = c("variable" = "mag"))    |> # combine tables keeping relevant variables only
+      inner_join(mapping, by = c("variable" = "mag"),       # combine tables keeping relevant variables only
+                 relationship = "many-to-one",              # each row in x (mag) matches at most 1 row in y (mapping)
+                 unmatched = c("drop", "error"))         |> # drop rows from x that are not in y, all rows in y must be in x
       mutate(value = value * factorMag2Rem)              |> # apply unit conversion
       mutate(value = round(value, digits = 11))          |> # limit number of decimals
       relocate(period, .before = region)                 |> # put period in front of region for proper order for GAMS import
       filter(period >= 2005, region != "World")          |> # keep REMIND time horizon and remove World region
       select(period, region, value)                      |> # keep relevant columns only
       tidyr::pivot_wider(names_from = region, values_from = value) |> # make 2D-table
-      readr::write_csv(file = file, col_names = TRUE)
+      readr::write_csv(file = file, col_names = TRUE, append = TRUE)
 
     write(paste0("*** EOF ", file ," ***"), file = file, append = TRUE)
     return(mag)
@@ -66,7 +86,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
   
   mag2rem <- tribble(
     ~mag,                                                                             ~rem,                       ~factorMag2Rem,
-    "Emissions|CO2|Land|+|Land-use Change                      "                      , "co2luc"                  ,   1/1000*12/44,
+    "Emissions|CO2|Land|+|Land-use Change"                                            , "co2luc"                  ,   1/1000*12/44,
     "Emissions|CO2|Land|Land-use Change|Regrowth|+|CO2-price AR"                      , "co2lucCDRintentByPrice"  ,   1/1000*12/44,
     "Emissions|CO2|Land|Land-use Change|Regrowth|+|NPI_NDC AR"                        , "co2lucCDRintentByReg"    ,   1/1000*12/44,
     "Emissions|CO2|Land|Land-use Change|Regrowth|+|Cropland Tree Cover"               , "co2lucCDRintentCropland" ,   1/1000*12/44,
