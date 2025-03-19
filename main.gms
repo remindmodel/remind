@@ -436,6 +436,11 @@ $setGlobal damages  off               !! def = off
 *' * (LabItr): Internalize labor supply damages based on Dasgupta et al. (2021). Requires cm_emiscen set to 9 for now.
 *' * (TCitr): Internalize tropical cyclone damage function based on Krichene et al. (2022). Requires cm_emiscen set to 9 for now.
 $setGlobal internalizeDamages  off               !! def = off
+*'---------------------    52_internalizeLCAimpacts    ----------------------------
+*'
+*' * (off): No internalization
+*' * (coupled): Run LCA internalization workflow in between iterations
+$setGlobal internalizeLCAimpacts  off               !! def = off
 *'---------------------    70_water  -------------------------------------------
 *'
 *' * (off): no water demand taken into account

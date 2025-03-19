@@ -26,6 +26,7 @@ p21_taxrevFlex0(ttot,all_regi)                                      "reference l
 p21_taxrevImport0(ttot,all_regi,all_enty,tax_import_type_21)        "reference level value of energy import tax"
 p21_taxrevChProdStartYear0(ttot,all_regi)                           "reference level value of tax to limit changes compared to reference run in cm_startyear"
 p21_taxrevSE0(ttot,all_regi)                                        "reference level value of tax on SE electricity demand"
+p21_taxrevEI0(ttot,all_regi)                                        "reference level value of tax on environmental impacts"
 
 p21_taxrevGHG_iter(iteration,ttot,all_regi)                         "track reference level value of GHG emission tax revenue over iterations"
 p21_taxrevCCS_iter(iteration,ttot,all_regi)                         "track reference level value of CCS tax revenue over iterations"
@@ -42,6 +43,7 @@ p21_taxrevFlex_iter(iteration,ttot,all_regi)                        "track refer
 p21_taxrevImport_iter(iteration,ttot,all_regi,all_enty)             "track reference level value of energy import tax over iterations"
 p21_taxrevChProdStartYear_iter(iteration,ttot,all_regi)             "track reference level value of tax to limit changes compared to reference run in cm_startyear over iterations"
 p21_taxrevSE_iter(iteration,ttot,all_regi)                          "track reference level value of tax on SE electricity demand over iterations"
+p21_taxrevEI_iter(iteration,ttot,all_regi)                          "track reference level value of tax on environmental impacts"
 
 p21_deltarev(iteration,all_regi)                                    "convergence criteria for iteration on tax revenue recycling"
 
@@ -61,6 +63,9 @@ p21_tau_SE_tax(ttot,all_regi,all_te)                                "maximum tax
 p21_tau_fe_tax(ttot,all_regi,emi_sectors,all_enty)                  "tax path for final energy"
 p21_tau_fe_sub(ttot,all_regi,emi_sectors,all_enty)                  "subsidy path for final energy"
 p21_CO2TaxSectorMarkup(ttot,all_regi,emi_sectors)                   "path for CO2 tax markup in building, industry or transport sector"
+pm_taxEI_PE(ttot,all_regi,all_enty)                                 "tax path for environmental impacts tax on primary energy production"
+pm_taxEI_SE(ttot,all_regi,all_te)                                   "tax path for environmental impacts tax on secondary energy production"
+pm_taxEI_cap(ttot,all_regi,all_te)                                  "tax path for environmental impacts tax on capacity additions"
 
 
 p21_tau_SE_tax_rampup(ttot,all_regi,all_te,teSeTax_coeff)           "Parameters of logistic function to describe relationship between SE electricity tax rate and share of technology in total electricity demand"
@@ -123,6 +128,7 @@ v21_taxemiMkt(ttot,all_regi,all_emiMkt)                             "tax on gree
 v21_taxrevImport(ttot,all_regi,all_enty)                            "net change vs. last iteration of tax revenues from energy import tax"
 v21_taxrevChProdStartYear(ttot,all_regi)                            "tax to limit changes compared to reference run in cm_startyear"
 v21_taxrevSE(ttot,all_regi)                                         "tax on SE electricity demand, used for taxes on electrolysis"
+v21_taxrevEI(ttot,all_regi)                                         "tax on environmental impacts"
 ;
 
 Positive Variable
@@ -156,6 +162,7 @@ q21_taxrevImport(ttot,all_regi,all_enty)                            "calculation
 q21_taxrevChProdStartYear(ttot,all_regi)                            "calculation of tax to limit changes compared to reference run in cm_startyear"
 q21_taxrevSE(ttot,all_regi)                                         "calculation of tax on SE electricity demand, used for taxes on electrolysis"
 q21_SeTaxRate(ttot,all_regi,all_te)                                 "calculation of SE tax rate, used for taxes on electrolysis"
+q21_taxrevEI(ttot,all_regi)                                         "calculation of tax on environmental impacts"
 ;
 
 $ifthen.importtaxrc "%cm_taxrc_RE%" == "REdirect"

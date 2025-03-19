@@ -924,6 +924,7 @@ sets
        regipol
        damages
        internalizeDamages
+       internalizeLCAimpacts
        water
        optimization
        codePerformance
@@ -959,6 +960,7 @@ module2realisation(modules,*) "mapping of modules and active realisations" /
        regipol . %regipol%
        damages . %damages%
        internalizeDamages . %internalizeDamages%
+       internalizeLCAimpacts . %internalizeLCAimpacts%
        water . %water%
        optimization . %optimization%
        codePerformance . %codePerformance%
