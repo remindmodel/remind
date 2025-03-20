@@ -55,7 +55,13 @@ $include "./modules/36_buildings/simple/input/f36_uedemand_build.cs4r"
 $offdelim
 /
 ;
-p36_uedemand_build(ttot,regi,in) = f36_uedemand_build(ttot,regi,"%cm_demScen%","%cm_rcp_scen_build%",in);
+
+*** load UE demand for reporting from input_ref.gdx cm_startyear
+if (cm_startyear gt 2005,
+  execute_load "input_ref.gdx", p36_uedemand_build;
+);
+
+p36_uedemand_build(t,regi,in) = f36_uedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",in);
 
 *** Scale UE demand and floor space in the building sector
 $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
