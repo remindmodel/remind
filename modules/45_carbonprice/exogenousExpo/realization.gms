@@ -4,12 +4,12 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/45_carbonprice/NPiexpo/realization.gms
+*** SOF ./modules/45_carbonprice/exogenousExpo/realization.gms
 
 *' @description: This realization implements an exponential increase in carbon price from the tax level before cm_startyear.
 
 *####################### R SECTION START (PHASES) ##############################
-$Ifi "%phase%" == "declarations" $include "./modules/45_carbonprice/NDCexpo/declarations.gms"
-$Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/NDCexpo/datainput.gms"
+$Ifi "%phase%" == "declarations" $include "./modules/45_carbonprice/exogenousExpo/declarations.gms"
+$Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/exogenousExpo/datainput.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/45_carbonprice/NPiexpo/realization.gms
+*** EOF ./modules/45_carbonprice/exogenousExpo/realization.gms
