@@ -3,7 +3,8 @@ Title: REMIND - REgional Model of INvestments and Development
 Version: 0.1
 Date: 2024-07-04
 Description: This is not a package yet, the purpose of this file is to
-    document metadata, notably dependencies.
+    document metadata, notably dependencies required by the R scripts.
+    Initialization of the renv will be based on this DESCRIPTION file.
 License: file LICENSE
 URL: https://github.com/remindmodel/remind,
     https://doi.org/10.5281/zenodo.6794920
