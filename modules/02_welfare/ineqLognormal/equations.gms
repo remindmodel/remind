@@ -63,7 +63,7 @@ $ifthen "%cm_INCONV_PENALTY_FESwitch%" == "on"
           v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
           + v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
           )
-          / 1e4	!! heuristically determined rescaling factor so the dampening doesn't dominate the transformation
+          / 1e3	!! heuristically determined rescaling factor so the dampening doesn't dominate the transformation
 $endif
 $ifthen not "%cm_seFeSectorShareDevMethod%" == "off"
         !! penalizing secondary energy share deviation in sectors  
