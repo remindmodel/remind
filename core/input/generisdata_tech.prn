@@ -166,7 +166,7 @@ lifetime              30          30         30          30           30        
 
 +                AmSyCoalcc    AmSyNGcc     AmSyLiqcc    MeSySolcc    MeSyNGcc    MeSyLiqcc
 !! documentation & sources: see below
-inco0                   300         200           300          300         200          300
+inco0                   600         650           650          850        1000          850
 omf                    0.05        0.05          0.05         0.05        0.05         0.05
 constrTme                 1           1             1            1           1            1
 lifetime                 25          25            25           25          25           25

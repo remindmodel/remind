@@ -187,7 +187,7 @@ loop((tePrc1,opmoPrc1,tePrc2,opmoPrc2,mat,route)$(
 
 *** determine production and FE demand by route
 *** ---------------------------------------------------------------------------
-loop((mat,route)$(matFin(mat)),
+loop((mat,route)$(matOut(mat)),
   o37_ProdIndRoute(ttot,regi,mat,route)
     = sum((tePrc,opmoPrc)$(    tePrc2matOut(tePrc,opmoPrc,mat)
                            AND tePrc2route(tePrc,opmoPrc,route)),

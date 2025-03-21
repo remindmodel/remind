@@ -719,12 +719,12 @@ p37_specFeDemTarget("feels","MeSyNG","standard")    = 0.1 / (sm_TWa_2_MWh/sm_gig
 p37_specFeDemTarget("fehos","MeSyLiq","standard")  = 9.7 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4 Assume Feedstock is 20Mwh
 p37_specFeDemTarget("feels","MeSyLiq","standard")  = 0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4
 
-p37_specFeDemTarget("fesos","MeSySolcc","standard")  = 2.0 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("fesos","MeSySolcc","standard")  = 2.7 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
 p37_specFeDemTarget("feels","MeSySolcc","standard")    = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
 
-p37_specFeDemTarget("feels","MeSyNGcc","standard")  = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("feels","MeSyNGcc","standard")  = 0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
 
-p37_specFeDemTarget("feels","MeSyLiqcc","standard")    = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non); !! Assume same as MeSyNGcc
+p37_specFeDemTarget("feels","MeSyLiqcc","standard")    = 0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Assume same as MeSyNGcc
 
 p37_specFeDemTarget("feh2s","MeSyH2","standard")  = 6.4 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: DEA Technology Data for Energy Carrier Generation and Conversion June 2017 98 Methanol from hydrogen
 p37_specFeDemTarget("feels","MeSyH2","standard")  = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: DEA Technology Data for Energy Carrier Generation and Conversion June 2017 98 Methanol from hydrogen
@@ -738,11 +738,11 @@ p37_specFeDemTarget("feels","AmSyNG","standard")    = 0.1 / (sm_TWa_2_MWh/sm_gig
 p37_specFeDemTarget("fehos","AmSyLiq","standard")    =  10.6 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4
 p37_specFeDemTarget("feels","AmSyLiq","standard")    =  0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4
 
-p37_specFeDemTarget("feels","AmSyCoalcc","standard")  =  0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("feels","AmSyCoalcc","standard")  =  0.4 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
 
-p37_specFeDemTarget("feels","AmSyNGcc","standard")    = 0.3 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("feels","AmSyNGcc","standard")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
 
-p37_specFeDemTarget("feels","AmSyLiqcc","standard")    =  0.3 / (sm_TWa_2_MWh/sm_giga_2_non); !! Assume same as AmSyNGcc
+p37_specFeDemTarget("feels","AmSyLiqcc","standard")    =  0.6 / (sm_TWa_2_MWh/sm_giga_2_non); !! Assume same as AmSyNGcc
 
 p37_specFeDemTarget("feh2s","AmSyH2","standard")    = 6.0 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: DEA Technology Data for Energy Carrier Generation and Conversion June 2017 103 Hydrogen to Ammonia
 p37_specFeDemTarget("feels","AmSyH2","standard")    = 0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: GrinbergDana16 Supplementary Table 4
@@ -1165,6 +1165,7 @@ $endif.cm_subsec_model_chemicals
 
 if (cm_startyear gt 2005,
   Execute_Loadpoint "input_ref" pm_specFeDem = pm_specFeDem;
+  Execute_Loadpoint "input_ref" p37_teMatShareHist = p37_teMatShareHist;
 );
 
 if (cm_startyear gt 2005,
