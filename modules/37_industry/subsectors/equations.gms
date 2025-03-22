@@ -511,16 +511,27 @@ q37_mat2ue(t,regi,mat,in)$( ppfUePrc(in) ) ..
 ***------------------------------------------------------
 *' Definition of capacity constraints
 ***------------------------------------------------------
-q37_limitCapMat(t,regi,tePrc) ..
-    sum(tePrc2opmoPrc(tePrc,opmoPrc),
-      vm_outflowPrc(t,regi,tePrc,opmoPrc)
-    )
-    =l=
-    sum(teMat2rlf(tePrc,rlf),
-      vm_capFac(t,regi,tePrc)
-    * vm_cap(t,regi,tePrc,rlf)
-    )
-;
+q37_limitCapMatHist(t,regi,tePrc)$(t.val le 2020) ..
+     sum(tePrc2opmoPrc(tePrc,opmoPrc),
+       vm_outflowPrc(t,regi,tePrc,opmoPrc)
+     )
+     =l=
+     sum(teMat2rlf(tePrc,rlf),
+       vm_capFac(t,regi,tePrc)
+     * vm_cap(t,regi,tePrc,rlf)
+     )
+ ;
+ 
+ q37_limitCapMat(t,regi,tePrc)$(t.val gt 2020) ..
+     sum(tePrc2opmoPrc(tePrc,opmoPrc),
+       vm_outflowPrc(t,regi,tePrc,opmoPrc)
+     )
+     =e=
+     sum(teMat2rlf(tePrc,rlf),
+       vm_capFac(t,regi,tePrc)
+     * vm_cap(t,regi,tePrc,rlf)
+     )
+ ;
 
 ***------------------------------------------------------
 *' Emission from process based industry sector (pre CC)
