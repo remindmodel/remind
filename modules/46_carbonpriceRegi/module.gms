@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/46_carbonpriceRegi/module.gms
 
-*' @title Carbonprice
+*' @title CarbonpriceRegi
 *'
 *' @description
 *' The carbonpriceRegi module defines a regional CO2eq tax markup pm_taxCO2eqRegi to satisfy NDC or netZero targets.
