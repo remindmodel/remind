@@ -23,8 +23,9 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     cfg <- gms::readDefaultConfig(remindPath)
   }
   scenConf <- read.csv2(filename, stringsAsFactors = FALSE, na.strings = "", comment.char = "#",
-                                  strip.white = TRUE, blank.lines.skip = TRUE, check.names = FALSE)
+                        strip.white = TRUE, blank.lines.skip = TRUE, check.names = FALSE)
   scenConf <- scenConf[! is.na(scenConf[1]), ]
+  colnames(scenConf) <- make.unique(colnames(scenConf), sep = ".")
   rownames(scenConf) <- scenConf[, 1]
   scenConf[1] <- NULL
   colduplicates <- grep("\\.[1-9]$", colnames(scenConf), value = TRUE)
