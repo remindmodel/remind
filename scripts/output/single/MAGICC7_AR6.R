@@ -146,7 +146,6 @@ runHarmoniseAndInfillCmd <- paste(
   "python", file.path(scriptsFolder, "run_harm_inf.py"),
   climateAssessmentEmi,
   climateAssessmentFolder,
-  "--no-inputcheck",
   "--infilling-database", infillingDatabaseFile
 )
 
@@ -243,6 +242,6 @@ if (dir.exists(workersFolder)) {
   }
 }
 
-logmsg <- paste0(logmsg, date(), "MAGICC7_AR6.R finished\n")
+logmsg <- paste0(logmsg, date(), "  MAGICC7_AR6.R finished\n")
 cat(logmsg)
 capture.output(cat(logmsg), file = logFile, append = TRUE)

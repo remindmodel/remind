@@ -374,9 +374,9 @@ loop((t,regi,entyPe)$pm_implicitPePriceTarget(t,regi,entyPe),
 );  
 $endIf.cm_implicitPePriceTarget
 
-*** check global budget target from core/postsolve, must be within 1% of target value
-p80_globalBudget_dev_iter(iteration) = sm_globalBudget_dev;
-if (p80_globalBudget_dev_iter(iteration) gt 1.01 OR p80_globalBudget_dev_iter(iteration) lt 0.99,
+*** check global budget target from core/postsolve, must be within 2 Gt of target value
+p80_globalBudget_absDev_iter(iteration) = sm_globalBudget_absDev;
+if (abs(p80_globalBudget_absDev_iter(iteration)) gt cm_budgetCO2_absDevTol,
   s80_bool = 0;
   p80_messageShow("target") = YES;
 );
@@ -441,10 +441,10 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
 	      );
         if(sameas(convMessage80, "target"),
 		      display "#### 6.) A global climate target has not been reached yet.";
-          display "#### check out sm_globalBudget_dev, it must within 0.99 and 1.01 to reach convergence, as well as";
-          display "#### pm_taxCO2eq_iterationdiff_tmp and pm_taxCO2eq_iterationdiff in diagnostics section below."; 
-          display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
-          display sm_globalBudget_dev;
+          display "#### check sm_globalBudget_absDev for the deviation from the global target CO2 budget (convergence criterion defined via cm_budgetCO2_absDevTol [default = 2 Gt CO2]), as well as";
+          display "#### pm_taxCO2eq_iter (regional CO2 tax path tracked over iterations [T$/GtC]) and"; 
+          display "#### pm_taxCO2eq_anchor_iterationdiff (difference in global anchor carbon price to the last iteration [T$/GtC]) in diagnostics section below."; 
+          display sm_globalBudget_absDev;
 	      );
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"       
         if(sameas(convMessage80, "regiTarget"),
@@ -506,8 +506,12 @@ OPTION decimals = 7;
 display p80_surplus;
 OPTION decimals = 3;
 
-display "Tax difference to last iteration for global targets of core/postsolve";
-display pm_taxCO2eq_iterationdiff_tmp, pm_taxCO2eq_iterationdiff;
+display "Carbon tax tracked over iterations of 45_carbonprice/functionalForm/postsolve";
+display pm_taxCO2eq_iter;
+
+display "Carbon tax difference to last iteration for global targets of 45_carbonprice/functionalForm/postsolve";
+display pm_taxCO2eq_anchor_iterationdiff;
+
 
 *RP* display effect of additional convergence push
 display "display effect of additional convergence push";
@@ -554,10 +558,10 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
 	     );
         if(sameas(convMessage80, "target"),
 		      display "#### 6.) A global climate target has not been reached yet.";
-          display "#### check out sm_globalBudget_dev, must within 0.99 and 1.01 to reach convergence, as well as";
-          display "#### pm_taxCO2eq_iterationdiff_tmp and pm_taxCO2eq_iterationdiff in diagnostics section below."; 
-          display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
-          display sm_globalBudget_dev;
+          display "#### check sm_globalBudget_absDev for the deviation from the global target CO2 budget (convergence criterion defined via cm_budgetCO2_absDevTol [default = 2 Gt CO2]), as well as";
+          display "#### pm_taxCO2eq_iter (regional CO2 tax path tracked over iterations [T$/GtC]) and"; 
+          display "#### pm_taxCO2eq_anchor_iterationdiff (difference in global anchor carbon price to the last iteration [T$/GtC]) in diagnostics section below."; 
+          display sm_globalBudget_absDev;
 	      );
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"       
         if(sameas(convMessage80, "regiTarget"),

@@ -6,29 +6,7 @@ Sys.setenv(RENV_PATHS_LIBRARY = "renv/library")
 # do not check if library and renv.lock are in sync, because normally renv.lock does not exist
 options(renv.config.synchronized.check = FALSE)
 
-# always set the renv project to the current directory
-Sys.setenv("RENV_PROJECT" = getwd())
-
-# when increasing renvVersion first commit new version's activate script and
-# put that commit's hash into the git checkout call below
-renvVersion <- "1.0.7"
-
-# reset renv/activate.R to match renv 1.0.7
-gitRoot <- system2("git", c("rev-parse", "--show-toplevel"), stdout = TRUE)
-if (Sys.getenv("RESET_RENV_ACTIVATE_SCRIPT", unset = "TRUE") == "TRUE" &&
-      normalizePath(gitRoot) == normalizePath(".")) {
-  system2("git", c("checkout", "b83bb1811ff08d8ee5ba8e834af5dd0080d10e66", "--", "renv/activate.R"))
-}
-
 source("renv/activate.R")
-
-if (packageVersion("renv") != renvVersion) {
-  renvLockExisted <- file.exists(renv::paths$lockfile())
-  renv::install(paste0("renv@", renvVersion))
-  if (!renvLockExisted) {
-    unlink(renv::paths$lockfile())
-  }
-}
 
 if (!"https://rse.pik-potsdam.de/r/packages" %in% getOption("repos")) {
   options(repos = c(getOption("repos"), pik = "https://rse.pik-potsdam.de/r/packages"))
@@ -40,26 +18,6 @@ if (isTRUE(rownames(installed.packages(priority = "NA")) == "renv")) {
   renv::install("rmarkdown", prompt = FALSE) # rmarkdown is required to find dependencies in Rmd files
   renv::hydrate(prompt = FALSE, report = FALSE) # auto-detect and install all dependencies
   message("Finished installing R package dependencies.")
-}
-
-# bootstrapping python venv, will only run once after remind is freshly cloned
-if (!dir.exists(".venv/")
-    && (Sys.which("python3") != ""
-        || (Sys.which("python.exe") != ""
-            && suppressWarnings(isTRUE(startsWith(system2("python.exe", "--version", stdout = TRUE), "Python 3")))
-           ))) {
-  message("Python venv is not available, setting up now...")
-  # use system python to set up venv
-  if (.Platform$OS.type == "windows") {
-    system2("python.exe", c("-mvenv", ".venv"))
-    pythonInVenv <- normalizePath(file.path(".venv", "Scripts", "python.exe"), mustWork = TRUE)
-  } else {
-    system2("python3", c("-mvenv", ".venv"))
-    pythonInVenv <- normalizePath(file.path(".venv", "bin", "python"), mustWork = TRUE)
-  }
-  # use venv python to install dependencies in venv
-  system2(pythonInVenv, c("-mpip", "install", "--upgrade", "pip", "wheel"))
-  system2(pythonInVenv, c("-mpip", "install", "-r", "requirements.txt"))
 }
 
 # Configure locations of REMIND input data

@@ -35,7 +35,6 @@ scenario <- getScenNames(outputdir)
 
 # paths of the reporting files
 remind_reporting_file <- file.path(outputdir,paste0("REMIND_generic_", scenario,".mif"))
-magicc_reporting_file <- file.path(outputdir,paste0("REMIND_climate_", scenario, ".mif"))
 LCOE_reporting_file   <- file.path(outputdir,paste0("REMIND_LCOE_", scenario, ".csv"))
 
 remind_policy_reporting_file <- file.path(outputdir,paste0("REMIND_generic_",scenario,"_adjustedPolicyCosts.mif"))
@@ -49,24 +48,6 @@ if (length(remind_policy_reporting_file) > 0) {
 # produce REMIND reporting *.mif based on gdx information
 message("\n### start generation of mif files at ", round(Sys.time()))
 convGDX2MIF(gdx, gdx_refpolicycost = gdx_refpolicycost, file = remind_reporting_file, scenario = scenario, gdx_ref = gdx_ref)
-
-# MAGICC code not working with REMIND-EU
-# generate MAGICC reporting and append to REMIND reporting
-if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
-  warning('Can\'t find magicc executable under environment variable MAGICC_BINARY')
-} else {
-  message("Generate ", basename(magicc_reporting_file))
-  system(paste("cd ",outputdir ,"/magicc; ",
-             "pwd;",
-             "sed -f modify_MAGCFG_USER_CFG.sed -i MAGCFG_USER.CFG; ",
-             Sys.getenv('MAGICC_BINARY'), '; ',
-             "awk -f MAGICC_reporting.awk -v c_expname=\"", scenario, "\"",
-             " < climate_reporting_template.txt ",
-             " > ","../../../", magicc_reporting_file,"; ",
-             "sed -i 's/;glob;/;World;/g' ","../../../", magicc_reporting_file, "; ",
-             "cat ", "../../../",magicc_reporting_file, " >> ", "../../../",remind_reporting_file, "; ",
-             sep = ""))
-}
 
 ## generate EDGE-T reporting if it is needed
 ## the reporting is appended to REMIND_generic_<scenario>.MIF
@@ -131,8 +112,10 @@ if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
   piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 }
 
-# warn if duplicates in mif
-reportDuplicates(read.quitte(sub("\\.mif$", "_withoutPlus.mif", remind_reporting_file), check.duplicates = FALSE))
+# warn if duplicates in mif and incorrect spelling of variables
+mifcontent <- read.quitte(sub("\\.mif$", "_withoutPlus.mif", remind_reporting_file), check.duplicates = FALSE)
+reportDuplicates(mifcontent)
+invisible(piamInterfaces::checkVarNames(mifcontent))
 
 message("### end generation of mif files at ", round(Sys.time()))
 

@@ -1,11 +1,3 @@
-<!--
-|  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
-|  authors, and contributors see CITATION.cff file. This file is part
-|  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
-|  AGPL-3.0, you are granted additional permissions described in the
-|  REMIND License Exception, version 1.0 (see LICENSE file).
-|  Contact: remind@pik-potsdam.de
--->
 ---
 title: 'How to analyse model output (importing, processing, and plotting data) '
 author: "David Klein"
@@ -19,16 +11,26 @@ vignette: |
 
 This is a [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code.
 
+
+```{r}
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 15,
+  fig.height = 10
+)
+```
+
 # Download demonstration data
 
 Before starting the tutorial we need to download the sample data that we are going to use from PIK's RSE server. A REMIND run normally produces/contains these files.
 
 ```{r}
-download.file("http://rse.pik-potsdam.de/data/example/fulldata.gdx", "fulldata.gdx", mode="wb")
+
+download.file("http://rse.pik-potsdam.de/data/example/fulldata.gdx", "fulldata.gdx", mode = "wb")
 download.file("http://rse.pik-potsdam.de/data/example/REMIND_generic_BAU.mif", "REMIND_generic_BAU.mif")
 download.file("http://rse.pik-potsdam.de/data/example/REMIND_generic_RCP20.mif", "REMIND_generic_RCP20.mif")
 download.file("http://rse.pik-potsdam.de/data/example/REMIND_generic_RCP26.mif", "REMIND_generic_RCP26.mif")
-download.file("http://rse.pik-potsdam.de/data/example/historical.mif", "historical.mif")
 ```
 
 
@@ -38,10 +40,14 @@ Import REMIND results from mif files using `read.report`. If you provide multipl
 
 ```{r}
 library(magclass)
-rem <- read.report(c("REMIND_generic_BAU.mif",
-                     "REMIND_generic_RCP20.mif",
-                     "REMIND_generic_RCP26.mif"), 
-                   as.list = FALSE)
+rem <- read.report(
+  c(
+    "REMIND_generic_BAU.mif",
+    "REMIND_generic_RCP20.mif",
+    "REMIND_generic_RCP26.mif"
+  ),
+  as.list = FALSE
+)
 ```
 
 Magclass objects have a standardized structure: regions in the first dimension, years in the second dimension, variable names in the third dimension. If your data has additional dimensions (such as *model* or *scenario*) they are added as a sub-dimension to the third dimension of the magpie object. The sub-dimension are separated by dots:
@@ -53,32 +59,34 @@ str(rem)
 Select years before and including 2100
 
 ```{r}
-rem <- rem[,getYears(rem)<="y2100",]
+rem <- rem[, getYears(rem) <= "y2100", ]
 ```
 
 Select only primary energy carriers
 
 ```{r}
-var_PE <- c("PE|+|Coal",
-            "PE|+|Oil",
-            "PE|+|Gas",
-            "PE|+|Biomass",
-            "PE|+|Nuclear",
-            "PE|+|Hydro",
-            "PE|+|Wind",
-            "PE|+|Solar",
-            "PE|+|Geothermal")
+var_PE <- c(
+  "PE|+|Coal",
+  "PE|+|Oil",
+  "PE|+|Gas",
+  "PE|+|Biomass",
+  "PE|+|Nuclear",
+  "PE|+|Hydro",
+  "PE|+|Wind",
+  "PE|+|Solar",
+  "PE|+|Geothermal"
+)
 
 # add same unit for all variables (works only if units are identical for all variables, otherwise you would have to provide the units individually)
-var_PE <- paste(var_PE,"(EJ/yr)")
+var_PE <- paste(var_PE, "(EJ/yr)")
 
-rem_PE <- rem[,,var_PE]
+rem_PE <- rem[, , var_PE]
 ```
 
-`fulldim` lists all elements of the object
+`getItems` lists all elements of the object
 
 ```{r}
-fulldim(rem_PE)
+getItems(rem_PE)
 ```
 
 # Plot data
@@ -89,7 +97,7 @@ fulldim(rem_PE)
 
 ```{r}
 library(mip)
-p <- mipArea(rem_PE["GLO",,invert=TRUE])
+p <- mipArea(rem_PE["GLO", , invert = TRUE])
 print(p)
 ```
 
@@ -97,13 +105,13 @@ Save the plot to a png file using `ggsave` from the ggplot2 package. We have to 
 
 ```{r}
 library(ggplot2)
-ggsave(filename = "PE.png",plot = p, width=15, height=10, scale = 2, units = "cm")
+ggsave(filename = "PE.png", plot = p, width = 15, height = 10, scale = 2, units = "cm")
 ```
 
 `mipArea` returns a regular ggplot object you can customize. To demonstrate this we override the default theme with theme_grey and a tiny font size, move the legend to the top, and reverse the faceting. This gives a rather ugly plot:
 
 ```{r}
-p + theme_grey(base_size=8) + theme(legend.position="top") + facet_grid(region~scenario)
+p + theme_grey(base_size = 8) + theme(legend.position = "top") + facet_grid(region ~ scenario)
 ```
 
 ## Bar plot
@@ -120,13 +128,14 @@ dat <- dat %>% filter(Region != "GLO")
 
 or using magclass
 ```{r}
-dat <- as.ggplot(rem_PE[,2050,]["GLO",,invert=TRUE])
+dat <- as.ggplot(rem_PE[, 2050, ]["GLO", , invert = TRUE])
 head(dat)
 ```
 
 Generate a raw bar plot without specific adjustments
 ```{r}
-ggplot() + geom_col(data=dat,aes(x=Data1,y=Value,fill=Data3))
+ggplot() +
+  geom_col(data = dat, aes(x = Data1, y = Value, fill = Data3))
 ```
 
 We use the `plotstyle` function to define default colors for our entities. This ensures that in all our plots a particular entity will be displayed with the same color. Now, retrieve these default colors for the primary energy carriers using `plotstyle`. Therefore, shorten variable names, so that they match the names defined in plotstyle. The full names of the elements stored in the third dimension of the magpie object would be
@@ -137,18 +146,18 @@ head(getNames(rem_PE))
 We only want to shorten the *variable names* (stored in the third sub-dimension), not the model and scenario names. Therefore, specify the number of the sub-dimension:
 
 ```{r}
-head(getNames(rem_PE,dim=3))
+head(getNames(rem_PE, dim = 3))
 ```
 
 Now use gsub and regular expressions to remove the "PE|+|" and the units:
 ```{r}
-getNames(rem_PE,dim=3) <- gsub("PE\\|\\+\\|(.*) \\(EJ\\/yr\\)$","\\1",getNames(rem_PE,dim=3))
-getNames(rem_PE,dim=3)
+getNames(rem_PE, dim = 3) <- gsub("PE\\|\\+\\|(.*) \\(EJ\\/yr\\)$", "\\1", getNames(rem_PE, dim = 3))
+getNames(rem_PE, dim = 3)
 ```
 
 For these names there are colors defined in `plotstyle`. Retrieve these colors
 ```{R}
-mycolors <- plotstyle(getNames(rem_PE,dim=3))
+mycolors <- plotstyle(getNames(rem_PE, dim = 3))
 print(mycolors)
 ```
 
@@ -159,12 +168,12 @@ showcolors(mycolors)
 
 Generate plot
 ```{r}
-dat <- as.ggplot(rem_PE[,2050,]["GLO",,invert=TRUE],useDimNames=FALSE)
+dat <- as.ggplot(rem_PE[, 2050, ]["GLO", , invert = TRUE], useDimNames = FALSE)
 
 p <- ggplot() +
-  geom_col(data=dat,aes(x=Data1,y=Value,fill=Data3)) +
-  scale_fill_manual(values = mycolors, name ="All Colors Are Beautiful") +
-  labs(title = "Primary Energy", subtitle = "in 2050", x = "Scenario", y ="EJ/yr") +
+  geom_col(data = dat, aes(x = Data1, y = Value, fill = Data3)) +
+  scale_fill_manual(values = mycolors, name = "All Colors Are Beautiful") +
+  labs(title = "Primary Energy", subtitle = "in 2050", x = "Scenario", y = "EJ/yr") +
   facet_wrap(~Region)
 print(p)
 ```
@@ -175,90 +184,84 @@ print(p)
 Another plot example, this time plotting emissions.
 
 ```{r}
-var_EMI <- c("Emi|CO2|Fossil Fuels and Industry|Cement process",
-             "Emi|CO2|Fossil Fuels and Industry|Demand",
-             "Emi|CO2|Fossil Fuels and Industry|Energy Supply",
-             "Emi|CO2|Land-Use Change")
+var_EMI <- c(
+  "Emi|CO2|Fossil Fuels and Industry|Cement process",
+  "Emi|CO2|Fossil Fuels and Industry|Demand",
+  "Emi|CO2|Fossil Fuels and Industry|Energy Supply",
+  "Emi|CO2|Land-Use Change"
+)
 
-var_EMI <- paste(var_EMI,"(Mt CO2/yr)")
+var_EMI <- paste(var_EMI, "(Mt CO2/yr)")
 
-rem_EMI <- rem[,,var_EMI]
+rem_EMI <- rem[, , var_EMI]
 ```
 
 First, just because it's so beautiful and easy using `mipArea`, the area plot again (this time with negative values):
 
 ```{r}
-mipArea(rem_EMI["GLO",,]) 
+mipArea(rem_EMI["GLO", , ])
 ```
 
 Creating a basic line plot with ggplot is almost as easy
 
 ```{r}
-ggplot (as.ggplot(rem["GLO",,"Emi|CO2 (Mt CO2/yr)"])) + geom_line(aes(x=Year,y=Value,color=Data1)) +
- labs(title = "CO2 emissions", x = "", y ="Mt CO2/yr")
+ggplot(as.ggplot(rem["GLO", , "Emi|CO2 (Mt CO2/yr)"])) +
+  geom_line(aes(x = Year, y = Value, color = Data1)) +
+  labs(title = "CO2 emissions", x = "", y = "Mt CO2/yr")
 ```
-
-If you have historical values at hand you can use `mipLineHistorical` to validate your model data. Read historical data. Select years from 1950 on. Remove global data from both data sets (for nicer y-scaling). Select total CO2 emissions for model data. The function selects the same variables from the historical data if available.
-
-```{r}
-history <- read.report("historical.mif",as.list=FALSE)
-history <- history["GLO",,,invert=TRUE][,getYears(history)>="y1950",][,,"IEA"]
-mipLineHistorical(x = rem[,,"Emi|CO2 (Mt CO2/yr)"][,,"BAU"]["GLO",,,invert=TRUE], x_hist = history,size=8)
-```
-
 
 # Calculating and adding a new variable
 
 Let's see whether we can calculate per capita emissions. First, we have to find out, if our data set contains something like population data. We apply `pmatch` and `getNames` to find out if there is a variable that has 'pop' in its name.
 ```{r}
-getNames(rem[,,"Pop",pmatch=TRUE])
+getNames(rem[, , "Pop", pmatch = TRUE])
 ```
 
 Oh, yes. So, let's simply calculate the per capita emissions.
 
 ```{r}
-emi_cap <- rem_EMI / rem[,,"Population (million)"]
+emi_cap <- rem_EMI / rem[, , "Population (million)"]
 ```
 
 magclass automatically matches regions, years, scenarios, and models. It also automatically assigns names to the resulting variable by combining the variable names of the two source objects. The resulting names look like this now:
 
 ```{r}
-getNames(emi_cap[,,1])
+getNames(emi_cap[, , 1])
 ```
 
 Let's provide better names. First, we remove the 4th sub-dimension, since all names are identical:
 
 ```{r}
-emi_cap <- collapseNames(emi_cap,collapsedim = 4)
+emi_cap <- collapseNames(emi_cap, collapsedim = 4)
 ```
 
 We could have got the same if we had removed the "Population (million)" above before dividing:
 
 ```{r}
-emi_cap <- rem_EMI / collapseNames(rem[,,"Population (million)"])
-getNames(emi_cap[,,1])
+emi_cap <- rem_EMI / collapseNames(rem[, , "Population (million)"])
+getNames(emi_cap[, , 1])
 ```
 
 Now, we rename the emission variables by replacing "Emi" with "Per capita emission" and correcting the unit
 
 ```{r}
-getNames(emi_cap,dim=3) <- gsub("Emi|","Per capita emissions|",getNames(emi_cap,dim=3),fixed = TRUE)
-getNames(emi_cap,dim=3) <- gsub("(Mt CO2/yr)","(t CO2/yr/cap)",getNames(emi_cap,dim=3),fixed = TRUE)
+getNames(emi_cap, dim = 3) <- gsub("Emi|", "Per capita emissions|", getNames(emi_cap, dim = 3), fixed = TRUE)
+getNames(emi_cap, dim = 3) <- gsub("(Mt CO2/yr)", "(t CO2/yr/cap)", getNames(emi_cap, dim = 3), fixed = TRUE)
 ```
 
 Now we can add the new variable to the full report
 ```{r}
-rem <- mbind(rem,emi_cap)
+rem <- mbind(rem, emi_cap)
 ```
 
 Finally, plot the freshly calculated per-capita emissions. When selecting the variables use `pmatch=TRUE` to retrieve all variables that have this string in their name. Useful in this case, because we do not need to provide the detailed sector names. Distinguish scenarios (column "Data1" in the data frame that `as.ggplot` produces) by line type and variables (Data3) by color.
 
 ```{r}
-ggplot (as.ggplot(rem[,,"Per capita emissions",pmatch=TRUE])) + 
-  geom_line(aes(x=Year,y=Value,color=Data3,linetype=Data1)) + 
-  facet_grid(~Region) + 
-  theme(legend.position="bottom") + 
-  guides(color = guide_legend(nrow = 4),linetype=guide_legend(nrow = 3))
+ggplot(as.ggplot(rem[, , "Per capita emissions", pmatch = TRUE])) +
+  geom_line(aes(x = Year, y = Value, color = Data3, linetype = Data1)) +
+  facet_grid(~Region) +
+  theme(legend.position = "bottom") +
+  guides(color = guide_legend(nrow = 4), linetype = guide_legend(nrow = 3))
 ```
 
 
@@ -267,20 +270,20 @@ ggplot (as.ggplot(rem[,,"Per capita emissions",pmatch=TRUE])) +
 In the following we are only talking about the third dimension of a magpie object, which can contain further sub-dimensions. We want to add a new sub-dimension distinguishing gases. Add a new sub-dimension with the name "gas" and the variable "CO2"
 
 ```{r}
-rem_EMI <- add_dimension(rem_EMI, dim = 3.3, add = "gas", nm="CO2")
+rem_EMI <- add_dimension(rem_EMI, dim = 3.3, add = "gas", nm = "CO2")
 str(rem_EMI)
 ```
 
 Add a new element to the dimension just created
 
 ```{r}
-rem_EMI <- add_columns(rem_EMI,addnm = "CH4",dim=3.3)
+rem_EMI <- add_columns(rem_EMI, addnm = "CH4", dim = 3.3)
 ```
 
 Now, remove the obsolete "Emi|CO2|" part from the old names
 
 ```{r}
-getNames(rem_EMI,dim=3) <- gsub("Emi\\|CO2\\|","",getNames(rem_EMI,dim=3))
+getNames(rem_EMI, dim = 3) <- gsub("Emi\\|CO2\\|", "", getNames(rem_EMI, dim = 3))
 str(rem_EMI)
 ```
 
@@ -290,46 +293,45 @@ If the variable or parameter you are interested in is not yet part of the REMIND
 
 ```{r}
 library(gdx)
-rem_gdx <- readGDX(gdx = "fulldata.gdx","vm_emiAll",field = "l",format = "first_found")
+rem_gdx <- readGDX(gdx = "fulldata.gdx", "vm_emiAll", field = "l", format = "first_found")
 str(rem_gdx)
 ```
 
 *vm_emiAll* does not include global values. We calculate them with `dimSums` summing over the regions (first dimension) and append them using `mbind`.
 
 ```{r}
-rem_gdx <- mbind(rem_gdx,dimSums(rem_gdx,dim = 1))
-getItems(rem_gdx,dim = 1)<-sub("dummy","GLO",getRegions(rem_gdx))
+rem_gdx <- mbind(rem_gdx, dimSums(rem_gdx, dim = 1))
+getItems(rem_gdx, dim = 1) <- sub("dummy", "GLO", getRegions(rem_gdx))
 ```
 
 *vm_emiAll* is defined for all entities, but for most of them it is zero. Let's find the entities for which it contains data. We use the year 2050 as an indicator:
 
 ```{r}
-non_zero_vars <- getNames(rem_gdx)[rem_gdx["GLO",2050,]!=0]
+non_zero_vars <- getNames(rem_gdx)[rem_gdx["GLO", 2050, ] != 0]
 ```
 
 Before plotting we have to rename the dimensions of the magclass object to names that mipArea (and the underlying quitte class) requires
 
 ```{r}
-getSets(rem_gdx) <- c("region","year","variable")
+getSets(rem_gdx) <- c("region", "year", "variable")
 
-mipArea(rem_gdx["GLO", getYears(rem_gdx)>="y2005" & getYears(rem_gdx) <="y2100", non_zero_vars])
-
+mipArea(rem_gdx["GLO", getYears(rem_gdx) >= "y2005" & getYears(rem_gdx) <= "y2100", non_zero_vars])
 ```
 
 Now, let's pick Kyoto gases only and get the units right. Define vector with names of Kyoto gases
 
 ```{r}
-kyo <- c("co2","n2o","ch4")
+kyo <- c("co2", "n2o", "ch4")
 ```
 
 Create a new magclass object with the same regions and years as *rem_gdx* and Kyoto gases as variables 
 
 ```{r}
-conversion <- new.magpie(cells_and_regions = getRegions(rem_gdx),years = getYears(rem_gdx),names = kyo)
+conversion <- new.magpie(cells_and_regions = getRegions(rem_gdx), years = getYears(rem_gdx), names = kyo)
 
-conversion[,,"co2"] <- 1 * 1000 * 44/12 # GtC      -> Mt CO2
-conversion[,,"ch4"] <- 34               # Mt CH4   -> Mt CO2_eq
-conversion[,,"n2o"] <- 298 * 44/18      # Mt N2O-N -> Mt CO2_eq
+conversion[, , "co2"] <- 1 * 1000 * 44 / 12 # GtC      -> Mt CO2
+conversion[, , "ch4"] <- 34 # Mt CH4   -> Mt CO2_eq
+conversion[, , "n2o"] <- 298 * 44 / 18 # Mt N2O-N -> Mt CO2_eq
 
 str(conversion)
 ```
@@ -337,7 +339,7 @@ str(conversion)
 Now, that the magpie objects have the same structure, multiplication is easy
 
 ```{r}
-rem_gdx[,,kyo] <- rem_gdx[,,kyo] * conversion
+rem_gdx[, , kyo] <- rem_gdx[, , kyo] * conversion
 
-mipArea(rem_gdx["GLO",getYears(rem_gdx)>="y2005" & getYears(rem_gdx) <="y2100",kyo]) + labs(title = "Emissions", subtitle = "Kyoto gases", y ="Mt CO2eq/yr")
+mipArea(rem_gdx["GLO", getYears(rem_gdx) >= "y2005" & getYears(rem_gdx) <= "y2100", kyo]) + labs(title = "Emissions", subtitle = "Kyoto gases", y = "Mt CO2eq/yr")
 ```

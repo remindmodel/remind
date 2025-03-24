@@ -12,22 +12,19 @@ if (! dir.exists(magpie_folder)) magpie_folder <- paste0("../", magpie_folder)
 config <- readCheckScenarioConfig(file.path("..", "..", coupledConfig), remindPath <- file.path("..", ".."))
 max_iterations <- if ("max_iterations" %in% names(config)) max(config$max_iterations) else 5
 # for a fresh run, delete all left-overs from previous test
-del_iterations <- max(max_iterations, 9)
-deleteallfiles <- NULL
+deleteallfiles <- paste0("C_TESTTHAT_startlog_", seq(6), ".txt")
 Rprofile <- ".Rprofile"
 for (scen in rownames(config)) {
   deleteallfiles <- c(deleteallfiles,
-    paste0("../../output/C_", scen, "-rem-", seq(del_iterations)),
-    paste0("../../output/C_", scen, "-", seq(del_iterations), ".pdf"),
+    paste0("../../output/C_", scen, "-rem-", seq(max_iterations)),
     paste0("../../output/C_", scen, ".mif"),
-    paste0("../../C_", scen, "-rem-", seq(del_iterations), ".RData"),
+    paste0("../../C_", scen, "-rem-", seq(max_iterations), ".RData"),
     paste0("../../output/gamscompile/main_", scen, ".gms"),
     paste0("../../output/gamscompile/main_", scen, ".lst"),
-    file.path(magpie_folder, paste0("output/C_", scen, "-mag-", seq(del_iterations - 1))),
-    paste0("C_TESTTHAT_startlog_", seq(10), ".txt")
+    file.path(magpie_folder, paste0("output/C_", scen, "-mag-", seq(max_iterations - 1)))
   )
 }
-expect_true(0 == unlink(deleteallfiles, recursive = TRUE))
+expect_true(0 == unlink(deleteallfiles, recursive = TRUE, force = TRUE))
 
 test_that("environment is suitable for coupled tests", {
   skipIfPreviousFailed()
@@ -170,7 +167,7 @@ test_that("delete last REMIND run to simulate re-starting aborted run", {
     paste0("../../output/C_", scen, "-", max_iterations, ".pdf"),
     paste0("../../output/C_", scen, ".mif")
   )
-  expect_true(0 == unlink(filestodelete, recursive = TRUE))
+  expect_true(0 == unlink(filestodelete, recursive = TRUE, force = TRUE))
   output <- localSystem2("Rscript", c("start_bundle_coupled.R", coupledConfig, "startgroup=1"),
                          env = paste0("R_PROFILE_USER=", Rprofile))
   writeLines(output, "C_TESTTHAT_startlog_2.txt")
@@ -181,7 +178,7 @@ test_that("delete last REMIND run to simulate re-starting aborted run", {
 
   # delete the last MAgPIE, but not the last REMIND scenario and expect fail
   filestodelete <- file.path(magpie_folder, "output", paste0("C_", scen, "-mag-", (max_iterations - 1)))
-  expect_true(0 == unlink(filestodelete, recursive = TRUE))
+  expect_true(0 == unlink(filestodelete, recursive = TRUE, force = TRUE))
   output <- localSystem2("Rscript", c("start_bundle_coupled.R", coupledConfig, "startgroup=1"),
                          env = paste0("R_PROFILE_USER=", Rprofile))
   writeLines(output, "C_TESTTHAT_startlog_3.txt")
@@ -195,7 +192,7 @@ test_that("delete last REMIND run to simulate re-starting aborted run", {
     paste0("../../output/C_", scen, "-", max_iterations, ".pdf"),
     paste0("../../output/C_", scen, ".mif")
   )
-  expect_true(0 == unlink(filestodelete, recursive = TRUE))
+  expect_true(0 == unlink(filestodelete, recursive = TRUE, force = TRUE))
   output <- localSystem2("Rscript", c("start_bundle_coupled.R", coupledConfig, "startgroup=1"),
                          env = paste0("R_PROFILE_USER=", Rprofile))
   printIfFailed(output)
@@ -206,8 +203,9 @@ test_that("delete last REMIND run to simulate re-starting aborted run", {
   expect_true(any(grepl(paste0("Starting MAgPIE run C_", scen, "-mag-", (max_iterations - 1)), output)))
 
   # delete all REMIND, but not MAgPIE, and expect fail
+  # when adjusting this, be careful because it is used at the end to determine files that need to exist
   filestodelete <- paste0("../../output/C_", scen, "-rem-", seq(max_iterations))
-  expect_true(0 == unlink(filestodelete, recursive = TRUE))
+  expect_true(0 == unlink(filestodelete, recursive = TRUE, force = TRUE))
   output <- localSystem2("Rscript", c("start_bundle_coupled.R", coupledConfig, "startgroup=1"),
                          env = paste0("R_PROFILE_USER=", Rprofile))
   writeLines(output, "C_TESTTHAT_startlog_5.txt")
@@ -218,6 +216,10 @@ test_that("delete last REMIND run to simulate re-starting aborted run", {
 test_that("Check path_mif_ghgprice_land with file", {
   # note: needs Base-rem-1 and -2 still present
   skipIfPreviousFailed()
+  output <- localSystem2("Rscript", c("start_bundle_coupled.R --gamscompile", coupledConfig, "startgroup=2"),
+                         env = paste0("R_PROFILE_USER=", Rprofile))
+  printIfFailed(output)
+  expectSuccessStatus(output)
   output <- localSystem2("Rscript", c("start_bundle_coupled.R", coupledConfig, "startgroup=2"),
                          env = paste0("R_PROFILE_USER=", Rprofile))
   writeLines(output, "C_TESTTHAT_startlog_6.txt")
@@ -235,36 +237,47 @@ test_that("Check path_mif_ghgprice_land with file", {
   }
 })
 
-test_that("start_bundle_coupled.R --test succeeds on all configs", {
-  skipIfPreviousFailed()
-  csvfiles <- system("git ls-files ../../config/scenario_config_coupled*.csv ../../config/*/scenario_config_coupled*.csv", intern = TRUE)
-  if (length(csvfiles) == 0) {
-    csvfiles <- Sys.glob(c(file.path("../../config/scenario_config_coupled*.csv"),
-                           file.path("../../config", "*", "scenario_config_coupled*.csv")))
-  }
-  skipfiles <- c("scenario_config_coupled_shortCascade", # fails on missing mif file which is present while running other tests
-                 "scenario_config_coupled_GCS")          # GCFS setting not in standard MAgPIE release
-  csvfiles <- normalizePath(grep(paste(skipfiles, collapse = "|"), csvfiles, invert = TRUE, value = TRUE))
+csvfiles <- system("git ls-files ../../config/scenario_config_coupled*.csv ../../config/*/scenario_config_coupled*.csv", intern = TRUE)
+if (length(csvfiles) == 0) {
+  csvfiles <- Sys.glob(c(file.path("../../config/scenario_config_coupled*.csv"),
+                         file.path("../../config", "*", "scenario_config_coupled*.csv")))
+}
+csvfiles <- normalizePath(csvfiles)
+test_that("coupled csv files found", {
   expect_true(length(csvfiles) > 0)
-  testthat::with_mocked_bindings(
-    for (csvfile in csvfiles) {
-      test_that(paste("perform start_bundle_coupled.R --test with", basename(csvfile)), {
+})
+
+skipfiles <- c("scenario_config_coupled_shortCascade") # fails on missing mif file which is present while running other tests
+
+for (csvfile in csvfiles) {
+  test_that(paste("start_bundle_coupled.R --test succeeds on", basename(csvfile)), {
+    skipIfPreviousFailed()
+    skip_if(grepl(paste(skipfiles, collapse = "|"), csvfile), message = paste(csvfile, "skipped."))
+    testthat::with_mocked_bindings(
+      {
         output <- localSystem2("Rscript",
-                             c("start_bundle_coupled.R", "--test", "startgroup=*", csvfile))
+                               c("start_bundle_coupled.R", "--test", "startgroup=*", csvfile))
         printIfFailed(output)
         expectSuccessStatus(output)
-      })
-    },
-    getLine = function() stop("getLine should not called."),
-    .package = "gms"
-  )
-  unlink("../../*TESTTHAT.RData")
-})
+      },
+      getLine = function() stop("getLine should not called."),
+      .package = "gms"
+    )
+    unlink("../../*TESTTHAT.RData", force = TRUE)
+    expect_no_warning(config <- readCheckScenarioConfig(csvfile, remindPath <- file.path("..", "..")))
+  })
+}
 
 test_that("delete files to leave clean state", {
   # leave clean state
   skipIfPreviousFailed()
-  skip_if_not(all(file.exists(deleteallfiles)),
-              message = "Not all expected files for coupled tests exist, not deleting anything.")
-  expect_true(0 == unlink(deleteallfiles, recursive = TRUE))
+  # Exclude NDC folders since they were deleted earlier to see if everything fails correctly if mag iteration is bigger than rem iteration.
+  missingfiles <- setdiff(deleteallfiles[! file.exists(deleteallfiles)],
+                          paste0("../../output/C_TESTTHAT-SSP2-NDC-rem-", seq(2)))
+  if (length(missingfiles) > 0) {
+    warning("files do not exist: ", paste(gsub("../.", "", missingfiles, fixed = TRUE), collapse = ", "))
+    skip("Not cleaning up coupled tests as not all required files exist.")
+  } else {
+    expect_true(0 == unlink(deleteallfiles, recursive = TRUE, force = TRUE))
+  }
 })

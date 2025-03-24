@@ -94,19 +94,6 @@ run_compareScenarios <- "short"
 magpie_empty <- FALSE
 
 ########################################################################################################
-#################################  install magpie dependencies  ########################################
-########################################################################################################
-if (!is.null(renv::project())) {
-  magpieDeps <- renv::dependencies(path_magpie)
-  installedPackages <- installed.packages()[, "Package"]
-  missingDeps <- setdiff(unique(magpieDeps$Package), installedPackages)
-  if (length(missingDeps) > 0) {
-    message("Installing missing MAgPIE dependencies ", paste(missingDeps, collapse = ", "))
-    renv::install(missingDeps)
-  }
-}
-
-########################################################################################################
 #################################  load command line arguments  ########################################
 ########################################################################################################
 
@@ -153,6 +140,8 @@ dir.create(file.path(path_remind, "output"), showWarnings = FALSE)
 dir.create(file.path(path_magpie, "output"), showWarnings = FALSE)
 
 ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
+
+piamenv::installDeps(path_magpie)
 
 errorsfound <- 0
 startedRuns <- NULL
@@ -590,6 +579,10 @@ for(scen in common){
       errorsfound <- errorsfound + cfg_rem$errorsfoundInCheckFixCfg
     }
 
+    if (i == start_iter_first) {
+      errorsfound <- errorsfound + checkSettingsRemMag(cfg_rem, cfg_mag, testmode = "--test" %in% flags)
+    }
+
     if (! any(c("--test", "--gamscompile") %in% flags)) {
       Rdatafile <- paste0(fullrunname, ".RData")
       message("Save settings to ", Rdatafile)
@@ -644,6 +637,8 @@ for(scen in common){
     }
   }
 }
+
+warnings()
 
 # start runs
 message("\nStarting Runs")
@@ -715,5 +710,6 @@ message("- qos statistics: ", paste0(names(qosRuns), ": ", unlist(qosRuns), coll
         if (isTRUE(qosRuns[["priority"]] > 4)) " More than 4 runs with qos=priority. They may not be able to run in parallel on the PIK cluster.")
 # make sure we have a non-zero exit status if there were any errors
 if (0 < errorsfound) {
+  warnings()
   stop(red, errorsfound, NC, " errors were identified, check logs above for details.")
 }

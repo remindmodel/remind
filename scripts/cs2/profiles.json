@@ -11,25 +11,27 @@
 	},
 	"H12": {
 		"projectLibrary": "'remind2'",
-		"reg": "c('CAZ', 'CHA', 'EUR', 'IND', 'JPN', 'LAM', 'MEA', 'NEU', 'OAS', 'REF', 'SSA', 'USA', 'World')"
+		"reg": "c('CAZ', 'CHA', 'EUR', 'IND', 'JPN', 'LAM', 'MEA', 'NEU', 'OAS', 'REF', 'SSA', 'USA', 'World')",
+		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))"
 	},
 	"H12-short": {
 		"projectLibrary": "'remind2'",
 		"reg": "c('CAZ', 'CHA', 'EUR', 'IND', 'JPN', 'LAM', 'MEA', 'NEU', 'OAS', 'REF', 'SSA', 'USA', 'World')",
 		"yearsScen": "seq(2005, 2050, 5)",
-		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))",
-		"yearsBarPlot": "c(2020, 2030, 2050)"
+		"yearsHist": "c(seq(2000, 2024, 1), seq(2025, 2050, 5))",
+		"yearsBarPlot": "c(2020, 2030, 2040, 2050)"
 	},
 	"EU27": {
 		"projectLibrary": "'remind2'",
 		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
-		"mainReg": "'EU27'"
+		"mainReg": "'EU27'",
+		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))"
 	},
 	"EU27-short": {
 		"projectLibrary": "'remind2'",
 		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
 		"yearsScen": "seq(2005, 2050, 5)",
-		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))",
+		"yearsHist": "c(seq(2000, 2024, 1), seq(2025, 2050, 5))",
 		"yearsBarPlot": "c(2020, 2030, 2040, 2050)",
 		"mainReg": "'EU27'"
 	},
@@ -37,7 +39,7 @@
 		"projectLibrary": "'remind2'",
 		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
 		"yearsScen": "seq(2005, 2050, 5)",
-		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))",
+		"yearsHist": "c(seq(2000, 2024, 1), seq(2025, 2050, 5))",
 		"yearsBarPlot": "c(2020, 2030, 2045)",
 		"modelsHistExclude": "c('IEA ETP B2DS', 'IEA ETP 2DS', 'IEA ETP RTS', 'EDGE_SSP1', 'EDGE_SSP2', 'CEDS', 'IRENA', 'IEA WEO 2021 APS', 'IEA WEO 2021 SDS', 'IEA WEO 2021 SPS')",
 		"mainReg": "'DEU'"

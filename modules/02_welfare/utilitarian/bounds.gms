@@ -7,10 +7,7 @@
 *** SOF ./modules/02_welfare/utilitarian/bounds.gms
 
 $IFTHEN.INCONV %cm_INCONV_PENALTY% == "on"
-v02_sesoInconvPenSlack.lo(t,regi)=0;
-v02_inconvPenCoalSolids.fx("2005",regi) = 0;
-v02_inconvPenCoalSolids.lo(t,regi) = 0;
-v02_inconvPen.lo(t,regi) = 0;
+v02_inconvPenSolidsBuild.fx("2005",regi) = 0;
 v02_inconvPen.fx("2005",regi) = 0;
 $ENDIF.INCONV
 

@@ -7,7 +7,6 @@
 *** SOF ./modules/15_climate/magicc7_ar6/postsolve.gms
 
 ***---------------------------------------------------------------------------
-*' The MAGICC scenario generation is set in `./core/magicc.gms`, but runs here.
 *' MAGICC is run and its output is read using different current R scripts in the external MAGICC folder
 *' that are copied to each run's folder during the preparation phase. Different parametrizations of MAGICC can also be chosen with `cm_magicc_config`,
 *' and are also handled during the preparation phase

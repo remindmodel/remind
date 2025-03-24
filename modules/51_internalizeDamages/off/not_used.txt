@@ -34,4 +34,6 @@ pm_damageIso,input,questionnaire
 pm_damageGrowthRateIso,input,questionnaire
 pm_sccIneq,input,questionnaire
 sm_c_2_co2,input,questionnaire
-sm_eps,input,added by codeCheck
+
+pm_ies,input,questionnaire
+sm_eps,input,questionnaire

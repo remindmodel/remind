@@ -88,44 +88,9 @@ i30_bioen_price_b(ttot,regi)$(regi_group("EUR_regi",regi)) = cm_BioSupply_Adjust
 
 *RP* in 2005 and 2010, we always want to use bau values
 loop(ttot$( (ttot.val = 2005) OR (ttot.val = 2010) ),
-    i30_bioen_price_a(ttot,regi)  =  f30_bioen_price(ttot,regi,"%cm_LU_emi_scen%","none","a");
-    i30_bioen_price_b(ttot,regi)  =  f30_bioen_price(ttot,regi,"%cm_LU_emi_scen%","none","b");
+    i30_bioen_price_a(ttot,regi)  =  f30_bioen_price(ttot,regi,"%cm_LU_emi_scen%","rcp45","a");
+    i30_bioen_price_b(ttot,regi)  =  f30_bioen_price(ttot,regi,"%cm_LU_emi_scen%","rcp45","b");
 );
 display i30_bioen_price_a, i30_bioen_price_b;
-
-*** -------------------------------------------------------------
-*** Bounds on pedem
-*** -------------------------------------------------------------
-
-*** To prevent RUS and MEA from demanding high amounts of biomass 
-*** just because of their capacity to store negative emissions a
-*** general rule for all regions is applied that limits the PE 
-*** demand of BECCS technologies in policy runs to 30% of the total 
-*** PE of the baseline scenario (see q30_limitTeBio)
-
-***if(cm_emiscen ne 1,
-***Execute_Loadpoint 'input_ref' v30_pedem_BAU=vm_demPe;
-***Execute_Loadpoint 'input_ref' v30_seprod_BAU=vm_prodSe;
-***
-***p30_pedem_BAU(ttot,regi) =
-***  sum(pe2se(enty,enty2,te)$(sameas(enty,"peoil") OR sameas(enty,"pecoal") OR sameas(enty,"pegas") OR sameas(enty,"pebiolc") OR sameas(enty,"pebios") OR sameas(enty,"pebioil")),
-***    v30_pedem_BAU.l(ttot,regi,enty,enty2,te)
-***  ) 
-***  + sum(entySe,
-***      sum(te,
-***          v30_seprod_BAU.l(ttot,regi,"pegeo",entySe,te)
-***        + v30_seprod_BAU.l(ttot,regi,"pehyd",entySe,te)
-***        + v30_seprod_BAU.l(ttot,regi,"pewin",entySe,te)
-***        + v30_seprod_BAU.l(ttot,regi,"pesol",entySe,te)
-***        + v30_seprod_BAU.l(ttot,regi,"peur",entySe,te)
-***      )
-***    ) * 100/40  !!! substitution method
-***;
-***
-***p30_pedemBio_BAU(ttot,regi) =
-***  sum(pe2se(enty,enty2,te)$(sameas(enty,"pebiolc") OR sameas(enty,"pebios") OR sameas(enty,"pebioil")),
-***    v30_pedem_BAU.l(ttot,regi,enty,enty2,te)
-***  );
-***);
 
 *** EOF ./modules/30_biomass/magpie_40/datainput.gms

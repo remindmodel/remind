@@ -14,8 +14,8 @@
 Execute_Loadpoint "input_ref" pm_taxCO2eq = pm_taxCO2eq;
 
 *** calculate pm_taxCO2eq for year before startyear
-pm_taxCO2eq(t,regi) = sum(ttot, pm_taxCO2eq(ttot,regi)$(ttot.val eq smax(ttot2$( ttot2.val lt cm_startyear ), ttot2.val))) * cm_co2_tax_growth**(t.val-smax(ttot2$( ttot2.val lt cm_startyear ), ttot2.val));
-pm_taxCO2eq(t,regi)$(t.val gt 2110) = pm_taxCO2eq("2110",regi); !! to prevent huge taxes after 2110 and the resulting convergence problems, set taxes after 2110 equal to 2110 value
+pm_taxCO2eq(t,regi) = sum(ttot, pm_taxCO2eq(ttot,regi)$(ttot.val eq smax(ttot2$( ttot2.val lt cm_startyear ), ttot2.val))) * cm_taxCO2_expGrowth**(t.val-smax(ttot2$( ttot2.val lt cm_startyear ), ttot2.val));
+pm_taxCO2eq(t,regi)$(t.val gt 2100) = pm_taxCO2eq("2100",regi); !! to prevent huge taxes after 2100 and the resulting convergence problems, set taxes after 2100 equal to 2100 value
 
 
 *** EOF ./modules/45_carbonprice/NPiexpo/datainput.gms

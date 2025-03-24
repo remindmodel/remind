@@ -15,7 +15,7 @@ p51_scc(tall)$((tall.val ge 2020) and (tall.val le 2150)) = 1000 *
     sum(regi2,
     sum(tall2$( (tall2.val ge tall.val) and (tall2.val le (tall.val + cm_damages_SccHorizon))),   !! add this for limiting horizon of damage consideration: and (tall2.val le 2150)
 	(1 + pm_prtp(regi2) )**(-(tall2.val - tall.val))
-	* pm_consPC(tall,regi2)/(pm_consPC(tall2,regi2) + sm_eps)
+	* (pm_consPC(tall,regi2)/(pm_consPC(tall2,regi2) + sm_eps))**(1/pm_ies(regi2))
 	* pm_GDPGross(tall2,regi2)
 	* pm_temperatureImpulseResponseCO2(tall2,tall)
 	* pm_damageMarginal(tall2,regi2)

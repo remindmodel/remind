@@ -30,7 +30,6 @@
 *' the emissions of that iteration.  
 
 *####################### R SECTION START (PHASES) ##############################
-$Ifi "%phase%" == "sets" $include "./modules/15_climate/magicc7_ar6/sets.gms"
 $Ifi "%phase%" == "declarations" $include "./modules/15_climate/magicc7_ar6/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/15_climate/magicc7_ar6/datainput.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/15_climate/magicc7_ar6/postsolve.gms"

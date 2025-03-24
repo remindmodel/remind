@@ -103,7 +103,7 @@ p80_fadeoutPriceAnticip_iter(iteration)           "Helper parameter, describes f
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)      "deviation of current iteration quantity target from target per iteration - relative for total targets, absolute (= share points) for share targets"
 $endif.cm_implicitQttyTarget
-p80_globalBudget_dev_iter(iteration)              "actual level of global cumulated emissions budget divided by target budget per iteration"
+p80_globalBudget_absDev_iter(iteration)           "absolute deviation of global cumulated CO2 emissions budget from target budget"
 p80_sccConvergenceMaxDeviation_iter(iteration)    "max deviation of SCC from last iteration per iteration [percent]"
 p80_gmt_conv_iter(iteration)                      "global mean temperature convergence per iteration"
 ;
@@ -128,7 +128,6 @@ s80_after                                  "value of time step after current int
 s80_numberIterations                       "display helper"
 s80_bool                                   "helper"
 s80_converged                              "if nash converged, this is 1"
-s80_cnptfile                               "parameter that indicates which optimality tolerance will be used"      /1/
 s80_runInDebug                             "Is 1 if regions stayed infeasible in nash and start in debug mode automatically following the parallel mode" /0/
 ;
 

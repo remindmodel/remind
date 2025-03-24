@@ -65,6 +65,7 @@ t_29(ttot)     "time steps considered in the calibration"
 
 pf_eff_target_dyn29(all_in)    "production factors with efficiency target"    / /
 pf_quan_target_dyn29(all_in)   "production factors with quantity target"      / /
+p29_building_relaxed_bounds_dyn(all_in) "quantity calibration in the building sector" /feelrhb, feelcb, fesob, fegab, feh2b/
 
 capUnitType  "Type of technological data: for investments or for the standing capital"
 /
