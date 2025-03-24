@@ -34,6 +34,5 @@ pm_damageIso,input,questionnaire
 pm_damageGrowthRateIso,input,questionnaire
 pm_sccIneq,input,questionnaire
 sm_c_2_co2,input,questionnaire
-
-pm_ies,input,questionnaire
-sm_eps,input,questionnaire
+sm_eps,input,not needed
+pm_ies,input,not needed
