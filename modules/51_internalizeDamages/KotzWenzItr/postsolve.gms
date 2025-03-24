@@ -11,7 +11,7 @@
 p51_sccLastItr(tall) = p51_scc(tall);
 
 
-p51_scc(tall)$((tall.val ge 2020) and (tall.val le 2150)) = 1000 *
+p51_scc(tall)$((tall.val ge 2025) and (tall.val le 2150)) = 1000 *
     sum(regi2,
     sum(tall2$( (tall2.val ge tall.val) and (tall2.val le (tall.val + cm_damages_SccHorizon))),   !! add this for limiting horizon of damage consideration: and (tall2.val le 2150)
 	(1 + pm_prtp(regi2) )**(-(tall2.val - tall.val))
