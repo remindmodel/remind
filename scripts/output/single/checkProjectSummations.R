@@ -31,6 +31,7 @@ relDiff <- 0.01
 sources <- paste0("R",
                   if (isTRUE(envi$cfg$gms$CES_parameters == "load")) "T",
                   if (any(grepl("^MAgPIE", levels(mifdata$model)))) "M")
+mifdata <- mutate(mifdata, model = factor(paste(levels(mifdata$model), collapse = "-"))) # checkSummations need one single model
 message("\n### Check existence of variables in mappings.")
 missingVariables <- checkMissingVars(mifdata, setdiff(names(mappingNames()), c("AgMIP", "AR6_MAgPIE")), sources)
 if (length(missingVariables) > 0) message("Check piamInterfaces::variableInfo('variablename') etc.")

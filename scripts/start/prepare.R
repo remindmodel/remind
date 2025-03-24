@@ -14,8 +14,6 @@ prepare <- function() {
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   require(tools, quietly = TRUE,warn.conflicts =FALSE)
   require(remind2, quietly = TRUE,warn.conflicts =FALSE)
-  require(mrremind)
-  require(mrvalidation)
 
   .copy.fromlist <- function(filelist,destfolder) {
     if(is.null(names(filelist))) names(filelist) <- rep("",length(filelist))
@@ -52,7 +50,7 @@ prepare <- function() {
             ~Package, "data.table", "devtools", "dplyr", "edgeTransport",
             "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools",
             "lucode2", "luplot", "luscale", "magclass", "magpie4", "methods",
-            "mip", "mrremind", "mrvalidation", "optparse", "parallel",
+            "mip", "optparse", "parallel",
             "plotly", "remind2", "reticulate", "rlang", "rmndt", "tidyverse",
             "tools"),
 
