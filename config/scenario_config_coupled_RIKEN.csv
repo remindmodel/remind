@@ -1,7 +1,7 @@
-title;start;oldrun;path_report;config/scenario_config.csv;cfg_mag$gms$s56_cprice_red_factor;no_ghgprices_land_until
-M-SSP2-NPi;1;;;SSP2|NPI|nocc_hist;;y2150
-VLLO-SSP1-PkBudg650;1;;;SDP-MC|SSP1-POP-GDP|NDC|nocc_hist;;y2030
-VLLO-SSP2-PkBudg650;1;;;SSP2|NDC|nocc_hist;;y2030
-M-SSP2-NPi-KLW;1;;;SSP2|NPI|cc|rcp4p5;;y2150
-VLLO-SSP2-KLW;1;;;SSP2|NDC|cc|rcp1p9;;y2030
-VLLO-SSP1-KLW;1;;;SDP-MC|SSP1-POP-GDP|NDC|cc|rcp1p9;;y2030
+title;start;oldrun;path_report;config/scenario_config.csv;cfg_mag$gms$s56_cprice_red_factor;no_ghgprices_land_until;var_luc;cfg_mag$gms$s15_elastic_demand;cfg_mag$gms$s29_treecover_scenario_start;cfg_mag$gms$s29_treecover_target;cfg_mag$gms$s59_scm_scenario_start;cfg_mag$gms$s59_scm_target;cfg_mag$gms$c60_1stgen_biodem;cfg_mag$gms$s56_limit_ch4_n2o_price
+M-SSP2-NPi;1;;;SSP2|NPI|AR-natveg|nocc_hist;;y2150;raw;1;;0;;0;const2030;734
+VLLO-SSP1-PkBudg650;1;;;VLLO|SSP1-POP-GDP|NDC|AR-natveg|nocc_hist;;y2030;raw;1;2025;0.02;2025;0.2;const2030;734
+VLLO-SSP2-PkBudg650;1;;;SSP2|NDC|AR-natveg|nocc_hist;;y2030;raw;1;2025;0.02;2025;0.2;const2030;734
+M-SSP2-NPi-KLW;1;;;SSP2|NPI|AR-natveg|cc|rcp4p5;;y2150;raw;1;;0;;;const2030;734
+VLLO-SSP2-KLW;1;;;SSP2|NDC|AR-natveg|cc|rcp1p9;;y2030;raw;1;2025;0.02;2025;0.2;const2030;734
+VLLO-SSP1-KLW;1;;;VLLO|SSP1-POP-GDP|NDC|AR-natveg|cc|rcp1p9;;y2030;raw;1;2025;0.02;2025;0.2;const2030;734
