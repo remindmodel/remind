@@ -1,9 +1,9 @@
 # This script is part of a longer workflow. 
 # Before running this script please perform the steps described here
-# https://gitlab.pik-potsdam.de/REMIND/remind-rse/-/wikis/How-to-create-a-REMIND-release
+# https://gitlab.pik-potsdam.de/REMIND/remind-rse/-/wikis/Topics/release
 
 # in your fork switch to temporary branch (e.g. release-candidate) and
-# execute this script in the main folder Rscript scripts/utils/release.R x.y.z
+# execute this script in the main folder with Rscript scripts/utils/release.R x.y.z
 
 release <- function(newVersion) {
   if (Sys.which("sbatch") == "") {
@@ -72,9 +72,14 @@ release <- function(newVersion) {
   #message("Committing and pushing changes")
   #gert::git_commit(paste("remind release", newVersion))
   #gert::git_push()
+  
+  # add renv snapshot to local archive
+  archivePath <- piamenv::archiveRenv() # Lockfile written to .../renv/archive/YYYY-MM-DDThhmmss_renv.lock
+  system(paste0("mv ", archivePath, " renv/archive/", newVersion, "_renv.lock"))
+  system(paste0("git add -f renv/archive/", newVersion, "_renv.lock"))
 
   message("Creating tag")
-  tag <- paste0("v",newVersion)
+  tag <- paste0("v", newVersion)
   gert::git_tag_create(name = tag, message = "new tag", repo = ".")
   gert::git_tag_push(name = tag, repo = ".")
   
