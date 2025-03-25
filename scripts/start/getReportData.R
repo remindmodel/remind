@@ -35,7 +35,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
     rem <- mag |>
       inner_join(mapping, by = c("variable" = "mag"),       # combine tables keeping relevant variables only
                  relationship = "many-to-one",              # each row in x (mag) matches at most 1 row in y (mapping)
-                 unmatched = c("drop", "error"))         |> # drop rows from x that are not in y, all rows in y must be in x
+                 unmatched = c("drop", "error"))         |> # drop rows from x that are not in y, error: all rows in y must be in x
       mutate(value = value * factorMag2Rem)              |> # apply unit conversion
       group_by(period, region, rem)                      |> # define groups for summation
       summarise(value = sum(value))                      |> # sum MAgPIE emissions (mag) that have the same enty in remind (rem)
@@ -61,7 +61,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
     mag <- mag |>
       inner_join(mapping, by = c("variable" = "mag"),       # combine tables keeping relevant variables only
                  relationship = "many-to-one",              # each row in x (mag) matches at most 1 row in y (mapping)
-                 unmatched = c("drop", "error"))         |> # drop rows from x that are not in y, all rows in y must be in x
+                 unmatched = c("drop", "error"))         |> # drop rows from x that are not in y, error: all rows in y must be in x
       mutate(value = value * factorMag2Rem)              |> # apply unit conversion
       mutate(value = round(value, digits = 11))          |> # limit number of decimals
       relocate(period, .before = region)                 |> # put period in front of region for proper order for GAMS import
@@ -71,18 +71,18 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
       readr::write_csv(file = file, col_names = TRUE, append = TRUE)
 
     write(paste0("*** EOF ", file ," ***"), file = file, append = TRUE)
+
     return(mag)
   }
   
   ### ---- Emissions ----
   
   # define three columns of dataframe:
-  #   emimag (magpie emission names)
-  #   emirem (remind emission names)
-  #   factorMag2Rem (factor for converting magpie to remind emissions)
-  #   1/1000*28/44, # kt N2O/yr -> Mt N2O/yr -> Mt N/yr
-  #   28/44,        # Tg N2O/yr =  Mt N2O/yr -> Mt N/yr
-  #   1/1000*12/44, # Mt CO2/yr -> Gt CO2/yr -> Gt C/yr
+  #   mag (magpie emission names)
+  #   rem (remind emission names)
+  #   factorMag2Rem (factor for converting magpie units into remind units)
+  #   nitrogen: 28/44,        # Tg N2O/yr =  Mt N2O/yr -> Mt N/yr
+  #   carbon:   1/1000*12/44, # Mt CO2/yr -> Gt CO2/yr -> Gt C/yr
   
   mag2rem <- tribble(
     ~mag,                                                                             ~rem,                       ~factorMag2Rem,
