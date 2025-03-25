@@ -10,8 +10,8 @@ This quick start guide is based on the other tutorials. It is only directly appl
 - clone the code (instead of a full github clone and checkout)
 	-  `cloneremind https://github.com/<yourusername>/remind.git DESTINATION_FOLDER`
 	- why? this will keep the data references from the HPC and reduce the size of the operation
-- Check the state of your repo
-	- navigate to your repo `cd myrepo`
+- Check the state of your remind repo
+	- navigate to your repo `cd <myremind_repo_location>`
 	- `git remote -v`
 - Switch to a stable release
 	- run `git fetch --all --tags` if you forgot to get the tags
@@ -22,7 +22,7 @@ This quick start guide is based on the other tutorials. It is only directly appl
 # 2. Preliminaries
 
 ## Overview of Remind code
-Read [REMIND - REgional Model of INvestments and Development – Overview](https://rse.pik-potsdam.de/doc/remind/3.2.0/) or equivalently the comment starting `main.gams` . This will be helpful in terms of understanding the code.
+Read [REMIND - REgional Model of INvestments and Development – Overview](https://rse.pik-potsdam.de/doc/remind/3.2.0/) or equivalently the comment starting `main.gms` . This will be helpful in terms of understanding the code.
 This [tutorial](https://www.gams.com/latest/docs/UG_Tutorial.html) is recommended by the group.
 ## !! Renv !!
 Note that REMIND **releases do not come with a locked environment** ([see the associated issue, which may be closed by the time you start](https://github.com/remindmodel/development_issues/issues/528)). This means that you will need to restore the version corresponding to your release: for example `make historic-reqs v=2024-12-11` where the date should be replaced with that of the release (see [here](https://github.com/remindmodel/development_issues/issues/528)) 
@@ -39,7 +39,6 @@ Note that REMIND **releases do not come with a locked environment** ([see the as
 	- do not edit `default.cfg` which is actually an R script
 - check your run
 	- `Rscript start.R --test config/<myfirstrun_cfg>.csv`
-	- press enter to (mock) submit to the priority queue
 - launch your run
 	- `Rscript start.R config/<myfirstrun_cfg>.csv`
 	- press enter to submit to the priority queue 
@@ -56,7 +55,7 @@ Note that REMIND **releases do not come with a locked environment** ([see the as
 	- you can also define a more power alias such as `alias sq='squeue -u $USER -o "%.18i %.9P %q %.30j %.8u %.5T %.10M %.9l %.6D %R"'` in your `.bashrc` and run that
 	- if needed you can also check the state of the hpc with `sinfo` and `sacct` commands
 - you should get an email once your run finishes
-	- remind runs in about 3 hours
+	- remind standard runs take about 3 hours  
 
 >[!warning] Failed runs with release versions
 > note that remind releases are not currently shipped with an exact (locked) environment and you may therefore run into dependency issues.
@@ -70,7 +69,7 @@ In short, from your REMIND folder run
 - `Rscript output.R`
 - Select comparison across runs: `2: Comparison across runs`
 - and then `compareScenarios2`
-- submit to priority (Not sure how to deal with this if you are not on cluster)
+- submit to priority (if you are on the cluster, otherwise current R session will be used. Note that the script takes some time)
 	- this takes on the order of 15 minutes on the hpc cluster (!?)
 	- your results will be saved to your code root folder
 
