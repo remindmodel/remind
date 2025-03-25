@@ -5,6 +5,14 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/21_tax/on/presolve.gms
+
+*** If net-nagative emissions tax is calculated across iterations, deactivate it in iteration 1 and for calculation of tax revenue at the beginning of iteration 2
+if( (cm_NetNegEmi_calculation eq 1) AND (iteration.val le 2),
+    s21_frac_NetNegEmi = 0;
+  else
+    s21_frac_NetNegEmi = cm_frac_NetNegEmi;
+);
+
 *JS*
 *** calculation of tax rate, as a function of per-capita gdp levels
 p21_tau_so2_tax(ttot,regi)$(ttot.val ge 2005)=s21_so2_tax_2010*pm_gdp(ttot,regi)/pm_pop(ttot,regi);  !! scaled by GDP/cap in the unit [trn US$/bn people]
@@ -22,8 +30,9 @@ pm_taxrevCO2LUC0(t,regi) = pm_taxCO2eqSum(t,regi) * vm_emiMacSector.l(t,regi,"co
 p21_taxrevCCS0(ttot,regi) = cm_frac_CCS * pm_data(regi,"omf","ccsinje") * pm_inco0_t(ttot,regi,"ccsinje") 
                             * ( sum(teCCS2rlf(te,rlf), sum(ccs2te(ccsCo2(enty),enty2,te), vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf) ) ) )
                             * (1/pm_ccsinjecrate(regi)) * sum(teCCS2rlf(te,rlf), sum(ccs2te(ccsCo2(enty),enty2,te), vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf) ) ) / pm_dataccs(regi,"quan","1");
-pm_taxrevNetNegEmi0(ttot,regi) = cm_frac_NetNegEmi * pm_taxCO2eqSum(ttot,regi) * vm_emiALLco2neg.l(ttot,regi);
-p21_emiALLco2neg0(ttot,regi)  = vm_emiALLco2neg.l(ttot,regi);
+pm_taxrevNetNegEmi0(ttot,regi) = s21_frac_NetNegEmi * pm_taxCO2eqSum(ttot,regi) * ( (1 - cm_NetNegEmi_calculation) * vm_emiAllco2neg.l(ttot,regi) + cm_NetNegEmi_calculation * v21_emiAllco2neg_acrossIterations.l(ttot,regi) );
+p21_emiALLco2neg0(ttot,regi)  = vm_emiAllco2neg.l(ttot,regi);
+p21_emiAllco2neg_acrossIterations0(ttot,regi)  = v21_emiAllco2neg_acrossIterations.l(ttot,regi);
 p21_taxrevFE0(ttot,regi) = sum((entyFe,sector)$entyFe2Sector(entyFe,sector),
     ( p21_tau_fe_tax(ttot,regi,sector,entyFe) + p21_tau_fe_sub(ttot,regi,sector,entyFe) )
     *
@@ -53,5 +62,23 @@ p21_taxrevChProdStartYear0(t,regi) = sum(en2en(enty,enty2,te), vm_changeProdStar
 p21_taxrevSE0(t,regi) =     sum(se2se(enty,enty2,te)$(teSeTax(te)), 
                                     v21_tau_SE_tax.l(t,regi,te) 
                                   * vm_demSe.l(t,regi,enty,enty2,te));
+
+*** If net-nagative emissions tax is calculated across iterations, activate net-negative emissions tax in iteration 2 after computation of tax revenue from iteration 1
+if( (cm_NetNegEmi_calculation eq 1) AND (iteration.val ge 2),
+    s21_frac_NetNegEmi= cm_frac_NetNegEmi;
+);
+
+*** Compute reference gross emissions p21_referenceGrossEmissions based on p21_grossEmissions in previous iterations
+if(iteration.val eq 1, !! Equal to zero in first iteration (note that no NNE tax is applied in first iteration)
+    p21_referenceGrossEmissions(ttot,regi) = 0; 
+  elseif iteration.val le 10, !! Equal to gross emissions from previous iteration
+    p21_referenceGrossEmissions(ttot,regi) = sum(iteration2$(iteration2.val eq iteration.val - 1), p21_grossEmissions(iteration2,ttot,regi));
+  else !! Equal to weighted average gross emissions of previous three iterations
+    p21_referenceGrossEmissions(ttot,regi) = sum(iteration2$(iteration2.val eq iteration.val - 3), p21_grossEmissions(iteration2,ttot,regi)) / 6
+                                             + sum(iteration2$(iteration2.val eq iteration.val - 2), p21_grossEmissions(iteration2,ttot,regi)) / 3
+                                             + sum(iteration2$(iteration2.val eq iteration.val - 1), p21_grossEmissions(iteration2,ttot,regi)) / 2;
+);
+
+p21_referenceGrossEmissions_iter(iteration,ttot,regi) = p21_referenceGrossEmissions(ttot,regi);
 
 *** EOF ./modules/21_tax/on/presolve.gms
