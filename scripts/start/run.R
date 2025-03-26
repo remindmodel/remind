@@ -172,7 +172,8 @@ run <- function() {
 
     # fulldatapath may be written into gdx paths of subsequent runs
     fulldatapath <- paste0(cfg_main$remind_folder,"/",cfg_main$results_folder,"/fulldata.gdx")
-    possible_pathes_to_gdx <- c("input.gdx", "input_ref.gdx", "input_refpolicycost.gdx", "input_bau.gdx", "input_carbonprice.gdx")
+    possible_pathes_to_gdx <- c("input.gdx", "input_ref.gdx", "input_refpolicycost.gdx",
+                                "input_bau.gdx", "input_carbonprice.gdx", "input_damage.gdx")
 
     # Loop possible subsequent runs, saving path to fulldata.gdx of current run (== cfg_main$title) to their cfg files
 
