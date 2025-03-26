@@ -318,7 +318,7 @@ v21_taxrevNetNegEmi(t,regi) =e= s21_frac_NetNegEmi * pm_taxCO2eqSum(t,regi)
 *'  if vm_emiAll is negative, in order to minimize tax v21_emiAllco2neg_slack becomes zero
 ***---------------------------------------------------------------------------
 q21_emiAllco2neg(t,regi)..
-vm_emiAllco2neg(t,regi) =e= -vm_emiAll(t,regi,"co2") + v21_emiALLco2neg_slack(t,regi);
+vm_emiAllco2neg(t,regi) =e= -vm_emiAll(t,regi,"co2") + v21_emiAllco2neg_slack(t,regi);
 
 ***---------------------------------------------------------------------------
 *'  Auxiliary calculation of net-negative CO2 emissions as difference of gross CDR in the current iteration and gross emissions in the previous iteration: 

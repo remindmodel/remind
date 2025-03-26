@@ -11,7 +11,7 @@ pm_taxrevCO2Sector0(ttot,all_regi,emi_sectors)                      "reference l
 pm_taxrevCO2LUC0(ttot,all_regi)                                     "reference level value of co2luc emission tax"
 p21_taxrevCCS0(ttot,all_regi)                                       "reference level value of CCS tax"
 pm_taxrevNetNegEmi0(ttot,all_regi)                                  "reference level value of net-negative emissions tax"
-p21_emiALLco2neg0(ttot,all_regi)                                    "reference level value of net-negative CO2 emissions in the current iteration"
+p21_emiAllco2neg0(ttot,all_regi)                                    "reference level value of net-negative CO2 emissions in the current iteration"
 p21_emiAllco2neg_acrossIterations0(ttot,all_regi)                   "reference level value of net-negative CO2 emissions as difference of gross CDR in the current iteration and gross emissions in the previous iteration"
 p21_taxrevPE0(ttot,all_regi,all_enty)                               "reference level value of primary energy tax"
 p21_taxrevFE0(ttot,all_regi)                                        "reference level value of final energy tax"
@@ -132,7 +132,7 @@ v21_taxrevSE(ttot,all_regi)                                         "tax on SE e
 
 Positive Variable
 vm_emiAllco2neg(ttot,all_regi)                                      "net-negative CO2 emissions (as positive variable)"
-v21_emiALLco2neg_slack(ttot,all_regi)                               "dummy variable to extract net-negative CO2 emissions from emiAll"
+v21_emiAllco2neg_slack(ttot,all_regi)                               "dummy variable to extract net-negative CO2 emissions from emiAll"
 v21_emiAllco2neg_acrossIterations(ttot,all_regi)                    "net-negative CO2 emissions as difference of gross CDR in the current iteration and gross emissions in the previous iteration (as positive variable)"
 v21_emiAllco2neg_acrossIterations_slack(ttot,all_regi)              "dummy variable to compute v21_emiAllco2neg_acrossIterations"
 v21_tau_SE_tax(ttot,all_regi,all_te)                                "tax rate of tax on SE electricity demand, used for taxes on electrolysis"
