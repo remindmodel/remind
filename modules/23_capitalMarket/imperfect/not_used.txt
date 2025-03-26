@@ -1,2 +1,0 @@
-name,type,reason
-vm_damageFactor,input,added by codeCheck
