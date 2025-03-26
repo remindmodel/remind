@@ -23,6 +23,7 @@ model <- paste("REMIND", paste0(strsplit(gms::readDefaultConfig(".")$model_versi
 removeFromScen <- ""                           # you can use regex such as: "_diff|_expoLinear"
 renameScen <- NULL                             # c(oldname1 = "newname1", …), without the `C_` and `-rem-[0-9]` stuff
 addToScen <- NULL                              # is added at the beginning
+timesteps <- c(seq(2005, 2060, 5), seq(2070, 2100, 10))
 
 # filenames relative to REMIND main directory (or use absolute path) 
 mapping <- NULL                                # file obtained from piamInterfaces, or AR6/SHAPE/NAVIGATE or NULL to get asked
@@ -47,6 +48,9 @@ projects <- list(
                     mapping = c("AR6", "AR6_NGFS"),
                     iiasatemplate = "https://files.ece.iiasa.ac.at/ngfs-phase-5/ngfs-phase-5-template.xlsx",
                     removeFromScen = "C_|_bIT|_bit|_bIt|_KLW"),
+  RIKEN = list(model = "REMIND-MAgPIE 3.4-4.8",
+               mapping = c("ScenarioMIP", "MAGICC7_AR6"),
+               checkSummation = "ScenarioMIP"),
   ScenarioMIP = list(model = "REMIND-MAgPIE 3.4-4.8",
                      mapping = "ScenarioMIP",
                      iiasatemplate = "https://files.ece.iiasa.ac.at/ssp-submission/ssp-submission-template.xlsx",
@@ -170,7 +174,8 @@ withCallingHandlers({ # piping messages to logFile
                           removeFromScen = removeFromScen, addToScen = addToScen,
                           outputDirectory = outputFolder, checkSummation = checkSummation,
                           logFile = logFile, outputFilename = basename(OUTPUT_xlsx),
-                          iiasatemplate = iiasatemplate, generatePlots = TRUE)
+                          iiasatemplate = iiasatemplate, generatePlots = TRUE,
+                          timesteps = timesteps)
 
 }, message = function(x) {
   cat(x$message, file = logFile, append = TRUE)
