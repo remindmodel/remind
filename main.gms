@@ -1724,7 +1724,7 @@ $setglobal cm_taxCO2_interpolation  off    !! def = "off"
 *** cm_taxCO2_startYearValue  "switch for manually choosing regional carbon prices in cm_startyear that are used as starting point for interpolation"
 *** (off): no manual values provided, i.e. carbonprice trajectory given by path_gdx_ref is used for interpolation
 *** Setting cm_taxCO2_startYearValue to GLO 50, SSA 5, CHA 40 means that in cm_startyear, SSA has carbon price of 5$/tCO2,  CHA has carbon price of 40$/tCO2, and all other regions have carbon price of 50$/tCO2.
-$setglobal cm_taxCO2_startYearValue !! def = "off"
+$setglobal cm_taxCO2_startYearValue off !! def = "off"
 *** cm_taxCO2_lowerBound_path_gdx_ref "switch for choosing if carbon price trajectories from path_gdx_ref are used as lower bound"
 *** (on): carbon price trajectories (pm_taxCO2eq) from path_gdx_ref is used as lower bound for pm_taxCO2eq
 *** (off): no lower bound
