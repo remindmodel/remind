@@ -32,9 +32,6 @@ mifmodel <- getItems(inreport, "model")
 mifscenario <- getItems(inreport, "scenario")
 inreport <- dimReduce(inreport)
 
-str(inreport)
-
-
 # Loads CEDS 2020 emissions from the input data, at both CEDS and IAMC sectoral levels
 cedsceds <- read.magpie("./core/input/p_emissions4ReportExtraCEDS.cs4r")
 cedsiamc <- read.magpie("./core/input/p_emissions4ReportExtraIAMC.cs4r")
@@ -121,21 +118,10 @@ outmif$region <- as.character(outmif$region)
 outmif[outmif$region == "GLO", "region"] <- "World"
 
 # To make sure we don't have duplicates, we have to write the inreport part again
-# Removing generated variables from inreport
-# keepvars <- setdiff(getItems(inreport, "variable"), getItems(out, "variable"))
-# inreport <- inreport[,,keepvars]
-
-# # Before we convert to quitte, we have to handle some nonstandard units
-# allvars <- getItems(inreport, "variable")
-# getItems(inreport, "variable") <- str_replace(allvars, "\\(p\\|t\\)", "9999REPLACEME9999")
-
-# # Do the the quitte conversion and replace back the units
-# inmif <- as.quitte(inreport)
-# inmif$unit <- str_replace(inmif$unit, "9999REPLACEME9999", "(p|t)")
-
 # To avoid unsafe conversions from quitte to magclass, read the mif again already as a quitte
 message("### reportExtraEmissions: Reading mif again to remove duplicates at ", round(Sys.time()))
 inmif <- read.quitte(remind_reporting_file)
+# Removing generated variables from inreport
 inmif <- filter(inmif, variable %in% setdiff(unique(inmif$variable),unique(outmif$variable)))
 
 # Append the mifs, now that we don't have duplicates,
