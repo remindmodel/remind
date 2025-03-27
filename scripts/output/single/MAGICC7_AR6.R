@@ -39,49 +39,16 @@ if (!exists("source_include")) {
   readArgs("outputdir", "gdxName", "gdx_ref_name", "gdx_refpolicycost_name")
 }
 
+runTimes <- c()
+runTimes <- c(runTimes, "set_up_assessment start" = Sys.time())
 # Normalize the output directory path, removing trailing slashes
 outputdir <- sub("/+$", "", normalizePath(outputdir, mustWork = TRUE))
 # cfg is a list containing all relevant paths and settings for the climate assessment
 cfg <- climateAssessmentConfig(outputdir, "report")
 # Keep track of runtimes of different parts of the script
-runTimes <- c()
 cat(date(), "MAGICC7_AR6.R:", reportClimateAssessmentConfig(cfg), file = cfg$logFile, append = TRUE)
 
-#################### PREPARING EMISSIONS INPUT ####################################################
-
-remindReportingFile <- normalizePath(file.path(outputdir, paste0("REMIND_generic_", cfg$scenario, ".mif")), mustWork = TRUE)
-cat(date(), "MAGICC7_AR6.R: Using ", remindReportingFile, file = cfg$logFile, append = TRUE)
-runTimes <- c(runTimes, "preprocessing start" = Sys.time())
-
-climateAssessmentInputData <- as.quitte(remindReportingFile) %>%
-  # Consider only the global region
-  filter(region %in% c("GLO", "World")) %>%
-  # Extract only the variables needed for climate-assessment. These are provided from the iiasaTemplates in the
-  # piamInterfaces package. See also:
-  # https://github.com/pik-piam/piamInterfaces/blob/master/inst/iiasaTemplates/climate_assessment_variables.yaml
-  generateIIASASubmission(
-    mapping = "AR6",
-    outputFilename = NULL,
-    iiasatemplate = cfg$variablesFile,
-    logFile = cfg$logFile
-  ) %>%
-  mutate(region = factor("World")) %>%
-  # Rename the columns using str_to_title which capitalizes the first letter of each word
-  rename_with(str_to_title) %>%
-  # Transforms the yearly values for each variable from a long to a wide format. The resulting data frame then has
-  # one column for each year and one row for each variable
-  pivot_wider(names_from = "Period", values_from = "Value") %>%
-  write_csv(cfg$remindEmissionsFile, quote = "none")
-
-runTimes <- c(runTimes, "preprocessing end" = Sys.time())
-cat(
-  date(), "MAGICC7_AR6.R: Extracted REMIND emission data to", cfg$remindEmissionsFile, "for climate-assessment\n",
-  file = cfg$logFile, append = TRUE
-)
-
 #################### PYTHON/MAGICC SETUP ##########################################################
-
-runTimes <- c(runTimes, "set_up_assessment start" = Sys.time())
 
 dir.create(cfg$climateDir, showWarnings = FALSE)
 dir.create(cfg$workersDir, showWarnings = FALSE)
@@ -108,6 +75,25 @@ runClimateEmulatorCmd <- paste(
 
 runTimes <- c(runTimes, "set_up_assessment end" = Sys.time())
 
+#################### PREPARING EMISSIONS INPUT ####################################################
+
+remindReportingFile <- normalizePath(
+  file.path(outputdir, paste0("REMIND_generic_", cfg$scenario, ".mif")),
+  mustWork = TRUE
+)
+cat(date(), "MAGICC7_AR6.R: Using ", remindReportingFile, file = cfg$logFile, append = TRUE)
+runTimes <- c(runTimes, "preprocessing start" = Sys.time())
+
+climateAssessmentInputData <- as.quitte(remindReportingFile) %>%
+  emissionDataForClimateAssessment(cfg$scenario, logFile = cfg$logFile) %>%
+  write_csv(cfg$remindEmissionsFile, quote = "none")
+
+runTimes <- c(runTimes, "preprocessing end" = Sys.time())
+cat(
+  date(), "MAGICC7_AR6.R: Extracted REMIND emission data to", cfg$remindEmissionsFile, "for climate-assessment\n",
+  file = cfg$logFile, append = TRUE
+)
+
 #################### HARMONIZATION/INFILLING ######################################################
 
 runTimes <- c(runTimes, "harmonization_infilling start" = Sys.time())
@@ -127,22 +113,14 @@ cat(date(), "MAGICC7_AR6.R: Done with climate assessment\n", file = cfg$logFile,
 if (!file.exists(cfg$climateAssessmentFile)) {
   stop(date(), "MAGICC7_AR6.R: Climate assessment output file not found")
 }
-cat(date(), " MAGICC7_AR6.R: Produced '", cfg$climateAssessmentFile, "'\n", sep = "", file = cfg$logFile, append = TRUE)
+cat(date(), "MAGICC7_AR6.R: Produced", cfg$climateAssessmentFile, "\n", file = cfg$logFile, append = TRUE)
 
 runTimes <- c(runTimes, "postprocessing start" = Sys.time())
 # Filter only periods used in REMIND, so that it doesn't expand the original mif
-usePeriods <- as.numeric(grep("[0-9]+", quitte::read_mif_header(remindReportingFile)$header, value = TRUE))
+periods <- as.numeric(grep("[0-9]+", quitte::read_mif_header(remindReportingFile)$header, value = TRUE))
 climateAssessmentData <- read.quitte(cfg$climateAssessmentFile) %>%
-  filter(period %in% usePeriods) %>%
-  interpolate_missing_periods(usePeriods, expand.values = FALSE) %>%
-  mutate(variable = gsub("|MAGICCv7.5.3", "", .data$variable, fixed = TRUE)) %>%
-  mutate(variable = gsub("AR6 climate diagnostics|", "MAGICC7 AR6|", .data$variable, fixed = TRUE))
-
-as.quitte(remindReportingFile) %>%
-  # remove data from old MAGICC7 runs to avoid duplicated
-  filter(! grepl("AR6 climate diagnostics.*MAGICC7", .data$variable), ! grepl("^MAGICC7 AR6", .data$variable)) %>%
-  rbind(climateAssessmentData) %>%
-  write.mif(remindReportingFile)
+  cleanUpClimateAssessment(periods = periods) %>%
+  appendClimateAssessmentToMif(remindReportingFile)
 piamutils::deletePlus(remindReportingFile, writemif = TRUE)
 
 runTimes <- c(runTimes, "postprocessing end" = Sys.time())
@@ -153,7 +131,7 @@ cat(
 
 #################### CLEAN UP WORKERS FOLDER ######################################################
 
-# openscm_runner not remnove up temp dirs. Do this manually since we keep running into file ownership issues
+# openscm_runner does not remnove up temp dirs. Do this manually since we keep running into file ownership issues
 if (dir.exists(cfg$workersDir)) {
   # Check if directory is empty
   if (length(list.files(cfg$workersDir)) == 0) {
@@ -163,7 +141,7 @@ if (dir.exists(cfg$workersDir)) {
 }
 cat(date(), "MAGICC7_AR6.R: Removed workers folder\n", file = cfg$logFile, append = TRUE)
 
-#################### RUNTIME REPORT ############################
+#################### RUNTIME REPORT ###############################################################
 
 cat(
   date(), " MAGICC7_AR6.R: Run times in secs:\n", runTimeReport(runTimes, prefix = "  "), "\n",
