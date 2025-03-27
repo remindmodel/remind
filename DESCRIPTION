@@ -61,6 +61,7 @@ Imports:
     readr,
     readxl,
     remind2 (>= 1.167.0),
+    remindClimateAssessment (== 0.0.2.9001),
     renv (>= 1.1.1),
     reshape2,
     reticulate,
