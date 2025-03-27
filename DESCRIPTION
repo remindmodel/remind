@@ -3,7 +3,8 @@ Title: REMIND - REgional Model of INvestments and Development
 Version: 0.1
 Date: 2024-07-04
 Description: This is not a package yet, the purpose of this file is to
-    document metadata, notably dependencies.
+    document metadata, notably dependencies required by the R scripts.
+    Initialization of the renv will be based on this DESCRIPTION file.
 License: file LICENSE
 URL: https://github.com/remindmodel/remind,
     https://doi.org/10.5281/zenodo.6794920
@@ -25,7 +26,7 @@ Imports:
     gdxdt,
     gdxrrw,
     ggplot2,
-    gms (>= 0.33.0),
+    gms (>= 0.33.4),
     goxygen (>= 1.4.4),
     gridExtra,
     gtools,
@@ -45,16 +46,11 @@ Imports:
     magpiesets,
     mip (>= 0.150.0),
     modelstats,
-    mrremind (>= 0.215.1),
-    mrcommons (>= 1.50.2),
-    mrdrivers (>= 6.1.0),
-    mrtransport (>= 0.10.6),
-    mrvalidation,
     ncdf4,
     nleqslv,
     optparse,
     piamenv (>= 0.6.0),
-    piamInterfaces (>= 0.42.0),
+    piamInterfaces (>= 0.48.1),
     piamPlotComparison (>= 0.0.10),
     piamutils,
     plotly,

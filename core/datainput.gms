@@ -10,7 +10,7 @@
 vm_co2eq.l(ttot,regi) = 0;
 vm_emiAll.l(ttot,regi,enty) = 0;
 vm_emiCO2Sector.l(ttot,all_regi,emi_sectors) = 0;
-
+pm_taxCO2eqSum(ttot,regi) = 0;
 
 *** initialize parameter (avoid compilation errors)
 *** do this at the start of datainput to prevent accidental overwriting

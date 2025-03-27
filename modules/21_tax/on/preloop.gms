@@ -6,32 +6,6 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/21_tax/on/preloop.gms
 
-***initialize co2 market taxes
-pm_taxemiMkt(t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
-pm_taxemiMkt_iteration(iteration,t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
-
-***-------------------------------------------------------------------
-***           overwrite default targets with gdx values
-***-------------------------------------------------------------------
-Execute_Loadpoint 'input' p21_tau_CO2_tax_gdx = pm_taxCO2eq;
-if (cm_gdximport_target eq 1,
-*** only if tax rates not all equal to zero
-if (smax((t,regi),p21_tau_CO2_tax_gdx(t,regi)$(t.val gt 2030)) gt 0,
-pm_taxCO2eq(t,regi) = p21_tau_CO2_tax_gdx(t,regi);
-);
-);
-if (cm_emiscen ne 9,
-    pm_taxCO2eq(t, regi) = 0;
-);
-***-------------------------------------------------------------------
-***           overwrite co2 tax for delay runs with gdx values
-***-------------------------------------------------------------------
-if ( (cm_startyear gt 2005),
-Execute_Loadpoint 'input_ref' p21_tau_CO2_tax_gdx_bau = pm_taxCO2eq;
-pm_taxCO2eq(ttot,regi)$((ttot.val gt 2005) AND (ttot.val lt cm_startyear)) = p21_tau_CO2_tax_gdx_bau(ttot,regi);
-);
-
-display pm_taxCO2eq;
 
 *** Adjustment of final energy subsidies to avoid neg. implicit 2005 prices that result in huge demand increases in 2010 and 2015
 *** Maximum final energy subsidy levels (in $/Gj) from REMIND version prior to rev. 5429
@@ -149,8 +123,12 @@ $endif.SEtaxRampUpParam
 
 *LB* initialization of vm_emiMac
 vm_emiMac.l(ttot,regi,enty) = 0;
-*LB* initialization of vm_emiALLco2neg
-vm_emiALLco2neg.l(ttot,regi) =0;
+*** initialization of vm_emiAllco2neg and v21_emiAllco2neg_acrossIterations
+vm_emiAllco2neg.l(ttot,regi) =0;
+v21_emiAllco2neg_acrossIterations.l(ttot,regi) =0;
+
+*** initialization of p21_grossEmissions
+p21_grossEmissions(iteration,t,regi) = 0;
 
 *DK initialize bioenergy tax
 v21_tau_bio.l(ttot) = 0;

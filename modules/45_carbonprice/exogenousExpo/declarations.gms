@@ -4,12 +4,9 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/45_carbonprice/none/datainput.gms
-***----------------------------
-*** CO2 Tax level
-***----------------------------
+*** SOF ./modules/45_carbonprice/NDCexpo/declarations.gms
+parameters
+    p45_tau_co2_tax(ttot,all_regi)   "Exogenous CO2 tax level [T$/GtC]"
+;
 
-*** CO2 tax level is set to zero
-pm_taxCO2eq(t,regi) = 0;
-
-*** EOF ./modules/45_carbonprice/none/datainput.gms
+*** EOF ./modules/45_carbonprice/NDCexpo/declarations.gms
