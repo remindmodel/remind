@@ -12,11 +12,11 @@ SMIPv06-M-SSP1-NPi2025-def;0,M,SSP1,def;SMIPv06-M-SSP2-NPi2025-def;;;;SSP1|NPI|A
 SMIPv06-ML-SSP1-PkBudg1500-def;0,ML,SSP1,def;SMIPv06-ML-SSP2-PkBudg1600-def;;;;SSP1|NPI|AR-natveg|nocc_hist;;;;;;;;;;;;;;;
 SMIPv06-L-SSP1-PkBudg1000-def;0,L,SSP1,def;SMIPv06-L-SSP2-PkBudg1000-def;;;;SSP1|NDC|AR-natveg|nocc_hist;;;;;;;;;;;;;;;
 SMIPv06-VLHO-SSP1-EcBudg400-def;0,VLHO,SSP1,def;SMIPv06-VLHO-SSP2-EcBudg400-def;;;;SSP1|NPI|AR-plant|nocc_hist;;;;;;;;;;;;;;;
-SMIPv06-M-SSP3-NPi2025-def;0,M,SSP3,def;SMIPv06-M-SSP2-NPi2025-def;;;;SSP3|NPI|AR-natveg|nocc_hist;;;;;;;;;;;;;;;
-SMIPv06-ML-SSP3-PkBudg1800-def;0,ML,SSP3,def;SMIPv06-ML-SSP2-PkBudg1600-def;;;;SSP3|NPI|AR-natveg|nocc_hist;;;;;;;;;;;;;;;
-SMIPv06-L-SSP3-PkBudg1000-def;0,L,SSP3,def;SMIPv06-L-SSP2-PkBudg1000-def;;;;SSP3|NDC|AR-natveg|nocc_hist;;;;;;;;;;;;;;;
-SMIPv06-VLHO-SSP3-EcBudg400-def;0,VLHO,SSP3,def;SMIPv06-VLHO-SSP2-EcBudg400-def;;;;SSP3|NPI|AR-plant|nocc_hist;;;;;;;;;;;;;;;
-SMIPv06-VLLO-SSP3-PkBudg650-def;0,VLLO,SSP3,def;SMIPv06-VLLO-SSP1-PkBudg650-def;;;;VLLO|SSP3-POP-GDP|NDC|AR-natveg|nocc_hist;;;;;;;;;;;;;;;
+SMIPv06-M-SSP3-NPi2025-def;0,M,SSP3,def;SMIPv06-M-SSP2-NPi2025-def;;;;SSP3|NPI|AR-natveg|nocc_hist;;;;;;;;;;;;;;;SSP2
+SMIPv06-ML-SSP3-PkBudg1800-def;0,ML,SSP3,def;SMIPv06-ML-SSP2-PkBudg1600-def;;;;SSP3|NPI|AR-natveg|nocc_hist;;;;;;;;;;;;;;;SSP2
+SMIPv06-L-SSP3-PkBudg1000-def;0,L,SSP3,def;SMIPv06-L-SSP2-PkBudg1000-def;;;;SSP3|NDC|AR-natveg|nocc_hist;;;;;;;;;;;;;;;SSP2
+SMIPv06-VLHO-SSP3-EcBudg400-def;0,VLHO,SSP3,def;SMIPv06-VLHO-SSP2-EcBudg400-def;;;;SSP3|NPI|AR-plant|nocc_hist;;;;;;;;;;;;;;;SSP2
+SMIPv06-VLLO-SSP3-PkBudg650-def;0,VLLO,SSP3,def;SMIPv06-VLLO-SSP1-PkBudg650-def;;;;VLLO|SSP3-POP-GDP|NDC|AR-natveg|nocc_hist;;;;;;;;;;;;;;;SSP2
 RIKEN-VLLO-SSP2-PkBudg650-var;0;SMIPv06-VLLO-SSP1-PkBudg650-def;;;;SSP2|NDC|AR-natveg|nocc_hist;;;;;;;;;;;;;;;
 SMIPv06-L-SSP2-PkBudg1000-var_yr2035;0,L,SSP2,var;SMIPv06-L-SSP2-PkBudg1000-def;;;;;;;;;;;;;;;;;;;
 SMIPv06-L-SSP2-PkBudg1000-var_yr2050;0,L,SSP2,var;SMIPv06-L-SSP2-PkBudg1000-def;;;;;;;;;;;;;;;;;;;
