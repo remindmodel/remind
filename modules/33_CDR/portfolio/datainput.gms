@@ -68,7 +68,8 @@ loop(ext_regi$f33_EW_maxShareOfCropland(ext_regi),
     p33_EW_maxShareOfCropland(regi)$(regi_groupExt(ext_regi, regi)) = f33_EW_maxShareOfCropland(ext_regi);
   );
 
-*** ocean alkalinity enhancement input data (Kowalczyk et al., 2024)
+
+*' #### ocean alkalinity enhancement input data (Kowalczyk et al., 2024)
 
 !! An assumption; generally the efficiency might vary between 0.9-1.4 tCO2/tCaO (1.2-1.8 molCO2/molCaO),
 !! depending on e.g., ocean chemistry and currents in a given region
@@ -86,6 +87,25 @@ if(cm_33_OAE_scen = 0, !! pessimistic scenario for distribution, high diesel dem
 
 if(cm_33_OAE_scen = 1, !! optimistic scenario for distribution, lower diesel demand
     p33_fedem(te_oae33, "fedie") = 0.77 / s33_OAE_efficiency; !! 770 MJ/tCaO (corresponds to the discharge rate of 100 t/h)
+);
+
+*' data for distribution of global oae limit based on EEZ size
+*' @stop
+parameter p33_EEZdistribution(all_regi)    "share in total EEZ area [fraction]"
+/
+$ondelim
+$include "./modules/33_CDR/portfolio/input/p33_EEZdistribution.cs4r"
+$offdelim
+/
+;
+display p33_EEZdistribution;
+*' @code
+
+*' Distribute global limit set for OAE based on size of EEZ
+if (cm_33_OAE_limit_EEZ gt 0,
+    p33_oae_eez_limit(regi) = cm_33_OAE_limit_EEZ / (sm_c_2_co2 * 1000) * p33_EEZdistribution(regi) ; !! [Mt CO2] / [Mt CO2/Gt C] * fraction = [Gt C]
+else
+    p33_oae_eez_limit(regi) = 10; !! 10 Gt C ocean uptake effectively means no upper limit (i.e. 36.67 Gt CO2 by one region alone) 
 );
 
 *' #### All CDR qoptions

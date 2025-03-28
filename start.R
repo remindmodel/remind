@@ -61,7 +61,9 @@ acceptedFlags <- c("0" = "--reset", "1" = "--testOneRegi", d = "--debug", g = "-
                    r = "--restart", R = "--reprepare", t = "--test", h = "--help", q = "--quick")
 startgroup <- "1"
 flags <- lucode2::readArgs("startgroup", "titletag", "slurmConfig", .flags = acceptedFlags, .silent = TRUE)
-if (exists("slurmConfig") && slurmConfig %in% paste(seq(1:16))) {
+if ("--test" %in% flags) {
+  slurmConfig <- choose_slurmConfig(identifier = "1")
+ } else if (exists("slurmConfig") && slurmConfig %in% paste(seq(1:16))) {
   slurmConfig <- choose_slurmConfig(identifier = slurmConfig)
 }
 

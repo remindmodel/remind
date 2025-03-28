@@ -19,7 +19,7 @@ scen <- lucode2::getScenNames(outputdir)
 mif  <- file.path(outputdir, paste0("REMIND_generic_", scen, ".mif"))
 mifdata <- as.quitte(mif)
 envi <- new.env()
-load(file.path(outputdir, "config.Rdata"), env =  envi)
+load(file.path(outputdir, "config.Rdata"), envir = envi)
 
 stopmessage <- NULL
 
@@ -31,13 +31,14 @@ relDiff <- 0.01
 sources <- paste0("R",
                   if (isTRUE(envi$cfg$gms$CES_parameters == "load")) "T",
                   if (any(grepl("^MAgPIE", levels(mifdata$model)))) "M")
+mifdata <- mutate(mifdata, model = factor(paste(levels(mifdata$model), collapse = "-"))) # checkSummations need one single model
 message("\n### Check existence of variables in mappings.")
 missingVariables <- checkMissingVars(mifdata, setdiff(names(mappingNames()), c("AgMIP", "AR6_MAgPIE")), sources)
 if (length(missingVariables) > 0) message("Check piamInterfaces::variableInfo('variablename') etc.")
 
 checkMappings <- list( # list(mappings, summationsFile, skipBunkers)
   list(c("NAVIGATE", "ELEVATE"), "NAVIGATE", FALSE),
-  list("ScenarioMIP", NULL, FALSE)
+  list("ScenarioMIP", "ScenarioMIP", FALSE)
 )
 
 for (i in seq_along(checkMappings)) {
