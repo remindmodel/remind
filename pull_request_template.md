@@ -1,8 +1,12 @@
 ## Purpose of this PR
 
+Please explain your PR here
+
 ## Type of change
 
-> **NOTE** Make sure to select the items relevant to your PR by placing an "x" in the brackets. *Delete* the lines you left empty. This way the progress tracker accurately reflects the status of the PR. Leave *unfinished* elements in the checklist unchecked so we know how far along you are.
+Make sure to select the items relevant to your PR by placing an "x" in the brackets. 
+*Delete* the lines you left empty. This way the progress tracker accurately reflects the status of the PR. 
+Leave *unfinished* elements in the checklist unchecked so we know how far along you are.
 
 ### Parts concerned:
 - [ ] GAMS Code
@@ -30,7 +34,6 @@ Dont delete any line
 - [ ] Must: I checked that the [in-code documentation](https://github.com/remindmodel/remind/blob/develop/main.gms#L120) is up-to-date
 - [ ] I adjusted the reporting in [`remind2`](https://github.com/pik-piam/remind2) where it was needed
 - [ ] I adjusted `forbiddenColumnNames` in [readCheckScenarioConfig.R](https://github.com/remindmodel/remind/blob/develop/scripts/start/readCheckScenarioConfig.R) in case the PR leads to deprecated switches
-raus: - [ ] I checked the `log.txt` file of my runs for newly introduced summation, fixing or variable name errors
 - [ ] I executed the automated model tests (`make test`) after my final commit and all tests pass (`FAIL 0`)
 - [ ] I updated the `CHANGELOG.md` [correctly](https://gitlab.pik-potsdam.de/rse/rsewiki/-/wikis/Standards-for-Writing-a-Changelog) (added, removed, changed, CES, ...s)
 
