@@ -92,10 +92,17 @@ prepare <- function() {
   # ATTENTION: modifying gms files
 
   # Create input file with exogenous CO2 tax using the CO2 price from another run
-  if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "exogenous") && (!is.na(cfg$files2export$start["input_carbonprice.gdx"]))){
+  if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice %in% c("exogenous", "exogenousExpo")) && (!is.na(cfg$files2export$start["input_carbonprice.gdx"]))){
     cat("\nRun scripts/input/create_input_for_45_carbonprice_exogenous.R to create input file with exogenous CO2 tax from another run.\n")
     source("scripts/input/create_input_for_45_carbonprice_exogenous.R")
-    create_input_for_45_carbonprice_exogenous(as.character(cfg$files2export$start["input_carbonprice.gdx"]))
+    create_input_for_45_carbonprice_exogenous(as.character(cfg$files2export$start["input_carbonprice.gdx"]), cfg$gms$carbonprice)
+  }
+
+  # Create input file with exogenous damage parameters using the damage parameter from another run
+  if(!is.null(cfg$gms$damages) && (cfg$gms$damages == "exogenous") && (!is.na(cfg$files2export$start["input_damage.gdx"]))){
+    cat("\nRun scripts/input/create_input_for_50_damage_exogenous.R to create input file with exogenous damage factor from another run.\n")
+    source("scripts/input/create_input_for_50_damage_exogenous.R")
+    create_input_for_50_damage_exogenous(as.character(cfg$files2export$start["input_damage.gdx"]))
   }
 
   # If a path to a MAgPIE report is supplied use it as REMIND input (used for REMIND-MAgPIE coupling)

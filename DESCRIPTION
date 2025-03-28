@@ -50,7 +50,7 @@ Imports:
     nleqslv,
     optparse,
     piamenv (>= 0.6.0),
-    piamInterfaces (>= 0.42.0),
+    piamInterfaces (>= 0.48.1),
     piamPlotComparison (>= 0.0.10),
     piamutils,
     plotly,
