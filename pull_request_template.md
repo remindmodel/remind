@@ -7,7 +7,7 @@
 *Indicate the items relevant for your PR by replacing* :white_medium_square: *with* :ballot_box_with_check:.\
 *Do not delete any lines. This makes it easier to understand which areas are affected by your changes and which are not.*
 
-### Parts concerned:
+### Parts concerned
 - :white_medium_square: GAMS Code
 - :white_medium_square: R-scripts
 - :white_medium_square: Documentation (GAMS incode documentation, comments, tutorials)
@@ -15,7 +15,7 @@
 - :white_medium_square: CI/CD (continuous integration/development)
 - :white_medium_square: Other (please give a description)
 
-### Impact:
+### Impact
 - :white_medium_square: Bug fix
 - :white_medium_square: Refactoring
 - :white_medium_square: New feature
@@ -37,7 +37,7 @@ In the end all checkboxes must be ticked before you can merge*
 - [ ] **I executed the automated model tests (`make test`) after my final commit and all tests pass (`FAIL 0`)**
 
 
-## Further information (optional):
+## Further information (optional)
 
 * Runs with these changes are here:
 * Comparison of results (what changes by this PR?): 
