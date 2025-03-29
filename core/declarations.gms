@@ -151,6 +151,9 @@ p_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Initial 
 pm_shGasLiq_fe_up(ttot,all_regi,emi_sectors)         "Final energy gases plus liquids shares exogenous upper bounds per sector"
 pm_shGasLiq_fe_lo(ttot,all_regi,emi_sectors)         "Final energy gases plus liquids shares exogenous lower bounds per sector"
 
+p_demFeSector0(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Final Energy demand in the previous iteration"
+pm_demFeTotal0(ttot,all_regi)                        "Total Final Energy demand in the previous iteration"
+
 p_adj_coeff_Orig(ttot,all_regi,all_te)               "initial value of p_adj_coeff"
 p_adj_seed_te_Orig(ttot,all_regi,all_te)             "initial value of p_adj_seed_te"
 $ifthen not "%cm_adj_seed_cont%" == "off"
