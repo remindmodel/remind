@@ -165,7 +165,7 @@ f04_IO_output("2005",regi,"sehe","fehei","tdhei")$(p04_IO_output_beforeFix_Total
 
 *** end adjustment of f04_IO_output to pm_fedemand values
 
-*** convert data from EJ to TWa
+*** convert data from EJ to TWa. Do this for tall (not ttot) because the input data is yearly
 f04_IO_input(tall,regi,all_enty,all_enty2,all_te) = f04_IO_input(tall,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
 f04_IO_output(tall,regi,all_enty,all_enty2,all_te) = f04_IO_output(tall,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
 
