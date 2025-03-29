@@ -184,7 +184,7 @@ $endif.scaleDemand
 
 p_boundtmp(tall,all_regi,all_te,rlf)                 "read-in bound on capacities"
 p_bound_cap(tall,all_regi,all_te,rlf)                "read-in bound on capacities"
-pm_f04_IO_output(tall,all_regi,all_enty,all_enty,all_te)    "copy of f04_IO_output to make it available in core bounds"
+pm_IO_output(tall,all_regi,all_enty,all_enty,all_te)    "copy of f04_IO_output to make it available in core bounds"
      
 pm_data(all_regi,char,all_te)                        "Large array for most technical parameters of technologies; more detail on the individual technical parameters can be found in the declaration of the set 'char' "
 pm_cf(tall,all_regi,all_te)                          "Installed capacity availability - capacity factor (fraction of the year that a plant is running)"
