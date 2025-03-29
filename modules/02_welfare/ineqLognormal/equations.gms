@@ -54,7 +54,7 @@ $ifthen %cm_INCONV_PENALTY% == "on"
       - v02_inconvPen(ttot,regi)
       - v02_inconvPenSolidsBuild(ttot,regi)
 $endif
-$ifthen "%cm_INCONV_PENALTY_FESwitch%" == "on"
+$ifthen.INCONV_bioSwitch not "%cm_INCONV_PENALTY_FESwitch%" == "off"
       - sum((entySe,entyFe,te,sector,emiMkt)$(
                                     se2fe(entySe,entyFe,te)
                                 AND entyFe2Sector(entyFe,sector)
@@ -63,8 +63,9 @@ $ifthen "%cm_INCONV_PENALTY_FESwitch%" == "on"
           v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
           + v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
           )
-          / 1e3	!! heuristically determined rescaling factor so the dampening doesn't dominate the transformation
-$endif
+          / 1e3 !! heuristically determined rescaling factor so the dampening doesn't dominate the transformation
+          * pm_demFeTotal0(ttot,regi) / pm_demFeTotal0(ttot,"%cm_INCONV_PENALTY_FESwitchRegi%") !! scale by relative total FE demand
+$endif.INCONV_bioSwitch
 $ifthen not "%cm_seFeSectorShareDevMethod%" == "off"
         !! penalizing secondary energy share deviation in sectors  
         - vm_penSeFeSectorShareDevCost(ttot,regi)
@@ -318,7 +319,7 @@ $ENDIF.INCONV
 *** between two time steps in buildings and industry and emissison markets
 *** necessary to avoid switching behavior in sectors and emissions markets
 *** between time steps as those sectors and markets do not have se2fe capcities
-$IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_FESwitch%" == "on"
+$IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_FESwitch%" == "constant"
 q02_inconvPenFeBioSwitch(ttot,regi,entySe,entyFe,te,sector,emiMkt)$(
                                   ttot.val ge cm_startyear
                               AND se2fe(entySe,entyFe,te) 
@@ -327,6 +328,23 @@ q02_inconvPenFeBioSwitch(ttot,regi,entySe,entyFe,te,sector,emiMkt)$(
                               AND (entySeBio(entySe) OR  entySeFos(entySe)) ) ..
     vm_demFeSector(ttot,regi,entySe,entyFe,sector,emiMkt) 
   - vm_demFeSector(ttot-1,regi,entySe,entyFe,sector,emiMkt)
+  + v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+  - v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+  =e=
+  0
+;
+$ELSEIF.INCONV_bioSwitch "%cm_INCONV_PENALTY_FESwitch%" == "linear"
+q02_inconvPenFeBioSwitch(ttot,regi,entySe,entyFe,te,sector,emiMkt)$(
+                                  ttot.val ge cm_startyear
+                              AND ttot.val < 2150
+                              AND se2fe(entySe,entyFe,te) 
+                              AND entyFe2Sector(entyFe,sector) 
+                              AND sector2emiMkt(sector,emiMkt) 
+                              AND (entySeBio(entySe) OR  entySeFos(entySe)) ) ..
+  (vm_demFeSector(ttot+1,regi,entySe,entyFe,sector,emiMkt)
+  - vm_demFeSector(ttot,regi,entySe,entyFe,sector,emiMkt))
+  - (vm_demFeSector(ttot,regi,entySe,entyFe,sector,emiMkt) 
+  - vm_demFeSector(ttot-1,regi,entySe,entyFe,sector,emiMkt))
   + v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
   - v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
   =e=

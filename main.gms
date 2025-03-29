@@ -1782,9 +1782,17 @@ $setGLobal c_agricult_base_shift off !! def off
 ***  cm_INCONV_PENALTY  on     !! def = on
 *** *RP* 2012-03-06 Flag to turn on inconvenience penalties, e.g. for air pollution
 $setglobal cm_INCONV_PENALTY  on         !! def = on  !! regexp = off|on
-*** cm_INCONV_PENALTY_FESwitch  off     !! def = off
-*** flag to trun on inconvenience penalty to avoid switching shares on buildings, transport and industry biomass use if costs are relatively close (seLiqbio, sesobio, segabio)
-$setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on  !! regexp = off|on
+*** cm_INCONV_PENALTY_FESwitch  linear     !! def = linear
+*** flag to run on inconvenience penalty to avoid switching shares on buildings, transport and industry biomass use if costs are relatively close (seLiqbio, sesobio, segabio)
+*** The penalty acts on changes in FE demand for each sector and SE-FE combination.
+*** (off): No inconvenience penalty
+*** (linear): Inconvenience penalty favors linear FE development
+*** (constant): Inconvenience penalty favors constant FE development
+$setglobal cm_INCONV_PENALTY_FESwitch  constant !! def = linear  !! regexp = off|linear|constant
+*** cm_INCONV_PENALTY_FESwitchRegi
+*** Switch to determine the reference region for the scaling of the FE switch penalty.
+*** Needs to be a valid Remind region and should be a region with average total FE demand compared to other regions.
+$setglobal cm_INCONV_PENALTY_FESwitchRegi  USA !! def = USA  !! regexp = [A-Z]{3}
 *** cm_seFeSectorShareDevMethod "Switch to enable an optimization incentive for sectors to have similar shares of secondary energy fuels and determine the method used for the incentive."
 *** Possible values: off or the method name (sqSectorShare, sqSectorAvrgShare, or minMaxAvrgShare)
 ***  off               "The model can freely allocate bio/syn/fossil fuels between sectors. If not off, a penalization term is added so sectors are incentivized to apply similar shares of bio-fuels, synfuels, and fossils in each sector."
