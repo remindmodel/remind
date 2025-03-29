@@ -559,7 +559,8 @@ $ENDIF.transpGDPscale
 v_changeProdStartyearSlack.up(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = + c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
 v_changeProdStartyearSlack.lo(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = - c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
 
-*** RP: add lower bound on 2020 coal chp use to have a more realistic starting point
-vm_prodSe.lo("2020",regi,"pecoal","seel","coalchp") = 0.8 * f04_IO_output("2020",regi,"pecoal","seel","coalchp") ; 
+*** RP: add lower bound on 2020 coal chp and upper bound on gas chp based on IEA data to have a more realistic starting point
+vm_prodSe.lo("2020",regi,"pecoal","seel","coalchp") = 0.8 * f04_IO_output("2020",regi,"pecoal","seel","coalchp") ;
+vm_prodSe.up("2020",regi,"pegas","seel","gaschp") = 1e-4 + 1.3 * f04_IO_output("2020",regi,"pegas","seel","gaschp") ;
 
 *** EOF ./core/bounds.gms
