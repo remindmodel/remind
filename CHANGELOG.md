@@ -32,6 +32,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **core** merge cm_GDPscen and cm_POPscen into cm_GDPpopScen [[#1973](https://github.com/remindmodel/remind/pull/1973)]
 - **45_carbonprice** realization 'none' only sets carbon price to 0 for t >= cm_startyear
     [[#2056](https://github.com/remindmodel/remind/pull/2056)]
+- **scripts** Redesigned pull request template. No lines to delete anymore. Checkboxes only in the checklist.
+    [[#2063](https://github.com/remindmodel/remind/pull/2063)]
 
 ### added
 -
