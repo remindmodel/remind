@@ -26,16 +26,15 @@
 ## Checklist
 
 *Do not delete any line. Leave **unfinished** elements unchecked so others know how far along you are.\
-In the end all checkboxes must be ticked before you can merge*
+In the end all checkboxes must be ticked before you can merge*.
 
+- [ ] **I executed the automated model tests (`make test`) after my final commit and all tests pass (`FAIL 0`)**
+- [ ] **I adjusted the reporting in [`remind2`](https://github.com/pik-piam/remind2) if and where it was needed**
 - [ ] My code follows the [coding etiquette](https://github.com/remindmodel/remind/blob/develop/main.gms#L80)
 - [ ] I explained my changes within the PR, particularly in hard-to-understand areas
 - [ ] I checked that the [in-code documentation](https://github.com/remindmodel/remind/blob/develop/main.gms#L120) is up-to-date
-- [ ] **I adjusted the reporting in [`remind2`](https://github.com/pik-piam/remind2) if and where it was needed**
 - [ ] I adjusted `forbiddenColumnNames` in [readCheckScenarioConfig.R](https://github.com/remindmodel/remind/blob/develop/scripts/start/readCheckScenarioConfig.R) in case the PR leads to deprecated switches
 - [ ] I updated the `CHANGELOG.md` [correctly](https://gitlab.pik-potsdam.de/rse/rsewiki/-/wikis/Standards-for-Writing-a-Changelog) (added, changed, fixed, removed, input data/calibration)
-- [ ] **I executed the automated model tests (`make test`) after my final commit and all tests pass (`FAIL 0`)**
-
 
 ## Further information (optional)
 
