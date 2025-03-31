@@ -11,7 +11,7 @@ $if %cm_less_TS% == "on"  pm_welf("2060") = 0.9;
 
 *RP* 2012-03-06: Inconvenience costs on seprod
 $IFTHEN.INCONV %cm_INCONV_PENALTY% == "on"
-p02_inconvpen_lap(ttot,regi,"coaltr")$(ttot.val ge 2005)      = sm_D2005_2_D2017 * 0;    !! In dollar per GJ seprod at 1.000$/cap GDP, or 10$/GJ at 10.000$_GDP/cap
+p02_inconvpen_lap(ttot,regi,"coaltr")$(ttot.val ge 2005)      = sm_D2005_2_D2017 * 0.5;    !! In dollar per GJ seprod at 1.000$/cap GDP, or 10$/GJ at 10.000$_GDP/cap
 p02_inconvpen_lap(ttot,regi,"coaltr")$( (ttot.val ge 2005) AND (ttot.val le 2025) ) = 0.33 * p02_inconvpen_lap("2050",regi,"coaltr");  !! phase-in to decrease jump from historic 2020 fesob|foss to model 2025 results
 p02_inconvpen_lap("2030",regi,"coaltr") = 0.66 * p02_inconvpen_lap("2050",regi,"coaltr");  !! phase-in to decrease jump from historic 2020 fesob|foss to model 2025 results
 
