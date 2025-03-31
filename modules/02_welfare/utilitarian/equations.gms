@@ -42,10 +42,19 @@ q02_welfare(regi) ..
       + log(vm_cons(ttot,regi) / pm_pop(ttot,regi))$( pm_ies(regi) eq 1 )
           )
         )
-$ifthen %cm_INCONV_PENALTY% == "on"
+
+$ifthen.inconvPen %cm_INCONV_PENALTY% == "on"
       - v02_inconvPen(ttot,regi)
+
+*RP Only turn on the inconv costs for fossil solids in buildings when the run is NOT a calibration run - in calibration runs, this inconv cost resulted in strong fluctuations.
+*RP Turning them on only shifts fossil solids from buildings to industry, so makes results more realistic, but overall FE use is not changed much - so this difference between 
+*RP calibration and normal model runs shouldn't be a problem
+$ifthen.notCalibration NOT "%CES_parameters%" == "calibrate"     
       - v02_inconvPenSolidsBuild(ttot,regi)
-$endif
+$endif.notCalibration      
+
+$endif.inconvPen
+
 $ifthen.INCONV_bioSwitch not "%cm_INCONV_PENALTY_FESwitch%" == "off"
         !! inconvenience cost for fuel switching in FE between fossil,
         !! biogenic, synthetic solids, liquids and gases across sectors and
