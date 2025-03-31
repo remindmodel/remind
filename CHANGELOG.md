@@ -32,6 +32,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **core** merge cm_GDPscen and cm_POPscen into cm_GDPpopScen [[#1973](https://github.com/remindmodel/remind/pull/1973)]
 - **45_carbonprice** realization 'none' only sets carbon price to 0 for t >= cm_startyear
     [[#2056](https://github.com/remindmodel/remind/pull/2056)]
+- **scripts** Updated renv version from to 1.1.1 to 1.1.4
+    [[#2065](https://github.com/remindmodel/remind/pull/2065)]
 
 ### added
 -
