@@ -51,6 +51,15 @@ $endif
 
 display p_emineg_econometric;
 
+*** Calculate total FE demand of previous iteration or input gdx.
+*** Required as a weight for penalty terms
+p_demFeSector0(ttot,regi,entySe,entyFe,sector,emiMkt) = vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt);
+
+pm_demFeTotal0(ttot, regi)
+  = sum((entySe,entyFe,sector,emiMkt)$( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ),
+  p_demFeSector0(ttot,regi,entySe,entyFe,sector,emiMkt))
+;
+
 ***--------------------------------------
 *** calculate some emission factors
 ***--------------------------------------
