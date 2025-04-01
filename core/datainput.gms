@@ -1017,6 +1017,7 @@ $include "./core/input/f_maxProdGradeRegiWindOff.cs3r"
 $offdelim
 ;
 pm_dataren(all_regi,"maxprod",rlf,"windoff") = sm_EJ_2_TWa * f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf);
+pm_dataren(all_regi,"nur",rlf,"windoff")     = f_maxProdGradeRegiWindOff(all_regi,"nur",rlf);
 
 pm_shareWindPotentialOff2On(all_regi) =
     sum(rlf $ (rlf.val le 8), f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf))
