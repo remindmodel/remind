@@ -75,7 +75,7 @@ out <- mbind(
   out,
   setNames(
     inreport[, , "ES|Transport|Bunkers|Freight"] * ef,
-    "Emi|CH4|Extra|Transport|Bunkers|Freight (kt N20/yr)"
+    "Emi|CH4|Extra|Transport|Bunkers|Freight (Mt CH4/yr)"
   )
 )
 # N2O from domestic+international aviation
@@ -115,7 +115,7 @@ out <- mbind(
   out,
   setNames(
     tmp * ef,
-    "Emi|N2O|Extra|Buildings|Gases|Fossil (Mt CH4/yr)"
+    "Emi|N2O|Extra|Buildings|Gases|Fossil (kt N2O/yr)"
   )
 )
 
