@@ -575,38 +575,46 @@ $endif.cm_subsec_model_steel
 route(all_te)  "Process routes; Currently only used for reporting"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-    ChemRo_Old
-    ChemRo_Elec
-    ChemRo_H2
 
-    StCrNG_Ro
-    StCrLiq_Ro
+     otherChem_old
+     otherChem_elec
+     otherChem_h2
 
-    MeSyRo_Sol !! methanol tech QIANZHI
-    MeSyRo_Sol_greenh2
-    MeSyRo_NG
-    MeSyRo_Liq
-    MeSyRo_Sol_ccs
-    MeSyRo_NG_ccs
-    MeSyRo_Liq_ccs
-    MeSyRo_H2
+     HVC_stCrLiq
+     HVC_stCrNg
+     HVC_meSol
+     HVC_meNg
+     HVC_meLiq
+     HVC_meSol_gh2
+     HVC_meSol_cc
+     HVC_meNg_cc
+     HVC_meLiq_cc
+     HVC_meh2
 
-    AmSyRo_Coal !! ammonia tech QIANZHI
-    AmSyRo_NG
-    AmSyRo_Liq
-    AmSyRo_Coal_ccs
-    AmSyRo_NG_ccs
-    AmSyRo_Liq_ccs
-    AmSyRo_H2
+     fertilizer_amSol
+     fertilizer_amNg
+     fertilizer_amLiq
+     fertilizer_amLiq_cc
+     fertilizer_amNg_cc
+     fertilizer_amSol_cc
+     fertilizer_amh2
 
-    MtOMtA_Ro
-    MtOMtAH2_Ro
-    FertProd_Ro
-    FertProdH2_Ro
-    MeToFinal_Ro
-    MeToFinalH2_Ro
-    AmToFinal_Ro
-    AmToFinalH2_Ro
+     meFinal_sol
+     meFinal_ng
+     meFinal_liq
+     meFinal_sol_gh2
+     meFinal_sol_cc
+     meFinal_ng_cc
+     meFinal_liq_cc
+     meFinal_h2
+
+     amFinal_sol
+     amFinal_ng
+     amFinal_liq
+     amFinal_sol_cc
+     amFinal_ng_cc
+     amFinal_liq_cc
+     amFinal_h2
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idreaf_ng
@@ -833,44 +841,43 @@ $endif.cm_subsec_model_steel
 tePrc2route(all_te,opmoPrc,route)  "Mapping of technologies onto the production routes they belong to"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-   ChemOld . standard . ChemRo_Old
-   ChemElec . standard . ChemRo_Elec
-   ChemH2 . standard . ChemRo_H2
 
-   StCrNG . standard . StCrNG_Ro
-   StCrLiq . standard . StCrLiq_Ro
+   ChemOld  . standard . otherChem_old
+   ChemElec . standard . otherChem_elec
+   ChemH2   . standard . otherChem_h2
 
-   MeSySol . greenh2 . MeSyRo_Sol_greenh2 !! methanol tech QIANZHI
-   MeSySol . standard . MeSyRo_Sol
-   MeSySol . standard . MeSyRo_Sol_ccs
-   MeSyNG  . standard  . MeSyRo_NG
-   MeSyNG  . standard  . MeSyRo_NG_ccs
-   MeSyLiq . standard  . MeSyRo_Liq
-   MeSyLiq . standard  . MeSyRo_Liq_ccs
-   MeSySolcc  . standard  . MeSyRo_Sol_ccs
-   MeSyNGcc   . standard  . MeSyRo_NG_ccs
-   MeSyLiqcc  . standard  . MeSyRo_Liq_ccs
-   MeSyH2  . standard  . MeSyRo_H2
+   StCrNG    . standard . HVC_stCrLiq
+   StCrLiq   . standard . HVC_stCrNg
 
-   AmSyCoal . standard . AmSyRo_Coal !! ammonia tech QIANZHI
-   AmSyCoal . standard . AmSyRo_Coal_ccs
-   AmSyNG . standard . AmSyRo_NG
-   AmSyNG . standard . AmSyRo_NG_ccs
-   AmSyLiq . standard . AmSyRo_Liq
-   AmSyLiq . standard . AmSyRo_Liq_ccs
-   AmSyCoalcc . standard . AmSyRo_Coal_ccs
-   AmSyNGcc . standard . AmSyRo_NG_ccs
-   AmSyLiqcc . standard . AmSyRo_Liq_ccs
-   AmSyH2 . standard . AmSyRo_H2
+   MeSySol   . standard . (HVC_meSol,     meFinal_sol, HVC_meSol_cc,  meFinal_sol_cc)
+   MeSyNG    . standard . (HVC_meNg,      meFinal_ng,  HVC_meNg_cc,   meFinal_ng_cc)
+   MeSyLiq   . standard . (HVC_meLiq,     meFinal_liq, HVC_meLiq_cc,  meFinal_liq_cc)
+   MeSySol   . greenh2  . (HVC_meSol_gh2, meFinal_sol_gh2)
+   MeSySolcc . standard . (HVC_meSol_cc,  meFinal_sol_cc)
+   MeSyNGcc  . standard . (HVC_meNg_cc,   meFinal_ng_cc)
+   MeSyLiqcc . standard . (HVC_meLiq_cc,  meFinal_liq_cc)
+   MeSyH2    . standard . (HVC_meh2,      meFinal_h2)
 
-   MtOMtA . standard . MtOMtA_Ro
-   MtOMtAH2 . standard . MtOMtAH2_Ro
-   FertProd . standard . FertProd_Ro
-   FertProdH2 . standard . FertProdH2_Ro
-   MeToFinal . standard . MeToFinal_Ro
-   MeToFinal . greenh2 . MeToFinal_Ro
-   AmToFinal . standard . AmToFinal_Ro
-   AmToFinal . greenh2 . AmToFinalH2_Ro
+   AmSyCoal   . standard . (fertilizer_amSol,    amFinal_sol, fertilizer_amSol_cc, amFinal_sol_cc)
+   AmSyNG     . standard . (fertilizer_amNg,     amFinal_ng,  fertilizer_amNg_cc,  amFinal_ng_cc)
+   AmSyLiq    . standard . (fertilizer_amLiq,    amFinal_liq, fertilizer_amLiq_cc, amFinal_liq_cc)
+   AmSyCoalcc . standard . (fertilizer_amSol_cc, amFinal_sol_cc)
+   AmSyNGcc   . standard . (fertilizer_amNg_cc,  amFinal_ng_cc)
+   AmSyLiqcc  . standard . (fertilizer_amLiq_cc, amFinal_liq_cc)
+   AmSyH2     . standard . (fertilizer_amh2,     amFinal_h2)
+
+   MtOMtA     . standard . (HVC_meSol, HVC_meSol_gh2, HVC_meNg, HVC_meLiq,
+                            HVC_meSol_cc, HVC_meNg_cc, HVC_meLiq_cc)
+   MtOMtAH2   . standard . HVC_meh2
+   FertProd   . standard . (fertilizer_amSol, fertilizer_amNg, fertilizer_amLiq,
+                            fertilizer_amSol_cc, fertilizer_amNg_cc, fertilizer_amLiq_cc)
+   FertProdH2 . standard . fertilizer_amh2
+   MeToFinal  . standard . (meFinal_sol, meFinal_sol_gh2, meFinal_ng, meFinal_liq,
+                            meFinal_sol_cc, meFinal_ng_cc, meFinal_liq_cc)
+   MeToFinal  . greenh2  . meFinal_h2
+   AmToFinal  . standard . (amFinal_sol, amFinal_ng, amFinal_liq,
+                            amFinal_sol_cc, amFinal_ng_cc, amFinal_liq_cc)
+   AmToFinal  . greenh2  . amFinal_h2
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     eaf . sec . seceaf
@@ -886,6 +893,51 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bof . unheated . bfbof
     bof . unheated . bfbof_ccs
     bfcc . standard . bfbof_ccs
+$endif.cm_subsec_model_steel
+  /
+
+routeCC(route)  "TODO"
+  /
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+    HVC_meSol_cc
+    HVC_meNg_cc
+    HVC_meLiq_cc
+    fertilizer_amLiq_cc
+    fertilizer_amNg_cc
+    fertilizer_amSol_cc
+    meFinal_sol_cc
+    meFinal_ng_cc
+    meFinal_liq_cc
+    amFinal_sol_cc
+    amFinal_ng_cc
+    amFinal_liq_cc
+
+$endif.cm_subsec_model_chemicals
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+    idreaf_ng_ccs
+    bfbof_ccs
+$endif.cm_subsec_model_steel
+  /
+
+routeCC2baseRoute(route,route) "TODO"
+  /
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+    HVC_meSol_cc         . HVC_meSol
+    HVC_meNg_cc          . HVC_meNg
+    HVC_meLiq_cc         . HVC_meLiq
+    fertilizer_amLiq_cc  . fertilizer_amLiq
+    fertilizer_amNg_cc   . fertilizer_amNg
+    fertilizer_amSol_cc  . fertilizer_amSol
+    meFinal_sol_cc       . meFinal_sol
+    meFinal_ng_cc        . meFinal_ng
+    meFinal_liq_cc       . meFinal_liq
+    amFinal_sol_cc       . amFinal_sol
+    amFinal_ng_cc        . amFinal_ng
+    amFinal_liq_cc       . amFinal_liq
+$endif.cm_subsec_model_chemicals
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+    idreaf_ng_ccs        . idreaf_ng
+    bfbof_ccs            . bfbof
 $endif.cm_subsec_model_steel
   /
 
@@ -1054,7 +1106,8 @@ $endif.calibrate
 
 teMat2rlf(tePrc,"1") = YES;
 alias(tePrc,tePrc1,tePrc2);
-alias(opmoPrc,opmoCCPrc,opmoPrc1,opmoPrc2);
+alias(tePrc,tePrc1,tePrc2,tePrc3);
+alias(opmoPrc,opmoCCPrc,opmoPrc1,opmoPrc2,opmoPrc3);
 alias(route,route2);
 alias(entyFeCC37,entyFeCC37_2);
 alias(secInd37_2_pf,secInd37_2_pf2);

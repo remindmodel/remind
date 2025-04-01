@@ -282,14 +282,9 @@ all_te          "all energy technologies, including from modules"
     ChemOld
     ChemElec
     ChemH2
-    ChemRo_Old
-    ChemRo_Elec
-    ChemRo_H2
 
     StCrNG
     StCrLiq
-    StCrNG_Ro
-    StCrLiq_Ro
 
     MeSySol    !! methanol tech QIANZHI
     MeSyNG
@@ -298,14 +293,6 @@ all_te          "all energy technologies, including from modules"
     MeSyNGcc
     MeSyLiqcc
     MeSyH2
-    MeSyRo_Sol
-    MeSyRo_Sol_greenh2
-    MeSyRo_Sol_ccs
-    MeSyRo_NG
-    MeSyRo_NG_ccs
-    MeSyRo_Liq
-    MeSyRo_Liq_ccs
-    MeSyRo_H2
 
     AmSyCoal   !! ammonia tech QIANZHI
     AmSyNG
@@ -314,28 +301,53 @@ all_te          "all energy technologies, including from modules"
     AmSyNGcc
     AmSyLiqcc
     AmSyH2
-    AmSyRo_Coal
-    AmSyRo_NG
-    AmSyRo_Liq
-    AmSyRo_Coal_ccs
-    AmSyRo_NG_ccs
-    AmSyRo_Liq_ccs
-    AmSyRo_H2
 
     MtOMtA
     MtOMtAH2
-    MtOMtA_Ro
-    MtOMtAH2_Ro
     FertProd
     FertProdH2
-    FertProd_Ro
-    FertProdH2_Ro
     MeToFinal
-    MeToFinal_Ro
-    MeToFinalH2_Ro
     AmToFinal
-    AmToFinal_Ro
-    AmToFinalH2_Ro
+
+    otherChem_old
+    otherChem_elec
+    otherChem_h2
+
+    HVC_stCrLiq
+    HVC_stCrNg
+    HVC_meSol
+    HVC_meNg
+    HVC_meLiq
+    HVC_meSol_gh2
+    HVC_meSol_cc
+    HVC_meNg_cc
+    HVC_meLiq_cc
+    HVC_meh2
+
+    fertilizer_amSol
+    fertilizer_amNg
+    fertilizer_amLiq
+    fertilizer_amLiq_cc
+    fertilizer_amNg_cc
+    fertilizer_amSol_cc
+    fertilizer_amh2
+
+    meFinal_sol
+    meFinal_ng
+    meFinal_liq
+    meFinal_sol_gh2
+    meFinal_sol_cc
+    meFinal_ng_cc
+    meFinal_liq_cc
+    meFinal_h2
+
+    amFinal_sol
+    amFinal_ng
+    amFinal_liq
+    amFinal_sol_cc
+    amFinal_ng_cc
+    amFinal_liq_cc
+    amFinal_h2
 
 *** technologies related to steel industry
     ironMine     "Mining of iron ore"

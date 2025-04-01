@@ -659,8 +659,8 @@ p37_specMatDem("methanolH2","MeToFinal","greenh2")        = 1;
 
 p37_specMatDem("naphtha","StCrLiq","standard")        = 0.95 * 20.56 / (sm_TWa_2_MWh/sm_giga_2_non); !!Assume 95% is feedstock
 
-p37_specMatDem("co2f","FertProdH2","standard")        = 1.52;
-p37_specMatDem("co2f","MeSyH2","standard")        = 1.373;
+p37_specMatDem("co2f","FertProdH2","standard")        = 0.43; !!12/28 for NH₂CONH₂
+p37_specMatDem("co2f","MeSyH2","standard")        = 0.375; !! 12/32 for CH₃OH
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_specMatDem("dripell","idr","ng")        = 1.44;                                           !! Source: POSTED / Average of Devlin2022, Otto2017, Volg2018, Rechberge2020
