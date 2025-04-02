@@ -42,9 +42,9 @@ if (!exists("source_include")) {
 runTimes <- c()
 runTimes <- c(runTimes, "set_up_assessment start" = Sys.time())
 # Normalize the output directory path, removing trailing slashes
-outputdir <- sub("/+$", "", normalizePath(outputdir, mustWork = TRUE))
+outputDir <- sub("/+$", "", normalizePath(outputdir, mustWork = TRUE))
 # cfg is a list containing all relevant paths and settings for the climate assessment
-cfg <- climateAssessmentConfig(outputdir, "report")
+cfg <- climateAssessmentConfig(outputDir, "report")
 # Keep track of runtimes of different parts of the script
 cat(date(), "MAGICC7_AR6.R:", reportClimateAssessmentConfig(cfg), file = cfg$logFile, append = TRUE)
 
