@@ -10,8 +10,6 @@ library(remind2)
 library(lucode2)
 library(gms)
 library(methods)
-library(edgeTransport)
-library(reporttransport)
 library(quitte)
 library(piamutils)
 ############################# BASIC CONFIGURATION #############################
@@ -49,27 +47,18 @@ if (length(remind_policy_reporting_file) > 0) {
 message("\n### start generation of mif files at ", round(Sys.time()))
 convGDX2MIF(gdx, gdx_refpolicycost = gdx_refpolicycost, file = remind_reporting_file, scenario = scenario, gdx_ref = gdx_ref)
 
-## generate EDGE-T reporting if it is needed
+## generate EDGE-T reporting
 ## the reporting is appended to REMIND_generic_<scenario>.MIF
 ## REMIND_generic_<scenario>_withoutPlus.MIF is replaced.
-
 edgetOutputDir <- file.path(outputdir, "EDGE-T")
 if (file.exists(edgetOutputDir)) {
-  if (! file.exists(file.path(edgetOutputDir, "4_Output", "vehSalesAndModeShares.RDS"))) {
-    message("EDGE-T reporting files are missing, probably because the run was killed.")
-    message("Rerunning toolIterativeEDGETransport().")
-    savewd <- getwd()
-    setwd(outputdir)
-    edgeTransport::iterativeEdgeTransport()
-    setwd(savewd)
-  }
   message("start generation of EDGE-T reporting")
-  EDGET_output <- reportEdgeTransport(edgetOutputDir,
-                                      isTransportExtendedReported = FALSE,
-                                      modelName = "REMIND",
-				                              scenarioName = scenario,
-                                      gdxPath = file.path(outputdir, "fulldata.gdx"),
-                                      isStored = FALSE)
+  EDGET_output <-   reporttransport::reportEdgeTransport(edgetOutputDir,
+                                                         isTransportExtendedReported = FALSE,
+                                                         modelName = "REMIND",
+                                                         scenarioName = scenario,
+                                                         gdxPath = file.path(outputdir, "fulldata.gdx"),
+                                                         isStored = FALSE)
 
   REMINDoutput <- as.data.table(read.quitte(file.path(outputdir, paste0("REMIND_generic_", scenario,"_withoutPlus.mif"))))
   sharedVariables <- EDGET_output[variable %in% REMINDoutput$variable | grepl(".*edge", variable)]
@@ -81,10 +70,10 @@ if (file.exists(edgetOutputDir)) {
   piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 
   #Generate transport extended mif
-  reportEdgeTransport(edgetOutputDir,
-                      isTransportExtendedReported = TRUE,
-                      gdxPath = file.path(outputdir, "fulldata.gdx"),
-                      isStored = TRUE)
+  reporttransport::reportEdgeTransport(edgetOutputDir,
+                                       isTransportExtendedReported = TRUE,
+                                       gdxPath = file.path(outputdir, "fulldata.gdx"),
+                                       isStored = TRUE)
 
   message("end generation of EDGE-T reporting")
 }
