@@ -12,14 +12,14 @@
 - :white_medium_square: R-scripts
 - :white_medium_square: Documentation (GAMS incode documentation, comments, tutorials)
 - :white_medium_square: Input data / CES parameters
-- :white_medium_square: CI/CD (continuous integration/development)
+- :white_medium_square: Tests, CI/CD (continuous integration/deployment)
 - :white_medium_square: Other (please give a description)
 
 ### Impact
 - :white_medium_square: Bug fix
 - :white_medium_square: Refactoring
 - :white_medium_square: New feature
-- :white_medium_square: Change of parameters or input data
+- :white_medium_square: Change of parameter values or input data (including CES parameters)
 - :white_medium_square: Minor change (default scenarios show only small differences)
 - :white_medium_square: Fundamental change of results of default scenarios
 
