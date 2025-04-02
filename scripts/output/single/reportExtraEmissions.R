@@ -75,7 +75,7 @@ out <- mbind(
   out,
   setNames(
     inreport[, , "ES|Transport|Bunkers|Freight"] * ef,
-    "Emi|CH4|Extra|Transport|Bunkers|Freight (kt N20/yr)"
+    "Emi|CH4|Extra|Transport|Bunkers|Freight (Mt CH4/yr)"
   )
 )
 # N2O from domestic+international aviation
@@ -108,14 +108,14 @@ out <- mbind(
 # See https://www.epa.gov/system/files/documents/2024-02/ghg-emission-factors-hub-2024.pdf
 tmp <- dimSums(inreport[, , c("FE|Buildings|Gases", "FE|Buildings|Liquids", "FE|Buildings|Solids")], dim = 3)
 ef <- setYears(
-  dimReduce(cedsceds[, 2020, "1A4a_Commercial-institutional.ch4"] + cedsceds[, 2020, "1A4b_Residential.ch4"]) /
+  dimReduce(cedsceds[, 2020, "1A4a_Commercial-institutional.n2o_n"] + cedsceds[, 2020, "1A4b_Residential.n2o_n"]) /
     tmp[, 2020, ], NULL
 )
 out <- mbind(
   out,
   setNames(
     tmp * ef,
-    "Emi|N2O|Extra|Buildings|Gases|Fossil (Mt CH4/yr)"
+    "Emi|N2O|Extra|Buildings|Gases|Fossil (kt N2O/yr)"
   )
 )
 
