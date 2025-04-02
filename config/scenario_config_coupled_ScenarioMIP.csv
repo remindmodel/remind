@@ -51,8 +51,8 @@ SMIPv06-VLLO-SSP2-PkPrice500-var;0,VLLO,SSP2,var;SMIPv06-VLLO-SSP2-PkBudg650-def
 SMIPv06-VLLO-SSP2-PkPrice600-var;0,VLLO,SSP2,var;SMIPv06-VLLO-SSP2-PkBudg650-def;;;;;;;;;;;;;;;;;;;
 SMIPv06-VLLO-SSP2-PkPrice800-var;0,VLLO,SSP2,var;SMIPv06-VLLO-SSP2-PkBudg650-def;;;;;;;;;;;;;;;;;;;
 SMIPv06-VLLO-SSP2-PkPrice1000-var;0,VLLO,SSP2,var;SMIPv06-VLLO-SSP2-PkBudg650-def;;;;;;;;;;;;;;;;;;;
-SMIPv06-VLLO-SSP1-PkBudg650-var_CCS;0,VLLO,SSP1,var;SMIPv06-VLLO-SSP1-PkPrice500-var;;;;;;;;;;;;;;;;;;;
-SMIPv06-VLLO-SSP2-PkBudg650-var_CCS;0,VLLO,SSP2,var;SMIPv06-VLLO-SSP2-PkPrice500-var;;;;;;;;;;;;;;;;;;;
+SMIPv06-VLLO-SSP1-PkPrice500-var_CCS;0,VLLO,SSP1,var;SMIPv06-VLLO-SSP1-PkPrice500-var;;;;;;;;;;;;;;;;;;;
+SMIPv06-VLLO-SSP2-PkPrice500-var_CCS;0,VLLO,SSP2,var;SMIPv06-VLLO-SSP2-PkPrice500-var;;;;;;;;;;;;;;;;;;;
 SMIPv06-VLLO-SSP1-PkPrice500-var_fossilPO;0,VLLO,SSP1,var;SMIPv06-VLLO-SSP1-PkPrice500-var;;;;;;;;;;;;;;;;;;;
 SMIPv06-VLLO-SSP2-PkPrice500-var_fossilPO;0,VLLO,SSP2,var;SMIPv06-VLLO-SSP2-PkPrice500-var;;;;;;;;;;;;;;;;;;;
 SMIPv06-VLLO-SSP1-PkPrice500-var_fossilPO_CCS;0,VLLO,SSP1,var;SMIPv06-VLLO-SSP1-PkPrice500-var;;;;;;;;;;;;;;;;;;;
