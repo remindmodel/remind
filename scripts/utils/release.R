@@ -74,8 +74,8 @@ release <- function(newVersion) {
   #gert::git_push()
   
   # add renv snapshot to local archive
-  archivePath <- piamenv::archiveRenv() # Lockfile written to .../renv/archive/YYYY-MM-DDThhmmss_renv.lock
-  system(paste0("mv ", archivePath, " renv/archive/", newVersion, "_renv.lock"))
+  archivePath <- file.path(normalizePath(renv::project()), "renv", "archive", paste0(newVersion, "_renv.lock"))
+  renv::snapshot(lockfile = archivePath)
   system(paste0("git add -f renv/archive/", newVersion, "_renv.lock"))
 
   message("Creating tag")
