@@ -27,7 +27,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1940](https://github.com/remindmodel/remind/pull/1940)]
 - **scripts** make the selection of variables and equations that are fixed on reference run automatic
     [[#2033](https://github.com/remindmodel/remind/pull/2033)]
-  **core** merge cm_GDPscen and cm_POPscen into cm_GDPpopScen [[#1973](https://github.com/remindmodel/remind/pull/1973)]
+- **core** merge cm_GDPscen and cm_POPscen into cm_GDPpopScen 
+    [[#1973](https://github.com/remindmodel/remind/pull/1973)]
+- **scripts** let the release script add a renv.lock to each new release
+    [[#2058](https://github.com/remindmodel/remind/pull/2058)]
+  
 
 ### added
 -
