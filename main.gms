@@ -1013,17 +1013,27 @@ parameter
 ;
   cm_frac_CCS          = 10;   !! def = 10
 *'
+
 parameter
   cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshooting, formulated as fraction of carbon price"
 ;
   cm_frac_NetNegEmi    = 0.5;  !! def = 0.5
-*' This tax reduces the regional effective carbon price for CO2 once regional net CO2 emissions turn negative; default is a reduction by 50 percent.
-*' As the tax applies to net CO2 emissions, both further emission reductions and CDR are disincentivised.
+*' This tax reduces the regional effective carbon price for net-negative CO2 emissions; default is a reduction by 50 percent.
 *' Fraction can be freely chosen. Guidelines:
 *'
 *' * (0)   No net negative tax, the full CO2 price always applies.
-*' * (0.5) Halves the effective CO2 price when regional net CO2 emissions turn negative.
-*' * (1)   No effective CO2 tax once regional emissions turn net-negative. Hence regions never become net-negative.
+*' * (0.5) Halves the effective CO2 price for gross CDR exceeding gross emissions.
+*' * (1)   No effective CO2 tax for gross CDR exceeding gross emissions.
+
+parameter
+  cm_NetNegEmi_calculation    "switch to choose if net-negative emissions are calculated within an iteration or across iterations"
+;
+  cm_NetNegEmi_calculation    = 0;  !! def = 0 !! regexp = 0|1
+*' (0) regional net-negative CO2 emissions are calculated within the current iteration, i.e. gross CO2 emissions of current iteration minus gross CDR of current iteration.
+*'     In this case, the net-negative emissions tax is applied to net CO2 emissions, and thus, both further CO2 emission reductions and CDR are disincentivised.
+*' (1) regional net-negative CO2 emissions are calculated across iterations, i.e. weighted average gross CO2 emissions of previous iterations minus gross CDR of current iteration.
+*'     In this case, the net-negative emissions tax is applied to the difference of gross CDR of the current iteration and gross CO2 emissions based on previous iterations, and thus, gross CDR beyond net-zero CO2 is disincentivised without incentivising gross CO2 emissions.
+*      Attention: As of now, (1) interferes with the algorithm to adjust carbon prices in 45_carbonprice/functionalForm/postsolve.gms. This will be improved before making it the default.
 
 parameter
   cm_H2InBuildOnlyAfter "Switch to fix H2 in buildings to zero until given year"
@@ -1714,7 +1724,7 @@ $setglobal cm_taxCO2_interpolation  off    !! def = "off"
 *** cm_taxCO2_startYearValue  "switch for manually choosing regional carbon prices in cm_startyear that are used as starting point for interpolation"
 *** (off): no manual values provided, i.e. carbonprice trajectory given by path_gdx_ref is used for interpolation
 *** Setting cm_taxCO2_startYearValue to GLO 50, SSA 5, CHA 40 means that in cm_startyear, SSA has carbon price of 5$/tCO2,  CHA has carbon price of 40$/tCO2, and all other regions have carbon price of 50$/tCO2.
-$setglobal cm_taxCO2_startYearValue !! def = "off"
+$setglobal cm_taxCO2_startYearValue off !! def = "off"
 *** cm_taxCO2_lowerBound_path_gdx_ref "switch for choosing if carbon price trajectories from path_gdx_ref are used as lower bound"
 *** (on): carbon price trajectories (pm_taxCO2eq) from path_gdx_ref is used as lower bound for pm_taxCO2eq
 *** (off): no lower bound
@@ -1772,9 +1782,17 @@ $setGLobal c_agricult_base_shift off !! def off
 ***  cm_INCONV_PENALTY  on     !! def = on
 *** *RP* 2012-03-06 Flag to turn on inconvenience penalties, e.g. for air pollution
 $setglobal cm_INCONV_PENALTY  on         !! def = on  !! regexp = off|on
-*** cm_INCONV_PENALTY_FESwitch  off     !! def = off
-*** flag to trun on inconvenience penalty to avoid switching shares on buildings, transport and industry biomass use if costs are relatively close (seLiqbio, sesobio, segabio)
-$setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on  !! regexp = off|on
+*** cm_INCONV_PENALTY_FESwitch  linear     !! def = linear
+*** flag to run on inconvenience penalty to avoid switching shares on buildings, transport and industry biomass use if costs are relatively close (seLiqbio, sesobio, segabio)
+*** The penalty acts on changes in FE demand for each sector and SE-FE combination.
+*** (off): No inconvenience penalty
+*** (linear): Inconvenience penalty favors linear FE development
+*** (constant): Inconvenience penalty favors constant FE development
+$setglobal cm_INCONV_PENALTY_FESwitch  constant !! def = linear  !! regexp = off|linear|constant
+*** cm_INCONV_PENALTY_FESwitchRegi
+*** Switch to determine the reference region for the scaling of the FE switch penalty.
+*** Needs to be a valid Remind region and should be a region with average total FE demand compared to other regions.
+$setglobal cm_INCONV_PENALTY_FESwitchRegi  USA !! def = USA  !! regexp = [A-Z]{3}
 *** cm_seFeSectorShareDevMethod "Switch to enable an optimization incentive for sectors to have similar shares of secondary energy fuels and determine the method used for the incentive."
 *** Possible values: off or the method name (sqSectorShare, sqSectorAvrgShare, or minMaxAvrgShare)
 ***  off               "The model can freely allocate bio/syn/fossil fuels between sectors. If not off, a penalization term is added so sectors are incentivized to apply similar shares of bio-fuels, synfuels, and fossils in each sector."
