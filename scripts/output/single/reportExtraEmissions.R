@@ -8,10 +8,6 @@ require(magrittr)
 
 readArgs("outputdir")
 
-# TESTING
-# outputdir <- "./output/SSP2-NPi2025-AMT_2025-03-21_22.16.32"
-# TESTING
-
 message("### reportExtraEmissions: started adding extra emission variable at ", round(Sys.time()))
 
 scenario <- getScenNames(outputdir)
@@ -139,6 +135,3 @@ fullmif <- rbind(inmif, outmif)
 write.mif(fullmif, remind_reporting_file, append = FALSE)
 piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 
-
-# TODO: overwrite existing Extra Variables in case reporrtinng has been run before
-# TODO: write Extra Variable to both the plus and without_plus mif
