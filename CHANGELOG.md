@@ -29,11 +29,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#2033](https://github.com/remindmodel/remind/pull/2033)]
 -_**scripts** You can define timesteps in xlsx_IIASA export script. Defaults to REMIND standard. If you want interpolation between timesteps,
     you need to adjust it. [[#2056](https://github.com/remindmodel/remind/pull/2056)]
-- **core** merge cm_GDPscen and cm_POPscen into cm_GDPpopScen [[#1973](https://github.com/remindmodel/remind/pull/1973)]
+- **core** merge cm_GDPscen and cm_POPscen into cm_GDPpopScen
+    [[#1973](https://github.com/remindmodel/remind/pull/1973)]
 - **45_carbonprice** realization 'none' only sets carbon price to 0 for t >= cm_startyear
     [[#2056](https://github.com/remindmodel/remind/pull/2056)]
 - **scripts** Updated renv version from to 1.1.1 to 1.1.4
     [[#2065](https://github.com/remindmodel/remind/pull/2065)]
+- **scripts** let the release script add a renv.lock to each new release
+    [[#2058](https://github.com/remindmodel/remind/pull/2058)]
 
 ### added
 -
