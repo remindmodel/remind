@@ -15,8 +15,8 @@ parameter f32_shCHP(ttot,all_regi) "upper boundary of chp electricity generation
 $ondelim
 $include "./modules/32_power/IntC/input/f32_shCHP.cs4r"
 $offdelim
-/
-;
+/;
+
 p32_shCHP(ttot,all_regi) = f32_shCHP(ttot,all_regi) + 0.05;
 p32_shCHP(ttot,all_regi)$(ttot.val ge 2050) = min(p32_shCHP("2020",all_regi) + 0.15, 0.75);
 p32_shCHP(ttot,all_regi)$((ttot.val gt 2020) and (ttot.val lt 2050)) = p32_shCHP("2020",all_regi) + ((p32_shCHP("2050",all_regi) - p32_shCHP("2020",all_regi)) / 30 * (ttot.val - 2020));
@@ -26,22 +26,14 @@ parameter p32_grid_factor(all_regi) "multiplicative factor that scales total gri
 $ondelim
 $include "./modules/32_power/IntC/input/p32_grid_factor.cs4r"
 $offdelim
-/
-;
+/;
 
 parameter f32_factorStorage(all_regi,all_te) "multiplicative factor that scales total curtailment and storage requirements up or down in different regions for different technologies (e.g. down for PV in regions where high solar radiation coincides with high electricity demand)"
 /
 $ondelim
 $include "./modules/32_power/IntC/input/f32_factorStorage.cs4r"
 $offdelim
-/
-;
-
-*** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated
-f32_factorStorage(all_regi,"windon") $ (f32_factorStorage(all_regi,"windon") eq 0) = f32_factorStorage(all_regi,"wind");
-f32_factorStorage(all_regi,"windoff") = f32_factorStorage(all_regi,"windon");
-f32_factorStorage(all_regi,"windon")  = 1.35 * f32_factorStorage(all_regi,"windon");
+/;
 
 p32_factorStorage(all_regi,teVRE) = f32_factorStorage(all_regi,teVRE);
 
