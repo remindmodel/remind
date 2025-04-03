@@ -44,8 +44,8 @@ inreport <- report %>%
   collapseDim()
 
 # Loads CEDS 2020 emissions from the input data, at both CEDS and IAMC sectoral levels
-cedsceds <- read.magpie("./core/input/p_emissions4ReportExtraCEDS.cs4r")
-cedsiamc <- read.magpie("./core/input/p_emissions4ReportExtraIAMC.cs4r")
+cedsceds <- read.magpie("./input/p_emissions4ReportExtraCEDS.cs4r")
+cedsiamc <- read.magpie("./input/p_emissions4ReportExtraIAMC.cs4r")
 
 # Calculate emissions that are based on emission factors. Derive EFs based on
 # CEDS 2020 emissions and REMIND 2020 activities
