@@ -14,4 +14,4 @@ maxfilesize <- function(max) {
   message("All files are smaller than ", max, "kB\n")
 }
 
-maxfilesize(550)
+maxfilesize(250)
