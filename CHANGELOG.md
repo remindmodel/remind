@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
-## [Unreleased]
+## [3.5.0] - 2025-04-04
 
 ### added
 - Possibility of using updated sources for baseline non-CO2 emissions calculation, controlled by `cm_emifacs_baseyear`
