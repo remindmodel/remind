@@ -113,7 +113,7 @@ if (cm_phaseoutBiolc eq 1,
             loop(te(teBioPebiolc),
                 loop(rlf,
                     if(vm_deltaCap.up(t,regi,te,rlf) eq INF,
-                       vm_deltaCap.up(t,regi,te,rlf) = 1e-5;
+                       vm_deltaCap.up(t,regi,te,rlf) = 1e-6;
                     );
                 );
             );

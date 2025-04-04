@@ -112,8 +112,10 @@ if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
   piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 }
 
-# warn if duplicates in mif
-reportDuplicates(read.quitte(sub("\\.mif$", "_withoutPlus.mif", remind_reporting_file), check.duplicates = FALSE))
+# warn if duplicates in mif and incorrect spelling of variables
+mifcontent <- read.quitte(sub("\\.mif$", "_withoutPlus.mif", remind_reporting_file), check.duplicates = FALSE)
+reportDuplicates(mifcontent)
+invisible(piamInterfaces::checkVarNames(mifcontent))
 
 message("### end generation of mif files at ", round(Sys.time()))
 

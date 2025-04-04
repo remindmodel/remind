@@ -16,7 +16,7 @@ Parameters
 *** substitution elasticities
   p37_cesdata_sigma(all_in)  "industry substitution elasticities"
   /
-    ue_industry                      0.5   !! cement - chemicals - steel - other
+    ue_industry                      0.3   !! cement - chemicals - steel - other
 
       ue_cement                      1.7   !! energy, capital
         en_cement                    0.3   !! non-electric, electric
@@ -66,7 +66,59 @@ pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2035) = 1.7;
 pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2040) = 2.0;
 
 *** abatement parameters for industry CCS MACs
-$include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
+
+loop ((ttot,steps)$( ttot.val ge 2005 ),
+
+  sm_tmp = steps.val * sm_dmac / sm_c_2_co2;   !! CO2 price at MAC step [$/tCO2] 
+
+$ifthen NOT "%cm_Industry_CCS_markup%" == "off"
+  sm_tmp = sm_tmp / %cm_Industry_CCS_markup%;
+$endif
+
+  !! short-term (until 2025)
+  if (ttot.val le 2025,
+
+    pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge  sm_D2005_2_D2017 * 95 ) = 0.63;
+    pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge sm_D2005_2_D2017 *133 ) = 0.756;
+
+    pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 *78 ) = 0.121;
+    pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 *80 ) = 0.572;
+
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
+    pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge sm_D2005_2_D2017 *59 ) = 0.117;
+    pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge sm_D2005_2_D2017 *82 ) = 0.234;
+$endif.cm_subsec_model_steel
+
+  !! long-term (from 2030 on)
+  else
+
+    if (cm_optimisticMAC eq 1,
+
+      !! logarithmic curve through 0.75 @ $50 and 0.9 @ $150, limited to 0.95
+      pm_abatparam_Ind(ttot,regi,emiInd37,steps)$( 
+                                              YES
+        $$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
+                                          AND NOT sameas(emiInd37,"co2steel")
+        $$endif.cm_subsec_model_steel
+                                                                              )
+      = max(0, min(0.95, 0.2159 + 0.1365 * log(sm_tmp)));
+
+    else
+      pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge  sm_D2005_2_D2017 * 54 ) = 0.702;
+      pm_abatparam_Ind(ttot,regi,"co2cement",steps)$( sm_tmp ge sm_D2005_2_D2017 * 133 ) = 0.756;
+
+      pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 * 46 ) = 0.363;
+      pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 * 78 ) = 0.484;
+      pm_abatparam_Ind(ttot,regi,"co2chemicals",steps)$( sm_tmp ge sm_D2005_2_D2017 *80 )  = 0.572;
+
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
+      pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge sm_D2005_2_D2017 *48 ) = 0.117;
+      pm_abatparam_Ind(ttot,regi,"co2steel",steps)$( sm_tmp ge sm_D2005_2_D2017 *62 ) = 0.275;
+$endif.cm_subsec_model_steel
+    );
+  );
+);
+
 
 if (cm_IndCCSscen eq 1,
   if (cm_CCS_cement eq 1,
@@ -223,12 +275,12 @@ emiMac2mac("co2otherInd","co2otherInd") = NO;
 
 *** data on maximum secondary steel production
 *** The steel recycling rate limit is assumed to increase from 90 to 99 %.
-  p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)
+  p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPpopScen)
   = pm_fedemand(tall,all_regi,"ue_steel_secondary")
   / 0.9
   * 0.99;
 
-s37_clinker_process_CO2 = 0.5262;
+s37_clinker_process_CO2 = 0.5262;  !! see Kermeli et al. (2019), doi: 10.1016/j.apenergy.2019.01.252
 
 *** Clinker-to-cement ratio
 Parameter
@@ -248,10 +300,6 @@ p37_clinker_cement_ratio(t,regi)
     )
   * (min(t.val, 2100) - 2005)
   / (2100             - 2005);
-
-*** Cement demand reduction is implicit in the production function, so no extra
-*** costs have to be calculated.
-pm_CementDemandReductionCost(ttot,regi) = 0;
 
 *** Exogenous share of carbon in chemical feedstock that is embeded into plastics
 ** calculated based on energy flows in REMIND, plastics production from (Geyer et.al., 2017) and stoichiometric calculations
@@ -471,7 +519,7 @@ display pm_tau_ces_tax;
 
 * Load secondary steel share limits
 Parameter
-  f37_steel_secondary_max_share(tall,all_regi,all_GDPscen)   "maximum share of secondary steel production"
+  f37_steel_secondary_max_share(tall,all_regi,all_GDPpopScen)   "maximum share of secondary steel production"
   /
 $ondelim
 $include "./modules/37_industry/subsectors/input/p37_steel_secondary_max_share.cs4r";
@@ -480,7 +528,7 @@ $offdelim
 ;
 
 p37_steel_secondary_max_share(t,regi)
-  = f37_steel_secondary_max_share(t,regi,"%cm_GDPscen%");
+  = f37_steel_secondary_max_share(t,regi,"%cm_GDPpopScen%");
 
 Parameter p37_steel_secondary_share(tall,all_regi) "endogenous values to fix rounding issues with p37_steel_secondary_max_share";
 

@@ -14,7 +14,7 @@
 *' All options can be switched on and off individually via the switches called cm_33[option abbreviation].
 *' The module calculates capacities, emissions (including captured carbon), energy demand & supply, costs,
 *' and limitations associated with the different options.
-*' @authors Jessica Strefler, Katarzyna Kowalczyk, Anne Merfort
+*' @authors Jessica Strefler, Katarzyna Kowalczyk, Anne Merfort, Tabea Dorndorf
 
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%CDR%" == "portfolio" $include "./modules/33_CDR/portfolio/realization.gms"

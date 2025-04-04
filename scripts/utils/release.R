@@ -1,9 +1,9 @@
 # This script is part of a longer workflow. 
 # Before running this script please perform the steps described here
-# https://gitlab.pik-potsdam.de/REMIND/remind-rse/-/wikis/How-to-create-a-REMIND-release
+# https://gitlab.pik-potsdam.de/REMIND/remind-rse/-/wikis/Topics/release
 
 # in your fork switch to temporary branch (e.g. release-candidate) and
-# execute this script in the main folder Rscript scripts/utils/release.R x.y.z
+# execute this script in the main folder with Rscript scripts/utils/release.R x.y.z
 
 release <- function(newVersion) {
   if (Sys.which("sbatch") == "") {
@@ -63,18 +63,23 @@ release <- function(newVersion) {
   cfg$input <- cfg$input[cfg$stopOnMissing]
   gms::publish_data(cfg,target = "dataupload@rse.pik-potsdam.de:/remind/public")
   
-  message("If not already done please perform the two following steps manually now:\n",
+  message("If not already done please perform the first step manually now. Please perform step two in any case:\n",
           "1. CHANGELOG.md: sort lines in each category: input data/calibration, changed, added, removed, fixed; remove empty categories\n",
-          "2. git add -p\n",
+          "2. git add -p (in another terminal)\n",
           "--> When done press ENTER to commit, push and create PR")
   gms::getLine()
   
-  message("Committing and pushing changes")
-  gert::git_commit(paste("remind release", newVersion))
-  gert::git_push()
+  #message("Committing and pushing changes")
+  #gert::git_commit(paste("remind release", newVersion))
+  #gert::git_push()
+  
+  # add renv snapshot to local archive
+  archivePath <- file.path(normalizePath(renv::project()), "renv", "archive", paste0(newVersion, "_renv.lock"))
+  renv::snapshot(lockfile = archivePath)
+  system(paste0("git add -f renv/archive/", newVersion, "_renv.lock"))
 
   message("Creating tag")
-  tag <- paste0("v",newVersion)
+  tag <- paste0("v", newVersion)
   gert::git_tag_create(name = tag, message = "new tag", repo = ".")
   gert::git_tag_push(name = tag, repo = ".")
   

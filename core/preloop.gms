@@ -60,7 +60,7 @@ display sm_budgetCO2eqGlob;
 
 
 *cb adjustment of vintages to account for fast growth in developing countries
-*** adjust vintages for real fe growth in years 1995-2005
+*** adjust vintages for real FE growth in years 1995-2005
 *** 2005 capacity addition (regi,"1",te) is scaled with ratio between (growth rate + 1/lifetime) and 1/lifetime, 
 *** with an offset of 0.5% to account for the general growth assumed in generisdata_vintages; for  regions with declining FE, 10% is minimum ratio
 *** 2000 capacity addition (regi,"6",te) is scaled with the average of the above ratio and 1
@@ -178,9 +178,9 @@ Execute_Loadpoint 'input_ref' vm_capEarlyReti.l = vm_capEarlyReti.l;
 
 *** initialize the carrier subtype shares in final energy demand such that the starting point for the model is "all sectors have the same bio/fos/syn shares for a given carrier type" when cm_seFeSectorShareDevMethod is enabled
 p_shSeFe(t,regi,entySe)$((entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) AND sum(seAgg$seAgg2se(seAgg,entySe), sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), sum(entySe2$seAgg2se(seAgg,entySe2), sum(entyFe$(sefe(entySe2,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt))))) ) =
-  sum((sector,emiMkt)$(sector2emiMkt(sector,emiMkt) AND (NOT(sameas(sector,"CDR")))), sum(entyFe$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))
+  sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), sum(entyFe$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))
   /
-  sum(seAgg$seAgg2se(seAgg,entySe), sum((sector,emiMkt)$(sector2emiMkt(sector,emiMkt)  AND (NOT(sameas(sector,"CDR")))), sum(entySe2$seAgg2se(seAgg,entySe2), sum(entyFe$(sefe(entySe2,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt)))));
+  sum(seAgg$seAgg2se(seAgg,entySe), sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), sum(entySe2$seAgg2se(seAgg,entySe2), sum(entyFe$(sefe(entySe2,entyFe) AND entyFe2Sector(entyFe,sector)), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt)))));
 v_shSeFe.l(t,regi,entySe)$p_shSeFe(t,regi,entySe) = p_shSeFe(t,regi,entySe);
 
 $ifthen.penSeFeSectorShareDevCost not "%cm_seFeSectorShareDevMethod%" == "off"
@@ -190,8 +190,7 @@ vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)$(
   ( entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe) ) AND !! only redefine vm_demFeSector for entySeBio, entySeSyn and entySeFos items
   ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
   ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
-  ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) AND !!disable buildings solids share incentives
-  ( NOT(sameas(sector,"CDR"))) !! disable share incentives for CDR sector as it leads to solver problems
+  ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
 ) =
   sum(entySe2$sefe(entySe2,entyFe), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt))
   * p_shSeFe(t,regi,entySe);  
@@ -203,7 +202,6 @@ p_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt)$((entySeBio(entySe) OR entySe
   /
   sum(entySe2$sefe(entySe2,entyFe), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt))
 ;
-v_shSeFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)$(p_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt) AND NOT(sameas(sector,"CDR"))) = p_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt);
-v_shSeFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)$(p_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt) AND (sameas(sector,"CDR"))) = 0;
+v_shSeFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)$p_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt) = p_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt);
 
 *** EOF ./core/preloop.gms

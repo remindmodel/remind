@@ -23,8 +23,9 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     cfg <- gms::readDefaultConfig(remindPath)
   }
   scenConf <- read.csv2(filename, stringsAsFactors = FALSE, na.strings = "", comment.char = "#",
-                                  strip.white = TRUE, blank.lines.skip = TRUE, check.names = FALSE)
+                        strip.white = TRUE, blank.lines.skip = TRUE, check.names = FALSE)
   scenConf <- scenConf[! is.na(scenConf[1]), ]
+  colnames(scenConf) <- make.unique(colnames(scenConf), sep = ".")
   rownames(scenConf) <- scenConf[, 1]
   scenConf[1] <- NULL
   colduplicates <- grep("\\.[1-9]$", colnames(scenConf), value = TRUE)
@@ -92,10 +93,13 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   pathgdxerrors <- 0
   # fix missing path_gdx and inconsistencies
   if ("path_gdx_ref" %in% names(scenConf) && ! "path_gdx_refpolicycost" %in% names(scenConf)) {
+    if (! isFALSE(coupling)) {
+      stop("Your ", basename(filename), " does contain a path_gdx_ref, but no path_gdx_refpolicycost column. ",
+          "For REMIND standalone, ref is copied to refpolicycost, but for coupled runs this lead to confusion. ",
+          "Please add a path_gdx_refpolicycost column to your config file, see tutorial 4.")
+    }
     scenConf$path_gdx_refpolicycost <- scenConf$path_gdx_ref
-    msg <- paste0("In ", filename,
-        ", no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
-    message(msg)
+    message("In ", filename, ", no column path_gdx_refpolicycost found, using path_gdx_ref instead.")
   }
 
   # make sure every path gdx column exists
@@ -145,8 +149,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   if (coupling %in% "MAgPIE") {
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
-                          "magpie_empty", "var_luc","cfg_mag$gms$s15_elastic_demand","cfg_mag$gms$s32_npi_ndc_reversal",
-                          "cfg_mag$gms$s35_npi_ndc_reversal")
+                          "magpie_empty", "var_luc")
     # identify MAgPIE switches by "cfg_mag" and "scenario_config"
     knownColumnNames <- c(knownColumnNames, grep("cfg_mag|scenario_config", names(scenConf), value = TRUE))
   } else { # not a coupling config
@@ -192,7 +195,10 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_CO2priceRegConvEndYr" = "Use cm_taxCO2_regiDiff_endYr instead, see https://github.com/remindmodel/remind/pull/1874",
        "cm_year_co2_tax_hist" = "Use cm_taxCO2_historicalYr instead, see https://github.com/remindmodel/remind/pull/1874",
        "cm_co2_tax_hist" = "Use cm_taxCO2_historical instead, see https://github.com/remindmodel/remind/pull/1874",
-       "cm_taxCO2inc_after_peakBudgYr" = "Use cm_taxCO2_IncAfterPeakBudgYr instead, see https://github.com/remindmodel/remind/pull/1874",    
+       "cm_taxCO2inc_after_peakBudgYr" = "Use cm_taxCO2_IncAfterPeakBudgYr instead, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_GDPscen" = "Use cm_GDPpopScen instead, see https://github.com/remindmodel/remind/pull/1973",
+       "cm_POPscen" = "Use cm_GDPpopScen instead, see https://github.com/remindmodel/remind/pull/1973",
+       "cm_DiscRateScen" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/2001",
      NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       msg <- paste0("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
@@ -203,17 +209,25 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
       errorsfound <- errorsfound + length(intersect(names(forbiddenColumnNames), unknownColumnNames))
     }
     # sort out known but forbidden names from unknown
-    unknownColumnNames <- setdiff(unknownColumnNames, names(forbiddenColumnNames))
+    commentColNames <- grep("^\\.", unknownColumnNames, value = TRUE)
+    if (length(commentColNames) > 0) {
+      message("readCheckScenarioConfig.R treats these columns starting with '.' as comments: ", paste(commentColNames, collapse = ", "))
+    }
+    unknownColumnNames <- setdiff(unknownColumnNames, c(commentColNames, names(forbiddenColumnNames)))
     if (length(unknownColumnNames) > 0) {
       message("\nAutomated checks did not understand these columns in ", basename(filename), ":")
       message("  ", paste(unknownColumnNames, collapse = ", "))
       if (isFALSE(coupling)) message("These are no cfg or cfg$gms switches found in main.gms and default.cfg.")
-      if (coupling %in% "MAgPIE") message("Maybe you specified REMIND switches in coupled config, which does not work.")
+      if (coupling %in% "MAgPIE") {
+        message("Maybe you specified REMIND switches in coupled config, which does not work.")
+        if (any(grepl("cfg$gms", unknownColumnNames, fixed = TRUE))) {
+          message("MAgPIE switches need to start with 'cfg_mag$gms', not 'cfg$gms'.")
+        }
+      }
       message("If you find false positives, add them to knownColumnNames in scripts/start/readCheckScenarioConfig.R.\n")
-      unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
-      if (length(unknownColumnNamesNoComments) > 0) {
+      if (length(unknownColumnNames) > 0) {
         if (testmode) {
-          warning("Unknown column names: ", paste(unknownColumnNamesNoComments, collapse = ", "))
+          warning("Unknown column names: ", paste(unknownColumnNames, collapse = ", "))
         } else if (errorsfound == 0) {
           message("Do you want to continue and simply ignore them? Y/n")
           userinput <- tolower(gms::getLine())

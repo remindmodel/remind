@@ -23,11 +23,16 @@ David Klein (<dklein@pik-potsdam.de>)
 
 ### Clone the models
 
+If you work on the PIK cluster, first fork both https://github.com/magpiemodel/magpie.git and https://github.com/remindmodel/remind.git on your own github account, and then run
 ```bash
-git clone https://github.com/magpiemodel/magpie.git
-git clone --filter=blob:limit=1m https://github.com/remindmodel/remind.git
+clonerempie githubuser [remindfolder]
 ```
-Note: On the PIK cluster, use `cloneremind https://github.com/remindmodel/remind.git` instead of `git clone --filter…` to clone REMIND.
+If `remindfolder` is not specified, it uses "remind".
+
+If you are not on the cluster, you can use the following to get a magpie folder within your remind folder:
+```bash
+git clone --filter=blob:limit=1m https://github.com/remindmodel/remind.git; cd remind; git clone https://github.com/magpiemodel/magpie.git
+```
 
 ### Switch to relevant branchs
 
@@ -55,7 +60,7 @@ Here's an example of a simple case. If you start a new coupled run with the scen
 
 This process will continue until for as many iterations as set in `max_iterations` in `start_bundle_coupled.R` (see Check the Convergence below). The last iteration will run REMIND only, so REMIND will have run `max_iterations` times and MAgPIE wil have run `max_iterations - 1` times. So, if `max_iterations` is 5, the last REMIND run in this case will be `C_Base-rem-5` and the last MAgPIE iteration will be `C_Base-mag-4`.
 
-The output of both models can be analyzed normally from these two runs. The REMIND .mif file contains also the MAgPIE variables. Additionally, at the end of a successful coupled run the coupling script will automatically merge the reports of the last runs of both models in a `.mif` file located in the root of REMIND's output folder, using the joint model name "REMIND-MAgPIE". In our example, that file will be `path_remind/output/C_SSP-Base.mif`.
+The output of both models can be analyzed normally from these two runs. The REMIND `.mif` file contains also the MAgPIE variables. Additionally, at the end of a successful coupled run the coupling script will automatically merge the reports of the last runs of both models in a `.mif` file located in the root of REMIND's output folder, using the joint model name "REMIND-MAgPIE". In our example, that file will be `path_remind/output/C_SSP-Base.mif`.
 
 So, in the end of the coupled run in this example, you should have a directory structure like:
 
@@ -109,7 +114,7 @@ All the columns must be present in the `scenario_config_coupled.csv` file, but m
 
 Other, optional columns allow you to make a run start only after another has finished, set starting conditions, and give you finer control over which data is fed from REMIND to MAgPIE or from MAgPIE to REMIND.
 
-   - `path_gdx`, `path_gdx_ref`, `path_gdx_refpolicycost`, `path_gdx_carbonprice`, `path_gdx_bau`, : Override these same settings in REMIND's `scenario_config`, see [`03_RunningBundleOfRuns`](./03_RunningBundleOfRuns.md) for a detailed explanation.
+   - `path_gdx`, `path_gdx_ref`, `path_gdx_refpolicycost`, `path_gdx_carbonprice`, `path_gdx_bau`: If cell is non-empty, override these same settings in REMIND's `scenario_config`, see [`03_RunningBundleOfRuns`](./03_RunningBundleOfRuns.md) for a detailed explanation. Note that if the `path_gdx_refpolicycost` column is missing, it is *not* copied from `path_gdx_ref` as is the case for the normal config file. If you specify `path_gdx_ref`, always specify `path_gdx_refpolicycost`.
       - You can set these switches either to the full path of a `fulldata.gdx` file or simply to the name of another scenario in the file (without the "C_"!). So if you want a certain scenario (say `NDC`) to use as starting point the results of a `Base` scenario, you can simply set `path_gdx` to `Base` and it will automatically locate the appropriate `fulldata.gdx` in `Base`, for example `path_remind/C_Base-rem-x/fulldata.gdx`.
       - If you set any of these `path_gdx…` columns (or `path_mif_ghgprice_land`, below) with a scenario name such as `Base`, the coupling script will not start any runs that depend on an unfinished run, and automatically start them when that run finishes. So, in the example above, you can set `start` to `1` in both `Base` and `NDC`, `NDC` will only start *after* `Base` is finished. `NDC-rem-2` will start after `NDC-rem-1` and `Base-rem-2` are finished.
       - If you set any of these settings with a scenario name, the script will automatically try to detect whether the required "parent" run including the reporting is already finished and uses the appropriate `fulldata.gdx` then.
@@ -172,6 +177,17 @@ Rscript scripts/output/comparison/plot_compare_iterations.R folder=another-outpu
 
 To compare the REMIND runs, a `compareScenario2` for each scenario is produced automatically in the main folder (look for `compScen_rem-1-5_Base.pdf` or similar).
 You can switch that off by setting `run_compareScenario` to `FALSE` in `start_bundle_coupled.R`.
+
+# Compare scalars from all coupled runs
+
+By running something like
+```bash
+Rscript --vanilla scripts/utils/readcoupled.R cm_startyear,o_iterationNumber
+Rscript --vanilla scripts/utils/readcoupled.R 'Price|Carbon,pm_taxCO2eqSum' EUR 2050
+```
+you can get a compact overview of scalars (such as `cm_startyear`, `o_iterationNumber`, `s45_actualbudgetco2` or `cm_peakBudgYr`),
+parameters, variables or reporting variables for all coupled runs in your folder. Type 'Rscript scripts/utils/readcoupled.R --help' for help.
+PIK cluster users can use `readcoupled vars [regi] [time]` as a shortcut.
 
 # Technical concept
 

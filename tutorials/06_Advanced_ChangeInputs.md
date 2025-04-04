@@ -44,7 +44,7 @@ If you want to peek inside the archive to debug something or out of curiosity yo
 2. Clone or pull the latest version of the [remind-preprocessing repo](https://github.com/remindmodel/pre-processing) to your tmp folder on the cluster and edit its `config/default.cfg` file by inserting the next revision number. Use the additional argument `dev` for testing. If an old revision number is used, the input data will not be recalculated. Input data for a new regional resolution will be recalculated based on the existing cache information in the PUC file.
 
 3. Start the script with `Rscript submit_preprocessing.R`.
-The .log file lists the progress and potential errors. This process might take a while (currently >8 hours).
+The `.log` file lists the progress and potential errors. This process might take a while (currently >8 hours).
 
 4. If the process terminates without errors, do a test run with the new input data. To do this, clone the REMIND repo and update the data input version `cfg$revision` in `config/default.cfg` using your recently created data revision number file and run one scenario (e.g. SSP2-Base).
 
