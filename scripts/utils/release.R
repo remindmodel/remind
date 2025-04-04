@@ -19,6 +19,7 @@ release <- function(newVersion) {
     sub(pattern = "dev", replacement = "")
   
   # Update CHANGELOG.md
+  message("Updating CHANGELOG.md")
   githubUrl <- "https://github.com/remindmodel/remind/compare/"
   readLines("CHANGELOG.md") |>
     # Add version and date of new release
@@ -30,6 +31,7 @@ release <- function(newVersion) {
     writeLines("CHANGELOG.md")
   
   # Update version and release date in CITATION.cff
+  message("Updating CITATION.cff")
   readLines("CITATION.cff") |>
     sub(pattern = "^version:.*$", replacement = paste("version:", newVersion)) |>
     sub(pattern = "^date-released:.*$", replacement = paste("date-released:", releaseDate)) |>
@@ -63,21 +65,24 @@ release <- function(newVersion) {
   cfg$input <- cfg$input[cfg$stopOnMissing]
   gms::publish_data(cfg,target = "dataupload@rse.pik-potsdam.de:/remind/public")
   
+  # add renv snapshot to local archive
+  archivePath <- file.path(normalizePath(renv::project()), "renv", "archive", paste0(newVersion, "_renv.lock"))
+  renv::snapshot(lockfile = archivePath)
+  system(paste0("git add -f renv/archive/", newVersion, "_renv.lock"))
+
   message("If not already done please perform the first step manually now. Please perform step two in any case:\n",
           "1. CHANGELOG.md: sort lines in each category: input data/calibration, changed, added, removed, fixed; remove empty categories\n",
-          "2. git add -p (in another terminal)\n",
-          "--> When done press ENTER to commit, push and create PR")
+          "In another terminal:\n"
+          "2. git add -p\n",
+          "3. git commit -m 'your commit message'",
+          "4. git push yourFork yourReleaseCandidateBranch",
+          "--> When done press ENTER to create PR")
   gms::getLine()
   
   #message("Committing and pushing changes")
   #gert::git_commit(paste("remind release", newVersion))
   #gert::git_push()
   
-  # add renv snapshot to local archive
-  archivePath <- file.path(normalizePath(renv::project()), "renv", "archive", paste0(newVersion, "_renv.lock"))
-  renv::snapshot(lockfile = archivePath)
-  system(paste0("git add -f renv/archive/", newVersion, "_renv.lock"))
-
   message("Creating tag")
   tag <- paste0("v", newVersion)
   gert::git_tag_create(name = tag, message = "new tag", repo = ".")
