@@ -7,6 +7,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### input data/calibration
+
+### changed
+-
+
+### added
+-
+
+### removed
+-
+
+### fixed
+-
+
+
+## [3.5.0] - 2025-04-04
+
 ### added
 - Possibility of using updated sources for baseline non-CO2 emissions calculation, controlled by `cm_emifacs_baseyear`
 - Add `readcoupled` script that allows to print data from gdx files or mif files for all coupled runs
