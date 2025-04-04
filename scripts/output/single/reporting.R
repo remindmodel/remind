@@ -54,28 +54,22 @@ convGDX2MIF(gdx, gdx_refpolicycost = gdx_refpolicycost, file = remind_reporting_
 ## REMIND_generic_<scenario>_withoutPlus.MIF is replaced.
 
 edgetOutputDir <- file.path(outputdir, "EDGE-T")
-if(file.exists(edgetOutputDir)) {
-  if (! file.exists(file.path(edgetOutputDir, "4_Output", "vehSalesAndModeShares.RDS"))) {
-    message("EDGE-T reporting files are missing, probably because the run was killed.")
-    message("Rerunning toolIterativeEDGETransport().")
+if (!file.exists(edgetOutputDir)) {
     savewd <- getwd()
     setwd(outputdir)
+    message("No EDGE-T folder was found in the remind output folder. Edge-T iterative runs in postprocessing.")
     edgeTransport::iterativeEdgeTransport()
     setwd(savewd)
   }
+
   message("start generation of EDGE-T reporting")
   EDGET_output <- reportEdgeTransport(edgetOutputDir,
                                       isTransportExtendedReported = FALSE,
                                       modelName = "REMIND",
 				                              scenarioName = scenario,
                                       gdxPath = file.path(outputdir, "fulldata.gdx"),
-                                      isStored = FALSE)
-
-  REMINDoutput <- as.data.table(read.quitte(file.path(outputdir, paste0("REMIND_generic_", scenario,"_withoutPlus.mif"))))
-  sharedVariables <- EDGET_output[variable %in% REMINDoutput$variable | grepl(".*edge", variable)]
-  EDGET_output <- EDGET_output[!(variable %in% REMINDoutput$variable | grepl(".*edge", variable))]
-  message("The following variables will be dropped from the EDGE-Transport reporting because
-                they are in the REMIND reporting: ", paste(unique(sharedVariables$variable), collapse = ", "))
+                                      isStored = FALSE,
+                                      isHarmonized = TRUE)
 
   write.mif(EDGET_output, remind_reporting_file, append = TRUE)
   piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
@@ -87,7 +81,6 @@ if(file.exists(edgetOutputDir)) {
                       isStored = TRUE)
 
   message("end generation of EDGE-T reporting")
-}
 
 envir <- new.env()
 load(file.path(outputdir, "config.Rdata"), envir = envir)
