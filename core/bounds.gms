@@ -69,21 +69,16 @@ loop(all_te $ (
     sameas(all_te, "fnrs") OR
     sameas(all_te, "pcc") OR
     sameas(all_te, "pco") OR
+*** windoffshore-todo: to remove when removing wind from all_te
     sameas(all_te, "wind") OR
     sameas(all_te, "storwind") OR
     sameas(all_te, "gridwind")
   ),
-  vm_cap.fx(t,regi,all_te,rlf)      = 0;
+  vm_cap.fx(t,regi,all_te,rlf) = 0;
   vm_deltaCap.fx(t,regi,all_te,rlf) = 0;
+  vm_demPe.fx(t,regi,entyPe,entySe,all_te) = 0;
+  vm_prodSe.fx(t,regi,entyPe,entySe,all_te) = 0;
 );
-
-vm_demPe.fx(t,regi,"pecoal","seel","pcc") = 0;
-vm_demPe.fx(t,regi,"pecoal","seel","pco") = 0;
-vm_prodSe.fx(t,regi,"pecoal","seel","pcc") = 0;
-vm_prodSe.fx(t,regi,"pecoal","seel","pco") = 0;
-*** windoffshore-todo: to remove when removing wind from all_te
-vm_demPe.fx(t,regi,"pewin","seel","wind") = 0;
-vm_prodSe.fx(t,regi,"pewin","seel","wind") = 0;
 
 *' Switch off coal-h2 hydrogen investments after 2020, and gas-h2 investments after 2030. Our current seh2 hydrogen represents only additional (clean) hydrogen use cases to current ones.
 *' However, as we have too high H2 demand in 2025 and 2030 from the input data, we need to allow grey hydrogen for these time periods to meet the hydrogen demand
@@ -146,42 +141,41 @@ $if %cm_GDPscen% == "gdp_SSP3" vm_deltaCap.fx("2070",regi,"biotr","1") = 0.15 * 
 $if %cm_GDPscen% == "gdp_SSP3" vm_deltaCap.fx("2080",regi,"biotr","1") = 0.05 * vm_deltaCap.lo("2005",regi,"biotr","1");
 
 
-*** ------------------------------------------------------------------------------------------
-*LP* implement switch for scenarios with or without carbon sequestration:
-*** ------------------------------------------------------------------------------------------
+*' @code{extrapage: "00_model_assumptions"}
 
-if ( c_ccsinjecratescen eq 0, !!no carbon sequestration at all
+*** ---------------------------------------------------------------------------------------------------
+*' #### implement switch for scenarios with different assumptions for carbon capture and sequestration:
+*** ---------------------------------------------------------------------------------------------------
+*'
+*** lower bound on stored CO2
+vm_emiTe.lo(ttot,regi,"cco2") = 0;
+
+*' no CCS at all in 2010
+*'
+vm_cap.fx("2010",regi,teCCS,rlf) = 0;
+
+
+*' deactivate carbon sequestration
+*'
+if ( c_ccsinjecratescen eq 0,
     vm_co2CCS.fx(t,regi_capturescen,"cco2","ico2","ccsinje","1") =0;
 );
 
-*' @code{extrapage: "00_model_assumptions"}
+*' deactivate carbon capture technologies
+*'
+if(cm_emiscen = 1,
+  vm_cap.fx(t,regi,teCCS,rlf) = 0;
+);
 
-***------------------------------------------------------------------------------------------
-*' #### implement switch for scenarios with different carbon capture assumptions:
-*** ------------------------------------------------------------------------------------------
-*'
-*' carbon capture bounds
-*'
 if (cm_ccapturescen eq 2,  !! no carbon capture at all
-  vm_cap.fx(t,regi_capturescen,"ngccc",rlf)        = 0;
-  vm_cap.fx(t,regi_capturescen,"ccsinje",rlf)      = 0;
-  vm_cap.fx(t,regi_capturescen,"gash2c",rlf)       = 0;
-  vm_cap.fx(t,regi_capturescen,"igccc",rlf)        = 0;
-  vm_cap.fx(t,regi_capturescen,"coalftcrec",rlf)   = 0;
-  vm_cap.fx(t,regi_capturescen,"coalh2c",rlf)      = 0;
-  vm_cap.fx(t,regi_capturescen,"biogasc",rlf)      = 0;
-  vm_cap.fx(t,regi_capturescen,"bioftcrec",rlf)    = 0;
-  vm_cap.fx(t,regi_capturescen,"bioh2c",rlf)       = 0;
-  vm_cap.fx(t,regi_capturescen,"bioigccc",rlf)     = 0;
+  vm_cap.fx(t,regi_capturescen,teCCS,rlf) = 0;
+  vm_cap.fx(t,regi_capturescen,"ccsinje",rlf) = 0;
 elseif (cm_ccapturescen eq 3),  !! no bio carbon capture:
-  vm_cap.fx(t,regi_capturescen,"biogasc",rlf)      = 0;
-  vm_cap.fx(t,regi_capturescen,"bioftcrec",rlf)    = 0;
-  vm_cap.fx(t,regi_capturescen,"bioh2c",rlf)       = 0;
-  vm_cap.fx(t,regi_capturescen,"bioigccc",rlf)     = 0;
+  vm_cap.fx(t,regi_capturescen,te,rlf) $ (teCCS(te) and teBio(te)) = 0;
 elseif (cm_ccapturescen eq 4), !! no carbon capture in the electricity sector
   loop(emi2te(enty,"seel",te,"cco2")$( sum(regi_capturescen,pm_emifac("2020",regi_capturescen,enty,"seel",te,"cco2")) > 0 ),
     loop(te2rlf(te,rlf),
-      vm_cap.fx(t,regi_capturescen,te,rlf)        = 0;
+      vm_cap.fx(t,regi_capturescen,te,rlf) = 0;
     );
   );
 );
@@ -192,9 +186,6 @@ if (c_bioliqscen eq 0, !! no bioliquids technologies
   vm_deltaCap.up(t,regi,"bioftrec",rlf)$(t.val gt 2005)    = 1.0e-6;
   vm_deltaCap.up(t,regi,"bioftcrec",rlf)$(t.val gt 2005)   = 1.0e-6;
   vm_deltaCap.up(t,regi,"bioethl",rlf)$(t.val gt 2005)     = 1.0e-6;
-***  vm_cap.fx(t,regi,"bioftcrec",rlf)    = 0;
-***  vm_cap.fx(t,regi,"bioftrec",rlf)     = 0;
-***  vm_cap.fx(t,regi,"bioethl",rlf)      = 0;
 );
 
 *' switching technologies off that produce hydrogen from lignocellulosic biomass
@@ -202,19 +193,8 @@ if (c_bioliqscen eq 0, !! no bioliquids technologies
 if (c_bioh2scen eq 0, !! no bioh2 technologies
   vm_deltaCap.up(t,regi,"bioh2",rlf)$(t.val gt 2005)       = 1.0e-6;
   vm_deltaCap.up(t,regi,"bioh2c",rlf)$(t.val gt 2005)      = 1.0e-6;
-***  vm_cap.fx(t,regi,"bioh2c",rlf)       = 0;
-***  vm_cap.fx(t,regi,"bioh2",rlf)       = 0;
 );
 *' @stop
-
-***--------------------------------------------------------------------
-*RP no CCS should be used in a BAU run, and no CCS at all in 2010
-***--------------------------------------------------------------------
-vm_cap.fx("2010",regi,teCCS,rlf) = 0;
-
-if(cm_emiscen = 1,
-  vm_cap.fx(t,regi,teCCS,rlf) = 0;
-);
 
 *** ------------------------------------------------------------------------
 *** Fix nuclear to historic values
@@ -243,12 +223,8 @@ if (cm_startyear le 2030,   !! upper bound calculated in mrremind/R/calcCapacity
 
 display p_CapFixFromRWfix, p_deltaCapFromRWfix;
 
-*** ------------------------------------------------------------------------------------------
-*RP* implement switch for scenarios with different nuclear assumptions:
-*** ------------------------------------------------------------------------------------------
-vm_deltaCap.up(t,regi,"fnrs",rlf)$(t.val ge 2010)= 0;
-vm_cap.fx(t,regi,"fnrs",rlf)$(t.val ge 2010) = 0;
 
+*RP* implement switch for scenarios with different nuclear assumptions:
 *** no new nuclear investments after 2020, until then all currently planned plants are built
 if (cm_nucscen eq 5,
   vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2020)= 1e-6;
@@ -290,7 +266,7 @@ vm_emiMac.fx(t,regi,"bc") = 0;
 vm_emiMac.fx(t,regi,"oc") = 0;
 
 *** -------------------------------------------------------------------------
-*** Exogenous values:
+*** Exogenous capacities:
 *** -------------------------------------------------------------------------
 
 *** fix capacities for wind, spv and csp to real world historical values:
@@ -332,12 +308,6 @@ vm_deltaCap.lo(t,regi,"bioh2c","1")$(t.val le 2030) = 0;
 *** fix capacities for advanced bio carbon capture technologies to zero in 2020 (i.e. no BECCS in 2020)
 vm_cap.fx("2020",regi,te,rlf)$(teBio(te) AND teCCS(te)) = 0;
 
-*** fix emissions to historical emissions in 2010
-*** RP: turned off in March 2018, as it produces substantial negative side-effects (requiring strong early retirement in 2010, which influences the future investments even in Reference scenarios)
-*** vm_emiTe.up("2010",regi,"co2") = p_boundEmi("2010",regi) ;
-
-*** lower bound on stored CO2
-vm_emiTe.lo(ttot,regi,"cco2") = 0;
 
 *** -------------------------------------------------------
 *** Advanced technologies shouldn't be built prior to 2015/2020:
