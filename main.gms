@@ -5,7 +5,7 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./main.gms
-*' @title REMIND - REgional Model of INvestments and Development
+*' @title REMIND - REgional Model of INvestments and 
 *'
 *' @description REMIND is a global multi-regional model incorporating the economy, the climate system
 *' and a detailed representation of the energy sector. It solves for an intertemporal Pareto optimum
