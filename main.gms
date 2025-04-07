@@ -118,12 +118,12 @@
 *'
 *' For the labels of parameters, scalars and set, use double quotes only.
 *'
-*' #### Commenting:
+*' #### Commenting & Documenting:
 *'
 *' * Comment all parts of the code generously
 *' * For all equations, it should become clear from the comments what part of the equation is supposed to do what
 *' * Variables and parameters should be declared along with a descriptive text (use `" "` for descriptive text to avoid compilation errors)
-*' * Use three asterisks `***` for comments or `*'` if the comment should show up in the documentation of REMIND
+*' * Use three asterisks `***` for comments or `*'` if the comment should show up in the documentation of REMIND generated with `make docs` (https://pik-piam.r-universe.dev/articles/goxygen/goxygen.html)
 *' * Never use 4 asterisks (reserved for GAMS error messages)
 *' * Don't use the string `infes` in comments
 *' * Don't use `$+number` combinations, e.g., `$20` (this interferes with GAMS error codes).

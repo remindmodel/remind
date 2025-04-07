@@ -54,6 +54,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#2065](https://github.com/remindmodel/remind/pull/2065)]
 - **scripts** let the release script add a renv.lock to each new release
     [[#2058](https://github.com/remindmodel/remind/pull/2058)]
+- **scripts** Redesigned pull request template. No lines to delete anymore. Checkboxes only in the checklist.
+    [[#2063](https://github.com/remindmodel/remind/pull/2063)]
 
 ### added
 -
