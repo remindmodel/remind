@@ -125,8 +125,8 @@ out <- mbind(out, setItems(dimSums(out, dim = 1), dim = 1, value = "GLO"))
 outmif <- as.quitte(out)
 outmif$region <- as.character(outmif$region)
 outmif[outmif$region == "GLO", "region"] <- "World"
-outmif$model <- levels(report$model)
-outmif$scenario <- levels(report$scenario)
+outmif$model <- unique(report$model)[str_detect(unique(report$model),"REMIND")][1] # Deals with REMIND-MAgPIE mifs
+outmif$scenario <- unique(report$scenario)[1] # Works on only one scenario at a time
 
 # Append to the original mif in-memory. We have do this to avoid duplicates.
 inmif <- filter(inmif, !(variable %in% as.character(unique(outmif$variable))))
