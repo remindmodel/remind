@@ -86,16 +86,16 @@ out <- mbind(
     "Emi|N2O|Extra|Transport|Pass|Aviation (kt N2O/yr)"
   )
 )
-# CH4 from residential+commercial, assume most of it is from gas use. Requires CEDS detail
+# CH4 from residential+commercial, assume most of it is from incomplete biomass/solids burning. Requires CEDS detail
 ef <- setYears(
   dimReduce(cedsceds[, 2020, "1A4a_Commercial-institutional.ch4"] + cedsceds[, 2020, "1A4b_Residential.ch4"]) /
-    inreport[, 2020, "FE|Buildings|Gases|Fossil"], NULL
+    inreport[, 2020, "FE|Buildings|Solids"], NULL
 )
 out <- mbind(
   out,
   setNames(
-    inreport[, , "FE|Buildings|Gases|Fossil"] * ef,
-    "Emi|CH4|Extra|Buildings|Gases|Fossil (Mt CH4/yr)"
+    inreport[, , "FE|Buildings|Solids"] * ef,
+    "Emi|CH4|Extra|Buildings|Solids (Mt CH4/yr)"
   )
 )
 # N2O from residential+commercial. Requires CEDS detail, assume it's all from fuel burning byproducts.
@@ -111,7 +111,7 @@ out <- mbind(
   out,
   setNames(
     tmp * ef,
-    "Emi|N2O|Extra|Buildings|Gases|Fossil (kt N2O/yr)"
+    "Emi|N2O|Extra|Buildings (kt N2O/yr)"
   )
 )
 
@@ -134,4 +134,3 @@ fullmif <- rbind(inmif, outmif)
 
 write.mif(fullmif, remind_reporting_file, append = FALSE)
 piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
-
