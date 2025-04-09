@@ -9,5 +9,6 @@
 *' @description The off-realization of the internalizeLCAimpacts module sets the parameter ADD PARAMETER NAME to zero, meaning no social costs related to environmental impacts are included in the optimization.
 
 *####################### R SECTION START (PHASES) ##############################
+$Ifi "%phase%" == "preloop" $include "./modules/52_internalizeLCAimpacts/off/preloop.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/52_internalizeLCAimpacts/off/realization.gms
