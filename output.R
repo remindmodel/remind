@@ -163,7 +163,8 @@ if (! exists("output")) {
 if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
                          "plot_compare_iterations", "varListHtml", "fixOnRef", "MAGICC7_AR6",
-                         "validateScenarios", "checkClimatePercentiles", "selectPlots")
+                         "validateScenarios", "checkClimatePercentiles", "selectPlots",
+                         "checkProjectSummations")
   needingMif <- any(modulesNeedingMif %in% output) && ! "reporting" %in% output[[1]]
   if (exists("remind_dir")) {
     dir_folder <- c(file.path(remind_dir, "output"), remind_dir)

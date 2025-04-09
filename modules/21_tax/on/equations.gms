@@ -326,21 +326,30 @@ q21_taxrevCCS(t,regi)$(t.val ge max(2010,cm_startyear))..
 ***---------------------------------------------------------------------------
 *'  Calculation of net-negative emissions tax: tax rate (defined as fraction of carbon price) times net-negative emissions
 *'  Documentation of overall tax approach is above at q21_taxrev.
+*'  Calculation of net-negative emissions within iteration or across iterations depending on cm_NetNegEmi_calculation
 ***---------------------------------------------------------------------------
 q21_taxrevNetNegEmi(t,regi)$(t.val ge max(2010,cm_startyear))..
-  v21_taxrevNetNegEmi(t,regi) =e= cm_frac_NetNegEmi * pm_taxCO2eqSum(t,regi) * vm_emiALLco2neg(t,regi)
-                                 - pm_taxrevNetNegEmi0(t,regi)
-;
+v21_taxrevNetNegEmi(t,regi) =e= s21_frac_NetNegEmi * pm_taxCO2eqSum(t,regi) 
+                                * ( (1 - cm_NetNegEmi_calculation) * vm_emiAllco2neg(t,regi) + cm_NetNegEmi_calculation * v21_emiAllco2neg_acrossIterations(t,regi) )
+                                 - pm_taxrevNetNegEmi0(t,regi);
 
 ***---------------------------------------------------------------------------
-*'  Auxiliary calculation of net-negative emissions: 
-*'  vm_emiALLco2neg and v21_emiAllco2neg_slack are defined as positive variables
+*'  Auxiliary calculation of net-negative CO2 emissions in the current iteration: 
+*'  vm_emiAllco2neg and v21_emiAllco2neg_slack are defined as positive variables
 *'  so as long as vm_emiAll is positive, v21_emiAllco2neg_slack adjusts so that sum is zero
 *'  if vm_emiAll is negative, in order to minimize tax v21_emiAllco2neg_slack becomes zero
 ***---------------------------------------------------------------------------
 q21_emiAllco2neg(t,regi)..
-  vm_emiALLco2neg(t,regi) =e= -vm_emiAll(t,regi,"co2") + v21_emiALLco2neg_slack(t,regi)
-;
+vm_emiAllco2neg(t,regi) =e= -vm_emiAll(t,regi,"co2") + v21_emiAllco2neg_slack(t,regi);
+
+***---------------------------------------------------------------------------
+*'  Auxiliary calculation of net-negative CO2 emissions as difference of gross CDR in the current iteration and gross emissions in the previous iteration: 
+*'  v21_emiAllco2neg_acrossIterations and v21_emiAllco2neg_acrossIterations_slack are defined as positive variables
+*'  so as long as vm_emiCdrAll is smaller than p21_referenceGrossEmissions, v21_emiAllco2neg_acrossIterations_slack adjusts so that sum is zero
+*'  if vm_emiCdrAll is larger than p21_referenceGrossEmissions, in order to minimize tax v21_emiAllco2neg_acrossIterations_slack becomes zero
+***---------------------------------------------------------------------------
+q21_emiAllco2neg_acrossIterations(t,regi)..
+v21_emiAllco2neg_acrossIterations(t,regi) =e= (vm_emiCdrAll(t,regi) - p21_referenceGrossEmissions(t,regi)) + v21_emiAllco2neg_acrossIterations_slack(t,regi);
 
 ***---------------------------------------------------------------------------
 *'  Calculation global sustainability tax on bioenergy:

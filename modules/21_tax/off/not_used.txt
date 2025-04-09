@@ -74,3 +74,6 @@ pm_taxEI_PE,parameter,only needed if tax is on
 pm_taxEI_SE,parameter,only needed if tax is on
 pm_taxEI_cap,parameter,only needed if tax is on
 vm_deltaCap,variable,only needed if tax is on
+vm_emiCdrAll,input,added by codeCheck
+cm_NetNegEmi_calculation,input,added by codeCheck
+vm_emiAllco2neg,input,added by codeCheck
