@@ -31,7 +31,7 @@ reportVars <- c(
 )
 
 # We do need to read the whole mif though, to be able to remove duplicates later
-inmif <- read.quitte(remind_reporting_file, check.duplicates = FALSE) 
+inmif <- read.quitte(remind_reporting_file, check.duplicates = FALSE)
 report <- deletePlus(inmif)
 
 inreport <- report %>%
@@ -46,15 +46,45 @@ cedsiamc <- read.magpie("./input/p_emissions4ReportExtraIAMC.cs4r")
 # Calculate emissions that are based on emission factors. Derive EFs based on
 # CEDS 2020 emissions and REMIND 2020 activities
 
+deriveEF <- function(emirefyear, actreffull, refyear = 2020, convyear = NULL) {
+  # EF in the reference year
+  ef2020 <- setYears(
+    emirefyear /
+      actreffull[, refyear, ], NULL
+  )
+
+  # Preallocate with actreffull to ensure they will multiply nicely later
+  ef <- actreffull
+  ef[, , ] <- ef2020
+
+  # If convyear was given, assume linear convergence towards
+  # the global emission factor in convyear
+  if (!is.null(convyear)) {
+    gef <- as.numeric(
+      dimSums(emirefyear, dim = 1) / dimSums(actreffull[, refyear, ], dim = 1)
+    )
+    ef <- convergence(
+      ef, gef,
+      start_year = 2020, end_year = convyear, type = "linear"
+    )
+  }
+  return(ef)
+}
+
+
 MtN_to_ktN2O <- 44 / 28 * 1000 # conversion from MtN to ktN2O
 # Output magclass object
 out <- NULL
 
 # N2O from international shipping
-ef <- setYears(
-  dimReduce(cedsiamc[, 2020, "International Shipping.n2o_n"]) /
-    inreport[, 2020, "ES|Transport|Bunkers|Freight"], NULL
-)
+# Converge to global EF in 2060
+ef <- deriveEF( 
+  dimReduce(cedsiamc[, 2020, "International Shipping.n2o_n"]),
+  inreport[, , "ES|Transport|Bunkers|Freight"],
+  refyear = 2020,
+  convyear = 2060
+  )
+
 out <- mbind(
   out,
   setNames(
@@ -63,10 +93,15 @@ out <- mbind(
   )
 )
 # CH4 from international shipping (should be very small)
-ef <- setYears(
-  dimReduce(cedsiamc[, 2020, "International Shipping.ch4"]) /
-    inreport[, 2020, "ES|Transport|Bunkers|Freight"], NULL
-)
+# Converge to global EF in 2060
+ef <- deriveEF( 
+  dimReduce(cedsiamc[, 2020, "International Shipping.ch4"]),
+  inreport[, , "ES|Transport|Bunkers|Freight"],
+  refyear = 2020,
+  convyear = 2060
+  )
+
+
 out <- mbind(
   out,
   setNames(
@@ -74,11 +109,15 @@ out <- mbind(
     "Emi|CH4|Extra|Transport|Bunkers|Freight (Mt CH4/yr)"
   )
 )
-# N2O from domestic+international aviation
-ef <- setYears(
-  dimReduce(cedsiamc[, 2020, "Aircraft.n2o_n"]) /
-    inreport[, 2020, "ES|Transport|Pass|Aviation"], NULL
-)
+# N2O from domestic+international aviation. 
+# Converge to global EF in 2060
+ef <- deriveEF( 
+  dimReduce(cedsiamc[, 2020, "Aircraft.n2o_n"]),
+  inreport[, , "ES|Transport|Pass|Aviation"],
+  refyear = 2020,
+  convyear = 2060
+  )
+
 out <- mbind(
   out,
   setNames(
@@ -87,10 +126,13 @@ out <- mbind(
   )
 )
 # CH4 from residential+commercial, assume most of it is from incomplete biomass/solids burning. Requires CEDS detail
-ef <- setYears(
-  dimReduce(cedsceds[, 2020, "1A4a_Commercial-institutional.ch4"] + cedsceds[, 2020, "1A4b_Residential.ch4"]) /
-    inreport[, 2020, "FE|Buildings|Solids"], NULL
-)
+# Don't assume convergence, as Global South EFs may be more representative of solids burning
+ef <- deriveEF( 
+  dimReduce(cedsceds[, 2020, "1A4a_Commercial-institutional.ch4"] + cedsceds[, 2020, "1A4b_Residential.ch4"]),
+  inreport[, , "FE|Buildings|Solids"],
+  refyear = 2020,
+  convyear = NULL
+  )
 out <- mbind(
   out,
   setNames(
@@ -102,11 +144,14 @@ out <- mbind(
 # Common solid fuels tend to have higher N2O EFs than common gaseous and liquid fuels, but here
 # we are implicitly assuming the 2020 mix Solids+Liquids+Gases determines the EF.
 # See https://www.epa.gov/system/files/documents/2024-02/ghg-emission-factors-hub-2024.pdf
+# Don't assume convergence, as Global South EFs may be more representative of solids burning
 tmp <- dimSums(inreport[, , c("FE|Buildings|Gases", "FE|Buildings|Liquids", "FE|Buildings|Solids")], dim = 3)
-ef <- setYears(
-  dimReduce(cedsceds[, 2020, "1A4a_Commercial-institutional.n2o_n"] + cedsceds[, 2020, "1A4b_Residential.n2o_n"]) /
-    tmp[, 2020, ], NULL
-)
+ef <- deriveEF( 
+  dimReduce(cedsceds[, 2020, "1A4a_Commercial-institutional.n2o_n"] + cedsceds[, 2020, "1A4b_Residential.n2o_n"]),
+  tmp,
+  refyear = 2020,
+  convyear = NULL
+  )
 out <- mbind(
   out,
   setNames(
@@ -125,7 +170,7 @@ out <- mbind(out, setItems(dimSums(out, dim = 1), dim = 1, value = "GLO"))
 outmif <- as.quitte(out)
 outmif$region <- as.character(outmif$region)
 outmif[outmif$region == "GLO", "region"] <- "World"
-outmif$model <- unique(report$model)[str_detect(unique(report$model),"REMIND")][1] # Deals with REMIND-MAgPIE mifs
+outmif$model <- unique(report$model)[str_detect(unique(report$model), "REMIND")][1] # Deals with REMIND-MAgPIE mifs
 outmif$scenario <- unique(report$scenario)[1] # Works on only one scenario at a time
 
 # Append to the original mif in-memory. We have do this to avoid duplicates.
