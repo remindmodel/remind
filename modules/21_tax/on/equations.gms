@@ -55,6 +55,7 @@ q21_taxrevPseudo(t,regi)$(t.val ge max(2010,cm_startyear))..
   + v21_taxrevCCS(t,regi) 
   + v21_taxrevNetNegEmi(t,regi)
   + v21_taxrevBioSust(t,regi)
+  + v21_taxrevEI(t,regi)
   + v21_taxrevChProdStartYear(t,regi)
   - vm_costSubsidizeLearning(t,regi)
   + sum(in, v21_taxrevCES(t,regi,in))
@@ -124,6 +125,27 @@ v21_taxrevPE(t,regi,entyPe) =e= pm_tau_pe_tax(t,regi,entyPe) * vm_prodPe(t,regi,
 q21_taxrevResEx(t,regi)$(t.val ge max(2010,cm_startyear))..
 v21_taxrevResEx(t,regi) =e=  sum(pe2rlf(peEx(enty),rlf), p21_tau_fuEx_sub(t,regi,enty) * vm_fuExtr(t,regi,enty,rlf))
                              - p21_taxrevResEx0(t,regi)
+;
+
+***---------------------------------------------------------------------------
+*' Calculation of Environmental impact tax: Sum of three components (PE, SE, deltaCap),
+*' each calculated as tax rate times production volume/capacity added. 
+***---------------------------------------------------------------------------
+q21_taxrevEI(t,regi)$(t.val ge max(2010,cm_startyear))..
+v21_taxrevEI(t,regi) 
+=e= SUM(entyPe,
+      pm_taxEI_PE(t,regi,entyPe) * vm_prodPe(t,regi,entyPe)
+    )
+    + SUM(pe2se(enty,enty2,te),
+          pm_taxEI_SE(t,regi,te) * vm_prodSe(t,regi,enty,enty2,te)
+    )
+    + SUM(se2se(enty,enty2,te),
+          pm_taxEI_SE(t,regi,te) * vm_prodSe(t,regi,enty,enty2,te)
+    )
+    + SUM(te2rlf(te,rlf),
+          pm_taxEI_cap(t,regi,te) * vm_deltaCap(t,regi,te,rlf)
+    )
+    - p21_taxrevEI0(t,regi)
 ;
 
 ***---------------------------------------------------------------------------
