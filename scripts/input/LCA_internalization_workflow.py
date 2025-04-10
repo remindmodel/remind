@@ -12,7 +12,7 @@ parser.add_argument('--static', action='store_true',
                     help='')
 parser.add_argument('--quantile', type=float, default=0.5)
 parser.add_argument('--single_midpoint', type=str)
-parser.add_argument('--exclude_midpoint', type=str)
+parser.add_argument('--exclude_midpoints', type=str)
 # parser.add_argument('scens_file', type=str, 
 #                     help='an integer for the accumulator')
 # parser.add_argument('--climatetempdir', default=os.getcwd(),
@@ -45,7 +45,7 @@ if args.static:
     else:
         exclude_list = []
         if args.exclude_midpoints != "none":
-            exclude_list = list(args.exclude_midpoints.replace("_", " ").split(";"))
+            exclude_list = list(args.exclude_midpoints.split(","))
         ics = [ic for ic in all_ics if ic not in exclude_list]
     costs = costs.sel({"impact category": ics})
 

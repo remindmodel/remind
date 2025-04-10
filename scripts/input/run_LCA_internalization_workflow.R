@@ -5,13 +5,10 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 # !/bin/bash
-require(remind2)
+
 require(quitte)
-require(piamInterfaces)
 require(yaml)
 require(tidyverse)
-require(lucode2)
-require(purrr)
 require(gdxrrw) # Needs an environmental variable to be set, see below
 require(R.utils)
 
@@ -39,11 +36,11 @@ if (!file.exists(logFile)) {
 
 
 logMsg <- paste0(
-  date(), " climate_assessment_run.R:\n",
+  date(), " run_LCA_internalization_workflow.R:\n",
   "outputDir              '", outputDir, "'\n",
   "Using gdxPath          '", gdxPath, "'\n",
   "Using config           '", cfgPath, "'\n",
-  if (createdLogFile) "Created logfile        '" else "Append to logFile      '", logFile, "'\n",
+  if (createdLogFile) "Created logfile        '" else "Append to logFile      '", logFile, "'\n"
  )
 
 
@@ -57,9 +54,9 @@ capture.output(cat(logMsg), file = logFile, append = TRUE)
 runLCAWorkflowCmd <- paste(
   "python LCA_internalization_workflow.py ",
   "--static",
-  "--quantile", cfg$cm_52_LCAquantile,
-  "--single_midpoint", cfg$cm_52_single_midpoint,
-  "--exclude_midpoints", cfg$cm_52_exclude_midpoints
+  "--quantile", cfg$gms$cm_52_LCAquantile,
+  "--single_midpoint", cfg$gms$cm_52_single_midpoint,
+  "--exclude_midpoints", cfg$gms$cm_52_exclude_midpoints
 )
 
 
