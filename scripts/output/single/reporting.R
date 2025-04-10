@@ -47,7 +47,9 @@ if (length(remind_policy_reporting_file) > 0) {
 
 # produce REMIND reporting *.mif based on gdx information
 message("\n### start generation of mif files at ", round(Sys.time()))
-convGDX2MIF(gdx, gdx_refpolicycost = gdx_refpolicycost, file = remind_reporting_file, scenario = scenario, gdx_ref = gdx_ref)
+convGDX2MIF(gdx, gdx_refpolicycost = gdx_refpolicycost,
+            file = remind_reporting_file, scenario = scenario, gdx_ref = gdx_ref,
+            extraData = file.path(outputdir, "reporting"))
 
 ## generate EDGE-T reporting if it is needed
 ## the reporting is appended to REMIND_generic_<scenario>.MIF
