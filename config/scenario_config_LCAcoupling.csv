@@ -1,0 +1,20 @@
+title;start;CES_parameters;slurmConfig;regionmapping;extramappings_historic;cm_rcp_scen;internalizeLCAimpacts;cm_52_LCAquantile;cm_52_single_midpoint;cm_52_exclude_midpoints;subsidizeLearning;cm_prtpScen;capitalMarket;cm_iterative_target_adj;cm_budgetCO2from2020;cm_budgetCO2_absDevTol;carbonprice;cm_taxCO2_functionalForm;cm_taxCO2_startyear;cm_peakBudgYr;cm_taxCO2_regiDiff;cm_taxCO2_regiDiff_endYr;cm_emiscen;c_regi_earlyreti_rate;c_tech_earlyreti_rate;cm_fetaxscen;cm_bioenergy_SustTax;cm_33EW;cm_33OAE;cm_33_OAE_limit_EEZ;cm_frac_NetNegEmi;c_ccsinjecratescen;c_ccscapratescen;cm_CESMkup_build;cm_wasteIncinerationCCSshare;techpol;regipol;cm_implicitQttyTarget;cm_emiMktTarget;cm_NucRegiPol;cm_CoalRegiPol;cm_altFeEmiFac;cm_GDPpopScen;cm_demScen;cm_oil_scen;cm_gas_scen;cm_coal_scen;c_techAssumptScen;cm_nucscen;cm_so2tax_scen;cm_multigasscen;cm_LU_emi_scen;cm_tradecostBio;cm_maxProdBiolc;cm_1stgen_phaseout;c_SSP_forcing_adjust;cm_APscen;cm_EDGEtr_scen;c_changeProdCost;cm_startyear;path_gdx;path_gdx_ref;path_gdx_bau;path_gdx_refpolicycost
+# main runs;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SSP2-NPi-internalize-trend;1;;;;;;;;;;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
+SSP2-NPi-internalize-onlyCC;1;;;;;;coupled;;climate change;;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
+SSP2-NPi-internalize-only-nonCC;1;;;;;;coupled;;;climate change;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
+SSP2-NPi-internalize-combined;1;;;;;;coupled;;;;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
+# single midpoint runs;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SSP2-NPi-internalize-only-acid;1;;;;;;coupled;;acidification;;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
+SSP2-NPi-internalize-only-CC;1;;;;;;coupled;;climate change;;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
+SSP2-NPi-internalize-only-etox;1;;;;;;coupled;;ecotoxicity;;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
+SSP2-NPi-internalize-only-eutr;1;;;;;;coupled;;eutrophication;;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
+SSP2-NPi-internalize-only-foss;1;;;;;;coupled;;fossil resources;;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
+SSP2-NPi-internalize-only-htox;1;;;;;;coupled;;human toxicity;;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
+SSP2-NPi-internalize-only-ion;1;;;;;;coupled;;ionizing radiation;;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
+SSP2-NPi-internalize-only-lu;1;;;;;;coupled;;land use;;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
+SSP2-NPi-internalize-only-metal;1;;;;;;coupled;;metal/mineral resources;;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
+SSP2-NPi-internalize-only-ozone;1;;;;;;coupled;;ozone depletion;;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
+SSP2-NPi-internalize-only-pm;1;;;;;;coupled;;particulate matter formation;;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
+SSP2-NPi-internalize-only-pof;1;;;;;;coupled;;photochemical oxidant formation;;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
+SSP2-NPi-internalize-only-wu;1;;;;;;coupled;;water use;;;;;0;;;NPi;;;;;;;;;;;;;;;;;;;NPi2018;;;;;;;;;;;;;;;;;;;;;;Mix1;;2005;;;;
