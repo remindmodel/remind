@@ -55,8 +55,8 @@ runLCAWorkflowCmd <- paste(
   "python LCA_internalization_workflow.py ",
   "--static",
   "--quantile", cfg$gms$cm_52_LCAquantile,
-  "--single_midpoint", cfg$gms$cm_52_single_midpoint,
-  "--exclude_midpoints", cfg$gms$cm_52_exclude_midpoints
+  "--single_midpoint", paste0("'", cfg$gms$cm_52_single_midpoint, "'"),
+  "--exclude_midpoints", paste0("'", cfg$gms$cm_52_exclude_midpoints, "'")
 )
 
 
