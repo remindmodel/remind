@@ -1010,6 +1010,10 @@ parameter
   cm_tempConvergence       = 0.05;  !! def = 0.05
 ;
 parameter
+  cm_52_LCAquantile        "quantile of the environmetal cost distributions"
+;
+  cm_52_LCAquantile         = 0.5;    !! def = 0.5 !! regex 0.1|0.2|0.3|0.4|0.5|0.6|0.7|0.8|0.9
+parameter
   cm_carbonprice_temperatureLimit "not-to-exceed temperature target in degree above pre-industrial [45_carbonprice = temperatureNotToExceed]"
 ;
   cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
@@ -1898,6 +1902,10 @@ $setGlobal c_nonco2_macc_scenario  Default     !! def = Default
 *' *  (off): no, only infeasable regions are repeated, standard setting
 *' *  (on):  also non-optimal regions are solved again, up to cm_solver_try_max
 $setglobal cm_repeatNonOpt off      !! def = off  !! regexp = off|on
+*** Switch to use only a single midpoint for environmental cost internalization
+$setglobal cm_52_single_midpoint none !! def = none
+*** Switch to exclude a list of midpoints from environmental cost internalization
+$setglobal cm_52_exclude_midpoints none !! def = none
 
 *' @stop
 
