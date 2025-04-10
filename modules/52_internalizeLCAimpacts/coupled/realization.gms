@@ -9,6 +9,7 @@
 *' @description The coupled-realization of the internalizeLCAimpacts module.
 
 *####################### R SECTION START (PHASES) ##############################
+$Ifi "%phase%" == "declarations" $include "./modules/52_internalizeLCAimpacts/coupled/declarations.gms"
 $Ifi "%phase%" == "preloop" $include "./modules/52_internalizeLCAimpacts/coupled/preloop.gms"
 $Ifi "%phase%" == "presolve" $include "./modules/52_internalizeLCAimpacts/coupled/presolve.gms"
 *######################## R SECTION END (PHASES) ###############################

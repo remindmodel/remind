@@ -1,8 +1,16 @@
 *** SOF ./modules/52_internalizeLCAimpacts/coupled/preloop.gms
 
-*** TODO: Run LCA workflow to initialize costs based on reference gdx
+*** Set taxes to zero to begin with.
 pm_taxEI_SE(ttot,all_regi,all_te) = 0;
 pm_taxEI_PE(ttot,all_regi,all_enty) = 0;
 pm_taxEI_cap(ttot,all_regi,all_te) = 0;
+
+*** TODO: pass an argument that this should use the input_ref.gdx
+Execute "Rscript run_LCA_internalization_workflow.R";
+* Read in results
+Execute_Loadpoint 'LCA_SE'  p52_LCAcosts_SE=pm_LCAcosts_SE;
+
+* convert units
+pm_taxEI_SE(ttot,all_regi,all_te) = p52_LCAcosts_SE * 0.001/sm_EJ_2_TWa;
 
 *** EOF ./modules/52_internalizeLCAimpacts/coupled/preloop.gms
