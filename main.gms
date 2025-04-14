@@ -125,6 +125,7 @@
 *' * Variables and parameters should be declared along with a descriptive text (use `" "` for descriptive text to avoid compilation errors)
 *' * Use three asterisks `***` for comments or `*'` if the comment should show up in the documentation of REMIND generated with `make docs` (https://pik-piam.r-universe.dev/articles/goxygen/goxygen.html)
 *' * Never use 4 asterisks (reserved for GAMS error messages)
+*' * Don't add dates or initials for your name
 *' * Don't use the string `infes` in comments
 *' * Don't use `$+number` combinations, e.g., `$20` (this interferes with GAMS error codes).
 *' * Indicate the end of a file by inserting `*** EOF filename.inc ***`
@@ -171,13 +172,13 @@
 *' * Parameters should not be overwritten in the initialization part of the models. Use if-statements instead.
 *' Notable exceptions include parameters that are part a loop iteration, e.g. Negishi weights.
 *' * Have your work double-checked! To avoid bugs and problems: If you make major changes to your code, ask an
-*' experienced colleague to review the changes before they are pushed to the git main repository.
+*' experienced colleague to review the changes before they are merged to the git main repository.
 *' * Use sets and subsets to avoid redundant formulation of code (e.g., for technology groups)
 *' * If big data tables are read in exclude them from the `.lst`-file (by using `$offlisting` and `$onlisting`),
 *' nevertheless display the parameter afterwards for an easier debugging later
 *' * When declaring a parameter/variable/equation always add the sets it is declared for,
 *' e.g. `parameter test(x,y);` instead of `parameter test;`
-*' * do not set variables for all set entries to zero (if not necessary), as this will blow up memory requirements.
+*' * Don't set variables for all set entries to zero (if not necessary), as this will blow up memory requirements.
 *'
 
 
