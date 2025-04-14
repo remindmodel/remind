@@ -153,7 +153,7 @@ o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)$tePrc2route(tePrc,opmoPrc,route) =
 
 
  !! 1st stage with two second-stage processes
- !! share = methanol * MtoMtA*specDem / (MtOMtA*specDem + MeToFinal*specDem)
+ !! share = methanol * mtoMta*specDem / (mtoMta*specDem + meToFinal*specDem)
  !! - loop over first stage techs
  !! - loop over second stage techs sharing a route
  !! - for each route, share_route is outflowPrc of 2nd stage tech of that route divided by sum_routes(outflowPrc of 2nd stage tech of route)

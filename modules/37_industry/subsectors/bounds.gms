@@ -176,4 +176,8 @@ vm_demFeSector_afterTax.lo(t,regi,entySe,"fesos","indst",emiMkt)$(NOT sameAs(emi
 v37_matShareChange.lo(t,regi,tePrc,opmoPrc,mat)$(tePrcStiffShare(tePrc,opmoPrc,mat)) = -cm_maxIndPrcShareChange;
 v37_matShareChange.up(t,regi,tePrc,opmoPrc,mat)$(tePrcStiffShare(tePrc,opmoPrc,mat)) =  cm_maxIndPrcShareChange;
 
+vm_outflowPrc.up(t,regi,"mechRe","standard") = 0.01; !! Due to downgraded recycling and pure feedstock limitations
+!!vm_outflowPrc.up(t,regi,"stCrChemRe","standard") = 0.01;
+!!vm_outflowPrc.up(t,regi,"meSyChemRe","standard") = 0.01;
+v37_matFlow.up(t,regi,"plasticWaste") = 0.03; !! Due to the limitations of the collection
 *** EOF ./modules/37_industry/subsectors/bounds.gms

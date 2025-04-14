@@ -157,26 +157,34 @@ learn                                      0.15
 
 
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-+                ChemOld     ChemElec    ChemH2      StCrNG      StCrLiq      AmSyCoal      AmSyNG      AmSyLiq      AmSyH2     MeSySol     MeSyNG     MeSyLiq     MeSyH2 
++                chemOld     chemElec    chemH2      stCrNg      stCrLiq      amSyCoal      amSyNG      amSyLiq      amSyH2     meSySol     meSyNG     meSyLiq     meSyH2
 !! documentation & sources: see below 
 inco0                500         500        500        1500         1000          2000         875         1200        1200         700        310         300        800
 omf                 0.06         0.1        0.1       0.025        0.025          0.05       0.025        0.025        0.04        0.05      0.025       0.025      0.015
 constrTme              3           3          3           3            3             3           3            3           3           3          3           3          3
 lifetime              30          30         30          30           30            30          30           30          30          30         30          30         30
 
-+                AmSyCoalcc    AmSyNGcc     AmSyLiqcc    MeSySolcc    MeSyNGcc    MeSyLiqcc
++                amSyCoal_cc    amSyNg_cc     amSyLiq_cc    meSySol_cc    meSyNg_cc    meSyLiq_cc
 !! documentation & sources: see below
-inco0                   600         650           650          850        1000          850
-omf                    0.05        0.05          0.05         0.05        0.05         0.05
-constrTme                 1           1             1            1           1            1
-lifetime                 25          25            25           25          25           25
+inco0                    600          650            650           850         1000           850
+omf                     0.05         0.05           0.05          0.05         0.05          0.05
+constrTme                  1            1              1             1            1             1
+lifetime                  25           25             25            25           25            25
 
-+                    MtOMtA    MtOMtAH2    FertProd   FertProdH2    AmToFinal    MeToFinal
++                    mtoMta    mtoMtaH2    fertProd   fertProdH2    amToFinal    meToFinal
 !! documentation & sources: see below
-inco0                   500         500         500          500          500          500        
+inco0                   500         500         500          500          500          500      
 omf                   0.025       0.025        0.06         0.06         0.06         0.06
-constrTme                 3           3           3            3            3            3 
+constrTme                 3           3           3            3            3            3
 lifetime                 30          30          30           30           30           30
+
++                    mechRe  stCrChemRe  meSyChemRe   
+!! documentation & sources: see below
+inco0                   400        2200          55     
+omf                    0.05        0.03       0.055
+constrTme                 3           3           3
+lifetime                 30          30          30
+
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 *** industry processes
@@ -337,6 +345,76 @@ bfcc:
 idrcc:
     make slightly cheaper than bfcc as there is only one point source
 
+chemOld chemElec and chemH2:
+
+
+stCrNg and stCrLiq:
+
+    for Naphtha Steam Cracking
+        CAPEX ~ 2057 $/t Ethylene
+        (Sources: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A3)
+        
+        Output ratio: 97.2 Naphtha → 31.86 Ethylene + 13.01 Propylene + 17.48 BTX + 3.78 Others
+        (Sources: Spallina17 Table 5.)
+
+    for NG Steam Cracking
+        CAPEX ~ 369.4(gas porcessing) + 912.6(co-Cracking) = 1282 Million $
+        (Sources: Minbo Yang 2017. Table 3)
+        
+        Output ratio: 197.3 Ethane-propane → 125.0 Ethylene + 28.4 Propylene + 1.6 BTX + 19.2 Others
+        (Sources: Spallina17 Table 5.)
+
+
+
+amSyCoal amSyNG amSyLiq and amSyH2:
+
+
+amSyCoal_cc amSyNG_cc amSyLiq_cc:
+
+
+meSySol meSyNG meSyLiq and meSyH2:
+
+
+meSyChemRe:
+
+
+meSySol_cc meSyNg_cc meSyLiq_cc:
+
+
+mtoMta mtoMtaH2:  
+
+
+fertProd   fertProdH2:    
+
+
+amToFinal    meToFinal:   
+
+
+mechRe meSyChemRe and stCrChemRe:
+
+    for Mechanical Recycling
+        CAPEX ~ 400 $/t
+        (Rough average of sources: Taylor Uekert 2023 Table S28.)
+
+    for Chemical Recycling: Pyrolysis
+        CAPEX ~ 2200 $/t
+        omf = 0.03
+        (Rough average of sources: Geetanjali Yadav 2023 Table1, Table S9.)
+
+    for Chemical Recycling: Gasification
+        CAPEX ~ 55 $/t
+        omf = 0.055
+        (Rough average of sources: Shaik Afzal 2023 Table S3. Table S4.)
+
+    inco0 for mechRe = 400$/t 
+    omf  for mechRe = 0.05
+
+    inco0 for stCrChemRe = 2200$/t
+    omf for stCrChemRe = 0.03
+
+    inco0 for meSyChemRe = 55$/t 
+    omf for meSyChemRe = 0.055
+ 
 $offtext
 
 *** EOF ./core/input/generisdata_tech.prn

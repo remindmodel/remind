@@ -279,50 +279,58 @@ all_te          "all energy technologies, including from modules"
     vess_nh3    "Vessels transporting liquid ammonia"
 
 *** technologies related to chemicals industry
-    ChemOld
-    ChemElec
-    ChemH2
+    chemOld
+    chemElec
+    chemH2
 
-    StCrNG
-    StCrLiq
+    stCrNg
+    stCrLiq
+    stCrChemRe
 
-    MeSySol    !! methanol tech QIANZHI
-    MeSyNG
-    MeSyLiq
-    MeSySolcc
-    MeSyNGcc
-    MeSyLiqcc
-    MeSyH2
+    mechRe
 
-    AmSyCoal   !! ammonia tech QIANZHI
-    AmSyNG
-    AmSyLiq
-    AmSyCoalcc
-    AmSyNGcc
-    AmSyLiqcc
-    AmSyH2
+    meSySol
+    meSyNg
+    meSyLiq
+    meSySol_cc
+    meSyNg_cc
+    meSyLiq_cc
+    meSyH2
+    meSyChemRe
 
-    MtOMtA
-    MtOMtAH2
-    FertProd
-    FertProdH2
-    MeToFinal
-    AmToFinal
+    amSyCoal
+    amSyNG
+    amSyLiq
+    amSyCoal_cc
+    amSyNG_cc
+    amSyLiq_cc
+    amSyH2
+
+    mtoMta
+    mtoMtaH2
+    fertProd
+    fertProdH2
+    meToFinal
+    amToFinal
 
     otherChem_old
     otherChem_elec
     otherChem_h2
 
-    HVC_stCrLiq
-    HVC_stCrNg
-    HVC_meSol
-    HVC_meNg
-    HVC_meLiq
-    HVC_meSol_gh2
-    HVC_meSol_cc
-    HVC_meNg_cc
-    HVC_meLiq_cc
-    HVC_meh2
+    mech_recycle
+
+    hvc_stCrLiq
+    hvc_stCrNg
+    hvc_stCrChemRe
+    hvc_meSol
+    hvc_meNg
+    hvc_meLiq
+    hvc_meSol_gh2
+    hvc_meSol_cc
+    hvc_meNg_cc
+    hvc_meLiq_cc
+    hvc_meh2
+    hvc_mechemRe
 
     fertilizer_amSol
     fertilizer_amNg
@@ -340,6 +348,7 @@ all_te          "all energy technologies, including from modules"
     meFinal_ng_cc
     meFinal_liq_cc
     meFinal_h2
+    meFinal_chemRe
 
     amFinal_sol
     amFinal_ng
@@ -448,16 +457,17 @@ all_enty             "all types of quantities"
     co2f         "feedstock CO2"
 
 *** chemicals
-    OtherChem
-    HVC
-    Fertilizer
+    otherChem
+    hvc
+    fertilizer
     methanol
     methanolH2
     ammonia
     ammoniaH2
-    MethFinal
-    AmmoFinal
+    methFinal
+    ammoFinal
     naphtha
+    plasticWaste
 
 *** steel
     prsteel      "Primary steel"
@@ -1297,32 +1307,39 @@ te(all_te)              "energy technologies"
     termM_lng       "Import terminals for LNG (regasification)"
     vess_lng        "Vessels transporting LNG"
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-    ChemOld
-    ChemElec
-    ChemH2
-    StCrNG
-    StCrLiq
-    MeSySol !! methanol tech QIANZHI
-    MeSyNG
-    MeSyLiq
-    MeSySolcc
-    MeSyNGcc
-    MeSyLiqcc
-    MeSyH2
-    AmSyCoal !! ammonia tech QIANZHI
-    AmSyNG
-    AmSyLiq
-    AmSyCoalcc
-    AmSyNGcc
-    AmSyLiqcc
-    AmSyH2
+    chemOld
+    chemElec
+    chemH2
 
-    MtOMtA
-    MtOMtAH2
-    FertProd
-    FertProdH2
-    AmToFinal
-    MeToFinal
+    stCrNg
+    stCrLiq
+    stCrChemRe
+
+    mechRe
+    
+    meSySol 
+    meSyNg
+    meSyLiq
+    meSySol_cc
+    meSyNg_cc
+    meSyLiq_cc
+    meSyH2
+    meSyChemRe
+
+    amSyCoal 
+    amSyNG
+    amSyLiq
+    amSyCoal_cc
+    amSyNG_cc
+    amSyLiq_cc
+    amSyH2
+
+    mtoMta
+    mtoMtaH2
+    fertProd
+    fertProdH2
+    amToFinal
+    meToFinal
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idr             "Iron direct reduction"
@@ -1402,25 +1419,28 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
     gridwindon      "grid between areas with high wind onshore production and the rest"
     gridwindoff     "grid between areas with high wind offshore production and the rest"
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-    ChemElec        "Other chemicals by Electricity"
-    ChemH2          "Other chemicals by Hydrogen"
-    MeSySol         "Methanol by Soilds" !! methanol tech QIANZHI
-    MeSyNG          "Methanol by Gas"
-    MeSyLiq         "Methanol by Liquids"
-    MeSySolcc       "Methanol by Soilds CCS" !! methanol tech QIANZHI
-    MeSyNGcc        "Methanol by Gas CCS"
-    MeSyLiqcc       "Methanol by Liquids CCS"
-    MeSyH2          "Methanol by Hydrogen"
-    AmSyCoal        "Ammonia by Coal" !! ammonia tech QIANZHI
-    AmSyNG          "Ammonia by Gas"
-    AmSyLiq         "Ammonia by Liquids"
-    AmSyCoalcc      "Ammonia by Coal CCS" !! ammonia tech QIANZHI
-    AmSyNGcc        "Ammonia by Gas CCS"
-    AmSyLiqcc       "Ammonia by Liquids CCS"
-    AmSyH2          "Ammonia by Hydrogen"
-    StCrLiq         "Steam cracking by Naphtha"
-    StCrNG          "Steam cracking by Natural Gas"
-    MTOMTA          "Methanol to Olefins and Aromatics"
+    chemElec        "Other chemicals by Electricity"
+    chemH2          "Other chemicals by Hydrogen"
+    meSySol         "Methanol by Soilds" 
+    meSyNg          "Methanol by Gas"
+    meSyLiq         "Methanol by Liquids"
+    meSySol_cc      "Methanol by Soilds CCS" 
+    meSyNg_cc       "Methanol by Gas CCS"
+    meSyLiq_cc      "Methanol by Liquids CCS"
+    meSyH2          "Methanol by Hydrogen"
+    meSyChemRe      "Methanol by Chemical Recycling"
+    amSyCoal        "Ammonia by Coal" 
+    amSyNG          "Ammonia by Gas"
+    amSyLiq         "Ammonia by Liquids"
+    amSyCoal_cc     "Ammonia by Coal CCS" 
+    amSyNG_cc       "Ammonia by Gas CCS"
+    amSyLiq_cc      "Ammonia by Liquids CCS"
+    amSyH2          "Ammonia by Hydrogen"
+    stCrLiq         "Steam cracking by Naphtha"
+    stCrNg          "Steam cracking by Natural Gas"
+    stCrChemRe      "Steam cracking by Chemical Recycling"
+    mechRe          "Mechanical Recycling"
+    mtoMta          "Methanol to Olefins and Aromatics"
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bfcc            "Blast furnace CCS"
