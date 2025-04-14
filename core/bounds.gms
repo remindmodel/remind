@@ -458,15 +458,6 @@ loop(prodSeOth2te(enty,te),
 
 
 ***---------------------------------------------------------------------------
-***                 Lower bounds on hydro
-***---------------------------------------------------------------------------
-*** as most of the costs for hydro are for the initial building, it is unlikely that existing hydro plants are not renovated, even if a completely new plant would not be economic
-*** accordingly, set lower bound on hydro generation close to 2005 values
-
-vm_prodSe.lo(t,regi,"pehyd","seel","hydro")$(t.val > 2005) = 0.99 * o_INI_DirProdSeTe(regi,"seel","hydro");
-
-
-***---------------------------------------------------------------------------
 ***                 make sure the model doesn't use technologies beyond grade 1
 ***---------------------------------------------------------------------------
 *** for pe2se, se2se and se2fe the other grades should not be used
