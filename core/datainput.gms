@@ -702,6 +702,9 @@ $offdelim
 ;
 $Onlisting
 
+*** renewable historical capacity should only increase as it cannot retire
+pm_histCap("2020",regi,teReNoBio) = max(pm_histCap("2015",regi,teReNoBio), pm_histCap("2020",regi,teReNoBio));
+
 *** calculate historic capacity additions
 pm_delta_histCap(tall,regi,te) = pm_histCap(tall,regi,te) - pm_histCap(tall-1,regi,te);
 
