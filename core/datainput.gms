@@ -1021,12 +1021,12 @@ $offdelim
 pm_dataren(all_regi,"maxprod",rlf,"windoff") = sm_EJ_2_TWa * f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf);
 pm_dataren(all_regi,"nur",rlf,"windoff")     = f_maxProdGradeRegiWindOff(all_regi,"nur",rlf);
 
-pm_shareWindPotentialOff2On(all_regi) =
-    sum(rlf $ (rlf.val le 8), f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf))
+pm_shareWindPotentialOff2On(regi) =
+    sum(rlf $ (rlf.val le 8), pm_dataren(regi,"maxprod",rlf,"windoff"))
   /
-    sum(rlf $ (rlf.val le 8), f_maxProdGradeRegiWindOn( all_regi,"maxprod",rlf));
+    sum(rlf $ (rlf.val le 8), pm_dataren(regi,"maxprod",rlf,"windon"));
 
-pm_shareWindOff(ttot,regi)$((ttot.val >= 2030)) = 1;
+pm_shareWindOff(ttot,regi)$(ttot.val >= 2030) = 1;
 
 
 table f_dataRegiSolar(all_regi,char,all_te,rlf) "input of regionalized data for solar [EJ/a]"
