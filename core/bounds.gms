@@ -69,16 +69,21 @@ loop(all_te $ (
     sameas(all_te, "fnrs") OR
     sameas(all_te, "pcc") OR
     sameas(all_te, "pco") OR
-*** windoffshore-todo: to remove when removing wind from all_te
     sameas(all_te, "wind") OR
     sameas(all_te, "storwind") OR
     sameas(all_te, "gridwind")
   ),
   vm_cap.fx(t,regi,all_te,rlf) = 0;
   vm_deltaCap.fx(t,regi,all_te,rlf) = 0;
-  vm_demPe.fx(t,regi,entyPe,entySe,all_te) = 0;
-  vm_prodSe.fx(t,regi,entyPe,entySe,all_te) = 0;
 );
+
+vm_demPe.fx(t,regi,"pecoal","seel","pcc") = 0;
+vm_demPe.fx(t,regi,"pecoal","seel","pco") = 0;
+vm_prodSe.fx(t,regi,"pecoal","seel","pcc") = 0;
+vm_prodSe.fx(t,regi,"pecoal","seel","pco") = 0;
+*** windoffshore-todo: to remove when removing wind from all_te
+vm_demPe.fx(t,regi,"pewin","seel","wind") = 0;
+vm_prodSe.fx(t,regi,"pewin","seel","wind") = 0;
 
 *' Switch off coal-h2 hydrogen investments after 2020, and gas-h2 investments after 2030. Our current seh2 hydrogen represents only additional (clean) hydrogen use cases to current ones.
 *' However, as we have too high H2 demand in 2025 and 2030 from the input data, we need to allow grey hydrogen for these time periods to meet the hydrogen demand
