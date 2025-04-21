@@ -295,9 +295,14 @@ vm_emiMac.fx(t,regi,"oc") = 0;
 loop(t $ (t.val >= 2015 and t.val <= 2025),
   loop(regi,
 *** fix renewable capacities to real world historical values if available
-    loop(teReNoBio(te) $ pm_histCap(t,regi,te),
-      vm_cap.lo(t,regi,te,"1") = 0.95 * pm_histCap(t,regi,te);
-      vm_cap.up(t,regi,te,"1") $ (t.val <= 2020) = 1.05 * pm_histCap(t,regi,te); !! TODO: activate 2025 upper-bound when consolidated data available
+    vm_cap.lo(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
+    if(t.val <= 2020, !! TODO: activate 2025 upper-bound when consolidated data available
+      vm_cap.up(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 1.05 * pm_histCap(t,regi,te);
+    );
+*** broader bounds for renewables with lower data quality
+    loop(te $ (sameas(te, "hydro") or sameas(te, "geohdr")),
+      vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.7 * pm_histCap(t,regi,te);
+      vm_cap.up(t,regi,te,"1") $ pm_histCap(t,regi,te) = 1.4 * pm_histCap(t,regi,te);
     );
 
 *** lower bound on capacities for ngcc and ngt and gaschp for regions defined at the pm_histCap file
