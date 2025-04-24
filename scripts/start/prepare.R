@@ -14,8 +14,6 @@ prepare <- function() {
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   require(tools, quietly = TRUE,warn.conflicts =FALSE)
   require(remind2, quietly = TRUE,warn.conflicts =FALSE)
-  require(mrremind)
-  require(mrvalidation)
 
   .copy.fromlist <- function(filelist,destfolder) {
     if(is.null(names(filelist))) names(filelist) <- rep("",length(filelist))
@@ -52,7 +50,7 @@ prepare <- function() {
             ~Package, "data.table", "devtools", "dplyr", "edgeTransport",
             "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools",
             "lucode2", "luplot", "luscale", "magclass", "magpie4", "methods",
-            "mip", "mrremind", "mrvalidation", "optparse", "parallel",
+            "mip", "optparse", "parallel",
             "plotly", "remind2", "reticulate", "rlang", "rmndt", "tidyverse",
             "tools"),
 
@@ -94,10 +92,17 @@ prepare <- function() {
   # ATTENTION: modifying gms files
 
   # Create input file with exogenous CO2 tax using the CO2 price from another run
-  if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "exogenous") && (!is.na(cfg$files2export$start["input_carbonprice.gdx"]))){
+  if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice %in% c("exogenous", "exogenousExpo")) && (!is.na(cfg$files2export$start["input_carbonprice.gdx"]))){
     cat("\nRun scripts/input/create_input_for_45_carbonprice_exogenous.R to create input file with exogenous CO2 tax from another run.\n")
     source("scripts/input/create_input_for_45_carbonprice_exogenous.R")
-    create_input_for_45_carbonprice_exogenous(as.character(cfg$files2export$start["input_carbonprice.gdx"]))
+    create_input_for_45_carbonprice_exogenous(as.character(cfg$files2export$start["input_carbonprice.gdx"]), cfg$gms$carbonprice)
+  }
+
+  # Create input file with exogenous damage parameters using the damage parameter from another run
+  if(!is.null(cfg$gms$damages) && (cfg$gms$damages == "exogenous") && (!is.na(cfg$files2export$start["input_damage.gdx"]))){
+    cat("\nRun scripts/input/create_input_for_50_damage_exogenous.R to create input file with exogenous damage factor from another run.\n")
+    source("scripts/input/create_input_for_50_damage_exogenous.R")
+    create_input_for_50_damage_exogenous(as.character(cfg$files2export$start["input_damage.gdx"]))
   }
 
   # If a path to a MAgPIE report is supplied use it as REMIND input (used for REMIND-MAgPIE coupling)
@@ -207,7 +212,7 @@ prepare <- function() {
   save(cfg, file = file.path(cfg$results_folder, "config.Rdata"))
 
   # Merge GAMS files
-  message("\nCreating full.gms")
+  message("\n", round(Sys.time()), ": Creating full.gms")
 
   # only compile the GAMS file to catch compilation errors and create a dump
   # file with the full code
@@ -269,6 +274,7 @@ prepare <- function() {
 
     # Start the clock.
     begin <- Sys.time()
+    message("\n", round(begin), ": Creating fixing files...")
 
     # Extract data from input_ref.gdx file and store in levs_margs_ref.gms.
     system(paste("gdxdump",
@@ -278,6 +284,23 @@ prepare <- function() {
 
     # Read data from levs_margs_ref.gms.
     ref_gdx_data <- suppressWarnings(readLines("levs_margs_ref.gms"))
+    # Read variables and equations that are declared in this run
+    varsAndEqs <- gms::readDeclarations("full.gms", types = c("equation", "(positive |negative |)variable"))[, "names"]
+    # Keep only lines with declared variables, gams operators or empty lines
+    ref_gdx_data_vars <- stringr::str_extract(ref_gdx_data, "[^ .]+")
+    keepVarsAndEqs <- c(varsAndEqs, "$onEmpty", "$offListing", "$offEmpty", "$onListing", NA)
+    toberemoved <- sort(setdiff(unique(ref_gdx_data_vars), keepVarsAndEqs))
+    notfixed <- sort(setdiff(varsAndEqs, ref_gdx_data_vars))
+    ref_gdx_data <- ref_gdx_data[ref_gdx_data_vars %in% keepVarsAndEqs]
+    # Tell users which variables were removed
+    if (length(toberemoved) > 0) {
+      message("Because they are not declared, the fixings for these variables and equations will be dropped:")
+      message(paste0(toberemoved, collapse = ", "))
+    }
+    if (length(notfixed) > 0) {
+      message("Because they are not available in path_gdx_ref, these variables and equations cannot be fixed:")
+      message(paste0(notfixed, collapse = ", "))
+    }
 
     # Create fixing files.
     cat("\n")
@@ -301,10 +324,13 @@ prepare <- function() {
   create_standard_fixings <- function(cfg, ref_gdx_data) {
 
     # Declare empty lists to hold the strings for the 'manipulateFile' functions.
-    full_manipulateThis <- NULL
-    levs_manipulateThis <- NULL
-    fixings_manipulateThis <- NULL
-    margs_manipulateThis <- NULL
+    manipulateThis <- NULL
+
+    # these lists can be used to comment out or rename stuff in such way, with the dot
+    # needed to terminate the variable or equation name:
+    # manipulateThis <- c(manipulateThis,
+    #   list(c("vm_forcOs.", "!!vm_forcOs.")),
+    #   list(c("q_oldname.", "q_newname.")))
 
     str_years <- c()
     no_years  <- (cfg$gms$cm_startyear - 2005) / 5
@@ -318,14 +344,6 @@ prepare <- function() {
 
     writeLines(levs, "levs.gms")
 
-    # Replace fixings.gms with level values
-    file.copy("levs.gms", "fixings.gms", overwrite = TRUE)
-
-    fixings_manipulateThis <- c(fixings_manipulateThis, list(c(".L ", ".FX ")))
-    #cb q_co2eq is only "static" equation to be active before cm_startyear, as multigasscen could be different from a scenario to another that is fixed on the first
-    #cb therefore, vm_co2eq cannot be fixed, otherwise infeasibilities would result. vm_co2eq.M is meaningless, is never used in the code (a manipulateFile delete line command would be even better)
-    #  manipulateFile("fixings.gms", list(c("vm_co2eq.FX ", "vm_co2eq.M ")))
-
     # Write marginal values to file
     margs <- c()
     str_years    <- c()
@@ -334,200 +352,24 @@ prepare <- function() {
       margs        <- c(margs, grep(str_years[i], ref_gdx_data, value = TRUE))
     }
     writeLines(margs, "margs.gms")
-     # temporary fix so that you can use older gdx for fixings - will become obsolete in the future and can be deleted once the next variable name change is done
-    margs_manipulateThis <- c(margs_manipulateThis, list(c("q_taxrev","q21_taxrev")))
-    # fixing for SPA runs based on ModPol input data
-    margs_manipulateThis <- c(margs_manipulateThis,
-                              list(c("q41_emitrade_restr_mp.M", "!!q41_emitrade_restr_mp.M")),
-                              list(c("q41_emitrade_restr_mp2.M", "!!q41_emitrade_restr_mp2.M")))
-
-    #AJS this symbol is not known and crashes the run - is it deprecated? TODO
-    levs_manipulateThis <- c(levs_manipulateThis,
-                             list(c("vm_pebiolc_price_base.L", "!!vm_pebiolc_price_base.L")))
-
-    #AJS filter out nash marginals in negishi case, as they would lead to a crash when trying to fix on them:
-    if(cfg$gms$optimization == 'negishi'){
-      margs_manipulateThis <- c(margs_manipulateThis, list(c("q80_costAdjNash.M", "!!q80_costAdjNash.M")))
+    # manipulate files
+    if (length(manipulateThis) > 0) {
+      manipulateFile("margs.gms", manipulateThis, fixed = TRUE)
+      manipulateFile("levs.gms", manipulateThis, fixed = TRUE)
     }
-    if(cfg$gms$subsidizeLearning == 'off'){
-      levs_manipulateThis <- c(levs_manipulateThis,
-                               list(c("v22_costSubsidizeLearningForeign.L",
-                                      "!!v22_costSubsidizeLearningForeign.L")))
-      margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("q22_costSubsidizeLearning.M", "!!q22_costSubsidizeLearning.M")),
-                                list(c("v22_costSubsidizeLearningForeign.M",
-                                       "!!v22_costSubsidizeLearningForeign.M")),
-                                list(c("q22_costSubsidizeLearningForeign.M",
-                                       "!!q22_costSubsidizeLearningForeign.M")))
-      fixings_manipulateThis <- c(fixings_manipulateThis,
-                                  list(c("v22_costSubsidizeLearningForeign.FX",
-                                         "!!v22_costSubsidizeLearningForeign.FX")))
-
-    }
-
-    #JH filter out negishi marginals in nash case, as they would lead to a crash when trying to fix on them:
-    if(cfg$gms$optimization == 'nash'){
-      margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("q80_balTrade.M", "!!q80_balTrade.M")),
-                                list(c("q80_budget_helper.M", "!!q80_budget_helper.M")))
-    }
-
-    #KK filter out module 39 CCU fixings
-    if(cfg$gms$CCU == 'off') {
-      levs_manipulateThis <- c(levs_manipulateThis,
-                               list(c("v39_shSynTrans.L", "!!v39_shSynTrans.L")),
-                               list(c("v39_shSynGas.L", "!!v39_shSynGas.L")))
-
-      fixings_manipulateThis <- c(fixings_manipulateThis,
-                                  list(c("v39_shSynTrans.FX", "!!v39_shSynTrans.FX")),
-                                  list(c("v39_shSynGas.FX", "!!v39_shSynGas.FX")))
-
-      margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("v39_shSynTrans.M", "!!v39_shSynTrans.M")),
-                                list(c("v39_shSynGas.M", "!!v39_shSynGas.M")),
-                                list(c("q39_emiCCU.M", "!!q39_emiCCU.M")),
-                                list(c("q39_shSynTrans.M", "!!q39_shSynTrans.M")),
-                                list(c("q39_shSynGas.M", "!!q39_shSynGas.M")))
-    }
-
-    #RP filter out module 40 techpol fixings
-    if(cfg$gms$techpol == 'none'){
-      margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("q40_NewRenBound.M", "!!q40_NewRenBound.M")),
-                                list(c("q40_CoalBound.M", "!!q40_CoalBound.M")),
-                                list(c("q40_LowCarbonBound.M", "!!q40_LowCarbonBound.M")),
-                                list(c("q40_FE_RenShare.M", "!!q40_FE_RenShare.M")),
-                                list(c("q40_trp_bound.M", "!!q40_trp_bound.M")),
-                                list(c("q40_TechBound.M", "!!q40_TechBound.M")),
-                                list(c("q40_ElecBioBound.M", "!!q40_ElecBioBound.M")),
-                                list(c("q40_PEBound.M", "!!q40_PEBound.M")),
-                                list(c("q40_PEcoalBound.M", "!!q40_PEcoalBound.M")),
-                                list(c("q40_PEgasBound.M", "!!q40_PEgasBound.M")),
-                                list(c("q40_PElowcarbonBound.M", "!!q40_PElowcarbonBound.M")),
-                                list(c("q40_TrpEnergyRed.M", "!!q40_TrpEnergyRed.M")),
-                                list(c("q40_El_RenShare.M", "!!q40_El_RenShare.M")),
-                                list(c("q40_BioFuelBound.M", "!!q40_BioFuelBound.M")))
-
-    }
-
-    if(cfg$gms$techpol == 'NPi2018'){
-      margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("q40_El_RenShare.M", "!!q40_El_RenShare.M")),
-                                list(c("q40_CoalBound.M", "!!q40_CoalBound.M")))
-    }
-
-    #KK CDR module realizations
-    fixings_manipulateThis <- c(fixings_manipulateThis,
-                                list(c("vm_ccs_cdr.FX", "vm_co2capture_cdr.FX")),
-                                list(c("v33_emi.FX", "vm_emiCdrTeDetail.FX")))
-
-    levs_manipulateThis <- c(levs_manipulateThis,
-                              list(c("vm_ccs_cdr.L", "vm_co2capture_cdr.L")),
-                              list(c("v33_emi.L", "vm_emiCdrTeDetail.L")))
-
-    margs_manipulateThis <- c(margs_manipulateThis,
-                              list(c("vm_ccs_cdr.M", "vm_co2capture_cdr.M")),
-                              list(c("q33_DAC_ccsbal.M", "!!q33_DAC_ccsbal.M")),
-                              list(c("q33_DAC_emi.M", "!!q33_DAC_emi.M")))
-    # end of CDR module realizations
-
-    levs_manipulateThis <- c(levs_manipulateThis,
-                               list(c("vm_shBioFe.L","!!vm_shBioFe.L")))
-    fixings_manipulateThis <- c(fixings_manipulateThis,
-                                list(c("vm_shBioFe.FX","!!vm_shBioFe.FX")))
-    margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("vm_shBioFe.M", "!!vm_shBioFe.M")),
-                                list(c("q39_EqualSecShare_BioSyn.M", "!!q39_EqualSecShare_BioSyn.M")))
-
-    # renamed because of https://github.com/remindmodel/remind/pull/796
-    manipulate_tradesets <- c(list(c("'gas_pipe'", "'pipe_gas'")),
-                              list(c("'lng_liq'", "'termX_lng'")),
-                              list(c("'lng_gas'", "'termX_lng'")),
-                              list(c("'lng_ves'", "'vess_lng'")),
-                              list(c("'coal_ves'", "'vess_coal'")),
-                              list(c("vm_budgetTradeX", "!! vm_budgetTradeX")),
-                              list(c("vm_budgetTradeM", "!! vm_budgetTradeM"))  )
-    levs_manipulateThis <- c(levs_manipulateThis, manipulate_tradesets)
-    margs_manipulateThis <- c(margs_manipulateThis, manipulate_tradesets)
-    fixings_manipulateThis <- c(fixings_manipulateThis, manipulate_tradesets)
-
-    # because of https://github.com/remindmodel/remind/pull/800
-    if (cfg$gms$cm_transpGDPscale != "on") {
-      levs_manipulateThis <- c(levs_manipulateThis, list(c("q35_transGDPshare.M", "!! q35_transGDPshare.M")))
-      margs_manipulateThis <- c(margs_manipulateThis, list(c("q35_transGDPshare.M", "!! q35_transGDPshare.M")))
-      fixings_manipulateThis <- c(fixings_manipulateThis, list(c("q35_transGDPshare.M", "!! q35_transGDPshare.M")))
-    }
-
-    # renamed because of https://github.com/remindmodel/remind/pull/848, 1066
-    levs_manipulateThis <- c(levs_manipulateThis,
-                             list(c("vm_forcOs.L", "!!vm_forcOs.L")),
-                             list(c("v32_shSeEl.L", "!!v32_shSeEl.L")))
-    margs_manipulateThis <- c(margs_manipulateThis,
-                             list(c("vm_forcOs.M", "!!vm_forcOs.M")),
-                             list(c("v32_shSeEl.M", "!!v32_shSeEl.M")))
-    fixings_manipulateThis <- c(fixings_manipulateThis,
-                             list(c("vm_forcOs.FX", "!!vm_forcOs.FX")),
-                             list(c("v32_shSeEl.FX", "!!v32_shSeEl.FX")))
-
-    #filter out deprecated regipol items
-    levs_manipulateThis <- c(levs_manipulateThis,
-                             list(c("v47_emiTarget.L", "!!v47_emiTarget.L")),
-                             list(c("v47_emiTargetMkt.L", "!!v47_emiTargetMkt.L")),
-                             list(c("vm_taxrevimplEnergyBoundTax.L", "!!vm_taxrevimplEnergyBoundTax.L")))
-    margs_manipulateThis <- c(margs_manipulateThis,
-                             list(c("v47_emiTarget.M", "!!v47_emiTarget.M")),
-                             list(c("v47_emiTargetMkt.M", "!!v47_emiTargetMkt.M")),
-                             list(c("q47_implFETax.M", "!!q47_implFETax.M")),
-                             list(c("q47_emiTarget_mkt_netCO2.M", "!!q47_emiTarget_mkt_netCO2.M")),
-                             list(c("q47_emiTarget_mkt_netGHG.M", "!!q47_emiTarget_mkt_netGHG.M")),
-                             list(c("q47_emiTarget_netCO2.M", "!!q47_emiTarget_netCO2.M")),
-                             list(c("q47_emiTarget_netCO2_noBunkers.M", "!!q47_emiTarget_netCO2_noBunkers.M")),
-                             list(c("q47_emiTarget_netCO2_noLULUCF_noBunkers.M", "!!q47_emiTarget_netCO2_noLULUCF_noBunkers.M")),
-                             list(c("q47_emiTarget_netGHG.M", "!!q47_emiTarget_netGHG.M")),
-                             list(c("q47_emiTarget_netGHG_noBunkers.M", "!!q47_emiTarget_netGHG_noBunkers.M")),
-                             list(c("q47_emiTarget_netGHG_noLULUCF_noBunkers.M", "!!q47_emiTarget_netGHG_noLULUCF_noBunkers.M")),
-                             list(c("q47_emiTarget_netGHG_LULUCFGrassi_noBunkers.M", "!!q47_emiTarget_netGHG_LULUCFGrassi_noBunkers.M")),
-
-                             list(c("q47_emiTarget_grossEnCO2.M", "!!q47_emiTarget_grossEnCO2.M")),
-                             list(c("q47_emiTarget_mkt_netCO2.M", "!!q47_emiTarget_mkt_netCO2.M")),
-                             list(c("q47_emiTarget_mkt_netCO2_noBunkers.M", "!!q47_emiTarget_mkt_netCO2_noBunkers.M")),
-                             list(c("q47_emiTarget_mkt_netCO2_noLULUCF_noBunkers.M", "!!q47_emiTarget_mkt_netCO2_noLULUCF_noBunkers.M")),
-                             list(c("q47_emiTarget_mkt_netGHG.M", "!!q47_emiTarget_mkt_netGHG.M")),
-                             list(c("q47_emiTarget_mkt_netGHG_noBunkers.M", "!!q47_emiTarget_mkt_netGHG_noBunkers.M")),
-                             list(c("q47_emiTarget_mkt_netGHG_noLULUCF_noBunkers.M", "!!q47_emiTarget_mkt_netGHG_noLULUCF_noBunkers.M")),
-                             list(c("q47_emiTarget_mkt_netGHG_LULUCFGrassi_noBunkers.M", "!!q47_emiTarget_mkt_netGHG_LULUCFGrassi_noBunkers.M")),
-                             list(c("qm_balFeAfterTax.M", "!!qm_balFeAfterTax.M")),
-                             list(c("q47_implicitQttyTargetTax.M", "!!q47_implicitQttyTargetTax.M")),
-                             list(c("q47_implEnergyBoundTax.M", "!!q47_implEnergyBoundTax.M")),
-                             list(c("vm_taxrevimplEnergyBoundTax.M", "!!vm_taxrevimplEnergyBoundTax.M"))
-                             )
-
-    fixings_manipulateThis <- c(fixings_manipulateThis,
-                            list(c("v47_emiTarget.FX", "!!v47_emiTarget.FX")),
-                            list(c("v47_emiTargetMkt.FX", "!!v47_emiTargetMkt.FX")),
-                            list(c("vm_taxrevimplEnergyBoundTax.FX", "!!vm_taxrevimplEnergyBoundTax.FX")))
+    file.copy("levs.gms", "fixings.gms", overwrite = TRUE)
+    # Replace fixings with level values
+    manipulateFile("fixings.gms", list(c(".L ", ".FX ")), fixed = TRUE)
 
     # Include fixings (levels) and marginals in full.gms at predefined position
     # in core/loop.gms.
-    full_manipulateThis <- c(full_manipulateThis,
-                             list(c("cb20150605readinpositionforlevelfile",
-                                    paste("first offlisting inclusion of levs.gms so that level value can be accessed",
-                                          "$offlisting",
-                                          "$include \"levs.gms\";",
-                                          "$onlisting", sep = "\n"))))
-    full_manipulateThis <- c(full_manipulateThis, list(c("cb20140305readinpositionforfinxingfiles",
-                                                         paste("offlisting inclusion of levs.gms, fixings.gms, and margs.gms",
-                                                               "$offlisting",
-                                                               "$include \"levs.gms\";",
-                                                               "$include \"fixings.gms\";",
-                                                               "$include \"margs.gms\";",
-                                                               "$onlisting", sep = "\n"))))
-
-    # Perform actual manipulation on levs.gms, fixings.gms, and margs.gms in
-    # single, respective, parses of the texts.
-    manipulateFile("levs.gms", levs_manipulateThis, fixed = TRUE)
-    manipulateFile("fixings.gms", fixings_manipulateThis, fixed = TRUE)
-    manipulateFile("margs.gms", margs_manipulateThis, fixed = TRUE)
+    full_manipulateThis <- list(c("cb20140305readinpositionforfixingfiles",
+                                  paste("offlisting inclusion of levs.gms, fixings.gms, and margs.gms",
+                                        "$offlisting",
+                                        "$include \"levs.gms\";",
+                                        "$include \"fixings.gms\";",
+                                        "$include \"margs.gms\";",
+                                        "$onlisting", sep = "\n")))
 
     # Perform actual manipulation on full.gms, in single parse of the text.
     manipulateFile("full.gms", full_manipulateThis, fixed = TRUE)

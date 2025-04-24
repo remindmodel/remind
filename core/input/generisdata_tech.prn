@@ -24,7 +24,7 @@ inco0            950     1350     500         60      1200        400       900 
 constrTme          3        3       2          1         3          2         2           2           3           3
 lifetime          35       35      30         35        35         35        35          35          35          35
 mix0                                                                       0.70        0.00        0.00        0.00
-eta             0.57     0.49    0.38       1.00      0.47       0.80      0.73        0.70        0.73        0.70
+eta             0.57     0.49    0.38       1.00      0.47       0.80      0.73        0.70        0.60        0.57
 omf             0.03     0.03    0.03       0.03      0.03       0.03      0.05        0.06        0.05        0.06
 omv               15       30      24         30        42         24        20          25          43          43
 flexibility     0.95     0.85      16                 0.85
@@ -280,6 +280,15 @@ Ocean Liming - oae
     omf: 60 (USD/tCaO production) + ~10 (USD/tCaO distribution)
     Costs per tC removed is calculated in the code as it depends on the efficiency (tCO2/tCaO; exogenous):
         cost (USD/tC) = inco0 (USD/tCaO) / ( efficiency (tCO2/tCaO) / 3.66 (tCO2/tC) )
+
+Gas to Liquids (GtL) Fischer-Tropsch Process - gasftrec/gasftcrec
+    efficiency eta = 0.60 (0.57 with capture), estimation at higher end of efficiency spectrum
+    Details in Issue 518/PR 2034
+    https://ora.ox.ac.uk/objects/uuid:574a2d88-61ee-4097-8642-f154e7bbf813/files/m4061815393e7b6a9bae761fc1a066e4f
+    https://www.sciencedirect.com/science/article/pii/S1875510012000947?casa_token=C5TlNuFXo3wAAAAA:f0X5fTYzFMS2N71q3TAVMcdz62KMLe6ibBk-tDlB3fmmhF2IQ9BjASritXPHH3316R3XBR1m
+    https://onepetro.org/IPTCONF/proceedings/13IPTC/All-13IPTC/IPTC-17415-MS/153046
+    https://www.natgas.info/gas-information/what-is-natural-gas/gtl
+
 
 --- process-based industry: ---
 annuity factor = r * (1+r)^lifetime/(-1+(1+r)^lifetime), factor to annualize total investment cost of plant, discounting r = 0.05

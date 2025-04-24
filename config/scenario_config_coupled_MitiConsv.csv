@@ -1,0 +1,4 @@
+title;start;oldrun;path_report;qos;config/scenario_config.csv;config/projects/scenario_config_miti_consv.csv;no_ghgprices_land_until;path_gdx;path_gdx_bau;path_gdx_ref;path_gdx_refpolicycost;cfg_mag$gms$s15_elastic_demand;cfg_mag$gms$s32_npi_ndc_reversal;cfg_mag$gms$s35_npi_ndc_reversal
+rev8_MitiConsv_SSP2-NPi;0;;;;SSP2|NPI|nocc_hist|rcp4p5|ForestryExo;MitiConsv;y2150;;;;;1;;
+rev8_MitiConsv_SSP2-PkBudg1000;0;;;;SSP2|NDC|nocc_hist|rcp2p6|ForestryExo;MitiConsv;y2030;;;;;1;;
+rev8_MitiConsv_SSP2-PkBudg650;0;;;;SSP2|NDC|nocc_hist|rcp1p9|ForestryExo;MitiConsv;y2030;;;;;1;;

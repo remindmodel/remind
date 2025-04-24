@@ -59,7 +59,7 @@ $batinclude "./modules/include.gms" presolve
 *cb 20140305 Fixing information (.L, .FX and .M) from run to be fixed to is read in from input_ref.gdx (t < cm_startyear)
 *cb 20140305 happens via submit.R script (files levs.gms, fixings.gms, margs.gms)
 *cb 20140305 submit.R looks for the unique string in the following line and replaces it with the offlisting include into the full.gms at this position
-***cb20140305readinpositionforfinxingfiles
+***cb20140305readinpositionforfixingfiles
 
 *** In case of fixing, fix to prices from input_ref.gdx (t < cm_startyear). 
 *** Parameters are not automatically treated by the fixing mechanism above.

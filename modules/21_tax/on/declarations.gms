@@ -11,7 +11,8 @@ pm_taxrevCO2Sector0(ttot,all_regi,emi_sectors)                      "reference l
 pm_taxrevCO2LUC0(ttot,all_regi)                                     "reference level value of co2luc emission tax"
 p21_taxrevCCS0(ttot,all_regi)                                       "reference level value of CCS tax"
 pm_taxrevNetNegEmi0(ttot,all_regi)                                  "reference level value of net-negative emissions tax"
-p21_emiALLco2neg0(ttot,all_regi)                                    "reference level value of negative CO2 emissions for taxes"
+p21_emiAllco2neg0(ttot,all_regi)                                    "reference level value of net-negative CO2 emissions in the current iteration"
+p21_emiAllco2neg_acrossIterations0(ttot,all_regi)                   "reference level value of net-negative CO2 emissions as difference of gross CDR in the current iteration and gross emissions in the previous iteration"
 p21_taxrevPE0(ttot,all_regi,all_enty)                               "reference level value of primary energy tax"
 p21_taxrevFE0(ttot,all_regi)                                        "reference level value of final energy tax"
 p21_taxrevCES0(ttot,all_regi,all_in)                                "reference level value of ces production tax"
@@ -26,6 +27,7 @@ p21_taxrevFlex0(ttot,all_regi)                                      "reference l
 p21_taxrevImport0(ttot,all_regi,all_enty,tax_import_type_21)        "reference level value of energy import tax"
 p21_taxrevChProdStartYear0(ttot,all_regi)                           "reference level value of tax to limit changes compared to reference run in cm_startyear"
 p21_taxrevSE0(ttot,all_regi)                                        "reference level value of tax on SE electricity demand"
+p21_taxrevEI0(ttot,all_regi)                                        "reference level value of tax on environmental impacts"
 
 p21_taxrevGHG_iter(iteration,ttot,all_regi)                         "track reference level value of GHG emission tax revenue over iterations"
 p21_taxrevCCS_iter(iteration,ttot,all_regi)                         "track reference level value of CCS tax revenue over iterations"
@@ -42,6 +44,7 @@ p21_taxrevFlex_iter(iteration,ttot,all_regi)                        "track refer
 p21_taxrevImport_iter(iteration,ttot,all_regi,all_enty)             "track reference level value of energy import tax over iterations"
 p21_taxrevChProdStartYear_iter(iteration,ttot,all_regi)             "track reference level value of tax to limit changes compared to reference run in cm_startyear over iterations"
 p21_taxrevSE_iter(iteration,ttot,all_regi)                          "track reference level value of tax on SE electricity demand over iterations"
+p21_taxrevEI_iter(iteration,ttot,all_regi)                          "track reference level value of tax on environmental impacts"
 
 p21_deltarev(iteration,all_regi)                                    "convergence criteria for iteration on tax revenue recycling"
 
@@ -61,7 +64,13 @@ p21_tau_SE_tax(ttot,all_regi,all_te)                                "maximum tax
 p21_tau_fe_tax(ttot,all_regi,emi_sectors,all_enty)                  "tax path for final energy"
 p21_tau_fe_sub(ttot,all_regi,emi_sectors,all_enty)                  "subsidy path for final energy"
 p21_CO2TaxSectorMarkup(ttot,all_regi,emi_sectors)                   "path for CO2 tax markup in building, industry or transport sector"
+pm_taxEI_PE(ttot,all_regi,all_enty)                                 "tax path for environmental impacts tax on primary energy production"
+pm_taxEI_SE(ttot,all_regi,all_te)                                   "tax path for environmental impacts tax on secondary energy production"
+pm_taxEI_cap(ttot,all_regi,all_te)                                  "tax path for environmental impacts tax on capacity additions"
 
+p21_grossEmissions(iteration,ttot,all_regi)                         "Gross CO2 emissions"
+p21_referenceGrossEmissions(ttot,all_regi)                          "Reference gross CO2 emissions used for computation of net-negative emissions"
+p21_referenceGrossEmissions_iter(iteration,ttot,all_regi)           "Tracked over iterations for debugging"
 
 p21_tau_SE_tax_rampup(ttot,all_regi,all_te,teSeTax_coeff)           "Parameters of logistic function to describe relationship between SE electricity tax rate and share of technology in total electricity demand"
 $ifThen.SEtaxRampUpParam not "%cm_SEtaxRampUpParam%" == "off" 
@@ -99,6 +108,7 @@ Scalars
 s21_so2_tax_2010                                                    "SO2 tax value in 2010 in 10^12$/TgS = 10^6 $/t S"
 s21_tax_time                                                        "time when final tax level is reached"
 s21_tax_value                                                       "target level of tax, sub, inconv in $/GJ, must always be rescaled after setting"
+s21_frac_NetNegEmi                                                  "parameter used for fade-in of cm_frac_NetNegEmi"
 ;
 
 variables
@@ -123,11 +133,14 @@ v21_taxemiMkt(ttot,all_regi,all_emiMkt)                             "tax on gree
 v21_taxrevImport(ttot,all_regi,all_enty)                            "net change vs. last iteration of tax revenues from energy import tax"
 v21_taxrevChProdStartYear(ttot,all_regi)                            "tax to limit changes compared to reference run in cm_startyear"
 v21_taxrevSE(ttot,all_regi)                                         "tax on SE electricity demand, used for taxes on electrolysis"
+v21_taxrevEI(ttot,all_regi)                                         "tax on environmental impacts"
 ;
 
 Positive Variable
-vm_emiALLco2neg(ttot,all_regi)                                      "negative part of total CO2 emissions"
-v21_emiALLco2neg_slack(ttot,all_regi)                               "dummy variable to extract negatice CO2 emissions from emiAll"
+vm_emiAllco2neg(ttot,all_regi)                                      "net-negative CO2 emissions (as positive variable)"
+v21_emiAllco2neg_slack(ttot,all_regi)                               "dummy variable to extract net-negative CO2 emissions from emiAll"
+v21_emiAllco2neg_acrossIterations(ttot,all_regi)                    "net-negative CO2 emissions as difference of gross CDR in the current iteration and gross emissions in the previous iteration (as positive variable)"
+v21_emiAllco2neg_acrossIterations_slack(ttot,all_regi)              "dummy variable to compute v21_emiAllco2neg_acrossIterations"
 v21_tau_SE_tax(ttot,all_regi,all_te)                                "tax rate of tax on SE electricity demand, used for taxes on electrolysis"
 ;
 
@@ -135,7 +148,8 @@ equations
 q21_taxrev(ttot,all_regi)                                           "calculation of difference in total tax volume"
 q21_taxrevReal(ttot,all_regi)                                       "calculation of difference in volume of real taxes and subsidies"
 q21_taxrevPseudo(ttot,all_regi)                                     "calculation of difference in volume of pseudo taxes and subsidies"
-q21_emiAllco2neg(ttot,all_regi)                                     "calculates negative part of CO2 emissions"
+q21_emiAllco2neg_acrossIterations(ttot,all_regi)                    "calculation of net-negative CO2 emissions as difference of gross CDR in the current iteration and gross emissions in the previous iteration"
+q21_emiAllco2neg(ttot,all_regi)                                     "calculation of net-negative CO2 emissions in the current iteration"
 q21_tau_bio(ttot)                                                   "calculation of demand-dependent bioenergy tax"
 q21_taxrevGHG(ttot,all_regi)                                        "calculation of tax on greenhouse gas emissions"
 q21_taxrevCO2Sector(ttot,all_regi,emi_sectors)                      "calculation of sector markup tax on CO2 emissions"
@@ -156,6 +170,7 @@ q21_taxrevImport(ttot,all_regi,all_enty)                            "calculation
 q21_taxrevChProdStartYear(ttot,all_regi)                            "calculation of tax to limit changes compared to reference run in cm_startyear"
 q21_taxrevSE(ttot,all_regi)                                         "calculation of tax on SE electricity demand, used for taxes on electrolysis"
 q21_SeTaxRate(ttot,all_regi,all_te)                                 "calculation of SE tax rate, used for taxes on electrolysis"
+q21_taxrevEI(ttot,all_regi)                                         "calculation of tax on environmental impacts"
 ;
 
 $ifthen.importtaxrc "%cm_taxrc_RE%" == "REdirect"

@@ -154,7 +154,6 @@ pm_tau_pe_tax(ttot,regi,all_enty) = 0;
 *** by default CES tax is zero
 pm_tau_ces_tax(ttot,regi,all_in) = 0;
 
-
 *** Read in bioenergy emission factor that is used to compute the emission-
 *** factor-based bioenergy tax and convert from kgCO2 per GJ to GtC per TWa.
 p21_bio_EF(ttot,all_regi) = 0;
@@ -170,5 +169,33 @@ if (cm_startyear gt 2005,
 execute_load "input_ref.gdx", pm_taxrevCO2LUC0;
 execute_load "input_ref.gdx", pm_taxrevGHG0;
 );
+
+***initialize co2 market taxes
+pm_taxemiMkt(t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
+pm_taxemiMkt_iteration(iteration,t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
+
+***-------------------------------------------------------------------
+***           overwrite default targets with gdx values
+***-------------------------------------------------------------------
+Execute_Loadpoint 'input' p21_tau_CO2_tax_gdx = pm_taxCO2eq;
+if (cm_gdximport_target eq 1,
+*** only if tax rates not all equal to zero
+if (smax((t,regi),p21_tau_CO2_tax_gdx(t,regi)$(t.val gt 2030)) gt 0,
+pm_taxCO2eq(t,regi) = p21_tau_CO2_tax_gdx(t,regi);
+);
+);
+if (cm_emiscen ne 9,
+    pm_taxCO2eq(t, regi) = 0;
+);
+
+***-------------------------------------------------------------------
+***           overwrite co2 tax for delay runs with gdx values
+***-------------------------------------------------------------------
+if ( (cm_startyear gt 2005),
+Execute_Loadpoint 'input_ref' p21_tau_CO2_tax_gdx_bau = pm_taxCO2eq;
+pm_taxCO2eq(ttot,regi)$((ttot.val gt 2005) AND (ttot.val lt cm_startyear)) = p21_tau_CO2_tax_gdx_bau(ttot,regi);
+);
+
+display pm_taxCO2eq;
 
 *** EOF ./modules/21_tax/on/datainput.gms
