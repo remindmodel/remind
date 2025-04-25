@@ -81,7 +81,7 @@ if (file.exists(edgetOutputDir)) {
   message("The following variables will be dropped from the EDGE-Transport reporting because
                 they are in the REMIND reporting: ", paste(unique(sharedVariables$variable), collapse = ", "))
 
-  write.mif(EDGEToutput, remind_reporting_file, append = TRUE)
+  quitte::write.mif(EDGEToutput, remind_reporting_file, append = TRUE)
   piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 
   # generate transport extended mif
@@ -95,8 +95,10 @@ if (file.exists(edgetOutputDir)) {
 
 # extra emission reporting (depends on REMIND and EDGE-T variables) ----
 message("### report additional emission variables (reportExtraEmissions)")
-extraEmissions <- remind2::reportExtraEmissions(mif = remind_reporting_file, extraData = extra_data_path)
-write.mif(extraEmissions, remind_reporting_file, append = TRUE)
+extraEmissions <- remind2::reportExtraEmissions(mif = remind_reporting_file,
+                                                extraData = extra_data_path,
+                                                gdx = gdx)
+quitte::write.mif(extraEmissions, remind_reporting_file, append = TRUE)
 piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 
 # append MAgPIE reporting if available ----
