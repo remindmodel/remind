@@ -1844,8 +1844,6 @@ $setGlobal cm_TCssp  SSP2  !! def = SSP2  !! regexp = SSP2|SSP5
 $setGlobal cm_TCpers  8  !! def = 8  !! regexp = [0-9]
 *** cfg$gms$cm_TCspec <- "mean"  # def = mean; {mean,median,95,05,83,17}  the uncertainty estimate of the TC damage function
 $setGlobal cm_TCspec  mean  !! def = mean  !! regexp = mean|median|95|05|83|17
-*** #cm_transpGDPscale <- "on"  # def "on", activate dampening factor to align edge-t non-energy transportation costs with historical GDP data"
-$setglobal cm_transpGDPscale  off  !! def = off  !! regexp = off|on
 *** This flag turns off output production
 $setGlobal c_skip_output  off        !! def = off  !! regexp = off|on
 ***  cm_CO2TaxSectorMarkup     "CO2 tax markup in buildings or transport sector, a value of 0.5 means CO2 tax increased by 50%"

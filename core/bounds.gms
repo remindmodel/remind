@@ -543,13 +543,6 @@ v_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_f
 vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le cm_H2InBuildOnlyAfter) = 1e-6;
 
 ***----------------------------------------------------------------------------
-***  Controlling if active, dampening factor to align edge-t non-energy transportation costs with historical GDP data
-***----------------------------------------------------------------------------
-$IFTHEN.transpGDPscale not "%cm_transpGDPscale%" == "on" 
-  vm_transpGDPscale.fx(t,regi) = 1;
-$ENDIF.transpGDPscale
-
-***----------------------------------------------------------------------------
 *'  Limit slack variable and uncontrolled variable values for adj costs that limit changes to reference in cm_startyear
 ***----------------------------------------------------------------------------
 
