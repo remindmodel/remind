@@ -1,8 +1,8 @@
 # This script is part of a longer workflow. 
 # Before running this script please perform the steps described here
-# https://gitlab.pik-potsdam.de/REMIND/remind-rse/-/wikis/How-to-create-a-REMIND-release
+# https://gitlab.pik-potsdam.de/REMIND/remind-rse/-/wikis/Topics/release
 
-# in your fork switch to develop and execute this script in the main folder Rscript scripts/utils/postRelease.R
+# in your fork switch to develop and execute this script in the main folder with Rscript scripts/utils/postRelease.R
 
 postRelease <- function() {
   gert::git_fetch("upstream")
