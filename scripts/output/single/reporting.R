@@ -10,8 +10,6 @@ library(remind2)
 library(lucode2)
 library(gms)
 library(methods)
-library(edgeTransport)
-library(reporttransport)
 library(quitte)
 library(piamutils)
 
@@ -78,6 +76,7 @@ if (file.exists(edgetOutputDir)) {
   REMINDoutput <- as.data.table(read.quitte(file.path(outputdir, paste0("REMIND_generic_", scenario, "_withoutPlus.mif"))))
   sharedVariables <- EDGEToutput[variable %in% REMINDoutput$variable | grepl(".*edge", variable)]
   EDGEToutput <- EDGEToutput[!(variable %in% REMINDoutput$variable | grepl(".*edge", variable))]
+
   message("The following variables will be dropped from the EDGE-Transport reporting because
                 they are in the REMIND reporting: ", paste(unique(sharedVariables$variable), collapse = ", "))
 
@@ -85,6 +84,7 @@ if (file.exists(edgetOutputDir)) {
   piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 
   # generate transport extended mif
+
   reporttransport::reportEdgeTransport(edgetOutputDir,
                                        isTransportExtendedReported = TRUE,
                                        gdxPath = file.path(outputdir, "fulldata.gdx"),
