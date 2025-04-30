@@ -13,6 +13,7 @@
 - :white_medium_square: Documentation (GAMS incode documentation, comments, tutorials)
 - :white_medium_square: Input data / CES parameters
 - :white_medium_square: Tests, CI/CD (continuous integration/deployment)
+- :white_medium_square: Configuration (switches in default.cfg and scenario_config*.csv files)
 - :white_medium_square: Other (please give a description)
 
 ### Impact
@@ -30,6 +31,7 @@ In the end all checkboxes must be ticked before you can merge*.
 
 - [ ] **I executed the automated model tests (`make test`) after my final commit and all tests pass (`FAIL 0`)**
 - [ ] **I adjusted the reporting in [`remind2`](https://github.com/pik-piam/remind2) if and where it was needed**
+- [ ] **I adjusted the madrat packages (mrremind and other packages involved) for input data generation if and where it was needed**
 - [ ] My code follows the [coding etiquette](https://github.com/remindmodel/remind/blob/develop/main.gms#L80)
 - [ ] I explained my changes within the PR, particularly in hard-to-understand areas
 - [ ] I checked that the [in-code documentation](https://github.com/remindmodel/remind/blob/develop/main.gms#L120) is up-to-date
