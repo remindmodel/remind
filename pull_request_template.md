@@ -13,7 +13,7 @@
 - :white_medium_square: Documentation (GAMS incode documentation, comments, tutorials)
 - :white_medium_square: Input data / CES parameters
 - :white_medium_square: Tests, CI/CD (continuous integration/deployment)
-- :white_medium_square: Configuration (switches in default.cfg and scenario_config*.csv files)
+- :white_medium_square: Configuration (switches in main.gms, default.cfg, and scenario_config*.csv files)
 - :white_medium_square: Other (please give a description)
 
 ### Impact
