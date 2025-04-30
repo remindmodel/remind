@@ -7,9 +7,9 @@
 
 getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc="costs",var_luc="smooth") {
   
-  require(dplyr,    quietly = TRUE,warn.conflicts =FALSE)
-  require(quitte,   quietly = TRUE,warn.conflicts =FALSE)
-  require(readr,    quietly = TRUE,warn.conflicts =FALSE)
+  require(dplyr,  quietly = TRUE, warn.conflicts = FALSE)
+  require(quitte, quietly = TRUE, warn.conflicts = FALSE)
+  require(readr,  quietly = TRUE, warn.conflicts = FALSE)
   
   magQuitte <- quitte::read.quitte(path_to_report, check.duplicates = FALSE)
   

@@ -416,6 +416,13 @@ all_enty             "all types of quantities"
     n2opeatland "n2o emissions from peatlands (no MAC available)"
     n2owaste   "n2o emissions from waste (domestic sewage)"
     co2luc     "co2 emissions from land use change"
+    co2lucCDRintentByPrice  "Emissions|CO2|Land|Land-use Change|Regrowth|+|CO2-price AR"
+    co2lucCDRintentByReg    "Emissions|CO2|Land|Land-use Change|Regrowth|+|NPI_NDC AR"
+    co2lucCDRintentCropland "Emissions|CO2|Land|Land-use Change|Regrowth|+|Cropland Tree Cover"
+    co2lucCDRintentTimber   "Emissions|CO2|Land|Land-use Change|Timber|+|Storage in HWP"
+    co2lucCDRunintent       "Gross Removals|CO2|AFOLU|Unintended"
+    co2lucPositive          "Gross Emissions|CO2|AFOLU"
+    co2lucResidual          "Emissions|CO2|Land|Land-use Change|+|Residual"
     co2cement_process  "co2 from cement production (only process emissions)"
     n2obio       "N2O emissions from pebiolc "
     bc           "black carbon from fossil fuel combustion"
@@ -1926,6 +1933,17 @@ emiMacMagpieCH4(all_enty)  "types of climate-relevant non-energy CH4 emissions w
 emiMacMagpieCO2(all_enty)  "types of climate-relevant non-energy CH4 emissions with mac curve where baseline emissions come from MAgPIE only"
 /
     co2luc     "co2 emissions from land use change"
+/
+
+emiMacMagpieCO2Sub(all_enty)  "subtypes of co2luc that add up to co2luc, coming from MAgPIE, passed through REMIND for reporting, not used anywhere, remain unchanged"
+/
+    co2lucCDRintentByPrice  "Emissions|CO2|Land|Land-use Change|Regrowth|+|CO2-price AR"
+    co2lucCDRintentByReg    "Emissions|CO2|Land|Land-use Change|Regrowth|+|NPI_NDC AR"
+    co2lucCDRintentCropland "Emissions|CO2|Land|Land-use Change|Regrowth|+|Cropland Tree Cover"
+    co2lucCDRintentTimber   "Emissions|CO2|Land|Land-use Change|Timber|+|Storage in HWP"
+    co2lucCDRunintent       "Gross Removals|CO2|AFOLU|Unintended"
+    co2lucPositive          "Gross Emissions|CO2|AFOLU"
+    co2lucResidual          "Emissions|CO2|Land|Land-use Change|+|Residual"
 /
 
 emiMacExo(all_enty)  "types of climate-relevant non-energy emissions with mac curve where baseline emissions are exogenous"
