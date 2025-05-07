@@ -65,7 +65,16 @@ p21_taxrevSE0(t,regi) =     sum(se2se(enty,enty2,te)$(teSeTax(te)),
 p21_taxrevEI0(t,regi) = sum(entyPe, pm_taxEI_PE(t,regi,entyPe) * vm_prodPe.l(t,regi,entyPe))
                       + sum(pe2se(enty,enty2,te), pm_taxEI_SE(t,regi,te) * vm_prodSe.l(t,regi,enty,enty2,te))
                       + sum(se2se(enty,enty2,te), pm_taxEI_SE(t,regi,te) * vm_prodSe.l(t,regi,enty,enty2,te))
-                      + sum(te2rlf(te,rlf), pm_taxEI_cap(t,regi,te) * vm_deltaCap.l(t,regi,te,rlf));
+                      + sum(te2rlf(te,rlf), pm_taxEI_cap(t,regi,te) * vm_deltaCap.l(t,regi,te,rlf))
+                      + sum((entyFe,sector)$entyFe2Sector(entyFe,sector),
+                              ( pm_taxEI_FE(t,regi,sector,entyFe) ) 
+                              * 
+                              sum(emiMkt$sector2emiMkt(sector,emiMkt), 
+                                sum(se2fe(entySe,entyFe,te),   
+                                  vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)
+                                )
+                              )
+                            );
 
 *** If net-nagative emissions tax is calculated across iterations, activate net-negative emissions tax in iteration 2 after computation of tax revenue from iteration 1
 if( (cm_NetNegEmi_calculation eq 1) AND (iteration.val ge 2),

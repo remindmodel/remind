@@ -128,7 +128,7 @@ v21_taxrevResEx(t,regi) =e=  sum(pe2rlf(peEx(enty),rlf), p21_tau_fuEx_sub(t,regi
 ;
 
 ***---------------------------------------------------------------------------
-*' Calculation of Environmental impact tax: Sum of three components (PE, SE, deltaCap),
+*' Calculation of Environmental impact tax: Sum of four components (PE, SE, deltaCap, FE),
 *' each calculated as tax rate times production volume/capacity added. 
 ***---------------------------------------------------------------------------
 q21_taxrevEI(t,regi)$(t.val ge max(2010,cm_startyear))..
@@ -144,6 +144,15 @@ v21_taxrevEI(t,regi)
     )
     + SUM(te2rlf(te,rlf),
           pm_taxEI_cap(t,regi,te) * vm_deltaCap(t,regi,te,rlf)
+    )
+    + SUM((entyFe,sector)$entyFe2Sector(entyFe,sector),
+      ( pm_taxEI_FE(t,regi,sector,entyFe) ) 
+      * 
+      SUM(emiMkt$sector2emiMkt(sector,emiMkt), 
+        SUM(se2fe(entySe,entyFe,te),   
+          vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
+        )
+      )
     )
     - p21_taxrevEI0(t,regi)
 ;
