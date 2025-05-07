@@ -4,6 +4,7 @@
 pm_taxEI_SE(ttot,all_regi,all_te) = 0;
 pm_taxEI_PE(ttot,all_regi,all_enty) = 0;
 pm_taxEI_cap(ttot,all_regi,all_te) = 0;
+pm_taxEI_FE(ttot,all_regi,emi_sectors,all_enty) = 0;
 
 *** TODO: pass an argument that this should use the input_ref.gdx
 Execute "Rscript run_LCA_internalization_workflow.R";
