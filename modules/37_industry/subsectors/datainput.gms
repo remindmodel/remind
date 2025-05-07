@@ -16,7 +16,7 @@ Parameters
 *** substitution elasticities
   p37_cesdata_sigma(all_in)  "industry substitution elasticities"
   /
-    ue_industry                      0.5   !! cement - chemicals - steel - other
+    ue_industry                      0.3   !! cement - chemicals - steel - other
 
       ue_cement                      1.7   !! energy, capital
         en_cement                    0.3   !! non-electric, electric
