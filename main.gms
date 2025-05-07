@@ -5,7 +5,7 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./main.gms
-*' @title REMIND - REgional Model of INvestments and Development
+*' @title REMIND - REgional Model of INvestments and 
 *'
 *' @description REMIND is a global multi-regional model incorporating the economy, the climate system
 *' and a detailed representation of the energy sector. It solves for an intertemporal Pareto optimum
@@ -125,6 +125,7 @@
 *' * Variables and parameters should be declared along with a descriptive text (use `" "` for descriptive text to avoid compilation errors)
 *' * Use three asterisks `***` for comments or `*'` if the comment should show up in the documentation of REMIND generated with `make docs` (https://pik-piam.r-universe.dev/articles/goxygen/goxygen.html)
 *' * Never use 4 asterisks (reserved for GAMS error messages)
+*' * Don't add dates or initials for your name
 *' * Don't use the string `infes` in comments
 *' * Don't use `$+number` combinations, e.g., `$20` (this interferes with GAMS error codes).
 *' * Indicate the end of a file by inserting `*** EOF filename.inc ***`
@@ -171,13 +172,13 @@
 *' * Parameters should not be overwritten in the initialization part of the models. Use if-statements instead.
 *' Notable exceptions include parameters that are part a loop iteration, e.g. Negishi weights.
 *' * Have your work double-checked! To avoid bugs and problems: If you make major changes to your code, ask an
-*' experienced colleague to review the changes before they are pushed to the git main repository.
+*' experienced colleague to review the changes before they are merged to the git main repository.
 *' * Use sets and subsets to avoid redundant formulation of code (e.g., for technology groups)
 *' * If big data tables are read in exclude them from the `.lst`-file (by using `$offlisting` and `$onlisting`),
 *' nevertheless display the parameter afterwards for an easier debugging later
 *' * When declaring a parameter/variable/equation always add the sets it is declared for,
 *' e.g. `parameter test(x,y);` instead of `parameter test;`
-*' * do not set variables for all set entries to zero (if not necessary), as this will blow up memory requirements.
+*' * Don't set variables for all set entries to zero (if not necessary), as this will blow up memory requirements.
 *'
 
 
@@ -1843,8 +1844,6 @@ $setGlobal cm_TCssp  SSP2  !! def = SSP2  !! regexp = SSP2|SSP5
 $setGlobal cm_TCpers  8  !! def = 8  !! regexp = [0-9]
 *** cfg$gms$cm_TCspec <- "mean"  # def = mean; {mean,median,95,05,83,17}  the uncertainty estimate of the TC damage function
 $setGlobal cm_TCspec  mean  !! def = mean  !! regexp = mean|median|95|05|83|17
-*** #cm_transpGDPscale <- "on"  # def "on", activate dampening factor to align edge-t non-energy transportation costs with historical GDP data"
-$setglobal cm_transpGDPscale  off  !! def = off  !! regexp = off|on
 *** This flag turns off output production
 $setGlobal c_skip_output  off        !! def = off  !! regexp = off|on
 ***  cm_CO2TaxSectorMarkup     "CO2 tax markup in buildings or transport sector, a value of 0.5 means CO2 tax increased by 50%"

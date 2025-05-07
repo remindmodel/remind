@@ -695,28 +695,30 @@ p_cint(regi,"co2","peoil","8")=0.4153983800;
 
 *** historical installed capacity
 $Offlisting
-table   pm_histCap(tall,all_regi,all_te)     "historical installed capacity"
+table   pm_histCap(tall,all_regi,all_te) "historical installed capacity (TW)"
 $ondelim
 $include "./core/input/pm_histCap.cs3r"
 $offdelim
 ;
 $Onlisting
 
+*** renewable historical capacity should only increase as it cannot retire
+pm_histCap("2020",regi,teReNoBio) = max(pm_histCap("2015",regi,teReNoBio), pm_histCap("2020",regi,teReNoBio));
+pm_histCap("2025",regi,teReNoBio) = max(pm_histCap("2020",regi,teReNoBio), pm_histCap("2025",regi,teReNoBio));
+
 *** calculate historic capacity additions
 pm_delta_histCap(tall,regi,te) = pm_histCap(tall,regi,te) - pm_histCap(tall-1,regi,te);
 
 *** historical PE installed capacity
-*** read-in of p_PE_histCap.cs3r
-table p_PE_histCap(tall,all_regi,all_enty,all_enty)     "historical installed capacity"
+table p_PE_histCap(tall,all_regi,all_enty,all_enty) "historical installed capacity (TW)"
 $ondelim
 $include "./core/input/p_PE_histCap.cs3r"
 $offdelim
 ;
 
 *** installed capacity availability
-*** read-in of f_cf.cs3r
 $Offlisting
-table   f_cf(tall,all_regi,all_te)     "installed capacity availability"
+table   f_cf(tall,all_regi,all_te) "installed capacity availability"
 $ondelim
 $include "./core/input/f_cf.cs3r"
 $offdelim
@@ -993,16 +995,17 @@ pm_dataren(regi,"nur",rlf,te)     = 1;
 pm_dataren(regi,"maxprod","1","geohe") = 6.342;
 
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
-table f_maxProdGradeRegiHydro(all_regi,char,rlf)                  "input of regionalized maximum from hydro [EJ/a]"
+table f_maxProdGradeRegiHydro(all_regi,char,rlf) "input of regionalized maximum from hydro [EJ/a]"
 $ondelim
 $include "./core/input/f_maxProdGradeRegiHydro.cs3r"
 $offdelim
 ;
+
 pm_dataren(all_regi,"maxprod",rlf,"hydro") = sm_EJ_2_TWa * f_maxProdGradeRegiHydro(all_regi,"maxprod",rlf);
 pm_dataren(all_regi,"nur",rlf,"hydro")     = f_maxProdGradeRegiHydro(all_regi,"nur",rlf);
 
 
-table f_maxProdGradeRegiWindOn(all_regi,char,rlf)                  "input of regionalized maximum from wind onshore [EJ/a]"
+table f_maxProdGradeRegiWindOn(all_regi,char,rlf) "input of regionalized maximum from wind onshore [EJ/a]"
 $ondelim
 $include "./core/input/f_maxProdGradeRegiWindOn.cs3r"
 $offdelim
@@ -1011,7 +1014,7 @@ pm_dataren(all_regi,"maxprod",rlf,"windon") = sm_EJ_2_TWa * f_maxProdGradeRegiWi
 pm_dataren(all_regi,"nur",rlf,"windon")     = f_maxProdGradeRegiWindOn(all_regi,"nur",rlf);
 
 
-table f_maxProdGradeRegiWindOff(all_regi,char,rlf)                  "input of regionalized maximum from wind offshore [EJ/a]"
+table f_maxProdGradeRegiWindOff(all_regi,char,rlf) "input of regionalized maximum from wind offshore [EJ/a]"
 $ondelim
 $include "./core/input/f_maxProdGradeRegiWindOff.cs3r"
 $offdelim
@@ -1019,23 +1022,15 @@ $offdelim
 pm_dataren(all_regi,"maxprod",rlf,"windoff") = sm_EJ_2_TWa * f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf);
 pm_dataren(all_regi,"nur",rlf,"windoff")     = f_maxProdGradeRegiWindOff(all_regi,"nur",rlf);
 
-pm_shareWindPotentialOff2On(all_regi) =
-    sum(rlf $ (rlf.val le 8), f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf))
+pm_shareWindPotentialOff2On(regi) =
+    sum(rlf $ (rlf.val le 8), pm_dataren(regi,"maxprod",rlf,"windoff"))
   /
-    sum(rlf $ (rlf.val le 8), f_maxProdGradeRegiWindOn( all_regi,"maxprod",rlf));
+    sum(rlf $ (rlf.val le 8), pm_dataren(regi,"maxprod",rlf,"windon"));
 
-pm_shareWindOff("2010",regi) = 0.05;
-pm_shareWindOff("2015",regi) = 0.1;
-pm_shareWindOff("2020",regi) = 0.2;
-pm_shareWindOff("2025",regi) = 0.4;
-pm_shareWindOff("2030",regi) = 0.6;
-pm_shareWindOff("2035",regi) = 0.8;
-pm_shareWindOff("2040",regi) = 0.9;
-pm_shareWindOff("2045",regi) = 0.95;
-pm_shareWindOff(ttot,regi)$((ttot.val ge 2050)) = 1;
+pm_shareWindOff(ttot,regi)$(ttot.val >= 2030) = 1;
 
 
-table f_dataRegiSolar(all_regi,char,all_te,rlf)                  "input of regionalized data for solar"
+table f_dataRegiSolar(all_regi,char,all_te,rlf) "input of regionalized data for solar [EJ/a]"
 $ondelim
 $include "./core/input/f_dataRegiSolar.cs3r"
 $offdelim
@@ -1054,18 +1049,14 @@ pm_data(all_regi,"luse","spv")                = 0.001 * f_dataRegiSolar(all_regi
 pm_dataren(all_regi,"nur",rlf,"csp")          = 2/3 * f_dataRegiSolar(all_regi,"nur","csp",rlf);
 
 
-table f_maxProdGeothermal(all_regi,char)                  "input of regionalized maximum from geothermal [EJ/a]"
+table f_maxProdGeothermal(all_regi,char) "input of regionalized maximum from geothermal [EJ/a]"
 $ondelim
 $include "./core/input/f_maxProdGeothermal.cs3r"
 $offdelim
 ;
 
 *** Ensure that all regions have at least a minimum potential of 0.01 EJ to prevent infeasibilities.
-*** Also increase the read-in potential by a factor of 3 to allow 2030/2050 NPI capacity targets to be met. 
-*** The current potential is calculated as "5x the 2015 generation" - given that geohdr is still a nascent technology, allowing stronger upscaling seems justified. 
-*** Even after the rescaling, no region can produce more than 1.5EJ/yr
-
-pm_dataren(all_regi,"maxprod","1","geohdr") = sm_EJ_2_TWa * max(0.01 , 3 * f_maxProdGeothermal(all_regi,"maxprod") ) ;
+pm_dataren(all_regi,"maxprod","1","geohdr") = sm_EJ_2_TWa * max(0.01 , f_maxProdGeothermal(all_regi,"maxprod") ) ;
 
 
 display p_datapot, pm_dataren;
