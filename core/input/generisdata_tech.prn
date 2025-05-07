@@ -159,7 +159,7 @@ learn                                      0.15
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 +                chemOld     chemElec    chemH2      stCrNg      stCrLiq      amSyCoal      amSyNG      amSyLiq      amSyH2     meSySol     meSyNG     meSyLiq     meSyH2
 !! documentation & sources: see below 
-inco0                500         500        500        1500         1000          2000         875         1200        1200         700        310         300        800
+inco0                500         500        500        1100         1000          2000         875         1200        1200         700        310         300        800
 omf                 0.06         0.1        0.1       0.025        0.025          0.05       0.025        0.025        0.04        0.05      0.025       0.025      0.015
 constrTme              3           3          3           3            3             3           3            3           3           3          3           3          3
 lifetime              30          30         30          30           30            30          30           30          30          30         30          30         30
@@ -180,7 +180,7 @@ lifetime                 30          30          30           30           30   
 
 +                    mechRe  stCrChemRe  meSyChemRe   
 !! documentation & sources: see below
-inco0                   400        2200          55     
+inco0                     0        2200          55     
 omf                    0.05        0.03       0.055
 constrTme                 3           3           3
 lifetime                 30          30          30
@@ -350,6 +350,8 @@ chemOld chemElec and chemH2:
 
 stCrNg and stCrLiq:
 
+    Note: As a general principle, carbon-containing products are included in the calculation, and hydrogen is used directly as an energy input.
+
     for Naphtha Steam Cracking
         CAPEX ~ 2057 $/t Ethylene
         (Sources: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A3)
@@ -357,12 +359,16 @@ stCrNg and stCrLiq:
         Output ratio: 97.2 Naphtha → 31.86 Ethylene + 13.01 Propylene + 17.48 BTX + 3.78 Others
         (Sources: Spallina17 Table 5.)
 
+        inco0 ~ 2057 $/t * (31.86/(31.86+13.01+17.48)) ~ 1000 $/t
+        
     for NG Steam Cracking
         CAPEX ~ 369.4(gas porcessing) + 912.6(co-Cracking) = 1282 Million $
         (Sources: Minbo Yang 2017. Table 3)
         
-        Output ratio: 197.3 Ethane-propane → 125.0 Ethylene + 28.4 Propylene + 1.6 BTX + 19.2 Others
-        (Sources: Spallina17 Table 5.)
+        Output ratio: 197.3 Ethane-propane → 125.0 Ethylene + 28.4 Propylene + 1.6 BTX + 10.8 Others
+        (Sources: Minbo Yang 2017. Table 1)
+
+        inco0 ~ 1282 Million $ * (125.0/(125.0+28.4+1.6)) /8760/0.8*1000*1000 ~ 1100 $/t
 
 
 

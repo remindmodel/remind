@@ -1884,6 +1884,7 @@ $setGlobal c_nonco2_macc_scenario  Default     !! def = Default
 *' *  (on):  also non-optimal regions are solved again, up to cm_solver_try_max
 $setglobal cm_repeatNonOpt off      !! def = off  !! regexp = off|on
 
+$setglobal cm_PlasticMFA      !! def = off  !! regexp = ^(off|on)$
 *' @stop
 
 *-------------------------------------------------------------------------------------

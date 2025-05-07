@@ -176,8 +176,21 @@ vm_demFeSector_afterTax.lo(t,regi,entySe,"fesos","indst",emiMkt)$(NOT sameAs(emi
 v37_matShareChange.lo(t,regi,tePrc,opmoPrc,mat)$(tePrcStiffShare(tePrc,opmoPrc,mat)) = -cm_maxIndPrcShareChange;
 v37_matShareChange.up(t,regi,tePrc,opmoPrc,mat)$(tePrcStiffShare(tePrc,opmoPrc,mat)) =  cm_maxIndPrcShareChange;
 
-vm_outflowPrc.up(t,regi,"mechRe","standard") = 0.01; !! Due to downgraded recycling and pure feedstock limitations
+vm_outflowPrc.up(t,regi,"mechRe","standard") = 0.; !! Due to downgraded recycling and pure feedstock limitations
+
+
+$ifthen.PlasticMFA "%cm_PlasticMFA%" == "on"
+vm_outflowPrc.up(t,regi,"mechRe","standard") = p37_recycleMech(t,regi);
+vm_outflowPrc.up(t,"SSA","mechRe","standard") = p37_recycleMech(t,"SSA") * 0.2;
+$endif.PlasticMFA
+
 !!vm_outflowPrc.up(t,regi,"stCrChemRe","standard") = 0.01;
 !!vm_outflowPrc.up(t,regi,"meSyChemRe","standard") = 0.01;
-v37_matFlow.up(t,regi,"plasticWaste") = 0.03; !! Due to the limitations of the collection
+v37_matFlow.up(t,regi,"plasticWaste") = 0.; !! Due to the limitations of the collection
+
+$ifthen.PlasticMFA "%cm_PlasticMFA%" == "on"
+v37_matFlow.up(t,regi,"plasticWaste") = p37_plastcWaste(t,regi); 
+v37_matFlow.up(t,"SSA","plasticWaste") = p37_plastcWaste(t,"SSA") * 0.2;
+$endif.PlasticMFA
+
 *** EOF ./modules/37_industry/subsectors/bounds.gms

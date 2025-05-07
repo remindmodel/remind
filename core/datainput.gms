@@ -1307,26 +1307,27 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,'oae_ng')          = 0.25;
   p_adj_seed_te(ttot,regi,'oae_el')          = 0.25;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-!!  p_adj_seed_te(ttot,regi,"chemElec")        = 0.50;
-!!  p_adj_seed_te(ttot,regi,"chemH2")          = 0.25;
+  !!p_adj_seed_te(ttot,regi,"chemElec")        = 0.50;
+  !!p_adj_seed_te(ttot,regi,"chemH2")          = 0.50;
   p_adj_seed_te(ttot,regi,"meSySol")         = 0.0001;  
   p_adj_seed_te(ttot,regi,"meSyNg")          = 0.0001;
   p_adj_seed_te(ttot,regi,"meSyLiq")         = 0.0001;
-  p_adj_seed_te(ttot,regi,"meSySol_cc")       = 0.10; 
-  p_adj_seed_te(ttot,regi,"meSyNg_cc")        = 0.10;
-  p_adj_seed_te(ttot,regi,"meSyLiq_cc")       = 0.10;
-  p_adj_seed_te(ttot,regi,"meSyH2")          = 0.10;
+  p_adj_seed_te(ttot,regi,"meSySol_cc")       = 0.0001; 
+  p_adj_seed_te(ttot,regi,"meSyNg_cc")        = 0.0001;
+  p_adj_seed_te(ttot,regi,"meSyLiq_cc")       = 0.0001;
+  p_adj_seed_te(ttot,regi,"meSyH2")          = 2.0;
   p_adj_seed_te(ttot,regi,"amSyCoal")        = 0.0001; 
   p_adj_seed_te(ttot,regi,"amSyNG")          = 0.0001;
   p_adj_seed_te(ttot,regi,"amSyLiq")         = 0.0001;
-  p_adj_seed_te(ttot,regi,"amSyCoal_cc")      = 0.10; 
-  p_adj_seed_te(ttot,regi,"amSyNG_cc")        = 0.10;
-  p_adj_seed_te(ttot,regi,"amSyLiq_cc")       = 0.10;
-  p_adj_seed_te(ttot,regi,"amSyH2")          = 0.25;
+  p_adj_seed_te(ttot,regi,"amSyCoal_cc")      = 0.0001; 
+  p_adj_seed_te(ttot,regi,"amSyNG_cc")        = 0.0001;
+  p_adj_seed_te(ttot,regi,"amSyLiq_cc")       = 0.0001;
+  p_adj_seed_te(ttot,regi,"amSyH2")          = 2.0;
   p_adj_seed_te(ttot,regi,"stCrLiq")         = 0.0001;
   p_adj_seed_te(ttot,regi,"stCrNg")          = 0.0001;
   p_adj_seed_te(ttot,regi,"mtoMta")          = 0.0001;
-  p_adj_seed_te(ttot,regi,"fertProdH2")      = 0.10;
+  p_adj_seed_te(ttot,regi,"mtoMtaH2")        = 2.0;
+  p_adj_seed_te(ttot,regi,"fertProdH2")      = 2.0;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   p_adj_seed_te(ttot,regi,"bfcc")            = 0.05;
@@ -1364,24 +1365,25 @@ $endif.cm_subsec_model_steel
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
   !!p_adj_coeff(ttot,regi,"chemElec")        = 0.25;
   !!p_adj_coeff(ttot,regi,"chemH2")          = 1.0;
-  !!p_adj_coeff(ttot,regi,"meSySol")         = 3.0; 
-  !!p_adj_coeff(ttot,regi,"meSyNg")          = 3.0;
-  !!p_adj_coeff(ttot,regi,"meSyLiq")         = 3.0;
-  p_adj_coeff(ttot,regi,"meSySol_cc")       = 1.0;  
-  p_adj_coeff(ttot,regi,"meSyNg_cc")        = 1.0;
-  p_adj_coeff(ttot,regi,"meSyLiq_cc")       = 1.0;
-  p_adj_coeff(ttot,regi,"meSyH2")          = 1.0;
-  !!p_adj_coeff(ttot,regi,"amSyCoal")        = 3.0;  
-  !!p_adj_coeff(ttot,regi,"amSyNG")          = 3.0;
-  !!p_adj_coeff(ttot,regi,"amSyLiq")         = 3.0;
-  p_adj_coeff(ttot,regi,"amSyCoal_cc")      = 1.0; 
-  p_adj_coeff(ttot,regi,"amSyNG_cc")        = 1.0;
-  p_adj_coeff(ttot,regi,"amSyLiq_cc")       = 1.0;
-  p_adj_coeff(ttot,regi,"amSyH2")          = 0.5;
-  !!p_adj_coeff(ttot,regi,"stCrLiq")         = 3.0;
-  !!p_adj_coeff(ttot,regi,"stCrNg")          = 3.0;
-  !!p_adj_coeff(ttot,regi,"mtoMta")          = 1.0;
-  !!p_adj_coeff(ttot,regi,"fertProdH2")      = 1.0;
+  p_adj_coeff(ttot,regi,"meSySol")         = 3.0; 
+  p_adj_coeff(ttot,regi,"meSyNg")          = 3.0;
+  p_adj_coeff(ttot,regi,"meSyLiq")         = 3.0;
+  p_adj_coeff(ttot,regi,"meSySol_cc")       = 3.0;  
+  p_adj_coeff(ttot,regi,"meSyNg_cc")        = 3.0;
+  p_adj_coeff(ttot,regi,"meSyLiq_cc")       = 3.0;
+  p_adj_coeff(ttot,regi,"meSyH2")          = 0.1;
+  p_adj_coeff(ttot,regi,"amSyCoal")        = 3.0;  
+  p_adj_coeff(ttot,regi,"amSyNG")          = 3.0;
+  p_adj_coeff(ttot,regi,"amSyLiq")         = 3.0;
+  p_adj_coeff(ttot,regi,"amSyCoal_cc")      = 3.0; 
+  p_adj_coeff(ttot,regi,"amSyNG_cc")        = 3.0;
+  p_adj_coeff(ttot,regi,"amSyLiq_cc")       = 3.0;
+  p_adj_coeff(ttot,regi,"amSyH2")          = 0.1;
+  p_adj_coeff(ttot,regi,"stCrLiq")         = 3.0;
+  p_adj_coeff(ttot,regi,"stCrNg")          = 3.0;
+  p_adj_coeff(ttot,regi,"mtoMta")          = 1.0;
+  p_adj_coeff(ttot,regi,"mtoMtaH2")        = 0.1;
+  p_adj_coeff(ttot,regi,"fertProdH2")      = 0.1;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   p_adj_coeff(ttot,regi,"bfcc")            = 1.0;
@@ -1665,13 +1667,25 @@ pm_emifacNonEnergy(ttot,regi,"segafos", "fegas","indst","co2") = f_nechem_emissi
 
 ***------ Read in projections for incineration rates of plastic waste---
 *** "incineration rates [fraction]"
+
 parameter f_incinerationShares(ttot,all_regi)         "incineration rate of plastic waste"
+
+$ifthen.PlasticMFA "%cm_PlasticMFA%" == "on"
+/
+$ondelim
+$include "./core/input/f_incinerationSharesMFA.cs4r"
+$offdelim
+/;
+$endif.PlasticMFA
+
+$ifthen.PlasticMFA "%cm_PlasticMFA%" == "off"
 /
 $ondelim
 $include "./core/input/f_incinerationShares.cs4r"
 $offdelim
-/
-;
+/;
+$endif.PlasticMFA
+
 pm_incinerationRate(ttot,all_regi)=f_incinerationShares(ttot,all_regi);
 
 *** some balances are not matching by small amounts;
