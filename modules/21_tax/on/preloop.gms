@@ -6,32 +6,6 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/21_tax/on/preloop.gms
 
-***initialize co2 market taxes
-pm_taxemiMkt(t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
-pm_taxemiMkt_iteration(iteration,t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
-
-***-------------------------------------------------------------------
-***           overwrite default targets with gdx values
-***-------------------------------------------------------------------
-Execute_Loadpoint 'input' p21_tau_CO2_tax_gdx = pm_taxCO2eq;
-if (cm_gdximport_target eq 1,
-*** only if tax rates not all equal to zero
-if (smax((t,regi),p21_tau_CO2_tax_gdx(t,regi)$(t.val gt 2030)) gt 0,
-pm_taxCO2eq(t,regi) = p21_tau_CO2_tax_gdx(t,regi);
-);
-);
-if (cm_emiscen ne 9,
-    pm_taxCO2eq(t, regi) = 0;
-);
-***-------------------------------------------------------------------
-***           overwrite co2 tax for delay runs with gdx values
-***-------------------------------------------------------------------
-if ( (cm_startyear gt 2005),
-Execute_Loadpoint 'input_ref' p21_tau_CO2_tax_gdx_bau = pm_taxCO2eq;
-pm_taxCO2eq(ttot,regi)$((ttot.val gt 2005) AND (ttot.val lt cm_startyear)) = p21_tau_CO2_tax_gdx_bau(ttot,regi);
-);
-
-display pm_taxCO2eq;
 
 *** Adjustment of final energy subsidies to avoid neg. implicit 2005 prices that result in huge demand increases in 2010 and 2015
 *** Maximum final energy subsidy levels (in $/Gj) from REMIND version prior to rev. 5429
@@ -43,69 +17,54 @@ p21_tau_fuEx_sub(ttot,regi,enty)$f21_max_pe_sub(ttot,regi,enty) = max(p21_tau_fu
 
 *** ------------------------- Temporal development of final energy TAXES and SUBSIDIES, depending on cm_fetaxscen
 *** Set time path for:
-***   - final energy taxes (p21_tau_fe_tax)
-***   - subsidies (p21_tau_fe_sub)
-if(cm_fetaxscen ne 0,
-*----- TAXES  ----------------------------------
+***   - final energy taxes (p21_tau_fe_tax, p21_tau_pe2se_tax)
+***   - subsidies (p21_tau_fe_sub, p21_tau_fuEx_sub)
 
-***CASE 1: constant TAXES
-  if((cm_fetaxscen eq 1) or (cm_fetaxscen eq 3) or (cm_fetaxscen eq 4),
-    loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax(ttot,regi,sector,entyFe) = p21_tau_fe_tax("2005",regi,sector,entyFe));
-  );
-***CASE 2: constant TAXES except for the final energies and regions defined at the f21_tax_convergence.cs4r file
-  if(cm_fetaxscen eq 2 OR cm_fetaxscen eq 5,
-	loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax(ttot,regi,sector,entyFe) = p21_tau_fe_tax("2005",regi,sector,entyFe));
-
-	if(cm_fetaxscen eq 2, s21_tax_time  = 2050;
-           p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2050",regi,entyFe) AND ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
-	   =
-           p21_tau_fe_tax("2005",regi,sector,entyFe)+((f21_tax_convergence("2050",regi,entyFe)*0.001/sm_EJ_2_TWa-p21_tau_fe_tax("2005",regi,sector,entyFe))*((ttot.val-2015)/(s21_tax_time-2015)));
-           p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2050",regi,entyFe) AND ttot.val >(s21_tax_time)) = f21_tax_convergence("2050",regi,entyFe)*0.001/sm_EJ_2_TWa;
-        );
-     	if(cm_fetaxscen eq 5, s21_tax_time  = 2035;
-           p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2035",regi,entyFe) AND ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
-	   =
-           p21_tau_fe_tax("2005",regi,sector,entyFe)+((f21_tax_convergence("2035",regi,entyFe)*0.001/sm_EJ_2_TWa-p21_tau_fe_tax("2005",regi,sector,entyFe))*((ttot.val-2015)/(s21_tax_time-2015)));
-           p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2035",regi,entyFe) AND ttot.val >(s21_tax_time)) = f21_tax_convergence("2050",regi,entyFe)*0.001/sm_EJ_2_TWa;
-        );
-
-  );
+***----- TAXES  ----------------------------------
+if(cm_fetaxscen eq 0, !! no FE tax, constant PE2SE tax
+    p21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe) = 0;
+  elseif (cm_fetaxscen eq 1) or (cm_fetaxscen eq 3) or (cm_fetaxscen eq 4), !! constant FE and PE2SE tax
+    p21_tau_fe_tax(ttot,regi,sector,entyFe)$(ttot.val gt 2005) = p21_tau_fe_tax("2005",regi,sector,entyFe);
+  elseif cm_fetaxscen eq 2, !! converging FE tax (-2050), constant PE2SE tax
+    p21_tau_fe_tax(ttot,regi,sector,entyFe)$(ttot.val gt 2005) = p21_tau_fe_tax("2005",regi,sector,entyFe);
+    p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2050",regi,entyFe) AND ttot.val gt 2025 AND ttot.val le 2050)
+	  = p21_tau_fe_tax("2025",regi,sector,entyFe) 
+      + ( f21_tax_convergence("2050",regi,entyFe) * 0.001 / sm_EJ_2_TWa - p21_tau_fe_tax("2025",regi,sector,entyFe) ) * ( ( ttot.val - 2025 ) / ( 2050 - 2025 ) );
+    p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2050",regi,entyFe) AND ttot.val gt 2050) = f21_tax_convergence("2050",regi,entyFe) * 0.001 / sm_EJ_2_TWa;
+  elseif cm_fetaxscen eq 5, !! rollback FE tax (-2035), no PE2SE tax
+    p21_tau_pe2se_tax(tall,regi,te) = 0;
+    p21_tau_fe_tax(ttot,regi,sector,entyFe)$(ttot.val gt 2005) = p21_tau_fe_tax("2005",regi,sector,entyFe);
+    p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence_rollback("2035",regi,entyFe) AND ttot.val gt 2025 AND ttot.val le 2035 )
+	   = p21_tau_fe_tax("2025",regi,sector,entyFe) 
+       + ( f21_tax_convergence_rollback("2035",regi,entyFe) * 0.001 / sm_EJ_2_TWa - p21_tau_fe_tax("2025",regi,sector,entyFe) ) * ( (ttot.val - 2025) / (2035 - 2025) );
+    p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence_rollback("2035",regi,entyFe) AND ttot.val  gt 2035) = f21_tax_convergence_rollback("2035",regi,entyFe) * 0.001 / sm_EJ_2_TWa;
+);
 
 ***----- SUBSIDIES  ----------------------------------
-***global subsidies phase-out until 2030 for SSP1 (CASE 2) & SDP (CASE 4), until 2050 for SSP2 (CASE 3), no phaseout for SSP5 (CASE 1)
-*** CASE 1: Constant subsidy (SSP5)
-  if(cm_fetaxscen eq 1,
-    loop(ttot$(ttot.val ge 2005), p21_tau_fe_sub(ttot,regi,sector,entyFe)=p21_tau_fe_sub("2005",regi,sector,entyFe));
-    loop(ttot$(ttot.val ge 2005), p21_tau_pe2se_sub(ttot,regi,te)=p21_tau_pe2se_sub("2005",regi,te));
-    loop(ttot$(ttot.val ge 2005), p21_tau_fuEx_sub(ttot,regi,entyPe)=p21_tau_fuEx_sub("2005",regi,entyPe));
-  );
-*** CASE 2 and 3 and 4: Global subsidies phase-out by 2030 (SSP1, SDP) and 2050 (SSP2) respectively
-  if(cm_fetaxscen eq 2 OR cm_fetaxscen eq 3 OR cm_fetaxscen eq 4 OR cm_fetaxscen eq 5,
-     p21_tau_fe_sub(ttot,regi,sector,entyFe)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_fe_sub("2005",regi,sector,entyFe);
-     p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_pe2se_sub("2005",regi,te);
-     p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_fuEx_sub("2005",regi,entyPe);
-    if(cm_fetaxscen eq 2 OR cm_fetaxscen eq 4, s21_tax_time = 2030);
-    if(cm_fetaxscen eq 3, s21_tax_time = 2050);
-    s21_tax_value = 0;
-*** Calculate phase-out
-    loop(ttot,
-      p21_tau_fe_sub(ttot,regi,sector,entyFe)$(ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
-      =
-      p21_tau_fe_sub("2015",regi,sector,entyFe)+((s21_tax_value-p21_tau_fe_sub("2015",regi,sector,entyFe))*(ttot.val-2015)/(s21_tax_time-2015));
-      p21_tau_fe_sub(ttot,regi,sector,entyFe)$(ttot.val>(s21_tax_time)) = s21_tax_value;
-
-      p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
-      =
-      p21_tau_pe2se_sub("2015",regi,te)+((s21_tax_value-p21_tau_pe2se_sub("2015",regi,te))*(ttot.val-2015)/(s21_tax_time-2015));
-      p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val>(s21_tax_time)) = s21_tax_value;
-
-      p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
-      =
-      p21_tau_fuEx_sub("2015",regi,entyPe)+((s21_tax_value-p21_tau_fuEx_sub("2015",regi,entyPe))*(ttot.val-2015)/(s21_tax_time-2015));
-      p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val>(s21_tax_time)) = s21_tax_value;
-
+if (cm_fetaxscen eq 0, !! no FE and ResEx sub
+    p21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe) = 0;
+    p21_tau_fuEx_sub(ttot,regi,all_enty) = 0;
+  elseif (cm_fetaxscen eq 1) or (cm_fetaxscen eq 5), !! constant FE and ResEx sub
+    p21_tau_fe_sub(ttot,regi,sector,entyFe)$(ttot.val gt 2005) = p21_tau_fe_sub("2005",regi,sector,entyFe);
+    p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val gt 2005) = p21_tau_fuEx_sub("2005",regi,entyPe);
+  elseif(cm_fetaxscen eq 2) or (cm_fetaxscen eq 3) or (cm_fetaxscen eq 4), 
+    p21_tau_fe_sub(ttot,regi,sector,entyFe)$(ttot.val gt 2005)=p21_tau_fe_sub("2005",regi,sector,entyFe);
+    p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val gt 2005)=p21_tau_fuEx_sub("2005",regi,entyPe);
+    if ( (cm_fetaxscen eq 2) or (cm_fetaxscen eq 4), !! phased out FE and ResEx sub (-2035)
+        s21_tax_time = 2035;
+      elseif cm_fetaxscen eq 3, !! phased out FE and ResEx sub (-2050)
+        s21_tax_time = 2050;
     );
-  );
+    s21_tax_value = 0;
+    p21_tau_fe_sub(ttot,regi,sector,entyFe)$(ttot.val gt 2025 AND ttot.val le s21_tax_time)
+      = p21_tau_fe_sub("2025",regi,sector,entyFe)
+        + ( ( s21_tax_value - p21_tau_fe_sub("2025",regi,sector,entyFe) ) * (ttot.val - 2025 ) / (s21_tax_time - 2025));
+      p21_tau_fe_sub(ttot,regi,sector,entyFe)$(ttot.val gt s21_tax_time) = s21_tax_value;
+
+      p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val gt 2025 AND ttot.val le s21_tax_time)
+      = p21_tau_fuEx_sub("2025",regi,entyPe)
+        + ((s21_tax_value - p21_tau_fuEx_sub("2025",regi,entyPe) ) * (ttot.val - 2025) / (s21_tax_time - 2025));
+      p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val gt  s21_tax_time) = s21_tax_value;
 );
 
 
@@ -141,7 +100,8 @@ $endif.fetaxRel
 
 display p21_tau_fe_sub; 
 display p21_tau_fe_tax;
-display p21_tau_pe2se_sub, p21_tau_fuEx_sub;
+display p21_tau_fuEx_sub;
+display p21_tau_pe2se_tax;
 
 *** SE Tax
 p21_tau_SE_tax(t,regi,te) = 0;
@@ -163,8 +123,12 @@ $endif.SEtaxRampUpParam
 
 *LB* initialization of vm_emiMac
 vm_emiMac.l(ttot,regi,enty) = 0;
-*LB* initialization of v21_emiALLco2neg
-v21_emiALLco2neg.l(ttot,regi) =0;
+*** initialization of vm_emiAllco2neg and v21_emiAllco2neg_acrossIterations
+vm_emiAllco2neg.l(ttot,regi) =0;
+v21_emiAllco2neg_acrossIterations.l(ttot,regi) =0;
+
+*** initialization of p21_grossEmissions
+p21_grossEmissions(iteration,t,regi) = 0;
 
 *DK initialize bioenergy tax
 v21_tau_bio.l(ttot) = 0;

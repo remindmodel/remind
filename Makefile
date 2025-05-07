@@ -26,7 +26,7 @@ update-renv:     ## Upgrade all pik-piam packages in your renv to the respective
 
 update-renv-all: ## Upgrade all packages (including CRAN packages) in your renv
                  ## to the respective latest release, write renv.lock archive
-	@Rscript -e 'renv::update(exclude = "renv"); piamenv::archiveRenv()'
+	@Rscript -e 'renv::update(); piamenv::archiveRenv()'
 
 revert-dev-packages: ## All PIK-PIAM packages that are development versions, i.e.
                      ## that have a non-zero fourth version number component, are
@@ -38,6 +38,14 @@ ensure-reqs:     ## Ensure the REMIND library requirements are fulfilled
                  ## by installing updates and new libraries as necessary. Does not
                  ## install updates unless it is required.
 	@Rscript -e 'source("scripts/start/ensureRequirementsInstalled.R"); ensureRequirementsInstalled(rerunPrompt="make ensure-reqs")'
+
+historic-reqs:   ## Restore renv.lock file "v" from the lockfile archive.  Call
+                 ## make historic-reqs v=YYYY-MM-DD
+                 ## where YYYY-MM-DD is a date tag in the lockfile archive.
+                 ## Uses environment variable RSE_LOCKFILE_ARCHIVE, or if that
+                 ## is unset /p/projects/rd3mod/github/repos/pik-piam/lockfile-archive/main/
+	@[ -n "$(v)" ] || ( echo "no date tag \"v\" set to restore renv.lock"; exit 1 )
+	@mkdir -p renv/archive && git -C $${RSE_LOCKFILE_ARCHIVE:-/p/projects/rd3mod/github/repos/pik-piam/lockfile-archive/main/} show $(v):./conservative.renv.lock > renv/archive/$(v)_renv.lock && Rscript -e "renv::restore(lockfile = \"renv/archive/$(v)_renv.lock\", exclude = \"renv\")"
 
 archive-renv:    ## Write renv.lock into archive.
 	Rscript -e 'piamenv::archiveRenv()'

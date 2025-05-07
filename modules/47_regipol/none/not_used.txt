@@ -73,7 +73,7 @@ vm_emiMacSector,input,questionnaire
 vm_emiTeDetailMkt,input,added by codeCheck
 vm_emiTeMkt,input,added by codeCheck
 pm_emiMktTarget_tolerance,switch,not needed
-sm_globalBudget_dev,input,questionnaire
+sm_globalBudget_absDev,input,questionnaire
 pm_allTargetsConverged,input,questionnaire
 sm_EJ_2_TWa,input,not needed
 vm_prodSe,input,not needed
@@ -81,3 +81,6 @@ pm_cesdata,input,not needed
 pm_prodCouple,input,not needed
 vm_emiIndCCS,input,not needed
 sm_D2005_2_D2017,input,no conversion needed
+cm_budgetCO2_absDevTol,input,added by codeCheck
+vm_emiCdrTeDetail,input,added by codeCheck
+vm_demFeNonEnergySector,input,added by codeCheck

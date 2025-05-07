@@ -23,6 +23,7 @@ model <- paste("REMIND", paste0(strsplit(gms::readDefaultConfig(".")$model_versi
 removeFromScen <- ""                           # you can use regex such as: "_diff|_expoLinear"
 renameScen <- NULL                             # c(oldname1 = "newname1", …), without the `C_` and `-rem-[0-9]` stuff
 addToScen <- NULL                              # is added at the beginning
+timesteps <- c(seq(2005, 2060, 5), seq(2070, 2100, 10))
 
 # filenames relative to REMIND main directory (or use absolute path) 
 mapping <- NULL                                # file obtained from piamInterfaces, or AR6/SHAPE/NAVIGATE or NULL to get asked
@@ -47,11 +48,15 @@ projects <- list(
                     mapping = c("AR6", "AR6_NGFS"),
                     iiasatemplate = "https://files.ece.iiasa.ac.at/ngfs-phase-5/ngfs-phase-5-template.xlsx",
                     removeFromScen = "C_|_bIT|_bit|_bIt|_KLW"),
+  RIKEN = list(model = "REMIND-MAgPIE 3.4-4.8",
+               mapping = c("ScenarioMIP", "MAGICC7_AR6"),
+               checkSummation = "ScenarioMIP"),
   ScenarioMIP = list(model = "REMIND-MAgPIE 3.4-4.8",
                      mapping = "ScenarioMIP",
                      iiasatemplate = "https://files.ece.iiasa.ac.at/ssp-submission/ssp-submission-template.xlsx",
                      renameScen = c("SMIPv03-M-SSP2-NPi-def" = "SSP2 - Medium Emissions", "SMIPv03-LOS-SSP2-EcBudg400-def" = "SSP2 - Low Overshoot", "SMIPv03-ML-SSP2-PkPrice200-fromL" = "SSP2 - Medium-Low Emissions","SMIPv03-L-SSP2-PkPrice265-inc6-def" = "SSP2 - Low Emissions", "SMIPv03-VL-SSP2_SDP_MC-PkPrice300-def" = "SSP2 - Very Low Emissions"),
-                     checkSummation = "NAVIGATE"),
+                     checkSummation = "ScenarioMIP",
+                     timesteps = seq(2005, 2100)),
   PRISMA = list(model = "REMIND-MAgPIE 3.4-4.8",
                 mapping = c("ScenarioMIP", "PRISMA"),
                 iiasatemplate = "https://files.ece.iiasa.ac.at/prisma/prisma-template.xlsx",  
@@ -75,14 +80,14 @@ if (! exists("project")) {
 projectdata <- projects[[project]]
 message("# Overwrite settings with project settings for '", project, "'.")
 varnames <- c("mapping", "iiasatemplate", "addToScen", "removeFromScen", "renameScen",
-              "model", "outputFilename", "logFile", "checkSummation")
+              "model", "outputFilename", "logFile", "checkSummation", "timesteps")
 for (p in intersect(varnames, names(projectdata))) {
   assign(p, projectdata[[p]])
 }
 
 # overwrite settings with those specified as command-line arguments
 lucode2::readArgs("outputdirs", "filename_prefix", "outputFilename", "model", "mapping",
-                  "summationFile", "logFile", "removeFromScen", "addToScen", "iiasatemplate")
+                  "summationFile", "logFile", "removeFromScen", "addToScen", "iiasatemplate", "timesteps")
 
 if (is.null(mapping)) {
   mapping <- gms::chooseFromList(names(piamInterfaces::mappingNames()), type = "mapping")
@@ -170,7 +175,8 @@ withCallingHandlers({ # piping messages to logFile
                           removeFromScen = removeFromScen, addToScen = addToScen,
                           outputDirectory = outputFolder, checkSummation = checkSummation,
                           logFile = logFile, outputFilename = basename(OUTPUT_xlsx),
-                          iiasatemplate = iiasatemplate, generatePlots = TRUE)
+                          iiasatemplate = iiasatemplate, generatePlots = TRUE,
+                          timesteps = timesteps)
 
 }, message = function(x) {
   cat(x$message, file = logFile, append = TRUE)

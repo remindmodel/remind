@@ -73,7 +73,7 @@ loop(all_te $ (
     sameas(all_te, "storwind") OR
     sameas(all_te, "gridwind")
   ),
-  vm_cap.fx(t,regi,all_te,rlf)      = 0;
+  vm_cap.fx(t,regi,all_te,rlf) = 0;
   vm_deltaCap.fx(t,regi,all_te,rlf) = 0;
 );
 
@@ -126,13 +126,24 @@ $endif
   );
 );
 
-* quickest phaseout in SDP scenarios (no new capacities allowed), quick phaseout in SSP1 und SSP5
-$if %cm_GDPscen% == "gdp_SDP" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SDP_EI" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SDP_MC" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SDP_RC" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SSP1" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
-$if %cm_GDPscen% == "gdp_SSP5" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
+*** quickest phaseout in SDP scenarios (no new capacities allowed), quick phaseout in SSP1 und SSP5
+$if %cm_GDPpopScen% == "SDP" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0;
+$if %cm_GDPpopScen% == "SDP_EI" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0;
+$if %cm_GDPpopScen% == "SDP_MC" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0;
+$if %cm_GDPpopScen% == "SDP_RC" vm_deltaCap.up(t,regi,"biotr","1")$(t.val gt 2020) = 0;
+$if %cm_GDPpopScen% == "SSP1" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
+$if %cm_GDPpopScen% == "SSP5" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
+
+$if %cm_GDPscen% == "gdp_SSP3" vm_deltaCap.fx("2025",regi,"biotr","1") = 0.6  * vm_deltaCap.lo("2005",regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SSP3" vm_deltaCap.fx("2030",regi,"biotr","1") = 0.55 * vm_deltaCap.lo("2005",regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SSP3" vm_deltaCap.fx("2035",regi,"biotr","1") = 0.5  * vm_deltaCap.lo("2005",regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SSP3" vm_deltaCap.fx("2040",regi,"biotr","1") = 0.45 * vm_deltaCap.lo("2005",regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SSP3" vm_deltaCap.fx("2045",regi,"biotr","1") = 0.4  * vm_deltaCap.lo("2005",regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SSP3" vm_deltaCap.fx("2050",regi,"biotr","1") = 0.35 * vm_deltaCap.lo("2005",regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SSP3" vm_deltaCap.fx("2055",regi,"biotr","1") = 0.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SSP3" vm_deltaCap.fx("2060",regi,"biotr","1") = 0.25 * vm_deltaCap.lo("2005",regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SSP3" vm_deltaCap.fx("2070",regi,"biotr","1") = 0.15 * vm_deltaCap.lo("2005",regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SSP3" vm_deltaCap.fx("2080",regi,"biotr","1") = 0.05 * vm_deltaCap.lo("2005",regi,"biotr","1");
 
 
 *** ------------------------------------------------------------------------------------------
@@ -153,10 +164,7 @@ if ( c_ccsinjecratescen eq 0, !!no carbon sequestration at all
 *'
 if (cm_ccapturescen eq 2,  !! no carbon capture at all
   vm_cap.fx(t,regi_capturescen,"ngccc",rlf)        = 0;
-  vm_cap.fx(t,regi_capturescen,"ccsinje",rlf)      = 0;
-***  vm_cap.fx(t,regi_capturescen,"ccscomp",rlf)      = 0; !! technologies disabled in REMIND 1.7
-***  vm_cap.fx(t,regi_capturescen,"ccspipe",rlf)      = 0; !! technologies disabled in REMIND 1.7
-***  vm_cap.fx(t,regi_capturescen,"ccsmoni",rlf)      = 0; !! technologies disabled in REMIND 1.7
+  vm_cap.fx(t,regi_capturescen,"ccsinje",rlf) = 0;
   vm_cap.fx(t,regi_capturescen,"gash2c",rlf)       = 0;
   vm_cap.fx(t,regi_capturescen,"igccc",rlf)        = 0;
   vm_cap.fx(t,regi_capturescen,"coalftcrec",rlf)   = 0;
@@ -173,7 +181,7 @@ elseif (cm_ccapturescen eq 3),  !! no bio carbon capture:
 elseif (cm_ccapturescen eq 4), !! no carbon capture in the electricity sector
   loop(emi2te(enty,"seel",te,"cco2")$( sum(regi_capturescen,pm_emifac("2020",regi_capturescen,enty,"seel",te,"cco2")) > 0 ),
     loop(te2rlf(te,rlf),
-      vm_cap.fx(t,regi_capturescen,te,rlf)        = 0;
+      vm_cap.fx(t,regi_capturescen,te,rlf) = 0;
     );
   );
 );
@@ -282,20 +290,26 @@ vm_emiMac.fx(t,regi,"bc") = 0;
 vm_emiMac.fx(t,regi,"oc") = 0;
 
 *** -------------------------------------------------------------------------
-*** Exogenous values:
+*** Exogenous capacities:
 *** -------------------------------------------------------------------------
-
-*** fix capacities for wind, spv and csp to real world historical values:
-vm_cap.lo("2015",regi,teVRE,"1") = 0.95 * pm_histCap("2015",regi,teVRE)$(pm_histCap("2015",regi,teVRE) gt 1e-10);
-vm_cap.up("2015",regi,teVRE,"1") = 1.05 * pm_histCap("2015",regi,teVRE)$(pm_histCap("2015",regi,teVRE) gt 1e-10);
-vm_cap.lo("2020",regi,teVRE,"1") = 0.95 * pm_histCap("2020",regi,teVRE)$(pm_histCap("2020",regi,teVRE) gt 1e-10);
-vm_cap.up("2020",regi,teVRE,"1") = 1.05 * pm_histCap("2020",regi,teVRE)$(pm_histCap("2020",regi,teVRE) gt 1e-10);
-vm_cap.up("2025",regi,teVRE,"1")$(pm_histCap("2025",regi,teVRE) gt 1e-6) = 1.05 * pm_histCap("2025",regi,teVRE)$(pm_histCap("2025",regi,teVRE) gt 1e-10); !! only set a bound if values >1MW are in pm_histCap
+loop(t $ (t.val >= 2015 and t.val <= 2025),
+  loop(regi,
+*** fix renewable capacities to real world historical values if available
+    vm_cap.lo(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
+    if(t.val <= 2020, !! TODO: activate 2025 upper-bound when consolidated data available
+      vm_cap.up(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 1.05 * pm_histCap(t,regi,te);
+    );
+*** broader bounds for renewables with lower data quality
+    loop(te $ (sameas(te, "hydro") or sameas(te, "geohdr")),
+      vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.7 * pm_histCap(t,regi,te);
+      vm_cap.up(t,regi,te,"1") $ pm_histCap(t,regi,te) = 1.4 * pm_histCap(t,regi,te);
+    );
 
 *** lower bound on capacities for ngcc and ngt and gaschp for regions defined at the pm_histCap file
-loop(te$(sameas(te,"ngcc") OR sameas(te,"ngt") OR sameas(te,"gaschp")),
-  vm_cap.lo("2015",regi,te,"1")$pm_histCap("2015",regi,te) = 0.95 * pm_histCap("2015",regi,te);
-  vm_cap.lo("2020",regi,te,"1")$pm_histCap("2020",regi,te) = 0.95 * pm_histCap("2020",regi,te);
+    loop(te $ (sameas(te,"ngcc") or sameas(te,"ngt") or sameas(te,"gaschp")),
+      vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
+    );
+  );
 );
 
 
@@ -483,15 +497,6 @@ loop(prodSeOth2te(enty,te),
 
 
 ***---------------------------------------------------------------------------
-***                 Lower bounds on hydro
-***---------------------------------------------------------------------------
-*** as most of the costs for hydro are for the initial building, it is unlikely that existing hydro plants are not renovated, even if a completely new plant would not be economic
-*** accordingly, set lower bound on hydro generation close to 2005 values
-
-vm_prodSe.lo(t,regi,"pehyd","seel","hydro")$(t.val > 2005) = 0.99 * o_INI_DirProdSeTe(regi,"seel","hydro");
-
-
-***---------------------------------------------------------------------------
 ***                 make sure the model doesn't use technologies beyond grade 1
 ***---------------------------------------------------------------------------
 *** for pe2se, se2se and se2fe the other grades should not be used
@@ -538,17 +543,14 @@ v_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_f
 vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le cm_H2InBuildOnlyAfter) = 1e-6;
 
 ***----------------------------------------------------------------------------
-***  Controlling if active, dampening factor to align edge-t non-energy transportation costs with historical GDP data
-***----------------------------------------------------------------------------
-$IFTHEN.transpGDPscale not "%cm_transpGDPscale%" == "on" 
-  vm_transpGDPscale.fx(t,regi) = 1;
-$ENDIF.transpGDPscale
-
-***----------------------------------------------------------------------------
 *'  Limit slack variable and uncontrolled variable values for adj costs that limit changes to reference in cm_startyear
 ***----------------------------------------------------------------------------
 
 v_changeProdStartyearSlack.up(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = + c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
 v_changeProdStartyearSlack.lo(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = - c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
+
+*RP: add lower bound on 2020 coal chp and upper bound on gas chp based on IEA data to have a more realistic starting point
+vm_prodSe.lo("2020",regi,"pecoal","seel","coalchp") = 0.8 * pm_IO_output("2020",regi,"pecoal","seel","coalchp") ;
+vm_prodSe.up("2020",regi,"pegas","seel","gaschp") = 1e-4 + 1.3 * pm_IO_output("2020",regi,"pegas","seel","gaschp") ;
 
 *** EOF ./core/bounds.gms

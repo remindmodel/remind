@@ -43,11 +43,26 @@ fe2cdr(all_enty,all_enty,all_te) "mapping of FE carriers supplying FE demand for
       feels.feels.oae_ng
       fedie.fedie.oae_ng
       fegas.fehes.oae_ng
+      feh2s.fehes.oae_ng
 
       feels.feels.oae_el
       fedie.fedie.oae_el
       feels.fehes.oae_el
       feh2s.fehes.oae_el
+/
+
+entyFe2FeType(all_enty,all_enty) "final energy categories mapping to final energy for CDR"
+/
+    feels.feels
+    feelt.feels
+    fehes.fehes  
+    fedie.fedie
+    fepet.fedie
+    fehos.fedie    
+    feh2s.feh2s
+    feh2t.feh2s
+    fegas.fegas
+    fegat.fegas
 /
 
 rlf_cz33(rlf) "representing weathering rates depending on climate zones according to Strefler, Amann et al. (2017)"

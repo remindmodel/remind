@@ -27,13 +27,38 @@ p_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005
 p_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)  = 0.1686718;
 
 *** calculate p1
+*** GA: p1 is based on GDP per capita. The older implementation assumes that
+*** richer countries (GPDpc > 10K USD) effectively have an older emission factor.
+*** The newer implementation, based on 2020 CEDS, assumes the same base year
+*** for both, with p2 only creating a distinction between the groups.
+*** The choice between implementations is controlled by setting the 
+*** the base year in cm_emifacs_baseyear, but we need an if condition
+*** here to account for the 1990 quirk. Choosing 2005 keeps the old version,
+*** and any other choice assumes 2020. 
+$ifthen %cm_emifacs_baseyear% == "2005"
 p_emineg_econometric(regi,"n2owaste","p1") = p_macBase2005(regi,"n2owaste") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"n2owaste","p2"));
 p_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10) = p_macBase2005(regi,"ch4wstl") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2"));
 p_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10) = p_macBase2005(regi,"ch4wsts") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wsts","p2"));
 p_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10) = p_macBase1990(regi,"ch4wstl") / (pm_pop("1990",regi) * (1000*pm_gdp("1990",regi) / (pm_pop("1990",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2"));
 p_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10) = p_macBase1990(regi,"ch4wsts") / (pm_pop("1990",regi) * (1000*pm_gdp("1990",regi) / (pm_pop("1990",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wsts","p2"));
+$else
+p_emineg_econometric(regi,"n2owaste","p1") = p_macBase2005(regi,"n2owaste") / (pm_pop("%cm_emifacs_baseyear%",regi) * (1000*pm_gdp("%cm_emifacs_baseyear%",regi) / (pm_pop("%cm_emifacs_baseyear%",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"n2owaste","p2"));
+p_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("%cm_emifacs_baseyear%",regi)/pm_pop("%cm_emifacs_baseyear%",regi) le 10) = p_macBaseCEDS2020(regi,"ch4wstl") / (pm_pop("%cm_emifacs_baseyear%",regi) * (1000*pm_gdp("%cm_emifacs_baseyear%",regi) / (pm_pop("%cm_emifacs_baseyear%",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2"));
+p_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("%cm_emifacs_baseyear%",regi)/pm_pop("%cm_emifacs_baseyear%",regi) le 10) = p_macBaseCEDS2020(regi,"ch4wsts") / (pm_pop("%cm_emifacs_baseyear%",regi) * (1000*pm_gdp("%cm_emifacs_baseyear%",regi) / (pm_pop("%cm_emifacs_baseyear%",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wsts","p2"));
+p_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("%cm_emifacs_baseyear%",regi)/pm_pop("%cm_emifacs_baseyear%",regi) gt 10) = p_macBaseCEDS2020(regi,"ch4wstl") / (pm_pop("%cm_emifacs_baseyear%",regi) * (1000*pm_gdp("%cm_emifacs_baseyear%",regi) / (pm_pop("%cm_emifacs_baseyear%",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2"));
+p_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("%cm_emifacs_baseyear%",regi)/pm_pop("%cm_emifacs_baseyear%",regi) gt 10) = p_macBaseCEDS2020(regi,"ch4wsts") / (pm_pop("%cm_emifacs_baseyear%",regi) * (1000*pm_gdp("%cm_emifacs_baseyear%",regi) / (pm_pop("%cm_emifacs_baseyear%",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wsts","p2"));
+$endif
 
 display p_emineg_econometric;
+
+*** Calculate total FE demand of previous iteration or input gdx.
+*** Required as a weight for penalty terms
+p_demFeSector0(ttot,regi,entySe,entyFe,sector,emiMkt) = vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt);
+
+pm_demFeTotal0(ttot, regi)
+  = sum((entySe,entyFe,sector,emiMkt)$( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ),
+  p_demFeSector0(ttot,regi,entySe,entyFe,sector,emiMkt))
+;
 
 ***--------------------------------------
 *** calculate some emission factors
@@ -42,10 +67,10 @@ display p_emineg_econometric;
 loop (emi2fuel(entyPe,enty),
   p_efFossilFuelExtrGlo(entyPe,enty)
   = sum(regi, p_emiFossilFuelExtr(regi,entyPe))
-  / sum((rlf,regi), vm_fuExtr.l("2005",regi,entyPe,rlf));
+  / sum((rlf,regi), vm_fuExtr.l("%cm_emifacs_baseyear%",regi,entyPe,rlf));
 
   loop (regi,
-    sm_tmp =  sum(rlf, vm_fuExtr.l("2005",regi,entyPe,rlf));
+    sm_tmp =  sum(rlf, vm_fuExtr.l("%cm_emifacs_baseyear%",regi,entyPe,rlf));
 
     p_efFossilFuelExtr(regi,entyPe,enty)$( sm_tmp )
       = p_emiFossilFuelExtr(regi,entyPe) / sm_tmp;
@@ -124,8 +149,8 @@ p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val ge cm_startyear+20) = p_pr
 *** 3. Reduce co2 price for land-use entities by level of development (uses the same data from MOINPUT as MAgPIE for im_development_state)
 p_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p_priceCO2forMAC(ttot,regi,MacSectorMagpie) * p_developmentState(ttot,regi);
 *** 4. Price for MACs was calculated with AR4 GWPs --> convert CO2 price with old GWPs here as well
-p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) = p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) * (298/s_gwpN2O);
-p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) = p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) * (25/s_gwpCH4);
+p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) = p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) * (s_gwpN2O_AR4/s_gwpN2O);
+p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) = p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) * (s_gwpCH4_AR4/s_gwpCH4);
 
 display p_priceCO2,p_priceCO2forMAC;
 ***--------------------------------------
@@ -144,11 +169,17 @@ v_macBase.fx(ttot,regi,enty)$emiMacMagpie(enty) = pm_macBaseMagpie(ttot,regi,ent
 v_macBase.fx(ttot,regi,enty)$emiMacExo(enty) = p_macBaseExo(ttot,regi,enty);
 v_macBase.fx(ttot,regi,"co2luc") = pm_macBaseMagpie(ttot,regi,"co2luc")-p_macPolCO2luc(ttot,regi);
 v_macBase.up(ttot,regi,"n2ofertin") = Inf;
-***scale exogenous baselines from van Vuuren to EDGAR v4.2 2005 data
-v_macBase.fx(ttot,regi,"n2otrans")$p_macBaseVanv("2005",regi,"n2otrans") = p_macBaseVanv(ttot,regi,"n2otrans") * (p_macBase2005(regi,"n2otrans") / p_macBaseVanv("2005",regi,"n2otrans"));
-v_macBase.fx(ttot,regi,"n2oadac")$p_macBaseVanv("2005",regi,"n2otrans")  = p_macBaseVanv(ttot,regi,"n2oadac")  * (p_macBase2005(regi,"n2oacid")  / (p_macBaseVanv("2005",regi,"n2oadac") + p_macBaseVanv("2005",regi,"n2onitac")));
-v_macBase.fx(ttot,regi,"n2onitac")$(p_macBaseVanv("2005",regi,"n2oadac") OR p_macBaseVanv("2005",regi,"n2onitac")) = p_macBaseVanv(ttot,regi,"n2onitac") * (p_macBase2005(regi,"n2oacid")  / (p_macBaseVanv("2005",regi,"n2oadac") + p_macBaseVanv("2005",regi,"n2onitac")));
-
+***scale exogenous baselines from van Vuuren to EDGAR v4.2 2005 data or CEDS2024 2020 data
+***Since they are exogenous anyway, it's OK to scale to after cm_startyear, but something to watch out for
+$ifthen %cm_emifacs_baseyear% == "2005" 
+v_macBase.fx(ttot,regi,"n2otrans")$p_macBaseIMAGE("2005",regi,"n2otrans") = p_macBaseIMAGE(ttot,regi,"n2otrans") * (p_macBase2005(regi,"n2otrans") / p_macBaseIMAGE("2005",regi,"n2otrans"));
+v_macBase.fx(ttot,regi,"n2oadac")$p_macBaseIMAGE("2005",regi,"n2oadac")  = p_macBaseIMAGE(ttot,regi,"n2oadac")  * (p_macBase2005(regi,"n2oacid")  / (p_macBaseIMAGE("2005",regi,"n2oadac") + p_macBaseIMAGE("2005",regi,"n2onitac")));
+v_macBase.fx(ttot,regi,"n2onitac")$(p_macBaseIMAGE("2005",regi,"n2oadac") OR p_macBaseIMAGE("2005",regi,"n2onitac")) = p_macBaseIMAGE(ttot,regi,"n2onitac") * (p_macBase2005(regi,"n2oacid")  / (p_macBaseIMAGE("2005",regi,"n2oadac") + p_macBaseIMAGE("2005",regi,"n2onitac")));
+$else
+v_macBase.fx(ttot,regi,"n2otrans")$p_macBaseIMAGE("2020",regi,"n2otrans") = p_macBaseIMAGE(ttot,regi,"n2otrans") * (p_macBaseCEDS2020(regi,"n2otrans") / p_macBaseIMAGE("2020",regi,"n2otrans"));
+v_macBase.fx(ttot,regi,"n2oadac")$p_macBaseIMAGE("2020",regi,"n2oadac")  = p_macBaseIMAGE(ttot,regi,"n2oadac")  * (p_macBaseCEDS2020(regi,"n2oacid")  / (p_macBaseIMAGE("2020",regi,"n2oadac") + p_macBaseIMAGE("2020",regi,"n2onitac")));
+v_macBase.fx(ttot,regi,"n2onitac")$(p_macBaseIMAGE("2020",regi,"n2oadac") OR p_macBaseIMAGE("2020",regi,"n2onitac")) = p_macBaseIMAGE(ttot,regi,"n2onitac") * (p_macBaseCEDS2020(regi,"n2oacid")  / (p_macBaseIMAGE("2020",regi,"n2oadac") + p_macBaseIMAGE("2020",regi,"n2onitac")));
+$endif
 *** baseline continuation after 2100
 v_macBase.fx(ttot,regi,enty)$((ttot.val gt 2100)$((NOT emiMacMagpie(enty)) AND (NOT emiFuEx(enty)) AND (NOT sameas(enty,"n2ofertin")) ))=v_macBase.l("2100",regi,enty);
 *DK: baseline continuation not necessary for magpie-emissions as the exogenous data reaches until 2150
@@ -308,5 +339,9 @@ pm_macCost(t,regi,emiMacSector(enty))
 p_macPE(ttot,regi,enty) = 0.0;
 p_macPE(ttot,regi,"pegas")$(ttot.val gt 2005) = s_MtCH4_2_TWa * 0.5 * (v_macBase.l(ttot,regi,"ch4coal")-vm_emiMacSector.l(ttot,regi,"ch4coal"));
 
+*** ACM initialise se-fe shares in CDR sector (from CDR module: dac, OAE, EW) from other sector se-fe shares
+*** This is necessary as hydrocarbon FE demand for CDR sector may be zero or small and then leads to solver issues
+v_shSeFeSector.l(ttot,regi,entySe,"fedie","CDR","ETS") =  v_shSeFeSector.l(ttot,regi,entySe,"fedie","trans","ES");
+v_shSeFeSector.l(ttot,regi,entySe,"fegas","CDR","ETS") =  v_shSeFeSector.l(ttot,regi,entySe,"fegas","indst","ETS");
 
 *** EOF ./core/presolve.gms

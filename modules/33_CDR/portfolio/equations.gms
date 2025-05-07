@@ -24,18 +24,23 @@ q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr"))..
     ;
 
 ***---------------------------------------------------------------------------
-*'  Sum of all CDR emissions other than BECCS and afforestation, which are calculated in the core.
-*'  The negative emissions are discounted by emissions that are released due to <100 percent capture
-*'  rate, as they are unavoidable (1-s33_capture_rate of the emissions that are possible to capture).
-*'  Note that this includes all atmospheric CO2 captured in this module that enters the CCUS chain.
+*'  First part: Sum over CDR-module technologies' dedicated negative emissions
+*'  (Note: energy-supply side (BECCS, in the future biochar) and land-use CDR are handled in core)
+*'  Second part: The gross negative emissions form oae are discounted by unavoidable  
+*'  calcination emissions released due to <100 percent capture.
+*'  Accounting note: The variable is the maximum potential, as if all captured carbon was stored. 
+*'  The net-effect is smaller, if not all captured carbon (vm_co2capture_cdr -> v_co2capture in core)  
+*'  is stored but used for CCU (or vented by capturevalve).
+*'  The net effect is only explicitly calculated in reportEmi.R. 
+*'  Furthermore, the CDR module might also capture energy related and CDR process emissions 
+*'  that are not part of vm_emiCdr but could lead to additional CDR if energy carrier is biogenic or synfuel.    
 ***---------------------------------------------------------------------------
 q33_emiCDR(t,regi)..
     vm_emiCdr(t,regi,"co2")
     =e=
     sum(te_used33, vm_emiCdrTeDetail(t,regi,te_used33))
-    + (1 - s33_capture_rate) * (
-        sum(te_ccs33, v33_co2emi_non_atm_gas(t, regi, te_ccs33))
-        + sum(te_oae33, v33_co2emi_non_atm_calcination(t, regi, te_oae33))
+    + (1 - sm_capture_rate_cdrmodule)
+        * sum(te_oae33, v33_co2emi_non_atm_calcination(t, regi, te_oae33)
     )
     ;
 
@@ -54,28 +59,27 @@ q33_capconst(t, regi, te_used33)$(not sameAs(te_used33, "weathering"))..
     ;
 
 ***---------------------------------------------------------------------------
-*'  The CO2 captured from gas used for heat production (DAC, OAE).
+*'  CO2 emissions from fegas consumption for heat production before capture (OAE and DAC)
 ***---------------------------------------------------------------------------
-q33_co2emi_non_atm_gas(t, regi, te_ccs33)..
-    v33_co2emi_non_atm_gas(t, regi, te_ccs33)
+q33_cco2_cdr_fromFE(t, regi, te_ccs33)..
+    vm_co2emi_cdrFE_beforeCapture(t, regi, te_ccs33)
     =e=
-    fm_dataemiglob("pegas","seh2","gash2c","cco2") !! conversion from PE to emissions
-        * (1 / pm_eta_conv(t,regi,"gash2c")) !! conversion from PE to FE
-        * sum(fe2cdr("fegas", entyFe2, te_ccs33), v33_FEdemand(t, regi,"fegas", entyFe2, te_ccs33)) !! FE gas used
+    pm_emifac(t,regi,"segafos","fegas","tdfosgas","co2")
+    * sum(fe2cdr("fegas", entyFe2, te_ccs33), v33_FEdemand(t, regi,"fegas", entyFe2, te_ccs33)) !! FE gas used
     ;
 
 ***---------------------------------------------------------------------------
 *'  Preparation of captured emissions to enter the CCUS chain.
 *'  The first part of the equation describes emissons captured from the ambient air,
-*'  the second part is non-atmospheric CO2 (e.g., from energy usage and calcination),
-*'  assuming a capture rate s33_capture_rate.
+*'  the second part is CO2 captured from energy usage (OAE or DAC)
+*'  the third part is CO2 captured from calcination for OAE
 ***---------------------------------------------------------------------------
 q33_ccsbal(t, regi, ccs2te(ccsCo2(enty), enty2, te))..
     sum(teCCS2rlf(te, rlf), vm_co2capture_cdr(t, regi, enty, enty2, te, rlf))
     =e=
     - vm_emiCdrTeDetail(t, regi, "dac")
-    + s33_capture_rate * (
-        sum(te_ccs33, v33_co2emi_non_atm_gas(t, regi, te_ccs33))
+    + sm_capture_rate_cdrmodule * (
+        sum(te_ccs33, vm_co2emi_cdrFE_beforeCapture(t, regi, te_ccs33))
         + sum(te_oae33, v33_co2emi_non_atm_calcination(t, regi, te_oae33))
     )
     ;
@@ -122,20 +126,24 @@ q33_EW_capconst(t,regi)..
 *'  Calculation of the total amount of ground rock on the fields in timestep t.
 *'  The first part of the equation describes the decay of the rocks added until that time,
 *'  the rest describes the newly added rocks.
+*'  The amounts already on or newly spread on the fields are multiplied with the total fraction 
+*'  remaining for the next time step, i.e. the fraction not weathering in the time step years. 
+*'  This fraction is generally calculated as (1-p33_rock_weath_rate)**(time_step_years).
+*'  For better solver solution, it is rewritten according to a**b = exp(log(a)*b) as
+*'  exp(log(1-p33_rock_weath_rate) * time_step_years).
+
 ***---------------------------------------------------------------------------
 q33_EW_onfield_tot(ttot,regi,rlf_cz33,rlf)$(ttot.val ge max(2025, cm_startyear))..
     v33_EW_onfield_tot(ttot,regi,rlf_cz33,rlf)
     =e=
-    v33_EW_onfield_tot(ttot-1,regi,rlf_cz33,rlf) * exp(-p33_co2_rem_rate(rlf_cz33) * pm_ts(ttot))
+    v33_EW_onfield_tot(ttot-1,regi,rlf_cz33,rlf) * exp(log(1-p33_rock_weath_rate(rlf_cz33)) * pm_ts(ttot))
     + v33_EW_onfield(ttot-1,regi,rlf_cz33,rlf) * (
         sum(tall$(tall.val le (ttot.val - pm_ts(ttot)/2) and tall.val gt (ttot.val - pm_ts(ttot))),
-            exp(-p33_co2_rem_rate(rlf_cz33) * (ttot.val - tall.val))
+            exp(log(1-p33_rock_weath_rate(rlf_cz33)) * (ttot.val - tall.val)))
         )
-    )
     + v33_EW_onfield(ttot,regi,rlf_cz33,rlf) * (
         sum(tall$(tall.val le ttot.val and tall.val gt (ttot.val - pm_ts(ttot)/2)),
-            exp(-p33_co2_rem_rate(rlf_cz33) * (ttot.val-tall.val))
-        )
+            exp(log(1-p33_rock_weath_rate(rlf_cz33)) * (ttot.val-tall.val)))
     )
 ;
 
@@ -146,8 +154,8 @@ q33_EW_emi(t,regi)..
     vm_emiCdrTeDetail(t,regi, "weathering")
     =e=
     sum((rlf_cz33, rlf),
-        - v33_EW_onfield_tot(t,regi,rlf_cz33,rlf) * s33_co2_rem_pot * (1 - exp(-p33_co2_rem_rate(rlf_cz33)))
-    )
+        - v33_EW_onfield_tot(t,regi,rlf_cz33,rlf) * s33_co2_rem_pot * p33_rock_weath_rate(rlf_cz33)
+        )
     ;
 
 ***---------------------------------------------------------------------------
@@ -233,6 +241,77 @@ q33_OAE_co2emi_non_atm_calcination(t, regi, te_oae33)..
     =e=
     - s33_OAE_chem_decomposition * vm_emiCdrTeDetail(t, regi, te_oae33)
     ;
+
+***---------------------------------------------------------------------------
+*'  Limit OAE by region based on the regions' share of the exclusive economic zone.
+*'  There are still many uncertainties about whether OAE would more likely be done
+*'  outside or inside EEZ. The equation is thus deactivated by default. 
+*'  Arguments in favor of OAE being done in EEZ, which can justify the distribution by EEZ
+*'  in case the cost-efficient allocation via cm_implicitQttyTrgt is not feasible: 
+*'  1. Tides lead to better mixing of the waters, thus more contact of the more alkaline 
+*'       surface waters with the atmosphere, leading to an expected higher CO2 uptake efficiency.
+*'  2. The generally lower water depth compared to the high seas helps OAE efficiency as the more alkaline 
+*'       surface waters don't sink to the deep oceans as quickly/ easily.
+*'  3. Legal situation: likely easier to create a legal framework for EEZs than high seas, 
+*'       where a significantly larger number of countries would need to agree
+*'  Potential issues to consider:
+*'  1. available EEZ-area is limited through other uses (fishing, offshore wind, marine protection etc.). 
+*'       Esp. marine protected areas are uncertain, as they are supposed to cover 30% of lgobal oceans by 2030 and are
+*'       currently mainly in EEZ areas. Some could, however, also be primary target for OAE, e.g. with ecosystems 
+*'       susceptible to ocean acidification like coral reefs.
+*'  2. Sufficiency of available area: depending on deployment depth and time-scales until the new equilibrium is reached,
+*'      the total EEZ area may not suffice for chosen uptake targets. At the default uptake efficiency of
+*'      1.2 tCO2/tCaO, 5 GtCO2 ocean uptake/yr corresponds ~ to distribution of CaO once a year
+*'      on the entire EEZ area at 2m depth.
+*'  3. Uptake efficiency differs by local conditions, and high-efficiency areas may lie outside EEZ areas.
+***---------------------------------------------------------------------------
+q33_OAE_EEZ_limit(t,regi)..
+    -p33_oae_eez_limit(regi) 
+    =l= 
+    sum(te_oae33,
+        vm_emiCdrTeDetail(t,regi, te_oae33))
+;
+
+
+***---------------------------------------------------------------------------
+*' #### Equations limiting CDR in the entire model
+
+***---------------------------------------------------------------------------
+*' Limit the amount of FE for CDR to a given fraction of total FE 
+***---------------------------------------------------------------------------
+q33_shfeSector_SectorTotal(t,regi,entyFe,sector)$(p33_shfetot_up(t,regi,entyFe,sector) AND entyFe2Sector(entyFe,sector))..
+  v33_FEsector_total(t,regi,entyFe,sector) 
+   =e=
+     sum(emiMkt$sector2emiMkt(sector,emiMkt),
+      sum(entySe$(sefe(entySe,entyFe)),
+       vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
+;
+
+q33_shfeSector_Total(t,regi,entyFe)..
+  v33_FE_total(t,regi,entyFe) 
+   =e=
+     sum(sector2emiMkt(sector,emiMkt),
+      sum(entySe$(sefe(entySe,entyFe)),
+       vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)$entyFe2Sector(entyFe,sector)))
+;
+
+q33_shfeSector_share(t,regi,entyFe,sector)$(p33_shfetot_up(t,regi,entyFe,sector))..
+  v33_shfeSector(t,regi,entyFe,sector) *
+  v33_FE_total(t,regi,entyFe) 
+  =e=
+  v33_FEsector_total(t,regi,entyFe,sector) 
+;
+
+
+***---------------------------------------------------------------------------
+*' Limit spending on net negative emissions to a share of the region's GDP 
+*' Warning: This needs to be adapted if cm_NetNegEmi_calculation = 1 is used.
+***---------------------------------------------------------------------------
+q33_CDRspending(t,regi)$(t.val ge max(2035,cm_startyear))..
+  v33_NetNegEmi_expenses(t,regi)
+  =e=
+  (1-cm_frac_NetNegEmi) * pm_taxCO2eqSum(t,regi) * vm_emiAllco2neg(t,regi)
+;
 
 *' @stop
 *** EOF ./modules/33_CDR/portfolio/equations.gms
