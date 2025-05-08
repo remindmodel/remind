@@ -49,6 +49,8 @@ magiccEnv <- c(
   "MAGICC_WORKER_NUMBER"   = 1
 )
 
+magiccInit <- condaInit(how = "pik-cluster", log = cfg$logFile, verbose = 1)
+
 runClimateEmulatorCmd <- paste(
   "python", file.path(system.file(package = "remindClimateAssessment"), "runOpenSCM.py"), cfg$emissionsImpulseFile,
   "--climatetempdir", cfg$climateDir,
