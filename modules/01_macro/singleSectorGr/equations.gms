@@ -53,6 +53,7 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
   + sum(enty$(emiMacSector(enty) AND (NOT emiMacMagpie(enty))), pm_macCost(ttot,regi,enty))
   + vm_costMatPrc(ttot,regi)
   + vm_costEnergySys(ttot,regi)
+  + vm_waccCost(ttot,regi)$(ttot.val ge 2010)
 ;
 
 ***---------------------------------------------------------------------------

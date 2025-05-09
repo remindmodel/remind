@@ -149,6 +149,7 @@ pm_share_CCS_CCO2(ttot,all_regi)                     "share of stored CO2 from t
 
 *** ------------- Emissions Variables ----------------------------------------
 variables
+<<<<<<< HEAD
 
 *** total emissions
 vm_co2eqGlob(ttot)                                   "total global greenhouse gas emissions to be balanced by allowances [GtCeq]"
@@ -168,6 +169,22 @@ v_macBase(ttot,all_regi,all_enty)                    "baseline emissions for all
 vm_emiMacSector(ttot,all_regi,all_enty)              "total emissions subject to MACCs, emissions that are not energy-related [GtC, Mt CH4, Mt N]"
 
 vm_emiCdr(ttot,all_regi,all_enty)                    "total (negative) CO2 emissions from CDR technologies that are calculated in the CDR module. Note that it includes all atmospheric CO2 entering the CCUS chain (i.e. CO2 stored (CDR) AND used (not CDR)) [GtC]"
+=======
+***----------------------------------------------------------------------------------------
+***--------------------------------------------------MACRO module--------------------------
+vm_taxrev(ttot,all_regi)                             "difference between tax volume in current and previous iteration"
+vm_costSubsidizeLearning(ttot,all_regi)              "regional cost of subsidy for learning technologies"
+vm_dummyBudget(ttot,all_regi)                        "auxiliary variable that helps to meet permit allocation equation in nash case"
+vm_waccCost(ttot,all_regi)                               "difference between WACC costs in current and previous iteration"
+***----------------------------------------------------------------------------------------
+***-------------------------------------------------ESM module-----------------------------
+v_macBase(ttot,all_regi,all_enty)                   "baseline emissions for all emissions subject to MACCs (type emismac)"
+vm_emiCO2Sector(ttot,all_regi,emi_sectors)           "total CO2 emissions from individual sectors [GtC]"
+vm_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty)  "energy-related emissions per region and technology"
+vm_emiTe(ttot,all_regi,all_enty)                     "total energy-related emissions of each region. [GtC, Mt CH4, Mt N]"
+vm_emiMacSector(ttot,all_regi,all_enty)              "total non-energy-related emission of each region. [GtC, Mt CH4, Mt N]"
+vm_emiCdr(ttot,all_regi,all_enty)                    "total (negative) emissions from CDR technologies of each region that are calculated in the CDR module. Note that it includes all atmospheric CO2 entering the CCUS chain (i.e. CO2 stored (CDR) AND used (not CDR)) [GtC]"
+>>>>>>> 5a8bc5bc (Add WACC module and link it with existing macro and REMIND structure)
 vm_emiMac(ttot,all_regi,all_enty)                    "total non-energy-related emission of each region. [GtC, Mt CH4, Mt N]"
 vm_emiFgas(ttot,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE [emiFgasTotal in MtCO2eq, for other units see f_emiFgas.cs4r]"
 
