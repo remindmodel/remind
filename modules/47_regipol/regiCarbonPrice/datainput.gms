@@ -14,17 +14,6 @@ option pm_taxemiMkt_iteration:3:3:1;
 *** initialize regipol target deviation parameter
 pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
 
-*** RR this should be replaced as soon as non-energy is treated endogenously in the model
-*** non-energy use values are calculated by taking the time path as contained in pm_fe_nechem.cs4r (where eg the 2030 value for EU27 is 91.6% of the 2020 value) and rescaling that with historic non-energy values from Eurostat
-*** historical values can be found at: https://ec.europa.eu/eurostat/databrowser/bookmark/f7c8aa0e-3cf6-45d6-b85c-f2e76e90b4aa?lang=en
-p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.121606*0.916; 
-p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EUR_regi")) = 0.13*0.924;
-p47_nonEnergyUse("2050",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.121606*0.815; 
-p47_nonEnergyUse("2050",ext_regi)$(sameas(ext_regi, "EUR_regi")) = 0.13*0.841;
-
-p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "DEU")) = 0.03*0.928; 
-p47_nonEnergyUse("2045",ext_regi)$(sameas(ext_regi, "DEU")) = 0.03*0.848; 
-p47_nonEnergyUse("2050",ext_regi)$(sameas(ext_regi, "DEU")) = 0.03*0.822; 
 ***--------------------------------------------------
 *** Emission markets (EU Emission trading system and Effort Sharing)
 ***--------------------------------------------------
