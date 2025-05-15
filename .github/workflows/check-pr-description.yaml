@@ -1,0 +1,18 @@
+on:
+  pull_request:
+    types: [ready_for_review]
+
+jobs:
+  check-pr-template:
+    runs-on: ubuntu-latest
+    env:
+      PR_DESCRIPTION: ${{ github.event.pull_request.body }}
+    steps:
+      - name: Check PR description
+        id: check_pr_description
+        run: |
+            SECTION=$(echo "$PR_DESCRIPTION" | sed -n '/## Checklist/,/## Further information (optional)/p')
+            if echo "$SECTION" | grep -q "\[ \]"; then
+              echo "Unselected checkboxes found in the 'Checklist' section of the pull request description. Please perform all steps required in the checklist."
+              exit 1
+            fi
