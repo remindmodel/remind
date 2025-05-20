@@ -29,6 +29,15 @@ invisible(getConfig(option = NULL, verbose = firstIteration))
 # read SSP scenario
 load("config.Rdata")
 ap_scenario <- cfg$gms$cm_APscen
+# Get actual SSP setting in the case where we should get it from cm_GDPpopScen
+if (cfg$gms$cm_APssp == "FROMGDPSSP"){
+  ap_ssp <- cfg$gms$cm_GDPpopScen
+} else {
+  ap_ssp <- cfg$gms$cm_APssp
+}
+# TODO: FIXME: REMOVE ==================================================================================
+ap_scenario <-"CLE"
+
 
 # read in REMIND avtivities, use input.gdx if the fulldata_exoGAINS.gdx is not available
 if (file.exists("fulldata_exoGAINS.gdx")) {
@@ -59,6 +68,10 @@ rem_in <- rem_in_mo
 # load GAINS emissions and emission factors
 ef_gains  <- read.magpie("ef_gains.cs4r")
 emi_gains <- read.magpie("emi_gains.cs4r")
+
+# Subset the chosen SSP (or GAINSlegacy if asked), taking special care of ambiguity between sets
+ef_gains  <- collapseDim(ef_gains[,,list(V6 = ap_ssp)], 3.4)
+emi_gains <- collapseDim(emi_gains[,,list(V6 = ap_ssp)], 3.4)
 
 # ship_ef  <- read.magpie("../../modules/11_aerosols/exoGAINS/input/ef_ship.cs4r")
 # ship_emi <- read.magpie("../../modules/11_aerosols/exoGAINS/input/emi_ship.cs4r")
@@ -133,9 +146,11 @@ RA_limited[RA_limited>5] <- 5
 
 E <- ( ef_gains[,,ap_scenario] / (setYears(ef_gains[,2015,ap_scenario])+1E-10) + noef ) * setYears(emi_gains[,2015,ap_scenario])  * ( RA_limited) ^ela
 
-# Calcualte emissions using different formula: for emisions that have no ef_gains
+# Calculate emissions using different formula: for emisions that have no ef_gains
 # take all timesteps of emi_gains and scale with relation of RA(SSP5) / RA(SSP2)
 # Preliminary: set RA_SSP2 to RA
+# GA: Since RA/RA is 1, and 1^0.4 is 1, this is essentially taking the 
+# exogenous emissions from the ap_scenario in emi_gains unaltered
 RA_SSP2 <- RA
 E_noef <- emi_gains[,,ap_scenario]  * ( RA / (RA_SSP2+1E-10) )^ela
 

@@ -63,8 +63,8 @@ $offdelim
 p11_emiAPexo(ttot,regi,enty,"Waste") = f11_emiAPexo(ttot,regi,"rcp60",enty,"Waste");
 display p11_emiAPexoGlob,p11_emiAPexo;
 
-parameter p11_emiAPexsolve(tall,all_regi,all_sectorEmi,emiRCP) "???";
-parameter f11_emiAPexsolve(tall,all_regi,all_sectorEmi,emiRCP,all_APscen) "ECLIPSE emission factors of air pollutants"
+parameter p11_emiAPexsolve(tall,all_regi,all_sectorEmi,emiRCP) "Emission of air pollutants from the exoGAINS script";
+parameter f11_emiAPexsolve(tall,all_regi,all_sectorEmi,emiRCP,all_APscen) "Emission of air pollutants from the exoGAINS script"
 /
 $ondelim
 $include "./modules/11_aerosols/exoGAINS/input/f11_emiAPexsolve.cs4r"
