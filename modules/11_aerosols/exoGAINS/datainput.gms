@@ -9,8 +9,13 @@
 *** Using EDGE-downscaling procedure
 ***----------------------------------
 
+* If prompted, infer the SSP for AP emissions and EFs from cm_GDPpopScen
+$ifthen.derivessp "%cm_APssp%" == "FROMGDPSSP"
+$setGlobal cm_APssp  "%cm_GDPpopScen%"
+$endif.derivessp
+
 *** SSP/ECLIPSE emission factors
-parameter f11_emiFacAP(tall,all_regi,all_enty,all_enty,all_te,all_sectorEmi,emisForEmiFac,all_APscen)     "ECLIPSE emission factors of air pollutants"
+parameter f11_emiFacAP(tall,all_regi,all_enty,all_enty,all_te,all_sectorEmi,emisForEmiFac,all_APscen,all_APssp)     "ECLIPSE emission factors of air pollutants"
 /
 $ondelim
 $include "./modules/11_aerosols/exoGAINS/input/f11_emiFacAP.cs4r"
@@ -18,7 +23,7 @@ $offdelim
 /
 ;
 p11_emiFacAP(ttot,regi,enty,enty2,te,sectorEndoEmi,emisForEmiFac)$(ttot.val ge 2005) = 0.0;
-p11_emiFacAP(ttot,regi,enty,enty2,te,sectorEndoEmi,emisForEmiFac)$(ttot.val ge 2005) = f11_emiFacAP(ttot,regi,enty,enty2,te,sectorEndoEmi,emisForEmiFac,"%cm_APscen%");
+p11_emiFacAP(ttot,regi,enty,enty2,te,sectorEndoEmi,emisForEmiFac)$(ttot.val ge 2005) = f11_emiFacAP(ttot,regi,enty,enty2,te,sectorEndoEmi,emisForEmiFac,"%cm_APscen%","%cm_APssp%");
 
 *** load emission data from land use change
 parameter f11_emiAPexoAgricult(tall,all_regi,all_enty,all_exogEmi,all_rcp_scen)     "ECLIPSE emission factors of air pollutants"
