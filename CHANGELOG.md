@@ -17,7 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - 
 
 ### removed
--
+- **config** Two scenario config files (damagepaper) were used for the NGFS runs but are not needed anymore.
+  [[#2107](https://github.com/remindmodel/remind/pull/2107)]
 
 ### fixed
 -
