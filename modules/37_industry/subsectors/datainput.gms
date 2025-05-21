@@ -293,7 +293,7 @@ Parameter
   p37_clinker_cement_ratio(ttot,all_regi)   "clinker content per unit cement used"
   /
 $ondelim
-$include "./modules/37_industry/subsectors/input/p37_clinker-to-cement-ratio.cs3r"
+$include "./modules/37_industry/subsectors/input/p37_clinker-to-cement-ratio.cs4r"
 $offdelim
   /
 ;

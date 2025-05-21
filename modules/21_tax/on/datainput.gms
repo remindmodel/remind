@@ -45,6 +45,15 @@ $offdelim
   /
 ;
 
+Parameter f21_sub_convergence_rollback(tall,all_regi,emi_sectors,all_enty) "Subsidy convergence level for specific regions, year and final energy type in rollback scenario"
+  /
+$ondelim
+$include "./modules/21_tax/on/input/f21_sub_convergence_rollback.cs4r"
+$offdelim
+  /
+;
+
+
 Parameter f21_max_fe_sub(tall,all_regi,all_enty) "maximum final energy subsidy levels (in $/Gj) from REMIND version prior to rev. 5429"
   /
 $ondelim
