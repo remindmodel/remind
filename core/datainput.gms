@@ -1238,7 +1238,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
   p_adj_seed_te(ttot,regi,"meSySol_cc")       = 0.0001; 
   p_adj_seed_te(ttot,regi,"meSyNg_cc")        = 0.0001;
   p_adj_seed_te(ttot,regi,"meSyLiq_cc")       = 0.0001;
-  p_adj_seed_te(ttot,regi,"meSyH2")          = 2.0;
+  p_adj_seed_te(ttot,regi,"meSyH2")          = 0.25;
   p_adj_seed_te(ttot,regi,"amSyCoal")        = 0.0001; 
   p_adj_seed_te(ttot,regi,"amSyNG")          = 0.0001;
   p_adj_seed_te(ttot,regi,"amSyLiq")         = 0.0001;
@@ -1249,7 +1249,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
   p_adj_seed_te(ttot,regi,"stCrLiq")         = 0.0001;
   p_adj_seed_te(ttot,regi,"stCrNg")          = 0.0001;
   p_adj_seed_te(ttot,regi,"mtoMta")          = 0.0001;
-  p_adj_seed_te(ttot,regi,"mtoMtaH2")        = 2.0;
+  p_adj_seed_te(ttot,regi,"mtoMtaH2")        = 0.25;
   p_adj_seed_te(ttot,regi,"fertProdH2")      = 2.0;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -1294,7 +1294,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
   p_adj_coeff(ttot,regi,"meSySol_cc")       = 3.0;  
   p_adj_coeff(ttot,regi,"meSyNg_cc")        = 3.0;
   p_adj_coeff(ttot,regi,"meSyLiq_cc")       = 3.0;
-  p_adj_coeff(ttot,regi,"meSyH2")          = 0.1;
+  p_adj_coeff(ttot,regi,"meSyH2")          = 0.8;
   p_adj_coeff(ttot,regi,"amSyCoal")        = 3.0;  
   p_adj_coeff(ttot,regi,"amSyNG")          = 3.0;
   p_adj_coeff(ttot,regi,"amSyLiq")         = 3.0;
@@ -1305,7 +1305,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
   p_adj_coeff(ttot,regi,"stCrLiq")         = 3.0;
   p_adj_coeff(ttot,regi,"stCrNg")          = 3.0;
   p_adj_coeff(ttot,regi,"mtoMta")          = 1.0;
-  p_adj_coeff(ttot,regi,"mtoMtaH2")        = 0.1;
+  p_adj_coeff(ttot,regi,"mtoMtaH2")        = 0.8;
   p_adj_coeff(ttot,regi,"fertProdH2")      = 0.1;
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
