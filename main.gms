@@ -1883,6 +1883,7 @@ $setGlobal cm_APssp  FROMGDPSSP          !! def = SSP2
 *' (SSP5): Only available for cm_APssp = GAINSlegacy
 *' (CLE): Current Legislation Emissions
 *' (SLE): Stronger Legislation Emissions
+*' (VLE): Very strong Legislation Emissions
 *' (MFR): Maximum Feasible Reductions
 $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-GDPpop_SSP2-En_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
