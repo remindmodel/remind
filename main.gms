@@ -1873,10 +1873,17 @@ $setglobal cm_demScen  SSP2     !! def = SSP2
 $setGlobal c_scaleEmiHistorical  on  !! def = on  !! regexp = off|on
 $SetGlobal cm_quick_mode  off          !! def = off  !! regexp = off|on
 $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
+*' cm_APssp "air polution SSP or emission factors version"
+*' (FROMGDPSSP): Shortcut to copy SSP from all_GDPpopScen
+*' (SSP1-5): SSP-specific emission factors GAINS runs from the 2025 ScenarioMIP effort
+*' (GAINSlegacy): emission factors from legacy GAINS runs
+$setGlobal cm_APssp  FROMGDPSSP          !! def = SSP2
 *' cm_APscen "air polution scenario"
-*' (SSP2):
-*' (SSP5):
+*' (SSP2):  Only available for cm_APssp = GAINSlegacy
+*' (SSP5): Only available for cm_APssp = GAINSlegacy
 *' (CLE): Current Legislation Emissions
+*' (SLE): Stronger Legislation Emissions
+*' (VLE): Very strong Legislation Emissions
 *' (MFR): Maximum Feasible Reductions
 $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-GDPpop_SSP2-En_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
