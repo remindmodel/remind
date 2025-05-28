@@ -14,7 +14,7 @@ test_that("checkFixCfg works", {
     "cm_emiscen" = "123",
     "cm_nash_autoconverge" = "NA",
     "cm_gs_ew" = "2.2.2",
-    "cm_co2_tax_growth" = "333++",
+    "cm_taxCO2_expGrowth" = "333++",
     "c_macscen" = "-1",
     "cm_keep_presolve_gdxes" = "1.1",
     "cm_startyear" = "1985",
@@ -22,7 +22,7 @@ test_that("checkFixCfg works", {
     "cm_rcp_scen" = "apocalypse",
     "c_testOneRegi_region" = "LOONG",
     "c_shGreenH2" = "1.5",
-    "cm_co2_tax_startyear" = "-2",
+    "cm_taxCO2_startyear" = "-2",
   NULL)
 
   cfg <- savecfg
@@ -33,5 +33,5 @@ test_that("checkFixCfg works", {
   }
   expect_match(w, paste0(length(wrongsetting), " errors found"), all = FALSE, fixed = TRUE)
   expect_match(w, "Chosen RCP scenario 'apocalypse' might currently not be fully operational", all = FALSE, fixed = TRUE)
-  expect_equal(length(w), length(wrongsetting) + 2)
+  expect_length(w, length(wrongsetting) + 2)
 })

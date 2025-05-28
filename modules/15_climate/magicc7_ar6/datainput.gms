@@ -43,14 +43,6 @@ s15_gr_forc_kyo     = 0;
 
 p15_forc_magicc(tall) = 0;
 
-$if  %cm_rcp_scen% == "rcp26"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp3pd.inc";
-$if  %cm_rcp_scen% == "rcp37"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp45.inc";
-$if  %cm_rcp_scen% == "rcp45"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp45.inc";
-$if  %cm_rcp_scen% == "rcp60"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp6.inc";
-$if  %cm_rcp_scen% == "rcp85"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp85.inc";
-$if  %cm_rcp_scen% == "rcp20"    $include "./modules/15_climate/magicc/input/data_oghgf_rcp3pd.inc";
-$if  %cm_rcp_scen% == "none"     $include "./modules/15_climate/magicc/input/data_oghgf_rcp6.inc";
-
 pm_emicapglob(ttot) = 0;
 
 *** parameter pm_emicapglob is read in depending on cm_rcp_scen and cm_multigasscen

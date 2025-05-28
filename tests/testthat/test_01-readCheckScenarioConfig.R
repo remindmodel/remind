@@ -43,7 +43,7 @@ test_that("readCheckScenarioConfig fails on error-loaden config", {
   expect_match(w, "Those scenarios link to a non-existing path_gdx_refpolicycost: PBS, PBScopy", all = FALSE, fixed = TRUE)
   expect_match(w, "Those scenarios link to a non-existing path_gdx_carbonprice: PBS, glob, PBScopy", all = FALSE, fixed = TRUE)
   expect_match(w, "Those scenarios have cm_startyear earlier than their path_gdx_ref run, which is not supported: startyear_too_early", all = FALSE, fixed = TRUE)
-  expect_match(m, "no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead", all = FALSE, fixed = TRUE)
+  expect_match(m, "no column path_gdx_refpolicycost found, using path_gdx_ref instead", all = FALSE, fixed = TRUE)
   copiedFromPBS <- c("c_budgetCO2", "path_gdx", "path_gdx_ref")
   expect_identical(unlist(scenConf["PBS", copiedFromPBS]),
                    unlist(scenConf["PBScopy", copiedFromPBS]))

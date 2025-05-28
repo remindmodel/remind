@@ -23,8 +23,9 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     cfg <- gms::readDefaultConfig(remindPath)
   }
   scenConf <- read.csv2(filename, stringsAsFactors = FALSE, na.strings = "", comment.char = "#",
-                                  strip.white = TRUE, blank.lines.skip = TRUE, check.names = FALSE)
+                        strip.white = TRUE, blank.lines.skip = TRUE, check.names = FALSE)
   scenConf <- scenConf[! is.na(scenConf[1]), ]
+  colnames(scenConf) <- make.unique(colnames(scenConf), sep = ".")
   rownames(scenConf) <- scenConf[, 1]
   scenConf[1] <- NULL
   colduplicates <- grep("\\.[1-9]$", colnames(scenConf), value = TRUE)
@@ -92,10 +93,13 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   pathgdxerrors <- 0
   # fix missing path_gdx and inconsistencies
   if ("path_gdx_ref" %in% names(scenConf) && ! "path_gdx_refpolicycost" %in% names(scenConf)) {
+    if (! isFALSE(coupling)) {
+      stop("Your ", basename(filename), " does contain a path_gdx_ref, but no path_gdx_refpolicycost column. ",
+          "For REMIND standalone, ref is copied to refpolicycost, but for coupled runs this lead to confusion. ",
+          "Please add a path_gdx_refpolicycost column to your config file, see tutorial 4.")
+    }
     scenConf$path_gdx_refpolicycost <- scenConf$path_gdx_ref
-    msg <- paste0("In ", filename,
-        ", no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
-    message(msg)
+    message("In ", filename, ", no column path_gdx_refpolicycost found, using path_gdx_ref instead.")
   }
 
   # make sure every path gdx column exists
@@ -155,9 +159,11 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   if (length(unknownColumnNames) > 0) {
     message("")
     forbiddenColumnNames <- list(   # specify forbidden column name and what should be done with it
-       "c_budgetCO2" = "Rename to c_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
+       "c_budgetCO2" = "Rename to cm_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
+       "c_budgetCO2from2020" = "Rename to cm_budgetCO2from2020, see https://github.com/remindmodel/remind/pull/1874",
+       "c_budgetCO2from2020FFI" = "Deleted, use cm_budgetCO2from2020 instead, and adapt emission budgets, see https://github.com/remindmodel/remind/pull/1874",
        "c_peakBudgYr" = "Rename to cm_peakBudgYr, see https://github.com/remindmodel/remind/pull/1747",
-       "c_budgetCO2FFI" = "Rename to c_budgetCO2from2020FFI, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
+       "c_budgetCO2FFI" = "Deleted, use cm_budgetCO2from2020 instead, and adapt emission budgets, see https://github.com/remindmodel/remind/pull/1874",
        "cm_bioenergy_tax" = "Rename to cm_bioenergy_SustTax, see https://github.com/remindmodel/remind/pull/1003",
        "cm_bioenergymaxscen" = "Use more flexible cm_maxProdBiolc switch instead, see https://github.com/remindmodel/remind/pull/1054",
        "cm_tradecost_bio" = "Use more flexible cm_tradecostBio switch, see https://github.com/remindmodel/remind/pull/1054",
@@ -174,13 +180,26 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_fixCO2price" = "Was never in use, removed in https://github.com/remindmodel/remind/pull/1369",
        "cm_calibration_FE" = "Deleted, only used for old hand made industry trajectories, see https://github.com/remindmodel/remind/pull/1468",
        "cm_DAC_eff" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/1487",
-       "cm_peakBudgYr" = "Rename to c_peakBudgYr, see https://github.com/remindmodel/remind/pull/1488",
-       "c_taxCO2inc_after_peakBudgYr" = "Rename to cm_taxCO2inc_after_peakBudgYr, see https://github.com/remindmodel/remind/pull/1776",
+       "c_taxCO2inc_after_peakBudgYr" = "Rename to cm_taxCO2_IncAfterPeakBudgYr, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_taxCO2inc_after_peakBudgYr" = "Rename to cm_taxCO2_IncAfterPeakBudgYr, see https://github.com/remindmodel/remind/pull/1874",
        "c_solscen" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/1515",
        "cm_regNetNegCO2" = "Deleted, not used, see https://github.com/remindmodel/remind/pull/1517",
        "cm_solwindenergyscen" = "Deleted, not used, see https://github.com/remindmodel/remind/pull/1532",
        "cm_wind_offshore" = "Deleted, not used, see https://github.com/remindmodel/development_issues/issues/272",
        "cm_co2_tax_2020" = "Use cm_co2_tax_startyear instead, see https://github.com/remindmodel/remind/pull/1858",
+       "cm_co2_tax_startyear" = "Rename to cm_taxCO2_startyear, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_co2_tax_growth" = "Rename to cm_taxCO2_expGrowth, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_co2_tax_spread" = "Use cm_taxCO2_regiDiff instead, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_co2_tax_hist" = "Rename to cm_taxCO2_historical, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_year_co2_tax_hist" = "Rename to cm_taxCO2_historicalYr, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_CO2priceRegConvEndYr" = "Use cm_taxCO2_regiDiff_endYr instead, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_year_co2_tax_hist" = "Use cm_taxCO2_historicalYr instead, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_co2_tax_hist" = "Use cm_taxCO2_historical instead, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_taxCO2inc_after_peakBudgYr" = "Use cm_taxCO2_IncAfterPeakBudgYr instead, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_GDPscen" = "Use cm_GDPpopScen instead, see https://github.com/remindmodel/remind/pull/1973",
+       "cm_POPscen" = "Use cm_GDPpopScen instead, see https://github.com/remindmodel/remind/pull/1973",
+       "cm_DiscRateScen" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/2001",
+       "cm_transpGDPscale" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/2092",
      NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       msg <- paste0("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
@@ -191,17 +210,25 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
       errorsfound <- errorsfound + length(intersect(names(forbiddenColumnNames), unknownColumnNames))
     }
     # sort out known but forbidden names from unknown
-    unknownColumnNames <- setdiff(unknownColumnNames, names(forbiddenColumnNames))
+    commentColNames <- grep("^\\.", unknownColumnNames, value = TRUE)
+    if (length(commentColNames) > 0) {
+      message("readCheckScenarioConfig.R treats these columns starting with '.' as comments: ", paste(commentColNames, collapse = ", "))
+    }
+    unknownColumnNames <- setdiff(unknownColumnNames, c(commentColNames, names(forbiddenColumnNames)))
     if (length(unknownColumnNames) > 0) {
       message("\nAutomated checks did not understand these columns in ", basename(filename), ":")
       message("  ", paste(unknownColumnNames, collapse = ", "))
       if (isFALSE(coupling)) message("These are no cfg or cfg$gms switches found in main.gms and default.cfg.")
-      if (coupling %in% "MAgPIE") message("Maybe you specified REMIND switches in coupled config, which does not work.")
+      if (coupling %in% "MAgPIE") {
+        message("Maybe you specified REMIND switches in coupled config, which does not work.")
+        if (any(grepl("cfg$gms", unknownColumnNames, fixed = TRUE))) {
+          message("MAgPIE switches need to start with 'cfg_mag$gms', not 'cfg$gms'.")
+        }
+      }
       message("If you find false positives, add them to knownColumnNames in scripts/start/readCheckScenarioConfig.R.\n")
-      unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
-      if (length(unknownColumnNamesNoComments) > 0) {
+      if (length(unknownColumnNames) > 0) {
         if (testmode) {
-          warning("Unknown column names: ", paste(unknownColumnNamesNoComments, collapse = ", "))
+          warning("Unknown column names: ", paste(unknownColumnNames, collapse = ", "))
         } else if (errorsfound == 0) {
           message("Do you want to continue and simply ignore them? Y/n")
           userinput <- tolower(gms::getLine())

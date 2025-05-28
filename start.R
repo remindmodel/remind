@@ -61,7 +61,9 @@ acceptedFlags <- c("0" = "--reset", "1" = "--testOneRegi", d = "--debug", g = "-
                    r = "--restart", R = "--reprepare", t = "--test", h = "--help", q = "--quick")
 startgroup <- "1"
 flags <- lucode2::readArgs("startgroup", "titletag", "slurmConfig", .flags = acceptedFlags, .silent = TRUE)
-if (exists("slurmConfig") && slurmConfig %in% paste(seq(1:16))) {
+if ("--test" %in% flags) {
+  slurmConfig <- choose_slurmConfig(identifier = "1")
+ } else if (exists("slurmConfig") && slurmConfig %in% paste(seq(1:16))) {
   slurmConfig <- choose_slurmConfig(identifier = slurmConfig)
 }
 
@@ -300,10 +302,6 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
         # overwrite slurmConfig settings provided in scenario config file with those selected by user
         cfg$slurmConfig      <- slurmConfig
         if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
-      }
-      # Make sure all python requirements are installed
-      if (cfg$pythonEnabled == "on") {
-        piamenv::updatePythonVirtualEnv()
       }
       # Directly start runs that have a gdx file location given as path_gdx... or where this field is empty
       gdx_specified <- grepl(".gdx", cfg$files2export$start[path_gdx_list], fixed = TRUE)

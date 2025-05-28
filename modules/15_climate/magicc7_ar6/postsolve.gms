@@ -7,7 +7,6 @@
 *** SOF ./modules/15_climate/magicc7_ar6/postsolve.gms
 
 ***---------------------------------------------------------------------------
-*' The MAGICC scenario generation is set in `./core/magicc.gms`, but runs here.
 *' MAGICC is run and its output is read using different current R scripts in the external MAGICC folder
 *' that are copied to each run's folder during the preparation phase. Different parametrizations of MAGICC can also be chosen with `cm_magicc_config`,
 *' and are also handled during the preparation phase
@@ -19,7 +18,7 @@
 * Run only on first iteration to avoid incomplete GDXs
 Execute_unload 'fulldata_postsolve';
 * Run the climate assessment script. Takes around 2-3m for a single parameter set, including harmonization and infilling
-Execute "Rscript climate_assessment_run.R";
+Execute "Rscript climateAssessmentInterimRun.R";
 * Read in results
 Execute_Loadpoint 'p15_forc_magicc'  p15_forc_magicc;
 Execute_Loadpoint 'p15_magicc_temp' pm_globalMeanTemperature = pm_globalMeanTemperature;
@@ -64,7 +63,7 @@ $ifthen.cm_magicc_tirf "%cm_magicc_temperatureImpulseResponse%" == "on"
 * thus only compute TIRF after each of the first 10 iterations, then only every fifth iteration. 
 * runtime is ca 30s, so switching on TIRF adds ca 10min to runtime
 if( ((iteration.val le 10) or ( mod(iteration.val,5 ) eq 0)) ,
-    execute "Rscript climate_assessment_temperatureImpulseResponse.R";
+    execute "Rscript climateAssessmentImpulseResponse.R";
     execute_loadpoint 'pm_magicc_temperatureImpulseResponse'  pm_temperatureImpulseResponseCO2 = pm_temperatureImpulseResponse;
 );
 *NOTE the MAGICC results (*.OUT files) are from  the last pulse experiment now, so take care if reading them in after this point.

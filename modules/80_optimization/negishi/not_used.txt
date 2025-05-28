@@ -4,7 +4,7 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-name,                              type,        reason
+name,type,reason
 cm_abortOnConsecFail,              switch,      ???
 cm_iteration_max,                  switch,      ???
 cm_keep_presolve_gdxes,            switch,      not needed
@@ -43,8 +43,6 @@ pm_implicitQttyTarget_isLimited,   parameter,   ???
 pm_implicitQttyTarget,             parameter,   ???
 pm_nfa_start,                      input,       questionnaire
 pm_shPerm,                         parameter,   ???
-pm_taxCO2eq_iterationdiff,         input,       questionnaire
-pm_taxCO2eq_iterationdiff_tmp,     input,       questionnaire
 pm_taxemiMkt_iteration,            input,       ??
 pm_Xport0,                         parameter,   ???
 qm_co2eqCum,                       equation,    ???
@@ -53,7 +51,7 @@ sm_EJ_2_TWa,                       scalar,      ???
 sm_endBudgetCO2eq,                 scalar,      ???
 sm_eps,                            scalar,      ???
 sm_fadeoutPriceAnticip,            scalar,      ???
-sm_globalBudget_dev,               input,       questionnaire
+sm_globalBudget_absDev,            input,       questionnaire
 sm_tmp2,                           scalar,      not needed
 sm_tmp,                            scalar,      not needed
 vm_capacityTradeBalance,           variable,    not implemented yet
@@ -69,3 +67,6 @@ sm_CES_calibration_iteration,      scalar,      only needed during calibration w
 cm_maxFadeOutPriceAnticip,         parameter,   ???
 cm_LearningSpillover,              input,       learning spillover only implemented in nash
 pm_allTargetsConverged,            parameter,   only relevant for nash
+pm_taxCO2eq_anchor_iterationdiff,input,no iterative target adjustment
+pm_taxCO2eq_iter,input,added by codeCheck
+cm_budgetCO2_absDevTol,input,added by codeCheck

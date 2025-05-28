@@ -9,11 +9,6 @@ run <- function() {
 
   load("config.Rdata")
 
-  if (cfg$pythonEnabled == "on"){
-    # Set environment variables so that reticulate finds the configured Python virtual env
-    Sys.setenv(RETICULATE_PYTHON = piamenv::pythonBinPath(".venv"))
-  }
-
   # Save start time
   timeGAMSStart <- Sys.time()
 
@@ -141,7 +136,10 @@ run <- function() {
                          config     = cfg,
                          runtime    = gams_runtime,
                          setup_info = lucode2::setup_info(),
-                         submit     = cfg$runstatistics)
+                         submit     = cfg$runstatistics,
+                         timeGAMSStart = timeGAMSStart,
+                         timeGAMSEnd   = timeGAMSEnd
+  )
 
   if (modelSummaryData[["stoprun"]]) {
     stop("GAMS did not complete its run, so stopping here:\n       No output is generated, no subsequent runs are started.\n",
@@ -174,7 +172,8 @@ run <- function() {
 
     # fulldatapath may be written into gdx paths of subsequent runs
     fulldatapath <- paste0(cfg_main$remind_folder,"/",cfg_main$results_folder,"/fulldata.gdx")
-    possible_pathes_to_gdx <- c("input.gdx", "input_ref.gdx", "input_refpolicycost.gdx", "input_bau.gdx", "input_carbonprice.gdx")
+    possible_pathes_to_gdx <- c("input.gdx", "input_ref.gdx", "input_refpolicycost.gdx",
+                                "input_bau.gdx", "input_carbonprice.gdx", "input_damage.gdx")
 
     # Loop possible subsequent runs, saving path to fulldata.gdx of current run (== cfg_main$title) to their cfg files
 
@@ -270,10 +269,8 @@ run <- function() {
   timeOutputEnd <- Sys.time()
 
   # Save run statistics to local file
-  cat("\nSaving timeGAMSStart, timeGAMSEnd, timeOutputStart and timeOutputStart to runstatistics.rda\n")
+  cat("\nSaving timeOutputStart and timeOutputEnd to runstatistics.rda\n")
   lucode2::runstatistics(file           = paste0(cfg$results_folder, "/runstatistics.rda"),
-                       timeGAMSStart   = timeGAMSStart,
-                       timeGAMSEnd     = timeGAMSEnd,
                        timeOutputStart = timeOutputStart,
                        timeOutputEnd   = timeOutputEnd)
 

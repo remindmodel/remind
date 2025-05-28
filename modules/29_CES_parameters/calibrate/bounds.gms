@@ -58,4 +58,13 @@ loop (pf_industry_relaxed_bounds_dyn37(in),
   + INF$( sm_CES_calibration_iteration gt sm_tmp );
 );
 
+loop(p29_building_relaxed_bounds_dyn(in),
+  vm_cesIO.lo(t,regi_dyn29(regi),in)$(t.val gt 2020 AND SAMEAS(regi, "MEA"))
+  = pm_cesdata(t,regi,in,"quantity") * 0.95 ;
+
+  vm_cesIO.up(t,regi_dyn29(regi),in)$(t.val gt 2020 AND SAMEAS(regi, "MEA"))
+  = pm_cesdata(t,regi,in,"quantity")* 1.05;
+);
+
+
 *** EOF ./modules/29_CES_parameters/calibrate/bounds.gms

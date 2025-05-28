@@ -1,4 +1,4 @@
-title;start;qos;sbatch;magpie_scen;config/scenario_config.csv;magpie_empty;no_ghgprices_land_until;max_iterations;oldrun;path_gdx;path_gdx_ref;path_gdx_bau;path_report;cm_nash_autoconverge_lastrun;path_mif_ghgprice_land;cfg_mag$gms$s56_minimum_cprice;cfg_mag$damping_factor;cfg_mag$gms$s56_cprice_red_factor
-TESTTHAT-SSP2-Base;1;auto;--wait --mail-type=FAIL --time=60;SSP2|NPI;SDP-MC;TRUE;y2150;2;;;;;;2;;;;
-TESTTHAT-SSP2-NDC;1;auto;--wait --mail-type=FAIL --time=60;SSP2|NDC;;TRUE;y2150;2;;;;;;2;TESTTHAT-SSP2-Base;;0.80;0.5
-TESTTHAT-SSP2-Policy;2;auto;--wait --mail-type=FAIL --time=60;SSP2|NDC;SDP-MC;TRUE;y2150;2;TESTTHAT-SSP2-Base;;;;;;output/C_TESTTHAT-SSP2-Base-rem-1/REMIND_generic_C_TESTTHAT-SSP2-Base-rem-1.mif;20;;
+title;start;qos;sbatch;magpie_scen;config/scenario_config.csv;magpie_empty;no_ghgprices_land_until;max_iterations;oldrun;path_gdx;path_gdx_ref;path_gdx_bau;path_report;cm_nash_autoconverge_lastrun;path_mif_ghgprice_land;cfg_mag$gms$s56_minimum_cprice;cfg_mag$damping_factor;cfg_mag$gms$s56_cprice_red_factor;path_gdx_refpolicycost
+TESTTHAT-SSP2-Base;1;auto;--wait --mail-type=FAIL --time=60;SSP2|NPI;SSP2;TRUE;y2150;2;;;;;;2;;;;;
+TESTTHAT-SSP2-NDC;1;auto;--wait --mail-type=FAIL --time=60;SSP2|NDC;;TRUE;y2150;2;;;;;;2;TESTTHAT-SSP2-Base;;0.80;0.5;
+TESTTHAT-SSP2-Policy;2;auto;--wait --mail-type=FAIL --time=60;SSP2|NDC;SSP2;TRUE;y2150;2;TESTTHAT-SSP2-Base;;;;;;output/C_TESTTHAT-SSP2-Base-rem-1/REMIND_generic_C_TESTTHAT-SSP2-Base-rem-1.mif;20;;;

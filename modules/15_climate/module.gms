@@ -13,10 +13,9 @@
 *' using the MAGICC climate emulator. It may also be used within the optimization or between iterations
 *' in order to internalize climate damages or adjust the carbon price to meet a desired climate target
 *'
-*' @authors Jessica Strefler, Michaja Pehl, Christoph Bertram
+*' @authors Jessica Strefler, Michaja Pehl, Christoph Bertram, Gabriel Abrahão, Tonn Rüter
 
 *###################### R SECTION START (MODULETYPES) ##########################
-$Ifi "%climate%" == "magicc" $include "./modules/15_climate/magicc/realization.gms"
 $Ifi "%climate%" == "magicc7_ar6" $include "./modules/15_climate/magicc7_ar6/realization.gms"
 $Ifi "%climate%" == "off" $include "./modules/15_climate/off/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################

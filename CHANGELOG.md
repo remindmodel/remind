@@ -4,21 +4,88 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+
 ## [Unreleased]
 
 ### input data/calibration
+
+### changed
+- Consolidated the `MAGICC7_AR6.R` climate reporting script and the `climateAssessmentInterimRun.R` climate assessment iteration script for damage runs using the `remindClimateAssessment` and `piamenv` packages [[#2082](https://github.com/remindmodel/remind/pull/2082), [#2099](https://github.com/remindmodel/remind/pull/2099)]
+- Enhanced `reporting.R` to read extra data needed for reporting directly from inputdata [[#2084](https://github.com/remindmodel/remind/pull/2084)]
+
+### added
+- 
+
+### removed
+- **config** Two scenario config files (damagepaper) were used for the NGFS runs but are not needed anymore.
+  [[#2107](https://github.com/remindmodel/remind/pull/2107)]
+
+### fixed
+-
+
+
+## [3.5.0] - 2025-04-04
+
+### added
+- Possibility of using updated sources for baseline non-CO2 emissions calculation, controlled by `cm_emifacs_baseyear`
+- Add `readcoupled` script that allows to print data from gdx files or mif files for all coupled runs
+    [[#1977](https://github.com/remindmodel/remind/pull/1977), [#1990](https://github.com/remindmodel/remind/pull/1990)]
+- Add `scripts/start/checkSettingsRemMag.R` to check compatibility of REMIND and MAgPIE settings with respect
+  to GDP, Population, bioenergy phaseout and damage settings
+    [[#2028](https://github.com/remindmodel/remind/pull/2028)]
+
+### input data/calibration
+- new input data rev7.21 including new MAgPIE data [[#1956](https://github.com/remindmodel/remind/pull/1956)]
+- new input data rev7.24 including IEA update [[#1992](https://github.com/remindmodel/remind/pull/1992)]
+- add CES parameters for SSP3 with imperfect capital markets [[#1995](https://github.com/remindmodel/remind/pull/1995)] 
+
+### changed
+- **config** updated ScenarioMIP config
+    [[#1972](https://github.com/remindmodel/remind/pull/1972)]
+- **scripts** for MAgPIE coupled runs, if the coupled config contains a `path_gdx_ref` column, it needs a `path_gdx_refpolicycost` column as well.
+    [[#1940](https://github.com/remindmodel/remind/pull/1940)]
+- **scripts** make the selection of variables and equations that are fixed on reference run automatic
+    [[#2033](https://github.com/remindmodel/remind/pull/2033)]
+-_**scripts** You can define timesteps in xlsx_IIASA export script. Defaults to REMIND standard. If you want interpolation between timesteps,
+    you need to adjust it. [[#2056](https://github.com/remindmodel/remind/pull/2056)]
+- **core** merge cm_GDPscen and cm_POPscen into cm_GDPpopScen
+    [[#1973](https://github.com/remindmodel/remind/pull/1973)]
+- **45_carbonprice** realization 'none' only sets carbon price to 0 for t >= cm_startyear
+    [[#2056](https://github.com/remindmodel/remind/pull/2056)]
+- **scripts** Updated renv version from to 1.1.1 to 1.1.4
+    [[#2065](https://github.com/remindmodel/remind/pull/2065)]
+- **scripts** let the release script add a renv.lock to each new release
+    [[#2058](https://github.com/remindmodel/remind/pull/2058)]
+- **scripts** Redesigned pull request template. No lines to delete anymore. Checkboxes only in the checklist.
+    [[#2063](https://github.com/remindmodel/remind/pull/2063)]
+
+### added
+-
+
+### removed
+- **37_industry** removed superseded realization fixed_shares [[#1941](https://github.com/remindmodel/remind/pull/1941)]
+- last traces of SSP2EU scenario which is superseeded by SSP2 [[#2028](https://github.com/remindmodel/remind/pull/2028)]
+
+### fixed
+- **37_industry** fix and restructure chemical feedstock balancing to account for all negative emissions from stored non-fossil carbon [[#1829](https://github.com/remindmodel/remind/pull/1829)]
+
+
+## [3.4.0] - 2024-12-11
+
+### input data/calibration
 - new input data rev6.84 [[#1757](https://github.com/remindmodel/remind/pull/1757)]
-- new input data rev6.95 in US$2017[[#1812]] (https://github.com/remindmodel/remind/pull/1812) 
+- new input data rev6.95 in US$2017 [[#1812](https://github.com/remindmodel/remind/pull/1812)]
+- new input data rev7.13 including new MAgPIE emulators [[#1886](https://github.com/remindmodel/remind/pull/1886)]
 - CES parameter and gdx files calibrated with new default diffLin2Lin for NPi 
     [[#1747](https://github.com/remindmodel/remind/pull/1747)] and
     [[#1757](https://github.com/remindmodel/remind/pull/1757)]
 - Update of NDC goals with cutoff data August 31, 2024
     [[#1816](https://github.com/remindmodel/remind/pull/1816)]
 - Prepare to make input data available for externals. Do not stop on missing validation data.
-  [[1828]][(https://github.com/remindmodel/remind/pull/1828)]
+    [[1828](https://github.com/remindmodel/remind/pull/1828)]
 
 ### changed
-- shift base unit from US$2005 to US$2017 [[#1812]] (https://github.com/remindmodel/remind/pull/1812)
+- shift base unit from US$2005 to US$2017 [[#1812](https://github.com/remindmodel/remind/pull/1812)]
 - plastic waste by default does not lag plastics production by ten years
     anymore; can be re-activated using `cm_wastelag`
 - moved to edgeTransport 2.0 version [[#1749](https://github.com/remindmodel/remind/pull/1749)]
@@ -29,16 +96,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **core** changed adjustment cost of geohe (central heat pumps), elh2 (electrolysis), MeOH (FT-Synthesis: H2-to-Liquids)
     and h22ch4 (methanation: H2-to-Gas) to better reflect upscaling dynamics
     [[#1823](https://github.com/remindmodel/remind/pull/1823)]
+- **core** increase electrolysis CAPEX and slightly adjust default setting for electrolysis taxation and flexibility benefit,
+    add near-term bounds for electrolysis and synthetic fuel deployment
+    [[#1882](https://github.com/remindmodel/remind/pull/1882)]
+- **core** update co2 capture rates and cost of biomass liquids and gas and some other X-to-Liq/Gas technologies to be internally consistent
+    [[#1881](https://github.com/remindmodel/remind/pull/1881)]
 
 ### added
+- **config** add ScenarioMIP config
+    [[#1894](https://github.com/remindmodel/remind/pull/1894)] and [[#1920](https://github.com/remindmodel/remind/pull/1920)]
 - **32_power** increase minimum required dispatchable back-up capacity for VRE integration
     [[#1789](https://github.com/remindmodel/remind/pull/1789)]
 - **33_CDR** added ocean alkalinity enhancement to the CDR portfolio (OAE is turned off by default)
     [[#1777](https://github.com/remindmodel/remind/pull/1777)]
-- **45_carbonprice** added realizations diffExp2Lin and diffLin2Lin
-    [[#1723](https://github.com/remindmodel/remind/pull/1723)]
--_**45_carbonprice** added realizations NPi2025_EUR55 and NPiexpo
-    [[#1851](https://github.com/remindmodel/remind/pull/1851)]
+- **45_carbonprice** added realization functionalForm
+    [[#1874](https://github.com/remindmodel/remind/pull/1874)] and [[#1723](https://github.com/remindmodel/remind/pull/1723)]
+- **45_carbonprice** added realizations NPi2025, NPi2025expo and NPiexpo
+    [[#1851](https://github.com/remindmodel/remind/pull/1851)] and
+    [[#1888](https://github.com/remindmodel/remind/pull/1888)]
 - **50_damages**, **51_internalizeDamages** add KotzWenz realization based on Kotz & Wenz (2024)
     [[#1601](https://github.com/remindmodel/remind/pull/1601)]
 - **config** add ELEVATE2p3 config
@@ -67,9 +142,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#1851](https://github.com/remindmodel/remind/pull/1851)]
 - **testthat** ignore missing historical.mif in tests because it is an optional input file
     [[#1857](https://github.com/remindmodel/remind/pull/1857)]
+- **scripts** Add scripts for preparing a release
+    [[#1871](https://github.com/remindmodel/remind/pull/1871)]
     
 ### fixed
-- included CCS from plastic waste incineration in CCS mass flows so it is
+- **30_biomass** reset 1st gen. biofuel bound from 2045 to 2030
+    [[#1890](https://github.com/remindmodel/remind/pull/1890)]
+- **37_industry** included CCS from plastic waste incineration in CCS mass flows so it is
     subject to injection constraints (but did not add CCS costs, see
     https://github.com/remindmodel/development_issues/issues/274
 - **MAGICC7** fix climate data for time before cm_startyear on reference run
@@ -81,7 +160,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** REMIND-MAgPIE start scripts now correctly use all non-gms cfg switches
     [[#1768](https://github.com/remindmodel/remind/pull/1768)]
 - **scripts** limit slurm runtime of output.R scripts to 2 hours
-    [[1783](https://github.com/remindmodel/remind/pull/1783)]
+    [[#1783](https://github.com/remindmodel/remind/pull/1783)]
 
 ### removed
 - **45_carbonprice** removed superseded realizations linear, exponential and diffCurvPhaseIn2Lin
@@ -135,7 +214,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** add script to automatically check project summations from piamInterfaces
     [[#1587](https://github.com/remindmodel/remind/pull/1587)]
 - **scripts** add MAGICCv7.5.3 with AR6 settings as output script, add compareScenarios2 option
-    [[#1475](https://github.com/remindmodel/remind/pull/1475), [[#1615](https://github.com/remindmodel/remind/pull/1615)]
+    [[#1475](https://github.com/remindmodel/remind/pull/1475)], [[#1615](https://github.com/remindmodel/remind/pull/1615)]
 - **scripts** add 'make test-fix' which runs codeCheck in interactive mode, adjusting not_used.txt files
     [[#1625](https://github.com/remindmodel/remind/pull/1625)]
 - **testthat** test and compile all config files [[#1356](https://github.com/remindmodel/remind/pull/1356)]
