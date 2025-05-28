@@ -409,6 +409,28 @@ pm_eta_conv(ttot,regi,teChp) = pm_data(regi,"eta",teChp);
 *** pm_eta_conv(ttot, regi, teEtaIncr) = pm_dataeta(ttot, regi, teEtaIncr);
 
 pm_eta_conv(ttot,regi,"elh2") = pm_dataeta(ttot,regi,"elh2");
+
+
+
+
+*** Increase SE2FE efficiency for gases in DEU following AGEB data from 2020
+*** increase incrementally from IEA data in 2005 to avoid inconsistencies with 2005 IEA calibration
+*** https://ag-energiebilanzen.de/daten-und-fakten/auswertungstabellen/
+*** Sum of gases input into electricity (Tab 4.1) and heat production (Tab 4.2) and final energy gas consumption (Tab 6.1)
+*** divided by total primary energy gases input (Tab 2.1). 
+pm_eta_conv("2010",regi,"tdfosgas")$(sameAs(regi,"DEU")) = 0.949;
+pm_eta_conv("2015",regi,"tdfosgas")$(sameAs(regi,"DEU")) = 0.962;
+pm_eta_conv(t,regi,"tdfosgas")$(sameAs(regi,"DEU") and t.val ge 2020) = 0.975;
+
+
+pm_eta_conv("2010",regi,"tdbiogas")$(sameAs(regi,"DEU")) = 0.949;
+pm_eta_conv("2015",regi,"tdbiogas")$(sameAs(regi,"DEU")) = 0.962;
+pm_eta_conv(t,regi,"tdbiogas")$(sameAs(regi,"DEU") and t.val ge 2020) = 0.975;
+
+pm_eta_conv("2010",regi,"tdsyngas")$(sameAs(regi,"DEU")) = 0.949;
+pm_eta_conv("2015",regi,"tdsyngas")$(sameAs(regi,"DEU")) = 0.962;
+pm_eta_conv(t,regi,"tdsyngas")$(sameAs(regi,"DEU") and t.val ge 2020) = 0.975;
+
 display pm_eta_conv, fm_dataglob;
 
 
