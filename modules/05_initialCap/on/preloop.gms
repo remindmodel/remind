@@ -510,31 +510,50 @@ display p05_deltacap_res,p05_cap_res,pm_pedem_res;
 
 ***------------------------------------------------------------------------------
 ***------------------------------------------------------------------------------
-***                            EMISSIONS
+***      Adapt Pe2Se emissions factors      START
 ***------------------------------------------------------------------------------
 ***------------------------------------------------------------------------------
-*gl Establish upper bounds for CO2 emissions based on Kyoto targets for EUR, JPN, RUS
-*gl detail see Kyoto_targets.xls
-*gl no targets for non-Annex I, USA (has not ratified Kyoto), ROW (hot air in EITs, non-compliance of CAN)
-loop(regi,
-  p05_emi2005_from_initialcap2(regi,emiTe) =
-    sum(pe2se(enty,enty2,te),
-      pm_emifac("2005",regi,enty,enty2,te,emiTe)
-      * 1/(pm_data(regi,"eta",te)) * pm_cf("2005",regi,te) * p05_cap0(regi,te)
-    )
-    +
-    sum(se2fe(enty,enty2,te),
-      pm_emifac("2005",regi,enty,enty2,te,emiTe) * pm_cf("2005",regi,te) * p05_cap0(regi,te)
-    );
-*** no CCS leakage in the first time step
+
+
+*** Calculate pe2se emissions factors based on
+*** 1) PE emissions factor from genersidata_emi.prn (total carbon content of PE input)
+*** 2) FE emissions factor used for combusting fuels on in the energy demand sectors (Emi|CO2|Energy|Demand...)
+*** 3) Conversion efficiencies (etas) of pe2se and se2fe technologies that were calculated in the section above
+*** The calculation is:
+*** Pe2Se emission factor [GtC/TWa(PE))] = PE emissions factor [GtC/TWa(PE))] - Carbon content of output fuel of pe2se technology per unit PE input [GtC/TWa(PE))]
+*** The second term is calculated as a (weighted) average of the FE emissions factor converted to a unit of PE input by multiplying the se2fe and pe2se eta.
+*** The average of FE emissions factor is done as liquids, for example, have different emissions factors depending on the sector (fedie, fehos, fepet).
+loop(entySe$(    sameas(entySe,"segafos")
+              OR sameas(entySe,"seliqfos")
+              OR sameas(entySe,"sesofos")),
+*** Pe2Se emissions factor
+  pm_emifac(ttot,regi,entyPe,entySe,te,"co2")$pm_emifac(ttot,regi,entyPe,entySe,te,"co2")
+    =
+*** Previous PE emissions factor
+  pm_emifac(ttot,regi,entyPe,entySe,te,"co2")
+*** Pe2Se conversion efficiency
+  - pm_eta_conv(ttot,regi,te)
+*** Average of FE emissions factor weighted by se2fe conversion efficiency
+    * ( sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"),
+              pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2")
+              * pm_eta_conv(ttot,regi,te2)  )
+        / sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"),1)  );
 );
-display pm_EN_demand_from_initialcap2, p05_emi2005_from_initialcap2;
+
+display pm_emifac;
 
 );
 
+***------------------------------------------------------------------------------
+***      Adapt Pe2Se emissions factors      END
+***------------------------------------------------------------------------------
 
-
-*** if cm_startyear > 2005, load outputs of InitialCap from input_ref.gdx
+***------------------------------------------------------------------------------
+***      Load InitialCap outputs in policy runs from reference GDX      START
+***------------------------------------------------------------------------------
+*** Note that in policy runs (cm_startyear > 2005) all the above code of initialCap is not executed to save runtime and avoid inconsistencies.
+*** Instead, the following parameters and bounds are loaded from the input_ref.gdx file below.
+*** Please do not change any of the parameters (including pm_emifac and pm_eta_conv) after this section of the code!
 if (cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' pm_eta_conv = pm_eta_conv;
   Execute_Loadpoint 'input_ref' o_INI_DirProdSeTe = o_INI_DirProdSeTe;
@@ -571,15 +590,9 @@ $ifThen %cm_techcosts% == "GLO"
 $endIf
 );
 
-*** To be moved to new emiAccounting module
-* Discounting se2fe emissions from pe2se emission factors
-loop(entySe$(sameas(entySe,"segafos") OR sameas(entySe,"seliqfos") OR sameas(entySe,"sesofos")),
-  pm_emifac(ttot,regi,entyPe,entySe,te,"co2")$pm_emifac(ttot,regi,entyPe,entySe,te,"co2") =
-    pm_emifac(ttot,regi,entyPe,entySe,te,"co2")
-    - pm_eta_conv(ttot,regi,te)
-      *( sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"), pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2")*pm_eta_conv(ttot,regi,te2))/sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"),1)  );
-);
+***------------------------------------------------------------------------------
+***      Load InitialCap outputs in policy runs from reference GDX      END
+***------------------------------------------------------------------------------
 
-display pm_emifac;
 
 *** EOF ./modules/05_initialCap/on/preloop.gms
