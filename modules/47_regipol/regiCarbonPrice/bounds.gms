@@ -245,6 +245,20 @@ $endif.exogDemScen
 vm_deltaCap.up(t,regi,"gasftrec",rlf)$((t.val gt 2005) and (regi_group("EUR_regi",regi))) = 0;
 vm_deltaCap.up(t,regi,"gasftcrec",rlf)$((t.val gt 2005) and (regi_group("EUR_regi",regi))) = 0;
 
+*** China-specific brownfield planning pipeline
+
+$ifthen.chaCoalBounds not "%cm_chaCoalBounds%" == "off"
+loop(regi$(sameAs(regi,"CHA")),
+*** 2020 to 2025 bounds on annual addition and early retirement, splitting bounds for pc and coalchp with 78:22 ratio among 350GW addition over 5 years (2025 Q1 1451GW), deltacap(x) = added capacity between year x-1 and x; 78:22 ratio is based on pypsa data; deltacap is annual so divide by 5
+vm_deltaCap.lo("2025",regi,"pc","1") = 70* 0.78 / 1e3;
+vm_deltaCap.lo("2025",regi,"coalchp","1") = 70 * 0.22 / 1e3;
+
+*** 2025 to 2030 bounds on addition and early retirement, splitting bounds for pc and coalchp with 78:22 ratio amonng 25GW (2030 1550GW) (expert guess)
+vm_deltaCap.lo("2030",regi,"pc","1") = 25 * 0.78 / 1e3;
+vm_deltaCap.lo("2030",regi,"coalchp","1") = 25 * 0.22 / 1e3;
+);
+$endif.chaCoalBounds
+
 *' @stop
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms
