@@ -256,6 +256,16 @@ vm_deltaCap.lo("2025",regi,"coalchp","1") = 70 * 0.22 / 1e3;
 *** 2025 to 2030 bounds on addition and early retirement, splitting bounds for pc and coalchp with 78:22 ratio amonng 25GW (2030 1550GW) (expert guess)
 vm_deltaCap.lo("2030",regi,"pc","1") = 25 * 0.78 / 1e3;
 vm_deltaCap.lo("2030",regi,"coalchp","1") = 25 * 0.22 / 1e3;
+
+*** lower capacity factor of coal power plants in China, to accomodate peaking with added capacities
+vm_capFac.fx("2020",regi,"pc") = 0.54;
+vm_capFac.fx("2025",regi,"pc") = 0.45;
+vm_capFac.fx("2030",regi,"pc") = 0.35;
+
+vm_capFac.fx("2020",regi,"coalchp") = 0.54;
+vm_capFac.fx("2025",regi,"coalchp") = 0.45;
+vm_capFac.fx("2030",regi,"coalchp") = 0.35;
+
 );
 $endif.chaCoalBounds
 
