@@ -61,7 +61,6 @@ pm_ttot_val,input,questionnaire
 pm_implicitPePriceTarget,input,questionnaire
 pm_implicitPePrice_NotConv,input,questionnaire
 pm_implicitPePrice_ignConv,input,questionnaire
-vm_capFac,input,questionnaire
 pm_shareWindPotentialOff2On,input,questionnaire
 cm_EnSecScen_limit,input,questionnaire
 pm_conv_TWa_EJ,input,questionnaire
