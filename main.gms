@@ -1900,6 +1900,8 @@ $setGlobal cm_emifacs_baseyear  2020          !! def = 2005
 *** Switches to choose Marginal Abatement Cost Curves (MACCs) version (PBL_2007, PBL_2022) and scenarios (Default, Pessismistic, Optimistic)
 $setGlobal c_nonco2_macc_version  PBL_2022    !! def = PBL_2007
 $setGlobal c_nonco2_macc_scenario  Default     !! def = Default
+*** China-specific brownfield planning pipeline (informed by Global energy monitor and pypsa capacity pipeline data, off by default)
+$setGlobal cm_chaCoalBounds off    !! def = off
 *' cm_repeatNonOpt       "should nonoptimal regions be solved again?"
 *'
 *' *  (off): no, only infeasable regions are repeated, standard setting
