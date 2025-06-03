@@ -18,13 +18,18 @@ p40_TechBound(ttot,all_regi,te) = f40_TechBound(ttot,all_regi,"%cm_NDC_version%"
 *** windoffshore-todo: separate NDC targets for windon and windoff
 p40_TechBound(ttot,all_regi,"wind") = f40_TechBound(ttot,all_regi,"%cm_NDC_version%","wind");
 
+*** IND nuclear target is now 63GW in 2032 https://unfccc.int/sites/default/files/NDC/2022-06/INDIA%20INDC%20TO%20UNFCCC.pdf#page=10
+*** Realistic maximum of 17.25GW calculated with the near-term analysis rules: https://github.com/pik-piam/mrremind/discussions/540
+p40_TechBound("2035","IND","tnrs") = 17.25;
+p40_TechBound(ttot,"IND","tnrs") $ (ttot.val > 2035) = 0; !! no specific nuclear NDC after 2035
+
 p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
 
 *** In scenarios with 2nd generation bioenergy technology phaseout,
 *** switch-off biomass capacity targets of NDC
 if (cm_phaseoutBiolc eq 1,
   p40_ElecBioBound(t,regi) = 0;
-  );
+);
 
 *** inputs for hard-coded share targets: they only apply if the respective country (or EU28) is a native region in the chosen REMIND setting
 *** otherwise, they are not considered in the model
