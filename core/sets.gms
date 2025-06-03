@@ -83,6 +83,17 @@ all_delayPolicy   "all possible SPA policy choices"
     SPAx            "moderate baseline policy, depends on the SSP-scenario"
 /
 
+all_APssp     "all air pollutant SSPs. GAINSlegacy means the SSP is picked with all_APscen and there are no variations"
+/
+    SSP1
+    SSP2
+    SSP3
+    SSP4
+    SSP5
+    GAINSlegacy
+    SSP2IndiaHigh
+/
+
 all_APscen     "all air pollutant scenarios"
 /
     SSP1
@@ -90,7 +101,9 @@ all_APscen     "all air pollutant scenarios"
     SSP3
     SSP4
     SSP5
+    SLE
     CLE
+    VLE
     FLE
     FLE_building_transport
     MFR
