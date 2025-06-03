@@ -68,6 +68,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### fixed
 - **37_industry** fix and restructure chemical feedstock balancing to account for all negative emissions from stored non-fossil carbon [[#1829](https://github.com/remindmodel/remind/pull/1829)]
+- **05_initialCap** fix pe2se gas emissions factors for DEU [[#2109](https://github.com/remindmodel/remind/pull/2109)]
+
 
 
 ## [3.4.0] - 2024-12-11

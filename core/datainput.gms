@@ -1480,6 +1480,18 @@ pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem(regi,"fepet"
 pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem(regi,"fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 pm_emifac(ttot,regi,"segafos","fegat","tdfosgat","co2") = p_ef_dem(regi,"fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 
+$ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
+*** Changing refineries emission factors in regions that belong to cm_altFeEmiFac to avoid negative emissions on pe2se 
+*** (changing from 18.4 to 20 zeta joule = 20/31.7098 = 0.630719841 Twa = 0.630719841 * 3.66666666666666 * 1000 * 0.03171  GtC/TWa = 73.33 GtC/TWa)
+loop(ext_regi$altFeEmiFac_regi(ext_regi),
+  pm_emifac(ttot,regi,"peoil","seliqfos","refliq","co2")$(regi_group(ext_regi,regi)) = 0.630719841;
+);
+*** Changing Germany and UKI solids emissions factors to be in line with CRF numbers
+*** (changing from 26.1 to 29.27 zeta joule = 0.922937989 TWa = 107.31 GtC/TWa)
+pm_emifac(ttot,regi,"pecoal","sesofos","coaltr","co2")$(sameas(regi,"DEU") OR sameas(regi,"UKI")) = 0.922937989;
+$endif.altFeEmiFac
+
+
 ***------ Read in emission factors for process emissions in chemicals sector---
 *** calculated using IEA data on feedstocks flows and UNFCCC data on chem sector process emissions
 *** these emission factors are for the chemical industry only
