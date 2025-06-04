@@ -14,7 +14,10 @@ $offdelim
 $onlisting
 ;
 
-p40_TechBound(ttot,all_regi,te) = f40_TechBound(ttot,all_regi,"%cm_NDC_version%",te);
+*** ensure that lower technology bounds are not decreasing
+*** this only refers to lower bounds and needs to be revised once upper bounds are introduced.
+p40_TechBound(ttot,all_regi,te) = smax(ttot2 $ (ttot2.val <= ttot.val) , f40_TechBound(ttot2,all_regi,"%cm_NDC_version%",te));
+
 *** windoffshore-todo: separate NDC targets for windon and windoff
 p40_TechBound(ttot,all_regi,"wind") = f40_TechBound(ttot,all_regi,"%cm_NDC_version%","wind");
 
