@@ -1885,7 +1885,7 @@ $setGlobal cm_APssp  FROMGDPSSP          !! def = SSP2
 *' (SLE): Stronger Legislation Emissions
 *' (VLE): Very strong Legislation Emissions
 *' (MFR): Maximum Feasible Reductions
-$setGlobal cm_APscen  SSP2          !! def = SSP2
+$setGlobal cm_APscen  CLE          !! def = CLE
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-GDPpop_SSP2-En_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_industry_FE_target  1
@@ -1900,6 +1900,8 @@ $setGlobal cm_emifacs_baseyear  2020          !! def = 2005
 *** Switches to choose Marginal Abatement Cost Curves (MACCs) version (PBL_2007, PBL_2022) and scenarios (Default, Pessismistic, Optimistic)
 $setGlobal c_nonco2_macc_version  PBL_2022    !! def = PBL_2007
 $setGlobal c_nonco2_macc_scenario  Default     !! def = Default
+*** China-specific brownfield planning pipeline (informed by Global energy monitor and pypsa capacity pipeline data, off by default)
+$setGlobal cm_chaCoalBounds off    !! def = off
 *' cm_repeatNonOpt       "should nonoptimal regions be solved again?"
 *'
 *' *  (off): no, only infeasable regions are repeated, standard setting

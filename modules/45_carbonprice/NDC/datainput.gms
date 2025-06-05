@@ -53,19 +53,6 @@ p45_2005shareTarget(t,all_regi) = f45_2005shareTarget(t,all_regi,"%cm_NDC_versio
 
 display p45_2005shareTarget;
 
-Table f45_histShare(tall,all_regi,NDC_version) "Table for all NDC versions with GHG emissions share of countries with quantifyable 2030 target, time dimension specifies historic record [0..1]"
-$offlisting
-$ondelim
-$include "./modules/45_carbonprice/NDC/input/fm_histShare.cs3r"
-$offdelim
-$onlisting
-;
-
-Parameter p45_histShare(tall,all_regi) "GHG emissions share of countries with quantifyable 2030 target, time dimension specifies historic record [0..1]";
-p45_histShare(tall,all_regi) = f45_histShare(tall,all_regi,"%cm_NDC_version%");
-
-display p45_histShare;
-
 Parameter p45_BAU_reg_emi_wo_LU_bunkers(ttot,all_regi) "regional GHG emissions (without LU and bunkers) in BAU scenario [MtCO2eq/yr]"
   /
 $ondelim

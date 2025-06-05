@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### input data/calibration
 
+
 ### changed
 - Consolidated the `MAGICC7_AR6.R` climate reporting script and the `climateAssessmentInterimRun.R` climate assessment iteration script for damage runs using the `remindClimateAssessment` and `piamenv` packages [[#2082](https://github.com/remindmodel/remind/pull/2082), [#2099](https://github.com/remindmodel/remind/pull/2099)]
 - Enhanced `reporting.R` to read extra data needed for reporting directly from inputdata [[#2084](https://github.com/remindmodel/remind/pull/2084)]
@@ -19,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### removed
 - **config** Two scenario config files (damagepaper) were used for the NGFS runs but are not needed anymore.
   [[#2107](https://github.com/remindmodel/remind/pull/2107)]
+- remove reading in and printing contents of `fm_histShare.cs3r`
 
 ### fixed
 -
