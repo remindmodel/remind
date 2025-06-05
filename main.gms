@@ -1885,7 +1885,7 @@ $setGlobal cm_APssp  FROMGDPSSP          !! def = SSP2
 *' (SLE): Stronger Legislation Emissions
 *' (VLE): Very strong Legislation Emissions
 *' (MFR): Maximum Feasible Reductions
-$setGlobal cm_APscen  SSP2          !! def = SSP2
+$setGlobal cm_APscen  CLE          !! def = CLE
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-GDPpop_SSP2-En_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_industry_FE_target  1
