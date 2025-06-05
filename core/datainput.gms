@@ -166,7 +166,7 @@ $ifthen.c_techAssumptScen "%c_techAssumptScen%" == "SSP1"
         fm_dataglob("inco0",te) =        1.3 * fm_dataglob("inco0",te);
     );
 *** hampers nuclear a lot
-    fm_dataglob("inco0","tnrs") =        1.7 * fm_dataglob("inco0","tnrs");
+    fm_dataglob("inco0","tnrs") =        1.3 * fm_dataglob("inco0","tnrs");
 *** favours transmission for non-ICE vehicules
     fm_dataglob("inco0",te) $ (sameas(te,"tdelt") or sameas(te,"tdh2t")) = 0.7 * fm_dataglob("inco0",te);
 *** favours VRE and electricity storage
