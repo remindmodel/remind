@@ -10,6 +10,7 @@ library(edgeTransport)
 library(reporttransport)
 library(quitte)
 library(piamutils)
+library(lucode2)
 
 ############################# BASIC CONFIGURATION #############################
 
@@ -20,7 +21,7 @@ gdx_refpolicycost_name <- "input_refpolicycost.gdx"  # name of the reference gdx
 if (!exists("source_include")) {
   # Define arguments that can be read from command line
   outputdir <- "."
-  readArgs("outputdir", "gdx_name", "gdx_ref_name", "gdx_refpolicycost_name")
+  lucode2::readArgs("outputdir", "gdx_name", "gdx_ref_name", "gdx_refpolicycost_name")
 }
 
 gdx     <- file.path(outputdir, gdx_name)
