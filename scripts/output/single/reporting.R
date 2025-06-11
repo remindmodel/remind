@@ -6,7 +6,6 @@
 # |  Contact: remind@pik-potsdam.de
 
 library(remind2)
-library(edgeTransport)
 library(reporttransport)
 library(quitte)
 library(piamutils)
@@ -29,7 +28,7 @@ gdx_ref <- file.path(outputdir, gdx_ref_name)
 gdx_refpolicycost <- file.path(outputdir, gdx_refpolicycost_name)
 if (!file.exists(gdx_ref))           gdx_ref <- NULL
 if (!file.exists(gdx_refpolicycost)) gdx_refpolicycost <- NULL
-scenario <- getScenNames(outputdir)
+scenario <- lucode2::getScenNames(outputdir)
 
 ###############################################################################
 
@@ -73,11 +72,11 @@ EDGEToutput <- reporttransport::reportEdgeTransport(edgetOutputDir,
                                                     gdxPath = file.path(outputdir, "fulldata.gdx"),
                                                     isStored = FALSE)
 
-REMINDoutput <- as.data.table(read.quitte(file.path(outputdir, paste0("REMIND_generic_", scenario, "_withoutPlus.mif"))))
+REMINDoutput <- read.quitte(file.path(outputdir, paste0("REMIND_generic_", scenario, "_withoutPlus.mif")))
 sharedVariables <- EDGEToutput[variable %in% REMINDoutput$variable | grepl(".*edge", variable)]
 EDGEToutput <- EDGEToutput[!(variable %in% REMINDoutput$variable | grepl(".*edge", variable))]
-message("The following variables will be dropped from the EDGE-Transport reporting because
-              they are in the REMIND reporting: ", paste(unique(sharedVariables$variable), collapse = ", "))
+message("The following variables will be dropped from the EDGE-Transport reporting because ",
+        "they are in the REMIND reporting: ", paste(unique(sharedVariables$variable), collapse = ", "))
 
 quitte::write.mif(EDGEToutput, remind_reporting_file, append = TRUE)
 piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
@@ -132,7 +131,7 @@ message("### end generation of mif files at ", round(Sys.time()))
 # produce REMIND LCOE reporting *.csv based on gdx information ----
 
 message("### start generation of LCOE reporting at ", round(Sys.time()))
-tmp <- try(remind2::convGDX2CSV_LCOE(gdx, file = LCOE_reporting_file, scen = scenario))
+remind2::convGDX2CSV_LCOE(gdx, file = LCOE_reporting_file, scen = scenario)
 message("### end generation of LCOE reporting at ", round(Sys.time()))
 
 message("### reporting finished.")
