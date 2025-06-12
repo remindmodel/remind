@@ -1180,6 +1180,7 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,"igcc")            = 0.50;
   p_adj_seed_te(ttot,regi,"tnrs")            = 0.25;
   p_adj_seed_te(ttot,regi,"hydro")           = 0.25;
+  p_adj_seed_te(ttot,regi,"geohdr")          = 0.1;
   p_adj_seed_te(ttot,regi,"csp")             = 0.25;
   p_adj_seed_te(ttot,regi,"spv")             = 2.00;
   p_adj_seed_te(ttot,regi,"windoff")         = 0.5;
@@ -1195,8 +1196,8 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
   p_adj_seed_te(ttot,regi,"bfcc")            = 0.05;
   p_adj_seed_te(ttot,regi,"idrcc")           = 0.05;
 $endif.cm_subsec_model_steel
-  p_adj_seed_te(ttot,regi,"MeOH") = 0.5;
-  p_adj_seed_te(ttot,regi,"h22ch4") = 0.5;
+  p_adj_seed_te(ttot,regi,"MeOH")            = 0.5;
+  p_adj_seed_te(ttot,regi,"h22ch4")          = 0.5;
 
 *RP: for comparison of different technologies:
 *** pm_conv_cap_2_MioLDV <- 650  # The world has slightly below 800million cars in 2005 (IEA TECO2), so with a global vm_cap of 1.2, this gives ~650
@@ -1213,6 +1214,7 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,"coaltr")          = 0.1;
   p_adj_coeff(ttot,regi,"tnrs")            = 1.0;
   p_adj_coeff(ttot,regi,"hydro")           = 1.0;
+  p_adj_coeff(ttot,regi,"geohdr")          = 2.0;
   p_adj_coeff(ttot,regi,"gasftrec")        = 0.4;
   p_adj_coeff(ttot,regi,"coalftrec")       = 0.6;
   p_adj_coeff(ttot,regi,"bioftrec")        = 0.65;
@@ -1237,8 +1239,6 @@ $endif.cm_subsec_model_steel
 
   p_adj_coeff(ttot,regi,"MeOH")            = 0.5;
   p_adj_coeff(ttot,regi,"h22ch4")          = 0.5;
-
-
 );
 
 ***Rescaling adj seed and coeff if adj cost multiplier switches are on
