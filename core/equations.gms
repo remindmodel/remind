@@ -318,13 +318,17 @@ q_cap(ttot,regi,te2rlf(te,rlf))$(ttot.val ge cm_startyear)..
   )
 ;
 
-
-
 q_capDistr(t,regi,teReNoBio(te))..
-    sum(teRe2rlfDetail(te,rlf), v_capDistr(t,regi,te,rlf) )
-    =e=
-    vm_cap(t,regi,te,"1")
+  sum(teRe2rlfDetail(te,rlf), v_capDistr(t,regi,te,rlf) )
+  =e=
+  vm_cap(t,regi,te,"1")
 ;
+
+*** For some technologies, the capacity is not allowed to decrease over time
+q_capNonDecreasing(t,regi,te) $ (t.val >= 2030 and sameAs(te, "hydro"))..
+  vm_cap(t,regi,te,"1")
+  =g=
+  vm_cap(t-1,regi,te,"1");
 
 
 ***---------------------------------------------------------------------------
@@ -353,7 +357,7 @@ q_windoff_low(t,regi)$(t.val >= 2030)..
 *' Technological change is an important driver of the evolution of energy systems.
 *' For mature technologies, such as coal-fired power plants, the evolution
 *' of techno-economic parameters is prescribed exogenously. For less mature
-*' technologies with substantial potential for cost decreases via learning-bydoing,
+*' technologies with substantial potential for cost decreases via learning-by-doing,
 *' investment costs are determined via an endogenous one-factor learning
 *' curve approach that assumes floor costs.
 ***---------------------------------------------------------------------------
