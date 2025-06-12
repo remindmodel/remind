@@ -18,25 +18,20 @@
 #' @param outputdir Directory where REMIND MIF file is located. Output files generated in the process will be written
 #' to a subfolder "climate-assessment-data" in this directory. Defaults to "."
 
-library(dplyr)
-library(lucode2)
 library(magrittr)
-library(piamInterfaces)
+library(lucode2)
 library(piamenv)
 library(piamutils)
 library(quitte)
 library(readr)
-library(remind2)
 library(remindClimateAssessment)
-library(stringr)
-library(tidyverse)
 
 #################### BASIC CONFIGURATION ##########################################################
 
 if (!exists("source_include")) {
   # Define arguments that can be read from command line
   outputdir <- "."
-  readArgs("outputdir", "gdxName", "gdx_ref_name", "gdx_refpolicycost_name")
+  lucode2::readArgs("outputdir", "gdxName", "gdx_ref_name", "gdx_refpolicycost_name")
 }
 
 runTimes <- c()
@@ -59,7 +54,7 @@ magiccEnv <- c(
   "MAGICC_WORKER_NUMBER"   = 1
 )
 
-magiccInit <- condaInit(how = "pik-cluster", log = cfg$logFile, verbose = 1)
+magiccInit <- piamenv::condaInit(how = "pik-cluster", log = cfg$logFile, verbose = 1)
 
 runHarmoniseAndInfillCmd <- paste(
   "python", file.path(cfg$scriptsDir, "run_harm_inf.py"), cfg$remindEmissionsFile, cfg$climateDir,
@@ -86,7 +81,7 @@ runTimes <- c(runTimes, "preprocessing start" = Sys.time())
 
 climateAssessmentInputData <- as.quitte(remindReportingFile) %>%
   emissionDataForClimateAssessment(cfg$scenario, logFile = cfg$logFile) %>%
-  write_csv(cfg$remindEmissionsFile, quote = "none")
+  readr::write_csv(cfg$remindEmissionsFile, quote = "none")
 
 runTimes <- c(runTimes, "preprocessing end" = Sys.time())
 cat(
