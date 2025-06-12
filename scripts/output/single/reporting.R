@@ -78,6 +78,19 @@ EDGEToutput <- EDGEToutput[!(variable %in% REMINDoutput$variable | grepl(".*edge
 message("The following variables will be dropped from the EDGE-Transport reporting because ",
         "they are in the REMIND reporting: ", paste(unique(sharedVariables$variable), collapse = ", "))
 
+# in order to append to the mif file, the periods 2005 and 2010 must be brought back
+# see also: https://github.com/pik-piam/reporttransport/pull/38
+
+if (!all(c(2005, 2010) %in% unique(EDGEToutput$period))) {
+  tmp <- filter(EDGEToutput, .data$period == 2015)
+  EDGEToutput <- rbind(
+    EDGEToutput,
+    mutate(tmp, "value" = NA, period = 2005),
+    mutate(tmp, "value" = NA, period = 2010)
+  )
+}
+
+
 quitte::write.mif(EDGEToutput, remind_reporting_file, append = TRUE)
 piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 
