@@ -10,6 +10,7 @@ library(reporttransport)
 library(quitte)
 library(piamutils)
 library(lucode2)
+library(dplyr)
 
 ############################# BASIC CONFIGURATION #############################
 
@@ -82,11 +83,11 @@ message("The following variables will be dropped from the EDGE-Transport reporti
 # see also: https://github.com/pik-piam/reporttransport/pull/38
 
 if (!all(c(2005, 2010) %in% unique(EDGEToutput$period))) {
-  tmp <- filter(EDGEToutput, .data$period == 2015)
+  tmp <- dplyr::filter(EDGEToutput, .data$period == 2015)
   EDGEToutput <- rbind(
     EDGEToutput,
-    mutate(tmp, "value" = NA, period = 2005),
-    mutate(tmp, "value" = NA, period = 2010)
+    dplyr::mutate(tmp, "value" = NA, period = 2005),
+    dplyr::mutate(tmp, "value" = NA, period = 2010)
   )
 }
 
