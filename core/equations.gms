@@ -325,10 +325,10 @@ q_capDistr(t,regi,teReNoBio(te))..
 ;
 
 *** For some technologies, the capacity is not allowed to decrease over time
-q_capNonDecreasing(t,regi,te) $ (t.val >= 2030 and sameAs(te, "hydro"))..
-  vm_cap(t,regi,te,"1")
+q_capNonDecreasing(ttot,regi,te) $ (ttot.val >= 2030 and sameAs(te, "hydro"))..
+  vm_cap(ttot,regi,te,"1")
   =g=
-  vm_cap(t-1,regi,te,"1");
+  vm_cap(ttot-1,regi,te,"1");
 
 
 ***---------------------------------------------------------------------------
