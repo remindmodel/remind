@@ -7,6 +7,7 @@
 library(piamutils)
 library(piamInterfaces)
 library(quitte)
+
 suppressPackageStartupMessages(library(tidyverse))
 
 if(! exists("source_include")) {
@@ -19,7 +20,7 @@ scen <- lucode2::getScenNames(outputdir)
 mif  <- file.path(outputdir, paste0("REMIND_generic_", scen, ".mif"))
 mifdata <- as.quitte(mif)
 envi <- new.env()
-load(file.path(outputdir, "config.Rdata"), env =  envi)
+load(file.path(outputdir, "config.Rdata"), envir = envi)
 
 stopmessage <- NULL
 
@@ -28,21 +29,26 @@ options(width = 160)
 absDiff <- 0.00001
 relDiff <- 0.01
 
-sources <- paste0("RT", if (any(grepl("^MAgPIE", levels(mifdata$model)))) "M")
+sources <- paste0("R",
+                  if (isTRUE(envi$cfg$gms$CES_parameters == "load")) "T",
+                  if (any(grepl("^MAgPIE", levels(mifdata$model)))) "M")
+mifdata <- mutate(mifdata, model = factor(paste(levels(mifdata$model), collapse = "-"))) # checkSummations need one single model
 message("\n### Check existence of variables in mappings.")
-missingVariables <- checkMissingVars(mifdata, TRUE, sources)
+missingVariables <- checkMissingVars(mifdata, setdiff(names(mappingNames()), c("AgMIP", "AR6_MAgPIE")), sources)
 if (length(missingVariables) > 0) message("Check piamInterfaces::variableInfo('variablename') etc.")
 
 checkMappings <- list( # list(mappings, summationsFile, skipBunkers)
   list(c("NAVIGATE", "ELEVATE"), "NAVIGATE", FALSE),
-  list("ScenarioMIP", NULL, FALSE)
+  list("ScenarioMIP", "ScenarioMIP", FALSE)
 )
+
+checks <- list()
 
 for (i in seq_along(checkMappings)) {
   mapping <- checkMappings[[i]][[1]]
   message("\n### Check project summations for ", paste(mapping, collapse = ", "))
   # checkMissingVars
-  checkMissingVars(mifdata, mapping, sources)
+  missingVariables <- checkMissingVars(mifdata, mapping, sources)
 
   # generate IIASASubmission
   d <- generateIIASASubmission(mifdata, outputDirectory = NULL, outputFilename = NULL, logFile = NULL,
@@ -75,10 +81,20 @@ for (i in seq_along(checkMappings)) {
     message("Regional summation checks are fine.")
   }
 
-  if (nrow(failvars) > 0 || nrow(failregi) > 0 || length(missingVariables) > 0) stopmessage <- c(stopmessage, paste(mapping, collapse = "+"))
+  if (nrow(failvars) > 0 || nrow(failregi) > 0 || length(missingVariables) > 0) {
+    stopmessage <- c(stopmessage, paste(mapping, collapse = "+"))
+  }
+
+  checks[[paste(mapping, collapse = ", ")]] <- list(
+    missingVars = length(missingVariables),
+    checkSummations = length(unique(failvars$variable)), # number of failed summations
+    checkSummationsRegional = nrow(failregi)
+  )
 }
 
 if (length(stopmessage) > 0 || length(missingVariables) > 0) {
-  stop("Project-related issues found checks for ", paste(stopmessage, collapse = ", "), " and ",
-       length(missingVariables), " missing variables found, see above.")
+  warning("Project-related issues found checks for ", paste(stopmessage, collapse = ", "), " and ",
+          length(missingVariables), " missing variables found, see above.")
 }
+
+saveRDS(checks, file = file.path(outputdir, "projectSummations.rds"))

@@ -19,6 +19,7 @@
 
 # Ignore everything in "input" folders
 input/
+!input/files
 !/scripts/input/
 
 # Ignore everything in root "output" folder
@@ -88,3 +89,4 @@ calibration_results/
 
 # ignore test logs
 tests/test-full*.log
+tests/testthat/C_TESTTHAT_startlog_*.txt

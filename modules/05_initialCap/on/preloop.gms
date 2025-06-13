@@ -206,7 +206,9 @@ loop(regi,
 loop(regi,
   loop(opTimeYr2te(te,opTimeYr)$(NOT teReNoBio(te)),
     loop(tsu2opTime5(ttot,opTimeYr),
-      loop(pe2se(entyPe,entySe,te), o_INI_DirProdSeTe(regi,entySe,te) = p05_cap0(regi,te) * pm_cf("2005",regi,te) * pm_dataren(regi,"nur","1",te) );
+      loop(pe2se(entyPe,entySe,te), 
+        o_INI_DirProdSeTe(regi,entySe,te) = p05_cap0(regi,te) * pm_cf("2005",regi,te) * pm_dataren(regi,"nur","1",te)
+      );
       sm_tmp = 1 / pm_ts(ttot) * p05_cap0(regi,te) * p05_vintage(regi,opTimeYr,te);
 
       vm_deltaCap.lo(ttot,regi,te,"1") = sm_tmp;
@@ -407,6 +409,28 @@ pm_eta_conv(ttot,regi,teChp) = pm_data(regi,"eta",teChp);
 *** pm_eta_conv(ttot, regi, teEtaIncr) = pm_dataeta(ttot, regi, teEtaIncr);
 
 pm_eta_conv(ttot,regi,"elh2") = pm_dataeta(ttot,regi,"elh2");
+
+
+
+
+*** Increase SE2FE efficiency for gases in DEU following AGEB data from 2020
+*** increase incrementally from IEA data in 2005 to avoid inconsistencies with 2005 IEA calibration
+*** https://ag-energiebilanzen.de/daten-und-fakten/auswertungstabellen/
+*** Sum of gases input into electricity (Tab 4.1) and heat production (Tab 4.2) and final energy gas consumption (Tab 6.1)
+*** divided by total primary energy gases input (Tab 2.1). 
+pm_eta_conv("2010",regi,"tdfosgas")$(sameAs(regi,"DEU")) = 0.949;
+pm_eta_conv("2015",regi,"tdfosgas")$(sameAs(regi,"DEU")) = 0.962;
+pm_eta_conv(t,regi,"tdfosgas")$(sameAs(regi,"DEU") and t.val ge 2020) = 0.975;
+
+
+pm_eta_conv("2010",regi,"tdbiogas")$(sameAs(regi,"DEU")) = 0.949;
+pm_eta_conv("2015",regi,"tdbiogas")$(sameAs(regi,"DEU")) = 0.962;
+pm_eta_conv(t,regi,"tdbiogas")$(sameAs(regi,"DEU") and t.val ge 2020) = 0.975;
+
+pm_eta_conv("2010",regi,"tdsyngas")$(sameAs(regi,"DEU")) = 0.949;
+pm_eta_conv("2015",regi,"tdsyngas")$(sameAs(regi,"DEU")) = 0.962;
+pm_eta_conv(t,regi,"tdsyngas")$(sameAs(regi,"DEU") and t.val ge 2020) = 0.975;
+
 display pm_eta_conv, fm_dataglob;
 
 
@@ -461,12 +485,12 @@ $endif
 );
 
 * quickest phaseout in SDP scenarios (no new capacities allowed), quick phaseout in SSP1 und SSP5
-$if %cm_GDPscen% == "gdp_SDP" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SDP_EI" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SDP_MC" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SDP_RC" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
-$if %cm_GDPscen% == "gdp_SSP1" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0.5 * p05_deltacap_res(t,regi,"biotr");
-$if %cm_GDPscen% == "gdp_SSP5" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0.5 * p05_deltacap_res(t,regi,"biotr");
+$if %cm_GDPpopScen% == "SDP" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
+$if %cm_GDPpopScen% == "SDP_EI" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
+$if %cm_GDPpopScen% == "SDP_MC" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
+$if %cm_GDPpopScen% == "SDP_RC" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
+$if %cm_GDPpopScen% == "SSP1" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0.5 * p05_deltacap_res(t,regi,"biotr");
+$if %cm_GDPpopScen% == "SSP5" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0.5 * p05_deltacap_res(t,regi,"biotr");
 
 display p05_deltacap_res;
 
@@ -486,31 +510,50 @@ display p05_deltacap_res,p05_cap_res,pm_pedem_res;
 
 ***------------------------------------------------------------------------------
 ***------------------------------------------------------------------------------
-***                            EMISSIONS
+***      Adapt Pe2Se emissions factors      START
 ***------------------------------------------------------------------------------
 ***------------------------------------------------------------------------------
-*gl Establish upper bounds for CO2 emissions based on Kyoto targets for EUR, JPN, RUS
-*gl detail see Kyoto_targets.xls
-*gl no targets for non-Annex I, USA (has not ratified Kyoto), ROW (hot air in EITs, non-compliance of CAN)
-loop(regi,
-  p05_emi2005_from_initialcap2(regi,emiTe) =
-    sum(pe2se(enty,enty2,te),
-      pm_emifac("2005",regi,enty,enty2,te,emiTe)
-      * 1/(pm_data(regi,"eta",te)) * pm_cf("2005",regi,te) * p05_cap0(regi,te)
-    )
-    +
-    sum(se2fe(enty,enty2,te),
-      pm_emifac("2005",regi,enty,enty2,te,emiTe) * pm_cf("2005",regi,te) * p05_cap0(regi,te)
-    );
-*** no CCS leakage in the first time step
+
+
+*** Calculate pe2se emissions factors based on
+*** 1) PE emissions factor from genersidata_emi.prn (total carbon content of PE input)
+*** 2) FE emissions factor used for combusting fuels on in the energy demand sectors (Emi|CO2|Energy|Demand...)
+*** 3) Conversion efficiencies (etas) of pe2se and se2fe technologies that were calculated in the section above
+*** The calculation is:
+*** Pe2Se emission factor [GtC/TWa(PE))] = PE emissions factor [GtC/TWa(PE))] - Carbon content of output fuel of pe2se technology per unit PE input [GtC/TWa(PE))]
+*** The second term is calculated as a (weighted) average of the FE emissions factor converted to a unit of PE input by multiplying the se2fe and pe2se eta.
+*** The average of FE emissions factor is done as liquids, for example, have different emissions factors depending on the sector (fedie, fehos, fepet).
+loop(entySe$(    sameas(entySe,"segafos")
+              OR sameas(entySe,"seliqfos")
+              OR sameas(entySe,"sesofos")),
+*** Pe2Se emissions factor
+  pm_emifac(ttot,regi,entyPe,entySe,te,"co2")$pm_emifac(ttot,regi,entyPe,entySe,te,"co2")
+    =
+*** Previous PE emissions factor
+  pm_emifac(ttot,regi,entyPe,entySe,te,"co2")
+*** Pe2Se conversion efficiency
+  - pm_eta_conv(ttot,regi,te)
+*** Average of FE emissions factor weighted by se2fe conversion efficiency
+    * ( sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"),
+              pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2")
+              * pm_eta_conv(ttot,regi,te2)  )
+        / sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"),1)  );
 );
-display pm_EN_demand_from_initialcap2, p05_emi2005_from_initialcap2;
+
+display pm_emifac;
 
 );
 
+***------------------------------------------------------------------------------
+***      Adapt Pe2Se emissions factors      END
+***------------------------------------------------------------------------------
 
-
-*** if cm_startyear > 2005, load outputs of InitialCap from input_ref.gdx
+***------------------------------------------------------------------------------
+***      Load InitialCap outputs in policy runs from reference GDX      START
+***------------------------------------------------------------------------------
+*** Note that in policy runs (cm_startyear > 2005) all the above code of initialCap is not executed to save runtime and avoid inconsistencies.
+*** Instead, the following parameters and bounds are loaded from the input_ref.gdx file below.
+*** Please do not change any of the parameters (including pm_emifac and pm_eta_conv) after this section of the code!
 if (cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' pm_eta_conv = pm_eta_conv;
   Execute_Loadpoint 'input_ref' o_INI_DirProdSeTe = o_INI_DirProdSeTe;
@@ -518,11 +561,10 @@ if (cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' pm_pedem_res = pm_pedem_res;
   Execute_Loadpoint 'input_ref' pm_dataeta = pm_dataeta;
   Execute_Loadpoint 'input_ref' pm_aux_capLowerLimit = pm_aux_capLowerLimit;
+  Execute_Loadpoint 'input_ref' pm_emifac = pm_emifac;
   Execute_Loadpoint 'input_ref' vm_deltaCap.l = vm_deltaCap.l;
   Execute_Loadpoint 'input_ref' vm_deltaCap.lo = vm_deltaCap.lo;
   Execute_Loadpoint 'input_ref' vm_deltaCap.up = vm_deltaCap.up;
-
-
 
 *** load pm_data from input_ref.gdx and overwrite values only for eta of chp technologies
 *** Only the eta values of chp technologies have been adapted by initialCap script above.
@@ -547,15 +589,9 @@ $ifThen %cm_techcosts% == "GLO"
 $endIf
 );
 
-*** To be moved to new emiAccounting module
-* Discounting se2fe emissions from pe2se emission factors
-loop(entySe$(sameas(entySe,"segafos") OR sameas(entySe,"seliqfos") OR sameas(entySe,"sesofos")),
-  pm_emifac(ttot,regi,entyPe,entySe,te,"co2")$pm_emifac(ttot,regi,entyPe,entySe,te,"co2") =
-    pm_emifac(ttot,regi,entyPe,entySe,te,"co2")
-    - pm_eta_conv(ttot,regi,te)
-      *( sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"), pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2")*pm_eta_conv(ttot,regi,te2))/sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"),1)  );
-);
+***------------------------------------------------------------------------------
+***      Load InitialCap outputs in policy runs from reference GDX      END
+***------------------------------------------------------------------------------
 
-display pm_emifac;
 
 *** EOF ./modules/05_initialCap/on/preloop.gms

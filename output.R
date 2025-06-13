@@ -65,6 +65,7 @@ helpText <- "
 "
 
 argv <- get0("argv", ifnotfound = commandArgs(trailingOnly = TRUE))
+timestamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
 
 if (any(c("-h", "--help") %in% argv)) {
   message(gsub("#' ?", '', helpText))
@@ -162,7 +163,8 @@ if (! exists("output")) {
 if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
                          "plot_compare_iterations", "varListHtml", "fixOnRef", "MAGICC7_AR6",
-                         "validateScenarios", "checkClimatePercentiles", "selectPlots")
+                         "validateScenarios", "checkClimatePercentiles", "selectPlots",
+                         "checkProjectSummations")
   needingMif <- any(modulesNeedingMif %in% output) && ! "reporting" %in% output[[1]]
   if (exists("remind_dir")) {
     dir_folder <- c(file.path(remind_dir, "output"), remind_dir)
@@ -326,7 +328,7 @@ if (comp %in% c("comparison", "export")) {
           }
         } else {
           # send the output script to slurm
-          logfile <- file.path(outputdir, "log_output.txt")
+          logfile <- file.path(outputdir, paste0("log_output_", timestamp, ".txt"))
           Rscripts <- paste0("Rscript scripts/output/single/", name, " outputdir=", outputdir, collapse = "; ")
           slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
                        " --mail-type=END,FAIL --comment=output.R --wrap='", Rscripts, "'")

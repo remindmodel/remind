@@ -245,6 +245,36 @@ $endif.exogDemScen
 vm_deltaCap.up(t,regi,"gasftrec",rlf)$((t.val gt 2005) and (regi_group("EUR_regi",regi))) = 0;
 vm_deltaCap.up(t,regi,"gasftcrec",rlf)$((t.val gt 2005) and (regi_group("EUR_regi",regi))) = 0;
 
+*' TODO: Historical fixings should be done in the core the via input data from mrremind, this still needs to be moved
+*** China-specific brownfield planning pipeline
+*** This adjustment of coal capacity and vm_capFac is meant to give the PYPSA-coupled REMIND version a better starting point. Before turning this switch on in normal REMIND runs, double-check the electricity sector results that come out for China
+$ifthen.chaCoalBounds not "%cm_chaCoalBounds%" == "off"
+loop(regi$(sameAs(regi,"CHA")),
+*** 2020 to 2025 bounds on annual addition and early retirement, splitting bounds for pc and coalchp with 78:22 ratio
+*** 2024 capacity: 1175GW, added capactiy 30.5GW (https://globalenergymonitor.org/report/boom-and-bust-coal-2025/)
+*** deltacap is annual added capacity between year x-1 and x; 78:22 ratio is based on pypsa data; deltacap is annual so divide by 5
+*** expect 2025 capacity to be 1200GW, given 2020 capacity is 1100GW, deltacap in 2025 is derived to be 20GW/yr
+vm_deltaCap.lo("2025",regi,"pc","1") = 20 * 0.78 / 1e3;
+vm_deltaCap.lo("2025",regi,"coalchp","1") = 20 * 0.22 / 1e3;
+
+*** 2025 to 2030 bounds on addition and early retirement, splitting bounds for pc and coalchp with 78:22 ratio amonng 20GW/yr (2030 1300GW: expert guess, GEM above source shows under construction is 200GW, preconstruction is also 200GW, so together this implementation presumes all under construction will be built, but non approved will be built by 2030)
+vm_deltaCap.lo("2030",regi,"pc","1") = 20 * 0.78 / 1e3;
+vm_deltaCap.lo("2030",regi,"coalchp","1") = 20 * 0.22 / 1e3;
+
+*** lower capacity factor of coal power plants in China, to accomodate peaking with added capacities
+*** current utilization rate is likely  3840hrs/yrs https://cgs.umd.edu/research-impact/publications/implications-continued-coal-builds-14th-five-year-plan-china-eng, correspond to 43.8%
+*** by 2030 we expect the capacity factor to be 35% (expert guess)
+vm_capFac.fx("2020",regi,"pc") = 0.54;
+vm_capFac.fx("2025",regi,"pc") = 0.438;
+vm_capFac.fx("2030",regi,"pc") = 0.35;
+
+vm_capFac.fx("2020",regi,"coalchp") = 0.54;
+vm_capFac.fx("2025",regi,"coalchp") = 0.438;
+vm_capFac.fx("2030",regi,"coalchp") = 0.35;
+
+);
+$endif.chaCoalBounds
+
 *' @stop
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms
