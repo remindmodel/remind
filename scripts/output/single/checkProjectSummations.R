@@ -7,6 +7,7 @@
 library(piamutils)
 library(piamInterfaces)
 library(quitte)
+
 suppressPackageStartupMessages(library(tidyverse))
 
 if(! exists("source_include")) {
@@ -41,11 +42,13 @@ checkMappings <- list( # list(mappings, summationsFile, skipBunkers)
   list("ScenarioMIP", "ScenarioMIP", FALSE)
 )
 
+checks <- list()
+
 for (i in seq_along(checkMappings)) {
   mapping <- checkMappings[[i]][[1]]
   message("\n### Check project summations for ", paste(mapping, collapse = ", "))
   # checkMissingVars
-  checkMissingVars(mifdata, mapping, sources)
+  missingVariables <- checkMissingVars(mifdata, mapping, sources)
 
   # generate IIASASubmission
   d <- generateIIASASubmission(mifdata, outputDirectory = NULL, outputFilename = NULL, logFile = NULL,
@@ -78,10 +81,20 @@ for (i in seq_along(checkMappings)) {
     message("Regional summation checks are fine.")
   }
 
-  if (nrow(failvars) > 0 || nrow(failregi) > 0 || length(missingVariables) > 0) stopmessage <- c(stopmessage, paste(mapping, collapse = "+"))
+  if (nrow(failvars) > 0 || nrow(failregi) > 0 || length(missingVariables) > 0) {
+    stopmessage <- c(stopmessage, paste(mapping, collapse = "+"))
+  }
+
+  checks[[paste(mapping, collapse = ", ")]] <- list(
+    missingVars = length(missingVariables),
+    checkSummations = length(unique(failvars$variable)), # number of failed summations
+    checkSummationsRegional = nrow(failregi)
+  )
 }
 
 if (length(stopmessage) > 0 || length(missingVariables) > 0) {
   warning("Project-related issues found checks for ", paste(stopmessage, collapse = ", "), " and ",
           length(missingVariables), " missing variables found, see above.")
 }
+
+saveRDS(checks, file = file.path(outputdir, "projectSummations.rds"))
