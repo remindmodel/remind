@@ -1052,6 +1052,16 @@ parameter
   c_teNoLearngConvEndYr  = 2070;   !! def = 2070
 *'
 parameter
+  c_LearnTeConvStartYear  "start year of cost convergence of learning technologies"
+;
+c_LearnTeConvStartYear = 2025; !! def = 2025
+*'
+parameter
+  c_LearnTeConvEndYear "end year of cost convergence of learning technologies"
+;
+c_LearnTeConvEndYear = 2080;   !! def = 2080
+*'
+parameter
   c_earlyRetiValidYr         "Year before which the early retirement rate designated by c_tech_earlyreti_rate holds"
 ;
   c_earlyRetiValidYr  = 2035;   !! def = 2035

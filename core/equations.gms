@@ -465,6 +465,7 @@ q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND
         ** fm_dataglob("learnExp_wFC",teLearn)
       )
     )$( t.val le 2005 )
+    
 *** 2005 to 2020: linear transition from global 2005 to regional 2020
 *** to phase-in the observed 2020 regional variation from input-data
   + ( (2020 - t.val) / (2020-2005) * fm_dataglob("learnMult_wFC",teLearn)
@@ -477,23 +478,31 @@ q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND
       * ( sum(regi2, vm_capCum(t,regi2,teLearn))
         + pm_capCumForeign(t,regi,teLearn)
         )
-  	  ** pm_data(regi,"learnExp_wFC",teLearn)
-    )$( (t.val gt 2005) AND (t.val lt 2020) )
+        ** pm_data(regi,"learnExp_wFC",teLearn)
+    )$( (t.val gt 2005) AND (t.val le 2020) )
 
 $ifthen.floorscen %cm_floorCostScen% == "default"
-*** 2020 to 2050: assuming linear convergence of regional learning curves to global values
-  + ( (pm_ttot_val(t) - 2020) / (2050-2020) * fm_dataglob("learnMult_wFC",teLearn)
+*** from 2020 to c_LearnTeConvStartYear: use regional values
+    + ( pm_data(regi,"learnMult_wFC",teLearn)
+      * ( sum(regi2, vm_capCum(t,regi2,teLearn))
+        + pm_capCumForeign(t,regi,teLearn)
+        )
+        ** pm_data(regi,"learnExp_wFC",teLearn)
+    )$( (t.val gt 2020) AND (t.val lt c_LearnTeConvStartYear) )
+
+*** c_LearnTeConvStartYear to c_LearnTeConvEndYear: assuming linear convergence of regional learning curves to global values
+  + ( (pm_ttot_val(t) - c_LearnTeConvStartYear) / (c_LearnTeConvEndYear-c_LearnTeConvStartYear) * fm_dataglob("learnMult_wFC",teLearn)
     * ( sum(regi2, vm_capCum(t,regi2,teLearn))
       + pm_capCumForeign(t,regi,teLearn)
       )
       ** fm_dataglob("learnExp_wFC",teLearn)
 
-    + (2050 - pm_ttot_val(t)) / (2050-2020) * pm_data(regi,"learnMult_wFC",teLearn)
+    + (c_LearnTeConvEndYear - pm_ttot_val(t)) / (c_LearnTeConvEndYear-c_LearnTeConvStartYear) * pm_data(regi,"learnMult_wFC",teLearn)
     * ( sum(regi2, vm_capCum(t,regi2,teLearn))
       + pm_capCumForeign(t,regi,teLearn)
       )
-	  ** pm_data(regi,"learnExp_wFC",teLearn)
-    )$( t.val ge 2020 AND t.val le 2050 )
+      ** pm_data(regi,"learnExp_wFC",teLearn)
+    )$( t.val ge c_LearnTeConvStartYear AND t.val le c_LearnTeConvEndYear )
 $endif.floorscen
 
 $ifthen.floorscen %cm_floorCostScen% == "pricestruc"
@@ -515,11 +524,11 @@ $ifthen.floorscen %cm_floorCostScen% == "techtrans"
 $endif.floorscen
 
 $ifthen.floorscen %cm_floorCostScen% == "default"
-*** after 2050: globally harmonized costs
+*** after c_LearnTeConvEndYear: globally harmonized costs
   + ( fm_dataglob("learnMult_wFC",teLearn)
      * (sum(regi2, vm_capCum(t,regi2,teLearn)) + pm_capCumForeign(t,regi,teLearn) )
        **(fm_dataglob("learnExp_wFC",teLearn))
-	)$(t.val gt 2050)
+    )$(t.val gt c_LearnTeConvEndYear)
 $endif.floorscen
 ;
 *' @stop
