@@ -458,6 +458,7 @@ q_costInv(ttot,all_regi)                             "costs of investment"
 
 q_cap(tall,all_regi,all_te,rlf)                      "definition of available capacities"
 q_capDistr(tall,all_regi,all_te)                     "distribute available capacities across grades"
+q_capNonDecreasing(tall,all_regi,all_te)             "for some technologies, the capacity is not allowed to decrease over time"
 q_capTotal(ttot,all_regi,all_enty,all_enty)          "calculation of vm_capTotal as total capacity without technology differentation for technologies where there exists differentation"
 
 *** windoffshore-todo
