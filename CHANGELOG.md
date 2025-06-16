@@ -9,9 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### input data/calibration
 
+
 ### changed
 - Consolidated the `MAGICC7_AR6.R` climate reporting script and the `climateAssessmentInterimRun.R` climate assessment iteration script for damage runs using the `remindClimateAssessment` and `piamenv` packages [[#2082](https://github.com/remindmodel/remind/pull/2082), [#2099](https://github.com/remindmodel/remind/pull/2099)]
 - Enhanced `reporting.R` to read extra data needed for reporting directly from inputdata [[#2084](https://github.com/remindmodel/remind/pull/2084)]
+- Updated costs for learning technologies based on the data in the IRENA 2023 report Renewable Power Generation Costs, and made the convergence from regional to global values slower. Increased floor costs for wind onshore, decreased floor costs for wind offshore, and increased learning rates for both on- and offshore. 
 
 ### added
 - 
@@ -19,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### removed
 - **config** Two scenario config files (damagepaper) were used for the NGFS runs but are not needed anymore.
   [[#2107](https://github.com/remindmodel/remind/pull/2107)]
+- remove reading in and printing contents of `fm_histShare.cs3r`
 
 ### fixed
 -
@@ -68,6 +71,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### fixed
 - **37_industry** fix and restructure chemical feedstock balancing to account for all negative emissions from stored non-fossil carbon [[#1829](https://github.com/remindmodel/remind/pull/1829)]
+- **05_initialCap** fix pe2se gas emissions factors for DEU [[#2109](https://github.com/remindmodel/remind/pull/2109)]
+
 
 
 ## [3.4.0] - 2024-12-11

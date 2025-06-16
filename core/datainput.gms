@@ -166,7 +166,7 @@ $ifthen.c_techAssumptScen "%c_techAssumptScen%" == "SSP1"
         fm_dataglob("inco0",te) =        1.3 * fm_dataglob("inco0",te);
     );
 *** hampers nuclear a lot
-    fm_dataglob("inco0","tnrs") =        1.7 * fm_dataglob("inco0","tnrs");
+    fm_dataglob("inco0","tnrs") =        1.3 * fm_dataglob("inco0","tnrs");
 *** favours transmission for non-ICE vehicules
     fm_dataglob("inco0",te) $ (sameas(te,"tdelt") or sameas(te,"tdh2t")) = 0.7 * fm_dataglob("inco0",te);
 *** favours VRE and electricity storage
@@ -1175,70 +1175,76 @@ p_adj_deltacapoffset("2020",regi,"windoff") = p_adj_deltacapoffset("2010",regi,"
 p_adj_seed_reg(t,regi) = pm_gdp(t,regi) * 1e-4;
 
 loop(ttot$(ttot.val ge 2005),
-  p_adj_seed_te(ttot,regi,te)                = 1.00;
-  p_adj_seed_te(ttot,regi,teCCS)             = 0.25;
-  p_adj_seed_te(ttot,regi,"igcc")            = 0.50;
-  p_adj_seed_te(ttot,regi,"tnrs")            = 0.25;
-  p_adj_seed_te(ttot,regi,"hydro")           = 0.25;
-  p_adj_seed_te(ttot,regi,"csp")             = 0.25;
-  p_adj_seed_te(ttot,regi,"spv")             = 2.00;
-  p_adj_seed_te(ttot,regi,"windoff")         = 0.5;
-  p_adj_seed_te(ttot,regi,"gasftrec")        = 0.25;
-  p_adj_seed_te(ttot,regi,"gasftcrec")       = 0.25;
-  p_adj_seed_te(ttot,regi,"coalftrec")       = 0.25;
-  p_adj_seed_te(ttot,regi,"coalftcrec")      = 0.25;
-  p_adj_seed_te(ttot,regi,"coaltr")          = 4.00;
-  p_adj_seed_te(ttot,regi,'dac')             = 0.25;
-  p_adj_seed_te(ttot,regi,'oae_ng')          = 0.25;
-  p_adj_seed_te(ttot,regi,'oae_el')          = 0.25;
+  p_adj_seed_te(ttot,regi,te)           = 1.00;
+  p_adj_seed_te(ttot,regi,teCCS)        = 0.25;
+
+  p_adj_seed_te(ttot,regi,"gasftrec")   = 0.25;
+  p_adj_seed_te(ttot,regi,"gasftcrec")  = 0.25;
+  p_adj_seed_te(ttot,regi,"igcc")       = 0.50;
+  p_adj_seed_te(ttot,regi,"coaltr")     = 4.00;
+  p_adj_seed_te(ttot,regi,"coalftrec")  = 0.25;
+  p_adj_seed_te(ttot,regi,"coalftcrec") = 0.25;
+  
+  p_adj_seed_te(ttot,regi,"geohdr")     = 0.1;
+  p_adj_seed_te(ttot,regi,"hydro")      = 0.25;
+  p_adj_seed_te(ttot,regi,"windoff")    = 0.5;
+  p_adj_seed_te(ttot,regi,"spv")        = 2.00;
+  p_adj_seed_te(ttot,regi,"csp")        = 0.25;
+  p_adj_seed_te(ttot,regi,"tnrs")       = 0.25;
+  p_adj_seed_te(ttot,regi,"h22ch4")     = 0.5;
+  p_adj_seed_te(ttot,regi,"MeOH")       = 0.5;
+  
+  p_adj_seed_te(ttot,regi,'dac')        = 0.25;
+  p_adj_seed_te(ttot,regi,'oae_ng')     = 0.25;
+  p_adj_seed_te(ttot,regi,'oae_el')     = 0.25;
+
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-  p_adj_seed_te(ttot,regi,"bfcc")            = 0.05;
-  p_adj_seed_te(ttot,regi,"idrcc")           = 0.05;
+  p_adj_seed_te(ttot,regi,"bfcc")       = 0.05;
+  p_adj_seed_te(ttot,regi,"idrcc")      = 0.05;
 $endif.cm_subsec_model_steel
-  p_adj_seed_te(ttot,regi,"MeOH") = 0.5;
-  p_adj_seed_te(ttot,regi,"h22ch4") = 0.5;
 
 *RP: for comparison of different technologies:
 *** pm_conv_cap_2_MioLDV <- 650  # The world has slightly below 800million cars in 2005 (IEA TECO2), so with a global vm_cap of 1.2, this gives ~650
 *** ==> 1TW power plant ~ 650 million LDV
 
-  p_adj_coeff(ttot,regi,te)                = 0.25;
-  p_adj_coeff(ttot,regi,"pc")              = 0.5;
-  p_adj_coeff(ttot,regi,"ngcc")            = 0.4;
-  p_adj_coeff(ttot,regi,"igcc")            = 0.5;
-  p_adj_coeff(ttot,regi,"bioigcc")         = 0.55;
-  p_adj_coeff(ttot,regi,"gaschp")          = 0.4;
-  p_adj_coeff(ttot,regi,"coalchp")         = 0.5;
-  p_adj_coeff(ttot,regi,"biochp")          = 0.55;
-  p_adj_coeff(ttot,regi,"coaltr")          = 0.1;
-  p_adj_coeff(ttot,regi,"tnrs")            = 1.0;
-  p_adj_coeff(ttot,regi,"hydro")           = 1.0;
-  p_adj_coeff(ttot,regi,"gasftrec")        = 0.4;
-  p_adj_coeff(ttot,regi,"coalftrec")       = 0.6;
-  p_adj_coeff(ttot,regi,"bioftrec")        = 0.65;
-  p_adj_coeff(ttot,regi,"gash2")           = 0.35;
-  p_adj_coeff(ttot,regi,"coalh2")          = 0.55;
-  p_adj_coeff(ttot,regi,"bioh2")           = 0.6;
-  p_adj_coeff(ttot,regi,teCCS)             = 1.0;
-  p_adj_coeff(ttot,regi,"ccsinje")         = 1.0;
-  p_adj_coeff(ttot,regi,"spv")             = 0.15;
-  p_adj_coeff(ttot,regi,"windon")          = 0.25;
-  p_adj_coeff(ttot,regi,"windoff")         = 0.35;
+  p_adj_coeff(ttot,regi,te)             = 0.25;
+  p_adj_coeff(ttot,regi,teCCS)          = 1.0;
+
+  p_adj_coeff(ttot,regi,"ngcc")         = 0.4;
+  p_adj_coeff(ttot,regi,"gaschp")       = 0.4;
+  p_adj_coeff(ttot,regi,"gash2")        = 0.35;
+  p_adj_coeff(ttot,regi,"gasftrec")     = 0.4;
+  p_adj_coeff(ttot,regi,"igcc")         = 0.5;
+  p_adj_coeff(ttot,regi,"pc")           = 0.5;
+  p_adj_coeff(ttot,regi,"coalchp")      = 0.5;
+  p_adj_coeff(ttot,regi,"coaltr")       = 0.1;
+  p_adj_coeff(ttot,regi,"coalftrec")    = 0.6;
+  p_adj_coeff(ttot,regi,"coalh2")       = 0.55;
+  p_adj_coeff(ttot,regi,"biochp")       = 0.55;
+  p_adj_coeff(ttot,regi,"bioigcc")      = 0.55;
+  p_adj_coeff(ttot,regi,"bioftrec")     = 0.65;
+  p_adj_coeff(ttot,regi,"bioh2")        = 0.6;
+
+  p_adj_coeff(ttot,regi,"geohdr")       = 2.0;
+  p_adj_coeff(ttot,regi,"hydro")        = 1.0;
+  p_adj_coeff(ttot,regi,"windon")       = 0.25;
+  p_adj_coeff(ttot,regi,"windoff")      = 0.35;
+  p_adj_coeff(ttot,regi,"spv")          = 0.15;
+  p_adj_coeff(ttot,regi,"tnrs")         = 1.0;
+  p_adj_coeff(ttot,regi,"h22ch4")       = 0.5;
+  p_adj_coeff(ttot,regi,"MeOH")         = 0.5;
+
+  p_adj_coeff(ttot,regi,"ccsinje")      = 1.0;
+  p_adj_coeff(ttot,regi,teGrid)         = 0.3;
+  p_adj_coeff(ttot,regi,teStor)         = 0.05;
+  p_adj_coeff(ttot,regi,"dac")          = 0.8;
+  p_adj_coeff(ttot,regi,'oae_ng')       = 0.8;
+  p_adj_coeff(ttot,regi,'oae_el')       = 0.8;
+
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-  p_adj_coeff(ttot,regi,"bfcc")            = 1.0;
-  p_adj_coeff(ttot,regi,"idrcc")           = 1.0;
+  p_adj_coeff(ttot,regi,"bfcc")         = 1.0;
+  p_adj_coeff(ttot,regi,"idrcc")        = 1.0;
 $endif.cm_subsec_model_steel
-
-  p_adj_coeff(ttot,regi,"dac")             = 0.8;
-  p_adj_coeff(ttot,regi,'oae_ng')          = 0.8;
-  p_adj_coeff(ttot,regi,'oae_el')          = 0.8;
-  p_adj_coeff(ttot,regi,teGrid)            = 0.3;
-  p_adj_coeff(ttot,regi,teStor)            = 0.05;
-
-  p_adj_coeff(ttot,regi,"MeOH")            = 0.5;
-  p_adj_coeff(ttot,regi,"h22ch4")          = 0.5;
-
-
 );
 
 ***Rescaling adj seed and coeff if adj cost multiplier switches are on
@@ -1479,6 +1485,18 @@ pm_emifac(ttot,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem(regi,"fehos"
 pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem(regi,"fepet") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem(regi,"fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 pm_emifac(ttot,regi,"segafos","fegat","tdfosgat","co2") = p_ef_dem(regi,"fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+
+$ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
+*** Changing refineries emission factors in regions that belong to cm_altFeEmiFac to avoid negative emissions on pe2se 
+*** (changing from 18.4 to 20 zeta joule = 20/31.7098 = 0.630719841 Twa = 0.630719841 * 3.66666666666666 * 1000 * 0.03171  GtC/TWa = 73.33 GtC/TWa)
+loop(ext_regi$altFeEmiFac_regi(ext_regi),
+  pm_emifac(ttot,regi,"peoil","seliqfos","refliq","co2")$(regi_group(ext_regi,regi)) = 0.630719841;
+);
+*** Changing Germany and UKI solids emissions factors to be in line with CRF numbers
+*** (changing from 26.1 to 29.27 zeta joule = 0.922937989 TWa = 107.31 GtC/TWa)
+pm_emifac(ttot,regi,"pecoal","sesofos","coaltr","co2")$(sameas(regi,"DEU") OR sameas(regi,"UKI")) = 0.922937989;
+$endif.altFeEmiFac
+
 
 ***------ Read in emission factors for process emissions in chemicals sector---
 *** calculated using IEA data on feedstocks flows and UNFCCC data on chem sector process emissions
