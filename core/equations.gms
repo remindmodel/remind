@@ -324,7 +324,8 @@ q_capDistr(t,regi,teReNoBio(te))..
   vm_cap(t,regi,te,"1")
 ;
 
-*** For some technologies, the capacity is not allowed to decrease over time
+*** For some capital-intensive and site-specific technologies like geothermal and hydropower,
+*** we assume continued maintenance of capacity once it is built: it is not allowed to decrease over time.
 q_capNonDecreasing(ttot,regi,teNonDecreasing(te)) $ (ttot.val >= 2030)..
   vm_cap(ttot,regi,te,"1")
   =g=
