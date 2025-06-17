@@ -8,15 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### input data/calibration
-
+- [[mrcommons #167]](https://github.com/pik-piam/mrcommons/pull/167) new input data rev including new subtype of landuse CO2 emissions (`co2luc`)
 
 ### changed
 - Consolidated the `MAGICC7_AR6.R` climate reporting script and the `climateAssessmentInterimRun.R` climate assessment iteration script for damage runs using the `remindClimateAssessment` and `piamenv` packages [[#2082](https://github.com/remindmodel/remind/pull/2082), [#2099](https://github.com/remindmodel/remind/pull/2099)]
 - Enhanced `reporting.R` to read extra data needed for reporting directly from inputdata [[#2084](https://github.com/remindmodel/remind/pull/2084)]
 - Updated costs for learning technologies based on the data in the IRENA 2023 report Renewable Power Generation Costs, and made the convergence from regional to global values slower. Increased floor costs for wind onshore, decreased floor costs for wind offshore, and increased learning rates for both on- and offshore. 
+- [[#2103]](https://github.com/remindmodel/remind/pull/2103) Refactored the MAgPIE coupling interface (`getReportData.R`) introducing MAgPIE-to-REMIND mappings and replacing magclass with quitte/dplyr.
 
 ### added
-- 
+- **core** [[#2103]](https://github.com/remindmodel/remind/pull/2103) Add subtypes of landuse CO2 emissions and passes them through REMIND so they appear in the reporting for both coupled to MAgPIE and standalone. The subtypes add up to `co2luc`. They are not used in any calculation and are passed through REMIND untouched.
 
 ### removed
 - **config** Two scenario config files (damagepaper) were used for the NGFS runs but are not needed anymore.

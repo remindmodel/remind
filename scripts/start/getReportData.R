@@ -11,7 +11,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
   require(quitte, quietly = TRUE, warn.conflicts = FALSE)
   require(readr,  quietly = TRUE, warn.conflicts = FALSE)
   
-  magQuitte <- quitte::read.quitte(path_to_report, check.duplicates = FALSE)
+  magData <- quitte::read.quitte(path_to_report, check.duplicates = FALSE)
   
   .emissions <- function(mag, mapping, file, var_luc, path_to_report) {
 
@@ -120,7 +120,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
     "Emissions|CH4|Land|+|Peatland"                                                   , "ch4peatland"             ,   1
   )
   
-  emi <- .emissions(magQuitte, mag2rem, file = paste0("./core/input/f_macBaseMagpie_coupling_new.cs4r"), var_luc, path_to_report)
+  emi <- .emissions(magData, mag2rem, file = paste0("./core/input/f_macBaseMagpie_coupling.cs4r"), var_luc, path_to_report)
   
   ### ---- Bioenergy prices ----
   
@@ -128,7 +128,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
     ~mag,              ~factorMag2Rem,
     "Prices|Bioenergy", 0.0315576) # US$2017/GJ to US$2017/Wa
 
-  pricBio <- .convertAndWrite(magQuitte, mag2rem, file = paste0("./modules/30_biomass/",inputpath_mag,"/input/p30_pebiolc_pricemag_coupling_new.csv"), path_to_report)
+  pricBio <- .convertAndWrite(magData, mag2rem, file = paste0("./modules/30_biomass/",inputpath_mag,"/input/p30_pebiolc_pricemag_coupling.csv"), path_to_report)
   
   ### ---- Bioenergy production ----
   
@@ -136,7 +136,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
     ~mag,                                                ~factorMag2Rem,
     "Demand|Bioenergy|2nd generation|++|Bioenergy crops", 1/31.536) # EJ to TWa
     
-  prodBio <- .convertAndWrite(magQuitte, mag2rem, file = paste0("./modules/30_biomass/",inputpath_mag,"/input/pm_pebiolc_demandmag_coupling_new.csv"), path_to_report)
+  prodBio <- .convertAndWrite(magData, mag2rem, file = paste0("./modules/30_biomass/",inputpath_mag,"/input/pm_pebiolc_demandmag_coupling.csv"), path_to_report)
 
   ### ---- Agricultural costs ----
 
@@ -144,7 +144,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
     ~mag,                      ~factorMag2Rem,
     "Costs Without Incentives", 1/1000/1000) # 10E6 US$2017 to 10E12 US$2017
 
-  cost <- .convertAndWrite(magQuitte, mag2rem, file = paste0("./modules/26_agCosts/",inputpath_acc,"/input/p26_totLUcost_coupling_new.csv"), path_to_report)
+  cost <- .convertAndWrite(magData, mag2rem, file = paste0("./modules/26_agCosts/",inputpath_acc,"/input/p26_totLUcost_coupling.csv"), path_to_report)
   
   ### ---- Agricultural trade ----
   
@@ -153,7 +153,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
     "Costs Accounting|+|Trade", 1/1000/1000) # 10E6 US$2017 to 10E12 US$2017
   
   # needs to be updated to MAgPIE 4 interface
-  # trade <- .convertAndWrite(magQuitte, mag2rem, file = paste0("./modules/26_agCosts/",inputpath_acc,"/input/trade_bal_reg.rem.csv"), path_to_report)
+  # trade <- .convertAndWrite(magData, mag2rem, file = paste0("./modules/26_agCosts/",inputpath_acc,"/input/trade_bal_reg.rem.csv"), path_to_report)
   
   ### ---- return ----
 
