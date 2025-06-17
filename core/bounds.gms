@@ -274,8 +274,9 @@ vm_capCum.lo(ttot,regi,teLearn)$(ttot.val ge cm_startyear) = pm_data(regi,"ccap0
 *** exception for tech_stat 4 technologies whose ccap0 refers to 2025 as these technologies don't exist in 2005
 vm_capCum.lo(ttot,regi,teLearn)$(pm_data(regi,"tech_stat",teLearn) eq 4 AND ttot.val le 2020) = 0;
 
-*nr: floor costs represent the lower bound of learning technologies investment costs
-vm_costTeCapital.lo(t,regi,teLearn) = pm_data(regi,"floorcost",teLearn);
+*RP: theoretically, floor costs represent the lower bound of investment costs for learnTe. However, with regional 
+*** variations of 2015 costs and long-term costs being high in SSP3/SSP5, this can be different -> set lower bound to 0.2
+vm_costTeCapital.lo(t,regi,teLearn) = 0.2 * pm_data(regi,"floorcost",teLearn);
 
 *cb 20120319 avoid negative adjustment costs in 2005 (they would allow the model to artificially save money)
 v_adjFactor.fx("2005",regi,te)=0;
