@@ -748,11 +748,11 @@ pm_cf(ttot,regi,"tdsynpet") = 0.7;
 pm_cf(ttot,regi,"tdsyndie") = 0.7;
 *** eternal short-term fix for process-based industry
 pm_cf(ttot,regi,"bf") = 0.8;
-pm_cf(ttot,regi,"bfcc") = 0.8;
+pm_cf(ttot,regi,"eaf") = 0.8;
 pm_cf(ttot,regi,"bof") = 0.8;
 pm_cf(ttot,regi,"idr") = 0.8;
 pm_cf(ttot,regi,"idrcc") = 1.0; !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
-pm_cf(ttot,regi,"eaf") = 1.0;   !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
+pm_cf(ttot,regi,"bfcc") = 1.0;   !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
 
 *RP* phasing down the ngt cf to "peak load" cf of 5%
 pm_cf(ttot,regi,"ngt")$(ttot.val eq 2025) = 0.9 * pm_cf(ttot,regi,"ngt");
