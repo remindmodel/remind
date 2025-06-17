@@ -202,8 +202,8 @@ $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP3"
     fm_dataglob("floorcost","csp") =     1.6 * fm_dataglob("floorcost","csp");
 *** RP: because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
 *** values need to be set by hand!
-    fm_dataglob("learn","windon")     =  0.20;  !! these values make 2100 wind onshore costs ~1.7 times those seen in SSP2 at the same cumCap
-    fm_dataglob("floorcost","windon") =  1600;
+    fm_dataglob("learn","windon")     =  0.17;  !! these values make 2100 wind onshore costs ~1.7 times those seen in SSP2 at the same cumCap
+    fm_dataglob("floorcost","windon") =  1500;
     fm_dataglob("learn","windoff")    =  0.32; !! these values make 2100 wind offshore costs ~1.8 times those seen in SSP2 at the same cumCap
     fm_dataglob("floorcost","windoff") = 1900; 
 
@@ -224,7 +224,7 @@ $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP5"
     fm_dataglob("floorcost","csp") =     1.3 * fm_dataglob("floorcost","csp");
 *** RP: because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
 *** values need to be set by hand!
-    fm_dataglob("learn","windon")     =  0.22;  !! these values make 2100 wind onshore costs ~1.3 times those seen in SSP2 at the same cumCap
+    fm_dataglob("learn","windon")     =  0.17;  !! these values make 2100 wind onshore costs ~1.3 times those seen in SSP2 at the same cumCap
     fm_dataglob("floorcost","windon") =  1070;
     fm_dataglob("learn","windoff")    =  0.18; !! these values make 2100 wind offshore costs ~1.3 times those seen in SSP2 at the same cumCap
     fm_dataglob("floorcost","windoff") = 1200; 
@@ -381,6 +381,12 @@ $ifthen.floorscen %cm_floorCostScen% == "pricestruc"
     p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
     p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
 $endif.floorscen
+
+*** calculate regional floor costs for learning technologies from ratio of global values
+*** take the ratio of the global floorcost to global initial cost, and multiply with the new regional cost to get new floorcost that should create reasonable
+  pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_inco0("2015",regi,te) * fm_dataglob("floorcost",te) / fm_dataglob("inco0",te);
+  pm_data(regi,"floorcost","spv") = p_inco0("2020",regi,"spv") * fm_dataglob("floorcost","spv") / fm_dataglob("inco0","spv") ; !! 2020 values are available for PV
+
 
 *** calculate floor costs for learning technologies if there is technology transfer
 $ifthen.floorscen %cm_floorCostScen% == "techtrans"

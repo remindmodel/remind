@@ -460,80 +460,88 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
 q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND t.val le 2020)) ..
   vm_costTeCapital(t,regi,teLearn)
   =e=
-*** floor costs defined regionally
-  pm_data(regi,"floorcost",teLearn)
 *** until 2005: using global estimates better matches historic values
-  + ( fm_dataglob("learnMult_wFC",teLearn)
-    * ( ( sum(regi2, vm_capCum(t,regi2,teLearn))
-          + pm_capCumForeign(t,regi,teLearn)
-        )
-        ** fm_dataglob("learnExp_wFC",teLearn)
+  + ( fm_dataglob("incolearn",teLearn)
+      + ( fm_dataglob("learnMult_wFC",teLearn)
+          * ( sum(regi2, vm_capCum(t,regi2,teLearn))
+              + pm_capCumForeign(t,regi,teLearn)
+          ) ** fm_dataglob("learnExp_wFC",teLearn)
       )
-    )$( t.val le 2005 )
+  )$( t.val le 2005 )
     
 *** 2005 to 2020: linear transition from global 2005 to regional 2020
 *** to phase-in the observed 2020 regional variation from input-data
-  + ( (2020 - t.val) / (2020-2005) * fm_dataglob("learnMult_wFC",teLearn)
-      * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-        + pm_capCumForeign(t,regi,teLearn)
-        )
-        ** fm_dataglob("learnExp_wFC",teLearn)
+  + ( (2020 - t.val) / (2020-2005)
+      * ( fm_dataglob("incolearn",teLearn)
+          + fm_dataglob("learnMult_wFC",teLearn)
+            * ( sum(regi2, vm_capCum(t,regi2,teLearn))
+                + pm_capCumForeign(t,regi,teLearn)
+              ) ** fm_dataglob("learnExp_wFC",teLearn)
+      )
 
-    + (t.val - 2005) / (2020-2005) * pm_data(regi,"learnMult_wFC",teLearn)
-      * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-        + pm_capCumForeign(t,regi,teLearn)
-        )
-        ** pm_data(regi,"learnExp_wFC",teLearn)
-    )$( (t.val gt 2005) AND (t.val le 2020) )
+    + (t.val - 2005) / (2020-2005) 
+      * ( pm_data(regi,"floorcost",teLearn) 
+          + pm_data(regi,"learnMult_wFC",teLearn)
+            * ( sum(regi2, vm_capCum(t,regi2,teLearn))
+                + pm_capCumForeign(t,regi,teLearn)
+              ) ** pm_data(regi,"learnExp_wFC",teLearn)
+      )
+  )$( (t.val gt 2005) AND (t.val le 2020) )
 
 $ifthen.floorscen %cm_floorCostScen% == "default"
 *** from 2020 to c_LearnTeConvStartYear: use regional values
-    + ( pm_data(regi,"learnMult_wFC",teLearn)
-      * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-        + pm_capCumForeign(t,regi,teLearn)
-        )
-        ** pm_data(regi,"learnExp_wFC",teLearn)
-    )$( (t.val gt 2020) AND (t.val lt c_LearnTeConvStartYear) )
+  + ( pm_data(regi,"floorcost",teLearn) 
+        + pm_data(regi,"learnMult_wFC",teLearn)
+          * ( sum(regi2, vm_capCum(t,regi2,teLearn))
+              + pm_capCumForeign(t,regi,teLearn)
+            ) ** pm_data(regi,"learnExp_wFC",teLearn)
+  )$( (t.val gt 2020) AND (t.val lt c_LearnTeConvStartYear) )
 
 *** c_LearnTeConvStartYear to c_LearnTeConvEndYear: assuming linear convergence of regional learning curves to global values
-  + ( (pm_ttot_val(t) - c_LearnTeConvStartYear) / (c_LearnTeConvEndYear-c_LearnTeConvStartYear) * fm_dataglob("learnMult_wFC",teLearn)
-    * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-      + pm_capCumForeign(t,regi,teLearn)
+  + ( (pm_ttot_val(t) - c_LearnTeConvStartYear) / (c_LearnTeConvEndYear-c_LearnTeConvStartYear)  
+      * ( fm_dataglob(regi,"floorcost",teLearn) 
+          + fm_dataglob("learnMult_wFC",teLearn)
+            * ( sum(regi2, vm_capCum(t,regi2,teLearn))
+                + pm_capCumForeign(t,regi,teLearn)
+              ) ** fm_dataglob("learnExp_wFC",teLearn)
       )
-      ** fm_dataglob("learnExp_wFC",teLearn)
 
-    + (c_LearnTeConvEndYear - pm_ttot_val(t)) / (c_LearnTeConvEndYear-c_LearnTeConvStartYear) * pm_data(regi,"learnMult_wFC",teLearn)
-    * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-      + pm_capCumForeign(t,regi,teLearn)
+    + (c_LearnTeConvEndYear - pm_ttot_val(t)) / (c_LearnTeConvEndYear-c_LearnTeConvStartYear)  
+      * ( pm_data(regi,"floorcost",teLearn) 
+          + pm_data(regi,"learnMult_wFC",teLearn)
+            * ( sum(regi2, vm_capCum(t,regi2,teLearn))
+                + pm_capCumForeign(t,regi,teLearn)
+              ) ** pm_data(regi,"learnExp_wFC",teLearn)
       )
-      ** pm_data(regi,"learnExp_wFC",teLearn)
-    )$( t.val ge c_LearnTeConvStartYear AND t.val le c_LearnTeConvEndYear )
+  )$( t.val ge c_LearnTeConvStartYear AND t.val le c_LearnTeConvEndYear )
 $endif.floorscen
 
 $ifthen.floorscen %cm_floorCostScen% == "pricestruc"
-  + ( pm_data(regi,"learnMult_wFC",teLearn)
-    * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-      + pm_capCumForeign(t,regi,teLearn)
-      )
-          ** pm_data(regi,"learnExp_wFC",teLearn)
+  + ( pm_data(regi,"floorcost",teLearn) 
+      + pm_data(regi,"learnMult_wFC",teLearn)
+        * ( sum(regi2, vm_capCum(t,regi2,teLearn))
+            + pm_capCumForeign(t,regi,teLearn)
+          ) ** pm_data(regi,"learnExp_wFC",teLearn)
     )$( t.val ge 2020 AND t.val le 2100 )
 $endif.floorscen
 
 $ifthen.floorscen %cm_floorCostScen% == "techtrans"
-  + ( pm_data(regi,"learnMult_wFC",teLearn)
-    * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-      + pm_capCumForeign(t,regi,teLearn)
-      )
-          ** pm_data(regi,"learnExp_wFC",teLearn)
+  + ( pm_data(regi,"floorcost",teLearn) 
+      + pm_data(regi,"learnMult_wFC",teLearn)
+        * ( sum(regi2, vm_capCum(t,regi2,teLearn))
+            + pm_capCumForeign(t,regi,teLearn)
+          ) ** pm_data(regi,"learnExp_wFC",teLearn)
     )$( t.val ge 2020 AND t.val le 2100 )
 $endif.floorscen
 
 $ifthen.floorscen %cm_floorCostScen% == "default"
 *** after c_LearnTeConvEndYear: globally harmonized costs
-  + ( fm_dataglob("learnMult_wFC",teLearn)
-     * (sum(regi2, vm_capCum(t,regi2,teLearn)) + pm_capCumForeign(t,regi,teLearn) )
-       **(fm_dataglob("learnExp_wFC",teLearn))
-    )$(t.val gt c_LearnTeConvEndYear)
+  + ( fm_dataglob(regi,"floorcost",teLearn) 
+      + fm_dataglob("learnMult_wFC",teLearn)
+        * ( sum(regi2, vm_capCum(t,regi2,teLearn)) 
+            + pm_capCumForeign(t,regi,teLearn) 
+            ) **(fm_dataglob("learnExp_wFC",teLearn))
+  )$(t.val gt c_LearnTeConvEndYear)
 $endif.floorscen
 ;
 *' @stop
