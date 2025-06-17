@@ -382,11 +382,6 @@ $ifthen.floorscen %cm_floorCostScen% == "pricestruc"
     p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
 $endif.floorscen
 
-*** calculate regional floor costs for learning technologies from ratio of global values
-*** take the ratio of the global floorcost to global initial cost, and multiply with the new regional cost to get new floorcost that should create reasonable
-  pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_inco0("2015",regi,te) * fm_dataglob("floorcost",te) / fm_dataglob("inco0",te);
-  pm_data(regi,"floorcost","spv") = p_inco0("2020",regi,"spv") * fm_dataglob("floorcost","spv") / fm_dataglob("inco0","spv") ; !! 2020 values are available for PV
-
 
 *** calculate floor costs for learning technologies if there is technology transfer
 $ifthen.floorscen %cm_floorCostScen% == "techtrans"
@@ -400,6 +395,11 @@ $endif.floorscen
 
 *** In case regionally differentiated investment costs should be used the corresponding entries are revised:
 $ifthen.REG_techcosts not "%cm_techcosts%" == "GLO"   !! cm_techcosts is REG or REG2040
+*** calculate regional floor costs for learning technologies from ratio of global values
+*** take the ratio of the global floorcost to global initial cost, and multiply with the new regional cost to get new floorcost that should create reasonable
+    pm_data(regi,"floorcost",teLearn(te))$(teRegTechCosts(te) ) = p_inco0("2015",regi,te) * fm_dataglob("floorcost",te) / fm_dataglob("inco0",te);
+    pm_data(regi,"floorcost","spv") = p_inco0("2020",regi,"spv") * fm_dataglob("floorcost","spv") / fm_dataglob("inco0","spv") ; !! 2020 values are available for PV
+
     pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2015",regi,teRegTechCosts);
     pm_data(regi,"inco0","spv")          = p_inco0("2020",regi,"spv");
 $endif.REG_techcosts
