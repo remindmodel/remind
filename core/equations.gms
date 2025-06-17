@@ -499,7 +499,7 @@ $ifthen.floorscen %cm_floorCostScen% == "default"
 
 *** c_LearnTeConvStartYear to c_LearnTeConvEndYear: assuming linear convergence of regional learning curves to global values
   + ( (pm_ttot_val(t) - c_LearnTeConvStartYear) / (c_LearnTeConvEndYear-c_LearnTeConvStartYear)  
-      * ( fm_dataglob(regi,"floorcost",teLearn) 
+      * ( fm_dataglob("floorcost",teLearn) 
           + fm_dataglob("learnMult_wFC",teLearn)
             * ( sum(regi2, vm_capCum(t,regi2,teLearn))
                 + pm_capCumForeign(t,regi,teLearn)
@@ -536,7 +536,7 @@ $endif.floorscen
 
 $ifthen.floorscen %cm_floorCostScen% == "default"
 *** after c_LearnTeConvEndYear: globally harmonized costs
-  + ( fm_dataglob(regi,"floorcost",teLearn) 
+  + ( fm_dataglob("floorcost",teLearn) 
       + fm_dataglob("learnMult_wFC",teLearn)
         * ( sum(regi2, vm_capCum(t,regi2,teLearn)) 
             + pm_capCumForeign(t,regi,teLearn) 
