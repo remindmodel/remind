@@ -461,7 +461,7 @@ q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND
   vm_costTeCapital(t,regi,teLearn)
   =e=
 *** until 2005: using global estimates better matches historic values
-  + ( fm_dataglob("incolearn",teLearn)
+  + ( fm_dataglob("floorcost",teLearn)
       + ( fm_dataglob("learnMult_wFC",teLearn)
           * ( sum(regi2, vm_capCum(t,regi2,teLearn))
               + pm_capCumForeign(t,regi,teLearn)
@@ -472,7 +472,7 @@ q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND
 *** 2005 to 2020: linear transition from global 2005 to regional 2020
 *** to phase-in the observed 2020 regional variation from input-data
   + ( (2020 - t.val) / (2020-2005)
-      * ( fm_dataglob("incolearn",teLearn)
+      * ( fm_dataglob("floorcost",teLearn)
           + fm_dataglob("learnMult_wFC",teLearn)
             * ( sum(regi2, vm_capCum(t,regi2,teLearn))
                 + pm_capCumForeign(t,regi,teLearn)
