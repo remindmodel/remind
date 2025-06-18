@@ -1691,15 +1691,18 @@ $setGlobal cm_CESMkup_build  standard  !! def = standard
 *** subsectors   | feh2_steel           |  50 $/MWh(th)
 *** subsectors   | feh2_otherInd        |  50 $/MWh(th)
 ***
-*** To change them to any specific value, either define a new setting besides
-*** "standard" in ./modules/37_industry/subsectors/datainput.gms,
-*** or use the setting "manual" and set cm_CESMkup_ind_data to e.g. "feelhth_chemicals 0.8".
-*** This would apply a cost markup of 0.8 $tr/TWa (100 $/MWh(el)) to the feelhth_chemicals
-*** CES node.  Standard markup costs are not effected unless specifically
+*** The setting "Elec_Push" should reflect a case of enhanced industry electrification
+*** in the other industry subsector, where mark-up cost for the electricity inputs are decreased
+*** and mark-up costs for combustible fuel inputs are increased. See ./modules/37_industry/subsectors/datainput.gms
+*** for details.
+*** The setting "manual" allows to set specific markup costs for the CES nodes in industry.
+*** In this setting the switch cm_CESMkup_ind_data is used to set the markup costs.
+*** Example: cm_CESMkup_ind_data = "feelhth_chemicals 0.8"
+*** This would apply a cost markup of 0.8 $tr/TWa (100 $/MWh(el)) to the feelhth_chemicals.
+*** Under this setting the mark-up cost are not effected unless specifically
 *** addressed in cm_CESMkup_ind_data.
-$setGlobal cm_CESMkup_ind        standard  !! def = standard
+$setGlobal cm_CESMkup_ind        standard  !! def = standard !! regexp = standard|Elec_Push|manual
 $setGlobal cm_CESMkup_ind_data   ""        !! def = ""
-
 *** cm_fxIndUe "switch for fixing UE demand in industry to baseline level - no endogenous demand adjustment"
 *** off: endogenous demand.
 *** on: exogenous demand fixed to baseline/NPi level (read in from input_ref.gdx)
