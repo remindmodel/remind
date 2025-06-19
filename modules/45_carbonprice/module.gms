@@ -10,7 +10,7 @@
 *'
 *' @description
 *' The carbonprice module sets or adjusts carbon price trajectories between iterations s.t. the desired climate policy targets are met.
-*' Carbon price trajectories either (a) follow  a prescribed funtional form (linear/exponential), (b) relect NPi or NDC targets, or (c) are set exogenously. 
+*' Carbon price trajectories either (a) follow  a prescribed funtional form (linear/exponential), (b) reflect NPi or NDC targets, or (c) are set exogenously. 
 *' The carbon price is the main indicator to reflect the change in climate policy ambition over time.
 
 *' Carbon prices are potentially defined by three modules:
