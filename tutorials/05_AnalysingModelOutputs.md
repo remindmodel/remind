@@ -15,7 +15,7 @@ Felix Scheyer (<felix.schreyer@pik-potsdam.de>), Isabelle Weindl (<weindl@pik-po
     -   [5.1. Execution of model-internal output scripts via the REMIND configuration file](#51-execution-of-model-internal-output-scripts-via-the-remind-configuration-file)
     -   [5.2. Execution of model-internal output scripts in the command window](#52-execution-of-model-internal-output-scripts-in-the-command-window)
 -   [6.  Analysis of outputs with the remind2 R package](#6-analysis-of-outputs-with-the-remind2-r-package)
--   [7. Visualizing Run Status und Summation Checks for Runs](#7-visualizing-run-status-und-summation-checks-for-runs)
+-   [7. Visualizing Run Status and Summation Checks for Runs](#7-visualizing-run-status-and-summation-checks-for-runs)
 
 ## 1. Introduction
 
@@ -199,7 +199,7 @@ library(remind2)
 
 You can click on the index and search for interesting functions. All functions used to generate the reporting start with "report*.R".
 
-## 7. Visualizing Run Status und Summation Checks for Runs
+## 7. Visualizing Run Status and Summation Checks for Runs
 
 > **Note** This part assumes that you have access to the PIK HPC, have followed the instructions [in the REMIND group-internal Wiki](https://gitlab.pik-potsdam.de/rse/rsewiki/-/wikis/Cluster-Access) on how to access the PIK HPC and configure your cluster environment.
 
