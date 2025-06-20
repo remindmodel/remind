@@ -34,16 +34,16 @@ s45_taxCO2_peakBudgYr = cm_taxCO2_peakBudgYr * sm_DptCO2_2_TDpGtC;
 
 $ifThen.taxCO2globalAnchor "%cm_taxCO2_functionalForm%" == "exponential"
 
-if(cm_taxCO2_startyear gt 0, 
-  !! Initial global anchor carbon price increases exponentially with growth rate cm_taxCO2_expGrowth from s45_taxCO2_startyear in cm_startyear
+if( (cm_taxCO2_startyear gt 0) and (cm_taxCO2_peakBudgYr eq -1), 
+***   Initial global anchor carbon price increases exponentially with growth rate cm_taxCO2_expGrowth from s45_taxCO2_startyear in cm_startyear
   p45_taxCO2eq_anchor(ttot)$(ttot.val ge 2005) = s45_taxCO2_startyear * cm_taxCO2_expGrowth**(ttot.val - cm_startyear);
 elseif (cm_taxCO2_startyear eq -1) and (cm_taxCO2_peakBudgYr gt 0) , 
-  !! Initial global anchor carbon price increases exponentially with growth rate cm_taxCO2_expGrowth through s45_taxCO2_peakBudgYr in cm_peakBudgYr
+***   Initial global anchor carbon price increases exponentially with growth rate cm_taxCO2_expGrowth through s45_taxCO2_peakBudgYr in cm_peakBudgYr
   p45_taxCO2eq_anchor(ttot)$(ttot.val ge 2005) = s45_taxCO2_peakBudgYr * cm_taxCO2_expGrowth**(ttot.val - cm_peakBudgYr);
 elseif (cm_taxCO2_startyear eq -1) and (cm_taxCO2_peakBudgYr le 0) ,
   abort "please initialize cm_taxCO2_peakBudgYr by setting it to a positive value"
-else 
-  abort "please initialize cm_taxCO2_startyear by setting it to a positive value"
+else
+  abort "please initialize cm_taxCO2_startyear by setting it to a positive value. Note that cm_taxCO2_peakBudgYr must be kept at default value -1 if not used."
 ); 
 
 $elseIf.taxCO2globalAnchor "%cm_taxCO2_functionalForm%" == "linear"
@@ -75,7 +75,7 @@ display s45_taxCO2_historical;
 
 *** Step I.2: Create linear global anchor trajectory through the points (s45_taxCO2_historicalYr, s45_taxCO2_historical), and (cm_startyear, s45_taxCO2_startyear) or (cm_peakBudgYr, cm_taxCO2_peakBudgYr) 
 
-if(cm_taxCO2_startyear gt 0, !! Initial global carbon price trajectory defined via (cm_startyear, s45_taxCO2_startyear)
+if((cm_taxCO2_startyear gt 0) and (cm_taxCO2_peakBudgYr eq -1), !! Initial global carbon price trajectory defined via (cm_startyear, s45_taxCO2_startyear)
 
   !! Make sure that initial carbon price trajectory is non-decreasing
   if(s45_taxCO2_startyear lt s45_taxCO2_historical,
@@ -92,7 +92,8 @@ elseif (cm_taxCO2_startyear eq -1) and (cm_taxCO2_peakBudgYr gt 0) , !! Initial 
   !! Make sure that initial carbon price trajectory is non-decreasing, and cm_peakBudgYr is at least cm_startyear
   if (cm_peakBudgYr lt cm_startyear,
     abort "please initialize cm_peakBudgYr by setting it to a value that is larger or equal to cm_startyear"
-  elseif s45_taxCO2_peakBudgYr lt s45_taxCO2_historicalYr,
+  elseif s45_taxCO2_peakBudgYr lt s45_taxCO2_historical,
+    display cm_taxCO2_peakBudgYr;
     abort "please make sure that cm_taxCO2_peakBudgYr is at least as large as the value provided by cm_taxCO2_historical"
   );
   p45_taxCO2eq_anchor(ttot)$(ttot.val ge s45_taxCO2_historicalYr) = 
@@ -103,7 +104,7 @@ elseif (cm_taxCO2_startyear eq -1) and (cm_taxCO2_peakBudgYr gt 0) , !! Initial 
 elseif (cm_taxCO2_startyear eq -1) and (cm_taxCO2_peakBudgYr le 0) ,
   abort "please initialize cm_taxCO2_peakBudgYr by setting it to a positive value"
 else 
-  abort "please initialize cm_taxCO2_startyear by setting it to a positive value"
+  abort "please initialize cm_taxCO2_startyear by setting it to a positive value. Note that cm_taxCO2_peakBudgYr must be kept at default value -1 if not used."
 ); 
 $endIf.taxCO2globalAnchor
 
@@ -150,15 +151,15 @@ display p45_gdppcap_PPP;
 *** Step III.1: Determine p45_regiDiff_endYr and p45_regiDiff_exponent based on cm_taxCO2_regiDiff and cm_taxCO2_regiDiff_convergence 
 
 $ifThen.taxCO2regiDiff3 "%cm_taxCO2_regiDiff_convergence%" == "scenario"
-  !! Define p45_regiDiff_endYr and p45_regiDiff_exponent based on scenario chosen via cm_taxCO2_regiDiff
+***   Define p45_regiDiff_endYr and p45_regiDiff_exponent based on scenario chosen via cm_taxCO2_regiDiff
 $ifThen.taxCO2regiDiff4 "%cm_taxCO2_regiDiff%" == "none"
-    !! Nothing to declare
+***     Nothing to declare
 $elseIf.taxCO2regiDiff4 "%cm_taxCO2_regiDiff%" == "gdpSpread"
-    !! Nothing to declare
+***     Nothing to declare
 $elseIf.taxCO2regiDiff4 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2035"
-    !! p45_regiDiff_endYr 
+***     p45_regiDiff_endYr 
     p45_regiDiff_endYr(regi) = 2035;
-    !! p45_regiDiff_exponent
+***     p45_regiDiff_exponent
     p45_regiDiff_exponent(regi)$(regi_group("EUR_regi",regi) OR regi_group("NEU_regi",regi) OR regi_group("USA_regi",regi) OR regi_group("CAZ_regi",regi) OR
                                  regi_group("JPN_regi",regi)) = 0.5;
     p45_regiDiff_exponent(regi)$(regi_group("CHA_regi",regi) OR regi_group("MEA_regi",regi) OR regi_group("REF_regi",regi) OR 
@@ -166,15 +167,16 @@ $elseIf.taxCO2regiDiff4 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2035"
     p45_regiDiff_exponent(regi)$(regi_group("OAS_regi",regi)) = 1;
     p45_regiDiff_exponent(regi)$(regi_group("IND_regi",regi)) = 1.5;
     p45_regiDiff_exponent(regi)$(regi_group("SSA_regi",regi)) = 2;
+    display  p45_regiDiff_endYr, p45_regiDiff_exponent;
 $elseIf.taxCO2regiDiff4 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2050"
-    !! p45_regiDiff_endYr 
+***     p45_regiDiff_endYr 
     p45_regiDiff_endYr(regi)$(regi_group("EUR_regi",regi) OR regi_group("NEU_regi",regi) OR regi_group("USA_regi",regi) OR regi_group("CAZ_regi",regi) OR
                               regi_group("JPN_regi",regi)) = 2040;
     p45_regiDiff_endYr(regi)$(regi_group("CHA_regi",regi) OR regi_group("MEA_regi",regi) OR regi_group("REF_regi",regi) OR 
                               regi_group("LAM_regi",regi)) = 2050;
     p45_regiDiff_endYr(regi)$(regi_group("OAS_regi",regi) OR regi_group("IND_regi",regi) OR 
                               regi_group("SSA_regi",regi)) = 2050;
-    !! p45_regiDiff_exponent
+***     p45_regiDiff_exponent
     p45_regiDiff_exponent(regi)$(regi_group("EUR_regi",regi) OR regi_group("NEU_regi",regi) OR regi_group("USA_regi",regi) OR regi_group("CAZ_regi",regi) OR
                                  regi_group("JPN_regi",regi)) = 0.5;
     p45_regiDiff_exponent(regi)$(regi_group("CHA_regi",regi) OR regi_group("MEA_regi",regi) OR regi_group("REF_regi",regi) OR 
@@ -182,15 +184,16 @@ $elseIf.taxCO2regiDiff4 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2050"
     p45_regiDiff_exponent(regi)$(regi_group("OAS_regi",regi)) = 1;
     p45_regiDiff_exponent(regi)$(regi_group("IND_regi",regi)) = 1.5;
     p45_regiDiff_exponent(regi)$(regi_group("SSA_regi",regi)) = 2;
+    display  p45_regiDiff_endYr, p45_regiDiff_exponent;
 $elseIf.taxCO2regiDiff4 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2070"
-    !! p45_regiDiff_endYr 
+***     p45_regiDiff_endYr 
     p45_regiDiff_endYr(regi)$(regi_group("EUR_regi",regi) OR regi_group("NEU_regi",regi) OR regi_group("USA_regi",regi) OR regi_group("CAZ_regi",regi) OR
                               regi_group("JPN_regi",regi)) = 2040;
     p45_regiDiff_endYr(regi)$(regi_group("CHA_regi",regi) OR regi_group("MEA_regi",regi) OR regi_group("REF_regi",regi) OR 
                               regi_group("LAM_regi",regi)) = 2060;
     p45_regiDiff_endYr(regi)$(regi_group("OAS_regi",regi) OR regi_group("IND_regi",regi) OR 
                               regi_group("SSA_regi",regi)) = 2070;
-    !! p45_regiDiff_exponent
+***     p45_regiDiff_exponent
     p45_regiDiff_exponent(regi)$(regi_group("EUR_regi",regi) OR regi_group("NEU_regi",regi) OR regi_group("USA_regi",regi) OR regi_group("CAZ_regi",regi) OR
                                  regi_group("JPN_regi",regi)) = 0.5;
     p45_regiDiff_exponent(regi)$(regi_group("CHA_regi",regi) OR regi_group("MEA_regi",regi) OR regi_group("REF_regi",regi) OR 
@@ -198,15 +201,16 @@ $elseIf.taxCO2regiDiff4 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2070"
     p45_regiDiff_exponent(regi)$(regi_group("OAS_regi",regi)) = 1;
     p45_regiDiff_exponent(regi)$(regi_group("IND_regi",regi)) = 1.5;
     p45_regiDiff_exponent(regi)$(regi_group("SSA_regi",regi)) = 2;
+    display  p45_regiDiff_endYr, p45_regiDiff_exponent;
 $elseIf.taxCO2regiDiff4 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2100"
-    !! p45_regiDiff_endYr 
+***     p45_regiDiff_endYr 
     p45_regiDiff_endYr(regi)$(regi_group("EUR_regi",regi) OR regi_group("NEU_regi",regi) OR regi_group("USA_regi",regi) OR regi_group("CAZ_regi",regi) OR
                               regi_group("JPN_regi",regi)) = 2050;
     p45_regiDiff_endYr(regi)$(regi_group("CHA_regi",regi) OR regi_group("MEA_regi",regi) OR regi_group("REF_regi",regi) OR 
                               regi_group("LAM_regi",regi)) = 2080;
     p45_regiDiff_endYr(regi)$(regi_group("OAS_regi",regi) OR regi_group("IND_regi",regi) OR 
                               regi_group("SSA_regi",regi)) = 2100;
-    !! p45_regiDiff_exponent
+***     p45_regiDiff_exponent
     p45_regiDiff_exponent(regi)$(regi_group("EUR_regi",regi) OR regi_group("NEU_regi",regi) OR regi_group("USA_regi",regi) OR regi_group("CAZ_regi",regi) OR
                                  regi_group("JPN_regi",regi)) = 0.5;
     p45_regiDiff_exponent(regi)$(regi_group("CHA_regi",regi) OR regi_group("MEA_regi",regi) OR regi_group("REF_regi",regi) OR 
@@ -214,91 +218,107 @@ $elseIf.taxCO2regiDiff4 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2100"
     p45_regiDiff_exponent(regi)$(regi_group("OAS_regi",regi)) = 1;
     p45_regiDiff_exponent(regi)$(regi_group("IND_regi",regi)) = 1.5;
     p45_regiDiff_exponent(regi)$(regi_group("SSA_regi",regi)) = 2;
+    display  p45_regiDiff_endYr, p45_regiDiff_exponent;
 $elseIf.taxCO2regiDiff4 "%cm_taxCO2_regiDiff%" == "initialSpread10"
-    !! p45_regiDiff_endYr 
+***     p45_regiDiff_endYr 
     p45_regiDiff_endYr(regi) = 2050;
-    !! p45_regiDiff_exponent
+***     p45_regiDiff_exponent
     p45_regiDiff_exponent(regi) = 2;
+    display  p45_regiDiff_endYr, p45_regiDiff_exponent;
 $elseIf.taxCO2regiDiff4 "%cm_taxCO2_regiDiff%" == "initialSpread20"
-    !! p45_regiDiff_endYr 
+***     p45_regiDiff_endYr 
     p45_regiDiff_endYr(regi) = 2070;
-    !! p45_regiDiff_exponent
+***     p45_regiDiff_exponent
     p45_regiDiff_exponent(regi) = 2;
+    display  p45_regiDiff_endYr, p45_regiDiff_exponent;
 $else.taxCO2regiDiff4
     abort "please choose a valid scenario via cm_taxCO2_regiDiff or set cm_taxCO2_regiDiff to manual"
 $endIf.taxCO2regiDiff4
 $else.taxCO2regiDiff3
-  !! Define p45_regiDiff_endYr and p45_regiDiff_exponent based on manually provided values
+***   Define p45_regiDiff_endYr and p45_regiDiff_exponent based on manually provided values
 $ifThen.taxCO2regiDiffManual1 "%cm_taxCO2_regiDiff%" == "none"
     abort "It is not possible to provide manual values via cm_taxCO2_regiDiff_convergence if cm_taxCO2_regiDiff is set to none."
 $elseIf.taxCO2regiDiffManual1 "%cm_taxCO2_regiDiff%" == "gdpSpread"
     abort "It is not possible to provide manual values via cm_taxCO2_regiDiff_convergence if cm_taxCO2_regiDiff is set to gdpSpread."
 $else.taxCO2regiDiffManual1
-    !! Set p45_regiDiff_endYr and p45_regiDiff_exponent based on data provided by switch cm_taxCO2_regiDiff_convergence
+***     Set p45_regiDiff_endYr and p45_regiDiff_exponent based on data provided by switch cm_taxCO2_regiDiff_convergence
     loop((ext_regi,ttot)$p45_regiDiff_convergence_data(ext_regi,ttot),
       loop(regi$regi_groupExt(ext_regi,regi),
         p45_regiDiff_exponent(regi) = p45_regiDiff_convergence_data(ext_regi,ttot);
         p45_regiDiff_endYr(regi) = ttot.val;
       );
     );
+    display  p45_regiDiff_endYr, p45_regiDiff_exponent;
 $endIf.taxCO2regiDiffManual1
 $endIf.taxCO2regiDiff3
-
-display  p45_regiDiff_endYr, p45_regiDiff_exponent;
 
 *** Step III.2: Determine p45_regiDiff_startYr and p45_regiDiff_initialRatio based on cm_taxCO2_regiDiff and cm_taxCO2_regiDiff_startyearValue
 
 $ifThen.taxCO2regiDiff5 "%cm_taxCO2_regiDiff_startyearValue%" == "endogenous"
-  !! Define p45_regiDiff_startYr and p45_regiDiff_initialRatio based on cm_taxCO2_regiDiff
+***   Define p45_regiDiff_startYr and p45_regiDiff_initialRatio based on cm_taxCO2_regiDiff
 $ifThen.taxCO2regiDiff6 "%cm_taxCO2_regiDiff%" == "none"
-    !! Nothing to declare
+***     Nothing to declare
 $elseIf.taxCO2regiDiff6 "%cm_taxCO2_regiDiff%" == "gdpSpread"
-    !! Nothing to declare
+***     Nothing to declare
 $elseIf.taxCO2regiDiff6 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2035"
-    !! Choose p45_regiDiff_startYr to be the last time period before start year 
+***     Choose p45_regiDiff_startYr to be the last time period before start year 
     p45_regiDiff_startYr(regi) = smax(ttot$( ttot.val lt cm_startyear ), ttot.val);
-    !! Define p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
+***     Define p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
     p45_regiDiff_initialRatio(regi) = sum(ttot$(ttot.val eq p45_regiDiff_startYr(regi)), p45_taxCO2eq_path_gdx_ref(ttot,regi) / p45_taxCO2eq_anchor(ttot));
+    display  p45_regiDiff_startYr, p45_regiDiff_initialRatio;
 $elseIf.taxCO2regiDiff6 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2050"
-    !! Choose p45_regiDiff_startYr to be the last time period before start year 
+***     Choose p45_regiDiff_startYr to be the last time period before start year 
     p45_regiDiff_startYr(regi) = smax(ttot$( ttot.val lt cm_startyear ), ttot.val);
-    !! Define p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
+***     Define p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
     p45_regiDiff_initialRatio(regi) = sum(ttot$(ttot.val eq p45_regiDiff_startYr(regi)), p45_taxCO2eq_path_gdx_ref(ttot,regi) / p45_taxCO2eq_anchor(ttot));
+    display  p45_regiDiff_startYr, p45_regiDiff_initialRatio;
 $elseIf.taxCO2regiDiff6 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2070"
-    !! Choose p45_regiDiff_startYr to be the last time period before start year 
+***     Choose p45_regiDiff_startYr to be the last time period before start year 
     p45_regiDiff_startYr(regi) = smax(ttot$( ttot.val lt cm_startyear ), ttot.val);
-    !! Define p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
+***     Define p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
     p45_regiDiff_initialRatio(regi) = sum(ttot$(ttot.val eq p45_regiDiff_startYr(regi)), p45_taxCO2eq_path_gdx_ref(ttot,regi) / p45_taxCO2eq_anchor(ttot));
+    display  p45_regiDiff_startYr, p45_regiDiff_initialRatio;
 $elseIf.taxCO2regiDiff6 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2100"
-    !! Choose p45_regiDiff_startYr to be the last time period before start year 
+***     Choose p45_regiDiff_startYr to be the last time period before start year 
     p45_regiDiff_startYr(regi) = smax(ttot$( ttot.val lt cm_startyear ), ttot.val);
-    !! Define p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
+***     Define p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
     p45_regiDiff_initialRatio(regi) = sum(ttot$(ttot.val eq p45_regiDiff_startYr(regi)), p45_taxCO2eq_path_gdx_ref(ttot,regi) / p45_taxCO2eq_anchor(ttot));
+    display  p45_regiDiff_startYr, p45_regiDiff_initialRatio;
 $elseIf.taxCO2regiDiff6 "%cm_taxCO2_regiDiff%" == "initialSpread10"
-    !! Set p45_regiDiff_startYr
+***     Set p45_regiDiff_startYr
     p45_regiDiff_startYr(regi) = 2030;
-    !! Define p45_regiDiff_initialRatio for maximal initial spread equal to 10
-    !! Guiding principle: Apply full carbon price (ratio = 1) for regions with GDP per capita at least 50 (in 1e3 $ PPP 2017),
-    !!                    apply 10 percent of it (ratio = 0.1) for regions with GDP per capita below 5 (in 1e3 $ PPP 2017),
-    !!                    linear increase of ratio for intermediate GDP per capita values
+***     Define p45_regiDiff_initialRatio for maximal initial spread equal to 10
+***     Guiding principle: Apply full carbon price (ratio = 1) for regions with GDP per capita at least 50 (in 1e3 $ PPP 2017),
+***                        apply 10 percent of it (ratio = 0.1) for regions with GDP per capita below 5 (in 1e3 $ PPP 2017),
+***                        linear increase of ratio for intermediate GDP per capita values
     p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) le 5) = 0.1; !! SSA (about 4)
-    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 5  and p45_gdppcap_PPP("2030",regi) le 12) = 0.2; !! IND (about 11 - thus category slightly extended))
-    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 12 and p45_gdppcap_PPP("2030",regi) le 15) = 0.3; !! OAS (about 14)
-    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 15 and p45_gdppcap_PPP("2030",regi) le 20) = 0.4; !! LAM, MEA (about 17-19)
-    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 20 and p45_gdppcap_PPP("2030",regi) le 30) = 0.6; !! CHA, REF (about 24-26)
+    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 5  and p45_gdppcap_PPP("2030",regi) le 12.5) = 0.2; !! IND (about 12)
+    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 12.5 and p45_gdppcap_PPP("2030",regi) le 15) = 0.3; !! OAS (about 14)
+    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 15 and p45_gdppcap_PPP("2030",regi) le 21) = 0.4; !! LAM, MEA (about 17-20)
+    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 21 and p45_gdppcap_PPP("2030",regi) le 25) = 0.5; 
+    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 25 and p45_gdppcap_PPP("2030",regi) le 30) = 0.6; !! CHA, REF (about 26-29)
     p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 30) = 1; !! EUR, JPN, USA, CAZ, NEU (between 42 and 75 - category starts lower to include all subregions of EUR and NEU in H21)
+    display  p45_regiDiff_startYr, p45_regiDiff_initialRatio;
 $elseIf.taxCO2regiDiff6 "%cm_taxCO2_regiDiff%" == "initialSpread20"
-    !! Set p45_regiDiff_startYr
+***     Set p45_regiDiff_startYr
     p45_regiDiff_startYr(regi) = 2030;
-    !! Define p45_regiDiff_initialRatio for maximal initial spread equal to 10
-    !! Guiding principle: Apply full carbon price (ratio = 1) for regions with GDP per capita at least 50 (in 1e3 $ PPP 2017),
-    !!                    apply 5 percent of it (ration = 0.05) for regions with GDP per capita below 5 (in 1e3 $ PPP 2017)
+***     Define p45_regiDiff_initialRatio for maximal initial spread equal to 10
+***     Guiding principle: Apply full carbon price (ratio = 1) for regions with GDP per capita at least 50 (in 1e3 $ PPP 2017),
+***                        apply 5 percent of it (ration = 0.05) for regions with GDP per capita below 5 (in 1e3 $ PPP 2017)
     p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) le 5) = 0.05; !! SSA (about 4)
-    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 5  and p45_gdppcap_PPP("2030",regi) le 12) = 0.1; !! IND (about 11 - thus category slightly extended))
-    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 12 and p45_gdppcap_PPP("2030",regi) le 15) = 0.2; !! OAS (about 14)
-    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 15 and p45_gdppcap_PPP("2030",regi) le 20) = 0.3; !! LAM, MEA (about 17-19)
-    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 20 and p45_gdppcap_PPP("2030",regi) le 30) = 0.5; !! CHA, REF (about 24-26)
+    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 5  and p45_gdppcap_PPP("2030",regi) le 12.5) = 0.1; !! IND (about 12)
+    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 12.5 and p45_gdppcap_PPP("2030",regi) le 15) = 0.2; !! OAS (about 14)
+    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 15 and p45_gdppcap_PPP("2030",regi) le 21) = 0.3; !! LAM, MEA (about 17-20)
+    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 21 and p45_gdppcap_PPP("2030",regi) le 25) = 0.4;
+    p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 25 and p45_gdppcap_PPP("2030",regi) le 30) = 0.5; !! CHA, REF (about 26-29)
     p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2030",regi) gt 30) = 1; !! EUR, JPN, USA, CAZ, NEU (between 42 and 75 - category starts lower to include all subregions of EUR and NEU in H21)
+    display  p45_regiDiff_startYr, p45_regiDiff_initialRatio;
+$elseIf.taxCO2regiDiff6 "%cm_taxCO2_regiDiff%" == "manual"
+***     Choose p45_regiDiff_startYr to be the last time period before start year 
+    p45_regiDiff_startYr(regi) = smax(ttot$( ttot.val lt cm_startyear ), ttot.val);
+***     Define p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
+    p45_regiDiff_initialRatio(regi) = sum(ttot$(ttot.val eq p45_regiDiff_startYr(regi)), p45_taxCO2eq_path_gdx_ref(ttot,regi) / p45_taxCO2eq_anchor(ttot));
+    display  p45_regiDiff_startYr, p45_regiDiff_initialRatio;
 $else.taxCO2regiDiff6
     abort "please choose a valid scenario via cm_taxCO2_regiDiff or set cm_taxCO2_regiDiff to manual"
 $endIf.taxCO2regiDiff6
@@ -313,43 +333,40 @@ $elseIf.taxCO2regiDiffStartyearValue2 "%cm_taxCO2_regiDiff%" == "initialSpread20
 $elseIf.taxCO2regiDiffStartyearValue2 "%cm_taxCO2_regiDiff%" == "gdpSpread"
   abort "Regional carbon prices can only be set manually via cm_taxCO2_regiDiff_startyearValue if cm_taxCO2_regiDiff equals (ScenarioMIP2035), (ScenarioMIP2050), (ScenarioMIP2070), (ScenarioMIP2100), or (manual)."
 $else.taxCO2regiDiffStartyearValue2
-  !! Set p45_regiDiff_startYr equal to cm_startyear
+***   Set p45_regiDiff_startYr equal to cm_startyear
   p45_regiDiff_startYr(regi) = cm_startyear;
-  !! Define p45_regiDiff_startyearValue in T$/GtC based on data provided by p45_regiDiff_startyearValue_data in $/t CO2eq
+***   Define p45_regiDiff_startyearValue in T$/GtC based on data provided by p45_regiDiff_startyearValue_data in $/t CO2eq
   loop((ext_regi)$p45_regiDiff_startyearValue_data(ext_regi),
       loop(regi$regi_groupExt(ext_regi,regi),
         p45_regiDiff_startyearValue(regi) = p45_regiDiff_startyearValue_data(ext_regi) * sm_DptCO2_2_TDpGtC; 
       );
   );
-  !! p45_regiDiff_initialRatio
+***   p45_regiDiff_initialRatio
   p45_regiDiff_initialRatio(regi) = sum(ttot$(ttot.val eq cm_startyear), p45_regiDiff_startyearValue(regi) / p45_taxCO2eq_anchor(ttot));
+  display  p45_regiDiff_startYr, p45_regiDiff_initialRatio;
 $endIf.taxCO2regiDiffStartyearValue2
 $endIf.taxCO2regiDiff5
 
-display  p45_regiDiff_startYr, p45_regiDiff_initialRatio;
+
 
 *** Step III.3: Create ratio between regional carbon price and global anchor trajectory based on previously defined convergence
 
 $ifThen.taxCO2regiDiff7 "%cm_taxCO2_regiDiff%" == "none"
   p45_regiDiff_ratio(t,regi)  =  1;
 $elseIf.taxCO2regiDiff7 "%cm_taxCO2_regiDiff%" == "gdpSpread"
-  !! Set s45_regiDiff_gdpThreshold (in 1e3 $ PPP 2017)
+***   Set s45_regiDiff_gdpThreshold (in 1e3 $ PPP 2017)
   s45_regiDiff_gdpThreshold = 50;
-  !! Compute ratio between GDP per capita (in 1e3 $ PPP 2017) and s45_regiDiff_gdpThreshold, and upper bound it by 1
+***   Compute ratio between GDP per capita (in 1e3 $ PPP 2017) and s45_regiDiff_gdpThreshold, and upper bound it by 1
   p45_regiDiff_ratio(t,regi) = min(p45_gdppcap_PPP(t,regi) / 50 , 1);
 $else.taxCO2regiDiff7
-  !! Set convergence factor equal to p45_regiDiff_initialRatio before p45_regiDiff_startYr:
+***   Set convergence factor equal to p45_regiDiff_initialRatio before p45_regiDiff_startYr:
   p45_regiDiff_ratio(t,regi)$(t.val lt p45_regiDiff_startYr(regi)) = p45_regiDiff_initialRatio(regi);
-  !! Set  convergence factor equal to 1 from p45_regiDiff_endYr:
+***   Set  convergence factor equal to 1 from p45_regiDiff_endYr:
   p45_regiDiff_ratio(t,regi)$(t.val ge p45_regiDiff_endYr(regi)) = 1;
-  !! Create convergence between p45_regiDiff_startYr and p45_regiDiff_endYr:
+***   Create convergence between p45_regiDiff_startYr and p45_regiDiff_endYr:
   loop((t,regi)$((t.val ge p45_regiDiff_startYr(regi)) and (t.val lt p45_regiDiff_endYr(regi))),
-    p45_regiDiff_ratio(t,regi) = 
-     min(1,
-         max(0, 
-  	        p45_regiDiff_initialRatio(regi) + (1 - p45_regiDiff_initialRatio(regi)) * Power( (t.val - p45_regiDiff_startYr(regi)) / (p45_regiDiff_endYr(regi) - p45_regiDiff_startYr(regi)), p45_regiDiff_exponent(regi)) 
-         )				 
-     );
+    p45_regiDiff_ratio(t,regi) = p45_regiDiff_initialRatio(regi) 
+                                + (1 - p45_regiDiff_initialRatio(regi)) * rPower( (t.val - p45_regiDiff_startYr(regi)) / (p45_regiDiff_endYr(regi) - p45_regiDiff_startYr(regi)), p45_regiDiff_exponent(regi));
   );
 $endIf.taxCO2regiDiff7
 
@@ -380,16 +397,19 @@ $endIf.taxCO2regiDiffStartyearValue3
 s45_interpolation_startYr = smax(ttot$( ttot.val lt cm_startyear ), ttot.val); !! Timestep before startyear
 
 $ifThen.CO2taxInterpolation2 "%cm_taxCO2_interpolation%" == "off"
-  s45_interpolation_endYr = cm_startyear !! Interpolation in 5 years, i.e. no intermediate step 
+*** Interpolation in 5 years, i.e. no intermediate step 
+  s45_interpolation_endYr = cm_startyear;
 $elseIf.CO2taxInterpolation2 "%cm_taxCO2_interpolation%" == "one_step"
 $ifThen.CO2taxInterpolation3 "%cm_taxCO2_regiDiff_startyearValue%" == "endogenous"
-    s45_interpolation_endYr = smin(ttot$( ttot.val ge cm_startyear + 5), ttot.val); !! Interpolation in 10 years, i.e. one intermediate step (if 5 year timesteps)
+*** Interpolation in 10 years (one intermediate step if 5 year timesteps)
+    s45_interpolation_endYr = smin(ttot$( ttot.val ge (cm_startyear + 5)), ttot.val); 
 $else.CO2taxInterpolation3
     abort "Interpolation cannot be used if regional carbon prices in cm_startyear where set manually via cm_taxCO2_regiDiff_startyearValue. This would overwrite manually set values."
 $endIf.CO2taxInterpolation3
 $elseIf.CO2taxInterpolation2 "%cm_taxCO2_interpolation%" == "two_steps"
 $ifThen.CO2taxInterpolation4 "%cm_taxCO2_regiDiff_startyearValue%" == "endogenous"
-    s45_interpolation_endYr = smin(ttot$( ttot.val ge cm_startyear + 10), ttot.val); !! Interpolation in 15 years, i.e. two intermediate steps (if 5 year timesteps)
+*** Interpolation in 15 years (two intermediate steps if 5 year timesteps)
+    s45_interpolation_endYr = smin(ttot$( ttot.val ge cm_startyear + 10), ttot.val); 
 $else.CO2taxInterpolation4
     abort "Interpolation cannot be used if regional carbon prices in cm_startyear where set manually via cm_taxCO2_regiDiff_startyearValue. This would overwrite manually set values."
 $endIf.CO2taxInterpolation4

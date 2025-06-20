@@ -100,7 +100,7 @@ if((cm_iterative_target_adj eq 5) OR (cm_iterative_target_adj eq 9),
 
     !! If functionalForm is linear, re-adjust global anchor trajectory to go through the point (cm_taxCO2_historicalYr, cm_taxCO2_historical) 
 $ifThen.taxCO2functionalForm4 "%cm_taxCO2_functionalForm%" == "linear"
-    p45_taxCO2eq_anchor(ttot)$(ttot.val ge s45_taxCO2_historicalYr) = s45_taxCO2_historical 
+    p45_taxCO2eq_anchor_until2150(ttot)$(ttot.val ge s45_taxCO2_historicalYr) = s45_taxCO2_historical 
         + (sum(t2$(t2.val eq cm_peakBudgYr), p45_taxCO2eq_anchor_until2150(t2)) - s45_taxCO2_historical) / (cm_peakBudgYr - s45_taxCO2_historicalYr) !! Yearly increase of CO2 price that interpolates between cm_taxCO2_historical in cm_taxCO2_historicalYr and p45_taxCO2eq_anchor_until2150 in peak year
                                       * (ttot.val - s45_taxCO2_historicalYr) ;
     display p45_taxCO2eq_anchor_until2150;
@@ -334,53 +334,58 @@ s45_actualbudgetco2_last = s45_actualbudgetco2;
 $ifThen.taxCO2regiDiff8 "%cm_taxCO2_regiDiff_startyearValue%" == "endogenous"
   !! Re-compute p45_regiDiff_startYr based on cm_taxCO2_regiDiff
 $ifThen.taxCO2regiDiff9 "%cm_taxCO2_regiDiff%" == "none"
-    !! Nothing to declare
+***     Nothing to declare
 $elseIf.taxCO2regiDiff9 "%cm_taxCO2_regiDiff%" == "gdpSpread"
-    !! Nothing to declare
-    $elseIf.taxCO2regiDiff9 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2035"
-    !! Re-compute p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
+***     Nothing to declare
+$elseIf.taxCO2regiDiff9 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2035"
+***     Re-compute p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
     p45_regiDiff_initialRatio(regi) = sum(ttot$(ttot.val eq p45_regiDiff_startYr(regi)), p45_taxCO2eq_path_gdx_ref(ttot,regi) / p45_taxCO2eq_anchor(ttot));
+    display  p45_regiDiff_initialRatio;
 $elseIf.taxCO2regiDiff9 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2050"
-    !! Re-compute p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
+***     Re-compute p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
     p45_regiDiff_initialRatio(regi) = sum(ttot$(ttot.val eq p45_regiDiff_startYr(regi)), p45_taxCO2eq_path_gdx_ref(ttot,regi) / p45_taxCO2eq_anchor(ttot));
+    display  p45_regiDiff_initialRatio;
 $elseIf.taxCO2regiDiff9 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2070"
-    !! Re-compute p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
+***     Re-compute p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
     p45_regiDiff_initialRatio(regi) = sum(ttot$(ttot.val eq p45_regiDiff_startYr(regi)), p45_taxCO2eq_path_gdx_ref(ttot,regi) / p45_taxCO2eq_anchor(ttot));
+    display  p45_regiDiff_initialRatio;
 $elseIf.taxCO2regiDiff9 "%cm_taxCO2_regiDiff%" == "ScenarioMIP2100"
-    !! Re-compute p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
+***     Re-compute p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
     p45_regiDiff_initialRatio(regi) = sum(ttot$(ttot.val eq p45_regiDiff_startYr(regi)), p45_taxCO2eq_path_gdx_ref(ttot,regi) / p45_taxCO2eq_anchor(ttot));
+    display  p45_regiDiff_initialRatio;
 $elseIf.taxCO2regiDiff9 "%cm_taxCO2_regiDiff%" == "initialSpread10"
-    !! Nothing to re-compute as p45_regiDiff_initialRatio does not depend on p45_taxCO2eq_anchor
+***     Nothing to re-compute as p45_regiDiff_initialRatio does not depend on p45_taxCO2eq_anchor
 $elseIf.taxCO2regiDiff9 "%cm_taxCO2_regiDiff%" == "initialSpread20"
-    !! Nothing to re-compute as p45_regiDiff_initialRatio does not depend on p45_taxCO2eq_anchor
+***     Nothing to re-compute as p45_regiDiff_initialRatio does not depend on p45_taxCO2eq_anchor
+$elseIf.taxCO2regiDiff9 "%cm_taxCO2_regiDiff%" == "manual"
+***     Re-compute p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
+    p45_regiDiff_initialRatio(regi) = sum(ttot$(ttot.val eq p45_regiDiff_startYr(regi)), p45_taxCO2eq_path_gdx_ref(ttot,regi) / p45_taxCO2eq_anchor(ttot));
+    display  p45_regiDiff_initialRatio;
 $endIf.taxCO2regiDiff9
 
 $else.taxCO2regiDiff8
-  !! Re-compute p45_regiDiff_initialRatio
+***   Re-compute p45_regiDiff_initialRatio
   p45_regiDiff_initialRatio(regi) = sum(ttot$(ttot.val eq cm_startyear), p45_regiDiff_startyearValue(regi) / p45_taxCO2eq_anchor(ttot));
+  display  p45_regiDiff_initialRatio;
 $endIf.taxCO2regiDiff8
 
-display  p45_regiDiff_initialRatio;
+
 
 *** Step III.3: Create ratio between regional carbon price and global anchor trajectory based on previously defined convergence
 
 $ifThen.taxCO2regiDiff10 "%cm_taxCO2_regiDiff%" == "none"
-  !! Nothing to re-compute
-$elseIf.taxCO2regiDiff7 "%cm_taxCO2_regiDiff%" == "gdpSpread"
-  !! Nothing to re-compute
+***   Nothing to re-compute
+$elseIf.taxCO2regiDiff10 "%cm_taxCO2_regiDiff%" == "gdpSpread"
+***   Nothing to re-compute
 $else.taxCO2regiDiff10
-  !! Set convergence factor equal to p45_regiDiff_initialRatio before p45_regiDiff_startYr:
+***   Set convergence factor equal to p45_regiDiff_initialRatio before p45_regiDiff_startYr:
   p45_regiDiff_ratio(t,regi)$(t.val lt p45_regiDiff_startYr(regi)) = p45_regiDiff_initialRatio(regi);
-  !! Set  convergence factor equal to 1 from p45_regiDiff_endYr:
+***   Set  convergence factor equal to 1 from p45_regiDiff_endYr:
   p45_regiDiff_ratio(t,regi)$(t.val ge p45_regiDiff_endYr(regi)) = 1;
-  !! Create convergence between p45_regiDiff_startYr and p45_regiDiff_endYr:
+***   Create convergence between p45_regiDiff_startYr and p45_regiDiff_endYr:
   loop((t,regi)$((t.val ge p45_regiDiff_startYr(regi)) and (t.val lt p45_regiDiff_endYr(regi))),
-    p45_regiDiff_ratio(t,regi) = 
-     min(1,
-         max(0, 
-  	        p45_regiDiff_initialRatio(regi) + (1 - p45_regiDiff_initialRatio(regi)) * Power( (t.val - p45_regiDiff_startYr(regi)) / (p45_regiDiff_endYr(regi) - p45_regiDiff_startYr(regi)), p45_regiDiff_exponent(regi)) 
-         )				 
-     );
+    p45_regiDiff_ratio(t,regi) = p45_regiDiff_initialRatio(regi) 
+                                + (1 - p45_regiDiff_initialRatio(regi)) * rPower( (t.val - p45_regiDiff_startYr(regi)) / (p45_regiDiff_endYr(regi) - p45_regiDiff_startYr(regi)), p45_regiDiff_exponent(regi));
   );
 $endIf.taxCO2regiDiff10
 
