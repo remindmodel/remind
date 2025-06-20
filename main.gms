@@ -1161,9 +1161,9 @@ parameter
 parameter
   cm_startIter_EDGET          "starting iteration of EDGE-T"
 ;
-  cm_startIter_EDGET = 14;  !! def = 14, by default EDGE-T is run first in iteration 14  !! regexp = [0-9]+
+  cm_startIter_EDGET = 10;  !! def = 10, by default EDGE-T is run first in iteration 10  !! regexp = [0-9]+
 *' EDGE-T transport starting iteration of coupling
-*' def 14, EDGE-T coupling starts at 14, if you want to test whether infeasibilities after EDGE-T -> set it to 1 to check after first iteration
+*' def 10, EDGE-T coupling starts at 10, if you want to test whether infeasibilities after EDGE-T -> set it to 1 to check after first iteration
 *'
 parameter
   cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
