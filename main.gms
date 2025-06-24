@@ -1010,9 +1010,9 @@ parameter
   cm_tempConvergence       = 0.05;  !! def = 0.05
 ;
 parameter
-  cm_52_LCAquantile        "quantile of the environmetal cost distributions"
+  c_52_LCAquantile        "quantile of the environmetal cost distributions"
 ;
-  cm_52_LCAquantile         = 0.5;    !! def = 0.5 !! regex 0.1|0.2|0.3|0.4|0.5|0.6|0.7|0.8|0.9
+  c_52_LCAquantile         = 0.5;    !! def = 0.5 !! regex 0.1|0.2|0.3|0.4|0.5|0.6|0.7|0.8|0.9
 parameter
   cm_carbonprice_temperatureLimit "not-to-exceed temperature target in degree above pre-industrial [45_carbonprice = temperatureNotToExceed]"
 ;
