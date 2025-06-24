@@ -382,6 +382,7 @@ display p45_taxCO2eq_regiDiff;
 $ifThen.taxCO2regiDiffStartyearValue3 "%cm_taxCO2_regiDiff_startyearValue%" == "endogenous"
 $else.taxCO2regiDiffStartyearValue3
   p45_taxCO2eq_regiDiff(t,regi) = max(p45_taxCO2eq_regiDiff(t,regi), p45_regiDiff_startyearValue(regi));
+  display "Apply p45_regiDiff_startyearValue(regi) as lower bound for p45_taxCO2eq_regiDiff"
   display p45_taxCO2eq_regiDiff;
 $endIf.taxCO2regiDiffStartyearValue3
 

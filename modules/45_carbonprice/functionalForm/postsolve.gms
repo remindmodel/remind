@@ -398,8 +398,10 @@ display p45_taxCO2eq_regiDiff;
 
 *** Step III.5: If regional carbon prices in cm_startyear where set manually via cm_taxCO2_regiDiff_startyearValue, ensure that convergence to global anchor trajectory does not lead to lower regional carbon prices in some timesteps (this could happen if regional carbon price in cm_startyear is much higher than global anchor price)
 
-$ifThen.taxCO2regiDiffStartyearValue4 "%cm_taxCO2_regiDiff_startyearValue%" <> "endogenous"
+$ifThen.taxCO2regiDiffStartyearValue4 "%cm_taxCO2_regiDiff_startyearValue%" == "endogenous"
+$else.taxCO2regiDiffStartyearValue4
   p45_taxCO2eq_regiDiff(t,regi) = max(p45_taxCO2eq_regiDiff(t,regi), p45_regiDiff_startyearValue(regi));
+  display "Apply p45_regiDiff_startyearValue(regi) as lower bound for p45_taxCO2eq_regiDiff"
   display p45_taxCO2eq_regiDiff;
 $endIf.taxCO2regiDiffStartyearValue4
 
