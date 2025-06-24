@@ -407,14 +407,15 @@ $endIf.taxCO2regiDiffStartyearValue4
 *** Part IV (Interpolation from path_gdx_ref): Re-create interpolation based on p45_taxCO2eq_regiDiff (updated in part III above), and s45_interpolation_startYr and s45_interpolation_endYr (computed in datainput)
 ***-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-*** Step IV.2: Re-reate interpolation
-pm_taxCO2eq(ttot,regi)$(ttot.val le s45_interpolation_startYr) = p45_taxCO2eq_regiDiff(ttot,regi);
-pm_taxCO2eq(ttot,regi)$((ttot.val gt s45_interpolation_startYr) and (ttot.val lt s45_interpolation_endYr)) =
+*** Step IV.2: Re-create interpolation
+pm_taxCO2eq(ttot,regi) = p45_taxCO2eq_path_gdx_ref(ttot,regi); !! Initialize pm_taxCO2eq with p45_taxCO2eq_path_gdx_ref. Then overwrite all time steps after cm_startyear
+pm_taxCO2eq(t,regi)$(t.val le s45_interpolation_startYr) = p45_taxCO2eq_regiDiff(t,regi);
+pm_taxCO2eq(t,regi)$((t.val gt s45_interpolation_startYr) and (t.val lt s45_interpolation_endYr)) =
     sum(ttot2$(ttot2.val eq s45_interpolation_startYr), p45_taxCO2eq_path_gdx_ref(ttot2,regi)) !! value of p45_taxCO2eq_path_gdx_ref in s45_interpolation_startYr
-    * (s45_interpolation_endYr - ttot.val) / (s45_interpolation_endYr - s45_interpolation_startYr)
+    * (s45_interpolation_endYr - t.val) / (s45_interpolation_endYr - s45_interpolation_startYr)
   + sum(t2$(t2.val eq s45_interpolation_endYr), p45_taxCO2eq_regiDiff(t2,regi)) !! value of p45_taxCO2eq_regiDiff in s45_interpolation_endYr
-    * (ttot.val - s45_interpolation_startYr) / (s45_interpolation_endYr - s45_interpolation_startYr);
-pm_taxCO2eq(ttot,regi)$(ttot.val ge s45_interpolation_endYr) = p45_taxCO2eq_regiDiff(ttot,regi);
+    * (t.val - s45_interpolation_startYr) / (s45_interpolation_endYr - s45_interpolation_startYr);
+pm_taxCO2eq(t,regi)$(t.val ge s45_interpolation_endYr) = p45_taxCO2eq_regiDiff(t,regi);
 
 display pm_taxCO2eq;
 
