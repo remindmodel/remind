@@ -25,7 +25,6 @@ load(file.path(outputdir, "config.Rdata"), envir = envi)
 stopmessage <- NULL
 
 options(width = 160)
-
 absDiff <- 0.00001
 relDiff <- 0.01
 
@@ -67,6 +66,7 @@ for (i in seq_along(checkMappings)) {
     failvars <- d %>%
       checkSummations(template = mapping[[1]],
                       summationsFile = checkMappings[[i]][[2]],
+                      outputDirectory = ifelse(is.null(checkMappings[[i]][[4]]), ".", outputdir),
                       logFile = NULL,
                       dataDumpFile = checkMappings[[i]][[4]],
                       generatePlots = checkMappings[[i]][[5]],
@@ -104,9 +104,8 @@ for (i in seq_along(checkMappings)) {
   )
 }
 
-if (length(stopmessage) > 0 || length(missingVariables) > 0) {
-  warning("Project-related issues found checks for ", paste(stopmessage, collapse = ", "), " and ",
-          length(missingVariables), " missing variables found, see above.")
+if (length(stopmessage) > 0) {
+  warning("Project-related issues found checks for ", paste(stopmessage, collapse = ", "))
 }
 
 saveRDS(checks, file = file.path(outputdir, "projectSummations.rds"))
