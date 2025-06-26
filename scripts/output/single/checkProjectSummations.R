@@ -38,8 +38,14 @@ if (length(missingVariables) > 0) message("Check piamInterfaces::variableInfo('v
 
 # list(mappings, summationsFile, skipBunkers, dataDumpFile, generatePlots, timesteps)
 checkMappings <- list(
-  list(c("NAVIGATE", "ELEVATE"), "NAVIGATE", FALSE, NULL, FALSE, seq(2005, 2100, 1)),
-  list("ScenarioMIP", "ScenarioMIP", FALSE, NULL, FALSE, seq(2005, 2100, 1)),
+  list(
+    c("NAVIGATE", "ELEVATE"), "NAVIGATE", FALSE, NULL, FALSE,
+    c(seq(2005, 2060, 5), seq(2070, 2100, 10))
+  ),
+  list(
+    "ScenarioMIP", "ScenarioMIP", FALSE, NULL, FALSE,
+    c(seq(2005, 2060, 5), seq(2070, 2100, 10))
+  ),
   # temporary check until EDGE-T reports 2005 and 2010 again
   list(
     "ScenarioMIP", "ScenarioMIP", FALSE, "projectSummationsScenarioMIP.csv", TRUE,
