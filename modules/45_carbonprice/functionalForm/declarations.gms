@@ -15,9 +15,7 @@ s45_taxCO2_historical                       "historical level of CO2 tax convert
 s45_taxCO2_historicalYr                     "year of s45_taxCO2_historical"
 $endIf.taxCO2functionalForm1
 
-$ifThen.taxCO2regiDiff1 "%cm_taxCO2_regiDiff%" == "gdpSpread"
 s45_regiDiff_gdpThreshold                   "reference value for GDP per capita (1e3 $ PPP 2017) above which carbon price from global anchor trajectory is fully applied"
-$endIf.taxCO2regiDiff1
 
 s45_interpolation_startYr                   "start year of interpolation from p45_taxCO2eq_path_gdx_ref to p45_taxCO2eq_regiDiff"
 s45_interpolation_endYr                     "end year of interpolation from p45_taxCO2eq_path_gdx_ref to p45_taxCO2eq_regiDiff"
@@ -31,15 +29,11 @@ p45_taxCO2eq_path_gdx_ref(ttot,all_regi)    "CO2 tax trajectories from path_gdx_
 
 p45_gdppcap_PPP(ttot,all_regi)              "GDP per capita (1e3 $ PPP 2017)"
 p45_regiDiff_ratio(ttot,all_regi)           "ratio between global anchor and regional differentiated CO2 price trajectories"
-*** Unless cm_taxCO2_regiDiff is set to none or gdpSpread, declare parameters for initialRatio, convergence year, and convergence exponent
-$ifThen.taxCO2regiDiff2 "%cm_taxCO2_regiDiff%" == "none"
-$elseIf.taxCO2regiDiff2 "%cm_taxCO2_regiDiff%" == "gdpSpread"
-$else.taxCO2regiDiff2
 p45_regiDiff_startYr(all_regi)              "start year of convergence from regionally differentiated carbon prices to global anchor trajectory"
 p45_regiDiff_initialRatio(all_regi)         "inital ratio between global anchor and regional differentiated CO2 price trajectories"
 p45_regiDiff_endYr(all_regi)                "end year of regional differentiation, i.e. regional carbon price equal to global anchor trajectory thereafter"
 p45_regiDiff_exponent(all_regi)             "regional convergence exponent for ratio between global anchor and regional differentiated CO2 price trajectories"
-$endIf.taxCO2regiDiff2
+
 *** If cm_taxCO2_regiDiff_convergence is not set to scenario, read in data from switch
 $ifThen.taxCO2regiDiffConvergence1 "%cm_taxCO2_regiDiff_convergence%" == "scenario"
 $else.taxCO2regiDiffConvergence1
