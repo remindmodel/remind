@@ -718,14 +718,6 @@ loop(regi,
 p80_eoWeights(regi) = p80_eoWeights(regi) / sum(regi2, p80_eoWeights(regi2) );
 
 
-*** hard coded weights only to be used if due to infeasibilities internal computation of weights (above) does not work
-loop(regi,
-  if (pm_SolNonInfes(regi) ne 1,
-     loop(regi2,
-        p80_eoWeights(regi2) = p80_eoWeights_fix(regi2);
-     );
-  );
-);
 
 p80_eoEmiMarg(regi) = p80_eoWeights(regi) * (p80_eoMargPermBudg(regi) + p80_eoMargEmiCum(regi));
 p80_count=0;
