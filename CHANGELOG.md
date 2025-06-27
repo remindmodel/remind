@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#2138](https://github.com/remindmodel/remind/pull/2138)]
 
 ### added
-- 
+- ScenarioMIP settings for regional carbon price differentiation added to 45_carbonprice/functionalForm [[#2117](https://github.com/remindmodel/remind/pull/2117)]
 
 ### removed
 - **config** Two scenario config files (damagepaper) were used for the NGFS runs but are not needed anymore.
