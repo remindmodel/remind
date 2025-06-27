@@ -250,11 +250,11 @@ elseif (cm_taxCO2_regiDiff = 5) or (cm_taxCO2_regiDiff = 6) or (cm_taxCO2_regiDi
   elseif cm_taxCO2_regiDiff = 7, !! ScenarioMIP2070
     p45_regiDiff_endYr(regi)$(p45_gdppcap_PPP("2025",regi) le 15) = 2070; !! SSA, IND, OAS
     p45_regiDiff_endYr(regi)$(p45_gdppcap_PPP("2025",regi) gt 15 and p45_gdppcap_PPP("2025",regi) le 30) = 2060; !! LAM, MEA , CHA, REF
-    p45_regiDiff_endYr(regi)$(p45_gdppcap_PPP("2025",regi) gt 30) = 2040; !! EUR, JPN, USA, CAZ, NEU
+    p45_regiDiff_endYr(regi)$(p45_gdppcap_PPP("2025",regi) gt 30) = 2050; !! EUR, JPN, USA, CAZ, NEU
   elseif cm_taxCO2_regiDiff = 8, !! ScenarioMIP2100
     p45_regiDiff_endYr(regi)$(p45_gdppcap_PPP("2025",regi) le 15) = 2100; !! SSA, IND, OAS
     p45_regiDiff_endYr(regi)$(p45_gdppcap_PPP("2025",regi) gt 15 and p45_gdppcap_PPP("2025",regi) le 30) = 2080; !! LAM, MEA, CHA, REF
-    p45_regiDiff_endYr(regi)$(p45_gdppcap_PPP("2025",regi) gt 30) = 2050; !! EUR, JPN, USA, CAZ, NEU
+    p45_regiDiff_endYr(regi)$(p45_gdppcap_PPP("2025",regi) gt 30) = 2060; !! EUR, JPN, USA, CAZ, NEU
   );
 else
   abort "please choose a valid scenario via cm_taxCO2_regiDiff or set cm_taxCO2_regiDiff to manual"
