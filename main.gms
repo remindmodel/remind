@@ -566,6 +566,34 @@ parameter
   cm_expoLinear_yearStart  = 2050;   !! def = 2050
 *'
 parameter
+  cm_taxCO2_regiDiff "switch for choosing the regional carbon price differentiation scheme in 45_carbonprice/functionalForm"
+;
+  cm_taxCO2_regiDiff = 1; !! def = 1 !! regexp = 0|1|2|3|5|6|7|8|10
+*' Switch can either be set to a specific scenario (e.g. "ScenarioMIP2070") or to "manual". If specific scenario is chosen, settings can be adjusted via cm_taxCO2_regiDiff_convergence and cm_taxCO2_regiDiff_startyearValue. If set to manual, settings must be provided via cm_taxCO2_regiDiff_convergence and cm_taxCO2_regiDiff_startyearValue. 
+*' * (0): none             - No regional differentiation, i.e. globally uniform carbon pricing
+*' * (1): initialSpread10  - Maximal initial spread of carbon prices in 2030 between OECD regions and poorest region is equal to 10. Initial spread for each region determined based on GDP per capita (PPP) in 2030. By default, carbon prices converge using quadratic phase-in until 2050. Convergence scheme can be adjusted with cm_taxCO2_regiDiff_convergence.
+*' * (2): initialSpread20  - Maximal initial spread of carbon prices in 2030 between OECD regions and poorest region is equal to 20. Initial spread for each region determined based on GDP per capita (PPP) in 2030. By default, carbon prices converge using quadratic phase-in until 2070. Convergence scheme can be adjusted with cm_taxCO2_regiDiff_convergence.
+*' * (3): gdpSpread        - Regional differentiation based on GDP per capita (PPP) throughout the century. Uses current GDP per capita (PPP) of OECD countries - around 50'000 US$2017 - as threshold for application of full carbon price.
+*' * (5): ScenarioMIP2035  - Carbon price differentiation with convergence year 2035 - used in ScenarioMIP - that takes carbon prices from path_gdx_ref or cm_taxCO2_regiDiff_startyearValue as starting point and assumes regionally differentiated speed of convergence to global anchor trajectory
+*' * (6): ScenarioMIP2050  - Carbon price differentiation with convergence year 2050 - used in ScenarioMIP - that takes carbon prices from path_gdx_ref or cm_taxCO2_regiDiff_startyearValue as starting point and assumes regionally differentiated speed of convergence to global anchor trajectory
+*' * (7): ScenarioMIP2070  - Carbon price differentiation with convergence year 2070 - used in ScenarioMIP - that takes carbon prices from path_gdx_ref or cm_taxCO2_regiDiff_startyearValue as starting point and assumes regionally differentiated speed of convergence to global anchor trajectory
+*' * (8): ScenarioMIP2100  - Carbon price differentiation with convergence year 2100 - used in ScenarioMIP - that takes carbon prices from path_gdx_ref or cm_taxCO2_regiDiff_startyearValue as starting point and assumes regionally differentiated speed of convergence to global anchor trajectory
+*' * (10): manual          - Enables manual specification of regional carbon price differentiation based on cm_taxCO2_regiDiff_convergence and cm_taxCO2_regiDiff_startyearValue
+parameter
+  cm_taxCO2_interpolation "switch for interpolation between (a) carbonprice trajectory given by path_gdx_ref and (b) carbonprice trajectory defined in 45_carbonprice"
+;
+  cm_taxCO2_interpolation = 0; !! def = 0 !! regexp = 0|1|2
+*' * (0): no interpolation, i.e. (b) is used from cm_startyear onward. This must be chosen if regional carbon prices are manually set via cm_taxCO2_regiDiff_startyearValue.
+*' * (1): one step interpolation, i.e. linear interpolation within 10 years between (a) and (b). For example, if cm_startyear = 2030, it uses (a) until 2025, the average of (a) and (b) in 2030, and (b) from 2035.
+*' * (2): two steps interpolation, i.e. linear interpolation within 15 years between (a) and (b). For example, if cm_startyear = 2030, it uses (a) until 2025, weighted averages of (a) and (b) in 2030 and 2035, and (b) from 2040.
+parameter 
+  cm_taxCO2_lowerBound_path_gdx_ref "switch for choosing if carbon price trajectories from path_gdx_ref are used as lower bound"
+;
+  cm_taxCO2_lowerBound_path_gdx_ref = 1; !! def = 1 !! regexp = 0|1
+*' * (1): carbon price trajectories (pm_taxCO2eq) from path_gdx_ref are used as lower bound for pm_taxCO2eq
+*' * (0): no lower bound
+*'
+parameter
   c_macscen                 "scenario switch on whether or not to use MAC (Marginal Abatement Cost) for certain sectors not related to direct combustion of fossil fuel, e.g. fugitive emissions from old mines, forestry, agriculture and cement"
 ;
   c_macscen         = 1;               !! def = 1  !! regexp = 1|2
@@ -1733,18 +1761,6 @@ $setglobal cm_taxCO2_historical       gdx_ref    !! def = "gdx_ref"  !! regexp =
 *** (last): last time period before start year (e.g. 2025 if start year is 2030)
 *** (any timestep >= 2005 and < cm_startyear): year for which historical level of CO2 tax (cm_taxCO2_historical) is provided (e.g. 2020)
 $setglobal cm_taxCO2_historicalYr     last    !! def = "last"  !! regexp = last|is.nonnegative
-*** cm_taxCO2_regiDiff "switch for choosing the regional carbon price differentiation scheme in 45_carbonprice/functionalForm"
-*** Switch can either be set to a specific scenario (e.g. "ScenarioMIP2070") or to "manual". If specific scenario is chosen, settings can be adjusted via cm_taxCO2_regiDiff_convergence and cm_taxCO2_regiDiff_startyearValue. If set to manual, settings must be provided via cm_taxCO2_regiDiff_convergence and cm_taxCO2_regiDiff_startyearValue. 
-*** (none): No regional differentiation, i.e. globally uniform carbon pricing
-*** (ScenarioMIP2035): Carbon price differentiation with convergence year 2035 - used in ScenarioMIP - that takes carbon prices from path_gdx_ref or cm_taxCO2_regiDiff_startyearValue as starting point and assumes regionally differentiated speed of convergence to global anchor trajectory
-*** (ScenarioMIP2050): Carbon price differentiation with convergence year 2050 - used in ScenarioMIP - that takes carbon prices from path_gdx_ref or cm_taxCO2_regiDiff_startyearValue as starting point and assumes regionally differentiated speed of convergence to global anchor trajectory
-*** (ScenarioMIP2070): Carbon price differentiation with convergence year 2070 - used in ScenarioMIP - that takes carbon prices from path_gdx_ref or cm_taxCO2_regiDiff_startyearValue as starting point and assumes regionally differentiated speed of convergence to global anchor trajectory
-*** (ScenarioMIP2100): Carbon price differentiation with convergence year 2100 - used in ScenarioMIP - that takes carbon prices from path_gdx_ref or cm_taxCO2_regiDiff_startyearValue as starting point and assumes regionally differentiated speed of convergence to global anchor trajectory
-*** (initialSpread10): Maximal initial spread of carbon prices in 2030 between OECD regions and poorest region is equal to 10. Initial spread for each region determined based on GDP per capita (PPP) in 2030. By default, carbon prices converge using quadratic phase-in until 2050. Convergence scheme can be adjusted with cm_taxCO2_regiDiff_convergence.
-*** (initialSpread20): Maximal initial spread of carbon prices in 2030 between OECD regions and poorest region is equal to 20. Initial spread for each region determined based on GDP per capita (PPP) in 2030. By default, carbon prices converge using quadratic phase-in until 2070. Convergence scheme can be adjusted with cm_taxCO2_regiDiff_convergence.
-*** (gdpSpread):       Regional differentiation based on GDP per capita (PPP) throughout the century. Uses current GDP per capita (PPP) of OECD countries - around 50'000 US$2017 - as threshold for application of full carbon price.
-*** (manual):          Enables manual specification of regional carbon price differentiation based on cm_taxCO2_regiDiff_convergence and cm_taxCO2_regiDiff_startyearValue
-$setglobal cm_taxCO2_regiDiff         initialSpread10    !! def = "initialSpread10"  !! regexp = none|ScenarioMIP2035|ScenarioMIP2050|ScenarioMIP2070|ScenarioMIP2100|initialSpread10|initialSpread20|gdpSpread|manual
 *** cm_taxCO2_regiDiff_convergence "switch for setting regional convergence type and convergence year in 45_carbonprice/functionalForm"
 *** Regional convergence type is determined by the exponent (linear = 1, quadratic = 2, etc.) for interpolating between the initial regional carbon price (RATIO = initial regional carbon price / global anchor carbon price) and the global anchor carbon price (RATIO = 1)
 *** Regional convergence year defines the year by which the global anchor carbon price (RATIO = 1) is reached
@@ -1760,16 +1776,6 @@ $setglobal cm_taxCO2_regiDiff_convergence   scenario    !! def = scenario
 *** For example, setting the switch to GLO 50, SSA 5, CHA 40 means that in cm_startyear, SSA has carbon price of 5$/tCO2,  CHA has carbon price of 40$/tCO2, and all other regions have carbon price of 50$/tCO2.
 *** Important note: If regional carbon prices in the start year are manually set, the regional values are used as lower bounds for pm_taxCO2eq
 $setglobal cm_taxCO2_regiDiff_startyearValue endogenous !! def = "endogenous"
-*** cm_co2_tax_interpolation "switch for interpolation between (a) carbonprice trajectory given by path_gdx_ref and (b) carbonprice trajectory defined in 45_carbonprice"
-*** (off): no interpolation, i.e. (b) is used from cm_startyear onward. This must be chosen if regional carbon prices are manually set via cm_taxCO2_regiDiff_startyearValue.
-*** (one_step): linear interpolation within 10 years between (a) and (b). For example, if cm_startyear = 2030, it uses (a) until 2025, the average of (a) and (b) in 2030, and (b) from 2035.
-*** (two_steps): linear interpolation within 15 years between (a) and (b). For example, if cm_startyear = 2030, it uses (a) until 2025, weighted averages of (a) and (b) in 2030 and 2035, and (b) from 2040.
-$setglobal cm_taxCO2_interpolation  off    !! regexp = off|one_step|two_steps
-*** cm_taxCO2_lowerBound_path_gdx_ref "switch for choosing if carbon price trajectories from path_gdx_ref are used as lower bound"
-*** (on): carbon price trajectories (pm_taxCO2eq) from path_gdx_ref are used as lower bound for pm_taxCO2eq
-*** (off): no lower bound
-$setglobal cm_taxCO2_lowerBound_path_gdx_ref  on    !! def = "on" !! regexp = on|off
-
 
 *** cm_ind_energy_limit Switch for setting upper limits on industry energy
 *** efficiency improvements.  See ./modules/37_subsectors/datainput.gms for
