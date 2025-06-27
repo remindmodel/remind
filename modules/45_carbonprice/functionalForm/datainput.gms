@@ -323,14 +323,16 @@ s45_interpolation_startYr = smax(ttot$( ttot.val lt cm_startyear ), ttot.val); !
 
 if( cm_taxCO2_interpolation = 0, !! Interpolation in 5 years, i.e. no intermediate step 
   s45_interpolation_endYr = cm_startyear;
+elseif (cm_taxCO2_interpolation <> 0),
 $ifThen.CO2taxInterpolation1 "%cm_taxCO2_regiDiff_startyearValue%" == "endogenous"
-elseif cm_taxCO2_interpolation= 1, !! Interpolation in 10 years (one intermediate step if 5 year timesteps)
-  s45_interpolation_endYr = smin(ttot$( ttot.val ge (cm_startyear + 5)), ttot.val); 
-elseif cm_taxCO2_interpolation= 2, !! Interpolation in 15 years (two intermediate steps if 5 year timesteps)
-  s45_interpolation_endYr = smin(ttot$( ttot.val ge cm_startyear + 10), ttot.val); 
 $else.CO2taxInterpolation1
   abort "Interpolation cannot be used if regional carbon prices in cm_startyear where set manually via cm_taxCO2_regiDiff_startyearValue. This would overwrite manually set values."
 $endIf.CO2taxInterpolation1
+  if(cm_taxCO2_interpolation= 1, !! Interpolation in 10 years (one intermediate step if 5 year timesteps)
+    s45_interpolation_endYr = smin(ttot$( ttot.val ge (cm_startyear + 5)), ttot.val); 
+  elseif cm_taxCO2_interpolation= 2, !! Interpolation in 15 years (two intermediate steps if 5 year timesteps)
+    s45_interpolation_endYr = smin(ttot$( ttot.val ge cm_startyear + 10), ttot.val); 
+  );
 );
 
 display s45_interpolation_startYr, s45_interpolation_endYr;
