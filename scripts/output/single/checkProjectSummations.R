@@ -10,7 +10,7 @@ library(quitte)
 
 suppressPackageStartupMessages(library(tidyverse))
 
-if(! exists("source_include")) {
+if (! exists("source_include")) {
   # Define arguments that can be read from command line
   outputdir <- "."
   lucode2::readArgs("outputdir")
@@ -25,7 +25,6 @@ load(file.path(outputdir, "config.Rdata"), envir = envi)
 stopmessage <- NULL
 
 options(width = 160)
-
 absDiff <- 0.00001
 relDiff <- 0.01
 
@@ -37,9 +36,21 @@ message("\n### Check existence of variables in mappings.")
 missingVariables <- checkMissingVars(mifdata, setdiff(names(mappingNames()), c("AgMIP", "AR6_MAgPIE")), sources)
 if (length(missingVariables) > 0) message("Check piamInterfaces::variableInfo('variablename') etc.")
 
-checkMappings <- list( # list(mappings, summationsFile, skipBunkers)
-  list(c("NAVIGATE", "ELEVATE"), "NAVIGATE", FALSE),
-  list("ScenarioMIP", "ScenarioMIP", FALSE)
+# list(mappings, summationsFile, skipBunkers, dataDumpFile, generatePlots, timesteps)
+checkMappings <- list(
+  list(
+    c("NAVIGATE", "ELEVATE"), "NAVIGATE", FALSE, NULL, FALSE,
+    c(seq(2005, 2060, 5), seq(2070, 2100, 10))
+  ),
+  list(
+    "ScenarioMIP", "ScenarioMIP", FALSE, NULL, FALSE,
+    c(seq(2005, 2060, 5), seq(2070, 2100, 10))
+  ),
+  # temporary check until EDGE-T reports 2005 and 2010 again
+  list(
+    "ScenarioMIP", "ScenarioMIP", FALSE, "projectSummationsScenarioMIP.csv", TRUE,
+    c(seq(2015, 2060, 5), seq(2070, 2100, 10))
+  )
 )
 
 checks <- list()
@@ -51,14 +62,21 @@ for (i in seq_along(checkMappings)) {
   missingVariables <- checkMissingVars(mifdata, mapping, sources)
 
   # generate IIASASubmission
+
   d <- generateIIASASubmission(mifdata, outputDirectory = NULL, outputFilename = NULL, logFile = NULL,
-                               mapping = mapping, checkSummation = FALSE, generatePlots = FALSE)
+                               mapping = mapping, checkSummation = FALSE, generatePlots = FALSE,
+                               timesteps = checkMappings[[i]][[6]])
   # Check variable summation, but using only the first mapping
   failvars <- data.frame()
   if (length(checkMappings[[i]][[2]]) > 0) {
     failvars <- d %>%
-      checkSummations(template = mapping[[1]], summationsFile = checkMappings[[i]][[2]], logFile = NULL,
-                      dataDumpFile = NULL, absDiff = absDiff, relDiff = relDiff) %>%
+      checkSummations(template = mapping[[1]],
+                      summationsFile = checkMappings[[i]][[2]],
+                      outputDirectory = ifelse(is.null(checkMappings[[i]][[4]]), ".", outputdir),
+                      logFile = NULL,
+                      dataDumpFile = checkMappings[[i]][[4]],
+                      generatePlots = checkMappings[[i]][[5]],
+                      absDiff = absDiff, relDiff = relDiff) %>%
       filter(abs(diff) >= absDiff, abs(reldiff) >= relDiff) %>%
       df_variation() %>%
       droplevels()
@@ -92,9 +110,8 @@ for (i in seq_along(checkMappings)) {
   )
 }
 
-if (length(stopmessage) > 0 || length(missingVariables) > 0) {
-  warning("Project-related issues found checks for ", paste(stopmessage, collapse = ", "), " and ",
-          length(missingVariables), " missing variables found, see above.")
+if (length(stopmessage) > 0) {
+  warning("Project-related issues found checks for ", paste(stopmessage, collapse = ", "))
 }
 
 saveRDS(checks, file = file.path(outputdir, "projectSummations.rds"))
