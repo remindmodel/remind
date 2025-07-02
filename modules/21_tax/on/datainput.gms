@@ -45,6 +45,15 @@ $offdelim
   /
 ;
 
+Parameter f21_sub_convergence_rollback(tall,all_regi,emi_sectors,all_enty) "Subsidy convergence level for specific regions, year and final energy type in rollback scenario"
+  /
+$ondelim
+$include "./modules/21_tax/on/input/f21_sub_convergence_rollback.cs4r"
+$offdelim
+  /
+;
+
+
 Parameter f21_max_fe_sub(tall,all_regi,all_enty) "maximum final energy subsidy levels (in $/Gj) from REMIND version prior to rev. 5429"
   /
 $ondelim
@@ -153,7 +162,6 @@ pm_tau_pe_tax(ttot,regi,all_enty) = 0;
 
 *** by default CES tax is zero
 pm_tau_ces_tax(ttot,regi,all_in) = 0;
-
 
 *** Read in bioenergy emission factor that is used to compute the emission-
 *** factor-based bioenergy tax and convert from kgCO2 per GJ to GtC per TWa.

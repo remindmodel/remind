@@ -17,8 +17,7 @@ gdx <- file.path(outputdir, gdx_name)
 
 dir_name <- tail(strsplit(outputdir, split = "/")[[1]], n = 1)
 
-remind2::nashAnalysis(
+remind2::nashConvergenceReport(
   gdx = gdx,
-  outputDir = outputdir,
-  outputFile = paste0("NashAnalysis_", dir_name, ".html")
+  outputDir = outputdir
 )

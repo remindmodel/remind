@@ -17,16 +17,6 @@ q35_demFeTrans(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2
   sum(fe2es(entyFe,esty,teEs)$(NOT (es_lo35(esty))), vm_demFeForEs(ttot,regi,entyFe,esty,teEs))$(sameas(emiMkt,"ES"))+
   sum(fe2es(entyFe,esty,teEs)$es_lo35(esty), vm_demFeForEs(ttot,regi,entyFe,esty,teEs))$(sameas(emiMkt,"other"));
 
-
-$IFTHEN.transpGDPscale "%cm_transpGDPscale%" == "on" 
-*' Calculating dampening factor to align edge-t non-energy transportation costs with historical GDP data
-q35_transGDPshare(ttot,regi)$(ttot.val ge cm_startyear)..
-  vm_transpGDPscale(ttot,regi) * (sum(fe2es(entyFe,esty,teEs)$entyFeTrans(entyFe), pm_esCapCost("2005",regi,teEs) * vm_prodEs("2005",regi,entyFe,esty,teEs)))
-  =e=
-  (p35_transportGDPshare("2005",regi)*pm_gdp("2005",regi))
-;
-$ENDIF.transpGDPscale
-
 *' @stop
 
 *** EOF ./modules/35_transport/edge_esm/equations.gms
