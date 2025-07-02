@@ -757,7 +757,7 @@ q_emiMacSector(t,regi,emiMacSector(enty))..
 
     ( v_macBase(t,regi,enty)
     * sum(emiMac2mac(enty,enty2),
-        1 - (pm_macSwitch(enty) * pm_macAbatLev(t,regi,enty2))
+        1 - (pm_macSwitch(t,enty) * pm_macAbatLev(t,regi,enty2))
       )
     )$( NOT sameas(enty,"co2cement_process") )
 ***   cement process emissions are accounted for in the industry module
