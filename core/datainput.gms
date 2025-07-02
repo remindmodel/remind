@@ -1386,8 +1386,8 @@ p_datacs(regi,"peoil") = 0;   !! RP: 0 turn off the explicit calculation of non-
 if(c_macscen eq 2,
   pm_macSwitch(ttot,regi,emiMacSector)  = 0;
 );
-  pm_macSwitch(ttot,"ch4wstl") = 1;
-  pm_macSwitch(ttot,"ch4wsts") = 1;
+  pm_macSwitch(ttot,regi,"ch4wstl") = 1;
+  pm_macSwitch(ttot,regi,"ch4wsts") = 1;
 if(c_macscen eq 1,
   pm_macSwitch(ttot,regi,emiMacSector) = 1;
 );
