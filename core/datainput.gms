@@ -1384,18 +1384,18 @@ p_datacs(regi,"peoil") = 0;   !! RP: 0 turn off the explicit calculation of non-
 ***                                ESM  MAC data
 ***------------------------------------------------------------------------------------
 if(c_macscen eq 2,
-  pm_macSwitch(ttot,emiMacSector)  = 0;
+  pm_macSwitch(ttot,regi,emiMacSector)  = 0;
 );
   pm_macSwitch(ttot,"ch4wstl") = 1;
   pm_macSwitch(ttot,"ch4wsts") = 1;
 if(c_macscen eq 1,
-  pm_macSwitch(ttot,emiMacSector) = 1;
+  pm_macSwitch(ttot,regi,emiMacSector) = 1;
 );
 
 *** for NDC and NPi switch off landuse MACs
-$if %carbonprice% == "off"      pm_macSwitch(ttot,emiMacMagpie) = 0;
-$if %carbonprice% == "NDC"      pm_macSwitch(ttot,emiMacMagpie) = 0;
-$if %carbonprice% == "NPi"      pm_macSwitch(ttot,emiMacMagpie) = 0;
+$if %carbonprice% == "off"      pm_macSwitch(ttot,regi,emiMacMagpie) = 0;
+$if %carbonprice% == "NDC"      pm_macSwitch(ttot,regi,emiMacMagpie) = 0;
+$if %carbonprice% == "NPi"      pm_macSwitch(ttot,regi,emiMacMagpie) = 0;
 
 *** Load historical carbon prices defined in $/t CO2, need to be rescaled to right unit
 pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = 0;
@@ -1409,17 +1409,23 @@ pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = fm_taxCO2eqHist(ttot,regi) * sm_DptC
 
 *DK* LU emissions are abated in MAgPIE in coupling mode
 *** An alternative to the approach below could be to introduce a new value for c_macswitch that only deactivates the LU MACs
-$if %cm_MAgPIE_coupling% == "on"  pm_macSwitch(ttot,enty)$emiMacMagpie(enty) = 0;
+$if %cm_MAgPIE_coupling% == "on"  pm_macSwitch(ttot,regi,enty)$emiMacMagpie(enty) = 0;
 *** As long as there is hardly any CO2 LUC reduction in MAgPIE we dont need MACs in REMIND
-$if %cm_MAgPIE_coupling% == "off"  pm_macSwitch(ttot,"co2luc") = 0;
+$if %cm_MAgPIE_coupling% == "off"  pm_macSwitch(ttot,regi,"co2luc") = 0;
 *** The tiny fraction n2ofertsom of total land use n2o can get slightly negative in some cases. Ignore MAC for n2ofertsom by default.
-$if %cm_MAgPIE_coupling% == "off"  pm_macSwitch(ttot,"n2ofertsom") = 0;
+$if %cm_MAgPIE_coupling% == "off"  pm_macSwitch(ttot,regi,"n2ofertsom") = 0;
+
+* GA: Deactivate MAC abatement for historical periods, assuming no abatement
+* happens until 2030. 
+pm_macSwitch(ttot,regi,enty)$(ttot.val le 2025) = 0;
+
 
 * GA: Use long term (2050) pm_macSwitch to set p_macCostSwitch, as some MACCs
 * are turned off in the short term 
-p_macCostSwitch(enty)=pm_macSwitch("2050",enty);
-pm_macSwitch(ttot,"co2cement_process") =0 ;
+p_macCostSwitch(enty)=pm_macSwitch("2050","USA",enty);
+pm_macSwitch(ttot,regi,"co2cement_process") =0 ;
 p_macCostSwitch("co2cement_process") =0 ;
+
 
 *** load econometric emission data
 *** read in p3 and p4
