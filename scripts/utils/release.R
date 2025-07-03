@@ -77,7 +77,7 @@ release <- function(newVersion) {
 
   message("If not already done please perform the first step manually now. Please perform step two in any case:\n",
           "1. CHANGELOG.md: sort lines in each category: input data/calibration, changed, added, removed, fixed; remove empty categories\n",
-          "In another terminal:\n"
+          "In another terminal:\n",
           "2. git add -p\n",
           "3. git commit -m 'your commit message'",
           "4. git push yourFork yourReleaseCandidateBranch",
