@@ -35,14 +35,8 @@ p30_datapebio(regi,"pebios","5","maxprod",ttot)$(ttot.val ge 2005) = p30_bio1stg
 p30_datapebio(regi,"pebioil","5","maxprod",ttot)$(ttot.val ge 2005) = p30_bio1stgen(ttot,regi,"pebioil") * sm_EJ_2_TWa / 1000;
 display p30_datapebio;
 
-*DK* Read prices and costs for 2nd gen. purpose grown bioenergy from MAgPIE (calculated with demnad from previous Remind run)
 p30_pebiolc_pricemag(ttot,regi) = 0;
-$if %cm_MAgPIE_coupling% == "on"  table p30_pebiolc_pricemag_coupling(tall,all_regi)     "prices and costs for 2nd gen. purpose grown bioenergy from MAgPIE"
-$if %cm_MAgPIE_coupling% == "on"  $ondelim
-$if %cm_MAgPIE_coupling% == "on"  $include "./modules/30_biomass/magpie/input/p30_pebiolc_pricemag_coupling.csv";
-$if %cm_MAgPIE_coupling% == "on"  $offdelim
-$if %cm_MAgPIE_coupling% == "on"  ;
-$if %cm_MAgPIE_coupling% == "on"  p30_pebiolc_pricemag(ttot,regi) = p30_pebiolc_pricemag_coupling(ttot,regi);
+*** In coupled runs p30_pebiolc_pricemag gets updated in presolve since it changes between Nash iterations
 
 *** Read production of ligno-cellulosic purpose grown bioenergy from look-up table (used to calculate bioenergy costs in standalone runs and substract them from budget equation)
 parameter p30_biolcProductionLookup(tall,all_regi,all_LU_emi_scen,all_rcp_scen)  "regional production of pebiolc purpose grown"
@@ -55,15 +49,7 @@ $offdelim
 
 *** select pebiolc productoion from look-up table according to SSP and RCP
 pm_pebiolc_demandmag(ttot,regi) = p30_biolcProductionLookup(ttot,regi,"%cm_LU_emi_scen%","%cm_rcp_scen%");
-
-*DK* In coupled runs overwrite pebiolc production from look-up table with actual MAgPIE values.
-*DK* Read production of 2nd gen. purpose grown bioenergy from MAgPIE (given to MAgPIE from previous Remind run)
-$if %cm_MAgPIE_coupling% == "on"  table pm_pebiolc_demandmag_coupling(tall,all_regi)     "production of 2nd gen. purpose grown bioenergy from MAgPIE"
-$if %cm_MAgPIE_coupling% == "on"  $ondelim
-$if %cm_MAgPIE_coupling% == "on"  $include "./modules/30_biomass/magpie/input/pm_pebiolc_demandmag_coupling.csv";
-$if %cm_MAgPIE_coupling% == "on"  $offdelim
-$if %cm_MAgPIE_coupling% == "on"  ;
-$if %cm_MAgPIE_coupling% == "on"  pm_pebiolc_demandmag(ttot,regi) = pm_pebiolc_demandmag_coupling(ttot,regi);
+*** In coupled runs pm_pebiolc_demandmag gets updated in presolve since it changes between Nash iterations
 
 *** Read parameters for bioenergy supply curve
 parameter f30_bioen_price(tall,all_regi,all_LU_emi_scen,all_rcp_scen,all_charScen)  "time dependent fit coefficients for bioenergy price formula"
