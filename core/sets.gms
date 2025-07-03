@@ -110,6 +110,8 @@ all_APscen     "all air pollutant scenarios"
     MFR_Transports
     GlobalEURO6
     SLCF_building_transport
+    SMIPbySSP
+    SMIPVLLO
 /
 
 all_LU_emi_scen  "all emission baselines for CH4 and N2O land use emissions from MAgPIE"
