@@ -241,28 +241,28 @@ $endif.no_calibration
 
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
-pm_macSwitch(emiInd37)      = NO;
+pm_macSwitch(ttot,regi,emiInd37)      = NO;
 
 *** turn on CCS for industry emissions
 if (cm_IndCCSscen eq 1,
   if (cm_CCS_cement eq 1,
     emiMacSector("co2cement") = YES;
-    pm_macSwitch("co2cement") = YES;
-    pm_macSwitch("co2cement_process") = YES;
+    pm_macSwitch(ttot,regi,"co2cement") = YES;
+    pm_macSwitch(ttot,regi,"co2cement_process") = YES;
     emiMac2mac("co2cement","co2cement") = YES;
     emiMac2mac("co2cement_process","co2cement") = YES;
   );
 
   if (cm_CCS_chemicals eq 1,
     emiMacSector("co2chemicals") = YES;
-    pm_macSwitch("co2chemicals") = YES;
+    pm_macSwitch(ttot,regi,"co2chemicals") = YES;
     emiMac2mac("co2chemicals","co2chemicals") = YES;
   );
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
   if (cm_CCS_steel eq 1,
     emiMacSector("co2steel") = YES;
-    pm_macSwitch("co2steel") = YES;
+    pm_macSwitch(ttot,regi,"co2steel") = YES;
     emiMac2mac("co2steel","co2steel") = YES;
   );
 $endif.cm_subsec_model_steel
@@ -270,7 +270,7 @@ $endif.cm_subsec_model_steel
 
 *** CCS for other industry is off in any case
 emiMacSector("co2otherInd") = NO;
-pm_macSwitch("co2otherInd") = NO;
+pm_macSwitch(ttot,regi,"co2otherInd") = NO;
 emiMac2mac("co2otherInd","co2otherInd") = NO;
 
 *** data on maximum secondary steel production
