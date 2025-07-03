@@ -42,6 +42,11 @@ release <- function(newVersion) {
     gsub(pattern = oldVersion, replacement = newVersion) |>
     writeLines("README.md")
   
+  # Update version in default.cfg
+  readLines("config/default.cfg") |>
+    sub(pattern = 'cfg\\$model_version <- .*$', replacement = paste0('cfg$model_version <- "', newVersion, '"')) |>
+    writeLines("config/default.cfg")
+  
   # Create documentation
   message("creating documentation using goxygen...")
   goxygen::goxygen(unitPattern = c("\\[","\\]"), 

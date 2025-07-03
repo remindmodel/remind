@@ -192,13 +192,16 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_co2_tax_spread" = "Use cm_taxCO2_regiDiff instead, see https://github.com/remindmodel/remind/pull/1874",
        "cm_co2_tax_hist" = "Rename to cm_taxCO2_historical, see https://github.com/remindmodel/remind/pull/1874",
        "cm_year_co2_tax_hist" = "Rename to cm_taxCO2_historicalYr, see https://github.com/remindmodel/remind/pull/1874",
-       "cm_CO2priceRegConvEndYr" = "Use cm_taxCO2_regiDiff_endYr instead, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_CO2priceRegConvEndYr" = "Specify settings instead via cm_taxCO2_regiDiff_convergence, see https://github.com/remindmodel/remind/pull/2117",
+       "cm_taxCO2_regiDiff_endYr" = "Specify settings instead via cm_taxCO2_regiDiff_convergence, see https://github.com/remindmodel/remind/pull/2117",
+       "cm_taxCO2_startYearValue" = "Specify settings instead via cm_taxCO2_regiDiff_startyearValue, see https://github.com/remindmodel/remind/pull/2117",
        "cm_year_co2_tax_hist" = "Use cm_taxCO2_historicalYr instead, see https://github.com/remindmodel/remind/pull/1874",
        "cm_co2_tax_hist" = "Use cm_taxCO2_historical instead, see https://github.com/remindmodel/remind/pull/1874",
        "cm_taxCO2inc_after_peakBudgYr" = "Use cm_taxCO2_IncAfterPeakBudgYr instead, see https://github.com/remindmodel/remind/pull/1874",
        "cm_GDPscen" = "Use cm_GDPpopScen instead, see https://github.com/remindmodel/remind/pull/1973",
        "cm_POPscen" = "Use cm_GDPpopScen instead, see https://github.com/remindmodel/remind/pull/1973",
        "cm_DiscRateScen" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/2001",
+       "cm_transpGDPscale" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/2092",
      NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       msg <- paste0("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])

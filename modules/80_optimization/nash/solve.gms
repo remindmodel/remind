@@ -58,7 +58,7 @@ $endif.repeatNonOpt
     p80_repy_thisSolitr(all_regi,"resusd")    = hybrid.resusd;
     p80_repy_thisSolitr(all_regi,"objval")    = hybrid.objval;
     if (p80_repy_thisSolitr(all_regi,"modelstat") eq 2,
-      p80_repyLastOptim(all_regi,"objval") = p80_repy(all_regi,"objval");
+      p80_repyLastOptim(all_regi,"objval") = p80_repy_thisSolitr(all_regi,"objval");
     );
   );
 
@@ -86,10 +86,6 @@ until card(p80_handle) = 0;
 );
 
 regi(all_regi) = YES;
-
-
-display p80_repy_thisSolitr;
-display p80_repy;
 
 *** internal nash helper paramter:
 pm_SolNonInfes(regi) = 0;

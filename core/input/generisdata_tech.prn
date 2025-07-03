@@ -85,13 +85,13 @@ flexibility                     16                       16
 *** variable relewable energy
 +                windon      windoff         spv        csp
 inco0              2400         5000        5160       7224
-floorcost           200         1000          50       1092
+floorcost           500          750          50       1092
 constrTme             1            4           1          3
 eta                1.00         1.00        1.00       1.00
 omf                0.02         0.03        0.02      0.025
 lifetime             25           25          30         30
 ccap0              0.06       0.0007       0.005     0.0002
-learn              0.12         0.12        0.25      0.103
+learn              0.17         0.16        0.25      0.103
 luse                                        0.09      0.021
 flexibility          -1           -1         -1          -1
 
@@ -160,7 +160,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 *** industry processes
 +                     bf         bof         idr         eaf
 tech_stat
-inco0              400.0       200.0       350.0       350.0
+inco0              400.0       200.0       420.0       350.0
 omf                 0.06        0.06        0.06        0.06
 lifetime              20          20          20          20
 
@@ -303,11 +303,10 @@ bf and bof:
     --> inco0 average is 600; distribution among bf and bof does not affect model, measurement of bf in tPI is negligible
 
 dri-eaf:
-    IEA I&S Fig 1.3: Route combined 53-136 $/t CAPEX (8 % discount, 25 yr lifetime -> discFac = 0.09), 48-125 $/t OPEX
-    Figure shows 85 / 75 --> inco0 approx 900
     Agora KSV-Rechner: 40 € OPEX
-    Woertler 2013 Exhibit 8: Components (no C&R) summed CAPEX 414 € (230 BF, 184 EAF) --> approx 475 $
-    --> Rough average inco0 is 700
+    DIW, Revisiting Investment Costs for Green Steel: Capital Expenditures, Firm Level Impacts, and Policy Implications (2024)
+    Table 1: Average summed CAPEX of 751 EUR2022/t across 8 listed projects, take more conservative estimate of 800 EUR2022/t --> 770 $/t
+    --> Rough average inco0 is 770
 
 scrap-eaf:
     IEA I&S Fig 1.3: Route combined 34-58 $/t CAPEX (8 % discount, 25 yr lifetime -> discFac = 0.09), 31-54 $/t OPEX
