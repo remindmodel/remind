@@ -14,6 +14,7 @@
 *' @authors David Klein
 
 *###################### R SECTION START (MODULETYPES) ##########################
+$Ifi "%biomass%" == "magpie" $include "./modules/30_biomass/magpie/realization.gms"
 $Ifi "%biomass%" == "magpie_40" $include "./modules/30_biomass/magpie_40/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
 *** EOF ./modules/30_biomass/module.gms
