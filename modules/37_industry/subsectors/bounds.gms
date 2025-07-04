@@ -180,8 +180,9 @@ vm_outflowPrc.up(t,regi,"mechRe","standard") = 0.; !! Due to downgraded recyclin
 
 
 $ifthen.PlasticMFA "%cm_PlasticMFA%" == "on"
+!! not all plastic is suitable for mechanical recycling, so this bound exists apart from the bound imposed 
+!! by total availability of plastic scrap
 vm_outflowPrc.up(t,regi,"mechRe","standard") = p37_recycleMech(t,regi);
-vm_outflowPrc.up(t,"SSA","mechRe","standard") = p37_recycleMech(t,"SSA") * 0.2;
 $endif.PlasticMFA
 
 !!vm_outflowPrc.up(t,regi,"stCrChemRe","standard") = 0.01;
@@ -190,7 +191,6 @@ v37_matFlow.up(t,regi,"plasticWaste") = 0.; !! Due to the limitations of the col
 
 $ifthen.PlasticMFA "%cm_PlasticMFA%" == "on"
 v37_matFlow.up(t,regi,"plasticWaste") = p37_plastcWaste(t,regi); 
-v37_matFlow.up(t,"SSA","plasticWaste") = p37_plastcWaste(t,"SSA") * 0.2;
 $endif.PlasticMFA
 
 *** EOF ./modules/37_industry/subsectors/bounds.gms

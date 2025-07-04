@@ -355,11 +355,13 @@ idrcc:
     make slightly cheaper than bfcc as there is only one point source
 
 chemOld chemElec and chemH2:
-
+    arbitraray value, as long as it's the same between all three. 
+    500 is commonly used in other tech
 
 stCrNg and stCrLiq:
 
-    Note: As a general principle, carbon-containing products are included in the calculation, and hydrogen is used directly as an energy input.
+    Note: Steam crackers create a range of different products.
+    As a general principle, all carbon-containing products are included in the calculation as a reference for specific CAPEX etc, and produced hydrogen is used directly as an energy input.
 
     for Naphtha Steam Cracking
         CAPEX ~ 2057 $/t Ethylene
@@ -404,6 +406,7 @@ fertProd   fertProdH2:
 
 amToFinal    meToFinal:   
 
+    dummy tech, zero cost
 
 mechRe meSyChemRe and stCrChemRe:
 
@@ -413,7 +416,7 @@ mechRe meSyChemRe and stCrChemRe:
 
     for Chemical Recycling: Pyrolysis
         CAPEX ~ 2200 $/t
-        omf = 0.03
+        omf = 0.03 
         (Rough average of sources: Geetanjali Yadav 2023 Table1, Table S9.)
 
     for Chemical Recycling: Gasification

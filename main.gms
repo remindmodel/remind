@@ -1199,9 +1199,9 @@ parameter
 ;
   cm_wastelag = 0;   !! def = 0 no waste lag  !! regexp = 1|0
 parameter
-  cm_maxIndPrcShareChange  "Max change of share of certain industry processes between time steps"
+  cm_maxIndPrcShareChange  "Max change of share of historically used chemicals industry processes between time steps"
 ;
-  cm_maxIndPrcShareChange = 0.05; !! def 0.05 = 5 percent points change between timem steps
+  cm_maxIndPrcShareChange = 0.05; !! def 0.05 = 5 percent points change between time steps
 *'
 *'
 *'
@@ -1906,7 +1906,7 @@ $setGlobal c_nonco2_macc_scenario  Default     !! def = Default
 *' *  (on):  also non-optimal regions are solved again, up to cm_solver_try_max
 $setglobal cm_repeatNonOpt off      !! def = off  !! regexp = off|on
 
-$setglobal cm_PlasticMFA      !! def = off  !! regexp = ^(off|on)$
+$setglobal cm_PlasticMFA off     !! def = off  !! regexp = ^(off|on)$
 *' @stop
 
 *-------------------------------------------------------------------------------------

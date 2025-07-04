@@ -409,6 +409,9 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     amSyLiq_cc
     amSyH2
 
+    !! differentiate between mtoMta and mtoMtaH2 such that the share of mtoMta (the old technology) can be constrained
+    !! after liquids disaggregation by Robert there can be a more specific set differentiating between coal and biomass
+    !! same for fertilizer prod; fertProdH2 needs carbon feedstock
     mtoMta
     mtoMtaH2
     fertProd
@@ -436,6 +439,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
 
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+    !! maybe add cc for heat generation part of steam cracker, but may not be worth it because we switch to H2 or electricity for heat generation
     meSySol_cc
     meSyNg_cc
     meSyLiq_cc
@@ -466,7 +470,8 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     ammoniaH2
     methFinal
     ammoFinal
-    co2f
+    !! REMINDER: once we co2f from the CCU module, make sure that it isn't subtracted twice (once by taking it from CCU, once by subtracting feedstock carbon)
+    co2f 
 
     naphtha
     plasticWaste
@@ -663,7 +668,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 
     mechRe . standard
 
-    meSySol . (standard,greenh2) 
+    meSySol . (standard,greenh2) !! methanol synthesis needs hydrogen apart from coal, can be from green hydrogen or coal gasification
     meSyNg . standard
     meSyLiq . standard
     meSySol_cc . standard
@@ -684,7 +689,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     mtoMtaH2 . standard
     fertProd . standard
     fertProdH2 . standard
-    meToFinal . (standard,greenh2)
+    meToFinal . (standard,greenh2) 
     amToFinal . (standard,greenh2)
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -914,7 +919,9 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bfcc . standard . bfbof_ccs
 $endif.cm_subsec_model_steel
   /
-
+  
+  
+!! for reporting
 routeCC(route)  "TODO"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"

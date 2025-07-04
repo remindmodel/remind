@@ -478,8 +478,8 @@ q37_prodMat(t,regi,mat)$( matOut(mat) ) ..
 *'    change.low = -max_change and change.up = max_change
 *' 2. multiply both sides with sum_i a_i(t) * sum_i a_i(t-1)
 ***------------------------------------------------------
-q37_chemflow(t,regi,mat)$(sum((tePrc,opmoPrc), tePrcStiffShare(tePrc,opmoPrc,mat)))  .. 
-  v37_chemflow(t,regi,mat)
+q37_chemFlow(t,regi,mat)$(sum((tePrc,opmoPrc), tePrcStiffShare(tePrc,opmoPrc,mat)))  .. 
+  v37_chemFlow(t,regi,mat)
 =e= 
   sum((tePrc, opmoPrc)$(tePrcStiffShare(tePrc, opmoPrc, mat)), vm_outflowPrc(t,regi,tePrc,opmoPrc))
 ;
@@ -489,7 +489,7 @@ q37_restrictMatShareChange(t,regi,tePrc,opmoPrc,mat)$(t.val gt 2020
   vm_outflowPrc(t,regi,tePrc,opmoPrc) 
 =e=
   (p37_teMatShareHist(regi,tePrc,opmoPrc,mat)+ v37_matShareChange(t,regi,tePrc,opmoPrc,mat))
-  * v37_chemflow(t,regi,mat) !! Try to use different opmoPrc 
+  * v37_chemFlow(t,regi,mat) !! Try to use different opmoPrc 
 ;
 
 ***------------------------------------------------------

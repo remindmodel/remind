@@ -647,6 +647,7 @@ $endIf.cm_wasteIncinerationCCSshare
 
 p37_specMatDem(mat,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+!! stochiemetric unit change from t NH3 to t N
 p37_specMatDem("ammonia","fertProd","standard")        = 17/14; !!TODOQZ Used to verify that the data are equal
 p37_specMatDem("ammoniaH2","fertProdH2","standard")        = 17/14;
 
@@ -687,21 +688,22 @@ p37_specFeDemTarget(all_enty,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 !! TODO Qianzhi 1MWh NH3,LHV = 0.19355 tons
 
-p37_specFeDemTarget("fesos","chemOld","standard")  = 1.5 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("fegas","chemOld","standard")  = 3.0 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("fehos","chemOld","standard")  = 3.9 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","chemOld","standard")  = 2.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+!! should not be needed anymore
+!!p37_specFeDemTarget("fesos","chemOld","standard")  = 1.5 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("fegas","chemOld","standard")  = 3.0 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("fehos","chemOld","standard")  = 3.9 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("feels","chemOld","standard")  = 2.4 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fesos","chemElec","standard")  = 1.2 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("fegas","chemElec","standard")  = 2.7 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("fehos","chemElec","standard")  = 3.3 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feels","chemElec","standard")  = 3.6 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("fesos","chemElec","standard")  = 1.2 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("fegas","chemElec","standard")  = 2.7 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("fehos","chemElec","standard")  = 3.3 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("feels","chemElec","standard")  = 3.6 / (sm_TWa_2_MWh/sm_giga_2_non);
 
-p37_specFeDemTarget("fesos","chemH2","standard")  = 1.2 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("fegas","chemH2","standard")  = 2.7 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("fehos","chemH2","standard")  = 3.3 / (sm_TWa_2_MWh/sm_giga_2_non);
-p37_specFeDemTarget("feh2s","chemH2","standard")  = 2.1 / (sm_TWa_2_MWh/sm_giga_2_non);   
-p37_specFeDemTarget("feels","chemH2","standard")  = 1.8 / (sm_TWa_2_MWh/sm_giga_2_non); 
+!!p37_specFeDemTarget("fesos","chemH2","standard")  = 1.2 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("fegas","chemH2","standard")  = 2.7 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("fehos","chemH2","standard")  = 3.3 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("feh2s","chemH2","standard")  = 2.1 / (sm_TWa_2_MWh/sm_giga_2_non);   
+!!p37_specFeDemTarget("feels","chemH2","standard")  = 1.8 / (sm_TWa_2_MWh/sm_giga_2_non); 
 
 p37_specFeDemTarget("fehos","stCrNg","standard")  = 15.8 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Yang, M., & You, F. (2017). Table1 NGL input/(Ethylene + By Products)
 !!p37_specFeDemTarget("fegas","stCrNg","standard")  = 2.8 / (sm_TWa_2_MWh/sm_giga_2_non);   !! Source: Yang, M., & You, F. (2017). Table1 External Energy input/(Ethylene + By Products)
@@ -811,11 +813,21 @@ $endif.cm_subsec_model_steel
 p37_captureRate(all_te) = 0.;
 p37_selfCaptureRate(all_te) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes" 
+!! 95 % for everything
 !!Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
-p37_captureRate("meSySol_cc")  = 0.95 * 0.71; !! Considering the carbon content in MeOH
+
+!! Methanol synthesis has some feedstock carbon, which reduces the capture rate
+!! For Coal (NG and Liq analogous):
+!! total coal input: 47.8 GJ/t; emission factor of coal: 0.027 tC/GJ
+!! total carbon input: (47.8 GJ/t * 0.027 tC/GJ) = 1.29 tC/tMeOH
+!! carbon content of methanol: 12/32 = 0.375 tC/tMeOH
+!! ==> feedstock share is 0.375/1.29 = 0.29 ==> energy share is 0.71
+
+p37_captureRate("meSySol_cc")  = 0.95 * 0.71; 
 p37_captureRate("meSyNg_cc") = 0.95 * 0.22; 
 p37_captureRate("meSyLiq_cc")  = 0.95 * 0.5;
-p37_selfCaptureRate("meSySol_cc")  = 0.9;
+
+p37_selfCaptureRate("meSySol_cc")  = 0.95;
 p37_selfCaptureRate("meSyNg_cc") = 0.95;
 p37_selfCaptureRate("meSyLiq_cc")  = 0.95;
 
@@ -835,7 +847,7 @@ p37_selfCaptureRate("idrcc") = 0.9;
 $endif.cm_subsec_model_steel
 
 *** --------------------------------
-
+!!can be deleted in the long run
 p37_priceMat(ttot,all_regi,all_enty) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 !!Execute_Loadpoint "input" pm_FEPrice = pm_FEPrice;
@@ -896,7 +908,7 @@ $include "./modules/37_industry/subsectors/input/p37_AllChemical_Mat2Ue.cs4r";
 $offdelim
   /
 ;
-
+!! constant before and after IEA report temporal scope
 p37_mat2ue(t,regi,mat,in)$(t.val lt 2020) = p37_mat2ue("2020",regi,mat,in);
 p37_mat2ue(t,regi,mat,in)$(t.val gt 2050) = p37_mat2ue("2050",regi,mat,in);
 
@@ -919,13 +931,15 @@ p37_mat2ue(t,all_regi,"prsteel","ue_steel_primary")   = 1.;
 $endif.cm_subsec_model_steel
 
 !! HOT FIX
+!! AmmoniaFinal equals total ammonia minus fertilizer ammonia
+!! can this be deleted? (recalculated from mrindustry to avoid rounding errors)
 pm_outflowPrcHist("2020",regi,"amToFinal","standard")
   = sum((tePrc2matOut(tePrc,opmoPrc,mat))$(sameas("ammonia",mat)),
     pm_outflowPrcHist("2020",regi,tePrc,opmoPrc))
   - (pm_outflowPrcHist("2020",regi,"fertProd","standard")
   * p37_specMatDem("ammonia","fertProd","standard"))
   ;
-
+!! same for methanol
 pm_outflowPrcHist("2020",regi,"meToFinal","standard")
   = sum((tePrc2matOut(tePrc,opmoPrc,mat))$(sameas("methanol",mat)),
     pm_outflowPrcHist("2020",regi,tePrc,opmoPrc))
@@ -934,6 +948,7 @@ pm_outflowPrcHist("2020",regi,"meToFinal","standard")
   ;
 
 !! 1. Correct pm_outflowPrcHist, such that sum is consistent with UE
+!! can this be deleted?
 p37_ueHistTmp("2020",regi)
   = sum((tePrc2matOut(tePrc,opmoPrc,mat), mat2ue(mat,in))$(sameas("ue_chemicals",in)),
          pm_outflowPrcHist("2020",regi,tePrc,opmoPrc)
@@ -946,6 +961,7 @@ pm_outflowPrcHist("2020",regi,tePrc,opmoPrc)$(secInd37_tePrc("chemicals",tePrc))
   / p37_ueHistTmp("2020",regi);
 
 !! 2. scale 2005 to 2015 with ue_chemicals
+!! can this be deleted?
 loop(t$(t.val ge 2005 AND t.val le 2015),
   pm_outflowPrcHist(t,regi,tePrc,opmoPrc)
   = pm_outflowPrcHist("2020",regi,tePrc,opmoPrc)
@@ -955,12 +971,14 @@ loop(t$(t.val ge 2005 AND t.val le 2015),
 
 
 !! 3. Calc MatflowHist
+!! can this be deleted?
 p37_matFlowHist(t,regi,mat) =
 sum(tePrc2matOut(tePrc,opmoPrc,mat),
       pm_outflowPrcHist(t,regi,tePrc,opmoPrc)
     )
 ;
 !! 4. Calc ue_share
+!! can this be deleted?
 p37_ue_share(t,regi,mat,in)$(mat2ue(mat,in) AND sameas(in,"ue_chemicals") AND t.val le 2020) =
   (p37_mat2ue(t,regi,mat,in) * p37_matFlowHist(t,regi,mat))
   / pm_cesdata(t,regi,in,"quantity");
@@ -986,7 +1004,7 @@ loop((t,regi,ppfUePrc(in)),
 
 *** --------------------------------
 p37_teMatShareHist(all_regi,tePrc,opmoPrc,mat) = 0.;
-
+!! this can be deleted in the future
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 loop(all_regi(regi),
   loop(tePrc2matOut(tePrc, opmoPrc, mat),
@@ -1032,6 +1050,8 @@ $offdelim
   /
 ;
 !! HOT FIX
+!! OtherChem is totalChemicals-sum(all other processes)
+!! is duplicate with mrindustry, could maybe be deleted
 p37_demFePrcHist(t,regi,tePrc,opmoPrc,entyFe) = sm_EJ_2_TWa * p37_demFePrcHist(t,regi,tePrc,opmoPrc,entyFe);
 loop(t$(t.val ge 2005 AND t.val le 2020),
     p37_demFePrcHist(t,regi,"chemOld","standard","fesos")
@@ -1139,16 +1159,20 @@ if (cm_startyear eq 2005,
 
 
 !! Hot fix on regional otherChem Energy Demand
+!! calculate electricity and H2 demand for otherChem
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 
   loop((entyFeStat(all_enty)),
       loop(t$(t.val > 2020),
 
         !! Calc chemOld
+        !! stays constant after 2020
         pm_specFeDem(t,regi,all_enty,"chemOld","standard") = 
         pm_specFeDem("2020",regi,all_enty,"chemOld","standard");
 
         !! Calc chemElec
+        !! all non-electricity scaled down to feedstock share
+        !! assumption: future otherChem sector has 65% feedstock (from Michajas or Simons data)
         loop(entyFe$(NOT sameas(entyFe, "feels")),
           pm_specFeDem(t, regi, entyFe, "chemElec", "standard") =
               pm_specFeDem("2020", regi, entyFe, "chemOld", "standard")
@@ -1156,12 +1180,15 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
         );
 
         !! Calc feels for chemElec
+        !! all non-feedstock non-electricity energy of ChemOld with 15% efficiency improvement
+        !! source: Danish Energy Agency https://ens.dk/en/analyses-and-statistics/technology-data-industrial-process-heat
         pm_specFeDem(t, regi, "feels", "chemElec", "standard") =
                   pm_specFeDem("2020", regi, "feels", "chemOld", "standard")
                   + 0.85 * ( sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem("2020", regi, entyFe2, "chemOld", "standard"))
                           - sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem(t, regi, entyFe2, "chemElec", "standard")) );
 
         !! Calc chemH2 
+        !! see above
         loop(entyFe$(NOT sameas(entyFe, "feels")),
           pm_specFeDem(t, regi, entyFe, "chemH2", "standard") =
               pm_specFeDem("2020", regi, entyFe, "chemOld", "standard")
@@ -1169,10 +1196,12 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
         );
 
         !! Calc feels for chemH2
+        !! see above
         pm_specFeDem(t, regi, "feels", "chemH2", "standard") =
             pm_specFeDem("2020", regi, "feels", "chemOld", "standard");
  
         !! Calc feh2s for chemH2
+        !! see above but without efficiency improvement, assumption: hydrogen and gas have the same efficiency
         pm_specFeDem(t, regi, "feh2s", "chemH2", "standard") =
             sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem("2020", regi, entyFe2, "chemOld", "standard"))
             - sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem(t, regi, entyFe2, "chemH2", "standard"));
