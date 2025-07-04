@@ -23,13 +23,6 @@ $include "./modules/35_transport/edge_esm/input/f35_esCapCost.cs4r"
 $offdelim
 /
 
-p35_transportGDPshare(ttot,all_regi) "transportation share in GDP [percentage]"
-/
-$ondelim
-$include "./modules/35_transport/edge_esm/input/f35_transportGDPshare.cs4r"
-$offdelim
-/
-
 p35_fe2es(tall,all_regi,all_GDPpopScen,all_demScen,EDGE_scenario_all,all_teEs) "Aggregate energy efficiency of transport fuel technologies [trn pkm/Twa or trn tkm/Twa]"
 /
 $ondelim

@@ -91,7 +91,6 @@ p80_eoMargDiffItr(all_regi,iteration)      "scaled deviation of regional margina
 p80_eoEmibudget1RegItr(all_regi,iteration) "corrected regional permit budgets"
 p80_eoEmibudgetDiffAbs(iteration)          "convergence indicator"
 p80_count                                  "count regions with feasible solution"
-p80_eoWeights_fix(all_regi)                "default and fallback weighting factors"
 
 p80_SolNonOpt(all_regi)                    "solve status"
 
