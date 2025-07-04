@@ -196,13 +196,6 @@ $endif
 $if %cm_GDPpopScen% == "SSP1"   vm_deltaCap.fx(t,regi,"biotr","1") $ (t.val > 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
 $if %cm_GDPpopScen% == "SSP5"   vm_deltaCap.fx(t,regi,"biotr","1") $ (t.val > 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
 
-*' Slow phaseout in SSP3, linearly from 2025 to 2085
-$ifthen %cm_GDPscen% == "gdp_SSP3"
-  loop(t $ (t.val >= 2025 and t.val <= 2080),
-    vm_deltaCap.fx(t,regi,"biotr","1") = max(0.6 - 0.01 * (t.val - 2025), 0) * vm_deltaCap.lo("2005", regi, "biotr", "1");
-  );
-$endif
-
 *' Quickest phaseout in SDP scenarios (no new capacities allowed)
 $if %cm_GDPpopScen% == "SDP"    vm_deltaCap.up(t,regi,"biotr","1") $ (t.val > 2020) = 0;
 $if %cm_GDPpopScen% == "SDP_EI" vm_deltaCap.up(t,regi,"biotr","1") $ (t.val > 2020) = 0;
