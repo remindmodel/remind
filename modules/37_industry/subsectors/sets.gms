@@ -467,6 +467,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     methFinal
     ammoFinal
     co2f
+    co2fdummy
 
     naphtha
     plasticWaste
@@ -491,6 +492,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     ammonia
     ammoniaH2
     co2f
+    co2fdummy
 
     naphtha
     plasticWaste
@@ -709,8 +711,8 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     amToFinal . standard  . ammonia
     amToFinal . greenh2  . ammoniaH2
 
-    meSyH2 . standard  . co2f
-    fertProdH2 . standard  . co2f
+    meSyH2 . standard  . co2fdummy
+    fertProdH2 . standard  . co2fdummy
     stCrLiq . standard  . naphtha
 
     mechRe . standard  . plasticWaste

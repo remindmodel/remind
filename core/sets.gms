@@ -455,6 +455,7 @@ all_enty             "all types of quantities"
 *** materials, feedstock, and industrial goods
 
     co2f         "feedstock CO2"
+    co2fdummy         "feedstock CO2 deummy"
 
 *** chemicals
     otherChem

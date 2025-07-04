@@ -205,9 +205,15 @@ q37_costCESmarkup(t,regi,in)$(ppfen_industry_dyn37(in))..
 
 ***--------------------------------------------------------------------------
 *'  Feedstock balances
+*'
+*'  Feedstocks are used for emissions accounting of the chemicals sector,
+*'  as some carbon from FE inputs is bound in output materials and not
+*'  emitted, and some is emitted as non-energy emissions
 ***--------------------------------------------------------------------------
 
-*' Lower bound on feso/feli/fega in chemicals FE input for feedstocks
+*' Since all feedstocks come from feso/feli/fega,
+*' the share of feso+feli+fega in chemicals FE demand has to be larger than
+*' the feedstocks share.
 q37_chemicals_feedstocks_limit(t,regi) ..
   sum(in_chemicals_feedstock_37(in), vm_cesIO(t,regi,in))
   =g=
@@ -215,21 +221,15 @@ q37_chemicals_feedstocks_limit(t,regi) ..
   * p37_chemicals_feedstock_share(t,regi)
 ;
 
-*' Define the flow of non-energy feedstocks. It is used for emissions
-*' accounting and calculating plastics production
+*' Balance for total feedstock demand per FE, summed over SE
 q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt) ..
   sum(se2fe(entySe,entyFe,te),
     vm_demFeNonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
   )
   =e=
-   ( sum(secInd37$(not secInd37Prc(secInd37)),
-    sum((fe2ppfEn(entyFe,ppfen_industry_dyn37(in)),
-         secInd37_emiMkt(secInd37,emiMkt),
-         secInd37_2_pf(secInd37,in_chemicals_feedstock_37(in))),
-        ( vm_cesIO(t,regi,in)
-        + pm_cesdata(t,regi,in,"offset_quantity")
-        )
-      )
+  sum(fe2ppfEn(entyFe,in_chemicals_feedstock_37(in)),
+    ( vm_cesIO(t,regi,in)
+    + pm_cesdata(t,regi,in,"offset_quantity")
     )
    +
   sum(secInd37Prc$(sameas(secInd37Prc,"chemicals")),
@@ -244,20 +244,10 @@ q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt) ..
   )$( entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) )
 ;
 
-*' Feedstocks flow has to be lower than total energy flow into the industry
-q37_feedstocksLimit(t,regi,entySe,entyFe,emiMkt)$(
-                         sefe(entySe,entyFe)
-                     AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
-  vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
-  =g=
-  vm_demFeNonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
-;
-
 *' Feedstocks have identical fossil/biomass/synfuel shares as industry FE
 q37_feedstocksShares(t,regi,entySe,entyFe,emiMkt)$(
                          sum(te, se2fe(entySe,entyFe,te))
-                     AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
-                     AND cm_emiscen ne 1                                   ) ..
+                     AND entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) ..
     vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)
   * sum(se2fe(entySe2,entyFe,te),
       vm_demFeNonEnergySector(t,regi,entySe2,entyFe,"indst",emiMkt)
@@ -268,7 +258,6 @@ q37_feedstocksShares(t,regi,entySe,entyFe,emiMkt)$(
       vm_demFeSector_afterTax(t,regi,entySe2,entyFe,"indst",emiMkt)
     )
 ;
-
 
 *' Calculate mass of carbon contained in chemical feedstocks
 *' (not including carbon that gets lost as chemical process emissions)

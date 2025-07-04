@@ -293,7 +293,7 @@ Parameter
   p37_clinker_cement_ratio(ttot,all_regi)   "clinker content per unit cement used"
   /
 $ondelim
-$include "./modules/37_industry/subsectors/input/p37_clinker-to-cement-ratio.cs3r"
+$include "./modules/37_industry/subsectors/input/p37_clinker-to-cement-ratio.cs4r"
 $offdelim
   /
 ;
@@ -647,7 +647,7 @@ $endIf.cm_wasteIncinerationCCSshare
 
 p37_specMatDem(mat,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-p37_specMatDem("ammonia","fertProd","standard")        = 17/14; !!TODOQZ Used to verify that the data are equal
+p37_specMatDem("ammonia","fertProd","standard")        = 17/14; !!Here the units of urea are based on nitrogen
 p37_specMatDem("ammoniaH2","fertProdH2","standard")        = 17/14;
 
 p37_specMatDem("methanol","mtoMta","standard")        = 2.624; !!Dutta2019 Figure 2, Page 196
@@ -663,8 +663,8 @@ p37_specMatDem("plasticWaste","mechRe","standard")        = 1/0.79; !! Source: T
 p37_specMatDem("plasticWaste","meSyChemRe","standard")        = 1/0.68; !! Source: Shaik Afzal 2023 Table S9. 
 p37_specMatDem("plasticWaste","stCrChemRe","standard")        = 1/0.62; !! Source: Geetanjali Yadav 2023 Table 3.
 
-p37_specMatDem("co2f","fertProdH2","standard")        = 0.43; !!12/28 for NH₂CONH₂
-p37_specMatDem("co2f","meSyH2","standard")        = 0.375; !! 12/32 for CH₃OH
+p37_specMatDem("co2fdummy","fertProdH2","standard")        = 0.43; !!12/28 for NH₂CONH₂
+p37_specMatDem("co2fdummy","meSyH2","standard")        = 0.375; !! 12/32 for CH₃OH
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_specMatDem("dripell","idr","ng")        = 1.44;                                           !! Source: POSTED / Average of Devlin2022, Otto2017, Volg2018, Rechberge2020
@@ -815,13 +815,13 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 p37_captureRate("meSySol_cc")  = 0.95 * 0.71; !! Considering the carbon content in MeOH
 p37_captureRate("meSyNg_cc") = 0.95 * 0.22; 
 p37_captureRate("meSyLiq_cc")  = 0.95 * 0.5;
-p37_selfCaptureRate("meSySol_cc")  = 0.9;
+p37_selfCaptureRate("meSySol_cc")  = 0.95;
 p37_selfCaptureRate("meSyNg_cc") = 0.95;
 p37_selfCaptureRate("meSyLiq_cc")  = 0.95;
 
-p37_captureRate("amSyCoal_cc")  = 0.95;
-p37_captureRate("amSyNG_cc") = 0.95;
-p37_captureRate("amSyLiq_cc") = 0.95;
+p37_captureRate("amSyCoal_cc")  = 0.95 * 0.66; !! Considering the carbon content in Urea
+p37_captureRate("amSyNG_cc") = 0.95 * 0.28;
+p37_captureRate("amSyLiq_cc") = 0.95 * 0.5;
 p37_selfCaptureRate("amSyCoal_cc")  = 0.95;
 p37_selfCaptureRate("amSyNG_cc") = 0.95;
 p37_selfCaptureRate("amSyLiq_cc") = 0.95;
@@ -840,16 +840,16 @@ p37_priceMat(ttot,all_regi,all_enty) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 !!Execute_Loadpoint "input" pm_FEPrice = pm_FEPrice;
 
-!!loop(t$(t.val > 2020),
-!!  loop(all_regi,
+loop(t$(t.val > 2020),
+  loop(all_regi,
 !!   p37_priceMat(t,all_regi,"naphtha") = -0.4 * pm_FEPrice(t,all_regi,"fehos","indst","ETS");
-    !!p37_priceMat(t,all_regi,"co2f") = 10 * 0.3048 * (t.val-2024) ** (-0.623) ; !! Mahdi Fasihi 2024
-!!  );
-!!);
+    p37_priceMat(t,all_regi,"co2fdummy") = 3 * 44/12 * 0.3048 * (t.val-2024) ** (-0.623) ; !! Mahdi Fasihi 2024
+  );
+);
 !! Source: Geetanjali Yadav 2023 Table S12 → 0.6 $/kg
 !! Source: Taylor Uekert 2023 Table Table S23 → 0.2-0.4 $/kg
 !! Source: Shaik Afzal 2023 Table Table S6 → 0.4-0.8 $/kg
-p37_priceMat(t,all_regi,"plasticWaste") = 0.3; 
+p37_priceMat(t,all_regi,"plasticWaste") = 0.1; 
 
 $endif.cm_subsec_model_chemicals
 
