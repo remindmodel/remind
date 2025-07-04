@@ -31,7 +31,7 @@ loop(pe2se(enty,enty2,te) $ (
     (not sameas(te,"tnrs"))
   ),
   vm_cap.lo(t,regi,te,"1") $ (t.val >= 2030 and t.val <= 2070) = 1e-7;
-  if( (not teCCS(te)), 
+  if(not teCCS(te), 
     vm_deltaCap.lo(t,regi,te,"1") $ (t.val >= 2030 and t.val <= 2070) = 1e-8;
   );
 );
@@ -152,12 +152,12 @@ vm_costTeCapital.fx(t,regi,teLearn) $ (t.val <= 2020 and pm_data(regi,"tech_stat
 vm_deltaCap.fx(t,regi,te,rlf) $ (t.val <= 2025 and pm_data(regi,"tech_stat",te) = 5) = 0;
 
 
-*nr* cumulated capacity never falls below initial cumulated capacity:
+*** NR: cumulated capacity never falls below initial cumulated capacity:
 vm_capCum.lo(ttot,regi,teLearn) $ (ttot.val >= cm_startyear) = pm_data(regi,"ccap0",teLearn);
 *** exception for tech_stat 4 technologies whose ccap0 refers to 2025 as these technologies don't exist in 2005
 vm_capCum.lo(ttot,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) = 4 and ttot.val <= 2020) = 0;
 
-*RP: add lower bound on 2020 coal chp and upper bound on gas chp based on IEA data to have a more realistic starting point
+*** RP: add lower bound on 2020 coal chp and upper bound on gas chp based on IEA data to have a more realistic starting point
 vm_prodSe.lo("2020",regi,"pecoal","seel","coalchp") = 0.8 * pm_IO_output("2020",regi,"pecoal","seel","coalchp") ;
 vm_prodSe.up("2020",regi,"pegas","seel","gaschp") = 1e-4 + 1.3 * pm_IO_output("2020",regi,"pegas","seel","gaschp") ;
 
@@ -318,14 +318,12 @@ v_co2capturevalve.up(t,regi) = 1 * s_MtCO2_2_GtC;
 *** ------------------------------------------------------------------
 
 if(cm_startyear <= 2015,
-  loop(regi,
-    p_CapFixFromRWfix("2015",regi,"tnrs") = max( pm_aux_capLowerLimit("tnrs",regi,"2015") , pm_NuclearConstraint("2015",regi,"tnrs") );
-    p_deltaCapFromRWfix("2015",regi,"tnrs") = ( p_CapFixFromRWfix("2015",regi,"tnrs") - pm_aux_capLowerLimit("tnrs",regi,"2015") )
-                                      / 7.5;  !! this parameter is currently only for display and not further used to fix anything
-    p_deltaCapFromRWfix("2010",regi,"tnrs") = ( p_CapFixFromRWfix("2015",regi,"tnrs") - pm_aux_capLowerLimit("tnrs",regi,"2015") )
-                                      / 7.5; !! this parameter is currently only for display and not further used to fix anything
-    vm_cap.fx("2015",regi,"tnrs","1") = p_CapFixFromRWfix("2015",regi,"tnrs");
-  );
+  p_CapFixFromRWfix("2015",regi,"tnrs") = max( pm_aux_capLowerLimit("tnrs",regi,"2015") , pm_NuclearConstraint("2015",regi,"tnrs") );
+  p_deltaCapFromRWfix("2015",regi,"tnrs") = ( p_CapFixFromRWfix("2015",regi,"tnrs") - pm_aux_capLowerLimit("tnrs",regi,"2015") )
+                                    / 7.5;  !! this parameter is currently only for display and not further used to fix anything
+  p_deltaCapFromRWfix("2010",regi,"tnrs") = ( p_CapFixFromRWfix("2015",regi,"tnrs") - pm_aux_capLowerLimit("tnrs",regi,"2015") )
+                                    / 7.5; !! this parameter is currently only for display and not further used to fix anything
+  vm_cap.fx("2015",regi,"tnrs","1") = p_CapFixFromRWfix("2015",regi,"tnrs");
 );
 
 if(cm_startyear <= 2020, !! require the realization of at least 70% of the plants that are currently under construction and thus might be finished until 2020 - should be updated with real-world 2020 numbers
@@ -388,30 +386,29 @@ loop((ext_regi,te) $ p_techEarlyRetiRate(ext_regi,te),
 $endif.tech_earlyreti
 
 *** restrict early retirement to the modeling time frame (to reduce runtime, the early retirement equations are phased out after 2110)
-vm_capEarlyReti.up(ttot,regi,te) $ (ttot.val < 2009 or ttot.val > 2111) = 0;
+vm_capEarlyReti.up(ttot,regi,te) $ (ttot.val < 2010 or ttot.val > 2110) = 0;
 
 *** lower bound of 0.01% to help the model to be aware of the early retirement option
-vm_capEarlyReti.lo(t,regi,te) $ ((vm_capEarlyReti.up(t,regi,te) >= 1) and (t.val > 2010) and (t.val <= 2100)) = 1e-4;
+vm_capEarlyReti.lo(t,regi,te) $ ((vm_capEarlyReti.up(t,regi,te) >= 1) and (t.val > 2010 and t.val <= 2100)) = 1e-4;
 
 *cb 20120301 no early retirement for dot, they are used despite their economic non-competitiveness for various reasons.
 vm_capEarlyReti.fx(t,regi,"dot") = 0;
 
 
-
-*** strong reliance on coal-to-liquids is not consistent with SSP1 storyline, therefore limit their use in the SSP 1 and SSP2 policy scenarios
+*** strong reliance on coal-to-liquids is not consistent with SSP1 storyline, therefore limit their use in the SSP1 and SSP2 policy scenarios
 $ifthen %c_SSP_forcing_adjust% == "forcing_SSP1"
-  vm_prodSe.up(t,regi,"pecoal","seliqfos","coalftrec") $ (t.val > 2050) = 0.00001;
-  vm_prodSe.up(t,regi,"pecoal","seliqfos","coalftcrec") $ (t.val > 2010) = 0.00001;
+  vm_prodSe.up(t,regi,"pecoal","seliqfos","coalftrec") $ (t.val > 2050) = 1e-5;
+  vm_prodSe.up(t,regi,"pecoal","seliqfos","coalftcrec") $ (t.val > 2010) = 1e-5;
   
 *** fixing prodFE in 2005 to the value contained in pm_cesdata("2005",regi,in,"quantity"). This is done to ensure that the energy system will reproduce the 2005 calibration values.
 *** Fixing will produce clearly attributable errors (good for debugging) when using inconsistent data, as the GAMS accuracy when comparing fixed results is very high (< 1e-8).
 *** vm_prodFe.fx("2005",regi,se2fe(enty,enty2,te)) = sum(fe2ppfEn(enty2,in), pm_cesdata("2005",regi,in,"quantity") );
-  vm_deltaCap.up(t,regi,"coalgas",rlf) $ (t.val > 2010) = 0.00001;
+  vm_deltaCap.up(t,regi,"coalgas",rlf) $ (t.val > 2010) = 1e-5;
 $endif
 
 $ifthen %c_SSP_forcing_adjust% == "forcing_SSP2"
 if(cm_emiscen > 1,
-  vm_prodSe.up(t,regi,"pecoal","seliqfos","coalftcrec") $ (t.val > 2010) = 0.00001;
+  vm_prodSe.up(t,regi,"pecoal","seliqfos","coalftcrec") $ (t.val > 2010) = 1e-5;
 );
 $endif
 
