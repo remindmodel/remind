@@ -1914,6 +1914,7 @@ $setGlobal c_scaleEmiHistorical  on  !! def = on  !! regexp = off|on
 $SetGlobal cm_quick_mode  off          !! def = off  !! regexp = off|on
 $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
 *' cm_APssp "air polution SSP or emission factors version"
+*' Note that SSP4 data is partly missing or copied from SSP3. Check carefully before using SSP4.
 *' (FROMGDPSSP): Shortcut to copy SSP from all_GDPpopScen
 *' (SSP1-5): SSP-specific emission factors GAINS runs from the 2025 ScenarioMIP effort
 *' (GAINSlegacy): emission factors from legacy GAINS runs
