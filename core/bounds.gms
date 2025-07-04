@@ -78,7 +78,7 @@ vm_deltaCap.up(t,regi,"dot","1") $ (t.val > 2005 and regi_group("EUR_regi",regi)
 
 
 *' bounds on near-term electrolysis capacities
-*' set lower and upper bounds for 2025 based on projects annoucements from IEA Hydryogen project database:
+*' set lower and upper bounds for 2025 and 2030 based on projects annoucements from IEA Hydryogen project database:
 *' https://www.iea.org/data-and-statistics/data-product/hydrogen-production-and-infrastructure-projects-database
 *' distribute to regions via GDP share of 2025 (we do not use later time steps as they may have different GDPs depending on the scenario)
 *' in future this should be differentiated by region based on regionalized input data of project announcements
@@ -87,6 +87,10 @@ vm_cap.lo("2025",regi,"elh2","1") =  2 * pm_eta_conv("2025",regi,"elh2") * pm_gd
                                          / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
 *' 20 GW(el) at maximum globally in 2025 (be more generous to not overconstrain regions which scale-up fastest)
 vm_cap.up("2025",regi,"elh2","1") = 20 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi)
+                                         / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
+*' 100 GW(el) at maximum globally in 2030
+*' (upper end of feasibility range in Odenweller et al. 2022, https://doi.org/10.1038/s41560-022-01097-4, see Fig. 4)
+vm_cap.up("2030",regi,"elh2","1")= 100 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2025",regi)
                                          / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
 
 *' upper bound of 0.5 EJ/yr to prevent building too much grey hydrogen before 2020, distributed to regions via GDP share
@@ -105,8 +109,9 @@ vm_deltaCap.lo(t,regi,"bioh2c","1") $ (t.val <= 2030) = 0;
 vm_costTeCapital.fx(ttot,regi,teNoLearn) = pm_inco0_t("2005",regi,teNoLearn); !! use 2005 value for the past
 vm_costTeCapital.fx(t,   regi,teNoLearn) = pm_inco0_t(t,regi,teNoLearn);
 
-*nr: floor costs represent the lower bound of learning technologies investment costs
-vm_costTeCapital.lo(t,regi,teLearn) = pm_data(regi,"floorcost",teLearn);
+*** RP: theoretically, floor costs represent the lower bound of investment costs for learnTe. However, with regional 
+*** variations of 2015 costs and long-term costs being high in SSP3/SSP5, this can be different -> set lower bound to 0.2
+vm_costTeCapital.lo(t,regi,teLearn) = 0.2 * pm_data(regi,"floorcost",teLearn);
 
 *' No battery storage in 2010:
 vm_cap.up("2010",regi,teStor,"1") = 0;
@@ -437,11 +442,6 @@ vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt) $ (t.val <= cm_H2InBuild
 
 *' upper bound on bioliquids as a share of transport liquids
 v_shBioTrans.up(t,regi) $ (t.val > 2020) = c_shBioTrans;
-
-*' Controlling if active, dampening factor to align edge-t non-energy transportation costs with historical GDP data
-$IFTHEN.transpGDPscale not "%cm_transpGDPscale%" == "on" 
-  vm_transpGDPscale.fx(t,regi) = 1;
-$ENDIF.transpGDPscale
 
 
 *** ------------------------------------------------------------------
