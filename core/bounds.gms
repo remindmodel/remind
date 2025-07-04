@@ -60,17 +60,24 @@ loop(teRe2rlfDetail(te,rlf),
 *** ------------------------------------------------------------------
 *** ------------------------------------------------------------------
 
-*' fix capacities for wind, spv and csp to real world historical values:
-vm_cap.lo("2015",regi,teVRE,"1") = 0.95 * pm_histCap("2015",regi,teVRE) $ (pm_histCap("2015",regi,teVRE) > 1e-10);
-vm_cap.up("2015",regi,teVRE,"1") = 1.05 * pm_histCap("2015",regi,teVRE) $ (pm_histCap("2015",regi,teVRE) > 1e-10);
-vm_cap.lo("2020",regi,teVRE,"1") = 0.95 * pm_histCap("2020",regi,teVRE) $ (pm_histCap("2020",regi,teVRE) > 1e-10);
-vm_cap.up("2020",regi,teVRE,"1") = 1.05 * pm_histCap("2020",regi,teVRE) $ (pm_histCap("2020",regi,teVRE) > 1e-10);
-vm_cap.up("2025",regi,teVRE,"1") $ (pm_histCap("2025",regi,teVRE) > 1e-6) = 1.05 * pm_histCap("2025",regi,teVRE) $ (pm_histCap("2025",regi,teVRE) > 1e-10); !! only set a bound if values >1MW are in pm_histCap
+loop(t $ (t.val >= 2015 and t.val <= 2025),
+  loop(regi,
+*** fix renewable capacities to real world historical values if available
+    vm_cap.lo(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
+    if(t.val <= 2020, !! TODO: activate 2025 upper-bound when consolidated data available
+      vm_cap.up(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 1.05 * pm_histCap(t,regi,te);
+    );
+*** broader bounds for renewables with lower data quality
+    loop(te $ (sameas(te, "hydro") or sameas(te, "geohdr")),
+      vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.7 * pm_histCap(t,regi,te);
+      vm_cap.up(t,regi,te,"1") $ pm_histCap(t,regi,te) = 1.4 * pm_histCap(t,regi,te);
+    );
 
 *' lower bound on capacities for ngcc and ngt and gaschp for regions defined at the pm_histCap file
-loop(te$(sameas(te,"ngcc") or sameas(te,"ngt") or sameas(te,"gaschp")),
-  vm_cap.lo("2015",regi,te,"1") $ pm_histCap("2015",regi,te) = 0.95 * pm_histCap("2015",regi,te);
-  vm_cap.lo("2020",regi,te,"1") $ pm_histCap("2020",regi,te) = 0.95 * pm_histCap("2020",regi,te);
+    loop(te $ (sameas(te,"ngcc") or sameas(te,"ngt") or sameas(te,"gaschp")),
+      vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
+    );
+  );
 );
 
 *' no investment into oil turbines in Europe
@@ -150,11 +157,6 @@ vm_capCum.lo(ttot,regi,teLearn) $ (ttot.val >= cm_startyear) = pm_data(regi,"cca
 *** exception for tech_stat 4 technologies whose ccap0 refers to 2025 as these technologies don't exist in 2005
 vm_capCum.lo(ttot,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) = 4 and ttot.val <= 2020) = 0;
 
-
-*' Lower bounds on hydro: as most of the costs for hydro are for the initial building, it is unlikely that existing hydro plants are not
-*' renovated, even if a completely new plant would not be economic accordingly, set lower bound on hydro generation close to 2005 values
-vm_prodSe.lo(t,regi,"pehyd","seel","hydro") $ (t.val > 2005) = 0.99 * o_INI_DirProdSeTe(regi,"seel","hydro");
-
 *RP: add lower bound on 2020 coal chp and upper bound on gas chp based on IEA data to have a more realistic starting point
 vm_prodSe.lo("2020",regi,"pecoal","seel","coalchp") = 0.8 * pm_IO_output("2020",regi,"pecoal","seel","coalchp") ;
 vm_prodSe.up("2020",regi,"pegas","seel","gaschp") = 1e-4 + 1.3 * pm_IO_output("2020",regi,"pegas","seel","gaschp") ;
@@ -174,7 +176,7 @@ vm_prodSe.up("2020",regi,"pegas","seel","gaschp") = 1e-4 + 1.3 * pm_IO_output("2
 vm_deltaCap.fx(t,regi,"biotr",rlf) $ (t.val > 2005) = 0;
 *' Developing regions (defined by GDP PPP threshold) phase out more slowly (+ varied by SSP)
 loop(regi,
-  if ( (pm_gdp("2005",regi) / pm_pop("2005",regi) / pm_shPPPMER(regi)) < 4,
+  if( (pm_gdp("2005",regi) / pm_pop("2005",regi) / pm_shPPPMER(regi)) < 4,
     vm_deltaCap.fx("2010",regi,"biotr","1") = 1.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
     vm_deltaCap.fx("2015",regi,"biotr","1") = 0.9  * vm_deltaCap.lo("2005",regi,"biotr","1");
     vm_deltaCap.fx("2020",regi,"biotr","1") = 0.7  * vm_deltaCap.lo("2005",regi,"biotr","1");
@@ -190,28 +192,26 @@ $endif
   );
 );
 
-*' Quickest phaseout in SDP scenarios (no new capacities allowed), quick phaseout in SSP1 und SSP5
+*' Quick phaseout in SSP1 and SSP5
+$if %cm_GDPpopScen% == "SSP1"   vm_deltaCap.fx(t,regi,"biotr","1") $ (t.val > 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
+$if %cm_GDPpopScen% == "SSP5"   vm_deltaCap.fx(t,regi,"biotr","1") $ (t.val > 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
+
+*' Slow phaseout in SSP3, linearly from 2025 to 2085
+$ifthen %cm_GDPscen% == "gdp_SSP3"
+  loop(t $ (t.val >= 2025 and t.val <= 2080),
+    vm_deltaCap.fx(t,regi,"biotr","1") = max(0.6 - 0.01 * (t.val - 2025), 0) * vm_deltaCap.lo("2005", regi, "biotr", "1");
+  );
+$endif
+
+*' Quickest phaseout in SDP scenarios (no new capacities allowed)
 $if %cm_GDPpopScen% == "SDP"    vm_deltaCap.up(t,regi,"biotr","1") $ (t.val > 2020) = 0;
 $if %cm_GDPpopScen% == "SDP_EI" vm_deltaCap.up(t,regi,"biotr","1") $ (t.val > 2020) = 0;
 $if %cm_GDPpopScen% == "SDP_MC" vm_deltaCap.up(t,regi,"biotr","1") $ (t.val > 2020) = 0;
 $if %cm_GDPpopScen% == "SDP_RC" vm_deltaCap.up(t,regi,"biotr","1") $ (t.val > 2020) = 0;
-$if %cm_GDPpopScen% == "SSP1"   vm_deltaCap.fx(t,regi,"biotr","1") $ (t.val > 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
-$if %cm_GDPpopScen% == "SSP5"   vm_deltaCap.fx(t,regi,"biotr","1") $ (t.val > 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
-
-$if %cm_GDPscen% == "gdp_SSP3"  vm_deltaCap.fx("2025",regi,"biotr","1") = 0.6  * vm_deltaCap.lo("2005",regi,"biotr","1");
-$if %cm_GDPscen% == "gdp_SSP3"  vm_deltaCap.fx("2030",regi,"biotr","1") = 0.55 * vm_deltaCap.lo("2005",regi,"biotr","1");
-$if %cm_GDPscen% == "gdp_SSP3"  vm_deltaCap.fx("2035",regi,"biotr","1") = 0.5  * vm_deltaCap.lo("2005",regi,"biotr","1");
-$if %cm_GDPscen% == "gdp_SSP3"  vm_deltaCap.fx("2040",regi,"biotr","1") = 0.45 * vm_deltaCap.lo("2005",regi,"biotr","1");
-$if %cm_GDPscen% == "gdp_SSP3"  vm_deltaCap.fx("2045",regi,"biotr","1") = 0.4  * vm_deltaCap.lo("2005",regi,"biotr","1");
-$if %cm_GDPscen% == "gdp_SSP3"  vm_deltaCap.fx("2050",regi,"biotr","1") = 0.35 * vm_deltaCap.lo("2005",regi,"biotr","1");
-$if %cm_GDPscen% == "gdp_SSP3"  vm_deltaCap.fx("2055",regi,"biotr","1") = 0.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
-$if %cm_GDPscen% == "gdp_SSP3"  vm_deltaCap.fx("2060",regi,"biotr","1") = 0.25 * vm_deltaCap.lo("2005",regi,"biotr","1");
-$if %cm_GDPscen% == "gdp_SSP3"  vm_deltaCap.fx("2070",regi,"biotr","1") = 0.15 * vm_deltaCap.lo("2005",regi,"biotr","1");
-$if %cm_GDPscen% == "gdp_SSP3"  vm_deltaCap.fx("2080",regi,"biotr","1") = 0.05 * vm_deltaCap.lo("2005",regi,"biotr","1");
 
 
 *' Switch to deactivate technologies that produce liquids from lignocellulosic biomass
-if (c_bioliqscen = 0, !! no bioliquids technologies
+if(c_bioliqscen = 0, !! no bioliquids technologies
   vm_deltaCap.up(t,regi,"bioftrec",rlf)  $ (t.val > 2005) = 1e-6;
   vm_deltaCap.up(t,regi,"bioftcrec",rlf) $ (t.val > 2005) = 1e-6;
   vm_deltaCap.up(t,regi,"bioethl",rlf)   $ (t.val > 2005) = 1e-6;
@@ -225,7 +225,7 @@ if(cm_1stgen_phaseout = 1,
 );
 
 *' Switch to deactivate technologies that produce hydrogen from lignocellulosic biomass
-if (c_bioh2scen = 0, !! no bioh2 technologies
+if(c_bioh2scen = 0, !! no bioh2 technologies
   vm_deltaCap.up(t,regi,"bioh2",rlf)  $ (t.val > 2005) = 1e-6;
   vm_deltaCap.up(t,regi,"bioh2c",rlf) $ (t.val > 2005) = 1e-6;
 );
@@ -274,7 +274,7 @@ if(cm_emiscen = 1,
 *** Potential of EU27 regions is pooled and redistributed according to GDP (Only upper limit for 2030)
 *** Norway and UK announced to store CO2 for EU27 countries. So 50% of Norway and UK potential in 2030 is attributed to EU27-Pool
 *** if c_ccsinjecratescen=0 --> no CCS at all and vm_co2CCS is fixed to 0 before, therefore the upper bound is only set if there should be CCS!
-if (c_ccsinjecratescen > 0 and (not cm_emiscen = 1),
+if(c_ccsinjecratescen > 0 and (not cm_emiscen = 1),
   vm_co2CCS.lo(t,regi,"cco2","ico2","ccsinje","1") $ (t.val <= 2030) = s_MtCO2_2_GtC * p_boundCapCCS(t,regi,"operational") $ (t.val <= 2030);
   vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1") $ (t.val <= 2030) = s_MtCO2_2_GtC * (
       p_boundCapCCS(t,regi,"operational") $ (t.val <= 2030)
@@ -283,12 +283,12 @@ if (c_ccsinjecratescen > 0 and (not cm_emiscen = 1),
 );
 
 
-if (cm_ccapturescen = 2, !! no carbon capture at all
+if(cm_ccapturescen = 2, !! no carbon capture at all
   vm_cap.fx(t,regi_capturescen,teCCS,rlf) = 0;
   vm_cap.fx(t,regi_capturescen,"ccsinje",rlf) = 0;
-elseif (cm_ccapturescen = 3), !! no bio carbon capture:
+elseif(cm_ccapturescen = 3), !! no bio carbon capture:
   vm_cap.fx(t,regi_capturescen,te,rlf) $ (teCCS(te) and teBio(te)) = 0;
-elseif (cm_ccapturescen = 4), !! no carbon capture in the electricity sector
+elseif(cm_ccapturescen = 4), !! no carbon capture in the electricity sector
   loop(emi2te(enty,"seel",te,"cco2") $ ( sum(regi_capturescen, pm_emifac("2020",regi_capturescen,enty,"seel",te,"cco2")) > 0 ),
     loop(te2rlf(te,rlf),
       vm_cap.fx(t,regi_capturescen,te,rlf) = 0;
@@ -324,7 +324,7 @@ v_co2capturevalve.up(t,regi) = 1 * s_MtCO2_2_GtC;
 *** ------------------------------------------------------------------
 *** ------------------------------------------------------------------
 
-if (cm_startyear <= 2015,
+if(cm_startyear <= 2015,
   loop(regi,
     p_CapFixFromRWfix("2015",regi,"tnrs") = max( pm_aux_capLowerLimit("tnrs",regi,"2015") , pm_NuclearConstraint("2015",regi,"tnrs") );
     p_deltaCapFromRWfix("2015",regi,"tnrs") = ( p_CapFixFromRWfix("2015",regi,"tnrs") - pm_aux_capLowerLimit("tnrs",regi,"2015") )
@@ -335,14 +335,14 @@ if (cm_startyear <= 2015,
   );
 );
 
-if (cm_startyear <= 2020, !! require the realization of at least 70% of the plants that are currently under construction and thus might be finished until 2020 - should be updated with real-world 2020 numbers
+if(cm_startyear <= 2020, !! require the realization of at least 70% of the plants that are currently under construction and thus might be finished until 2020 - should be updated with real-world 2020 numbers
    vm_deltaCap.lo("2020",regi,"tnrs","1") = 0.70 * pm_NuclearConstraint("2020",regi,"tnrs") / 5;
    vm_deltaCap.up("2020",regi,"tnrs","1") = pm_NuclearConstraint("2020",regi,"tnrs") / 5;
 );
-if (cm_startyear <= 2025, !! upper bound calculated in mrremind/R/calcCapacityNuclear.R: 50% of planned and 30% of proposed plants, plus extra for lifetime extension and newcomers
+if(cm_startyear <= 2025, !! upper bound calculated in mrremind/R/calcCapacityNuclear.R: 50% of planned and 30% of proposed plants, plus extra for lifetime extension and newcomers
    vm_deltaCap.up("2025",regi,"tnrs","1") = pm_NuclearConstraint("2025",regi,"tnrs") / 5;
 );
-if (cm_startyear <= 2030, !! upper bound calculated in mrremind/R/calcCapacityNuclear.R: 50% of planned and 70% of proposed plants, plus extra for lifetime extension and newcomers
+if(cm_startyear <= 2030, !! upper bound calculated in mrremind/R/calcCapacityNuclear.R: 50% of planned and 70% of proposed plants, plus extra for lifetime extension and newcomers
    vm_deltaCap.up("2030",regi,"tnrs","1") = pm_NuclearConstraint("2030",regi,"tnrs") / 5;
 );
 
@@ -350,7 +350,7 @@ display p_CapFixFromRWfix, p_deltaCapFromRWfix;
 
 
 *' switch to prevent new nuclear capacities after 2020, until then all currently planned plants are built
-if (cm_nucscen = 5,
+if(cm_nucscen = 5,
   vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf) $ (t.val > 2020)= 1e-6;
   vm_cap.lo(t,regi_nucscen,"tnrs",rlf) $ (t.val > 2015) = 0;
 );
