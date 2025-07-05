@@ -274,8 +274,9 @@ vm_capCum.lo(ttot,regi,teLearn)$(ttot.val ge cm_startyear) = pm_data(regi,"ccap0
 *** exception for tech_stat 4 technologies whose ccap0 refers to 2025 as these technologies don't exist in 2005
 vm_capCum.lo(ttot,regi,teLearn)$(pm_data(regi,"tech_stat",teLearn) eq 4 AND ttot.val le 2020) = 0;
 
-*nr: floor costs represent the lower bound of learning technologies investment costs
-vm_costTeCapital.lo(t,regi,teLearn) = pm_data(regi,"floorcost",teLearn);
+*RP: theoretically, floor costs represent the lower bound of investment costs for learnTe. However, with regional 
+*** variations of 2015 costs and long-term costs being high in SSP3/SSP5, this can be different -> set lower bound to 0.2
+vm_costTeCapital.lo(t,regi,teLearn) = 0.2 * pm_data(regi,"floorcost",teLearn);
 
 *cb 20120319 avoid negative adjustment costs in 2005 (they would allow the model to artificially save money)
 v_adjFactor.fx("2005",regi,te)=0;
@@ -314,7 +315,7 @@ loop(t $ (t.val >= 2015 and t.val <= 2025),
 
 
 *** bounds on near-term electrolysis capacities
-*' set lower and upper bounds for 2025 based on projects annoucements
+*' set lower and upper bounds for 2025 and 2030 based on projects annoucements
 *' from IEA Hydryogen project database:
 *' https://www.iea.org/data-and-statistics/data-product/hydrogen-production-and-infrastructure-projects-database
 *' distribute to regions via GDP share of 2025 (we do not use later time steps as they may have different GDPs depending on the scenario)
@@ -325,6 +326,11 @@ vm_cap.lo("2025",regi,"elh2","1")= 2 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2
 *' 20 GW(el) at maximum globally in 2025 (be more generous to not overconstrain regions which scale-up fastest)
 vm_cap.up("2025",regi,"elh2","1")= 20 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2025",regi)
                                          / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
+*' 100 GW(el) at maximum globally in 2030
+*' (upper end of feasibility range in Odenweller et al. 2022, https://doi.org/10.1038/s41560-022-01097-4, see Fig. 4)
+vm_cap.up("2030",regi,"elh2","1")= 100 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2025",regi)
+                                         / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
+
 
 *** bounds on biomass technologies
 *' set upper bounds on biomass gasification for h2 production, which is not deployed as of 2025

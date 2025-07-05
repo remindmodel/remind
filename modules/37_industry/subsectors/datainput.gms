@@ -245,14 +245,14 @@ $endif.no_calibration
 
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
-pm_macSwitch(emiInd37)      = NO;
+pm_macSwitch(ttot,regi,emiInd37)      = NO;
 
 *** turn on CCS for industry emissions
 if (cm_IndCCSscen eq 1,
   if (cm_CCS_cement eq 1,
     emiMacSector("co2cement") = YES;
-    pm_macSwitch("co2cement") = YES;
-    pm_macSwitch("co2cement_process") = YES;
+    pm_macSwitch(ttot,regi,"co2cement") = YES;
+    pm_macSwitch(ttot,regi,"co2cement_process") = YES;
     emiMac2mac("co2cement","co2cement") = YES;
     emiMac2mac("co2cement_process","co2cement") = YES;
   );
@@ -260,7 +260,7 @@ if (cm_IndCCSscen eq 1,
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
   if (cm_CCS_chemicals eq 1,
     emiMacSector("co2chemicals") = YES;
-    pm_macSwitch("co2chemicals") = YES;
+    pm_macSwitch(ttot,regi,"co2chemicals") = YES;
     emiMac2mac("co2chemicals","co2chemicals") = YES;
   );
 $endif.cm_subsec_model_chemicals
@@ -268,7 +268,7 @@ $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
   if (cm_CCS_steel eq 1,
     emiMacSector("co2steel") = YES;
-    pm_macSwitch("co2steel") = YES;
+    pm_macSwitch(ttot,regi,"co2steel") = YES;
     emiMac2mac("co2steel","co2steel") = YES;
   );
 $endif.cm_subsec_model_steel
@@ -276,7 +276,7 @@ $endif.cm_subsec_model_steel
 
 *** CCS for other industry is off in any case
 emiMacSector("co2otherInd") = NO;
-pm_macSwitch("co2otherInd") = NO;
+pm_macSwitch(ttot,regi,"co2otherInd") = NO;
 emiMac2mac("co2otherInd","co2otherInd") = NO;
 
 *** data on maximum secondary steel production
@@ -517,15 +517,54 @@ $endif.cm_subsec_model_steel
 pm_tau_ces_tax(t,regi,"feh2_otherInd")  =  50 * sm_TWa_2_MWh * 1e-12;
 
 
-*' overwrite or extent CES markup cost if specified by switch
-$ifthen.CESMkup "%cm_CESMkup_ind%" == "manual"
-loop (ppfen_industry_dyn37(in)$( p37_CESMkup_input(in) ),
-  p37_CESMkup(ttot,regi,in)$( ppfen_MkupCost37(in) )
-  = p37_CESMkup_input(in);
 
-  pm_tau_ces_tax(ttot,regi,in)$( NOT ppfen_MkupCost37(in) )
-  = p37_CESMkup_input(in);
+$ifthen.CESMkup "%cm_CESMkup_ind%" == "Elec_Push"
+*' mark-up cost changes in runs with electrification push
+*' other industry sector has high electrification potential
+*' decrease electricity mark-up cost and increase mark-up cost of combustible fuels
+*' to enable deep electrification in this sector
+
+*' decrease feelhth_otherInd 100 $/MWh in long-term
+p37_CESMkup_input("feelhth_otherInd") = 100 * sm_TWa_2_MWh * 1e-12;
+*' increase feso_otherInd mark-up to 100 $/MWh in long-term
+p37_CESMkup_input("feso_otherInd")    = 100 * sm_TWa_2_MWh * 1e-12;
+*' increase feli_otherInd mark-up to 100 $/MWh in long-term
+p37_CESMkup_input("feli_otherInd")    = 100 * sm_TWa_2_MWh * 1e-12;
+*' increase fega_otherInd mark-up to 100 $/MWh in long-term
+p37_CESMkup_input("fega_otherInd")    = 100 * sm_TWa_2_MWh * 1e-12;
+*' increase feh2_otherInd mark-up to 100 $/MWh in long-term
+p37_CESMkup_input("feh2_otherInd")    = 100 * sm_TWa_2_MWh * 1e-12;
+$endif.CESMkup
+
+
+$ifthen.CESMkup NOT "%cm_CESMkup_ind%" == "standard"
+*' overwrite default CES markup cost if specified by switch apply mark-up cost change from 2050 on
+*' and linearly interpolate between cm_startyear and 2050 to have smooth phase-in
+
+*' overwrite if CES mark-up cost implemented as cost with budget effect
+p37_CESMkup(ttot,regi,in)$(ppfen_MkupCost37(in) AND ttot.val ge 2050) = p37_CESMkup_input(in);
+loop(ttot2$(ttot2.val eq 2050),
+  loop(ttot3$(ttot3.val eq cm_startyear),
+    p37_CESMkup(ttot,regi,in)$(ppfen_MkupCost37(in) AND ttot.val lt 2050 AND ttot.val ge cm_startyear) =
+      p37_CESMkup(ttot3,regi,in)
+      + ( p37_CESMkup(ttot2,regi,in) - p37_CESMkup(ttot3,regi,in) )
+        * (ttot.val - cm_startyear)
+        / (2050 - cm_startyear);
+  );
 );
+
+*' overwrite if CES mark-up cost implement as tax without budget effect
+pm_tau_ces_tax(ttot,regi,in)$(NOT ppfen_MkupCost37(in) AND ttot.val ge 2050) = p37_CESMkup_input(in);
+loop(ttot2$(ttot2.val eq 2050),
+  loop(ttot3$(ttot3.val eq cm_startyear),
+    pm_tau_ces_tax(ttot,regi,in)$(NOT ppfen_MkupCost37(in) AND ttot.val lt 2050 AND ttot.val ge cm_startyear) =
+      pm_tau_ces_tax(ttot3,regi,in)
+      + ( pm_tau_ces_tax(ttot2,regi,in) - pm_tau_ces_tax(ttot3,regi,in) )
+        * (ttot.val - cm_startyear)
+        / (2050 - cm_startyear);
+  );
+);
+
 $endif.CESMkup
 
 display p37_CESMkup;

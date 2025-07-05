@@ -123,7 +123,7 @@ q37_emiIndCCSmax(t,regi,emiInd37)$(
     + ( vm_emiIndBase(t,regi,"co2cement_process","cement")
       )$( sameas(emiInd37,"co2cement_process") )
     )
-    * pm_macSwitch(macInd37)              !! sub-sector CCS available or not
+    * pm_macSwitch(t,regi,macInd37)              !! sub-sector CCS available or not
     * pm_macAbatLev(t,regi,macInd37)   !! abatement level at current price
   )
 ;
@@ -155,7 +155,7 @@ q37_limit_IndCCS_growth(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
 ***------------------------------------------------------
 *' Fix cement fuel and cement process emissions to the same abatement level.
 ***------------------------------------------------------
-q37_cementCCS(t,regi)$(    pm_macSwitch("co2cement")
+q37_cementCCS(t,regi)$(    pm_macSwitch(t,regi,"co2cement")
                        AND pm_macAbatLev(t,regi,"co2cement") ) ..
     vm_emiIndCCS(t,regi,"co2cement")
   * v37_emiIndCCSmax(t,regi,"co2cement_process")
@@ -172,7 +172,7 @@ q37_IndCCSCost(t,regi,emiInd37)$(
   vm_IndCCSCost(t,regi,emiInd37)
   =e=
     1e-3
-  * pm_macSwitch(emiInd37)
+  * pm_macSwitch(t,regi,emiInd37)
   * ( sum((entyFeCC37,secInd37_2_emiInd37(secInd37,emiInd37)),
         vm_emiIndBase(t,regi,entyFeCC37,secInd37)
       )$( NOT sameas(emiInd37,"co2cement_process") )
