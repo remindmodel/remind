@@ -75,6 +75,11 @@ pm_taxCO2eq(t,regi)$(t.val gt p45_lastNDCyear(regi))
       + p45_taxCO2eqGlobal2030        * p45_taxCO2eqYearlyIncrease**(t.val-2030)                  * (min(t.val,p45_taxCO2eqConvergenceYear) - p45_lastNDCyear(regi))
       )/(p45_taxCO2eqConvergenceYear - p45_lastNDCyear(regi));
 
+$ifthen.emiSSAconst %cm_constEmiSSA% == "on"
+pm_taxCO2eq(t,regi)$(t.val gt 2055 AND sameas(regi,"SSA")) = sum(ttot, pm_taxCO2eq(ttot,regi)$(ttot.val eq smax(ttot2$( ttot2.val gt 2055 ), ttot2.val))) * cm_taxCO2_expGrowth**(t.val-smax(ttot2$( ttot2.val lt 2055 ), ttot2.val));
+pm_taxCO2eq(t,regi)$(t.val gt 2100 AND sameas(regi,"SSA")) = pm_taxCO2eq("2100","SSA");
+$endif.emiSSAconst
+
 ***as a minimum, use BAU and have linear price increase starting from 1$ in 2030
 pm_taxCO2eq(t,regi)$(t.val ge 2030) = max(
                  pm_taxCO2eq(t,regi),
