@@ -8,7 +8,6 @@
 
 Parameter
   p05_cap0(all_regi,all_te)                           "standing capacity in 2005 as calculated by the initialization routine generisinical. Unit: TWa"
-  p05_emi2005_from_initialcap2(all_regi,emiTe)       "regional energy emissions 2005 resulting from the initialcap routine. Unit: GtC"
   p05_initial_capacity(all_regi,all_te)              "capacitiy at t=2005, calculated from past deltacaps"
   p05_inital_input(all_regi,all_te)                  "input in 2005, calculated from past deltacaps and initial time-variable eta"
   p05_corrected_inital_input(all_regi,all_te)        "corrected input in 2005, calculated from past deltacaps and corrected time-variable eta"

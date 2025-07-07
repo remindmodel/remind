@@ -65,7 +65,7 @@ p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types) "historical emi
 p_macLevFree(tall,all_regi,all_enty)                 "Phase in of zero-cost MAC options [fraction]"
 pm_macCost(tall,all_regi,all_enty)                   "abatement costs for all emissions subject to MACCs (type emiMacSector) []"
 pm_macStep(tall,all_regi,all_enty)                   "step number of abatement level [integer]"
-pm_macSwitch(all_enty)                               "switch to include mac option in the code"
+pm_macSwitch(ttot, all_regi, all_enty)               "switch to include mac options in specific sectors and years"
 p_macCostSwitch(all_enty)                            "switch to include mac costs in the code (e.g. in coupled scenarios, we want to include the costs in REMIND, but MAC effects on emissions are calculated in MAgPIE)"
 p_priceCO2(tall,all_regi)                            "carbon price [$/tC]"
 p_priceCO2forMAC(tall,all_regi,all_enty)             "carbon price defined for MAC gases [$/tC]"
@@ -151,6 +151,9 @@ p_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Initial 
 pm_shGasLiq_fe_up(ttot,all_regi,emi_sectors)         "Final energy gases plus liquids shares exogenous upper bounds per sector"
 pm_shGasLiq_fe_lo(ttot,all_regi,emi_sectors)         "Final energy gases plus liquids shares exogenous lower bounds per sector"
 
+p_demFeSector0(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Final Energy demand in the previous iteration"
+pm_demFeTotal0(ttot,all_regi)                        "Total Final Energy demand in the previous iteration"
+
 p_adj_coeff_Orig(ttot,all_regi,all_te)               "initial value of p_adj_coeff"
 p_adj_seed_te_Orig(ttot,all_regi,all_te)             "initial value of p_adj_seed_te"
 $ifthen not "%cm_adj_seed_cont%" == "off"
@@ -184,6 +187,8 @@ $endif.scaleDemand
 
 p_boundtmp(tall,all_regi,all_te,rlf)                 "read-in bound on capacities"
 p_bound_cap(tall,all_regi,all_te,rlf)                "read-in bound on capacities"
+pm_IO_output(tall,all_regi,all_enty,all_enty,all_te)    "copy of IO_output from module 04 to make it available in core bounds"
+     
 pm_data(all_regi,char,all_te)                        "Large array for most technical parameters of technologies; more detail on the individual technical parameters can be found in the declaration of the set 'char' "
 pm_cf(tall,all_regi,all_te)                          "Installed capacity availability - capacity factor (fraction of the year that a plant is running)"
 p_tkpremused(all_regi,all_te)                        "turn-key cost premium used in the model (with a discount rate of 3+ pure rate of time preference); in comparison to overnight costs)"
@@ -421,8 +426,7 @@ vm_changeProdStartyearCost(ttot,all_regi,all_te)     "Costs for changing output 
 *** ES layer variables
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
 
-vm_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
-vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"
+v_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
 
 $ifthen.seFeSectorShareDev not "%cm_seFeSectorShareDevMethod%" == "off"
   v_penSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "penalty cost for secondary energy share deviation between sectors, for each sector/emiMarket combination"
@@ -453,11 +457,11 @@ q_costInv(ttot,all_regi)                             "costs of investment"
 
 q_cap(tall,all_regi,all_te,rlf)                      "definition of available capacities"
 q_capDistr(tall,all_regi,all_te)                     "distribute available capacities across grades"
+q_capNonDecreasing(tall,all_regi,all_te)             "for some technologies, the capacity is not allowed to decrease over time"
 q_capTotal(ttot,all_regi,all_enty,all_enty)          "calculation of vm_capTotal as total capacity without technology differentation for technologies where there exists differentation"
 
 *** windoffshore-todo
 q_windoff_low(tall,all_regi)                         "semi-endogenous offshore wind power generation as a share of onshore wind energy, which is proportional to more than half of maxprod ratio"
-q_windoff_high(tall,all_regi)                        "semi-endogenous offshore wind power generation as a share of onshore wind energy, which is proportional to less than twice of maxprod ratio"
 
 q_limitCapSe(ttot,all_regi,all_enty,all_enty,all_te)    "capacity constraint for se production"
 q_limitCapSe2se(ttot,all_regi,all_enty,all_enty,all_te) "capacity constraint for se to se transformation"

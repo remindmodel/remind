@@ -15,9 +15,6 @@ Parameter
   s47_prefreeYear                                    "value of the last non-free year for the carbon price trajectory"
   p47_LULUCFEmi_GrassiShift(ttot,all_regi)           "difference between Magpie land-use change emissions and UNFCCC emissions in 2015 to correct for national accounting in emissions targets"
   pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) "deviation of emissions of current iteration from target emissions, for budget target this is the difference normalized by target emissions, while for year targets this is the difference normalized by 2005 emissions [%]"
-
-*** RR this should be replaced as soon as non-energy is treated endogenously in the model
-  p47_nonEnergyUse(ttot,ext_regi)                  "non-energy use"
 ;
 
 *** parameters to track regipol emissions calculation

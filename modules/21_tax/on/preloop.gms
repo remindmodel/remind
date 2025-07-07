@@ -44,9 +44,20 @@ if(cm_fetaxscen eq 0, !! no FE tax, constant PE2SE tax
 if (cm_fetaxscen eq 0, !! no FE and ResEx sub
     p21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe) = 0;
     p21_tau_fuEx_sub(ttot,regi,all_enty) = 0;
-  elseif (cm_fetaxscen eq 1) or (cm_fetaxscen eq 5), !! constant FE and ResEx sub
+  elseif (cm_fetaxscen eq 1) or (cm_fetaxscen eq 5), !! constant FE and ResEx sub, in case of 5 (i.e. rollback) some reduction in tax levels to avoid absurd results
     p21_tau_fe_sub(ttot,regi,sector,entyFe)$(ttot.val gt 2005) = p21_tau_fe_sub("2005",regi,sector,entyFe);
     p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val gt 2005) = p21_tau_fuEx_sub("2005",regi,entyPe);
+    if ( (cm_fetaxscen eq 5),
+      p21_tau_fe_sub(ttot,regi,sector,entyFe)$(f21_sub_convergence_rollback("2035",regi,sector,entyFe) gt 0 AND ttot.val gt 2025 AND ttot.val le 2035 )
+   	      = p21_tau_fe_sub("2025",regi,sector,entyFe) 
+         + ( f21_sub_convergence_rollback("2035",regi,sector,entyFe) * 0.001 / sm_EJ_2_TWa - p21_tau_fe_sub("2025",regi,sector,entyFe) ) * ( (ttot.val - 2025) / (2035 - 2025) );
+      p21_tau_fe_sub(ttot,regi,sector,entyFe)$(f21_sub_convergence_rollback("2035",regi,sector,entyFe) gt 0 AND ttot.val  gt 2035) = f21_sub_convergence_rollback("2035",regi,sector,entyFe) * 0.001 / sm_EJ_2_TWa;
+*** Limit subsidy feelt and feels maximum value at 2050 onward to 0.2 [$/TWa] to avoid negative electricity prices. Linearly reduce values from 2035.
+      p21_tau_fe_sub(ttot,regi,sector,entyFe)$((ttot.val gt 2035) AND (ttot.val le 2050) AND (p21_tau_fe_sub("2050",regi,sector,entyFe) lt -0.2) AND (sameas(entyFe,"feelt") OR sameas(entyFe,"feels"))) = 
+        p21_tau_fe_sub("2035",regi,sector,entyFe) - 
+        (p21_tau_fe_sub("2050",regi,sector,entyFe) - (-0.2)) * (ttot.val - 2035) / (2050 - 2035);
+      p21_tau_fe_sub(ttot,regi,sector,entyFe)$((ttot.val gt 2050)) = p21_tau_fe_sub("2050",regi,sector,entyFe);
+    );
   elseif(cm_fetaxscen eq 2) or (cm_fetaxscen eq 3) or (cm_fetaxscen eq 4), 
     p21_tau_fe_sub(ttot,regi,sector,entyFe)$(ttot.val gt 2005)=p21_tau_fe_sub("2005",regi,sector,entyFe);
     p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val gt 2005)=p21_tau_fuEx_sub("2005",regi,entyPe);
@@ -123,8 +134,12 @@ $endif.SEtaxRampUpParam
 
 *LB* initialization of vm_emiMac
 vm_emiMac.l(ttot,regi,enty) = 0;
-*LB* initialization of vm_emiALLco2neg
-vm_emiALLco2neg.l(ttot,regi) =0;
+*** initialization of vm_emiAllco2neg and v21_emiAllco2neg_acrossIterations
+vm_emiAllco2neg.l(ttot,regi) =0;
+v21_emiAllco2neg_acrossIterations.l(ttot,regi) =0;
+
+*** initialization of p21_grossEmissions
+p21_grossEmissions(iteration,t,regi) = 0;
 
 *DK initialize bioenergy tax
 v21_tau_bio.l(ttot) = 0;
