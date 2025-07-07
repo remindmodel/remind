@@ -1245,6 +1245,11 @@ parameter
 ;
   cm_wastelag = 0;   !! def = 0 no waste lag  !! regexp = 1|0
 *'
+parameter
+  c_edgetReportAfter2010			"switch that turns on overwriting of EDGE-T results for 2005 and 2010 by NAs when set to 1"
+;
+  c_edgetReportAfter2010 = 0;   !! def = 0 full reporting  !! regexp = 1|0
+*'
 *'
 *'
 ***-----------------------------------------------------------------------------
@@ -1914,6 +1919,7 @@ $setGlobal c_scaleEmiHistorical  on  !! def = on  !! regexp = off|on
 $SetGlobal cm_quick_mode  off          !! def = off  !! regexp = off|on
 $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
 *' cm_APssp "air polution SSP or emission factors version"
+*' Note that SSP4 data is partly missing or copied from SSP3. Check carefully before using SSP4.
 *' (FROMGDPSSP): Shortcut to copy SSP from all_GDPpopScen
 *' (SSP1-5): SSP-specific emission factors GAINS runs from the 2025 ScenarioMIP effort
 *' (GAINSlegacy): emission factors from legacy GAINS runs
