@@ -123,6 +123,12 @@ vm_costTeCapital.lo(t,regi,teLearn) = 0.2 * pm_data(regi,"floorcost",teLearn);
 *' No battery storage in 2010:
 vm_cap.up("2010",regi,teStor,"1") = 0;
 
+*** NR: cumulated capacity never falls below initial cumulated capacity:
+vm_capCum.lo(ttot,regi,teLearn) $ (ttot.val >= cm_startyear) = pm_data(regi,"ccap0",teLearn);
+*** exception for tech_stat 4 technologies whose ccap0 refers to 2025 as these technologies don't exist in 2005
+vm_capCum.lo(ttot,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) = 4 and ttot.val <= 2020) = 0;
+
+
 *' Advanced technologies shouldn't be built prior to 2015/2020
 loop(regi,
   loop(teNoLearn(te) $ (pm_data(regi,"tech_stat",te) = 2),
@@ -151,11 +157,6 @@ vm_costTeCapital.fx(t,regi,teLearn) $ (t.val <= 2020 and pm_data(regi,"tech_stat
 *** no technologies with tech_stat 5 before 2030
 vm_deltaCap.fx(t,regi,te,rlf) $ (t.val <= 2025 and pm_data(regi,"tech_stat",te) = 5) = 0;
 
-
-*** NR: cumulated capacity never falls below initial cumulated capacity:
-vm_capCum.lo(ttot,regi,teLearn) $ (ttot.val >= cm_startyear) = pm_data(regi,"ccap0",teLearn);
-*** exception for tech_stat 4 technologies whose ccap0 refers to 2025 as these technologies don't exist in 2005
-vm_capCum.lo(ttot,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) = 4 and ttot.val <= 2020) = 0;
 
 *** RP: add lower bound on 2020 coal chp and upper bound on gas chp based on IEA data to have a more realistic starting point
 vm_prodSe.lo("2020",regi,"pecoal","seel","coalchp") = 0.8 * pm_IO_output("2020",regi,"pecoal","seel","coalchp") ;
@@ -241,23 +242,16 @@ vm_cap.fx("2020",regi,te,rlf) $ (teBio(te) and teCCS(te)) = 0;
 
 *' switch to deactivate carbon sequestration
 if(c_ccsinjecratescen = 0,
-  vm_co2CCS.fx(t,regi_capturescen,"cco2","ico2","ccsinje","1") = ;
+  vm_co2CCS.fx(t,regi_capturescen,"cco2","ico2","ccsinje","1") = 0;
 );
 
 *' bound on maximum annual carbon storage by region
+*** if c_ccsinjecratescen=0 --> no CCS at all and vm_co2CCS is fixed to 0 before, therefore the upper bound is only set if there should be CCS!
+if(c_ccsinjecratescen > 0,
 *' DK 20100929: default value (pm_ccsinjecrate= 0.5%) is consistent with Interview Gerling (BGR)
 *' (http://www.iz-klima.de/aktuelles/archiv/news-2010/mai/news-05052010-2/): 
 *' 12 Gt storage potential in Germany, 50-75 Mt/a injection => 60 Mt/a => 60/12000=0.005
-*** if c_ccsinjecratescen=0 --> no CCS at all and vm_co2CCS is fixed to 0 before, therefore the upper bound is only set if there should be CCS!
-if(c_ccsinjecratescen > 0,
   vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1") = pm_dataccs(regi,"quan","1") * pm_ccsinjecrate(regi);
-);
-
-
-*' switch to deactivate carbon capture technologies
-if(cm_emiscen = 1,
-  vm_cap.fx(t,regi,teCCS,rlf) = 0;
-);
 
 *** Lower limit for 2020-2030 is capacities of all projects that are operational (2020-2030) from project data base
 *** Upper limit for 2025 and 2030 additionally includes all projects under construction and 30% 
@@ -266,13 +260,18 @@ if(cm_emiscen = 1,
 *** In nash-mode regions cannot easily share ressources, therefore CCS potentials are redistributed in Europe in data preprocessing in mrremind:
 *** Potential of EU27 regions is pooled and redistributed according to GDP (Only upper limit for 2030)
 *** Norway and UK announced to store CO2 for EU27 countries. So 50% of Norway and UK potential in 2030 is attributed to EU27-Pool
-*** if c_ccsinjecratescen=0 --> no CCS at all and vm_co2CCS is fixed to 0 before, therefore the upper bound is only set if there should be CCS!
-if(c_ccsinjecratescen > 0 and (not cm_emiscen = 1),
-  vm_co2CCS.lo(t,regi,"cco2","ico2","ccsinje","1") $ (t.val <= 2030) = s_MtCO2_2_GtC * p_boundCapCCS(t,regi,"operational") $ (t.val <= 2030);
-  vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1") $ (t.val <= 2030) = s_MtCO2_2_GtC * (
-      p_boundCapCCS(t,regi,"operational") $ (t.val <= 2030)
-    + p_boundCapCCS(t,regi,"construction") $ (t.val <= 2030)
-    + p_boundCapCCS(t,regi,"planned") $ (t.val <= 2030) * c_fracRealfromAnnouncedCCScap2030);
+  if(not cm_emiscen = 1, # cm_emiscen 1 = BAU
+    vm_co2CCS.lo(t,regi,"cco2","ico2","ccsinje","1") $ (t.val <= 2030) = s_MtCO2_2_GtC * p_boundCapCCS(t,regi,"operational") $ (t.val <= 2030);
+    vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1") $ (t.val <= 2030) = s_MtCO2_2_GtC * (
+        p_boundCapCCS(t,regi,"operational") $ (t.val <= 2030)
+      + p_boundCapCCS(t,regi,"construction") $ (t.val <= 2030)
+      + p_boundCapCCS(t,regi,"planned") $ (t.val <= 2030) * c_fracRealfromAnnouncedCCScap2030);
+  );
+);
+
+*' switch to deactivate carbon capture technologies
+if(cm_emiscen = 1,
+  vm_cap.fx(t,regi,teCCS,rlf) = 0;
 );
 
 
