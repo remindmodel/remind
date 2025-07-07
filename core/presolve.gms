@@ -295,7 +295,7 @@ pm_macAbatLev("2020",regi,"co2luc") = 0;
 
 *** GA: Modify pm_macAbatLev with pm_macSwitch so the limiting works also 
 *** when abatement is being phased in
-pm_macAbatLev(ttot,regi,enty)$( ttot.val ge 2005 ) = pm_macSwitch(ttot,regi,enty)
+pm_macAbatLev(ttot,regi,enty)$( ttot.val ge 2005 ) = pm_macAbatLev(ttot,regi,enty)*pm_macSwitch(ttot,regi,enty)
 
 *** Limit MAC abatement level increase to sm_macChange (default: 5 % p.a.)
 loop (ttot$( ttot.val ge 2015 ),
