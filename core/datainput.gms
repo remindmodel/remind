@@ -1415,10 +1415,10 @@ $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch(ttot,regi,"co2luc") = 0;
 *** The tiny fraction n2ofertsom of total land use n2o can get slightly negative in some cases. Ignore MAC for n2ofertsom by default.
 $if %cm_MAgPIE_coupling% == "off"  pm_macSwitch(ttot,regi,"n2ofertsom") = 0;
 
-* GA: Deactivate MAC abatement for historical periods, assuming no abatement
-* happens until 2030. 
-pm_macSwitch(ttot,regi,enty)$(ttot.val le 2025) = 0;
-
+* GA: Deactivate MAC abatement for historical periods, assuming no abatement 
+* happens until 2030, except in Europe
+pm_macSwitch(ttot,regi,emiMacSector)$(ttot.val le 2025) = 0;
+pm_macSwitch(ttot,regi,emiMacSector)$(regi_group("EUR_regi",regi) and (ttot.val le 2025) and (ttot.val ge 2005))  = 1;
 
 * GA: Use long term (2050) pm_macSwitch to set p_macCostSwitch, as some MACCs
 * are turned off in the short term 
