@@ -12,10 +12,10 @@ REMIND scripts do not alter the Python environment, ensuring that the environmen
 
 ### Environment Creation, Integrity, and Archiving
 
-REMIND supports using your system Python installation via `pip`, but also *virtual Python environments* like `conda` and `venv`. Among these, `conda` is the preferred option due to its ease of use and robust package management. For more details on installing `conda`, refer to the [Installing `conda`](#installing-conda) section.
+REMIND relies on the `conda run` subcommand to execute Python scripts. A recent `conda` installation is therefore required to make use of all REMIND capabilities. For more details on installing `conda`, refer to the [Installing `conda`](#installing-conda) section.
 
-The provided Makefile includes targets to create or clone a Python environment:
-- `make clone-conda`: Clones an existing `conda` environment. Note: Users of the PIK cluster should activate the default environment at `/p/projects/rd3mod/python/environments/scm_magicc7_hpc/`, then use `make conda-clone` to create their own version
+The `Makefile` provided by REMIND includes targets to create or clone a Python environment:
+- `make clone-conda`: Clones an existing `conda` environment. Note: Users of the PIK cluster should activate the default environment at ([see below](#conda-environment-for-remindmagicc7-operation-on-the-cluster) for more information) then use `make conda-clone` to create their own version
 - `make create-conda`: Creates a new `conda` environment based on the `py_requirements.txt` file.
 
 ### Leveraging `reticulate`
@@ -32,27 +32,25 @@ When using REMIND, you might encounter warnings about the inability to verify th
 
 ### `conda` Environment for REMIND/MAGICC7 Operation on the Cluster
 
-> **Note** This section assumes that you have access to the PIK HPC, have followed the instructions in the REMIND group-internal Wiki on [how to access the PIK HPC]((https://gitlab.pik-potsdam.de/rse/rsewiki/-/wikis/Cluster-Access)) and configure your [Python cluster environment](https://gitlab.pik-potsdam.de/rse/rsewiki/-/wikis/Cluster#for-python-users).
+All necessary software is available on the cluster. Calling [`piamenv::condaInit(how = "pik-cluster")`](https://github.com/pik-piam/piamenv/blob/main/R/condaInit.R) in e.g. a coupling script ensures that modules are loaded at the appropriate time, [`piamenv::condaRun`](https://github.com/pik-piam/piamenv/blob/main/R/condaRun.R) will run a Python command in a specified `conda` environment.
 
-To ensure `climate-assessment` and `MAGICC7` are available when running REMIND on the PIK high performance cluster (HPC), follow these steps after logging in and before initiating a REMIND run that requires MAGICC7 (e.g., climate reporting). On the HPC (`foote.pik-potsdam.de`) activate the conda environment:
+You *can* load the PIK HPC `conda` module manually with 
 
 ```bash
-source activate /p/projects/rd3mod/python/environments/scm_magicc7_hpc
+module load anaconda/2025.10
 ```
 
-This setup ensures the correct Python versions are available. To deactivate the conda environment, type `conda deactivate`. **Please do not alter the conda environment as changes would affect all users.**
+and activate a `conda` environment with
 
-With the conda environment activated, you can start a climate assessment report from your REMIND folder with:
-
-```sh
-Rscript output.R
+```bash
+source activate path/to/env
 ```
 
-and navigate through the selection process as usual.
+before starting a run, but please note that as of REMIND version `3.5.0` *you don't have to*.
 
 ### Installing `conda`
 
-This is not necessary when running REMIND on the PIK cluster. If you are on a Desktop machine or are using another shared computing infrastructure, ask your local IT department if `conda` is available for your system. For Desktop users here's a brief overview of how to install `conda`. Follow these steps:
+> **Note** This is not applicable to REMIND users on the PIK HPC
 
 1. **Download the `conda` installer**:
     - *Recommended*: For Miniconda (a minimal installer for `conda`): [Miniconda Distribution](https://docs.conda.io/en/latest/miniconda.html)

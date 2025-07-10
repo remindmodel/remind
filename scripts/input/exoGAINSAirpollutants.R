@@ -28,7 +28,16 @@ invisible(getConfig(option = NULL, verbose = firstIteration))
 
 # read SSP scenario
 load("config.Rdata")
-ssp_scenario <- cfg$gms$cm_APscen
+ap_scenario <- cfg$gms$cm_APscen
+# Get actual SSP setting in the case where we should get it from cm_GDPpopScen
+if (cfg$gms$cm_APssp == "FROMGDPSSP"){
+  ap_ssp <- cfg$gms$cm_GDPpopScen
+} else {
+  ap_ssp <- cfg$gms$cm_APssp
+}
+# TODO: FIXME: REMOVE ==================================================================================
+ap_scenario <-"CLE"
+
 
 # read in REMIND avtivities, use input.gdx if the fulldata_exoGAINS.gdx is not available
 if (file.exists("fulldata_exoGAINS.gdx")) {
@@ -59,6 +68,10 @@ rem_in <- rem_in_mo
 # load GAINS emissions and emission factors
 ef_gains  <- read.magpie("ef_gains.cs4r")
 emi_gains <- read.magpie("emi_gains.cs4r")
+
+# Subset the chosen SSP (or GAINSlegacy if asked), taking special care of ambiguity between sets
+ef_gains  <- collapseDim(ef_gains[,,list(V6 = ap_ssp)], 3.4)
+emi_gains <- collapseDim(emi_gains[,,list(V6 = ap_ssp)], 3.4)
 
 # ship_ef  <- read.magpie("../../modules/11_aerosols/exoGAINS/input/ef_ship.cs4r")
 # ship_emi <- read.magpie("../../modules/11_aerosols/exoGAINS/input/emi_ship.cs4r")
@@ -131,13 +144,15 @@ ela[,,] <- tmp
 RA_limited <- RA / (setYears(RA[,2015,] +1E-10))
 RA_limited[RA_limited>5] <- 5
 
-E <- ( ef_gains[,,ssp_scenario] / (setYears(ef_gains[,2015,ssp_scenario])+1E-10) + noef ) * setYears(emi_gains[,2015,ssp_scenario])  * ( RA_limited) ^ela
+E <- ( ef_gains[,,ap_scenario] / (setYears(ef_gains[,2015,ap_scenario])+1E-10) + noef ) * setYears(emi_gains[,2015,ap_scenario])  * ( RA_limited) ^ela
 
-# Calcualte emissions using different formula: for emisions that have no ef_gains
+# Calculate emissions using different formula: for emisions that have no ef_gains
 # take all timesteps of emi_gains and scale with relation of RA(SSP5) / RA(SSP2)
 # Preliminary: set RA_SSP2 to RA
+# GA: Since RA/RA is 1, and 1^0.4 is 1, this is essentially taking the 
+# exogenous emissions from the ap_scenario in emi_gains unaltered
 RA_SSP2 <- RA
-E_noef <- emi_gains[,,ssp_scenario]  * ( RA / (RA_SSP2+1E-10) )^ela
+E_noef <- emi_gains[,,ap_scenario]  * ( RA / (RA_SSP2+1E-10) )^ela
 
 # Replace only those emission in E that have no ef_gains
 sec_noef <- map_GAINS2REMIND[map_GAINS2REMIND$noef==1,]$GAINS
@@ -205,7 +220,7 @@ attributes(out) <- c(attributes(out),list(gdxdata =gdxdata))
 writeGDX(out,file="p11_emiAPexsolve",period_with_y = FALSE)
 
 # Use this to produce file with start values for REMIND
-#out_cs4r <- add_dimension(out,add = "ssp", nm = ssp_scenario,dim=3.3)
+#out_cs4r <- add_dimension(out,add = "ssp", nm = ap_scenario,dim=3.3)
 #write.magpie(out_cs4r,file_name = "f11_emiAPexsolve.cs4r")
 
 # library(luplot)
@@ -224,7 +239,7 @@ writeGDX(out,file="p11_emiAPexsolve",period_with_y = FALSE)
 # ship_E <- (ship_ef/setYears(ship_ef[,2015,])) * setYears(ship_emi[,2015,]) * (RA_ship/setYears(RA_ship[,2015,]))
 # E_rem <- add_columns(E_rem,addnm = getNames(ship_E,dim=1)) # filled with NA
 # gases <- getNames(E_rem,dim=2)
-# E_rem["GLO",,getNames(tmp)] <- ship_E[,,gases][,,ssp_scenario]
+# E_rem["GLO",,getNames(tmp)] <- ship_E[,,gases][,,ap_scenario]
 #
 # # Add BC and NOx for missing Int. Aviation sector from extra file from Steve
 # RA_avi <- collapseNames(time_interpolate(rem_in["GLO",,"Final Energy|Transportation|Liquids (EJ/yr)"][,,scenario], interpolated_year=getYears(ef_gains), integrate_interpolated_years=TRUE, extrapolation_type="constant"))
@@ -232,7 +247,7 @@ writeGDX(out,file="p11_emiAPexsolve",period_with_y = FALSE)
 # avi_E <- (avi_ef/setYears(avi_ef[,2015,])) * setYears(avi_emi[,2015,]) * (RA_avi/setYears(RA_avi[,2015,]))
 # CEDS16 <- add_columns(CEDS16,addnm = getNames(avi_E,dim=1)) # filled with NA
 # CEDS16[,,getNames(avi_E,dim=1)] <- 0 # replace NA with zero
-# CEDS16["GLO",,getNames(avi_E[,,ssp_scenario])] <- avi_E[,,ssp_scenario] # data only contains BC and NOx emissions from aircraft
+# CEDS16["GLO",,getNames(avi_E[,,ap_scenario])] <- avi_E[,,ap_scenario] # data only contains BC and NOx emissions from aircraft
 
 if(firstIteration){
   cat("\nExoGAINS - end of first iteration.\n\n")

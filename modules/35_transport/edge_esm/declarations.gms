@@ -10,9 +10,6 @@ p35_fe2es_aux(tall,all_regi,all_GDPpopScen,all_demScen,EDGE_scenario_all,all_teE
 ;
 Equations
 q35_demFeTrans(ttot,all_regi,all_enty,all_emiMkt) "Transport final energy demand"
-$IFTHEN.transpGDPscale "%cm_transpGDPscale%" == "on" 
-q35_transGDPshare(ttot,all_regi)  "Calculating dampening factor to align edge-t non-energy transportation costs with historical GDP data"
-$ENDIF.transpGDPscale
 ;
 
 *** EOF ./modules/35_transport/edge_esm/declarations.gms

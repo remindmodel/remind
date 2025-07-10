@@ -69,6 +69,10 @@ pm_cf,input,only needed if tax is on
 vm_shDemSeel,input,only needed if tax is on
 pm_teAnnuity,input,only needed if tax is on
 sm_D2005_2_D2017,input,no conversion needed
+pm_taxEI_PE,parameter,only needed if tax is on
+pm_taxEI_SE,parameter,only needed if tax is on
+pm_taxEI_cap,parameter,only needed if tax is on
+vm_deltaCap,variable,only needed if tax is on
 vm_emiCdrAll,input,added by codeCheck
 cm_NetNegEmi_calculation,input,added by codeCheck
 vm_emiAllco2neg,input,added by codeCheck

@@ -99,15 +99,6 @@ q80_budgetPermRestr.m(regi) = 0;
 ***p80_pvpFallback(ttot,trade) = 0;
 $include "./modules/80_optimization/nash/input/prices_NASH.inc";
 
-*** read in hard coded weights only to be used if due to infeasibilities internal computation of weights (postsolve) does not work
-parameter p80_eoWeights_fix(all_regi)        "hard coded fallback nash weights"
-/
-$ondelim
-$include "./modules/80_optimization/nash/input/p80_eoWeights_fix.cs4r"
-$offdelim
-/
-;
-
 ***EMIOPT------------------------------------------------------------------------------
 if ( cm_emiscen eq 6,
 $ifthen.emiopt %emicapregi% == "none"
