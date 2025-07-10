@@ -5,29 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
-## [Unreleased]
-
-### input data/calibration
+## [3.5.1] - 2025-07-10
 
 
 ### changed
-- Consolidated the `MAGICC7_AR6.R` climate reporting script and the `climateAssessmentInterimRun.R` climate assessment iteration script for damage runs using the `remindClimateAssessment` and `piamenv` packages [[#2082](https://github.com/remindmodel/remind/pull/2082), [#2099](https://github.com/remindmodel/remind/pull/2099)]
-- Enhanced `reporting.R` to read extra data needed for reporting directly from inputdata [[#2084](https://github.com/remindmodel/remind/pull/2084)]
-- Updated costs for learning technologies based on the data in the IRENA 2023 report Renewable Power Generation Costs, and made the convergence from regional to global values slower. Increased floor costs for wind onshore, decreased floor costs for wind offshore, and increased learning rates for both on- and offshore. 
-- restricted near-term growth of electrolysis by putting a global upper bound of 100 GW(el) in 2030 and increasing adjustment cost parameter and decreasing adjustment cost seed value [[#2126](https://github.com/remindmodel/remind/pull/2126)]
+- **scripts** Consolidated the `MAGICC7_AR6.R` climate reporting script and the `climateAssessmentInterimRun.R` climate assessment iteration script 
+    for damage runs using the `remindClimateAssessment` and `piamenv` packages 
+    [[#2082](https://github.com/remindmodel/remind/pull/2082)], 
+    [[#2099](https://github.com/remindmodel/remind/pull/2099)]
+- **scripts** Enhanced `reporting.R` to read extra data needed for reporting directly from inputdata 
+    [[#2084](https://github.com/remindmodel/remind/pull/2084)]
 - **scripts** nashAnalysis is deprecated in favor of improved nashConvergenceReport.
     [[#2138](https://github.com/remindmodel/remind/pull/2138)]
+- **core** Updated costs for learning technologies based on the data in the IRENA 2023 report Renewable Power Generation Costs, 
+    and made the convergence from regional to global values slower. Increased floor costs for wind onshore, decreased floor costs for wind offshore, 
+    and increased learning rates for both on- and offshore. 
+- **core** restricted near-term growth of electrolysis by putting a global upper bound of 100 GW(el) in 2030 and 
+    increasing adjustment cost parameter and decreasing adjustment cost seed value 
+    [[#2126](https://github.com/remindmodel/remind/pull/2126)]
 
 ### added
-- ScenarioMIP settings for regional carbon price differentiation added to 45_carbonprice/functionalForm [[#2117](https://github.com/remindmodel/remind/pull/2117)]
+- **45_carbonprice** ScenarioMIP settings for regional carbon price differentiation added to 45_carbonprice/functionalForm [[#2117](https://github.com/remindmodel/remind/pull/2117)]
 
 ### removed
 - **config** Two scenario config files (damagepaper) were used for the NGFS runs but are not needed anymore.
   [[#2107](https://github.com/remindmodel/remind/pull/2107)]
-- remove reading in and printing contents of `fm_histShare.cs3r`
-
-### fixed
--
+- **45_carbonprice/46_carbonpriceRegi** remove reading in and printing contents of `fm_histShare.cs3r`
 
 
 ## [3.5.0] - 2025-04-04
