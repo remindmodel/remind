@@ -84,8 +84,7 @@ parameter pm_shPPPMER(all_regi)        "PPP ratio for calculating GDP|PPP from G
 $ondelim
 $include "./core/input/pm_shPPPMER.cs4r"
 $offdelim
-/
-;
+/;
 
 *** load GDP data
 table f_gdp(tall,all_regi,all_GDPpopScen)        "GDP data"
@@ -155,12 +154,6 @@ $ondelim
 $include "./core/input/p_inco0.cs4r"
 $offdelim
 /;
-
-*** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated 
-p_inco0(ttot,all_regi,"windon") $ (p_inco0(ttot,all_regi,"windon") eq 0) = p_inco0(ttot,all_regi,"wind");
-p_inco0(ttot,all_regi,"wind") = 0;
-
 
 ***---------------------------------------------------------------------------
 *** SSP-dependent technology assumptions
@@ -542,16 +535,14 @@ parameter pm_share_ind_fesos(tall,all_regi)              "Share of coal solids (
 $ondelim
 $include "./core/input/p_share_ind_fesos.cs4r"
 $offdelim
-/
-;
+/;
 
 parameter pm_share_ind_fesos_bio(tall,all_regi)           "Share of biomass solids (biotr) used in the industry (rest is residential)"
 /
 $ondelim
 $include "./core/input/p_share_ind_fesos_bio.cs4r"
 $offdelim
-/
-;
+/;
 
 *** initialize pm_share_trans with the global value, will be updated after each negishi/nash iteration
 pm_share_trans("2005",regi) = 0.617;
@@ -625,16 +616,14 @@ parameter p_histEmiMac(tall,all_regi,all_enty)    "historical emissions per MAC"
 $ondelim
 $include "./core/input/p_histEmiMac.cs4r"
 $offdelim
-/
-;
+/;
 *** Read in historical emissions per sector to calibrate MAC reference emissions
 parameter p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types)    "historical emissions per sector"
 /
 $ondelim
 $include "./core/input/p_histEmiSector.cs4r"
 $offdelim
-/
-;
+/;
 
 ***---------------------------------------------------------------------------
 *** Import and set regional data
@@ -678,8 +667,7 @@ parameter f_IO_trade(tall,all_regi,all_enty,char)        "Energy trade bounds ba
 $ondelim
 $include "./core/input/f_IO_trade.cs4r"
 $offdelim
-/
-;
+/;
 pm_IO_trade(ttot,regi,enty,char) = f_IO_trade(ttot,regi,enty,char) * sm_EJ_2_TWa;
 
 *** use scaled data for export to guarantee net trade = 0 for each traded good
@@ -706,52 +694,36 @@ p_cint(regi,"co2","peoil","7")=0.2283105600;
 p_cint(regi,"co2","peoil","8")=0.4153983800;
 
 *** historical installed capacity
-*** read-in of pm_histCap_windoff.cs3r *** windoffshore-todo
 $Offlisting
-table   pm_histCap(tall,all_regi,all_te)     "historical installed capacity"
+table   pm_histCap(tall,all_regi,all_te) "historical installed capacity (TW)"
 $ondelim
-$include "./core/input/pm_histCap_windoff.cs3r"
+$include "./core/input/pm_histCap.cs3r"
 $offdelim
 ;
 $Onlisting
 
-*** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated
-pm_histCap(tall,all_regi,"windon") $ (pm_histCap(tall,all_regi,"windon") eq 0) = pm_histCap(tall,all_regi,"wind");
-pm_histCap(tall,all_regi,"wind") = 0;
-
+*** renewable historical capacity should only increase as it cannot retire
+pm_histCap("2020",regi,teReNoBio) = max(pm_histCap("2015",regi,teReNoBio), pm_histCap("2020",regi,teReNoBio));
+pm_histCap("2025",regi,teReNoBio) = max(pm_histCap("2020",regi,teReNoBio), pm_histCap("2025",regi,teReNoBio));
 
 *** calculate historic capacity additions
 pm_delta_histCap(tall,regi,te) = pm_histCap(tall,regi,te) - pm_histCap(tall-1,regi,te);
 
 *** historical PE installed capacity
-*** read-in of p_PE_histCap.cs3r
-table p_PE_histCap(tall,all_regi,all_enty,all_enty)     "historical installed capacity"
+table p_PE_histCap(tall,all_regi,all_enty,all_enty) "historical installed capacity (TW)"
 $ondelim
 $include "./core/input/p_PE_histCap.cs3r"
 $offdelim
 ;
 
 *** installed capacity availability
-*** read-in of f_cf.cs3r
 $Offlisting
-table   f_cf(tall,all_regi,all_te)     "installed capacity availability"
+table   f_cf(tall,all_regi,all_te) "installed capacity availability"
 $ondelim
 $include "./core/input/f_cf.cs3r"
 $offdelim
 ;
 $Onlisting
-
-
-*CG* setting wind offshore capacity factor to be the same as onshore here (later adjusting it in vm_capFac)
-*** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated
-f_cf(ttot,regi,"windon") $ (f_cf(ttot,regi,"windon") eq 0) = f_cf(ttot,regi,"wind");
-f_cf(ttot,regi,"storwindon") $ (f_cf(ttot,regi,"storwindon") eq 0) = f_cf(ttot,regi,"storwind");
-f_cf(ttot,regi,"gridwindon") $ (f_cf(ttot,regi,"gridwindon") eq 0) = f_cf(ttot,regi,"gridwind");
-f_cf(ttot,regi,"windoff") = f_cf(ttot,regi,"windon");
-f_cf(ttot,regi,"storwindoff") = f_cf(ttot,regi,"storwindon");
-f_cf(ttot,regi,"gridwindoff") = f_cf(ttot,regi,"gridwindon");
 
 pm_cf(ttot,regi,te) =  f_cf(ttot,regi,te);
 ***pm_cf(ttot,regi,"h2turbVRE") = 0.15;
@@ -891,8 +863,7 @@ parameter pm_NuclearConstraint(ttot,all_regi,all_te)       "parameter with the r
 $ondelim
 $include "./core/input/pm_NuclearConstraint.cs4r"
 $offdelim
-/
-;
+/;
 *** avoid negative additions requiremnet for 2020
 loop(regi,
 if(pm_NuclearConstraint("2020",regi,"tnrs")<0,
@@ -906,8 +877,7 @@ parameter p_boundCapCCS(ttot,all_regi,project_status)        "installed and plan
 $ondelim
 $include "./core/input/p_boundCapCCS.cs4r"
 $offdelim
-/
-;
+/;
 
 *** read in indicators on whether CCS is used in 2025 and 2030 (0 = no)
 parameter p_boundCapCCSindicator(all_regi)        "CCS used in until 2030"
@@ -915,8 +885,7 @@ parameter p_boundCapCCSindicator(all_regi)        "CCS used in until 2030"
 $ondelim
 $include "./core/input/p_boundCapCCSindicator.cs4r"
 $offdelim
-/
-;
+/;
 
 *** read in CO2 emisisons for 2010, used to fix vm_emiTe.up("2010",regi,"co2")
 parameter p_boundEmi(tall,all_regi)        "domestic CO2 emissions that are allowed in 2010 Unit: GtC"
@@ -924,16 +893,14 @@ parameter p_boundEmi(tall,all_regi)        "domestic CO2 emissions that are allo
 $ondelim
 $include "./core/input/p_boundEmi.cs4r"
 $offdelim
-/
-;
+/;
 *** read in F-Gas emissions
 parameter f_emiFgas(tall,all_regi,all_SSP_forcing_adjust,all_rcp_scen,all_delayPolicy,all_enty)        "F-gas emissions by single gases from IMAGE"
 /
 $ondelim
 $include "./core/input/f_emiFgas.cs4r"
 $offdelim
-/
-;
+/;
 
 
 * GA Read choice of non-CO2 MACs version
@@ -947,15 +914,13 @@ parameter p_abatparam_CH4(tall,all_regi,all_enty,steps)        "MAC costs for CH
 $ondelim
 $include "./core/input/p_abatparam_CH4.cs4r"
 $offdelim
-/
-;
+/;
 parameter p_abatparam_N2O(tall,all_regi,all_enty,steps)        "MAC costs for N2O by source"
 /
 $ondelim
 $include "./core/input/p_abatparam_N2O.cs4r"
 $offdelim
-/
-;
+/;
 $ELSEIF.MaccVersion %c_nonco2_macc_version% == "PBL_2022"
 *** PBL_2022 MACs are discretized in steps of 20 $/tC
 *** PBL_2022 includes three scenarios, read the big file into p_all_abatparam_CH4 and subset based on c_nonco2_macc_scenario
@@ -966,8 +931,7 @@ parameter p_all_abatparam_CH4(tall,all_regi,all_enty,macc_scens,steps)        "M
 $ondelim
 $include "./core/input/p_abatparam_SSP22022_CH4.cs4r"
 $offdelim
-/
-;
+/;
 parameter p_abatparam_CH4(tall,all_regi,all_enty,steps) "MAC costs for CH4 by source";
 *** Pick MACC scenario
 p_abatparam_CH4(tall,all_regi,all_enty,steps) = p_all_abatparam_CH4(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
@@ -976,8 +940,7 @@ parameter p_all_abatparam_N2O(tall,all_regi,all_enty,macc_scens,steps)        "M
 $ondelim
 $include "./core/input/p_abatparam_SSP22022_N2O.cs4r"
 $offdelim
-/
-;
+/;
 parameter p_abatparam_N2O(tall,all_regi,all_enty,steps) "MAC costs for N2O by source";
 *** Pick MACC scenario
 p_abatparam_N2O(tall,all_regi,all_enty,steps) = p_all_abatparam_N2O(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
@@ -989,8 +952,7 @@ parameter p_abatparam_CO2(tall,all_enty,steps)    "MAC costs for CO2 by source"
 $ondelim
 $include "./core/input/p_abatparam_CO2.cs4r"
 $offdelim
-/
-;
+/;
 p_abatparam_CH4(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p_abatparam_CH4(tall,all_regi,all_enty,"201");
 p_abatparam_N2O(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p_abatparam_N2O(tall,all_regi,all_enty,"201");
 
@@ -1002,16 +964,14 @@ parameter p_emiFossilFuelExtr(all_regi,all_enty)          "methane emissions in 
 $ondelim
 $include "./core/input/p_emiFossilFuelExtr.cs4r"
 $offdelim
-/
-;
+/;
 $else
 parameter p_emiFossilFuelExtr(all_regi,all_enty)          "methane emissions in 2020 [Mt CH4], needed for the calculation of p_efFossilFuelExtr"
 /
 $ondelim
 $include "./core/input/p_emiFossilFuelExtr2020.cs4r"
 $offdelim
-/
-;
+/;
 $endif
 
 *** GA: These hardcoded values were probably assuming 2005 as base year, TODO: check and adjust for 2020 case
@@ -1035,17 +995,17 @@ pm_dataren(regi,"nur",rlf,te)     = 1;
 pm_dataren(regi,"maxprod","1","geohe") = 6.342;
 
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
-table f_maxProdGradeRegiHydro(all_regi,char,rlf)                  "input of regionalized maximum from hydro [EJ/a]"
+table f_maxProdGradeRegiHydro(all_regi,char,rlf) "input of regionalized maximum from hydro [EJ/a]"
 $ondelim
 $include "./core/input/f_maxProdGradeRegiHydro.cs3r"
 $offdelim
 ;
+
 pm_dataren(all_regi,"maxprod",rlf,"hydro") = sm_EJ_2_TWa * f_maxProdGradeRegiHydro(all_regi,"maxprod",rlf);
 pm_dataren(all_regi,"nur",rlf,"hydro")     = f_maxProdGradeRegiHydro(all_regi,"nur",rlf);
 
-*CG* separating input of wind onshore and offshore
-*** windoffshore-todo
-table f_maxProdGradeRegiWindOn(all_regi,char,rlf)                  "input of regionalized maximum from wind onshore [EJ/a]"
+
+table f_maxProdGradeRegiWindOn(all_regi,char,rlf) "input of regionalized maximum from wind onshore [EJ/a]"
 $ondelim
 $include "./core/input/f_maxProdGradeRegiWindOn.cs3r"
 $offdelim
@@ -1054,33 +1014,23 @@ pm_dataren(all_regi,"maxprod",rlf,"windon") = sm_EJ_2_TWa * f_maxProdGradeRegiWi
 pm_dataren(all_regi,"nur",rlf,"windon")     = f_maxProdGradeRegiWindOn(all_regi,"nur",rlf);
 
 
-table f_maxProdGradeRegiWindOff(all_regi,char,rlf)                  "input of regionalized maximum from wind offshore [EJ/a]"
+table f_maxProdGradeRegiWindOff(all_regi,char,rlf) "input of regionalized maximum from wind offshore [EJ/a]"
 $ondelim
 $include "./core/input/f_maxProdGradeRegiWindOff.cs3r"
 $offdelim
 ;
 pm_dataren(all_regi,"maxprod",rlf,"windoff") = sm_EJ_2_TWa * f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf);
-*** increase wind offshore capacity factors by 25% to account for very different real-world values
-*** NREL values seem underestimated, potentially partially due to assuming low turbines
-pm_dataren(all_regi,"nur",rlf,"windoff")     = 1.25 * f_maxProdGradeRegiWindOff(all_regi,"nur",rlf);
+pm_dataren(all_regi,"nur",rlf,"windoff")     = f_maxProdGradeRegiWindOff(all_regi,"nur",rlf);
 
-pm_shareWindPotentialOff2On(all_regi) =
-    sum(rlf $ (rlf.val le 8), f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf))
+pm_shareWindPotentialOff2On(regi) =
+    sum(rlf $ (rlf.val le 8), pm_dataren(regi,"maxprod",rlf,"windoff"))
   /
-    sum(rlf $ (rlf.val le 8), f_maxProdGradeRegiWindOn( all_regi,"maxprod",rlf));
+    sum(rlf $ (rlf.val le 8), pm_dataren(regi,"maxprod",rlf,"windon"));
 
-pm_shareWindOff("2010",regi) = 0.05;
-pm_shareWindOff("2015",regi) = 0.1;
-pm_shareWindOff("2020",regi) = 0.2;
-pm_shareWindOff("2025",regi) = 0.4;
-pm_shareWindOff("2030",regi) = 0.6;
-pm_shareWindOff("2035",regi) = 0.8;
-pm_shareWindOff("2040",regi) = 0.9;
-pm_shareWindOff("2045",regi) = 0.95;
-pm_shareWindOff(ttot,regi)$((ttot.val ge 2050)) = 1;
+pm_shareWindOff(ttot,regi)$(ttot.val >= 2030) = 1;
 
 
-table f_dataRegiSolar(all_regi,char,all_te,rlf)                  "input of regionalized data for solar"
+table f_dataRegiSolar(all_regi,char,all_te,rlf) "input of regionalized data for solar [EJ/a]"
 $ondelim
 $include "./core/input/f_dataRegiSolar.cs3r"
 $offdelim
@@ -1099,18 +1049,14 @@ pm_data(all_regi,"luse","spv")                = 0.001 * f_dataRegiSolar(all_regi
 pm_dataren(all_regi,"nur",rlf,"csp")          = 2/3 * f_dataRegiSolar(all_regi,"nur","csp",rlf);
 
 
-table f_maxProdGeothermal(all_regi,char)                  "input of regionalized maximum from geothermal [EJ/a]"
+table f_maxProdGeothermal(all_regi,char) "input of regionalized maximum from geothermal [EJ/a]"
 $ondelim
 $include "./core/input/f_maxProdGeothermal.cs3r"
 $offdelim
 ;
 
 *** Ensure that all regions have at least a minimum potential of 0.01 EJ to prevent infeasibilities.
-*** Also increase the read-in potential by a factor of 3 to allow 2030/2050 NPI capacity targets to be met. 
-*** The current potential is calculated as "5x the 2015 generation" - given that geohdr is still a nascent technology, allowing stronger upscaling seems justified. 
-*** Even after the rescaling, no region can produce more than 1.5EJ/yr
-
-pm_dataren(all_regi,"maxprod","1","geohdr") = sm_EJ_2_TWa * max(0.01 , 3 * f_maxProdGeothermal(all_regi,"maxprod") ) ;
+pm_dataren(all_regi,"maxprod","1","geohdr") = sm_EJ_2_TWa * max(0.01 , f_maxProdGeothermal(all_regi,"maxprod") ) ;
 
 
 display p_datapot, pm_dataren;
@@ -1152,16 +1098,9 @@ display p_aux_capToDistr, s_aux_cap_remaining, p_aux_capThisGrade, p_avCapFac201
 parameter p_histCapFac(tall,all_regi,all_te)     "Capacity factor (fraction of the year that a plant is running) of installed capacity in 2015"
 /
 $ondelim
-$include "./core/input/p_histCapFac_windoff.cs4r"
+$include "./core/input/p_histCapFac.cs4r"
 $offdelim
-/
-;
-
-*** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated
-p_histCapFac(tall,all_regi,"windon") $ (p_histCapFac(tall,all_regi,"windon") eq 0) = p_histCapFac(tall,all_regi,"wind");
-p_histCapFac(tall,all_regi,"wind") = 0;
-
+/;
 
 *** Capacity factor for wind and solar
 *** Effective capacity factor pm_dataren("nur") * pm_cf scales from historical values in 2015 to grade-based values in 2030
@@ -1227,15 +1166,10 @@ parameter p_adj_deltacapoffset(tall,all_regi,all_te)     "adjustment cost offset
 $ondelim
 $include "./core/input/p_adj_deltacapoffset.cs4r"
 $offdelim
-/
-;
-p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
-
-*** windoffshore-todo
-*** allow input data with either "wind" or "windon" until mrremind is updated
-p_adj_deltacapoffset(t,regi,"windon") $ (p_adj_deltacapoffset(t,regi,"windon") eq 0) = p_adj_deltacapoffset(t,regi,"wind");
-p_adj_deltacapoffset(t,regi,"windoff")= p_adj_deltacapoffset(t,regi,"windon");
-p_adj_deltacapoffset(t,regi,"wind") = 0;
+/;
+p_adj_deltacapoffset("2015",regi,"tnrs") = 1;
+p_adj_deltacapoffset("2015",regi,"windoff") = p_adj_deltacapoffset("2010",regi,"windon");
+p_adj_deltacapoffset("2020",regi,"windoff") = p_adj_deltacapoffset("2010",regi,"windon");
 
 *** share of PE2SE capacities in 2005 depends on GDP-MER
 p_adj_seed_reg(t,regi) = pm_gdp(t,regi) * 1e-4;
@@ -1428,8 +1362,7 @@ parameter fm_taxCO2eqHist(ttot,all_regi)       "historic CO2 prices [$/tCO2]"
 $ondelim
 $include "./core/input/pm_taxCO2eqHist.cs4r"
 $offdelim
-/
-;
+/;
 pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = fm_taxCO2eqHist(ttot,regi) * sm_DptCO2_2_TDpGtC;
 
 *DK* LU emissions are abated in MAgPIE in coupling mode
@@ -1457,29 +1390,25 @@ parameter p_macBase2005(all_regi,all_enty)        "baseline emissions of mac opt
 $ondelim
 $include "./core/input/p_macBase2005.cs4r"
 $offdelim
-/
-;
+/;
 parameter p_macBase1990(all_regi,all_enty)     "baseline emissions of mac options in 1990"
 /
 $ondelim
 $include "./core/input/p_macBase1990.cs4r"
 $offdelim
-/
-;
+/;
 parameter p_macBaseCEDS2005(all_regi,all_enty)        "baseline emissions of mac options in 2005 from CEDS"
 /
 $ondelim
 $include "./core/input/p_macBaseCEDS2005.cs4r"
 $offdelim
-/
-;
+/;
 parameter p_macBaseCEDS2020(all_regi,all_enty)        "baseline emissions of mac options in 2020"
 /
 $ondelim
 $include "./core/input/p_macBaseCEDS2020.cs4r"
 $offdelim
-/
-;
+/;
 parameter p_macBaseIMAGE(tall,all_regi,all_enty)        "baseline emissions of N2O from transport, adipic acid production, and nitric acid production based on data from van Vuuren"
 /
 $ondelim
@@ -1489,16 +1418,14 @@ $else
 $include "./core/input/p_macBaseHarmsen2022.cs4r"
 $endif
 $offdelim
-/
-;
+/;
 
 parameter f_macBaseExo(tall,all_regi,all_enty,all_LU_emi_scen)        "baseline emissions of N2O and CH4 from landuse based on exogenous data"
 /
 $ondelim
 $include "./core/input/f_macBaseExo.cs4r"
 $offdelim
-/
-;
+/;
 p_macBaseExo(ttot,regi,emiMacExo(enty))$(ttot.val ge 2005) = f_macBaseExo(ttot,regi,emiMacExo,"%cm_LU_emi_scen%");
 
 $if %cm_MAgPIE_coupling% == "off" parameter f_macBaseMagpie(tall,all_regi,all_enty,all_LU_emi_scen,all_rcp_scen)    "baseline emissions of N2O and CH4 from landuse based on data from Magpie"
@@ -1508,8 +1435,7 @@ $ondelim
 $if %cm_MAgPIE_coupling% == "off" $include "./core/input/f_macBaseMagpie.cs4r"
 $if %cm_MAgPIE_coupling% == "on"  $include "./core/input/f_macBaseMagpie_coupling.cs4r"
 $offdelim
-/
-;
+/;
 $if %cm_MAgPIE_coupling% == "off" pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
 $if %cm_MAgPIE_coupling% == "on"  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
 
@@ -1520,8 +1446,7 @@ parameter p_macPolCO2luc(tall,all_regi)                "co2 emissions from landu
 $ondelim
 $include "./core/input/p_macPolCO2luc.cs4r"
 $offdelim
-/
-;
+/;
 
 *** ----- Emission factor of final energy carriers -----------------------------------
 *** demand side emission factor of final energy carriers in MtCO2/EJ
@@ -1563,8 +1488,7 @@ parameter f_nechem_emissionFactors(ttot,all_regi,*)  "non-energy emission factor
 $ondelim
 $include "./core/input/f_nechem_emissionFactors.cs4r"
 $offdelim
-/
-;
+/;
 
 pm_emifacNonEnergy(ttot,regi,"sesofos", "fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids")  / s_zj_2_twa;
 pm_emifacNonEnergy(ttot,regi,"seliqfos","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
@@ -1577,8 +1501,7 @@ parameter f_incinerationShares(ttot,all_regi)         "incineration rate of plas
 $ondelim
 $include "./core/input/f_incinerationShares.cs4r"
 $offdelim
-/
-;
+/;
 pm_incinerationRate(ttot,all_regi)=f_incinerationShares(ttot,all_regi);
 
 *** some balances are not matching by small amounts;
@@ -1614,8 +1537,7 @@ f_fedemand(tall,all_regi,all_demScen,all_in)   "final energy demand"
 $ondelim
 $include "./core/input/f_fedemand.cs4r"
 $offdelim
-/
-;
+/;
 
 *** use cm_demScen for Industry and Buildings
 *** cm_GDPpopScen will be used for Transport (EDGE-T) (see p29_trpdemand)

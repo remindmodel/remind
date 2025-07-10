@@ -342,17 +342,12 @@ q_capTotal(t,regi,entyPe,entySe)$( capTotal(entyPe,entySe))..
 *' CG: implementing simple exogenous wind offshore energy production
 *** windoffshore-todo
 ***---------------------------------------------------------------------------
-q_windoff_low(t,regi)$(t.val > 2020)..
+q_windoff_low(t,regi)$(t.val >= 2030)..
    sum(rlf, vm_deltaCap(t,regi,"windoff",rlf))
    =g=
    pm_shareWindOff(t,regi) * pm_shareWindPotentialOff2On(regi) * 0.5 * sum(rlf, vm_deltaCap(t,regi,"windon",rlf))
 ;
 
-q_windoff_high(t,regi)$(t.val > 2020)..
-   sum(rlf, vm_deltaCap(t,regi,"windoff",rlf))
-   =l=
-   pm_shareWindOff(t,regi) * pm_shareWindPotentialOff2On(regi) * 2 * sum(rlf, vm_deltaCap(t,regi,"windon",rlf))
-;
 
 ***---------------------------------------------------------------------------
 *' Technological change is an important driver of the evolution of energy systems.
