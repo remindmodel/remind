@@ -83,10 +83,7 @@ all_delayPolicy   "all possible SPA policy choices"
     SPAx            "moderate baseline policy, depends on the SSP-scenario"
 /
 
-*** GA: If you get a domain violation here, make sure you have a valid cm_APssp and cm_APscen combination, and 
-*** especially if you're using defaults. The default setting may be trying to set one of these automatically,
-*** so if you use an SSP setting outside of SSP1-5
-*** See entries in main.gms for details.
+*** If you get a domain violation here, check if cm_APssp and cm_APscen values are correctly paired. See main.gms for details.
 all_APssp     "all air pollutant SSPs. GAINSlegacy means the SSP is picked with all_APscen and there are no variations"
 /
     SSP1
@@ -98,10 +95,7 @@ all_APssp     "all air pollutant SSPs. GAINSlegacy means the SSP is picked with 
     SSP2IndiaHigh
 /
 
-*** GA: If you get a domain violation here, make sure you have a valid cm_APssp and cm_APscen combination, and 
-*** especially if you're using defaults. The default setting may be trying to set one of these automatically,
-*** so if you use an SSP setting outside of SSP1-5
-*** See entries in main.gms for details.
+*** If you get a domain violation here, check if cm_APssp and cm_APscen values are correctly paired. See main.gms for details.
 all_APscen     "all air pollutant scenarios"
 /
     SSP1
