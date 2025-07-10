@@ -1,0 +1,11 @@
+title;start;oldrun;path_report;qos;config/scenario_config.csv;no_ghgprices_land_until;var_luc;path_gdx;path_gdx_bau;path_gdx_ref;path_gdx_refpolicycost;cfg_mag$gms$s15_elastic_demand;cfg_mag$gms$s29_treecover_target;cfg_mag$gms$s59_scm_target;cfg_mag$gms$c60_1stgen_biodem;cfg_mag$gms$s44_bii_target;cfg_mag$gms$c44_bii_decrease;cfg_mag$gms$s44_start_year
+# startgroup=remindinput: scenarios that are needed to update MAgPIE inputs in REMIND (emissions, costs, ...);;;;;;;;;;;;;;;;;;
+SSP1-NDC;0;;;;SSP1|NDC|AR-natveg|nocc_hist;y2150;raw;;;;;1;0;0;const2030;0;1;2025
+SSP1-NPi2025;1;;;;SSP1|NPI|AR-natveg|nocc_hist;y2150;raw;;;;;1;0;0;const2030;0;1;2025
+SSP1-PkBudg1000;1;;;;SSP1|NDC|AR-natveg|nocc_hist;y2030;raw;;;;;1;0.01;0.1;const2030;0;1;2025
+Reference_SSP1_800f;1;;;;SSP1|NDC|AR-natveg|nocc_hist;y2030;raw;;;;;1;0;0;const2030;0.7;0;2030
+SSP2-NDC;0;;;;SSP2|NDC|AR-natveg|nocc_hist;y2150;raw;;;;;1;0;0;const2030;0;1;2025
+SSP2-NPi;0;;;;SSP2|NPI|AR-natveg|nocc_hist;y2150;raw;;;;;1;0;0;const2030;0;1;2025
+SSP2-NPi2025;1;;;;SSP2|NPI|AR-natveg|nocc_hist;y2150;raw;;;;;1;0;0;const2030;0;1;2025
+SSP2-PkBudg1000;1;;;;SSP2|NDC|AR-natveg|nocc_hist;y2030;raw;;;;;1;0.01;0.1;const2030;0;1;2025
+Reference_SSP2_800f;0;;;;SSP2|NDC|AR-natveg|nocc_hist;y2030;raw;;;;;1;0;0;const2030;0.7;0;2030

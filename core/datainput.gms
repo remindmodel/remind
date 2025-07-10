@@ -166,15 +166,19 @@ $ifthen.c_techAssumptScen "%c_techAssumptScen%" == "SSP1"
         fm_dataglob("inco0",te) =        1.3 * fm_dataglob("inco0",te);
     );
 *** hampers nuclear a lot
-    fm_dataglob("inco0","tnrs") =        1.7 * fm_dataglob("inco0","tnrs");
+    fm_dataglob("inco0","tnrs") =        1.3 * fm_dataglob("inco0","tnrs");
 *** favours transmission for non-ICE vehicules
     fm_dataglob("inco0",te) $ (sameas(te,"tdelt") or sameas(te,"tdh2t")) = 0.7 * fm_dataglob("inco0",te);
 *** favours VRE and electricity storage
     fm_dataglob("learn",teVRE) =         1.1 * fm_dataglob("learn",teVRE);
     fm_dataglob("floorcost","spv") =     0.1 * fm_dataglob("floorcost","spv");
     fm_dataglob("floorcost","csp") =     0.8 * fm_dataglob("floorcost","csp");
-    fm_dataglob("floorcost","windon") =  0.5 * fm_dataglob("floorcost","windon");
-    fm_dataglob("floorcost","windoff") = 0.6 * fm_dataglob("floorcost","windoff");
+*** RP: because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
+*** values need to be set by hand!
+    fm_dataglob("learn","windon")     =  0.17;  !! these values make 2100 wind onshore costs ~0.8 times those seen in SSP2 at the same cumCap
+    fm_dataglob("floorcost","windon") =  200;
+    fm_dataglob("learn","windoff")    =  0.16; !! these values make 2100 wind offshore costs ~0.8 times those seen in SSP2 at the same cumCap
+    fm_dataglob("floorcost","windoff") = 400; 
     fm_dataglob("inco0",teStor) =        0.7 * fm_dataglob("inco0",teStor); 
     fm_dataglob("floorcost",teStor) =    0.7 * fm_dataglob("floorcost",teStor);
 
@@ -196,8 +200,13 @@ $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP3"
     fm_dataglob("learn","spv") =         0.8 * fm_dataglob("learn","spv");
     fm_dataglob("floorcost","spv") =     8   * fm_dataglob("floorcost","spv");
     fm_dataglob("floorcost","csp") =     1.6 * fm_dataglob("floorcost","csp");
-    fm_dataglob("floorcost","windon") =  4.5 * fm_dataglob("floorcost","windon");
-    fm_dataglob("floorcost","windoff") = 1.8 * fm_dataglob("floorcost","windoff");
+*** RP: because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
+*** values need to be set by hand!
+    fm_dataglob("learn","windon")     =  0.17;  !! these values make 2100 wind onshore costs ~2 times those seen in SSP2 at the same cumCap
+    fm_dataglob("floorcost","windon") =  1500;
+    fm_dataglob("learn","windoff")    =  0.16; !! these values make 2100 wind offshore costs ~2 times those seen in SSP2 at the same cumCap
+    fm_dataglob("floorcost","windoff") = 2000; 
+
     fm_dataglob("inco0",teStor) =        2   * fm_dataglob("inco0",teStor); 
     fm_dataglob("floorcost",teStor) =    2   * fm_dataglob("floorcost",teStor); 
 
@@ -213,8 +222,12 @@ $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP5"
     fm_dataglob("learn",teVRE) =         0.8 * fm_dataglob("learn",teVRE);
     fm_dataglob("floorcost","spv") =     3   * fm_dataglob("floorcost","spv");
     fm_dataglob("floorcost","csp") =     1.3 * fm_dataglob("floorcost","csp");
-    fm_dataglob("floorcost","windon") =  2.5 * fm_dataglob("floorcost","windon");
-    fm_dataglob("floorcost","windoff") = 1.4 * fm_dataglob("floorcost","windoff");
+*** RP: because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
+*** values need to be set by hand!
+    fm_dataglob("learn","windon")     =  0.17;  !! these values make 2100 wind onshore costs ~1.5 times those seen in SSP2 at the same cumCap
+    fm_dataglob("floorcost","windon") =  1000;
+    fm_dataglob("learn","windoff")    =  0.16; !! these values make 2100 wind offshore costs ~1.5 times those seen in SSP2 at the same cumCap
+    fm_dataglob("floorcost","windoff") = 1400; 
     fm_dataglob("inco0",teStor) =        2   * fm_dataglob("inco0",teStor); 
     fm_dataglob("floorcost",teStor) =    2   * fm_dataglob("floorcost",teStor); 
 
@@ -369,6 +382,7 @@ $ifthen.floorscen %cm_floorCostScen% == "pricestruc"
     p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
 $endif.floorscen
 
+
 *** calculate floor costs for learning technologies if there is technology transfer
 $ifthen.floorscen %cm_floorCostScen% == "techtrans"
 *** compute maximum income GDP PPP per capita among regions in 2050
@@ -381,6 +395,11 @@ $endif.floorscen
 
 *** In case regionally differentiated investment costs should be used the corresponding entries are revised:
 $ifthen.REG_techcosts not "%cm_techcosts%" == "GLO"   !! cm_techcosts is REG or REG2040
+*** calculate regional floor costs for learning technologies from ratio of global values
+*** take the ratio of the global floorcost to global initial cost, and multiply with the new regional cost to get new floorcost that should create reasonable learning paths around 2020
+    pm_data(regi,"floorcost",teLearn(te))$(teRegTechCosts(te) ) = p_inco0("2015",regi,te) * fm_dataglob("floorcost",te) / fm_dataglob("inco0",te);
+    pm_data(regi,"floorcost","spv") = p_inco0("2020",regi,"spv") * fm_dataglob("floorcost","spv") / fm_dataglob("inco0","spv") ; !! 2020 values are available for PV
+
     pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2015",regi,teRegTechCosts);
     pm_data(regi,"inco0","spv")          = p_inco0("2020",regi,"spv");
 $endif.REG_techcosts
@@ -735,11 +754,11 @@ pm_cf(ttot,regi,"tdsynpet") = 0.7;
 pm_cf(ttot,regi,"tdsyndie") = 0.7;
 *** eternal short-term fix for process-based industry
 pm_cf(ttot,regi,"bf") = 0.8;
-pm_cf(ttot,regi,"bfcc") = 0.8;
+pm_cf(ttot,regi,"eaf") = 0.8;
 pm_cf(ttot,regi,"bof") = 0.8;
 pm_cf(ttot,regi,"idr") = 0.8;
 pm_cf(ttot,regi,"idrcc") = 1.0; !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
-pm_cf(ttot,regi,"eaf") = 1.0;   !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
+pm_cf(ttot,regi,"bfcc") = 1.0;   !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
 
 *RP* phasing down the ngt cf to "peak load" cf of 5%
 pm_cf(ttot,regi,"ngt")$(ttot.val eq 2025) = 0.9 * pm_cf(ttot,regi,"ngt");
@@ -1171,74 +1190,97 @@ p_adj_deltacapoffset("2015",regi,"tnrs") = 1;
 p_adj_deltacapoffset("2015",regi,"windoff") = p_adj_deltacapoffset("2010",regi,"windon");
 p_adj_deltacapoffset("2020",regi,"windoff") = p_adj_deltacapoffset("2010",regi,"windon");
 
+
+
+
 *** share of PE2SE capacities in 2005 depends on GDP-MER
 p_adj_seed_reg(t,regi) = pm_gdp(t,regi) * 1e-4;
 
+
+*** set global seed value of adjustment costs parameterization
+*** lower seed values let adjustment cost start to have influence already at lower growth rates
 loop(ttot$(ttot.val ge 2005),
-  p_adj_seed_te(ttot,regi,te)                = 1.00;
-  p_adj_seed_te(ttot,regi,teCCS)             = 0.25;
-  p_adj_seed_te(ttot,regi,"igcc")            = 0.50;
-  p_adj_seed_te(ttot,regi,"tnrs")            = 0.25;
-  p_adj_seed_te(ttot,regi,"hydro")           = 0.25;
-  p_adj_seed_te(ttot,regi,"csp")             = 0.25;
-  p_adj_seed_te(ttot,regi,"spv")             = 2.00;
-  p_adj_seed_te(ttot,regi,"windoff")         = 0.5;
-  p_adj_seed_te(ttot,regi,"gasftrec")        = 0.25;
-  p_adj_seed_te(ttot,regi,"gasftcrec")       = 0.25;
-  p_adj_seed_te(ttot,regi,"coalftrec")       = 0.25;
-  p_adj_seed_te(ttot,regi,"coalftcrec")      = 0.25;
-  p_adj_seed_te(ttot,regi,"coaltr")          = 4.00;
-  p_adj_seed_te(ttot,regi,'dac')             = 0.25;
-  p_adj_seed_te(ttot,regi,'oae_ng')          = 0.25;
-  p_adj_seed_te(ttot,regi,'oae_el')          = 0.25;
+*** standard setting
+  p_adj_seed_te(ttot,regi,te)           = 1.00;
+*** standard setting for carbon capture technologies with lower seed value
+  p_adj_seed_te(ttot,regi,teCCS)        = 0.25;
+*** fossil technologies
+  p_adj_seed_te(ttot,regi,"gasftrec")   = 0.25;
+  p_adj_seed_te(ttot,regi,"gasftcrec")  = 0.25;
+  p_adj_seed_te(ttot,regi,"igcc")       = 0.50;
+  p_adj_seed_te(ttot,regi,"coaltr")     = 4.00;
+  p_adj_seed_te(ttot,regi,"coalftrec")  = 0.25;
+  p_adj_seed_te(ttot,regi,"coalftcrec") = 0.25;
+*** renewables and nuclear  
+  p_adj_seed_te(ttot,regi,"geohdr")     = 0.1;
+  p_adj_seed_te(ttot,regi,"hydro")      = 0.25;
+  p_adj_seed_te(ttot,regi,"windoff")    = 0.5;
+  p_adj_seed_te(ttot,regi,"spv")        = 2.00;
+  p_adj_seed_te(ttot,regi,"csp")        = 0.25;
+  p_adj_seed_te(ttot,regi,"tnrs")       = 0.25;
+*** green hydrogen and synthetic fuels
+  p_adj_seed_te(ttot,regi,"elh2")       = 0.5;
+  p_adj_seed_te(ttot,regi,"MeOH")       = 0.5;
+  p_adj_seed_te(ttot,regi,"h22ch4")     = 0.5;
+*** CDR technologies  
+  p_adj_seed_te(ttot,regi,'dac')        = 0.25;
+  p_adj_seed_te(ttot,regi,'oae_ng')     = 0.25;
+  p_adj_seed_te(ttot,regi,'oae_el')     = 0.25;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-  p_adj_seed_te(ttot,regi,"bfcc")            = 0.05;
-  p_adj_seed_te(ttot,regi,"idrcc")           = 0.05;
+*** steel technologies
+  p_adj_seed_te(ttot,regi,"bfcc")       = 0.05;
+  p_adj_seed_te(ttot,regi,"idrcc")      = 0.05;
 $endif.cm_subsec_model_steel
-  p_adj_seed_te(ttot,regi,"MeOH") = 0.5;
-  p_adj_seed_te(ttot,regi,"h22ch4") = 0.5;
 
 *RP: for comparison of different technologies:
 *** pm_conv_cap_2_MioLDV <- 650  # The world has slightly below 800million cars in 2005 (IEA TECO2), so with a global vm_cap of 1.2, this gives ~650
 *** ==> 1TW power plant ~ 650 million LDV
 
-  p_adj_coeff(ttot,regi,te)                = 0.25;
-  p_adj_coeff(ttot,regi,"pc")              = 0.5;
-  p_adj_coeff(ttot,regi,"ngcc")            = 0.4;
-  p_adj_coeff(ttot,regi,"igcc")            = 0.5;
-  p_adj_coeff(ttot,regi,"bioigcc")         = 0.55;
-  p_adj_coeff(ttot,regi,"gaschp")          = 0.4;
-  p_adj_coeff(ttot,regi,"coalchp")         = 0.5;
-  p_adj_coeff(ttot,regi,"biochp")          = 0.55;
-  p_adj_coeff(ttot,regi,"coaltr")          = 0.1;
-  p_adj_coeff(ttot,regi,"tnrs")            = 1.0;
-  p_adj_coeff(ttot,regi,"hydro")           = 1.0;
-  p_adj_coeff(ttot,regi,"gasftrec")        = 0.4;
-  p_adj_coeff(ttot,regi,"coalftrec")       = 0.6;
-  p_adj_coeff(ttot,regi,"bioftrec")        = 0.65;
-  p_adj_coeff(ttot,regi,"gash2")           = 0.35;
-  p_adj_coeff(ttot,regi,"coalh2")          = 0.55;
-  p_adj_coeff(ttot,regi,"bioh2")           = 0.6;
-  p_adj_coeff(ttot,regi,teCCS)             = 1.0;
-  p_adj_coeff(ttot,regi,"ccsinje")         = 1.0;
-  p_adj_coeff(ttot,regi,"spv")             = 0.15;
-  p_adj_coeff(ttot,regi,"windon")          = 0.25;
-  p_adj_coeff(ttot,regi,"windoff")         = 0.35;
+*** set adjustment cost coefficients, higher values increase adjustment costs
+*** standard setting
+  p_adj_coeff(ttot,regi,te)             = 0.25;
+*** standard setting for carbon capture technologies with higher adjustment costs
+  p_adj_coeff(ttot,regi,teCCS)          = 1.0;
+*** fossil technologies
+  p_adj_coeff(ttot,regi,"ngcc")         = 0.4;
+  p_adj_coeff(ttot,regi,"gaschp")       = 0.4;
+  p_adj_coeff(ttot,regi,"gash2")        = 0.35;
+  p_adj_coeff(ttot,regi,"gasftrec")     = 0.4;
+  p_adj_coeff(ttot,regi,"igcc")         = 0.5;
+  p_adj_coeff(ttot,regi,"pc")           = 0.5;
+  p_adj_coeff(ttot,regi,"coalchp")      = 0.5;
+  p_adj_coeff(ttot,regi,"coaltr")       = 0.1;
+  p_adj_coeff(ttot,regi,"coalftrec")    = 0.6;
+  p_adj_coeff(ttot,regi,"coalh2")       = 0.55;
+*** biomass technologies
+  p_adj_coeff(ttot,regi,"biochp")       = 0.55;
+  p_adj_coeff(ttot,regi,"bioigcc")      = 0.55;
+  p_adj_coeff(ttot,regi,"bioftrec")     = 0.65;
+  p_adj_coeff(ttot,regi,"bioh2")        = 0.6;
+*** renewables and nuclear
+  p_adj_coeff(ttot,regi,"geohdr")       = 2.0;
+  p_adj_coeff(ttot,regi,"hydro")        = 1.0;
+  p_adj_coeff(ttot,regi,"windon")       = 0.25;
+  p_adj_coeff(ttot,regi,"windoff")      = 0.35;
+  p_adj_coeff(ttot,regi,"spv")          = 0.15;
+  p_adj_coeff(ttot,regi,"tnrs")         = 1.0;
+*** VRE storage and grid
+  p_adj_coeff(ttot,regi,teGrid)         = 0.3;
+  p_adj_coeff(ttot,regi,teStor)         = 0.05;
+*** green hydrogen and synthetic fuels
+  p_adj_coeff(ttot,regi,"elh2")         = 0.5;
+  p_adj_coeff(ttot,regi,"MeOH")         = 0.5;
+  p_adj_coeff(ttot,regi,"h22ch4")       = 0.5;
+*** CO2 storage and CDR technologies
+  p_adj_coeff(ttot,regi,"ccsinje")      = 1.0;
+  p_adj_coeff(ttot,regi,"dac")          = 0.8;
+  p_adj_coeff(ttot,regi,'oae_ng')       = 0.8;
+  p_adj_coeff(ttot,regi,'oae_el')       = 0.8;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-  p_adj_coeff(ttot,regi,"bfcc")            = 1.0;
-  p_adj_coeff(ttot,regi,"idrcc")           = 1.0;
+*** steel technologies
+  p_adj_coeff(ttot,regi,"bfcc")         = 1.0;
+  p_adj_coeff(ttot,regi,"idrcc")        = 1.0;
 $endif.cm_subsec_model_steel
-
-  p_adj_coeff(ttot,regi,"dac")             = 0.8;
-  p_adj_coeff(ttot,regi,'oae_ng')          = 0.8;
-  p_adj_coeff(ttot,regi,'oae_el')          = 0.8;
-  p_adj_coeff(ttot,regi,teGrid)            = 0.3;
-  p_adj_coeff(ttot,regi,teStor)            = 0.05;
-
-  p_adj_coeff(ttot,regi,"MeOH")            = 0.5;
-  p_adj_coeff(ttot,regi,"h22ch4")          = 0.5;
-
-
 );
 
 ***Rescaling adj seed and coeff if adj cost multiplier switches are on
@@ -1342,18 +1384,18 @@ p_datacs(regi,"peoil") = 0;   !! RP: 0 turn off the explicit calculation of non-
 ***                                ESM  MAC data
 ***------------------------------------------------------------------------------------
 if(c_macscen eq 2,
-  pm_macSwitch(emiMacSector)  = 0;
+  pm_macSwitch(ttot,regi,emiMacSector)  = 0;
 );
-  pm_macSwitch("ch4wstl") = 1;
-  pm_macSwitch("ch4wsts") = 1;
+  pm_macSwitch(ttot,regi,"ch4wstl") = 1;
+  pm_macSwitch(ttot,regi,"ch4wsts") = 1;
 if(c_macscen eq 1,
-  pm_macSwitch(emiMacSector) = 1;
+  pm_macSwitch(ttot,regi,emiMacSector) = 1;
 );
 
 *** for NDC and NPi switch off landuse MACs
-$if %carbonprice% == "off"      pm_macSwitch(emiMacMagpie) = 0;
-$if %carbonprice% == "NDC"      pm_macSwitch(emiMacMagpie) = 0;
-$if %carbonprice% == "NPi"      pm_macSwitch(emiMacMagpie) = 0;
+$if %carbonprice% == "off"      pm_macSwitch(ttot,regi,emiMacMagpie) = 0;
+$if %carbonprice% == "NDC"      pm_macSwitch(ttot,regi,emiMacMagpie) = 0;
+$if %carbonprice% == "NPi"      pm_macSwitch(ttot,regi,emiMacMagpie) = 0;
 
 *** Load historical carbon prices defined in $/t CO2, need to be rescaled to right unit
 pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = 0;
@@ -1367,15 +1409,21 @@ pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = fm_taxCO2eqHist(ttot,regi) * sm_DptC
 
 *DK* LU emissions are abated in MAgPIE in coupling mode
 *** An alternative to the approach below could be to introduce a new value for c_macswitch that only deactivates the LU MACs
-$if %cm_MAgPIE_coupling% == "on"  pm_macSwitch(enty)$emiMacMagpie(enty) = 0;
+$if %cm_MAgPIE_coupling% == "on"  pm_macSwitch(ttot,regi,enty)$emiMacMagpie(enty) = 0;
 *** As long as there is hardly any CO2 LUC reduction in MAgPIE we dont need MACs in REMIND
-$if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("co2luc") = 0;
+$if %cm_MAgPIE_coupling% == "off"  pm_macSwitch(ttot,regi,"co2luc") = 0;
 *** The tiny fraction n2ofertsom of total land use n2o can get slightly negative in some cases. Ignore MAC for n2ofertsom by default.
-$if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("n2ofertsom") = 0;
+$if %cm_MAgPIE_coupling% == "off"  pm_macSwitch(ttot,regi,"n2ofertsom") = 0;
 
-p_macCostSwitch(enty)=pm_macSwitch(enty);
-pm_macSwitch("co2cement_process") =0 ;
+* GA: Deactivate MAC abatement for historical periods, assuming no abatement happens until 2030
+pm_macSwitch(ttot,regi,emiMacSector)$(ttot.val le 2025) = 0;
+
+* GA: Use long term (2050) pm_macSwitch to set p_macCostSwitch, as some MACCs
+* are turned off in the short term 
+p_macCostSwitch(enty)=pm_macSwitch("2050","USA",enty);
+pm_macSwitch(ttot,regi,"co2cement_process") =0 ;
 p_macCostSwitch("co2cement_process") =0 ;
+
 
 *** load econometric emission data
 *** read in p3 and p4
@@ -1479,6 +1527,18 @@ pm_emifac(ttot,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem(regi,"fehos"
 pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem(regi,"fepet") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem(regi,"fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 pm_emifac(ttot,regi,"segafos","fegat","tdfosgat","co2") = p_ef_dem(regi,"fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+
+$ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
+*** Changing refineries emission factors in regions that belong to cm_altFeEmiFac to avoid negative emissions on pe2se 
+*** (changing from 18.4 to 20 zeta joule = 20/31.7098 = 0.630719841 Twa = 0.630719841 * 3.66666666666666 * 1000 * 0.03171  GtC/TWa = 73.33 GtC/TWa)
+loop(ext_regi$altFeEmiFac_regi(ext_regi),
+  pm_emifac(ttot,regi,"peoil","seliqfos","refliq","co2")$(regi_group(ext_regi,regi)) = 0.630719841;
+);
+*** Changing Germany and UKI solids emissions factors to be in line with CRF numbers
+*** (changing from 26.1 to 29.27 zeta joule = 0.922937989 TWa = 107.31 GtC/TWa)
+pm_emifac(ttot,regi,"pecoal","sesofos","coaltr","co2")$(sameas(regi,"DEU") OR sameas(regi,"UKI")) = 0.922937989;
+$endif.altFeEmiFac
+
 
 ***------ Read in emission factors for process emissions in chemicals sector---
 *** calculated using IEA data on feedstocks flows and UNFCCC data on chem sector process emissions
