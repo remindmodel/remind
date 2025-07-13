@@ -757,12 +757,12 @@ p37_specFeDemTarget("feels","stCrChemRe","standard")  = 1.0 / (sm_TWa_2_MWh/sm_g
 p37_specFeDemTarget("fegas","mechRe","standard")  = 0.29 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Taylor Uekert 2023 Table S1 - S4 Weighted average of PE PP and PET
 p37_specFeDemTarget("feels","mechRe","standard")  = 0.54 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Taylor Uekert 2023 Table S1 - S4 Weighted average of PE PP and PET
 
-p37_specFeDemTarget("fesos","meSySol","standard")  = 11.3 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
-p37_specFeDemTarget("feels","meSySol","standard")  = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("fesos","meSySol","standard")  = 10.3 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Dongliang, Wang, et al Energy 2021 Table 9
+p37_specFeDemTarget("feels","meSySol","standard")  = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Dongliang, Wang, et al Energy 2021 Table 9
 
-p37_specFeDemTarget("fesos","meSySol","greenh2")  = 4.3 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Zhao Y, Energy Conversion and Management, 2022.Table 6
-p37_specFeDemTarget("feh2s","meSySol","greenh2")  = 4.7 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Zhao Y, Energy Conversion and Management, 2022.Table 6
-p37_specFeDemTarget("feels","meSySol","greenh2")  = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non); !! Same as MeSySol
+p37_specFeDemTarget("fesos","meSySol","greenh2")  = 4.6 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Dongliang, Wang, et al Energy 2021 Table 9
+p37_specFeDemTarget("feh2s","meSySol","greenh2")  = 3.3 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Dongliang, Wang, et al Energy 2021 Table 9
+p37_specFeDemTarget("feels","meSySol","greenh2")  = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Dongliang, Wang, et al Energy 2021 Table 9
 
 p37_specFeDemTarget("fegas","meSyNg","standard")    = 8.75 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
 p37_specFeDemTarget("feels","meSyNg","standard")    = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5

@@ -796,6 +796,7 @@ pm_cf(ttot,regi,"bof") = 0.8;
 pm_cf(ttot,regi,"idr") = 0.8;
 pm_cf(ttot,regi,"idrcc") = 1.0; !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
 pm_cf(ttot,regi,"bfcc") = 1.0;   !! capex is derived from numbers per ton of CO2, where cf = 1 is assumed in conversion
+$endif.cm_subsec_model_steel
 
 *RP* phasing down the ngt cf to "peak load" cf of 5%
 pm_cf(ttot,regi,"ngt")$(ttot.val eq 2025) = 0.9 * pm_cf(ttot,regi,"ngt");
