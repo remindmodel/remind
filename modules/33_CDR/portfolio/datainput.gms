@@ -7,13 +7,16 @@
 *** SOF ./modules/33_CDR/portfolio/datainput.gms
 
 *' @code
+*------------------------------------------------------------------------------------
 *' #### DAC input data
+*------------------------------------------------------------------------------------
 *' FE demand from Beuttler et al. 2019 (Climeworks)
 p33_fedem("dac", "feels") = 5.28; !! FE demand electricity for ventilation
 p33_fedem("dac", "fehes") = 21.12; !! FE demand heat for material recovery
 
-
+*------------------------------------------------------------------------------------
 *' #### EW input data
+*------------------------------------------------------------------------------------
 *' @stop
 table f33_maxProdGradeRegiWeathering(all_regi,rlf)  "regional maximum potentials for enhanced weathering in Gt of grinded stone/a for different grades"
 $ondelim
@@ -68,9 +71,29 @@ loop(ext_regi$f33_EW_maxShareOfCropland(ext_regi),
     p33_EW_maxShareOfCropland(regi)$(regi_groupExt(ext_regi, regi)) = f33_EW_maxShareOfCropland(ext_regi);
   );
 
+*------------------------------------------------------------------------------------
+*' #### Biochar input data
+***---------------------------------------------------------------------------
+*' if deployment-independent path for biochar over time: fix price by timestep
+parameter p33_BiocharPricePath(ttot,char)    "Biochar price trajectories assumptions over time (independent of actual deployment) [US$2015/t BC]"
+/
+$ondelim
+$include "./modules/33_CDR/portfolio/input/p33_BiocharPricePath.cs4r"
+$offdelim
+/;
 
+p33_BiocharPricePath(ttot, char)$(ttot.val gt 2050) = p33_BiocharPricePath("2050", char);
+if (cm_33_BCpriceForm eq 1, 
+  p33_BiocharPrice(ttot) = p33_BiocharPricePath(ttot, "priceLow") / s_tBC_2_TWa / sm_trillion_2_non * s_D2015_2_D2017;
+elseif (cm_33_BCpriceForm eq 2),
+  p33_BiocharPrice(ttot) = p33_BiocharPricePath(ttot, "priceHigh") / s_tBC_2_TWa / sm_trillion_2_non * s_D2015_2_D2017;
+else
+  p33_BiocharPrice(ttot) = cm_33_BCpriceForm / s_tBC_2_TWa / sm_trillion_2_non * s_D2015_2_D2017;
+);
+
+*------------------------------------------------------------------------------------
 *' #### ocean alkalinity enhancement input data (Kowalczyk et al., 2024)
-
+*------------------------------------------------------------------------------------
 !! An assumption; generally the efficiency might vary between 0.9-1.4 tCO2/tCaO (1.2-1.8 molCO2/molCaO),
 !! depending on e.g., ocean chemistry and currents in a given region
 s33_OAE_efficiency = cm_33_OAE_eff / sm_c_2_co2; !!   GtC (ocean uptake) per unit of GtCaO
@@ -108,7 +131,9 @@ else
     p33_oae_eez_limit(regi) = 10; !! 10 Gt C ocean uptake effectively means no upper limit (i.e. 36.67 Gt CO2 by one region alone) 
 );
 
+*------------------------------------------------------------------------------------
 *' #### All CDR qoptions
+*------------------------------------------------------------------------------------
 *' Upper bound for FE share by CDR approaches
 *** initialize upper bound on FE share parameter
 p33_shfetot_up(t,regi,entyFe,sector)$(t.val ge 2040 AND sameAs(sector, "CDR") AND 
