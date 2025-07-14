@@ -1315,6 +1315,11 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,"bioh2")           = 0.6;
   p_adj_coeff(ttot,regi,teCCS)             = 1.0;
   p_adj_coeff(ttot,regi,"ccsinje")         = 1.0;
+  p_adj_coeff(ttot,regi,"biopyronly")      = 0.55; !! like biochp and bioigcc;
+  p_adj_coeff(ttot,regi,"biopyrhe")        = 0.55; !! like biochp and bioigcc;
+  p_adj_coeff(ttot,regi,"biopyrel")        = 0.55; !! like biochp and bioigcc;
+  p_adj_coeff(ttot,regi,"biopyrchp")       = 0.55; !! like biochp and bioigcc;
+  p_adj_coeff(ttot,regi,"biopyrliq")       = 0.65; !! like bioftrec;
   p_adj_coeff(ttot,regi,"spv")             = 0.15;
   p_adj_coeff(ttot,regi,"windon")          = 0.25;
   p_adj_coeff(ttot,regi,"windoff")         = 0.35;

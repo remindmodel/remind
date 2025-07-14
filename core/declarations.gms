@@ -402,7 +402,7 @@ v_prodUe (ttot,all_regi,all_enty,all_enty,all_te)    "Useful energy production [
 vm_capEarlyReti(tall,all_regi,all_te)                "fraction of early retired capital"
 
 *** RLDC removal
-v_demSeOth(ttot,all_regi,all_enty,all_te)	         "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
+vm_demSeOth(ttot,all_regi,all_enty,all_te)	         "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
 v_prodSeOth(ttot,all_regi,all_enty,all_te)	         "other sety production from certain technologies, have to be calculated in additional equations [TWa]"
 
 v_shGreenH2(ttot,all_regi)   "share of green hydrogen in all hydrogen by 2030 [0..1]"
@@ -587,6 +587,7 @@ sm_GJ_2_TWa                  "multiplicative factor to convert from GJ to TWa"  
 sm_TWa_2_TWh                 "tera Watt year to Tera Watt hour"                    /8.76e+3/,
 sm_TWa_2_MWh                 "tera Watt year to Mega Watt hour"                    /8.76e+9/,
 sm_TWa_2_kWh                 "tera Watt year to kilo Watt hour"                    /8.76e+12/,
+s_tBC_2_TWa                  "t biochar to TWa biochar (29000 [MJ/tBC]*10^-12[EJ/MJ]/31.536[EJ/TWa])" /9.196e-10/,
 *RP* all these new conversion factors with the form "s_xxx_2_yyy" are multplicative factors. Thus, if you have a number in Unit xxx, you have to
 *RP* multiply this number by the conversion factor s_xxx_2_yyy to get the new value in Unit yyy.
 s_NO2_2_N                    "convert NO2 to N [14 / (14 + 2 * 16)]"   / .304 /
