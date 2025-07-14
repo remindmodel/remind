@@ -161,6 +161,14 @@ $offdelim
 p_inco0(ttot,all_regi,"windon") $ (p_inco0(ttot,all_regi,"windon") eq 0) = p_inco0(ttot,all_regi,"wind");
 p_inco0(ttot,all_regi,"wind") = 0;
 
+***---------------------------------------------------------------------------
+*** Biochar parametrization variation
+***---------------------------------------------------------------------------
+*TD* adjust learning factor for biochar technologies if biochar is learning or not
+*fm_dataglob("learn", te)$(sameAs(te, "biopyronly") OR sameAs(te, "biopyrhe") OR
+*                            sameAs(te, "biopyrel") OR sameAs(te, "biopyrchp")) = cm_BCLearning;
+fm_dataglob("learn", te)$(sameAs(te, "biopyronly") OR sameAs(te, "biopyrhe") OR
+                            sameAs(te, "biopyrel") OR sameAs(te, "biopyrchp")) = %cm_BCLearning%;
 
 ***---------------------------------------------------------------------------
 *** SSP-dependent technology assumptions

@@ -1621,6 +1621,11 @@ $setglobal cm_CCS_markup  off  !! def = off
 ***   def <- "off"
 ***   or number (ex. 0.66), multiply by 0.66 Industry CSS cost markup
 $setglobal cm_Industry_CCS_markup  off !! def = off
+*' Flag to change learning assumption for established pyrolysis technologies. 0 = not learning; any number = learning rate
+*' Beware: you may need to start a new NPi if you want to have techs learning.
+*' (0.1): Learning rate of 10%.
+*' (0): Not learning
+$setglobal cm_BClearning 0 !! def = 0
 *** cm_renewables_floor_cost "additional floor cost for renewables"
 ***   def <- "off" = use default floor cost for renewables.
 ***   or list of techs with respective value to be added to the renewables floor cost in Europe
