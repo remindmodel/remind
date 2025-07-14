@@ -937,6 +937,15 @@ $offdelim
 /
 ;
 
+*** read in data on Biochar capacities used as upper and lower bound on Biochar production in 2020 and 2025
+parameter p_boundCapBiochar(ttot, all_regi)        "installed and planned capacity of CCS"
+/
+$ondelim
+$include "./core/input/p_boundCapBiochar.cs4r"
+$offdelim
+/
+;
+
 *** read in CO2 emisisons for 2010, used to fix vm_emiTe.up("2010",regi,"co2")
 parameter p_boundEmi(tall,all_regi)        "domestic CO2 emissions that are allowed in 2010 Unit: GtC"
 /

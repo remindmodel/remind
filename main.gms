@@ -867,6 +867,16 @@ parameter
 *' * (0): no import
 *' * (1): the values from the gdx are read in (works only if the gdx has a parameter value) ATTENTION: make sure that the values from the gdx have the right structure (e.g. regionally differentiated or not)
 *'
+parameter 
+  cm_biopyrEstablished      "Turn the four established industrial biochar production configurations on = 1 or off = 0"
+; 
+  cm_biopyrEstablished = 1; !! def = 1
+*'
+parameter
+  cm_biopyrliq             "Turn the advanced industrial biochar production setup that co-produces liquids on  = 1 or off = 0"
+;
+  cm_biopyrliq = 0;         !! def = 0
+*'
 parameter
   cm_33DAC                  "choose whether DAC (direct air capture) should be included into the CDR portfolio."
 ;
@@ -952,7 +962,6 @@ parameter
 *' *  (1): decreasing price over time, independent of actual deployment. Lower price path. Fits best for PB650.
 *' *  (2): decreasing price over time, independent of actual deployment. Higher price path. Fits best for PB650.
 *' *  (any other number): constant price. Chose 0 to turn it off. Unit: [2015 USD / t BC]
-
 parameter
   cm_33_maxFeShare                "max share of the CDR sectors' FE demand in the region's total FE demand, by FE type. Default is 10%"
 ;
