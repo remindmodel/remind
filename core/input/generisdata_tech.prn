@@ -355,7 +355,7 @@ idrcc:
     make slightly cheaper than bfcc as there is only one point source
 
 chemOld chemElec and chemH2:
-    arbitraray value, as long as it's the same between all three. 
+    arbitrary value, as long as it's the same between all three. 
     500 is commonly used in other tech
 
 stCrNg and stCrLiq:
@@ -376,10 +376,10 @@ stCrNg and stCrLiq:
         CAPEX ~ 369.4(gas porcessing) + 912.6(co-Cracking) = 1282 Million $
         (Sources: Minbo Yang 2017. Table 3)
         
-        Output ratio: 197.3 Ethane-propane → 125.0 Ethylene + 28.4 Propylene + 1.6 BTX + 10.8 Others
+        Output ratio: 197.3 Ethane-propane → 125.0 Ethylene + 28.4 Propylene + 1.6 BTX + 10.8 Others [t/h]
         (Sources: Minbo Yang 2017. Table 1)
 
-        inco0 ~ 1282 Million $ * (125.0/(125.0+28.4+1.6)) /8760/0.8*1000*1000 ~ 1100 $/t
+        inco0 ~ 1282 Million $ * (1/(125.0+28.4+1.6)) /8760/0.8*1000*1000 ~ 1100 $/t
 
 
 
@@ -412,17 +412,17 @@ mechRe meSyChemRe and stCrChemRe:
 
     for Mechanical Recycling
         CAPEX ~ 400 $/t
-        (Rough average of sources: Taylor Uekert 2023 Table S28.)
+        (weighted average for different polymers: Taylor Uekert 2023 Table S28.)
 
     for Chemical Recycling: Pyrolysis
         CAPEX ~ 2200 $/t
         omf = 0.03 
-        (Rough average of sources: Geetanjali Yadav 2023 Table1, Table S9.)
+        (Geetanjali Yadav 2023 Table1, Table S9.)
 
     for Chemical Recycling: Gasification
         CAPEX ~ 55 $/t
         omf = 0.055
-        (Rough average of sources: Shaik Afzal 2023 Table S3. Table S4.)
+        (Shaik Afzal 2023 Table S3. Table S4.)
 
     inco0 for mechRe = 400$/t 
     omf  for mechRe = 0.05

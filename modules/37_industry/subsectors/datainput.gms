@@ -613,6 +613,7 @@ loop ((regi,t2)$( p37_steel_secondary_max_share_scenario(t2,regi) ),
 display "scenario limits for maximum secondary steel share",
         p37_steel_secondary_max_share;
 $endif.sec_steel_scen
+
 Parameter p37_chemicals_feedstock_share(ttot,all_regi)   "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
   /
 $ondelim
@@ -631,7 +632,7 @@ execute_load "input_ref.gdx", vm_demFeSector_afterTax;
 );
 
 * Define carbon capture and storage share in waste incineration emissions
-* capture rate increases linearly from zero in 2025 to value the set in the switch for the defined year, and it is kept constant for years afterwards
+* capture rate increases linearly from zero in 2025 to the value set in the switch for the defined year, and it is kept constant for years afterwards
 p37_regionalWasteIncinerationCCSMaxShare(ttot,all_regi) = 0;
 $ifthen.cm_wasteIncinerationCCSshare not "%cm_wasteIncinerationCCSshare%" == "off"
 loop((ttot,ext_regi)$p37_wasteIncinerationCCSMaxShare(ttot,ext_regi),
@@ -647,24 +648,24 @@ $endIf.cm_wasteIncinerationCCSshare
 
 p37_specMatDem(mat,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-!! stochiemetric unit change from t NH3 to t N
+!! stochiometric unit change from t NH3 to t N
 p37_specMatDem("ammonia","fertProd","standard")        = 17/14; !!TODOQZ Used to verify that the data are equal
 p37_specMatDem("ammoniaH2","fertProdH2","standard")        = 17/14;
 
-p37_specMatDem("methanol","mtoMta","standard")        = 2.624; !!Dutta2019 Figure 2, Page 196
-p37_specMatDem("methanolH2","mtoMtaH2","standard")        = 2.624; !!Dutta2019 Figure 2, Page 196
+p37_specMatDem("methanol","mtoMta","standard")        = 2.624; !!Dutta2019 Table 4
+p37_specMatDem("methanolH2","mtoMtaH2","standard")        = 2.624; !!Dutta2019 Table 4
 p37_specMatDem("ammonia","amToFinal","standard")        = 1;
 p37_specMatDem("ammoniaH2","amToFinal","greenh2")        = 1;
 p37_specMatDem("methanol","meToFinal","standard")        = 1;
 p37_specMatDem("methanolH2","meToFinal","greenh2")        = 1;
 
-p37_specMatDem("naphtha","stCrLiq","standard")        =  18.3 / (sm_TWa_2_MWh/sm_giga_2_non); 
+!! p37_specMatDem("naphtha","stCrLiq","standard")        =  18.3 / (sm_TWa_2_MWh/sm_giga_2_non); !! should not be needed any more
 
-p37_specMatDem("plasticWaste","mechRe","standard")        = 1/0.79; !! Source: Taylor Uekert 2023 Table S1 - S4.
-p37_specMatDem("plasticWaste","meSyChemRe","standard")        = 1/0.68; !! Source: Shaik Afzal 2023 Table S9. 
-p37_specMatDem("plasticWaste","stCrChemRe","standard")        = 1/0.62; !! Source: Geetanjali Yadav 2023 Table 3.
+p37_specMatDem("plasticWaste","mechRe","standard")        = 1/0.79; !! Source: Taylor Uekert 2023 Table S1-S4.
+p37_specMatDem("plasticWaste","meSyChemRe","standard")        = 1/1.47; !! Source: Shaik Afzal 2023 Table 3. 
+p37_specMatDem("plasticWaste","stCrChemRe","standard")        = 1/0.62; !! Source: Geetanjali Yadav 2023 Table S9.
 
-p37_specMatDem("co2f","fertProdH2","standard")        = 0.43; !!12/28 for NH₂CONH₂
+p37_specMatDem("co2f","fertProdH2","standard")        = 0.43; !!12/28 for NH₂CONH₂ (urea)
 p37_specMatDem("co2f","meSyH2","standard")        = 0.375; !! 12/32 for CH₃OH
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -687,6 +688,8 @@ $endif.cm_subsec_model_steel
 p37_specFeDemTarget(all_enty,all_te,opmoPrc) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 !! TODO Qianzhi 1MWh NH3,LHV = 0.19355 tons
+
+!! 1 / (sm_TWa_2_MWh/sm_giga_2_non) unit conversion: MWh/t output -> TWa/Gt output
 
 !! should not be needed anymore
 !!p37_specFeDemTarget("fesos","chemOld","standard")  = 1.5 / (sm_TWa_2_MWh/sm_giga_2_non);
@@ -714,11 +717,11 @@ p37_specFeDemTarget("fehos","stCrLiq","standard")  = 14.6 / (sm_TWa_2_MWh/sm_gig
 !!p37_specFeDemTarget("fegas","stCrLiq","standard")  = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Lucia S. Layritz 2021 Appendix A.2 Naphtha input/(Ethylene + By Products)
 p37_specFeDemTarget("feels","stCrLiq","standard")  = 0.07 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Lucia S. Layritz 2021 Appendix A.2 Electricity input/(Ethylene + By Products)
 
-p37_specFeDemTarget("fegas","stCrChemRe","standard")  = 2.6 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Geetanjali Yadav 2023 Table S20 Using co-producted naphtha and NGLs as fuel
-p37_specFeDemTarget("feels","stCrChemRe","standard")  = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Geetanjali Yadav 2023 Table S20
+p37_specFeDemTarget("fegas","stCrChemRe","standard")  = 1.99 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Geetanjali Yadav 2023 Table S20 Using co-producted naphtha and NGLs as fuel
+p37_specFeDemTarget("feels","stCrChemRe","standard")  = 0.54 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Geetanjali Yadav 2023 Table S20 Calculating total electricity consumption from fossil fuel for electricity based on 2016 US total electricity generation and fossil fuel consumption for electricity generation
 
-p37_specFeDemTarget("fegas","mechRe","standard")  = 0.29 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Taylor Uekert 2023 Table S1 - S4 Weighted average of PE PP and PET
-p37_specFeDemTarget("feels","mechRe","standard")  = 0.54 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Taylor Uekert 2023 Table S1 - S4 Weighted average of PE PP and PET
+p37_specFeDemTarget("fegas","mechRe","standard")  = 0.29 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Taylor Uekert 2023 Table S1-S4 Weighted average of PE PP and PET
+p37_specFeDemTarget("feels","mechRe","standard")  = 0.54 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Taylor Uekert 2023 Table S1-S4 Weighted average of PE PP and PET
 
 p37_specFeDemTarget("fesos","meSySol","standard")  = 11.3 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
 p37_specFeDemTarget("feels","meSySol","standard")  = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
@@ -889,7 +892,7 @@ $endif.cm_subsec_model_steel
 !! 0. Data input
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 Parameter
-  pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) "TODO"
+  pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) "material flows per production route in 2020 [Gt or GtN for fertilizer]"
   /
 $ondelim
 $include "./modules/37_industry/subsectors/input/p37_AllChem_Routes_Value_2020noCCS.cs4r";
@@ -901,7 +904,7 @@ $endif.cm_subsec_model_chemicals
 !!p37_mat2ue(tall,all_regi,all_enty,all_in) = 0.;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 Parameter
-  p37_mat2ue(tall,all_regi,all_enty,all_in) "TODO"
+  p37_mat2ue(tall,all_regi,all_enty,all_in) "conversion factors [2017$/kg or 2017$/kgN] for 2020-2050 to convert material [Gt or GtN] into UE [trn$2017]"
   /
 $ondelim
 $include "./modules/37_industry/subsectors/input/p37_AllChemical_Mat2Ue.cs4r";
@@ -1042,7 +1045,7 @@ loop((regi,matFin(mat))$(NOT mat2ue(mat,"ue_chemicals")),
 
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 Parameter
-  p37_demFePrcHist(tall,all_regi,all_te,opmoPrc,all_enty) "TODO"
+  p37_demFePrcHist(tall,all_regi,all_te,opmoPrc,all_enty) "total FE demand [EJ] per process in 2005-2020 (calculated from specific FE demand and production volume)"
   /
 $ondelim
 $include "./modules/37_industry/subsectors/input/p37_AllChem_Energy_Value_2005_2020noCCS.cs4r";

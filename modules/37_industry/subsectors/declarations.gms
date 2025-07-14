@@ -31,15 +31,15 @@ Parameters
   p37_demFeTarget(tall,all_regi,all_enty,all_in)                               "Total Fe demand that would be have been consumed historically for production of a UE if all tech had BAT efficiency"
   p37_demFeActual(tall,all_regi,all_enty,all_in)                               "Total historic Fe demand consumed for production of a UE"
   p37_specFeDemTarget(all_enty,all_te,opmoPrc)                                 "Best available technology (will be reached in convergence year) [TWa/Gt_output]"
-  p37_matFlowHist(tall,all_regi,all_enty)                                      "TODO"
-  p37_ue_share(tall,all_regi,all_enty,all_in)                                  "TODO"
-  p37_mat2ue(tall,all_regi,all_enty,all_in)                                                  "Contribution of process output to ue in CES tree; Trivial if just one material per UE, as in steel [Gt/Gt]"
-  p37_ueHistTmp(tall,all_regi)                                                 "TODO"
+  p37_matFlowHist(tall,all_regi,all_enty)                                      "Total historic material flow calculated as the sum of outputs of all processes producing the respective material [Gt or GtN for fertilizer]"
+  p37_ue_share(tall,all_regi,all_enty,all_in)                                  "Share of material to total ue in CES tree"
+  p37_mat2ue(tall,all_regi,all_enty,all_in)                                    "Conversion factor of process output to ue in CES tree; Trivial if just one material per UE, as in steel [Gt/Gt], in chemicals [trn$2017/Gt]"
+  p37_ueHistTmp(tall,all_regi)                                                 "TODO - Can this be deleted?"
   p37_demFeRatio(tall,all_regi,all_in)                                         "Ratio of historic Fe demand and Fe demand calculated from historic production and BAT specific demand"
-  p37_teMatShareHist(all_regi,all_te,opmoPrc,mat)                              "Share that a tePrc/opmoPrc historically contibrutes to production of a matFin"
+  p37_teMatShareHist(all_regi,all_te,opmoPrc,mat)                              "Share that a tePrc/opmoPrc historically contributes to production of a matFin"
   p37_captureRate(all_te)                                                      "Capture rate of CCS technology"
   p37_selfCaptureRate(all_te)                                                  "Share of emissions from fossil fuels used for a CCS process which are captured by the CCS process itself"
-  p37_priceMat(tall,all_regi,all_enty)                                                  "Prices of external material input [US$/kg] = [trn$US/Gt]"
+  p37_priceMat(tall,all_regi,all_enty)                                         "Prices of external material input [US$/kg] = [trn$US/Gt]"
 
   p37_chemicals_feedstock_share(ttot,all_regi)               "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
   p37_FeedstockCarbonContent(ttot,all_regi,all_enty)         "carbon content of feedstocks [GtC/TWa]"
@@ -110,7 +110,7 @@ Positive Variables
   v37_shareWithCC(tall,all_regi,all_te,opmoPrc)                             "Share of process and operation mode equipped with carbon capture technology"
   vm_costMatPrc(tall,all_regi)                                              "Cost of external material inputs such as iron ore in process-based industry [trn $2017/a]"
   v37_matShareChange(tall,all_regi,all_te,opmoPrc,all_enty)                 "Change of share of processes with rectricted relative share change"
-  v37_chemFlow(tall,all_regi,all_enty)                                      "Summed material outflow of historic processes with future restricted shares"
+  v37_chemFlow(tall,all_regi,all_enty)                                      "Summed material outflow of historic processes with future restricted shares; Needed as auxiliary for calculating material outflows of historic processes from the restricted shares"
   
 ;
 
