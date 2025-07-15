@@ -376,7 +376,9 @@ $endIf.cm_implicitPePriceTarget
 
 *** check global budget target from core/postsolve, must be within 2 Gt of target value
 p80_globalBudget_absDev_iter(iteration) = sm_globalBudget_absDev;
-if (abs(p80_globalBudget_absDev_iter(iteration)) gt cm_budgetCO2_absDevTol,
+if ( ( ( abs(p80_globalBudget_absDev_iter(iteration)) gt cm_budgetCO2_absDevTol ) !! check if CO2 budget met in tolerance range,
+    OR (      cm_iterative_target_adj eq 9 
+          AND cm_peakBudgYr ne sm_peakBudgYr_check  ) ) ,  !! if peak budget -> check if cm_peakBudgYr corresponds to year of maximum cumulative CO2 emissions,
   s80_bool = 0;
   p80_messageShow("target") = YES;
 );

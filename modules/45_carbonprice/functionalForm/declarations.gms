@@ -68,6 +68,8 @@ s45_actualbudgetco2                                     "actual level of 2020-21
 s45_actualbudgetco2_last                                "actual level of 2020-2100 cumulated emissions for previous iteration" /0/
 s45_factorRescale_taxCO2_exponent_before10              "exponent determining sensitivity    before iteration 10"
 s45_factorRescale_taxCO2_exponent_from10                "exponent determining sensitivity of CO2 price adjustment to CO2 budget deviation from iteration 10"
+s45_peakBudget                                          "peak CO2 budget as calculated as the maximum of cumulative CO2 emissions, used to check adjustment algorithm [GtC/yr]"
+sm_peakBudgYr_check                                    "peak budget year calculated based on maximum of cumulative CO2 emissions, used to check adjustment algorithm  [year]"
 ;
 
 *** Parameters only used in functionForm/postsolve.gms
@@ -87,6 +89,7 @@ o45_change_totCO2emi_peakBudgYr(iteration)              "Measure for how much th
 p45_factorRescale_taxCO2(iteration)                     "Multiplicative factor for rescaling the CO2 price to reach the target"
 p45_factorRescale_taxCO2_Funneled(iteration)            "Multiplicative factor for rescaling the CO2 price to reach the target - limited by an iteration-dependent funnel"
 o45_pkBudgYr_flipflop(iteration)                        "Counter that tracks if flipfloping of cm_peakBudgYr occured in the last iterations"
+p45_peakBudgYr_check(ttot)                              "peak budget year calculated based on maximum of cumulative CO2 emissions, used to check adjustment algorithm  [year]"
 ;
 
 
