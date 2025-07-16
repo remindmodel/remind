@@ -61,7 +61,6 @@ pm_ttot_val,input,questionnaire
 pm_implicitPePriceTarget,input,questionnaire
 pm_implicitPePrice_NotConv,input,questionnaire
 pm_implicitPePrice_ignConv,input,questionnaire
-vm_capFac,input,questionnaire
 pm_shareWindPotentialOff2On,input,questionnaire
 cm_EnSecScen_limit,input,questionnaire
 pm_conv_TWa_EJ,input,questionnaire
@@ -82,3 +81,5 @@ pm_prodCouple,input,not needed
 vm_emiIndCCS,input,not needed
 sm_D2005_2_D2017,input,no conversion needed
 cm_budgetCO2_absDevTol,input,added by codeCheck
+vm_emiCdrTeDetail,input,added by codeCheck
+vm_demFeNonEnergySector,input,added by codeCheck

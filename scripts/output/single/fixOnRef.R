@@ -32,6 +32,7 @@ findRefMif <- function(outputdir, envi) {
   }
   # find scenario name of reference run to be able to find mif file
   refdir <- dirname(inputref)
+
   if (! file.exists(file.path(refdir, "config.Rdata"))) {
     message("Config in reference directory '", refdir, "' not found.")
     return(NULL)
@@ -78,7 +79,7 @@ fixOnMif <- function(outputdir) {
 
   # load config of first outputdir (the folder we are checking)
   envi <- new.env()
-  load(configs[[1]], env =  envi)
+  load(configs[[1]], envir = envi)
   title <- envi$cfg$title
   stopifnot(title == scens[[1]])
   startyear <- envi$cfg$gms$cm_startyear
@@ -102,7 +103,8 @@ fixOnMif <- function(outputdir) {
   failfile <- file.path(outputdir[[1]], "log_fixOnRef.csv")
   # call piamInterfaces::fixOnRef. Returns either TRUE if everything is fine, or the corrected data
   # small relative differences of 0.002 % are considered acceptable
-  fixeddata <- piamInterfaces::fixOnRef(d, dref, ret = "TRUE_or_fixed", startyear = startyear, failfile = failfile, relDiff = 0.00002)
+  fixeddata <- piamInterfaces::fixOnRef(d, dref, ret = "TRUE_or_fixed", startyear = startyear,
+                                        failfile = failfile, relDiff = 0.00002)
 
   # if cfg$fixOnRefAuto = TRUE), fix the data automatically
   # else if in interactive mode (not within a REMIND run), ask

@@ -165,9 +165,12 @@ f04_IO_output("2005",regi,"sehe","fehei","tdhei")$(p04_IO_output_beforeFix_Total
 
 *** end adjustment of f04_IO_output to pm_fedemand values
 
-*** convert data from EJ to TWa
-f04_IO_input(ttot,regi,all_enty,all_enty2,all_te) = f04_IO_input(ttot,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
-f04_IO_output(ttot,regi,all_enty,all_enty2,all_te) = f04_IO_output(ttot,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
+*** convert data from EJ to TWa. Do this for tall (not ttot) because the input data is yearly
+f04_IO_input(tall,regi,all_enty,all_enty2,all_te) = f04_IO_input(tall,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
+f04_IO_output(tall,regi,all_enty,all_enty2,all_te) = f04_IO_output(tall,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
+
+*** copy to new parameter
+pm_IO_output(tall,regi,all_enty,all_enty2,all_te) = f04_IO_output(tall,regi,all_enty,all_enty2,all_te);
 
 *** calculate bio share per fe carrier (only for historically available years)
 pm_secBioShare(ttot,regi,entyFe,sector)$((seAgg2fe("all_seso",entyFe) OR seAgg2fe("all_seliq",entyFe) OR seAgg2fe("all_sega",entyFe)) AND entyFe2Sector(entyFe,sector) and (ttot.val ge 2005 and ttot.val le 2020) and (sum((entySe,all_enty,all_te)$entyFeSec2entyFeDetail(entyFe,sector,all_enty), f04_IO_output(ttot,regi,entySe,all_enty,all_te) ) gt 0)) = 

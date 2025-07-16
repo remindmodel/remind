@@ -10,7 +10,7 @@ require(lucode2)
 
 if (!exists("source_include")) {
   # Define arguments that can be read from command line
-  readArgs("outputdir")
+  lucode2::readArgs("outputdir")
 }
 
 scenario <- lucode2::getScenNames(outputdir)

@@ -51,6 +51,15 @@ $endif
 
 display p_emineg_econometric;
 
+*** Calculate total FE demand of previous iteration or input gdx.
+*** Required as a weight for penalty terms
+p_demFeSector0(ttot,regi,entySe,entyFe,sector,emiMkt) = vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt);
+
+pm_demFeTotal0(ttot, regi)
+  = sum((entySe,entyFe,sector,emiMkt)$( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ),
+  p_demFeSector0(ttot,regi,entySe,entyFe,sector,emiMkt))
+;
+
 ***--------------------------------------
 *** calculate some emission factors
 ***--------------------------------------
@@ -283,6 +292,10 @@ pm_macAbatLev(ttot,regi,enty)$( ttot.val gt 2015 )
 
 pm_macAbatLev("2015",regi,"co2luc") = 0;
 pm_macAbatLev("2020",regi,"co2luc") = 0;
+
+*** GA: Modify pm_macAbatLev with pm_macSwitch so the limiting works also 
+*** when abatement is being phased in
+pm_macAbatLev(ttot,regi,enty)$( ttot.val ge 2005 ) = pm_macAbatLev(ttot,regi,enty)*pm_macSwitch(ttot,regi,enty);
 
 *** Limit MAC abatement level increase to sm_macChange (default: 5 % p.a.)
 loop (ttot$( ttot.val ge 2015 ),

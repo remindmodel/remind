@@ -73,7 +73,7 @@ loop(all_te $ (
     sameas(all_te, "storwind") OR
     sameas(all_te, "gridwind")
   ),
-  vm_cap.fx(t,regi,all_te,rlf)      = 0;
+  vm_cap.fx(t,regi,all_te,rlf) = 0;
   vm_deltaCap.fx(t,regi,all_te,rlf) = 0;
 );
 
@@ -164,7 +164,7 @@ if ( c_ccsinjecratescen eq 0, !!no carbon sequestration at all
 *'
 if (cm_ccapturescen eq 2,  !! no carbon capture at all
   vm_cap.fx(t,regi_capturescen,"ngccc",rlf)        = 0;
-  vm_cap.fx(t,regi_capturescen,"ccsinje",rlf)      = 0;
+  vm_cap.fx(t,regi_capturescen,"ccsinje",rlf) = 0;
   vm_cap.fx(t,regi_capturescen,"gash2c",rlf)       = 0;
   vm_cap.fx(t,regi_capturescen,"igccc",rlf)        = 0;
   vm_cap.fx(t,regi_capturescen,"coalftcrec",rlf)   = 0;
@@ -181,7 +181,7 @@ elseif (cm_ccapturescen eq 3),  !! no bio carbon capture:
 elseif (cm_ccapturescen eq 4), !! no carbon capture in the electricity sector
   loop(emi2te(enty,"seel",te,"cco2")$( sum(regi_capturescen,pm_emifac("2020",regi_capturescen,enty,"seel",te,"cco2")) > 0 ),
     loop(te2rlf(te,rlf),
-      vm_cap.fx(t,regi_capturescen,te,rlf)        = 0;
+      vm_cap.fx(t,regi_capturescen,te,rlf) = 0;
     );
   );
 );
@@ -300,8 +300,9 @@ vm_capCum.lo(ttot,regi,teLearn)$(ttot.val ge cm_startyear) = pm_data(regi,"ccap0
 *** exception for tech_stat 4 technologies whose ccap0 refers to 2025 as these technologies don't exist in 2005
 vm_capCum.lo(ttot,regi,teLearn)$(pm_data(regi,"tech_stat",teLearn) eq 4 AND ttot.val le 2020) = 0;
 
-*nr: floor costs represent the lower bound of learning technologies investment costs
-vm_costTeCapital.lo(t,regi,teLearn) = pm_data(regi,"floorcost",teLearn);
+*RP: theoretically, floor costs represent the lower bound of investment costs for learnTe. However, with regional 
+*** variations of 2015 costs and long-term costs being high in SSP3/SSP5, this can be different -> set lower bound to 0.2
+vm_costTeCapital.lo(t,regi,teLearn) = 0.2 * pm_data(regi,"floorcost",teLearn);
 
 *cb 20120319 avoid negative adjustment costs in 2005 (they would allow the model to artificially save money)
 v_adjFactor.fx("2005",regi,te)=0;
@@ -316,25 +317,31 @@ vm_emiMac.fx(t,regi,"bc") = 0;
 vm_emiMac.fx(t,regi,"oc") = 0;
 
 *** -------------------------------------------------------------------------
-*** Exogenous values:
+*** Exogenous capacities:
 *** -------------------------------------------------------------------------
-
-*** fix capacities for wind, spv and csp to real world historical values:
-vm_cap.lo("2015",regi,teVRE,"1") = 0.95 * pm_histCap("2015",regi,teVRE)$(pm_histCap("2015",regi,teVRE) gt 1e-10);
-vm_cap.up("2015",regi,teVRE,"1") = 1.05 * pm_histCap("2015",regi,teVRE)$(pm_histCap("2015",regi,teVRE) gt 1e-10);
-vm_cap.lo("2020",regi,teVRE,"1") = 0.95 * pm_histCap("2020",regi,teVRE)$(pm_histCap("2020",regi,teVRE) gt 1e-10);
-vm_cap.up("2020",regi,teVRE,"1") = 1.05 * pm_histCap("2020",regi,teVRE)$(pm_histCap("2020",regi,teVRE) gt 1e-10);
-vm_cap.up("2025",regi,teVRE,"1")$(pm_histCap("2025",regi,teVRE) gt 1e-6) = 1.05 * pm_histCap("2025",regi,teVRE)$(pm_histCap("2025",regi,teVRE) gt 1e-10); !! only set a bound if values >1MW are in pm_histCap
+loop(t $ (t.val >= 2015 and t.val <= 2025),
+  loop(regi,
+*** fix renewable capacities to real world historical values if available
+    vm_cap.lo(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
+    if(t.val <= 2020, !! TODO: activate 2025 upper-bound when consolidated data available
+      vm_cap.up(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 1.05 * pm_histCap(t,regi,te);
+    );
+*** broader bounds for renewables with lower data quality
+    loop(te $ (sameas(te, "hydro") or sameas(te, "geohdr")),
+      vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.7 * pm_histCap(t,regi,te);
+      vm_cap.up(t,regi,te,"1") $ pm_histCap(t,regi,te) = 1.4 * pm_histCap(t,regi,te);
+    );
 
 *** lower bound on capacities for ngcc and ngt and gaschp for regions defined at the pm_histCap file
-loop(te$(sameas(te,"ngcc") OR sameas(te,"ngt") OR sameas(te,"gaschp")),
-  vm_cap.lo("2015",regi,te,"1")$pm_histCap("2015",regi,te) = 0.95 * pm_histCap("2015",regi,te);
-  vm_cap.lo("2020",regi,te,"1")$pm_histCap("2020",regi,te) = 0.95 * pm_histCap("2020",regi,te);
+    loop(te $ (sameas(te,"ngcc") or sameas(te,"ngt") or sameas(te,"gaschp")),
+      vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
+    );
+  );
 );
 
 
 *** bounds on near-term electrolysis capacities
-*' set lower and upper bounds for 2025 based on projects annoucements
+*' set lower and upper bounds for 2025 and 2030 based on projects annoucements
 *' from IEA Hydryogen project database:
 *' https://www.iea.org/data-and-statistics/data-product/hydrogen-production-and-infrastructure-projects-database
 *' distribute to regions via GDP share of 2025 (we do not use later time steps as they may have different GDPs depending on the scenario)
@@ -345,6 +352,11 @@ vm_cap.lo("2025",regi,"elh2","1")= 2 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2
 *' 20 GW(el) at maximum globally in 2025 (be more generous to not overconstrain regions which scale-up fastest)
 vm_cap.up("2025",regi,"elh2","1")= 20 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2025",regi)
                                          / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
+*' 100 GW(el) at maximum globally in 2030
+*' (upper end of feasibility range in Odenweller et al. 2022, https://doi.org/10.1038/s41560-022-01097-4, see Fig. 4)
+vm_cap.up("2030",regi,"elh2","1")= 100 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2025",regi)
+                                         / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
+
 
 *** bounds on biomass technologies
 *' set upper bounds on biomass gasification for h2 production, which is not deployed as of 2025
@@ -517,15 +529,6 @@ loop(prodSeOth2te(enty,te),
 
 
 ***---------------------------------------------------------------------------
-***                 Lower bounds on hydro
-***---------------------------------------------------------------------------
-*** as most of the costs for hydro are for the initial building, it is unlikely that existing hydro plants are not renovated, even if a completely new plant would not be economic
-*** accordingly, set lower bound on hydro generation close to 2005 values
-
-vm_prodSe.lo(t,regi,"pehyd","seel","hydro")$(t.val > 2005) = 0.99 * o_INI_DirProdSeTe(regi,"seel","hydro");
-
-
-***---------------------------------------------------------------------------
 ***                 make sure the model doesn't use technologies beyond grade 1
 ***---------------------------------------------------------------------------
 *** for pe2se, se2se and se2fe the other grades should not be used
@@ -572,17 +575,14 @@ v_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_f
 vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le cm_H2InBuildOnlyAfter) = 1e-6;
 
 ***----------------------------------------------------------------------------
-***  Controlling if active, dampening factor to align edge-t non-energy transportation costs with historical GDP data
-***----------------------------------------------------------------------------
-$IFTHEN.transpGDPscale not "%cm_transpGDPscale%" == "on" 
-  vm_transpGDPscale.fx(t,regi) = 1;
-$ENDIF.transpGDPscale
-
-***----------------------------------------------------------------------------
 *'  Limit slack variable and uncontrolled variable values for adj costs that limit changes to reference in cm_startyear
 ***----------------------------------------------------------------------------
 
 v_changeProdStartyearSlack.up(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = + c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
 v_changeProdStartyearSlack.lo(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = - c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
+
+*RP: add lower bound on 2020 coal chp and upper bound on gas chp based on IEA data to have a more realistic starting point
+vm_prodSe.lo("2020",regi,"pecoal","seel","coalchp") = 0.8 * pm_IO_output("2020",regi,"pecoal","seel","coalchp") ;
+vm_prodSe.up("2020",regi,"pegas","seel","gaschp") = 1e-4 + 1.3 * pm_IO_output("2020",regi,"pegas","seel","gaschp") ;
 
 *** EOF ./core/bounds.gms

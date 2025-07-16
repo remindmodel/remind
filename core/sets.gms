@@ -30,7 +30,6 @@ all_GDPpopScen    "all possible GDP scenarios"
     SDP_RC
     SSP1        "SSP1 fastGROWTH medCONV"
     SSP2        "SSP2 medGROWTH medCONV"
-    SSP2EU
     SSP3        "SSP3 slowGROWTH slowCONV"
     SSP4        "SSP4  medGROWTH mixedCONV"
     SSP5        "SSP5 fastGROWTH fastCONV"
@@ -84,6 +83,19 @@ all_delayPolicy   "all possible SPA policy choices"
     SPAx            "moderate baseline policy, depends on the SSP-scenario"
 /
 
+*** If you get a domain violation here, check if cm_APssp and cm_APscen values are correctly paired. See main.gms for details.
+all_APssp     "all air pollutant SSPs. GAINSlegacy means the SSP is picked with all_APscen and there are no variations"
+/
+    SSP1
+    SSP2
+    SSP3
+    SSP4
+    SSP5
+    GAINSlegacy
+    SSP2IndiaHigh
+/
+
+*** If you get a domain violation here, check if cm_APssp and cm_APscen values are correctly paired. See main.gms for details.
 all_APscen     "all air pollutant scenarios"
 /
     SSP1
@@ -91,13 +103,17 @@ all_APscen     "all air pollutant scenarios"
     SSP3
     SSP4
     SSP5
+    SLE
     CLE
+    VLE
     FLE
     FLE_building_transport
     MFR
     MFR_Transports
     GlobalEURO6
     SLCF_building_transport
+    SMIPbySSP
+    SMIPVLLO
 /
 
 all_LU_emi_scen  "all emission baselines for CH4 and N2O land use emissions from MAgPIE"
@@ -932,6 +948,7 @@ sets
        regipol
        damages
        internalizeDamages
+       internalizeLCAimpacts
        water
        optimization
        codePerformance
@@ -967,6 +984,7 @@ module2realisation(modules,*) "mapping of modules and active realisations" /
        regipol . %regipol%
        damages . %damages%
        internalizeDamages . %internalizeDamages%
+       internalizeLCAimpacts . %internalizeLCAimpacts%
        water . %water%
        optimization . %optimization%
        codePerformance . %codePerformance%
@@ -1092,6 +1110,7 @@ opTimeYr "actual lifetime of a built technology in years"
     1*130
 /
 opTime5(opTimeYr) "actual lifetime of a built technology in years - 5 years time steps for the past to calculate vintages"
+*** Command to generate it with R: paste(seq(1,130,5), collapse=",")
 /
     1,6,11,16,21,26,31,36,41,46,51,56,61,66,71,76,81,86,91,96,101,106,111,116,121,126
 /
@@ -1604,12 +1623,16 @@ teFlex(all_te)       "all technologies which can benefit from flexibility tax"
     elh2
 ***dac
 /
-
-
 teFlexTax(all_te)       "all technologies to which flexibility tax/subsidy applies, flexible technologies are those in teFlex, inflexible technologies those which are not in teFlex"
 /
     elh2
     tdels
+/
+
+teNonDecreasing(all_te) "all technologies for which capacity should not decrease over time, meaning that once it is built, it is steadily maintained"
+/
+    geohdr      "geothermal electric hot dry rock"
+    hydro       "hydro electric"
 /
 
 feForUe(all_enty)    "final energy types that are transformed into useful energys - is filled automatically from the content of fe2ue"

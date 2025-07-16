@@ -21,7 +21,7 @@ q23_limit_debt(t,regi)..
 ;
 
 q23_limit_debt_growth(t,regi)..
-  vm_cesIO(t,regi,"inco") * p23_debt_growthCoeff(regi)
+  vm_damageFactor(t,regi) * vm_cesIO(t,regi,"inco") * p23_debt_growthCoeff(regi)
   =g=
   vm_Mport(t,regi,"good") - vm_Xport(t,regi,"good") 
   + sum(tradePe, (pm_pvp(t,tradePe)/(pm_pvp(t,"good")+0.000000001))*(vm_Mport(t,regi,tradePe)- vm_Xport(t,regi,tradePe))) 

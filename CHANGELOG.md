@@ -7,10 +7,58 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### input data/calibration
+
+### changed
+-
+
+### added
+-
+
+### removed
+-
+
+### fixed
+-
+
+
+## [3.5.1] - 2025-07-10
+
+
+### changed
+- **scripts** Consolidated the `MAGICC7_AR6.R` climate reporting script and the `climateAssessmentInterimRun.R` climate assessment iteration script 
+    for damage runs using the `remindClimateAssessment` and `piamenv` packages 
+    [[#2082](https://github.com/remindmodel/remind/pull/2082)], 
+    [[#2099](https://github.com/remindmodel/remind/pull/2099)]
+- **scripts** Enhanced `reporting.R` to read extra data needed for reporting directly from inputdata 
+    [[#2084](https://github.com/remindmodel/remind/pull/2084)]
+- **scripts** nashAnalysis is deprecated in favor of improved nashConvergenceReport.
+    [[#2138](https://github.com/remindmodel/remind/pull/2138)]
+- **core** Updated costs for learning technologies based on the data in the IRENA 2023 report Renewable Power Generation Costs, 
+    and made the convergence from regional to global values slower. Increased floor costs for wind onshore, decreased floor costs for wind offshore, 
+    and increased learning rates for both on- and offshore. 
+- **core** restricted near-term growth of electrolysis by putting a global upper bound of 100 GW(el) in 2030 and 
+    increasing adjustment cost parameter and decreasing adjustment cost seed value 
+    [[#2126](https://github.com/remindmodel/remind/pull/2126)]
+
+### added
+- **45_carbonprice** ScenarioMIP settings for regional carbon price differentiation added to 45_carbonprice/functionalForm [[#2117](https://github.com/remindmodel/remind/pull/2117)]
+
+### removed
+- **config** Two scenario config files (damagepaper) were used for the NGFS runs but are not needed anymore.
+  [[#2107](https://github.com/remindmodel/remind/pull/2107)]
+- **45_carbonprice/46_carbonpriceRegi** remove reading in and printing contents of `fm_histShare.cs3r`
+
+
+## [3.5.0] - 2025-04-04
+
 ### added
 - Possibility of using updated sources for baseline non-CO2 emissions calculation, controlled by `cm_emifacs_baseyear`
 - Add `readcoupled` script that allows to print data from gdx files or mif files for all coupled runs
     [[#1977](https://github.com/remindmodel/remind/pull/1977), [#1990](https://github.com/remindmodel/remind/pull/1990)]
+- Add `scripts/start/checkSettingsRemMag.R` to check compatibility of REMIND and MAgPIE settings with respect
+  to GDP, Population, bioenergy phaseout and damage settings
+    [[#2028](https://github.com/remindmodel/remind/pull/2028)]
 
 ### input data/calibration
 - new input data rev7.21 including new MAgPIE data [[#1956](https://github.com/remindmodel/remind/pull/1956)]
@@ -18,18 +66,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - add CES parameters for SSP3 with imperfect capital markets [[#1995](https://github.com/remindmodel/remind/pull/1995)] 
 
 ### changed
+- **config** updated ScenarioMIP config
+    [[#1972](https://github.com/remindmodel/remind/pull/1972)]
 - **scripts** for MAgPIE coupled runs, if the coupled config contains a `path_gdx_ref` column, it needs a `path_gdx_refpolicycost` column as well.
     [[#1940](https://github.com/remindmodel/remind/pull/1940)]
-  **core** merge cm_GDPscen and cm_POPscen into cm_GDPpopScen [[#1973](https://github.com/remindmodel/remind/pull/1973)]
+- **scripts** make the selection of variables and equations that are fixed on reference run automatic
+    [[#2033](https://github.com/remindmodel/remind/pull/2033)]
+-_**scripts** You can define timesteps in xlsx_IIASA export script. Defaults to REMIND standard. If you want interpolation between timesteps,
+    you need to adjust it. [[#2056](https://github.com/remindmodel/remind/pull/2056)]
+- **core** merge cm_GDPscen and cm_POPscen into cm_GDPpopScen
+    [[#1973](https://github.com/remindmodel/remind/pull/1973)]
+- **45_carbonprice** realization 'none' only sets carbon price to 0 for t >= cm_startyear
+    [[#2056](https://github.com/remindmodel/remind/pull/2056)]
+- **scripts** Updated renv version from to 1.1.1 to 1.1.4
+    [[#2065](https://github.com/remindmodel/remind/pull/2065)]
+- **scripts** let the release script add a renv.lock to each new release
+    [[#2058](https://github.com/remindmodel/remind/pull/2058)]
+- **scripts** Redesigned pull request template. No lines to delete anymore. Checkboxes only in the checklist.
+    [[#2063](https://github.com/remindmodel/remind/pull/2063)]
 
 ### added
 -
 
 ### removed
 - **37_industry** removed superseded realization fixed_shares [[#1941](https://github.com/remindmodel/remind/pull/1941)]
+- last traces of SSP2EU scenario which is superseeded by SSP2 [[#2028](https://github.com/remindmodel/remind/pull/2028)]
 
 ### fixed
 - **37_industry** fix and restructure chemical feedstock balancing to account for all negative emissions from stored non-fossil carbon [[#1829](https://github.com/remindmodel/remind/pull/1829)]
+- **05_initialCap** fix pe2se gas emissions factors for DEU [[#2109](https://github.com/remindmodel/remind/pull/2109)]
+
 
 
 ## [3.4.0] - 2024-12-11
