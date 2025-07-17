@@ -311,7 +311,7 @@ $setglobal CES_parameters  load   !! def = load
 *'---------------------    30_biomass    ----------------------------------------
 *'
 *' * (magpie_40): using supply curves derived from MAgpIE 4.0
-$setglobal biomass  magpie_40     !! def = magpie_40
+$setglobal biomass  magpie     !! def = magpie_40
 *'---------------------    31_fossil    ----------------------------------------
 *'
 *' * (timeDepGrades): time-dependent grade structure of fossil resources (oil & gas only)
@@ -1255,6 +1255,7 @@ parameter
 *' *  (off): off = REMIND expects to be run standalone (emission factors are used, shiftfactors are set to zero)
 *' *  (on): on  = REMIND expects to be run based on a MAgPIE reporting file (emission factors are set to zero because emissions are retrieved from the MAgPIE reporting, shift factors for supply curves are calculated)
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"  !! regexp = off|on
+$setglobal cm_MAgPIE_Nash      on     !! def = "off"  !! regexp = off|on
 *' cm_rcp_scen       "chooses RCP scenario"
 *'
 *' *  (none): no RCP scenario, standard setting
