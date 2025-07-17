@@ -1478,16 +1478,25 @@ $offdelim
 /;
 p_macBaseExo(ttot,regi,emiMacExo(enty))$(ttot.val ge 2005) = f_macBaseExo(ttot,regi,emiMacExo,"%cm_LU_emi_scen%");
 
-$if %cm_MAgPIE_coupling% == "off" parameter f_macBaseMagpie(tall,all_regi,all_enty,all_LU_emi_scen,all_rcp_scen)    "baseline emissions of N2O and CH4 from landuse based on data from Magpie"
-$if %cm_MAgPIE_coupling% == "on"  parameter f_macBaseMagpie_coupling(tall,all_regi,all_enty)                        "baseline emissions of N2O and CH4 from landuse based on data from Magpie"
+
+parameter f_macBaseMagpie(tall,all_regi,all_enty,all_LU_emi_scen,all_rcp_scen)    "baseline emissions of N2O and CH4 from landuse based on data from Magpie"
 /
 $ondelim
-$if %cm_MAgPIE_coupling% == "off" $include "./core/input/f_macBaseMagpie.cs4r"
-$if %cm_MAgPIE_coupling% == "on"  $include "./core/input/f_macBaseMagpie_coupling.cs4r"
+$include "./core/input/f_macBaseMagpie.cs4r"
 $offdelim
 /;
-$if %cm_MAgPIE_coupling% == "off" pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
-$if %cm_MAgPIE_coupling% == "on"  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
+pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
+
+*** pm_macBaseMagpie gets overwritten when coupled:
+$ifThen.coupling %cm_MAgPIE_coupling% == "alwaysoff"  
+parameter f_macBaseMagpie_coupling(tall,all_regi,all_enty)                        "baseline emissions of N2O and CH4 from landuse based on data from Magpie"
+/
+$ondelim
+$include "./core/input/f_macBaseMagpie_coupling.cs4r"
+$offdelim
+/;
+pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
+$endIf.coupling
 
 *** p_macPolCO2luc defines the lower limit for abatement of CO2 landuse change emissions in REMIND
 *** The values are derived from MAgPIE runs with very strong mitigation

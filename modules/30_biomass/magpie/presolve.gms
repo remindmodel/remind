@@ -7,24 +7,23 @@
 
 *** SOF ./modules/30_biomass/magpie/presolve.gms
 
+*** If MAgPIE runs inbetween the Nash iterations:
+*** ============================================================
+$ifthen %cm_MAgPIE_Nash% == "on"
+*** ============================================================
+
+*** Start MAgPIE and transfer data
+*** system(scripts/input/mag2rem.R)
+
+*** Update biomass prices and biomass production with MAgPIE's results
+*** The landuse emissions are updated in the core/presolve.gms
+
 *DK* Read prices and costs for 2nd gen. purpose grown bioenergy from MAgPIE (calculated with demnad from previous Remind run)
-p30_pebiolc_pricemag(ttot,regi) = 0;
-$if %cm_MAgPIE_coupling% == "on"  table p30_pebiolc_pricemag_coupling(tall,all_regi)     "prices and costs for 2nd gen. purpose grown bioenergy from MAgPIE"
-$if %cm_MAgPIE_coupling% == "on"  $ondelim
-$if %cm_MAgPIE_coupling% == "on"  $include "./modules/30_biomass/magpie/input/p30_pebiolc_pricemag_coupling.csv";
-$if %cm_MAgPIE_coupling% == "on"  $offdelim
-$if %cm_MAgPIE_coupling% == "on"  ;
-$if %cm_MAgPIE_coupling% == "on"  p30_pebiolc_pricemag(ttot,regi) = p30_pebiolc_pricemag_coupling(ttot,regi);
+executeTool.checkErrorLevel 'csvread p30_pebiolc_pricemag_coupling.csv id=p30_pebiolc_pricemag index=1,2 values=3 useHeader=Y';
 
 *DK* In coupled runs overwrite pebiolc production from look-up table with actual MAgPIE values.
 *DK* Read production of 2nd gen. purpose grown bioenergy from MAgPIE (given to MAgPIE from previous Remind run)
-$if %cm_MAgPIE_coupling% == "on"  table pm_pebiolc_demandmag_coupling(tall,all_regi)     "production of 2nd gen. purpose grown bioenergy from MAgPIE"
-$if %cm_MAgPIE_coupling% == "on"  $ondelim
-$if %cm_MAgPIE_coupling% == "on"  $include "./modules/30_biomass/magpie/input/pm_pebiolc_demandmag_coupling.csv";
-$if %cm_MAgPIE_coupling% == "on"  $offdelim
-$if %cm_MAgPIE_coupling% == "on"  ;
-$if %cm_MAgPIE_coupling% == "on"  pm_pebiolc_demandmag(ttot,regi) = pm_pebiolc_demandmag_coupling(ttot,regi);
-
+executeTool.checkErrorLevel 'csvread pm_pebiolc_demandmag_coupling.csv id=pm_pebiolc_demandmag index=1,2 values=3 useHeader=Y';
 
 ***=============================================================
 ***  BEGIN: calculate shift factors for bioenergy prices 
@@ -38,30 +37,18 @@ $if %cm_MAgPIE_coupling% == "on"  pm_pebiolc_demandmag(ttot,regi) = pm_pebiolc_d
 ***  4  Release the bound on fuelex (to be precise: fuelex has to be fixed only for 2a and 3)  
 ***  Note: In the cost formula in 3a the price shift factor is used!
 
-*** Eliminate effect of shift and mult for calculating the original emulator price
-v30_priceshift.fx(ttot,regi) = 0;
-v30_pricemult.fx(ttot,regi)  = 1;
-
 ***--------- declare models -----------------
-model
-model_biopresolve_p /q30_pebiolc_price/
-;
-model
-model_priceshift  /q30_priceshift, q30_pebiolc_price/
-;
-model
-model_biopresolve_c /q30_pebiolc_costs/
-;
+*** Models cant be delcard inside a loop.
+*** They are therefore declared in preloop.gms.
 
 ***------------ Step 1: Fix fuelex to MAgPIE demand -------------
 *** BEFORE calculation: Regular emulator equations are applied to calculate costs and prices. Therefore set demand (fuelex) in
 *** the emulator equations for price and costs to demand from MAgPIE reporting
 vm_fuExtr.fx(ttot,regi,"pebiolc","1") = pm_pebiolc_demandmag(ttot,regi);
 
-*** Shift factors only have to be calculateed if REMIND is run coupled to MAgPIE, else they are set to 1
-*** ============================================================
-$ifthen %cm_MAgPIE_coupling% == "on"
-*** ============================================================
+*** Eliminate effect of shift and mult for calculating the original emulator price (p30_pebiolc_price_emu_preloop)
+v30_priceshift.fx(ttot,regi) = 0;
+v30_pricemult.fx(ttot,regi)  = 1;
 
 ***------------ Step 2a: calculate bioenergy prices -------------
 if (execError > 0,
@@ -93,6 +80,10 @@ p30_pebiolc_pricmult(ttot,regi)$(v30_pricemult.l(ttot,regi) gt 0) = v30_pricemul
 v30_pricemult.fx(ttot,regi) = p30_pebiolc_pricmult(ttot,regi);
 v30_priceshift.fx(ttot,regi) = p30_pebiolc_pricshift(ttot,regi);
 
+s30_switch_shiftcalc = 0; !!! deactivate equations for shift calculation. This is necessary because the main model uses /all/
+
+display p30_pebiolc_pricmult, p30_pebiolc_pricshift;
+
 *** Calculate shifted prices
 if (execError > 0,
   execute_unload "abort.gdx";
@@ -102,13 +93,8 @@ if (execError > 0,
 solve model_biopresolve_p using cns; !!! nothing has to be optimized here, just pure calculation
 p30_pebiolc_price_emu_preloop_shifted(ttot,regi) = vm_pebiolc_price.l(ttot,regi); !!! save for reporting
 
-s30_switch_shiftcalc = 0; !!! deactivate equations for shift calculation. This is necessary because the main model uses /all/
+display p30_pebiolc_price_emu_preloop_shifted;
 
-display p30_pebiolc_pricmult, p30_pebiolc_pricshift,p30_pebiolc_price_emu_preloop_shifted;
-
-*** ============================================================
-$endif 
-*** ============================================================
 
 ***------------ Step 3: calculate bioenergy costs -------------
 *** The costs are calculated applying the regular cost equation. 
@@ -136,6 +122,13 @@ vm_fuExtr.l(ttot,regi,"pebiolc","1")  = pm_pebiolc_demandmag(ttot,regi);
 ***-------------------------------------------------------------
 ***  END: calculate shift factors
 ***-------------------------------------------------------------
+*** ============================================================
+$endif 
+*** ============================================================
+
+*** XXX MUST BE REMOVED AFTER TESTING!!!
+v30_pricemult.fx(ttot,regi) = 1;
+v30_priceshift.fx(ttot,regi) = 0;
 
 
 *** Calculate total primary energy to limit BECCS (see q30_limitTeBio)

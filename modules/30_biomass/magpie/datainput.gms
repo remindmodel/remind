@@ -60,7 +60,7 @@ $offdelim
 /
 ;
 
-
+*** Why is this necessary? Isn't p30_pebiolc_costs_emu_preloop ALWAYS calculated in preloop, overwriting what has been loaded here?
 if (cm_startyear gt 2005,
 execute_load "input_ref.gdx", p30_pebiolc_costs_emu_preloop;
 );

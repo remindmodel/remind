@@ -7,6 +7,12 @@
 *** SOF ./modules/26_agCosts/costs/presolve.gms
 
 *' @code
+
+$if %cm_MAgPIE_Nash% == "on" Execute "Rscript runMAgPIE.R";
+
+*' In coupled runs landuse costs are directly transferred from MAgPIE run instead of reading them from the look-up table.
+$if %cm_MAgPIE_Nash% == "on" executeTool.checkErrorLevel 'csvread p26_totLUcost_coupling.csv id=p26_totLUcosts_withMAC index=1,2 values=3 useHeader=Y';
+
 *' **Total agricultural costs (excluding MAC costs)**
 *' For standalone runs replace exogenous land use MAC cots (p26_macCostLu) with endogenous land use MAC costs (pm_macCost). 
 *' Note: dont include mac costs for CO2luc, because they are already implicitly included in p26_totLUcosts_withMAC (and not in p26_macCostLu).

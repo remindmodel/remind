@@ -22,16 +22,11 @@ $offdelim
 ;
 
 *' In coupled runs landuse costs are directly transferred from MAgPIE run instead of reading them from the look-up table.
-$if %cm_MAgPIE_coupling% == "on"  table p26_totLUcost_coupling(tall,all_regi)  "total landuse cost from MAgPIE"
-$if %cm_MAgPIE_coupling% == "on"  $ondelim
-$if %cm_MAgPIE_coupling% == "on"  $include "./modules/26_agCosts/costs/input/p26_totLUcost_coupling.csv";
-$if %cm_MAgPIE_coupling% == "on"  $offdelim
-$if %cm_MAgPIE_coupling% == "on"  ;
+*** gets updated in presolve since it changes between Nash iterations
 
 *** Total land use costs including MAC costs (either from look-up table for standalone runs or from MAgPIE in coupled runs)
 *' @code
-$if %cm_MAgPIE_coupling% == "off" p26_totLUcosts_withMAC(ttot,regi) = p26_totLUcostLookup(ttot,regi,"%cm_LU_emi_scen%","%cm_rcp_scen%");
-$if %cm_MAgPIE_coupling% == "on"  p26_totLUcosts_withMAC(ttot,regi) = p26_totLUcost_coupling(ttot,regi);
+p26_totLUcosts_withMAC(ttot,regi) = p26_totLUcostLookup(ttot,regi,"%cm_LU_emi_scen%","%cm_rcp_scen%");
 
 *' **Land use emissions MAC cost**
 *' In *standalone runs* land use MAC costs are calculated endogenously in REMIND. Since they are also included
@@ -50,7 +45,7 @@ $offdelim
 
 *' @code
 *** MAC costs (either from look-up table for standalone runs or zero in coupled runs because MAgPIE's total costs already include MAC costs)
-$if %cm_MAgPIE_coupling% == "off" p26_macCostLu(ttot,regi) = p26_macCostLuLookup(ttot,regi,"%cm_LU_emi_scen%","%cm_rcp_scen%");
-$if %cm_MAgPIE_coupling% == "on"  p26_macCostLu(ttot,regi) = 0;
+p26_macCostLu(ttot,regi) = p26_macCostLuLookup(ttot,regi,"%cm_LU_emi_scen%","%cm_rcp_scen%");
+$if %cm_MAgPIE_Nash% == "on" p26_macCostLu(ttot,regi) = 0;
 *' @stop 
 *** EOF ./modules/26_agCosts/costs/datainput.gms
