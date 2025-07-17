@@ -159,9 +159,6 @@ $offdelim
 ***---------------------------------------------------------------------------
 *** Biochar parametrization variation
 ***---------------------------------------------------------------------------
-*TD* adjust learning factor for biochar technologies if biochar is learning or not
-*fm_dataglob("learn", te)$(sameAs(te, "biopyronly") OR sameAs(te, "biopyrhe") OR
-*                            sameAs(te, "biopyrel") OR sameAs(te, "biopyrchp")) = cm_BCLearning;
 fm_dataglob("learn", te)$(sameAs(te, "biopyronly") OR sameAs(te, "biopyrhe") OR
                             sameAs(te, "biopyrel") OR sameAs(te, "biopyrchp")) = %cm_BCLearning%;
 
