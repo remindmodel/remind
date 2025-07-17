@@ -45,14 +45,14 @@ prepare <- function() {
     # using right_join instead of filter generates NA for packages that are not
     # installed
     right_join(
-    # list all packages of interest here
+    # list all packages of interest alphabetically here
         tribble(
             ~Package, "data.table", "devtools", "dplyr", "edgeTransport",
             "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools",
             "lucode2", "luplot", "luscale", "magclass", "magpie4", "methods",
-            "mip", "optparse", "parallel",
-            "plotly", "remind2", "reticulate", "rlang", "rmndt", "tidyverse",
-            "tools"),
+            "mip", "mrtransport", "optparse", "parallel",
+            "plotly", "remind2", "reporttransport", "reticulate", "rlang",
+            "rmndt", "tidyverse", "tools"),
 
         'Package') %>%
     print(n = Inf)
