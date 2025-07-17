@@ -595,7 +595,7 @@ sm_GJ_2_TWa                  "multiplicative factor to convert from GJ to TWa"  
 sm_TWa_2_TWh                 "tera Watt year to Tera Watt hour"                    /8.76e+3/,
 sm_TWa_2_MWh                 "tera Watt year to Mega Watt hour"                    /8.76e+9/,
 sm_TWa_2_kWh                 "tera Watt year to kilo Watt hour"                    /8.76e+12/,
-s_tBC_2_TWa                  "t biochar to TWa biochar (29000 [MJ/tBC]*10^-12[EJ/MJ]/31.536[EJ/TWa])" /9.196e-10/,
+s_tBC_2_TWa                  "t biochar to TWa biochar (28700 [MJ/tBC]*10^-12[EJ/MJ]/31.536[EJ/TWa])" /9.101e-10/,
 
 *** all these new conversion factors with the form "s_xxx_2_yyy" are multplicative factors. Thus, if you have a number in Unit xxx, you have to
 *** multiply this number by the conversion factor s_xxx_2_yyy to get the new value in Unit yyy.
