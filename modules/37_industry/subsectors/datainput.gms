@@ -756,8 +756,8 @@ p37_specFeDemTarget("fehos","stCrLiq","standard")  = 14.6 / (sm_TWa_2_MWh/sm_gig
 !!p37_specFeDemTarget("fegas","stCrLiq","standard")  = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Lucia S. Layritz 2021 Appendix A.2 Naphtha input/(Ethylene + By Products)
 p37_specFeDemTarget("feels","stCrLiq","standard")  = 0.07 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Lucia S. Layritz 2021 Appendix A.2 Electricity input/(Ethylene + By Products)
 
-p37_specFeDemTarget("fegas","stCrChemRe","standard")  = 1.99 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Geetanjali Yadav 2023 Table S20 Using co-producted naphtha and NGLs as fuel
-p37_specFeDemTarget("feels","stCrChemRe","standard")  = 0.54 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Geetanjali Yadav 2023 Table S20 Calculating total electricity consumption from fossil fuel for electricity based on 2016 US total electricity generation and fossil fuel consumption for electricity generation
+p37_specFeDemTarget("fegas","stCrChemRe","standard")  = 0.84 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Geetanjali Yadav 2023 Table S20 Using co-producted naphtha and NGLs as fuel
+p37_specFeDemTarget("feels","stCrChemRe","standard")  = 0.24 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Geetanjali Yadav 2023 Table S12+S13, calculated from electricity costs
 
 p37_specFeDemTarget("fegas","mechRe","standard")  = 0.29 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Taylor Uekert 2023 Table S1-S4 Weighted average of PE PP and PET
 p37_specFeDemTarget("feels","mechRe","standard")  = 0.54 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Taylor Uekert 2023 Table S1-S4 Weighted average of PE PP and PET
@@ -775,7 +775,7 @@ p37_specFeDemTarget("feels","meSyNg","standard")    = 0.1 / (sm_TWa_2_MWh/sm_gig
 p37_specFeDemTarget("fehos","meSyLiq","standard")  = 9.7 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4 Assume Feedstock is 20Mwh
 p37_specFeDemTarget("feels","meSyLiq","standard")  = 0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4
 
-p37_specFeDemTarget("fesos","meSySol_cc","standard")  = 2.7 / (sm_TWa_2_MWh/sm_giga_2_non); !! TODO：Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5  Mwh/tC
+p37_specFeDemTarget("fesos","meSySol_cc","standard")  = 2.8 / (sm_TWa_2_MWh/sm_giga_2_non); !! TODO：Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5  Mwh/tC
 p37_specFeDemTarget("feels","meSySol_cc","standard")    = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5  Mwh/tC
 
 p37_specFeDemTarget("feels","meSyNg_cc","standard")  = 0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5   Mwh/tC
@@ -785,8 +785,8 @@ p37_specFeDemTarget("feels","meSyLiq_cc","standard")    = 0.5 / (sm_TWa_2_MWh/sm
 p37_specFeDemTarget("feh2s","meSyH2","standard")  = 6.4 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: DEA Technology Data for Energy Carrier Generation and Conversion June 2017 98 Methanol from hydrogen
 p37_specFeDemTarget("feels","meSyH2","standard")  = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: DEA Technology Data for Energy Carrier Generation and Conversion June 2017 98 Methanol from hydrogen
 
-p37_specFeDemTarget("fegas","meSyChemRe","standard")  = 3.0 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Shaik Afzal 2023 Table S5
-p37_specFeDemTarget("feels","meSyChemRe","standard")  = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Shaik Afzal 2023 Table S5
+p37_specFeDemTarget("fegas","meSyChemRe","standard")  = 2.6 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Shaik Afzal 2023 Table S4+S5, calculated from minimum selling price breakdown
+p37_specFeDemTarget("feels","meSyChemRe","standard")  = 1.0 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Shaik Afzal 2023 Table S3+S5, calculated from minimum selling price breakdown
 
 p37_specFeDemTarget("fesos","amSyCoal","standard")  = 10.6 / (sm_TWa_2_MWh/sm_giga_2_non);   !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
 p37_specFeDemTarget("feels","amSyCoal","standard")  =  1.0 / (sm_TWa_2_MWh/sm_giga_2_non);   !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
@@ -794,14 +794,14 @@ p37_specFeDemTarget("feels","amSyCoal","standard")  =  1.0 / (sm_TWa_2_MWh/sm_gi
 p37_specFeDemTarget("fegas","amSyNG","standard")    = 8.9 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 4
 p37_specFeDemTarget("feels","amSyNG","standard")    = 0.1 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 4
 
-p37_specFeDemTarget("fehos","amSyLiq","standard")    =  10.6 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4
+p37_specFeDemTarget("fehos","amSyLiq","standard")    =  9 / (sm_TWa_2_MWh/sm_giga_2_non); !! TODO Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4
 p37_specFeDemTarget("feels","amSyLiq","standard")    =  0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4
 
 p37_specFeDemTarget("feels","amSyCoal_cc","standard")  =  0.4 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5  Mwh/tC
 
-p37_specFeDemTarget("feels","amSyNG_cc","standard")    = 0.4 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5  Mwh/tC
+p37_specFeDemTarget("feels","amSyNG_cc","standard")    = 0.5 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5  Mwh/tC
 
-p37_specFeDemTarget("feels","amSyLiq_cc","standard")    =  0.4 / (sm_TWa_2_MWh/sm_giga_2_non); !! Assume same as amSyNG_cc  Mwh/tC
+p37_specFeDemTarget("feels","amSyLiq_cc","standard")    =  0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Assume same as amSyNG_cc  Mwh/tC
 
 p37_specFeDemTarget("feh2s","amSyH2","standard")    = 6.0 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: DEA Technology Data for Energy Carrier Generation and Conversion June 2017 103 Hydrogen to Ammonia
 p37_specFeDemTarget("feels","amSyH2","standard")    = 0.5 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: GrinbergDana16 Supplementary Table 4
@@ -868,10 +868,6 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 p37_captureRate("meSySol_cc")  = 0.95 * 0.71; 
 p37_captureRate("meSyNg_cc") = 0.95 * 0.22; 
 p37_captureRate("meSyLiq_cc")  = 0.95 * 0.5;
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/chemicals
 p37_selfCaptureRate("meSySol_cc")  = 0.95;
 p37_selfCaptureRate("meSyNg_cc") = 0.95;
 p37_selfCaptureRate("meSyLiq_cc")  = 0.95;
@@ -927,7 +923,7 @@ $endif.cm_subsec_model_steel
 
 
 *** --------------------------------
-*** Plastics Production volumes
+*** Chemicals Production volumes
 *** --------------------------------
 
 
