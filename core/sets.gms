@@ -1883,21 +1883,6 @@ entyFeTrans(all_enty) "final energy types from transport sector"
 
 feForCes(all_enty)   "limit q_balFeForCes to entyFe in fe2ppfEn"
 
-teSpecificRevenue(all_te) "artificial demand technologies for products  that are not yet demanded elsewhere in the model"
-/       
-    biocharuse    "use of biochar, e.g. for soil or for building materials"
-/
-
-entySpecificRevenue(all_enty)
-/
-    sebiochar     "SE Biochar from pyrolysis, not consumed as energy"
-/
-
-SpecificRevenueEntyandTe(entySpecificRevenue,teSpecificRevenue)
-/
-    sebiochar.biocharuse
-/
-
 emi(all_enty)      "types of emissions, these emissions are given to the climate module"
 
 emiTe(all_enty)   "types of climate-relevant energy emissions for climate coupling and reporting"
