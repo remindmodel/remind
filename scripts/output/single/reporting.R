@@ -6,7 +6,6 @@
 # |  Contact: remind@pik-potsdam.de
 
 library(remind2)
-library(reporttransport)
 library(quitte)
 library(piamutils)
 library(lucode2)
