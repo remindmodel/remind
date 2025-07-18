@@ -1488,7 +1488,7 @@ $offdelim
 pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
 
 *** pm_macBaseMagpie gets overwritten when coupled:
-$ifThen.coupling %cm_MAgPIE_coupling% == "alwaysoff"  
+$ifThen.coupling %cm_MAgPIE_coupling% == "on"  
 parameter f_macBaseMagpie_coupling(tall,all_regi,all_enty)                        "baseline emissions of N2O and CH4 from landuse based on data from Magpie"
 /
 $ondelim

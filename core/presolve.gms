@@ -96,8 +96,6 @@ display p_efFossilFuelExtr;
 ***--------------------------------------
 *** Non-energy emissions reductions (MAC)
 ***--------------------------------------
-*** scale CO2 luc baselines from MAgPIE to EDGAR v4.2 2005 data in REMIND standalone runs: linear, phase out within 20 years
-***$if %cm_MAgPIE_coupling% == "off" pm_macBaseMagpie(ttot,regi,"co2luc")$(ttot.val lt 2030) = pm_macBaseMagpie(ttot,regi,"co2luc") + ( (p_macBase2005(regi,"co2luc") - pm_macBaseMagpie("2005",regi,"co2luc")) * (1-(ttot.val - 2005)/20) );
 
 *** make sure that minimum CO2 luc emissions given in p_macPolCO2luc do not exceed the baseline
 loop(regi,
