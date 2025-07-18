@@ -68,7 +68,7 @@ flexibility                         0.7              0.75        0.7
 
 +              biopyronly      biopyrhe        biopyrchp         biopyrel      biopyrliq  
 tech_stat               1             1                1                1              3 
-inco0                1080          1430             1750             1553           4670  
+inco0                1080          1430             1750             1553           3215  
 floorcost             511           668              989              792
 constrTme               4             4                4                4              4
 eta                  0.48           0.48             0.48            0.48           0.36 
