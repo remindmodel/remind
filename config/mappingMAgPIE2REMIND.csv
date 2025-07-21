@@ -1,0 +1,37 @@
+﻿mag;enty;factorMag2Rem;parameter
+Demand|Bioenergy|2nd generation|++|Bioenergy crops;;1/31.536;pm_pebiolc_demandmag
+Costs Without Incentives;;1/1000/1000;p26_totLUcost
+Costs Accounting|+|Trade;;1/1000/1000;xxx
+Prices|Bioenergy;;0.0315576;p30_pebiolc_pricemag
+Emissions|CO2|Land|+|Land-use Change;co2luc;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|+|Deforestation;co2lucPos;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|+|Forest degradation;co2lucPos;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|+|Other land conversion;co2lucPos;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|+|Wood Harvest;co2lucPos;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|Peatland|+|Positive;co2lucPos;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|Peatland|+|Negative;co2lucNegIntentPeat;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|Regrowth|+|CO2-price AR;co2lucNegIntentAR;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|Regrowth|+|NPI_NDC AR;co2lucNegIntentAR;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|Regrowth|+|Cropland Tree Cover;co2lucNegIntentAgroforestry;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|Regrowth|+|Other Land;co2lucNegUnintent;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|Regrowth|+|Secondary Forest;co2lucNegUnintent;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|Regrowth|+|Timber Plantations;co2lucNegUnintent;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|Residual|+|Positive;co2lucPos;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|Residual|+|Negative;co2lucNegUnintent;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|Soil|++|Emissions;co2lucPos;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|Soil|Cropland management|+|Withdrawals;co2lucNegUnintent;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|Soil|Land Conversion|+|Withdrawals;co2lucNegUnintent;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|Soil|Soil Carbon Management|+|Withdrawals;co2lucNegIntentSCM;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|Timber|+|Storage in HWP;co2lucNegIntentTimber;1/1000*12/44;f_macBaseMagpie
+Emissions|CO2|Land|Land-use Change|Timber|+|Release from HWP;co2lucPos;1/1000*12/44;f_macBaseMagpie
+Emissions|N2O|Land|Agriculture|+|Animal Waste Management;n2oanwstm;28/44;f_macBaseMagpie
+Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Inorganic Fertilizers;n2ofertin;28/44;f_macBaseMagpie
+Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Manure applied to Croplands;n2oanwstc;28/44;f_macBaseMagpie
+Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Decay of Crop Residues;n2ofertcr;28/44;f_macBaseMagpie
+Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Soil Organic Matter Loss;n2ofertsom;28/44;f_macBaseMagpie
+Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Pasture;n2oanwstp;28/44;f_macBaseMagpie
+Emissions|N2O|Land|+|Peatland;n2opeatland;28/44;f_macBaseMagpie
+Emissions|CH4|Land|Agriculture|+|Rice;ch4rice;1;f_macBaseMagpie
+Emissions|CH4|Land|Agriculture|+|Animal waste management;ch4anmlwst;1;f_macBaseMagpie
+Emissions|CH4|Land|Agriculture|+|Enteric fermentation;ch4animals;1;f_macBaseMagpie
+Emissions|CH4|Land|+|Peatland;ch4peatland;1;f_macBaseMagpie

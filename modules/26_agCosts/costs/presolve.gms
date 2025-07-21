@@ -8,10 +8,11 @@
 
 *' @code
 
-$if %cm_MAgPIE_Nash% == "on" Execute "Rscript runMAgPIE.R";
+*** Since in the coupling MAgPIE data is first required in core/presolve
+*** MAgPIE is executed there.
 
 *' In coupled runs landuse costs are directly transferred from MAgPIE run instead of reading them from the look-up table.
-$if %cm_MAgPIE_Nash% == "on" executeTool.checkErrorLevel 'csvread p26_totLUcost_coupling.csv id=p26_totLUcosts_withMAC index=1,2 values=3 useHeader=Y';
+$if %cm_MAgPIE_Nash% == "on" Execute_Loadpoint 'magpieData.gdx' p26_totLUcosts_withMAC;
 
 *' **Total agricultural costs (excluding MAC costs)**
 *' For standalone runs replace exogenous land use MAC cots (p26_macCostLu) with endogenous land use MAC costs (pm_macCost). 

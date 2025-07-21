@@ -63,7 +63,7 @@ if (execError > 0,
   abort "at least one execution error occured, abort.gdx written";
 );
 
-Solve model_priceshift using nlp minimizing v30_shift_r2;
+solve model_priceshift using nlp minimizing v30_shift_r2;
 *** Initialize shift factors
 p30_pebiolc_pricshift(t,regi) = 0;
 p30_pebiolc_pricmult(t,regi)  = 1;

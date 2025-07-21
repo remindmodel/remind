@@ -93,6 +93,14 @@ loop(regi,
 );
 display p_efFossilFuelExtr;
 
+
+***--------------------------------------
+***    MAgPIE coupling: run MAgPIE
+***--------------------------------------
+
+$if %cm_MAgPIE_Nash% == "on" Execute "Rscript runMAgPIE.R";
+
+
 ***--------------------------------------
 *** Non-energy emissions reductions (MAC)
 ***--------------------------------------

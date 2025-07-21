@@ -12,18 +12,18 @@
 $ifthen %cm_MAgPIE_Nash% == "on"
 *** ============================================================
 
-*** Start MAgPIE and transfer data
-*** system(scripts/input/mag2rem.R)
+*** Since in the coupling MAgPIE data is first required in core/presolve
+*** MAgPIE is executed there.
 
 *** Update biomass prices and biomass production with MAgPIE's results
 *** The landuse emissions are updated in the core/presolve.gms
 
 *DK* Read prices and costs for 2nd gen. purpose grown bioenergy from MAgPIE (calculated with demnad from previous Remind run)
-executeTool.checkErrorLevel 'csvread p30_pebiolc_pricemag_coupling.csv id=p30_pebiolc_pricemag index=1,2 values=3 useHeader=Y';
+Execute_Loadpoint 'magpieData.gdx' p30_pebiolc_pricemag;
 
 *DK* In coupled runs overwrite pebiolc production from look-up table with actual MAgPIE values.
 *DK* Read production of 2nd gen. purpose grown bioenergy from MAgPIE (given to MAgPIE from previous Remind run)
-executeTool.checkErrorLevel 'csvread pm_pebiolc_demandmag_coupling.csv id=pm_pebiolc_demandmag index=1,2 values=3 useHeader=Y';
+Execute_Loadpoint 'magpieData.gdx' pm_pebiolc_demandmag;
 
 ***=============================================================
 ***  BEGIN: calculate shift factors for bioenergy prices 
@@ -70,7 +70,7 @@ if (execError > 0,
   abort "at least one execution error occured, abort.gdx written";
 );
 
-Solve model_priceshift using nlp minimizing v30_shift_r2;
+solve model_priceshift using nlp minimizing v30_shift_r2;
 *** Initialize shift factors
 p30_pebiolc_pricshift(t,regi) = 0;
 p30_pebiolc_pricmult(t,regi)  = 1;
