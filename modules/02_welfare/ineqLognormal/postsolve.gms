@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/02_welfare/ineqLognormal/postsolve.gms
 
-$IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_FESwitch%" == "on"
+$IFTHEN.INCONV_bioSwitch not "%cm_INCONV_PENALTY_FESwitch%" == "off"
 *** track inconvenience penalty for bio/synfuel switching to check how large it
 *** is relative to consumption
 p02_inconvPen_Switch_Track(t,regi)
@@ -18,7 +18,9 @@ p02_inconvPen_Switch_Track(t,regi)
       v02_NegInconvPenFeBioSwitch.l(t,regi,entySe,entyFe,sector,emiMkt) 
     + v02_PosInconvPenFeBioSwitch.l(t,regi,entySe,entyFe,sector,emiMkt)
     )
-  / 1e3;
+  / 1e3
+  * pm_demFeTotal0(t,regi) / pm_demFeTotal0(t,"%cm_INCONV_PENALTY_FESwitchRegi%")
+;
 $ENDIF.INCONV_bioSwitch
 
 *for use in the SCC calculation

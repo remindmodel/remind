@@ -31,12 +31,17 @@ fm_taxCO2eqHist,input,not needed
 sm_budgetCO2eqGlob,input,no iterative target adjustment
 vm_emiAll,input,no iterative target adjustment
 pm_budgetCO2eq,input,no iterative target adjustment
-pm_ts,input,no iterative target adjustment
 cm_iteration_max,input,no iterative target adjustment
 cm_taxCO2_startyear,input,added by codeCheck
 cm_taxCO2_expGrowth,input,added by codeCheck
 cm_taxCO2_IncAfterPeakBudgYr,input,added by codeCheck
 cm_budgetCO2from2020,input,no iterative target adjustment
 pm_taxCO2eq_anchor_iterationdiff,input,no iterative target adjustment
-pm_taxCO2eq_anchor_iterationdiff_tmp,input,no iterative target adjustment
-sm_globalBudget_dev,input,no target adjustement
+sm_globalBudget_absDev,input,no target adjustement
+pm_taxCO2eq_iter,input,added by codeCheck
+cm_budgetCO2_absDevTol,input,added by codeCheck
+pm_actualbudgetco2,input,added by codeCheck
+cm_taxCO2_peakBudgYr,input,added by codeCheck
+cm_taxCO2_regiDiff,input,added by codeCheck
+cm_taxCO2_interpolation,input,added by codeCheck
+cm_taxCO2_lowerBound_path_gdx_ref,input,added by codeCheck

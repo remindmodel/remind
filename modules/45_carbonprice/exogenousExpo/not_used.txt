@@ -1,0 +1,47 @@
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
+name,type,reason
+cm_emiscen, switch, ???
+sm_c_2_co2,switch, ???
+pm_ttot_val,parameter,???
+cm_iterative_target_adj,switch,???
+cm_expoLinear_yearStart,switch,???
+vm_co2eq,variable,???
+vm_emiFgas,input,questionnaire
+pm_globalMeanTemperature,input,questionnaire
+pm_temperatureImpulseResponseCO2,input,questionnaire
+pm_consPC,input,questionnaire
+pm_GDPGross,input,questionnaire
+pm_prtp,input,questionnaire
+cm_carbonprice_temperatureLimit,input,questionnaire
+pm_ttot_2_tall,input,questionnaire
+pm_shPPPMER,input,questionnaire
+pm_pop,input,questionnaire
+pm_gdp,input,questionnaire
+cm_NDC_divergentScenario,input,questionnaire
+vm_demFeSector,input,questionnaire
+pm_emifac,input,questionnaire
+sm_DptCO2_2_TDpGtC,input,added by codeCheck
+cm_peakBudgYr,input,added by codeCheck
+fm_taxCO2eqHist,input,not needed
+sm_D2005_2_D2017,input,not needed
+sm_budgetCO2eqGlob,input,no iterative target adjustment
+vm_emiAll,input,no iterative target adjustment
+pm_budgetCO2eq,input,no iterative target adjustment
+cm_iteration_max,input,no iterative target adjustment
+cm_taxCO2_startyear,input,added by codeCheck
+cm_taxCO2_IncAfterPeakBudgYr,input,added by codeCheck
+cm_budgetCO2from2020,input,no iterative target adjustment
+pm_taxCO2eq_anchor_iterationdiff,input,no iterative target adjustment
+sm_globalBudget_absDev,input,no target adjustement
+pm_taxCO2eq_iter,input,added by codeCheck
+cm_budgetCO2_absDevTol,input,added by codeCheck
+pm_actualbudgetco2,input,added by codeCheck
+cm_taxCO2_peakBudgYr,input,added by codeCheck
+cm_taxCO2_regiDiff,input,added by codeCheck
+cm_taxCO2_interpolation,input,added by codeCheck
+cm_taxCO2_lowerBound_path_gdx_ref,input,added by codeCheck

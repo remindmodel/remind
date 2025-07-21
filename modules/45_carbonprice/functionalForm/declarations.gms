@@ -8,18 +8,17 @@
 
 scalars
 s45_taxCO2_startyear                        "CO2 tax provided by cm_taxCO2_startyear converted from $/t CO2eq to T$/GtC"
+s45_taxCO2_peakBudgYr                       "CO2 tax provided by cm_taxCO2_peakBudgYr converted from $/t CO2eq to T$/GtC"
 
 $ifThen.taxCO2functionalForm1 "%cm_taxCO2_functionalForm%" == "linear"
 s45_taxCO2_historical                       "historical level of CO2 tax converted from $/t CO2eq to T$/GtC"
 s45_taxCO2_historicalYr                     "year of s45_taxCO2_historical"
 $endIf.taxCO2functionalForm1
 
-$ifThen.taxCO2regiDiff1 "%cm_taxCO2_regiDiff%" == "none"
-$elseIf.taxCO2regiDiff1 "%cm_taxCO2_regiDiff%" == "gdpSpread"
 s45_regiDiff_gdpThreshold                   "reference value for GDP per capita (1e3 $ PPP 2017) above which carbon price from global anchor trajectory is fully applied"
-$else.taxCO2regiDiff1
-s45_regiDiff_startYr                        "year until which initial ratios of CO2 prices are applied and after which convergence starts"
-$endIf.taxCO2regiDiff1
+
+s45_interpolation_startYr                   "start year of interpolation from p45_taxCO2eq_path_gdx_ref to p45_taxCO2eq_regiDiff"
+s45_interpolation_endYr                     "end year of interpolation from p45_taxCO2eq_path_gdx_ref to p45_taxCO2eq_regiDiff"
 ;
 
 parameters
@@ -29,38 +28,26 @@ p45_taxCO2eq_regiDiff(ttot,all_regi)        "regional differentiated CO2 price t
 p45_taxCO2eq_path_gdx_ref(ttot,all_regi)    "CO2 tax trajectories from path_gdx_ref"
 
 p45_gdppcap_PPP(ttot,all_regi)              "GDP per capita (1e3 $ PPP 2017)"
-p45_regiDiff_convFactor(ttot,all_regi)      "convergence factor for regional differentiation"
-*** Only declaring additional parameters if cm_taxCO2_regiDiff is set to initialSpread10 or initialSpread20
-$ifThen.taxCO2regiDiff2 "%cm_taxCO2_regiDiff%" == "none"
-$elseIf.taxCO2regiDiff2 "%cm_taxCO2_regiDiff%" == "gdpSpread"
-$else.taxCO2regiDiff2
+p45_regiDiff_ratio(ttot,all_regi)           "ratio between global anchor and regional differentiated CO2 price trajectories"
+p45_regiDiff_startYr(all_regi)              "start year of convergence from regionally differentiated carbon prices to global anchor trajectory"
 p45_regiDiff_initialRatio(all_regi)         "inital ratio between global anchor and regional differentiated CO2 price trajectories"
 p45_regiDiff_endYr(all_regi)                "end year of regional differentiation, i.e. regional carbon price equal to global anchor trajectory thereafter"
-p45_regiDiff_endYr_data(ext_regi)           "data provided by switch cm_taxCO2_regiDiff_endYr"
-/ %cm_taxCO2_regiDiff_endYr% /
-$endIf.taxCO2regiDiff2
-    
-p45_interpolation_startYr(all_regi)         "start year of interpolation from p45_taxCO2eq_path_gdx_ref to p45_taxCO2eq_regiDiff"
-p45_interpolation_endYr(all_regi)           "end year of interpolation from p45_taxCO2eq_path_gdx_ref to p45_taxCO2eq_regiDiff"
-p45_interpolation_exponent(all_regi)        "interpolation exponent"
-*** Only assigning values to p45_interpolation_data if cm_taxCO2_interpolation is not set to off, one_step, or two_steps
-$ifThen.taxCO2interpolation1 "%cm_taxCO2_interpolation%" == "off"
-$elseIf.taxCO2interpolation1 "%cm_taxCO2_interpolation%" == "one_step" 
-$elseIf.taxCO2interpolation1 "%cm_taxCO2_interpolation%" == "two_steps" 
-$else.taxCO2interpolation1
-p45_interpolation_data(ext_regi,ttot,ttot2)  "regional exponent and timewindow for interpolation"
-/ %cm_taxCO2_interpolation% /
-$endIf.taxCO2interpolation1
-*** Only assigning values to p45_taxCO2eq_startYearValue if cm_taxCO2_startYearValue is not off
-$ifThen.taxCO2startYearValue1 "%cm_taxCO2_startYearValue%" == "off"
-$else.taxCO2startYearValue1
-p45_taxCO2eq_startYearValue_data(ext_regi)    "input data for manually chosen regional carbon price in cm_startyear in $/t CO2eq"
-/ %cm_taxCO2_startYearValue% /
-p45_taxCO2eq_startYearValue(all_regi)         "manually chosen regional carbon price in cm_startyear in $/t CO2eq"
-$endIf.taxCO2startYearValue1
-;          
+p45_regiDiff_exponent(all_regi)             "regional convergence exponent for ratio between global anchor and regional differentiated CO2 price trajectories"
 
-
+*** If cm_taxCO2_regiDiff_convergence is not set to scenario, read in data from switch
+$ifThen.taxCO2regiDiffConvergence1 "%cm_taxCO2_regiDiff_convergence%" == "scenario"
+$else.taxCO2regiDiffConvergence1
+p45_regiDiff_convergence_data(ext_regi,ttot)     "input data for regional exponent and convergence year provided by switch cm_taxCO2_regiDiff_convergence"
+/ %cm_taxCO2_regiDiff_convergence% /
+$endIf.taxCO2regiDiffConvergence1
+*** If cm_taxCO2_regiDiff_startyearValue is not set to endogenous, read in data from switch
+$ifThen.taxCO2regiDiffStartyearValue1 "%cm_taxCO2_regiDiff_startyearValue%" == "endogenous"
+$else.taxCO2regiDiffStartyearValue1
+p45_regiDiff_startyearValue(all_regi)       "manually chosen regional carbon price in cm_startyear converted from $/t CO2eq to T$/GtC"
+p45_regiDiff_startyearValue_data(ext_regi)  "input data for regional carbon price in start year provided by switch cm_taxCO2_regiDiff_startyearValue"
+/ %cm_taxCO2_regiDiff_startyearValue% /
+$endIf.taxCO2regiDiffStartyearValue1
+;
 
 *** Scalars only used in functionForm/postsolve.gms
 scalars
@@ -72,11 +59,9 @@ s45_factorRescale_taxCO2_exponent_from10                "exponent determining se
 
 *** Parameters only used in functionForm/postsolve.gms
 parameters 
-p45_actualbudgetco2(ttot)                               "actual level of cumulated emissions starting from 2020 [GtCO2]"
-
-p45_taxCO2eq_iteration(iteration,ttot,all_regi)         "save pm_taxCO2eq in each iteration (before entering functionalForm/postsolve.gms) for debugging"
-p45_taxCO2eq_anchor_iteration(iteration,ttot)           "save p45_taxCO2eq_anchor in each iteration (before entering functionalForm/postsolve.gms) for debugging"
+p45_taxCO2eq_anchor_iter(iteration,ttot)                "save p45_taxCO2eq_anchor in each iteration (before entering functionalForm/postsolve.gms) for debugging"
 o45_taxCO2eq_anchor_iterDiff_Itr(iteration)             "track pm_taxCO2eq_anchor_iterationdiff in 2100 over iterations"
+p45_taxCO2eq_anchor_iterationdiff_tmp(ttot)             "help parameter for iterative adjustment of taxes"
 
 o45_diff_to_Budg(iteration)                             "Difference between actual CO2 budget and target CO2 budget"
 o45_totCO2emi_peakBudgYr(iteration)                     "Total CO2 emissions in the peakBudgYr"

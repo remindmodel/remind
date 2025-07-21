@@ -10,25 +10,14 @@
 *** Part 0 (Actual CO2 budget): If iterative_target_adj = 0, 7 or 9, compute actual CO2 peak budget in current iteration. If iterative_target_adj = 5, compute actual CO2 end-of-century budget in current iteration. 
 ***-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-*** `p45_actualbudgetco2(ttot)` includes emissions from 2020 to `ttot` (inclusive).
-p45_actualbudgetco2(ttot)$( 2020 lt ttot.val )
-  = sum((regi,ttot2)$( 2020 le ttot2.val AND ttot2.val le ttot.val ),
-      vm_emiAll.l(ttot2,regi,"co2")
-      * ( (0.5 + pm_ts(ttot2) / 2)$( ttot2.val eq 2020 ) !! second half of the 2020 period (mid 2020 - end 2022) plus 0.5 to account fo beginning 2020 - mid 2020  
-        + (pm_ts(ttot2))$( 2020 lt ttot2.val AND ttot2.val lt ttot.val ) !! entire middle periods
-        + ((pm_ttot_val(ttot) - pm_ttot_val(ttot-1)) / 2 + 0.5)$(ttot2.val eq ttot.val ) !! first half of the final period plus 0.5 to account fo mid - end of final year
-        )
-    )
-  * sm_c_2_co2;
-
 if(cm_iterative_target_adj = 5,  !! End-of-century budget
-  s45_actualbudgetco2 = sum(t$(t.val eq 2100),p45_actualbudgetco2(t)); 
+  s45_actualbudgetco2 = sum(t$(t.val eq 2100),pm_actualbudgetco2(t)); 
 else !! Peak budget
-  s45_actualbudgetco2 = smax(t$(t.val le cm_peakBudgYr AND t.val le 2100),p45_actualbudgetco2(t));
+  s45_actualbudgetco2 = smax(t$(t.val le cm_peakBudgYr AND t.val le 2100),pm_actualbudgetco2(t));
   o45_peakBudgYr_Itr(iteration) = cm_peakBudgYr;
 );
                   
-display p45_actualbudgetco2, s45_actualbudgetco2;
+display pm_actualbudgetco2, s45_actualbudgetco2;
 
 *** Copied from postsolve algorithm for cm_iterative_target_adj = 5. TODO: Check where cm_emiscen eq 6 is used and if this should be kept.
 if ((cm_emiscen eq 6) AND (cm_iterative_target_adj eq 5), 
@@ -46,19 +35,11 @@ if ((cm_emiscen eq 6) AND (cm_iterative_target_adj eq 5),
 if((cm_emiscen eq 9) AND ((cm_iterative_target_adj eq 5) OR (cm_iterative_target_adj eq 7) OR (cm_iterative_target_adj eq 9)),
 
 *** Save pm_taxCO2eq and p45_taxCO2eq_anchor over iterations for debugging
-p45_taxCO2eq_iteration(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);
-p45_taxCO2eq_anchor_iteration(iteration,t) = p45_taxCO2eq_anchor(t);
+pm_taxCO2eq_iter(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);
+p45_taxCO2eq_anchor_iter(iteration,ttot) = p45_taxCO2eq_anchor(ttot);
 
-*** Compute deviation of actual budget from target budget
-if(abs(cm_budgetCO2from2020) ge 200, !! Use relative deviation for budgets larger than 200 Gt
-  sm_globalBudget_dev = s45_actualbudgetco2 / cm_budgetCO2from2020; 
-else !! Use absolute deviation for budgets smaller than 200 Gt
-  if(abs(s45_actualbudgetco2 - cm_budgetCO2from2020) le 2, !! sufficiently close to budget target
-    sm_globalBudget_dev = 1; 
-  else !! budget target not reached, choose arbitrary value bigger than 1.01
-    sm_globalBudget_dev = 2;
-  );
-);
+*** Compute absolute deviation of actual budget from target budget
+sm_globalBudget_absDev = s45_actualbudgetco2 - cm_budgetCO2from2020;
 
 ***--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** Part I and II (Global anchor trajectory and post-peak behaviour): Adjustment of global anchor trajectory to meet (peak or end-of-century) CO2 budget target prescribed via cm_budgetCO2from2020.
@@ -78,7 +59,7 @@ if((cm_iterative_target_adj eq 5) OR (cm_iterative_target_adj eq 9),
     s45_factorRescale_taxCO2_exponent_from10 = 1;
   );
 
-  if( (o_modelstat ne 2) OR (abs(sm_globalBudget_dev -1) le 0.01) OR (ord(iteration) = cm_iteration_max), 
+  if( (o_modelstat ne 2) OR (abs(sm_globalBudget_absDev) le cm_budgetCO2_absDevTol) OR (ord(iteration) = cm_iteration_max), 
     !! keep CO2 tax constant if model was not optimal, if maximal number of iterations is reached, or if budget already reached
     p45_factorRescale_taxCO2(iteration)          = 1;
     p45_factorRescale_taxCO2_Funneled(iteration) = p45_factorRescale_taxCO2(iteration);
@@ -87,13 +68,13 @@ if((cm_iterative_target_adj eq 5) OR (cm_iterative_target_adj eq 9),
 
       !! if end-of-century budget is higher than budget at peak point, AND end-of-century budget is already in the range of the target budget (+/- 50 GtC), treat as end-of-century budget 
       !! for this iteration. Only do this rough approach (jump to 2100) for the first iterations - at later iterations the slower adjustment of the peaking time should work better
-      if( (cm_iterative_target_adj eq 9) AND ( p45_actualbudgetco2("2100") > 1.1 * s45_actualbudgetco2 ) AND ( abs(cm_budgetCO2from2020 - s45_actualbudgetco2) < 50 ) AND (iteration.val < 12), 
+      if( (cm_iterative_target_adj eq 9) AND ( pm_actualbudgetco2("2100") > 1.1 * s45_actualbudgetco2 ) AND ( abs(cm_budgetCO2from2020 - s45_actualbudgetco2) < 50 ) AND (iteration.val < 12), 
         display iteration;
         display "this is likely an end-of-century budget with no net negative emissions at all. Shift cm_peakBudgYr to 2100";
         cm_peakBudgYr = 2100;
         !! due to the potential strong jump in cm_peakBudgYr, which implies that the CO2 price will increase over a longer time horizon,
         !! take the average of the budget at the old peak time and the new peak time
-        s45_actualbudgetco2 = 0.5 * (p45_actualbudgetco2("2100") + s45_actualbudgetco2); 
+        s45_actualbudgetco2 = 0.5 * (pm_actualbudgetco2("2100") + s45_actualbudgetco2); 
       );
 
       !! CO2 tax rescale factor
@@ -114,19 +95,19 @@ if((cm_iterative_target_adj eq 5) OR (cm_iterative_target_adj eq 9),
     display p45_taxCO2eq_anchor, p45_taxCO2eq_anchor_until2150, p45_factorRescale_taxCO2, p45_factorRescale_taxCO2_Funneled;
 
     !! Apply CO2 tax rescale factor
-    p45_taxCO2eq_anchor_until2150(t) = max(1* sm_DptCO2_2_TDpGtC, p45_taxCO2eq_anchor_until2150(t) * p45_factorRescale_taxCO2_Funneled(iteration) );
+    p45_taxCO2eq_anchor_until2150(ttot)$(ttot.val ge 2005) = p45_taxCO2eq_anchor_until2150(ttot) * p45_factorRescale_taxCO2_Funneled(iteration);
     display p45_taxCO2eq_anchor_until2150;
 
     !! If functionalForm is linear, re-adjust global anchor trajectory to go through the point (cm_taxCO2_historicalYr, cm_taxCO2_historical) 
 $ifThen.taxCO2functionalForm4 "%cm_taxCO2_functionalForm%" == "linear"
-    p45_taxCO2eq_anchor_until2150(t) = s45_taxCO2_historical 
+    p45_taxCO2eq_anchor_until2150(ttot)$(ttot.val ge s45_taxCO2_historicalYr) = s45_taxCO2_historical 
         + (sum(t2$(t2.val eq cm_peakBudgYr), p45_taxCO2eq_anchor_until2150(t2)) - s45_taxCO2_historical) / (cm_peakBudgYr - s45_taxCO2_historicalYr) !! Yearly increase of CO2 price that interpolates between cm_taxCO2_historical in cm_taxCO2_historicalYr and p45_taxCO2eq_anchor_until2150 in peak year
-                                      * (t.val - s45_taxCO2_historicalYr) ;
+                                      * (ttot.val - s45_taxCO2_historicalYr) ;
     display p45_taxCO2eq_anchor_until2150;
 $endIf.taxCO2functionalForm4 
 
     !! Use rescaled p45_taxCO2eq_anchor_until2150 as starting point for re-defining p45_taxCO2eq_anchor
-    p45_taxCO2eq_anchor(t) = p45_taxCO2eq_anchor_until2150(t);
+    p45_taxCO2eq_anchor(ttot)$(ttot.val ge 2005) = p45_taxCO2eq_anchor_until2150(ttot);
     
     if(cm_iterative_target_adj = 9, !! After cm_peakBudgYr, the global anchor trajectory increases linearly with fixed annual increase given by cm_taxCO2_IncAfterPeakBudgYr
       p45_taxCO2eq_anchor(t)$(t.val gt cm_peakBudgYr) = sum(t2$(t2.val eq cm_peakBudgYr), p45_taxCO2eq_anchor_until2150(t2)) !! CO2 tax in peak budget year
@@ -136,12 +117,12 @@ $endIf.taxCO2functionalForm4
     p45_taxCO2eq_anchor(t)$(t.val gt 2100) = p45_taxCO2eq_anchor("2100");
 
     !! Compute difference for debugging
-    pm_taxCO2eq_anchor_iterationdiff(t) = p45_taxCO2eq_anchor(t) - p45_taxCO2eq_anchor_iteration(iteration,t);
+    pm_taxCO2eq_anchor_iterationdiff(t) = p45_taxCO2eq_anchor(t) - p45_taxCO2eq_anchor_iter(iteration,t);
     o45_taxCO2eq_anchor_iterDiff_Itr(iteration) = pm_taxCO2eq_anchor_iterationdiff("2100");
 
     display p45_taxCO2eq_anchor, pm_taxCO2eq_anchor_iterationdiff, o45_taxCO2eq_anchor_iterDiff_Itr;
 
-  ); !! if( (o_modelstat ne 2) OR (abs(sm_globalBudget_dev -1) le 0.01) OR (ord(iteration) = cm_iteration_max), 
+  ); !! if( (o_modelstat ne 2) OR (abs(sm_globalBudget_absDev) le cm_budgetCO2_absDevTol) OR (ord(iteration) = cm_iteration_max), 
 ); !! if((cm_iterative_target_adj eq 5) OR (cm_iterative_target_adj eq 9),
 
 
@@ -198,7 +179,7 @@ if(cm_iterative_target_adj eq 9,
     cm_peakBudgYr = o45_peakBudgYr_Itr(iteration+1);
     display cm_peakBudgYr;
   );       
-  p45_taxCO2eq_anchor(t)$(t.val le cm_peakBudgYr) = p45_taxCO2eq_anchor_until2150(t); !! until peakBudgYr, take the contiuous price trajectory
+  p45_taxCO2eq_anchor(ttot)$((ttot.val ge 2005) AND (ttot.val le cm_peakBudgYr)) = p45_taxCO2eq_anchor_until2150(ttot); !! until peakBudgYr, take the contiuous price trajectory
    
   !!-----B2: if there was a flip-floping of cm_peakBudgYr in the previous iterations, try to overome this by adjusting the CO2 price path after the peaking year	
   if (o45_delay_increase_peakBudgYear(iteration) = 1,   
@@ -216,7 +197,7 @@ if(cm_iterative_target_adj eq 9,
           o45_peakBudgYr_Itr(iteration+1) = t2.val;        !! shift PeakBudgYear to the following time step
           p45_taxCO2eq_anchor(t2) = p45_taxCO2eq_anchor_until2150(t2) ;  !! set CO2 price in t2 to value in the "continuous path"
     
-	      elseif ( ( o45_reached_until2150pricepath(iteration-1) eq 1 ) AND ( o45_totCO2emi_peakBudgYr(iteration) < (0.1 + o45_change_totCO2emi_peakBudgYr(iteration)) ) ), 
+	      elseif ( o45_totCO2emi_peakBudgYr(iteration) < (0.1 + o45_change_totCO2emi_peakBudgYr(iteration) ) ), 
           display "New intermediate price in timestep after cm_peakBudgYr is sufficient to stabilize peaking year - go back to normal loop";	
 	        o45_delay_increase_peakBudgYear(iteration+1) = 0;  !! probably is not necessary
           o45_reached_until2150pricepath(iteration) = 0;
@@ -263,13 +244,13 @@ if(cm_iterative_target_adj eq 7,
 			else
 			    !! change in CO2 price through adjustment: new price - old price; the two instances of "p45_taxCO2eq_anchor" cancel out -> only the difference term
 				!! until cm_peakBudgYr: expolinear price trajectory
-				pm_taxCO2eq_anchor_iterationdiff_tmp(t) = 
+				p45_taxCO2eq_anchor_iterationdiff_tmp(t) = 
 				                      max(pm_taxCO2eq_anchor_iterationdiff(t) * min(max((cm_budgetCO2from2020 - s45_actualbudgetco2)/(s45_actualbudgetco2 - s45_actualbudgetco2_last),-2),2),-p45_taxCO2eq_anchor(t)/2);
 				p45_taxCO2eq_anchor(t)$(t.val le cm_peakBudgYr) = p45_taxCO2eq_anchor(t) + 
 				                      max(pm_taxCO2eq_anchor_iterationdiff(t) * min(max((cm_budgetCO2from2020 - s45_actualbudgetco2)/(s45_actualbudgetco2 - s45_actualbudgetco2_last),-2),2),-p45_taxCO2eq_anchor(t)/2);
 			  p45_taxCO2eq_anchor_until2150(t) = p45_taxCO2eq_anchor_until2150(t) + 
 				                      max(pm_taxCO2eq_anchor_iterationdiff(t) * min(max((cm_budgetCO2from2020 - s45_actualbudgetco2)/(s45_actualbudgetco2 - s45_actualbudgetco2_last),-2),2),-p45_taxCO2eq_anchor_until2150(t)/2);
-				pm_taxCO2eq_anchor_iterationdiff(t) = pm_taxCO2eq_anchor_iterationdiff_tmp(t);
+				pm_taxCO2eq_anchor_iterationdiff(t) = p45_taxCO2eq_anchor_iterationdiff_tmp(t);
 				!! after cm_peakBudgYr: adjustment so that emissions become zero: increase/decrease tax in each time step after cm_peakBudgYr by percentage of that year's total CO2 emissions of 2015 emissions
 			);
       o45_taxCO2eq_anchor_iterDiff_Itr(iteration) = pm_taxCO2eq_anchor_iterationdiff("2100");
@@ -343,45 +324,87 @@ display p45_taxCO2eq_anchor_until2150, p45_taxCO2eq_anchor;
 s45_actualbudgetco2_last = s45_actualbudgetco2;
 
 
-***--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-*** Part III (Regional differentiation): Re-create regional carbon price trajectories p45_taxCO2eq_regiDiff using p45_taxCO2eq_anchor (updated in parts I-II above) and p45_regiDiff_convFactor (computed in datainput)
-***--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-p45_taxCO2eq_regiDiff(t,regi) = p45_regiDiff_convFactor(t,regi) * p45_taxCO2eq_anchor(t);
+***----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+*** Part III (Regional differentiation): Re-compute p45_regiDiff_ratio, and 
+***                                      re-create regional carbon price trajectories p45_taxCO2eq_regiDiff using p45_taxCO2eq_anchor (updated in parts I-II above) and p45_regiDiff_ratio
+***----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+*** Step III.1: Re-compute p45_regiDiff_initialRatio. This is necessary if p45_taxCO2eq_anchor was adjusted.
+
+$ifThen.taxCO2regiDiff3 "%cm_taxCO2_regiDiff_startyearValue%" == "endogenous"
+if( (cm_taxCO2_regiDiff = 0) or (cm_taxCO2_regiDiff = 3), !! none or gdpSpread
+  !! Both parameters are not needed. No need to re-compute
+elseif (cm_taxCO2_regiDiff = 1) or (cm_taxCO2_regiDiff = 2), !! initialSpread10 or initialSpread20
+  !! Nothing to re-compute as p45_regiDiff_initialRatio does not depend on p45_taxCO2eq_anchor
+elseif (cm_taxCO2_regiDiff = 5) or (cm_taxCO2_regiDiff = 6) or (cm_taxCO2_regiDiff = 7) or (cm_taxCO2_regiDiff = 8) or (cm_taxCO2_regiDiff = 10), !! ScenarioMIP2035, ScenarioMIP2050, ScenarioMIP2070, ScenarioMIP2100, or manual
+  !! Re-compute p45_regiDiff_initialRatio based on regional carbon prices in p45_regiDiff_startYr
+  p45_regiDiff_initialRatio(regi) = sum(ttot$(ttot.val eq p45_regiDiff_startYr(regi)), p45_taxCO2eq_path_gdx_ref(ttot,regi) / p45_taxCO2eq_anchor(ttot));
+else
+  abort "please choose a valid scenario via cm_taxCO2_regiDiff or set cm_taxCO2_regiDiff to manual"
+);
+$else.taxCO2regiDiff3
+if( (cm_taxCO2_regiDiff = 0) or (cm_taxCO2_regiDiff = 1) or (cm_taxCO2_regiDiff = 2) or (cm_taxCO2_regiDiff = 3), !! none, initialSpread10, initialSpread20, or gdpSpread
+  abort "Regional carbon prices can only be set manually via cm_taxCO2_regiDiff_startyearValue if cm_taxCO2_regiDiff equals (ScenarioMIP2035), (ScenarioMIP2050), (ScenarioMIP2070), (ScenarioMIP2100), or (manual)."
+else
+  !! Re-compute p45_regiDiff_initialRatio
+  p45_regiDiff_initialRatio(regi) = sum(ttot$(ttot.val eq cm_startyear), p45_regiDiff_startyearValue(regi) / p45_taxCO2eq_anchor(ttot));
+);
+$endIf.taxCO2regiDiff3
+display  p45_regiDiff_initialRatio;
+
+*** Step III.3: Create ratio between regional carbon price and global anchor trajectory based on previously defined convergence
+
+if( (cm_taxCO2_regiDiff = 0) or (cm_taxCO2_regiDiff = 3), !! none or gdpSpread
+  !! Nothing to re-compute
+else 
+  !! Set convergence factor equal to p45_regiDiff_initialRatio before p45_regiDiff_startYr:
+  p45_regiDiff_ratio(t,regi)$(t.val lt p45_regiDiff_startYr(regi)) = p45_regiDiff_initialRatio(regi);
+  !! Set  convergence factor equal to 1 from p45_regiDiff_endYr:
+  p45_regiDiff_ratio(t,regi)$(t.val ge p45_regiDiff_endYr(regi)) = 1;
+  !! Create convergence between p45_regiDiff_startYr and p45_regiDiff_endYr:
+  loop((t,regi)$((t.val ge p45_regiDiff_startYr(regi)) and (t.val lt p45_regiDiff_endYr(regi))),
+    p45_regiDiff_ratio(t,regi) = p45_regiDiff_initialRatio(regi) 
+                                + (1 - p45_regiDiff_initialRatio(regi)) * rPower( (t.val - p45_regiDiff_startYr(regi)) / (p45_regiDiff_endYr(regi) - p45_regiDiff_startYr(regi)), p45_regiDiff_exponent(regi));
+  );
+);
+display p45_regiDiff_ratio;
+
+*** Step III.4: Create regionally differentiated carbon price trajectories based on global anchor trajectory and p45_regiDiff_ratio
+
+p45_taxCO2eq_regiDiff(t,regi) = p45_regiDiff_ratio(t,regi) * p45_taxCO2eq_anchor(t);
 display p45_taxCO2eq_regiDiff;
 
+*** Step III.5: If regional carbon prices in cm_startyear where set manually via cm_taxCO2_regiDiff_startyearValue, ensure that convergence to global anchor trajectory does not lead to lower regional carbon prices in some timesteps (this could happen if regional carbon price in cm_startyear is much higher than global anchor price)
+
+$ifThen.taxCO2regiDiffStartyearValue2 "%cm_taxCO2_regiDiff_startyearValue%" == "endogenous"
+$else.taxCO2regiDiffStartyearValue2
+  p45_taxCO2eq_regiDiff(t,regi) = max(p45_taxCO2eq_regiDiff(t,regi), p45_regiDiff_startyearValue(regi));
+  display "Apply p45_regiDiff_startyearValue(regi) as lower bound for p45_taxCO2eq_regiDiff"
+  display p45_taxCO2eq_regiDiff;
+$endIf.taxCO2regiDiffStartyearValue2
+
 ***------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-*** Part IV (Interpolation from path_gdx_ref): Re-create interpolation based on p45_taxCO2eq_regiDiff (updated in part III above) and p45_interpolation_exponent, p45_interpolation_startYr, p45_interpolation_endYr (computed in datainput)
+*** Part IV (Interpolation from path_gdx_ref): Re-create interpolation based on p45_taxCO2eq_regiDiff (updated in part III above), and s45_interpolation_startYr and s45_interpolation_endYr (computed in datainput)
 ***-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-*** Re-reate interpolation for all timesteps after cm_startyear
-$ifThen.taxCO2startYearValue4 "%cm_taxCO2_startYearValue%" == "off"
-loop(regi,
-  pm_taxCO2eq(t,regi)$(t.val lt p45_interpolation_startYr(regi)) = p45_taxCO2eq_path_gdx_ref(t,regi);
-  pm_taxCO2eq(t,regi)$((t.val ge p45_interpolation_startYr(regi)) and (t.val lt p45_interpolation_endYr(regi))) = 
-      sum(ttot2$(ttot2.val eq p45_interpolation_startYr(regi)), p45_taxCO2eq_path_gdx_ref(ttot2,regi)) !! value of p45_taxCO2eq_path_gdx_ref in p45_interpolation_startYr
-      * (1 - rPower( (t.val - p45_interpolation_startYr(regi)) / (p45_interpolation_endYr(regi) - p45_interpolation_startYr(regi)), p45_interpolation_exponent(regi)))
-    + sum(t2$(t2.val eq p45_interpolation_endYr(regi)), p45_taxCO2eq_regiDiff(t2,regi)) !! value of p45_taxCO2eq_regiDiff in p45_interpolation_endYr
-      * rPower( (t.val - p45_interpolation_startYr(regi)) / (p45_interpolation_endYr(regi) - p45_interpolation_startYr(regi)), p45_interpolation_exponent(regi));
-  pm_taxCO2eq(t,regi)$(t.val ge p45_interpolation_endYr(regi)) = p45_taxCO2eq_regiDiff(t,regi);
-);
-$else.taxCO2startYearValue4
-loop(regi,
-  pm_taxCO2eq(t,regi)$(t.val lt p45_interpolation_startYr(regi)) = p45_taxCO2eq_path_gdx_ref(t,regi);
-  pm_taxCO2eq(t,regi)$(t.val lt p45_interpolation_endYr(regi)) = 
-      p45_taxCO2eq_startYearValue(regi)
-      * (1 - rPower( (t.val - cm_startyear) / (p45_interpolation_endYr(regi) - cm_startyear), p45_interpolation_exponent(regi)))
-    + sum(t2$(t2.val eq p45_interpolation_endYr(regi)), p45_taxCO2eq_regiDiff(t2,regi)) !! value of p45_taxCO2eq_regiDiff in p45_interpolation_endYr
-      * rPower( (t.val - cm_startyear) / (p45_interpolation_endYr(regi) - cm_startyear), p45_interpolation_exponent(regi));
-  pm_taxCO2eq(t,regi)$(t.val ge p45_interpolation_endYr(regi)) = p45_taxCO2eq_regiDiff(t,regi);
-);
-$endIf.taxCO2startYearValue4
+*** Step IV.2: Re-create interpolation
+pm_taxCO2eq(ttot,regi) = p45_taxCO2eq_path_gdx_ref(ttot,regi); !! Initialize pm_taxCO2eq with p45_taxCO2eq_path_gdx_ref. Then overwrite all time steps after cm_startyear
+pm_taxCO2eq(t,regi)$(t.val le s45_interpolation_startYr) = p45_taxCO2eq_regiDiff(t,regi);
+pm_taxCO2eq(t,regi)$((t.val gt s45_interpolation_startYr) and (t.val lt s45_interpolation_endYr)) =
+    sum(ttot2$(ttot2.val eq s45_interpolation_startYr), p45_taxCO2eq_path_gdx_ref(ttot2,regi)) !! value of p45_taxCO2eq_path_gdx_ref in s45_interpolation_startYr
+    * (s45_interpolation_endYr - t.val) / (s45_interpolation_endYr - s45_interpolation_startYr)
+  + sum(t2$(t2.val eq s45_interpolation_endYr), p45_taxCO2eq_regiDiff(t2,regi)) !! value of p45_taxCO2eq_regiDiff in s45_interpolation_endYr
+    * (t.val - s45_interpolation_startYr) / (s45_interpolation_endYr - s45_interpolation_startYr);
+pm_taxCO2eq(t,regi)$(t.val ge s45_interpolation_endYr) = p45_taxCO2eq_regiDiff(t,regi);
+
 display pm_taxCO2eq;
 
-*** Re-introduce lower bound pm_taxCO2eq by p45_taxCO2eq_path_gdx_ref if switch cm_taxCO2_lowerBound_path_gdx_ref is on
-$ifthen.lowerBound "%cm_taxCO2_lowerBound_path_gdx_ref%" == "on"
+*** Step IV.3: Re-introduce lower bound pm_taxCO2eq by p45_taxCO2eq_path_gdx_ref if switch cm_taxCO2_lowerBound_path_gdx_ref is on
+if(cm_taxCO2_lowerBound_path_gdx_ref = 1,
   pm_taxCO2eq(t,regi) = max(pm_taxCO2eq(t,regi), p45_taxCO2eq_path_gdx_ref(t,regi));
-$endIf.lowerBound
-display pm_taxCO2eq;
+  display pm_taxCO2eq;
+);
+
 
 ); !! if((cm_emiscen eq 9) AND ((cm_iterative_target_adj eq 5) OR (cm_iterative_target_adj eq 7) OR (cm_iterative_target_adj eq 9)),
 *** EOF ./modules/45_carbonprice/functionalForm/postsolve.gms

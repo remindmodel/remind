@@ -55,7 +55,13 @@ $include "./modules/36_buildings/simple/input/f36_uedemand_build.cs4r"
 $offdelim
 /
 ;
-p36_uedemand_build(ttot,regi,in) = f36_uedemand_build(ttot,regi,"%cm_demScen%","%cm_rcp_scen_build%",in);
+
+*** load UE demand for reporting from input_ref.gdx cm_startyear
+if (cm_startyear gt 2005,
+  execute_load "input_ref.gdx", p36_uedemand_build;
+);
+
+p36_uedemand_build(t,regi,in) = f36_uedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",in);
 
 *** Scale UE demand and floor space in the building sector
 $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
@@ -66,20 +72,6 @@ $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
       p36_floorspace(t,regi)        = p36_floorspace(t,regi)        * ( pm_scaleDemand(tall,tall2,regi)**0.3 + (1-pm_scaleDemand(tall,tall2,regi)**0.3) * min(1, max(0, tall2.val-t.val) / (tall2.val-tall.val)) );
   );
 $endif.scaleDemand
-
-
-*** scale default elasticity of substitution on enb level
-$IFTHEN.cm_enb not "%cm_enb%" == "off" 
-  pm_cesdata_sigma(ttot,"enb")$pm_cesdata_sigma(ttot,"enb") =
-    pm_cesdata_sigma(ttot,"enb") * %cm_enb%;
-*** avoid the elasticity of substitution parameter to be too close to one, which could cause undesired numerical behavior: if the resulting scaled parameter is between 0.8 and 1, make it 0.8; if it is between 1 and 1.2, make it 1.2. 
-  pm_cesdata_sigma(ttot,"enb")$(pm_cesdata_sigma(ttot,"enb") gt 0.8
-                                AND pm_cesdata_sigma(ttot,"enb") lt 1) =
-    0.8; 
-  pm_cesdata_sigma(ttot,"enb")$(pm_cesdata_sigma(ttot,"enb") ge 1
-                                AND pm_cesdata_sigma(ttot,"enb") lt 1.2) =
-    1.2;  
-$ENDIF.cm_enb
 
 
 ***-----------------------------------------------------------------------------

@@ -27,7 +27,7 @@ elseif cm_NDC_divergentScenario = 2,
 );
 
 *** load NDC data
-Table f45_factorTargetyear(tall,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]"
+Table f45_factorTargetyear(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]"
 $offlisting
 $ondelim
 $include "./modules/45_carbonprice/NDC/input/fm_factorTargetyear.cs3r"
@@ -36,11 +36,11 @@ $onlisting
 ;
 
 Parameter p45_factorTargetyear(ttot,all_regi) "Multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]";
-p45_factorTargetyear(t,all_regi) = f45_factorTargetyear(t,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
+p45_factorTargetyear(t,all_regi) = f45_factorTargetyear(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
 display p45_factorTargetyear;
 
-Table f45_2005shareTarget(tall,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with 2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]"
+Table f45_2005shareTarget(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with 2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]"
 $offlisting
 $ondelim
 $include "./modules/45_carbonprice/NDC/input/fm_2005shareTarget.cs3r"
@@ -49,22 +49,9 @@ $onlisting
 ;
 
 Parameter p45_2005shareTarget(ttot,all_regi) "2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]";
-p45_2005shareTarget(t,all_regi) = f45_2005shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
+p45_2005shareTarget(t,all_regi) = f45_2005shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
 display p45_2005shareTarget;
-
-Table f45_histShare(tall,all_regi,NDC_version) "Table for all NDC versions with GHG emissions share of countries with quantifyable 2030 target, time dimension specifies historic record [0..1]"
-$offlisting
-$ondelim
-$include "./modules/45_carbonprice/NDC/input/fm_histShare.cs3r"
-$offdelim
-$onlisting
-;
-
-Parameter p45_histShare(tall,all_regi) "GHG emissions share of countries with quantifyable 2030 target, time dimension specifies historic record [0..1]";
-p45_histShare(tall,all_regi) = f45_histShare(tall,all_regi,"%cm_NDC_version%");
-
-display p45_histShare;
 
 Parameter p45_BAU_reg_emi_wo_LU_bunkers(ttot,all_regi) "regional GHG emissions (without LU and bunkers) in BAU scenario [MtCO2eq/yr]"
   /
@@ -112,7 +99,7 @@ display p45_NDCyearSet,p45_firstNDCyear,p45_lastNDCyear;
 *** countries <- toolGetMapping("regionmappingREMIND.csv",where = "mappingfolder",type = "regional")
 *** LAMCountries <- countries$CountryCode[countries$RegionCode == "LAM"]
 *** shareWithinTargetCountries <- dummy1[LAMCountries,"y2030",] * ghgTarget[LAMCountries,"y2030",] / dimSums(dummy1[LAMCountries,"y2030",] * ghgTarget[LAMCountries,"y2030", ], dim=1)
-*** print(shareWithinTargetCountries["BRA",,]*(as.numeric(ghg["BRA","y2015"])/as.numeric(ghg["BRA","y2005"])-as.numeric(ghgfactor["BRA","y2030","gdp_SSP2"])))
+*** print(shareWithinTargetCountries["BRA",,]*(as.numeric(ghg["BRA","y2015"])/as.numeric(ghg["BRA","y2005"])-as.numeric(ghgfactor["BRA","y2030","SSP2"])))
 *** 0.2 is a rounded value valid for all except 2018_uncond, because Brazil had no unconditional target then.
 
 if (not sameas("%cm_NDC_version%","2018_uncond"),

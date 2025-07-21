@@ -3,7 +3,8 @@ Title: REMIND - REgional Model of INvestments and Development
 Version: 0.1
 Date: 2024-07-04
 Description: This is not a package yet, the purpose of this file is to
-    document metadata, notably dependencies.
+    document metadata, notably dependencies required by the R scripts.
+    Initialization of the renv will be based on this DESCRIPTION file.
 License: file LICENSE
 URL: https://github.com/remindmodel/remind,
     https://doi.org/10.5281/zenodo.6794920
@@ -17,15 +18,15 @@ Imports:
     data.table,
     devtools,
     dplyr,
-    edgeTransport (>= 2.7.0),
-    reporttransport (>= 0.5.0),
+    edgeTransport (>= 3.0.0),
+    reporttransport (>= 1.0.0),
     flexdashboard,
     GDPuc,
     gdx (>= 1.53.0),
     gdxdt,
     gdxrrw,
     ggplot2,
-    gms (>= 0.33.0),
+    gms (>= 0.33.4),
     goxygen (>= 1.4.4),
     gridExtra,
     gtools,
@@ -45,16 +46,11 @@ Imports:
     magpiesets,
     mip (>= 0.150.0),
     modelstats,
-    mrremind (>= 0.191.2),
-    mrcommons (>= 1.43.6),
-    mrdrivers (>= 3.0.0),
-    mrtransport (>= 0.7.1),
-    mrvalidation,
     ncdf4,
     nleqslv,
     optparse,
     piamenv (>= 0.6.0),
-    piamInterfaces (>= 0.34.1),
+    piamInterfaces (>= 0.49.0),
     piamPlotComparison (>= 0.0.10),
     piamutils,
     plotly,
@@ -64,8 +60,9 @@ Imports:
     raster,
     readr,
     readxl,
-    remind2 (>= 1.162.1),
-    renv,
+    remind2 (>= 1.185.0),
+    remindClimateAssessment (>= 0.0.9),
+    renv (>= 1.1.1),
     reshape2,
     reticulate,
     rlang,
@@ -74,7 +71,7 @@ Imports:
     SPEI,
     stringr,
     terra,
-    testthat (>= 3.2.0),
+    testthat (>= 3.2.3),
     tibble,
     tidyr,
     tidyverse,
