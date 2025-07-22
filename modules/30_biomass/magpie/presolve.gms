@@ -44,6 +44,8 @@ Execute_Loadpoint 'magpieData.gdx' pm_pebiolc_demandmag;
 ***------------ Step 1: Fix fuelex to MAgPIE demand -------------
 *** BEFORE calculation: Regular emulator equations are applied to calculate costs and prices. Therefore set demand (fuelex) in
 *** the emulator equations for price and costs to demand from MAgPIE reporting
+*** Save level of vm_fuelex to continue at the same point for the next nash iteration
+p30_pebiolc_demand_helper(ttot,regi) = vm_fuExtr.l(ttot,regi,"pebiolc","1");
 vm_fuExtr.fx(ttot,regi,"pebiolc","1") = pm_pebiolc_demandmag(ttot,regi);
 
 *** Eliminate effect of shift and mult for calculating the original emulator price (p30_pebiolc_price_emu_preloop)
@@ -116,9 +118,8 @@ display p30_pebiolc_costs_emu_preloop;
 *** AFTER presolve calculations: prepare for main solve, therefore release bounds on fuelex
 vm_fuExtr.lo(ttot,regi,"pebiolc","1") = 0;
 vm_fuExtr.up(ttot,regi,"pebiolc","1") = inf;
-*** Provide start values for fuelex
-vm_fuExtr.l(ttot,regi,"pebiolc","1")  = pm_pebiolc_demandmag(ttot,regi);
-
+*** Provide start values for fuelex taken from last iteration
+vm_fuExtr.l(ttot,regi,"pebiolc","1")  = p30_pebiolc_demand_helper(ttot,regi);
 ***-------------------------------------------------------------
 ***  END: calculate shift factors
 ***-------------------------------------------------------------
