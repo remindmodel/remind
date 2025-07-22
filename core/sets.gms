@@ -439,6 +439,13 @@ all_enty             "all types of quantities"
     n2opeatland "n2o emissions from peatlands (no MAC available)"
     n2owaste   "n2o emissions from waste (domestic sewage)"
     co2luc     "co2 emissions from land use change"
+    co2lucPos                    "Emi|CO2|Land-Use Change|+|Positive"
+    co2lucNegUnintent            "Emi|CO2|Land-Use Change|Negative|+|Unintentional"
+    co2lucNegIntentAR            "Emi|CO2|Land-Use Change|Negative|Intentional|+|Reforestation"
+    co2lucNegIntentAgroforestry  "Emi|CO2|Land-Use Change|Negative|Intentional|+|Agroforestry"
+    co2lucNegIntentTimber        "Emi|CO2|Land-Use Change|Negative|Intentional|+|Timber"
+    co2lucNegIntentSCM           "Emi|CO2|Land-Use Change|Negative|Intentional|+|Soil Carbon Management"
+    co2lucNegIntentPeat          "Emi|CO2|Land-Use Change|Negative|Intentional|+|Peatland"
     co2cement_process  "co2 from cement production (only process emissions)"
     n2obio       "N2O emissions from pebiolc "
     bc           "black carbon from fossil fuel combustion"
@@ -1954,6 +1961,17 @@ emiMacMagpieCH4(all_enty)  "types of climate-relevant non-energy CH4 emissions w
 emiMacMagpieCO2(all_enty)  "types of climate-relevant non-energy CH4 emissions with mac curve where baseline emissions come from MAgPIE only"
 /
     co2luc     "co2 emissions from land use change"
+/
+
+emiMacMagpieCO2Sub(all_enty)  "subtypes of co2luc that add up to co2luc, coming from MAgPIE, passed through REMIND for reporting, not used anywhere, remain unchanged"
+/
+    co2lucPos                    "Emi|CO2|Land-Use Change|+|Positive"
+    co2lucNegUnintent            "Emi|CO2|Land-Use Change|Negative|+|Unintentional"
+    co2lucNegIntentAR            "Emi|CO2|Land-Use Change|Negative|Intentional|+|Reforestation"
+    co2lucNegIntentAgroforestry  "Emi|CO2|Land-Use Change|Negative|Intentional|+|Agroforestry"
+    co2lucNegIntentTimber        "Emi|CO2|Land-Use Change|Negative|Intentional|+|Timber"
+    co2lucNegIntentSCM           "Emi|CO2|Land-Use Change|Negative|Intentional|+|Soil Carbon Management"
+    co2lucNegIntentPeat          "Emi|CO2|Land-Use Change|Negative|Intentional|+|Peatland"
 /
 
 emiMacExo(all_enty)  "types of climate-relevant non-energy emissions with mac curve where baseline emissions are exogenous"
