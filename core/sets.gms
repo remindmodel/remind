@@ -83,6 +83,7 @@ all_delayPolicy   "all possible SPA policy choices"
     SPAx            "moderate baseline policy, depends on the SSP-scenario"
 /
 
+*** If you get a domain violation here, check if cm_APssp and cm_APscen values are correctly paired. See main.gms for details.
 all_APssp     "all air pollutant SSPs. GAINSlegacy means the SSP is picked with all_APscen and there are no variations"
 /
     SSP1
@@ -94,6 +95,7 @@ all_APssp     "all air pollutant SSPs. GAINSlegacy means the SSP is picked with 
     SSP2IndiaHigh
 /
 
+*** If you get a domain violation here, check if cm_APssp and cm_APscen values are correctly paired. See main.gms for details.
 all_APscen     "all air pollutant scenarios"
 /
     SSP1
@@ -110,6 +112,8 @@ all_APscen     "all air pollutant scenarios"
     MFR_Transports
     GlobalEURO6
     SLCF_building_transport
+    SMIPbySSP
+    SMIPVLLO
 /
 
 all_LU_emi_scen  "all emission baselines for CH4 and N2O land use emissions from MAgPIE"
