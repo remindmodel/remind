@@ -98,7 +98,7 @@ display p_efFossilFuelExtr;
 ***    MAgPIE coupling: run MAgPIE
 ***--------------------------------------
 
-$if %cm_MAgPIE_Nash% == "on" Execute "Rscript runMAgPIE.R";
+$if %cm_MAgPIE_Nash% == "on" Execute "Rscript mag2rem.R";
 
 
 ***--------------------------------------

@@ -134,8 +134,8 @@ getMagpieData <- function(path_to_report = "report.mif", mapping = "magppingMAgP
 #load("config.Rdata")
 
 cfg <- list()
-cfg$pathToMagpieReport <- "/p/projects/remind/runs/REMIND-MAgPIE-2025-04-24/magpie/output/C_SSP2-NPi2025-mag-4/report.mif"
 cfg$pathToMagpieReport <- "~/Transferfolder/report.mif"
+cfg$pathToMagpieReport <- "/p/projects/remind/runs/REMIND-MAgPIE-2025-04-24/magpie/output/C_SSP2-NPi2025-mag-4/report.mif"
 cfg$var_luc <- "raw"
 
 # - load from REMIND config in the REMIND run folder:
@@ -151,5 +151,5 @@ cfg$var_luc <- "raw"
 
 getMagpieData(
   path_to_report = cfg$pathToMagpieReport, 
-  mapping        = "config/mappingMAgPIE2REMIND.csv",
+  mapping        = "mappingMAgPIE2REMIND.csv",
   var_luc        = cfg$var_luc)
