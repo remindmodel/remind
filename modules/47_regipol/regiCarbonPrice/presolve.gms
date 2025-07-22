@@ -6,6 +6,20 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/47_regipol/regiCarbonPrice/presolve.gms
 
+*** difference between 2020 land-use change emissions from Magpie and UNFCCC 2015 and 2020 moving average land-use change emissions
+p47_LULUCFEmi_GrassiShift(ttot,regi)$(p47_EmiLULUCFCountryAcc("2020",regi)) =
+  pm_macBaseMagpie("2020",regi,"co2luc")
+  -
+  (
+    (
+      ((p47_EmiLULUCFCountryAcc("2013",regi) + p47_EmiLULUCFCountryAcc("2014",regi) + p47_EmiLULUCFCountryAcc("2015",regi) + p47_EmiLULUCFCountryAcc("2016",regi) + p47_EmiLULUCFCountryAcc("2017",regi))/5)
+      +
+      ((p47_EmiLULUCFCountryAcc("2018",regi) + p47_EmiLULUCFCountryAcc("2019",regi) + p47_EmiLULUCFCountryAcc("2020",regi) + p47_EmiLULUCFCountryAcc("2021",regi))/4)
+    )/2
+    * 1e-3/sm_c_2_co2
+  )
+;
+
 ***--------------------------------------------------
 *** Emission markets (EU Emission trading system and Effort Sharing)
 ***--------------------------------------------------

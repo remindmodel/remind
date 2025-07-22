@@ -1487,16 +1487,7 @@ $offdelim
 /;
 pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
 
-*** pm_macBaseMagpie gets overwritten when coupled:
-$ifThen.coupling %cm_MAgPIE_coupling% == "on"  
-parameter f_macBaseMagpie_coupling(tall,all_regi,all_enty)                        "baseline emissions of N2O and CH4 from landuse based on data from Magpie"
-/
-$ondelim
-$include "./core/input/f_macBaseMagpie_coupling.cs4r"
-$offdelim
-/;
-pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
-$endIf.coupling
+*** pm_macBaseMagpie gets updated in core/presolve.gms when coupling to MAgPIE is active
 
 *** p_macPolCO2luc defines the lower limit for abatement of CO2 landuse change emissions in REMIND
 *** The values are derived from MAgPIE runs with very strong mitigation
