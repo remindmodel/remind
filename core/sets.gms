@@ -83,6 +83,7 @@ all_delayPolicy   "all possible SPA policy choices"
     SPAx            "moderate baseline policy, depends on the SSP-scenario"
 /
 
+*** If you get a domain violation here, check if cm_APssp and cm_APscen values are correctly paired. See main.gms for details.
 all_APssp     "all air pollutant SSPs. GAINSlegacy means the SSP is picked with all_APscen and there are no variations"
 /
     SSP1
@@ -91,8 +92,10 @@ all_APssp     "all air pollutant SSPs. GAINSlegacy means the SSP is picked with 
     SSP4
     SSP5
     GAINSlegacy
+    SSP2IndiaHigh
 /
 
+*** If you get a domain violation here, check if cm_APssp and cm_APscen values are correctly paired. See main.gms for details.
 all_APscen     "all air pollutant scenarios"
 /
     SSP1
@@ -109,6 +112,8 @@ all_APscen     "all air pollutant scenarios"
     MFR_Transports
     GlobalEURO6
     SLCF_building_transport
+    SMIPbySSP
+    SMIPVLLO
 /
 
 all_LU_emi_scen  "all emission baselines for CH4 and N2O land use emissions from MAgPIE"
@@ -175,6 +180,12 @@ all_te          "all energy technologies, including from modules"
     bioethl         "biomass to ethanol"
     bioeths         "sugar and starch biomass to ethanol"
     biodiesel       "oil biomass to biodiesel"
+    biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
+    biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
+    biopyrel        "biomass pyrolysis to biochar plus power (established industrial)"
+    biopyrchp       "biomass pyrolysis to biochar plus heat and power (established industrial)"   
+    biopyrliq       "biomass pyrolysis to biochar plus liquids (combined with Fischer-Tropsch plant, advanced industrial)"
+    biocharuse      "use of biochar, e.g. for soil or for building materials"
     geohdr          "geothermal electric hot dry rock"
     geohe           "geothermal heat"
     hydro           "hydro electric"
@@ -428,6 +439,13 @@ all_enty             "all types of quantities"
     n2opeatland "n2o emissions from peatlands (no MAC available)"
     n2owaste   "n2o emissions from waste (domestic sewage)"
     co2luc     "co2 emissions from land use change"
+    co2lucPos                    "Emi|CO2|Land-Use Change|+|Positive"
+    co2lucNegUnintent            "Emi|CO2|Land-Use Change|Negative|+|Unintentional"
+    co2lucNegIntentAR            "Emi|CO2|Land-Use Change|Negative|Intentional|+|Reforestation"
+    co2lucNegIntentAgroforestry  "Emi|CO2|Land-Use Change|Negative|Intentional|+|Agroforestry"
+    co2lucNegIntentTimber        "Emi|CO2|Land-Use Change|Negative|Intentional|+|Timber"
+    co2lucNegIntentSCM           "Emi|CO2|Land-Use Change|Negative|Intentional|+|Soil Carbon Management"
+    co2lucNegIntentPeat          "Emi|CO2|Land-Use Change|Negative|Intentional|+|Peatland"
     co2cement_process  "co2 from cement production (only process emissions)"
     n2obio       "N2O emissions from pebiolc "
     bc           "black carbon from fossil fuel combustion"
@@ -1098,6 +1116,7 @@ opTimeYr "actual lifetime of a built technology in years"
     1*130
 /
 opTime5(opTimeYr) "actual lifetime of a built technology in years - 5 years time steps for the past to calculate vintages"
+*** Command to generate it with R: paste(seq(1,130,5), collapse=",")
 /
     1,6,11,16,21,26,31,36,41,46,51,56,61,66,71,76,81,86,91,96,101,106,111,116,121,126
 /
@@ -1567,12 +1586,16 @@ teFlex(all_te)       "all technologies which can benefit from flexibility tax"
     elh2
 ***dac
 /
-
-
 teFlexTax(all_te)       "all technologies to which flexibility tax/subsidy applies, flexible technologies are those in teFlex, inflexible technologies those which are not in teFlex"
 /
     elh2
     tdels
+/
+
+teNonDecreasing(all_te) "all technologies for which capacity should not decrease over time, meaning that once it is built, it is steadily maintained"
+/
+    geohdr      "geothermal electric hot dry rock"
+    hydro       "hydro electric"
 /
 
 feForUe(all_enty)    "final energy types that are transformed into useful energys - is filled automatically from the content of fe2ue"
@@ -1938,6 +1961,17 @@ emiMacMagpieCH4(all_enty)  "types of climate-relevant non-energy CH4 emissions w
 emiMacMagpieCO2(all_enty)  "types of climate-relevant non-energy CH4 emissions with mac curve where baseline emissions come from MAgPIE only"
 /
     co2luc     "co2 emissions from land use change"
+/
+
+emiMacMagpieCO2Sub(all_enty)  "subtypes of co2luc that add up to co2luc, coming from MAgPIE, passed through REMIND for reporting, not used anywhere, remain unchanged"
+/
+    co2lucPos                    "Emi|CO2|Land-Use Change|+|Positive"
+    co2lucNegUnintent            "Emi|CO2|Land-Use Change|Negative|+|Unintentional"
+    co2lucNegIntentAR            "Emi|CO2|Land-Use Change|Negative|Intentional|+|Reforestation"
+    co2lucNegIntentAgroforestry  "Emi|CO2|Land-Use Change|Negative|Intentional|+|Agroforestry"
+    co2lucNegIntentTimber        "Emi|CO2|Land-Use Change|Negative|Intentional|+|Timber"
+    co2lucNegIntentSCM           "Emi|CO2|Land-Use Change|Negative|Intentional|+|Soil Carbon Management"
+    co2lucNegIntentPeat          "Emi|CO2|Land-Use Change|Negative|Intentional|+|Peatland"
 /
 
 emiMacExo(all_enty)  "types of climate-relevant non-energy emissions with mac curve where baseline emissions are exogenous"

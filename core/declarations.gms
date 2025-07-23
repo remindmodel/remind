@@ -108,6 +108,7 @@ pm_co2eq0(tall,all_regi)                             "Total greenhouse gas emiss
 pm_macBaseMagpie(tall,all_regi,all_enty)             "baseline emissions from MAgPIE (type emiMacMagpie) [GtC, Mt CH4, Mt N]"
 p_macBaseMagpieNegCo2(tall,all_regi)                 "net negative CO2 emissions from land-use change [GtC]"
 p_macBaseExo(tall,all_regi,all_enty)                 "exogenous baseline emissions (type emiMacExo) [Mt CH4, Mt N]"
+p_co2lucSub(tall,all_regi,all_enty)                  "subtypes of CO2 land use change emissions, add up to total land use change emissions, coming from MAgPIE, passed through REMIND for reporting, not used anywhere, remain unchanged [GtC]"
 pm_macAbat(tall,all_regi,all_enty,steps)             "abatement levels based on data from van Vuuren [fraction]"
 pm_macAbatLev(tall,all_regi,all_enty)                "actual level of abatement per time step, region, and source [fraction]"
 p_macAbat_lim(tall,all_regi,all_enty)                "limit of abatement level based on limit of yearly change [fraction]"
@@ -117,7 +118,7 @@ p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types) "historical emi
 p_macLevFree(tall,all_regi,all_enty)                 "Phase in of zero-cost MAC options [fraction]"
 pm_macCost(tall,all_regi,all_enty)                   "abatement costs for all emissions subject to MACCs (type emiMacSector) [T$]"
 pm_macStep(tall,all_regi,all_enty)                   "step number of abatement level [integer]"
-pm_macSwitch(all_enty)                               "switch to include mac option in the code [0/1]"
+pm_macSwitch(ttot,all_regi,all_enty)                 "switch to include mac options in specific sectors and years [0/1]"
 p_macCostSwitch(all_enty)                            "switch to include mac costs in the code [0/1] (e.g. in coupled scenarios, we want to include the costs in REMIND, but MAC effects on emissions are calculated in MAgPIE)"
 p_macPE(ttot,all_regi,all_enty)                      "Primary energy production from MACs, e.g. methane production from abated methane leakage in coal extraction [TWa]"
 p_priceCO2(tall,all_regi)                            "carbon price [$/tC]"
@@ -223,7 +224,6 @@ vm_emiCdrAll(ttot,all_regi)                                  "all CDR emissions,
 
 *** ------------- Emissions Equations -----------------------------------------
 equations
-
 q_emiCO2Sector(ttot,all_regi,emi_sectors)            "CO2 emissions from different sectors"
 q_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty) "determination of emissions"
 q_macBase(tall,all_regi,all_enty)                    "baseline emissions for all emissions subject to MACCs (type emiMacSector)"
@@ -247,7 +247,6 @@ q_balCCUvsCCS(ttot,all_regi)                         "balance equation for captu
 q_ccsShare(ttot,all_regi)                            "calculate the share of captured CO2 that is stored geologically"
 
 *** q_limitSo2 can be removed?
-
 * RP: this equation is turned off as of 2025-03-11, because it has strong negative side
 *     effects on coal use - eg SSA strongly increases coal use until 2050 only because 
 *     it wants coal solids in 2070 and needs to ramp it up until 2050 due to this limit
@@ -580,6 +579,7 @@ q_limitProd(ttot,all_regi,all_te,rlf)                "constrain renewable produc
 q_limitGeopot(ttot,all_regi,all_enty,rlf)            "constrain land use of solar PV and CSP power to compete for the same geographical potential"
 q_windoff_low(tall,all_regi)                         "constraint to ensure that offshore wind capacity is also built to a some extend if region builds onshore wind and has notable offshore potential relative to its onshore potential"
 q_limitSeel2fehes(ttot,all_regi)                     "equation to limit the share of electricity in district heating"
+q_capNonDecreasing(tall,all_regi,all_te)             "constrain capacity of some capital-intensive and site-specific technologies like hydropower and geothermal to not decrease over time once it is built"
 
 *** biomass equations (to be moved to biomass module?)
 q_limitBiotrmod(ttot,all_regi)                       "limit the total amount of modern biomass use for solids to the amount of coal use for solids"

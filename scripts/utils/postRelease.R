@@ -34,7 +34,7 @@ postRelease <- function() {
     sub(pattern = pattern, replacement = paste0(pattern, textToAdd), fixed = TRUE) |>
     writeLines("CHANGELOG.md")
 
-  message("Please perform the following step manually:\n",
+  message("Please perform the following step manually in another terminal:\n",
           "git add -p\n",
           "--> When done press ENTER to commit, push and create PR")
   gms::getLine()

@@ -314,6 +314,12 @@ if(p80_DevPriceAnticipGlobAllMax2100Iter(iteration) gt 0.1 * p80_surplusMaxToler
   p80_messageShow("DevPriceAnticip") = YES;
 );
 
+*' criterion "Did REMIND run sufficient iterations (currently set at 18, to allow for at least 4 iterations with EDGE-T)
+if( (iteration.val le 17),
+  s80_bool=0;                
+  p80_messageShow("IterationNumber") = YES;
+);
+
 ***additional criterion: did taxes converge? (only checked if cm_TaxConvCheck is 1)
 p80_convNashTaxrev_iter(iteration,t,regi) = 0;
 loop(regi,
@@ -462,6 +468,9 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
           display "#### pm_taxCO2eq_anchor_iterationdiff (difference in global anchor carbon price to the last iteration [T$/GtC]) in diagnostics section below."; 
           display sm_globalBudget_absDev;
 	      );
+        if(sameas(convMessage80, "IterationNumber"),
+          display "#### 0.) REMIND did not run sufficient iterations (currently set at 18, to allow for at least 4 iterations with EDGE-T)";
+        );
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"       
         if(sameas(convMessage80, "regiTarget"),
 		      display "#### 7) A regional climate target has not been reached yet.";
@@ -725,14 +734,6 @@ loop(regi,
 p80_eoWeights(regi) = p80_eoWeights(regi) / sum(regi2, p80_eoWeights(regi2) );
 
 
-*** hard coded weights only to be used if due to infeasibilities internal computation of weights (above) does not work
-loop(regi,
-  if (pm_SolNonInfes(regi) ne 1,
-     loop(regi2,
-        p80_eoWeights(regi2) = p80_eoWeights_fix(regi2);
-     );
-  );
-);
 
 p80_eoEmiMarg(regi) = p80_eoWeights(regi) * (p80_eoMargPermBudg(regi) + p80_eoMargEmiCum(regi));
 p80_count=0;
