@@ -69,7 +69,8 @@ s45_actualbudgetco2_last                                "actual level of 2020-21
 s45_factorRescale_taxCO2_exponent_before10              "exponent determining sensitivity    before iteration 10"
 s45_factorRescale_taxCO2_exponent_from10                "exponent determining sensitivity of CO2 price adjustment to CO2 budget deviation from iteration 10"
 s45_peakBudget                                          "peak CO2 budget as calculated as the maximum of cumulative CO2 emissions, used to check adjustment algorithm [GtC/yr]"
-sm_peakBudgYr_check                                    "peak budget year calculated based on maximum of cumulative CO2 emissions, used to check adjustment algorithm  [year]"
+sm_peakBudgYr_check                                     "peak budget year calculated based on maximum of cumulative CO2 emissions, used to check adjustment algorithm  [year]"
+sm_peakbudget_diff                                       "difference in cumulative CO2 emissions between cumulative emissions in cm_peakBudgYr and time step of maximum cumulative CO2 emissions [GtCO2]"
 ;
 
 *** Parameters only used in functionForm/postsolve.gms

@@ -376,12 +376,26 @@ $endIf.cm_implicitPePriceTarget
 
 *** check global budget target from core/postsolve, must be within 2 Gt of target value
 p80_globalBudget_absDev_iter(iteration) = sm_globalBudget_absDev;
-if ( ( ( abs(p80_globalBudget_absDev_iter(iteration)) gt cm_budgetCO2_absDevTol ) !! check if CO2 budget met in tolerance range,
-    OR (      cm_iterative_target_adj eq 9 
-          AND cm_peakBudgYr ne sm_peakBudgYr_check  ) ) ,  !! if peak budget -> check if cm_peakBudgYr corresponds to year of maximum cumulative CO2 emissions,
+if ( abs(p80_globalBudget_absDev_iter(iteration)) gt cm_budgetCO2_absDevTol , !! check if CO2 budget met in tolerance range,
   s80_bool = 0;
   p80_messageShow("target") = YES;
 );
+
+*** check global budget target for peak budgets,
+*** 1) check whether cm_peakBudgYr corresponds to year of maximum cumulative CO2 emissions
+*** If not 2) check whether difference in cumulative emissions between both time steps is smaller than sm_peakbudget_diff_tolerance
+*** If neither 1) nor 2) satisfied, converge criterion not fullfilled and keep on iterating.
+$ifthen.carbonprice %carbonprice% == "functionalForm"
+if (  (     cm_iterative_target_adj eq 9
+        AND cm_peakBudgYr ne sm_peakBudgYr_check  )
+      OR
+      (   cm_iterative_target_adj eq 9
+      AND abs(sm_peakbudget_diff) lt sm_peakbudget_diff_tolerance),
+  s80_bool = 0;
+  p80_messageShow("target") = YES;
+);
+$endIf.carbonprice
+
 
 *** additional criterion: if damage internalization is on, is damage iteration converged?
 p80_sccConvergenceMaxDeviation_iter(iteration) = pm_sccConvergenceMaxDeviation;
