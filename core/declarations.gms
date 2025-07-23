@@ -23,35 +23,33 @@
 *** ------------- Macro Parameters --------------------------------------------
 parameters
 
-*** trade prices
+*** trade prices (move to trade module?)
 pm_pvp(ttot,all_enty)                                "Price on commodity markets, [T$/TWa] for energy commodities except uranium, uranium (peur) in [T$/Mt Uranium], emissions permits (perm) in [T$/GtC]"
 p_pvpRef(ttot,all_enty)                              "Price on commodity markets - imported from REF gdx, [T$/TWa] for energy commodities except uranium, uranium (peur) in [T$/Mt Uranium], emissions permits (perm) in [T$/GtC]"
 p_pvpRegiBeforeStartYear(ttot,all_regi,all_enty)     "prices of traded commodities before start year - regional. only used for permit trade [T$/GtC]"
 
 pm_ies(all_regi)                                     "intertemporal elasticity of substitution",
-pm_share_trans(tall,all_regi)                        "share of transport FE liquids (fedie and fepet) and all FE liquids"
+*** only used in air pollutants module, move there?
+pm_share_trans(tall,all_regi)                        "share of transport FE liquids (fedie and fepet) and all FE liquids [share]"
 
 *** macro variables from gdx or previous iteration
 pm_gdp_gdx(tall,all_regi)                            "GDP path from gdx, updated iteratively [T$]"
 p_inv_gdx(tall,all_regi)                             "macro-investments path from gdx, updated iteratively [T$]"
 
-*** co2 price calculated in 45_carbonprice module
-pm_taxCO2eq(ttot,all_regi)                           "CO2 tax path calculated in 45_carbonprice module [T$/GtC]. To get $/tCO2, multiply with 272 [T$/GtC]"
+*** co2 price calculated in 45_carbonprice module (move to tax or carbonprice module?)
+pm_taxCO2eq(ttot,all_regi)                           "CO2 tax path calculated in 45_carbonprice module [T$/GtC]. To get $/tCO2, multiply with 272 = 1 / sm_DptCO2_2_TDpGtC"
 pm_taxCO2eq_iter(iteration,ttot,all_regi)            "CO2 tax path (pm_taxCO2eq) tracked over iterations [T$/GtC]"
 pm_taxCO2eq_anchor_iterationdiff(ttot)               "difference in global anchor carbon price to the last iteration [T$/GtC]"
 
-*** co2 price mark-up per region on top of pm_taxCO2eq calculated in 46_carbonpriceRegi module
-pm_taxCO2eqRegi(tall,all_regi)                       "Additional regional CO2 tax path calulated in in 46_carbonpriceRegi module to reach regional emissions targets [T$/GtC]. To get $/tCO2, multiply with 272 [T$/GtC]"
-pm_taxCO2eqSum(tall,all_regi)                        "sum of pm_taxCO2eq, pm_taxCO2eqRegi, pm_taxCO2eqSCC [T$/GtC]. To get $/tCO2, multiply with 272 [T$/GtC]"
+*** co2 price mark-up per region on top of pm_taxCO2eq calculated in 46_carbonpriceRegi module (move to tax or carbonprice module?)
+pm_taxCO2eqRegi(tall,all_regi)                       "Additional regional CO2 tax path calulated in in 46_carbonpriceRegi module to reach regional emissions targets [T$/GtC]. To get $/tCO2, multiply with 272 = 1 / sm_DptCO2_2_TDpGtC"
+pm_taxCO2eqSum(tall,all_regi)                        "sum of pm_taxCO2eq, pm_taxCO2eqRegi, pm_taxCO2eqSCC [T$/GtC]. To get $/tCO2, multiply with 272 = 1 / sm_DptCO2_2_TDpGtC"
 
-*** co2 price calculated in 47_regipol module
+*** co2 price calculated in 47_regipol module (move to tax or carbonprice module?)
 pm_taxemiMkt(ttot,all_regi,all_emiMkt)               "CO2 tax path per region and emissions market calculated in 47_regipol module [T$/GtC]"
 pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt) "CO2 tax path per region and emissions market calculated in 47_regipol module from previous iteration [T$/GtC]"
 
-*** emissions parameters for nash algorithm
-pm_co2eqForeign(tall,all_regi)                       "emissions, which are part of the climate policy, of other regions (nash relevant)." 
-pm_co2eq0(tall,all_regi)                             "Total greenhouse gas emissions from last iteration based on vm_co2eq used in nash algorithm [GtCeq]"                                                      
-
+*** general macro parameters
 pm_cesdata(tall,all_regi,all_in,cesParameter)        "parameters of the CES function: efficiency parameters (xi, eff, effgr) [unitless], target quantities of CES calibration (quantity) [unit of CES node, see set all_in], CES prices resulting from calibration (price) [T$/unit of CES node]"
 f_pop(tall,all_regi,all_GDPpopScen)                  "population data for all possible scenarios [million people]"
 pm_pop(tall,all_regi)                                "population data [bn people]"
@@ -102,6 +100,10 @@ pm_emiExog(tall,all_regi,all_enty)                   "exogenous emissions from a
 pm_shPerm(tall, all_regi)                            "emission permit shares [share]"
 pm_emicapglob(tall)                                  "global emission cap [GtC]" 
 
+*** emissions parameters for nash algorithm
+pm_co2eqForeign(tall,all_regi)                       "emissions, which are part of the climate policy, of other regions (nash relevant)."
+pm_co2eq0(tall,all_regi)                             "Total greenhouse gas emissions from last iteration based on vm_co2eq used in nash algorithm [GtCeq]"
+
 *** parameters used for MAC curves
 pm_macBaseMagpie(tall,all_regi,all_enty)             "baseline emissions from MAgPIE (type emiMacMagpie) [GtC, Mt CH4, Mt N]"
 p_macBaseMagpieNegCo2(tall,all_regi)                 "net negative CO2 emissions from land-use change [GtC]"
@@ -132,16 +134,17 @@ $ENDIF.agricult_base_shift
 p_aux_scaleEmiHistorical_n2o(all_regi)               "auxiliary parameter to rescale MAgPIE n2o emissions to historical values [Mt N]"
 p_aux_scaleEmiHistorical_ch4(all_regi)               "auxiliary parameter to rescale MAgPIE ch4 emissions to historical values [Mt CH4]"
 
+*** emissions factors and incineration rates
 pm_emifac(tall,all_regi,all_enty,all_enty,all_te,all_enty) "emission factor by technology for all types of energy-related emissions [GtC/TWa, Mt CH4/TWa, Mt N/TWa, Mt SO2/TWa, Mt BC/TWa, Mt OC/TWa]"
 p_ef_dem(all_regi,all_enty)                          "read-in parameter for demand side emission factors of final energy carriers [MtCO2/EJ]"
 pm_emifacNonEnergy(ttot,all_regi,all_enty,all_enty,emi_sectors,all_enty) "emission factor for non-energy fedstocks, only for chemical industry [GtC/TWa]"
 pm_incinerationRate(ttot,all_regi)                   "share of plastic waste that gets incinerated [fraction]"
-
 pm_cintraw(all_enty)                                 "CO2 emissions factor of fossil fuels [GtC/TWa]"
 p_cint(all_regi,all_enty,all_enty,rlf)               "CO2 emissions factor of energy-related emissions from unconventional fossil fuel extraction [GtC/TWa]" 
 p_efFossilFuelExtr(all_regi,all_enty,all_enty)       "CH4 and N2O emission factor of PE production: fugitive CH4 from fossil fuel extraction and N2O from bioenergy [Mt CH4/TWA, Mt N/TWa]"
 p_efFossilFuelExtrGlo(all_enty,all_enty)             "CH4 and N2O emission factor of PE production - global value: fugitive CH4 from fossil fuel extraction and N2O from bioenergy [Mt CH4/TWA, Mt N/TWa]"
 
+*** share of stored carbon in captured carbon
 pm_share_CCS_CCO2(ttot,all_regi)                     "share of stored CO2 from total captured CO2 from previous iteration [share]"
 
 *** can be removed?
@@ -288,15 +291,6 @@ pm_capCum0(tall,all_regi,all_te)                     "Total cumulated capacity o
 p_capCum(tall, all_regi,all_te)                      "Total cumulated capacity of learning technologies from input.gdx used for learning curves based on vm_capCum[TW]"
 pm_capCumForeign(ttot,all_regi,all_te)               "Total cumulated capacity of learning technologies of all other regions except regi [TW]"
 
-*** carbon management technology parameters
-$ifthen.tech_CO2capturerate not "%c_tech_CO2capturerate%" == "off"
-p_tech_co2capturerate(all_te)                        "Technology specific CO2 capture rate, fraction of carbon from input fuel that is captured [share]" / %c_tech_CO2capturerate% /
-p_PECarriers_CarbonContent(all_enty)                 "Carbon content of PE carriers [GtC/TWa]"
-$endif.tech_CO2capturerate
-pm_dataccs(all_regi,char,rlf)                        "maximum CO2 storage capacity using CCS technology. [GtC]"
-pm_ccsinjecrate(all_regi)                            "Regional CCS injection rate factor. [1/year]."
-p_extRegiccsinjecrateRegi(ext_regi)                  "Regional CCS injection rate factor. [1/year]. (extended regions)"  
-
 *** biomass parameters (move to biomass module?)
 pm_pedem_res(ttot,all_regi,all_te)                   "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
 
@@ -330,7 +324,8 @@ $ifthen not "%cm_adj_coeff_multiplier%" == "off"
   p_adj_coeff_multiplier(all_te)                     "factor to multiply standard adjustment cost coefficient with" / %cm_adj_coeff_multiplier% /
 $endif
 
-*** diagnostic output parameters for interpreting adjustment costs
+*** diagnostic output parameters
+*** parameters for interpreting adjustment costs
 o_margAdjCostInv(ttot,all_regi,all_te)               "marginal adjustment cost calculated in postsolve for diagnostics [T$/TW]"
 o_avgAdjCostInv(ttot,all_regi,all_te)                "average adjustment cost calculated in postsolve for diagnostics [T$/TW]"
 o_avgAdjCost_2_InvCost_ratioPc(ttot,all_regi,all_te) "ratio of adjustment cost compared to direct invesment costs [%]"
@@ -386,7 +381,7 @@ o_INI_AvCapFac                                       "Average regional capacity 
 pm_fedemand(tall,all_regi,all_in)                    "read-in parameter for final energy and production trajectories used for the CES parameter calibration in industry and buildings [TWa]"
 
 *** energy service layer (only relevant for transport, move to transport module?)
-pm_fe2es(tall,all_regi,all_teEs)                     "Conversion factor from final energies to transport energy services [Tpkm/TWa, Ttkm/Twa]" 
+pm_fe2es(tall,all_regi,all_teEs)                     "Conversion factor from final energies to transport energy services [Tpkm/TWa, Ttkm/TWa]"
 pm_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)   "Final energy shares for CES nodes in transport [share]"
 
 *** parameters for setting final energy shares
@@ -589,17 +584,11 @@ q_limitSeel2fehes(ttot,all_regi)                     "equation to limit the shar
 *** biomass equations (to be moved to biomass module?)
 q_limitBiotrmod(ttot,all_regi)                       "limit the total amount of modern biomass use for solids to the amount of coal use for solids"
 
-*** carbon management technology equations
-*** q_transCCS can be removed?
-q_transCCS(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_enty,all_te,rlf) "transformation equation for ccs"
-q_limitCCS(all_regi,all_enty,all_enty,all_te,rlf)    "limit cumulated CO2 injection into geological storage to maximum storage potential"
-
 *** capacity constraints for energy production (capacity * capacity factor = production)
 q_limitCapSe(ttot,all_regi,all_enty,all_enty,all_te)    "capacity constraint for pe2se secondary energy production"
 q_limitCapSe2se(ttot,all_regi,all_enty,all_enty,all_te) "capacity constraint for se2se secondary energy production"
 q_limitCapFe(ttot,all_regi,all_te)                      "capacity constraint for final energy production"
-*** capacity constraint for CCS (capacity * capacity factor = co2 injection)
-q_limitCapCCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "capacity constraint for ccs"
+
 *** capacity constraint for H2 infrastructure in buildings and indsutry (capacity * capacity factor = FE demand)
 q_limitCapFeH2BI(ttot,all_regi,emi_sectors)               "capacity limit equation for H2 infrastructure capacities of buildings and industry, needed to avoid switching behavior of H2 between both sectors"
 
@@ -661,9 +650,38 @@ $endif.minMaxSeFeSectorShareDev
 * q_shFeCesNorm(ttot,all_regi,all_in)                "Shares have to sum to 1."
 ;
 
+*** ---------------------------------------------------------------------------
+***        4. Carbon Management
+*** ---------------------------------------------------------------------------
+
+*** -------------  Carbon Management Parameters -------------------------------
+
+Parameters
+
+$ifthen.tech_CO2capturerate not "%c_tech_CO2capturerate%" == "off"
+p_tech_co2capturerate(all_te)                        "Technology specific CO2 capture rate, fraction of carbon from input fuel that is captured [share]" / %c_tech_CO2capturerate% /
+p_PECarriers_CarbonContent(all_enty)                 "Carbon content of PE carriers [GtC/TWa]"
+$endif.tech_CO2capturerate
+pm_dataccs(all_regi,char,rlf)                        "maximum CO2 storage capacity using CCS technology. [GtC]"
+pm_ccsinjecrate(all_regi)                            "Regional CCS injection rate factor. [1/year]."
+p_extRegiccsinjecrateRegi(ext_regi)                  "Regional CCS injection rate factor. [1/year]. (extended regions)"
+;
+
+
+*** ------------- Carbon Management Equations -------------------------------
+
+equations
+*** carbon management technology equations
+*** q_transCCS can be removed?
+q_transCCS(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_enty,all_te,rlf) "transformation equation for ccs"
+q_limitCCS(all_regi,all_enty,all_enty,all_te,rlf)    "limit cumulated CO2 injection into geological storage to maximum storage potential"
+
+*** capacity constraint for CCS (capacity * capacity factor = co2 injection)
+q_limitCapCCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "capacity constraint for ccs"
+;
 
 *** ---------------------------------------------------------------------------
-***        4. Other
+***        5. Other
 *** ---------------------------------------------------------------------------
 
 
