@@ -185,11 +185,11 @@ o_emi_conv(all_enty)                                 "output parameter" / co2 36
 variables
 
 *** total emissions
-vm_co2eqGlob(ttot)                                   "global total greenhouse gas emissions to be balanced by allowances [GtCeq]"
-vm_co2eq(ttot,all_regi)                              "total greenhouse gas emissions measured in co2 equivalents, ATTENTION: content depends on multigasscen [GtCeq]"
-vm_co2eqMkt(ttot,all_regi,all_emiMkt)                "total greenhouse gas emissions per market measured in co2 equivalents, ATTENTION: content depends on multigasscen [GtCeq]"
+vm_co2eqGlob(ttot)                                   "total global greenhouse gas emissions to be balanced by allowances [GtCeq]"
+vm_co2eq(ttot,all_regi)                              "total greenhouse gas emissions measured in co2 equivalents that are subject to carbon pricing, be aware that emissions coverage of this variable depends on switch cm_multigasscen [GtCeq]"
+vm_co2eqMkt(ttot,all_regi,all_emiMkt)                "total greenhouse gas emissions per market measured in co2 equivalents that are subject to carbon pricing, be aware that emissions coverage of this variable depends on switch cm_multigasscen [GtCeq]"
 vm_emiAll(ttot,all_regi,all_enty)                    "total emissions by species [GtC, Mt CH4, Mt N, Mt SO2, Mt BC, Mt OC]"
-v_co2eqCum(all_regi)                                 "cumulated vm_co2eq emissions for the first budget period.  [GtCeq]"
+v_co2eqCum(all_regi)                                 "cumulated vm_co2eq emissions for the first budget period [GtCeq]"
 *** move to module 41 emicapregi?
 vm_perm(ttot,all_regi)                               "emission allowances [GtCeq]"
 
