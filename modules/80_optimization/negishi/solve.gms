@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/80_optimization/negishi/solve.gms
 
-hybrid.optfile = s80_cnptfile;
+remindgamsmodel.optfile = s80_cnptfile;
 
 ***      -------------------------------------------------------------------
 ***                     SOLVE statement
@@ -16,8 +16,8 @@ if (execError > 0,
   abort "at least one execution error occured, abort.gdx written";
 );
 
-solve hybrid using nlp maximizing vm_welfareGlob;
-o_modelstat = hybrid.modelstat;
+solve remindgamsmodel using nlp maximizing vm_welfareGlob;
+o_modelstat = remindgamsmodel.modelstat;
 
 *this parameter is especially useful in nash mode
 pm_SolNonInfes(regi) = 0;
