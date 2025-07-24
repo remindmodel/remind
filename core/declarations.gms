@@ -54,6 +54,7 @@ p_r(ttot,all_regi)                                   "calculating capital intere
 ***-----------------------------------------------ESM module-------------------------------
 pm_emiExog(tall,all_regi,all_enty)                   "exogenous emissions"
 pm_macBaseMagpie(tall,all_regi,all_enty)             "baseline emissions from MAgPIE (type emiMacMagpie)"
+p_co2lucSub(tall,all_regi,all_enty)                  "subtypes of co2luc that add up to co2luc, coming from MAgPIE, passed through REMIND for reporting, not used anywhere, remain unchanged"
 p_macBaseMagpieNegCo2(tall,all_regi)                 "net negative emissions from co2luc"
 p_macBaseExo(tall,all_regi,all_enty)                 "exogenous baseline emissions (type emiMacExo)"
 pm_macAbat(tall,all_regi,all_enty,steps)             "abatement levels based on data from van Vuuren [fraction]"
