@@ -66,3 +66,8 @@ pm_allTargetsConverged,         parameter,  only relevant for nash
 pm_taxCO2eq_anchor_iterationdiff,input,no iterative target adjustment
 pm_taxCO2eq_iter,input,added by codeCheck
 cm_budgetCO2_absDevTol,input,added by codeCheck
+cm_peakBudgYr,input,not needed
+sm_peakbudget_diff_tolerance,input,not needed
+cm_iterative_target_adj,input,not needed
+sm_peakBudgYr_check,input,not needed
+sm_peakbudget_diff,input,not needed
