@@ -640,6 +640,8 @@ sm_globalBudget_absDev       "absolute deviation of global cumulated CO2 emissio
 sm_eps                       "small number: 1e-9 "  /1e-9/
 
 sm_CES_calibration_iteration "current calibration iteration number, loaded from environment variable cm_CES_calibration_iteration"  /0/
+
+s_magIter                    "If coupled to MAgPIE: MAgPIE iteration" /0/
 ;
 
 * GA sm_dmac changes depending on the choice of MACs in c_nonco2_macc_version

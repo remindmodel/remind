@@ -98,8 +98,16 @@ display p_efFossilFuelExtr;
 ***    MAgPIE coupling: run MAgPIE
 ***--------------------------------------
 
-$if %cm_MAgPIE_Nash% == "on" Execute "Rscript mag2rem.R";
-
+***$if %cm_MAgPIE_Nash% == "on" Execute "Rscript mag2rem.R";
+$if %cm_MAgPIE_Nash% == "on" sm_tmp  = logfile.nr;
+$if %cm_MAgPIE_Nash% == "on" sm_tmp2 = logfile.nd;
+$if %cm_MAgPIE_Nash% == "on" logfile.nr = 1;
+$if %cm_MAgPIE_Nash% == "on" logfile.nd = 0;
+$if %cm_MAgPIE_Nash% == "on" s_magIter = s_magIter + 1;
+$if %cm_MAgPIE_Nash% == "on" put_utility  "exec" / "Rscript mag2rem.R " s_magIter;
+$if %cm_MAgPIE_Nash% == "on" logfile.nr = sm_tmp;
+$if %cm_MAgPIE_Nash% == "on" logfile.nd = sm_tmp2;
+    
 *** Update pm_macBase when Magpie coupling is active, otherwise or set it back 
 *** to input-data values. Since it has been overwritten in the previous Nash  
 *** iteration by calculations that follow further down, it must be set back to 
