@@ -45,7 +45,7 @@ $offdelim
 
 *' @code
 *** MAC costs (either from look-up table for standalone runs or zero in coupled runs because MAgPIE's total costs already include MAC costs)
-if(cm_MAgPIE_Nash eq 5,
+if(cm_MAgPIE_Nash eq 1,
   p26_macCostLu(ttot,regi) = 0;
 else
   p26_macCostLu(ttot,regi) = p26_macCostLuLookup(ttot,regi,"%cm_LU_emi_scen%","%cm_rcp_scen%");
