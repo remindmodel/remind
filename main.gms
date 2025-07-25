@@ -506,6 +506,14 @@ parameter
 *' * (2): run until solution is sufficiently converged  - fine tolerances, for production runs.
 *' * (3): run until solution is sufficiently converged using very relaxed targets  - very coarse tolerances, two times higher than option 1. ! do not use in production runs !
 *'
+
+parameter
+  cm_MAgPIE_Nash      "run MAgPIE between Nash iterations"
+;
+  cm_MAgPIE_Nash   = 1;     !! def = 0  !! regexp = [0-1]
+*' * (0): REMIND runs standalone (emission factors are used, shiftfactors are set to zero)
+*' * (1): MAgPIE runs between certain Nash iterations (emission factors are set to zero because emissions are retrieved from the MAgPIE reporting, shift factors for supply curves are calculated)
+
 parameter
   cm_emiscen                "policy scenario choice"
 ;
@@ -1250,12 +1258,11 @@ parameter
 ***-----------------------------------------------------------------------------
 *' ####                     FLAGS
 ***-----------------------------------------------------------------------------
-*' cm_MAgPIE_coupling    "switch on coupling mode with MAgPIE"
+*' cm_MAgPIE_coupling    "switch on OLD coupling mode with MAgPIE. OLD means MAgPIE does not run between the Nash iterations but after REMIND completed. CURRENTLY NOT SUPPORTED!"
 *'
 *' *  (off): off = REMIND expects to be run standalone (emission factors are used, shiftfactors are set to zero)
 *' *  (on): on  = REMIND expects to be run based on a MAgPIE reporting file (emission factors are set to zero because emissions are retrieved from the MAgPIE reporting, shift factors for supply curves are calculated)
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"  !! regexp = off|on
-$setglobal cm_MAgPIE_Nash      on     !! def = "off"  !! regexp = off|on
 *' cm_rcp_scen       "chooses RCP scenario"
 *'
 *' *  (none): no RCP scenario, standard setting

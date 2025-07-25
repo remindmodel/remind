@@ -9,7 +9,7 @@
 
 *** If MAgPIE runs inbetween the Nash iterations:
 *** ============================================================
-$ifthen %cm_MAgPIE_Nash% == "on"
+if(cm_MAgPIE_Nash eq 1,
 *** ============================================================
 
 *** Since in the coupling MAgPIE data is first required in core/presolve
@@ -124,13 +124,12 @@ vm_fuExtr.l(ttot,regi,"pebiolc","1")  = p30_pebiolc_demand_helper(ttot,regi);
 ***  END: calculate shift factors
 ***-------------------------------------------------------------
 *** ============================================================
-$endif 
+)
 *** ============================================================
 
 *** XXX MUST BE REMOVED AFTER TESTING!!!
 v30_pricemult.fx(ttot,regi) = 1;
 v30_priceshift.fx(ttot,regi) = 0;
-
 
 *** Calculate total primary energy to limit BECCS (see q30_limitTeBio)
 *** The summation is devided into actual primary energy carriers, e.g. coal or biomass, 

@@ -12,7 +12,9 @@
 *** MAgPIE is executed there.
 
 *' In coupled runs landuse costs are directly transferred from MAgPIE run instead of reading them from the look-up table.
-$if %cm_MAgPIE_Nash% == "on" Execute_Loadpoint 'magpieData.gdx' p26_totLUcosts_withMAC;
+if(cm_MAgPIE_Nash eq 1, 
+  Execute_Loadpoint 'magpieData.gdx' p26_totLUcosts_withMAC;
+);
 
 *' **Total agricultural costs (excluding MAC costs)**
 *' For standalone runs replace exogenous land use MAC cots (p26_macCostLu) with endogenous land use MAC costs (pm_macCost). 

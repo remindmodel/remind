@@ -98,29 +98,27 @@ display p_efFossilFuelExtr;
 ***    MAgPIE coupling: run MAgPIE
 ***--------------------------------------
 
-***$if %cm_MAgPIE_Nash% == "on" Execute "Rscript mag2rem.R";
-$if %cm_MAgPIE_Nash% == "on" sm_tmp  = logfile.nr;
-$if %cm_MAgPIE_Nash% == "on" sm_tmp2 = logfile.nd;
-$if %cm_MAgPIE_Nash% == "on" logfile.nr = 1;
-$if %cm_MAgPIE_Nash% == "on" logfile.nd = 0;
-$if %cm_MAgPIE_Nash% == "on" s_magIter = s_magIter + 1;
-$if %cm_MAgPIE_Nash% == "on" put_utility  "exec" / "Rscript mag2rem.R " s_magIter;
-$if %cm_MAgPIE_Nash% == "on" logfile.nr = sm_tmp;
-$if %cm_MAgPIE_Nash% == "on" logfile.nd = sm_tmp2;
-    
-*** Update pm_macBase when Magpie coupling is active, otherwise or set it back 
+*** Update pm_macBase when Magpie coupling is active, otherwise set it back 
 *** to input-data values. Since it has been overwritten in the previous Nash  
 *** iteration by calculations that follow further down, it must be set back to 
 *** initial values before these calculations are repeated in the current Nash iteration.
 
-$ifThen.coupling %cm_MAgPIE_coupling% == "on"
+if (cm_MAgPIE_Nash eq 1,
+  sm_tmp  = logfile.nr;
+  sm_tmp2 = logfile.nd;
+  logfile.nr = 1;
+  logfile.nd = 0;
+  s_magIter = s_magIter + 1;
+  put_utility  "exec" / "Rscript mag2rem.R " s_magIter;
+  logfile.nr = sm_tmp;
+  logfile.nd = sm_tmp2;
 *** MAgPIE coupling active: update pm_macBaseMagpie
-Execute_Loadpoint 'magpieData.gdx' f_macBaseMagpie;
-pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie);
-$else.coupling
+  Execute_Loadpoint 'magpieData.gdx' f_macBaseMagpie;
+  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie);
+else 
 *** No MAgPIE coupling active: set pm_macBaseMagpie back to initial values
-pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
-$endIf.coupling
+  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
+);
 
 *** DK: xxx code moved here from core/preloop.gms
 *** The N2O emissions generated during biomass production in agriculture (in MAgPIE)
