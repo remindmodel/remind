@@ -76,7 +76,7 @@ getMagpieData <- function(path_to_report = "report.mif", mapping = "magppingMAgP
   emiMacMagpie <- m$addSet(
     "emiMacMagpie",
     records = mapping |>
-              filter(parameter == "f_macBaseMagpie") |>
+              filter(parameter == "f_macBaseMagpie_coupling") |>
               select(enty) |>
               unique(),
     description = "emission types coming from MAgPIE"
@@ -84,11 +84,11 @@ getMagpieData <- function(path_to_report = "report.mif", mapping = "magppingMAgP
   
   # ---- Define PARAMETERS ----
   
-  f_macBaseMagpie <- m$addParameter(
+  f_macBaseMagpie_coupling <- m$addParameter(
     "f_macBaseMagpie_coupling",
     domain = c(ttot, regi, emiMacMagpie),
     records = rem |>
-              filter(parameter == "f_macBaseMagpie") |>
+              filter(parameter == "f_macBaseMagpie_coupling") |>
               select(ttot, regi, enty, value) |>
               rename(emiMacMagpie = enty),
     description = "emissions from MAgPIE"
@@ -112,11 +112,11 @@ getMagpieData <- function(path_to_report = "report.mif", mapping = "magppingMAgP
     description = "demand for bioenergy in MAgPIE from which the prices result"
   )
   
-  p26_totLUcost <- m$addParameter(
-    "p26_totLUcost",
+  p26_totLUcost_coupling <- m$addParameter(
+    "p26_totLUcost_coupling",
     domain = c(ttot, regi),
     records = rem |> 
-              filter(parameter == "p26_totLUcost") %>% 
+              filter(parameter == "p26_totLUcost_coupling") %>% 
               select(ttot, regi, value),
     description = "total production costs from MAgPIE without costs for GHG"
   )
@@ -133,7 +133,7 @@ getMagpieData <- function(path_to_report = "report.mif", mapping = "magppingMAgP
 
 #load("config.Rdata")
 i <- as.numeric(commandArgs(trailingOnly = TRUE))
-write(paste(format(Sys.time(), "%Y-%m-%d_%H.%M.%S"), i)), file = "iteration.log", append = TRUE)
+write(paste(format(Sys.time(), "%Y-%m-%d_%H.%M.%S"), i), file = "iteration.log", append = TRUE)
 
 cfg <- list()
 cfg$pathToMagpieReport <- "~/Transferfolder/report.mif"
