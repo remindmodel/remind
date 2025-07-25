@@ -85,7 +85,7 @@ getMagpieData <- function(path_to_report = "report.mif", mapping = "magppingMAgP
   # ---- Define PARAMETERS ----
   
   f_macBaseMagpie <- m$addParameter(
-    "f_macBaseMagpie",
+    "f_macBaseMagpie_coupling",
     domain = c(ttot, regi, emiMacMagpie),
     records = rem |>
               filter(parameter == "f_macBaseMagpie") |>
@@ -132,6 +132,8 @@ getMagpieData <- function(path_to_report = "report.mif", mapping = "magppingMAgP
 # - remind2::convGDX2MIF_REMIND2MAgPIE(gdx = "fulldata.gdx", file = "REMIND_rem2mag.mif")
 
 #load("config.Rdata")
+i <- as.numeric(commandArgs(trailingOnly = TRUE))
+write(paste(format(Sys.time(), "%Y-%m-%d_%H.%M.%S"), i)), file = "iteration.log", append = TRUE)
 
 cfg <- list()
 cfg$pathToMagpieReport <- "~/Transferfolder/report.mif"

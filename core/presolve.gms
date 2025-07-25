@@ -113,8 +113,8 @@ if (cm_MAgPIE_Nash eq 1,
   logfile.nr = sm_tmp;
   logfile.nd = sm_tmp2;
 *** MAgPIE coupling active: update pm_macBaseMagpie
-  Execute_Loadpoint 'magpieData.gdx' f_macBaseMagpie;
-  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie);
+  Execute_Loadpoint 'magpieData.gdx' f_macBaseMagpie_coupling;
+  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
 else 
 *** No MAgPIE coupling active: set pm_macBaseMagpie back to initial values
   pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
