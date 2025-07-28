@@ -54,6 +54,7 @@ p_r(ttot,all_regi)                                   "calculating capital intere
 ***-----------------------------------------------ESM module-------------------------------
 pm_emiExog(tall,all_regi,all_enty)                   "exogenous emissions"
 pm_macBaseMagpie(tall,all_regi,all_enty)             "baseline emissions from MAgPIE (type emiMacMagpie)"
+p_co2lucSub(tall,all_regi,all_enty)                  "subtypes of co2luc that add up to co2luc, coming from MAgPIE, passed through REMIND for reporting, not used anywhere, remain unchanged"
 p_macBaseMagpieNegCo2(tall,all_regi)                 "net negative emissions from co2luc"
 p_macBaseExo(tall,all_regi,all_enty)                 "exogenous baseline emissions (type emiMacExo)"
 pm_macAbat(tall,all_regi,all_enty,steps)             "abatement levels based on data from van Vuuren [fraction]"
@@ -65,7 +66,7 @@ p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types) "historical emi
 p_macLevFree(tall,all_regi,all_enty)                 "Phase in of zero-cost MAC options [fraction]"
 pm_macCost(tall,all_regi,all_enty)                   "abatement costs for all emissions subject to MACCs (type emiMacSector) []"
 pm_macStep(tall,all_regi,all_enty)                   "step number of abatement level [integer]"
-pm_macSwitch(all_enty)                               "switch to include mac option in the code"
+pm_macSwitch(ttot, all_regi, all_enty)               "switch to include mac options in specific sectors and years"
 p_macCostSwitch(all_enty)                            "switch to include mac costs in the code (e.g. in coupled scenarios, we want to include the costs in REMIND, but MAC effects on emissions are calculated in MAgPIE)"
 p_priceCO2(tall,all_regi)                            "carbon price [$/tC]"
 p_priceCO2forMAC(tall,all_regi,all_enty)             "carbon price defined for MAC gases [$/tC]"
@@ -457,6 +458,7 @@ q_costInv(ttot,all_regi)                             "costs of investment"
 
 q_cap(tall,all_regi,all_te,rlf)                      "definition of available capacities"
 q_capDistr(tall,all_regi,all_te)                     "distribute available capacities across grades"
+q_capNonDecreasing(tall,all_regi,all_te)             "for some technologies, the capacity is not allowed to decrease over time"
 q_capTotal(ttot,all_regi,all_enty,all_enty)          "calculation of vm_capTotal as total capacity without technology differentation for technologies where there exists differentation"
 
 *** windoffshore-todo
@@ -514,11 +516,11 @@ q_balcapture(ttot,all_regi,all_enty,all_enty,all_te)  "balance equation for carb
 q_balCCUvsCCS(ttot,all_regi)                          "balance equation for captured carbon to CCU or CCS or valve"
 q_ccsShare(ttot,all_regi)                             "calculate the share of captured CO2 that is stored geologically"
 
-* RP: this equation is turned off as of 2025-03-11, because it has strong negative side
-*     effects on coal use - eg SSA strongly increases coal use until 2050 only because 
-*     it wants coal solids in 2070 and needs to ramp it up until 2050 due to this limit
-*     this limit 
-* q_limitSo2(ttot,all_regi)                             "prevent SO2 from rising again after 2050"
+*** RP: this equation is turned off as of 2025-03-11, because it has strong negative side
+***     effects on coal use - eg SSA strongly increases coal use until 2050 only because 
+***     it wants coal solids in 2070 and needs to ramp it up until 2050 due to this limit
+***     this limit 
+*** q_limitSo2(ttot,all_regi)                             "prevent SO2 from rising again after 2050"
 
 q_limitGeopot(ttot,all_regi,all_enty,rlf)             "constraint on annual renewable production due to competition for the same geographical potential"
 
@@ -542,7 +544,7 @@ q_PE_histCap_NGCC_2020_up(ttot,all_regi,all_enty,all_enty) "gas capacity can onl
 q_transFe2Es(ttot,all_regi,all_enty,all_esty,all_teEs)    "Conversion from final energy to energy service"
 q_es2ppfen(ttot,all_regi,all_in)                          "Energy services are handed to the CES tree."
 q_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)         "Shares of final energies in production factors."
-*q_shFeCesNorm(ttot,all_regi,all_in)                      "Shares have to sum to 1."
+***q_shFeCesNorm(ttot,all_regi,all_in)                      "Shares have to sum to 1."
 q_shGreenH2(ttot,all_regi)  "share of green hydrogen in all hydrogen"
 q_shBioTrans(ttot,all_regi)  "Define the share of biofuels in transport liquids from 2025 on."
 
@@ -594,8 +596,8 @@ sm_GJ_2_TWa                  "multiplicative factor to convert from GJ to TWa"  
 sm_TWa_2_TWh                 "tera Watt year to Tera Watt hour"                    /8.76e+3/,
 sm_TWa_2_MWh                 "tera Watt year to Mega Watt hour"                    /8.76e+9/,
 sm_TWa_2_kWh                 "tera Watt year to kilo Watt hour"                    /8.76e+12/,
-*RP* all these new conversion factors with the form "s_xxx_2_yyy" are multplicative factors. Thus, if you have a number in Unit xxx, you have to
-*RP* multiply this number by the conversion factor s_xxx_2_yyy to get the new value in Unit yyy.
+*** all these new conversion factors with the form "s_xxx_2_yyy" are multplicative factors. Thus, if you have a number in Unit xxx, you have to
+*** multiply this number by the conversion factor s_xxx_2_yyy to get the new value in Unit yyy.
 s_NO2_2_N                    "convert NO2 to N [14 / (14 + 2 * 16)]"   / .304 /
 s_DpKWa_2_TDpTWa             "convert Dollar per kWa to TeraDollar per TeraWattYear"       /0.001/
 s_DpKW_2_TDpTW               "convert Dollar per kW to TeraDollar per TeraWatt"            /0.001/
@@ -605,7 +607,7 @@ s_gwpN2O                     "Global Warming Potentials of N2O, AR5 WG1 CH08 Tab
 s_gwpCH4_AR4                 "Global Warming Potentials of CH4 as in the AR4, used in the MACCs"     /25/
 s_gwpN2O_AR4                 "Global Warming Potentials of N2O as in the AR4, used in the MACCs"     /298/
 
-* GA sm_dmac changes depending on the choice of MACs in c_nonco2_macc_version
+*** GA sm_dmac changes depending on the choice of MACs in c_nonco2_macc_version
 sm_dmac                      "step in MAC functions [US$]"                                                                   
 sm_macChange                 "maximum yearly increase of relative abatement in percentage points of maximum abatement. [0..1]"      /0.05/
 sm_tgn_2_pgc                 "conversion factor 100-yr GWP from TgN to PgCeq"
