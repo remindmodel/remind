@@ -15,7 +15,7 @@ pegas.seh2.gash2               15.3             0.00315
 pegas.seh2.gash2c               1.5      13.8   0.00315
 pegas.sehe.gashp               15.3             0.00315
 pegas.seliqfos.gasftrec        15.3           
-pegas.seliqfos.gasftcrec       15.1       0.2
+pegas.seliqfos.gasftcrec       12.6       2.7
 pecoal.seel.igcc               26.1             0.04415
 pecoal.seel.pc                 26.1             0.04415
 pecoal.seel.igccc               2.6      23.5   0.04415
@@ -60,7 +60,7 @@ Technology-specific CO2 capture rates:
 Capture Rate(bioftcrec) = 25 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.41 ~ 14.6 GtC/ZJ(PE) (58% of carbon input)
 Capture Rate(biogasc) = 25 GtC/ZJ * 0.9 - 14.6 GtC/ZJ(FE) / 0.95 * 0.55 ~ 14.1 GtC/ZJ(PE) (56% of carbon input)
 Capture Rate(coalftcrec) = 26.1 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.4 ~ 15.8 GtC/ZJ(PE) (60% of carbon input)
-Capture Rate(gasftcrec) = 15.3 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.7 ~ 0.2 GtC/ZJ(PE) (1.3% of carbon input)
+Capture Rate(gasftcrec) = 15.3 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.57 ~ 2.7 GtC/ZJ(PE) (17.6% of carbon input)
 $offtext
 
 *** EOF ./core/input/generisdata_emi.prn
