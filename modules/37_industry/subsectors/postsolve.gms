@@ -231,8 +231,7 @@ loop((mat,route)$(matOut(mat)),
 !!
 o37_demFeIndRoute(ttot,regi,entyFe,tePrc,route,secInd37) = 0.;
 loop((entyFe,route,tePrc,opmoPrc,secInd37)$(    tePrc2route(tePrc,opmoPrc,route)
-                                            AND secInd37_tePrc(secInd37,tePrc)
-                                            AND (p37_specFeDemTarget(entyFe,tePrc,opmoPrc) gt 0.) ),
+                                            AND secInd37_tePrc(secInd37,tePrc)),
   o37_demFeIndRoute(ttot,regi,entyFe,tePrc,route,secInd37)
   = o37_demFeIndRoute(ttot,regi,entyFe,tePrc,route,secInd37) !!sum (only necessary if several opmodes for one route)
     + vm_outflowPrc.l(ttot,regi,tePrc,opmoPrc)
