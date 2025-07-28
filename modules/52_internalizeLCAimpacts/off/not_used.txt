@@ -5,4 +5,6 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 name,type,reason
-sm_EJ_2_TWa,scalar,conversion not needed
+sm_DpGJ_2_TDpTWa,scalar,conversion not needed
+cm_startIter_EDGET,parameter,no iteration in off module
+cm_startIter_LCA,parameter,no iteration in off module
