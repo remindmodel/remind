@@ -22,9 +22,6 @@ def get_monetization_arg(args):
             v = df.columns[1]
             return df.set_index(k)[v].to_dict()
         
-def get_pathway_name(miffile):
-    return miffile.split(".")[0].split("_")[-1]
-        
 IMPACT_CATEGORIES_MC = [
     "acidification",
     "climate change",
@@ -46,10 +43,11 @@ parser = argparse.ArgumentParser(
     prog="run_internalizer",
     description='Runs the LCA internalization workflow'
     )
-parser.add_argument('miffile', type=str, help="Name of the .mif file")
-parser.add_argument('gdxfile', type=str, help="Name of the .gdx file")
-parser.add_argument('--mode', choices=['static', 'iterative'], required=True,
-                    help="whether to run static or iterative mode")
+parser.add_argument('mifpath', type=str, help="Path to the .mif file")
+parser.add_argument('gdxpath', type=str, help="Path to the .gdx file")
+parser.add_argument('pathway', type=str, help="Name of the REMIND scenario")
+parser.add_argument('--mode', choices=['static', 'iterative', 'testing'], required=True,
+                    help="whether to run static, iterative, or testing mode")
 group = parser.add_argument_group(title="Monetization", description="Flags that determine the monetization")
 monetization_group = group.add_mutually_exclusive_group(required=True)
 monetization_group.add_argument('--quantile', type=float, help="quantile for MC monetization")
@@ -60,6 +58,9 @@ parser.add_argument('--exclude_midpoints', type=str, help="Run with some midpoin
 
 args = parser.parse_args()
 print(args)
+
+# setup logging file
+logFile = open("log_lca.txt", "a")
 
 if args.mode == "static":
     # load static data
@@ -94,22 +95,32 @@ elif args.mode == "iterative":
 
     # initialize Internalizer
     I = Internalizer(
-        args.miffile,
+        args.mifpath,
         "remind",
-        get_pathway_name(args.miffile),
+        args.pathway,
         EI_VERSION,
         bw_project,
-        args.gdxfile,
+        args.gdxpath,
         outputfolder = "lca"
+    )
+    print(I.scenario)
+    logFile.writelines(
+        ["Internalizer initialized successfully."]
     )
 
     # premise runs
     years = [2020, 2030, 2040, 2050, 2060, 2070]
-    I.run_premise(years)
+    I.run_premise(years, multiprocessing=False)
+    logFile.writelines(
+        ["premise runs done."]
+    )
 
-    # cost calculation
+    # cost calculation (default mappings)
     monetization = get_monetization_arg(args)
     I.calculate_costs(monetization)
+    logFile.writelines(
+        ["Cost calculation done."]
+    )
 
     # get selected impact categories
     if args.monetization_factors is not None:
@@ -126,8 +137,36 @@ elif args.mode == "iterative":
         ics = [ic for ic in all_ics if ic not in exclude_list]
 
     # output files
+    ramp_up_start = 2020
+    ramp_up_end = 2030
     I.write_remind_input_files(
         ramp_up_start,
         ramp_up_end,
         ics
     )
+    logFile.writelines(
+        ["input files written."]
+    )
+elif args.mode == "testing":
+    # check whether the brightway project is accessible and contains the right databases
+    import bw2data as bd
+
+    bw_project = f"internalizer_ei_{EI_VERSION}"
+    bd.projects.set_current(bw_project)
+    needed_dbs = [f"ecoinvent-{EI_VERSION}-biosphere",
+                  f"ecoinvent-{EI_VERSION}-cutoff"]
+    for db in needed_dbs:
+        if db not in list(bd.databases):
+            logFile.writelines(
+                [f"WARNING: {db} not found in brightway project {bw_project}"]
+            )
+
+    # try to get monetization
+    monetization = get_monetization_arg(args)
+    logFile.writelines(
+        ["Monetization given:\n",
+         str(monetization)]
+    )
+
+
+logFile.close()
