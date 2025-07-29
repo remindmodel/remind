@@ -216,7 +216,7 @@ vm_cap.fx(t,regi,te,rlf)$(t.val le 2015 AND (sameAs(te,"biopyronly") OR  sameas(
                                           sameas(te,"biopyrchp"))) = 0; 
 vm_cap.fx(t,regi,te,rlf)$(t.val le 2025 AND sameas(te,"biopyrliq")) = 0; !! does not yet exist commercially
 
-if (cm_biopyrEstablished eq 0,
+if (c_biopyrEstablished eq 0,
   vm_deltaCap.fx(t,regi,te,rlf)$(t.val ge cm_startyear AND (sameAs(te, "biopyronly") OR sameAs(te,"biopyrhe") 
                                 OR sameAs(te,"biopyrchp"))) = 0; 
 else
@@ -229,7 +229,7 @@ else
                             = 1.7 * p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3;                      
 );
 
-if (cm_biopyrliq eq 0,
+if (c_biopyrliq eq 0,
    vm_deltaCap.fx(t,regi,"biopyrliq",rlf)$(t.val ge cm_startyear) = 0; 
   else 
    vm_deltaCap.lo(t,regi,"biopyrliq",rlf)$(t.val gt cm_startyear) = 1.0e-8; !! initiate a negligible increase to help model find the technology

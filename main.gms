@@ -913,14 +913,14 @@ parameter
 *' * (1): the values from the gdx are read in (works only if the gdx has a parameter value) ATTENTION: make sure that the values from the gdx have the right structure (e.g. regionally differentiated or not)
 *'
 parameter 
-  cm_biopyrEstablished      "Turn the four established industrial biochar production configurations on = 1 or off = 0"
+  c_biopyrEstablished      "Turn the four established industrial biochar production configurations on = 1 or off = 0"
 ; 
-  cm_biopyrEstablished = 1; !! def = 1
+  c_biopyrEstablished = 1; !! def = 1
 *'
 parameter
-  cm_biopyrliq             "Turn the advanced industrial biochar production setup that co-produces liquids on  = 1 or off = 0"
+  c_biopyrliq             "Turn the advanced industrial biochar production setup that co-produces liquids on  = 1 or off = 0"
 ;
-  cm_biopyrliq = 0;         !! def = 0
+  c_biopyrliq = 0;         !! def = 0
 *'
 parameter
   cm_33DAC                  "choose whether DAC (direct air capture) should be included into the CDR portfolio."
