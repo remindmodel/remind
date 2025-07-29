@@ -31,7 +31,12 @@ loop(pe2se(enty,enty2,te) $ (
     (not sameas(te,"bioeths")) AND
     (not sameas(te,"gasftcrec")) AND
     (not sameas(te,"gasftrec")) AND
-    (not sameas(te,"tnrs"))
+    (not sameas(te,"tnrs")) AND
+    (not sameas(te,"biopyronly")) AND
+    (not sameas(te,"biopyrhe")) AND
+    (not sameas(te,"biopyrel")) AND
+    (not sameas(te,"biopyrchp")) AND
+    (not sameas(te,"biopyrliq")) 
   ),
   vm_cap.lo(t,regi,te,"1")$(t.val gt 2026 AND t.val le 2070) = 1e-7;
   if( (NOT teCCS(te)), 
@@ -192,7 +197,7 @@ if (c_bioliqscen eq 0, !! no bioliquids technologies
   vm_deltaCap.up(t,regi,"bioftrec",rlf)$(t.val gt 2005)    = 1.0e-6;
   vm_deltaCap.up(t,regi,"bioftcrec",rlf)$(t.val gt 2005)   = 1.0e-6;
   vm_deltaCap.up(t,regi,"bioethl",rlf)$(t.val gt 2005)     = 1.0e-6;
-  vm_deltaCap.up(t,regi,"biopyrliq",rlf)$(t.val gt 2025) = 1.0e-6;
+  vm_deltaCap.up(t,regi,"biopyrliq",rlf)$(t.val gt 2025)   = 1.0e-8;
 ***  vm_cap.fx(t,regi,"bioftcrec",rlf)    = 0;
 ***  vm_cap.fx(t,regi,"bioftrec",rlf)     = 0;
 ***  vm_cap.fx(t,regi,"bioethl",rlf)      = 0;
@@ -207,28 +212,31 @@ if (c_bioh2scen eq 0, !! no bioh2 technologies
 ***  vm_cap.fx(t,regi,"bioh2",rlf)       = 0;
 );
 
-*' set capacity for all biochar technologies to 0 until 2015 and biopyrLiq to 0 until 2025 as it does not exist yet commercially
- vm_cap.fx(t,regi,te,rlf)$(t.val le 2015 AND (sameAs(te,"biopyronly") OR  sameas(te,"biopyrhe") OR 
-                                                sameas(te,"biopyrchp") OR sameas(te,"biopyrel"))) = 0;
- vm_cap.fx(t,regi,te,rlf)$(t.val le 2025 AND sameas(te,"biopyrliq")) = 0;
+*' switch pyrolysis technologies off/on and set capacity bounds
+vm_cap.fx(t,regi,te,rlf)$(t.val le 2015 AND (sameAs(te,"biopyronly") OR  sameas(te,"biopyrhe") OR  
+                                          sameas(te,"biopyrchp") OR sameas(te,"biopyrel"))) = 0; 
+vm_cap.fx(t,regi,te,rlf)$(t.val le 2025 AND sameas(te,"biopyrliq")) = 0; !! does not yet exist commercially
 
-*' switch pyrolysis technologies off/on
 if (cm_biopyrEstablished eq 0,
-  vm_deltaCap.up(t,regi,te,rlf)$(t.val ge 2020 AND (sameAs(te, "biopyronly") OR sameAs(te,"biopyrhe") 
-                                      OR sameAs(te,"biopyrel") OR sameAs(te,"biopyrchp"))) = 1.0e-6; 
-  else
-    vm_cap.up("2020",regi,te,rlf)$(sameAs(te,"biopyronly") OR sameAs(te,"biopyrhe") OR sameAs(te,"biopyrel") OR sameAs(te,"biopyrchp"))  
-                                 = p_boundCapBiochar("2020",regi) * s_tBC_2_TWa / 4; 
-    vm_cap.lo("2025",regi,te,rlf)$(sameAs(te, "biopyronly") OR sameAs(te,"biopyrhe") OR sameAs(te,"biopyrel") OR sameAs(te,"biopyrchp")) 
-                                 = p_boundCapBiochar("2020",regi) * s_tBC_2_TWa / 4; 
-    vm_cap.up("2025",regi,te,rlf)$(sameAs(te, "biopyronly") OR sameAs(te,"biopyrhe") OR  sameAs(te,"biopyrel") OR sameAs(te,"biopyrchp"))
-                                  = (1.55/0.9)  * p_boundCapBiochar("2025",regi) * s_tBC_2_TWa / 4;                                
+  vm_deltaCap.fx(t,regi,te,rlf)$(t.val ge cm_startyear AND (sameAs(te, "biopyronly") OR sameAs(te,"biopyrhe") 
+                                OR sameAs(te,"biopyrel") OR sameAs(te,"biopyrchp"))) = 0; 
+else
+  vm_cap.up("2020",regi,te,rlf)$(sameAs(te,"biopyronly") OR sameAs(te,"biopyrhe") OR sameAs(te,"biopyrel") OR sameAs(te,"biopyrchp"))  
+                            = p_boundCapBiochar("2020",regi) * s_tBC_2_TWa / 4; 
+  vm_cap.lo("2025",regi,te,rlf)$(sameAs(te, "biopyronly") OR sameAs(te,"biopyrhe") OR sameAs(te,"biopyrel") OR sameAs(te,"biopyrchp")) 
+                            = p_boundCapBiochar("2020",regi) * s_tBC_2_TWa / 4; 
+  !! set upper bound to 70% above the lower bound which is based on 2024 values    
+  vm_cap.up("2025",regi,te,rlf)$(sameAs(te, "biopyronly") OR sameAs(te,"biopyrhe") OR  sameAs(te,"biopyrel") OR sameAs(te,"biopyrchp"))
+                            = 1.7 * p_boundCapBiochar("2025",regi) * s_tBC_2_TWa / 4;                      
 );
 
 if (cm_biopyrliq eq 0,
-   vm_deltaCap.up(t,regi,"biopyrliq",rlf)$(t.val gt 2025) = 1.0e-6; !! limit to negligible increase as of 2025 when turned off
+   vm_deltaCap.fx(t,regi,"biopyrliq",rlf)$(t.val ge cm_startyear) = 0; 
   else 
-   vm_deltaCap.lo(t,regi,"biopyrliq",rlf)$(t.val ge 2030) = 1.0e-6; !! initiate a negligible increase as of 2030 to help model find the technology
+   vm_deltaCap.lo(t,regi,"biopyrliq",rlf)$(t.val gt cm_startyear) = 1.0e-8; !! initiate a negligible increase to help model find the technology
+   vm_deltaCap.up(t,regi,"biopyrliq",rlf)$(t.val gt cm_startyear) = 1e10; !! necessary to revert fixing to 0
+);
+
 );
 
 *' @stop
