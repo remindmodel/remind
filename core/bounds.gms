@@ -221,12 +221,12 @@ if (cm_biopyrEstablished eq 0,
                                 OR sameAs(te,"biopyrchp"))) = 0; 
 else
   vm_cap.up("2020",regi,te,rlf)$(sameAs(te,"biopyronly") OR sameAs(te,"biopyrhe") OR sameAs(te,"biopyrchp"))  
-                            = p_boundCapBiochar("2020",regi) * s_tBC_2_TWa / 4; 
+                            = p_boundCapBiochar("2020",regi) * s_tBC_2_TWa / 3; 
   vm_cap.lo("2025",regi,te,rlf)$(sameAs(te, "biopyronly") OR sameAs(te,"biopyrhe") OR sameAs(te,"biopyrchp")) 
-                            = p_boundCapBiochar("2020",regi) * s_tBC_2_TWa / 4; 
+                            = p_boundCapBiochar("2020",regi) * s_tBC_2_TWa / 3; 
   !! set upper bound to 70% above the lower bound which is based on 2024 values    
   vm_cap.up("2025",regi,te,rlf)$(sameAs(te, "biopyronly") OR sameAs(te,"biopyrhe") OR sameAs(te,"biopyrchp"))
-                            = 1.7 * p_boundCapBiochar("2025",regi) * s_tBC_2_TWa / 4;                      
+                            = 1.7 * p_boundCapBiochar("2025",regi) * s_tBC_2_TWa / 3;                      
 );
 
 if (cm_biopyrliq eq 0,
