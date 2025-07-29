@@ -1576,14 +1576,6 @@ teBioPebiolc(all_te)      "biomass technologies using pebiolc"
     biopyrliq       "biomass pyrolysis to biochar plus liquids (combined with Fischer-Tropsch plant, advanced industrial)"
 /
 
-teBiochar(all_te)
-/
-    biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
-    biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
-    biopyrchp       "biomass pyrolysis to biochar plus heat and power (established industrial)"   
-    biopyrliq       "biomass pyrolysis to biochar plus liquids (combined with Fischer-Tropsch plant, advanced industrial)"
-/
-
 teNoTransform(all_te) "all technologies that do not transform energy but still have investment and O&M costs (like storage or grid)"
 /
     storspv       "storage technology for photo voltaic (PV)"
