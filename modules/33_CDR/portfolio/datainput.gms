@@ -84,11 +84,11 @@ $offdelim
 
 p33_BiocharPricePath(ttot, char)$(ttot.val gt 2050) = p33_BiocharPricePath("2050", char);
 if (cm_33_BCpriceForm eq 1, 
-  p33_BiocharPrice(ttot) = p33_BiocharPricePath(ttot, "priceLow") / s_tBC_2_TWa / sm_trillion_2_non * s_D2015_2_D2017;
+  p33_BiocharPrice(ttot) = p33_BiocharPricePath(ttot, "priceLow") / sm_tBC_2_TWa / sm_trillion_2_non * sm_D2015_2_D2017;
 elseif (cm_33_BCpriceForm eq 2),
-  p33_BiocharPrice(ttot) = p33_BiocharPricePath(ttot, "priceHigh") / s_tBC_2_TWa / sm_trillion_2_non * s_D2015_2_D2017;
+  p33_BiocharPrice(ttot) = p33_BiocharPricePath(ttot, "priceHigh") / sm_tBC_2_TWa / sm_trillion_2_non * sm_D2015_2_D2017;
 else
-  p33_BiocharPrice(ttot) = cm_33_BCpriceForm / s_tBC_2_TWa / sm_trillion_2_non * s_D2015_2_D2017;
+  p33_BiocharPrice(ttot) = cm_33_BCpriceForm / sm_tBC_2_TWa / sm_trillion_2_non * sm_D2015_2_D2017;
 );
 
 *------------------------------------------------------------------------------------
