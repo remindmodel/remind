@@ -236,8 +236,6 @@ if (c_biopyrliq eq 0,
    vm_deltaCap.up(t,regi,"biopyrliq",rlf)$(t.val gt cm_startyear) = 1e10; !! necessary to revert fixing to 0
 );
 
-);
-
 *' @stop
 
 ***--------------------------------------------------------------------
