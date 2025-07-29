@@ -1184,7 +1184,6 @@ te(all_te)              "energy technologies"
     biodiesel       "oil biomass to biodiesel"
     biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
-    biopyrel        "biomass pyrolysis to biochar plus power (established industrial)"
     biopyrchp       "biomass pyrolysis to biochar plus heat and power (established industrial)"   
     biopyrliq       "biomass pyrolysis to biochar plus liquids (combined with Fischer-Tropsch plant, advanced industrial)"
     biocharuse      "use of biochar, e.g. for soil or for building materials"
@@ -1297,7 +1296,6 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
     biodiesel       "oil biomass to biodiesel"
     biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
-    biopyrel        "biomass pyrolysis to biochar plus power (established industrial)"
     biopyrchp       "biomass pyrolysis to biochar plus heat and power (established industrial)"   
     biopyrliq       "biomass pyrolysis to biochar plus liquids (combined with Fischer-Tropsch plant, advanced industrial)"
     geohdr          "geothermal electric hot dry rock"
@@ -1356,7 +1354,6 @@ teLearn(all_te)     "Learning technologies (for which investment costs are reduc
 $ifthen.cm_BCLearning not "%cm_BCLearning%" == 0
     biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
-    biopyrel        "biomass pyrolysis to biochar plus power (established industrial)"
     biopyrchp       "biomass pyrolysis to biochar plus heat and power (established industrial)"  
 $endif.cm_BCLearning
 /
@@ -1430,7 +1427,6 @@ teBio(all_te)      "biomass energy systems technologies"
     biodiesel   "oil biomass to biodiesel"
     biopyronly  "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe    "biomass pyrolysis to biochar plus heat (established industrial)"
-    biopyrel    "biomass pyrolysis to biochar plus power (established industrial)"
     biopyrchp   "biomass pyrolysis to biochar plus heat and power (established industrial)"   
     biopyrliq   "biomass pyrolysis to biochar plus liquids (combined with Fischer-Tropsch plant, advanced industrial)"
 /
@@ -1451,11 +1447,10 @@ teRe(all_te)     "renewable technologies including biomass"
     bioethl     "biomass to ethanol"
     bioeths     "sugar and starch biomass to ethanol"
     biodiesel   "oil biomass to biodiesel"
-    biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
-    biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
-    biopyrel        "biomass pyrolysis to biochar plus power (established industrial)"
-    biopyrchp       "biomass pyrolysis to biochar plus heat and power (established industrial)"   
-    biopyrliq       "biomass pyrolysis to biochar plus liquids (combined with Fischer-Tropsch plant, advanced industrial)"
+    biopyronly  "biomass pyrolysis to biochar, no energy co-product (established industrial)"
+    biopyrhe    "biomass pyrolysis to biochar plus heat (established industrial)"
+    biopyrchp   "biomass pyrolysis to biochar plus heat and power (established industrial)"   
+    biopyrliq   "biomass pyrolysis to biochar plus liquids (combined with Fischer-Tropsch plant, advanced industrial)"
     geohdr      "geothermal electric hot dry rock"
     geohe       "geothermal heat"
     hydro       "hydro electric"
@@ -1577,7 +1572,6 @@ teBioPebiolc(all_te)      "biomass technologies using pebiolc"
     bioethl     "biomass to ethanol"
     biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
-    biopyrel        "biomass pyrolysis to biochar plus power (established industrial)"
     biopyrchp       "biomass pyrolysis to biochar plus heat and power (established industrial)"   
     biopyrliq       "biomass pyrolysis to biochar plus liquids (combined with Fischer-Tropsch plant, advanced industrial)"
 /
@@ -1586,7 +1580,6 @@ teBiochar(all_te)
 /
     biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
-    biopyrel        "biomass pyrolysis to biochar plus power (established industrial)"
     biopyrchp       "biomass pyrolysis to biochar plus heat and power (established industrial)"   
     biopyrliq       "biomass pyrolysis to biochar plus liquids (combined with Fischer-Tropsch plant, advanced industrial)"
 /
@@ -2470,7 +2463,6 @@ pe2se(all_enty,all_enty,all_te) "map primary energy carriers to secondary"
     pebiolc.segabio.biogasc
     pebiolc.sebiochar.biopyronly
     pebiolc.sebiochar.biopyrhe
-    pebiolc.sebiochar.biopyrel
     pebiolc.sebiochar.biopyrchp
     pebiolc.sebiochar.biopyrliq
     pegeo.seel.geohdr
@@ -2605,7 +2597,6 @@ pc2te(all_enty,all_enty,all_te,all_enty)    "mapping for own consumption of tech
     pebiolc.sebiochar.biopyronly.seel
     pebiolc.sebiochar.biopyrhe.sehe
     pebiolc.sebiochar.biopyrhe.seel
-    pebiolc.sebiochar.biopyrel.seel
     pebiolc.sebiochar.biopyrchp.seel
     pebiolc.sebiochar.biopyrchp.sehe
     pebiolc.sebiochar.biopyrliq.seel
@@ -2720,7 +2711,6 @@ emi2te(all_enty,all_enty,all_te,all_enty)    " map emissions to technologies"
     pebiolc.segabio.biogasc.n2o
     pebiolc.sebiochar.biopyronly.co2
     pebiolc.sebiochar.biopyrhe.co2
-    pebiolc.sebiochar.biopyrel.co2
     pebiolc.sebiochar.biopyrchp.co2
     pebiolc.sebiochar.biopyrliq.co2
     segabio.fegas.tdbiogas.ch4
@@ -2828,7 +2818,6 @@ emiBiochar2te(all_enty,all_enty,all_te,all_enty) "mapping of Biochar PE,SE,techn
 /
     pebiolc.sebiochar.biopyronly.co2
     pebiolc.sebiochar.biopyrhe.co2
-    pebiolc.sebiochar.biopyrel.co2
     pebiolc.sebiochar.biopyrchp.co2
     pebiolc.sebiochar.biopyrliq.co2
 /
@@ -2885,7 +2874,7 @@ teSe2rlf(all_te,rlf)        "mapping for techologies to grades. Currently, the i
     (windon,windoff,spv,csp,refliq,hydro,geohe,geohdr,solhe,ngcc,ngccc,ngt,gaschp,gashp,gash2,gash2c,gastr,gasftrec,gasftcrec,dot,
     igcc,igccc,pc,coaltr,coalgas,coalh2,coalh2c,coalchp,coalhp,coalftrec,coalftcrec,
     biotr,biotrmod,biogas,biogasc,bioftrec,bioftcrec,bioh2,bioh2c,biohp,biochp,bioigcc,bioigccc,
-    biopyronly,biopyrhe,biopyrel,biopyrchp,biopyrliq,
+    biopyronly,biopyrhe,biopyrchp,biopyrliq,
     elh2,h2turb,elh2VRE,h2turbVRE,bioethl,bioeths,biodiesel,tnrs,fnrs
     ) . 1
 /

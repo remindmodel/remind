@@ -160,7 +160,7 @@ $offdelim
 *** Biochar parametrization variation
 ***---------------------------------------------------------------------------
 fm_dataglob("learn", te)$(sameAs(te, "biopyronly") OR sameAs(te, "biopyrhe") OR
-                            sameAs(te, "biopyrel") OR sameAs(te, "biopyrchp")) = %cm_BCLearning%;
+                          sameAs(te, "biopyrchp")) = %cm_BCLearning%;
 
 ***---------------------------------------------------------------------------
 *** SSP-dependent technology assumptions
@@ -781,6 +781,8 @@ pm_cf(ttot,regi,"h2turbVRE")$(ttot.val ge 2025) = pm_cf(ttot,regi,"ngt");
 pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
+*TD* Set capacity factors for pyrolysis technologies. *Move to mrremind for final implementation*
+pm_cf(ttot,regi,"biocharuse") = 1;
 
 *** Region- and tech-specific early retirement rates
 loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi),
@@ -1290,7 +1292,6 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,"ccsinje")      = 1.0;
   p_adj_coeff(ttot,regi,"biopyronly")   = 0.55; !! like biochp and bioigcc;
   p_adj_coeff(ttot,regi,"biopyrhe")     = 0.55; !! like biochp and bioigcc;
-  p_adj_coeff(ttot,regi,"biopyrel")     = 0.55; !! like biochp and bioigcc;
   p_adj_coeff(ttot,regi,"biopyrchp")    = 0.55; !! like biochp and bioigcc;
   p_adj_coeff(ttot,regi,"biopyrliq")    = 0.65; !! like bioftrec;
   p_adj_coeff(ttot,regi,"dac")          = 0.8;

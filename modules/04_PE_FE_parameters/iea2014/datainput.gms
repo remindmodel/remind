@@ -297,7 +297,6 @@ p04_prodCoupleGlob("pebiolc","sebiochar","biopyrhe","seel") = -0.04; !! 2% of bi
 *** biopyrhe: data from certification process according to the European Biochar 345 Certificate (EBC, 2024), 
 *** in line with Sessions et al. (2019) https://doi.org/10.1016/j.biombioe.2019.02.015 and Roberts et al (2010) https://doi.org/10.1021/es902266r
 p04_prodCoupleGlob("pebiolc","sebiochar","biopyrhe","sehe") = 0.58; 
-p04_prodCoupleGlob("pebiolc","sebiochar","biopyrel","seel") = 0.13; !! Fawzy et al., 2022, https://doi.org/10.1016/j.jclepro.2022.133660)
 p04_prodCoupleGlob("pebiolc","sebiochar","biopyrchp","sehe") = 0.27; !! data from certification process according to the European Biochar Certificate (2024)
 p04_prodCoupleGlob("pebiolc","sebiochar","biopyrchp","seel") = 0.10; !! data from certification process according to the European Biochar Certificate (2024)
 p04_prodCoupleGlob("pebiolc","sebiochar","biopyrliq","seel") = -0.2; !! according to Buffi et al (2024) https://doi.org/10.1016/j.enconman.2024.118450

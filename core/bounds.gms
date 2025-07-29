@@ -34,7 +34,6 @@ loop(pe2se(enty,enty2,te) $ (
     (not sameas(te,"tnrs")) AND
     (not sameas(te,"biopyronly")) AND
     (not sameas(te,"biopyrhe")) AND
-    (not sameas(te,"biopyrel")) AND
     (not sameas(te,"biopyrchp")) AND
     (not sameas(te,"biopyrliq")) 
   ),
@@ -214,19 +213,19 @@ if (c_bioh2scen eq 0, !! no bioh2 technologies
 
 *' switch pyrolysis technologies off/on and set capacity bounds
 vm_cap.fx(t,regi,te,rlf)$(t.val le 2015 AND (sameAs(te,"biopyronly") OR  sameas(te,"biopyrhe") OR  
-                                          sameas(te,"biopyrchp") OR sameas(te,"biopyrel"))) = 0; 
+                                          sameas(te,"biopyrchp"))) = 0; 
 vm_cap.fx(t,regi,te,rlf)$(t.val le 2025 AND sameas(te,"biopyrliq")) = 0; !! does not yet exist commercially
 
 if (cm_biopyrEstablished eq 0,
   vm_deltaCap.fx(t,regi,te,rlf)$(t.val ge cm_startyear AND (sameAs(te, "biopyronly") OR sameAs(te,"biopyrhe") 
-                                OR sameAs(te,"biopyrel") OR sameAs(te,"biopyrchp"))) = 0; 
+                                OR sameAs(te,"biopyrchp"))) = 0; 
 else
-  vm_cap.up("2020",regi,te,rlf)$(sameAs(te,"biopyronly") OR sameAs(te,"biopyrhe") OR sameAs(te,"biopyrel") OR sameAs(te,"biopyrchp"))  
+  vm_cap.up("2020",regi,te,rlf)$(sameAs(te,"biopyronly") OR sameAs(te,"biopyrhe") OR sameAs(te,"biopyrchp"))  
                             = p_boundCapBiochar("2020",regi) * s_tBC_2_TWa / 4; 
-  vm_cap.lo("2025",regi,te,rlf)$(sameAs(te, "biopyronly") OR sameAs(te,"biopyrhe") OR sameAs(te,"biopyrel") OR sameAs(te,"biopyrchp")) 
+  vm_cap.lo("2025",regi,te,rlf)$(sameAs(te, "biopyronly") OR sameAs(te,"biopyrhe") OR sameAs(te,"biopyrchp")) 
                             = p_boundCapBiochar("2020",regi) * s_tBC_2_TWa / 4; 
   !! set upper bound to 70% above the lower bound which is based on 2024 values    
-  vm_cap.up("2025",regi,te,rlf)$(sameAs(te, "biopyronly") OR sameAs(te,"biopyrhe") OR  sameAs(te,"biopyrel") OR sameAs(te,"biopyrchp"))
+  vm_cap.up("2025",regi,te,rlf)$(sameAs(te, "biopyronly") OR sameAs(te,"biopyrhe") OR sameAs(te,"biopyrchp"))
                             = 1.7 * p_boundCapBiochar("2025",regi) * s_tBC_2_TWa / 4;                      
 );
 
