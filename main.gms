@@ -1703,7 +1703,7 @@ $setglobal cm_CCS_markup  off  !! def = off
 ***   or number (ex. 0.66), multiply by 0.66 Industry CSS cost markup
 $setglobal cm_Industry_CCS_markup  off !! def = off
 *' Flag to change learning assumption for established pyrolysis technologies. 0 = not learning; any number = learning rate
-*' Beware: you may need to start a new NPi if you want to have techs learning.
+*' Beware: When turned on, policy runs require a NPi that also has learning, otherwise it becomes unbounded.
 *' (0.1): Learning rate of 10%.
 *' (0): Not learning
 $setglobal c_BClearning 0 !! def = 0
