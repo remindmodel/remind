@@ -66,20 +66,17 @@ omf                       0.03     0.04    0.04      0.04       0.04     0.04   
 omv                               30.11   25.00     31.50      50.50    10.90     12.80   10.60    10.60     97.27     38.99        5.05      10.60       10.60
 flexibility                         0.7              0.75        0.7
 
-+              biopyronly      biopyrhe        biopyrchp           biopyrliq  
++              biopyronly      biopyrhe        biopyrchp           biopyrliq    biocharuse
 tech_stat               1             1                1                 3 
 inco0                1080          1430             1750              3215  
 floorcost             511           668              989        
 constrTme               4             4                4                 4
 eta                  0.48           0.48             0.48              0.36 
 omf                  0.04           0.04             0.04              0.05 
-omv                    70             70               70              138
-lifetime               30             30               30               40 
+omv                    70             70               70              138          
+lifetime               30             30               30               40             1
 learn                0.10           0.10             0.10       
 ccap0               0.001          0.001            0.001       
-
-+                  biocharuse
-lifetime                   1   
 
 *** hydrogen technologies
 +                   elh2    h2turb      h2curt    h2turbVRE   elh2VRE    h22ch4    MeOH
