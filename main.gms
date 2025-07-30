@@ -1706,7 +1706,7 @@ $setglobal cm_Industry_CCS_markup  off !! def = off
 *' Beware: you may need to start a new NPi if you want to have techs learning.
 *' (0.1): Learning rate of 10%.
 *' (0): Not learning
-$setglobal cm_BClearning 0 !! def = 0
+$setglobal c_BClearning 0 !! def = 0
 *** cm_renewables_floor_cost "additional floor cost for renewables"
 ***   def <- "off" = use default floor cost for renewables.
 ***   or list of techs with respective value to be added to the renewables floor cost in Europe

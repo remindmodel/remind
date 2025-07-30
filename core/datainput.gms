@@ -160,7 +160,7 @@ $offdelim
 *** Biochar parametrization variation
 ***---------------------------------------------------------------------------
 fm_dataglob("learn", te)$(sameAs(te, "biopyronly") OR sameAs(te, "biopyrhe") OR
-                          sameAs(te, "biopyrchp")) = %cm_BCLearning%;
+                          sameAs(te, "biopyrchp")) = %c_BCLearning%;
 
 ***---------------------------------------------------------------------------
 *** SSP-dependent technology assumptions

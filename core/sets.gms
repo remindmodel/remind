@@ -1351,11 +1351,11 @@ teLearn(all_te)     "Learning technologies (for which investment costs are reduc
     storwindoff "storage technology for wind offshore"
     storcsp     "storage technology for csp"
     elh2        "hydrogen elecrolysis"
-$ifthen.cm_BCLearning not "%cm_BCLearning%" == 0
+$ifthen.c_BCLearning not "%c_BCLearning%" == 0
     biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
     biopyrchp       "biomass pyrolysis to biochar plus heat and power (established industrial)"  
-$endif.cm_BCLearning
+$endif.c_BCLearning
 /
 
 teNoLearn(all_te)   "Technologies without learning effect"
