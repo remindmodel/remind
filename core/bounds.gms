@@ -223,7 +223,7 @@ else
   vm_cap.up("2020",regi,te,rlf)$(sameAs(te,"biopyronly") OR sameAs(te,"biopyrhe") OR sameAs(te,"biopyrchp"))  
                             = p_boundCapBiochar("2020",regi) * sm_tBC_2_TWa / 3; 
   vm_cap.lo("2025",regi,te,rlf)$(sameAs(te, "biopyronly") OR sameAs(te,"biopyrhe") OR sameAs(te,"biopyrchp")) 
-                            = p_boundCapBiochar("2020",regi) * sm_tBC_2_TWa / 3; 
+                            = p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3; 
   !! set upper bound to 70% above the lower bound which is based on 2024 values    
   vm_cap.up("2025",regi,te,rlf)$(sameAs(te, "biopyronly") OR sameAs(te,"biopyrhe") OR sameAs(te,"biopyrchp"))
                             = 1.7 * p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3;                      

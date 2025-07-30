@@ -781,7 +781,7 @@ pm_cf(ttot,regi,"h2turbVRE")$(ttot.val ge 2025) = pm_cf(ttot,regi,"ngt");
 pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
-*TD* Set capacity factors for pyrolysis technologies. *Move to mrremind for final implementation*
+*TD* Set capacity factors for pyrolysis technologies. Will delete after added in next inputdata generation
 pm_cf(ttot,regi,"biocharuse") = 1;
 
 *** Region- and tech-specific early retirement rates
@@ -916,7 +916,7 @@ $offdelim
 /;
 
 *** read in data on Biochar capacities used as upper and lower bound on Biochar production in 2020 and 2025
-parameter p_boundCapBiochar(ttot, all_regi)        "installed and planned capacity of CCS"
+parameter p_boundCapBiochar(ttot, all_regi)        "installed and planned capacity of Biochar [t BC/a]"
 /
 $ondelim
 $include "./core/input/p_boundCapBiochar.cs4r"

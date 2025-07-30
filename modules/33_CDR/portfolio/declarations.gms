@@ -29,9 +29,8 @@ p33_rock_weath_rate(rlf)                 "fraction of stone weathering per year 
 p33_EW_upScalingLimit(ttot)              "Annual growth rate limit on upscaling of mining & spreading rocks on fields"
 p33_EW_shortTermEW_Limit(all_regi)       "Limit on 2030 potential for enhanced weathering, defined in Gt rocks, based on % of land on which EW is applied"
 p33_EW_maxShareOfCropland(all_regi)      "Share of cropland that can be used for enhanced weathering. Limits maximum amount of rocks weathering."
-*** Biochar
-p33_BiocharPricePath(ttot, char)                       "Biochar price trajectories assumptions over time (independent of actual deployment) [US$2015/t BC]"
-p33_BiocharPrice(ttot)                                 "Biochar prices assumption [trilUS$2017/TWa BC]"      
+*** Biochar                  
+p33_BiocharPrice(ttot)                   "Biochar prices assumption [trilUS$2017/TWa BC]"      
 *** OAE 
 p33_oae_eez_limit(all_regi)              "Regional limit on ocean uptake"
 

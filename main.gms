@@ -1004,9 +1004,9 @@ parameter
   cm_33_BCpriceForm               "biochar price assumptions (revenue from using biochar in agriculture or construction)"
 ;
   cm_33_BCpriceForm = 1; !! def = 1 
-*' *  (1): decreasing price over time, independent of actual deployment. Lower price path. Fits best for PB650.
-*' *  (2): decreasing price over time, independent of actual deployment. Higher price path. Fits best for PB650.
-*' *  (any other number): constant price. Chose 0 to turn it off. Unit: [2015 USD / t BC]. Suggested range: 100-200 USD/tBC. Better choice for PB1000.
+*' *  (1): decreasing price over time, independent of actual deployment. Lower price path. Fits best for peak budget runs with 650 Gt CO2 as of 2020.
+*' *  (2): decreasing price over time, independent of actual deployment. Higher price path.Fits best for peak budget runs with 650 Gt CO2 as of 2020.
+*' *  (any other number): constant price. Chose 0 to turn it off. Unit: [2015 USD / t BC]. Suggested range: 100-200 USD/tBC. Better choice for runs with higher peak budget.
 parameter
   cm_33_maxFeShare                "max share of the CDR sectors' FE demand in the region's total FE demand, by FE type. Default is 10%"
 ;
