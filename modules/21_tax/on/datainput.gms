@@ -54,24 +54,12 @@ $offdelim
 ;
 
 
-Parameter f21_max_fe_sub(tall,all_regi,all_enty) "maximum final energy subsidy levels (in $/Gj) from REMIND version prior to rev. 5429"
-  /
-$ondelim
-$include "./modules/21_tax/on/input/f21_max_fe_sub.cs4r"
-$offdelim
-  /
-;
-
 
 *** transfer data to parameters and rescaling of FE parameters from $/GJ to trillion $ / TWa (subsidies also get adjusted in preloop.gms to avoid neg. prices)
 
   p21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe)$f21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe) = f21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe)*0.001/sm_EJ_2_TWa;
   p21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe)$f21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe) = f21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe)*0.001/sm_EJ_2_TWa;
   p21_tau_fuEx_sub(ttot,regi,entyPe)$f21_tau_fuEx_sub(ttot,regi,entyPe) = f21_tau_fuEx_sub(ttot,regi,entyPe)*0.001/sm_EJ_2_TWa;
-
-  p21_max_fe_sub(ttot,all_regi,entyFe)$f21_max_fe_sub(ttot,all_regi,entyFe) = f21_max_fe_sub(ttot,all_regi,entyFe)*0.001/sm_EJ_2_TWa;
-
-
 
 *** -------------------------PE2SE Taxes--------------------------(Primary to secondary energy technology taxes, specified by technology)
 *** cb 20110923 load paths for technology taxes, subsidies and inconvenience costs 
