@@ -23,7 +23,7 @@ Execute_Loadpoint 'magpieData.gdx' p30_pebiolc_pricemag;
 
 *DK* In coupled runs overwrite pebiolc production from look-up table with actual MAgPIE values.
 *DK* Read production of 2nd gen. purpose grown bioenergy from MAgPIE (given to MAgPIE from previous Remind run)
-Execute_Loadpoint 'magpieData.gdx' pm_pebiolc_demandmag;
+*** Moved to core/presolve.gms because it is needed there for calcualtions
 
 ***=============================================================
 ***  BEGIN: calculate shift factors for bioenergy prices 
