@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - [[#2103]](https://github.com/remindmodel/remind/pull/2103) Refactored the MAgPIE coupling interface (`getReportData.R`) introducing MAgPIE-to-REMIND mappings and replacing magclass with quitte/dplyr.
 
 ### added
-- 
+- [[#2168]](https://github.com/remindmodel/remind/pull/2168) Adds biochar as novel CDR option. Biochar can be produced via three established and one future pe2se technology.
 
 ### removed
 -
