@@ -8,12 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### input data/calibration
+- [[mrcommons #167]](https://github.com/pik-piam/mrcommons/pull/167) new input data rev including new subtype of landuse CO2 emissions (`co2luc`)
 
 ### changed
--
+- [[#2103]](https://github.com/remindmodel/remind/pull/2103) Refactored the MAgPIE coupling interface (`getReportData.R`) introducing MAgPIE-to-REMIND mappings and replacing magclass with quitte/dplyr.
 
 ### added
--
+- [[#2168]](https://github.com/remindmodel/remind/pull/2168) Adds biochar as novel CDR option. Biochar can be produced via three established and one future pe2se technology.
 
 ### removed
 -

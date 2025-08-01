@@ -49,6 +49,20 @@
 		"yearsBarPlot": "c(2020, 2030, 2040, 2050)",
 		"mainReg": "'EU27'"
 	},
+	"EUR": {
+		"projectLibrary": "'remind2'",
+		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA', 'UKI', 'NES', 'NEN', 'EUR')",
+		"mainReg": "'EUR'",
+		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))"
+	},
+	"EUR-short": {
+		"projectLibrary": "'remind2'",
+		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA', 'UKI', 'NES', 'NEN', 'EUR')",
+		"yearsScen": "seq(2005, 2050, 5)",
+		"yearsHist": "c(seq(2000, 2024, 1), seq(2025, 2050, 5))",
+		"yearsBarPlot": "c(2020, 2030, 2040, 2050)",
+		"mainReg": "'EUR'"
+	},
 	"AriadneDEU": {
 		"projectLibrary": "'remind2'",
 		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
