@@ -334,6 +334,12 @@ all_te          "all energy technologies, including from modules"
     tdfosgai        "transmission and distribution for gas from fossil origin to industry"
     tdhei           "transmission and distribution for heat to industry"
     tdeli           "transmission and distribution for electricity to industry"
+*** dummy entries to allow inclusion of some output variables into f04_IO_output.cs4r - can be removed once the structuremappings are fixed/improved
+    x_seliq
+    x_feho
+    x_nonenergy
+    x_fedie
+    x_bunkers
 /
 
 all_enty             "all types of quantities"
