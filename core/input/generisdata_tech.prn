@@ -170,7 +170,7 @@ learn                                      0.15
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 +                chemOld     chemElec    chemH2      stCrNg      stCrLiq      amSyCoal      amSyNG      amSyLiq      amSyH2     meSySol     meSyNG     meSyLiq     meSyH2
 !! documentation & sources: see below 
-inco0                500         500        500        1080         1040          2100         875         1190        1230         520        300         290       1050
+inco0                500         500        500        1080         1040          2100         875         1190        1250         520        300         290       1050
 omf                 0.06         0.1        0.1       0.025        0.025          0.05       0.025        0.025        0.04        0.05      0.025       0.025      0.015
 constrTme              3           3          3           3            3             3           3            3           3           3          3           3          3
 lifetime              30          30         30          30           30            30          30           30          30          30         30          30         30
@@ -426,10 +426,11 @@ amSyCoal amSyNG amSyLiq and amSyH2:
         (Sources: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A3)
 
     amSyH2:
-        inco0 ~ 1.69 MEUR_2020/MW:LHV *1000 / 3.6 MJ/MWh * 18.6 MJ/kg * 1.08 USD/EUR = 9412 kgNH3/h 
-        9412 kgNH3/h / (8760 / 0.8 * 1000) /USD_2020 * USD_2015 ~ 1230 $/t
-        omf ~ 0.04
+        inco0 ~ 1.69 MEUR_2020/MW:LHV *1000 / 3.6 MJ/MWh * 18.9 MJ/kg * 1.08 USD/EUR = 9564 kgNH3/h 
+        9412 kgNH3/h / (8760 / 0.8 * 1000) /USD_2020 * USD_2015 ~ 1250 $/t
         (Sources: Technology Data for Renewable Fuels by Danish Energy Agency. 103 Hydrogen to Ammonia)
+        omf ~ 0.04
+        (M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021, 294, 116170. Table A1)
 
 amSyCoal_cc amSyNG_cc amSyLiq_cc:
 
@@ -461,21 +462,16 @@ meSySol meSyNG meSyLiq and meSyH2:
         (Sources: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5)
 
     meSyLiq:
-        inco0 ~ 1203 /USD_2016 * USD_2015 ~ 290 $/t
+        inco0 ~ 295 /USD_2016 * USD_2015 ~ 290 $/t
         omf ~ 0.025
         (Sources: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A3)
 
     meSyH2:
-        inco0 ~ 1.35 MEUR_2020/MW:LHV *1000 / 3.6 MJ/MWh * 18.6 MJ/kg * 1.08 USD/EUR = 8035 kgMeOH/h 
+        inco0 ~ 1.35 MEUR_2020/MW:LHV *1000 / 3.6 MJ/MWh * 19.9 MJ/kg * 1.08 USD/EUR = 8035 kgMeOH/h 
         8035 kgNH3/h / (8760 / 0.8 * 1000) /USD_2020 * USD_2015 ~ 1050 $/t
-        omf ~ 0.015
         (Sources: Technology Data for Renewable Fuels by Danish Energy Agency. 98 Methanol from hydrogen)
-
-meSyChemRe:
-
-    inco0 ~ 148MM$ per 353.8 t/d /353.8 * (8760 * 0.85) USD_2022 * USD_2015 ~ 49 $/t
-    omf ~ 8.18 MUSD_2022/year /148.8 MUSD_2022 = 0.055
-    (Sources: Afzal, Shaik, et al., Green Chemistry 25.13 (2023): 5068-5085. Table S3 and S4.)
+        omf ~ 0.015
+        (Sources: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5)
 
 meSySol_cc meSyNg_cc meSyLiq_cc:
 
@@ -497,8 +493,9 @@ meSySol_cc meSyNg_cc meSyLiq_cc:
 mtoMta mtoMtaH2:  
 
     inco0 ~ 320MM$ per (386 Propylene + 214 Ethylene) kt/a /600 * 1000 ~ 533 $/t
-    omf ~ 0.025
     (Sources: S. Jasper and M. M. El-Halwagi, Processes, 2015, 3, 684–698. Table 2)
+    omf ~ 0.025
+    (Sources: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A3)
 
 fertProd   fertProdH2:    
 
@@ -526,7 +523,7 @@ mechRe meSyChemRe and stCrChemRe:
     for Chemical Recycling: Gasification
         inco0 ~ 148MM$ per 353.8 t/d /353.8 / (8760 * 0.8) USD_2022 * USD_2015 ~ 49 $/t
         omf ~ 8.18 MUSD_2022/year /148.8 MUSD_2022 = 0.055
-        (Sources: Shaik Afzal 2023 Table S3. Table S4.)
+        (Sources: Afzal, Shaik, et al., Green Chemistry 25.13 (2023): 5068-5085. Table S3 and S4.)
 
 $offtext
 
