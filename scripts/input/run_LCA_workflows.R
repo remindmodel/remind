@@ -40,6 +40,11 @@ if (!file.exists(logFile)) {
   createdLogFile <- FALSE
 }
 
+errFile <- file.path(outputDir, paste0("err_lca.txt"))
+if (!file.exists(errFile)) {
+  file.create(errFile)
+}
+
 
 logMsg <- paste0(
   date(), " run_LCA_internalization_workflow.R:\n",
@@ -151,7 +156,7 @@ logMsg <- paste0(
 )
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 
-system(paste(condaCmd, runLCAWorkflowCmd))
+system(paste(condaCmd, runLCAWorkflowCmd, "&>>", errFile))
 
 # 
 # WRITE GDXes
