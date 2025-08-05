@@ -170,7 +170,7 @@ learn                                      0.15
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 +                chemOld     chemElec    chemH2      stCrNg      stCrLiq      amSyCoal      amSyNG      amSyLiq      amSyH2     meSySol     meSyNG     meSyLiq     meSyH2
 !! documentation & sources: see below 
-inco0                500         500        500        1080         1040          2100         875         1190        1230         530        300         290       1050
+inco0                500         500        500        1080         1040          2100         875         1190        1230         520        300         290       1050
 omf                 0.06         0.1        0.1       0.025        0.025          0.05       0.025        0.025        0.04        0.05      0.025       0.025      0.015
 constrTme              3           3          3           3            3             3           3            3           3           3          3           3          3
 lifetime              30          30         30          30           30            30          30           30          30          30         30          30         30
@@ -185,13 +185,13 @@ lifetime                  25           25             25            25          
 +                    mtoMta    mtoMtaH2    fertProd   fertProdH2    amToFinal    meToFinal
 !! documentation & sources: see below
 inco0                   533         533        3280         3280          500          500      
-omf                   0.025       0.025        0.06         0.06         0.06         0.06
+omf                   0.025       0.025        0.03         0.03         0.06         0.06
 constrTme                 3           3           3            3            3            3
 lifetime                 30          30          30           30           30           30
 
 +                    mechRe  stCrChemRe  meSyChemRe   
 !! documentation & sources: see below
-inco0                   318        2200          49     
+inco0                   318        2146          49     
 omf                    0.03        0.03       0.055
 constrTme                 3           3           3
 lifetime                 30          30          30
@@ -417,12 +417,12 @@ amSyCoal amSyNG amSyLiq and amSyH2:
 
     amSyNG:
         inco0 ~ 905 /USD_2017 * USD_2015 ~ 875 $/t
-        omf ~ 0.05
+        omf ~ 0.025
         (Sources: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 4)
 
     amSyLiq:
         inco0 ~ 1203 /USD_2016 * USD_2015 ~ 1190 $/t
-        omf ~ 0.05
+        omf ~ 0.025
         (Sources: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A3)
 
     amSyH2:
@@ -462,7 +462,7 @@ meSySol meSyNG meSyLiq and meSyH2:
 
     meSyLiq:
         inco0 ~ 1203 /USD_2016 * USD_2015 ~ 290 $/t
-        omf ~ 0.05
+        omf ~ 0.025
         (Sources: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A3)
 
     meSyH2:
@@ -497,14 +497,14 @@ meSySol_cc meSyNg_cc meSyLiq_cc:
 mtoMta mtoMtaH2:  
 
     inco0 ~ 320MM$ per (386 Propylene + 214 Ethylene) kt/a /600 * 1000 ~ 533 $/t
-    omf ~ 0.03
+    omf ~ 0.025
     (Sources: S. Jasper and M. M. El-Halwagi, Processes, 2015, 3, 684–698. Table 2)
 
 fertProd   fertProdH2:    
 
     inco0 ~ 4.03MM$ per 1000t/a * 1000 /USD_2022 * USD_2015 ~ 3280 $/t
     (Sources: Palys23 Section 2.3, Page 6)
-    omf ~ 0.025
+    omf ~ 0.03
     (Sources: Palys23 Section 2.3, Page 6)
 
 amToFinal    meToFinal:   
