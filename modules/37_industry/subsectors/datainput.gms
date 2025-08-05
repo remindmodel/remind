@@ -928,6 +928,9 @@ $endif.cm_subsec_model_steel
 
 
 !! 0. Data input
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
+pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) = 0.;
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 Parameter
   pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) "material flows per production route in 2020 [Gt or GtN for fertilizer]"
@@ -939,7 +942,9 @@ $offdelim
 ;
 $endif.cm_subsec_model_chemicals
 
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
 p37_mat2ue(tall,all_regi,all_enty,all_in) = 0.;
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 Parameter
   p37_mat2ue(tall,all_regi,all_enty,all_in) "conversion factors [2017$/kg or 2017$/kgN] for 2020-2050 to convert material [Gt or GtN] into UE [trn$2017]"
@@ -974,7 +979,6 @@ $endif.cm_subsec_model_steel
 *** --------------------------------
 p37_ue_share(tall,all_regi,all_enty,all_in) = 0.;
 pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
-pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) = 0.;
 p37_matFlowHist(tall,all_regi,mat) = 0.;
 
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
