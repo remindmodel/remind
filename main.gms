@@ -1962,11 +1962,6 @@ $setGlobal cm_chaCoalBounds off    !! def = off
 *' *  (off): no, only infeasable regions are repeated, standard setting
 *' *  (on):  also non-optimal regions are solved again, up to cm_solver_try_max
 $setglobal cm_repeatNonOpt off      !! def = off  !! regexp = off|on
-*' c_52_coupling mode     "mode for LCA coupling"
-*' (iterative): LCA workflow run iteratively after some REMIND iterations
-*' (static): load static costs
-*' (testing): test environments, no LCA costs calculated
-$setglobal c_52_coupling_mode iterative       !! def = iterative  !! regexp = iterative|static|testing
 *' c_52_monetization_type     "type of monetization, determines how c_52_LCA_monetizationFactor is interpreted"
 *' (quantile): interpreted as quantile of MC sampled cost distributions
 *' (perspective): interpreted as monetization perspective
