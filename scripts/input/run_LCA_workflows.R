@@ -29,7 +29,6 @@ outputDir <- getwd()
 gdxPath <- file.path(outputDir, args[1])
 scenario <- lucode2::getScenNames(outputDir)
 mifName <- paste0("REMIND_generic_", scenario, ".mif")
-pathway <- paste0(scenario, "-", args[2])
 
 load("config.Rdata")
 
@@ -44,9 +43,9 @@ if (!file.exists(logFile)) {
 
 logMsg <- paste0(
   date(), " run_LCA_internalization_workflow.R:\n",
-  "outputDir              '", outputDir, "'\n",
-  "Using gdxPath          '", gdxPath, "'\n",
-  "Stage                  '", args[2], "'\n",
+  "outputDir                 '", outputDir, "'\n",
+  "Using gdxPath             '", gdxPath, "'\n",
+  "Stage/iteration type      '", args[2], "'\n",
   if (createdLogFile) "Created logfile        '" else "Append to logFile      '", logFile, "'\n"
  )
 capture.output(cat(logMsg), file = logFile, append = TRUE)
@@ -58,7 +57,7 @@ capture.output(cat(logMsg), file = logFile, append = TRUE)
 logMsg <- paste0(date(), " =================== Copy or create REMIND reporting ===================\n")
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 
-newName <- paste0("remind_", pathway, ".mif")
+newName <- paste0("remind_", scenario, ".mif")
 mifPath <- file.path(outputDir, "lca", "remind_runs", newName)
 
 if (args[2] == "preloop") {
@@ -75,7 +74,10 @@ if (args[2] == "preloop") {
 
   logMsg <- paste0("Preloop mode: .mif file copied from ", inputMifDir, "\n")
   capture.output(cat(logMsg), file = logFile, append = TRUE)
-} else if (args[2] == "postsolve") {
+
+  # which routines to run
+  extraroutines <- "--plca --calcCosts"
+} else if (args[2] == "update_plca") {
   runReportingCmd <- paste(
     "Rscript reporting.R",
     paste0("gdx_name=", args[1]),
@@ -89,6 +91,9 @@ if (args[2] == "preloop") {
 
   logMsg <- paste0("Postsolve mode: new file ", newName, " created.\n")
   capture.output(cat(logMsg), file = logFile, append = TRUE)
+
+  # which routines to run
+  extraroutines <- "--plca --calcCosts"
 }
 
 logMsg <- paste0(date(), " =================== SET UP LCA scripts environment ===================\n")
@@ -118,8 +123,9 @@ runLCAWorkflowCmd <- paste(
   "python LCA_internalization_workflow.py ",
   mifPath,
   gdxPath,
-  pathway,
-  "--mode", cfg$gms$c_52_coupling_mode,
+  scenario,
+  "--aggTaxes",
+  extraroutines,
   paste0("--", cfg$gms$c_52_monetization_type), cfg$gms$c_52_LCA_monetizationFactor,
   "--single_midpoint", paste0("'", cfg$gms$cm_52_single_midpoint, "'"),
   "--exclude_midpoints", paste0("'", cfg$gms$cm_52_exclude_midpoints, "'")
@@ -137,23 +143,21 @@ system(paste(condaCmd, runLCAWorkflowCmd, "&>>", logFile))
 # WRITE GDXes
 #
 
-if (cfg$gms$c_52_coupling_mode != "testing") {
-  # read in csv, write to gdx
-  LCAcosts <- read.csv("lca/lca_costs_SE.csv")
+# TODO: With more levels, take level names etc from config
+# read in csv, write to gdx
+LCAcosts <- read.csv("lca/lca_costs_SE.csv")
 
-  writeToGdx = function(file,df,name){
-    df$year = factor(df$year)
-    df$region = factor(df$region)
-    df$all_te = factor(df$all_te)
-    attr(df,which = 'symName') = name
-    attr(df,which = 'domains') = c('ttot','all_regi','all_te')
-    attr(df,which = 'domInfo') = 'full'
-    
-    gdxrrw::wgdx.lst(file,df,squeeze = F)
-  }
-
-  writeToGdx("LCA_SE", LCAcosts, 'pm_LCAcosts_SE')
+writeToGdx = function(file,df,name){
+  df$year = factor(df$year)
+  df$region = factor(df$region)
+  df$all_te = factor(df$all_te)
+  attr(df,which = 'symName') = name
+  attr(df,which = 'domains') = c('ttot','all_regi','all_te')
+  attr(df,which = 'domInfo') = 'full'
+  
+  gdxrrw::wgdx.lst(file,df,squeeze = F)
 }
 
+writeToGdx("LCA_SE", LCAcosts, 'pm_LCAcosts_SE')
 
 print("...done")

@@ -22,6 +22,36 @@ def get_monetization_arg(args):
             v = df.columns[1]
             return df.set_index(k)[v].to_dict()
         
+def add_ES_subcategories(df, parent_variables):
+    all_variables = list(df["Variable"].unique())
+    dflist = []
+    for parent in parent_variables:
+        prefix = parent.replace("ES|", "FE|")
+        children = [v for v in all_variables if v.startswith(prefix + "|")]
+        if len(children) == 3:
+            subcats = [v.split("|")[-1] for v in children]
+
+            years = list(df.columns)[5:]
+
+            total = df[df["Variable"] == prefix].set_index("Region")[years].astype(float)
+            parent_df = df[df["Variable"] == parent]
+            new_unit = list(parent_df["Unit"].unique())[0]
+            parent_df = parent_df.set_index("Region")[years].astype(float)
+
+            for cat in subcats:
+                s = prefix + "|" + cat
+                sel = df[df["Variable"] == s].copy().set_index("Region")[years].astype(float)
+                share = sel.div(total, axis=0)
+                new_df = share.mul(parent_df, axis=0).reset_index()
+                new_df["Model"] = list(df["Model"].unique())[0]
+                new_df["Scenario"] = list(df["Scenario"].unique())[0]
+                new_df["Unit"] = new_unit
+                new_df["Variable"] = "|".join([parent, cat])
+                dflist.append(new_df)
+            
+    additions = pd.concat(dflist, axis=0)[["Model", "Scenario", "Region", "Variable", "Unit"]+years]
+    return pd.concat((df, additions), axis=0)
+        
 IMPACT_CATEGORIES_MC = [
     "acidification",
     "climate change",
@@ -61,6 +91,15 @@ print(args)
 
 # setup logging file
 logFile = open("log_lca.txt", "a")
+
+# extra reporting
+df = pd.read_csv(args.mifpath, sep=";").iloc[:, :-1]
+
+all_variables = list(df["Variable"].unique())
+ES_vars = [v for v in all_variables if v.startswith("ES|Transport")]
+potential_parent_vars = [v for v in ES_vars if v.split("|")[-1] in ["Liquids", "Gases"]]
+
+add_ES_subcategories(df, potential_parent_vars).to_csv(args.mifpath, sep=";", index=False)
 
 if args.mode == "static":
     # load static data
