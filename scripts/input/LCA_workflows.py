@@ -1,5 +1,6 @@
 import argparse
 import os
+import time
 
 import pandas as pd
 import xarray as xr
@@ -119,7 +120,17 @@ if __name__ == "__main__":
     parser.add_argument('--exclude_midpoints', type=str, help="Run with some midpoints excluded")
 
     args = parser.parse_args()
-    print(args)
+
+    # setup logging file
+    logFile = open("log_lca.txt", "a")
+    logFile.writelines([f"--- {str(time.time())}: LCA worflows started with arguments:"])
+    logFile.writelines(
+        [
+            f"\t {k}: {v}" for k, v in vars(args)
+        ]
+    )
+    logFile.writelines(["\n"])
+        
 
     # in any case, initialize an Internalizer instance
     bw_project = f"internalizer_ei_{EI_VERSION}"
@@ -134,16 +145,24 @@ if __name__ == "__main__":
     )
 
     if args.plca:
+        t0 = time.time()
         add_ES_subcategories(args.mifpath)
         I.run_premise(YEARS_INTERNALIZATION)
+        t1 = time.time()
+        logFile.writelines([f"Premise runs done in {t1-t0} seconds", "\n"])
+
     else:
         I.years = YEARS_INTERNALIZATION
 
     if args.calcCosts:
+        t0 = time.time()
         monetization = get_monetization_arg(args)
         I.calculate_costs(monetization)
+        t1 = time.time()
+        logFile.writelines([f"Cost calculation done in {t1-t0} seconds", "\n"])
 
     if args.aggTaxes:
+        t0 = time.time()
         I.load_costs()
 
         ics = get_impact_categories(args)
@@ -152,3 +171,7 @@ if __name__ == "__main__":
             RAMP_UP_END,
             ics
         )
+        t1 = time.time()
+        logFile.writelines([f"Tax recalculation done in {t1-t0} seconds", "\n"])
+
+    logFile.close()

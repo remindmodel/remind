@@ -47,7 +47,7 @@ logMsg <- paste0(
   "outputDir              '", outputDir, "'\n",
   "Using gdxPath          '", gdxPath, "'\n",
   "Stage                  '", args[2], "'\n",
-  if (createdLogFile) "Created logfile        '" else "Append to logFile      '", logFile, "'\n"
+  if (createdLogFile) "Created logfile        '" else "Append to logFile      '", logFile, "'\n","\n"
  )
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 

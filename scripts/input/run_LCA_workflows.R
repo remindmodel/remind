@@ -72,11 +72,11 @@ if (args[2] == "preloop") {
   inputMifPath <- file.path(inputMifDir, inputMifName)
   file.copy(from=inputMifPath, to=mifPath)
 
-  logMsg <- paste0("Preloop mode: .mif file copied from ", inputMifDir, "\n")
+  logMsg <- paste0("Preloop mode: .mif file copied from ", inputMifDir, "\n", "\n")
   capture.output(cat(logMsg), file = logFile, append = TRUE)
 
   # which routines to run
-  extraroutines <- "--plca --calcCosts"
+  routines <- "--plca --calcCosts --aggTaxes"
 } else if (args[2] == "update_plca") {
   runReportingCmd <- paste(
     "Rscript reporting.R",
@@ -89,15 +89,30 @@ if (args[2] == "preloop") {
   
   file.copy(from=oldName, to=mifPath)
 
-  logMsg <- paste0("Postsolve mode: new file ", newName, " created.\n")
+  logMsg <- paste0("Postsolve mode: new file ", newName, " created.\n", "\n")
   capture.output(cat(logMsg), file = logFile, append = TRUE)
 
   # which routines to run
-  extraroutines <- "--plca --calcCosts"
+  routines <- "--plca --calcCosts --aggTaxes"
+} else if (args[2] == "recalculate_taxes") {
+  runReportingCmd <- paste(
+    "Rscript reporting.R",
+    paste0("gdx_name=", args[1]),
+    paste0("outputdir=", outputDir)
+  )
+  system(paste(runReportingCmd, "&>>", logFile))
+
+  oldName <- paste0("REMIND_generic_", scenario, ".mif")
+  
+  file.copy(from=oldName, to=mifPath)
+
+  logMsg <- paste0("Postsolve mode: new file ", newName, " created.\n", "\n")
+  capture.output(cat(logMsg), file = logFile, append = TRUE)
+
+  # which routines to run
+  routines <- "--aggTaxes"
 }
 
-logMsg <- paste0(date(), " =================== SET UP LCA scripts environment ===================\n")
-capture.output(cat(logMsg), file = logFile, append = TRUE)
 
 #
 # SET UP CONDA ENVIRONMENT
@@ -120,24 +135,23 @@ if (file.exists("/p/system/modulefiles/defaults/piam/1.25")) {
 #
 
 runLCAWorkflowCmd <- paste(
-  "python LCA_internalization_workflow.py ",
+  "python LCA_workflows.py ",
   mifPath,
   gdxPath,
   scenario,
   "--aggTaxes",
-  extraroutines,
+  routines,
   paste0("--", cfg$gms$c_52_monetization_type), cfg$gms$c_52_LCA_monetizationFactor,
   "--single_midpoint", paste0("'", cfg$gms$cm_52_single_midpoint, "'"),
   "--exclude_midpoints", paste0("'", cfg$gms$cm_52_exclude_midpoints, "'")
 )
 
 logMsg <- paste0(
-  date(), " =================== RUN LCA workflow ===========================\n",
-  runLCAWorkflowCmd, "'\n"
+  date(), " =================== RUN LCA workflow ===========================\n"
 )
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 
-system(paste(condaCmd, runLCAWorkflowCmd, "&>>", logFile))
+system(paste(condaCmd, runLCAWorkflowCmd))
 
 # 
 # WRITE GDXes
