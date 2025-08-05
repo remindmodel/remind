@@ -13,7 +13,7 @@
 *** 
 Execute_unload 'fulldata_postsolve';
 
-if( (ord(iteration) ge max(cm_startIter_EDGET, cm_startIter_LCA) and (mod(ord(iteration), 5) eq 0)),
+if( (ord(iteration) ge max(cm_startIter_EDGET, cm_startIter_LCA) and (mod(ord(iteration), cm_freqIter_LCA) eq 0)),
   Execute "Rscript run_LCA_internalization_workflow.R fulldata_postsolve.gdx update_plca";
 else
   Execute "Rscript run_LCA_internalization_workflow.R fulldata_postsolve.gdx recalculate_taxes"

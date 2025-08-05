@@ -1209,6 +1209,10 @@ parameter
 *' default is 15. As EDGE-T results are needed for the workflow, also cm_startIter_EDGET is also checked.
 *'
 parameter
+  cm_freqIter_LCA           "Frequency of LCA updates"
+;
+  cm_freqIter_LCA = 5;    !! def = 5   !! regexp = ^[1-9]\d*$
+parameter
   cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
 ;
   cm_deuCDRmax = -1; !! def = -1
