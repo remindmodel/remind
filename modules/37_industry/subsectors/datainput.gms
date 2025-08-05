@@ -701,12 +701,17 @@ p37_specFeDemTarget("feels","idr","h2")           = 0.08 / (sm_TWa_2_MWh/sm_giga
 p37_specFeDemTarget("fegas","idr","ng")           = 2.69 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Page 7 (9.7 GJ) (per tHBI)
 p37_specFeDemTarget("feels","idr","ng")           = 0.08 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Hölling et al 2017, Page 7 (9.7 GJ) (per tHBI)
 
-!! To do: Does not include casting and rolling;
+!! From Vogl et al 2018 (Section 3.1), primary DRI requires 0.75 MWh/t, and secondary DRI 0.67 MWh/t.
+!! Casting and rolling requires an additional 0.01 and 0.105 MWh/t of electricity demand, respectively (IEA GHG 2013).
+!! Casting and rolling also requires heat, which we assume to come from ng: 0.006 and 0.468 MWh/t, respectively (IEA GHG 2013)
 !! Birat2010, p. 11: 0.97 MWh total, only 0.44 MWh of which is electrical
 !! EU JRC BAT says 0.404–0.748 (only EAF, elec) / Otto et al. say 0.92
 !! --> have declining curve?
-p37_specFeDemTarget("feels","eaf","pri")          = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Copy from secondary (Agora Energiewende, 2022 give similar values, between w and w/o reheating)
-p37_specFeDemTarget("feels","eaf","sec")          = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Vogl et al 2018, Section 3.1
+p37_specFeDemTarget("feels","eaf","pri")          = 0.87 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Vogl et al 2018, Section 3.1 and IEAGHG 2013, Vol 1 Section D Table D-13 and D-15 
+p37_specFeDemTarget("feels","eaf","sec")          = 0.79 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Vogl et al 2018, Section 3.1 and IEAGHG 2013, Vol 1 Section D Table D-13 and D-15
+
+p37_specFeDemTarget("fegas","eaf","pri")          = 0.47 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / IEA GHG 2013, Vol 1 Section D Table D-13 and D-15
+p37_specFeDemTarget("fegas","eaf","sec")          = 0.47 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / IEA GHG 2013, Vol 1 Section D Table D-13 and D-15
 
 !! Otto et al. Fig 3: 10.303 GJ coke (from 13.24 GJ coal, see Menendez2015 Fig 3) + 4.67 GJ coal dust -> 18 GJ
 !! Birat2010, p.11 says best performers have 17 GJ, out of which 16 GJ coal
