@@ -126,7 +126,7 @@ if __name__ == "__main__":
     logFile.writelines([f"--- {str(time.time())}: LCA worflows started with arguments:"])
     logFile.writelines(
         [
-            f"\t {k}: {v}" for k, v in vars(args)
+            f"\t {k}: {v}" for k, v in vars(args).items()
         ]
     )
     logFile.writelines(["\n"])
