@@ -206,7 +206,7 @@ loop((tePrc1,opmoPrc1,tePrc2,opmoPrc2,mat,route)$(
             AND tePrc2route(tePrc1,opmoPrc1,route)
             AND tePrc2route(tePrc2,opmoPrc2,route)),
   !! The share of second-stage tech (such as eaf) which belongs to a certain route equals...
-  o37_shareRoute(ttot,regi,tePrc2,opmoPrc2,route)$(vm_outflowPrc.l(ttot,regi,tePrc2,opmoPrc2) gt 0.)
+  o37_shareRoute(ttot,regi,tePrc2,opmoPrc2,route)$(vm_outflowPrc.l(ttot,regi,tePrc2,opmoPrc2) gt sm_eps)
   !! ...the outflow of the first-stage tech (such as idr) which provides the input material (such as driron) to the second-stage...
   =   vm_outflowPrc.l(ttot,regi,tePrc1,opmoPrc1)
     !! ...times the share of that 1st stage tech which belongs to a certain route
