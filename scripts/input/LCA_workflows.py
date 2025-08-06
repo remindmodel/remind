@@ -1,6 +1,7 @@
 import argparse
 import os
 import time
+from datetime import datetime
 
 import pandas as pd
 import xarray as xr
@@ -123,10 +124,10 @@ if __name__ == "__main__":
 
     # setup logging file
     logFile = open("log_lca.txt", "a")
-    logFile.writelines([f"--- {str(time.time())}: LCA worflows started with arguments:"])
+    logFile.writelines([f"--- {datetime.now().strftime('%Y%m%d_%H%M%S')}: LCA worflows started with arguments:"])
     logFile.writelines(
         [
-            f"\t {k}: {v}" for k, v in vars(args).items()
+            f"\t {k}: {v}\n" for k, v in vars(args).items()
         ]
     )
     logFile.writelines(["\n"])
