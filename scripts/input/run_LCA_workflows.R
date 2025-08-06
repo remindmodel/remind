@@ -51,7 +51,7 @@ logMsg <- paste0(
   "outputDir                 '", outputDir, "'\n",
   "Using gdxPath             '", gdxPath, "'\n",
   "Stage/iteration type      '", args[2], "'\n",
-  if (createdLogFile) "Created logfile        '" else "Append to logFile      '", logFile, "'\n"
+  if (createdLogFile) "Created logfile        '" else "Append to logFile      '", logFile, "'\n", "\n"
  )
 capture.output(cat(logMsg), file = logFile, append = TRUE)
 
@@ -83,35 +83,41 @@ if (args[2] == "preloop") {
   # which routines to run
   routines <- "--plca --calcCosts --aggTaxes"
 } else if (args[2] == "update_plca") {
+  t0 <- Sys.time()
   runReportingCmd <- paste(
     "Rscript reporting.R",
     paste0("gdx_name=", args[1]),
     paste0("outputdir=", outputDir)
   )
   system(paste(runReportingCmd, "&>>", logFile))
+  t1 <- Sys.time()
+  dt <- paste0(round(as.numeric(difftime(time1 = b, time2 = a, units = "secs")), 3), " seconds")
 
   oldName <- paste0("REMIND_generic_", scenario, ".mif")
   
   file.copy(from=oldName, to=mifPath)
 
-  logMsg <- paste0("Postsolve mode: new file ", newName, " created.\n", "\n")
+  logMsg <- paste0(args[2]," mode: Reporting ", newName, " done in ", dt, "\n", "\n")
   capture.output(cat(logMsg), file = logFile, append = TRUE)
 
   # which routines to run
   routines <- "--plca --calcCosts --aggTaxes"
 } else if (args[2] == "recalculate_taxes") {
+  t0 <- Sys.time()
   runReportingCmd <- paste(
     "Rscript reporting.R",
     paste0("gdx_name=", args[1]),
     paste0("outputdir=", outputDir)
   )
   system(paste(runReportingCmd, "&>>", logFile))
+  t1 <- Sys.time()
+  dt <- paste0(round(as.numeric(difftime(time1 = b, time2 = a, units = "secs")), 3), " seconds")
 
   oldName <- paste0("REMIND_generic_", scenario, ".mif")
   
   file.copy(from=oldName, to=mifPath)
 
-  logMsg <- paste0("Postsolve mode: new file ", newName, " created.\n", "\n")
+  logMsg <- paste0(args[2]," mode: Reporting ", newName, " done in ", dt, "\n", "\n")
   capture.output(cat(logMsg), file = logFile, append = TRUE)
 
   # which routines to run
@@ -162,21 +168,23 @@ system(paste(condaCmd, runLCAWorkflowCmd, "&>>", errFile))
 # WRITE GDXes
 #
 
-# TODO: With more levels, take level names etc from config
-# read in csv, write to gdx
-LCAcosts <- read.csv("lca/lca_costs_SE.csv")
-
-writeToGdx = function(file,df,name){
+writeToGdx = function(file, df, name, domains){
   df$year = factor(df$year)
   df$region = factor(df$region)
-  df$all_te = factor(df$all_te)
+  for (dom in domains) {
+    df$dom = factor(df$dom)
+  }
   attr(df,which = 'symName') = name
-  attr(df,which = 'domains') = c('ttot','all_regi','all_te')
+  attr(df,which = 'domains') = c(c('ttot','all_regi'), domains)
   attr(df,which = 'domInfo') = 'full'
   
   gdxrrw::wgdx.lst(file,df,squeeze = F)
 }
 
-writeToGdx("LCA_SE", LCAcosts, 'pm_LCAcosts_SE')
+SEcosts <- read.csv("lca/lca_costs_SE.csv")
+writeToGdx("LCA_SE", SEcosts, 'pm_LCAcosts_SE', c('all_te'))
+
+FEcosts <- read.csv("lca/lca_costs_FE.csv")
+writeToGdx("LCA_FE", FEcosts, 'pm_LCAcosts_FE', c('emi_sectors', 'all_enty'))
 
 print("...done")

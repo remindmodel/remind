@@ -124,7 +124,7 @@ if __name__ == "__main__":
 
     # setup logging file
     logFile = open("log_lca.txt", "a")
-    logFile.writelines([f"--- {datetime.now().strftime('%Y%m%d_%H%M%S')}: LCA worflows started with arguments:"])
+    logFile.writelines([f"LCA workflows started with arguments:\n"])
     logFile.writelines(
         [
             f"\t {k}: {v}\n" for k, v in vars(args).items()
@@ -133,7 +133,7 @@ if __name__ == "__main__":
     logFile.writelines(["\n"])
         
 
-    # in any case, initialize an Internalizer instance
+    # in any case, initialize an Internalizer instance and call the setup
     bw_project = f"internalizer_ei_{EI_VERSION}"
     I = Internalizer(
         args.mifpath,
@@ -144,6 +144,7 @@ if __name__ == "__main__":
         args.gdxpath,
         outputfolder = "lca"
     )
+    I.set_calculation_setup() # defaults to REMIND Internalization setup
 
     if args.plca:
         t0 = time.time()
