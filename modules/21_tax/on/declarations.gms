@@ -53,8 +53,6 @@ p21_tau_CO2_tax_gdx_bau(ttot,all_regi)                              "tax path fr
 
 p21_tau_so2_tax(tall,all_regi)                                      "so2 tax path"
 p21_tau_pe2se_tax(tall,all_regi,all_te)                             "tax path for PE2SE technologies"
-p21_max_fe_sub(tall,all_regi,all_enty)                              "maximum final energy subsidy levels from REMIND version prior to rev. 5429 [$/TWa]"
-p21_prop_fe_sub(tall,all_regi,all_enty)                             "subsidy proportional cap to avoid liquids increasing dramatically"
 p21_tau_fuEx_sub(tall,all_regi,all_enty)                            "subsidy path for fuel extraction [$/TWa]"
 p21_bio_EF(ttot,all_regi)                                           "bioenergy emission factor, which is used to calculate the emission-factor-based tax level [GtC/TWa]"
 p21_tau_Import(ttot,all_regi,all_enty,tax_import_type_21)           "tax on energy imports, only works on energy carriers traded on nash markets, tax defined as share of world market price pm_pvp [Unit: share]"
