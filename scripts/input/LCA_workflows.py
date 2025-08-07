@@ -74,28 +74,30 @@ def add_ES_subcategories(mifpath):
         children = [v for v in all_variables if v.startswith(prefix + "|")]
         if len(children) == 3:
             subcats = [v.split("|")[-1] for v in children]
+            subcats2add = [cat for cat in subcats if "|".join([parent, cat]) not in all_variables]
 
-            years = list(df.columns)[5:]
+            if len(subcats2add) > 0:
+                years = list(df.columns)[5:]
 
-            total = df[df["Variable"] == prefix].set_index("Region")[years].astype(float)
-            parent_df = df[df["Variable"] == parent]
-            new_unit = list(parent_df["Unit"].unique())[0]
-            parent_df = parent_df.set_index("Region")[years].astype(float)
+                total = df[df["Variable"] == prefix].set_index("Region")[years].astype(float)
+                parent_df = df[df["Variable"] == parent]
+                new_unit = list(parent_df["Unit"].unique())[0]
+                parent_df = parent_df.set_index("Region")[years].astype(float)
 
-            for cat in subcats:
-                s = prefix + "|" + cat
-                sel = df[df["Variable"] == s].copy().set_index("Region")[years].astype(float)
-                share = sel.div(total, axis=0)
-                new_df = share.mul(parent_df, axis=0).reset_index()
-                new_df["Model"] = list(df["Model"].unique())[0]
-                new_df["Scenario"] = list(df["Scenario"].unique())[0]
-                new_df["Unit"] = new_unit
-                new_df["Variable"] = "|".join([parent, cat])
-                dflist.append(new_df)
-            
-    additions = pd.concat(dflist, axis=0)[["Model", "Scenario", "Region", "Variable", "Unit"]+years]
-    
-    pd.concat((df, additions), axis=0).to_csv(mifpath, sep=";", index=False)
+                for cat in subcats2add:
+                    s = prefix + "|" + cat
+                    sel = df[df["Variable"] == s].copy().set_index("Region")[years].astype(float)
+                    share = sel.div(total, axis=0)
+                    new_df = share.mul(parent_df, axis=0).reset_index()
+                    new_df["Model"] = list(df["Model"].unique())[0]
+                    new_df["Scenario"] = list(df["Scenario"].unique())[0]
+                    new_df["Unit"] = new_unit
+                    new_df["Variable"] = "|".join([parent, cat])
+                    dflist.append(new_df)
+
+    if len(dflist) > 0:
+        additions = pd.concat(dflist, axis=0)[["Model", "Scenario", "Region", "Variable", "Unit"]+years]
+        pd.concat((df, additions), axis=0).to_csv(mifpath, sep=";", index=False)
 
 
 
@@ -144,7 +146,6 @@ if __name__ == "__main__":
         args.gdxpath,
         outputfolder = "lca"
     )
-    I.set_calculation_setup() # defaults to REMIND Internalization setup
 
     if args.plca:
         t0 = time.time()
@@ -155,6 +156,8 @@ if __name__ == "__main__":
 
     else:
         I.years = YEARS_INTERNALIZATION
+
+    I.set_calculation_setup() # defaults to REMIND Internalization setup
 
     if args.calcCosts:
         t0 = time.time()
