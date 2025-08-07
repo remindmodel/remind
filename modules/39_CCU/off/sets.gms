@@ -25,22 +25,28 @@ te_ccu39(all_te)                            "CCU technologies"
 /
 
 
-
 teCCU2rlf(all_te,rlf)				  "mapping for CCU technologies to grades"
+/
+/
+
+
+teSeCCU2rlf(all_te,rlf)				  "mapping for CCU technologies to grades"
 /
       (h22ch4) . 1
       (MeOH) . 1
 /
+
 ;
 
-alias(teCCU2rlf,teCCU2rlf2); 
 
 ***-------------------------------------------------------------------------
 ***  add module specific sets and mappings to the global sets and mappings
 ***-------------------------------------------------------------------------
 
+teCCU2rlf(teSeCCU2rlf)         = YES;
+teCCU2rlf(teCUPrc,"1")         = YES;
 
-enty(enty_ccu39)							   = YES;
-te(te_ccu39)								   = YES;
+enty(enty_ccu3)                = YES;
+te(te_ccu39)                   = YES;
 
 *** EOF ./modules/39_CCU/off/sets.gms
