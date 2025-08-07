@@ -67,6 +67,7 @@ p21_CO2TaxSectorMarkup(ttot,all_regi,emi_sectors)                   "path for CO
 pm_taxEI_PE(ttot,all_regi,all_enty)                                 "tax path for environmental impacts tax on primary energy production"
 pm_taxEI_SE(ttot,all_regi,all_te)                                   "tax path for environmental impacts tax on secondary energy production"
 pm_taxEI_cap(ttot,all_regi,all_te)                                  "tax path for environmental impacts tax on capacity additions"
+pm_taxEI_FE(ttot,all_regi,emi_sectors,all_enty)                     "tax path for environmental impacts tax on FE use"
 
 p21_grossEmissions(iteration,ttot,all_regi)                         "Gross CO2 emissions"
 p21_referenceGrossEmissions(ttot,all_regi)                          "Reference gross CO2 emissions used for computation of net-negative emissions"
