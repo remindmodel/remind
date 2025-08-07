@@ -13,6 +13,8 @@ library(gdxrrw) # Needs an environmental variable to be set, see below
 library(R.utils)
 library(remind2)
 library(lucode2)
+library(data.table)
+library(gdxdt)
 
 igdx(system("dirname $( which gams )", intern = TRUE))
 
@@ -168,23 +170,22 @@ system(paste(condaCmd, runLCAWorkflowCmd, "&>>", errFile))
 # WRITE GDXes
 #
 
-writeToGdx = function(file, df, name, domains){
-  df$year = factor(df$year)
-  df$region = factor(df$region)
-  for (dom in domains) {
-    df$dom = factor(df$dom)
-  }
-  attr(df,which = 'symName') = name
-  attr(df,which = 'domains') = c(c('ttot','all_regi'), domains)
-  attr(df,which = 'domInfo') = 'full'
-  
-  gdxrrw::wgdx.lst(file,df,squeeze = F)
-}
+SEcosts <- as.data.table(read.csv("lca/lca_costs_SE.csv"))
+gdxdt::writegdx.parameter(
+  "LCA_SE.gdx",
+  SEcosts,
+  name = "pm_LCAcosts_SE",
+  valcol = "cost",
+  uelcols = c('ttot', 'all_regi', 'all_te')
+)
 
-SEcosts <- read.csv("lca/lca_costs_SE.csv")
-writeToGdx("LCA_SE", SEcosts, 'pm_LCAcosts_SE', c('all_te'))
-
-FEcosts <- read.csv("lca/lca_costs_FE.csv")
-writeToGdx("LCA_FE", FEcosts, 'pm_LCAcosts_FE', c('emi_sectors', 'all_enty'))
+FEcosts <- as.data.table(read.csv("lca/lca_costs_FE.csv"))
+gdxdt::writegdx.parameter(
+  "LCA_FE.gdx",
+  FEcosts,
+  name = "pm_LCAcosts_FE",
+  valcol = "cost",
+  uelcols = c('ttot', 'all_regi', 'emi_sectors', 'all_enty')
+)
 
 print("...done")
