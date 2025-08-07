@@ -382,39 +382,42 @@ $endif.cm_subsec_model_steel
 tePrc(all_te)  "Technologies used in process-based model (including CCS)"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-    chemOld
-    chemElec
-    chemH2
+    chemOld       "process to produce otherChem with historic FE demand"
+    chemElec      "process to produce otherChem with higher share of feels and improved efficiency"
+    chemH2        "process to produce otherChem with higher share of feh2s"
 
-    stCrNg
-    stCrLiq
-    stCrChemRe
+    stCrNg        "ethane/propane steam cracking"
+    stCrLiq       "naphtha steam cracking"
+    stCrChemRe    "pyrolysis (chemical recycling) of plastic waste"
 
-    mechRe
+    mechRe        "mechanical recycling of plastic waste"
 
-    meSySol 
-    meSyNg
-    meSyLiq
-    meSySol_cc
-    meSyNg_cc
-    meSyLiq_cc
-    meSyH2
-    meSyChemRe
+    meSySol       "methanol synthesis from coal/biomass"
+    meSyNg        "methanol synthesis from NG"
+    meSyLiq       "methanol synthesis from oil"
+    meSySol_cc    "CC for methanol synthesis from coal/biomass"
+    meSyNg_cc     "CC for methanol synthesis from NG"
+    meSyLiq_cc    "CC for methanol synthesis from oil"
+    meSyH2        "methanol synthesis from hydrogen"
+    meSyChemRe    "gasification (chemical recycling) of plastic waste"
 
-    amSyCoal 
-    amSyNG
-    amSyLiq
-    amSyCoal_cc
-    amSyNG_cc
-    amSyLiq_cc
-    amSyH2
+    amSyCoal      "ammonia synthesis from coal/biomass"
+    amSyNG        "ammonia synthesis from NG"
+    amSyLiq       "ammonia synthesis from oil"
+    amSyCoal_cc   "CC for ammonia synthesis from coal/biomass"
+    amSyNG_cc     "CC for ammonia synthesis from NG"
+    amSyLiq_cc    "CC for ammonia synthesis from oil"
+    amSyH2        "Ammonia synthesis from hydrogen"
 
-    mtoMta
-    mtoMtaH2
-    fertProd
-    fertProdH2
-    meToFinal
-    amToFinal
+    !! differentiate between mtoMta and mtoMtaH2 such that the share of mtoMta (the old technology) can be constrained
+    !! after liquids disaggregation by Robert there can be a more specific set differentiating between coal and biomass
+    !! same for fertilizer prod; fertProdH2 needs carbon feedstock
+    mtoMta        "Methanol to olefins/methanol to aromatics (production of HVC from methanol from fossil feedstocks)"
+    mtoMtaH2      "mtoMta from green methanol"
+    fertProd      "Fertilizer production from ammonia from fossil feedstocks"
+    fertProdH2    "Fertilizer production from green ammonia"
+    meToFinal     "dummy process to convert methanol or methanolH2 to methFinal"
+    amToFinal     "dummy process to convert ammonia or ammoniaH2 to ammoFinal"
 
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -436,13 +439,14 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
 
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-    meSySol_cc
-    meSyNg_cc
-    meSyLiq_cc
+    !! maybe add cc for heat generation part of steam cracker, but may not be worth it because we switch to H2 or electricity for heat generation
+    meSySol_cc    
+    meSyNg_cc     
+    meSyLiq_cc    
 
-    amSyCoal_cc
-    amSyNG_cc
-    amSyLiq_cc
+    amSyCoal_cc   
+    amSyNG_cc     
+    amSyLiq_cc    
 $endif.cm_subsec_model_chemicals
   /
 
@@ -457,20 +461,21 @@ $endif.cm_subsec_model_chemicals
 mat(all_enty)   "Materials considered in process-based model; Can be input and/or output of a process"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
-    otherChem
-    hvc
-    fertilizer
-    methanol
-    methanolH2
-    ammonia
-    ammoniaH2
-    methFinal
-    ammoFinal
+    otherChem     "All other chemicals not covered in the specific process-representation"
+    hvc           "High-value chemicals; consist of ethylene, propylene and BTX"
+    fertilizer    "Nitrogen fertilizer; consists of urea, ammonium nitrate, ammonium sulfate and calcium ammonium nitrate"
+    methanol      "Methanol produced from fesos, fehos or fegas; intermediate product"
+    methanolH2    "Methanol produced from hydrogen or gasification of plastic waste (differentiation from methanol in order to restrict historic shares of mtoMta); intermediate product"
+    ammonia       "Ammonia produced from fesos, fehos or fegas; intermediate product"
+    ammoniaH2     "Ammonia produced from hydrogen (needs co2f input in fertilizer production in difference to ammonia)"
+    methFinal     "Methanol; final product"
+    ammoFinal     "Ammonia; final product"
+    !! REMINDER: once we co2f from the CCU module, make sure that it isn't subtracted twice (once by taking it from CCU, once by subtracting feedstock carbon)
     co2f
-    co2fdummy
+    co2fdummy 
 
-    naphtha
-    plasticWaste
+    naphtha       "Naphtha"
+    plasticWaste  "Plastic waste, mixed"
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     prsteel
@@ -665,7 +670,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 
     mechRe . standard
 
-    meSySol . (standard,greenh2) 
+    meSySol . (standard,greenh2) !! methanol synthesis needs hydrogen apart from coal, can be from green hydrogen or coal gasification
     meSyNg . standard
     meSyLiq . standard
     meSySol_cc . standard
@@ -686,7 +691,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
     mtoMtaH2 . standard
     fertProd . standard
     fertProdH2 . standard
-    meToFinal . (standard,greenh2)
+    meToFinal . (standard,greenh2) 
     amToFinal . (standard,greenh2)
 $endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
@@ -916,7 +921,9 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bfcc . standard . bfbof_ccs
 $endif.cm_subsec_model_steel
   /
-
+  
+  
+!! for reporting
 routeCC(route)  "TODO"
   /
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"

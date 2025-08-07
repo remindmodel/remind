@@ -79,6 +79,9 @@ runtime.rds
 # ignore RStudio project files
 /*.Rproj
 
+# ignore VS Code workspace files
+/.vscode/
+
 # Main Python virtual environment
 .venv/
 

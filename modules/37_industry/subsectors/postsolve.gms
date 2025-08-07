@@ -44,11 +44,11 @@ o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)$(
       (vm_cesIO.l(ttot,regi,in)
       + pm_cesdata(ttot,regi,in,"offset_quantity"))
       )
-  + sum((secInd37_emiMkt(secInd37Prc,emiMkt),
-           secInd37_tePrc(secInd37Prc,tePrc),
-           tePrc2opmoPrc(tePrc,opmoPrc)),
+  + sum((secInd37_emiMkt(secInd37,emiMkt),
+           secInd37_tePrc(secInd37,tePrc),
+           tePrc2opmoPrc(tePrc,opmoPrc))$(secInd37Prc(secInd37)),
       o37_demFePrc(ttot,regi,entyFe,tePrc,opmoPrc)
-      )$(secInd37Prc(secInd37))
+      )
   )
   / o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
 ;
@@ -231,8 +231,7 @@ loop((mat,route)$(matOut(mat)),
 !!
 o37_demFeIndRoute(ttot,regi,entyFe,tePrc,route,secInd37) = 0.;
 loop((entyFe,route,tePrc,opmoPrc,secInd37)$(    tePrc2route(tePrc,opmoPrc,route)
-                                            AND secInd37_tePrc(secInd37,tePrc)
-                                            AND (p37_specFeDemTarget(entyFe,tePrc,opmoPrc) gt 0.) ),
+                                            AND secInd37_tePrc(secInd37,tePrc)),
   o37_demFeIndRoute(ttot,regi,entyFe,tePrc,route,secInd37)
   = o37_demFeIndRoute(ttot,regi,entyFe,tePrc,route,secInd37) !!sum (only necessary if several opmodes for one route)
     + vm_outflowPrc.l(ttot,regi,tePrc,opmoPrc)

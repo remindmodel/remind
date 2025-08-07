@@ -1282,6 +1282,10 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,'oae_ng')     = 0.25;
   p_adj_seed_te(ttot,regi,'oae_el')     = 0.25;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+  !! not all existing tech are used in all regions 
+  !! Low seeds for these prevent switching between exisitng tech
+  !! High seeds for new tech like H2 makes ist easy to switch to that. 
+  !! Seeds have little/no effect on tech with large exisitng cap in a region
   !!p_adj_seed_te(ttot,regi,"chemElec")        = 0.50;
   !!p_adj_seed_te(ttot,regi,"chemH2")          = 0.50;
   p_adj_seed_te(ttot,regi,"meSySol")         = 0.0001;  
@@ -1359,6 +1363,9 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,'oae_ng')       = 0.8;
   p_adj_coeff(ttot,regi,'oae_el')       = 0.8;
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+  !! scaling factor for adjustment costs
+  !! old technologies have high costs, new technologies have low costs
+  !! default = 0.25
   !!p_adj_coeff(ttot,regi,"chemElec")        = 0.25;
   !!p_adj_coeff(ttot,regi,"chemH2")          = 1.0;
   p_adj_coeff(ttot,regi,"meSySol")         = 3.0; 
