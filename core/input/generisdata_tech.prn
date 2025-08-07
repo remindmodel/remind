@@ -171,7 +171,7 @@ $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 +                chemOld     chemElec    chemH2      stCrNg      stCrLiq      amSyCoal      amSyNG      amSyLiq      amSyH2     meSySol     meSyNG     meSyLiq     meSyH2
 !! documentation & sources: see below 
 inco0                500         500        500        1080         1040          2100         875         1190        1250         520        300         290       1050
-omf                 0.06         0.1        0.1       0.025        0.025          0.05       0.025        0.025        0.04        0.05      0.025       0.025      0.015
+omf                 0.06         0.06        0.06       0.025        0.025          0.05       0.025        0.025        0.04        0.05      0.025       0.025      0.015
 constrTme              3           3          3           3            3             3           3            3           3           3          3           3          3
 lifetime              30          30         30          30           30            30          30           30          30          30         30          30         30
 
@@ -430,7 +430,7 @@ amSyCoal amSyNG amSyLiq and amSyH2:
         9412 kgNH3/h / (8760 / 0.8 * 1000) /USD_2020 * USD_2015 ~ 1250 $/t
         (Sources: Technology Data for Renewable Fuels by Danish Energy Agency. 103 Hydrogen to Ammonia)
         omf ~ 0.04
-        (M. Fasihi, R. Weiss, J. Savolainen and C. Breyer, Appl. Energy, 2021, 294, 116170. Table A1)
+        (Fasihi, M., Breyer, C., 2024. Global production potential of green methanol based on variable renewable electricity. Energy Environ. Sci. 17, 3503–3522. Table S10)
 
 amSyCoal_cc amSyNG_cc amSyLiq_cc:
 

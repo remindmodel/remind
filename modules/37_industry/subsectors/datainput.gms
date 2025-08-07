@@ -782,7 +782,7 @@ p37_specFeDemTarget("feels","meSyNg_cc","standard")  = 0.54 / (sm_TWa_2_MWh/sm_g
 
 p37_specFeDemTarget("feels","meSyLiq_cc","standard")    = 0.54 / (sm_TWa_2_MWh/sm_giga_2_non); !! Assume same as meSyNg_cc   Mwh/tC
 
-p37_specFeDemTarget("feh2s","meSyH2","standard")  = 6.4 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: DEA Technology Data for Energy Carrier Generation and Conversion June 2017 98 Methanol from hydrogen
+p37_specFeDemTarget("feh2s","meSyH2","standard")  = (6.4+0.58) / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: DEA Technology Data for Energy Carrier Generation and Conversion June 2017 98 Methanol from hydrogen, assuming steam input is produced from hydrogen
 p37_specFeDemTarget("feels","meSyH2","standard")  = 0.10 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: DEA Technology Data for Energy Carrier Generation and Conversion June 2017 98 Methanol from hydrogen
 
 p37_specFeDemTarget("fegas","meSyChemRe","standard")  = 2.6 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Shaik Afzal 2023 Table S4+S5, calculated from minimum selling price breakdown
