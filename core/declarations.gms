@@ -231,6 +231,8 @@ pm_fedemand(tall,all_regi,all_in)                     "final energy demand"
 pm_share_CCS_CCO2(ttot,all_regi)                      "share of stored CO2 from total captured CO2"
 
 pm_delta_histCap(tall,all_regi,all_te)                "parameter to store data of historic capacity additions [TW/yr]"
+p_histProdSeGrowthRate(tall,all_regi,all_enty,all_te) "parameter to store data of historic production growth rate [fraction]"
+p_maxhistProdSeGrowthRate(all_regi,all_enty,all_te)   "maximum historic production growth rate [fraction]"
 
 p_prodSeReference(ttot,all_regi,all_enty,all_enty,all_te)         "Secondary Energy output of a te in the reference run [TWa]"
 pm_prodFEReference(ttot,all_regi,all_enty,all_enty,all_te)         "Final Energy output of a te in the reference run [TWa]"

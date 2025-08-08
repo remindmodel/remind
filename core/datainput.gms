@@ -742,6 +742,16 @@ $include "./core/input/p_PE_histCap.cs3r"
 $offdelim
 ;
 
+*** historical secondary energy production
+table p_histProdSe(tall,all_regi,all_enty,all_te) "historical installed production/generation (TWa)"
+$ondelim
+$include "./core/input/p_histProdSe.cs3r"
+$offdelim
+;
+p_histProdSe(tall,regi,entySe,te) = p_histProdSe(tall,regi,entySe,te) / sm_TWa_2_TWh;
+p_histProdSeGrowthRate(tall,regi,entySe,te)$p_histProdSe(tall-1,regi,entySe,te) = ( p_histProdSe(tall,regi,entySe,te) - p_histProdSe(tall-1,regi,entySe,te) ) / p_histProdSe(tall-1,regi,entySe,te);
+p_maxhistProdSeGrowthRate(regi,entySe,te) = smax(tall, p_histProdSeGrowthRate(tall,regi,entySe,te)$ (tall.val >= 2019 and tall.val <= 2024));
+
 *** installed capacity availability
 $Offlisting
 table   f_cf(tall,all_regi,all_te) "installed capacity availability"
