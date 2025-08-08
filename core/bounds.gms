@@ -346,7 +346,6 @@ loop(t $ (t.val >= 2015 and t.val <= 2025),
 
 *** bounds on 2025 variable renewables generation deployment based on historical growth rates
 vm_prodSe.up("2025",regi,"pewin","seel","windon")$regi_group("EUR_regi",regi) = power(((p_maxhistProdSeGrowthRate(regi,"seel","windon") * 1.3) + 1), 2) * p_histProdSe("2023",regi,"seel","windon");
-#vm_prodSe.up("2025",regi,"pewin","seel","windoff")$regi_group("EUR_regi",regi) = power(((p_maxhistProdSeGrowthRate(regi,"seel","windoff") * 1.3) + 1), 2) * p_histProdSe("2023",regi,"seel","windoff");
 vm_prodSe.up("2025",regi,"pewin","seel","spv")$regi_group("EUR_regi",regi) = power(((p_maxhistProdSeGrowthRate(regi,"seel","spv") * 1.3) + 1), 2) * p_histProdSe("2023",regi,"seel","spv");
 
 *** bounds on near-term electrolysis capacities
