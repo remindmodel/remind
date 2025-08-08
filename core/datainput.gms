@@ -748,7 +748,7 @@ $ondelim
 $include "./core/input/p_histProdSe.cs3r"
 $offdelim
 ;
-p_histProdSeGrowthRate(tall,regi,entySe,te) = ( p_histProdSe(tall,regi,entySe,te) - p_histProdSe(tall-1,regi,entySe,te) ) / p_histProdSe(tall-1,regi,entySe,te);
+p_histProdSeGrowthRate(tall,regi,entySe,te)$p_histProdSe(tall-1,regi,entySe,te) = ( p_histProdSe(tall,regi,entySe,te) - p_histProdSe(tall-1,regi,entySe,te) ) / p_histProdSe(tall-1,regi,entySe,te);
 p_maxhistProdSeGrowthRate(regi,entySe,te) = smax(tall, p_histProdSeGrowthRate(tall,regi,entySe,te)$ (tall.val >= 2019 and tall.val <= 2024));
 
 *** installed capacity availability
