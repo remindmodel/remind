@@ -1,0 +1,305 @@
+<!--
+|  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
+|  authors, and contributors see CITATION.cff file. This file is part
+|  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+|  AGPL-3.0, you are granted additional permissions described in the
+|  REMIND License Exception, version 1.0 (see LICENSE file).
+|  Contact: remind@pik-potsdam.de
+-->
+# Air Pollutants detailed
+
+```{r, echo = TRUE, results = 'show'}
+# Create some total variables that are not directly available in the historical data
+data <- data %>%
+  filter(model == "CEDS IAMC sectors") %>%
+  calc_addVariable(
+    `Emi|BC` = 
+    "`Emi|BC|Agriculture` +
+    `Emi|BC|Aircraft` +
+    `Emi|BC|Energy Sector` +
+    `Emi|BC|Industrial Sector` +
+    `Emi|BC|International Shipping` +
+    `Emi|BC|Residential Commercial Other` +
+    `Emi|BC|Solvents Production and Application` +
+    `Emi|BC|Transportation Sector` +
+    `Emi|BC|Waste`",
+    unit = "Mt BC/yr"
+  ) %>%
+  bind_rows(data, .)
+
+data %>%
+  filter(scenario == "historical") %>%
+  filter(variable == "Emi|BC")
+```
+
+```{r, echo = TRUE, results = 'show'}
+data %>%
+  filter(scenario == "historical") %>%
+  filter(variable == "Emi|BC")
+```
+
+## BC
+
+### Emi|BC
+```{r Black Carbon Emissions - Total}
+showLinePlots(data, "Emi|BC", histVars = "Emi|BC", vlines = 2020)
+```
+
+### Emi|BC|Energy Demand|Buildings
+```{r Black Carbon Emissions - Buildings}
+showLinePlots(data, "Emi|BC|Energy Demand|Buildings", histVars = "Emi|BC|Energy|Demand|Buildings", vlines = 2020)
+```
+
+```{r Black Carbon Emissions - Industry}
+showLinePlots(data, "Emi|BC|Energy Demand|Industry", histVars = "Emi|BC|Energy|Demand|Industry", vlines = 2020)
+```
+
+```{r Black Carbon Emissions - Transport}
+showLinePlots(data, "Emi|BC|Energy Demand|Transport", histVars = "Emi|BC|Energy|Demand|Transport", vlines = 2020)
+```
+
+```{r BC Emissions - Total}
+showLinePlots(data, "Emi|BC|Energy Demand|Transport|Aviation", histVars = "Emi|BC|Transport|Pass|Aviation|International|Demand", vlines = 2020)
+```
+
+```{r BC Emissions - Total}
+showLinePlots(data, "Emi|BC|Energy Demand|Transport|International Shipping", histVars = "Emi|BC|International Shipping", vlines = 2020)
+```
+
+```{r Black Carbon Emissions - Energy Supply}
+showLinePlots(data, "Emi|BC|Energy Supply", histVars = "Emi|BC|Energy|Supply", vlines = 2020)
+```
+
+```{r Black Carbon Emissions - Land use}
+showLinePlots(data, "Emi|BC|Land Use", histVars = "Emissions|BC|Land|", vlines = 2020)
+```
+
+```{r Black Carbon Emissions - Solvents}
+showLinePlots(data, "Emi|BC|Solvents", histVars = "Emi|BC|Solvents Production and Application", vlines = 2020)
+```
+
+```{r Black Carbon Emissions - Waste}
+showLinePlots(data, "Emi|BC|Waste", histVars = "Emi|BC|Waste", vlines = 2020)
+```
+
+## SO2 
+```{r SO2 Emissions - Total}
+showLinePlots(data, "Emi|SO2|Energy Supply", histVars = "Emi|Sulfur|Energy|Supply", vlines = 2020)
+```
+
+```{r SO2 Emissions - Total}
+showLinePlots(data, "Emi|SO2|Energy Demand|Buildings", histVars = "Emi|Sulfur|Energy|Demand|Buildings", vlines = 2020)
+```
+
+```{r SO2 Emissions - Total}
+showLinePlots(data, "Emi|SO2|Energy Demand|Industry", histVars = "Emi|Sulfur|Energy|Demand|Industry", vlines = 2020)
+```
+
+```{r SO2 Emissions - Total}
+showLinePlots(data, "Emi|SO2|Energy Demand|Transport", histVars = "Emi|Sulfur|Energy|Demand|Transport", vlines = 2020)
+```
+
+```{r SO2 Emissions - Total}
+showLinePlots(data, "Emi|SO2|Energy Demand|Transport|Aviation", histVars = "Emi|Sulfur|Transport|Pass|Aviation|International|Demand", vlines = 2020)
+```
+
+```{r SO2 Emissions - Total}
+showLinePlots(data, "Emi|SO2|Energy Demand|Transport|International Shipping", histVars = "Emi|Sulfur|International Shipping", vlines = 2020)
+```
+
+```{r SO2 Emissions - Total}
+showLinePlots(data, "Emi|SO2|Land Use", histVars = "Emissions|SO2|Land|", vlines = 2020)
+```
+
+```{r SO2 Emissions - Total}
+showLinePlots(data, "Emi|SO2|Solvents", histVars = "Emi|Sulfur|Solvents Production and Application", vlines = 2020)
+```
+
+```{r SO2 Emissions - Total}
+showLinePlots(data, "Emi|SO2|Waste", histVars = "Emi|Sulfur|Waste", vlines = 2020)
+```
+
+## VOC 
+```{r VOC Emissions - Total}
+showLinePlots(data, "Emi|VOC|Energy Supply", histVars = "Emi|VOC|Energy|Supply", vlines = 2020)
+```
+
+```{r VOC Emissions - Total}
+showLinePlots(data, "Emi|VOC|Energy Demand|Buildings", histVars = "Emi|VOC|Energy|Demand|Buildings", vlines = 2020)
+```
+
+```{r VOC Emissions - Total}
+showLinePlots(data, "Emi|VOC|Energy Demand|Industry", histVars = "Emi|VOC|Energy|Demand|Industry", vlines = 2020)
+```
+
+```{r VOC Emissions - Total}
+showLinePlots(data, "Emi|VOC|Energy Demand|Transport", histVars = "Emi|VOC|Energy|Demand|Transport", vlines = 2020)
+```
+
+```{r VOC Emissions - Total}
+showLinePlots(data, "Emi|VOC|Energy Demand|Transport|Aviation", histVars = "Emi|VOC|Transport|Pass|Aviation|International|Demand", vlines = 2020)
+```
+
+```{r VOC Emissions - Total}
+showLinePlots(data, "Emi|VOC|Energy Demand|Transport|International Shipping", histVars = "Emi|VOC|International Shipping", vlines = 2020)
+```
+
+```{r VOC Emissions - Total}
+showLinePlots(data, "Emi|VOC|Land Use", vlines = 2020)
+```
+
+```{r VOC Emissions - Total}
+showLinePlots(data, "Emi|VOC|Solvents", histVars = "Emi|VOC|Solvents Production and Application", vlines = 2020)
+```
+
+```{r VOC Emissions - Total}
+showLinePlots(data, "Emi|VOC|Waste", histVars = "Emi|VOC|Waste", vlines = 2020)
+```
+
+## OC 
+```{r OC Emissions - Total}
+showLinePlots(data, "Emi|OC|Energy Supply", histVars = "Emi|OC|Energy|Supply", vlines = 2020)
+```
+
+```{r OC Emissions - Total}
+showLinePlots(data, "Emi|OC|Energy Demand|Buildings", histVars = "Emi|OC|Energy|Demand|Buildings", vlines = 2020)
+```
+
+```{r OC Emissions - Total}
+showLinePlots(data, "Emi|OC|Energy Demand|Industry", histVars = "Emi|OC|Energy|Demand|Industry", vlines = 2020)
+```
+
+```{r OC Emissions - Total}
+showLinePlots(data, "Emi|OC|Energy Demand|Transport", histVars = "Emi|OC|Energy|Demand|Transport", vlines = 2020)
+```
+
+```{r OC Emissions - Total}
+showLinePlots(data, "Emi|OC|Energy Demand|Transport|Aviation", histVars = "Emi|OC|Transport|Pass|Aviation|International|Demand", vlines = 2020)
+```
+
+```{r OC Emissions - Total}
+showLinePlots(data, "Emi|OC|Energy Demand|Transport|International Shipping", histVars = "Emi|OC|International Shipping", vlines = 2020)
+```
+
+```{r OC Emissions - Total}
+showLinePlots(data, "Emi|OC|Land Use", vlines = 2020)
+```
+
+```{r OC Emissions - Total}
+showLinePlots(data, "Emi|OC|Solvents", histVars = "Emi|OC|Solvents Production and Application", vlines = 2020)
+```
+
+```{r OC Emissions - Total}
+showLinePlots(data, "Emi|OC|Waste", histVars = "Emi|OC|Waste", vlines = 2020)
+```
+
+## NOX 
+```{r NOX Emissions - Total}
+showLinePlots(data, "Emi|NOX|Energy Supply", histVars = "Emi|NOX|Energy|Supply", vlines = 2020)
+```
+
+```{r NOX Emissions - Total}
+showLinePlots(data, "Emi|NOX|Energy Demand|Buildings", histVars = "Emi|NOX|Energy|Demand|Buildings", vlines = 2020)
+```
+
+```{r NOX Emissions - Total}
+showLinePlots(data, "Emi|NOX|Energy Demand|Industry", histVars = "Emi|NOX|Energy|Demand|Industry", vlines = 2020)
+```
+
+```{r NOX Emissions - Total}
+showLinePlots(data, "Emi|NOX|Energy Demand|Transport", histVars = "Emi|NOX|Energy|Demand|Transport", vlines = 2020)
+```
+
+```{r NOX Emissions - Total}
+showLinePlots(data, "Emi|NOX|Energy Demand|Transport|Aviation", histVars = "Emi|NOX|Transport|Pass|Aviation|International|Demand", vlines = 2020)
+```
+
+```{r NOX Emissions - Total}
+showLinePlots(data, "Emi|NOX|Energy Demand|Transport|International Shipping", histVars = "Emi|NOX|International Shipping", vlines = 2020)
+```
+
+```{r NOX Emissions - Total}
+showLinePlots(data, "Emi|NOX|Land Use", vlines = 2020)
+```
+
+```{r NOX Emissions - Total}
+showLinePlots(data, "Emi|NOX|Solvents", histVars = "Emi|NOX|Solvents Production and Application", vlines = 2020)
+```
+
+```{r NOX Emissions - Total}
+showLinePlots(data, "Emi|NOX|Waste", histVars = "Emi|NOX|Waste", vlines = 2020)
+```
+
+## NH3 
+```{r NH3 Emissions - Total}
+showLinePlots(data, "Emi|NH3|Energy Supply", histVars = "Emi|NH3|Energy|Supply", vlines = 2020)
+```
+
+```{r NH3 Emissions - Total}
+showLinePlots(data, "Emi|NH3|Energy Demand|Buildings", histVars = "Emi|NH3|Energy|Demand|Buildings", vlines = 2020)
+```
+
+```{r NH3 Emissions - Total}
+showLinePlots(data, "Emi|NH3|Energy Demand|Industry", histVars = "Emi|NH3|Energy|Demand|Industry", vlines = 2020)
+```
+
+```{r NH3 Emissions - Total}
+showLinePlots(data, "Emi|NH3|Energy Demand|Transport", histVars = "Emi|NH3|Energy|Demand|Transport", vlines = 2020)
+```
+
+```{r NH3 Emissions - Total}
+showLinePlots(data, "Emi|NH3|Energy Demand|Transport|Aviation", histVars = "Emi|NH3|Transport|Pass|Aviation|International|Demand", vlines = 2020)
+```
+
+```{r NH3 Emissions - Total}
+showLinePlots(data, "Emi|NH3|Energy Demand|Transport|International Shipping", histVars = "Emi|NH3|International Shipping", vlines = 2020)
+```
+
+```{r NH3 Emissions - Total}
+showLinePlots(data, "Emi|NH3|Land Use", vlines = 2020)
+```
+
+```{r NH3 Emissions - Total}
+showLinePlots(data, "Emi|NH3|Solvents", histVars = "Emi|NH3|Solvents Production and Application", vlines = 2020)
+```
+
+```{r NH3 Emissions - Total}
+showLinePlots(data, "Emi|NH3|Waste", histVars = "Emi|NH3|Waste", vlines = 2020)
+```
+
+## CO 
+```{r CO Emissions - Total}
+showLinePlots(data, "Emi|CO|Energy Supply", histVars = "Emi|CO|Energy|Supply", vlines = 2020)
+```
+
+```{r CO Emissions - Total}
+showLinePlots(data, "Emi|CO|Energy Demand|Buildings", histVars = "Emi|CO|Energy|Demand|Buildings", vlines = 2020)
+```
+
+```{r CO Emissions - Total}
+showLinePlots(data, "Emi|CO|Energy Demand|Industry", histVars = "Emi|CO|Energy|Demand|Industry", vlines = 2020)
+```
+
+```{r CO Emissions - Total}
+showLinePlots(data, "Emi|CO|Energy Demand|Transport", histVars = "Emi|CO|Energy|Demand|Transport", vlines = 2020)
+```
+
+```{r CO Emissions - Total}
+showLinePlots(data, "Emi|CO|Energy Demand|Transport|Aviation", histVars = "Emi|CO|Transport|Pass|Aviation|International|Demand", vlines = 2020)
+```
+
+```{r CO Emissions - Total}
+showLinePlots(data, "Emi|CO|Energy Demand|Transport|International Shipping", histVars = "Emi|CO|International Shipping", vlines = 2020)
+```
+
+```{r CO Emissions - Total}
+showLinePlots(data, "Emi|CO|Land Use", vlines = 2020)
+```
+
+```{r CO Emissions - Total}
+showLinePlots(data, "Emi|CO|Solvents", histVars = "Emi|CO|Solvents Production and Application", vlines = 2020)
+```
+
+```{r CO Emissions - Total}
+showLinePlots(data, "Emi|CO|Waste", histVars = "Emi|CO|Waste", vlines = 2020)
+```
