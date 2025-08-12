@@ -8,34 +8,52 @@
 -->
 # Air Pollutants detailed
 
-```{r, echo = TRUE, results = 'show'}
-# Create some total variables that are not directly available in the historical data
-data <- data %>%
-  filter(model == "CEDS IAMC sectors") %>%
-  calc_addVariable(
-    `Emi|BC` = 
-    "`Emi|BC|Agriculture` +
-    `Emi|BC|Aircraft` +
-    `Emi|BC|Energy Sector` +
-    `Emi|BC|Industrial Sector` +
-    `Emi|BC|International Shipping` +
-    `Emi|BC|Residential Commercial Other` +
-    `Emi|BC|Solvents Production and Application` +
-    `Emi|BC|Transportation Sector` +
-    `Emi|BC|Waste`",
-    unit = "Mt BC/yr"
-  ) %>%
-  bind_rows(data, .)
+```{r, echo = FALSE, results = 'hide'}
+# Adds a new variable as the sum of a list of variables
+addSumVariables <- function(
+  fdata, sumvars, outvarname, outunit = NULL, convmult = 1, convoffset = 0, only.new = FALSE
+  ) {
+  if (is.null(outunit)) {
+    outunit <- fdata %>%
+      filter(variable == sumvars[1]) %>%
+      slice(1) %>%
+      select(unit) %>% unlist %>% as.character
+  }
 
-data %>%
-  filter(scenario == "historical") %>%
-  filter(variable == "Emi|BC")
+  newdata <- fdata %>%
+    filter(variable %in% sumvars) %>%
+    select(-varplus) %>%
+    distinct %>%
+    pivot_wider(names_from = variable, values_from = value) %>%
+    mutate(value = rowSums(across(sumvars))) %>%
+    select(-c(sumvars)) %>%
+    mutate(variable = outvarname, varplus = outvarname, unit = outunit)
+  if(!only.new) {
+    return(rbind(fdata, newdata))
+  } else {
+    return(newdata)
+  }
+}
 ```
 
-```{r, echo = TRUE, results = 'show'}
-data %>%
-  filter(scenario == "historical") %>%
-  filter(variable == "Emi|BC")
+```{r, echo = FALSE, results = 'hide'}
+# Create some total variables that are not directly available in the historical data
+sumvars <- c(
+    "Emi|BC|Agriculture",
+    "Emi|BC|Aircraft",
+    "Emi|BC|Energy Sector",
+    "Emi|BC|Industrial Sector",
+    "Emi|BC|International Shipping",
+    "Emi|BC|Residential Commercial Other",
+    "Emi|BC|Solvents Production and Application",
+    "Emi|BC|Transportation Sector",
+    "Emi|BC|Waste"
+  )
+
+data <- data %>% 
+  filter(model == "CEDS IAMC sectors") %>%
+  addSumVariables(sumvars, "Emi|BC", only.new = TRUE) %>%
+  bind_rows(data)
 ```
 
 ## BC
