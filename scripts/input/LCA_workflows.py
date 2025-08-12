@@ -34,7 +34,7 @@ def get_monetization_arg(args):
     elif args.perspective is not None:
         return args.perspective
     else:
-        df = pd.read_csv(args.monetization_factors)
+        df = pd.read_csv(args.monetization_factors, header=None)
         if len(df.columns) != 2:
             raise ValueError("File with monetization factors must have exactly two columns!")
         else:
@@ -162,7 +162,7 @@ if __name__ == "__main__":
     if args.calcCosts:
         t0 = time.time()
         monetization = get_monetization_arg(args)
-        I.calculate_costs(monetization)
+        I.calculate_costs(monetization, save_intermediate_results=True)
         t1 = time.time()
         logFile.writelines([f"Cost calculation done in {t1-t0} seconds", "\n"])
 
