@@ -153,7 +153,14 @@ parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit:
 $ondelim
 $include "./core/input/p_inco0.cs4r"
 $offdelim
-/;
+/
+;
+
+***---------------------------------------------------------------------------
+*** Biochar parametrization variation
+***---------------------------------------------------------------------------
+fm_dataglob("learn", te)$(sameAs(te, "biopyronly") OR sameAs(te, "biopyrhe") OR
+                          sameAs(te, "biopyrchp")) = %c_BCLearning%;
 
 ***---------------------------------------------------------------------------
 *** SSP-dependent technology assumptions
@@ -279,9 +286,9 @@ $if not "%cm_inco0RegiFactor%" == "off"           p_inco0(ttot,regi,te)$(p_inco0
 ***---------------------------------------------------------------------------
 
 *** generisdata_tech is in $2015. Needs to be converted to $2017
-fm_dataglob("inco0",te)        = s_D2015_2_D2017 * fm_dataglob("inco0",te);
-fm_dataglob("floorcost",te)    = s_D2015_2_D2017 * fm_dataglob("floorcost",te);
-fm_dataglob("omv",te)          = s_D2015_2_D2017 * fm_dataglob("omv",te);
+fm_dataglob("inco0",te)        = sm_D2015_2_D2017 * fm_dataglob("inco0",te);
+fm_dataglob("floorcost",te)    = sm_D2015_2_D2017 * fm_dataglob("floorcost",te);
+fm_dataglob("omv",te)          = sm_D2015_2_D2017 * fm_dataglob("omv",te);
 
 *** adjust costs for oae from USD/GtCaO to USD/GtC
 fm_dataglob("inco0", "oae_ng") = fm_dataglob("inco0", "oae_ng") / (cm_33_OAE_eff / sm_c_2_co2);
@@ -774,6 +781,8 @@ pm_cf(ttot,regi,"h2turbVRE")$(ttot.val ge 2025) = pm_cf(ttot,regi,"ngt");
 pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
+*TD* Set capacity factors for pyrolysis technologies. Will delete after added in next inputdata generation
+pm_cf(ttot,regi,"biocharuse") = 1;
 
 *** Region- and tech-specific early retirement rates
 loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi),
@@ -903,6 +912,14 @@ parameter p_boundCapCCSindicator(all_regi)        "CCS used in until 2030"
 /
 $ondelim
 $include "./core/input/p_boundCapCCSindicator.cs4r"
+$offdelim
+/;
+
+*** read in data on Biochar capacities used as upper and lower bound on Biochar production in 2020 and 2025
+parameter p_boundCapBiochar(ttot, all_regi)        "installed and planned capacity of Biochar [t BC/a]"
+/
+$ondelim
+$include "./core/input/p_boundCapBiochar.cs4r"
 $offdelim
 /;
 
@@ -1273,6 +1290,10 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,"h22ch4")       = 0.5;
 *** CO2 storage and CDR technologies
   p_adj_coeff(ttot,regi,"ccsinje")      = 1.0;
+  p_adj_coeff(ttot,regi,"biopyronly")   = 0.55; !! like biochp and bioigcc;
+  p_adj_coeff(ttot,regi,"biopyrhe")     = 0.55; !! like biochp and bioigcc;
+  p_adj_coeff(ttot,regi,"biopyrchp")    = 0.55; !! like biochp and bioigcc;
+  p_adj_coeff(ttot,regi,"biopyrliq")    = 0.65; !! like bioftrec;
   p_adj_coeff(ttot,regi,"dac")          = 0.8;
   p_adj_coeff(ttot,regi,'oae_ng')       = 0.8;
   p_adj_coeff(ttot,regi,'oae_el')       = 0.8;

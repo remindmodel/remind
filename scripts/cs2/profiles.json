@@ -49,6 +49,20 @@
 		"yearsBarPlot": "c(2020, 2030, 2040, 2050)",
 		"mainReg": "'EU27'"
 	},
+	"EUR": {
+		"projectLibrary": "'remind2'",
+		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA', 'UKI', 'NES', 'NEN', 'EUR')",
+		"mainReg": "'EUR'",
+		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))"
+	},
+	"EUR-short": {
+		"projectLibrary": "'remind2'",
+		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA', 'UKI', 'NES', 'NEN', 'EUR')",
+		"yearsScen": "seq(2005, 2050, 5)",
+		"yearsHist": "c(seq(2000, 2024, 1), seq(2025, 2050, 5))",
+		"yearsBarPlot": "c(2020, 2030, 2040, 2050)",
+		"mainReg": "'EUR'"
+	},
 	"AriadneDEU": {
 		"projectLibrary": "'remind2'",
 		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
@@ -79,6 +93,11 @@
 		"reg": "c('OAS', 'MEA', 'SSA', 'LAM', 'REF', 'CAZ', 'CHA', 'IND', 'JPN', 'USA', 'NEU', 'EUR', 'World')",
 		"sections": "c(0,1,2,3,4,5,99)",
 		"mainReg": "'World'"
+	},
+		"AirPollutantsDetailed": {
+		"sections": "0",
+		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))",
+		"userSectionPath": "normalizePath('./scripts/cs2/AirPollutantsDetailed.Rmd')"
 	},
 	"mySection": {
 		"sections": "0",
