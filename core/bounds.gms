@@ -345,6 +345,8 @@ loop(t $ (t.val >= 2015 and t.val <= 2025),
 );
 
 *** bounds on 2025 variable renewables generation deployment based on historical growth rates
+*** the bound takes the maximum annual growth rate for any year between 2019 and 2024, 
+***   increases it by 30% to allow for growth acceleration, and applies it for the two years from 2023 to 2025
 vm_prodSe.up("2025",regi,"pewin","seel","windon")$regi_group("EUR_regi",regi) = power(((p_maxhistProdSeGrowthRate(regi,"seel","windon") * 1.3) + 1), 2) * p_histProdSe("2023",regi,"seel","windon");
 vm_prodSe.up("2025",regi,"pesol","seel","spv")$regi_group("EUR_regi",regi) = power(((p_maxhistProdSeGrowthRate(regi,"seel","spv") * 1.3) + 1), 2) * p_histProdSe("2023",regi,"seel","spv");
 
