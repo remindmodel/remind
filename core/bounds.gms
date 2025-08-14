@@ -82,12 +82,11 @@ loop(t $ (t.val >= 2015 and t.val <= 2025),
 );
 
 loop(regi $ regi_group("EUR_regi",regi),
-*' bounds on 2025 variable renewables generation deployment based on historical growth rates
-*** RP: the bound takes the maximum annual growth rate for any year between 2019 and 2024, 
+*' bounds on 2025 variable renewables generation based on historical growth rates
+*** the bound takes the maximum annual growth rate for any year between 2019 and 2024, 
 *** increases it by 30% to allow for growth acceleration, and applies it for the two years from 2023 to 2025
-  loop(te $ (sameas(te, "windon") or sameas(te, "spv"))
-    vm_prodSe.up("2025",regi,"pewin","seel",te) = p_histProdSe("2023",regi,"seel",te) * power(((p_maxhistProdSeGrowthRate(regi,"seel",te) * 1.3) + 1), 2);
-  );
+  vm_prodSe.up("2025",regi,"pewin","seel","windon") = p_histProdSe("2023",regi,"seel","windon") * power((p_maxhistProdSeGrowthRate(regi,"seel","windon") * 1.3 + 1), 2);
+  vm_prodSe.up("2025",regi,"pesol","seel","spv") = p_histProdSe("2023",regi,"seel","spv") * power((p_maxhistProdSeGrowthRate(regi,"seel","spv") * 1.3 + 1), 2);
 
 *' no investment into oil turbines in Europe
   vm_deltaCap.up(t,regi,"dot","1") $ (t.val > 2005) = 1e-6;
@@ -112,12 +111,11 @@ vm_cap.up("2030",regi,"elh2","1")= 100 * pm_eta_conv("2025",regi,"elh2") * pm_gd
                                          / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
 
 *' upper bound of 0.5 EJ/yr to prevent building too much grey hydrogen before 2020, distributed to regions via GDP share
-vm_cap.up("2020",regi,"gash2","1") = 0.5 / 3.66 * 1e3 / 8760 * pm_gdp("2020",regi) / sum(regi2, pm_gdp("2020",regi2));
+vm_cap.up("2020",regi,"gash2","1") = 0.5 * sm_EJ_2_TWa * pm_gdp("2020",regi) / sum(regi2, pm_gdp("2020",regi2));
 *' Set upper bounds on biomass gasification for hydrogen production, which is not deployed as of 2025
 *' allow for small production of at most 0.1 EJ/yr by 2030 for each technology globally, distributed to regions by GDP share in 2025
-*** TODO: use sm_EJ_2_TWa, which will slightly change the bound (0.03171 instead of previous 0.03113)
-vm_cap.up("2030",regi,"bioh2","1")  = 0.1 / 3.66 * 1e3 / 8760 * pm_gdp("2025",regi) / sum(regi2, pm_gdp("2025",regi2));
-vm_cap.up("2030",regi,"bioh2c","1") = 0.1 / 3.66 * 1e3 / 8760 * pm_gdp("2025",regi) / sum(regi2, pm_gdp("2025",regi2));
+vm_cap.up("2030",regi,"bioh2","1")  = 0.1 * sm_EJ_2_TWa * pm_gdp("2025",regi) / sum(regi2, pm_gdp("2025",regi2));
+vm_cap.up("2030",regi,"bioh2c","1") = 0.1 * sm_EJ_2_TWa * pm_gdp("2025",regi) / sum(regi2, pm_gdp("2025",regi2));
 *' allow zero vm_deltaCap for bio-hydrogen up to 2030 to be consistent with above bounds
 vm_deltaCap.lo(t,regi,"bioh2","1")  $ (t.val <= 2030) = 0;
 vm_deltaCap.lo(t,regi,"bioh2c","1") $ (t.val <= 2030) = 0;
