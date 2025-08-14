@@ -29,10 +29,7 @@ loop(pe2se(enty,enty2,te) $ (
     (not sameas(te,"gasftcrec")) and
     (not sameas(te,"gasftrec")) and
     (not sameas(te,"tnrs")) and
-    (not sameas(te,"biopyronly")) and
-    (not sameas(te,"biopyrhe")) and
-    (not sameas(te,"biopyrchp")) and
-    (not sameas(te,"biopyrliq")) 
+    (not teBiopyr(te))
   ),
   vm_cap.lo(t,regi,te,"1") $ (t.val >= 2030 and t.val <= 2070) = 1e-7;
   if(not teCCS(te), 
@@ -52,8 +49,8 @@ loop(teRe2rlfDetail(te,rlf),
     v_capDistr.lo(t,regi,te,rlf) $ (t.val >= 2015) = 1e-8;
 *** CB: make sure that grade distribution in early time steps with capacity fixing is close to optimal one assumed for vm_capFac calibration,
 ***     divide by p_aux_capacityFactorHistOverREMIND to correct for deviation of REMIND capacity factors from historic capacity factors
-    v_capDistr.lo("2015",regi,te,rlf) = 0.90 / max(1, p_aux_capacityFactorHistOverREMIND(regi,te)) * p_aux_capThisGrade(regi,te,rlf);
-    v_capDistr.lo("2020",regi,te,rlf) = 0.90 / max(1, p_aux_capacityFactorHistOverREMIND(regi,te)) * p_aux_capThisGrade(regi,te,rlf);
+    v_capDistr.lo("2015",regi,te,rlf) = 0.9 / max(1, p_aux_capacityFactorHistOverREMIND(regi,te)) * p_aux_capThisGrade(regi,te,rlf);
+    v_capDistr.lo("2020",regi,te,rlf) = 0.9 / max(1, p_aux_capacityFactorHistOverREMIND(regi,te)) * p_aux_capThisGrade(regi,te,rlf);
   );
 );
 
@@ -86,7 +83,7 @@ loop(regi $ regi_group("EUR_regi",regi),
 *** the bound takes the maximum annual growth rate for any year between 2019 and 2024, 
 *** increases it by 30% to allow for growth acceleration, and applies it for the two years from 2023 to 2025
   vm_prodSe.up("2025",regi,"pewin","seel","windon") = p_histProdSe("2023",regi,"seel","windon") * power((p_maxhistProdSeGrowthRate(regi,"seel","windon") * 1.3 + 1), 2);
-  vm_prodSe.up("2025",regi,"pesol","seel","spv") = p_histProdSe("2023",regi,"seel","spv") * power((p_maxhistProdSeGrowthRate(regi,"seel","spv") * 1.3 + 1), 2);
+  vm_prodSe.up("2025",regi,"pesol","seel","spv")    = p_histProdSe("2023",regi,"seel","spv")    * power((p_maxhistProdSeGrowthRate(regi,"seel","spv")    * 1.3 + 1), 2);
 
 *' no investment into oil turbines in Europe
   vm_deltaCap.up(t,regi,"dot","1") $ (t.val > 2005) = 1e-6;
@@ -100,15 +97,12 @@ loop(regi $ regi_group("EUR_regi",regi),
 *' distribute to regions via GDP share of 2025 (we do not use later time steps as they may have different GDPs depending on the scenario)
 *' in future this should be differentiated by region based on regionalized input data of project announcements
 *' 2 GW(el) at least globally in 2025, about operational capacity as of 2023
-vm_cap.lo("2025",regi,"elh2","1") =  2 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi)
-                                         / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
+vm_cap.lo("2025",regi,"elh2","1") =   2 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi) / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
 *' 20 GW(el) at maximum globally in 2025 (be more generous to not overconstrain regions which scale-up fastest)
-vm_cap.up("2025",regi,"elh2","1") = 20 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi)
-                                         / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
+vm_cap.up("2025",regi,"elh2","1") =  20 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi) / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
 *' 100 GW(el) at maximum globally in 2030
 *' (upper end of feasibility range in Odenweller et al. 2022, https://doi.org/10.1038/s41560-022-01097-4, see Fig. 4)
-vm_cap.up("2030",regi,"elh2","1")= 100 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi)
-                                         / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
+vm_cap.up("2030",regi,"elh2","1") = 100 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi) / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
 
 *' upper bound of 0.5 EJ/yr to prevent building too much grey hydrogen before 2020, distributed to regions via GDP share
 vm_cap.up("2020",regi,"gash2","1") = 0.5 * sm_EJ_2_TWa * pm_gdp("2020",regi) / sum(regi2, pm_gdp("2020",regi2));
@@ -129,7 +123,7 @@ vm_costTeCapital.fx(t,   regi,teNoLearn) = pm_inco0_t(t,regi,teNoLearn);
 *** variations of 2015 costs and long-term costs being high in SSP3/SSP5, this can be different -> set lower bound to 0.2
 vm_costTeCapital.lo(t,regi,teLearn) = 0.2 * pm_data(regi,"floorcost",teLearn);
 
-*' No battery storage in 2010:
+*' No battery storage in 2010
 vm_cap.up("2010",regi,teStor,"1") = 0;
 
 *** NR: cumulated capacity never falls below initial cumulated capacity:
@@ -238,7 +232,7 @@ if(c_bioh2scen = 0, !! no bioh2 technologies
 *' Switches to activate pyrolysis technologies
 loop(teBiopyr(te) $ (not sameas(te, "biopyrliq")), !! established industrial technologies
   vm_cap.fx(t,regi,te,rlf) $ (t.val <= 2015) = 0; 
-  if (c_biopyrEstablished eq 0,
+  if(c_biopyrEstablished = 0,
     vm_deltaCap.fx(t,regi,te,rlf) $ (t.val >= cm_startyear) = 0; 
   else
     vm_cap.up("2020",regi,te,rlf) = p_boundCapBiochar("2020",regi) * sm_tBC_2_TWa / 3; 
@@ -252,7 +246,7 @@ loop(te $ sameas(te, "biopyrliq"), !! does not yet exist commercially
   vm_cap.fx(t,regi,"biopyrliq",rlf)  $ (t.val <= 2025) = 0;
   vm_deltaCap.lo(t,regi,"biopyrliq",rlf) $ (t.val > cm_startyear) = 1e-8; !! initiate a negligible increase to help model find the technology
   vm_deltaCap.up(t,regi,"biopyrliq",rlf) $ (t.val > cm_startyear) = inf; !! revert fixing to small values above
-  if (c_biopyrliq eq 0,
+  if(c_biopyrliq = 0,
     vm_deltaCap.fx(t,regi,"biopyrliq",rlf) $ (t.val >= cm_startyear) = 0; 
   );
 );
