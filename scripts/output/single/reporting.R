@@ -6,7 +6,6 @@
 # |  Contact: remind@pik-potsdam.de
 
 library(remind2)
-library(reporttransport)
 library(quitte)
 library(piamutils)
 library(lucode2)
@@ -74,21 +73,21 @@ EDGEToutput <- reporttransport::reportEdgeTransport(edgetOutputDir,
                                                     isStored = FALSE)
 
 REMINDoutput <- read.quitte(file.path(outputdir, paste0("REMIND_generic_", scenario, "_withoutPlus.mif")))
+# drop regions from higher resolution EDGET reporting if REMIND is in H12
+EDGEToutput <- EDGEToutput[EDGEToutput$region %in% REMINDoutput$region, ]
 sharedVariables <- EDGEToutput[variable %in% REMINDoutput$variable | grepl(".*edge", variable)]
 EDGEToutput <- EDGEToutput[!(variable %in% REMINDoutput$variable | grepl(".*edge", variable))]
 message("The following variables will be dropped from the EDGE-Transport reporting because ",
         "they are in the REMIND reporting: ", paste(unique(sharedVariables$variable), collapse = ", "))
 
-# in order to append to the mif file, the periods 2005 and 2010 must be brought back
-# see also: https://github.com/pik-piam/reporttransport/pull/38
+# For certain projects, we currently don't want to report EDGE-T results for 2005 and 2010. 
+# If the flag c_edgetReportAfter2010 is set, 2005 and 2010 values get replaced by NAs
 
-if (!all(c(2005, 2010) %in% unique(EDGEToutput$period))) {
-  tmp <- dplyr::filter(EDGEToutput, .data$period == 2015)
-  EDGEToutput <- rbind(
-    EDGEToutput,
-    dplyr::mutate(tmp, "value" = NA, period = 2005),
-    dplyr::mutate(tmp, "value" = NA, period = 2010)
-  )
+c_edgetReportAfter2010 <- gdx::readGDX(gdx, name = "c_edgetReportAfter2010")
+
+if (c_edgetReportAfter2010 == 1) {
+  EDGEToutput <- EDGEToutput %>%
+    dplyr::mutate(value = if_else(period %in% c(2005, 2010), NA_real_, value))
 }
 
 

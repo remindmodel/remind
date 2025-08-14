@@ -28,7 +28,11 @@ loop(pe2se(enty,enty2,te) $ (
     (not sameas(te,"bioeths")) and
     (not sameas(te,"gasftcrec")) and
     (not sameas(te,"gasftrec")) and
-    (not sameas(te,"tnrs"))
+    (not sameas(te,"tnrs")) and
+    (not sameas(te,"biopyronly")) and
+    (not sameas(te,"biopyrhe")) and
+    (not sameas(te,"biopyrchp")) and
+    (not sameas(te,"biopyrliq")) 
   ),
   vm_cap.lo(t,regi,te,"1") $ (t.val >= 2030 and t.val <= 2070) = 1e-7;
   if(not teCCS(te), 
@@ -59,29 +63,36 @@ loop(teRe2rlfDetail(te,rlf),
 *' #### Assumptions on historical and near-term capacities
 *** ------------------------------------------------------------------
 *** ------------------------------------------------------------------
-
 loop(t $ (t.val >= 2015 and t.val <= 2025),
-  loop(regi,
 *** fix renewable capacities to real world historical values if available
-    vm_cap.lo(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
-    if(t.val <= 2020, !! TODO: activate 2025 upper-bound when consolidated data available
-      vm_cap.up(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 1.05 * pm_histCap(t,regi,te);
-    );
+  vm_cap.lo(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
+  if(t.val <= 2020, !! TODO: activate 2025 upper-bound when consolidated data available
+    vm_cap.up(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 1.05 * pm_histCap(t,regi,te);
+  );
 *** broader bounds for renewables with lower data quality
-    loop(te $ (sameas(te, "hydro") or sameas(te, "geohdr")),
-      vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.7 * pm_histCap(t,regi,te);
-      vm_cap.up(t,regi,te,"1") $ pm_histCap(t,regi,te) = 1.4 * pm_histCap(t,regi,te);
-    );
+  loop(te $ (sameas(te, "hydro") or sameas(te, "geohdr")),
+    vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.7 * pm_histCap(t,regi,te);
+    vm_cap.up(t,regi,te,"1") $ pm_histCap(t,regi,te) = 1.4 * pm_histCap(t,regi,te);
+  );
 
-*' lower bound on capacities for ngcc and ngt and gaschp for regions defined at the pm_histCap file
-    loop(te $ (sameas(te,"ngcc") or sameas(te,"ngt") or sameas(te,"gaschp")),
-      vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
-    );
+*** lower bound on capacities for ngcc and ngt and gaschp for regions defined at the pm_histCap file
+  loop(te $ (sameas(te,"ngcc") or sameas(te,"ngt") or sameas(te,"gaschp")),
+    vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
   );
 );
 
+loop(regi $ regi_group("EUR_regi",regi),
+*' bounds on 2025 variable renewables generation deployment based on historical growth rates
+*** RP: the bound takes the maximum annual growth rate for any year between 2019 and 2024, 
+*** increases it by 30% to allow for growth acceleration, and applies it for the two years from 2023 to 2025
+  loop(te $ (sameas(te, "windon") or sameas(te, "spv"))
+    vm_prodSe.up("2025",regi,"pewin","seel",te) = p_histProdSe("2023",regi,"seel",te) * power(((p_maxhistProdSeGrowthRate(regi,"seel",te) * 1.3) + 1), 2);
+  );
+
 *' no investment into oil turbines in Europe
-vm_deltaCap.up(t,regi,"dot","1") $ (t.val > 2005 and regi_group("EUR_regi",regi)) = 1e-6;
+  vm_deltaCap.up(t,regi,"dot","1") $ (t.val > 2005) = 1e-6;
+);
+
 
 
 *' bounds on near-term electrolysis capacities
@@ -97,7 +108,7 @@ vm_cap.up("2025",regi,"elh2","1") = 20 * pm_eta_conv("2025",regi,"elh2") * pm_gd
                                          / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
 *' 100 GW(el) at maximum globally in 2030
 *' (upper end of feasibility range in Odenweller et al. 2022, https://doi.org/10.1038/s41560-022-01097-4, see Fig. 4)
-vm_cap.up("2030",regi,"elh2","1")= 100 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2025",regi)
+vm_cap.up("2030",regi,"elh2","1")= 100 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi)
                                          / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
 
 *' upper bound of 0.5 EJ/yr to prevent building too much grey hydrogen before 2020, distributed to regions via GDP share
@@ -209,6 +220,7 @@ if(c_bioliqscen = 0, !! no bioliquids technologies
   vm_deltaCap.up(t,regi,"bioftrec",rlf)  $ (t.val > 2005) = 1e-6;
   vm_deltaCap.up(t,regi,"bioftcrec",rlf) $ (t.val > 2005) = 1e-6;
   vm_deltaCap.up(t,regi,"bioethl",rlf)   $ (t.val > 2005) = 1e-6;
+  vm_deltaCap.up(t,regi,"biopyrliq",rlf) $ (t.val > 2025) = 1e-8;
 );
 
 *' Switch to prevent new capacities of 1st generation biofuel technologies after 2030, allowing more cost-efficient
@@ -224,6 +236,28 @@ if(c_bioh2scen = 0, !! no bioh2 technologies
   vm_deltaCap.up(t,regi,"bioh2c",rlf) $ (t.val > 2005) = 1e-6;
 );
 
+
+*' Switches to activate pyrolysis technologies
+loop(teBiopyr(te) $ (not sameas(te, "biopyrliq")), !! established industrial technologies
+  vm_cap.fx(t,regi,te,rlf) $ (t.val <= 2015) = 0; 
+  if (c_biopyrEstablished eq 0,
+    vm_deltaCap.fx(t,regi,te,rlf) $ (t.val >= cm_startyear) = 0; 
+  else
+    vm_cap.up("2020",regi,te,rlf) = p_boundCapBiochar("2020",regi) * sm_tBC_2_TWa / 3; 
+    vm_cap.lo("2025",regi,te,rlf) = p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3; 
+    !! set upper bound to 70% above the lower bound which is based on 2024 values    
+    vm_cap.up("2025",regi,te,rlf) = 1.7 * p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3;                      
+  );
+);
+
+loop(te $ sameas(te, "biopyrliq"), !! does not yet exist commercially
+  vm_cap.fx(t,regi,"biopyrliq",rlf)  $ (t.val <= 2025) = 0;
+  vm_deltaCap.lo(t,regi,"biopyrliq",rlf) $ (t.val > cm_startyear) = 1e-8; !! initiate a negligible increase to help model find the technology
+  vm_deltaCap.up(t,regi,"biopyrliq",rlf) $ (t.val > cm_startyear) = inf; !! revert fixing to small values above
+  if (c_biopyrliq eq 0,
+    vm_deltaCap.fx(t,regi,"biopyrliq",rlf) $ (t.val >= cm_startyear) = 0; 
+  );
+);
 
 *** ------------------------------------------------------------------
 *** ------------------------------------------------------------------
@@ -260,7 +294,7 @@ if(c_ccsinjecratescen > 0,
 *** In nash-mode regions cannot easily share ressources, therefore CCS potentials are redistributed in Europe in data preprocessing in mrremind:
 *** Potential of EU27 regions is pooled and redistributed according to GDP (Only upper limit for 2030)
 *** Norway and UK announced to store CO2 for EU27 countries. So 50% of Norway and UK potential in 2030 is attributed to EU27-Pool
-  if(not cm_emiscen = 1, # cm_emiscen 1 = BAU
+  if(not cm_emiscen = 1, !! cm_emiscen 1 = BAU
     vm_co2CCS.lo(t,regi,"cco2","ico2","ccsinje","1") $ (t.val <= 2030) = s_MtCO2_2_GtC * p_boundCapCCS(t,regi,"operational") $ (t.val <= 2030);
     vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1") $ (t.val <= 2030) = s_MtCO2_2_GtC * (
         p_boundCapCCS(t,regi,"operational") $ (t.val <= 2030)

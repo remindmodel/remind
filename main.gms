@@ -912,6 +912,16 @@ parameter
 *' * (0): no import
 *' * (1): the values from the gdx are read in (works only if the gdx has a parameter value) ATTENTION: make sure that the values from the gdx have the right structure (e.g. regionally differentiated or not)
 *'
+parameter 
+  c_biopyrEstablished      "Turn the four established industrial biochar production configurations on = 1 or off = 0"
+; 
+  c_biopyrEstablished = 1; !! def = 1
+*'
+parameter
+  c_biopyrliq             "Turn the advanced industrial biochar production setup that co-produces liquids on  = 1 or off = 0"
+;
+  c_biopyrliq = 0;         !! def = 0
+*'
 parameter
   cm_33DAC                  "choose whether DAC (direct air capture) should be included into the CDR portfolio."
 ;
@@ -990,6 +1000,13 @@ parameter
 ;
   cm_33_EW_shortTermLimit = 0.005; !! def = 0.5% !! regexp = is.nonnegative
 *'
+parameter
+  cm_33_BCpriceForm               "biochar price assumptions (revenue from using biochar in agriculture or construction)"
+;
+  cm_33_BCpriceForm = 1; !! def = 1 
+*' *  (1): decreasing price over time, independent of actual deployment. Lower price path. Fits best for peak budget runs with 650 Gt CO2 as of 2020.
+*' *  (2): decreasing price over time, independent of actual deployment. Higher price path.Fits best for peak budget runs with 650 Gt CO2 as of 2020.
+*' *  (any other number): constant price. Chose 0 to turn it off. Unit: [2015 USD / t BC]. Suggested range: 100-200 USD/tBC. Better choice for runs with higher peak budget.
 parameter
   cm_33_maxFeShare                "max share of the CDR sectors' FE demand in the region's total FE demand, by FE type. Default is 10%"
 ;
@@ -1244,6 +1261,11 @@ parameter
   cm_wastelag			"switch to decide whether waste from plastics lags ten years behind plastics production"
 ;
   cm_wastelag = 0;   !! def = 0 no waste lag  !! regexp = 1|0
+*'
+parameter
+  c_edgetReportAfter2010			"switch that turns on overwriting of EDGE-T results for 2005 and 2010 by NAs when set to 1"
+;
+  c_edgetReportAfter2010 = 0;   !! def = 0 full reporting  !! regexp = 1|0
 *'
 *'
 *'
@@ -1680,6 +1702,11 @@ $setglobal cm_CCS_markup  off  !! def = off
 ***   def <- "off"
 ***   or number (ex. 0.66), multiply by 0.66 Industry CSS cost markup
 $setglobal cm_Industry_CCS_markup  off !! def = off
+*' Flag to change learning assumption for established pyrolysis technologies. 0 = not learning; any number = learning rate
+*' Beware: When turned on, policy runs require a NPi that also has learning, otherwise it becomes unbounded.
+*' (0.1): Learning rate of 10%.
+*' (0): Not learning
+$setglobal c_BClearning 0 !! def = 0
 *** cm_renewables_floor_cost "additional floor cost for renewables"
 ***   def <- "off" = use default floor cost for renewables.
 ***   or list of techs with respective value to be added to the renewables floor cost in Europe
@@ -1914,6 +1941,7 @@ $setGlobal c_scaleEmiHistorical  on  !! def = on  !! regexp = off|on
 $SetGlobal cm_quick_mode  off          !! def = off  !! regexp = off|on
 $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
 *' cm_APssp "air polution SSP or emission factors version"
+*' Note that SSP4 data is partly missing or copied from SSP3. Check carefully before using SSP4.
 *' (FROMGDPSSP): Shortcut to copy SSP from all_GDPpopScen
 *' (SSP1-5): SSP-specific emission factors GAINS runs from the 2025 ScenarioMIP effort
 *' (GAINSlegacy): emission factors from legacy GAINS runs
