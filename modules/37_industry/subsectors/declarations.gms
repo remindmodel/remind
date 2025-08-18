@@ -31,6 +31,7 @@ Parameters
   p37_demFeTarget(tall,all_regi,all_enty,all_in)                               "Total Fe demand that would be have been consumed historically for production of a UE if all tech had BAT efficiency"
   p37_demFeActual(tall,all_regi,all_enty,all_in)                               "Total historic Fe demand consumed for production of a UE"
   p37_specFeDemTarget(all_enty,all_te,opmoPrc)                                 "Best available technology (will be reached in convergence year) [TWa/Gt_output]"
+  pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc)                              "Historic production volumes of processes [Gt]"
   p37_matFlowHist(tall,all_regi,all_enty)                                      "Total historic material flow calculated as the sum of outputs of all processes producing the respective material [Gt or GtN for fertilizer]"
   p37_ue_share(tall,all_regi,all_enty,all_in)                                  "Share of material to total ue in CES tree"
   p37_mat2ue(tall,all_regi,all_enty,all_in)                                    "Conversion factor of process output to ue in CES tree; Trivial if just one material per UE, as in steel [Gt/Gt], in chemicals [trn$2017/Gt]"
