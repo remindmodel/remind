@@ -362,6 +362,9 @@ pm_vintage_in(all_regi,opTimeYr,all_te)              "historical vintage structu
 p_CapFixFromRWfix(ttot,all_regi,all_te)              "auxiliary parameter for fixing nuclear capacity variable to real-world values in 2010/2015 [TW]"
 p_deltaCapFromRWfix(ttot,all_regi,all_te)            "auxiliary parameter with resulting deltacap values resulting from fixing nuclear capacity to real-world values in 2010/2015 [TW/yr]"
 pm_delta_histCap(tall,all_regi,all_te)               "historic capacity additions calculated from historic data [TW/yr]"
+p_histProdSeGrowthRate(tall,all_regi,all_enty,all_te)"historic energy production growth rate [fraction]"
+p_maxhistProdSeGrowthRate(all_regi,all_enty,all_te)  "maximum historic energy production growth rate [fraction]"
+
 
 *** penalty cost implementation for cm_startyear to limit change in policy run relative to reference run
 p_prodSeReference(ttot,all_regi,all_enty,all_enty,all_te) "Secondary Energy output of a technology in the reference run [TWa]"
@@ -545,7 +548,7 @@ $endif.minMaxSeFeSectorShareDev
 
 *** can be removed?
 v_prodUe(ttot,all_regi,all_enty,all_enty,all_te)    "Useful energy production [TWa]"
-v_demSeOth(ttot,all_regi,all_enty,all_te)           "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
+vm_demSeOth(ttot,all_regi,all_enty,all_te)          "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
 v_prodSeOth(ttot,all_regi,all_enty,all_te)          "other sety production from certain technologies, have to be calculated in additional equations [TWa]"
 ;
 
@@ -770,8 +773,9 @@ sm_GJ_2_TWa                  "multiplicative factor to convert from GJ to TWa"  
 sm_TWa_2_TWh                 "tera Watt year to Tera Watt hour"                    /8.76e+3/,
 sm_TWa_2_MWh                 "tera Watt year to Mega Watt hour"                    /8.76e+9/,
 sm_TWa_2_kWh                 "tera Watt year to kilo Watt hour"                    /8.76e+12/,
-sm_h2kg_2_h2kWh              "convert kilogramme of hydrogen to kwh energy value." /32.5/
-sm_DptCO2_2_TDpGtC           "Conversion multiplier to go from $/tCO2 to T$/GtC: 44/12/1000"     /0.00366667/
+sm_h2kg_2_h2kWh              "convert kilogramme of hydrogen to kwh energy value." /32.5/,
+sm_DptCO2_2_TDpGtC           "Conversion multiplier to go from $/tCO2 to T$/GtC: 44/12/1000"     /0.00366667/,
+sm_tBC_2_TWa                  "t biochar to TWa biochar (28700 [MJ/tBC]*10^-12[EJ/MJ]/31.536[EJ/TWa])" /9.101e-10/,
 
 *** emissions units
 sm_c_2_co2                   "conversion from c to co2"                /3.666666666667/,
@@ -790,7 +794,7 @@ s_DpKWa_2_TDpTWa             "convert Dollar per kWa to TeraDollar per TeraWattY
 s_DpKW_2_TDpTW               "convert Dollar per kW to TeraDollar per TeraWatt"            /0.001/
 sm_DpGJ_2_TDpTWa             "multipl. factor to convert (Dollar per GJoule) to (TerraDollar per TWyear)"    / 31.54e-03/
 s_D2010_2_D2017              "Convert US$2010 to US$2017"      /1.1491/
-s_D2015_2_D2017              "Convert US$2015 to US$2017"      /1.0292/
+sm_D2015_2_D2017              "Convert US$2015 to US$2017"      /1.0292/
 sm_D2005_2_D2017             "Convert US$2005 to US$2017"      /1.231/
 sm_D2020_2_D2017             "Convert US$2020 to US$2017"      /0.9469/
 sm_EURO2023_2_D2017          "Convert EURO 2023 to US$2017"    /0.8915/
