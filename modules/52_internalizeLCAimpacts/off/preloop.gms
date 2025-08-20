@@ -4,5 +4,5 @@
 pm_taxEI_SE(ttot,all_regi,all_te) = 0;
 pm_taxEI_PE(ttot,all_regi,all_enty) = 0;
 pm_taxEI_cap(ttot,all_regi,all_te) = 0;
-
+pm_taxEI_FE(ttot,all_regi,emi_sectors,all_enty) = 0;
 *** EOF ./modules/52_internalizeLCAimpacts/off/preloop.gms

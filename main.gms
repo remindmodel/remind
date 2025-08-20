@@ -1066,6 +1066,7 @@ parameter
 ;
   cm_tempConvergence       = 0.05;  !! def = 0.05
 ;
+
 parameter
   cm_carbonprice_temperatureLimit "not-to-exceed temperature target in degree above pre-industrial [45_carbonprice = temperatureNotToExceed]"
 ;
@@ -1076,7 +1077,6 @@ parameter
 ;
   cm_frac_CCS          = 10;   !! def = 10
 *'
-
 parameter
   cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshooting, formulated as fraction of carbon price"
 ;
@@ -1222,6 +1222,17 @@ parameter
 *' EDGE-T transport starting iteration of coupling
 *' def 10, EDGE-T coupling starts at 10, if you want to test whether infeasibilities after EDGE-T -> set it to 1 to check after first iteration
 *'
+parameter
+  cm_startIter_LCA          "starting iteration of LCA coupling"
+;
+  cm_startIter_LCA = 15;  !! def = 15  !! regexp = [0-9]+
+*' starting iteration of coupling the LCA workflow in module 52
+*' default is 15. As EDGE-T results are needed for the workflow, also cm_startIter_EDGET is also checked.
+*'
+parameter
+  cm_freqIter_LCA           "Frequency of LCA updates"
+;
+  cm_freqIter_LCA = 5;    !! def = 5   !! regexp = ^[1-9]\d*$
 parameter
   cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
 ;
@@ -1981,6 +1992,17 @@ $setGlobal cm_chaCoalBounds off    !! def = off
 *' *  (off): no, only infeasable regions are repeated, standard setting
 *' *  (on):  also non-optimal regions are solved again, up to cm_solver_try_max
 $setglobal cm_repeatNonOpt off      !! def = off  !! regexp = off|on
+*' c_52_monetization_type     "type of monetization, determines how c_52_LCA_monetizationFactor is interpreted"
+*' (quantile): interpreted as quantile of MC sampled cost distributions
+*' (perspective): interpreted as monetization perspective
+*' (monetization_factors): interpreted as path to file with monetization factors
+$setglobal c_52_monetization_type quantile    !! def = quantile  !! regexp = quantile|perspective|monetization_factors
+*' c_52_LCA_monetizationFactor    "quantile, cost perspective, or path of monetization factors"
+$setglobal c_52_LCA_monetizationFactor 0.5 !! def = 0.5
+*** Switch to use only a single midpoint for environmental cost internalization
+$setglobal cm_52_single_midpoint none !! def = none
+*** Switch to exclude a list of midpoints from environmental cost internalization
+$setglobal cm_52_exclude_midpoints none !! def = none
 
 *' @stop
 
