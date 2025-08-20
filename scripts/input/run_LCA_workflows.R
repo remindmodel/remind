@@ -47,6 +47,11 @@ if (!file.exists(errFile)) {
   file.create(errFile)
 }
 
+reportLog <- file.path(outputDir, paste0("reporting_for_lca.log"))
+if (!file.exists(reportLog)) {
+  file.create(reportLog)
+}
+
 
 logMsg <- paste0(
   date(), " run_LCA_internalization_workflow.R:\n",
@@ -91,7 +96,7 @@ if (args[2] == "preloop") {
     paste0("gdx_name=", args[1]),
     paste0("outputdir=", outputDir)
   )
-  system(paste(runReportingCmd, "&>>", logFile))
+  system(paste(runReportingCmd, "&>>", reportLog))
   t1 <- Sys.time()
   dt <- paste0(round(as.numeric(difftime(time1 = b, time2 = a, units = "secs")), 3), " seconds")
 
@@ -111,7 +116,7 @@ if (args[2] == "preloop") {
     paste0("gdx_name=", args[1]),
     paste0("outputdir=", outputDir)
   )
-  system(paste(runReportingCmd, "&>>", logFile))
+  system(paste(runReportingCmd, "&>>", reportLog))
   t1 <- Sys.time()
   dt <- paste0(round(as.numeric(difftime(time1 = b, time2 = a, units = "secs")), 3), " seconds")
 
