@@ -742,6 +742,16 @@ $include "./core/input/p_PE_histCap.cs3r"
 $offdelim
 ;
 
+*** historical secondary energy production
+table p_histProdSe(tall,all_regi,all_enty,all_te) "historical installed production/generation (TWa)"
+$ondelim
+$include "./core/input/p_histProdSe.cs3r"
+$offdelim
+;
+p_histProdSe(tall,regi,entySe,te) = p_histProdSe(tall,regi,entySe,te) / sm_TWa_2_TWh;
+p_histProdSeGrowthRate(tall,regi,entySe,te)$p_histProdSe(tall-1,regi,entySe,te) = ( p_histProdSe(tall,regi,entySe,te) - p_histProdSe(tall-1,regi,entySe,te) ) / p_histProdSe(tall-1,regi,entySe,te);
+p_maxhistProdSeGrowthRate(regi,entySe,te) = smax(tall, p_histProdSeGrowthRate(tall,regi,entySe,te)$ (tall.val >= 2019 and tall.val <= 2024));
+
 *** installed capacity availability
 $Offlisting
 table   f_cf(tall,all_regi,all_te) "installed capacity availability"
@@ -818,9 +828,6 @@ pm_cf(ttot,regi,"h2turbVRE")$(ttot.val ge 2025) = pm_cf(ttot,regi,"ngt");
 *** FS: set CF of additional t&d H2 for buildings and industry to t&d H2 stationary value
 pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
-
-*TD* Set capacity factors for pyrolysis technologies. Will delete after added in next inputdata generation
-pm_cf(ttot,regi,"biocharuse") = 1;
 
 *** Region- and tech-specific early retirement rates
 loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi),

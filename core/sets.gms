@@ -182,7 +182,6 @@ all_te          "all energy technologies, including from modules"
     biodiesel       "oil biomass to biodiesel"
     biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
-    biopyrel        "biomass pyrolysis to biochar plus power (established industrial)"
     biopyrchp       "biomass pyrolysis to biochar plus heat and power (established industrial)"   
     biopyrliq       "biomass pyrolysis to biochar plus liquids (combined with Fischer-Tropsch plant, advanced industrial)"
     biocharuse      "use of biochar, e.g. for soil or for building materials"
@@ -416,6 +415,9 @@ all_te          "all energy technologies, including from modules"
     tdfosgai        "transmission and distribution for gas from fossil origin to industry"
     tdhei           "transmission and distribution for heat to industry"
     tdeli           "transmission and distribution for electricity to industry"
+*** dummy entries to allow inclusion of some output variables into f04_IO_output.cs4r - can be removed once the structuremappings are fixed/improved
+    x_nonenergy
+    x_bunkers
 /
 
 all_enty             "all types of quantities"
@@ -594,6 +596,10 @@ all_enty             "all types of quantities"
     fegai        "industry use of gaseous energy carriers"
     fehei        "industry use of district heat"
     feeli        "industry use of electricity"
+*** dummy entries to allow inclusion of some output variables into f04_IO_output.cs4r - can be removed once the structuremappings are fixed/improved
+    x_seliq
+    x_feho
+    x_fedie
 /
 
 all_esty "energy services"
