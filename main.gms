@@ -561,6 +561,10 @@ parameter
   cm_taxCO2_IncAfterPeakBudgYr = 0; !! def = 0 . For weak targets (higher than 1100 Peak Budget), this value might need to increased to prevent continually increasing temperatures
 *'
 parameter
+  sm_peakbudget_diff_tolerance  "convergence criterion for allowed difference between cumulative emissions in peak budget year and year of maximum cumulative emissions if both years are not the same. It is formulated as an absolute deviation from the target budget [GtCO2]"
+;
+  sm_peakbudget_diff_tolerance      = 1;   !! def = 1 !! regexp = is.nonnegative
+parameter
   cm_expoLinear_yearStart   "time at which carbon price increases linearly instead of exponentially"
 ;
   cm_expoLinear_yearStart  = 2050;   !! def = 2050
