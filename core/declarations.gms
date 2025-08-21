@@ -29,8 +29,6 @@ p_pvpRef(ttot,all_enty)                              "Price on commodity markets
 p_pvpRegiBeforeStartYear(ttot,all_regi,all_enty)     "prices of traded commodities before start year - regional. only used for permit trade [T$/GtC]"
 
 pm_ies(all_regi)                                     "intertemporal elasticity of substitution",
-*** only used in air pollutants module, move there?
-pm_share_trans(tall,all_regi)                        "share of transport FE liquids (fedie and fepet) and all FE liquids [share]"
 
 *** macro variables from gdx or previous iteration
 pm_gdp_gdx(tall,all_regi)                            "GDP path from gdx, updated iteratively [T$]"

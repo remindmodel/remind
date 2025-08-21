@@ -20,6 +20,8 @@ p11_emiAPexoAgricult(ttot,all_regi,all_enty,all_exogEmi)                      "A
 
 p11_emiAPexo(ttot,all_regi,all_enty,all_exogEmi)                              "exogenous emissions from RCP scenarios"
 
+p11_share_trans(tall,all_regi)                                                "share of transport FE liquids (fedie and fepet) and all FE liquids [share]"
+
 *** this parameter is not part of the optimization, but just used in remind2::reportEmiAirPol() to for emissions only accounted at the global level
 p11_emiAPexoGlob(ttot,all_enty,all_exogEmi)                                   "exogenous emissions for aviation and international shipping from RCP scenarios"
 ;

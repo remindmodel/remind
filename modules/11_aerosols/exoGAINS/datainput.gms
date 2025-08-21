@@ -5,6 +5,29 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/11_aerosols/exoGAINS/datainput.gms
+
+
+*** initialize p11_share_trans with the global value, will be updated after each negishi/nash iteration
+p11_share_trans("2005",regi) = 0.617;
+p11_share_trans("2010",regi) = 0.625;
+p11_share_trans("2015",regi) = 0.626;
+p11_share_trans("2020",regi) = 0.642;
+p11_share_trans("2025",regi) = 0.684;
+p11_share_trans("2030",regi) = 0.710;
+p11_share_trans("2035",regi) = 0.727;
+p11_share_trans("2040",regi) = 0.735;
+p11_share_trans("2045",regi) = 0.735;
+p11_share_trans("2050",regi) = 0.742;
+p11_share_trans("2055",regi) = 0.736;
+p11_share_trans("2060",regi) = 0.751;
+p11_share_trans("2070",regi) = 0.774;
+p11_share_trans("2080",regi) = 0.829;
+p11_share_trans("2090",regi) = 0.810;
+p11_share_trans("2100",regi) = 0.829;
+p11_share_trans("2110",regi) = 0.818;
+p11_share_trans("2130",regi) = 0.865;
+p11_share_trans("2150",regi) = 0.872;
+
 ***----------------------------------
 *** Using EDGE-downscaling procedure
 ***----------------------------------
@@ -153,14 +176,14 @@ loop ((t,regi)$( t.val ge 2005 ),
   = 1 - p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi);
 
   p11_share_sector(t,"peoil","seliqfos","refliq","trans",regi)
-  = pm_share_trans(t,regi);
+  = p11_share_trans(t,regi);
 
   p11_share_sector(t,"peoil","seliqfos","refliq","indst",regi)
-  = (1 - pm_share_trans(t,regi))
+  = (1 - p11_share_trans(t,regi))
   * p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi);
 
   p11_share_sector(t,"peoil","seliqfos","refliq","res",regi)
-  = (1 - pm_share_trans(t,regi))
+  = (1 - p11_share_trans(t,regi))
   * (1 - p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi));
 
   !! share in gases
@@ -194,8 +217,8 @@ loop(emiExog,
 ***-- SO2 specific ----
 ***-- Oil/Other ---
 pm_emifac(ttot,regi,"peoil",enty2,"refliq","SO2") =
-  pm_share_trans(ttot,regi) * p11_emiFacAP(ttot,regi,"peoil",enty2,"refliq","trans","SO2")
-  + (1-pm_share_trans(ttot,regi))
+  p11_share_trans(ttot,regi) * p11_emiFacAP(ttot,regi,"peoil",enty2,"refliq","trans","SO2")
+  + (1-p11_share_trans(ttot,regi))
   * (
          p11_share_ind_fehos(ttot,regi)  * p11_emiFacAP(ttot,regi,"peoil",enty2,"refliq","indst","SO2")
     + (1-p11_share_ind_fehos(ttot,regi)) * p11_emiFacAP(ttot,regi,"peoil",enty2,"refliq","res",  "SO2")
