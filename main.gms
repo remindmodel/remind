@@ -1265,6 +1265,11 @@ parameter
   cm_wastelag			"switch to decide whether waste from plastics lags ten years behind plastics production"
 ;
   cm_wastelag = 0;   !! def = 0 no waste lag  !! regexp = 1|0
+parameter
+  cm_maxIndPrcShareChange  "Max change of share of historically used chemicals industry processes between time steps"
+;
+  cm_maxIndPrcShareChange = 0.05; !! def 0.05 = 5 percent points change between time steps
+*'
 *'
 parameter
   c_edgetReportAfter2010			"switch that turns on overwriting of EDGE-T results for 2005 and 2010 by NAs when set to 1"
@@ -1932,6 +1937,8 @@ $setglobal cm_subsec_model_steel  processes  !! def = processes  !! regexp = pro
 *** (off) no bounds for 2025
 *** (on) some generous bounds for 2025 assuming that certain developments are not possible anymore even for fast growing technologies given 2023 data
 $setglobal cm_tech_bounds_2025  on  !! def = on  !! regexp = on|off
+*** cm_subsec_model_chemicals      "switch between ces-based and process-based chemicals implementation in subsectors realisation of industry module"
+$setglobal cm_subsec_model_chemicals  processes  !! def = processes  !! regexp = processes|ces
 *** set conopt version. Warning: conopt4 is in beta
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
 *' c_empty_model  "Short-circuit the model, just use the input as solution"
@@ -1982,6 +1989,7 @@ $setGlobal cm_chaCoalBounds off    !! def = off
 *' *  (on):  also non-optimal regions are solved again, up to cm_solver_try_max
 $setglobal cm_repeatNonOpt off      !! def = off  !! regexp = off|on
 
+$setglobal cm_PlasticMFA off      !! def = off  !! regexp = ^(off|on)$
 *' @stop
 
 *-------------------------------------------------------------------------------------

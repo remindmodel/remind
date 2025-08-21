@@ -167,6 +167,36 @@ ccap0                                    0.0008
 learn                                      0.15
 
 
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
++                chemOld     chemElec    chemH2      stCrNg      stCrLiq      amSyCoal      amSyNG      amSyLiq      amSyH2     meSySol     meSyNG     meSyLiq     meSyH2
+!! documentation & sources: see below 
+inco0                500         500        500        1080         1040          2100         875         1190        1250         520        300         290       1050
+omf                 0.06         0.06        0.06       0.025        0.025          0.05       0.025        0.025        0.04        0.05      0.025       0.025      0.015
+constrTme              3           3          3           3            3             3           3            3           3           3          3           3          3
+lifetime              30          30         30          30           30            30          30           30          30          30         30          30         30
+
++                amSyCoal_cc    amSyNg_cc     amSyLiq_cc    meSySol_cc    meSyNg_cc    meSyLiq_cc
+!! documentation & sources: see below
+inco0                    610          650            610           855         1003           855
+omf                     0.05         0.05           0.05          0.05        0.025          0.05
+constrTme                  1            1              1             1            1             1
+lifetime                  25           25             25            25           25            25
+
++                    mtoMta    mtoMtaH2    fertProd   fertProdH2    amToFinal    meToFinal
+!! documentation & sources: see below
+inco0                   533         533        3280         3280          500          500      
+omf                   0.025       0.025        0.03         0.03         0.06         0.06
+constrTme                 3           3           3            3            3            3
+lifetime                 30          30          30           30           30           30
+
++                    mechRe  stCrChemRe  meSyChemRe   
+!! documentation & sources: see below
+inco0                   318        2146          49     
+omf                    0.03        0.03       0.055
+constrTme                 3           3           3
+lifetime                 30          30          30
+
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 *** industry processes
 +                     bf         bof         idr         eaf
@@ -344,6 +374,156 @@ bfcc:
 
 idrcc:
     make slightly cheaper than bfcc as there is only one point source
+
+chemOld chemElec and chemH2:
+    arbitrary value, as long as it's the same between all three. 
+    500 is commonly used in other tech
+    Saving later for Heat Gerneration Split
+
+
+stCrNg and stCrLiq:
+
+    Note: Steam crackers create a range of different products.
+    As a general principle, all carbon-containing products are included in the calculation as a reference for specific CAPEX etc, and produced hydrogen is used directly as an energy input.
+
+    for Naphtha Steam Cracking
+        CAPEX ~ 2057 $/t Ethylene
+        (Sources: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A3)
+        
+        Output ratio: 97.2 Naphtha → 31.86 Ethylene + 13.01 Propylene + 17.48 BTX + 3.78 Others
+        (Sources: Spallina17 Table 5.)
+
+        inco0 ~ 2057 $/t * (31.86/(31.86+13.01+17.48)) /USD_2017 * USD_2015 ~ 1040 $/t
+        omf ~ 0.025 
+
+    for NG Steam Cracking
+        CAPEX ~ 369.4(gas processing) + 912.6(co-Cracking) = 1282 Million $
+        (Sources: Minbo Yang 2017. Table 2+3)
+        
+        Output ratio: 197.3 Ethane-propane → 125.0 Ethylene + 28.4 Propylene + 1.6 BTX + 10.8 Others [t/h]
+        (Sources: Minbo Yang 2017. Table 1)
+
+        inco0 ~ 1282 Million $ * (1/(125.0+28.4+1.6)) /8760/0.8*1000*1000 /USD_2017 * USD_2015 ~ 1080 $/t
+        omf ~ 0.025
+
+
+
+amSyCoal amSyNG amSyLiq and amSyH2:
+
+    amSyCoal:
+        inco0 ~ 2175 /USD_2017 * USD_2015 ~ 2100 $/t
+        omf ~ 0.05
+        (Sources: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5)
+
+    amSyNG:
+        inco0 ~ 905 /USD_2017 * USD_2015 ~ 875 $/t
+        omf ~ 0.025
+        (Sources: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 4)
+
+    amSyLiq:
+        inco0 ~ 1203 /USD_2016 * USD_2015 ~ 1190 $/t
+        omf ~ 0.025
+        (Sources: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A3)
+
+    amSyH2:
+        inco0 ~ 1.69 MEUR_2020/MW:LHV *1000 / 3.6 MJ/MWh * 18.9 MJ/kg * 1.08 USD/EUR = 9564 kgNH3/h 
+        9412 kgNH3/h / (8760 / 0.8 * 1000) /USD_2020 * USD_2015 ~ 1250 $/t
+        (Sources: Technology Data for Renewable Fuels by Danish Energy Agency. 103 Hydrogen to Ammonia)
+        omf ~ 0.04
+        (Fasihi, M., Breyer, C., 2024. Global production potential of green methanol based on variable renewable electricity. Energy Environ. Sci. 17, 3503–3522. Table S10)
+
+amSyCoal_cc amSyNG_cc amSyLiq_cc:
+
+    amSyCoal_cc:
+        Captured carbon ~ (3.9 kgCO2/kg - 0.2 kgCO2/kg) / 44 * 12 = 1.009
+        inco0 ~ (2810 $/t - 2175 $/t) / 1.009 kgC/kg /USD_2017 * USD_2015 ~ 610 $/t
+        omf ~ 0.05
+        (Sources: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5)
+
+    amSyNG_cc:
+        Captured carbon ~ (2.35 kgCO2/kg - 0.12 kgCO2/kg) / 44 * 12 = 0.608
+        inco0 ~ (1315 $/t - 905 $/t) / 0.608 kgC/kg /USD_2017 * USD_2015 ~ 650 $/t
+        omf ~ 0.05
+        (Sources: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5)
+
+    amSyLiq_cc:
+        nodata, just Assume same as asSyCoal_cc
+
+meSySol meSyNG meSyLiq and meSyH2:
+    meSySol:
+        inco0 ~ 26.7 BRMB_2024 / 6 Mt/a /USD_2024 * USD_2015 ~ 520$/t
+        (Sources: Real Chinese Project https://www.cgmia.org.cn/Web/News/Detail/21080)
+        omf ~ 0.05
+        (Sources: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5)
+
+    meSyNG:
+        inco0 ~ 310 /USD_2017 * USD_2015 ~ 300 $/t
+        omf ~ 0.025
+        (Sources: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5)
+
+    meSyLiq:
+        inco0 ~ 295 /USD_2016 * USD_2015 ~ 290 $/t
+        omf ~ 0.025
+        (Sources: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A3)
+
+    meSyH2:
+        inco0 ~ 1.35 MEUR_2020/MW:LHV *1000 / 3.6 MJ/MWh * 19.9 MJ/kg * 1.08 USD/EUR = 8035 kgMeOH/h 
+        8035 kgNH3/h / (8760 / 0.8 * 1000) /USD_2020 * USD_2015 ~ 1050 $/t
+        (Sources: Technology Data for Renewable Fuels by Danish Energy Agency. 98 Methanol from hydrogen)
+        omf ~ 0.015
+        (Sources: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5)
+
+meSySol_cc meSyNg_cc meSyLiq_cc:
+
+    meSySol_cc:
+        Captured carbon ~ (3.3 kgCO2/kg - 0.17 kgCO2/kg) / 44 * 12 = 0.854
+        inco0 ~ (1505 $/t - 750 $/t) / 0.854 kgC/kg /USD_2017 * USD_2015 ~ 855 $/t
+        omf ~ 0.05
+        (Sources: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5)
+
+    meSyNg_cc:
+        Captured carbon ~ (0.8 kgCO2/kg - 0.04 kgCO2/kg) / 44 * 12 = 0.207
+        inco0 ~ (525 $/t - 310 $/t) / 0.207 kgC/kg /USD_2017 * USD_2015 ~ 1003 $/t
+        omf ~ 0.025
+        (Sources: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5)
+
+    meSyLiq_cc:
+        nodata, just Assume same as meSySol_cc
+
+mtoMta mtoMtaH2:  
+
+    inco0 ~ 320MM$ per (386 Propylene + 214 Ethylene) kt/a /600 * 1000 ~ 533 $/t
+    (Sources: S. Jasper and M. M. El-Halwagi, Processes, 2015, 3, 684–698. Table 2)
+    omf ~ 0.025
+    (Sources: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A3)
+
+fertProd   fertProdH2:    
+
+    inco0 ~ 4.03MM$ per 1000t/a * 1000 /USD_2022 * USD_2015 ~ 3280 $/t
+    (Sources: Palys23 Section 2.3, Page 6)
+    omf ~ 0.03
+    (Sources: Palys23 Section 2.3, Page 6)
+
+amToFinal    meToFinal:   
+
+    dummy tech, zero cost
+
+mechRe meSyChemRe and stCrChemRe:
+
+    for Mechanical Recycling
+        inco0 ~ 17.18MM$ per 150t/d /150 / (8760 * 0.8) /USD_2022 * USD_2015 ~ 318 $/t
+        omf = 0.03 (dummy number)
+        (Sources: Taylor Uekert 2023 Table S28.)
+
+    for Chemical Recycling: Pyrolysis
+        inco0 ~ 107MM$ per 49.24kt/year /49.24 * 1000 /USD_2016 * USD_2015 ~ 2146 $/t
+        omf = 0.03 (dummy number)
+        (Sources: Geetanjali Yadav 2023 Table1, Table S9.)
+
+    for Chemical Recycling: Gasification
+        inco0 ~ 148MM$ per 353.8 t/d /353.8 / (8760 * 0.8) USD_2022 * USD_2015 ~ 49 $/t
+        omf ~ 8.18 MUSD_2022/year /148.8 MUSD_2022 = 0.055
+        (Sources: Afzal, Shaik, et al., Green Chemistry 25.13 (2023): 5068-5085. Table S3 and S4.)
 
 $offtext
 

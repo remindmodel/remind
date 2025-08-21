@@ -136,7 +136,6 @@ $drop cm_indstExogScen_set
 v37_regionalWasteIncinerationCCSshare.lo(t,regi) = 0.;
 v37_regionalWasteIncinerationCCSshare.up(t,regi) = p37_regionalWasteIncinerationCCSMaxShare(t,regi);
 
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 !! fix processes procudction in historic years
 if (cm_startyear eq 2005,
     loop((ttot,regi,tePrc2opmoPrc(tePrc,opmoPrc))$(ttot.val ge 2005 AND ttot.val le 2020),
@@ -144,14 +143,24 @@ if (cm_startyear eq 2005,
     );
 );
 
-!! Switch to turn off steel CCS
-if (cm_CCS_steel ne 1 OR cm_IndCCSscen ne 1,
+!! Switch to turn off all CCS
+if (cm_IndCCSscen ne 1,
   vm_cap.fx(t,regi,teCCPrc,rlf) = 0.;
+);
+!! TOCHECK:Qianzhi
+if (cm_CCS_steel ne 1,
+  loop(tePrc$(teCCPrc(tePrc) AND secInd37_tePrc("steel", tePrc)),
+    vm_cap.fx(t,regi,tePrc,rlf) = 0.;
+  );
+);
+if (cm_CCS_chemicals ne 1,
+  loop(tePrc$(teCCPrc(tePrc) AND secInd37_tePrc("chemicals", tePrc)),
+    vm_cap.fx(t,regi,tePrc,rlf) = 0.;
+  );
 );
 
 v37_shareWithCC.lo(t,regi,tePrc,opmoPrc) = 0.;
 v37_shareWithCC.up(t,regi,tePrc,opmoPrc) = 1.;
-$endif.cm_subsec_model_steel
 
 $ifthen.fixedUE_scenario "%cm_fxIndUe%" == "on"
 
@@ -163,5 +172,25 @@ $endif.fixedUE_scenario
 
 !! Fix to avoid reoccurring random infeasibilities. May need to be excluded if e.g. synfuels (or something else) are set to zero.
 vm_demFeSector_afterTax.lo(t,regi,entySe,"fesos","indst",emiMkt)$(NOT sameAs(emiMkt, "other")) = 1e-16;
+
+v37_matShareChange.lo(t,regi,tePrc,opmoPrc,mat)$(tePrcStiffShare(tePrc,opmoPrc,mat)) = -cm_maxIndPrcShareChange;
+v37_matShareChange.up(t,regi,tePrc,opmoPrc,mat)$(tePrcStiffShare(tePrc,opmoPrc,mat)) =  cm_maxIndPrcShareChange;
+
+vm_outflowPrc.up(t,regi,"mechRe","standard") = 0.; !! Due to downgraded recycling and pure feedstock limitations
+
+
+$ifthen.PlasticMFA "%cm_PlasticMFA%" == "on"
+!! not all plastic is suitable for mechanical recycling, so this bound exists apart from the bound imposed 
+!! by total availability of plastic scrap
+vm_outflowPrc.up(t,regi,"mechRe","standard") = p37_recycleMech(t,regi);
+$endif.PlasticMFA
+
+!!vm_outflowPrc.up(t,regi,"stCrChemRe","standard") = 0.01;
+!!vm_outflowPrc.up(t,regi,"meSyChemRe","standard") = 0.01;
+v37_matFlow.up(t,regi,"plasticWaste") = 0.; !! Due to the limitations of the collection
+
+$ifthen.PlasticMFA "%cm_PlasticMFA%" == "on"
+v37_matFlow.up(t,regi,"plasticWaste") = p37_plastcWaste(t,regi); 
+$endif.PlasticMFA
 
 *** EOF ./modules/37_industry/subsectors/bounds.gms

@@ -299,7 +299,88 @@ all_te          "all energy technologies, including from modules"
     termX_nh3   "Export terminals for liquid ammonia (liquification)"
     termM_nh3   "Import terminals for liquid ammonia (regasification)"
     vess_nh3    "Vessels transporting liquid ammonia"
-*** PCV: technologies related to steel
+
+*** technologies related to chemicals industry
+    chemOld
+    chemElec
+    chemH2
+
+    stCrNg
+    stCrLiq
+    stCrChemRe
+
+    mechRe
+
+    meSySol
+    meSyNg
+    meSyLiq
+    meSySol_cc
+    meSyNg_cc
+    meSyLiq_cc
+    meSyH2
+    meSyChemRe
+
+    amSyCoal
+    amSyNG
+    amSyLiq
+    amSyCoal_cc
+    amSyNG_cc
+    amSyLiq_cc
+    amSyH2
+
+    mtoMta
+    mtoMtaH2
+    fertProd
+    fertProdH2
+    meToFinal
+    amToFinal
+
+    otherChem_old
+    otherChem_elec
+    otherChem_h2
+
+    mech_recycle
+
+    hvc_stCrLiq
+    hvc_stCrNg
+    hvc_stCrChemRe
+    hvc_meSol
+    hvc_meNg
+    hvc_meLiq
+    hvc_meSol_gh2
+    hvc_meSol_cc
+    hvc_meNg_cc
+    hvc_meLiq_cc
+    hvc_meh2
+    hvc_mechemRe
+
+    fertilizer_amSol
+    fertilizer_amNg
+    fertilizer_amLiq
+    fertilizer_amLiq_cc
+    fertilizer_amNg_cc
+    fertilizer_amSol_cc
+    fertilizer_amh2
+
+    meFinal_sol
+    meFinal_ng
+    meFinal_liq
+    meFinal_sol_gh2
+    meFinal_sol_cc
+    meFinal_ng_cc
+    meFinal_liq_cc
+    meFinal_h2
+    meFinal_chemRe
+
+    amFinal_sol
+    amFinal_ng
+    amFinal_liq
+    amFinal_sol_cc
+    amFinal_ng_cc
+    amFinal_liq_cc
+    amFinal_h2
+
+*** technologies related to steel industry
     ironMine     "Mining of iron ore"
     idr          "Iron direct reduction"
     eaf          "Electric-arc furnace"
@@ -313,9 +394,10 @@ all_te          "all energy technologies, including from modules"
     idreaf_ng    "Route: NG Direct reduction / EAF without CCS"
     idreaf_ng_ccs "Route: H2 Direct reduction / EAF with CCS"
     seceaf       "Route: Scrap-loaded EAF"
+
     pcc          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
     pco          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
-*** transport technologies for deleted realization complex of module 35_transport 
+*** transport technologies for deleted realization complex of module 35_transport
 *** only here to make it possible to process input data that still includes data for these obsolete transport technologies
     apCarPeT        "outdated transport technology"
     apCarDiT        "outdated transport technology"
@@ -397,6 +479,24 @@ all_enty             "all types of quantities"
     entydummy    "dummy FE for process based industry implementation"
 
 *** materials, feedstock, and industrial goods
+
+    co2f         "feedstock CO2"
+    co2fdummy         "feedstock CO2 deummy"
+
+*** chemicals
+    otherChem
+    hvc
+    fertilizer
+    methanol
+    methanolH2
+    ammonia
+    ammoniaH2
+    methFinal
+    ammoFinal
+    naphtha
+    plasticWaste
+
+*** steel
     prsteel      "Primary steel"
     sesteel      "Secondary steel"
     dri          "Directly reduced iron"
@@ -489,7 +589,7 @@ all_enty             "all types of quantities"
     perm         "Carbon permit"
     peog         "aggregated oil and gas, only relevant for calibration because IEA only provides aggregated data"
     bfco2        "CO2 emission from blast furnace"
-    
+
 *** outdated entries, still used in module 04 until structuremappings are fixed
     fesoi        "industry use of solid energy carriers"
     fehoi        "industry use of liquid energy carriers"
@@ -1095,7 +1195,7 @@ ttot(tall)    "time index with spin-up, years between 1900 and 2150 with 5 to 20
 ***     10-year intervals from 2060 to 2110,
 ***     20-year intervals from 2110 to 2150.
 /
-    1900, 1905, 1910, 1915, 1920, 1925, 1930, 1935, 1940, 1945, 1950, 1955, 1960, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 
+    1900, 1905, 1910, 1915, 1920, 1925, 1930, 1935, 1940, 1945, 1950, 1955, 1960, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000,
     2005, 2010, 2015, 2020, 2025, 2030, 2035, 2040, 2045, 2050, 2055,
     2060, 2070, 2080, 2090, 2100,
     2110, 2130, 2150
@@ -1252,6 +1352,41 @@ te(all_te)              "energy technologies"
     termX_lng       "Export terminals for LNG (liquification)"
     termM_lng       "Import terminals for LNG (regasification)"
     vess_lng        "Vessels transporting LNG"
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+    chemOld
+    chemElec
+    chemH2
+
+    stCrNg
+    stCrLiq
+    stCrChemRe
+
+    mechRe
+    
+    meSySol 
+    meSyNg
+    meSyLiq
+    meSySol_cc
+    meSyNg_cc
+    meSyLiq_cc
+    meSyH2
+    meSyChemRe
+
+    amSyCoal 
+    amSyNG
+    amSyLiq
+    amSyCoal_cc
+    amSyNG_cc
+    amSyLiq_cc
+    amSyH2
+
+    mtoMta
+    mtoMtaH2
+    fertProd
+    fertProdH2
+    amToFinal
+    meToFinal
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idr             "Iron direct reduction"
     eaf             "Electric-arc furnace"
@@ -1333,6 +1468,30 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
 ***  gridwind        "grid between areas with high wind onshore production and the rest"
     gridwindon      "grid between areas with high wind onshore production and the rest"
     gridwindoff     "grid between areas with high wind offshore production and the rest"
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+    chemElec        "Other chemicals by Electricity"
+    chemH2          "Other chemicals by Hydrogen"
+    meSySol         "Methanol by Soilds" 
+    meSyNg          "Methanol by Gas"
+    meSyLiq         "Methanol by Liquids"
+    meSySol_cc      "Methanol by Soilds CCS" 
+    meSyNg_cc       "Methanol by Gas CCS"
+    meSyLiq_cc      "Methanol by Liquids CCS"
+    meSyH2          "Methanol by Hydrogen"
+    meSyChemRe      "Methanol by Chemical Recycling"
+    amSyCoal        "Ammonia by Coal" 
+    amSyNG          "Ammonia by Gas"
+    amSyLiq         "Ammonia by Liquids"
+    amSyCoal_cc     "Ammonia by Coal CCS" 
+    amSyNG_cc       "Ammonia by Gas CCS"
+    amSyLiq_cc      "Ammonia by Liquids CCS"
+    amSyH2          "Ammonia by Hydrogen"
+    stCrLiq         "Steam cracking by Naphtha"
+    stCrNg          "Steam cracking by Natural Gas"
+    stCrChemRe      "Steam cracking by Chemical Recycling"
+    mechRe          "Mechanical Recycling"
+    mtoMta          "Methanol to Olefins and Aromatics"
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bfcc            "Blast furnace CCS"
     idrcc           "Direct reduction CCS"
@@ -1960,7 +2119,9 @@ MacSector(all_enty)  "sectors for which mac curves exist. Some MACs are used for
     n2owaste   "waste (domestic sewage)"
     co2luc     "land use change"
     co2cement  "cement production (only process emissions)"
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
     co2chemicals
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     co2steel
 $endif.cm_subsec_model_steel
@@ -2778,7 +2939,9 @@ emiMac2mac(all_enty,all_enty)            "mapping of emission sources to MACs - 
     co2luc.co2luc
     co2cement_process. co2cement   "process emissions are captured by kiln CCS too"
     co2cement    . co2cement
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
     co2chemicals . co2chemicals
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     co2steel     . co2steel
 $endif.cm_subsec_model_steel
@@ -2797,7 +2960,10 @@ emiMac2sector(all_enty,emi_sectors,sector_types,all_enty)            "mapping of
     (n2ofertin, n2ofertcr, n2ofertsom, n2oanwstc, n2oanwstm, n2oanwstp, n2oagwaste).agriculture.process.n2o
     (n2oforest, n2osavan, n2opeatland).lulucf.process.n2o
 
-    (co2cement_process,co2cement,co2chemicals).indst.process.co2
+    (co2cement_process,co2cement).indst.process.co2
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
+    co2chemicals.indst.process.co2
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     co2steel.indst.process.co2
 $endif.cm_subsec_model_steel

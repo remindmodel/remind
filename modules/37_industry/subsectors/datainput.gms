@@ -22,9 +22,11 @@ Parameters
         en_cement                    0.3   !! non-electric, electric
           en_cement_non_electric     2.0   !! solids, liquids, gases, hydrogen
 
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
       ue_chemicals                   1.7   !! energy, capital
         en_chemicals                 0.3   !! fuels and high-temperature heat, electricity
           en_chemicals_fhth          3.0   !! solids, liquids, gases, electricity
+$endif.cm_subsec_model_chemicals
 
       ue_steel                       5     !! primary steel, secondary steel
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
@@ -48,10 +50,12 @@ pm_cesdata_sigma(ttot,"en_cement_non_electric")$ (ttot.val eq 2030) = 1.3;
 pm_cesdata_sigma(ttot,"en_cement_non_electric")$ (ttot.val eq 2035) = 1.7;
 pm_cesdata_sigma(ttot,"en_cement_non_electric")$ (ttot.val eq 2040) = 2.0;
 
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
 pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val le 2025) = 0.7;
 pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val eq 2030) = 1.3;
 pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val eq 2035) = 2.0;
 pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val eq 2040) = 3.0;
+$endif.cm_subsec_model_chemicals
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 pm_cesdata_sigma(ttot,"en_steel_furnace")$ (ttot.val le 2025) = 0.5;
@@ -69,7 +73,7 @@ pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2040) = 2.0;
 
 loop ((ttot,steps)$( ttot.val ge 2005 ),
 
-  sm_tmp = steps.val * sm_dmac / sm_c_2_co2;   !! CO2 price at MAC step [$/tCO2] 
+  sm_tmp = steps.val * sm_dmac / sm_c_2_co2;   !! CO2 price at MAC step [$/tCO2]
 
 $ifthen NOT "%cm_Industry_CCS_markup%" == "off"
   sm_tmp = sm_tmp / %cm_Industry_CCS_markup%;
@@ -95,7 +99,7 @@ $endif.cm_subsec_model_steel
     if (cm_optimisticMAC eq 1,
 
       !! logarithmic curve through 0.75 @ $50 and 0.9 @ $150, limited to 0.95
-      pm_abatparam_Ind(ttot,regi,emiInd37,steps)$( 
+      pm_abatparam_Ind(ttot,regi,emiInd37,steps)$(
                                               YES
         $$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
                                           AND NOT sameas(emiInd37,"co2steel")
@@ -253,11 +257,13 @@ if (cm_IndCCSscen eq 1,
     emiMac2mac("co2cement_process","co2cement") = YES;
   );
 
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
   if (cm_CCS_chemicals eq 1,
     emiMacSector("co2chemicals") = YES;
     pm_macSwitch(ttot,regi,"co2chemicals") = YES;
     emiMac2mac("co2chemicals","co2chemicals") = YES;
   );
+$endif.cm_subsec_model_chemicals
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
   if (cm_CCS_steel eq 1,
@@ -315,12 +321,14 @@ Parameter
   p37_arcane_FE_limits(all_in,all_in)   "minimum ratio of feelhth/feelwlth and feh2/fega (may be needed for calibration)"
   /
     feh2_cement       . fega_cement          1e-5
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
     feh2_chemicals    . fega_chemicals       1e-5
+    feelhth_chemicals . feelwlth_chemicals   1e-5
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
     feh2_steel        . fega_steel           1e-5
 $endif.cm_subsec_model_steel
     feh2_otherInd     . fega_otherInd        1e-5
-    feelhth_chemicals . feelwlth_chemicals   1e-5
     feelhth_otherInd  . feelwlth_otherInd    1e-5
   /
 ;
@@ -439,9 +447,11 @@ pm_calibrate_eff_scale("feelhth_otherInd","fega_otherInd","width")       = 15;
 pm_calibrate_eff_scale("feh2_cement","fega_cement","level")              = 1.1;
 pm_calibrate_eff_scale("feh2_cement","fega_cement","midperiod")          = 2050;
 pm_calibrate_eff_scale("feh2_cement","fega_cement","width")              = 22;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
 pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","level")        = 1.1;
 pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","midperiod")    = 2050;
 pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","width")        = 22;
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 pm_calibrate_eff_scale("feh2_steel","fega_steel","level")                = 1.1;
 pm_calibrate_eff_scale("feh2_steel","fega_steel","midperiod")            = 2050;
@@ -487,20 +497,24 @@ p37_CESMkup(ttot,regi,in) = 0;
 *' Default industry mark-up cost without budget effect:
 *' mark-up cost on electrification (hth_electricity inputs), to reach > 1 MRS to
 *' gas/liquids as technical efficiency gains from electrification
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
 pm_tau_ces_tax(t,regi,"feelhth_chemicals")    = 100 * sm_TWa_2_MWh * 1e-12;
-pm_tau_ces_tax(t,regi,"feelhth_otherInd")     = 300 * sm_TWa_2_MWh * 1e-12;
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 pm_tau_ces_tax(t,regi,"feel_steel_secondary") = 100 * sm_TWa_2_MWh * 1e-12;
 $endif.cm_subsec_model_steel
+pm_tau_ces_tax(t,regi,"feelhth_otherInd")     = 300 * sm_TWa_2_MWh * 1e-12;
 
 *' mark-up cost on H2 inputs, to reach MRS around 1 to gas/liquids as similar
 *' technical efficiency
+pm_tau_ces_tax(t,regi,"feh2_cement")    = 100 * sm_TWa_2_MWh * 1e-12;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
 pm_tau_ces_tax(t,regi,"feh2_chemicals") = 100 * sm_TWa_2_MWh * 1e-12;
-pm_tau_ces_tax(t,regi,"feh2_otherInd")  =  50 * sm_TWa_2_MWh * 1e-12;
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
 pm_tau_ces_tax(t,regi,"feh2_steel")     =  50 * sm_TWa_2_MWh * 1e-12;
 $endif.cm_subsec_model_steel
-pm_tau_ces_tax(t,regi,"feh2_cement")    = 100 * sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feh2_otherInd")  =  50 * sm_TWa_2_MWh * 1e-12;
 
 
 
@@ -638,6 +652,7 @@ loop ((regi,t2)$( p37_steel_secondary_max_share_scenario(t2,regi) ),
 display "scenario limits for maximum secondary steel share",
         p37_steel_secondary_max_share;
 $endif.sec_steel_scen
+
 Parameter p37_chemicals_feedstock_share(ttot,all_regi)   "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
   /
 $ondelim
@@ -656,7 +671,7 @@ execute_load "input_ref.gdx", vm_demFeSector_afterTax;
 );
 
 * Define carbon capture and storage share in waste incineration emissions
-* capture rate increases linearly from zero in 2025 to value the set in the switch for the defined year, and it is kept constant for years afterwards
+* capture rate increases linearly from zero in 2025 to the value set in the switch for the defined year, and it is kept constant for years afterwards
 p37_regionalWasteIncinerationCCSMaxShare(ttot,all_regi) = 0;
 $ifthen.cm_wasteIncinerationCCSshare not "%cm_wasteIncinerationCCSshare%" == "off"
 loop((ttot,ext_regi)$p37_wasteIncinerationCCSMaxShare(ttot,ext_regi),
@@ -671,6 +686,27 @@ $endIf.cm_wasteIncinerationCCSshare
 *** ---------------------------------------------------------------------------
 
 p37_specMatDem(mat,all_te,opmoPrc) = 0.;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+!! stochiometric unit change from t NH3 to t N
+p37_specMatDem("ammonia","fertProd","standard")        = 17/14; !!Here the units of urea are based on nitrogen
+p37_specMatDem("ammoniaH2","fertProdH2","standard")        = 17/14;
+
+p37_specMatDem("methanol","mtoMta","standard")        = 2.62; !!Dutta2019 Table 4
+p37_specMatDem("methanolH2","mtoMtaH2","standard")        = 2.62; !!Dutta2019 Table 4
+p37_specMatDem("ammonia","amToFinal","standard")        = 1;
+p37_specMatDem("ammoniaH2","amToFinal","greenh2")        = 1;
+p37_specMatDem("methanol","meToFinal","standard")        = 1;
+p37_specMatDem("methanolH2","meToFinal","greenh2")        = 1;
+
+!! p37_specMatDem("naphtha","stCrLiq","standard")        =  18.3 / (sm_TWa_2_MWh/sm_giga_2_non); !! should not be needed any more
+
+p37_specMatDem("plasticWaste","mechRe","standard")        = 1/0.79; !! Source: Taylor Uekert 2023 Table S1-S4.
+p37_specMatDem("plasticWaste","meSyChemRe","standard")        = 1/1.47; !! Source: Shaik Afzal 2023 Table 3. 
+p37_specMatDem("plasticWaste","stCrChemRe","standard")        = 1/0.62; !! Source: Geetanjali Yadav 2023 Table S9.
+
+p37_specMatDem("co2fdummy","fertProdH2","standard")        = 0.43; !!12/28 for NH₂CONH₂ (urea)
+p37_specMatDem("co2fdummy","meSyH2","standard")        = 0.375; !! 12/32 for CH₃OH
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_specMatDem("dripell","idr","ng")        = 1.44;                                           !! Source: POSTED / Average of Devlin2022, Otto2017, Volg2018, Rechberge2020
 p37_specMatDem("dripell","idr","h2")        = 1.44;                                           !! Source: POSTED / Copy from ng opMode
@@ -689,6 +725,93 @@ $endif.cm_subsec_model_steel
 
 !!TODO: Think about accounting of integrated plants / casting & rolling
 p37_specFeDemTarget(all_enty,all_te,opmoPrc) = 0.;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+!! TODO Qianzhi 1MWh NH3,LHV = 0.19355 tons
+
+!! 1 / (sm_TWa_2_MWh/sm_giga_2_non) unit conversion: MWh/t output -> TWa/Gt output
+
+!! should not be needed anymore
+!!p37_specFeDemTarget("fesos","chemOld","standard")  = 1.5 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("fegas","chemOld","standard")  = 3.0 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("fehos","chemOld","standard")  = 3.9 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("feels","chemOld","standard")  = 2.4 / (sm_TWa_2_MWh/sm_giga_2_non);
+
+!!p37_specFeDemTarget("fesos","chemElec","standard")  = 1.2 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("fegas","chemElec","standard")  = 2.7 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("fehos","chemElec","standard")  = 3.3 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("feels","chemElec","standard")  = 3.6 / (sm_TWa_2_MWh/sm_giga_2_non);
+
+!!p37_specFeDemTarget("fesos","chemH2","standard")  = 1.2 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("fegas","chemH2","standard")  = 2.7 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("fehos","chemH2","standard")  = 3.3 / (sm_TWa_2_MWh/sm_giga_2_non);
+!!p37_specFeDemTarget("feh2s","chemH2","standard")  = 2.1 / (sm_TWa_2_MWh/sm_giga_2_non);   
+!!p37_specFeDemTarget("feels","chemH2","standard")  = 1.8 / (sm_TWa_2_MWh/sm_giga_2_non); 
+
+p37_specFeDemTarget("fehos","stCrNg","standard")  = 15.8 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Yang, M., & You, F. (2017). Table1 NGL input/(Ethylene + By Products)
+!!p37_specFeDemTarget("fegas","stCrNg","standard")  = 2.8 / (sm_TWa_2_MWh/sm_giga_2_non);   !! Source: Yang, M., & You, F. (2017). Table1 External Energy input/(Ethylene + By Products)
+p37_specFeDemTarget("fegas","stCrNg","standard")  = 0.60 / (sm_TWa_2_MWh/sm_giga_2_non);   !! Source: Yang, M., & You, F. (2017). Table1 (External Energy input - Hydrogen Output)/(Ethylene + By Products)
+p37_specFeDemTarget("feels","stCrNg","standard")  = 0.54 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Yang, M., & You, F. (2017). Table1 Electricity input/(Ethylene + By Products)
+
+p37_specFeDemTarget("fehos","stCrLiq","standard")  = 14.6 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Lucia S. Layritz 2021 Appendix A.2 Naphtha input/(Ethylene + By Products)
+!!p37_specFeDemTarget("fegas","stCrLiq","standard")  = sm_eps / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Lucia S. Layritz 2021 Appendix A.2 Naphtha input/(Ethylene + By Products)
+p37_specFeDemTarget("feels","stCrLiq","standard")  = 0.069 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Lucia S. Layritz 2021 Appendix A.2 Electricity input/(Ethylene + By Products)
+
+p37_specFeDemTarget("fegas","stCrChemRe","standard")  = 0.84 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Geetanjali Yadav 2023 Table S20 Using co-producted naphtha and NGLs as fuel
+p37_specFeDemTarget("feels","stCrChemRe","standard")  = 0.24 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Geetanjali Yadav 2023 Table S12+S13, calculated from electricity costs
+
+p37_specFeDemTarget("fegas","mechRe","standard")  = 0.29 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Taylor Uekert 2023 Table S1-S4 Weighted average of PE PP and PET
+p37_specFeDemTarget("feels","mechRe","standard")  = 0.54 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Taylor Uekert 2023 Table S1-S4 Weighted average of PE PP and PET
+
+p37_specFeDemTarget("fesos","meSySol","standard")  = 10.3 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Dongliang, Wang, et al Energy 2021 Table 9
+p37_specFeDemTarget("feels","meSySol","standard")  = 0.14 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Dongliang, Wang, et al Energy 2021 Table 9
+
+p37_specFeDemTarget("fesos","meSySol","greenh2")  = 4.6 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Dongliang, Wang, et al Energy 2021 Table 9
+p37_specFeDemTarget("feh2s","meSySol","greenh2")  = 3.3 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Dongliang, Wang, et al Energy 2021 Table 9
+p37_specFeDemTarget("feels","meSySol","greenh2")  = 0.14 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Dongliang, Wang, et al Energy 2021 Table 9
+
+p37_specFeDemTarget("fegas","meSyNg","standard")    = 8.8 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("feels","meSyNg","standard")    = 0.083 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+
+p37_specFeDemTarget("fehos","meSyLiq","standard")  = 9.7 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4 Assume Feedstock is 20Mwh
+p37_specFeDemTarget("feels","meSyLiq","standard")  = 0.56 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4
+
+p37_specFeDemTarget("fesos","meSySol_cc","standard")  = 2.8 / (sm_TWa_2_MWh/sm_giga_2_non); !! TODO：Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5  Mwh/tC
+p37_specFeDemTarget("feels","meSySol_cc","standard")    = 0.065 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5  Mwh/tC
+
+p37_specFeDemTarget("feels","meSyNg_cc","standard")  = 0.54 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5   Mwh/tC
+
+p37_specFeDemTarget("feels","meSyLiq_cc","standard")    = 0.54 / (sm_TWa_2_MWh/sm_giga_2_non); !! Assume same as meSyNg_cc   Mwh/tC
+
+p37_specFeDemTarget("feh2s","meSyH2","standard")  = (6.4+0.58) / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: DEA Technology Data for Energy Carrier Generation and Conversion June 2017 98 Methanol from hydrogen, assuming steam input is produced from hydrogen
+p37_specFeDemTarget("feels","meSyH2","standard")  = 0.10 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: DEA Technology Data for Energy Carrier Generation and Conversion June 2017 98 Methanol from hydrogen
+
+p37_specFeDemTarget("fegas","meSyChemRe","standard")  = 2.6 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Shaik Afzal 2023 Table S4+S5, calculated from minimum selling price breakdown
+p37_specFeDemTarget("feels","meSyChemRe","standard")  = 0.92 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Shaik Afzal 2023 Table S3+S5, calculated from minimum selling price breakdown
+
+p37_specFeDemTarget("fesos","amSyCoal","standard")  = 10.7 / (sm_TWa_2_MWh/sm_giga_2_non);   !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+p37_specFeDemTarget("feels","amSyCoal","standard")  =  1.0 / (sm_TWa_2_MWh/sm_giga_2_non);   !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+
+p37_specFeDemTarget("fegas","amSyNG","standard")    = 8.9 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 4
+p37_specFeDemTarget("feels","amSyNG","standard")    = 0.083 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 4
+
+p37_specFeDemTarget("fehos","amSyLiq","standard")    =  9.0 / (sm_TWa_2_MWh/sm_giga_2_non); !! TODO Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4
+p37_specFeDemTarget("feels","amSyLiq","standard")    =  0.56 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Petrochemicals: Towards more sustainable plastics and fertilisers, Paris, 2018. Table A4
+
+p37_specFeDemTarget("feels","amSyCoal_cc","standard")  =  0.44 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5  Mwh/tC
+
+p37_specFeDemTarget("feels","amSyNG_cc","standard")    = 0.46 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5  Mwh/tC
+
+p37_specFeDemTarget("feels","amSyLiq_cc","standard")    =  0.46 / (sm_TWa_2_MWh/sm_giga_2_non); !! Assume same as amSyNG_cc  Mwh/tC
+
+p37_specFeDemTarget("feh2s","amSyH2","standard")    = 6.0 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: DEA Technology Data for Energy Carrier Generation and Conversion June 2017 103 Hydrogen to Ammonia
+p37_specFeDemTarget("feels","amSyH2","standard")    = 0.49 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: GrinbergDana16 Supplementary Table 4
+
+p37_specFeDemTarget("feels","mtoMta","standard")    = 1.4 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Bazzanella17 Section 4.5.3
+p37_specFeDemTarget("feels","mtoMtaH2","standard")    = 1.4 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Bazzanella17 Section 4.5.3
+p37_specFeDemTarget("feels","fertProd","standard")    = 0.39 / (sm_TWa_2_MWh/sm_giga_2_non);  !! Source: Palys23 Section 2.3, Page 6
+p37_specFeDemTarget("feels","fertProdH2","standard")    = 0.39 / (sm_TWa_2_MWh/sm_giga_2_non); !! Source: Palys23 Section 2.3, Page 6
+
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 
 !! numbers are given in MWh/t and converted to Remind units TWa/Gt with the factors after that (divided by 8.76)
@@ -728,50 +851,35 @@ p37_specFeDemTarget("feels","idrcc","ng")         = 0.11 * sm_c_2_co2 / (sm_TWa_
 p37_specFeDemTarget("fegas","idrcc","ng")         = 0.92 * sm_c_2_co2 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Copy from bfcc, but seems to be quite universal. See e.g. Rochelle 2016, who has slightly lower values.
 $endif.cm_subsec_model_steel
 
-*** --------------------------------
-
-p37_mat2ue(all_enty,all_in) = 0.;
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-p37_mat2ue("sesteel","ue_steel_secondary") = 1.;
-p37_mat2ue("prsteel","ue_steel_primary")   = 1.;
-$endif.cm_subsec_model_steel
-
-*** --------------------------------
-
-p37_ue_share(all_enty,all_in) = 0.;
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-p37_ue_share("sesteel","ue_steel_secondary") = 1.;
-p37_ue_share("prsteel","ue_steel_primary")   = 1.;
-$endif.cm_subsec_model_steel
-loop(ppfUePrc(in),
-  if(abs(sum(mat,p37_ue_share(mat,in))-1.) gt sm_eps,
-    display p37_ue_share;
-    abort "p37_ue_share must add to one for each ue";
-  );
-);
-
-*** --------------------------------
-p37_teMatShareHist(tePrc,opmoPrc,mat) = 0.;
-$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
-p37_teMatShareHist("bof","unheated","prsteel") = 1.;
-p37_teMatShareHist("eaf","sec","sesteel") = 1.;
-$endif.cm_subsec_model_steel
-loop(matFin(mat),
-  if(abs(sum((tePrc,opmoPrc),p37_teMatShareHist(tePrc,opmoPrc,mat))-1.) gt sm_eps,
-    display p37_teMatShareHist;
-    abort "p37_teMatShareHist must add to one for each matFin";
-  );
-);
-if(sum((tePrc,opmoPrc,mat)$(not matFin(mat)), p37_teMatShareHist(tePrc,opmoPrc,mat)) gt sm_eps,
-  display p37_teMatShareHist;
-  abort "p37_teMatShareHist must only be non-zero for matFin";
-);
-*** --------------------------------
-s37_shareHistFeDemPenalty = 0.6;
-*** --------------------------------
 
 p37_captureRate(all_te) = 0.;
 p37_selfCaptureRate(all_te) = 0.;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes" 
+!! 95 % for everything
+!!Source: IEA, The Future of Hydrogen. Seizing today’s opportunities, Assumptions Annex, Paris, 2019. PAGE | 5
+
+!! Methanol synthesis has some feedstock carbon, which reduces the capture rate
+!! For Coal (NG and Liq analogous):
+!! total coal input: 47.8 GJ/t; emission factor of coal: 0.027 tC/GJ
+!! total carbon input: (47.8 GJ/t * 0.027 tC/GJ) = 1.29 tC/tMeOH
+!! carbon content of methanol: 12/32 = 0.375 tC/tMeOH
+!! ==> feedstock share is 0.375/1.29 = 0.29 ==> energy share is 0.71
+
+p37_captureRate("meSySol_cc")  = 0.95 * 0.71; 
+p37_captureRate("meSyNg_cc") = 0.95 * 0.22; 
+p37_captureRate("meSyLiq_cc")  = 0.95 * 0.5;
+p37_selfCaptureRate("meSySol_cc")  = 0.95;
+p37_selfCaptureRate("meSyNg_cc") = 0.95;
+p37_selfCaptureRate("meSyLiq_cc")  = 0.95;
+
+p37_captureRate("amSyCoal_cc")  = 0.95 * 0.66; !! Considering the carbon content in Urea
+p37_captureRate("amSyNG_cc") = 0.95 * 0.28;
+p37_captureRate("amSyLiq_cc") = 0.95 * 0.5;
+p37_selfCaptureRate("amSyCoal_cc")  = 0.95;
+p37_selfCaptureRate("amSyNG_cc") = 0.95;
+p37_selfCaptureRate("amSyLiq_cc") = 0.95;
+$endif.cm_subsec_model_chemicals
+
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_captureRate("bfcc")  = 0.73; !! Source: Witecka 2023, Figure 18
 p37_captureRate("idrcc") = 0.85; !! Source: IEA Steel Roadmap Fig. 2.11
@@ -780,32 +888,265 @@ p37_selfCaptureRate("idrcc") = 0.9;
 $endif.cm_subsec_model_steel
 
 *** --------------------------------
+!!can be deleted in the long run
+p37_priceMat(ttot,all_regi,all_enty) = 0.;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+!!Execute_Loadpoint "input" pm_FEPrice = pm_FEPrice;
 
-p37_priceMat(all_enty) = 0.;
+loop(t$(t.val > 2020),
+  loop(all_regi,
+!!   p37_priceMat(t,all_regi,"naphtha") = -0.4 * pm_FEPrice(t,all_regi,"fehos","indst","ETS");
+    p37_priceMat(t,all_regi,"co2fdummy") = 3 * 44/12 * 0.3048 * (t.val-2024) ** (-0.623) ; !! Mahdi Fasihi 2024
+  );
+);
+!! Source: Geetanjali Yadav 2023 Table S12 → 0.6 $/kg
+!! Source: Taylor Uekert 2023 Table Table S23 → 0.2-0.4 $/kg
+!! Source: Shaik Afzal 2023 Table Table S6 → 0.4-0.8 $/kg
+p37_priceMat(t,all_regi,"plasticWaste") = 0.1; 
+
+$endif.cm_subsec_model_chemicals
+
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 !! IEA STeel Roadmap Fig 1.3 Caption: Scrap price 200-300 $/t
 !! => take 250 $/t, unit 2020$US
-p37_priceMat("eafscrap") = sm_D2020_2_D2017 * 0.250 ;
-p37_priceMat("bofscrap") = sm_D2020_2_D2017 * 0.250;
-!! Agora KSV-Rechner: 114 €2023/tSteel / (tn$ /bn t)
-p37_priceMat("ironore")  = sm_EURO2023_2_D2017 * 0.114;
-!! Agora KSV-Rechner: 154 €2023/tSteel / (tn$ /bn t)
-p37_priceMat("dripell")  = sm_EURO2023_2_D2017 * 0.154;
+loop(t$(t.val ge 2005),
+  p37_priceMat(t,all_regi,"eafscrap") = sm_D2020_2_D2017 * 0.250;
+  p37_priceMat(t,all_regi,"bofscrap") = sm_D2020_2_D2017 * 0.250;
+  !! Agora KSV-Rechner: 114 €2023/tSteel / (tn$ /bn t)
+  p37_priceMat(t,all_regi,"ironore")  = sm_EURO2023_2_D2017 * 0.114;
+  !! Agora KSV-Rechner: 154 €2023/tSteel / (tn$ /bn t)
+  p37_priceMat(t,all_regi,"dripell")  = sm_EURO2023_2_D2017 * 0.154;
+);
+$endif.cm_subsec_model_steel
+
+
+
+
+*** --------------------------------
+*** Chemicals Production volumes
+*** --------------------------------
+
+
+!! 0. Data input
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
+pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) = 0.;
+$endif.cm_subsec_model_chemicals
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+Parameter
+  pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) "material flows per production route in 2020 [Gt or GtN for fertilizer]"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_AllChem_Routes_Value_2020noCCS.cs4r";
+$offdelim
+  /
+;
+$endif.cm_subsec_model_chemicals
+
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
+p37_mat2ue(tall,all_regi,all_enty,all_in) = 0.;
+$endif.cm_subsec_model_chemicals
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+Parameter
+  p37_mat2ue(tall,all_regi,all_enty,all_in) "conversion factors [2017$/kg or 2017$/kgN] for 2020-2050 to convert material [Gt or GtN] into UE [trn$2017]"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_AllChemical_Mat2Ue.cs4r";
+$offdelim
+  /
+;
+!! constant before and after IEA report temporal scope
+p37_mat2ue(t,regi,mat,in)$(t.val lt 2020) = p37_mat2ue("2020",regi,mat,in);
+p37_mat2ue(t,regi,mat,in)$(t.val gt 2050) = p37_mat2ue("2050",regi,mat,in);
+
+!! ue_chemicals is measured in value_added (trn$2017), whilst material is measured in Gt
+!! So this is the price of material in trn$2017/Gt = $2017/kg
+
+!! new calculation value added: Global plastic production volume 400.3 Mt Global plastic market size 712bn USD in 2022 https://www.statista.com/topics/5266/plastics-industry/#:~:text=Since%20the%20mass%20production%20of%20plastic%20products%20began,to%20experience%20considerable%20growth%20over%20the%20next%20decade.
+
+!!TODO QIanzhi: Change to 2017$
+!!p37_mat2ue(t,all_regi,"hvc","ue_chemicals") = 0.66; !!2017$/kg Source: https://businessanalytiq,com/procurementanalytics/index/ethylene-price-index/
+!!p37_mat2ue("fertilizer","ue_chemicals") = 0.73; !!2017$/kgN Source: https://farmdocdaily,illinois,edu/wp-content/uploads/2023/06/06132023_fig1,png 2020 Global Average
+!!p37_mat2ue("methFinal","ue_chemicals") = 0.37; !!2017$/kg Source: https://www,methanex,com/about-methanol/pricing/ 2020 Global Average
+!!p37_mat2ue("ammoFinal","ue_chemicals") = 0.69; !!2017$/kg Source: https://businessanalytiq,com/procurementanalytics/index/ammonia-price-index/ 2020 Global Average
+p37_mat2ue(t,all_regi,"otherChem","ue_chemicals") = 1.;
+$endif.cm_subsec_model_chemicals
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+
+p37_mat2ue(t,all_regi,"sesteel","ue_steel_secondary") = 1.;
+p37_mat2ue(t,all_regi,"prsteel","ue_steel_primary")   = 1.;
 $endif.cm_subsec_model_steel
 
 *** --------------------------------
-
+p37_ue_share(tall,all_regi,all_enty,all_in) = 0.;
 pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
-pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) = 0.;
 p37_matFlowHist(tall,all_regi,mat) = 0.;
+
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+!! HOT FIX
+!! AmmoniaFinal equals total ammonia minus fertilizer ammonia
+!! can this be deleted? (recalculated from mrindustry to avoid rounding errors)
+pm_outflowPrcHist("2020",regi,"amToFinal","standard")
+  = sum((tePrc2matOut(tePrc,opmoPrc,mat))$(sameas("ammonia",mat)),
+    pm_outflowPrcHist("2020",regi,tePrc,opmoPrc))
+  - (pm_outflowPrcHist("2020",regi,"fertProd","standard")
+  * p37_specMatDem("ammonia","fertProd","standard"))
+  ;
+!! same for methanol
+pm_outflowPrcHist("2020",regi,"meToFinal","standard")
+  = sum((tePrc2matOut(tePrc,opmoPrc,mat))$(sameas("methanol",mat)),
+    pm_outflowPrcHist("2020",regi,tePrc,opmoPrc))
+  - (pm_outflowPrcHist("2020",regi,"mtoMta","standard")
+  * p37_specMatDem("methanol","mtoMta","standard"))
+  ;
+
+!! 1. Correct pm_outflowPrcHist, such that sum is consistent with UE
+!! can this be deleted?
+p37_ueHistTmp("2020",regi)
+  = sum((tePrc2matOut(tePrc,opmoPrc,mat), mat2ue(mat,in))$(sameas("ue_chemicals",in)),
+         pm_outflowPrcHist("2020",regi,tePrc,opmoPrc)
+         * p37_mat2ue("2020",regi,mat,in)
+    );
+
+pm_outflowPrcHist("2020",regi,tePrc,opmoPrc)$(secInd37_tePrc("chemicals",tePrc))
+  = pm_outflowPrcHist("2020",regi,tePrc,opmoPrc)
+  * pm_fedemand("2020",regi,"ue_chemicals")
+  / p37_ueHistTmp("2020",regi);
+
+!! 2. scale 2005 to 2015 with ue_chemicals
+!! can this be deleted?
+loop(t$(t.val ge 2005 AND t.val le 2015),
+  pm_outflowPrcHist(t,regi,tePrc,opmoPrc)
+  = pm_outflowPrcHist("2020",regi,tePrc,opmoPrc)
+  * pm_fedemand(t,regi,"ue_chemicals")
+  / pm_fedemand("2020",regi,"ue_chemicals");
+);
+
+
+!! 3. Calc MatflowHist
+!! can this be deleted?
+p37_matFlowHist(t,regi,mat) =
+sum(tePrc2matOut(tePrc,opmoPrc,mat),
+      pm_outflowPrcHist(t,regi,tePrc,opmoPrc)
+    )
+;
+!! 4. Calc ue_share
+!! can this be deleted?
+p37_ue_share(t,regi,mat,in)$(mat2ue(mat,in) AND sameas(in,"ue_chemicals") AND t.val le 2020) =
+  (p37_mat2ue(t,regi,mat,in) * p37_matFlowHist(t,regi,mat))
+  / pm_cesdata(t,regi,in,"quantity");
+;
+p37_ue_share(t,regi,mat,in)$(t.val gt 2020) = p37_ue_share("2020",regi,mat,in);
+$endif.cm_subsec_model_chemicals
+
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+p37_ue_share(t,regi,"sesteel","ue_steel_secondary") = 1.;
+p37_ue_share(t,regi,"prsteel","ue_steel_primary")   = 1.;
+$endif.cm_subsec_model_steel
+
+if (cm_startyear gt 2005,
+  Execute_Loadpoint "input_ref" p37_ue_share = p37_ue_share;
+);
+
+loop((t,regi,ppfUePrc(in)),
+  if(abs(sum(mat,p37_ue_share(t,regi,mat,in))-1.) gt sm_eps,
+    display p37_ue_share;
+    abort "p37_ue_share must add to one for each ue";
+  );
+);
+
+*** --------------------------------
+p37_teMatShareHist(all_regi,tePrc,opmoPrc,mat) = 0.;
+!! this can be deleted in the future
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+loop(all_regi(regi),
+  loop(tePrc2matOut(tePrc, opmoPrc, mat),
+        if (p37_matFlowHist("2020", regi, mat) gt 0,
+          p37_teMatShareHist(regi, tePrc, opmoPrc, mat) = 
+            pm_outflowPrcHist("2020", regi, tePrc, opmoPrc) 
+            / p37_matFlowHist("2020", regi, mat);
+        else
+          p37_teMatShareHist(regi, tePrc, opmoPrc, mat) = 0;
+        );
+      );
+    );
+
+$endif.cm_subsec_model_chemicals
+
+$ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
+p37_teMatShareHist(regi,"bof","unheated","prsteel") = 1.;
+p37_teMatShareHist(regi,"eaf","sec","sesteel") = 1.;
+p37_teMatShareHist(regi,"bf","standard","pigiron") = 1.;
+p37_teMatShareHist(regi,"idr","ng","driron") = 1.;
+$endif.cm_subsec_model_steel
+loop((regi,matFin(mat))$(NOT mat2ue(mat,"ue_chemicals")),
+  if(abs(sum((tePrc,opmoPrc),p37_teMatShareHist(regi,tePrc,opmoPrc,mat))-1.) gt sm_eps,
+    display p37_teMatShareHist;
+    abort "p37_teMatShareHist must add to one for each matFin";
+  );
+);
+!!if(sum((tePrc,opmoPrc,mat)$(not matFin(mat)), p37_teMatShareHist(tePrc,opmoPrc,mat)) gt sm_eps,
+!!  display p37_teMatShareHist;
+!!  abort "p37_teMatShareHist must only be non-zero for matFin";
+!!\);
+
+
+*** --------------------------------
+
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+Parameter
+  p37_demFePrcHist(tall,all_regi,all_te,opmoPrc,all_enty) "total FE demand [EJ] per process in 2005-2020 (calculated from specific FE demand and production volume)"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_AllChem_Energy_Value_2005_2020noCCS.cs4r";
+$offdelim
+  /
+;
+!! HOT FIX
+!! OtherChem is totalChemicals-sum(all other processes)
+!! is duplicate with mrindustry, could maybe be deleted
+p37_demFePrcHist(t,regi,tePrc,opmoPrc,entyFe) = sm_EJ_2_TWa * p37_demFePrcHist(t,regi,tePrc,opmoPrc,entyFe);
+loop(t$(t.val ge 2005 AND t.val le 2020),
+    p37_demFePrcHist(t,regi,"chemOld","standard","fesos")
+    = pm_fedemand(t,regi,"feso_chemicals") * sm_EJ_2_TWa
+    - sum((tePrc, opmoPrc)$(NOT sameas(tePrc,"chemOld")), p37_demFePrcHist(t,regi,tePrc,opmoPrc,"fesos"));
+
+    p37_demFePrcHist(t,regi,"chemOld","standard","fehos")
+    = pm_fedemand(t,regi,"feli_chemicals") * sm_EJ_2_TWa
+    - sum((tePrc, opmoPrc)$(NOT sameas(tePrc,"chemOld")), p37_demFePrcHist(t,regi,tePrc,opmoPrc,"fehos"));
+
+    p37_demFePrcHist(t,regi,"chemOld","standard","fegas")
+    = (pm_fedemand(t,regi,"fega_chemicals")
+    +  pm_fedemand(t,regi,"feh2_chemicals")) * sm_EJ_2_TWa
+    - sum((tePrc, opmoPrc)$(NOT sameas(tePrc,"chemOld")), p37_demFePrcHist(t,regi,tePrc,opmoPrc,"fegas"));
+
+    p37_demFePrcHist(t,regi,"chemOld","standard","feels")
+    = (pm_fedemand(t,regi,"feelhth_chemicals")
+    +  pm_fedemand(t,regi,"feelwlth_chemicals")) * sm_EJ_2_TWa
+    - sum((tePrc, opmoPrc)$(NOT sameas(tePrc,"chemOld")), p37_demFePrcHist(t,regi,tePrc,opmoPrc,"feels"));
+);
+loop((t,regi,tePrc,opmoPrc)$(t.val ge 2005 AND t.val le 2020),
+   IF(pm_outflowPrcHist(t,regi,tePrc,opmoPrc) gt EPS,
+      loop(entyFe,
+        pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc)
+        = p37_demFePrcHist(t,regi,tePrc,opmoPrc,entyFe)
+        / pm_outflowPrcHist(t,regi,tePrc,opmoPrc);
+    );
+  );
+);
+$endif.cm_subsec_model_chemicals
+
+s37_shareHistFeDemPenalty = 0.6;
+
+*** --------------------------------
+
 if (cm_startyear eq 2005,
-  loop(ttot$(ttot.val ge 2005 AND ttot.val le 2020),
+  loop(t$(t.val ge 2005 AND t.val le 2020),
 
     !! 2nd stage tech
-    loop(mat2ue(mat,in),
-      p37_matFlowHist(ttot,regi,mat) = pm_fedemand(ttot,regi,in) / p37_mat2ue(mat,in) * p37_ue_share(mat,in);
+    loop(mat2ue(mat,in)$(NOT sameas(in,"ue_chemicals")),
+      p37_matFlowHist(t,regi,mat) = pm_fedemand(t,regi,in) / p37_mat2ue(t,regi,mat,in) * p37_ue_share(t,regi,mat,in);
       loop(tePrc2matOut(tePrc,opmoPrc,mat),
-        pm_outflowPrcHist(ttot,regi,tePrc,opmoPrc) = p37_matFlowHist(ttot,regi,mat) * p37_teMatShareHist(tePrc,opmoPrc,mat);
+        pm_outflowPrcHist(t,regi,tePrc,opmoPrc) = p37_matFlowHist(t,regi,mat) * p37_teMatShareHist(regi,tePrc,opmoPrc,mat);
       );
     );
 
@@ -813,35 +1154,37 @@ if (cm_startyear eq 2005,
     !! TODO: simply do this loop several times to fill more than two stages?
     loop((tePrc1,opmoPrc1,mat)$(
                     sum((tePrc2,opmoPrc2), tePrc2matIn(tePrc2,opmoPrc2,mat))
-                AND tePrc2matOut(tePrc1,opmoPrc1,mat)),
-      p37_matFlowHist(ttot,regi,mat)
+                AND tePrc2matOut(tePrc1,opmoPrc1,mat)
+                AND secInd37_tePrc("steel",tePrc1)),
+      p37_matFlowHist(t,regi,mat)
         = sum((tePrc2matOut(tePrc1,opmoPrc1,mat),
                tePrc2matIn(tePrc2,opmoPrc2,mat)),
-            !!TODO: enable p37_teMatShareHist here, too (has to be defined, though)
-            p37_specMatDem(mat,tePrc2,opmoPrc2) * pm_outflowPrcHist(ttot,regi,tePrc2,opmoPrc2) );
-      pm_outflowPrcHist(ttot,regi,tePrc1,opmoPrc1) = p37_matFlowHist(ttot,regi,mat);
+            p37_specMatDem(mat,tePrc2,opmoPrc2) * pm_outflowPrcHist(t,regi,tePrc2,opmoPrc2) );
+      pm_outflowPrcHist(t,regi,tePrc1,opmoPrc1) = p37_matFlowHist(t,regi,mat) * p37_teMatShareHist(regi,tePrc1,opmoPrc1,mat);
     );
 
-    loop((entyFe,ppfUePrc),
-      p37_demFeTarget(ttot,regi,entyFe,ppfUePrc) = sum(tePrc2ue(tePrc,opmoPrc,ppfUePrc), pm_outflowPrcHist(ttot,regi,tePrc,opmoPrc) * p37_specFeDemTarget(entyFe,tePrc,opmoPrc));
-      p37_demFeActual(ttot,regi,entyFe,ppfUePrc) = sum((fe2ppfen_no_ces_use(entyFe,all_in),ue2ppfenPrc(ppfUePrc,all_in)), pm_fedemand(ttot,regi,all_in) * sm_EJ_2_TWa);
+    loop((entyFe,ppfUePrc)$(not sameas(ppfUePrc, "ue_chemicals")),
+      p37_demFeTarget(t,regi,entyFe,ppfUePrc) = sum(tePrc2ue(tePrc,opmoPrc,ppfUePrc), pm_outflowPrcHist(t,regi,tePrc,opmoPrc) * p37_specFeDemTarget(entyFe,tePrc,opmoPrc));
+      p37_demFeActual(t,regi,entyFe,ppfUePrc) = sum((fe2ppfen_no_ces_use(entyFe,all_in),ue2ppfenPrc(ppfUePrc,all_in)), pm_fedemand(t,regi,all_in) * sm_EJ_2_TWa);
     );
 
-    p37_demFeRatio(ttot,regi,ppfUePrc) = sum(entyFe,p37_demFeActual(ttot,regi,entyFe,ppfUePrc)) / sum(entyFe,p37_demFeTarget(ttot,regi,entyFe,ppfUePrc));
+    p37_demFeRatio(t,regi,ppfUePrc)$(not sameas(ppfUePrc, "ue_chemicals")) = sum(entyFe,p37_demFeActual(t,regi,entyFe,ppfUePrc)) / sum(entyFe,p37_demFeTarget(t,regi,entyFe,ppfUePrc));
 
-    loop((tePrc2opmoPrc(tePrc,opmoPrc),regi,entyFe)$(p37_specFeDemTarget(entyFe,tePrc,opmoPrc) gt 0.01*sm_eps),
-      if((pm_outflowPrcHist(ttot,regi,tePrc,opmoPrc) gt sm_eps),
-        pm_specFeDem(ttot,regi,entyFe,tePrc,opmoPrc)
+    loop((tePrc2opmoPrc(tePrc,opmoPrc),regi,entyFe)$(
+                p37_specFeDemTarget(entyFe,tePrc,opmoPrc) gt 0.01*sm_eps
+            AND secInd37_tePrc("steel",tePrc)),
+      if((pm_outflowPrcHist(t,regi,tePrc,opmoPrc) gt sm_eps),
+        pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc)
           = p37_specFeDemTarget(entyFe,tePrc,opmoPrc)
           * sum(tePrc2ue(tePrc,opmoPrc,in),
-              p37_demFeActual(ttot,regi,entyFe,in)
-              / p37_demFeTarget(ttot,regi,entyFe,in));
+              p37_demFeActual(t,regi,entyFe,in)
+              / p37_demFeTarget(t,regi,entyFe,in));
       else
-        pm_specFeDem(ttot,regi,entyFe,tePrc,opmoPrc)
+        pm_specFeDem(t,regi,entyFe,tePrc,opmoPrc)
           = p37_specFeDemTarget(entyFe,tePrc,opmoPrc)
           * (1.
              + s37_shareHistFeDemPenalty
-             * (sum(tePrc2ue(tePrc,opmoPrc,ppfUePrc), p37_demFeRatio(ttot,regi,ppfUePrc))
+             * (sum(tePrc2ue(tePrc,opmoPrc,ppfUePrc), p37_demFeRatio(t,regi,ppfUePrc))
                -1.));
       );
     );
@@ -849,27 +1192,107 @@ if (cm_startyear eq 2005,
   );
 
   !! loop over other years and blend
-  loop((entyFeStat(all_enty), tePrc(all_te), opmoPrc),
-    if( (p37_specFeDemTarget(all_enty,all_te,opmoPrc) gt 0.),
-      loop(ttot$(ttot.val > 2020),
-        !! fedemand in excess of BAT halves until 2055
-        !! gams cannot handle float exponents, so pre-compute 0.5^(1/(2055-2020)) = 0.9804
-        pm_specFeDem(ttot,regi,all_enty,all_te,opmoPrc)
-        = p37_specFeDemTarget(all_enty,all_te,opmoPrc)
-        + (pm_specFeDem("2020",regi,all_enty,all_te,opmoPrc) - p37_specFeDemTarget(all_enty,all_te,opmoPrc))
-        * power(0.9804, ttot.val - 2020) ;
+  loop((regi(all_regi),entyFeStat(all_enty), tePrc(all_te), opmoPrc),
+    if( pm_specFeDem("2020",all_regi,all_enty,all_te,opmoPrc) gt 0.,
+      loop(t$(t.val > 2020),
+          !! fedemand in excess of BAT halves until 2055
+          !! gams cannot handle float exponents, so pre-compute 0.5^(1/(2055-2020)) = 0.9804
+        pm_specFeDem(t,regi,all_enty,all_te,opmoPrc)
+          = p37_specFeDemTarget(all_enty,all_te,opmoPrc)
+            + (pm_specFeDem("2020",regi,all_enty,all_te,opmoPrc) - p37_specFeDemTarget(all_enty,all_te,opmoPrc))
+            * power(0.9804, t.val - 2020)
+          );
+        else
+          pm_specFeDem(t,regi,all_enty,all_te,opmoPrc) = p37_specFeDemTarget(all_enty,all_te,opmoPrc)
       );
     );
-  );
+
+
+!! Hot fix on regional otherChem Energy Demand
+!! calculate electricity and H2 demand for otherChem
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
+
+  loop((entyFeStat(all_enty)),
+      loop(t$(t.val > 2020),
+
+        !! Calc chemOld
+        !! stays constant after 2020
+        pm_specFeDem(t,regi,all_enty,"chemOld","standard") = 
+        pm_specFeDem("2020",regi,all_enty,"chemOld","standard");
+
+        !! Calc chemElec
+        !! all non-electricity scaled down to feedstock share
+        !! assumption: future otherChem sector has 65% feedstock (from Michajas or Simons data)
+        loop(entyFe$(NOT sameas(entyFe, "feels")),
+          pm_specFeDem(t, regi, entyFe, "chemElec", "standard") =
+              pm_specFeDem("2020", regi, entyFe, "chemOld", "standard")
+              * 0.65
+        );
+
+        !! Calc feels for chemElec
+        !! all non-feedstock non-electricity energy of ChemOld with 15% efficiency improvement
+        !! source: Danish Energy Agency https://ens.dk/en/analyses-and-statistics/technology-data-industrial-process-heat
+        pm_specFeDem(t, regi, "feels", "chemElec", "standard") =
+                  pm_specFeDem("2020", regi, "feels", "chemOld", "standard")
+                  + 0.85 * ( sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem("2020", regi, entyFe2, "chemOld", "standard"))
+                          - sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem(t, regi, entyFe2, "chemElec", "standard")) );
+
+        !! Calc chemH2 
+        !! see above
+        loop(entyFe$(NOT sameas(entyFe, "feels")),
+          pm_specFeDem(t, regi, entyFe, "chemH2", "standard") =
+              pm_specFeDem("2020", regi, entyFe, "chemOld", "standard")
+              * 0.65
+        );
+
+        !! Calc feels for chemH2
+        !! see above
+        pm_specFeDem(t, regi, "feels", "chemH2", "standard") =
+            pm_specFeDem("2020", regi, "feels", "chemOld", "standard");
+ 
+        !! Calc feh2s for chemH2
+        !! see above but without efficiency improvement, assumption: hydrogen and gas have the same efficiency
+        pm_specFeDem(t, regi, "feh2s", "chemH2", "standard") =
+            sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem("2020", regi, entyFe2, "chemOld", "standard"))
+            - sum(entyFe2$(NOT sameas(entyFe2, "feels")), pm_specFeDem(t, regi, entyFe2, "chemH2", "standard"));
+
+      );
+    );
+    
+$endif.cm_subsec_model_chemicals
 
 );
 
 if (cm_startyear gt 2005,
   Execute_Loadpoint "input_ref" pm_specFeDem = pm_specFeDem;
+  Execute_Loadpoint "input_ref" p37_teMatShareHist = p37_teMatShareHist;
 );
 
 if (cm_startyear gt 2005,
   execute_load "input_ref.gdx" v37_plasticWaste.l = v37_plasticWaste.l;
 );
+
+
+$ifthen.PlasticMFA "%cm_PlasticMFA%" == "on"
+Parameter
+  p37_recycleMech(tall,all_regi) "TODO"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_RecycleMech.cs4r";
+$offdelim
+  /
+;
+$endif.PlasticMFA
+
+$ifthen.PlasticMFA "%cm_PlasticMFA%" == "on"
+Parameter
+  p37_plastcWaste(tall,all_regi) "TODO"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_PlasticWaste.cs4r";
+$offdelim
+  /
+;
+$endif.PlasticMFA
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms

@@ -44,11 +44,11 @@ o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)$(
       (vm_cesIO.l(ttot,regi,in)
       + pm_cesdata(ttot,regi,in,"offset_quantity"))
       )
-  + sum((secInd37_emiMkt(secInd37Prc,emiMkt),
-           secInd37_tePrc(secInd37Prc,tePrc),
-           tePrc2opmoPrc(tePrc,opmoPrc)),
+  + sum((secInd37_emiMkt(secInd37,emiMkt),
+           secInd37_tePrc(secInd37,tePrc),
+           tePrc2opmoPrc(tePrc,opmoPrc))$(secInd37Prc(secInd37)),
       o37_demFePrc(ttot,regi,entyFe,tePrc,opmoPrc)
-      )$(secInd37Prc(secInd37))
+      )
   )
   / o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
 ;
@@ -89,11 +89,11 @@ pm_IndstCO2Captured(ttot,regi,entySe,entyFe(entyFeCC37),secInd37,emiMkt)$(
 pm_NonFos_IndCC_fraction0(ttot,regi,emiInd37)$(
               sum(secInd37$secInd37_2_emiInd37(secInd37,emiInd37),
                   (sum((entySe,entyFe,emiMkt),
-                        pm_IndstCO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt))))) 
-  = sum(secInd37$secInd37_2_emiInd37(secInd37,emiInd37), 
-        sum( (entySe,entyFe, emiMkt)$(NOT (entySeFos(entySe))), 
-          pm_IndstCO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt)) 
-    / (sum((entySe,entyFe,emiMkt), 
+                        pm_IndstCO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt)))))
+  = sum(secInd37$secInd37_2_emiInd37(secInd37,emiInd37),
+        sum( (entySe,entyFe, emiMkt)$(NOT (entySeFos(entySe))),
+          pm_IndstCO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt))
+    / (sum((entySe,entyFe,emiMkt),
           pm_IndstCO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt))))
 ;
 
@@ -151,19 +151,51 @@ loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc)$(
 !! init all to 1
 o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)$tePrc2route(tePrc,opmoPrc,route) = 1.;
 
+
+ !! 1st stage with two second-stage processes
+ !! share = methanol * mtoMta*specDem / (mtoMta*specDem + meToFinal*specDem)
+ !! - loop over first stage techs
+ !! - loop over second stage techs sharing a route
+ !! - for each route, share_route is outflowPrc of 2nd stage tech of that route divided by sum_routes(outflowPrc of 2nd stage tech of route)
+ !!   (outFlowPrc always multiplied by specMatDem)
+ loop((tePrc1,opmoPrc1,tePrc2,opmoPrc2,mat,route)$(
+                 tePrc2matIn(tePrc2,opmoPrc2,mat)
+             AND tePrc2matOut(tePrc1,opmoPrc1,mat)
+             AND tePrc2route(tePrc1,opmoPrc1,route)
+             AND tePrc2route(tePrc2,opmoPrc2,route)),
+   o37_shareRoute(ttot,regi,tePrc1,opmoPrc1,route)
+   = vm_outflowPrc.l(ttot,regi,tePrc2,opmoPrc2)
+   * p37_specMatDem(mat,tePrc2,opmoPrc2)
+   / max(
+       sum((route2,tePrc3,opmoPrc3)$(
+                 tePrc2matIn(tePrc3,opmoPrc3,mat)
+             AND tePrc2matOut(tePrc1,opmoPrc1,mat)
+             AND tePrc2route(tePrc1,opmoPrc1,route2)
+             AND tePrc2route(tePrc3,opmoPrc3,route2)
+             AND (NOT routeCC(route2))),
+         vm_outflowPrc.l(ttot,regi,tePrc3,opmoPrc3)
+         * p37_specMatDem(mat,tePrc3,opmoPrc3)
+       ),
+       sm_eps
+     )
+   ;
+ );
+
+
 loop((tePrc,opmoPrc,teCCPrc,opmoCCPrc,route)$(
                           tePrc2teCCPrc(tePrc,opmoPrc,teCCPrc,opmoCCPrc)
                       AND tePrc2route(teCCPrc,opmoCCPrc,route)),
 
   !! share of first-stage tech with CCS
   o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)$(sum(entyFe,v37_emiPrc.l(ttot,regi,entyFe,tePrc,opmoPrc)) gt 0.)
-    = v37_shareWithCC.l(ttot,regi,tePrc,opmoPrc);
+    =   o37_shareRoute(ttot,regi,tePrc,opmoPrc,route)
+      * v37_shareWithCC.l(ttot,regi,tePrc,opmoPrc);
 
   !! share of first-stage tech without CCS
-  loop(route2$(        tePrc2route(tePrc,opmoPrc,route2)
-               AND NOT tePrc2route(teCCPrc,opmoCCPrc,route2)),
+  loop(routeCC2baseRoute(route,route2),
     o37_shareRoute(ttot,regi,tePrc,opmoPrc,route2)
-    = 1. - v37_shareWithCC.l(ttot,regi,tePrc,opmoPrc);
+    = o37_shareRoute(ttot,regi,tePrc,opmoPrc,route2)
+     * (1. - v37_shareWithCC.l(ttot,regi,tePrc,opmoPrc));
   );
 );
 
@@ -174,7 +206,7 @@ loop((tePrc1,opmoPrc1,tePrc2,opmoPrc2,mat,route)$(
             AND tePrc2route(tePrc1,opmoPrc1,route)
             AND tePrc2route(tePrc2,opmoPrc2,route)),
   !! The share of second-stage tech (such as eaf) which belongs to a certain route equals...
-  o37_shareRoute(ttot,regi,tePrc2,opmoPrc2,route)$(vm_outflowPrc.l(ttot,regi,tePrc2,opmoPrc2) gt 0.)
+  o37_shareRoute(ttot,regi,tePrc2,opmoPrc2,route)$(vm_outflowPrc.l(ttot,regi,tePrc2,opmoPrc2) gt sm_eps)
   !! ...the outflow of the first-stage tech (such as idr) which provides the input material (such as driron) to the second-stage...
   =   vm_outflowPrc.l(ttot,regi,tePrc1,opmoPrc1)
     !! ...times the share of that 1st stage tech which belongs to a certain route
@@ -187,7 +219,7 @@ loop((tePrc1,opmoPrc1,tePrc2,opmoPrc2,mat,route)$(
 
 *** determine production and FE demand by route
 *** ---------------------------------------------------------------------------
-loop((mat,route)$(matFin(mat)),
+loop((mat,route)$(matOut(mat)),
   o37_ProdIndRoute(ttot,regi,mat,route)
     = sum((tePrc,opmoPrc)$(    tePrc2matOut(tePrc,opmoPrc,mat)
                            AND tePrc2route(tePrc,opmoPrc,route)),
@@ -199,8 +231,7 @@ loop((mat,route)$(matFin(mat)),
 !!
 o37_demFeIndRoute(ttot,regi,entyFe,tePrc,route,secInd37) = 0.;
 loop((entyFe,route,tePrc,opmoPrc,secInd37)$(    tePrc2route(tePrc,opmoPrc,route)
-                                            AND secInd37_tePrc(secInd37,tePrc)
-                                            AND (p37_specFeDemTarget(entyFe,tePrc,opmoPrc) gt 0.) ),
+                                            AND secInd37_tePrc(secInd37,tePrc)),
   o37_demFeIndRoute(ttot,regi,entyFe,tePrc,route,secInd37)
   = o37_demFeIndRoute(ttot,regi,entyFe,tePrc,route,secInd37) !!sum (only necessary if several opmodes for one route)
     + vm_outflowPrc.l(ttot,regi,tePrc,opmoPrc)
