@@ -227,12 +227,13 @@ q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt) ..
     vm_demFeNonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt)
   )
   =e=
-  sum(fe2ppfEn(entyFe,in_chemicals_feedstock_37(in)),
+  (
+    sum(fe2ppfEn(entyFe,in_chemicals_feedstock_37(in)),
     ( vm_cesIO(t,regi,in)
     + pm_cesdata(t,regi,in,"offset_quantity")
-    )
-   +
-  sum(secInd37Prc$(sameas(secInd37Prc,"chemicals")),
+    ))
+    +
+    sum(secInd37Prc$(sameas(secInd37Prc,"chemicals")),
       sum((secInd37_emiMkt(secInd37Prc,emiMkt),
           secInd37_tePrc(secInd37Prc,tePrc),
           tePrc2opmoPrc(tePrc,opmoPrc)),
@@ -240,8 +241,9 @@ q37_demFeFeedstockChemIndst(t,regi,entyFe,emiMkt) ..
           * vm_outflowPrc(t,regi,tePrc,opmoPrc)
           )
       )
-      * p37_chemicals_feedstock_share(t,regi)
-  )$( entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) )
+  )
+  * p37_chemicals_feedstock_share(t,regi)
+  $( entyFE2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) )
 ;
 
 *' Feedstocks have identical fossil/biomass/synfuel shares as industry FE

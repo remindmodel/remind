@@ -2939,7 +2939,6 @@ emiMac2mac(all_enty,all_enty)            "mapping of emission sources to MACs - 
     co2luc.co2luc
     co2cement_process. co2cement   "process emissions are captured by kiln CCS too"
     co2cement    . co2cement
-    co2chemicals . co2chemicals
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
     co2chemicals . co2chemicals
 $endif.cm_subsec_model_chemicals

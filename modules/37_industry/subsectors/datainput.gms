@@ -928,6 +928,9 @@ $endif.cm_subsec_model_steel
 
 
 !! 0. Data input
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
+pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) = 0.;
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 Parameter
   pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) "material flows per production route in 2020 [Gt or GtN for fertilizer]"
@@ -939,7 +942,9 @@ $offdelim
 ;
 $endif.cm_subsec_model_chemicals
 
-!!p37_mat2ue(tall,all_regi,all_enty,all_in) = 0.;
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "ces"
+p37_mat2ue(tall,all_regi,all_enty,all_in) = 0.;
+$endif.cm_subsec_model_chemicals
 $ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 Parameter
   p37_mat2ue(tall,all_regi,all_enty,all_in) "conversion factors [2017$/kg or 2017$/kgN] for 2020-2050 to convert material [Gt or GtN] into UE [trn$2017]"
@@ -971,6 +976,12 @@ p37_mat2ue(t,all_regi,"sesteel","ue_steel_secondary") = 1.;
 p37_mat2ue(t,all_regi,"prsteel","ue_steel_primary")   = 1.;
 $endif.cm_subsec_model_steel
 
+*** --------------------------------
+p37_ue_share(tall,all_regi,all_enty,all_in) = 0.;
+pm_specFeDem(tall,all_regi,all_enty,all_te,opmoPrc) = 0.;
+p37_matFlowHist(tall,all_regi,mat) = 0.;
+
+$ifthen.cm_subsec_model_chemicals "%cm_subsec_model_chemicals%" == "processes"
 !! HOT FIX
 !! AmmoniaFinal equals total ammonia minus fertilizer ammonia
 !! can this be deleted? (recalculated from mrindustry to avoid rounding errors)
@@ -1025,8 +1036,8 @@ p37_ue_share(t,regi,mat,in)$(mat2ue(mat,in) AND sameas(in,"ue_chemicals") AND t.
   / pm_cesdata(t,regi,in,"quantity");
 ;
 p37_ue_share(t,regi,mat,in)$(t.val gt 2020) = p37_ue_share("2020",regi,mat,in);
+$endif.cm_subsec_model_chemicals
 
-*** --------------------------------
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_ue_share(t,regi,"sesteel","ue_steel_secondary") = 1.;
 p37_ue_share(t,regi,"prsteel","ue_steel_primary")   = 1.;
@@ -1128,8 +1139,6 @@ s37_shareHistFeDemPenalty = 0.6;
 
 *** --------------------------------
 
-!!pm_outflowPrcHist(tall,all_regi,all_te,opmoPrc) = 0.;
-!!p37_matFlowHist(tall,all_regi,mat) = 0.;
 if (cm_startyear eq 2005,
   loop(t$(t.val ge 2005 AND t.val le 2020),
 
