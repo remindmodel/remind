@@ -147,38 +147,6 @@ p_efFossilFuelExtrGlo(all_enty,all_enty)             "CH4 and N2O emission facto
 
 *** share of stored carbon in captured carbon
 pm_share_CCS_CCO2(ttot,all_regi)                     "share of stored CO2 from total captured CO2 from previous iteration [share]"
-
-*** can be removed?
-
-*** output parameters of deprecated internal emissions reporting
-o_emissions(ttot,all_regi,all_enty)                  "output parameter"
-o_emissions_bunkers(ttot,all_regi,all_enty)          "output parameter"
-o_emissions_energy(ttot,all_regi,all_enty)           "output parameter"
-o_emissions_energy_demand(ttot,all_regi,all_enty)    "output parameter"
-o_emissions_energy_demand_sector(ttot,all_regi,all_enty,emi_sectors) "output parameter"
-o_emissions_energy_supply_gross(ttot,all_regi,all_enty) "output parameter"
-o_emissions_energy_supply_gross_carrier(ttot,all_regi,all_enty,all_enty) "output parameter"
-o_emissions_energy_extraction(ttot,all_regi,all_enty,all_enty) "output parameter"
-o_emissions_energy_negative(ttot,all_regi,all_enty)  "output parameter"
-o_emissions_industrial_processes(ttot,all_regi,all_enty) "output parameter"
-o_emissions_AFOLU(ttot,all_regi,all_enty)            "output parameter"
-o_emissions_CDRmodule(ttot,all_regi,all_enty)        "output parameter"
-o_emissions_other(ttot,all_regi,all_enty)            "output parameter"
-
-o_capture(ttot,all_regi,all_enty)                    "output parameter"
-o_capture_energy(ttot,all_regi,all_enty)             "output parameter"
-o_capture_energy_elec(ttot,all_regi,all_enty)        "output parameter"
-o_capture_energy_other(ttot,all_regi,all_enty)       "output parameter"
-o_capture_cdr(ttot,all_regi,all_enty)                "output parameter"
-o_capture_industry(ttot,all_regi,all_enty)           "output parameter"
-o_capture_energy_bio(ttot,all_regi,all_enty)         "output parameter"
-o_capture_energy_fos(ttot,all_regi,all_enty)         "output parameter"
-o_carbon_CCU(ttot,all_regi,all_enty)                 "output parameter"
-o_carbon_LandUse(ttot,all_regi,all_enty)             "output parameter"
-o_carbon_underground(ttot,all_regi,all_enty)         "output parameter"
-o_carbon_reemitted(ttot,all_regi,all_enty)           "output parameter"
-
-o_emi_conv(all_enty)                                 "output parameter" / co2 3666.6666666666666666666666666667, ch4 28, n2o 416.4286, so2 1,	bc  1, oc  1 /
 ;
 
 *** ------------- Emissions Variables ----------------------------------------
