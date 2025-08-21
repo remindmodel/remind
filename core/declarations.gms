@@ -26,7 +26,6 @@ parameters
 *** trade prices (move to trade module?)
 pm_pvp(ttot,all_enty)                                "Price on commodity markets, [T$/TWa] for energy commodities except uranium, uranium (peur) in [T$/Mt Uranium], emissions permits (perm) in [T$/GtC]"
 p_pvpRef(ttot,all_enty)                              "Price on commodity markets - imported from REF gdx, [T$/TWa] for energy commodities except uranium, uranium (peur) in [T$/Mt Uranium], emissions permits (perm) in [T$/GtC]"
-p_pvpRegiBeforeStartYear(ttot,all_regi,all_enty)     "prices of traded commodities before start year - regional. only used for permit trade [T$/GtC]"
 
 pm_ies(all_regi)                                     "intertemporal elasticity of substitution",
 
