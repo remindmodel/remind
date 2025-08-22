@@ -18,13 +18,27 @@
 #' @param outputdir Directory where REMIND MIF file is located. Output files generated in the process will be written
 #' to a subfolder "climate-assessment-data" in this directory. Defaults to "."
 
+<<<<<<< HEAD
 library(magrittr)
 library(lucode2)
+=======
+library(dplyr)
+library(lucode2)
+library(magrittr)
+library(piamInterfaces)
+>>>>>>> 2077ea43 (Update WACC branch with latest changes)
 library(piamenv)
 library(piamutils)
 library(quitte)
 library(readr)
+<<<<<<< HEAD
 library(remindClimateAssessment)
+=======
+library(remind2)
+library(remindClimateAssessment)
+library(stringr)
+library(tidyverse)
+>>>>>>> 2077ea43 (Update WACC branch with latest changes)
 
 #################### BASIC CONFIGURATION ##########################################################
 
@@ -54,7 +68,11 @@ magiccEnv <- c(
   "MAGICC_WORKER_NUMBER"   = 1
 )
 
+<<<<<<< HEAD
 magiccInit <- piamenv::condaInit(how = "pik-cluster", log = cfg$logFile, verbose = 1)
+=======
+magiccInit <- condaInit(how = "pik-cluster", log = cfg$logFile, verbose = 1)
+>>>>>>> 2077ea43 (Update WACC branch with latest changes)
 
 runHarmoniseAndInfillCmd <- paste(
   "python", file.path(cfg$scriptsDir, "run_harm_inf.py"), cfg$remindEmissionsFile, cfg$climateDir,
@@ -81,7 +99,11 @@ runTimes <- c(runTimes, "preprocessing start" = Sys.time())
 
 climateAssessmentInputData <- as.quitte(remindReportingFile) %>%
   emissionDataForClimateAssessment(cfg$scenario, logFile = cfg$logFile) %>%
+<<<<<<< HEAD
   readr::write_csv(cfg$remindEmissionsFile, quote = "none")
+=======
+  write_csv(cfg$remindEmissionsFile, quote = "none")
+>>>>>>> 2077ea43 (Update WACC branch with latest changes)
 
 runTimes <- c(runTimes, "preprocessing end" = Sys.time())
 cat(

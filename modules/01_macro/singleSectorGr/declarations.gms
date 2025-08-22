@@ -22,6 +22,7 @@ parameters
 o01_CESderivatives(ttot,all_regi,all_in,all_in)        "derivatives of production CES function"
 o01_totalCESEff(ttot,all_regi,all_in)                  "total CES efficiency" 
 o01_CESmrs(ttot,all_regi,all_in,all_in)                "marginal rate of subsitution of CES production factors"
+p01_investeffectv(all_regi)                                "efficiency rate of investments"
 ;
 
 ***------------------------------------------------------------ -------------------

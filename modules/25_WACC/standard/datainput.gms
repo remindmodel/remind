@@ -11,19 +11,21 @@
 ***---------------------------------------------------------------------------
 *** Initialize WACC parameter for different regions and technologies  
 ***p25_wacc(t, regi, tewacc) = 0;
+***p25_wacc(t, regi, tewacc) = 0;
+***p25_techwacc(t, regi, tewacc) = 0;
 
-***p25_wacc(t, 'CAZ', 'spv') = 0.025;
-***p25_wacc(t, 'CHA', 'spv') = 0.022;
-***p25_wacc(t, 'EUR', 'spv') = 0.025;
-***p25_wacc(t, 'IND', 'spv') = 0.031;
-***p25_wacc(t, 'JPN', 'spv') = 0.021;
-***p25_wacc(t, 'LAM', 'spv') = 0.043;
-***p25_wacc(t, 'MEA', 'spv') = 0.046;
-***p25_wacc(t, 'NEU', 'spv') = 0.033;
-***p25_wacc(t, 'OAS', 'spv') = 0.035;
-***p25_wacc(t, 'REF', 'spv') = 0.042;
-***p25_wacc(t, 'SSA', 'spv') = 0.041;
-***p25_wacc(t, 'USA', 'spv') = 0.030;
+p25_invwacc(t, 'CAZ') = 0.0043;
+p25_invwacc(t, 'CHA') = 0.0083;
+p25_invwacc(t, 'EUR') = 0.0085;
+p25_invwacc(t, 'IND') = 0.0215;
+p25_invwacc(t, 'JPN') = 0.0098;
+p25_invwacc(t, 'LAM') = 0.0364;
+p25_invwacc(t, 'MEA') = 0.0335;
+p25_invwacc(t, 'NEU') = 0.0243;
+p25_invwacc(t, 'OAS') = 0.0222;
+p25_invwacc(t, 'REF') = 0.0295;
+p25_invwacc(t, 'SSA') = 0.0401;
+p25_invwacc(t, 'USA') = 0.0055;
 
 *** Set WACC to 4% specifically for ngcc in EUR region
 ***p25_wacc(t, regi, 'windon')$sameas(regi,'EUR') = 0.09;
@@ -41,14 +43,22 @@
 ***) = 0.05;
 
 
-*** Check if WACC data should be loaded  
-Parameter p25_wacc(ttot, all_regi, tewacc)                       "WACC markup for each power technology in each REMIND region"   
+***Check if WACC data should be loaded  
+Parameter p25_techwacc(ttot, all_regi, tewacc)                       "WACC markup for each power technology in each REMIND region"   
    /
 $ondelim 
-$include "./modules/25_WACC/standard/input/p25_wacc.cs4r"
+$include "./modules/25_WACC/standard/input/p25_wacc_extended.cs4r"   
 $offdelim
   /
 ;
+
+***Parameter p25_invwacc(ttot, all_regi)                       "WACC markup for each country"   
+***   /
+***$ondelim 
+***$include "./modules/25_WACC/standard/input/p25_wacc_extended.cs4r"   
+***$offdelim
+***  /
+***;
 
 ***p25_wacc(ttot, all_regi, tewacc) = 2 * p25_wacc(ttot, all_regi, tewacc);
 

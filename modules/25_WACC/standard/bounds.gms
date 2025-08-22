@@ -8,11 +8,9 @@
 *fix budget equation term to zero for 2005
 ***vm_waccCost.fx("2005",regi) = 0;
 
-
-
-
-p25_waccCostO("2005", regi)  = 0 ;
-p25_waccCost1("2005", regi)  = 0 ;
+p25_techwaccCostO("2005", regi)  = 0 ;
+p25_techwaccCost1("2005", regi)  = 0 ;
+p25_invwaccCost0("2005", regi)  = 0 ;
 p25_waccCostO_tewacc("2005", regi, tewacc) = 0 ;
 p25_waccCost1_tewacc("2005", regi, tewacc) = 0 ;
 

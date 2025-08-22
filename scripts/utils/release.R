@@ -44,7 +44,10 @@ release <- function(newVersion) {
     writeLines("README.md")
   
   # Update version in default.cfg
+<<<<<<< HEAD
   message("Updating default.cfg")
+=======
+>>>>>>> 2077ea43 (Update WACC branch with latest changes)
   readLines("config/default.cfg") |>
     sub(pattern = 'cfg\\$model_version <- .*$', replacement = paste0('cfg$model_version <- "', newVersion, '"')) |>
     writeLines("config/default.cfg")

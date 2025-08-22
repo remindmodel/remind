@@ -8,4 +8,6 @@
 *fix the WACC term of the budget equation equal to zero for all times
 vm_waccCost(t, regi) = 0;
 
+***vm_techwaccCost(t, regi) = 0;
+***vm_invwaccCost(t, regi) = 0;
 *** EOF ./modules/25_WACC/off/bounds.gms

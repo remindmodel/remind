@@ -9,9 +9,23 @@
 *** depreciation rate of capital
 pm_delta_kap(regi,"kap") = 0.05;
 
+p01_investeffectv('CAZ') = 0.8167;
+p01_investeffectv('CHA') = 0.8693;
+p01_investeffectv('EUR') = 0.7945;
+p01_investeffectv('IND') = 0.7404;
+p01_investeffectv('JPN') = 0.8565;
+p01_investeffectv('LAM') = 0.6906;
+p01_investeffectv('MEA') = 0.7231;
+p01_investeffectv('NEU') = 0.7940;
+p01_investeffectv('OAS') = 0.7458;
+p01_investeffectv('REF') = 0.7815;
+p01_investeffectv('SSA') = 0.6760;
+p01_investeffectv('USA') = 0.87 ;
+
 *AL* initialize parameter (avoid compilation errors)
 p01_ppfen_ratios(t,regi,in,in2) = 0; 
-p01_ppfen_shares(t,regi,in,in2) = 0; 
+p01_ppfen_shares(t,regi,in,in2) = 0;
+
 *** load data for macro investments in 2005, used as bound
 parameter p01_boundInvMacro(all_regi)        "macro investments in 2005" 
 /

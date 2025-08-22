@@ -8,8 +8,11 @@
 
 Parameters
 ***p25_wacc(ttot, all_regi, tewacc)                       "WACC markup for each power technology in each REMIND region"
-p25_waccCostO(ttot, all_regi)                          "reference level value of WACC costs of the cuurent and previous period"
-p25_waccCost1(ttot, all_regi)                          "reference level value of WACC costs of the previous period"
+***p25_techwacc(ttot, all_regi, tewacc)                      "WACC markup for each power technology in each REMIND region"
+p25_invwacc(ttot, all_regi)                                "WACC markup for each country"
+p25_techwaccCostO(ttot, all_regi)                          "reference level value of technology WACC costs of the cuurent and previous period"
+p25_invwaccCost0(ttot, all_regi)                           "reference level value of macro investments WACC costs of the cuurent and previous period"
+p25_techwaccCost1(ttot, all_regi)                          "reference level value of WACC costs of the previous period"
 
 p25_waccCostO_tewacc(ttot, all_regi, tewacc)                 "reference level value of WACC costs of the cuurent and previous period"
 p25_waccCost1_tewacc(ttot, all_regi, tewacc)                 "reference level value of WACC costs of the previous period"
@@ -18,9 +21,17 @@ p25_waccCost1_tewacc(ttot, all_regi, tewacc)                 "reference level va
 ; 
 
 equations 
-q25_waccCost(ttot, all_regi)                           "Calculation of WACC costs considering both new and existing system technologies"
+***q25_waccCost(ttot, all_regi)                           "Calculation of WACC costs considering both new and existing system technologies"
+q25_techwaccCost(ttot, all_regi)                          "Calculation of WACC costs considering both new and existing system technologies"   
+q25_invwaccCost(ttot, all_regi)                           "Calculation of WACC costs for macro investments"
+q25_totwaccCost(ttot, all_regi)                           "Calculation of total WACC costs for both system technologies and macro investments"
 ;
 
+
+variables
+v25_techwaccCost(ttot, all_regi)                         "WACC costs for financing new and existing technologies in the system"
+v25_invWaccCost(ttot, all_regi)                          "WACC costs related to macro investments"
+;
 *** EOF ./modules/25_WACC/standard/declarations.gms
 
 

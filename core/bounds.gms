@@ -79,10 +79,25 @@ loop(t $ (t.val >= 2015 and t.val <= 2025),
     vm_cap.up(t,regi,te,"1") $ pm_histCap(t,regi,te) = 1.4 * pm_histCap(t,regi,te);
   );
 
+<<<<<<< HEAD
 *** lower bound on capacities for ngcc and ngt and gaschp for regions defined at the pm_histCap file
   loop(te $ (sameas(te,"ngcc") or sameas(te,"ngt") or sameas(te,"gaschp")),
     vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
   );
+=======
+*' completely switching off technologies that are not used in the current version of REMIND, although their parameters are declared:
+loop(all_te $ (
+    sameas(all_te, "solhe") OR
+    sameas(all_te, "fnrs") OR
+    sameas(all_te, "pcc") OR
+    sameas(all_te, "pco") OR
+    sameas(all_te, "wind") OR
+    sameas(all_te, "storwind") OR
+    sameas(all_te, "gridwind")
+  ),
+  vm_cap.fx(t,regi,all_te,rlf) = 0;
+  vm_deltaCap.fx(t,regi,all_te,rlf) = 0;
+>>>>>>> 2077ea43 (Update WACC branch with latest changes)
 );
 
 loop(regi $ regi_group("EUR_regi",regi),
@@ -262,6 +277,7 @@ if(cm_1stgen_phaseout = 1,
    vm_deltaCap.up(t,regi,"biodiesel",rlf) $ (t.val > 2030) = 0;
 );
 
+<<<<<<< HEAD
 *' Switch to deactivate technologies that produce hydrogen from lignocellulosic biomass
 if(c_bioh2scen = 0, !! no bioh2 technologies
   vm_deltaCap.up(t,regi,"bioh2",rlf)  $ (t.val > 2005) = 1e-6;
@@ -279,6 +295,35 @@ loop(teBiopyr(te) $ (not sameas(te, "biopyrliq")), !! established industrial tec
     vm_cap.lo("2025",regi,te,rlf) = p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3; 
     !! set upper bound to 70% above the lower bound which is based on 2024 values    
     vm_cap.up("2025",regi,te,rlf) = 1.7 * p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3;                      
+=======
+***------------------------------------------------------------------------------------------
+*' #### implement switch for scenarios with different carbon capture assumptions:
+*** ------------------------------------------------------------------------------------------
+*'
+*' carbon capture bounds
+*'
+if (cm_ccapturescen eq 2,  !! no carbon capture at all
+  vm_cap.fx(t,regi_capturescen,"ngccc",rlf)        = 0;
+  vm_cap.fx(t,regi_capturescen,"ccsinje",rlf) = 0;
+  vm_cap.fx(t,regi_capturescen,"gash2c",rlf)       = 0;
+  vm_cap.fx(t,regi_capturescen,"igccc",rlf)        = 0;
+  vm_cap.fx(t,regi_capturescen,"coalftcrec",rlf)   = 0;
+  vm_cap.fx(t,regi_capturescen,"coalh2c",rlf)      = 0;
+  vm_cap.fx(t,regi_capturescen,"biogasc",rlf)      = 0;
+  vm_cap.fx(t,regi_capturescen,"bioftcrec",rlf)    = 0;
+  vm_cap.fx(t,regi_capturescen,"bioh2c",rlf)       = 0;
+  vm_cap.fx(t,regi_capturescen,"bioigccc",rlf)     = 0;
+elseif (cm_ccapturescen eq 3),  !! no bio carbon capture:
+  vm_cap.fx(t,regi_capturescen,"biogasc",rlf)      = 0;
+  vm_cap.fx(t,regi_capturescen,"bioftcrec",rlf)    = 0;
+  vm_cap.fx(t,regi_capturescen,"bioh2c",rlf)       = 0;
+  vm_cap.fx(t,regi_capturescen,"bioigccc",rlf)     = 0;
+elseif (cm_ccapturescen eq 4), !! no carbon capture in the electricity sector
+  loop(emi2te(enty,"seel",te,"cco2")$( sum(regi_capturescen,pm_emifac("2020",regi_capturescen,enty,"seel",te,"cco2")) > 0 ),
+    loop(te2rlf(te,rlf),
+      vm_cap.fx(t,regi_capturescen,te,rlf) = 0;
+    );
+>>>>>>> 2077ea43 (Update WACC branch with latest changes)
   );
 );
 
@@ -292,9 +337,112 @@ loop(te $ sameas(te, "biopyrliq"), !! does not yet exist commercially
 );
 
 
+<<<<<<< HEAD
 *** ==================================================================
 *' #### 4. Assumptions on carbon management
 *** ==================================================================
+=======
+display p_CapFixFromRWfix, p_deltaCapFromRWfix;
+
+*** ------------------------------------------------------------------------------------------
+*RP* implement switch for scenarios with different nuclear assumptions:
+*** ------------------------------------------------------------------------------------------
+vm_deltaCap.up(t,regi,"fnrs",rlf)$(t.val ge 2010)= 0;
+vm_cap.fx(t,regi,"fnrs",rlf)$(t.val ge 2010) = 0;
+
+*** no new nuclear investments after 2020, until then all currently planned plants are built
+if (cm_nucscen eq 5,
+  vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2020)= 1e-6;
+  vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2015)  = 0;
+);
+
+*'  -------------------------------------------------------------
+*'  Force no new capacities of 1st generation biofuel technologies to be
+*'  installed after 2030, allowing more cost-efficient and more sustainable new
+*'  generation of biofuel technologies free entrance to the market
+*'  -------------------------------------------------------------
+if(cm_1stgen_phaseout=1,
+   vm_deltaCap.up(t,regi,"bioeths",rlf)$(t.val gt 2030)   = 0;
+   vm_deltaCap.up(t,regi,"biodiesel",rlf)$(t.val gt 2030) = 0;
+);
+
+*** -----------------------------------------------------------
+*mh bounds that narrow the solution space to help the conopt solver:
+*** -----------------------------------------------------------
+
+*nr* cumulated capacity never falls below initial cumulated capacity:
+vm_capCum.lo(ttot,regi,teLearn)$(ttot.val ge cm_startyear) = pm_data(regi,"ccap0",teLearn);
+*** exception for tech_stat 4 technologies whose ccap0 refers to 2025 as these technologies don't exist in 2005
+vm_capCum.lo(ttot,regi,teLearn)$(pm_data(regi,"tech_stat",teLearn) eq 4 AND ttot.val le 2020) = 0;
+
+*nr: floor costs represent the lower bound of learning technologies investment costs
+vm_costTeCapital.lo(t,regi,teLearn) = pm_data(regi,"floorcost",teLearn);
+
+*cb 20120319 avoid negative adjustment costs in 2005 (they would allow the model to artificially save money)
+v_adjFactor.fx("2005",regi,te)=0;
+
+
+
+vm_emiMacSector.lo(t,regi,enty)    =  0;
+vm_emiMacSector.lo(t,regi,"co2luc")= -5.0;  !! afforestation can lead to negative emissions
+vm_emiMacSector.lo(t,regi,"n2ofertsom") =  -1; !! small negative emissions can result from human activity
+vm_emiMac.fx(t,regi,"so2") = 0;
+vm_emiMac.fx(t,regi,"bc") = 0;
+vm_emiMac.fx(t,regi,"oc") = 0;
+
+*** -------------------------------------------------------------------------
+*** Exogenous capacities:
+*** -------------------------------------------------------------------------
+loop(t $ (t.val >= 2015 and t.val <= 2025),
+  loop(regi,
+*** fix renewable capacities to real world historical values if available
+    vm_cap.lo(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
+    if(t.val <= 2020, !! TODO: activate 2025 upper-bound when consolidated data available
+      vm_cap.up(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 1.05 * pm_histCap(t,regi,te);
+    );
+*** broader bounds for renewables with lower data quality
+    loop(te $ (sameas(te, "hydro") or sameas(te, "geohdr")),
+      vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.7 * pm_histCap(t,regi,te);
+      vm_cap.up(t,regi,te,"1") $ pm_histCap(t,regi,te) = 1.4 * pm_histCap(t,regi,te);
+    );
+
+*** lower bound on capacities for ngcc and ngt and gaschp for regions defined at the pm_histCap file
+    loop(te $ (sameas(te,"ngcc") or sameas(te,"ngt") or sameas(te,"gaschp")),
+      vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
+    );
+  );
+);
+
+
+*** bounds on near-term electrolysis capacities
+*' set lower and upper bounds for 2025 based on projects annoucements
+*' from IEA Hydryogen project database:
+*' https://www.iea.org/data-and-statistics/data-product/hydrogen-production-and-infrastructure-projects-database
+*' distribute to regions via GDP share of 2025 (we do not use later time steps as they may have different GDPs depending on the scenario)
+*' in future this should be differentiated by region based on regionalized input data of project announcements
+*' 2 GW(el) at least globally in 2025, about operational capacity as of 2023
+vm_cap.lo("2025",regi,"elh2","1")= 2 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2025",regi)
+                                         / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
+*' 20 GW(el) at maximum globally in 2025 (be more generous to not overconstrain regions which scale-up fastest)
+vm_cap.up("2025",regi,"elh2","1")= 20 * pm_eta_conv("2025",regi,"elh2")*pm_gdp("2025",regi)
+                                         / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
+
+*** bounds on biomass technologies
+*' set upper bounds on biomass gasification for h2 production, which is not deployed as of 2025
+*' allow for small production of 0.1 EJ/yr at by 2030 for each technology globally, distributed to regions by GDP share in 2025
+vm_cap.up("2030",regi,"bioh2","1")= 0.1 / 3.66 * 1e3 / 8760 * pm_gdp("2025",regi) / sum(regi2,pm_gdp("2025",regi2));
+vm_cap.up("2030",regi,"bioh2c","1")= 0.1 / 3.66 * 1e3 / 8760 * pm_gdp("2025",regi) / sum(regi2,pm_gdp("2025",regi2));
+*' allow zero vm_deltaCap for bio-H2 up to 2030 to be consistent with above bounds
+vm_deltaCap.lo(t,regi,"bioh2","1")$(t.val le 2030) = 0;
+vm_deltaCap.lo(t,regi,"bioh2c","1")$(t.val le 2030) = 0;
+
+*** fix capacities for advanced bio carbon capture technologies to zero in 2020 (i.e. no BECCS in 2020)
+vm_cap.fx("2020",regi,te,rlf)$(teBio(te) AND teCCS(te)) = 0;
+
+*** fix emissions to historical emissions in 2010
+*** RP: turned off in March 2018, as it produces substantial negative side-effects (requiring strong early retirement in 2010, which influences the future investments even in Reference scenarios)
+*** vm_emiTe.up("2010",regi,"co2") = p_boundEmi("2010",regi) ;
+>>>>>>> 2077ea43 (Update WACC branch with latest changes)
 
 *** lower bound on stored CO2
 vm_emiTe.lo(ttot,regi,"cco2") = 0;
@@ -507,6 +655,7 @@ loop(prodSeOth2te(enty,te),
 );
 
 
+<<<<<<< HEAD
 *** Make sure no grades > 9 are used. Only cosmetic to avoid entries in lst file
 v_capDistr.fx(t,regi,te,rlf) $ (rlf.val > 9) = 0;
 *** Make sure the model doesn't use technologies beyond grade 1 for pe2se, se2se and se2fe
@@ -519,6 +668,12 @@ loop(te $ (teSe2rlf(te,"1") or teFe2rlf(te,"1")),
 *** lower bound on share of green hydrogen starting from 2030 (switch c_shGreenH2 has default value zero)
 v_shGreenH2.lo(t,regi) $ (t.val = 2025) = c_shGreenH2 * 2/3;
 v_shGreenH2.lo(t,regi) $ (t.val > 2025) = c_shGreenH2;
+=======
+***---------------------------------------------------------------------------
+***                 make sure the model doesn't use technologies beyond grade 1
+***---------------------------------------------------------------------------
+*** for pe2se, se2se and se2fe the other grades should not be used
+>>>>>>> 2077ea43 (Update WACC branch with latest changes)
 
 
 *** Limit slack variable and uncontrolled variable values for adj costs that limit changes to reference in cm_startyear
@@ -529,5 +684,50 @@ v_changeProdStartyearSlack.lo(t,regi,te) $ ( (t.val > 2005) and (t.val = cm_star
 *** CB 20120319: avoid negative adjustment costs in 2005 (they would allow the model to artificially save money)
 v_adjFactor.fx("2005",regi,te) = 0;
 
+<<<<<<< HEAD
+=======
+vm_emiFgas.fx(ttot,all_regi,all_enty) = f_emiFgas(ttot,all_regi,"%c_SSP_forcing_adjust%","%cm_rcp_scen%","SPA0",all_enty);
+display vm_emiFgas.L;
+
+
+***----------------------------------------------------------------------------
+*** lower bound on share of green hydrogen starting from 2030 (c_greenH2)
+***----------------------------------------------------------------------------
+
+v_shGreenH2.lo(t,regi)$(t.val eq 2025) = c_shGreenH2 * 2/3;
+v_shGreenH2.lo(t,regi)$(t.val gt 2025) = c_shGreenH2;
+
+***----------------------------------------------------------------------------
+*** upper bound on bioliquids as a share of transport liquids
+***----------------------------------------------------------------------------
+
+v_shBioTrans.up(t,regi)$(t.val > 2020) = c_shBioTrans;
+
+***----------------------------------------------------------------------------
+*** bounds on final energy use (relevant in case some switches are acitvated that make pm_shfe_up and pm_shfe_lo non-zero)
+***----------------------------------------------------------------------------
+
+*** upper and lower bounds on FE carrier shares
+v_shfe.up(t,regi,entyFe,sector)$pm_shfe_up(t,regi,entyFe,sector) = pm_shfe_up(t,regi,entyFe,sector);
+v_shfe.lo(t,regi,entyFe,sector)$pm_shfe_lo(t,regi,entyFe,sector) = pm_shfe_lo(t,regi,entyFe,sector);
+
+*** upper and lower bounds on gases+liquids share in FE
+v_shGasLiq_fe.up(t,regi,sector)$pm_shGasLiq_fe_up(t,regi,sector) = pm_shGasLiq_fe_up(t,regi,sector);
+v_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_fe_lo(t,regi,sector);
+
+*** Set H2 upper bound in buildings for years defined at cm_H2InBuildOnlyAfter
+vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le cm_H2InBuildOnlyAfter) = 1e-6;
+
+***----------------------------------------------------------------------------
+*'  Limit slack variable and uncontrolled variable values for adj costs that limit changes to reference in cm_startyear
+***----------------------------------------------------------------------------
+
+v_changeProdStartyearSlack.up(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = + c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
+v_changeProdStartyearSlack.lo(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = - c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
+
+*RP: add lower bound on 2020 coal chp and upper bound on gas chp based on IEA data to have a more realistic starting point
+vm_prodSe.lo("2020",regi,"pecoal","seel","coalchp") = 0.8 * pm_IO_output("2020",regi,"pecoal","seel","coalchp") ;
+vm_prodSe.up("2020",regi,"pegas","seel","gaschp") = 1e-4 + 1.3 * pm_IO_output("2020",regi,"pegas","seel","gaschp") ;
+>>>>>>> 2077ea43 (Update WACC branch with latest changes)
 
 *** EOF ./core/bounds.gms
