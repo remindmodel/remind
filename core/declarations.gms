@@ -9,10 +9,11 @@
 *LB* declaration of parameters, variables and equations
 
 *** The declarations file follows the following structure:
-*** 1. Macro-Economy
-*** 2. Emissions
-*** 3. Energy System
-*** 4. Other (Not fitting into the above categories or generic declarations used everywhere in the model)
+***   1. Macro-Economy
+***   2. Emissions
+***   3. Energy System
+***   4. Carbon Management
+***   5. Other (Not fitting into the above categories or generic declarations used everywhere in the model)
 *** Please take this structure into account when adding new parameters, variables or equations.
 
 
