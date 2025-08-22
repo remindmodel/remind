@@ -792,9 +792,4 @@ $endif
 sm_tgn_2_pgc = (44/28) * s_gwpN2O * (12/44) * 0.001;
 sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 
-*** carbon intensities of coal, oil, and gas (move to core datainput?)
-pm_cintraw("pecoal") = 26.1 / s_zj_2_twa;
-pm_cintraw("peoil")  = 20.0 / s_zj_2_twa;
-pm_cintraw("pegas")  = 15.0 / s_zj_2_twa;
-
 *** EOF ./core/declarations.gms
