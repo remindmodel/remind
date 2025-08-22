@@ -91,6 +91,7 @@ q_esCapInv(ttot,all_regi,all_teEs)                   "investment equation for en
 *** ------------- Emissions Parameters ----------------------------------------
 parameters
 
+*** HERE
 *** air pollutant emissions parameters (move to module 11?)
 pm_emiExog(tall,all_regi,all_enty)                   "exogenous emissions from air pollutants [Mt SO2, Mt BC, Mt OC]" 
 *** emissions permit parameters (move to module 41?)
@@ -210,16 +211,7 @@ q_emiCdrAll(ttot,all_regi)                           "summing over all CDR emiss
 q_balcapture(ttot,all_regi,all_enty,all_enty,all_te) "balance equation for carbon capture"
 q_balCCUvsCCS(ttot,all_regi)                         "balance equation for captured carbon to CCU or CCS or valve"
 q_ccsShare(ttot,all_regi)                            "calculate the share of captured CO2 that is stored geologically"
-
-*** q_limitSo2 can be removed?
-* RP: this equation is turned off as of 2025-03-11, because it has strong negative side
-*     effects on coal use - eg SSA strongly increases coal use until 2050 only because 
-*     it wants coal solids in 2070 and needs to ramp it up until 2050 due to this limit
-*     this limit 
-* q_limitSo2(ttot,all_regi)                             "prevent SO2 from rising again after 2050"
 ;
-
-
 
 *** ---------------------------------------------------------------------------
 ***        3. Energy System

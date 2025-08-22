@@ -950,18 +950,6 @@ q_limitCCS(regi,ccs2te2(enty,"ico2",te),rlf)$teCCS2rlf(te,rlf)..
         =l=
         pm_dataccs(regi,"quan",rlf);
 
-***---------------------------------------------------------------------------
-*' Emission constraint on SO2 after 2050:
-***---------------------------------------------------------------------------
-* RP: this equation is turned off as of 2025-03-11, because it has strong negative side
-*     effects on coal use - eg SSA strongly increases coal use until 2050 only because 
-*     it wants coal solids in 2070 and needs to ramp it up until 2050 due to this limit
-*     this limit 
-* q_limitSo2(ttot+1,regi) $((pm_ttot_val(ttot+1) ge max(cm_startyear,2055)) AND (cm_emiscen gt 1) AND (ord(ttot) lt card(ttot))) ..
-*         vm_emiTe(ttot+1,regi,"so2")
-*         =l=
-*         vm_emiTe(ttot,regi,"so2");
-
 
 ***---------------------------------------------------------------------------
 *' Adjustment costs - calculation of the relative change to last time step
