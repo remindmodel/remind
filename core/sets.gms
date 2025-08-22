@@ -1436,6 +1436,15 @@ teBio(all_te)      "biomass energy systems technologies"
     biopyrchp   "biomass pyrolysis to biochar plus heat and power (established industrial)"   
     biopyrliq   "biomass pyrolysis to biochar plus liquids (combined with Fischer-Tropsch plant, advanced industrial)"
 /
+
+teBiopyr(all_te) "biomass pyrolysis to biochar technologies"
+/
+    biopyronly  "biomass pyrolysis to biochar, no energy co-product (established industrial)"
+    biopyrhe    "biomass pyrolysis to biochar plus heat (established industrial)"
+    biopyrchp   "biomass pyrolysis to biochar plus heat and power (established industrial)"   
+    biopyrliq   "biomass pyrolysis to biochar plus liquids (combined with Fischer-Tropsch plant, advanced industrial)"
+/
+
 teRe(all_te)     "renewable technologies including biomass"
 /
     biotr       "transformation of biomass"
