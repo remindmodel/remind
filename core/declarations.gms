@@ -91,7 +91,6 @@ q_esCapInv(ttot,all_regi,all_teEs)                   "investment equation for en
 *** ------------- Emissions Parameters ----------------------------------------
 parameters
 
-*** HERE
 *** air pollutant emissions parameters (move to module 11?)
 pm_emiExog(tall,all_regi,all_enty)                   "exogenous emissions from air pollutants [Mt SO2, Mt BC, Mt OC]" 
 *** emissions permit parameters (move to module 41?)
@@ -329,12 +328,6 @@ pm_prodFEReference(ttot,all_regi,all_enty,all_enty,all_te) "Final Energy output 
 p_prodUeReference(ttot,all_regi,all_enty,all_enty,all_te) "Useful Energy output of a technology in the reference run [TWa]"
 p_co2CCSReference(ttot,all_regi,all_enty,all_enty,all_te,rlf) "Captured CO2 put through the CCS chain in ccs2te (pipelines/injection) in the reference run [GtC]"
 p_prodAllReference(ttot,all_regi,all_te)             "Sum of the above in the reference run. As each technology has only one type of output, the differing units should not be a problem"
-
-*** output parameters for 2005 calibration (move to 05_initialCap module?)
-o_INI_DirProdSeTe                                    "directly produced SE by technology in 2005 (from initialcap2)"
-o_INI_TotalDirProdSe                                 "Total direct SE production in 2005 (from initialcap2)"
-o_INI_TotalCap                                       "Total electricity producing capacity in 2005 (from initialcap2)"
-o_INI_AvCapFac                                       "Average regional capacity factor of the power sector in 2005 (from initialcap2)"
 
 *** CES calibration tarjectories industry and buildings
 pm_fedemand(tall,all_regi,all_in)                    "read-in parameter for final energy and production trajectories used for the CES parameter calibration in industry and buildings [TWa]"
