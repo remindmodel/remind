@@ -309,9 +309,7 @@ p_aux_capacityFactorHistOverREMIND(all_regi,all_te)  "auxiliary parameter to cal
 *** historical IEA calibration data (move to module 4?) -> yes
 pm_IO_output(tall,all_regi,all_enty,all_enty,all_te) "Historical energy output per technology based on IEA data [TWa]"
 
-*** parameters used for 2005 capacity calibration (move to module 5 intialCap?) -> TODO: yes
-pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]" 
-*** TODO: leave as is 
+*** parameters used for 2005 capacity calibration
 pm_vintage_in(all_regi,opTimeYr,all_te)              "historical vintage structure per technology, generic assumptions made in generisdata_vintages.prn [unitless]" 
 
 *** parameters for capacity bounds

@@ -7,6 +7,7 @@
 *** SOF ./modules/05_initialCap/on/declarations.gms
 
 Parameter
+  pm_EN_demand_from_initialcap2(all_regi,all_enty)   "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]" 
   p05_cap0(all_regi,all_te)                          "standing capacity in 2005 as calculated by the initialization routine generisinical. Unit: TWa"
   p05_initial_capacity(all_regi,all_te)              "capacitiy at t=2005, calculated from past deltacaps"
   p05_inital_input(all_regi,all_te)                  "input in 2005, calculated from past deltacaps and initial time-variable eta"
