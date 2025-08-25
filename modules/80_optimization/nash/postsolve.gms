@@ -293,7 +293,7 @@ if(iteration.val <= 17,
   p80_messageShow("IterationNumber") = YES;
 );
 
-*' additional criterion: did taxes converge? (only checked if cm_TaxConvCheck is 1)
+*' criterion: did taxes converge? (only checked if cm_TaxConvCheck is 1)
 p80_convNashTaxrev_iter(iteration,t,regi) = 0;
 loop(regi,
   loop(t,
@@ -307,7 +307,7 @@ loop(regi,
   );
 );
 
-*' additional criterion: Were regional climate targets reached? 
+*' criterion: Were regional climate targets reached? 
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off" 
 loop((ttot,ttot2,ext_regi,emiMktExt) $ pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt),
   if(not(pm_allTargetsConverged(ext_regi) = 1),
@@ -317,7 +317,7 @@ loop((ttot,ttot2,ext_regi,emiMktExt) $ pm_emiMktTarget_dev(ttot,ttot2,ext_regi,e
 );
 $endif.emiMkt
 
-*' additional criterion: Were the quantity targets reached by implicit taxes and/or subsidies? 
+*' criterion: Were the quantity targets reached by implicit taxes and/or subsidies? 
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 p80_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) = pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup);
 loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) $ pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
@@ -333,7 +333,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) $ pm_implicit
 );
 $endif.cm_implicitQttyTarget
 
-*' additional criterion: Were FE price targets reached by implicit taxes and/or subsidies?
+*' criterion: Were FE price targets reached by implicit taxes and/or subsidies?
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
 loop((t,regi,entyFe,entySe,sector) $ pm_implicitPriceTarget(t,regi,entyFe,entySe,sector),
   if((pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t)), 
@@ -343,7 +343,7 @@ loop((t,regi,entyFe,entySe,sector) $ pm_implicitPriceTarget(t,regi,entyFe,entySe
 );  
 $endIf.cm_implicitPriceTarget
 
-*' additional criterion: Were PE price targets reached by implicit taxes and/or subsidies?
+*' criterion: Were PE price targets reached by implicit taxes and/or subsidies?
 $ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
 loop((t,regi,entyPe) $ pm_implicitPePriceTarget(t,regi,entyPe),
   if((pm_implicitPePrice_NotConv(regi,entyPe,t)), 
@@ -353,14 +353,27 @@ loop((t,regi,entyPe) $ pm_implicitPePriceTarget(t,regi,entyPe),
 );  
 $endIf.cm_implicitPePriceTarget
 
-*' additional criterion: global budget target from core/postsolve must be within 2 Gt of target value
+*' criterion: global budget target from core/postsolve must be within 2 Gt of target value
 p80_globalBudget_absDev_iter(iteration) = sm_globalBudget_absDev;
-if (abs(p80_globalBudget_absDev_iter(iteration)) > cm_budgetCO2_absDevTol,
+if (abs(p80_globalBudget_absDev_iter(iteration)) > cm_budgetCO2_absDevTol, !! check if CO2 budget met in tolerance range,
   s80_bool = 0;
   p80_messageShow("target") = YES;
 );
 
-*' additional criterion: if damage internalization is on, is damage iteration converged?
+*' criterion: is the peak budget year the same as the year of maximum cumulative CO2 emissions?
+*' 1) check whether cm_peakBudgYr corresponds to year of maximum cumulative CO2 emissions
+*' If not, 2) check whether difference in cumulative emissions between both time steps is smaller than sm_peakbudget_diff_tolerance
+*' If neither 1) nor 2) satisfied, converge criterion not fullfilled and keep on iterating.
+$ifthen.carbonprice %carbonprice% == "functionalForm"
+if (    cm_iterative_target_adj = 9
+    and (cm_peakBudgYr ne sm_peakBudgYr_check or abs(sm_peakbudget_diff) < sm_peakbudget_diff_tolerance),
+  s80_bool = 0;
+  p80_messageShow("target") = YES;
+);
+$endIf.carbonprice
+
+
+*' criterion: if damage internalization is on, is damage iteration converged?
 p80_sccConvergenceMaxDeviation_iter(iteration) = pm_sccConvergenceMaxDeviation;
 p80_gmt_conv_iter(iteration) = pm_gmt_conv;
 $ifthen.internalizeDamages not "%internalizeDamages%" == "off"

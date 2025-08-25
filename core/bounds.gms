@@ -6,17 +6,25 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./core/bounds.gms
 
-
 *' @title{extrapage: "00_model_assumptions"} Model Assumptions
 *' @code{extrapage: "00_model_assumptions"}
 
 *' ### Model Bounds and Assumptions
 
-*** ------------------------------------------------------------------
-*** ------------------------------------------------------------------
-*' #### Conopt optimisation bounds
-*** ------------------------------------------------------------------
-*** ------------------------------------------------------------------
+*** The bounds file follows the following structure:
+***   1. Conopt optimisation bounds
+***   2. Historical and near-term capacities
+***   3. Assumptions on biomass
+***   4. Assumptions on carbon management
+***   5. Early retirement and phase-out of technologies
+***   6. Energy demand sectors and final energy
+***   7. Assumptions for emissions
+***   8. Other bounds (not fitting into the above categories or need to overwrite previous bounds)
+*** Please take this structure into account when adding new parameters, variables or equations.
+
+*** ==================================================================
+*' #### 1. Conopt optimisation bounds
+*** ==================================================================
 
 *' Set lower bounds on variables otherwise the conopt solver doesn't see a benefit from changing variable value away from 0
 *' These lower bounds are set so low that they do not restrict the results
@@ -37,7 +45,6 @@ loop(pe2se(enty,enty2,te) $ (
   );
 );
 
-
 *' Make sure that the model also sees the se2se technologies (seel <--> seh2)
 loop(se2se(enty,enty2,te),
   vm_cap.lo(t,regi,te,"1") $ (t.val >= 2030) = 1e-7;
@@ -55,10 +62,10 @@ loop(teRe2rlfDetail(te,rlf),
 );
 
 
-*** ------------------------------------------------------------------
-*** ------------------------------------------------------------------
-*' #### Assumptions on historical and near-term capacities
-*** ------------------------------------------------------------------
+*** ==================================================================
+*' #### 2. Historical and near-term capacities
+*** ==================================================================
+*' ##### Capacity for fossils and renewables
 *** ------------------------------------------------------------------
 loop(t $ (t.val >= 2015 and t.val <= 2025),
 *** fix renewable capacities to real world historical values if available
@@ -79,7 +86,7 @@ loop(t $ (t.val >= 2015 and t.val <= 2025),
 );
 
 loop(regi $ regi_group("EUR_regi",regi),
-*' bounds on 2025 variable renewables generation based on historical growth rates
+*' bounds on 2025 variable renewables generation in Europe based on historical growth rates
 *** the bound takes the maximum annual growth rate for any year between 2019 and 2024, 
 *** increases it by 30% to allow for growth acceleration, and applies it for the two years from 2023 to 2025
   vm_prodSe.up("2025",regi,"pewin","seel","windon") = p_histProdSe("2023",regi,"seel","windon") * power((p_maxhistProdSeGrowthRate(regi,"seel","windon") * 1.3 + 1), 2);
@@ -89,23 +96,27 @@ loop(regi $ regi_group("EUR_regi",regi),
   vm_deltaCap.up(t,regi,"dot","1") $ (t.val > 2005) = 1e-6;
 );
 
+*** RP: add lower bound on 2020 coal chp and upper bound on gas chp based on IEA data to have a more realistic starting point
+vm_prodSe.lo("2020",regi,"pecoal","seel","coalchp") = 0.8 * pm_IO_output("2020",regi,"pecoal","seel","coalchp") ;
+vm_prodSe.up("2020",regi,"pegas","seel","gaschp") = 1e-4 + 1.3 * pm_IO_output("2020",regi,"pegas","seel","gaschp") ;
 
 
-*' bounds on near-term electrolysis capacities
+*** ------------------------------------------------------------------
+*' ##### Near-term capacity for electrolysis and hydrogen 
+*** ------------------------------------------------------------------
 *' set lower and upper bounds for 2025 and 2030 based on projects annoucements from IEA Hydryogen project database:
 *' https://www.iea.org/data-and-statistics/data-product/hydrogen-production-and-infrastructure-projects-database
 *' distribute to regions via GDP share of 2025 (we do not use later time steps as they may have different GDPs depending on the scenario)
 *' in future this should be differentiated by region based on regionalized input data of project announcements
 *' 2 GW(el) at least globally in 2025, about operational capacity as of 2023
-vm_cap.lo("2025",regi,"elh2","1") =   2 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi) / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
+vm_cap.lo("2025",regi,"elh2","1") =   2e-3 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi) / sum(regi2,pm_gdp("2025",regi2));
 *' 20 GW(el) at maximum globally in 2025 (be more generous to not overconstrain regions which scale-up fastest)
-vm_cap.up("2025",regi,"elh2","1") =  20 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi) / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
-*' 100 GW(el) at maximum globally in 2030
-*' (upper end of feasibility range in Odenweller et al. 2022, https://doi.org/10.1038/s41560-022-01097-4, see Fig. 4)
-vm_cap.up("2030",regi,"elh2","1") = 100 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi) / sum(regi2,pm_gdp("2025",regi2)) * 1e-3;
+vm_cap.up("2025",regi,"elh2","1") =  20e-3 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi) / sum(regi2,pm_gdp("2025",regi2));
+*' 100 GW(el) at maximum globally in 2030 (upper end of feasibility range in Odenweller et al. 2022, https://doi.org/10.1038/s41560-022-01097-4, Fig. 4)
+vm_cap.up("2030",regi,"elh2","1") = 100e-3 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi) / sum(regi2,pm_gdp("2025",regi2));
 
 *' upper bound of 0.5 EJ/yr to prevent building too much grey hydrogen before 2020, distributed to regions via GDP share
-vm_cap.up("2020",regi,"gash2","1") = 0.5 * sm_EJ_2_TWa * pm_gdp("2020",regi) / sum(regi2, pm_gdp("2020",regi2));
+vm_cap.up("2020",regi,"gash2","1")  = 0.5 * sm_EJ_2_TWa * pm_gdp("2020",regi) / sum(regi2, pm_gdp("2020",regi2));
 *' Set upper bounds on biomass gasification for hydrogen production, which is not deployed as of 2025
 *' allow for small production of at most 0.1 EJ/yr by 2030 for each technology globally, distributed to regions by GDP share in 2025
 vm_cap.up("2030",regi,"bioh2","1")  = 0.1 * sm_EJ_2_TWa * pm_gdp("2025",regi) / sum(regi2, pm_gdp("2025",regi2));
@@ -115,7 +126,10 @@ vm_deltaCap.lo(t,regi,"bioh2","1")  $ (t.val <= 2030) = 0;
 vm_deltaCap.lo(t,regi,"bioh2c","1") $ (t.val <= 2030) = 0;
 
 
-*RP 20160126 set vm_costTeCapital to pm_inco0_t for all technologies that are non-learning
+*** ------------------------------------------------------------------
+*' ##### Technologies depending on learning and tech_stat
+*** ------------------------------------------------------------------
+*** RP 20160126: set vm_costTeCapital to pm_inco0_t for all technologies that are non-learning
 vm_costTeCapital.fx(ttot,regi,teNoLearn) = pm_inco0_t("2005",regi,teNoLearn); !! use 2005 value for the past
 vm_costTeCapital.fx(t,   regi,teNoLearn) = pm_inco0_t(t,regi,teNoLearn);
 
@@ -161,21 +175,47 @@ vm_costTeCapital.fx(t,regi,teLearn) $ (t.val <= 2020 and pm_data(regi,"tech_stat
 vm_deltaCap.fx(t,regi,te,rlf) $ (t.val <= 2025 and pm_data(regi,"tech_stat",te) = 5) = 0;
 
 
-*** RP: add lower bound on 2020 coal chp and upper bound on gas chp based on IEA data to have a more realistic starting point
-vm_prodSe.lo("2020",regi,"pecoal","seel","coalchp") = 0.8 * pm_IO_output("2020",regi,"pecoal","seel","coalchp") ;
-vm_prodSe.up("2020",regi,"pegas","seel","gaschp") = 1e-4 + 1.3 * pm_IO_output("2020",regi,"pegas","seel","gaschp") ;
+*** ------------------------------------------------------------------
+*' ##### Capacity for nuclear energy
+*** TODO: data update ------------------------------------------------
+if(cm_startyear <= 2015,
+  p_CapFixFromRWfix("2015",regi,"tnrs") = max( pm_aux_capLowerLimit("tnrs",regi,"2015") , pm_NuclearConstraint("2015",regi,"tnrs") );
+  p_deltaCapFromRWfix("2015",regi,"tnrs") = ( p_CapFixFromRWfix("2015",regi,"tnrs") - pm_aux_capLowerLimit("tnrs",regi,"2015") )
+                                    / 7.5;  !! this parameter is currently only for display and not further used to fix anything
+  p_deltaCapFromRWfix("2010",regi,"tnrs") = ( p_CapFixFromRWfix("2015",regi,"tnrs") - pm_aux_capLowerLimit("tnrs",regi,"2015") )
+                                    / 7.5; !! this parameter is currently only for display and not further used to fix anything
+  vm_cap.fx("2015",regi,"tnrs","1") = p_CapFixFromRWfix("2015",regi,"tnrs");
+);
+
+if(cm_startyear <= 2020, !! require the realization of at least 70% of the plants that are currently under construction and thus might be finished until 2020 - should be updated with real-world 2020 numbers
+   vm_deltaCap.lo("2020",regi,"tnrs","1") = 0.70 * pm_NuclearConstraint("2020",regi,"tnrs") / 5;
+   vm_deltaCap.up("2020",regi,"tnrs","1") = pm_NuclearConstraint("2020",regi,"tnrs") / 5;
+);
+if(cm_startyear <= 2025, !! upper bound calculated in mrremind/R/calcCapacityNuclear.R: 50% of planned and 30% of proposed plants, plus extra for lifetime extension and newcomers
+   vm_deltaCap.up("2025",regi,"tnrs","1") = pm_NuclearConstraint("2025",regi,"tnrs") / 5;
+);
+if(cm_startyear <= 2030, !! upper bound calculated in mrremind/R/calcCapacityNuclear.R: 50% of planned and 70% of proposed plants, plus extra for lifetime extension and newcomers
+   vm_deltaCap.up("2030",regi,"tnrs","1") = pm_NuclearConstraint("2030",regi,"tnrs") / 5;
+);
+
+display p_CapFixFromRWfix, p_deltaCapFromRWfix;
 
 
-*** ------------------------------------------------------------------
-*** ------------------------------------------------------------------
-*' #### Assumptions on biomass
-*** ------------------------------------------------------------------
-*** ------------------------------------------------------------------
+*' switch to prevent new nuclear capacities after 2020, until then all currently planned plants are built
+if(cm_nucscen = 5,
+  vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf) $ (t.val > 2020) = 1e-6;
+  vm_cap.lo(t,regi_nucscen,"tnrs",rlf) $ (t.val > 2015) = 0;
+);
+
+
+*** ==================================================================
+*' #### 3. Assumptions on biomass
+*** (move to biomass module?) ========================================
 
 *' Traditional biomass use is phased out on an exogeneous time path
 *** Note: make sure that this matches with the settings for residues in modules/05_initialCap/on/preloop.gms
 
-*BS/DK*
+*** BS/DK:
 *' Developed regions phase out quickly (no new capacities)
 vm_deltaCap.fx(t,regi,"biotr",rlf) $ (t.val > 2005) = 0;
 *' Developing regions (defined by GDP PPP threshold) phase out more slowly (+ varied by SSP)
@@ -251,11 +291,10 @@ loop(te $ sameas(te, "biopyrliq"), !! does not yet exist commercially
   );
 );
 
-*** ------------------------------------------------------------------
-*** ------------------------------------------------------------------
-*' #### Assumptions on carbon capture and sequestration
-*** ------------------------------------------------------------------
-*** ------------------------------------------------------------------
+
+*** ==================================================================
+*' #### 4. Assumptions on carbon management
+*** ==================================================================
 
 *** lower bound on stored CO2
 vm_emiTe.lo(ttot,regi,"cco2") = 0;
@@ -336,47 +375,9 @@ loop(regi $ (p_boundCapCCSindicator(regi) = 0),
 v_co2capturevalve.up(t,regi) = 1 * s_MtCO2_2_GtC;
 
 
-*** ------------------------------------------------------------------
-*** ------------------------------------------------------------------
-*' #### Assumptions and historic values for nuclear energy
-*** ------------------------------------------------------------------
-*** ------------------------------------------------------------------
-
-if(cm_startyear <= 2015,
-  p_CapFixFromRWfix("2015",regi,"tnrs") = max( pm_aux_capLowerLimit("tnrs",regi,"2015") , pm_NuclearConstraint("2015",regi,"tnrs") );
-  p_deltaCapFromRWfix("2015",regi,"tnrs") = ( p_CapFixFromRWfix("2015",regi,"tnrs") - pm_aux_capLowerLimit("tnrs",regi,"2015") )
-                                    / 7.5;  !! this parameter is currently only for display and not further used to fix anything
-  p_deltaCapFromRWfix("2010",regi,"tnrs") = ( p_CapFixFromRWfix("2015",regi,"tnrs") - pm_aux_capLowerLimit("tnrs",regi,"2015") )
-                                    / 7.5; !! this parameter is currently only for display and not further used to fix anything
-  vm_cap.fx("2015",regi,"tnrs","1") = p_CapFixFromRWfix("2015",regi,"tnrs");
-);
-
-if(cm_startyear <= 2020, !! require the realization of at least 70% of the plants that are currently under construction and thus might be finished until 2020 - should be updated with real-world 2020 numbers
-   vm_deltaCap.lo("2020",regi,"tnrs","1") = 0.70 * pm_NuclearConstraint("2020",regi,"tnrs") / 5;
-   vm_deltaCap.up("2020",regi,"tnrs","1") = pm_NuclearConstraint("2020",regi,"tnrs") / 5;
-);
-if(cm_startyear <= 2025, !! upper bound calculated in mrremind/R/calcCapacityNuclear.R: 50% of planned and 30% of proposed plants, plus extra for lifetime extension and newcomers
-   vm_deltaCap.up("2025",regi,"tnrs","1") = pm_NuclearConstraint("2025",regi,"tnrs") / 5;
-);
-if(cm_startyear <= 2030, !! upper bound calculated in mrremind/R/calcCapacityNuclear.R: 50% of planned and 70% of proposed plants, plus extra for lifetime extension and newcomers
-   vm_deltaCap.up("2030",regi,"tnrs","1") = pm_NuclearConstraint("2030",regi,"tnrs") / 5;
-);
-
-display p_CapFixFromRWfix, p_deltaCapFromRWfix;
-
-
-*' switch to prevent new nuclear capacities after 2020, until then all currently planned plants are built
-if(cm_nucscen = 5,
-  vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf) $ (t.val > 2020)= 1e-6;
-  vm_cap.lo(t,regi_nucscen,"tnrs",rlf) $ (t.val > 2015) = 0;
-);
-
-
-*** ------------------------------------------------------------------
-*** ------------------------------------------------------------------
-*' #### Assumptions for early retirement and phase-out of technologies
-*** ------------------------------------------------------------------
-*** ------------------------------------------------------------------
+*** ==================================================================
+*' #### 5. Early retirement and phase-out of technologies
+*** ==================================================================
 
 *' Switch off coal-h2 hydrogen investments after 2020, and gas-h2 investments after 2030. Our current seh2 hydrogen represents
 *' only additional (clean) hydrogen use cases to current ones. However, as we have too high H2 demand in 2025 and 2030 from the
@@ -389,10 +390,9 @@ vm_cap.lo(t,regi,"coalh2",rlf) $ (t.val >= 2020) = 0;
 vm_cap.lo(t,regi,"gash2",rlf) $ (t.val > 2030) = 0;
 
 
-*** CB allow for early retirement at the start of free model time
+*** CB: allow for early retirement at the start of free model time
 *** allow non zero early retirement for all technologies to avoid mathematical errors
 vm_capEarlyReti.up(t,regi,te) = 1e-6;
-
 *** generally allow full early retiremnt for all fossil technologies without CCS
 vm_capEarlyReti.up(t,regi,teFosNoCCS(te)) = 1;
 *** allow nuclear early retirement
@@ -414,15 +414,15 @@ $endif.tech_earlyreti
 vm_capEarlyReti.up(ttot,regi,te) $ (ttot.val < 2010 or ttot.val > 2110) = 0;
 
 *** lower bound of 0.01% to help the model to be aware of the early retirement option
-vm_capEarlyReti.lo(t,regi,te) $ ((vm_capEarlyReti.up(t,regi,te) >= 1) and (t.val > 2010 and t.val <= 2100)) = 1e-4;
+vm_capEarlyReti.lo(t,regi,te) $ (vm_capEarlyReti.up(t,regi,te) >= 1 and t.val > 2010 and t.val <= 2100) = 1e-4;
 
-*cb 20120301 no early retirement for dot, they are used despite their economic non-competitiveness for various reasons.
+*** CB 20120301: no early retirement for diesel oil turbines, they are used despite their economic non-competitiveness for various reasons.
 vm_capEarlyReti.fx(t,regi,"dot") = 0;
 
 
 *** strong reliance on coal-to-liquids is not consistent with SSP1 storyline, therefore limit their use in the SSP1 and SSP2 policy scenarios
 $ifthen %c_SSP_forcing_adjust% == "forcing_SSP1"
-  vm_prodSe.up(t,regi,"pecoal","seliqfos","coalftrec") $ (t.val > 2050) = 1e-5;
+  vm_prodSe.up(t,regi,"pecoal","seliqfos","coalftrec")  $ (t.val > 2050) = 1e-5;
   vm_prodSe.up(t,regi,"pecoal","seliqfos","coalftcrec") $ (t.val > 2010) = 1e-5;
   
 *** fixing prodFE in 2005 to the value contained in pm_cesdata("2005",regi,in,"quantity"). This is done to ensure that the energy system will reproduce the 2005 calibration values.
@@ -438,11 +438,9 @@ if(cm_emiscen > 1,
 $endif
 
 
-*** ------------------------------------------------------------------
-*** ------------------------------------------------------------------
-*' #### Assumptions for sectors and final energy
-*** ------------------------------------------------------------------
-*** ------------------------------------------------------------------
+*** ==================================================================
+*' #### 6. Energy demand sectors and final energy
+*** ==================================================================
 
 *** bounds on final energy use (relevant in case some switches are acitvated that make pm_shfe_up and pm_shfe_lo non-zero)
 *' upper and lower bounds on FE carrier shares
@@ -459,11 +457,25 @@ vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt) $ (t.val <= cm_H2InBuild
 v_shBioTrans.up(t,regi) $ (t.val > 2020) = c_shBioTrans;
 
 
-*** ------------------------------------------------------------------
-*** ------------------------------------------------------------------
+*** ==================================================================
+*' #### 7. Assumptions for emissions
+*** (move to a module?) ==============================================
+
+vm_emiMacSector.lo(t,regi,enty) = 0;
+vm_emiMacSector.lo(t,regi,"co2luc") = -5.0; !! afforestation can lead to negative emissions
+vm_emiMacSector.lo(t,regi,"n2ofertsom") = -1; !! small negative emissions can result from human activity
+vm_emiMac.fx(t,regi,"so2") = 0;
+vm_emiMac.fx(t,regi,"bc") = 0;
+vm_emiMac.fx(t,regi,"oc") = 0;
+
+*** fix F-gas emissions to inputdata (IMAGE)
+vm_emiFgas.fx(ttot,all_regi,all_enty) = f_emiFgas(ttot,all_regi,"%c_SSP_forcing_adjust%","%cm_rcp_scen%","SPA0",all_enty);
+display vm_emiFgas.L;
+
+
+*** ==================================================================
 *' #### Other bounds 
-*** ------------------------------------------------------------------
-*** ------------------------------------------------------------------
+*** ==================================================================
 *' @stop
 
 *** completely switching off technologies that are not used in the current version of REMIND, although their parameters are declared
@@ -514,19 +526,8 @@ v_changeProdStartyearSlack.up(t,regi,te) $ ( (t.val > 2005) and (t.val = cm_star
 v_changeProdStartyearSlack.lo(t,regi,te) $ ( (t.val > 2005) and (t.val = cm_startyear) ) = - c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
 
 
-*cb 20120319 avoid negative adjustment costs in 2005 (they would allow the model to artificially save money)
+*** CB 20120319: avoid negative adjustment costs in 2005 (they would allow the model to artificially save money)
 v_adjFactor.fx("2005",regi,te) = 0;
 
-
-*** fix F-gas emissions to inputdata (IMAGE)
-vm_emiFgas.fx(ttot,all_regi,all_enty) = f_emiFgas(ttot,all_regi,"%c_SSP_forcing_adjust%","%cm_rcp_scen%","SPA0",all_enty);
-display vm_emiFgas.L;
-
-vm_emiMacSector.lo(t,regi,enty) = 0;
-vm_emiMacSector.lo(t,regi,"co2luc") = -5.0; !! afforestation can lead to negative emissions
-vm_emiMacSector.lo(t,regi,"n2ofertsom") = -1; !! small negative emissions can result from human activity
-vm_emiMac.fx(t,regi,"so2") = 0;
-vm_emiMac.fx(t,regi,"bc") = 0;
-vm_emiMac.fx(t,regi,"oc") = 0;
 
 *** EOF ./core/bounds.gms

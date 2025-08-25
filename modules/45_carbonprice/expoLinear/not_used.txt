@@ -40,3 +40,5 @@ cm_taxCO2_peakBudgYr,input,added by codeCheck
 cm_taxCO2_regiDiff,input,added by codeCheck
 cm_taxCO2_interpolation,input,added by codeCheck
 cm_taxCO2_lowerBound_path_gdx_ref,input,added by codeCheck
+sm_peakBudgYr_check,input,not needed
+sm_peakbudget_diff,input,not needed
