@@ -570,27 +570,12 @@ $include "./core/input/p_share_ind_fesos_bio.cs4r"
 $offdelim
 /;
 
-*** initialize pm_share_trans with the global value, will be updated after each negishi/nash iteration
-pm_share_trans("2005",regi) = 0.617;
-pm_share_trans("2010",regi) = 0.625;
-pm_share_trans("2015",regi) = 0.626;
-pm_share_trans("2020",regi) = 0.642;
-pm_share_trans("2025",regi) = 0.684;
-pm_share_trans("2030",regi) = 0.710;
-pm_share_trans("2035",regi) = 0.727;
-pm_share_trans("2040",regi) = 0.735;
-pm_share_trans("2045",regi) = 0.735;
-pm_share_trans("2050",regi) = 0.742;
-pm_share_trans("2055",regi) = 0.736;
-pm_share_trans("2060",regi) = 0.751;
-pm_share_trans("2070",regi) = 0.774;
-pm_share_trans("2080",regi) = 0.829;
-pm_share_trans("2090",regi) = 0.810;
-pm_share_trans("2100",regi) = 0.829;
-pm_share_trans("2110",regi) = 0.818;
-pm_share_trans("2130",regi) = 0.865;
-pm_share_trans("2150",regi) = 0.872;
 
+*** carbon intensities of coal, oil, and gas
+*** emissions factor of primary energy fossil fuels
+pm_cintraw("pecoal") = 26.1 / s_zj_2_twa;
+pm_cintraw("peoil")  = 20.0 / s_zj_2_twa;
+pm_cintraw("pegas")  = 15.0 / s_zj_2_twa;
 
 $ifthen.tech_CO2capturerate not "%c_tech_CO2capturerate%" == "off"
 p_PECarriers_CarbonContent(peFos)=pm_cintraw(peFos);
