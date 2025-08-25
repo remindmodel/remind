@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./core/declarations.gms
 
-*LB* declaration of parameters, variables and equations
+*** declaration of parameters, variables and equations
 
 *** The declarations file follows the following structure:
 ***   1. Macro-Economy

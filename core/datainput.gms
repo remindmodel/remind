@@ -180,7 +180,7 @@ $ifthen.c_techAssumptScen "%c_techAssumptScen%" == "SSP1"
     fm_dataglob("learn",teVRE) =         1.1 * fm_dataglob("learn",teVRE);
     fm_dataglob("floorcost","spv") =     0.1 * fm_dataglob("floorcost","spv");
     fm_dataglob("floorcost","csp") =     0.8 * fm_dataglob("floorcost","csp");
-*** RP: because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
+*** because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
 *** values need to be set by hand!
     fm_dataglob("learn","windon")     =  0.17;  !! these values make 2100 wind onshore costs ~0.8 times those seen in SSP2 at the same cumCap
     fm_dataglob("floorcost","windon") =  200;
@@ -229,7 +229,7 @@ $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP5"
     fm_dataglob("learn",teVRE) =         0.8 * fm_dataglob("learn",teVRE);
     fm_dataglob("floorcost","spv") =     3   * fm_dataglob("floorcost","spv");
     fm_dataglob("floorcost","csp") =     1.3 * fm_dataglob("floorcost","csp");
-*** RP: because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
+*** because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
 *** values need to be set by hand!
     fm_dataglob("learn","windon")     =  0.17;  !! these values make 2100 wind onshore costs ~1.5 times those seen in SSP2 at the same cumCap
     fm_dataglob("floorcost","windon") =  1000;
