@@ -20,7 +20,7 @@
 ***in order to read parameters like p80_priceXXX from a gdx, instead of only variables , we have to explicitly instruct gams to do so in the execute_loadpoint command in core/preloop.gms.
 ***the price paths are the trickiest part. Try to find p80_priceXXX prices in the gdx fist, if that fails, fallback to price path read from input/prices_NASH.inc
 loop(ttot$(ttot.val ge 2005),
-    loop(trade$(NOT tradeSe(trade)),
+  loop(trade$(NOT tradeSe(trade)),
 $ontext
         if((pm_pvp(ttot,trade) eq NA) OR (pm_pvp(ttot,trade) lt 1E-12) OR (pm_pvp(ttot,trade) gt 0.1) ,
 ***in case we have not been able to read price paths from the gdx, or these price are zero (or eps),  fall back to price paths in file input/prices_NASH.inc:
@@ -32,9 +32,9 @@ $ontext
         pm_pvp(ttot,trade) = 0;
          );
 $offtext
-        loop(regi,
-         pm_Xport0(ttot,regi,trade)$(NOT tradeSe(trade))  = vm_Xport.l(ttot,regi,trade);
-         p80_Mport0(ttot,regi,trade)$(NOT tradeSe(trade)) = vm_Mport.l(ttot,regi,trade);
+    loop(regi,
+      pm_Xport0(ttot,regi,trade)$(NOT tradeSe(trade))  = vm_Xport.l(ttot,regi,trade);
+      p80_Mport0(ttot,regi,trade)$(NOT tradeSe(trade)) = vm_Mport.l(ttot,regi,trade);
 
 ***in case xport/mport is not found in gdx:
 $ontext
@@ -48,15 +48,13 @@ $ontext
              );
 $offtext
 
-        p80_normalize0(ttot,regi,"good")   = vm_cons.l(ttot,regi);
-***        p80_normalize0(ttot,regi,"perm") = vm_cons.l(ttot,regi);
-                    p80_normalize0(ttot,regi,"perm")$(ttot.val ge 2005) = max(abs(pm_shPerm(ttot,regi) * pm_emicapglob(ttot)) , 1E-6);
-        p80_normalize0(ttot,regi,tradePe) =  0.5 * (sum(rlf,vm_fuExtr.l(ttot,regi,tradePe,rlf)) + vm_prodPe.l(ttot,regi,tradePe));
+      p80_marketVolume(ttot,regi,"good")   = vm_cons.l(ttot,regi);
+      p80_marketVolume(ttot,regi,"perm")$(ttot.val ge 2005) = max(abs(pm_shPerm(ttot,regi) * pm_emicapglob(ttot)) , 1E-6);
+      p80_marketVolume(ttot,regi,tradePe) =  0.5 * (sum(rlf,vm_fuExtr.l(ttot,regi,tradePe,rlf)) + vm_prodPe.l(ttot,regi,tradePe));
 
-p80_taxrev0(ttot,regi) = vm_taxrev.l(ttot,regi);
-
-	       );
-	   );
+      p80_taxrev0(ttot,regi) = vm_taxrev.l(ttot,regi);
+	  );
+	);
 );
 
 display "info: starting from this price path";

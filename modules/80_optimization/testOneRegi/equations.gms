@@ -18,7 +18,7 @@ q80_budg_intertemp(regi)..
               (vm_Xport(ttot,regi,trade)-vm_Mport(ttot,regi,trade)) * pm_pvp(ttot,trade)
               * ( 1 +  p80_etaXp(trade)
                    * ( (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport(ttot,regi,trade) - vm_Mport(ttot,regi,trade)) )
-                   / (p80_normalize0(ttot,regi,trade) + 1E-6)
+                   / (p80_marketVolume(ttot,regi,trade) + 1E-6)
                 )
             ) 
          + vm_capacityTradeBalance(ttot,regi)
