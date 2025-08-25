@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./core/declarations.gms
 
-*LB* declaration of parameters, variables and equations
+*** declaration of parameters, variables and equations
 
 *** The declarations file follows the following structure:
 ***   1. Macro-Economy
@@ -27,11 +27,8 @@ parameters
 *** trade prices (move to trade module?)
 pm_pvp(ttot,all_enty)                                "Price on commodity markets, [T$/TWa] for energy commodities except uranium, uranium (peur) in [T$/Mt Uranium], emissions permits (perm) in [T$/GtC]"
 p_pvpRef(ttot,all_enty)                              "Price on commodity markets - imported from REF gdx, [T$/TWa] for energy commodities except uranium, uranium (peur) in [T$/Mt Uranium], emissions permits (perm) in [T$/GtC]"
-p_pvpRegiBeforeStartYear(ttot,all_regi,all_enty)     "prices of traded commodities before start year - regional. only used for permit trade [T$/GtC]"
 
 pm_ies(all_regi)                                     "intertemporal elasticity of substitution",
-*** only used in air pollutants module, move there?
-pm_share_trans(tall,all_regi)                        "share of transport FE liquids (fedie and fepet) and all FE liquids [share]"
 
 *** macro variables from gdx or previous iteration
 pm_gdp_gdx(tall,all_regi)                            "GDP path from gdx, updated iteratively [T$]"
@@ -148,38 +145,6 @@ p_efFossilFuelExtrGlo(all_enty,all_enty)             "CH4 and N2O emission facto
 
 *** share of stored carbon in captured carbon
 pm_share_CCS_CCO2(ttot,all_regi)                     "share of stored CO2 from total captured CO2 from previous iteration [share]"
-
-*** can be removed?
-
-*** output parameters of deprecated internal emissions reporting
-o_emissions(ttot,all_regi,all_enty)                  "output parameter"
-o_emissions_bunkers(ttot,all_regi,all_enty)          "output parameter"
-o_emissions_energy(ttot,all_regi,all_enty)           "output parameter"
-o_emissions_energy_demand(ttot,all_regi,all_enty)    "output parameter"
-o_emissions_energy_demand_sector(ttot,all_regi,all_enty,emi_sectors) "output parameter"
-o_emissions_energy_supply_gross(ttot,all_regi,all_enty) "output parameter"
-o_emissions_energy_supply_gross_carrier(ttot,all_regi,all_enty,all_enty) "output parameter"
-o_emissions_energy_extraction(ttot,all_regi,all_enty,all_enty) "output parameter"
-o_emissions_energy_negative(ttot,all_regi,all_enty)  "output parameter"
-o_emissions_industrial_processes(ttot,all_regi,all_enty) "output parameter"
-o_emissions_AFOLU(ttot,all_regi,all_enty)            "output parameter"
-o_emissions_CDRmodule(ttot,all_regi,all_enty)        "output parameter"
-o_emissions_other(ttot,all_regi,all_enty)            "output parameter"
-
-o_capture(ttot,all_regi,all_enty)                    "output parameter"
-o_capture_energy(ttot,all_regi,all_enty)             "output parameter"
-o_capture_energy_elec(ttot,all_regi,all_enty)        "output parameter"
-o_capture_energy_other(ttot,all_regi,all_enty)       "output parameter"
-o_capture_cdr(ttot,all_regi,all_enty)                "output parameter"
-o_capture_industry(ttot,all_regi,all_enty)           "output parameter"
-o_capture_energy_bio(ttot,all_regi,all_enty)         "output parameter"
-o_capture_energy_fos(ttot,all_regi,all_enty)         "output parameter"
-o_carbon_CCU(ttot,all_regi,all_enty)                 "output parameter"
-o_carbon_LandUse(ttot,all_regi,all_enty)             "output parameter"
-o_carbon_underground(ttot,all_regi,all_enty)         "output parameter"
-o_carbon_reemitted(ttot,all_regi,all_enty)           "output parameter"
-
-o_emi_conv(all_enty)                                 "output parameter" / co2 3666.6666666666666666666666666667, ch4 28, n2o 416.4286, so2 1,	bc  1, oc  1 /
 ;
 
 *** ------------- Emissions Variables ----------------------------------------
@@ -246,16 +211,7 @@ q_emiCdrAll(ttot,all_regi)                           "summing over all CDR emiss
 q_balcapture(ttot,all_regi,all_enty,all_enty,all_te) "balance equation for carbon capture"
 q_balCCUvsCCS(ttot,all_regi)                         "balance equation for captured carbon to CCU or CCS or valve"
 q_ccsShare(ttot,all_regi)                            "calculate the share of captured CO2 that is stored geologically"
-
-*** q_limitSo2 can be removed?
-* RP: this equation is turned off as of 2025-03-11, because it has strong negative side
-*     effects on coal use - eg SSA strongly increases coal use until 2050 only because 
-*     it wants coal solids in 2070 and needs to ramp it up until 2050 due to this limit
-*     this limit 
-* q_limitSo2(ttot,all_regi)                             "prevent SO2 from rising again after 2050"
 ;
-
-
 
 *** ---------------------------------------------------------------------------
 ***        3. Energy System
@@ -373,12 +329,6 @@ pm_prodFEReference(ttot,all_regi,all_enty,all_enty,all_te) "Final Energy output 
 p_prodUeReference(ttot,all_regi,all_enty,all_enty,all_te) "Useful Energy output of a technology in the reference run [TWa]"
 p_co2CCSReference(ttot,all_regi,all_enty,all_enty,all_te,rlf) "Captured CO2 put through the CCS chain in ccs2te (pipelines/injection) in the reference run [GtC]"
 p_prodAllReference(ttot,all_regi,all_te)             "Sum of the above in the reference run. As each technology has only one type of output, the differing units should not be a problem"
-
-*** output parameters for 2005 calibration (move to 05_initialCap module?)
-o_INI_DirProdSeTe                                    "directly produced SE by technology in 2005 (from initialcap2)"
-o_INI_TotalDirProdSe                                 "Total direct SE production in 2005 (from initialcap2)"
-o_INI_TotalCap                                       "Total electricity producing capacity in 2005 (from initialcap2)"
-o_INI_AvCapFac                                       "Average regional capacity factor of the power sector in 2005 (from initialcap2)"
 
 *** CES calibration tarjectories industry and buildings
 pm_fedemand(tall,all_regi,all_in)                    "read-in parameter for final energy and production trajectories used for the CES parameter calibration in industry and buildings [TWa]"
@@ -842,10 +792,5 @@ $endif
 *** calculate further conversion factors for emissions
 sm_tgn_2_pgc = (44/28) * s_gwpN2O * (12/44) * 0.001;
 sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
-
-*** carbon intensities of coal, oil, and gas (move to core datainput?)
-pm_cintraw("pecoal") = 26.1 / s_zj_2_twa;
-pm_cintraw("peoil")  = 20.0 / s_zj_2_twa;
-pm_cintraw("pegas")  = 15.0 / s_zj_2_twa;
 
 *** EOF ./core/declarations.gms
