@@ -6,11 +6,6 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./core/datainput.gms
 
-*** carbon intensities of coal, oil, and gas
-pm_cintraw("pecoal") = 26.1 / s_zj_2_twa;
-pm_cintraw("peoil")  = 20.0 / s_zj_2_twa;
-pm_cintraw("pegas")  = 15.0 / s_zj_2_twa;
-
 *** technical. initialize parameters so that they are read from gdx
 vm_co2eq.l(ttot,regi) = 0;
 vm_emiAll.l(ttot,regi,enty) = 0;
@@ -574,6 +569,13 @@ $ondelim
 $include "./core/input/p_share_ind_fesos_bio.cs4r"
 $offdelim
 /;
+
+
+*** carbon intensities of coal, oil, and gas
+*** emissions factor of primary energy fossil fuels
+pm_cintraw("pecoal") = 26.1 / s_zj_2_twa;
+pm_cintraw("peoil")  = 20.0 / s_zj_2_twa;
+pm_cintraw("pegas")  = 15.0 / s_zj_2_twa;
 
 $ifthen.tech_CO2capturerate not "%c_tech_CO2capturerate%" == "off"
 p_PECarriers_CarbonContent(peFos)=pm_cintraw(peFos);
