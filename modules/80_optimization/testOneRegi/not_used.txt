@@ -36,7 +36,6 @@ vm_co2eq,                       variable,   ???
 pm_taxCO2eq,                    parameter,  ???
 cm_emiscen,                     switch,     ???
 pm_nfa_start,                   input,      questionnaire
-vm_dummyBudget,                 input,      questionnaire
 vm_cesIO,                       variable,   ???
 cm_TaxConvCheck,                variable,   ??
 sm_globalBudget_absDev,         input,      ??

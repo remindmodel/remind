@@ -63,13 +63,11 @@ p_r(ttot,all_regi)                                   "capital interest rate calc
 *** ------------- Macro Variables --------------------------------------------
 variables
 
-*** tax revenue (move to tax module?)
+*** tax revenue (move to tax module?) -> TODO: yes
 vm_taxrev(ttot,all_regi)                             "difference between tax volume in current and previous iteration [T$]"
 
-*** move to module 22?
+*** move to module 22? -> TODO: yes
 vm_costSubsidizeLearning(ttot,all_regi)              "regional cost of subsidy for learning technologies [T$]"
-*** move to module 41 emicapregi?
-vm_dummyBudget(ttot,all_regi)                        "auxiliary variable that helps to meet permit allocation equation in nash case [GtCeq]"
 ;
 
 *** ------------- Macro Positive Variables ------------------------------------
@@ -92,9 +90,9 @@ q_esCapInv(ttot,all_regi,all_teEs)                   "investment equation for en
 *** ------------- Emissions Parameters ----------------------------------------
 parameters
 
-*** air pollutant emissions parameters (move to module 11?)
+*** air pollutant emissions parameters (move to module 11?) -> TODO: yes
 pm_emiExog(tall,all_regi,all_enty)                   "exogenous emissions from air pollutants [Mt SO2, Mt BC, Mt OC]" 
-*** emissions permit parameters (move to module 41?)
+*** emissions permit parameters (move to module 41?) -> TODO: yes
 pm_shPerm(tall, all_regi)                            "emission permit shares [share]"
 pm_emicapglob(tall)                                  "global emission cap [GtC]" 
 
@@ -156,7 +154,7 @@ vm_co2eq(ttot,all_regi)                              "total greenhouse gas emiss
 vm_co2eqMkt(ttot,all_regi,all_emiMkt)                "total greenhouse gas emissions per market measured in co2 equivalents that are subject to carbon pricing, be aware that emissions coverage of this variable depends on switch cm_multigasscen [GtCeq]"
 vm_emiAll(ttot,all_regi,all_enty)                    "total emissions by species [GtC, Mt CH4, Mt N, Mt SO2, Mt BC, Mt OC]"
 v_co2eqCum(all_regi)                                 "cumulated vm_co2eq emissions for the first budget period [GtCeq]"
-*** move to module 41 emicapregi?
+*** move to module 41 emicapregi? -> TODO yes
 vm_perm(ttot,all_regi)                               "emission allowances [GtCeq]"
 
 *** sectoral emissions
@@ -308,11 +306,12 @@ s_aux_cap_remaining                                  "auxiliary parameter to cal
 p_aux_capThisGrade(all_regi,all_te,rlf)              "auxiliary parameter to calculate p_avCapFac2015; How the historic 2015 capacity is distributed among grades [TW]"
 p_aux_capacityFactorHistOverREMIND(all_regi,all_te)  "auxiliary parameter to calculate capacity factors correction (wind and spv): the ratio of historic over REMIND CapFac in 2015"
 
-*** historical IEA calibration data (move to module 4?)
+*** historical IEA calibration data (move to module 4?) -> yes
 pm_IO_output(tall,all_regi,all_enty,all_enty,all_te) "Historical energy output per technology based on IEA data [TWa]"
 
-*** parameters used for 2005 capacity calibration (move to module 5 intialCap?)
+*** parameters used for 2005 capacity calibration (move to module 5 intialCap?) -> TODO: yes
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]" 
+*** TODO: leave as is 
 pm_vintage_in(all_regi,opTimeYr,all_te)              "historical vintage structure per technology, generic assumptions made in generisdata_vintages.prn [unitless]" 
 
 *** parameters for capacity bounds
@@ -404,10 +403,10 @@ v_changeProdStartyear(ttot,all_regi,all_te)          "absolute change of output 
 v_relChangeProdStartYear(ttot,all_regi,all_te)       "calculating the relative change of output with respect to the reference run for each te [Percent]"
 v_changeProdStartyearSlack(ttot,all_regi,all_te)     "slack variable to allow a minimum cost-free change with respect to the reference run [TWa] for all energy-conversion tech, [GtC] for the CCS chain in ccs2te (pipelines/injection)"
 
-*** move to biomass module?
+*** move to biomass module? -> TODO yes
 vm_costFuBio(ttot,all_regi)                          "fuel costs from bioenergy production [T$]"
 
-*** move to CDR module?
+*** move to CDR module? -> TODO yes
 vm_omcosts_cdr(tall,all_regi)                        "O&M costs for spreading grinded rocks on fields [T$]"
 
 *** move to air pollution module?
@@ -419,7 +418,7 @@ vm_usableSeTe(ttot,all_regi,entySe,all_te)           "Usable SE electricity per 
 
 vm_flexAdj(tall,all_regi,all_te)                     "flexibility mark-up cost or subsidy, used to emulate price changes of technologies which see lower-than-average or higher-than-average electricity prices due to more or less flexible operation[T$/TWa]"
 
-*** move to tax module?
+*** move to tax module? TODO-> yes
 *** tax revenues of implicit taxes used for quantity and price target implementation
 vm_taxrevimplicitQttyTargetTax(ttot,all_regi)        "tax revenue of implict tax for quantity target bound [T$]"
 vm_taxrevimplicitPriceTax(ttot,all_regi,entySe,all_enty,sector)   "tax revenue of implict tax for final energy price target [T$]"
