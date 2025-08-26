@@ -66,8 +66,6 @@ variables
 *** tax revenue (move to tax module?) -> TODO: yes
 vm_taxrev(ttot,all_regi)                             "difference between tax volume in current and previous iteration [T$]"
 
-*** move to module 22? -> TODO: yes
-vm_costSubsidizeLearning(ttot,all_regi)              "regional cost of subsidy for learning technologies [T$]"
 ;
 
 *** ------------- Macro Positive Variables ------------------------------------
