@@ -37,6 +37,7 @@ p_macBaseHarmsen2022.cs4r
 p_macBaseVanv.cs4r
 p_macPolCO2luc.cs4r
 p_boundCapCCS.cs4r
+p_boundCapBiochar.cs4r
 pm_dataccs.cs3r
 f_fedemand.cs4r
 f_fedemand_build.cs4r
@@ -48,3 +49,4 @@ p_regi_2_MAGICC_regions.cs3r
 p_share_ind_fesos_bio.cs4r
 p_share_ind_fesos.cs4r
 pm_taxCO2eqHist.cs4r
+p_histProdSe.cs3r

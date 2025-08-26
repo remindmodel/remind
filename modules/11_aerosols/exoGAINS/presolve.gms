@@ -5,6 +5,10 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/11_aerosols/exoGAINS/presolve.gms
+
+*JeS* calculate share of transport fuels in liquids
+p11_share_trans(ttot,regi)$(ttot.val ge 2005) = sum(se2fe(entySe,entyFe,te)$(seAgg2se("all_seliq",entySe) AND ( sameas(entyFe,"fepet") OR sameas(entyFe,"fedie"))), vm_prodFe.l(ttot,regi,entySe,entyFe,te)) / (sum(se2fe(entySe,entyFe,te)$seAgg2se("all_seliq",entySe), vm_prodFe.l(ttot,regi,entySe,entyFe,te)) + 0.0000001);
+
 *** Update sector shares
 loop ((t,regi)$( t.val ge 2005 ),
   !! share in solids
@@ -38,14 +42,14 @@ loop ((t,regi)$( t.val ge 2005 ),
   = 1 - p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi);
 
   p11_share_sector(t,"peoil","seliqfos","refliq","trans",regi)
-  = pm_share_trans(t,regi);
+  = p11_share_trans(t,regi);
 
   p11_share_sector(t,"peoil","seliqfos","refliq","indst",regi)
-  = (1 - pm_share_trans(t,regi))
+  = (1 - p11_share_trans(t,regi))
   * p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi);
 
   p11_share_sector(t,"peoil","seliqfos","refliq","res",regi)
-  = (1 - pm_share_trans(t,regi))
+  = (1 - p11_share_trans(t,regi))
   * (1 - p11_share_sector(t,"seliqfos","fehos","tdfoshos","indst",regi));
 
   !! share in gases
