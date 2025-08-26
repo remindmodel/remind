@@ -88,8 +88,6 @@ q_esCapInv(ttot,all_regi,all_teEs)                   "investment equation for en
 *** ------------- Emissions Parameters ----------------------------------------
 parameters
 
-*** air pollutant emissions parameters (move to module 11?) -> TODO: yes
-pm_emiExog(tall,all_regi,all_enty)                   "exogenous emissions from air pollutants [Mt SO2, Mt BC, Mt OC]" 
 *** emissions permit parameters (move to module 41?) -> TODO: yes
 pm_shPerm(tall, all_regi)                            "emission permit shares [share]"
 pm_emicapglob(tall)                                  "global emission cap [GtC]" 
@@ -398,12 +396,6 @@ vm_costCESMkup(ttot,all_regi,all_in)                 "CES markup cost to represe
 v_changeProdStartyear(ttot,all_regi,all_te)          "absolute change of output with respect to the reference run for each te [TWa] for all energy-conversion tech, [GtC] for the CCS chain in ccs2te (pipelines/injection)"
 v_relChangeProdStartYear(ttot,all_regi,all_te)       "calculating the relative change of output with respect to the reference run for each te [Percent]"
 v_changeProdStartyearSlack(ttot,all_regi,all_te)     "slack variable to allow a minimum cost-free change with respect to the reference run [TWa] for all energy-conversion tech, [GtC] for the CCS chain in ccs2te (pipelines/injection)"
-
-*** move to biomass module? -> TODO yes
-vm_costFuBio(ttot,all_regi)                          "fuel costs from bioenergy production [T$]"
-
-*** move to CDR module? -> TODO yes
-vm_omcosts_cdr(tall,all_regi)                        "O&M costs for spreading grinded rocks on fields [T$]"
 
 *** move to air pollution module?
 vm_costpollution(tall,all_regi)                      "costs of air pollution policies [T$]"
