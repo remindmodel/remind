@@ -60,14 +60,6 @@ pm_cesdata_sigma(ttot,all_in)                        "elasticities of substituti
 p_r(ttot,all_regi)                                   "capital interest rate calculated as a diagnostic parameter (not used in the optimization) as the sum of the pure rate of time preference and endogenous consumption growth rate [year-1]"
 ;
 
-*** ------------- Macro Variables --------------------------------------------
-variables
-
-*** tax revenue (move to tax module?) -> TODO: yes
-vm_taxrev(ttot,all_regi)                             "difference between tax volume in current and previous iteration [T$]"
-
-;
-
 *** ------------- Macro Positive Variables ------------------------------------
 positive variables
 
@@ -405,12 +397,6 @@ vm_usableSe(ttot,all_regi,entySe)                    "Usable SE electricity defi
 vm_usableSeTe(ttot,all_regi,entySe,all_te)           "Usable SE electricity per generation technology defined as: generation from pe2se technologies + generation from coupled production - storage losses [TWa]"
 
 vm_flexAdj(tall,all_regi,all_te)                     "flexibility mark-up cost or subsidy, used to emulate price changes of technologies which see lower-than-average or higher-than-average electricity prices due to more or less flexible operation[T$/TWa]"
-
-*** move to tax module? TODO-> yes
-*** tax revenues of implicit taxes used for quantity and price target implementation
-vm_taxrevimplicitQttyTargetTax(ttot,all_regi)        "tax revenue of implict tax for quantity target bound [T$]"
-vm_taxrevimplicitPriceTax(ttot,all_regi,entySe,all_enty,sector)   "tax revenue of implict tax for final energy price target [T$]"
-vm_taxrevimplicitPePriceTax(ttot,all_regi,all_enty)  "tax revenue of implict tax forprimary energy price target [T$]"
 ;
 
 
