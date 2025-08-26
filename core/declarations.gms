@@ -227,9 +227,6 @@ pm_capCum0(tall,all_regi,all_te)                     "Total cumulated capacity o
 p_capCum(tall, all_regi,all_te)                      "Total cumulated capacity of learning technologies from input.gdx used for learning curves based on vm_capCum[TW]"
 pm_capCumForeign(ttot,all_regi,all_te)               "Total cumulated capacity of learning technologies of all other regions except regi [TW]"
 
-*** biomass parameters (move to biomass module?)
-pm_pedem_res(ttot,all_regi,all_te)                   "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
-
 *** early retirement parameters
 pm_regiEarlyRetiRate(ttot,all_regi,all_te)           "regional early retirement rate, maximum allowed annual increase in the share of early retired capacity of a technology for which early retirement is allowed [1/year]"
 pm_extRegiEarlyRetiRate(ext_regi)                    "regional early retirement rate (extended regions) [1/year]" / %c_regi_earlyreti_rate% /
@@ -287,9 +284,6 @@ p_aux_capToDistr(all_regi,all_te)                    "auxiliary parameter to cal
 s_aux_cap_remaining                                  "auxiliary parameter to calculate p_avCapFac2015; countdown parameter [TW]"
 p_aux_capThisGrade(all_regi,all_te,rlf)              "auxiliary parameter to calculate p_avCapFac2015; How the historic 2015 capacity is distributed among grades [TW]"
 p_aux_capacityFactorHistOverREMIND(all_regi,all_te)  "auxiliary parameter to calculate capacity factors correction (wind and spv): the ratio of historic over REMIND CapFac in 2015"
-
-*** historical IEA calibration data (move to module 4?) -> yes
-pm_IO_output(tall,all_regi,all_enty,all_enty,all_te) "Historical energy output per technology based on IEA data [TWa]"
 
 *** parameters used for 2005 capacity calibration
 pm_vintage_in(all_regi,opTimeYr,all_te)              "historical vintage structure per technology, generic assumptions made in generisdata_vintages.prn [unitless]" 
