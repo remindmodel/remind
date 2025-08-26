@@ -80,10 +80,6 @@ q_esCapInv(ttot,all_regi,all_teEs)                   "investment equation for en
 *** ------------- Emissions Parameters ----------------------------------------
 parameters
 
-*** emissions permit parameters (move to module 41?) -> TODO: yes
-pm_shPerm(tall, all_regi)                            "emission permit shares [share]"
-pm_emicapglob(tall)                                  "global emission cap [GtC]" 
-
 *** emissions parameters for nash algorithm
 pm_co2eqForeign(tall,all_regi)                       "emissions, which are part of the climate policy, of other regions (nash relevant)."
 pm_co2eq0(tall,all_regi)                             "Total greenhouse gas emissions from last iteration based on vm_co2eq used in nash algorithm [GtCeq]"
@@ -142,8 +138,6 @@ vm_co2eq(ttot,all_regi)                              "total greenhouse gas emiss
 vm_co2eqMkt(ttot,all_regi,all_emiMkt)                "total greenhouse gas emissions per market measured in co2 equivalents that are subject to carbon pricing, be aware that emissions coverage of this variable depends on switch cm_multigasscen [GtCeq]"
 vm_emiAll(ttot,all_regi,all_enty)                    "total emissions by species [GtC, Mt CH4, Mt N, Mt SO2, Mt BC, Mt OC]"
 v_co2eqCum(all_regi)                                 "cumulated vm_co2eq emissions for the first budget period [GtCeq]"
-*** move to module 41 emicapregi? -> TODO yes
-vm_perm(ttot,all_regi)                               "emission allowances [GtCeq]"
 
 *** sectoral emissions
 vm_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty)  "emissions from energy technologies on supply-side (pm_emifac * PE) and demand-side (pm_emifac * FE), note: not equivalent to Emi|CO2|Energy in reporting [GtC, Mt CH4, Mt N, Mt SO2, Mt BC, Mt OC]"

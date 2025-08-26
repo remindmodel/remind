@@ -6,7 +6,14 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/41_emicapregi/CandC/declarations.gms
 
+variables
+vm_perm(ttot,all_regi)                          "emission allowances [GtCeq]"
+;
+
 parameter
+pm_shPerm(tall, all_regi)                       "emission permit shares [share]"
+pm_emicapglob(tall)                             "global emission cap [GtC]" 
+
 p41_lambda(tall)                                "share parameter"
 p41_shEmi2005(all_regi)                         "emission shares in 2005"
 p41_co2eq(ttot,all_regi)                        "emissions from baseline run"
