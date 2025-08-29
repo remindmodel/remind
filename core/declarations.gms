@@ -428,9 +428,6 @@ v_costInv(ttot,all_regi)                             "total technology investmen
 
 vm_costAddTeInv(tall,all_regi,all_te,emi_sectors)    "additional sector-specific investment cost of demand-side transformation, e.g. investment into initial hydrogen distribution infrastructure [T$]"
 
-*** move to biomass module?
-vm_pebiolc_price(ttot,all_regi)                      "bioenergy price based on MAgPIE supply curves [T$/TWa]"
-
 *** energy share variables
 v_shGreenH2(ttot,all_regi)                           "share of green hydrogen in total hydrogen production [share]"
 v_shBioTrans(ttot,all_regi)                          "share of biofuels in transport liquids [share]"
