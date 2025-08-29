@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### input data/calibration
-- [mrcommons #167](https://github.com/pik-piam/mrcommons/pull/167) new input data rev including new subtype of landuse CO2 emissions (`co2luc`)
+- **mrcommons** New input data rev including new subtype of landuse CO2 emissions (`co2luc`) [#167](https://github.com/pik-piam/mrcommons/pull/167)
 
 ### changed
 
