@@ -17,10 +17,6 @@ pm_taxCO2eqSum(ttot,regi) = 0;
 pm_SolNonInfes(regi) = 1; !! assume the starting point came from a feasible solution
 pm_capCum0(ttot,regi,teLearn)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq 1)) = 0;
 
-pm_globalMeanTemperature(tall)              = 0;
-pm_globalMeanTemperatureZeroed1900(tall)    = 0;
-pm_temperatureImpulseResponseCO2(tall,tall) = 0;
-
 *** Initialise to avoid compilation errors in presolve if variable not in input.gdx
 vm_demFeForEs.L(t,regi,entyFe,esty,teEs) = 0;
 vm_demFeForEs.L(t,regi,fe2es(entyFe,esty,teEs)) = 0.1;

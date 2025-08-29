@@ -604,12 +604,8 @@ pm_budgetCO2eq(all_regi)                             "budget for regional energy
 pm_actualbudgetco2(ttot)                             "actual level of cumulated emissions starting from 2020 [GtCO2]"
 p_actualbudgetco2_iter(iteration,ttot)               "track actual level of cumulated emissions starting from 2020 over iterations [GtCO2]"
 
-*** climate system parameters (move to climate module?)
-pm_globalMeanTemperature(tall)                       "global mean temperature anomaly [K]" 
-pm_globalMeanTemperatureZeroed1900(tall)             "global mean temperature anomaly, zero around 1900 [K]"
-pm_temperatureImpulseResponseCO2(tall,tall)          "temperature impulse response to CO2 [K/GtCO2]"
-
 *** damage parameters, (move to damage module?)
+*** TODO
 pm_taxCO2eqSCC(ttot,all_regi)                        "carbon tax component due to damages (social cost of carbon) [T$/GtCeq] " 
 pm_GDPGross(tall,all_regi)                           "gross GDP (before damages) [T$]"
 
