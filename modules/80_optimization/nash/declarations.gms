@@ -19,8 +19,9 @@ p80_etaAdj(all_enty)                        "Adjustment costs for changes of tra
 p80_pvp_itr(ttot,all_enty,iteration)        "Price on commodity markets per iteration"
 p80_pvpFallback(ttot,all_enty)              "Helper parameter. Price path from input/prices_NASH.inc. Only used if reading prices from gdx fails."
 
-p80_itertemporalMarketRevenue(all_enty)     "Aggregated intertemporal market volume"
-p80_marketVolume(ttot,all_regi,all_enty)    "Normalization parameter for market volume"
+p80_marketVolume(ttot,all_regi,all_enty)    "Normalization parameter for market volume [amount of trade item]"
+p80_intertemporalSurplusRevenue(all_enty)   "Aggregated intertemporal value of the surplus [T$2017]"
+p80_itertemporalMarketRevenue(all_enty)     "Aggregated intertemporal market volume [T$2017]"
 
 *** parameter containing the respective level values from last iteration (the first set of values taken from gdx in the first iteration, respectively)
 p80_Mport0(tall,all_regi,all_enty)          "Imports in last iteration"
