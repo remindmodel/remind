@@ -668,10 +668,6 @@ pm_emifac(t,regi,"pebiolc","sesobio","biotr","ch4") = 9.46 * (1-pm_share_ind_fes
 
 display pm_emifac;
 
-*MLB* initialization needed as include file represents only parameters that are different from zero
-p_boundtmp(ttot,all_regi,te,rlf)$(ttot.val ge 2005)       = 0;
-p_bound_cap(ttot,all_regi,te,rlf)$(ttot.val ge 2005)       = 0;
-
 *NB* include data and parameters for upper bounds on fossil fuel transport
 parameter f_IO_trade(tall,all_regi,all_enty,char)        "Energy trade bounds based on IEA data"
 /
@@ -1390,8 +1386,6 @@ $if  "%cm_rcp_scen%" == "none"    sm_budgetCO2eqGlob = 20000.0000;
 
 display sm_budgetCO2eqGlob;
 ***-----------------------------------------------------------------------------
-
-p_datacs(regi,"peoil") = 0;   !! RP: 0 turn off the explicit calculation of non-energy use, as it is included in the oil total. Emission correction happens through rescaling of f_dataemiglob
 
 ***------------------------------------------------------------------------------------
 ***                                ESM  MAC data

@@ -458,7 +458,8 @@ $ifthen.minMaxSeFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgS
   v_PosPenSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max positive penalty for secondary energy share deviation in sectors [T$]"
 $endif.minMaxSeFeSectorShareDev
 
-*** can be removed?
+*** can be removed? 
+*** TODO
 v_prodUe(ttot,all_regi,all_enty,all_enty,all_te)    "Useful energy production [TWa]"
 vm_demSeOth(ttot,all_regi,all_enty,all_te)          "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
 v_prodSeOth(ttot,all_regi,all_enty,all_te)          "other sety production from certain technologies, have to be calculated in additional equations [TWa]"
@@ -561,8 +562,6 @@ $ifthen.minMaxSeFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgS
   q_minMaxPenSeFeSectorShareDev(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max penalty balance for secondary energy share deviation in sectors"
 $endif.minMaxSeFeSectorShareDev
 
-*** can be removed?
-* q_shFeCesNorm(ttot,all_regi,all_in)                "Shares have to sum to 1."
 ;
 
 *** ---------------------------------------------------------------------------
@@ -587,8 +586,6 @@ p_extRegiccsinjecrateRegi(ext_regi)                  "Regional CCS injection rat
 
 equations
 *** carbon management technology equations
-*** q_transCCS can be removed?
-q_transCCS(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_enty,all_te,rlf) "transformation equation for ccs"
 q_limitCCS(all_regi,all_enty,all_enty,all_te,rlf)    "limit cumulated CO2 injection into geological storage to maximum storage potential"
 
 *** capacity constraint for CCS (capacity * capacity factor = co2 injection)
@@ -637,11 +634,6 @@ o_negitr_cumulative_CO2_emieng_seq(iteration)        "estimated sequestered CO2 
 o_negitr_disc_cons_dr5_reg(iteration,all_regi)       "estimated discounted consumption 2005-2100 with discount rate 5%. 'estimated' because of different times step lengths around 2100 [T$]"
 o_negitr_disc_cons_drInt_reg(iteration,all_regi)     "estimated discounted consumption 2005-2100 with internal discount rate. 'estimated' because of different times step lengths around 2100 [T$]"
 o_negitr_total_forc(iteration)                       "total forcing in 2100"
-
-*** not used anymore, can be removed?
-p_boundtmp(tall,all_regi,all_te,rlf)                 "read-in bound on capacities" 
-p_bound_cap(tall,all_regi,all_te,rlf)                "read-in bound on capacities"
-p_datacs(all_regi,all_enty)                          "Primary energy oil that is not comubusted but used for non-energy use [TWa]" 
 
 o_DirlcoCCS(ttot,all_regi,all_te)                    "Annuity per sequestered CO2 by CCS technology, calc. from investment costs and fixOM. [$/tCO2]"
 o_DirlcoCCS_total(ttot,all_regi)                     "Total annuity per sequestered CO2. [$/tCO2]"

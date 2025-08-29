@@ -117,8 +117,6 @@ q_balPe(t,regi,entyPe(enty))..
          vm_prodPe(t,regi,enty) + p_macPE(t,regi,enty)
          =e=
          sum(pe2se(enty,enty2,te), vm_demPe(t,regi,enty,enty2,te))
-*** through p_datacs one could correct for non-energetic use, e.g. bitumen for roads; set to 0 in current version, as the total oil value already contains the non-energy use part
-         + p_datacs(regi,enty) / 0.95
 ;
 
 
@@ -939,11 +937,6 @@ q_ccsShare(t,regi) ..
 ***---------------------------------------------------------------------------
 *' Definition of the CCS transformation chain:
 ***---------------------------------------------------------------------------
-*** no effect while CCS chain is limited to just one step (ccsinje)
-q_transCCS(t,regi,ccs2te(enty,enty2,te),ccs2te2(enty2,enty3,te2),rlf)$teCCS2rlf(te2,rlf)..
-        (1-pm_emifac(t,regi,enty,enty2,te,"co2")) * vm_co2CCS(t,regi,enty,enty2,te,rlf)
-        =e=
-        vm_co2CCS(t,regi,enty2,enty3,te2,rlf);
 
 q_limitCCS(regi,ccs2te2(enty,"ico2",te),rlf)$teCCS2rlf(te,rlf)..
         sum(ttot $(ttot.val ge 2005), pm_ts(ttot) * vm_co2CCS(ttot,regi,enty,"ico2",te,rlf))
