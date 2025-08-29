@@ -13,6 +13,7 @@ s30_switch_shiftcalc    "Switch to activate equation for shift calculation befor
 
 parameter
 pm_pedem_res(ttot,all_regi,all_te)              "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
+pm_secBioShare(ttot,all_regi,all_enty,emi_sectors) "Share of biomass per carrier for each sector [share]"
 p30_datapebio(all_regi,all_enty,rlf,charPeRe,ttot) "Global bioenergy potential for lignocellulosic residues and 1st generation crops [TWa]"
 p30_max_pebiolc_path(all_regi,tall)             "Time path of regional maximal pebiolc production [TWa]"
 p30_max_pebiolc_path_glob(tall)                 "Time path of global maximal pebiolc production [TWa]"

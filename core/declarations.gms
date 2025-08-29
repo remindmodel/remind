@@ -327,9 +327,6 @@ $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
   pm_scaleDemand(tall,tall,all_regi)                 "Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
 $endif.scaleDemand
 
-*** historic biomass shares in final energy (move to biomass module?)
-pm_secBioShare(ttot,all_regi,all_enty,emi_sectors)   "Share of biomass per carrier for each sector [share]"
-
 *** energy prices
 pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)     "parameter to capture all FE prices across sectors and markets [tr$2005/TWa]"
 pm_FEPrice_iter(iteration,ttot,all_regi,all_enty,sector,emiMkt) "parameter to capture all FE prices across sectors and markets [tr$2005/TWa] across iterations"
