@@ -6,6 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/11_aerosols/exoGAINS/declarations.gms
 
+variables
+vm_costpollution(tall,all_regi)                                               "costs of air pollution policies [T$]"
+;
+
 parameter
 pm_emiExog(tall,all_regi,all_enty)                                            "exogenous emissions from air pollutants [Mt SO2, Mt BC, Mt OC]"
 
