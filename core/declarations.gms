@@ -327,9 +327,6 @@ $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
   pm_scaleDemand(tall,tall,all_regi)                 "Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
 $endif.scaleDemand
 
-*** industry CES efficiency scaling (move to industry module?)
-pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)  "parameters for scaling efficiencies in CES calibration for industry [unitless]" /   /
-
 *** historic biomass shares in final energy (move to biomass module?)
 pm_secBioShare(ttot,all_regi,all_enty,emi_sectors)   "Share of biomass per carrier for each sector [share]"
 
