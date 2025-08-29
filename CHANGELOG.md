@@ -8,19 +8,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### input data/calibration
-- [[mrcommons #167]](https://github.com/pik-piam/mrcommons/pull/167) new input data rev including new subtype of landuse CO2 emissions (`co2luc`)
+- [mrcommons #167](https://github.com/pik-piam/mrcommons/pull/167) new input data rev including new subtype of landuse CO2 emissions (`co2luc`)
 
 ### changed
 
 - **scripts** Refactored the MAgPIE coupling interface (`getReportData.R`) introducing MAgPIE-to-REMIND mappings and replacing magclass with quitte/dplyr.
-    [[#2103]](https://github.com/remindmodel/remind/pull/2103)
+    [#2103](https://github.com/remindmodel/remind/pull/2103)
 - **core** Restructured core declarations file with different subsections and better documentation. Added units where missing and flagged declarations that can be either be removed or moved to another module in future steps.
-    [[#2142]](https://github.com/remindmodel/remind/pull/2142) 
+    [#2142](https://github.com/remindmodel/remind/pull/2142) 
 - **scripts** Upgrade renv from 1.1.4 to 1.1.5
-    [[#2192]](https://github.com/remindmodel/remind/pull/2192)
+    [#2192](https://github.com/remindmodel/remind/pull/2192)
 
 ### added
-- [[#2168]](https://github.com/remindmodel/remind/pull/2168) Adds biochar as novel CDR option. Biochar can be produced via three established and one future pe2se technology.
+- [#2168](https://github.com/remindmodel/remind/pull/2168) Adds biochar as novel CDR option. Biochar can be produced via three established and one future pe2se technology.
 
 ### removed
 -
