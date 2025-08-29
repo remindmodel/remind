@@ -403,8 +403,6 @@ vm_demSe(ttot,all_regi,all_enty,all_enty,all_te)     "secondary energy demand (i
 vm_prodFe(ttot,all_regi,all_enty,all_enty,all_te)    "final energy production [TWa]"
 vm_demFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "final energy demand per sector and emissions market, note: taxes should be applied to this variable or variables closer to the supply-side whenever possible so the marginal prices include the tax effects [TWa]"
 vm_demFeSector_afterTax(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "final energy demand per sector and emissions market after taxation, demand sectors should use this variable in their final energy balance equations so demand-side marginals include taxes effects [TWa]"
-*** move to industry module?
-vm_demFeNonEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "final energy demand used for material feedstocks in the industry sector [TWa]"
 
 *** energy system cost variables
 vm_costEnergySys(ttot,all_regi)                      "total energy system costs [T$]"
