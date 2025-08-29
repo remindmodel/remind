@@ -494,9 +494,6 @@ q_windoff_low(tall,all_regi)                         "constraint to ensure that 
 q_limitSeel2fehes(ttot,all_regi)                     "equation to limit the share of electricity in district heating"
 q_capNonDecreasing(tall,all_regi,all_te)             "constrain capacity of some capital-intensive and site-specific technologies like hydropower and geothermal to not decrease over time once it is built"
 
-*** biomass equations (to be moved to biomass module?)
-q_limitBiotrmod(ttot,all_regi)                       "limit the total amount of modern biomass use for solids to the amount of coal use for solids"
-
 *** capacity constraints for energy production (capacity * capacity factor = production)
 q_limitCapSe(ttot,all_regi,all_enty,all_enty,all_te)    "capacity constraint for pe2se secondary energy production"
 q_limitCapSe2se(ttot,all_regi,all_enty,all_enty,all_te) "capacity constraint for se2se secondary energy production"
