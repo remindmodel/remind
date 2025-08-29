@@ -142,7 +142,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie_40",inputpath_acc
 
   mag2rem <- tribble(
     ~mag,                      ~factorMag2Rem,
-    "Costs Without Incentives", 1/1000/1000) # 10E6 US$2017 to 10E12 US$2017
+    "Costs Accounting|Costs without incentives", 1/1000/1000) # 10E6 US$2017 to 10E12 US$2017
 
   cost <- .convertAndWrite(magData, mag2rem, file = paste0("./modules/26_agCosts/",inputpath_acc,"/input/p26_totLUcost_coupling.csv"), path_to_report)
   
