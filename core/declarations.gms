@@ -306,10 +306,6 @@ p_prodAllReference(ttot,all_regi,all_te)             "Sum of the above in the re
 *** CES calibration tarjectories industry and buildings
 pm_fedemand(tall,all_regi,all_in)                    "read-in parameter for final energy and production trajectories used for the CES parameter calibration in industry and buildings [TWa]"
 
-*** energy service layer (only relevant for transport, move to transport module?)
-pm_fe2es(tall,all_regi,all_teEs)                     "Conversion factor from final energies to transport energy services [Tpkm/TWa, Ttkm/TWa]"
-pm_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)   "Final energy shares for CES nodes in transport [share]"
-
 *** parameters for setting final energy shares
 pm_shfe_up(ttot,all_regi,all_enty,emi_sectors)       "Final energy shares exogenous upper bounds per sector [share]"
 pm_shfe_lo(ttot,all_regi,all_enty,emi_sectors)       "Final energy shares exogenous lower bounds per sector [share]"

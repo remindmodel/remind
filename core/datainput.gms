@@ -111,10 +111,6 @@ p_inv_gdx(ttot,regi)     = vm_invMacro.l(ttot,regi,"kap");
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
 
-*** default conversion for energy services
-pm_fe2es(ttot,regi,teEs) = 1;
-pm_shFeCes(ttot,regi,enty,in,teEs) = 0;
-
 *** initialize upper and lower bound to FE share parameters as zero (this will leave any FE share bounds non-activated)
 *** please set FE share bounds by modying this parameter in the sectormodules, e.g. 36_buildings and 37_industry datainput files
 pm_shfe_up(ttot,regi,entyFe,sector)=0;
