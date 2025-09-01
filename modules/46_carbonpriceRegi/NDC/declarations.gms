@@ -20,6 +20,8 @@ p46_vm_CO2eq_2020(all_regi)                              "2020 reference emissio
 p46_taxCO2eq_iter(iteration,ttot,all_regi)               "CO2eq tax non-regi tracked over iterations [T$/GtC]"
 p46_taxCO2eqRegi_iter(iteration,ttot,all_regi)           "CO2eq tax regi tracked over iterations [T$/GtC]"
 p46_taxCO2eqLast(tall,all_regi)                          "general carbon price in last iteration [T$/GtC]"
+pm_taxCO2eqRegi(tall,all_regi)                           "Additional regional CO2 tax path calulated in in 46_carbonpriceRegi module to reach regional emissions targets [T$/GtC]. To get $/tCO2, multiply with 272 = 1 / sm_DptCO2_2_TDpGtC"
+pm_taxCO2eqSum(tall,all_regi)                            "sum of pm_taxCO2eq, pm_taxCO2eqRegi, pm_taxCO2eqSCC [T$/GtC]. To get $/tCO2, multiply with 272 = 1 / sm_DptCO2_2_TDpGtC"
 ;
 
 Scalar    p46_adjustExponent                             "exponent in tax adjustment process [1]";

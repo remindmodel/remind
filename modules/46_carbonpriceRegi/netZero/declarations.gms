@@ -19,6 +19,8 @@ p46_factorRescaleCO2TaxLtd_iter(iteration,all_regi) "Track the changes of p46_fa
 p46_emi_actual_iter(iteration,ttot,all_regi)        "Track the changes of p46_emi_actual over the iterations [MtCO2eq/yr]"
 p46_offset(all_regi)                                "allowed emissions in netZero year [MtCO2eq/yr]"
 p46_ref_co2eq (ttot,all_regi)                       "emissions in reference run"
+pm_taxCO2eqRegi(tall,all_regi)                      "Additional regional CO2 tax path calulated in in 46_carbonpriceRegi module to reach regional emissions targets [T$/GtC]. To get $/tCO2, multiply with 272 = 1 / sm_DptCO2_2_TDpGtC"
+pm_taxCO2eqSum(tall,all_regi)                       "sum of pm_taxCO2eq, pm_taxCO2eqRegi, pm_taxCO2eqSCC [T$/GtC]. To get $/tCO2, multiply with 272 = 1 / sm_DptCO2_2_TDpGtC"
 ;
 
 Scalar p46_zeroYear                                 "between the netZero goal and this scalar, pm_taxCO2eqRegi linearly drops to zero [year]"
