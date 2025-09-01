@@ -367,10 +367,6 @@ v_changeProdStartyear(ttot,all_regi,all_te)          "absolute change of output 
 v_relChangeProdStartYear(ttot,all_regi,all_te)       "calculating the relative change of output with respect to the reference run for each te [Percent]"
 v_changeProdStartyearSlack(ttot,all_regi,all_te)     "slack variable to allow a minimum cost-free change with respect to the reference run [TWa] for all energy-conversion tech, [GtC] for the CCS chain in ccs2te (pipelines/injection)"
 
-*** move to power module?
-vm_usableSe(ttot,all_regi,entySe)                    "Usable SE electricity defined as: generation from pe2se technologies + generation from coupled production - storage losses [TWa]"
-vm_usableSeTe(ttot,all_regi,entySe,all_te)           "Usable SE electricity per generation technology defined as: generation from pe2se technologies + generation from coupled production - storage losses [TWa]"
-
 vm_flexAdj(tall,all_regi,all_te)                     "flexibility mark-up cost or subsidy, used to emulate price changes of technologies which see lower-than-average or higher-than-average electricity prices due to more or less flexible operation[T$/TWa]"
 ;
 
