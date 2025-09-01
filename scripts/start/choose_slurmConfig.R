@@ -11,7 +11,7 @@
 choose_slurmConfig <- function(identifier = FALSE, flags = NULL) {
 
   slurm <- suppressWarnings(ifelse(system2("srun",stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
-  if (slurm) { 
+  if (slurm) {
     modes <- c(" 1: SLURM standby               12   nash H12             [recommended]",
                " 2: SLURM standby               13   nash H12 coupled",
                " 3: SLURM standby               16   nash H12+",
@@ -64,8 +64,8 @@ choose_slurmConfig <- function(identifier = FALSE, flags = NULL) {
                    "11" = "--qos=short --nodes=1 --tasks-per-node=1 --mem=8000"     , # SLURM short    - task per node:  1 (nash debug, test one regi)
                    "12" = "--qos=medium --nodes=1 --tasks-per-node=1 --mem=8000"    , # SLURM medium   - task per node:  1 (negishi)
                    "13" = "--qos=long --nodes=1 --tasks-per-node=1 --mem=8000"      , # SLURM long     - task per node:  1 (negishi)
-                   "14" = "--qos=medium --nodes=1 --tasks-per-node=12"   , # SLURM medium   - task per node: 12 (nash long calibration)
-                   "15" = "--qos=medium --nodes=1 --tasks-per-node=16"   , # SLURM medium   - task per node: 16 (nash long calibration)
+                   "14" = "--qos=medium --nodes=1 --tasks-per-node=12 --time=48:00:00"   , # SLURM medium   - task per node: 12 (nash long calibration)
+                   "15" = "--qos=medium --nodes=1 --tasks-per-node=16 --time=48:00:00"   , # SLURM medium   - task per node: 16 (nash long calibration)
                    "16" = "direct")
     if (! exists("wasselect")) {
       message("   SLURM option ", identifier, " selected: ", gsub("--", "", comp))

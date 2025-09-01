@@ -180,7 +180,7 @@ $ifthen.c_techAssumptScen "%c_techAssumptScen%" == "SSP1"
     fm_dataglob("learn",teVRE) =         1.1 * fm_dataglob("learn",teVRE);
     fm_dataglob("floorcost","spv") =     0.1 * fm_dataglob("floorcost","spv");
     fm_dataglob("floorcost","csp") =     0.8 * fm_dataglob("floorcost","csp");
-*** RP: because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
+*** because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
 *** values need to be set by hand!
     fm_dataglob("learn","windon")     =  0.17;  !! these values make 2100 wind onshore costs ~0.8 times those seen in SSP2 at the same cumCap
     fm_dataglob("floorcost","windon") =  200;
@@ -229,7 +229,7 @@ $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP5"
     fm_dataglob("learn",teVRE) =         0.8 * fm_dataglob("learn",teVRE);
     fm_dataglob("floorcost","spv") =     3   * fm_dataglob("floorcost","spv");
     fm_dataglob("floorcost","csp") =     1.3 * fm_dataglob("floorcost","csp");
-*** RP: because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
+*** because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
 *** values need to be set by hand!
     fm_dataglob("learn","windon")     =  0.17;  !! these values make 2100 wind onshore costs ~1.5 times those seen in SSP2 at the same cumCap
     fm_dataglob("floorcost","windon") =  1000;
@@ -570,27 +570,12 @@ $include "./core/input/p_share_ind_fesos_bio.cs4r"
 $offdelim
 /;
 
-*** initialize pm_share_trans with the global value, will be updated after each negishi/nash iteration
-pm_share_trans("2005",regi) = 0.617;
-pm_share_trans("2010",regi) = 0.625;
-pm_share_trans("2015",regi) = 0.626;
-pm_share_trans("2020",regi) = 0.642;
-pm_share_trans("2025",regi) = 0.684;
-pm_share_trans("2030",regi) = 0.710;
-pm_share_trans("2035",regi) = 0.727;
-pm_share_trans("2040",regi) = 0.735;
-pm_share_trans("2045",regi) = 0.735;
-pm_share_trans("2050",regi) = 0.742;
-pm_share_trans("2055",regi) = 0.736;
-pm_share_trans("2060",regi) = 0.751;
-pm_share_trans("2070",regi) = 0.774;
-pm_share_trans("2080",regi) = 0.829;
-pm_share_trans("2090",regi) = 0.810;
-pm_share_trans("2100",regi) = 0.829;
-pm_share_trans("2110",regi) = 0.818;
-pm_share_trans("2130",regi) = 0.865;
-pm_share_trans("2150",regi) = 0.872;
 
+*** carbon intensities of coal, oil, and gas
+*** emissions factor of primary energy fossil fuels
+pm_cintraw("pecoal") = 26.1 / s_zj_2_twa;
+pm_cintraw("peoil")  = 20.0 / s_zj_2_twa;
+pm_cintraw("pegas")  = 15.0 / s_zj_2_twa;
 
 $ifthen.tech_CO2capturerate not "%c_tech_CO2capturerate%" == "off"
 p_PECarriers_CarbonContent(peFos)=pm_cintraw(peFos);
@@ -742,6 +727,16 @@ $include "./core/input/p_PE_histCap.cs3r"
 $offdelim
 ;
 
+*** historical secondary energy production
+table p_histProdSe(tall,all_regi,all_enty,all_te) "historical installed production/generation (TWa)"
+$ondelim
+$include "./core/input/p_histProdSe.cs3r"
+$offdelim
+;
+p_histProdSe(tall,regi,entySe,te) = p_histProdSe(tall,regi,entySe,te) / sm_TWa_2_TWh;
+p_histProdSeGrowthRate(tall,regi,entySe,te)$p_histProdSe(tall-1,regi,entySe,te) = ( p_histProdSe(tall,regi,entySe,te) - p_histProdSe(tall-1,regi,entySe,te) ) / p_histProdSe(tall-1,regi,entySe,te);
+p_maxhistProdSeGrowthRate(regi,entySe,te) = smax(tall, p_histProdSeGrowthRate(tall,regi,entySe,te)$ (tall.val >= 2019 and tall.val <= 2024));
+
 *** installed capacity availability
 $Offlisting
 table   f_cf(tall,all_regi,all_te) "installed capacity availability"
@@ -780,9 +775,6 @@ pm_cf(ttot,regi,"h2turbVRE")$(ttot.val ge 2025) = pm_cf(ttot,regi,"ngt");
 *** FS: set CF of additional t&d H2 for buildings and industry to t&d H2 stationary value
 pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
-
-*TD* Set capacity factors for pyrolysis technologies. Will delete after added in next inputdata generation
-pm_cf(ttot,regi,"biocharuse") = 1;
 
 *** Region- and tech-specific early retirement rates
 loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi),

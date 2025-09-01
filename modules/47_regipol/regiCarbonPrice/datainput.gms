@@ -124,13 +124,19 @@ $ifThen.cm_implicitQttyTargetType "%cm_implicitQttyTargetType%" == "scenario"
 
   p47_implicitQttyTargetScenario("EU27_bio4"  ,"2035","EU27_regi","tax","t","PE","biomass") = 0.19;
   p47_implicitQttyTargetScenario("EU27_bio4"  ,"2050","EU27_regi","tax","t","PE","biomass") = 0.126667;
+  p47_implicitQttyTargetScenario("EU27_bio7"  ,t     ,"EU27_regi","tax","t","PE","biomass")$((t.val ge 2035) AND (t.val le 2050)) = 0.221666;
   p47_implicitQttyTargetScenario("EU27_bio7p5",t     ,"EU27_regi","tax","t","PE","biomass")$((t.val ge 2035) AND (t.val le 2050)) = 0.237825;
   p47_implicitQttyTargetScenario("EU27_bio12" ,t     ,"EU27_regi","tax","t","PE","biomass")$((t.val ge 2035) AND (t.val le 2050)) = 0.38;
+  p47_implicitQttyTargetScenario("GLO_bio100" ,t     ,"GLO","tax","t","PE","biomass")$((t.val ge 2035) AND (t.val le 2050)) = 3.17;
 
   p47_implicitQttyTargetScenario("EU27_limVRE" ,"2025","EU27_regi","tax","t","PE","wind")  = 0.072;
   p47_implicitQttyTargetScenario("EU27_limVRE" ,"2050","EU27_regi","tax","t","PE","wind")  = 0.201;
   p47_implicitQttyTargetScenario("EU27_limVRE" ,"2025","EU27_regi","tax","t","PE","solar") = 0.04;
   p47_implicitQttyTargetScenario("EU27_limVRE" ,"2050","EU27_regi","tax","t","PE","solar") = 0.168;
+
+  p47_implicitQttyTargetScenario("EU28_CCS250Mt",t    ,"EUR_regi","tax","t","CCS","all")$((t.val ge 2035) AND (t.val le 2050)) = 250;
+  p47_implicitQttyTargetScenario("GLO_CCS2Gt"   ,t    ,"GLO","tax","t","CCS","all")$((t.val ge 2035) AND (t.val le 2050)) = 2000;
+
 *** assign active scenarios to the current run
 loop(qttyTargetActiveScenario,
   pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$p47_implicitQttyTargetScenario(qttyTargetActiveScenario,ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetScenario(qttyTargetActiveScenario,ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup);
