@@ -27,37 +27,37 @@ elseif cm_NDC_divergentScenario = 2,
 );
 
 *** load NDC data
-Table f45_factorTargetyear(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]"
+Table f45_factorTargetyear(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with multiplier for target year emissions vs 2015 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]"
 $offlisting
 $ondelim
-$include "./modules/45_carbonprice/NDC/input/fm_factorTargetyear.cs3r"
+$include "./modules/45_carbonprice/NDC/input/fm_factorTargetyearLULUCF.cs3r"
 $offdelim
 $onlisting
 ;
 
-Parameter p45_factorTargetyear(ttot,all_regi) "Multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]";
+Parameter p45_factorTargetyear(ttot,all_regi) "Multiplier for target year emissions vs 2015 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]";
 p45_factorTargetyear(t,all_regi) = f45_factorTargetyear(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
 display p45_factorTargetyear;
 
-Table f45_2005shareTarget(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with 2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]"
+Table f45_2015shareTarget(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with 2015 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]"
 $offlisting
 $ondelim
-$include "./modules/45_carbonprice/NDC/input/fm_2005shareTarget.cs3r"
+$include "./modules/45_carbonprice/NDC/input/fm_2015shareTarget.cs3r"
 $offdelim
 $onlisting
 ;
 
-Parameter p45_2005shareTarget(ttot,all_regi) "2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]";
-p45_2005shareTarget(t,all_regi) = f45_2005shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
+Parameter p45_2015shareTarget(ttot,all_regi) "2015 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]";
+p45_2015shareTarget(t,all_regi) = f45_2015shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
-display p45_2005shareTarget;
+display p45_2015shareTarget;
 
-Parameter p45_BAU_reg_emi_wo_LU_bunkers(ttot,all_regi) "regional GHG emissions (without LU and bunkers) in BAU scenario [MtCO2eq/yr]"
+Parameter p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,all_regi) "regional GHG emissions (without LU and without bunkers) in BAU scenario [MtCO2eq/yr]"
   /
 $ondelim
-$ifthen exist "./modules/45_carbonprice/NDC/input/pm_BAU_reg_emi_wo_LU_bunkers.cs4r"
-$include "./modules/45_carbonprice/NDC/input/pm_BAU_reg_emi_wo_LU_bunkers.cs4r"
+$ifthen exist "./modules/45_carbonprice/NDC/input/pm_BAU_reg_emi_wo_LU_wo_bunkers.cs4r"
+$include "./modules/45_carbonprice/NDC/input/pm_BAU_reg_emi_wo_LU_wo_bunkers.cs4r"
 $endif
 $offdelim
   /             ;
@@ -74,10 +74,10 @@ Parameter p45_bestNDCcoverage(all_regi)        "highest coverage of NDC targets 
 Parameter p45_distanceToOptyear(ttot,all_regi)    "distance to p45_useSingleYearCloseTo to favor years in case of multiple equally good targets [year]";
 Parameter p45_minDistanceToOptyear(all_regi)   "minimal distance to p45_useSingleYearCloseTo per region [year]";
 
-p45_bestNDCcoverage(regi) = smax(t$(t.val <= p45_ignoreNDCafter AND t.val >= p45_ignoreNDCbefore), p45_2005shareTarget(t,regi));
+p45_bestNDCcoverage(regi) = smax(t$(t.val <= p45_ignoreNDCafter AND t.val >= p45_ignoreNDCbefore), p45_2015shareTarget(t,regi));
 display p45_bestNDCcoverage;
 
-p45_NDCyearSet(t,regi)$(t.val <= p45_ignoreNDCafter AND t.val >= p45_ignoreNDCbefore) = p45_2005shareTarget(t,regi) >= p45_minRatioOfCoverageToMax * p45_bestNDCcoverage(regi);
+p45_NDCyearSet(t,regi)$(t.val <= p45_ignoreNDCafter AND t.val >= p45_ignoreNDCbefore) = p45_2015shareTarget(t,regi) >= p45_minRatioOfCoverageToMax * p45_bestNDCcoverage(regi);
 
 if(p45_useSingleYearCloseTo > 0,
   p45_distanceToOptyear(p45_NDCyearSet(t,regi)) = abs(t.val - p45_useSingleYearCloseTo);
