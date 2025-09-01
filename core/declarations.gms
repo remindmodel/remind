@@ -583,11 +583,6 @@ pm_budgetCO2eq(all_regi)                             "budget for regional energy
 pm_actualbudgetco2(ttot)                             "actual level of cumulated emissions starting from 2020 [GtCO2]"
 p_actualbudgetco2_iter(iteration,ttot)               "track actual level of cumulated emissions starting from 2020 over iterations [GtCO2]"
 
-*** damage parameters, (move to damage module?)
-*** TODO
-pm_taxCO2eqSCC(ttot,all_regi)                        "carbon tax component due to damages (social cost of carbon) [T$/GtCeq] " 
-pm_GDPGross(tall,all_regi)                           "gross GDP (before damages) [T$]"
-
 *** iteration parameters
 pm_SolNonInfes(all_regi)                             "model status from last iteration. 1 means status 2 or 7, 0 for all other status codes"
 o_iterationNumber                                    "output parameter to be able to display the iteration number"
