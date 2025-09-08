@@ -76,7 +76,13 @@ release <- function(newVersion) {
   archivePath <- file.path(normalizePath(renv::project()), "renv", "archive", paste0(newVersion, "_renv.lock"))
   renv::snapshot(lockfile = archivePath)
   system(paste0("git add -f renv/archive/", newVersion, "_renv.lock"))
+  
+  # make the release run with the renv snapshot from above
+  readLines("config/default.cfg") |>
+    sub(pattern = 'cfg\\$UseThisRenvLock <- .*$', replacement = paste0('cfg$UseThisRenvLock <- "renv/archive/', newVersion, '_renv.lock"')) |>
+    writeLines("config/default.cfg")  
 
+  # commit all changes made so far
   message("Please only continue if you already cleaned CHANGELOG.md:\n",
           "In another terminal:\n",
           "1. git add -p\n",
