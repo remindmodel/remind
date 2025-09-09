@@ -595,8 +595,6 @@ o_negitr_total_forc(iteration)                       "total forcing in 2100"
 
 *** not used anymore, can be removed?
 *** TODO
-pm_emissions0(tall,all_regi,all_enty)                "Total emissions of last iteration used for nash algorithm [GtC, Mt CH4, Mt N]" 
-
 p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data [T$/TW]"
 p_newFloorCostdata(all_regi,all_te)                  "print new floor cost data [T$/TW]" 
 ;

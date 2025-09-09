@@ -19,7 +19,6 @@ cm_nash_autoconverge,           switch,     ???
 pm_emiMktTarget_tolerance,      switch,     not needed
 cm_implicitQttyTarget_tolerance,switch,     not needed
 sm_eps,                         scalar,     ???
-pm_emissions0,                  parameter,  ???
 pm_co2eq0,                      parameter,  ???
 pm_capCum0,                     parameter,  ???
 pm_NXagr,                       parameter,  ???
