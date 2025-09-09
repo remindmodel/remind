@@ -42,40 +42,6 @@ $endif.neg
 ***-----------------------------------------------
 *RP* calculate shares of SE used for different FEs
 ***-----------------------------------------------
-*NB* this is only relevant for reporting purposes. With reporting tranferred to R, the entire part will become obsolete.
-
-loop ((ttot,regi), 
-
-  if (sum(se2fe("seh2",entyFe,te), vm_demSe.l(ttot,regi,"seh2",entyFe,te)) ne 0, 
-    p_share_seh2_s(ttot,regi) = 
-      sum(se2fe("seh2","feh2s",te), vm_demSe.l(ttot,regi,"seh2","feh2s",te)) 
-    / sum(se2fe("seh2", entyFe,  te), vm_demSe.l(ttot,regi,"seh2", entyFe,  te)); 
-  else 
-    p_share_seh2_s(ttot,regi) = NA;
-  );
-
-  if (sum(se2fe("seel",entyFe,te), vm_demSe.l(ttot,regi,"seel",entyFe,te)) ne 0, 
-    p_share_seel_s(ttot,regi) = 
-      sum(se2fe("seel","feels",te), vm_demSe.l(ttot,regi,"seel","feels",te)) 
-    / sum(se2fe("seel", entyFe,  te), vm_demSe.l(ttot,regi,"seel", entyFe,  te)); 
-  else
-    p_share_seel_s(ttot,regi) = NA;
-  );
-
-  if (sum(se2fe(entySe,entyFe,te)$(sameas(entySe,"seliqfos") OR sameas(entySe,"seliqbio")),
-        vm_demSe.l(ttot,regi,entySe,entyFe,te)) ne 0, 
-    p_share_seliq_s(ttot,regi) = 
-      ( sum(se2fe("seliqfos","fehos",te), vm_demSe.l(ttot,regi,"seliqfos","fehos",te)) + sum(se2fe("seliqbio","fehos",te), vm_demSe.l(ttot,regi,"seliqbio","fehos",te)) )
-      / ( sum(se2fe("seliqfos",entyFe,te),  vm_demSe.l(ttot,regi,"seliqfos",entyFe,te)) + sum(se2fe("seliqbio",entyFe,te),  vm_demSe.l(ttot,regi,"seliqbio",entyFe,te)) )
-    ;
-  else
-    p_share_seliq_s(ttot,regi) = NA;
-  );
-
-); 
-
-DISPLAY  p_share_seliq_s, p_share_seh2_s, p_share_seel_s;
-
 
 *LB* update parameter that are used for variables during the run
 pm_gdp_gdx(ttot,regi)$(ttot.val ge 2005)    = vm_cesIO.l(ttot,regi,"inco");

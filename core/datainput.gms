@@ -1311,9 +1311,6 @@ p_adj_coeff(ttot,regi,te)            = 32 * p_adj_coeff(ttot,regi,te);  !! Resca
 p_adj_coeff_Orig(ttot,regi,te)    = p_adj_coeff(ttot,regi,te);
 p_adj_seed_te_Orig(ttot,regi,te)  = p_adj_seed_te(ttot,regi,te);
 
-p_adj_coeff_glob(te)        = 0.0;
-p_adj_coeff_glob('tnrs')    = 0.0;
-
 *** Unit conversions
 p_emi_quan_conv_ar4(enty) = 1;
 p_emi_quan_conv_ar4(enty)$(emiMacMagpieCH4(enty)) = sm_tgch4_2_pgc * (25/s_gwpCH4);  !! need to use old GWP for MAC cost conversion as it only reverts what has been done in the calculation of the MACs

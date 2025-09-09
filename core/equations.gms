@@ -72,7 +72,7 @@ q_costInvTeAdj(t,regi,teAdj)..
   vm_costInvTeAdj(t,regi,teAdj)
   =e=
   vm_costTeCapital(t,regi,teAdj) * (
-    (p_adj_coeff(t,regi,teAdj) * v_adjFactor(t,regi,teAdj)) + (p_adj_coeff_glob(teAdj) * v_adjFactorGlob(t,regi,teAdj))
+    (p_adj_coeff(t,regi,teAdj) * v_adjFactor(t,regi,teAdj)) 
   )
   * (1 + 0.02/pm_ies(regi) + pm_prtp(regi) ) ** (pm_ts(t) / 2) !! This increases the investments as if the money was actually borrowed
   !! half a time step earlier, using an interest rate of pm_prtp + 2%, which is close to the model-endogenous interest rate.

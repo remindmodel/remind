@@ -593,23 +593,12 @@ o_negitr_disc_cons_dr5_reg(iteration,all_regi)       "estimated discounted consu
 o_negitr_disc_cons_drInt_reg(iteration,all_regi)     "estimated discounted consumption 2005-2100 with internal discount rate. 'estimated' because of different times step lengths around 2100 [T$]"
 o_negitr_total_forc(iteration)                       "total forcing in 2100"
 
-o_DirlcoCCS(ttot,all_regi,all_te)                    "Annuity per sequestered CO2 by CCS technology, calc. from investment costs and fixOM. [$/tCO2]"
-o_DirlcoCCS_total(ttot,all_regi)                     "Total annuity per sequestered CO2. [$/tCO2]"
-o_CO2emi_per_energy(ttot,all_regi,all_te)            "Emitted CO2 per MWh energy (main product) produced. [kgCO2/MWh]"
-o_seq_CCO2emi_per_energy(ttot,all_regi,all_te)       "Sequestered CO2 per MWh energy produced (main product). [kgCO2/MWh]"
-o_lcoemarkup_CCS(ttot,all_regi,all_te)               "Additional LCOE mark-up due to CCS transport&storage. [$/MWh]"
-
-pm_emissionsForeign(tall,all_regi,all_enty)          "total emissions of other regions (nash relevant) [GtC, Mt CH4, Mt N]" 
+*** not used anymore, can be removed?
+*** TODO
 pm_emissions0(tall,all_regi,all_enty)                "Total emissions of last iteration used for nash algorithm [GtC, Mt CH4, Mt N]" 
 
 p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data [T$/TW]"
 p_newFloorCostdata(all_regi,all_te)                  "print new floor cost data [T$/TW]" 
-
-p_adj_coeff_glob(all_te)                             "coefficient for adjustment costs - global scale [unitless]" 
-
-p_share_seliq_s(ttot,all_regi)                       "share of liquids used for stationary sector (fehos). [0..1]"
-p_share_seh2_s(ttot,all_regi)                        "share of hydrogen used for stationary sector (feh2s). [0..1]"
-p_share_seel_s(ttot,all_regi)                        "Share of electricity used for stationary sector (feels). [0..1]"
 ;
 
 *** ------------- Scalars ----------------------------
