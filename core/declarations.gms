@@ -212,6 +212,7 @@ p_maxRegTechCost2020(all_te)                         "highest historical regiona
 p_gdppcap2050_PPP(all_regi)                          "regional GDP PPP per capita in 2050 [thousand $/capita]"
 p_maxPPP2050                                         "maximum income GDP PPP among regions in 2050 [T$]"
 p_maxSpvCost                                         "maximum spv investment cost among regions [T$/TW]" 
+p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data [T$/TW]"
 
 *** parameters for capacity equations
 pm_tsu2opTimeYr(ttot,opTimeYr)                       "auxiliary parameter to map time steps to past time steps: counts the number of model timesteps between years ttot-opTimeYr and ttot, used for q_transPe2se and q_cap equations [unitless]" 
@@ -594,11 +595,6 @@ o_negitr_cumulative_CO2_emieng_seq(iteration)        "estimated sequestered CO2 
 o_negitr_disc_cons_dr5_reg(iteration,all_regi)       "estimated discounted consumption 2005-2100 with discount rate 5%. 'estimated' because of different times step lengths around 2100 [T$]"
 o_negitr_disc_cons_drInt_reg(iteration,all_regi)     "estimated discounted consumption 2005-2100 with internal discount rate. 'estimated' because of different times step lengths around 2100 [T$]"
 o_negitr_total_forc(iteration)                       "total forcing in 2100"
-
-*** not used anymore, can be removed?
-*** TODO
-p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data [T$/TW]"
-p_newFloorCostdata(all_regi,all_te)                  "print new floor cost data [T$/TW]" 
 ;
 
 *** ------------- Scalars ----------------------------
