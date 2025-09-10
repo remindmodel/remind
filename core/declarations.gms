@@ -25,6 +25,7 @@
 parameters
 
 *** trade prices (move to trade module?)
+*** TODO
 pm_pvp(ttot,all_enty)                                "Price on commodity markets, [T$/TWa] for energy commodities except uranium, uranium (peur) in [T$/Mt Uranium], emissions permits (perm) in [T$/GtC]"
 p_pvpRef(ttot,all_enty)                              "Price on commodity markets - imported from REF gdx, [T$/TWa] for energy commodities except uranium, uranium (peur) in [T$/Mt Uranium], emissions permits (perm) in [T$/GtC]"
 
@@ -35,6 +36,7 @@ pm_gdp_gdx(tall,all_regi)                            "GDP path from gdx, updated
 p_inv_gdx(tall,all_regi)                             "macro-investments path from gdx, updated iteratively [T$]"
 
 *** co2 price calculated in 45_carbonprice module (move to tax or carbonprice module?)
+*** TODO
 pm_taxCO2eq(ttot,all_regi)                           "CO2 tax path calculated in 45_carbonprice module [T$/GtC]. To get $/tCO2, multiply with 272 = 1 / sm_DptCO2_2_TDpGtC"
 pm_taxCO2eq_iter(iteration,ttot,all_regi)            "CO2 tax path (pm_taxCO2eq) tracked over iterations [T$/GtC]"
 pm_taxCO2eq_anchor_iterationdiff(ttot)               "difference in global anchor carbon price to the last iteration [T$/GtC]"
