@@ -129,29 +129,53 @@ getMagpieData <- function(path_to_report = "report.mif", mapping = "magppingMAgP
 # Coupling REMIND-MAgPIE
 
 # run REMIND reporting and give path to mif to MAgPIE
-# - remind2::convGDX2MIF_REMIND2MAgPIE(gdx = "fulldata.gdx", file = "REMIND_rem2mag.mif")
+scenario <- lucode2::getScenNames(".")
+remind_reporting_file <- "REMIND_rem2mag.mif"
+message("\n### Start generating short REMIND reporting for MAgPIE - ", round(Sys.time()))
+remind2::convGDX2MIF_REMIND2MAgPIE(gdx = "fulldata.gdx", file = remind_reporting_file, scenario = scenario)
 
-#load("config.Rdata")
 i <- as.numeric(commandArgs(trailingOnly = TRUE))
 write(paste(format(Sys.time(), "%Y-%m-%d_%H.%M.%S"), i), file = "iteration.log", append = TRUE)
 
-cfg <- list()
-cfg$pathToMagpieReport <- "~/Transferfolder/report.mif"
-cfg$pathToMagpieReport <- "/p/projects/remind/runs/REMIND-MAgPIE-2025-04-24/magpie/output/C_SSP2-NPi2025-mag-4/report.mif"
-cfg$var_luc <- "raw"
+load("config.Rdata")
+cfg_rem <- cfg
+rm(cfg)
+
+# define path to MAgPIE # move to start.R
+path_remind <- cfg_rem$remind_folder
+path_magpie <- normalizePath(file.path(path_remind, "magpie"), mustWork = FALSE)
+if (! dir.exists(path_magpie)) path_magpie <- normalizePath(file.path(path_remind, "..", "magpie"), mustWork = FALSE)
 
 # - load from REMIND config in the REMIND run folder:
-#   - path_to_magpie
 #   - MAgPIE settings
-#   - run name used for MAgPIE run
-# - start MAgPIE
-    # outfolder_mag <- start_run(cfg_mag, codeCheck=FALSE)
-# - obtain path to individual MAgPIE report
-    # report_mag <- file.path(path_magpie, outfolder_mag, "report.mif")
-    
-# runMAgPIE(cfg)
+# preliminary: since at the moment there is no MAgPIE cfg available here, load MAgPIE default
+# ---------------- move to start.R -------------------------------
+  source(file.path(path_magpie, "config", "default.cfg")) # retrieve MAgPIE settings
+  cfg_mag <- cfg
+  rm(cfg)
+  cfg_mag$sequential <- TRUE
+  cfg_mag$force_replace <- TRUE
+# ----------------------------------------------------------------
 
-getMagpieData(
-  path_to_report = cfg$pathToMagpieReport, 
-  mapping        = "mappingMAgPIE2REMIND.csv",
-  var_luc        = cfg$var_luc)
+message("### COUPLING ### Preparing MAgPIE")
+message("### COUPLING ### Set working directory from ", getwd())
+setwd(path_magpie)
+message("                                         to ", getwd(), "\n")
+source("scripts/start_functions.R")
+runname <- gsub("output\\/", "", cfg$results_folder)
+cfg_mag$results_folder <- paste0("output/",runname,"-mag-",i)
+cfg_mag$title          <- paste0(runname,"-mag-",i)
+
+if (!is.null(renv::project())) {
+  cfg_mag$renv_lock <- normalizePath(file.path(path_remind, cfg_rem$results_folder, "renv.lock"))
+}
+
+message("### COUPLING ### Starting MAgPIE")
+outfolder_mag <- start_run(cfg_mag, codeCheck=FALSE)
+cfg_rem$pathToMagpieReport <- file.path(path_magpie, outfolder_mag, "report.mif") # "/p/projects/remind/runs/REMIND-MAgPIE-2025-04-24/magpie/output/C_SSP2-NPi2025-mag-4/report.mif"
+
+# what else should be saved?
+# save(cfg_rem, cfg_mag, file = "config.Rdata")
+setwd(cfg_rem$results_folder)
+
+getMagpieData(path_to_report = cfg_rem$pathToMagpieReport)

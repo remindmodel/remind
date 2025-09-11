@@ -119,7 +119,7 @@ if (cm_MAgPIE_Nash eq 1,
 *** Read production of 2nd gen. purpose grown bioenergy from MAgPIE (given to MAgPIE from previous Remind run)
   Execute_Loadpoint 'magpieData.gdx' pm_pebiolc_demandmag;
 else 
-*** No MAgPIE coupling active: set pm_macBaseMagpie back to initial values
+*** No MAgPIE coupling active: set pm_macBaseMagpie back to initial values, since it gets changed by calculations further down in each Nash iteration
   pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
 );
 
