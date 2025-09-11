@@ -130,9 +130,9 @@ getMagpieData <- function(path_to_report = "report.mif", mapping = "magppingMAgP
 
 # run REMIND reporting and give path to mif to MAgPIE
 scenario <- lucode2::getScenNames(".")
-remind_reporting_file <- "REMIND_rem2mag.mif"
+pathToRemindReport <- "REMIND_rem2mag.mif"
 message("\n### Start generating short REMIND reporting for MAgPIE - ", round(Sys.time()))
-remind2::convGDX2MIF_REMIND2MAgPIE(gdx = "fulldata.gdx", file = remind_reporting_file, scenario = scenario)
+remind2::convGDX2MIF_REMIND2MAgPIE(gdx = "fulldata.gdx", file = pathToRemindReport, scenario = scenario)
 
 i <- as.numeric(commandArgs(trailingOnly = TRUE))
 write(paste(format(Sys.time(), "%Y-%m-%d_%H.%M.%S"), i), file = "iteration.log", append = TRUE)
@@ -155,6 +155,11 @@ if (! dir.exists(path_magpie)) path_magpie <- normalizePath(file.path(path_remin
   rm(cfg)
   cfg_mag$sequential <- TRUE
   cfg_mag$force_replace <- TRUE
+  # if provided use ghg prices for land (MAgPIE) from a different REMIND run than the one MAgPIE runs coupled to
+  use_external_ghgprices <- ifelse(is.na(cfg_mag$path_to_report_ghgprices), FALSE, TRUE)
+  # always select 'coupling' scenario
+  cfg_mag <- setScenario(cfg_mag, "coupling", scenario_config = file.path(path_magpie, "config", "scenario_config.csv"))
+
 # ----------------------------------------------------------------
 
 message("### COUPLING ### Preparing MAgPIE")
@@ -170,12 +175,38 @@ if (!is.null(renv::project())) {
   cfg_mag$renv_lock <- normalizePath(file.path(path_remind, cfg_rem$results_folder, "renv.lock"))
 }
 
-message("### COUPLING ### Starting MAgPIE")
+# Providing MAgPIE with gdx from last iteration's solution only for time steps >= cfg_rem$gms$cm_startyear
+# For years prior to cfg_rem$gms$cm_startyear MAgPIE output has to be identical across iterations.
+# Because gdxes might slightly lead to a different solution exclude gdxes for the fixing years.
+if (i > 1) {
+  message("### COUPLING ### Copying MAgPIE gdx files from previous iteration")
+  gdxlist <- paste0("output/", runname, "-mag-", i-1, "/magpie_y", seq(cfg_rem$gms$cm_startyear,2150,5), ".gdx")
+  cfg_mag$files2export$start <- .setgdxcopy(".gdx",cfg_mag$files2export$start,gdxlist)
+}
+
+message("### COUPLING ### MAgPIE will be started with\n    Report = ", pathToRemindReport, "\n    Folder = ", cfg_mag$results_folder)
+cfg_mag$path_to_report_bioenergy <- pathToRemindReport
+# if no different mif was set for GHG prices use the same as for bioenergy
+if(! use_external_ghgprices) cfg_mag$path_to_report_ghgprices <- pathToRemindReport
+########### START MAGPIE #############
 outfolder_mag <- start_run(cfg_mag, codeCheck=FALSE)
-cfg_rem$pathToMagpieReport <- file.path(path_magpie, outfolder_mag, "report.mif") # "/p/projects/remind/runs/REMIND-MAgPIE-2025-04-24/magpie/output/C_SSP2-NPi2025-mag-4/report.mif"
+######################################
+message("### COUPLING ### MAgPIE output was stored in ", outfolder_mag)
+pathToMagpieReport <- file.path(path_magpie, outfolder_mag, "report.mif")
+
+# Checking whether MAgPIE is optimal in all years
+file_modstat <- file.path(outfolder_mag, "glo.magpie_modelstat.csv")
+if (file.exists(file_modstat)) {
+  modstat_mag <- read.csv(file_modstat, stringsAsFactors = FALSE, row.names=1, na.strings="")
+} else {
+  modstat_mag <- readGDX(file.path(outfolder_mag, "fulldata.gdx"), "p80_modelstat", "o_modelstat", format="first_found")
+}
+
+if (!all((modstat_mag == 2) | (modstat_mag == 7)))
+  stop("Iteration stopped! MAgPIE modelstat is not 2 or 7 for all years.\n")
 
 # what else should be saved?
-# save(cfg_rem, cfg_mag, file = "config.Rdata")
+# save(cfg_rem, cfg_mag, pathToMagpieReport, file = "config.Rdata")
 setwd(cfg_rem$results_folder)
 
-getMagpieData(path_to_report = cfg_rem$pathToMagpieReport)
+getMagpieData(path_to_report = pathToMagpieReport)
