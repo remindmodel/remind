@@ -1,0 +1,6 @@
+name,type,reason
+vm_costInvTeDir,input,added by codeCheck
+vm_costInvTeAdj,input,added by codeCheck
+vm_invMacro,input,added by codeCheck
+pm_delta_kap,input,added by codeCheck
+pm_lifetime_max,input,added by codeCheck

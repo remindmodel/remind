@@ -53,6 +53,7 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
   + sum(enty$(emiMacSector(enty) AND (NOT emiMacMagpie(enty))), pm_macCost(ttot,regi,enty))
   + vm_costMatPrc(ttot,regi)
   + vm_costEnergySys(ttot,regi)
+  + vm_waccCost(ttot,regi)$(ttot.val ge 2010)
 ;
 
 ***---------------------------------------------------------------------------
@@ -124,9 +125,15 @@ q01_kapMo(ttot,regi,ppfKap(in))$(ord(ttot) lt card(ttot)
     vm_cesIO(ttot,regi,in)
   * (1 - pm_delta_kap(regi,in))
  ** (pm_ttot_val(ttot+1) - pm_ttot_val(ttot))
-  + p01_cumDeprecFactor_old(ttot+1,regi,in) * vm_invMacro(ttot,regi,in)
-  + p01_cumDeprecFactor_new(ttot+1,regi,in) * vm_invMacro(ttot+1,regi,in)
+   + p01_cumDeprecFactor_old(ttot+1,regi,in) * vm_invMacro(ttot,regi,in) * p01_investeffectv(regi)
+*    + p01_cumDeprecFactor_old(ttot+1,regi,in) * vm_invMacro(ttot,regi,in) 
+   + p01_cumDeprecFactor_new(ttot+1,regi,in) * vm_invMacro(ttot+1,regi,in) * p01_investeffectv(regi)
+*    + p01_cumDeprecFactor_new(ttot+1,regi,in) * vm_invMacro(ttot+1,regi,in)
 ;
+
+* * p01_investeffectv(regi) * (1 + (sum(inLocal, vm_invMacro(ttot+1,regi,inLocal)) - sum(inLocal, vm_invMacro(ttot,regi,inLocal))) / sum(inLocal, vm_invMacro(ttot,regi,inLocal)))
+*   + p01_cumDeprecFactor_new(ttot+1,regi,in) * vm_invMacro(ttot+1,regi,in)
+* * p01_investeffectv(regi) * (1 + (sum(inLocal, vm_invMacro(ttot+1,regi,inLocal)) - sum(inLocal, vm_invMacro(ttot,regi,inLocal))) / sum(inLocal, vm_invMacro(ttot,regi,inLocal)))
 
 ***---------------------------------------------------------------------------
 *' Adjustment costs of macro economic investments:

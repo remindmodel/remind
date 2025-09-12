@@ -4,9 +4,10 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/45_carbonprice/exogenousExpo/declarations.gms
-parameters
-    p45_tau_co2_tax(ttot,all_regi)   "Exogenous CO2 tax level [T$/GtC]"
-;
+*** SOF ./modules/25_WACC/off/bounds.gms
+*fix the WACC term of the budget equation equal to zero for all times
+vm_waccCost(t, regi) = 0;
 
-*** EOF ./modules/45_carbonprice/exogenousExpo/declarations.gms
+***vm_techwaccCost(t, regi) = 0;
+***vm_invwaccCost(t, regi) = 0;
+*** EOF ./modules/25_WACC/off/bounds.gms
