@@ -9,15 +9,17 @@
 *' @description
 *' Unlike in Negishi-mode, each region forms its own optimization problem in Nash mode.
 *' Regions trade on goods and resource markets, but market-clearing conditions are not part of the optimization itself.
-*' Instead, the Nash-algorithm iteratively computes solutions for all regions including their trade patterns, and adjusts prices such that the surplus on global markets vanishes.
-*' Initial values for trade patterns, prices etc. are taken from the gdx (input.gdx).
+*' Instead, the Nash-algorithm iteratively computes solutions for all regions including their trade patterns, and adjusts prices
+*' such that the surplus on global markets vanishes. Initial values for trade patterns, prices etc. are taken from the gdx (input.gdx).
 *'
-*' Potential benefits of a Nash-solution are a massive reduction in run-time (convergence within a few hours), and more flexibility in treating inter-regional externalities.
-*' Learning-by-doing technologies (learnte) are included by default and cause an inter-regional spill-over. This causes a welfare difference between the solution in Nash- and Negishi-mode.
-*' In Nash-mode, a subsidy on the investment cost of learning technologies can be used to internalize this spill-over externality. This subsidy is implemented in the module 22_subsidizeLearning.
+*' Potential benefits of a Nash-solution are a massive reduction in run-time (convergence within a few hours), and more flexibility in treating
+*' inter-regional externalities. Learning-by-doing technologies (teLearn) are included by default and cause an inter-regional spill-over.
+*' This causes a welfare difference between the solution in Nash- and Negishi-mode.
+*' In Nash-mode, a subsidy on the investment cost of learning technologies can be used to internalize this spill-over externality.
+*' This subsidy is implemented in the module 22_subsidizeLearning.
 *'
-*' Without internalizing the learning-by-doing spill-over due to the global learning curve, Nash and Negishi solution differ. This is the case in the default setting of the corresponding module:
-*' cfg$gms$subsidizeLearning <- "off"
+*' Without internalizing the learning-by-doing spill-over due to the global learning curve, Nash and Negishi solution differ.
+*' This is the case in the default setting of the corresponding module: cfg$gms$subsidizeLearning <- "off"
 *' In Nash-mode, the subsidy internalizing this externality can be calculated.
 *' When activated by cfg$gms$subsidizeLearning <- "globallyOptimal" the Nash solution should be equivalent to the Negishi solution.
 

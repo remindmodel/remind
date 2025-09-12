@@ -5,19 +5,18 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/80_optimization/nash/bounds.gms
-*override fixing of vm_perm set in 41_emicapregi/none/bounds.gms
-*mlb 20150609* allow negative permits to compute efficient solution
+
+if(cm_emiscen = 6, !! budget run
 $ifthen.emiopt %emicapregi% == 'none' 
-if(cm_emiscen eq 6,
-  vm_perm.lo(t,regi) = -10;
-  vm_perm.up(t,regi) = 10000;
-);
+  vm_perm.up(t,regi) = 10000; !! override fixing of vm_perm set in 41_emicapregi/none/bounds.gms
+  vm_perm.lo(t,regi) = -10; !! mlb 20150609: allow negative permits to compute efficient solution
 $endif.emiopt
 
-*ML* in nash with permit allocation only total budgets are meaningful; allowing permit trade
-*only for the initial policy period avoids indeterminacy, hence numerical problems
-loop(ttot$(ttot.val ne cm_startyear),
-    vm_Xport.fx(ttot,regi,"perm")$(cm_emiscen eq 6) = 0;
-    vm_Mport.fx(ttot,regi,"perm")$(cm_emiscen eq 6) = 0 ;
+*** ML: in nash with permit allocation only total budgets are meaningful;
+*** allowing permit trade only for the initial policy period avoids indeterminacy, hence numerical problems
+  loop(ttot $ (ttot.val ne cm_startyear),
+    vm_Xport.fx(ttot,regi,"perm") = 0;
+    vm_Mport.fx(ttot,regi,"perm") = 0;
+  );
 );
 *** EOF ./modules/80_optimization/nash/bounds.gms

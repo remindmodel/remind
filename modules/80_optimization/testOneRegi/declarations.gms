@@ -11,7 +11,7 @@ p80_pvpFallback(ttot,all_enty)                      "Helper parameter. Price pat
 p80_etaXp(all_enty)                                 "Parameter governing price anticipation on commodity markets",
 p80_taxrev0(tall,all_regi)                          "???"
 p80_Mport0(tall,all_regi,all_enty)                  "Imports in last iteration"
-p80_normalize0(ttot,all_regi,all_enty)              "Normalization parameter for market volume"
+p80_marketVolume(ttot,all_regi,all_enty)              "Normalization parameter for market volume"
 pm_cumEff(tall,all_regi,all_in)                     "parameter for spillover externality (aggregated productivity level)"
 pm_fuExtrForeign(ttot,all_regi,all_enty,rlf)        "foreign fuel extraction"
 ;
