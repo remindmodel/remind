@@ -132,6 +132,7 @@ getMagpieData <- function(path_to_report = "report.mif", mapping = "magppingMAgP
 scenario <- lucode2::getScenNames(".")
 pathToRemindReport <- "REMIND_rem2mag.mif"
 message("\n### Start generating short REMIND reporting for MAgPIE - ", round(Sys.time()))
+if(!file.exists("fulldata.gdx")) stop("The MAgPIE coupling script 'mag2rem.R' could not find a REMIND fulldata.gdx file!")
 remind2::convGDX2MIF_REMIND2MAgPIE(gdx = "fulldata.gdx", file = pathToRemindReport, scenario = scenario)
 
 i <- as.numeric(commandArgs(trailingOnly = TRUE))
