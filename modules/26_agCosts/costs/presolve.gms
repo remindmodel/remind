@@ -12,7 +12,7 @@
 *** MAgPIE is executed there.
 
 *' In coupled runs landuse costs are directly transferred from MAgPIE run instead of reading them from the look-up table.
-if(cm_MAgPIE_Nash eq 1, 
+if(sm_magpieIter gt 0, 
   Execute_Loadpoint 'magpieData.gdx' p26_totLUcost_coupling;
   p26_totLUcosts_withMAC(ttot,regi) = p26_totLUcost_coupling(ttot,regi);
 );

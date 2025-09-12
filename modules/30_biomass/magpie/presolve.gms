@@ -9,7 +9,7 @@
 
 *** If MAgPIE runs inbetween the Nash iterations:
 *** ============================================================
-if(cm_MAgPIE_Nash eq 1,
+if(sm_magpieIter gt 0,
 *** ============================================================
 
 *** Since in the coupling MAgPIE data is first required in core/presolve

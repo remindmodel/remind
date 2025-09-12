@@ -23,9 +23,9 @@ q30_costFuBio(ttot,regi)$(ttot.val ge cm_startyear)..
          vm_costFuBio(ttot,regi)
          =e= sum(peren2rlf30(enty,rlf), p30_datapebio(regi,enty,rlf,"cost",ttot) * vm_fuExtr(ttot,regi,enty,rlf))
          +
-         (v30_pebiolc_costs(ttot,regi) * v30_multcost(ttot,regi))$(cm_MAgPIE_Nash eq 1)
+         (v30_pebiolc_costs(ttot,regi) * v30_multcost(ttot,regi))$(sm_magpieIter gt 0)
          +
-         (v30_pebiolc_costs(ttot,regi)                          )$(cm_MAgPIE_Nash eq 0)
+         (v30_pebiolc_costs(ttot,regi)                          )$(sm_magpieIter eq 0)
          - 
          p30_pebiolc_costs_emu_preloop(ttot,regi) !! Need to be substracted since they are also included in the total agricultural production costs
          + 

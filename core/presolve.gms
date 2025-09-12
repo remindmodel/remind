@@ -108,8 +108,8 @@ if (cm_MAgPIE_Nash eq 1,
   sm_tmp2 = logfile.nd;
   logfile.nr = 1;
   logfile.nd = 0;
-  s_magIter = s_magIter + 1;
-  put_utility  "exec" / "Rscript mag2rem.R " s_magIter;
+  sm_magpieIter = sm_magpieIter + 1;
+  put_utility  "exec" / "Rscript mag2rem.R " sm_magpieIter;
   logfile.nr = sm_tmp;
   logfile.nd = sm_tmp2;
 *** MAgPIE coupling active: update pm_macBaseMagpie
