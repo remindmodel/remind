@@ -470,6 +470,7 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
           display "#### pm_taxCO2eq_anchor_iterationdiff (difference in global anchor carbon price to the last iteration [T$/GtC]) in diagnostics section below."; 
           display sm_globalBudget_absDev;
 	      );
+$ifthen.carbonprice %carbonprice% == "functionalForm"
         if(sameas(convMessage80, "peakbudgyr"),
 		      display "#### 6.) Years are different: cm_peakBudgYr is not equal to sm_peakBudgYr_check.";
           display cm_peakBudgYr;
@@ -478,6 +479,7 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
 		      display "#### 6.) PeakBudget not reached: sm_peakbudget_diff is greater than sm_peakbudget_diff_tolerance.";
           display sm_peakbudget_diff;
 	      );
+$endIf.carbonprice
         if(sameas(convMessage80, "IterationNumber"),
           display "#### 0.) REMIND did not run sufficient iterations (currently set at 18, to allow for at least 4 iterations with EDGE-T)";
         );
@@ -598,6 +600,7 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
           display "#### pm_taxCO2eq_anchor_iterationdiff (difference in global anchor carbon price to the last iteration [T$/GtC]) in diagnostics section below."; 
           display sm_globalBudget_absDev;
 	      );
+$ifthen.carbonprice %carbonprice% == "functionalForm"
         if(sameas(convMessage80, "peakbudgyr"),
 		      display "#### 6.) Years are different: cm_peakBudgYr is not equal to sm_peakBudgYr_check.";
           display cm_peakBudgYr;
@@ -606,6 +609,7 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
 		      display "#### 6.) PeakBudget not reached: sm_peakbudget_diff is greater than sm_peakbudget_diff_tolerance.";
           display sm_peakbudget_diff;
 	      );
+$endIf.carbonprice
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"       
         if(sameas(convMessage80, "regiTarget"),
 		      display "#### 7) A regional climate target has not been reached yet.";
