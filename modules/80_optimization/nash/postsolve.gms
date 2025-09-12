@@ -391,7 +391,7 @@ if ( abs(p80_globalBudget_absDev_iter(iteration)) gt cm_budgetCO2_absDevTol , !!
 $ifthen.carbonprice %carbonprice% == "functionalForm"
 *** check whether cm_peakBudgYr corresponds to year of maximum cumulative CO2 emissions
 if (  (     cm_iterative_target_adj eq 9
-        AND cm_peakBudgYr ne sm_peakBudgYr_check  )
+        AND cm_peakBudgYr ne sm_peakBudgYr_check  ),
   s80_bool = 0;
   p80_messageShow("peakbudgyr") = YES;
 );
