@@ -24,8 +24,7 @@
 *** ------------- Macro Parameters --------------------------------------------
 parameters
 
-*** trade prices (move to trade module?)
-*** TODO
+*** trade prices
 pm_pvp(ttot,all_enty)                                "Price on commodity markets, [T$/TWa] for energy commodities except uranium, uranium (peur) in [T$/Mt Uranium], emissions permits (perm) in [T$/GtC]"
 p_pvpRef(ttot,all_enty)                              "Price on commodity markets - imported from REF gdx, [T$/TWa] for energy commodities except uranium, uranium (peur) in [T$/Mt Uranium], emissions permits (perm) in [T$/GtC]"
 
@@ -35,8 +34,7 @@ pm_ies(all_regi)                                     "intertemporal elasticity o
 pm_gdp_gdx(tall,all_regi)                            "GDP path from gdx, updated iteratively [T$]"
 p_inv_gdx(tall,all_regi)                             "macro-investments path from gdx, updated iteratively [T$]"
 
-*** co2 price calculated in 45_carbonprice module (move to tax or carbonprice module?)
-*** TODO
+*** co2 price calculated in 45_carbonprice module
 pm_taxCO2eq(ttot,all_regi)                           "CO2 tax path calculated in 45_carbonprice module [T$/GtC]. To get $/tCO2, multiply with 272 = 1 / sm_DptCO2_2_TDpGtC"
 pm_taxCO2eq_iter(iteration,ttot,all_regi)            "CO2 tax path (pm_taxCO2eq) tracked over iterations [T$/GtC]"
 pm_taxCO2eq_anchor_iterationdiff(ttot)               "difference in global anchor carbon price to the last iteration [T$/GtC]"
@@ -431,10 +429,10 @@ $ifthen.minMaxSeFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgS
   v_PosPenSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max positive penalty for secondary energy share deviation in sectors [T$]"
 $endif.minMaxSeFeSectorShareDev
 
-*** can be removed? 
-*** TODO
 v_prodUe(ttot,all_regi,all_enty,all_enty,all_te)    "Useful energy production [TWa]"
+*** TODO: should be renamed?
 vm_demSeOth(ttot,all_regi,all_enty,all_te)          "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
+*** TODO: can be removed? 
 v_prodSeOth(ttot,all_regi,all_enty,all_te)          "other sety production from certain technologies, have to be calculated in additional equations [TWa]"
 ;
 
