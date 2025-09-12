@@ -8,7 +8,7 @@
 
 Parameters
 ***p25_wacc(ttot, all_regi, tewacc)                       "WACC markup for each power technology in each REMIND region"
-***p25_techwacc(ttot, all_regi, tewacc)                      "WACC markup for each power technology in each REMIND region"
+p25_techwacc(ttot, all_regi, tewacc)                      "WACC markup for each power technology in each REMIND region"
 p25_invwacc(ttot, all_regi)                                "WACC markup for each country"
 p25_techwaccCostO(ttot, all_regi)                          "reference level value of technology WACC costs of the cuurent and previous period"
 p25_invwaccCost0(ttot, all_regi)                           "reference level value of macro investments WACC costs of the cuurent and previous period"
