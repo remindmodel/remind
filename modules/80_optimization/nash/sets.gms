@@ -41,7 +41,9 @@ activeConvMessage80("IterationNumber") = YES;
 
 if (cm_TaxConvCheck eq 1, activeConvMessage80("taxconv") = YES;);
 ***activeConvMessage80("anticip") = YES;
-activeConvMessage80("target") = YES;
+activeConvMessage80("globalbudget") = YES;
+$if %carbonprice% == "functionalForm" activeConvMessage80("peakbudgyr") = YES;
+$if %carbonprice% == "functionalForm" activeConvMessage80("peakbudget") = YES;
 activeConvMessage80("DevPriceAnticip") = YES;
 $if not "%cm_emiMktTarget%" == "off" activeConvMessage80("regiTarget") = YES;
 $if not "%cm_implicitQttyTarget%" == "off" activeConvMessage80("implicitEnergyTarget") = YES;
