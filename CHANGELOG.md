@@ -11,7 +11,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **mrcommons** New input data rev including new subtype of landuse CO2 emissions (`co2luc`) [#167](https://github.com/pik-piam/mrcommons/pull/167)
 
 ### changed
-<<<<<<< HEAD
 
 - **scripts** Refactored the MAgPIE coupling interface (`getReportData.R`) introducing MAgPIE-to-REMIND mappings and replacing magclass with quitte/dplyr.
     [#2103](https://github.com/remindmodel/remind/pull/2103)
@@ -24,13 +23,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - [#2168](https://github.com/remindmodel/remind/pull/2168) Adds biochar as novel CDR option. Biochar can be produced via three established and one future pe2se technology.
 - [#2195](https://github.com/remindmodel/remind/pull/2195) Make it possible to provide a renv.lock to be used for a run (useful for the releases)
 - [#2196](https://github.com/remindmodel/remind/pull/2196) Update release scripts: the release uses the renv snapshot, the develop does not
-=======
-- Consolidated the `MAGICC7_AR6.R` climate reporting script and the `climateAssessmentInterimRun.R` climate assessment iteration script for damage runs using the `remindClimateAssessment` and `piamenv` packages [[#2082](https://github.com/remindmodel/remind/pull/2082), [#2099](https://github.com/remindmodel/remind/pull/2099)]
-- Enhanced `reporting.R` to read extra data needed for reporting directly from inputdata [[#2084](https://github.com/remindmodel/remind/pull/2084)]
-
-### added
-- 
->>>>>>> 2077ea43 (Update WACC branch with latest changes)
 
 ### removed
 - **config** Two scenario config files (damagepaper) were used for the NGFS runs but are not needed anymore.

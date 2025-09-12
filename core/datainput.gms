@@ -153,7 +153,6 @@ parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit:
 $ondelim
 $include "./core/input/p_inco0.cs4r"
 $offdelim
-<<<<<<< HEAD
 /
 ;
 
@@ -162,9 +161,6 @@ $offdelim
 ***---------------------------------------------------------------------------
 fm_dataglob("learn", te)$(sameAs(te, "biopyronly") OR sameAs(te, "biopyrhe") OR
                           sameAs(te, "biopyrchp")) = %c_BCLearning%;
-=======
-/;
->>>>>>> 2077ea43 (Update WACC branch with latest changes)
 
 ***---------------------------------------------------------------------------
 *** SSP-dependent technology assumptions
@@ -910,7 +906,6 @@ $ondelim
 $include "./core/input/p_boundCapCCSindicator.cs4r"
 $offdelim
 /;
-<<<<<<< HEAD
 
 *** read in data on Biochar capacities used as upper and lower bound on Biochar production in 2020 and 2025
 parameter p_boundCapBiochar(ttot, all_regi)        "installed and planned capacity of Biochar [t BC/a]"
@@ -920,7 +915,6 @@ $include "./core/input/p_boundCapBiochar.cs4r"
 $offdelim
 /;
 =======
->>>>>>> 2077ea43 (Update WACC branch with latest changes)
 
 *** read in CO2 emisisons for 2010, used to fix vm_emiTe.up("2010",regi,"co2")
 parameter p_boundEmi(tall,all_regi)        "domestic CO2 emissions that are allowed in 2010 Unit: GtC"
@@ -1205,12 +1199,9 @@ $offdelim
 p_adj_deltacapoffset("2015",regi,"tnrs") = 1;
 p_adj_deltacapoffset("2015",regi,"windoff") = p_adj_deltacapoffset("2010",regi,"windon");
 p_adj_deltacapoffset("2020",regi,"windoff") = p_adj_deltacapoffset("2010",regi,"windon");
-<<<<<<< HEAD
 
 
 
-=======
->>>>>>> 2077ea43 (Update WACC branch with latest changes)
 
 *** share of PE2SE capacities in 2005 depends on GDP-MER
 p_adj_seed_reg(t,regi) = pm_gdp(t,regi) * 1e-4;

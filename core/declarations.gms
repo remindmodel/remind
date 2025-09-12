@@ -149,7 +149,6 @@ pm_share_CCS_CCO2(ttot,all_regi)                     "share of stored CO2 from t
 
 *** ------------- Emissions Variables ----------------------------------------
 variables
-<<<<<<< HEAD
 
 *** total emissions
 vm_co2eqGlob(ttot)                                   "total global greenhouse gas emissions to be balanced by allowances [GtCeq]"
@@ -184,7 +183,6 @@ vm_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty)  "energy-related
 vm_emiTe(ttot,all_regi,all_enty)                     "total energy-related emissions of each region. [GtC, Mt CH4, Mt N]"
 vm_emiMacSector(ttot,all_regi,all_enty)              "total non-energy-related emission of each region. [GtC, Mt CH4, Mt N]"
 vm_emiCdr(ttot,all_regi,all_enty)                    "total (negative) emissions from CDR technologies of each region that are calculated in the CDR module. Note that it includes all atmospheric CO2 entering the CCUS chain (i.e. CO2 stored (CDR) AND used (not CDR)) [GtC]"
->>>>>>> 5a8bc5bc (Add WACC module and link it with existing macro and REMIND structure)
 vm_emiMac(ttot,all_regi,all_enty)                    "total non-energy-related emission of each region. [GtC, Mt CH4, Mt N]"
 vm_emiFgas(ttot,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE [emiFgasTotal in MtCO2eq, for other units see f_emiFgas.cs4r]"
 
@@ -197,128 +195,16 @@ vm_emiAllMkt(tall,all_regi,all_enty,all_emiMkt)      "total emissions per emissi
 *** ------------- Emissions Positive Variables --------------------------------
 positive variables
 
-<<<<<<< HEAD
 v_co2capture(ttot,all_regi,all_enty,all_enty,all_te,rlf)    "total captured CO2 [GtC/year]"
 vm_co2CCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)       "total CO2 injected into geological storage [GtC/a]"
 v_co2capturevalve(ttot,all_regi)                            "total CO2 emitted right after capture [GtC/a], note: used in q_balCCUvsCCS to account for different lifetimes of capture and CCU/CCS te and capacities [GtC/year]"
 v_ccsShare(ttot,all_regi)                                    "fraction of captured CO2 that is stored geologically [share]"
 vm_emiCdrAll(ttot,all_regi)                                  "all CDR emissions, net negative emissions from land-use change, gross removals for all other options [GtC/year]"
-=======
-vm_cap(tall,all_regi,all_te,rlf)                     "net total capacities"
-v_capDistr(tall,all_regi,all_te,rlf)                "net capacities, distributed to the different grades for renewables"
-vm_capTotal(ttot,all_regi,all_enty,all_enty)         "total capacity without technology differentation for technologies where there exists differentation [TW]"
-vm_capFac(ttot,all_regi,all_te)                      "capacity factor of conversion technologies"
-vm_deltaCap(tall,all_regi,all_te,rlf)                "capacity additions"
-vm_capCum(tall,all_regi,all_te)                      "gross capacities (=capacities cumulated over time)"
-vm_fuExtr(ttot,all_regi,all_enty,rlf)                "fuel use [TWa]"
-
-vm_demPe(tall,all_regi,all_enty,all_enty,all_te)     "pe demand. [TWa, Uranium: Mt Ur]"
-vm_prodPe(ttot,all_regi,all_enty)                    "pe production. [TWa, Uranium: Mt Ur]"
-vm_demSe(ttot,all_regi,all_enty,all_enty,all_te)     "se demand. [TWa]"
-vm_prodSe(tall,all_regi,all_enty,all_enty,all_te)    "se production. [TWa]"
-vm_prodFe(ttot,all_regi,all_enty,all_enty,all_te)    "fe production. [TWa]"
-vm_demFeNonEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "energy flows of non-energy feedstocks [TWa]"
-vm_demFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)          "fe demand per sector and emission market. Taxes should be applied to this variable or variables closer to the supply side whenever possible so the marginal prices include the tax effects. [TWa]"
-vm_demFeSector_afterTax(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "fe demand per sector and emission market after tax. Demand sectors should use this variable in their fe balance equations so demand side marginals include taxes effects. [TWa]"
-v_costFu(ttot,all_regi)                              "fuel costs"
-vm_costFuEx(ttot,all_regi,all_enty)                  "fuel costs from exhaustible energy [tril$US]"
-vm_pebiolc_price(ttot,all_regi)                      "Bioenergy price according to MAgPIE supply curves [T$US/TWa]"
-
-v_costOM(ttot,all_regi)                              "o&m costs"
-v_costInv(ttot,all_regi)                             "investment costs"
-vm_costTeCapital(ttot,all_regi,all_te)               "investment costs"
-vm_costAddTeInv(tall,all_regi,all_te,emi_sectors)    "additional sector-specific investment cost of demand-side transformation"
-
-v_co2capture(ttot,all_regi,all_enty,all_enty,all_te,rlf)    "all captured CO2. [GtC/a]"
-v_co2capturevalve(ttot,all_regi)                            "CO2 emitted right after capture [GtC/a] (in q_balCCUvsCCS to account for different lifetimes of capture and CCU/CCS te and capacities)"
-vm_co2CCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)       "all geologically stored co2 [GtC/a]"
-v_ccsShare(ttot,all_regi)                                 "fraction of captured CO2 that is stored geologically"
-
-v_prodUe (ttot,all_regi,all_enty,all_enty,all_te)    "Useful energy production [TWa]"
-
-vm_capEarlyReti(tall,all_regi,all_te)                "fraction of early retired capital"
-
-*** RLDC removal
-v_demSeOth(ttot,all_regi,all_enty,all_te)	         "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
-v_prodSeOth(ttot,all_regi,all_enty,all_te)	         "other sety production from certain technologies, have to be calculated in additional equations [TWa]"
-
-v_shGreenH2(ttot,all_regi)   "share of green hydrogen in all hydrogen by 2030 [0..1]"
-v_shBioTrans(ttot,all_regi)    "Share of biofuels in transport liquids from 2025 onwards. Value between 0 and 1."
-
-v_shfe(ttot,all_regi,all_enty,emi_sectors)           "share of final energy in sector total final energy [0..1]"
-v_shSeFe(ttot,all_regi,all_enty)                     "share of energy carrier subtype in final energy demand of the aggregated carrier type (eg 'the share of bio-based FE liquids in all FE liquids') [0..1]"
-v_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "share of energy carrier subtype in final energy demand of the aggregated carrier type per sector/emiMarket combination (eg 'the share of bio-based FE liquids in all FE liquids used in ETS-covered transport') [0..1]"
-v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids in sector final energy [0..1]"
-
-vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions; net for LUC gross for all other"
-
-v_changeProdStartyearAdj(ttot,all_regi,all_te)       "Absolute effect size of changing output with respect to the reference run for each te"
-vm_changeProdStartyearCost(ttot,all_regi,all_te)     "Costs for changing output with respect to the reference run for each te"
-
-*** ES layer variables
-vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
-
-v_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
-
-$ifthen.seFeSectorShareDev not "%cm_seFeSectorShareDevMethod%" == "off"
-  v_penSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "penalty cost for secondary energy share deviation between sectors, for each sector/emiMarket combination"
-  vm_penSeFeSectorShareDevCost(ttot,all_regi)        "total penalty cost for secondary energy share deviation between sectors"
-$endif.seFeSectorShareDev
-
-$ifthen.minMaxSeFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgShare"
-  v_NegPenSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max negative penalty for secondary energy share deviation in sectors"
-  v_PosPenSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max positive penalty for secondary energy share deviation in sectors"
-$endif.minMaxSeFeSectorShareDev
->>>>>>> 2077ea43 (Update WACC branch with latest changes)
 ;
 
 
 *** ------------- Emissions Equations -----------------------------------------
 equations
-<<<<<<< HEAD
-=======
-***----------------------------------------------------------------------------------------
-***------------------------------------------------MACRO module----------------------------
-q_limitSeel2fehes(ttot,all_regi)                     "equation to limit the share of electricity that can be used for fehes"
-q_esCapInv(ttot,all_regi,all_teEs)                   "investment equation for end-use capital investments (energy service layer)"
-***----------------------------------------------------------------------------------------
-***-----------------------------------------------ESM module-------------------------------
-q_costEnergySys(ttot,all_regi)                       "energy system costs"
-
-q_costFu(ttot,all_regi)                              "costs of fuels"
-q_costOM(ttot,all_regi)                              "costs of o&m"
-q_costInv(ttot,all_regi)                             "costs of investment"
-
-q_cap(tall,all_regi,all_te,rlf)                      "definition of available capacities"
-q_capDistr(tall,all_regi,all_te)                     "distribute available capacities across grades"
-q_capTotal(ttot,all_regi,all_enty,all_enty)          "calculation of vm_capTotal as total capacity without technology differentation for technologies where there exists differentation"
-
-*** windoffshore-todo
-q_windoff_low(tall,all_regi)                         "semi-endogenous offshore wind power generation as a share of onshore wind energy, which is proportional to more than half of maxprod ratio"
-
-q_limitCapSe(ttot,all_regi,all_enty,all_enty,all_te)    "capacity constraint for se production"
-q_limitCapSe2se(ttot,all_regi,all_enty,all_enty,all_te) "capacity constraint for se to se transformation"
-q_limitCapFe(ttot,all_regi,all_te)                      "capacity constraint for fe production"
-
-q_capCumNet(t0,all_regi,all_te)                      "cumulative net capactiy"
-qm_deltaCapCumNet(ttot,all_regi,all_te)              "increase of cumulative net capacity"
-
-q_costTeCapital(tall,all_regi,all_te)                "calculation of investment cost for learning technologies"
-
-q_balPe(ttot,all_regi,all_enty)                      "balance of primary energy (pe)"
-q_balSe(ttot,all_regi,all_enty)                      "balance of secondary energy (se)"
-q_balFe(ttot,all_regi,all_enty,all_enty,all_te)     "balance of final energy (fe)"
-q_balFeAfterTax(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "balance of final energy after considering FE sectoral taxes (fe)"
-
-q_transPe2se(ttot,all_regi,all_enty,all_enty,all_te) "energy tranformation pe to se"
-q_transSe2fe(ttot,all_regi,all_enty,all_enty,all_te) "energy tranformation se to fe"
-q_transSe2se(ttot,all_regi,all_enty,all_enty,all_te) "energy transformation se to se"
-
-qm_fuel2pe(ttot,all_regi,all_enty)                   "constraint on cumulative fuel use"
-
-q_limitProd(ttot,all_regi,all_te,rlf)                "constraint on annual production"
-
->>>>>>> 2077ea43 (Update WACC branch with latest changes)
 q_emiCO2Sector(ttot,all_regi,emi_sectors)            "CO2 emissions from different sectors"
 q_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty) "determination of emissions"
 q_macBase(tall,all_regi,all_enty)                    "baseline emissions for all emissions subject to MACCs (type emiMacSector)"
