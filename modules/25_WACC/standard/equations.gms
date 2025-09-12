@@ -25,7 +25,7 @@
 q25_techwaccCost(t, regi)$(t.val > 2005)..
 v25_techwaccCost(t, regi)
 =e=
-sum((t2, tewacc)$((t2.val <= t.val) and (t.val - t2.val <= p_lifetime_max(regi,tewacc))),  
+sum((t2, tewacc)$((t2.val <= t.val) and (t.val - t2.val <= pm_lifetime_max(regi,tewacc))),  
     (vm_costInvTeDir(t2, regi, tewacc)          
      + vm_costInvTeAdj(t2, regi, tewacc)$teAdj(tewacc)
     ) * p25_techwacc(t2, regi, tewacc)              

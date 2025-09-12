@@ -228,7 +228,7 @@ pm_cf(tall,all_regi,all_te)                          "read-in parameter for capa
 p_tkpremused(all_regi,all_te)                        "turn-key cost premium used in the model (with a discount rate of 3 + pure rate of time preference), measured as relative increase of overnight investment costs)"
 pm_inco0_t(ttot,all_regi,all_te)                     "investment cost parameter including exogenuous time-variance for non-learning technologies [T$/TW]"
 pm_omeg(all_regi,opTimeYr,all_te)                    "technical depreciation parameter, gives the share of a capacity that is still usable after technical life time. [none/share, value between 0 and 1]"
-p_lifetime_max(all_regi,all_te)                      "maximum lifetime of a technology (generisdata_tech gives the average lifetime) [years]"
+pm_lifetime_max(all_regi,all_te)                      "maximum lifetime of a technology (generisdata_tech gives the average lifetime) [years]"
 p_discountedLifetime(all_te)                         "Sum over the discounted (@6%) depreciation factor (omega) [unitless]"
 pm_teAnnuity(all_te)                                 "Annuity factor of a technology [unitless]"
 

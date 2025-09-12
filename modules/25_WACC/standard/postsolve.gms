@@ -17,7 +17,7 @@
 ***  ) ;        
 
 p25_waccCostO_tewacc(t, regi, tewacc) =
-  sum((t2)$((t.val - t2.val <= p_lifetime_max(regi,tewacc)) and (t2.val <= t.val)),  
+  sum((t2)$((t.val - t2.val <= pm_lifetime_max(regi,tewacc)) and (t2.val <= t.val)),  
       (vm_costInvTeDir.l(t2, regi, tewacc)         
        + vm_costInvTeAdj.l(t2, regi, tewacc)$teAdj(tewacc)  
       ) * p25_techwacc(t2, regi, tewacc)              
@@ -29,7 +29,7 @@ p25_techwaccCostO(t, regi) = sum(tewacc, p25_waccCostO_tewacc(t, regi, tewacc));
 
 
 p25_waccCost1_tewacc(t, regi, tewacc) =
-  sum((t2)$((t.val - t2.val <= p_lifetime_max(regi,tewacc)) and (t2.val < t.val)),  
+  sum((t2)$((t.val - t2.val <= pm_lifetime_max(regi,tewacc)) and (t2.val < t.val)),  
       (vm_costInvTeDir.l(t2, regi, tewacc)         
        + vm_costInvTeAdj.l(t2, regi, tewacc)$teAdj(tewacc)  
       ) * p25_techwacc(t2, regi, tewacc)              
