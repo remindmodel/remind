@@ -49,7 +49,7 @@ p30_fuelex_dummy(all_regi)         "Dummy for bio-energy supply per region"
 ;
 
 variables
-vm_costFuBio(ttot,all_regi)        "fuel costs from bioenergy production [T$]"
+vm_costFuBio(ttot,all_regi)        "fuel costs from bioenergy production (can be negative depending on total agricultural cost) [T$]"
 vm_pebiolc_price(ttot,all_regi)    "bioenergy price based on MAgPIE supply curves [T$/TWa]"
 v30_pebiolc_costs(ttot,all_regi)   "Bioenergy costs according to MAgPIE supply curves [T$US]"
 v30_shift_r2                       "Least square to minimize during shift calculation"
