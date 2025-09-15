@@ -7,7 +7,7 @@
 *** SOF ./modules/05_initialCap/on/declarations.gms
 
 Parameter
-  p05_cap0(all_regi,all_te)                           "standing capacity in 2005 as calculated by the initialization routine generisinical. Unit: TWa"
+  p05_cap0(all_regi,all_te)                          "standing capacity in 2005 as calculated by the initialization routine generisinical. Unit: TWa"
   p05_initial_capacity(all_regi,all_te)              "capacitiy at t=2005, calculated from past deltacaps"
   p05_inital_input(all_regi,all_te)                  "input in 2005, calculated from past deltacaps and initial time-variable eta"
   p05_corrected_inital_input(all_regi,all_te)        "corrected input in 2005, calculated from past deltacaps and corrected time-variable eta"
@@ -28,6 +28,12 @@ $ifThen %cm_techcosts% == "GLO"
   p05_inco0_t_ref(ttot,all_regi,all_te)              "auxiliary parameter to load pm_inco0_t from reference run if cm_startyear > 2005 and initialCap is therefore not run"
 $endIf
   p05_pmdata_ref(all_regi,char,all_te)               "auxiliary parameter to load pm_data from reference run if cm_startyear > 2005 and initialCap is therefore not run"
+
+*** output parameters for 2005 calibration
+o05_INI_DirProdSeTe                                  "directly produced SE by technology in 2005 (from initialcap2)"
+o05_INI_TotalDirProdSe                               "Total direct SE production in 2005 (from initialcap2)"
+o05_INI_TotalCap                                     "Total electricity producing capacity in 2005 (from initialcap2)"
+o05_INI_AvCapFac                                     "Average regional capacity factor of the power sector in 2005 (from initialcap2)"
 ;
 
 Variables

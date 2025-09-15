@@ -161,7 +161,7 @@ q_balSe(t,regi,enty2)$( entySe(enty2) AND (NOT (sameas(enty2,"seel"))) )..
   =e=
     sum(se2fe(enty2,enty3,te), vm_demSe(t,regi,enty2,enty3,te))
   + sum(se2se(enty2,enty3,te), vm_demSe(t,regi,enty2,enty3,te))
-  + sum(demSeOth2te(enty2,te), v_demSeOth(t,regi,enty2,te) ) !! *** RLDC removal
+  + sum(demSeOth2te(enty2,te), vm_demSeOth(t,regi,enty2,te) ) !! *** RLDC removal
   + vm_Xport(t,regi,enty2)
 ;
 
@@ -805,6 +805,8 @@ q_emiCdrAll(t,regi)..
           + vm_demFeSector_afterTax(t,regi,"segasyn","fegas","cdr","ETS")) !! FE syngas
       !! multiply with ccs share 
       * v_ccsShare(t,regi) 
+  !! 5. biochar CDR 
+  -  sum(emiBiochar2te(enty,enty2,te,enty3),vm_emiTeDetail(t,regi,enty,enty2,te,enty3)) !! negative value
 
   !! ---- gross industry CDR
   !! 1. gross industry CCS-CDR  (from burning biogenic or synfuel + capturing + storing the co2)
@@ -947,18 +949,6 @@ q_limitCCS(regi,ccs2te2(enty,"ico2",te),rlf)$teCCS2rlf(te,rlf)..
         sum(ttot $(ttot.val ge 2005), pm_ts(ttot) * vm_co2CCS(ttot,regi,enty,"ico2",te,rlf))
         =l=
         pm_dataccs(regi,"quan",rlf);
-
-***---------------------------------------------------------------------------
-*' Emission constraint on SO2 after 2050:
-***---------------------------------------------------------------------------
-* RP: this equation is turned off as of 2025-03-11, because it has strong negative side
-*     effects on coal use - eg SSA strongly increases coal use until 2050 only because 
-*     it wants coal solids in 2070 and needs to ramp it up until 2050 due to this limit
-*     this limit 
-* q_limitSo2(ttot+1,regi) $((pm_ttot_val(ttot+1) ge max(cm_startyear,2055)) AND (cm_emiscen gt 1) AND (ord(ttot) lt card(ttot))) ..
-*         vm_emiTe(ttot+1,regi,"so2")
-*         =l=
-*         vm_emiTe(ttot,regi,"so2");
 
 
 ***---------------------------------------------------------------------------

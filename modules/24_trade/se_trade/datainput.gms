@@ -239,7 +239,7 @@ $ifthen.import_nzero_EU "%cm_import_EU%" == "nzero"
       * 1/3; !! each supplier region provide one-third of total imports
 *** 2030 
     p24_seTradeCapacity("2030",regi,regi2,"seliqsyn") = 
-      ((1.2 / sm_TWa_2_TWh) / p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi","DEU") ) 
+      ((0.3 / sm_TWa_2_TWh) / p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi","DEU") ) 
       * p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi",regi2) 
       * 1/3;
   );
@@ -294,7 +294,7 @@ $ifthen.import_nzero_bio_EU "%cm_import_EU%" == "nzero_bio"
       * 1/3; !! each supplier region provide one-third of total imports
 *** 2030 
     p24_seTradeCapacity("2030",regi,regi2,"seliqsyn") = 
-      ( (0.6 / sm_TWa_2_TWh) / p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi","DEU") )
+      ( (0.3 / sm_TWa_2_TWh) / p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi","DEU") )
       * p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi",regi2) 
       * 1/3; 
   );

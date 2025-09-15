@@ -220,6 +220,19 @@ q33_EW_upscaling_rate(ttot,regi)$(ord(ttot) lt card(ttot) AND pm_ttot_val(ttot) 
    (1+p33_EW_upScalingLimit(ttot))**pm_dt(ttot) * sum((rlf_cz33, rlf), v33_EW_onfield(ttot-1,regi,rlf_cz33,rlf)) + p33_EW_shortTermEW_Limit(regi)
 ;
 
+
+***---------------------------------------------------------------------------
+*' #### Biochar equations
+
+***---------------------------------------------------------------------------
+*' Revenue from Biochar 
+***---------------------------------------------------------------------------
+q33_biocharRevenue(t, regi)..
+    vm_biocharRevenue(t, regi)
+    =e= 
+    p33_BiocharPrice(t) * vm_demSeOth(t,regi,"sebiochar","biocharuse")
+;
+
 ***---------------------------------------------------------------------------
 *' #### OAE equations
 

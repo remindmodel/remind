@@ -153,7 +153,14 @@ parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit:
 $ondelim
 $include "./core/input/p_inco0.cs4r"
 $offdelim
-/;
+/
+;
+
+***---------------------------------------------------------------------------
+*** Biochar parametrization variation
+***---------------------------------------------------------------------------
+fm_dataglob("learn", te)$(sameAs(te, "biopyronly") OR sameAs(te, "biopyrhe") OR
+                          sameAs(te, "biopyrchp")) = %c_BCLearning%;
 
 ***---------------------------------------------------------------------------
 *** SSP-dependent technology assumptions
@@ -173,7 +180,7 @@ $ifthen.c_techAssumptScen "%c_techAssumptScen%" == "SSP1"
     fm_dataglob("learn",teVRE) =         1.1 * fm_dataglob("learn",teVRE);
     fm_dataglob("floorcost","spv") =     0.1 * fm_dataglob("floorcost","spv");
     fm_dataglob("floorcost","csp") =     0.8 * fm_dataglob("floorcost","csp");
-*** RP: because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
+*** because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
 *** values need to be set by hand!
     fm_dataglob("learn","windon")     =  0.17;  !! these values make 2100 wind onshore costs ~0.8 times those seen in SSP2 at the same cumCap
     fm_dataglob("floorcost","windon") =  200;
@@ -222,7 +229,7 @@ $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP5"
     fm_dataglob("learn",teVRE) =         0.8 * fm_dataglob("learn",teVRE);
     fm_dataglob("floorcost","spv") =     3   * fm_dataglob("floorcost","spv");
     fm_dataglob("floorcost","csp") =     1.3 * fm_dataglob("floorcost","csp");
-*** RP: because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
+*** because of the interaction of learn rates with floor costs, it is not possible to simply apply multiplicative factors. These 
 *** values need to be set by hand!
     fm_dataglob("learn","windon")     =  0.17;  !! these values make 2100 wind onshore costs ~1.5 times those seen in SSP2 at the same cumCap
     fm_dataglob("floorcost","windon") =  1000;
@@ -279,9 +286,9 @@ $if not "%cm_inco0RegiFactor%" == "off"           p_inco0(ttot,regi,te)$(p_inco0
 ***---------------------------------------------------------------------------
 
 *** generisdata_tech is in $2015. Needs to be converted to $2017
-fm_dataglob("inco0",te)        = s_D2015_2_D2017 * fm_dataglob("inco0",te);
-fm_dataglob("floorcost",te)    = s_D2015_2_D2017 * fm_dataglob("floorcost",te);
-fm_dataglob("omv",te)          = s_D2015_2_D2017 * fm_dataglob("omv",te);
+fm_dataglob("inco0",te)        = sm_D2015_2_D2017 * fm_dataglob("inco0",te);
+fm_dataglob("floorcost",te)    = sm_D2015_2_D2017 * fm_dataglob("floorcost",te);
+fm_dataglob("omv",te)          = sm_D2015_2_D2017 * fm_dataglob("omv",te);
 
 *** adjust costs for oae from USD/GtCaO to USD/GtC
 fm_dataglob("inco0", "oae_ng") = fm_dataglob("inco0", "oae_ng") / (cm_33_OAE_eff / sm_c_2_co2);
@@ -563,27 +570,12 @@ $include "./core/input/p_share_ind_fesos_bio.cs4r"
 $offdelim
 /;
 
-*** initialize pm_share_trans with the global value, will be updated after each negishi/nash iteration
-pm_share_trans("2005",regi) = 0.617;
-pm_share_trans("2010",regi) = 0.625;
-pm_share_trans("2015",regi) = 0.626;
-pm_share_trans("2020",regi) = 0.642;
-pm_share_trans("2025",regi) = 0.684;
-pm_share_trans("2030",regi) = 0.710;
-pm_share_trans("2035",regi) = 0.727;
-pm_share_trans("2040",regi) = 0.735;
-pm_share_trans("2045",regi) = 0.735;
-pm_share_trans("2050",regi) = 0.742;
-pm_share_trans("2055",regi) = 0.736;
-pm_share_trans("2060",regi) = 0.751;
-pm_share_trans("2070",regi) = 0.774;
-pm_share_trans("2080",regi) = 0.829;
-pm_share_trans("2090",regi) = 0.810;
-pm_share_trans("2100",regi) = 0.829;
-pm_share_trans("2110",regi) = 0.818;
-pm_share_trans("2130",regi) = 0.865;
-pm_share_trans("2150",regi) = 0.872;
 
+*** carbon intensities of coal, oil, and gas
+*** emissions factor of primary energy fossil fuels
+pm_cintraw("pecoal") = 26.1 / s_zj_2_twa;
+pm_cintraw("peoil")  = 20.0 / s_zj_2_twa;
+pm_cintraw("pegas")  = 15.0 / s_zj_2_twa;
 
 $ifthen.tech_CO2capturerate not "%c_tech_CO2capturerate%" == "off"
 p_PECarriers_CarbonContent(peFos)=pm_cintraw(peFos);
@@ -735,6 +727,16 @@ $include "./core/input/p_PE_histCap.cs3r"
 $offdelim
 ;
 
+*** historical secondary energy production
+table p_histProdSe(tall,all_regi,all_enty,all_te) "historical installed production/generation (TWa)"
+$ondelim
+$include "./core/input/p_histProdSe.cs3r"
+$offdelim
+;
+p_histProdSe(tall,regi,entySe,te) = p_histProdSe(tall,regi,entySe,te) / sm_TWa_2_TWh;
+p_histProdSeGrowthRate(tall,regi,entySe,te)$p_histProdSe(tall-1,regi,entySe,te) = ( p_histProdSe(tall,regi,entySe,te) - p_histProdSe(tall-1,regi,entySe,te) ) / p_histProdSe(tall-1,regi,entySe,te);
+p_maxhistProdSeGrowthRate(regi,entySe,te) = smax(tall, p_histProdSeGrowthRate(tall,regi,entySe,te)$ (tall.val >= 2019 and tall.val <= 2024));
+
 *** installed capacity availability
 $Offlisting
 table   f_cf(tall,all_regi,all_te) "installed capacity availability"
@@ -773,7 +775,6 @@ pm_cf(ttot,regi,"h2turbVRE")$(ttot.val ge 2025) = pm_cf(ttot,regi,"ngt");
 *** FS: set CF of additional t&d H2 for buildings and industry to t&d H2 stationary value
 pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
-
 
 *** Region- and tech-specific early retirement rates
 loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi),
@@ -903,6 +904,14 @@ parameter p_boundCapCCSindicator(all_regi)        "CCS used in until 2030"
 /
 $ondelim
 $include "./core/input/p_boundCapCCSindicator.cs4r"
+$offdelim
+/;
+
+*** read in data on Biochar capacities used as upper and lower bound on Biochar production in 2020 and 2025
+parameter p_boundCapBiochar(ttot, all_regi)        "installed and planned capacity of Biochar [t BC/a]"
+/
+$ondelim
+$include "./core/input/p_boundCapBiochar.cs4r"
 $offdelim
 /;
 
@@ -1273,6 +1282,10 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,"h22ch4")       = 0.5;
 *** CO2 storage and CDR technologies
   p_adj_coeff(ttot,regi,"ccsinje")      = 1.0;
+  p_adj_coeff(ttot,regi,"biopyronly")   = 0.55; !! like biochp and bioigcc;
+  p_adj_coeff(ttot,regi,"biopyrhe")     = 0.55; !! like biochp and bioigcc;
+  p_adj_coeff(ttot,regi,"biopyrchp")    = 0.55; !! like biochp and bioigcc;
+  p_adj_coeff(ttot,regi,"biopyrliq")    = 0.65; !! like bioftrec;
   p_adj_coeff(ttot,regi,"dac")          = 0.8;
   p_adj_coeff(ttot,regi,'oae_ng')       = 0.8;
   p_adj_coeff(ttot,regi,'oae_el')       = 0.8;
