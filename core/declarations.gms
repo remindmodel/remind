@@ -404,8 +404,9 @@ v_changeProdStartyear(ttot,all_regi,all_te)          "absolute change of output 
 v_relChangeProdStartYear(ttot,all_regi,all_te)       "calculating the relative change of output with respect to the reference run for each te [Percent]"
 v_changeProdStartyearSlack(ttot,all_regi,all_te)     "slack variable to allow a minimum cost-free change with respect to the reference run [TWa] for all energy-conversion tech, [GtC] for the CCS chain in ccs2te (pipelines/injection)"
 
+v_costFu(ttot,all_regi)                              "costs of primary energy production/extraction (can be negative depending on vm_costFuBio) [T$]"
 *** move to biomass module?
-vm_costFuBio(ttot,all_regi)                          "fuel costs from bioenergy production [T$]"
+vm_costFuBio(ttot,all_regi)                          "fuel costs from bioenergy production (can be negative depending on total agricultural cost) [T$]"
 
 *** move to CDR module?
 vm_omcosts_cdr(tall,all_regi)                        "O&M costs for spreading grinded rocks on fields [T$]"
@@ -460,8 +461,7 @@ vm_demFeNonEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) 
 
 *** energy system cost variables
 vm_costEnergySys(ttot,all_regi)                      "total energy system costs [T$]"
-v_costFu(ttot,all_regi)                              "costs of primary energy production (extraction) [T$]"
-vm_costFuEx(ttot,all_regi,all_enty)                  "costs of exhaustible primary energy production (extraction) of fossil fuels and uranium [T$]"
+vm_costFuEx(ttot,all_regi,all_enty)                  "costs of exhaustible primary energy production/extraction of fossil fuels and uranium [T$]"
 v_costOM(ttot,all_regi)                              "operation and maintenance costs of technologies [T$]"
 v_costInv(ttot,all_regi)                             "total technology investment costs (including adjustment costs) [T$]"
 
