@@ -159,7 +159,7 @@ if (! dir.exists(path_magpie)) path_magpie <- normalizePath(file.path(path_remin
   # if provided use ghg prices for land (MAgPIE) from a different REMIND run than the one MAgPIE runs coupled to
   use_external_ghgprices <- ifelse(is.na(cfg_mag$path_to_report_ghgprices), FALSE, TRUE)
   # always select 'coupling' scenario
-  cfg_mag <- setScenario(cfg_mag, "coupling", scenario_config = file.path(path_magpie, "config", "scenario_config.csv"))
+  cfg_mag <- gms::setScenario(cfg_mag, "coupling", scenario_config = file.path(path_magpie, "config", "scenario_config.csv"))
 
 # ----------------------------------------------------------------
 
@@ -168,7 +168,7 @@ message("### COUPLING ### Set working directory from ", getwd())
 setwd(path_magpie)
 message("                                         to ", getwd(), "\n")
 source("scripts/start_functions.R")
-runname <- gsub("output\\/", "", cfg$results_folder)
+runname <- gsub("output\\/", "", cfg_rem$results_folder)
 cfg_mag$results_folder <- paste0("output/",runname,"-mag-",i)
 cfg_mag$title          <- paste0(runname,"-mag-",i)
 
