@@ -508,6 +508,11 @@ parameter
 *'
 
 parameter
+  cm_startIter_MAgPIE          "Nash iteration in which MAgPIE runs for the first time"
+;
+  cm_startIter_MAgPIE = 1;  !! def = 10, by default MAgPIE is run first in iteration 10  !! regexp = [0-9]+
+
+parameter
   cm_MAgPIE_Nash      "run MAgPIE between Nash iterations"
 ;
   cm_MAgPIE_Nash   = 1;     !! def = 0  !! regexp = [0-1]

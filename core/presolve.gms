@@ -63,7 +63,7 @@ pm_demFeTotal0(ttot, regi)
 ***--------------------------------------
 *** calculate some emission factors
 ***--------------------------------------
-*** calculate global emission factor
+*** calculate global emission factor (excluding pebiolc)
 loop (emi2fuel(entyPe,enty),
   p_efFossilFuelExtrGlo(entyPe,enty)
   = sum(regi, p_emiFossilFuelExtr(regi,entyPe))
@@ -98,12 +98,23 @@ display p_efFossilFuelExtr;
 ***    MAgPIE coupling: run MAgPIE
 ***--------------------------------------
 
-*** Update pm_macBase when Magpie coupling is active, otherwise set it back 
-*** to input-data values. Since it has been overwritten in the previous Nash  
-*** iteration by calculations that follow further down, it must be set back to 
-*** initial values before these calculations are repeated in the current Nash iteration.
+*** Decide whether MAgPIE should be executed. Also triggers the update of MAgPIE data in multiple locations.
+if((    (ord(iteration) le 25                          AND (mod(ord(iteration), 4) eq 0))
+     OR (ord(iteration) gt 25 AND ord(iteration) le 45 AND (mod(ord(iteration), 5) eq 0))
+     OR (ord(iteration) gt 45                          AND (mod(ord(iteration), 5) eq 0))
+   )
+   AND ord(iteration) ge cm_startIter_MAgPIE
+   AND cm_MAgPIE_Nash eq 1,
 
-if (cm_MAgPIE_Nash eq 1,
+    sm_updateMagpieData = 1; !! Run MAgPIE in this Nash iteration
+    else
+    sm_updateMagpieData = 0; !! Don't run MAgPIE in this Nash iteration
+);
+
+*** Run MAgPIE
+if (sm_updateMagpieData eq 1,
+*** Temporarily change numeric round format (nr) and number of decimals (nd) of the
+*** outpt of the put_utility such that the arguments passed to mag2rem.R have integer format
   sm_tmp  = logfile.nr;
   sm_tmp2 = logfile.nd;
   logfile.nr = 1;
@@ -112,16 +123,35 @@ if (cm_MAgPIE_Nash eq 1,
   put_utility  "exec" / "Rscript mag2rem.R " sm_magpieIter;
   logfile.nr = sm_tmp;
   logfile.nd = sm_tmp2;
-*** MAgPIE coupling active: update pm_macBaseMagpie
-  Execute_Loadpoint 'magpieData.gdx' f_macBaseMagpie_coupling;
-  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
+
 *** In coupled runs overwrite pebiolc production from look-up table with actual MAgPIE values
 *** Read production of 2nd gen. purpose grown bioenergy from MAgPIE (given to MAgPIE from previous Remind run)
   Execute_Loadpoint 'magpieData.gdx' pm_pebiolc_demandmag;
+);
+
+*** At the beginning of each Nash iteration reset pm_macBaseMagpie to start values (from lookup table or from MAgPIE),
+*** since it gets changed by calculations further down in each Nash iteration, regardless of whether MAgPIE runs or not.
+if (sm_magpieIter gt 0,
+*** MAgPIE has run once at least: the start values for pm_macBaseMagpie come from the last MAgPIE iteration
+  Execute_Loadpoint 'magpieData.gdx' f_macBaseMagpie_coupling;
+  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
+*** Biomass emission factor is set to zero after MAgPIE has run at least one, since biomass emissions are included in the emissions imported above. 
+  p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0;
+*DK* In coupling mode LU emissions are abated in MAgPIE (moved here from core/datainput.gms)
+  pm_macSwitch(ttot,regi,enty)$emiMacMagpie(enty) = 0;
 else 
-*** No MAgPIE coupling active: set pm_macBaseMagpie back to initial values, since it gets changed by calculations further down in each Nash iteration
+*** MAgPIE has not run (and might never run): the start values for pm_macBaseMagpie come from input data file
   pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
 );
+
+display p_efFossilFuelExtr;
+
+*** DK: moved here from core/datainput.gms, because pm_macSwitch is changed above after first MAgPIE iteration
+*** An alternative to the approach below could be to introduce a new value for c_macswitch that only deactivates the LU MACs
+*** GA: Use long term (2050) pm_macSwitch to set p_macCostSwitch, as some MACCs
+*** are turned off in the short term 
+pm_macSwitch(ttot,regi,"co2cement_process") =0 ;
+p_macCostSwitch(enty)=pm_macSwitch("2050","USA",enty);
 
 *** DK: xxx code moved here from core/preloop.gms
 *** The N2O emissions generated during biomass production in agriculture (in MAgPIE)

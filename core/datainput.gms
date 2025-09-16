@@ -1001,12 +1001,8 @@ $if %cm_LU_emi_scen% == "SSP3"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0
 $if %cm_LU_emi_scen% == "SSP5"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0066/sm_EJ_2_TWa;
 $if %cm_LU_emi_scen% == "SDP"    p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0047/sm_EJ_2_TWa;
 
-*DK* In case REMIND is coupled to MAgPIE emissions are obtained from the MAgPIE reporting. Thus, emission factors are set to zero
-if (cm_MAgPIE_Nash eq 1,
-  p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0;
-);
-
-display p_efFossilFuelExtr;
+*DK* In case REMIND is coupled to MAgPIE emissions are obtained from the MAgPIE reporting. 
+*** Thus, emission factors are set to zero in core/presolve.gms after MAgPIE has run at least one.
 
 *** capacity factors (nur) are 1 by default
 pm_dataren(regi,"nur",rlf,te)     = 1;
@@ -1409,28 +1405,15 @@ $offdelim
 /;
 pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = fm_taxCO2eqHist(ttot,regi) * sm_DptCO2_2_TDpGtC;
 
-*DK* In coupling mode LU emissions are abated in MAgPIE
-*** An alternative to the approach below could be to introduce a new value for c_macswitch that only deactivates the LU MACs
-if (cm_MAgPIE_Nash eq 1,
-  pm_macSwitch(ttot,regi,enty)$emiMacMagpie(enty) = 0;
-else 
 *** As long as there is hardly any CO2 LUC reduction in MAgPIE we dont need MACs in REMIND
-  pm_macSwitch(ttot,regi,"co2luc") = 0;
+pm_macSwitch(ttot,regi,"co2luc") = 0;
 *** The tiny fraction n2ofertsom of total land use n2o can get slightly negative in some cases. Ignore MAC for n2ofertsom by default.
-  pm_macSwitch(ttot,regi,"n2ofertsom") = 0;
-);
+pm_macSwitch(ttot,regi,"n2ofertsom") = 0;
 
 
 * GA: Deactivate MAC abatement for historical periods, assuming no abatement
 * happens until 2030. 
 pm_macSwitch(ttot,regi,enty)$(ttot.val le 2025) = 0;
-
-
-* GA: Use long term (2050) pm_macSwitch to set p_macCostSwitch, as some MACCs
-* are turned off in the short term 
-p_macCostSwitch(enty)=pm_macSwitch("2050","USA",enty);
-pm_macSwitch(ttot,regi,"co2cement_process") =0 ;
-p_macCostSwitch("co2cement_process") =0 ;
 
 
 *** load econometric emission data

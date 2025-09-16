@@ -11,8 +11,14 @@
 *** Since in the coupling MAgPIE data is first required in core/presolve
 *** MAgPIE is executed there.
 
-*' In coupled runs landuse costs are directly transferred from MAgPIE run instead of reading them from the look-up table.
-if(sm_magpieIter gt 0, 
+
+*** MAC costs must be zero once MAgPIE has run for the first time because MAgPIE's total costs (see below) already include MAC costs.
+if(sm_magpieIter gt 0,
+  p26_macCostLu(ttot,regi) = 0;
+);
+
+*' Update landuse costs only and every time MAgPIE actually has run.
+if(sm_updateMagpieData gt 0, 
   Execute_Loadpoint 'magpieData.gdx' p26_totLUcost_coupling;
   p26_totLUcosts_withMAC(ttot,regi) = p26_totLUcost_coupling(ttot,regi);
 );

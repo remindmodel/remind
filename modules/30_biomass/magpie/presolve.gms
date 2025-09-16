@@ -9,7 +9,7 @@
 
 *** If MAgPIE runs inbetween the Nash iterations:
 *** ============================================================
-if(sm_magpieIter gt 0,
+if(sm_updateMagpieData gt 0,
 *** ============================================================
 
 *** Since in the coupling MAgPIE data is first required in core/presolve
@@ -59,7 +59,7 @@ if (execError > 0,
 );
 
 solve model_biopresolve_p using cns; !!! nothing has to be optimized here, just pure calculation
-p30_pebiolc_price_emu_preloop(ttot,regi) = vm_pebiolc_price.l(ttot,regi); !!! save for shift factor calculation and reporting
+p30_pebiolc_price_emu_preloop(ttot,regi) = vm_pebiolc_price.l(ttot,regi); !!! save for reporting
 
 ***------------ Step 2b: Calculate shift factor for prices -------------
 *** In the current coupling shift remains fixed to 0 (no shift, change of slope only)

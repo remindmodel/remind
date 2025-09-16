@@ -5,7 +5,8 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/26_agCosts/costs/datainput.gms
-*FP* read agricultural costs (all except bioenergy) from MAgPIE
+
+***FP* read agricultural costs (all except bioenergy) from MAgPIE
 
 pm_NXagr(tall,all_regi) = 0;
 
@@ -21,8 +22,7 @@ $offdelim
 /
 ;
 
-*' In coupled runs landuse costs are directly transferred from MAgPIE run instead of reading them from the look-up table.
-*** gets updated in presolve since it changes between Nash iterations
+*' In coupled runs landuse costs are first read from the look-up table and get updated (in presolve) when MAgPIE has run.
 
 *** Total land use costs including MAC costs (either from look-up table for standalone runs or from MAgPIE in coupled runs)
 *' @code
@@ -43,13 +43,7 @@ $offdelim
 /
 ;
 
-*' @code
 *** MAC costs (either from look-up table for standalone runs or zero in coupled runs because MAgPIE's total costs already include MAC costs)
-if(sm_magpieIter gt 0,
-  p26_macCostLu(ttot,regi) = 0;
-else
-  p26_macCostLu(ttot,regi) = p26_macCostLuLookup(ttot,regi,"%cm_LU_emi_scen%","%cm_rcp_scen%");
-);
+p26_macCostLu(ttot,regi) = p26_macCostLuLookup(ttot,regi,"%cm_LU_emi_scen%","%cm_rcp_scen%");
 
-*' @stop 
 *** EOF ./modules/26_agCosts/costs/datainput.gms
