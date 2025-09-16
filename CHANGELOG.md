@@ -25,7 +25,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - [#2196](https://github.com/remindmodel/remind/pull/2196) Update release scripts: the release uses the renv snapshot, the develop does not
 
 ### removed
--
+- **21_tax** remove input file with upper bound on subsidy for fuel extraction, as it no longer has any effect on the data 
+  [#2201](https://github.com/remindmodel/remind/pull/2201)
 
 ### fixed
 -
