@@ -188,18 +188,20 @@ emifacs_change <- emifacs / (setYears(emifacs[,2020,]))
 emis_projected <- setYears(emis) * emifacs_change * (RA_change)^elasticity
 
 # Special case 1: constant emission factor
+# Not yet needed since no sector is marked as constantef in the mapping
 # emis_projected_constantef <-  setYears(emis) * 1 * (RA_change)^elasticity
 # emis_projected[emis_projected_constantef == 1] <- emis_projected_constantef
 
 # Special case 2: constant emissions
+# Not yet needed since no sector is marked as constantemi in the mapping
+
+# fill NA values with zero
+emis_projected[is.na(emis_projected)] <- 0
 
 #add global dimension
 emis_projected_GLO <- dimSums(emis_projected,dim=1)
 getItems(emis_projected_GLO, dim = 1) <- "GLO"
 emis_projected <- mbind(emis_projected,emis_projected_GLO)
-
-# fill NA values with zero
-emis_projected[is.na(emis_projected)] <- 0
 
 ##############################################################
 ################ Aggregate to REMIND sectors #################
