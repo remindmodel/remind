@@ -6,7 +6,6 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/21_tax/on/preloop.gms
 
-
 *** ------------------------- Temporal development of final energy TAXES and SUBSIDIES, depending on cm_fetaxscen
 *** Set time path for:
 ***   - final energy taxes (p21_tau_fe_tax, p21_tau_pe2se_tax)
