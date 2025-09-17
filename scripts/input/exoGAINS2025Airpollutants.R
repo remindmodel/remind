@@ -90,28 +90,27 @@ rem_in <- rem_in_mo
 ########### Load GAINS emissions and emission factors ########
 ##############################################################
 
-if (ap_source == "CEDS") {
+if (ap_source == 1) { 
   emifacs <- read.magpie("emifacs_sectGAINS_sourceCEDS.cs4r")
   emis <- read.magpie("emi2020_sectGAINS_sourceCEDS.cs4r")
-} else if (ap_source == "GAINS") {
+} else if (ap_source == 2) {
   emifacs <- read.magpie("emifacs_sectGAINS_sourceGAINS.cs4r")
   emis <- read.magpie("emi2020_sectGAINS_sourceGAINS.cs4r")
 } else {
   stop(paste0("cm_APsource '",ap_source,"' is not supported by exoGAINS2025. Please select one of the following: CEDS, GAINS"))
 }
+getSets(emifacs) <- c("region","year","ssp", "scenario","sector", "species")
+getSets(emis) <- c("region","year","sector", "species")
 
 # Subset the chosen scenario and SSP
-emifacs <- mselect(emifacs, scenario = ap_scenario, ssp = ap_ssp)
+emifacs <- emifacs[,,list(ssp = ap_ssp, scenario = ap_scenario)]
 emifacs <- collapseDim(emifacs, dim = c("ssp", "scenario"))
-
-emis <- mselect(emis, scenario = ap_scenario, ssp = ap_ssp)
-emis <- collapseDim(emis, dim = c("ssp", "scenario"))
 
 ##############################################################
 ################### Load REMIND activities ###################
 ##############################################################
 
-map_GAINS2REMIND <- read.csv("mappingGAINS2025toREMINDactivities.csv", stringsAsFactors=FALSE)
+map_GAINS2REMIND <- read.csv("mappingGAINS2025toREMIND.csv", stringsAsFactors=FALSE)
 
 # End_Use_Services_Coal is mapped to an activity that is so far not existing in the REMIND reporting:
 # FE|Solids without BioTrad (EJ/yr) = Final Energy|Solids (EJ/yr) -  Final Energy|Solids|Biomass|Traditional (EJ/yr)
@@ -119,8 +118,21 @@ map_GAINS2REMIND <- read.csv("mappingGAINS2025toREMINDactivities.csv", stringsAs
 rem_in <- add_columns(rem_in,addnm = "FE|Solids without BioTrad (EJ/yr)",dim=3.1)
 rem_in[,,"FE|Solids without BioTrad (EJ/yr)"] <- rem_in[,,"FE|Solids (EJ/yr)"] - rem_in[,,"FE|Solids|Biomass|Traditional (EJ/yr)"]
 
+# compute relative regional share of global total
+rem_in_regishare_2020 <- rem_in[,2020,] / rem_in["GLO",2020,] 
+
+# set activities to NA that account for less than 0.1% of global activity in 2020
+# since huge relative changes in region x sector combinations with initially very low activity 
+# can lead to very high emissions that are not realistic
+rem_in_regishare_2020[rem_in_regishare_2020 < 0.001] <- NA
+
+mask <- setYears(rem_in_regishare_2020, NULL)
+mask[!is.na(mask)] <- 1
+rem_in <- rem_in * mask
+
 # select REMIND activity (RA) data according to order in mapping
-RA <- collapseNames(rem_in[,,map_GAINS2REMIND$REMIND])
+RA <- collapseNames(rem_in[,,map_GAINS2REMIND$REMINDactivity])
+# remove global dimension from RA
 RA <- RA["GLO",,invert=TRUE]
 
 ##############################################################
@@ -130,65 +142,64 @@ RA <- RA["GLO",,invert=TRUE]
 # logging missing sectors
 if(firstIteration){
   cat("List of sectors that are not in the GAINS2REMIND mapping because there is no emission and/or activity data.\nThese sectors will be omitted in the calculations!\n")
-  missing_sectors <- setdiff(getNames(emifacs,dim=1),map_GAINS2REMIND$GAINS)
+  missing_sectors <- setdiff(getNames(emifacs,dim=1),map_GAINS2REMIND$GAINSsector)
   cat(missing_sectors,sep="\n")
 }
 
 # Select GAINS data according to order in mapping and bring regions into same (alphabetically sorted) order as RA
-emifacs  <- emifacs[getRegions(RA),,map_GAINS2REMIND$GAINS]
-emis <- emis[getRegions(RA),,map_GAINS2REMIND$GAINS]
+emifacs  <- emifacs[getRegions(RA),,map_GAINS2REMIND$GAINSsector]
+emis <- emis[getRegions(RA),,map_GAINS2REMIND$GAINSsector]
 
 # Rename REMIND activities to GAINS sectors to make them compatible for calculation
 # IMPORTANT: before renaming, order of REMIND sectors must be identical to order of GAINS sectors, otherwise data would be mixed up
 # This was already taken care of by selecting both REMIND and GAINS data using the map_GAINS2REMIND (see above)
-getNames(RA) <- getNames(emifacs,dim=1)
-getSets(RA)[3] <- "sector"
+getItems(RA, dim = 3) <- getItems(emifacs,dim=3.1)
+getSets(RA) <- c("region","year","sector")
 
-# create magpie object of the structure of RA, fill with noef data from map_GAINS2REMIND
-noef <- RA * 0
-tmp <- as.magpie(map_GAINS2REMIND$noef)
-getNames(tmp) <- getNames(RA)
-noef[,,] <- tmp
-
-# create magpie object of the structure of RA, fill with elasticity data from map_GAINS2REIND
-ela <- RA * 0
+# create magpie object of the structure of RA, fill with elasticity data from map_GAINS2REMIND
+elasticity <- RA * 0
 tmp <- as.magpie(map_GAINS2REMIND$elasticity)
 getNames(tmp) <- getNames(RA)
-ela[,,] <- tmp
+elasticity[,,] <- tmp
+
+# create magpie object of the structure of emifacs, fill with constantef data from map_GAINS2REMIND
+constantef <- emifacs * 0
+tmp <- as.magpie(map_GAINS2REMIND$constantef)
+getNames(tmp) <- getNames(emifacs, dim = "sector")
+tmp <- add_dimension(tmp, add = "species", nm = getNames(emifacs, dim = "species"), dim = 3.2)
+constantef[,,] <- tmp
+
+# create magpie object of the structure of emifacs, fill with constantemi data from map_GAINS2REMIND
+constantemi <- emifacs * 0
+tmp <- as.magpie(map_GAINS2REMIND$constantemi)
+getNames(tmp) <- getNames(emifacs, dim = "sector")
+tmp <- add_dimension(tmp, add = "species", nm = getNames(emifacs, dim = "species"), dim = 3.2)
+constantemi[,,] <- tmp
 
 ##############################################################
 #################### Calculate emissions #####################
 ##############################################################
-RA_limited <- RA / (setYears(RA[,2015,] +1E-10))
-RA_limited[RA_limited>5] <- 5
 
-E <- ( emifacs[,,ap_scenario] / (setYears(emifacs[,2015,ap_scenario])+1E-10) + noef ) * setYears(emis[,2015,ap_scenario])  * ( RA_limited) ^ela
+# Compute relative change in activitiy compared to 2020
+RA_change <- RA / (setYears(RA[,2020,]))
+# Compute relative change in emission factor compared to 2020
+emifacs_change <- emifacs / (setYears(emifacs[,2020,])) 
+# Compute emissions with formula: emis = emifac/emifac(2020) * emis(2020) * (RA/RA(2020))^elasticity
+emis_projected <- setYears(emis) * emifacs_change * (RA_change)^elasticity
 
-# Calculate emissions using different formula: for emisions that have no emifacs
-# take all timesteps of emis and scale with relation of RA(SSP5) / RA(SSP2)
-# Preliminary: set RA_SSP2 to RA
-# GA: Since RA/RA is 1, and 1^0.4 is 1, this is essentially taking the 
-# exogenous emissions from the ap_scenario in emis unaltered
-RA_SSP2 <- RA
-E_noef <- emis[,,ap_scenario]  * ( RA / (RA_SSP2+1E-10) )^ela
+# Special case 1: constant emission factor
+# emis_projected_constantef <-  setYears(emis) * 1 * (RA_change)^elasticity
+# emis_projected[emis_projected_constantef == 1] <- emis_projected_constantef
 
-# Replace only those emission in E that have no emifacs
-sec_noef <- map_GAINS2REMIND[map_GAINS2REMIND$noef==1,]$GAINS
-E[,,sec_noef] <- E_noef[,,sec_noef]
+# Special case 2: constant emissions
 
-# add global dimension
-E <- mbind(E,dimSums(E,dim=1))
+#add global dimension
+emis_projected_GLO <- dimSums(emis_projected,dim=1)
+getItems(emis_projected_GLO, dim = 1) <- "GLO"
+emis_projected <- mbind(emis_projected,emis_projected_GLO)
 
-# Calibrate GAINS emissions to CEDS
-# on GAINS sector level, or CEDS sector level or REMIND sector level?
-# E_calibrated <- E * E(2015) / E_CEDS(2015)
+### NOT REVISED YET
 
-# read mapping from GAINS sectors to REMIND sectors
-map_GAINSsec2REMINDsec <- read.csv(
-  toolGetMapping(type = "sectoral", name = "mappingGAINS2025toREMINDsectors.csv", returnPathOnly = TRUE),
-  stringsAsFactors = FALSE,
-  na.strings = ""
-)
 # keep mixed version of GAINS sectors (mix of aggregated and extended, currently only appending waste sectors from extended to aggreagted)
 map_GAINSsec2REMINDsec <- subset(map_GAINSsec2REMINDsec, select = c("REMINDsectors","GAINS_mixed"))
 # remove lines with empty GAINS sectors (land use etc.)
