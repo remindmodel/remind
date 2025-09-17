@@ -261,6 +261,8 @@ $setGlobal initialCap  on             !! def = on
 *'
 *' * (exoGAINS):
 $setGlobal aerosols  exoGAINS2025         !! def = exoGAINS2025
+*' * (exoGAINS):      old realization with base year 2015 that enables to choose between GAINSlegacy data and corrupted GAINS2025 data
+*' * (exoGAINS2025):  new realization with base year 2020 based on cleaned GAINS2025 data that enables to choose between CEDS and GAINS as source for baseyear emissions
 *'---------------------    15_climate    ---------------------------------------
 *'
 *' * (off): no climate coupling
