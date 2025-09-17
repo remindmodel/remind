@@ -5,6 +5,9 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
+##############################################################
+######################## PREAMBLE ############################
+##############################################################
 
 # Only output messages to the log if it is the first run of exoGAINS2025 to avoid repetition in the log.txt file
 firstIteration = FALSE
@@ -23,21 +26,41 @@ for (pkg in c('madrat', 'dplyr', 'remind2', 'gdx')) {
 # stop madrat reporting its default settings _every damn time_
 invisible(getConfig(option = NULL, verbose = firstIteration))
 
-# Read AP settings for scenario, ssp, and source of baseyear emissions
-# read SSP scenario
+##############################################################
+######## READ AP SETTINGS FOR SCENARIO, SSP AND SOURCE #######
+##############################################################
+
 load("config.Rdata")
+# AP scenario
 ap_scenario <- cfg$gms$cm_APscen
-# Get actual SSP setting in the case where we should get it from cm_GDPpopScen
-if (cfg$gms$cm_APssp == "FROMGDPSSP"){
-  ap_ssp <- cfg$gms$cm_GDPpopScen
+# AP SSP
+if (ap_scenario == "MTFR" | ap_scenario == "SMIPVLLO") {
+  # MTFR and SMIPVLLO are not differentiated by SSP, so set to ap_scenario
+  ap_ssp <- ap_scenario
+} else if (ap_scenario == "CLE" | ap_scenario == "SLE" | ap_scenario == "SMIPbySSP") {
+  # CLE, SLE and SMIPbySSP are differentiated by SSP, but SSP4 is not available for SMIPbySSP
+  if (ap_scenario == "SMIPbySSP" & ((cfg$gms$cm_APssp == "SSP4") | (cfg$gms$cm_APssp == "FROMGDPSSP" & cfg$gms$cm_GDPpopScen == "SSP4"))) {
+    stop(paste0("cm_APssp 'SSP4' is not available for SMIPbySSP. Please select another SSP."))
+  }
+  # Determine ap_ssp based on cm_APscen and cm_APssp setting
+  if (cfg$gms$cm_APssp == "FROMGDPSSP"){
+    ap_ssp <- cfg$gms$cm_GDPpopScen
+  } else if (cfg$gms$cm_APssp %in% c("SSP1", "SSP2", "SSP3", "SSP4", "SSP5")) {
+    ap_ssp <- cfg$gms$cm_APssp
+  } else {
+    stop(paste0("cm_APssp '", cfg$gms$cm_APssp,"' is not supported by exoGAINS2025. Please select one of the following: FROMGDPSSP, SSP1-5"))
+  }
 } else {
-  ap_ssp <- cfg$gms$cm_APssp
+  stop(paste0("cm_APscen '",ap_scenario,"' is not supported by exoGAINS2025. Please select one of the following: CLE, SLE, MTFR, SMIPbySSP, SMIPVLLO"))
 }
-# TODO: FIXME: REMOVE ==================================================================================
-ap_scenario <-"CLE"
+# AP source for baseyear emissions
+ap_source <- cfg$gms$cm_APsource
 
+##############################################################
+################ READ IN GDX AND RUN REPORTING ###############
+##############################################################
 
-# read in REMIND avtivities, use input.gdx if the fulldata_exoGAINS.gdx is not available
+# Use input.gdx if the fulldata_exoGAINS2025.gdx is not available
 if (file.exists("fulldata_exoGAINS2025.gdx")) {
   gdx <- "fulldata_exoGAINS2025.gdx"
   iterationInfo <- paste("iteration", as.numeric(readGDX(gdx = gdx, "o_iterationNumber", format = "simplest")))
@@ -48,7 +71,7 @@ if (file.exists("fulldata_exoGAINS2025.gdx")) {
 
 t <- c(seq(2005,2060,5),seq(2070,2110,10),2130,2150)
 rem_in_mo <- NULL
-message("With data from ", iterationInfo, ": exoGAINSAirpollutants.R calls remind2::reportMacroEconomy ", appendLF = FALSE)
+message("With data from ", iterationInfo, ": exoGAINS2025Airpollutants.R calls remind2::reportMacroEconomy ", appendLF = FALSE)
 rem_in_mo <- mbind(rem_in_mo,reportMacroEconomy(gdx)[,t,])
 message("- reportPE ", appendLF = FALSE)
 rem_in_mo <- mbind(rem_in_mo,reportPE(gdx)[,t,])
@@ -57,32 +80,38 @@ rem_in_mo <- mbind(rem_in_mo,reportSE(gdx)[,t,])
 message("- reportFE")
 rem_in_mo <- mbind(rem_in_mo,reportFE(gdx)[,t,])
 
-# delete "+" and "++" from variable names
+# delete "+", "++" and "+++" from variable names
 rem_in_mo <- piamutils::deletePlus(rem_in_mo)
 
 # for easier debugging use rem_in in the remainder of the script
 rem_in <- rem_in_mo
 
-# load GAINS emissions and emission factors
-ef_gains  <- read.magpie("ef_gains.cs4r")
-emi_gains <- read.magpie("emi_gains.cs4r")
+##############################################################
+########### Load GAINS emissions and emission factors ########
+##############################################################
 
-# Subset the chosen SSP (or GAINSlegacy if asked), taking special care of ambiguity between sets
-ef_gains  <- collapseDim(ef_gains[,,list(V6 = ap_ssp)], 3.4)
-emi_gains <- collapseDim(emi_gains[,,list(V6 = ap_ssp)], 3.4)
+if (ap_source == "CEDS") {
+  emifacs <- read.magpie("emifacs_sectGAINS_sourceCEDS.cs4r")
+  emis <- read.magpie("emi2020_sectGAINS_sourceCEDS.cs4r")
+} else if (ap_source == "GAINS") {
+  emifacs <- read.magpie("emifacs_sectGAINS_sourceGAINS.cs4r")
+  emis <- read.magpie("emi2020_sectGAINS_sourceGAINS.cs4r")
+} else {
+  stop(paste0("cm_APsource '",ap_source,"' is not supported by exoGAINS2025. Please select one of the following: CEDS, GAINS"))
+}
 
-# ship_ef  <- read.magpie("../../modules/11_aerosols/exoGAINS/input/ef_ship.cs4r")
-# ship_emi <- read.magpie("../../modules/11_aerosols/exoGAINS/input/emi_ship.cs4r")
+# Subset the chosen scenario and SSP
+emifacs <- mselect(emifacs, scenario = ap_scenario, ssp = ap_ssp)
+emifacs <- collapseDim(emifacs, dim = c("ssp", "scenario"))
 
-# avi_ef  <- read.magpie("../../modules/11_aerosols/exoGAINS/input/ef_avi.cs4r")
-# avi_emi <- read.magpie("../../modules/11_aerosols/exoGAINS/input/emi_avi.cs4r")
-
+emis <- mselect(emis, scenario = ap_scenario, ssp = ap_ssp)
+emis <- collapseDim(emis, dim = c("ssp", "scenario"))
 
 ##############################################################
 ################### Load REMIND activities ###################
 ##############################################################
 
-map_GAINS2REMIND <- read.csv("mappingGAINSmixedtoREMIND17activities.csv", stringsAsFactors=FALSE)
+map_GAINS2REMIND <- read.csv("mappingGAINS2025toREMINDactivities.csv", stringsAsFactors=FALSE)
 
 # End_Use_Services_Coal is mapped to an activity that is so far not existing in the REMIND reporting:
 # FE|Solids without BioTrad (EJ/yr) = Final Energy|Solids (EJ/yr) -  Final Energy|Solids|Biomass|Traditional (EJ/yr)
@@ -90,39 +119,30 @@ map_GAINS2REMIND <- read.csv("mappingGAINSmixedtoREMIND17activities.csv", string
 rem_in <- add_columns(rem_in,addnm = "FE|Solids without BioTrad (EJ/yr)",dim=3.1)
 rem_in[,,"FE|Solids without BioTrad (EJ/yr)"] <- rem_in[,,"FE|Solids (EJ/yr)"] - rem_in[,,"FE|Solids|Biomass|Traditional (EJ/yr)"]
 
-# select REMIND data according to order in mapping
+# select REMIND activity (RA) data according to order in mapping
 RA <- collapseNames(rem_in[,,map_GAINS2REMIND$REMIND])
 RA <- RA["GLO",,invert=TRUE]
 
-# for sectors that have no GAINS emission factors use SSP2 data to create a dependence on SSPs
-# Preliminary: ommit this step
-# RA_SSP2 <- collapseNames(rem_in[,,map_GAINS2REMIND$REMIND][,,"SSP2-Ref-SPA0-V15"])
-# RA_SSP2 <- RA_SSP2["GLO",,invert=TRUE]
-
 ##############################################################
-###################   select GAINS data    ###################
+###################   Select GAINS data    ###################
 ##############################################################
 
 # logging missing sectors
 if(firstIteration){
   cat("List of sectors that are not in the GAINS2REMIND mapping because there is no emission and/or activity data.\nThese sectors will be omitted in the calculations!\n")
-  missing_sectors <- setdiff(getNames(ef_gains,dim=1),map_GAINS2REMIND$GAINS)
+  missing_sectors <- setdiff(getNames(emifacs,dim=1),map_GAINS2REMIND$GAINS)
   cat(missing_sectors,sep="\n")
 }
 
-# select GAINS data according to order in mapping and bring regions into same (alphabetically sorted) order as RA
-ef_gains  <- ef_gains[getRegions(RA),,map_GAINS2REMIND$GAINS]
-emi_gains <- emi_gains[getRegions(RA),,map_GAINS2REMIND$GAINS]
+# Select GAINS data according to order in mapping and bring regions into same (alphabetically sorted) order as RA
+emifacs  <- emifacs[getRegions(RA),,map_GAINS2REMIND$GAINS]
+emis <- emis[getRegions(RA),,map_GAINS2REMIND$GAINS]
 
-# rename REMIND activities to GAINS sectors to make them compatible for calcualtion
+# Rename REMIND activities to GAINS sectors to make them compatible for calculation
 # IMPORTANT: before renaming, order of REMIND sectors must be identical to order of GAINS sectors, otherwise data would be mixed up
 # This was already taken care of by selecting both REMIND and GAINS data using the map_GAINS2REMIND (see above)
-getNames(RA) <- getNames(ef_gains,dim=1)
+getNames(RA) <- getNames(emifacs,dim=1)
 getSets(RA)[3] <- "sector"
-
-# Preliminary: ommit this step
-# getNames(RA_SSP2) <- getNames(ef_gains,dim=1)
-# getSets(RA_SSP2)[3] <- "sector"
 
 # create magpie object of the structure of RA, fill with noef data from map_GAINS2REMIND
 noef <- RA * 0
@@ -142,17 +162,17 @@ ela[,,] <- tmp
 RA_limited <- RA / (setYears(RA[,2015,] +1E-10))
 RA_limited[RA_limited>5] <- 5
 
-E <- ( ef_gains[,,ap_scenario] / (setYears(ef_gains[,2015,ap_scenario])+1E-10) + noef ) * setYears(emi_gains[,2015,ap_scenario])  * ( RA_limited) ^ela
+E <- ( emifacs[,,ap_scenario] / (setYears(emifacs[,2015,ap_scenario])+1E-10) + noef ) * setYears(emis[,2015,ap_scenario])  * ( RA_limited) ^ela
 
-# Calculate emissions using different formula: for emisions that have no ef_gains
-# take all timesteps of emi_gains and scale with relation of RA(SSP5) / RA(SSP2)
+# Calculate emissions using different formula: for emisions that have no emifacs
+# take all timesteps of emis and scale with relation of RA(SSP5) / RA(SSP2)
 # Preliminary: set RA_SSP2 to RA
 # GA: Since RA/RA is 1, and 1^0.4 is 1, this is essentially taking the 
-# exogenous emissions from the ap_scenario in emi_gains unaltered
+# exogenous emissions from the ap_scenario in emis unaltered
 RA_SSP2 <- RA
-E_noef <- emi_gains[,,ap_scenario]  * ( RA / (RA_SSP2+1E-10) )^ela
+E_noef <- emis[,,ap_scenario]  * ( RA / (RA_SSP2+1E-10) )^ela
 
-# Replace only those emission in E that have no ef_gains
+# Replace only those emission in E that have no emifacs
 sec_noef <- map_GAINS2REMIND[map_GAINS2REMIND$noef==1,]$GAINS
 E[,,sec_noef] <- E_noef[,,sec_noef]
 
@@ -165,7 +185,7 @@ E <- mbind(E,dimSums(E,dim=1))
 
 # read mapping from GAINS sectors to REMIND sectors
 map_GAINSsec2REMINDsec <- read.csv(
-  toolGetMapping(type = "sectoral", name = "mappingGAINStoREMINDsectors.csv", returnPathOnly = TRUE),
+  toolGetMapping(type = "sectoral", name = "mappingGAINS2025toREMINDsectors.csv", returnPathOnly = TRUE),
   stringsAsFactors = FALSE,
   na.strings = ""
 )
@@ -240,7 +260,7 @@ writeGDX(out,file="p11_emiAPexsolve",period_with_y = FALSE)
 # E_rem["GLO",,getNames(tmp)] <- ship_E[,,gases][,,ap_scenario]
 #
 # # Add BC and NOx for missing Int. Aviation sector from extra file from Steve
-# RA_avi <- collapseNames(time_interpolate(rem_in["GLO",,"Final Energy|Transportation|Liquids (EJ/yr)"][,,scenario], interpolated_year=getYears(ef_gains), integrate_interpolated_years=TRUE, extrapolation_type="constant"))
+# RA_avi <- collapseNames(time_interpolate(rem_in["GLO",,"Final Energy|Transportation|Liquids (EJ/yr)"][,,scenario], interpolated_year=getYears(emifacs), integrate_interpolated_years=TRUE, extrapolation_type="constant"))
 # # calculate aviation emission the same way as gains emissions
 # avi_E <- (avi_ef/setYears(avi_ef[,2015,])) * setYears(avi_emi[,2015,]) * (RA_avi/setYears(RA_avi[,2015,]))
 # CEDS16 <- add_columns(CEDS16,addnm = getNames(avi_E,dim=1)) # filled with NA
@@ -248,5 +268,5 @@ writeGDX(out,file="p11_emiAPexsolve",period_with_y = FALSE)
 # CEDS16["GLO",,getNames(avi_E[,,ap_scenario])] <- avi_E[,,ap_scenario] # data only contains BC and NOx emissions from aircraft
 
 if(firstIteration){
-  cat("\nExoGAINS - end of first iteration.\n\n")
+  cat("\nExoGAINS2025 - end of first iteration.\n\n")
 }
