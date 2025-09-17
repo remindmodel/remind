@@ -91,11 +91,11 @@ rem_in <- rem_in_mo
 ##############################################################
 
 if (ap_source == 1) { 
-  emifacs <- read.magpie("emifacs_sectGAINS_sourceCEDS.cs4r")
-  emis <- read.magpie("emi2020_sectGAINS_sourceCEDS.cs4r")
+  emifacs <- read.magpie("../../modules/11_aerosols/exoGAINS2025/input/emifacs_sectGAINS_sourceCEDS.cs4r")
+  emis <- read.magpie("../../modules/11_aerosols/exoGAINS2025/input/emi2020_sectGAINS_sourceCEDS.cs4r")
 } else if (ap_source == 2) {
-  emifacs <- read.magpie("emifacs_sectGAINS_sourceGAINS.cs4r")
-  emis <- read.magpie("emi2020_sectGAINS_sourceGAINS.cs4r")
+  emifacs <- read.magpie("../../modules/11_aerosols/exoGAINS2025/input/emifacs_sectGAINS_sourceGAINS.cs4r")
+  emis <- read.magpie("../../modules/11_aerosols/exoGAINS2025/input/emi2020_sectGAINS_sourceGAINS.cs4r")
 } else {
   stop(paste0("cm_APsource '",ap_source,"' is not supported by exoGAINS2025. Please select one of the following: CEDS, GAINS"))
 }
@@ -110,7 +110,7 @@ emifacs <- collapseDim(emifacs, dim = c("ssp", "scenario"))
 ################### Load REMIND activities ###################
 ##############################################################
 
-map_GAINS2REMIND <- read.csv("mappingGAINS2025toREMIND.csv", stringsAsFactors=FALSE)
+map_GAINS2REMIND <- read.csv("../../modules/11_aerosols/exoGAINS2025/input/mappingGAINS2025toREMIND.csv", stringsAsFactors=FALSE)
 
 # End_Use_Services_Coal is mapped to an activity that is so far not existing in the REMIND reporting:
 # FE|Solids without BioTrad (EJ/yr) = Final Energy|Solids (EJ/yr) -  Final Energy|Solids|Biomass|Traditional (EJ/yr)
