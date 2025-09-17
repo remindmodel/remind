@@ -91,6 +91,8 @@ all_APssp     "all air pollutant SSPs. GAINSlegacy means the SSP is picked with 
     SSP3
     SSP4
     SSP5
+    MTFR
+    SMIPVLLO
     GAINSlegacy
     SSP2IndiaHigh
 /
@@ -108,6 +110,7 @@ all_APscen     "all air pollutant scenarios"
     VLE
     FLE
     FLE_building_transport
+    MTFR
     MFR
     MFR_Transports
     GlobalEURO6

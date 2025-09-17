@@ -6,4 +6,3 @@
 # |  Contact: remind@pik-potsdam.de
 name,type,reason
 
-cm_APsource,input,choice of data source for baseyear emissions only possible in exoGAINS2025
