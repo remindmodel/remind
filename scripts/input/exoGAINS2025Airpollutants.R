@@ -198,41 +198,32 @@ emis_projected_GLO <- dimSums(emis_projected,dim=1)
 getItems(emis_projected_GLO, dim = 1) <- "GLO"
 emis_projected <- mbind(emis_projected,emis_projected_GLO)
 
-### NOT REVISED YET
+# fill NA values with zero
+emis_projected[is.na(emis_projected)] <- 0
 
-# keep mixed version of GAINS sectors (mix of aggregated and extended, currently only appending waste sectors from extended to aggreagted)
-map_GAINSsec2REMINDsec <- subset(map_GAINSsec2REMINDsec, select = c("REMINDsectors","GAINS_mixed"))
-# remove lines with empty GAINS sectors (land use etc.)
-map_GAINSsec2REMINDsec <- na.omit(map_GAINSsec2REMINDsec)
-# remove double entries that are due to the fact that the original file contains higher sectoral resolutions in some columns that have been removed here
-# not necessary, since speed_aggregate seems to remove duplicates
-#map_GAINSsec2REMINDsec <- map_GAINSsec2REMINDsec[-which(duplicated(map_GAINSsec2REMINDsec)),]
+##############################################################
+################ Aggregate to REMIND sectors #################
+##############################################################
 
-E_rem <- madrat::toolAggregate(x = E, weight = NULL, dim = 3.1, rel = map_GAINSsec2REMINDsec, from = "GAINS_mixed", to = "REMINDsectors")
+emis_projected_rem <- madrat::toolAggregate(x = emis_projected, weight = NULL, dim = "sector", rel = map_GAINS2REMIND, from = "GAINSsector", to = "REMINDsector")
 
-getNames(E_rem,dim=2) <- gsub("VOC","NMVOC",getNames(E_rem,dim=2)) # rename emissions to names defined in emiRCP
+# rename emissions to names defined in emiRCP
+getNames(emis_projected_rem,dim=2) <- gsub("VOC","NMVOC",getNames(emis_projected_rem,dim=2)) 
+getNames(emis_projected_rem,dim=2) <- gsub("SO2","SOx",getNames(emis_projected_rem,dim=2)) 
 
 # Preliminary: export only all_sectorEmi (sectors that are in all_exogEmi (ag,waste,avi,ship) will be added later)
 # we leave out Waste that is not part of all_sectorEmi
 all_sectorEmi <- c("solvents","indprocess", "indst", "res", "trans", "extraction", "power")
-getNames(E_rem) <- gsub("SO2","SOx",getNames(E_rem))
-
-# get rid of SSPx in the name
-E_rem <- collapseNames(E_rem)
-
-# for test purpose: limit high values (indst AFR,CHN,LAM,OAS,IND)
-#E_rem[E_rem>100] <- 100
 
 # rename dimension to the ones we need in GAMS (gdx will use these)
-getSets(E_rem) <- c("all_regi","tall","all_sectorEmi","emiRCP")
-#write.report(E_rem,file=paste0("exoGAINS_AP",format(Sys.time(), "_%Y-%m-%d_%H.%M.%S"),".mif"))
+getSets(emis_projected_rem) <- c("all_regi","tall","all_sectorEmi","emiRCP")
 
 ##############################################################
 ###################### Export to gdx  ########################
 ##############################################################
 
-# selcet data that will be exported to GDX
-out <- E_rem[,,all_sectorEmi]["GLO",,invert=TRUE]
+# select data that will be exported to GDX
+out <- emis_projected_rem[,,all_sectorEmi]["GLO",,invert=TRUE]
 
 # construct attributes that are required by writeGDX
 gdxdata <- list()
@@ -247,36 +238,6 @@ attributes(out) <- c(attributes(out),list(gdxdata =gdxdata))
 
 # Write gdx with following dimensions: p11_emiAPexsolve(tall,all_regi,all_sectorEmi,emiRCP)
 writeGDX(out,file="p11_emiAPexsolve",period_with_y = FALSE)
-
-# Use this to produce file with start values for REMIND
-#out_cs4r <- add_dimension(out,add = "ssp", nm = ap_scenario,dim=3.3)
-#write.magpie(out_cs4r,file_name = "f11_emiAPexsolve.cs4r")
-
-# library(luplot)
-# for (sec in getNames(E_rem,dim=1)) {
-#   dat <- as.ggplot(E_rem[,,sec])
-#   dat <- na.omit(dat)
-#   p<-ggplot(data=dat, aes(x=Year, y=Value)) +  geom_line(aes(colour=Data2)) + facet_wrap(~Region,scales = "free_y")
-#   ggsave(filename=paste0("Regions_",sec,".png"),p,scale=1.5,width=32,height=18,unit="cm",dpi=150)
-# }
-#
-# stop()
-#
-# # Add missing Int. Shipping sector from extra ECLIPSE file
-# RA_ship <- setNames(rem_in["GLO",,"FE|Transport|Liquids (EJ/yr)"],NULL)
-# # calculate shippin emission the same way as gains emissions
-# ship_E <- (ship_ef/setYears(ship_ef[,2015,])) * setYears(ship_emi[,2015,]) * (RA_ship/setYears(RA_ship[,2015,]))
-# E_rem <- add_columns(E_rem,addnm = getNames(ship_E,dim=1)) # filled with NA
-# gases <- getNames(E_rem,dim=2)
-# E_rem["GLO",,getNames(tmp)] <- ship_E[,,gases][,,ap_scenario]
-#
-# # Add BC and NOx for missing Int. Aviation sector from extra file from Steve
-# RA_avi <- collapseNames(time_interpolate(rem_in["GLO",,"Final Energy|Transportation|Liquids (EJ/yr)"][,,scenario], interpolated_year=getYears(emifacs), integrate_interpolated_years=TRUE, extrapolation_type="constant"))
-# # calculate aviation emission the same way as gains emissions
-# avi_E <- (avi_ef/setYears(avi_ef[,2015,])) * setYears(avi_emi[,2015,]) * (RA_avi/setYears(RA_avi[,2015,]))
-# CEDS16 <- add_columns(CEDS16,addnm = getNames(avi_E,dim=1)) # filled with NA
-# CEDS16[,,getNames(avi_E,dim=1)] <- 0 # replace NA with zero
-# CEDS16["GLO",,getNames(avi_E[,,ap_scenario])] <- avi_E[,,ap_scenario] # data only contains BC and NOx emissions from aircraft
 
 if(firstIteration){
   cat("\nExoGAINS2025 - end of first iteration.\n\n")
