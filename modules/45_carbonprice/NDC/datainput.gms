@@ -30,7 +30,7 @@ elseif cm_NDC_divergentScenario = 2,
 Table f45_factorTargetyear(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with multiplier for target year emissions vs 2015 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]"
 $offlisting
 $ondelim
-$include "./modules/45_carbonprice/NDC/input/fm_factorTargetyearLULUCF.cs3r"
+$include "./modules/45_carbonprice/NDC/input/fm_factorTargetyear.cs3r"
 $offdelim
 $onlisting
 ;
