@@ -1,7 +1,6 @@
 ﻿mag;enty;factorMag2Rem;parameter
 Demand|Bioenergy|2nd generation|++|Bioenergy crops;;1/31.536;pm_pebiolc_demandmag
 Costs Without Incentives;;1/1000/1000;p26_totLUcost_coupling
-Costs Accounting|+|Trade;;1/1000/1000;xxx
 Prices|Bioenergy;;0.0315576;p30_pebiolc_pricemag
 Emissions|CO2|Land|+|Land-use Change;co2luc;1/1000*12/44;f_macBaseMagpie_coupling
 Emissions|CO2|Land|Land-use Change|+|Deforestation;co2lucPos;1/1000*12/44;f_macBaseMagpie_coupling
