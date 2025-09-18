@@ -14,5 +14,6 @@
 
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%aerosols%" == "exoGAINS" $include "./modules/11_aerosols/exoGAINS/realization.gms"
+$Ifi "%aerosols%" == "exoGAINS2025" $include "./modules/11_aerosols/exoGAINS2025/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
 *** EOF ./modules/11_aerosols/module.gms
