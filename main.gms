@@ -260,7 +260,9 @@ $setGlobal initialCap  on             !! def = on
 *'---------------------    11_aerosols    --------------------------------------
 *'
 *' * (exoGAINS):
-$setGlobal aerosols  exoGAINS         !! def = exoGAINS
+$setGlobal aerosols  exoGAINS2025         !! def = exoGAINS2025
+*' * (exoGAINS):      old realization with base year 2015 that enables to choose between GAINSlegacy data and corrupted GAINS2025 data
+*' * (exoGAINS2025):  new realization with base year 2020 based on cleaned GAINS2025 data that enables to choose between CEDS and GAINS as source for baseyear emissions
 *'---------------------    15_climate    ---------------------------------------
 *'
 *' * (off): no climate coupling
@@ -1271,6 +1273,12 @@ parameter
 ;
   c_edgetReportAfter2010 = 0;   !! def = 0 full reporting  !! regexp = 1|0
 *'
+parameter
+  cm_APsource                "data source for air pollution baseyear (2020) emissions"
+;
+  cm_APsource           = 1;      !! def = 1  !! regexp = 1|2
+*' *  (1): CEDS2025 emissions (mapped to GAINS sectors) are used as baseyear (2020) emissions
+*' *  (2): GAINS2025 emissions (from baseline scenario) are used as baseyear (2020) emissions
 *'
 *'
 ***-----------------------------------------------------------------------------
@@ -1647,10 +1655,12 @@ $setGLobal cm_exogDem_scen off !! def off  !! regexp = off|ariadne_(bal|ensec|hi
 $setGlobal cm_Ger_Pol  off !! def off
 *** cm_altFeEmiFac <- "off"  # def <- "off", regions that should use alternative data from "umweltbundesamt" on emission factors for final energy carriers (ex. "EUR_regi, NEU_regi")
 $setGlobal cm_altFeEmiFac  EUR_regi, NEU_regi        !! def = "EUR_regi, NEU_regi"
-***  cm_incolearn "change floor investment cost value"
+***  cm_incolearn "change cost reduction potential of capital costs via endogenous learning"
+***  This switch enables to change the floor cost of technologies. The incolearn set by this switch is the difference between initial costs and floor costs.
+***  The initial costs are set in generisdata_tech.prn for non-regionalized investment cost and set by p_inco0 for regionalized investment cost.
 ***   Example on how to use:
 ***     cm_incolearn  "windon=1600,spv=5160,csp=9500"
-***       floor investment costs from learning set to 1600 for wind onshore, 5160 for solar photovoltaic and 9500 for concentrated solar power.
+***     cost reduction potential set to 1600 for wind onshore, 5160 for solar photovoltaic and 9500 for concentrated solar power.
 $setglobal cm_incolearn  off !! def = off
 *** cm_storageFactor "scale curtailment and storage requirements. [factor]"
 ***   def <- "off" = no change for curtailment and storage requirements;
@@ -1944,22 +1954,20 @@ $setglobal cm_demScen  SSP2     !! def = SSP2
 $setGlobal c_scaleEmiHistorical  on  !! def = on  !! regexp = off|on
 $SetGlobal cm_quick_mode  off          !! def = off  !! regexp = off|on
 $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
-*' cm_APssp "air polution SSP or emission factors version"
-*' Note that SSP4 data is partly missing or copied from SSP3. Check carefully before using SSP4.
+*' cm_APssp "air pollution SSP"
+*' (SSP1-5): SSP selection for emission factors based on GAINS2025 data
 *' (FROMGDPSSP): Shortcut to copy SSP from all_GDPpopScen
-*' (SSP1-5): SSP-specific emission factors GAINS runs from the 2025 ScenarioMIP effort
-*' (GAINSlegacy): emission factors from legacy GAINS runs
+*' (GAINSlegacy): selection for emission factors based on legacy GAINS data (not available for 11_aerosols/exoGAINS2025)
 $setGlobal cm_APssp  FROMGDPSSP          !! def = FROMGDPSSP !! regexp = SSP1|SSP2|SSP3|SSP4|SSP5|FROMGDPSSP|GAINSlegacy
-*' cm_APscen "air polution scenario"
-*' (SSP2):  Only available for cm_APssp = GAINSlegacy
+*' cm_APscen "air pollution scenario"
+*' (SSP2): Only available for cm_APssp = GAINSlegacy
 *' (SSP5): Only available for cm_APssp = GAINSlegacy
-*' (CLE): Current Legislation Emissions
-*' (SLE): Stronger Legislation Emissions
-*' (VLE): Very strong Legislation Emissions
-*' (MFR): Maximum Feasible Reductions
-*' (SMIPbySSP): ScenarioMIP defaults, varies with SSP narratives
-*' (SMIPVLLO): ScenarioMIP special trajectories for VLLO, varies slightly between SSP1 and SSP2
-$setGlobal cm_APscen  SMIPbySSP          !! def = SMIPbySSP !! regexp = SSP2|SSP5|CLE|SLE|VLE|MFR|SMIPbySSP|SMIPVLLO 
+*' (CLE): Current Legislation Emissions (differentiated by SSP, available for SSP1-5)
+*' (SLE): Stronger Legislation Emissions (differentiated by SSP, available for SSP1-5)
+*' (MTFR):  Maximum Technically Feasible Reduction (not differentiated by SSP)
+*' (SMIPbySSP): ScenarioMIP default scenario (differentiated by SSP, available for SSP1, SSP2, SSP3 and SSP5)
+*' (SMIPVLLO): ScenarioMIP VLLO scenario (not differentiated by SSP)
+$setGlobal cm_APscen  SMIPbySSP          !! def = SMIPbySSP !! regexp = SSP2|SSP5|CLE|SLE|MTFR|SMIPbySSP|SMIPVLLO 
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-GDPpop_SSP2-En_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_industry_FE_target  1

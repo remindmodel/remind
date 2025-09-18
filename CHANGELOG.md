@@ -23,9 +23,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - [#2168](https://github.com/remindmodel/remind/pull/2168) Adds biochar as novel CDR option. Biochar can be produced via three established and one future pe2se technology.
 - [#2195](https://github.com/remindmodel/remind/pull/2195) Make it possible to provide a renv.lock to be used for a run (useful for the releases)
 - [#2196](https://github.com/remindmodel/remind/pull/2196) Update release scripts: the release uses the renv snapshot, the develop does not
+- [#2205](https://github.com/remindmodel/remind/pull/2205) Add renewed pipeline for the calculation of air pollutant emissions in REMIND. 
 
 ### removed
--
+- **21_tax** remove input file with upper bound on subsidy for fuel extraction, as it no longer has any effect on the data 
+  [#2201](https://github.com/remindmodel/remind/pull/2201)
 
 ### fixed
 -
