@@ -99,7 +99,7 @@ display p_efFossilFuelExtr;
 ***--------------------------------------
 
 *** Decide whether MAgPIE should be executed. Also triggers the update of MAgPIE data in multiple locations.
-if((    (ord(iteration) le 25                          AND (mod(ord(iteration), 4) eq 0))
+if((    (ord(iteration) le 25                          AND (mod(ord(iteration), 2) eq 0))
      OR (ord(iteration) gt 25 AND ord(iteration) le 45 AND (mod(ord(iteration), 5) eq 0))
      OR (ord(iteration) gt 45                          AND (mod(ord(iteration), 5) eq 0))
    )
