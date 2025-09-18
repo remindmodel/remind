@@ -152,5 +152,10 @@ p30_demPe(ttot,regi) =
     ) * 100/40  !!! substitution method
 ;
 
+*** Save values for tracking across Nash iterations
+o_p30_pebiolc_pricmult(iteration,ttot,regi)                  = p30_pebiolc_pricmult(ttot,regi);
+o_p30_pebiolc_price_emu_preloop(iteration,ttot,regi)         = p30_pebiolc_price_emu_preloop(ttot,regi);
+o_p30_pebiolc_price_emu_preloop_shifted(iteration,ttot,regi) = p30_pebiolc_price_emu_preloop_shifted(ttot,regi);
+o_p30_pebiolc_costs_emu_preloop(iteration,ttot,regi)         = p30_pebiolc_costs_emu_preloop(ttot,regi);
 
 *** EOF ./modules/30_biomass/magpie/presolve.gms

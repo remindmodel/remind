@@ -11,6 +11,10 @@ p26_totLUcost_coupling(tall,all_regi)  "Total landuse cost read from magpie.gdx 
 p26_totLUcosts_withMAC(tall,all_regi)  "Total landuse costs including agricultural MAC costs (agriculture, bioenergy, MAC, etc) [T$US]"
 p26_macCostLu(tall,all_regi)           "Land use emissions MAC cost [T$US]"
 pm_NXagr(tall,all_regi)                "Net agricultural exports"
+
+o_p26_totLUcosts_withMAC(iteration,ttot,all_regi) "track p26_totLUcosts_withMAC across Nash iterations"
+o_pm_totLUcosts(iteration,ttot,all_regi)          "track pm_totLUcosts across Nash iterations"
+o_p26_macCostLu(iteration,ttot,all_regi)          "track p26_macCostLu across Nash iterations"
 ;
 
 *** EOF ./modules/26_agCosts/costs/declarations.gms

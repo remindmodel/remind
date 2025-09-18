@@ -295,6 +295,13 @@ o_negitr_disc_cons_dr5_reg(iteration,all_regi)       "estimated discounted consu
 o_negitr_disc_cons_drInt_reg(iteration,all_regi)     "estimated discounted consumption 2005-2100 with internal discount rate. 'estimated' because of different times step lengths around 2100 [T$]"
 o_negitr_total_forc(iteration)                       "total forcing in 2100"
 
+o_pm_pebiolc_demandmag(iteration,ttot,all_regi)      "track pm_pebiolc_demandmag across Nash iterations"
+o_pm_macBaseMagpie(iteration,ttot,all_regi,all_enty) "track pm_macBaseMagpie across Nash iterations"
+o_pm_macSwitch(iteration,ttot,all_regi,all_enty)     "track pm_macSwitch across Nash iterations"
+o_p_efFossilFuelExtr_n2obio(iteration,all_regi)      "track p_efFossilFuelExtr for n2obio across Nash iterations"
+o_vm_fuExtr_pebiolc(iteration,ttot,all_regi)         "track vm_fuExtr for pebiolc across Nash iterations"
+o_vm_pebiolc_price(iteration,ttot,all_regi)          "track vm_pebiolc_price across Nash iterations"
+
 ***----------------------------------------------------------------------------------------
 ***------------------------------------------------trade module----------------------------
 pm_ttot_val(ttot)                                    "value of ttot set element"

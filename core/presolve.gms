@@ -483,4 +483,10 @@ p_macPE(ttot,regi,"pegas")$(ttot.val gt 2005) = s_MtCH4_2_TWa * 0.5 * (v_macBase
 v_shSeFeSector.l(ttot,regi,entySe,"fedie","CDR","ETS") =  v_shSeFeSector.l(ttot,regi,entySe,"fedie","trans","ES");
 v_shSeFeSector.l(ttot,regi,entySe,"fegas","CDR","ETS") =  v_shSeFeSector.l(ttot,regi,entySe,"fegas","indst","ETS");
 
+*** Save values for tracking across Nash iterations
+o_pm_pebiolc_demandmag(iteration,ttot,regi)  = pm_pebiolc_demandmag(ttot,regi);
+o_pm_macBaseMagpie(iteration,ttot,regi,enty) = pm_macBaseMagpie(ttot,regi,enty);
+o_pm_macSwitch(iteration,ttot,regi,enty)     = pm_macSwitch(ttot,regi,enty);
+o_p_efFossilFuelExtr_n2obio(iteration,regi)  = p_efFossilFuelExtr(regi,"pebiolc","n2obio");
+
 *** EOF ./core/presolve.gms

@@ -21,12 +21,9 @@ pm_pebiolc_demandmag(tall,all_regi)             "Production of lignocellulosic p
 p30_pebiolc_demand_helper(tall,all_regi)        "Save level of vm_fuelex for a better starting point since it is overwritten between nash iterations"
 p30_demPe(ttot,all_regi)                        "Primary energy demand imported from gdx or previous iteration [TWa]"
 
-
 $IFTHEN.bioprod_regi_lim not "%cm_bioprod_regi_lim%" == "off"
 p30_bioprod_regi_lim(ext_regi)   "limit of total biomass production per region or region group [EJ/yr]" / %cm_bioprod_regi_lim% /
 $ENDIF.bioprod_regi_lim
-
-
 
 *** Shift factor calculation
 p30_pebiolc_costs_emu_preloop(ttot,all_regi)    "Bioenergy costs calculated with emulator using MAgPIE demand. For shift factor calculation [T$US]"
@@ -45,6 +42,13 @@ i30_bioen_price_b(ttot,all_regi)   "Time dependent slope in bioenergy price form
 p30_pebiolc_price_dummy            "Dummy for the bio-energy price to match the bioenergy bound cm_maxProdBiolc"
 p30_max_pebiolc_dummy              "Dummy for bio energy supply at p30_pebiolc_price_dummy"
 p30_fuelex_dummy(all_regi)         "Dummy for bio-energy supply per region"
+
+*** Parameters used to track other parameters across Nash iterations
+o_p30_pebiolc_pricmult(iteration,ttot,all_regi)                  "track p30_pebiolc_pricmult across Nash iterations"
+o_p30_pebiolc_price_emu_preloop(iteration,ttot,all_regi)         "track p30_pebiolc_price_emu_preloop across Nash iterations"
+o_p30_pebiolc_price_emu_preloop_shifted(iteration,ttot,all_regi) "track p30_pebiolc_price_emu_preloop_shifted across Nash iterations"
+o_p30_pebiolc_costs_emu_preloop(iteration,ttot,all_regi)         "track p30_pebiolc_costs_emu_preloop across Nash iterations"
+o_v30_pebiolc_costs(iteration,ttot,all_regi)                     "track v30_pebiolc_costs across Nash iterations"
 ;
 
 variables
