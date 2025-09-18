@@ -5,7 +5,14 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/11_aerosols/exoGAINS2025/declarations.gms
+
+variables
+vm_costpollution(tall,all_regi)                                               "costs of air pollution policies [T$]"
+;
+
 parameter
+pm_emiExog(tall,all_regi,all_enty)                                            "exogenous emissions from air pollutants [Mt SO2, Mt BC, Mt OC]"
+
 p11_emiFacAP(tall,all_regi,all_enty,all_enty,all_te,sectorEndoEmi,all_enty)   "air pollutant emission factors [Gt(species)/TWa]"
 p11_share_sector(tall,all_enty,all_enty,all_te,sectorEndoEmi,all_regi)        "share of technology that goes into industry, residential, and transport sectorEndoEmi [1]"
 p11_costpollution(all_te,all_enty,sectorEndoEmi)                              "pollutant abatement costs in [$/t]"
