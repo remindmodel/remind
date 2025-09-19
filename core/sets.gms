@@ -538,9 +538,7 @@ all_sectorEmi "all sectors with emissions"
 /
 
 all_exogEmi "all exogenous emission types"
-/   Aviation         "Exog emi from Aviation"
-    InternationalShipping "Exog emi from Int. Shipping"
-    Agriculture      "Exogenous emissions from Agriculture"
+/   Agriculture      "Exogenous emissions from Agriculture"
     AgWasteBurning   "Exogenous emissions from Ag Waste Burning"
     ForestBurning    "Exogenous emissions from Forest Burning"
     GrasslandBurning "Exogenous emissions from Grassland Burning"
