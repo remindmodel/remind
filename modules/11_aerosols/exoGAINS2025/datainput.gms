@@ -94,17 +94,7 @@ p11_emiAPexo(t,regi,enty,"AgWasteBurning")   = p11_emiAPexoAgricult(t,regi,enty,
 p11_emiAPexo(t,regi,enty,"ForestBurning")    = p11_emiAPexoAgricult(t,regi,enty,"ForestBurning");
 p11_emiAPexo(t,regi,enty,"GrasslandBurning") = p11_emiAPexoAgricult(t,regi,enty,"GrasslandBurning");
 
-*** this parameter is not part of the optimization, but just used in remind2::reportEmiAirPol() to for emissions only accounted at the global level
-*** TODO updated to account for updated calculation of aviation and international shipping emissions in reportExtraEmissions
-parameter f11_emiAPexoGlob(tall,all_rcp_scen,all_enty,all_exogEmi)                     "exogenous emissions for aviation and international shipping from RCP scenarios"
-/
-$ondelim
-$include "./modules/11_aerosols/exoGAINS2025/input/f11_emiAPexoGlob.cs4r";
-$offdelim
-/;
-p11_emiAPexoGlob(ttot,enty,all_exogEmi) = f11_emiAPexoGlob(ttot,"rcp60",enty,all_exogEmi);
-
-display p11_emiAPexoGlob, p11_emiAPexo;
+display p11_emiAPexo;
 
 *** Initialize p11_emiAPexsolve to zero 
 *** TODO Could be improved by using values from previous run if available
