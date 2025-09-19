@@ -31,5 +31,5 @@ Power_Gen_NatGas,power,SE|Electricity|Gas (EJ/yr),1,0,0
 Transformations_Coal,power,SE|Solids|Coal (EJ/yr),1,0,0
 Transformations_HLF_Refinery,power,PE|Oil (EJ/yr),1,0,0
 Transformations_NatGas,power,PE|Gas (EJ/yr),1,0,0
-Waste_Solid_Municipal,Waste,GDP|MER (billion US$2017/yr),0.4,0,0
-Waste_Water_Municipal,Waste,GDP|MER (billion US$2017/yr),0.4,0,0
+Waste_Solid_Municipal,waste,GDP|MER (billion US$2017/yr),0.4,0,0
+Waste_Water_Municipal,waste,GDP|MER (billion US$2017/yr),0.4,0,0
