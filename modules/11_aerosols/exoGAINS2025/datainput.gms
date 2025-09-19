@@ -104,15 +104,7 @@ $offdelim
 /;
 p11_emiAPexoGlob(ttot,enty,all_exogEmi) = f11_emiAPexoGlob(ttot,"rcp60",enty,all_exogEmi);
 
-*** TODO updated to account for updated calculation of waste emissions
-parameter f11_emiAPexo(tall,all_regi,all_rcp_scen,all_enty,all_exogEmi)    "exogenous emissions from RCP scenarios"
-/
-$ondelim
-$include "./modules/11_aerosols/exoGAINS2025/input/f11_emiAPexo.cs4r"
-$offdelim
-/;
-p11_emiAPexo(ttot,regi,enty,"Waste") = f11_emiAPexo(ttot,regi,"rcp60",enty,"Waste");
-display p11_emiAPexoGlob,p11_emiAPexo;
+display p11_emiAPexoGlob, p11_emiAPexo;
 
 *** Initialize p11_emiAPexsolve to zero 
 *** TODO Could be improved by using values from previous run if available
@@ -124,7 +116,7 @@ pm_emiExog(t,regi,"SO2") = p11_emiAPexo(t,regi,"SO2","AgWasteBurning")
                          + p11_emiAPexo(t,regi,"SO2","Agriculture")
                          + p11_emiAPexo(t,regi,"SO2","ForestBurning")
                          + p11_emiAPexo(t,regi,"SO2","GrasslandBurning")
-                         + p11_emiAPexo(t,regi,"SO2","Waste")
+                         + p11_emiAPexsolve(t,regi,"waste","SOx")
                          + p11_emiAPexsolve(t,regi,"solvents","SOx")
                          + p11_emiAPexsolve(t,regi,"extraction","SOx")
                          + p11_emiAPexsolve(t,regi,"indprocess","SOx");
@@ -132,7 +124,7 @@ pm_emiExog(t,regi,"BC") = p11_emiAPexo(t,regi,"BC","AgWasteBurning")
                         + p11_emiAPexo(t,regi,"BC","Agriculture")
                         + p11_emiAPexo(t,regi,"BC","ForestBurning")
                         + p11_emiAPexo(t,regi,"BC","GrasslandBurning")
-                        + p11_emiAPexo(t,regi,"BC","Waste")
+                        + p11_emiAPexsolve(t,regi,"waste","BC")
                         + p11_emiAPexsolve(t,regi,"solvents","BC")
                         + p11_emiAPexsolve(t,regi,"extraction","BC")
                         + p11_emiAPexsolve(t,regi,"indprocess","BC");
@@ -140,7 +132,7 @@ pm_emiExog(t,regi,"OC") = p11_emiAPexo(t,regi,"OC","AgWasteBurning")
                         + p11_emiAPexo(t,regi,"OC","Agriculture")
                         + p11_emiAPexo(t,regi,"OC","ForestBurning")
                         + p11_emiAPexo(t,regi,"OC","GrasslandBurning")
-                        + p11_emiAPexo(t,regi,"OC","Waste")
+                        + p11_emiAPexsolve(t,regi,"waste","OC")
                         + p11_emiAPexsolve(t,regi,"solvents","OC")
                         + p11_emiAPexsolve(t,regi,"extraction","OC")
                         + p11_emiAPexsolve(t,regi,"indprocess","OC");

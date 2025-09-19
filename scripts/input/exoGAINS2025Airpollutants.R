@@ -213,10 +213,6 @@ emis_projected_rem <- madrat::toolAggregate(x = emis_projected, weight = NULL, d
 getNames(emis_projected_rem,dim=2) <- gsub("VOC","NMVOC",getNames(emis_projected_rem,dim=2)) 
 getNames(emis_projected_rem,dim=2) <- gsub("SO2","SOx",getNames(emis_projected_rem,dim=2)) 
 
-# Preliminary: export only all_sectorEmi (sectors that are in all_exogEmi (ag,waste,avi,ship) will be added later)
-# we leave out Waste that is not part of all_sectorEmi
-all_sectorEmi <- c("solvents","indprocess", "indst", "res", "trans", "extraction", "power")
-
 # rename dimension to the ones we need in GAMS (gdx will use these)
 getSets(emis_projected_rem) <- c("all_regi","tall","all_sectorEmi","emiRCP")
 
@@ -225,7 +221,7 @@ getSets(emis_projected_rem) <- c("all_regi","tall","all_sectorEmi","emiRCP")
 ##############################################################
 
 # select data that will be exported to GDX
-out <- emis_projected_rem[,,all_sectorEmi]["GLO",,invert=TRUE]
+out <- emis_projected_rem["GLO",,invert=TRUE]
 
 # construct attributes that are required by writeGDX
 gdxdata <- list()
