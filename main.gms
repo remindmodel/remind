@@ -259,10 +259,8 @@ $setGlobal PE_FE_parameters  iea2014  !! def = iea2014
 $setGlobal initialCap  on             !! def = on
 *'---------------------    11_aerosols    --------------------------------------
 *'
-*' * (exoGAINS):
-$setGlobal aerosols  exoGAINS2025         !! def = exoGAINS2025
-*' * (exoGAINS):      old realization with base year 2015 that enables to choose between GAINSlegacy data and corrupted GAINS2025 data
 *' * (exoGAINS2025):  new realization with base year 2020 based on cleaned GAINS2025 data that enables to choose between CEDS and GAINS as source for baseyear emissions
+$setGlobal aerosols  exoGAINS2025         !! def = exoGAINS2025
 *'---------------------    15_climate    ---------------------------------------
 *'
 *' * (off): no climate coupling
@@ -1957,17 +1955,14 @@ $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
 *' cm_APssp "air pollution SSP"
 *' (SSP1-5): SSP selection for emission factors based on GAINS2025 data
 *' (FROMGDPSSP): Shortcut to copy SSP from all_GDPpopScen
-*' (GAINSlegacy): selection for emission factors based on legacy GAINS data (not available for 11_aerosols/exoGAINS2025)
-$setGlobal cm_APssp  FROMGDPSSP          !! def = FROMGDPSSP !! regexp = SSP1|SSP2|SSP3|SSP4|SSP5|FROMGDPSSP|GAINSlegacy
+$setGlobal cm_APssp  FROMGDPSSP          !! def = FROMGDPSSP !! regexp = SSP1|SSP2|SSP3|SSP4|SSP5|FROMGDPSSP
 *' cm_APscen "air pollution scenario"
-*' (SSP2): Only available for cm_APssp = GAINSlegacy
-*' (SSP5): Only available for cm_APssp = GAINSlegacy
 *' (CLE): Current Legislation Emissions (differentiated by SSP, available for SSP1-5)
 *' (SLE): Stronger Legislation Emissions (differentiated by SSP, available for SSP1-5)
 *' (MTFR):  Maximum Technically Feasible Reduction (not differentiated by SSP)
 *' (SMIPbySSP): ScenarioMIP default scenario (differentiated by SSP, available for SSP1, SSP2, SSP3 and SSP5)
 *' (SMIPVLLO): ScenarioMIP VLLO scenario (not differentiated by SSP)
-$setGlobal cm_APscen  SMIPbySSP          !! def = SMIPbySSP !! regexp = SSP2|SSP5|CLE|SLE|MTFR|SMIPbySSP|SMIPVLLO 
+$setGlobal cm_APscen  SMIPbySSP          !! def = SMIPbySSP !! regexp = CLE|SLE|MTFR|SMIPbySSP|SMIPVLLO 
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-GDPpop_SSP2-En_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_industry_FE_target  1

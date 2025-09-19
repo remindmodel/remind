@@ -93,28 +93,14 @@ all_APssp     "all air pollutant SSPs. GAINSlegacy means the SSP is picked with 
     SSP5
     MTFR
     SMIPVLLO
-    GAINSlegacy
-    SSP2IndiaHigh
 /
 
 *** If you get a domain violation here, check if cm_APssp and cm_APscen values are correctly paired. See main.gms for details.
 all_APscen     "all air pollutant scenarios"
 /
-    SSP1
-    SSP2
-    SSP3
-    SSP4
-    SSP5
     SLE
     CLE
-    VLE
-    FLE
-    FLE_building_transport
     MTFR
-    MFR
-    MFR_Transports
-    GlobalEURO6
-    SLCF_building_transport
     SMIPbySSP
     SMIPVLLO
 /
