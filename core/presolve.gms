@@ -99,7 +99,7 @@ display p_efFossilFuelExtr;
 ***--------------------------------------
 
 *** Decide whether MAgPIE should be executed. Also triggers the update of MAgPIE data in multiple locations.
-if((    (ord(iteration) le 25                          AND (mod(ord(iteration), 2) eq 0))
+if((    (ord(iteration) le 25                          AND (mod(ord(iteration), 5) eq 0))
      OR (ord(iteration) gt 25 AND ord(iteration) le 45 AND (mod(ord(iteration), 5) eq 0))
      OR (ord(iteration) gt 45                          AND (mod(ord(iteration), 5) eq 0))
    )
@@ -120,7 +120,7 @@ if (sm_updateMagpieData eq 1,
   logfile.nr = 1;
   logfile.nd = 0;
   sm_magpieIter = sm_magpieIter + 1;
-  put_utility  "exec" / "Rscript mag2rem.R " sm_magpieIter;
+  put_utility  "exec" / "Rscript mag2rem.R " sm_magpieIter " " ord(iteration);
   logfile.nr = sm_tmp;
   logfile.nd = sm_tmp2;
 
@@ -172,6 +172,9 @@ $IFTHEN.scaleEmiHist %c_scaleEmiHistorical% == "on"
 *** data (depending on the region MAgPIE non-CO2 GHG emissions can be up to 
 *** twice as high as historic emissions). This involves different emission variables in
 *** pm_macBaseMagpie and additionall agwaste variables from p_macBaseExo
+
+*** Since this part is repeated in each Nash iteration and it changes p_macBaseExo, reset p_macBaseExo to initial values.
+p_macBaseExo(ttot,regi,emiMacExo(enty))$(ttot.val ge 2005) = f_macBaseExo(ttot,regi,emiMacExo,"%cm_LU_emi_scen%");
 display p_macBaseExo;
 
 *** Define rescale factor for MAgPIE CH4 emissions
