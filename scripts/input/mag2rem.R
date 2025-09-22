@@ -135,16 +135,19 @@ getMagpieData <- function(path_to_report = "report.mif", mapping = "mappingMAgPI
 }
 
 # Obtain number of MAgPIE iteration passed to this script by GAMS
-i <- as.numeric(commandArgs(trailingOnly = TRUE))
+args <- commandArgs(trailingOnly = TRUE)
+i <- as.numeric(args[1])
+#NashIteration <- as.numeric(args[2])
+OrdNashIteration <- as.numeric(args[2])
 
 # Rename gdx from previous MAgPIE iteration so that REMIND can only continue if a new one could be successfully created
 if(file.exists("magpieData.gdx")) file.rename("magpieData.gdx", paste0("magpieData-", i-1,".gdx")) 
 
 # Log MAgPIE iterations (can be removed late)
-write(paste(format(Sys.time(), "%Y-%m-%d_%H.%M.%S"), i), file = "iteration.log", append = TRUE)
+write(paste(format(Sys.time(), "%Y-%m-%d_%H.%M.%S"), i, OrdNashIteration), file = "iteration.log", append = TRUE)
 
 # Create reduced REMIND reporting
-message("\n### COUPLING ", i, " ### Generating reduced REMIND reporting for MAgPIE - ", round(Sys.time()))
+message("\n### COUPLING ", i, " ", OrdNashIteration, " ### Generating reduced REMIND reporting for MAgPIE - ", round(Sys.time()))
 if(!file.exists("fulldata.gdx")) stop("The MAgPIE coupling script 'mag2rem.R' could not find a REMIND fulldata.gdx file!")
 scenario <- lucode2::getScenNames(".")
 remind2::convGDX2MIF_REMIND2MAgPIE(gdx = "fulldata.gdx", file = "REMIND_rem2mag.mif", scenario = scenario)
@@ -179,14 +182,14 @@ runname <- gsub("output\\/", "", cfg_rem$results_folder)
 cfg_mag$results_folder <- paste0("output/",runname,"-mag-",i)
 cfg_mag$title          <- paste0(runname,"-mag-",i)
 cfg_mag$path_to_report_bioenergy <- pathToRemindReport
+# if provided use ghg prices for land (MAgPIE) from a different REMIND run than the one MAgPIE runs coupled to
+use_external_ghgprices <- ifelse(is.na(cfg_mag$path_to_report_ghgprices), FALSE, TRUE)
 # if no different mif was set for GHG prices use the same as for bioenergy
 if(! use_external_ghgprices) cfg_mag$path_to_report_ghgprices <- pathToRemindReport
 
 # ---------------- move to start.R -------------------------------
   cfg_mag$sequential <- TRUE
   cfg_mag$force_replace <- TRUE
-  # if provided use ghg prices for land (MAgPIE) from a different REMIND run than the one MAgPIE runs coupled to
-  use_external_ghgprices <- ifelse(is.na(cfg_mag$path_to_report_ghgprices), FALSE, TRUE)
   # always select 'coupling' scenario
   cfg_mag <- gms::setScenario(cfg_mag, "coupling", scenario_config = file.path(path_magpie, "config", "scenario_config.csv"))
   
