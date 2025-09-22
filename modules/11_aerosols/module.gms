@@ -10,10 +10,9 @@
 *'
 *' @description  The 11_aerosols module calculates the air pollution emissions.
 *'
-*' @authors Sebastian Rauner, David Klein, Jessica Strefler
+*' @authors Sebastian Rauner, David Klein, Jessica Strefler, Laurin Köhler-Schindler
 
 *###################### R SECTION START (MODULETYPES) ##########################
-$Ifi "%aerosols%" == "exoGAINS" $include "./modules/11_aerosols/exoGAINS/realization.gms"
 $Ifi "%aerosols%" == "exoGAINS2025" $include "./modules/11_aerosols/exoGAINS2025/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
 *** EOF ./modules/11_aerosols/module.gms
