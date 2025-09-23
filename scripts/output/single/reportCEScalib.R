@@ -20,10 +20,17 @@ yamlParams <- list(
   doctitle = paste0("CES Calibration Report ", scenario)
 )
 
+if (grepl("[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}", outputdir)) {
+  runDate <- stringr::str_extract(outputdir, "[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}")
+  fName <- paste0("CES_calibration_report_", scenario, "_", runDate, ".pdf")
+} else {
+  fName <- paste0("CES_calibration_report_", scenario, ".pdf")
+}
+
 rmarkdown::render(
   file.path("scripts", "output", "single", "notebook_templates", "cesCalibrationReport.Rmd"),
   output_dir = outputdir,
-  output_file = paste0("CES_calibration_report_", scenario, ".pdf"),
+  output_file = fName,
   output_format = "pdf_document",
   params = yamlParams
 )
