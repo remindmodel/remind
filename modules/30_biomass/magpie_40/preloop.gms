@@ -102,9 +102,9 @@ if (execError > 0,
 
 solve model_biopresolve_c using cns; !!! nothing has to be optimized here, just pure calculation
 
-p30_pebiolc_costs_emu_preloop(t,regi) = v30_pebiolc_costs.l(t,regi);
+pm_pebiolc_costs_emu_preloop(t,regi) = v30_pebiolc_costs.l(t,regi);
 
-display p30_pebiolc_costs_emu_preloop;
+display pm_pebiolc_costs_emu_preloop;
 
 ***------------ Step 4: Release bounds on fuelex -------------
 *** AFTER presolve calculations: prepare for main solve, therefore release bounds on fuelex

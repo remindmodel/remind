@@ -14,7 +14,7 @@
 pm_totLUcosts_excl_costFuBio(ttot,regi) =  p26_totLUcosts_withMAC(ttot,regi) 
                                          - p26_macCostLu(ttot,regi) 
                                          + sum(enty$(emiMacMagpie(enty) AND (NOT emiMacMagpieCO2(enty))), pm_macCost(ttot,regi,enty))
-                                         - p30_pebiolc_costs_emu_preloop(ttot,regi); !! Need to be substracted since they are also included in the total agricultural production costs
+                                         - pm_pebiolc_costs_emu_preloop(ttot,regi); !! Need to be substracted since they are also included in the total agricultural production costs
 
 *' **Bioenergy costs**
 *' The costs for biomass production cannot be determined directly as individual costs in MAgPIE, but are included 
@@ -23,7 +23,7 @@ pm_totLUcosts_excl_costFuBio(ttot,regi) =  p26_totLUcosts_withMAC(ttot,regi)
 *' price curve. The bioenergy costs included in the total land use costs are approximated in REMIND in the preloop 
 *' brefore the main solve by calculating this integral with the bioenergy demand from the same MAgPIE scenario from 
 *' which the total costs are taken. The bioenergy costs calculated in this pre-step are subtracted as a fixed component
-*' (p30_pebiolc_costs_emu_preloop) during optimization (see above). The actual bioenergy costs (v30_pebiolc_costs) 
+*' (pm_pebiolc_costs_emu_preloop) during optimization (see above). The actual bioenergy costs (v30_pebiolc_costs) 
 *' going into the budget equation are calculated during optimization using the endogenous bioenergy demand (also as
 *' an integral under the price curve).
 

@@ -28,7 +28,7 @@ $ENDIF.bioprod_regi_lim
 
 
 *** Shift factor calculation
-p30_pebiolc_costs_emu_preloop(ttot,all_regi)    "Bioenergy costs calculated with emulator using MAgPIE demand. For shift factor calculation [T$US]"
+pm_pebiolc_costs_emu_preloop(ttot,all_regi)     "Bioenergy costs calculated with emulator using MAgPIE demand. For shift factor calculation [T$US]"
 p30_pebiolc_price_emu_preloop(ttot,all_regi)    "Bioenergy price calculated with emulator using MAgPIE demand. For shift factor calculation [T$US/TWa]"
 p30_pebiolc_price_emu_preloop_shifted(ttot,all_regi) "Bioenergy price calculated with emulator using MAgPIE demand after shift factor calculation [T$US/TWa]"
 p30_pebiolc_pricshift(ttot,all_regi)            "Regional translation factor that shifts emulator prices to better fit actual MAgPIE prices [-]"
