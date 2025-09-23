@@ -6,6 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/declarations.gms
 Parameters
+pm_fe2es(tall,all_regi,all_teEs)                                                   "Conversion factor from final energies to transport energy services [Tpkm/TWa, Ttkm/TWa]"
+pm_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)                                 "Final energy shares for CES nodes in transport [share]"
 p35_fe2es_aux(tall,all_regi,all_GDPpopScen,all_demScen,EDGE_scenario_all,all_teEs) "Aggregate energy efficiency of transport fuel technologies [trn pkm/Twa or trn tkm/Twa]"
 ;
 Equations

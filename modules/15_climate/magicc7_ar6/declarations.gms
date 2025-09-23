@@ -33,6 +33,9 @@ p15_emicapregi(tall,all_regi)  "regional emission caps, used for calculation of 
 p15_forc_magicc(tall) "actual radiative forcing as calculated by magicc [W/m^2]"
 pm_gmt_conv           "global mean temperature convergence"
 p15_gmt0(tall)        "global mean temperature convergence saved for the next iteration"
+pm_globalMeanTemperature(tall)                "global mean temperature anomaly [K]"
+pm_globalMeanTemperatureZeroed1900(tall)      "global mean temperature anomaly, zero around 1900 [K]"
+pm_temperatureImpulseResponseCO2(tall,tall)   "temperature impulse response to CO2 [K/GtCO2]" 
 ;
 
 scalars

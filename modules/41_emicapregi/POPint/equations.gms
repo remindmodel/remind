@@ -12,8 +12,7 @@
 q41_perm_alloc_cap(t,regi) $(t.val gt 2010)..        
      vm_perm(t,regi) =e=
      pm_shPerm(t,regi)* 
-         (vm_dummyBudget(t,regi) $(cm_emiscen eq 6) 
-        + vm_co2eqGlob(t) $(cm_emiscen ne 4)
+         (vm_co2eqGlob(t) $(cm_emiscen ne 4)
         + pm_emicapglob(t) $(cm_emiscen eq 4));
 
 *' @stop

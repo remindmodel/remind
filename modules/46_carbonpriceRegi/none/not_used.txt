@@ -7,11 +7,9 @@
 name,type,reason
 cm_startyear,switch,not needed
 sm_c_2_co2,input,questionnaire
-sm_DptCO2_2_TDpGtC,input,questionnaire
 vm_co2eq,input,questionnaire
 vm_emiFgas,input,questionnaire
 vm_demFeSector,input,questionnaire
-pm_taxCO2eq,input,questionnaire
 pm_emifac,input,questionnaire
 vm_emiTe,input,questionnaire
 vm_emiCdr,input,questionnaire

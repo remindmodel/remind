@@ -11,7 +11,6 @@ pm_damage,input,questionnaire
 pm_damageGrowthRate,input,questionnaire
 pm_damageMarginal,input,questionnaire
 pm_consPC,input,questionnaire
-pm_GDPGross,input,questionnaire
 pm_prtp,input,questionnaire
 cm_startyear,input,questionnaire
 cm_damages_BurkeLike_persistenceTime,input,questionnaire
