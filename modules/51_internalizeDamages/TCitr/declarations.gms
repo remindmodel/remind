@@ -15,6 +15,8 @@ p51_sccLastItr(tall) "Social cost of carbon (due to GDP damages) from last itera
 p51_sccParts(tall,tall,all_regi) "Social cost of carbon components (time, region)"
 
 pm_sccConvergenceMaxDeviation "max deviation of SCC from last iteration [percent]"
+pm_taxCO2eqSCC(ttot,all_regi) "carbon tax component due to damages (social cost of carbon) [T$/GtCeq]"
+pm_GDPGross(tall,all_regi) "gross GDP (before damages) [T$]"
 ;
 
 *** EOF ./modules/51_internalizeDamages/TCitr/declarations.gms

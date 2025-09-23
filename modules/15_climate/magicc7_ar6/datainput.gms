@@ -70,7 +70,10 @@ $onlisting
 );
 display pm_emicapglob;
 
-pm_gmt_conv=1;
-p15_gmt0(tall)=1;
+pm_gmt_conv = 1;
+p15_gmt0(tall) = 1;
+pm_globalMeanTemperature(tall) = 0;
+pm_globalMeanTemperatureZeroed1900(tall) = 0;
+pm_temperatureImpulseResponseCO2(tall,tall) = 0;
 
 *** EOF ./modules/15_climate/magicc7_ar6/datainput.gms

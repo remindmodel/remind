@@ -41,7 +41,12 @@ p33_GDP_NetNeg_share(all_regi)                    "Upper bound on share of expen
 
 ;
 
+variables
+vm_omcosts_cdr(tall,all_regi)                        "O&M costs for spreading grinded rocks on fields [T$]"
+;
+
 positive variables
+
 *** EW
 v33_EW_onfield(ttot,all_regi,rlf,rlf)  "amount of ground rock spread on fields in each timestep [Gt]"
 v33_EW_onfield_tot(ttot,all_regi,rlf,rlf)  "total amount of ground rock on fields, for each climate zone and transportation distance [Gt]"

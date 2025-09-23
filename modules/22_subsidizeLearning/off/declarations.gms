@@ -5,9 +5,13 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/22_subsidizeLearning/off/declarations.gms
+
+variables
+    vm_costSubsidizeLearning(ttot,all_regi)              "regional cost of subsidy for learning technologies [T$]"
+;
+
 parameters
     p22_infoCapcumGlob2050(all_te)       "cpacities cumulated until 2050, diagnostics"
-
 ;
 
 *** EOF ./modules/22_subsidizeLearning/off/declarations.gms

@@ -8,7 +8,4 @@
 *AJS* Adjustment costs are only relevant for the Nash realization
 vm_costAdjNash.fx(t,regi) = 0;
 
-*ML* fix dummy variable that is only used for Nash 
-vm_dummyBudget.fx(t,regi) = 0;
-
 *** EOF ./modules/80_optimization/negishi/bounds.gms
