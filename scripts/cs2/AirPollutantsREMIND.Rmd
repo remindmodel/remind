@@ -1,0 +1,411 @@
+<!--
+|  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
+|  authors, and contributors see CITATION.cff file. This file is part
+|  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+|  AGPL-3.0, you are granted additional permissions described in the
+|  REMIND License Exception, version 1.0 (see LICENSE file).
+|  Contact: remind@pik-potsdam.de
+-->
+# Air Pollutants for CMIP7 harmonization - REMIND-MAgPIE
+
+```{r, echo = FALSE, results = 'hide'}
+# Adds a new variable as the sum of a list of variables
+addSumVariables <- function(
+  fdata, sumvars, outvarname, outunit = NULL, convmult = 1, convoffset = 0, only.new = FALSE
+  ) {
+  if (is.null(outunit)) {
+    outunit <- fdata %>%
+      filter(variable == sumvars[1]) %>%
+      slice(1) %>%
+      select(unit) %>% unlist %>% as.character
+  }
+
+  newdata <- fdata %>%
+    filter(variable %in% sumvars) %>%
+    select(-varplus) %>%
+    distinct %>%
+    pivot_wider(names_from = variable, values_from = value) %>%
+    mutate(value = rowSums(across(sumvars))) %>%
+    select(-c(sumvars)) %>%
+    mutate(variable = outvarname, varplus = outvarname, unit = outunit)
+  if(!only.new) {
+    return(rbind(fdata, newdata))
+  } else {
+    return(newdata)
+  }
+}
+```
+
+```{r, echo = FALSE, results = 'hide'}
+
+# Compute total emissions for CMIP7 harmonization sectors from REMIND
+for (species in c("BC", "CO", "NH3", "NOX", "OC", "SO2", "VOC")) {
+  sumvars <- c(
+    paste0("Emi|", species, "|Extra|Energy|Demand|Transport|Pass|Aviation"),
+    paste0("Emi|", species, "|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping"),
+    paste0("Emi|", species, "|Energy Supply"),
+    paste0("Emi|", species, "|Energy Demand|Industry"),
+    paste0("Emi|", species, "|Energy Demand|Buildings"),
+    paste0("Emi|", species, "|Solvents"),
+    paste0("Emi|", species, "|Energy Demand|Transport"),
+    paste0("Emi|", species, "|Waste")
+  )
+  
+  data <- data %>% 
+    filter(model == "REMIND") %>%
+    addSumVariables(sumvars, paste0("Emi|", species,"|REMIND total"), only.new = TRUE) %>%
+    bind_rows(data)
+}
+
+# Compute total emissions for CMIP7 harmonization sectors from CEDS
+for (species in c("BC", "CO", "NH3", "NOX", "OC", "Sulfur", "VOC")) {
+  sumvars <- c(
+    paste0("Emi|", species, "|Aircraft"),
+    paste0("Emi|", species, "|International Shipping"),
+    paste0("Emi|", species, "|Energy Sector"),
+    paste0("Emi|", species, "|Industrial Sector"),
+    paste0("Emi|", species, "|Residential Commercial Other"),
+    paste0("Emi|", species, "|Solvents Production and Application"),
+    paste0("Emi|", species, "|Transportation Sector"),
+    paste0("Emi|", species, "|Waste")
+  )
+  
+  data <- data %>% 
+    filter(model == "CEDS IAMC sectors") %>%
+    addSumVariables(sumvars, paste0("Emi|", species,"|REMIND total"), only.new = TRUE) %>%
+    bind_rows(data)
+}
+```
+
+## BC
+
+### Emi|BC|REMIND total
+```{r Black Carbon Emissions - REMIND Total}
+showLinePlots(data, "Emi|BC|REMIND total", histVars = "Emi|BC|REMIND total", vlines = 2020)
+```
+
+### Emi|BC|Extra|Energy|Demand|Transport|Pass|Aviation
+```{r Black Carbon Emissions - Total}
+showLinePlots(data, "Emi|BC|Extra|Energy|Demand|Transport|Pass|Aviation", histVars = "Emi|BC|Aircraft", vlines = 2020)
+```
+
+### Emi|BC|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping
+```{r Black Carbon Emissions - Total}
+showLinePlots(data, "Emi|BC|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping", histVars = "Emi|BC|International Shipping", vlines = 2020)
+```
+
+### Emi|BC|Energy Supply
+```{r Black Carbon Emissions - Energy Supply}
+showLinePlots(data, "Emi|BC|Energy Supply", histVars = "Emi|BC|Energy Sector", vlines = 2020)
+```
+
+### Emi|BC|Energy Demand|Industry
+```{r Black Carbon Emissions - Industry}
+showLinePlots(data, "Emi|BC|Energy Demand|Industry", histVars = "Emi|BC|Industrial Sector", vlines = 2020)
+```
+
+### Emi|BC|Energy Demand|Buildings
+```{r Black Carbon Emissions - Buildings}
+showLinePlots(data, "Emi|BC|Energy Demand|Buildings", histVars = "Emi|BC|Residential Commercial Other", vlines = 2020)
+```
+
+### Emi|BC|Solvents
+```{r Black Carbon Emissions - Solvents}
+showLinePlots(data, "Emi|BC|Solvents", histVars = "Emi|BC|Solvents Production and Application", vlines = 2020)
+```
+
+### Emi|BC|Energy Demand|Transport
+```{r Black Carbon Emissions - Transport}
+showLinePlots(data, "Emi|BC|Energy Demand|Transport", histVars = "Emi|BC|Transportation Sector", vlines = 2020)
+```
+
+### Emi|BC|Waste
+```{r Black Carbon Emissions - Waste}
+showLinePlots(data, "Emi|BC|Waste", histVars = "Emi|BC|Waste", vlines = 2020)
+```
+
+
+## CO
+
+### Emi|CO|REMIND total
+```{r Black Carbon Emissions - REMIND Total}
+showLinePlots(data, "Emi|CO|REMIND total", histVars = "Emi|CO|REMIND total", vlines = 2020)
+```
+
+### Emi|CO|Extra|Energy|Demand|Transport|Pass|Aviation
+```{r Black Carbon Emissions - Total}
+showLinePlots(data, "Emi|CO|Extra|Energy|Demand|Transport|Pass|Aviation", histVars = "Emi|CO|Aircraft", vlines = 2020)
+```
+
+### Emi|CO|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping
+```{r Black Carbon Emissions - Total}
+showLinePlots(data, "Emi|CO|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping", histVars = "Emi|CO|International Shipping", vlines = 2020)
+```
+
+### Emi|CO|Energy Supply
+```{r Black Carbon Emissions - Energy Supply}
+showLinePlots(data, "Emi|CO|Energy Supply", histVars = "Emi|CO|Energy Sector", vlines = 2020)
+```
+
+### Emi|CO|Energy Demand|Industry
+```{r Black Carbon Emissions - Industry}
+showLinePlots(data, "Emi|CO|Energy Demand|Industry", histVars = "Emi|CO|Industrial Sector", vlines = 2020)
+```
+
+### Emi|CO|Energy Demand|Buildings
+```{r Black Carbon Emissions - Buildings}
+showLinePlots(data, "Emi|CO|Energy Demand|Buildings", histVars = "Emi|CO|Residential Commercial Other", vlines = 2020)
+```
+
+### Emi|CO|Solvents
+```{r Black Carbon Emissions - Solvents}
+showLinePlots(data, "Emi|CO|Solvents", histVars = "Emi|CO|Solvents Production and Application", vlines = 2020)
+```
+
+### Emi|CO|Energy Demand|Transport
+```{r Black Carbon Emissions - Transport}
+showLinePlots(data, "Emi|CO|Energy Demand|Transport", histVars = "Emi|CO|Transportation Sector", vlines = 2020)
+```
+
+### Emi|CO|Waste
+```{r Black Carbon Emissions - Waste}
+showLinePlots(data, "Emi|CO|Waste", histVars = "Emi|CO|Waste", vlines = 2020)
+```
+
+
+## NH3
+
+### Emi|NH3|REMIND total
+```{r Black Carbon Emissions - REMIND Total}
+showLinePlots(data, "Emi|NH3|REMIND total", histVars = "Emi|NH3|REMIND total", vlines = 2020)
+```
+
+### Emi|NH3|Extra|Energy|Demand|Transport|Pass|Aviation
+```{r Black Carbon Emissions - Total}
+showLinePlots(data, "Emi|NH3|Extra|Energy|Demand|Transport|Pass|Aviation", histVars = "Emi|NH3|Aircraft", vlines = 2020)
+```
+
+### Emi|NH3|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping
+```{r Black Carbon Emissions - Total}
+showLinePlots(data, "Emi|NH3|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping", histVars = "Emi|NH3|International Shipping", vlines = 2020)
+```
+
+### Emi|NH3|Energy Supply
+```{r Black Carbon Emissions - Energy Supply}
+showLinePlots(data, "Emi|NH3|Energy Supply", histVars = "Emi|NH3|Energy Sector", vlines = 2020)
+```
+
+### Emi|NH3|Energy Demand|Industry
+```{r Black Carbon Emissions - Industry}
+showLinePlots(data, "Emi|NH3|Energy Demand|Industry", histVars = "Emi|NH3|Industrial Sector", vlines = 2020)
+```
+
+### Emi|NH3|Energy Demand|Buildings
+```{r Black Carbon Emissions - Buildings}
+showLinePlots(data, "Emi|NH3|Energy Demand|Buildings", histVars = "Emi|NH3|Residential Commercial Other", vlines = 2020)
+```
+
+### Emi|NH3|Solvents
+```{r Black Carbon Emissions - Solvents}
+showLinePlots(data, "Emi|NH3|Solvents", histVars = "Emi|NH3|Solvents Production and Application", vlines = 2020)
+```
+
+### Emi|NH3|Energy Demand|Transport
+```{r Black Carbon Emissions - Transport}
+showLinePlots(data, "Emi|NH3|Energy Demand|Transport", histVars = "Emi|NH3|Transportation Sector", vlines = 2020)
+```
+
+### Emi|NH3|Waste
+```{r Black Carbon Emissions - Waste}
+showLinePlots(data, "Emi|NH3|Waste", histVars = "Emi|NH3|Waste", vlines = 2020)
+```
+
+
+## NOX
+
+### Emi|NOX|REMIND total
+```{r Black Carbon Emissions - REMIND Total}
+showLinePlots(data, "Emi|NOX|REMIND total", histVars = "Emi|NOX|REMIND total", vlines = 2020)
+```
+
+### Emi|NOX|Extra|Energy|Demand|Transport|Pass|Aviation
+```{r Black Carbon Emissions - Total}
+showLinePlots(data, "Emi|NOX|Extra|Energy|Demand|Transport|Pass|Aviation", histVars = "Emi|NOX|Aircraft", vlines = 2020)
+```
+
+### Emi|NOX|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping
+```{r Black Carbon Emissions - Total}
+showLinePlots(data, "Emi|NOX|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping", histVars = "Emi|NOX|International Shipping", vlines = 2020)
+```
+
+### Emi|NOX|Energy Supply
+```{r Black Carbon Emissions - Energy Supply}
+showLinePlots(data, "Emi|NOX|Energy Supply", histVars = "Emi|NOX|Energy Sector", vlines = 2020)
+```
+
+### Emi|NOX|Energy Demand|Industry
+```{r Black Carbon Emissions - Industry}
+showLinePlots(data, "Emi|NOX|Energy Demand|Industry", histVars = "Emi|NOX|Industrial Sector", vlines = 2020)
+```
+
+### Emi|NOX|Energy Demand|Buildings
+```{r Black Carbon Emissions - Buildings}
+showLinePlots(data, "Emi|NOX|Energy Demand|Buildings", histVars = "Emi|NOX|Residential Commercial Other", vlines = 2020)
+```
+
+### Emi|NOX|Solvents
+```{r Black Carbon Emissions - Solvents}
+showLinePlots(data, "Emi|NOX|Solvents", histVars = "Emi|NOX|Solvents Production and Application", vlines = 2020)
+```
+
+### Emi|NOX|Energy Demand|Transport
+```{r Black Carbon Emissions - Transport}
+showLinePlots(data, "Emi|NOX|Energy Demand|Transport", histVars = "Emi|NOX|Transportation Sector", vlines = 2020)
+```
+
+### Emi|NOX|Waste
+```{r Black Carbon Emissions - Waste}
+showLinePlots(data, "Emi|NOX|Waste", histVars = "Emi|NOX|Waste", vlines = 2020)
+```
+
+## OC
+
+### Emi|OC|REMIND total
+```{r Black Carbon Emissions - REMIND Total}
+showLinePlots(data, "Emi|OC|REMIND total", histVars = "Emi|OC|REMIND total", vlines = 2020)
+```
+
+### Emi|OC|Extra|Energy|Demand|Transport|Pass|Aviation
+```{r Black Carbon Emissions - Total}
+showLinePlots(data, "Emi|OC|Extra|Energy|Demand|Transport|Pass|Aviation", histVars = "Emi|OC|Aircraft", vlines = 2020)
+```
+
+### Emi|OC|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping
+```{r Black Carbon Emissions - Total}
+showLinePlots(data, "Emi|OC|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping", histVars = "Emi|OC|International Shipping", vlines = 2020)
+```
+
+### Emi|OC|Energy Supply
+```{r Black Carbon Emissions - Energy Supply}
+showLinePlots(data, "Emi|OC|Energy Supply", histVars = "Emi|OC|Energy Sector", vlines = 2020)
+```
+
+### Emi|OC|Energy Demand|Industry
+```{r Black Carbon Emissions - Industry}
+showLinePlots(data, "Emi|OC|Energy Demand|Industry", histVars = "Emi|OC|Industrial Sector", vlines = 2020)
+```
+
+### Emi|OC|Energy Demand|Buildings
+```{r Black Carbon Emissions - Buildings}
+showLinePlots(data, "Emi|OC|Energy Demand|Buildings", histVars = "Emi|OC|Residential Commercial Other", vlines = 2020)
+```
+
+### Emi|OC|Solvents
+```{r Black Carbon Emissions - Solvents}
+showLinePlots(data, "Emi|OC|Solvents", histVars = "Emi|OC|Solvents Production and Application", vlines = 2020)
+```
+
+### Emi|OC|Energy Demand|Transport
+```{r Black Carbon Emissions - Transport}
+showLinePlots(data, "Emi|OC|Energy Demand|Transport", histVars = "Emi|OC|Transportation Sector", vlines = 2020)
+```
+
+### Emi|OC|Waste
+```{r Black Carbon Emissions - Waste}
+showLinePlots(data, "Emi|OC|Waste", histVars = "Emi|OC|Waste", vlines = 2020)
+```
+
+## SO2
+
+### Emi|SO2|REMIND total
+```{r Black Carbon Emissions - REMIND Total}
+showLinePlots(data, "Emi|SO2|REMIND total", histVars = "Emi|Sulfur|REMIND total", vlines = 2020)
+```
+
+### Emi|SO2|Extra|Energy|Demand|Transport|Pass|Aviation
+```{r Black Carbon Emissions - Total}
+showLinePlots(data, "Emi|SO2|Extra|Energy|Demand|Transport|Pass|Aviation", histVars = "Emi|Sulfur|Aircraft", vlines = 2020)
+```
+
+### Emi|SO2|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping
+```{r Black Carbon Emissions - Total}
+showLinePlots(data, "Emi|SO2|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping", histVars = "Emi|Sulfur|International Shipping", vlines = 2020)
+```
+
+### Emi|SO2|Energy Supply
+```{r Black Carbon Emissions - Energy Supply}
+showLinePlots(data, "Emi|SO2|Energy Supply", histVars = "Emi|Sulfur|Energy Sector", vlines = 2020)
+```
+
+### Emi|SO2|Energy Demand|Industry
+```{r Black Carbon Emissions - Industry}
+showLinePlots(data, "Emi|SO2|Energy Demand|Industry", histVars = "Emi|Sulfur|Industrial Sector", vlines = 2020)
+```
+
+### Emi|SO2|Energy Demand|Buildings
+```{r Black Carbon Emissions - Buildings}
+showLinePlots(data, "Emi|SO2|Energy Demand|Buildings", histVars = "Emi|Sulfur|Residential Commercial Other", vlines = 2020)
+```
+
+### Emi|SO2|Solvents
+```{r Black Carbon Emissions - Solvents}
+showLinePlots(data, "Emi|SO2|Solvents", histVars = "Emi|Sulfur|Solvents Production and Application", vlines = 2020)
+```
+
+### Emi|SO2|Energy Demand|Transport
+```{r Black Carbon Emissions - Transport}
+showLinePlots(data, "Emi|SO2|Energy Demand|Transport", histVars = "Emi|Sulfur|Transportation Sector", vlines = 2020)
+```
+
+### Emi|SO2|Waste
+```{r Black Carbon Emissions - Waste}
+showLinePlots(data, "Emi|SO2|Waste", histVars = "Emi|Sulfur|Waste", vlines = 2020)
+```
+
+
+## VOC
+
+### Emi|VOC|REMIND total
+```{r Black Carbon Emissions - REMIND Total}
+showLinePlots(data, "Emi|VOC|REMIND total", histVars = "Emi|VOC|REMIND total", vlines = 2020)
+```
+
+### Emi|VOC|Extra|Energy|Demand|Transport|Pass|Aviation
+```{r Black Carbon Emissions - Total}
+showLinePlots(data, "Emi|VOC|Extra|Energy|Demand|Transport|Pass|Aviation", histVars = "Emi|VOC|Aircraft", vlines = 2020)
+```
+
+### Emi|VOC|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping
+```{r Black Carbon Emissions - Total}
+showLinePlots(data, "Emi|VOC|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping", histVars = "Emi|VOC|International Shipping", vlines = 2020)
+```
+
+### Emi|VOC|Energy Supply
+```{r Black Carbon Emissions - Energy Supply}
+showLinePlots(data, "Emi|VOC|Energy Supply", histVars = "Emi|VOC|Energy Sector", vlines = 2020)
+```
+
+### Emi|VOC|Energy Demand|Industry
+```{r Black Carbon Emissions - Industry}
+showLinePlots(data, "Emi|VOC|Energy Demand|Industry", histVars = "Emi|VOC|Industrial Sector", vlines = 2020)
+```
+
+### Emi|VOC|Energy Demand|Buildings
+```{r Black Carbon Emissions - Buildings}
+showLinePlots(data, "Emi|VOC|Energy Demand|Buildings", histVars = "Emi|VOC|Residential Commercial Other", vlines = 2020)
+```
+
+### Emi|VOC|Solvents
+```{r Black Carbon Emissions - Solvents}
+showLinePlots(data, "Emi|VOC|Solvents", histVars = "Emi|VOC|Solvents Production and Application", vlines = 2020)
+```
+
+### Emi|VOC|Energy Demand|Transport
+```{r Black Carbon Emissions - Transport}
+showLinePlots(data, "Emi|VOC|Energy Demand|Transport", histVars = "Emi|VOC|Transportation Sector", vlines = 2020)
+```
+
+### Emi|VOC|Waste
+```{r Black Carbon Emissions - Waste}
+showLinePlots(data, "Emi|VOC|Waste", histVars = "Emi|VOC|Waste", vlines = 2020)
+```
