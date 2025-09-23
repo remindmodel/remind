@@ -195,6 +195,23 @@ emis_projected <- setYears(emis) * emifacs_change * (RA_change)^elasticity
 # Special case 2: constant emissions
 # Not yet needed since no sector is marked as constantemi in the mapping
 
+# logging species x sector x region combinations for which baseyear emissions (2020) are positive but projected emissions are NA
+# this happens if RA in 2020 is zero (division by zero in RA_change) or if emifacs in 2020 is zero (division by zero in emifacs_change)
+if(firstIteration){
+  cat("List of species x sector x region combinations for which projected emissions are NA but baseyear emissions (2020) are positive.\n
+  This can happen if the REMIND activity in 2020 is zero or the emission factor in 2020 is zero.\n")
+  for (species in getNames(emis_projected,dim="species")){
+    for (sector in getNames(emis_projected,dim="sector")){
+      missing_combinations <- which(is.na(emis_projected[,2020,species][,,sector]) & (emis[,2020,species][,,sector] > 0))
+      if (length(missing_combinations) > 0){
+        cat(paste0("Region(s) with missing projected emissions for species ",species," and sector ",sector,":"))
+        cat(paste0(getRegions(emis_projected)[missing_combinations]))
+        cat("\n")
+      }
+    }
+  }
+}
+
 # fill NA values with zero
 emis_projected[is.na(emis_projected)] <- 0
 
