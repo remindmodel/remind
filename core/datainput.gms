@@ -17,10 +17,6 @@ pm_taxCO2eqSum(ttot,regi) = 0;
 pm_SolNonInfes(regi) = 1; !! assume the starting point came from a feasible solution
 pm_capCum0(ttot,regi,teLearn)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq 1)) = 0;
 
-pm_globalMeanTemperature(tall)              = 0;
-pm_globalMeanTemperatureZeroed1900(tall)    = 0;
-pm_temperatureImpulseResponseCO2(tall,tall) = 0;
-
 *** Initialise to avoid compilation errors in presolve if variable not in input.gdx
 vm_demFeForEs.L(t,regi,entyFe,esty,teEs) = 0;
 vm_demFeForEs.L(t,regi,fe2es(entyFe,esty,teEs)) = 0.1;
@@ -114,10 +110,6 @@ p_inv_gdx(ttot,regi)     = vm_invMacro.l(ttot,regi,"kap");
 ***                                ESM
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
-
-*** default conversion for energy services
-pm_fe2es(ttot,regi,teEs) = 1;
-pm_shFeCes(ttot,regi,enty,in,teEs) = 0;
 
 *** initialize upper and lower bound to FE share parameters as zero (this will leave any FE share bounds non-activated)
 *** please set FE share bounds by modying this parameter in the sectormodules, e.g. 36_buildings and 37_industry datainput files
@@ -384,9 +376,6 @@ $ifthen.floorscen %cm_floorCostScen% == "pricestruc"
 *** for newer data than 2015, use these
     p_maxRegTechCost2020(teRegTechCosts) = SMax(regi, p_inco0("2020",regi,teRegTechCosts));
     pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
-*** report the new floor cost data
-    p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
-    p_newFloorCostdata(regi,teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
 $endif.floorscen
 
 
@@ -397,7 +386,6 @@ $ifthen.floorscen %cm_floorCostScen% == "techtrans"
     p_maxPPP2050 = SMax(regi, p_gdppcap2050_PPP(regi));
 *** take the ratio of the PPP income and the maximum income, and multiply with the global floor to get new floorcost that simulates tech transfer where costs are solely dependent on local wages, not on IP rent
     pm_data(regi,"floorcost",teLearn(te))$(p_maxPPP2050 ne 0) = p_oldFloorCostdata(regi,te) * p_gdppcap2050_PPP(regi) / p_maxPPP2050;
-    p_newFloorCostdata(regi,teLearn(te))$(p_maxPPP2050 ne 0) = p_oldFloorCostdata(regi,te) * p_gdppcap2050_PPP(regi) / p_maxPPP2050;
 $endif.floorscen
 
 *** In case regionally differentiated investment costs should be used the corresponding entries are revised:
@@ -667,10 +655,6 @@ pm_emifac(t,regi,"pecoal","sesofos","coaltr","ch4") = 9.46 * (1-pm_share_ind_fes
 pm_emifac(t,regi,"pebiolc","sesobio","biotr","ch4") = 9.46 * (1-pm_share_ind_fesos_bio("2005",regi));
 
 display pm_emifac;
-
-*MLB* initialization needed as include file represents only parameters that are different from zero
-p_boundtmp(ttot,all_regi,te,rlf)$(ttot.val ge 2005)       = 0;
-p_bound_cap(ttot,all_regi,te,rlf)$(ttot.val ge 2005)       = 0;
 
 *NB* include data and parameters for upper bounds on fossil fuel transport
 parameter f_IO_trade(tall,all_regi,all_enty,char)        "Energy trade bounds based on IEA data"
@@ -1323,9 +1307,6 @@ p_adj_coeff(ttot,regi,te)            = 32 * p_adj_coeff(ttot,regi,te);  !! Resca
 p_adj_coeff_Orig(ttot,regi,te)    = p_adj_coeff(ttot,regi,te);
 p_adj_seed_te_Orig(ttot,regi,te)  = p_adj_seed_te(ttot,regi,te);
 
-p_adj_coeff_glob(te)        = 0.0;
-p_adj_coeff_glob('tnrs')    = 0.0;
-
 *** Unit conversions
 p_emi_quan_conv_ar4(enty) = 1;
 p_emi_quan_conv_ar4(enty)$(emiMacMagpieCH4(enty)) = sm_tgch4_2_pgc * (25/s_gwpCH4);  !! need to use old GWP for MAC cost conversion as it only reverts what has been done in the calculation of the MACs
@@ -1390,8 +1371,6 @@ $if  "%cm_rcp_scen%" == "none"    sm_budgetCO2eqGlob = 20000.0000;
 
 display sm_budgetCO2eqGlob;
 ***-----------------------------------------------------------------------------
-
-p_datacs(regi,"peoil") = 0;   !! RP: 0 turn off the explicit calculation of non-energy use, as it is included in the oil total. Emission correction happens through rescaling of f_dataemiglob
 
 ***------------------------------------------------------------------------------------
 ***                                ESM  MAC data

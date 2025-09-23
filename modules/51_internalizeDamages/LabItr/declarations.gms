@@ -12,14 +12,17 @@ p51_sccLastItr(tall) "Social cost of carbon (due to GDP damages) from last itera
 p51_sccParts(tall,tall,all_regi)  "component needed for SCC calculation"
 p51_dy(tall,all_regi)		"damage factor for GDP instead of labor"
 
-pm_sccConvergenceMaxDeviation "max deviation of SCC from last iteration [percent]"
 
 p51_labRho(tall,all_regi)	"ces parameter rho for labor, needed for extension beyond 2150"
 p51_labXi(tall,all_regi)	"ces parameter xi for labor, needed for extension beyond 2150"
 p51_labEff(tall,all_regi)	"ces parameter eff for labor, needed for extension beyond 2150"
 p51_labEffgr(tall,all_regi)	"ces parameter effgr for labor, needed for extension beyond 2150"
 p51_lab(tall,all_regi)		"labor for extension beyond 2150"
-p51_ygross(tall,all_regi)		"GDP net of labor damage"
+p51_ygross(tall,all_regi)	"GDP net of labor damage"
+
+pm_sccConvergenceMaxDeviation "max deviation of SCC from last iteration [percent]"
+pm_taxCO2eqSCC(ttot,all_regi) "carbon tax component due to damages (social cost of carbon) [T$/GtCeq]"
+pm_GDPGross(tall,all_regi) "gross GDP (before damages) [T$]"
 ;
 
 *** EOF ./modules/51_internalizeDamages/LabItr/declarations.gms

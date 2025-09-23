@@ -15,7 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** Refactored the MAgPIE coupling interface (`getReportData.R`) introducing MAgPIE-to-REMIND mappings and replacing magclass with quitte/dplyr.
     [#2103](https://github.com/remindmodel/remind/pull/2103)
 - **core** Restructured core declarations file with different subsections and better documentation. Added units where missing and flagged declarations that can be either be removed or moved to another module in future steps.
-    [#2142](https://github.com/remindmodel/remind/pull/2142) 
+    [#2142](https://github.com/remindmodel/remind/pull/2142)
+- **core** Moved variable and parameter declarations from core to more fitting modules.
+    [#2189](https://github.com/remindmodel/remind/pull/2189)
 - **scripts** Upgrade renv from 1.1.4 to 1.1.5
     [#2192](https://github.com/remindmodel/remind/pull/2192)
 

@@ -21,6 +21,7 @@
 *** Eliminate effect of shift and mult for calculating the original emulator price
 v30_priceshift.fx(ttot,regi) = 0;
 v30_pricemult.fx(ttot,regi)  = 1;
+vm_pebiolc_price.l(ttot,regi)$(ttot.val ge 2005) = 0;
 
 ***--------- declare models -----------------
 model
@@ -48,6 +49,7 @@ if (execError > 0,
   execute_unload "abort.gdx";
   abort "at least one execution error occured, abort.gdx written";
 );
+
 
 solve model_biopresolve_p using cns; !!! nothing has to be optimized here, just pure calculation
 p30_pebiolc_price_emu_preloop(ttot,regi) = vm_pebiolc_price.l(ttot,regi); !!! save for shift factor calculation and reporting

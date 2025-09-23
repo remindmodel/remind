@@ -12,6 +12,8 @@ s30_switch_shiftcalc    "Switch to activate equation for shift calculation befor
 ;
 
 parameter
+pm_pedem_res(ttot,all_regi,all_te)              "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
+pm_secBioShare(ttot,all_regi,all_enty,emi_sectors) "Share of biomass per carrier for each sector [share]"
 p30_datapebio(all_regi,all_enty,rlf,charPeRe,ttot) "Global bioenergy potential for lignocellulosic residues and 1st generation crops [TWa]"
 p30_max_pebiolc_path(all_regi,tall)             "Time path of regional maximal pebiolc production [TWa]"
 p30_max_pebiolc_path_glob(tall)                 "Time path of global maximal pebiolc production [TWa]"
@@ -47,6 +49,8 @@ p30_fuelex_dummy(all_regi)         "Dummy for bio-energy supply per region"
 ;
 
 variables
+vm_costFuBio(ttot,all_regi)        "fuel costs from bioenergy production (can be negative depending on total agricultural cost) [T$]"
+vm_pebiolc_price(ttot,all_regi)    "bioenergy price based on MAgPIE supply curves [T$/TWa]"
 v30_pebiolc_costs(ttot,all_regi)   "Bioenergy costs according to MAgPIE supply curves [T$US]"
 v30_shift_r2                       "Least square to minimize during shift calculation"
 ;
@@ -70,5 +74,6 @@ q30_limitXpBio(ttot,all_regi)      "Only purpose grown bioenergy may be exported
 q30_costAdj(ttot,all_regi)         "Improve convergence penalizing deviations from last coupling iteration"
 q30_limitTeBio(ttot,all_regi)      "Limit BECCS in policy runs relative to reference scenario"
 q30_BioPEProdTotal(ttot,all_regi)  "Calculate total domestic PE biomass production"
+q30_limitBiotrmod(ttot,all_regi)   "limit the total amount of modern biomass use for solids to the amount of coal use for solids"
 ;
 *** EOF ./modules/30_biomass/magpie_40/declarations.gms
