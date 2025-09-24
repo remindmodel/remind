@@ -7,10 +7,6 @@
 *** SOF ./modules/21_tax/on/preloop.gms
 
 
-*** Adjustment of final energy subsidies to avoid neg. implicit 2005 prices that result in huge demand increases in 2010 and 2015
-*** Maximum final energy subsidy levels (in $/Gj) from REMIND version prior to rev. 5429
-p21_tau_fe_sub(ttot,regi,sector,entyFe)$p21_max_fe_sub(ttot,regi,entyFe) = max(p21_tau_fe_sub(ttot,regi,sector,entyFe),-p21_max_fe_sub(ttot,regi,entyFe));
-
 *** ------------------------- Temporal development of final energy TAXES and SUBSIDIES, depending on cm_fetaxscen
 *** Set time path for:
 ***   - final energy taxes (p21_tau_fe_tax, p21_tau_pe2se_tax)
