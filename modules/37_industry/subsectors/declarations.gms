@@ -15,13 +15,14 @@ Scalar
 Parameters
   pm_abatparam_Ind(ttot,all_regi,all_enty,steps)                               "industry CCS MAC curves [ratio @ US$2017]"
   pm_energy_limit(all_in)                                                      "thermodynamic/technical limits of subsector energy use [GJ/t product]"
+  pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)                          "parameters for scaling efficiencies in CES calibration for industry [unitless]"
   p37_energy_limit_slope(tall,all_regi,all_in)                                 "limit for subsector specific energy demand that converges towards the thermodynamic/technical limit [GJ/t product]"
   p37_clinker_cement_ratio(ttot,all_regi)                                      "clinker content per unit cement used"
   pm_ue_eff_target(all_in)                                                     "energy efficiency target trajectories [% p.a.]"
   pm_IndstCO2Captured(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)     "Captured CO2 in industry by energy carrier, subsector and emissions market [GtC/a]"
-  pm_NonFos_IndCC_fraction0(ttot,all_regi,emiInd37)                        "share of fuel co2 captured that is from sebio or sesyn [fraction]"
+  pm_NonFos_IndCC_fraction0(ttot,all_regi,emiInd37)                            "share of fuel co2 captured that is from sebio or sesyn [fraction]"
   p37_CESMkup(ttot,all_regi,all_in)                                            "parameter for those CES markup cost accounted as investment cost in the budget [trUSD/CES input]"
-  p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPpopScen)                      "upper limit to secondary steel production based on scrap availability"
+  p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPpopScen)                   "upper limit to secondary steel production based on scrap availability"
   p37_steel_secondary_max_share(tall,all_regi)                                 "maximum share of secondary steel production"
   p37_BAU_industry_ETS_solids(tall,all_regi)                                   "industry solids demand in baseline scenario"
   p37_cesIO_baseline(tall,all_regi,all_in)                                     "vm_cesIO from the baseline scenario"
@@ -50,6 +51,7 @@ Parameters
   p37_IndFeBal_FeedStock_RH(ttot,all_regi,all_enty,emiMkt)   "testing parameter Ind FE Balance right-hand side feedstock term"
   p37_EmiEnDemand_NonEnCorr(ttot,all_regi)                   "energy demand co2 emissions with non-energy correction"
   p37_EmiEnDemand(ttot,all_regi)                             "energy demand co2 emissions without non-energy correction"
+  
 *** output parameters only for reporting
   o37_cementProcessEmissions(ttot,all_regi,all_enty)                     "cement process emissions [GtC/a]"
   o37_demFeIndTotEn(ttot,all_regi,all_enty,all_emiMkt)                   "total FE per energy carrier and emissions market in industry (sum over subsectors)"
@@ -113,8 +115,9 @@ Positive Variables
 Variables
 !! feedstocks
 vm_emiFeedstockNoEnergy(ttot,all_regi,all_enty,all_emiMkt)                "Emissions from feedstocks that are not accounted as energy-related emissions, so far only CO2 emissions [GtC]"
-vm_emiNonFosNonIncineratedPlastics(ttot,all_regi,all_enty,all_emiMkt)    "Negative CO2 emissions from non-fossil carbon in non-incinerated plastics [GtC]"
+vm_emiNonFosNonIncineratedPlastics(ttot,all_regi,all_enty,all_emiMkt)     "Negative CO2 emissions from non-fossil carbon in non-incinerated plastics [GtC]"
 v37_emiNonPlasticWaste(ttot,all_regi,all_enty,all_emiMkt)                 "Emissions from non-plastic waste, so far only CO2 emissions [GtC]"
+vm_demFeNonEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "final energy demand used for material feedstocks in the industry sector [TWa]"
 ;
 
 Equations

@@ -28,7 +28,6 @@ pm_emiMktRefYear,                  parameter,   ???
 pm_emiMktTarget_dev_iter,          input,       ??
 pm_emiMktTarget_dev,               parameter,   ???
 pm_emiMktTarget,                   input,       ??
-pm_emissions0,                     parameter,   ???
 pm_factorRescaleemiMktCO2Tax,      input,       ??
 pm_FEPrice_iter,                   parameter,   not needed
 pm_FEPrice,                        parameter,   not needed

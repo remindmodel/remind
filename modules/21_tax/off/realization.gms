@@ -7,6 +7,7 @@
 *** SOF ./modules/21_tax/off/realization.gms
 
 *####################### R SECTION START (PHASES) ##############################
+$Ifi "%phase%" == "declarations" $include "./modules/21_tax/off/declarations.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/21_tax/off/bounds.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/21_tax/off/realization.gms

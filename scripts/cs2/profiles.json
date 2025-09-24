@@ -94,10 +94,15 @@
 		"sections": "c(0,1,2,3,4,5,99)",
 		"mainReg": "'World'"
 	},
-		"AirPollutantsDetailed": {
+	"AirPollutantsREMIND": {
 		"sections": "0",
 		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))",
-		"userSectionPath": "normalizePath('./scripts/cs2/AirPollutantsDetailed.Rmd')"
+		"userSectionPath": "normalizePath('./scripts/cs2/AirPollutantsREMIND.Rmd')"
+	},
+	"AirPollutantsREMIND-MAgPIE": {
+		"sections": "0",
+		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))",
+		"userSectionPath": "normalizePath('./scripts/cs2/AirPollutantsREMIND-MAgPIE.Rmd')"
 	},
 	"mySection": {
 		"sections": "0",

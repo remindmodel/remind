@@ -91,27 +91,16 @@ all_APssp     "all air pollutant SSPs. GAINSlegacy means the SSP is picked with 
     SSP3
     SSP4
     SSP5
-    GAINSlegacy
-    SSP2IndiaHigh
+    MTFR
+    SMIPVLLO
 /
 
 *** If you get a domain violation here, check if cm_APssp and cm_APscen values are correctly paired. See main.gms for details.
 all_APscen     "all air pollutant scenarios"
 /
-    SSP1
-    SSP2
-    SSP3
-    SSP4
-    SSP5
     SLE
     CLE
-    VLE
-    FLE
-    FLE_building_transport
-    MFR
-    MFR_Transports
-    GlobalEURO6
-    SLCF_building_transport
+    MTFR
     SMIPbySSP
     SMIPVLLO
 /
@@ -545,13 +534,11 @@ all_sectorEmi "all sectors with emissions"
     solvents     "emissions from solvents"
     extraction   "emissions from fuel extraction"
     indprocess   "process emissions from industry"
+    waste        "emissions from waste"
 /
 
 all_exogEmi "all exogenous emission types"
-/   Aviation         "Exog emi from Aviation"
-    InternationalShipping "Exog emi from Int. Shipping"
-    Waste            "Exogenous emissions from Waste treatment"
-    Agriculture      "Exogenous emissions from Agriculture"
+/   Agriculture      "Exogenous emissions from Agriculture"
     AgWasteBurning   "Exogenous emissions from Ag Waste Burning"
     ForestBurning    "Exogenous emissions from Forest Burning"
     GrasslandBurning "Exogenous emissions from Grassland Burning"
@@ -2053,6 +2040,7 @@ sectorExogEmi(all_sectorEmi) "sectors with exogenous emissions"
     solvents
     extraction
     indprocess
+    waste
 /
 emi_sectors  "comprehensive sector set used for more detailed emissions accounting (REMIND-EU) and for CH4 tier 1 scaling - potentially to be integrated with similar set all_exogEmi"
 /

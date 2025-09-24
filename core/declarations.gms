@@ -24,7 +24,7 @@
 *** ------------- Macro Parameters --------------------------------------------
 parameters
 
-*** trade prices (move to trade module?)
+*** trade prices
 pm_pvp(ttot,all_enty)                                "Price on commodity markets, [T$/TWa] for energy commodities except uranium, uranium (peur) in [T$/Mt Uranium], emissions permits (perm) in [T$/GtC]"
 p_pvpRef(ttot,all_enty)                              "Price on commodity markets - imported from REF gdx, [T$/TWa] for energy commodities except uranium, uranium (peur) in [T$/Mt Uranium], emissions permits (perm) in [T$/GtC]"
 
@@ -34,18 +34,10 @@ pm_ies(all_regi)                                     "intertemporal elasticity o
 pm_gdp_gdx(tall,all_regi)                            "GDP path from gdx, updated iteratively [T$]"
 p_inv_gdx(tall,all_regi)                             "macro-investments path from gdx, updated iteratively [T$]"
 
-*** co2 price calculated in 45_carbonprice module (move to tax or carbonprice module?)
+*** co2 price calculated in 45_carbonprice module
 pm_taxCO2eq(ttot,all_regi)                           "CO2 tax path calculated in 45_carbonprice module [T$/GtC]. To get $/tCO2, multiply with 272 = 1 / sm_DptCO2_2_TDpGtC"
 pm_taxCO2eq_iter(iteration,ttot,all_regi)            "CO2 tax path (pm_taxCO2eq) tracked over iterations [T$/GtC]"
 pm_taxCO2eq_anchor_iterationdiff(ttot)               "difference in global anchor carbon price to the last iteration [T$/GtC]"
-
-*** co2 price mark-up per region on top of pm_taxCO2eq calculated in 46_carbonpriceRegi module (move to tax or carbonprice module?)
-pm_taxCO2eqRegi(tall,all_regi)                       "Additional regional CO2 tax path calulated in in 46_carbonpriceRegi module to reach regional emissions targets [T$/GtC]. To get $/tCO2, multiply with 272 = 1 / sm_DptCO2_2_TDpGtC"
-pm_taxCO2eqSum(tall,all_regi)                        "sum of pm_taxCO2eq, pm_taxCO2eqRegi, pm_taxCO2eqSCC [T$/GtC]. To get $/tCO2, multiply with 272 = 1 / sm_DptCO2_2_TDpGtC"
-
-*** co2 price calculated in 47_regipol module (move to tax or carbonprice module?)
-pm_taxemiMkt(ttot,all_regi,all_emiMkt)               "CO2 tax path per region and emissions market calculated in 47_regipol module [T$/GtC]"
-pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt) "CO2 tax path per region and emissions market calculated in 47_regipol module from previous iteration [T$/GtC]"
 
 *** general macro parameters
 pm_cesdata(tall,all_regi,all_in,cesParameter)        "parameters of the CES function: efficiency parameters (xi, eff, effgr) [unitless], target quantities of CES calibration (quantity) [unit of CES node, see set all_in], CES prices resulting from calibration (price) [T$/unit of CES node]"
@@ -58,18 +50,6 @@ pm_lab(tall,all_regi)                                "data for labour [bn people
 pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer) [T$/unit energy service]"
 pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution, higher values increase sustitutability between inputs of the CES function (i.e. stronger reaction of quantities to price changes) [unitless]"
 p_r(ttot,all_regi)                                   "capital interest rate calculated as a diagnostic parameter (not used in the optimization) as the sum of the pure rate of time preference and endogenous consumption growth rate [year-1]"
-;
-
-*** ------------- Macro Variables --------------------------------------------
-variables
-
-*** tax revenue (move to tax module?)
-vm_taxrev(ttot,all_regi)                             "difference between tax volume in current and previous iteration [T$]"
-
-*** move to module 22?
-vm_costSubsidizeLearning(ttot,all_regi)              "regional cost of subsidy for learning technologies [T$]"
-*** move to module 41 emicapregi?
-vm_dummyBudget(ttot,all_regi)                        "auxiliary variable that helps to meet permit allocation equation in nash case [GtCeq]"
 ;
 
 *** ------------- Macro Positive Variables ------------------------------------
@@ -91,12 +71,6 @@ q_esCapInv(ttot,all_regi,all_teEs)                   "investment equation for en
 
 *** ------------- Emissions Parameters ----------------------------------------
 parameters
-
-*** air pollutant emissions parameters (move to module 11?)
-pm_emiExog(tall,all_regi,all_enty)                   "exogenous emissions from air pollutants [Mt SO2, Mt BC, Mt OC]" 
-*** emissions permit parameters (move to module 41?)
-pm_shPerm(tall, all_regi)                            "emission permit shares [share]"
-pm_emicapglob(tall)                                  "global emission cap [GtC]" 
 
 *** emissions parameters for nash algorithm
 pm_co2eqForeign(tall,all_regi)                       "emissions, which are part of the climate policy, of other regions (nash relevant)."
@@ -156,8 +130,6 @@ vm_co2eq(ttot,all_regi)                              "total greenhouse gas emiss
 vm_co2eqMkt(ttot,all_regi,all_emiMkt)                "total greenhouse gas emissions per market measured in co2 equivalents that are subject to carbon pricing, be aware that emissions coverage of this variable depends on switch cm_multigasscen [GtCeq]"
 vm_emiAll(ttot,all_regi,all_enty)                    "total emissions by species [GtC, Mt CH4, Mt N, Mt SO2, Mt BC, Mt OC]"
 v_co2eqCum(all_regi)                                 "cumulated vm_co2eq emissions for the first budget period [GtCeq]"
-*** move to module 41 emicapregi?
-vm_perm(ttot,all_regi)                               "emission allowances [GtCeq]"
 
 *** sectoral emissions
 vm_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty)  "emissions from energy technologies on supply-side (pm_emifac * PE) and demand-side (pm_emifac * FE), note: not equivalent to Emi|CO2|Energy in reporting [GtC, Mt CH4, Mt N, Mt SO2, Mt BC, Mt OC]"
@@ -238,6 +210,7 @@ p_maxRegTechCost2020(all_te)                         "highest historical regiona
 p_gdppcap2050_PPP(all_regi)                          "regional GDP PPP per capita in 2050 [thousand $/capita]"
 p_maxPPP2050                                         "maximum income GDP PPP among regions in 2050 [T$]"
 p_maxSpvCost                                         "maximum spv investment cost among regions [T$/TW]" 
+p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data [T$/TW]"
 
 *** parameters for capacity equations
 pm_tsu2opTimeYr(ttot,opTimeYr)                       "auxiliary parameter to map time steps to past time steps: counts the number of model timesteps between years ttot-opTimeYr and ttot, used for q_transPe2se and q_cap equations [unitless]" 
@@ -246,9 +219,6 @@ pm_tsu2opTimeYr(ttot,opTimeYr)                       "auxiliary parameter to map
 pm_capCum0(tall,all_regi,all_te)                     "Total cumulated capacity of learning technologies from last iteration used for learning curves based on vm_capCum[TW]"
 p_capCum(tall, all_regi,all_te)                      "Total cumulated capacity of learning technologies from input.gdx used for learning curves based on vm_capCum[TW]"
 pm_capCumForeign(ttot,all_regi,all_te)               "Total cumulated capacity of learning technologies of all other regions except regi [TW]"
-
-*** biomass parameters (move to biomass module?)
-pm_pedem_res(ttot,all_regi,all_te)                   "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
 
 *** early retirement parameters
 pm_regiEarlyRetiRate(ttot,all_regi,all_te)           "regional early retirement rate, maximum allowed annual increase in the share of early retired capacity of a technology for which early retirement is allowed [1/year]"
@@ -308,11 +278,7 @@ s_aux_cap_remaining                                  "auxiliary parameter to cal
 p_aux_capThisGrade(all_regi,all_te,rlf)              "auxiliary parameter to calculate p_avCapFac2015; How the historic 2015 capacity is distributed among grades [TW]"
 p_aux_capacityFactorHistOverREMIND(all_regi,all_te)  "auxiliary parameter to calculate capacity factors correction (wind and spv): the ratio of historic over REMIND CapFac in 2015"
 
-*** historical IEA calibration data (move to module 4?)
-pm_IO_output(tall,all_regi,all_enty,all_enty,all_te) "Historical energy output per technology based on IEA data [TWa]"
-
-*** parameters used for 2005 capacity calibration (move to module 5 intialCap?)
-pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]" 
+*** parameters used for 2005 capacity calibration
 pm_vintage_in(all_regi,opTimeYr,all_te)              "historical vintage structure per technology, generic assumptions made in generisdata_vintages.prn [unitless]" 
 
 *** parameters for capacity bounds
@@ -333,10 +299,6 @@ p_prodAllReference(ttot,all_regi,all_te)             "Sum of the above in the re
 *** CES calibration tarjectories industry and buildings
 pm_fedemand(tall,all_regi,all_in)                    "read-in parameter for final energy and production trajectories used for the CES parameter calibration in industry and buildings [TWa]"
 
-*** energy service layer (only relevant for transport, move to transport module?)
-pm_fe2es(tall,all_regi,all_teEs)                     "Conversion factor from final energies to transport energy services [Tpkm/TWa, Ttkm/TWa]"
-pm_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)   "Final energy shares for CES nodes in transport [share]"
-
 *** parameters for setting final energy shares
 pm_shfe_up(ttot,all_regi,all_enty,emi_sectors)       "Final energy shares exogenous upper bounds per sector [share]"
 pm_shfe_lo(ttot,all_regi,all_enty,emi_sectors)       "Final energy shares exogenous lower bounds per sector [share]"
@@ -353,12 +315,6 @@ $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
 *** FE demand rescaling parameters
   pm_scaleDemand(tall,tall,all_regi)                 "Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
 $endif.scaleDemand
-
-*** industry CES efficiency scaling (move to industry module?)
-pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)  "parameters for scaling efficiencies in CES calibration for industry [unitless]" /   /
-
-*** historic biomass shares in final energy (move to biomass module?)
-pm_secBioShare(ttot,all_regi,all_enty,emi_sectors)   "Share of biomass per carrier for each sector [share]"
 
 *** energy prices
 pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)     "parameter to capture all FE prices across sectors and markets [tr$2005/TWa]"
@@ -405,26 +361,8 @@ v_relChangeProdStartYear(ttot,all_regi,all_te)       "calculating the relative c
 v_changeProdStartyearSlack(ttot,all_regi,all_te)     "slack variable to allow a minimum cost-free change with respect to the reference run [TWa] for all energy-conversion tech, [GtC] for the CCS chain in ccs2te (pipelines/injection)"
 
 v_costFu(ttot,all_regi)                              "costs of primary energy production/extraction (can be negative depending on vm_costFuBio) [T$]"
-*** move to biomass module?
-vm_costFuBio(ttot,all_regi)                          "fuel costs from bioenergy production (can be negative depending on total agricultural cost) [T$]"
-
-*** move to CDR module?
-vm_omcosts_cdr(tall,all_regi)                        "O&M costs for spreading grinded rocks on fields [T$]"
-
-*** move to air pollution module?
-vm_costpollution(tall,all_regi)                      "costs of air pollution policies [T$]"
-
-*** move to power module?
-vm_usableSe(ttot,all_regi,entySe)                    "Usable SE electricity defined as: generation from pe2se technologies + generation from coupled production - storage losses [TWa]"
-vm_usableSeTe(ttot,all_regi,entySe,all_te)           "Usable SE electricity per generation technology defined as: generation from pe2se technologies + generation from coupled production - storage losses [TWa]"
 
 vm_flexAdj(tall,all_regi,all_te)                     "flexibility mark-up cost or subsidy, used to emulate price changes of technologies which see lower-than-average or higher-than-average electricity prices due to more or less flexible operation[T$/TWa]"
-
-*** move to tax module?
-*** tax revenues of implicit taxes used for quantity and price target implementation
-vm_taxrevimplicitQttyTargetTax(ttot,all_regi)        "tax revenue of implict tax for quantity target bound [T$]"
-vm_taxrevimplicitPriceTax(ttot,all_regi,entySe,all_enty,sector)   "tax revenue of implict tax for final energy price target [T$]"
-vm_taxrevimplicitPePriceTax(ttot,all_regi,all_enty)  "tax revenue of implict tax forprimary energy price target [T$]"
 ;
 
 
@@ -456,8 +394,6 @@ vm_demSe(ttot,all_regi,all_enty,all_enty,all_te)     "secondary energy demand (i
 vm_prodFe(ttot,all_regi,all_enty,all_enty,all_te)    "final energy production [TWa]"
 vm_demFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "final energy demand per sector and emissions market, note: taxes should be applied to this variable or variables closer to the supply-side whenever possible so the marginal prices include the tax effects [TWa]"
 vm_demFeSector_afterTax(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "final energy demand per sector and emissions market after taxation, demand sectors should use this variable in their final energy balance equations so demand-side marginals include taxes effects [TWa]"
-*** move to industry module?
-vm_demFeNonEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "final energy demand used for material feedstocks in the industry sector [TWa]"
 
 *** energy system cost variables
 vm_costEnergySys(ttot,all_regi)                      "total energy system costs [T$]"
@@ -466,9 +402,6 @@ v_costOM(ttot,all_regi)                              "operation and maintenance 
 v_costInv(ttot,all_regi)                             "total technology investment costs (including adjustment costs) [T$]"
 
 vm_costAddTeInv(tall,all_regi,all_te,emi_sectors)    "additional sector-specific investment cost of demand-side transformation, e.g. investment into initial hydrogen distribution infrastructure [T$]"
-
-*** move to biomass module?
-vm_pebiolc_price(ttot,all_regi)                      "bioenergy price based on MAgPIE supply curves [T$/TWa]"
 
 *** energy share variables
 v_shGreenH2(ttot,all_regi)                           "share of green hydrogen in total hydrogen production [share]"
@@ -497,9 +430,10 @@ $ifthen.minMaxSeFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgS
   v_PosPenSeFeSectorShare(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max positive penalty for secondary energy share deviation in sectors [T$]"
 $endif.minMaxSeFeSectorShareDev
 
-*** can be removed?
 v_prodUe(ttot,all_regi,all_enty,all_enty,all_te)    "Useful energy production [TWa]"
+*** TODO: should be renamed?
 vm_demSeOth(ttot,all_regi,all_enty,all_te)          "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
+*** TODO: can be removed? 
 v_prodSeOth(ttot,all_regi,all_enty,all_te)          "other sety production from certain technologies, have to be calculated in additional equations [TWa]"
 ;
 
@@ -534,9 +468,6 @@ q_limitGeopot(ttot,all_regi,all_enty,rlf)            "constrain land use of sola
 q_windoff_low(tall,all_regi)                         "constraint to ensure that offshore wind capacity is also built to a some extend if region builds onshore wind and has notable offshore potential relative to its onshore potential"
 q_limitSeel2fehes(ttot,all_regi)                     "equation to limit the share of electricity in district heating"
 q_capNonDecreasing(tall,all_regi,all_te)             "constrain capacity of some capital-intensive and site-specific technologies like hydropower and geothermal to not decrease over time once it is built"
-
-*** biomass equations (to be moved to biomass module?)
-q_limitBiotrmod(ttot,all_regi)                       "limit the total amount of modern biomass use for solids to the amount of coal use for solids"
 
 *** capacity constraints for energy production (capacity * capacity factor = production)
 q_limitCapSe(ttot,all_regi,all_enty,all_enty,all_te)    "capacity constraint for pe2se secondary energy production"
@@ -600,8 +531,6 @@ $ifthen.minMaxSeFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgS
   q_minMaxPenSeFeSectorShareDev(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "min-max penalty balance for secondary energy share deviation in sectors"
 $endif.minMaxSeFeSectorShareDev
 
-*** can be removed?
-* q_shFeCesNorm(ttot,all_regi,all_in)                "Shares have to sum to 1."
 ;
 
 *** ---------------------------------------------------------------------------
@@ -626,8 +555,6 @@ p_extRegiccsinjecrateRegi(ext_regi)                  "Regional CCS injection rat
 
 equations
 *** carbon management technology equations
-*** q_transCCS can be removed?
-q_transCCS(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_enty,all_te,rlf) "transformation equation for ccs"
 q_limitCCS(all_regi,all_enty,all_enty,all_te,rlf)    "limit cumulated CO2 injection into geological storage to maximum storage potential"
 
 *** capacity constraint for CCS (capacity * capacity factor = co2 injection)
@@ -645,15 +572,6 @@ parameters
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1 [GtC]"
 pm_actualbudgetco2(ttot)                             "actual level of cumulated emissions starting from 2020 [GtCO2]"
 p_actualbudgetco2_iter(iteration,ttot)               "track actual level of cumulated emissions starting from 2020 over iterations [GtCO2]"
-
-*** climate system parameters (move to climate module?)
-pm_globalMeanTemperature(tall)                       "global mean temperature anomaly [K]" 
-pm_globalMeanTemperatureZeroed1900(tall)             "global mean temperature anomaly, zero around 1900 [K]"
-pm_temperatureImpulseResponseCO2(tall,tall)          "temperature impulse response to CO2 [K/GtCO2]"
-
-*** damage parameters, (move to damage module?)
-pm_taxCO2eqSCC(ttot,all_regi)                        "carbon tax component due to damages (social cost of carbon) [T$/GtCeq] " 
-pm_GDPGross(tall,all_regi)                           "gross GDP (before damages) [T$]"
 
 *** iteration parameters
 pm_SolNonInfes(all_regi)                             "model status from last iteration. 1 means status 2 or 7, 0 for all other status codes"
@@ -676,29 +594,6 @@ o_negitr_cumulative_CO2_emieng_seq(iteration)        "estimated sequestered CO2 
 o_negitr_disc_cons_dr5_reg(iteration,all_regi)       "estimated discounted consumption 2005-2100 with discount rate 5%. 'estimated' because of different times step lengths around 2100 [T$]"
 o_negitr_disc_cons_drInt_reg(iteration,all_regi)     "estimated discounted consumption 2005-2100 with internal discount rate. 'estimated' because of different times step lengths around 2100 [T$]"
 o_negitr_total_forc(iteration)                       "total forcing in 2100"
-
-*** not used anymore, can be removed?
-p_boundtmp(tall,all_regi,all_te,rlf)                 "read-in bound on capacities" 
-p_bound_cap(tall,all_regi,all_te,rlf)                "read-in bound on capacities"
-p_datacs(all_regi,all_enty)                          "Primary energy oil that is not comubusted but used for non-energy use [TWa]" 
-
-o_DirlcoCCS(ttot,all_regi,all_te)                    "Annuity per sequestered CO2 by CCS technology, calc. from investment costs and fixOM. [$/tCO2]"
-o_DirlcoCCS_total(ttot,all_regi)                     "Total annuity per sequestered CO2. [$/tCO2]"
-o_CO2emi_per_energy(ttot,all_regi,all_te)            "Emitted CO2 per MWh energy (main product) produced. [kgCO2/MWh]"
-o_seq_CCO2emi_per_energy(ttot,all_regi,all_te)       "Sequestered CO2 per MWh energy produced (main product). [kgCO2/MWh]"
-o_lcoemarkup_CCS(ttot,all_regi,all_te)               "Additional LCOE mark-up due to CCS transport&storage. [$/MWh]"
-
-pm_emissionsForeign(tall,all_regi,all_enty)          "total emissions of other regions (nash relevant) [GtC, Mt CH4, Mt N]" 
-pm_emissions0(tall,all_regi,all_enty)                "Total emissions of last iteration used for nash algorithm [GtC, Mt CH4, Mt N]" 
-
-p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data [T$/TW]"
-p_newFloorCostdata(all_regi,all_te)                  "print new floor cost data [T$/TW]" 
-
-p_adj_coeff_glob(all_te)                             "coefficient for adjustment costs - global scale [unitless]" 
-
-p_share_seliq_s(ttot,all_regi)                       "share of liquids used for stationary sector (fehos). [0..1]"
-p_share_seh2_s(ttot,all_regi)                        "share of hydrogen used for stationary sector (feh2s). [0..1]"
-p_share_seel_s(ttot,all_regi)                        "Share of electricity used for stationary sector (feels). [0..1]"
 ;
 
 *** ------------- Scalars ----------------------------

@@ -111,6 +111,12 @@ s21_frac_NetNegEmi                                                  "parameter u
 ;
 
 variables
+*** tax revenues of implicit taxes used for quantity and price target implementation
+vm_taxrev(ttot,all_regi)                                            "difference between tax volume in current and previous iteration [T$]"
+vm_taxrevimplicitQttyTargetTax(ttot,all_regi)                       "tax revenue of implict tax for quantity target bound [T$]"
+vm_taxrevimplicitPriceTax(ttot,all_regi,entySe,all_enty,sector)     "tax revenue of implict tax for final energy price target [T$]"
+vm_taxrevimplicitPePriceTax(ttot,all_regi,all_enty)                 "tax revenue of implict tax forprimary energy price target [T$]"
+
 v21_taxrevReal(ttot,all_regi)                                       "difference between volume of real taxes and subsidies in current and previous iteration"
 v21_taxrevPseudo(ttot,all_regi)                                     "difference between volume of pseudo taxes and subsidies in current and previous iteration"
 v21_tau_bio(ttot)                                                   "demand-dependent bioenergy tax"
