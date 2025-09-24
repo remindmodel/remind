@@ -11,14 +11,21 @@
 *' For standalone runs replace exogenous land use MAC cots (p26_macCostLu) with endogenous land use MAC costs (pm_macCost). 
 *' Note: dont include mac costs for CO2luc, because they are already implicitly included in p26_totLUcosts_withMAC (and not in p26_macCostLu).
 *' In coupled runs these two components are zero and the original data from MAgPIE are used.
-pm_totLUcosts(ttot,regi) =  p26_totLUcosts_withMAC(ttot,regi) - p26_macCostLu(ttot,regi) + sum(enty$(emiMacMagpie(enty) AND (NOT emiMacMagpieCO2(enty))), pm_macCost(ttot,regi,enty));
+pm_totLUcosts_excl_costFuBio(ttot,regi) =  p26_totLUcosts_withMAC(ttot,regi) 
+                                         - p26_macCostLu(ttot,regi) 
+                                         + sum(enty$(emiMacMagpie(enty) AND (NOT emiMacMagpieCO2(enty))), pm_macCost(ttot,regi,enty))
+                                         - pm_pebiolc_costs_emu_preloop(ttot,regi); !! Need to be substracted since they are also included in the total agricultural production costs
 
 *' **Bioenergy costs**
-*' For standalone and coupled runs costs for biomass production are calculated endogenously (v30_pebiolc_costs). Since they
-*' are also included in the exogenous total landuse costs (p26_totLUcostLookup) they need to be substracted from these total
-*' landuse costs. This is done in the biomass module ([30_biomass]) by calculating them before the main solve as a
-*' parameter (p30_pebiolc_costs_emu_preloop), and during the optimization substracting this parameter from the fuel costs
-*' while including the variable v30_pebiolc_costs.
+*' The costs for biomass production cannot be determined directly as individual costs in MAgPIE, but are included 
+*' in the total land use costs (p26_totLUcosts_withMAC), which are exogenous (i.e., fixed) to REMIND. In REMIND, 
+*' bioenergy costs (v30_pebiolc_costs) are calculated in the biomass module ([30_biomass]) as an integral under the
+*' price curve. The bioenergy costs included in the total land use costs are approximated in REMIND in the preloop 
+*' (model_biopresolve_c) before the main solve by calculating this integral with the bioenergy demand from the same
+*' MAgPIE scenario from which the total costs are taken. The bioenergy costs calculated in this pre-step are subtracted
+*' as a fixed component (pm_pebiolc_costs_emu_preloop) during optimization (see above). The actual bioenergy costs
+*' (v30_pebiolc_costs) going into the budget equation are calculated during optimization using the endogenous 
+*' bioenergy demand (also as an integral under the price curve).
 
 *' @stop
 

@@ -8,16 +8,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### input data/calibration
-- [[mrcommons #167]](https://github.com/pik-piam/mrcommons/pull/167) new input data rev including new subtype of landuse CO2 emissions (`co2luc`)
+- **mrcommons** New input data rev including new subtype of landuse CO2 emissions (`co2luc`) [#167](https://github.com/pik-piam/mrcommons/pull/167)
 
 ### changed
-- [[#2103]](https://github.com/remindmodel/remind/pull/2103) Refactored the MAgPIE coupling interface (`getReportData.R`) introducing MAgPIE-to-REMIND mappings and replacing magclass with quitte/dplyr.
+
+- **scripts** Refactored the MAgPIE coupling interface (`getReportData.R`) introducing MAgPIE-to-REMIND mappings and replacing magclass with quitte/dplyr.
+    [#2103](https://github.com/remindmodel/remind/pull/2103)
+- **core** Restructured core declarations file with different subsections and better documentation. Added units where missing and flagged declarations that can be either be removed or moved to another module in future steps.
+    [#2142](https://github.com/remindmodel/remind/pull/2142)
+- **core** Moved variable and parameter declarations from core to more fitting modules.
+    [#2189](https://github.com/remindmodel/remind/pull/2189)
+- **scripts** Upgrade renv from 1.1.4 to 1.1.5
+    [#2192](https://github.com/remindmodel/remind/pull/2192)
 
 ### added
-- 
+- [#2168](https://github.com/remindmodel/remind/pull/2168) Adds biochar as novel CDR option. Biochar can be produced via three established and one future pe2se technology.
+- [#2195](https://github.com/remindmodel/remind/pull/2195) Make it possible to provide a renv.lock to be used for a run (useful for the releases)
+- [#2196](https://github.com/remindmodel/remind/pull/2196) Update release scripts: the release uses the renv snapshot, the develop does not
+- **11_aerosols** Add renewed pipeline exoGAINS2025 for the calculation of air pollutant emissions in REMIND. 
+  [#2205](https://github.com/remindmodel/remind/pull/2205) 
 
 ### removed
--
+- **21_tax** remove input file with upper bound on subsidy for fuel extraction, as it no longer has any effect on the data 
+  [#2201](https://github.com/remindmodel/remind/pull/2201)
+- **11_aerosols** Remove old pipeline exoGAINS for the calculation of air pollutant emissions in REMIND. 
+  [#2209](https://github.com/remindmodel/remind/pull/2209)
 
 ### fixed
 -

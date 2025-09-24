@@ -1,5 +1,5 @@
 *** SOF ./core/input/generisdata_emi.prn
-*TA* This file includes the emission factors of secondary energy production technologies given in GtC per ZJ (ie 10^9tC per 10^9TJ) 
+*TA* This file includes the emission factors of secondary energy production technologies given in GtC per ZJ input (ie 10^9tC per 10^9TJ) 
 *SMore* As part of the feedstock and plastics implementation, the emission factors for oil were set back to the actual value of 20 
 *JeS* emission factors for n2o are in Tg N per TWa (native remind units)
 *DK* biomass N2O emissions are taken care via p_efFossilFuelExtr in q_macBase in core/equations.gms
@@ -29,19 +29,23 @@ pecoal.sesofos.coaltr          26.1             0.04415
 pecoal.segafos.coalgas         26.1             0.04415
 pebiolc.seel.bioigccc         -20.0      20.0
 pebiolc.seel.bioigcc
-pebiolc.segabio.biogasc       -14.1      14.1
-pebiolc.seliqbio.bioftcrec    -14.6      14.6
-pebiolc.seh2.bioh2c           -22.5      22.5   
+pebiolc.segabio.biogasc             -14.1      14.1
+pebiolc.seliqbio.bioftcrec          -14.6      14.6
+pebiolc.seh2.bioh2c                 -22.5      22.5   
 pebiolc.seel.biochp                             
 pebiolc.seh2.bioh2                              
 pebiolc.sehe.biohp                              
+pebiolc.sebiochar.biopyronly       -10.7
+pebiolc.sebiochar.biopyrhe         -10.7
+pebiolc.sebiochar.biopyrchp        -10.7
+pebiolc.sebiochar.biopyrliq         -8.0     
 pebiolc.sesobio.biotr                           
 pebiolc.sesobio.biotrmod                        
 pebiolc.segabio.biogas                          
-peoil.seliqfos.refliq          20               
-peoil.seel.dot                 20             0.01892
-seh2.segasyn.h22ch4                                              0.395
-seh2.seliqsyn.MeOH                                               0.53
+peoil.seliqfos.refliq               20               
+peoil.seel.dot                      20               0.01892
+seh2.segasyn.h22ch4                                                0.395
+seh2.seliqsyn.MeOH                                                 0.53
 
 $ontext
 Parameterization of CO2 Capture Rates of X-to-Liquids and X-to-Gas technologies including carbon capture:
@@ -61,6 +65,10 @@ Capture Rate(bioftcrec) = 25 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.41 ~ 14.6
 Capture Rate(biogasc) = 25 GtC/ZJ * 0.9 - 14.6 GtC/ZJ(FE) / 0.95 * 0.55 ~ 14.1 GtC/ZJ(PE) (56% of carbon input)
 Capture Rate(coalftcrec) = 26.1 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.4 ~ 15.8 GtC/ZJ(PE) (60% of carbon input)
 Capture Rate(gasftcrec) = 15.3 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.57 ~ 2.7 GtC/ZJ(PE) (17.6% of carbon input)
+
+Parametrization of biochar-producing technologies:
+- established biochar options assuming slow pyrolysis at 500°C based on Schmidt et al. (2019), https://doi.org/10.1111/gcbb.12553.
+- biopyrliq based on Woolf et al. (2014), https://doi.org/10.1021/es500474q. 
 $offtext
 
 *** EOF ./core/input/generisdata_emi.prn

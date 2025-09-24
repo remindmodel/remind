@@ -380,12 +380,30 @@ loop((t,regi,entyPe)$pm_implicitPePriceTarget(t,regi,entyPe),
 );  
 $endIf.cm_implicitPePriceTarget
 
-*** check global budget target from core/postsolve, must be within 2 Gt of target value
+*** check global budget target from core/postsolve, must be within cm_budgetCO2_absDevTol (default 2 Gt) of target value
 p80_globalBudget_absDev_iter(iteration) = sm_globalBudget_absDev;
-if (abs(p80_globalBudget_absDev_iter(iteration)) gt cm_budgetCO2_absDevTol,
+if ( abs(p80_globalBudget_absDev_iter(iteration)) gt cm_budgetCO2_absDevTol , !! check if CO2 budget met in tolerance range,
   s80_bool = 0;
-  p80_messageShow("target") = YES;
+  p80_messageShow("globalbudget") = YES;
 );
+
+
+$ifthen.carbonprice %carbonprice% == "functionalForm"
+*** check whether cm_peakBudgYr corresponds to year of maximum cumulative CO2 emissions
+if (  (     cm_iterative_target_adj eq 9
+        AND cm_peakBudgYr ne sm_peakBudgYr_check  ),
+  s80_bool = 0;
+  p80_messageShow("peakbudgyr") = YES;
+);
+
+*** Check whether difference in cumulative emissions between both time steps is greater than sm_peakbudget_diff_tolerance
+if (  (   cm_iterative_target_adj eq 9
+      AND abs(sm_peakbudget_diff) gt sm_peakbudget_diff_tolerance),
+  s80_bool = 0;
+  p80_messageShow("peakbudget") = YES;
+);
+$endIf.carbonprice
+
 
 *** additional criterion: if damage internalization is on, is damage iteration converged?
 p80_sccConvergenceMaxDeviation_iter(iteration) = pm_sccConvergenceMaxDeviation;
@@ -445,13 +463,23 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
           display "#### Check out sm_fadeoutPriceAnticip which needs to be below cm_maxFadeOutPriceAnticip.";
           display sm_fadeoutPriceAnticip, cm_maxFadeOutPriceAnticip;
 	      );
-        if(sameas(convMessage80, "target"),
+        if(sameas(convMessage80, "globalbudget"),
 		      display "#### 6.) A global climate target has not been reached yet.";
           display "#### check sm_globalBudget_absDev for the deviation from the global target CO2 budget (convergence criterion defined via cm_budgetCO2_absDevTol [default = 2 Gt CO2]), as well as";
           display "#### pm_taxCO2eq_iter (regional CO2 tax path tracked over iterations [T$/GtC]) and"; 
           display "#### pm_taxCO2eq_anchor_iterationdiff (difference in global anchor carbon price to the last iteration [T$/GtC]) in diagnostics section below."; 
           display sm_globalBudget_absDev;
 	      );
+$ifthen.carbonprice %carbonprice% == "functionalForm"
+        if(sameas(convMessage80, "peakbudgyr"),
+		      display "#### 6.) Years are different: cm_peakBudgYr is not equal to sm_peakBudgYr_check.";
+          display cm_peakBudgYr;
+	      );
+        if(sameas(convMessage80, "peakbudget"),
+		      display "#### 6.) PeakBudget not reached: sm_peakbudget_diff is greater than sm_peakbudget_diff_tolerance.";
+          display sm_peakbudget_diff;
+	      );
+$endIf.carbonprice
         if(sameas(convMessage80, "IterationNumber"),
           display "#### 0.) REMIND did not run sufficient iterations (currently set at 18, to allow for at least 4 iterations with EDGE-T)";
         );
@@ -565,13 +593,23 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
       if(sameas(convMessage80, "anticip"),
 		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";
 	     );
-        if(sameas(convMessage80, "target"),
+        if(sameas(convMessage80, "globalbudget"),
 		      display "#### 6.) A global climate target has not been reached yet.";
           display "#### check sm_globalBudget_absDev for the deviation from the global target CO2 budget (convergence criterion defined via cm_budgetCO2_absDevTol [default = 2 Gt CO2]), as well as";
           display "#### pm_taxCO2eq_iter (regional CO2 tax path tracked over iterations [T$/GtC]) and"; 
           display "#### pm_taxCO2eq_anchor_iterationdiff (difference in global anchor carbon price to the last iteration [T$/GtC]) in diagnostics section below."; 
           display sm_globalBudget_absDev;
 	      );
+$ifthen.carbonprice %carbonprice% == "functionalForm"
+        if(sameas(convMessage80, "peakbudgyr"),
+		      display "#### 6.) Years are different: cm_peakBudgYr is not equal to sm_peakBudgYr_check.";
+          display cm_peakBudgYr;
+	      );
+        if(sameas(convMessage80, "peakbudget"),
+		      display "#### 6.) PeakBudget not reached: sm_peakbudget_diff is greater than sm_peakbudget_diff_tolerance.";
+          display sm_peakbudget_diff;
+	      );
+$endIf.carbonprice
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"       
         if(sameas(convMessage80, "regiTarget"),
 		      display "#### 7) A regional climate target has not been reached yet.";

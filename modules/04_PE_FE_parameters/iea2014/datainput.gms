@@ -290,6 +290,18 @@ p04_prodCoupleGlob("segabio","fegas","tdbiogas","seel")     = -0.05;
 p04_prodCoupleGlob("segafos","fegas","tdfosgas","seel")     = -0.05;
 p04_prodCoupleGlob("pegeo","sehe","geohe","seel")           = -0.3;
 p04_prodCoupleGlob("cco2","ico2","ccsinje","seel")          = -0.005;
+
+*** Co-Production based on Dorndorf et al (in review)
+p04_prodCoupleGlob("pebiolc","sebiochar","biopyronly","seel") = -0.04; !! 2% of biomass input (Fawzy et al., 2022, https://doi.org/10.1016/j.jclepro.2022.133660)
+p04_prodCoupleGlob("pebiolc","sebiochar","biopyrhe","seel") = -0.04; !! 2% of biomass input (Fawzy et al., 2022, https://doi.org/10.1016/j.jclepro.2022.133660)
+*** biopyrhe: data from certification process according to the European Biochar 345 Certificate (EBC, 2024), 
+*** in line with Sessions et al. (2019) https://doi.org/10.1016/j.biombioe.2019.02.015 and Roberts et al (2010) https://doi.org/10.1021/es902266r
+p04_prodCoupleGlob("pebiolc","sebiochar","biopyrhe","sehe") = 0.58; 
+p04_prodCoupleGlob("pebiolc","sebiochar","biopyrchp","sehe") = 0.27; !! data from certification process according to the European Biochar Certificate (2024)
+p04_prodCoupleGlob("pebiolc","sebiochar","biopyrchp","seel") = 0.10; !! data from certification process according to the European Biochar Certificate (2024)
+p04_prodCoupleGlob("pebiolc","sebiochar","biopyrliq","seel") = -0.2; !! according to Buffi et al (2024) https://doi.org/10.1016/j.enconman.2024.118450
+p04_prodCoupleGlob("pebiolc","sebiochar","biopyrliq","seliqbio") = 1.06; !! Woolf et al. (2014), https://doi.org/10.1021/es500474q
+
 *** use global data for couple products if regional data form IEA are 0
 loop(pc2te(enty,enty2,te,enty3),
     loop(regi,
