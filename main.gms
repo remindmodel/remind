@@ -421,6 +421,7 @@ $setglobal regipol  regiCarbonPrice              !! def = regiCarbonPrice
 *' * (KWTCint): Combines aggregate damages from Kalkuhl & Wenz (2020) and tropical cyclone damages from Krichene et al. (2022)
 *' * (Labor): Labor supply damages from Dasgupta et al. (2021)
 *' * (TC): tropical cyclone damages from Krichene et al. (2022)
+*' * (COACCH): bottom-up damage function from the COACCH project (van der Wijst et al. 2023)
 $setGlobal damages  off               !! def = off
 *'---------------------    51_internalizeDamages    ----------------------------
 *'
@@ -435,6 +436,7 @@ $setGlobal damages  off               !! def = off
 *' * (KWTCintItr): Internalize combined damages from Kalkuhl & Wenz (2020) and from tropical cyclones. Requires cm_emiscen set to 9 for now.
 *' * (LabItr): Internalize labor supply damages based on Dasgupta et al. (2021). Requires cm_emiscen set to 9 for now.
 *' * (TCitr): Internalize tropical cyclone damage function based on Krichene et al. (2022). Requires cm_emiscen set to 9 for now.
+*' * (COACCHitr): Internalize COACCH damage function. Requires cm_emiscen set to 9
 $setGlobal internalizeDamages  off               !! def = off
 *'---------------------    52_internalizeLCAimpacts    ----------------------------
 *'
@@ -1911,10 +1913,14 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off  !! 
 *' roughly comparable to TCRE value, or even more roughly, equivalent climate sensitivity
 *' choose from OLDDEFAULT (REMIND1.7 legacy file); or different percentiles of RCP26 or generic TCRE outcomes calibrated to CMIP5 (see Schultes et al. (2018) for details)
 $setGlobal cm_magicc_config  OLDDEFAULT    !! def = OLDDEFAULT ; {OLDDEFAULT, RCP26_[5,15,..,95], TCRE_[LOWEST,LOW,MEDIUM,HIGH,HIGHEST] }
-*'  climate damages (HowardNonCatastrophic, DICE2013R, DICE2016, HowardNonCatastrophic, HowardInclCatastrophic, KWcross, KWpanelPop}
+*'  climate damages (HowardNonCatastrophic,DICE2013R, DICE2016, HowardNonCatastrophic, HowardInclCatastrophic, KWcross, KWpanelPop,Howard2025Level,Howard2025Growth,Howard2025LevelCat,Howard2025GrowthCat}
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 ***cfg$gms$cm_KotzWenzPerc <- mean #def = mean; {low,med,mean,high} the percentile of the damage distribution from Kotz et al. (2024), low = 5th, high = 95th percentile
 $setGlobal cm_KotzWenzPerc mean !! def = mean !! regexp = low|med|mean|high
+*' COACCH damage function adaptation flag for SLR adaptation (noadapt, adapt)
+$setGlobal cm_damage_COACCH_adaptSpec	noadapt  !! def = noadapt
+*' COACCH damage function percentile specification ,p5 is median(p05,p5,p59)
+$setGlobal cm_damage_COACCH_CIspec	p5  !! def = p5
 *** cfg$gms$cm_damage_Labor_exposure <- "low" # def = "low"; {low,high}
 $setGlobal cm_damage_Labor_exposure  low    !! def = low  !! regexp = low|high
 *** cfg$gms$cm_TCssp <- "SSP2"  #def = "SSP2"; {SSP2,SSP5} the scenario for which the damage function is specified - currently only SSP2 and SSP5 are available
