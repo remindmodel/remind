@@ -25,7 +25,6 @@ q30_costFuBio(ttot,regi)$(ttot.val ge cm_startyear)..
          +
 $if %cm_MAgPIE_coupling% == "on"  (v30_pebiolc_costs(ttot,regi) * v30_multcost(ttot,regi))
 $if %cm_MAgPIE_coupling% == "off" (v30_pebiolc_costs(ttot,regi))
-         - p30_pebiolc_costs_emu_preloop(ttot,regi) !! Need to be substracted since they are also included in the total agricultural production costs
          + 
          sum(peren2cont30(enty,rlf), vm_fuExtr(ttot,regi,enty,rlf) * pm_costsTradePeFinancial(regi,"use",enty));
 
