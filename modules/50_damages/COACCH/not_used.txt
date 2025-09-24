@@ -29,4 +29,5 @@ pm_damageGrowthRate,input,questionnaire
 pm_regionalTemperature,input,questionnaire
 cm_damages_BurkeLike_persistenceTime,input,questionnaire
 cm_damages_BurkeLike_specification,input,questionnaire
+pm_globalMeanTemperatureZeroed1900,input,questionnaire
 

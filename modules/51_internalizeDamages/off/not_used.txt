@@ -35,3 +35,4 @@ pm_sccIneq,input,questionnaire
 sm_c_2_co2,input,questionnaire
 sm_eps,input,not needed
 pm_ies,input,not needed
+pm_ttot_2_tall,input,questionnaire
