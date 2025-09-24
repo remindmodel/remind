@@ -5,29 +5,29 @@
 *DK* biomass N2O emissions are taken care via p_efFossilFuelExtr in q_macBase in core/equations.gms
 *LP* ratio of C to H  in CCU-technologies (make sure if it is H or H2 you are reffering to!)
 
-                                    co2      cco2      n2o            CtoH
-pegas.seel.ngcc                     15.3             0.00315
-pegas.seel.ngt                      15.3             0.00315
-pegas.seel.gaschp                   15.3             0.00315
-pegas.seel.ngccc                     1.5      13.8   0.00315
-pegas.segafos.gastr                 15.3             0.00315
-pegas.seh2.gash2                    15.3             0.00315
-pegas.seh2.gash2c                    1.5      13.8   0.00315
-pegas.sehe.gashp                    15.3             0.00315
-pegas.seliqfos.gasftrec             15.3           
-pegas.seliqfos.gasftcrec            15.1       0.2
-pecoal.seel.igcc                    26.1             0.04415
-pecoal.seel.pc                      26.1             0.04415
-pecoal.seel.igccc                    2.6      23.5   0.04415
-pecoal.seel.coalchp                 26.1             0.04415
-pecoal.sehe.coalhp                  26.1             0.04415
-pecoal.seh2.coalh2                  26.1             0.04415
-pecoal.seh2.coalh2c                  2.6      23.5   0.04415
-pecoal.seliqfos.coalftrec           26.1           
-pecoal.seliqfos.coalftcrec          10.3      15.8
-pecoal.sesofos.coaltr               26.1             0.04415
-pecoal.segafos.coalgas              26.1             0.04415
-pebiolc.seel.bioigccc               -20.0      20.0
+                               co2      cco2      n2o            CtoH
+pegas.seel.ngcc                15.3             0.00315
+pegas.seel.ngt                 15.3             0.00315
+pegas.seel.gaschp              15.3             0.00315
+pegas.seel.ngccc                1.5      13.8   0.00315
+pegas.segafos.gastr            15.3             0.00315
+pegas.seh2.gash2               15.3             0.00315
+pegas.seh2.gash2c               1.5      13.8   0.00315
+pegas.sehe.gashp               15.3             0.00315
+pegas.seliqfos.gasftrec        15.3           
+pegas.seliqfos.gasftcrec       12.6       2.7
+pecoal.seel.igcc               26.1             0.04415
+pecoal.seel.pc                 26.1             0.04415
+pecoal.seel.igccc               2.6      23.5   0.04415
+pecoal.seel.coalchp            26.1             0.04415
+pecoal.sehe.coalhp             26.1             0.04415
+pecoal.seh2.coalh2             26.1             0.04415
+pecoal.seh2.coalh2c             2.6      23.5   0.04415
+pecoal.seliqfos.coalftrec      26.1           
+pecoal.seliqfos.coalftcrec     10.3      15.8
+pecoal.sesofos.coaltr          26.1             0.04415
+pecoal.segafos.coalgas         26.1             0.04415
+pebiolc.seel.bioigccc         -20.0      20.0
 pebiolc.seel.bioigcc
 pebiolc.segabio.biogasc             -14.1      14.1
 pebiolc.seliqbio.bioftcrec          -14.6      14.6
@@ -64,7 +64,7 @@ Technology-specific CO2 capture rates:
 Capture Rate(bioftcrec) = 25 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.41 ~ 14.6 GtC/ZJ(PE) (58% of carbon input)
 Capture Rate(biogasc) = 25 GtC/ZJ * 0.9 - 14.6 GtC/ZJ(FE) / 0.95 * 0.55 ~ 14.1 GtC/ZJ(PE) (56% of carbon input)
 Capture Rate(coalftcrec) = 26.1 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.4 ~ 15.8 GtC/ZJ(PE) (60% of carbon input)
-Capture Rate(gasftcrec) = 15.3 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.7 ~ 0.2 GtC/ZJ(PE) (1.3% of carbon input)
+Capture Rate(gasftcrec) = 15.3 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.57 ~ 2.7 GtC/ZJ(PE) (17.6% of carbon input)
 
 Parametrization of biochar-producing technologies:
 - established biochar options assuming slow pyrolysis at 500°C based on Schmidt et al. (2019), https://doi.org/10.1111/gcbb.12553.
