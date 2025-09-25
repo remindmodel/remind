@@ -7,20 +7,20 @@
 *** SOF ./modules/50_damages/COACCH/sets.gms
 
 SETS
-dam_adapt	"with or without SLR adaptation"
+dam_adapt50	"with or without SLR adaptation"
 /
 noadapt
 adapt
 /
 
-dam_coef	"coefficients of the damage function"
+dam_coef50	"coefficients of the damage function"
 /
 a
 b1
 b2
 /
 
-dam_CI		"percentiles of the damage function uncertainty space"
+dam_CI50	"percentiles of the damage function uncertainty space"
 /
 med
 low
