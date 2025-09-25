@@ -10,7 +10,7 @@ p50_damageFuncCoef0(regi) = 1;
 p50_damageFuncCoef1(regi) = 0;
 p50_damageFuncCoef2(regi) = 0;
 
-parameter p50_damageCoefs(dam_adapt50,all_regi,dam_coef50,dam_CI50)	"coefficients for damage function" 
+parameter p50_damageCoefs(dam_adapt_50,all_regi,dam_coef_50,dam_CI_50)	"coefficients for damage function" 
 /
 $ondelim
 $include "./modules/50_damages/COACCH/input/REMIND_coefs.inc"
