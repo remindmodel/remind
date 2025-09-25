@@ -134,10 +134,9 @@ getMagpieData <- function(path_to_report = "report.mif", mapping = "mappingMAgPI
   return(out)
 }
 
-# Obtain number of MAgPIE iteration passed to this script by GAMS
+# Obtain number of MAgPIE iteration and Nash iteration passed to this script by GAMS
 args <- commandArgs(trailingOnly = TRUE)
 i <- as.numeric(args[1])
-#NashIteration <- as.numeric(args[2])
 OrdNashIteration <- as.numeric(args[2])
 
 # Rename gdx from previous MAgPIE iteration so that REMIND can only continue if a new one could be successfully created
