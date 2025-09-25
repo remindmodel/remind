@@ -506,6 +506,10 @@ loop(prodSeOth2te(enty,te),
   v_prodSeOth.fx(t,regi,"seh2","h2curt") = 0;
 );
 
+loop(demSeOth2te(enty,te),
+  vm_demSeOth.fx(t,regi,enty,te) = 0;
+);
+
 
 *** Make sure no grades > 9 are used. Only cosmetic to avoid entries in lst file
 v_capDistr.fx(t,regi,te,rlf) $ (rlf.val > 9) = 0;
