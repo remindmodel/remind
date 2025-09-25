@@ -6,8 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/80_optimization/testOneRegi/solve.gms
 
-hybrid.optfile = 9;
-$IF %cm_quick_mode% == "on" hybrid.optfile = 6;
+remindgamsmodel.optfile = 9;
+$IF %cm_quick_mode% == "on" remindgamsmodel.optfile = 6;
 
 ***reduce the problem to one region
 regi(all_regi) = NO;
@@ -42,9 +42,9 @@ if (cm_keep_presolve_gdxes eq 1,
   logfile.nd = sm_tmp2;
 );
 
-solve hybrid using nlp maximizing vm_welfareGlob;
+solve remindgamsmodel using nlp maximizing vm_welfareGlob;
 
-o_modelstat = hybrid.modelstat;
+o_modelstat = remindgamsmodel.modelstat;
 display o_modelstat;
 
 ***helper parameter to access regional solution status

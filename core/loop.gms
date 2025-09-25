@@ -9,21 +9,21 @@
 *--------------------------------------------------------------------------
 ***         solveoptions
 *--------------------------------------------------------------------------
-option limcol    = 0;
-option limrow    = 0;
-hybrid.optfile   = 1;
-hybrid.holdfixed = 1;
-hybrid.scaleopt  = 1;
-option savepoint = 0;
-option resLim    = 3e6;
-option solprint  = off;
-o_modelstat      = 100;
+remindgamsmodel.optfile   = 1;
+remindgamsmodel.holdfixed = 1;
+remindgamsmodel.scaleopt  = 1;
+option limcol             = 0;
+option limrow             = 0;
+option savepoint          = 0;
+option resLim             = 3e6;
+option solprint           = off;
+o_modelstat               = 100;
 
 $ifthen.calibrate "%CES_parameters%" == "calibrate"   !! CES_parameters
 $ifthen.subsectors "%industry%" == "subsectors"       !! industry
 !! Calibrating industry/subsectors lead to random infeasibilities on the order
 !! of 1e-15.  Relaxing this attribute a little solves this problem.
-hybrid.tolinfeas = 1e-14;
+remindgamsmodel.tolinfeas = 1e-14;
 $endif.subsectors
 $endif.calibrate
 
