@@ -219,6 +219,13 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   # If a scenario_config.csv file was provided, set cfg according to it.
 
   if (! length(config.file) == 0) {
+    
+    # Check if a scenario_config_coupled[_XYZ].csv was provided
+    # If so: 
+    # - read it and keep it as data frame in the variable "settingsMAgPIECoupling"
+    # - take start == 1 from the coupled config and not from the standalone config, bzw. overwrite the latter with the first
+    # - proceed as normal with reading the scenario_config.csv that corresponds to the scenario_config_coupled.csv
+  
     cat(paste("\nReading config file", config.file, "\n"))
 
     # Read-in the switches table, use first column as row names

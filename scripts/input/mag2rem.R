@@ -157,10 +157,11 @@ load("config.Rdata")
 cfg_rem <- cfg
 rm(cfg)
 
-# Define path to MAgPIE 
-# Later: move to start.R
 path_remind_run    <- file.path(cfg_rem$remind_folder, cfg_rem$results_folder)
 pathToRemindReport <- file.path(cfg_rem$remind_folder, cfg_rem$results_folder, "REMIND_rem2mag.mif")
+
+# Define path to MAgPIE 
+# Later: move to start.R
 path_magpie <- normalizePath(file.path(cfg_rem$remind_folder, "magpie"), mustWork = FALSE)
 if (! dir.exists(path_magpie)) path_magpie <- normalizePath(file.path(cfg_rem$remind_folder, "..", "magpie"), mustWork = FALSE)
 
