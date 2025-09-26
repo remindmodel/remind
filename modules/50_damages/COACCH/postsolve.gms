@@ -6,11 +6,11 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF .modules/50_damages/COACCH/postsolve.gms
 
-*this damage function is derived for global mean temperature increase compared to 1986-2005 mean which is set to 0.6°:
+*** this damage function is derived for global mean temperature increase compared to 1986-2005 mean which is set to 0.6 degree Celsius:
 
 p50_damage(tall,regi)$(tall.val ge 2010 and tall.val le 2300) = p50_damageFuncCoef0(regi)*(p50_damageFuncCoef1(regi)/100*(pm_globalMeanTemperature(tall)-0.6)+p50_damageFuncCoef2(regi)/100*(pm_globalMeanTemperature(tall)-0.6)**2);
 
-* derivative of damage function w.r.t. teperature (used in 51_internalizeDamages)
+*** derivative of damage function w.r.t. teperature (used in 51_internalizeDamages)
 pm_damageMarginal(tall,regi)$(tall.val ge 2000 and tall.val le 2300) =     
   p50_damageFuncCoef0(regi)*( p50_damageFuncCoef1(regi)/100  + 2 * p50_damageFuncCoef2(regi)/100 * (pm_globalMeanTemperature(tall)-0.6));
 *  ( p50_damageFuncCoef1(regi)/100  + 2 * p50_damageFuncCoef2(regi)/100 * (pm_globalMeanTemperatureZeroed1900(tall)-pm_globalMeanTemperatureZeroed1900("2005") ));
