@@ -6,6 +6,8 @@ maxfilesize <- function(max) {
                  system("git diff --cached --name-only", intern = TRUE))
   out <- data.frame(files = files, size = round(file.size(files) / 1024, 2))
   out <- out[!is.na(out$size), ]
+  # Accept renv.lock files that exceed the maximum value by removing them before the check
+  out <- out[!grepl("renv.lock", out$files), ]
   out <- out[out$size > max, ]
   if (nrow(out) > 0) {
     stop(nrow(out), " files with size > ", max, "kB detected: \n",
@@ -14,4 +16,4 @@ maxfilesize <- function(max) {
   message("All files are smaller than ", max, "kB\n")
 }
 
-maxfilesize(550)
+maxfilesize(200)
