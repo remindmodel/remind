@@ -25,3 +25,5 @@ pm_damageMarginalTC,input,added by codeCheck
 pm_GDPGrossIso,input,added by codeCheck
 pm_damageIso,input,added by codeCheck
 pm_damageGrowthRateIso,input,added by codeCheck
+pm_globalMeanTemperature,input,questionnaire
+cm_startyear,input,questionnaire

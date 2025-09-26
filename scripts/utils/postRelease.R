@@ -5,9 +5,11 @@
 # in your fork switch to develop and execute this script in the main folder with Rscript scripts/utils/postRelease.R
 
 postRelease <- function() {
+  # pull (fetch+merge) the master into develop
   gert::git_fetch("upstream")
   gert::git_merge("upstream/master")
 
+  # add empty [Unreleased] section to CHANGELOG
   pattern <- "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)."
   stopifnot(any(grepl(pattern, readLines("CHANGELOG.md"), fixed = TRUE)))
   textToAdd <- paste("",
@@ -33,8 +35,13 @@ postRelease <- function() {
   readLines("CHANGELOG.md") |>
     sub(pattern = pattern, replacement = paste0(pattern, textToAdd), fixed = TRUE) |>
     writeLines("CHANGELOG.md")
+  
+  # Unlike the release version, the development branch should not use a Renv snapshot.
+  readLines("config/default.cfg") |>
+    sub(pattern = 'cfg\\$UseThisRenvLock <- .*$', replacement = paste0('cfg$UseThisRenvLock <- NULL')) |>
+    writeLines("config/default.cfg")  
 
-  message("Please perform the following step manually:\n",
+  message("Please perform the following step manually in another terminal:\n",
           "git add -p\n",
           "--> When done press ENTER to commit, push and create PR")
   gms::getLine()

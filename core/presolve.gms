@@ -9,13 +9,9 @@
 * defining the CO2 price parameter that sums up the 3 CO2eq tax components
 pm_taxCO2eqSum(ttot,regi) = pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqSCC(ttot,regi);
 
-*JeS* calculate share of transport fuels in liquids
-pm_share_trans(ttot,regi)$(ttot.val ge 2005) = sum(se2fe(entySe,entyFe,te)$(seAgg2se("all_seliq",entySe) AND ( sameas(entyFe,"fepet") OR sameas(entyFe,"fedie"))), vm_prodFe.l(ttot,regi,entySe,entyFe,te)) / (sum(se2fe(entySe,entyFe,te)$seAgg2se("all_seliq",entySe), vm_prodFe.l(ttot,regi,entySe,entyFe,te)) + 0.0000001);
-
 *AJS* we need those in nash
 pm_capCum0(ttot,regi,teLearn)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq 1)) = vm_capCum.l(ttot,regi,teLearn);
 pm_co2eq0(ttot,regi)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq 1)) = vm_co2eq.l(ttot,regi);
-pm_emissions0(ttot,regi,enty)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq 1)) = vm_emiAll.l(ttot,regi,enty);
 
 *LB* moved here from datainput to be updated based on the gdp-path
 *** calculate econometric emission data: p2

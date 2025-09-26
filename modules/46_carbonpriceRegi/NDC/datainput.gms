@@ -13,7 +13,7 @@ p46_taxCO2eqGlobal2030 = 0 * sm_DptCO2_2_TDpGtC;
 Scalar p46_taxCO2eqYearlyIncrease "yearly multiplicative increase of co2 tax, write 3% as 1.03" /1/;
 
 *** load NDC data
-Table f46_factorTargetyear(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]"
+Table f46_factorTargetyear(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with multiplier for target year emissions vs 2015 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]"
 $offlisting
 $ondelim
 $include "./modules/46_carbonpriceRegi/NDC/input/fm_factorTargetyear.cs3r"
@@ -21,29 +21,29 @@ $offdelim
 $onlisting
 ;
 
-Parameter p46_factorTargetyear(ttot,all_regi) "Multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]";
+Parameter p46_factorTargetyear(ttot,all_regi) "Multiplier for target year emissions vs 2015 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]";
 p46_factorTargetyear(t,all_regi) = f46_factorTargetyear(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
 display p46_factorTargetyear;
 
-Table f46_2005shareTarget(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with 2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [1]"
+Table f46_2015shareTarget(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with 2015 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [1]"
 $offlisting
 $ondelim
-$include "./modules/46_carbonpriceRegi/NDC/input/fm_2005shareTarget.cs3r"
+$include "./modules/46_carbonpriceRegi/NDC/input/fm_2015shareTarget.cs3r"
 $offdelim
 $onlisting
 ;
 
-Parameter p46_2005shareTarget(ttot,all_regi) "2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [1]";
-p46_2005shareTarget(t,all_regi) = f46_2005shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
+Parameter p46_2015shareTarget(ttot,all_regi) "2015 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [1]";
+p46_2015shareTarget(t,all_regi) = f46_2015shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
-display p46_2005shareTarget;
+display p46_2015shareTarget;
 
-Parameter p46_BAU_reg_emi_wo_LU_bunkers(ttot,all_regi) "regional GHG emissions (without LU and bunkers) in BAU scenario [MtCO2eq/yr]"
+Parameter p46_BAU_reg_emi_wo_LU_wo_bunkers(ttot,all_regi) "regional GHG emissions (without LU and bunkers) in BAU scenario [MtCO2eq/yr]"
   /
 $ondelim
-$ifthen exist "./modules/46_carbonpriceRegi/NDC/input/pm_BAU_reg_emi_wo_LU_bunkers.cs4r"
-$include "./modules/46_carbonpriceRegi/NDC/input/pm_BAU_reg_emi_wo_LU_bunkers.cs4r"
+$ifthen exist "./modules/46_carbonpriceRegi/NDC/input/pm_BAU_reg_emi_wo_LU_wo_bunkers.cs4r"
+$include "./modules/46_carbonpriceRegi/NDC/input/pm_BAU_reg_emi_wo_LU_wo_bunkers.cs4r"
 $endif
 $offdelim
   /;
@@ -54,7 +54,7 @@ $offdelim
 *** countries <- toolGetMapping("regionmappingREMIND.csv",where = "mappingfolder",type = "regional")
 *** LAMCountries <- countries$CountryCode[countries$RegionCode == "LAM"]
 *** shareWithinTargetCountries <- dummy1[LAMCountries,"y2030",] * ghgTarget[LAMCountries,"y2030",] / dimSums(dummy1[LAMCountries,"y2030",] * ghgTarget[LAMCountries,"y2030", ], dim=1)
-*** print(shareWithinTargetCountries["BRA",,]*(as.numeric(ghg["BRA","y2015"])/as.numeric(ghg["BRA","y2005"])-as.numeric(ghgfactor["BRA","y2030","SSP2"])))
+*** print(shareWithinTargetCountries["BRA",,]*(as.numeric(ghg["BRA","y2015"])/as.numeric(ghg["BRA","y2015"])-as.numeric(ghgfactor["BRA","y2030","SSP2"])))
 *** 0.2 is a rounded value valid for all except 2018_uncond, because Brazil had no unconditional target then.
 
 if (not sameas("%cm_NDC_version%","2018_uncond"),
@@ -63,25 +63,25 @@ if (not sameas("%cm_NDC_version%","2018_uncond"),
 
 *** add 2060 GHG net zero target for China, not yet in the UNFCCC_NDC database
 p46_factorTargetyear(t,regi)$(sameas(regi,"CHA") AND sameas(t,"2060")) = 0;
-p46_2005shareTarget(t,regi)$(sameas(regi,"CHA") AND sameas(t,"2060")) = 1;
+p46_2015shareTarget(t,regi)$(sameas(regi,"CHA") AND sameas(t,"2060")) = 1;
 
 $ifthen.p46_netZero "%cm_netZeroScen%" == "NGFS_v4_20pc"
   p46_factorTargetyear(t,regi)$(sameas(regi,"CAZ") AND sameas(t,"2050")) = 0;
-   p46_2005shareTarget(t,regi)$(sameas(regi,"CAZ") AND sameas(t,"2050")) = 0.8;
+   p46_2015shareTarget(t,regi)$(sameas(regi,"CAZ") AND sameas(t,"2050")) = 0.8;
   p46_factorTargetyear(t,regi)$(sameas(regi,"EUR") AND sameas(t,"2050")) = 0;
-   p46_2005shareTarget(t,regi)$(sameas(regi,"EUR") AND sameas(t,"2050")) = 0.8;
+   p46_2015shareTarget(t,regi)$(sameas(regi,"EUR") AND sameas(t,"2050")) = 0.8;
   p46_factorTargetyear(t,regi)$(sameas(regi,"JPN") AND sameas(t,"2050")) = 0;
-   p46_2005shareTarget(t,regi)$(sameas(regi,"JPN") AND sameas(t,"2050")) = 0.8;
+   p46_2015shareTarget(t,regi)$(sameas(regi,"JPN") AND sameas(t,"2050")) = 0.8;
   p46_factorTargetyear(t,regi)$(sameas(regi,"LAM") AND sameas(t,"2050")) = 0;
-   p46_2005shareTarget(t,regi)$(sameas(regi,"LAM") AND sameas(t,"2050")) = 0.8;
+   p46_2015shareTarget(t,regi)$(sameas(regi,"LAM") AND sameas(t,"2050")) = 0.8;
   p46_factorTargetyear(t,regi)$(sameas(regi,"USA") AND sameas(t,"2050")) = 0;
-   p46_2005shareTarget(t,regi)$(sameas(regi,"USA") AND sameas(t,"2050")) = 0.8;
+   p46_2015shareTarget(t,regi)$(sameas(regi,"USA") AND sameas(t,"2050")) = 0.8;
   p46_factorTargetyear(t,regi)$(sameas(regi,"CHA") AND sameas(t,"2060")) = 0;
-   p46_2005shareTarget(t,regi)$(sameas(regi,"CHA") AND sameas(t,"2060")) = 0.8;
+   p46_2015shareTarget(t,regi)$(sameas(regi,"CHA") AND sameas(t,"2060")) = 0.8;
   p46_factorTargetyear(t,regi)$(sameas(regi,"REF") AND sameas(t,"2060")) = 0;
-   p46_2005shareTarget(t,regi)$(sameas(regi,"REF") AND sameas(t,"2060")) = 0.8;
+   p46_2015shareTarget(t,regi)$(sameas(regi,"REF") AND sameas(t,"2060")) = 0.8;
   p46_factorTargetyear(t,regi)$(sameas(regi,"IND") AND sameas(t,"2070")) = 0;
-   p46_2005shareTarget(t,regi)$(sameas(regi,"IND") AND sameas(t,"2070")) = 0.8;
+   p46_2015shareTarget(t,regi)$(sameas(regi,"IND") AND sameas(t,"2070")) = 0.8;
 $endif.p46_netZero
 
 
@@ -97,10 +97,10 @@ Parameter p46_bestNDCcoverage(all_regi)         "highest coverage of NDC targets
 Parameter p46_distanceToOptyear(ttot,all_regi)  "distance to p46_useSingleYearCloseTo to favor years in case of multiple equally good targets [year]";
 Parameter p46_minDistanceToOptyear(all_regi)    "minimal distance to p46_useSingleYearCloseTo per region [year]";
 
-p46_bestNDCcoverage(regi) = smax(t$(t.val <= p46_ignoreNDCafter AND t.val >= p46_ignoreNDCbefore), p46_2005shareTarget(t,regi));
+p46_bestNDCcoverage(regi) = smax(t$(t.val <= p46_ignoreNDCafter AND t.val >= p46_ignoreNDCbefore), p46_2015shareTarget(t,regi));
 display p46_bestNDCcoverage;
 
-p46_NDCyearSet(t,regi)$(t.val <= p46_ignoreNDCafter AND t.val >= p46_ignoreNDCbefore) = p46_2005shareTarget(t,regi) >= p46_minRatioOfCoverageToMax * p46_bestNDCcoverage(regi);
+p46_NDCyearSet(t,regi)$(t.val <= p46_ignoreNDCafter AND t.val >= p46_ignoreNDCbefore) = p46_2015shareTarget(t,regi) >= p46_minRatioOfCoverageToMax * p46_bestNDCcoverage(regi);
 
 if(p46_useSingleYearCloseTo > 0,
   p46_distanceToOptyear(p46_NDCyearSet(t,regi)) = abs(t.val - p46_useSingleYearCloseTo);

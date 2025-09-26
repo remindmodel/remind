@@ -7,6 +7,6 @@
 *** SOF ./modules/50_damages/KWLike/bounds.gms
 
 vm_damageProdFactor.fx(ttot,regi,in) = 1;
-vm_damageFactor.fx(ttot,regi)$(ttot.val ge 2005) = pm_damage(ttot,regi);
+vm_damageFactor.fx(ttot,regi)$(ttot.val ge cm_startyear) = pm_damage(ttot,regi);
 
 *** EOF ./modules/50_damages/KWLike/bounds.gms

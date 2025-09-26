@@ -7,7 +7,8 @@
 *** SOF ./modules/04_PE_FE_parameters/iea2014/declarations.gms
 
 parameter
-pm_IO_input(all_regi,all_enty,all_enty,all_te)                 "Energy input based on IEA data"
+pm_IO_input(all_regi,all_enty,all_enty,all_te)                  "Energy input based on IEA data"
+pm_IO_output(tall,all_regi,all_enty,all_enty,all_te)            "Historical energy output per technology based on IEA data [TWa]"
 p04_IO_output(all_regi,all_enty,all_enty,all_te)                "Energy output based on IEA data"
 p04_x_enty2te_dyn04(all_regi,all_enty,all_enty,all_te,all_te)   "parameter for the allocation of energy flow to technologies"
 pm_prodCouple(all_regi,all_enty,all_enty,all_te,all_enty)       "own consumption"
@@ -20,8 +21,8 @@ pm_histfegrowth(all_regi,all_enty)                              "average growth 
 p04_prodCoupleGlob(all_enty,all_enty,all_te,all_enty)           "global couple products"
 
 
-p04_IO_output_beforeFix(ttot,all_regi,all_enty,all_enty,all_te)        "Energy output based on IEA data as read in from input data before correction from FE trajectories"
-p04_IO_output_beforeFix_Total(ttot,all_regi,all_enty)                         "Energy output based on IEA data as read in from input data before correction from FE trajectories summed over SE"
+p04_IO_output_beforeFix(ttot,all_regi,all_enty,all_enty,all_te) "Energy output based on IEA data as read in from input data before correction from FE trajectories"
+p04_IO_output_beforeFix_Total(ttot,all_regi,all_enty)           "Energy output based on IEA data as read in from input data before correction from FE trajectories summed over SE"
 ;
 
 *** EOF ./modules/04_PE_FE_parameters/iea2014/declarations.gms

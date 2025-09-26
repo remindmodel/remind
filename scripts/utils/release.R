@@ -38,11 +38,13 @@ release <- function(newVersion) {
     writeLines("CITATION.cff")
   
   # Update version in README.md
+  message("Updating README.md")
   readLines("README.md") |>
     gsub(pattern = oldVersion, replacement = newVersion) |>
     writeLines("README.md")
   
   # Update version in default.cfg
+  message("Updating default.cfg")
   readLines("config/default.cfg") |>
     sub(pattern = 'cfg\\$model_version <- .*$', replacement = paste0('cfg$model_version <- "', newVersion, '"')) |>
     writeLines("config/default.cfg")
@@ -57,7 +59,7 @@ release <- function(newVersion) {
                    startType = NULL)
   
   # Upload html documentation to RSE server
-  message("uploading documentation to RSE server")
+  message("Uploading documentation to RSE server")
   exitCode <- system(paste0("rsync -e ssh -avz doc/html/* ",
                             "rse@rse.pik-potsdam.de:/webservice/doc/remind/", newVersion))
   stopifnot(exitCode == 0)
@@ -74,24 +76,20 @@ release <- function(newVersion) {
   archivePath <- file.path(normalizePath(renv::project()), "renv", "archive", paste0(newVersion, "_renv.lock"))
   renv::snapshot(lockfile = archivePath)
   system(paste0("git add -f renv/archive/", newVersion, "_renv.lock"))
+  
+  # make the release run with the renv snapshot from above
+  readLines("config/default.cfg") |>
+    sub(pattern = 'cfg\\$UseThisRenvLock <- .*$', replacement = paste0('cfg$UseThisRenvLock <- "renv/archive/', newVersion, '_renv.lock"')) |>
+    writeLines("config/default.cfg")  
 
-  message("If not already done please perform the first step manually now. Please perform step two in any case:\n",
-          "1. CHANGELOG.md: sort lines in each category: input data/calibration, changed, added, removed, fixed; remove empty categories\n",
+  # commit all changes made so far
+  message("Please only continue if you already cleaned CHANGELOG.md:\n",
           "In another terminal:\n",
-          "2. git add -p\n",
-          "3. git commit -m 'your commit message'",
-          "4. git push yourFork yourReleaseCandidateBranch",
+          "1. git add -p\n",
+          "2. git commit -m 'your commit message\n'",
+          "3. git push yourRemote yourReleaseCandidateBranch",
           "--> When done press ENTER to create PR")
   gms::getLine()
-  
-  #message("Committing and pushing changes")
-  #gert::git_commit(paste("remind release", newVersion))
-  #gert::git_push()
-  
-  message("Creating tag")
-  tag <- paste0("v", newVersion)
-  gert::git_tag_create(name = tag, message = "new tag", repo = ".")
-  gert::git_tag_push(name = tag, repo = ".")
   
   message("Creating a PR on GitHub")
   # gh pr create --help

@@ -25,3 +25,4 @@ pm_damageTC,input,questionnaire
 pm_damageGrowthRateTC,input,questionnaire
 pm_damageIso,input,questionnaire
 pm_damageGrowthRateIso,input,questionnaire
+pm_globalMeanTemperature,input,questionnaire

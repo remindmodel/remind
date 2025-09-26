@@ -11,7 +11,6 @@ pm_gdp_gdx, parameter, ???
 pm_pop, parameter, ???
 pm_budgetCO2eq, parameter, ???
 cm_emiscen, switch, ???
-vm_dummyBudget,input,questionnaire
 pm_shPPPMER,input,questionnaire
 pm_gdp,input,questionnaire
 cm_permittradescen,input,questionnaire

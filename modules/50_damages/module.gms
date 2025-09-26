@@ -14,6 +14,7 @@
 
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%damages%" == "BurkeLike" $include "./modules/50_damages/BurkeLike/realization.gms"
+$Ifi "%damages%" == "COACCH" $include "./modules/50_damages/COACCH/realization.gms"
 $Ifi "%damages%" == "DiceLike" $include "./modules/50_damages/DiceLike/realization.gms"
 $Ifi "%damages%" == "KWLike" $include "./modules/50_damages/KWLike/realization.gms"
 $Ifi "%damages%" == "KWTCint" $include "./modules/50_damages/KWTCint/realization.gms"

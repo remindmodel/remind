@@ -259,8 +259,8 @@ $setGlobal PE_FE_parameters  iea2014  !! def = iea2014
 $setGlobal initialCap  on             !! def = on
 *'---------------------    11_aerosols    --------------------------------------
 *'
-*' * (exoGAINS):
-$setGlobal aerosols  exoGAINS         !! def = exoGAINS
+*' * (exoGAINS2025):  new realization with base year 2020 based on cleaned GAINS2025 data that enables to choose between CEDS and GAINS as source for baseyear emissions
+$setGlobal aerosols  exoGAINS2025         !! def = exoGAINS2025
 *'---------------------    15_climate    ---------------------------------------
 *'
 *' * (off): no climate coupling
@@ -421,6 +421,7 @@ $setglobal regipol  regiCarbonPrice              !! def = regiCarbonPrice
 *' * (KWTCint): Combines aggregate damages from Kalkuhl & Wenz (2020) and tropical cyclone damages from Krichene et al. (2022)
 *' * (Labor): Labor supply damages from Dasgupta et al. (2021)
 *' * (TC): tropical cyclone damages from Krichene et al. (2022)
+*' * (COACCH): bottom-up damage function from the COACCH project (van der Wijst et al. 2023)
 $setGlobal damages  off               !! def = off
 *'---------------------    51_internalizeDamages    ----------------------------
 *'
@@ -435,6 +436,7 @@ $setGlobal damages  off               !! def = off
 *' * (KWTCintItr): Internalize combined damages from Kalkuhl & Wenz (2020) and from tropical cyclones. Requires cm_emiscen set to 9 for now.
 *' * (LabItr): Internalize labor supply damages based on Dasgupta et al. (2021). Requires cm_emiscen set to 9 for now.
 *' * (TCitr): Internalize tropical cyclone damage function based on Krichene et al. (2022). Requires cm_emiscen set to 9 for now.
+*' * (COACCHitr): Internalize COACCH damage function. Requires cm_emiscen set to 9
 $setGlobal internalizeDamages  off               !! def = off
 *'---------------------    52_internalizeLCAimpacts    ----------------------------
 *'
@@ -560,6 +562,10 @@ parameter
 ;
   cm_taxCO2_IncAfterPeakBudgYr = 0; !! def = 0 . For weak targets (higher than 1100 Peak Budget), this value might need to increased to prevent continually increasing temperatures
 *'
+parameter
+  sm_peakbudget_diff_tolerance  "convergence criterion for allowed difference between cumulative emissions in peak budget year and year of maximum cumulative emissions if both years are not the same. It is formulated as an absolute deviation from the target budget [GtCO2]"
+;
+  sm_peakbudget_diff_tolerance      = 1;   !! def = 1 !! regexp = is.nonnegative
 parameter
   cm_expoLinear_yearStart   "time at which carbon price increases linearly instead of exponentially"
 ;
@@ -912,6 +918,16 @@ parameter
 *' * (0): no import
 *' * (1): the values from the gdx are read in (works only if the gdx has a parameter value) ATTENTION: make sure that the values from the gdx have the right structure (e.g. regionally differentiated or not)
 *'
+parameter 
+  c_biopyrEstablished      "Turn the four established industrial biochar production configurations on = 1 or off = 0"
+; 
+  c_biopyrEstablished = 1; !! def = 1
+*'
+parameter
+  c_biopyrliq             "Turn the advanced industrial biochar production setup that co-produces liquids on  = 1 or off = 0"
+;
+  c_biopyrliq = 0;         !! def = 0
+*'
 parameter
   cm_33DAC                  "choose whether DAC (direct air capture) should be included into the CDR portfolio."
 ;
@@ -990,6 +1006,13 @@ parameter
 ;
   cm_33_EW_shortTermLimit = 0.005; !! def = 0.5% !! regexp = is.nonnegative
 *'
+parameter
+  cm_33_BCpriceForm               "biochar price assumptions (revenue from using biochar in agriculture or construction)"
+;
+  cm_33_BCpriceForm = 1; !! def = 1 
+*' *  (1): decreasing price over time, independent of actual deployment. Lower price path. Fits best for peak budget runs with 650 Gt CO2 as of 2020.
+*' *  (2): decreasing price over time, independent of actual deployment. Higher price path.Fits best for peak budget runs with 650 Gt CO2 as of 2020.
+*' *  (any other number): constant price. Chose 0 to turn it off. Unit: [2015 USD / t BC]. Suggested range: 100-200 USD/tBC. Better choice for runs with higher peak budget.
 parameter
   cm_33_maxFeShare                "max share of the CDR sectors' FE demand in the region's total FE demand, by FE type. Default is 10%"
 ;
@@ -1250,6 +1273,12 @@ parameter
 ;
   c_edgetReportAfter2010 = 0;   !! def = 0 full reporting  !! regexp = 1|0
 *'
+parameter
+  cm_APsource                "data source for air pollution baseyear (2020) emissions"
+;
+  cm_APsource           = 1;      !! def = 1  !! regexp = 1|2
+*' *  (1): CEDS2025 emissions (mapped to GAINS sectors) are used as baseyear (2020) emissions
+*' *  (2): GAINS2025 emissions (from baseline scenario) are used as baseyear (2020) emissions
 *'
 *'
 ***-----------------------------------------------------------------------------
@@ -1626,10 +1655,12 @@ $setGLobal cm_exogDem_scen off !! def off  !! regexp = off|ariadne_(bal|ensec|hi
 $setGlobal cm_Ger_Pol  off !! def off
 *** cm_altFeEmiFac <- "off"  # def <- "off", regions that should use alternative data from "umweltbundesamt" on emission factors for final energy carriers (ex. "EUR_regi, NEU_regi")
 $setGlobal cm_altFeEmiFac  EUR_regi, NEU_regi        !! def = "EUR_regi, NEU_regi"
-***  cm_incolearn "change floor investment cost value"
+***  cm_incolearn "change cost reduction potential of capital costs via endogenous learning"
+***  This switch enables to change the floor cost of technologies. The incolearn set by this switch is the difference between initial costs and floor costs.
+***  The initial costs are set in generisdata_tech.prn for non-regionalized investment cost and set by p_inco0 for regionalized investment cost.
 ***   Example on how to use:
 ***     cm_incolearn  "windon=1600,spv=5160,csp=9500"
-***       floor investment costs from learning set to 1600 for wind onshore, 5160 for solar photovoltaic and 9500 for concentrated solar power.
+***     cost reduction potential set to 1600 for wind onshore, 5160 for solar photovoltaic and 9500 for concentrated solar power.
 $setglobal cm_incolearn  off !! def = off
 *** cm_storageFactor "scale curtailment and storage requirements. [factor]"
 ***   def <- "off" = no change for curtailment and storage requirements;
@@ -1685,6 +1716,11 @@ $setglobal cm_CCS_markup  off  !! def = off
 ***   def <- "off"
 ***   or number (ex. 0.66), multiply by 0.66 Industry CSS cost markup
 $setglobal cm_Industry_CCS_markup  off !! def = off
+*' Flag to change learning assumption for established pyrolysis technologies. 0 = not learning; any number = learning rate
+*' Beware: When turned on, policy runs require a NPi that also has learning, otherwise it becomes unbounded.
+*' (0.1): Learning rate of 10%.
+*' (0): Not learning
+$setglobal c_BClearning 0 !! def = 0
 *** cm_renewables_floor_cost "additional floor cost for renewables"
 ***   def <- "off" = use default floor cost for renewables.
 ***   or list of techs with respective value to be added to the renewables floor cost in Europe
@@ -1877,10 +1913,14 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off  !! 
 *' roughly comparable to TCRE value, or even more roughly, equivalent climate sensitivity
 *' choose from OLDDEFAULT (REMIND1.7 legacy file); or different percentiles of RCP26 or generic TCRE outcomes calibrated to CMIP5 (see Schultes et al. (2018) for details)
 $setGlobal cm_magicc_config  OLDDEFAULT    !! def = OLDDEFAULT ; {OLDDEFAULT, RCP26_[5,15,..,95], TCRE_[LOWEST,LOW,MEDIUM,HIGH,HIGHEST] }
-*'  climate damages (HowardNonCatastrophic, DICE2013R, DICE2016, HowardNonCatastrophic, HowardInclCatastrophic, KWcross, KWpanelPop}
+*'  climate damages (HowardNonCatastrophic,DICE2013R, DICE2016, HowardNonCatastrophic, HowardInclCatastrophic, KWcross, KWpanelPop,Howard2025Level,Howard2025Growth,Howard2025LevelCat,Howard2025GrowthCat}
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 ***cfg$gms$cm_KotzWenzPerc <- mean #def = mean; {low,med,mean,high} the percentile of the damage distribution from Kotz et al. (2024), low = 5th, high = 95th percentile
 $setGlobal cm_KotzWenzPerc mean !! def = mean !! regexp = low|med|mean|high
+*' COACCH damage function adaptation flag for SLR adaptation (noadapt, adapt)
+$setGlobal cm_damage_COACCH_adaptSpec	noadapt  !! def = noadapt
+*' COACCH damage function percentile specification ,p5 is median(p05,p5,p59)
+$setGlobal cm_damage_COACCH_CIspec	p5  !! def = p5
 *** cfg$gms$cm_damage_Labor_exposure <- "low" # def = "low"; {low,high}
 $setGlobal cm_damage_Labor_exposure  low    !! def = low  !! regexp = low|high
 *** cfg$gms$cm_TCssp <- "SSP2"  #def = "SSP2"; {SSP2,SSP5} the scenario for which the damage function is specified - currently only SSP2 and SSP5 are available
@@ -1918,22 +1958,17 @@ $setglobal cm_demScen  SSP2     !! def = SSP2
 $setGlobal c_scaleEmiHistorical  on  !! def = on  !! regexp = off|on
 $SetGlobal cm_quick_mode  off          !! def = off  !! regexp = off|on
 $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
-*' cm_APssp "air polution SSP or emission factors version"
-*' Note that SSP4 data is partly missing or copied from SSP3. Check carefully before using SSP4.
+*' cm_APssp "air pollution SSP"
+*' (SSP1-5): SSP selection for emission factors based on GAINS2025 data
 *' (FROMGDPSSP): Shortcut to copy SSP from all_GDPpopScen
-*' (SSP1-5): SSP-specific emission factors GAINS runs from the 2025 ScenarioMIP effort
-*' (GAINSlegacy): emission factors from legacy GAINS runs
-$setGlobal cm_APssp  FROMGDPSSP          !! def = FROMGDPSSP !! regexp = SSP1|SSP2|SSP3|SSP4|SSP5|FROMGDPSSP|GAINSlegacy
-*' cm_APscen "air polution scenario"
-*' (SSP2):  Only available for cm_APssp = GAINSlegacy
-*' (SSP5): Only available for cm_APssp = GAINSlegacy
-*' (CLE): Current Legislation Emissions
-*' (SLE): Stronger Legislation Emissions
-*' (VLE): Very strong Legislation Emissions
-*' (MFR): Maximum Feasible Reductions
-*' (SMIPbySSP): ScenarioMIP defaults, varies with SSP narratives
-*' (SMIPVLLO): ScenarioMIP special trajectories for VLLO, varies slightly between SSP1 and SSP2
-$setGlobal cm_APscen  SMIPbySSP          !! def = SMIPbySSP !! regexp = SSP2|SSP5|CLE|SLE|VLE|MFR|SMIPbySSP|SMIPVLLO 
+$setGlobal cm_APssp  FROMGDPSSP          !! def = FROMGDPSSP !! regexp = SSP1|SSP2|SSP3|SSP4|SSP5|FROMGDPSSP
+*' cm_APscen "air pollution scenario"
+*' (CLE): Current Legislation Emissions (differentiated by SSP, available for SSP1-5)
+*' (SLE): Stronger Legislation Emissions (differentiated by SSP, available for SSP1-5)
+*' (MTFR):  Maximum Technically Feasible Reduction (not differentiated by SSP)
+*' (SMIPbySSP): ScenarioMIP default scenario (differentiated by SSP, available for SSP1, SSP2, SSP3 and SSP5)
+*' (SMIPVLLO): ScenarioMIP VLLO scenario (not differentiated by SSP)
+$setGlobal cm_APscen  SMIPbySSP          !! def = SMIPbySSP !! regexp = CLE|SLE|MTFR|SMIPbySSP|SMIPVLLO 
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-GDPpop_SSP2-En_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_industry_FE_target  1
