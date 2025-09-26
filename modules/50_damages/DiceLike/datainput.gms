@@ -8,6 +8,7 @@
 
 p50_damageFuncCoef1 = 0;
 p50_damageFuncCoef2 = 0;
+p50_damageFuncCoef3 = 2;
 
 * http://www.econ.yale.edu/~nordhaus/homepage/DICE2013R_110513_vanilla.gms
 $ifi %cm_damage_DiceLike_specification% == "DICE2013R" p50_damageFuncCoef2 = 0.00267;
@@ -18,6 +19,18 @@ $ifi %cm_damage_DiceLike_specification% == "DICE2016" p50_damageFuncCoef2 = 0.00
 * Howard et al (2017), 10.1007/s10640-017-0166-z
 $ifi %cm_damage_DiceLike_specification% == "HowardNonCatastrophic" p50_damageFuncCoef2 = 0.00744;
 $ifi %cm_damage_DiceLike_specification% == "HowardInclCatastrophic" p50_damageFuncCoef2 = 0.0100;
+
+* Howard et al (2025)
+$ifi %cm_damage_DiceLike_specification% == "Howard2025Level" p50_damageFuncCoef2 = 0.00622;
+$ifi %cm_damage_DiceLike_specification% == "Howard2025Level" p50_damageFuncCoef3 = 1.5;
+$ifi %cm_damage_DiceLike_specification% == "Howard2025Growth" p50_damageFuncCoef2 = 0.00622;
+$ifi %cm_damage_DiceLike_specification% == "Howard2025Growth" p50_damageFuncCoef3 = 1.5;
+$ifi %cm_damage_DiceLike_specification% == "Howard2025Growth" p50_damageFuncCoef1 = 0.01997;
+$ifi %cm_damage_DiceLike_specification% == "Howard2025LevelCat" p50_damageFuncCoef2 = 0.02397;
+$ifi %cm_damage_DiceLike_specification% == "Howard2025LevelCat" p50_damageFuncCoef3 = 1.5;
+$ifi %cm_damage_DiceLike_specification% == "Howard2025GrowthCat" p50_damageFuncCoef2 = 0.02397;
+$ifi %cm_damage_DiceLike_specification% == "Howard2025GrowthCat" p50_damageFuncCoef3 = 1.5;
+$ifi %cm_damage_DiceLike_specification% == "Howard2025GrowthCat" p50_damageFuncCoef1 = 0.01997;
 
 * Kalkuhl & Wenz (2020)
 $ifi %cm_damage_DiceLike_specification% == "KWcross" p50_damageFuncCoef1 = 0.023;

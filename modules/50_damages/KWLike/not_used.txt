@@ -26,3 +26,4 @@ cm_damage_KWSE,input,switch not required
 pm_shPPPMER,input,questionnaire
 pm_interpolWeight_ttot_tall,input,questionnaire
 pm_tall_2_ttot,input,questionnaire
+pm_globalMeanTemperature,input,questionnaire

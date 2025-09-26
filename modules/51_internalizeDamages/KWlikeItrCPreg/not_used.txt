@@ -20,3 +20,4 @@ pm_GDPGrossIso,input,questionnaire
 pm_damageImp,input,questionnaire
 pm_damageIso,input,questionnaire
 pm_damageGrowthRateIso,input,questionnaire
+pm_ttot_2_tall,input,questionnaire
