@@ -77,6 +77,22 @@ showLinePlots(data, "Productivity|Yield|Forage")
 showLinePlots(data, "Productivity|Yield|Pasture")
 ```
 
+## Biodiversity
+
+```{r results='asis'}
+items <- c(
+  "Biodiversity|BII",
+  "Biodiversity|Biodiversity Hotspot BII",
+  "Biodiversity|Cropland Landscapes BII",
+  "Biodiversity|Key Biodiversity Area BII",
+  "Biodiversity|BII in areas outside Biodiversity Hotspots, Intact Forest & Cropland Landscapes",
+  "Biodiversity|Shannon crop area diversity index")
+walk(items, function(v) {
+  cat("###", v, "\n\n")
+  showLinePlots(data, v, ylim = NULL, scales = "fixed")
+  cat("\n\n")
+})
+```
 
 ## SDG
 
@@ -85,6 +101,7 @@ items <- c(
   "SDG|SDG02|Agricultural commodity price index wrt 2020",
   "SDG|SDG02|Food availability",
   "SDG|SDG02|Food expenditure share",
+  "SDG|SDG02|Agricultural primary product expenditure share",
   "SDG|SDG15|Industrial and intentional biological fixation of N",
   "SDG|SDG12|Food waste",
   "SDG|SDG06|Agricultural water use")
@@ -97,7 +114,7 @@ walk(items, function(v) {
 
 ## Demand
 
-### Selection
+### Areaplot - Split 1 - Selection
 
 ```{r}
 items <- c(
@@ -109,19 +126,58 @@ items <- c(
 showAreaAndBarPlots(data, items, scales = "fixed")
 ```
 
-### Aggregation 1
-
-```{r}
-showAreaAndBarPlotsPlus(data, "Demand", plusNum = 1, scales = "fixed")
-```
-
-### Aggregation 2
+### Areaplot - Split 1
 
 ```{r}
 showAreaAndBarPlotsPlus(data, "Demand", plusNum = 2, scales = "fixed")
 ```
 
+### Lineplots - Split 1
 
+```{r results='asis'}
+items <- c(
+  "Demand|Bioenergy crops",
+  "Demand|Crop residues",
+  "Demand|Crops",
+  "Demand|Fish",
+  "Demand|Forage",
+  "Demand|Forest products",
+  "Demand|Livestock products",
+  "Demand|Pasture",
+  "Demand|Secondary products"
+  )
+walk(items, function(v) {
+  cat("####", v, "\n\n")
+  showLinePlots(data, v)
+  cat("\n\n")
+})
+```
+
+### Areaplot - Split 2
+
+```{r}
+showAreaAndBarPlotsPlus(data, "Demand", plusNum = 1, scales = "fixed")
+```
+
+### Lineplots - Split 2
+
+```{r results='asis'}
+items <- c(
+  "Demand|Agricultural Supply Chain Loss",
+  "Demand|Bioenergy",
+  "Demand|Domestic Balanceflow",
+  "Demand|Feed",
+  "Demand|Food",
+  "Demand|Material",
+  "Demand|Processing",
+  "Demand|Seed"
+  )
+walk(items, function(v) {
+  cat("####", v, "\n\n")
+  showLinePlots(data, v)
+  cat("\n\n")
+})
+```
 
 ## Nutrition
 
