@@ -53,27 +53,28 @@ showLinePlots(data, "Resources|NetForestChange")
 showLinePlots(data, "Productivity|Landuse Intensity Indicator Tau")
 ```
 
-### Productivity|Yield
-
-```{r}
-items <- c(
-  "Productivity|Yield|Bioenergy crops",
-  "Productivity|Yield|Crops",
-  "Productivity|Yield|Forage",
-  "Productivity|Yield|Pasture")
-showAreaAndBarPlots(data, items, scales = "fixed")
-```
-
-#### Productivity|Yield|Bioenergy crops
+### Productivity|Yield|Bioenergy crops
 
 ```{r}
 showLinePlots(data, "Productivity|Yield|Bioenergy crops")
 ```
 
-#### Productivity|Yield|Crops
+### Productivity|Yield|Crops
 
 ```{r}
 showLinePlots(data, "Productivity|Yield|Crops")
+```
+
+### Productivity|Yield|Forage
+
+```{r}
+showLinePlots(data, "Productivity|Yield|Forage")
+```
+
+### Productivity|Yield|Pasture
+
+```{r}
+showLinePlots(data, "Productivity|Yield|Pasture")
 ```
 
 
@@ -134,6 +135,12 @@ showAreaAndBarPlotsPlus(data, "Nutrition|Calorie Intake", scales = "fixed")
 
 ```{r}
 showAreaAndBarPlotsPlus(data, "Nutrition|Calorie Supply", scales = "fixed")
+```
+
+### Nutrition|Dietary Composition|Livestock Share
+
+```{r}
+showAreaAndBarPlotsPlus(data, "Nutrition|Dietary Composition|Livestock Share", scales = "fixed")
 ```
 
 
