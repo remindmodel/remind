@@ -26,10 +26,10 @@ showAreaAndBarPlots(data, items, scales = "fixed")
 showAreaAndBarPlotsPlus(data, "Resources|Land Cover Change|Forest", scales = "fixed")
 ```
 
-### Resources|Land Cover Change|Forest|Managed Forest
+### Resources|Land Cover Change|Forest|Planted Forest
 
 ```{r}
-showAreaAndBarPlotsPlus(data, "Resources|Land Cover Change|Forest|Managed Forest", scales = "fixed")
+showAreaAndBarPlotsPlus(data, "Resources|Land Cover Change|Forest|Planted Forest", scales = "fixed")
 ```
 
 ### Resources|Land Cover Change|Forest|Natural Forest
@@ -140,7 +140,7 @@ showAreaAndBarPlotsPlus(data, "Nutrition|Calorie Supply", scales = "fixed")
 ### Nutrition|Dietary Composition|Livestock Share
 
 ```{r}
-showAreaAndBarPlotsPlus(data, "Nutrition|Dietary Composition|Livestock Share", scales = "fixed")
+showLinePlots(data, "Nutrition|Dietary Composition|Livestock Share")
 ```
 
 
