@@ -98,7 +98,7 @@ if (args[2] == "preloop") {
   )
   system(paste(runReportingCmd, "&>>", reportLog))
   t1 <- Sys.time()
-  dt <- paste0(round(as.numeric(difftime(time1 = b, time2 = a, units = "secs")), 3), " seconds")
+  dt <- paste0(round(as.numeric(difftime(time1 = t1, time2 = t0, units = "secs")), 3), " seconds")
 
   oldName <- paste0("REMIND_generic_", scenario, ".mif")
   
@@ -118,7 +118,7 @@ if (args[2] == "preloop") {
   )
   system(paste(runReportingCmd, "&>>", reportLog))
   t1 <- Sys.time()
-  dt <- paste0(round(as.numeric(difftime(time1 = b, time2 = a, units = "secs")), 3), " seconds")
+  dt <- paste0(round(as.numeric(difftime(time1 = t1, time2 = t0, units = "secs")), 3), " seconds")
 
   oldName <- paste0("REMIND_generic_", scenario, ".mif")
   
