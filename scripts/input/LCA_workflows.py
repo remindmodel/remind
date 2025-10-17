@@ -7,6 +7,7 @@ import pandas as pd
 import xarray as xr
 
 from internalizer import Internalizer
+from internalizer.internalizer import CONFIG_NO_REMOVAL
 
 EI_VERSION = "3.10"
 YEARS_INTERNALIZATION = [2020, 2030, 2040, 2050, 2060, 2070]
@@ -169,6 +170,12 @@ if __name__ == "__main__":
     if args.aggTaxes:
         t0 = time.time()
         I.load_costs()
+
+        # SE_zeroed = {}
+        # for year, xa in I.cost_results["SE"].items():
+        #     SE_zeroed[year] = xa * 0
+
+        # I.cost_results["SE"] = SE_zeroed
 
         ics = get_impact_categories(args)
         I.write_remind_input_files(
