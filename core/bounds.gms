@@ -482,8 +482,6 @@ display vm_emiFgas.L;
 loop(all_te $ (
     sameas(all_te, "solhe") or
     sameas(all_te, "fnrs") or
-    sameas(all_te, "pcc") or
-    sameas(all_te, "pco") or
 *** windoffshore-todo: to remove when removing wind from all_te
     sameas(all_te, "wind") or
     sameas(all_te, "storwind") or
