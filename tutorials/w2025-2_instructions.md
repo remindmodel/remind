@@ -2,7 +2,7 @@
 
 REMIND requires some auxiliary software to run. Please make sure you have the following software installed on your system. To ensure interoperability with REMIND, the version of the software should match the versions given in the list below. *Note*: an `X` in a version string denotes a wildcard that can be any number:
 
-- `GAMS` (version `47.X`) from [here](https://www.gams.com/47/)
+- `GAMS` (version `51.X`) from [here](https://www.gams.com/51/)
     - *Note*: GAMS is proprietary software and requires a license key to run. In case you do not already have a GAMS license, we can provide you with a temporary one. Please refer to the [GAMS license](#gams-license) section below.
 - `R` (version `4.3.X`): 
     - *Linux installation procedure*: R is distributed by a number of popular Linux distributions. On Ubuntu, for instance, open a terminal and run
@@ -61,7 +61,7 @@ At line:1 char:1
     + FullyQualifiedErrorId : CommandNotFoundException
 ```
 
-We need to tell Windows where to find the executables for `GAMS` and `R`. This can achieved by adding the respective locations to the `PATH` environmental variable. First, locate the folders containing `gams.exe` resp. `R.exe` on your system. For `GAMS` this should be `C:\GAMS\47`, for `R.exe` this should be `C:\Program Files\R\R-4.3.2\bin` if you used the default installations. Then hit the `? Win`-key or directly select the start menu. In the Start Menu, type "Environment variables":
+We need to tell Windows where to find the executables for `GAMS` and `R`. This can achieved by adding the respective locations to the `PATH` environmental variable. First, locate the folders containing `gams.exe` resp. `R.exe` on your system. For `GAMS` this should be `C:\GAMS\51`, for `R.exe` this should be `C:\Program Files\R\R-4.3.2\bin` if you used the default installations. Then hit the `? Win`-key or directly select the start menu. In the Start Menu, type "Environment variables":
 
 <img src="figures/w2024_envs_00.png" alt="Open the Start Menu, type 'Environment variables'" width="400"/>
 
@@ -73,7 +73,7 @@ A new window open. In the lower half of the "Environmental Variables" window, in
 
 <img src="figures/w2024_envs_02.png" alt="Click on the button labeled 'Environmental Variables'" width="400"/>
 
-A new window titled "Edit environment variable" opens. Click on button "New". A new line in the list appears. For `R`-executables paste the `C:\Program Files\R\R-4.3.2\bin` folder (or the correct location for your system). Click "New" again and add the `C:\GAMS\47` folder (or the correct location for your system) to add the `GAMS`-executables
+A new window titled "Edit environment variable" opens. Click on button "New". A new line in the list appears. For `R`-executables paste the `C:\Program Files\R\R-4.3.2\bin` folder (or the correct location for your system). Click "New" again and add the `C:\GAMS\51` folder (or the correct location for your system) to add the `GAMS`-executables
 
 <img src="figures/w2024_envs_03.png" alt="Click on the button labeled 'Environmental Variables'" width="400"/>
 
