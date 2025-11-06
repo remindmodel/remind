@@ -27,7 +27,7 @@ The REMIND installation procedure is mediated by the version control software gi
 - Change into the newly created directory and check out the workshop version of REMIND:
     ```bash
     cd remind # Assuming you cloned remind as described above
-    git checkout workshop2024
+    git checkout workshop2025
     ``` 
 - Start R once in the `remind` folder to initiate the R environment and test the installation. In a terminal, navigate to the folder into which you just cloned REMIND (`remind` in the above example), then  on *Linux* simply type `R` (on *Windows* type `R.exe`) and hit enter
 
