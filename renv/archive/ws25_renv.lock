@@ -2372,7 +2372,7 @@
       "LazyData": "true",
       "RoxygenNote": "7.3.3",
       "VignetteBuilder": "knitr",
-      "Date": "2025-11-05",
+      "Date": "2025-11-11",
       "Config/testthat/edition": "3",
       "Imports": [
         "rmndt",
@@ -2402,7 +2402,7 @@
       "RemoteUsername": "ahagen-pik",
       "RemoteRepo": "edgeTransport",
       "RemoteRef": "workshop2025",
-      "RemoteSha": "810f9bf60a52461190530ee724fb9e510786edf3"
+      "RemoteSha": "2a837e164a6067b8f31e8b86c018119244b6e04b"
     },
     "ellipsis": {
       "Package": "ellipsis",
