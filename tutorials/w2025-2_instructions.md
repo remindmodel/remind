@@ -117,3 +117,40 @@ tail -f output/testOneRegi/full.log
 ```
 
 on Linux.
+
+# Common pitfalls
+
+## Version control with `git`
+
+Common git pitfalls include not having the `workshop2025` branch active. Use `git status` in your REMIND directory to make sure you are on the `workshop2025` branch of the REMIND git repo
+
+```PowerShell
+> git status
+On branch workshop2025 # <---
+Your branch is up to date with 'origin/workshop2025'.
+
+nothing to commit, working tree clean
+```
+
+### Update your REMIND branch
+
+We'll cover an update routine that allows to accomodate changes made in the REMIND repository into your local copy.
+
+```PowerShell
+# Save all changes beforehand!
+git stash # Optionally: Temporarily remove local changes 
+git pull --rebase origin workshop2025
+git stash apply # Add local changes
+```
+
+**Please note** that `git`, while essential in software engineering of large projects, is a somewhat complex tool that quickly cause issues when used inattentively.
+
+# Can't find package `X`
+
+This issue can have a myriad of reasons. Try making sure the `.Rprofile` incorporates [PIK-CRAN](https://rse.pik-potsdam.de/r/packages/) into your REMIND set-up. Run
+
+```PowerShell
+Rscript -e "renv::restore(lockfile='renv/archive/ws25_renv.lock'); renv::snapshot()"
+```
+
+in your REMIND directory to create a `renv.lock` file.
