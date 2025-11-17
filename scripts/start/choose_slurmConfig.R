@@ -10,7 +10,7 @@
 
 choose_slurmConfig <- function(identifier = FALSE, flags = NULL) {
 
-  slurm <- suppressWarnings(ifelse(system2("srun",stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
+  slurm <- isSlurmAvailable()
   if (slurm) {
     modes <- c(" 1: SLURM standby               12   nash H12             [recommended]",
                " 2: SLURM standby               13   nash H12 coupled",
