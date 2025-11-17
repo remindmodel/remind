@@ -2,6 +2,10 @@
 
 REMIND requires some auxiliary software to run. Please make sure you have the following software installed on your system. To ensure interoperability with REMIND, the version of the software should match the versions given in the list below. *Note*: an `X` in a version string denotes a wildcard that can be any number:
 
+- A shell program: We run
+    - To ease debugging efforts, we recommend using a dedicated shell programm instead of using the integrated shell of an development environment
+    - *for Windows* we highly recommend the use of `PowerShell`. Comes with any current Windows installation and provides a much better experience than the. To start it, press the <kbd>⌘ Win</kbd> key and type `PowerShell`
+    - *for Linux* we recommend `bash`
 - `GAMS` (version `51.X`) from [here](https://www.gams.com/51/)
     - *Note*: GAMS is proprietary software and requires a license key to run. In case you do not already have a GAMS license, we can provide you with a temporary one. Please refer to the [GAMS license](#gams-license) section below.
 - `R` (version `4.3.X`): 
@@ -12,15 +16,16 @@ REMIND requires some auxiliary software to run. Please make sure you have the fo
         Further installation instructions (e.g., for non-Ubuntu Linux) can be found on the [`R` homepage](https://cran.r-project.org/bin/linux/ubuntu/fullREADME.html)
     - The *Windows installation procedure* is a bit more involved. Download the `R-4.3.2-win.exe` installer [here](https://cran.r-project.org/bin/windows/base/old/4.3.2/), as well as `Rtools43` (installation instructions can be found [here](https://cran.r-project.org/bin/windows/Rtools/), the installer itself [here](https://cran.r-project.org/bin/windows/Rtools/rtools43/files/rtools43-5958-5975.exe))
     - *Optional*: To view and edit GAMS and R source code, please have a text editor installed. We recommend using [RStudio](https://posit.co/download/rstudio-desktop/)
+    - *Optional*: Test your `R` installation by running `R.exe --version` on Windows resp. `R --version` on Linux
 - `git`: We use the version control software `git` to download REMIND and keep track of changes to the source code. Follow the official [installation instructions](https://git-scm.com/install/) for your system.
 - *On Windows* After the installations, please make sure to add the GAMS installation directory to the PATH environmental variable of your operating system. The process for Windows [is described below](#configure-remind-related-environment-variables-in-windows)
 
 # Installing REMIND
 
-The REMIND installation procedure is mediated by the version control software git. Version control is essential to collaborative software development. This paragraph briefly outlines our approach to obtain and personalize the source code of REMIND. If not otherwise specified, run these commands in a shell (for Linux we recommend `bash`, for Windows we recommend `PowerShell`).
+The REMIND installation procedure is mediated by the version control software git. Version control is essential to collaborative software development. This paragraph briefly outlines our approach to obtain and personalize the source code of REMIND. If not otherwise specified, run these commands in a shell program.
 
 - Set-up an user account on [github.com](https://github.com/) or use your existing account
-- In a terminal, navigate to the directory in which you want to store the REMIND folder. Clone the REMIND source code by running 
+- In a terminal, navigate to the directory in which you want to store the REMIND directory. Clone the REMIND source code by running 
     ```bash
     git clone https://github.com/remindmodel/remind.git remind
     ```
