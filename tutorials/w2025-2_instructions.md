@@ -80,3 +80,35 @@ A new window titled "Edit environment variable" opens. Click on button "New". A 
 <img src="figures/w2024_envs_03.png" alt="Click on the button labeled 'Environmental Variables'" width="400"/>
 
 Then close all windows by clicking the "OK" button. Re-start your terminal for the changes to take effect.
+
+# Run a quick REMIND test
+
+In your terminal, navigate to the REMIND directory (contains amongst others `start.R` file). Type
+
+```PowerShell
+Rscript start.R --testOneRegi
+```
+
+to run a quick test of the REMIND installation. Especially the first run can take a while, since it will install all `R` dependencies. After some time your terminal output will show something similar to
+
+```PowerShell
+2025-11-13 14:48:01: Creating full.gms
+2025-11-13 14:48:15: unlocked model.
+
+Starting REMIND...
+GAMS will provide logging in full.log.
+```
+
+Open another terminal to observe the progress of the GAMS solver during the REMIND run with 
+
+```PowerShell
+Get-Content -Tail 10 -Wait output\testOneRegi\full.log
+```
+
+on Windows and 
+
+```bash
+tail -f output/testOneRegi/full.log
+```
+
+on Linux.
