@@ -86,6 +86,30 @@ A new window titled "Edit environment variable" opens. Click on button "New". A 
 
 Then close all windows by clicking the "OK" button. Re-start your terminal for the changes to take effect.
 
+## Verify `PATH` environment variables are correctly set
+
+In your shell program run
+
+```PowerShell
+$env:PATH -split [System.IO.Path]::PathSeparator | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne '' } | Sort-Object -Unique
+```
+
+on Windows or
+
+```bash
+echo "$PATH" | tr ':' '\n' | awk '{$1=$1} NF' | sort -u
+```
+
+on Linux. The printed lines should include
+
+```PowerShell
+# The GAMS directory ..
+C:\GAMS\51
+C:\GAMS\51\gbin
+# .. and your R installation
+C:\Users\tonnru\AppData\Local\Programs\R\R-4.3.2\bin\x64
+```
+
 # Run a quick REMIND test
 
 In your terminal, navigate to the REMIND directory (contains amongst others `start.R` file). Type
