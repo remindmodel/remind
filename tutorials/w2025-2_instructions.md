@@ -140,7 +140,40 @@ on Windows and
 tail -f output/testOneRegi/full.log
 ```
 
-on Linux.
+on Linux. A typical model summary printed to your shell programm after completion reads
+
+```PowerShell
+Model summary:
+  gams_runtime is 43.5 mins.
+  full.gms exists, so the REMIND GAMS code was generated.
+  full.log and full.lst exist, so GAMS did run.
+  abort.gdx does not exist, a file written automatically for some types of errors.
+  non_optimal.gdx exists, because iteration 1 did not find a locally optimal solution. modelstat: 7 (Intermediate Nonoptimal)
+! fulldata.gdx does not exist, so output generation will fail. # <--- This is expected for the test run
+  Modelstat after 1 iterations: 7 (Intermediate Nonoptimal)    # <--- Single iteration
+  full.log states: *** Status: Normal completion
+```
+
+Disregard possible errors like
+
+```PowerShell
+Collect and submit run statistics to central data base.
+Cannot access run statistics repository /p/projects/rd3mod/models/statistics/remind Run statistics are not submitted.
+```
+
+as they pertain to certain tools only available on the PIK high performance cluster and are irrelevant to running the test case.
+
+# Start SSP2 scenario REMIND runs
+
+Use the `scenario_config_ws25.csv` to start a `SSP2-NPi2025` run followed by a `SSP2-PkBdgt650` scenario
+
+```PowerShell
+Rscript start.R config/scenario_config_ws25.csv
+```
+
+You can track the output as before. *Do not* close the shell programm window from which the run was started as this will terminate the REMIND run.
+
+*Note* In case the `SSP2-PkBdgt650` does not automatically start after the `SSP2-NPi2025` run has finished, edit the `scenario_config_ws25.csv` by putting a `0` in the `start` column of the `SSP2-NPi2025` scenario line and re-run the above command.
 
 # Common pitfalls
 
