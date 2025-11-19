@@ -19,7 +19,7 @@ Ensure that all participants have all necessary software installed (Windows, Lin
 
 ## Day 1 - Wed 19.11. - 1:00-4:30 pm
 
-### 1:00 - 2:00 SESSION 1 - CONTENT OVERVIEW (Renato)
+### 1:00 - 2:00 SESSION 1 - CONTENT OVERVIEW (Renato, [Slides](https://rse.pik-potsdam.de/data/remind/public/presentations/REMIND-WS2025-D1S1-Remind_Overview_Renato_Rodrigues.pdf))
 - Macro, welfare, CES function, Nash
 - Energy system (PE to UE), overview of sectors
 - Techno economic assumptions
@@ -29,7 +29,7 @@ Ensure that all participants have all necessary software installed (Windows, Lin
 
 ### 2:00-2:15 BREAK
 
-### 2:15-3:15 SESSION 2 - CODE STRUCTURE (Lavinia/Falk)
+### 2:15-3:15 SESSION 2 - CODE STRUCTURE (Lavinia/Falk, [Slides](https://rse.pik-potsdam.de/data/remind/public/presentations/REMIND-WS2025-D1S2-Code_Structure.pdf))
  - Pre- and postprocessing (Lavinia)
  - Core, modules, file structure and their order, solve loop (preloop, ...) (Lavinia)
  - `main.gms` (Lavinia)
@@ -39,7 +39,7 @@ Ensure that all participants have all necessary software installed (Windows, Lin
 
 ### 3:15-3:30 BREAK
 
-### 3:30-4:30 SESSION 3 - POLICY IMPLEMENTATION (Laurin)
+### 3:30-4:30 SESSION 3 - POLICY IMPLEMENTATION (Laurin, [Slides](https://rse.pik-potsdam.de/data/remind/public/presentations/REMIND-WS2025-D1S3-Policy_implementation_Laurin_K%c3%b6hler-Schindler.pdf))
 - CO2-target -> emission budget -> carbon tax 
 - Tax mechanism 
 - Climate impacts in remind 
