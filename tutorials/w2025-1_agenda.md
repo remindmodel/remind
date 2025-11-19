@@ -62,7 +62,7 @@ Ensure that all participants have all necessary software installed (Windows, Lin
 ### 3:45-4:00 BREAK 
 
 ### 4:00-4:30 SESSION 3 - REMIND CONFIGURATION (David K.)
-- Scenario configuration (`default.cfg`, `scenario_confing.csv`, input data) and running REMIND (including iterations) (David K.)
+- Scenario configuration (`main.gms`, `default.cfg`, `scenario_confing.csv`) and running REMIND (including cascades) (David K.)
 
 ## Day 3 - Fri 21.11. - 1:00-4:30
 
