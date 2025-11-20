@@ -19,7 +19,7 @@ Ensure that all participants have all necessary software installed (Windows, Lin
 
 ## Day 1 - Wed 19.11. - 1:00-4:30 pm
 
-### 1:00 - 2:00 SESSION 1 - CONTENT OVERVIEW (Renato, [Slides](https://rse.pik-potsdam.de/data/remind/public/presentations/REMIND-WS2025-D1S1-Remind_Overview_Renato_Rodrigues.pdf))
+### 1:00 - 2:00 SESSION 1 - CONTENT OVERVIEW (Renato, [Slides](https://rse.pik-potsdam.de/data/remind/public/presentations/REMIND-WS2025-D1S1-Remind_Overview_Renato_Rodrigues.pdf), [Discount rate details](https://github.com/Renato-Rodrigues/miscellany/blob/main/Discount%20rate.md))
 - Macro, welfare, CES function, Nash
 - Energy system (PE to UE), overview of sectors
 - Techno economic assumptions
