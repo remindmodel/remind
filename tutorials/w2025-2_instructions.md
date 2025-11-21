@@ -276,6 +276,22 @@ compareScenarios(
 ```
 - If you don't want to render the whole document, select specifi chapters via the argument `sections`, e.g. ``sections = 02`` for the macro chapter.
 
+With the [`prepared_output.tar.gz`](https://rse.pik-potsdam.de/data/remind/public/prepared_output.tar.gz) extracted to the `output` folder in your REMIND directory, the above command becomes
+
+```R
+piamPlotComparison::compareScenarios(
+    projectLibrary = "remind2",
+    mifScen = c(
+        "output/SSP2-NPi2025_2025-11-14_00.24.00/REMIND_generic_SSP2-NPi2025.mif",
+        "output/SSP2-PkBudg650_2025-11-13_18.28.33/REMIND_generic_SSP2-PkBudg650.mif"
+    ), 
+    mifHist =   "output/SSP2-NPi2025_2025-11-14_00.24.00/historical.mif",
+    #sections = 02 # Un-comment this line for a quicker compareScenarios run
+)
+```
+
+Tou can run this diectly in an R session or paste it into a file. Assuming the file is called `runCompareScenarios.R`, start the comparison with in your shell program in the REMIND directory with `Rscript runCompareScenarios.R`. This will produce a `CompareScenarios.pdf` in your REMIND directory. Examples of the compare scenarios output [can be found here](https://rse.pik-potsdam.de/data/remind/public/compareScenarios/).
+
 ### Interactive Use
 
 - clone remind2, create R project in folder
@@ -353,7 +369,7 @@ git stash apply # Add local changes
 
 **Please note** that `git`, while essential in software engineering of large projects, is a somewhat complex tool that quickly cause issues when used inattentively.
 
-# Can't find package `X`
+## Can't find package `X`
 
 This issue can have a myriad of reasons. Try making sure the `.Rprofile` incorporates [PIK-CRAN](https://rse.pik-potsdam.de/r/packages/) into your REMIND set-up. Run
 
@@ -362,3 +378,17 @@ Rscript -e "renv::restore(lockfile='renv/archive/ws25_renv.lock'); renv::snapsho
 ```
 
 in your REMIND directory to create a `renv.lock` file.
+
+## Missing `tabu.sty` when running `compareScenarios`
+
+Check whether a LaTeX installation is available by running
+
+```PowerShell
+Get-Command pdflatex | Select-Object Source
+```
+
+If the previous command comes up empty we recommend installing [MiKTeX](https://miktex.org/). Using an existing MiKTeX installation, make sure `tabu.sty` is available by running
+
+```PowerShell
+mpm --install=tabu
+```
