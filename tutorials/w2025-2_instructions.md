@@ -175,7 +175,9 @@ You can track the output as before. *Do not* close the shell programm window fro
 
 *Note* In case the `SSP2-PkBdgt650` does not automatically start after the `SSP2-NPi2025` run has finished, edit the `scenario_config_ws25.csv` by putting a `0` in the `start` column of the `SSP2-NPi2025` scenario line and re-run the above command.
 
-# REMIND Reporting
+# Output Analysis
+
+## REMIND Reporting
 
 *Note*: If you've experienced difficulties with running REMIND or any of the scenarios on your PC you can download a tar archive of prepared REMIND output [at this link](https://rse.pik-potsdam.de/data/remind/public/prepared_output.tar.gz). Move the `prepared_output.tar.gz` from your `Downloads` directory into the REMIND directory. Extract contents of the tar archive and place them into the `output` subdirectory of your REMIND folder by running
 
@@ -185,7 +187,9 @@ tar -xzf prepared_output.tar.gz -C output # This should work on both PowerShell 
 
 Verify the availability of output folders by running `ls output` in your REMIND directory. In case you are using the prepared output directory, the command shows directories `SSP2-NPi2025_2025-11-14_00.24.00` and `SSP2-PkBudg650_2025-11-13_18.28.33`. If you've computed your own scenarios, the time stamps at the end of the directory name will be different, but they still have the `SSP2-NPi2025` and `SSP2-PkBudg650` prefixes.
 
-## Start reporting
+### Start reporting
+
+The REMIND reporting translates the ``fulldata.gdx`` to ``REMIND_generic_<scenario>.mif`` and ``REMIND_generic_<scenario>_withoutPlus.mif``.
 
 To initiate the reporting type
 
@@ -196,14 +200,25 @@ Rscript output.R
 in your REMIND directory. Navigate the selection menu by typing a number and pressing <kbd>Enter</kbd>. The selection sequence for reporting goes:
 
 - Press `1` for *single run*
-- Press `13` for *reporting*
+- Press `13` or `14` for *reporting*
 - A list of runs available for reporting will appear. Select the run(s) you want to run reporting on. *Note*
   - A single run corresponds to a single number, e.g. type `1`
   - A selection of runs can be provided as a comma separated list, e.g. type `1,2,5`
   - A sequence of runs is denoted by a colon, e.g. type `1:5`
   - All of the above can be combined
 
+If you have trouble running the reporting on your machine, see the section above on how to download and extract the `prepared_output.tar.gz`.
+
+
 ## Compare scenarios
+
+Documentation:
+
+- Vignette: https://pik-piam.r-universe.dev/articles/remind2/compareScenariosRemind2.html
+- Vignette: https://pik-piam.r-universe.dev/articles/piamPlotComparison/compareScenarios.html 
+
+
+### REMIND script
 
 Comparison of two or more scenarios is initiated as above by running 
 
@@ -215,9 +230,76 @@ in your REMIND directory. The selection menu sequence for reporting goes:
 
 - Press `2` for *Comparison across runs*
 - Press `5` for *compareScenarios2*
-- Select the run(s) you want to compare. Must be at least two!
+- Select the run(s) you want to compare.
 - Choose a prefix for filenames of `compareScenarios2`. Just type a prefix or leave empty
 - Leave the cs2 profile selection empty or type `2` for the default profile
+
+### From R Session
+
+- Start a new R Session and load ``remind2`` and ``piamPlotComparison`` via 
+```R
+library(remind2)
+library(piamPlotComparison)
+```
+- Execute
+```
+compareScenarios(
+		projectLibrary = "remind2",
+		mifScen = c("path/to/remind_scen1.mif",
+					"path/to/remind_scen2.mif"), 
+		mifHist =   "path/to/historical.mif")
+```
+- If you don't want to render the whole document, select specifi chapters via the argument `sections`, e.g. ``sections = 02`` for the macro chapter.
+
+### Interactive Use
+
+- clone remind2, create R project in folder
+- run ``devtools::load_all(".")`` in the project root
+- use interactively via argument ``outputFormat = "Rmd"``
+- take a look at copied folder and make changes, e.g. in main.Rmd for preprocessing of data
+
+## Validate scenarios
+
+Documentation:
+
+- Vignette: https://pik-piam.r-universe.dev/articles/piamValidation/validateScenarios.html 
+- Paper: https://egusphere.copernicus.org/preprints/2025/egusphere-2025-2284/ 
+
+
+### REMIND script
+    
+Same as ``compareScenarios``, however here it doesn't work because of missing reference data.
+
+### From R Session
+
+- download the [validationConfig_workshop25.csv](https://rse.pik-potsdam.de/data/remind/public/validationConfig_workshop25.csv)
+- take a look inside to get an idea how checks are defined
+- load ``library(piamValidation)``
+- execute validation and return data including validation outcome:
+
+```R
+df <- validateScenarios(
+        dataPath =	c("path/to/remind_scen1.mif",
+                      "path/to/remind_scen2.mif", 
+                      "path/to/historical.mif"), 
+        config = "path/to/downloaded/validationConfig.csv")
+```
+- execute validation and also render a report with visualizations:
+```R
+validationReport(
+        dataPath =	c("path/to/remind_scen1.mif",
+                      "path/to/remind_scen2.mif", 
+                      "path/to/historical.mif"), 
+        config = "path/to/downloaded/validationConfig.csv")
+```
+
+### Interactive Use
+
+- clone piamValidation, create R project in folder
+- run ``devtools::load_all(".")`` in the project root
+- make changes, like creating a custom Rmd report file or a new config
+
+
 
 # Common pitfalls
 
