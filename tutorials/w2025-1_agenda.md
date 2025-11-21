@@ -47,7 +47,7 @@ Ensure that all participants have all necessary software installed (Windows, Lin
 
 ## Day 2 - Thu 20.11. - 1:00-4:30
 
-### 1:00 - 2:00 SESSION 1 - CALIBRATION (Jakob)
+### 1:00 - 2:00 SESSION 1 - CALIBRATION (Jakob, [Slides](https://rse.pik-potsdam.de/data/remind/public/presentations/REMIND-WS2025-D2S1-Calibration_Jakob_Duerrwaechter.pdf))
 - CES function and what is loaded/calibrated 
 - CES parameter realization "load" vs. "calibrate" (when and why to calibrate)
 - How to calibrate
@@ -55,13 +55,13 @@ Ensure that all participants have all necessary software installed (Windows, Lin
 ### 2:00-2:15 BREAK
 
 ### 2:15-3:45 SESSION 2 - SECTORS
-- Transport (30min) (Alex)
-- Buildings (30min) (Ricarda)
-- Industry (30min) (Jakob)
+- Transport (30min) (Alex, [Slides](https://rse.pik-potsdam.de/data/remind/public/presentations/REMIND-WS2025-D2S2P1-Transport_Sector_Alex_Hagen.pdf))
+- Buildings (30min) (Ricarda, [Slides](https://rse.pik-potsdam.de/data/remind/public/presentations/REMIND-WS2025-D2S2P2-Buildings_Sector_Ricarda_Rosemann.pdf))
+- Industry (30min) (Jakob, [Slides](https://rse.pik-potsdam.de/data/remind/public/presentations/REMIND-WS2025-D2S2P3-Industry_Sector_Jakob_Duerrwaechter.pdf))
 
 ### 3:45-4:00 BREAK 
 
-### 4:00-4:30 SESSION 3 - REMIND CONFIGURATION (David K.)
+### 4:00-4:30 SESSION 3 - REMIND CONFIGURATION (David K., [Slides](https://rse.pik-potsdam.de/data/remind/public/presentations/REMIND-WS2025-D2S3-Scenario_configuration_David_Klein.pdf))
 - Scenario configuration (`main.gms`, `default.cfg`, `scenario_confing.csv`) and running REMIND (including cascades) (David K.)
 
 ## Day 3 - Fri 21.11. - 1:00-4:30
