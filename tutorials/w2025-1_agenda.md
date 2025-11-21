@@ -66,7 +66,7 @@ Ensure that all participants have all necessary software installed (Windows, Lin
 
 ## Day 3 - Fri 21.11. - 1:00-4:30
 
-### 1:00 - 1:30 SESSION 1 - CONTRIBUTING TO REMIND (David K.)
+### 1:00 - 1:30 SESSION 1 - CONTRIBUTING TO REMIND (David K., [Slides](https://rse.pik-potsdam.de/data/remind/public/presentations/REMIND-WS2025-D3S1-Git_Workflow_David_Klein.pdf))
 - Make your changes to code 
 - Run `make test`
 - Use PRs with template 
@@ -76,11 +76,10 @@ Ensure that all participants have all necessary software installed (Windows, Lin
 
 ### 2:00-2:15 BREAK
 
-### 2:15-3:15 SESSION 3 - VIEWING RESULTS
+### 2:15-3:15 SESSION 3 - VIEWING RESULTS (Pascal, [Slides](https://rse.pik-potsdam.de/data/remind/public/presentations/REMIND-WS2025-D3S2-Output_Analysis_Pascal_Weigmann.pdf))
 - Viewing the results (compare scenarios, validation tool, solve problems) (Pascal)
 
 ### 3:15-3:30 BREAK 
 
 ### 3:30-4:30 SESSION 3 - Q&A + HANDS-ON
-- Helping hands
 - Solve problems installing and running REMIND (Tonn/Falk, all)
