@@ -290,7 +290,7 @@ piamPlotComparison::compareScenarios(
 )
 ```
 
-Tou can run this diectly in an R session or paste it into a file. Assuming the file is called `runCompareScenarios.R`, start the comparison with in your shell program in the REMIND directory with `Rscript runCompareScenarios.R`. This will produce a `CompareScenarios.pdf` in your REMIND directory. Examples of the compare scenarios output [can be found here](https://rse.pik-potsdam.de/data/remind/public/compareScenarios/).
+One can run this directly in an R session or paste it into a `R` file. Assuming the file is called `runCompareScenarios.R`, start the comparison with in your shell program in the REMIND directory with `Rscript runCompareScenarios.R`. This will produce a `CompareScenarios.pdf` in your REMIND directory. Examples of the compare scenarios output [can be found here](https://rse.pik-potsdam.de/data/remind/public/compareScenarios/).
 
 ### Interactive Use
 
