@@ -175,6 +175,31 @@ You can track the output as before. *Do not* close the shell programm window fro
 
 *Note* In case the `SSP2-PkBdgt650` does not automatically start after the `SSP2-NPi2025` run has finished, edit the `scenario_config_ws25.csv` by putting a `0` in the `start` column of the `SSP2-NPi2025` scenario line and re-run the above command.
 
+## Check on runs after completion
+
+On Windows, run
+
+```PowerShell
+Select-String "output\<run folder>\full.log" -Pattern "(\*\*\* Status: (Normal completion|Execution error\(s\))|LOOPS iteration = )" | Select-Object -Last 2
+```
+
+in PowerShell to check on the exit status and the overall number of iterations of your REMIND run. The same command on Linux is
+
+```
+grep -E "(\*\*\* Status: (Normal completion|Execution error\(s\))|LOOPS iteration = )" output/SSP2-PkBudg650_2025-11-13_18.28.33/full.log | tail -2
+```
+
+A typical output of the commands looks like
+
+```PowerShell
+> Select-String "output\SSP2-PkBudg650_2025-11-13_18.28.33\full.log" -Pattern "(\*\*\* Status: (Normal completion|Execution error\(s\))|LOOPS iteration = )" | Select-Object -Last 2
+
+output\SSP2-PkBudg650_2025-11-13_18.28.33\full.log:10385:--- LOOPS iteration = 44
+output\SSP2-PkBudg650_2025-11-13_18.28.33\full.log:10448:*** Status: Normal completion
+```
+
+indicating `Normal completion` after 44 iterations.
+
 # Output Analysis
 
 ## REMIND Reporting
