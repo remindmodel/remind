@@ -34,7 +34,7 @@ q80_costAdjNash(ttot,regi) $ (ttot.val >= cm_startyear) ..
   =e= sum(trade $ (not tradeSe(trade)),
         p80_etaAdj(trade)
       * pm_pvp(ttot,trade)
-      * ((pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport(ttot,regi,trade)  - vm_Mport(ttot,regi,trade))) ** 2
+      * power((pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport(ttot,regi,trade)  - vm_Mport(ttot,regi,trade)), 2)
       / (p80_marketVolume(ttot,regi,trade) + sm_eps));
 
 *' link between permit budget and emission budget

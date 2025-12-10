@@ -12,7 +12,7 @@
 *' #### Price corrections to improve convergence of next iteration
 ***------------------------------------------------------------------------------
 
-*' The objective of the nash optimisation is to find a set of prices that clears the markets.
+*' The objective of the nash optimisation is to find a set of prices that clears the markets for all trade items.
 *' If a certain trade has a positive surplus, it means that the global price is too high and should be reduced to obtain convergence.
 *' The price corrections are given by    price reduction   = price adjustment elasticity * market surplus / market volume
 *'                        for example    p80_etaST_correct = p80_etaST                   * p80_surplus    / p80_marketVolume
@@ -20,34 +20,35 @@
 *' Compute market volume for different trades (take values from last iteration for regions that were not solved optimally)
 loop(ttot $ (ttot.val >= 2005),
   loop(regi $ (pm_SolNonInfes(regi) = 1),
-    p80_marketVolume(ttot,regi,"good")  = max(sm_eps, vm_cons.l(ttot,regi));
-    p80_marketVolume(ttot,regi,tradePe) = max(sm_eps, (sum(rlf, vm_fuExtr.l(ttot,regi,tradePe,rlf)) + vm_prodPe.l(ttot,regi,tradePe)) / 2);
+    p80_marketVolume(ttot,regi,"good")  = vm_cons.l(ttot,regi);
+    p80_marketVolume(ttot,regi,tradePe) = (sum(rlf, vm_fuExtr.l(ttot,regi,tradePe,rlf)) + vm_prodPe.l(ttot,regi,tradePe)) / 2;
   );
   loop(regi $ (pm_SolNonInfes(regi) = 0),
-    p80_marketVolume(ttot,regi,"good")  = max(sm_eps, p80_marketVolume(ttot,regi,"good"));
-    p80_marketVolume(ttot,regi,tradePe) = max(sm_eps, p80_marketVolume(ttot,regi,tradePe));
+    p80_marketVolume(ttot,regi,"good")  = p80_marketVolume(ttot,regi,"good");
+    p80_marketVolume(ttot,regi,tradePe) = p80_marketVolume(ttot,regi,tradePe);
   );
 *** ML: normalize permit trade corrections to consumption or positive cap path instead of emissions, as those may be negative
-  p80_marketVolume(ttot,regi,"perm") = max(sm_eps, abs(pm_shPerm(ttot,regi) * pm_emicapglob("2050")));
+  p80_marketVolume(ttot,regi,"perm") = abs(pm_shPerm(ttot,regi) * pm_emicapglob("2050"));
+  p80_marketVolume(ttot,regi,trade) = max(sm_eps, p80_marketVolume(ttot,regi,trade)) !! ensure market volume is positive
 );
 
 loop(trade $ (not tradeSe(trade)),
-*' Calculate residual surplus on the markets
+*' Calculate residual surplus on the markets: trade items that are exported but not imported
   p80_surplus(ttot,trade,iteration) $ (ttot.val >= 2005) = sum(regi,
       (vm_Xport.l(ttot,regi,trade) - vm_Mport.l(ttot,regi,trade)) $ (pm_SolNonInfes(regi) = 1)
     + (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade) ) $ (pm_SolNonInfes(regi) = 0) );
 
-*' Long term correction takes into account the aggregated intertemporal market revenue (instead of volume) defined by
+*' Long term price correction takes into account the aggregated intertemporal market revenue (instead of volume) defined by
 *'      market revenue = price * duration * market yearly volume (or pm_pvp * pm_ts * p80_marketVolume)
-  p80_intertemporalSurplusRevenue(trade,iteration) = sum(ttot $ (ttot.val >= cm_startyear),
+  p80_intertemporalSurplusRevenue(trade) = sum(ttot $ (ttot.val >= cm_startyear),
     pm_pvp(ttot,trade) * pm_ts(ttot) * p80_surplus(ttot,trade,iteration));
   p80_itertemporalMarketRevenue(trade) = max(sm_eps, sum((ttot, regi) $ (ttot.val >= 2005),
     pm_pvp(ttot,trade) * pm_ts(ttot) * p80_marketVolume(ttot,regi,trade)));
 
   p80_etaLT_correct(trade,iteration) =
-    p80_etaLT(trade) * p80_intertemporalSurplusRevenue(trade,iteration) / p80_itertemporalMarketRevenue(trade);
+    p80_etaLT(trade) * p80_intertemporalSurplusRevenue(trade) / p80_itertemporalMarketRevenue(trade);
 
-*' Short term correction takes into account the market surplus volume of a single time step
+*' Short term price correction takes into account the market surplus volume of a single time step
 *' For permit and primary energy trade, price anticipation impacts the price correction
   p80_etaST_correct(ttot,trade,iteration) $ (ttot.val >= 2005) =
     p80_etaST(trade) * p80_surplus(ttot,trade,iteration) / max(sm_eps , sum(regi, p80_marketVolume(ttot,regi,trade)));
