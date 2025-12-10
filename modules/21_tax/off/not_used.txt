@@ -41,7 +41,6 @@ vm_demSe,input,questionnaire
 vm_flexAdj,input,questionnaire
 sm_eps,input,questionnaire
 vm_co2eqMkt,input,questionnaire
-vm_taxrevimplicitQttyTargetTax,input,questionnaire
 vm_demFeSector,input,questionnaire
 pm_pvp,input,questionnaire
 pm_taxemiMkt,input,questionnaire
@@ -58,8 +57,6 @@ pm_taxrevCO2Sector0,input,questionaire
 pm_taxrevCO2LUC0,input,questionaire
 pm_taxrevNetNegEmi0,input,questionaire
 pm_tau_ces_tax,input,questionnaire
-vm_taxrevimplicitPriceTax,input,questionnaire
-vm_taxrevimplicitPePriceTax,input,questionnaire
 vm_changeProdStartyearCost, variable, ???
 vm_costInvTeDir,input,only needed if tax is on
 vm_costInvTeAdj,input,only needed if tax is on

@@ -15,8 +15,6 @@ vm_cap,input,questionnaire
 vm_demFeSector,input,questionnaire
 pm_taxCO2eq,input,questionnaire
 pm_taxCO2eqRegi,input,questionnaire
-pm_taxemiMkt,input,questionnaire
-pm_taxemiMkt_iteration,input,questionnaire
 pm_data,input,questionnaire
 pm_inco0_t,input,questionnaire
 pm_taxCO2eqSCC,input,questionnaire

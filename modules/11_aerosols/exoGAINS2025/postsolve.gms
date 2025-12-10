@@ -4,22 +4,22 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/11_aerosols/exoGAINS/postsolve.gms
+*** SOF ./modules/11_aerosols/exoGAINS2025/postsolve.gms
 
 *--------------------------------------------------------------------------
 ***                  save gdx
 *--------------------------------------------------------------------------
 
-*** run exoGAINS from iteration 2 onwards to avoid incomplete GDX files when running it in the first iteration
+*** run exoGAINS2025 from iteration 2 onwards to avoid incomplete GDX files when running it in the first iteration
 if (iteration.val ge 2,
 
 *** write data to file if an optimal solution was found
 if((o_modelstat le 2),
-    Execute_Unload 'fulldata_exoGAINS';
+    Execute_Unload 'fulldata_exoGAINS2025';
 );
 
 *** Calculate AP emissions
-Execute "Rscript exoGAINSAirpollutants.R";
+Execute "Rscript exoGAINS2025Airpollutants.R";
 
 *** Read input ref results for tall with following dimensions: p11_emiAPexsolve(tall,all_regi,all_sectorEmi,emiRCP)
 if((cm_startyear gt 2005),
@@ -34,4 +34,4 @@ p11_emiAPexsolve(t,regi,all_sectorEmi,emiRCP) = p11_emiAPexsolveGDX(t,regi,all_s
 display p11_emiAPexsolve;
 
 );
-*** EOF ./modules/11_aerosols/exoGAINS/postsolve.gms
+*** EOF ./modules/11_aerosols/exoGAINS2025/postsolve.gms

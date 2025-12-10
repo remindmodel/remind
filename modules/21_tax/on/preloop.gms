@@ -12,8 +12,7 @@
 p21_tau_fe_sub(ttot,regi,sector,entyFe)$p21_max_fe_sub(ttot,regi,entyFe) = max(p21_tau_fe_sub(ttot,regi,sector,entyFe),-p21_max_fe_sub(ttot,regi,entyFe));
 *** Subsidy proportional cap to avoid liquids increasing dramatically
 p21_tau_fe_sub(ttot,regi,sector,entyFe)$p21_prop_fe_sub(ttot,regi,entyFe) = p21_tau_fe_sub(ttot,regi,sector,entyFe) * p21_prop_fe_sub(ttot,regi,entyFe);
-*** Maximum primary energy subsidy levels (in $/Gj) to provide plausible upper bound: 40$/barrel ~ 8 $/GJ"
-p21_tau_fuEx_sub(ttot,regi,enty)$f21_max_pe_sub(ttot,regi,enty) = max(p21_tau_fuEx_sub(ttot,regi,enty),-f21_max_pe_sub(ttot,regi,enty)*0.001/sm_EJ_2_TWa);
+
 
 *** ------------------------- Temporal development of final energy TAXES and SUBSIDIES, depending on cm_fetaxscen
 *** Set time path for:

@@ -353,7 +353,7 @@ loop((t,regi,entyPe) $ pm_implicitPePriceTarget(t,regi,entyPe),
 );  
 $endIf.cm_implicitPePriceTarget
 
-*' criterion: global budget target from core/postsolve must be within 2 Gt of target value
+*' criterion: global budget target from core/postsolve must be within cm_budgetCO2_absDevTol (default 2Gt) of target value
 p80_globalBudget_absDev_iter(iteration) = sm_globalBudget_absDev;
 if (abs(p80_globalBudget_absDev_iter(iteration)) > cm_budgetCO2_absDevTol, !! check if CO2 budget met in tolerance range,
   s80_bool = 0;
@@ -361,14 +361,17 @@ if (abs(p80_globalBudget_absDev_iter(iteration)) > cm_budgetCO2_absDevTol, !! ch
 );
 
 *' criterion: is the peak budget year the same as the year of maximum cumulative CO2 emissions?
-*' 1) check whether cm_peakBudgYr corresponds to year of maximum cumulative CO2 emissions
-*' If not, 2) check whether difference in cumulative emissions between both time steps is smaller than sm_peakbudget_diff_tolerance
-*' If neither 1) nor 2) satisfied, converge criterion not fullfilled and keep on iterating.
 $ifthen.carbonprice %carbonprice% == "functionalForm"
-if (    cm_iterative_target_adj = 9
-    and (cm_peakBudgYr ne sm_peakBudgYr_check or abs(sm_peakbudget_diff) < sm_peakbudget_diff_tolerance),
+*** check whether cm_peakBudgYr corresponds to year of maximum cumulative CO2 emissions
+if (cm_iterative_target_adj eq 9 and cm_peakBudgYr ne sm_peakBudgYr_check,
   s80_bool = 0;
-  p80_messageShow("target") = YES;
+  p80_messageShow("peakbudgyr") = YES;
+);
+
+*** check whether difference in cumulative emissions between both time steps is within sm_peakbudget_diff_tolerance
+if (cm_iterative_target_adj eq 9 and abs(sm_peakbudget_diff) > sm_peakbudget_diff_tolerance,
+  s80_bool = 0;
+  p80_messageShow("peakbudget") = YES;
 );
 $endIf.carbonprice
 

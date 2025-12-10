@@ -76,7 +76,7 @@ $offdelim
 
 
 if (cm_startyear gt 2005,
-execute_load "input_ref.gdx", p30_pebiolc_costs_emu_preloop;
+execute_load "input_ref.gdx", pm_pebiolc_costs_emu_preloop;
 );
 
 *** Select bioenergy bioenergy supply curve according to SSP scenario

@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/11_aerosols/exoGAINS/sets.gms
+*** SOF ./modules/11_aerosols/exoGAINS2025/sets.gms
 sets
 emisForEmiFac(all_enty)  "types of emissions that are only calculated in a post-processing routine after the optimization"
 /
@@ -33,4 +33,4 @@ pebiolc.segabio.biogas.power
 ***-------------------------------------------------------------------------
 sectorEndoEmi2te(sectorEndoEmi2te_dyn11) = YES;
 
-*** EOF ./modules/11_aerosols/exoGAINS/sets.gms
+*** EOF ./modules/11_aerosols/exoGAINS2025/sets.gms

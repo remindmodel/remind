@@ -44,7 +44,7 @@ q32_usableSe(t,regi,entySe)$(sameas(entySe,"seel"))..
 
 *' This equation calculates the total usable output from a seel-producing technology, meaning "after storage losses"
 q32_usableSeTe(t,regi,entySe,te)$(sameas(entySe,"seel") AND teVRE(te))..
-     vm_usableSeTe(t,regi,entySe,te)
+     v32_usableSeTe(t,regi,entySe,te)
      =e=
      sum(pe2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) )
    + sum(se2se(enty,entySe,te), vm_prodSe(t,regi,enty,entySe,te) )
@@ -138,7 +138,7 @@ q32_limitCapTeGrid(t,regi)$( t.val ge 2020 ) ..
 q32_shSeEl(t,regi,teVRE)..
     vm_shSeEl(t,regi,teVRE) / 100 * vm_usableSe(t,regi,"seel")
     =e=
-    vm_usableSeTe(t,regi,"seel",teVRE)
+    v32_usableSeTe(t,regi,"seel",teVRE)
 ;
 
 ***---------------------------------------------------------------------------
@@ -178,7 +178,7 @@ q32_storloss(t,regi,teVRE)$(t.val ge 2020)..
     + p32_FactorAddIntCostTotVRE * v32_shAddIntCostTotVRE(t,regi)    !! integration challenges due to the total VRE share
   ) / 100    
   * sum(VRE2teStor(teVRE,teStor), (1 - pm_eta_conv(t,regi,teStor) ) /  pm_eta_conv(t,regi,teStor) )
-  * vm_usableSeTe(t,regi,"seel",teVRE)
+  * v32_usableSeTe(t,regi,"seel",teVRE)
 ;
 
 q32_TotVREshare(t,regi)..

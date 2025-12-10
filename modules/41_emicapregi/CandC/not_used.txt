@@ -10,7 +10,6 @@ vm_Mport, variable, ???
 sm_budgetCO2eqGlob, parameter, ???
 pm_gdp_gdx, parameter, ???
 pm_budgetCO2eq, parameter, ???
-vm_dummyBudget,input,questionnaire
 pm_shPPPMER,input,questionnaire
 pm_gdp,input,questionnaire
 cm_permittradescen,input,questionnaire

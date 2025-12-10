@@ -15,6 +15,8 @@ Parameter
   s47_prefreeYear                                    "value of the last non-free year for the carbon price trajectory"
   p47_LULUCFEmi_GrassiShift(ttot,all_regi)           "difference between Magpie land-use change emissions and UNFCCC emissions in 2015 to correct for national accounting in emissions targets"
   pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) "deviation of emissions of current iteration from target emissions, for budget target this is the difference normalized by target emissions, while for year targets this is the difference normalized by 2005 emissions [%]"
+  pm_taxemiMkt(ttot,all_regi,all_emiMkt)                             "CO2 tax path per region and emissions market [T$/GtC]"
+  pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt)         "CO2 tax path per region and emissions market calculated from previous iteration [T$/GtC]"
 ;
 
 *** parameters to track regipol emissions calculation
@@ -162,7 +164,7 @@ Parameter
   pm_implicitPrice_ignConv(all_regi,sector,all_enty,entySe,ttot) "auxiliary parameter to store the price targets that were ignored in the convergence check (cases: 1 = non existent price, 2 = no change in prices for the last 3 iterations) [#]" 
   p47_implicitPriceTax_iter(iteration,ttot,all_regi,all_enty,entySe,sector)  "tax/subsidy level on FE for reaching the price target per iteration [2005 TerraDollar per TWyear]"
   p47_implicitPriceTarget_terminalYear(all_regi,all_enty,entySe,sector) "terminal year of price target for given region and energy carrier [year]"
-  p47_implicitPriceTarget_initialYear(all_regi,all_enty,entySe,sector) "initial year of price target for given region and energy carrier [year]"
+  p47_implicitPriceTarget_initialYear(all_regi,all_enty,entySe,sector) "initial year of price target for given region and energy carrier [year]" 
 ;
 
 Equations
@@ -241,7 +243,6 @@ Parameter
   p47_exoCo2tax(ext_regi,ttot)   "Exogenous CO2 tax level. Overrides carbon prices in pm_taxCO2eq, only if explicitly defined. Regions and region groups allowed. Format: '<regigroup>.<year> <value>, <regigroup>.<year2> <value2>' or '<regigroup>.(<year1> <value>,<year2> <value>'). [$/tCO2]" / %cm_regiExoPrice% /
 ;
 $endIf.regiExoPrice
-
 
 ***---------------------------------------------------------------------------
 *** Total SE per PE calculation used for setting bounds

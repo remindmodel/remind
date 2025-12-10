@@ -5,6 +5,11 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/datainput.gms
+
+*** default conversion for energy services
+pm_fe2es(ttot,regi,teEs) = 1;
+pm_shFeCes(ttot,regi,enty,in,teEs) = 0;
+
 Parameter
   p35_cesdata_sigma(all_in)  "substitution elasticities"
   /

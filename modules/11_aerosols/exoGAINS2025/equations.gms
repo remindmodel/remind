@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/11_aerosols/exoGAINS/equations.gms
+*** SOF ./modules/11_aerosols/exoGAINS2025/equations.gms
 ***--------------------------------------------------------------------------
 *** JeS: factor 0.000001 converts units from M$ to T$: e.g. for sulfur units are [TgS/TWa]*[TWa]*[$/pm_ts]
 
@@ -48,4 +48,4 @@ vm_costpollution(t,regi)=e=sum(emi2te(enty,enty2,te,enty3),
 
 *' @stop
 
-*** EOF ./modules/11_aerosols/exoGAINS/equations.gms
+*** EOF ./modules/11_aerosols/exoGAINS2025/equations.gms

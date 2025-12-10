@@ -22,7 +22,6 @@ p80_defic_sum("1") = 1;
 pm_capCumForeign(t,regi,teLearn) = 0;
 pm_cumEff(t,regi,in) = 0;
 pm_co2eqForeign(t,regi) = 0;
-pm_emissionsForeign(t,regi,enty) = 0;
 pm_fuExtrForeign(t,regi,enty,rlf) = 0;
 
 pm_SolNonInfes(regi) = 1; !! assume the starting point came from a feasible solution 

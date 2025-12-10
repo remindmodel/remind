@@ -8,7 +8,5 @@ name, type, reason
 sm_budgetCO2eqGlob, parameter, ???
 pm_gdp_gdx, parameter, ???
 pm_budgetCO2eq, parameter, ???
-vm_dummyBudget,input,questionnaire
 vm_co2eqGlob,input,questionnaire
-pm_emicapglob,input,questionnaire
 cm_emiscen,input,questionnaire

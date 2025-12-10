@@ -61,13 +61,7 @@ $include "./modules/21_tax/on/input/f21_max_fe_sub.cs4r"
 $offdelim
   /
 ;
-Parameter f21_max_pe_sub(tall,all_regi,all_enty) "maximum primary energy subsidy levels (in $/Gj) to provide plausible upper bound: 40$/barrel ~ 8 $/GJ" 
-  /
-$ondelim
-$include "./modules/21_tax/on/input/f21_max_pe_sub.cs4r"
-$offdelim
-  /
-;
+
 Parameter f21_prop_fe_sub(tall,all_regi,all_enty) "subsidy proportional cap to avoid liquids increasing dramatically"
   /
 $ondelim

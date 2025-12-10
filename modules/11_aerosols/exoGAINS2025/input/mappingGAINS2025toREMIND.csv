@@ -1,0 +1,35 @@
+GAINSsector,REMINDsector,REMINDactivity,elasticity,constantef,constantemi
+CEMENT,indprocess,Production|Industry|Cement (Mt/yr),1,0,0
+CHEM,solvents,FE|Industry|Chemicals (EJ/yr),1,0,0
+CUSM,indprocess,Production|Industry|Steel (Mt/yr),1,0,0
+NACID,indprocess,FE|Industry|Chemicals (EJ/yr),1,0,0
+PAPER,indprocess,Value Added|Industry|Other Industry (billion US$2017/yr),0.9,0,0
+STEEL,indprocess,Production|Industry|Steel|Primary (Mt/yr),1,0,0
+End_Use_Industry_Bio_Trad,indst,FE|Industry|Solids|Biomass|Traditional (EJ/yr),1,0,0
+End_Use_Industry_Coal,indst,FE|Industry|Solids|Coal (EJ/yr),1,0,0
+End_Use_Industry_HLF,indst,FE|Industry|Liquids (EJ/yr),1,0,0
+End_Use_Industry_LLF,indst,FE|Industry|Liquids (EJ/yr),1,0,0
+End_Use_Industry_NatGas,indst,FE|Industry|Gases (EJ/yr),1,0,0
+End_Use_Residential_Bio_Mod,res,FE|Solids|Biomass|Modern (EJ/yr),1,0,0
+End_Use_Residential_Bio_Trad,res,FE|Solids|Biomass|Traditional (EJ/yr),1,0,0
+End_Use_Residential_Coal,res,FE|Solids|Fossil|Coal (EJ/yr),1,0,0
+End_Use_Residential_HLF,res,FE|Buildings|Liquids (EJ/yr),1,0,0
+End_Use_Residential_LLF,res,FE|Buildings|Liquids (EJ/yr),1,0,0
+End_Use_Residential_NatGas,res,FE|Buildings|Gases (EJ/yr),1,0,0
+End_Use_Services_Bio_Trad,res,FE|Solids|Biomass|Traditional (EJ/yr),1,0,0
+End_Use_Services_Coal,res,FE|Solids without BioTrad (EJ/yr),1,0,0
+End_Use_Transport_HLF,trans,FE|Transport|Liquids (EJ/yr),1,0,0
+End_Use_Transport_LLF,trans,FE|Transport|Liquids (EJ/yr),1,0,0
+End_Use_Transport_NatGas,trans,FE|Transport|Gases (EJ/yr),1,0,0
+Losses_Coal,extraction,PE|Coal (EJ/yr),1,0,0
+Losses_Vent_Flare,extraction,PE|Gas (EJ/yr),1,0,0
+Power_Gen_Bio_Trad,power,SE|Electricity|Coal (EJ/yr),1,0,0
+Power_Gen_Coal,power,SE|Electricity|Coal (EJ/yr),1,0,0
+Power_Gen_HLF,power,SE|Electricity|Oil (EJ/yr),1,0,0
+Power_Gen_LLF,power,SE|Electricity|Oil (EJ/yr),1,0,0
+Power_Gen_NatGas,power,SE|Electricity|Gas (EJ/yr),1,0,0
+Transformations_Coal,power,SE|Solids|Coal (EJ/yr),1,0,0
+Transformations_HLF_Refinery,power,PE|Oil (EJ/yr),1,0,0
+Transformations_NatGas,power,PE|Gas (EJ/yr),1,0,0
+Waste_Solid_Municipal,waste,GDP|MER (billion US$2017/yr),0.4,0,0
+Waste_Water_Municipal,waste,GDP|MER (billion US$2017/yr),0.4,0,0

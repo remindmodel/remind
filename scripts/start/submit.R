@@ -47,9 +47,9 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       warning("No active renv project found, not using renv.")
     } else {
       # we only want to run renv checks/updates in the first run in a cascade:
-      # cfg$renvLockFromPrecedingRun is only NULL for the first run in a cascade.
+      # cfg$UseThisRenvLock is only NULL for the first run in a cascade.
       # For a subsequent run it has been set by the parent run in run.R (standalone) or start_coupled.R (coupled).
-      firstRunInCascade <- is.null(cfg$renvLockFromPrecedingRun)
+      firstRunInCascade <- is.null(cfg$UseThisRenvLock)
       if (firstRunInCascade) {
         if (getOption("autoRenvUpdates", FALSE)) {
           installedUpdates <- piamenv::updateRenv()
@@ -76,8 +76,8 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
         message("done.")
       } else {
         # a run renv is loaded, we are presumably starting new run in a cascade
-        message("   Copying lockfile '",cfg$renvLockFromPrecedingRun,"' into '", cfg$results_folder, "'")
-        file.copy(cfg$renvLockFromPrecedingRun, file.path(cfg$results_folder, "_renv.lock"))
+        message("   Copying lockfile '",cfg$UseThisRenvLock,"' into '", cfg$results_folder, "'")
+        file.copy(cfg$UseThisRenvLock, file.path(cfg$results_folder, "_renv.lock"))
       }
 
 

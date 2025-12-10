@@ -7,9 +7,9 @@
 *** SOF ./modules/26_agCosts/costs_trade/datainput.gms
 *FP* read agricultural costs (all except bioenergy) and trade data from MAgPIE
 
-table pm_totLUcosts(tall,all_regi) "agricultural costs"
+table pm_totLUcosts_excl_costFuBio(tall,all_regi) "agricultural costs"
 $ondelim
-$include "./modules/26_agCosts/costs_trade/input/pm_totLUcostsmag.csv";
+$include "./modules/26_agCosts/costs_trade/input/pm_totLUcosts_excl_costFuBiomag.csv";
 $offdelim
 ;
 

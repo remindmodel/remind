@@ -10,4 +10,3 @@ pm_prtp,             parameter,   ???
 pm_taxCO2eq,         parameter,   ???
 pm_ttot_val,         parameter,   ???
 pm_welf,             parameter,   ???
-vm_dummyBudget,      input,       questionnaire

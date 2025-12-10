@@ -8,6 +8,7 @@
 
 parameter
 pm_IO_input(all_regi,all_enty,all_enty,all_te)                  "Energy input based on IEA data"
+pm_IO_output(tall,all_regi,all_enty,all_enty,all_te)            "Historical energy output per technology based on IEA data [TWa]"
 p04_IO_output(all_regi,all_enty,all_enty,all_te)                "Energy output based on IEA data"
 p04_x_enty2te_dyn04(all_regi,all_enty,all_enty,all_te,all_te)   "parameter for the allocation of energy flow to technologies"
 pm_prodCouple(all_regi,all_enty,all_enty,all_te,all_enty)       "share of couple production. Value 0.2 means 20EJ of couple product for 100EJ of main product; value -0.03 means 3EJ of own consumption for 100EJ of main product."

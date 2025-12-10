@@ -28,8 +28,8 @@ display pm_taxCO2eq;
 *#'  emission target relative to 2005 emissions (factor_targetyear) for part of region with NDC target
 *#'  baseline for the rest of the countries
 p45_CO2eqwoLU_goal(p45_NDCyearSet(t,regi)) =
-          p45_2005shareTarget(t,regi)     * p45_BAU_reg_emi_wo_LU_bunkers("2005",regi) * p45_factorTargetyear(t,regi)    !! share with NDC target
-        + (1-p45_2005shareTarget(t,regi)) * p45_BAU_reg_emi_wo_LU_bunkers(t,regi);            !! baseline for share of countries without NDC target
+          p45_2015shareTarget(t,regi)     * p45_BAU_reg_emi_wo_LU_wo_bunkers("2015",regi) * p45_factorTargetyear(t,regi)    !! share with NDC target
+        + (1-p45_2015shareTarget(t,regi)) * p45_BAU_reg_emi_wo_LU_wo_bunkers(t,regi);            !! baseline for share of countries without NDC target
 
 display pm_taxCO2eq,p45_CO2eqwoLU_goal;
 

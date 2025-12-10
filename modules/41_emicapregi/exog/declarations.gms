@@ -5,7 +5,16 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/41_emicapregi/exog/declarations.gms
+
+variables
+vm_perm(ttot,all_regi)                "emission allowances [GtCeq]"
+;
+
 parameter
+pm_shPerm(tall, all_regi)             "emission permit shares [share]"
+pm_emicapglob(tall)                   "global emission cap [GtC]" 
+
+
 p41_emicapregi(tall,all_regi)         "exogenous regional emission cap"
 p41_lambda(tall)                      "share parameter"
 ;

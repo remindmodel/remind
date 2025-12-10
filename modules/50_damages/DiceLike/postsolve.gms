@@ -7,13 +7,13 @@
 *** SOF ./modules/50_damages/DiceLike/postsolve.gms
 
 
-pm_damage(tall,regi)$(tall.val ge 2020 and tall.val le 2300) = 
+pm_damage(tall,regi)$(tall.val ge cm_startyear and tall.val le 2300) = 
 1 
 - p50_damageFuncCoef1 * pm_globalMeanTemperatureZeroed1900(tall) 
-- p50_damageFuncCoef2 * pm_globalMeanTemperatureZeroed1900(tall)**2; 
+- p50_damageFuncCoef2 * pm_globalMeanTemperatureZeroed1900(tall)**p50_damageFuncCoef3; 
 
 * derivative of damage function w.r.t. teperature (used in 51_internalizeDamages)
 pm_damageMarginal(tall,"USA")$(tall.val ge 2000 and tall.val le 2300) =     !! USA stands in as a dummy for a gobal value here
-  ( p50_damageFuncCoef1  + 2 * p50_damageFuncCoef2 * pm_globalMeanTemperatureZeroed1900(tall) );
+  ( p50_damageFuncCoef1  + p50_damageFuncCoef3 * p50_damageFuncCoef2 * pm_globalMeanTemperatureZeroed1900(tall)**(p50_damageFuncCoef3-1) );
 
 *** EOF ./modules/50_damages/DiceLike/postsolve.gms

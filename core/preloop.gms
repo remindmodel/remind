@@ -31,7 +31,6 @@ vm_Xport.l(ttot,regi,tradePe)       = 0;
 v_capDistr.l(t,regi,te,rlf)          = 0;
 vm_cap.l(t,regi,te,rlf)              = 0;
 vm_fuExtr.l(ttot,regi,"pebiolc","1")$(ttot.val ge 2005)  = 0;
-vm_pebiolc_price.l(ttot,regi)$(ttot.val ge 2005)         = 0;
 vm_emiAllMkt.l(t,regi,enty,emiMkt) = 0;
 vm_co2eqMkt.l(ttot,regi,emiMkt) = 0;
 

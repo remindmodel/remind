@@ -42,7 +42,7 @@ Imports:
     luscale,
     lusweave,
     magclass,
-    magpie4 (>= 2.3.10),
+    magpie4 (>= 2.35.1),
     magpiesets,
     mip (>= 0.150.0),
     modelstats,
