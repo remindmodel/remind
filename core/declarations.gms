@@ -628,7 +628,7 @@ sm_c_2_co2                   "conversion from c to co2"                /3.666666
 s_NO2_2_N                    "convert NO2 to N [14 / (14 + 2 * 16)]"   / .304 /
 sm_tgn_2_pgc                 "conversion factor 100-yr GWP from TgN to PgCeq"
 sm_tgch4_2_pgc               "conversion factor 100-yr GWP from TgCH4 to PgCeq"
-s_MtCO2_2_GtC                "conversion factor from MtCO2 to native REMIND emission unit GtC" /2.727e-04/
+sm_MtCO2_2_GtC               "conversion factor from MtCO2 to native REMIND emission unit GtC" /2.727e-04/
 s_MtCH4_2_TWa                "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
 s_gwpCH4                     "Global Warming Potentials of CH4, AR5 WG1 CH08 Table 8.7"     /28/
 s_gwpN2O                     "Global Warming Potentials of N2O, AR5 WG1 CH08 Table 8.7"     /265/

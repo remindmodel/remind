@@ -6,22 +6,20 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/80_optimization/nash/datainput.gms
 
-*** Negishi weights, not used in Nash
-pm_w(regi) = 1;
 
 *** convergence with trade surplus thresholds
 if(cm_nash_autoconverge > 0,
   cm_iteration_max = 100; !! set max number of iterations
 
-*** default values for cm_nash_autoconverge = 1 - coarse 
-  p80_surplusMaxTolerance(tradePe) = 1.5 * sm_EJ_2_TWa; !! 1.5 EJ/yr, converted into internal unit TWa
-  p80_surplusMaxTolerance("good") = 0.1;                !! 0.1 trillion Dollar
-  p80_surplusMaxTolerance("perm") = 350 * 12/44 / 1000; !! 350 MtCO2eq, converted into internal unit GtC
+*** default values (cm_nash_autoconverge = 1)
+  p80_surplusMaxTolerance(tradePe) = 1.5 * sm_EJ_2_TWa;   !! 1.5 EJ/yr, converted into internal unit TWa
+  p80_surplusMaxTolerance("good") = 0.1;                  !! 0.1 trillion Dollar
+  p80_surplusMaxTolerance("perm") = 300 * sm_MtCO2_2_GtC; !! 300 MtCO2eq, converted into internal unit GtC
 
   loop(trade $ (tradePe(trade) or tradeMacro(trade)),
-*** convergences thresholds - fine
+*** fine convergence thresholds (cm_nash_autoconverge = 2)
     p80_surplusMaxTolerance(trade) $ (cm_nash_autoconverge = 2) = 0.2 * p80_surplusMaxTolerance(trade);
-*** convergences thresholds - very coarse
+*** coarse convergence thresholds (cm_nash_autoconverge = 3)
     p80_surplusMaxTolerance(trade) $ (cm_nash_autoconverge = 3) = 2 * p80_surplusMaxTolerance(trade);
   );
 );
@@ -30,35 +28,34 @@ if(cm_nash_autoconverge > 0,
 
 *** Nash adjustment costs (default value around 150).
 *** Multiplicator to penalise trade patterns deviations from the last iteration. Involves a trade-off:
-*** - if too low, markets jump far away from clearance.
-*** - if too high, changes in trade patten over iterations are very slow, convergence takes many many iterations.
-p80_etaAdj(tradePe) = 80; 
-p80_etaAdj("good") = 100;
-p80_etaAdj("perm") = 10;
+*** - when too low, markets are unstable across iterations and cannot clear
+*** - when too high, changes in trade patten over iterations are very slow and convergence takes longer
+p80_tradeAdj(tradePe) = 80; 
+p80_tradeAdj("good") = 100;
+p80_tradeAdj("perm") = 10;
 
-*** LB: parameter for nash price algorithm within the optimization. 
 *** Multiplicator to price anticipation
-p80_etaXp(tradePe) = 0.1;
-p80_etaXp("good") = 0.1;
-p80_etaXp("perm") = 0.2;
+p80_priceAnticipStrength(tradePe) = 0.1;
+p80_priceAnticipStrength("good") = 0.1;
+p80_priceAnticipStrength("perm") = 0.2;
 
 
-*** LB: parameter for Nash price algorithm between different iterations. These parameters are pretty sensitive:
-*** - if market surpluses diverge, try higher values (up to 1).
-*** - if surpluses oscillate, try lower values. 
+*** Price adjustment factor across iterations (value between zero and one). These parameters are sensitive:
+*** - when too low, market surplus may diverge
+*** - when too high, market surplus may oscillate
 
 *** short term price ajustment elasticity
-p80_etaST(tradePe) = 0.3;
-p80_etaST("pebiolc") = 0.8; !! AJS: bio market seems to like this
-p80_etaST("peur") = 0.2; !! uranium market is more sensitive, so choose lower etaST
-p80_etaST("good") = 0.25;
-p80_etaST("perm") = 0.3;
-$ifi %banking% == "banking"  p80_etaST("perm") = 0.2;    !! in banking mode, the permit market reacts more sensitively.
-$ifi %emicapregi% == "budget"  p80_etaST("perm") = 0.25; !! in budget mode, the permit market reacts more sensitively.
+p80_shortTermFac(tradePe) = 0.3;
+p80_shortTermFac("pebiolc") = 0.8; !! AJS: bio market seems to like this
+p80_shortTermFac("peur") = 0.2; !! uranium market is more sensitive, so choose lower etaST
+p80_shortTermFac("good") = 0.25;
+p80_shortTermFac("perm") = 0.3;
+$ifi %banking% == "banking"  p80_shortTermFac("perm") = 0.2;    !! in banking mode, the permit market reacts more sensitively.
+$ifi %emicapregi% == "budget"  p80_shortTermFac("perm") = 0.25; !! in budget mode, the permit market reacts more sensitively.
 
 *** long term price ajustment elasticity
-p80_etaLT(trade) = 0;
-p80_etaLT("perm") = 0.03;
+p80_longTermFac(trade) = 0;
+p80_longTermFac("perm") = 0.03;
 
 
 *** --------------- Initialise convergence process parameters ---------------
@@ -66,6 +63,9 @@ s80_converged = 0;
 
 s80_fadeoutPriceAnticipStartingPeriod = 0;
 sm_fadeoutPriceAnticip = 1;
+
+*** Negishi weights, not used in Nash
+pm_w(regi) = 1;
 
 *** parameter for spillover externality (aggregated productivity level)
 pm_cumEff(t, regi, in) = 100;
@@ -101,6 +101,7 @@ $include "./modules/80_optimization/nash/input/prices_NASH.inc";
 *** --------------- Emissions initialisation ---------------
 *** emissions, which are part of the climate policy, of other regions (nash relevant)
 *** MLB 20140109: initialisation of climate externality is sensitive
+*** may be overwritten in nash/presolve
 pm_co2eqForeign(t, regi) = (1 - pm_shPerm(t,regi)) * pm_emicapglob(t); !! (1 - emission permit shares) * global emission cap
 
 $ifthen.emiopt %emicapregi% == "none"

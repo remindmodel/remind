@@ -18,11 +18,8 @@ loop(all_regi,
 *** only solve for regions that do not have a valid solution from the last solver iteration
   if(    (   sol_itr.val > 1 or s80_runInDebug = 1)
      and (   p80_repy(all_regi,"modelstat") = 2
-$ifthen.repeatNonOpt "%cm_repeatNonOpt%" == "off"
-           or p80_repy(all_regi,"modelstat") = 7
-$endif.repeatNonOpt
+$if "%cm_repeatNonOpt%" == "off"                or p80_repy(all_regi,"modelstat") = 7
          ),
-
     p80_repy_thisSolitr(all_regi,solveinfo80) = 0;
     continue;
   );
@@ -66,7 +63,7 @@ $endif.repeatNonOpt
 
 if(cm_nash_mode = 2, !! regions run in parallel
 repeat
-  loop(all_regi$handlecollect(p80_handle(all_regi)),
+  loop(all_regi $ handlecollect(p80_handle(all_regi)),
     p80_repy_thisSolitr(all_regi,"solvestat") = hybrid.solvestat;
     p80_repy_thisSolitr(all_regi,"modelstat") = hybrid.modelstat;
     p80_repy_thisSolitr(all_regi,"resusd")    = hybrid.resusd;
@@ -90,9 +87,8 @@ pm_SolNonInfes(regi) = 0;
 p80_SolNonOpt(regi)  = 0;
 
 putclose foo_msg;  
-*** This putclose serves to make foo_msg the last "active" put file, and thus makes GAMS use the foo_msg formating (namely F-format, not scientific E-format)
+*** This putclose makes foo_msg the last "active" put file so that GAMS uses the foo_msg formating (namely F-format, not scientific E-format)
 *** Otherwise, the following put messages will try to write modelstat in scientif format, throwing errors because of insufficient space
-
 loop(regi,
   if(p80_repy_thisSolitr(regi,"solvestat") > 0,
     put_utility foo_msg "msg" / "Solitr:" sol_itr.tl:2:0 " " regi.tl:4:0 "     updated. Modstat new " p80_repy_thisSolitr(regi,"modelstat"):2:0 ", old " p80_repy(regi,"modelstat"):2:0 "; Resusd new" p80_repy_thisSolitr(regi,"resusd"):5:0 ", old" p80_repy(regi,"resusd"):5:0 "; Obj new" p80_repy_thisSolitr(regi,"objval"):7:3 ", old" p80_repy(regi,"objval"):7:3 ;
@@ -109,11 +105,10 @@ loop(regi,
 );
 
 *** set o_modelstat to the highest value across all regions
-o_modelstat
 $ifthen.repeatNonOpt "%cm_repeatNonOpt%" == "off"
-  = smax(regi, p80_repy(regi,"modelstat")$(p80_repy(regi,"modelstat") ne 7));  !! ignoring status 7 
+  o_modelstat = smax(regi, p80_repy(regi,"modelstat") $ (p80_repy(regi,"modelstat") ne 7)); !! ignoring status 7 
 $else.repeatNonOpt
-  = smax(regi, p80_repy(regi,"modelstat"));                                    !! also taking into account status 7
+  o_modelstat = smax(regi, p80_repy(regi,"modelstat"));                                     !! also taking into account status 7
 $endif.repeatNonOpt
 
 *** add information if this region was solved in this iteration

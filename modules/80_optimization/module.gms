@@ -11,7 +11,7 @@
 *' @description The optimization module gives the opportunity to choose different solution algorithms. 
 *'
 *'
-*' @authors Anastasis Giannousakis, Marian Leimbach, Lavinia Baumstark, Gunnar Luderer, Anselm Schultes 
+*' @authors Anastasis Giannousakis, Marian Leimbach, Lavinia Baumstark, Gunnar Luderer, Anselm Schultes, Fabrice Lécuyer
 
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%optimization%" == "nash" $include "./modules/80_optimization/nash/realization.gms"

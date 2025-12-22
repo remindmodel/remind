@@ -7,37 +7,38 @@
 *** SOF ./modules/80_optimization/nash/declarations.gms
 
 parameter
-*** LB: parameters for ajustments within one iteration. These cause price anticipation
-p80_etaXp(all_enty)                         "Parameter governing price anticipation on commodity markets"
+*** parameters for ajustments within one iteration. These cause price anticipation
+p80_priceAnticipStrength(all_enty)            "Parameter governing price anticipation on commodity markets"
 
-*** LB: parameters for ajustments between different iterations
-p80_etaLT(all_enty)                         "long term price ajustment elasticity"
-p80_etaST(all_enty)                         "short term price ajustment elasticity"
-p80_etaAdj(all_enty)                        "Adjustment costs for changes of trade pattern between iterations"
+*** parameters for ajustments between differ  ent iterations
+p80_longTermFac(all_enty)                     "Long term price ajustment elasticity"
+p80_shortTermFac(all_enty)                    "Short term price ajustment elasticity"
+p80_tradeAdj(all_enty)                        "Adjustment costs for changes of trade pattern between iterations"
 
 *** prices and market volumes
-p80_pvp_itr(ttot,all_enty,iteration)        "Price on commodity markets per iteration"
-p80_pvpFallback(ttot,all_enty)              "Helper parameter. Price path from input/prices_NASH.inc. Only used if reading prices from gdx fails."
+p80_pvp_itr(ttot,all_enty,iteration)          "Price on commodity markets per iteration"
+p80_pvpFallback(ttot,all_enty)                "Helper parameter. Price path from input/prices_NASH.inc. Only used if reading prices from gdx fails."
 
-p80_marketVolume(ttot,all_regi,all_enty)    "Normalization parameter for market volume [amount of trade item]"
-p80_intertemporalSurplusRevenue(all_enty)   "Aggregated intertemporal value of the surplus [T$2017]"
-p80_itertemporalMarketRevenue(all_enty)     "Aggregated intertemporal market volume [T$2017]"
+p80_regiMarketVolume(ttot,all_regi,all_enty)  "Regional market volume of a trade item, used for normalisation [amount of trade item]"
+p80_globMarketVolume(ttot,all_enty)           "Global market volume of a trade item, used for normalisation [amount of trade item]"
+p80_intertempSurplusRevenue(all_enty)         "Aggregated intertemporal value of the surplus [T$2017]"
+p80_itertempMarketRevenue(all_enty)           "Aggregated intertemporal market volume [T$2017]"
 
-*** parameter containing the respective level values from last iteration (the first set of values taken from gdx in the first iteration, respectively)
-p80_Mport0(tall,all_regi,all_enty)          "Imports in last iteration"
-p80_surplus(tall,all_enty,iteration)        "Surplus on commodity market"
-p80_defic_trade(all_enty)                   "Surplus in monetary terms over all times on commodity markets [T$2017]"
-p80_defic_sum(iteration)                    "Surplus in monetary terms over all times on all commodity markets combined [T$2017] (NOTE: to compare this number with the Negishi defic_sum, divide by around 100)"
-p80_defic_sum_rel(iteration)                "Surplus monetary value over all times on all commodity markets combined, normalized to consumption [%]"
+*** parameter containing the respective leve l values from last iteration (the first set of values taken from gdx in the first iteration, respectively)
+p80_Mport0(tall,all_regi,all_enty)            "Imports in last iteration"
+p80_surplus(tall,all_enty,iteration)          "Surplus on commodity market"
+p80_defic_trade(all_enty)                     "Surplus in monetary terms over all times on commodity markets [T$2017]"
+p80_defic_sum(iteration)                      "Surplus in monetary terms over all times on all commodity markets combined [T$2017] (NOTE: to compare this number with the Negishi defic_sum, divide by around 100)"
+p80_defic_sum_rel(iteration)                  "Surplus monetary value over all times on all commodity markets combined, normalized to consumption [%]"
 
-*** LB: diagnostic parameters
-p80_etaLT_correct(all_enty,iteration)       "long term price correction factor in percent"
-p80_etaST_correct(tall,all_enty,iteration)  "short term price correction factor in percent"
+*** diagnostic parameters
+p80_longTermCorrect(all_enty,iteration)       "Long term price correction factor in percent"
+p80_shortTermCorrect(tall,all_enty,iteration) "Short term price correction factor in percent"
 
-p80_etaST_correct_safecopy(tall,all_enty,iteration)       "auxiliary parameter to remember short term price correction factor in percent, before new convergence adjustments"
-o80_counter_iteration_trade_ttot(ttot,all_enty,iteration) "auxiliary parameter to display in which iteration and for which item (ttot, trade) additional convergence measures were taken"
-o80_trackSurplusSign(ttot,all_enty,iteration)             "auxiliary parameter to track how long the surplus for an item (ttot, trade) had the same sign over iterations"
-o80_SurplusOverTolerance(ttot,all_enty,iteration)         "auxiliary parameter to track in which iterations which item surpassed the tolerance (positive/negative)"
+p80_shortTermCorrect_safecopy(tall,all_enty,iteration)     "auxiliary parameter to remember short term price correction factor in percent, before new convergence adjustments"
+o80_counter_iteration_trade_ttot(ttot,all_enty,iteration)  "auxiliary parameter to display in which iteration and for which item (ttot, trade) additional convergence measures were taken"
+o80_trackSurplusSign(ttot,all_enty,iteration)              "auxiliary parameter to track how long the surplus for an item (ttot, trade) had the same sign over iterations"
+o80_SurplusOverTolerance(ttot,all_enty,iteration)          "auxiliary parameter to track in which iterations which item surpassed the tolerance (positive/negative)"
 
 
 p80_surplusMax_iter(all_enty,iteration,tall) "Diagnostics for Nash: Worst residual market surplus until given year, absolute value [TWa, T$, GtC]"
@@ -106,7 +107,7 @@ p80_gmt_conv_iter(iteration)                      "global mean temperature conve
 ;
 
 positive variable
-*** AJS: Adjustment costs for Nash trade algorithm.  Only non-zero in the Nash_test realization of 80_optimization module.
+*** adjustment costs for Nash trade algorithm (only non-zero in the nash realization of 80_optimization module)
 vm_costAdjNash(ttot,all_regi)  "Adjustment costs for deviation from the trade structure of the last iteration."
 ;
 
@@ -118,7 +119,7 @@ q80_budgetPermRestr(all_regi)  "constraints regional permit budget to given regi
 
 scalars
 *** Convergence criteria: if met, the optimization is stopped. Feel free to adjust these to your needs.
-*** Denote maximum tolerable deviation from market clearance (goods in  M$2017/yr, resources in EJ/yr)
+*** Denote maximum tolerable deviation from market clearance (goods in M$2017/yr, resources in EJ/yr)
 sm_fadeoutPriceAnticip                     "Helper parameter, describes fadeout of price anticipation during iterations"
 s80_fadeoutPriceAnticipStartingPeriod      "Helper parameter, denotes iteration in which price anticipation fadeout starts"
 s80_dummy                                  "dummy scalar"
@@ -130,7 +131,7 @@ s80_converged                              "if nash converged, this is 1"
 s80_runInDebug                             "Is 1 if regions stayed infeasible in nash and start in debug mode automatically following the parallel mode" /0/
 ;
 
-*** defining specific output formats:
+*** specific output formats
 option   p80_DevPriceAnticipGlobAll:3:0:1;
 option   p80_DevPriceAnticipGlobAllMax:3:0:1;
 option   o80_PriceChangePriceAnticipReg:1:2:1;

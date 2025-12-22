@@ -9,7 +9,7 @@
 *' @description This is a reduced model version, only containing one region.
 *' It is equivalent to the Nash realization with just one region. Prices of resources and goods are exogenously fixed to the values taken from the gdx.
 *'
-*' Run time is some minutes.
+*' Run time is a few minutes.
 *'
 *' @limitations This realization is only useful for testing purposes or for regions with no influence on the global prices of traded goods.
 

@@ -326,8 +326,8 @@ if(c_ccsinjecratescen > 0,
 *** Potential of EU27 regions is pooled and redistributed according to GDP (Only upper limit for 2030)
 *** Norway and UK announced to store CO2 for EU27 countries. So 50% of Norway and UK potential in 2030 is attributed to EU27-Pool
   if(not cm_emiscen = 1, !! cm_emiscen 1 = BAU
-    vm_co2CCS.lo(t,regi,"cco2","ico2","ccsinje","1") $ (t.val <= 2030) = s_MtCO2_2_GtC * p_boundCapCCS(t,regi,"operational") $ (t.val <= 2030);
-    vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1") $ (t.val <= 2030) = s_MtCO2_2_GtC * (
+    vm_co2CCS.lo(t,regi,"cco2","ico2","ccsinje","1") $ (t.val <= 2030) = sm_MtCO2_2_GtC * p_boundCapCCS(t,regi,"operational") $ (t.val <= 2030);
+    vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1") $ (t.val <= 2030) = sm_MtCO2_2_GtC * (
         p_boundCapCCS(t,regi,"operational") $ (t.val <= 2030)
       + p_boundCapCCS(t,regi,"construction") $ (t.val <= 2030)
       + p_boundCapCCS(t,regi,"planned") $ (t.val <= 2030) * c_fracRealfromAnnouncedCCScap2030);
@@ -372,7 +372,7 @@ loop(regi $ (p_boundCapCCSindicator(regi) = 0),
 *** Limit REMINDs ability to vent captured CO2 to 1 MtCO2 per yr per region. This happens otherwise to a great extend in stringent climate 
 *** policy scenarios if CCS and CCU capacities are limited in early years, to lower overall adjustment costs of capture technologies.
 *** In reality, people don't have perfect foresight and without storage or usage capacities, no capture facilities will be built.
-v_co2capturevalve.up(t,regi) = 1 * s_MtCO2_2_GtC;
+v_co2capturevalve.up(t,regi) = 1 * sm_MtCO2_2_GtC;
 
 
 *** ==================================================================

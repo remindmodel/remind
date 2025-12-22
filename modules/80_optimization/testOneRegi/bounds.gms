@@ -6,6 +6,6 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/80_optimization/testOneRegi/bounds.gms
 
-*AJS* Adjustment costs are only relevant for the Nash_test realization
+*AJS* Adjustment costs are only relevant for the nash realization
 vm_costAdjNash.fx(t,regi) = 0;
 *** EOF ./modules/80_optimization/testOneRegi/bounds.gms

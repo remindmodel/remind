@@ -8,14 +8,12 @@
 
 o_iterationNumber = iteration.val;
 
-*AJS* feed updated prices and quantities into the next iteration:
-loop(trade$(NOT tradeSe(trade)),
-    loop(regi,
-    loop(ttot$(ttot.val ge cm_startyear),
-        pm_Xport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 1)  = vm_Xport.l(ttot,regi,trade);
-        p80_Mport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 1) = vm_Mport.l(ttot,regi,trade);
-    );
-    );
+*** AJS: feed updated prices and quantities into the next iteration, ML: adjustments in case of infeasibilities (increase import)
+loop(trade $ (not tradeSe(trade)),
+  loop(ttot $ (ttot.val >= cm_startyear),
+    pm_Xport0(ttot,regi,trade)  $ (pm_SolNonInfes(regi) = 1) = vm_Xport.l(ttot,regi,trade);
+    p80_Mport0(ttot,regi,trade) $ (pm_SolNonInfes(regi) = 1) = vm_Mport.l(ttot,regi,trade);
+  );
 );
 
 *** Save FE prices in each iteration for easier monitoring

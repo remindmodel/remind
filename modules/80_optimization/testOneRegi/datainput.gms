@@ -10,9 +10,9 @@ pm_w(regi) = 1;
 
 *LB* initialize price parameter, import from gdx in preloop
 pm_pvp(ttot,trade)$((ttot.val ge 2005) AND (NOT tradeSe(trade))) = 0;
-p80_etaXp(tradePe) = 1;
-p80_etaXp("good") = 1;
-p80_etaXp("perm") = 1;
+p80_priceAnticipStrength(tradePe) = 1;
+p80_priceAnticipStrength("good") = 1;
+p80_priceAnticipStrength("perm") = 1;
 
 *load fallback prices
 
