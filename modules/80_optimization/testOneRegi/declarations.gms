@@ -8,7 +8,6 @@
 
 parameter
 p80_priceAnticipStrength(all_enty) "Parameter governing price anticipation on commodity markets"
-p80_pvpFallback(ttot,all_enty) "Helper parameter. Price path from input/prices_NASH.inc. Only used if reading prices from gdx fails."
 p80_regiMarketVolume(ttot,all_regi,all_enty) "Regional market volume of a trade item, used for normalisation [amount of trade item]"
 p80_Mport0(tall,all_regi,all_enty) "Imports in last iteration"
 p80_taxrev0(tall,all_regi) "vm_taxrev from last iteration"

@@ -14,10 +14,6 @@ p80_priceAnticipStrength(tradePe) = 1;
 p80_priceAnticipStrength("good") = 1;
 p80_priceAnticipStrength("perm") = 1;
 
-*load fallback prices
-
-$include "./modules/80_optimization/testOneRegi/input/prices_NASH.inc";
-
 
 *MLB 12062013* initialize learning externality (can be improved by including file)
 pm_capCumForeign(ttot,regi,teLearn)$(ttot.val ge 2005) = 0;
