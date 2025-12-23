@@ -279,8 +279,8 @@ if(p80_DevPriceAnticipGlobAllMax2100Iter(iteration) > 0.1 * p80_surplusMaxTolera
   p80_messageShow("DevPriceAnticip") = YES;
 );
 
-*' criterion "Did REMIND run sufficient iterations": currently set at 18, to allow for at least 4 iterations with EDGE-T
-if(iteration.val <= 17,
+*' criterion "Were there enough iterations": currently set to allow for at least 4 iterations with EDGE-T
+if(iteration.val < cm_startIter_EDGET + 4,
   s80_bool = 0;                
   p80_messageShow("IterationNumber") = YES;
 );
@@ -349,7 +349,7 @@ $endIf.cm_implicitPePriceTarget
 p80_globalBudget_absDev_iter(iteration) = sm_globalBudget_absDev;
 if (abs(p80_globalBudget_absDev_iter(iteration)) > cm_budgetCO2_absDevTol, !! check if CO2 budget met in tolerance range,
   s80_bool = 0;
-  p80_messageShow("target") = YES;
+  p80_messageShow("globalbudget") = YES;
 );
 
 *' criterion: is the peak budget year the same as the year of maximum cumulative CO2 emissions?
@@ -430,7 +430,7 @@ loop(convMessage80$(p80_messageShow(convMessage80)),
     display "#### Check out sm_fadeoutPriceAnticip which needs to be below cm_maxFadeOutPriceAnticip.";
     display sm_fadeoutPriceAnticip, cm_maxFadeOutPriceAnticip;
   );
-  if(sameas(convMessage80, "target"),
+  if(sameas(convMessage80, "globalbudget"),
     display "#### 6.) A global climate target has not been reached yet.";
     display "#### check sm_globalBudget_absDev for the deviation from the global target CO2 budget (convergence criterion defined via cm_budgetCO2_absDevTol [default = 2 Gt CO2]), as well as";
     display "#### pm_taxCO2eq_iter (regional CO2 tax path tracked over iterations [T$/GtC]) and"; 

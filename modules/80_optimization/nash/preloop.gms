@@ -39,7 +39,7 @@ loop(ttot $ (ttot.val >= 2005),
     p80_regiMarketVolume(ttot,regi,"good")  = vm_cons.l(ttot,regi);
     p80_regiMarketVolume(ttot,regi,"perm")  = abs(pm_shPerm(ttot,regi) * pm_emicapglob(ttot));
     p80_regiMarketVolume(ttot,regi,tradePe) = (sum(rlf, vm_fuExtr.l(ttot,regi,tradePe,rlf)) + vm_prodPe.l(ttot,regi,tradePe)) / 2;
-    p80_regiMarketVolume(ttot,regi,trade)   = max(sm_eps, p80_regiMarketVolume(ttot,regi,trade)) !! ensure market volume is positive
+    p80_regiMarketVolume(ttot,regi,trade)   = max(sm_eps, p80_regiMarketVolume(ttot,regi,trade)); !! ensure market volume is positive
 
     p80_taxrev0(ttot,regi) = vm_taxrev.l(ttot,regi);
   );
