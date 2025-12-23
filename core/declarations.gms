@@ -613,7 +613,7 @@ sm_trillion_2_non            "trillion to non"                         /1e+12/,
 
 *** energy units
 pm_conv_TWa_EJ               "conversion from TWa to EJ"                          /31.536/,
-s_zj_2_twa                   "zeta joule to tw year"                              /31.7098/,
+s_ZJ_2_TWa                   "zeta joule to tw year"                              /31.71/,
 sm_EJ_2_TWa                  "multiplicative factor to convert from EJ to TWa"    /31.71e-03/,
 sm_GJ_2_TWa                  "multiplicative factor to convert from GJ to TWa"    /31.71e-12/,
 sm_TWa_2_TWh                 "tera Watt year to Tera Watt hour"                    /8.76e+3/,

@@ -6,9 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./core/loop.gms
 
-*--------------------------------------------------------------------------
+***-------------------------------------------------------------------
 ***         solveoptions
-*--------------------------------------------------------------------------
+***-------------------------------------------------------------------
 option limcol    = 0;
 option limrow    = 0;
 hybrid.optfile   = 1;
@@ -21,158 +21,130 @@ o_modelstat      = 100;
 
 $ifthen.calibrate "%CES_parameters%" == "calibrate"   !! CES_parameters
 $ifthen.subsectors "%industry%" == "subsectors"       !! industry
-!! Calibrating industry/subsectors lead to random infeasibilities on the order
-!! of 1e-15.  Relaxing this attribute a little solves this problem.
+*** Calibrating industry/subsectors lead to random infeasibilities on the order of 1e-15.
+*** Relaxing this attribute a little solves this problem.
 hybrid.tolinfeas = 1e-14;
 $endif.subsectors
 $endif.calibrate
 
 ***-------------------------------------------------------------------
-***                     read GDX
+***         read GDX
 ***-------------------------------------------------------------------
-*** load start gdx
-
 execute_loadpoint "input";
 
-***--------------------------------------------------------------------------
-***    start iteration loop
-***--------------------------------------------------------------------------
+***-------------------------------------------------------------------
+***         start iteration loop
+***-------------------------------------------------------------------
+loop(iteration $ (iteration.val <= cm_iteration_max),
+  if(iteration.val = cm_iteration_max,
+    option solprint = on
+  );
 
-LOOP(iteration $(ord(iteration)<(cm_iteration_max+1)),
-
-      IF(ord(iteration)>(cm_iteration_max-1),
-            OPTION solprint=on
-        );
-*--------------------------------------------------------------------------
+***-------------------------------------------------------------------
 ***         BOUNDS
-*--------------------------------------------------------------------------
+***-------------------------------------------------------------------
 $include    "./core/bounds.gms";
 $batinclude "./modules/include.gms" bounds
 
 
-***--------------------------------------------------------------------------
+***-------------------------------------------------------------------
 ***         PRESOLVE
-***--------------------------------------------------------------------------
+***-------------------------------------------------------------------
 $include    "./core/presolve.gms";
 $batinclude "./modules/include.gms" presolve
 
-*** Fixing information (.L, .FX and .M) from run to be fixed to is read in from input_ref.gdx (t < cm_startyear)
-*** happens via submit.R script (files levs.gms, fixings.gms, margs.gms)
-*** submit.R looks for the unique string in the following line and replaces it with the offlisting include into the full.gms at this position
-***cb20140305readinpositionforfixingfiles
+*** When there is a reference run, input_ref.gdx contains the necessary fixing information (.L, .FX and .M) for t < cm_startyear
+*** Script submit.R creates reference files (levs.gms, fixings.gms, margs.gms) and inludes them in full.gms by replacing the following line
+*** cb20140305readinpositionforfixingfiles
 
-*** In case of fixing, fix to prices from input_ref.gdx (t < cm_startyear). 
-*** Parameters are not automatically treated by the fixing mechanism above.
-if( (cm_startyear gt 2005),
+*** Also fix prices, which are not automatically treated by the fixing mechanism above.
+  if(cm_startyear > 2005,
     Execute_Loadpoint "input_ref" p_pvpRef = pm_pvp;
-    pm_pvp(ttot,trade)$( (ttot.val ge 2005) and (ttot.val lt cm_startyear) and (NOT tradeSe(trade))) = p_pvpRef(ttot,trade);
-);
+    pm_pvp(ttot,trade) $ (ttot.val >= 2005 and ttot.val < cm_startyear and not tradeSe(trade)) = p_pvpRef(ttot,trade);
+  );
 
-***--------------------------------------------------------------------------
+***-------------------------------------------------------------------
 ***         SOLVE
-***--------------------------------------------------------------------------
+***-------------------------------------------------------------------
 *** Set options for debugging
-if (cm_nash_mode eq 1, 
-      option 
-        solprint = on
-        limcol   = 2147483647
-        limrow   = 2147483647
-      ;
-);
-
+  if(cm_nash_mode = 1, 
+    option 
+      solprint = on
+      limcol   = 2147483647
+      limrow   = 2147483647
+    ;
+  );
 
 o_modelstat = 100;
-loop(sol_itr$(sol_itr.val <= cm_solver_try_max),
-    if(o_modelstat ne 2,
+loop(sol_itr $ (sol_itr.val <= cm_solver_try_max),
+  if(o_modelstat ne 2,
 $batinclude "./modules/include.gms" solve
-    )
+  )
 );  !! end of sol_itr loop, when o_modelstat is not equal to 2
 
-***---------------------------------------------------------
-***     Track of changes between iterations
-***---------------------------------------------------------
-loop(entyPe$(NOT sameas(entyPe,"peur")),
-  o_negitr_cumulative_peprod(iteration,entyPe) = 0.031536
-    * sum(regi,
-        sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), vm_prodPe.l(ttot,regi,entyPe) * pm_ts(ttot)  )
-        + sum(ttot$(ttot.val eq 2005), vm_prodPe.l(ttot,regi,entyPe) * pm_ts(ttot) * 0.5  )
-        + sum(ttot$(ttot.val eq 2100), vm_prodPe.l(ttot,regi,entyPe) * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5  )
-    );
-);
-o_negitr_cumulative_peprod(iteration,"peur") =
-sum(regi,
-        sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), sum(pe2rlf("peur",rlf), 0.4102 * vm_prodPe.l(ttot,regi,"peur") * pm_ts(ttot) ) )
-        + sum(ttot$(ttot.val eq 2005), 0.4102 * vm_prodPe.l(ttot,regi,"peur") * pm_ts(ttot) * 0.5 )
-        + sum(ttot$(ttot.val eq 2100), 0.4102 * vm_prodPe.l(ttot,regi,"peur") * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5 )
-);
-o_negitr_cumulative_CO2_emineg_co2luc(iteration) =
-sum(regi,
-    sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), 3.6667 * vm_emiMacSector.l(ttot,regi,"co2luc") * pm_ts(ttot) )
-    + sum(ttot$(ttot.val eq 2005), 3.6667 * vm_emiMacSector.l(ttot,regi,"co2luc") * pm_ts(ttot) * 0.5 )
-    + sum(ttot$(ttot.val eq 2100), 3.6667 * vm_emiMacSector.l(ttot,regi,"co2luc") * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5 )
-);
-
-o_negitr_cumulative_CO2_emineg_cement(iteration) =
-sum(regi,
-    sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), 3.6667 * vm_emiMacSector.l(ttot,regi,"co2cement_process") * pm_ts(ttot) )
-    + sum(ttot$(ttot.val eq 2005), 3.6667 * vm_emiMacSector.l(ttot,regi,"co2cement_process") * pm_ts(ttot) * 0.5 )
-    + sum(ttot$(ttot.val eq 2100), 3.6667 * vm_emiMacSector.l(ttot,regi,"co2cement_process") * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5 )
-);
-o_negitr_cumulative_CO2_emieng_seq(iteration)
-  =
-    3.6667
+***-------------------------------------------------------------------
+***         Track of changes between iterations
+***-------------------------------------------------------------------
+o_negitr_cumulative_peprod(iteration,entyPe) =
+    ((1 / s_ZJ_2_TWa) $ (not sameas(entyPe,"peur")) + 0.4102 $ (sameas(entyPe,"peur"))) !! conversion from TWa (or Mt uranium) to ZJ
   * sum(regi,
-      sum((ttot,emi2te(enty,enty2,te,"cco2"))$( ttot.val gt 2005 AND ttot.val lt 2100 ),
-        vm_emiTeDetail.l(ttot,regi,enty,enty2,te,"cco2")
-      * pm_ts(ttot)
-      )
-    + sum((ttot,emi2te(enty,enty2,te,"cco2"))$( ttot.val eq 2005 ),
-        vm_emiTeDetail.l(ttot,regi,enty,enty2,te,"cco2")
-      * pm_ts(ttot)
-      / 2
-      )
-    + sum((ttot,emi2te(enty,enty2,te,"cco2"))$( ttot.val eq 2100 ),
-        vm_emiTeDetail.l(ttot,regi,enty,enty2,te,"cco2")
-      * (pm_ttot_val(ttot) - pm_ttot_val(ttot-1))
-      / 2
-      )
-    )
-;
-o_negitr_disc_cons_dr5_reg(iteration,regi) =
-    sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), vm_cons.l(ttot,regi) * (0.95 ** (pm_ttot_val(ttot) - s_t_start)) * pm_ts(ttot) )
-    + sum(ttot$(ttot.val eq 2005), vm_cons.l(ttot,regi) * (0.95 ** (pm_ttot_val(ttot) - s_t_start)) * pm_ts(ttot) * 0.5 )
-    + sum(ttot$(ttot.val eq 2100), vm_cons.l(ttot,regi) * (0.95 ** (pm_ttot_val(ttot) - s_t_start)) * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5 )
-;
-o_negitr_disc_cons_drInt_reg(iteration,regi) =
-    sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), vm_cons.l(ttot,regi) * qm_budget.m(ttot,regi)/ (qm_budget.m("2005",regi) + 1.e-8) * pm_ts(ttot) )
-    + sum(ttot$(ttot.val eq 2005), vm_cons.l(ttot,regi) * qm_budget.m(ttot,regi)/ (qm_budget.m("2005",regi) + 1.e-8) * pm_ts(ttot) * 0.5 )
-    + sum(ttot$(ttot.val eq 2100), vm_cons.l(ttot,regi) * qm_budget.m(ttot,regi)/ (qm_budget.m("2005",regi) + 1.e-8) * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5 )
-;
+      sum(ttot $ (ttot.val < 2100 and ttot.val > 2005), vm_prodPe.l(ttot,regi,entyPe) * pm_ts(ttot) )
+    + sum(ttot $ (ttot.val = 2005), vm_prodPe.l(ttot,regi,entyPe) * pm_ts(ttot) * 0.5 )
+    + sum(ttot $ (ttot.val = 2100), vm_prodPe.l(ttot,regi,entyPe) * ( pm_ttot_val(ttot) - pm_ttot_val(ttot-1) ) * 0.5 )
+  );
 
-***--------------------------------------------------------------------------
+o_negitr_cumulative_CO2_emineg_co2luc(iteration) = sm_c_2_co2 !! conversion from carbon to CO2
+  * sum(regi,
+      sum(ttot $ (ttot.val < 2100 and ttot.val > 2005), vm_emiMacSector.l(ttot,regi,"co2luc") * pm_ts(ttot) )
+    + sum(ttot $ (ttot.val = 2005), vm_emiMacSector.l(ttot,regi,"co2luc") * pm_ts(ttot) * 0.5 )
+    + sum(ttot $ (ttot.val = 2100), vm_emiMacSector.l(ttot,regi,"co2luc") * ( pm_ttot_val(ttot) - pm_ttot_val(ttot-1) ) * 0.5 )
+  );
+
+o_negitr_cumulative_CO2_emineg_cement(iteration) = sm_c_2_co2 !! conversion from carbon to CO2
+  * sum(regi,
+      sum(ttot $ (ttot.val < 2100 and ttot.val > 2005), vm_emiMacSector.l(ttot,regi,"co2cement_process") * pm_ts(ttot) )
+    + sum(ttot $ (ttot.val = 2005), vm_emiMacSector.l(ttot,regi,"co2cement_process") * pm_ts(ttot) * 0.5 )
+    + sum(ttot $ (ttot.val = 2100), vm_emiMacSector.l(ttot,regi,"co2cement_process") * ( pm_ttot_val(ttot) - pm_ttot_val(ttot-1) ) * 0.5 )
+  );
+
+o_negitr_cumulative_CO2_emieng_seq(iteration) = sm_c_2_co2 !! conversion from carbon to CO2
+  * sum((regi,emi2te(enty,enty2,te,"cco2")),
+      sum(ttot $ ( ttot.val > 2005 and ttot.val < 2100 ), vm_emiTeDetail.l(ttot,regi,enty,enty2,te,"cco2") * pm_ts(ttot))
+    + sum(ttot $ ( ttot.val = 2005 ), vm_emiTeDetail.l(ttot,regi,enty,enty2,te,"cco2") * pm_ts(ttot) * 0.5)
+    + sum(ttot $ ( ttot.val = 2100 ), vm_emiTeDetail.l(ttot,regi,enty,enty2,te,"cco2") * ( pm_ttot_val(ttot) - pm_ttot_val(ttot-1) ) * 0.5)
+  );
+
+o_negitr_disc_cons_dr5_reg(iteration,regi) =
+    sum(ttot $ ( (ttot.val < 2100) and (ttot.val > 2005)), vm_cons.l(ttot,regi) * (0.95 ** (pm_ttot_val(ttot) - s_t_start)) * pm_ts(ttot) )
+  + sum(ttot $ (ttot.val = 2005), vm_cons.l(ttot,regi) * (0.95 ** (pm_ttot_val(ttot) - s_t_start)) * pm_ts(ttot) * 0.5 )
+  + sum(ttot $ (ttot.val = 2100), vm_cons.l(ttot,regi) * (0.95 ** (pm_ttot_val(ttot) - s_t_start)) * ( pm_ttot_val(ttot) - pm_ttot_val(ttot-1) ) * 0.5 );
+
+o_negitr_disc_cons_drInt_reg(iteration,regi) =
+    sum(ttot $ ( (ttot.val < 2100) and (ttot.val > 2005)), vm_cons.l(ttot,regi) * qm_budget.m(ttot,regi)/ (qm_budget.m("2005",regi) + sm_eps) * pm_ts(ttot) )
+  + sum(ttot $ (ttot.val = 2005), vm_cons.l(ttot,regi) * qm_budget.m(ttot,regi) / (qm_budget.m("2005",regi) + sm_eps) * pm_ts(ttot) * 0.5 )
+  + sum(ttot $ (ttot.val = 2100), vm_cons.l(ttot,regi) * qm_budget.m(ttot,regi) / (qm_budget.m("2005",regi) + sm_eps) * ( pm_ttot_val(ttot) - pm_ttot_val(ttot-1) ) * 0.5 );
+
+***-------------------------------------------------------------------
 ***         POSTSOLVE
-***--------------------------------------------------------------------------
+***-------------------------------------------------------------------
 $include    "./core/postsolve.gms";
 $batinclude "./modules/include.gms" postsolve
 
-*--------------------------------------------------------------------------
-***                  save gdx
-*--------------------------------------------------------------------------
-*** write the fulldata.gdx file after each optimal iteration
-*** In Nash status 7 is considered optimal in that respect (see definition of
-*** o_modelstat in solve.gms)
+***-------------------------------------------------------------------
+***         save gdx
+***-------------------------------------------------------------------
+*** Write the fulldata.gdx file after each optimal iteration
+*** In Nash, status 7 is considered optimal (see definition of o_modelstat in solve.gms)
 logfile.nr = 1;
-if (o_modelstat le 2,
+if(o_modelstat <= 2,
   execute_unload "fulldata";
-  !! retain gdxes of intermediate iterations by copying them using shell
-  !! commands
-  if (c_keep_iteration_gdxes eq 1,
+  if(c_keep_iteration_gdxes = 1, !! save gdx of intermediate iterations using shell command "copy"
     put_utility logfile, "shell" /
       "cp fulldata.gdx fulldata_" iteration.val:0:0 ".gdx";
   );
 else
   execute_unload "non_optimal";
-  if (c_keep_iteration_gdxes eq 1,
+  if(c_keep_iteration_gdxes = 1,
     put_utility logfile, "shell" /
       "cp non_optimal.gdx non_optimal_" iteration.val:0:0 ".gdx";
   );

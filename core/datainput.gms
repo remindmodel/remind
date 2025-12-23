@@ -561,15 +561,14 @@ $offdelim
 
 *** carbon intensities of coal, oil, and gas
 *** emissions factor of primary energy fossil fuels
-pm_cintraw("pecoal") = 26.1 / s_zj_2_twa;
-pm_cintraw("peoil")  = 20.0 / s_zj_2_twa;
-pm_cintraw("pegas")  = 15.0 / s_zj_2_twa;
+pm_cintraw("pecoal") = 26.1 / s_ZJ_2_TWa;
+pm_cintraw("peoil")  = 20.0 / s_ZJ_2_TWa;
+pm_cintraw("pegas")  = 15.0 / s_ZJ_2_TWa;
 
 $ifthen.tech_CO2capturerate not "%c_tech_CO2capturerate%" == "off"
 p_PECarriers_CarbonContent(peFos)=pm_cintraw(peFos);
 *** From conversation: 25 GtC/ZJ is the assumed carbon content of PE biomass (makes default bioh2c capture rate 90%)
-*** Convert to GtC/TWa
-p_PECarriers_CarbonContent("pebiolc")=25 / s_zj_2_twa;
+p_PECarriers_CarbonContent("pebiolc") = 25 / s_ZJ_2_TWa; !! convert 25 GtC/ZJ to GtC/TWa
 loop(pe2se(entyPe,entySe,te)$(p_tech_co2capturerate(te)),
   if(p_tech_co2capturerate(te) gt 0,
     if(p_tech_co2capturerate(te) ge 1,
@@ -577,7 +576,7 @@ loop(pe2se(entyPe,entySe,te)$(p_tech_co2capturerate(te)),
 	  );
 *** Alter CO2 capture rate in f_dataemiglob
 *** f_dataemiglob is given in GtC/ZJ
-    f_dataemiglob(entyPe,entySe,te,"cco2") = p_tech_co2capturerate(te) * p_PECarriers_CarbonContent(entyPe) * s_zj_2_twa;
+    f_dataemiglob(entyPe,entySe,te,"cco2") = p_tech_co2capturerate(te) * p_PECarriers_CarbonContent(entyPe) * s_ZJ_2_TWa;
     if(sameAs(entyPe,"pebiolc"),
       f_dataemiglob(entyPe,entySe,te,"co2") = -f_dataemiglob(entyPe,entySe,te,"cco2") ;
     else
@@ -602,8 +601,8 @@ $ifthen "%c_SSP_forcing_adjust%" == "forcing_SSP5"
 $endif
 );
 *nb* specific emissions of transformation technologies (co2 in gtc/zj -> conv. gtc/twyr):
-f_dataemiglob(enty,enty2,te,"co2")$pe2se(enty,enty2,te)       = 1/s_zj_2_twa * f_dataemiglob(enty,enty2,te,"co2");
-f_dataemiglob(enty,enty2,te,"cco2")                           = 1/s_zj_2_twa * f_dataemiglob(enty,enty2,te,"cco2");
+f_dataemiglob(enty,enty2,te,"co2")$pe2se(enty,enty2,te)       = 1/s_ZJ_2_TWa * f_dataemiglob(enty,enty2,te,"co2");
+f_dataemiglob(enty,enty2,te,"cco2")                           = 1/s_ZJ_2_TWa * f_dataemiglob(enty,enty2,te,"cco2");
 
 table f_dataetaglob(tall,all_te)                      "global eta data"
 $include "./core/input/generisdata_varying_eta.prn"
@@ -1545,9 +1544,9 @@ $include "./core/input/f_nechem_emissionFactors.cs4r"
 $offdelim
 /;
 
-pm_emifacNonEnergy(ttot,regi,"sesofos", "fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids")  / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"seliqfos","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"segafos", "fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases")   / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,"sesofos", "fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids")  / s_ZJ_2_TWa;
+pm_emifacNonEnergy(ttot,regi,"seliqfos","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_ZJ_2_TWa;
+pm_emifacNonEnergy(ttot,regi,"segafos", "fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases")   / s_ZJ_2_TWa;
 
 ***------ Read in projections for incineration rates of plastic waste---
 *** "incineration rates [fraction]"
