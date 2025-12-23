@@ -74,3 +74,5 @@ sm_peakbudget_diff_tolerance,input,not needed
 cm_iterative_target_adj,input,not needed
 sm_peakBudgYr_check,input,not needed
 sm_peakbudget_diff,input,not needed
+sm_MtCO2_2_GtC,input,not needed
+cm_startIter_EDGET,input,not needed
