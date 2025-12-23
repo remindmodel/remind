@@ -26,7 +26,7 @@ q80_budg_intertemp(regi)..
         +   sm_fadeoutPriceAnticip * p80_priceAnticipStrength(trade)
           * ( (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport(ttot,regi,trade) - vm_Mport(ttot,regi,trade))
               - (p80_taxrev0(ttot,regi) - vm_taxrev(ttot,regi)) $ (sameas(trade,"good") and ttot.val > 2005))
-          / p80_regiMarketVolume(ttot,regi,trade)
+          / (p80_regiMarketVolume(ttot,regi,trade) + sm_eps)
         )
       )
     )
@@ -39,7 +39,8 @@ q80_costAdjNash(ttot,regi) $ (ttot.val >= cm_startyear) ..
         p80_tradeAdj(trade)
       * pm_pvp(ttot,trade)
       * power((pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport(ttot,regi,trade) - vm_Mport(ttot,regi,trade)), 2)
-      / p80_regiMarketVolume(ttot,regi,trade));
+      / (p80_regiMarketVolume(ttot,regi,trade) + sm_eps)
+    );
 
 *' link between permit budget and emission budget
 q80_budgetPermRestr(regi) $ (cm_emiscen = 6) ..
