@@ -15,8 +15,6 @@
 *------------------------------------------------------------------------------------
 
 
-*** Léa to do: technologies still missing are h2 to electricity and "coal to electricity"
-
 *** Keep historical data until 2020 
 *** AM the lowbound of solar and pv for 2030 to be taken from the NDCs (in GW), therefore multiplying by 0.001 for TW*
 *** NPi bounds are only applied after 2020, as NPi scenarios should always have cm_startyear higher than 2020.
@@ -31,7 +29,7 @@ vm_cap.lo(t,regi,"wind","1")$(t.val gt 2025) = p40_TechBound(t,regi,"wind")*0.00
 *vm_cap.lo(t,regi,"elh2","1")$(t.val gt 2025) = p40_TechBound(t,regi,"elh2")*0.001;   
 *vm_cap.lo(t,regi,"geohdr","1")$(t.val gt 2025) = p40_TechBound(t,regi,"geohdr")*0.001;  quick fix needs adjustments in the mrremind Inputdata generation including new IRENA
 vm_cap.lo(t,regi,"geohdr","1")$( (t.val gt 2025) AND sameas(regi, "OAS")) = p40_TechBound(t,regi,"geohdr")*0.001;
-*vm_cap.up(t,regi,"coalchp","1")$(t.val gt 2025) = p40_TechBound(t,regi,"coalchp")*0.001;  !!max bound for Canada use the netzero calculator, check coal phase out module
+*vm_cap.up(t,regi,"coalchp","1",rlf)$(t.val gt 2025) = p40_TechBound(t,regi,"coalchp")*0.001;  !!max bound for Canada use the netzero calculator, check coal phase out module
 *vm_cap.lo(t,regi,"bioigcc","1")$(t.val gt 2025) = p40_TechBound(t,regi,"bioigcc")*0.001; !!regular bioenergy bound
 
 

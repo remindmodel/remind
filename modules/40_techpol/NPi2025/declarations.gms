@@ -22,6 +22,7 @@ Parameter
 Equation 
     q40_ElecBioBound                              "equation low-carbon push technology policy for bio power"
     q40_windBound				                  "lower bound on combined wind onshore and offshore"
+    q40_coalBound                                 "upper bound on coal power technologies"
 ;
 
 *------------------------------------------------------------------------------------
