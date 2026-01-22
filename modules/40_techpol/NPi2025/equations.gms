@@ -27,7 +27,11 @@ q40_windBound(t,regi)$(t.val gt 2025 AND p40_TechBound(t,regi,"wind") gt 0)..
 ;
 
 *** coal bound: all technologies transforming PE coal into SE electricity
-q40_coalBound(t,regi)$(t.val gt 2025 AND p40_TechBound(t,regi,"coalchp") gt 0)..
+*** limit to Canada (CAZ) and Europe (EUR) coal phase out
+*** disregards OAS target to avoid artifical increse of transisiton speed in OAS
+q40_coalBound(t,regi)$(t.val gt 2025 
+  AND p40_TechBound(t,regi,"coalchp") gt 0
+  AND ((sameas(regi,"CAZ") OR sameas(regi,"EUR"))))..
   sum(pe2se("pecoal","seel",te), 
     sum(te2rlf(te,rlf),
     vm_cap(t,regi,te,rlf)))
