@@ -15,7 +15,7 @@
 Table f40_TechBound(ttot,all_regi,NPi_version,all_te) "Table for all NPi versions with NPi capacity targets (GW)"
 $offlisting
 $ondelim
-$include "./modules/40_techpol/NPi2025/input/f40_NewClimate-new.cs3r"
+$include "./modules/40_techpol/NPi2025/input/f40_NewClimate-new4.cs3r"
 $offdelim
 $onlisting
 ;
