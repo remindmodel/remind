@@ -15,14 +15,14 @@
 Parameter 
     p40_TechBound(ttot,all_regi,all_te)          "NPI capacity targets for solar (pv, csp), wind (total, onshore, offshore), nuclear, hydro, biomass, nuclear (GW)"
     p40_ElecBioBound(ttot,all_regi)              "level for lower bound on biomass tech. absolute capacities, in GW"
-    p40_CoalBound(ttot,iso_regi)                 "level for upper bound on absolute capacities, in GW for all technologies except electromobility"
+    p40_CoalCapBound(ttot,iso_regi)               "level for upper bound on absolute capacities, in GW for all technologies except electromobility"
 ;
 
     
 Equation 
     q40_ElecBioBound                              "equation low-carbon push technology policy for bio power"
     q40_windBound				                  "lower bound on combined wind onshore and offshore"
-    q40_coalBound                                 "upper bound on coal power technologies"
+    q40_coalCapBound                                 "upper bound on coal power technologies"
 ;
 
 *------------------------------------------------------------------------------------

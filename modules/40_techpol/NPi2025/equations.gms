@@ -27,7 +27,7 @@ q40_windBound(t,regi)$(t.val gt 2025 AND p40_TechBound(t,regi,"wind") gt 0)..
 ;
 
 *** coal bound: all technologies transforming PE coal into SE electricity
-q40_coalBound(t,regi)$(t.val gt 2025 
+q40_coalCapBound(t,regi)$(t.val gt 2025 
   AND p40_TechBound(t,regi,"coalchp") gt 0)..
   sum(pe2se("pecoal","seel",te), 
     sum(te2rlf(te,rlf),

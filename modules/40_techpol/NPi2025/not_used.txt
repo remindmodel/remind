@@ -17,3 +17,4 @@ cm_H2targets,input,questionnaire
 pm_pop,input,not needed
 pm_gdp,input,not needed
 p40_ElCap_RenShare,input,not needed
+p40_CoalCapBound, input, not needed
