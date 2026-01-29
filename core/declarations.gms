@@ -203,7 +203,7 @@ pm_cf(tall,all_regi,all_te)                          "read-in parameter for capa
 p_tkpremused(all_regi,all_te)                        "turn-key cost premium used in the model (with a discount rate of 3 + pure rate of time preference), measured as relative increase of overnight investment costs)"
 pm_inco0_t(ttot,all_regi,all_te)                     "investment cost parameter including exogenuous time-variance for non-learning technologies [T$/TW]"
 pm_omeg(all_regi,opTimeYr,all_te)                    "technical depreciation parameter, gives the share of a capacity that is still usable after technical life time. [none/share, value between 0 and 1]"
-p_lifetime_max(all_regi,all_te)                      "maximum lifetime of a technology (generisdata_tech gives the average lifetime) [years]"
+pm_lifetime_max(all_regi,all_te)                      "maximum lifetime of a technology (generisdata_tech gives the average lifetime) [years]"
 p_discountedLifetime(all_te)                         "Sum over the discounted (@6%) depreciation factor (omega) [unitless]"
 pm_teAnnuity(all_te)                                 "Annuity factor of a technology [unitless]"
 
@@ -376,6 +376,13 @@ v_changeProdStartyearSlack(ttot,all_regi,all_te)     "slack variable to allow a 
 v_costFu(ttot,all_regi)                              "costs of primary energy production/extraction (can be negative depending on vm_costFuBio) [T$]"
 
 vm_flexAdj(tall,all_regi,all_te)                     "flexibility mark-up cost or subsidy, used to emulate price changes of technologies which see lower-than-average or higher-than-average electricity prices due to more or less flexible operation[T$/TWa]"
+
+*** move to tax module?
+*** tax revenues of implicit taxes used for quantity and price target implementation
+vm_taxrevimplicitQttyTargetTax(ttot,all_regi)        "tax revenue of implict tax for quantity target bound [T$]"
+vm_taxrevimplicitPriceTax(ttot,all_regi,entySe,all_enty,sector)   "tax revenue of implict tax for final energy price target [T$]"
+vm_taxrevimplicitPePriceTax(ttot,all_regi,all_enty)  "tax revenue of implict tax forprimary energy price target [T$]"
+vm_waccCost(ttot,all_regi)                               "difference between WACC costs in current and previous iteration"
 ;
 
 

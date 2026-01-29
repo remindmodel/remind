@@ -243,7 +243,8 @@ $setGlobal c_results_folder  REMIND results_folder will be automatically added d
 *'---------------------    01_macro    -----------------------------------------
 *'
 *' * (singleSectorGr) neo-classical, single sector growth model
-$setGlobal macro  singleSectorGr  !! def = singleSectorGr
+*' * (Investment_Inefficiencies) Investment losses due to domestic capital market inefficiencies
+$setGlobal macro  Investment_Inefficiencies  !! def = singleSectorGr
 *'---------------------    02_welfare    ---------------------------------------
 *'
 *' * (utilitarian) utilitarian aka. Benthamite social welfare function
@@ -297,6 +298,11 @@ $setglobal capitalMarket  debt_limit           !! def = debt_limit
 *' * (se_trade): macro-economic commodities, primary energy commodities and secondary energy hydrogen and electricity trading
 *' * (capacity): capacity-based trade implementation
 $setglobal trade  standard           !! def = standard
+*'---------------------    25_WACC    ------------------------------------------
+*'
+*' * (standard): WACC like tax
+*' * (off): no WACC
+$setglobal WACC  standard          !! def = standard
 *'----------------------   26_agCosts  ----------------------------------------
 *'
 *' * (off): agricultural costs zero, no trade taken into account
