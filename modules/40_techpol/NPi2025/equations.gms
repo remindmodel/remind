@@ -26,14 +26,14 @@ q40_windBound(t,regi)$(t.val gt 2025 AND p40_TechBound(t,regi,"wind") gt 0)..
     =g= p40_TechBound(t,regi,"wind") * 0.001
 ;
 
-*** coal bound: all technologies transforming PE coal into SE electricity
-q40_coalCapBound(t,regi)$(t.val gt 2025 
-  AND p40_TechBound(t,regi,"coalchp") gt 0)..
-  sum(pe2se("pecoal","seel",te), 
-    sum(te2rlf(te,rlf),
-    vm_cap(t,regi,te,rlf)))
-    =l= p40_TechBound(t,regi,"coalchp") * 0.001
-;
+*** coal bound: all technologies transforming PE coal into SE electricity. Cannot apply to current input data, as lower bound on historical data affect strongly dynamics in OAS and CHA.
+*q40_coalCapBound(t,regi)$(t.val gt 2025 
+*  AND p40_TechBound(t,regi,"coalchp") gt 0)..
+*  sum(pe2se("pecoal","seel",te), 
+*    sum(te2rlf(te,rlf),
+*    vm_cap(t,regi,te,rlf)))
+*    =l= p40_TechBound(t,regi,"coalchp") * 0.001
+*;
 
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
