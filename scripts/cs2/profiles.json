@@ -78,7 +78,7 @@
 	},
 	"REMIND-MAgPIE": {
   	"projectLibrary": "'remind2'",
-		"userSectionPath": "normalizePath('./scripts/cs2/magpie.Rmd')"
+		"userSectionPath":  "c(normalizePath('./scripts/cs2/magpie.Rmd'), normalizePath('./scripts/cs2/planetaryboundaries.Rmd'))"
 	},
 	"MAgPIE": {
 		"sections": "0",
@@ -103,6 +103,10 @@
 		"sections": "0",
 		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))",
 		"userSectionPath": "normalizePath('./scripts/cs2/AirPollutantsREMIND-MAgPIE.Rmd')"
+	},
+	"PlanetaryBoundaries": {
+		"sections": "0",
+		"userSectionPath": "normalizePath('./scripts/cs2/planetaryboundaries.Rmd')"
 	},
 	"mySection": {
 		"sections": "0",

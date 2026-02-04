@@ -1,0 +1,185 @@
+# Planetary Boundaries Indicators
+<!-- The order of boundaries and names follow Richardson et al. (2023) -->
+
+## PB 1: Climate Change Indicators
+
+### Atmospheric CO2 concentration 
+
+```{r}
+showLinePlotsWithZones(
+  data,
+  "MAGICC7 AR6|Atmospheric Concentrations|CO2|67.0th Percentile",
+  # from Richardson et al.(2023)
+  safePB = 350,
+  highRisk = 450
+)
+```
+
+
+### Radiative Forcing 
+
+```{r}
+showLinePlotsWithZones(
+  data,
+  "MAGICC7 AR6|Effective Radiative Forcing|Basket|Anthropogenic|67.0th Percentile",
+  # from Richardson et al.(2023)
+  safePB = 1,
+  highRisk = 1.5
+)
+```
+
+
+### Global Mean Surface Temperature  
+
+```{r}
+showLinePlotsWithZones(
+  data,
+  "MAGICC7 AR6|Surface Temperature (GSAT)|67.0th Percentile",
+  # from Beier et al.(2025)
+  safePB = 1,
+  highRisk = 2
+)
+```
+
+
+## PB 2: Novel Entities
+
+<!-- This is not defined yet. -->
+
+
+## PB 3: Stratospheric Ozone Depletion 
+
+<!-- 
+This is not defined yet.
+van Vuuren et al (2025) used CMIP6 data, mostly over the Antarctica region. 
+Is there MAGICC output that could be used?
+  -->
+
+
+## PB 4: Atmospheric Aerosol Loading 
+
+<!-- 
+This is not defined yet.
+There is MAGICC output that could be used.
+RoSa: van Vuuren et al (2025) calculates something, and plugs it into the FASST model 
+ -->
+
+
+## PB 5: Ocean Acidification 
+
+<!-- This approach is based on van Vuuren et al (2025) 
+RoSa: We have better output and results for this, so this should be preliminary. For example: Soergel et al. (2021) couple to ClimberX with more appropriate approach. MAGICC also has net transport to ocean, maybe that is more exact? 
+-->
+
+```{r}
+a <- -5e-8 # RoSa:van Vuuren et al. (2025) value was given by Gt, so I changed to exponent from e-5 to e-8 to adjust to our values in Mt
+b <- 8.0957
+
+data2 <- data %>%
+  dplyr::mutate(
+    value = dplyr::if_else(
+      variable == "Emi|CO2|Cumulated",
+      a * value + b,
+      value
+    ),
+    variable = dplyr::if_else(
+      variable == "Emi|CO2|Cumulated",
+      "pH",
+      variable
+    ),
+    unit = dplyr::if_else(
+      variable == "pH",
+      "pH",
+      unit
+    )
+  )
+
+showLinePlotsWithZones(
+  data2,
+  "pH",
+  # from van Vuuren et al.(2025)
+  safePB = 8.01,
+  highRisk = 7.94,
+  ylim = c(7.85,8.1)
+)
+```
+
+
+## PB 6: Biogeochemical Flows 
+
+### Nitrogen Surplus 
+
+```{r}
+showLinePlotsWithZones(
+  data,
+  "Planetary Boundary|Nitrogen|Agricultural Nitrogen surplus",
+  # taken from Beier et al. (2025) based on Rockström et al. (2023), Richardson et al (2023) state 62, and upper limit 82
+  safePB = 61,
+  highRisk = 84
+)
+```
+
+### Phosphorus Balance 
+
+<!-- 
+This is not defined yet. Might change eventually.
+  -->
+
+
+## PB 7: Freshwater Change 
+
+### Freshwater Consumption 
+
+```{r}
+showLinePlotsWithZones(
+  data,
+  "Planetary Boundary|Freshwater|Water consumption",
+  # based on Beier et al (2025)
+  safePB = 2800,
+  highRisk = 4500
+)
+```
+
+
+## PB 8: Land System Change / Land Cover 
+
+### Forest Cover 
+
+```{r}
+showLinePlotsWithZones(
+  data,
+  "Planetary Boundary|Land|Forest cover",
+  # based on Beier et al (2025)
+  safePB = 4790,
+  highRisk = 3449
+)
+```
+
+
+## PB 9: Biosphere Integrity
+
+### Share of intact land relative to total land area 
+
+```{r}
+showLinePlotsWithZones(
+  data,
+  "Planetary Boundary|Biosphere|Share of intact land relative to total land area",
+  # from Beier et al. (2025) based on Rockström et al. (2023) 
+  safePB = 0.6,
+  highRisk = 0.5,
+  ylim = c(0.35,0.7)
+)
+```
+
+### Share of land area that satisfies landscape target 
+
+```{r}
+showLinePlotsWithZones(
+  data,
+  "Planetary Boundary|Biosphere|Share of land area that satisfies landscape target",
+  # from Beier et al. (2025) based on Rockström et al. (2023) 
+  safePB = 1,
+  #highRisk = 4500,
+  ylim = c(0.7,1.05)
+)
+```
