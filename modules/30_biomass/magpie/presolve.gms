@@ -138,7 +138,7 @@ vm_fuExtr.l(ttot,regi,"pebiolc","1")  = p30_pebiolc_demand_helper(ttot,regi);
 *** if it was generated from fossil fuels with an average efficiency of 40%.
 
 p30_demPe(ttot,regi) =
-  sum(pe2se(enty,enty2,te)$(sameas(enty,"peoil") OR sameas(enty,"pecoal") OR sameas(enty,"pegas") OR sameas(enty,"pebiolc") OR sameas(enty,"pebios") OR sameas(enty,"pebioil")),
+  sum(pe2se(enty,enty2,te)$(sameas(enty,"peoil") OR sameas(enty,"pecoal") OR sameas(enty,"pegas") OR sameas(enty,"pebiolc") OR sameas(enty,"pebios") OR sameas(enty,"pebioil") OR sameas(enty,"pemanure")),
     vm_demPe.l(ttot,regi,enty,enty2,te)
   ) 
   + sum(entySe,
