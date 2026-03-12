@@ -23,8 +23,10 @@ pm_taxCO2eqRegi(ttot,all_regi)                      "Additional regional CO2 tax
 pm_taxCO2eqSum(ttot,all_regi)                       "sum of pm_taxCO2eq, pm_taxCO2eqRegi, pm_taxCO2eqSCC [T$/GtC]. To get $/tCO2, multiply with 272 = 1 / sm_DptCO2_2_TDpGtC"
 ;
 
-Scalar p46_zeroYear                                 "between the netZero goal and this scalar, pm_taxCO2eqRegi linearly drops to zero [year]"
-Scalar p46_startInIteration                         "first iteration to start adapting pm_taxCO2eqRegi [1]" / 10 /;
+Scalar  
+p46_zeroYear                                       "between the netZero goal and this scalar, pm_taxCO2eqRegi linearly drops to zero [year]"
+p46_startInIteration                               "first iteration to start adapting pm_taxCO2eqRegi [1]" / 10 /
+;
 
 *** EOF ./modules/46_carbonpriceRegi/netZero/declarations.gms
 

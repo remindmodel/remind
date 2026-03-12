@@ -20,7 +20,8 @@ p30_max_pebiolc_path_glob(tall)                 "Time path of global maximal peb
 p30_maxprod_residue(ttot,all_regi)              "Maximal potential of residues enhanced by demand of biotr [TWa]"
 p30_pebiolc_pricemag(tall,all_regi)             "Prices for lignocellulosic purpose grown bioenergy from MAgPIE [T$US/TWa]"
 pm_pebiolc_demandmag(tall,all_regi)             "Production of lignocellulosic purpose grown bioenergy from MAgPIE [TWa]"
-p30_pebiolc_demand_helper(tall,all_regi)        "Save level of vm_fuelex for a better starting point since it is overwritten between nash iterations"
+p30_pebiolc_demand_helper_level(tall,all_regi)  "Save level of vm_fuelex for a better starting point since it is overwritten between nash iterations"
+p30_pebiolc_demand_helper_upper(tall,all_regi)  "Save upper bound on vm_fuelex to preserve it across Nash iterations since it is overwritten between nash iterations"
 p30_demPe(ttot,all_regi)                        "Primary energy demand imported from gdx or previous iteration [TWa]"
 
 $IFTHEN.bioprod_regi_lim not "%cm_bioprod_regi_lim%" == "off"

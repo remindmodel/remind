@@ -195,7 +195,7 @@ p29_capitalQuantity(tall,all_regi,"kap")
 *** Substract the end-use capital quantities from the aggregate capital
 
 *** Load CES parameters from the last run
-Execute_Load 'input'  p29_cesdata_load = pm_cesdata;
+Execute_Loadpoint 'input'  p29_cesdata_load = pm_cesdata;
 $ifthen.testOneRegi "%optimization%" == "testOneRegi"   !! optimization
   !! carry along CES parameters for other regions in testOneRegi runs
   pm_cesdata(t,regi,in,cesParameter)$( NOT regi_dyn29(regi) )

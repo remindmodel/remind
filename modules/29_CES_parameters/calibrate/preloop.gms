@@ -26,7 +26,7 @@ display "check starting pm_cesdata", pm_cesdata;
 
 *** Abort if new structure flag is not set but should be
 $ifthen.old_structure %c_CES_calibration_new_structure% == "0"
-Execute_Load 'input'  ces2_29=cesOut2cesIn;
+Execute_Loadpoint 'input'  ces2_29=cesOut2cesIn;
 sm_tmp = 0;
 loop ( ces2_29(out,in)$( NOT cesOut2cesIn2(out,in) ), sm_tmp = 1);
 loop (cesOut2cesIn2(out,in)$( NOT  ces2_29(out,in) ), sm_tmp = 1);
@@ -35,7 +35,7 @@ if (sm_tmp,
   abort "CES structure does not match. Enable c_CES_calibration_new_structure";
 );
 
-Execute_Load 'input'  regi_29_load=regi;
+Execute_Loadpoint 'input'  regi_29_load=regi;
 sm_tmp = 0;
 loop ( regi_29_load(regi2)$( NOT regi(regi2) ), sm_tmp = 1);
 loop (regi(regi2)$( NOT  regi_29_load(regi2) ), sm_tmp = 1);

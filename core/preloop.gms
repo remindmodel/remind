@@ -88,7 +88,7 @@ $ENDIF.out
 
 *** load PE, SE, FE price parameters from reference gdx to have prices in time steps before cm_startyear
 if (cm_startyear gt 2005,
-execute_load "input_ref.gdx", pm_PEPrice, pm_SEPrice, pm_FEPrice;
+  Execute_Loadpoint "input_ref.gdx", pm_PEPrice, pm_SEPrice, pm_FEPrice;
 );
 
 *** load vm_capEarlyReti(ttot,regi,te) from reference gdx to have a reference point for q_smoothphaseoutCapEarlyReti and q_limitCapEarlyReti

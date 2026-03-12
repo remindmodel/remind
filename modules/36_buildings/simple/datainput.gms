@@ -60,7 +60,7 @@ $offdelim
 
 *** load UE demand for reporting from input_ref.gdx cm_startyear
 if (cm_startyear gt 2005,
-  execute_load "input_ref.gdx", p36_uedemand_build;
+  Execute_Loadpoint "input_ref.gdx", p36_uedemand_build;
 );
 
 p36_uedemand_build(t,regi,in) = f36_uedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",in);

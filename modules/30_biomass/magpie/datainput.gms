@@ -62,7 +62,7 @@ $offdelim
 
 *** Why is this necessary? Isn't pm_pebiolc_costs_emu_preloop ALWAYS calculated in preloop, overwriting what has been loaded here?
 if (cm_startyear gt 2005,
-execute_load "input_ref.gdx", pm_pebiolc_costs_emu_preloop;
+Execute_Loadpoint "input_ref.gdx", pm_pebiolc_costs_emu_preloop;
 );
 
 *** Select bioenergy bioenergy supply curve according to SSP scenario
