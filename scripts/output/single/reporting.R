@@ -63,6 +63,7 @@ if (!file.exists(edgetOutputDir)) {
   }
 
   message("start generation of EDGE-T reporting")
+  reporttransport::checkConvergence()
   EDGET_output <- reportEdgeTransport(edgetOutputDir,
                                       isTransportExtendedReported = FALSE,
                                       modelName = "REMIND",
