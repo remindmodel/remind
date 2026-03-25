@@ -21,15 +21,15 @@ pm_damageGrowthRate(tall,regi)$(tall.val ge 2005 and tall.val le 2300) =
   + p50_damageFuncCoefb2 * ( pm_regionalTemperature(tall-1,regi) - pm_regionalTemperature(tall-2,regi))*pm_regionalTemperature(tall-1,regi)
 );
 
-*no damages until 2020 (as observed GDP should already include damages)
-pm_damageGrowthRate(tall,regi)$(tall.val le 2020) = 0;
+*no damages until 2025 (as observed GDP should already include damages)
+pm_damageGrowthRate(tall,regi)$(tall.val le 2025) = 0;
 
 *no growth rate damages after 2150 to prevent extreme runaway damages
 pm_damageGrowthRate(tall,regi)$(tall.val gt 2150) = 0;
 
 *damage function. match observed 2020 GDP, that is, assume that no climate damages unitl then.
-pm_damage(tall,regi)$(tall.val ge 2020 and tall.val le 2300) = 
-    prod(tall2$(tall2.val ge 2020 AND tall2.val le tall.val),  
+pm_damage(tall,regi)$(tall.val ge 2025 and tall.val le 2300) = 
+    prod(tall2$(tall2.val ge 2025 AND tall2.val le tall.val),  
 	(1 + pm_damageGrowthRate(tall2,regi))    
     )
 ;

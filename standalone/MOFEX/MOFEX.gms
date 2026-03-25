@@ -77,7 +77,7 @@ $setGlobal agCosts  costs               !! def = costs
 ***---------------------    29_CES_parameters    --------------------------------
 $setglobal CES_parameters  load       !! def = load
 ***---------------------    30_biomass    ---------------------------------------
-$setGlobal biomass  magpie_40 !! def = magpie_40
+$setGlobal biomass  magpie !! def = magpie
 ***---------------------    31_fossil    ----------------------------------------
 $setGlobal fossil  timeDepGrades        !! def = MOFEX
 ***---------------------    32_power    ----------------------------------------
@@ -189,7 +189,6 @@ cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshoot
 
 c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 cm_taxCO2_IncAfterPeakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
-cm_taxCO2_regiDiff_endYr     "Year at which regional CO2 taxes converge in module 45 for realizations with differentiated carbon prices"
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
 c_regi_synfuelscen			"region to apply synfuelscen to"
@@ -210,7 +209,6 @@ cm_import_EU                "EU switch for different scenarios of EU SE import a
 cm_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
 cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
-cm_startIter_EDGET          "starting iteration of EDGE-T"
 cm_ARIADNE_FeShareBounds    "switch for minimum share of liquids and gases for industry needed for the ARIADNE project"
 cm_ariadne_trade_el         "switch for enabling electricity imports to Germany for ARIADNE project"
 cm_ariadne_trade_h2         "switch for enabling H2 imports to Germany for ARIADNE project"
@@ -234,7 +232,6 @@ cm_iteration_max       = 1;     !! def = 1
 c_solver_try_max       = 2;     !! def = 2
 c_keep_iteration_gdxes = 0;     !! def = 0
 cm_nash_autoconverge   = 1;     !! def = 1
-$setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
 cm_emiscen        = 1;         !! def = 1
 $setglobal cm_rcp_scen  none   !! def = "none"
@@ -313,7 +310,6 @@ cm_postTargetIncrease    = 0;      !! def = 0
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 c_peakBudgYr            = 2050;   !! def = 2050
 cm_taxCO2_IncAfterPeakBudgYr = 2; !! def = 2
-cm_taxCO2_regiDiff_endYr  = 2050;   !! def = 2050
 
 $setGlobal cm_NucRegiPol	 off   !! def = off		
 $setGlobal cm_CoalRegiPol	 off   !! def = off		
@@ -337,14 +333,10 @@ $setGlobal cm_pushCalib  none !! def = none
 $setGlobal cm_reducCostB  none !! def = none
 $setGlobal cm_effHP  5 !! def = 5
 
-$setGlobal cm_EDGEtr_scen  ConvCase  !! def = ConvCase
-
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
 $setGlobal c_regi_synfuelscen  all !! def = all
 $setGlobal c_regi_sensscen  all !! def = all
-
-
 
 																	  
 cm_biotrade_phaseout = 0; !! def 0
@@ -378,9 +370,6 @@ cm_noPeFosCCDeu = 0; !! def 0
 
 cm_HeatLim_b = 1; !! def 1
 cm_ElLim_b = 1; !! def 1
-
-cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 14
-
 
 cm_TaxConvCheck = 0; !! def 0, which means tax convergence check is off
 

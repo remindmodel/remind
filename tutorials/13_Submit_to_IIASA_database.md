@@ -99,16 +99,17 @@ The following functions from `piamInterfaces` might be helpful for further analy
 - [`fixOnRef()`](https://github.com/pik-piam/piamInterfaces/blob/master/R/fixOnRef.R) checks whether the runs are correctly fixed on their reference run for delayed transition scenarios.
 - [`plotIntercomparison()`](https://github.com/pik-piam/piamInterfaces/blob/master/R/plotIntercomparison.R) plots area and line plots of selected variables.
 
-If you like to generate a 'historical.mif' file for a different regional resolution and variable naming scheme than the REMIND one to pass it to plotIntercomparison, you can use the [regionmapping](https://github.com/pik-piam/piamInterfaces/tree/master/inst/regionmapping) ISO files from piamInterfaces or a similarly formatted file, for example like this:
+## Custom historical.mif
+
+If you like to generate a 'historical.mif' file for a different regional resolution and variable naming scheme than the REMIND one to pass it to plotIntercomparison, you can use the [regionmapping](https://github.com/pik-piam/piamInterfaces/tree/master/inst/regionmapping) ISO files from piamInterfaces, the madrat mappings folder or a similarly formatted file. Check for the latest data revision via `lastrev` anywhere on the cluster or use whichever revision you need by adjusting the `rev` argument of `retrieveData()`. An example could look like this:
 ```
 library(madrat); library(mrremind); library(quitte); library(piamInterfaces)
 stopifnot(utils::packageVersion("piamInterfaces") >= "0.36.2")
 setConfig(regionmapping = system.file("regionmapping/ISO_2_ISO.csv", package = "piamInterfaces"))
-d <- madrat::retrieveData("VALIDATIONREMIND")
+d <- madrat::retrieveData("VALIDATIONREMIND", rev = "<lastrev>")
 system(paste("tar -xvf", d, "./historical.mif"))
 hist <- read.snapshot("historical.mif")
 write.mif(convertHistoricalData(hist, "ScenarioMIP", "ISO_2_R10"), "historical_R10.mif")
-write.mif(convertHistoricalData(hist, "ScenarioMIP", "ISO_2_R5"), "historical_R5.mif")
 ```
 
 ## Further Information

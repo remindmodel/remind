@@ -111,10 +111,15 @@ configureCfg <- function(icfg, iscen, iscenarios, verboseGamsCompile = TRUE) {
         }
       }
     }
-
+    
     # Define path where the GDXs will be taken from
     gdxlist <- unlist(iscenarios[iscen, names(path_gdx_list)])
     names(gdxlist) <- path_gdx_list
+    
+    # if MAgPIE coupled prepend 'C_' to name of reference scenarios
+    if(icfg$gms$cm_MAgPIE_Nash > 0) {
+      gdxlist[gdxlist %in% rownames(iscenarios)] <- paste0("C_", gdxlist[gdxlist %in% rownames(iscenarios)])
+    }
 
     # add gdxlist to list of files2export
     icfg$files2export$start <- c(icfg$files2export$start, gdxlist, config.file)
@@ -122,6 +127,13 @@ configureCfg <- function(icfg, iscen, iscenarios, verboseGamsCompile = TRUE) {
     # add table with information about runs that need the fulldata.gdx of the current run as input
     icfg$RunsUsingTHISgdxAsInput <- iscenarios %>% select(contains("path_gdx")) %>%              # select columns that have "path_gdx" in their name
                                                    filter(rowSums(. == iscen, na.rm = TRUE) > 0) # select rows that have the current scenario in any column
+                                                   
+    # For coupled runs add "C_" to scenario names
+    if(nrow(icfg$RunsUsingTHISgdxAsInput) > 0 & icfg$gms$cm_MAgPIE_Nash > 0) {
+      selection <- !is.na(icfg$RunsUsingTHISgdxAsInput)
+      icfg$RunsUsingTHISgdxAsInput[selection] <- paste0("C_", icfg$RunsUsingTHISgdxAsInput[selection])
+      rownames(icfg$RunsUsingTHISgdxAsInput) <- paste0("C_", rownames(icfg$RunsUsingTHISgdxAsInput))
+    }
 
     return(icfg)
 }

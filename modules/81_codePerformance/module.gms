@@ -8,7 +8,7 @@
 
 *' @title Codeperformance
 *'
-*' @description The realization codeperformance can be used to test the performance of the model. test code performance: noumerous (30) succesive runs
+*' @description The realization codeperformance can be used to test the performance of the model. test code performance: numerous (30) successive runs
 *' performed in a triangle, tax0, tax30, tax150, all growing exponentially.
 *'
 *' @authors Anastasis Giannousakis, Robert Pietzcker

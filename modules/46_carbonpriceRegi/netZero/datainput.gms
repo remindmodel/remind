@@ -6,72 +6,42 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/46_carbonpriceRegi/netZero/datainput.gms
 
-p46_zeroYear = 2100;
-$ifthen.p46_zeroYear "%cm_netZeroScen%" == "ELEVATE2p3"
-  p46_zeroYear = 2200;
-$endif.p46_zeroYear
+if(not (cm_multigasscen = 2),
+  abort "Error: module 46 netZero requires cm_multigasscen = 2, because all pledges include all GHG emissions including LULUCF";
+);
 
-$ifthen.p46_zeroYear "%cm_netZeroScen%" == "NGFS_v4_20pc"
-  p46_zeroYear = 2200;
-$endif.p46_zeroYear
-$ifthen.p46_zeroYear "%cm_netZeroScen%" == "NGFS_v4"
-  p46_zeroYear = 2200;
-$endif.p46_zeroYear
+if(sum(regi $ sameAs(regi,"EUR"),1) = 0,
+  abort "Error: module 46 netZero only works with the H12 regions including EUR.";
+);
 
-***profile for countries with 2050 target
-pm_taxCO2eqRegi(t,nz_reg2050)$sameas(t,"2035")=5;
-pm_taxCO2eqRegi(t,nz_reg2050)$sameas(t,"2040")=10;
-pm_taxCO2eqRegi(t,nz_reg2050)$sameas(t,"2045")=15;
-pm_taxCO2eqRegi(t,nz_reg2050)$sameas(t,"2050")=20;
-pm_taxCO2eqRegi(t,nz_reg2050)$(t.val > 2050) = max(0, pm_taxCO2eqRegi("2050", nz_reg2050) * (t.val - p46_zeroYear) / (2050 - p46_zeroYear));
 
-*** profile for countries with 2055 CO2 target
-pm_taxCO2eqRegi(t,nz_reg2055)$sameas(t,"2035")=3;
-pm_taxCO2eqRegi(t,nz_reg2055)$sameas(t,"2040")=6;
-pm_taxCO2eqRegi(t,nz_reg2055)$sameas(t,"2045")=10;
-pm_taxCO2eqRegi(t,nz_reg2055)$sameas(t,"2050")=16;
-pm_taxCO2eqRegi(t,nz_reg2055)$sameas(t,"2055")=24;
-pm_taxCO2eqRegi(t,nz_reg2055)$(t.val > 2055) = max(0, pm_taxCO2eqRegi("2055", nz_reg2055) * (t.val - p46_zeroYear) / (2055 - p46_zeroYear));
+*' For each region, define its net-zero target year and emission coverage for a certain set of gas species.
+*' The coverage reduces if not all countries in the region have a target, and if targets exlude certain emissions.
+*' Coverage shares are calculated using PBL's Net-Zero Calculator based on https://zerotracker.net/
+*' (methodology and more information at https://zerotracker.net/methodology) and further
+*' adaptations based on Climate Action Tracker information, literature or expert opinion.
+*' Net-zero claculator "ELEVATE T6.3 Scenario Protocol NDC and LTS information v3.xlsx"
+*' "The current CPDB is informed by the annual update cycle for 2025. It contains policies adopted up to and including March 2025." Luka (NCI)
+*** The current protocol includes policies until March 2025 (see https://github.com/NewClimateInstitute/policy-modelling/issues/6#event-22523859766)
+*' CO2 targets of Countries that are represented by a native REMIND region follow it directly instead of using PBL's coverage shares.
+parameter
+p46_netZeroTargetCoverage(all_regi,ttot,targetSpecies) "Coverage of emissions in net-zero targets for a given region, year and gas species [1]" /
+  CAZ . 2050 . GHG_target  1
+  EUR . 2050 . GHG_target  1
+  JPN . 2050 . GHG_target  1
+  LAM . 2050 . GHG_target  0.83
 
-*** profile for countries with 2060 target
-pm_taxCO2eqRegi(t,nz_reg2060)$sameas(t,"2035")=2;
-pm_taxCO2eqRegi(t,nz_reg2060)$sameas(t,"2040")=5;
-pm_taxCO2eqRegi(t,nz_reg2060)$sameas(t,"2045")=9;
-pm_taxCO2eqRegi(t,nz_reg2060)$sameas(t,"2050")=14;
-pm_taxCO2eqRegi(t,nz_reg2060)$sameas(t,"2055")=20;
-pm_taxCO2eqRegi(t,nz_reg2060)$sameas(t,"2060")=28;
-pm_taxCO2eqRegi(t,nz_reg2060)$(t.val > 2060) = max(0, pm_taxCO2eqRegi("2060", nz_reg2060) * (t.val - p46_zeroYear) / (2060 - p46_zeroYear));
+  MEA . 2055 . GHG_target  0.41
+  NEU . 2055 . GHG_target  0.8
+  OAS . 2055 . GHG_target  0.86
+  SSA . 2055 . GHG_target  0.56
 
-*** profile for countries with 2070 target
-pm_taxCO2eqRegi(t,nz_reg2070)$sameas(t,"2035")=2;
-pm_taxCO2eqRegi(t,nz_reg2070)$sameas(t,"2040")=5;
-pm_taxCO2eqRegi(t,nz_reg2070)$sameas(t,"2045")=9;
-pm_taxCO2eqRegi(t,nz_reg2070)$sameas(t,"2050")=13;
-pm_taxCO2eqRegi(t,nz_reg2070)$sameas(t,"2055")=17;
-pm_taxCO2eqRegi(t,nz_reg2070)$sameas(t,"2060")=21;
-pm_taxCO2eqRegi(t,nz_reg2070)$sameas(t,"2065")=25;
-pm_taxCO2eqRegi(t,nz_reg2070)$sameas(t,"2070")=29;
-pm_taxCO2eqRegi(t,nz_reg2070)$(t.val > 2070) = max(0, pm_taxCO2eqRegi("2070", nz_reg2070) * (t.val - p46_zeroYear) / (2070 - p46_zeroYear));
+  CHA . 2060 . CO2_target  1 !! CO2 target of China
+  REF . 2060 . GHG_target  0.87
 
-*** profile for countries with 2080 target
-pm_taxCO2eqRegi(t,nz_reg2080)$sameas(t,"2035")=2;
-pm_taxCO2eqRegi(t,nz_reg2080)$sameas(t,"2040")=4;
-pm_taxCO2eqRegi(t,nz_reg2080)$sameas(t,"2045")=7;
-pm_taxCO2eqRegi(t,nz_reg2080)$sameas(t,"2050")=10;
-pm_taxCO2eqRegi(t,nz_reg2080)$sameas(t,"2055")=13;
-pm_taxCO2eqRegi(t,nz_reg2080)$sameas(t,"2060")=16;
-pm_taxCO2eqRegi(t,nz_reg2080)$sameas(t,"2065")=19;
-pm_taxCO2eqRegi(t,nz_reg2080)$sameas(t,"2070")=22;
-pm_taxCO2eqRegi(t,nz_reg2080)$sameas(t,"2075")=25;
-pm_taxCO2eqRegi(t,nz_reg2080)$sameas(t,"2080")=28;
-pm_taxCO2eqRegi(t,nz_reg2080)$(t.val > 2080) = max(0, pm_taxCO2eqRegi("2080", nz_reg2080) * (t.val - p46_zeroYear) / (2080 - p46_zeroYear));
+  IND . 2070 . CO2_target  1 !! CO2 target of India
+/;
 
-***rescale
-pm_taxCO2eqRegi(t,regi) = sm_DptCO2_2_TDpGtC * pm_taxCO2eqRegi(t,regi);
-
-***initialize parameter
-p46_taxCO2eqRegiLast(t,regi) = 0;
-p46_taxCO2eqLast(t,regi)     = 0;
+pm_taxCO2eqRegi(ttot,regi) = 0;
 
 *** EOF ./modules/46_carbonpriceRegi/netZero/datainput.gms
-

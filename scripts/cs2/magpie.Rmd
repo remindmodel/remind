@@ -6,6 +6,7 @@
 |  REMIND License Exception, version 1.0 (see LICENSE file).
 |  Contact: remind@pik-potsdam.de
 -->
+
 # MAgPIE
 
 ## Resources|Land Cover Change
@@ -26,10 +27,10 @@ showAreaAndBarPlots(data, items, scales = "fixed")
 showAreaAndBarPlotsPlus(data, "Resources|Land Cover Change|Forest", scales = "fixed")
 ```
 
-### Resources|Land Cover Change|Forest|Managed Forest
+### Resources|Land Cover Change|Forest|Planted Forest
 
 ```{r}
-showAreaAndBarPlotsPlus(data, "Resources|Land Cover Change|Forest|Managed Forest", scales = "fixed")
+showAreaAndBarPlotsPlus(data, "Resources|Land Cover Change|Forest|Planted Forest", scales = "fixed")
 ```
 
 ### Resources|Land Cover Change|Forest|Natural Forest
@@ -53,29 +54,46 @@ showLinePlots(data, "Resources|NetForestChange")
 showLinePlots(data, "Productivity|Landuse Intensity Indicator Tau")
 ```
 
-### Productivity|Yield
-
-```{r}
-items <- c(
-  "Productivity|Yield|Bioenergy crops",
-  "Productivity|Yield|Crops",
-  "Productivity|Yield|Forage",
-  "Productivity|Yield|Pasture")
-showAreaAndBarPlots(data, items, scales = "fixed")
-```
-
-#### Productivity|Yield|Bioenergy crops
+### Productivity|Yield|Bioenergy crops
 
 ```{r}
 showLinePlots(data, "Productivity|Yield|Bioenergy crops")
 ```
 
-#### Productivity|Yield|Crops
+### Productivity|Yield|Crops
 
 ```{r}
 showLinePlots(data, "Productivity|Yield|Crops")
 ```
 
+### Productivity|Yield|Forage
+
+```{r}
+showLinePlots(data, "Productivity|Yield|Forage")
+```
+
+### Productivity|Yield|Pasture
+
+```{r}
+showLinePlots(data, "Productivity|Yield|Pasture")
+```
+
+## Biodiversity
+
+```{r results='asis'}
+items <- c(
+  "Biodiversity|BII",
+  "Biodiversity|Biodiversity Hotspot BII",
+  "Biodiversity|Cropland Landscapes BII",
+  "Biodiversity|Key Biodiversity Area BII",
+  "Biodiversity|BII in areas outside Biodiversity Hotspots, Intact Forest & Cropland Landscapes",
+  "Biodiversity|Shannon crop area diversity index")
+walk(items, function(v) {
+  cat("###", v, "\n\n")
+  showLinePlots(data, v, ylim = NULL, scales = "fixed")
+  cat("\n\n")
+})
+```
 
 ## SDG
 
@@ -84,6 +102,7 @@ items <- c(
   "SDG|SDG02|Agricultural commodity price index wrt 2020",
   "SDG|SDG02|Food availability",
   "SDG|SDG02|Food expenditure share",
+  "SDG|SDG02|Agricultural primary product expenditure share",
   "SDG|SDG15|Industrial and intentional biological fixation of N",
   "SDG|SDG12|Food waste",
   "SDG|SDG06|Agricultural water use")
@@ -96,7 +115,7 @@ walk(items, function(v) {
 
 ## Demand
 
-### Selection
+### Areaplot - Split 1 - Selection
 
 ```{r}
 items <- c(
@@ -108,19 +127,58 @@ items <- c(
 showAreaAndBarPlots(data, items, scales = "fixed")
 ```
 
-### Aggregation 1
-
-```{r}
-showAreaAndBarPlotsPlus(data, "Demand", plusNum = 1, scales = "fixed")
-```
-
-### Aggregation 2
+### Areaplot - Split 1
 
 ```{r}
 showAreaAndBarPlotsPlus(data, "Demand", plusNum = 2, scales = "fixed")
 ```
 
+### Lineplots - Split 1
 
+```{r results='asis'}
+items <- c(
+  "Demand|Bioenergy crops",
+  "Demand|Crop residues",
+  "Demand|Crops",
+  "Demand|Fish",
+  "Demand|Forage",
+  "Demand|Forest products",
+  "Demand|Livestock products",
+  "Demand|Pasture",
+  "Demand|Secondary products"
+  )
+walk(items, function(v) {
+  cat("####", v, "\n\n")
+  showLinePlots(data, v)
+  cat("\n\n")
+})
+```
+
+### Areaplot - Split 2
+
+```{r}
+showAreaAndBarPlotsPlus(data, "Demand", plusNum = 1, scales = "fixed")
+```
+
+### Lineplots - Split 2
+
+```{r results='asis'}
+items <- c(
+  "Demand|Agricultural Supply Chain Loss",
+  "Demand|Bioenergy",
+  "Demand|Domestic Balanceflow",
+  "Demand|Feed",
+  "Demand|Food",
+  "Demand|Material",
+  "Demand|Processing",
+  "Demand|Seed"
+  )
+walk(items, function(v) {
+  cat("####", v, "\n\n")
+  showLinePlots(data, v)
+  cat("\n\n")
+})
+```
 
 ## Nutrition
 
@@ -134,6 +192,12 @@ showAreaAndBarPlotsPlus(data, "Nutrition|Calorie Intake", scales = "fixed")
 
 ```{r}
 showAreaAndBarPlotsPlus(data, "Nutrition|Calorie Supply", scales = "fixed")
+```
+
+### Nutrition|Dietary Composition|Livestock Share
+
+```{r}
+showLinePlots(data, "Nutrition|Dietary Composition|Livestock Share")
 ```
 
 

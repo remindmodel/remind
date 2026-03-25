@@ -7,6 +7,7 @@
 *** SOF ./modules/46_carbonpriceRegi/none/realization.gms
 
 *####################### R SECTION START (PHASES) ##############################
+$Ifi "%phase%" == "declarations" $include "./modules/46_carbonpriceRegi/none/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/46_carbonpriceRegi/none/datainput.gms"
 *######################## R SECTION END (PHASES) ###############################
 

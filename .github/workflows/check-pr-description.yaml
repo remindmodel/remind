@@ -1,0 +1,44 @@
+on:
+  pull_request:
+    types: [opened, reopened, edited, ready_for_review]
+
+jobs:
+  check-pr-template:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR description
+        env:
+          PR_DESCRIPTION: ${{ github.event.pull_request.body }}
+        run: |
+          ERROR_FOUND=0
+          
+          # Check 1: At least one item must be selected in "Parts concerned"
+          PARTS_SECTION=$(echo "$PR_DESCRIPTION" | sed -n '/### Parts concerned/,/### Impact/p')
+          if ! echo "$PARTS_SECTION" | grep -q ":ballot_box_with_check:"; then
+            echo "ERROR: No items selected in 'Parts concerned' section."
+            echo "Please select at least one item by replacing :white_medium_square: with :ballot_box_with_check:"
+            ERROR_FOUND=1
+          fi
+          
+          # Check 2: At least one item must be selected in "Impact"
+          IMPACT_SECTION=$(echo "$PR_DESCRIPTION" | sed -n '/### Impact/,/## Checklist/p')
+          if ! echo "$IMPACT_SECTION" | grep -q ":ballot_box_with_check:"; then
+            echo "ERROR: No items selected in 'Impact' section."
+            echo "Please select at least one item by replacing :white_medium_square: with :ballot_box_with_check:"
+            ERROR_FOUND=1
+          fi
+          
+          # Check 3: All checkboxes in "Checklist" must be checked
+          CHECKLIST_SECTION=$(echo "$PR_DESCRIPTION" | sed -n '/## Checklist/,/## Further information (optional)/p')
+          if echo "$CHECKLIST_SECTION" | grep -q "\[ \]"; then
+            echo "ERROR: Unchecked checkboxes found in 'Checklist' section."
+            echo "All checklist items must be checked before merging."
+            ERROR_FOUND=1
+          fi
+          
+          if [ $ERROR_FOUND -eq 1 ]; then
+            exit 1
+          fi
+          
+          echo "Success: All PR template requirements are fulfilled."

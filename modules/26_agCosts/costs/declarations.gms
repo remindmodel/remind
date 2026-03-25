@@ -6,10 +6,15 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/26_agCosts/costs/declarations.gms
 parameter
-pm_totLUcosts(tall,all_regi)           "Total landuse costs (agriculture, bioenergy, MAC, etc). In standalone runs MAC costs are substituted by costs from the endogenous REMIND-MAC [T$US]"
-p26_totLUcosts_withMAC(tall,all_regi)  "Total landuse costs including agricultural MAC costs (agriculture, bioenergy, MAC, etc) [T$US]"
-p26_macCostLu(tall,all_regi)           "Land use emissions MAC cost [T$US]"
-pm_NXagr(tall,all_regi)                "Net agricultural exports"
+pm_totLUcosts_excl_costFuBio(tall,all_regi) "Total landuse costs (agriculture, MAC, etc) excluding bioenergy. In standalone runs MAC costs are substituted by costs from the endogenous REMIND-MAC [T$US]"
+p26_totLUcost_coupling(tall,all_regi)       "Total landuse cost read from magpie.gdx in coupling [T$US]"
+p26_totLUcosts_withMAC(tall,all_regi)       "Total landuse costs including agricultural MAC costs (agriculture, bioenergy, MAC, etc) [T$US]"
+p26_macCostLu(tall,all_regi)                "Land use emissions MAC cost [T$US]"
+pm_NXagr(tall,all_regi)                     "Net agricultural exports"
+
+o_p26_totLUcosts_withMAC(iteration,ttot,all_regi)        "track p26_totLUcosts_withMAC across Nash iterations"
+o_pm_totLUcosts_excl_costFuBio(iteration,ttot,all_regi)  "track pm_totLUcosts across Nash iterations"
+o_p26_macCostLu(iteration,ttot,all_regi)                 "track p26_macCostLu across Nash iterations"
 ;
 
 *** EOF ./modules/26_agCosts/costs/declarations.gms

@@ -43,12 +43,10 @@ if ( cm_flex_tax eq 1,
   );
 );
 
-*** Lower bounds on VRE use (more than 0.01% of electricity demand) after 2015 to prevent the model from overlooking solar and wind
-loop(regi,
-  loop(te$(teVRE(te)),
-    if ( (sum(rlf, pm_dataren(regi,"maxprod",rlf,te)) > 0.01 * pm_IO_input(regi,"seel","feels","tdels")) ,
-         vm_shSeEl.lo(t,regi,te)$(t.val>2020) = 0.01; 
-    );
+*** Lower bounds on VRE use (more than 0.01% of electricity demand) after 2025 to prevent the model from overlooking solar and wind
+loop(teVRE(te),
+  loop(regi $ ( sum(rlf, pm_dataren(regi,"maxprod",rlf,te)) > 0.01 * pm_IO_input(regi,"seel","feels","tdels") ),
+    vm_shSeEl.lo(t,regi,te) $ (t.val > 2025) = 0.01; 
   );
 );
 
@@ -62,10 +60,10 @@ vm_cap.fx(t,regi,"h2curt",rlf) = 0;
 
 
 *RP To ensure that the REMIND model doesn't overlook CSP due to gdx effects, ensure some minimum use in regions with good solar insolation, here proxied from the csp storage factor:
-loop(regi$(p32_factorStorage(regi,"csp") < 1),
-  vm_shSeEl.lo(t,regi,"csp")$(t.val > 2025) = 0.5;
-  vm_shSeEl.lo(t,regi,"csp")$(t.val > 2050) = 1;
-  vm_shSeEl.lo(t,regi,"csp")$(t.val > 2100) = 2;
+loop(regi $ (p32_factorStorage(regi,"csp") < 1),
+  vm_shSeEl.lo(t,regi,"csp") $ (t.val > 2025) = 0.5;
+  vm_shSeEl.lo(t,regi,"csp") $ (t.val > 2050) = 1;
+  vm_shSeEl.lo(t,regi,"csp") $ (t.val > 2100) = 2;
 );
 
 *** Fix capacity to 0 for elh2VRE now that the equation q32_elh2VREcapfromTestor pushes elh2, not anymore elh2VRE, and capital costs are 1

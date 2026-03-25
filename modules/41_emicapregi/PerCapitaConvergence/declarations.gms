@@ -6,7 +6,13 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/41_emicapregi/PerCapitaConvergence/declarations.gms
 
+variables
+vm_perm(ttot,all_regi)                          "emission allowances [GtCeq]"
+;
+
 parameter
+pm_shPerm(tall, all_regi)                       "emission permit shares [share]"
+pm_emicapglob(tall)                             "global emission cap [GtC]" 
 p41_convergenceyear                             "year of convergence of per-capita-emissions"
 p41_lambda(tall)                                "share parameter"
 p41_shEmi2020(all_regi)                         "emission shares in 2020"

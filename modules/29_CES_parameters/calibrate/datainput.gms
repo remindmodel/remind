@@ -152,14 +152,14 @@ $offdelim
 /
 
 parameter
-f29_capitalQuantity(tall,all_regi,all_demScen,all_in)          "capital quantities"
+f29_capitalQuantity(tall,all_regi,all_GDPpopScen,all_in)          "capital quantities"
 /
 $ondelim
 $include "./modules/29_CES_parameters/calibrate/input/f29_capitalQuantity.cs4r"
 $offdelim
 /
 ;
-p29_capitalQuantity(t,regi,ppfKap) = f29_capitalQuantity(t,regi,"%cm_demScen%",ppfKap);
+p29_capitalQuantity(t,regi,ppfKap) = f29_capitalQuantity(t,regi,"%cm_GDPpopScen%",ppfKap);
 
 *** fix industry energy efficiency capital for mrremind rounding
 loop ((ttot,regi,ppfKap_industry_dyn37(in))$( t(ttot-1) AND t(ttot+1) ),
@@ -195,7 +195,7 @@ p29_capitalQuantity(tall,all_regi,"kap")
 *** Substract the end-use capital quantities from the aggregate capital
 
 *** Load CES parameters from the last run
-Execute_Load 'input'  p29_cesdata_load = pm_cesdata;
+Execute_Loadpoint 'input'  p29_cesdata_load = pm_cesdata;
 $ifthen.testOneRegi "%optimization%" == "testOneRegi"   !! optimization
   !! carry along CES parameters for other regions in testOneRegi runs
   pm_cesdata(t,regi,in,cesParameter)$( NOT regi_dyn29(regi) )

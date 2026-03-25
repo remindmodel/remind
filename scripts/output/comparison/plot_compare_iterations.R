@@ -114,7 +114,7 @@ plot_iterations <- function(runname) {
   # remind2::reportPE.R
   # fuelex[,,"pebiolc.1"] + (1-p_costsPEtradeMp[,,"pebiolc"]) * Mport[,,"pebiolc"] - Xport[,,"pebiolc"] -> "PE|Biomass|Energy Crops (EJ/yr)"
 
-  var <- "PE|Biomass|Energy Crops (EJ/yr)"
+  var <- "PE|Biomass|+++|Energy Crops (EJ/yr)"
   title  <- paste(runname, var, sep = "\n")
 
   p_prodPE    <- myplot(reports[r, years, var],                                        ylab = "EJ/yr", title = title)

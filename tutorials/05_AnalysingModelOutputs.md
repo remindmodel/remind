@@ -9,17 +9,13 @@ Felix Scheyer (<felix.schreyer@pik-potsdam.de>), Isabelle Weindl (<weindl@pik-po
     - [3.2 Load mif-file as Magpie Object](#32-load-a-mif-file-as-a-magpie-object)
     - [3.3 Load mif file as quitte Object](#33-load-a-mif-file-as-a-quitte-object)
     - [3.4 Load gdx file as magpie object](#34-load-a-gdx-file-as-a-magpie-object)
--   [4. Automated model validation](#4-automated-model-validation)
-    -   [4.1. Generation of validation pdfs](#41-generation-of-summary-and-validation-pdfs)
-    -   [4.2 A Summary of Results](#42-a-summary-of-results)
-    -   [4.3 The Whole Range of Validation](#43-the-whole-range-of-validation)
--   [5. Interactive scenario analysis](#5-interactive-scenario-analysis)
-    -   [5.1. AppResults](#51-appresults)
--   [6. Model-internal R-scripts for output analysis](#6-model-internal-r-scripts-for-output-analysis)
-    -   [6.1. Execution of model-internal output scripts via the REMIND configuration file](#61-execution-of-model-internal-output-scripts-via-the-remind-configuration-file)
-    -   [6.2. Execution of model-internal output scripts in the command window](#62-execution-of-model-internal-output-scripts-in-the-command-window)
--   [7.  Analysis of outputs with the remind2 R package](#7-analysis-of-outputs-with-the-remind2-r-package)
-
+-   [4. Interactive scenario analysis](#4-interactive-scenario-analysis)
+    -   [4.1. AppResults](#41-appresults)
+-   [5. Model-internal R-scripts for output analysis](#5-model-internal-r-scripts-for-output-analysis)
+    -   [5.1. Execution of model-internal output scripts via the REMIND configuration file](#51-execution-of-model-internal-output-scripts-via-the-remind-configuration-file)
+    -   [5.2. Execution of model-internal output scripts in the command window](#52-execution-of-model-internal-output-scripts-in-the-command-window)
+-   [6.  Analysis of outputs with the remind2 R package](#6-analysis-of-outputs-with-the-remind2-r-package)
+-   [7. Visualizing Run Status and Summation Checks for Runs](#7-visualizing-run-status-and-summation-checks-for-runs)
 
 ## 1. Introduction
 
@@ -202,3 +198,27 @@ library(remind2)
 ```
 
 You can click on the index and search for interesting functions. All functions used to generate the reporting start with "report*.R".
+
+## 7. Visualizing Run Status and Summation Checks for Runs
+
+> **Note** This part assumes that you have access to the PIK HPC, have followed the instructions [in the REMIND group-internal Wiki](https://gitlab.pik-potsdam.de/rse/rsewiki/-/wikis/Cluster-Access) on how to access the PIK HPC and configure your cluster environment.
+
+### Run Status
+
+To get an overview of the status of your run, your can use the commandline tool `rs2` on the cluser (see help at `rs2 -h`). The tool provides information about runtime, convergence, number of iterations needed to converge, optimality etc.
+
+### Summation Checks
+
+In order to get an overview of the outcome of the summation checks applied after the run, use `rsanity` (see help at `rsanity -h`). The overview only applies to runs that produce a mif file, i.e. the reporting has completed successfully. 
+
+Table contains the following columns:
+
+* "SumErr": Summation Errors found when running `remind2::convGDX2MIF`. If any exist, details can be found in the file `<RunName>_summation_errors.csv`.
+* "RangeErr": Range Errors found when running `remind2::convGDX2MIF`. If any exist, details can be found in the file `<RunName>_range_errors.txt`.
+* "FixingErr": Fixing Errors found when running `piamInterfaces::fixOnRef`. If any exist, details can be found in the file `log_fixOnRef.csv`.
+* "MissingVar": Missing Variables found when running `piamInterfaces::checkMissingVars` for ScenarioMIP. Details can be found in the `log.txt` file.
+* "ProjSumErr": Summation Errors found when running `piamInterfaces::checkSummations` for ScenarioMIP. Details can be found in the `log.txt` file.
+* "ProjSumErrReg": Regional Summation Errors found when running `piamInterfaces::checkSummationsRegional` for ScenarioMIP. Details can be found in the `log.txt` file.
+
+
+

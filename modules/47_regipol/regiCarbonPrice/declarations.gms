@@ -13,11 +13,10 @@
 Parameter
   s47_firstFreeYear                                  "value of first free year for the carbon price trajectory"
   s47_prefreeYear                                    "value of the last non-free year for the carbon price trajectory"
-  p47_LULUCFEmi_GrassiShift(ttot,all_regi)           "difference between Magpie land-use change emissions and UNFCCC emissions in 2015 to correct for national accounting in emissions targets"
+  pm_emiLULUCF_GrassiShift(ttot,all_regi)            "difference between Magpie land-use change emissions and UNFCCC emissions in 2015 to correct for national accounting in emissions targets [GtC]"
   pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) "deviation of emissions of current iteration from target emissions, for budget target this is the difference normalized by target emissions, while for year targets this is the difference normalized by 2005 emissions [%]"
-
-*** RR this should be replaced as soon as non-energy is treated endogenously in the model
-  p47_nonEnergyUse(ttot,ext_regi)                  "non-energy use"
+  pm_taxemiMkt(ttot,all_regi,all_emiMkt)                             "CO2 tax path per region and emissions market [T$/GtC]"
+  pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt)         "CO2 tax path per region and emissions market calculated from previous iteration [T$/GtC]"
 ;
 
 *** parameters to track regipol emissions calculation
@@ -165,7 +164,7 @@ Parameter
   pm_implicitPrice_ignConv(all_regi,sector,all_enty,entySe,ttot) "auxiliary parameter to store the price targets that were ignored in the convergence check (cases: 1 = non existent price, 2 = no change in prices for the last 3 iterations) [#]" 
   p47_implicitPriceTax_iter(iteration,ttot,all_regi,all_enty,entySe,sector)  "tax/subsidy level on FE for reaching the price target per iteration [2005 TerraDollar per TWyear]"
   p47_implicitPriceTarget_terminalYear(all_regi,all_enty,entySe,sector) "terminal year of price target for given region and energy carrier [year]"
-  p47_implicitPriceTarget_initialYear(all_regi,all_enty,entySe,sector) "initial year of price target for given region and energy carrier [year]"
+  p47_implicitPriceTarget_initialYear(all_regi,all_enty,entySe,sector) "initial year of price target for given region and energy carrier [year]" 
 ;
 
 Equations
@@ -245,7 +244,6 @@ Parameter
 ;
 $endIf.regiExoPrice
 
-
 ***---------------------------------------------------------------------------
 *** Total SE per PE calculation used for setting bounds
 ***---------------------------------------------------------------------------
@@ -258,6 +256,26 @@ Equation
 q47_prodSEtotal(ttot,all_regi,all_enty,all_enty) "calculate total SE production per PE and SE over all technologies"
 ;
 
+
+
+***---------------------------------------------------------------------------
+*** Exogenous CO2 tax level from another run:
+***---------------------------------------------------------------------------
+$ifThen.regiExoPrice_fromFile not "%cm_regiExoPrice_fromFile%" == "off"
+
+File co2price_scenario /                                  "%cm_regiExoPrice_fromFile%" /;
+
+Parameter
+  p47_exoCo2tax_fromFile(ttot,all_regi,emiMkt)   "Exogenous CO2 tax level from of GDX file. Overrides carbon prices in pm_taxCO2eq, only if explicitly defined. [T$/GtC]"
+
+;
+
+Execute_Loadpoint "%cm_regiExoPrice_fromFile%" p47_exoCo2tax_fromFile = pm_taxemiMkt;
+
+execute_unload "exoCO2Tax_fromFile", p47_exoCo2tax_fromFile;
+display p47_exoCo2tax_fromFile;
+
+$endIf.regiExoPrice_fromFile
 
 
 

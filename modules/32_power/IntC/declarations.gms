@@ -7,11 +7,11 @@
 *** SOF ./modules/32_power/IntC/declarations.gms
 
 parameters
-    p32_grid_factor(all_regi)						"multiplicative factor that scales total grid requirements down in comparatively small or homogeneous regions like Japan, Europe or India"
-    p32_gridexp(all_regi,all_te)					"exponent that determines how grid requirement per kW increases with market share of wind and solar. 1 means specific marginal costs increase linearly"
-    p32_storexp(all_regi,all_te)					"exponent that determines how curtailment and storage requirements per kW increase with market share of wind and solar. 1 means specific marginal costs increase linearly"
-    p32_shCHP(ttot,all_regi)            			"upper boundary of chp electricity generation"
-    p32_factorStorage(all_regi,all_te)      		"multiplicative factor that scales total curtailment and storage requirements up or down in different regions for different technologies (e.g. down for PV in regions where high solar radiation coincides with high electricity demand)"
+    p32_grid_factor(all_regi) 			    "multiplicative factor that scales total grid requirements down in comparatively small or homogeneous regions like Japan, Europe or India"
+    p32_gridexp(all_regi,all_te)		    "exponent that determines how grid requirement per kW increases with market share of wind and solar. 1 means specific marginal costs increase linearly"
+    p32_storexp(all_regi,all_te)		    "exponent that determines how curtailment and storage requirements per kW increase with market share of wind and solar. 1 means specific marginal costs increase linearly"
+    p32_shCHP(ttot,all_regi)            	    "upper boundary of chp electricity generation"
+    p32_factorStorage(all_regi,all_te)      	    "multiplicative factor that scales total curtailment and storage requirements up or down in different regions for different technologies (e.g. down for PV in regions where high solar radiation coincides with high electricity demand)"
     f32_storageCap(char, all_te)                    "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
     p32_storageCap(all_te,char)                     "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
     p32_PriceDurSlope(all_regi,all_te)              "slope of price duration curve used for calculation of electricity price for flexible technologies, determines how fast electricity price declines at lower capacity factors"
@@ -27,9 +27,9 @@ s32_storlink                                        "how strong is the influence
 ;
 
 positive variables
-    v32_shStor(ttot,all_regi,all_te)         		"share of seel production from a VRE te that needs to be stored based on this te's share. Unit: ~Percent"
-    v32_storloss(ttot,all_regi,all_te)         		"total energy loss from storage for a given technology [TWa]"
-    vm_shSeEl(ttot,all_regi,all_te)			     	"new share of electricity production in % [%]"
+    v32_shStor(ttot,all_regi,all_te)                "share of seel production from a VRE te that needs to be stored based on this te's share. Unit: ~Percent"
+    v32_storloss(ttot,all_regi,all_te)         	    "total energy loss from storage for a given technology [TWa]"
+    vm_shSeEl(ttot,all_regi,all_te)		    "new share of electricity production in % [%]"
     v32_testdemSeShare(ttot,all_regi,all_te)        "test variable for tech share of SE electricity demand"
     v32_TotVREshare(ttot,all_regi)                  "Total VRE share as calculated by summing shSeEl. Unit: Percent"
     v32_shAddIntCostTotVRE(ttot,all_regi)           "Variable containing how much the total VRE share is above the threshold - needed to calculate additional integation costs due to total VRE share."
@@ -37,16 +37,16 @@ positive variables
 ;
 
 equations
-    q32_balSe(ttot,all_regi,all_enty)				"balance equation for electricity secondary energy"
-    q32_usableSe(ttot,all_regi,all_enty)			"calculate usable se before se2se and MP/XP (without storage)"
-    q32_usableSeTe(ttot,all_regi,entySe,all_te)   	"calculate usable se produced by one technology (vm_usableSeTe)"
-    q32_limitCapTeStor(ttot,all_regi,teStor)		"calculate the storage capacity required by vm_storloss"
+    q32_balSe(ttot,all_regi,all_enty)		    "balance equation for electricity secondary energy"
+    q32_usableSe(ttot,all_regi,all_enty)	    "calculate usable se before se2se and MP/XP (without storage)"
+    q32_usableSeTe(ttot,all_regi,entySe,all_te)     "calculate usable se produced by one technology (v32_usableSeTe)"
+    q32_limitCapTeStor(ttot,all_regi,teStor)	    "calculate the storage capacity required by vm_storloss"
     q32_limitCapTeChp(ttot,all_regi)                "capacitiy constraint for chp electricity generation"
-    q32_limitCapTeGrid(ttot,all_regi)          		"calculate the additional grid capacity required by VRE"
-    q32_shSeEl(ttot,all_regi,all_te)         		"calculate share of electricity production of a technology (vm_shSeEl)"
+    q32_limitCapTeGrid(ttot,all_regi)          	    "calculate the additional grid capacity required by VRE"
+    q32_shSeEl(ttot,all_regi,all_te)         	    "calculate share of electricity production of a technology (vm_shSeEl)"
     q32_shStor(ttot,all_regi,all_te)                "equation to calculate v32_shStor"
     q32_storloss(ttot,all_regi,all_te)              "equation to calculate vm_storloss, and - as vm_storloss determines the storage capacity - also the general integration challenges"
-    q32_operatingReserve(ttot,all_regi)  			"operating reserve for necessary flexibility"
+    q32_operatingReserve(ttot,all_regi)  	    "operating reserve for necessary flexibility"
     q32_h2turbVREcapfromTestor(tall,all_regi)       "calculate capacities of dummy seel<--h2 technology from storXXX technologies"
     q32_h2turbVREcapfromTestorUp(ttot,all_regi)     "constraint h2turbVRE hydrogen turbines to be only built together with storage capacities"
     q32_elh2VREcapfromTestor(tall,all_regi)         "calculate capacities of dummy seel-->h2 technology from storXXX technologies"
@@ -64,6 +64,7 @@ variables
 v32_flexPriceShare(ttot,all_regi,all_te)            "share of average electricity price that flexible technologies see [share: 0...1]"
 v32_flexPriceShareVRE(ttot,all_regi,all_te)         "possible minimum of share of average electricity price that flexible technologies see given the current VRE share [share: 0...1]"   
 v32_flexPriceShareMin(ttot,all_regi,all_te)         "possible minimum of share of average electricity price that flexible technologies see [share: 0...1]"
-
+vm_usableSe(ttot,all_regi,entySe)                   "Usable SE electricity defined as: generation from pe2se technologies + generation from coupled production - storage losses [TWa]"
+v32_usableSeTe(ttot,all_regi,entySe,all_te)         "Usable SE electricity per generation technology defined as: generation from pe2se technologies + generation from coupled production - storage losses [TWa]"
 ;
 *** EOF ./modules/32_power/IntC/declarations.gms

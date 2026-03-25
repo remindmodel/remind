@@ -39,6 +39,14 @@ ensure-reqs:     ## Ensure the REMIND library requirements are fulfilled
                  ## install updates unless it is required.
 	@Rscript -e 'source("scripts/start/ensureRequirementsInstalled.R"); ensureRequirementsInstalled(rerunPrompt="make ensure-reqs")'
 
+historic-reqs:   ## Restore renv.lock file "v" from the lockfile archive.  Call
+                 ## make historic-reqs v=YYYY-MM-DD
+                 ## where YYYY-MM-DD is a date tag in the lockfile archive.
+                 ## Uses environment variable RSE_LOCKFILE_ARCHIVE, or if that
+                 ## is unset /p/projects/rd3mod/github/repos/pik-piam/lockfile-archive/main/
+	@[ -n "$(v)" ] || ( echo "no date tag \"v\" set to restore renv.lock"; exit 1 )
+	@mkdir -p renv/archive && git -C $${RSE_LOCKFILE_ARCHIVE:-/p/projects/rd3mod/github/repos/pik-piam/lockfile-archive/main/} show $(v):./conservative.renv.lock > renv/archive/$(v)_renv.lock && Rscript -e "renv::restore(lockfile = \"renv/archive/$(v)_renv.lock\", exclude = \"renv\")"
+
 archive-renv:    ## Write renv.lock into archive.
 	Rscript -e 'piamenv::archiveRenv()'
 

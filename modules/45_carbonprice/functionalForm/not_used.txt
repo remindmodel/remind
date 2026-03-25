@@ -13,7 +13,6 @@ pm_GDPGross,input,questionnaire
 pm_ttot_2_tall,input,questionnaire
 cm_expoLinear_yearStart,input,questionnaire
 cm_carbonprice_temperatureLimit,input,questionnaire
-cm_NDC_divergentScenario,input,questionnaire
 pm_consPC,input,questionnaire
 pm_prtp,input,questionnaire
 vm_demFeSector,input,questionnaire
@@ -21,3 +20,12 @@ pm_emifac,input,questionnaire
 sm_D2005_2_D2017,input,not needed
 fm_taxCO2eqHist,input,not needed
 sm_c_2_co2,input,added by codeCheck
+pm_macSwitch,input,not needed because default MAC curve settings are used
+pm_NDCEmiTargetDeviation,input,not used
+pm_actualbudgetco2Regi,input,added by codeCheck
+pm_dt,input,added by codeCheck
+cm_CPslopeAdjustment,input,added by codeCheck
+cm_useInputGdxForCarbonPrice,input,added by codeCheck
+pm_factorRescale_taxCO2Regi_Funneled2,input,added by codeCheck
+pm_budgetDeviation,input,added by codeCheck
+pm_regionalBudget_absDevTol,input,added by codeCheck

@@ -45,37 +45,21 @@ $offdelim
   /
 ;
 
-Parameter f21_max_fe_sub(tall,all_regi,all_enty) "maximum final energy subsidy levels (in $/Gj) from REMIND version prior to rev. 5429"
+Parameter f21_sub_convergence_rollback(tall,all_regi,emi_sectors,all_enty) "Subsidy convergence level for specific regions, year and final energy type in rollback scenario"
   /
 $ondelim
-$include "./modules/21_tax/on/input/f21_max_fe_sub.cs4r"
+$include "./modules/21_tax/on/input/f21_sub_convergence_rollback.cs4r"
 $offdelim
   /
 ;
-Parameter f21_max_pe_sub(tall,all_regi,all_enty) "maximum primary energy subsidy levels (in $/Gj) to provide plausible upper bound: 40$/barrel ~ 8 $/GJ" 
-  /
-$ondelim
-$include "./modules/21_tax/on/input/f21_max_pe_sub.cs4r"
-$offdelim
-  /
-;
-Parameter f21_prop_fe_sub(tall,all_regi,all_enty) "subsidy proportional cap to avoid liquids increasing dramatically"
-  /
-$ondelim
-$include "./modules/21_tax/on/input/f21_prop_fe_sub.cs4r"
-$offdelim
-  /
-;
+
+
 
 *** transfer data to parameters and rescaling of FE parameters from $/GJ to trillion $ / TWa (subsidies also get adjusted in preloop.gms to avoid neg. prices)
 
   p21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe)$f21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe) = f21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe)*0.001/sm_EJ_2_TWa;
   p21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe)$f21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe) = f21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe)*0.001/sm_EJ_2_TWa;
   p21_tau_fuEx_sub(ttot,regi,entyPe)$f21_tau_fuEx_sub(ttot,regi,entyPe) = f21_tau_fuEx_sub(ttot,regi,entyPe)*0.001/sm_EJ_2_TWa;
-
-  p21_max_fe_sub(ttot,all_regi,entyFe)$f21_max_fe_sub(ttot,all_regi,entyFe) = f21_max_fe_sub(ttot,all_regi,entyFe)*0.001/sm_EJ_2_TWa;
-  p21_prop_fe_sub(ttot,all_regi,entyFe)$f21_prop_fe_sub(ttot,all_regi,entyFe) = f21_prop_fe_sub(ttot,all_regi,entyFe);
-
 
 
 *** -------------------------PE2SE Taxes--------------------------(Primary to secondary energy technology taxes, specified by technology)
@@ -154,7 +138,6 @@ pm_tau_pe_tax(ttot,regi,all_enty) = 0;
 *** by default CES tax is zero
 pm_tau_ces_tax(ttot,regi,all_in) = 0;
 
-
 *** Read in bioenergy emission factor that is used to compute the emission-
 *** factor-based bioenergy tax and convert from kgCO2 per GJ to GtC per TWa.
 p21_bio_EF(ttot,all_regi) = 0;
@@ -167,8 +150,36 @@ Execute_Loadpoint 'input_ref' p21_ref_costInvTeAdj_RE = vm_costInvTeAdj.l;
 $endif.importtaxrc
 
 if (cm_startyear gt 2005,
-execute_load "input_ref.gdx", pm_taxrevCO2LUC0;
-execute_load "input_ref.gdx", pm_taxrevGHG0;
+Execute_Loadpoint "input_ref.gdx", pm_taxrevCO2LUC0;
+Execute_Loadpoint "input_ref.gdx", pm_taxrevGHG0;
 );
+
+***initialize co2 market taxes
+pm_taxemiMkt(t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
+pm_taxemiMkt_iteration(iteration,t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
+
+***-------------------------------------------------------------------
+***           overwrite default targets with gdx values
+***-------------------------------------------------------------------
+Execute_Loadpoint 'input' p21_tau_CO2_tax_gdx = pm_taxCO2eq;
+if (cm_gdximport_target eq 1,
+*** only if tax rates not all equal to zero
+if (smax((t,regi),p21_tau_CO2_tax_gdx(t,regi)$(t.val gt 2030)) gt 0,
+pm_taxCO2eq(t,regi) = p21_tau_CO2_tax_gdx(t,regi);
+);
+);
+if (cm_emiscen ne 9,
+    pm_taxCO2eq(t, regi) = 0;
+);
+
+***-------------------------------------------------------------------
+***           overwrite co2 tax for delay runs with gdx values
+***-------------------------------------------------------------------
+if ( (cm_startyear gt 2005),
+Execute_Loadpoint 'input_ref' p21_tau_CO2_tax_gdx_bau = pm_taxCO2eq;
+pm_taxCO2eq(ttot,regi)$((ttot.val gt 2005) AND (ttot.val lt cm_startyear)) = p21_tau_CO2_tax_gdx_bau(ttot,regi);
+);
+
+display pm_taxCO2eq;
 
 *** EOF ./modules/21_tax/on/datainput.gms

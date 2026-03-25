@@ -74,8 +74,8 @@ q33_cco2_cdr_fromFE(t, regi, te_ccs33)..
 *'  the second part is CO2 captured from energy usage (OAE or DAC)
 *'  the third part is CO2 captured from calcination for OAE
 ***---------------------------------------------------------------------------
-q33_ccsbal(t, regi, ccs2te(ccsCo2(enty), enty2, te))..
-    sum(teCCS2rlf(te, rlf), vm_co2capture_cdr(t, regi, enty, enty2, te, rlf))
+q33_ccsbal(t, regi)..
+    sum(teCCS2rlf(te, rlf), vm_co2capture_cdr(t, regi, "cco2", "ico2", te, rlf))
     =e=
     - vm_emiCdrTeDetail(t, regi, "dac")
     + sm_capture_rate_cdrmodule * (
@@ -220,6 +220,19 @@ q33_EW_upscaling_rate(ttot,regi)$(ord(ttot) lt card(ttot) AND pm_ttot_val(ttot) 
    (1+p33_EW_upScalingLimit(ttot))**pm_dt(ttot) * sum((rlf_cz33, rlf), v33_EW_onfield(ttot-1,regi,rlf_cz33,rlf)) + p33_EW_shortTermEW_Limit(regi)
 ;
 
+
+***---------------------------------------------------------------------------
+*' #### Biochar equations
+
+***---------------------------------------------------------------------------
+*' Revenue from Biochar 
+***---------------------------------------------------------------------------
+q33_biocharRevenue(t, regi)..
+    vm_biocharRevenue(t, regi)
+    =e= 
+    p33_BiocharPrice(t) * vm_demSeOth(t,regi,"sebiochar","biocharuse")
+;
+
 ***---------------------------------------------------------------------------
 *' #### OAE equations
 
@@ -305,11 +318,12 @@ q33_shfeSector_share(t,regi,entyFe,sector)$(p33_shfetot_up(t,regi,entyFe,sector)
 
 ***---------------------------------------------------------------------------
 *' Limit spending on net negative emissions to a share of the region's GDP 
+*' Warning: This needs to be adapted if cm_NetNegEmi_calculation = 1 is used.
 ***---------------------------------------------------------------------------
 q33_CDRspending(t,regi)$(t.val ge max(2035,cm_startyear))..
   v33_NetNegEmi_expenses(t,regi)
   =e=
-  (1-cm_frac_NetNegEmi) * pm_taxCO2eqSum(t,regi) * vm_emiALLco2neg(t,regi)
+  (1-cm_frac_NetNegEmi) * pm_taxCO2eqSum(t,regi) * vm_emiAllco2neg(t,regi)
 ;
 
 *' @stop

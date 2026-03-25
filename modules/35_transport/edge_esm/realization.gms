@@ -23,6 +23,5 @@ $Ifi "%phase%" == "datainput" $include "./modules/35_transport/edge_esm/datainpu
 $Ifi "%phase%" == "equations" $include "./modules/35_transport/edge_esm/equations.gms"
 $Ifi "%phase%" == "presolve" $include "./modules/35_transport/edge_esm/presolve.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/35_transport/edge_esm/postsolve.gms"
-$Ifi "%phase%" == "output" $include "./modules/35_transport/edge_esm/output.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/35_transport/edge_esm/realization.gms

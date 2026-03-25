@@ -23,7 +23,7 @@ runGamsCompile <- function(modelFile, cfg, interactive = TRUE, testmode = FALSE)
   tmpModelLst <- gsub("gms$", "lst", tmpModelFile)
   file.copy(modelFile, tmpModelFile, overwrite = TRUE)
   if (! testmode) {
-    unlink(file.path("modules", c("45_carbonprice", "46_carbonpriceRegi"), "NDC", "input", "pm_BAU_reg_emi_wo_LU_bunkers.cs4r"))
+    unlink(file.path("modules", c("45_carbonprice", "46_carbonpriceRegi"), "NDC", "input", "pm_BAU_reg_emi_wo_LU_wo_bunkers.cs4r"))
     updateSets(cfg)
     updateInputData(cfg, gamsCompile = TRUE)
   }

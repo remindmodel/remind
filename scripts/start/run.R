@@ -108,6 +108,9 @@ run <- function() {
   timeGAMSEnd  <- Sys.time()
   gams_runtime <- timeGAMSEnd - timeGAMSStart
   timeOutputStart <- Sys.time()
+  
+  # Record the time when the output starts in runtime.log
+  write(paste(Sys.time(), "output", 0, sep = ","), file = "runtime.log", append = TRUE)
 
   # If REMIND actually did run
   if (cfg$action == "ce" && cfg$gms$c_skip_output != "on") {
@@ -156,12 +159,9 @@ run <- function() {
 
   #====================== Subsequent runs ===========================
 
-  # Use the name to check whether it is a coupled run (TRUE if the name ends with "-rem-xx")
-  coupled_run <- grepl("-rem-[0-9]{1,2}$",cfg$title)
-  # Don't start subsequent runs form here if REMIND runs coupled. They are started in start_coupled.R instead.
   # Only if this run has been restarted manually cfg$restart_subsequent_runs is TRUE. If the run is resumed after
   # preemtion it is just NULL and isFALSE(NULL) is FALSE, so subsequent standalone runs will be started.
-  start_subsequent_runs <- ! isFALSE(cfg$restart_subsequent_runs) && ! coupled_run
+  start_subsequent_runs <- ! isFALSE(cfg$restart_subsequent_runs)
 
   if (start_subsequent_runs & (length(rownames(cfg$RunsUsingTHISgdxAsInput)) > 0)) {
     # track whether any subsequent run was actually started
@@ -172,7 +172,8 @@ run <- function() {
 
     # fulldatapath may be written into gdx paths of subsequent runs
     fulldatapath <- paste0(cfg_main$remind_folder,"/",cfg_main$results_folder,"/fulldata.gdx")
-    possible_pathes_to_gdx <- c("input.gdx", "input_ref.gdx", "input_refpolicycost.gdx", "input_bau.gdx", "input_carbonprice.gdx")
+    possible_pathes_to_gdx <- c("input.gdx", "input_ref.gdx", "input_refpolicycost.gdx",
+                                "input_bau.gdx", "input_carbonprice.gdx", "input_damage.gdx")
 
     # Loop possible subsequent runs, saving path to fulldata.gdx of current run (== cfg_main$title) to their cfg files
 
@@ -193,7 +194,7 @@ run <- function() {
       cfg$files2export$start[needfulldatagdx] <- fulldatapath
       # let the subsequent run use the renv.lock of this run
       message("In ", RData_file, ", use current renv.lock for subsequent run ", run, ".")
-      cfg$renvLockFromPrecedingRun <- file.path(cfg_main$remind_folder, cfg_main$results_folder, "renv.lock")
+      cfg$UseThisRenvLock <- file.path(cfg_main$remind_folder, cfg_main$results_folder, "renv.lock")
 
       save(cfg, file = RData_file)
 
@@ -267,11 +268,18 @@ run <- function() {
   # get runtime for output
   timeOutputEnd <- Sys.time()
 
+  # Record the time when the run finishes in runtime.log
+  write(paste(Sys.time(), "end", 0, sep = ","), file = paste0(cfg$results_folder, "/runtime.log"), append = TRUE)
+  
+  # Add the runtime.log to runstatistics.rda
+  runtimeLog <- readr::read_csv(paste0(cfg$results_folder, "/runtime.log"), col_names = c("time","phase", "iteration")) |> suppressMessages()
+
   # Save run statistics to local file
   cat("\nSaving timeOutputStart and timeOutputEnd to runstatistics.rda\n")
-  lucode2::runstatistics(file           = paste0(cfg$results_folder, "/runstatistics.rda"),
+  lucode2::runstatistics(file          = paste0(cfg$results_folder, "/runstatistics.rda"),
                        timeOutputStart = timeOutputStart,
-                       timeOutputEnd   = timeOutputEnd)
+                       timeOutputEnd   = timeOutputEnd,
+                       runtimeLog      = runtimeLog)
 
   return(cfg$results_folder)
   # on.exit sets working directory back to results folder

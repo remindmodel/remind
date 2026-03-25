@@ -117,10 +117,15 @@ qttyTargetScenario  "hard-coded quantity scenarios"
   EU27_RpEUEff "RePowerEU energy efficiency target  (750 Mtoe final energy by 2030)"
 
   EU27_bio4    "EU-27 primary energy biomass limited to 6 EJ by 2035 and 4 EJ by 2050"
+  EU27_bio7    "EU-27 primary energy biomass limited to 7 EJ by 2035 and 2050"
   EU27_bio7p5  "EU-27 primary energy biomass limited to 7.5 EJ by 2035 and 2050"
   EU27_bio12   "EU-27 primary energy biomass limited to 12 EJ by 2035 and 2050"
+  GLO_bio100   "Global primary energy biomass limited to 100EJ by 2035 and 2050"
 
   EU27_limVRE  "wind and solar limited to linear extrapolation of 2021-2022 growth of generation capacity by 2025 and 2050"
+
+  EU28_CCS250Mt "EU27 and UK max CCS (including DACCS and BECCS) limited to 250 Mt CO2/yr."
+  GLO_CCS2Gt   "Global max CCS (including DACCS and BECCS) limited to 2 Gt CO2/yr."
 /
 qttyTargetActiveScenario(qttyTargetScenario) "current run active quantity scenarios" / %cm_implicitQttyTarget% / 
 $endif.cm_implicitQttyTargetType

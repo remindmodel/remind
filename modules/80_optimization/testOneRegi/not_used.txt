@@ -19,7 +19,6 @@ cm_nash_autoconverge,           switch,     ???
 pm_emiMktTarget_tolerance,      switch,     not needed
 cm_implicitQttyTarget_tolerance,switch,     not needed
 sm_eps,                         scalar,     ???
-pm_emissions0,                  parameter,  ???
 pm_co2eq0,                      parameter,  ???
 pm_capCum0,                     parameter,  ???
 pm_NXagr,                       parameter,  ???
@@ -36,7 +35,6 @@ vm_co2eq,                       variable,   ???
 pm_taxCO2eq,                    parameter,  ???
 cm_emiscen,                     switch,     ???
 pm_nfa_start,                   input,      questionnaire
-vm_dummyBudget,                 input,      questionnaire
 vm_cesIO,                       variable,   ???
 cm_TaxConvCheck,                variable,   ??
 sm_globalBudget_absDev,         input,      ??
@@ -66,3 +64,17 @@ pm_allTargetsConverged,         parameter,  only relevant for nash
 pm_taxCO2eq_anchor_iterationdiff,input,no iterative target adjustment
 pm_taxCO2eq_iter,input,added by codeCheck
 cm_budgetCO2_absDevTol,input,added by codeCheck
+cm_peakBudgYr,input,not needed
+sm_peakbudget_diff_tolerance,input,not needed
+cm_iterative_target_adj,input,not needed
+sm_peakBudgYr_check,input,not needed
+sm_peakbudget_diff,input,not needed
+cm_NDC_target_DevTol,input,added by codeCheck
+pm_NDCEmiTargetDeviation,input,not used
+sm_DptCO2_2_TDpGtC,input,added by codeCheck
+pm_factorRescale_taxCO2Regi_Funneled2,input,added by codeCheck
+pm_budgetDeviation,input,added by codeCheck
+pm_regionalBudget_absDevTol, input,added by codeCheck
+sm_magpieIter,switch,not needed
+sm_magpieIterEnd,switch,not needed
+cm_MAgPIE_Nash,switch,not needed

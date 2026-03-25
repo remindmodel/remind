@@ -11,7 +11,8 @@ equations
 ;
 
 variables
-    v22_costSubsidizeLearningForeign(ttot,all_regi) "Subsidy for learning spillover in foreign regions"
+    vm_costSubsidizeLearning(ttot,all_regi)                        "regional cost of subsidy for learning technologies [T$]"
+    v22_costSubsidizeLearningForeign(ttot,all_regi)                "Subsidy for learning spillover in foreign regions"
 
 ;    
 parameters

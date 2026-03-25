@@ -12,15 +12,15 @@ library(gms)
 library(methods)
 library(piamutils)
 ############################# BASIC CONFIGURATION #############################
-gdx_name     <- "fulldata.gdx"             # name of the gdx
+gdx_name <- "fulldata.gdx" # name of the gdx
 
-if(!exists("source_include")) {
-   # Define arguments that can be read from command line
-   outputdir <- "."
-   readArgs("outputdir", "gdx_name")
+if (!exists("source_include")) {
+  # Define arguments that can be read from command line
+  outputdir <- "."
+  readArgs("outputdir", "gdx_name")
 }
 
-gdx      <- file.path(outputdir,gdx_name)
+gdx <- file.path(outputdir, gdx_name)
 scenario <- getScenNames(outputdir)
 
 configfile <- file.path(outputdir, "config.Rdata")
@@ -29,14 +29,15 @@ load(configfile, envir = envir)
 
 ###############################################################################
 # paths of the reporting files
-remind_reporting_file <- file.path(outputdir,paste0("REMIND_generic_",scenario,".mif"))
+remind_reporting_file <- file.path(outputdir, paste0("REMIND_generic_", scenario, ".mif"))
 
 # produce REMIND reporting *.mif based on gdx information
 message("\n### start generation of mif files at ", round(Sys.time()))
-convGDX2MIF_REMIND2MAgPIE(gdx, file = remind_reporting_file, scenario = scenario)
+extra_data_path <- file.path(outputdir, "reporting")
+convGDX2MIF_REMIND2MAgPIE(gdx, file = remind_reporting_file, scenario = scenario, extraData = extra_data_path)
 
 magpie_reporting_file <- envir$cfg$pathToMagpieReport
-if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
+if (!is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
   message("add MAgPIE reporting from ", magpie_reporting_file)
   tmp_rem <- quitte::as.quitte(remind_reporting_file)
   tmp_mag <- dplyr::filter(quitte::as.quitte(magpie_reporting_file), .data$period %in% unique(tmp_rem$period))
@@ -44,7 +45,7 @@ if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
   sharedvariables <- intersect(tmp_mag$variable, tmp_rem$variable)
   if (length(sharedvariables) > 0) {
     message("The following variables will be dropped from MAgPIE reporting because they are in REMIND reporting: ", paste(sharedvariables, collapse = ", "))
-    tmp_mag <- dplyr::filter(tmp_mag, ! .data$variable %in% sharedvariables)
+    tmp_mag <- dplyr::filter(tmp_mag, !.data$variable %in% sharedvariables)
   }
   # harmonize scenario name from -mag-xx to -rem-xx
   tmp_mag$scenario <- paste0(scenario)

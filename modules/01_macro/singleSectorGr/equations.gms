@@ -21,6 +21,7 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
     vm_cesIO(ttot,regi,"inco") * vm_damageFactor(ttot,regi)
   - vm_Xport(ttot,regi,"good")
   + vm_Mport(ttot,regi,"good") * (1 - pm_tradecostgood(regi) - pm_risk_premium(regi))
+  + vm_biocharRevenue(ttot,regi)
   =g=
     vm_cons(ttot,regi)
   + sum(ppfKap(in), vm_invMacro(ttot,regi,in))
@@ -47,8 +48,8 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
   + vm_costAdjNash(ttot,regi)
   + sum(teEs, vm_esCapInv(ttot,regi,teEs))
   + vm_costpollution(ttot,regi)
-  + pm_totLUcosts(ttot,regi)
-*** agricultural MACs are part of pm_totLUcosts (see module 26_agCosts)
+  + pm_totLUcosts_excl_costFuBio(ttot,regi)
+*** agricultural MACs are part of pm_totLUcosts_excl_costFuBio (see module 26_agCosts)
   + sum(enty$(emiMacSector(enty) AND (NOT emiMacMagpie(enty))), pm_macCost(ttot,regi,enty))
   + vm_costMatPrc(ttot,regi)
   + vm_costEnergySys(ttot,regi)

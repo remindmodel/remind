@@ -186,8 +186,8 @@ $endif.import_h2_EU
 p24_seAggReference(ttot,regi,seAgg) = sum(enty$seAgg2se(seAgg,enty), sum(se2fe(enty,enty2,te), pm_prodFEReference(ttot,regi,enty,enty2,te)));
 p24_FEregiShareInRegiGroup(ttot,ext_regi,regi,seAgg)$(regi_group(ext_regi,regi) and p24_seAggReference(ttot,regi,seAgg)) = p24_seAggReference(ttot,regi,seAgg) / sum(regi2$regi_group(ext_regi,regi2), p24_seAggReference(ttot,regi2,seAgg));
 
-execute_load "input_ref.gdx", p24_demFeForEsReference = vm_demFeForEs.l;
-execute_load "input_ref.gdx", p24_demFeIndSubReference = o37_demFeIndSub;
+Execute_Loadpoint "input_ref.gdx", p24_demFeForEsReference = vm_demFeForEs.l;
+Execute_Loadpoint "input_ref.gdx", p24_demFeIndSubReference = o37_demFeIndSub;
 
 *** calculate regional share of each region in the total of region group ext_regi with respect to FE demand, for chemicals + aviation liquids
 p24_aviationAndChemicalsFE(ttot,regi) = p24_demFeForEsReference(ttot,regi,"fedie","esdie_pass_lo","te_esdie_pass_lo") + !! aviation FE demand
@@ -239,7 +239,7 @@ $ifthen.import_nzero_EU "%cm_import_EU%" == "nzero"
       * 1/3; !! each supplier region provide one-third of total imports
 *** 2030 
     p24_seTradeCapacity("2030",regi,regi2,"seliqsyn") = 
-      ((1.2 / sm_TWa_2_TWh) / p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi","DEU") ) 
+      ((0.3 / sm_TWa_2_TWh) / p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi","DEU") ) 
       * p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi",regi2) 
       * 1/3;
   );
@@ -294,7 +294,7 @@ $ifthen.import_nzero_bio_EU "%cm_import_EU%" == "nzero_bio"
       * 1/3; !! each supplier region provide one-third of total imports
 *** 2030 
     p24_seTradeCapacity("2030",regi,regi2,"seliqsyn") = 
-      ( (0.6 / sm_TWa_2_TWh) / p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi","DEU") )
+      ( (0.3 / sm_TWa_2_TWh) / p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi","DEU") )
       * p24_aviationAndChemicalsFEShareInRegion("2050","EUR_regi",regi2) 
       * 1/3; 
   );

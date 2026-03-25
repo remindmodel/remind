@@ -165,9 +165,12 @@ f04_IO_output("2005",regi,"sehe","fehei","tdhei")$(p04_IO_output_beforeFix_Total
 
 *** end adjustment of f04_IO_output to pm_fedemand values
 
-*** convert data from EJ to TWa
-f04_IO_input(ttot,regi,all_enty,all_enty2,all_te) = f04_IO_input(ttot,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
-f04_IO_output(ttot,regi,all_enty,all_enty2,all_te) = f04_IO_output(ttot,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
+*** convert data from EJ to TWa. Do this for tall (not ttot) because the input data is yearly
+f04_IO_input(tall,regi,all_enty,all_enty2,all_te) = f04_IO_input(tall,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
+f04_IO_output(tall,regi,all_enty,all_enty2,all_te) = f04_IO_output(tall,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
+
+*** copy to new parameter
+pm_IO_output(tall,regi,all_enty,all_enty2,all_te) = f04_IO_output(tall,regi,all_enty,all_enty2,all_te);
 
 *** calculate bio share per fe carrier (only for historically available years)
 pm_secBioShare(ttot,regi,entyFe,sector)$((seAgg2fe("all_seso",entyFe) OR seAgg2fe("all_seliq",entyFe) OR seAgg2fe("all_sega",entyFe)) AND entyFe2Sector(entyFe,sector) and (ttot.val ge 2005 and ttot.val le 2020) and (sum((entySe,all_enty,all_te)$entyFeSec2entyFeDetail(entyFe,sector,all_enty), f04_IO_output(ttot,regi,entySe,all_enty,all_te) ) gt 0)) = 
@@ -175,6 +178,23 @@ pm_secBioShare(ttot,regi,entyFe,sector)$((seAgg2fe("all_seso",entyFe) OR seAgg2f
   /
   sum((entySe,all_enty,all_te)$entyFeSec2entyFeDetail(entyFe,sector,all_enty), f04_IO_output(ttot,regi,entySe,all_enty,all_te) )
 ;
+
+
+*** adjustment of biomass shares in demand sectors specifically for Germany
+*** 1. adjustment of 2020 shares based on AGEB data
+*** 2. assumptions on non-increasing coal shares for after 2020 in industry and buildings
+loop(regi$(sameAs("DEU", regi)),
+*** set 2020 biomass share in LDV transport in Germany to 6% based on AGEB data
+*** https://ag-energiebilanzen.de/daten-und-fakten/auswertungstabellen/
+  pm_secBioShare("2020",regi,"fepet","trans") = 0.06;
+*** set 2020 biomass share in in non-LDV transport in Germany to 5% based on AGEB data
+*** biofuel share in HDV road transport liquids about 7%, translated to total non-LDV liqiuds about 5%
+  pm_secBioShare("2020",regi,"fedie","trans") = 0.05;
+*** set 2020 biomass share in industry solids to 20% based on AGEB data
+  pm_secBioShare("2020",regi,"fesos","indst") = 0.2;
+*** set maximum coal share in buildings after 2020 to 2020 value as residential coal heating is not going to recover once phased out
+  pm_secBioShare(t,regi,"fesos","build")$(t.val gt 2020) = pm_secBioShare("2020",regi,"fesos","build");
+);
 
 display pm_secBioShare;
 
@@ -286,7 +306,20 @@ p04_prodCoupleGlob("pebiolc","seliqbio","bioftcrec","seel") = 0.108;
 p04_prodCoupleGlob("segabio","fegas","tdbiogas","seel")     = -0.05;
 p04_prodCoupleGlob("segafos","fegas","tdfosgas","seel")     = -0.05;
 p04_prodCoupleGlob("pegeo","sehe","geohe","seel")           = -0.3;
-p04_prodCoupleGlob("cco2","ico2","ccsinje","seel")          = -0.005;
+p04_prodCoupleGlob("cco2","ico2","ccsinjeon","seel")        = -0.005;
+p04_prodCoupleGlob("cco2","ico2","ccsinjeoff","seel")       = -0.005; !!DKX assumption correct?
+
+*** Co-Production based on Dorndorf et al (in review)
+p04_prodCoupleGlob("pebiolc","sebiochar","biopyronly","seel") = -0.04; !! 2% of biomass input (Fawzy et al., 2022, https://doi.org/10.1016/j.jclepro.2022.133660)
+p04_prodCoupleGlob("pebiolc","sebiochar","biopyrhe","seel") = -0.04; !! 2% of biomass input (Fawzy et al., 2022, https://doi.org/10.1016/j.jclepro.2022.133660)
+*** biopyrhe: data from certification process according to the European Biochar 345 Certificate (EBC, 2024), 
+*** in line with Sessions et al. (2019) https://doi.org/10.1016/j.biombioe.2019.02.015 and Roberts et al (2010) https://doi.org/10.1021/es902266r
+p04_prodCoupleGlob("pebiolc","sebiochar","biopyrhe","sehe") = 0.58; 
+p04_prodCoupleGlob("pebiolc","sebiochar","biopyrchp","sehe") = 0.27; !! data from certification process according to the European Biochar Certificate (2024)
+p04_prodCoupleGlob("pebiolc","sebiochar","biopyrchp","seel") = 0.10; !! data from certification process according to the European Biochar Certificate (2024)
+p04_prodCoupleGlob("pebiolc","sebiochar","biopyrliq","seel") = -0.2; !! according to Buffi et al (2024) https://doi.org/10.1016/j.enconman.2024.118450
+p04_prodCoupleGlob("pebiolc","sebiochar","biopyrliq","seliqbio") = 1.06; !! Woolf et al. (2014), https://doi.org/10.1021/es500474q
+
 *** use global data for couple products if regional data form IEA are 0
 loop(pc2te(enty,enty2,te,enty3),
     loop(regi,

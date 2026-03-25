@@ -15,10 +15,21 @@
 ***---------------------------------------------------------------------------
 *' @code
 
-* Run only on first iteration to avoid incomplete GDXs
+*run only after 1st iteration due to incomplete reporting otherwise
+
+if(iteration.val gt 1,
+
 Execute_unload 'fulldata_postsolve';
 * Run the climate assessment script. Takes around 2-3m for a single parameter set, including harmonization and infilling
-Execute "Rscript climate_assessment_run.R";
+
+*** Track runtime
+putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",climateAssessmentInterimRun," iteration.val:0;
+
+Execute "Rscript climateAssessmentInterimRun.R";
+
+*** Track runtime
+putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",GAMS," iteration.val:0;
+
 * Read in results
 Execute_Loadpoint 'p15_forc_magicc'  p15_forc_magicc;
 Execute_Loadpoint 'p15_magicc_temp' pm_globalMeanTemperature = pm_globalMeanTemperature;
@@ -63,11 +74,13 @@ $ifthen.cm_magicc_tirf "%cm_magicc_temperatureImpulseResponse%" == "on"
 * thus only compute TIRF after each of the first 10 iterations, then only every fifth iteration. 
 * runtime is ca 30s, so switching on TIRF adds ca 10min to runtime
 if( ((iteration.val le 10) or ( mod(iteration.val,5 ) eq 0)) ,
-    execute "Rscript climate_assessment_temperatureImpulseResponse.R";
+    execute "Rscript climateAssessmentImpulseResponse.R";
     execute_loadpoint 'pm_magicc_temperatureImpulseResponse'  pm_temperatureImpulseResponseCO2 = pm_temperatureImpulseResponse;
 );
 *NOTE the MAGICC results (*.OUT files) are from  the last pulse experiment now, so take care if reading them in after this point.
 $endif.cm_magicc_tirf
+
+)
 
 ***---------------------------------------------------------------------------
 *' __Iterative adjustment of budgets or carbon taxes to meet forcing target__

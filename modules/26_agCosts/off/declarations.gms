@@ -6,11 +6,11 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/26_agCosts/off/declarations.gms
 parameter
-pm_totLUcosts(tall,all_regi)        "agricultural costs (non-biomass)"
+pm_totLUcosts_excl_costFuBio(tall,all_regi)        "agricultural costs (non-biomass)"
 pm_NXagr(tall,all_regi)           "net agricultural exports"
 ;
 
-pm_totLUcosts(tall,all_regi) = 0;
+pm_totLUcosts_excl_costFuBio(tall,all_regi) = 0;
 pm_NXagr(tall,all_regi) = 0;
 
 *** EOF ./modules/26_agCosts/off/declarations.gms

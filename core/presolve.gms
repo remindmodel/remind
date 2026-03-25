@@ -9,13 +9,9 @@
 * defining the CO2 price parameter that sums up the 3 CO2eq tax components
 pm_taxCO2eqSum(ttot,regi) = pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqSCC(ttot,regi);
 
-*JeS* calculate share of transport fuels in liquids
-pm_share_trans(ttot,regi)$(ttot.val ge 2005) = sum(se2fe(entySe,entyFe,te)$(seAgg2se("all_seliq",entySe) AND ( sameas(entyFe,"fepet") OR sameas(entyFe,"fedie"))), vm_prodFe.l(ttot,regi,entySe,entyFe,te)) / (sum(se2fe(entySe,entyFe,te)$seAgg2se("all_seliq",entySe), vm_prodFe.l(ttot,regi,entySe,entyFe,te)) + 0.0000001);
-
 *AJS* we need those in nash
 pm_capCum0(ttot,regi,teLearn)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq 1)) = vm_capCum.l(ttot,regi,teLearn);
 pm_co2eq0(ttot,regi)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq 1)) = vm_co2eq.l(ttot,regi);
-pm_emissions0(ttot,regi,enty)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq 1)) = vm_emiAll.l(ttot,regi,enty);
 
 *LB* moved here from datainput to be updated based on the gdp-path
 *** calculate econometric emission data: p2
@@ -51,10 +47,19 @@ $endif
 
 display p_emineg_econometric;
 
+*** Calculate total FE demand of previous iteration or input gdx.
+*** Required as a weight for penalty terms
+p_demFeSector0(ttot,regi,entySe,entyFe,sector,emiMkt) = vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt);
+
+pm_demFeTotal0(ttot, regi)
+  = sum((entySe,entyFe,sector,emiMkt)$( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ),
+  p_demFeSector0(ttot,regi,entySe,entyFe,sector,emiMkt))
+;
+
 ***--------------------------------------
 *** calculate some emission factors
 ***--------------------------------------
-*** calculate global emission factor
+*** calculate global emission factor (excluding pebiolc)
 loop (emi2fuel(entyPe,enty),
   p_efFossilFuelExtrGlo(entyPe,enty)
   = sum(regi, p_emiFossilFuelExtr(regi,entyPe))
@@ -84,11 +89,150 @@ loop(regi,
 );
 display p_efFossilFuelExtr;
 
+
+***--------------------------------------
+***    MAgPIE coupling: run MAgPIE
+***--------------------------------------
+
+*** Decide whether MAgPIE should be executed. Also triggers the update of MAgPIE data in multiple locations.
+if(magpieIter(iteration) AND cm_MAgPIE_Nash eq 1,
+    sm_updateMagpieData = 1; !! Run MAgPIE in this Nash iteration
+else
+    sm_updateMagpieData = 0; !! Don't run MAgPIE in this Nash iteration
+);
+
+*** Run MAgPIE
+if (sm_updateMagpieData eq 1,
+*** Track runtime: done in magpie.R
+*** Temporarily change numeric round format (nr) and number of decimals (nd) of the
+*** outpt of the put_utility such that the arguments passed to magpie.R have integer format
+  sm_tmp  = logfile.nr;
+  sm_tmp2 = logfile.nd;
+  logfile.nr = 1;
+  logfile.nd = 0;
+  sm_magpieIter = sm_magpieIter + 1;
+  put_utility  "exec.checkErrorLevel" / "Rscript magpie.R " sm_magpieIter " " ord(iteration);
+  logfile.nr = sm_tmp;
+  logfile.nd = sm_tmp2;
+*** Track runtime
+  putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",GAMS," iteration.val:0;
+*** In coupled runs overwrite pebiolc production from look-up table with actual MAgPIE values
+*** Read production of 2nd gen. purpose grown bioenergy from MAgPIE (given to MAgPIE from previous Remind run)
+  Execute_Loadpoint 'magpieData.gdx' pm_pebiolc_demandmag;
+);
+
+*** At the beginning of each Nash iteration reset pm_macBaseMagpie to start values (from lookup table or from MAgPIE),
+*** since it gets changed by calculations further down in each Nash iteration, regardless of whether MAgPIE runs or not.
+if (sm_magpieIter gt 0,
+*** MAgPIE has run once at least: the start values for pm_macBaseMagpie come from the last MAgPIE iteration
+  Execute_Loadpoint 'magpieData.gdx' f_macBaseMagpie_coupling;
+  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005)  = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
+  p_co2lucSub(ttot,regi,emiMacMagpieCO2Sub(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpieCO2Sub);
+*** Biomass emission factor is set to zero after MAgPIE has run at least one, since biomass emissions are included in the emissions imported above. 
+  p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0;
+*** In coupling mode LU emissions are abated in MAgPIE (moved here from core/datainput.gms)
+  pm_macSwitch(ttot,regi,enty)$emiMacMagpie(enty) = 0;
+else 
+*** MAgPIE has not run (and might never run): the start values for pm_macBaseMagpie come from input data file
+  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
+);
+
+display p_efFossilFuelExtr;
+
+*** Moved here from core/datainput.gms, because pm_macSwitch is changed above after first MAgPIE iteration
+*** An alternative to the approach below could be to introduce a new value for c_macswitch that only deactivates the LU MACs
+*** GA: Use long term (2050) pm_macSwitch to set p_macCostSwitch, as some MACCs
+*** are turned off in the short term 
+pm_macSwitch(ttot,regi,"co2cement_process") =0 ;
+p_macCostSwitch(enty)=pm_macSwitch("2050","USA",enty);
+
+*** Code moved here from core/preloop.gms
+*** The N2O emissions generated during biomass production in agriculture (in MAgPIE)
+*** are represented in REMIND by applying the n2obio emission factor (zero in coupled runs)
+*** in q_macBase. In standaolne runs the resulting emissions need to be subtracted (see below)
+*** from the exogenous emission baseline read from MAgPIE, since the baseline already implicitly 
+*** includes the N2O emissions from biomass. In q_macBase in core/equations.gms the N2O 
+*** emissions resulting from the actual biomass demand in REMIND are then added again. 
+*** In case some inconsistencies between pm_pebiolc_demandmag and pm_macBaseMagpie lead to
+*** negative values, set the value to 0 instead, since negative values may lead to 
+*** infeasibilities.
+display pm_macBaseMagpie;
+pm_macBaseMagpie(t,regi,"n2ofertin") = max(0, pm_macBaseMagpie(t,regi,"n2ofertin") - (p_efFossilFuelExtr(regi,"pebiolc","n2obio") * pm_pebiolc_demandmag(t,regi)));
+display pm_macBaseMagpie;
+
+$IFTHEN.scaleEmiHist %c_scaleEmiHistorical% == "on"
+*** Re-scale MAgPie reference CH4 and N2O emissions to be inline with eurostat
+*** data (depending on the region MAgPIE non-CO2 GHG emissions can be up to 
+*** twice as high as historic emissions). This involves different emission variables in
+*** pm_macBaseMagpie and additionall agwaste variables from p_macBaseExo
+
+*** Since this part is repeated in each Nash iteration and it changes p_macBaseExo, reset p_macBaseExo to initial values.
+p_macBaseExo(ttot,regi,emiMacExo(enty))$(ttot.val ge 2005) = f_macBaseExo(ttot,regi,emiMacExo,"%cm_LU_emi_scen%");
+display p_macBaseExo;
+
+*** Define rescale factor for MAgPIE CH4 emissions
+p_aux_scaleEmiHistorical_ch4(regi)$p_histEmiSector("2005",regi,"ch4","agriculture","process") =
+  (p_histEmiSector("2005",regi,"ch4","agriculture","process")+p_histEmiSector("2005",regi,"ch4","lulucf","process")) !!no rescaling needed - REMIND-internal unit is Mt CH4
+    /
+  (sum(enty$emiMacMagpieCH4(enty), pm_macBaseMagpie("2005",regi,enty)) + p_macBaseExo("2005",regi,"ch4agwaste"));
+*** Rescale CH4 emissions so that all subtypes add up to the historic values
+*** pm_macBaseMagpie
+pm_macBaseMagpie(ttot,regi,enty)$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_ch4(regi) AND emiMacMagpieCH4(enty)) =
+  pm_macBaseMagpie(ttot,regi,enty) * p_aux_scaleEmiHistorical_ch4(regi);
+*** p_macBaseExo
+p_macBaseExo(ttot,regi,"ch4agwaste")$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_ch4(regi)) =
+  p_macBaseExo(ttot,regi,"ch4agwaste") * p_aux_scaleEmiHistorical_ch4(regi);
+
+*** Define rescale factor for MAgPIE N2O emissions
+p_aux_scaleEmiHistorical_n2o(regi)$p_histEmiSector("2005",regi,"n2o","agriculture","process") =
+  p_histEmiSector("2005",regi,"n2o","agriculture","process")/( 44 / 28) !! rescaling to Mt N (internal unit for N2O emissions), since eurostat uses 298 to convert N2O to CO2eq
+    /
+  (sum(enty$emiMacMagpieN2O(enty), pm_macBaseMagpie("2005",regi,enty)) + p_macBaseExo("2005",regi,"n2oagwaste"));
+*** Rescale N2O emissions so that all subtypes add up to the historic values
+*** pm_macBaseMagpie
+pm_macBaseMagpie(ttot,regi,enty)$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_n2o(regi) AND emiMacMagpieN2O(enty)) =
+  pm_macBaseMagpie(ttot,regi,enty) * p_aux_scaleEmiHistorical_n2o(regi);
+*** p_macBaseExo
+p_macBaseExo(ttot,regi,"n2oagwaste")$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_n2o(regi)) =
+  p_macBaseExo(ttot,regi,"n2oagwaste") * p_aux_scaleEmiHistorical_n2o(regi);
+
+display pm_macBaseMagpie;
+$ENDIF.scaleEmiHist
+
+!! all net negative co2luc
+p_macBaseMagpieNegCo2(t,regi) = pm_macBaseMagpie(t,regi,"co2luc")$(pm_macBaseMagpie(t,regi,"co2luc") < 0);
+
+*** Rescale agricultural emissions baseline if c_agricult_base_shift switch is activated
+$IFTHEN.agricult_base_shift not "%c_agricult_base_shift%" == "off"
+
+p_macBaseMagpie_beforeShift(t,regi,enty)=pm_macBaseMagpie(t,regi,enty);
+*** gradual phase-in of rescaling until 2040
+p_agricult_shift_phasein(t) = 0;
+p_agricult_shift_phasein("2025") = 0.25;
+p_agricult_shift_phasein("2030") = 0.5;
+p_agricult_shift_phasein("2035") = 0.75;
+p_agricult_shift_phasein(t)$(t.val ge 2040) = 1;
+
+*** rescaling all ext_regi provided by c_agricult_base_shift
+loop((ext_regi)$(p_agricult_base_shift(ext_regi)), 
+ loop(regi$regi_groupExt(ext_regi,regi),
+
+    pm_macBaseMagpie(t,regi,enty)$( emiMac2sector(enty,"agriculture","process","ch4") 
+                                    OR emiMac2sector(enty,"agriculture","process","n2o"))
+    = p_macBaseMagpie_beforeShift(t,regi,enty)
+      * (1 + p_agricult_shift_phasein(t)
+           * p_agricult_base_shift(ext_regi));
+
+  );
+);
+
+
+display pm_macBaseMagpie;
+$ENDIF.agricult_base_shift  
+
 ***--------------------------------------
 *** Non-energy emissions reductions (MAC)
 ***--------------------------------------
-*** scale CO2 luc baselines from MAgPIE to EDGAR v4.2 2005 data in REMIND standalone runs: linear, phase out within 20 years
-***$if %cm_MAgPIE_coupling% == "off" pm_macBaseMagpie(ttot,regi,"co2luc")$(ttot.val lt 2030) = pm_macBaseMagpie(ttot,regi,"co2luc") + ( (p_macBase2005(regi,"co2luc") - pm_macBaseMagpie("2005",regi,"co2luc")) * (1-(ttot.val - 2005)/20) );
 
 *** make sure that minimum CO2 luc emissions given in p_macPolCO2luc do not exceed the baseline
 loop(regi,
@@ -284,6 +428,10 @@ pm_macAbatLev(ttot,regi,enty)$( ttot.val gt 2015 )
 pm_macAbatLev("2015",regi,"co2luc") = 0;
 pm_macAbatLev("2020",regi,"co2luc") = 0;
 
+*** GA: Modify pm_macAbatLev with pm_macSwitch so the limiting works also 
+*** when abatement is being phased in
+pm_macAbatLev(ttot,regi,enty)$( ttot.val ge 2005 ) = pm_macAbatLev(ttot,regi,enty)*pm_macSwitch(ttot,regi,enty);
+
 *** Limit MAC abatement level increase to sm_macChange (default: 5 % p.a.)
 loop (ttot$( ttot.val ge 2015 ),
   pm_macAbatLev(ttot,regi,MacSector(enty))
@@ -334,5 +482,11 @@ p_macPE(ttot,regi,"pegas")$(ttot.val gt 2005) = s_MtCH4_2_TWa * 0.5 * (v_macBase
 *** This is necessary as hydrocarbon FE demand for CDR sector may be zero or small and then leads to solver issues
 v_shSeFeSector.l(ttot,regi,entySe,"fedie","CDR","ETS") =  v_shSeFeSector.l(ttot,regi,entySe,"fedie","trans","ES");
 v_shSeFeSector.l(ttot,regi,entySe,"fegas","CDR","ETS") =  v_shSeFeSector.l(ttot,regi,entySe,"fegas","indst","ETS");
+
+*** Save values for tracking across Nash iterations
+o_pm_pebiolc_demandmag(iteration,ttot,regi)  = pm_pebiolc_demandmag(ttot,regi);
+o_pm_macBaseMagpie(iteration,ttot,regi,enty) = pm_macBaseMagpie(ttot,regi,enty);
+o_pm_macSwitch(iteration,ttot,regi,enty)     = pm_macSwitch(ttot,regi,enty);
+o_p_efFossilFuelExtr_n2obio(iteration,regi)  = p_efFossilFuelExtr(regi,"pebiolc","n2obio");
 
 *** EOF ./core/presolve.gms

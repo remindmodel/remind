@@ -56,10 +56,10 @@ $batinclude "./modules/include.gms" bounds
 $include    "./core/presolve.gms";
 $batinclude "./modules/include.gms" presolve
 
-*cb 20140305 Fixing information (.L, .FX and .M) from run to be fixed to is read in from input_ref.gdx (t < cm_startyear)
-*cb 20140305 happens via submit.R script (files levs.gms, fixings.gms, margs.gms)
-*cb 20140305 submit.R looks for the unique string in the following line and replaces it with the offlisting include into the full.gms at this position
-***cb20140305readinpositionforfinxingfiles
+*** Fixing information (.L, .FX and .M) from run to be fixed to is read in from input_ref.gdx (t < cm_startyear)
+*** happens via submit.R script (files levs.gms, fixings.gms, margs.gms)
+*** submit.R looks for the unique string in the following line and replaces it with the offlisting include into the full.gms at this position
+***cb20140305readinpositionforfixingfiles
 
 *** In case of fixing, fix to prices from input_ref.gdx (t < cm_startyear). 
 *** Parameters are not automatically treated by the fixing mechanism above.
@@ -80,6 +80,8 @@ if (cm_nash_mode eq 1,
       ;
 );
 
+*** For each Nash iteration track runtime of solution (all regions and soliter)
+putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",solve," iteration.val:0;
 
 o_modelstat = 100;
 loop(sol_itr$(sol_itr.val <= cm_solver_try_max),
@@ -87,6 +89,9 @@ loop(sol_itr$(sol_itr.val <= cm_solver_try_max),
 $batinclude "./modules/include.gms" solve
     )
 );  !! end of sol_itr loop, when o_modelstat is not equal to 2
+
+*** Track runtime
+putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",GAMS," iteration.val:0;
 
 ***---------------------------------------------------------
 ***     Track of changes between iterations

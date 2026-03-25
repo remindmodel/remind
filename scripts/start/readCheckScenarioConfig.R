@@ -16,15 +16,16 @@
 #' @author Oliver Richters
 #' @return list with scenario config content
 readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE, fillWithDefault = FALSE) {
-  coupling <- if (grepl("scenario_config_coupled", filename)) "MAgPIE" else FALSE
+  coupling <- if (grepl("scenario_config_magpie", filename)) "MAgPIE" else FALSE
   if (testmode) {
     cfg <- suppressWarnings(gms::readDefaultConfig(remindPath))
   } else {
     cfg <- gms::readDefaultConfig(remindPath)
   }
   scenConf <- read.csv2(filename, stringsAsFactors = FALSE, na.strings = "", comment.char = "#",
-                                  strip.white = TRUE, blank.lines.skip = TRUE, check.names = FALSE)
+                        strip.white = TRUE, blank.lines.skip = TRUE, check.names = FALSE)
   scenConf <- scenConf[! is.na(scenConf[1]), ]
+  colnames(scenConf) <- make.unique(colnames(scenConf), sep = ".")
   rownames(scenConf) <- scenConf[, 1]
   scenConf[1] <- NULL
   colduplicates <- grep("\\.[1-9]$", colnames(scenConf), value = TRUE)
@@ -146,10 +147,9 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   # check column names
   knownColumnNames <- c(names(path_gdx_list), "start", "model", "copyConfigFrom")
   if (coupling %in% "MAgPIE") {
-    knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
-                          "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
-                          "magpie_empty", "var_luc","cfg_mag$gms$s15_elastic_demand","cfg_mag$gms$s32_npi_ndc_reversal",
-                          "cfg_mag$gms$s35_npi_ndc_reversal")
+    knownColumnNames <- c(knownColumnNames, "magpie_scen",
+                          "no_ghgprices_land_until", "sbatch", "path_mif_ghgprice_land", "max_iterations",
+                          "magpie_empty", "continueFromHere", "magpieIter")
     # identify MAgPIE switches by "cfg_mag" and "scenario_config"
     knownColumnNames <- c(knownColumnNames, grep("cfg_mag|scenario_config", names(scenConf), value = TRUE))
   } else { # not a coupling config
@@ -192,13 +192,17 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_co2_tax_spread" = "Use cm_taxCO2_regiDiff instead, see https://github.com/remindmodel/remind/pull/1874",
        "cm_co2_tax_hist" = "Rename to cm_taxCO2_historical, see https://github.com/remindmodel/remind/pull/1874",
        "cm_year_co2_tax_hist" = "Rename to cm_taxCO2_historicalYr, see https://github.com/remindmodel/remind/pull/1874",
-       "cm_CO2priceRegConvEndYr" = "Use cm_taxCO2_regiDiff_endYr instead, see https://github.com/remindmodel/remind/pull/1874",
+       "cm_CO2priceRegConvEndYr" = "Specify settings instead via cm_taxCO2_regiDiff_convergence, see https://github.com/remindmodel/remind/pull/2117",
+       "cm_taxCO2_regiDiff_endYr" = "Specify settings instead via cm_taxCO2_regiDiff_convergence, see https://github.com/remindmodel/remind/pull/2117",
+       "cm_taxCO2_startYearValue" = "Specify settings instead via cm_taxCO2_regiDiff_startyearValue, see https://github.com/remindmodel/remind/pull/2117",
        "cm_year_co2_tax_hist" = "Use cm_taxCO2_historicalYr instead, see https://github.com/remindmodel/remind/pull/1874",
        "cm_co2_tax_hist" = "Use cm_taxCO2_historical instead, see https://github.com/remindmodel/remind/pull/1874",
        "cm_taxCO2inc_after_peakBudgYr" = "Use cm_taxCO2_IncAfterPeakBudgYr instead, see https://github.com/remindmodel/remind/pull/1874",
        "cm_GDPscen" = "Use cm_GDPpopScen instead, see https://github.com/remindmodel/remind/pull/1973",
        "cm_POPscen" = "Use cm_GDPpopScen instead, see https://github.com/remindmodel/remind/pull/1973",
        "cm_DiscRateScen" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/2001",
+       "cm_transpGDPscale" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/2092",
+       "var_luc" = "Deleted, not used anymore. Land-use CO2 emissions are always RAW now. See https://github.com/remindmodel/remind/pull/2255",
      NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       msg <- paste0("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
@@ -218,7 +222,12 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
       message("\nAutomated checks did not understand these columns in ", basename(filename), ":")
       message("  ", paste(unknownColumnNames, collapse = ", "))
       if (isFALSE(coupling)) message("These are no cfg or cfg$gms switches found in main.gms and default.cfg.")
-      if (coupling %in% "MAgPIE") message("Maybe you specified REMIND switches in coupled config, which does not work.")
+      if (coupling %in% "MAgPIE") {
+        message("Maybe you specified REMIND switches in coupled config, which does not work.")
+        if (any(grepl("cfg$gms", unknownColumnNames, fixed = TRUE))) {
+          message("MAgPIE switches need to start with 'cfg_mag$gms', not 'cfg$gms'.")
+        }
+      }
       message("If you find false positives, add them to knownColumnNames in scripts/start/readCheckScenarioConfig.R.\n")
       if (length(unknownColumnNames) > 0) {
         if (testmode) {

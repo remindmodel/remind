@@ -5,6 +5,11 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/datainput.gms
+
+*** default conversion for energy services
+pm_fe2es(ttot,regi,teEs) = 1;
+pm_shFeCes(ttot,regi,enty,in,teEs) = 0;
+
 Parameter
   p35_cesdata_sigma(all_in)  "substitution elasticities"
   /
@@ -20,13 +25,6 @@ p35_esCapCost(tall,all_regi,all_GDPpopScen,all_demScen,EDGE_scenario_all,all_teE
 /
 $ondelim
 $include "./modules/35_transport/edge_esm/input/f35_esCapCost.cs4r"
-$offdelim
-/
-
-p35_transportGDPshare(ttot,all_regi) "transportation share in GDP [percentage]"
-/
-$ondelim
-$include "./modules/35_transport/edge_esm/input/f35_transportGDPshare.cs4r"
 $offdelim
 /
 

@@ -13,49 +13,50 @@ library(quitte)
 options("magclass.verbosity" = 1)
 
 ############################# BASIC CONFIGURATION #############################
-if(!exists("source_include")) {
+if (!exists("source_include")) {
   outputdir <- "output/default_2021-03-18_18.16.40/"
   readArgs("outputdir")
 }
 
 load(paste0(outputdir, "/config.Rdata"))
-gdx      <- file.path(outputdir,"fulldata.gdx")
-gdx_ref  <- file.path(outputdir,"input_refpolicycost.gdx")
-if(!file.exists(gdx_ref)) gdx_ref <- NULL
+gdx <- file.path(outputdir, "fulldata.gdx")
+gdx_ref <- file.path(outputdir, "input_refpolicycost.gdx")
+if (!file.exists(gdx_ref)) gdx_ref <- NULL
 rds <- paste0(outputdir, "/report.rds")
-runstatistics <- paste0(outputdir,"/runstatistics.rda")
+runstatistics <- paste0(outputdir, "/runstatistics.rda")
 resultsarchive <- "/p/projects/rd3mod/models/results/remind"
 ###############################################################################
 
-mif <- file.path(outputdir,paste0("REMIND_generic_",cfg$title,".mif"))
+mif <- file.path(outputdir, paste0("REMIND_generic_", cfg$title, ".mif"))
 
-if(file.exists(mif)) {
+if (file.exists(mif)) {
   report <- read.quitte(mif)
 } else {
-  report <- convGDX2MIF(gdx,gdx_ref,scenario=cfg$title)
+  extra_data_path <- file.path(outputdir, "reporting")
+  report <- convGDX2MIF(gdx, gdx_ref, scenario = cfg$title, extraData = extra_data_path)
 }
 
 if (!is.quitte(report)) report <- as.quitte(report)
-q<-report
-if(all(is.na(q$value))) stop("No values in reporting!")
-saveRDS(q,file=rds)
+q <- report
+if (all(is.na(q$value))) stop("No values in reporting!")
+saveRDS(q, file = rds)
 
-if(file.exists(runstatistics) & dir.exists(resultsarchive)) {
+if (file.exists(runstatistics) & dir.exists(resultsarchive)) {
   stats <- list()
   load(runstatistics)
-  if(is.null(stats$id)) {
-    # create an id if it does not exist (which means that statistics have not 
+  if (is.null(stats$id)) {
+    # create an id if it does not exist (which means that statistics have not
     # been saved to the archive before) and save statistics to the archive
-    message("No id found in runstatistics.rda. Calling lucode2::runstatistics() to create one.") 
+    message("No id found in runstatistics.rda. Calling lucode2::runstatistics() to create one.")
     stats <- lucode2::runstatistics(file = runstatistics, submit = cfg$runstatistics)
-    message("Created the id ",stats$id)
-    # save stats locally (including id) otherwise it would generate a new id (and 
+    message("Created the id ", stats$id)
+    # save stats locally (including id) otherwise it would generate a new id (and
     # resubmit the results and the statistics) next time rds_report is executed
-    save(stats, file=runstatistics, compress="xz")
+    save(stats, file = runstatistics, compress = "xz")
   }
-  
+
   # Save report to results archive
-  saveRDS(q,file=paste0(resultsarchive,"/",stats$id,".rds"))
+  saveRDS(q, file = paste0(resultsarchive, "/", stats$id, ".rds"))
   cwd <- getwd()
   setwd(resultsarchive)
   system("find -type f -name '1*.rds' -printf '%f\n' | sort > fileListForShinyresults")

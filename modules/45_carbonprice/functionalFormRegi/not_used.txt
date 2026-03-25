@@ -1,0 +1,40 @@
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
+name,type,reason
+sm_c_2_co2,input,added by codeCheck
+sm_D2005_2_D2017,input,added by codeCheck
+sm_budgetCO2eqGlob,input,added by codeCheck
+sm_globalBudget_absDev,input,added by codeCheck
+vm_co2eq,input,added by codeCheck
+vm_emiAll,input,added by codeCheck
+vm_emiFgas,input,added by codeCheck
+vm_demFeSector,input,added by codeCheck
+pm_shPPPMER,input,added by codeCheck
+fm_taxCO2eqHist,input,added by codeCheck
+pm_taxCO2eq_anchor_iterationdiff,input,added by codeCheck
+pm_pop,input,added by codeCheck
+pm_gdp,input,added by codeCheck
+pm_macSwitch,input,added by codeCheck
+pm_emifac,input,added by codeCheck
+pm_budgetCO2eq,input,added by codeCheck
+pm_actualbudgetco2,input,added by codeCheck
+pm_ttot_val,input,added by codeCheck
+pm_ttot_2_tall,input,added by codeCheck
+cm_iteration_max,input,added by codeCheck
+cm_emiscen,input,added by codeCheck
+cm_expoLinear_yearStart,input,added by codeCheck
+cm_taxCO2_regiDiff,input,added by codeCheck
+cm_taxCO2_interpolation,input,added by codeCheck
+cm_carbonprice_temperatureLimit,input,added by codeCheck
+pm_consPC,input,added by codeCheck
+pm_prtp,input,added by codeCheck
+pm_globalMeanTemperature,input,added by codeCheck
+pm_temperatureImpulseResponseCO2,input,added by codeCheck
+sm_peakBudgYr_check,input,added by codeCheck
+sm_peakbudget_diff,input,added by codeCheck
+pm_NDCEmiTargetDeviation,input,added by codeCheck
+pm_GDPGross,input,added by codeCheck

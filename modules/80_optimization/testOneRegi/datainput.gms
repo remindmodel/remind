@@ -23,7 +23,6 @@ $include "./modules/80_optimization/testOneRegi/input/prices_NASH.inc";
 pm_capCumForeign(ttot,regi,teLearn)$(ttot.val ge 2005) = 0;
 pm_cumEff(t,regi,in) = 0;
 pm_co2eqForeign(t,regi) = 0;
-pm_emissionsForeign(t,regi,enty) = 0;
 pm_SolNonInfes(regi) = 1; !! assume the starting point came from a feasible solution 
 pm_fuExtrForeign(t,regi,enty,rlf) = 0;
 

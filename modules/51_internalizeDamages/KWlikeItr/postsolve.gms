@@ -26,7 +26,7 @@ p51_sccParts(tall,tall2,regi2)$((tall.val ge 2010) and (tall.val le 2150) and (t
 	* pm_sccIneq(tall2,regi2)
 ;
 
-p51_scc(tall)$((tall.val ge 2020) and (tall.val le 2150)) = 1000 *
+p51_scc(tall)$((tall.val ge 2025) and (tall.val le 2150)) = 1000 *
     sum(regi2,
     sum(tall2$( (tall2.val ge tall.val) and (tall2.val le (tall.val + cm_damages_SccHorizon))),   !! add this for limiting horizon of damage consideration: and (tall2.val le 2150)
 	p51_sccParts(tall,tall2,regi2)

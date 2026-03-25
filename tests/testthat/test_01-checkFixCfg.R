@@ -18,7 +18,6 @@ test_that("checkFixCfg works", {
     "c_macscen" = "-1",
     "cm_keep_presolve_gdxes" = "1.1",
     "cm_startyear" = "1985",
-    "cm_netZeroScen" = "NöööGFS_v4",
     "cm_rcp_scen" = "apocalypse",
     "c_testOneRegi_region" = "LOONG",
     "c_shGreenH2" = "1.5",

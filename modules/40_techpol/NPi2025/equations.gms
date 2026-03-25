@@ -8,7 +8,11 @@
 
 *' @equations
 
-
+*------------------------------------------------------------------------------------
+*------------------------------------------------------------------------------------
+***                                Capacity Targets
+*------------------------------------------------------------------------------------
+*------------------------------------------------------------------------------------
 
 ***am minimum targets for certain technologies
 q40_ElecBioBound(t,regi)$(t.val gt 2025)..
@@ -22,17 +26,52 @@ q40_windBound(t,regi)$(t.val gt 2025 AND p40_TechBound(t,regi,"wind") gt 0)..
     =g= p40_TechBound(t,regi,"wind") * 0.001
 ;
 
-  q40_FE_RenShare(t,regi)$(t.val ge 2025 AND sameas(regi,"EUR"))..
-***cb for EUR, renewable SE must be greater than lowCarbonshare times total SE
-  ( sum(pe2se(enty,enty2,te)$(sameas(enty,"pegeo") OR sameas(enty,"pehyd") OR sameas(enty,"pewin")  OR sameas(enty,"pesol")  OR sameas(enty,"pebiolc") OR sameas(enty,"pebios") OR sameas(enty,"pebioil")), vm_prodSe(t,regi,enty,enty2,te))
-  + sum(pc2te(enty,enty2,te,entySe(enty3))$peBio(enty),
-      max(0, pm_prodCouple(regi,enty,enty2,te,enty3)) * vm_prodSe(t,regi,enty,enty2,te))
+*------------------------------------------------------------------------------------
+*------------------------------------------------------------------------------------
+***                                Renewable Share Targets
+*------------------------------------------------------------------------------------
+*------------------------------------------------------------------------------------
+
+
+*** Minimum shares of renewable energy should be met in target year based on renewable energy share targets of NPI scenario.
+*** Constraint currently supports the following target types (RenShareTargetType):
+*** 1.  RenElec                     "renewable share in secondary energy electricity"
+*** 2.  NonBioRenElec               "non-biomass renewable share in secondary energy electricity"
+*** 3.  NonFossilElec               "non-fossil share in secondary energy electricity"
+*** 4.  RenFE                       "renewable share in total final energy"
+*** Note that for 4. we approximately use the renewable share in total secondary energy instead of final energy to reduce the complexity of the implementation.
+*** Moreover, we count hydrogen as a renewable source by assumption since most hydrogen in REMIND is of renewable origin.
+q40_RenShare(t,regi,RenShareTargetType)$(p40_RenShareTargets(t,regi,RenShareTargetType)
+                                          AND cm_RenShareTargets eq 1)..
+  sum(TargetType2ShareEnty(RenShareTargetType,enty),
+    sum(TargetType2TotalEnty(RenShareTargetType,enty2),
+*** Renewable SE production of output SE carrier (enty2) as main product
+      sum(en2en(enty,enty2,te),
+        vm_prodSe(t,regi,enty,enty2,te)
+      )
+      +
+*** Renewable SE production of output SE carrier (enty2) as second product
+      sum(pc2te(enty,enty3,te,enty2),
+        max(0, pm_prodCouple(regi,enty,enty3,te,enty2))
+        * vm_prodSe(t,regi,enty,enty3,te)
+      ) 
+    )
   )
-    =g= sum(iso_regi$map_iso_regi(iso_regi,regi),p40_FE_RenShare(t,iso_regi))*
-  ( sum(pe2se(enty,enty2,te),       vm_prodSe(t,regi,enty,enty2,te))
-  + sum(pc2te(enty,enty2,te,entySe(enty3)),
-     max(0, pm_prodCouple(regi,enty,enty2,te,enty3)) * vm_prodSe(t,regi,enty,enty2,te))
-  );
+  =g=
+  p40_RenShareTargets(t,regi,RenShareTargetType)
+  * sum(TargetType2TotalEnty(RenShareTargetType,enty2),
+*** Total SE production of SE output SE carrier (enty2) as main product
+      sum(en2en(enty,enty2,te),
+        vm_prodSe(t,regi,enty,enty2,te)
+      )
+      +
+*** Total SE production of SE output SE carrier (enty2) as second product
+      sum(pc2te(enty,enty3,te,enty2),
+        max(0, pm_prodCouple(regi,enty,enty3,te,enty2)) 
+        * vm_prodSe(t,regi,enty,enty3,te)
+      )
+    )
+  ;
 
 *' @stop
 

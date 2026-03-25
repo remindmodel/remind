@@ -12,7 +12,7 @@ grep -q "^$caldir/$" .gitignore || echo "$caldir/" >> .gitignore
 
 cd "$caldir"
 
-git init > /dev/null
+git init -b main > /dev/null
 cp ../scripts/utils/set-local-calibration/collect_calibration ./
 cp ../scripts/utils/set-local-calibration/gitignore .gitignore
 chmod u+x collect_calibration
@@ -24,10 +24,10 @@ cp ../scripts/utils/set-local-calibration/pre-commit .git/hooks
 cp ../scripts/utils/set-local-calibration/post-commit .git/hooks
 chmod u+x .git/hooks/pre-commit .git/hooks/post-commit
 
-cd "$OLDPWD"
-
 # create additional .Rprofile (sourced through default .Rprofile)
 echo -e "options(remind_repos = c(\n" \
 	"    getOption(\"remind_repos\"),\n" \
-	"    stats::setNames(list(x = NULL), \"$PWD/$caldir/\")))" \
-	> calibration_results/.Rprofile_calibration_results
+	"    stats::setNames(list(x = NULL), \"$PWD\")))" \
+	> .Rprofile_calibration_results
+
+cd "$OLDPWD"

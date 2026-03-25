@@ -5,13 +5,13 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-create_input_for_45_carbonprice_exogenous<-function(gdx){
+create_input_for_45_carbonprice_exogenous <- function(gdx, realization = "exogenous") {
  
   library(luplot,quietly=TRUE,warn.conflicts =FALSE)
   library(gms,quietly=TRUE,warn.conflicts =FALSE)
   require(remind2,quietly = TRUE,warn.conflicts =FALSE)
- 
-  p_fpath <- "./modules/45_carbonprice/exogenous/input/p45_tau_co2_tax.inc"
+
+  p_fpath <- paste0("./modules/45_carbonprice/", realization, "/input/p45_tau_co2_tax.inc")
  
   # ---- Read data ----
  

@@ -6,166 +6,92 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/46_carbonpriceRegi/netZero/postsolve.gms
 
-if(sameas("%carbonprice%","none"), p46_startInIteration = 0);
-
-if(ord(iteration) > p46_startInIteration, !!start only after 10 iterations, so to already have some stability of the overall carbon price trajectory
-
-p46_emi_2020(regi) = vm_co2eq.l("2020",regi) * sm_c_2_co2 * 1000;
-
-***define offsets
-p46_offset(all_regi) = 0;
-$ifthen.offsets "%cm_netZeroScen%" == "ELEVATE2p3"
-  p46_offset(nz_reg)$(sameas(nz_reg, "EUR")) = 100;
+if(sameAs("%carbonprice%","none"), p46_startInIteration = 1);
+if(iteration.val = p46_startInIteration, !! let the carbon price stabilise over 10 iterations before adding regional markups
+*' Define initial values for the regional carbon price markup designed to reach net-zero targets.
+  p46_taxCO2eqRegiPeak(regi) = 100 * sm_DptCO2_2_TDpGtC; !! [$/tCO2 converted to T$/GtC]
+  p46_taxCO2eqRegi_iter(iteration,t,regi) = 0; !! initialisation required for compilation
+);
 
 
-  Execute_Loadpoint 'input_bau' p46_ref_co2eq = vm_co2eq.l;
-*** Coverage shares are calculated using PBL's Net-Zero Calculator based on https://zerotracker.net/
-*** (methodology and more information at https://zerotracker.net/methodology) and further
-*** adaptations based on Climate Action Tracker information, literature or expert opinion.
-  p46_offset(nz_reg)$(sameas(nz_reg, "LAM")) = (1 - 0.68) * p46_ref_co2eq("2050", nz_reg) * sm_c_2_co2 * 1000;
-  p46_offset(nz_reg)$(sameas(nz_reg, "MEA")) = (1 - 0.40) * p46_ref_co2eq("2055", nz_reg) * sm_c_2_co2 * 1000;
-  p46_offset(nz_reg)$(sameas(nz_reg, "NEU")) = (1 - 0.83) * p46_ref_co2eq("2055", nz_reg) * sm_c_2_co2 * 1000;
-  p46_offset(nz_reg)$(sameas(nz_reg, "OAS")) = (1 - 0.88) * p46_ref_co2eq("2055", nz_reg) * sm_c_2_co2 * 1000;
-  p46_offset(nz_reg)$(sameas(nz_reg, "SSA")) = (1 - 0.58) * p46_ref_co2eq("2055", nz_reg) * sm_c_2_co2 * 1000;
-  p46_offset(nz_reg)$(sameas(nz_reg, "REF")) = (1 - 0.83) * p46_ref_co2eq("2060", nz_reg) * sm_c_2_co2 * 1000;
+if(iteration.val > p46_startInIteration, !! adapt carbon price markup depending on previous iteration reaching net-zero targets
+*** ---------------------------------------------------------------------------
+*' #### 1. Calculating emissions
+*** ---------------------------------------------------------------------------
+*' Define reference emissions:
+*'   - 2025 serves to normalise regional emissions and to allow for incomplete net-zero targets with `cm_netZeroPercent`
+*'   - the baseline run indicates the emissions of countries without net-zero targets
+  Execute_Loadpoint 'input_bau' !! read from path_gdx_bau
+    p46_refRun_co2eq = vm_co2eq.l,
+    p46_refRun_emiFgas = vm_emiFgas.l,
+    p46_refRun_emiTe = vm_emiTe.l,
+    p46_refRun_emiMac = vm_emiMac.l,
+    p46_refRun_emiCdr = vm_emiCdr.l;
 
-$elseif.offsets "%cm_netZeroScen%" == "NGFS_v4_20pc"
-  p46_offset(nz_reg) = 0.2 * vm_co2eq.l("2020", nz_reg) * sm_c_2_co2 * 1000;
-  p46_offset(nz_reg)$(sameas(nz_reg, "LAM")) = 0.6 * vm_co2eq.l("2020", nz_reg) * sm_c_2_co2 * 1000;
-$elseif.offsets "%cm_netZeroScen%" == "NGFS_v4"
-  p46_offset(nz_reg)$(sameas(nz_reg, "LAM")) = 0.5 * vm_co2eq.l("2020", nz_reg) * sm_c_2_co2 * 1000;
-$endif.offsets
+*** In this module, t3 is used to loop over the years of net-zero targets, while t is used for general model time steps.
+  loop((regi,t3,targetSpecies) $ p46_netZeroTargetCoverage(regi,t3,targetSpecies),
 
-display p46_offset;
+    if(sameAs(targetSpecies,"GHG_target"),
+      p46_emi_targetYr(regi) =       vm_co2eq.l(t3,regi) / sm_MtCO2_2_GtC +       vm_emiFgas.l(t3,regi,"emiFgasTotal");
+      p46_emi_refYr(regi)    =   vm_co2eq.l("2025",regi) / sm_MtCO2_2_GtC +   vm_emiFgas.l("2025",regi,"emiFgasTotal");
+      p46_emi_refRun(regi)   = p46_refRun_co2eq(t3,regi) / sm_MtCO2_2_GtC + p46_refRun_emiFgas(t3,regi,"emiFgasTotal");
 
-*** OR: calculate actual emissions for all with GHG target
+    elseif sameAs(targetSpecies,"CO2_target"),
+      p46_emi_targetYr(regi) = (      vm_emiTe.l(t3,regi,"co2") +       vm_emiMac.l(t3,regi,"co2") +       vm_emiCdr.l(t3,regi,"co2")) / sm_MtCO2_2_GtC;
+      p46_emi_refYr(regi)    = (  vm_emiTe.l("2025",regi,"co2") +   vm_emiMac.l("2025",regi,"co2") +   vm_emiCdr.l("2025",regi,"co2")) / sm_MtCO2_2_GtC;
+      p46_emi_refRun(regi)   = (p46_refRun_emiTe(t3,regi,"co2") + p46_refRun_emiMac(t3,regi,"co2") + p46_refRun_emiCdr(t3,regi,"co2")) / sm_MtCO2_2_GtC;
+    );
+    
+*' Define emission offset [MtCO2eq/yr], which are the emissions not covered by the target.
+*' Offset represents the fact that not all countries, species and sectors are included in the net-zero target.
+    p46_emi_offset(regi) =
+        (1 - p46_netZeroTargetCoverage(regi,t3,targetSpecies)) * p46_emi_refRun(regi) !! offset countries that are not covered
+      + pm_emiLULUCF_GrassiShift("2020",regi) / sm_MtCO2_2_GtC !! ensure that the land-use C02 emissions are in line with national accounting
+      + sum(se2fe(enty,enty2,te), !! bunker emissions are not included in any of the targets
+          pm_emifac(t3,regi,enty,enty2,te,"co2") * vm_demFeSector.l(t3,regi,enty,enty2,"trans","other")) / sm_MtCO2_2_GtC;
 
-p46_emi_actual(nz_reg2050(all_regi))$(not nz_reg_CO2(all_regi))
-   = vm_co2eq.l("2050",nz_reg2050)*sm_c_2_co2*1000 + vm_emiFgas.L("2050",nz_reg2050,"emiFgasTotal")
-***   substract the bunker emissions
-    - sum(se2fe(enty,enty2,te),
-        pm_emifac("2050",nz_reg2050,enty,enty2,te,"co2")
-        * vm_demFeSector.l("2050",nz_reg2050,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
-      );
+*** ---------------------------------------------------------------------------  
+*' #### 2. Calculating regional markup carbon tax
+*** ---------------------------------------------------------------------------  
+*' Step 1: Error signal calculation with tolerance share (cm_netZeroPercent) for squared price response
+    p46_targetDeviation(regi) = (p46_emi_targetYr(regi) - p46_emi_offset(regi)) / p46_emi_refYr(regi) - cm_netZeroPercent;
+    p46_factorRescaleCO2Tax(regi) = max(0.3, 1 + p46_targetDeviation(regi)) ** 2;
 
-p46_emi_actual(nz_reg2055(all_regi))$(not nz_reg_CO2(all_regi))
-   = vm_co2eq.l("2055",nz_reg2055)*sm_c_2_co2*1000 + vm_emiFgas.L("2055",nz_reg2055,"emiFgasTotal")
-***   substract the bunker emissions
-    - sum(se2fe(enty,enty2,te),
-        pm_emifac("2055",nz_reg2055,enty,enty2,te,"co2")
-        * vm_demFeSector.l("2055",nz_reg2055,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
-      );
+*' Step 2: Iteration-dependent damping - prevents oscillation, ensures convergence
+*' Concave curve growing from 0 at iteration 0 to 1 at cm_iteration_max https://www.desmos.com/calculator/ekpauw9fxx
+    p46_iterDamping = 1 - (1 - iteration.val / cm_iteration_max) ** 2;
 
-p46_emi_actual(nz_reg2060(all_regi))$(not nz_reg_CO2(all_regi))
-   = vm_co2eq.l("2060",nz_reg2060)*sm_c_2_co2*1000 + vm_emiFgas.L("2060",nz_reg2060,"emiFgasTotal")
-***   substract the bunker emissions
-    - sum(se2fe(enty,enty2,te),
-        pm_emifac("2060",nz_reg2060,enty,enty2,te,"co2")
-        * vm_demFeSector.l("2060",nz_reg2060,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
-      );
+*' Step 3: Price decomposition - adjusts only markup (pm_taxCO2eqRegi), preserves base trajectory (pm_taxCO2eq and pm_taxCO2eqSCC).
+*' Calculate markup adjustment factor by applying p46_factorRescaleCO2Tax to total tax, then isolating markup component.
+*' Markup only applies after year cm_LTSstartYr (default 2040 to first meet 2035 NDC targets in NDC-LTS scenario, or 2035 to directly reach net-zero in scenario LTS).
+    p46_taxCO2eqRegiPeak(regi) = max(
+      pm_taxCO2eqSum(t3,regi) * p46_factorRescaleCO2Tax(regi) - pm_taxCO2eq(t3,regi) - pm_taxCO2eqSCC(t3,regi),
+      p46_taxCO2eqRegi_iter(iteration-1,t3,regi) * p46_iterDamping
+    );
+  ); !! loop over net-zero targets
 
-p46_emi_actual(nz_reg2070(all_regi))$(not nz_reg_CO2(all_regi))
-   = vm_co2eq.l("2070",nz_reg2070)*sm_c_2_co2*1000 + vm_emiFgas.L("2070",nz_reg2070,"emiFgasTotal")
-***   substract the bunker emissions
-    - sum(se2fe(enty,enty2,te),
-        pm_emifac("2070",nz_reg2070,enty,enty2,te,"co2")
-        * vm_demFeSector.l("2070",nz_reg2070,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
-      );
-
-p46_emi_actual(nz_reg2080(all_regi))$(not nz_reg_CO2(all_regi))
-   = vm_co2eq.l("2080",nz_reg2080)*sm_c_2_co2*1000 + vm_emiFgas.L("2080",nz_reg2080,"emiFgasTotal")
-***   substract the bunker emissions
-    - sum(se2fe(enty,enty2,te),
-        pm_emifac("2080",nz_reg2080,enty,enty2,te,"co2")
-        * vm_demFeSector.l("2080",nz_reg2080,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
-      );
-
-*** OR: calculate actual emissions for all with CO2 target
-
-p46_emi_actual(nz_reg2050(all_regi))$(nz_reg_CO2(all_regi))
-   = (vm_emiTe.l("2050",nz_reg2050,"co2") + vm_emiMac.L("2050",nz_reg2050,"co2") + vm_emiCdr.L("2050",nz_reg2050,"co2"))*sm_c_2_co2*1000
-***   substract the bunker emissions
-    - sum(se2fe(enty,enty2,te),
-        pm_emifac("2050",nz_reg2050,enty,enty2,te,"co2")
-        * vm_demFeSector.l("2050",nz_reg2050,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
-      );
-
-p46_emi_actual(nz_reg2055(all_regi))$(nz_reg_CO2(all_regi))
-   = (vm_emiTe.l("2055",nz_reg2055,"co2") + vm_emiMac.L("2055",nz_reg2055,"co2") + vm_emiCdr.L("2055",nz_reg2055,"co2"))*sm_c_2_co2*1000
-***   substract the bunker emissions
-    - sum(se2fe(enty,enty2,te),
-        pm_emifac("2055",nz_reg2055,enty,enty2,te,"co2")
-        * vm_demFeSector.l("2055",nz_reg2055,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
-      );
-
-p46_emi_actual(nz_reg2060(all_regi))$(nz_reg_CO2(all_regi))
-   = (vm_emiTe.l("2060",nz_reg2060,"co2") + vm_emiMac.L("2060",nz_reg2060,"co2") + vm_emiCdr.L("2060",nz_reg2060,"co2"))*sm_c_2_co2*1000
-***   substract the bunker emissions
-    - sum(se2fe(enty,enty2,te),
-        pm_emifac("2060",nz_reg2060,enty,enty2,te,"co2")
-        * vm_demFeSector.l("2060",nz_reg2060,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
-      );
-
-p46_emi_actual(nz_reg2070(all_regi))$(nz_reg_CO2(all_regi))
-   = (vm_emiTe.l("2070",nz_reg2070,"co2") + vm_emiMac.L("2070",nz_reg2070,"co2") + vm_emiCdr.L("2070",nz_reg2070,"co2"))*sm_c_2_co2*1000
-***   substract the bunker emissions
-    - sum(se2fe(enty,enty2,te),
-        pm_emifac("2070",nz_reg2070,enty,enty2,te,"co2")
-        * vm_demFeSector.l("2070",nz_reg2070,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
-      );
-
-p46_emi_actual(nz_reg2080(all_regi))$(nz_reg_CO2(all_regi))
-   = (vm_emiTe.l("2080",nz_reg2080,"co2") + vm_emiMac.L("2080",nz_reg2080,"co2") + vm_emiCdr.L("2080",nz_reg2080,"co2"))*sm_c_2_co2*1000
-***   substract the bunker emissions
-    - sum(se2fe(enty,enty2,te),
-        pm_emifac("2080",nz_reg2080,enty,enty2,te,"co2")
-        * vm_demFeSector.l("2080",nz_reg2080,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
-      );
-
-***calculate relative change of overall price required to bring emissions to zero
-p46_factorRescaleCO2Tax(nz_reg)=(max(0.3, (1+((p46_emi_actual(nz_reg)-p46_offset(nz_reg))/p46_emi_2020(nz_reg)))))**2;
-
-***calculate relative change in markup, taking into account change in tax
-***add a small amount at the end to avoid division by zero in case of mark-up being not necessary
-p46_factorRescaleCO2TaxRegi(nz_reg2050) = max(1-0.75*1.01**(-iteration.val),((p46_taxCO2eqLast("2050",nz_reg2050)+p46_taxCO2eqRegiLast("2050",nz_reg2050))*p46_factorRescaleCO2Tax(nz_reg2050)-pm_taxCO2eq("2050",nz_reg2050))
-                               /(p46_taxCO2eqRegiLast("2050",nz_reg2050)+0.0001));
-p46_factorRescaleCO2TaxRegi(nz_reg2055) = max(1-0.75*1.01**(-iteration.val),((p46_taxCO2eqLast("2055",nz_reg2055)+p46_taxCO2eqRegiLast("2055",nz_reg2055))*p46_factorRescaleCO2Tax(nz_reg2055)-pm_taxCO2eq("2055",nz_reg2055))
-                               /(p46_taxCO2eqRegiLast("2055",nz_reg2055)+0.0001));
-p46_factorRescaleCO2TaxRegi(nz_reg2060) = max(1-0.75*1.01**(-iteration.val),((p46_taxCO2eqLast("2060",nz_reg2060)+p46_taxCO2eqRegiLast("2060",nz_reg2060))*p46_factorRescaleCO2Tax(nz_reg2060)-pm_taxCO2eq("2060",nz_reg2060))
-                               /(p46_taxCO2eqRegiLast("2060",nz_reg2060)+0.0001));
-p46_factorRescaleCO2TaxRegi(nz_reg2070) = max(1-0.75*1.01**(-iteration.val),((p46_taxCO2eqLast("2070",nz_reg2070)+p46_taxCO2eqRegiLast("2070",nz_reg2070))*p46_factorRescaleCO2Tax(nz_reg2070)-pm_taxCO2eq("2070",nz_reg2070))
-                               /(p46_taxCO2eqRegiLast("2070",nz_reg2070)+0.0001));
-p46_factorRescaleCO2TaxRegi(nz_reg2080) = max(1-0.75*1.01**(-iteration.val),((p46_taxCO2eqLast("2080",nz_reg2080)+p46_taxCO2eqRegiLast("2080",nz_reg2080))*p46_factorRescaleCO2Tax(nz_reg2080)-pm_taxCO2eq("2080",nz_reg2080))
-                               /(p46_taxCO2eqRegiLast("2080",nz_reg2080)+0.0001));
-
-p46_factorRescaleCO2TaxLtd_iter(iteration,nz_reg) = p46_factorRescaleCO2TaxRegi(nz_reg);
-
-***calculate new mark-up:
-pm_taxCO2eqRegi(t,nz_reg)=pm_taxCO2eqRegi(t,nz_reg)*p46_factorRescaleCO2TaxRegi(nz_reg);
+  display p46_emi_offset, p46_emi_targetYr, p46_emi_refYr, p46_factorRescaleCO2Tax, pm_taxCO2eqRegi;
+); !! iteration.val > p46_startInIteration
 
 
 
-);!! ord(iteration) > p46_startInIteration
-
-display p46_emi_actual,p46_emi_2020,p46_factorRescaleCO2Tax, p46_factorRescaleCO2TaxRegi, pm_taxCO2eqRegi, p46_taxCO2eqRegiLast;
-
-p46_taxCO2eqRegiLast(t,regi) = pm_taxCO2eqRegi(t,regi);
-p46_taxCO2eqLast(t,regi) = pm_taxCO2eq(t,regi);
-
-p46_taxCO2eqRegi_iter(iteration,t,nz_reg2050)$sameas(t,"2050") = pm_taxCO2eqRegi(t,nz_reg2050);
-p46_taxCO2eqRegi_iter(iteration,t,nz_reg2055)$sameas(t,"2055") = pm_taxCO2eqRegi(t,nz_reg2055);
-p46_taxCO2eqRegi_iter(iteration,t,nz_reg2060)$sameas(t,"2060") = pm_taxCO2eqRegi(t,nz_reg2060);
-p46_taxCO2eqRegi_iter(iteration,t,nz_reg2070)$sameas(t,"2070") = pm_taxCO2eqRegi(t,nz_reg2070);
-p46_taxCO2eqRegi_iter(iteration,t,nz_reg2080)$sameas(t,"2080") = pm_taxCO2eqRegi(t,nz_reg2080);
-p46_taxCO2eq_iter(iteration,t,nz_reg2050)$sameas(t,"2050") = pm_taxCO2eq(t,nz_reg2050);
-p46_taxCO2eq_iter(iteration,t,nz_reg2055)$sameas(t,"2055") = pm_taxCO2eq(t,nz_reg2055);
-p46_taxCO2eq_iter(iteration,t,nz_reg2060)$sameas(t,"2060") = pm_taxCO2eq(t,nz_reg2060);
-p46_taxCO2eq_iter(iteration,t,nz_reg2070)$sameas(t,"2070") = pm_taxCO2eq(t,nz_reg2070);
-p46_taxCO2eq_iter(iteration,t,nz_reg2080)$sameas(t,"2080") = pm_taxCO2eq(t,nz_reg2080);
-p46_emi_actual_iter(iteration,t,nz_reg2050)$sameas(t,"2050") = p46_emi_actual(nz_reg2050);
-p46_emi_actual_iter(iteration,t,nz_reg2055)$sameas(t,"2055") = p46_emi_actual(nz_reg2055);
-p46_emi_actual_iter(iteration,t,nz_reg2060)$sameas(t,"2060") = p46_emi_actual(nz_reg2060);
-p46_emi_actual_iter(iteration,t,nz_reg2070)$sameas(t,"2070") = p46_emi_actual(nz_reg2070);
-p46_emi_actual_iter(iteration,t,nz_reg2080)$sameas(t,"2080") = p46_emi_actual(nz_reg2080);
+*** ---------------------------------------------------------------------------  
+*' #### 3. Carbon price shape and tracking across iterations
+*** ---------------------------------------------------------------------------  
+*' Define shape of pm_taxCO2eqRegi to grow linearly from zero in cm_LTSstartYr to p46_taxCO2eqRegiPeak in the target year, then back toward zero in 2200.
+*' Store current prices for next iteration's learning algorithm.
+*' Track evolution across iterations for debugging and analysis.
+loop((regi,t3,targetSpecies) $ p46_netZeroTargetCoverage(regi,t3,targetSpecies),
+  pm_taxCO2eqRegi(t,regi) $ (cm_LTSstartYr <= t.val and t.val <= t3.val) = macro_interpolate(t.val, cm_LTSstartYr-5, t3.val, 0, p46_taxCO2eqRegiPeak(regi));
+  if(cm_LTSendYr = 0,
+      pm_taxCO2eqRegi(t,regi) $ (t3.val < t.val) = p46_taxCO2eqRegiPeak(regi);
+  else
+    pm_taxCO2eqRegi(t,regi) $ (t3.val < t.val) = macro_interpolate(t.val, t3.val, cm_LTSendYr, p46_taxCO2eqRegiPeak(regi), 0);
+  );
+  
+  p46_emi_targetYr_iter(iteration,t3,regi) = p46_emi_targetYr(regi);
+);
+p46_taxCO2eqRegi_iter(iteration,t,regi) = pm_taxCO2eqRegi(t,regi);
+p46_taxCO2eq_iter(iteration,t,regi) = pm_taxCO2eq(t,regi);
 
 *** EOF ./modules/46_carbonpriceRegi/netZero/postsolve.gms

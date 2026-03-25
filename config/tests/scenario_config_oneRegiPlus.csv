@@ -1,0 +1,4 @@
+title;start;cm_nash_mode;cm_iteration_max;optimization;c_edgeTransportIter;slurmConfig;output
+testOneRegiEnhanced;1;1;5;testOneRegi;;--qos=priority --nodes=1 --tasks-per-node=1 --mem=8000 --time=180;reporting
+testOneRegiTransport;1;1;5;testOneRegi;2, 3;--qos=priority --nodes=1 --tasks-per-node=1 --mem=8000 --time=180;reporting
+testOneRegiMAgPIE;1;1;5;testOneRegi;2, 4;--qos=priority --nodes=1 --tasks-per-node=1 --mem=32000 --time=180;reporting

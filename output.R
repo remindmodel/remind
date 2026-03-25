@@ -44,23 +44,22 @@ helpText <- "
 #'                        (compareScenarios, xlsx_IIASA)
 #'
 #'   --output=            output=compareScenarios2 directly selects the specific
-#'                        script
+#'                        script (without .R extension)
 #'
-#'   --outputdir=         Can be used to specify the output directories to be
-#'                        used directly, bypassing run selection, as a
-#'                        comma-separated list
+#'   --outputdir=         Directly specify the output directories, bypassing run
+#'                        selection, as a comma-separated list
 #'                        (e.g. outputdir=./output/SSP2-Base-rem-1,./output/NDC-rem-1)
 #'
 #'   --remind_dir=        path to remind or output directories where runs can be
 #'                        found.  Defaults to ./output but can also be used to
-#'                        specify multiple  folders, comma-separated, such as
+#'                        specify multiple folders, comma-separated, such as
 #'                        remind_dir=.,../otherremind
 #'
 #'   --renv=<path>        load the renv located at <path>, incompatible with
 #'                        --update
 #'
 #'   --slurmConfig=       use slurmConfig=priority, short or standby to specify
-#'                        slurm selection.  You may also pass complicated
+#'                        slurm selection. You may also pass multiple SLURM
 #'                        arguments such as slurmConfig='--qos=priority --mem=8000'
 "
 
@@ -110,7 +109,7 @@ choose_slurmConfig_output <- function(output) {
   # Modify slurm options for reporting options that run in parallel (MAGICC) or need more memory
   if ("MAGICC7_AR6" %in% output) {
     slurm_options <- paste(slurm_options[1:3], "--tasks-per-node=12 --mem=32000")
-  } else if ("nashAnalysis" %in% output) {
+  } else if ("nashConvergenceReport" %in% output) {
     slurm_options <- paste(slurm_options[1:3], "--mem=32000")
   } else if ("reporting" %in% output) {
     slurm_options <- grep("--mem=[0-9]*[0-9]{3}", slurm_options, value = TRUE)
@@ -163,7 +162,8 @@ if (! exists("output")) {
 if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
                          "plot_compare_iterations", "varListHtml", "fixOnRef", "MAGICC7_AR6",
-                         "validateScenarios", "checkClimatePercentiles", "selectPlots")
+                         "validateScenarios", "checkClimatePercentiles", "selectPlots",
+                         "checkProjectSummations")
   needingMif <- any(modulesNeedingMif %in% output) && ! "reporting" %in% output[[1]]
   if (exists("remind_dir")) {
     dir_folder <- c(file.path(remind_dir, "output"), remind_dir)
@@ -238,10 +238,12 @@ if (comp %in% c("comparison", "export")) {
           warning("Script ", name, " was stopped by an error and not executed properly!")
         }
       }
+    } else {
+      message("\nCould not find ", name)
     }
   }
 } else { # comp = single
-    # define slurm class or direct execution
+  # define slurm class or direct execution
   outputInteractive <- c("plotIterations", "integratedDamageCosts")
   if (! exists("source_include")) {
     if (any(output %in% outputInteractive)) {

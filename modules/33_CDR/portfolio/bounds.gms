@@ -44,6 +44,13 @@ if (te_used33("dac"),
     v33_FEdemand.fx(t,regi,"feh2s","fehes","dac") = 0;
 );
 
+*** Bounds for Biochar application: Upper limit based on use on croplands and substituting cement
+*** For cropland assumption, see description in inputdata file
+*** Cement substitution percentage in literature ranges from 1-10%, with most around 2-4% (see https://doi.org/10.1038/s44284-024-00086-w, Table 7). 
+vm_demSeOth.up(t,regi,"sebiochar","biocharuse") = (0.03 * vm_cesIO.l(t,regi,"ue_cement") * sm_giga_2_non  !! [tBC/t cement] * [Gt cement]*[10^9 t/Gt]
+                                                   + p33_BiocharLimitCropland(regi) * 1e6)     !! [Mt BC] * [t/Mt]
+                                                    * sm_tBC_2_TWa ;                           !!* [TWa BC/tBC]
+
 *** Bounds for enhanced weathering
 if(te_used33("weathering"),
     v33_EW_onfield_tot.up(t,regi,rlf_cz33,rlf) = s33_step;

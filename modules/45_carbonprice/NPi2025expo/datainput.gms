@@ -20,4 +20,7 @@ loop(ext_regi$sameas(ext_regi, "EUR_regi"),
 
 pm_taxCO2eq(t,regi)$(t.val gt 2100) = pm_taxCO2eq("2100",regi); !! to prevent huge taxes after 2100 and the resulting convergence problems, set taxes after 2100 equal to 2100 value
 
+*** switch off MAC abatement of land emissions, scenario should only have Magpie baseline emissions
+pm_macSwitch(ttot,regi,emiMacMagpie) = 0;
+
 *** EOF ./modules/45_carbonprice/NPi2025expo/datainput.gms

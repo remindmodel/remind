@@ -14,3 +14,4 @@ pm_tempScaleGlob2Reg,input,questionnaire
 pm_damageImp,input,questionnaire
 pm_damageIso,input,questionnaire
 pm_damageGrowthRateIso,input,questionnaire
+pm_globalMeanTemperature,input,questionnaire
