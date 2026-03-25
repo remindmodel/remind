@@ -65,22 +65,16 @@ if (!file.exists(edgetOutputDir)) {
 }
 
 message("### start generation of EDGE-T reporting")
+reporttransport::checkConvergence()
 EDGEToutput <- reporttransport::reportEdgeTransport(edgetOutputDir,
-                                                    isTransportExtendedReported = FALSE,
-                                                    modelName = "REMIND",
-                                                    scenarioName = scenario,
-                                                    gdxPath = file.path(outputdir, "fulldata.gdx"),
-                                                    isStored = FALSE)
+                                                     isTransportExtendedReported = FALSE,
+                                                     modelName = "REMIND",
+                                                     scenarioName = scenario,
+                                                     gdxPath = file.path(outputdir, "fulldata.gdx"),
+                                                     isStored = FALSE,
+                                                     isHarmonized = TRUE)
 
-REMINDoutput <- read.quitte(file.path(outputdir, paste0("REMIND_generic_", scenario, "_withoutPlus.mif")))
-# drop regions from higher resolution EDGET reporting if REMIND is in H12
-EDGEToutput <- EDGEToutput[EDGEToutput$region %in% REMINDoutput$region, ]
-sharedVariables <- EDGEToutput[variable %in% REMINDoutput$variable | grepl(".*edge", variable)]
-EDGEToutput <- EDGEToutput[!(variable %in% REMINDoutput$variable | grepl(".*edge", variable))]
-message("The following variables will be dropped from the EDGE-Transport reporting because ",
-        "they are in the REMIND reporting: ", paste(unique(sharedVariables$variable), collapse = ", "))
-
-# For certain projects, we currently don't want to report EDGE-T results for 2005 and 2010. 
+# For certain projects, we currently don't want to report EDGE-T results for 2005 and 2010.
 # If the flag c_edgetReportAfter2010 is set, 2005 and 2010 values get replaced by NAs
 
 c_edgetReportAfter2010 <- gdx::readGDX(gdx, name = "c_edgetReportAfter2010")
