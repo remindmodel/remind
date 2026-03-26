@@ -1,11 +1,12 @@
-title;start;continueFromHere;magpieIter;config/scenario_config.csv;no_ghgprices_land_until;cfg_mag$gms$s15_elastic_demand;cfg_mag$gms$s29_treecover_target;cfg_mag$gms$s59_scm_target;cfg_mag$gms$c60_1stgen_biodem;cfg_mag$gms$s44_bii_target;cfg_mag$gms$c44_bii_decrease;cfg_mag$gms$s44_start_year
-# startgroup=remindinput: scenarios that are needed to update MAgPIE inputs in REMIND (emissions, costs, ...);;;;;;;;;;;;
-SSP1-NDC;0;;;SSP1|NDC|AR-natveg|nocc_hist;y2150;1;0;0;const2030;0;1;2025
-SSP1-NPi2025;1;;;SSP1|NPI|AR-natveg|nocc_hist;y2150;1;0;0;const2030;0;1;2025
-SSP1-PkBudg1000;1;;;SSP1|NDC|AR-natveg|nocc_hist;y2030;1;0.01;0.1;const2030;0;1;2025
-Reference_SSP1_800f;1;;;SSP1|NDC|AR-natveg|nocc_hist;y2030;1;0;0;const2030;0.7;0;2030
-SSP2-NDC;0;;;SSP2|NDC|AR-natveg|nocc_hist;y2150;1;0;0;const2030;0;1;2025
-SSP2-NPi;0;;;SSP2|NPI|AR-natveg|nocc_hist;y2150;1;0;0;const2030;0;1;2025
-SSP2-NPi2025;1;;;SSP2|NPI|AR-natveg|nocc_hist;y2150;1;0;0;const2030;0;1;2025
-SSP2-PkBudg1000;1;;;SSP2|NDC|AR-natveg|nocc_hist;y2030;1;0.01;0.1;const2030;0;1;2025
-Reference_SSP2_800f;0;;;SSP2|NDC|AR-natveg|nocc_hist;y2030;1;0;0;const2030;0.7;0;2030
+title;start;continueFromHere;magpieIter;config/scenario_config.csv;no_ghgprices_land_until;cfg_mag$gms$s15_elastic_demand;cfg_mag$gms$s29_treecover_scenario_start;cfg_mag$gms$s29_treecover_scenario_target;cfg_mag$gms$s29_treecover_target;cfg_mag$gms$s59_scm_scenario_start;cfg_mag$gms$s59_scm_scenario_target;cfg_mag$gms$s59_scm_target;cfg_mag$gms$c60_1stgen_biodem;cfg_mag$gms$s56_limit_ch4_n2o_price;cfg_mag$gms$c15_food_scenario;cfg_mag$gms$s44_bii_target;cfg_mag$gms$c44_bii_decrease;cfg_mag$gms$s44_start_year;cfg_mag$gms$s56_fader_cpriceaff_start;cfg_mag$gms$s56_fader_cpriceaff_end
+SSP1-NPi2025;1;;;VLLO|SSP1-POP-GDP|NPI|AR-natveg|nocc_hist;y2150;1;;;0;;;0;const2030;734;;0.7;1;2030;2030;2030
+SSP1-NDC;0;;;VLLO|SSP1-POP-GDP|NDC|AR-natveg|nocc_hist;y2150;1;;;0;;;0;const2030;734;;0.7;1;2030;2030;2030
+SSP1-PkBudg1000;1;;;VLLO|SSP1-POP-GDP|NDC|AR-natveg|nocc_hist;y2030;1;2025;2050;0.01;2025;2050;0.1;const2030;734;;0.7;1;2030;2030;2030
+Reference_SSP1_800f;1;;;VLLO|SSP1-POP-GDP|NDC|AR-natveg|nocc_hist;y2030;1;2025;2050;0.03;2025;2050;0.3;const2030;734;;0.7;1;2030;2030;2030
+SSP2-NPi2025;1;;;SSP2|NPI|AR-natveg|nocc_hist|rcp4p5;y2150;1;;;0;;;0;const2030;734;;0;1;2030;2030;2030
+SSP2-NPi2025-CES;1;;;SSP2|NPI|AR-natveg|nocc_hist|rcp4p5;y2150;1;;;0;;;0;const2030;734;;0;1;2030;2030;2030
+SSP2-NDC;1;;;SSP2|NDC|AR-natveg|nocc_hist|rcp4p5;y2150;1;;;0;;;0;const2030;734;;0;1;2030;2030;2030
+SSP2-PkBudg1000;1;;;SSP2|NDC|AR-natveg|nocc_hist|rcp2p6;y2030;1;;;0.01;;;0.1;const2030;734;;0;0;2030;2030;2030
+Reference_SSP2_800f;1;;;SSP2|NDC|AR-natveg|nocc_hist|rcp1p9;y2030;1;;;0.03;;;0.3;const2030;734;;0;0;2030;2030;2030
+Reference_SSP2_800f_CES;1;;;SSP2|NDC|AR-natveg|nocc_hist|rcp1p9;y2030;1;;;0.03;;;0.3;const2030;734;;0;0;2030;2030;2030
+;;;;;;;;;;;;;;;;;;;;
