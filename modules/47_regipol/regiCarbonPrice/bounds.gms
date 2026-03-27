@@ -79,8 +79,9 @@ $endIf.tech_bounds_2025
 
 *' These bounds account for historic coal power development.
 vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"DEU"))) = 38.028/1000;
-*' This limits early retirement of coal power in Germany in 2020s to avoid extremly fast phase-out.
+*' This limits early retirement of coal power in Germany in near-term to avoid extremly fast phase-out.
 vm_capEarlyReti.up('2025',regi,'pc')$(sameAs(regi,"DEU")) = 0.65;
+vm_capEarlyReti.up('2030',regi,'pc')$(sameAs(regi,"DEU")) = 0.8;
 
 
 *' This aligns 2020 chp capcities for Germany with historic data (AGEB)
