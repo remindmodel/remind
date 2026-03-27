@@ -49,19 +49,26 @@ loop((ttot,regi,te)$(p47_histCap(ttot,regi,te)),
 );
 $endIf.tech_bounds_2025
 
-*' make assumptions on minimum renewable power and heat pump growth for Germany between 2025 and 2030 and distinguish two different scenarios ("Current Policies" and "Optimistic")
-$ifthen.cm_VREminCap_Ger "%cm_VREminCap_Ger%" == "CurrPol"
-    vm_deltaCap.lo("2030",regi,"windon","1")$(sameAs(regi,"DEU")) = 6/1000;
-    vm_deltaCap.lo("2030",regi,"windoff","1")$(sameAs(regi,"DEU")) = 2/1000;
-    vm_cap.lo("2030",regi,"geohe","1")$(sameAs(regi,"DEU")) = 7/1000;
-$endIf.cm_VREminCap_Ger
+*' define plausible corridor for renewable power and heat pump growth for Germany between 2025 and 2030
 
-$ifthen.cm_VREminCap_Ger "%cm_VREminCap_Ger%" == "Opt"
-    vm_deltaCap.lo("2030",regi,"windon","1")$(sameAs(regi,"DEU")) = 7.5/1000;
-    vm_deltaCap.lo("2030",regi,"windoff","1")$(sameAs(regi,"DEU")) = 3/1000;
-    vm_cap.lo("2030",regi,"geohe","1")$(sameAs(regi,"DEU")) = 7/1000;
-$endIf.cm_VREminCap_Ger
+*' offshore wind near-term capacity additions based on recent project pipeline
+*' https://www.wind-energie.de/fileadmin/redaktion/dokumente/pressemitteilungen/2026/Status_des_Offshore-Windenergieausbaus_Jahr_2025.pdf
+vm_deltaCap.lo("2030",regi,"windoff","1")$(sameAs(regi,"DEU")) = 2/1000;
+vm_deltaCap.up("2030",regi,"windoff","1")$(sameAs(regi,"DEU")) = 4/1000;
 
+*' onshore wind near-term capacity additions based on recent trends and planned auction volumes
+*' https://www.fachagentur-wind-solar.de/fileadmin/Veroeffentlichungen/Wind/Daten/FA_Wind_Solar_Status_des_Windenergieausbaus_an_Land_Halbjahr_2025.pdf, p. 22
+vm_deltaCap.lo("2030",regi,"windon","1")$(sameAs(regi,"DEU")) = 6/1000;
+vm_deltaCap.up("2030",regi,"windon","1")$(sameAs(regi,"DEU")) = 12/1000;
+
+*' solar PV near-term capacity additions based on recent trends and planned auction volumes
+*' https://www.sfv.de/medien/artikel/habecks-osterpaket/ausschreibungsmengen'
+vm_deltaCap.lo("2030",regi,"spv","1")$(sameAs(regi,"DEU")) = 10/1000; !! current annual additions
+vm_deltaCap.up("2030",regi,"spv","1")$(sameAs(regi,"DEU")) = 20/1000; !! planned annual additions to be reached from 2030 via EEG
+
+*' large-scale heat pumps near-term capacity additions
+*' https://www.ewi.uni-koeln.de/de/aktuelles/grosswaermepumpen-markthochlauf-und-kosten-in-deutschland/
+vm_deltaCap.up("2030",regi,"geohe","1")$(sameAs(regi,"DEU")) = 0.5/1000; !! 500 MW/yr would be really ambitious already
 
 *' These bounds account for historic gas power development.
 *' TODO: Historical fixings should be done in the core the via input data from mrremind, this still needs to be moved
