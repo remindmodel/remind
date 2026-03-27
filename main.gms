@@ -2086,7 +2086,7 @@ $setGlobal cm_APssp  FROMGDPSSP          !! def = FROMGDPSSP !! regexp = SSP1|SS
 *' (SMIPbySSP): ScenarioMIP default scenario (differentiated by SSP, available for SSP1, SSP2, SSP3 and SSP5)
 *' (SMIPVLLO): ScenarioMIP VLLO scenario (not differentiated by SSP)
 $setGlobal cm_APscen  SMIPbySSP          !! def = SMIPbySSP !! regexp = CLE|SLE|MTFR|SMIPbySSP|SMIPVLLO 
-$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-GDPpop_SSP2-En_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_configuration   indu_subsectors-buil_simple-tran_edge_esm-GDPpop_SSP2-En_SSP2-Kap_debt_limit-Reg_2b1450bc  !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_industry_FE_target  1
 *' setting which region is to be tested in the one-region test run (80_optimization = testOneRegi)
