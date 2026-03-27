@@ -1255,6 +1255,7 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bfcc            "Blast furnace CCS"
     idrcc           "Direct reduction CCS"
+    idr             "Iron direct reduction"
 $endif.cm_subsec_model_steel
 /
 

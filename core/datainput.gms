@@ -1257,6 +1257,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 *** steel technologies
   p_adj_seed_te(ttot,regi,"bfcc")       = 0.05;
   p_adj_seed_te(ttot,regi,"idrcc")      = 0.05;
+  p_adj_seed_te(ttot,regi,"idr")        = 0.05;
 $endif.cm_subsec_model_steel
 
 *RP: for comparison of different technologies:
@@ -1311,6 +1312,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 *** steel technologies
   p_adj_coeff(ttot,regi,"bfcc")         = 1.0;
   p_adj_coeff(ttot,regi,"idrcc")        = 1.0;
+  p_adj_coeff(ttot,regi,"idr")          = 1.0;
 $endif.cm_subsec_model_steel
 );
 
