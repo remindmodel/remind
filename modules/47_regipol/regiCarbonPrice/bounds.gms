@@ -21,18 +21,31 @@
 *' ####### Power Sector
 
 $ifThen.tech_bounds_2025 "%cm_tech_bounds_2025%" == "on"
-*' Set bounds for renewable power capacity in 2025 based on recent and historic growth rates
-*' This limits wind and solar PV capacity additions for 2025 in light of recent slow developments as of 2023.
-*' Upper bound is double the historic maximum capacity addition in 2011-2020.
-*' In addition: Limit solar PV capacity to 120 GW in 2025 (2023-2027 average) given that we are at only 76 GW PV in 2023
-loop(regi$(sameAs(regi,"DEU")),
-  vm_deltaCap.up("2025",regi,"windon","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"windon"));
-  vm_deltaCap.up("2025",regi,"spv","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"spv"));
+*' Set 2025 bounds for power capacity based on latest data from Frauenhofer ISE
+*' https://energy-charts.info/?l=en&c=DE
+*' For large-scale heat pumps: https://www.ewi.uni-koeln.de/de/aktuelles/grosswaermepumpen-markthochlauf-und-kosten-in-deutschland/
 
-*' 2025 lower bounds for VRE capacities based on installed capacity by 2024 and recent yearly growth rates
-  vm_cap.lo("2025",regi,"spv","1")=0.096+0.014;
-  vm_cap.lo("2025",regi,"windon","1")=0.062+0.003;
-  vm_cap.lo("2025",regi,"windoff","1")=0.009+0.001;
+
+
+loop(regi$(sameAs(regi,"DEU")),
+*' solar PV
+    p47_histCap("2020",regi,"spv")=51; 
+    p47_histCap("2025",regi,"spv")=107; 
+*' onshore wind
+    p47_histCap("2020",regi,"windon")=54; 
+    p47_histCap("2025",regi,"windon")=68;
+*' offshore wind
+    p47_histCap("2020",regi,"windoff")=7.8; 
+    p47_histCap("2025",regi,"windoff")=10;
+*' large-scale heat pumps for district heating
+    p47_histCap("2025",regi,"geohe")=0.2;    
+);
+
+*' Set bounds on historical capacity for non-zero entries of p47_histCap, 
+*' 10% flexibility for model to deviate from historical data
+loop((ttot,regi,te)$(p47_histCap(ttot,regi,te)),
+    vm_cap.lo(ttot,regi,te,"1") = 0.9 * p47_histCap(ttot,regi,te) * 0.001;  !! convert from GW to TW
+    vm_cap.up(ttot,regi,te,"1") = 1.1 * p47_histCap(ttot,regi,te) * 0.001;  !! convert from GW to TW
 );
 $endIf.tech_bounds_2025
 

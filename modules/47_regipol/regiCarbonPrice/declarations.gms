@@ -17,6 +17,7 @@ Parameter
   pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) "deviation of emissions of current iteration from target emissions, for budget target this is the difference normalized by target emissions, while for year targets this is the difference normalized by 2005 emissions [%]"
   pm_taxemiMkt(ttot,all_regi,all_emiMkt)                             "CO2 tax path per region and emissions market [T$/GtC]"
   pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt)         "CO2 tax path per region and emissions market calculated from previous iteration [T$/GtC]"
+  p47_histCap(ttot,all_regi,all_te)                                  "historical capacity per technology and region, used for setting bounds [GW]"                     
 ;
 
 *** parameters to track regipol emissions calculation
