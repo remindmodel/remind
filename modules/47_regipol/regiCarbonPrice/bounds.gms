@@ -77,6 +77,13 @@ $ifThen.tech_bounds_2025 "%cm_tech_bounds_2025%" == "on"
 v47_prodSEtotal.up("2025",regi,"pegas","seel")$(sameAs(regi,"DEU"))= 0.4*sm_EJ_2_TWa;
 $endIf.tech_bounds_2025
 
+*' disallow early retirement of gas power plants in Germany before 2040 since Germany is planning to keep / increase gas power capacities in the near-term 
+*' https://www.bundeswirtschaftsministerium.de/Redaktion/DE/Pressemitteilungen/2026/01/20260115-grundsatzeinigung-mit-europaeischen-kommission-ueber-eckpunkte-der-kraftwerksstrategie.html
+*' Note: some early retirement needs to be allowed for ngcc to fullfill the 2020 gas generation bound above, 
+*' clean solution would probably fix capacities and capacities factors correctly before 2020
+vm_capEarlyReti.up(t,regi,'ngcc') $ ( t.val lt 2040 AND sameAs(regi,"DEU") ) = 0.4; 
+vm_capEarlyReti.up(t,regi,'ngt') $ ( t.val lt 2040 AND sameAs(regi,"DEU") ) = 0.01; 
+
 *' These bounds account for historic coal power development.
 vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"DEU"))) = 38.028/1000;
 *' This limits early retirement of coal power in Germany in near-term to avoid extremly fast phase-out.
