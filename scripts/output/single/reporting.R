@@ -94,6 +94,20 @@ reporttransport::reportEdgeTransport(edgetOutputDir,
                                      gdxPath = file.path(outputdir, "fulldata.gdx"),
                                      isStored = TRUE)
 
+#Add relative deviation of FE|Transport (including bunkers) to the REMIND.mif as an indicator
+FEratioEDGE <- reporttransport[variable == "FE|Transport with bunkers"][, variable := NULL]
+setnames(FEratioEDGE, "value", "EDGEfe")
+mifs <- list.files(".", recursive = FALSE, full.names = TRUE)
+mif <- mifs[grepl(".*withoutPlus\\.mif", mifs)]
+#Select matching variables
+REMINDvars <- as.data.table(read.quitte(mif))
+FEratioREMIND <- REMINDvars[variable == "FE|Transport"][, variable := NULL]
+setnames(FEratioREMIND, "value", "REMINDfe")
+FEratio <- merge(FEratioEDGE, FEratioREMIND, by = intersect(names(FEratioEDGE), names(FEratioREMIND)))
+FEratio[, value := (EDGEfe / REMINDfe) * 100]
+FEratio[, variable := "FE|Transport|a - FE|Transport|a - ratio of EDGE-T to REMIND before harmonization"][, unit := "%"]
+FEratio[, c("EDGEfe", "REMINDfe") := NULL]
+
 message("### end generation of EDGE-T reporting")
 
 # extra emission reporting (depends on REMIND and EDGE-T variables) ----
