@@ -12,3 +12,5 @@ vm_co2eqGlob,input,questionnaire
 pm_shPPPMER,input,questionnaire
 pm_gdp,input,questionnaire
 cm_emiscen,input,questionnaire
+cm_permitTradeFinalYr, input, ???
+cm_permitTradeRatio, input, ???

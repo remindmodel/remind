@@ -756,6 +756,20 @@ pm_cf(ttot,regi,"ngt")$(ttot.val eq 2030) = 0.8 * pm_cf(ttot,regi,"ngt");
 pm_cf(ttot,regi,"ngt")$(ttot.val eq 2035) = 0.7 * pm_cf(ttot,regi,"ngt");
 pm_cf(ttot,regi,"ngt")$(ttot.val ge 2040) = 0.6 * pm_cf(ttot,regi,"ngt");
 
+
+*** assume that standard coal power plants also go in peak load mode over time as VRE share increases
+pm_cf(ttot,regi,"pc")$(ttot.val eq 2035) = 0.9 * pm_cf(ttot,regi,"pc");
+pm_cf(ttot,regi,"pc")$(ttot.val eq 2040) = 0.8 * pm_cf(ttot,regi,"pc");
+pm_cf(ttot,regi,"pc")$(ttot.val eq 2045) = 0.7 * pm_cf(ttot,regi,"pc");
+pm_cf(ttot,regi,"pc")$(ttot.val ge 2050) = 0.5 * pm_cf(ttot,regi,"pc");
+
+*** modify short-term coal capacity factor for China based on latest 2025 EMBER data 
+*** (https://ember-energy.org/data/yearly-electricity-data/)
+*** and assumption that quite some renewables + coal over-capacity will be built until 2030, so coal power CF goes down
+pm_cf("2025",regi,"pc")$( sameas(regi,"CHA")) = 0.55;
+pm_cf("2030",regi,"pc")$( sameas(regi,"CHA")) = 0.48;
+
+
 *RP* set H2 turbines to the same CF values
 pm_cf(ttot,regi,"h2turb")$(ttot.val ge 2025) = pm_cf(ttot,regi,"ngt");
 pm_cf(ttot,regi,"h2turbVRE")$(ttot.val ge 2025) = pm_cf(ttot,regi,"ngt");
@@ -766,12 +780,15 @@ pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
 *** Region- and tech-specific early retirement rates
 loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi),
-  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi)) = pm_extRegiEarlyRetiRate(ext_regi);
+  pm_regiEarlyRetiRate(t,regi,teEarlyReti)$(regi_group(ext_regi,regi)) = pm_extRegiEarlyRetiRate(ext_regi);
 );
 
 
 *** for runs with all EU subregions (regionmapping21_EU21), increase early retirement rates for the EU regions
 *** because the higher regional resolution already introduces more intertia to the phase-out dynamics
+*** This increase of the parameter value between the two regional resolution actually makes H12 results better match EU21 results. 
+*** The larger heterogeneity of the EU subregions means that the single-region version needs less flexibility to change at the 
+*** same speed that the sum over the many regions can change.
 *** check whether DEU, FRA, ENC, ESC, ESW, ECS all contained in regi set
 if(       (sum(regi$sameas(regi,"DEU"),1) > 0)
       and (sum(regi$sameas(regi,"FRA"),1) > 0)
@@ -781,7 +798,7 @@ if(       (sum(regi$sameas(regi,"DEU"),1) > 0)
       and (sum(regi$sameas(regi,"ECS"),1) > 0),
 *** increase default early retirement rates by 2%/yr for EU subregions
   loop(regi$regi_group("EUR_regi",regi),
-    pm_regiEarlyRetiRate(t,regi,te) = pm_regiEarlyRetiRate(t,regi,te) + 0.02
+    pm_regiEarlyRetiRate(t,regi,teEarlyReti) = pm_regiEarlyRetiRate(t,regi,teEarlyReti) + 0.02
   );
 );
 
@@ -805,17 +822,6 @@ loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
 );
 $endif.tech_earlyreti
 
-*** Time-dependent early retirement rates in Baseline scenarios
-$ifthen.Base_Cprice %carbonprice% == "none"
-$ifthen.Base_techpol %techpol% == "none"
-*** CG: Allow no early retirement in future periods under baseline for developing countries
-loop(regi,
-if ( p_developmentState("2015",regi) < 1,
-pm_regiEarlyRetiRate(t,regi,"pc")= 0;
-);
-);
-$endif.Base_techpol
-$endif.Base_Cprice
 
 display pm_regiEarlyRetiRate;
 
@@ -898,6 +904,33 @@ if(pm_NuclearConstraint("2020",regi,"tnrs")<0,
     pm_NuclearConstraint("2020",regi,"tnrs")=0;
 );
 );
+
+*** read project pipeline data of capacities used for setting historical and near-term bounds across technologies
+*** coal power projects from Global Energy Monitor
+*** CO2 storage capacities from IEA CCU database
+parameter p_CapacityBounds(ttot,all_regi,all_te,project_status)        "technology capacity for historical and near-term time steps by project status, project status categories are operational, under construction and planned [GW(output) for energy technologies, MtCO2/yr for carbon management technologies]"
+/
+$ondelim
+$include "./core/input/p_CapacityBounds.cs4r"
+$offdelim
+/;
+
+
+*** assumptions on share of completed projects in near-term time steps for projects that are "under construction" or "planned"
+p_ProjectsCompletionShare(ttot,regi,te,project_status) = 0;
+
+*** so far this generic near-term bounds implementation only makes assumptions on the completion of coal power projects (pc)
+$ifthen.ProjectsNearTerm %c_NearTermProjectCompletion% == "conservative"
+*** for coal power assume that 90% of projects under construction will actually be completed in time as well as 50% of currently planned projects
+p_ProjectsCompletionShare(ttot,regi,"pc","construction") = 0.9;
+p_ProjectsCompletionShare(ttot,regi,"pc","planned") = 0.5;
+$elseif.ProjectsNearTerm %c_NearTermProjectCompletion% == "transformative"
+*** for coal power assume that 30%% of projects under construction will actually be completed and no currently planned projects
+p_ProjectsCompletionShare(ttot,regi,"pc","construction") = 0.3;
+$endif.ProjectsNearTerm
+
+
+
 
 *** read in data on CCS capacities and announced projects used as upper and lower bound on vm_co2CCS in 2025 and 2030
 parameter p_boundCapCCS(ttot,all_regi,project_status)        "installed and planned capacity of CCS"

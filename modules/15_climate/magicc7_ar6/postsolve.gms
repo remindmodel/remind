@@ -15,8 +15,10 @@
 ***---------------------------------------------------------------------------
 *' @code
 
+*run only after 1st iteration due to incomplete reporting otherwise
 
-* Run only on first iteration to avoid incomplete GDXs
+if(iteration.val gt 1,
+
 Execute_unload 'fulldata_postsolve';
 * Run the climate assessment script. Takes around 2-3m for a single parameter set, including harmonization and infilling
 
@@ -77,6 +79,8 @@ if( ((iteration.val le 10) or ( mod(iteration.val,5 ) eq 0)) ,
 );
 *NOTE the MAGICC results (*.OUT files) are from  the last pulse experiment now, so take care if reading them in after this point.
 $endif.cm_magicc_tirf
+
+)
 
 ***---------------------------------------------------------------------------
 *' __Iterative adjustment of budgets or carbon taxes to meet forcing target__

@@ -16,3 +16,5 @@ cm_emiscen, switch, ???
 pm_shPPPMER,input,questionnair
 pm_gdp,input,questionnaire
 cm_permittradescen,input,questionnaire
+cm_permitTradeFinalYr, input, ???
+cm_permitTradeRatio, input, ???

@@ -288,7 +288,7 @@ p_deltaCapFromRWfix(ttot,all_regi,all_te)            "auxiliary parameter with r
 pm_delta_histCap(tall,all_regi,all_te)               "historic capacity additions calculated from historic data [TW/yr]"
 p_histProdSeGrowthRate(tall,all_regi,all_enty,all_te)"historic energy production growth rate [fraction]"
 p_maxhistProdSeGrowthRate(all_regi,all_enty,all_te)  "maximum historic energy production growth rate [fraction]"
-
+p_ProjectsCompletionShare(ttot,all_regi,all_te,project_status) "assumptions on shares of technology capacity that will start operation in the total amount of capacity that is currently under construction or planned; used to set near-term technology bounds [share]"
 
 *** penalty cost implementation for cm_startyear to limit change in policy run relative to reference run
 p_prodSeReference(ttot,all_regi,all_enty,all_enty,all_te) "Secondary Energy output of a technology in the reference run [TWa]"
@@ -496,9 +496,9 @@ q_balFe(ttot,all_regi,all_enty,all_enty,all_te)      "balance of final energy (f
 q_balFeAfterTax(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "balance of final energy after considering FE sectoral taxes (fe)"
 
 *** energy conversion equations (energy input * conversion efficiency = energy output)
-q_transPe2se(ttot,all_regi,all_enty,all_enty,all_te) "energy tranformation pe to se"
+q_transPe2se(ttot,all_regi,all_enty,all_enty,all_te) "energy transformation pe to se"
 q_transSe2se(ttot,all_regi,all_enty,all_enty,all_te) "energy transformation se to se"
-q_transSe2fe(ttot,all_regi,all_enty,all_enty,all_te) "energy tranformation se to fe"
+q_transSe2fe(ttot,all_regi,all_enty,all_enty,all_te) "energy transformation se to fe"
 
 *** penalty cost implementation for cm_startyear to limit change in policy run relative to reference run
 q_changeProdStartyear(ttot,all_regi,all_te)          "calculating the absolute change of output with respect to the reference run for each technology"
@@ -649,7 +649,7 @@ sm_c_2_co2                   "conversion from c to co2"                /3.666666
 s_NO2_2_N                    "convert NO2 to N [14 / (14 + 2 * 16)]"   / .304 /
 sm_tgn_2_pgc                 "conversion factor 100-yr GWP from TgN to PgCeq"
 sm_tgch4_2_pgc               "conversion factor 100-yr GWP from TgCH4 to PgCeq"
-s_MtCO2_2_GtC                "conversion factor from MtCO2 to native REMIND emission unit GtC" /2.727e-04/
+sm_MtCO2_2_GtC               "conversion factor from MtCO2 to native REMIND emission unit GtC" /2.727e-04/
 s_MtCH4_2_TWa                "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
 s_gwpCH4                     "Global Warming Potentials of CH4, AR5 WG1 CH08 Table 8.7"     /28/
 s_gwpN2O                     "Global Warming Potentials of N2O, AR5 WG1 CH08 Table 8.7"     /265/
@@ -704,7 +704,7 @@ $ifthen %c_nonco2_macc_version% == "PBL_2007"
 sm_dmac = 5 * sm_D2005_2_D2017;
 $elseif %c_nonco2_macc_version% == "PBL_2022"
 * PBL_2022 MACs are discretized in steps of 20 $2010/tCeq
-sm_dmac = 20 * s_D2010_2_D2017;;
+sm_dmac = 20 * s_D2010_2_D2017;
 $endif
 ;
 
@@ -712,5 +712,23 @@ $endif
 *** calculate further conversion factors for emissions
 sm_tgn_2_pgc = (44/28) * s_gwpN2O * (12/44) * 0.001;
 sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
+
+
+
+*** ------------ Macro functions ---------------
+*** Define macros that can be used as functions throughout the model code.
+*** This is especially useful for more complex expressions that are used in multiple places, to avoid code duplication and to ensure consistency.
+*** Parameters of a macro are replaced directly by the chosen value at compile time: they have nothing to do with the model parameters or sets.
+*** Because the replacement is automatic, please pay attention to brackets.
+
+*** macro_interpolate: Linear interpolation between two values x0 and x1 at time points t0 and t1 for an intermediate time point t
+*** Example 1:
+***   Suppose we use two different data sources for historical and projected population.
+***   To avoid a sudden jump, we may interpolate between the two curves over the period 2005-2025:
+***   pm_pop(t,regi) = macro_interpolate(t.val, 2005, 2025, p_popHistorical(t,regi), p_popProjection(t,regi));
+*** Example 2:
+***   Suppose we have a subsidy that we want to phase out with a different date for each region.
+***   p_subsidy(t,regi) = macro_interpolate(t.val, cm_startyear, p_subsidyEndYr(regi), p_subsidy(cm_startyear,regi), 0);
+$macro macro_interpolate(t,t0,t1,x0,x1) ( ((t1) - (t)) / ((t1) - (t0)) * (x0) + ((t) - (t0)) / ((t1) - (t0)) * (x1) )
 
 *** EOF ./core/declarations.gms

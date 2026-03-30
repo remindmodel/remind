@@ -12,18 +12,18 @@ SSP3-NPi2025;0;;;;SSP3|NPI|AR-natveg|nocc_hist;y2150;;1;;;0;;;0;const2030;734;SS
 SSP3-PkBudg1000;0;;;;SSP3|NDC|AR-natveg|nocc_hist;y2030;;1;2025;2050;0.01;2025;2050;0.1;const2030;734;SSP2;0;0;2030;2030;2030
 SSP3-rollBack;0;;;;SSP3|NPI-revert|AR-natveg|nocc_hist;y2150;;1;;;0;;;;const2030;734;SSP2;0;1;2030;2030;2030
 # NGFS (no damages);;;;;;;1;0;2025;2050;0;2025;2050;0;"const2020";4920;SP2;0;1;2030;2030;2030
-h_cpol;NGFS;;;;SSP2|NPI|AR-natveg|nocc_hist|rcp4p5;y2150;;1;;;0;;;0;const2030;734;;0;1;2030;2030;2030
-h_ndc;NGFS;;;;SSP2|NDC|AR-natveg|nocc_hist|rcp4p5;y2150;;1;;;0;;;0;const2030;734;;0;1;2030;2030;2030
-o_1p5c;NGFS,NGFS_1p5c;;;;SSP2|NDC|AR-natveg|nocc_hist|rcp1p9;y2030;;1;;;0.03;;;0.3;const2030;734;;0;0;2030;2030;2030
-o_2c;NGFS;;;;SSP2|NDC|AR-natveg|nocc_hist|rcp2p6;y2030;;1;;;0.01;;;0.1;const2030;734;;0;0;2030;2030;2030
-d_delfrag_2035;NGFS;;;;SSP2|NDC|AR-natveg|nocc_hist|rcp2p6;y2030;;1;;;0.01;;;0.1;const2030;734;;0;0;2030;2030;2030
-d_strain_2025;NGFS;;;;SSP2|NDC|AR-natveg|nocc_hist|rcp4p5;y2030;;1;;;0;;;0;const2030;734;;0;1;2030;2030;2030
+h_cpol;NGFS;;;;SSP2|NPI|AR-natveg|nocc_hist;y2150;;1;;;0;;;0;const2030;734;;0;1;2030;2030;2030
+h_ndc;NGFS;;;;SSP2|NDC|AR-natveg|nocc_hist;y2150;;1;;;0;;;0;const2030;734;;0;1;2030;2030;2030
+o_1p5c;NGFS,NGFS_1p5c;;;;SSP2|NDC|AR-natveg|nocc_hist;y2030;;1;;;0.03;;;0.3;const2030;734;;0;0;2030;2030;2030
+o_2c;NGFS;;;;SSP2|NDC|AR-natveg|nocc_hist;y2030;;1;;;0.01;;;0.1;const2030;734;;0;0;2030;2030;2030
+d_delfrag;NGFS;;;;SSP2|NDC|AR-natveg|nocc_hist;y2030;;1;;;0.01;;;0.1;const2030;734;;0;0;2030;2030;2030
+d_strain;NGFS;;;;SSP2|NDC|AR-natveg|nocc_hist;y2030;;1;;;0;;;0;const2030;734;;0;1;2030;2030;2030
 # tests;;;;;;;;;;;;;;;;;;;;;;
-# cpol same as NPi2025?;FALSE;-;-;-;FALSE;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-
-# 1p5c same as Pk650?;FALSE;-;-;-;FALSE;-;-;-;FALSE;FALSE;-;FALSE;FALSE;-;-;-;-;-;-;-;-;-
+# cpol same as NPi2025?;FALSE;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-
+# 1p5c same as Pk650?;FALSE;-;-;-;-;-;-;-;FALSE;FALSE;-;FALSE;FALSE;-;-;-;-;-;-;-;-;-
 # variations;;;;;;;;;;;;;;;;;;;;;;
-d_delfrag_2030;NGFS;d_delfrag_2035;;;;;;;;;;;;;;;;;;;;
-d_strain_2035;NGFS;d_strain_2025;;;;;;;;;;;;;;;;;;;;
+d_delfrag_2030;NGFS;d_delfrag;;;;;;;;;;;;;;;;;;;;
+d_strain_2035;NGFS;d_strain;;;;;;;;;;;;;;;;;;;;
 o_1p5c_noDAC;NGFS_1p5c;o_1p5c;;;;;;;;;;;;;;;;;;;;
 o_1p5c_Pk725;NGFS_1p5c;o_1p5c;;;;;;;;;;;;;;;;;;;;
 o_1p5c_Pk750;NGFS_1p5c;o_1p5c;;;;;;;;;;;;;;;;;;;;

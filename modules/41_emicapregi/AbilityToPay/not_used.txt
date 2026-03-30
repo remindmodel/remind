@@ -10,3 +10,5 @@ pm_gdp_gdx, parameter, ???
 pm_budgetCO2eq, parameter, ???
 vm_co2eqGlob,input,questionnaire
 cm_emiscen,input,questionnaire
+cm_permitTradeFinalYr, input, ???
+cm_permitTradeRatio, input, ???

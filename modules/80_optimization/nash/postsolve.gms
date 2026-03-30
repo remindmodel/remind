@@ -418,11 +418,11 @@ $else.globalBudget
 $endIf.globalBudget
 
 *** check whether cm_peakBudgYr corresponds to year of maximum cumulative CO2 emissions
-if (  (     cm_iterative_target_adj eq 9
-        AND cm_peakBudgYr ne sm_peakBudgYr_check  ),
-  s80_bool = 0;
-  p80_messageShow("peakbudgyr") = YES;
-);
+*if (  (     cm_iterative_target_adj eq 9
+*        AND cm_peakBudgYr ne sm_peakBudgYr_check  ),
+*  s80_bool = 0;
+*  p80_messageShow("peakbudgyr") = YES;
+*);
 
 *** Check whether difference in cumulative emissions between both time steps is greater than sm_peakbudget_diff_tolerance
 if (  (   cm_iterative_target_adj eq 9
