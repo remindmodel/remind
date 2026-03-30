@@ -94,7 +94,7 @@ EDGEToutputPriorHarmonization <-reporttransport::reportEdgeTransport(edgetOutput
                                      gdxPath = file.path(outputdir, "fulldata.gdx"),
                                      isStored = TRUE)
 
-#Add relative deviation of FE|Transport (including bunkers) to the REMIND.mif as an indicator
+#Add ratio of "FE|Transport" (with bunkers) EDGE-T to REMIND before harmonization to the REMIND.mif as an indicator
 FEratioEDGE <- EDGEToutputPriorHarmonization[variable == "FE|Transport with bunkers"][, c("variable", "model", "scenario") := NULL]
 setnames(FEratioEDGE, "value", "EDGEfe")
 mifs <- list.files(".", recursive = FALSE, full.names = TRUE)
