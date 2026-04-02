@@ -176,7 +176,7 @@ if (cm_phaseoutBiolc eq 1,
 
 *' @stop
 
-*** FS: limit biomass domestic production from 2035 onwards to regional upper value defined by cm_bioprod_regi_lim
+*' If cm_bioprod_regi_lim switch used, limit biomass domestic production to regional upper value
 $IFTHEN.bioprod_regi_lim not "%cm_bioprod_regi_lim%" == "off"
 loop( ext_regi$(p30_bioprod_regi_lim(ext_regi)),
   loop(regi$regi_groupExt(ext_regi,regi),
