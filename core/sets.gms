@@ -1256,6 +1256,7 @@ teEarlyReti(all_te)    "technologies for which early retirement of existing capa
     biochp
     biohp
     bioigcc
+    biotrmod
     tnrs
 /
 
