@@ -7,11 +7,11 @@
 *** SOF ./modules/80_optimization/nash/solve.gms
 
 regi(all_regi) = NO;
-hybrid.solvelink = 3; !! activate multiple-CPU mode for GAMS
-hybrid.optfile   = 9;
+remindgamsmodel.solvelink = 3; !! activate multiple-CPU mode for GAMS
+remindgamsmodel.optfile   = 9;
 
 if(cm_nash_mode eq 1,
-  hybrid.solvelink = 0;  !! activate single-CPU mode for GAMS
+  remindgamsmodel.solvelink = 0;  !! activate single-CPU mode for GAMS
 );
 
 loop (all_regi,
@@ -50,29 +50,29 @@ $endif.repeatNonOpt
     logfile.nd = sm_tmp2;
   );
   
-  solve hybrid using nlp maximizing vm_welfareGlob;
+  solve remindgamsmodel using nlp maximizing vm_welfareGlob;
 
   if(cm_nash_mode eq 1,
-    p80_repy_thisSolitr(all_regi,"solvestat") = hybrid.solvestat;
-    p80_repy_thisSolitr(all_regi,"modelstat") = hybrid.modelstat;
-    p80_repy_thisSolitr(all_regi,"resusd")    = hybrid.resusd;
-    p80_repy_thisSolitr(all_regi,"objval")    = hybrid.objval;
+    p80_repy_thisSolitr(all_regi,"solvestat") = remindgamsmodel.solvestat;
+    p80_repy_thisSolitr(all_regi,"modelstat") = remindgamsmodel.modelstat;
+    p80_repy_thisSolitr(all_regi,"resusd")    = remindgamsmodel.resusd;
+    p80_repy_thisSolitr(all_regi,"objval")    = remindgamsmodel.objval;
     if (p80_repy_thisSolitr(all_regi,"modelstat") eq 2,
       p80_repyLastOptim(all_regi,"objval") = p80_repy_thisSolitr(all_regi,"objval");
     );
   );
 
   regi(all_regi) = NO;
-  p80_handle(all_regi) = hybrid.handle;
+  p80_handle(all_regi) = remindgamsmodel.handle;
 );  !! close regi loop
 
 if(cm_nash_mode eq 2,
 repeat
   loop (all_regi$handlecollect(p80_handle(all_regi)),
-    p80_repy_thisSolitr(all_regi,"solvestat") = hybrid.solvestat;
-    p80_repy_thisSolitr(all_regi,"modelstat") = hybrid.modelstat;
-    p80_repy_thisSolitr(all_regi,"resusd")    = hybrid.resusd;
-    p80_repy_thisSolitr(all_regi,"objval")    = hybrid.objval;
+    p80_repy_thisSolitr(all_regi,"solvestat") = remindgamsmodel.solvestat;
+    p80_repy_thisSolitr(all_regi,"modelstat") = remindgamsmodel.modelstat;
+    p80_repy_thisSolitr(all_regi,"resusd")    = remindgamsmodel.resusd;
+    p80_repy_thisSolitr(all_regi,"objval")    = remindgamsmodel.objval;
 
     if (p80_repy_thisSolitr(all_regi,"modelstat") eq 2,
       p80_repyLastOptim(all_regi,"objval") = p80_repy_thisSolitr(all_regi,"objval");
