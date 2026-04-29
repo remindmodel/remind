@@ -173,7 +173,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 tech_stat
 inco0              400.0       200.0       420.0       350.0
 omf                 0.06        0.06        0.06        0.06
-lifetime              20          20          20          20
+lifetime              35          35          20          20
 
 +                   bfcc       idrcc
 inco0               1100         900
