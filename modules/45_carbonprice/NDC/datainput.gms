@@ -47,8 +47,8 @@ Parameter delay(all_regi) /
 
 ** For 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
 loop("%cm_NDC_version%" == "2026_cond",
-  p45_EmiTargetAbs(t,regi)$(t.val eq 2030 + delay(regi)) = sum(ttot, f45_EmiTargetAbs(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%"))$(ttot.val eq 2030);
-  p45_EmiTargetAbs(t,regi)$(t.val eq 2035 + delay(regi)) = sum(ttot, f45_EmiTargetAbs(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%"))$(ttot.val eq 2035);
+  p45_EmiTargetAbs(t,regi)$(t.val eq 2030 + delay(regi)) = sum(ttot, f45_EmiTargetAbs(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%")$(ttot.val eq 2030));
+  p45_EmiTargetAbs(t,regi)$(t.val eq 2035 + delay(regi)) = sum(ttot, f45_EmiTargetAbs(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%")$(ttot.val eq 2035));
   p45_EmiTargetAbs(t,regi)$(t.val eq 2030) = 0;
   p45_EmiTargetAbs(t,regi)$(t.val eq 2035) = 0;
 );
@@ -78,8 +78,8 @@ display p45_shareTarget;
 
 ** For 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
 loop("%cm_NDC_version%" == "2026_cond",
-  p45_shareTarget(t,regi)$(t.val eq 2030 + delay(regi)) = sum(ttot, p45_shareTarget(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%"))$(ttot.val eq 2030);
-  p45_shareTarget(t,regi)$(t.val eq 2035 + delay(regi)) = sum(ttot, p45_shareTarget(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%"))$(ttot.val eq 2035);
+  p45_shareTarget(t,regi)$(t.val eq 2030 + delay(regi)) = sum(ttot, p45_shareTarget(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%")$(ttot.val eq 2030));
+  p45_shareTarget(t,regi)$(t.val eq 2035 + delay(regi)) = sum(ttot, p45_shareTarget(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%")$(ttot.val eq 2035));
   p45_shareTarget(t,regi)$(t.val eq 2030) = 0;
   p45_shareTarget(t,regi)$(t.val eq 2035) = 0;
 );
