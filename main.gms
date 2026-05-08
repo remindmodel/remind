@@ -1433,6 +1433,13 @@ $setglobal cm_NDC_version  2026_cond    !! def = "2024_cond" !! regexp = 20(18|2
 *' * Note: including target years here does not mean they are automcatically considered in the carbonprice NDC realization. 
 *' * Depending on the p45_minRatioOfCoverageToMax parameter, each region receives the target year with the highest share of emissions covered under NDCs.
 $setglobal cm_NDC_targetYear  2030, 2035    !! def = "2030, 2035"
+*' cm_NDC_delay            "delays NDC targets beyond the target years defined by cm_NDC_targetYear"
+*' *  (prisma):            PRISMA asymetric rollback delays NDC target per region
+*' *    Regional delay defined as:  
+*'      *   10 years delay for Transition leaders: EUR, NEU, JPN (e.g. 2030 NDC shifted to 2040, 2035 target shifter to 2045, and 2050 target shifted to 2060)
+*'      *   20 years delay for Diversifying economies: LAM, USA, CAZ, IND, CHA, SSA, OAS
+*'      *   30 years delay for Fossil-dependant: REF, MEA
+$setglobal cm_NDC_delay  prisma    !! def = "off"
 *' cm_NDC_CO2PriceLimit            "sets regional upper limit for CO2 prices in NDC realization" [requires 45_carbonprice = NDC]"
 *' This serves to not force regions to reach NDC emissions targets at extremly high CO2 prices in the near-term. 
 *' Instead, regions go "as close as still plausible" to their NDC targets. 
