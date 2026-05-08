@@ -133,9 +133,10 @@ $ifthen.policy_scenario "%cm_indstExogScen_set%" == "YES"
 $endif.policy_scenario
 $drop cm_indstExogScen_set
 
-!! Fix regional waste incineration carbon capture share to what is assumed via cm_wasteIncinerationCCSshare from 2035 on
-v37_regionalWasteIncinerationCCSshare.fx(t,regi)$(t.val lt 2035) = 0;
-v37_regionalWasteIncinerationCCSshare.fx(t,regi)$(t.val ge 2035) = p37_regionalWasteIncinerationCCSMaxShare(t,regi);
+!! Fix regional waste incineration carbon capture share to what is assumed via cm_wasteIncinerationCCSshare from 2035 on for Germany
+v37_regionalWasteIncinerationCCSshare.lo(t,regi)$(t.val lt 2035) = 0;
+v37_regionalWasteIncinerationCCSshare.up(t,regi)$(t.val ge 2035) = p37_regionalWasteIncinerationCCSMaxShare(t,regi);
+v37_regionalWasteIncinerationCCSshare.fx(t,regi)$(t.val ge 2035 AND (sameAs(regi, "DEU"))) = p37_regionalWasteIncinerationCCSMaxShare(t,regi);
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 !! fix processes procudction in historic years
