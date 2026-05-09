@@ -308,32 +308,6 @@ $include "./modules/47_regipol/regiCarbonPrice/input/p47_exogDemScen.cs4r"
 $offdelim
 /;
 
-*' adapt Ariadne industry production trajectories to the relative trajectory from FORECAST 
-*' (absolute values are different because of different sectoral scopes)
-*' to be done in mrremind cleanly once FORECAST has its updated data in the Ariadne DB
-*' fix to calibration trajectories before cm_staryear, the switch is only used in policy runs
-loop( regi$sameAs(regi,"DEU"),
-*' chemicals production
-  pm_exogDemScen(t,regi,"ariadne_bal","ue_chemicals") $ ( t.val lt cm_startyear ) = pm_cesdata(t,regi,"ue_chemicals","quantity");
-  pm_exogDemScen("2030",regi,"ariadne_bal","ue_chemicals") = pm_cesdata("2020",regi,"ue_chemicals","quantity") * 0.94;
-  pm_exogDemScen("2035",regi,"ariadne_bal","ue_chemicals") = pm_cesdata("2020",regi,"ue_chemicals","quantity") * 0.95;
-  pm_exogDemScen("2040",regi,"ariadne_bal","ue_chemicals") = pm_cesdata("2020",regi,"ue_chemicals","quantity") * 0.97;
-  pm_exogDemScen("2045",regi,"ariadne_bal","ue_chemicals") = pm_cesdata("2020",regi,"ue_chemicals","quantity") * 0.98;
-*' constant production after 2050
-  pm_exogDemScen(t ,regi,"ariadne_bal","ue_chemicals") $ ( t.val ge 2050 ) = pm_cesdata("2020",regi,"ue_chemicals","quantity");
-
-*' other industry production
-  pm_exogDemScen(t,regi,"ariadne_bal","ue_otherInd") $ ( t.val lt cm_startyear ) = pm_cesdata(t,regi,"ue_otherInd","quantity");
-  pm_exogDemScen("2030",regi,"ariadne_bal","ue_otherInd") = pm_cesdata("2020",regi,"ue_otherInd","quantity");
-  pm_exogDemScen("2035",regi,"ariadne_bal","ue_otherInd") = pm_cesdata("2020",regi,"ue_otherInd","quantity") * 1.03;
-  pm_exogDemScen("2040",regi,"ariadne_bal","ue_otherInd") = pm_cesdata("2020",regi,"ue_otherInd","quantity") * 1.05;
-  pm_exogDemScen("2045",regi,"ariadne_bal","ue_otherInd") = pm_cesdata("2020",regi,"ue_otherInd","quantity") * 1.08;
-*' constant production after 2050
-  pm_exogDemScen(t ,regi,"ariadne_bal","ue_otherInd") $ ( t.val ge 2050 ) = pm_cesdata("2020",regi,"ue_otherInd","quantity") * 1.1;
-);
-
-
-
 $endif.exogDemScen
 
 
