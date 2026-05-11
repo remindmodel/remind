@@ -1778,7 +1778,7 @@ $setGlobal cm_indstExogScen  off !! def off
 *** (ariadne_ensec)    steel and cement production trajectories for Germany used in the Ariadne "EnSec" (energy security) scenario
 *** (ariadne_highDem)
 *** (ariadne_lowDem)
-$setGLobal cm_exogDem_scen off !! def off  !! regexp = off|ariadne_(bal|ensec|highDem|lowDem)
+$setGLobal cm_exogDem_scen off !! def off  !! regexp = off|ariadne_(bal|reloc)
 *** cm_Ger_Pol               "switch for selecting different policies for Germany used in the ARIADNE scenarios"
 *** switch for Germany-specific policies
 *** (off) default
