@@ -323,6 +323,8 @@ bf and bof:
     Agora KSV-Rechner: 38 € OPEX
     Woertler 2013 Exhibit 8: Components (no C&R) summed CAPEX 442 € (149 BF, 128 BOF, + Rest) --> approx 500 $
     --> inco0 average is 600; distribution among bf and bof does not affect model, measurement of bf in tPI is negligible
+    Lifetime: BFs require a first relining at approx 20yr of operation. Given this is cheap (~10% of total CAPEX), we assume
+    one relining is likely --> lifetime of 35yr
 
 dri-eaf:
     Agora KSV-Rechner: 40 € OPEX
