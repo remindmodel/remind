@@ -42,7 +42,7 @@ display p45_EmiTargetAbs;
 Parameter p45_delay(all_regi) /
     EUR 10, NEU 10, JPN 10,
     LAM 20, USA 20, CAZ 20, IND 20, CHA 20, SSA 20, OAS 20,
-    REF 30, MEA 30
+    REF 35, MEA 35
 /;
 
 ** For 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
