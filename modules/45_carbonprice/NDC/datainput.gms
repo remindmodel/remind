@@ -33,30 +33,28 @@ display p45_EmiTargetAbs;
 **       20 years delay for Diversifying economies: LAM, USA, CAZ, IND, CHA, SSA, OAS
 **       30 years delay for Fossil-dependant: REF, MEA
 
-$ifThen.adTargetValue "%cm_NDC_delay%" == "prisma"
+$ifThen "%cm_NDC_delay%" == "prisma"
 
 
 ** Test: display delayed NDC targets before delay
 display p45_EmiTargetAbs;
 
-Parameter delay(all_regi) /
+Parameter p45_delay(all_regi) /
     EUR 10, NEU 10, JPN 10,
     LAM 20, USA 20, CAZ 20, IND 20, CHA 20, SSA 20, OAS 20,
     REF 30, MEA 30
 /;
 
 ** For 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
-loop("%cm_NDC_version%" == "2026_cond",
-  p45_EmiTargetAbs(t,regi)$(t.val eq 2030 + delay(regi)) = sum(ttot, f45_EmiTargetAbs(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%")$(ttot.val eq 2030));
-  p45_EmiTargetAbs(t,regi)$(t.val eq 2035 + delay(regi)) = sum(ttot, f45_EmiTargetAbs(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%")$(ttot.val eq 2035));
-  p45_EmiTargetAbs(t,regi)$(t.val eq 2030) = 0;
-  p45_EmiTargetAbs(t,regi)$(t.val eq 2035) = 0;
-);
+p45_EmiTargetAbs(t,regi)$(t.val eq 2030 + p45_delay(regi)) = sum(ttot, f45_EmiTargetAbs(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%")$(ttot.val eq 2030));
+p45_EmiTargetAbs(t,regi)$(t.val eq 2035 + p45_delay(regi)) = sum(ttot, f45_EmiTargetAbs(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%")$(ttot.val eq 2035));
+p45_EmiTargetAbs(t,regi)$(t.val eq 2030) = 0;
+p45_EmiTargetAbs(t,regi)$(t.val eq 2035) = 0;
 
 ** Test: display delayed NDC targets after delay
 display p45_EmiTargetAbs;
 
-$ENDIF.adTargetValue
+$ENDIF
 ** << PRISMA Asymetric rollback
 
 Table f45_shareTarget(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with estimated target year GHG emissions share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]"
@@ -71,23 +69,21 @@ Parameter p45_shareTarget(ttot,all_regi) "Estimated target year GHG emissions sh
 p45_shareTarget(t,all_regi) = f45_shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
 *** >> PRISMA Asymetric rollback: 
-$ifThen.adTargetValue "%cm_NDC_delay%" == "prisma"
+$ifThen "%cm_NDC_delay%" == "prisma"
 
 ** Test: display delayed NDC sharetargets before delay
 display p45_shareTarget;
 
 ** For 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
-loop("%cm_NDC_version%" == "2026_cond",
-  p45_shareTarget(t,regi)$(t.val eq 2030 + delay(regi)) = sum(ttot, p45_shareTarget(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%")$(ttot.val eq 2030));
-  p45_shareTarget(t,regi)$(t.val eq 2035 + delay(regi)) = sum(ttot, p45_shareTarget(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%")$(ttot.val eq 2035));
-  p45_shareTarget(t,regi)$(t.val eq 2030) = 0;
-  p45_shareTarget(t,regi)$(t.val eq 2035) = 0;
-);
+p45_shareTarget(t,regi)$(t.val eq 2030 + p45_delay(regi)) = sum(ttot, f45_shareTarget(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%")$(ttot.val eq 2030));
+p45_shareTarget(t,regi)$(t.val eq 2035 + p45_delay(regi)) = sum(ttot, f45_shareTarget(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%")$(ttot.val eq 2035));
+p45_shareTarget(t,regi)$(t.val eq 2030) = 0;
+p45_shareTarget(t,regi)$(t.val eq 2035) = 0;
 
 ** Test: display delayed NDC sharetargets after delay
 display p45_shareTarget;
 
-$ENDIF.adTargetValue
+$ENDIF
 ** << PRISMA Asymetric rollback
 
 display p45_shareTarget;
