@@ -24,12 +24,38 @@ if(sum(regi $ sameAs(regi,"EUR"),1) = 0,
 *' "The current CPDB is informed by the annual update cycle for 2025. It contains policies adopted up to and including March 2025." Luka (NCI)
 *** The current protocol includes policies until March 2025 (see https://github.com/NewClimateInstitute/policy-modelling/issues/6#event-22523859766)
 *' CO2 targets of Countries that are represented by a native REMIND region follow it directly instead of using PBL's coverage shares.
+
 parameter
 p46_netZeroTargetCoverage(all_regi,ttot,targetSpecies) "Coverage of emissions in net-zero targets for a given region, year and gas species [1]" /
+
+$ifthen.prisma "%cm_targetDelay%" == "prisma"
+*** Delay scenario where national targets are pushed by:
+*** - 10 years for EUR, NEU, JPN
+*** - 20 years for LAM, USA, CAZ, IND, CHA, SSA, OAS
+*** - 30 years for REF, MEA
+
+  CAZ . 2070 . GHG_target  1
+  EUR . 2060 . GHG_target  1
+  JPN . 2060 . GHG_target  1
+  LAM . 2070 . GHG_target  0.83
+  USA . 2070 . GHG_target  1 !! by default deactivated with LTSexcludeRegi
+
+  MEA . 2090 . GHG_target  0.41 !! delay of 35 years (instead of 30, because 2085 is not a model year)
+  NEU . 2070 . GHG_target  0.8  !! delay of 15 years (instead of 10, because 2065 is not a model year)
+  OAS . 2080 . GHG_target  0.86 !! delay of 25 years (instead of 20, because 2075 is not a model year)
+  SSA . 2080 . GHG_target  0.56 !! delay of 25 years (instead of 20, because 2075 is not a model year)
+
+  CHA . 2080 . CO2_target  1
+  REF . 2090 . GHG_target  0.87
+
+  IND . 2090 . CO2_target  1
+
+$else
   CAZ . 2050 . GHG_target  1
   EUR . 2050 . GHG_target  1
   JPN . 2050 . GHG_target  1
   LAM . 2050 . GHG_target  0.83
+  USA . 2050 . GHG_target  1 !! by default deactivated with LTSexcludeRegi
 
   MEA . 2055 . GHG_target  0.41
   NEU . 2055 . GHG_target  0.8
@@ -40,7 +66,12 @@ p46_netZeroTargetCoverage(all_regi,ttot,targetSpecies) "Coverage of emissions in
   REF . 2060 . GHG_target  0.87
 
   IND . 2070 . CO2_target  1 !! CO2 target of India
+$endif.prisma
 /;
+
+loop(p46_netZeroTargetCoverage(regi,t,targetSpecies) $ LTSexcludeRegi(regi),
+  p46_netZeroTargetCoverage(regi,t,targetSpecies) = 0;
+);
 
 pm_taxCO2eqRegi(ttot,regi) = 0;
 

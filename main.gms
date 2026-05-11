@@ -1464,7 +1464,13 @@ $setglobal cm_NDC_TargetCheckConv  off      !! def = "off"  !! regexp = on|off
 *' *  (2024_cond):   minimum technology targets are included from NewClimate latest policy modeling protocol in 2025
 *' *  (2024_uncond): maximal technology targets are included from NewClimate latest policy modeling protocol in 2025
 $setglobal cm_NPi_version  2025_cond    !! def = "2025_cond"  !! regexp = 2025_(un)?cond
-*'
+
+*' cm_LTSexcludeRegi: comma-separated list of regions (H12) for which LTS should be ignored
+*' *  (off):   apply all hard-coded LTS of module 46 (see datainput)
+*' *  (USA):   by default, USA targets are ignored because of withdrawal from all climate agreements 
+*' *  (USA, OAS):   removing several regions
+$setglobal cm_LTSexcludeRegi USA !! def = "USA"  
+
 *' *  c_regi_earlyreti_rate  "maximum percentage of capital stock that can be retired early (before reaching their expected lifetimes) in one year in specified regions, if they are not economically viable. It is applied to all techs unless otherwise specified in c_tech_earlyreti_rate."
 *' *  Default value used in NPi runs: EUR_regi 0.06, USA_regi 0.04, CHA_regi 0.04, CAZ_regi 0.04, JPN_regi 0.04, GLO 0.03 (0.06 means 6% of capacity can be retired early per year at maximum, i.e. full retirement after 16.7 years, 40% standing capacity after 10 years)
 *' *  In target scenarios with ambition level beyond the NPi, we assume slightly higher early retirement rates outside the EU.
