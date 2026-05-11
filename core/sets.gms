@@ -858,11 +858,11 @@ sets
        biomass
        fossil
        power
-       CDR
+       carbonRemoval
        transport
        buildings
        industry
-       CCU
+       carbonUtilization
        techpol
        emicapregi
        carbonprice
@@ -894,11 +894,11 @@ module2realisation(modules,*) "mapping of modules and active realisations" /
        biomass . %biomass%
        fossil . %fossil%
        power . %power%
-       CDR . %CDR%
+       carbonRemoval . %carbonRemoval%
        transport . %transport%
        buildings . %buildings%
        industry . %industry%
-       CCU . %CCU%
+       carbonUtilization . %carbonUtilization%
        techpol . %techpol%
        emicapregi . %emicapregi%
        carbonprice . %carbonprice%

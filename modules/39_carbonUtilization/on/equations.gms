@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/39_CCU/on/equations.gms
+*** SOF ./modules/39_carbonUtilization/on/equations.gms
 
 *' @equations
 
@@ -50,4 +50,4 @@ q39_shSynGas(t,regi)$(cm_shSynGas gt 0)..
 ;
 
 *' @stop
-*** EOF ./modules/39_CCU/on/equations.gms
+*** EOF ./modules/39_carbonUtilization/on/equations.gms

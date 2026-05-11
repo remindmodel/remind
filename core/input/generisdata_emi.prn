@@ -50,7 +50,7 @@ seh2.seliqsyn.MeOH                                                 0.53
 $ontext
 Parameterization of CO2 Capture Rates of X-to-Liquids and X-to-Gas technologies including carbon capture:
 The capture rates need to be consistent with the capture rate of X-to-H2 technologies
-and the carbon efficiency (carbon in output / carbon in input) of CCU-Technologies (see ./modules/39_CCU/on/datainput.gms)
+and the carbon efficiency (carbon in output / carbon in input) of CCU-Technologies (see ./modules/39_carbonUsage/on/datainput.gms)
 that convert H2 + CO2 to Liquids/Gases.
 For the capture rate of the combined process, we take into account the parameterization of the individual steps:
 1. Production of synthesis gas/h2, here we assume 90% capture rate in line with our parameterization of

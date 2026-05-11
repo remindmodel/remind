@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/39_CCU/on/bounds.gms
+*** SOF ./modules/39_carbonUtilization/on/bounds.gms
 
 *' no CCU technologies (liquid synfuel, synthetic gas) before 2025
 vm_cap.up(t,regi,te_ccu39,"1")$(t.val lt 2025) = 0;
@@ -63,4 +63,4 @@ v39_shSynGas.lo(t,regi)$(t.val eq 2035) = cm_shSynGas / 4;
 v39_shSynGas.lo(t,regi)$(t.val eq 2040) = cm_shSynGas / 2;
 v39_shSynGas.lo(t,regi)$(t.val ge 2045) = cm_shSynGas;
 );
-*** EOF ./modules/39_CCU/on/bounds.gms
+*** EOF ./modules/39_carbonUtilization/on/bounds.gms

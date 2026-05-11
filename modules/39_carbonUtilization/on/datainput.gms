@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/39_CCU/on/datainput.gms
+*** SOF ./modules/39_carbonUtilization/on/datainput.gms
 
 *** carbon efficiency of synthetic liquids (FT synthesis) and synthetic gas production (methanation)
 *** set to 0.95 following Mar Pérez-Fortes et al. (2016), https://doi.org/10.1016/j.apenergy.2015.07.067,
@@ -18,4 +18,4 @@ p39_co2_dem(t,regi,"seh2","seliqsyn","MeOH") = pm_emifac(t,regi,"seliqfos","fedi
 
 
 
-*** EOF ./modules/39_CCU/on/datainput.gms
+*** EOF ./modules/39_carbonUtilization/on/datainput.gms

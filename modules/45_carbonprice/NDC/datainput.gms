@@ -13,19 +13,19 @@ Execute_Loadpoint "input_ref" p45_taxCO2eq_bau = pm_taxCO2eq;
 pm_taxCO2eq(t,regi) = p45_taxCO2eq_bau(t,regi);
 
 
-*** load NDC data
-Table f45_factorTargetyear(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with multiplier for target year emissions vs 2015 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]"
+*** load NDC emissions targets (only fraction of emissions in REMIND region from countries with NDC targets)
+Table f45_EmiTargetAbs(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with absolute NDC emissions targets, emissions from countries without targets are not included [Mt CO2eq/yr]"
 $offlisting
 $ondelim
-$include "./modules/45_carbonprice/NDC/input/fm_factorTargetyear.cs3r"
+$include "./modules/45_carbonprice/NDC/input/fm_EmiTargetAbs.cs3r"
 $offdelim
 $onlisting
 ;
 
-Parameter p45_factorTargetyear(ttot,all_regi) "Multiplier for target year emissions vs 2015 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]";
-p45_factorTargetyear(t,all_regi) = f45_factorTargetyear(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
+Parameter p45_EmiTargetAbs(ttot,all_regi) "Absolute NDC emissions targets, emissions from countries without targets are not included [Mt CO2eq/yr]";
+p45_EmiTargetAbs(t,all_regi) = f45_EmiTargetAbs(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
-display p45_factorTargetyear;
+display p45_EmiTargetAbs;
 
 Table f45_shareTarget(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with estimated target year GHG emissions share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]"
 $offlisting
@@ -48,6 +48,17 @@ $include "./modules/45_carbonprice/NDC/input/pm_BAU_reg_emi_wo_LU_wo_bunkers.cs4
 $endif
 $offdelim
   /             ;
+
+*** --------------------------------------------------------------------------
+*** use new GAMS internal variables for total GHG excl LULUCF and excl bunkers
+
+*** overwrite BAU emissions with emissions in GAMS variable from reference GDX
+p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,regi) = 0;
+Execute_Loadpoint 'input_ref' p45_BAU_reg_emi_wo_LU_wo_bunkers = v_emiGHG_exclLULUCF_exclBunkers.l;
+*** convert from GtCeq/yr to MtCO2eq/yr
+p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,regi) = p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,regi) * sm_c_2_co2 * 1000;
+
+*** --------------------------------------------------------------------------
 
 *** parameters for selecting NDC years
 Set t_NDC_targetYear(ttot)                          "Years for which NDC emissions targets can be applied [0 or 1]" / %cm_NDC_targetYear% /;

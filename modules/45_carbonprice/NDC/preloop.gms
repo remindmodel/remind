@@ -10,12 +10,12 @@
 *#' @equations 
 *#'  calculate level of emission target per REMIND region. It is componsed to two terms:
 *#'  1. Contribution of countries within REMIND region with NDC target: 
-*#'     share of emissions covered by NDC in particular region * REMIND NPI emissions in 2015 * (country-aggregated) relative NDC emissions target with respect to 2015
+*#'     Absolute NDC emissions target that was derived by summing the targets of all countries within the region that have NDC targets
 *#'  2. Contribution of countries within REMIND region without NDC target:
 *#'     (1 - share of emissions covered by NDC in particular region) *  REMIND NPI  emissions in target year
 p45_CO2eqwoLU_goal(p45_NDCyearSet(t,regi)) =
-          p45_shareTarget(t,regi)     * p45_BAU_reg_emi_wo_LU_wo_bunkers("2015",regi) * p45_factorTargetyear(t,regi)    !! share with NDC target
-        + (1-p45_shareTarget(t,regi)) * p45_BAU_reg_emi_wo_LU_wo_bunkers(t,regi);                                       !! baseline for share of countries without NDC target
+          p45_EmiTargetAbs(t,regi)                                                  !! emissions target derived from countries with NDC target
+        + (1-p45_shareTarget(t,regi)) * p45_BAU_reg_emi_wo_LU_wo_bunkers(t,regi);   !! countries without NDC target are assumed to follow NPI emissions pathway
 
 display pm_taxCO2eq,p45_CO2eqwoLU_goal;
 

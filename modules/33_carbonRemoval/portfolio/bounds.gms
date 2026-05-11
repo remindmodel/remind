@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/33_CDR/portfolio/bounds.gms
+*** SOF ./modules/33_carbonRemoval/portfolio/bounds.gms
 
 vm_emiCdr.fx(t,regi,emi)$(not sameas(emi,"co2")) = 0.0;
 vm_emiCdr.l(t,regi,"co2")$(t.val ge 2025 AND cm_ccapturescen ne 2) = -sm_eps;
@@ -82,4 +82,4 @@ else
 *** Set upper bound on the amount of FE available for a sector
 v33_FEsector_total.up(t,regi,entyFe,sector)$p33_shfetot_up(t,regi,entyFe,sector) = p33_FE_limit(t,regi,entyFe,sector);
 
-*** EOF ./modules/33_CDR/portfolio/bounds.gms
+*** EOF ./modules/33_carbonRemoval/portfolio/bounds.gms

@@ -82,20 +82,20 @@ $setglobal CES_parameters  load       !! def = load
 $setGlobal biomass  magpie !! def = magpie
 ***---------------------    31_fossil    ----------------------------------------
 $setGlobal fossil  grades2poly        !! def = grades2poly
-***---------------------    32_power    ----------------------------------------
+***---------------------    32_power    -----------------------------------------
 $setGlobal power  IntC               !! def = IntC
-***---------------------    33_cdr       ----------------------------------------
-$setGlobal CDR  DAC                   !! def = DAC
+***---------------------    33_carbonRemoval       ------------------------------
+$setGlobal carbonRemoval  DAC                   !! def = DAC
 ***---------------------    35_transport    -------------------------------------
 $setGlobal transport  edge_esm         !! def = edge_esm
 ***---------------------    36_buildings    -------------------------------------
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
 $setglobal industry  subsectors     !! def = simple
-***---------------------    38_stationary    --------------------------------------
+***---------------------    38_stationary    ------------------------------------
 $setglobal stationary  off            !! def = simple
-***---------------------    39_CCU    --------------------------------------
-$setglobal CCU  on !! def = on
+***---------------------    39_carbonUtilization    -----------------------------
+$setglobal carbonUtilization  on !! def = on
 ***---------------------    40_techpol  -----------------------------------------
 $setglobal techpol  none              !! def = none
 ***---------------------    41_emicapregi  --------------------------------------
@@ -104,7 +104,7 @@ $setglobal emicapregi  none           !! def = none
 $setglobal banking  off               !! def = off
 ***---------------------    45_carbonprice  -------------------------------------
 $setglobal carbonprice  none          !! def = none
-***---------------------    47_regipol  -------------------------------------
+***---------------------    47_regipol  -----------------------------------------
 $setglobal regipol  none              !! def = none
 ***---------------------    50_damages    ---------------------------------------
 $setGlobal damages  off               !! def = off

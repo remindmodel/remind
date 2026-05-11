@@ -853,6 +853,24 @@ q_emiCap(t,regi) ..
                 vm_co2eq(t,regi) + vm_Xport(t,regi,"perm") - vm_Mport(t,regi,"perm")
                 =l= vm_perm(t,regi);
 
+
+***--------------------------------------------------
+*' Total GHG emissions excl. land-use change and excl. bunker emissions  (needed for NDC targets)
+***--------------------------------------------------
+q_emiGHG_exclLULUCF_exclBunkers(t,regi)..
+  v_emiGHG_exclLULUCF_exclBunkers(t,regi)
+  =e=
+*** total GHG emissions excl. F-Gases and excl. LULUCF
+  vm_co2eq(t,regi) 
+*** add F-Gases, convert from MtCO2eq/yr to GtC/yr
+  + vm_emiFgas(t,regi,"emiFgasTotal") / sm_c_2_co2 / 1000
+*** subtract bunker emissions
+  - sum(se2fe(enty,enty2,te),
+      pm_emifac(t,regi,enty,enty2,te,"co2")
+      * vm_demFeSector(t,regi,enty,enty2,"trans","other") 
+    );
+  
+
 ***-----------------------------------------------------------------
 *** Budgets on GHG emissions (single or two subsequent time periods)
 ***-----------------------------------------------------------------

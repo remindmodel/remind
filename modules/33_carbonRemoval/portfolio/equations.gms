@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/33_CDR/portfolio/equations.gms
+*** SOF ./modules/33_carbonRemoval/portfolio/equations.gms
 
 *' @equations
 ***---------------------------------------------------------------------------
@@ -320,11 +320,11 @@ q33_shfeSector_share(t,regi,entyFe,sector)$(p33_shfetot_up(t,regi,entyFe,sector)
 *' Limit spending on net negative emissions to a share of the region's GDP 
 *' Warning: This needs to be adapted if cm_NetNegEmi_calculation = 1 is used.
 ***---------------------------------------------------------------------------
-q33_CDRspending(t,regi)$(t.val ge max(2035,cm_startyear))..
+q33_carbonRemovalspending(t,regi)$(t.val ge max(2035,cm_startyear))..
   v33_NetNegEmi_expenses(t,regi)
   =e=
   (1-cm_frac_NetNegEmi) * pm_taxCO2eqSum(t,regi) * vm_emiAllco2neg(t,regi)
 ;
 
 *' @stop
-*** EOF ./modules/33_CDR/portfolio/equations.gms
+*** EOF ./modules/33_carbonRemoval/portfolio/equations.gms

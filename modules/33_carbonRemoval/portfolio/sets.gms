@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/33_CDR/portfolio/sets.gms
+*** SOF ./modules/33_carbonRemoval/portfolio/sets.gms
 sets
 
 te_all33(all_te)  "all CDR technologies"
@@ -112,4 +112,4 @@ teNoTransform2rlf(teNoTransform2rlf33) = YES;
 teAdj(teAdj33) = YES;
 teLearn(teLearn33) = YES;
 
-*** EOF ./modules/33_CDR/portfolio/sets.gms
+*** EOF ./modules/33_carbonRemoval/portfolio/sets.gms

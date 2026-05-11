@@ -323,10 +323,10 @@ $setglobal fossil  grades2poly        !! def = grades2poly
 *'
 *' * (IntC)      :    Power sector formulation with Integration Cost (IntC) markups and curtailment for VRE integration - linearly increasing with VRE share -, and fixed capacity factors for dispatchable power plants
 $setglobal power  IntC        !! def = IntC
-*'---------------------    33_CDR       ----------------------------------------
+*'---------------------    33_carbonRemoval       ---------------------------------
 *'
 *' * (portfolio) : CDR options added via switches: cm_33[option abbreviation]
-$setglobal CDR  portfolio        !! def = portfolio
+$setglobal carbonRemoval  portfolio        !! def = portfolio
 *'---------------------    35_transport    ----------------------------------------
 *'
 *' * (edge_esm): transport realization with iterative coupling to logit-based transport model EDGE-Transport with detailed representation of transport modes and technologies
@@ -340,11 +340,11 @@ $setglobal buildings  simple      !! def = simple
 *' * (subsectors):   models industry subsectors explicitly with individual CES nests
 *'                   for cement, chemicals, steel, and otherInd production.
 $setglobal industry  subsectors   !! def = subsectors
-*'---------------------    39_CCU    ---------------------------------
+*'---------------------    39_carbonUtilization   -------------------------------
 *'
 *' * (on): representation of technologies for producing synthetic liquids and synthetic gases based on hydrogen and captured carbon
 *' * (off): no representation of carbon capture and utilization technologies.
-$setglobal CCU  on      !! def = on
+$setglobal carbonUtilization  on      !! def = on
 *'---------------------    40_techpol  ----------------------------------------
 *'
 *' * (none): no technology policies
@@ -1425,11 +1425,14 @@ $setglobal cm_NDC_targetYear  2030, 2035    !! def = "2030, 2035"
 *' Instead, regions go "as close as still plausible" to their NDC targets. 
 *' * Examples on how to use:
 *' *  "2030.EUR 150" means that EUR has maximum CO2 price of 150 USD/tCO2 in 2030. 
-*' *  The CO2 price limit is increased after the specified target year by 20%/yr. 
-*' *  In the example, that would mean that EUR has a CO2 price limit in 2035 of 150 + 0.2 * 150 * 5 = 300 USD/tCO2. 
+*' *  For the development after the target year, the switch cm_NDC_CO2PriceLimit_continuation determines whether or not an upper limit on CO2 prices is imposed.
 *' *  By default 2030 CO2 prices are limited to 150 USD/tCO2 in EUR, 80 USD/tCO2 in CAZ, USA, JPN and NEU, 50 USD/tCO2 in REF and MEA, 40 USD/tCO2 in LAM and CHA, 30 USD/tCO2 in OAS, 15 USD/tCO2 in IND and 10 USD/tCO2 in SSA.
 *' *  If set to "off", no CO2 price limits are applied in any region.
 $setglobal cm_NDC_CO2PriceLimit  2030.EUR 150, 2030.(CAZ,USA, JPN, NEU) 80, 2030.(REF,MEA) 50, 2030.(LAM, CHA) 40, 2030.OAS 30, 2030.IND 15, 2030.SSA 10    !! def = "2030.EUR 150, 2030.(CAZ,USA, JPN, NEU) 80, 2030.(REF,MEA) 50, 2030.(LAM, CHA) 40, 2030.OAS 30, 2030.IND 15, 2030.SSA 10" 
+*' cm_NDC_CO2PriceLimit_continuation "switch to determine whether CO2 price limits in NDC realization are applied only in the specified target year or also in subsequent years" [requires 45_carbonprice = NDC]
+*' *  (on): CO2 price limits are applied not only in the specified target year but also in subsequent years, with the limit increasing by 20% per year after the target year, but allowing for carbon price of at least 200$/tCO2 at minimum
+*' *  (off): CO2 price limits are only applied in the specified target year, but not in subsequent years
+$setglobal cm_NDC_CO2PriceLimit_continuation  off     !! def = "off"  !! regexp = on|off
 *' cm_NDC_postTargetDevelopment            "choose assumption on co2 price trajectory after NDC target years" [requires 45_carbonprice = NDC]
 *' *  (constant):                     carbon price remains constant after the last NDC target year
 *' *  (global_conv):                  carbon price converges across regions to a global value of 100$/tCO2 by 2100

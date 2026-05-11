@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/33_CDR/portfolio/declarations.gms
+*** SOF ./modules/33_carbonRemoval/portfolio/declarations.gms
 scalars
 *** Multiple options
 sm_capture_rate_cdrmodule       "CO2 capture rate for CDR energy and process emissions, i.e. fegas use in OAE and DAC and for calcination emissions in oae" / 0.9 /
@@ -106,7 +106,7 @@ q33_shfeSector_share(ttot,all_regi,all_enty,emi_sectors)             "share of a
 q33_shfeSector_SectorTotal(ttot,all_regi,all_enty,emi_sectors) "a sector's final energy type demand"
 q33_shfeSector_Total(ttot,all_regi,all_enty)                   "total FE demand in a region (aggregating similar fe types)"
 
-q33_CDRspending(ttot,all_regi)                             "expenses for net negative emissions relative to GDP"
+q33_carbonRemovalspending(ttot,all_regi)                             "expenses for net negative emissions relative to GDP"
 ;
 
-*** EOF ./modules/33_CDR/portfolio/declarations.gms
+*** EOF ./modules/33_carbonRemoval/portfolio/declarations.gms

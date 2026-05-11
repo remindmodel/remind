@@ -55,7 +55,7 @@ Imports:
     piamutils,
     plotly,
     purrr,
-    quitte (>= 0.3137.2),
+    quitte (>= 0.3148.0),
     R.utils,
     raster,
     readr,

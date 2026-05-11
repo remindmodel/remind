@@ -4,9 +4,10 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/33_CDR/portfolio/preloop.gms
+*** SOF ./modules/39_carbonUtilization/off/bounds.gms
 
-*** initialize bound on final energy for a sector
-p33_FE_limit(t,regi,entyFe,sector)$p33_shfetot_up(t,regi,entyFe,sector) = 1000;
+vm_co2CCUshort.fx(t,regi,"cco2","ccuco2short",teCCU2rlf(te2,rlf)) = 0;
+vm_cap.fx(t,regi,"h22ch4",rlf)$te2rlf("h22ch4",rlf) = 0;
+vm_cap.fx(t,regi,"MeOH",rlf)$te2rlf("MeOH",rlf) = 0;
 
-*** EOF ./modules/33_CDR/portfolio/preloop.gms
+*** EOF ./modules/39_carbonUtilization/off/bounds.gms

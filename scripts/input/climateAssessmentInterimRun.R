@@ -106,27 +106,18 @@ cat(
   file = cfg$logFile, append = TRUE
 )
 
-runTimes <- c(runTimes, "postprocessing start" = Sys.time())
-
-gdxExportCfg <- file.path(system.file(package = "remindClimateAssessment"), "default.yaml")
-# The variable/file association determines which variables are extracted from the MAGICC7 output file
-# and dumped into which GDX file(s)
-associateVariablesAndFiles <- exportConfFromYaml(gdxExportCfg)
-thesePlease <- unique(associateVariablesAndFiles$magicc7Variable)
-climateAssessmentData <- read.quitte(cfg$climateAssessmentFile) %>%
-  filter(variable %in% thesePlease) %>%
-  pivot_wider(names_from = "period", values_from = "value") %>%
-  mutate(variable = vapply(.data$variable, renameVariableMagicc7ToRemind, USE.NAMES = FALSE, FUN.VALUE = character(1)))
-runTimes <- c(runTimes, "postprocessing end" = Sys.time())
-
-# Loop through each file name given in associateVariablesAndFiles and write the associated variables to GDX files
-# Note: This arrangement is capable of writing multiple variables to the same GDX file
 runTimes <- c(runTimes, "write_gdx start" = Sys.time())
 
-for (currentFn in unique(unlist(associateVariablesAndFiles$fileName))) {
-  cat(date(), "climateAssessmentInterimRun.R: Wrote", currentFn, "\n", file = cfg$logFile, append = TRUE)
-  dumpToGdx(climateAssessmentData, currentFn, associateVariablesAndFiles)
-}
+# Map climate assessment variables to REMIND/GAMS
+varmap <- c(
+  'Surface Air Temperature Change'            = 'pm_globalMeanTemperature',
+  'Effective Radiative Forcing|Anthropogenic' = 'p15_forc_magicc'
+)
+
+# No need to postprocess, which mainly consisted of renaming variables anyway. Skip renaming variables since during
+# iterative call to climate assessment the variables names are not expanded as in `MAGICC7_AR6.Report`/the standard
+# call to `run_climate` in `climate-assessment`
+read.quitte(cfg$climateAssessmentFile) %>% write.gdx(file.path(outputDir, "p15_climate.gdx"), varmap = varmap)
 
 runTimes <- c(runTimes, "write_gdx end" = Sys.time())
 

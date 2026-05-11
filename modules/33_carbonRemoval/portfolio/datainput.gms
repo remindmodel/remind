@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/33_CDR/portfolio/datainput.gms
+*** SOF ./modules/33_carbonRemoval/portfolio/datainput.gms
 
 *' @code
 *------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ p33_fedem("dac", "fehes") = 21.12; !! FE demand heat for material recovery
 *' @stop
 table f33_maxProdGradeRegiWeathering(all_regi,rlf)  "regional maximum potentials for enhanced weathering in Gt of grinded stone/a for different grades"
 $ondelim
-$include "./modules/33_CDR/portfolio/input/f33_maxProdGradeRegiWeathering.cs3r"
+$include "./modules/33_carbonRemoval/portfolio/input/f33_maxProdGradeRegiWeathering.cs3r"
 $offdelim
 ;
 display f33_maxProdGradeRegiWeathering;
@@ -28,7 +28,7 @@ display f33_maxProdGradeRegiWeathering;
 parameter p33_EW_transport_costs(all_regi,rlf,rlf)    "transport costs [T$/Gt stone]"
 /
 $ondelim
-$include "./modules/33_CDR/portfolio/input/p33_transportCostsWeathering.cs4r"
+$include "./modules/33_carbonRemoval/portfolio/input/p33_transportCostsWeathering.cs4r"
 $offdelim
 /
 ;
@@ -78,7 +78,7 @@ loop(ext_regi$f33_EW_maxShareOfCropland(ext_regi),
 parameter p33_BiocharPricePath(ttot,char)    "Biochar price trajectories assumptions over time (independent of actual deployment) [US$2015/t BC]"
 /
 $ondelim
-$include "./modules/33_CDR/portfolio/input/p33_BiocharPricePath.cs4r"
+$include "./modules/33_carbonRemoval/portfolio/input/p33_BiocharPricePath.cs4r"
 $offdelim
 /;
 
@@ -94,7 +94,7 @@ else
 parameter p33_BiocharLimitCropland(all_regi)    "Limits on Biochar deployment on land based on cropland in 2020. Assumption: max 50 t BC / ha / 10 yrs =   5 t BC / ha / yr. Unit:  [Mt BC/ yr]"
 /
 $ondelim
-$include "./modules/33_CDR/portfolio/input/p33_BiocharLimitCropland.cs4r"
+$include "./modules/33_carbonRemoval/portfolio/input/p33_BiocharLimitCropland.cs4r"
 $offdelim
 /;
 
@@ -124,7 +124,7 @@ if(cm_33_OAE_scen = 1, !! optimistic scenario for distribution, lower diesel dem
 parameter p33_EEZdistribution(all_regi)    "share in total EEZ area [fraction]"
 /
 $ondelim
-$include "./modules/33_CDR/portfolio/input/p33_EEZdistribution.cs4r"
+$include "./modules/33_carbonRemoval/portfolio/input/p33_EEZdistribution.cs4r"
 $offdelim
 /
 ;
@@ -158,4 +158,4 @@ loop(ext_regi$p33_GDP_NetNeg_share_s(ext_regi),
   );
 
 *' @stop
-*** EOF ./modules/33_CDR/portfolio/datainput.gms
+*** EOF ./modules/33_carbonRemoval/portfolio/datainput.gms

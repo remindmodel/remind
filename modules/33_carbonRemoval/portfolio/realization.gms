@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/33_CDR/portfolio/realization.gms
+*** SOF ./modules/33_carbonRemoval/portfolio/realization.gms
 
 *' @description
 *' (DAC) Direct air capture uses heat and electricity to capture CO2 from the atmosphere,
@@ -38,12 +38,12 @@
 ***----------------------------------------------------
 
 *####################### R SECTION START (PHASES) ##############################
-$Ifi "%phase%" == "sets" $include "./modules/33_CDR/portfolio/sets.gms"
-$Ifi "%phase%" == "declarations" $include "./modules/33_CDR/portfolio/declarations.gms"
-$Ifi "%phase%" == "datainput" $include "./modules/33_CDR/portfolio/datainput.gms"
-$Ifi "%phase%" == "equations" $include "./modules/33_CDR/portfolio/equations.gms"
-$Ifi "%phase%" == "preloop" $include "./modules/33_CDR/portfolio/preloop.gms"
-$Ifi "%phase%" == "bounds" $include "./modules/33_CDR/portfolio/bounds.gms"
-$Ifi "%phase%" == "postsolve" $include "./modules/33_CDR/portfolio/postsolve.gms"
+$Ifi "%phase%" == "sets" $include "./modules/33_carbonRemoval/portfolio/sets.gms"
+$Ifi "%phase%" == "declarations" $include "./modules/33_carbonRemoval/portfolio/declarations.gms"
+$Ifi "%phase%" == "datainput" $include "./modules/33_carbonRemoval/portfolio/datainput.gms"
+$Ifi "%phase%" == "equations" $include "./modules/33_carbonRemoval/portfolio/equations.gms"
+$Ifi "%phase%" == "preloop" $include "./modules/33_carbonRemoval/portfolio/preloop.gms"
+$Ifi "%phase%" == "bounds" $include "./modules/33_carbonRemoval/portfolio/bounds.gms"
+$Ifi "%phase%" == "postsolve" $include "./modules/33_carbonRemoval/portfolio/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/33_CDR/portfolio/realization.gms
+*** EOF ./modules/33_carbonRemoval/portfolio/realization.gms

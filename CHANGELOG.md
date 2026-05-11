@@ -10,7 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### input data/calibration
 
 ### changed
--
+- **33_CDR** Rename module to `33_carbonRemoval`
+    [[#2332](https://github.com/remindmodel/remind/pull/2332)]
+- **37_industry** Rename set item `pri` to `prim`
+    [[#2332](https://github.com/remindmodel/remind/pull/2332)]
+- **39_CCU** Rename module to `39_carbonUtilization`
+    [[#2332](https://github.com/remindmodel/remind/pull/2332)]
+- **scripts** Use `quitte::write.gdx` in `climateAssessmentInterimRun.R` to dump climate assessment results to gdx
+    [[#2334](https://github.com/remindmodel/remind/pull/2334)]
 
 ### added
 -
@@ -57,6 +64,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#2229](https://github.com/remindmodel/remind/pull/2229)]
 - **46_carbonpriceRegi** Refactor netZero realisation and ensure that targets are aligned with national accounting
     [#2307](https://github.com/remindmodel/remind/pull/2307)
+- **45_carbonprice** adapt NDC realization of carbonprice module to implement absolute emissions targets instead of relative targets
+    [#2328](https://github.com/remindmodel/remind/pull/2328)
 
 ### added
 - **mapping** Add csv mapping MAgPIE to REMIND variables used by the coupling script
