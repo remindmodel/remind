@@ -157,9 +157,7 @@ $ifthen.exogDemScen NOT "%cm_exogDem_scen%" == "off"
 exogDemScen       "exogenuous FE and ES demand scenarios that can be activated by cm_exogDem_scen"
 /
         ariadne_bal
-        ariadne_ensec
-        ariadne_highDem
-        ariadne_lowDem
+        ariadne_reloc
 /
 $endif.exogDemScen
 
