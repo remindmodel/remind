@@ -46,8 +46,8 @@ Parameter p45_delay(all_regi) /
 /;
 
 ** For 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
-p45_EmiTargetAbs(t,regi)$(t.val eq 2030 + p45_delay(regi)) = sum(ttot, f45_EmiTargetAbs(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%")$(ttot.val eq 2030));
-p45_EmiTargetAbs(t,regi)$(t.val eq 2035 + p45_delay(regi)) = sum(ttot, f45_EmiTargetAbs(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%")$(ttot.val eq 2035));
+p45_EmiTargetAbs(t,regi)$(t.val eq 2030 + p45_delay(regi)) = sum(ttot, f45_EmiTargetAbs(ttot,regi)$(ttot.val eq 2030));
+p45_EmiTargetAbs(t,regi)$(t.val eq 2035 + p45_delay(regi)) = sum(ttot, f45_EmiTargetAbs(ttot,regi)$(ttot.val eq 2035));
 p45_EmiTargetAbs(t,regi)$(t.val eq 2030) = 0;
 p45_EmiTargetAbs(t,regi)$(t.val eq 2035) = 0;
 
@@ -75,8 +75,8 @@ $ifThen "%cm_NDC_delay%" == "prisma"
 display p45_shareTarget;
 
 ** For 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
-p45_shareTarget(t,regi)$(t.val eq 2030 + p45_delay(regi)) = sum(ttot, f45_shareTarget(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%")$(ttot.val eq 2030));
-p45_shareTarget(t,regi)$(t.val eq 2035 + p45_delay(regi)) = sum(ttot, f45_shareTarget(ttot,regi,"%cm_NDC_version%","%cm_GDPpopScen%")$(ttot.val eq 2035));
+p45_shareTarget(t,regi)$(t.val eq 2030 + p45_delay(regi)) = sum(ttot, f45_shareTarget(ttot,regi)$(ttot.val eq 2030));
+p45_shareTarget(t,regi)$(t.val eq 2035 + p45_delay(regi)) = sum(ttot, f45_shareTarget(ttot,regi)$(ttot.val eq 2035));
 p45_shareTarget(t,regi)$(t.val eq 2030) = 0;
 p45_shareTarget(t,regi)$(t.val eq 2035) = 0;
 
