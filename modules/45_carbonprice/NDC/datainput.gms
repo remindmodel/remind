@@ -33,7 +33,7 @@ display p45_EmiTargetAbs;
 **       20 years delay for Diversifying economies: LAM, USA, CAZ, IND, CHA, SSA, OAS
 **       30 years delay for Fossil-dependant: REF, MEA
 
-$ifThen "%cm_NDC_delay%" == "prisma"
+$ifThen "%cm_targetDelay%" == "prisma"
 
 
 ** Test: display delayed NDC targets before delay
@@ -46,8 +46,8 @@ Parameter p45_delay(all_regi) /
 /;
 
 ** For 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
-p45_EmiTargetAbs(t,regi)$(t.val eq 2030 + p45_delay(regi)) = sum(ttot, f45_EmiTargetAbs(ttot,regi)$(ttot.val eq 2030));
-p45_EmiTargetAbs(t,regi)$(t.val eq 2035 + p45_delay(regi)) = sum(ttot, f45_EmiTargetAbs(ttot,regi)$(ttot.val eq 2035));
+p45_EmiTargetAbs(t,regi)$(t.val eq 2030 + p45_delay(regi)) = p45_EmiTargetAbs("2030",regi);
+p45_EmiTargetAbs(t,regi)$(t.val eq 2035 + p45_delay(regi)) = p45_EmiTargetAbs("2035",regi);
 p45_EmiTargetAbs(t,regi)$(t.val eq 2030) = 0;
 p45_EmiTargetAbs(t,regi)$(t.val eq 2035) = 0;
 
@@ -69,14 +69,14 @@ Parameter p45_shareTarget(ttot,all_regi) "Estimated target year GHG emissions sh
 p45_shareTarget(t,all_regi) = f45_shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
 *** >> PRISMA Asymetric rollback: 
-$ifThen "%cm_NDC_delay%" == "prisma"
+$ifThen "%cm_targetDelay%" == "prisma"
 
 ** Test: display delayed NDC sharetargets before delay
 display p45_shareTarget;
 
 ** For 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
-p45_shareTarget(t,regi)$(t.val eq 2030 + p45_delay(regi)) = sum(ttot, f45_shareTarget(ttot,regi)$(ttot.val eq 2030));
-p45_shareTarget(t,regi)$(t.val eq 2035 + p45_delay(regi)) = sum(ttot, f45_shareTarget(ttot,regi)$(ttot.val eq 2035));
+p45_shareTarget(t,regi)$(t.val eq 2030 + p45_delay(regi)) = p45_shareTarget("2030",regi);
+p45_shareTarget(t,regi)$(t.val eq 2035 + p45_delay(regi)) = p45_shareTarget("2035",regi);
 p45_shareTarget(t,regi)$(t.val eq 2030) = 0;
 p45_shareTarget(t,regi)$(t.val eq 2035) = 0;
 
