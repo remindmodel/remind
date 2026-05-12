@@ -84,8 +84,16 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       renvLogPath <- file.path(cfg$results_folder, "log_renv.txt")
       message("   Initializing renv, see ", renvLogPath)
       createResultsfolderRenv <- function() {
+        # dir.create: renv::init(bare=TRUE) does not create the library directory itself,
+        # so we pre-create it to avoid warnings from renv about a missing library path.
         dir.create("renv/library", recursive = TRUE, showWarnings = FALSE)
-        renv::init() # will overwrite renv.lock if existing...
+        # bare = TRUE: set up renv project structure only without installing or updating
+        # any packages. Without bare = TRUE, renv::init() reads from the renv global
+        # cache (~/.cache/R/renv) and overwrites RENV_PATHS_LIBRARY with whatever
+        # versions it finds there, potentially undoing the libraries already provided in the container. 
+        # With bare = TRUE, the baked-in library (pointed to by RENV_PATHS_LIBRARY) is left untouched, and
+        # renv::restore() below finds everything already satisfied at ws26_renv.lock versions.
+        renv::init(bare = TRUE)
         file.rename("_renv.lock", "renv.lock") # so we need this rename
         if (!identical(Sys.info()[["sysname"]], "Windows")) {
           # the renv package installation folder is copied from the renv cache, where it might
