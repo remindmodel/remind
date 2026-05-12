@@ -17,7 +17,7 @@ p45_factorRescaleCO2TaxLtd_iter(iteration,ttot,all_regi) "Track the changes of p
 p45_taxCO2eqFirstNDCyear(all_regi)                       "CO2eq tax in p45_firstNDCyear [T$/GtC]"
 p45_taxCO2eq_bau(ttot,all_regi)                          "level of CO2 taxes in business as usual run [T$/GtC]"
 pm_NDCEmiTargetDeviation(ttot,all_regi)                  "deviation of REMIND emissions to NDC target emissions in last iteration normalized to NDC target emissions [0-1]"
-$ifthen "%cm_NDC_delay%" == "prisma"
+$ifthen "%cm_targetDelay%" == "prisma"
 p45_delay(all_regi)                                      "delay of NDC targets defined per region"
 $endif
 $ifthen not "%cm_NDC_CO2PriceLimit%" == "off"
