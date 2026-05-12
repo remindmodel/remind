@@ -84,6 +84,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       renvLogPath <- file.path(cfg$results_folder, "log_renv.txt")
       message("   Initializing renv, see ", renvLogPath)
       createResultsfolderRenv <- function() {
+        dir.create("renv/library", recursive = TRUE, showWarnings = FALSE)
         renv::init() # will overwrite renv.lock if existing...
         file.rename("_renv.lock", "renv.lock") # so we need this rename
         if (!identical(Sys.info()[["sysname"]], "Windows")) {
@@ -97,7 +98,8 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       # init renv in a separate session so the libPaths of the current session remain unchanged
       callr::r(createResultsfolderRenv,
                wd = cfg$results_folder,
-               env = c(RENV_PATHS_LIBRARY = "renv/library"),
+               env = c(RENV_PATHS_LIBRARY = Sys.getenv("RENV_PATHS_LIBRARY",
+                                                       unset = file.path(normalizePath("."), "renv/library"))),
                stdout = renvLogPath, stderr = "2>&1")
     }
 
