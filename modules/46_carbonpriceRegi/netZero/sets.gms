@@ -11,9 +11,9 @@ sets
 targetSpecies "Gases included in national net-zero targets" / CO2_target, GHG_target /
 
 $ifthen.LTSexcludeRegi not "%cm_LTSexcludeRegi%" == "off"
-    LTSexcludeRegi(all_regi) / %cm_LTSexcludeRegi% /
-$else
-    LTSexcludeRegi(all_regi) / /
+    LTSexcludeRegi(all_regi) "Regions for which net-zero targets are ignored" / %cm_LTSexcludeRegi% /
+$else.LTSexcludeRegi
+    LTSexcludeRegi(all_regi) "Regions for which net-zero targets are ignored" / /
 $endif.LTSexcludeRegi
 ;
 

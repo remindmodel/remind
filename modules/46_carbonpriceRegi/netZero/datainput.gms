@@ -50,7 +50,7 @@ $ifthen.prisma "%cm_targetDelay%" == "prisma"
 
   IND . 2090 . CO2_target  1
 
-$else
+$else.prisma
   CAZ . 2050 . GHG_target  1
   EUR . 2050 . GHG_target  1
   JPN . 2050 . GHG_target  1
@@ -69,10 +69,10 @@ $else
 $endif.prisma
 /;
 
-loop(p46_netZeroTargetCoverage(regi,t,targetSpecies) $ LTSexcludeRegi(regi),
-  p46_netZeroTargetCoverage(regi,t,targetSpecies) = 0;
+loop((LTSexcludeRegi(regi),t3,targetSpecies) $ p46_netZeroTargetCoverage(regi,t3,targetSpecies),
+  p46_netZeroTargetCoverage(regi,t3,targetSpecies) = 0;
 );
 
-pm_taxCO2eqRegi(ttot,regi) = 0;
+pm_taxCO2eqRegi(t,regi) = 0;
 
 *** EOF ./modules/46_carbonpriceRegi/netZero/datainput.gms

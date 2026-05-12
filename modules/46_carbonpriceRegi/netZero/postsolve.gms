@@ -70,7 +70,7 @@ if(iteration.val > p46_startInIteration, !! adapt carbon price markup depending 
     );
   ); !! loop over net-zero targets
 
-  display p46_emi_offset, p46_emi_targetYr, p46_emi_refYr, p46_factorRescaleCO2Tax, pm_taxCO2eqRegi;
+  display p46_emi_offset, p46_emi_targetYr, p46_emi_refYr, p46_targetDeviation, p46_factorRescaleCO2Tax, pm_taxCO2eqRegi;
 ); !! iteration.val > p46_startInIteration
 
 
