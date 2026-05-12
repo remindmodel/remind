@@ -451,8 +451,8 @@ vm_cap.lo(t,regi,"gash2",rlf) $ (t.val > 2030) = 0;
 *** strong reliance on coal-to-liquids is not consistent with SSP1 storyline, therefore limit their use in the SSP1 and SSP2 policy scenarios
 $ifthen %c_SSP_forcing_adjust% == "forcing_SSP1"
 *** ensure that no new capacity is built
-  vm_deltacap.up(t,regi,"coalftrec","1")  $ ( (t.val > 2005) AND (t.val >= cm_startyear) ) = 1e-7; 
-  vm_deltacap.up(t,regi,"coalftcrec","1")  $ ( (t.val > 2005) AND (t.val >= cm_startyear) ) = 1e-7; 
+  vm_deltaCap.up(t,regi,"coalftrec","1")  $ ( (t.val > 2005) AND (t.val >= cm_startyear) ) = 1e-7; 
+  vm_deltaCap.up(t,regi,"coalftcrec","1")  $ ( (t.val > 2005) AND (t.val >= cm_startyear) ) = 1e-7; 
 *** and enforce the fastest possible phase-out in each region, starting in the larger of (cm_startyear, 2030), because most regions are fixed to zero earlyReti in 2030 
   vm_capEarlyReti.lo(t,regi,"coalftrec") $ ( (t.val >= max(cm_startyear, 2030) + (1 / pm_regiEarlyRetiRate("2050",regi,"coalftrec") ) ) ) = 1 ;
 
@@ -466,7 +466,7 @@ $endif
 $ifthen %c_SSP_forcing_adjust% == "forcing_SSP2"
 if(cm_emiscen > 1,
 *** as above: limit new additions 
-  vm_deltacap.up(t,regi,"coalftcrec","1")  $ ( (t.val > 2005) AND (t.val >= cm_startyear) ) = 1e-7; 
+  vm_deltaCap.up(t,regi,"coalftcrec","1")  $ ( (t.val > 2005) AND (t.val >= cm_startyear) ) = 1e-7; 
 );
 $endif
 
