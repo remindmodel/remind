@@ -450,8 +450,12 @@ vm_cap.lo(t,regi,"gash2",rlf) $ (t.val > 2030) = 0;
 
 *** strong reliance on coal-to-liquids is not consistent with SSP1 storyline, therefore limit their use in the SSP1 and SSP2 policy scenarios
 $ifthen %c_SSP_forcing_adjust% == "forcing_SSP1"
-  vm_prodSe.up(t,regi,"pecoal","seliqfos","coalftrec")  $ (t.val > 2050) = 1e-5;
-  vm_prodSe.up(t,regi,"pecoal","seliqfos","coalftcrec") $ (t.val > 2010) = 1e-5;
+*** ensure that no new capacity is built
+  vm_deltacap.up(t,regi,"coalftrec","1")  $ ( (t.val > 2005) AND (t.val >= cm_startyear) ) = 1e-7; 
+  vm_deltacap.up(t,regi,"coalftcrec","1")  $ ( (t.val > 2005) AND (t.val >= cm_startyear) ) = 1e-7; 
+*** and enforce the fastest possible phase-out in each region, starting in the larger of (cm_startyear, 2030), because most regions are fixed to zero earlyReti in 2030 
+  vm_capEarlyReti.lo(t,regi,"coalftrec") $ ( (t.val >= max(cm_startyear, 2030) + (1 / pm_regiEarlyRetiRate("2050",regi,"coalftrec") ) ) ) = 1 ;
+  vm_capEarlyReti.lo(t,regi,"coalftcrec") $ ( (t.val >= max(cm_startyear, 2030) + (1 / pm_regiEarlyRetiRate("2050",regi,"coalftcrec") ) ) ) = 1 ;
   
 *** fixing prodFE in 2005 to the value contained in pm_cesdata("2005",regi,in,"quantity"). This is done to ensure that the energy system will reproduce the 2005 calibration values.
 *** Fixing will produce clearly attributable errors (good for debugging) when using inconsistent data, as the GAMS accuracy when comparing fixed results is very high (< 1e-8).
@@ -459,9 +463,12 @@ $ifthen %c_SSP_forcing_adjust% == "forcing_SSP1"
   vm_deltaCap.up(t,regi,"coalgas",rlf) $ (t.val > 2010) = 1e-5;
 $endif
 
+*** strong reliance on coal-to-liquids with CCS is not consistent with climate mitigation storyline in SSP2
 $ifthen %c_SSP_forcing_adjust% == "forcing_SSP2"
 if(cm_emiscen > 1,
-  vm_prodSe.up(t,regi,"pecoal","seliqfos","coalftcrec") $ (t.val > 2010) = 1e-5;
+*** as above: limit both new additions as well as enforce phaseout
+  vm_deltacap.up(t,regi,"coalftcrec","1")  $ ( (t.val > 2005) AND (t.val >= cm_startyear) ) = 1e-7; 
+  vm_capEarlyReti.lo(t,regi,"coalftcrec") $ ( (t.val >= max(cm_startyear, 2030) + (1 / pm_regiEarlyRetiRate("2050",regi,"coalftcrec") ) ) ) = 1 ;
 );
 $endif
 
