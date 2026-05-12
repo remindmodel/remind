@@ -190,8 +190,7 @@ $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP3"
         fm_dataglob("omf",te) =          2/3 * fm_dataglob("omf",te);
     );
 *** hampers nuclear
-    fm_dataglob("inco0","tnrs") =        1.2 * fm_dataglob("inco0","tnrs");
-    fm_dataglob("lifetime","tnrs") =     0.8 * fm_dataglob("lifetime","tnrs");
+    fm_dataglob("inco0","tnrs") =        1.25 * fm_dataglob("inco0","tnrs");
 *** hampers transmission for non-ICE vehicules
     fm_dataglob("inco0",te) $ (sameas(te,"tdelt") or sameas(te,"tdh2t")) = 2 * fm_dataglob("inco0",te);
 *** hampers VRE a lot, and electricity storage
