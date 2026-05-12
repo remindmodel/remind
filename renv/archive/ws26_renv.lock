@@ -5743,9 +5743,6 @@
       "Encoding": "UTF-8",
       "RoxygenNote": "7.3.3",
       "Repository": "https://rse.pik-potsdam.de/r/packages",
-      "RemoteUrl": "https://github.com/pik-piam/mrdownscale",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "c47e26a4df2ba400c58806d97abba77280df35e9",
       "NeedsCompilation": "no",
       "Author": "Pascal Sauer [aut, cre] (Potsdam Institute for Climate Impact Research, <https://orcid.org/0000-0002-6856-8239>), Jan Philipp Dietrich [aut] (Potsdam Institute for Climate Impact Research, <https://orcid.org/0000-0002-4309-6431>)",
       "Maintainer": "Pascal Sauer <pascal.sauer@pik-potsdam.de>"
