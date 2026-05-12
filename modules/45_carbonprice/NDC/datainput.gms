@@ -25,21 +25,20 @@ $onlisting
 Parameter p45_EmiTargetAbs(ttot,all_regi) "Absolute NDC emissions targets, emissions from countries without targets are not included [Mt CO2eq/yr]";
 p45_EmiTargetAbs(t,all_regi) = f45_EmiTargetAbs(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
-*** >> PRISMA Asymetric rollback: 
+$ifThen "%cm_targetDelay%" == "prisma"
+*** PRISMA Asymetric rollback: 
 **   the delay of NDC targets of "10, 20, or 30 years" per region would be assigned as:
 **       10 years delay for Transition leaders: EUR, NEU, JPN (e.g. 2030 NDC shifted to 2040, 2035 target shifter to 2045, and 2050 target shifted to 2060)
 **       20 years delay for Diversifying economies: LAM, USA, CAZ, IND, CHA, SSA, OAS
 **       30 years delay for Fossil-dependant: REF, MEA
 
-$ifThen "%cm_targetDelay%" == "prisma"
-
-Parameter p45_delay(all_regi) "delay of NDC targets, defined per region"/
+Parameter p45_delay(all_regi) "delay of NDC targets, defined per region [years]"/
     EUR 10, NEU 10, JPN 10,
     LAM 20, USA 20, CAZ 20, IND 20, CHA 20, SSA 20, OAS 20,
     REF 30, MEA 30 
 /;
 
-** For 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
+** Requires cm_NDC_version = 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
 *** Special case for REF and MEA: delay of 2035 NDC by 35 years (until 2070) as 2065 is not a valid timestep
 p45_EmiTargetAbs(t,regi)$(t.val eq 2030 + p45_delay(regi)) = p45_EmiTargetAbs("2030",regi);
 p45_EmiTargetAbs(t,regi)$(t.val eq 2035 + p45_delay(regi)) = p45_EmiTargetAbs("2035",regi);
@@ -48,8 +47,9 @@ p45_EmiTargetAbs("2070","MEA") = p45_EmiTargetAbs("2035","MEA");
 p45_EmiTargetAbs(t,regi)$(t.val eq 2030) = 0;
 p45_EmiTargetAbs(t,regi)$(t.val eq 2035) = 0;
 
+** end of PRISMA Asymetric rollback
 $ENDIF
-** << PRISMA Asymetric rollback
+
 display p45_EmiTargetAbs;
 
 Table f45_shareTarget(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with estimated target year GHG emissions share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]"
@@ -63,19 +63,19 @@ $onlisting
 Parameter p45_shareTarget(ttot,all_regi) "Estimated target year GHG emissions share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]";
 p45_shareTarget(t,all_regi) = f45_shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
-*** >> PRISMA Asymetric rollback: 
-$ifThen "%cm_targetDelay%" == "prisma"
 
-** For 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
+$ifThen "%cm_targetDelay%" == "prisma"
+*** PRISMA Asymetric rollback
+** Requires cm_NDC_version = 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
 p45_shareTarget(t,regi)$(t.val eq 2030 + p45_delay(regi)) = p45_shareTarget("2030",regi);
 p45_shareTarget(t,regi)$(t.val eq 2035 + p45_delay(regi)) = p45_shareTarget("2035",regi);
 p45_shareTarget("2070","REF") = p45_shareTarget("2035","REF");
 p45_shareTarget("2070","MEA") = p45_shareTarget("2035","MEA");
 p45_shareTarget(t,regi)$(t.val eq 2030) = 0;
 p45_shareTarget(t,regi)$(t.val eq 2035) = 0;
-
+** end of PRISMA Asymetric rollback
 $ENDIF
-** << PRISMA Asymetric rollback
+
 
 display p45_shareTarget;
 
