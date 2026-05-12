@@ -18,7 +18,7 @@ p45_taxCO2eqFirstNDCyear(all_regi)                       "CO2eq tax in p45_first
 p45_taxCO2eq_bau(ttot,all_regi)                          "level of CO2 taxes in business as usual run [T$/GtC]"
 pm_NDCEmiTargetDeviation(ttot,all_regi)                  "deviation of REMIND emissions to NDC target emissions in last iteration normalized to NDC target emissions [0-1]"
 $ifthen "%cm_targetDelay%" == "prisma"
-p45_delay(all_regi)                                      "delay of NDC targets defined per region"
+p45_delay(all_regi)                                      "delay of NDC targets, defined per region [years]"
 $endif
 $ifthen not "%cm_NDC_CO2PriceLimit%" == "off"
 p45_CO2PriceLimitNDC(ttot,all_regi)                       "Upper limit of CO2 price in NDC realization, read from switch cm_NDC_CO2PriceLimit [$/tCO2]" / %cm_NDC_CO2PriceLimit% /
