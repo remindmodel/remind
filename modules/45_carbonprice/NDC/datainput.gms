@@ -80,6 +80,8 @@ display p45_shareTarget;
 ** For 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
 p45_shareTarget(t,regi)$(t.val eq 2030 + p45_delay(regi)) = p45_shareTarget("2030",regi);
 p45_shareTarget(t,regi)$(t.val eq 2035 + p45_delay(regi)) = p45_shareTarget("2035",regi);
+p45_shareTarget("2070","REF") = p45_shareTarget("2035","REF");
+p45_shareTarget("2070","MEA") = p45_shareTarget("2035","MEA");
 p45_shareTarget(t,regi)$(t.val eq 2030) = 0;
 p45_shareTarget(t,regi)$(t.val eq 2035) = 0;
 
