@@ -33,7 +33,7 @@ p45_EmiTargetAbs(t,all_regi) = f45_EmiTargetAbs(t,all_regi,"%cm_NDC_version%","%
 
 $ifThen "%cm_targetDelay%" == "prisma"
 
-Parameter p45_delay(all_regi) /
+Parameter p45_delay(all_regi) "delay of NDC targets, defined per region"/
     EUR 10, NEU 10, JPN 10,
     LAM 20, USA 20, CAZ 20, IND 20, CHA 20, SSA 20, OAS 20,
     REF 30, MEA 30 
