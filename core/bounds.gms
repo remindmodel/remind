@@ -455,8 +455,7 @@ $ifthen %c_SSP_forcing_adjust% == "forcing_SSP1"
   vm_deltacap.up(t,regi,"coalftcrec","1")  $ ( (t.val > 2005) AND (t.val >= cm_startyear) ) = 1e-7; 
 *** and enforce the fastest possible phase-out in each region, starting in the larger of (cm_startyear, 2030), because most regions are fixed to zero earlyReti in 2030 
   vm_capEarlyReti.lo(t,regi,"coalftrec") $ ( (t.val >= max(cm_startyear, 2030) + (1 / pm_regiEarlyRetiRate("2050",regi,"coalftrec") ) ) ) = 1 ;
-  vm_capEarlyReti.lo(t,regi,"coalftcrec") $ ( (t.val >= max(cm_startyear, 2030) + (1 / pm_regiEarlyRetiRate("2050",regi,"coalftcrec") ) ) ) = 1 ;
-  
+
 *** fixing prodFE in 2005 to the value contained in pm_cesdata("2005",regi,in,"quantity"). This is done to ensure that the energy system will reproduce the 2005 calibration values.
 *** Fixing will produce clearly attributable errors (good for debugging) when using inconsistent data, as the GAMS accuracy when comparing fixed results is very high (< 1e-8).
 *** vm_prodFe.fx("2005",regi,se2fe(enty,enty2,te)) = sum(fe2ppfEn(enty2,in), pm_cesdata("2005",regi,in,"quantity") );
@@ -466,9 +465,8 @@ $endif
 *** strong reliance on coal-to-liquids with CCS is not consistent with climate mitigation storyline in SSP2
 $ifthen %c_SSP_forcing_adjust% == "forcing_SSP2"
 if(cm_emiscen > 1,
-*** as above: limit both new additions as well as enforce phaseout
+*** as above: limit new additions 
   vm_deltacap.up(t,regi,"coalftcrec","1")  $ ( (t.val > 2005) AND (t.val >= cm_startyear) ) = 1e-7; 
-  vm_capEarlyReti.lo(t,regi,"coalftcrec") $ ( (t.val >= max(cm_startyear, 2030) + (1 / pm_regiEarlyRetiRate("2050",regi,"coalftcrec") ) ) ) = 1 ;
 );
 $endif
 
