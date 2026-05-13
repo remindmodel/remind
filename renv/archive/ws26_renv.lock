@@ -2400,9 +2400,9 @@
         "renv"
       ],
       "Repository": "https://rse.pik-potsdam.de/r/packages",
-      "RemoteUrl": "https://github.com/pik-piam/edgeTransport",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "e220eaa15e5a6337dcdaa2d38b65cbda13f8da43",
+      "RemoteUrl": "https://github.com/ahagen-pik/edgeTransport/",
+      "RemoteRef": "workshop2026",
+      "RemoteSha": "f551e97aba247c49a187b3a273314b8d1f0311d0",
       "NeedsCompilation": "no",
       "Author": "Johanna Hoppe [aut, cre] (<https://orcid.org/0009-0004-6753-5090>), Alois Dirnaichner [aut], Marianna Rottoli [aut], Jarusch Muessel [aut] (<https://orcid.org/0000-0002-1857-7866>), Alex K. Hagen [aut] (<https://orcid.org/0000-0003-4793-8664>), Robert P. Pietzcker [aut] (<https://orcid.org/0000-0002-9403-6711>)",
       "Maintainer": "Johanna Hoppe <johanna.hoppe@pik-potsdam.de>"
