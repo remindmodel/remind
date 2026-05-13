@@ -453,6 +453,8 @@ $ifthen %c_SSP_forcing_adjust% == "forcing_SSP1"
 *** ensure that no new capacity is built after 2005 / in the active model time (t only starts in cm_startyear)
   vm_deltaCap.up(t,regi,"coalftrec","1")  $ (t.val > 2005) = 1e-6; 
   vm_deltaCap.up(t,regi,"coalftcrec","1")  $ (t.val > 2005) = 1e-6; 
+  vm_cap.lo(t,regi,"coalftrec","1")  $ (t.val > 2005) = 0; !! also relax the lower bound on vm_cap to prevent infeasibilities when vm_capEarlyReti is already close to 1
+  vm_cap.lo(t,regi,"coalftcrec","1")  $ (t.val > 2005) = 0; !! also relax the lower bound on vm_cap to prevent infeasibilities when vm_capEarlyReti is already close to 1
 
 *** fixing prodFE in 2005 to the value contained in pm_cesdata("2005",regi,in,"quantity"). This is done to ensure that the energy system will reproduce the 2005 calibration values.
 *** Fixing will produce clearly attributable errors (good for debugging) when using inconsistent data, as the GAMS accuracy when comparing fixed results is very high (< 1e-8).
@@ -464,7 +466,8 @@ $endif
 $ifthen %c_SSP_forcing_adjust% == "forcing_SSP2"
 if(cm_emiscen > 1,
 *** as above: limit new additions after 2005 / in the active model time (t only starts in cm_startyear)
-  vm_deltaCap.up(t,regi,"coalftcrec","1")  $ ( (t.val > 2005) AND (t.val >= cm_startyear) ) = 1e-7; 
+  vm_deltaCap.up(t,regi,"coalftcrec","1")  $ (t.val > 2005)  = 1e-7; 
+  vm_cap.lo(t,regi,"coalftcrec","1")  $ (t.val > 2005) = 0; !! also relax the lower bound on vm_cap to prevent infeasibilities when vm_capEarlyReti is already close to 1
 );
 $endif
 
