@@ -316,6 +316,8 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   ###################### Loop over scenarios ###############################
 
   # Modify and save cfg for all runs
+  runs_to_submit <- list()
+
   for (scen in rownames(scenarios)) {
 
     #source cfg file for each scenario to avoid duplication of gdx entries in files2export
@@ -586,7 +588,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
             warning("   Could not set up ", caldir, " automatically. Please run 'make set-local-calibration' manually.")
           }
         }
-        submit(cfg)
+        runs_to_submit[[scen]] <- cfg
       } else {
         message("   Not started, as errors were found.")
       }
@@ -601,6 +603,11 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       }
     }
   } # end scenario loop
+
+  for (scen in names(runs_to_submit)) {
+    submit(runs_to_submit[[scen]])
+  }
+
   message("")
   if (exists("lockID")) gms::model_unlock(lockID)
 }
