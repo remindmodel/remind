@@ -58,49 +58,49 @@ convGDX2MIF(gdx, gdx_refpolicycost = gdx_refpolicycost,
 # the reporting is appended to REMIND_generic_<scenario>.MIF
 # REMIND_generic_<scenario>_withoutPlus.MIF is replaced.
 
-edgetOutputDir <- file.path(outputdir, "EDGE-T")
+# edgetOutputDir <- file.path(outputdir, "EDGE-T")
 
-if (!file.exists(edgetOutputDir)) {
-  stop("EDGE-T folder is missing")
-}
+# if (!file.exists(edgetOutputDir)) {
+#   stop("EDGE-T folder is missing")
+# }
 
-message("### start generation of EDGE-T reporting")
-EDGEToutput <- reporttransport::reportEdgeTransport(edgetOutputDir,
-                                                    isTransportExtendedReported = FALSE,
-                                                    modelName = "REMIND",
-                                                    scenarioName = scenario,
-                                                    gdxPath = file.path(outputdir, "fulldata.gdx"),
-                                                    isStored = FALSE)
+# message("### start generation of EDGE-T reporting")
+# EDGEToutput <- reporttransport::reportEdgeTransport(edgetOutputDir,
+#                                                     isTransportExtendedReported = FALSE,
+#                                                     modelName = "REMIND",
+#                                                     scenarioName = scenario,
+#                                                     gdxPath = file.path(outputdir, "fulldata.gdx"),
+#                                                     isStored = FALSE)
 
-REMINDoutput <- read.quitte(file.path(outputdir, paste0("REMIND_generic_", scenario, "_withoutPlus.mif")))
-# drop regions from higher resolution EDGET reporting if REMIND is in H12
-EDGEToutput <- EDGEToutput[EDGEToutput$region %in% REMINDoutput$region, ]
-sharedVariables <- EDGEToutput[variable %in% REMINDoutput$variable | grepl(".*edge", variable)]
-EDGEToutput <- EDGEToutput[!(variable %in% REMINDoutput$variable | grepl(".*edge", variable))]
-message("The following variables will be dropped from the EDGE-Transport reporting because ",
-        "they are in the REMIND reporting: ", paste(unique(sharedVariables$variable), collapse = ", "))
+# REMINDoutput <- read.quitte(file.path(outputdir, paste0("REMIND_generic_", scenario, "_withoutPlus.mif")))
+# # drop regions from higher resolution EDGET reporting if REMIND is in H12
+# EDGEToutput <- EDGEToutput[EDGEToutput$region %in% REMINDoutput$region, ]
+# sharedVariables <- EDGEToutput[variable %in% REMINDoutput$variable | grepl(".*edge", variable)]
+# EDGEToutput <- EDGEToutput[!(variable %in% REMINDoutput$variable | grepl(".*edge", variable))]
+# message("The following variables will be dropped from the EDGE-Transport reporting because ",
+#         "they are in the REMIND reporting: ", paste(unique(sharedVariables$variable), collapse = ", "))
 
-# For certain projects, we currently don't want to report EDGE-T results for 2005 and 2010. 
-# If the flag c_edgetReportAfter2010 is set, 2005 and 2010 values get replaced by NAs
+# # For certain projects, we currently don't want to report EDGE-T results for 2005 and 2010. 
+# # If the flag c_edgetReportAfter2010 is set, 2005 and 2010 values get replaced by NAs
 
-c_edgetReportAfter2010 <- gdx::readGDX(gdx, name = "c_edgetReportAfter2010")
+# c_edgetReportAfter2010 <- gdx::readGDX(gdx, name = "c_edgetReportAfter2010")
 
-if (c_edgetReportAfter2010 == 1) {
-  EDGEToutput <- EDGEToutput %>%
-    dplyr::mutate(value = if_else(period %in% c(2005, 2010), NA_real_, value))
-}
+# if (c_edgetReportAfter2010 == 1) {
+#   EDGEToutput <- EDGEToutput %>%
+#     dplyr::mutate(value = if_else(period %in% c(2005, 2010), NA_real_, value))
+# }
 
 
-quitte::write.mif(EDGEToutput, remind_reporting_file, append = TRUE)
-piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
+# quitte::write.mif(EDGEToutput, remind_reporting_file, append = TRUE)
+# piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 
-# generate transport extended mif
-reporttransport::reportEdgeTransport(edgetOutputDir,
-                                     isTransportExtendedReported = TRUE,
-                                     gdxPath = file.path(outputdir, "fulldata.gdx"),
-                                     isStored = TRUE)
+# # generate transport extended mif
+# reporttransport::reportEdgeTransport(edgetOutputDir,
+#                                      isTransportExtendedReported = TRUE,
+#                                      gdxPath = file.path(outputdir, "fulldata.gdx"),
+#                                      isStored = TRUE)
 
-message("### end generation of EDGE-T reporting")
+# message("### end generation of EDGE-T reporting")
 
 # extra emission reporting (depends on REMIND and EDGE-T variables) ----
 message("### report additional emission variables (reportExtraEmissions)")
