@@ -1,7 +1,10 @@
 local({
 # setting RENV_PATHS_LIBRARY ensures packages are installed into renv/library
 # for some reason this also has implications for symlinking into the global cache
-Sys.setenv(RENV_PATHS_LIBRARY = "renv/library")
+# Only set if not already set externally (e.g. Docker ENV with absolute baked-library path)
+if (Sys.getenv("RENV_PATHS_LIBRARY") == "") {
+  Sys.setenv(RENV_PATHS_LIBRARY = "renv/library")
+}
 
 # do not check if library and renv.lock are in sync, because normally renv.lock does not exist
 options(renv.config.synchronized.check = FALSE)
