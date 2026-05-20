@@ -115,7 +115,7 @@ projects <- list(
     mapping = c("ScenarioMIP", "PRISMA"),
     iiasatemplate = "https://files.ece.iiasa.ac.at/prisma/prisma-template.xlsx",  
     removeFromScen = "C_"),
-    checkSummation = "ScenarioMIP"),
+    checkSummation = "ScenarioMIP",
   NAVIGATE_coupled = list(mapping = c("NAVIGATE", "NAVIGATE_coupled")),
   SHAPE            = list(mapping = c("NAVIGATE", "NAVIGATE_coupled", "SHAPE")),
   TESTTHAT         = list(mapping = "AR6")
