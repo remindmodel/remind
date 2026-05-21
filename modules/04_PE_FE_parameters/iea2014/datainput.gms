@@ -192,8 +192,6 @@ loop(regi$(sameAs("DEU", regi)),
   pm_secBioShare("2020",regi,"fedie","trans") = 0.05;
 *** set 2020 biomass share in industry solids to 20% based on AGEB data
   pm_secBioShare("2020",regi,"fesos","indst") = 0.2;
-*** set maximum coal share in buildings after 2020 to 2020 value as residential coal heating is not going to recover once phased out
-  pm_secBioShare(t,regi,"fesos","build")$(t.val gt 2020) = pm_secBioShare("2020",regi,"fesos","build");
 );
 
 display pm_secBioShare;
