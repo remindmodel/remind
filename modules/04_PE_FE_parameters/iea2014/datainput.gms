@@ -301,8 +301,6 @@ p04_prodCoupleGlob("pebiolc","seliqbio","bioethl","seel")   = 0.153;
 p04_prodCoupleGlob("pebiolc","seliqbio","bioftrec","seel")  = 0.147;
 p04_prodCoupleGlob("pebiolc","seliqbio","bioftcrec","seel") = 0.108;
 
-p04_prodCoupleGlob("segabio","fegas","tdbiogas","seel")     = -0.05;
-p04_prodCoupleGlob("segafos","fegas","tdfosgas","seel")     = -0.05;
 p04_prodCoupleGlob("pegeo","sehe","geohe","seel")           = -0.3;
 p04_prodCoupleGlob("cco2","ico2","ccsinjeon","seel")        = -0.005;
 p04_prodCoupleGlob("cco2","ico2","ccsinjeoff","seel")       = -0.005; !!DKX assumption correct?
