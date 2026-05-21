@@ -114,8 +114,12 @@ projects <- list(
     model = "REMIND-MAgPIE 3.6-4.14",
     mapping = c("ScenarioMIP", "PRISMA"),
     iiasatemplate = "https://files.ece.iiasa.ac.at/prisma/prisma-template.xlsx",  
-    removeFromScen = "C_"),
-    checkSummation = "ScenarioMIP",
+    renameScen = c(
+      "C_SSP2-MeetAspirations" = "SSP2 - Meet Aspirations",
+      "C_SSP2-AsymmetricRoll-Back" = "SSP2 - Asymmetric Roll-Back",
+      "C_SSP2-LateReawakening" = "SSP2 - Late Reawakening",
+      "C_SSP2-Staying Alive" = "SSP2 - Staying Alive"),
+    checkSummation = "ScenarioMIP"),
   NAVIGATE_coupled = list(mapping = c("NAVIGATE", "NAVIGATE_coupled")),
   SHAPE            = list(mapping = c("NAVIGATE", "NAVIGATE_coupled", "SHAPE")),
   TESTTHAT         = list(mapping = "AR6")
