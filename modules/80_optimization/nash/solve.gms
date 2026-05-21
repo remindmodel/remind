@@ -31,6 +31,50 @@ $endif.repeatNonOpt
 
   regi(all_regi) = YES;
 
+  !! ----------------------------------------------------------------------------------------
+  !! Debugging Code for Execution Errors:
+  !! This is a blueprint for debugging execution errors like NA values in equations. 
+  !! It serves to identify the problematic set element combinations and print them to the full.log file. 
+  !! The code can be used as a basis to debug similar problems in other equations. 
+  !! ----------------------------------------------------------------------------------------
+  !! Check for NAs in the log of the q01_cesIO equation
+  !! Calculate expression inside log of q01_cesIO equation
+  loop(out $ ( ipf(out) ),
+      p80_CesNACheck(t,all_regi,out) = 
+        sum(cesOut2cesIn(out,in),
+          pm_cesdata(t,all_regi,in,"xi")
+            * exp(
+                log(
+                  pm_cesdata(t,all_regi,in,"eff")
+                  * vm_effGr.l(t,all_regi,in)
+                  * vm_damageProdFactor.l(t,all_regi,in)
+                  * vm_cesIO.l(t,all_regi,in)
+                )
+              * pm_cesdata(t,all_regi,out,"rho")
+             )
+          );
+  );
+
+  !! Check for problematic values in p80_CesNACheck (NA, 0, negative values)
+  put logfile;
+  put "Checking for possible NA expressions in q01_cesIO for region " all_regi.tl /;
+   
+  if (smax((t,out)$( ipf(out) AND (p80_CesNACheck(t,all_regi,out) = NA OR p80_CesNACheck(t,all_regi,out) le 0) ),
+          1),
+    put "Warning: p80_CesNACheck issues found:" /;
+    loop ((t,out)$( ipf(out) AND (p80_CesNACheck(t,all_regi,out) = NA OR p80_CesNACheck(t,all_regi,out) le 0) ),
+      put "  t=" t.tl:0, " out=" out.tl:0, " all_regi=" all_regi.tl:0,
+          " value=" p80_CesNACheck(t,all_regi,out):15:10 /;
+    );
+  else
+    put "No issues found in p80_CesNACheck for region " all_regi.tl /;
+  );
+  putclose logfile " " /;
+
+  !! End Debugging Code for Execution Errors
+  !! ----------------------------------------------------------------------------------------
+
+
   if (execError > 0,
     execute_unload "abort.gdx";
     abort "at least one execution error occured, possibly in the loop";

@@ -32,7 +32,10 @@ p80_defic_trade(all_enty)                   "Surplus in monetary terms over all 
 p80_defic_sum(iteration)                    "Surplus in monetary terms over all times on all commodity markets combined [trillion US$2017] (NOTE: to compare this number with the Negishi defic_sum, divide by around 100)",
 p80_defic_sum_rel(iteration)                "Surplus monetary value over all times on all commodity markets combined, normalized to consumption [%]",
 
-*LB* diagnostic parameters
+*** diagnostic parameter for NA detection in q01_cesIO
+p80_CesNACheck(ttot,all_regi,all_in)        "Diagnostic parameter to reproduce the term inside the log of the CES function. This can be used to debug error that an expression in q01_cesIO is NA"
+
+*LB* other diagnostic parameters
 p80_etaLT_correct(all_enty,iteration)       "long term price correction factor in percent"
 p80_etaST_correct(tall,all_enty,iteration)  "short term price correction factor in percent"
 
