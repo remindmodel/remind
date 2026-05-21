@@ -189,10 +189,4 @@ loop( ext_regi$(p30_bioprod_regi_lim(ext_regi)),
 );
 $ENDIF.bioprod_regi_lim
 
-*' forbid biomass imports for Germany from 2025
-*' allow before to not cause infeasibilities with initial bioenergy technology capacities in model
-vm_Mport.up(t,regi,"pebiolc")$( t.val ge 2025 AND sameas(regi,"DEU") ) = 0;
-
-
-
 *** EOF ./modules/30_biomass/magpie/bounds.gms
