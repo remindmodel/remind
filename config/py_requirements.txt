@@ -13,3 +13,6 @@ netCDF4>=1.6.0
 # No new numpy, no old pandas
 numpy<3
 pandas>2
+
+# xarray.core.ops moved to xarray.computation.ops in 2025.03, breaking scmdata
+xarray<2025.03
