@@ -65,7 +65,7 @@ if (!file.exists(edgetOutputDir)) {
 }
 
 message("### start generation of EDGE-T reporting")
-reporttransport::checkConvergence()
+reporttransport::checkConvergence(outputdir)
 EDGEToutput <- reporttransport::reportEdgeTransport(edgetOutputDir,
                                                      isTransportExtendedReported = FALSE,
                                                      modelName = "REMIND",
@@ -89,7 +89,8 @@ quitte::write.mif(EDGEToutput, remind_reporting_file, append = TRUE)
 piamutils::deletePlus(remind_reporting_file, writemif = TRUE)
 
 # generate transport extended mif
-EDGEToutputPriorHarmonization <-reporttransport::reportEdgeTransport(edgetOutputDir,
+EDGEToutputPriorHarmonization <- reporttransport::reportEdgeTransport(edgetOutputDir,
+                                                                     isREMINDinputReported = TRUE,
                                      isTransportExtendedReported = TRUE,
                                      gdxPath = file.path(outputdir, "fulldata.gdx"),
                                      isStored = TRUE)
@@ -97,7 +98,7 @@ EDGEToutputPriorHarmonization <-reporttransport::reportEdgeTransport(edgetOutput
 #Add ratio of "FE|Transport" (with bunkers) EDGE-T to REMIND before harmonization to the REMIND.mif as an indicator
 FEratioEDGE <- EDGEToutputPriorHarmonization[variable == "FE|Transport with bunkers"][, c("variable", "model", "scenario") := NULL]
 setnames(FEratioEDGE, "value", "EDGEfe")
-mifs <- list.files(".", recursive = FALSE, full.names = TRUE)
+mifs <- list.files(outputdir, recursive = FALSE, full.names = TRUE)
 mif <- mifs[grepl(".*withoutPlus\\.mif", mifs)]
 #Select matching variables
 REMINDvars <- as.data.table(read.quitte(mif))
