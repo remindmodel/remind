@@ -10,6 +10,7 @@ library(quitte)
 library(piamutils)
 library(lucode2)
 library(dplyr)
+library(data.table)
 
 ############################# BASIC CONFIGURATION #############################
 
