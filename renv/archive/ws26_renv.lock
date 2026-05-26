@@ -2362,7 +2362,7 @@
     "edgeTransport": {
       "Package": "edgeTransport",
       "Version": "3.13.4.9001",
-      "Source": "/opt/edgeTransport_3.13.4.9001.tar.gz",
+      "Source": "Cellar",
       "Title": "Prepare EDGE Transport Data for the REMIND model",
       "Authors@R": "c( person(\"Johanna\", \"Hoppe\", email = \"johanna.hoppe@pik-potsdam.de\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0009-0004-6753-5090\")), person(\"Alois\", \"Dirnaichner\", email = \"dirnaichner@pik-potsdam.de\", role = \"aut\"), person(\"Marianna\", \"Rottoli\", email = \"rottoli@pik-potsdam.de\", role = \"aut\"), person(\"Jarusch\", \"Muessel\", email = \"jarusch.muessel@pik-potsdam.de\", role = c(\"aut\"), comment = c(ORCID = \"0000-0002-1857-7866\")), person(\"Alex K.\", \"Hagen\",email = \"alex.hagen@pik-potsdam.de\", role = c(\"aut\"), comment = c(ORCID = \"0000-0003-4793-8664\")), person(\"Robert P.\", \"Pietzcker\",email = \"pietzcker@pik-potsdam.de\", role = c(\"aut\"), comment = c(ORCID = \"0000-0002-9403-6711\")))",
       "Description": "EDGE-T is a fork of the GCAM transport module https://jgcri.github.io/gcam-doc/energy.html#transportation with a high level of detail in its representation of technological and modal options. It is a partial equilibrium model with a nested multinomial logit structure and relies on the modified logit formulation. Most of the sources are not publicly available. PIK-internal users can find the sources in the distributed file system in the folder `/p/projects/rd3mod/inputdata/sources/EDGE-Transport-Standalone`.",
