@@ -30,7 +30,7 @@ $ifThen.tech_bounds_2025 "%cm_tech_bounds_2025%" == "on"
 loop(regi$(sameAs(regi,"DEU")),
 *' solar PV
     p47_histCap("2020",regi,"spv")=51; 
-    p47_histCap("2025",regi,"spv")=107; 
+    p47_histCap("2025",regi,"spv")=120; 
 *' onshore wind
     p47_histCap("2020",regi,"windon")=54; 
     p47_histCap("2025",regi,"windon")=68;
@@ -42,10 +42,10 @@ loop(regi$(sameAs(regi,"DEU")),
 );
 
 *' Set bounds on historical capacity for non-zero entries of p47_histCap, 
-*' 10% flexibility for model to deviate from historical data
+*' 5% flexibility for model to deviate from historical data
 loop((ttot,regi,te)$(p47_histCap(ttot,regi,te)),
-    vm_cap.lo(ttot,regi,te,"1") = 0.9 * p47_histCap(ttot,regi,te) * 0.001;  !! convert from GW to TW
-    vm_cap.up(ttot,regi,te,"1") = 1.1 * p47_histCap(ttot,regi,te) * 0.001;  !! convert from GW to TW
+    vm_cap.lo(ttot,regi,te,"1") = 0.95 * p47_histCap(ttot,regi,te) * 0.001;  !! convert from GW to TW
+    vm_cap.up(ttot,regi,te,"1") = 1.05 * p47_histCap(ttot,regi,te) * 0.001;  !! convert from GW to TW
 );
 $endIf.tech_bounds_2025
 
