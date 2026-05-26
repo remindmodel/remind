@@ -465,6 +465,11 @@ $ifthen.internalizeDamages not "%internalizeDamages%" == "off"
    );
 $endIf.internalizeDamages
 
+
+*** save failed markets and criteria for non-convergence over iterations
+p80_messageFailedMarket_iter(tall,all_enty,iteration) = p80_messageFailedMarket(tall,all_enty);
+p80_messageShow_iter(convMessage80,iteration) = p80_messageShow(convMessage80);
+
 display "####";
 display "Convergence diagnostics";
 display "Iteration number: ";

@@ -60,8 +60,12 @@ p80_repy_iteration(all_regi,solveinfo80,iteration) "summary report from solver i
 p80_repyLastOptim(all_regi,solveinfo80)    "p80_repy from last iteration"
 p80_repy_thisSolitr(all_regi,solveinfo80)    "p80_repy from the current solitr - only shows results for regions that were run in this solItr"
 p80_repy_nashitr_solitr(all_regi,solveinfo80,iteration,sol_itr)   "summary report from solver in nash iteration and solver iteration"
-p80_messageFailedMarket(tall,all_enty)     "nash display helper"
-p80_messageShow(convMessage80)             "nash display helper"
+p80_messageFailedMarket(tall,all_enty)     "shows timesteps and traded goods for which the market surplus was above the tolerance, thus indicating that the Nash iteration did not converge for these items"
+p80_messageShow(convMessage80)             "shows all convergence criteria which were not met in this iteration"
+p80_messageFailedMarket_iter(tall,all_enty,iteration)     "shows p80_messageFailedMarket over iterations"
+p80_messageShow_iter(convMessage80,iteration)             "shows p80_messageShow over iterations"
+
+
 p80_trackConsecFail(all_regi)              "Parameter to keep track of consecutive solve failures of regions in Nash mode."
 
 p80_curracc(ttot,all_regi)                 "current account"
