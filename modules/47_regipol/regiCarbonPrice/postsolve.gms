@@ -251,8 +251,8 @@ loop((ext_regi,ttot)$regiANDperiodEmiMktTarget_47(ttot,ext_regi),
     p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = 1;
   elseif(NOT(p47_currentConvergence_iter(iteration,ttot,ext_regi) eq p47_currentConvergence_iter(iteration-1,ttot,ext_regi))), !! reset the iteration reference for slope calculation if the target that is being analyzed changes
     p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = ord(iteration);
-  elseif ( iteration.val - p47_slopeReferenceIteration_iter(iteration-1,ttot,ext_regi) > 5 ) !! make sure the reference point is updated regularly, so the comparison point is not stuck in some very different past.
-    p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = iteration.val - 5 ;
+  elseif ( iteration.val - p47_slopeReferenceIteration_iter(iteration-1,ttot,ext_regi) > 8 ) !! make sure the reference point is updated regularly, so the comparison point is not stuck in some very different past.
+    p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = iteration.val - 8 ;
   else
     p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = p47_slopeReferenceIteration_iter(iteration-1,ttot,ext_regi);
   );
