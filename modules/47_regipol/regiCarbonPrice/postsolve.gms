@@ -251,6 +251,8 @@ loop((ext_regi,ttot)$regiANDperiodEmiMktTarget_47(ttot,ext_regi),
     p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = 1;
   elseif(NOT(p47_currentConvergence_iter(iteration,ttot,ext_regi) eq p47_currentConvergence_iter(iteration-1,ttot,ext_regi))), !! reset the iteration reference for slope calculation if the target that is being analyzed changes
     p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = ord(iteration);
+  elseif((ord(iteration) - p47_slopeReferenceIteration_iter(iteration-1,ttot,ext_regi)) gt s47_slopeMaxWindow), !! reset if reference is too old to represent the local abatement cost curve
+    p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = ord(iteration);
   else
     p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = p47_slopeReferenceIteration_iter(iteration-1,ttot,ext_regi);
   );
@@ -297,11 +299,18 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
                     (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration(iteration2,ttot2,regi,emiMkt));
 ***             else if denominator in relation to first iteration is not close to zero, calculate the price slope in relation to the first iteration mitigation and price levels instead
                 elseif(NOT(abs(pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration("1",ttot2,regi,emiMkt)) lt 1e-2)),
-                  regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"slope_firstIteration") = YES;
-                  p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = 
-                    (p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - p47_emiMktCurrent_iter("1",ttot,ttot2,ext_regi,emiMktExt))
-                    /
-                    (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration("1",ttot2,regi,emiMkt));
+***               only use iteration 1 as reference if it falls within the slope window; otherwise iteration 1 is too old
+***               to represent the local abatement cost and squareDev is more appropriate
+                  if((iteration.val - 1) le s47_slopeMaxWindow,
+                    regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"slope_firstIteration") = YES;
+                    p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) =
+                      (p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - p47_emiMktCurrent_iter("1",ttot,ttot2,ext_regi,emiMktExt))
+                      /
+                      (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration("1",ttot2,regi,emiMkt));
+                  else
+                    regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_outsideWindow") = YES;
+                    pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
+                  );
                 );
 ***             if the slope is positive
                 if(p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) gt 0,
@@ -317,7 +326,8 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
                   );
                 );
 ***             if we are still using the slope
-                if(NOT(regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_noNonPositiveSlope")),
+                if(NOT(regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_noNonPositiveSlope"))
+                   AND NOT(regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_outsideWindow")),
 ***               clamp slopes values to avoid extreme changes (or no change) on a single iteration (avoid corner cases where other parts of the model changes causing undesirable fluctuations on the calculated slope)
                   if((p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) gt -0.3) OR (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) lt -5),
                     p47_clampedRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt);

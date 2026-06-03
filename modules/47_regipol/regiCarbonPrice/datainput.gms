@@ -19,9 +19,9 @@ pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
 ***--------------------------------------------------
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
 
-*** minimum emission change (as fraction of 2005 emissions) required for slope_refIteration to be considered numerically reliable;
-*** below this the reference is treated as degenerate (e.g. run initialised from near-net-zero scenario, and tagretting a net-zero scenario)
-s47_slopeDegenerateThreshold = 1e-2;
+*** slope calculation algorithm parameters
+s47_slopeDegenerateThreshold = 1e-2; !! minimum emission change (fraction of 2005 emissions) for a reliable slope numerator
+s47_slopeMaxWindow = 5;              !! maximum iterations between reference and current; beyond this the reference is reset to stay local on the abatement cost curve
 
 *** Auxiliar parameters based on emission targets information
   loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47), !!calculated sets that depends on data parameter
