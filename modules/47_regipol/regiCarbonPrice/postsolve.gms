@@ -142,7 +142,7 @@ p47_emiTargetMkt_iter(iteration,ttot,regi, emiMktExt,emi_type_47) = p47_emiTarge
 *** Emission markets (EU Emission trading system and Effort Sharing)
 ***--------------------------------------------------
 
-$IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
+$IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
 
 *** Removing economy wide co2 tax parameters for regions within the emiMKt controlled targets (this is necessary here to remove any calculation made in other modules after the last run in the postsolve)
   loop(ext_regi$regiEmiMktTarget(ext_regi),
@@ -343,6 +343,19 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
                   );
                 );
               );
+            );
+***         if slope numerator is negligibly small relative to 2005 emissions, the reference iteration is degenerate (e.g. initialised from near-net-zero scenario where emi_ref ≈ emi_current ≈ 0).
+***         fall back to squareDev and reset reference so next iteration uses a fresh slope. It only applies to year targets (pm_emiMktRefYear > 0)
+            if((regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"slope_refIteration")
+                OR regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"slope_firstIteration"))
+               AND (pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt) gt 0)
+               AND (abs(p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt)
+                        - p47_emiMktCurrent_iter(iteration2,ttot,ttot2,ext_regi,emiMktExt))
+                    lt s47_slopeDegenerateThreshold * pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt)),
+              regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,rescaleType) = NO;
+              regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_degenerateSlope") = YES;
+              pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
+              p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi) = ord(iteration);
             );
 ***         dampen if rescale oscillates
             if( (iteration.val > 3) , 
