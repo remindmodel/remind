@@ -303,7 +303,7 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
                     /
                     (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration("1",ttot2,regi,emiMkt));
 ***             else if there is a previous iteration calculated slope, repeat the previous iteration slope                       
-                elseif((iteration.val gt 1) and (p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) - p47_slopeReferenceIteration_iter(iteration-1,ttot,ext_regi) eq 0)),
+                elseif((iteration.val gt 1) and (p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi) - p47_slopeReferenceIteration_iter(iteration-1,ttot2,ext_regi) eq 0)),
                   regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"slope_repeatPrev") = YES;
                   p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleSlope_iter(iteration-1,ttot,ttot2,ext_regi,emiMktExt);
 ***             else slope is not available, set the rescale factor based on remaining deviation
@@ -317,7 +317,7 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
                   if(p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) gt 0, 
                     regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,rescaleType) = NO;
 ***                 if there is a previous iteration calculated slope, repeat the previous iteration slope to avoid the positive value because we assume a trade-off between tax and emission levels 
-                    if((iteration.val gt 1) and (p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) - p47_slopeReferenceIteration_iter(iteration-1,ttot,ext_regi) eq 0),
+                    if((iteration.val gt 1) and (p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi) - p47_slopeReferenceIteration_iter(iteration-1,ttot2,ext_regi) eq 0),
                       regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"slope_repeatPrev_positiveSlope") = YES;
                       p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleSlope_iter(iteration-1,ttot,ttot2,ext_regi,emiMktExt);
 ***                 else slope is not available, set the rescale factor based on remaining deviation
