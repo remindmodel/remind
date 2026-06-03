@@ -342,7 +342,6 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
                     ) + 1;
                 );
               );
-            );
 ***         if slope numerator is negligibly small relative to 2005 emissions, the reference iteration is degenerate (e.g. initialised from near-net-zero scenario where emi_ref ≈ emi_current ≈ 0).
 ***         fall back to squareDev and reset reference so next iteration uses a fresh slope. It only applies to year targets (pm_emiMktRefYear > 0)
             if((regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"slope_refIteration")
@@ -355,6 +354,7 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
               regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_degenerateSlope") = YES;
               pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
               p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi) = ord(iteration);
+            );
             );
 ***         dampen if rescale oscillates
             if( (iteration.val > 3) , 
