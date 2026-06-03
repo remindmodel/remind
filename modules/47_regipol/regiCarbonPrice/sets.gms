@@ -23,8 +23,8 @@ $ifThen.emiMkt not "%cm_emiMktTarget%" == "off"
   regiEmiMktTarget2regi_47(ext_regi,all_regi)  "regions controlled by emiMkt market set to ext_regi" / / 
   rescaleType                                  "emi mkt carbon price scaling factor calculation methods" /
     "squareDev_firstIteration", "squareDev_perfectMatch", "squareDev_smallChange", "squareDev_noChange",
-    "slope_refIteration", "slope_firstIteration", "slope_repeatPrev", "slope_repeatPrev_positiveSlope",
-    "squareDev_noSlope", "squareDev_noNonPositiveSlope", "squareDev_degenerateSlope"/
+    "slope_refIteration", "slope_firstIteration", "slope_repeatPrev_positiveSlope",
+    "squareDev_noNonPositiveSlope", "squareDev_degenerateSlope"/
   regiEmiMktRescaleType(iteration,ttot,ttot,ext_regi,emiMktExt,rescaleType) "saving scaling type used in iteration" / /
   convergenceType                              "emiMkt target non convergence reason" / "lowerThanTolerance", "smallPrice" / 
   regiEmiMktconvergenceType(iteration,ttot,ttot,ext_regi,emiMktExt,convergenceType) "saving convergence type in iteration" / /
