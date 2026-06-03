@@ -429,7 +429,12 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
                 pm_taxemiMkt(t,regi,emiMkt)$((t.val gt ttot2.val) AND (t.val lt ttot3.val)) = pm_taxemiMkt(ttot2,regi,emiMkt) + ((pm_taxemiMkt(ttot3,regi,emiMkt) - pm_taxemiMkt(ttot2,regi,emiMkt))/(ttot3.val-ttot2.val))*(t.val-ttot2.val); !! price in between current target year and next target year
 ***           else if next target was never executed by the algorithm yet, initialize next target value as weighted average convergence price between current target terminal year (ttot2.val) and next target year (p47_nextConvergencePeriod)
               else
-                p47_averagetaxemiMkt(t,regi) = 
+***             default: simple average across markets (guards against division by zero when total
+***             net emissions are negligibly small, zero, or net-negative with cancellation)
+                p47_averagetaxemiMkt(t,regi) =
+                  (pm_taxemiMkt(t,regi,"ETS") + pm_taxemiMkt(t,regi,"ES") + pm_taxemiMkt(t,regi,"other")) / 3;
+***             override with emission-weighted average when total net emissions are large enough
+                p47_averagetaxemiMkt(t,regi)$(abs(p47_emiTargetMkt(t,regi,"ETS",emi_type_47) + p47_emiTargetMkt(t,regi,"ESR",emi_type_47) + p47_emiTargetMkt(t,regi,"other",emi_type_47)) gt 1e-6) =
                   (pm_taxemiMkt(t,regi,"ETS")*p47_emiTargetMkt(t,regi,"ETS",emi_type_47) + pm_taxemiMkt(t,regi,"ES")*p47_emiTargetMkt(t,regi,"ESR",emi_type_47) + pm_taxemiMkt(t,regi,"other")*p47_emiTargetMkt(t,regi,"other",emi_type_47))
                   /
                   (p47_emiTargetMkt(t,regi,"ETS",emi_type_47) + p47_emiTargetMkt(t,regi,"ESR",emi_type_47) + p47_emiTargetMkt(t,regi,"other",emi_type_47));
