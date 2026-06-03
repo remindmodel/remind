@@ -339,10 +339,10 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
                 );
               );
 
-***           clamp tax rescale refactor to [0.3 .. 3] to avoid extreme changes (or no change) on a single iteration (avoid corner cases where other parts of the model changes causing undesirable fluctuations on the calculated slope)
-              if(  ( pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) gt 3 ) OR ( pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) lt 0.33 ) ,
+***           clamp tax rescale refactor to [0.5 .. 2] to avoid extreme changes (or no change) on a single iteration (avoid corner cases where other parts of the model changes causing undesirable fluctuations on the calculated slope)
+              if(  ( pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) gt 2 ) OR ( pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) lt 0.5 ) ,
                 p47_factorRescaleemiMktCO2TaxPreclamp_iter(ttot,ttot2,ext_regi,emiMktExt) = pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt); 
-                pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = min(3, max( 0.33, pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) ) );  
+                pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = min(2, max( 0.5, pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) ) );  
               );
             ); 
 ***         dampen if rescale oscillates
