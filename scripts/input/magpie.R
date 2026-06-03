@@ -1,6 +1,6 @@
 
 # Mapping of MAgPIE variables to REMIND variables
-# If you change the mapping, check whether the structure of the gdx object in “getMagpieData” (see below) needs to be adjusted.
+# If you change the mapping, check whether the structure of the gdx object in ï¿½getMagpieDataï¿½ (see below) needs to be adjusted.
 mag2rem <- tibble::tribble(
     ~mag                                                                             ,   ~enty                        ,   ~factorMag2Rem  ,   ~parameter                ,
     'Demand|Bioenergy|2nd generation|++|Bioenergy crops'                             ,   NA                           ,   1/31.536        ,   'pm_pebiolc_demandmag'    ,
@@ -75,6 +75,7 @@ runMAgPIE <- function(pathToRemindReport) {
   message("                    Switching from REMIND ", getwd())
   message("                                to MAgPIE ", cfg$path_magpie)
   withr::with_dir(cfg$path_magpie,{
+    renv::load("/opt/magpie")
     source("scripts/start_functions.R")
 
     runname <- gsub("output\\/", "", cfg$results_folder)
@@ -102,12 +103,6 @@ runMAgPIE <- function(pathToRemindReport) {
       # also configure magpie to only run the reportings necessary for coupling
       # the other reportings are pointless anyway with an empty model
       cfg$cfg_mag$output <- c("extra/reportMAgPIE2REMIND")
-    }
-
-    # ----------------------------------------------------------------
-    if (!is.null(renv::project())) {
-      message("                    Using REMIND's renv.lock for MAgPIE")
-      cfg$cfg_mag$renv_lock <- normalizePath(file.path(cfg$remind_folder, cfg$results_folder, "renv.lock"))
     }
 
     # Providing MAgPIE with gdx from last iteration's solution only for time steps >= cfg$gms$cm_startyear
