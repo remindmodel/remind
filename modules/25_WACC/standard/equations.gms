@@ -27,8 +27,8 @@ q25_invwaccCost(t, regi)$(t.val > 2005) ..
            (t2.val <= t.val)
         and ((1 - pm_delta_kap(regi,in)) ** (t.val - t2.val)) > 0.1
       ),
-      vm_invMacro(t2, regi, in) * p25_invwacc(t2, regi) * pm_ts(t2)/2
-      ) - p25_invwaccCost0(t, regi);
+      vm_invMacro(t2, regi, in) * p25_counwacc(t2, regi) * pm_ts(t2)/2
+      ) - p25_counwaccCost0(t, regi);
 
 q25_totwaccCost(t, regi)$(t.val > 2005)..
 vm_waccCost(t, regi)

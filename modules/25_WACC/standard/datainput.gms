@@ -9,7 +9,7 @@
 ***---------------------------------------------------------------------------
 *** Read WACC values across technologies and countries
 ***---------------------------------------------------------------------------
-Parameter p25_invwacc(ttot, all_regi)                       "WACC markup for each country"   
+Parameter p25_counwacc(ttot, all_regi)                       "WACC markup for each country"   
    /
 $ondelim 
 $include "./modules/25_WACC/standard/input/p25_invwacc.cs4r"   
