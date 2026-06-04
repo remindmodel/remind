@@ -328,18 +328,45 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
 ***             if we are still using the slope
                 if(NOT(regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_noNonPositiveSlope"))
                    AND NOT(regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_outsideWindow")),
-***               clamp slopes values to avoid extreme changes (or no change) on a single iteration (avoid corner cases where other parts of the model changes causing undesirable fluctuations on the calculated slope)
-                  if((p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) gt -0.3) OR (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) lt -5),
-                    p47_clampedRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt);
+***               initialize or reset adaptive upper clamp bound when reference iteration changes
+                  if((p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt) eq 0)
+                     OR ((iteration.val gt 1) AND (p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi) ne p47_slopeReferenceIteration_iter(iteration-1,ttot2,ext_regi))),
+                    p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt) = -0.3;
                   );
-                  p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = max(-5,min(-0.3, p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)));
+                  p47_slopeUpperClampBound_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt);
+***               if upper clamp fires for second consecutive time at minimum level (-0.075), immediately override to squareDev and reset
+                  if((p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) gt p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt))
+                     AND (p47_upperClampActive_iter(iteration-1,ttot,ttot2,ext_regi,emiMktExt) eq 1)
+                     AND (p47_slopeUpperClampBound_iter(iteration-1,ttot,ttot2,ext_regi,emiMktExt) eq p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt))
+                     AND (p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt) lt -0.07),
+                    regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,rescaleType) = NO;
+                    regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_adaptiveClamp") = YES;
+                    pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
+                    p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt) = -0.3;
+                    p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi) = ord(iteration);
+                  else
+***               clamp slopes values to avoid extreme changes (or no change) on a single iteration
+                    if((p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) gt p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt)) OR (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) lt -5),
+                      p47_clampedRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt);
+                    );
+                    p47_upperClampActive_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) gt p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt));
+                    p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = max(-5, min(p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt), p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)));
 ***               calculate the tax rescale factor using the above calculated slope
-                  pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) =
-                    (
-                      (pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) - p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt))
-                      /
-                      (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) * pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt))
-                    ) + 1;
+                    pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) =
+                      (
+                        (pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) - p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt))
+                        /
+                        (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) * pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt))
+                      ) + 1;
+***               halve adaptive bound after two consecutive upper-clamp triggers at the same level; reset if clamp not triggered
+                    if((p47_upperClampActive_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) eq 1)
+                       AND (p47_upperClampActive_iter(iteration-1,ttot,ttot2,ext_regi,emiMktExt) eq 1)
+                       AND (p47_slopeUpperClampBound_iter(iteration-1,ttot,ttot2,ext_regi,emiMktExt) eq p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt)),
+                      p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt) = p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt) / 2;
+                    elseif(p47_upperClampActive_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) eq 0),
+                      p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt) = -0.3;
+                    );
+                  );
                 );
               );
 ***         if slope numerator is negligibly small relative to 2005 emissions, the reference iteration is degenerate (e.g. initialised from near-net-zero scenario where emi_ref ≈ emi_current ≈ 0).

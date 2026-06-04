@@ -64,6 +64,9 @@ $endif.emiMktTargetType
   p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugging purposes [%]"
   p47_clampedRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "auxiliary parameter to save the slope value before clamping. Useful for debugging purposes [#]"
   p47_dampedFactorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "auxiliary parameter to save the rescale factor value before dampening. Useful for debugging purposes [#]"
+  p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt) "adaptive upper clamp bound for rescale slope; starts at -0.3 and halves after two consecutive triggers at the same level [#]"
+  p47_slopeUpperClampBound_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "adaptive upper clamp bound per iteration for debugging [#]"
+  p47_upperClampActive_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "1 if the upper slope clamp fired in this iteration, 0 otherwise [0 or 1]"
 
 *** Parameters necessary to define the CO2 tax curve shape   
   p47_targetConverged(ttot,ext_regi)                 "boolean to store if emission target has converged [0 or 1]"
