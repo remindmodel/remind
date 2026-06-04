@@ -9,10 +9,6 @@
 ***---------------------------------------------------------------------------
 *** Read WACC values across technologies and countries
 ***---------------------------------------------------------------------------
-*** Initialize WACC parameter for different regions and technologies  
-***Zero WACC for energy technologies is used for calibration 
-***p25_techwacc(t, regi, tewacc) = 0;
-
 Parameter p25_invwacc(ttot, all_regi)                       "WACC markup for each country"   
    /
 $ondelim 
@@ -21,7 +17,6 @@ $offdelim
   /
 ;
 
-***Check if WACC data should be loaded  
 Parameter p25_techwacc(ttot, all_regi, tewacc)                       "WACC markup for each power technology in each REMIND region"   
    /
 $ondelim 

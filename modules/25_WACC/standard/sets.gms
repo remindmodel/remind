@@ -26,7 +26,7 @@ tewacc(all_te)       "technologies with WACC data"
         tdsyngas,tdbiogat,tdfosgat,tdsyngat,
         tdbiohos,tdfoshos,tdsynhos,tdh2s,tdh2t,
         tdbiodie,tdfosdie,tdsyndie,tdbiopet,tdfospet,
-        tdsynpet,tdbiosos,tdfossos,tdhes,ccsinje,
+        tdsynpet,tdbiosos,tdfossos,tdhes,
         gridspv,gridcsp,gridwindon,gridwindoff,
         pipe_gas,termX_lng,termM_lng,vess_lng
 /
