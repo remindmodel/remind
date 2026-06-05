@@ -373,6 +373,7 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
 ***         fall back to squareDev and reset reference so next iteration uses a fresh slope. It only applies to year targets (pm_emiMktRefYear > 0)
             if((regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"slope_refIteration")
                 OR regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"slope_firstIteration"))
+               AND NOT((iteration.val - iteration2.val) eq 0)
                AND (pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt) gt 0)
                AND (abs(p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt)
                         - p47_emiMktCurrent_iter(iteration2,ttot,ttot2,ext_regi,emiMktExt))
