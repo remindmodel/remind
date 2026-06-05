@@ -268,6 +268,8 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
       loop((ttot,emiMktExt,target_type_47,emi_type_47)$(pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)),
         loop(emiMkt$emiMktGroup(emiMktExt,emiMkt),
           loop(regi$regiEmiMktTarget2regi_47(ext_regi,regi),
+***         reset the rescale type tracking for the current iteration to avoid overlapping flags
+            regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,rescaleType) = NO;
 ***         if rescale factor was already calculated for ext_regi, there is no need to recalculate it  
             continue$(pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt));
 ***         calculating the rescale factor   
