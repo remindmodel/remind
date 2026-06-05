@@ -110,6 +110,7 @@ Positive Variables
   v37_emiPrc(tall,all_regi,all_enty,all_te,opmoPrc)                         "Emissions per process and operation mode [GtC/a]"
   v37_shareWithCC(tall,all_regi,all_te,opmoPrc)                             "Share of process and operation mode equipped with carbon capture technology"
   vm_costMatPrc(tall,all_regi)                                              "Cost of external material inputs such as iron ore in process-based industry [trn $2017/a]"
+  v37_shSolidsIndst(tall,all_regi)                                          "upper share on biosolids"
 ;
 
 Variables
@@ -160,6 +161,7 @@ $endif.no_calibration
   q37_emiCCPrc(tall,all_regi,emiInd37)                                              "Captured emissions from CCS"
   q37_limitOutflowCCPrc(tall,all_regi,all_te)                                       "Carbon capture processes can only capture as much co2 as the base process emits"
   q37_costMat(tall,all_regi)                                                        "External material cost (non-energy)"
+  q37_limitBioSolidsIndst(tall,all_regi,all_enty)                                    "Upper limit on biosolids share"
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms
