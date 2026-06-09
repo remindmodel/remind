@@ -111,7 +111,8 @@ runTimes <- c(runTimes, "write_gdx start" = Sys.time())
 # Map climate assessment variables to REMIND/GAMS
 varmap <- c(
   'Surface Air Temperature Change'            = 'pm_globalMeanTemperature',
-  'Effective Radiative Forcing|Anthropogenic' = 'p15_forc_magicc'
+  'Effective Radiative Forcing|Anthropogenic' = 'p15_forc_magicc',
+  'Atmospheric Concentrations|CO2'            = 'p15_co2_conc'
 )
 
 # Postprocess by renaming IAMC-style `period` (year) column to REMIND compatible `tall` set & using this as sole index 
