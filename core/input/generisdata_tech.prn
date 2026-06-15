@@ -154,26 +154,26 @@ lifetime               30        30          45          45          45         
 
 
 *** carbon management
-+             ccsinje    weathering         dac      oae_ng      oae_el
-tech_stat           0                         4
-inco0             350          0.01       18800         200         400
-floorcost                                  4800
-constrTme           3
-lifetime           40            20          20          25          25
-mix0             1.00
-eta              1.00          1.00        1.00        1.00        1.00
-omf              0.06          0.84       0.025        0.35        0.17
-ccap0                                    0.0008
-learn                                      0.15
++           ccsinjeon   ccsinjeoff    weathering         dac      oae_ng      oae_el
+tech_stat           0            0                         4
+inco0             350          525          0.01       18800         200         400
+floorcost                                               4800
+constrTme           3            5
+lifetime           40           40            20          20          25          25
+mix0             1.00         1.00
+eta              1.00         1.00          1.00        1.00        1.00        1.00
+omf              0.06         0.12          0.84       0.025        0.35        0.17
+ccap0                                                 0.0008
+learn                                                   0.15
 
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 *** industry processes
 +                     bf         bof         idr         eaf
 tech_stat
-inco0              400.0       200.0       420.0       350.0
+inco0              460.0       200.0       420.0       350.0
 omf                 0.06        0.06        0.06        0.06
-lifetime              20          20          20          20
+lifetime              35          35          20          20
 
 +                   bfcc       idrcc
 inco0               1100         900
@@ -322,7 +322,11 @@ bf and bof:
     Figure shows 65 / 55 --> inco0 approx 700
     Agora KSV-Rechner: 38 € OPEX
     Woertler 2013 Exhibit 8: Components (no C&R) summed CAPEX 442 € (149 BF, 128 BOF, + Rest) --> approx 500 $
-    --> inco0 average is 600; distribution among bf and bof does not affect model, measurement of bf in tPI is negligible
+    --> inco0 average is 600 without relining;
+    Relining cost: IEAGHG 2013 states US$ 232 Million for a 4 Mt plant => US$ 250 Million today => $60/t. 
+    --> inco0 average is 660 with relining; Distribution among bf and bof does not affect model, measurement of bf in tPI is negligible
+    Lifetime: bfs need a relining after 20 years (typically), but these are cheap -> default is 35 years (including one relining)
+    Ambitious scenarios could consider using 20 years instead, especially for developed markets + China
 
 dri-eaf:
     Agora KSV-Rechner: 40 € OPEX

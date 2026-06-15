@@ -182,17 +182,16 @@ prepare <- function() {
   replace_in_file('core/sets.gms',content,"MODULES",comment="***")
   ### ADD MODULE INFO IN SETS  ############# END #########
 
-  # copy right gdx file to the output folder
-  gdx_name <- paste0("config/gdx-files/", cfg$gms$cm_CES_configuration, ".gdx")
-  if (!file.copy(gdx_name, file.path(cfg$results_folder, 'input.gdx'))) {
-    errmsg <- 'Could not copy gdx file:\n   '
-    if (cfg$gms$CES_parameters == 'calibrate') {
-      errmsg <- paste0(errmsg,
-        'Calibration requires a start point, so copy the gdx file with the closest configuration and paste it to:\n   ')
-    }
-    stop(errmsg, gdx_name, '\n\n')
-  } else {
-    message('Copied ', gdx_name, ' to input.gdx')
+  # Retrieve appropriate gdx file
+  gdxConfig <- paste0("config/gdx-files/", cfg$gms$cm_CES_configuration, ".gdx")
+  gdxInput <- file.path(cfg$results_folder, "input.gdx")
+  if (file.copy(gdxConfig, gdxInput)) {
+    message("Copied: ", gdxConfig, "\n    to: ", gdxInput)
+  } else  {
+    stop(ifelse (cfg$gms$CES_parameters == "calibrate",
+        "Calibration requires a starting gdx; please copy the gdx file with the closest configuration and paste it to:",
+        "Could not find gdx file:"),
+      "\n    ", gdxConfig, "\n\n")
   }
 
   # choose which conopt files to copy

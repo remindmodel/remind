@@ -150,8 +150,8 @@ Execute_Loadpoint 'input_ref' p21_ref_costInvTeAdj_RE = vm_costInvTeAdj.l;
 $endif.importtaxrc
 
 if (cm_startyear gt 2005,
-execute_load "input_ref.gdx", pm_taxrevCO2LUC0;
-execute_load "input_ref.gdx", pm_taxrevGHG0;
+Execute_Loadpoint "input_ref.gdx", pm_taxrevCO2LUC0;
+Execute_Loadpoint "input_ref.gdx", pm_taxrevGHG0;
 );
 
 ***initialize co2 market taxes

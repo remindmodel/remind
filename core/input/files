@@ -37,10 +37,11 @@ p_macBaseHarmsen2022.cs4r
 p_macBaseVanv.cs4r
 p_macPolCO2luc.cs4r
 p_boundCapCCS.cs4r
+p_CapacityBounds.cs4r
 p_boundCapBiochar.cs4r
-pm_dataccs.cs3r
-f_fedemand.cs4r
-f_fedemand_build.cs4r
+f_geoStorPot.cs3r
+f_fedemandBuild.cs4r
+f_fedemandInd.cs4r
 pm_NuclearConstraint.cs4r
 pm_risk_premium.cs4r
 pm_shPPPMER.cs4r

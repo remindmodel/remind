@@ -39,8 +39,5 @@ prepare_NDC <- function(gdx, cfg) {
     comment = "description: Regional GHG emi (excl. LU and bunkers) in BAU scenario \nunit: Mt CO2eq/yr \nfile created with scripts/input/prepare_NDC.R",
     comment.char = "*** "
   )
-  file.copy(
-    "./modules/45_carbonprice/NDC/input/pm_BAU_reg_emi_wo_LU_wo_bunkers.cs4r",
-    "./modules/46_carbonpriceRegi/NDC/input/pm_BAU_reg_emi_wo_LU_wo_bunkers.cs4r"
-  )
+
 }

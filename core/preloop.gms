@@ -20,6 +20,9 @@ model hybrid /all/;
 ***------------------------------------------------------------------------------
 ***------------------------------------------------------------------------------
 
+*** remove legacy values for timesteps and technologies that are not required
+vm_capCum.l(tall,all_regi,all_te) $ (not (ttot(tall) and regi(all_regi) and te(all_te))) = 0;
+
 *** Set level values, so that reference value is available even if gdx has no level value to overwrite. Gams complains if .l was never initialized.
 vm_emiMacSector.l(ttot,regi,enty)      = 0;
 vm_emiTe.l(ttot,regi,enty)      = 0;
@@ -88,7 +91,7 @@ $ENDIF.out
 
 *** load PE, SE, FE price parameters from reference gdx to have prices in time steps before cm_startyear
 if (cm_startyear gt 2005,
-execute_load "input_ref.gdx", pm_PEPrice, pm_SEPrice, pm_FEPrice;
+  Execute_Loadpoint "input_ref.gdx", pm_PEPrice, pm_SEPrice, pm_FEPrice;
 );
 
 *** load vm_capEarlyReti(ttot,regi,te) from reference gdx to have a reference point for q_smoothphaseoutCapEarlyReti and q_limitCapEarlyReti

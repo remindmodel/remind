@@ -28,13 +28,13 @@ $ifthen.rcp_scen "%cm_rcp_scen%" == "none"
   !! available for increased production.
   vm_cesIO.up(t,regi,"ue_steel_secondary")
     = ( ( p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPpopScen%")
-        / pm_fedemand(t,regi,"ue_steel_secondary")
+        / pm_fedemandInd(t,regi,"ue_steel_secondary")
         - 1
         )
       / 10
       + 1
       )
-    * pm_fedemand(t,regi,"ue_steel_secondary");
+    * pm_fedemandInd(t,regi,"ue_steel_secondary");
 $elseif.rcp_scen "%cm_rcp_scen%" == "rcp85"
   !! In no-policy scenarios, tight bounds representing usual scrap recycling
   !! rates apply.  Only 10% of the difference between projected secondary
@@ -42,13 +42,13 @@ $elseif.rcp_scen "%cm_rcp_scen%" == "rcp85"
   !! available for increased production.
   vm_cesIO.up(t,regi,"ue_steel_secondary")
     = ( ( p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPpopScen%")
-        / pm_fedemand(t,regi,"ue_steel_secondary")
+        / pm_fedemandInd(t,regi,"ue_steel_secondary")
         - 1
         )
       / 10
       + 1
       )
-    * pm_fedemand(t,regi,"ue_steel_secondary");
+    * pm_fedemandInd(t,regi,"ue_steel_secondary");
 $elseif.rcp_scen "%cm_rcp_scen%" == "rcp60"
   !! In no-policy scenarios, tight bounds representing usual scrap recycling
   !! rates apply.  Only 10% of the difference between projected secondary
@@ -56,13 +56,13 @@ $elseif.rcp_scen "%cm_rcp_scen%" == "rcp60"
   !! available for increased production.
   vm_cesIO.up(t,regi,"ue_steel_secondary")
     = ( ( p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPpopScen%")
-        / pm_fedemand(t,regi,"ue_steel_secondary")
+        / pm_fedemandInd(t,regi,"ue_steel_secondary")
         - 1
         )
       / 10
       + 1
       )
-    * pm_fedemand(t,regi,"ue_steel_secondary");
+    * pm_fedemandInd(t,regi,"ue_steel_secondary");
 $elseif.rcp_scen "%cm_rcp_scen%" == "rcp45"
   !! In no-policy scenarios, tight bounds representing usual scrap recycling
   !! rates apply.  Only 10% of the difference between projected secondary
@@ -70,13 +70,13 @@ $elseif.rcp_scen "%cm_rcp_scen%" == "rcp45"
   !! available for increased production.
   vm_cesIO.up(t,regi,"ue_steel_secondary")
     = ( ( p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPpopScen%")
-        / pm_fedemand(t,regi,"ue_steel_secondary")
+        / pm_fedemandInd(t,regi,"ue_steel_secondary")
         - 1
         )
       / 10
       + 1
       )
-    * pm_fedemand(t,regi,"ue_steel_secondary");
+    * pm_fedemandInd(t,regi,"ue_steel_secondary");
 $else.rcp_scen
   !! In policy scenarios, secondary steel production can be increased up to the
   !! limit of theoretical scrap availability.
@@ -113,16 +113,6 @@ loop (in$( sameas(in,"feel_steel_secondary") ),
 vm_cesIO.lo(t,regi_dyn29(regi),in_industry_dyn37(in))$(
                                                   0 eq vm_cesIO.lo(t,regi,in) )
   = max(sm_eps, abs(pm_cesdata(t,regi,in,"offset_quantity")));
-
-*' Limit biomass solids use in industry to 25% (or historic shares, if they are
-*' higher) of baseline solids
-*' Cement CCS might otherwise become a compelling BioCCS option under very high
-*' carbon prices due to missing adjustment costs.
-if (cm_startyear gt 2005,   !! not a baseline or NPi scenario
-  vm_demFeSector_afterTax.up(t,regi,"sesobio","fesos","indst","ETS")
-  = max(0.25 , smax(t2, pm_secBioShare(t2,regi,"fesos","indst") ) )
-    * p37_BAU_industry_ETS_solids(t,regi);
-);
 
 !! Fix industry output for Bal and EnSec scenario
 $if "%cm_indstExogScen%" == "forecast_bal"   $set cm_indstExogScen_set "YES"
@@ -163,5 +153,9 @@ $endif.fixedUE_scenario
 
 !! Fix to avoid reoccurring random infeasibilities. May need to be excluded if e.g. synfuels (or something else) are set to zero.
 vm_demFeSector_afterTax.lo(t,regi,entySe,"fesos","indst",emiMkt)$(NOT sameAs(emiMkt, "other")) = 1e-16;
+
+!! Limit biosolids in industry to 0.3 of all solids used in industry (only for ETS - all sectors except otherInd)
+!! Solids biomass has limited substitution potential in both the steel and cement sector.
+v37_shSolidsIndst.fx(t,regi) = 0.3 ;
 
 *** EOF ./modules/37_industry/subsectors/bounds.gms

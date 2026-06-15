@@ -276,7 +276,7 @@ emiMac2mac("co2otherInd","co2otherInd") = NO;
 *** data on maximum secondary steel production
 *** The steel recycling rate limit is assumed to increase from 90 to 99 %.
   p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPpopScen)
-  = pm_fedemand(tall,all_regi,"ue_steel_secondary")
+  = pm_fedemandInd(tall,all_regi,"ue_steel_secondary")
   / 0.9
   * 0.99;
 
@@ -648,7 +648,7 @@ $offdelim
 
 *' load baseline industry ETS solids demand
 if (cm_startyear ne 2005,   !! not a BAU scenario
-execute_load "input_ref.gdx", vm_demFeSector_afterTax;
+Execute_Loadpoint "input_ref.gdx", vm_demFeSector_afterTax;
   p37_BAU_industry_ETS_solids(t,regi)
   = sum(se2fe(entySe,"fesos",te),
       vm_demFeSector_afterTax.l(t,regi,entySe,"fesos","indst","ETS")
@@ -675,7 +675,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 p37_specMatDem("dripell","idr","ng")        = 1.44;                                           !! Source: POSTED / Average of Devlin2022, Otto2017, Volg2018, Rechberge2020
 p37_specMatDem("dripell","idr","h2")        = 1.44;                                           !! Source: POSTED / Copy from ng opMode
 
-p37_specMatDem("driron","eaf","pri")        = 1.065;                                          !! Source: POSTED / Average of Devlin et al 2022, Section 2.2.2 and Otto et al 2017, Figure 6
+p37_specMatDem("driron","eaf","prim")       = 1.065;                                          !! Source: POSTED / Average of Devlin et al 2022, Section 2.2.2 and Otto et al 2017, Figure 6
 p37_specMatDem("eafscrap","eaf","sec")      = 1.09;                                           !! Source: POSTED / Ecorys 2014, Table 3.1
 
 p37_specMatDem("ironore","bf","standard")   = 1.58;                                           !! Source: Sum of weighted average values for sinter, ore and pellets in JRC BAT, Table 6.1: 1.626 / tHM -> 1.58/tPI
@@ -705,7 +705,7 @@ p37_specFeDemTarget("feels","idr","ng")           = 0.08 / (sm_TWa_2_MWh/sm_giga
 !! Birat2010, p. 11: 0.97 MWh total, only 0.44 MWh of which is electrical
 !! EU JRC BAT says 0.404–0.748 (only EAF, elec) / Otto et al. say 0.92
 !! --> have declining curve?
-p37_specFeDemTarget("feels","eaf","pri")          = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Copy from secondary (Agora Energiewende, 2022 give similar values, between w and w/o reheating)
+p37_specFeDemTarget("feels","eaf","prim")         = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Copy from secondary (Agora Energiewende, 2022 give similar values, between w and w/o reheating)
 p37_specFeDemTarget("feels","eaf","sec")          = 0.67 / (sm_TWa_2_MWh/sm_giga_2_non);    !! Source: POSTED / Vogl et al 2018, Section 3.1
 
 !! Otto et al. Fig 3: 10.303 GJ coke (from 13.24 GJ coal, see Menendez2015 Fig 3) + 4.67 GJ coal dust -> 18 GJ
@@ -803,7 +803,7 @@ if (cm_startyear eq 2005,
 
     !! 2nd stage tech
     loop(mat2ue(mat,in),
-      p37_matFlowHist(ttot,regi,mat) = pm_fedemand(ttot,regi,in) / p37_mat2ue(mat,in) * p37_ue_share(mat,in);
+      p37_matFlowHist(ttot,regi,mat) = pm_fedemandInd(ttot,regi,in) / p37_mat2ue(mat,in) * p37_ue_share(mat,in);
       loop(tePrc2matOut(tePrc,opmoPrc,mat),
         pm_outflowPrcHist(ttot,regi,tePrc,opmoPrc) = p37_matFlowHist(ttot,regi,mat) * p37_teMatShareHist(tePrc,opmoPrc,mat);
       );
@@ -824,7 +824,7 @@ if (cm_startyear eq 2005,
 
     loop((entyFe,ppfUePrc),
       p37_demFeTarget(ttot,regi,entyFe,ppfUePrc) = sum(tePrc2ue(tePrc,opmoPrc,ppfUePrc), pm_outflowPrcHist(ttot,regi,tePrc,opmoPrc) * p37_specFeDemTarget(entyFe,tePrc,opmoPrc));
-      p37_demFeActual(ttot,regi,entyFe,ppfUePrc) = sum((fe2ppfen_no_ces_use(entyFe,all_in),ue2ppfenPrc(ppfUePrc,all_in)), pm_fedemand(ttot,regi,all_in) * sm_EJ_2_TWa);
+      p37_demFeActual(ttot,regi,entyFe,ppfUePrc) = sum((fe2ppfen_no_ces_use(entyFe,all_in),ue2ppfenPrc(ppfUePrc,all_in)), pm_fedemandInd(ttot,regi,all_in) * sm_EJ_2_TWa);
     );
 
     p37_demFeRatio(ttot,regi,ppfUePrc) = sum(entyFe,p37_demFeActual(ttot,regi,entyFe,ppfUePrc)) / sum(entyFe,p37_demFeTarget(ttot,regi,entyFe,ppfUePrc));
@@ -869,7 +869,7 @@ if (cm_startyear gt 2005,
 );
 
 if (cm_startyear gt 2005,
-  execute_load "input_ref.gdx" v37_plasticWaste.l = v37_plasticWaste.l;
+  Execute_Loadpoint "input_ref.gdx" v37_plasticWaste.l = v37_plasticWaste.l;
 );
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms

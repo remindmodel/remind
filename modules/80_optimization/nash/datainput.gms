@@ -37,7 +37,7 @@ cm_iteration_max = 100;
 ***convergences thresholds - very coarse 
   p80_surplusMaxTolerance(tradePe) = 2* 1.5 * sm_EJ_2_TWa;          !! convert EJ/yr into internal unit TWa
   p80_surplusMaxTolerance("good") = 2* 100/1000;                  !! in internal unit, trillion Dollar
-  p80_surplusMaxTolerance("perm") = 2* 300 * 12/44 / 1000;                !! convert MtCO2eq into internal unit GtC
+  p80_surplusMaxTolerance("perm") = 3* 300 * 12/44 / 1000;                !! convert MtCO2eq into internal unit GtC
    );
 );
     
@@ -54,12 +54,12 @@ p80_etaXp("perm") = 0.2;
 
 *LB* parameter for Nash price algorithm between different iterations
 p80_etaLT(trade) = 0;
-p80_etaLT("perm") = 0.03;
+p80_etaLT("perm") = 0.04;
 
 ***These parameters are pretty sensitive. If market surpluses diverge, try higher values (up to 1). If surpluses oscillate, try lower values. 
 p80_etaST(tradePe) = 0.3;
 p80_etaST("good") = 0.25;
-p80_etaST("perm") = 0.3;
+p80_etaST("perm") = 0.8;
 
 $ifi %banking% == "banking"  p80_etaST("perm") = 0.2;      !! in banking mode, the permit market reacts more sensitively.
 $ifi %emicapregi% == "budget"  p80_etaST("perm") = 0.25;      !! in budget mode, the permit market reacts more sensitively.

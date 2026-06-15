@@ -142,11 +142,11 @@ q_balSe(t,regi,enty2)$( entySe(enty2) AND (NOT (sameas(enty2,"seel"))) )..
     * vm_prodFe(t,regi,enty4,enty5,te)
     )
   + sum(pc2te(enty,enty3,te,enty2),
-                sum(teCCS2rlf(te,rlf),
-        pm_prodCouple(regi,enty,enty3,te,enty2)
-      * vm_co2CCS(t,regi,enty,enty3,te,rlf)
-                )
-         )
+        sum(teCCS2rlf(te,rlf),
+          pm_prodCouple(regi,enty,enty3,te,enty2)
+        * vm_co2CCS(t,regi,enty,enty3,te,rlf)
+        )
+    )
 ***   add (reused gas from waste landfills) to segas to not account for CO2
 ***   emissions - it comes from biomass
   + ( s_MtCH4_2_TWa
@@ -375,7 +375,7 @@ qm_deltaCapCumNet(ttot,regi,teLearn)$(ord(ttot) lt card(ttot) AND pm_ttot_val(tt
 *' Initial values for cumulated capacities (learning technologies only):
 *' (except for tech_stat 4 technologies that have no standing capacities in 2005 and ccap0 refers to another year)
 ***---------------------------------------------------------------------------
-q_capCumNet(t0,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4))..
+q_capCumNet(t0,regi,teLearn)$(pm_data(regi,"tech_stat",teLearn) < 4)..
   vm_capCum(t0,regi,teLearn)
   =e=
   pm_data(regi,"ccap0",teLearn);
@@ -455,92 +455,36 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
 *' In equations.gms, the investment costs equation `q_costTeCapital` corresponds to $I = a'\times C^{b'} + F$,
 *' with variations depending on time period and floor cost scenarios.
 
-q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND t.val le 2020)) ..
+
+$macro macro_capCumGlob (sum(regi2, vm_capCum(t,regi2,teLearn)) + pm_capCumForeign(t,regi,teLearn))
+$macro macro_costRegi   (pm_data(regi,"floorcost",teLearn) + pm_data(regi,"learnMult_wFC",teLearn) * macro_capCumGlob ** pm_data(regi,"learnExp_wFC",teLearn))
+$macro macro_costGlob   (fm_dataglob("floorcost",teLearn) + fm_dataglob("learnMult_wFC",teLearn) * macro_capCumGlob ** fm_dataglob("learnExp_wFC",teLearn))
+
+q_costTeCapital(t,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) < 4 or t.val > 2020) ..
   vm_costTeCapital(t,regi,teLearn)
   =e=
 *** until 2005: using global estimates better matches historic values
-  + ( fm_dataglob("floorcost",teLearn)
-      + ( fm_dataglob("learnMult_wFC",teLearn)
-          * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-              + pm_capCumForeign(t,regi,teLearn)
-          ) ** fm_dataglob("learnExp_wFC",teLearn)
-      )
-  )$( t.val le 2005 )
+  macro_costGlob $ (t.val <= 2005)
     
 *** 2005 to 2020: linear transition from global 2005 to regional 2020
 *** to phase-in the observed 2020 regional variation from input-data
-  + ( (2020 - t.val) / (2020-2005)
-      * ( fm_dataglob("floorcost",teLearn)
-          + fm_dataglob("learnMult_wFC",teLearn)
-            * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-                + pm_capCumForeign(t,regi,teLearn)
-              ) ** fm_dataglob("learnExp_wFC",teLearn)
-      )
+  + macro_interpolate(t.val, 2005, 2020, macro_costGlob, macro_costRegi) $ (t.val > 2005 and t.val <= 2020)
 
-    + (t.val - 2005) / (2020-2005) 
-      * ( pm_data(regi,"floorcost",teLearn) 
-          + pm_data(regi,"learnMult_wFC",teLearn)
-            * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-                + pm_capCumForeign(t,regi,teLearn)
-              ) ** pm_data(regi,"learnExp_wFC",teLearn)
-      )
-  )$( (t.val gt 2005) AND (t.val le 2020) )
+*** after 2020 for specific cm_floorCostScen: regional capital costs
+$if %cm_floorCostScen% == "pricestruc"  + macro_costRegi $ (t.val > 2020)
+$if %cm_floorCostScen% == "gdpBased"    + macro_costRegi $ (t.val > 2020)
 
-$ifthen.floorscen %cm_floorCostScen% == "default"
-*** from 2020 to c_LearnTeConvStartYear: use regional values
-  + ( pm_data(regi,"floorcost",teLearn) 
-        + pm_data(regi,"learnMult_wFC",teLearn)
-          * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-              + pm_capCumForeign(t,regi,teLearn)
-            ) ** pm_data(regi,"learnExp_wFC",teLearn)
-  )$( (t.val gt 2020) AND (t.val lt c_LearnTeConvStartYear) )
+$ifthen.default %cm_floorCostScen% == "default"
+*** from 2020 to c_teLearnConvStartYr: regional capital costs
+  + macro_costRegi $ (t.val > 2020 and t.val <= c_teLearnConvStartYr)
 
-*** c_LearnTeConvStartYear to c_LearnTeConvEndYear: assuming linear convergence of regional learning curves to global values
-  + ( (pm_ttot_val(t) - c_LearnTeConvStartYear) / (c_LearnTeConvEndYear-c_LearnTeConvStartYear)  
-      * ( fm_dataglob("floorcost",teLearn) 
-          + fm_dataglob("learnMult_wFC",teLearn)
-            * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-                + pm_capCumForeign(t,regi,teLearn)
-              ) ** fm_dataglob("learnExp_wFC",teLearn)
-      )
+*** c_teLearnConvStartYr to c_teLearnConvEndYr: linear convergence from regional costs to global costs
+  + macro_interpolate(t.val, c_teLearnConvStartYr, c_teLearnConvEndYr, macro_costRegi, macro_costGlob) $ (t.val > c_teLearnConvStartYr and t.val < c_teLearnConvEndYr)
 
-    + (c_LearnTeConvEndYear - pm_ttot_val(t)) / (c_LearnTeConvEndYear-c_LearnTeConvStartYear)  
-      * ( pm_data(regi,"floorcost",teLearn) 
-          + pm_data(regi,"learnMult_wFC",teLearn)
-            * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-                + pm_capCumForeign(t,regi,teLearn)
-              ) ** pm_data(regi,"learnExp_wFC",teLearn)
-      )
-  )$( t.val ge c_LearnTeConvStartYear AND t.val le c_LearnTeConvEndYear )
-$endif.floorscen
+*** after c_teLearnConvEndYr: global capital costs
+  + macro_costGlob $ (t.val >= c_teLearnConvEndYr)
+$endif.default
 
-$ifthen.floorscen %cm_floorCostScen% == "pricestruc"
-  + ( pm_data(regi,"floorcost",teLearn) 
-      + pm_data(regi,"learnMult_wFC",teLearn)
-        * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-            + pm_capCumForeign(t,regi,teLearn)
-          ) ** pm_data(regi,"learnExp_wFC",teLearn)
-    )$( t.val ge 2020 AND t.val le 2100 )
-$endif.floorscen
-
-$ifthen.floorscen %cm_floorCostScen% == "techtrans"
-  + ( pm_data(regi,"floorcost",teLearn) 
-      + pm_data(regi,"learnMult_wFC",teLearn)
-        * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-            + pm_capCumForeign(t,regi,teLearn)
-          ) ** pm_data(regi,"learnExp_wFC",teLearn)
-    )$( t.val ge 2020 AND t.val le 2100 )
-$endif.floorscen
-
-$ifthen.floorscen %cm_floorCostScen% == "default"
-*** after c_LearnTeConvEndYear: globally harmonized costs
-  + ( fm_dataglob("floorcost",teLearn) 
-      + fm_dataglob("learnMult_wFC",teLearn)
-        * ( sum(regi2, vm_capCum(t,regi2,teLearn)) 
-            + pm_capCumForeign(t,regi,teLearn) 
-            ) **(fm_dataglob("learnExp_wFC",teLearn))
-  )$(t.val gt c_LearnTeConvEndYear)
-$endif.floorscen
 ;
 *' @stop
 
@@ -572,7 +516,7 @@ q_emiTe(t,regi,emiTe(enty))..
 *' transformations within the chain of CCS steps (Leakage).
 ***-----------------------------------------------------------------------------
 q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
-                           emi2te(enty,enty2,te,enty3)
+                           emi2te(enty,enty2,te,enty3)  !! emi2te = cco2.ico2.ccsinje.co2
                         OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
   vm_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
   =e=
@@ -581,7 +525,7 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
         pm_emifac(t,regi,enty,enty2,te,enty3)
       * vm_demPe(t,regi,enty,enty2,te)
       )
-    + sum((ccs2Leak(enty,enty2,te,enty3),teCCS2rlf(te,rlf)),
+    + sum((ccs2Leak(enty,enty2,te,enty3),teCCS2rlf(te,rlf)), !! ccs2Leak = cco2.ico2.ccsinje.co2
         pm_emifac(t,regi,enty,enty2,te,enty3)
       * vm_co2CCS(t,regi,enty,enty2,te,rlf)
       )
@@ -773,7 +717,7 @@ q_emiCdrAll(t,regi)..
   + ( !! pe2se-BECC 
       sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail(t,regi,enty,enty2,te,enty3)) !! positive value
         !! + gross DACC 
-      - sum(teCCS2rlf(te,rlf), vm_emiCdrTeDetail(t, regi, "dac"))) !! negative value
+      - vm_emiCdrTeDetail(t, regi, "dac")) !! negative value
       !! scaled by the fraction that gets stored geologically
      *  v_ccsShare(t,regi) 
   !! 2. gross CDR from Enhanced Weathering
@@ -853,6 +797,24 @@ q_emiCap(t,regi) ..
                 vm_co2eq(t,regi) + vm_Xport(t,regi,"perm") - vm_Mport(t,regi,"perm")
                 =l= vm_perm(t,regi);
 
+
+***--------------------------------------------------
+*' Total GHG emissions excl. land-use change and excl. bunker emissions  (needed for NDC targets)
+***--------------------------------------------------
+q_emiGHG_exclLULUCF_exclBunkers(t,regi)..
+  v_emiGHG_exclLULUCF_exclBunkers(t,regi)
+  =e=
+*** total GHG emissions excl. F-Gases and excl. LULUCF
+  vm_co2eq(t,regi) 
+*** add F-Gases, convert from MtCO2eq/yr to GtC/yr
+  + vm_emiFgas(t,regi,"emiFgasTotal") / sm_c_2_co2 / 1000
+*** subtract bunker emissions
+  - sum(se2fe(enty,enty2,te),
+      pm_emifac(t,regi,enty,enty2,te,"co2")
+      * vm_demFeSector(t,regi,enty,enty2,"trans","other") 
+    );
+  
+
 ***-----------------------------------------------------------------
 *** Budgets on GHG emissions (single or two subsequent time periods)
 ***-----------------------------------------------------------------
@@ -880,15 +842,19 @@ q_budgetCO2eqGlob$(cm_emiscen=6)..
 ***---------------------------------------------------------------------------
 *' Definition of carbon capture :
 ***---------------------------------------------------------------------------
-q_balcapture(t,regi,ccs2te(ccsCo2(enty),enty2,te)) ..
-  sum(teCCS2rlf(te,rlf), v_co2capture(t,regi,enty,enty2,te,rlf))
+
+***q_balcapture(t,regi, enty,  enty2, te)
+***q_balcapture(t,regi,"cco2","ico2","ccsinjeon")
+
+q_balcapture(t,regi) ..
+  v_co2capture(t,regi)
   =e=
     !! carbon captured in energy sector
-    sum(emi2te(enty3,enty4,te2,enty),
-      vm_emiTeDetail(t,regi,enty3,enty4,te2,enty)
+    sum(emi2te(enty3,enty4,te2,"cco2"),
+      vm_emiTeDetail(t,regi,enty3,enty4,te2,"cco2")
     )
     !! carbon captured from CDR technologies in CDR module
-  + sum(teCCS2rlf(te,rlf), vm_co2capture_cdr(t,regi,enty,enty2,te,rlf))
+  + sum(teCCS2rlf(te,rlf), vm_co2capture_cdr(t,regi,"cco2","ico2",te,rlf))
     !! carbon captured from industry
   + sum(emiInd37, vm_emiIndCCS(t,regi,emiInd37))
   + sum((sefe(entySe,entyFe),emiMkt)$(
@@ -904,7 +870,7 @@ q_balcapture(t,regi,ccs2te(ccsCo2(enty),enty2,te)) ..
 *' atmosphere)
 ***---------------------------------------------------------------------------
 q_balCCUvsCCS(t,regi) ..
-  sum(teCCS2rlf(te,rlf), v_co2capture(t,regi,"cco2","ico2",te,rlf))
+  v_co2capture(t,regi)
   =e=
     sum(teCCS2rlf(te,rlf), vm_co2CCS(t,regi,"cco2","ico2",te,rlf))
   + sum(teCCU2rlf(te,rlf), vm_co2CCUshort(t,regi,"cco2","ccuco2short",te,rlf))
@@ -912,7 +878,7 @@ q_balCCUvsCCS(t,regi) ..
 ;
 
 q_ccsShare(t,regi) ..
-  sum(teCCS2rlf(te, rlf), v_co2capture(t, regi, "cco2", "ico2", "ccsinje", rlf))  * 
+  v_co2capture(t,regi)  * 
   v_ccsShare(t,regi) 
   =e=
   sum(teCCS2rlf(te, rlf), vm_co2CCS(t, regi, "cco2", "ico2", te, rlf))
@@ -922,10 +888,10 @@ q_ccsShare(t,regi) ..
 *' Definition of the CCS transformation chain:
 ***---------------------------------------------------------------------------
 
-q_limitCCS(regi,ccs2te2(enty,"ico2",te),rlf)$teCCS2rlf(te,rlf)..
+q_limitCCS(regi,ccs2te(enty,"ico2",te),rlf)$teCCS2rlf(te,rlf)..
         sum(ttot $(ttot.val ge 2005), pm_ts(ttot) * vm_co2CCS(ttot,regi,enty,"ico2",te,rlf))
         =l=
-        pm_dataccs(regi,"quan",rlf);
+        pm_dataccs(regi,"quan",te);
 
 
 ***---------------------------------------------------------------------------

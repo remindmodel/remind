@@ -22,6 +22,10 @@ c_model_version  "model version" /%c_model_version%/
 cm_GDPpopScen    "cm_GDPpopScen as set for use in GDX"      /%cm_GDPpopScen%/
 cm_APssp         "cm_APssp as set for use in GDX"           /%cm_APssp%/
 cm_APscen        "cm_APscen as set for use in GDX"          /%cm_APscen%/
+cm_LU_emi_scen   "cm_LU_emi_scen as set for use in GDX"     /%cm_LU_emi_scen%/
+cm_rcp_scen      "cm_rcp_scen as set for use in GDX"        /%cm_rcp_scen%/
+
+
 
 all_GDPpopScen    "all possible GDP scenarios"
 /
@@ -145,9 +149,9 @@ all_te          "all energy technologies, including from modules"
     igcc            "integrated coal gasification combined cycle"
     igccc           "integrated coal gasification combined cycle with capture"
     pc              "pulverised coal power plant"
-    coalchp         "combined heat powercoal"
+    coalchp         "combined heat and power coal"
     coalhp          "heating plantcoal"
-    coaltr          "tranformation of coal"
+    coaltr          "transformation of coal"
     coalgas         "coal gasification"
     coalftrec       "coal based fischer-tropsch recycle"
     coalftcrec      "coal based fischer-tropsch with capture recycle"
@@ -192,8 +196,8 @@ all_te          "all energy technologies, including from modules"
     elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
     h2turbVRE       "dummy technology: hydrogen turbine for electricity production; to demonstrate the capacities and SE flows inside the storXXX technologies"
     h2curt          "hydrogen production from curtailment"
-    h22ch4          "Methanation, H2 + 4 CO2 --> CH4 + 2 H20"
-    MeOH            "Methanol production /liquid fuel, CO2 hydrogenation, CO2 + 3 H2 --> CH3OH + H20"
+    h22ch4          "production of synthetic methane from hydrogen and captured carbon via methanation"
+    MeOH            "production of synthetic liquid hydrocarbon fuels from hydrogen and captured carbon via Fischer-Tropsch synthesis"
     tdels           "transmission and distribution for electricity to stationary users"
     tdelb           "transmission and distribution for electricity to buildings"
     tdelt           "transmission and distribution for electricity to transport"
@@ -205,7 +209,7 @@ all_te          "all energy technologies, including from modules"
     tdbiogat        "transmission and distribution for gas from biomass origin to transportation"
     tdfosgat        "transmission and distribution for gas from fossil origin to transportation"
     tdsyngat        "transmission and distribution for gas from synthetic origin to transportation"
-    tdbiohos        "transmission and distribution for heating oil from biomass origin to transportation"
+    tdbiohos        "transmission and distribution for heating oil from biomass origin to stationary users"
     tdfoshos        "transmission and distribution for heating oil from fossil origin to stationary users"
     tdsynhos        "transmission and distribution for heating oil from synthetic origin to stationary users"
     tdbiohob        "transmission and distribution for heating oil from biomass origin to buildings"
@@ -225,7 +229,8 @@ all_te          "all energy technologies, including from modules"
     tdhes           "transmission and distribution for heat to stationary users"
     tdheb           "transmission and distribution for heat to buildings"
 
-    ccsinje         "injection of co2"
+    ccsinjeon       "transport, injection, and storage of co2 onshore"
+    ccsinjeoff      "transport, injection, and storage of co2 offshore"
 *** Storage technology:
     storspv         "storage technology for photo voltaic (PV)"
     storwind        "storage technology for wind onshore"
@@ -241,8 +246,8 @@ all_te          "all energy technologies, including from modules"
 
     weathering      "enhanced weathering"
     dac             "direct air capture"
-    oae_ng          "ocean akalinity ehnacement via ocean liming using a traditional calciner"
-    oae_el          "ocean akalinity ehnacement via ocean liming using a novel calciner technology"
+    oae_ng          "ocean alkalinity enhancement via ocean liming using a traditional calciner"
+    oae_el          "ocean alkalinity enhancement via ocean liming using a novel calciner technology"
     x_gas2elec
     d_bio2elec      "d_* transmission and distribution losses"
     d_coal2elec
@@ -302,7 +307,7 @@ all_te          "all energy technologies, including from modules"
     bfbof_ccs    "Route: BF/BOF with CCS"
     idreaf_h2    "Route: H2 Direct reduction / EAF"
     idreaf_ng    "Route: NG Direct reduction / EAF without CCS"
-    idreaf_ng_ccs "Route: H2 Direct reduction / EAF with CCS"
+    idreaf_ng_ccs "Route: NG Direct reduction / EAF with CCS"
     seceaf       "Route: Scrap-loaded EAF"
 *** outdated entries, still used in module 04 until structuremappings are fixed
     tdbiohoi        "transmission and distribution for heating oil from biomass origin to industry"
@@ -367,9 +372,6 @@ all_enty             "all types of quantities"
     feel
     feels        "FE electricity stationary"
     feelb
-    feelcb       "buildings use of conventional electricity (all but space heating)"
-    feelhpb      "buildings use of electricity for space heating with heat pumps"
-    feelrhb      "buildings use of electricity for space heating with resistive heating"
     feelt        "final energy electricity for transport"
     fepet        "FE petrol transport"
     fedie        "FE diesel transport"
@@ -434,10 +436,10 @@ all_enty             "all types of quantities"
     n2obio       "N2O emissions from pebiolc "
     bc           "black carbon from fossil fuel combustion"
     oc           "organic carbon from fossil fuel combustion"
-    NOx          "nitrogen oxide emissions"
-    CO           "carbon monoxide emissions"
-    VOC          "volatile organic compound emissions"
-    NH3          "ammonia emissions"
+    nox          "nitrogen oxide emissions"
+    co           "carbon monoxide emissions"
+    voc          "volatile organic compound emissions"
+    nh3          "ammonia emissions"
 
 *** emissions from industry sub-sectors
     co2cement      "CO2 emissions from clinker and cement production"
@@ -512,18 +514,48 @@ all_in   "all inputs and outputs of the CES function"
     fehes                   "stationary use of district heat"
     feels                   "stationary use of electricity"
 
-    enb                     "buildings energy use"
-    enhb                    "buildings heat energy use"
-    enhgab                  "buildings heat gaseous energy use (fegab and feh2b)"
-    fesob                   "buildings use of solid energy carriers"
-    fehob                   "buildings use of liquid energy carriers"
-    fegab                   "buildings use of gaseous energy carriers"
-    feh2b                   "buildings use of hydrogen"
-    feheb                   "buildings use of district heat"
-    feelb                   "buildings use of electricity"
-    feelcb                  "buildings use of conventional electricity (all but space heating)"
-    feelhpb                 "buildings use of electricity for space heating with heat pumps"
-    feelrhb                 "buildings use of electricity for space heating with resistive heating"
+    enb                         "buildings energy use"
+    enhb                        "buildings heat energy use"
+    enhgab                      "buildings heat gaseous energy use (fegab and feh2b)"
+    fesob                       "buildings use of solid energy carriers"
+    fehob                       "buildings use of liquid energy carriers"
+    fegab                       "buildings use of gaseous energy carriers"
+    feh2b                       "buildings use of hydrogen"
+    feheb                       "buildings use of district heat"
+    feelb                       "buildings use of electricity"
+    feelhpb                     "buildings use of electricity for heat pumps"
+    feelrhcob                   "buildings use of electricity for resistive heating and cooking"
+    feelalb                     "buildings use of electricity for appliances and lighting"
+    feelictb                    "buildings use of electricity for information and communication technology"
+    feelscb                     "buildings use of electricity for space cooling"
+    appliances_light_elec_fe    "buildings appliances and lighting electricity"
+    appliances_light_natgas_fe  "buildings appliances and lighting natural gas"
+    appliances_light_petrol_fe  "buildings appliances and lighting petrol"
+    cooking_biomod_fe           "buildings cooking modern biomass"
+    cooking_biotrad_fe          "buildings cooking traditional biomass"
+    cooking_coal_fe             "buildings cooking coal"
+    cooking_elec_fe             "buildings cooking electricity"
+    cooking_natgas_fe           "buildings cooking natural gas"
+    cooking_petrol_fe           "buildings cooking petrol"
+    ict_elec_fe                 "buildings information communication technology electricity"
+    space_cooling_elec_fe       "buildings space cooling electricity"
+    space_cooling_heat_fe       "buildings space cooling district heat"
+    space_heating_biomod_fe     "buildings space heating modern biomass"
+    space_heating_biotrad_fe    "buildings space heating traditional biomass"
+    space_heating_coal_fe       "buildings space heating coal"
+    space_heating_elecHP_fe     "buildings space heating electricity heat pump"
+    space_heating_elecRH_fe     "buildings space heating electricity resistive heating"
+    space_heating_heat_fe       "buildings space heating district heat"
+    space_heating_natgas_fe     "buildings space heating natural gas"
+    space_heating_petrol_fe     "buildings space heating petrol"
+    water_heating_biomod_fe     "buildings water heating modern biomass"
+    water_heating_biotrad_fe    "buildings water heating traditional biomass"
+    water_heating_coal_fe       "buildings water heating coal"
+    water_heating_elecHP_fe     "buildings water heating electricity heat pump"
+    water_heating_elecRH_fe     "buildings water heating electricity resistive heating"
+    water_heating_heat_fe       "buildings water heating district heat"
+    water_heating_natgas_fe     "buildings water heating natural gas"
+    water_heating_petrol_fe     "buildings water heating petrol"
 
     eni                     "industry energy use"
     enhi                    "industry heat energy use"
@@ -624,7 +656,7 @@ all_teEs                 "energy service technologies"
     te_ueshhob  "buildings space heating liquids"
     te_ueshsob  "buildings space heating solids"
     te_ueshstb  "buildings space heating traditional solids"
-    te_ueshgab  "buildings space heating district heat"
+    te_ueshgab  "buildings space heating gas"
     te_ueshh2b  "buildings space heating hydrogen"
     te_ueshelb  "buildings space heating electricity resistance"
     te_ueshhpb  "buildings space heating electricity heat pump"
@@ -867,11 +899,11 @@ sets
        biomass
        fossil
        power
-       CDR
+       carbonRemoval
        transport
        buildings
        industry
-       CCU
+       carbonUtilization
        techpol
        emicapregi
        carbonprice
@@ -903,11 +935,11 @@ module2realisation(modules,*) "mapping of modules and active realisations" /
        biomass . %biomass%
        fossil . %fossil%
        power . %power%
-       CDR . %CDR%
+       carbonRemoval . %carbonRemoval%
        transport . %transport%
        buildings . %buildings%
        industry . %industry%
-       CCU . %CCU%
+       carbonUtilization . %carbonUtilization%
        techpol . %techpol%
        emicapregi . %emicapregi%
        carbonprice . %carbonprice%
@@ -927,30 +959,6 @@ module2realisation(modules,*) "mapping of modules and active realisations" /
 sets
 
 regi(all_regi)  "all regions used in the solution process"
-
-*** region sets used for MAGICC
-RCP_regions_world_bunkers "five RCP regions plus total (world) and bunkers"
-/
-    WORLD
-    R5OECD
-    R5REF
-    R5ASIA
-    R5MAF
-    R5LAM
-    BUNKERS
-/
-
-RCP_regions_world(RCP_regions_world_bunkers) "five RCP regions plus total (world)"
-/
-    WORLD
-    R5OECD
-    R5REF
-    R5ASIA
-    R5MAF
-    R5LAM
-    BUNKERS
-/
-;
 
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
@@ -973,7 +981,7 @@ sets
     2023_cond, 2023_uncond,
     2024_cond, 2024_uncond,
     2025_cond, 2025_uncond,
-    2025_cond_extrapol, 2025_uncond_extrapol
+    2025_cond_extrapol, 2025_uncond_extrapol,
     2026_cond, 2026_uncond
   /
   NPi_version "NPi data version for NPi realizations of 40_techpol and 45_carbonprice"
@@ -1086,9 +1094,9 @@ te(all_te)              "energy technologies"
     igcc            "integrated coal gasification combined cycle"
     igccc           "integrated coal gasification combined cycle with carbon capture"
     pc              "pulverised coal power plant"
-    coalchp         "combined heat powercoal"
+    coalchp         "combined heat and power coal"
     coalhp          "heating plant coal"
-    coaltr          "tranformation of coal"
+    coaltr          "transformation of coal"
     coalgas         "coal gasification"
     coalftrec       "coal based fischer-tropsch recycle"
     coalftcrec      "coal based fischer-tropsch with carbon capture recycle"
@@ -1126,7 +1134,7 @@ te(all_te)              "energy technologies"
     solhe           "solar thermal heat generation"
     tnrs            "thermal nuclear reactor (simple structure)"
     fnrs            "fast nuclear reactor (simple structure)"
-    elh2            "hydrogen elecrolysis"
+    elh2            "hydrogen electrolysis"
     h2turb          "hydrogen turbine for electricity production"
     elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
     h2turbVRE       "dummy technology: hydrogen turbine for electricity production; to demonstrate the capacities and SE flows inside the storXXX technologies"
@@ -1157,7 +1165,8 @@ te(all_te)              "energy technologies"
     tdh2i           "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
     tdh2b           "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
 
-    ccsinje         "injection of co2, CCS related"
+    ccsinjeon       "transport, injection, and storage of co2 onshore, CCS related"
+    ccsinjeoff      "transport, injection, and storage of co2 offshore, CCS related"
 
     storspv         "storage technology for photo voltaic"
 ***        storwind        "storage technology for wind onshore"
@@ -1183,6 +1192,11 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idrcc           "Direct reduction CCS"
 $endif.cm_subsec_model_steel
 /
+
+***-----------------------------------------------------------------------------
+*** Definition of subsets of 'te':
+***-----------------------------------------------------------------------------
+
 teAdj(all_te)           "technologies with adjustment costs on capacity additions"
 /
     ngcc            "natural gas combined cycle"
@@ -1199,9 +1213,9 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
     igcc            "integrated coal gasification combined cycle"
     igccc           "integrated coal gasification combined cycle with carbon capture"
     pc              "pulverised coal power plant"
-    coalchp         "combined heat powercoal"
+    coalchp         "combined heat and power coal"
     coalhp          "heating plant coal"
-    coaltr          "tranformation of coal"
+    coaltr          "transformation of coal"
     coalgas         "coal gasification"
     coalftrec       "coal based fischer-tropsch recycle"
     coalftcrec      "coal based fischer-tropsch with carbon capture recycle"
@@ -1209,8 +1223,8 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
     coalh2c         "coal to hydrogen with carbon capture"
     biotr           "transformation of biomass"
     biotrmod        "modern solids from biomass"
-    biochp          "heating plant bio"
-    biohp           "heating plant bio"
+    biochp          "biomass combined heat and power"
+    biohp           "biomass heating plant"
     bioigcc         "integrated biomass gasification combined cycle"
     bioigccc        "integrated biomass gasification combined cycle with carbon capture"
     biogas          "gasification of biomass"
@@ -1238,10 +1252,11 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
     solhe           "solar thermal heat generation"
     tnrs            "thermal nuclear reactor (simple structure)"
     fnrs            "fast nuclear reactor (simple structure)"
-    elh2            "hydrogen elecrolysis"
+    elh2            "hydrogen electrolysis"
     h2turb          "hydrogen turbine for electricity production"
     h2curt          "hydrogen production from curtailment"
-    ccsinje         "injection of co2, CCS related"
+    ccsinjeon       "transport, injection, and storage of co2 onshore, CCS related"
+    ccsinjeoff      "transport, injection, and storage of co2 offshore, CCS related"
 
     storspv         "storage technology for PV"
 ***  storwind        "storage technology for wind onshore"
@@ -1259,12 +1274,36 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bfcc            "Blast furnace CCS"
     idrcc           "Direct reduction CCS"
+    idr             "Iron direct reduction"
 $endif.cm_subsec_model_steel
 /
 
-***-----------------------------------------------------------------------------
-*** Definition of subsets of 'te':
-***-----------------------------------------------------------------------------
+teEarlyReti(all_te)    "technologies for which early retirement of existing capacities is allowed (i.e. before end of technical lifetime)."
+/
+    ngcc
+    ngt
+    gastr
+    gaschp
+    gashp
+    gash2
+    gasftrec
+    refliq
+    igcc
+    pc
+    coalchp
+    coalhp
+    coaltr
+    coalgas
+    coalftrec
+    coalh2
+    biochp
+    biohp
+    bioigcc
+    tnrs
+    bf
+    bof
+    bfcc
+/
 
 *** Note: technologies without endogenous learning can also have decreasing (or increasing) capital cost over time, due to for example convergence to global value
 teLearn(all_te)     "Learning technologies (for which investment costs are reduced endogenously through capacity deployment)."
@@ -1279,7 +1318,7 @@ teLearn(all_te)     "Learning technologies (for which investment costs are reduc
     storwindon  "storage technology for wind onshore"
     storwindoff "storage technology for wind offshore"
     storcsp     "storage technology for csp"
-    elh2        "hydrogen elecrolysis"
+    elh2        "hydrogen electrolysis"
 $ifthen.c_BCLearning not "%c_BCLearning%" == 0
     biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
@@ -1331,6 +1370,12 @@ te2teCCS(all_te,all_te) "Map an energy technology to its CCS equivalent"
     biogas    . biogasc    "gasification of biomass"
     bioftrec  . bioftcrec  "biomass based fischer-tropsch recycle"
     bioh2     . bioh2c     "biomass to hydrogen"
+/
+
+teccsinje(all_te)         "transport, storage, and injection of ico2"
+/
+  ccsinjeon
+  ccsinjeoff
 /
 
 teNoCCS(all_te)     "Technologies without CCS"
@@ -1478,9 +1523,9 @@ teFosNoCCS(all_te)  "fossil technologies without CCS"
     dot         "diesel oil turbine"
     igcc        "integrated coal gasification combined cycle"
     pc          "pulverised coal power plant"
-    coalchp     "combined heat powercoal"
+    coalchp     "combined heat and power coal"
     coalhp      "heating plant coal"
-    coaltr      "tranformation of coal"
+    coaltr      "transformation of coal"
     coalgas     "coal gasification"
     coalftrec   "coal based fischer-tropsch recycle"
     coalh2      "coal to hydrogen"
@@ -1590,7 +1635,7 @@ enty(all_enty)       "all types of quantities"
     pewin        "primary energy wind"
     pesol        "primary energy solar"
     pebiolc      "primary energy biomass lignocellulosic"
-    pebios       "primary energy biomass sugar nd starch"
+    pebios       "primary energy biomass sugar and starch"
     pemanure     "PE manure"
     pebioil      "primary energy biomass sunflowers, palm oil, etc"
     seliqbio     "secondary energy liquids from biomass (ex. ethanol)"
@@ -1609,7 +1654,7 @@ enty(all_enty)       "all types of quantities"
     fehos        "final energy heating oil stationary"
     fesos        "final energy solids stationary"
     feels        "final energy electricity stationary"
-    fehes        "final energy district heating (including combined heat nd power), nd heat pumps stationary"
+    fehes        "final energy district heating (including combined heat and power), and heat pumps stationary"
     feh2s        "final energy hydrogen stationary"
     fepet        "final energy petrol transport"
     fedie        "final energy diesel transport"
@@ -1657,10 +1702,10 @@ enty(all_enty)       "all types of quantities"
     n2obio       "N2O emissions from pebiolc"
     bc           "black carbon from fossil fuel combustion"
     oc           "organic carbon from fossil fuel combustion"
-    NOx
-    CO
-    VOC
-    NH3
+    nox
+    co
+    voc
+    nh3
     cco2         "captured CO2"
 *        pco2         "CCS related parameter during compression of CO2"
 *        tco2         "CCS related parameter during transportation of CO2"
@@ -1751,7 +1796,7 @@ entySe(all_enty)   "secondary energy types"
     segabio    "secondary energy gas from biomass"
     segasyn    "secondary energy synthetic gas from H2"
     seh2       "SE hydrogen"
-    sehe       "SE district heating nd heat pumps"
+    sehe       "SE district heating and heat pumps"
     seel       "SE electricity"
     sebiochar  "SE biochar from pyrolysis, not consumed as energy"
 /
@@ -1932,9 +1977,9 @@ emiMacMagpieCH4(all_enty)  "types of climate-relevant non-energy CH4 emissions w
     ch4rice    "ch4 emissions from rice cultivation (rice_ch4)"
     ch4animals "ch4 emissions from enteric fermentation of ruminants (ent_ferm_ch4)"
     ch4anmlwst "ch4 emissions from animal waste management(awms_ch4)"
-    ch4peatland "ch4 emissions from peatlands peatland_ch4)"
+    ch4peatland "ch4 emissions from peatlands (no MAC available)"
 /
-emiMacMagpieCO2(all_enty)  "types of climate-relevant non-energy CH4 emissions with mac curve where baseline emissions come from MAgPIE only"
+emiMacMagpieCO2(all_enty)  "types of climate-relevant non-energy CO2 emissions with mac curve where baseline emissions come from MAgPIE only"
 /
     co2luc     "co2 emissions from land use change"
 /
@@ -2130,36 +2175,9 @@ integ           "set of integers for looping etc"
 /
     1*100
 /
-xirog       "parameters decribing exhaustible extraction coss including long-run marginal costs and short term adjustment costs"
+xirog       "parameters describing exhaustible extraction costs including long-run marginal costs and short term adjustment costs"
 /
     xi1, xi2, xi3, xi4, xi5, xi6, xi7, xi8, dec
-/
-*** emissions exported to MAGICC
-emiRCP "emission types exported to MAGICC"
-/
-    FossilCO2
-    OtherCO2
-    CH4
-    N2O
-    SOx
-    CO
-    NMVOC
-    NOx
-    BC
-    OC
-    NH3
-    CF4
-    C2F6
-    C6F14
-    HFC23
-    HFC32
-    HFC43-10
-    HFC125
-    HFC134a
-    HFC143a
-    HFC227ea
-    HFC245fa
-    SF6
 /
 
 p                "parameter for ch4 and n2o waste emissions and co2 cement emissions"
@@ -2169,6 +2187,8 @@ p                "parameter for ch4 and n2o waste emissions and co2 cement emiss
     p3
     p4
 /
+
+
 *** This is a work-around to ensure emissions are printed in correct order.
 numberEmiRCP "number of emission types" / 1 * 23 /
 
@@ -2184,7 +2204,7 @@ char            "characteristics of technologies"
     incolearn       "Investment costs that can be reduced through learning = inco0 - floorcost. Unit: $/kW"
     floorcost       "Floor investment costs for learning technologies. Unit: $/kW"
     eta             "conversion efficiency"
-    eta_d           "conversion efficieny, i.e. the amount of energy NOT lost in transportation. Per 1000km."
+    eta_d           "conversion efficiency, i.e. the amount of energy NOT lost in transportation. Per 1000km."
     omf             "fixed o&m"
     omf_d           "fixed o&m per 1000km"
     omv             "variable o&m"
@@ -2209,7 +2229,7 @@ char            "characteristics of technologies"
     omeg            "NOT USED ANYMORE. New parameter: pm_omeg. Weight factor of still available capacities."
     seed            "initial value for control variable constraint"
     lingro          "linear growth of control variable additions p.a."
-    linconstela     "elastaticity of investment costs for linear growth constraint"
+    linconstela     "elasticity of investment costs for linear growth constraint"
     limitGeopot        "geographical annual solar potential"
     luse            "land use factor of solar technologies"
     capacity        "capacity of solar technologies"
@@ -2218,8 +2238,8 @@ char            "characteristics of technologies"
     lifetime        "average lifetime of a technology (integral under the omeg-curve). Unit: years"
     flexibility                        "representing ramping constraints or additional costs for partial load of technologies in power sector"
     tech_stat       "technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'"
-    Xport           "imports"
-    Mport           "exports"
+    Xport           "exports"
+    Mport           "imports"
     use             "financial trade costs for PE use [trl$US per TWa]"
     XportElasticity "PE trade adjustment cost parameter that influences the export supply elasticity"
     tradeFloor      "PE trade adjustment cost parameter that allows for smallest trade increase without adjustment cost"
@@ -2231,6 +2251,11 @@ char            "characteristics of technologies"
     batteryVREcapRatio  "ratio of battery capacity to storage technology capacity"
     priceLow        "biochar price path assumption"
     priceHigh       "biochar price path assumption"
+    potTechOff      "technical geological storage potential Offshore"
+    potTechOn       "technical geological storage potential Onshore"
+    potLimOff       "limited geological storage potential Offshore"
+    potLimOn        "limited geological storage potential Onshore"
+    mixedOld        "old geological storage potential formerly used in REMIND"    
 /
 
 ***-----------------------------------------------------------------------------
@@ -2301,6 +2326,11 @@ steps         "iterator for MAC steps"
 magpieIter(iteration) "Nash iterations in which MAgPIE runs in core/presolve"
 /
     %c_magpieIter%
+/
+
+edgeTransportIter(iteration) "Nash iterations in which EDGE-T runs"
+/
+    %c_edgeTransportIter%
 /
 ;
 
@@ -2538,7 +2568,8 @@ pc2te(all_enty,all_enty,all_te,all_enty)    "mapping for own consumption of tech
     segabio.fegas.tdbiogas.seel
     segafos.fegas.tdfosgas.seel
     pegeo.sehe.geohe.seel
-    cco2.ico2.ccsinje.seel
+    cco2.ico2.ccsinjeon.seel
+    cco2.ico2.ccsinjeoff.seel
 /
 *NB* mappings for emissions, capture and leakage
 emi2te(all_enty,all_enty,all_te,all_enty)    " map emissions to technologies"
@@ -2646,7 +2677,8 @@ emi2te(all_enty,all_enty,all_te,all_enty)    " map emissions to technologies"
     pebiolc.sebiochar.biopyrliq.co2
     segabio.fegas.tdbiogas.ch4
     segafos.fegas.tdfosgas.ch4
-    cco2.ico2.ccsinje.co2
+    cco2.ico2.ccsinjeon.co2
+    cco2.ico2.ccsinjeoff.co2
     pebiolc.seel.bioigccc.co2
     pebiolc.seel.bioigccc.cco2
     seliqbio.fehos.tdbiohos.bc
@@ -2760,12 +2792,14 @@ emi2fuelMine(all_enty,all_enty,rlf)   "missions from fossil fuel extraction"
 /
 ccs2te(all_enty,all_enty,all_te)   "chain for ccs"
 /
-    cco2.ico2.ccsinje
+    cco2.ico2.ccsinjeon
+    cco2.ico2.ccsinjeoff
 /
 
 ccs2Leak(all_enty,all_enty,all_te,all_enty)   "leakage along ccs chain"
 /
-    cco2.ico2.ccsinje.co2
+    cco2.ico2.ccsinjeon.co2
+    cco2.ico2.ccsinjeoff.co2
 /
 
 pe2rlf(all_enty,rlf)     "map exhaustible energy to grades for qm_fuel2pe"
@@ -2841,7 +2875,7 @@ teMat2rlf(all_te,rlf)     "mapping for material production technologies to grade
 
 teCCS2rlf(all_te,rlf)     "mapping for CCS technologies to grades"
 /
-    (ccsinje) . 1
+    (ccsinjeon,ccsinjeoff) . 1
 /
 
 teNoTransform2rlf(all_te,rlf) "mapping for no transformation technologies to grades"
@@ -2900,7 +2934,6 @@ es2ppfen(all_esty,all_in)      "matching ES in ESM to ppfEn in MACRO"
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
 
-alias(ccs2te,ccs2te2);
 alias(pe2se,pe2se2);
 alias(se2fe,se2fe2);
 

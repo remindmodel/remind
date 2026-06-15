@@ -180,7 +180,7 @@ $endIf.ensec
 *' Policy in energy security scenario for Germany activated by cm_EnSecScen_limit: 
 *' Limit PE gas demand from 2025 on to cm_EnSecScen_limit (in EJ/yr) gas imports + domestic gas in Germany.
 if (cm_EnSecScen_limit gt 0,
-    vm_prodPe.up(t,regi,"pegas")$((t.val ge 2025) AND (sameas(regi,"DEU"))) = cm_EnSecScen_limit/pm_conv_TWa_EJ;
+    vm_prodPe.up(t,regi,"pegas")$((t.val ge 2025) AND (sameas(regi,"DEU"))) = cm_EnSecScen_limit * sm_EJ_2_TWa;
 );
 
 *' ##### Bounds for EU subregions
@@ -199,21 +199,29 @@ vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"UKI"))
 $IFTHEN.NucRegiPol not "%cm_NucRegiPol%" == "off" 
 *' Germany Nuclear phase-out
     vm_cap.up(t,regi,"tnrs","1")$((t.val ge 2025) and (t.val ge cm_startyear) and (sameas(regi,"DEU"))) = 1E-6;
+    vm_cap.lo(t,regi,"tnrs","1")$((t.val ge 2025) and (t.val ge cm_startyear) and (sameas(regi,"DEU"))) = 0;
 *' ESC -> no new Nuclear capacity (Italy had a plebiscite for this and Greece should not have any new capacity)
     vm_deltaCap.up(t,regi,"tnrs","1")$((t.val ge 2020) and (t.val ge cm_startyear) and (sameas(regi,"ESC"))) = 0;
+*' Neither France, ENC, NEN, ECS, ESW or ECE currently plan to early-retire any of their current fleet until 2050
+    vm_capEarlyReti.up(t,regi,"tnrs") $ ( (t.val ge cm_startyear) AND (t.val le 2050) AND (sameas(regi,"FRA")) ) = 1e-3;
+    vm_capEarlyReti.up(t,regi,"tnrs") $ ( (t.val ge cm_startyear) AND (t.val le 2050) AND (sameas(regi,"ENC")) ) = 1e-3;
+    vm_capEarlyReti.up(t,regi,"tnrs") $ ( (t.val ge cm_startyear) AND (t.val le 2050) AND (sameas(regi,"NEN")) ) = 1e-3;
+    vm_capEarlyReti.up(t,regi,"tnrs") $ ( (t.val ge cm_startyear) AND (t.val le 2050) AND (sameas(regi,"ECS")) ) = 1e-3;
+    vm_capEarlyReti.up(t,regi,"tnrs") $ ( (t.val ge cm_startyear) AND (t.val le 2050) AND (sameas(regi,"ESW")) ) = 1e-3;
+    vm_capEarlyReti.up(t,regi,"tnrs") $ ( (t.val ge cm_startyear) AND (t.val le 2050) AND (sameas(regi,"ECE")) ) = 1e-3;
 $ENDIF.NucRegiPol  
 
 *' Extended nuclear policies:
 $IFTHEN.proNucRegiPol not "%cm_proNucRegiPol%" == "off" 
 *' Pro nuclear countries tend to keep nuclear production by political decision
 *' assuming France would keep at least 80% of its 2015 nuclear capacity in the future.
-vm_cap.lo(t,regi,"tnrs","1")$((t.val ge cm_startyear) and (sameas(regi,"FRA"))) = 0.8*pm_histCap("2015",regi,"tnrs");
+vm_cap.lo(t,regi,"tnrs","1")$((t.val ge cm_startyear) AND (t.val ge 2030) AND (sameas(regi,"FRA"))) = 0.8*pm_histCap("2015",regi,"tnrs");
 *' Assuming Czech Republic would keep at least its 2015 nuclear capacity in the future (CZE corresponds to 61.8% of nuclear capacity of ECE in 2015)
-vm_cap.lo(t,regi,"tnrs","1")$((t.val ge cm_startyear) and (sameas(regi,"ECE"))) = 0.618*pm_histCap("2015",regi,"tnrs");
+vm_cap.lo(t,regi,"tnrs","1")$((t.val ge cm_startyear) AND (t.val ge 2030) AND (sameas(regi,"ECE"))) = 0.618*pm_histCap("2015",regi,"tnrs");
 *' Assuming Finland would keep at least its 2015 nuclear capacity in the future (FIN corresponds to 21.6% of nuclear capacity of ENC in 2015)
-vm_cap.lo(t,regi,"tnrs","1")$((t.val ge cm_startyear) and (sameas(regi,"ENC"))) = 0.216*pm_histCap("2015",regi,"tnrs");
+vm_cap.lo(t,regi,"tnrs","1")$((t.val ge cm_startyear) AND (t.val ge 2030) AND (sameas(regi,"ENC"))) = 0.216*pm_histCap("2015",regi,"tnrs");
 *' Assuming Romania would keep at least its 2015 nuclear capacity in the future (ROU corresponds to 22.1% of nuclear capacity of ECS in 2015)
-vm_cap.lo(t,regi,"tnrs","1")$((t.val ge cm_startyear) and (sameas(regi,"ECS"))) = 0.221*pm_histCap("2015",regi,"tnrs");
+vm_cap.lo(t,regi,"tnrs","1")$((t.val ge cm_startyear) AND (t.val ge 2030) AND (sameas(regi,"ECS"))) = 0.221*pm_histCap("2015",regi,"tnrs");
 $ENDIF.proNucRegiPol 
 
 *' This accounts for different CCS policies that can be chosen for the EU subregions.

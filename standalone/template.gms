@@ -77,18 +77,18 @@ $setglobal CES_parameters  load       !! def = load
 $setGlobal biomass  magpie !! def = magpie
 ***---------------------    31_fossil    ----------------------------------------
 $setGlobal fossil  timeDepGrades        !! def = grades2poly
-***---------------------    32_power    ----------------------------------------
+***---------------------    32_power    -----------------------------------------
 $setGlobal power  IntC               !! def = IntC
-***---------------------    33_cdr       ----------------------------------------
-$setGlobal CDR  DAC                   !! def = DAC
+***---------------------    33_carbonRemoval   ----------------------------------
+$setGlobal carbonRemoval  DAC                   !! def = DAC
 ***---------------------    35_transport    -------------------------------------
 $setGlobal transport  edge_esm         !! def = edge_esm
 ***---------------------    36_buildings    -------------------------------------
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
 $setglobal industry  subsectors     !! def = simple
-***---------------------    39_CCU    --------------------------------------
-$setglobal CCU  off !! def = off
+***---------------------    39_carbonUtilization    -----------------------------
+$setglobal carbonUtilization  off !! def = off
 ***---------------------    40_techpol  -----------------------------------------
 $setglobal techpol  none              !! def = none
 ***---------------------    41_emicapregi  --------------------------------------

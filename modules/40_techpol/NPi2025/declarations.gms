@@ -18,6 +18,13 @@ Parameter
     p40_CoalBound(ttot,iso_regi)                 "level for upper bound on absolute capacities, in GW for all technologies except electromobility"
 ;
 
+*--- Declaration of manual adjustment of renewable share targets from configuration file
+$ifThen.adTargetValue not "%cm_RenShareTargetValue%" == "off" 
+Parameter
+    p40_NPiRenShareTarget(ttot,all_regi,RenShareTargetType)      "region renewable share target [%]"  / %cm_RenShareTargetValue% /
+    p40_NPiRenShareTarget_path(ttot,all_regi,RenShareTargetType) "constant renewable share target path" 
+;
+$ENDIF.adTargetValue
     
 Equation 
     q40_ElecBioBound                              "equation low-carbon push technology policy for bio power"
@@ -33,10 +40,12 @@ Equation
 
 Parameter
     p40_RenShareTargets(ttot,all_regi,RenShareTargetType)  "renewable share targets in NPi per REMIND region aggregated from country-level targets [share]"
+    p40_RenShare_FE(ttot,all_regi)                         "diagnostic parameter to shares in q40_RenShare_FE, calculated renewable share in final energy including ambient heat from heat pumps [share]"
 ;
 
 Equation
-    q40_RenShare                                  "constraint to enforce minimum share of renewables based on renewable share targets of NPi"
+    q40_RenShare_SE                               "constraint to enforce minimum share of renewables in secondary energy based on renewable share targets of NPi"
+    q40_RenShare_FE                               "constraint to enforce minimum share of renewables in final energy including ambient heat from heat pumps"
 ;
 
 

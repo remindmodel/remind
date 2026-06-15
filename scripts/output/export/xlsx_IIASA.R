@@ -59,8 +59,8 @@ projects <- list(
     iiasatemplate = "https://files.ece.iiasa.ac.at/ngfs-phase-5/ngfs-phase-5-template.xlsx",
     removeFromScen = "C_|_bIT|_bit|_bIt|_KLW"),
   NGFS6 = list(
-    model = "REMIND-MAgPIE 3.5-4.13",
-    mapping = c("ScenarioMIP"),
+    model = "REMIND-MAgPIE 3.6-4.14",
+    mapping = c("ScenarioMIP", "NGFS6"),
     iiasatemplate = "https://files.ece.iiasa.ac.at/ngfs-phase-6/ngfs-phase-6-template.xlsx",
     removeFromScen = "C_"),
   RIKEN = list(
@@ -110,6 +110,17 @@ projects <- list(
     iiasatemplate = "https://files.ece.iiasa.ac.at/prisma/prisma-template.xlsx",  
     renameScen = c("SMIPv04-M-SSP2-NPi2025-def" = "SSP2 - Medium Emissions", "SMIPv04-L-SSP2-PkBudg1000-def" = "SSP2 - Low Emissions"),
     checkSummation = "NAVIGATE"),
+  PRISMA_WP6 = list(
+    model = "REMIND-MAgPIE 3.6-4.14",
+    mapping = c("ScenarioMIP", "PRISMA"),
+    iiasatemplate = "https://files.ece.iiasa.ac.at/prisma/prisma-template.xlsx",  
+    removeFromScen = "C_",
+    renameScen = c(
+      "SSP2-MeetAspirations" = "SSP2 - Meet Aspirations",
+      "SSP2-AsymmetricRoll-Back" = "SSP2 - Asymmetric Roll-Back",
+      "SSP2-LateReawakening" = "SSP2 - Late Reawakening",
+      "SSP2-StayingAlive_exo" = "SSP2 - Staying Alive"),
+    checkSummation = "ScenarioMIP"),
   NAVIGATE_coupled = list(mapping = c("NAVIGATE", "NAVIGATE_coupled")),
   SHAPE            = list(mapping = c("NAVIGATE", "NAVIGATE_coupled", "SHAPE")),
   TESTTHAT         = list(mapping = "AR6")

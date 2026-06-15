@@ -20,7 +20,8 @@ p30_max_pebiolc_path_glob(tall)                 "Time path of global maximal peb
 p30_maxprod_residue(ttot,all_regi)              "Maximal potential of residues enhanced by demand of biotr [TWa]"
 p30_pebiolc_pricemag(tall,all_regi)             "Prices for lignocellulosic purpose grown bioenergy from MAgPIE [T$US/TWa]"
 pm_pebiolc_demandmag(tall,all_regi)             "Production of lignocellulosic purpose grown bioenergy from MAgPIE [TWa]"
-p30_pebiolc_demand_helper(tall,all_regi)        "Save level of vm_fuelex for a better starting point since it is overwritten between nash iterations"
+p30_pebiolc_demand_helper_level(tall,all_regi)  "Save level of vm_fuelex for a better starting point since it is overwritten between nash iterations"
+p30_pebiolc_demand_helper_upper(tall,all_regi)  "Save upper bound on vm_fuelex to preserve it across Nash iterations since it is overwritten between nash iterations"
 p30_demPe(ttot,all_regi)                        "Primary energy demand imported from gdx or previous iteration [TWa]"
 
 $IFTHEN.bioprod_regi_lim not "%cm_bioprod_regi_lim%" == "off"
@@ -80,6 +81,5 @@ q30_limitXpBio(ttot,all_regi)      "Only purpose grown bioenergy may be exported
 q30_costAdj(ttot,all_regi)         "Improve convergence penalizing deviations from last coupling iteration"
 q30_limitTeBio(ttot,all_regi)      "Limit BECCS in policy runs relative to reference scenario"
 q30_BioPEProdTotal(ttot,all_regi)  "Calculate total domestic PE biomass production"
-q30_limitBiotrmod(ttot,all_regi)   "limit the total amount of modern biomass use for solids to the amount of coal use for solids"
 ;
 *** EOF ./modules/30_biomass/magpie/declarations.gms

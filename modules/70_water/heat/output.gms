@@ -79,7 +79,7 @@ display i70_losses, p70_heat, p70_water_con, p70_water_wtd;
 o70_se_production(ttot,regi,te_elcool70)
   =
     sum(enty,
-      vm_prodSe.l(ttot,regi,enty,"seel",te_elcool70) * pm_conv_TWa_EJ
+      vm_prodSe.l(ttot,regi,enty,"seel",te_elcool70) * sm_TWa_2_EJ
     )
 ;
 
@@ -123,7 +123,7 @@ p70_water_output(ttot,regi,"Secondary Energy|Electricity|Full; EJ/yr;") =
         vm_prodSe.l(ttot,regi,enty,"seel",te))
         + sum(se2se(enty,"seel",te), vm_prodSe.l(ttot,regi,enty,"seel",te))
         + sum(pc2te(enty,entySe(enty3),te,"seel"), max(0, pm_prodCouple(regi,enty,enty3,te,"seel")) * vm_prodSe.l(ttot,regi,enty,enty3,te))
-			) * pm_conv_TWa_EJ
+			) * sm_TWa_2_EJ
 ;
 p70_water_output(ttot,regi,"Secondary Energy|Electricity|Part; EJ/yr;") = sum(te_elcool70, o70_se_production(ttot,regi,te_elcool70));
 p70_water_output(ttot,regi,"Water Consumption|Electricity; km3/yr;") = sum(te_elcool70, o70_water_consumption(ttot,regi,te_elcool70));

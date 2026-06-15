@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/functionalForm/realization.gms
 
-*' @description: Carbon price trajectory follows a prescribed functional form (linear/exponential) - either until peak year or until end-of-century - 
+*' @description Carbon price trajectory follows a prescribed functional form (linear/exponential) - either until peak year or until end-of-century - 
 *'               and can be endogenously adjusted to meet CO2 budget targets  - either peak or end-of-century - that are formulated in terms of total cumulated CO2 emissions from 2020 (cm_budgetCO2from2020).
 *'               Flexible choices for regional carbon price differentiation and near-term adjustments.
 

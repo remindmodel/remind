@@ -6,9 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/presolve.gms
 $ifthen.calibrate %CES_parameters% == "load"
-if( (ord(iteration) le 25 and ord(iteration) ge cm_startIter_EDGET and (mod(ord(iteration), 2) eq 0))
-    or (ord(iteration) le 45  and ord(iteration) gt 25 and  (mod(ord(iteration), 3) eq 0))
-    or (ord(iteration)  gt 45 and  (mod(ord(iteration), 5) eq 0)),
+if(edgeTransportIter(iteration),
 
 *** Track runtime
     putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",iterativeEdgeTransport," iteration.val:0;
@@ -36,3 +34,5 @@ if( (ord(iteration) le 25 and ord(iteration) ge cm_startIter_EDGET and (mod(ord(
 $endif.calibrate
 
 *** EOF ./modules/35_transport/edge_esm/presolve.gms
+
+

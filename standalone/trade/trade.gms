@@ -82,20 +82,20 @@ $setglobal CES_parameters  load       !! def = load
 $setGlobal biomass  magpie !! def = magpie
 ***---------------------    31_fossil    ----------------------------------------
 $setGlobal fossil  grades2poly        !! def = grades2poly
-***---------------------    32_power    ----------------------------------------
+***---------------------    32_power    -----------------------------------------
 $setGlobal power  IntC               !! def = IntC
-***---------------------    33_cdr       ----------------------------------------
-$setGlobal CDR  DAC                   !! def = DAC
+***---------------------    33_carbonRemoval       ------------------------------
+$setGlobal carbonRemoval  DAC                   !! def = DAC
 ***---------------------    35_transport    -------------------------------------
 $setGlobal transport  edge_esm         !! def = edge_esm
 ***---------------------    36_buildings    -------------------------------------
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
 $setglobal industry  subsectors     !! def = simple
-***---------------------    38_stationary    --------------------------------------
+***---------------------    38_stationary    ------------------------------------
 $setglobal stationary  off            !! def = simple
-***---------------------    39_CCU    --------------------------------------
-$setglobal CCU  on !! def = on
+***---------------------    39_carbonUtilization    -----------------------------
+$setglobal carbonUtilization  on !! def = on
 ***---------------------    40_techpol  -----------------------------------------
 $setglobal techpol  none              !! def = none
 ***---------------------    41_emicapregi  --------------------------------------
@@ -104,7 +104,7 @@ $setglobal emicapregi  none           !! def = none
 $setglobal banking  off               !! def = off
 ***---------------------    45_carbonprice  -------------------------------------
 $setglobal carbonprice  none          !! def = none
-***---------------------    47_regipol  -------------------------------------
+***---------------------    47_regipol  -----------------------------------------
 $setglobal regipol  none              !! def = none
 ***---------------------    50_damages    ---------------------------------------
 $setGlobal damages  off               !! def = off
@@ -213,7 +213,6 @@ cm_import_EU                "EU switch for different scenarios of EU SE import a
 cm_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
 cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
-cm_startIter_EDGET          "starting iteration of EDGE-T"
 cm_ARIADNE_FeShareBounds    "switch for minimum share of liquids and gases for industry needed for the ARIADNE project"
 cm_ariadne_trade_el         "switch for enabling electricity imports to Germany for ARIADNE project"
 cm_ariadne_trade_h2         "switch for enabling H2 imports to Germany for ARIADNE project"
@@ -340,16 +339,12 @@ $setGlobal cm_pushCalib  none !! def = none
 $setGlobal cm_reducCostB  none !! def = none
 $setGlobal cm_effHP  5 !! def = 5
 
-$setGlobal cm_EDGEtr_scen  ConvCase  !! def = ConvCase
-
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
 $setGlobal c_regi_synfuelscen  all !! def = all
 $setGlobal c_regi_sensscen  all !! def = all
 
-
-
-																	  
+																  
 cm_biotrade_phaseout = 0; !! def 0
 cm_bioprod_histlim = -1; !! def -1	
 
@@ -381,9 +376,6 @@ cm_noPeFosCCDeu = 0; !! def 0
 
 cm_HeatLim_b = 1; !! def 1
 cm_ElLim_b = 1; !! def 1
-
-cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 14
-
 
 cm_TaxConvCheck = 0; !! def 0, which means tax convergence check is off
 

@@ -1,6 +1,7 @@
 # Calibrating CES Parameters
 
-## CES Production Function Basics
+## Theory
+### CES Production Function Basics
 
 REMIND uses a nested CES production function of the form
 
@@ -27,7 +28,9 @@ Therefore,
 > **Anytime either the REMIND model or the input data change in a way that affects
 the results of a baseline scenario, that baseline scenario needs to be calibrated.**
 
-## Iterative Calibration
+
+
+### Iterative Calibration
 
 As it is not possible to calculate $n$ parameters $\alpha_i$ from a single
 equation, we use an iterative approach.  The
@@ -61,37 +64,35 @@ $\pi_i^{(j)} = \alpha_i^{(j)} {V_i^{(j)}}^{\rho_o - 1} {V_o^{(j)}}^{1 - \rho_o}$
 $\alpha_i^{(j+1)} = \pi_i^{(j)} \left(\frac{V_i^\ast}{V_o^\ast}\right)^{1 - \rho_o}$
 
 
-## Requirements
 
-For the calibration process to work, we need 
+## Practice
+### Requirements and settings
 
-1. trajectories for all primary production factors (`ppf`, final energy and
-   energy service demands, labour, capital) and the output (GDP), and
-2. the previous iterations' `ppf` prices.
+For the calibration process to work, we need both:
 
-Trajectories under (1) come from the input files `./core/input/f_gdp.cs3r`,
-`./core/input/f_pop.cs3r`,
-`./modules/29_CES_parameters/calibrate/input/f29_capitalQuantity.cs4r`, and
-`./core/input/f_fedemand.cs4r` which are generated automatically as part of the
-input data generation and always present.
+1. Trajectories for all primary production factors (`ppf`: final energy and energy service demands,
+   labour, capital) and the output (GDP). They come from input files that are automatically
+   generated as part of the input data generation:
+  - `./core/input/f_gdp.cs3r`
+  - `./core/input/f_pop.cs3r`
+  - `./modules/29_CES_parameters/calibrate/input/f29_capitalQuantity.cs4r`
+  - `./core/input/f_fedemandBuild.cs4r`
+  - `./core/input/f_fedemandInd.cs4r`
 
-Prices under (2) are calculated using the `input.gdx` provided to the
-calibration run.  User intervention is only required when prices cannot be
-derived from the `.gdx` file in case of a change in the CES structure:
-when nodes have been added or removed from the CES tree 
-(technically when the set `cesOut2cesIn` differs between `input.gdx` and the
-current calibration run), or seldom in cases of convergence problems.
+2. Prices of `ppf` at the previous iteration. They are calculated using the `input.gdx` provided to
+   the calibration run. User intervention is only required when prices cannot be derived from the `.gdx`
+   file in case of a change in the CES structure: when nodes have been added or removed from the CES tree 
+   (technically when the set `cesOut2cesIn` differs between `input.gdx` and the current calibration run),
+   or seldom in cases of convergence problems.
 
 
-## Settings
-
-To set up a CES calibration run, simply set module 29 `CES_parameters` to the
-`calibration` realisation.  All data relevant to the calibration is configured
-according to the selected scenario configuration.  Keep them identical to the
-baseline scenario you want to calibrate.
-If your calibration depends on new input data, you need to update the configuration.
-Use the command `lastrev` to find the latest input data revisions on the cluster.
-If your choice is _rev1.23abc_, update the following line of the configuration file
+To set up a CES calibration run, simply set module 29 `CES_parameters` to the `calibrate` realisation.
+All data relevant to the calibration is configured according to the selected scenario configuration;
+keep them identical to the baseline scenario you want to calibrate.
+If your calibration depends on new input data (for instance an update in `mrremind`),
+you need to update the configuration.
+Use the command `lastrev` to find the latest input data revisions on the cluster;
+if your choice is _rev1.23abc_, update the following line of the configuration file
 `./config/default.cfg` (without _rev_ and always with quotation marks):
 
 ```R
@@ -122,46 +123,50 @@ The calibration can further be adjusted using the following switches:
   Can help finding a suitable value for `cm_CES_calibration_default_price`.
 
 
-## Results
 
-The CES calibration outputs a `.gdx` file and an `.inc` file with all
-the CES parameters.  Their long name, for instance
-`indu_subsectors-buil_simple-tran_edge_esm-GDPpop_SSP2-En_SSP2-Kap_debt_limit-Reg_62eff8f7`
-indicates the CES configuration, the GDP/population scenarios, the capital market
-module realisation and the [region configuration](17_Regions.md)
-(_62eff8f7_ for H12, _2b1450bc_ for EU21).
-You don't need to change these names, they are matched automatically using the
-switch `cm_CES_configuration`.  The parameter files also include a counter for
+### Results
+
+The CES calibration outputs a `.gdx` file and an `.inc` file containing all the CES parameters.
+The long name of these files indicates the CES configuration, the GDP/population scenarios,
+the capital market module realisation, and the [region configuration](17_Regions.md)
+(_62eff8f7_ for H12, _2b1450bc_ for EU21), for instance:
+`indu_subsectors-buil_simple-tran_edge_esm-GDPpop_SSP2-En_SSP2-Kap_debt_limit-Reg_62eff8f7`.
+Do not change these names, as they are matched automatically with the
+switch `cm_CES_configuration`. The parameter files also include a counter for
 the calibration iteration they resulted from (e.g. `_ITERATION_10.inc`).
 
-Calibration results can be included the PIK calibration repository (for use by
-all REMIND users), or used in a local directory (e.g. for project work).
+Calibration results can be included in the PIK calibration repository (for use by
+all REMIND users) or used in a local directory (for project work):
 
 1. Prepare the calibration directory:
   - To include calibration results in the PIK calibration repository, navigate to
-  `/p/projects/remind/inputdata/CESparametersAndGDX/`.
-  - For use in a local directory, go to your local REMIND folder and type
-    `make set-local-calibration`. Navigate to the newly created folder `calibration_results/`.
-2. Use the `collect_calibration` script with one ore more paths to the completed
-   calibration run directories as a parameter, for instance:
-   ```sh
-   ./collect_calibration /p/tmp/username/Remind/output/SSP2-calibrate_2024-12-31_23.59.59/
-   ```
-    Note that an absolute or relative path may be used. 
-    The script copies the necessary `.inc` and `.gdx` files to the repository
-    (adjusting the file names as needed), stages and commits them; you may review and
-    modify the commit message before committing (or abort with `:cq` in vim).
-    The script then generates a `.tgz` archive, which is what REMIND will be looking for
-    in order to run.  Finally it displays the commit hash and offers to include it as the
-    `CESandGDXrevision` in the REMIND configuration.
-3. If the specific calibration settings (`cm_CES_configuration`) have never been 
-calibrated and used in REMIND before, add the name of the `.gdx` file to `./config/gdx-files/files`
-and add the name of the  `.inc` file to `./modules/29_CES_parameters/load/input/files`, so that the
-new calibration results are copied into these directories during run setup.
+    `/p/projects/remind/inputdata/CESparametersAndGDX/`.
+  - For use in a local directory, navigate to the folder `calibration_results/`. This folder
+    is automatically created during CES calibration runs, or you can set it up manually
+    with `make set-local-calibration`.
+
+2. Use the `collect_calibration` script with one or more paths to the completed
+  calibration run directories as a parameter. For instance:
+  ```sh
+  ./collect_calibration /p/tmp/username/Remind/output/SSP2-calibrate_2024-12-31_23.59.59/
+  ```
+  Note that both absolute and relative paths may be used. 
+  The script copies the necessary `.inc` and `.gdx` files to `calibration_results/`,
+  adjusting the file names as needed, stages and commits them (you may review and
+  modify the commit message, then commit with `:wq` or abort with `:cq`).
+  The script then displays the commit hash and offers to include it as the
+  `CESandGDXrevision` in the REMIND configuration, so that the next REMIND runs are 
+  able to find the `.tgz` archive containing the calibration files.
+
+3. New calibration files are automatically copied from the `.tgz` archive to the relevant directories
+   during the run setup. This requires the calibration name `cm_CES_configuration` to be listed in
+   the following files (which happens automatically if you ran the calibration yourself):
+  - `./config/gdx-files/files` (for the `.gdx` file)
+  - `./modules/29_CES_parameters/load/input/files` (for the `.inc` file)
 
 
 
-## Diagnostic and validity 
+### Diagnostic and validity 
 
 To diagnose the outputs, you may use the `full.log` and `full.lst` files for each
 calibration iteration (`full_01.log` …), the file `CES_calibration.csv`
@@ -210,8 +215,9 @@ observed problems and suggested solutions.
   This can happen in new or modified scenario (`GDPscen`, `POPscen`) where the data
   is missing entirely. Otherwise, check the input files
   (`./core/input/f_gdp.cs3r`, `./core/input/f_pop.cs3r`,
-  `./modules/29_CES_parameters/calibrate/input/f29_capitalQuantity.cs4r`, and
-  `./core/input/f_fedemand.cs4r`) to figure out which data is missing and fix it.
+  `./modules/29_CES_parameters/calibrate/input/f29_capitalQuantity.cs4r`, 
+  `./core/input/f_fedemandBuild.cs4r` and `./core/input/f_fedemandInd.cs4r`) to 
+  figure out which data is missing and fix it.
 
 #### $\xi \lt 0$  
   This error (_assertion xi gt 0 failed, see .log file for details_) should not

@@ -6,30 +6,16 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/NDC/preloop.gms
 
-*** first calculate tax path until last NDC target year - linear increase
-pm_taxCO2eq(t,regi)$(t.val gt 2021 AND t.val le p45_lastNDCyear(regi)) = pm_taxCO2eq("2020",regi)*(t.val-2015)/5;
-
-*** convergence scheme after the last NDC target year: exponential increase with 1.25% AND regional convergence until p45_taxCO2eqConvergenceYear
-p45_taxCO2eqLastNDCyear(regi) = smax(t$(t.val = p45_lastNDCyear(regi)), pm_taxCO2eq(t,regi));
-
-pm_taxCO2eq(t,regi)$(t.val gt p45_lastNDCyear(regi))
-   = (  !! regional, weight going from 1 in last NDC target year to 0 in 2100
-        p45_taxCO2eqLastNDCyear(regi) * p45_taxCO2eqYearlyIncrease**(t.val-p45_lastNDCyear(regi)) * (max(p45_taxCO2eqConvergenceYear,t.val) - t.val)
-        !! global, weight going from 0 in NDC target year to 1 in and after 2100
-      + p45_taxCO2eqGlobal2030          * p45_taxCO2eqYearlyIncrease**(t.val-2030)                    * (min(p45_taxCO2eqConvergenceYear,t.val) - p45_lastNDCyear(regi))
-      )/(p45_taxCO2eqConvergenceYear - p45_lastNDCyear(regi));
-
-pm_taxCO2eq(t,regi) = max(pm_taxCO2eq(t,regi), p45_taxCO2eq_bau(t,regi));
-
-display pm_taxCO2eq;
 
 *#' @equations 
-*#'  calculate level of emission target that it should converge to, composed of:
-*#'  emission target relative to 2005 emissions (factor_targetyear) for part of region with NDC target
-*#'  baseline for the rest of the countries
+*#'  calculate level of emission target per REMIND region. It is componsed to two terms:
+*#'  1. Contribution of countries within REMIND region with NDC target: 
+*#'     Absolute NDC emissions target that was derived by summing the targets of all countries within the region that have NDC targets
+*#'  2. Contribution of countries within REMIND region without NDC target:
+*#'     (1 - share of emissions covered by NDC in particular region) *  REMIND NPI  emissions in target year
 p45_CO2eqwoLU_goal(p45_NDCyearSet(t,regi)) =
-          p45_shareTarget(t,regi)     * p45_BAU_reg_emi_wo_LU_wo_bunkers("2015",regi) * p45_factorTargetyear(t,regi)    !! share with NDC target
-        + (1-p45_shareTarget(t,regi)) * p45_BAU_reg_emi_wo_LU_wo_bunkers(t,regi);            !! baseline for share of countries without NDC target
+          p45_EmiTargetAbs(t,regi)                                                  !! emissions target derived from countries with NDC target
+        + (1-p45_shareTarget(t,regi)) * p45_BAU_reg_emi_wo_LU_wo_bunkers(t,regi);   !! countries without NDC target are assumed to follow NPI emissions pathway
 
 display pm_taxCO2eq,p45_CO2eqwoLU_goal;
 

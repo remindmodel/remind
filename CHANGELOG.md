@@ -8,46 +8,119 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### input data/calibration
+- Split final energy demands into buildings and industry specific parameters
+    [[#2329](https://github.com/remindmodel/remind/pull/2329/)]
+- update information form MAgPIE( e.g. AP, agricultural costs) to MAgPIE v4.14.0
+  New: land use air pollutants got a major update, because they are taken from current MAgPIE version from now on replacing outdated data
+    [[#2364](https://github.com/remindmodel/remind/pull/2364/)]
 
 ### changed
-- **45_carbonprice** Use ScenarioMIP settings as new default for regional carbon price differentiation in 45_carbonprice/functionalForm 
-    [[#2229](https://github.com/remindmodel/remind/pull/2229)]
-- **11_aerosols** Move calculation of air pollutant emissions from REMIND module 11_aerosols to remind2.
-    [[#2231](https://github.com/remindmodel/remind/pull/2231)]
-- **scripts** Forward `reporting` dir to `reportEmiForClimateAssessement`
-    [[#2287](https://github.com/remindmodel/remind/pull/2229)]
+- **33_CDR** Rename module to `33_carbonRemoval`
+    [[#2332](https://github.com/remindmodel/remind/pull/2332)]
+- **36_buildings** Refactor buildings CES tree structure and remove bound relaxations for improved model performance
+    [[#2331](https://github.com/remindmodel/remind/pull/2331)]
+- **37_industry** Rename set item `pri` to `prim`
+    [[#2332](https://github.com/remindmodel/remind/pull/2332)]
+- **39_CCU** Rename module to `39_carbonUtilization`
+    [[#2332](https://github.com/remindmodel/remind/pull/2332)]
+- **scripts** Use `quitte::write.gdx` in `climateAssessmentInterimRun.R` to dump climate assessment results to gdx
+    [[#2334](https://github.com/remindmodel/remind/pull/2354)]
+- **scripts** Transition from IAMC-style index column `period` to REMIND-style `tall` when writing climate-assessment results to `p15_climate.gdx` in `climateAssessmentInterimRun.R`
+    [[#2334](https://github.com/remindmodel/remind/pull/2361)]
+- **inputdata** Split final energy demands into buildings and industry specific parameters
+    [[#2329](https://github.com/remindmodel/remind/pull/2329/)]
+- **scripts** include reporttransport/remind2 (EDGE-T/REMIND) variable harmonization. reporttransport (EDGE-T side) energy service demand is rescaled to match exactly remind2 ES/FE/Emi values for variables reported by both models
+    [[#2320](https://github.com/remindmodel/remind/pull/2320)]
 
 ### added
+-
+
+### removed
+-
+
+### fixed
+- **scripts** Force version after [Bugfix #130](https://github.com/pik-piam/quitte/pull/130)
+    [[#2354](https://github.com/remindmodel/remind/pull/2334)]
+
+
+## [3.6.0] - 2026-03-27
+
+### input data/calibration
+- **mrremind** new data source for geological CO2 storage potential (split into onshore/offshore and technical vs. limited potentials), replacing the previous LimitCCS output
+  [[#788](https://github.com/pik-piam/mrremind/pull/788)]
+
+### changed
+- **scripts** Forward `reporting` dir to `reportEmiForClimateAssessement`
+    [[#2287](https://github.com/remindmodel/remind/pull/2229)]
+- **reporting** Distinguish between onshore and offshore transport and storage of captured CO2
+    [[#777](https://github.com/pik-piam/remind2/pull/777)]
+- **core** Distinguish between onshore and offshore transport and storage of captured CO2
+    [[#2296](https://github.com/remindmodel/remind/pull/2296)]
+- **core** replaced `execute_load` with `execute_loadpoint` in `core/preloop.gms` 
+    [[#2237](https://github.com/remindmodel/remind/pull/2207)]
+- **11_aerosols** Move calculation of air pollutant emissions from REMIND module 11_aerosols to remind2.
+    [[#2231](https://github.com/remindmodel/remind/pull/2231)]
+- **21_tax** replaced `execute_load` with `execute_loadpoint` in `21_tax/on/datainput.gms` 
+    [[#2237](https://github.com/remindmodel/remind/pull/2207)]
+- **24_trade** replaced `execute_load` with `execute_loadpoint` in `24_trade/se_trade/datainput.gms` 
+    [[#2237](https://github.com/remindmodel/remind/pull/2207)]
+- **29_CES_parameters** replaced `execute_load` with `execute_loadpoint` in `29_CES_parameters/calibrate/datainput.gms` and `29_CES_parameters/calibrate/preloop.gms` 
+    [[#2237](https://github.com/remindmodel/remind/pull/2207)]
+- **30_biomass** replaced `execute_load` with `execute_loadpoint` in `30_biomass/magpie_40/datainput.gms` 
+    [[#2237](https://github.com/remindmodel/remind/pull/2207)]
+- **35_transport** replaced `cm_startIter_EDGET` with `c_edgeTransportIter`
+    [[#2283](https://github.com/remindmodel/remind/pull/2283)]
+- **36_buildings** replaced `execute_load` with `execute_loadpoint` in `36_buildings/simple/datainput.gms` 
+    [[#2237](https://github.com/remindmodel/remind/pull/2207)]
+- **37_industry** replaced `execute_load` with `execute_loadpoint` in `37_industry/subsectors/datainput.gms` 
+    [[#2237](https://github.com/remindmodel/remind/pull/2207)]
+- **45_carbonprice** Use ScenarioMIP settings as new default for regional carbon price differentiation in `45_carbonprice/functionalForm` 
+    [[#2229](https://github.com/remindmodel/remind/pull/2229)]
+- **46_carbonpriceRegi** Refactor netZero realisation and ensure that targets are aligned with national accounting
+    [#2307](https://github.com/remindmodel/remind/pull/2307)
+- **45_carbonprice** adapt NDC realization of carbonprice module to implement absolute emissions targets instead of relative targets
+    [#2328](https://github.com/remindmodel/remind/pull/2328)
+
+### added
+- **mapping** Add csv mapping MAgPIE to REMIND variables used by the coupling script
+    [#2249](https://github.com/remindmodel/remind/pull/2249)
+- **scripts** Add new coupling script executed between the Nash iterations to transfer data between REMIND and MAgPIE and run MAgPIE
+    [#2249](https://github.com/remindmodel/remind/pull/2249)
+- **core** Adapt maximum early retirement rates and differentiate between NPi and policy runs 
+    [[#2300](https://github.com/remindmodel/remind/pull/2300)]
+- **core** further decrease early retirement rates in Npi and adapt coal power trends 
+    [[#2311](https://github.com/remindmodel/remind/pull/2311)]
+- **30_biomass** Replace realization magpie_40 with new coupling realization magpie that runs MAgPIE between the Nash iterations
+    [#2249](https://github.com/remindmodel/remind/pull/2249)
 - **40_techpol** implement renewable energy share targets for NPi2025 realization based on NewClimate policy protocol
     [[#2226](https://github.com/remindmodel/remind/pull/2226)]
 - **45_carbonprice** New realization 45_carbonprice/functionalFormRegi for regional carbon budget targets
     [[#2222](https://github.com/remindmodel/remind/pull/2222)]
-- **30_biomass** Replace realization magpie_40 with new coupling realization magpie that runs MAgPIE between the Nash iterations
-    [#2249](https://github.com/remindmodel/remind/pull/2249)
-- **scripts** Add new coupling script executed between the Nash iterations to transfer data between REMIND and MAgPIE and run MAgPIE
-    [#2249](https://github.com/remindmodel/remind/pull/2249)
-- **mapping** Add csv mapping MAgPIE to REMIND variables used by the coupling script
-    [#2249](https://github.com/remindmodel/remind/pull/2249)
+- **45_carbonprice** update NDC realization to run 2030+2035 NDC emissions targets by default and clean up and extend on switches for NDC variants
+    [[#2289](https://github.com/remindmodel/remind/pull/2289)]
 
 ### removed
-- **21_tax** remove input files with upper bounds on subsidies for final energy, as it is directly applied as part of input data generation
-    [#2207](https://github.com/remindmodel/remind/pull/2207)
-- **core** remove no longer used technolgies (pcc, pco, apCarPeT) 
-    [#2228](https://github.com/remindmodel/remind/pull/2228)
-- **core** remove no longer used buildings final energy and useful energy items in sets.gms
-    [#2230](https://github.com/remindmodel/remind/pull/2230)
-- **30_biomass** Replace realization magpie_40 with new coupling realization magpie that runs MAgPIE between the Nash iterations
-    [#2249](https://github.com/remindmodel/remind/pull/2249)
 - **scripts** Remove of coupling scripts
     [#2249](https://github.com/remindmodel/remind/pull/2249)
 - **scripts** The distinction between 'raw' and 'smoothed' land use CO2 emissions is no longer supported, as the MAgPIE reporting only includes raw emissions
     [#2255](https://github.com/remindmodel/remind/pull/2255)
-
+- **core** remove no longer used technolgies (pcc, pco, apCarPeT) 
+    [#2228](https://github.com/remindmodel/remind/pull/2228)
+- **core** remove no longer used buildings final energy and useful energy items in sets.gms
+    [#2230](https://github.com/remindmodel/remind/pull/2230)
+- **21_tax** remove input files with upper bounds on subsidies for final energy, as it is directly applied as part of input data generation
+    [#2207](https://github.com/remindmodel/remind/pull/2207)
+- **30_biomass** Replace realization magpie_40 with new coupling realization magpie that runs MAgPIE between the Nash iterations
+    [#2249](https://github.com/remindmodel/remind/pull/2249)
+- **46_carbonpriceRegi** Remove NDC realisation: all NDC mechanisms are in 45_carbonprice
+    [#2307](https://github.com/remindmodel/remind/pull/2307)
 
     
 ### fixed
 - **30_biomass** fix pathways of historic 1st generation bioenergy deployment
     [#2253](https://github.com/remindmodel/remind/pull/2253)
+- **40_techpol** reformulate and weaken renewable FE share targets for EU
+    [#2349](https://github.com/remindmodel/remind/pull/2349)
 
 
 ## [3.5.2] - 2025-09-26

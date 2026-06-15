@@ -1,6 +1,8 @@
 on:
   pull_request:
     types: [opened, reopened, edited, ready_for_review]
+    branches-ignore:
+      - 'master'
 
 jobs:
   check-pr-template:

@@ -20,7 +20,6 @@ pm_ttot_2_tall,input,questionnaire
 pm_shPPPMER,input,questionnaire
 pm_pop,input,questionnaire
 pm_gdp,input,questionnaire
-cm_NDC_divergentScenario,input,questionnaire
 vm_demFeSector,input,questionnaire
 pm_emifac,input,questionnaire
 sm_DptCO2_2_TDpGtC,input,questionnaire
@@ -49,7 +48,7 @@ sm_peakBudgYr_check,input,not needed
 sm_peakbudget_diff,input,not needed
 pm_macSwitch,input,not needed because default MAC curve settings are used
 pm_NDCEmiTargetDeviation,input,not used
-pm_actualbudgetco2Regi,input,added by codeCheck
+pm_actualbudgetco2eqRegi,input,added by codeCheck
 pm_dt,input,added by codeCheck
 cm_taxCO2_Shape,input,added by codeCheck
 cm_CPslopeAdjustment,input,added by codeCheck

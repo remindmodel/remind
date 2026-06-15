@@ -29,7 +29,6 @@ cm_emiscen,input,added by codeCheck
 cm_expoLinear_yearStart,input,added by codeCheck
 cm_taxCO2_regiDiff,input,added by codeCheck
 cm_taxCO2_interpolation,input,added by codeCheck
-cm_NDC_divergentScenario,input,added by codeCheck
 cm_carbonprice_temperatureLimit,input,added by codeCheck
 pm_consPC,input,added by codeCheck
 pm_prtp,input,added by codeCheck

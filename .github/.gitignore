@@ -1,1 +1,6 @@
 *.html
+
+# Copilot context files
+copilot-instructions.md
+instructions/
+prompts/

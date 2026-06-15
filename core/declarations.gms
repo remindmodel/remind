@@ -43,7 +43,7 @@ pm_taxCO2eq_anchor_iterationdiff(ttot)               "difference in global ancho
 pm_cesdata(tall,all_regi,all_in,cesParameter)        "parameters of the CES function: efficiency parameters (xi, eff, effgr) [unitless], target quantities of CES calibration (quantity) [unit of CES node, see set all_in], CES prices resulting from calibration (price) [T$/unit of CES node]"
 f_pop(tall,all_regi,all_GDPpopScen)                  "population data for all possible scenarios [million people]"
 pm_pop(tall,all_regi)                                "population data [bn people]"
-pm_gdp(tall,all_regi)                                "GDP data [trn US$ 2005]"
+pm_gdp(tall,all_regi)                                "GDP MER data [trn US$ 2005]"
 p_developmentState(tall,all_regi)                    "level of development based on GDP per capita, 0 is low income, 1 is high income"
 f_lab(tall,all_regi,all_GDPpopScen)                  "labour data for all possible scenarios [million people]"
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
@@ -131,6 +131,7 @@ vm_co2eq(ttot,all_regi)                              "total greenhouse gas emiss
 vm_co2eqMkt(ttot,all_regi,all_emiMkt)                "total greenhouse gas emissions per market measured in co2 equivalents that are subject to carbon pricing, be aware that emissions coverage of this variable depends on switch cm_multigasscen [GtCeq]"
 vm_emiAll(ttot,all_regi,all_enty)                    "total emissions by species [GtC, Mt CH4, Mt N, Mt SO2, Mt BC, Mt OC]"
 v_co2eqCum(all_regi)                                 "cumulated vm_co2eq emissions for the first budget period [GtCeq]"
+v_emiGHG_exclLULUCF_exclBunkers(ttot,all_regi)       "total GHG emissions excl LULUCF and excl bunkers, needed for NDC targets [GtCeq]"
 
 *** sectoral emissions
 vm_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty)  "emissions from energy technologies on supply-side (pm_emifac * PE) and demand-side (pm_emifac * FE), note: not equivalent to Emi|CO2|Energy in reporting [GtC, Mt CH4, Mt N, Mt SO2, Mt BC, Mt OC]"
@@ -153,7 +154,7 @@ vm_emiAllMkt(tall,all_regi,all_enty,all_emiMkt)      "total emissions per emissi
 *** ------------- Emissions Positive Variables --------------------------------
 positive variables
 
-v_co2capture(ttot,all_regi,all_enty,all_enty,all_te,rlf)    "total captured CO2 [GtC/year]"
+v_co2capture(ttot,all_regi)                                 "total captured CO2 [GtC/year]"
 vm_co2CCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)       "total CO2 injected into geological storage [GtC/a]"
 v_co2capturevalve(ttot,all_regi)                            "total CO2 emitted right after capture [GtC/a], note: used in q_balCCUvsCCS to account for different lifetimes of capture and CCU/CCS te and capacities [GtC/year]"
 v_ccsShare(ttot,all_regi)                                    "fraction of captured CO2 that is stored geologically [share]"
@@ -181,9 +182,10 @@ q_emiTeMkt(ttot,all_regi,all_enty,all_emiMkt)        "total energy-emissions per
 q_emiEnFuelEx(ttot,all_regi,all_enty)                "energy emissions from fuel extraction"
 q_emiAllMkt(ttot,all_regi,all_enty,all_emiMkt)       "total regional emissions for each emission market"
 q_emiCdrAll(ttot,all_regi)                           "summing over all CDR emissions"
-q_balcapture(ttot,all_regi,all_enty,all_enty,all_te) "balance equation for carbon capture"
+q_balcapture(ttot,all_regi)                          "balance equation for carbon capture"
 q_balCCUvsCCS(ttot,all_regi)                         "balance equation for captured carbon to CCU or CCS or valve"
 q_ccsShare(ttot,all_regi)                            "calculate the share of captured CO2 that is stored geologically"
+q_emiGHG_exclLULUCF_exclBunkers(ttot,all_regi)       "calculate total GHG emissions excl LULUCF and excl bunkers"
 ;
 
 *** ---------------------------------------------------------------------------
@@ -208,8 +210,8 @@ pm_teAnnuity(all_te)                                 "Annuity factor of a techno
 *** parameters used for floor costs calculation
 p_maxRegTechCost2015(all_te)                         "highest historical regional investment cost in 2015, used to calculate regionally-differentiated floor costs of learning technologies"
 p_maxRegTechCost2020(all_te)                         "highest historical regional investment cost in 2020, used to calculate regionally-differentiated floor costs of learning technologies"
-p_gdppcap2050_PPP(all_regi)                          "regional GDP PPP per capita in 2050 [thousand $/capita]"
-p_maxPPP2050                                         "maximum income GDP PPP among regions in 2050 [T$]"
+p_floorcostRef(all_regi)                             "regional GDP per capita in 2050 [$/capita]"
+p_floorcostRef_world                                 "global average GDP per capita in 2050 [$/capita]"
 p_maxSpvCost                                         "maximum spv investment cost among regions [T$/TW]" 
 p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data [T$/TW]"
 
@@ -217,8 +219,8 @@ p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data 
 pm_tsu2opTimeYr(ttot,opTimeYr)                       "auxiliary parameter to map time steps to past time steps: counts the number of model timesteps between years ttot-opTimeYr and ttot, used for q_transPe2se and q_cap equations [unitless]" 
 
 *** parameters used for endogenous technology learning implementation
-pm_capCum0(tall,all_regi,all_te)                     "Total cumulated capacity of learning technologies from last iteration used for learning curves based on vm_capCum[TW]"
-p_capCum(tall, all_regi,all_te)                      "Total cumulated capacity of learning technologies from input.gdx used for learning curves based on vm_capCum[TW]"
+pm_capCum0(tall,all_regi,all_te)                     "Total cumulated capacity of learning technologies from last iteration used for learning curves based on vm_capCum [TW]"
+p_capCum(tall, all_regi,all_te)                      "Total cumulated capacity of learning technologies from input.gdx used for learning curves based on vm_capCum [TW]"
 pm_capCumForeign(ttot,all_regi,all_te)               "Total cumulated capacity of learning technologies of all other regions except regi [TW]"
 
 *** early retirement parameters
@@ -288,7 +290,7 @@ p_deltaCapFromRWfix(ttot,all_regi,all_te)            "auxiliary parameter with r
 pm_delta_histCap(tall,all_regi,all_te)               "historic capacity additions calculated from historic data [TW/yr]"
 p_histProdSeGrowthRate(tall,all_regi,all_enty,all_te)"historic energy production growth rate [fraction]"
 p_maxhistProdSeGrowthRate(all_regi,all_enty,all_te)  "maximum historic energy production growth rate [fraction]"
-
+p_ProjectsCompletionShare(ttot,all_regi,all_te,project_status) "assumptions on shares of technology capacity that will start operation in the total amount of capacity that is currently under construction or planned; used to set near-term technology bounds [share]"
 
 *** penalty cost implementation for cm_startyear to limit change in policy run relative to reference run
 p_prodSeReference(ttot,all_regi,all_enty,all_enty,all_te) "Secondary Energy output of a technology in the reference run [TWa]"
@@ -298,7 +300,8 @@ p_co2CCSReference(ttot,all_regi,all_enty,all_enty,all_te,rlf) "Captured CO2 put 
 p_prodAllReference(ttot,all_regi,all_te)             "Sum of the above in the reference run. As each technology has only one type of output, the differing units should not be a problem"
 
 *** CES calibration tarjectories industry and buildings
-pm_fedemand(tall,all_regi,all_in)                    "read-in parameter for final energy and production trajectories used for the CES parameter calibration in industry and buildings [TWa]"
+pm_fedemandInd(tall,all_regi,all_in)                    "read-in parameter for final energy and production trajectories used for the CES parameter calibration in industry [EJ, ue_primary_steel, ue_secondary_steel: Gt, ue_otherInd: $tn]"
+pm_fedemandBuild(tall,all_regi,all_in)                  "read-in parameter for final energy and production trajectories used for the CES parameter calibration in buildings [EJ]"
 
 *** parameters for setting final energy shares
 pm_shfe_up(ttot,all_regi,all_enty,emi_sectors)       "Final energy shares exogenous upper bounds per sector [share]"
@@ -316,6 +319,16 @@ $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
 *** FE demand rescaling parameters
   pm_scaleDemand(tall,tall,all_regi)                 "Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
 $endif.scaleDemand
+
+$ifthen.scaleDemandBuildTable not "%cm_scaleDemandBuildTable%" == "off"
+*** FE demand rescaling parameters
+  pm_scaleDemandBuildTable(ttot, all_regi)                 "Rescaling factor on buildings final energy and usable energy demand, read-in from a table" 
+$endif.scaleDemandBuildTable
+
+$ifthen.scaleDemandIndTable not "%c_scaleDemandIndTable%" == "off"
+*** FE demand rescaling parameters
+  p_scaleDemandIndTable(ttot, all_regi)                 "Rescaling factor on industry final energy and usable energy demand, read-in from a table" 
+$endif.scaleDemandIndTable
 
 *** energy prices
 pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)     "parameter to capture all FE prices across sectors and markets [tr$2005/TWa]"
@@ -486,9 +499,9 @@ q_balFe(ttot,all_regi,all_enty,all_enty,all_te)      "balance of final energy (f
 q_balFeAfterTax(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "balance of final energy after considering FE sectoral taxes (fe)"
 
 *** energy conversion equations (energy input * conversion efficiency = energy output)
-q_transPe2se(ttot,all_regi,all_enty,all_enty,all_te) "energy tranformation pe to se"
+q_transPe2se(ttot,all_regi,all_enty,all_enty,all_te) "energy transformation pe to se"
 q_transSe2se(ttot,all_regi,all_enty,all_enty,all_te) "energy transformation se to se"
-q_transSe2fe(ttot,all_regi,all_enty,all_enty,all_te) "energy tranformation se to fe"
+q_transSe2fe(ttot,all_regi,all_enty,all_enty,all_te) "energy transformation se to fe"
 
 *** penalty cost implementation for cm_startyear to limit change in policy run relative to reference run
 q_changeProdStartyear(ttot,all_regi,all_te)          "calculating the absolute change of output with respect to the reference run for each technology"
@@ -546,7 +559,7 @@ $ifthen.tech_CO2capturerate not "%c_tech_CO2capturerate%" == "off"
 p_tech_co2capturerate(all_te)                        "Technology specific CO2 capture rate, fraction of carbon from input fuel that is captured [share]" / %c_tech_CO2capturerate% /
 p_PECarriers_CarbonContent(all_enty)                 "Carbon content of PE carriers [GtC/TWa]"
 $endif.tech_CO2capturerate
-pm_dataccs(all_regi,char,rlf)                        "maximum CO2 storage capacity using CCS technology. [GtC]"
+pm_dataccs(all_regi,char,all_te)                     "maximum CO2 storage capacity using CCS technology. [GtC]"
 pm_ccsinjecrate(all_regi)                            "Regional CCS injection rate factor. [1/year]."
 p_extRegiccsinjecrateRegi(ext_regi)                  "Regional CCS injection rate factor. [1/year]. (extended regions)"
 ;
@@ -573,8 +586,8 @@ parameters
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1 [GtC]"
 pm_actualbudgetco2(ttot)                             "actual level of cumulated emissions starting from 2020 [GtCO2]"
 p_actualbudgetco2_iter(iteration,ttot)               "track actual level of cumulated emissions starting from 2020 over iterations [GtCO2]"
-pm_actualbudgetco2Regi(ttot,all_regi)                "Regional- actual level of cumulated emissions starting from 2020 [GtCO2]"
-p_actualbudgetco2Regi_iter(iteration,ttot,all_regi)  "Regional- track actual level of cumulated emissions starting from 2020 over iterations [GtCO2]"
+pm_actualbudgetco2eqRegi(ttot,all_regi)                "Regional- actual level of cumulated emissions starting from 2020 [GtCO2]"
+p_actualbudgetco2eqRegi_iter(iteration,ttot,all_regi)  "Regional- track actual level of cumulated emissions starting from 2020 over iterations [GtCO2]"
 
 *** iteration parameters
 pm_SolNonInfes(all_regi)                             "model status from last iteration. 1 means status 2 or 7, 0 for all other status codes"
@@ -623,23 +636,24 @@ sm_giga_2_non                "giga to non"                             /1e+9/,
 sm_trillion_2_non            "trillion to non"                         /1e+12/,
 
 *** energy units
-pm_conv_TWa_EJ               "conversion from TWa to EJ"                          /31.536/,
-s_zj_2_twa                   "zeta joule to tw year"                              /31.7098/,
-sm_EJ_2_TWa                  "multiplicative factor to convert from EJ to TWa"    /31.71e-03/,
-sm_GJ_2_TWa                  "multiplicative factor to convert from GJ to TWa"    /31.71e-12/,
-sm_TWa_2_TWh                 "tera Watt year to Tera Watt hour"                    /8.76e+3/,
-sm_TWa_2_MWh                 "tera Watt year to Mega Watt hour"                    /8.76e+9/,
-sm_TWa_2_kWh                 "tera Watt year to kilo Watt hour"                    /8.76e+12/,
-sm_h2kg_2_h2kWh              "convert kilogramme of hydrogen to kwh energy value." /32.5/,
-sm_DptCO2_2_TDpGtC           "Conversion multiplier to go from $/tCO2 to T$/GtC: 44/12/1000"     /0.00366667/,
-sm_tBC_2_TWa                  "t biochar to TWa biochar (28700 [MJ/tBC]*10^-12[EJ/MJ]/31.536[EJ/TWa])" /9.101e-10/,
+s_ZJ_2_TWa                   "convert from Zeta Joule to Tera Watt annum"   /31.71/,
+sm_EJ_2_TWa                  "convert from Exa Joule to Tera Watt annum"    /31.71e-03/,
+sm_GJ_2_TWa                  "convert from Giga Joule to Tera Watt annum"   /31.71e-12/,
+sm_TWa_2_EJ                  "convert from Tera Watt annum to Exa Joule"    /31.54/,
+sm_DpGJ_2_TDpTWa             "convert $/GJ to T$/TWa"                       /31.54e-03/
+sm_TWa_2_TWh                 "convert Tera Watt annum to Tera Wh"           /8.76e+3/,
+sm_TWa_2_MWh                 "convert Tera Watt annum to Mega Wh"           /8.76e+9/,
+sm_TWa_2_kWh                 "convert Tera Watt annum to kilo Wh"           /8.76e+12/,
+sm_h2kg_2_h2kWh              "convert kg of hydrogen to kWh energy value"   /32.5/,
+sm_tBC_2_TWa                 "t biochar to TWa biochar (28700 [MJ/tBC]*10^-12[EJ/MJ]/31.536[EJ/TWa])" /9.101e-10/,
 
 *** emissions units
-sm_c_2_co2                   "conversion from c to co2"                /3.666666666667/,
+sm_c_2_co2                   "convert mass from carbon to CO2 (44/12)" /3.66667/,
+sm_DptCO2_2_TDpGtC           "convert $/tCO2 to T$/GtC: 44/12/1000"    /0.00366667/,
 s_NO2_2_N                    "convert NO2 to N [14 / (14 + 2 * 16)]"   / .304 /
 sm_tgn_2_pgc                 "conversion factor 100-yr GWP from TgN to PgCeq"
 sm_tgch4_2_pgc               "conversion factor 100-yr GWP from TgCH4 to PgCeq"
-s_MtCO2_2_GtC                "conversion factor from MtCO2 to native REMIND emission unit GtC" /2.727e-04/
+sm_MtCO2_2_GtC               "conversion factor from MtCO2 to native REMIND emission unit GtC" /2.727e-04/
 s_MtCH4_2_TWa                "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
 s_gwpCH4                     "Global Warming Potentials of CH4, AR5 WG1 CH08 Table 8.7"     /28/
 s_gwpN2O                     "Global Warming Potentials of N2O, AR5 WG1 CH08 Table 8.7"     /265/
@@ -647,11 +661,10 @@ s_gwpCH4_AR4                 "Global Warming Potentials of CH4 as in the AR4, us
 s_gwpN2O_AR4                 "Global Warming Potentials of N2O as in the AR4, used in the MACCs"     /298/
 
 *** monetary units
-s_DpKWa_2_TDpTWa             "convert Dollar per kWa to TeraDollar per TeraWattYear"       /0.001/
-s_DpKW_2_TDpTW               "convert Dollar per kW to TeraDollar per TeraWatt"            /0.001/
-sm_DpGJ_2_TDpTWa             "multipl. factor to convert (Dollar per GJoule) to (TerraDollar per TWyear)"    / 31.54e-03/
+s_DpKWa_2_TDpTWa             "convert Dollar per kWa to Tera Dollar per TWa" /0.001/
+s_DpKW_2_TDpTW               "convert Dollar per kW to Tera Dollar per TW"   /0.001/
 s_D2010_2_D2017              "Convert US$2010 to US$2017"      /1.1491/
-sm_D2015_2_D2017              "Convert US$2015 to US$2017"      /1.0292/
+sm_D2015_2_D2017             "Convert US$2015 to US$2017"      /1.0292/
 sm_D2005_2_D2017             "Convert US$2005 to US$2017"      /1.231/
 sm_D2020_2_D2017             "Convert US$2020 to US$2017"      /0.9469/
 sm_EURO2023_2_D2017          "Convert EURO 2023 to US$2017"    /0.8915/
@@ -694,7 +707,7 @@ $ifthen %c_nonco2_macc_version% == "PBL_2007"
 sm_dmac = 5 * sm_D2005_2_D2017;
 $elseif %c_nonco2_macc_version% == "PBL_2022"
 * PBL_2022 MACs are discretized in steps of 20 $2010/tCeq
-sm_dmac = 20 * s_D2010_2_D2017;;
+sm_dmac = 20 * s_D2010_2_D2017;
 $endif
 ;
 
@@ -702,5 +715,23 @@ $endif
 *** calculate further conversion factors for emissions
 sm_tgn_2_pgc = (44/28) * s_gwpN2O * (12/44) * 0.001;
 sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
+
+
+
+*** ------------ Macro functions ---------------
+*** Define macros that can be used as functions throughout the model code.
+*** This is especially useful for more complex expressions that are used in multiple places, to avoid code duplication and to ensure consistency.
+*** Parameters of a macro are replaced directly by the chosen value at compile time: they have nothing to do with the model parameters or sets.
+*** Because the replacement is automatic, please pay attention to brackets.
+
+*** macro_interpolate: Linear interpolation between two values x0 and x1 at time points t0 and t1 for an intermediate time point t
+*** Example 1:
+***   Suppose we use two different data sources for historical and projected population.
+***   To avoid a sudden jump, we may interpolate between the two curves over the period 2005-2025:
+***   pm_pop(t,regi) = macro_interpolate(t.val, 2005, 2025, p_popHistorical(t,regi), p_popProjection(t,regi));
+*** Example 2:
+***   Suppose we have a subsidy that we want to phase out with a different date for each region.
+***   p_subsidy(t,regi) = macro_interpolate(t.val, cm_startyear, p_subsidyEndYr(regi), p_subsidy(cm_startyear,regi), 0);
+$macro macro_interpolate(t,t0,t1,x0,x1) ( ((t1) - (t)) / ((t1) - (t0)) * (x0) + ((t) - (t0)) / ((t1) - (t0)) * (x1) )
 
 *** EOF ./core/declarations.gms

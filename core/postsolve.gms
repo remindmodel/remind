@@ -19,10 +19,14 @@ pm_actualbudgetco2(ttot)$( 2020 lt ttot.val )
     )
   * sm_c_2_co2;
 
-*** `pm_actualbudgetco2Regi(ttot, regi)` includes emissions from 2020 to `ttot` (inclusive).
-pm_actualbudgetco2Regi(ttot,regi)$( 2020 lt ttot.val )
+*** `pm_actualbudgetco2eqRegi(ttot, regi)` includes emissions from 2020 to `ttot` (inclusive).
+pm_actualbudgetco2eqRegi(ttot,regi)$( 2020 lt ttot.val )
   = sum((ttot2)$( 2020 le ttot2.val AND ttot2.val le ttot.val ),
-      vm_emiAll.l(ttot2,regi,"co2")
+      ((vm_emiAll.l(ttot2,regi,"co2") - vm_emiMacSector.l(ttot2,regi,"co2luc")$(c_budgetscen gt 2 AND c_budgetscen ne 4)) !! co2 emissions including or excluding land-use co2 emissions
+      + (sm_tgn_2_pgc * vm_emiAll.l(ttot2, regi, "n2o") + sm_tgch4_2_pgc * vm_emiAll.l(ttot2,regi, "ch4"))$(c_budgetscen le 3)  !! include other GHG emissions if c_budgetscen is 1, 2 or 3
+      - sum(se2fe(enty,enty2,te),     !! subtract bunker emissions if cm_bunkerscen is eq 3 or 6
+        pm_emifac(ttot2,regi,enty,enty2,te,"co2")
+        * vm_demFeSector.l(ttot2,regi,enty,enty2,"trans","other"))$(c_budgetscen eq 3 OR c_budgetscen eq 6))
       * ( (0.5 + pm_ts(ttot2) / 2)$( ttot2.val eq 2020 ) !! second half of the 2020 period (mid 2020 - end 2022) plus 0.5 to account fo beginning 2020 - mid 2020  
         + (pm_ts(ttot2))$( 2020 lt ttot2.val AND ttot2.val lt ttot.val ) !! entire middle periods
         + ((pm_ttot_val(ttot) - pm_ttot_val(ttot-1)) / 2 + 0.5)$(ttot2.val eq ttot.val ) !! first half of the final period plus 0.5 to account fo mid - end of final year
@@ -32,7 +36,7 @@ pm_actualbudgetco2Regi(ttot,regi)$( 2020 lt ttot.val )
 
 *** track `pm_actualbudgetco2(ttot)` over iterations
 p_actualbudgetco2_iter(iteration,ttot)$( 2020 lt ttot.val) = pm_actualbudgetco2(ttot);
-p_actualbudgetco2Regi_iter(iteration,ttot,regi)$( 2020 lt ttot.val) = pm_actualbudgetco2Regi(ttot,regi);
+p_actualbudgetco2eqRegi_iter(iteration,ttot,regi)$( 2020 lt ttot.val) = pm_actualbudgetco2eqRegi(ttot,regi);
 
 *** track pm_taxCO2eq over iterations - pm_taxCO2eq is adjusted in 45_carbonprice/functionalForm/postsolve.gms and consequently pm_taxCO2eq_iter gets overwritten there
 pm_taxCO2eq_iter(iteration,t,regi) = pm_taxCO2eq(t,regi);
@@ -103,7 +107,7 @@ pm_PEPrice(ttot,regi,entyPe)$(abs (qm_budget.m(ttot,regi)) gt sm_eps) =
        q_balPe.m(ttot,regi,entyPe) / qm_budget.m(ttot,regi);
 
 *** calculate share of stored CO2 from captured CO2
-pm_share_CCS_CCO2(t,regi) = sum(teCCS2rlf(te,rlf), vm_co2CCS.l(t,regi,"cco2","ico2",te,rlf)) / (sum(teCCS2rlf(te,rlf), v_co2capture.l(t,regi,"cco2","ico2",te,rlf))+sm_eps);
+pm_share_CCS_CCO2(t,regi) = sum(teCCS2rlf(te,rlf), vm_co2CCS.l(t,regi,"cco2","ico2",te,rlf)) / (v_co2capture.l(t,regi)+sm_eps);
 
 
 *CG**ML*: capital interest rate

@@ -12,26 +12,33 @@
 	"H12": {
 		"projectLibrary": "'remind2'",
 		"reg": "c('CAZ', 'CHA', 'EUR', 'IND', 'JPN', 'LAM', 'MEA', 'NEU', 'OAS', 'REF', 'SSA', 'USA', 'World')",
-		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))"
+		"yearsHist": "union(seq(1990, format(Sys.Date(), '%Y'), 1), seq(2030, 2050, 5))"
 	},
-	"H12-short": {
+	"H12-to2050": {
 		"projectLibrary": "'remind2'",
 		"reg": "c('CAZ', 'CHA', 'EUR', 'IND', 'JPN', 'LAM', 'MEA', 'NEU', 'OAS', 'REF', 'SSA', 'USA', 'World')",
 		"yearsScen": "seq(2005, 2050, 5)",
-		"yearsHist": "c(seq(2000, 2024, 1), seq(2025, 2050, 5))",
-		"yearsBarPlot": "c(2020, 2030, 2040, 2050)"
+		"yearsHist": "union(seq(2005, format(Sys.Date(), '%Y'), 1), seq(2030, 2050, 5))",
+		"yearsBarPlot": "c(2025, 2030, 2040, 2050)"
+	},
+	"H12-to2060": {
+		"projectLibrary": "'remind2'",
+		"reg": "c('CAZ', 'CHA', 'EUR', 'IND', 'JPN', 'LAM', 'MEA', 'NEU', 'OAS', 'REF', 'SSA', 'USA', 'World')",
+		"yearsScen": "seq(2005, 2060, 5)",
+		"yearsHist": "union(seq(2005, format(Sys.Date(), '%Y'), 1), seq(2030, 2060, 5))",
+		"yearsBarPlot": "c(2025, 2030, 2040, 2060)"
 	},
 	"IndiaH12": {
 		"projectLibrary": "'remind2'",
 		"reg": "c('CAZ', 'CHA', 'EUR', 'IND', 'JPN', 'LAM', 'MEA', 'NEU', 'OAS', 'REF', 'SSA', 'USA', 'World')",
-		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))",
+		"yearsHist": "union(seq(1990, format(Sys.Date(), '%Y'), 1), seq(2030, 2050, 5))",
 		"mainReg": "'IND'"
 	},
-	"IndiaH12-short": {
+	"IndiaH12-to2050": {
 		"projectLibrary": "'remind2'",
 		"reg": "c('CAZ', 'CHA', 'EUR', 'IND', 'JPN', 'LAM', 'MEA', 'NEU', 'OAS', 'REF', 'SSA', 'USA', 'World')",
 		"yearsScen": "seq(2005, 2050, 5)",
-		"yearsHist": "c(seq(2000, 2024, 1), seq(2025, 2050, 5))",
+		"yearsHist": "union(seq(2005, format(Sys.Date(), '%Y'), 1), seq(2030, 2050, 5))",
 		"yearsBarPlot": "c(2020, 2030, 2040, 2050)",
 		"mainReg": "'IND'"
 	},
@@ -39,13 +46,13 @@
 		"projectLibrary": "'remind2'",
 		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
 		"mainReg": "'EU27'",
-		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))"
+		"yearsHist": "union(seq(1990, format(Sys.Date(), '%Y'), 1), seq(2030, 2050, 5))"
 	},
-	"EU27-short": {
+	"EU27-to2050": {
 		"projectLibrary": "'remind2'",
 		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
 		"yearsScen": "seq(2005, 2050, 5)",
-		"yearsHist": "c(seq(2000, 2024, 1), seq(2025, 2050, 5))",
+		"yearsHist": "union(seq(2005, format(Sys.Date(), '%Y'), 1), seq(2030, 2050, 5))",
 		"yearsBarPlot": "c(2020, 2030, 2040, 2050)",
 		"mainReg": "'EU27'"
 	},
@@ -53,13 +60,13 @@
 		"projectLibrary": "'remind2'",
 		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA', 'UKI', 'NES', 'NEN', 'EUR')",
 		"mainReg": "'EUR'",
-		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))"
+		"yearsHist": "union(seq(1990, format(Sys.Date(), '%Y'), 1), seq(2030, 2050, 5))"
 	},
-	"EUR-short": {
+	"EUR-to2050": {
 		"projectLibrary": "'remind2'",
 		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA', 'UKI', 'NES', 'NEN', 'EUR')",
 		"yearsScen": "seq(2005, 2050, 5)",
-		"yearsHist": "c(seq(2000, 2024, 1), seq(2025, 2050, 5))",
+		"yearsHist": "union(seq(2005, format(Sys.Date(), '%Y'), 1), seq(2030, 2050, 5))",
 		"yearsBarPlot": "c(2020, 2030, 2040, 2050)",
 		"mainReg": "'EUR'"
 	},
@@ -67,7 +74,7 @@
 		"projectLibrary": "'remind2'",
 		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
 		"yearsScen": "seq(2005, 2050, 5)",
-		"yearsHist": "c(seq(2000, 2024, 1), seq(2025, 2050, 5))",
+		"yearsHist": "union(seq(2005, format(Sys.Date(), '%Y'), 1), seq(2030, 2050, 5))",
 		"yearsBarPlot": "c(2020, 2030, 2045)",
 		"modelsHistExclude": "c('IEA ETP B2DS', 'IEA ETP 2DS', 'IEA ETP RTS', 'EDGE_SSP1', 'EDGE_SSP2', 'CEDS', 'IRENA', 'IEA WEO 2021 APS', 'IEA WEO 2021 SDS', 'IEA WEO 2021 SPS')",
 		"mainReg": "'DEU'"
@@ -77,32 +84,27 @@
 		"sections": "c(0,1,99)"
 	},
 	"REMIND-MAgPIE": {
-  	"projectLibrary": "'remind2'",
-		"userSectionPath":  "c(normalizePath('./scripts/cs2/magpie.Rmd'), normalizePath('./scripts/cs2/planetaryboundaries.Rmd'))"
+		"projectLibrary": "'remind2'",
+		"userSectionPath": "c(normalizePath('./scripts/cs2/magpie.Rmd'), normalizePath('./scripts/cs2/planetaryboundaries.Rmd'))"
 	},
 	"MAgPIE": {
 		"sections": "0",
 		"userSectionPath": "normalizePath('./scripts/cs2/magpie.Rmd')"
 	},
-  "MAGICC7_AR6": {
-    "sections": "0",
-    "userSectionPath": "normalizePath('./scripts/cs2/MAGICC7_AR6.Rmd')"
-  },
+	"MAGICC7_AR6": {
+		"sections": "0",
+		"userSectionPath": "normalizePath('./scripts/cs2/MAGICC7_AR6.Rmd')"
+	},
 	"EDGE-Transport": {
 		"projectLibrary": "'reporttransport'",
 		"reg": "c('OAS', 'MEA', 'SSA', 'LAM', 'REF', 'CAZ', 'CHA', 'IND', 'JPN', 'USA', 'NEU', 'EUR', 'World')",
 		"sections": "c(0,1,2,3,4,5,99)",
 		"mainReg": "'World'"
 	},
-	"AirPollutantsREMIND": {
+	"Emissions_CMIP7": {
 		"sections": "0",
-		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))",
-		"userSectionPath": "normalizePath('./scripts/cs2/AirPollutantsREMIND.Rmd')"
-	},
-	"AirPollutantsREMIND-MAgPIE": {
-		"sections": "0",
-		"yearsHist": "c(seq(1990, 2024, 1), seq(2025, 2050, 5))",
-		"userSectionPath": "normalizePath('./scripts/cs2/AirPollutantsREMIND-MAgPIE.Rmd')"
+		"yearsHist": "seq(2000, 2025, 1)",
+		"userSectionPath": "normalizePath('./scripts/cs2/Emissions_CMIP7.Rmd')"
 	},
 	"PlanetaryBoundaries": {
 		"sections": "0",

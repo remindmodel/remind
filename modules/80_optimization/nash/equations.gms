@@ -44,7 +44,7 @@ q80_costAdjNash(ttot,regi)$( ttot.val ge cm_startyear ) ..
 ;
 
 *' link between permit budget and  emission budget
-q80_budgetPermRestr(regi)$(cm_emiscen=6) ..
+q80_budgetPermRestr(regi)$(cm_emiscen=6 OR cm_emiscen = 4) ..
      sum(ttot$(ttot.val lt sm_endBudgetCO2eq and ttot.val ge cm_startyear), pm_ts(ttot)* vm_perm(ttot,regi))
      + sum(ttot$(ttot.val eq sm_endBudgetCO2eq),pm_ts(ttot)/2 * (vm_perm(ttot,regi)))  =l=
      pm_budgetCO2eq(regi) - sum(ttot $((ttot.val ge 2005) and (ttot.val lt cm_startyear)), pm_ts(ttot)* vm_co2eq(ttot,regi));

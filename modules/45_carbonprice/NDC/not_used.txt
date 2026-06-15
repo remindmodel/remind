@@ -38,7 +38,7 @@ cm_taxCO2_interpolation,input,added by codeCheck
 cm_taxCO2_lowerBound_path_gdx_ref,input,added by codeCheck
 sm_peakBudgYr_check,input,not needed
 sm_peakbudget_diff,input,not needed
-pm_actualbudgetco2Regi,input,added by codeCheck
+pm_actualbudgetco2eqRegi,input,added by codeCheck
 pm_dt,input,added by codeCheck
 cm_taxCO2_Shape,input,added by codeCheck
 cm_CPslopeAdjustment,input,added by codeCheck
@@ -47,3 +47,5 @@ pm_factorRescale_taxCO2Regi_Funneled2,input,added by codeCheck
 pm_budgetDeviation,input,added by codeCheck
 pm_regionalBudget_absDevTol,input,added by codeCheck
 cm_startyear,input,not used
+sm_D2005_2_D2017,input,not used
+cm_iterative_target_adj,input,not used

@@ -34,6 +34,9 @@ p45_FunnelUpper(iteration) = 2 * EXP(-0.15 * iteration.val) + 1.005;
 *** Other
 s45_YearBeforeStartYear = smax(ttot$( ttot.val lt cm_startyear ), ttot.val); !! Timestep before startyear
 
+$ifthen.peak "%cm_peakBudgYrRegi%" == "off"
+p45_peakBudgYr_regi(regi) = cm_peakBudgYr;
+$endif.peak
 
 ***----------------------------------------------------------------------------------
 *** ---- Derive the starting co2 price path and shape
@@ -68,10 +71,13 @@ else
               p45_taxCO2refYear(regi)  / (cm_taxCO2_expGrowth**(2100 - ttot.val));
     !! carbon price post 2100 is set in Part II for all cm_taxCO2_functionalForm
     
-  else !! increase until cm_peakBudgYr
-    p45_taxCO2refYear(regi)  = sum(ttot$(ttot.val eq cm_peakBudgYr), p45_taxCO2eq_path_gdx_input(ttot,regi));  !! save cm_peakBudgYr CO2 price from the input.gdx as reference point
-    p45_taxCO2eq_anchorRegi(ttot,regi)$(ttot.val gt s45_YearBeforeStartYear AND ttot.val le cm_peakBudgYr) = 
-              p45_taxCO2refYear(regi)  / (cm_taxCO2_expGrowth**(cm_peakBudgYr - ttot.val));
+  else !! increase until p45_peakBudgYr_regi(regi) (determined globally by cm_peakBudgYr or regionally by cm_peakBudgYrRegi)
+    loop(regi, 
+       s45_regiHelperYear = p45_peakBudgYr_regi(regi);
+       p45_taxCO2refYear(regi)  = sum(ttot$(ttot.val eq s45_regiHelperYear), p45_taxCO2eq_path_gdx_input(ttot,regi));  !! save cm_peakBudgYr CO2 price from the input.gdx as reference point
+       p45_taxCO2eq_anchorRegi(ttot,regi)$(ttot.val gt s45_YearBeforeStartYear AND ttot.val le s45_regiHelperYear) = 
+              p45_taxCO2refYear(regi)  / (cm_taxCO2_expGrowth**(s45_regiHelperYear - ttot.val));
+    );
     !! carbon price post peak year is set in Part II for all cm_taxCO2_functionalForm          
   );  !! EOC or Peak
 ); !! use input.gdx information or not
@@ -125,17 +131,18 @@ if((cm_taxCO2_startyear gt 0) and (cm_taxCO2_peakBudgYr eq -1), !! Initial globa
 elseif (cm_taxCO2_startyear eq -1) and (cm_taxCO2_peakBudgYr gt 0) , !! Initial global carbon price trajetory defined via (cm_peakBudgYr, s45_taxCO2_peakBudgYr)
 
   !! Make sure that initial carbon price trajectory is non-decreasing, and cm_peakBudgYr is at least cm_startyear
-  if (cm_peakBudgYr lt cm_startyear,
-    abort "please initialize cm_peakBudgYr by setting it to a value that is larger or equal to cm_startyear"
-  elseif s45_taxCO2_peakBudgYr lt s45_taxCO2_historical,
-    display cm_taxCO2_peakBudgYr;
-    abort "please make sure that cm_taxCO2_peakBudgYr is at least as large as the value provided by cm_taxCO2_historical"
+  loop(regi, 
+    if (p45_peakBudgYr_regi(regi) lt cm_startyear,
+      abort "please initialize cm_peakBudgYr by setting it to a value that is larger or equal to cm_startyear"
+    elseif s45_taxCO2_peakBudgYr lt s45_taxCO2_historical,
+      display cm_taxCO2_peakBudgYr;
+      abort "please make sure that cm_taxCO2_peakBudgYr is at least as large as the value provided by cm_taxCO2_historical"
+    );
+    p45_taxCO2eq_anchor(ttot)$(ttot.val ge s45_taxCO2_historicalYr) = 
+                            s45_taxCO2_historical
+                            + (s45_taxCO2_peakBudgYr - s45_taxCO2_historical) / (p45_peakBudgYr_regi(regi) - s45_taxCO2_historicalYr) !! Yearly increase of carbon price 
+                              * (ttot.val - s45_taxCO2_historicalYr) ;
   );
-  p45_taxCO2eq_anchor(ttot)$(ttot.val ge s45_taxCO2_historicalYr) = 
-                          s45_taxCO2_historical
-                          + (s45_taxCO2_peakBudgYr - s45_taxCO2_historical) / (cm_peakBudgYr - s45_taxCO2_historicalYr) !! Yearly increase of carbon price 
-                            * (ttot.val - s45_taxCO2_historicalYr) ;
-
 elseif (cm_taxCO2_startyear eq -1) and (cm_taxCO2_peakBudgYr le 0) ,
   abort "please initialize cm_taxCO2_peakBudgYr by setting it to a positive value"
 else 
@@ -183,8 +190,11 @@ $endif.taxCO2GeneralShape
 
 *** Adjust global anchor trajectory so that after cm_peakBudgYr, it increases linearly with fixed annual increase given by cm_taxCO2_IncAfterPeakBudgYr
 if(cm_taxCO2_Shape eq 2,
-   p45_taxCO2eq_anchorRegi(t,regi)$(t.val gt cm_peakBudgYr) = sum(t2$(t2.val eq cm_peakBudgYr), p45_taxCO2eq_anchorRegi(t2,regi)) !! CO2 tax in peak budget year
-                                                  + (t.val - cm_peakBudgYr) * cm_taxCO2_IncAfterPeakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year 
+  loop(regi, 
+      s45_regiHelperYear = p45_peakBudgYr_regi(regi);
+      p45_taxCO2eq_anchorRegi(t,regi)$(t.val gt s45_regiHelperYear) = sum(t2$(t2.val eq s45_regiHelperYear), p45_taxCO2eq_anchorRegi(t2,regi)) !! CO2 tax in peak budget year
+                                                  + (t.val - s45_regiHelperYear) * cm_taxCO2_IncAfterPeakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year 
+  );
 );
 
 *** Always set carbon price constant after 2100 to prevent huge taxes after 2100 and the resulting convergence problems

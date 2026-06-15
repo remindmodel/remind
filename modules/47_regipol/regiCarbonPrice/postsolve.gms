@@ -96,27 +96,27 @@ p47_emiTargetMkt(ttot,regi, emiMktExt,"netGHG_noLULUCF_noBunkers") =
 *** net CO2 per Mkt with Grassi LULUCF shift
 p47_emiTargetMkt(ttot,regi, emiMktExt,"netCO2_LULUCFGrassi") =
   p47_emiTargetMkt(ttot,regi, emiMktExt,"netCO2")
-  - ( p47_LULUCFEmi_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"));
+  - ( pm_emiLULUCF_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"));
 
 *** net CO2 per Mkt without bunkers and with Grassi LULUCF shift
 p47_emiTargetMkt(ttot,regi, emiMktExt,"netCO2_LULUCFGrassi_noBunkers") =
   p47_emiTargetMkt(ttot,regi, emiMktExt,"netCO2_noBunkers")
-  - ( p47_LULUCFEmi_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"));
+  - ( pm_emiLULUCF_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"));
 
 *** net GHG per Mkt with Grassi LULUCF shift
 p47_emiTargetMkt(ttot,regi, emiMktExt,"netGHG_LULUCFGrassi") =
   p47_emiTargetMkt(ttot,regi, emiMktExt,"netGHG")
-  - ( p47_LULUCFEmi_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"));
+  - ( pm_emiLULUCF_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"));
 
 *** net GHG per Mkt without bunkers and with Grassi LULUCF shift
 p47_emiTargetMkt(ttot,regi, emiMktExt,"netGHG_LULUCFGrassi_noBunkers") =
   p47_emiTargetMkt(ttot,regi, emiMktExt,"netGHG_noBunkers")
-  - ( p47_LULUCFEmi_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"));
+  - ( pm_emiLULUCF_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"));
 
 *** net CO2 per Mkt without bunkers and with Grassi LULUCF shift
 p47_emiTargetMkt(ttot,regi, emiMktExt,"netCO2_LULUCFGrassi_intraRegBunker") =
   p47_emiTargetMkt(ttot,regi, emiMktExt,"netCO2_noBunkers")
-  - ( p47_LULUCFEmi_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"))
+  - ( pm_emiLULUCF_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"))
   + (
     sum(se2fe(enty,enty2,te),
       pm_emifac(ttot,regi,enty,enty2,te,"co2")
@@ -127,7 +127,7 @@ p47_emiTargetMkt(ttot,regi, emiMktExt,"netCO2_LULUCFGrassi_intraRegBunker") =
 *** net GHG per Mkt without bunkers and with Grassi LULUCF shift
 p47_emiTargetMkt(ttot,regi, emiMktExt,"netGHG_LULUCFGrassi_intraRegBunker") =
   p47_emiTargetMkt(ttot,regi, emiMktExt,"netGHG_noBunkers")
-  - ( p47_LULUCFEmi_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"))
+  - ( pm_emiLULUCF_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"))
   + (
     sum(se2fe(enty,enty2,te),
       pm_emifac(ttot,regi,enty,enty2,te,"co2")

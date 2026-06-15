@@ -123,6 +123,11 @@ startedRuns <- 0
 waitingRuns <- 0
 modeltestRunsUsed <- 0
 
+nonStoppingError <- function(...) { # error display that increments the global errorsfound counter
+  message(red, "Error", NC, ": ", ...)
+  errorsfound <<- errorsfound + 1 # operator <<- ensures that the global variable errorsfound is modified
+}
+
 # Returns TRUE if 'fullname' ends with 'extension' (eg. if "C_SSP2-Base/fulldata.gdx" ends with "fulldata.gdx")
 # AND if the file given in 'fullname' exists.
 .isFileAndAvailable <- function(fullname, extension) {
@@ -309,7 +314,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   }
 
   ###################### Loop over scenarios ###############################
-  
+
   # Modify and save cfg for all runs
   for (scen in rownames(scenarios)) {
 
@@ -327,8 +332,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       cfg$gms$optimization <- "testOneRegi"
       cfg$output           <- NA
       cfg$results_folder   <- paste0("output/", cfg$title)
-      # delete existing Results directory
-      cfg$force_replace    <- TRUE
+      cfg$force_replace    <- TRUE # delete existing Results directory
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
     }
     if ("--quick" %in% flags) {
@@ -346,6 +350,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
                           verboseGamsCompile = ! "--gamscompile" %in% flags || "--interactive" %in% flags)
       errorsfound <- sum(errorsfound, cfg$errorsfoundInConfigureCfg)
       cfg$errorsfoundInConfigureCfg <- NULL
+
       # set optimization mode to testOneRegi, if specified as command line argument
       if (any(c("--quick", "--testOneRegi") %in% flags)) {
         cfg$description      <- paste("testOneRegi:", cfg$description)
@@ -377,6 +382,50 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
 
     # abort on too long paths ----
     cfg$gms$cm_CES_configuration <- calculate_CES_configuration(cfg, check = TRUE)
+
+    # offer to copy existing gdx when missing required calibration gdx (interactive mode only) ----
+    if ("--interactive" %in% flags && cfg$gms$CES_parameters == "calibrate") {
+      gdxFolder <- "./config/gdx-files"
+      gdxConfig <- file.path(gdxFolder, paste0(cfg$gms$cm_CES_configuration, ".gdx"))
+      if (!file.exists(gdxConfig)) {
+        message("\nCalibration requires a starting gdx that does not exist:\n    ", gdxConfig)
+        abortText <- paste0("Please copy the gdx file with the closest configuration and paste it to:\n    ", gdxConfig, "\n")
+
+        # List available gdx files
+        gdxFiles <- list.files(gdxFolder, pattern = "\\.gdx$", full.names = TRUE)
+        if (length(gdxFiles) > 0) { # length is zero when input data has not been collected yet and copying gdx is impossible
+          # Prompt user to choose an existing gdx file
+          gdxClosest <- gdxFiles[which.min(adist(basename(gdxConfig), basename(gdxFiles)))] # existing file with the closest name
+          abortOption <- paste0(crayon::red("ABORT"), ": you will then need to copy the gdx of your choice manually")
+          gdxFiles <- c(abortOption, gdxFiles)
+          gdxSelection <- gdxFiles[gms::chooseFromList(
+            ifelse(gdxFiles == gdxClosest, crayon::cyan(gdxFiles), gdxFiles),
+            type = "an existing gdx file that you would like to use",
+            userinfo = paste0("Leave empty to select existing gdx with ", crayon::cyan("most similar name")),
+            returnBoolean = TRUE,
+            multiple = FALSE
+          )]
+
+          if (length(gdxSelection) == 0) { gdxSelection <- gdxClosest } # default option
+          if (gdxSelection == abortOption || !file.copy(gdxSelection, gdxConfig)) { # abort option or copy failure
+            nonStoppingError(abortText)
+          } else {
+            message("Copied: ", gdxSelection, "\n    to: ", gdxConfig, "\n")
+
+            # Add the .gdx and .inc to list of possible names
+            addLine <- function(line, path = "files") {
+              if (!file.exists(path)) message(path, " does not exist, you may have to manually add ", line)
+              else if (!(line %in% readLines(path))) {
+                write(line, path, append = TRUE)
+                message("Added in ", path, " the line ", line)
+              }
+            }
+            addLine(paste0(cfg$gms$cm_CES_configuration, ".gdx"), path = file.path(gdxFolder, "files"))
+            addLine(paste0(cfg$gms$cm_CES_configuration, ".inc"), path = file.path("./modules/29_CES_parameters/load/input", "files"))
+          }
+        }
+      }
+    }
 
     # =================== MAgPIE coupling ===================
 
@@ -413,8 +462,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
           cfg$files2export$start["input.gdx"] <- scenarios_magpie[scen, "continueFromHere"]
           message("   Continuing MAgPIE coupling from REMIND gdx ", scenarios_magpie[scen, "continueFromHere"])
         } else {
-          message(red, "Error", NC, ": Could not find what is given in 'scenarios_magpie[scen, continueFromHere]': ", scenarios_magpie[scen, "continueFromHere"])
-          errorsfound <- errorsfound + 1
+          nonStoppingError("Could not find what is given in 'scenarios_magpie[scen, continueFromHere]': ", scenarios_magpie[scen, "continueFromHere"])
         }
       }
       
@@ -481,14 +529,12 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
               # if no real file is given but a reference to another scenario (that has to run first) create path to the reference scenario
               #ghgprice_remindrun <- paste0(prefix_runname, scenarios_magpie[scen, "path_mif_ghgprice_land"], "-rem-", i)
               #path_mif_ghgprice_land <- file.path(path_remind, "output", ghgprice_remindrun, paste0("REMIND_generic_", ghgprice_remindrun, ".mif"))
-              message(red, "Error", NC, ": path_mif_ghgprice_land must be a path to an existing file and cannot reference another scenario by name currently: ",
+              nonStoppingError("path_mif_ghgprice_land must be a path to an existing file and cannot reference another scenario by name currently: ",
                       scenarios_magpie[scen, "path_mif_ghgprice_land"])
-              errorsfound <- errorsfound + 1
               path_mif_ghgprice_land <- FALSE
           } else {
-            message(red, "Error", NC, ": path_mif_ghgprice_land neither an existing file nor a scenario that will be started: ",
+            nonStoppingError("path_mif_ghgprice_land is neither an existing file nor a scenario that will be started: ",
                     scenarios_magpie[scen, "path_mif_ghgprice_land"])
-            errorsfound <- errorsfound + 1
             path_mif_ghgprice_land <- FALSE
           }
           cfg_mag$path_to_report_ghgprices <- path_mif_ghgprice_land
@@ -530,6 +576,16 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       errorsfound <- errorsfound + ! gcresult
     } else if (start_now) {
       if (errorsfound == 0) {
+        caldir <- "calibration_results/"
+        if (cfg$gms$CES_parameters == "calibrate" && !dir.exists(caldir)) {
+          if (0 == system("./scripts/utils/set-local-calibration.sh")) {
+            message("   Folder ", caldir, " has been automatically set up.")
+            cfg$repositories <- append(cfg$repositories, setNames(list(NULL), normalizePath(caldir)))
+            source(file.path(caldir, ".Rprofile_calibration_results"))
+          } else {
+            warning("   Could not set up ", caldir, " automatically. Please run 'make set-local-calibration' manually.")
+          }
+        }
         submit(cfg)
       } else {
         message("   Not started, as errors were found.")

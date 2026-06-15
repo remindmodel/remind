@@ -13,7 +13,7 @@
 Parameter
   s47_firstFreeYear                                  "value of first free year for the carbon price trajectory"
   s47_prefreeYear                                    "value of the last non-free year for the carbon price trajectory"
-  p47_LULUCFEmi_GrassiShift(ttot,all_regi)           "difference between Magpie land-use change emissions and UNFCCC emissions in 2015 to correct for national accounting in emissions targets"
+  pm_emiLULUCF_GrassiShift(ttot,all_regi)            "difference between Magpie land-use change emissions and UNFCCC emissions in 2015 to correct for national accounting in emissions targets [GtC]"
   pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) "deviation of emissions of current iteration from target emissions, for budget target this is the difference normalized by target emissions, while for year targets this is the difference normalized by 2005 emissions [%]"
   pm_taxemiMkt(ttot,all_regi,all_emiMkt)                             "CO2 tax path per region and emissions market [T$/GtC]"
   pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt)         "CO2 tax path per region and emissions market calculated from previous iteration [T$/GtC]"

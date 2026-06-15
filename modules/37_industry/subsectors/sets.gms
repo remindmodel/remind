@@ -423,7 +423,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     ng         "Direct reduction using natural gas"
     h2         "Direct reduction using hydrogen"
     unheated   "BOF operation with maximum amount of scrap possible without external heating"
-    pri        "Primary production of steel (based on iron ore or DRI)"
+    prim       "Primary production of steel (based on iron ore or DRI)"
     sec        "Secondary production of steel (based on scrap)"
 $endif.cm_subsec_model_steel
   /
@@ -448,7 +448,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 $endif.cm_subsec_model_steel
   /
 
-ppfen_no_ces_use(all_in)   "FE nodes of all_in that are not part of the CES tree in the process-based industry model; Needed for pm_fedemand data input"
+ppfen_no_ces_use(all_in)   "FE nodes of all_in that are not part of the CES tree in the process-based industry model; Needed for pm_fedemandInd data input"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     feso_steel
@@ -468,7 +468,7 @@ tePrc2opmoPrc(tePrc,opmoPrc)   "Mapping of technologies onto available operation
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idr . (ng,h2)
-    eaf . (pri,sec)
+    eaf . (prim,sec)
     bf . (standard)
     bof . (unheated)
     bfcc . (standard)
@@ -480,7 +480,7 @@ tePrc2matIn(tePrc,opmoPrc,mat)   "Mapping of technologies onto input materials"
   /
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idr . (h2,ng) . dripell
-    eaf . pri . driron
+    eaf . prim . driron
     eaf . sec . eafscrap
     bf  . standard . ironore
     bof . unheated . (pigiron,bofscrap)
@@ -493,7 +493,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    bf  . standard . pigiron
    bof . unheated . prsteel
    idr . (h2,ng) . driron
-   eaf . pri . prsteel
+   eaf . prim . prsteel
    eaf . sec . sesteel
 $endif.cm_subsec_model_steel
   /
@@ -505,7 +505,7 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
    bof . unheated . ue_steel_primary
    idr . (h2,ng) . ue_steel_primary
    idrcc . ng . ue_steel_primary
-   eaf . pri . ue_steel_primary
+   eaf . prim . ue_steel_primary
    eaf . sec . ue_steel_secondary
 $endif.cm_subsec_model_steel
   /
@@ -525,9 +525,9 @@ $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     idr . h2 . idreaf_h2
     idr . ng . idreaf_ng
     idr . ng . idreaf_ng_ccs
-    eaf . pri . idreaf_h2
-    eaf . pri . idreaf_ng
-    eaf . pri . idreaf_ng_ccs
+    eaf . prim . idreaf_h2
+    eaf . prim . idreaf_ng
+    eaf . prim . idreaf_ng_ccs
     idrcc . ng . idreaf_ng_ccs
     bf  . standard . bfbof
     bf  . standard . bfbof_ccs

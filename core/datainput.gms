@@ -83,7 +83,7 @@ $offdelim
 /;
 
 *** load GDP data
-table f_gdp(tall,all_regi,all_GDPpopScen)        "GDP data"
+table f_gdp(tall,all_regi,all_GDPpopScen)        "GDP PPP data"
 $ondelim
 $include "./core/input/f_gdp.cs3r"
 $offdelim
@@ -161,7 +161,7 @@ fm_dataglob("learn", te)$(sameAs(te, "biopyronly") OR sameAs(te, "biopyrhe") OR
 $ifthen.c_techAssumptScen "%c_techAssumptScen%" == "SSP1"
 *** hampers technologies with CCS or FT
 *** TODO: add industry ccs technologies bfcc and idrcc
-    loop(te $ (teCCS(te) or teFischerTropsch(te) or sameas(te,"ccsinje")),
+    loop(te $ (teCCS(te) or teFischerTropsch(te) or teccsinje(te)),  !! DKX: assumptions correct?
         fm_dataglob("inco0",te) =        1.3 * fm_dataglob("inco0",te);
     );
 *** hampers nuclear a lot
@@ -190,8 +190,7 @@ $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP3"
         fm_dataglob("omf",te) =          2/3 * fm_dataglob("omf",te);
     );
 *** hampers nuclear
-    fm_dataglob("inco0","tnrs") =        1.2 * fm_dataglob("inco0","tnrs");
-    fm_dataglob("lifetime","tnrs") =     0.8 * fm_dataglob("lifetime","tnrs");
+    fm_dataglob("inco0","tnrs") =        1.3 * fm_dataglob("inco0","tnrs");
 *** hampers transmission for non-ICE vehicules
     fm_dataglob("inco0",te) $ (sameas(te,"tdelt") or sameas(te,"tdh2t")) = 2 * fm_dataglob("inco0",te);
 *** hampers VRE a lot, and electricity storage
@@ -212,7 +211,7 @@ $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP3"
 
 $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP5"
 *** favours technologies with CCS or FT
-    loop(te $ (teCCS(te) or teFischerTropsch(te) or sameas(te,"ccsinje")),
+    loop(te $ (teCCS(te) or teFischerTropsch(te) or teccsinje(te)), !! DKX: assumptions correct?
         fm_dataglob("inco0",te) =        0.9 * fm_dataglob("inco0",te);
     );
 *** hampers nuclear
@@ -240,12 +239,16 @@ $endif.c_techAssumptScen
 ***---------------------------------------------------------------------------
 *** cm_ccsinjeCost cost scenarios
 *** Warning: it applies absolute values; only use it in combination with default c_techAssumptScen SSP2. 
-*** low estimate: ccsinje cost prior to 03/2024; i.e. ~11 USD/tCO2 in 2025, decreasing to ~7.5USD/tCO2 as of 2035
-$if "%cm_ccsinjeCost%" == "low" fm_dataglob("tech_stat","ccsinje") = 2;
-$if "%cm_ccsinjeCost%" == "low" fm_dataglob("inco0","ccsinje") = 220;
-$if "%cm_ccsinjeCost%" == "low" fm_dataglob("constrTme","ccsinje") = 0;
+*** low estimate: ccsinjeon cost prior to 03/2024; i.e. ~11 USD/tCO2 in 2025, decreasing to ~7.5USD/tCO2 as of 2035
+$if "%cm_ccsinjeCost%" == "low" fm_dataglob("tech_stat","ccsinjeon") = 2;
+$if "%cm_ccsinjeCost%" == "low" fm_dataglob("inco0","ccsinjeon") = 220;  
+$if "%cm_ccsinjeCost%" == "low" fm_dataglob("constrTme","ccsinjeon") = 0;
+$if "%cm_ccsinjeCost%" == "low" fm_dataglob("tech_stat","ccsinjeoff") = 2;      !! DKX: assumptions
+$if "%cm_ccsinjeCost%" == "low" fm_dataglob("inco0","ccsinjeoff") = 330;        !! DKX: assumptions
+$if "%cm_ccsinjeCost%" == "low" fm_dataglob("constrTme","ccsinjeoff") = 0;      !! DKX: assumptions
 *** high estimate: ~20USD/tCO2 (constant), assuming upper end of storage cost and long transport distances
-$if "%cm_ccsinjeCost%" == "high" fm_dataglob("inco0","ccsinje") = 550;
+$if "%cm_ccsinjeCost%" == "high" fm_dataglob("inco0","ccsinjeon")  = 550;
+$if "%cm_ccsinjeCost%" == "high" fm_dataglob("inco0","ccsinjeoff") = 825;       !! DKX: assumptions
 
 
 *** cm_VRE_supply_assumptions: Modify learning and floor costs for electricity storage and production of VRE
@@ -322,10 +325,19 @@ display fm_dataglob;
 *** initialize regionalized data using global data
 pm_data(all_regi,char,te) = fm_dataglob(char,te);
 
-*** -------------------------------------------------------------------------------
-*** Regional risk premium during building time
-*** -------------------------------------------------------------------------------
+$ifthen.REG_techcosts not "%cm_techcosts%" == "GLO"   !! cm_techcosts is REG or REG2040
+*** Initial investment costs differentiated by region:
+  pm_data(regi,"inco0",teRegTechCosts(te)) = p_inco0("2015",regi,te);
+  pm_data(regi,"inco0","spv")              = p_inco0("2020",regi,"spv");
 
+*** Initial capacity differentiated by region:
+  Execute_Loadpoint 'input' p_capCum = vm_capCum.l; !! read vm_capCum(t0,regi,teLearn) from input.gdx to have 2005 investment costs
+  p_capCum("2015",regi,te) $ (p_capCum("2015",regi,te) = 0) = fm_dataglob("ccap0",te) / card(regi); !! if technology not in gdx, default to global value
+  p_capCum("2020",regi,"spv") $ (p_capCum("2020",regi,"spv") = 0) = 0.6 / card(regi2); !! assume 600GW of solar PV in 2020 globally
+$endif.REG_techcosts
+
+
+*** =============== Regional risk premium during building time ====================
 parameter p_risk_premium_constr(all_regi) "risk premium during construction time. Use same values as pm_risk_premium used in module 23_capital markets"
 *RP* 2 parameters needed because pm_risk_premium is set to 0 in module 23 realization perfect".
 /
@@ -341,8 +353,7 @@ loop(te $ (fm_dataglob("constrTme",te) > 0),
                               (1
                                   + 0.02 / pm_ies(regi) !! intertemporal elasticity of substitution
                                   + pm_prtp(regi) !! pure rate of time preference
-*** if technology costs are regionalised, also use regionalised financing costs
-$if not "%cm_techcosts%" == "GLO" + p_risk_premium_constr(regi)
+$if not "%cm_techcosts%" == "GLO" + p_risk_premium_constr(regi) !! if technology costs are regionalised, also use regionalised financing costs
 *** nuclear sees 3% higher interest rates during construction time due to higher construction time risk
 *** see "The economic future of nuclear power - A study conducted at The University of Chicago" (2004)
                                   + 0.03 $ sameas(te,"tnrs")
@@ -355,100 +366,86 @@ display p_tkpremused;
 *** modify regionalized cost data using cost premium during construction time
 pm_data(regi,"inco0",te)     = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"inco0",te);
 pm_data(regi,"floorcost",te) = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"floorcost",te);
-p_inco0(ttot,regi,teRegTechCosts)  = (1 + p_tkpremused(regi,teRegTechCosts) ) * p_inco0(ttot,regi,teRegTechCosts);
+p_inco0(ttot,regi,teRegTechCosts) = (1 + p_tkpremused(regi,teRegTechCosts) ) * p_inco0(ttot,regi,teRegTechCosts);
 
 *** take region average p_tkpremused for global convergence price
 fm_dataglob("inco0",te)      = (1 + sum(regi, p_tkpremused(regi,te)) / card(regi)) * fm_dataglob("inco0",te);
 fm_dataglob("floorcost",te)  = (1 + sum(regi, p_tkpremused(regi,te)) / card(regi)) * fm_dataglob("floorcost",te);
 
+
 *** ====================== floor cost scenarios ===========================
-*** report old floor costs pre manipulation in non-default scenario
 $ifthen.floorscen not %cm_floorCostScen% == "default"
-    p_oldFloorCostdata(regi,teLearn(te)) = pm_data(regi,"floorcost",te);
+*** report old floor costs pre manipulation in non-default scenario
+  p_oldFloorCostdata(regi,teLearn(te)) = pm_data(regi,"floorcost",te);
+  display p_oldFloorCostdata;
 $endif.floorscen
 
-*** calculate floor costs for learning technologies if historical price structure prevails
 $ifthen.floorscen %cm_floorCostScen% == "pricestruc"
-*** compute maximum tech cost in 2015 for a given tech among regions
-    p_maxRegTechCost2015(teRegTechCosts) = SMax(regi, p_inco0("2015",regi,teRegTechCosts));
-*** take the ratio of the tech cost in 2015 and the maximum cost, and multiply with the global floor to get new floorcost that preserves the price structure
-    pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2015(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2015",regi,te) / p_maxRegTechCost2015(te);
-*** for newer data than 2015, use these
-    p_maxRegTechCost2020(teRegTechCosts) = SMax(regi, p_inco0("2020",regi,teRegTechCosts));
-    pm_data(regi,"floorcost",teLearn(te))$(p_maxRegTechCost2020(te) ne 0) = p_oldFloorCostdata(regi,te) * p_inco0("2020",regi,te) / p_maxRegTechCost2020(te);
+*' Floor costs based on current price structure: for selected technologie, floor cost follows the historical price structure across regions.
+*' The rescaling is relative to global average investment costs: if a region has twice higher costs than average at historical time steps
+*' then it will also have a twice higher floor cost.
+  pm_data(regi,"floorcost",te) $ (teRegTechCosts(te) and teLearn(te)) =
+      fm_dataglob("floorcost",te) * p_inco0("2015",regi,te)
+    / (sum(regi2, p_inco0("2015",regi2,te)) / card(regi2));
+  pm_data(regi,"floorcost",te) $ sameAs(te, "spv") =
+      fm_dataglob("floorcost",te) * p_inco0("2020",regi,te)
+    / (sum(regi2, p_inco0("2020",regi2,te)) / card(regi2));
+
+$elseif.floorscen %cm_floorCostScen% == "gdpBased"
+*' Floor costs for learning technologies based on GDP MER per capita in 2050 (see calculation below):
+*'   - regions with average GDP have multiplier 1
+*'   - regions with infinitely low GDP have multiplier 0.5
+*'   - regions with infinitely high GDP have multiplier 1.5
+*' Compute GDP MER per capita in 2050 per region and the population-weighted global average [$/capita]
+  p_floorcostRef(regi) = pm_gdp("2050",regi) / pm_pop("2050",regi) * 1000;
+  p_floorcostRef_world = sum(regi, pm_gdp("2050",regi)) / sum(regi, pm_pop("2050",regi)) * 1000;
+*' As CHA is a leader in novel technologies, we assume a floorcost that corresponds to countries with half its actual GDP/cap
+  p_floorcostRef(regi) $ (sameas(regi,"CHA")) = p_floorcostRef(regi) / 2;
+
+*' Apply sigmoid function (see shape on https://www.desmos.com/calculator/rbcjeoulgk):
+*' floor cost = standard floor cost  * (0.5 + 1 / (1 + exp(4 * (2050 global GDPpCap  / 2050 regional GDPpCap - 1))))
+  pm_data(regi,"floorcost",teLearn(te)) =
+        pm_data(regi,"floorcost",te) * (0.5 + 1 / (1 + exp(4 * (p_floorcostRef_world / p_floorcostRef(regi) - 1))));
 $endif.floorscen
 
-
-*** calculate floor costs for learning technologies if there is technology transfer
-$ifthen.floorscen %cm_floorCostScen% == "techtrans"
-*** compute maximum income GDP PPP per capita among regions in 2050
-    p_gdppcap2050_PPP(regi) = pm_gdp("2050",regi) / pm_shPPPMER(regi) / pm_pop("2050",regi);
-    p_maxPPP2050 = SMax(regi, p_gdppcap2050_PPP(regi));
-*** take the ratio of the PPP income and the maximum income, and multiply with the global floor to get new floorcost that simulates tech transfer where costs are solely dependent on local wages, not on IP rent
-    pm_data(regi,"floorcost",teLearn(te))$(p_maxPPP2050 ne 0) = p_oldFloorCostdata(regi,te) * p_gdppcap2050_PPP(regi) / p_maxPPP2050;
-$endif.floorscen
-
-*** In case regionally differentiated investment costs should be used the corresponding entries are revised:
-$ifthen.REG_techcosts not "%cm_techcosts%" == "GLO"   !! cm_techcosts is REG or REG2040
-*** calculate regional floor costs for learning technologies from ratio of global values
-*** take the ratio of the global floorcost to global initial cost, and multiply with the new regional cost to get new floorcost that should create reasonable learning paths around 2020
-    pm_data(regi,"floorcost",teLearn(te))$(teRegTechCosts(te) ) = p_inco0("2015",regi,te) * fm_dataglob("floorcost",te) / fm_dataglob("inco0",te);
-    pm_data(regi,"floorcost","spv") = p_inco0("2020",regi,"spv") * fm_dataglob("floorcost","spv") / fm_dataglob("inco0","spv") ; !! 2020 values are available for PV
-
-    pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2015",regi,teRegTechCosts);
-    pm_data(regi,"inco0","spv")          = p_inco0("2020",regi,"spv");
-$endif.REG_techcosts
 
 *** -------------------------------------------------------------------------------
 *** Calculate learning parameters
 *** See equations.gms for documentation of learning equations and floor costs
 *** -------------------------------------------------------------------------------
+loop(teLearn(te),
 *** calculate default learnable costs for learning technologies
-fm_dataglob("incolearn",teLearn(te))  = fm_dataglob("inco0",te)  - fm_dataglob("floorcost",te);
-pm_data(regi,"incolearn",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"floorcost",te);
+  fm_dataglob("incolearn",te)  = fm_dataglob("inco0",te)  - fm_dataglob("floorcost",te);
+  pm_data(regi,"incolearn",te) = pm_data(regi,"inco0",te) - pm_data(regi,"floorcost",te);
 
 *** global parameters: calculation for global level, that regional values can gradually converge to
 *** b' = \frac{I_0}{I_0 - F} b = \frac{I_0}{I_0 - F} \log_2(1-\lambda)
-fm_dataglob("learnExp_wFC",teLearn(te)) = fm_dataglob("inco0",te) / fm_dataglob("incolearn",te) * log(1 - fm_dataglob("learn",te)) / log(2);
+  fm_dataglob("learnExp_wFC",te) = fm_dataglob("inco0",te) / fm_dataglob("incolearn",te) * log(1 - fm_dataglob("learn",te)) / log(2);
 *** a' = \frac{I_0 - F}{C_0^{b'}}
-fm_dataglob("learnMult_wFC",teLearn(te)) = fm_dataglob("incolearn",te) / (fm_dataglob("ccap0",te) ** fm_dataglob("learnExp_wFC", te));
+  fm_dataglob("learnMult_wFC",te) = fm_dataglob("incolearn",te) / (fm_dataglob("ccap0",te) ** fm_dataglob("learnExp_wFC", te));
 
 *** regional parameters
-pm_data(regi,"learnExp_wFC",teLearn(te)) = pm_data(regi,"inco0",te) / pm_data(regi,"incolearn",te) * log(1 - pm_data(regi,"learn",te)) / log(2);
+  pm_data(regi,"learnExp_wFC",te) = pm_data(regi,"inco0",te) / pm_data(regi,"incolearn",te) * log(1 - pm_data(regi,"learn",te)) / log(2);
 
 $ifthen %cm_techcosts% == "GLO"
-    pm_data(regi,"learnMult_wFC",teLearn(te)) = pm_data(regi,"incolearn",te) / (sum(regi2,pm_data(regi2,"ccap0",te)) ** pm_data(regi,"learnExp_wFC",te));
+  pm_data(regi,"learnMult_wFC",te) = pm_data(regi,"incolearn",te) / sum(regi2,pm_data(regi2,"ccap0",te)) ** pm_data(regi,"learnExp_wFC",te);
 
 $else
 !! cm_techcosts is REG or REG2040
-*NB* read in vm_capCum(t0,regi,teLearn) from input.gdx to have info available for the recalibration of 2005 investment costs
-  Execute_Loadpoint 'input' p_capCum = vm_capCum.l;
-*** FS: in case technologies did not exist in gdx, set intial capacities to global initial value
-  p_capCum(tall,regi,te)$(not p_capCum(tall,regi,te)) = fm_dataglob("ccap0",te) / card(regi);
-*RP overwrite p_capCum by exogenous values for 2020
-  p_capCum("2020",regi,"spv")  = 0.6 / card(regi2);  !! roughly 600GW in 2020 globally
-*NB* this is the correction of the original parameter calibration
-  pm_data(regi,"learnMult_wFC",teLearn(te))  = pm_data(regi,"incolearn",te)    / (sum(regi2,p_capCum("2015",regi2,te))    ** pm_data(regi,"learnExp_wFC",te));
-*** initialize spv learning curve in 2020
-  pm_data(regi,"learnMult_wFC","spv")        = pm_data(regi,"incolearn","spv") / (sum(regi2,p_capCum("2020",regi2,"spv")) ** pm_data(regi,"learnExp_wFC","spv"));
-display p_capCum;
+    pm_data(regi,"learnMult_wFC",te)    = pm_data(regi,"incolearn",te)    / sum(regi2,p_capCum("2015",regi2,te))    ** pm_data(regi,"learnExp_wFC",te);
+    pm_data(regi,"learnMult_wFC","spv") = pm_data(regi,"incolearn","spv") / sum(regi2,p_capCum("2020",regi2,"spv")) ** pm_data(regi,"learnExp_wFC","spv");
 $endif
 
 *FS* initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020)
 *** equally for all regions based on global cumulative capacity of ccap0 and incolearn (difference between initial investment cost and floor cost)
-pm_data(regi,"learnMult_wFC",te)$( pm_data(regi,"tech_stat",te) eq 4 )
-  = pm_data(regi,"incolearn",te)
-  / ( fm_dataglob("ccap0",te)
-   ** pm_data(regi,"learnExp_wFC",te)
-    );
-
+  pm_data(regi,"learnMult_wFC",te) $ (pm_data(regi,"tech_stat",te) = 4)
+    = pm_data(regi,"incolearn",te) / fm_dataglob("ccap0",te) ** pm_data(regi,"learnExp_wFC",te);
+);
 display pm_data;
-*** -------------------------------------------------------------------------------
-*** end learning parameters
-*** -------------------------------------------------------------------------------
 
-*** Markup for advanced technologies
-table p_costMarkupAdvTech(s_statusTe,tall)              "Multiplicative investment cost markup for early time periods (until 2030) on advanced technologies (CCS, Hydrogen) that are not modeled through endogenous learning"
+
+*** =================== Markup for advanced technologies ========================
+table p_costMarkupAdvTech(s_statusTe,tall) "Multiplicative investment cost markup for early time periods (until 2030) on advanced technologies (CCS, Hydrogen) that are not modeled through endogenous learning"
 $include "./core/input/p_costMarkupAdvTech.prn"
 ;
 
@@ -456,62 +453,45 @@ $include "./core/input/p_costMarkupAdvTech.prn"
 p_costMarkupAdvTech("4",ttot) = p_costMarkupAdvTech("3",ttot);
 p_costMarkupAdvTech("5",ttot) = p_costMarkupAdvTech("3",ttot);
 
-loop (teNoLearn(te),
+loop(teNoLearn(te),
   pm_inco0_t(ttot,regi,te) = pm_data(regi,"inco0",te);
-  loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2035 ),
-    pm_inco0_t(ttot,regi,te)
-    = sum(s_statusTe$( s_statusTe.val eq pm_data(regi,"tech_stat",te) ),
-        p_costMarkupAdvTech(s_statusTe,ttot)
-      * pm_inco0_t(ttot,regi,te)
-      );
+  loop(s_statusTe $ (s_statusTe.val = fm_dataglob("tech_stat",te)),
+    pm_inco0_t(ttot,regi,te) $ (ttot.val >= 2005 and ttot.val <= 2030)
+      = p_costMarkupAdvTech(s_statusTe,ttot) * pm_inco0_t(ttot,regi,te);
   );
 );
+
 display pm_inco0_t;
 
-*** regional differentiation and convergence of non-learning technologies costs
+
+*** ============== Convergence of non-learning technologies costs ===================
 $ifthen.REG2040_techcosts "%cm_techcosts%" == "REG2040"   !! cm_techcosts REG2040
 *** for 2015-2040, use differentiated costs when available for a specific non-learning technology
-    loop(te$( teNoLearn(te) AND teRegTechCosts(te) ),
-      pm_inco0_t(ttot,regi,te)$( ttot.val ge 2015 AND ttot.val lt 2045)
-      = p_inco0(ttot,regi,te);
+  loop(te $ (teNoLearn(te) and teRegTechCosts(te)),
+    pm_inco0_t(ttot,regi,te) $ (ttot.val >= 2015 and ttot.val < 2040) = p_inco0(ttot,regi,te);
 
 *** after 2040, keep the same regionally differentiated costs
-      pm_inco0_t(ttot,regi,te)$( ttot.val gt 2040 ) = p_inco0("2040",regi,te);
-    );
+    pm_inco0_t(ttot,regi,te) $ (ttot.val >= 2040) = p_inco0("2040",regi,te);
+  );
 $endif.REG2040_techcosts
 
 $ifthen.REG_techcosts "%cm_techcosts%" == "REG"   !! cm_techcosts REG
 *** for 2015-2020, use differentiated costs when available for a specific non-learning technology
-    loop(te$( teNoLearn(te) AND teRegTechCosts(te) ),
-      pm_inco0_t(ttot,regi,te)$( ttot.val ge 2015 AND ttot.val lt 2025)
-      = p_inco0(ttot,regi,te);
+  loop(te $ (teNoLearn(te) and teRegTechCosts(te)),
+    pm_inco0_t(ttot,regi,te) $ (ttot.val >= 2015 and ttot.val <= 2020) = p_inco0(ttot,regi,te);
 
-*** from 2025 to c_teNoLearngConvEndYr, apply linear convergence of investment costs so that
+*** from 2025 to c_teNoLearnConvEndYr, apply linear convergence of investment costs so that
 *** all regions converge and stabilise at the technology cost data given in generisdata.prn
-      loop(ttot$( ttot.val ge 2020 AND ttot.val le c_teNoLearngConvEndYr ),
-        pm_inco0_t(ttot,regi,te)
-        = (
-            (pm_ttot_val(ttot) - 2020) * fm_dataglob("inco0",te)
-            + (c_teNoLearngConvEndYr - pm_ttot_val(ttot)) * pm_inco0_t("2020",regi,te)
-          )
-          / (c_teNoLearngConvEndYr - 2020);
-      );
-
-      pm_inco0_t(ttot,regi,te)$( ttot.val gt c_teNoLearngConvEndYr ) = fm_dataglob("inco0",te);
+    loop(ttot $ (ttot.val > 2020 and ttot.val < c_teNoLearnConvEndYr),
+      pm_inco0_t(ttot,regi,te)
+        = macro_interpolate(ttot.val, 2020, c_teNoLearnConvEndYr, p_inco0("2020",regi,te), fm_dataglob("inco0",te))
     );
 
-*** re-insert effect of costMarkupAdvTech for IGCC in the regionalized cost
-*** data, as the IEA numbers have unrealistically low IGCC costs in 2005-2020
-    loop (teNoLearn(te)$( sameas(te,"igcc") ),
-      loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2035 ),
-        pm_inco0_t(ttot,regi,te)
-        = sum(s_statusTe$( s_statusTe.val eq pm_data(regi,"tech_stat",te) ),
-            p_costMarkupAdvTech(s_statusTe,ttot)
-          * pm_inco0_t(ttot,regi,te)
-          );
-      );
-    );
+    pm_inco0_t(ttot,regi,te) $ (ttot.val >= c_teNoLearnConvEndYr) = fm_dataglob("inco0",te);
+  );
 $endif.REG_techcosts
+
+
 
 *------------------------------------------------------------------------------------
 ***          Technology data input read-in and manipulation    END
@@ -561,15 +541,15 @@ $offdelim
 
 *** carbon intensities of coal, oil, and gas
 *** emissions factor of primary energy fossil fuels
-pm_cintraw("pecoal") = 26.1 / s_zj_2_twa;
-pm_cintraw("peoil")  = 20.0 / s_zj_2_twa;
-pm_cintraw("pegas")  = 15.0 / s_zj_2_twa;
+pm_cintraw("pecoal") = 26.1 / s_ZJ_2_TWa;
+pm_cintraw("peoil")  = 20.0 / s_ZJ_2_TWa;
+pm_cintraw("pegas")  = 15.0 / s_ZJ_2_TWa;
 
 $ifthen.tech_CO2capturerate not "%c_tech_CO2capturerate%" == "off"
 p_PECarriers_CarbonContent(peFos)=pm_cintraw(peFos);
 *** From conversation: 25 GtC/ZJ is the assumed carbon content of PE biomass (makes default bioh2c capture rate 90%)
 *** Convert to GtC/TWa
-p_PECarriers_CarbonContent("pebiolc")=25 / s_zj_2_twa;
+p_PECarriers_CarbonContent("pebiolc")=25 / s_ZJ_2_TWa;
 loop(pe2se(entyPe,entySe,te)$(p_tech_co2capturerate(te)),
   if(p_tech_co2capturerate(te) gt 0,
     if(p_tech_co2capturerate(te) ge 1,
@@ -577,7 +557,7 @@ loop(pe2se(entyPe,entySe,te)$(p_tech_co2capturerate(te)),
 	  );
 *** Alter CO2 capture rate in f_dataemiglob
 *** f_dataemiglob is given in GtC/ZJ
-    f_dataemiglob(entyPe,entySe,te,"cco2") = p_tech_co2capturerate(te) * p_PECarriers_CarbonContent(entyPe) * s_zj_2_twa;
+    f_dataemiglob(entyPe,entySe,te,"cco2") = p_tech_co2capturerate(te) * p_PECarriers_CarbonContent(entyPe) * s_ZJ_2_TWa;
     if(sameAs(entyPe,"pebiolc"),
       f_dataemiglob(entyPe,entySe,te,"co2") = -f_dataemiglob(entyPe,entySe,te,"cco2") ;
     else
@@ -602,8 +582,8 @@ $ifthen "%c_SSP_forcing_adjust%" == "forcing_SSP5"
 $endif
 );
 *nb* specific emissions of transformation technologies (co2 in gtc/zj -> conv. gtc/twyr):
-f_dataemiglob(enty,enty2,te,"co2")$pe2se(enty,enty2,te)       = 1/s_zj_2_twa * f_dataemiglob(enty,enty2,te,"co2");
-f_dataemiglob(enty,enty2,te,"cco2")                           = 1/s_zj_2_twa * f_dataemiglob(enty,enty2,te,"cco2");
+f_dataemiglob(enty,enty2,te,"co2")$pe2se(enty,enty2,te)       = 1/s_ZJ_2_TWa * f_dataemiglob(enty,enty2,te,"co2");
+f_dataemiglob(enty,enty2,te,"cco2")                           = 1/s_ZJ_2_TWa * f_dataemiglob(enty,enty2,te,"cco2");
 
 table f_dataetaglob(tall,all_te)                      "global eta data"
 $include "./core/input/generisdata_varying_eta.prn"
@@ -702,7 +682,7 @@ pm_histCap("2020",regi,teReNoBio) = max(pm_histCap("2015",regi,teReNoBio), pm_hi
 pm_histCap("2025",regi,teReNoBio) = max(pm_histCap("2020",regi,teReNoBio), pm_histCap("2025",regi,teReNoBio));
 
 *** calculate historic capacity additions
-pm_delta_histCap(tall,regi,te) = pm_histCap(tall,regi,te) - pm_histCap(tall-1,regi,te);
+pm_delta_histCap(ttot,regi,te) = pm_histCap(ttot,regi,te) - pm_histCap(ttot-1,regi,te);
 
 *** historical PE installed capacity
 table p_PE_histCap(tall,all_regi,all_enty,all_enty) "historical installed capacity (TW)"
@@ -752,6 +732,20 @@ pm_cf(ttot,regi,"ngt")$(ttot.val eq 2030) = 0.8 * pm_cf(ttot,regi,"ngt");
 pm_cf(ttot,regi,"ngt")$(ttot.val eq 2035) = 0.7 * pm_cf(ttot,regi,"ngt");
 pm_cf(ttot,regi,"ngt")$(ttot.val ge 2040) = 0.6 * pm_cf(ttot,regi,"ngt");
 
+
+*** assume that standard coal power plants also go in peak load mode over time as VRE share increases
+pm_cf(ttot,regi,"pc")$(ttot.val eq 2035) = 0.9 * pm_cf(ttot,regi,"pc");
+pm_cf(ttot,regi,"pc")$(ttot.val eq 2040) = 0.8 * pm_cf(ttot,regi,"pc");
+pm_cf(ttot,regi,"pc")$(ttot.val eq 2045) = 0.7 * pm_cf(ttot,regi,"pc");
+pm_cf(ttot,regi,"pc")$(ttot.val ge 2050) = 0.5 * pm_cf(ttot,regi,"pc");
+
+*** modify short-term coal capacity factor for China based on latest 2025 EMBER data 
+*** (https://ember-energy.org/data/yearly-electricity-data/)
+*** and assumption that quite some renewables + coal over-capacity will be built until 2030, so coal power CF goes down
+pm_cf("2025",regi,"pc")$( sameas(regi,"CHA")) = 0.55;
+pm_cf("2030",regi,"pc")$( sameas(regi,"CHA")) = 0.48;
+
+
 *RP* set H2 turbines to the same CF values
 pm_cf(ttot,regi,"h2turb")$(ttot.val ge 2025) = pm_cf(ttot,regi,"ngt");
 pm_cf(ttot,regi,"h2turbVRE")$(ttot.val ge 2025) = pm_cf(ttot,regi,"ngt");
@@ -765,18 +759,46 @@ pm_cf(ttot,regi,"biodigest") = 0.9;
 
 *** Region- and tech-specific early retirement rates
 loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi),
-  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi)) = pm_extRegiEarlyRetiRate(ext_regi);
+  pm_regiEarlyRetiRate(t,regi,teEarlyReti)$(regi_group(ext_regi,regi)) = pm_extRegiEarlyRetiRate(ext_regi);
 );
-***Tech-specific*
-*RP*: reduce early retirement for technologies with additional characteristics that are difficult to represent in REMIND, eg. industries built around heating/CHP plants, or flexibility from ngt plants
+
+
+*** for runs with all EU subregions (regionmapping21_EU21), increase early retirement rates for the EU regions
+*** because the higher regional resolution already introduces more intertia to the phase-out dynamics
+*** This increase of the parameter value between the two regional resolution actually makes H12 results better match EU21 results. 
+*** The larger heterogeneity of the EU subregions means that the single-region version needs less flexibility to change at the 
+*** same speed that the sum over the many regions can change.
+*** check whether DEU, FRA, ENC, ESC, ESW, ECS all contained in regi set
+if(       (sum(regi$sameas(regi,"DEU"),1) > 0)
+      and (sum(regi$sameas(regi,"FRA"),1) > 0)
+      and (sum(regi$sameas(regi,"ENC"),1) > 0)
+      and (sum(regi$sameas(regi,"ESC"),1) > 0)
+      and (sum(regi$sameas(regi,"ESW"),1) > 0)
+      and (sum(regi$sameas(regi,"ECS"),1) > 0),
+*** increase default early retirement rates by 2%/yr for EU subregions
+  loop(regi$regi_group("EUR_regi",regi),
+    pm_regiEarlyRetiRate(t,regi,teEarlyReti) = pm_regiEarlyRetiRate(t,regi,teEarlyReti) + 0.02
+  );
+);
+
+
+*** Technology-specific adaptations of maximum allowed annual early retirement rates
+*** increase early retirement for technologies that are old and should be phased out faster
+pm_regiEarlyRetiRate(t,regi,"pc")      = 1.2 * pm_regiEarlyRetiRate(t,regi,"pc");       !! standard coal power plants, pc, are a relatively old technology that should be allowed to retire faster
+*** reduce early retirement for technologies with additional characteristics that are difficult to represent in REMIND, eg. industries built around heating/CHP plants, or flexibility from ngt plants
 pm_regiEarlyRetiRate(t,regi,"ngt")     = 0.3 * pm_regiEarlyRetiRate(t,regi,"ngt");      !! ngt should only be phased out very slowly, as they provide flexibility - which REMIND is not too good at capturing endogeneously
-pm_regiEarlyRetiRate(t,regi,"gaschp")  = 0.5 * pm_regiEarlyRetiRate(t,regi,"gaschp");   !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
-pm_regiEarlyRetiRate(t,regi,"coalchp") = 0.5 * pm_regiEarlyRetiRate(t,regi,"coalchp");  !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
-pm_regiEarlyRetiRate(t,regi,"gashp")   = 0.5 * pm_regiEarlyRetiRate(t,regi,"gashp");    !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
-pm_regiEarlyRetiRate(t,regi,"coalhp")  = 0.5 * pm_regiEarlyRetiRate(t,regi,"coalhp");   !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
-pm_regiEarlyRetiRate(t,regi,"biohp")   = 0.25 * pm_regiEarlyRetiRate(t,regi,"biohp");   !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
-pm_regiEarlyRetiRate(t,regi,"biochp")  = 0.25 * pm_regiEarlyRetiRate(t,regi,"biochp");  !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
-pm_regiEarlyRetiRate(t,regi,"bioigcc") = 0.25 * pm_regiEarlyRetiRate(t,regi,"bioigcc"); !! reduce bio early retirement rate
+pm_regiEarlyRetiRate(t,regi,"gaschp")  = 0.7 * pm_regiEarlyRetiRate(t,regi,"gaschp");   !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
+pm_regiEarlyRetiRate(t,regi,"coalchp") = 0.7 * pm_regiEarlyRetiRate(t,regi,"coalchp");  !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
+pm_regiEarlyRetiRate(t,regi,"gashp")   = 0.5 * pm_regiEarlyRetiRate(t,regi,"gashp");    !! district heating plants should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
+pm_regiEarlyRetiRate(t,regi,"coalhp")  = 0.5 * pm_regiEarlyRetiRate(t,regi,"coalhp");   !! district heating plants should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
+
+pm_regiEarlyRetiRate(t,regi,"bf")   = 0.25 * pm_regiEarlyRetiRate(t,regi,"bf");          !! bf-bof plants should only be phased out slowly, as they are capital-intensive and typically operate as long as possible
+pm_regiEarlyRetiRate(t,regi,"bof")  = 0.25 * pm_regiEarlyRetiRate(t,regi,"bof");         !! bf-bof plants should only be phased out slowly, as they are capital-intensive and typically operate as long as possible
+pm_regiEarlyRetiRate(t,regi,"bfcc")   = 0.25 * pm_regiEarlyRetiRate(t,regi,"bfcc");      !! bf-bof plants should only be phased out slowly, as they are capital-intensive and typically operate as long as possible
+
+pm_regiEarlyRetiRate(t,regi,"biohp")   = 0.25 * pm_regiEarlyRetiRate(t,regi,"biohp");   !! biomass technologies should only be phased-out slowly, case for their early retirement is shifting the allocation of biomass across technologies to optimize biogenic carbon capture/use
+pm_regiEarlyRetiRate(t,regi,"biochp")  = 0.25 * pm_regiEarlyRetiRate(t,regi,"biochp");  !! biomass technologies should only be phased-out slowly, case for their early retirement is shifting the allocation of biomass across technologies to optimize biogenic carbon capture/use
+pm_regiEarlyRetiRate(t,regi,"bioigcc") = 0.25 * pm_regiEarlyRetiRate(t,regi,"bioigcc"); !! biomass technologies should only be phased-out slowly, case for their early retirement is shifting the allocation of biomass across technologies to optimize biogenic carbon capture/use
 
 $ifthen.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
 loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
@@ -784,17 +806,6 @@ loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
 );
 $endif.tech_earlyreti
 
-*** Time-dependent early retirement rates in Baseline scenarios
-$ifthen.Base_Cprice %carbonprice% == "none"
-$ifthen.Base_techpol %techpol% == "none"
-*** CG: Allow no early retirement in future periods under baseline for developing countries
-loop(regi,
-if ( p_developmentState("2015",regi) < 1,
-pm_regiEarlyRetiRate(t,regi,"pc")= 0;
-);
-);
-$endif.Base_techpol
-$endif.Base_Cprice
 
 display pm_regiEarlyRetiRate;
 
@@ -877,6 +888,33 @@ if(pm_NuclearConstraint("2020",regi,"tnrs")<0,
     pm_NuclearConstraint("2020",regi,"tnrs")=0;
 );
 );
+
+*** read project pipeline data of capacities used for setting historical and near-term bounds across technologies
+*** coal power projects from Global Energy Monitor
+*** CO2 storage capacities from IEA CCU database
+parameter p_CapacityBounds(ttot,all_regi,all_te,project_status)        "technology capacity for historical and near-term time steps by project status, project status categories are operational, under construction and planned [GW(output) for energy technologies, MtCO2/yr for carbon management technologies]"
+/
+$ondelim
+$include "./core/input/p_CapacityBounds.cs4r"
+$offdelim
+/;
+
+
+*** assumptions on share of completed projects in near-term time steps for projects that are "under construction" or "planned"
+p_ProjectsCompletionShare(ttot,regi,te,project_status) = 0;
+
+*** so far this generic near-term bounds implementation only makes assumptions on the completion of coal power projects (pc)
+$ifthen.ProjectsNearTerm %c_NearTermProjectCompletion% == "conservative"
+*** for coal power assume that 90% of projects under construction will actually be completed in time as well as 50% of currently planned projects
+p_ProjectsCompletionShare(ttot,regi,"pc","construction") = 0.9;
+p_ProjectsCompletionShare(ttot,regi,"pc","planned") = 0.5;
+$elseif.ProjectsNearTerm %c_NearTermProjectCompletion% == "transformative"
+*** for coal power assume that 30%% of projects under construction will actually be completed and no currently planned projects
+p_ProjectsCompletionShare(ttot,regi,"pc","construction") = 0.3;
+$endif.ProjectsNearTerm
+
+
+
 
 *** read in data on CCS capacities and announced projects used as upper and lower bound on vm_co2CCS in 2025 and 2030
 parameter p_boundCapCCS(ttot,all_regi,project_status)        "installed and planned capacity of CCS"
@@ -1079,7 +1117,7 @@ display p_datapot, pm_dataren;
 *** --------------------------------------------------------------------------
 loop(regi,
   loop(teReNoBio(te),
-    p_aux_capToDistr(regi,te) = pm_histCap("2015",regi,te) $ (pm_histCap("2015",regi,te) gt 1e-10);
+    p_aux_capToDistr(regi,te) = pm_histCap("2015",regi,te) $ (pm_histCap("2015",regi,te) gt sm_eps);
 
 *** Knowing the historical capacity (pm_histCap) in 2015, let us estimate on which grades this capacity was distributed.
 *** We assume that the best grades were filled first, but only up to 80% of their potential.
@@ -1100,7 +1138,7 @@ loop(regi,
           p_aux_capThisGrade(regi,te,rlf) * pm_dataren(regi,"nur",rlf,te))
       /
         (sum(teRe2rlfDetail(te,rlf), p_aux_capThisGrade(regi,te,rlf))
-        + 1e-10)
+        + sm_eps)
   );    !! teReNoBio
 );      !! regi
 
@@ -1163,12 +1201,24 @@ loop(te,
 teEtaConst(te) = not teEtaIncr(te);
 display teEtaIncr;
 
-*** import regionalized CCS constraints:
-table pm_dataccs(all_regi,char,rlf)                       "maximum CO2 storage capacity using CCS technology. Unit: GtC"
+*** import regionalized storage potential:
+table f_geoStorPot(all_regi,char)                       "different categories of geological storage potential for CO2. Unit: GtC"
 $ondelim
-$include "./core/input/pm_dataccs.cs3r"
+$include "./core/input/f_geoStorPot.cs3r"
 $offdelim
 ;
+
+*** set onshore and offshore storage potential according to c_geoStorPotScen
+if (c_geoStorPotScen eq 1,
+  pm_dataccs(all_regi, "quan", "ccsinjeon")  = f_geoStorPot(all_regi, "potTechOn");
+  pm_dataccs(all_regi, "quan", "ccsinjeoff") = f_geoStorPot(all_regi, "potTechOff");
+elseif (c_geoStorPotScen eq 2),
+  pm_dataccs(all_regi, "quan", "ccsinjeon")  = f_geoStorPot(all_regi, "potLimOn");
+  pm_dataccs(all_regi, "quan", "ccsinjeoff") = f_geoStorPot(all_regi, "potLimOff");
+elseif (c_geoStorPotScen eq 3),
+  pm_dataccs(all_regi, "quan", "ccsinjeon")  = f_geoStorPot(all_regi, "mixedOld");
+  pm_dataccs(all_regi, "quan", "ccsinjeoff") = 0.00001;
+);
 
 ***-----------------------------------------------------------------------------
 *** adjustment cost parameter
@@ -1209,7 +1259,7 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,"geohdr")     = 0.1;
   p_adj_seed_te(ttot,regi,"hydro")      = 0.25;
   p_adj_seed_te(ttot,regi,"windoff")    = 0.5;
-  p_adj_seed_te(ttot,regi,"spv")        = 2.00;
+  p_adj_seed_te(ttot,regi,"spv")        = 1.5;
   p_adj_seed_te(ttot,regi,"csp")        = 0.25;
   p_adj_seed_te(ttot,regi,"tnrs")       = 0.25;
 *** green hydrogen and synthetic fuels
@@ -1222,8 +1272,8 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,'oae_el')     = 0.25;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 *** steel technologies
-  p_adj_seed_te(ttot,regi,"bfcc")       = 0.05;
-  p_adj_seed_te(ttot,regi,"idrcc")      = 0.05;
+  p_adj_seed_te(ttot,regi,"bfcc")       = 0.02;
+  p_adj_seed_te(ttot,regi,"idrcc")      = 0.02;
 $endif.cm_subsec_model_steel
 
 *RP: for comparison of different technologies:
@@ -1256,7 +1306,7 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,"hydro")        = 1.0;
   p_adj_coeff(ttot,regi,"windon")       = 0.25;
   p_adj_coeff(ttot,regi,"windoff")      = 0.35;
-  p_adj_coeff(ttot,regi,"spv")          = 0.15;
+  p_adj_coeff(ttot,regi,"spv")          = 0.18;
   p_adj_coeff(ttot,regi,"tnrs")         = 1.0;
 *** VRE storage and grid
   p_adj_coeff(ttot,regi,teGrid)         = 0.3;
@@ -1266,7 +1316,7 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,"MeOH")         = 0.5;
   p_adj_coeff(ttot,regi,"h22ch4")       = 0.5;
 *** CO2 storage and CDR technologies
-  p_adj_coeff(ttot,regi,"ccsinje")      = 1.0;
+  p_adj_coeff(ttot,regi,teccsinje)      = 1.0;
   p_adj_coeff(ttot,regi,"biopyronly")   = 0.55; !! like biochp and bioigcc;
   p_adj_coeff(ttot,regi,"biopyrhe")     = 0.55; !! like biochp and bioigcc;
   p_adj_coeff(ttot,regi,"biopyrchp")    = 0.55; !! like biochp and bioigcc;
@@ -1276,8 +1326,8 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,'oae_el')       = 0.8;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 *** steel technologies
-  p_adj_coeff(ttot,regi,"bfcc")         = 1.0;
-  p_adj_coeff(ttot,regi,"idrcc")        = 1.0;
+  p_adj_coeff(ttot,regi,"bfcc")         = 4.0;
+  p_adj_coeff(ttot,regi,"idrcc")        = 4.0;
 $endif.cm_subsec_model_steel
 );
 
@@ -1531,9 +1581,9 @@ $include "./core/input/f_nechem_emissionFactors.cs4r"
 $offdelim
 /;
 
-pm_emifacNonEnergy(ttot,regi,"sesofos", "fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids")  / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"seliqfos","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
-pm_emifacNonEnergy(ttot,regi,"segafos", "fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases")   / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,"sesofos", "fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids")  / s_ZJ_2_TWa;
+pm_emifacNonEnergy(ttot,regi,"seliqfos","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_ZJ_2_TWa;
+pm_emifacNonEnergy(ttot,regi,"segafos", "fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases")   / s_ZJ_2_TWa;
 
 ***------ Read in projections for incineration rates of plastic waste---
 *** "incineration rates [fraction]"
@@ -1570,44 +1620,90 @@ loop(te,
 
 
 *** ---- FE demand trajectories for calibration -------------------------------
-*** also used for limiting secondary steel demand in baseline and policy
-*** scenarios
+
 Parameter
-f_fedemand(tall,all_regi,all_demScen,all_in)   "final energy demand"
+f_fedemandInd(tall,all_regi,all_demScen,all_in) "final energy demand in industry"
 /
 $ondelim
-$include "./core/input/f_fedemand.cs4r"
+$include "./core/input/f_fedemandInd.cs4r"
 $offdelim
 /;
 
-*** use cm_demScen for Industry and Buildings
-*** cm_GDPpopScen will be used for Transport (EDGE-T) (see p29_trpdemand)
-pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
-*** data input for industry FE that is no part of the CES tree
-pm_fedemand(tall,all_regi,ppfen_no_ces_use) = f_fedemand(tall,all_regi,"%cm_demScen%",ppfen_no_ces_use);
+pm_fedemandInd(t,regi,in) = f_fedemandInd(t,regi,"%cm_demScen%",in);
+*** data input for industry FE that is no part of the CES tree 
+*** needed for process-based steel implementation, where these items are not part of "in"
+pm_fedemandInd(t,regi,ppfen_no_ces_use) = f_fedemandInd(t,regi,"%cm_demScen%",ppfen_no_ces_use);
 
 *** RCP-dependent demands in buildings (climate impact)
-$ifthen.cm_rcp_scen_build not "%cm_rcp_scen_build%" == "none"
-Parameter f_fedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in) "RCP-dependent final energy demand in buildings"
+Parameter 
+f_fedemandBuild(tall,all_regi,all_demScen,all_rcp_scen,all_in) "RCP-dependent final energy demand in buildings"
 /
 $ondelim
-$include "./core/input/f_fedemand_build.cs4r"
+$include "./core/input/f_fedemandBuild.cs4r"
 $offdelim
 /;
 
-
-pm_fedemand(t,regi,cal_ppf_buildings_dyn36) = f_fedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
-$endif.cm_rcp_scen_build
-
+pm_fedemandBuild(t,regi,cal_ppf_buildings_dyn36) = f_fedemandBuild(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 
 *** Scale FE demand across industry and building sectors
 $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
   loop((tall,tall2,all_regi) $ pm_scaleDemand(tall,tall2,all_regi),
 *FL*  rescaled demand                = normal demand                  * [ scaling factor                      + (1-scaling factor)                      * remaining phase-in, between zero and one               ]
-      pm_fedemand(t,all_regi,all_in) = pm_fedemand(t,all_regi,all_in) * ( pm_scaleDemand(tall,tall2,all_regi) + (1-pm_scaleDemand(tall,tall2,all_regi)) * min(1, max(0, tall2.val-t.val) / (tall2.val-tall.val)) );
+      pm_fedemandInd(t,all_regi,all_in) = pm_fedemandInd(t,all_regi,all_in) * ( pm_scaleDemand(tall,tall2,all_regi) + (1-pm_scaleDemand(tall,tall2,all_regi)) * min(1, max(0, tall2.val-t.val) / (tall2.val-tall.val)) );
+      pm_fedemandBuild(t,all_regi,all_in) = pm_fedemandBuild(t,all_regi,all_in) * ( pm_scaleDemand(tall,tall2,all_regi) + (1-pm_scaleDemand(tall,tall2,all_regi)) * min(1, max(0, tall2.val-t.val) / (tall2.val-tall.val)) );
   );
 $endif.scaleDemand
 
+*** Scale FE demand in building sectors
+$ifthen.scaleDemandBuildTable not "%cm_scaleDemandBuildTable%" == "off"
+
+*** File should have the following format:
+*** 2025,USA,1.00
+*** 2030,USA,0.9
+*** 2035,USA,0.8
+
+
+Parameter f_scaleDemandBuildTable(ttot,all_regi) "Rescaling factor on industry final energy and usable energy demand, read-in from a table"
+/
+$ondelim
+$include "./core/input/%cm_scaleDemandBuildTable%.cs4r"
+$offdelim
+/;
+
+pm_scaleDemandBuildTable(t,regi) = f_scaleDemandBuildTable(t,regi);
+pm_scaleDemandBuildTable(t,regi) $ (t.val < 2030 ) = 1;  !! ensure that historic data is not changed
+pm_scaleDemandBuildTable(t,regi) $ ( pm_scaleDemandBuildTable(t,regi) le 0) = 1;  !! If no multiplier was entered or a negative value was entered, override by 1. (FE values <0 are not possible)
+pm_scaleDemandBuildTable(t,regi) $ (t.val > 2100 ) = pm_scaleDemandBuildTable("2100",regi); !! continue 2100 multiplier until end of time
+
+  loop( (t,regi,in) $ in_buildings_dyn36(in) ,
+    pm_fedemandBuild(t,regi,in) = pm_fedemandBuild(t,regi,in) * pm_scaleDemandBuildTable(t,regi)
+  );
+$endif.scaleDemandBuildTable
+
+*** Scale FE demand in industry sectors
+$ifthen.scaleDemandIndTable not "%c_scaleDemandIndTable%" == "off"
+
+*** File should have the following format:
+*** 2025,USA,1.00
+*** 2030,USA,0.9
+*** 2035,USA,0.8
+
+Parameter f_scaleDemandIndTable(ttot,all_regi) "Rescaling factor on industry final energy and usable energy demand, read-in from a table"
+/
+$ondelim
+$include "./core/input/%c_scaleDemandIndTable%.cs4r"
+$offdelim
+/;
+
+p_scaleDemandIndTable(t,regi) $ (t.val > 2025 ) = f_scaleDemandIndTable(t,regi);
+p_scaleDemandIndTable(t,regi) $ (t.val < 2030 ) = 1;  !! ensure that historic data is not changed
+p_scaleDemandIndTable(t,regi) $ ( p_scaleDemandIndTable(t,regi) le 0) = 1;  !! If no multiplier was entered or a negative value was entered, override by 1. (FE values <0 are not possible)
+p_scaleDemandIndTable(t,regi) $ (t.val > 2100 ) = p_scaleDemandIndTable("2100",regi); !! continue 2100 multiplier until end of time
+
+  loop( (t,regi,in) $ in_industry_dyn37(in) ,
+    pm_fedemandInd(t,regi,in) = pm_fedemandInd(t,regi,in) * p_scaleDemandIndTable(t,regi)
+  );
+$endif.scaleDemandIndTable
 
 *** initialize absolute deviation of global cumulated CO2 emissions budget from target budget
 sm_globalBudget_absDev = 0;

@@ -12,23 +12,23 @@
 if(cm_iterative_target_adj eq 5,
 *** 1. Get the relevant information from this iteration
   !! Update the actual budget by region and save across iterations for debugging
-  p45_actualbudgetco2Regi_2100(regi) = sum(t$(t.val eq 2100), pm_actualbudgetco2Regi(t,regi)); 
-  p45_actualbudgetco2Regi_2100_iter(iteration, regi) = p45_actualbudgetco2Regi_2100(regi);
+  p45_actualbudgetco2eqRegi_2100(regi) = sum(t$(t.val eq 2100), pm_actualbudgetco2eqRegi(t,regi)); 
+  p45_actualbudgetco2eqRegi_2100_iter(iteration, regi) = p45_actualbudgetco2eqRegi_2100(regi);
 
   !! Save pm_taxCO2eq over iterations
   pm_taxCO2eq_iter(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);
   
   !! Compute deviation from regional target budget 
-  pm_budgetDeviation(regi) =  p45_actualbudgetco2Regi_2100(regi) - p45_budgetCO2from2020Regi(regi);
+  pm_budgetDeviation(regi) =  p45_actualbudgetco2eqRegi_2100(regi) - p45_budgetCO2from2020Regi(regi);
   p45_budgetDeviation_iter(iteration, regi) = pm_budgetDeviation(regi) ; 
 
   !!  Save the best available information about the reaction of the actual budget to the change in prices 
   if (iteration.val ge 2,
      !! determine the (price change / budget change) in the last iteration. If no change in tax, then 0; no change of budget at all is very unlikely, thus negligible risk of infeasibility
       loop(regi,
-        if ((p45_actualbudgetco2Regi_2100_iter(iteration, regi) -  p45_actualbudgetco2Regi_2100_iter(iteration - 1, regi)) ne 0,
+        if ((p45_actualbudgetco2eqRegi_2100_iter(iteration, regi) -  p45_actualbudgetco2eqRegi_2100_iter(iteration - 1, regi)) ne 0,
         p45_TaxBudgetSlopeCurrent(regi) = (pm_taxCO2eq_iter(iteration, "2100", regi) - pm_taxCO2eq_iter(iteration-1, "2100", regi))
-                                          / (p45_actualbudgetco2Regi_2100_iter(iteration, regi) -  p45_actualbudgetco2Regi_2100_iter(iteration - 1, regi));
+                                          / (p45_actualbudgetco2eqRegi_2100_iter(iteration, regi) -  p45_actualbudgetco2eqRegi_2100_iter(iteration - 1, regi));
         else
         p45_TaxBudgetSlopeCurrent(regi) = 1000; !! TBD: it has now happened, that there was absolutely no change in the budget between iterations. 
                                                 !! How to deal with that case? Preliminary idea: 1000 as a marker for this case
@@ -67,21 +67,21 @@ else   !! if not yet within tolerance
     !! a) positive budget target 
     if (p45_budgetCO2from2020Regi(regi) > 0,   
       !! a1) positive actual budget        => case analogous to global target default case: ratio = (actual budget/target)
-          if (p45_actualbudgetco2Regi_2100(regi) >= 0,
-            p45_factorRescale_taxCO2Regi(iteration, regi) = max(0.5, (p45_actualbudgetco2Regi_2100(regi) / p45_budgetCO2from2020Regi(regi))); 
+          if (p45_actualbudgetco2eqRegi_2100(regi) >= 0,
+            p45_factorRescale_taxCO2Regi(iteration, regi) = max(0.5, (p45_actualbudgetco2eqRegi_2100(regi) / p45_budgetCO2from2020Regi(regi))); 
       !! a2) negative actual budget       => ratio = (positive target) / (absolute difference). Potential problem: Approaches 1 for small negative budgets              
           else 
             p45_factorRescale_taxCO2Regi(iteration, regi) = 
-                max(0.5, (p45_budgetCO2from2020Regi(regi) / (p45_budgetCO2from2020Regi(regi) + abs(p45_actualbudgetco2Regi_2100(regi))) ) ) ;
+                max(0.5, (p45_budgetCO2from2020Regi(regi) / (p45_budgetCO2from2020Regi(regi) + abs(p45_actualbudgetco2eqRegi_2100(regi))) ) ) ;
          )  !! positive target sub-categories             
     !! b) negative budget target
     else
       !! b1) positive actual budget             => take the absolute deviation & rescale to get a factor: ratio = log(actual + asb(target))
-           if (p45_actualbudgetco2Regi_2100(regi) >= 0,
-             p45_factorRescale_taxCO2Regi(iteration, regi) =  log(abs(p45_budgetCO2from2020Regi(regi)) + p45_actualbudgetco2Regi_2100(regi)) 
+           if (p45_actualbudgetco2eqRegi_2100(regi) >= 0,
+             p45_factorRescale_taxCO2Regi(iteration, regi) =  log(abs(p45_budgetCO2from2020Regi(regi)) + p45_actualbudgetco2eqRegi_2100(regi)) 
       !! b2) negative actual budget         => case reverse to global target default case: ratio = (target/actual budget)
           else
-            p45_factorRescale_taxCO2Regi(iteration, regi) = max(0.5, (p45_budgetCO2from2020Regi(regi) / p45_actualbudgetco2Regi_2100(regi))))
+            p45_factorRescale_taxCO2Regi(iteration, regi) = max(0.5, (p45_budgetCO2from2020Regi(regi) / p45_actualbudgetco2eqRegi_2100(regi))))
           )  !! target type
       ); !! earlier vs. later iterations
     ); !! tolerance check
@@ -132,7 +132,7 @@ else   !! if not yet within tolerance
   ); !! if iteration far enough
 
 !! Simultaneous up- and downward adjustment of carbon prices in early iterations
-if (iteration.val le 12,
+if (iteration.val le 30,
   p45_factorRescale_taxCO2Regi_Final(iteration, regi) = pm_factorRescale_taxCO2Regi_Funneled2(iteration, regi);
   !! For later iterations, set the adjustment factors to 1 according to iteration number
   else
@@ -169,9 +169,11 @@ if(cm_CPslopeAdjustment = 0,
 
     !! Adjust the shape if the peak-budget carbon price shape is set
   if(cm_taxCO2_Shape eq 2,
-  !! After cm_peakBudgYr, the global anchor trajectory increases linearly with fixed annual increase given by cm_taxCO2_IncAfterPeakBudgYr
-        p45_taxCO2eq_anchorRegi(t,regi)$(t.val gt cm_peakBudgYr) = sum(t2$(t2.val eq cm_peakBudgYr), p45_taxCO2eq_anchorRegi(t2,regi)) !! CO2 tax in peak budget year
-                                                      + (t.val - cm_peakBudgYr) * cm_taxCO2_IncAfterPeakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year 
+  loop(regi,
+    !! After the regional peakBudgYr, the regional anchor trajectory increases linearly with fixed annual increase given by cm_taxCO2_IncAfterPeakBudgYr
+        p45_taxCO2eq_anchorRegi(t,regi)$(t.val gt p45_peakBudgYr_regi(regi)) = sum(t2$(t2.val eq p45_peakBudgYr_regi(regi)), p45_taxCO2eq_anchorRegi(t2,regi)) !! CO2 tax in peak budget year
+                                                      + (t.val - p45_peakBudgYr_regi(regi)) * cm_taxCO2_IncAfterPeakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year 
+    );
   ); !! peak shape
 );  !! no CP slope adjustment
 
@@ -184,27 +186,28 @@ if(cm_CPslopeAdjustment = 1,
 
     !! Option (a): If peak-budget shape:
   if(cm_taxCO2_Shape eq 2,
-      !! B4.3a: Set the rescaled anchor trajectory as of cm_peakBudgYr
-        p45_taxCO2eq_anchorRegi(ttot,regi)$(ttot.val eq cm_peakBudgYr) = 
+      loop(regi,
+      !! B4.3a: Set the rescaled anchor trajectory as of the regional peak budget year
+        p45_taxCO2eq_anchorRegi(ttot,regi)$(ttot.val eq p45_peakBudgYr_regi(regi)) = 
                     p45_temp_anchor(ttot,regi) * p45_factorRescale_taxCO2Regi_Final(iteration,regi);
       !! Set the peakBudgYr value plus predefined increase thereafter (the only currently tested version is post-increase slope = 0) (necessary because initial shape & thus all following are taken from the anchor trajectory)
-        p45_taxCO2eq_anchorRegi(ttot,regi)$(ttot.val ge cm_peakBudgYr) = 
-                                            sum(ttot2$(ttot2.val eq cm_peakBudgYr), p45_taxCO2eq_anchorRegi(ttot2,regi)) !! CO2 tax in peak budget year
-                                          + (ttot.val - cm_peakBudgYr) * cm_taxCO2_IncAfterPeakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year 
+        p45_taxCO2eq_anchorRegi(ttot,regi)$(ttot.val ge p45_peakBudgYr_regi(regi)) = 
+                                            sum(ttot2$(ttot2.val eq p45_peakBudgYr_regi(regi)), p45_taxCO2eq_anchorRegi(ttot2,regi)) !! CO2 tax in peak budget year
+                                          + (ttot.val - p45_peakBudgYr_regi(regi)) * cm_taxCO2_IncAfterPeakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year 
       
       !! B4.4a: Calculate the slope for a linear connection between the last carbon price from input data and the Price in the Peak Budget year
-        p45_CarbonPriceSlope(regi) = (sum(ttot2$(ttot2.val eq cm_peakBudgYr), p45_taxCO2eq_anchorRegi(ttot2,regi)) 
+        p45_CarbonPriceSlope(regi) = (sum(ttot2$(ttot2.val eq p45_peakBudgYr_regi(regi)), p45_taxCO2eq_anchorRegi(ttot2,regi)) 
                                   - sum(ttot3$(ttot3.val eq s45_YearBeforeStartYear), p45_taxCO2eq_anchorRegi(ttot3,regi)))
-                                        /  (cm_peakBudgYr - s45_YearBeforeStartYear);
+                                        /  (p45_peakBudgYr_regi(regi) - s45_YearBeforeStartYear);
         p45_CarbonPriceSlope_iter(iteration,regi) = p45_CarbonPriceSlope(regi);
         
-        p45_taxCO2eq_anchorRegi(ttot,regi)$(ttot.val ge cm_startyear AND ttot.val lt cm_peakBudgYr) = 
+        p45_taxCO2eq_anchorRegi(ttot,regi)$(ttot.val ge cm_startyear AND ttot.val lt p45_peakBudgYr_regi(regi)) = 
                                             sum(ttot3$(ttot3.val eq s45_YearBeforeStartYear), p45_taxCO2eq_anchorRegi(ttot3,regi)) !! CO2 tax in last fixed period
                                                     + (ttot.val - s45_YearBeforeStartYear) * p45_CarbonPriceSlope(regi) ; 
-
+      );
       !! Option (b): If increase until EOC
   elseif(cm_taxCO2_Shape eq 1),
-       !! B2.3b: Set the rescaled anchor trajectory as of cm_peakBudgYr
+       !! B2.3b: Set the rescaled anchor trajectory as of 2100
         p45_taxCO2eq_anchorRegi(ttot,regi)$(ttot.val eq 2100) = 
                     p45_temp_anchor(ttot,regi) * p45_factorRescale_taxCO2Regi_Final(iteration,regi);
 

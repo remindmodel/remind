@@ -11,6 +11,8 @@ s45_taxCO2_startyear                        "CO2 tax provided by cm_taxCO2_start
 s45_taxCO2_peakBudgYr                       "CO2 tax provided by cm_taxCO2_peakBudgYr converted from $/t CO2eq to T$/GtC"
 s45_YearBeforeStartYear                     "The REMIND year before cm_startyear"
 
+s45_regiHelperYear                          "helper scalar for regional peaking carbon price year implementation"
+
 $ifThen.taxCO2functionalForm1 "%cm_taxCO2_functionalForm%" == "linear"
 s45_taxCO2_historical                       "historical level of CO2 tax converted from $/t CO2eq to T$/GtC"
 s45_taxCO2_historicalYr                     "year of s45_taxCO2_historical"
@@ -35,8 +37,13 @@ p45_taxCO2refYear(all_regi)                      "CO2 tax in reference year for 
 *** If there is a regional budget, read regional carbon budget from switch and set additionally needed parameters
 p45_budgetCO2from2020Regi(all_regi)                      "regional carbon budget (Gt CO2)"
 p45_budgetCO2from2020RegiShare(all_regi)                 "share of region in global carbon budget" /%cm_budgetCO2from2020RegiShare%/
-p45_actualbudgetco2Regi_2100(all_regi)                   "regional - actual level of 2020-2100 cumulated emissions, including all CO2 for last iteration"
-p45_actualbudgetco2Regi_2100_iter(iteration,all_regi)    "regional - actual level of 2020-2100 cumulated emissions, including all CO2 for last iteration"
+$ifthen.Peak not "%cm_peakBudgYrRegi%" == "off"
+p45_peakBudgYr_regi(all_regi)                            "prescribed peak carbon price year for each region" /%cm_peakBudgYrRegi%/
+$else.Peak
+p45_peakBudgYr_regi(all_regi)                            "prescribed peak carbon price year for each region"
+$endif.Peak
+p45_actualbudgetco2eqRegi_2100(all_regi)                   "regional - actual level of 2020-2100 cumulated emissions, including all CO2 for last iteration"
+p45_actualbudgetco2eqRegi_2100_iter(iteration,all_regi)    "regional - actual level of 2020-2100 cumulated emissions, including all CO2 for last iteration"
 p45_factorRescale_taxCO2Regi(iteration,all_regi)         "regional - Multiplicative factor for rescaling the CO2 price to reach the target"
 p45_factorRescale_taxCO2Regi_Funneled(iteration, all_regi)  "regional - Multiplicative factor for rescaling the CO2 price to reach the target - Funnelled (static)"
 pm_factorRescale_taxCO2Regi_Funneled2(iteration, all_regi) "regional - Multiplicative factor for rescaling the CO2 price to reach the target - Funnelled (interactive, incl. adjustments based on last iterations)"

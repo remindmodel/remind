@@ -57,6 +57,37 @@ loop( (ttot,all_regi,RenShareTargetType)$(f40_RenShareTargets(ttot,all_regi,RenS
   p40_RenShareTargets(t,all_regi,RenShareTargetType)$(t.val ge ttot.val) = f40_RenShareTargets(ttot,all_regi,RenShareTargetType);
 );
 
+*** =========================
+*** Adjusted Renewable share target from congiguration file
+*** =========================
+*** In case of manual adjustment of renewable share targets from configuration file, overwrite input data with adjusted target if higher
+*--- Auxiliary sets & target year
+$ifThen.adTargetValue not "%cm_RenShareTargetValue%" == "off" 
+
+*--- Loop over input targets
+loop((ttot,all_regi,RenShareTargetType)
+     $ p40_NPiRenShareTarget(ttot,all_regi,RenShareTargetType),
+
+*** keep target constant for all years after target year 
+    loop(ttot2$(ttot2.val >= ttot.val),
+        p40_NPiRenShareTarget_path(ttot2,all_regi,RenShareTargetType)
+          = p40_NPiRenShareTarget(ttot,all_regi,RenShareTargetType);
+    );
+);
+
+*--- overwrite baseline with adjusted target if higher
+loop((ttot,all_regi,RenShareTargetType),
+
+    p40_RenShareTargets(ttot,all_regi,RenShareTargetType) =
+        max(
+            p40_RenShareTargets(ttot,all_regi,RenShareTargetType),
+            p40_NPiRenShareTarget_path(ttot,all_regi,RenShareTargetType)
+        );
+);
+display p40_NPiRenShareTarget;
+display p40_RenShareTargets;
+$ENDIF.adTargetValue
+
 
 *** EOF ./modules/40_techpol/NPi2025/datainput.gms
 

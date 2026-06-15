@@ -16,7 +16,7 @@ create_input_for_45_carbonprice_exogenous <- function(gdx, realization = "exogen
   # ---- Read data ----
  
   if (file.exists(gdx)) {
-    pr <- reportPrices(gdx)
+    pr <- reportPrices(gdx, extraData = "./core/input/reporting/")
   } else {
     stop("No gdx file found to take the carbon price from - please provide gdx from a reference run in path_gdx_carbonprice in scenario_config file.")
   }

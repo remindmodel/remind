@@ -6,39 +6,51 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/NDC/datainput.gms
 
-*** CO2 tax level from business as usual run, serves as minimal tax in NDC
+*** load carbon price trajectory from reference run (NPi scenario)
 Execute_Loadpoint "input_ref" p45_taxCO2eq_bau = pm_taxCO2eq;
 
-pm_taxCO2eq(t,regi) = p45_taxCO2eq_bau(t,regi)
+*** initialize carbon price trajectory before target adjustment iterations by setting carbon price to NPi
+pm_taxCO2eq(t,regi) = p45_taxCO2eq_bau(t,regi);
 
-*** parameters for exponential increase after NDC targets
-Scalar p45_taxCO2eqGlobal2030 "startprice in 2030 of global CO2eq taxes towards which countries converge [T$/GtC]";
-p45_taxCO2eqGlobal2030 = 30 * sm_D2005_2_D2017 * sm_DptCO2_2_TDpGtC;
-Scalar p45_taxCO2eqYearlyIncrease "yearly multiplicative increase of co2 tax, write 3% as 1.03 [1]" /1.0125/;
 
-Scalar p45_taxCO2eqConvergenceYear "year until which CO2eq taxes have converged globally [year]" /2100/;
-*** set Years for CO2eq taxes to converge after 2030
-if(cm_NDC_divergentScenario = 0,
-    p45_taxCO2eqConvergenceYear = 2100;
-elseif cm_NDC_divergentScenario = 1,
-    p45_taxCO2eqConvergenceYear = 2150;
-elseif cm_NDC_divergentScenario = 2,
-    p45_taxCO2eqConvergenceYear = 3000;
-);
-
-*** load NDC data
-Table f45_factorTargetyear(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with multiplier for target year emissions vs 2015 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]"
+*** load NDC emissions targets (only fraction of emissions in REMIND region from countries with NDC targets)
+Table f45_EmiTargetAbs(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with absolute NDC emissions targets, emissions from countries without targets are not included [Mt CO2eq/yr]"
 $offlisting
 $ondelim
-$include "./modules/45_carbonprice/NDC/input/fm_factorTargetyear.cs3r"
+$include "./modules/45_carbonprice/NDC/input/fm_EmiTargetAbs.cs3r"
 $offdelim
 $onlisting
 ;
 
-Parameter p45_factorTargetyear(ttot,all_regi) "Multiplier for target year emissions vs 2015 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region [1]";
-p45_factorTargetyear(t,all_regi) = f45_factorTargetyear(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
+Parameter p45_EmiTargetAbs(ttot,all_regi) "Absolute NDC emissions targets, emissions from countries without targets are not included [Mt CO2eq/yr]";
+p45_EmiTargetAbs(t,all_regi) = f45_EmiTargetAbs(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
-display p45_factorTargetyear;
+$ifThen "%cm_targetDelay%" == "prisma"
+*** PRISMA Asymetric rollback: 
+**   the delay of NDC targets of "10, 20, or 30 years" per region would be assigned as:
+**       10 years delay for Transition leaders: EUR, NEU, JPN (e.g. 2030 NDC shifted to 2040, 2035 target shifter to 2045, and 2050 target shifted to 2060)
+**       20 years delay for Diversifying economies: LAM, USA, CAZ, IND, CHA, SSA, OAS
+**       30 years delay for Fossil-dependant: REF, MEA
+
+Parameter p45_delay(all_regi) "delay of NDC targets, defined per region [years]"/
+    EUR 10, NEU 10, JPN 10,
+    LAM 20, USA 20, CAZ 20, IND 20, CHA 20, SSA 20, OAS 20,
+    REF 30, MEA 30 
+/;
+
+** Requires cm_NDC_version = 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
+*** Special case for REF and MEA: delay of 2035 NDC by 35 years (until 2070) as 2065 is not a valid timestep
+p45_EmiTargetAbs(t,regi)$(t.val eq 2030 + p45_delay(regi)) = p45_EmiTargetAbs("2030",regi);
+p45_EmiTargetAbs(t,regi)$(t.val eq 2035 + p45_delay(regi)) = p45_EmiTargetAbs("2035",regi);
+p45_EmiTargetAbs("2070","REF") = p45_EmiTargetAbs("2035","REF");
+p45_EmiTargetAbs("2070","MEA") = p45_EmiTargetAbs("2035","MEA");
+p45_EmiTargetAbs(t,regi)$(t.val eq 2030) = 0;
+p45_EmiTargetAbs(t,regi)$(t.val eq 2035) = 0;
+
+** end of PRISMA Asymetric rollback
+$ENDIF
+
+display p45_EmiTargetAbs;
 
 Table f45_shareTarget(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with estimated target year GHG emissions share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]"
 $offlisting
@@ -51,6 +63,20 @@ $onlisting
 Parameter p45_shareTarget(ttot,all_regi) "Estimated target year GHG emissions share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]";
 p45_shareTarget(t,all_regi) = f45_shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
+
+$ifThen "%cm_targetDelay%" == "prisma"
+*** PRISMA Asymetric rollback
+** Requires cm_NDC_version = 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
+p45_shareTarget(t,regi)$(t.val eq 2030 + p45_delay(regi)) = p45_shareTarget("2030",regi);
+p45_shareTarget(t,regi)$(t.val eq 2035 + p45_delay(regi)) = p45_shareTarget("2035",regi);
+p45_shareTarget("2070","REF") = p45_shareTarget("2035","REF");
+p45_shareTarget("2070","MEA") = p45_shareTarget("2035","MEA");
+p45_shareTarget(t,regi)$(t.val eq 2030) = 0;
+p45_shareTarget(t,regi)$(t.val eq 2035) = 0;
+** end of PRISMA Asymetric rollback
+$ENDIF
+
+
 display p45_shareTarget;
 
 Parameter p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,all_regi) "regional GHG emissions (without LU and without bunkers) in BAU scenario [MtCO2eq/yr]"
@@ -62,10 +88,21 @@ $endif
 $offdelim
   /             ;
 
+*** --------------------------------------------------------------------------
+*** use new GAMS internal variables for total GHG excl LULUCF and excl bunkers
+
+*** overwrite BAU emissions with emissions in GAMS variable from reference GDX
+p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,regi) = 0;
+Execute_Loadpoint 'input_ref' p45_BAU_reg_emi_wo_LU_wo_bunkers = v_emiGHG_exclLULUCF_exclBunkers.l;
+*** convert from GtCeq/yr to MtCO2eq/yr
+p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,regi) = p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,regi) * sm_c_2_co2 * 1000;
+
+*** --------------------------------------------------------------------------
+
 *** parameters for selecting NDC years
 Set t_NDC_targetYear(ttot)                          "Years for which NDC emissions targets can be applied [0 or 1]" / %cm_NDC_targetYear% /;
-Scalar p45_minRatioOfCoverageToMax                  "only targets whose coverage is this times p45_bestNDCcoverage are considered. Use 1 for only best [0..1]" /1.0/;
-Scalar p45_useSingleYearCloseTo                     "if 0: use all. If > 0: use only one single NDC target per country closest to this year (use 2030.4 to prefer 2030 over 2035 over 2025) [year]" /2030.4/;
+Scalar p45_minRatioOfCoverageToMax                  "only targets whose coverage is this times p45_bestNDCcoverage are considered. Use 1 for only best [0..1]" /0/;
+Scalar p45_useSingleYearCloseTo                     "if 0: use all. If > 0: use only one single NDC target per country closest to this year (use 2030.4 to prefer 2030 over 2035 over 2025) [year]" /0/;
 Set p45_NDCyearSet(ttot,all_regi)                   "YES for years whose NDC targets is used";
 Parameter p45_bestNDCcoverage(all_regi)             "highest coverage of NDC targets within region [0..1]";
 Parameter p45_distanceToOptyear(ttot,all_regi)      "distance to p45_useSingleYearCloseTo to favor years in case of multiple equally good targets [year]";
@@ -90,20 +127,6 @@ Parameter p45_lastNDCyear(all_regi)  "last year with NDC coverage within region 
 p45_lastNDCyear(regi)  = smax( p45_NDCyearSet(t, regi), t.val );
 
 display p45_NDCyearSet,p45_firstNDCyear,p45_lastNDCyear;
-
-*** adjust reduction value for LAM based on the assumption that Brazilian reduction targets are only from landuse, see https://climateactiontracker.org/countries/brazil/
-*** the adjustment were calculated such that Brazil is assumed to maintain its 2015 non-landuse emissions, as follows:
-*** Use R and the code in https://github.com/pik-piam/mrremind/blob/master/R/calcEmiTarget.R to calculate dummy1, ghgTarget, ghgfactor, then run the following code:
-*** countries <- toolGetMapping("regionmappingREMIND.csv",where = "mappingfolder",type = "regional")
-*** LAMCountries <- countries$CountryCode[countries$RegionCode == "LAM"]
-*** shareWithinTargetCountries <- dummy1[LAMCountries,"y2030",] * ghgTarget[LAMCountries,"y2030",] / dimSums(dummy1[LAMCountries,"y2030",] * ghgTarget[LAMCountries,"y2030", ], dim=1)
-*** print(shareWithinTargetCountries["BRA",,]*(as.numeric(ghg["BRA","y2015"])/as.numeric(ghg["BRA","y2005"])-as.numeric(ghgfactor["BRA","y2030","SSP2"])))
-*** 0.2 is a rounded value valid for all except 2018_uncond, because Brazil had no unconditional target then.
-
-if (not sameas("%cm_NDC_version%","2018_uncond"),
-    p45_factorTargetyear(t,regi)$(sameas(regi,"LAM") AND sameas(t,"2030")) = p45_factorTargetyear(t,regi) + 0.2;
-    p45_factorTargetyear(t,regi)$(sameas(regi,"LAM") AND sameas(t,"2035")) = p45_factorTargetyear(t,regi) + 0.2;
-);
 
 *** switch off MAC abatement of land emissions, scenario should only have Magpie baseline emissions
 pm_macSwitch(ttot,regi,emiMacMagpie) = 0;

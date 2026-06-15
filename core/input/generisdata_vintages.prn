@@ -147,8 +147,8 @@ $offtext
 +      storspv      storwindon  storwindoff       storcsp       gridspv      gridwindon   gridwindoff       gridcsp
 1          1.0             1.0          1.0           1.0           1.0             1.0           1.0           1.0
 
-+      ccsinje
-1         1.0
++      ccsinjeon  ccsinjeoff
+1         1.0        1.0
 
 +      tdsyngas      tdsyngat       tdsynhos       tdsynpet      tdsyndie
 1        1.0           1.0           1.0           1.0           1.0

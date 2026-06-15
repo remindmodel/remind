@@ -15,7 +15,7 @@ pegas.seh2.gash2                    15.3             0.00315
 pegas.seh2.gash2c                    1.5      13.8   0.00315
 pegas.sehe.gashp                    15.3             0.00315
 pegas.seliqfos.gasftrec             15.3           
-pegas.seliqfos.gasftcrec            15.1       0.2
+pegas.seliqfos.gasftcrec            12.6       2.7
 pecoal.seel.igcc                    26.1             0.04415
 pecoal.seel.pc                      26.1             0.04415
 pecoal.seel.igccc                    2.6      23.5   0.04415
@@ -50,7 +50,7 @@ seh2.seliqsyn.MeOH                                                 0.53
 $ontext
 Parameterization of CO2 Capture Rates of X-to-Liquids and X-to-Gas technologies including carbon capture:
 The capture rates need to be consistent with the capture rate of X-to-H2 technologies
-and the carbon efficiency (carbon in output / carbon in input) of CCU-Technologies (see ./modules/39_CCU/on/datainput.gms)
+and the carbon efficiency (carbon in output / carbon in input) of CCU-Technologies (see ./modules/39_carbonUsage/on/datainput.gms)
 that convert H2 + CO2 to Liquids/Gases.
 For the capture rate of the combined process, we take into account the parameterization of the individual steps:
 1. Production of synthesis gas/h2, here we assume 90% capture rate in line with our parameterization of
@@ -64,7 +64,7 @@ Technology-specific CO2 capture rates:
 Capture Rate(bioftcrec) = 25 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.41 ~ 14.6 GtC/ZJ(PE) (58% of carbon input)
 Capture Rate(biogasc) = 25 GtC/ZJ * 0.9 - 14.6 GtC/ZJ(FE) / 0.95 * 0.55 ~ 14.1 GtC/ZJ(PE) (56% of carbon input)
 Capture Rate(coalftcrec) = 26.1 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.4 ~ 15.8 GtC/ZJ(PE) (60% of carbon input)
-Capture Rate(gasftcrec) = 15.3 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.7 ~ 0.2 GtC/ZJ(PE) (1.3% of carbon input)
+Capture Rate(gasftcrec) = 15.3 GtC/ZJ * 0.9 - 18.4 GtC/ZJ(FE) / 0.95 * 0.57 ~ 2.7 GtC/ZJ(PE) (17.6% of carbon input)
 
 Parametrization of biochar-producing technologies:
 - established biochar options assuming slow pyrolysis at 500°C based on Schmidt et al. (2019), https://doi.org/10.1111/gcbb.12553.

@@ -26,6 +26,7 @@ $Ifi "%emicapregi%" == "CandC" $include "./modules/41_emicapregi/CandC/realizati
 $Ifi "%emicapregi%" == "GDPint" $include "./modules/41_emicapregi/GDPint/realization.gms"
 $Ifi "%emicapregi%" == "POPint" $include "./modules/41_emicapregi/POPint/realization.gms"
 $Ifi "%emicapregi%" == "PerCapitaConvergence" $include "./modules/41_emicapregi/PerCapitaConvergence/realization.gms"
+$Ifi "%emicapregi%" == "TradingOnRef" $include "./modules/41_emicapregi/TradingOnRef/realization.gms"
 $Ifi "%emicapregi%" == "exog" $include "./modules/41_emicapregi/exog/realization.gms"
 $Ifi "%emicapregi%" == "none" $include "./modules/41_emicapregi/none/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
