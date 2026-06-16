@@ -18,8 +18,9 @@ q36_demFeBuild(ttot,regi,entyFe,emiMkt)$(ttot.val ge cm_startyear
   =e=
   sum(in$(fe2ppfEn(entyFe,in)
           AND ppfen_buildings_dyn36(in)),
-      vm_cesIO(ttot,regi,in) * pm_climateCorrection(ttot,regi,in)
-      + pm_cesdata(ttot,regi,in,"offset_quantity") 
+      vm_cesIO(ttot,regi,in)
+      + (pm_climateCorrection(ttot,regi,in) - 1) * vm_cesIO.l(ttot,regi,in)
+      + pm_cesdata(ttot,regi,in,"offset_quantity")
   )$(sameas(emiMkt,"ES"))
 ;
 
