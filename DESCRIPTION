@@ -13,6 +13,7 @@ Depends:
     R (>= 4.0.0)
 Imports:
     callr,
+    climbed (>= 1.2.0),
     colorspace,
     crayon,
     data.table,
@@ -54,6 +55,7 @@ Imports:
     piamPlotComparison (>= 0.0.10),
     piamutils,
     plotly,
+    pracma,
     purrr,
     quitte (>= 0.3149.0),
     R.utils,
