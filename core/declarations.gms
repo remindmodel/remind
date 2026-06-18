@@ -43,7 +43,7 @@ pm_taxCO2eq_anchor_iterationdiff(ttot)               "difference in global ancho
 pm_cesdata(tall,all_regi,all_in,cesParameter)        "parameters of the CES function: efficiency parameters (xi, eff, effgr) [unitless], target quantities of CES calibration (quantity) [unit of CES node, see set all_in], CES prices resulting from calibration (price) [T$/unit of CES node]"
 f_pop(tall,all_regi,all_GDPpopScen)                  "population data for all possible scenarios [million people]"
 pm_pop(tall,all_regi)                                "population data [bn people]"
-pm_gdp(tall,all_regi)                                "GDP data [trn US$ 2005]"
+pm_gdp(tall,all_regi)                                "GDP MER data [trn US$ 2005]"
 p_developmentState(tall,all_regi)                    "level of development based on GDP per capita, 0 is low income, 1 is high income"
 f_lab(tall,all_regi,all_GDPpopScen)                  "labour data for all possible scenarios [million people]"
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
@@ -210,8 +210,8 @@ pm_teAnnuity(all_te)                                 "Annuity factor of a techno
 *** parameters used for floor costs calculation
 p_maxRegTechCost2015(all_te)                         "highest historical regional investment cost in 2015, used to calculate regionally-differentiated floor costs of learning technologies"
 p_maxRegTechCost2020(all_te)                         "highest historical regional investment cost in 2020, used to calculate regionally-differentiated floor costs of learning technologies"
-p_gdppcap2050_PPP(all_regi)                          "regional GDP PPP per capita in 2050 [thousand $/capita]"
-p_maxPPP2050                                         "maximum income GDP PPP among regions in 2050 [T$]"
+p_floorcostRef(all_regi)                             "regional GDP per capita in 2050 [$/capita]"
+p_floorcostRef_world                                 "global average GDP per capita in 2050 [$/capita]"
 p_maxSpvCost                                         "maximum spv investment cost among regions [T$/TW]" 
 p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data [T$/TW]"
 
@@ -219,8 +219,8 @@ p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data 
 pm_tsu2opTimeYr(ttot,opTimeYr)                       "auxiliary parameter to map time steps to past time steps: counts the number of model timesteps between years ttot-opTimeYr and ttot, used for q_transPe2se and q_cap equations [unitless]" 
 
 *** parameters used for endogenous technology learning implementation
-pm_capCum0(tall,all_regi,all_te)                     "Total cumulated capacity of learning technologies from last iteration used for learning curves based on vm_capCum[TW]"
-p_capCum(tall, all_regi,all_te)                      "Total cumulated capacity of learning technologies from input.gdx used for learning curves based on vm_capCum[TW]"
+pm_capCum0(tall,all_regi,all_te)                     "Total cumulated capacity of learning technologies from last iteration used for learning curves based on vm_capCum [TW]"
+p_capCum(tall, all_regi,all_te)                      "Total cumulated capacity of learning technologies from input.gdx used for learning curves based on vm_capCum [TW]"
 pm_capCumForeign(ttot,all_regi,all_te)               "Total cumulated capacity of learning technologies of all other regions except regi [TW]"
 
 *** early retirement parameters
@@ -300,7 +300,8 @@ p_co2CCSReference(ttot,all_regi,all_enty,all_enty,all_te,rlf) "Captured CO2 put 
 p_prodAllReference(ttot,all_regi,all_te)             "Sum of the above in the reference run. As each technology has only one type of output, the differing units should not be a problem"
 
 *** CES calibration tarjectories industry and buildings
-pm_fedemand(tall,all_regi,all_in)                    "read-in parameter for final energy and production trajectories used for the CES parameter calibration in industry and buildings [TWa]"
+pm_fedemandInd(tall,all_regi,all_in)                    "read-in parameter for final energy and production trajectories used for the CES parameter calibration in industry [EJ, ue_primary_steel, ue_secondary_steel: Gt, ue_otherInd: $tn]"
+pm_fedemandBuild(tall,all_regi,all_in)                  "read-in parameter for final energy and production trajectories used for the CES parameter calibration in buildings [EJ]"
 
 *** parameters for setting final energy shares
 pm_shfe_up(ttot,all_regi,all_enty,emi_sectors)       "Final energy shares exogenous upper bounds per sector [share]"
@@ -642,19 +643,20 @@ sm_giga_2_non                "giga to non"                             /1e+9/,
 sm_trillion_2_non            "trillion to non"                         /1e+12/,
 
 *** energy units
-pm_conv_TWa_EJ               "conversion from TWa to EJ"                          /31.536/,
-s_zj_2_twa                   "zeta joule to tw year"                              /31.7098/,
-sm_EJ_2_TWa                  "multiplicative factor to convert from EJ to TWa"    /31.71e-03/,
-sm_GJ_2_TWa                  "multiplicative factor to convert from GJ to TWa"    /31.71e-12/,
-sm_TWa_2_TWh                 "tera Watt year to Tera Watt hour"                    /8.76e+3/,
-sm_TWa_2_MWh                 "tera Watt year to Mega Watt hour"                    /8.76e+9/,
-sm_TWa_2_kWh                 "tera Watt year to kilo Watt hour"                    /8.76e+12/,
-sm_h2kg_2_h2kWh              "convert kilogramme of hydrogen to kwh energy value." /32.5/,
-sm_DptCO2_2_TDpGtC           "Conversion multiplier to go from $/tCO2 to T$/GtC: 44/12/1000"     /0.00366667/,
-sm_tBC_2_TWa                  "t biochar to TWa biochar (28700 [MJ/tBC]*10^-12[EJ/MJ]/31.536[EJ/TWa])" /9.101e-10/,
+s_ZJ_2_TWa                   "convert from Zeta Joule to Tera Watt annum"   /31.71/,
+sm_EJ_2_TWa                  "convert from Exa Joule to Tera Watt annum"    /31.71e-03/,
+sm_GJ_2_TWa                  "convert from Giga Joule to Tera Watt annum"   /31.71e-12/,
+sm_TWa_2_EJ                  "convert from Tera Watt annum to Exa Joule"    /31.54/,
+sm_DpGJ_2_TDpTWa             "convert $/GJ to T$/TWa"                       /31.54e-03/
+sm_TWa_2_TWh                 "convert Tera Watt annum to Tera Wh"           /8.76e+3/,
+sm_TWa_2_MWh                 "convert Tera Watt annum to Mega Wh"           /8.76e+9/,
+sm_TWa_2_kWh                 "convert Tera Watt annum to kilo Wh"           /8.76e+12/,
+sm_h2kg_2_h2kWh              "convert kg of hydrogen to kWh energy value"   /32.5/,
+sm_tBC_2_TWa                 "t biochar to TWa biochar (28700 [MJ/tBC]*10^-12[EJ/MJ]/31.536[EJ/TWa])" /9.101e-10/,
 
 *** emissions units
-sm_c_2_co2                   "conversion from c to co2"                /3.666666666667/,
+sm_c_2_co2                   "convert mass from carbon to CO2 (44/12)" /3.66667/,
+sm_DptCO2_2_TDpGtC           "convert $/tCO2 to T$/GtC: 44/12/1000"    /0.00366667/,
 s_NO2_2_N                    "convert NO2 to N [14 / (14 + 2 * 16)]"   / .304 /
 sm_tgn_2_pgc                 "conversion factor 100-yr GWP from TgN to PgCeq"
 sm_tgch4_2_pgc               "conversion factor 100-yr GWP from TgCH4 to PgCeq"
@@ -666,11 +668,10 @@ s_gwpCH4_AR4                 "Global Warming Potentials of CH4 as in the AR4, us
 s_gwpN2O_AR4                 "Global Warming Potentials of N2O as in the AR4, used in the MACCs"     /298/
 
 *** monetary units
-s_DpKWa_2_TDpTWa             "convert Dollar per kWa to TeraDollar per TeraWattYear"       /0.001/
-s_DpKW_2_TDpTW               "convert Dollar per kW to TeraDollar per TeraWatt"            /0.001/
-sm_DpGJ_2_TDpTWa             "multipl. factor to convert (Dollar per GJoule) to (TerraDollar per TWyear)"    / 31.54e-03/
+s_DpKWa_2_TDpTWa             "convert Dollar per kWa to Tera Dollar per TWa" /0.001/
+s_DpKW_2_TDpTW               "convert Dollar per kW to Tera Dollar per TW"   /0.001/
 s_D2010_2_D2017              "Convert US$2010 to US$2017"      /1.1491/
-sm_D2015_2_D2017              "Convert US$2015 to US$2017"      /1.0292/
+sm_D2015_2_D2017             "Convert US$2015 to US$2017"      /1.0292/
 sm_D2005_2_D2017             "Convert US$2005 to US$2017"      /1.231/
 sm_D2020_2_D2017             "Convert US$2020 to US$2017"      /0.9469/
 sm_EURO2023_2_D2017          "Convert EURO 2023 to US$2017"    /0.8915/

@@ -55,8 +55,9 @@ TargetType2ShareEnty("NonBioRenElec",enty)$( ( peRe(enty) OR sameas(enty,"seh2")
 TargetType2TotalEnty("NonBioRenElec","seel") = YES;
 
 *** 3.  NonFossilElec: "non-fossil share in secondary energy electricity"
-*** For non-fossil electricity share targets include all electricity produced non-fossil sources. 
-TargetType2ShareEnty("NonFossilElec",enty)$( NOT peFos(enty)  ) = YES;
+*** For non-fossil electricity share targets include all electricity produced from renewable and nuclear sources.
+*** This is: renewables (peRe) + hydrogen (seh2, assumed renewable-based) + nuclear (peur).
+TargetType2ShareEnty("NonFossilElec",enty)$( ( peRe(enty) OR sameas(enty,"seh2") OR sameas(enty,"peur") )  ) = YES;
 TargetType2TotalEnty("NonFossilElec","seel") = YES;
 
 *** 4.  RenFE: "renewable share in total final energy"

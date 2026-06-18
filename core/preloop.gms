@@ -20,6 +20,9 @@ model hybrid /all/;
 ***------------------------------------------------------------------------------
 ***------------------------------------------------------------------------------
 
+*** remove legacy values for timesteps and technologies that are not required
+vm_capCum.l(tall,all_regi,all_te) $ (not (ttot(tall) and regi(all_regi) and te(all_te))) = 0;
+
 *** Set level values, so that reference value is available even if gdx has no level value to overwrite. Gams complains if .l was never initialized.
 vm_emiMacSector.l(ttot,regi,enty)      = 0;
 vm_emiTe.l(ttot,regi,enty)      = 0;

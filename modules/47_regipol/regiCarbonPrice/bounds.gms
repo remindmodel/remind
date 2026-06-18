@@ -180,7 +180,7 @@ $endIf.ensec
 *' Policy in energy security scenario for Germany activated by cm_EnSecScen_limit: 
 *' Limit PE gas demand from 2025 on to cm_EnSecScen_limit (in EJ/yr) gas imports + domestic gas in Germany.
 if (cm_EnSecScen_limit gt 0,
-    vm_prodPe.up(t,regi,"pegas")$((t.val ge 2025) AND (sameas(regi,"DEU"))) = cm_EnSecScen_limit/pm_conv_TWa_EJ;
+    vm_prodPe.up(t,regi,"pegas")$((t.val ge 2025) AND (sameas(regi,"DEU"))) = cm_EnSecScen_limit * sm_EJ_2_TWa;
 );
 
 *' ##### Bounds for EU subregions

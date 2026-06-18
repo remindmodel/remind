@@ -375,7 +375,7 @@ qm_deltaCapCumNet(ttot,regi,teLearn)$(ord(ttot) lt card(ttot) AND pm_ttot_val(tt
 *' Initial values for cumulated capacities (learning technologies only):
 *' (except for tech_stat 4 technologies that have no standing capacities in 2005 and ccap0 refers to another year)
 ***---------------------------------------------------------------------------
-q_capCumNet(t0,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4))..
+q_capCumNet(t0,regi,teLearn)$(pm_data(regi,"tech_stat",teLearn) < 4)..
   vm_capCum(t0,regi,teLearn)
   =e=
   pm_data(regi,"ccap0",teLearn);
@@ -455,92 +455,36 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
 *' In equations.gms, the investment costs equation `q_costTeCapital` corresponds to $I = a'\times C^{b'} + F$,
 *' with variations depending on time period and floor cost scenarios.
 
-q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND t.val le 2020)) ..
+
+$macro macro_capCumGlob (sum(regi2, vm_capCum(t,regi2,teLearn)) + pm_capCumForeign(t,regi,teLearn))
+$macro macro_costRegi   (pm_data(regi,"floorcost",teLearn) + pm_data(regi,"learnMult_wFC",teLearn) * macro_capCumGlob ** pm_data(regi,"learnExp_wFC",teLearn))
+$macro macro_costGlob   (fm_dataglob("floorcost",teLearn) + fm_dataglob("learnMult_wFC",teLearn) * macro_capCumGlob ** fm_dataglob("learnExp_wFC",teLearn))
+
+q_costTeCapital(t,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) < 4 or t.val > 2020) ..
   vm_costTeCapital(t,regi,teLearn)
   =e=
 *** until 2005: using global estimates better matches historic values
-  + ( fm_dataglob("floorcost",teLearn)
-      + ( fm_dataglob("learnMult_wFC",teLearn)
-          * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-              + pm_capCumForeign(t,regi,teLearn)
-          ) ** fm_dataglob("learnExp_wFC",teLearn)
-      )
-  )$( t.val le 2005 )
+  macro_costGlob $ (t.val <= 2005)
     
 *** 2005 to 2020: linear transition from global 2005 to regional 2020
 *** to phase-in the observed 2020 regional variation from input-data
-  + ( (2020 - t.val) / (2020-2005)
-      * ( fm_dataglob("floorcost",teLearn)
-          + fm_dataglob("learnMult_wFC",teLearn)
-            * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-                + pm_capCumForeign(t,regi,teLearn)
-              ) ** fm_dataglob("learnExp_wFC",teLearn)
-      )
+  + macro_interpolate(t.val, 2005, 2020, macro_costGlob, macro_costRegi) $ (t.val > 2005 and t.val <= 2020)
 
-    + (t.val - 2005) / (2020-2005) 
-      * ( pm_data(regi,"floorcost",teLearn) 
-          + pm_data(regi,"learnMult_wFC",teLearn)
-            * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-                + pm_capCumForeign(t,regi,teLearn)
-              ) ** pm_data(regi,"learnExp_wFC",teLearn)
-      )
-  )$( (t.val gt 2005) AND (t.val le 2020) )
+*** after 2020 for specific cm_floorCostScen: regional capital costs
+$if %cm_floorCostScen% == "pricestruc"  + macro_costRegi $ (t.val > 2020)
+$if %cm_floorCostScen% == "gdpBased"    + macro_costRegi $ (t.val > 2020)
 
-$ifthen.floorscen %cm_floorCostScen% == "default"
-*** from 2020 to c_LearnTeConvStartYear: use regional values
-  + ( pm_data(regi,"floorcost",teLearn) 
-        + pm_data(regi,"learnMult_wFC",teLearn)
-          * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-              + pm_capCumForeign(t,regi,teLearn)
-            ) ** pm_data(regi,"learnExp_wFC",teLearn)
-  )$( (t.val gt 2020) AND (t.val lt c_LearnTeConvStartYear) )
+$ifthen.default %cm_floorCostScen% == "default"
+*** from 2020 to c_teLearnConvStartYr: regional capital costs
+  + macro_costRegi $ (t.val > 2020 and t.val <= c_teLearnConvStartYr)
 
-*** c_LearnTeConvStartYear to c_LearnTeConvEndYear: assuming linear convergence of regional learning curves to global values
-  + ( (pm_ttot_val(t) - c_LearnTeConvStartYear) / (c_LearnTeConvEndYear-c_LearnTeConvStartYear)  
-      * ( fm_dataglob("floorcost",teLearn) 
-          + fm_dataglob("learnMult_wFC",teLearn)
-            * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-                + pm_capCumForeign(t,regi,teLearn)
-              ) ** fm_dataglob("learnExp_wFC",teLearn)
-      )
+*** c_teLearnConvStartYr to c_teLearnConvEndYr: linear convergence from regional costs to global costs
+  + macro_interpolate(t.val, c_teLearnConvStartYr, c_teLearnConvEndYr, macro_costRegi, macro_costGlob) $ (t.val > c_teLearnConvStartYr and t.val < c_teLearnConvEndYr)
 
-    + (c_LearnTeConvEndYear - pm_ttot_val(t)) / (c_LearnTeConvEndYear-c_LearnTeConvStartYear)  
-      * ( pm_data(regi,"floorcost",teLearn) 
-          + pm_data(regi,"learnMult_wFC",teLearn)
-            * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-                + pm_capCumForeign(t,regi,teLearn)
-              ) ** pm_data(regi,"learnExp_wFC",teLearn)
-      )
-  )$( t.val ge c_LearnTeConvStartYear AND t.val le c_LearnTeConvEndYear )
-$endif.floorscen
+*** after c_teLearnConvEndYr: global capital costs
+  + macro_costGlob $ (t.val >= c_teLearnConvEndYr)
+$endif.default
 
-$ifthen.floorscen %cm_floorCostScen% == "pricestruc"
-  + ( pm_data(regi,"floorcost",teLearn) 
-      + pm_data(regi,"learnMult_wFC",teLearn)
-        * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-            + pm_capCumForeign(t,regi,teLearn)
-          ) ** pm_data(regi,"learnExp_wFC",teLearn)
-    )$( t.val ge 2020 AND t.val le 2100 )
-$endif.floorscen
-
-$ifthen.floorscen %cm_floorCostScen% == "techtrans"
-  + ( pm_data(regi,"floorcost",teLearn) 
-      + pm_data(regi,"learnMult_wFC",teLearn)
-        * ( sum(regi2, vm_capCum(t,regi2,teLearn))
-            + pm_capCumForeign(t,regi,teLearn)
-          ) ** pm_data(regi,"learnExp_wFC",teLearn)
-    )$( t.val ge 2020 AND t.val le 2100 )
-$endif.floorscen
-
-$ifthen.floorscen %cm_floorCostScen% == "default"
-*** after c_LearnTeConvEndYear: globally harmonized costs
-  + ( fm_dataglob("floorcost",teLearn) 
-      + fm_dataglob("learnMult_wFC",teLearn)
-        * ( sum(regi2, vm_capCum(t,regi2,teLearn)) 
-            + pm_capCumForeign(t,regi,teLearn) 
-            ) **(fm_dataglob("learnExp_wFC",teLearn))
-  )$(t.val gt c_LearnTeConvEndYear)
-$endif.floorscen
 ;
 *' @stop
 

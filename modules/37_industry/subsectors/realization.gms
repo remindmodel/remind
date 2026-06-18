@@ -29,7 +29,7 @@
 *'   q_costOM; techno-economic data is input via generisdata_tech.prn
 *' - Specific FE demands (arbitrary number of inputs) are used instead of one efficiency eta
 *'   - For historically exisitng tech, specific energy demand follows exogenous convergence from
-*'     historical values (via pm_fedemand) to the best available technology (BAT)
+*'     historical values (via pm_fedemandInd) to the best available technology (BAT)
 *'   - For "new" tech, temporally constant BAT values are assumed for energy efficiency
 *' - Technologies have specific material demands. Materials can be model-external (e.g. iron ore)
 *'   or outputs of other processes (e.g. DRI); This allows to have process routes consiting of

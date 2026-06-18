@@ -1,0 +1,688 @@
+<!--
+|  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
+|  authors, and contributors see CITATION.cff file. This file is part
+|  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+|  AGPL-3.0, you are granted additional permissions described in the
+|  REMIND License Exception, version 1.0 (see LICENSE file).
+|  Contact: remind@pik-potsdam.de
+-->
+# CMIP7 Emissions
+
+This document provides an overview of the emissions in REMIND and MAgPIE at the sectoral resolution that is used for the emissions harmonization
+in ScenarioMIP for CMIP7. It covers 10 emission species:
+
+1. CO2
+2. CH4
+3. N2O
+4. BC
+5. CO
+6. NH3
+7. NOx
+8. OC
+9. SO2
+10. VOC
+
+It covers 13 sectors, of which 5 are provided by MAgPIE:
+
+1. Agricultural Waste Burning
+2. Agriculture
+3. Forest Burning
+4. Grassland Burning
+5. Peat Burning
+
+8 sectors are provided by REMIND:
+
+1. Aircraft
+2. International Shipping
+3. Energy Sector
+4. Industrial Sector
+5. Residential Commercial Other
+6. Solvents Production and Application
+7. Transportation Sector
+8. Waste
+
+Historical emissions based on CEDS, GFED and GCB (for CO2 AFOLU) up to 2023 are those used in the emissions harmonization in ScenarioMIP for CMIP7.
+
+```{r, echo = FALSE, results = 'hide'}
+# Adds a new variable as the sum of a list of variables
+addSumVariables <- function(
+  fdata, sumvars, outvarname, outunit = NULL, convmult = 1, convoffset = 0, only.new = FALSE
+  ) {
+  if (is.null(outunit)) {
+    outunit <- fdata %>%
+      filter(variable == sumvars[1]) %>%
+      slice(1) %>%
+      select(unit) %>% unlist %>% as.character
+  }
+
+  newdata <- fdata %>%
+    filter(variable %in% sumvars) %>%
+    select(-varplus) %>%
+    distinct %>%
+    pivot_wider(names_from = variable, values_from = value) %>%
+    mutate(value = rowSums(across(sumvars))) %>%
+    select(-c(sumvars)) %>%
+    mutate(variable = outvarname, varplus = outvarname, unit = outunit)
+  if(!only.new) {
+    return(rbind(fdata, newdata))
+  } else {
+    return(newdata)
+  }
+}
+```
+
+```{r, echo = FALSE, results = 'hide'}
+# Compute emissions for CMIP7 industrial sector from REMIND
+for (species in c("BC", "CO", "NH3", "NOx", "OC", "SO2", "VOC")) {
+  sumvars <- c(
+    paste0("Emi|", species, "|Energy|Demand|Industry"),
+    paste0("Emi|", species, "|Industrial Processes")
+  )
+  
+  data <- data %>% 
+    filter(model == "REMIND") %>%
+    addSumVariables(sumvars, paste0("Emi|", species,"|Industrial Sector"), only.new = TRUE) %>%
+    bind_rows(data)
+}
+
+# Compute CO2 emissions for CMIP7 aircraft sector from REMIND
+data <- data %>%
+  filter(model == "REMIND") %>%
+  addSumVariables(c("Emi|CO2|Energy|Demand|Transport|Pass|Domestic Aviation",
+                    "Emi|CO2|Energy|Demand|Transport|Bunkers|Pass|International Aviation"),
+                  "Emi|CO2|Energy|Demand|Transport|Pass|Aviation", only.new = TRUE) %>%
+  bind_rows(data)
+
+```
+
+
+# CO2
+For CO2 emissions, the emissions harmonization in CMIP7 has the additional sectors BECCS, Biochar, Direct Air Capture, Enhanced Weathering, Ocean, Other CDR, and Soil Carbon Management.
+These are included in the total *Emi|CO2|w/ Bunkers*, but we do not separately show the sectors below since the historical emissions are equal to zero for these sectors.
+
+## Emi|CO2
+The variable *Emi|CO2|w/ Bunkers* does **not** include *Emissions|CO2|Land|Biomass Burning|Burning of Crop Residues* since this variable is only available in MAgPIE, not in REMIND.
+```{r CO2 Emissions}
+showLinePlots(data, "Emi|CO2|w/ Bunkers", histVars = "Emi|CMIP7|CO2", vlines = 2020)
+```
+
+## MAgPIE
+CO2 emissions from land-use change are only harmonized at the global level in CMIP7 for use in Simple Climate Models. Historical emissions are based on the Global Carbon Budget (GCB).
+
+IAMs do not report CO2 emissions from forest burning, grassland burning and peat burning in CMIP7.
+
+### Emi|CO2|Land-Use Change (CMIP7 sector: AFOLU)
+```{r CO2 Emissions - Agriculture}
+showLinePlots(data, "Emi|CO2|Land-Use Change", histVars = "Emi|CMIP7|CO2|AFOLU", vlines = 2020)
+```
+
+### Emissions|CO2|Land|Biomass Burning|Burning of Crop Residues (CMIP7 sector: Agricultural Waste Burning)
+
+This variable is only available in MAgPIE, not in REMIND. Thus, it cannot be reported for REMIND standalone runs and is **not** included in *Emi|CO2|w/ Bunkers*.
+```{r CO2 Emissions - Agricultural Waste Burning}
+showLinePlots(data, "Emissions|CO2|Land|Biomass Burning|Burning of Crop Residues", histVars = "Emi|CO2|AFOLU|Agricultural Waste Burning", vlines = 2020)
+```
+
+## REMIND
+CO2 emissions from solvents production and application are not modelled in REMIND.
+
+### Emi|CO2|Energy|Demand|Transport|Pass|Aviation (CMIP7 sector: Aircraft)
+```{r CO2 Emissions - Aircraft}
+showLinePlots(data, "Emi|CO2|Energy|Demand|Transport|Pass|Aviation", histVars = "Emi|CO2|Energy|Demand|Transport|Pass|Aviation", vlines = 2020)
+```
+
+### Emi|CO2|Energy|Demand|Transport|Bunkers|Freight|International Shipping (CMIP7 sector: International Shipping)
+```{r CO2 Emissions - International Shipping}
+showLinePlots(data, "Emi|CO2|Energy|Demand|Transport|Bunkers|Freight|International Shipping", histVars = "Emi|CO2|Energy|Demand|Transport|Bunkers|Freight|International Shipping", vlines = 2020)
+```
+
+### Emi|CO2|Energy|Supply (CMIP7 sector: Energy Sector)
+```{r CO2 Emissions - Energy Sector}
+showLinePlots(data, "Emi|CO2|Energy|Supply", histVars = "Emi|CO2|Energy|Supply", vlines = 2020)
+```
+
+### Emi|CO2|Industry (CMIP7 sector: Industrial Sector)
+*Emi|CO2|Industry* is the sum of *Emi|CO2|Energy|Demand|+|Industry* and *Emi|CO2|Industrial Processes|+|Industry*.
+
+```{r CO2 Emissions - Industrial Sector}
+showLinePlots(data, "Emi|CO2|Industry", histVars = "Emi|CO2|Industry", vlines = 2020)
+```
+
+### Emi|CO2|Energy|Demand|Buildings (CMIP7 sector: Residential Commercial Other)
+```{r CO2 Emissions - Residential Commercial Other}
+showLinePlots(data, "Emi|CO2|Energy|Demand|Buildings", histVars = "Emi|CO2|Energy|Demand|Buildings", vlines = 2020)
+```
+
+### Emi|CO2|w/o Bunkers|Energy|Demand|Transport (CMIP7 sector: Transportation Sector)
+```{r CO2 Emissions - Transportation Sector}
+showLinePlots(data, "Emi|CO2|w/o Bunkers|Energy|Demand|Transport", histVars = "Emi|CO2|w/o Bunkers|Energy|Demand|Transport", vlines = 2020)
+```
+
+### Emi|CO2|Waste (CMIP7 sector: Waste)
+```{r CO2 Emissions - Waste}
+showLinePlots(data, "Emi|CO2|Waste", histVars = "Emi|CO2|Waste", vlines = 2020)
+```
+
+# CH4 and N2O
+Reporting of CH4 and N2O emissions in ScenarioMIP for CMIP7 (using mapping_ScenarioMIP.csv) currently relies on a combination of various REMIND and MAgPIE variables 
+since the REMIND totals do not correctly reflect all MAgPIE CH4 emissions and some REMIND variables are only computed in the postprocessing as part of *remind2::reportExtraEmissions*.
+
+TODO: Clean-up handling of CH4 and N2O emissions in REMIND and in piamInterfaces (mapping_ScenarioMIP) to ensure correct reporting for REMIND standalone and REMIND-MAgPIE coupled runs.
+
+# BC
+```{r BC Emissions}
+showLinePlots(data, "Emi|BC|w/ Bunkers", histVars = "Emi|BC", vlines = 2020)
+```
+
+## MAgPIE
+
+### Emi|BC|AFOLU|Agricultural Waste Burning (CMIP7 sector: Agricultural Waste Burning)
+```{r BC Emissions - Agricultural Waste Burning}
+showLinePlots(data, "Emi|BC|AFOLU|Agricultural Waste Burning", histVars = "Emi|BC|AFOLU|Agricultural Waste Burning", vlines = 2020)
+```
+
+### Emi|BC|AFOLU|Agriculture (CMIP7 sector: Agriculture)
+```{r BC Emissions - Agriculture}
+showLinePlots(data, "Emi|BC|AFOLU|Agriculture", histVars = "Emi|BC|Agriculture", vlines = 2020)
+```
+
+### Emi|BC|AFOLU|Land|Fires|Forest Burning (CMIP7 sector: Forest Burning)
+```{r BC Emissions - Forest Burning}
+showLinePlots(data, "Emi|BC|AFOLU|Land|Fires|Forest Burning", histVars = "Emi|BC|AFOLU|Land|Fires|Forest Burning", vlines = 2020)
+```
+
+### Emi|BC|AFOLU|Land|Fires|Grassland Burning (CMIP7 sector: Grassland Burning)
+```{r BC Emissions - Grassland Burning}
+showLinePlots(data, "Emi|BC|AFOLU|Land|Fires|Grassland Burning", histVars = "Emi|BC|AFOLU|Land|Fires|Grassland Burning", vlines = 2020)
+```
+
+### Emi|BC|AFOLU|Land|Fires|Peat Burning (CMIP7 sector: Peat Burning)
+```{r BC Emissions - Peat Burning}
+showLinePlots(data, "Emi|BC|AFOLU|Land|Fires|Peat Burning", histVars = "Emi|BC|AFOLU|Land|Fires|Peat Burning", vlines = 2020)
+``` 
+
+## REMIND
+
+### Emi|BC|Extra|Energy|Demand|Transport|Pass|Aviation (CMIP7 sector: Aircraft)
+```{r BC Emissions - Aircraft}
+showLinePlots(data, "Emi|BC|Extra|Energy|Demand|Transport|Pass|Aviation", histVars = "Emi|BC|Energy|Demand|Transport|Pass|Aviation", vlines = 2020)
+```
+
+### Emi|BC|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping (CMIP7 sector: International Shipping)
+```{r BC Emissions - International Shipping}
+showLinePlots(data, "Emi|BC|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping", histVars = "Emi|BC|Energy|Demand|Transport|Bunkers|Freight|International Shipping", vlines = 2020)
+```
+
+### Emi|BC|Energy|Supply (CMIP7 sector: Energy Sector)
+```{r BC Emissions - Energy Sector}
+showLinePlots(data, "Emi|BC|Energy|Supply", histVars = "Emi|BC|Energy|Supply", vlines = 2020)
+```
+
+### Emi|BC|Industrial Sector (CMIP7 sector: Industrial Sector)
+```{r BC Emissions - Industrial Sector}
+showLinePlots(data, "Emi|BC|Industrial Sector", histVars = "Emi|BC|Industry", vlines = 2020)
+```
+
+### Emi|BC|Energy|Demand|Buildings (CMIP7 sector: Residential Commercial Other)
+```{r BC Emissions - Residential Commercial Other}
+showLinePlots(data, "Emi|BC|Energy|Demand|Buildings", histVars = "Emi|BC|Energy|Demand|Buildings", vlines = 2020)
+```
+
+### Emi|BC|Product Use|Solvents (CMIP7 sector: Solvents Production and Application)
+```{r BC Emissions - Solvents Production and Application}
+showLinePlots(data, "Emi|BC|Product Use|Solvents", histVars = "Emi|BC|Product Use|Solvents", vlines = 2020)
+```
+
+### Emi|BC|w/o Bunkers|Energy|Demand|Transport (CMIP7 sector: Transportation Sector)
+```{r BC Emissions - Transportation Sector}
+showLinePlots(data, "Emi|BC|w/o Bunkers|Energy|Demand|Transport", histVars = "Emi|BC|w/o Bunkers|Energy|Demand|Transport", vlines = 2020)
+```
+
+### Emi|BC|Waste (CMIP7 sector: Waste)
+```{r BC Emissions - Waste}
+showLinePlots(data, "Emi|BC|Waste", histVars = "Emi|BC|Waste", vlines = 2020)
+```
+
+# CO
+```{r CO Emissions}
+showLinePlots(data, "Emi|CO|w/ Bunkers", histVars = "Emi|CO", vlines = 2020)
+```
+
+## MAgPIE
+
+### Emi|CO|AFOLU|Agricultural Waste Burning (CMIP7 sector: Agricultural Waste Burning)
+```{r CO Emissions - Agricultural Waste Burning}
+showLinePlots(data, "Emi|CO|AFOLU|Agricultural Waste Burning", histVars = "Emi|CO|AFOLU|Agricultural Waste Burning", vlines = 2020)
+```
+
+### Emi|CO|AFOLU|Agriculture (CMIP7 sector: Agriculture)
+```{r CO Emissions - Agriculture}
+showLinePlots(data, "Emi|CO|AFOLU|Agriculture", histVars = "Emi|CO|Agriculture", vlines = 2020)
+```
+
+### Emi|CO|AFOLU|Land|Fires|Forest Burning (CMIP7 sector: Forest Burning)
+```{r CO Emissions - Forest Burning}
+showLinePlots(data, "Emi|CO|AFOLU|Land|Fires|Forest Burning", histVars = "Emi|CO|AFOLU|Land|Fires|Forest Burning", vlines = 2020)
+```
+
+### Emi|CO|AFOLU|Land|Fires|Grassland Burning (CMIP7 sector: Grassland Burning)
+```{r CO Emissions - Grassland Burning}
+showLinePlots(data, "Emi|CO|AFOLU|Land|Fires|Grassland Burning", histVars = "Emi|CO|AFOLU|Land|Fires|Grassland Burning", vlines = 2020)
+```
+
+### Emi|CO|AFOLU|Land|Fires|Peat Burning (CMIP7 sector: Peat Burning)
+```{r CO Emissions - Peat Burning}
+showLinePlots(data, "Emi|CO|AFOLU|Land|Fires|Peat Burning", histVars = "Emi|CO|AFOLU|Land|Fires|Peat Burning", vlines = 2020)
+``` 
+
+## REMIND
+
+### Emi|CO|Extra|Energy|Demand|Transport|Pass|Aviation (CMIP7 sector: Aircraft)
+```{r CO Emissions - Aircraft}
+showLinePlots(data, "Emi|CO|Extra|Energy|Demand|Transport|Pass|Aviation", histVars = "Emi|CO|Energy|Demand|Transport|Pass|Aviation", vlines = 2020)
+```
+
+### Emi|CO|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping (CMIP7 sector: International Shipping)
+```{r CO Emissions - International Shipping}
+showLinePlots(data, "Emi|CO|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping", histVars = "Emi|CO|Energy|Demand|Transport|Bunkers|Freight|International Shipping", vlines = 2020)
+```
+
+### Emi|CO|Energy|Supply (CMIP7 sector: Energy Sector)
+```{r CO Emissions - Energy Sector}
+showLinePlots(data, "Emi|CO|Energy|Supply", histVars = "Emi|CO|Energy|Supply", vlines = 2020)
+```
+
+### Emi|CO|Industrial Sector (CMIP7 sector: Industrial Sector)
+```{r CO Emissions - Industrial Sector}
+showLinePlots(data, "Emi|CO|Industrial Sector", histVars = "Emi|CO|Industry", vlines = 2020)
+```
+
+### Emi|CO|Energy|Demand|Buildings (CMIP7 sector: Residential Commercial Other)
+```{r CO Emissions - Residential Commercial Other}
+showLinePlots(data, "Emi|CO|Energy|Demand|Buildings", histVars = "Emi|CO|Energy|Demand|Buildings", vlines = 2020)
+```
+
+### Emi|CO|Product Use|Solvents (CMIP7 sector: Solvents Production and Application)
+```{r CO Emissions - Solvents Production and Application}
+showLinePlots(data, "Emi|CO|Product Use|Solvents", histVars = "Emi|CO|Product Use|Solvents", vlines = 2020)
+```
+
+### Emi|CO|w/o Bunkers|Energy|Demand|Transport (CMIP7 sector: Transportation Sector)
+```{r CO Emissions - Transportation Sector}
+showLinePlots(data, "Emi|CO|w/o Bunkers|Energy|Demand|Transport", histVars = "Emi|CO|w/o Bunkers|Energy|Demand|Transport", vlines = 2020)
+```
+
+### Emi|CO|Waste (CMIP7 sector: Waste)
+```{r CO Emissions - Waste}
+showLinePlots(data, "Emi|CO|Waste", histVars = "Emi|CO|Waste", vlines = 2020)
+```
+
+# NH3
+```{r NH3 Emissions}
+showLinePlots(data, "Emi|NH3|w/ Bunkers", histVars = "Emi|NH3", vlines = 2020)
+```
+
+## MAgPIE
+
+### Emi|NH3|AFOLU|Agricultural Waste Burning (CMIP7 sector: Agricultural Waste Burning)
+```{r NH3 Emissions - Agricultural Waste Burning}
+showLinePlots(data, "Emi|NH3|AFOLU|Agricultural Waste Burning", histVars = "Emi|NH3|AFOLU|Agricultural Waste Burning", vlines = 2020)
+```
+
+### Emi|NH3|AFOLU|Agriculture (CMIP7 sector: Agriculture)
+```{r NH3 Emissions - Agriculture}
+showLinePlots(data, "Emi|NH3|AFOLU|Agriculture", histVars = "Emi|NH3|Agriculture", vlines = 2020)
+```
+
+### Emi|NH3|AFOLU|Land|Fires|Forest Burning (CMIP7 sector: Forest Burning)
+```{r NH3 Emissions - Forest Burning}
+showLinePlots(data, "Emi|NH3|AFOLU|Land|Fires|Forest Burning", histVars = "Emi|NH3|AFOLU|Land|Fires|Forest Burning", vlines = 2020)
+```
+
+### Emi|NH3|AFOLU|Land|Fires|Grassland Burning (CMIP7 sector: Grassland Burning)
+```{r NH3 Emissions - Grassland Burning}
+showLinePlots(data, "Emi|NH3|AFOLU|Land|Fires|Grassland Burning", histVars = "Emi|NH3|AFOLU|Land|Fires|Grassland Burning", vlines = 2020)
+```
+
+### Emi|NH3|AFOLU|Land|Fires|Peat Burning (CMIP7 sector: Peat Burning)
+```{r NH3 Emissions - Peat Burning}
+showLinePlots(data, "Emi|NH3|AFOLU|Land|Fires|Peat Burning", histVars = "Emi|NH3|AFOLU|Land|Fires|Peat Burning", vlines = 2020)
+``` 
+
+## REMIND
+
+### Emi|NH3|Extra|Energy|Demand|Transport|Pass|Aviation (CMIP7 sector: Aircraft)
+```{r NH3 Emissions - Aircraft}
+showLinePlots(data, "Emi|NH3|Extra|Energy|Demand|Transport|Pass|Aviation", histVars = "Emi|NH3|Energy|Demand|Transport|Pass|Aviation", vlines = 2020)
+```
+
+### Emi|NH3|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping (CMIP7 sector: International Shipping)
+```{r NH3 Emissions - International Shipping}
+showLinePlots(data, "Emi|NH3|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping", histVars = "Emi|NH3|Energy|Demand|Transport|Bunkers|Freight|International Shipping", vlines = 2020)
+```
+
+### Emi|NH3|Energy|Supply (CMIP7 sector: Energy Sector)
+```{r NH3 Emissions - Energy Sector}
+showLinePlots(data, "Emi|NH3|Energy|Supply", histVars = "Emi|NH3|Energy|Supply", vlines = 2020)
+```
+
+### Emi|NH3|Industrial Sector (CMIP7 sector: Industrial Sector)
+```{r NH3 Emissions - Industrial Sector}
+showLinePlots(data, "Emi|NH3|Industrial Sector", histVars = "Emi|NH3|Industry", vlines = 2020)
+```
+
+### Emi|NH3|Energy|Demand|Buildings (CMIP7 sector: Residential Commercial Other)
+```{r NH3 Emissions - Residential Commercial Other}
+showLinePlots(data, "Emi|NH3|Energy|Demand|Buildings", histVars = "Emi|NH3|Energy|Demand|Buildings", vlines = 2020)
+```
+
+### Emi|NH3|Product Use|Solvents (CMIP7 sector: Solvents Production and Application)
+```{r NH3 Emissions - Solvents Production and Application}
+showLinePlots(data, "Emi|NH3|Product Use|Solvents", histVars = "Emi|NH3|Product Use|Solvents", vlines = 2020)
+```
+
+### Emi|NH3|w/o Bunkers|Energy|Demand|Transport (CMIP7 sector: Transportation Sector)
+```{r NH3 Emissions - Transportation Sector}
+showLinePlots(data, "Emi|NH3|w/o Bunkers|Energy|Demand|Transport", histVars = "Emi|NH3|w/o Bunkers|Energy|Demand|Transport", vlines = 2020)
+```
+
+### Emi|NH3|Waste (CMIP7 sector: Waste)
+```{r NH3 Emissions - Waste}
+showLinePlots(data, "Emi|NH3|Waste", histVars = "Emi|NH3|Waste", vlines = 2020)
+```
+
+# NOx
+```{r NOx Emissions}
+showLinePlots(data, "Emi|NOx|w/ Bunkers", histVars = "Emi|NOX", vlines = 2020)
+```
+
+## MAgPIE
+
+### Emi|NOx|AFOLU|Agricultural Waste Burning (CMIP7 sector: Agricultural Waste Burning)
+```{r NOx Emissions - Agricultural Waste Burning}
+showLinePlots(data, "Emi|NOx|AFOLU|Agricultural Waste Burning", histVars = "Emi|NOX|AFOLU|Agricultural Waste Burning", vlines = 2020)
+```
+
+### Emi|NOx|AFOLU|Agriculture (CMIP7 sector: Agriculture)
+```{r NOx Emissions - Agriculture}
+showLinePlots(data, "Emi|NOx|AFOLU|Agriculture", histVars = "Emi|NOX|Agriculture", vlines = 2020)
+```
+
+### Emi|NOx|AFOLU|Land|Fires|Forest Burning (CMIP7 sector: Forest Burning)
+```{r NOx Emissions - Forest Burning}
+showLinePlots(data, "Emi|NOx|AFOLU|Land|Fires|Forest Burning", histVars = "Emi|NOX|AFOLU|Land|Fires|Forest Burning", vlines = 2020)
+```
+
+### Emi|NOx|AFOLU|Land|Fires|Grassland Burning (CMIP7 sector: Grassland Burning)
+```{r NOx Emissions - Grassland Burning}
+showLinePlots(data, "Emi|NOx|AFOLU|Land|Fires|Grassland Burning", histVars = "Emi|NOX|AFOLU|Land|Fires|Grassland Burning", vlines = 2020)
+```
+
+### Emi|NOx|AFOLU|Land|Fires|Peat Burning (CMIP7 sector: Peat Burning)
+```{r NOx Emissions - Peat Burning}
+showLinePlots(data, "Emi|NOx|AFOLU|Land|Fires|Peat Burning", histVars = "Emi|NOX|AFOLU|Land|Fires|Peat Burning", vlines = 2020)
+``` 
+
+## REMIND
+
+### Emi|NOx|Extra|Energy|Demand|Transport|Pass|Aviation (CMIP7 sector: Aircraft)
+```{r NOx Emissions - Aircraft}
+showLinePlots(data, "Emi|NOx|Extra|Energy|Demand|Transport|Pass|Aviation", histVars = "Emi|NOX|Energy|Demand|Transport|Pass|Aviation", vlines = 2020)
+```
+
+### Emi|NOx|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping (CMIP7 sector: International Shipping)
+```{r NOx Emissions - International Shipping}
+showLinePlots(data, "Emi|NOx|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping", histVars = "Emi|NOX|Energy|Demand|Transport|Bunkers|Freight|International Shipping", vlines = 2020)
+```
+
+### Emi|NOx|Energy|Supply (CMIP7 sector: Energy Sector)
+```{r NOx Emissions - Energy Sector}
+showLinePlots(data, "Emi|NOx|Energy|Supply", histVars = "Emi|NOX|Energy|Supply", vlines = 2020)
+```
+
+### Emi|NOx|Industrial Sector (CMIP7 sector: Industrial Sector)
+```{r NOx Emissions - Industrial Sector}
+showLinePlots(data, "Emi|NOx|Industrial Sector", histVars = "Emi|NOX|Industry", vlines = 2020)
+```
+
+### Emi|NOx|Energy|Demand|Buildings (CMIP7 sector: Residential Commercial Other)
+```{r NOx Emissions - Residential Commercial Other}
+showLinePlots(data, "Emi|NOx|Energy|Demand|Buildings", histVars = "Emi|NOX|Energy|Demand|Buildings", vlines = 2020)
+```
+
+### Emi|NOx|Product Use|Solvents (CMIP7 sector: Solvents Production and Application)
+```{r NOx Emissions - Solvents Production and Application}
+showLinePlots(data, "Emi|NOx|Product Use|Solvents", histVars = "Emi|NOX|Product Use|Solvents", vlines = 2020)
+```
+
+### Emi|NOx|w/o Bunkers|Energy|Demand|Transport (CMIP7 sector: Transportation Sector)
+```{r NOx Emissions - Transportation Sector}
+showLinePlots(data, "Emi|NOx|w/o Bunkers|Energy|Demand|Transport", histVars = "Emi|NOX|w/o Bunkers|Energy|Demand|Transport", vlines = 2020)
+```
+
+### Emi|NOx|Waste (CMIP7 sector: Waste)
+```{r NOx Emissions - Waste}
+showLinePlots(data, "Emi|NOx|Waste", histVars = "Emi|NOX|Waste", vlines = 2020)
+```
+
+# OC
+```{r OC Emissions}
+showLinePlots(data, "Emi|OC|w/ Bunkers", histVars = "Emi|OC", vlines = 2020)
+```
+
+## MAgPIE
+
+### Emi|OC|AFOLU|Agricultural Waste Burning (CMIP7 sector: Agricultural Waste Burning)
+```{r OC Emissions - Agricultural Waste Burning}
+showLinePlots(data, "Emi|OC|AFOLU|Agricultural Waste Burning", histVars = "Emi|OC|AFOLU|Agricultural Waste Burning", vlines = 2020)
+```
+
+### Emi|OC|AFOLU|Agriculture (CMIP7 sector: Agriculture)
+```{r OC Emissions - Agriculture}
+showLinePlots(data, "Emi|OC|AFOLU|Agriculture", histVars = "Emi|OC|Agriculture", vlines = 2020)
+```
+
+### Emi|OC|AFOLU|Land|Fires|Forest Burning (CMIP7 sector: Forest Burning)
+```{r OC Emissions - Forest Burning}
+showLinePlots(data, "Emi|OC|AFOLU|Land|Fires|Forest Burning", histVars = "Emi|OC|AFOLU|Land|Fires|Forest Burning", vlines = 2020)
+```
+
+### Emi|OC|AFOLU|Land|Fires|Grassland Burning (CMIP7 sector: Grassland Burning)
+```{r OC Emissions - Grassland Burning}
+showLinePlots(data, "Emi|OC|AFOLU|Land|Fires|Grassland Burning", histVars = "Emi|OC|AFOLU|Land|Fires|Grassland Burning", vlines = 2020)
+```
+
+### Emi|OC|AFOLU|Land|Fires|Peat Burning (CMIP7 sector: Peat Burning)
+```{r OC Emissions - Peat Burning}
+showLinePlots(data, "Emi|OC|AFOLU|Land|Fires|Peat Burning", histVars = "Emi|OC|AFOLU|Land|Fires|Peat Burning", vlines = 2020)
+``` 
+
+## REMIND
+
+### Emi|OC|Extra|Energy|Demand|Transport|Pass|Aviation (CMIP7 sector: Aircraft)
+```{r OC Emissions - Aircraft}
+showLinePlots(data, "Emi|OC|Extra|Energy|Demand|Transport|Pass|Aviation", histVars = "Emi|OC|Energy|Demand|Transport|Pass|Aviation", vlines = 2020)
+```
+
+### Emi|OC|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping (CMIP7 sector: International Shipping)
+```{r OC Emissions - International Shipping}
+showLinePlots(data, "Emi|OC|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping", histVars = "Emi|OC|Energy|Demand|Transport|Bunkers|Freight|International Shipping", vlines = 2020)
+```
+
+### Emi|OC|Energy|Supply (CMIP7 sector: Energy Sector)
+```{r OC Emissions - Energy Sector}
+showLinePlots(data, "Emi|OC|Energy|Supply", histVars = "Emi|OC|Energy|Supply", vlines = 2020)
+```
+
+### Emi|OC|Industrial Sector (CMIP7 sector: Industrial Sector)
+```{r OC Emissions - Industrial Sector}
+showLinePlots(data, "Emi|OC|Industrial Sector", histVars = "Emi|OC|Industry", vlines = 2020)
+```
+
+### Emi|OC|Energy|Demand|Buildings (CMIP7 sector: Residential Commercial Other)
+```{r OC Emissions - Residential Commercial Other}
+showLinePlots(data, "Emi|OC|Energy|Demand|Buildings", histVars = "Emi|OC|Energy|Demand|Buildings", vlines = 2020)
+```
+
+### Emi|OC|Product Use|Solvents (CMIP7 sector: Solvents Production and Application)
+```{r OC Emissions - Solvents Production and Application}
+showLinePlots(data, "Emi|OC|Product Use|Solvents", histVars = "Emi|OC|Product Use|Solvents", vlines = 2020)
+```
+
+### Emi|OC|w/o Bunkers|Energy|Demand|Transport (CMIP7 sector: Transportation Sector)
+```{r OC Emissions - Transportation Sector}
+showLinePlots(data, "Emi|OC|w/o Bunkers|Energy|Demand|Transport", histVars = "Emi|OC|w/o Bunkers|Energy|Demand|Transport", vlines = 2020)
+```
+
+### Emi|OC|Waste (CMIP7 sector: Waste)
+```{r OC Emissions - Waste}
+showLinePlots(data, "Emi|OC|Waste", histVars = "Emi|OC|Waste", vlines = 2020)
+```
+
+# SO2
+```{r SO2 Emissions}
+showLinePlots(data, "Emi|SO2|w/ Bunkers", histVars = "Emi|SO2", vlines = 2020)
+```
+
+## MAgPIE
+
+### Emi|SO2|AFOLU|Agricultural Waste Burning (CMIP7 sector: Agricultural Waste Burning)
+```{r SO2 Emissions - Agricultural Waste Burning}
+showLinePlots(data, "Emi|SO2|AFOLU|Agricultural Waste Burning", histVars = "Emi|SO2|AFOLU|Agricultural Waste Burning", vlines = 2020)
+```
+
+### Emi|SO2|AFOLU|Agriculture (CMIP7 sector: Agriculture)
+```{r SO2 Emissions - Agriculture}
+showLinePlots(data, "Emi|SO2|AFOLU|Agriculture", histVars = "Emi|SO2|Agriculture", vlines = 2020)
+```
+
+### Emi|SO2|AFOLU|Land|Fires|Forest Burning (CMIP7 sector: Forest Burning)
+```{r SO2 Emissions - Forest Burning}
+showLinePlots(data, "Emi|SO2|AFOLU|Land|Fires|Forest Burning", histVars = "Emi|SO2|AFOLU|Land|Fires|Forest Burning", vlines = 2020)
+```
+
+### Emi|SO2|AFOLU|Land|Fires|Grassland Burning (CMIP7 sector: Grassland Burning)
+```{r SO2 Emissions - Grassland Burning}
+showLinePlots(data, "Emi|SO2|AFOLU|Land|Fires|Grassland Burning", histVars = "Emi|SO2|AFOLU|Land|Fires|Grassland Burning", vlines = 2020)
+```
+
+### Emi|SO2|AFOLU|Land|Fires|Peat Burning (CMIP7 sector: Peat Burning)
+```{r SO2 Emissions - Peat Burning}
+showLinePlots(data, "Emi|SO2|AFOLU|Land|Fires|Peat Burning", histVars = "Emi|SO2|AFOLU|Land|Fires|Peat Burning", vlines = 2020)
+``` 
+
+## REMIND
+
+### Emi|SO2|Extra|Energy|Demand|Transport|Pass|Aviation (CMIP7 sector: Aircraft)
+```{r SO2 Emissions - Aircraft}
+showLinePlots(data, "Emi|SO2|Extra|Energy|Demand|Transport|Pass|Aviation", histVars = "Emi|SO2|Energy|Demand|Transport|Pass|Aviation", vlines = 2020)
+```
+
+### Emi|SO2|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping (CMIP7 sector: International Shipping)
+```{r SO2 Emissions - International Shipping}
+showLinePlots(data, "Emi|SO2|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping", histVars = "Emi|SO2|Energy|Demand|Transport|Bunkers|Freight|International Shipping", vlines = 2020)
+```
+
+### Emi|SO2|Energy|Supply (CMIP7 sector: Energy Sector)
+```{r SO2 Emissions - Energy Sector}
+showLinePlots(data, "Emi|SO2|Energy|Supply", histVars = "Emi|SO2|Energy|Supply", vlines = 2020)
+```
+
+### Emi|SO2|Industrial Sector (CMIP7 sector: Industrial Sector)
+```{r SO2 Emissions - Industrial Sector}
+showLinePlots(data, "Emi|SO2|Industrial Sector", histVars = "Emi|SO2|Industry", vlines = 2020)
+```
+
+### Emi|SO2|Energy|Demand|Buildings (CMIP7 sector: Residential Commercial Other)
+```{r SO2 Emissions - Residential Commercial Other}
+showLinePlots(data, "Emi|SO2|Energy|Demand|Buildings", histVars = "Emi|SO2|Energy|Demand|Buildings", vlines = 2020)
+```
+
+### Emi|SO2|Product Use|Solvents (CMIP7 sector: Solvents Production and Application)
+```{r SO2 Emissions - Solvents Production and Application}
+showLinePlots(data, "Emi|SO2|Product Use|Solvents", histVars = "Emi|SO2|Product Use|Solvents", vlines = 2020)
+```
+
+### Emi|SO2|w/o Bunkers|Energy|Demand|Transport (CMIP7 sector: Transportation Sector)
+```{r SO2 Emissions - Transportation Sector}
+showLinePlots(data, "Emi|SO2|w/o Bunkers|Energy|Demand|Transport", histVars = "Emi|SO2|w/o Bunkers|Energy|Demand|Transport", vlines = 2020)
+```
+
+### Emi|SO2|Waste (CMIP7 sector: Waste)
+```{r SO2 Emissions - Waste}
+showLinePlots(data, "Emi|SO2|Waste", histVars = "Emi|SO2|Waste", vlines = 2020)
+```
+
+# VOC
+```{r VOC Emissions}
+showLinePlots(data, "Emi|VOC|w/ Bunkers", histVars = "Emi|VOC", vlines = 2020)
+```
+
+## MAgPIE
+
+### Emi|VOC|AFOLU|Agricultural Waste Burning (CMIP7 sector: Agricultural Waste Burning)
+```{r VOC Emissions - Agricultural Waste Burning}
+showLinePlots(data, "Emi|VOC|AFOLU|Agricultural Waste Burning", histVars = "Emi|VOC|AFOLU|Agricultural Waste Burning", vlines = 2020)
+```
+
+### Emi|VOC|AFOLU|Agriculture (CMIP7 sector: Agriculture)
+```{r VOC Emissions - Agriculture}
+showLinePlots(data, "Emi|VOC|AFOLU|Agriculture", histVars = "Emi|VOC|Agriculture", vlines = 2020)
+```
+
+### Emi|VOC|AFOLU|Land|Fires|Forest Burning (CMIP7 sector: Forest Burning)
+```{r VOC Emissions - Forest Burning}
+showLinePlots(data, "Emi|VOC|AFOLU|Land|Fires|Forest Burning", histVars = "Emi|VOC|AFOLU|Land|Fires|Forest Burning", vlines = 2020)
+```
+
+### Emi|VOC|AFOLU|Land|Fires|Grassland Burning (CMIP7 sector: Grassland Burning)
+```{r VOC Emissions - Grassland Burning}
+showLinePlots(data, "Emi|VOC|AFOLU|Land|Fires|Grassland Burning", histVars = "Emi|VOC|AFOLU|Land|Fires|Grassland Burning", vlines = 2020)
+```
+
+### Emi|VOC|AFOLU|Land|Fires|Peat Burning (CMIP7 sector: Peat Burning)
+```{r VOC Emissions - Peat Burning}
+showLinePlots(data, "Emi|VOC|AFOLU|Land|Fires|Peat Burning", histVars = "Emi|VOC|AFOLU|Land|Fires|Peat Burning", vlines = 2020)
+``` 
+
+## REMIND
+
+### Emi|VOC|Extra|Energy|Demand|Transport|Pass|Aviation (CMIP7 sector: Aircraft)
+```{r VOC Emissions - Aircraft}
+showLinePlots(data, "Emi|VOC|Extra|Energy|Demand|Transport|Pass|Aviation", histVars = "Emi|VOC|Energy|Demand|Transport|Pass|Aviation", vlines = 2020)
+```
+
+### Emi|VOC|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping (CMIP7 sector: International Shipping)
+```{r VOC Emissions - International Shipping}
+showLinePlots(data, "Emi|VOC|Extra|Energy|Demand|Transport|Bunkers|Freight|International Shipping", histVars = "Emi|VOC|Energy|Demand|Transport|Bunkers|Freight|International Shipping", vlines = 2020)
+```
+
+### Emi|VOC|Energy|Supply (CMIP7 sector: Energy Sector)
+```{r VOC Emissions - Energy Sector}
+showLinePlots(data, "Emi|VOC|Energy|Supply", histVars = "Emi|VOC|Energy|Supply", vlines = 2020)
+```
+
+### Emi|VOC|Industrial Sector (CMIP7 sector: Industrial Sector)
+```{r VOC Emissions - Industrial Sector}
+showLinePlots(data, "Emi|VOC|Industrial Sector", histVars = "Emi|VOC|Industry", vlines = 2020)
+```
+
+### Emi|VOC|Energy|Demand|Buildings (CMIP7 sector: Residential Commercial Other)
+```{r VOC Emissions - Residential Commercial Other}
+showLinePlots(data, "Emi|VOC|Energy|Demand|Buildings", histVars = "Emi|VOC|Energy|Demand|Buildings", vlines = 2020)
+```
+
+### Emi|VOC|Product Use|Solvents (CMIP7 sector: Solvents Production and Application)
+```{r VOC Emissions - Solvents Production and Application}
+showLinePlots(data, "Emi|VOC|Product Use|Solvents", histVars = "Emi|VOC|Product Use|Solvents", vlines = 2020)
+```
+
+### Emi|VOC|w/o Bunkers|Energy|Demand|Transport (CMIP7 sector: Transportation Sector)
+```{r VOC Emissions - Transportation Sector}
+showLinePlots(data, "Emi|VOC|w/o Bunkers|Energy|Demand|Transport", histVars = "Emi|VOC|w/o Bunkers|Energy|Demand|Transport", vlines = 2020)
+```
+
+### Emi|VOC|Waste (CMIP7 sector: Waste)
+```{r VOC Emissions - Waste}
+showLinePlots(data, "Emi|VOC|Waste", histVars = "Emi|VOC|Waste", vlines = 2020)
+```
