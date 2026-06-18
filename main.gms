@@ -244,7 +244,7 @@ $setGlobal c_results_folder  REMIND results_folder will be automatically added d
 *'
 *' * (singleSectorGr) neo-classical, single sector growth model
 *' * (Investment_Inefficiencies) Investment losses due to domestic capital market inefficiencies
-$setGlobal macro  Investment_Inefficiencies  !! def = singleSectorGr
+$setGlobal macro  singleSectorGr  !! def = singleSectorGr
 *'---------------------    02_welfare    ---------------------------------------
 *'
 *' * (utilitarian) utilitarian aka. Benthamite social welfare function
@@ -302,7 +302,7 @@ $setglobal trade  standard           !! def = standard
 *'
 *' * (standard): WACC like tax
 *' * (off): no WACC
-$setglobal WACC  standard         !! def = standard
+$setglobal WACC  off         !! def = standard
 *'----------------------   26_agCosts  ----------------------------------------
 *'
 *' * (off): agricultural costs zero, no trade taken into account
