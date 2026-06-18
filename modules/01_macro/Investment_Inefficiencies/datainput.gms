@@ -12,7 +12,7 @@ pm_delta_kap(regi,"kap") = 0.05;
 Parameter p01_investeffectv(all_regi)                       "efficiency rate of investments"   
    /
 $ondelim 
-$include "./modules/01_macro/Investment_Inefficiencies/input/p01_boundInvMacro.cs4r"   
+$include "./modules/01_macro/Investment_Inefficiencies/input/p01_phi.cs4r"   
 $offdelim
   /
 ;

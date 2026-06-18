@@ -12,7 +12,7 @@
 Parameter p25_counwacc(ttot, all_regi)                       "WACC markup for each country"   
    /
 $ondelim 
-$include "./modules/25_WACC/standard/input/p25_invwacc.cs4r"   
+$include "./modules/25_WACC/standard/input/p25_macro_wacc.cs4r"   
 $offdelim
   /
 ;
@@ -20,7 +20,7 @@ $offdelim
 Parameter p25_techwacc(ttot, all_regi, tewacc)                       "WACC markup for each power technology in each REMIND region"   
    /
 $ondelim 
-$include "./modules/25_WACC/standard/input/p25_wacc_extended.cs4r"   
+$include "./modules/25_WACC/standard/input/p25_wacc.cs4r"   
 $offdelim
   /
 ;

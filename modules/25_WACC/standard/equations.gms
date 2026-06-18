@@ -9,7 +9,7 @@
 ***--------------------------------------------------------------------------- 
 *  WACC implementation on capital costs
 ***---------------------------------------------------------------------------
-***This equation calculates the weighted average cost of capital (WACC) costs for new and existing technologies while ensuring that each past investment is assigned the correct WACC from the year
+***This equation calculates the capital costs for new and existing technologies while ensuring that each past investment is assigned the correct WACC from the year
 q25_techwaccCost(t, regi)$(t.val > 2005)..
   v25_techwaccCost(t, regi)
   =e=
@@ -19,7 +19,7 @@ q25_techwaccCost(t, regi)$(t.val > 2005)..
         ) * p25_techwacc(t2, regi, tewacc) * pm_ts(t2)/2
     ) - p25_techwaccCostO(t, regi);
 
-
+***This equation calculates the capital costs for macroeconomic investments, including those coming from previous periods that are within their lifetime
 q25_invwaccCost(t, regi)$(t.val > 2005) ..
     v25_invWaccCost(t, regi)
     =e=
