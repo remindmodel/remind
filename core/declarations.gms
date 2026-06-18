@@ -378,11 +378,6 @@ v_costFu(ttot,all_regi)                              "costs of primary energy pr
 
 vm_flexAdj(tall,all_regi,all_te)                     "flexibility mark-up cost or subsidy, used to emulate price changes of technologies which see lower-than-average or higher-than-average electricity prices due to more or less flexible operation[T$/TWa]"
 
-*** move to tax module?
-*** tax revenues of implicit taxes used for quantity and price target implementation
-vm_taxrevimplicitQttyTargetTax(ttot,all_regi)        "tax revenue of implict tax for quantity target bound [T$]"
-vm_taxrevimplicitPriceTax(ttot,all_regi,entySe,all_enty,sector)   "tax revenue of implict tax for final energy price target [T$]"
-vm_taxrevimplicitPePriceTax(ttot,all_regi,all_enty)  "tax revenue of implict tax forprimary energy price target [T$]"
 vm_waccCost(ttot,all_regi)                               "difference between WACC costs in current and previous iteration"
 ;
 
