@@ -101,15 +101,10 @@
 		"sections": "c(0,1,2,3,4,5,99)",
 		"mainReg": "'World'"
 	},
-	"AirPollutantsREMIND": {
+	"Emissions_CMIP7": {
 		"sections": "0",
-		"yearsHist": "union(seq(1990, format(Sys.Date(), '%Y'), 1), seq(2030, 2050, 5))",
-		"userSectionPath": "normalizePath('./scripts/cs2/AirPollutantsREMIND.Rmd')"
-	},
-	"AirPollutantsREMIND-MAgPIE": {
-		"sections": "0",
-		"yearsHist": "union(seq(1990, format(Sys.Date(), '%Y'), 1), seq(2030, 2050, 5))",
-		"userSectionPath": "normalizePath('./scripts/cs2/AirPollutantsREMIND-MAgPIE.Rmd')"
+		"yearsHist": "seq(2000, 2025, 1)",
+		"userSectionPath": "normalizePath('./scripts/cs2/Emissions_CMIP7.Rmd')"
 	},
 	"PlanetaryBoundaries": {
 		"sections": "0",

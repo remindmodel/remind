@@ -40,8 +40,8 @@ p_boundCapCCS.cs4r
 p_CapacityBounds.cs4r
 p_boundCapBiochar.cs4r
 f_geoStorPot.cs3r
-f_fedemand.cs4r
-f_fedemand_build.cs4r
+f_fedemandBuild.cs4r
+f_fedemandInd.cs4r
 pm_NuclearConstraint.cs4r
 pm_risk_premium.cs4r
 pm_shPPPMER.cs4r

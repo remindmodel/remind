@@ -1,6 +1,6 @@
 
 # Mapping of MAgPIE variables to REMIND variables
-# If you change the mapping, check whether the structure of the gdx object in “getMagpieData” (see below) needs to be adjusted.
+# If you change the mapping, check whether the structure of the gdx object in the function "getMagpieData" (see below) needs to be adjusted.
 mag2rem <- tibble::tribble(
     ~mag                                                                             ,   ~enty                        ,   ~factorMag2Rem  ,   ~parameter                ,
     'Demand|Bioenergy|2nd generation|++|Bioenergy crops'                             ,   NA                           ,   1/31.536        ,   'pm_pebiolc_demandmag'    ,
@@ -38,6 +38,36 @@ mag2rem <- tibble::tribble(
     'Emissions|CH4|Land|Agriculture|+|Animal waste management'                       ,   'ch4anmlwst'                 ,   1               ,   'f_macBaseMagpie_coupling',
     'Emissions|CH4|Land|Agriculture|+|Enteric fermentation'                          ,   'ch4animals'                 ,   1               ,   'f_macBaseMagpie_coupling',
     'Emissions|CH4|Land|+|Peatland'                                                  ,   'ch4peatland'                ,   1               ,   'f_macBaseMagpie_coupling')
+
+
+# Mapping of air pollutant emissions from MAgPIE names to REMIND names
+# Unlike the variables above, the air pollutants are not imported into REMIND GAMS but directly to the reporting.
+# Therefore, they won't be written to the gdx but to an extra file the reporting uses.
+species <- c("BC","CO","NH3","NO2","OC","SO2","VOC")
+
+magAP <- c(#paste0("Emissions|", species, "|AFOLU|Agriculture"), # temporarily existed as dummy zeros for BC, CO, OC, SO2, VOC to achieve completeness of emissions reporting for ScenarioMIP. Will be removed from magpie4 reporting
+           paste0("Emissions|", c("NH3", "NO2"), "|Land|+|Agriculture"), # exists for NH3, NO2 only (endogenous in MAgPIE)
+           paste0("Emissions|", species, "|Land|Biomass Burning|+|Burning of Crop Residues"),
+           #paste0("Emissions|", species, "|Land|+|Peatland"),
+           paste0("Emissions|", species, "|AFOLU|Land|Fires"),                               
+           paste0("Emissions|", species, "|AFOLU|Land|Fires|+|Forest Burning"),
+           paste0("Emissions|", species, "|AFOLU|Land|Fires|+|Grassland Burning"),
+           paste0("Emissions|", species, "|AFOLU|Land|Fires|+|Peat Burning")
+         )
+
+remAP <- c(#paste0("Emi|", species, "|AFOLU|+|Agriculture"),
+           paste0("Emi|", c("NH3", "NO2"), "|AFOLU|+|Agriculture"),
+           paste0("Emi|", species, "|AFOLU|+|Agricultural Waste Burning"),
+           #paste0("Emi|", species, "|AFOLU|Land|+|Peatland"),
+           paste0("Emi|", species, "|AFOLU|Land|+|Fires"),           
+           paste0("Emi|", species, "|AFOLU|Land|Fires|+|Forest Burning"),
+           paste0("Emi|", species, "|AFOLU|Land|Fires|+|Grassland Burning"),
+           paste0("Emi|", species, "|AFOLU|Land|Fires|+|Peat Burning")
+         )
+
+mappingAP <- tibble::tibble(mag = magAP, enty = remAP, factorMag2Rem = 1, parameter = "AirPollutantsMAgPIE")
+
+mag2rem <- dplyr::bind_rows(mag2rem, mappingAP)
 
 
 # Delete entries in stack that contain needle and append new
@@ -146,44 +176,9 @@ runMAgPIE <- function(pathToRemindReport) {
   })
 }
 
-# Transfer coupling variables from MAgPIE report to magpieData.gdx read by REMIND between the Nash iterations
-getMagpieData <- function(path_to_report = "report.mif", mapping) {
-  
+# Write data to gdx
+writeToGdx <- function(rem, mapping) {
   require(gamstransfer, quietly = TRUE, warn.conflicts = FALSE)
-  require(quitte,       quietly = TRUE, warn.conflicts = FALSE)
-  require(dplyr,        quietly = TRUE, warn.conflicts = FALSE)
-  require(readr,        quietly = TRUE, warn.conflicts = FALSE)  
-  
-  # ---- Record runtime when the data transfer from MAgPIE to REMIND starts in runtime.log ----
-
-  write(paste(format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "getMagpieData", NashIteration, sep = ","), file = paste0("runtime.log"), append = TRUE)
-  message(round(Sys.time()), " Transferring MAgPIE data")
-  message("                    from ", path_to_report)
-  message("                      to ./magpieData.gdx")
-  
-  # ---- Read and prepare MAgPIE data ----
-  
-  mag <- quitte::read.quitte(path_to_report, check.duplicates = FALSE)
-  
-  # Stop if variables are missing
-  variablesMissing <- ! mapping$mag %in% mag$variable
-  if (any(variablesMissing)) {
-    stop("The following variables defined in the coupling interface could not be found in the MAgPIE report: ", 
-         mapping$mag[variablesMissing])
-  }
-  
-  rem <- mag |>
-    inner_join(mapping, by = c("variable" = "mag"),          # combine tables keeping relevant variables only
-               relationship = "many-to-one",                 # each row in x (mag) matches at most 1 row in y (mapping)
-               unmatched = c("drop", "error"))            |> # drop rows from x that are not in y, error: all rows in y must be in x
-    mutate(value = value * factorMag2Rem)                 |> # apply unit conversion
-    group_by(period, region, enty, parameter)             |> # define groups for summation
-    summarise(value = sum(value), .groups = "drop")       |> # sum MAgPIE emissions (variable) that have the same enty in remind
-    rename(ttot = period, regi = region)                  |> # use REMIND set names 
-    filter(, regi != "World", between(ttot, 2005, 2150))  |> # keep REMIND time horizon and remove World region
-    select(regi, ttot, enty, parameter, value)               # keep only columns required for import to REMIND
-
-  
   # ---- Start creating objects that will be written to gdx ----
   
   # ---- Define SETS ----
@@ -205,9 +200,9 @@ getMagpieData <- function(path_to_report = "report.mif", mapping) {
   emiMacMagpie <- m$addSet(
     "emiMacMagpie",
     records = mapping |>
-              filter(parameter == "f_macBaseMagpie_coupling") |>
-              select(enty) |>
-              unique(),
+      filter(parameter == "f_macBaseMagpie_coupling") |>
+      select(enty) |>
+      unique(),
     description = "emission types coming from MAgPIE"
   )
   
@@ -217,9 +212,9 @@ getMagpieData <- function(path_to_report = "report.mif", mapping) {
     "f_macBaseMagpie_coupling",
     domain = c(ttot, regi, emiMacMagpie),
     records = rem |>
-              filter(parameter == "f_macBaseMagpie_coupling") |>
-              select(ttot, regi, enty, value) |>
-              rename(emiMacMagpie = enty),
+      filter(parameter == "f_macBaseMagpie_coupling") |>
+      select(ttot, regi, enty, value) |>
+      rename(emiMacMagpie = enty),
     description = "emissions from MAgPIE"
   )
   
@@ -227,17 +222,17 @@ getMagpieData <- function(path_to_report = "report.mif", mapping) {
     "p30_pebiolc_pricemag",
     domain = c(ttot, regi),
     records = rem |>
-              filter(parameter == "p30_pebiolc_pricemag") |>
-              select(ttot, regi, value),
+      filter(parameter == "p30_pebiolc_pricemag") |>
+      select(ttot, regi, value),
     description = "bioenergy price from MAgPIE"
   )
-    
+  
   pm_pebiolc_demandmag <- m$addParameter(
     "pm_pebiolc_demandmag",
     domain = c(ttot, regi),
     records = rem |> 
-              filter(parameter == "pm_pebiolc_demandmag") |> 
-              select(ttot, regi, value),
+      filter(parameter == "pm_pebiolc_demandmag") |> 
+      select(ttot, regi, value),
     description = "demand for bioenergy in MAgPIE from which the prices result"
   )
   
@@ -245,14 +240,73 @@ getMagpieData <- function(path_to_report = "report.mif", mapping) {
     "p26_totLUcost_coupling",
     domain = c(ttot, regi),
     records = rem |> 
-              filter(parameter == "p26_totLUcost_coupling") %>% 
-              select(ttot, regi, value),
+      filter(parameter == "p26_totLUcost_coupling") %>% 
+      select(ttot, regi, value),
     description = "total production costs from MAgPIE without costs for GHG"
   )
   
   # ---- Write to gdx file ----
   
   m$write("magpieData.gdx")
+}
+
+# Write air pollutant emissions to file for reporting
+writeAPToReporting <- function(rem, mapping) {
+  
+  # select only air pollutant emissions and write to file
+  rem <- rem |>
+    filter(parameter == "AirPollutantsMAgPIE") |>
+    mutate(enty = paste0(enty, " (", unit, ")")) |>
+    mutate(enty = gsub("NO2", "NOx", enty)) |>
+    select(ttot, regi, enty, value) |>
+    write.table(file = "reporting/AirPollutantsMAgPIE.cs4r",
+                quote = FALSE, sep = ",", row.names = FALSE, col.names = FALSE)
+}
+
+# Transfer coupling variables from MAgPIE report to magpieData.gdx read by REMIND between the Nash iterations
+getMagpieData <- function(path_to_report = "report.mif", mapping) {
+  
+  require(quitte,       quietly = TRUE, warn.conflicts = FALSE)
+  require(dplyr,        quietly = TRUE, warn.conflicts = FALSE)
+  
+  # ---- Record runtime when the data transfer from MAgPIE to REMIND starts in runtime.log ----
+
+  write(paste(format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "getMagpieData", NashIteration, sep = ","), file = paste0("runtime.log"), append = TRUE)
+  message(round(Sys.time()), " Transferring MAgPIE data")
+  message("                    from ", path_to_report)
+  message("                      to ./magpieData.gdx and ./reporting/AirPollutantsMAgPIE.cs4r")
+  
+  # ---- Read and prepare MAgPIE data ----
+  
+  mag <- quitte::read.quitte(path_to_report, check.duplicates = FALSE)
+  
+  # Stop if variables are missing
+  variablesMissing <- ! mapping$mag %in% mag$variable
+  if (any(variablesMissing)) {
+    stop("The following variables defined in the coupling interface could not be found in the MAgPIE report: \n", 
+         paste(mapping$mag[variablesMissing], collapse = "\n"))
+  }
+  
+  rem <- mag |>
+    inner_join(mapping, by = c("variable" = "mag"),          # combine tables keeping relevant variables only
+               relationship = "many-to-one",                 # each row in x (mag) matches at most 1 row in y (mapping)
+               unmatched = c("drop", "error"))            |> # drop rows from x that are not in y, error: all rows in y must be in x
+    mutate(value = value * factorMag2Rem)                 |> # apply unit conversion
+    group_by(period, region, enty, parameter, unit)             |> # define groups for summation, include unit to keep it (needed for export of air pollutants to REMIND reporting)
+    summarise(value = sum(value), .groups = "drop")       |> # sum MAgPIE emissions (variable) that have the same enty in remind
+    rename(ttot = period, regi = region)                  |> # use REMIND set names 
+    filter(regi != "World", between(ttot, 2005, 2150))     # keep REMIND time horizon and remove World region
+    
+
+  # write data to gdx, that will be read by REMIND in the next Nash iteration. 
+  # If you change the structure of rem, check whether writeToGdx needs to be adjusted.
+  # keep only columns required for import to REMIND
+  writeToGdx(rem |> select(regi, ttot, enty, parameter, value) , mapping)
+
+  # write data to file, that will be read by remind2::reportAirPollutantEmissions in the reporting step. 
+  # If you change the structure of rem, check whether reportAirPollutantEmissions needs to be adjusted.
+  writeAPToReporting(rem, mapping)
+  
 }
 
 # Obtain number of MAgPIE iteration and Nash iteration passed to this script by GAMS
@@ -299,7 +353,7 @@ if (is.null(cfg$continueFromHere) || NashIteration > 1) {
 # Write pathToMagpieReport to cfg, so reporting.R can find the MAgPIE report and append it to the REMIND reporting
 cfg$pathToMagpieReport <- pathToMagpieReport
 
-# In any case transfer MAgPIE data from report to magpieData.gdx
+# In any case transfer MAgPIE data from report to magpieData.gdx and AirPollutantsMAgPIE.cs4r
 getMagpieData(path_to_report = pathToMagpieReport, mapping = mag2rem)
 
 # Save the same elements that were loaded (they may have been updated in the meantime)

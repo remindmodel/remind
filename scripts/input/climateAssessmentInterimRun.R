@@ -114,10 +114,12 @@ varmap <- c(
   'Effective Radiative Forcing|Anthropogenic' = 'p15_forc_magicc'
 )
 
-# No need to postprocess, which mainly consisted of renaming variables anyway. Skip renaming variables since during
-# iterative call to climate assessment the variables names are not expanded as in `MAGICC7_AR6.Report`/the standard
-# call to `run_climate` in `climate-assessment`
-read.quitte(cfg$climateAssessmentFile) %>% write.gdx(file.path(outputDir, "p15_climate.gdx"), varmap = varmap)
+# Postprocess by renaming IAMC-style `period` (year) column to REMIND compatible `tall` set & using this as sole index 
+# `dimCol`, No need to further rename variables since during iterative call to climate assessment the variables names 
+# are not expanded as in `MAGICC7_AR6.Report`/the standard call to `run_climate` in `climate-assessment`
+read.quitte(cfg$climateAssessmentFile) %>% 
+  rename(tall = period) %>% 
+  write.gdx(file.path(outputDir, "p15_climate.gdx"), varmap = varmap, dimCols = c("tall"))
 
 runTimes <- c(runTimes, "write_gdx end" = Sys.time())
 

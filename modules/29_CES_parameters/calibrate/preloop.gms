@@ -312,7 +312,6 @@ Display p29_alpha, p29_beta;
 
 *** for entrp_frgt_lo (energy transport - freight transport - long distance)
 *** pass on to pm_cesdata and ensure the resulting price is positive
-$ifthen.edge_esm %transport% == "edge_esm"
 
 loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2020 ),
   pm_cesdata(ttot,regi_dyn29(regi),"entrp_frgt_lo","price")
@@ -336,8 +335,6 @@ loop (ttot$( ttot.val ge 2005),
 );
 
 display "after entrp_frgt_lo smoothening", pm_cesdata;
-
-$endif.edge_esm
 
 *** for all other modes
 *** pass on to pm_cesdata and ensure the resulting price is positive
@@ -399,7 +396,6 @@ if (sm_CES_calibration_iteration eq 1, !! first CES calibration iteration
     put pm_cesdata(t,regi,in,"quantity") /;
   );
 
-$ifthen.subsectors "%industry%" == "subsectors"
 $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
   loop((t_29scen(t),regi_dyn29(regi),in)$(   ppfen_industry_dyn37(in)
                                           OR ppfKap_industry_dyn37(in) ),
@@ -407,7 +403,6 @@ $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
     put pm_cesdata(t,regi,in,"quantity") /;
   );
 $endif.industry_FE_target
-$endif.subsectors
 
   putclose file_CES_calibration;
 );
@@ -723,13 +718,11 @@ if (card(ppf_beyondcalib_29) >= 1, !! if there are any nodes in beyond calib
       = p29_CESderivative(t,regi,out,in);
     );
 
-$ifthen.subsectors "%industry%" == "subsectors"
 $ifthen.FE_target "%c_CES_calibration_industry_FE_target%" == "1" !! c_CES_calibration_industry_FE_target
     !! set minimum price on ppf_industry
     pm_cesdata(t,regi_dyn29(regi),ppf_industry_dyn37(in),"price")$(NOT ue_industry_dyn37(in))
     = max(pm_cesdata(t,regi,in,"price"), 1e-5);
 $endif.FE_target
-$endif.subsectors
 
     !! smooth historical prices
     pm_cesdata(t_29hist(t),regi_dyn29(regi),in,"price")$(
@@ -915,7 +908,6 @@ loop ((t_29hist_last(t2),regi_dyn29(regi),cesOut2cesIn(out,in))$(
 
 ***_____________________________ START OF: BEYOND CALIBRATION PART II ________________________________________
 
-$ifthen.subsectors "%industry%" == "subsectors"
 $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
 
 *** c_CES_calibration_industry_FE_target == 1 means that
@@ -1123,7 +1115,7 @@ loop (cesOut2cesIn(in_industry_dyn37(out),in)$(
    );
 );
 $endif.industry_FE_target
-$endif.subsectors
+
 
 ***_____________________________ END OF: BEYOND CALIBRATION PART II ________________________________________
 
@@ -1294,7 +1286,6 @@ loop ((ttot(t),regi_dyn29(regi),industry_ue_calibration_target_dyn37(out))$(
   );
 );
 
-$ifthen.subsectors "%industry%" == "subsectors"   !! subsectors
 if (sm_tmp eq 1,
   put logfile, "Assertion of industry energy limits failed: " /;
   loop ((regi_dyn29(regi),ttot(t),industry_ue_calibration_target_dyn37(out))$(
@@ -1318,6 +1309,5 @@ if (sm_tmp eq 1,
   execute_unload "abort.gdx";
   abort "Assertion of industry energy limits failed. See .log file for details.";
 );
-$endif.subsectors
 
 *** EOF ./modules/29_CES_parameters/calibrate/preloop.gms

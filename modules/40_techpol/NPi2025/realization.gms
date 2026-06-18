@@ -11,6 +11,7 @@ $Ifi "%phase%" == "declarations" $include "./modules/40_techpol/NPi2025/declarat
 $Ifi "%phase%" == "datainput" $include "./modules/40_techpol/NPi2025/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/40_techpol/NPi2025/equations.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/40_techpol/NPi2025/bounds.gms"
+$Ifi "%phase%" == "postsolve" $include "./modules/40_techpol/NPi2025/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 
 *** EOF ./modules/40_techpol/NPi2025/realization.gms

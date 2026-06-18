@@ -150,10 +150,6 @@ vm_deltaCap.lo(t,regi,"bioh2c","1") $ (t.val <= 2030) = 0;
 vm_costTeCapital.fx(ttot,regi,teNoLearn) = pm_inco0_t("2005",regi,teNoLearn); !! use 2005 value for the past
 vm_costTeCapital.fx(t,   regi,teNoLearn) = pm_inco0_t(t,regi,teNoLearn);
 
-*** RP: theoretically, floor costs represent the lower bound of investment costs for learnTe. However, with regional 
-*** variations of 2015 costs and long-term costs being high in SSP3/SSP5, this can be different -> set lower bound to 0.2
-vm_costTeCapital.lo(t,regi,teLearn) = 0.2 * pm_data(regi,"floorcost",teLearn);
-
 *' No battery storage in 2010
 vm_cap.up("2010",regi,teStor,"1") = 0;
 
@@ -318,7 +314,7 @@ loop(te $ sameas(te, "biopyrliq"), !! does not yet exist commercially
 *' #### 4. Assumptions on carbon management
 *** ==================================================================
 
-*** lower bound on stored CO2
+*' Carbon capture is a positive variable
 vm_emiTe.lo(ttot,regi,"cco2") = 0;
 
 *' no CCS at all in 2010
@@ -332,22 +328,26 @@ if(c_ccsinjecratescen = 0,
   vm_co2CCS.fx(t,regi_capturescen,"cco2","ico2",te,rlf) $ teCCS2rlf(te,rlf) = 0;
 );
 
-*' bound on maximum annual carbon storage by region
-*** if c_ccsinjecratescen=0 --> no CCS at all and vm_co2CCS is fixed to 0 before, therefore the upper bound is only set if there should be CCS!
-if(c_ccsinjecratescen > 0,
+*' Bounds on maximum annual carbon storage by region
+*' Upper limits on regional annual injection rates are calculated as percentage of total storage potential  
 *' DK 20100929: default value (pm_ccsinjecrate= 0.5%) is consistent with Interview Gerling (BGR)
 *' (http://www.iz-klima.de/aktuelles/archiv/news-2010/mai/news-05052010-2/): 
 *' 12 Gt storage potential in Germany, 50-75 Mt/a injection => 60 Mt/a => 60/12000=0.005
+*** if c_ccsinjecratescen=0 --> no CCS at all and vm_co2CCS is fixed to 0 before, therefore the upper bound is only set if there should be CCS!
+if(c_ccsinjecratescen > 0,
   vm_co2CCS.up(t,regi,"cco2","ico2","ccsinjeon","1")  = pm_dataccs(regi,"quan","ccsinjeon")  * pm_ccsinjecrate(regi);
   vm_co2CCS.up(t,regi,"cco2","ico2","ccsinjeoff","1") = pm_dataccs(regi,"quan","ccsinjeoff") * pm_ccsinjecrate(regi);
 
-*** Lower limit for 2020-2030 is capacities of all projects that are operational (2020-2030) from project data base
-*** Upper limit for 2025 and 2030 additionally includes all projects under construction and 30% 
-*** (default, or changed by c_fracRealfromAnnouncedCCScap2030) of announced/planned projects from project data base
-*** See also corresponding code in input validation data preparation in mrremind/R/calcProjectPipeline.R.
-*** In nash-mode regions cannot easily share ressources, therefore CCS potentials are redistributed in Europe in data preprocessing in mrremind:
-*** Potential of EU27 regions is pooled and redistributed according to GDP (Only upper limit for 2030)
-*** Norway and UK announced to store CO2 for EU27 countries. So 50% of Norway and UK potential in 2030 is attributed to EU27-Pool
+*' Near-term limits derived from CCUS project announcements
+*' Lower limit for 2020-2030 is capacities of all projects that are operational (2020-2030) from project data base
+*' Upper limit for 2025 and 2030 additionally includes all projects under construction and 30% 
+*' (default, or changed by c_fracRealfromAnnouncedCCScap2030) of announced/planned projects from project data base
+*' See also corresponding code in input validation data preparation in mrremind/R/calcProjectPipeline.R.
+*' In nash-mode regions cannot easily share ressources, therefore CCS potentials are redistributed in Europe in data preprocessing in mrremind:
+*' Potential of EU27 regions is pooled and redistributed according to GDP (Only upper limit for 2030)
+*' Norway and UK announced to store CO2 for EU27 countries. So 50% of Norway and UK potential in 2030 is attributed to EU27-Pool
+*' Furthermore we restrict 2035 capacities to a maximum of 2.5 times 2030 capacities, assuming an optimistic 20 percent annual growth.
+*' Regions without project announcements (IND, REF) are assigned an upper limit of 10 Mt storage per year in 2035.
   if(not cm_emiscen = 1, !! cm_emiscen 1 = BAU
     vm_co2CCS.lo(t,regi,"cco2","ico2","ccsinjeon","1") $ (t.val <= 2030) = sm_MtCO2_2_GtC * p_boundCapCCS(t,regi,"operational") $ (t.val <= 2030);
     vm_co2CCS.up(t,regi,"cco2","ico2","ccsinjeon","1") $ (t.val <= 2030) = sm_MtCO2_2_GtC * (
@@ -355,6 +355,17 @@ if(c_ccsinjecratescen > 0,
       + p_boundCapCCS(t,regi,"construction") $ (t.val <= 2030)
       + p_boundCapCCS(t,regi,"planned") $ (t.val <= 2030) * c_fracRealfromAnnouncedCCScap2030);
       !! DKX: assumptions for ccsinjeoff
+    vm_co2CCS.up(t,regi,"cco2","ico2","ccsinjeon","1") $ (t.val = 2035) =
+      2.5 * sm_MtCO2_2_GtC * (
+        p_boundCapCCS("2030",regi,"operational")
+        + p_boundCapCCS("2030",regi,"construction")
+        + p_boundCapCCS("2030",regi,"planned") * c_fracRealfromAnnouncedCCScap2030
+      );
+    loop(regi,
+      if( ((p_boundCapCCS("2030",regi,"operational") + p_boundCapCCS("2030",regi,"construction") + p_boundCapCCS("2030",regi,"planned")) = 0),
+        vm_co2CCS.up(t,regi,"cco2","ico2","ccsinjeon","1") $ (t.val = 2035) = 10 * sm_MtCO2_2_GtC;
+      );
+    );
   );
 );
 
@@ -388,15 +399,29 @@ loop(regi,
   );
 );
 
-loop(regi $ (p_boundCapCCSindicator(regi) = 0),
-  vm_cap.fx("2025",regi,teCCS,rlf) = 0;
-  vm_cap.fx("2030",regi,teCCS,rlf) = 0;
-);
-
-*** Limit REMINDs ability to vent captured CO2 to 1 MtCO2 per yr per region. This happens otherwise to a great extend in stringent climate 
-*** policy scenarios if CCS and CCU capacities are limited in early years, to lower overall adjustment costs of capture technologies.
-*** In reality, people don't have perfect foresight and without storage or usage capacities, no capture facilities will be built.
+*' Limit REMINDs ability to vent captured CO2 to 1 MtCO2 per yr per region. This happens otherwise to a great extend in stringent climate 
+*' policy scenarios if CCS and CCU capacities are limited in early years, to lower overall adjustment costs of capture technologies.
 v_co2capturevalve.up(t,regi) = 1 * sm_MtCO2_2_GtC;
+
+*** ------------------------------------------------------------------
+*' ##### Assumptions on leakage in the CCUS chain:
+*** ------------------------------------------------------------------
+*' 1. Leakage from CO2 capture and transportation:
+*' 1 percent of captured CO2 leaks back to the atmosphere and is directly deduced from each technology's capture rate 
+*' See s_co2pipe_leakage in datainput.
+*' 2. Leakage from the geological reservoir:
+*' NOT considered in REMIND. 
+*' Justification: effect is too small
+*' According to Alcalde et al. 2018  DOI: 10.1038/s41467-018-04423-1 
+*' "An unrealistic scenario, where CO2 storage is inadequately regulated, estimates that more than 78% will be retained over 10,000 years."
+*' Relating these numbers to REMIND scenarios:
+*' Let R(t) be the fraction remaining after time t with (simplified) constant leakage rate k:
+*' R(t)=e^(kt)
+*' with R(10 000) = 0.78
+*' leakage rate k = 0.0025% / yr
+*' After 100 years, this leads to a loss of 0.25% from the reservoirs
+*' so in the "unrealistic scenario" for every 400 GtCO2 stored, 1 GtCO2 leaks after 100 years.
+
 
 
 *** ==================================================================
@@ -529,7 +554,6 @@ loop(all_te $ (
     vm_prodSe.fx(t,regi,entyPe,entySe,all_te) = 0;
   );
 );
-
 
 *** H2 Curtailment (TODO: RLDC removal)
 *** Fixing h2curt value to zero to avoid the model to generate SE out of nothing.

@@ -19,8 +19,8 @@ sm_tmp2,input,questionnaire
 pm_ttot_val,input,questionnaire
 pm_ue_eff_target,parameter,not needed
 pm_calibrate_eff_scale,parameter,not needed
-pm_fedemand,parameter,not needed
+pm_fedemandInd,parameter,not needed
+pm_fedemandBuild,parameter,not needed
 pm_energy_limit,,
 sm_CES_calibration_iteration,scalar,only applicable during calibration
 cm_H2InBuildOnlyAfter,parameter,???
-p29_building_relaxed_bounds_dyn,set,not needed

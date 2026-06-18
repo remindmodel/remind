@@ -59,8 +59,8 @@ projects <- list(
     iiasatemplate = "https://files.ece.iiasa.ac.at/ngfs-phase-5/ngfs-phase-5-template.xlsx",
     removeFromScen = "C_|_bIT|_bit|_bIt|_KLW"),
   NGFS6 = list(
-    model = "REMIND-MAgPIE 3.5-4.13",
-    mapping = c("ScenarioMIP"),
+    model = "REMIND-MAgPIE 3.6-4.14",
+    mapping = c("ScenarioMIP", "NGFS6"),
     iiasatemplate = "https://files.ece.iiasa.ac.at/ngfs-phase-6/ngfs-phase-6-template.xlsx",
     removeFromScen = "C_"),
   RIKEN = list(

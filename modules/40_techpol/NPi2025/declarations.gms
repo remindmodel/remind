@@ -40,10 +40,12 @@ Equation
 
 Parameter
     p40_RenShareTargets(ttot,all_regi,RenShareTargetType)  "renewable share targets in NPi per REMIND region aggregated from country-level targets [share]"
+    p40_RenShare_FE(ttot,all_regi)                         "diagnostic parameter to shares in q40_RenShare_FE, calculated renewable share in final energy including ambient heat from heat pumps [share]"
 ;
 
 Equation
-    q40_RenShare                                  "constraint to enforce minimum share of renewables based on renewable share targets of NPi"
+    q40_RenShare_SE                               "constraint to enforce minimum share of renewables in secondary energy based on renewable share targets of NPi"
+    q40_RenShare_FE                               "constraint to enforce minimum share of renewables in final energy including ambient heat from heat pumps"
 ;
 
 

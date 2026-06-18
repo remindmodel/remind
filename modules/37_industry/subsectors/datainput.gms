@@ -276,7 +276,7 @@ emiMac2mac("co2otherInd","co2otherInd") = NO;
 *** data on maximum secondary steel production
 *** The steel recycling rate limit is assumed to increase from 90 to 99 %.
   p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPpopScen)
-  = pm_fedemand(tall,all_regi,"ue_steel_secondary")
+  = pm_fedemandInd(tall,all_regi,"ue_steel_secondary")
   / 0.9
   * 0.99;
 
@@ -646,15 +646,6 @@ $offdelim
   /
 ;
 
-*' load baseline industry ETS solids demand
-if (cm_startyear ne 2005,   !! not a BAU scenario
-Execute_Loadpoint "input_ref.gdx", vm_demFeSector_afterTax;
-  p37_BAU_industry_ETS_solids(t,regi)
-  = sum(se2fe(entySe,"fesos",te),
-      vm_demFeSector_afterTax.l(t,regi,entySe,"fesos","indst","ETS")
-    );
-);
-
 * Define carbon capture and storage share in waste incineration emissions
 * capture rate increases linearly from zero in 2025 to value the set in the switch for the defined year, and it is kept constant for years afterwards
 p37_regionalWasteIncinerationCCSMaxShare(ttot,all_regi) = 0;
@@ -803,7 +794,7 @@ if (cm_startyear eq 2005,
 
     !! 2nd stage tech
     loop(mat2ue(mat,in),
-      p37_matFlowHist(ttot,regi,mat) = pm_fedemand(ttot,regi,in) / p37_mat2ue(mat,in) * p37_ue_share(mat,in);
+      p37_matFlowHist(ttot,regi,mat) = pm_fedemandInd(ttot,regi,in) / p37_mat2ue(mat,in) * p37_ue_share(mat,in);
       loop(tePrc2matOut(tePrc,opmoPrc,mat),
         pm_outflowPrcHist(ttot,regi,tePrc,opmoPrc) = p37_matFlowHist(ttot,regi,mat) * p37_teMatShareHist(tePrc,opmoPrc,mat);
       );
@@ -824,7 +815,7 @@ if (cm_startyear eq 2005,
 
     loop((entyFe,ppfUePrc),
       p37_demFeTarget(ttot,regi,entyFe,ppfUePrc) = sum(tePrc2ue(tePrc,opmoPrc,ppfUePrc), pm_outflowPrcHist(ttot,regi,tePrc,opmoPrc) * p37_specFeDemTarget(entyFe,tePrc,opmoPrc));
-      p37_demFeActual(ttot,regi,entyFe,ppfUePrc) = sum((fe2ppfen_no_ces_use(entyFe,all_in),ue2ppfenPrc(ppfUePrc,all_in)), pm_fedemand(ttot,regi,all_in) * sm_EJ_2_TWa);
+      p37_demFeActual(ttot,regi,entyFe,ppfUePrc) = sum((fe2ppfen_no_ces_use(entyFe,all_in),ue2ppfenPrc(ppfUePrc,all_in)), pm_fedemandInd(ttot,regi,all_in) * sm_EJ_2_TWa);
     );
 
     p37_demFeRatio(ttot,regi,ppfUePrc) = sum(entyFe,p37_demFeActual(ttot,regi,entyFe,ppfUePrc)) / sum(entyFe,p37_demFeTarget(ttot,regi,entyFe,ppfUePrc));
