@@ -15,6 +15,19 @@
     - [First-time setup](#first-time-setup)
     - [Pull and run](#pull-and-run)
     - [Retrieve results](#retrieve-results)
+- [6. Output Analysis](#6-output-analysis)
+  - [REMIND Reporting](#remind-reporting)
+    - [Obtain REMIND output files](#obtain-remind-output-files)
+    - [Full run archives](#full-run-archives)
+    - [Start reporting](#start-reporting)
+  - [Compare scenarios](#compare-scenarios)
+    - [REMIND script](#remind-script)
+    - [From R Session](#from-r-session)
+    - [Interactive Use](#interactive-use)
+  - [Validate scenarios](#validate-scenarios)
+    - [REMIND script](#remind-script-1)
+    - [From R Session](#from-r-session-1)
+    - [Interactive Use](#interactive-use-1)
 
 ---
 
@@ -325,7 +338,10 @@ When you are done, stop the EC2 instance in the AWS Console to avoid being charg
 
 ## REMIND Reporting
 
-*Note*: If you've experienced difficulties with running REMIND or any of the scenarios on your PC you can download a tar archive of prepared REMIND output [at this link](https://rse.pik-potsdam.de/data/remind/public/prepared_output.tar.gz). Move the `prepared_output.tar.gz` into the container.
+### Obtain REMIND output files
+
+*Note*: If you've experienced difficulties with running REMIND or any of the scenarios on your PC you can download a tar archive of prepared REMIND output [at this link](https://rse.pik-potsdam.de/data/remind/public/prepared_output.tar.gz). It is much smaller than the full run archives described below and contains everything you need for the tasks in this section. Move the `prepared_output.tar.gz` into the container.
+
 
 ```PowerShell
 docker cp .\prepared_output.tar.gz ws26:/opt/remind
@@ -337,6 +353,28 @@ tar -xzf prepared_output.tar.gz -C output
 ```
 
 Verify the availability of output folders by running `ls output` in your REMIND directory. In case you are using the prepared output directory, the command shows directories `SSP2-NPi2025_2025-11-14_00.24.00` and `SSP2-PkBudg650_2025-11-13_18.28.33`. If you've computed your own scenarios, the time stamps at the end of the directory name will be different, but they still have the `SSP2-NPi2025` and `SSP2-PkBudg750` prefixes.
+
+### Full run archives
+
+For access to the complete GAMS solver output and coupled REMIND/MAgPIE runs, two larger archives are available. These are not required for the tasks in this section but give full detail for deeper analysis.
+
+**REMIND energy-only runs** (~1.1 GB) — NPi2025 and PkBudg750 scenarios with full solver output.
+
+Download [prepared_remind_runs.tar.gz](https://rse.pik-potsdam.de/data/remind/public/prepared_remind_runs.tar.gz), then on your host machine run:
+
+```PowerShell
+docker cp prepared_remind_runs.tar.gz ws26:/opt/remind
+docker exec ws26 bash -c "cd /opt/remind && tar -xzf prepared_remind_runs.tar.gz && rm prepared_remind_runs.tar.gz"
+```
+
+**Coupled REMIND/MAgPIE runs** (~3 GB) — NPi2025 coupled run with 4 MAgPIE iteration folders.
+
+Download [prepared_magpie_runs.tar.gz](https://rse.pik-potsdam.de/data/remind/public/prepared_magpie_runs.tar.gz), then on your host machine run:
+
+```PowerShell
+docker cp prepared_magpie_runs.tar.gz ws26:/opt/magpie
+docker exec ws26 bash -c "cd /opt/magpie && tar -xzf prepared_magpie_runs.tar.gz && rm prepared_magpie_runs.tar.gz"
+```
 
 ### Start reporting
 
