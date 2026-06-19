@@ -32,7 +32,7 @@ p30_datapebio(regi,"pebiolc","2","cost",ttot)$(ttot.val ge 2005) =    1 * s30_D2
 p30_datapebio(regi,"pebiolc","2","maxprod",ttot)$(ttot.val ge 2005) = p30_biolcResidues(ttot,regi,"%cm_LU_emi_scen%") * sm_EJ_2_TWa / 1000;
 
 *** maxprod 1st gen: use regional maxprod data from MAgPIE for 1st generation energy carriers (pebios, pebioil)
-*** RoSa: The last one should be pretending that there is 500 PJ of Manure available in each region.
+*** RoSa: The last one should be pretending that there is 500 PJ of Manure available in each region. This should be set explicitly for Germany based on Input from BENOPT or input from MAgPIE. CAUTION: IEA might define biogas, so output of digestors rather than input.  
 p30_datapebio(regi,"pebios","5","maxprod",ttot)$(ttot.val ge 2005) = p30_bio1stgen(ttot,regi,"pebios") * sm_EJ_2_TWa / 1000;
 p30_datapebio(regi,"pebioil","5","maxprod",ttot)$(ttot.val ge 2005) = p30_bio1stgen(ttot,regi,"pebioil") * sm_EJ_2_TWa / 1000;
 p30_datapebio(regi,"pemanure","5","maxprod",ttot)$(ttot.val ge 2005) = 500 * sm_EJ_2_TWa / 1000;  

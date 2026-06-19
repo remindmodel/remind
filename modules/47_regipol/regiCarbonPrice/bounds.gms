@@ -69,6 +69,7 @@ vm_capEarlyReti.up('2025',regi,'pc')$(sameAs(regi,"DEU")) = 0.65;
 *' gas share of chp heat output to be between 50-55% of total district heating demand
 *' bio share of chp heat output to be between 15-25% of total district heating demand
 *' TODO: Historical fixings should be done in the core via input data from mrremind, this still needs to be moved
+*' RoSa: Probably have to adjust this with second bioCHP tech with historic Values. Maybe also ask Tabea about biochar?'
 loop(regi$(sameAs(regi,"DEU")),
     loop(t$(t.val eq 2020),
         vm_cap.lo(t,regi,"coalchp","1")= 0.2

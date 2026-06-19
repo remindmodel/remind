@@ -428,7 +428,8 @@ pm_eta_conv(ttot,regi,"elh2") = pm_dataeta(ttot,regi,"elh2");
 *** happening).
 pm_eta_conv(ttot,regi,"bioeths")   = fm_dataglob("eta","bioeths");
 pm_eta_conv(ttot,regi,"biodiesel") = fm_dataglob("eta","biodiesel");
-pm_eta_conv(ttot,regi,"biodigest") = fm_dataglob("eta","biodigest");
+pm_eta_conv(ttot,regi,"biodigestCHP") = fm_dataglob("eta","biodigestCHP");
+pm_eta_conv(ttot,regi,"biodigestGAS") = fm_dataglob("eta","biodigestGAS");
 
 *** Increase SE2FE efficiency for gases in DEU following AGEB data from 2020
 *** increase incrementally from IEA data in 2005 to avoid inconsistencies with 2005 IEA calibration

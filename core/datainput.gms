@@ -754,8 +754,9 @@ pm_cf(ttot,regi,"h2turbVRE")$(ttot.val ge 2025) = pm_cf(ttot,regi,"ngt");
 pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
-*** RoSa: set CF for biodigest 
-pm_cf(ttot,regi,"biodigest") = 0.9;
+*** RoSa: set CF for biodigestCHP and biodigestGAS 
+pm_cf(ttot,regi,"biodigestCHP") = 0.9;
+pm_cf(ttot,regi,"biodigestGAS") = 0.9;
 
 *** Region- and tech-specific early retirement rates
 loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi),

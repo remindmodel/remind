@@ -295,6 +295,8 @@ p04_prodCoupleGlob("pebiolc","seel","biochp","sehe")        = 0.72;
 p04_prodCoupleGlob("pebiolc","segabio","biogasc","seel")    = -0.07;
 p04_prodCoupleGlob("pebiolc","seliqbio","bioethl","seel")   = 0.153;
 
+p04_prodCoupleGlob("pemanure","seel","biodigestCHP","sehe")   = 0.1;
+
 *** Electricity co-production for this Fischer-Tropsch-based biomass-to-liquids route. Values taken from:
 *** - Liu et al. 2011 (Making Fischer-Tropsch Fuels and Electricity from Coal and Biomass: Performance and Cost Analysis) https://doi.org/10.1021/ef101184e
 *** broadly in line with the other studies:

@@ -174,7 +174,8 @@ all_te          "all energy technologies, including from modules"
     bioethl         "biomass to ethanol"
     bioeths         "sugar and starch biomass to ethanol"
     biodiesel       "oil biomass to biodiesel"
-    biodigest       "anaerobic digestion"
+    biodigestCHP    "anaerobic digestion for CHP"
+    biodigestGAS "anaerobic digestion for manure"
     biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
     biopyrchp       "biomass pyrolysis to biochar plus heat and power (established industrial)"   
@@ -1117,7 +1118,8 @@ te(all_te)              "energy technologies"
     bioethl         "biomass to ethanol"
     bioeths         "sugar and starch biomass to ethanol"
     biodiesel       "oil biomass to biodiesel"
-    biodigest    "anaerobic digestion"
+    biodigestCHP    "anaerobic digestion for CHP"
+    biodigestGAS "anaerobic digestion for manure"
     biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
     biopyrchp       "biomass pyrolysis to biochar plus heat and power (established industrial)"   
@@ -1236,7 +1238,8 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
     bioethl         "biomass to ethanol"
     bioeths         "sugar and starch biomass to ethanol"
     biodiesel       "oil biomass to biodiesel"
-    biodigest    "anaerobic digestion"
+    biodigestCHP    "anaerobic digestion for CHP"
+    biodigestGAS "anaerobic digestion for manure"
     biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
     biopyrchp       "biomass pyrolysis to biochar plus heat and power (established industrial)"   
@@ -1399,7 +1402,8 @@ teBio(all_te)      "biomass energy systems technologies"
     bioethl     "biomass to ethanol"
     bioeths     "sugar and starch biomass to ethanol"
     biodiesel   "oil biomass to biodiesel"
-    biodigest   "anaerobic digestion"
+    biodigestCHP    "anaerobic digestion for CHP"
+    biodigestGAS "anaerobic digestion for manure"
     biopyronly  "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe    "biomass pyrolysis to biochar plus heat (established industrial)"
     biopyrchp   "biomass pyrolysis to biochar plus heat and power (established industrial)"   
@@ -1431,7 +1435,8 @@ teRe(all_te)     "renewable technologies including biomass"
     bioethl     "biomass to ethanol"
     bioeths     "sugar and starch biomass to ethanol"
     biodiesel   "oil biomass to biodiesel"
-    biodigest    "anaerobic digestion"
+    biodigestCHP    "anaerobic digestion for CHP"
+    biodigestGAS "anaerobic digestion for manure"
     biopyronly  "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe    "biomass pyrolysis to biochar plus heat (established industrial)"
     biopyrchp   "biomass pyrolysis to biochar plus heat and power (established industrial)"   
@@ -2406,7 +2411,8 @@ pe2se(all_enty,all_enty,all_te) "map primary energy carriers to secondary"
     pebiolc.seliqbio.bioftrec
     pebiolc.seliqbio.bioftcrec
     pebioil.seliqbio.biodiesel
-    pemanure.seel.biodigest
+    pemanure.seel.biodigestCHP
+    pemanure.segabio.biodigestGAS
     pebios.seliqbio.bioeths
     pebiolc.seliqbio.bioethl
     peoil.seel.dot
@@ -2564,6 +2570,7 @@ pc2te(all_enty,all_enty,all_te,all_enty)    "mapping for own consumption of tech
     pecoal.seh2.coalh2.seel
     pecoal.seh2.coalh2c.seel
     pebiolc.seel.biochp.sehe
+    pemanure.seel.biodigestCHP.sehe
     pebiolc.segabio.biogasc.seel
     segabio.fegas.tdbiogas.seel
     segafos.fegas.tdfosgas.seel
@@ -2655,13 +2662,17 @@ emi2te(all_enty,all_enty,all_te,all_enty)    " map emissions to technologies"
     pebiolc.seliqbio.bioethl.bc
     pebios.seliqbio.bioeths.bc
     pebioil.seliqbio.biodiesel.bc
-    pemanure.seel.biodigest.bc
+    pemanure.seel.biodigestCHP.bc
+    pemanure.segabio.biodigestGAS.bc
     pebiolc.seliqbio.bioethl.oc
     pebios.seliqbio.bioeths.oc
     pebioil.seliqbio.biodiesel.oc
-    pemanure.seel.biodigest.oc
+    pemanure.seel.biodigestCHP.oc
+    pemanure.segabio.biodigestGAS.oc
     pebiolc.seh2.bioh2c.n2o
     pebiolc.seel.biochp.n2o
+    pemanure.seel.biodigestCHP.n2o
+    pemanure.segabio.biodigestGAS.n2o
     pebiolc.sehe.biohp.n2o
     pebiolc.sesobio.biotr.n2o
     pebiolc.sesobio.biotrmod.n2o
@@ -2841,7 +2852,7 @@ teSe2rlf(all_te,rlf)        "mapping for techologies to grades. Currently, the i
     igcc,igccc,pc,coaltr,coalgas,coalh2,coalh2c,coalchp,coalhp,coalftrec,coalftcrec,
     biotr,biotrmod,biogas,biogasc,bioftrec,bioftcrec,bioh2,bioh2c,biohp,biochp,bioigcc,bioigccc,
     biopyronly,biopyrhe,biopyrchp,biopyrliq,
-    elh2,h2turb,elh2VRE,h2turbVRE,bioethl,bioeths,biodiesel,tnrs,fnrs
+    elh2,h2turb,elh2VRE,h2turbVRE,bioethl,bioeths,biodiesel,biodigestCHP,biodigestGAS,tnrs,fnrs
     ) . 1
 /
 
