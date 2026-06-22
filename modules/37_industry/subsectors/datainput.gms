@@ -646,15 +646,6 @@ $offdelim
   /
 ;
 
-*' load baseline industry ETS solids demand
-if (cm_startyear ne 2005,   !! not a BAU scenario
-Execute_Loadpoint "input_ref.gdx", vm_demFeSector_afterTax;
-  p37_BAU_industry_ETS_solids(t,regi)
-  = sum(se2fe(entySe,"fesos",te),
-      vm_demFeSector_afterTax.l(t,regi,entySe,"fesos","indst","ETS")
-    );
-);
-
 * Define carbon capture and storage share in waste incineration emissions
 * capture rate increases linearly from zero in 2025 to value the set in the switch for the defined year, and it is kept constant for years afterwards
 p37_regionalWasteIncinerationCCSMaxShare(ttot,all_regi) = 0;

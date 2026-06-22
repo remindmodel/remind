@@ -1311,6 +1311,13 @@ parameter
 ;
   cm_deuCDRmax = -1; !! def = -1
 *'  switch to cap annual DEU CDR amount by value assigned to switch, or no cap if -1, in MtCO2
+
+parameter
+  cm_EURCDRmax                 "switch to limit maximum annual CDR amount in the EU in MtCO2 per y"
+;
+  cm_EURCDRmax = -1; !! def = -1
+*'  switch to cap annual EUR CDR amount by value assigned to switch, or no cap if -1, in MtCO2
+
 parameter
   cm_EnSecScen_limit        "switch for limiting the gas demand from 2025 onward, currently only applied to Germany"
 ;
@@ -1877,7 +1884,7 @@ $setglobal cm_inco0RegiFactor  off  !! def = off
 *** cm_CCS_markup "multiplicative factor for CSS cost markup"
 ***   def <- "off" = use default CCS pm_inco0_t values.
 ***   or number (ex. 0.66), multiply by 0.66 the CSS cost markup
-$setglobal cm_ccsinjeCost med !! def = med !! regexp = med|low|high
+$setglobal cm_ccsinjeCost high !! def = high !! regexp = med|low|high
 *' switch from standard to low and high CO2 transport & storage cost.
 *' Warning: it applies absolute values; only use it in combination with default c_techAssumptScen SSP2. 
 *'  * (low): old estimate before 03/2024; ~7.5 USD/tCO2 in 2035. Also applies tech_stat=2 and constrTme=0
