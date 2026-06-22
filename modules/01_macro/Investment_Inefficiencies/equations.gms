@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/01_macro/singleSectorGr/equations.gms
+*** SOF ./modules/01_macro/Investment_Inefficiencies/equations.gms
 
 *' @equations
 ***---------------------------------------------------------------------------
@@ -125,8 +125,8 @@ q01_kapMo(ttot,regi,ppfKap(in))$(ord(ttot) lt card(ttot)
     vm_cesIO(ttot,regi,in)
   * (1 - pm_delta_kap(regi,in))
  ** (pm_ttot_val(ttot+1) - pm_ttot_val(ttot))
-  + p01_cumDeprecFactor_old(ttot+1,regi,in) * vm_invMacro(ttot,regi,in)
-  + p01_cumDeprecFactor_new(ttot+1,regi,in) * vm_invMacro(ttot+1,regi,in)
+   + p01_cumDeprecFactor_old(ttot+1,regi,in) * vm_invMacro(ttot,regi,in)   * p01_investeffectv(ttot+1,regi)
+   + p01_cumDeprecFactor_new(ttot+1,regi,in) * vm_invMacro(ttot+1,regi,in) * p01_investeffectv(ttot+1,regi)
 ;
 
 ***---------------------------------------------------------------------------
@@ -168,4 +168,4 @@ q01_limtRatioPpfen(t,regi,in,in2)$( p01_ppfen_ratios(t,regi,in,in2) ) ..
   * (vm_cesIO(t,regi,in2) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
 *' @stop
-*** EOF ./modules/01_macro/singleSectorGr/equations.gms
+*** EOF ./modules/01_macro/Investment_Inefficiencies/equations.gms

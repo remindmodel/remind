@@ -884,6 +884,7 @@ sets
        subsidizeLearning
        capitalMarket
        trade
+       WACC
        agCosts
        CES_parameters
        biomass
@@ -920,6 +921,7 @@ module2realisation(modules,*) "mapping of modules and active realisations" /
        subsidizeLearning . %subsidizeLearning%
        capitalMarket . %capitalMarket%
        trade . %trade%
+       WACC . %WACC%
        agCosts . %agCosts%
        CES_parameters . %CES_parameters%
        biomass . %biomass%

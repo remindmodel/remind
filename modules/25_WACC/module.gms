@@ -4,13 +4,14 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/01_macro/module.gms
-*' @title Macro-Economic Growth Module
+*** SOF ./modules/25_WACC/module.gms
+
+*' @title WACC Module
 *'
-*' @description The macro module allows for the implementation of different 
-*' macro-economic modules. 
+*' @description The WACC module calculates the WACC related costs on technology investments. 
+
 *###################### R SECTION START (MODULETYPES) ##########################
-$Ifi "%macro%" == "Investment_Inefficiencies" $include "./modules/01_macro/Investment_Inefficiencies/realization.gms"
-$Ifi "%macro%" == "singleSectorGr" $include "./modules/01_macro/singleSectorGr/realization.gms"
+$Ifi "%WACC%" == "off" $include "./modules/25_WACC/off/realization.gms"
+$Ifi "%WACC%" == "standard" $include "./modules/25_WACC/standard/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
-*** EOF ./modules/01_macro/module.gms
+*** EOF ./modules/25_WACC/module.gms

@@ -823,8 +823,8 @@ pm_data(regi,"lifetime","tdh2b") = pm_data(regi,"lifetime","tdh2s");
 *' provided in generisdata_tech.prn.
 *' There is still some non-zero capacity beyond the average lifetime, until the maximum lifetime p_lifetime_max
 *' (calculated from an integral as 5/4 times the average lifetime).
-p_lifetime_max(regi,te) = 5 / 4 * pm_data(regi,"lifetime",te);
-pm_omeg(regi,opTimeYr,te) = max(0, 1 - ((opTimeYr.val - 0.5) / p_lifetime_max(regi,te))**4);
+pm_lifetime_max(regi,te) = 5 / 4 * pm_data(regi,"lifetime",te);
+pm_omeg(regi,opTimeYr,te) = max(0, 1 - ((opTimeYr.val - 0.5) / pm_lifetime_max(regi,te))**4);
 
 *** Map each technology with its possible age
 opTimeYr2te(te,opTimeYr) $ sum(regi $ (pm_omeg(regi,opTimeYr,te) > 0), 1) = yes;
@@ -854,8 +854,8 @@ loop(regi,
     if(pm_omeg(regi,"1",te) eq 0,
       abort "Technology has zero lifetime", pm_omeg);
 ***   - lifetime of technology is longer than allowed by opTimeYr
-    if(p_lifetime_max(regi,te) > smax(opTimeYr, opTimeYr.val),
-      abort "Technology has longer lifetime than allowed by opTimeYr", opTimeYr, p_lifetime_max);
+    if(pm_lifetime_max(regi,te) > smax(opTimeYr, opTimeYr.val),
+      abort "Technology has longer lifetime than allowed by opTimeYr", opTimeYr, pm_lifetime_max);
 ***   - technology has remaining capacity beyond its lifetime
     if(
       sum(opTimeYr $ (opTimeYr.val > smax(opTimeYr2te(te,opTimeYr2), opTimeYr2.val)),
