@@ -739,7 +739,7 @@ if(s80_bool eq 1,
     OPTION decimals = 3;
     s80_numberIterations = cm_iteration_max + 1;
     display "######################################################################################################";
-    display "Run converged!!";
+    display "Run converged!";
     display "#### Nash Solution Report";
     display "#### Convergence threshold reached within ",s80_numberIterations, "iterations.";
     display "############";
