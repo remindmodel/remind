@@ -5,8 +5,6 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/25_WACC/standard/bounds.gms
-*fix budget equation term to zero for 2005
-***vm_waccCost.fx("2005",regi) = 0;
 
 p25_techwaccCostO("2005", regi)  = 0 ;
 p25_techwaccCost1("2005", regi)  = 0 ;

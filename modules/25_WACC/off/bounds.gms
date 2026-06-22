@@ -5,7 +5,7 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/25_WACC/off/bounds.gms
-*fix the WACC term of the budget equation equal to zero for all times
+***fix the WACC term of the budget equation equal to zero for all times
 vm_waccCost.fx(t, regi) = 0;
 
 *** EOF ./modules/25_WACC/off/bounds.gms

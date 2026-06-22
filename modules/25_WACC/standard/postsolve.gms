@@ -17,8 +17,6 @@ p25_waccCostO_tewacc(t, regi, tewacc) =
 
 p25_techwaccCostO(t, regi) = sum(tewacc, p25_waccCostO_tewacc(t, regi, tewacc));       
 
-*** EOF ./modules/25_WACC/standard/postsolve.gms
-
 ***This calculates WACC costs only for technologies coming from previous periods
 p25_waccCost1_tewacc(t, regi, tewacc) =
   sum((t2)$((t.val - t2.val <= pm_lifetime_max(regi,tewacc)) and (t2.val < t.val)),  
