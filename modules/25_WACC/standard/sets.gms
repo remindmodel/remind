@@ -6,7 +6,6 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/25_WACC/standard/sets.gms
 
-*** No new sets are directly related to this module.
 Sets
 tewacc(all_te)       "technologies with WACC data"
 /

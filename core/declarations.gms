@@ -377,8 +377,6 @@ v_changeProdStartyearSlack(ttot,all_regi,all_te)     "slack variable to allow a 
 v_costFu(ttot,all_regi)                              "costs of primary energy production/extraction (can be negative depending on vm_costFuBio) [T$]"
 
 vm_flexAdj(tall,all_regi,all_te)                     "flexibility mark-up cost or subsidy, used to emulate price changes of technologies which see lower-than-average or higher-than-average electricity prices due to more or less flexible operation[T$/TWa]"
-
-vm_waccCost(ttot,all_regi)                               "difference between WACC costs in current and previous iteration"
 ;
 
 

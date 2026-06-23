@@ -4,7 +4,12 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/25_WACC/standard/presolve.gms
+*** SOF ./modules/25_WACC/off/declarations.gms
 
-*** EOF ./modules/25_WACC/standard/presolve.gms
+variables
+vm_waccCost(ttot,all_regi)                               "difference between WACC costs in current and previous iteration"
+;
+*** EOF ./modules/25_WACC/off/declarations.gms
+
+
 

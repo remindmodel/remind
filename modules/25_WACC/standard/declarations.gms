@@ -25,6 +25,7 @@ q25_totwaccCost(ttot, all_regi)                           "Calculation of total 
 variables
 v25_techwaccCost(ttot, all_regi)                         "WACC costs for financing new and existing technologies in the system"
 v25_invWaccCost(ttot, all_regi)                          "WACC costs related to macro investments"
+vm_waccCost(ttot,all_regi)                               "difference between WACC costs in current and previous iteration"
 ;
 *** EOF ./modules/25_WACC/standard/declarations.gms
 

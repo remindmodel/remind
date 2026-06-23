@@ -26,7 +26,7 @@ p25_waccCost1_tewacc(t, regi, tewacc) =
 
 p25_techwaccCost1(t, regi) = sum(tewacc, p25_waccCost1_tewacc(t, regi, tewacc));       
 
-p25_counwaccCost0(t, regi)=
+p25_counwaccCostO(t, regi)=
     sum((t2, in)$(
            (t2.val <= t.val)
         and ((1 - pm_delta_kap(regi,in)) ** (t.val - t2.val)) > 0.1
