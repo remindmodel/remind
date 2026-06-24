@@ -110,6 +110,15 @@
 		"sections": "0",
 		"userSectionPath": "normalizePath('./scripts/cs2/planetaryboundaries.Rmd')"
 	},
+	"bioMIP": {
+		"sections": "0",
+		"userSectionPath": "normalizePath('./scripts/cs2/bioMIP.Rmd')",
+		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
+		"yearsScen": "seq(2005, 2050, 5)",
+		"yearsHist": "union(seq(2005, format(Sys.Date(), '%Y'), 1), seq(2030, 2050, 5))",
+		"yearsBarPlot": "c(2020, 2030, 2045)",
+		"mainReg": "'DEU'"
+	},
 	"mySection": {
 		"sections": "0",
 		"userSectionPath": "normalizePath('./scripts/cs2/mySection.Rmd')"
