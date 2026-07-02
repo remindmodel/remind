@@ -23,13 +23,13 @@ p31_rentdisc(all_enty)                            "discount factor for the rent,
 p31_rentdisc2(all_enty)                           "discount factor for the rent achieved in 2100, used for the sensitivity analysis"
 p31_rentconv(all_enty)                            "number of year that the convergence to rentdisc2 takes"
 p31_rentdisctot(ttot, all_enty)                   "rent discount factor applied to the model"
-p31_fuExtrCumMaxBound(all_regi,all_enty,rlf)      "value of regional uranium extraction bound"
+p31_fuExtrCumMaxBound(all_regi,all_enty,rlf)      "value of regional uranium extraction bound [Mt_Ur]"
 ;
 
 positive variables
-v31_fuExtrCum(ttot,all_regi,all_enty,rlf)        "cumulated extraction of exhaustible resources [Mt]"
-v31_fuExtrCumMax(all_regi,all_enty,rlf)          "maximum of cumulated extraction of exhaustible resources [Mt]"
-v31_fuExtrMC(all_enty,rlf)                       "MC exhaustible resources [Mt]"
+v31_fuExtrCum(ttot,all_regi,all_enty,rlf)        "cumulated extraction of exhaustible resources [TWa, Uranium: Mt_Ur]"
+v31_fuExtrCumMax(all_regi,all_enty,rlf)          "maximum of cumulated extraction of exhaustible resources [Mt_Ur]"
+v31_fuExtrMC(all_enty,rlf)                       "MC exhaustible uranium resources [T$/Mt_Ur]"
 ;
 
 variables

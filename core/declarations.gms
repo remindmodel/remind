@@ -196,7 +196,7 @@ q_emiGHG_exclLULUCF_exclBunkers(ttot,all_regi)       "calculate total GHG emissi
 parameters
 
 *** general technoeconomic parameters
-pm_eta_conv(tall,all_regi,all_te)                    "conversion efficiency of all energy technologies, only applying to technologies that do not have explicit time-dependant conversion efficiencies, still eta converges until 2050 to dataglob_values. [efficiency (0..1)]"
+pm_eta_conv(tall,all_regi,all_te)                    "conversion efficiency of all energy technologies, only applying to technologies that do not have explicit time-dependant conversion efficiencies, still eta converges until 2050 to dataglob_values. [efficiency (0..1), nuclear: TWa_elec/Mt_Ur]"
 pm_dataeta(tall,all_regi,all_te)                     "read-in parameter for conversion efficiency of technologies that vary exogenously over time based on generisdata_varying_eta.prn file [efficiency (0..1)]"
 pm_data(all_regi,char,all_te)                        "Large array for most technical parameters of technologies, more detail on the individual technical parameters and their units can be found in the declaration of the set 'char' "
 pm_cf(tall,all_regi,all_te)                          "read-in parameter for capacity factor (fraction of the year that a plant is running) [share]"
@@ -334,7 +334,7 @@ $endif.scaleDemandIndTable
 pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)     "parameter to capture all FE prices across sectors and markets [tr$2005/TWa]"
 pm_FEPrice_iter(iteration,ttot,all_regi,all_enty,sector,emiMkt) "parameter to capture all FE prices across sectors and markets [tr$2005/TWa] across iterations"
 pm_SEPrice(ttot,all_regi,all_enty)                   "parameter to capture all SE prices [tr$2005/TWa]"
-pm_PEPrice(ttot,all_regi,all_enty)                   "parameter to capture all PE prices [tr$2005/TWa]"
+pm_PEPrice(ttot,all_regi,all_enty)                   "parameter to capture all PE prices [tr$2005/TWa, Uranium: tr$2005/Mt_Ur]"
 
 p_FEPrice_by_SE_Sector_EmiMkt(ttot,all_regi,entySe,all_enty,sector,emiMkt) "parameter to save FE price per SE, sector and emission market [tr$2005/TWa]"
 p_FEPrice_by_Sector_EmiMkt(ttot,all_regi,all_enty,sector,emiMkt) "parameter to save FE marginal price per sector and emission market [tr$2005/TWa]"
