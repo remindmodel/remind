@@ -417,12 +417,6 @@ $else.globalBudget
   );
 $endIf.globalBudget
 
-*** check whether cm_peakBudgYr corresponds to year of maximum cumulative CO2 emissions
-*if (  (     cm_iterative_target_adj eq 9
-*        AND cm_peakBudgYr ne sm_peakBudgYr_check  ),
-*  s80_bool = 0;
-*  p80_messageShow("peakbudgyr") = YES;
-*);
 
 *** Check whether difference in cumulative emissions between both time steps is greater than sm_peakbudget_diff_tolerance
 if (  (   cm_iterative_target_adj eq 9
@@ -522,7 +516,7 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
 	      );
 $ifthen.carbonprice %carbonprice% == "functionalForm"
         if(sameas(convMessage80, "peakbudgyr"),
-		      display "#### 6.) Years are different: cm_peakBudgYr is not equal to sm_peakBudgYr_check.";
+		      display "#### 6.) Years are different: cm_peakBudgYr is not equal to s45_peakBudgYr_check.";
           display cm_peakBudgYr;
 	      );
         if(sameas(convMessage80, "peakbudget"),
@@ -667,7 +661,7 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
 	      );
 $ifthen.carbonprice %carbonprice% == "functionalForm"
         if(sameas(convMessage80, "peakbudgyr"),
-		      display "#### 6.) Years are different: cm_peakBudgYr is not equal to sm_peakBudgYr_check.";
+		      display "#### 6.) Years are different: cm_peakBudgYr is not equal to s45_peakBudgYr_check.";
           display cm_peakBudgYr;
 	      );
         if(sameas(convMessage80, "peakbudget"),
@@ -739,7 +733,7 @@ if(s80_bool eq 1,
     OPTION decimals = 3;
     s80_numberIterations = cm_iteration_max + 1;
     display "######################################################################################################";
-    display "Run converged!!";
+    display "Run converged!";
     display "#### Nash Solution Report";
     display "#### Convergence threshold reached within ",s80_numberIterations, "iterations.";
     display "############";

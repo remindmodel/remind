@@ -19,3 +19,7 @@ cm_LTSendYr,input,not needed
 cm_netZeroPercent,input,not needed
 cm_multigasscen,input,not needed
 pm_emiLULUCF_GrassiShift,input,not needed
+sm_DptCO2_2_TDpGtC,input,not needed
+pm_taxCO2eq,input,not needed
+pm_taxCO2eqSCC,input,not needed
+
