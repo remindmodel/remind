@@ -89,7 +89,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
         if (!identical(Sys.info()[["sysname"]], "Windows")) {
           # the renv package installation folder is copied from the renv cache, where it might
           # be write protected, but we don't want write protection in the results folder
-          system("chmod ug+w -R renv/library/R-*/*")
+          system("chmod ug+w -R renv/library")
         }
         renv::restore(prompt = FALSE)
       }
