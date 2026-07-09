@@ -1,6 +1,6 @@
 on:
   pull_request:
-    types: [opened, reopened, edited, ready_for_review]
+    types: [opened, reopened, edited, ready_for_review, synchronize]
     branches-ignore:
       - 'master'
 
@@ -12,7 +12,30 @@ jobs:
   check-pr-template:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
     steps:
+      - name: Check whether only documentation was changed
+        id: docs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files" --paginate --jq '.[].filename' > changedfiles.txt
+          if [ ! -s changedfiles.txt ]; then
+            echo "ERROR: Could not determine which files were changed."
+            exit 1
+          fi
+
+          # documentation means: anything in tutorials/ plus Markdown files
+          if grep -qvE '^tutorials/|\.(md|Rmd|qmd)$' changedfiles.txt; then
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+            echo "Code was changed, so all checkboxes of the PR checklist must be ticked." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "docs_only=true" >> "$GITHUB_OUTPUT"
+            echo "Only documentation was changed, so the PR checklist may be left unticked." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Check PR description
         env:
           PR_DESCRIPTION: ${{ github.event.pull_request.body }}
@@ -35,7 +58,20 @@ jobs:
             ERROR_FOUND=1
           fi
           
-          # Check 3: All checkboxes in "Checklist" must be checked
+          if [ $ERROR_FOUND -eq 1 ]; then
+            exit 1
+          fi
+          
+          echo "Success: All PR template requirements are fulfilled."
+
+      - name: Check PR checklist
+        if: steps.docs.outputs.docs_only == 'false'
+        env:
+          PR_DESCRIPTION: ${{ github.event.pull_request.body }}
+        run: |
+          ERROR_FOUND=0
+          
+          # Check: All checkboxes in "Checklist" must be checked
           CHECKLIST_SECTION=$(echo "$PR_DESCRIPTION" | sed -n '/## Checklist/,/## Further information (optional)/p')
           if echo "$CHECKLIST_SECTION" | grep -q "\[ \]"; then
             echo "ERROR: Unchecked checkboxes found in 'Checklist' section."
