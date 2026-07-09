@@ -1,0 +1,34 @@
+on:
+  pull_request:
+    types: [opened, reopened, edited, ready_for_review]
+    branches-ignore:
+      - 'master'
+    paths-ignore:
+      - '**.md'
+
+name: check-pr-checklist
+
+jobs:
+  check-pr-checklist:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR Checklist
+        env:
+          PR_DESCRIPTION: ${{ github.event.pull_request.body }}
+        run: |
+          ERROR_FOUND=0
+          
+          # Check 1: All checkboxes in "Checklist" must be checked
+          CHECKLIST_SECTION=$(echo "$PR_DESCRIPTION" | sed -n '/## Checklist/,/## Further information (optional)/p')
+          if echo "$CHECKLIST_SECTION" | grep -q "\[ \]"; then
+            echo "ERROR: Unchecked checkboxes found in 'Checklist' section."
+            echo "All checklist items must be checked before merging."
+            ERROR_FOUND=1
+          fi
+          
+          if [ $ERROR_FOUND -eq 1 ]; then
+            exit 1
+          fi
+          
+          echo "Success: All PR template requirements are fulfilled."
