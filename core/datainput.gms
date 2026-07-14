@@ -139,6 +139,8 @@ $include "./core/input/generisdata_trade.prn"
 *** TODO: merge all grid types into one
 fm_dataglob(char,teGrid) = fm_dataglob(char,"gridwindon");
 
+fm_dataglob("inco0","bioBurial") = fm_dataglob("inco0","bioBurial") * cm_inco0Burial;  !! scale burial costs by user-defined factor
+
 
 parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit: USD$/kW"
 /
@@ -1191,6 +1193,8 @@ pm_cf(t,regi,"storwindoff") = pm_cf(t,regi,"storwindon");
 pm_cf(t,regi,"gridwindoff") = pm_cf(t,regi,"gridwindon");
 
 
+*RoSa* set capacity factor for bioBurial to 1.0
+pm_cf(ttot,regi,"bioBurial") = 1.;
 
 display p_aux_capacityFactorHistOverREMIND, pm_dataren, pm_cf;
 
