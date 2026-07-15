@@ -37,6 +37,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### added
 - **30_biomass** Quick-fix for `cm_maxProdBiolc`: allocate up to 25 EJ/yr of the global lignocellulosic biomass potential to regions by hardcoded 2020 crop-production shares (remainder still via marginal-cost inversion); scales down if the budget is smaller and works for both the H12 and EU21 region resolutions
     [[#2390](https://github.com/remindmodel/remind/pull/2390)]
+- **scripts** Add the possibility to give aliases to runs in the compareScenarios2 script
+    [[#2399](https://github.com/remindmodel/remind/pull/2399)]
 
 ### removed
 -
