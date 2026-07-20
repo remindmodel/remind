@@ -9,12 +9,21 @@ skipIfPreviousFailed()
 
 test_that("output.R -> single -> reporting works", {
   output <- localSystem2("Rscript", c("output.R", "--comp=single", "--output=reporting", "--outputdirs=output/testOneRegi",
-                                      "slurmConfig='--qos=priority --mem=8000 --wait --time=120'"))
+                                      "--slurmConfig='--qos=priority --mem=8000 --wait --time=120'"))
   printIfFailed(output)
   expectSuccessStatus(output)
   remind_reporting_file <- "../../output/testOneRegi/REMIND_generic_testOneRegi.mif"
   expect_true(file.exists(remind_reporting_file))
   expect_no_warning(quitte::reportDuplicates(piamutils::deletePlus(quitte::read.quitte(remind_reporting_file, check.duplicates = FALSE))))
+})
+
+test_that("output.R -> single -> reportingLCOE works", {
+  output <- localSystem2("Rscript", c("output.R", "--comp=single", "--output=reportingLCOE", "--outputdirs=output/testOneRegi",
+                                      "--slurmConfig='--qos=priority --mem=8000 --wait --time=120'"))
+  printIfFailed(output)
+  expectSuccessStatus(output)
+  remind_reporting_LCOE_file <- "../../output/testOneRegi/REMIND_LCOE_testOneRegi.csv"
+  expect_true(file.exists(remind_reporting_LCOE_file))
 })
 
 test_that("output.R -> export -> xlsx_IIASA works", {
