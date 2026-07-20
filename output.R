@@ -208,10 +208,12 @@ chooseAliases <- function(output, outputdirs) {
   return(aliases)
 }
 
+# returns TRUE if any script had errors
 runComparisonOrExport <- function(comp, output, outputdirs, aliases, filename_prefix, slurmConfig, test) {
   # Set value source_include so that loaded scripts know, that they are
   # included as source (instead of a load from command line)
   source_include <- TRUE
+  errors <- FALSE
 
   # Execute output scripts over all chosen folders
   for (rout in output) {
@@ -227,15 +229,19 @@ runComparisonOrExport <- function(comp, output, outputdirs, aliases, filename_pr
         gc()
         if (!is.null(tmp.error)) {
           warning("Script ", name, " was stopped by an error and not executed properly!")
+          errors <- TRUE
         }
       }
     } else {
       message("\nCould not find ", name)
     }
   }
+  return(errors)
 }
 
+# returns TRUE if any script had errors
 runSingle <- function(output, outputdirs, slurmConfig, test) { # comp = single
+  errors <- FALSE
   # Execute outputscripts for all chosen folders
   for (outputdir in outputdirs) {
     if (exists("cfg")) {
@@ -248,10 +254,11 @@ runSingle <- function(output, outputdirs, slurmConfig, test) { # comp = single
     # Get values of config if output.R is called standalone
     if (!exists("source_include")) {
       magpie_folder <- getwd()
-      message("Load data from ", file.path(outputdir, "config.Rdata"))
+      rdataPath <- file.path(outputdir, "config.Rdata")
+      message("Load data from ", rdataPath)
       # Old .cfg files will not be read anymore
-      stopifnot(file.exists(file.path(outputdir, "config.Rdata")))
-      load(file.path(outputdir, "config.Rdata"))
+      stopifnot(file.exists(rdataPath))
+      load(rdataPath)
       title <- cfg$title
       gms <- cfg$gms
       revision <- cfg$inputRevision
@@ -291,6 +298,7 @@ runSingle <- function(output, outputdirs, slurmConfig, test) { # comp = single
           gc()
           if (!is.null(tmp.error)) {
             warning("Script ", n, " was stopped by an error and not executed properly!")
+            errors <- TRUE
           }
         }
       } else {
@@ -311,6 +319,7 @@ runSingle <- function(output, outputdirs, slurmConfig, test) { # comp = single
       print(warnings())
     }
   }
+  return(errors)
 }
 
 #' main function of the script
@@ -346,8 +355,8 @@ output <- function(args) {
     }
     
     # choose the slurm options. If you use command line arguments, use slurmConfig=priority or standby
-    modules_using_slurmConfig <- c("compareScenarios2", "validateScenarios")
-    if (any(modules_using_slurmConfig %in% output)) {
+    modulesUsingSlurmConfig <- c("compareScenarios2", "validateScenarios")
+    if (isSlurmAvailable() && any(modulesUsingSlurmConfig %in% output)) {
       if (is.null(args[["slurmConfig"]])) {
         slurmConfig <- chooseSlurmConfigOutput(output = output)
       } else if (args[["slurmConfig"]] %in% c("priority", "short", "standby")) {
@@ -356,27 +365,27 @@ output <- function(args) {
         slurmConfig = args[["slurmConfig"]]
       }
     }
-    runComparisonOrExport(comp, output, outputdirs, aliases, filename_prefix, slurmConfig, args[["test"]])
+    errors = runComparisonOrExport(comp, output, outputdirs, aliases, filename_prefix, slurmConfig, args[["test"]])
   } else {
     # define slurm class or direct execution
     outputInteractive <- c("plotIterations", "integratedDamageCosts")
-    if (exists("source_include") || any(output %in% outputInteractive)) {
+    if (!isSlurmAvailable() || exists("source_include") || any(output %in% outputInteractive)) {
       # if being sourced by another script execute the output scripts directly without sending them to the cluster
       slurmConfig <- "direct"
+    } else if (is.null(args[["slurmConfig"]])) {
+      slurmConfig <- chooseSlurmConfigOutput(output = output)
+      if (slurmConfig != "direct") slurmConfig <- combine_slurmConfig("--nodes=1 --tasks-per-node=1 --time=120", slurmConfig)
+    } else if (args[["slurmConfig"]] %in% c("priority", "short", "standby")) {
+      slurmConfig <- paste0("--nodes=1 --tasks-per-node=1 --qos=", args[["slurmConfig"]])
+    } else if (isTRUE(args[["slurmConfig"]] %in% "direct")) {
+      interactive = TRUE
     } else {
-      # if it is called from the command line via Rscript let the user choose the slurm options
-      if (is.null(args[["slurmConfig"]])) {
-        slurmConfig <- chooseSlurmConfigOutput(output = output)
-        if (slurmConfig != "direct") slurmConfig <- combine_slurmConfig("--nodes=1 --tasks-per-node=1 --time=120", slurmConfig)
-      } else if (args[["slurmConfig"]] %in% c("priority", "short", "standby")) {
-        slurmConfig <- paste0("--nodes=1 --tasks-per-node=1 --qos=", args[["slurmConfig"]])
-      } else if (isTRUE(args[["slurmConfig"]] %in% "direct")) {
-        interactive = TRUE
-      } else {
-        slurmConfig = args[["slurmConfig"]]
-      }
+      slurmConfig = args[["slurmConfig"]]
     }
-    runSingle(output, outputdirs, slurmConfig, args[["test"]])
+    errors = runSingle(output, outputdirs, slurmConfig, args[["test"]])
+  }
+  if (errors) {
+    quit(status = -1)
   }
 }
 
