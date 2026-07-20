@@ -40,7 +40,8 @@ determineDefaultProfiles <- function(outputDir) {
 startComp <- function(
   outputDirs,
   nameCore,
-  profileName
+  profileName,
+  aliases=NULL
 ) {
   if (!exists("slurmConfig")) {
     slurmConfig <- "--qos=standby"
@@ -66,6 +67,7 @@ startComp <- function(
       " outputDirs=", paste(outputDirs, collapse = ","),
       " profileName=", profileName,
       " outFileName=", outFileName,
+      " aliases=", paste(aliases, collapse = ","),
       "\"")
     cat(clcom, "\n")
     system(clcom)
@@ -115,5 +117,6 @@ for (profileName in profileNames) {
   startComp(
     outputDirs = outputdirs,
     nameCore = nameCore,
-    profileName = profileName)
+    profileName = profileName,
+    aliases = aliases)
 }

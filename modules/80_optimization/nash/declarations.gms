@@ -36,6 +36,11 @@ p80_defic_sum_rel(iteration)                "Surplus monetary value over all tim
 p80_etaLT_correct(all_enty,iteration)       "long term price correction factor in percent"
 p80_etaST_correct(tall,all_enty,iteration)  "short term price correction factor in percent"
 
+p80_Mport_iter(ttot,all_regi,all_enty,iteration)          "Imports over iterations"
+p80_Xport_iter(ttot,all_regi,all_enty,iteration)          "Exports over iterations"
+p80_prodPe_iter(ttot,all_regi,all_enty,iteration)         "PE production over iterations"
+p80_fuExtr_iter(ttot,all_regi,all_enty,rlf,iteration)     "Fuel extraction over iterations"
+
 p80_etaST_correct_safecopy(tall,all_enty,iteration)       "auxiliary parameter to remember short term price correction factor in percent, before new convergence adjustments"
 o80_counter_iteration_trade_ttot(ttot,all_enty,iteration) "auxiliary parameter to display in which iteration and for which item (ttot, trade) additional convergence measures were taken"
 o80_trackSurplusSign(ttot,all_enty,iteration)             "auxiliary parameter to track how long the surplus for an item (ttot, trade) had the same sign over iterations"
