@@ -78,23 +78,23 @@ plot_iterations <- function(dat, runname) {
 
   # ---- Plot: MAgPIE co2luc ----
   
-  p_emi_mag    <- myplot(dat, "o_vm_emiMacSector_co2luc", runname, ylab = "Mt CO2/yr")
-  p_emi_mag_it <- myplot(dat, "o_vm_emiMacSector_co2luc", xaxis = "iteration", color = "ttot", runname, ylab = "Mt CO2/yr")
+  p_emi_mag    <- myplot(dat, "o_vm_emiMacSector_co2luc_iter", runname, ylab = "Mt CO2/yr")
+  p_emi_mag_it <- myplot(dat, "o_vm_emiMacSector_co2luc_iter", xaxis = "iteration", color = "ttot", runname, ylab = "Mt CO2/yr")
   
   
   # ---- Plot: REMIND Production of purpose grown bioenergy ----
   
-  p_fuelex         <- myplot(dat, "o_vm_fuExtr_pebiolc", runname,                                      ylab = "EJ/yr")
-  p_fuelex_it      <- myplot(dat, "o_vm_fuExtr_pebiolc", runname, xaxis = "iteration", color = "ttot", ylab = "EJ/yr")
-  p_fuelex_it_fix  <- myplot(dat, "o_vm_fuExtr_pebiolc", runname, xaxis = "iteration", color = "ttot", ylab = "EJ/yr", scales = "fixed")
+  p_fuelex         <- myplot(dat, "o_vm_fuExtr_pebiolc_iter", runname,                                      ylab = "EJ/yr")
+  p_fuelex_it      <- myplot(dat, "o_vm_fuExtr_pebiolc_iter", runname, xaxis = "iteration", color = "ttot", ylab = "EJ/yr")
+  p_fuelex_it_fix  <- myplot(dat, "o_vm_fuExtr_pebiolc_iter", runname, xaxis = "iteration", color = "ttot", ylab = "EJ/yr", scales = "fixed")
   p_fuelex_it_2060 <- myplot(dat |> filter(ttot == 2060),
-                                  "o_vm_fuExtr_pebiolc", runname, type = "bar", 
+                                  "o_vm_fuExtr_pebiolc_iter", runname, type = "bar", 
                                                                   xaxis = "iteration", color = "ttot", ylab = "EJ/yr", scales = "fixed")
   
   # ---- Plot: REMIND Demand for purpose grown bioenergy ----
   
-  p_demPE    <- myplot(dat, "o_PEDem_Bio_ECrops", runname,                                      ylab = "EJ/yr")
-  p_demPE_it <- myplot(dat, "o_PEDem_Bio_ECrops", runname, xaxis = "iteration", color = "ttot", ylab = "EJ/yr")
+  p_demPE    <- myplot(dat, "o_PEDem_Bio_ECrops_iter", runname,                                      ylab = "EJ/yr")
+  p_demPE_it <- myplot(dat, "o_PEDem_Bio_ECrops_iter", runname, xaxis = "iteration", color = "ttot", ylab = "EJ/yr")
   
   # ---- Plot: REMIND Price scaling factor ----
   
@@ -151,9 +151,9 @@ readDataFromGdx <- function(runfolder, allIter = TRUE) {
   # "Emi|CO2|+|Land-Use Change (Mt CO2/yr)"
   # vm_emiMacSector <- readGDX(gdx, "vm_emiMacSector", field = "l", restore_zeros = FALSE)
   # dimSums(vm_emiMacSector[, , "co2luc"]                 , dim = 3) * GtC_2_MtCO2
-  # "o_vm_emiMacSector_co2luc"
+  # "o_vm_emiMacSector_co2luc_iter"
   # core/postsolve.gms:
-  # o_vm_emiMacSector_co2luc(iteration,ttot,regi) = vm_emiMacSector.l(ttot,regi,"co2luc");
+  # o_vm_emiMacSector_co2luc_iter(iteration,ttot,regi) = vm_emiMacSector.l(ttot,regi,"co2luc");
   
   # "Primary Energy Production|Biomass|Energy Crops (EJ/yr)"
   # remind2::reportExtraction.R
@@ -162,16 +162,16 @@ readDataFromGdx <- function(runfolder, allIter = TRUE) {
   # dimSums(fuelex_bio[, , "pebiolc.1"], dim = 3) * TWa_2_EJ
   #   -> "PE|Production|Biomass|+|Lignocellulosic (EJ/yr)"
   #   -> "Primary Energy Production|Biomass|Energy Crops (EJ/yr)" (used also in coupling interface in MAgPIE)
-  # "o_vm_fuExtr_pebiolc"
+  # "o_vm_fuExtr_pebiolc_iter"
   # core/postsolve.gms:
-  # o_vm_fuExtr_pebiolc = vm_fuExtr.l(ttot,regi,"pebiolc","1");
+  # o_vm_fuExtr_pebiolc_iter = vm_fuExtr.l(ttot,regi,"pebiolc","1");
   
   # "PE|Biomass|+++|Energy Crops (EJ/yr)"
   # remind2::reportPE.R
   # fuelex[,,"pebiolc.1"] + (1-p_costsPEtradeMp[,,"pebiolc"]) * Mport[,,"pebiolc"] - Xport[,,"pebiolc"] -> "PE|Biomass|+++|Energy Crops (EJ/yr)"
-  # "o_PEDem_Bio_ECrops"
+  # "o_PEDem_Bio_ECrops_iter"
   # core/postsolve.gms:
-  # o_PEDem_Bio_ECrops(iteration,ttot,regi) = vm_fuExtr.l(ttot,regi,"pebiolc","1") + (1 - pm_costsPEtradeMp(ttot,regi"pebiolc")) * vm_Mport.l(ttot,regi,"pebiolc") - vm_Xport.l(ttot,regi"pebiolc");
+  # o_PEDem_Bio_ECrops_iter(iteration,ttot,regi) = vm_fuExtr.l(ttot,regi,"pebiolc","1") + (1 - pm_costsPEtradeMp(ttot,regi"pebiolc")) * vm_Mport.l(ttot,regi,"pebiolc") - vm_Xport.l(ttot,regi"pebiolc");
   
   # "Internal|Price|Biomass|Multfactor ()"
   # remind2::reportPrices.R
@@ -197,9 +197,9 @@ readDataFromGdx <- function(runfolder, allIter = TRUE) {
   items <- tribble(
     ~par                      , ~var                                                    , ~factor,
     "o_p30_pebiolc_pricemag"  , "Internal|Price|Biomass|MAgPIE (US$2017/GJ)"            ,  sm_tdptwyr2dpgj,
-    "o_vm_emiMacSector_co2luc", "Emi|CO2|+|Land-Use Change (Mt CO2/yr)"                 ,  GtC_2_MtCO2,
-    "o_vm_fuExtr_pebiolc"     , "Primary Energy Production|Biomass|Energy Crops (EJ/yr)",  TWa2EJ,
-    "o_PEDem_Bio_ECrops"      , "PE|Biomass|+++|Energy Crops (EJ/yr)"                   ,  TWa2EJ,
+    "o_vm_emiMacSector_co2luc_iter", "Emi|CO2|+|Land-Use Change (Mt CO2/yr)"                 ,  GtC_2_MtCO2,
+    "o_vm_fuExtr_pebiolc_iter"     , "Primary Energy Production|Biomass|Energy Crops (EJ/yr)",  TWa2EJ,
+    "o_PEDem_Bio_ECrops_iter"      , "PE|Biomass|+++|Energy Crops (EJ/yr)"                   ,  TWa2EJ,
     "o_p30_pebiolc_pricmult"  , "Internal|Price|Biomass|Multfactor ()"                  ,  1,
     "pm_taxCO2eq_iter"        , "Price|Carbon (US$2017/t CO2)"                          ,  1000 * 12 / 44,
   )

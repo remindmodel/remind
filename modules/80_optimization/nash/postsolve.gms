@@ -22,12 +22,27 @@ p80_normalize0(ttot,regi,tradePe)$(ttot.val ge 2005) = max(0.5 * (sum(rlf, vm_fu
                                                         + p80_normalize0(ttot,regi,tradePe)$(pm_SolNonInfes(regi) eq 0) ,sm_eps);
 
 
+*** track exports and imports and fuel extraction and prodPe
+loop(ttot$(ttot.val ge 2005),
+  loop(regi,
+    loop(trade,
+      p80_Mport_iter(ttot,regi,trade,iteration) = vm_Mport.l(ttot,regi,trade);
+      p80_Mport_iter(ttot,regi,trade,iteration) = vm_Xport.l(ttot,regi,trade);
+    );
+    loop(entyPe,
+      p80_prodPe_iter(ttot,regi,entyPe,iteration)      = vm_prodPe.l(ttot,regi,entyPe);   
+      p80_fuExtr_iter(ttot,regi,entyPe,rlf,iteration)  = vm_fuExtr.l(ttot,regi,entyPe,rlf);
+    );
+  ); 
+); 
+
 ***calculate residual surplus on the markets
 loop(ttot$(ttot.val ge 2005),
   loop(trade$(NOT tradeSe(trade)),
-     p80_surplus(ttot,trade,iteration) = sum(regi, (vm_Xport.l(ttot,regi,trade) - vm_Mport.l(ttot,regi,trade))$(pm_SolNonInfes(regi) eq 1)
+    p80_surplus(ttot,trade,iteration) = sum(regi, (vm_Xport.l(ttot,regi,trade) - vm_Mport.l(ttot,regi,trade))$(pm_SolNonInfes(regi) eq 1)
                                                + (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade) )$(pm_SolNonInfes(regi) eq 0) );
-      ); 
+
+  ); 
 ); 
 
 *' calculate both the size of the price change due to the price change anticipation effect in percent, as well as  
