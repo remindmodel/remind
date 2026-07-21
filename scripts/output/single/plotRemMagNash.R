@@ -117,8 +117,7 @@ plot_iterations <- function(dat, runname) {
   filename <- paste0(tail(runname$outputdirs, n = 1), ifelse(nrow(runname) > 1, "-continued", ""))
 
   # Collect the plots in the order they should appear in the report.
-  # The rmarkdown template (see beloew) reads this list.
-  plots <- list(p_price_mag, p_price_mag_it, p_fuelex, p_fuelex_it,
+  # The rmarkdown template (see below) reads this list.
                 p_fuelex_it_fix, p_fuelex_it_2060, p_demPE_it, p_emi_mag,
                 p_emi_mag_it, p_mult, p_mult_it, p_price_carbon,
                 p_price_carbon_it_1, p_price_carbon_it_2)
