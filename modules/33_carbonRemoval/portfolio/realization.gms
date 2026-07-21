@@ -19,8 +19,7 @@
 *' on crop fields where it weathers in reaction with water and atmospheric CO2. Electricity is needed to grind the
 *' rocks and diesel is needed for transportation and spreading on crop fields. The weathering process leads to an exponential
 *' decay over time of the spread rocks. There is an upper limit on the amount of rock that can be on the fields, so that
-*' in equilibrium only the part that decays in one timestep can be replaced in the next. In addition, an arbitrary
-*' limit of the amount of rock spread each year can be set in cm_LimRock. Costs consist of costs for capital, O&M,
+*' in equilibrium only the part that decays in one timestep can be replaced in the next. Costs consist of costs for capital, O&M,
 *' distribution and transport (grades depend on region specific transport distance from mine to fields).
 *'
 *' (OAE) Ocean alkalinity enhancement via ocean liming draws down CO2 from the atmosphere by adding (hydrated) lime

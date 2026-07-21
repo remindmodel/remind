@@ -1086,10 +1086,9 @@ parameter
 ;
   cm_gs_ew                 = 20;     !! def = 20  !! regexp = is.numeric
 *'
+
 parameter
-  cm_LimRock                "limit amount of rock spread each year [Gt]"
-;
-  cm_LimRock               = 1000;   !! def = 1000
+
 *'
 parameter
   cm_33_EW_upScalingRateLimit    "Annual growth rate limit on upscaling of mining & spreading rocks on fields"

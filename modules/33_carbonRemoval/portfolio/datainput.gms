@@ -54,9 +54,6 @@ p33_rock_weath_rate("2") = s33_rock_weath_rate_ambientT * 0.29;
 p33_fedem("weathering", "feels") = 6.62 * cm_gs_ew**(-1.16);
 p33_fedem("weathering", "fedie") = 0.3;
 
-*' Factor distributing the global rock limit across regions according to population
-p33_LimRock(regi) = pm_pop("2005",regi) / sum(regi2,pm_pop("2005",regi2));
-
 *' Annual growth rate limit on upscaling of mining & spreading rocks on fields
 p33_EW_upScalingLimit(ttot) = cm_33_EW_upScalingRateLimit;
 
@@ -64,7 +61,7 @@ p33_EW_upScalingLimit(ttot) = cm_33_EW_upScalingRateLimit;
 p33_EW_shortTermEW_Limit(regi) = cm_33_EW_shortTermLimit * sum(rlf, f33_maxProdGradeRegiWeathering(regi, rlf));
 
 *' Narrative switch: what share of cropland can be used for EW?
-parameter f33_EW_maxShareOfCropland(ext_regi) "Maximum share of cropland available for enhanced weathering by region" / %cm_33_EW_maxShareOfCropland% /;
+parameter f33_EW_maxShareOfCropland(ext_regi) "Maximum share of suitable cropland available for enhanced weathering by region" / %cm_33_EW_maxShareOfCropland% /;
 p33_EW_maxShareOfCropland(regi) = 1; !! if no value is assigned to GLO, the default share is set to 100%
 p33_EW_maxShareOfCropland(regi) = f33_EW_maxShareOfCropland("GLO"); !! if a value is assigned to GLO, this value is set for all regions
 loop(ext_regi$f33_EW_maxShareOfCropland(ext_regi),

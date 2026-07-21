@@ -190,16 +190,6 @@ q33_EW_potential(t,regi,rlf_cz33)..
 
 
 ***---------------------------------------------------------------------------
-*'  An annual limit for the maximum global amount of rocks spread [Gt] can be set via cm_LimRock,
-*'  e.g. due to sustainability concerns.
-***---------------------------------------------------------------------------
-q33_EW_LimEmi(t,regi)..
-    sum((rlf_cz33, rlf), v33_EW_onfield(t,regi,rlf_cz33,rlf))
-    =l=
-    cm_LimRock * p33_LimRock(regi)
-    ;
-
-***---------------------------------------------------------------------------
 *' Short term bound on spreading of rock
 ***---------------------------------------------------------------------------
 
