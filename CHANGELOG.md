@@ -8,35 +8,58 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### input data/calibration
+
+### changed
+- **scripts** Harmonize command line arguments for output.R: prefix `--` is now required, change `--outputdir` to `--outputdirs`
+    [[#2413](https://github.com/remindmodel/remind/pull/2413)]
+- **scripts** Move LCOE reporting into `reoirtingLCOE` instead of `reporting`
+    [[#2416](https://github.com/remindmodel/remind/pull/2416)]
+
+### added
+- **scripts** Add the possibility to build only some sections of the compareScenarios2 report with `--sections=`
+    [[#2415](https://github.com/remindmodel/remind/pull/2415)]
+
+### removed
+-
+
+### fixed
+-
+
+
+## [3.7.0] - 2026-07-15
+
+### input data/calibration
 - Split final energy demands into buildings and industry specific parameters
     [[#2329](https://github.com/remindmodel/remind/pull/2329/)]
-- update information form MAgPIE( e.g. AP, agricultural costs) to MAgPIE v4.14.0
+- update information form MAgPIE( e.g. AP, agricultural costs, supply curves) to MAgPIE v4.14.0
   New: land use air pollutants got a major update, because they are taken from current MAgPIE version from now on replacing outdated data
     [[#2364](https://github.com/remindmodel/remind/pull/2364/)]
 
 ### changed
+- **core** Set default regional floor cost to gdpBased instead of uniform
+    [[#2400](https://github.com/remindmodel/remind/pull/2400)]
 - **33_CDR** Rename module to `33_carbonRemoval`
     [[#2332](https://github.com/remindmodel/remind/pull/2332)]
 - **36_buildings** Refactor buildings CES tree structure and remove bound relaxations for improved model performance
     [[#2331](https://github.com/remindmodel/remind/pull/2331)]
 - **37_industry** Rename set item `pri` to `prim`
     [[#2332](https://github.com/remindmodel/remind/pull/2332)]
+- **36_buildings, 37_industry** Split final energy demands into buildings and industry specific parameters
+    [[#2329](https://github.com/remindmodel/remind/pull/2329/)]
 - **39_CCU** Rename module to `39_carbonUtilization`
     [[#2332](https://github.com/remindmodel/remind/pull/2332)]
 - **scripts** Use `quitte::write.gdx` in `climateAssessmentInterimRun.R` to dump climate assessment results to gdx
     [[#2334](https://github.com/remindmodel/remind/pull/2354)]
 - **scripts** Transition from IAMC-style index column `period` to REMIND-style `tall` when writing climate-assessment results to `p15_climate.gdx` in `climateAssessmentInterimRun.R`
     [[#2334](https://github.com/remindmodel/remind/pull/2361)]
-- **inputdata** Split final energy demands into buildings and industry specific parameters
-    [[#2329](https://github.com/remindmodel/remind/pull/2329/)]
 - **scripts** include reporttransport/remind2 (EDGE-T/REMIND) variable harmonization. reporttransport (EDGE-T side) energy service demand is rescaled to match exactly remind2 ES/FE/Emi values for variables reported by both models
     [[#2320](https://github.com/remindmodel/remind/pull/2320)]
-- **core** Set default regional floor cost to gdpBased instead of uniform
-    [[#2400](https://github.com/remindmodel/remind/pull/2400)]
 
 ### added
 - **30_biomass** Quick-fix for `cm_maxProdBiolc`: allocate up to 25 EJ/yr of the global lignocellulosic biomass potential to regions by hardcoded 2020 crop-production shares (remainder still via marginal-cost inversion); scales down if the budget is smaller and works for both the H12 and EU21 region resolutions
     [[#2390](https://github.com/remindmodel/remind/pull/2390)]
+- **scripts** Add the possibility to give aliases to runs in the compareScenarios2 script
+    [[#2399](https://github.com/remindmodel/remind/pull/2399)]
 
 ### removed
 -

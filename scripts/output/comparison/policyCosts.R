@@ -202,7 +202,7 @@ if (!exists("source_include")) {
 # Check that "outputdirs" has an even number of entries.
 if (length(outputdirs) %% 2 != 0) {
   message(crayon::red("\nOutputdirs has an uneven number of entries..."))
-  message("To start again, run: ", crayon::blue("Rscript output.R comp=comparison output=policyCosts"), "\n\n")
+  message("To start again, run: ", crayon::blue("Rscript output.R --comp=comparison --output=policyCosts"), "\n\n")
   q()
 }
 
@@ -244,7 +244,7 @@ if (exists("source_include")) {
     message(crayon::green("Great!"))
   } else {
     message(crayon::red("\nGood-bye!"))
-    message("To start again, run: ", crayon::blue("Rscript output.R comp=comparison output=policyCosts"), "\n\n")
+    message("To start again, run: ", crayon::blue("Rscript output.R --comp=comparison --output=policyCosts"), "\n\n")
     q()
   }
   # Get special requests from user
