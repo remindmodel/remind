@@ -39,7 +39,9 @@ s33_step = 2.5;
 *' @code
 *' fix costs [T$/Gt stone]. Data from strefler et al. in $/t stone: mining, crushing, grinding (5.0 investment costs, 25.1 O&M costs), spreading (12.1 O&M costs)
 s33_costs_fix = 0.0422;
-s33_co2_rem_pot = 0.3 * 12/44;       !! default for basalt, for Olivine 1.1
+s33_rockRemPot = cm_33_EW_rockRemPot * 12/44;       !! default for basalt is 0.3 t CO2/t rock, for Olivine 1.1 t CO2/t rock. Converted to t C/t rock.
+*' Sources for loss pathways that would reduce the total removal potential per ton rock: 
+*' https://www.carbon-drawdown.de/blog/2026-7-18-where-does-the-co-removal-potential-of-enhanced-weathering-actually-go; https://cdrxiv.org/preprint/417
 
 *' rock weathering rate (i.e. fraction of rock weathering per year) at ambient temperature (25 degree C), based on 
 *' eq 2 in strefler, amann et al. (2018): 

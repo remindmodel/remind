@@ -9,7 +9,7 @@ scalars
 *** Multiple options
 sm_capture_rate_cdrmodule       "CO2 capture rate for CDR energy and process emissions, i.e. fegas use in OAE and DAC and for calcination emissions in oae" / 0.9 /
 *** EW
-s33_co2_rem_pot                 "specific carbon removal potential [Gt C per Gt ground rock]"
+s33_rockRemPot                 "specific carbon removal potential [Gt C per Gt ground rock]"
 s33_rock_weath_rate_ambientT    "fraction of stone weathering per year at ambient temperature (25 degree C)"
 s33_costs_fix                   "fixed costs for mining, grinding, spreading [T$/Gt stone]"
 s33_step                        "size of bins in v33_weathering_onfield [Gt stone]"

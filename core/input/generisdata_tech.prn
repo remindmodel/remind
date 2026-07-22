@@ -155,8 +155,8 @@ lifetime               30        30          45          45          45         
 
 *** carbon management
 +           ccsinjeon   ccsinjeoff    weathering         dac      oae_ng      oae_el
-tech_stat           0            0                         4
-inco0             350          525          0.01       18800         200         400
+tech_stat           0            0             1           4 
+inco0             350          525            43        18800        200         400
 floorcost                                               4800
 constrTme           3            5
 lifetime           40           40            20          20          25          25

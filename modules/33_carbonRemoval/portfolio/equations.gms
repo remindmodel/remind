@@ -154,7 +154,7 @@ q33_EW_emi(t,regi)..
     vm_emiCdrTeDetail(t,regi, "weathering")
     =e=
     sum((rlf_cz33, rlf),
-        - v33_EW_onfield_tot(t,regi,rlf_cz33,rlf) * s33_co2_rem_pot * p33_rock_weath_rate(rlf_cz33)
+        - v33_EW_onfield_tot(t,regi,rlf_cz33,rlf) * s33_rockRemPot * p33_rock_weath_rate(rlf_cz33)
         )
     ;
 

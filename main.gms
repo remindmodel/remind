@@ -1088,7 +1088,15 @@ parameter
 *'
 
 parameter
-
+  cm_33_EW_rockRemPot             "Maximum CO2 removal potential per ton of rock."
+;
+  cm_33_EW_rockRemPot            = 0.3;   !! def = 0.3 t CO2 / t basalt
+*' Theoretical potential is influenced by the chemical composition of the rock, in particular calcium and magnesium content. 
+*' * (0.3): 0.3 t CO2 / t basalt is the commonly used average, see e.g. Strefler et al 2018 (SI-A Table A-1)
+*' * (0.2-0.4): 0.2 and 0.4 t CO2 / t basalt are a lower and upper bound in Strefler et al 2018 (SI-A Table A-1) 
+*' The theoretical potential may not be reached due to different loss pathways (dissolution through strong acids;
+*' secondary mineral formation (esp. clays); secondary carbonate formation (where carbon retention is only temporary)) which 
+*' strongly depend on the local soil conditions. Reduction below 50% of the theoretical potential is well possible. 
 *'
 parameter
   cm_33_EW_upScalingRateLimit    "Annual growth rate limit on upscaling of mining & spreading rocks on fields"
