@@ -5,6 +5,15 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
+############################# DESCRIPTION #############################
+#
+# Diagnostics for the REMIND-MAgPIE coupling. For a given coupled run this
+# script reads the per-iteration results and plots the key coupling variables
+# (bioenergy price, production and demand, CO2 land-use-change emissions, price
+# scaling factor and CO2 price), each shown both over time and over iterations
+# to reveal how the coupled models converge. The plots are compiled into a
+# multi-page PDF (two plots per A4 page) via rmarkdown.
+
 ############################# LOAD LIBRARIES #############################
 
 library(dplyr,    quietly = TRUE, warn.conflicts = FALSE)
