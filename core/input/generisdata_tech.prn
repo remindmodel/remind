@@ -162,7 +162,7 @@ constrTme           3            5
 lifetime           40           40            20          20          25          25
 mix0             1.00         1.00
 eta              1.00         1.00          1.00        1.00        1.00        1.00
-omf              0.06         0.12          0.84       0.025        0.35        0.17
+omf              0.06         0.12          0.59       0.025        0.35        0.17
 ccap0                                                 0.0008
 learn                                                   0.15
 
@@ -302,6 +302,13 @@ Ocean Liming - oae
     omf: 60 (USD/tCaO production) + ~10 (USD/tCaO distribution)
     Costs per tC removed is calculated in the code as it depends on the efficiency (tCO2/tCaO; exogenous):
         cost (USD/tC) = inco0 (USD/tCaO) / ( efficiency (tCO2/tCaO) / 3.66 (tCO2/tC) )
+
+Enhanced Rock Weathering - weathering
+    Parameterization based on Strefler et al (2018) doi.org/10.1088/1748-9326/aaa9c4
+    annuity factor = 0.08 for lifetime of 20 years and r = 0.05; capacity factor = 0.69
+    inco0: 5 (USD/t rock) * 0.69 / 0.08 = 43 USD/t rock/a for mining and production
+    omf: O&M cost from rock mining & production (25 USD/t rock) and transportation & distribution (12 USD/t rock), i.e. 37/(43/0.69) = 0.86
+    To use the upper Capital Cost estimate from Strefler et al, 15 USD/t rock, set inco0 = 129 and omf = 0.2
 
 Gas to Liquids (GtL) Fischer-Tropsch Process - gasftrec/gasftcrec
     efficiency eta = 0.60 (0.57 with capture), estimation at higher end of efficiency spectrum
