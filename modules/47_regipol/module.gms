@@ -34,6 +34,22 @@
 *'               These bounds either serve to align REMIND with historic and near-term data in specific regions or represent regional policies (like national coal phase-out plans) that can be activated via switches.
 *'               Finally, there are some regional adjustments in the datainput file that modify input data for specific regions for cases which have not been generalized for all REMIND regions yet.
 *'
+*'               ## Glossary of Carbon Price Rescaling Terms
+*'
+*'               * **Target Deviation**: The fractional difference between current iteration emissions and the specified emissions target, normalized by a reference year's emissions. The algorithm drives this deviation toward zero (within a specified tolerance band) by adjusting the carbon tax.
+*'               * **Rescale Factor**: The multiplicative factor applied to the regional carbon tax at the end of each outer (Nash) iteration. A value of 1.0 means no change; > 1 raises the tax; < 1 lowers it.
+*'               * **Rescale Slope**: The estimated marginal sensitivity of regional emissions to the carbon tax in a given emission market (change in emissions / change in price). Expected to be negative (higher price leads to lower emissions). Computed from the current iteration and a baseline reference iteration.
+*'               * **Slope Reference Iteration**: The baseline outer iteration used to compute the Rescale Slope. It is reset when the target changes, when the slope window is exceeded, or when a degenerate slope is detected to ensure the computed slope reflects the local abatement cost curve.
+*'               * **Slope Window**: The maximum allowed number of iterations between the current outer iteration and the Slope Reference Iteration. If the reference becomes older than this threshold, it is forced to reset.
+*'               * **SquareDev Fallback**: A robust fallback method that bypasses the Rescale Slope entirely and computes the tax rescale factor quadratically as `(1 + target_deviation)^2`. Used when reliable slope information is unavailable or degenerate.
+*'               * **Degenerate Slope**: A condition where the change in emissions (slope numerator) is negligibly small relative to the reference year's emissions (e.g., in near-net-zero scenarios). Triggers a SquareDev Fallback and resets the reference iteration.
+*'               * **Positive Slope**: An anomalous scenario where the computed Rescale Slope is positive, falsely implying that a higher carbon tax increased emissions. Addressed by either repeating a valid historical slope or triggering a SquareDev Fallback.
+*'               * **Slope Clamp**: Hard bounds applied to the Rescale Slope before it is used. Prevents a single iteration from making an extreme price adjustment due to noisy slope estimates.
+*'               * **Upper Clamp Bound**: The maximum (least-negative) permitted value for the Rescale Slope (default: -0.3). Prevents the algorithm from over-adjusting when the slope is too flat.
+*'               * **Lower Clamp Bound**: The minimum (most-negative) permitted value for the Rescale Slope (default: -5). Prevents extreme tax jumps when the slope is too steep.
+*'               * **Adaptive Upper Clamp Bound**: An extension of the Upper Clamp Bound that halves the limit when the clamp triggers in consecutive outer iterations, indicating persistent flat-slope behavior. Resets to the default when the clamp is no longer triggered.
+*'               * **Oscillation Dampener**: A safeguard that fires when the Rescale Factor alternates between > 1 and < 1 for three consecutive outer iterations. When triggered, the factor's adjustment distance from 1.0 is halved to dampen volatility.
+*'
 *' @authors Renato Rodrigues, Felix Schreyer
 
 *###################### R SECTION START (MODULETYPES) ##########################

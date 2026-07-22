@@ -261,6 +261,7 @@ loop((ext_regi,ttot)$regiANDperiodEmiMktTarget_47(ttot,ext_regi),
 *** resetting rescale factor for the next iteration
 p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = 0;
 pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = 0;
+regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,rescaleType) = NO;
 *** Calculating the emissions tax rescale factor based on previous iterations emission reduction for current targets
 loop(ext_regi$regiEmiMktTarget(ext_regi),
   loop((ttot2)$(ttot2.val eq p47_currentConvergencePeriod(ext_regi)),
@@ -268,10 +269,8 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
       loop((ttot,emiMktExt,target_type_47,emi_type_47)$(pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)),
         loop(emiMkt$emiMktGroup(emiMktExt,emiMkt),
           loop(regi$regiEmiMktTarget2regi_47(ext_regi,regi),
-***         reset the rescale type tracking for the current iteration to avoid overlapping flags
-            regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,rescaleType) = NO;
 ***         if rescale factor was already calculated for ext_regi, there is no need to recalculate it  
-            continue$(pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt));
+            continue$(sum(rescaleType$regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,rescaleType), 1));
 ***         calculating the rescale factor   
             loop(iteration2$((iteration2.val le iteration.val) and (iteration2.val eq p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi))), !!reference iteration for slope calculation
 ***           if it is the first iteration or the reference iteration changed, initialize the rescale factor based on remaining deviation
@@ -318,7 +317,7 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
                 if(p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) gt 0,
                   regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,rescaleType) = NO;
 ***               if there is a previous iteration calculated slope, repeat the previous iteration slope to avoid the positive value because we assume a trade-off between tax and emission levels
-                  if((iteration.val gt 1) and (p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi) - p47_slopeReferenceIteration_iter(iteration-1,ttot2,ext_regi) eq 0),
+                  if((iteration.val gt 1) and (p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi) - p47_slopeReferenceIteration_iter(iteration-1,ttot2,ext_regi) eq 0) and (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)),
                     regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"slope_repeatPrev_positiveSlope") = YES;
                     p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleSlope_iter(iteration-1,ttot,ttot2,ext_regi,emiMktExt);
 ***               else slope is not available, set the rescale factor based on remaining deviation
@@ -345,7 +344,6 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
                     regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_adaptiveClamp") = YES;
                     pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
                     p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt) = -0.3;
-                    p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi) = ord(iteration);
                   else
 ***               clamp slopes values to avoid extreme changes (or no change) on a single iteration
                     if((p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) gt p47_slopeUpperClampBound(ttot,ttot2,ext_regi,emiMktExt)) OR (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) lt -5),
@@ -371,20 +369,29 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
                   );
                 );
               );
-***         if slope numerator is negligibly small relative to 2005 emissions, the reference iteration is degenerate (e.g. initialised from near-net-zero scenario where emi_ref ≈ emi_current ≈ 0).
-***         fall back to squareDev and reset reference so next iteration uses a fresh slope. It only applies to year targets (pm_emiMktRefYear > 0)
+***         if slope numerator is negligibly small both relative to 2005 emissions AND relative to the remaining gap to close, the slope is degenerate (e.g. initialised from near-net-zero scenario where emi_ref ≈ emi_current ≈ target ≈ 0).
+***         fall back to squareDev. It only applies to year targets (pm_emiMktRefYear > 0).
+***         The relative-to-gap condition prevents squareDev from firing when emissions are merely close to the target in absolute terms but the slope is still useful for Newton: e.g. a 5 MtCO2 change is below 1% of 2005 emissions but is 25% of a 20 MtCO2 remaining gap, so Newton should be used.
             if((regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"slope_refIteration")
                 OR regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"slope_firstIteration"))
                AND NOT((iteration.val - iteration2.val) eq 0)
                AND (pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt) gt 0)
                AND (abs(p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt)
                         - p47_emiMktCurrent_iter(iteration2,ttot,ttot2,ext_regi,emiMktExt))
-                    lt s47_slopeDegenerateThreshold * pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt)),
+                    lt s47_slopeDegenerateThreshold * pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt))
+               AND (abs(p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt)
+                        - p47_emiMktCurrent_iter(iteration2,ttot,ttot2,ext_regi,emiMktExt))
+                    lt s47_slopeDegenerateThreshold * abs(pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)
+                                                          - p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt))),
               regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,rescaleType) = NO;
               regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_degenerateSlope") = YES;
               pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = power(1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt), 2);
-              p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi) = ord(iteration);
             );
+            );
+***         reset slope reference iteration after squareDev_adaptiveClamp, moved outside loop(iteration2) to prevent the loop from re-evaluating its condition with the updated reference and executing a spurious second body run that sets squareDev_firstIteration alongside the intended type.
+***         squareDev_degenerateSlope intentionally does NOT reset the reference: resetting after degeneracy creates a 1-step window on the next iteration that is immediately degenerate again, locking the algorithm out of Newton. Instead, the reference is allowed to age naturally so emissions accumulate enough history for a reliable slope. The slopeMaxWindow mechanism resets the reference after s47_slopeMaxWindow iterations if needed.
+            if(regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_adaptiveClamp"),
+              p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi) = ord(iteration);
             );
 ***         dampen if rescale oscillates
             if( (iteration.val > 3) , 
