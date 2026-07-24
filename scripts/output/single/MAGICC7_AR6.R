@@ -31,7 +31,7 @@ library(remindClimateAssessment)
 if (!exists("source_include")) {
   # Define arguments that can be read from command line
   outputdir <- "."
-  lucode2::readArgs("outputdir", "gdxName", "gdx_ref_name", "gdx_refpolicycost_name")
+  lucode2::readArgs("outputdir")
 }
 
 runTimes <- c()

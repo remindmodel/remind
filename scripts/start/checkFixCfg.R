@@ -104,8 +104,8 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
     cfg$inputRevision <- sub("^rev", "", cfg$inputRevision)
     warning("cfg$inputRevision started with 'rev', but this will be added automatically. Removed it.")
   }
-  # check if RCP scenario other than (none), (rcp20), (rcp26), or (rcp45) is used
-  if (! isTRUE(cfg$gms$cm_rcp_scen %in% c("none","rcp20","rcp26","rcp45") )) {
+  # check if RCP scenario other than (none), (rcp20), (rcp26), (rcp37), or (rcp45) is used
+  if (! isTRUE(cfg$gms$cm_rcp_scen %in% c("none","rcp20","rcp26","rcp45", "rcp37") )) {
     warning("Chosen RCP scenario '", cfg$gms$cm_rcp_scen, "' might currently not be fully operational: test and verify before using it!")
   }
   # check if cm_iterative_target_adj 5, 7, or 9 is used without carbonprice being set to functionalForm

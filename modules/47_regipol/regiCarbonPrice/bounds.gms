@@ -154,7 +154,8 @@ vm_emiTeDetail.up(t,regi,peFos,entySe,teFosCCS,"cco2")$((sameas(regi,"DEU")) AND
 *' If cm_deuCDRmax >= 0, limit German CDR amount (Energy system BECCS, DACCS, EW and negative Landuse Change emissions) to cm_deuCDRmax.
 *' Convert cm_deuCDRmax from MtCO2/yr to model unit of GtC/yr. 
 vm_emiCdrAll.up(t,regi)$((cm_deuCDRmax ge 0) AND (sameas(regi,"DEU"))) = cm_deuCDRmax / 1000 / sm_c_2_co2;
-
+*** limit EUR CDR amount (Energy system BECCS, DACCS, EW and negative Landuse Change emissions), conversion from MtCO2 to GtC
+vm_emiCdrAll.up(t,regi)$((cm_EURCDRmax ge 0) AND (sameas(regi,"EUR"))) = cm_EURCDRmax / 1000 / sm_c_2_co2;
 
 *' Bounds for German Energy Security Scenario (activated by switches)
 
@@ -180,7 +181,7 @@ $endIf.ensec
 *' Policy in energy security scenario for Germany activated by cm_EnSecScen_limit: 
 *' Limit PE gas demand from 2025 on to cm_EnSecScen_limit (in EJ/yr) gas imports + domestic gas in Germany.
 if (cm_EnSecScen_limit gt 0,
-    vm_prodPe.up(t,regi,"pegas")$((t.val ge 2025) AND (sameas(regi,"DEU"))) = cm_EnSecScen_limit/pm_conv_TWa_EJ;
+    vm_prodPe.up(t,regi,"pegas")$((t.val ge 2025) AND (sameas(regi,"DEU"))) = cm_EnSecScen_limit * sm_EJ_2_TWa;
 );
 
 *' ##### Bounds for EU subregions

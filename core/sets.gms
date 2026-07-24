@@ -370,9 +370,6 @@ all_enty             "all types of quantities"
     feel
     feels        "FE electricity stationary"
     feelb
-    feelcb       "buildings use of conventional electricity (all but space heating)"
-    feelhpb      "buildings use of electricity for space heating with heat pumps"
-    feelrhb      "buildings use of electricity for space heating with resistive heating"
     feelt        "final energy electricity for transport"
     fepet        "FE petrol transport"
     fedie        "FE diesel transport"
@@ -515,18 +512,48 @@ all_in   "all inputs and outputs of the CES function"
     fehes                   "stationary use of district heat"
     feels                   "stationary use of electricity"
 
-    enb                     "buildings energy use"
-    enhb                    "buildings heat energy use"
-    enhgab                  "buildings heat gaseous energy use (fegab and feh2b)"
-    fesob                   "buildings use of solid energy carriers"
-    fehob                   "buildings use of liquid energy carriers"
-    fegab                   "buildings use of gaseous energy carriers"
-    feh2b                   "buildings use of hydrogen"
-    feheb                   "buildings use of district heat"
-    feelb                   "buildings use of electricity"
-    feelcb                  "buildings use of conventional electricity (all but space heating)"
-    feelhpb                 "buildings use of electricity for space heating with heat pumps"
-    feelrhb                 "buildings use of electricity for space heating with resistive heating"
+    enb                         "buildings energy use"
+    enhb                        "buildings heat energy use"
+    enhgab                      "buildings heat gaseous energy use (fegab and feh2b)"
+    fesob                       "buildings use of solid energy carriers"
+    fehob                       "buildings use of liquid energy carriers"
+    fegab                       "buildings use of gaseous energy carriers"
+    feh2b                       "buildings use of hydrogen"
+    feheb                       "buildings use of district heat"
+    feelb                       "buildings use of electricity"
+    feelhpb                     "buildings use of electricity for heat pumps"
+    feelrhcob                   "buildings use of electricity for resistive heating and cooking"
+    feelalb                     "buildings use of electricity for appliances and lighting"
+    feelictb                    "buildings use of electricity for information and communication technology"
+    feelscb                     "buildings use of electricity for space cooling"
+    appliances_light_elec_fe    "buildings appliances and lighting electricity"
+    appliances_light_natgas_fe  "buildings appliances and lighting natural gas"
+    appliances_light_petrol_fe  "buildings appliances and lighting petrol"
+    cooking_biomod_fe           "buildings cooking modern biomass"
+    cooking_biotrad_fe          "buildings cooking traditional biomass"
+    cooking_coal_fe             "buildings cooking coal"
+    cooking_elec_fe             "buildings cooking electricity"
+    cooking_natgas_fe           "buildings cooking natural gas"
+    cooking_petrol_fe           "buildings cooking petrol"
+    ict_elec_fe                 "buildings information communication technology electricity"
+    space_cooling_elec_fe       "buildings space cooling electricity"
+    space_cooling_heat_fe       "buildings space cooling district heat"
+    space_heating_biomod_fe     "buildings space heating modern biomass"
+    space_heating_biotrad_fe    "buildings space heating traditional biomass"
+    space_heating_coal_fe       "buildings space heating coal"
+    space_heating_elecHP_fe     "buildings space heating electricity heat pump"
+    space_heating_elecRH_fe     "buildings space heating electricity resistive heating"
+    space_heating_heat_fe       "buildings space heating district heat"
+    space_heating_natgas_fe     "buildings space heating natural gas"
+    space_heating_petrol_fe     "buildings space heating petrol"
+    water_heating_biomod_fe     "buildings water heating modern biomass"
+    water_heating_biotrad_fe    "buildings water heating traditional biomass"
+    water_heating_coal_fe       "buildings water heating coal"
+    water_heating_elecHP_fe     "buildings water heating electricity heat pump"
+    water_heating_elecRH_fe     "buildings water heating electricity resistive heating"
+    water_heating_heat_fe       "buildings water heating district heat"
+    water_heating_natgas_fe     "buildings water heating natural gas"
+    water_heating_petrol_fe     "buildings water heating petrol"
 
     eni                     "industry energy use"
     enhi                    "industry heat energy use"
@@ -857,6 +884,7 @@ sets
        subsidizeLearning
        capitalMarket
        trade
+       WACC
        agCosts
        CES_parameters
        biomass
@@ -893,6 +921,7 @@ module2realisation(modules,*) "mapping of modules and active realisations" /
        subsidizeLearning . %subsidizeLearning%
        capitalMarket . %capitalMarket%
        trade . %trade%
+       WACC . %WACC%
        agCosts . %agCosts%
        CES_parameters . %CES_parameters%
        biomass . %biomass%
@@ -1235,6 +1264,7 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
     bfcc            "Blast furnace CCS"
     idrcc           "Direct reduction CCS"
+    idr             "Iron direct reduction"
 $endif.cm_subsec_model_steel
 /
 
@@ -1260,6 +1290,9 @@ teEarlyReti(all_te)    "technologies for which early retirement of existing capa
     biohp
     bioigcc
     tnrs
+    bf
+    bof
+    bfcc
 /
 
 *** Note: technologies without endogenous learning can also have decreasing (or increasing) capital cost over time, due to for example convergence to global value

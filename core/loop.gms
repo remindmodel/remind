@@ -95,7 +95,7 @@ putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " gho
 ***     Track of changes between iterations
 ***---------------------------------------------------------
 loop(entyPe$(NOT sameas(entyPe,"peur")),
-  o_negitr_cumulative_peprod(iteration,entyPe) = 0.031536
+  o_negitr_cumulative_peprod(iteration,entyPe) = sm_TWa_2_EJ / 1000
     * sum(regi,
         sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), vm_prodPe.l(ttot,regi,entyPe) * pm_ts(ttot)  )
         + sum(ttot$(ttot.val eq 2005), vm_prodPe.l(ttot,regi,entyPe) * pm_ts(ttot) * 0.5  )
@@ -110,20 +110,20 @@ sum(regi,
 );
 o_negitr_cumulative_CO2_emineg_co2luc(iteration) =
 sum(regi,
-    sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), 3.6667 * vm_emiMacSector.l(ttot,regi,"co2luc") * pm_ts(ttot) )
-    + sum(ttot$(ttot.val eq 2005), 3.6667 * vm_emiMacSector.l(ttot,regi,"co2luc") * pm_ts(ttot) * 0.5 )
-    + sum(ttot$(ttot.val eq 2100), 3.6667 * vm_emiMacSector.l(ttot,regi,"co2luc") * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5 )
+    sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), sm_c_2_co2 * vm_emiMacSector.l(ttot,regi,"co2luc") * pm_ts(ttot) )
+    + sum(ttot$(ttot.val eq 2005), sm_c_2_co2 * vm_emiMacSector.l(ttot,regi,"co2luc") * pm_ts(ttot) * 0.5 )
+    + sum(ttot$(ttot.val eq 2100), sm_c_2_co2 * vm_emiMacSector.l(ttot,regi,"co2luc") * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5 )
 );
 
 o_negitr_cumulative_CO2_emineg_cement(iteration) =
 sum(regi,
-    sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), 3.6667 * vm_emiMacSector.l(ttot,regi,"co2cement_process") * pm_ts(ttot) )
-    + sum(ttot$(ttot.val eq 2005), 3.6667 * vm_emiMacSector.l(ttot,regi,"co2cement_process") * pm_ts(ttot) * 0.5 )
-    + sum(ttot$(ttot.val eq 2100), 3.6667 * vm_emiMacSector.l(ttot,regi,"co2cement_process") * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5 )
+    sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), sm_c_2_co2 * vm_emiMacSector.l(ttot,regi,"co2cement_process") * pm_ts(ttot) )
+    + sum(ttot$(ttot.val eq 2005), sm_c_2_co2 * vm_emiMacSector.l(ttot,regi,"co2cement_process") * pm_ts(ttot) * 0.5 )
+    + sum(ttot$(ttot.val eq 2100), sm_c_2_co2 * vm_emiMacSector.l(ttot,regi,"co2cement_process") * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5 )
 );
 o_negitr_cumulative_CO2_emieng_seq(iteration)
   =
-    3.6667
+    sm_c_2_co2
   * sum(regi,
       sum((ttot,emi2te(enty,enty2,te,"cco2"))$( ttot.val gt 2005 AND ttot.val lt 2100 ),
         vm_emiTeDetail.l(ttot,regi,enty,enty2,te,"cco2")

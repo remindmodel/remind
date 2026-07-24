@@ -8,17 +8,19 @@
 Sets
   in_buildings_dyn36(all_in)   "all inputs and outputs of the CES function - buildings"
   /
-    enb     "buildings energy use"
-    enhb    "buildings heat energy use"
-    enhgab  "buildings heat gaseous energy use (fegab and feh2b)"     
-    fesob   "buildings use of solid energy carriers"
-    fehob   "buildings use of liquid energy carriers"
-    fegab   "buildings use of gaseous energy carriers"
-    feh2b   "buildings use of hydrogen"
-    feheb   "buildings use of district heat"
-    feelcb  "buildings use of conventional electricity (all but space heating)"
-    feelhpb "buildings use of electricity for space heating with heat pumps"
-    feelrhb "buildings use of electricity for space heating with resistive heating"    
+    enb        "buildings energy use"
+    enhb       "buildings heat energy use"
+    enhgab     "buildings heat gaseous energy use (fegab and feh2b)"
+    fesob      "buildings use of solid energy carriers"
+    fehob      "buildings use of liquid energy carriers"
+    fegab      "buildings use of gaseous energy carriers"
+    feh2b      "buildings use of hydrogen"
+    feheb      "buildings use of district heat"
+    feelhpb    "buildings use of electricity for heat pumps"
+    feelrhcob  "buildings use of electricity for resistive heating and cooking"
+    feelalb    "buildings use of electricity for appliances and lighting"
+    feelictb   "buildings use of electricity for information and communication technology"
+    feelscb    "buildings use of electricity for space cooling"
   /
 
   ppfen_buildings_dyn36(all_in)   "primary production factors energy - buildings"
@@ -28,9 +30,11 @@ Sets
     fegab
     feh2b
     feheb
-    feelcb
     feelhpb
-    feelrhb
+    feelrhcob
+    feelalb
+    feelictb
+    feelscb
   /
 
   cal_ppf_buildings_dyn36(all_in)   "primary production factors for calibration - buildings"
@@ -38,8 +42,8 @@ Sets
   ces_buildings_dyn36(all_in,all_in)   "CES tree structure - buildings"
   /
     en     . enb
-    enb    . (enhb, feelcb)
-    enhb   . (fesob, fehob, feheb, feelhpb, feelrhb, enhgab)
+    enb    . (enhb, feelalb, feelictb, feelscb)
+    enhb   . (fesob, fehob, feheb, feelhpb, feelrhcob, enhgab)
     enhgab . (fegab, feh2b)
   /
 
@@ -60,7 +64,7 @@ Sets
     fegas . fegab
     feh2s . feh2b
     fehes . feheb
-    feels . (feelcb,feelhpb,feelrhb)
+    feels . (feelrhcob, feelhpb, feelalb, feelictb, feelscb)
   /
   
   ue_dyn36(all_in)  "useful energy items"

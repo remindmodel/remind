@@ -464,13 +464,31 @@ q37_mat2ue(t,regi,mat,in)$( ppfUePrc(in) ) ..
 ;
 
 ***------------------------------------------------------
-*' Definition of capacity constraints
+*' Definition of capacity constraints (historical and current)
 ***------------------------------------------------------
-q37_limitCapMat(t,regi,tePrc) ..
+*' historical capacity constraint allows for free adjustment of
+*' the capacity factor, as historical input data sometimes
+*' displays low capacity factors (below 0.8).
+q37_limitCapMatHist(t,regi,tePrc)$(t.val le 2020) ..
     sum(tePrc2opmoPrc(tePrc,opmoPrc),
       vm_outflowPrc(t,regi,tePrc,opmoPrc)
     )
     =l=
+    sum(teMat2rlf(tePrc,rlf),
+      vm_capFac(t,regi,tePrc)
+    * vm_cap(t,regi,tePrc,rlf)
+    )
+;
+
+*' from 2025 onwards, the constraint is binding,
+*' fixing the capacity factor to 0.8.
+*' this prevents the model from idling capacity at zero cost,
+*' which otherwise leads to unrealistically low utilizations
+q37_limitCapMat(t,regi,tePrc)$(t.val gt 2020) ..
+    sum(tePrc2opmoPrc(tePrc,opmoPrc),
+      vm_outflowPrc(t,regi,tePrc,opmoPrc)
+    )
+    =e=
     sum(teMat2rlf(tePrc,rlf),
       vm_capFac(t,regi,tePrc)
     * vm_cap(t,regi,tePrc,rlf)
@@ -532,7 +550,7 @@ q37_emiCCPrc(t,regi,emiInd37)$(
 ***------------------------------------------------------
 *' Limit biosolids in industry (only for ETS - all sectors except otherInd)
 ***------------------------------------------------------
-q37_limitBioSolidsIndst(t,regi,entyFe)$((t.val ge 2025) AND sameas(entyFe,"fesos"))..
+q37_limitBioSolidsIndst(t,regi,entyFe)$(sameas(entyFe,"fesos"))..
   v37_shSolidsIndst(t,regi)
   *
   sum((entySe,te)$se2fe(entySe,entyFe,te),

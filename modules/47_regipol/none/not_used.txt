@@ -61,7 +61,6 @@ pm_implicitPePrice_NotConv,input,questionnaire
 pm_implicitPePrice_ignConv,input,questionnaire
 pm_shareWindPotentialOff2On,input,questionnaire
 cm_EnSecScen_limit,input,questionnaire
-pm_conv_TWa_EJ,input,questionnaire
 pm_shareWindOff,input,questionnaire
 vm_cesIO,input,added by codeCheck
 pm_exogDemScen,input,added by codeCheck
@@ -83,3 +82,4 @@ vm_emiCdrTeDetail,input,added by codeCheck
 vm_demFeNonEnergySector,input,added by codeCheck
 sm_MtCO2_2_GtC,input,not needed
 pm_emiLULUCF_GrassiShift,input,not needed
+vm_co2CCS,input,not needed

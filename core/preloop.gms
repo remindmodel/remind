@@ -20,6 +20,9 @@ model hybrid /all/;
 ***------------------------------------------------------------------------------
 ***------------------------------------------------------------------------------
 
+*** remove legacy values for timesteps and technologies that are not required
+vm_capCum.l(tall,all_regi,all_te) $ (not (ttot(tall) and regi(all_regi) and te(all_te))) = 0;
+
 *** Set level values, so that reference value is available even if gdx has no level value to overwrite. Gams complains if .l was never initialized.
 vm_emiMacSector.l(ttot,regi,enty)      = 0;
 vm_emiTe.l(ttot,regi,enty)      = 0;
@@ -110,7 +113,8 @@ vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)$(
   ( entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe) ) AND !! only redefine vm_demFeSector for entySeBio, entySeSyn and entySeFos items
   ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
   ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
-  ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
+  ( NOT(sameas(sector,"build") AND (sameas(entyFe,"fesos"))) ) AND !!disable buildings solids share incentives
+  ( NOT(sameas(sector,"indst") AND (sameas(entyFe,"fesos"))) ) !!disable indst solids share incentives
 ) =
   sum(entySe2$sefe(entySe2,entyFe), vm_demFeSector.l(t,regi,entySe2,entyFe,sector,emiMkt))
   * p_shSeFe(t,regi,entySe);  

@@ -14,7 +14,7 @@ library(data.table)
 
 ############################# BASIC CONFIGURATION #############################
 
-gdx_name     <- "fulldata.gdx"             # name of the gdx
+gdx_name     <- "fulldata.gdx"
 gdx_ref_name <- "input_ref.gdx"            # name of the ref for < cm_startyear
 gdx_refpolicycost_name <- "input_refpolicycost.gdx"  # name of the reference gdx (for policy cost calculation)
 
@@ -23,6 +23,7 @@ if (!exists("source_include")) {
   outputdir <- "."
   lucode2::readArgs("outputdir", "gdx_name", "gdx_ref_name", "gdx_refpolicycost_name")
 }
+stopifnot(exists("outputdir"))
 
 gdx     <- file.path(outputdir, gdx_name)
 gdx_ref <- file.path(outputdir, gdx_ref_name)
@@ -35,7 +36,6 @@ scenario <- lucode2::getScenNames(outputdir)
 
 # paths of the reporting files
 remind_reporting_file <- file.path(outputdir, paste0("REMIND_generic_", scenario, ".mif"))
-LCOE_reporting_file   <- file.path(outputdir, paste0("REMIND_LCOE_", scenario, ".csv"))
 
 remind_policy_reporting_file <- file.path(outputdir, paste0("REMIND_generic_", scenario, "_adjustedPolicyCosts.mif"))
 remind_policy_reporting_file <- remind_policy_reporting_file[file.exists(remind_policy_reporting_file)]
@@ -157,11 +157,5 @@ mifcontent <- read.quitte(sub("\\.mif$", "_withoutPlus.mif", remind_reporting_fi
 quitte::reportDuplicates(mifcontent)
 
 message("### end generation of mif files at ", round(Sys.time()))
-
-# produce REMIND LCOE reporting *.csv based on gdx information ----
-
-message("### start generation of LCOE reporting at ", round(Sys.time()))
-remind2::convGDX2CSV_LCOE(gdx, file = LCOE_reporting_file, scen = scenario)
-message("### end generation of LCOE reporting at ", round(Sys.time()))
 
 message("### reporting finished.")

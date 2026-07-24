@@ -113,7 +113,7 @@ fixOnMif <- function(outputdir) {
   if (! isTRUE(fixeddata) && isTRUE(envi$cfg$fixOnRefAuto %in% c(TRUE, "TRUE"))) {
     d <- fixeddata
     update <- "data from reference run because cfg$fixOnRefAuto=TRUE."
-  } else if (! isTRUE(fixeddata) && exists("flags") && isTRUE("--interactive" %in% flags)) {
+  } else if (! isTRUE(fixeddata) && exists("interactive")) {
     message("\nDo you want to fix that by overwriting ", title, " mif with reference run ",
             refname, " for t < ", startyear, "?\nType: y/N")
     if (tolower(gms::getLine()) %in% c("y", "yes")) {
