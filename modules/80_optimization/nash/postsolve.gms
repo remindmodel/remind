@@ -349,27 +349,6 @@ loop(regi,
     );
 );
 
-*** additional diagnostic (not a convergence criterion): break down the net tax
-*** revenue relative to GDP into its main components per iteration, so the report
-*** can show which tax does not clear between iterations rather than only the total.
-*** Only the "on" realisation of module 21_tax defines the v21_taxrev* components,
-*** so guard against other realisations to avoid a compile-time error.
-$ifThen.tax "%tax%" == "on"
-loop((t,regi)$(vm_cesIO.l(t,regi,"inco") ne 0),
-  p80_convNashTaxrevComp_iter(iteration,t,regi,"GHG")       = v21_taxrevGHG.l(t,regi) / vm_cesIO.l(t,regi,"inco");
-  p80_convNashTaxrevComp_iter(iteration,t,regi,"CO2Sector") = sum(emi_sectors, v21_taxrevCO2Sector.l(t,regi,emi_sectors)) / vm_cesIO.l(t,regi,"inco");
-  p80_convNashTaxrevComp_iter(iteration,t,regi,"CO2luc")    = v21_taxrevCO2luc.l(t,regi) / vm_cesIO.l(t,regi,"inco");
-  p80_convNashTaxrevComp_iter(iteration,t,regi,"emiMkt")    = sum(emiMkt, v21_taxemiMkt.l(t,regi,emiMkt)) / vm_cesIO.l(t,regi,"inco");
-  p80_convNashTaxrevComp_iter(iteration,t,regi,"PE")        = sum(entyPe, v21_taxrevPE.l(t,regi,entyPe)) / vm_cesIO.l(t,regi,"inco");
-  p80_convNashTaxrevComp_iter(iteration,t,regi,"ResEx")     = v21_taxrevResEx.l(t,regi) / vm_cesIO.l(t,regi,"inco");
-  p80_convNashTaxrevComp_iter(iteration,t,regi,"BioEF")     = v21_taxrevBioEF.l(t,regi) / vm_cesIO.l(t,regi,"inco");
-  p80_convNashTaxrevComp_iter(iteration,t,regi,"SE")        = v21_taxrevSE.l(t,regi) / vm_cesIO.l(t,regi,"inco");
-  p80_convNashTaxrevComp_iter(iteration,t,regi,"FE")        = v21_taxrevFE.l(t,regi) / vm_cesIO.l(t,regi,"inco");
-  p80_convNashTaxrevComp_iter(iteration,t,regi,"Import")    = sum(tradePe, v21_taxrevImport.l(t,regi,tradePe)) / vm_cesIO.l(t,regi,"inco");
-  p80_convNashTaxrevComp_iter(iteration,t,regi,"Pseudo")    = v21_taxrevPseudo.l(t,regi) / vm_cesIO.l(t,regi,"inco");
-);
-$endIf.tax
-
 *** additional criterion: Were regional climate targets reached?
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off" 
 loop((ttot,ttot2,ext_regi,emiMktExt)$pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt),
