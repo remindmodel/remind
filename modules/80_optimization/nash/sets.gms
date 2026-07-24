@@ -24,6 +24,11 @@ solveinfo80	"Nash solution stats"
 solvestat, modelstat, resusd, objval
 /
 
+taxrev80   "tax revenue components tracked over iterations for tax convergence debugging (subset of the vm_taxrev composition in module 21_tax)"
+/
+GHG, CO2Sector, CO2luc, emiMkt, PE, ResEx, BioEF, SE, FE, Import, Pseudo
+/
+
 convMessage80   "contains all convergence criteria"
 /
 infes,surplus,nonopt,taxconv,anticip,globalbudget,peakbudgyr,peakbudget,regiBudget,regiTarget,NDC,implicitEnergyTarget,cm_implicitPriceTarget,cm_implicitPePriceTarget,damage,DevPriceAnticip, IterationNumber

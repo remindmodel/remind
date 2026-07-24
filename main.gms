@@ -1118,6 +1118,16 @@ parameter
   cm_implicitQttyTarget_tolerance    = 0.01;       !! def = 0.01, i.e. regipol implicit quantity targets must be met within 1% of target deviation
 *'
 parameter
+  cm_implicitPriceTarget_tolerance "tolerance for regipol implicit FE price target deviations convergence."
+;
+  cm_implicitPriceTarget_tolerance    = 0.05;      !! def = 0.05, i.e. regipol implicit FE price targets must be met within 5% of price deviation
+*'
+parameter
+  cm_implicitPePriceTarget_tolerance "tolerance for regipol implicit PE price target deviations convergence."
+;
+  cm_implicitPePriceTarget_tolerance    = 0.05;    !! def = 0.05, i.e. regipol implicit PE price targets must be met within 5% of price deviation
+*'
+parameter
   cm_emiMktTargetDelay  "number of years for delayed price change in the emission tax convergence algorithm. Not applied to first target set."
 ;
   cm_emiMktTargetDelay    = 0;       !! def = 0
@@ -1228,9 +1238,25 @@ parameter
 *' * 1 (on), default
 *'
 parameter
+  cm_TaxConv_tolerance        "tolerance for the nash tax convergence check: maximum absolute net tax revenue relative to GDP."
+;
+  cm_TaxConv_tolerance = 0.001;  !! def = 0.001, i.e. absolute net tax revenue must be smaller than 0.1% of GDP in all regions and periods
+*'  maximum allowed absolute value of net tax revenue as a share of GDP for the tax convergence check (cm_TaxConvCheck)
+*'
+parameter
   cm_maxFadeOutPriceAnticip   "switch to determine maximum allowed fadeout price anticipation to consider that the model converged."
 ;
   cm_maxFadeOutPriceAnticip = 1e-4; !! def = 1e-4, the fadeout price anticipation term needs to be lower than 1e-4 to consider that the model converged.
+*'
+parameter
+  cm_nashObjVal_tolerance     "nash convergence tolerance: maximum accepted decrease of a region's objective value relative to its last optimal solution (only for modelstat 7 iterations)."
+;
+  cm_nashObjVal_tolerance = 1e-4;  !! def = 1e-4, rather arbitrary; objective value decreases smaller than this are accepted as if the solution were optimal
+*'
+parameter
+  cm_DevPriceAnticip_tolFactor "nash convergence: price-anticipation deviation tolerance expressed as a fraction of the goods surplus tolerance p80_surplusMaxTolerance('good')."
+;
+  cm_DevPriceAnticip_tolFactor = 0.1;  !! def = 0.1, i.e. price-anticipation deviations until 2100 must be below 10% of the goods imbalance threshold
 *'
 parameter
   cm_flex_tax                 "switch for enabling flexibility tax"
