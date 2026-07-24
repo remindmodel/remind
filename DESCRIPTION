@@ -70,7 +70,6 @@ Imports:
     rmndt,
     SPEI,
     stringr,
-    terra,
     testthat (>= 3.2.3),
     tibble,
     tidyr,

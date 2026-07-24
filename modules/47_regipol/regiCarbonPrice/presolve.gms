@@ -54,6 +54,15 @@ p47_implicitQttyTargetTax0(t,regi) =
       ( sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt))))
       )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
       +
+      ( sum(entyFe$energyQttyTargetANDGroup2enty("FE_indst",qttyTargetGroup,entyFe), sum(se2fe(entySe,entyFe,te), sum((emiMkt)$(entyFe2Sector(entyFe,"indst") AND sector2emiMkt("indst",emiMkt)), vm_demFeSector.l(t,regi,entySe,entyFe,"indst",emiMkt))))
+      )$(sameas(qttyTarget,"FE_indst") AND sameas(qttyTargetGroup,"all"))
+      +
+      ( sum(entyFe$energyQttyTargetANDGroup2enty("FE_build",qttyTargetGroup,entyFe), sum(se2fe(entySe,entyFe,te), sum((emiMkt)$(entyFe2Sector(entyFe,"build") AND sector2emiMkt("build",emiMkt)), vm_demFeSector.l(t,regi,entySe,entyFe,"build",emiMkt))))
+      )$(sameas(qttyTarget,"FE_build") AND sameas(qttyTargetGroup,"all"))
+      +
+      ( sum(entyFe$energyQttyTargetANDGroup2enty("FE_trans",qttyTargetGroup,entyFe), sum(se2fe(entySe,entyFe,te), sum((emiMkt)$(entyFe2Sector(entyFe,"trans") AND sector2emiMkt("trans",emiMkt)), vm_demFeSector.l(t,regi,entySe,entyFe,"trans",emiMkt))))
+      )$(sameas(qttyTarget,"FE_trans") AND sameas(qttyTargetGroup,"all"))
+      +
       ( sum(ccs2te(ccsCo2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(t,regi,enty,enty2,te,rlf)))
       )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"all"))
       +

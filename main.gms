@@ -243,6 +243,7 @@ $setGlobal c_results_folder  REMIND results_folder will be automatically added d
 *'---------------------    01_macro    -----------------------------------------
 *'
 *' * (singleSectorGr) neo-classical, single sector growth model
+*' * (Investment_Inefficiencies) Investment losses due to domestic capital market inefficiencies
 $setGlobal macro  singleSectorGr  !! def = singleSectorGr
 *'---------------------    02_welfare    ---------------------------------------
 *'
@@ -297,6 +298,11 @@ $setglobal capitalMarket  debt_limit           !! def = debt_limit
 *' * (se_trade): macro-economic commodities, primary energy commodities and secondary energy hydrogen and electricity trading
 *' * (capacity): capacity-based trade implementation
 $setglobal trade  standard           !! def = standard
+*'---------------------    25_WACC    ------------------------------------------
+*'
+*' * (standard): WACC like tax
+*' * (off): no WACC
+$setglobal WACC  off         !! def = standard
 *'----------------------   26_agCosts  ----------------------------------------
 *'
 *' * (off): agricultural costs zero, no trade taken into account
@@ -1430,7 +1436,7 @@ $setglobal c_edgeTransportIter 10,12,14,16,18,20,22,24,27,30,33,36,39,42,45,50,5
 *' *  (none): no RCP scenario, standard setting
 *' *  (rcp20): RCP2.0
 *' *  (rcp26): RCP2.6
-*' *  (rcp37): RCP3.7 [currently not operational: test and verify before using it!]
+*' *  (rcp37): RCP3.7
 *' *  (rcp45): RCP4.5
 *' *  (rcp60): RCP6.0 [currently not operational: test and verify before using it!]
 *' *  (rcp85): RCP8.5 [currently not operational: test and verify before using it!]
@@ -1490,7 +1496,7 @@ $setglobal cm_NDC_postTargetDevelopment  constant    !! def = "constant"
 *' *  (zero):                         no minimum carbon price after first NDC target year, i.e. carbon price can decrease to zero after first NDC target year
 *' *  (NPi):                          carbon price cannot fall below carbon price of NPi run as this represent the development of current policies
 *' *  (NonDecreasing):                carbon price cannot decrease after first NDC target year, but can increase or remain constant 
-$setglobal cm_NDC_CO2PriceMinimum  NPi     !! def = "NPi"  !! regexp = zero|NPi|NonDecreasing
+$setglobal cm_NDC_CO2PriceMinimum  NonDecreasing     !! def = "NonDecreasing"  !! regexp = zero|NPi|NonDecreasing
 *' cm_NDC_TargetCheckConv            "choose whether iterations should go on until all NDC emissions targets are fullfilled" [requires 45_carbonprice = NDC]
 *' This setting determines whether compliance with NDC emissions targets should be a criterion for convergence of REMIND. 
 *' *  (on):                         runs only converges if all NDC emissions targets are met within the tolerance defined by cm_NDC_target_DevTol
@@ -1728,11 +1734,11 @@ $setglobal cm_calibration_string  off    !!  def  =  off
 *** (REG2040) regionalized technology costs given by p_inco0 until 2040, then stable without convergence
 *** (GLO) globally homogenous technology costs
 $setglobal cm_techcosts  REG       !! def = REG  !! regexp = REG|REG2040|GLO
-*** cm_floorCostScen regionally differentiated floor cost scenarios
-*** (default) uniform floor cost (almost no regional differentiation)
-*** (pricestruc) regionally differentiated floor costs, the differentiated costs have the same ratio between regions as the ratio between 2020 tech cost values
-*** (gdpBased) regionally differentiated floor costs based on GDP per capita in 2050: regions with above-average GDP get higher floor costs (up to 1.5x), regions with below-average GDP get lower floor costs (down to 0.5x)
-$setglobal cm_floorCostScen default       !! def = default  !! regexp = default|pricestruc|gdpBased
+*** cm_floorCostScen: regionally differentiated floor cost scenarios
+***   (uniform)    uniform floor cost (almost no regional differentiation)
+***   (pricestruc) regionally differentiated floor costs, the differentiated costs have the same ratio between regions as the ratio between 2020 tech cost values
+***   (gdpBased)   regionally differentiated floor costs based on GDP per capita in 2050: regions with above-average GDP get higher floor costs (up to 1.5x), regions with below-average GDP get lower floor costs (down to 0.5x)
+$setglobal cm_floorCostScen gdpBased       !! def = gdpBased  !! regexp = uniform|pricestruc|gdpBased
 *** cfg$gms$cm_EDGEtr_scen  "the EDGE-T scenario"  # def <- "Mix1". For calibration runs: Mix1. Mix2, Mix3, Mix4 also available - numbers after the "mix" denote policy strength, with 1 corresponding roughly to Baseline/NPI, 2= NDC, 3= Budg1500, 4 = Budg800
 ***  The following descriptions are based on scenario results for EUR in 2050 unless specified otherwise.
 ***  Whenever we give numbers, please be aware that they are just there to estimate the ballpark.

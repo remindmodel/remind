@@ -76,6 +76,24 @@ loop(t $ (t.val >= 2015 and t.val <= 2025),
   if(t.val <= 2020, !! TODO: activate 2025 upper-bound when consolidated data available
     vm_cap.up(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 1.05 * pm_histCap(t,regi,te);
   );
+*** for 2025: as no 2025 data avaiable yet, fix lower bound to 2024 capacity + 0.5 times the annual growth in 2022-2024
+*** but at least 2024 capacity
+  if(t.val = 2025,
+    vm_cap.lo(t,regi,teVRE(te),"1") $ p_histCapYearly("2024",regi,te) = max(p_histCapYearly("2024",regi,te) 
+                                                                                + 0.5
+                                                                                  * ( p_histCapYearly("2024",regi,te) 
+                                                                                    - p_histCapYearly("2022",regi,te) ) / 2,
+                                                                              p_histCapYearly("2024",regi,te)
+                                                                            );
+*** for 2025: as no 2025 data avaiable yet, fix upper bound to 2024 capacity + 2 times the annual growth in 2022-2024
+*** but at least 10% growth of 2024 capacity
+    vm_cap.up(t,regi,teVRE(te),"1") $ p_histCapYearly("2024",regi,te) = max(p_histCapYearly("2024",regi,te) 
+                                                                                + 2
+                                                                                  * ( p_histCapYearly("2024",regi,te) 
+                                                                                    - p_histCapYearly("2022",regi,te) ) / 2,
+                                                                              1.1 * p_histCapYearly("2024",regi,te)
+                                                                            );
+  );
 *** broader bounds for renewables with lower data quality
   loop(te $ (sameas(te, "hydro") or sameas(te, "geohdr")),
     vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.7 * pm_histCap(t,regi,te);

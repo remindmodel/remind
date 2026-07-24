@@ -255,7 +255,7 @@ q21_taxrevImport(t,regi,tradePe)..
   v21_taxrevImport(t,regi,tradePe)
   =e=
 ***---------------------------------------------------------------------------
-*'  import taxation: 1. "worldPricemarkup" = import tax level * world market price * tradePE import
+*'  import taxation: 1. "worldPricemarkup" = import tax level * world market price * tradePe import
 *'                   2. "CO2taxmarkup" = import tax level * national carbon price * imported carbon by carrier
 *'                   3. "avCO2taxmarkup" = import tax level * max( national carbon price, average carbonprice) * imported carbon by carrier
 * NOTE: In case of "CO2taxmarkup" and "avCO2taxmarkup" there is double-taxation of the CO2-content of the imported energy carrier: Once when being imported (at the border) and once when being converted to Secondary Energy (normal CO2price applied by REMIND)
@@ -418,7 +418,7 @@ q21_rc_tau_import_RE(t,regi)..
     vm_costInvTeDir(t,regi,teNoTransform) + vm_costInvTeAdj(t,regi,teNoTransform)$teAdj(teNoTransform)
   )
 =g= 
-  sum(tradePE, sum(tax_import_type_21, p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)))
+  sum(tradePe, sum(tax_import_type_21, p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)))
   +
   sum(en2en(enty,enty2,te)$(teVRE(te)),
       p21_ref_costInvTeDir_RE(t,regi,te) + p21_ref_costInvTeAdj_RE(t,regi,te)$teAdj(te)  !! Reference VRE investment

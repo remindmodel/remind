@@ -125,12 +125,97 @@ p30_max_pebiolc_path_glob(t) = %cm_maxProdBiolc% * sm_EJ_2_TWa;
 p30_max_pebiolc_path_glob(t) = p30_max_pebiolc_path_glob(t) - sum(regi, p30_maxprod_residue(t,regi));
 display p30_max_pebiolc_path_glob;
 
+*** -----------------------------------------------------------------------------
+*** Quick-Fix "Historical Shares": carve out a fixed slice of the global biomass
+*** potential (the sum of the hardcoded regional values below, currently 25 EJ/yr)
+*** and distribute it to regions by shares of ~2020 total agricultural crop
+*** production, instead of by equal marginal supply costs.
+***
+*** Values are hardcoded at the level of the 12 H12 region groups (the "_regi"
+*** elements of ext_regi). These group names exist in BOTH the H12 and the
+*** 21-region (EU21) resolution, so no resolution-specific / compile-time code is
+*** needed. In EU21 runs the two split groups (EUR_regi -> 9 regions, NEU_regi ->
+*** 2 regions) are distributed across their sub-regions by their share in MAgPIE
+*** purpose-grown biomass production in 2020 (pm_pebiolc_demandmag), with an equal
+*** split as fallback; the other 10 groups map 1:1 to a single region.
+***
+*** Hardcoded per-region-group values [EJ/yr] adding up to a total of 25 EJ/yr.
+*** Shares are based on 2020 total agricultural crop production from MAgPIE
+*** (using a recent coupled REMIND-MAgPIE NPi run). If the total bound is lower
+*** than 25 EJ/yr, the values are scaled down accordingly preserving the shares.
+*** -----------------------------------------------------------------------------
+p30_max_pebiolc_dist_by_prod_grp("LAM_regi") = 4.34485;
+p30_max_pebiolc_dist_by_prod_grp("OAS_regi") = 3.36905;
+p30_max_pebiolc_dist_by_prod_grp("SSA_regi") = 1.73546;
+p30_max_pebiolc_dist_by_prod_grp("EUR_regi") = 2.17023;
+p30_max_pebiolc_dist_by_prod_grp("NEU_regi") = 0.42204;
+p30_max_pebiolc_dist_by_prod_grp("MEA_regi") = 0.6659;
+p30_max_pebiolc_dist_by_prod_grp("REF_regi") = 0.95342;
+p30_max_pebiolc_dist_by_prod_grp("CAZ_regi") = 0.87566;
+p30_max_pebiolc_dist_by_prod_grp("CHA_regi") = 4.79197;
+p30_max_pebiolc_dist_by_prod_grp("IND_regi") = 2.80432;
+p30_max_pebiolc_dist_by_prod_grp("JPN_regi") = 0.08197;
+p30_max_pebiolc_dist_by_prod_grp("USA_regi") = 2.78513;
+
+*** Derive the definitive total to be distributed from the hardcoded values.
+s30_max_pebiolc_dist_by_prod = sum(ext_regi, p30_max_pebiolc_dist_by_prod_grp(ext_regi));
+
+*** Distribute the (H12-group-level) hardcoded values to the active model regions
+*** and convert from EJ/yr to TWa. For 10 groups this is a 1:1 map; EUR_regi and
+*** NEU_regi are split across their EU21 sub-regions by their 2020 MAgPIE
+*** purpose-grown biomass production (pm_pebiolc_demandmag).
+p30_max_pebiolc_dist_by_prod(regi) = 0;
+loop(ext_regi$p30_max_pebiolc_dist_by_prod_grp(ext_regi),
+  if(sum(regi$regi_group(ext_regi,regi), pm_pebiolc_demandmag("2020",regi)) > 0,
+*** split by share in 2020 MAgPIE purpose-grown biomass production
+    p30_max_pebiolc_dist_by_prod(regi)$regi_group(ext_regi,regi) =
+        p30_max_pebiolc_dist_by_prod_grp(ext_regi) * sm_EJ_2_TWa
+      * pm_pebiolc_demandmag("2020",regi)
+      / sum(regi2$regi_group(ext_regi,regi2), pm_pebiolc_demandmag("2020",regi2));
+  else
+*** fallback: split the group value equally across its sub-regions
+    p30_max_pebiolc_dist_by_prod(regi)$regi_group(ext_regi,regi) =
+        p30_max_pebiolc_dist_by_prod_grp(ext_regi) * sm_EJ_2_TWa
+      / sum(regi2$regi_group(ext_regi,regi2), 1);
+  );
+);
+display p30_max_pebiolc_dist_by_prod;
+
+*** Split the global purpose-grown budget into a crop-production-based slice and a
+*** remainder distributed via marginal costs, checked per year:
+***   - the crop slice is min(hardcoded total, available budget), so it is scaled
+***     down when the available budget is too small (principle 1);
+***   - the remainder (available budget minus the crop slice) is distributed via
+***     the marginal-cost inversion below. It is 0 whenever the crop slice already
+***     consumes the whole budget (principle 1), otherwise the inversion works as
+***     intended (principle 2).
+p30_max_pebiolc_dist_by_prod_tot(t) = max(0,
+  min( s30_max_pebiolc_dist_by_prod * sm_EJ_2_TWa,
+       p30_max_pebiolc_path_glob(t) ));
+
+*** Per-year regional crop allocation, scaled to the (possibly reduced) crop slice
+*** while preserving the regional shares. The unscaled distribution
+*** p30_max_pebiolc_dist_by_prod stays the definitive reference; only this
+*** time-dependent copy is scaled down.
+p30_max_pebiolc_dist_by_prod_scaled(t,regi)$(sum(regi2, p30_max_pebiolc_dist_by_prod(regi2)) > 0) =
+    p30_max_pebiolc_dist_by_prod(regi)
+  * p30_max_pebiolc_dist_by_prod_tot(t)
+  / sum(regi2, p30_max_pebiolc_dist_by_prod(regi2));
+display p30_max_pebiolc_dist_by_prod_scaled;
+
+*** Reduce the global budget for the marginal-cost distribution by the crop slice.
+p30_max_pebiolc_path_glob(t) = p30_max_pebiolc_path_glob(t) - p30_max_pebiolc_dist_by_prod_tot(t);
+
 *' Calclate regional bounds with equal marginal costs from global bound
 *** (inverting the supply curve)
 loop(ttot$(ttot.val ge cm_startyear),
 *** initialization
      p30_max_pebiolc_dummy = 0;
      p30_pebiolc_price_dummy = 0.01;
+*** Reset the regional supply so that a year whose entire budget went to the crop
+*** slice (p30_max_pebiolc_path_glob = 0, the while-loop below is skipped) gets 0
+*** instead of the stale values from the previous year.
+     p30_fuelex_dummy(regi) = 0;
      while(p30_max_pebiolc_dummy < p30_max_pebiolc_path_glob(ttot),
 *** Exclude JPN to avoid UNDF in p30_max_pebiolc_dummy
            loop(regi$(NOT sameas(regi,'JPN')),
@@ -146,6 +231,16 @@ loop(ttot$(ttot.val ge cm_startyear),
      );
      p30_max_pebiolc_path(regi,ttot) = p30_fuelex_dummy(regi);
 );
+display p30_max_pebiolc_path;
+
+*** Quick-Fix "Historical Shares": add the (down-scaled) crop-production-based
+*** allocation on top of the marginal-cost distribution. In case 1 the marginal
+*** part is 0 (see above), so the regional bounds then sum exactly to the reduced
+*** global budget. p30_max_pebiolc_dist_by_prod_scaled is 0 where nothing was
+*** hardcoded, so no extra guard is needed here.
+p30_max_pebiolc_path(regi,ttot)$(ttot.val ge cm_startyear) =
+    p30_max_pebiolc_path(regi,ttot)
+  + p30_max_pebiolc_dist_by_prod_scaled(ttot,regi);
 display p30_max_pebiolc_path;
 
 *' According to EMF guidelines, the upper bound on total (residues+purpose)

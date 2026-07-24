@@ -156,6 +156,7 @@ vm_demFeSector_afterTax.lo(t,regi,entySe,"fesos","indst",emiMkt)$(NOT sameAs(emi
 
 !! Limit biosolids in industry to 0.3 of all solids used in industry (only for ETS - all sectors except otherInd)
 !! Solids biomass has limited substitution potential in both the steel and cement sector.
-v37_shSolidsIndst.fx(t,regi) = 0.3 ;
+!! Temporary: EUR excluded until cement and chemicals emissions are fixed 
+v37_shSolidsIndst.fx(t,regi)$(not regi_group("EUR_regi",regi)) = 0.3 ;
 
 *** EOF ./modules/37_industry/subsectors/bounds.gms

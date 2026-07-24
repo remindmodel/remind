@@ -50,6 +50,9 @@ qttyTarget "quantity target for energy carrier level (primary, secondary, final 
   PE              "Primary Energy"
   SE              "Secondary Energy"
   FE              "Final Energy"
+  FE_indst        "Final Energy industry"
+  FE_build        "Final Energy buildings"
+  FE_trans        "Final Energy transport"
   FE_wo_b         "Final Energy without bunkers"
   FE_wo_n_e       "Final Energy without non-energy"
   FE_wo_b_wo_n_e  "Final Energy without bunkers and non-energy"
@@ -100,6 +103,10 @@ energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,all_enty) "set combinin
   FE.hydrogen.(seh2)
   FE.electricity.(seel)
   FE.heat.(sehe)
+*** Total final energy per sector and final energy type
+  FE_indst.all.(fegas,fehos,fesos,feels,fehes,feh2s)
+  FE_build.all.(fegas,fehos,fesos,feels,fehes,feh2s)
+  FE_trans.all.(fepet,fedie,feh2t,feelt,fegat)
 /
 
 qttyDelayType_47 "options to define different delay rules for starting the quantity targets algorithm"

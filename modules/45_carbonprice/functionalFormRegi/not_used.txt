@@ -34,7 +34,7 @@ pm_consPC,input,added by codeCheck
 pm_prtp,input,added by codeCheck
 pm_globalMeanTemperature,input,added by codeCheck
 pm_temperatureImpulseResponseCO2,input,added by codeCheck
-sm_peakBudgYr_check,input,added by codeCheck
+s45_peakBudgYr_check,input,added by codeCheck
 sm_peakbudget_diff,input,added by codeCheck
 pm_NDCEmiTargetDeviation,input,added by codeCheck
 pm_GDPGross,input,added by codeCheck

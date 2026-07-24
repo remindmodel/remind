@@ -9,6 +9,7 @@
 scalars
 s30_D2TD                "Multiplicative factor to convert from Dollar to TeraDollar"     /1.0e-12/
 s30_switch_shiftcalc    "Switch to activate equation for shift calculation before main solve and to deactivate it during main solve" /0/
+s30_max_pebiolc_dist_by_prod "Total biomass distributed by crop production, derived from the hardcoded regional values [EJ/yr]"
 ;
 
 parameter
@@ -17,6 +18,10 @@ pm_secBioShare(ttot,all_regi,all_enty,emi_sectors) "Share of biomass per carrier
 p30_datapebio(all_regi,all_enty,rlf,charPeRe,ttot) "Global bioenergy potential for lignocellulosic residues and 1st generation crops [TWa]"
 p30_max_pebiolc_path(all_regi,tall)             "Time path of regional maximal pebiolc production [TWa]"
 p30_max_pebiolc_path_glob(tall)                 "Time path of global maximal pebiolc production [TWa]"
+p30_max_pebiolc_dist_by_prod_grp(ext_regi)      "Hardcoded biomass allocation per H12 region group, based on ~2020 total agricultural crop production [EJ/yr]"
+p30_max_pebiolc_dist_by_prod(all_regi)          "Unscaled biomass allocation distributed to model regions (H12 groups split to EU21 sub-regions by 2020 MAgPIE production) [TWa]"
+p30_max_pebiolc_dist_by_prod_tot(tall)          "Total biomass distributed via crop-production shares per year, capped by availability [TWa]"
+p30_max_pebiolc_dist_by_prod_scaled(tall,all_regi) "Per-year regional biomass allocation, down-scaled to the available budget while preserving regional shares [TWa]"
 p30_maxprod_residue(ttot,all_regi)              "Maximal potential of residues enhanced by demand of biotr [TWa]"
 p30_pebiolc_pricemag(tall,all_regi)             "Prices for lignocellulosic purpose grown bioenergy from MAgPIE [T$US/TWa]"
 pm_pebiolc_demandmag(tall,all_regi)             "Production of lignocellulosic purpose grown bioenergy from MAgPIE [TWa]"

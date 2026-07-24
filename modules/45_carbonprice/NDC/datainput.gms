@@ -25,6 +25,17 @@ $onlisting
 Parameter p45_EmiTargetAbs(ttot,all_regi) "Absolute NDC emissions targets, emissions from countries without targets are not included [Mt CO2eq/yr]";
 p45_EmiTargetAbs(t,all_regi) = f45_EmiTargetAbs(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
+*** quick-fix EUR 2035 NDC target, to be removed after target calculation rewrite in mrremind
+*** take mean of 66.25% and 72.5% reduction instead of higher 72.5% reduction which is default in mrremind target calculation if countries provide a range
+*** Calculation assumptions:
+*** EU27 1990 reference GHG emissions incl LULUCF: 4652 MtCO2eq/yr (UNFCCC)
+*** UK 1990 reference GHG emissions incl LULUCF: 817 MtCO2eq/yr (UNFCCC)
+*** EU27 2035 percentage reduction target: mean(0.6625,0.725) = 69.375
+*** UK 2035 percentage reduction target: 0.81
+*** EUR target = EU27 + UK target = 4652*(1-0.69375) + 817*(1-0.81) = 1579.9 MtCO2eq/yr (incl LULUCF)
+*** Assume -310 LULUCF 2035 emissions  (kept constant from 2030 goal) => EUR 2035 target excl LULUCF = 1579.9 + 310 ~ 1890 MtCO2eq/yr
+p45_EmiTargetAbs(t,regi)$(t.val eq 2035 AND sameas(regi,"EUR")) = 1890;
+
 $ifThen "%cm_targetDelay%" == "prisma"
 *** PRISMA Asymetric rollback: 
 **   the delay of NDC targets of "10, 20, or 30 years" per region would be assigned as:
