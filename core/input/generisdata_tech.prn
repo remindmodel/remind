@@ -307,7 +307,7 @@ Enhanced Rock Weathering - weathering
     Parameterization based on Strefler et al (2018) doi.org/10.1088/1748-9326/aaa9c4
     annuity factor = 0.08 for lifetime of 20 years and r = 0.05; capacity factor = 0.69
     inco0: 5 (USD/t rock) * 0.69 / 0.08 = 43 USD/t rock/a for mining and production
-    omf: O&M cost from rock mining & production (25 USD/t rock) and transportation & distribution (12 USD/t rock), i.e. 37/(43/0.69) = 0.86
+    omf: O&M cost from rock mining & production (25 USD/t rock) and transportation & distribution (12 USD/t rock), i.e. 37/(43/0.69) = 0.59
     To use the upper Capital Cost estimate from Strefler et al, 15 USD/t rock, set inco0 = 129 and omf = 0.2
 
 Gas to Liquids (GtL) Fischer-Tropsch Process - gasftrec/gasftcrec
