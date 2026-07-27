@@ -11,7 +11,6 @@ sm_capture_rate_cdrmodule       "CO2 capture rate for CDR energy and process emi
 *** EW
 s33_rockRemPot                 "specific carbon removal potential [Gt C per Gt ground rock]"
 s33_rock_weath_rate_ambientT    "fraction of stone weathering per year at ambient temperature (25 degree C)"
-s33_costs_fix                   "fixed costs for mining, grinding, spreading [T$/Gt stone]"
 s33_step                        "size of bins in v33_weathering_onfield [Gt stone]"
 *JeS* GJ/tCO2 = EJ/Gt CO2 = 44/12 EJ/Gt C.
 *** OAE
@@ -41,7 +40,7 @@ p33_GDP_NetNeg_share(all_regi)                    "Upper bound on share of expen
 ;
 
 variables
-vm_omcosts_cdr(tall,all_regi)                        "O&M costs for spreading grinded rocks on fields [T$]"
+vm_EW_transport_costs(tall,all_regi)     "O&M costs for spreading grinded rocks on fields [T$]"
 ;
 
 positive variables

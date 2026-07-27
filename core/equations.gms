@@ -106,7 +106,7 @@ q_costOM(t,regi)..
              vm_costTeCapital(t,regi,te) * vm_cap(t,regi,te,rlf)
             )
   )
-  + vm_omcosts_cdr(t,regi)
+  + vm_EW_transport_costs(t,regi)
 ;
 
 ***---------------------------------------------------------------------------

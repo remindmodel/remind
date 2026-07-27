@@ -172,10 +172,10 @@ q33_EW_FEdemand(t,regi,entyFe2)$sum(entyFe, fe2cdr(entyFe,entyFe2,"weathering"))
 *'  O&M costs of EW, consisting of fix costs for mining, grinding and spreading, and transportation costs.
 ***---------------------------------------------------------------------------
 q33_EW_omcosts(t,regi)..
-    vm_omcosts_cdr(t,regi)
+    vm_EW_transport_costs(t,regi)
     =e=
     sum((rlf_cz33, rlf),
-        (s33_costs_fix + p33_EW_transport_costs(regi,rlf_cz33,rlf)) * v33_EW_onfield(t,regi,rlf_cz33,rlf)
+        (p33_EW_transport_costs(regi,rlf_cz33,rlf)) * v33_EW_onfield(t,regi,rlf_cz33,rlf)
     )
     ;
 
