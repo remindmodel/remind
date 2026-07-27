@@ -316,7 +316,7 @@ loop(teBiopyr(te) $ (not sameas(te, "biopyrliq")), !! established industrial tec
     vm_cap.lo("2025",regi,te,rlf) = p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3; 
     !! set upper bound to 70% above the lower bound which is based on 2024 values    
     vm_cap.up("2025",regi,te,rlf) = 1.7 * p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3;     
-    vm_cap.up("2030",regi,te,rlf) = (1.7)**5 * vm_cap.up("2025",regi,te,rlf);   !! short-term upscaling limit based on recent growth rates in EUR        
+    vm_cap.up("2030",regi,te,rlf) = power(1.7, 5) * vm_cap.up("2025",regi,te,rlf);   !! short-term upscaling limit based on recent growth rates in EUR
   );
 );
 
