@@ -9,9 +9,9 @@ scalars
 *** Multiple options
 sm_capture_rate_cdrmodule       "CO2 capture rate for CDR energy and process emissions, i.e. fegas use in OAE and DAC and for calcination emissions in oae" / 0.9 /
 *** EW
-s33_rockRemPot                 "specific carbon removal potential [Gt C per Gt ground rock]"
+s33_rockRemPot                 "specific carbon removal potential [t C / t rock]"
 s33_rock_weath_rate_ambientT    "fraction of stone weathering per year at ambient temperature (25 degree C)"
-s33_step                        "size of bins in v33_weathering_onfield [Gt stone]"
+s33_step                        "size of bins in v33_weathering_onfield [Gt stone]" / 2.5 /
 *JeS* GJ/tCO2 = EJ/Gt CO2 = 44/12 EJ/Gt C.
 *** OAE
 s33_OAE_efficiency          "the amount of rock required to sequester 1GtC [Gt rock / GtC]"
@@ -21,7 +21,7 @@ s33_OAE_glo_limit           "global limit for OAE [tC / a]"
 
 parameters
 *** Multiple options
-p33_fedem(all_te,all_enty)               "final energy demand of each technology [EJ/GtC] (for EW the unit is [EJ/Gt stone])"
+p33_fedem(all_te,all_enty)               "final energy demand of each technology [EJ/GtC] (for EW the unit is [EJ/Gt rock])"
 *** EW
 p33_rock_weath_rate(rlf)                 "fraction of stone weathering per year depending on climate grade (warm or temperate)"
 p33_EW_upScalingLimit(ttot)              "Annual growth rate limit on upscaling of mining & spreading rocks on fields"

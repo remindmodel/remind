@@ -37,7 +37,7 @@ display p33_EW_transport_costs;
 s33_step = 2.5;
 
 *' @code
-s33_rockRemPot = cm_33_EW_rockRemPot * 12/44;       !! default for basalt is 0.3 t CO2/t rock, for Olivine 1.1 t CO2/t rock. Converted to t C/t rock.
+s33_rockRemPot = cm_33_EW_rockRemPot / sm_c_2_co2;       !! default for basalt is 0.3 t CO2/t rock, for Olivine 1.1 t CO2/t rock. Converted to t C/t rock.
 *' Sources for loss pathways that would reduce the total removal potential per ton rock: 
 *' https://www.carbon-drawdown.de/blog/2026-7-18-where-does-the-co-removal-potential-of-enhanced-weathering-actually-go; https://cdrxiv.org/preprint/417
 

@@ -291,8 +291,8 @@ fm_dataglob("inco0", "oae_el") = fm_dataglob("inco0", "oae_el") / (cm_33_OAE_eff
 
 *** convert inco0, floorcost and omv to REMIND units by applying a factor 0.001
 ***   category          energy technology   ccs technology    process-based industry            weathering
-***   input data unit   $/kW                $/(tC/a)          $/(t/a)                         $/(t rocks/a)
-***   REMIND unit       T$/TW               T$/(GtC/a)        T$/(Gt/a)                       T$/(Gt rocks/a)
+***   input data unit   $/kW                $/(tC/a)          $/(t/a)                         $/(t rock/a)
+***   REMIND unit       T$/TW               T$/(GtC/a)        T$/(Gt/a)                       T$/(Gt rock/a)
 fm_dataglob("inco0",te)        = s_DpKW_2_TDpTW   * fm_dataglob("inco0",te);
 fm_dataglob("floorcost",te)    = s_DpKW_2_TDpTW   * fm_dataglob("floorcost",te);
 fm_dataglob("omv",te)          = s_DpKWa_2_TDpTWa * fm_dataglob("omv",te);

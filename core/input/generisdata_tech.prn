@@ -1,7 +1,7 @@
 *** SOF ./core/input/generisdata_tech.prn
 $ontext
 tech_stat   technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'
-inco0       Initial investment costs given in $[2015] / kW[output] capacity; for dac/prc cc: $[2015] / (tC[captured]/a); for other indutry prc: $[2015]/(t[output]/a); for weathering:  $[2015]/(t rock/a)
+inco0       Initial investment costs given in $[2015] / kW[output] capacity; for dac/prc cc: $[2015] / (tC[captured]/a); for other industry prc: $[2015]/(t[output]/a); for weathering:  $[2015]/(t rock/a)
 floorcost   Floor investment costs, given in $[2015] / kW[output]; for dac: $[2015] / (tC[captured]/a)
 constrTme   Construction time in years, needed to calculate turn-key cost premium compared to overnight costs
 lifetime    Average lifetime of a technology, given in years. Effective maximum lifetime is longer than that.

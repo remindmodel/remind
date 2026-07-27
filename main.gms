@@ -1088,7 +1088,7 @@ parameter
 *'
 
 parameter
-  cm_33_EW_rockRemPot             "Maximum CO2 removal potential per ton of rock."
+  cm_33_EW_rockRemPot             "Maximum CO2 removal potential per ton of rock (t CO2 / t rock)."
 ;
   cm_33_EW_rockRemPot            = 0.3;   !! def = 0.3 t CO2 / t basalt
 *' Theoretical potential is influenced by the chemical composition of the rock, in particular calcium and magnesium content. 
