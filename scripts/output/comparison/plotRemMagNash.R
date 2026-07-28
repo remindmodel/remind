@@ -5,6 +5,17 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
+############################# DESCRIPTION #############################
+#
+# Diagnostics for the REMIND-MAgPIE coupling. For a set of coupled runs this
+# script reads the per-iteration results and plots the key coupling variables
+# (bioenergy price, production and demand, CO2 land-use-change emissions, price
+# scaling factor and CO2 price), each shown both over time and over iterations
+# to reveal how the coupled models converge. If multiple runs are passed, the 
+# script interprets them in the specified order, treating the successors as 
+# continuations of their predecessors. The plots are compiled into a
+# multi-page PDF (two plots per A4 page) via rmarkdown.
+
 ############################# LOAD LIBRARIES #############################
 
 library(dplyr,    quietly = TRUE, warn.conflicts = FALSE)
@@ -105,35 +116,71 @@ plot_iterations <- function(dat, runname) {
   
   p_price_carbon      <- myplot(dat, "pm_taxCO2eq_iter", runname, ylab = "$/tCO2")
   
-  p_price_carbon_it_1 <- myplot(dat |> filter(ttot < 2025), "pm_taxCO2eq_iter", runname,
+  p_price_carbon_it_1 <- myplot(dat |> filter(ttot > 2025, ttot <= 2100), "pm_taxCO2eq_iter", runname,
                                 ylab = "$/tCO2", xaxis = "iteration", color = "ttot")
-  p_price_carbon_it_2 <- myplot(dat |> filter(ttot > 2020, ttot <= 2100), "pm_taxCO2eq_iter", runname,
+  p_price_carbon_it_2 <- myplot(dat |> filter(ttot < 2030), "pm_taxCO2eq_iter", runname,
                                 ylab = "$/tCO2", xaxis = "iteration", color = "ttot")
   
   # ---- Print to pdf ----
   
-  out <- lusweave::swopen(template = "david")
-  
-  lusweave::swfigure(out, print, p_price_mag,         sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_price_mag_it,      sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_fuelex,            sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_fuelex_it,         sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_fuelex_it_fix,     sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_fuelex_it_2060,    sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_demPE_it,          sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_emi_mag,           sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_emi_mag_it,        sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_mult,              sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_mult_it,           sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_price_carbon,      sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_price_carbon_it_1, sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_price_carbon_it_2, sw_option = "height=9,width=16")
-  
-  filename <- paste0("output/", tail(runname$outputdirs, n=1), ifelse(nrow(runname)>1, "-continued", ""))
-  lusweave::swclose(out, outfile = filename, clean_output = TRUE, save_stream = FALSE)
-  file.remove(paste0(filename,c(".log")))
-  # out files have "." replaced with "-_-_-" in their names
-  #file.remove(paste0(gsub("\\.","-_-_-",filename),".out"))
+  filename <- paste0(tail(runname$outputdirs, n = 1), ifelse(nrow(runname) > 1, "-continued", ""))
+
+  # Collect the plots in the order they should appear in the report.
+  # The rmarkdown template (see below) reads this list.
+  plots <- list(p_price_mag, p_price_mag_it, p_fuelex, p_fuelex_it,
+                p_fuelex_it_fix, p_fuelex_it_2060, p_demPE, p_demPE_it, p_emi_mag,
+                p_emi_mag_it, p_mult, p_mult_it, p_price_carbon,
+                p_price_carbon_it_1, p_price_carbon_it_2)
+
+  # Use a unique working directory so two plotRemMagNash renders running in
+  # parallel do not overwrite each other's rmarkdown output or knit
+  # artefacts (intermediate .md/.tex files and figure files).
+  intermediates <- tempfile(pattern = "plotRemMagNash-")
+  dir.create(intermediates)
+  on.exit(unlink(intermediates, recursive = TRUE), add = TRUE)
+
+  # rmarkdown template written inline.
+  template <- c(
+    "---",
+    "output:",
+    "  pdf_document:",
+    "    latex_engine: pdflatex",
+    "geometry: a4paper, top=1.5cm, bottom=1.5cm, left=0.5cm, right=0.5cm",
+    "---",
+    "",
+    "```{r setup, include=FALSE}",
+    "knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE,",
+    "                      fig.width = 16, fig.height = 9,",
+    "                      out.width = \"20cm\", fig.align = \"center\")",
+    "```",
+    "",
+    "```{r plots, results='asis'}",
+    "# `plots` is provided by plot_iterations() via the render environment.",
+    "for (i in seq_along(plots)) {",
+    "  print(plots[[i]])",
+    "  if (i %% 2 == 1) {",
+    "    # First figure on the page: stretchable space pushes this figure to",
+    "    # the top margin and the next one to the bottom margin.",
+    "    cat(\"\\n\\n\\\\vfill\\n\\n\")",
+    "  } else if (i < length(plots)) {",
+    "    # Second figure on the page: start a new page. This keeps two figures",
+    "    # per page (14 plots -> 7 pages).",
+    "    cat(\"\\n\\n\\\\newpage\\n\\n\")",
+    "  }",
+    "}",
+    "```"
+  )
+  rmd <- file.path(intermediates, "plotRemMagNash.Rmd")
+  writeLines(template, rmd)
+
+  rmarkdown::render(
+    input             = rmd,
+    output_file       = paste0(filename, ".pdf"),
+    output_dir        = "output",
+    intermediates_dir = intermediates,
+    envir             = environment(),
+    quiet             = TRUE
+  )
   
   return("Done\n")
 }  
