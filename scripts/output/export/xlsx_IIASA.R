@@ -119,7 +119,7 @@ projects <- list(
       "SSP2-MeetAspirations" = "SSP2 - Meet Aspirations",
       "SSP2-AsymmetricRoll-Back" = "SSP2 - Asymmetric Roll-Back",
       "SSP2-LateReawakening" = "SSP2 - Late Reawakening",
-      "SSP2-StayingAlive_exo" = "SSP2 - Staying Alive"),
+      "SSP2-StayingAlive" = "SSP2 - Staying Alive"),
     checkSummation = "ScenarioMIP"),
   NAVIGATE_coupled = list(mapping = c("NAVIGATE", "NAVIGATE_coupled")),
   SHAPE            = list(mapping = c("NAVIGATE", "NAVIGATE_coupled", "SHAPE")),
