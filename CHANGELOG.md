@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
+## [Unreleased]
+
+### input data/calibration
+
+### changed
+- **scripts** Harmonize command line arguments for output.R: prefix `--` is now required, change `--outputdir` to `--outputdirs`
+    [[#2413](https://github.com/remindmodel/remind/pull/2413)]
+- **scripts** Move LCOE reporting into `reoirtingLCOE` instead of `reporting`
+    [[#2416](https://github.com/remindmodel/remind/pull/2416)]
+
+### added
+- **scripts** Add the possibility to build only some sections of the compareScenarios2 report with `--sections=`
+    [[#2415](https://github.com/remindmodel/remind/pull/2415)]
+
+### removed
+-
+
+### fixed
+-
+
+
 ## [3.7.0] - 2026-07-15
 
 ### input data/calibration
