@@ -13,6 +13,8 @@
 Parameter
   s47_firstFreeYear                                  "value of first free year for the carbon price trajectory"
   s47_prefreeYear                                    "value of the last non-free year for the carbon price trajectory"
+  s47_prevTargetYear                                 "terminal year of the closest earlier emiMkt target of the same region (0 if none); the ramp of a later target is anchored here so it cannot overwrite an already converged target year"
+  s47_slopeWindowStart                               "window start iteration (an ord of the iteration set) for the current least-squares slope calculation [#]"
   pm_emiLULUCF_GrassiShift(ttot,all_regi)            "difference between Magpie land-use change emissions and UNFCCC emissions in 2015 to correct for national accounting in emissions targets [GtC]"
   pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) "deviation of emissions of current iteration from target emissions, for budget target this is the difference normalized by target emissions, while for year targets this is the difference normalized by 2005 emissions [%]"
   pm_taxemiMkt(ttot,all_regi,all_emiMkt)                             "CO2 tax path per region and emissions market [T$/GtC]"
@@ -51,23 +53,35 @@ $endif.emiMktTargetType
   pm_emiMktCurrent(ttot,ttot2,ext_regi,emiMktExt)    "previous iteration region emissions (from year ttot to ttot2 for budget) [GtCO2 or GtCO2eq]"
   p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktCurrent across iterations  [GtCO2 or GtCO2eq]"
   pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt)    "emissions in reference year 2005, used for calculating target deviation of year targets [GtCO2 or GtCO2eq]"
+  p47_emiMktRefBudget(ttot,ttot2,ext_regi,emiMktExt) "the cumulative emissions this market would have produced from ttot to ttot2 at its 2005 annual rate, budget analogue of pm_emiMktRefYear [GtCO2 or GtCO2eq]"
   pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktTarget_dev across iterations (1 is 100%)"
   pm_emiMktTarget_tolerance(ext_regi)                "tolerance for regipol emission target deviations convergence [#]"
 
 *** Parameters necessary to calculate the emission tax rescaling factor
-  p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)     "auxiliary parameter to save the slope corresponding to the observed mitigation derivative regarding to co2tax level changes from the two previous iterations [#]"
-  p47_factorRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save mitigation curve slope across iterations [#]"
-  p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi)    "auxiliary parameter to store reference iteration used for calculating slope of current mititgation cost [#]"
+  p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)     "fitted slope of emissions vs. carbon price over the current window, after the maxSteep cap [GtCO2 per T$/GtC]"
+  p47_factorRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save p47_factorRescaleSlope across iterations [GtCO2 per T$/GtC]"
+  p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi)    "first iteration of the current slope window; the window holds the last maxWindow iterations this target was STEERED, so it can reach past a freeze [#]"
   pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) "multiplicative tax rescale factor that rescales emiMkt carbon price from iteration to iteration to reach regipol targets [%]"
   p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugging purposes [%]"
-  p47_clampedRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "auxiliary parameter to save the slope value before clamping. Useful for debugging purposes [#]"
-  p47_dampedFactorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "auxiliary parameter to save the rescale factor value before dampening. Useful for debugging purposes [#]"
+  p47_slopeAux(slopeTerm)                                    "scratch accumulators and results for the market currently being solved (see slopeTerm set) [mixed units]"
+  p47_slopeParam(slopeParam)                                 "configuration constants of the convergence algorithm, set in datainput.gms and documented in tutorials/19_RegionalEmissionTargets.md section 10 [mixed units]"
+  p47_slopeTrace_iter(slopeTrace,iteration,ttot,ttot2,ext_regi,emiMktExt) "per-iteration diagnostics: rawSlope, fitR2, preDamp (pre-dampening rescale), rollIter/rollUndo (price rollback and its undo), divBrake, parked [mixed units]"
 
 *** Parameters necessary to define the CO2 tax curve shape   
-  p47_targetConverged(ttot,ext_regi)                 "boolean to store if emission target has converged [0 or 1]"
+  p47_targetConverged(ttot,ext_regi)                 "boolean to store if the region-period emission target has converged, i.e. all its markets are FROZEN (AND over its markets) [0 or 1]"
   p47_targetConverged_iter(iteration,ttot,ext_regi)  "parameter to save p47_targetConverged across iterations [0 or 1]"
-  pm_allTargetsConverged(ext_regi)                  "boolean to store if all emission targets converged at least once [0 or 1]"
-  p47_allTargetsConverged_iter(iteration,ext_regi)   "parameter to save p47_allTargetsConverged across iterations [0 or 1]"
+  p47_marketConverged_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "per-market-target FROZEN flag: stop steering this price. NOT a statement that the target was achieved - see p47_marketMet_iter [0 or 1]"
+  p47_marketMet_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "per-market-target MET flag: |deviation| within the RAW user tolerance, or legitimately slack at the price floor. No hysteresis [0 or 1]"
+  p47_targetMet(ttot,ext_regi)                       "boolean to store if the region-period emission target was actually MET (AND over its markets) [0 or 1]"
+  p47_targetMet_iter(iteration,ttot,ext_regi)        "parameter to save p47_targetMet across iterations [0 or 1]"
+  p47_targetState(targetState,ttot,ttot2,ext_regi,emiMktExt) "persistent state of one market target's convergence state machine, one value per targetState element. The element text in set targetState carries the meaning and units of each [mixed]"
+  pm_allTargetsConverged(ext_regi)                  "run-end signal read by module 80: all emission targets of the region frozen AND every one of them met or deliberately given up [0 or 1]"
+  p47_allTargetsConverged_iter(iteration,ext_regi)   "parameter to save pm_allTargetsConverged across iterations [0 or 1]"
+  p47_allTargetsFrozen(ext_regi)                     "boolean to store if all emission targets of the region are FROZEN, i.e. none of them is steering its carbon price any more [0 or 1]"
+  p47_allTargetsFrozen_iter(iteration,ext_regi)      "parameter to save p47_allTargetsFrozen across iterations [0 or 1]"
+  p47_unmetNoGiveUp(ext_regi)                        "1 if a market target of the region is outside the raw tolerance and NOT given up, i.e. the algorithm still intends to correct it [0 or 1]"
+  p47_allTargetsMet(ext_regi)                        "1 if all emission targets of the region are MET within the raw tolerance. Module-internal reporting only, not a termination criterion [0 or 1]"
+  p47_allTargetsMet_iter(iteration,ext_regi)         "parameter to save p47_allTargetsMet across iterations [0 or 1]"
   p47_firstTargetYear(ext_regi)                      "first year with a pre defined policy emission target in the region [year]"
   p47_lastTargetYear(ext_regi)                       "last year with a pre defined policy emission target in the region [year]"
   p47_currentConvergencePeriod(ext_regi)             "auxiliary parameter to store the current target year being executed by the convergence algorithm [year]"
@@ -86,7 +100,7 @@ $endif.emiMktTargetType
 
 *' RP: improve formatting of output: always have the iteration separate to allow easy comparison over iterations.
 *' For non-iteration values show time and regi down, and the other two sets to the right
-option pm_emiMktTarget:3:3:3; !! ensure bett
+option pm_emiMktTarget:3:3:3;
 option pm_factorRescaleemiMktCO2Tax:3:3:1;
 option pm_emiMktCurrent:3:3:1;
 option pm_emiMktRefYear:3:3:1;
@@ -117,7 +131,6 @@ $else.cm_implicitQttyTargetType
   pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)  "quantity target [absolute: TWa or GtC; or percentage: 0.1]"
   p47_implicitQttyTargetScenario(qttyTargetScenario,ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) "hard-coded quantity scenarios types [absolute: TWa or GtC; or percentage: 0.1]"
 $endif.cm_implicitQttyTargetType
- 
   pm_implicitQttyTarget_isLimited(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)  "1 (one) if there is a hard bound on the model that does not allow the tax to change further the quantity"
 
   p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) "initial year of quantity target for a given region [year]"

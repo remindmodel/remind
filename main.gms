@@ -1579,7 +1579,8 @@ $setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2  !! regexp
 $setGlobal cm_regiExoPrice  off    !! def = off
 *** cm_regiExoPrice_fromFile "set exogenous co2 tax path for specific regions from another run, require regipol module to be set to regiCarbonPrice (e.g. "PathToGDX.gdx")"
 $setGlobal cm_regiExoPrice_fromFile  off    !! def = off
-*** cm_emiMktTarget "set a budget or year emission target, for all (all) or specific emission markets (ETS, ESD or other), and specific regions (e.g. DEU) or region groups (e.g. EU27)"
+*** cm_emiMktTarget "set a budget or year emission target, for all (all) or specific emission markets (ETS, ESR or other), and specific regions (e.g. DEU) or region groups (e.g. EU27)"
+***   Format: '<startYear>.<targetYear>.<region>.<market>.<year|budget>.<metric> <value>' [GtCO2 or GtCO2eq], comma separated.
 ***   Example on how to use:
 ***     cm_emiMktTarget = '2020.2050.EU27_regi.all.budget.netGHG_noBunkers 72, 2020.2050.DEU.all.year.netGHG_noBunkers 0.1'
 ***     sets a 72 GtCO2eq budget target for European 27 countries (EU27_regi), for all GHG emissions excluding bunkers between 2020 and 2050; and a 100 MtCO2 CO2eq emission target for the year 2050, for Germany"
@@ -1587,13 +1588,21 @@ $setGlobal cm_regiExoPrice_fromFile  off    !! def = off
 ***     loads hard-coded options for regional target scenarios defined in the module '47_regipol/regiCarbonPrice' declarations file.
 ***     The 'nzero' scenario applies declared net-zero targets for countries explicitly handled by the model (DEU, CHA, USA, IND, JPN, UKI, FRA and EU27_regi)
 ***     Requires regiCarbonPrice realization in regipol module
+***   Full documentation of the targets and of the carbon price convergence algorithm: tutorials/19_RegionalEmissionTargets.md
 $setGlobal cm_emiMktTarget  off    !! def = off
 *** Tolerance for regipol emission target deviations convergence.
 *** For budget targets the tolerance is measured relative to the target value. For year targets the tolerance is relative to 2005 emissions.
 ***   def = GLO 0.01, i.e. regipol emission targets must be met within 1% of target deviation
+***   Note the Nash iteration itself wobbles by roughly +-1%, so a tolerance far below 1% is asking for less than the noise.
 ***   Example on how to use:
 ***      cm_emiMktTarget_tolerance = 'GLO 0.004, DEU 0.01'. All regional emission targets will be considered converged if they have at most 0.4% of the target deviation, except for Germany that requires 1%.
 $setGlobal cm_emiMktTarget_tolerance  GLO 0.01    !! def = GLO 0.01
+*** cm_slopeParam "overwrite default values of the module 47 regional-target convergence constants (see p47_slopeParam in regiCarbonPrice/datainput.gms and tutorials/19_RegionalEmissionTargets.md section 10)"
+***   (off): use the default values set in the regiCarbonPrice datainput.gms
+***   otherwise: a list of slopeParam elements with the value to overwrite (only the listed ones change), e.g.
+***     cm_slopeParam = 'maxPrice 10000, reopenMax 5, enterFrac 0.8'
+***   To switch a knob OFF use a negligible value (1e-9), not 0: GAMS drops zero records, so 0 reads as "not listed".
+$setGlobal cm_slopeParam  off    !! def = off
 *** cm_scaleDemand - Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window.
 *** Requires re-calibration in order to work.
 ***   Example on how to use:

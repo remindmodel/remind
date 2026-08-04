@@ -19,10 +19,41 @@ pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
 ***--------------------------------------------------
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
 
+*** Initialize carbon price convergence algorithm constants.
+*** slope fit and step size
+p47_slopeParam("maxWindow")=8; p47_slopeParam("minPriceSpread")=1e-2; p47_slopeParam("minR2")=0.5; p47_slopeParam("maxSteep")=5; p47_slopeParam("degenerateThreshold")=1e-2; p47_slopeParam("rescaleCapLo")=0.5; p47_slopeParam("rescaleCapHi")=2;
+*** convergence bands
+p47_slopeParam("enterFrac")=0.75; p47_slopeParam("aimMaxTries")=3; p47_slopeParam("exitFrac")=1.0; p47_slopeParam("persist")=2; p47_slopeParam("priceEps")=0;
+*** deviation normalisation and price ceiling
+p47_slopeParam("budgetDenomFloorFrac")=1e-2; p47_slopeParam("maxPrice")=0;
+*** give-up stops
+p47_slopeParam("noiseFloorMaxDev")=0.02; p47_slopeParam("noiseFloorBandWidth")=0.01; p47_slopeParam("noiseFloorBandWidthRel")=15; p47_slopeParam("noiseFloorRollback")=1; p47_slopeParam("parkedStop")=1; p47_slopeParam("infeasEmiTol")=5e-3; 
+p47_slopeParam("infeasStallFrac")=0.9; p47_slopeParam("divergeFactor")=10; p47_slopeParam("divergeMinBest")=1.0; p47_slopeParam("divergeBrakeMax")=2;
+*** re-open parameters
+p47_slopeParam("reopenMaxDev")=0.1; p47_slopeParam("reopenMax")=3; p47_slopeParam("reopenStepCap")=0.05; p47_slopeParam("reopenRefresh")=24;
+*** step bound for the squareDev fallbacks
+p47_slopeParam("fallbackStepFactor")=2; p47_slopeParam("fallbackStepFloor")=0.05;
+*** price rollback on freeze
+p47_slopeParam("rollbackBestFrac")=0.5; p47_slopeParam("rollbackMaxAge")=8; p47_slopeParam("rollbackVerify")=1;
+*** progressive oscillation dampening
+p47_slopeParam("dampFlipMin")=2; p47_slopeParam("dampProgFactor")=0.6; p47_slopeParam("dampFloor")=0.1;
+*** optional overwrite of individual constants from the scenario config, e.g. cm_slopeParam = 'maxPrice 10000, reopenMax 5'.
+$if not "%cm_slopeParam%" == "off"  parameter p_new_slopeParam(slopeParam) "slope/convergence parameters overwritten via cm_slopeParam" / %cm_slopeParam% /;
+$if not "%cm_slopeParam%" == "off"  p47_slopeParam(slopeParam)$p_new_slopeParam(slopeParam) = p_new_slopeParam(slopeParam);
+
+*** initialise the state parameters
+p47_targetState(targetState,ttot,ttot2,ext_regi,emiMktExt) = 0;
+p47_emiMktRefBudget(ttot,ttot2,ext_regi,emiMktExt) = 0;
+p47_targetMet(ttot,ext_regi)                    = 0;
+p47_allTargetsMet(ext_regi)                     = 0;
+p47_allTargetsFrozen(ext_regi)                  = 0;
+p47_unmetNoGiveUp(ext_regi)                     = 0;
+p47_currentConvergence_iter(iteration,ttot,ext_regi) = 0;
+
 *** Auxiliar parameters based on emission targets information
   loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47), !!calculated sets that depends on data parameter
-    regiEmiMktTarget(ext_regi) = yes; !! assigning values to set containing extended regions that have regional emission targets  
-    regiANDperiodEmiMktTarget_47(ttot2,ext_regi) = yes; !! assigning values to set containing extended regions and terminal years of regional emission targets  
+    regiEmiMktTarget(ext_regi) = yes; !! assigning values to set containing extended regions that have regional emission targets
+    regiANDperiodEmiMktTarget_47(ttot2,ext_regi) = yes; !! assigning values to set containing extended regions and terminal years of regional emission targets
   );
 
 *** Calculating set containing regions that should be controlled by a given regional emission target. 
@@ -46,7 +77,6 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
       break$(p47_firstTargetYear(ext_regi));
     );
   );
-  
 *** Assigning convergence tolerance to active regional targets
   parameter f47_emiMktTarget_tolerance(ext_regi) "tolerance for regipol emission target deviations convergence [#]" / %cm_emiMktTarget_tolerance% /;
   pm_emiMktTarget_tolerance(ext_regi)$(regiEmiMktTarget(ext_regi)) = 0.01; !! if no value is assigned to GLO, the default devation tolerance is set to 1%
@@ -75,7 +105,6 @@ p47_taxemiMkt_init(ttot,regi,emiMkt)$(p47_taxCO2eq_ref(ttot,regi) and (NOT(p47_t
       );
     );
   );
-  
 *** if there is a European regional target, overwrite historical prices for Europe if the historical years are free in the cm_emiMktTarget run. 
 *** in this case, historical prices will reflect the ETS market observed prices instead of the values defined pm_taxCO2eq
   loop(ext_regi$regiEmiMktTarget(ext_regi),
