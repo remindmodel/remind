@@ -85,7 +85,7 @@ $ifThen.emiMkt not "%cm_emiMktTarget%" == "off"
   targetState                                  "persistent per-target state of the convergence state machine, documented in tutorials/19_RegionalEmissionTargets.md section 3.1" /
 *** budgets and counters
     reopenCount    "charged re-opens of this market target; run-wide budget (reopenMax), cleared only by reopenRefresh consecutive settled iterations [count]"
-    settledCount   "consecutive iterations frozen AND met AND not given up; at reopenRefresh the re-open budget is earned back, any other state resets it [count]"
+    "settledCount" "consecutive iterations frozen AND met AND not given up; at reopenRefresh the re-open budget is earned back, any other state resets it [count]"
     refreshCount   "times this market target actually got a SPENT re-open budget back; a refresh with the budget already at 0 is not counted. Diagnostic only [count]"
     releaseCount   "times this market target was UN-FROZEN without a re-open being charged (|dev| beyond reopenMaxDev). Diagnostic only [count]"
     divBrakeCount  "divergence brakes taken on this market target; run-wide budget (divergeBrakeMax), after which the stop freezes instead [count]"
