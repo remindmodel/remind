@@ -1,7 +1,7 @@
 """Draw flow graphs for tutorials/19_RegionalEmissionTargets.md with labeled straight connectors, zero overlaps, and automatic box border snapping.
 
 Regenerate with:  python regiCarbonPrice_targets_graph.py
-Requires: matplotlib.
+Requires: matplotlib (which brings Pillow, used to keep the pngs under the 220 kB repo file-size limit).
 
 Outputs:
   git-19-loop.png               - per-iteration search loop (Section 2.1)
@@ -22,8 +22,26 @@ import os
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch
+from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+
+# REMIND rejects files above 220 kB. matplotlib writes 32-bit RGBA, which costs ~330 kB for a 2000x2000
+# figure. These are flat-fill diagrams of a few dozen distinct colours, so a 256-entry palette holds every
+# fill, border and antialiased text edge exactly: the shrink is ~70% with no visible loss. Do NOT dither,
+# it adds noise to the flat fills and makes the file BIGGER.
+MAX_KB = 220
+
+
+def _shrink(path):
+    """Rewrite a matplotlib RGBA png as an 8-bit palette png, and refuse to leave one over the repo limit."""
+    with Image.open(path) as img:
+        img.convert("RGB").quantize(colors=256, dither=Image.Dither.NONE).save(path, optimize=True)
+    kb = os.path.getsize(path) / 1024
+    if kb > MAX_KB:
+        raise SystemExit(f"{os.path.basename(path)} is {kb:.0f} kB, over the {MAX_KB} kB repo limit. "
+                         f"Lower the savefig dpi or split the figure.")
+    print(f"wrote {path} ({kb:.0f} kB)")
 
 # Design system palette (Fill, Border, Text Color)
 THEME = {
@@ -187,7 +205,7 @@ def _draw_straight_graph(pos, boxes, edges, xlim, ylim, figsize, title, outfile,
     path = os.path.join(HERE, outfile)
     plt.savefig(path, dpi=200, facecolor="#F8FAFC", bbox_inches="tight")
     plt.close(fig)
-    print("wrote", path)
+    _shrink(path)
 
 
 def loop_graph():
