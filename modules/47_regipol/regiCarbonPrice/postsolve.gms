@@ -241,7 +241,7 @@ loop((ext_regi,ttot2)$regiANDperiodEmiMktTarget_47(ttot2,ext_regi),
 
 *** Rollback verify-and-undo: A rollback is a bet that can fail if other regions moved. 
 *** Test it on the next iteration; if |dev| got worse, undo it and lock out future rollbacks (rolledBack = 2).
-    if((p47_slopeParam("rollbackVerify") gt 0)
+    if((p47_slopeParam("rollbackVerify") ge 1)
        AND (p47_targetState("rolledBack",ttot,ttot2,ext_regi,emiMktExt) eq 1)
        AND (p47_targetState("rollFromIter",ttot,ttot2,ext_regi,emiMktExt) gt 0)
        AND (iteration.val eq p47_targetState("rollFromIter",ttot,ttot2,ext_regi,emiMktExt) + 1)
@@ -304,6 +304,7 @@ loop((ext_regi,ttot2)$regiANDperiodEmiMktTarget_47(ttot2,ext_regi),
               regiEmiMktconvergenceType(iteration,ttot,ttot2,ext_regi,emiMktExt,"bestAchievable") = YES;
               p47_marketConverged_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = 1;
               p47_targetState("giveUp",ttot,ttot2,ext_regi,emiMktExt) = 1;
+              p47_slopeTrace_iter("giveUpBy",iteration,ttot,ttot2,ext_regi,emiMktExt) = 4; !! re-open budget spent
               p47_slopeAux("wantRoll") = 1; !! giving up after reopenMax corrections -> keep the best state reached
             );
 ***       Stick hold: Permanently freeze abandoned targets (giveUp = 1) to prevent price runaways.
@@ -391,6 +392,7 @@ loop((ext_regi,ttot2)$regiANDperiodEmiMktTarget_47(ttot2,ext_regi),
         regiEmiMktconvergenceType(iteration,ttot,ttot2,ext_regi,emiMktExt,"bestAchievable") = YES;
         p47_marketConverged_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = 1;
         p47_targetState("giveUp",ttot,ttot2,ext_regi,emiMktExt) = 1; !! noise-floor stop: a deliberate give-up, must stay frozen
+        p47_slopeTrace_iter("giveUpBy",iteration,ttot,ttot2,ext_regi,emiMktExt) = 1; !! noise-floor stop
 ***     Roll back to the best deviation in the window if the entire window was strictly outside tolerance.
         if((p47_slopeParam("noiseFloorRollback") ge 0.5)
            AND (p47_slopeAux("bestWinIter") gt 0)
@@ -425,6 +427,7 @@ loop((ext_regi,ttot2)$regiANDperiodEmiMktTarget_47(ttot2,ext_regi),
          AND ((p47_slopeAux("devMax") - p47_slopeAux("devMin")) le max(p47_slopeParam("noiseFloorBandWidth"), p47_slopeParam("noiseFloorBandWidthRel") * pm_emiMktTarget_tolerance(ext_regi))),
         regiEmiMktconvergenceType(iteration,ttot,ttot2,ext_regi,emiMktExt,"bestAchievable") = YES;
         p47_targetState("giveUp",ttot,ttot2,ext_regi,emiMktExt) = 1; !! parked stop: a deliberate give-up, must stay frozen
+        p47_slopeTrace_iter("giveUpBy",iteration,ttot,ttot2,ext_regi,emiMktExt) = 5; !! parked stop
         p47_slopeTrace_iter("parked",iteration,ttot,ttot2,ext_regi,emiMktExt) = 1;
 ***     No rollback needed: Target was frozen for the whole window, so price was constant.
         put_utility "msg" / "Parked-target stop: held inside the exit band but outside the tolerance at deviation ";
@@ -458,6 +461,7 @@ loop((ext_regi,ttot2)$regiANDperiodEmiMktTarget_47(ttot2,ext_regi),
         regiEmiMktconvergenceType(iteration,ttot,ttot2,ext_regi,emiMktExt,"bestAchievable") = YES;
         p47_marketConverged_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = 1;
         p47_targetState("giveUp",ttot,ttot2,ext_regi,emiMktExt) = 1; !! infeasible-target stop: a deliberate give-up, must stay frozen
+        p47_slopeTrace_iter("giveUpBy",iteration,ttot,ttot2,ext_regi,emiMktExt) = 2; !! infeasible-target stop
         p47_slopeAux("wantRoll") = 1; !! giving up on an (locally) infeasible target -> keep the best state reached
 ***     Roll back to the "knee": Find the earliest iteration that achieved nearly the same minimum emissions at a much lower, realistic price. (Disabled by infeasEmiTol = 0).
         if(p47_slopeParam("infeasEmiTol") gt 0,
@@ -524,6 +528,7 @@ loop((ext_regi,ttot2)$regiANDperiodEmiMktTarget_47(ttot2,ext_regi),
           regiEmiMktconvergenceType(iteration,ttot,ttot2,ext_regi,emiMktExt,"bestAchievable") = YES;
           p47_marketConverged_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = 1;
           p47_targetState("giveUp",ttot,ttot2,ext_regi,emiMktExt) = 1; !! divergence stop: a deliberate give-up, must stay frozen
+          p47_slopeTrace_iter("giveUpBy",iteration,ttot,ttot2,ext_regi,emiMktExt) = 3; !! divergence stop
           p47_slopeAux("wantRoll") = 1;
           put_utility "msg" / "Divergence STOP (brake budget spent): deviation " pm_emiMktTarget_dev_iter(iteration,ttot,ttot2,ext_regi,emiMktExt):10:5 " far beyond best ";
           put_utility "msg" / p47_targetState("bestDevAbs",ttot,ttot2,ext_regi,emiMktExt):10:5 " for " ttot.tl " " ttot2.tl " " ext_regi.tl " " emiMktExt.tl;
@@ -824,7 +829,7 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
 ***         |rescale-1| over the window, never below fallbackStepFloor. The MEAN, not the maximum: a maximum
 ***         ratchets, because one large step licenses the next (one target walked 24k -> 157k US$/tCO2 in five
 ***         fallback steps that way). squareDev_firstIteration is exempt - it is the cold-start ramp, with no
-***         history. fallbackStepFactor = 0 disables the bound. Tutorial section 7.3.
+***         history. fallbackStepFactor = 0 disables the bound. Tutorial section 2.6.
             p47_slopeAux("isFallback") = 0;
             p47_slopeAux("isFallback")$regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_lowPriceSpread")   = 1;
             p47_slopeAux("isFallback")$regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_unstableFit")      = 1;
@@ -848,13 +853,13 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
 
 ***         trust-region cap applied to EVERY rescale path (Newton and all squareDev fallbacks). power(1+dev,2)
 ***         is unbounded, so without this a far-from-target step explodes the carbon price (~5e9 US$/tCO2 was
-***         observed on an infeasible budget, which destabilised the whole run). Tutorial section 7.4.
+***         observed on an infeasible budget, which destabilised the whole run). Tutorial section 2.7.
             pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) =
               max(p47_slopeParam("rescaleCapLo"), min(p47_slopeParam("rescaleCapHi"), pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)));
 
 ***         POST-RE-OPEN STEP CAP: a re-opened target is by construction already close (|dev| <= reopenMaxDev),
 ***         so the correcting step must be a nudge, not a fresh search. Caps the FIRST step after a re-open
-***         whichever path produced it. reopenStepCap = 0 disables it. Tutorial section 7.5.
+***         whichever path produced it. reopenStepCap = 0 disables it. Tutorial section 2.7.
             if((p47_slopeParam("reopenStepCap") gt 0) AND (p47_targetState("reopenIter",ttot,ttot2,ext_regi,emiMktExt) eq iteration.val),
               pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) =
                 max(1 - p47_slopeParam("reopenStepCap"), min(1 + p47_slopeParam("reopenStepCap"), pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)));

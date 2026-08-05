@@ -30,7 +30,7 @@ $ifThen.emiMkt not "%cm_emiMktTarget%" == "off"
   slopeTerm                                    "scratch accumulators and results of the convergence algorithm: least-squares slope terms plus the per-branch window counters" /
     n, sumP, sumE, sumP2, sumE2, sumPE, pMin, pMax, denom, num, varE, slope, r2, inBand, priceOk, devMax, devMin, settled, nWin, outBand, nSteer, skipSteer, cntSteer, atCap, emiMin, kneeIter, devAbsMax, devAbsMin, bestWinIter, nFlip,
     isFallback, recentStep, nStep, stepBound, rollIter, wantRoll, prevTgtYr, holdOk, divOut, divMax, divBest, divRoll /
-  slopeParam                                   "configuration constants of the convergence algorithm, documented in tutorials/19_RegionalEmissionTargets.md section 10" /
+  slopeParam                                   "configuration constants of the convergence algorithm, documented in tutorials/19_RegionalEmissionTargets.md section 3.1" /
 *** slope fit and step size
     maxWindow             "rolling window length, counted in iterations this target actually STEERED [#]"
     minPriceSpread        "minimum price spread across the window (fraction of current price) to trust the slope [fraction]"
@@ -70,15 +70,19 @@ $ifThen.emiMkt not "%cm_emiMktTarget%" == "off"
 *** price rollback on freeze
     rollbackBestFrac      "prefer best-so-far price over stop candidate when at least this factor better (0 = off) [fraction]"
     rollbackMaxAge        "best-so-far candidate must lie within this many iterations (0 = no age limit) [#]"
-    rollbackVerify        "undo rollback if next iteration is worse, then lock out future rollbacks (0 = off) [0 or 1]"
+    rollbackVerify        "undo rollback if next iteration is worse, then lock out future rollbacks (< 1 = off) [0 or 1]"
 *** progressive oscillation dampening
     dampFlipMin           "reversals within window before dampening starts [#]"
     dampProgFactor        "step multiplier per extra reversal: dampProgFactor^(nFlip - dampFlipMin + 1) [fraction]"
     dampFloor             "lower bound on dampening multiplier [fraction]"
   /
   slopeTrace                                   "per-iteration diagnostics of the convergence algorithm, saved for debugging" /
-    rawSlope, fitR2, preDamp, rollIter, rollUndo, divBrake, parked /
-  targetState                                  "persistent per-target state of the convergence state machine, documented in tutorials/19_RegionalEmissionTargets.md section 11" /
+*** giveUpBy names WHICH give-up branch froze a target, because the end state alone cannot say: 1 = noise-floor
+*** stop, 2 = infeasible-target stop, 3 = divergence stop, 4 = re-open budget spent, 5 = parked stop. Without it,
+*** "did this knob's mechanism actually fire?" has to be guessed from reopenCount/divBrakeCount, and three
+*** analysis rounds guessed it wrong (tutorial section 3.2 rule 5; CONVERGENCE_ALGORITHM.md 3.18).
+    rawSlope, fitR2, preDamp, rollIter, rollUndo, divBrake, parked, giveUpBy /
+  targetState                                  "persistent per-target state of the convergence state machine, documented in tutorials/19_RegionalEmissionTargets.md section 3.1" /
 *** budgets and counters
     reopenCount    "charged re-opens of this market target; run-wide budget (reopenMax), cleared only by reopenRefresh consecutive settled iterations [count]"
     settledCount   "consecutive iterations frozen AND met AND not given up; at reopenRefresh the re-open budget is earned back, any other state resets it [count]"

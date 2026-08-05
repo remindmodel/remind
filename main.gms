@@ -1597,7 +1597,7 @@ $setGlobal cm_emiMktTarget  off    !! def = off
 ***   Example on how to use:
 ***      cm_emiMktTarget_tolerance = 'GLO 0.004, DEU 0.01'. All regional emission targets will be considered converged if they have at most 0.4% of the target deviation, except for Germany that requires 1%.
 $setGlobal cm_emiMktTarget_tolerance  GLO 0.01    !! def = GLO 0.01
-*** cm_slopeParam "overwrite default values of the module 47 regional-target convergence constants (see p47_slopeParam in regiCarbonPrice/datainput.gms and tutorials/19_RegionalEmissionTargets.md section 10)"
+*** cm_slopeParam "overwrite default values of the module 47 regional-target convergence constants (see p47_slopeParam in regiCarbonPrice/datainput.gms and tutorials/19_RegionalEmissionTargets.md section 1.3)"
 ***   (off): use the default values set in the regiCarbonPrice datainput.gms
 ***   otherwise: a list of slopeParam elements with the value to overwrite (only the listed ones change), e.g.
 ***     cm_slopeParam = 'maxPrice 10000, reopenMax 5, enterFrac 0.8'

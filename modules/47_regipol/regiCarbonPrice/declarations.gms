@@ -64,7 +64,7 @@ $endif.emiMktTargetType
   pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) "multiplicative tax rescale factor that rescales emiMkt carbon price from iteration to iteration to reach regipol targets [%]"
   p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugging purposes [%]"
   p47_slopeAux(slopeTerm)                                    "scratch accumulators and results for the market currently being solved (see slopeTerm set) [mixed units]"
-  p47_slopeParam(slopeParam)                                 "configuration constants of the convergence algorithm, set in datainput.gms and documented in tutorials/19_RegionalEmissionTargets.md section 10 [mixed units]"
+  p47_slopeParam(slopeParam)                                 "configuration constants of the convergence algorithm, set in datainput.gms and documented in tutorials/19_RegionalEmissionTargets.md section 3.1 [mixed units]"
   p47_slopeTrace_iter(slopeTrace,iteration,ttot,ttot2,ext_regi,emiMktExt) "per-iteration diagnostics: rawSlope, fitR2, preDamp (pre-dampening rescale), rollIter/rollUndo (price rollback and its undo), divBrake, parked [mixed units]"
 
 *** Parameters necessary to define the CO2 tax curve shape   
