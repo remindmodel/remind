@@ -648,6 +648,8 @@ scalars
 sm_giga_2_non                "giga to non"                             /1e+9/,
 sm_trillion_2_non            "trillion to non"                         /1e+12/,
 
+sm_non_2_trillion            "non to trillion"                         /1e-12/,
+
 *** energy units
 s_ZJ_2_TWa                   "convert from Zeta Joule to Tera Watt annum"   /31.71/,
 sm_EJ_2_TWa                  "convert from Exa Joule to Tera Watt annum"    /31.71e-03/,

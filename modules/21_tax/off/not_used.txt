@@ -73,3 +73,5 @@ vm_deltaCap,variable,only needed if tax is on
 vm_emiCdrAll,input,added by codeCheck
 cm_NetNegEmi_calculation,input,added by codeCheck
 vm_emiAllco2neg,input,added by codeCheck
+sm_non_2_trillion,input,conversion factor
+sm_GJ_2_TWa,input,conversion factor

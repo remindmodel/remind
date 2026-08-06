@@ -57,9 +57,15 @@ $offdelim
 
 *** transfer data to parameters and rescaling of FE parameters from $/GJ to trillion $ / TWa (subsidies also get adjusted in preloop.gms to avoid neg. prices)
 
-  p21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe)$f21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe) = f21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe)*0.001/sm_EJ_2_TWa;
-  p21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe)$f21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe) = f21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe)*0.001/sm_EJ_2_TWa;
-  p21_tau_fuEx_sub(ttot,regi,entyPe)$f21_tau_fuEx_sub(ttot,regi,entyPe) = f21_tau_fuEx_sub(ttot,regi,entyPe)*0.001/sm_EJ_2_TWa;
+  p21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe)$f21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe) = f21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe)*sm_non_2_trillion/sm_GJ_2_TWa;
+  p21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe)$f21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe) = f21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe)*sm_non_2_trillion/sm_GJ_2_TWa;
+  p21_tau_fuEx_sub(ttot,regi,entyPe)$f21_tau_fuEx_sub(ttot,regi,entyPe) = f21_tau_fuEx_sub(ttot,regi,entyPe)*sm_non_2_trillion/sm_GJ_2_TWa;
+
+  p21_tax_convergence(ttot,all_regi,entyFe)$f21_tax_convergence(ttot,all_regi,entyFe) = f21_tax_convergence(ttot,all_regi,entyFe)*sm_non_2_trillion/sm_GJ_2_TWa;
+  p21_tax_convergence_rollback(ttot,all_regi,entyFe)$f21_tax_convergence_rollback(ttot,all_regi,entyFe) = f21_tax_convergence_rollback(ttot,all_regi,entyFe)*sm_non_2_trillion/sm_GJ_2_TWa;
+  p21_sub_convergence_rollback(ttot,all_regi,emi_sectors,entyFe)$f21_sub_convergence_rollback(ttot,all_regi,emi_sectors,entyFe) = f21_sub_convergence_rollback(ttot,all_regi,emi_sectors,entyFe)*sm_non_2_trillion/sm_GJ_2_TWa;
+
+
 
 
 *** -------------------------PE2SE Taxes--------------------------(Primary to secondary energy technology taxes, specified by technology)
