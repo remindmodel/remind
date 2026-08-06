@@ -12,7 +12,7 @@ sm_capture_rate_cdrmodule       "CO2 capture rate for CDR energy and process emi
 s33_rockGrainSize               "grain size of ground rock, influences electricity demand and weathering rate. By default 20 micrometer based on Strefler et al. (2018) [micrometre]" /20/
 s33_rockRemPot                 "specific carbon removal potential [t C / t rock]"
 s33_rock_weath_rate_ambientT    "fraction of stone weathering per year at ambient temperature (25 degree C)"
-s33_step                        "size of bins in v33_weathering_onfield [Gt stone]" / 2.5 /
+s33_step                        "size of bins in v33_EW_onfield_tot [Gt rock]" / 2.5 /
 *JeS* GJ/tCO2 = EJ/Gt CO2 = 44/12 EJ/Gt C.
 *** OAE
 s33_OAE_efficiency          "the amount of rock required to sequester 1GtC [Gt rock / GtC]"

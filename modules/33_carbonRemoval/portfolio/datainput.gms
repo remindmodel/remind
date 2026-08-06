@@ -34,8 +34,6 @@ $offdelim
 ;
 display p33_EW_transport_costs;
 
-s33_step = 2.5;
-
 *' @code
 s33_rockRemPot = cm_33_EW_rockRemPot / sm_c_2_co2;       !! default for basalt is 0.3 t CO2/t rock, for Olivine 1.1 t CO2/t rock. Converted to t C/t rock.
 *' Sources for loss pathways that would reduce the total removal potential per ton rock: 
