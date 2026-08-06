@@ -1081,11 +1081,6 @@ parameter
 *'           5 Gt CO2/yr uptake limit corresponds roughly to CaO being distributed in the upper 2m of the entire (!) EEZ
 *'           up to the precipitation avoiding concentration limit, assuming average uptake efficiency. 
 *' 
-parameter
-  cm_gs_ew                  "grain size (for enhanced weathering, CDR module) [micrometre]"
-;
-  cm_gs_ew                 = 20;     !! def = 20  !! regexp = is.numeric
-*'
 
 parameter
   cm_33_EW_rockRemPot             "Maximum CO2 removal potential per ton of rock (t CO2 / t rock)."

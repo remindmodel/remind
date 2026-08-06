@@ -15,12 +15,15 @@
 *' low-temperature heat demand. The heat can be provided via district heat, electricity, gas, or H2. If gas is used,
 *' the resulting CO2 is captured with a capture rate of 90%.
 *'
-*' (EW) Basalt is mined and ground to fine grain sizes (specified in cm_gs_ew, by default 20 µm), and then spread
+*' (EW) Basalt is mined and ground to fine grain sizes (default 20 µm), and then spread
 *' on crop fields where it weathers in reaction with water and atmospheric CO2. Electricity is needed to grind the
-*' rocks and diesel is needed for transportation and spreading on crop fields. The weathering process leads to an exponential
+*' rocks and diesel is needed for spreading on crop fields. Transport costs from mine to fields depend on distance grades.
+*' In addition, capital cost for mining and production, and O&M cost for mining and distribution on fields are added. 
+*' The amount of rock that can be spread on fields is limited by the maximum potential for enhanced weathering, 
+*' which depends on the region and climate grade. The weathering process leads to an exponential
 *' decay over time of the spread rocks. There is an upper limit on the amount of rock that can be on the fields, so that
-*' in equilibrium only the part that decays in one timestep can be replaced in the next. Costs consist of costs for capital, O&M,
-*' distribution and transport (grades depend on region specific transport distance from mine to fields).
+*' in equilibrium only the part that decays in one timestep can be replaced in the next. The share of suitable fields that can be 
+*' used for spreading rocks can be adjusted via cm_33_EW_maxShareOfCropland.
 *'
 *' (OAE) Ocean alkalinity enhancement via ocean liming draws down CO2 from the atmosphere by adding (hydrated) lime
 *' to the coastal or open ocean. Calcination process, which involves heating limestone to typically around 900-1000°C,
@@ -34,6 +37,11 @@
 *' material).
 *'
 *' Equations for each option determine the capacity, emissions, energy demand, costs and limits.
+
+*' (Overarching) This module further limits the amount of final energy that can be used for CDR technologies (via cm_33_maxFeShare), 
+*' and the share of GDP that can be spent on net negative emissions (via cm_33_GDP_netNegCDR_maxShare). It also contains
+*' the biochar material value price assumption and revenue calculation.
+
 ***----------------------------------------------------
 
 *####################### R SECTION START (PHASES) ##############################

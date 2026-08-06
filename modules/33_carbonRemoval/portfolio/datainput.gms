@@ -51,8 +51,8 @@ p33_rock_weath_rate("1") = s33_rock_weath_rate_ambientT * 0.94;
 p33_rock_weath_rate("2") = s33_rock_weath_rate_ambientT * 0.29;
 
 *' JeS FE demand fit from Thorben: SI D in strefler, amann et al. (2018)
-p33_fedem("weathering", "feels") = 6.62 * cm_gs_ew**(-1.16);
-p33_fedem("weathering", "fedie") = 0.3;
+p33_fedem("weathering", "feels") = 6.62 * s33_rockGrainSize**(-1.16);    !! electricity for grinding of rocks, depends on the grain size. 
+p33_fedem("weathering", "fedie") = 0.3;                         !! diesel for spreading rocks on fields using tractors
 
 *' Annual growth rate limit on upscaling of mining & spreading rocks on fields
 p33_EW_upScalingLimit(ttot) = cm_33_EW_upScalingRateLimit;

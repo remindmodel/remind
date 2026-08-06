@@ -9,6 +9,7 @@ scalars
 *** Multiple options
 sm_capture_rate_cdrmodule       "CO2 capture rate for CDR energy and process emissions, i.e. fegas use in OAE and DAC and for calcination emissions in oae" / 0.9 /
 *** EW
+s33_rockGrainSize               "grain size of ground rock, influences electricity demand and weathering rate. By default 20 micrometer based on Strefler et al. (2018) [micrometre]" /20/
 s33_rockRemPot                 "specific carbon removal potential [t C / t rock]"
 s33_rock_weath_rate_ambientT    "fraction of stone weathering per year at ambient temperature (25 degree C)"
 s33_step                        "size of bins in v33_weathering_onfield [Gt stone]" / 2.5 /
@@ -40,7 +41,7 @@ p33_GDP_NetNeg_share(all_regi)                    "Upper bound on share of expen
 ;
 
 variables
-vm_EW_transport_costs(tall,all_regi)     "O&M costs for spreading grinded rocks on fields [T$]"
+vm_EW_transport_costs(tall,all_regi)     "O&M costs for transporting ground rocks from mines to fields [T$]"
 ;
 
 positive variables
@@ -83,8 +84,8 @@ q33_DAC_FEdemand(ttot,all_regi,all_enty)  "calculates final energy demand from D
 *** EW
 q33_EW_capconst(ttot,all_regi)  "calculates amount of ground rock spread on fields"
 q33_EW_onfield_tot(ttot,all_regi,rlf,rlf)  "total amount of ground rock on fields"
-q33_EW_omcosts(ttot,all_regi)  "calculates O&M costs for spreading ground rocks on fields"
-q33_EW_FEdemand(ttot,all_regi,all_enty)  "calculates final energy demand from enhanced weathering"
+q33_EW_transportCosts(ttot,all_regi)  "calculates transport costs for transporting ground rocks from mines to fields"
+q33_EW_FEdemand(ttot,all_regi,all_enty)  "calculates final energy demand from enhanced weathering for grinding and spreading rocks on fields"
 q33_EW_potential(ttot,all_regi,rlf)  "limits the total potential of EW per region and grade"
 q33_EW_emi(ttot,all_regi)  "calculates amount of carbon captured by EW"
 q33_EW_upscaling_rate(ttot, all_regi) "limits spreading of rock to a steep but credible upscaling rate"

@@ -160,7 +160,7 @@ q33_EW_emi(t,regi)..
 
 ***---------------------------------------------------------------------------
 *'  Calculation of FE demand for enhanced weathering, i.e., electricity demand for grinding,
-*'  and the diesel demand for transportation and spreading on crop fields.
+*'  and the diesel demand for spreading rocks on crop fields.
 ***---------------------------------------------------------------------------
 q33_EW_FEdemand(t,regi,entyFe2)$sum(entyFe, fe2cdr(entyFe,entyFe2,"weathering"))..
     sum(fe2cdr(entyFe,entyFe2,"weathering"), v33_FEdemand(t,regi,entyFe,entyFe2,"weathering"))
@@ -169,9 +169,9 @@ q33_EW_FEdemand(t,regi,entyFe2)$sum(entyFe, fe2cdr(entyFe,entyFe2,"weathering"))
     ;
 
 ***---------------------------------------------------------------------------
-*'  O&M costs of EW, consisting of fix costs for mining, grinding and spreading, and transportation costs.
+*'  Transport cost for rocks from mine to field
 ***---------------------------------------------------------------------------
-q33_EW_omcosts(t,regi)..
+q33_EW_transportCosts(t,regi)..
     vm_EW_transport_costs(t,regi)
     =e=
     sum((rlf_cz33, rlf),
