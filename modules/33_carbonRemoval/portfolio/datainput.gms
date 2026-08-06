@@ -44,8 +44,8 @@ s33_rockRemPot = cm_33_EW_rockRemPot / sm_c_2_co2;       !! default for basalt i
 *' rock weathering rate (i.e. fraction of rock weathering per year) at ambient temperature (25 degree C), based on 
 *' eq 2 in strefler, amann et al. (2018): 
 *' wr = grain surface area based weathering rate (10^-10.53 mol m^-2 s^-1) * molar weight of basalt/forsterite (140.7 g/mol) 
-*'      * 3.155^7 s/a * specific surface area(depending on grain size cm_gs_ew)
-s33_rock_weath_rate_ambientT = 10**(-10.53) * 125 * 3.155*10**7 * 69.18*(cm_gs_ew**(-1.24));
+*'      * 3.155^7 s/a * specific surface area(depending on grain size s33_rockGrainSize)
+s33_rock_weath_rate_ambientT = 10**(-10.53) * 125 * 3.155*10**7 * 69.18*(s33_rockGrainSize**(-1.24));
 *' rock weathering rate for different climate grades: SI Tab F-1 of strefler, amann et al. (2018)
 p33_rock_weath_rate("1") = s33_rock_weath_rate_ambientT * 0.94;
 p33_rock_weath_rate("2") = s33_rock_weath_rate_ambientT * 0.29;
