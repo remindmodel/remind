@@ -18,14 +18,14 @@ p33_fedem("dac", "fehes") = 21.12; !! FE demand heat for material recovery
 *' #### EW input data
 *------------------------------------------------------------------------------------
 *' @stop
-table f33_maxProdGradeRegiWeathering(all_regi,rlf)  "regional maximum potentials for enhanced weathering in Gt of grinded stone/a for different grades"
+table f33_maxProdGradeRegiWeathering(all_regi,rlf)  "regional maximum potentials for enhanced weathering in Gt of ground rock/a for different grades"
 $ondelim
 $include "./modules/33_carbonRemoval/portfolio/input/f33_maxProdGradeRegiWeathering.cs3r"
 $offdelim
 ;
 display f33_maxProdGradeRegiWeathering;
 
-parameter p33_EW_transport_costs(all_regi,rlf,rlf)    "transport costs [T$/Gt stone]"
+parameter p33_EW_transport_costs(all_regi,rlf,rlf)    "transport costs [T$/Gt rock]"
 /
 $ondelim
 $include "./modules/33_carbonRemoval/portfolio/input/p33_transportCostsWeathering.cs4r"
