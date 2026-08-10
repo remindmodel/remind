@@ -194,7 +194,7 @@ cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshoot
 c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 cm_taxCO2_IncAfterPeakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 c_regi_nucscen				"regions to apply nucscen to"
-c_regi_captureEnergy			"region to apply cm_captureEnergy to"
+c_regi_captureEnergy			"region to apply c_captureEnergy to"
 c_regi_synfuelscen			"region to apply synfuelscen to"
 cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
 c_regi_sensscen				"regions which regional sensitivity parameters apply to"
@@ -244,7 +244,7 @@ cm_taxCO2_expGrowth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
-cm_captureEnergy  = 1;        !! def = 1
+c_captureEnergy  = 1;        !! def = 1
 c_bioliqscen     = 1;        !! def = 1
 c_bioh2scen      = 1;        !! def = 1
 c_shGreenH2      = 0;        !! def = 0

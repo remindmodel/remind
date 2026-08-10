@@ -128,7 +128,7 @@ cm_taxCO2_startyear    "level of co2 tax in start year in $ per t CO2eq"
 cm_taxCO2_expGrowth     "growth rate of carbon tax"
 c_macscen            "use of mac"
 cm_nucscen            "nuclear option choice"
-cm_captureEnergy       "carbon capture option choice"
+c_captureEnergy       "carbon capture option choice"
 c_bioliqscen          "bioenergy liquids technology choise"
 c_bioh2scen           "bioenergy hydrogen technology choice"
 cm_optimisticMAC     "assume optimistic Industry MAC from AR5 Ch. 10?"
@@ -199,7 +199,7 @@ cm_taxCO2_expGrowth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
-cm_captureEnergy  = 1;        !! def = 1
+c_captureEnergy  = 1;        !! def = 1
 c_bioliqscen     = 1;        !! def = 1
 c_bioh2scen      = 1;        !! def = 1
 

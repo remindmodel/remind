@@ -837,10 +837,10 @@ $ELSE.RegScenNuc
 $ENDIF.RegScenNuc
 
 $IFTHEN.RegScenCapt "%c_regi_captureEnergy%" == "all"
-  set regi_CCtech_energy(all_regi) "regions which energy carbon capture scenario cm_captureEnergy applies to";
+  set regi_CCtech_energy(all_regi) "regions which energy carbon capture scenario c_captureEnergy applies to";
   regi_CCtech_energy(all_regi)=YES;
 $ELSE.RegScenCapt
-  set regi_CCtech_energy(all_regi) "regions which energy carbon capture scenario cm_captureEnergy applies to" / %c_regi_captureEnergy% /;
+  set regi_CCtech_energy(all_regi) "regions which energy carbon capture scenario c_captureEnergy applies to" / %c_regi_captureEnergy% /;
 $ENDIF.RegScenCapt
 
 *** definition of set of regions that use alternative FE emission factors from umweltbundesamt

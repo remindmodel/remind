@@ -637,9 +637,9 @@ parameter
 *' *  (6): +33% investment costs for tnrs under SSP5, uranium resources increased by a factor of 10
 *'
 parameter
-  cm_captureEnergy        "carbon capture option choice for energy conversion technologies. Regions that this is applied to are defined in cm_regi_captureEnergy"
+  c_captureEnergy        "carbon capture option choice for energy conversion technologies. Regions that this is applied to are defined in cm_regi_captureEnergy"
 ;
-  cm_captureEnergy  = 1;        !! def = 1  !! regexp = [1-4]
+  c_captureEnergy  = 1;        !! def = 1  !! regexp = [1-4]
 *' *  (1): all teCCS technologies are available
 *' *  (2): no teCCS technologies are available. Note: this no longer limits geologic CO2 storage! 
 *' *  (3): no bio carbon capture from teCCS technologies
@@ -2155,7 +2155,7 @@ $setGlobal c_skip_output  off        !! def = off  !! regexp = off|on
 $setglobal cm_CO2TaxSectorMarkup  off   !! def = off
 *** c_regi_nucscen              "regions to apply cm_nucscen to in case of cm_nucscen = 5 (no new nuclear investments), e.g. c_regi_nucscen <- "JPN,USA"
 $setGlobal c_regi_nucscen  all  !! def = all
-***  c_regi_captureEnergy              "regions to apply cm_captureEnergy to (availability of carbon capture technologies), e.g. c_regi_captureEnergy <- "JPN,USA"
+***  c_regi_captureEnergy              "regions to apply c_captureEnergy to (availability of carbon capture technologies), e.g. c_regi_captureEnergy <- "JPN,USA"
 $setGlobal c_regi_captureEnergy  all  !! def = all
 *** cm_subsec_model_steel      "switch between ces-based and process-based steel implementation in subsectors realisation of industry module"
 $setglobal cm_subsec_model_steel  processes  !! def = processes  !! regexp = processes|ces
