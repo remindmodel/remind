@@ -203,7 +203,16 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_DiscRateScen" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/2001",
        "cm_transpGDPscale" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/2092",
        "var_luc" = "Deleted, not used anymore. Land-use CO2 emissions are always RAW now. See https://github.com/remindmodel/remind/pull/2255",
-     NULL)
+       "cm_ccapturescen" = "Rename to c_captureEnergy + adjusted scope, see https://github.com/remindmodel/remind/pull/2424",
+       "cm_IndCCSscen" = "Rename to cm_captureInd, see https://github.com/remindmodel/remind/pull/2424",
+       "cm_CCS_cement" = "Rename to cm_captureCement, see https://github.com/remindmodel/remind/pull/2424",
+       "cm_CCS_chemicals" = "Rename to cm_captureChemicals, see https://github.com/remindmodel/remind/pull/2424",
+       "cm_CCS_steel" = "Rename to cm_captureSteel, see https://github.com/remindmodel/remind/pull/2424",
+       "c_regi_capturescen" = "Rename to c_regi_captureEnergy, see https://github.com/remindmodel/remind/pull/2424",
+       "cm_CCS_markup" = "Rename to cm_captureEnergyMarkup, see https://github.com/remindmodel/remind/pull/2424",
+       "cm_Industry_CCS_markup" = "Rename to cm_captureIndMarkup, see https://github.com/remindmodel/remind/pull/2424"
+     )
+
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       msg <- paste0("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
       if (testmode) warning(msg) else message(msg)
