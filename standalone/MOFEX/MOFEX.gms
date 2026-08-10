@@ -128,18 +128,18 @@ cm_taxCO2_startyear  "level of co2 tax in start year in $ per t CO2eq"
 cm_taxCO2_expGrowth     "growth rate of carbon tax"
 c_macscen            "use of mac"
 cm_nucscen            "nuclear option choice"
-cm_ccapturescen       "carbon capture option choice"
+cm_captureEnergy       "carbon capture option choice"
 c_bioliqscen          "bioenergy liquids technology choise"
 c_bioh2scen           "bioenergy hydrogen technology choice"
 c_shGreenH2           "lower bound on share of green hydrogen in all hydrogen by 2030"
 c_shBioTrans          "upper bound on share of bioliquids in transport from 2025 onwards"
 cm_shSynTrans         "lower bound on share of synthetic fuels in all transport fuels by 2045"
 cm_shSynGas           "lower bound on share of synthetic gases by 2045"
-cm_IndCCSscen        "CCS for Industry"
-cm_optimisticMAC     "assume optimistic Industry MAC from AR5 Ch. 10?"
-cm_CCS_cement        "CCS for cement sub-sector"
-cm_CCS_chemicals     "CCS for chemicals sub-sector"
-cm_CCS_steel         "CCS for steel sub-sector"
+cm_optimisticMAC      "assume optimistic Industry MAC from AR5 Ch. 10?"
+cm_captureInd        "carbon capture for Industry"
+cm_captureCement          "carbon capture for cement sub-sector"
+cm_captureChemicals       "carbon capture for chemicals sub-sector"
+cm_captureSteel            "carbon capture for steel sub-sector"
 cm_bioenergy_SustTax    "level of the bioenergy sustainability tax in fraction of bioenergy price"
 cm_bioenergy_EF_for_tax "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2 per GJ]"
 cm_maxProdBiolc         "bound on global pebiolc production including residues but excluding traditionally used biomass [EJ per yr]"
@@ -190,7 +190,7 @@ cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshoot
 c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 cm_taxCO2_IncAfterPeakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 c_regi_nucscen				"regions to apply nucscen to"
-c_regi_capturescen			"region to apply ccapturescen to"
+c_regi_captureEnergy			"region to apply ccapturescen to"
 c_regi_synfuelscen			"region to apply synfuelscen to"
 cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
 c_regi_sensscen				"regions which regional sensitivity parameters apply to"
@@ -240,7 +240,7 @@ cm_taxCO2_expGrowth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
-cm_ccapturescen  = 1;        !! def = 1
+cm_captureEnergy  = 1;        !! def = 1
 c_bioliqscen     = 1;        !! def = 1
 c_bioh2scen      = 1;        !! def = 1
 c_shGreenH2      = 0;        !! def = 0
@@ -248,11 +248,11 @@ c_shBioTrans     = 1;        !! def = 1
 cm_shSynTrans    = 0;        !! def = 0
 cm_shSynGas      = 0;        !! def = 0
 
-cm_IndCCSscen          = 1;        !! def = 1
 cm_optimisticMAC       = 0;        !! def = 0
-cm_CCS_cement          = 1;        !! def = 1
-cm_CCS_chemicals       = 1;        !! def = 1
-cm_CCS_steel           = 1;        !! def = 1
+cm_captureInd          = 1;        !! def = 1
+cm_captureCement          = 1;        !! def = 1
+cm_captureChemicals       = 1;        !! def = 1
+cm_captureSteel           = 1;        !! def = 1
 
 $setglobal cm_secondary_steel_bound  none   !! def = "scenario"
 
@@ -334,7 +334,7 @@ $setGlobal cm_reducCostB  none !! def = none
 $setGlobal cm_effHP  5 !! def = 5
 
 $setGlobal c_regi_nucscen  all !! def = all
-$setGlobal c_regi_capturescen  all !! def = all
+$setGlobal c_regi_captureEnergy  all !! def = all
 $setGlobal c_regi_synfuelscen  all !! def = all
 $setGlobal c_regi_sensscen  all !! def = all
 
@@ -443,8 +443,8 @@ $setglobal cm_adj_coeff_multiplier  off
 $setglobal cm_inco0Factor  off !! def = off
 $setglobal cm_inco0RegiFactor  off !! def = off
 
-$setglobal cm_CCS_markup  off !! def = off
-$setglobal cm_Industry_CCS_markup  off !! def = off
+$setglobal cm_captureEnergyMarkup  off !! def = off
+$setglobal cm_captureIndMarkup  off !! def = off
 $setglobal cm_renewables_floor_cost  off !! def = off 
 
 $setglobal cm_sehe_upper  off !! def = off 

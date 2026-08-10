@@ -637,14 +637,16 @@ parameter
 *' *  (6): +33% investment costs for tnrs under SSP5, uranium resources increased by a factor of 10
 *'
 parameter
-  cm_ccapturescen       "carbon capture option choice, no carbon capture only if CCS and CCU are switched off!"
+  cm_captureEnergy        "carbon capture option choice for energy conversion technologies. Regions that this is applied to are defined in cm_regi_captureEnergy"
 ;
-  cm_ccapturescen  = 1;        !! def = 1  !! regexp = [1-4]
-*' *  (1): yes
-*' *  (2): no carbon capture (only if CCS and CCU are switched off!)
-*' *  (3): no bio carbon capture
-*' *  (4): no carbon capture in the electricity sector
-*'
+  cm_captureEnergy  = 1;        !! def = 1  !! regexp = [1-4]
+*' *  (1): all teCCS technologies are available
+*' *  (2): no teCCS technologies are available. Note: this no longer limits geologic CO2 storage! 
+*' *  (3): no bio carbon capture from teCCS technologies
+*' *  (4): no carbon capture in the electricity sector via teCCS technologies
+*' Note: This does not affect carbon capture of emissions in industry, via DAC or OAE! 
+*' Align with other cm_CCtech..., cm_33DAC, cm_33OAE, as well as ccsinje and carbonUtilization assumptions for the intended overall narrative.
+
 parameter
   c_bioliqscen              "2nd generation bioenergy liquids technology choice"
 ;
@@ -680,29 +682,29 @@ parameter
   cm_shSynGas      = 0;        !! def = 0  !! regexp = is.share
 *'
 parameter
-  cm_IndCCSscen             "CCS for Industry"
-;
-  cm_IndCCSscen          = 1;        !! def = 1
-*'
-parameter
   cm_optimisticMAC          "assume optimistic Industry MAC from AR5 Ch. 10?"
 ;
   cm_optimisticMAC       = 0;        !! def = 0
 *'
 parameter
-  cm_CCS_cement             "CCS for cement sub-sector"
+  cm_captureInd             "carbon capture for Industry on/off"
 ;
-  cm_CCS_cement          = 1;        !! def = 1
+  cm_captureInd          = 1;        !! def = 1
 *'
 parameter
-  cm_CCS_chemicals          "CCS for chemicals sub-sector"
+  cm_captureCement             "carbon capture for cement sub-sector on/off"
 ;
-  cm_CCS_chemicals       = 1;        !! def = 1
+  cm_captureCement          = 1;        !! def = 1
 *'
 parameter
-  cm_CCS_steel              "CCS for steel sub-sector"
+  cm_captureChemicals          "carbon capture for chemicals sub-sector on/off"
 ;
-  cm_CCS_steel           = 1;        !! def = 1
+  cm_captureChemicals       = 1;        !! def = 1
+*'
+parameter
+  cm_captureSteel              "carbon capture for steel sub-sector on/off"
+;
+  cm_captureSteel           = 1;        !! def = 1
 *'
 parameter
   cm_bioenergy_SustTax      "level of the bioenergy sustainability tax in fraction of bioenergy price"
@@ -1913,20 +1915,20 @@ $setglobal cm_inco0Factor  off !! def = off
 *' *  or list of techs with respective factor to change p_inco0 value by a multiplication factor. (ex. "windon 0.33, spv 0.33" makes investment costs for windon and spv 3 times cheaper)
 *' *  (note: if %cm_techcosts% == "GLO", switch will not work for policy runs, i.e. cm_startyear > 2005, for pc, ngt and ngcc as this gets overwritten in 05_initialCap module)
 $setglobal cm_inco0RegiFactor  off  !! def = off
-*** cm_CCS_markup "multiplicative factor for CSS cost markup"
-***   def <- "off" = use default CCS pm_inco0_t values.
-***   or number (ex. 0.66), multiply by 0.66 the CSS cost markup
-$setglobal cm_ccsinjeCost high !! def = high !! regexp = med|low|high
 *' switch from standard to low and high CO2 transport & storage cost.
 *' Warning: it applies absolute values; only use it in combination with default c_techAssumptScen SSP2. 
 *'  * (low): old estimate before 03/2024; ~7.5 USD/tCO2 in 2035. Also applies tech_stat=2 and constrTme=0
 *'  * (med): new main estimate; 12 USD/tCO2 at all times (similar to ~11.4 USD/tCO2 average of saline formations, on- and offshore DOG fields in Budinis et al 2017)
 *'  * (high): upper estimate; ~20USD/tCO2 (constant), assuming upper end of storage cost and long transport distances
-$setglobal cm_CCS_markup  off  !! def = off
-*** cm_Industry_CCS_markup "multiplicative factor for Industry CSS cost markup"
+$setglobal cm_ccsinjeCost high !! def = high !! regexp = med|low|high
+*** cm_captureEnergyMarkup "multiplicative factor for carbon capture technologies (teCCS) cost markup"
+***   def <- "off" = use default CC pm_inco0_t values.
+***   or number (ex. 0.66), multiply by 0.66 the CSS cost markup
+$setglobal cm_captureEnergyMarkup  off  !! def = off
+*** cm_captureIndMarkup "multiplicative factor for Industry carbon capture cost markup"
 ***   def <- "off"
-***   or number (ex. 0.66), multiply by 0.66 Industry CSS cost markup
-$setglobal cm_Industry_CCS_markup  off !! def = off
+***   or number (ex. 0.66), multiply by 0.66 Industry carbon capture cost markup
+$setglobal cm_captureIndMarkup  off !! def = off
 *' Flag to change learning assumption for established pyrolysis technologies. 0 = not learning; any number = learning rate
 *' Beware: When turned on, policy runs require a NPi that also has learning, otherwise it becomes unbounded.
 *' (0.1): Learning rate of 10%.
@@ -2153,8 +2155,8 @@ $setGlobal c_skip_output  off        !! def = off  !! regexp = off|on
 $setglobal cm_CO2TaxSectorMarkup  off   !! def = off
 *** c_regi_nucscen              "regions to apply cm_nucscen to in case of cm_nucscen = 5 (no new nuclear investments), e.g. c_regi_nucscen <- "JPN,USA"
 $setGlobal c_regi_nucscen  all  !! def = all
-***  c_regi_capturescen              "regions to apply cm_ccapturescen to (availability of carbon capture technologies), e.g. c_regi_nucscen <- "JPN,USA"
-$setGlobal c_regi_capturescen  all  !! def = all
+***  c_regi_captureEnergy              "regions to apply cm_captureEnergy to (availability of carbon capture technologies), e.g. c_regi_captureEnergy <- "JPN,USA"
+$setGlobal c_regi_captureEnergy  all  !! def = all
 *** cm_subsec_model_steel      "switch between ces-based and process-based steel implementation in subsectors realisation of industry module"
 $setglobal cm_subsec_model_steel  processes  !! def = processes  !! regexp = processes|ces
 *** cm_tech_bounds_2025

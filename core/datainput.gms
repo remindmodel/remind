@@ -1416,10 +1416,10 @@ $if  "%cm_rcp_scen%" == "none"    sm_budgetCO2eqGlob = 20000.0000;
   );
   if(cm_multigasscen eq 2,
 $if  "%cm_rcp_scen%" == "rcp20"   sm_budgetCO2eqGlob = 500.0000;
-     if(cm_ccapturescen eq 1,
+     if(cm_captureEnergy eq 1,
 $if  "%cm_rcp_scen%" == "rcp26"   sm_budgetCO2eqGlob = 530.0000;
      );
-     if(cm_ccapturescen gt 1,
+     if(cm_captureEnergy gt 1,
 $if  "%cm_rcp_scen%" == "rcp26"   sm_budgetCO2eqGlob = 700.0000;
      );
 $if  "%cm_rcp_scen%" == "rcp37"   sm_budgetCO2eqGlob = 1000.0000;

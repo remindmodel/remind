@@ -128,14 +128,14 @@ cm_taxCO2_startyear    "level of co2 tax in start year in $ per t CO2eq"
 cm_taxCO2_expGrowth     "growth rate of carbon tax"
 c_macscen            "use of mac"
 cm_nucscen            "nuclear option choice"
-cm_ccapturescen       "carbon capture option choice"
+cm_captureEnergy       "carbon capture option choice"
 c_bioliqscen          "bioenergy liquids technology choise"
 c_bioh2scen           "bioenergy hydrogen technology choice"
-cm_IndCCSscen        "CCS for Industry"
 cm_optimisticMAC     "assume optimistic Industry MAC from AR5 Ch. 10?"
-cm_CCS_cement        "CCS for cement sub-sector"
-cm_CCS_chemicals     "CCS for chemicals sub-sector"
-cm_CCS_steel         "CCS for steel sub-sector"
+cm_captureInd        "carbon capture for Industry"
+cm_captureCement        "carbon capture for cement sub-sector"
+cm_captureChemicals     "carbon capture for chemicals sub-sector"
+cm_captureSteel         "carbon capture for steel sub-sector"
 cm_bioenergy_SustTax    "level of the bioenergy sustainability tax in fraction of bioenergy price"
 cm_bioenergy_EF_for_tax "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2 per GJ]"
 cm_maxProdBiolc         "bound on global pebiolc production including residues but excluding traditionally used biomass [EJ per yr]"
@@ -199,15 +199,15 @@ cm_taxCO2_expGrowth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
-cm_ccapturescen  = 1;        !! def = 1
+cm_captureEnergy  = 1;        !! def = 1
 c_bioliqscen     = 1;        !! def = 1
 c_bioh2scen      = 1;        !! def = 1
 
-cm_IndCCSscen          = 1;        !! def = 1
 cm_optimisticMAC       = 0;        !! def = 0
-cm_CCS_cement          = 1;        !! def = 1
-cm_CCS_chemicals       = 1;        !! def = 1
-cm_CCS_steel           = 1;        !! def = 1
+cm_captureInd          = 1;        !! def = 1
+cm_captureCement          = 1;        !! def = 1
+cm_captureChemicals       = 1;        !! def = 1
+cm_captureSteel           = 1;        !! def = 1
 
 
 cm_bioenergy_SustTax    = 1.5;            !! def = 1.5

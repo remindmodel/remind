@@ -342,8 +342,9 @@ vm_cap.fx("2010",regi,teCCS,rlf) = 0;
 vm_cap.fx("2020",regi,te,rlf) $ (teBio(te) and teCCS(te)) = 0;
 
 *' switch to deactivate carbon sequestration
-if(c_ccsinjecratescen = 0,
-  vm_co2CCS.fx(t,regi_capturescen,"cco2","ico2",te,rlf) $ teCCS2rlf(te,rlf) = 0;
+if(c_ccsinjecratescen = 0, !! also need to add that there must be no CCU allowed for this to be set? 
+  vm_deltaCap.up(t,regi_CCtech_energy,"ccsinjeon","1") $ (t.val ge cm_startyear) = sm_eps;
+  vm_deltaCap.up(t,regi_CCtech_energy,"ccsinjeoff","1") $ (t.val ge cm_startyear) = sm_eps;
 );
 
 *' Bounds on maximum annual carbon storage by region
@@ -393,15 +394,14 @@ if(cm_emiscen = 1,
 );
 
 
-if(cm_ccapturescen = 2, !! no carbon capture at all
-  vm_cap.fx(t,regi_capturescen,teCCS,rlf) = 0;
-  vm_cap.fx(t,regi_capturescen,te,rlf) $ teCCS2rlf(te,rlf) = 0;
-elseif(cm_ccapturescen = 3), !! no bio carbon capture:
-  vm_cap.fx(t,regi_capturescen,te,rlf) $ (teCCS(te) and teBio(te)) = 0;
-elseif(cm_ccapturescen = 4), !! no carbon capture in the electricity sector
-  loop(emi2te(enty,"seel",te,"cco2") $ ( sum(regi_capturescen, pm_emifac("2020",regi_capturescen,enty,"seel",te,"cco2")) > 0 ),
+if(cm_captureEnergy = 2, !! no carbon capture at all
+  vm_deltaCap.up(t,regi_CCtech_energy,teCCS,rlf) $ (t.val ge cm_startyear) = sm_eps;
+elseif(cm_captureEnergy = 3), !! no bio carbon capture:
+  vm_deltaCap.up(t,regi_CCtech_energy,te,rlf) $ ((t.val ge cm_startyear) and teCCS(te) and teBio(te)) = sm_eps;
+elseif(cm_captureEnergy = 4), !! no carbon capture in the electricity sector
+  loop(emi2te(enty,"seel",te,"cco2") $ ( sum(regi_CCtech_energy, pm_emifac("2020",regi_CCtech_energy,enty,"seel",te,"cco2")) > 0 ),
     loop(te2rlf(te,rlf),
-      vm_cap.fx(t,regi_capturescen,te,rlf) = 0;
+      vm_deltaCap.up(t,regi_CCtech_energy,te,rlf) $ (t.val ge cm_startyear)  = sm_eps;
     );
   );
 );
