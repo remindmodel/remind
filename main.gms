@@ -943,7 +943,7 @@ parameter
   c_ccsinjecratescen    = 1;         !! def = 1  !! regexp = [0-6]
 *' This switch determines the upper bound of the annual CCS injection rate.
 *' CCS here refers to carbon sequestration, carbon capture is modelled separately.
-*' *   (0) no "CCS" as in no carbon sequestration at all
+*' *   (0) no "CCS" as in no carbon sequestration at all. Note: there can still be carbon capture unless this is turned off as well.
 *' *   (1) reference case: 0.005; max 19.7 GtCO2/yr globally
 *' *   (2) lower estimate: 0.0025; max 9.8 GtCO2/yr globally
 *' *   (3) upper estimate: 0.0075; max 29.5 GtCO2/yr globally
