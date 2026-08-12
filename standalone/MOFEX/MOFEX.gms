@@ -128,7 +128,7 @@ cm_taxCO2_startyear  "level of co2 tax in start year in $ per t CO2eq"
 cm_taxCO2_expGrowth     "growth rate of carbon tax"
 c_macscen            "use of mac"
 cm_nucscen            "nuclear option choice"
-c_captureEnergy       "carbon capture option choice"
+c_co2captureEnergy    "carbon capture option choice"
 c_bioliqscen          "bioenergy liquids technology choise"
 c_bioh2scen           "bioenergy hydrogen technology choice"
 c_shGreenH2           "lower bound on share of green hydrogen in all hydrogen by 2030"
@@ -136,10 +136,10 @@ c_shBioTrans          "upper bound on share of bioliquids in transport from 2025
 cm_shSynTrans         "lower bound on share of synthetic fuels in all transport fuels by 2045"
 cm_shSynGas           "lower bound on share of synthetic gases by 2045"
 cm_optimisticMAC      "assume optimistic Industry MAC from AR5 Ch. 10?"
-cm_captureInd        "carbon capture for Industry"
-cm_captureCement          "carbon capture for cement sub-sector"
-cm_captureChemicals       "carbon capture for chemicals sub-sector"
-cm_captureSteel            "carbon capture for steel sub-sector"
+cm_co2captureInd        "carbon capture for Industry"
+cm_co2captureCement          "carbon capture for cement sub-sector"
+cm_co2captureChemicals       "carbon capture for chemicals sub-sector"
+cm_co2captureSteel            "carbon capture for steel sub-sector"
 cm_bioenergy_SustTax    "level of the bioenergy sustainability tax in fraction of bioenergy price"
 cm_bioenergy_EF_for_tax "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2 per GJ]"
 cm_maxProdBiolc         "bound on global pebiolc production including residues but excluding traditionally used biomass [EJ per yr]"
@@ -240,7 +240,7 @@ cm_taxCO2_expGrowth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
-c_captureEnergy  = 1;        !! def = 1
+c_co2captureEnergy  = 1;        !! def = 1
 c_bioliqscen     = 1;        !! def = 1
 c_bioh2scen      = 1;        !! def = 1
 c_shGreenH2      = 0;        !! def = 0
@@ -249,10 +249,10 @@ cm_shSynTrans    = 0;        !! def = 0
 cm_shSynGas      = 0;        !! def = 0
 
 cm_optimisticMAC       = 0;        !! def = 0
-cm_captureInd          = 1;        !! def = 1
-cm_captureCement          = 1;        !! def = 1
-cm_captureChemicals       = 1;        !! def = 1
-cm_captureSteel           = 1;        !! def = 1
+cm_co2captureInd          = 1;        !! def = 1
+cm_co2captureCement          = 1;        !! def = 1
+cm_co2captureChemicals       = 1;        !! def = 1
+cm_co2captureSteel           = 1;        !! def = 1
 
 $setglobal cm_secondary_steel_bound  none   !! def = "scenario"
 
@@ -443,8 +443,8 @@ $setglobal cm_adj_coeff_multiplier  off
 $setglobal cm_inco0Factor  off !! def = off
 $setglobal cm_inco0RegiFactor  off !! def = off
 
-$setglobal cm_captureEnergyMarkup  off !! def = off
-$setglobal cm_captureIndMarkup  off !! def = off
+$setglobal cm_co2captureEnergyMarkup  off !! def = off
+$setglobal cm_co2captureIndMarkup  off !! def = off
 $setglobal cm_renewables_floor_cost  off !! def = off 
 
 $setglobal cm_sehe_upper  off !! def = off 

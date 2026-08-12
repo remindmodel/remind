@@ -228,8 +228,8 @@ $endIf.cm_implicitPePriceTarget
 *** Region-specific datainput (with hard-coded regions)
 ***---------------------------------------------------------------------------
 
-$IFTHEN.CCcostMarkup not "%cm_captureEnergyMarkup%" == "off" 
-	pm_inco0_t(ttot,regi,teCCS)$(regi_group("EUR_regi",regi)) = pm_inco0_t(ttot,regi,teCCS)*%cm_captureEnergyMarkup%;
+$IFTHEN.CCcostMarkup not "%cm_co2captureEnergyMarkup%" == "off" 
+	pm_inco0_t(ttot,regi,teCCS)$(regi_group("EUR_regi",regi)) = pm_inco0_t(ttot,regi,teCCS)*%cm_co2captureEnergyMarkup%;
 $ENDIF.CCcostMarkup
 
 $IFTHEN.renewablesFloorCost not "%cm_renewables_floor_cost%" == "off" 

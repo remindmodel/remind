@@ -135,7 +135,7 @@ if (cm_startyear eq 2005,
 );
 
 !! Switch to turn off steel CCS
-if (cm_captureSteel ne 1 OR cm_captureInd ne 1,
+if (cm_co2captureSteel ne 1 OR cm_co2captureInd ne 1,
   vm_cap.fx(t,regi,teCCPrc,rlf) = 0.;
 );
 

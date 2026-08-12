@@ -394,11 +394,11 @@ if(cm_emiscen = 1,
 );
 
 
-if(c_captureEnergy = 2, !! no carbon capture at all
+if(c_co2captureEnergy = 2, !! no carbon capture at all
   vm_deltaCap.up(t,regi_CCtech_energy,teCCS,rlf) $ (t.val ge cm_startyear) = sm_eps;
-elseif(c_captureEnergy = 3), !! no bio carbon capture:
+elseif(c_co2captureEnergy = 3), !! no bio carbon capture:
   vm_deltaCap.up(t,regi_CCtech_energy,te,rlf) $ ((t.val ge cm_startyear) and teCCS(te) and teBio(te)) = sm_eps;
-elseif(c_captureEnergy = 4), !! no carbon capture in the electricity sector
+elseif(c_co2captureEnergy = 4), !! no carbon capture in the electricity sector
   loop(emi2te(enty,"seel",te,"cco2") $ ( sum(regi_CCtech_energy, pm_emifac("2020",regi_CCtech_energy,enty,"seel",te,"cco2")) > 0 ),
     loop(te2rlf(te,rlf),
       vm_deltaCap.up(t,regi_CCtech_energy,te,rlf) $ (t.val ge cm_startyear)  = sm_eps;
