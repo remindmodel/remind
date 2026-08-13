@@ -1171,7 +1171,8 @@ loop(t $ (t.val ge 2015 AND t.val lt 2040),
 pm_cf(t,regi,"storwindoff") = pm_cf(t,regi,"storwindon");
 pm_cf(t,regi,"gridwindoff") = pm_cf(t,regi,"gridwindon");
 
-
+*RoSa*: This should moved to mrremind when bioeths is implemented in REMIND. For now, we just set the capacity factor of bioethsc to be the same as bioeths.
+pm_cf(ttot,regi,"bioethsc") = pm_cf(ttot,regi,"bioeths");
 
 display p_aux_capacityFactorHistOverREMIND, pm_dataren, pm_cf;
 

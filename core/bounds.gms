@@ -468,7 +468,8 @@ vm_deltaCap.fx(t,regi,"gash2",rlf) $ (t.val > 2030) = 0;
 vm_cap.lo(t,regi,"coalh2",rlf) $ (t.val >= 2020) = 0;
 vm_cap.lo(t,regi,"gash2",rlf) $ (t.val > 2030) = 0;
 
-
+* RoSa: Not sure if this should be there. 
+* vm_deltaCap.up(t,regi,"bioethsc",rlf) $ (t.val < 2030) = 1e-6;
 
 
 
