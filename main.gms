@@ -637,15 +637,15 @@ parameter
 *' *  (6): +33% investment costs for tnrs under SSP5, uranium resources increased by a factor of 10
 *'
 parameter
-  c_co2captureEnergy        "carbon capture option choice for energy conversion technologies. Regions that this is applied to are defined in cm_regi_captureEnergy"
+  c_co2captureEnergy        "carbon capture option choice for energy conversion technologies. Regions that this is applied to are defined in c_regi_co2captureEnergy"
 ;
   c_co2captureEnergy  = 1;        !! def = 1  !! regexp = [1-4]
 *' *  (1): all teCCS technologies are available
-*' *  (2): no teCCS technologies are available. Note: this no longer limits geologic CO2 storage! 
+*' *  (2): no teCCS technologies are available. Note: this does not limit geologic CO2 storage! 
 *' *  (3): no bio carbon capture from teCCS technologies
 *' *  (4): no carbon capture in the electricity sector via teCCS technologies
 *' Note: This does not affect carbon capture of emissions in industry, via DAC or OAE! 
-*' Align with other cm_CCtech..., cm_33DAC, cm_33OAE, as well as ccsinje and carbonUtilization assumptions for the intended overall narrative.
+*' Align with other cm_co2capture..., cm_33DAC, cm_33OAE, as well as ccsinje and carbonUtilization assumptions for the intended overall narrative.
 
 parameter
   c_bioliqscen              "2nd generation bioenergy liquids technology choice"
@@ -689,22 +689,22 @@ parameter
 parameter
   cm_co2captureInd             "carbon capture for Industry on/off"
 ;
-  cm_co2captureInd          = 1;        !! def = 1
+  cm_co2captureInd          = 1;        !! def = 1   !! regexp = 0|1
 *'
 parameter
   cm_co2captureCement             "carbon capture for cement sub-sector on/off"
 ;
-  cm_co2captureCement          = 1;        !! def = 1
+  cm_co2captureCement          = 1;        !! def = 1   !! regexp = 0|1
 *'
 parameter
   cm_co2captureChemicals          "carbon capture for chemicals sub-sector on/off"
 ;
-  cm_co2captureChemicals       = 1;        !! def = 1
+  cm_co2captureChemicals       = 1;        !! def = 1   !! regexp = 0|1
 *'
 parameter
   cm_co2captureSteel              "carbon capture for steel sub-sector on/off"
 ;
-  cm_co2captureSteel           = 1;        !! def = 1
+  cm_co2captureSteel           = 1;        !! def = 1   !! regexp = 0|1
 *'
 parameter
   cm_bioenergy_SustTax      "level of the bioenergy sustainability tax in fraction of bioenergy price"
@@ -943,7 +943,7 @@ parameter
   c_ccsinjecratescen    = 1;         !! def = 1  !! regexp = [0-6]
 *' This switch determines the upper bound of the annual CCS injection rate.
 *' CCS here refers to carbon sequestration, carbon capture is modelled separately.
-*' *   (0) no "CCS" as in no carbon sequestration at all. Note: there can still be carbon capture unless this is turned off as well.
+*' *   (0) no "CCS" as in no carbon sequestration at all. Note: there can still be carbon capture unless this is turned off as well via cm_co2capture...
 *' *   (1) reference case: 0.005; max 19.7 GtCO2/yr globally
 *' *   (2) lower estimate: 0.0025; max 9.8 GtCO2/yr globally
 *' *   (3) upper estimate: 0.0075; max 29.5 GtCO2/yr globally
@@ -1921,13 +1921,13 @@ $setglobal cm_inco0RegiFactor  off  !! def = off
 *'  * (med): new main estimate; 12 USD/tCO2 at all times (similar to ~11.4 USD/tCO2 average of saline formations, on- and offshore DOG fields in Budinis et al 2017)
 *'  * (high): upper estimate; ~20USD/tCO2 (constant), assuming upper end of storage cost and long transport distances
 $setglobal cm_ccsinjeCost high !! def = high !! regexp = med|low|high
-*** cm_co2captureEnergyMarkup "multiplicative factor for carbon capture technologies (teCCS) cost markup"
-***   def <- "off" = use default CC pm_inco0_t values.
-***   or number (ex. 0.66), multiply by 0.66 the CSS cost markup
+*** cm_co2captureEnergyMarkup "multiplicative factor for CO2 capture technologies (teCCS) capital cost markup applied to EUR_regi regions"
+*' *  (off): use default pm_inco0_t values for teCCS technologies
+*' *  (any value gt 0): multiply by the capital cost by the given factor. E.g. factor 0.66 reduces the capital cost of carbon capture technologies by 1/3.
 $setglobal cm_co2captureEnergyMarkup  off  !! def = off
-*** cm_co2captureIndMarkup "multiplicative factor for Industry carbon capture cost markup"
-***   def <- "off"
-***   or number (ex. 0.66), multiply by 0.66 Industry carbon capture cost markup
+*** cm_co2captureIndMarkup "multiplicative factor for Industry CO2 capture cost "
+*' * (off): use default co2 capture cost in industry
+*' * (any value gt 0): multiply the CO2 capture cost in industry by the given factor. E.g. factor 0.66 reduces the carbon capture cost in industry by 1/3.'
 $setglobal cm_co2captureIndMarkup  off !! def = off
 *' Flag to change learning assumption for established pyrolysis technologies. 0 = not learning; any number = learning rate
 *' Beware: When turned on, policy runs require a NPi that also has learning, otherwise it becomes unbounded.

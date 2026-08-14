@@ -324,7 +324,7 @@ loop(te $ sameas(te, "biopyrliq"), !! does not yet exist commercially
   vm_deltaCap.lo(t,regi,"biopyrliq",rlf) $ (t.val > cm_startyear) = 1e-8; !! initiate a negligible increase to help model find the technology
   vm_deltaCap.up(t,regi,"biopyrliq",rlf) $ (t.val > cm_startyear) = inf; !! revert fixing to small values above
   if(c_biopyrOptions le 1,
-  vm_deltaCap.fx(t,regi,"biopyrliq",rlf) $ (t.val >= cm_startyear) = 0;
+  vm_deltaCap.fx(t,regi,"biopyrliq",rlf) = 0;
   );
 );
 
@@ -343,8 +343,8 @@ vm_cap.fx("2020",regi,te,rlf) $ (teBio(te) and teCCS(te)) = 0;
 
 *' switch to deactivate carbon sequestration
 if(c_ccsinjecratescen = 0, 
-  vm_deltaCap.up(t,regi_CCtech_energy,"ccsinjeon","1") $ (t.val ge cm_startyear) = sm_eps;
-  vm_deltaCap.up(t,regi_CCtech_energy,"ccsinjeoff","1") $ (t.val ge cm_startyear) = sm_eps;
+  vm_deltaCap.up(t,regi_co2captureEnergy,"ccsinjeon","1") = sm_eps;
+  vm_deltaCap.up(t,regi_co2captureEnergy,"ccsinjeoff","1") = sm_eps;
 );
 
 *' Bounds on maximum annual carbon storage by region
@@ -395,13 +395,13 @@ if(cm_emiscen = 1,
 
 
 if(c_co2captureEnergy = 2, !! no carbon capture at all
-  vm_deltaCap.up(t,regi_CCtech_energy,teCCS,rlf) $ (t.val ge cm_startyear) = sm_eps;
+  vm_deltaCap.up(t,regi_co2captureEnergy,teCCS,rlf) = sm_eps;
 elseif(c_co2captureEnergy = 3), !! no bio carbon capture:
-  vm_deltaCap.up(t,regi_CCtech_energy,te,rlf) $ ((t.val ge cm_startyear) and teCCS(te) and teBio(te)) = sm_eps;
+  vm_deltaCap.up(t,regi_co2captureEnergy,te,rlf) $ (teCCS(te) and teBio(te)) = sm_eps;
 elseif(c_co2captureEnergy = 4), !! no carbon capture in the electricity sector
-  loop(emi2te(enty,"seel",te,"cco2") $ ( sum(regi_CCtech_energy, pm_emifac("2020",regi_CCtech_energy,enty,"seel",te,"cco2")) > 0 ),
+  loop(emi2te(enty,"seel",te,"cco2") $ ( sum(regi_co2captureEnergy, pm_emifac("2020",regi_co2captureEnergy,enty,"seel",te,"cco2")) > 0 ),
     loop(te2rlf(te,rlf),
-      vm_deltaCap.up(t,regi_CCtech_energy,te,rlf) $ (t.val ge cm_startyear)  = sm_eps;
+      vm_deltaCap.up(t,regi_co2captureEnergy,te,rlf)  = sm_eps;
     );
   );
 );
