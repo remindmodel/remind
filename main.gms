@@ -1549,7 +1549,10 @@ $setglobal cm_tradbio_phaseout  default  !! def = default  !! regexp = default|f
 ***  (off):             (default) no bound
 ***  (100):             (e.g.) set maximum to 100 EJ per year
 ***  (any value ge 0):  set maximum to that value
-$setglobal cm_maxProdBiolc  100  !! def = 100  !! regexp = off|is.nonnegative
+***  Note: Regional shares are fixed. For dynamically adjusted shares use
+***  `cm_implicitQttyTarget` (this, however, affects total biomass, i.e.
+***  including 1st gen. biomass and not exluding traditional).
+$setglobal cm_maxProdBiolc  off  !! def = 100  !! regexp = off|is.nonnegative
 *** cm_bioprod_regi_lim
 *** limit to total biomass production (including residues) by region to an upper value in EJ/yr from 2035 on
 *** example: "CHA 20, EUR_regi 7.5" limits total biomass production in China to 20 EJ/yr and
@@ -1674,9 +1677,9 @@ $setGlobal cm_vehiclesSubsidies  off !! def = off
 ***     cm_implicitQttyTarget  "EU27_RpEUEff,EU27_bio4"
 ***       "EU27_RpEUEff" -> Enforce a tax that guarantees total FE will be lower or equal to the RePowerEU target for 2030.
 ***       "EU27_bio4" -> Enforce a tax that garantees that EU27 biomass use will be lower or equal to the 4EJ in 20235 and 2050.
-$setGlobal cm_implicitQttyTarget  off !! def = off
+$setGlobal cm_implicitQttyTarget  GLO_bio100 !! def = off
 ***  cm_implicitQttyTargetType - Define if the quantity target switch cm_implicitQttyTarget contains explicit values for defining the targets (config) or if it contains scenario names to reflect hard-coded options (scenario).
-$setGlobal cm_implicitQttyTargetType  config !! def = config !! regexp = config|scenario
+$setGlobal cm_implicitQttyTargetType  scenario !! def = config !! regexp = config|scenario
 *** cm_loadFromGDX_implicitQttyTargetTax "load p47_implicitQttyTargetTax values from gdx for first iteration. Usefull for policy runs."
 $setGlobal cm_loadFromGDX_implicitQttyTargetTax  off  !! def = off  !! regexp = off|on
 *** cm_implicitQttyTarget_delay "delay the start of the quantity target algorithm either to:

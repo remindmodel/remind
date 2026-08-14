@@ -64,6 +64,7 @@ qttyTargetGroup "quantity target aggregated categories"
 /
   all
   biomass
+  biolc
   fossil
   VRE
   wind
@@ -81,6 +82,7 @@ energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,all_enty) "set combinin
 *** Primary energy type categories
 ***  PE.all.(entyPe) !! defined below as calculated set
   PE.biomass.(pebiolc,pebios,pebioil)
+  PE.biolc.(pebiolc)
   PE.fossil.(peoil,pegas,pecoal)
   PE.VRE.(pewin,pesol)
   PE.wind.pewin
@@ -127,7 +129,12 @@ qttyTargetScenario  "hard-coded quantity scenarios"
   EU27_bio7    "EU-27 primary energy biomass limited to 7 EJ by 2035 and 2050"
   EU27_bio7p5  "EU-27 primary energy biomass limited to 7.5 EJ by 2035 and 2050"
   EU27_bio12   "EU-27 primary energy biomass limited to 12 EJ by 2035 and 2050"
-  GLO_bio100   "Global primary energy biomass limited to 100EJ by 2035 and 2050"
+  GLO_bio100   "Global primary energy biomass limited to 100EJ by 2035 and 2100"
+  GLO_bio110   "Global primary energy biomass limited to 110EJ by 2035 and 2100"
+  GLO_bio150   "Global primary energy biomass limited to 150EJ by 2035 and 2100"
+  GLO_bio200   "Global primary energy biomass limited to 200EJ by 2035 and 2100"
+  GLO_bio250   "Global primary energy biomass limited to 250EJ by 2035 and 2100"
+  GLO_bio300   "Global primary energy biomass limited to 300EJ by 2035 and 2100"
 
   EU27_limVRE  "wind and solar limited to linear extrapolation of 2021-2022 growth of generation capacity by 2025 and 2050"
 
