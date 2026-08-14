@@ -14,10 +14,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#2413](https://github.com/remindmodel/remind/pull/2413)]
 - **scripts** Move LCOE reporting into `reoirtingLCOE` instead of `reporting`
     [[#2416](https://github.com/remindmodel/remind/pull/2416)]
+- **47_regipol** Use dynamic implicit quantity target to limit biomass to 100 EJ/yr in default setting (instead of ex-ante regional allocations via `cm_maxProdBiolc`)
 
 ### added
 - **scripts** Add the possibility to build only some sections of the compareScenarios2 report with `--sections=`
     [[#2415](https://github.com/remindmodel/remind/pull/2415)]
+- **47_regipol** New (optional) quantity targets for limiting PE lignocellulosic biomass
 
 ### removed
 -
