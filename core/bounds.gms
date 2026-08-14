@@ -343,8 +343,7 @@ vm_cap.fx("2020",regi,te,rlf) $ (teBio(te) and teCCS(te)) = 0;
 
 *' switch to deactivate carbon sequestration
 if(c_ccsinjecratescen = 0, 
-  vm_deltaCap.up(t,regi_co2captureEnergy,"ccsinjeon","1") = sm_eps;
-  vm_deltaCap.up(t,regi_co2captureEnergy,"ccsinjeoff","1") = sm_eps;
+  vm_deltaCap.up(t,regi_co2captureEnergy,teccsinje,"1") = sm_eps;
 );
 
 *' Bounds on maximum annual carbon storage by region
