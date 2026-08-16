@@ -533,6 +533,10 @@ vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt) $ (t.val <= cm_H2InBuild
 *' upper bound on bioliquids as a share of transport liquids
 v_shBioTrans.up(t,regi) $ (t.val > 2020) = c_shBioTrans;
 
+*' upper bounds on secondary energy subtype shares in FE demand
+v_shSeFeSector.up(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) = 1;
+v_shSeFe.up(ttot,all_regi,all_enty) = 1;
+
 
 *** ==================================================================
 *' #### 7. Assumptions for emissions
