@@ -18,7 +18,7 @@
 *' (EW) Basalt is mined and ground to fine grain sizes (default 20 µm), and then spread
 *' on crop fields where it weathers in reaction with water and atmospheric CO2. Electricity is needed to grind the
 *' rocks and diesel is needed for spreading on crop fields. Transport costs from mine to fields depend on distance grades.
-*' In addition, capital cost for mining and production, and O&M cost for mining and distribution on fields are added. 
+*' In addition, capital cost for mining and production, and O&M cost for mining and spreading on fields are added. 
 *' The amount of rock that can be spread on fields is limited by the maximum potential for enhanced weathering, 
 *' which depends on the region and climate grade. The weathering process leads to an exponential
 *' decay over time of the spread rocks. There is an upper limit on the amount of rock that can be on the fields, so that

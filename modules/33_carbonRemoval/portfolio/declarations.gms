@@ -47,8 +47,8 @@ vm_EW_transport_costs(tall,all_regi)     "O&M costs for transporting ground rock
 positive variables
 
 *** EW
-v33_EW_onfield(ttot,all_regi,rlf,rlf)  "amount of ground rock spread on fields in each timestep [Gt]"
-v33_EW_onfield_tot(ttot,all_regi,rlf,rlf)  "total amount of ground rock on fields, for each climate zone and transportation distance [Gt]"
+v33_EW_onfield(ttot,all_regi,rlf,rlf)  "amount of ground rock spread on fields in each timestep [Gt rock / a]"
+v33_EW_onfield_tot(ttot,all_regi,rlf,rlf)  "total amount of ground rock on fields, for each climate zone and transportation distance [Gt rock]"
 v33_FEdemand(ttot,all_regi,all_enty,all_enty,all_te)  "FE demand of each technology [TWa]"
 *** Multiple options
 vm_co2capture_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "total emissions captured through technologies in the CDR module that enter the CCUS chain + captured emissions from associated FE demand [GtC / a]"
