@@ -71,8 +71,8 @@ loop ((ttot,steps)$( ttot.val ge 2005 ),
 
   sm_tmp = steps.val * sm_dmac / sm_c_2_co2;   !! CO2 price at MAC step [$/tCO2] 
 
-$ifthen NOT "%cm_Industry_CCS_markup%" == "off"
-  sm_tmp = sm_tmp / %cm_Industry_CCS_markup%;
+$ifthen NOT "%cm_co2captureIndMarkup%" == "off"
+  sm_tmp = sm_tmp / %cm_co2captureIndMarkup%;
 $endif
 
   !! short-term (until 2025)
@@ -120,8 +120,8 @@ $endif.cm_subsec_model_steel
 );
 
 
-if (cm_IndCCSscen eq 1,
-  if (cm_CCS_cement eq 1,
+if (cm_co2captureInd eq 1,
+  if (cm_co2captureCement eq 1,
 
     emiMac2mac("co2cement_process","co2cement") = YES;
      );
@@ -244,8 +244,8 @@ emiMacSector(emiInd37_fuel) = NO;
 pm_macSwitch(ttot,regi,emiInd37)      = NO;
 
 *** turn on CCS for industry emissions
-if (cm_IndCCSscen eq 1,
-  if (cm_CCS_cement eq 1,
+if (cm_co2captureInd eq 1,
+  if (cm_co2captureCement eq 1,
     emiMacSector("co2cement") = YES;
     pm_macSwitch(ttot,regi,"co2cement") = YES;
     pm_macSwitch(ttot,regi,"co2cement_process") = YES;
@@ -253,14 +253,14 @@ if (cm_IndCCSscen eq 1,
     emiMac2mac("co2cement_process","co2cement") = YES;
   );
 
-  if (cm_CCS_chemicals eq 1,
+  if (cm_co2captureChemicals eq 1,
     emiMacSector("co2chemicals") = YES;
     pm_macSwitch(ttot,regi,"co2chemicals") = YES;
     emiMac2mac("co2chemicals","co2chemicals") = YES;
   );
 
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "ces"
-  if (cm_CCS_steel eq 1,
+  if (cm_co2captureSteel eq 1,
     emiMacSector("co2steel") = YES;
     pm_macSwitch(ttot,regi,"co2steel") = YES;
     emiMac2mac("co2steel","co2steel") = YES;
