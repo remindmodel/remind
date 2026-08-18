@@ -296,41 +296,48 @@ runSingle <- function(output, outputdirs, slurmConfig, interactiveSession, test)
     # Execute R scripts
     ###################################################################################
 
-    message("\nStarting output generation for ", outputdir, "\n")
-    name <- paste0(output, ".R")
-    scriptsfound <- file.exists(paste0("scripts/output/single/", name))
-    if (any(! scriptsfound)) {
-      warning("Skipping output scripts not found in scripts/output/single: ", name[! scriptsfound])
-    }
-    if (test) {
-      message("Test mode, not executing scripts/output/single/", paste(name, collapse = ", "))
-      next
-    }
-    if (slurmConfig == "direct") {
-      # execute output script directly (without sending it to slurm)
-      for (n in name[scriptsfound]) {
-        message("Executing ", n)
-        tmp.env <- new.env()
-        tmp.error <- try(sys.source(paste0("scripts/output/single/", n), envir = tmp.env))
-        #        rm(list=ls(tmp.env),envir=tmp.env)
-        rm(tmp.env)
-        gc()
-        if (!is.null(tmp.error)) {
-          warning("Script ", n, " was stopped by an error and not executed properly!")
-          errors <- TRUE
-        }
-      }
+    # output creation for --testOneRegi was switched off in start.R in this commit:
+    # https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
+    if (all(output %in% c(NA, "NA"))) {
+      message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
     } else {
-      # send the output script to slurm
-      timestamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
-      logfile <- file.path(outputdir, paste0("log_output_", timestamp, ".txt"))
-      Rscripts <- paste0("Rscript scripts/output/single/", name, " --outputdir=", outputdir, collapse = "; ")
-      slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
-                    " --mail-type=END,FAIL --comment=output.R --wrap='", Rscripts, "'")
-      message("Sending to slurm: ", paste(name, collapse = ", "), ". Find log in ", logfile)
-      system(slurmcmd)
+      message("\nStarting output generation for ", outputdir, "\n")
+      name <- paste0(output, ".R")
+      scriptsfound <- file.exists(paste0("scripts/output/single/", name))
+      if (any(! scriptsfound)) {
+        warning("Skipping output scripts not found in scripts/output/single: ", name[! scriptsfound])
+      }
+      if (test) {
+        message("Test mode, not executing scripts/output/single/", paste(name, collapse = ", "))
+        next
+      }
+      if (slurmConfig == "direct") {
+        # execute output script directly (without sending it to slurm)
+        for (n in name[scriptsfound]) {
+          message("Executing ", n)
+          tmp.env <- new.env()
+          tmp.error <- try(sys.source(paste0("scripts/output/single/", n), envir = tmp.env))
+          #        rm(list=ls(tmp.env),envir=tmp.env)
+          rm(tmp.env)
+          gc()
+          if (!is.null(tmp.error)) {
+            warning("Script ", n, " was stopped by an error and not executed properly!")
+            errors <- TRUE
+          }
+        }
+      } else {
+        # send the output script to slurm
+        timestamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
+        logfile <- file.path(outputdir, paste0("log_output_", timestamp, ".txt"))
+        # Prefix RSCRIPT_SLURM_HOOK for piam-apptainer integration (empty if unset)
+        Rscripts <- paste0(trimws(paste(Sys.getenv("RSCRIPT_SLURM_HOOK", unset = ""), "Rscript")), " scripts/output/single/", name, " --outputdir=", outputdir, collapse = "; ")
+        slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
+                      " --mail-type=END,FAIL --comment=output.R --wrap='", Rscripts, "'")
+        message("Sending to slurm: ", paste(name, collapse = ", "), ". Find log in ", logfile)
+        system(slurmcmd)
+      }
+      message("\nFinished ", ifelse(slurmConfig == "direct", "", "starting job for "), "output generation for ", outputdir, "!\n")
     }
-    message("\nFinished ", ifelse(slurmConfig == "direct", "", "starting job for "), "output generation for ", outputdir, "!\n")
 
     rm(source_include)
     if (!is.null(warnings())) {

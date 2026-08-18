@@ -132,7 +132,8 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
                               " --output=log.txt --open-mode=append", # append for requeued jobs
                               " --mail-type=END,FAIL",
                               " --comment=REMIND",
-                              " --wrap=\"Rscript prepareAndRun.R \" ",
+                              # Prefix RSCRIPT_SLURM_HOOK for piam-apptainer integration (empty if unset)
+                              " --wrap=\"", trimws(paste(Sys.getenv("RSCRIPT_SLURM_HOOK", unset = ""), "Rscript")), " prepareAndRun.R \" ",
                               cfg$slurmConfig))
     Sys.sleep(1)
   }
