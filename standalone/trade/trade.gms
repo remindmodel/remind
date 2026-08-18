@@ -139,11 +139,11 @@ c_shGreenH2           "lower bound on share of green hydrogen in all hydrogen by
 c_shBioTrans          "upper bound on share of bioliquids in transport from 2025 onwards"
 cm_shSynTrans         "lower bound on share of synthetic fuels in all transport fuels by 2045"
 cm_shSynGas           "lower bound on share of synthetic gases by 2045"
-cm_IndCCSscen        "CCS for Industry"
 cm_optimisticMAC     "assume optimistic Industry MAC from AR5 Ch. 10?"
-cm_CCS_cement        "CCS for cement sub-sector"
-cm_CCS_chemicals     "CCS for chemicals sub-sector"
-cm_CCS_steel         "CCS for steel sub-sector"
+cm_co2captureInd        "carbon capture for Industry"
+cm_co2captureCement          "carbon capture for cement sub-sector"
+cm_co2captureChemicals     "carbon capture for chemicals sub-sector"
+cm_co2captureSteel         "carbon capture for steel sub-sector"
 cm_bioenergy_SustTax    "level of the bioenergy sustainability tax in fraction of bioenergy price"
 cm_bioenergy_EF_for_tax "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2 per GJ]"
 cm_maxProdBiolc         "bound on global pebiolc production including residues but excluding traditionally used biomass [EJ per yr]"
@@ -193,7 +193,7 @@ cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshoot
 c_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 cm_taxCO2_IncAfterPeakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 c_regi_nucscen				"regions to apply nucscen to"
-c_regi_capturescen			"region to apply ccapturescen to"
+c_regi_co2captureEnergy			"region to apply c_co2captureEnergy to"
 c_regi_synfuelscen			"region to apply synfuelscen to"
 cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
 c_regi_sensscen				"regions which regional sensitivity parameters apply to"
@@ -243,7 +243,7 @@ cm_taxCO2_expGrowth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
-cm_ccapturescen  = 1;        !! def = 1
+c_co2captureEnergy  = 1;        !! def = 1
 c_bioliqscen     = 1;        !! def = 1
 c_bioh2scen      = 1;        !! def = 1
 c_shGreenH2      = 0;        !! def = 0
@@ -251,11 +251,11 @@ c_shBioTrans     = 1;        !! def = 1
 cm_shSynTrans    = 0;        !! def = 0
 cm_shSynGas      = 0;        !! def = 0
 
-cm_IndCCSscen          = 1;        !! def = 1
 cm_optimisticMAC       = 0;        !! def = 0
-cm_CCS_cement          = 1;        !! def = 1
-cm_CCS_chemicals       = 1;        !! def = 1
-cm_CCS_steel           = 1;        !! def = 1
+cm_co2captureInd          = 1;        !! def = 1
+cm_co2captureCement          = 1;        !! def = 1
+cm_co2captureChemicals       = 1;        !! def = 1
+cm_co2captureSteel           = 1;        !! def = 1
 
 $setglobal cm_secondary_steel_bound  none   !! def = "scenario"
 
@@ -338,7 +338,7 @@ $setGlobal cm_reducCostB  none !! def = none
 $setGlobal cm_effHP  5 !! def = 5
 
 $setGlobal c_regi_nucscen  all !! def = all
-$setGlobal c_regi_capturescen  all !! def = all
+$setGlobal c_regi_captureEnergy  all !! def = all
 $setGlobal c_regi_synfuelscen  all !! def = all
 $setGlobal c_regi_sensscen  all !! def = all
 
@@ -445,8 +445,8 @@ $setglobal cm_adj_coeff_multiplier  off
 $setglobal cm_inco0Factor  off !! def = off
 $setglobal cm_inco0RegiFactor  off !! def = off
 
-$setglobal cm_CCS_markup  off !! def = off
-$setglobal cm_Industry_CCS_markup  off !! def = off
+$setglobal cm_co2captureEnergyMarkup  off !! def = off
+$setglobal cm_co2captureIndMarkup  off !! def = off
 $setglobal cm_renewables_floor_cost  off !! def = off 
 
 $setglobal cm_sehe_upper  off !! def = off 

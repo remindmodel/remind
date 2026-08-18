@@ -68,6 +68,9 @@ scripts/utils/climate_assessment/output_climate/
 # ignore GDX files in the gdx-files folder
 config/gdx-files/*.gdx
 
+# gams error file
+abort.gdx
+
 # ignore output created by output script plotRuntime.R
 plotRuntime*.html
 plotRuntimeDependencies/
@@ -80,6 +83,9 @@ runtime.rds
 # ignore RStudio project files
 /*.Rproj
 
+# vscode configuration files
+.vscode/
+
 # Main Python virtual environment
 .venv/
 
@@ -88,6 +94,9 @@ slurm-[0-9]*.log
 slurm-[0-9]*.out
 calibration_results/
 
-# ignore test logs
+# ignore files created by tests
 tests/test-full*.log
 tests/testthat/C_TESTTHAT_startlog_*.txt
+225a/
+main_testOneRegi.dmp
+main_testOneRegi.lst

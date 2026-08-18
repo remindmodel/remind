@@ -169,6 +169,11 @@ authors:
   given-names:  "Elmar"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
+- family-names: "Krogmann"
+  given-names:  "Simon"
+  orcid: https://orcid.org/0000-0001-6577-6756
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
 - family-names: "Lécuyer"
   given-names:  "Fabrice"
   orcid: https://orcid.org/0000-0002-7364-999X
@@ -339,8 +344,8 @@ abstract: REMIND (REgional Model of Investment and Development) is a numerical
   technology, policy and climate constraints. It also accounts for regional trade 
   characteristics on goods, energy fuels, and emissions allowances. All greenhouse 
   gas emissions due to human activities are represented in the model.
-version: "3.7.0.dev23"
-date-released: 2026-07-22
+version: "3.7.0.dev52"
+date-released: 2026-08-18
 repository-code: https://github.com/remindmodel/remind
 keywords:
   - energy
