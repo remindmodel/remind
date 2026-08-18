@@ -36,7 +36,8 @@
         " --output=", jobName, ".out",
         " --error=", jobName, ".out",
         " --mail-type=END --time=200 --mem-per-cpu=8000",
-        " --wrap=\"Rscript ", script,
+        # Prefix RSCRIPT_SLURM_HOOK for piam-apptainer integration (empty if unset)
+        " --wrap=\"", trimws(paste(Sys.getenv("RSCRIPT_SLURM_HOOK", unset = ""), "Rscript")), " ", script,
         " outputdirs=", paste(outputDirs, collapse = ","),
         " validationConfig=", validationConfig,
         "\"")

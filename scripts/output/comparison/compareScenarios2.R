@@ -70,7 +70,8 @@ startComp <- function(
       " --error=", jobName, ".out",
       " --mail-type=END,FAIL --time=200",
       if (!grepl("--mem", slurmConfig)) " --mem=8000",
-      " --wrap=\"Rscript ", script,
+      # Prefix RSCRIPT_SLURM_HOOK for piam-apptainer integration (empty if unset)
+      " --wrap=\"", trimws(paste(Sys.getenv("RSCRIPT_SLURM_HOOK", unset = ""), "Rscript")), " ", script,
       " --outputdirs=", paste(outputdirs, collapse = ","),
       " --profileName=", profileName,
       " --outFileName=", outFileName,
