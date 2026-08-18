@@ -173,8 +173,7 @@ c_ccscapratescen      "CCS capture rate"
 c_export_tax_scen    "choose which oil export tax is used in the model. 0 = none, 1 = fix"
 cm_iterative_target_adj "whether or not a tax or a budget target should be iteratively adjusted depending on actual emission or forcing level"
 cm_gdximport_target   "whether or not the starting value for iteratively adjusted budgets, tax scenarios, or forcing targets (emiscen 5,6,8,9) should be read in from the input.gdx"
-cm_gs_ew              "grain size (for enhanced weathering, CDR module) [micrometre]"
-cm_LimRock             "limit amount of rock spread each year [Gt]"
+cm_33_EW_rockRemPot     "Maximum CO2 removal potential per ton of rock (t CO2 / t rock)."
 cm_expoLinear_yearStart "time at which carbon price increases linearly instead of exponentially"
 
 c_budgetCO2FFI        "carbon budget for CO2 emissions from FFI (in GtCO2)"
@@ -303,8 +302,7 @@ c_export_tax_scen     = 0;         !! def = 0
 cm_iterative_target_adj  = 0;      !! def = 0
 cm_gdximport_target      = 0;      !! def = 0
 $setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2
-cm_gs_ew                 = 20;     !! def = 20
-cm_LimRock               = 1000;   !! def = 1000
+cm_33_EW_rockRemPot      = 0.3;    !! def = 0.3
 cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
