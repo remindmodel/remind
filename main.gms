@@ -1552,8 +1552,8 @@ $setglobal cm_tradbio_phaseout  default  !! def = default  !! regexp = default|f
 ***  (100):             (e.g.) set maximum to 100 EJ per year
 ***  (any value ge 0):  set maximum to that value
 ***  Note: Regional shares are fixed. For dynamically adjusted shares use
-***  `cm_implicitQttyTarget` (this, however, affects total biomass, i.e.
-***  including 1st gen. biomass and not exluding traditional).
+***  `cm_implicitQttyTarget` (this, however, does not allow for exluding
+***  traditional biomass).
 $setglobal cm_maxProdBiolc  off  !! def = 100  !! regexp = off|is.nonnegative
 *** cm_bioprod_regi_lim
 *** limit to total biomass production (including residues) by region to an upper value in EJ/yr from 2035 on
