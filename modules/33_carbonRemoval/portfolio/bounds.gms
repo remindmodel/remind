@@ -30,7 +30,7 @@ vm_co2emi_cdrFE_beforeCapture.fx(t,regi,te_all33)$(not te_ccs33(te_all33)) = 0;
 vm_emiCdrTeDetail.fx(t,regi,te_used33)$(t.val lt 2025) = 0.0;
 v33_FEdemand.fx(t,regi,entyFe,entyFe2,te_used33)$(fe2cdr(entyFe,entyFe2,te_used33) AND (t.val lt 2025)) = 0.0;
 vm_emiCdr.fx(t,regi,"co2")$(t.val lt 2025) = 0;
-vm_omcosts_cdr.fx(t,regi)$((t.val lt 2025)) = 0;
+vm_EW_transport_costs.fx(t,regi)$((t.val lt 2025)) = 0;
 vm_cap.fx(t,regi,"weathering",rlf)$(t.val lt 2025) = 0;
 vm_co2emi_cdrFE_beforeCapture.fx(t,regi,te_used33)$(t.val lt 2025) = 0;
 v33_co2emi_non_atm_calcination.fx(t,regi,te_oae33)$(t.val lt 2025) = 0;
@@ -61,7 +61,7 @@ if(te_used33("weathering"),
     v33_EW_onfield_tot.fx(ttot,regi,rlf_cz33,rlf)$(ttot.val lt max(2025,cm_startyear)) = 0.0; !! 
     vm_emiCdrTeDetail.up(ttot,regi,"weathering")$(ttot.val gt 2040) = - sm_eps; !! force some minimum amount of EW to help the solver see it 
 else
-    vm_omcosts_cdr.fx(t,regi) = 0;
+    vm_EW_transport_costs.fx(t,regi) = 0;
     vm_cap.fx(t,regi,"weathering",rlf) = 0;
 );
 

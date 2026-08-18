@@ -106,7 +106,7 @@ q_costOM(t,regi)..
              vm_costTeCapital(t,regi,te) * vm_cap(t,regi,te,rlf)
             )
   )
-  + vm_omcosts_cdr(t,regi)
+  + vm_EW_transport_costs(t,regi)
 ;
 
 ***---------------------------------------------------------------------------
@@ -1090,7 +1090,11 @@ q_shSeFe(t,regi,entySe)$(entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(ent
       vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
 ;
 
-q_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt)$((entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) AND (sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)))..
+q_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt)$(
+    (sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)) AND
+    (entySeBio(entySe) OR entySeSyn(entySe)) AND
+    (NOT (sameas(entyFe,"fesos") AND (sameas(sector,"build") OR sameas(sector,"indst")))) !! exclude build/indst solids (not in share penalty; prevents zero-demand infeasibility)
+  )..
   v_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt) 
   * sum(entySe2$sefe(entySe2,entyFe),
       vm_demFeSector_afterTax(t,regi,entySe2,entyFe,sector,emiMkt)*(1+999$(sameas(sector,"CDR"))))
