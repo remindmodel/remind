@@ -315,20 +315,12 @@ pm_shGasLiq_fe_lo(ttot,all_regi,emi_sectors)         "Final energy gases plus li
 p_demFeSector0(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Final Energy demand in the previous iteration [TWa]"
 pm_demFeTotal0(ttot,all_regi)                        "Total Final Energy demand in the previous iteration [TWa]"
 
-$ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
-*** FE demand rescaling parameters
-  pm_scaleDemand(tall,tall,all_regi)                 "Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
-$endif.scaleDemand
 
-$ifthen.scaleDemandBuildTable not "%cm_scaleDemandBuildTable%" == "off"
-*** FE demand rescaling parameters
-  pm_scaleDemandBuildTable(ttot, all_regi)                 "Rescaling factor on buildings final energy and usable energy demand, read-in from a table" 
-$endif.scaleDemandBuildTable
-
-$ifthen.scaleDemandIndTable not "%c_scaleDemandIndTable%" == "off"
-*** FE demand rescaling parameters
-  p_scaleDemandIndTable(ttot, all_regi)                 "Rescaling factor on industry final energy and usable energy demand, read-in from a table" 
-$endif.scaleDemandIndTable
+*** FE and UE demand rescaling parameters
+$if not "%cm_scaleDemand%" == "off"     pm_scaleDemand(tall,tall,all_regi)     "Rescaling factor on industry and buildings final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
+$if not "%cm_scaleDemandChem%" == "off" pm_scaleDemandChem(tall,tall,all_regi) "Rescaling factor on chemicals final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemandChem% /
+$if not "%cm_scaleDemandBuildTable%" == "off" pm_scaleDemandBuildTable(ttot, all_regi) "Rescaling factor on buildings final energy and usable energy demand, read-in from a table" 
+$if not "%c_scaleDemandIndTable%" == "off"    p_scaleDemandIndTable(ttot, all_regi)    "Rescaling factor on industry final energy and usable energy demand, read-in from a table" 
 
 *** energy prices
 pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)     "parameter to capture all FE prices across sectors and markets [tr$2017/TWa]"
