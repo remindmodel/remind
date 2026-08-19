@@ -42,16 +42,7 @@ loop(ext_regi$sameas(ext_regi, "EUR_regi"),
 
 );
 
-*** for USA drop carbon pricing to 0 due roll back policies
-!! In case of the US, the carbon price is dropped completely, to reflect government decisions of withdrawing from the IRA and Paris Agreement,
-!! also in line with the PBL protocol 2025 (source: NewClimate).
-loop(ext_regi$sameas(ext_regi,"USA_regi"),
-   pm_taxCO2eq(t,regi)$(t.val ge 2030 AND regi_group(ext_regi,regi)) 
-      = 0;
-);
-
-
-*** for USA: test negative carbon price from 2030 on
+*** negative carbon price from 2030 on to represent fossil-friendly US policies in energy supply sector
 loop(ext_regi$sameas(ext_regi,"USA_regi"),
    pm_taxCO2eq(t,regi)$(t.val ge 2030 AND regi_group(ext_regi,regi)) 
       = -5 * sm_DptCO2_2_TDpGtC;
