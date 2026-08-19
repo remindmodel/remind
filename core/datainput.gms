@@ -290,9 +290,9 @@ fm_dataglob("inco0", "oae_ng") = fm_dataglob("inco0", "oae_ng") / (cm_33_OAE_eff
 fm_dataglob("inco0", "oae_el") = fm_dataglob("inco0", "oae_el") / (cm_33_OAE_eff / sm_c_2_co2);
 
 *** convert inco0, floorcost and omv to REMIND units by applying a factor 0.001
-***   category          energy technology   ccs technology    process-based industry 
-***   input data unit   $/kW                $/(tC/a)          $/(t/a)
-***   REMIND unit       T$/TW               T$/(GtC/a)        T$/(Gt/a)
+***   category          energy technology   ccs technology    process-based industry            weathering
+***   input data unit   $/kW                $/(tC/a)          $/(t/a)                         $/(t rock/a)
+***   REMIND unit       T$/TW               T$/(GtC/a)        T$/(Gt/a)                       T$/(Gt rock/a)
 fm_dataglob("inco0",te)        = s_DpKW_2_TDpTW   * fm_dataglob("inco0",te);
 fm_dataglob("floorcost",te)    = s_DpKW_2_TDpTW   * fm_dataglob("floorcost",te);
 fm_dataglob("omv",te)          = s_DpKWa_2_TDpTWa * fm_dataglob("omv",te);
@@ -1416,10 +1416,10 @@ $if  "%cm_rcp_scen%" == "none"    sm_budgetCO2eqGlob = 20000.0000;
   );
   if(cm_multigasscen eq 2,
 $if  "%cm_rcp_scen%" == "rcp20"   sm_budgetCO2eqGlob = 500.0000;
-     if(cm_ccapturescen eq 1,
+     if(c_co2captureEnergy eq 1,
 $if  "%cm_rcp_scen%" == "rcp26"   sm_budgetCO2eqGlob = 530.0000;
      );
-     if(cm_ccapturescen gt 1,
+     if(c_co2captureEnergy gt 1,
 $if  "%cm_rcp_scen%" == "rcp26"   sm_budgetCO2eqGlob = 700.0000;
      );
 $if  "%cm_rcp_scen%" == "rcp37"   sm_budgetCO2eqGlob = 1000.0000;
