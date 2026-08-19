@@ -26,20 +26,21 @@ display p45_CO2eqwoLU_goal;
 
 *#' nash compatible convergence scheme: adjustment of co2 tax for next iteration based on deviation of emissions in this iteration (actual) from target emissions (ref)
 *#' maximum possible change between iterations decreases with increase of iteration number
-
 if(       iteration.val lt  8, p45_adjustExponent = 4;
    elseif iteration.val lt 15, p45_adjustExponent = 3;
    elseif iteration.val lt 23, p45_adjustExponent = 2;
    else                        p45_adjustExponent = 1;
 );
 
+*** calculate CO2 tax rescale factor as ratio of current emissions in this iteration divided by target emissions, raised to the power of p45_adjustExponent
+*** use max(0.1, ...) to make sure that negative emission values cause no problem, use +0.0001 such that net zero targets cause no problem
 p45_factorRescaleCO2Tax(p45_NDCyearSet(t,regi)) =
-  ( (p45_CO2eqwoLU_actual(t,regi)+0.0001)/(p45_CO2eqwoLU_goal(t,regi)+0.0001) )**p45_adjustExponent;
+  ( (max(0.1, p45_CO2eqwoLU_actual(t,regi))+0.0001)/(p45_CO2eqwoLU_goal(t,regi)+0.0001) )**p45_adjustExponent;
 
 p45_factorRescaleCO2TaxLtd(p45_NDCyearSet(t,regi)) =
   min(max(0.1**p45_adjustExponent, p45_factorRescaleCO2Tax(t,regi)), max(2-iteration.val/15,1.01-iteration.val/10000));
-*** use max(0.1, ...) to make sure that negative emission values cause no problem, use +0.0001 such that net zero targets cause no problem
 
+*** rescale CO2 tax for next iteration
 pm_taxCO2eq(t,regi)$(t.val gt 2021 AND t.val le p45_lastNDCyear(regi)) = max(1* sm_DptCO2_2_TDpGtC,pm_taxCO2eq(t,regi) * p45_factorRescaleCO2TaxLtd(t,regi) );
 
 p45_factorRescaleCO2Tax_iter(iteration,t,regi) = p45_factorRescaleCO2Tax(t,regi);
