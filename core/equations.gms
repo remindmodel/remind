@@ -805,7 +805,11 @@ q_emiGHG_exclLULUCF_exclBunkers(t,regi)..
   v_emiGHG_exclLULUCF_exclBunkers(t,regi)
   =e=
 *** total GHG emissions excl. F-Gases and excl. LULUCF
-  vm_co2eq(t,regi) 
+  sum( emiMkt,
+         vm_emiAllMkt(t,regi,"co2",emiMkt)
+      +  vm_emiAllMkt(t,regi,"n2o",emiMkt) * sm_tgn_2_pgc
+      +  vm_emiAllMkt(t,regi,"ch4",emiMkt) * sm_tgch4_2_pgc
+    )
 *** add F-Gases, convert from MtCO2eq/yr to GtC/yr
   + vm_emiFgas(t,regi,"emiFgasTotal") / sm_c_2_co2 / 1000
 *** subtract bunker emissions

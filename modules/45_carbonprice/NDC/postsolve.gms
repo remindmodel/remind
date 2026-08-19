@@ -10,16 +10,9 @@
 display pm_taxCO2eq;
 
 *#' @equations 
-*#' calculate emission variable to be used for NDC target: GHG emissions w/o land-use change and w/o transport bunker emissions, unit [Mt CO2eq/yr]
-p45_CO2eqwoLU_actual(p45_NDCyearSet(t,regi)) =
-    vm_co2eq.l(t,regi) * sm_c_2_co2*1000
-*** add F-Gases
-    + vm_emiFgas.L(t,regi,"emiFgasTotal")
-*** substract bunker emissions
-    - sum(se2fe(enty,enty2,te),
-        pm_emifac(t,regi,enty,enty2,te,"co2")
-        * vm_demFeSector.l(t,regi,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
-      ); 
+*#' emissions of current iteration to check whether NDC implementation meets the targets
+*#' (GHG emissions w/o land-use change and w/o transport bunker emissions, unit [Mt CO2eq/yr])
+p45_CO2eqwoLU_actual(p45_NDCyearSet(t,regi)) = v_emiGHG_exclLULUCF_exclBunkers.l(t,regi) * sm_c_2_co2 * 1000;
 
 pm_taxCO2eq_iter(iteration,p45_NDCyearSet(t,regi)) = pm_taxCO2eq(t,regi);
 p45_CO2eqwoLU_actual_iter(iteration,p45_NDCyearSet(t,regi)) = p45_CO2eqwoLU_actual(t,regi);
@@ -28,7 +21,6 @@ p45_CO2eqwoLU_actual_iter(iteration,p45_NDCyearSet(t,regi)) = p45_CO2eqwoLU_actu
 ** as measure how close we are to reaching NDC emissions target
 pm_NDCEmiTargetDeviation(p45_NDCyearSet(t,regi)) = (p45_CO2eqwoLU_goal(t,regi) - p45_CO2eqwoLU_actual(t,regi)) / p45_CO2eqwoLU_goal(t,regi);
 
-display vm_co2eq.l;
 display p45_CO2eqwoLU_actual;
 display p45_CO2eqwoLU_goal;
 
