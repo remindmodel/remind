@@ -344,8 +344,8 @@ abstract: REMIND (REgional Model of Investment and Development) is a numerical
   technology, policy and climate constraints. It also accounts for regional trade 
   characteristics on goods, energy fuels, and emissions allowances. All greenhouse 
   gas emissions due to human activities are represented in the model.
-version: "3.7.0.dev81"
-date-released: 2026-08-18
+version: "3.7.0.dev84"
+date-released: 2026-08-19
 repository-code: https://github.com/remindmodel/remind
 keywords:
   - energy
