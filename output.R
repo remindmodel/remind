@@ -263,7 +263,7 @@ runSingle <- function(output, outputdirs, slurmConfig, test) { # comp = single
       gms <- cfg$gms
       revision <- cfg$inputRevision
     }
-    
+
     # Set value source_include so that loaded scripts know, that they are
     # included as source (instead of a load from command line)
     source_include <- TRUE
@@ -272,47 +272,41 @@ runSingle <- function(output, outputdirs, slurmConfig, test) { # comp = single
     # Execute R scripts
     ###################################################################################
 
-    # output creation for --testOneRegi was switched off in start.R in this commit:
-    # https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
-    if (all(output %in% c(NA, "NA"))) {
-      message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
-    } else {
-      message("\nStarting output generation for ", outputdir, "\n")
-      name <- paste0(output, ".R")
-      scriptsfound <- file.exists(paste0("scripts/output/single/", name))
-      if (any(! scriptsfound)) {
-        warning("Skipping output scripts not found in scripts/output/single: ", name[! scriptsfound])
-      }
-      if (test) {
-        message("Test mode, not executing scripts/output/single/", paste(name, collapse = ", "))
-        next
-      }
-      if (slurmConfig == "direct") {
-        # execute output script directly (without sending it to slurm)
-        for (n in name[scriptsfound]) {
-          message("Executing ", n)
-          tmp.env <- new.env()
-          tmp.error <- try(sys.source(paste0("scripts/output/single/", n), envir = tmp.env))
-          #        rm(list=ls(tmp.env),envir=tmp.env)
-          rm(tmp.env)
-          gc()
-          if (!is.null(tmp.error)) {
-            warning("Script ", n, " was stopped by an error and not executed properly!")
-            errors <- TRUE
-          }
-        }
-      } else {
-        # send the output script to slurm
-        timestamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
-        logfile <- file.path(outputdir, paste0("log_output_", timestamp, ".txt"))
-        Rscripts <- paste0("Rscript scripts/output/single/", name, " --outputdir=", outputdir, collapse = "; ")
-        slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
-                      " --mail-type=END,FAIL --comment=output.R --wrap='", Rscripts, "'")
-        message("Sending to slurm: ", paste(name, collapse = ", "), ". Find log in ", logfile)
-        system(slurmcmd)
-      }
-      message("\nFinished ", ifelse(slurmConfig == "direct", "", "starting job for "), "output generation for ", outputdir, "!\n")
+    message("\nStarting output generation for ", outputdir, "\n")
+    name <- paste0(output, ".R")
+    scriptsfound <- file.exists(paste0("scripts/output/single/", name))
+    if (any(! scriptsfound)) {
+      warning("Skipping output scripts not found in scripts/output/single: ", name[! scriptsfound])
     }
+    if (test) {
+      message("Test mode, not executing scripts/output/single/", paste(name, collapse = ", "))
+      next
+    }
+    if (slurmConfig == "direct") {
+      # execute output script directly (without sending it to slurm)
+      for (n in name[scriptsfound]) {
+        message("Executing ", n)
+        tmp.env <- new.env()
+        tmp.error <- try(sys.source(paste0("scripts/output/single/", n), envir = tmp.env))
+        #        rm(list=ls(tmp.env),envir=tmp.env)
+        rm(tmp.env)
+        gc()
+        if (!is.null(tmp.error)) {
+          warning("Script ", n, " was stopped by an error and not executed properly!")
+          errors <- TRUE
+        }
+      }
+    } else {
+      # send the output script to slurm
+      timestamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
+      logfile <- file.path(outputdir, paste0("log_output_", timestamp, ".txt"))
+      Rscripts <- paste0("Rscript scripts/output/single/", name, " --outputdir=", outputdir, collapse = "; ")
+      slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
+                    " --mail-type=END,FAIL --comment=output.R --wrap='", Rscripts, "'")
+      message("Sending to slurm: ", paste(name, collapse = ", "), ". Find log in ", logfile)
+      system(slurmcmd)
+    }
+    message("\nFinished ", ifelse(slurmConfig == "direct", "", "starting job for "), "output generation for ", outputdir, "!\n")
 
     rm(source_include)
     if (!is.null(warnings())) {
@@ -324,11 +318,19 @@ runSingle <- function(output, outputdirs, slurmConfig, test) { # comp = single
 
 #' main function of the script
 #' prompts the user for all required information to start an output script
-#' 
+#'
 #' @param args parsed command line arguments as a named list, for documentation of the arguments,
 #'        see the command line arguments of this script
 output <- function(args) {
-  remind_dir <- if (is.null(args[["remind_dir"]])) NULL                                           else unlist(strsplit(args[["remind_dir"]], ","))   
+
+  # output creation for --testOneRegi was switched off in start.R in this commit:
+  # https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
+  if (args[["output"]] %in% c(NA, "NA")) {
+    message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
+    return()
+  }
+
+  remind_dir <- if (is.null(args[["remind_dir"]])) NULL                                           else unlist(strsplit(args[["remind_dir"]], ","))
   comp       <- if (is.null(args[["comp"]]))       chooseCompMode()                               else args[["comp"]]
   output     <- if (is.null(args[["output"]]))     chooseOutputScript(comp)                       else unlist(strsplit(args[["output"]], ","))
   outputdirs <- if (is.null(args[["outputdirs"]]))  chooseOutputDirs(output, args[["remind_dir"]]) else unlist(strsplit(args[["outputdirs"]], ","))
@@ -353,7 +355,7 @@ output <- function(args) {
     } else {
       filename_prefix = args[["filename_prefix"]]
     }
-    
+
     # choose the slurm options. If you use command line arguments, use slurmConfig=priority or standby
     modulesUsingSlurmConfig <- c("compareScenarios2", "validateScenarios")
     if (isSlurmAvailable() && any(modulesUsingSlurmConfig %in% output)) {
