@@ -125,6 +125,13 @@ display p45_bestNDCcoverage;
 
 p45_NDCyearSet(t,regi)$(t_NDC_targetYear(t)) = p45_shareTarget(t,regi) >= p45_minRatioOfCoverageToMax * p45_bestNDCcoverage(regi);
 
+*** remove 2030 USA and 2035 USA targets from p45_NDCyearSet as US has withdrawn from Paris Agreement and has no NDC targets anymore
+p45_NDCyearSet("2030","USA") = NO;
+p45_NDCyearSet("2035","USA") = NO;
+
+
+
+
 if(p45_useSingleYearCloseTo > 0,
   p45_distanceToOptyear(p45_NDCyearSet(t,regi)) = abs(t.val - p45_useSingleYearCloseTo);
   p45_minDistanceToOptyear(regi) = smin(t$(p45_NDCyearSet(t,regi)), p45_distanceToOptyear(t,regi));
