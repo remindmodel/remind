@@ -351,10 +351,15 @@ $ifthen.targetCheck  "%cm_NDC_TargetCheckConv%" == "on"
 loop((t,regi)$pm_NDCEmiTargetDeviation(t,regi),
 *** pm_NDCEmiTargetDeviation gives the difference between actual model emissions and target emissions normalized to target emissions, 
 *** so a negative value means that actual emissions are below target, while a positive value means that actual emissions are above target.
-*** The convergence criterion is that actual emissions should at max up to cm_NDC_target_DevTol above the target.
-  if( (pm_NDCEmiTargetDeviation(t,regi)  le -cm_NDC_target_DevTol),
-    s80_bool = 0;
-    p80_messageShow("NDC") = YES;
+*** The convergence criterion is that actual emissions should at max up to cm_NDC_target_DevTol above the target. 
+*** However, if co2 price is already at co2 price limit, then the convergence criterion is not applied, as the model cannot increase co2 price anymore to reduce emissions.
+  if(   (      p45_CO2PriceLimitNDC(t,regi) gt 0 
+          AND  pm_taxCO2eq(t,regi) lt p45_CO2PriceLimitNDC(t,regi) * sm_DptCO2_2_TDpGtC ),
+    if( (pm_NDCEmiTargetDeviation(t,regi)  le -cm_NDC_target_DevTol),
+      s80_bool = 0;
+      p80_messageShow("NDC") = YES;
+      pm_NDCTargetNotReached_iter(iteration,t,regi) = 1;
+    );
   );
 );
 $endif.targetCheck
