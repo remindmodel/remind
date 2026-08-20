@@ -637,14 +637,16 @@ parameter
 *' *  (6): +33% investment costs for tnrs under SSP5, uranium resources increased by a factor of 10
 *'
 parameter
-  cm_ccapturescen       "carbon capture option choice, no carbon capture only if CCS and CCU are switched off!"
+  c_co2captureEnergy        "carbon capture option choice for energy conversion technologies. Regions that this is applied to are defined in c_regi_co2captureEnergy"
 ;
-  cm_ccapturescen  = 1;        !! def = 1  !! regexp = [1-4]
-*' *  (1): yes
-*' *  (2): no carbon capture (only if CCS and CCU are switched off!)
-*' *  (3): no bio carbon capture
-*' *  (4): no carbon capture in the electricity sector
-*'
+  c_co2captureEnergy  = 1;        !! def = 1  !! regexp = [1-4]
+*' *  (1): all teCCS technologies are available
+*' *  (2): no teCCS technologies are available. Note: this does not limit geologic CO2 storage! 
+*' *  (3): no bio carbon capture from teCCS technologies
+*' *  (4): no carbon capture in the electricity sector via teCCS technologies
+*' Note: This does not affect carbon capture of emissions in industry, via DAC or OAE! 
+*' Align with other cm_co2capture..., cm_33DAC, cm_33OAE, as well as ccsinje and carbonUtilization assumptions for the intended overall narrative.
+
 parameter
   c_bioliqscen              "2nd generation bioenergy liquids technology choice"
 ;
@@ -680,29 +682,29 @@ parameter
   cm_shSynGas      = 0;        !! def = 0  !! regexp = is.share
 *'
 parameter
-  cm_IndCCSscen             "CCS for Industry"
-;
-  cm_IndCCSscen          = 1;        !! def = 1
-*'
-parameter
   cm_optimisticMAC          "assume optimistic Industry MAC from AR5 Ch. 10?"
 ;
   cm_optimisticMAC       = 0;        !! def = 0
 *'
 parameter
-  cm_CCS_cement             "CCS for cement sub-sector"
+  cm_co2captureInd             "carbon capture for Industry on/off"
 ;
-  cm_CCS_cement          = 1;        !! def = 1
+  cm_co2captureInd          = 1;        !! def = 1   !! regexp = 0|1
 *'
 parameter
-  cm_CCS_chemicals          "CCS for chemicals sub-sector"
+  cm_co2captureCement             "carbon capture for cement sub-sector on/off"
 ;
-  cm_CCS_chemicals       = 1;        !! def = 1
+  cm_co2captureCement          = 1;        !! def = 1   !! regexp = 0|1
 *'
 parameter
-  cm_CCS_steel              "CCS for steel sub-sector"
+  cm_co2captureChemicals          "carbon capture for chemicals sub-sector on/off"
 ;
-  cm_CCS_steel           = 1;        !! def = 1
+  cm_co2captureChemicals       = 1;        !! def = 1   !! regexp = 0|1
+*'
+parameter
+  cm_co2captureSteel              "carbon capture for steel sub-sector on/off"
+;
+  cm_co2captureSteel           = 1;        !! def = 1   !! regexp = 0|1
 *'
 parameter
   cm_bioenergy_SustTax      "level of the bioenergy sustainability tax in fraction of bioenergy price"
@@ -941,7 +943,7 @@ parameter
   c_ccsinjecratescen    = 1;         !! def = 1  !! regexp = [0-6]
 *' This switch determines the upper bound of the annual CCS injection rate.
 *' CCS here refers to carbon sequestration, carbon capture is modelled separately.
-*' *   (0) no "CCS" as in no carbon sequestration at all
+*' *   (0) no "CCS" as in no carbon sequestration at all. Note: there can still be carbon capture unless this is turned off as well via cm_co2capture...
 *' *   (1) reference case: 0.005; max 19.7 GtCO2/yr globally
 *' *   (2) lower estimate: 0.0025; max 9.8 GtCO2/yr globally
 *' *   (3) upper estimate: 0.0075; max 29.5 GtCO2/yr globally
@@ -1126,6 +1128,16 @@ parameter
   cm_implicitQttyTarget_tolerance    = 0.01;       !! def = 0.01, i.e. regipol implicit quantity targets must be met within 1% of target deviation
 *'
 parameter
+  cm_implicitPriceTarget_tolerance "tolerance for regipol implicit FE price target deviations convergence."
+;
+  cm_implicitPriceTarget_tolerance    = 0.05;      !! def = 0.05, i.e. regipol implicit FE price targets must be met within 5% of price deviation
+*'
+parameter
+  cm_implicitPePriceTarget_tolerance "tolerance for regipol implicit PE price target deviations convergence."
+;
+  cm_implicitPePriceTarget_tolerance    = 0.05;    !! def = 0.05, i.e. regipol implicit PE price targets must be met within 5% of price deviation
+*'
+parameter
   cm_emiMktTargetDelay  "number of years for delayed price change in the emission tax convergence algorithm. Not applied to first target set."
 ;
   cm_emiMktTargetDelay    = 0;       !! def = 0
@@ -1236,9 +1248,25 @@ parameter
 *' * 1 (on), default
 *'
 parameter
+  cm_TaxConv_tolerance        "tolerance for the nash tax convergence check: maximum absolute net tax revenue relative to GDP."
+;
+  cm_TaxConv_tolerance = 0.001;  !! def = 0.001, i.e. absolute net tax revenue must be smaller than 0.1% of GDP in all regions and periods
+*'  maximum allowed absolute value of net tax revenue as a share of GDP for the tax convergence check (cm_TaxConvCheck)
+*'
+parameter
   cm_maxFadeOutPriceAnticip   "switch to determine maximum allowed fadeout price anticipation to consider that the model converged."
 ;
   cm_maxFadeOutPriceAnticip = 1e-4; !! def = 1e-4, the fadeout price anticipation term needs to be lower than 1e-4 to consider that the model converged.
+*'
+parameter
+  cm_nashObjVal_tolerance     "nash convergence tolerance: maximum accepted decrease of a region's objective value relative to its last optimal solution (only for modelstat 7 iterations)."
+;
+  cm_nashObjVal_tolerance = 1e-4;  !! def = 1e-4, rather arbitrary; objective value decreases smaller than this are accepted as if the solution were optimal
+*'
+parameter
+  cm_DevPriceAnticip_tolFactor "nash convergence: price-anticipation deviation tolerance expressed as a fraction of the goods surplus tolerance p80_surplusMaxTolerance('good')."
+;
+  cm_DevPriceAnticip_tolFactor = 0.1;  !! def = 0.1, i.e. price-anticipation deviations until 2100 must be below 10% of the goods imbalance threshold
 *'
 parameter
   cm_flex_tax                 "switch for enabling flexibility tax"
@@ -1525,7 +1553,10 @@ $setglobal cm_tradbio_phaseout  default  !! def = default  !! regexp = default|f
 ***  (off):             (default) no bound
 ***  (100):             (e.g.) set maximum to 100 EJ per year
 ***  (any value ge 0):  set maximum to that value
-$setglobal cm_maxProdBiolc  100  !! def = 100  !! regexp = off|is.nonnegative
+***  Note: Regional shares are fixed. For dynamically adjusted shares use
+***  `cm_implicitQttyTarget` (this, however, does not allow for exluding
+***  traditional biomass).
+$setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.nonnegative
 *** cm_bioprod_regi_lim
 *** limit to total biomass production (including residues) by region to an upper value in EJ/yr from 2035 on
 *** example: "CHA 20, EUR_regi 7.5" limits total biomass production in China to 20 EJ/yr and
@@ -1639,6 +1670,8 @@ $setGlobal cm_vehiclesSubsidies  off !! def = off
 ***   If cm_implicitQttyTargetType is set to "config", the quantity targets will be defined directly in this switch. Check below for examples on how to do this.
 ***   If cm_implicitQttyTargetType is set to "scenario", you should define the list of pre-defined scenarios hard-coded in module '47_regipol' that should be active for the current run (this avoids reaching the 255 characters limit in more complex definitions).
 ***   Example on how to use the switch with cm_implicitQttyTargetType = config:
+***     cm_implicitQttyTarget  "off"
+***       Deactivates any implicit quantity targets
 ***     cm_implicitQttyTarget  "2030.EU27_regi.tax.t.FE.all 1.03263"
 ***       Enforce a tax (tax) that guarantees that the total (t=total) Final Energy (FE.all) in 2030 (2030) is at most the Final energy target in the Fit For 55 regulation in the European Union (EU27_regi) (1.03263 Twa).
 ***       The p47_implicitQttyTargetTax parameter will contain the tax necessary to achieve that goal. (777.8 Mtoe = 777.8 * 1e6 toe = 777.8 * 1e6 * 41.868 GJ = 777.8 * 1e6 * 41.868 * 1e-9 EJ = 777.8 * 1e6 * 41.868 * 1e-9 * 0.03171 TWa = 1.03263 TWa)
@@ -1650,9 +1683,9 @@ $setGlobal cm_vehiclesSubsidies  off !! def = off
 ***     cm_implicitQttyTarget  "EU27_RpEUEff,EU27_bio4"
 ***       "EU27_RpEUEff" -> Enforce a tax that guarantees total FE will be lower or equal to the RePowerEU target for 2030.
 ***       "EU27_bio4" -> Enforce a tax that garantees that EU27 biomass use will be lower or equal to the 4EJ in 20235 and 2050.
-$setGlobal cm_implicitQttyTarget  off !! def = off
+$setGlobal cm_implicitQttyTarget  GLO_bio100 !! def = GLO_bio100
 ***  cm_implicitQttyTargetType - Define if the quantity target switch cm_implicitQttyTarget contains explicit values for defining the targets (config) or if it contains scenario names to reflect hard-coded options (scenario).
-$setGlobal cm_implicitQttyTargetType  config !! def = config !! regexp = config|scenario
+$setGlobal cm_implicitQttyTargetType  scenario !! def = scenario !! regexp = config|scenario
 *** cm_loadFromGDX_implicitQttyTargetTax "load p47_implicitQttyTargetTax values from gdx for first iteration. Usefull for policy runs."
 $setGlobal cm_loadFromGDX_implicitQttyTargetTax  off  !! def = off  !! regexp = off|on
 *** cm_implicitQttyTarget_delay "delay the start of the quantity target algorithm either to:
@@ -1889,20 +1922,20 @@ $setglobal cm_inco0Factor  off !! def = off
 *' *  or list of techs with respective factor to change p_inco0 value by a multiplication factor. (ex. "windon 0.33, spv 0.33" makes investment costs for windon and spv 3 times cheaper)
 *' *  (note: if %cm_techcosts% == "GLO", switch will not work for policy runs, i.e. cm_startyear > 2005, for pc, ngt and ngcc as this gets overwritten in 05_initialCap module)
 $setglobal cm_inco0RegiFactor  off  !! def = off
-*** cm_CCS_markup "multiplicative factor for CSS cost markup"
-***   def <- "off" = use default CCS pm_inco0_t values.
-***   or number (ex. 0.66), multiply by 0.66 the CSS cost markup
-$setglobal cm_ccsinjeCost high !! def = high !! regexp = med|low|high
 *' switch from standard to low and high CO2 transport & storage cost.
 *' Warning: it applies absolute values; only use it in combination with default c_techAssumptScen SSP2. 
 *'  * (low): old estimate before 03/2024; ~7.5 USD/tCO2 in 2035. Also applies tech_stat=2 and constrTme=0
 *'  * (med): new main estimate; 12 USD/tCO2 at all times (similar to ~11.4 USD/tCO2 average of saline formations, on- and offshore DOG fields in Budinis et al 2017)
 *'  * (high): upper estimate; ~20USD/tCO2 (constant), assuming upper end of storage cost and long transport distances
-$setglobal cm_CCS_markup  off  !! def = off
-*** cm_Industry_CCS_markup "multiplicative factor for Industry CSS cost markup"
-***   def <- "off"
-***   or number (ex. 0.66), multiply by 0.66 Industry CSS cost markup
-$setglobal cm_Industry_CCS_markup  off !! def = off
+$setglobal cm_ccsinjeCost high !! def = high !! regexp = med|low|high
+*** cm_co2captureEnergyMarkup "multiplicative factor for CO2 capture technologies (teCCS) capital cost markup applied to EUR_regi regions"
+*' *  (off): use default pm_inco0_t values for teCCS technologies
+*' *  (any value gt 0): multiply by the capital cost by the given factor. E.g. factor 0.66 reduces the capital cost of carbon capture technologies by 1/3.
+$setglobal cm_co2captureEnergyMarkup  off  !! def = off
+*** cm_co2captureIndMarkup "multiplicative factor for Industry CO2 capture cost "
+*' * (off): use default co2 capture cost in industry
+*' * (any value gt 0): multiply the CO2 capture cost in industry by the given factor. E.g. factor 0.66 reduces the carbon capture cost in industry by 1/3.'
+$setglobal cm_co2captureIndMarkup  off !! def = off
 *' Flag to change learning assumption for established pyrolysis technologies. 0 = not learning; any number = learning rate
 *' Beware: When turned on, policy runs require a NPi that also has learning, otherwise it becomes unbounded.
 *' (0.1): Learning rate of 10%.
@@ -2129,8 +2162,8 @@ $setGlobal c_skip_output  off        !! def = off  !! regexp = off|on
 $setglobal cm_CO2TaxSectorMarkup  off   !! def = off
 *** c_regi_nucscen              "regions to apply cm_nucscen to in case of cm_nucscen = 5 (no new nuclear investments), e.g. c_regi_nucscen <- "JPN,USA"
 $setGlobal c_regi_nucscen  all  !! def = all
-***  c_regi_capturescen              "regions to apply cm_ccapturescen to (availability of carbon capture technologies), e.g. c_regi_nucscen <- "JPN,USA"
-$setGlobal c_regi_capturescen  all  !! def = all
+***  c_regi_co2captureEnergy              "regions to apply c_co2captureEnergy to (availability of carbon capture technologies), e.g. c_regi_co2captureEnergy <- "JPN,USA"
+$setGlobal c_regi_co2captureEnergy  all  !! def = all
 *** cm_subsec_model_steel      "switch between ces-based and process-based steel implementation in subsectors realisation of industry module"
 $setglobal cm_subsec_model_steel  processes  !! def = processes  !! regexp = processes|ces
 *** cm_tech_bounds_2025

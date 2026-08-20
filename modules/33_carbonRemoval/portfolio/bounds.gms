@@ -7,7 +7,7 @@
 *** SOF ./modules/33_carbonRemoval/portfolio/bounds.gms
 
 vm_emiCdr.fx(t,regi,emi)$(not sameas(emi,"co2")) = 0.0;
-vm_emiCdr.l(t,regi,"co2")$(t.val ge 2025 AND cm_ccapturescen ne 2) = -sm_eps;
+vm_emiCdr.l(t,regi,"co2")$(t.val ge 2025) = -sm_eps;
 
 *** Bounds if there are no technologies in the portfolio
 if(card(te_used33) eq 0,
