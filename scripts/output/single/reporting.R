@@ -63,7 +63,8 @@ convGDX2MIF(gdx,
 
 edgetOutputDir <- file.path(outputdir, "EDGE-T")
 
-if (!file.exists(edgetOutputDir)) {
+if (dir.exists(edgetOutputDir)) {
+
   message("### start generation of EDGE-T reporting")
   reporttransport::checkConvergence(outputdir)
 
