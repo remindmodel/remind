@@ -39,9 +39,10 @@ loop(pe2se(enty,enty2,te) $ (
     (not sameas(te,"tnrs")) and
     (not teBiopyr(te))
   ),
-  vm_cap.lo(t,regi,te,"1") $ (t.val >= 2030 and t.val <= 2070) = 1e-7;
+  vm_cap.lo(t,regi,te,"1") 
+    $ (t.val >= 2030 and t.val <= 2070 and pm_seedAvail(regi,te)) = 1e-7;
   if(not teCCS(te), 
-    vm_deltaCap.lo(t,regi,te,"1") $ (t.val >= 2030 and t.val <= 2070) = 1e-8;
+    vm_deltaCap.lo(t,regi,te,"1") $ (t.val >= 2030 and t.val <= 2070 and pm_seedAvail(regi,te)) = 1e-8;
   );
 );
 

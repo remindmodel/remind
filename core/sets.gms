@@ -2648,6 +2648,8 @@ emi2te(all_enty,all_enty,all_te,all_enty)    " map emissions to technologies"
     pebiolc.seliqbio.bioethl.oc
     pebios.seliqbio.bioeths.oc
     pebios.seliqbio.bioethsc.oc
+    pebios.seliqbio.bioethsc.co2
+    pebios.seliqbio.bioethsc.cco2
     pebioil.seliqbio.biodiesel.oc
     pebiolc.seh2.bioh2c.n2o
     pebiolc.seel.biochp.n2o
