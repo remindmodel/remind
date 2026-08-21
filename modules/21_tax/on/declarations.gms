@@ -13,6 +13,7 @@ p21_taxrevCCS0(ttot,all_regi)                                       "reference l
 pm_taxrevNetNegEmi0(ttot,all_regi)                                  "reference level value of net-negative emissions tax"
 p21_emiAllco2neg0(ttot,all_regi)                                    "reference level value of net-negative CO2 emissions in the current iteration"
 p21_emiAllco2neg_acrossIterations0(ttot,all_regi)                   "reference level value of net-negative CO2 emissions as difference of gross CDR in the current iteration and gross emissions in the previous iteration"
+p21_taxCO2eqSum_NetNegEmi(ttot,all_regi)                            "non-negative carbon price for the net-neg-emissions tax (prevents subsidy when pm_taxCO2eqSum < 0)"
 p21_taxrevPE0(ttot,all_regi,all_enty)                               "reference level value of primary energy tax"
 p21_taxrevFE0(ttot,all_regi)                                        "reference level value of final energy tax"
 p21_taxrevCES0(ttot,all_regi,all_in)                                "reference level value of ces production tax"
