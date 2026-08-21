@@ -1334,6 +1334,7 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,"dac")          = 0.8;
   p_adj_coeff(ttot,regi,'oae_ng')       = 0.8;
   p_adj_coeff(ttot,regi,'oae_el')       = 0.8;
+  p_adj_coeff(ttot,regi,'weathering')   = 1.0;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 *** steel technologies
   p_adj_coeff(ttot,regi,"bfcc")         = 4.0;
