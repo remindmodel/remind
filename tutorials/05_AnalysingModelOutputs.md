@@ -173,9 +173,9 @@ Another useful script it `validateScenarios`, which performs an automated check 
 You can also specify the parameters in the command line, for example starting a `compareScenario2` run without any prefix as:
 
 ``` bash
-Rscript output.R comp=comparison filename_prefix= output=compareScenarios2 slurmConfig=priority
+Rscript output.R --comp=comparison --filename_prefix= --output=compareScenarios2 --slurmConfig=priority
 ```
-If you want to compare runs from different REMIND folders, add `remind_dir=.,../otherremind` as a parameter.
+If you want to compare runs from different REMIND folders, add `--remind_dir=.,../otherremind` as a parameter.
 
 How to create new plots is described in the tutorial [8_Advanced_AnalysingModelOutputs.Rmd](./08_Advanced_AnalysingModelOutputs.Rmd).
 Another useful and compatible resource for generating plots (e.g. box plots) from REMIND results is UTokyo's *mipplot* R package: https://github.com/UTokyo-mip/mipplot.

@@ -77,3 +77,6 @@ pm_regionalBudget_absDevTol, input,added by codeCheck
 sm_magpieIter,switch,not needed
 sm_magpieIterEnd,switch,not needed
 cm_MAgPIE_Nash,switch,not needed
+cm_TaxConv_tolerance,input,not needed
+cm_nashObjVal_tolerance,input,not needed
+cm_DevPriceAnticip_tolFactor,input,not needed

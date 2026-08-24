@@ -5,6 +5,15 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
+############################# DESCRIPTION #############################
+#
+# Diagnostics for the REMIND-MAgPIE coupling. For a given coupled run this
+# script reads the per-iteration results and plots the key coupling variables
+# (bioenergy price, production and demand, CO2 land-use-change emissions, price
+# scaling factor and CO2 price), each shown both over time and over iterations
+# to reveal how the coupled models converge. The plots are compiled into a
+# multi-page PDF (two plots per A4 page) via rmarkdown.
+
 ############################# LOAD LIBRARIES #############################
 
 library(dplyr,    quietly = TRUE, warn.conflicts = FALSE)
@@ -80,23 +89,23 @@ plot_iterations <- function(dat, runname) {
 
   # ---- Plot: MAgPIE co2luc ----
   
-  p_emi_mag    <- myplot(dat, "o_vm_emiMacSector_co2luc", runname, ylab = "Mt CO2/yr")
-  p_emi_mag_it <- myplot(dat, "o_vm_emiMacSector_co2luc", xaxis = "iteration", color = "ttot", runname, ylab = "Mt CO2/yr")
+  p_emi_mag    <- myplot(dat, "o_vm_emiMacSector_co2luc_iter", runname, ylab = "Mt CO2/yr")
+  p_emi_mag_it <- myplot(dat, "o_vm_emiMacSector_co2luc_iter", xaxis = "iteration", color = "ttot", runname, ylab = "Mt CO2/yr")
   
   
   # ---- Plot: REMIND Production of purpose grown bioenergy ----
   
-  p_fuelex         <- myplot(dat, "o_vm_fuExtr_pebiolc", runname,                                      ylab = "EJ/yr")
-  p_fuelex_it      <- myplot(dat, "o_vm_fuExtr_pebiolc", runname, xaxis = "iteration", color = "ttot", ylab = "EJ/yr")
-  p_fuelex_it_fix  <- myplot(dat, "o_vm_fuExtr_pebiolc", runname, xaxis = "iteration", color = "ttot", ylab = "EJ/yr", scales = "fixed")
+  p_fuelex         <- myplot(dat, "o_vm_fuExtr_pebiolc_iter", runname,                                      ylab = "EJ/yr")
+  p_fuelex_it      <- myplot(dat, "o_vm_fuExtr_pebiolc_iter", runname, xaxis = "iteration", color = "ttot", ylab = "EJ/yr")
+  p_fuelex_it_fix  <- myplot(dat, "o_vm_fuExtr_pebiolc_iter", runname, xaxis = "iteration", color = "ttot", ylab = "EJ/yr", scales = "fixed")
   p_fuelex_it_2060 <- myplot(dat |> filter(ttot == 2060),
-                                  "o_vm_fuExtr_pebiolc", runname, type = "bar", 
+                                  "o_vm_fuExtr_pebiolc_iter", runname, type = "bar", 
                                                                   xaxis = "iteration", color = "ttot", ylab = "EJ/yr", scales = "fixed")
   
   # ---- Plot: REMIND Demand for purpose grown bioenergy ----
   
-  p_demPE    <- myplot(dat, "o_PEDem_Bio_ECrops", runname,                                      ylab = "EJ/yr")
-  p_demPE_it <- myplot(dat, "o_PEDem_Bio_ECrops", runname, xaxis = "iteration", color = "ttot", ylab = "EJ/yr")
+  p_demPE    <- myplot(dat, "o_PEDem_Bio_ECrops_iter", runname,                                      ylab = "EJ/yr")
+  p_demPE_it <- myplot(dat, "o_PEDem_Bio_ECrops_iter", runname, xaxis = "iteration", color = "ttot", ylab = "EJ/yr")
   
   # ---- Plot: REMIND Price scaling factor ----
   
@@ -107,35 +116,71 @@ plot_iterations <- function(dat, runname) {
   
   p_price_carbon      <- myplot(dat, "pm_taxCO2eq_iter", runname, ylab = "$/tCO2")
   
-  p_price_carbon_it_1 <- myplot(dat |> filter(ttot < 2025), "pm_taxCO2eq_iter", runname,
+  p_price_carbon_it_1 <- myplot(dat |> filter(ttot > 2025, ttot <= 2100), "pm_taxCO2eq_iter", runname,
                                 ylab = "$/tCO2", xaxis = "iteration", color = "ttot")
-  p_price_carbon_it_2 <- myplot(dat |> filter(ttot > 2020, ttot <= 2100), "pm_taxCO2eq_iter", runname,
+  p_price_carbon_it_2 <- myplot(dat |> filter(ttot < 2030), "pm_taxCO2eq_iter", runname,
                                 ylab = "$/tCO2", xaxis = "iteration", color = "ttot")
   
   # ---- Print to pdf ----
   
-  out <- lusweave::swopen(template = "david")
-  
-  lusweave::swfigure(out, print, p_price_mag,         sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_price_mag_it,      sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_fuelex,            sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_fuelex_it,         sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_fuelex_it_fix,     sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_fuelex_it_2060,    sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_demPE_it,          sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_emi_mag,           sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_emi_mag_it,        sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_mult,              sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_mult_it,           sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_price_carbon,      sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_price_carbon_it_1, sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_price_carbon_it_2, sw_option = "height=9,width=16")
-  
-  filename <- paste0("output/", tail(runname$outputdirs, n=1), ifelse(nrow(runname)>1, "-continued", ""))
-  lusweave::swclose(out, outfile = filename, clean_output = TRUE, save_stream = FALSE)
-  file.remove(paste0(filename,c(".log")))
-  # out files have "." replaced with "-_-_-" in their names
-  #file.remove(paste0(gsub("\\.","-_-_-",filename),".out"))
+  filename <- paste0(tail(runname$outputdirs, n = 1), ifelse(nrow(runname) > 1, "-continued", ""))
+
+  # Collect the plots in the order they should appear in the report.
+  # The rmarkdown template (see below) reads this list.
+  plots <- list(p_price_mag, p_price_mag_it, p_fuelex, p_fuelex_it,
+                p_fuelex_it_fix, p_fuelex_it_2060, p_demPE, p_demPE_it, p_emi_mag,
+                p_emi_mag_it, p_mult, p_mult_it, p_price_carbon,
+                p_price_carbon_it_1, p_price_carbon_it_2)
+
+  # Use a unique working directory so two plotRemMagNash renders running in
+  # parallel do not overwrite each other's rmarkdown output or knit
+  # artefacts (intermediate .md/.tex files and figure files).
+  intermediates <- tempfile(pattern = "plotRemMagNash-")
+  dir.create(intermediates)
+  on.exit(unlink(intermediates, recursive = TRUE), add = TRUE)
+
+  # rmarkdown template written inline.
+  template <- c(
+    "---",
+    "output:",
+    "  pdf_document:",
+    "    latex_engine: pdflatex",
+    "geometry: a4paper, top=1.5cm, bottom=1.5cm, left=0.5cm, right=0.5cm",
+    "---",
+    "",
+    "```{r setup, include=FALSE}",
+    "knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE,",
+    "                      fig.width = 16, fig.height = 9,",
+    "                      out.width = \"20cm\", fig.align = \"center\")",
+    "```",
+    "",
+    "```{r plots, results='asis'}",
+    "# `plots` is provided by plot_iterations() via the render environment.",
+    "for (i in seq_along(plots)) {",
+    "  print(plots[[i]])",
+    "  if (i %% 2 == 1) {",
+    "    # First figure on the page: stretchable space pushes this figure to",
+    "    # the top margin and the next one to the bottom margin.",
+    "    cat(\"\\n\\n\\\\vfill\\n\\n\")",
+    "  } else if (i < length(plots)) {",
+    "    # Second figure on the page: start a new page. This keeps two figures",
+    "    # per page (14 plots -> 7 pages).",
+    "    cat(\"\\n\\n\\\\newpage\\n\\n\")",
+    "  }",
+    "}",
+    "```"
+  )
+  rmd <- file.path(intermediates, "plotRemMagNash.Rmd")
+  writeLines(template, rmd)
+
+  rmarkdown::render(
+    input             = rmd,
+    output_file       = paste0(filename, ".pdf"),
+    output_dir        = "output",
+    intermediates_dir = intermediates,
+    envir             = environment(),
+    quiet             = TRUE
+  )
   
   return("Done\n")
 }  
@@ -153,9 +198,9 @@ readDataFromGdx <- function(runfolder, allIter = TRUE) {
   # "Emi|CO2|+|Land-Use Change (Mt CO2/yr)"
   # vm_emiMacSector <- readGDX(gdx, "vm_emiMacSector", field = "l", restore_zeros = FALSE)
   # dimSums(vm_emiMacSector[, , "co2luc"]                 , dim = 3) * GtC_2_MtCO2
-  # "o_vm_emiMacSector_co2luc"
+  # "o_vm_emiMacSector_co2luc_iter"
   # core/postsolve.gms:
-  # o_vm_emiMacSector_co2luc(iteration,ttot,regi) = vm_emiMacSector.l(ttot,regi,"co2luc");
+  # o_vm_emiMacSector_co2luc_iter(iteration,ttot,regi) = vm_emiMacSector.l(ttot,regi,"co2luc");
   
   # "Primary Energy Production|Biomass|Energy Crops (EJ/yr)"
   # remind2::reportExtraction.R
@@ -164,16 +209,16 @@ readDataFromGdx <- function(runfolder, allIter = TRUE) {
   # dimSums(fuelex_bio[, , "pebiolc.1"], dim = 3) * TWa_2_EJ
   #   -> "PE|Production|Biomass|+|Lignocellulosic (EJ/yr)"
   #   -> "Primary Energy Production|Biomass|Energy Crops (EJ/yr)" (used also in coupling interface in MAgPIE)
-  # "o_vm_fuExtr_pebiolc"
+  # "o_vm_fuExtr_pebiolc_iter"
   # core/postsolve.gms:
-  # o_vm_fuExtr_pebiolc = vm_fuExtr.l(ttot,regi,"pebiolc","1");
+  # o_vm_fuExtr_pebiolc_iter = vm_fuExtr.l(ttot,regi,"pebiolc","1");
   
   # "PE|Biomass|+++|Energy Crops (EJ/yr)"
   # remind2::reportPE.R
   # fuelex[,,"pebiolc.1"] + (1-p_costsPEtradeMp[,,"pebiolc"]) * Mport[,,"pebiolc"] - Xport[,,"pebiolc"] -> "PE|Biomass|+++|Energy Crops (EJ/yr)"
-  # "o_PEDem_Bio_ECrops"
+  # "o_PEDem_Bio_ECrops_iter"
   # core/postsolve.gms:
-  # o_PEDem_Bio_ECrops(iteration,ttot,regi) = vm_fuExtr.l(ttot,regi,"pebiolc","1") + (1 - pm_costsPEtradeMp(ttot,regi"pebiolc")) * vm_Mport.l(ttot,regi,"pebiolc") - vm_Xport.l(ttot,regi"pebiolc");
+  # o_PEDem_Bio_ECrops_iter(iteration,ttot,regi) = vm_fuExtr.l(ttot,regi,"pebiolc","1") + (1 - pm_costsPEtradeMp(ttot,regi"pebiolc")) * vm_Mport.l(ttot,regi,"pebiolc") - vm_Xport.l(ttot,regi"pebiolc");
   
   # "Internal|Price|Biomass|Multfactor ()"
   # remind2::reportPrices.R
@@ -199,9 +244,9 @@ readDataFromGdx <- function(runfolder, allIter = TRUE) {
   items <- tribble(
     ~par                      , ~var                                                    , ~factor,
     "o_p30_pebiolc_pricemag"  , "Internal|Price|Biomass|MAgPIE (US$2017/GJ)"            ,  sm_tdptwyr2dpgj,
-    "o_vm_emiMacSector_co2luc", "Emi|CO2|+|Land-Use Change (Mt CO2/yr)"                 ,  GtC_2_MtCO2,
-    "o_vm_fuExtr_pebiolc"     , "Primary Energy Production|Biomass|Energy Crops (EJ/yr)",  TWa2EJ,
-    "o_PEDem_Bio_ECrops"      , "PE|Biomass|+++|Energy Crops (EJ/yr)"                   ,  TWa2EJ,
+    "o_vm_emiMacSector_co2luc_iter", "Emi|CO2|+|Land-Use Change (Mt CO2/yr)"                 ,  GtC_2_MtCO2,
+    "o_vm_fuExtr_pebiolc_iter"     , "Primary Energy Production|Biomass|Energy Crops (EJ/yr)",  TWa2EJ,
+    "o_PEDem_Bio_ECrops_iter"      , "PE|Biomass|+++|Energy Crops (EJ/yr)"                   ,  TWa2EJ,
     "o_p30_pebiolc_pricmult"  , "Internal|Price|Biomass|Multfactor ()"                  ,  1,
     "pm_taxCO2eq_iter"        , "Price|Carbon (US$2017/t CO2)"                          ,  1000 * 12 / 44,
   )

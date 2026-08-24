@@ -5,6 +5,12 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
+#' @title Compare Scenarios 2
+#' @description Creates a PDF document that compares multiple scenarios
+#'
+#' @param sections List of section numbers to be included in the PDF
+#' separated by commas. Default: "all".
+#' Examples: --sections=2 --sections=2,3
 
 
 
@@ -38,10 +44,11 @@ determineDefaultProfiles <- function(outputDir) {
 
 # Start compareScenarios2 either on the cluster or locally.
 startComp <- function(
-  outputDirs,
+  outputdirs,
   nameCore,
   profileName,
-  aliases=NULL
+  aliases,
+  sections
 ) {
   if (!exists("slurmConfig")) {
     slurmConfig <- "--qos=standby"
@@ -64,10 +71,11 @@ startComp <- function(
       " --mail-type=END,FAIL --time=200",
       if (!grepl("--mem", slurmConfig)) " --mem=8000",
       " --wrap=\"Rscript ", script,
-      " outputDirs=", paste(outputDirs, collapse = ","),
-      " profileName=", profileName,
-      " outFileName=", outFileName,
-      " aliases=", paste(aliases, collapse = ","),
+      " --outputdirs=", paste(outputdirs, collapse = ","),
+      " --profileName=", profileName,
+      " --outFileName=", outFileName,
+      " --aliases=", paste(aliases, collapse = ","),
+      " --sections=", paste(sections, collapse = ","),
       "\"")
     cat(clcom, "\n")
     system(clcom)
@@ -88,7 +96,11 @@ startComp <- function(
 # Load cs2 profiles.
 profiles <- piamPlotComparison::getCs2Profiles()
 
-lucode2::readArgs("profileNames")
+lucode2::readArgs("profileNames", "sections")
+
+if (! exists("sections")) {
+  sections = "all"
+}
 
 # Let user choose cs2 profile(s).
 profileNamesDefault <- determineDefaultProfiles(outputdirs[1])
@@ -115,8 +127,9 @@ nameCore <- paste0(filename_prefix, ifelse(filename_prefix == "", "", "-"), time
 # Start a job for each profile.
 for (profileName in profileNames) {
   startComp(
-    outputDirs = outputdirs,
+    outputdirs = outputdirs,
     nameCore = nameCore,
     profileName = profileName,
-    aliases = aliases)
+    aliases = aliases,
+    sections = sections)
 }
