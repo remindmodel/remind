@@ -264,7 +264,7 @@ runComparisonOrExport <- function(comp, output, outputdirs, aliases, filename_pr
 }
 
 # returns TRUE if any script had errors
-runSingle <- function(output, outputdirs, slurmConfig, test) { # comp = single
+runSingle <- function(output, outputdirs, slurmConfig, interactiveSession, test) { # comp = single
   errors <- FALSE
   # Execute outputscripts for all chosen folders
   for (outputdir in outputdirs) {
@@ -393,6 +393,7 @@ output <- function(args) {
     }
     errors = runComparisonOrExport(comp, output, outputdirs, aliases, filename_prefix, slurmConfig, args[["test"]])
   } else {
+    interactiveSession <- FALSE
     # define slurm class or direct execution
     outputInteractive <- c("plotIterations", "integratedDamageCosts")
     if (!isSlurmAvailable() || exists("source_include") || any(output %in% outputInteractive)) {
@@ -404,11 +405,11 @@ output <- function(args) {
     } else if (args[["slurmConfig"]] %in% c("priority", "short", "standby")) {
       slurmConfig <- paste0("--nodes=1 --tasks-per-node=1 --qos=", args[["slurmConfig"]])
     } else if (isTRUE(args[["slurmConfig"]] %in% "direct")) {
-      interactive = TRUE
+      interactiveSession <- TRUE
     } else {
       slurmConfig = args[["slurmConfig"]]
     }
-    errors = runSingle(output, outputdirs, slurmConfig, args[["test"]])
+    errors = runSingle(output, outputdirs, slurmConfig, interactiveSession, args[["test"]])
   }
   if (errors) {
     quit(status = -1)
