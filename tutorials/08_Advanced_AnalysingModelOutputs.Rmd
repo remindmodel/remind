@@ -292,7 +292,7 @@ str(rem_EMI)
 If the variable or parameter you are interested in is not yet part of the REMIND reporting you can directly access the gdx and import the variable using `readGDX`. Here, we read the level values (*l*) of the variable *vm_emiAll* (which is of course in the reporting already).
 
 ```{r}
-library(gdx)
+library(gdx2)
 rem_gdx <- readGDX(gdx = "fulldata.gdx", "vm_emiAll", field = "l", format = "first_found")
 str(rem_gdx)
 ```

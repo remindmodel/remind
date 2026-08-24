@@ -17,7 +17,7 @@ h <- "
 #' If a GAMS parameter is defined on more sets then regi and t, simply the first element is printed.
 "
 suppressMessages(library(tidyverse))
-suppressMessages(library(gdx))
+suppressMessages(library(gdx2))
 suppressMessages(library(modelstats))
 suppressMessages(library(magclass))
 suppressMessages(library(quitte))

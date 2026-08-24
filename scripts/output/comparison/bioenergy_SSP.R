@@ -7,13 +7,13 @@
 library(luplot)
 library(lucode2)
 library(gms)
-library(gdx)
+library(gdx2)
 library(magpie4)
 library(remind2)
 library(ggplot2)
 
 ############################# BASIC CONFIGURATION #############################
-gdx_name <- "fulldata.gdx"        # name of the gdx   
+gdx_name <- "fulldata.gdx"        # name of the gdx
 
 if(!exists("source_include")) {
   setwd("~/Documents/0_SVN/REMIND2.0/output/")
@@ -39,10 +39,10 @@ if(!exists("source_include")) {
                   #"rem6192_SSP2-26-SSP") # original name "rem6192_SSP2-26-SPA2-rem-5",
                   "r8134_Base-rem-10",
                   "r8134_Budg1500-rem-10")
-  
+
   # path to the output folder
   readArgs("outputdirs","gdx_name")
-} 
+}
 
 
 read.reportEntry <- function(outputdir,entry,type=NULL){
@@ -55,7 +55,7 @@ read.reportEntry <- function(outputdir,entry,type=NULL){
     }
   }else{
     mif_path <- paste0(fname,type)
-  }  
+  }
   mif <- read.report(mif_path,as.list=FALSE)
   mif <- collapseNames(mif)
   out <- mif[,,1] + NA # fill with first variable and set to NA
@@ -68,7 +68,7 @@ read.reportEntry <- function(outputdir,entry,type=NULL){
 read_all<-function(gdx,func,as.list=TRUE,...){
   if(!is.list(gdx))gdx<-as.list(gdx)
   if(identical(names(gdx),c("aliases","sets","equations","parameters","variables"))) gdx<-list(gdx)
-  
+
   out<-list()
   for(i in 1:length(gdx)){
     out[[i]]<-func(gdx[[i]],...)
@@ -76,9 +76,9 @@ read_all<-function(gdx,func,as.list=TRUE,...){
       names(out)[i]<-names(gdx)[i]
     }
   }
-  
+
   if(!all(lapply(out,ndata)==ndata(out[[1]]))) stop("ERROR: different data dimensions. Can't read_all")
-  
+
   if(as.list==TRUE){
     return(out)
   } else if(length(out)==1) {
@@ -120,10 +120,10 @@ names(outputdirs) <- scenNames # needed in read.reportEntry that reads variables
 # function to read variable from gdx file
 readvar <- function(gdx,name,enty=NULL) {
   if (is.null(enty)) {
-	out <- readGDX(gdx,name, format="first_found", field="l")
+	out <- gdx2::readGDX(gdx,name, format="first_found", field="l")
   getNames(out) <- "dummy" # something has to be here, will be removed by collapseNames anyway
   } else {
-	out <- readGDX(gdx,name=name, format="first_found", field="l")[,,enty]
+	out <- gdx2::readGDX(gdx,name=name, format="first_found", field="l")[,,enty]
   }
   out <- collapseNames(out)
   return(out)
@@ -131,7 +131,7 @@ readvar <- function(gdx,name,enty=NULL) {
 
 # function to read parameter from gdx file
 readpar <- function(gdx,name) {
-  out <- readGDX(gdx, name)#, format="first_found")
+  out <- gdx2::readGDX(gdx, name)#, format="first_found")
   getNames(out) <- "dummy" # something has to be here, will be removed by collapseNames anyway
   out <- collapseNames(out)
   return(out)
@@ -162,11 +162,11 @@ fill_missing_scenarios <- function(rawdata) {
 # # nur Iterationszahl l?schen, damit Namen nach dem L?schen von "pattern" nicht identisch sind
 # # sonst w?ren SSP2-26-nix-rem-10 und SSP2-26-exo-rem-10 nach Entfernen von -rem-10 identisch
 # # Die Zahlen gar nicht zu entfernen f?hrt dazu, dass zu SSP2-26-exo-rem-10 ein unfertiger Lauf
-# # SSP2-26-exo-rem-9 nicht gefunden w?rde 
+# # SSP2-26-exo-rem-9 nicht gefunden w?rde
 # getNames(x)  <- gsub("(-rem-[0-9]{1,2})","-rem",getNames(x))             # remove -rem-X from name
 # pattern <- "-exo"
 # counterpart <- "-endo"
-# 
+#
 # ind <- grep(pattern,getNames(x))
 # for(i in ind) {
 #   # suche den zum aktuellen Lauf (dessen Namen pattern enth?lt: SSP2-26-exo-rem)
@@ -236,7 +236,7 @@ fuelex <- read_all(gdx_path,readvar,name=c("vm_fuExtr","vm_fuelex"),enty="pebiol
   fuelex_bio <- collapseNames(fuelex[,,"1"],collapsedim=2) * TWa2EJ# get rid of grades
   if(length(fulldim(fuelex)[[2]][[3]])>1)	fuelex_bio <- collapseNames(fuelex_bio) # only if there is more than one scenario, otherwise keep single scenarioname
 	fuelex_bio       <- mbind(fuelex_bio,colSums(fuelex_bio))
-  
+
 	fuelex_bio_all   <- fill_missing_scenarios(fuelex_bio)
 	y_limreg         <- c(0,max(fuelex_bio[,y,]["GLO",,,invert=TRUE]))
 
@@ -256,7 +256,7 @@ fuelex <- read_all(gdx_path,readvar,name=c("vm_fuExtr","vm_fuelex"),enty="pebiol
 	fuelex_bio       <- mbind(fuelex_bio,colSums(fuelex_bio))
 	fuelex_bio_all   <- fill_missing_scenarios(fuelex_bio)
     y_limreg         <- c(0,max(fuelex_bio[,y,]["GLO",,,invert=TRUE]))
-	
+
 	p3g <- magpie2ggplot2(fuelex_bio_all["GLO",y,],geom='line',group=NULL,
 						 ylab='EJ/yr',color='Data2',linetype="Data1",
 						 scales='fixed',show_grid=TRUE,ncol=4,text_size=txtsiz,ylim=y_limglo,
@@ -281,7 +281,7 @@ if(length(fulldim(pedem)[[2]][[3]])>1)	pedem <- collapseNames(pedem) # only if t
                      ylab='EJ/yr',color='Data2',linetype="Data1",
                      scales='fixed',show_grid=TRUE,ncol=4,text_size=txtsiz,ylim=y_limglo,
                      title=paste0("Traditional bioenergy consumption"))
-					 
+
 	p6r <- magpie2ggplot2(pedem_all[r,y,],geom='line',group=NULL,
                      ylab='EJ/yr',color='Data2',linetype="Data1",
                      scales='fixed',show_grid=TRUE,ncol=4,text_size=txtsiz,ylim=y_limreg,
@@ -327,7 +327,7 @@ fuelex <- read_all(gdx_path,readvar,name=c("vm_fuExtr","vm_fuelex"),enty="pebios
 						 scales='fixed',show_grid=TRUE,ncol=4,text_size=txtsiz,ylim=y_limreg,
 						 title=paste0("1st gen biomass: pebios"))
 
-					 
+
 ############### READ DATA: PRICE & SHIFT ################################
 price <- read_all(gdx_path,readvar,name="vm_pebiolc_price",as.list=FALSE)
 price <- setNames(price,gsub(".","",getNames(price),fixed=TRUE))
@@ -342,7 +342,7 @@ if(length(fulldim(price)[[2]][[3]])>1)  price <- collapseNames(price) # only if 
 						 ylab='$/GJ',color='Data2',linetype="Data1",
 						 scales='fixed',show_grid=TRUE,ncol=4,text_size=txtsiz,
 						 title=paste0("Purpose grown bioenergy price: shifted, without tax"))
-             
+
 ############### READ DYNAMIC BIO TAX ################################
 dyntax <- read_all(gdx_path,readvar,name="v21_tau_bio",as.list=FALSE)
 if(length(fulldim(dyntax)[[2]][[3]])>1) dyntax <- collapseNames(dyntax) # only if there is more than one scenario, otherwise keep single scenarioname
@@ -366,7 +366,7 @@ if(length(fulldim(dyntax)[[2]][[3]])>1) dyntax <- collapseNames(dyntax) # only i
 	marginal <- read_all(outputdirs,read.reportEntry,entry="Price|Biomass|Primary Level (US$2017/GJ)",as.list=FALSE)
 	marginal <- collapseNames(marginal,collapsedim=2)
 	if(length(fulldim(marginal)[[2]][[3]])>1)	marginal <- collapseNames(marginal) # only if there is more than one scenario, otherwise keep single scenarioname
-	
+
 	#### PLOT #####
 	marginal_all <- fill_missing_scenarios(marginal)
 
@@ -379,7 +379,7 @@ if(length(fulldim(dyntax)[[2]][[3]])>1) dyntax <- collapseNames(dyntax) # only i
 	mult <- read_all(outputdirs,read.reportEntry,entry="Price|Biomass|Multfactor ()",as.list=FALSE)
 	mult <- collapseNames(mult,collapsedim=2)
 	if(length(fulldim(mult)[[2]][[3]])>1)	mult <- collapseNames(mult) # only if there is more than one scenario, otherwise keep single scenarioname
-	
+
 	#### PLOT #####
 	mult_all <- fill_missing_scenarios(mult)
 
@@ -388,13 +388,13 @@ if(length(fulldim(dyntax)[[2]][[3]])>1) dyntax <- collapseNames(dyntax) # only i
 	#                      scales='fixed',show_grid=TRUE,ncol=4,text_size=txtsiz,
 	#                      title=paste0("Emulator multiplication factor"))
 
-	p_mult <- ggplot(as.ggplot(mult_all[r,y,]), aes(x=Year,y=Value,colour=Data2,linetype=Data1)) + geom_line() + geom_point() + 
+	p_mult <- ggplot(as.ggplot(mult_all[r,y,]), aes(x=Year,y=Value,colour=Data2,linetype=Data1)) + geom_line() + geom_point() +
 	  facet_wrap(~Region,scales = "free_y") + labs(title=paste0("Emulator multiplication factor",y="Factor")) +
 	  coord_cartesian(ylim = c(0,10)) + scale_y_continuous(breaks=seq(0,10,1)) +
     theme(#panel.background = element_rect(fill="white", colour="black"),
           #panel.grid.minor=element_line(colour="white"),
           text=element_text(size=txtsiz),axis.text.x=element_text(size=txtsiz))
-                        
+
 ############### READ DATA: STATIC BIOENERGY TAX ################################
 ptax <- read_all(outputdirs,read.reportEntry,entry="Price|Biomass|Bioenergy tax (US$2017/GJ)",as.list=FALSE)
 ptax <- collapseNames(ptax,collapsedim=2)
@@ -403,7 +403,7 @@ if(length(fulldim(ptax)[[2]][[3]])>1)	ptax <- collapseNames(ptax) # only if ther
 	#### PLOT #####
 	ptax_all <- fill_missing_scenarios(ptax)
 	y_limreg  <- c(0,max(ptax[,y,]["GLO",,,invert=TRUE]))
-	
+
 	p4t <- magpie2ggplot2(ptax_all[r,y,],geom='line',group=NULL,
 	                      ylab='US$2017/GJ',color='Data2',linetype="Data1",
 	                      scales='fixed',show_grid=TRUE,ncol=4,text_size=txtsiz,ylim=y_limreg,
@@ -429,7 +429,7 @@ if(length(fulldim(cost)[[2]][[3]])>1)  cost <- collapseNames(cost) # only if the
 						 scales='fixed',show_grid=TRUE,ncol=2,text_size=txtsiz,#ylim=y_limreg,
 						 title=paste0("Purpose grown bioenergy cost"))
 
-						 
+
 ############### READ DATA: CO2 PRICE ################################
 prCO2 <- read_all(gdx_path,readpar,name=c("pm_taxCO2eq","pm_tau_CO2_tax"),as.list=FALSE) * (1000*12/44)
 if(length(fulldim(prCO2)[[2]][[3]])>1) prCO2 <- collapseNames(prCO2) # only if there is more than one scenario, otherwise keep single scenarioname
@@ -519,7 +519,7 @@ if(length(fulldim(co2beccs)[[2]][[3]])>1) co2beccs <- collapseNames(co2beccs) # 
 						 ylab='GtCO2/yr',color='Data2',linetype="Data1",
 						 scales='fixed',show_grid=TRUE,ncol=4,text_size=txtsiz,ylim=y_limreg,
 						 title=v)
-						 
+
 ############### READ DATA: CO2 from BECCS Cumulated ################################
 v <- "Emi|CO2|Carbon Capture and Storage|Biomass|Cumulated (Mt CO2/yr)"
 co2beccs_c <- read_all(outputdirs,read.reportEntry,entry=v,as.list=FALSE)/1000
@@ -562,7 +562,7 @@ enegN$.value[enegN$.value>=0] <- 0
 # calculate total
 enegT <- gginput(dimSums(eneg["GLO",,],dim = 3.2),verbose=FALSE)
 
-pNEGgs <- ggplot() + 
+pNEGgs <- ggplot() +
   geom_area(aes(y = .value, x = year, fill = sink), data = enegP) +
   geom_area(aes(y = .value, x = year, fill = sink), data = enegN) +
   geom_line(aes(y = .value, x = year), data = enegT, size=1) +
@@ -599,7 +599,7 @@ if(length(fulldim(co2ccs)[[2]][[3]])>1) co2ccs <- collapseNames(co2ccs) # only i
 						 ylab='GtCO2/yr',color='Data2',linetype="Data1",
 						 scales='fixed',show_grid=TRUE,ncol=4,text_size=txtsiz,ylim=y_limreg,
 						 title=v)
-						 
+
 ############### READ DATA: CO2 from CCS Cumulated ################################
 v   <- "Emi|CO2|Carbon Capture and Storage|Cumulated (Mt CO2/yr)"
 co2ccs_c <- read_all(outputdirs,read.reportEntry,entry=v,as.list=FALSE)/1000

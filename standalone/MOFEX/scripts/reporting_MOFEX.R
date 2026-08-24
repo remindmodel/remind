@@ -10,20 +10,19 @@ library(remind2)
 library(lucode2)
 library(methods)
 library(tidyverse)
-library(gdx)
 library(rlang)
 library(luscale)
 
 ############################# BASIC CONFIGURATION #############################
 gdx_name     <- "fulldata.gdx"             # name of the gdx
 gdx_ref_name <- "input_refpolicycost.gdx"  # name of the reference gdx (for policy cost calculation)
- 
+
 
 if(!exists("source_include")) {
   #Define arguments that can be read from command line
    outputdir <- "output/R17IH_SSP2_postIIASA-26_2016-12-23_16.03.23"     # path to the output folder
    readArgs("outputdir","gdx_name","gdx_ref_name")
-} 
+}
 
 gdx      <- file.path(outputdir,gdx_name)
 gdx_ref  <- file.path(outputdir,gdx_ref_name)

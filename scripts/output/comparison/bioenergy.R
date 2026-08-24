@@ -9,12 +9,12 @@ library(lusweave)
 library(luplot)
 library(lucode2)
 library(gms)
-library(gdx)
+library(gdx2)
 library(magpie4)
 library(remind2)
 
 ############################# BASIC CONFIGURATION #############################
-gdx_name <- "fulldata.gdx"        # name of the gdx   
+gdx_name <- "fulldata.gdx"        # name of the gdx
 
 if(!exists("source_include")) {
   #Define arguments that can be read from command line
@@ -22,7 +22,7 @@ if(!exists("source_include")) {
                   "C:/Documents and Settings/dklein/My Documents/0_SVN/0_B_remind_modular/output/SSP2-37/")
   # path to the output folder
    readArgs("outputdirs","gdx_name")
-} 
+}
 
 
 ##################### general plot settings ###################################
@@ -47,7 +47,7 @@ for (i in scenNames_path) {
 names(gdx_path) <- scenNames
 
 readfuelex <- function(gdx,enty) {
-  out <- readGDX(gdx, "vm_fuExtr", format="first_found", field="l")[,,enty]
+  out <- gdx2::readGDX(gdx, "vm_fuExtr", format="first_found", field="l")[,,enty]
   out <- collapseNames(out)
   return(out)
 }

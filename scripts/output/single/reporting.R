@@ -80,7 +80,7 @@ if (dir.exists(edgetOutputDir)) {
   # For certain projects, we currently don't want to report EDGE-T results for 2005 and 2010.
   # If the flag c_edgetReportAfter2010 is set, 2005 and 2010 values get replaced by NAs
 
-  c_edgetReportAfter2010 <- gdx::readGDX(gdx, name = "c_edgetReportAfter2010")
+  c_edgetReportAfter2010 <- gdx2::readGDX(gdx, name = "c_edgetReportAfter2010")
 
   if (c_edgetReportAfter2010 == 1) {
     EDGEToutput <- EDGEToutput %>%
