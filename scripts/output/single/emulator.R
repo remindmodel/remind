@@ -13,6 +13,7 @@ library(gdx2)
 library(ggplot2)
 library(remind2)
 library(mip)
+library(remulator)
 
 #####################################################
 ################## CONFIGURATION ####################
