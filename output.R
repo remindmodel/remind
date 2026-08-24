@@ -44,29 +44,51 @@ invisible(sapply(list.files("scripts/start", pattern = "\\.R$", full.names = TRU
 # parse options from command line and return them as a named list
 parseOptions <- function() {
   options <- list(
-    make_option(c("-t", "--test"), action="store_true", default=FALSE,
-                help="test output.R without actually starting any run"),
-    make_option("--update", action="store_true", default=FALSE,
-                help="update packages in renv first, incompatible with --renv"),
-    make_option("--comp", type="character", default=NULL,
-                help="specify output type: 'single' for single runs (e.g. reporting), 'comparison' for run comparisons (e.g. compareScenarios2), or 'export' to export runs (e.g. xlsx_IIASA)"),
-    make_option("--filename_prefix", type="character", default=NULL,
-                help="string to be added to filenames by some output scripts (compareScenarios, xlsx_IIASA)"),
-    make_option("--output", type="character", default=NULL,
-                help="directly select a specific script (without .R extension)"),
-    make_option("--outputdirs", type="character", default=NULL,
-                help="directly specify output directories as comma-separated list (e.g. ./output/SSP2-Base-rem-1,./output/NDC-rem-1)"),
-    make_option("--aliases", type="character", default=NULL,
-                help="Specify aliases for the runs given in outputdirs as a comma-separated list (e.g. aliases=default,modified)"),
-    make_option("--remind_dir", type="character", default=NULL,
-                help="path to remind or output directories where runs can be found. Defaults to ./output. Can specify multiple comma-separated folders (e.g. .,../otherremind)"),
-    make_option("--renv", type="character", default=NULL,
-                help="load the renv located at <path>, incompatible with --update"),
-    make_option("--slurmConfig", type="character", default=NULL,
-                help="specify SLURM selection: use 'priority', 'short', or 'standby', or pass multiple SLURM arguments (e.g. '--qos=priority --mem=8000')")
+    make_option(c("-t", "--test"),
+      action = "store_true", default = FALSE,
+      help = "test output.R without actually starting any run"
+    ),
+    make_option("--update",
+      action = "store_true", default = FALSE,
+      help = "update packages in renv first, incompatible with --renv"
+    ),
+    make_option("--comp",
+      type = "character", default = NULL,
+      help = "specify output type: 'single' for single runs (e.g. reporting), 'comparison' for run comparisons (e.g. compareScenarios2), or 'export' to export runs (e.g. xlsx_IIASA)"
+    ),
+    make_option("--filename_prefix",
+      type = "character", default = NULL,
+      help = "string to be added to filenames by some output scripts (compareScenarios, xlsx_IIASA)"
+    ),
+    make_option("--output",
+      type = "character", default = NULL,
+      help = "directly select a specific script (without .R extension)"
+    ),
+    make_option("--outputdirs",
+      type = "character", default = NULL,
+      help = "directly specify output directories as comma-separated list (e.g. ./output/SSP2-Base-rem-1,./output/NDC-rem-1)"
+    ),
+    make_option("--aliases",
+      type = "character", default = NULL,
+      help = "Specify aliases for the runs given in outputdirs as a comma-separated list (e.g. aliases=default,modified)"
+    ),
+    make_option("--remind_dir",
+      type = "character", default = NULL,
+      help = "path to remind or output directories where runs can be found. Defaults to ./output. Can specify multiple comma-separated folders (e.g. .,../otherremind)"
+    ),
+    make_option("--renv",
+      type = "character", default = NULL,
+      help = "load the renv located at <path>, incompatible with --update"
+    ),
+    make_option("--slurmConfig",
+      type = "character", default = NULL,
+      help = "specify SLURM selection: use 'priority', 'short', or 'standby', or pass multiple SLURM arguments (e.g. '--qos=priority --mem=8000')"
+    )
   )
-  parser <- OptionParser(usage="Rscript output.R [options prefixed by --, e.g. --comp=single]", option_list=options,
-                        description="[options] can be the following flags and variables. If variables are not specified but needed, the scripts will ask the user.")
+  parser <- OptionParser(
+    usage = "Rscript output.R [options prefixed by --, e.g. --comp=single]", option_list = options,
+    description = "[options] can be the following flags and variables. If variables are not specified but needed, the scripts will ask the user."
+  )
   # these flags appear in the various output scripts and are necessary here
   # if you add a command line argument to a script, add it here as well
   additionalScriptOptions = list("profileNames", "runs", "folder", "project", "sections",
@@ -75,6 +97,7 @@ parseOptions <- function() {
   for (option in additionalScriptOptions) {
     parser <- add_option(parser, paste0("--", option), help="This option is used in an output script, see your script for information.")
   }
+  
   return(parse_args(parser))
 }
 
@@ -168,7 +191,8 @@ chooseOutputDirs <- function(output, remind_dir) {
     defaultcfg <- readDefaultConfig(".")
     dir_folder <- unique(c("output", dirname(defaultcfg$results_folder)))
   } else {
-    dir_folder <- c(file.path(remind_dir, "output"), remind_dir)
+    dir_folder <- trimws(unlist(strsplit(remind_dir, ",")))
+    dir_folder <- c(file.path(dir_folder, "output"), dir_folder)
   }
   dirs <- dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx")))
   if (needingMif) dirs <- intersect(dirs, unique(dirname(Sys.glob(file.path(dir_folder, "*", "REMIND_generic_*.mif")))))
@@ -325,7 +349,7 @@ output <- function(args) {
 
   # output creation for --testOneRegi was switched off in start.R in this commit:
   # https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
-  if (args[["output"]] %in% c(NA, "NA")) {
+  if (!is.null(args[["output"]]) && args[["output"]] %in% c(NA, "NA")) {
     message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
     return()
   }
@@ -390,6 +414,7 @@ output <- function(args) {
     quit(status = -1)
   }
 }
+
 
 if (exists("source_include")) {
   output(passedArgs)
