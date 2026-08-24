@@ -18,6 +18,7 @@ p80_taxrev0(ttot,regi)$( (ttot.val ge max(2010,cm_startyear)) and (pm_SolNonInfe
 p80_normalize0(ttot,regi,"good")$(ttot.val ge 2005) = max(vm_cons.l(ttot,regi)$(pm_SolNonInfes(regi) eq 1) + p80_normalize0(ttot,regi,"good")$(pm_SolNonInfes(regi) eq 0),sm_eps);
 *ML*normalize permit trade corrections to consumption or positive cap path instead of emissions, as those may be negative
 p80_normalize0(ttot,regi,"perm")$(ttot.val ge 2005) = max(abs(pm_shPerm(ttot,regi) * pm_emicapglob("2050")) , sm_eps);
+*normalize permit trade corrections to absolute trade volumes 
 $ifthen.justMip "%emicapregi%" == "JUSTMip" 
 p80_normalize0(ttot,regi,"perm")$(ttot.val ge 2005) =
     max(

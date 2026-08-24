@@ -8,7 +8,6 @@
 
 *' @equations
 *' For Nash solution: intertemporal trade balance must be zero (couple in agricultural trade costs: pvp deflator * net export)
-*' Rahel needs to rewrite this equation the exclude perm only in the JUSTMIP case
 q80_budg_intertemp(regi)..
 0 =e= pm_nfa_start(regi) * pm_pvp("2005","good")
   + SUM(ttot$(ttot.val ge 2005),
@@ -28,7 +27,7 @@ q80_budg_intertemp(regi)..
       )
     );
 
-
+*' Intertemporal permit trade balance over the century must be zero
 $ifthen.justMip "%emicapregi%" == "JUSTMip" 
 
 Equation q80_budg_intertemp_perm;
