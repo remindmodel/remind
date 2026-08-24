@@ -37,7 +37,7 @@
         " --error=", jobName, ".out",
         " --mail-type=END --time=200 --mem-per-cpu=8000",
         " --wrap=\"Rscript ", script,
-        " outputDirs=", paste(outputDirs, collapse = ","),
+        " outputdirs=", paste(outputDirs, collapse = ","),
         " validationConfig=", validationConfig,
         "\"")
       cat(clcom, "\n")

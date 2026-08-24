@@ -10,6 +10,8 @@ library(piamPlotComparison)
 if (!exists("source_include")) {
   lucode2::readArgs("outputdirs", "outFileName", "profileName", "aliases", "sections")
 }
+if (!exists("aliases"))  { aliases <- NULL }
+if (!exists("sections")) { sections <- "all" }
 
 run_compareScenarios2 <- function(
   outputdirs,

@@ -27,7 +27,7 @@ loop(ttot$(ttot.val ge 2005),
   loop(regi,
     loop(trade,
       p80_Mport_iter(ttot,regi,trade,iteration) = vm_Mport.l(ttot,regi,trade);
-      p80_Mport_iter(ttot,regi,trade,iteration) = vm_Xport.l(ttot,regi,trade);
+      p80_Xport_iter(ttot,regi,trade,iteration) = vm_Xport.l(ttot,regi,trade);
     );
     loop(entyPe,
       p80_prodPe_iter(ttot,regi,entyPe,iteration)      = vm_prodPe.l(ttot,regi,entyPe);   
