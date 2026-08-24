@@ -52,7 +52,7 @@ prepare <- function() {
     # list all packages of interest alphabetically here
         tribble(
             ~Package, "data.table", "devtools", "dplyr", "edgeTransport",
-            "flexdashboard", "gdx2", "gdxdt", "ggplot2", "gtools",
+            "flexdashboard", "gdx2", "gdxdt", "gdxrrw", "ggplot2", "gtools",
             "lucode2", "luplot", "luscale", "magclass", "magpie4", "methods",
             "mip", "mrtransport", "optparse", "parallel",
             "plotly", "remind2", "reporttransport", "reticulate", "rlang",
