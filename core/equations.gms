@@ -804,7 +804,7 @@ q_emiCap(t,regi) ..
 q_emiGHG_exclLULUCF_exclBunkers(t,regi)..
   v_emiGHG_exclLULUCF_exclBunkers(t,regi)
   =e=
-*** total GHG emissions excl. F-Gases and excl. LULUCF
+*** total GHG emissions excl. F-Gases, incl. bunkers, incl. LULUCF
   sum( emiMkt,
          vm_emiAllMkt(t,regi,"co2",emiMkt)
       +  vm_emiAllMkt(t,regi,"n2o",emiMkt) * sm_tgn_2_pgc
@@ -816,7 +816,9 @@ q_emiGHG_exclLULUCF_exclBunkers(t,regi)..
   - sum(se2fe(enty,enty2,te),
       pm_emifac(t,regi,enty,enty2,te,"co2")
       * vm_demFeSector(t,regi,enty,enty2,"trans","other") 
-    );
+    )
+*** substract LULUCF emissions
+  - vm_emiMacSector(t,regi,"co2luc");
   
 
 ***-----------------------------------------------------------------
