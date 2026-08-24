@@ -42,7 +42,7 @@ pm_actualbudgetco2eqRegi(ttot,regi)$( 2020 lt ttot.val )
       - sum(se2fe(enty,enty2,te),     !! subtract bunker emissions if cm_bunkerscen is eq 3 or 6
         pm_emifac(ttot2,regi,enty,enty2,te,"co2")
         * vm_demFeSector.l(ttot2,regi,enty,enty2,"trans","other"))$(c_budgetscen eq 3 OR c_budgetscen eq 6)
-      + (vm_Xport.l(ttot2,regi,"perm") - vm_Mport.l(ttot2,regi,"perm"))/sm_c_2_co2)!! subtract net trade of permits in the same pre-conversion units as the budget expression
+      + (vm_Xport.l(ttot2,regi,"perm") - vm_Mport.l(ttot2,regi,"perm"))*(1/sm_c_2_co2))!! subtract net trade of permits in the same pre-conversion units as the budget expression
       * ( (0.5 + pm_ts(ttot2) / 2)$( ttot2.val eq 2020 ) !! second half of the 2020 period (mid 2020 - end 2022) plus 0.5 to account fo beginning 2020 - mid 2020  
         + (pm_ts(ttot2))$( 2020 lt ttot2.val AND ttot2.val lt ttot.val ) !! entire middle periods
         + ((pm_ttot_val(ttot) - pm_ttot_val(ttot-1)) / 2 + 0.5)$(ttot2.val eq ttot.val ) !! first half of the final period plus 0.5 to account fo mid - end of final year

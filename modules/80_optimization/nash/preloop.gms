@@ -46,8 +46,15 @@ loop(ttot$(ttot.val ge 2005),
         vm_Mport.L(ttot,regi,trade) = 0;
              );
         p80_normalize0(ttot,regi,"good")   = vm_cons.l(ttot,regi);
-***        p80_normalize0(ttot,regi,"perm") = vm_cons.l(ttot,regi);  
-                    p80_normalize0(ttot,regi,"perm")$(ttot.val ge 2005) = max(abs(pm_shPerm(ttot,regi) * pm_emicapglob(ttot)) , 1E-6);
+*** Normalize permit market by the actual traded quantity
+            p80_normalize0(ttot,regi,"perm")$(ttot.val ge 2005) =
+                max(
+                    0.5 * (
+                          abs(pm_Xport0(ttot,regi,"perm"))
+                        + abs(p80_Mport0(ttot,regi,"perm"))
+                    ),
+                    1
+                );
         p80_normalize0(ttot,regi,tradePe) = 0.5 * (sum(rlf, vm_fuExtr.l(ttot,regi,tradePe,rlf)) + vm_prodPe.l(ttot,regi,tradePe));
 
 p80_taxrev0(ttot,regi) = vm_taxrev.l(ttot,regi);
@@ -70,6 +77,8 @@ if((cm_emiscen ne 1) and (smax(t,pm_pvp(t,"perm"))) eq 0,
  pm_pvp("2005","perm")=0;
 );
 
+
+
 if((cm_emiscen eq 1), !! if there is no period trade, set the price to zero.
     pm_pvp(ttot,"perm")=0;
 );
@@ -85,6 +94,25 @@ loop(tradePe,
           );
     );
 );
+
+*RM* Permit price growth reflects the carbon price trajectory
+$ifthen.justMip "%emicapregi%" == "JUSTMip"
+loop(ttot$(ttot.val ge 2005),
+
+    if(ttot.val le 2060,
+        pm_pvp(ttot,"perm") =
+            0.35 * 1.055**(ttot.val-2020)
+          * pm_pvp(ttot,"good");
+    else
+        pm_pvp(ttot,"perm") =
+            0.78 * 1.025**(ttot.val-2060)
+          * pm_pvp(ttot,"good");
+    );
+
+);
+
+pm_pvp("2005","perm") = 0; 
+$endif.justMip
 
 ***debug display
 display pm_pvp,p80_normalize0;

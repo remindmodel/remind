@@ -8,6 +8,7 @@
 
 *' @equations
 *' For Nash solution: intertemporal trade balance must be zero (couple in agricultural trade costs: pvp deflator * net export)
+*' Rahel needs to rewrite this equation the exclude perm only in the JUSTMIP case
 q80_budg_intertemp(regi)..
 0 =e= pm_nfa_start(regi) * pm_pvp("2005","good")
   + SUM(ttot$(ttot.val ge 2005),
@@ -28,23 +29,22 @@ q80_budg_intertemp(regi)..
     );
 
 
-$ifthen "%emicapregi%" == "JUSTMip" 
+$ifthen.justMip "%emicapregi%" == "JUSTMip" 
 
 Equation q80_budg_intertemp_perm;
+
 q80_budg_intertemp_perm..
 
 0 =e=
-    SUM(ttot$(ttot.val ge 2005 and ttot.val le 2100),
+    sum(ttot$(ttot.val ge 2005 and ttot.val le 2100),
         pm_ts(ttot)
-        *
-        SUM(regi,
-            (vm_Xport(ttot,regi,"perm")
-            - vm_Mport(ttot,regi,"perm"))
-            * pm_pvp(ttot,"perm")
+      * sum(regi,
+            vm_Xport(ttot,regi,"perm")
+          - vm_Mport(ttot,regi,"perm")
         )
     );
 
-$endif
+$endif.justMip
 
 *' quadratic adjustment costs, penalizing deviations from the trade pattern of the last iteration.
 q80_costAdjNash(ttot,regi)$( ttot.val ge cm_startyear ) ..

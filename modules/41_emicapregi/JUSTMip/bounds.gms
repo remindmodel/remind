@@ -10,7 +10,7 @@
 *** In later iterations, recalculate allocation from market emissions
 
 vm_perm.lo(t,regi) = -10;
-vm_perm.up(t,regi) = 20;
+vm_perm.up(t,regi) = 100;
 
 vm_Xport.fx(t,regi,"perm")$(t.val gt 2100) = 0;
 vm_Mport.fx(t,regi,"perm")$(t.val gt 2100) = 0;
