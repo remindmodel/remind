@@ -128,14 +128,14 @@ cm_taxCO2_startyear    "level of co2 tax in start year in $ per t CO2eq"
 cm_taxCO2_expGrowth     "growth rate of carbon tax"
 c_macscen            "use of mac"
 cm_nucscen            "nuclear option choice"
-cm_ccapturescen       "carbon capture option choice"
+c_co2captureEnergy       "carbon capture option choice"
 c_bioliqscen          "bioenergy liquids technology choise"
 c_bioh2scen           "bioenergy hydrogen technology choice"
-cm_IndCCSscen        "CCS for Industry"
 cm_optimisticMAC     "assume optimistic Industry MAC from AR5 Ch. 10?"
-cm_CCS_cement        "CCS for cement sub-sector"
-cm_CCS_chemicals     "CCS for chemicals sub-sector"
-cm_CCS_steel         "CCS for steel sub-sector"
+cm_co2captureInd        "carbon capture for Industry"
+cm_co2captureCement        "carbon capture for cement sub-sector"
+cm_co2captureChemicals     "carbon capture for chemicals sub-sector"
+cm_co2captureSteel         "carbon capture for steel sub-sector"
 cm_bioenergy_SustTax    "level of the bioenergy sustainability tax in fraction of bioenergy price"
 cm_bioenergy_EF_for_tax "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2 per GJ]"
 cm_maxProdBiolc         "bound on global pebiolc production including residues but excluding traditionally used biomass [EJ per yr]"
@@ -165,8 +165,7 @@ c_ccscapratescen      "CCS capture rate"
 c_export_tax_scen    "choose which oil export tax is used in the model. 0 = none, 1 = fix"
 cm_iterative_target_adj "whether or not a tax or a budget target should be iteratively adjusted depending on actual emission or forcing level"
 cm_gdximport_target   "whether or not the starting value for iteratively adjusted budgets, tax scenarios, or forcing targets (emiscen 5,6,8,9) should be read in from the input.gdx"
-cm_gs_ew              "grain size (for enhanced weathering, CDR module) [micrometre]"
-cm_LimRock             "limit amount of rock spread each year [Gt]"
+cm_33_EW_rockRemPot     "Maximum CO2 removal potential per ton of rock (t CO2 / t rock)."
 cm_expoLinear_yearStart "time at which carbon price increases linearly instead of exponentially"
 
 c_budgetCO2FFI        "carbon budget for CO2 emissions from FFI (in GtCO2)"
@@ -199,15 +198,15 @@ cm_taxCO2_expGrowth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
-cm_ccapturescen  = 1;        !! def = 1
+c_co2captureEnergy  = 1;        !! def = 1
 c_bioliqscen     = 1;        !! def = 1
 c_bioh2scen      = 1;        !! def = 1
 
-cm_IndCCSscen          = 1;        !! def = 1
 cm_optimisticMAC       = 0;        !! def = 0
-cm_CCS_cement          = 1;        !! def = 1
-cm_CCS_chemicals       = 1;        !! def = 1
-cm_CCS_steel           = 1;        !! def = 1
+cm_co2captureInd          = 1;        !! def = 1
+cm_co2captureCement          = 1;        !! def = 1
+cm_co2captureChemicals       = 1;        !! def = 1
+cm_co2captureSteel           = 1;        !! def = 1
 
 
 cm_bioenergy_SustTax    = 1.5;            !! def = 1.5
@@ -252,8 +251,7 @@ c_export_tax_scen     = 0;         !! def = 0
 cm_iterative_target_adj  = 0;      !! def = 0
 cm_gdximport_target      = 0;      !! def = 0
 $setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2
-cm_gs_ew                 = 20;     !! def = 20
-cm_LimRock               = 1000;   !! def = 1000
+cm_33_EW_rockRemPot      = 0.3;    !! def = 0.3
 cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010

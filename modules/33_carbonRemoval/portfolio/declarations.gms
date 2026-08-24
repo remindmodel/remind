@@ -9,10 +9,10 @@ scalars
 *** Multiple options
 sm_capture_rate_cdrmodule       "CO2 capture rate for CDR energy and process emissions, i.e. fegas use in OAE and DAC and for calcination emissions in oae" / 0.9 /
 *** EW
-s33_co2_rem_pot                 "specific carbon removal potential [Gt C per Gt ground rock]"
+s33_rockGrainSize               "grain size of ground rock, influences electricity demand and weathering rate. By default 20 micrometer based on Strefler et al. (2018) [micrometre]" /20/
+s33_rockRemPot                 "specific carbon removal potential [t C / t rock]"
 s33_rock_weath_rate_ambientT    "fraction of stone weathering per year at ambient temperature (25 degree C)"
-s33_costs_fix                   "fixed costs for mining, grinding, spreading [T$/Gt stone]"
-s33_step                        "size of bins in v33_weathering_onfield [Gt stone]"
+s33_step                        "size of bins in v33_EW_onfield_tot [Gt rock]" / 2.5 /
 *JeS* GJ/tCO2 = EJ/Gt CO2 = 44/12 EJ/Gt C.
 *** OAE
 s33_OAE_efficiency          "the amount of rock required to sequester 1GtC [Gt rock / GtC]"
@@ -22,9 +22,8 @@ s33_OAE_glo_limit           "global limit for OAE [tC / a]"
 
 parameters
 *** Multiple options
-p33_fedem(all_te,all_enty)               "final energy demand of each technology [EJ/GtC] (for EW the unit is [EJ/Gt stone])"
+p33_fedem(all_te,all_enty)               "final energy demand of each technology [EJ/GtC] (for EW the unit is [EJ/Gt rock])"
 *** EW
-p33_LimRock(all_regi)                    "regional share of EW limit [fraction], calculated ex ante for a maximal annual amount of 8 Gt rock in D:\projects\CEMICS\paper_technical\supply_curve_transport_remind_regions.m"
 p33_rock_weath_rate(rlf)                 "fraction of stone weathering per year depending on climate grade (warm or temperate)"
 p33_EW_upScalingLimit(ttot)              "Annual growth rate limit on upscaling of mining & spreading rocks on fields"
 p33_EW_shortTermEW_Limit(all_regi)       "Limit on 2030 potential for enhanced weathering, defined in Gt rocks, based on % of land on which EW is applied"
@@ -42,14 +41,14 @@ p33_GDP_NetNeg_share(all_regi)                    "Upper bound on share of expen
 ;
 
 variables
-vm_omcosts_cdr(tall,all_regi)                        "O&M costs for spreading grinded rocks on fields [T$]"
+vm_EW_transport_costs(tall,all_regi)     "O&M costs for transporting ground rocks from mines to fields [T$]"
 ;
 
 positive variables
 
 *** EW
-v33_EW_onfield(ttot,all_regi,rlf,rlf)  "amount of ground rock spread on fields in each timestep [Gt]"
-v33_EW_onfield_tot(ttot,all_regi,rlf,rlf)  "total amount of ground rock on fields, for each climate zone and transportation distance [Gt]"
+v33_EW_onfield(ttot,all_regi,rlf,rlf)  "amount of ground rock spread on fields in each timestep [Gt rock / a]"
+v33_EW_onfield_tot(ttot,all_regi,rlf,rlf)  "total amount of ground rock on fields, for each climate zone and transportation distance [Gt rock]"
 v33_FEdemand(ttot,all_regi,all_enty,all_enty,all_te)  "FE demand of each technology [TWa]"
 *** Multiple options
 vm_co2capture_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "total emissions captured through technologies in the CDR module that enter the CCUS chain + captured emissions from associated FE demand [GtC / a]"
@@ -85,11 +84,10 @@ q33_DAC_FEdemand(ttot,all_regi,all_enty)  "calculates final energy demand from D
 *** EW
 q33_EW_capconst(ttot,all_regi)  "calculates amount of ground rock spread on fields"
 q33_EW_onfield_tot(ttot,all_regi,rlf,rlf)  "total amount of ground rock on fields"
-q33_EW_omcosts(ttot,all_regi)  "calculates O&M costs for spreading ground rocks on fields"
-q33_EW_FEdemand(ttot,all_regi,all_enty)  "calculates final energy demand from enhanced weathering"
+q33_EW_transportCosts(ttot,all_regi)  "calculates transport costs for transporting ground rocks from mines to fields"
+q33_EW_FEdemand(ttot,all_regi,all_enty)  "calculates final energy demand from enhanced weathering for grinding and spreading rocks on fields"
 q33_EW_potential(ttot,all_regi,rlf)  "limits the total potential of EW per region and grade"
 q33_EW_emi(ttot,all_regi)  "calculates amount of carbon captured by EW"
-q33_EW_LimEmi(ttot,all_regi)  "limits EW to a maximal annual amount of ground rock of cm_LimRock"
 q33_EW_upscaling_rate(ttot, all_regi) "limits spreading of rock to a steep but credible upscaling rate"
 q33_EW_ShortTermBound(ttot,all_regi)   "Limits short term potential for enhanced weathering"
 
