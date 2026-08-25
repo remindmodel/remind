@@ -44,29 +44,51 @@ invisible(sapply(list.files("scripts/start", pattern = "\\.R$", full.names = TRU
 # parse options from command line and return them as a named list
 parseOptions <- function() {
   options <- list(
-    make_option(c("-t", "--test"), action="store_true", default=FALSE,
-                help="test output.R without actually starting any run"),
-    make_option("--update", action="store_true", default=FALSE,
-                help="update packages in renv first, incompatible with --renv"),
-    make_option("--comp", type="character", default=NULL,
-                help="specify output type: 'single' for single runs (e.g. reporting), 'comparison' for run comparisons (e.g. compareScenarios2), or 'export' to export runs (e.g. xlsx_IIASA)"),
-    make_option("--filename_prefix", type="character", default=NULL,
-                help="string to be added to filenames by some output scripts (compareScenarios, xlsx_IIASA)"),
-    make_option("--output", type="character", default=NULL,
-                help="directly select a specific script (without .R extension)"),
-    make_option("--outputdirs", type="character", default=NULL,
-                help="directly specify output directories as comma-separated list (e.g. ./output/SSP2-Base-rem-1,./output/NDC-rem-1)"),
-    make_option("--aliases", type="character", default=NULL,
-                help="Specify aliases for the runs given in outputdirs as a comma-separated list (e.g. aliases=default,modified)"),
-    make_option("--remind_dir", type="character", default=NULL,
-                help="path to remind or output directories where runs can be found. Defaults to ./output. Can specify multiple comma-separated folders (e.g. .,../otherremind)"),
-    make_option("--renv", type="character", default=NULL,
-                help="load the renv located at <path>, incompatible with --update"),
-    make_option("--slurmConfig", type="character", default=NULL,
-                help="specify SLURM selection: use 'priority', 'short', or 'standby', or pass multiple SLURM arguments (e.g. '--qos=priority --mem=8000')")
+    make_option(c("-t", "--test"),
+      action = "store_true", default = FALSE,
+      help = "test output.R without actually starting any run"
+    ),
+    make_option("--update",
+      action = "store_true", default = FALSE,
+      help = "update packages in renv first, incompatible with --renv"
+    ),
+    make_option("--comp",
+      type = "character", default = NULL,
+      help = "specify output type: 'single' for single runs (e.g. reporting), 'comparison' for run comparisons (e.g. compareScenarios2), or 'export' to export runs (e.g. xlsx_IIASA)"
+    ),
+    make_option("--filename_prefix",
+      type = "character", default = NULL,
+      help = "string to be added to filenames by some output scripts (compareScenarios, xlsx_IIASA)"
+    ),
+    make_option("--output",
+      type = "character", default = NULL,
+      help = "directly select a specific script (without .R extension)"
+    ),
+    make_option("--outputdirs",
+      type = "character", default = NULL,
+      help = "directly specify output directories as comma-separated list (e.g. ./output/SSP2-Base-rem-1,./output/NDC-rem-1)"
+    ),
+    make_option("--aliases",
+      type = "character", default = NULL,
+      help = "Specify aliases for the runs given in outputdirs as a comma-separated list (e.g. aliases=default,modified)"
+    ),
+    make_option("--remind_dir",
+      type = "character", default = NULL,
+      help = "path to remind or output directories where runs can be found. Defaults to ./output. Can specify multiple comma-separated folders (e.g. .,../otherremind)"
+    ),
+    make_option("--renv",
+      type = "character", default = NULL,
+      help = "load the renv located at <path>, incompatible with --update"
+    ),
+    make_option("--slurmConfig",
+      type = "character", default = NULL,
+      help = "specify SLURM selection: use 'priority', 'short', or 'standby', or pass multiple SLURM arguments (e.g. '--qos=priority --mem=8000')"
+    )
   )
-  parser <- OptionParser(usage="Rscript output.R [options prefixed by --, e.g. --comp=single]", option_list=options,
-                        description="[options] can be the following flags and variables. If variables are not specified but needed, the scripts will ask the user.")
+  parser <- OptionParser(
+    usage = "Rscript output.R [options prefixed by --, e.g. --comp=single]", option_list = options,
+    description = "[options] can be the following flags and variables. If variables are not specified but needed, the scripts will ask the user."
+  )
   # these flags appear in the various output scripts and are necessary here
   # if you add a command line argument to a script, add it here as well
   additionalScriptOptions = list("profileNames", "runs", "folder", "project", "sections",
@@ -75,6 +97,7 @@ parseOptions <- function() {
   for (option in additionalScriptOptions) {
     parser <- add_option(parser, paste0("--", option), help="This option is used in an output script, see your script for information.")
   }
+  
   return(parse_args(parser))
 }
 
@@ -168,7 +191,8 @@ chooseOutputDirs <- function(output, remind_dir) {
     defaultcfg <- readDefaultConfig(".")
     dir_folder <- unique(c("output", dirname(defaultcfg$results_folder)))
   } else {
-    dir_folder <- c(file.path(remind_dir, "output"), remind_dir)
+    dir_folder <- trimws(unlist(strsplit(remind_dir, ",")))
+    dir_folder <- c(file.path(dir_folder, "output"), dir_folder)
   }
   dirs <- dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx")))
   if (needingMif) dirs <- intersect(dirs, unique(dirname(Sys.glob(file.path(dir_folder, "*", "REMIND_generic_*.mif")))))
@@ -240,7 +264,7 @@ runComparisonOrExport <- function(comp, output, outputdirs, aliases, filename_pr
 }
 
 # returns TRUE if any script had errors
-runSingle <- function(output, outputdirs, slurmConfig, test) { # comp = single
+runSingle <- function(output, outputdirs, slurmConfig, interactiveSession, test) { # comp = single
   errors <- FALSE
   # Execute outputscripts for all chosen folders
   for (outputdir in outputdirs) {
@@ -263,7 +287,7 @@ runSingle <- function(output, outputdirs, slurmConfig, test) { # comp = single
       gms <- cfg$gms
       revision <- cfg$inputRevision
     }
-    
+
     # Set value source_include so that loaded scripts know, that they are
     # included as source (instead of a load from command line)
     source_include <- TRUE
@@ -272,47 +296,41 @@ runSingle <- function(output, outputdirs, slurmConfig, test) { # comp = single
     # Execute R scripts
     ###################################################################################
 
-    # output creation for --testOneRegi was switched off in start.R in this commit:
-    # https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
-    if (all(output %in% c(NA, "NA"))) {
-      message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
-    } else {
-      message("\nStarting output generation for ", outputdir, "\n")
-      name <- paste0(output, ".R")
-      scriptsfound <- file.exists(paste0("scripts/output/single/", name))
-      if (any(! scriptsfound)) {
-        warning("Skipping output scripts not found in scripts/output/single: ", name[! scriptsfound])
-      }
-      if (test) {
-        message("Test mode, not executing scripts/output/single/", paste(name, collapse = ", "))
-        next
-      }
-      if (slurmConfig == "direct") {
-        # execute output script directly (without sending it to slurm)
-        for (n in name[scriptsfound]) {
-          message("Executing ", n)
-          tmp.env <- new.env()
-          tmp.error <- try(sys.source(paste0("scripts/output/single/", n), envir = tmp.env))
-          #        rm(list=ls(tmp.env),envir=tmp.env)
-          rm(tmp.env)
-          gc()
-          if (!is.null(tmp.error)) {
-            warning("Script ", n, " was stopped by an error and not executed properly!")
-            errors <- TRUE
-          }
-        }
-      } else {
-        # send the output script to slurm
-        timestamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
-        logfile <- file.path(outputdir, paste0("log_output_", timestamp, ".txt"))
-        Rscripts <- paste0("Rscript scripts/output/single/", name, " --outputdir=", outputdir, collapse = "; ")
-        slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
-                      " --mail-type=END,FAIL --comment=output.R --wrap='", Rscripts, "'")
-        message("Sending to slurm: ", paste(name, collapse = ", "), ". Find log in ", logfile)
-        system(slurmcmd)
-      }
-      message("\nFinished ", ifelse(slurmConfig == "direct", "", "starting job for "), "output generation for ", outputdir, "!\n")
+    message("\nStarting output generation for ", outputdir, "\n")
+    name <- paste0(output, ".R")
+    scriptsfound <- file.exists(paste0("scripts/output/single/", name))
+    if (any(! scriptsfound)) {
+      warning("Skipping output scripts not found in scripts/output/single: ", name[! scriptsfound])
     }
+    if (test) {
+      message("Test mode, not executing scripts/output/single/", paste(name, collapse = ", "))
+      next
+    }
+    if (slurmConfig == "direct") {
+      # execute output script directly (without sending it to slurm)
+      for (n in name[scriptsfound]) {
+        message("Executing ", n)
+        tmp.env <- new.env()
+        tmp.error <- try(sys.source(paste0("scripts/output/single/", n), envir = tmp.env))
+        #        rm(list=ls(tmp.env),envir=tmp.env)
+        rm(tmp.env)
+        gc()
+        if (!is.null(tmp.error)) {
+          warning("Script ", n, " was stopped by an error and not executed properly!")
+          errors <- TRUE
+        }
+      }
+    } else {
+      # send the output script to slurm
+      timestamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
+      logfile <- file.path(outputdir, paste0("log_output_", timestamp, ".txt"))
+      Rscripts <- paste0("Rscript scripts/output/single/", name, " --outputdir=", outputdir, collapse = "; ")
+      slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
+                    " --mail-type=END,FAIL --comment=output.R --wrap='", Rscripts, "'")
+      message("Sending to slurm: ", paste(name, collapse = ", "), ". Find log in ", logfile)
+      system(slurmcmd)
+    }
+    message("\nFinished ", ifelse(slurmConfig == "direct", "", "starting job for "), "output generation for ", outputdir, "!\n")
 
     rm(source_include)
     if (!is.null(warnings())) {
@@ -324,11 +342,19 @@ runSingle <- function(output, outputdirs, slurmConfig, test) { # comp = single
 
 #' main function of the script
 #' prompts the user for all required information to start an output script
-#' 
+#'
 #' @param args parsed command line arguments as a named list, for documentation of the arguments,
 #'        see the command line arguments of this script
 output <- function(args) {
-  remind_dir <- if (is.null(args[["remind_dir"]])) NULL                                           else unlist(strsplit(args[["remind_dir"]], ","))   
+
+  # output creation for --testOneRegi was switched off in start.R in this commit:
+  # https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
+  if (!is.null(args[["output"]]) && args[["output"]] %in% c(NA, "NA")) {
+    message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
+    return()
+  }
+
+  remind_dir <- if (is.null(args[["remind_dir"]])) NULL                                           else unlist(strsplit(args[["remind_dir"]], ","))
   comp       <- if (is.null(args[["comp"]]))       chooseCompMode()                               else args[["comp"]]
   output     <- if (is.null(args[["output"]]))     chooseOutputScript(comp)                       else unlist(strsplit(args[["output"]], ","))
   outputdirs <- if (is.null(args[["outputdirs"]]))  chooseOutputDirs(output, args[["remind_dir"]]) else unlist(strsplit(args[["outputdirs"]], ","))
@@ -353,7 +379,7 @@ output <- function(args) {
     } else {
       filename_prefix = args[["filename_prefix"]]
     }
-    
+
     # choose the slurm options. If you use command line arguments, use slurmConfig=priority or standby
     modulesUsingSlurmConfig <- c("compareScenarios2", "validateScenarios")
     if (isSlurmAvailable() && any(modulesUsingSlurmConfig %in% output)) {
@@ -367,6 +393,7 @@ output <- function(args) {
     }
     errors = runComparisonOrExport(comp, output, outputdirs, aliases, filename_prefix, slurmConfig, args[["test"]])
   } else {
+    interactiveSession <- FALSE
     # define slurm class or direct execution
     outputInteractive <- c("plotIterations", "integratedDamageCosts")
     if (!isSlurmAvailable() || exists("source_include") || any(output %in% outputInteractive)) {
@@ -378,16 +405,17 @@ output <- function(args) {
     } else if (args[["slurmConfig"]] %in% c("priority", "short", "standby")) {
       slurmConfig <- paste0("--nodes=1 --tasks-per-node=1 --qos=", args[["slurmConfig"]])
     } else if (isTRUE(args[["slurmConfig"]] %in% "direct")) {
-      interactive = TRUE
+      interactiveSession <- TRUE
     } else {
       slurmConfig = args[["slurmConfig"]]
     }
-    errors = runSingle(output, outputdirs, slurmConfig, args[["test"]])
+    errors = runSingle(output, outputdirs, slurmConfig, interactiveSession, args[["test"]])
   }
   if (errors) {
     quit(status = -1)
   }
 }
+
 
 if (exists("source_include")) {
   output(passedArgs)

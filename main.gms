@@ -1553,7 +1553,10 @@ $setglobal cm_tradbio_phaseout  default  !! def = default  !! regexp = default|f
 ***  (off):             (default) no bound
 ***  (100):             (e.g.) set maximum to 100 EJ per year
 ***  (any value ge 0):  set maximum to that value
-$setglobal cm_maxProdBiolc  100  !! def = 100  !! regexp = off|is.nonnegative
+***  Note: Regional shares are fixed. For dynamically adjusted shares use
+***  `cm_implicitQttyTarget` (this, however, does not allow for exluding
+***  traditional biomass).
+$setglobal cm_maxProdBiolc  off  !! def = off  !! regexp = off|is.nonnegative
 *** cm_bioprod_regi_lim
 *** limit to total biomass production (including residues) by region to an upper value in EJ/yr from 2035 on
 *** example: "CHA 20, EUR_regi 7.5" limits total biomass production in China to 20 EJ/yr and
@@ -1667,6 +1670,8 @@ $setGlobal cm_vehiclesSubsidies  off !! def = off
 ***   If cm_implicitQttyTargetType is set to "config", the quantity targets will be defined directly in this switch. Check below for examples on how to do this.
 ***   If cm_implicitQttyTargetType is set to "scenario", you should define the list of pre-defined scenarios hard-coded in module '47_regipol' that should be active for the current run (this avoids reaching the 255 characters limit in more complex definitions).
 ***   Example on how to use the switch with cm_implicitQttyTargetType = config:
+***     cm_implicitQttyTarget  "off"
+***       Deactivates any implicit quantity targets
 ***     cm_implicitQttyTarget  "2030.EU27_regi.tax.t.FE.all 1.03263"
 ***       Enforce a tax (tax) that guarantees that the total (t=total) Final Energy (FE.all) in 2030 (2030) is at most the Final energy target in the Fit For 55 regulation in the European Union (EU27_regi) (1.03263 Twa).
 ***       The p47_implicitQttyTargetTax parameter will contain the tax necessary to achieve that goal. (777.8 Mtoe = 777.8 * 1e6 toe = 777.8 * 1e6 * 41.868 GJ = 777.8 * 1e6 * 41.868 * 1e-9 EJ = 777.8 * 1e6 * 41.868 * 1e-9 * 0.03171 TWa = 1.03263 TWa)
@@ -1678,9 +1683,9 @@ $setGlobal cm_vehiclesSubsidies  off !! def = off
 ***     cm_implicitQttyTarget  "EU27_RpEUEff,EU27_bio4"
 ***       "EU27_RpEUEff" -> Enforce a tax that guarantees total FE will be lower or equal to the RePowerEU target for 2030.
 ***       "EU27_bio4" -> Enforce a tax that garantees that EU27 biomass use will be lower or equal to the 4EJ in 20235 and 2050.
-$setGlobal cm_implicitQttyTarget  off !! def = off
+$setGlobal cm_implicitQttyTarget  GLO_bio100 !! def = GLO_bio100
 ***  cm_implicitQttyTargetType - Define if the quantity target switch cm_implicitQttyTarget contains explicit values for defining the targets (config) or if it contains scenario names to reflect hard-coded options (scenario).
-$setGlobal cm_implicitQttyTargetType  config !! def = config !! regexp = config|scenario
+$setGlobal cm_implicitQttyTargetType  scenario !! def = scenario !! regexp = config|scenario
 *** cm_loadFromGDX_implicitQttyTargetTax "load p47_implicitQttyTargetTax values from gdx for first iteration. Usefull for policy runs."
 $setGlobal cm_loadFromGDX_implicitQttyTargetTax  off  !! def = off  !! regexp = off|on
 *** cm_implicitQttyTarget_delay "delay the start of the quantity target algorithm either to:
