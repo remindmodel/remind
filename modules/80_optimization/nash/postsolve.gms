@@ -454,21 +454,26 @@ $endIf.carbonprice
 
 $ifthen.carbonpriceRegi %carbonprice% == "functionalFormRegi"
 *** check regional budget target, must be within tolerance level of target value
-p80_regionalBudget_absDev_iter(iteration,regi) = pm_budgetDeviation(regi);
-
-loop(regi,
-
+  p80_regionalBudget_absDev_iter(iteration,regi) = pm_budgetDeviation(regi);
+  loop(regi,
   !! If the deviation is positive, i.e. budget is too high and requires an increase in Carbon Price => always throw an error
   if(p80_regionalBudget_absDev_iter(iteration,regi) ge 0,
-
-    if (abs(p80_regionalBudget_absDev_iter(iteration,regi)) gt pm_regionalBudget_absDevTol(regi), !! If the deviation is
+    if (abs(p80_regionalBudget_absDev_iter(iteration,regi)) gt pm_regionalBudget_absDevTol(regi), !! If the deviation is 
       s80_bool = 0;
       p80_messageShow("regiBudget") = YES;
     );
-
-  ); !! if for positive deviation
-
-); !! loop regi
+  if( cm_permTradingJustMip eq 0, !! negative deviation excluded in permit trading mode
+  !! If the deviation is negative, i.e. budget is too low and would require a decrease of the Carbon Price => only "not converged" if the carbon price is not already very low, 
+  !! "Very low" is for now <1 USD/t CO2 in 2100, tbd
+  else
+    if ((abs(p80_regionalBudget_absDev_iter(iteration,regi)) gt abs(cm_budgetCO2_absDevTol)) 
+         AND (pm_taxCO2eq("2100",regi) gt (1 * sm_DptCO2_2_TDpGtC)), 
+      s80_bool = 0;
+      p80_messageShow("regiBudget") = YES;
+    );
+  );
+  );
+  );  
 $endIf.carbonpriceRegi
 
 

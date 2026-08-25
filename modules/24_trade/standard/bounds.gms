@@ -15,7 +15,7 @@ vm_Xport.lo(ttot,regi,tradePe)$(ttot.val ge 2005) = 0;
 *** -----------------------------------------------------------
 *** no permit trade allowed in BAU and tax scenarios:
 *** -----------------------------------------------------------
-if (cm_emiscen = 1,
+if (cm_emiscen = 1 or (cm_emiscen = 9 and cm_permTradingJustMip = 0),
    vm_Xport.fx(t,regi,"perm") = 0;
    vm_Mport.fx(t,regi,"perm") = 0;
 else

@@ -69,7 +69,7 @@ if(p80_Mport0("2005",regi,tradePe) eq NA, p80_Mport0("2005",regi,tradePe) = 0);
 ););
 
 *AJS* starting policy runs from permit prices that are all zero doesnot work. start from 49$ price path instead
-if((cm_emiscen ne 1) and (smax(t,pm_pvp(t,"perm"))) eq 0,
+if((cm_emiscen ne 1 or (cm_emiscen ne 9 and cm_permTradingJustMip eq 0)) and (smax(t,pm_pvp(t,"perm"))) eq 0,
  loop(ttot$(ttot.val ge 2005),
 ***this is a 49$/tCo2eq in 2020 trajectory ([T$/GtC]. To get $/tCO2, multiply with 272: 0.18 T$/GtC = 48.96 $/tCO2):     
 	pm_pvp(ttot,"perm") = 0.18*1.05**(ttot.val-2020) * pm_pvp(ttot,"good");
@@ -79,7 +79,7 @@ if((cm_emiscen ne 1) and (smax(t,pm_pvp(t,"perm"))) eq 0,
 
 
 
-if((cm_emiscen eq 1), !! if there is no period trade, set the price to zero.
+if((cm_emiscen eq 1 or (cm_emiscen eq 9 and cm_permTradingJustMip eq 0)), !! if there is no period trade, set the price to zero.
     pm_pvp(ttot,"perm")=0;
 );
 
