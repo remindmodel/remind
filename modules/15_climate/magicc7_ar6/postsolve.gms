@@ -24,8 +24,7 @@ Execute_unload 'fulldata_postsolve';
 
 *** Track runtime
 putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",climateAssessmentInterimRun," iteration.val:0;
-
-Execute "Rscript climateAssessmentInterimRun.R";
+execute.checkErrorLevel "Rscript climateAssessmentInterimRun.R";
 
 *** Track runtime
 putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",GAMS," iteration.val:0;
@@ -74,7 +73,7 @@ $ifthen.cm_magicc_tirf "%cm_magicc_temperatureImpulseResponse%" == "on"
 * thus only compute TIRF after each of the first 10 iterations, then only every fifth iteration. 
 * runtime is ca 30s, so switching on TIRF adds ca 10min to runtime
 if( ((iteration.val le 10) or ( mod(iteration.val,5 ) eq 0)) ,
-    execute "Rscript climateAssessmentImpulseResponse.R";
+    execute.checkErrorLevel "Rscript climateAssessmentImpulseResponse.R";
     execute_loadpoint 'pm_magicc_temperatureImpulseResponse'  pm_temperatureImpulseResponseCO2 = pm_temperatureImpulseResponse;
 );
 *NOTE the MAGICC results (*.OUT files) are from  the last pulse experiment now, so take care if reading them in after this point.
