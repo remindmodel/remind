@@ -7,14 +7,11 @@
 *** SOF ./modules/41_emicapregi/JUSTMip/datainput.gms
 
 
-*** read in data of cost-optimal reference climate policy run
-*' load CO2 emissions from reference run to assign the allocated permits
 
-*** initialization of pm_shPermit and vm_perm for bounds
+
+*** initialization of pm_shPermit and vm_perm for preloop not used as condition in optimization
 pm_emicapglob(t) = 100;
 pm_shPerm(t,regi) = 1;
-
-
 vm_perm.fx(t,regi) = 0;
 
 *** get global GDP

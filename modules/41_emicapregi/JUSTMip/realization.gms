@@ -6,9 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/41_emicapregi/JUSTMip/realization.gms
 
-*' @description: Emission caps/permits are handled through a simple global cap
-*' relative to global GDP, with regional permit shares initialized from the
-*' reference-run emissions for input purposes.
+*' @description: Emission permits are only restricted by 1% of global GDP and can relax regional emission budgets
 
 
 *####################### R SECTION START (PHASES) ##############################
