@@ -705,13 +705,9 @@ q_emiMac(t,regi,emiMac) ..
 ***--------------------------------------------------
 *' All CDR emissions summed up
 ***--------------------------------------------------
-q_emiCdrAll(t,regi)..
-  vm_emiCdrAll(t,regi) !! positive value
-  =e=
-  !! ---- net LUC CDR
-  !! net negative emissions from co2luc
-  - p_macBaseMagpieNegCo2(t,regi) !! negative value
-  
+q_emiCdrNoLU(t,regi)..
+  vm_emiCdrNoLU(t,regi) !! positive value
+  =e=  
   !! ---- gross non-industry CDR
   !! 1. directly geologically stored gross atmospheric removal from pe2se-BECCS + DACCS
   + ( !! pe2se-BECC 
@@ -753,6 +749,14 @@ q_emiCdrAll(t,regi)..
   + vm_nonFosNonPlasticNonEmitted(t,regi) !! positive value
 ;
 
+q_emiCdrAll(t,regi)..
+  vm_emiCdrAll(t,regi) 
+  =e=
+  vm_emiCdrNoLU(t,regi)   
+  !! ---- net LUC CDR
+  !! net negative emissions from co2luc
+  - p_macBaseMagpieNegCo2(t,regi) !! negative value
+;
 
 ***------------------------------------------------------
 *' Total regional emissions are computed as the sum of total emissions over all emission markets.

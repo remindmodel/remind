@@ -158,6 +158,7 @@ v_co2capture(ttot,all_regi)                                 "total captured CO2 
 vm_co2CCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)       "total CO2 injected into geological storage [GtC/a]"
 v_co2capturevalve(ttot,all_regi)                            "total CO2 emitted right after capture [GtC/a], note: used in q_balCCUvsCCS to account for different lifetimes of capture and CCU/CCS te and capacities [GtC/year]"
 v_ccsShare(ttot,all_regi)                                    "fraction of captured CO2 that is stored geologically [share]"
+vm_emiCdrNoLU(ttot,all_regi)                                 "all CDR emissions, gross removals for all options, excluding land-use change emissions [GtC/year]"
 vm_emiCdrAll(ttot,all_regi)                                  "all CDR emissions, net negative emissions from land-use change, gross removals for all other options [GtC/year]"
 ;
 
@@ -181,7 +182,8 @@ q_emiTeDetailMkt(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "de
 q_emiTeMkt(ttot,all_regi,all_enty,all_emiMkt)        "total energy-emissions per region and market"
 q_emiEnFuelEx(ttot,all_regi,all_enty)                "energy emissions from fuel extraction"
 q_emiAllMkt(ttot,all_regi,all_enty,all_emiMkt)       "total regional emissions for each emission market"
-q_emiCdrAll(ttot,all_regi)                           "summing over all CDR emissions"
+q_emiCdrNoLU(ttot,all_regi)                          "summing over all CDR emissions, except net negative land-use change emissions"
+q_emiCdrAll(ttot,all_regi)                           "summing over all CDR emissions, incl. net negative land-use change emissions"
 q_balcapture(ttot,all_regi)                          "balance equation for carbon capture"
 q_balCCUvsCCS(ttot,all_regi)                         "balance equation for captured carbon to CCU or CCS or valve"
 q_ccsShare(ttot,all_regi)                            "calculate the share of captured CO2 that is stored geologically"
