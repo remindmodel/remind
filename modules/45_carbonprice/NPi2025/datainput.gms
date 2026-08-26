@@ -29,16 +29,16 @@ loop(ext_regi$sameas(ext_regi, "EUR_regi"),
   pm_taxCO2eq(t,regi)$(t.val = 2030 AND regi_group(ext_regi,regi))
     = fm_taxCO2eqHist("2030",regi) * sm_DptCO2_2_TDpGtC;
 
-*** 2. linear interpolation from 2030 value to 200 in 2050
+*** 2. linear interpolation from 2030 value to 180 in 2050: reflecting increase of policy stringency with ETS2
   pm_taxCO2eq(t,regi)$(t.val > 2030 AND t.val < 2050 AND regi_group(ext_regi,regi))
     = fm_taxCO2eqHist("2030",regi) * sm_DptCO2_2_TDpGtC
       * (2050 - t.val) / (2050 - 2030)
-    + 200 * sm_DptCO2_2_TDpGtC
+    + 180 * sm_DptCO2_2_TDpGtC
       * (t.val - 2030) / (2050 - 2030);
 
 *** 3. constant after 2050
   pm_taxCO2eq(t,regi)$(t.val ge 2050 AND regi_group(ext_regi,regi))
-    = 200 * sm_DptCO2_2_TDpGtC;
+    = 180 * sm_DptCO2_2_TDpGtC;
 
 );
 
