@@ -97,7 +97,7 @@ parseOptions <- function() {
   for (option in additionalScriptOptions) {
     parser <- add_option(parser, paste0("--", option), help="This option is used in an output script, see your script for information.")
   }
-  
+
   return(parse_args(parser))
 }
 
@@ -349,7 +349,7 @@ output <- function(args) {
 
   # output creation for --testOneRegi was switched off in start.R in this commit:
   # https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
-  if (!is.null(args[["output"]]) && args[["output"]] %in% c(NA, "NA")) {
+  if (!is.null(args[["output"]]) && all(args[["output"]] %in% c(NA, "NA"))) {
     message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
     return()
   }
