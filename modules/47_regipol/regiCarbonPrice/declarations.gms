@@ -236,6 +236,15 @@ Equation
 $endIf.cm_CCSmaxBound
 
 ***---------------------------------------------------------------------------
+*** per region maximum novel CDR (without land-use change) until the given time step:
+***---------------------------------------------------------------------------
+$ifthen not "%cm_CDRregiLimit%" == "off"
+Parameter 
+ p47_CDRregiLimit(ttot, all_regi)                       "Upper limit on novel CDR in each region until the given time step, read from switch cm_CDRregiLimit [GtC]" / %cm_CDRregiLimit% /
+;
+$endif
+
+***---------------------------------------------------------------------------
 *** Exogenous CO2 tax level:
 ***---------------------------------------------------------------------------
 $ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"

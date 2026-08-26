@@ -1343,16 +1343,10 @@ parameter
 *' Default assumption is that only 30% of announced or planned capacities will be realised, either due to discontinuation or delay
 
 parameter
-  cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
+  cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y, incl. land-use change emissions"
 ;
   cm_deuCDRmax = -1; !! def = -1
 *'  switch to cap annual DEU CDR amount by value assigned to switch, or no cap if -1, in MtCO2
-
-parameter
-  cm_EURCDRmax                 "switch to limit maximum annual CDR amount in the EU in MtCO2 per y"
-;
-  cm_EURCDRmax = -1; !! def = -1
-*'  switch to cap annual EUR CDR amount by value assigned to switch, or no cap if -1, in MtCO2
 
 parameter
   cm_EnSecScen_limit        "switch for limiting the gas demand from 2025 onward, currently only applied to Germany"
@@ -1712,6 +1706,11 @@ $setGlobal cm_VREminShare    off !! def = off
 ***     amount of Carbon Capture and Storage (including DACCS and BECCS) is limited to a maximum of 2GtCO2 per yr globally, and 250 Mt CO2 per yr in EU28.
 ***   This switch only works for model native regions. If you want to apply it to a group region use cm_implicitQttyTarget instead.
 $setGlobal cm_CCSmaxBound    off  !! def = off
+*** cm_CDRregiLimit "limits novel Carbon Dioxide Removal (CDR) to a maximum value per year per region until the given time step."
+***   Example on how to use:
+***     cm_CDRregiLimit   "2040.EUR.50"
+***     This limits the amount of novel CDR to a maximum of 50 Mt CO2 per yr until 2040.
+$setGlobal cm_CDRregiLimit    off  !! def = off
 *** cm_33_EW_maxShareOfCropland
 *** limit the share of cropland on which rocks can be spread. Affects the maximum total amount of rocks weathering on fields.
 *** example: "GLO 1, LAM 0.5" limits amount of rocks weathering on cropland in LAM to 50% of max value if all LAM cropland were used.
