@@ -90,14 +90,7 @@ $ENDIF
 
 display p45_shareTarget;
 
-Parameter p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,all_regi) "regional GHG emissions (without LU and without bunkers) in BAU scenario [MtCO2eq/yr]"
-  /
-$ondelim
-$ifthen exist "./modules/45_carbonprice/NDC/input/pm_BAU_reg_emi_wo_LU_wo_bunkers.cs4r"
-$include "./modules/45_carbonprice/NDC/input/pm_BAU_reg_emi_wo_LU_wo_bunkers.cs4r"
-$endif
-$offdelim
-  /             ;
+Parameter p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,all_regi) "regional GHG emissions (without LU and without bunkers) in BAU scenario [MtCO2eq/yr]";
 
 *** --------------------------------------------------------------------------
 *** use new GAMS internal variables for total GHG excl LULUCF and excl bunkers

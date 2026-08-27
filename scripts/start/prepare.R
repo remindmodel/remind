@@ -149,13 +149,6 @@ prepare <- function() {
   # check whether the regional resolution and input data revision are outdated and update data if needed
   cfg <- updateInputData(cfg, remindPath = ".")
 
-  # extract BAU emissions for NDC runs to set up emission goals for region where only some countries have a target
-  if (isTRUE(cfg$gms$carbonprice == "NDC") || isTRUE(cfg$gms$carbonpriceRegi == "NDC")) {
-    cat("\nRun scripts/input/prepare_NDC.R.\n")
-    source("scripts/input/prepare_NDC.R")
-    prepare_NDC(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
-  }
-
   ############ update information ########################
   # update_info, which regional resolution and input data revision in tmpModelFile
   update_info(madrat::regionscode(cfg$regionmapping), cfg$inputRevision, cfg$model_version)
