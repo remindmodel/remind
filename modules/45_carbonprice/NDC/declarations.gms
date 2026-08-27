@@ -26,7 +26,7 @@ $ifthen "%cm_targetDelay%" == "prisma"
 p45_delay(all_regi)                                      "delay of NDC targets, defined per region [years]"
 $endif
 $ifthen not "%cm_NDC_CO2PriceLimit%" == "off"
-p45_CO2PriceLimitNDC(ttot,all_regi)                       "Upper limit of CO2 price in NDC realization, read from switch cm_NDC_CO2PriceLimit [$/tCO2]" / %cm_NDC_CO2PriceLimit% /
+pm_CO2PriceLimitNDC(ttot,all_regi)                       "Upper limit of CO2 price in NDC realization, read from switch cm_NDC_CO2PriceLimit [$/tCO2]" / %cm_NDC_CO2PriceLimit% /
 $endif
 ;
 

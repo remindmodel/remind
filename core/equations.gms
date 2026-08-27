@@ -802,7 +802,7 @@ q_emiCap(t,regi) ..
 *' Total GHG emissions excl. land-use change and excl. bunker emissions  (needed for NDC targets)
 ***--------------------------------------------------
 q_emiGHG_exclLULUCF_exclBunkers(t,regi)..
-  v_emiGHG_exclLULUCF_exclBunkers(t,regi)
+  vm_emiGHG_exclLULUCF_exclBunkers(t,regi)
   =e=
 *** total GHG emissions excl. F-Gases, incl. bunkers, incl. LULUCF
   sum( emiMkt,
