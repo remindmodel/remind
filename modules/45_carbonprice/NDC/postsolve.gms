@@ -24,29 +24,38 @@ pm_NDCEmiTargetDeviation(p45_NDCyearSet(t,regi)) = (p45_CO2eqwoLU_goal(t,regi) -
 display p45_CO2eqwoLU_actual;
 display p45_CO2eqwoLU_goal;
 
-*#' nash compatible convergence scheme: adjustment of co2 tax for next iteration based on deviation of emissions in this iteration (actual) from target emissions (ref)
-*#' maximum possible change between iterations decreases with increase of iteration number
+*** nash compatible convergence scheme: adjustment of co2 tax for next iteration based on deviation of emissions in this iteration (actual) from target emissions (ref)
+*** define adjustment exponent decreasing over iterations, determines upper and lower limits to rescale factor of CO2 tax that converge to 1 with increasing iteration number
 if(       iteration.val lt  8, p45_adjustExponent = 4;
-   elseif iteration.val lt 15, p45_adjustExponent = 3;
-   elseif iteration.val lt 23, p45_adjustExponent = 2;
+   elseif iteration.val lt 20, p45_adjustExponent = 3;
+   elseif iteration.val lt 30, p45_adjustExponent = 2;
    else                        p45_adjustExponent = 1;
 );
 
 *** calculate CO2 tax rescale factor as ratio of current emissions in this iteration divided by target emissions, raised to the power of p45_adjustExponent
-*** use max(0.1, ...) to make sure that negative emission values cause no problem, use +0.0001 such that net zero targets cause no problem
 p45_factorRescaleCO2Tax(p45_NDCyearSet(t,regi)) =
-  ( (max(0.1, p45_CO2eqwoLU_actual(t,regi))+0.0001)/(p45_CO2eqwoLU_goal(t,regi)+0.0001) )**p45_adjustExponent;
+*** use max(0.1, ...) to make sure that negative emission values cause no problem
+  ( (max(0.1, p45_CO2eqwoLU_actual(t,regi)) ) 
+***use +0.0001 such that net zero targets cause no problem
+    / (p45_CO2eqwoLU_goal(t,regi)+0.0001) )**p45_adjustExponent;
 
+*** iteration-dependent upper and lower limits for the rescale factor (both decrease with iteration number)
+p45_factorRescaleUpLimit = max(2-iteration.val/20, 1.01-iteration.val/10000);
+p45_factorRescaleLoLimit = 0.1**p45_adjustExponent;
+p45_factorRescaleUpLimit_iter(iteration) = p45_factorRescaleUpLimit;
+p45_factorRescaleLoLimit_iter(iteration) = p45_factorRescaleLoLimit;
+
+*** apply upper and lower limits to rescale factor
 p45_factorRescaleCO2TaxLtd(p45_NDCyearSet(t,regi)) =
-  min(max(0.1**p45_adjustExponent, p45_factorRescaleCO2Tax(t,regi)), max(2-iteration.val/15,1.01-iteration.val/10000));
+  min(max(p45_factorRescaleLoLimit, p45_factorRescaleCO2Tax(t,regi)), p45_factorRescaleUpLimit);
 
 *** rescale CO2 tax for next iteration
 pm_taxCO2eq(t,regi)$(t.val gt 2021 AND t.val le p45_lastNDCyear(regi)) = max(1* sm_DptCO2_2_TDpGtC,pm_taxCO2eq(t,regi) * p45_factorRescaleCO2TaxLtd(t,regi) );
 
+*** save rescale factors over iterations
 p45_factorRescaleCO2Tax_iter(iteration,t,regi) = p45_factorRescaleCO2Tax(t,regi);
 p45_factorRescaleCO2TaxLtd_iter(iteration,t,regi) = p45_factorRescaleCO2TaxLtd(t,regi);
 
-display p45_factorRescaleCO2TaxLtd_iter;
 
 
 $ifThen.cm_NDC_CO2PriceLimit not "%cm_NDC_CO2PriceLimit%" == "off"
