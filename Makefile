@@ -54,6 +54,14 @@ restore-renv:    ## Restore renv to the state described in interactively
                  ## selected renv.lock from the archive or a run folder.
 	Rscript -e 'piamenv::restoreRenv()'
 
+reset-renv:      ## reset renv to state of a freshly cloned repo
+	@mv renv/archive tmp-renv-archive
+	@chmod +w -R renv
+	@rm -r renv
+	@git restore renv
+	@mv tmp-renv-archive/* renv/archive/
+	@rm -d tmp-renv-archive
+
 clone-conda: ## Clone the specified conda environment or the active environment to a new environment in the user's home directory or specified DEST
 	@if [ -z "$$ENV" ] && [ -z "$$CONDA_DEFAULT_ENV" ]; then \
 		echo "No Conda environment specified and no active Conda environment found."; \

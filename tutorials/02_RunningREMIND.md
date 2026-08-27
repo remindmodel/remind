@@ -74,7 +74,7 @@ To see how far your run is or whether it was stopped due to some problems, you c
 remindstatus output/default_2024-02-29_16.45.19
 ```
 in the console. If you are in the folder, `remindstatus` is sufficient.
-For a short version, use `rs2` (see help at `rs2 -h`). For more commands to manage your runs, type `piaminfo`.
+For a short version and an overview of all runs, use `rs` (see help at `rs -h`). For more commands to manage your runs, type `piaminfo`.
 
 NOTE: A few words on the scripts that we currently use to start runs. The scripts containing the string 'start' have a double functionality:
 - they submit the run to the cluster or to your GAMS system if you work locally

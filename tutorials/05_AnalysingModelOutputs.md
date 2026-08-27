@@ -173,9 +173,9 @@ Another useful script it `validateScenarios`, which performs an automated check 
 You can also specify the parameters in the command line, for example starting a `compareScenario2` run without any prefix as:
 
 ``` bash
-Rscript output.R comp=comparison filename_prefix= output=compareScenarios2 slurmConfig=priority
+Rscript output.R --comp=comparison --filename_prefix= --output=compareScenarios2 --slurmConfig=priority
 ```
-If you want to compare runs from different REMIND folders, add `remind_dir=.,../otherremind` as a parameter.
+If you want to compare runs from different REMIND folders, add `--remind_dir=.,../otherremind` as a parameter.
 
 How to create new plots is described in the tutorial [8_Advanced_AnalysingModelOutputs.Rmd](./08_Advanced_AnalysingModelOutputs.Rmd).
 Another useful and compatible resource for generating plots (e.g. box plots) from REMIND results is UTokyo's *mipplot* R package: https://github.com/UTokyo-mip/mipplot.
@@ -205,11 +205,11 @@ You can click on the index and search for interesting functions. All functions u
 
 ### Run Status
 
-To get an overview of the status of your run, your can use the commandline tool `rs2` on the cluser (see help at `rs2 -h`). The tool provides information about runtime, convergence, number of iterations needed to converge, optimality etc.
+To get an overview of the status of your run, your can use the commandline tool `rs` on the cluser (see help at `rs -h`). The tool provides information about runtime, convergence, number of iterations needed to converge, optimality etc.
 
 ### Summation Checks
 
-In order to get an overview of the outcome of the summation checks applied after the run, use `rsanity` (see help at `rsanity -h`). The overview only applies to runs that produce a mif file, i.e. the reporting has completed successfully. 
+In order to get an overview of the outcome of the summation checks applied after the run, use `rs -s`. The overview only applies to runs that produce a mif file, i.e. the reporting has completed successfully. 
 
 Table contains the following columns:
 
