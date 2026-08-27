@@ -648,6 +648,8 @@ scalars
 sm_giga_2_non                "giga to non"                             /1e+9/,
 sm_trillion_2_non            "trillion to non"                         /1e+12/,
 
+sm_non_2_trillion            "non to trillion"                         /1e-12/,
+
 *** energy units
 s_ZJ_2_TWa                   "convert from Zeta Joule to Tera Watt annum"   /31.71/,
 sm_EJ_2_TWa                  "convert from Exa Joule to Tera Watt annum"    /31.71e-03/,
@@ -745,6 +747,23 @@ sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 *** Example 2:
 ***   Suppose we have a subsidy that we want to phase out with a different date for each region.
 ***   p_subsidy(t,regi) = macro_interpolate(t.val, cm_startyear, p_subsidyEndYr(regi), p_subsidy(cm_startyear,regi), 0);
+*** Outside t0 and t1, the linear function is continued
+*** x0 _|         /
+***     |        /
+***     |       /
+*** x1 _|      /
+***     |_____/___________
+***            | |
+***          t0  t1
 $macro macro_interpolate(t,t0,t1,x0,x1) ( ((t1) - (t)) / ((t1) - (t0)) * (x0) + ((t) - (t0)) / ((t1) - (t0)) * (x1) )
 
+*** m_clamped_interpolate: Like m_interpolate, but if t is not between t0 and t1, we return the respective boundary value
+*** x0 _|         _____
+***     |        /
+***     |       /
+*** x1 _|______/
+***     |________________
+***            | |
+***          t0  t1
+$macro m_clamped_interpolate(t, t0, t1, x0, x1) ( (x0)$((t) <= (t0)) + (x1)$((t) >= (t1)) + ((x0) + ((x1) - (x0)) * ((t) - (t0)) / ((t1) - (t0)))$(((t) > (t0)) AND ((t) < (t1))))
 *** EOF ./core/declarations.gms
