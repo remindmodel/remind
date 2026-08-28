@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** Move LCOE reporting into `reoirtingLCOE` instead of `reporting`
     [[#2416](https://github.com/remindmodel/remind/pull/2416)]
 - **47_regipol** Use dynamic implicit quantity target to limit biomass to 100 EJ/yr in default setting (instead of ex-ante regional allocations via `cm_maxProdBiolc`)
+- **29_CES-parameters** add 2020 to historic periods for corrections in industry FE demands
+    [[#2442](https://github.com/remindmodel/remind/pull/2442)]
 
 ### added
 - **scripts** Add the possibility to build only some sections of the compareScenarios2 report with `--sections=`

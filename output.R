@@ -97,7 +97,7 @@ parseOptions <- function() {
   for (option in additionalScriptOptions) {
     parser <- add_option(parser, paste0("--", option), help="This option is used in an output script, see your script for information.")
   }
-  
+
   return(parse_args(parser))
 }
 
@@ -264,7 +264,7 @@ runComparisonOrExport <- function(comp, output, outputdirs, aliases, filename_pr
 }
 
 # returns TRUE if any script had errors
-runSingle <- function(output, outputdirs, slurmConfig, test) { # comp = single
+runSingle <- function(output, outputdirs, slurmConfig, interactiveSession, test) { # comp = single
   errors <- FALSE
   # Execute outputscripts for all chosen folders
   for (outputdir in outputdirs) {
@@ -349,7 +349,7 @@ output <- function(args) {
 
   # output creation for --testOneRegi was switched off in start.R in this commit:
   # https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
-  if (!is.null(args[["output"]]) && args[["output"]] %in% c(NA, "NA")) {
+  if (!is.null(args[["output"]]) && all(args[["output"]] %in% c(NA, "NA"))) {
     message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
     return()
   }
@@ -392,7 +392,8 @@ output <- function(args) {
       }
     }
     errors = runComparisonOrExport(comp, output, outputdirs, aliases, filename_prefix, slurmConfig, args[["test"]])
-  } else {
+  } else if (comp %in% c("single")) {
+    interactiveSession <- FALSE
     # define slurm class or direct execution
     outputInteractive <- c("plotIterations", "integratedDamageCosts")
     if (!isSlurmAvailable() || exists("source_include") || any(output %in% outputInteractive)) {
@@ -404,11 +405,13 @@ output <- function(args) {
     } else if (args[["slurmConfig"]] %in% c("priority", "short", "standby")) {
       slurmConfig <- paste0("--nodes=1 --tasks-per-node=1 --qos=", args[["slurmConfig"]])
     } else if (isTRUE(args[["slurmConfig"]] %in% "direct")) {
-      interactive = TRUE
+      interactiveSession <- TRUE
     } else {
       slurmConfig = args[["slurmConfig"]]
     }
-    errors = runSingle(output, outputdirs, slurmConfig, args[["test"]])
+    errors = runSingle(output, outputdirs, slurmConfig, interactiveSession, args[["test"]])
+  } else {
+    stop("Comparison mode not supported")
   }
   if (errors) {
     quit(status = -1)

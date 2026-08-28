@@ -238,8 +238,10 @@ pm_cesdata(t,regi,ppfKap,"quantity") = p29_capitalQuantity(t,regi,ppfKap);
 *** TODO: unify handling of offset_quantity accross all sectors?
 
 *** Assume fehe_otherInd at 0.1% of fega_otherInd for regions with zero
-*** fehe_otherInd in historic periods (IND, LAM, MEA, SSA)
-loop ((t_29hist(t),regi_dyn29(regi))$(
+*** fehe_otherInd in historic periods (2005-2015 and 2020) (IND, LAM, MEA, SSA) 
+loop ((t,regi_dyn29(regi))$(
+                           (t_29hist(t) or t.val eq 2020)
+                           and
                            pm_cesdata(t,regi,"fehe_otherInd","quantity") eq 0 ),
   pm_cesdata(t,regi,"fehe_otherInd","quantity")
   = 1e-4
