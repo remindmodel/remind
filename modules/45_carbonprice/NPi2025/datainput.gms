@@ -45,9 +45,14 @@ loop(ext_regi$sameas(ext_regi, "EUR_regi"),
 *** negative carbon price from 2030 on to represent fossil-friendly US policies in energy supply sector
 loop(ext_regi$sameas(ext_regi,"USA_regi"),
    pm_taxCO2eq(t,regi)$(t.val ge 2030 AND regi_group(ext_regi,regi)) 
-      = -5 * sm_DptCO2_2_TDpGtC;
+      = fm_taxCO2eqHist("2030",regi) * sm_DptCO2_2_TDpGtC;
 );
 
+*** In SSA, add 2030 value
+loop(ext_regi$sameas(ext_regi,"SSA_regi"),
+  pm_taxCO2eq(t,regi)$(t.val = 2030 AND regi_group(ext_regi,regi))
+    = fm_taxCO2eqHist("2030",regi) * sm_DptCO2_2_TDpGtC;
+);
 
 *** after 2100, keep CO2 price constant at 2100 level
 pm_taxCO2eq(t,regi)$(t.val gt 2100) = pm_taxCO2eq("2100",regi);
