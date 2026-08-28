@@ -158,7 +158,7 @@ vm_emiCdrAll.up(t,regi)$((cm_deuCDRmax ge 0) AND (sameas(regi,"DEU"))) = cm_deuC
 *** limit EUR CDR amount (Energy system and industry BECCS, DACCS, biochar, EW, other industry storage), conversion from MtCO2 to GtC
 $ifthen not "%cm_CDRregiLimit%" == "off"
 loop((t, regi) $ p47_CDRregiLimit(t, regi),
-    vm_emiCdrNoLU.up(t2,regi)$(t2.val le t.val) = p47_CDRregiLimit(t, regi) / 1000 / sm_c_2_co2;
+    vm_emiCdrNovel.up(t2,regi)$(t2.val le t.val) = p47_CDRregiLimit(t, regi) / 1000 / sm_c_2_co2;
 );
 $endIf
 
