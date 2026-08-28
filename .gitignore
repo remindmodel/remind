@@ -97,6 +97,6 @@ calibration_results/
 # ignore files created by tests
 tests/test-full*.log
 tests/testthat/C_TESTTHAT_startlog_*.txt
-225a/
+/225*/*
 main_testOneRegi.dmp
 main_testOneRegi.lst
