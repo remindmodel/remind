@@ -1009,10 +1009,18 @@ parameter
 parameter 
   c_biopyrOptions      "Turn the three established and one advanced industrial biochar production configurations on or off"
 ; 
-  c_biopyrOptions = 1; !! def = 1 !! regexp  = 0|1|2
+  c_biopyrOptions = 0; !! def = 1 !! regexp  = 0|1|2
 *' * (0): biochar technologies are turned off
 *' * (1): three established industrial biochar production configurations
 *' * (2): three established + advanced industrial biochar production setup that co-produces liquids
+
+parameter
+  cm_inco0Burial               "biochar price assumptions (revenue from using biochar in agriculture or construction)"
+;
+  cm_inco0Burial = 1; !! def = 1 
+*' *  (any number): multiplied by 100 to set the imported investment costs. 
+
+
 parameter
   cm_33DAC                  "choose whether DAC (direct air capture) should be included into the CDR portfolio."
 ;
@@ -1096,7 +1104,7 @@ parameter
 parameter
   cm_33_BCpriceForm               "biochar price assumptions (revenue from using biochar in agriculture or construction)"
 ;
-  cm_33_BCpriceForm = 1; !! def = 1 
+  cm_33_BCpriceForm = 0; !! def = 1 
 *' *  (1): decreasing price over time, independent of actual deployment. Lower price path. Fits best for peak budget runs with 650 Gt CO2 as of 2020.
 *' *  (2): decreasing price over time, independent of actual deployment. Higher price path.Fits best for peak budget runs with 650 Gt CO2 as of 2020.
 *' *  (any other number): constant price. Chose 0 to turn it off. Unit: [2015 USD / t BC]. Suggested range: 100-200 USD/tBC. Better choice for runs with higher peak budget.
