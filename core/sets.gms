@@ -174,6 +174,7 @@ all_te          "all energy technologies, including from modules"
     bioh2c          "biomass to hydrogen with capture"
     bioethl         "biomass to ethanol"
     bioeths         "sugar and starch biomass to ethanol"
+    bioethsc        "sugar and starch biomass to ethanol with capture"
     biodiesel       "oil biomass to biodiesel"
     biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
@@ -1109,6 +1110,7 @@ te(all_te)              "energy technologies"
     bioh2c          "biomass to hydrogen with carbon capture"
     bioethl         "biomass to ethanol"
     bioeths         "sugar and starch biomass to ethanol"
+    bioethsc        "sugar and starch biomass to ethanol with capture"
     biodiesel       "oil biomass to biodiesel"
     biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
@@ -1227,6 +1229,7 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
     bioh2c          "biomass to hydrogen with carbon capture"
     bioethl         "biomass to ethanol"
     bioeths         "sugar and starch biomass to ethanol"
+    bioethsc        "sugar and starch biomass to ethanol with capture"
     biodiesel       "oil biomass to biodiesel"
     biopyronly      "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe        "biomass pyrolysis to biochar plus heat (established industrial)"
@@ -1347,6 +1350,7 @@ teCCS(all_te)       "Technologies with carbon capture"
     biogasc     "gasification of biomass with carbon capture"
     bioftcrec   "biomass based fischer-tropsch with carbon capture recycle"
     bioh2c      "biomass to hydrogen with carbon capture"
+    bioethsc    "sugar and starch biomass to ethanol with capture"
 /
 
 te2teCCS(all_te,all_te) "Map an energy technology to its CCS equivalent"
@@ -1361,6 +1365,7 @@ te2teCCS(all_te,all_te) "Map an energy technology to its CCS equivalent"
     biogas    . biogasc    "gasification of biomass"
     bioftrec  . bioftcrec  "biomass based fischer-tropsch recycle"
     bioh2     . bioh2c     "biomass to hydrogen"
+    bioeths   . bioethsc   "sugar and starch biomass to ethanol with capture"
 /
 
 teccsinje(all_te)         "transport, storage, and injection of ico2"
@@ -1389,6 +1394,7 @@ teBio(all_te)      "biomass energy systems technologies"
     bioh2c      "biomass to hydrogen with carbon capture"
     bioethl     "biomass to ethanol"
     bioeths     "sugar and starch biomass to ethanol"
+    bioethsc    "sugar and starch biomass to ethanol with capture"
     biodiesel   "oil biomass to biodiesel"
     biopyronly  "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe    "biomass pyrolysis to biochar plus heat (established industrial)"
@@ -1420,6 +1426,7 @@ teRe(all_te)     "renewable technologies including biomass"
     bioh2c      "biomass to hydrogen with carbon capture"
     bioethl     "biomass to ethanol"
     bioeths     "sugar and starch biomass to ethanol"
+    bioethsc    "sugar and starch biomass to ethanol with capture"
     biodiesel   "oil biomass to biodiesel"
     biopyronly  "biomass pyrolysis to biochar, no energy co-product (established industrial)"
     biopyrhe    "biomass pyrolysis to biochar plus heat (established industrial)"
@@ -2391,6 +2398,7 @@ pe2se(all_enty,all_enty,all_te) "map primary energy carriers to secondary"
     pebiolc.seliqbio.bioftcrec
     pebioil.seliqbio.biodiesel
     pebios.seliqbio.bioeths
+    pebios.seliqbio.bioethsc
     pebiolc.seliqbio.bioethl
     peoil.seel.dot
     pebiolc.seel.biochp
@@ -2637,9 +2645,13 @@ emi2te(all_enty,all_enty,all_te,all_enty)    " map emissions to technologies"
     pebiolc.sehe.biohp.oc
     pebiolc.seliqbio.bioethl.bc
     pebios.seliqbio.bioeths.bc
+    pebios.seliqbio.bioethsc.bc
     pebioil.seliqbio.biodiesel.bc
     pebiolc.seliqbio.bioethl.oc
     pebios.seliqbio.bioeths.oc
+    pebios.seliqbio.bioethsc.oc
+    pebios.seliqbio.bioethsc.co2
+    pebios.seliqbio.bioethsc.cco2
     pebioil.seliqbio.biodiesel.oc
     pebiolc.seh2.bioh2c.n2o
     pebiolc.seel.biochp.n2o
@@ -2756,6 +2768,7 @@ emiBECCS2te(all_enty,all_enty,all_te,all_enty) "mapping of BECCS PE,SE,technolog
     pebiolc. seel.bioigccc.cco2
     pebiolc.seh2.bioh2c.cco2
     pebiolc.segabio.biogasc.cco2
+    pebios.seliqbio.bioethsc.cco2
 /
 
 emiBiochar2te(all_enty,all_enty,all_te,all_enty) "mapping of Biochar PE,SE,technology and emissions captured long-term in biochar"
@@ -2821,7 +2834,7 @@ teSe2rlf(all_te,rlf)        "mapping for techologies to grades. Currently, the i
     igcc,igccc,pc,coaltr,coalgas,coalh2,coalh2c,coalchp,coalhp,coalftrec,coalftcrec,
     biotr,biotrmod,biogas,biogasc,bioftrec,bioftcrec,bioh2,bioh2c,biohp,biochp,bioigcc,bioigccc,
     biopyronly,biopyrhe,biopyrchp,biopyrliq,
-    elh2,h2turb,elh2VRE,h2turbVRE,bioethl,bioeths,biodiesel,tnrs,fnrs
+    elh2,h2turb,elh2VRE,h2turbVRE,bioethl,bioeths,bioethsc,biodiesel,tnrs,fnrs
     ) . 1
 /
 

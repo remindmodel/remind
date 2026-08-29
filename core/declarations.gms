@@ -356,6 +356,17 @@ p_FEPrice_by_FE_iter(iteration,ttot,all_regi,all_enty) "parameter to save iterat
 ;
 
 
+*' Region-level feedstock availability for the seed bounds.
+*' Default: seedable in every region.
+Set pm_seedAvail(all_regi,all_te) "regions where the pe feedstock for te exists";
+pm_seedAvail(regi,te) = yes;
+
+*' RoSa: This could be data-driven eventually. 
+Set regNoSugarStarch(all_regi) "no feedstock for bioethsc" / REF, MEA /;
+pm_seedAvail(regNoSugarStarch,"bioethsc") = no;
+
+
+
 *** ------------- Energy System Variables ------------------------------------
 variables
 

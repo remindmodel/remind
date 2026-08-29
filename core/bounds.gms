@@ -39,9 +39,10 @@ loop(pe2se(enty,enty2,te) $ (
     (not sameas(te,"tnrs")) and
     (not teBiopyr(te))
   ),
-  vm_cap.lo(t,regi,te,"1") $ (t.val >= 2030 and t.val <= 2070) = 1e-7;
+  vm_cap.lo(t,regi,te,"1") 
+    $ (t.val >= 2030 and t.val <= 2070 and pm_seedAvail(regi,te)) = 1e-7;
   if(not teCCS(te), 
-    vm_deltaCap.lo(t,regi,te,"1") $ (t.val >= 2030 and t.val <= 2070) = 1e-8;
+    vm_deltaCap.lo(t,regi,te,"1") $ (t.val >= 2030 and t.val <= 2070 and pm_seedAvail(regi,te)) = 1e-8;
   );
 );
 
@@ -485,7 +486,8 @@ vm_deltaCap.fx(t,regi,"gash2",rlf) $ (t.val > 2030) = 0;
 vm_cap.lo(t,regi,"coalh2",rlf) $ (t.val >= 2020) = 0;
 vm_cap.lo(t,regi,"gash2",rlf) $ (t.val > 2030) = 0;
 
-
+* RoSa: Not sure if this should be there. 
+* vm_deltaCap.up(t,regi,"bioethsc",rlf) $ (t.val < 2030) = 1e-6;
 
 
 
