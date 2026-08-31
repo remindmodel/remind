@@ -74,7 +74,7 @@ To see how far your run is or whether it was stopped due to some problems, you c
 remindstatus output/default_2024-02-29_16.45.19
 ```
 in the console. If you are in the folder, `remindstatus` is sufficient.
-For a short version, use `rs2` (see help at `rs2 -h`). For more commands to manage your runs, type `piaminfo`.
+For a short version and an overview of all runs, use `rs` (see help at `rs -h`). For more commands to manage your runs, type `piaminfo`.
 
 NOTE: A few words on the scripts that we currently use to start runs. The scripts containing the string 'start' have a double functionality:
 - they submit the run to the cluster or to your GAMS system if you work locally
@@ -138,7 +138,7 @@ The actual REMIND is written in GAMS, a programming software to numerically solv
 GAMS code structure
 </p>
 
-Fundamentally, we distinguish between two kinds of variables: variables (starting with *v_*) and parameters (starting with *p_*). Parameters are fixed (exogenous data in economists' lingo), while variables are free within a certain range and can be adjusted to maximize the objective function of the optimization problem (endogenous variables in economist's lingo). However, there are many constraints that fix relations between the variables and parameters. Within the remaining solution space, the optimization procedure tries to find the maximum of the objective function. The output file of the optimization is the **fulldata.gdx** which is under `output` in the folder of your REMIND run. You can open it, for instance, with GAMS IDE or load it into `R` using the command  `readGDX()` (see details below). In the file, you can find, among other things, the optimal levels of the variables (`variable.l`) and all the predefined parameter values.
+Fundamentally, we distinguish between two kinds of variables: variables (starting with *v_*) and parameters (starting with *p_*). Parameters are fixed (exogenous data in economists' lingo), while variables are free within a certain range and can be adjusted to maximize the objective function of the optimization problem (endogenous variables in economist's lingo). However, there are many constraints that fix relations between the variables and parameters. Within the remaining solution space, the optimization procedure tries to find the maximum of the objective function. The output file of the optimization is the **fulldata.gdx** which is under `output` in the folder of your REMIND run. You can open it, for instance, with GAMS IDE or load it into `R` using the command  `gdx2::readGDX()` (see details below). In the file, you can find, among other things, the optimal levels of the variables (`variable.l`) and all the predefined parameter values.
 
 ## Output Processing
 
