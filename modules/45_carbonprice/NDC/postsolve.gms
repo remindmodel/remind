@@ -59,7 +59,7 @@ p45_factorRescaleCO2TaxLtd_iter(iteration,t,regi) = p45_factorRescaleCO2TaxLtd(t
 
 
 $ifThen.cm_NDC_CO2PriceLimit not "%cm_NDC_CO2PriceLimit%" == "off"
-*** limit CO2 prices in NDC realization according to switch cm_NDC_CO2PriceLimit
+*** limit CO2 prices in target year according to switch cm_NDC_CO2PriceLimit
   loop( p45_NDCyearSet(t,regi)$( pm_CO2PriceLimitNDC(t,regi) > 0 ) ,
     pm_taxCO2eq(t,regi) = min(    pm_taxCO2eq(t,regi), 
                                   pm_CO2PriceLimitNDC(t,regi) * sm_DptCO2_2_TDpGtC );
@@ -77,12 +77,21 @@ $endif.cm_NDC_CO2PriceLimit
 
 *** calculate tax path until NDC target year - linear increase
 p45_taxCO2eqFirstNDCyear(regi) = smax(t$(t.val = p45_firstNDCyear(regi)), pm_taxCO2eq(t,regi));
-pm_taxCO2eq(t,regi)$(t.val > 2021 AND t.val < p45_firstNDCyear(regi)) = (p45_taxCO2eqFirstNDCyear(regi) - pm_taxCO2eq("2020",regi))*(t.val-2020)/(p45_firstNDCyear(regi)-2020) + pm_taxCO2eq("2020",regi);
+pm_taxCO2eq(t,regi) $ (t.val >= cm_startyear - 5 and t.val < p45_firstNDCyear(regi)) = macro_interpolate(t.val, cm_startyear - 5, p45_firstNDCyear(regi), pm_taxCO2eq(t,regi) $ (t.val eq cm_startyear - 5), p45_taxCO2eqFirstNDCyear(regi));
 
 *** replace taxCO2eq between NDC targets such that taxCO2eq between goals does not decrease
 loop( p45_NDCyearSet(t2,regi) ,
   pm_taxCO2eq(t,regi)$(t.val > t2.val AND not p45_NDCyearSet(t,regi)) = pm_taxCO2eq(t2,regi);
 ) ;
+
+*** if CO2 price limit is active, make sure that CO2 price does not exceed limit also before NDC target year 
+*** (carbon price obtained by interpolation from 2025 carbon price to carbon price in target year)
+$ifThen.cm_NDC_CO2PriceLimit not "%cm_NDC_CO2PriceLimit%" == "off"
+  loop( (t,regi) $ ( pm_CO2PriceLimitNDC(t,regi) > 0 ),
+    pm_taxCO2eq(t,regi) = min(    pm_taxCO2eq(t,regi), 
+                                  pm_CO2PriceLimitNDC(t,regi) * sm_DptCO2_2_TDpGtC );
+  );
+$endif.cm_NDC_CO2PriceLimit
 
 
 *** post-NDC target year development of CO2 price depends on switch cm_NDC_postTargetDevelopment
