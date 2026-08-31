@@ -1475,7 +1475,7 @@ $setglobal cm_targetDelay  off     !! def = "off"
 *' *  For the development after the target year, the switch cm_NDC_CO2PriceLimit_continuation determines whether or not an upper limit on CO2 prices is imposed.
 *' *  By default 2030 CO2 prices are limited to 150 USD/tCO2 in EUR, 80 USD/tCO2 in CAZ, USA, JPN and NEU, 50 USD/tCO2 in REF and MEA, 40 USD/tCO2 in LAM and CHA, 30 USD/tCO2 in OAS, 15 USD/tCO2 in IND and 10 USD/tCO2 in SSA.
 *' *  If set to "off", no CO2 price limits are applied in any region.
-$setglobal cm_NDC_CO2PriceLimit  2030.EUR 150, 2030.(CAZ,USA, JPN, NEU) 80, 2030.(REF,MEA) 50, 2030.(LAM, CHA) 40, 2030.OAS 30, 2030.IND 15, 2030.SSA 10    !! def = "2030.EUR 150, 2030.(CAZ,USA, JPN, NEU) 80, 2030.(REF,MEA) 50, 2030.(LAM, CHA) 40, 2030.OAS 30, 2030.IND 15, 2030.SSA 10" 
+$setglobal cm_NDC_CO2PriceLimit  2030.EUR 200, 2030.(CAZ,USA, JPN, NEU) 80, 2030.(REF,MEA) 50, 2030.(LAM, CHA) 40, 2030.OAS 30, 2030.IND 15, 2030.SSA 10    !! def = "2030.EUR 200, 2030.(CAZ,USA, JPN, NEU) 80, 2030.(REF,MEA) 50, 2030.(LAM, CHA) 40, 2030.OAS 30, 2030.IND 15, 2030.SSA 10" 
 *' cm_NDC_CO2PriceLimit_continuation "switch to determine whether CO2 price limits in NDC realization are applied only in the specified target year or also in subsequent years" [requires 45_carbonprice = NDC]
 *' *  (on): CO2 price limits are applied not only in the specified target year but also in subsequent years, with the limit increasing by 20% per year after the target year, but allowing for carbon price of at least 200$/tCO2 at minimum
 *' *  (off): CO2 price limits are only applied in the specified target year, but not in subsequent years
@@ -1493,7 +1493,7 @@ $setglobal cm_NDC_CO2PriceMinimum  NonDecreasing     !! def = "NonDecreasing"  !
 *' This setting determines whether compliance with NDC emissions targets should be a criterion for convergence of REMIND. 
 *' *  (on):                         runs only converges if all NDC emissions targets are met within the tolerance defined by cm_NDC_target_DevTol
 *' *  (off):                        runs can converge even if some NDC emissions targets are not met within the tolerance defined by cm_NDC_target_DevTol, e.g. because of very high CO2 prices needed to meet them in the near-term
-$setglobal cm_NDC_TargetCheckConv  off      !! def = "off"  !! regexp = on|off
+$setglobal cm_NDC_TargetCheckConv  on      !! def = "on"  !! regexp = on|off
 *' cm_NPi_version            "choose version year of NPi targets for min and max targets in the form of conditional vs. unconditional"
 *' *  (2024_cond):   minimum technology targets are included from NewClimate latest policy modeling protocol in 2025
 *' *  (2024_uncond): maximal technology targets are included from NewClimate latest policy modeling protocol in 2025
