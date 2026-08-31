@@ -836,18 +836,6 @@ parameter
 *' *  (3): 3 %
 *'
 parameter
-  cm_fetaxscen              "choice of final energy tax path and subsidy path, values other than zero enable final energy tax"
-;
-  cm_fetaxscen        = 3;         !! def = 3  !! regexp = [0-5]
-*' even if set to 0, the PE inconvenience cost per SO2-cost for coal are always on if module 21_tax is on
-*' * (0): no FE tax, constant PE2SE tax,                    no FE and ResEx sub
-*' * (1): constant FE and PE2SE tax,                        constant FE and ResEx sub               (used in SSP3 and SSP 5)
-*' * (2): converging FE tax (-2050), constant PE2SE tax,    phased out FE and ResEx sub (-2035)     (used in SSP 1)
-*' * (3): constant FE and PE2SE tax,                        phased out FE and ResEx sub (-2050)     (used in SSP 2)
-*' * (4): constant FE and PE2SE tax,                        phased out FE and ResEx sub (-2035)
-*' * (5): rollback FE tax (-2035), no PE2SE tax,            constant FE and ResEx sub               (used in rollback scenarios to get back to a no-policy case (previously known as BAU))
-*'
-parameter
   cm_distrBeta              "elasticity of tax revenue redistribution"
 ;
   cm_distrBeta        = 1;       !! def = 1  !! regexp = 0|1
@@ -2107,6 +2095,15 @@ $setGlobal cm_FEtax_trajectory_abs  off !! def = off
 *** example: cm_FEtax_trajectory_rel   2040.indst.feels 2 doubles FE electricity tax in industry relative to cm_startyear for all regions by 2040 and after, before: linear increase from cm_startyear to 2040
 *** (note: don't put values to 0 as this will make the model ignore the switch)
 $setGlobal cm_FEtax_trajectory_rel  off !! def = off
+* cm_fetaxscen "choice of final energy tax path and subsidy path, values other than zero enable final energy tax"
+* even if set to 0, the PE inconvenience cost per SO2-cost for coal are always on if module 21_tax is on
+*  (0): no FE tax, constant PE2SE tax,                    no FE and ResEx sub
+*  (1): constant FE and PE2SE tax,                        constant FE and ResEx sub               (used in SSP3 and SSP 5)
+*  (2): converging FE tax (-2050), constant PE2SE tax,    phased out FE and ResEx sub (-2035)     (used in SSP 1)
+*  (3): constant FE and PE2SE tax,                        phased out FE and ResEx sub (-2050)     (used in SSP 2)
+*  (4): constant FE and PE2SE tax,                        phased out FE and ResEx sub (-2035)
+*  (5): rollback FE tax (-2035), no PE2SE tax,            constant FE and ResEx sub               (used in rollback scenarios to get back to a no-policy case (previously known as BAU))
+$setGlobal cm_fetaxscen 3         !! def = 3  !! regexp = [0-5]
 *** Switch to scale agriculture baseline emissions per region relative to default (Magpie) levels
 *** example: "CHA 0.2, EUR -0.4" means 20% increase of agricultural baseline emissions in China, 40% decrease in EUR,
 *** phase-in of the scaling is gradual over time and full scaling is reached by 2040.

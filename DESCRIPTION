@@ -22,7 +22,7 @@ Imports:
     reporttransport (>= 1.0.0),
     flexdashboard,
     GDPuc,
-    gdx (>= 1.53.0),
+    gdx2,
     gdxdt,
     gdxrrw,
     ggplot2,
