@@ -72,12 +72,12 @@ df <- filter(mifdata,
 ```
 ### 3.4 Load a gdx file as a Magpie Object
 
-Finally, you can also load the content of the **fulldata.gdx** via the function **readGDX** of the **gdx** package  (<https://github.com/pik-piam/gdx>) into a magpie file to directly access the GAMS output. Here is an example of how **readGDX** is used:
+Finally, you can also load the content of the **fulldata.gdx** via the function **readGDX** of the **gdx2** package  (<https://github.com/pik-piam/gdx2>) into a magpie file to directly access the GAMS output. Here is an example of how **readGDX** is used:
 
 ``` r
 pe2se  <- readGDX(gdx,"pe2se")
 Mport  <- readGDX(gdx,c("vm_Mport"),field="l",format="first_found")
-demPE  <- readGDX(gdx,name=c("vm_demPe","v_pedem"),field="l",restore_zeros=FALSE,format="first_found")
+demPE  <- readGDX(gdx,name=c("vm_demPe","v_pedem"),field="l",restoreZeros=FALSE,format="first_found")
 ```
 Here **gdx** is the path to the gdx file, while the second argument is the **name** of the GAMS object you want to load. It is possible to extract various GAMS objects like *"sets"*, *"equations"*, *"parameters"*, *"variables"* and *"aliases"* with **readGDX**. With the arguemtn *field="l"*, you can select the levels of endogenous variables. With *field="m"* you can extract the marginal values of these variables.
 

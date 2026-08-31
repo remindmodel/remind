@@ -315,8 +315,13 @@ loop(teBiopyr(te) $ (not sameas(te, "biopyrliq")), !! established industrial tec
     vm_cap.up("2020",regi,te,rlf) = p_boundCapBiochar("2020",regi) * sm_tBC_2_TWa / 3; 
     vm_cap.lo("2025",regi,te,rlf) = p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3; 
     !! set upper bound to 70% above the lower bound which is based on 2024 values    
-    vm_cap.up("2025",regi,te,rlf) = 1.7 * p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3;                      
-  );
+    vm_cap.up("2025",regi,te,rlf) = 1.7 * p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3;
+    vm_cap.lo("2030",regi,te,rlf) = sm_eps; !! initiate a starting value in all regions from 2030, even if no deployment in 2025
+    !! upper bound of 0.1 Mt biochar in 2030 (approx. 2025 production in Europe), for regions without 2025 value
+    vm_cap.up("2030",regi,te,rlf) = power(10,5) * sm_tBC_2_TWa / 3 ;
+    !!short-term upscaling limit based on recent growth rates in EUR, for regions with 2025 values      
+    vm_cap.up("2030",regi,te,rlf)$(p_boundCapBiochar("2025",regi)) = power(1.7, 5) * vm_cap.up("2025",regi,te,rlf);   
+    );
 );
 
 loop(te $ sameas(te, "biopyrliq"), !! does not yet exist commercially
