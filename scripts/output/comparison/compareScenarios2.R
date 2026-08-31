@@ -71,11 +71,11 @@ startComp <- function(
       " --mail-type=END,FAIL --time=200",
       if (!grepl("--mem", slurmConfig)) " --mem=8000",
       " --wrap=\"Rscript ", script,
-      " --outputdirs=", paste(outputdirs, collapse = ","),
-      " --profileName=", profileName,
-      " --outFileName=", outFileName,
-      " --aliases=", paste(aliases, collapse = ","),
-      " --sections=", paste(sections, collapse = ","),
+      " --outputdirs=", shQuote(paste(outputdirs, collapse = ",")),
+      " --profileName=", shQuote(profileName),
+      " --outFileName=", shQuote(outFileName),
+      " --aliases=", shQuote(paste(aliases, collapse = ",")),
+      " --sections=", shQuote(paste(sections, collapse = ",")),
       "\"")
     cat(clcom, "\n")
     system(clcom)

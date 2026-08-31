@@ -392,7 +392,7 @@ output <- function(args) {
       }
     }
     errors = runComparisonOrExport(comp, output, outputdirs, aliases, filename_prefix, slurmConfig, args[["test"]])
-  } else {
+  } else if (comp %in% c("single")) {
     interactiveSession <- FALSE
     # define slurm class or direct execution
     outputInteractive <- c("plotIterations", "integratedDamageCosts")
@@ -410,6 +410,8 @@ output <- function(args) {
       slurmConfig = args[["slurmConfig"]]
     }
     errors = runSingle(output, outputdirs, slurmConfig, interactiveSession, args[["test"]])
+  } else {
+    stop("Comparison mode not supported")
   }
   if (errors) {
     quit(status = -1)
