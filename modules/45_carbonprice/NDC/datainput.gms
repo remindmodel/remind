@@ -134,6 +134,7 @@ if(p45_useSingleYearCloseTo > 0,
 *** first and last NDC year as a number
 Parameter p45_firstNDCyear(all_regi) "last year with NDC coverage within region [year]";
 p45_firstNDCyear(regi) = smin( p45_NDCyearSet(t, regi), t.val );
+p45_firstNDCyear(regi)$(p45_firstNDCyear(regi) = +INF) = 0;
 Parameter p45_lastNDCyear(all_regi)  "last year with NDC coverage within region [year]";
 p45_lastNDCyear(regi)  = smax( p45_NDCyearSet(t, regi), t.val );
 
