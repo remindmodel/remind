@@ -7,12 +7,12 @@
 
 library(piamValidation)
 
-lucode2::readArgs("outputDirs", "validationConfig")
+lucode2::readArgs("outputdirs", "validationConfig")
 
 # working directory is assumed to be the remind directory
-outputDirs <- normalizePath(outputDirs, mustWork = TRUE)
-mifPath <- remind2::getMifScenPath(outputDirs, mustWork = TRUE)
-histPath <- remind2::getMifHistPath(outputDirs[1], mustWork = TRUE)
+outputdirs <- normalizePath(outputdirs, mustWork = TRUE)
+mifPath <- remind2::getMifScenPath(outputdirs, mustWork = TRUE)
+histPath <- remind2::getMifHistPath(outputdirs[1], mustWork = TRUE)
 
 # option 1: HTML validation Report
 piamValidation::validationReport(c(mifPath, histPath), validationConfig)

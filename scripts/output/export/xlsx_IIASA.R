@@ -30,7 +30,7 @@ mapping <- NULL                                # file obtained from piamInterfac
 iiasatemplate <- NULL                          # provided for each project, can be yaml or xlsx with a column 'Variable'
 checkSummation <- TRUE                         # if TRUE, tries to use the one from mapping. Or specify here
 
-# note: you can also pass all these options to output.R, so 'Rscript output.R logFile=mylogfile.txt' works.
+# note: you can also pass all these options to output.R, so 'Rscript output.R --logFile=mylogfile.txt' works.
 lucode2::readArgs("project")
 
 

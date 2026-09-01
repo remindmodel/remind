@@ -154,13 +154,13 @@ q33_EW_emi(t,regi)..
     vm_emiCdrTeDetail(t,regi, "weathering")
     =e=
     sum((rlf_cz33, rlf),
-        - v33_EW_onfield_tot(t,regi,rlf_cz33,rlf) * s33_co2_rem_pot * p33_rock_weath_rate(rlf_cz33)
+        - v33_EW_onfield_tot(t,regi,rlf_cz33,rlf) * s33_rockRemPot * p33_rock_weath_rate(rlf_cz33)
         )
     ;
 
 ***---------------------------------------------------------------------------
 *'  Calculation of FE demand for enhanced weathering, i.e., electricity demand for grinding,
-*'  and the diesel demand for transportation and spreading on crop fields.
+*'  and the diesel demand for spreading rocks on crop fields.
 ***---------------------------------------------------------------------------
 q33_EW_FEdemand(t,regi,entyFe2)$sum(entyFe, fe2cdr(entyFe,entyFe2,"weathering"))..
     sum(fe2cdr(entyFe,entyFe2,"weathering"), v33_FEdemand(t,regi,entyFe,entyFe2,"weathering"))
@@ -169,13 +169,13 @@ q33_EW_FEdemand(t,regi,entyFe2)$sum(entyFe, fe2cdr(entyFe,entyFe2,"weathering"))
     ;
 
 ***---------------------------------------------------------------------------
-*'  O&M costs of EW, consisting of fix costs for mining, grinding and spreading, and transportation costs.
+*'  Transport cost for rocks from mine to field
 ***---------------------------------------------------------------------------
-q33_EW_omcosts(t,regi)..
-    vm_omcosts_cdr(t,regi)
+q33_EW_transportCosts(t,regi)..
+    vm_EW_transport_costs(t,regi)
     =e=
     sum((rlf_cz33, rlf),
-        (s33_costs_fix + p33_EW_transport_costs(regi,rlf_cz33,rlf)) * v33_EW_onfield(t,regi,rlf_cz33,rlf)
+        (p33_EW_transport_costs(regi,rlf_cz33,rlf)) * v33_EW_onfield(t,regi,rlf_cz33,rlf)
     )
     ;
 
@@ -188,16 +188,6 @@ q33_EW_potential(t,regi,rlf_cz33)..
     p33_EW_maxShareOfCropland(regi) * f33_maxProdGradeRegiWeathering(regi,rlf_cz33)
     ;
 
-
-***---------------------------------------------------------------------------
-*'  An annual limit for the maximum global amount of rocks spread [Gt] can be set via cm_LimRock,
-*'  e.g. due to sustainability concerns.
-***---------------------------------------------------------------------------
-q33_EW_LimEmi(t,regi)..
-    sum((rlf_cz33, rlf), v33_EW_onfield(t,regi,rlf_cz33,rlf))
-    =l=
-    cm_LimRock * p33_LimRock(regi)
-    ;
 
 ***---------------------------------------------------------------------------
 *' Short term bound on spreading of rock

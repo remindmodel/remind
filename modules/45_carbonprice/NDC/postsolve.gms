@@ -10,16 +10,9 @@
 display pm_taxCO2eq;
 
 *#' @equations 
-*#' calculate emission variable to be used for NDC target: GHG emissions w/o land-use change and w/o transport bunker emissions, unit [Mt CO2eq/yr]
-p45_CO2eqwoLU_actual(p45_NDCyearSet(t,regi)) =
-    vm_co2eq.l(t,regi) * sm_c_2_co2*1000
-*** add F-Gases
-    + vm_emiFgas.L(t,regi,"emiFgasTotal")
-*** substract bunker emissions
-    - sum(se2fe(enty,enty2,te),
-        pm_emifac(t,regi,enty,enty2,te,"co2")
-        * vm_demFeSector.l(t,regi,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
-      ); 
+*#' emissions of current iteration to check whether NDC implementation meets the targets
+*#' (GHG emissions w/o land-use change and w/o transport bunker emissions, unit [Mt CO2eq/yr])
+p45_CO2eqwoLU_actual(p45_NDCyearSet(t,regi)) = vm_emiGHG_exclLULUCF_exclBunkers.l(t,regi) * sm_c_2_co2 * 1000;
 
 pm_taxCO2eq_iter(iteration,p45_NDCyearSet(t,regi)) = pm_taxCO2eq(t,regi);
 p45_CO2eqwoLU_actual_iter(iteration,p45_NDCyearSet(t,regi)) = p45_CO2eqwoLU_actual(t,regi);
@@ -28,28 +21,38 @@ p45_CO2eqwoLU_actual_iter(iteration,p45_NDCyearSet(t,regi)) = p45_CO2eqwoLU_actu
 ** as measure how close we are to reaching NDC emissions target
 pm_NDCEmiTargetDeviation(p45_NDCyearSet(t,regi)) = (p45_CO2eqwoLU_goal(t,regi) - p45_CO2eqwoLU_actual(t,regi)) / p45_CO2eqwoLU_goal(t,regi);
 
-display vm_co2eq.l;
 display p45_CO2eqwoLU_actual;
 display p45_CO2eqwoLU_goal;
 
-*#' nash compatible convergence scheme: adjustment of co2 tax for next iteration based on deviation of emissions in this iteration (actual) from target emissions (ref)
-*#' maximum possible change between iterations decreases with increase of iteration number
-
+*** nash compatible convergence scheme: adjustment of co2 tax for next iteration based on deviation of emissions in this iteration (actual) from target emissions (ref)
+*** define adjustment exponent decreasing over iterations, determines upper and lower limits to rescale factor of CO2 tax that converge to 1 with increasing iteration number
 if(       iteration.val lt  8, p45_adjustExponent = 4;
-   elseif iteration.val lt 15, p45_adjustExponent = 3;
-   elseif iteration.val lt 23, p45_adjustExponent = 2;
+   elseif iteration.val lt 20, p45_adjustExponent = 3;
+   elseif iteration.val lt 30, p45_adjustExponent = 2;
    else                        p45_adjustExponent = 1;
 );
 
+*** calculate CO2 tax rescale factor as ratio of current emissions in this iteration divided by target emissions, raised to the power of p45_adjustExponent
 p45_factorRescaleCO2Tax(p45_NDCyearSet(t,regi)) =
-  ( (p45_CO2eqwoLU_actual(t,regi)+0.0001)/(p45_CO2eqwoLU_goal(t,regi)+0.0001) )**p45_adjustExponent;
+*** use max(0.1, ...) to make sure that negative emission values cause no problem
+  ( (max(0.1, p45_CO2eqwoLU_actual(t,regi)) ) 
+***use +0.0001 such that net zero targets cause no problem
+    / (p45_CO2eqwoLU_goal(t,regi)+0.0001) )**p45_adjustExponent;
 
+*** iteration-dependent upper and lower limits for the rescale factor (both decrease with iteration number)
+p45_factorRescaleUpLimit = max(2-iteration.val/20, 1.01-iteration.val/10000);
+p45_factorRescaleLoLimit = 0.1**p45_adjustExponent;
+p45_factorRescaleUpLimit_iter(iteration) = p45_factorRescaleUpLimit;
+p45_factorRescaleLoLimit_iter(iteration) = p45_factorRescaleLoLimit;
+
+*** apply upper and lower limits to rescale factor
 p45_factorRescaleCO2TaxLtd(p45_NDCyearSet(t,regi)) =
-  min(max(0.1**p45_adjustExponent, p45_factorRescaleCO2Tax(t,regi)), max(2-iteration.val/15,1.01-iteration.val/10000));
-*** use max(0.1, ...) to make sure that negative emission values cause no problem, use +0.0001 such that net zero targets cause no problem
+  min(max(p45_factorRescaleLoLimit, p45_factorRescaleCO2Tax(t,regi)), p45_factorRescaleUpLimit);
 
+*** rescale CO2 tax for next iteration
 pm_taxCO2eq(t,regi)$(t.val gt 2021 AND t.val le p45_lastNDCyear(regi)) = max(1* sm_DptCO2_2_TDpGtC,pm_taxCO2eq(t,regi) * p45_factorRescaleCO2TaxLtd(t,regi) );
 
+*** save rescale factors over iterations
 p45_factorRescaleCO2Tax_iter(iteration,t,regi) = p45_factorRescaleCO2Tax(t,regi);
 p45_factorRescaleCO2TaxLtd_iter(iteration,t,regi) = p45_factorRescaleCO2TaxLtd(t,regi);
 
@@ -82,21 +85,25 @@ $endif.cm_NDC_CO2PriceLimit_continuation
 $else
 
 $ifThen.cm_NDC_CO2PriceLimit not "%cm_NDC_CO2PriceLimit%" == "off"
-*** limit CO2 prices in NDC realization according to switch cm_NDC_CO2PriceLimit
-  loop( p45_NDCyearSet(t,regi)$( p45_CO2PriceLimitNDC(t,regi) > 0 ) ,
+*** limit CO2 prices in target year according to switch cm_NDC_CO2PriceLimit
+  loop( p45_NDCyearSet(t,regi)$( pm_CO2PriceLimitNDC(t,regi) > 0 ) ,
     pm_taxCO2eq(t,regi) = min(    pm_taxCO2eq(t,regi), 
-                                  p45_CO2PriceLimitNDC(t,regi) * sm_DptCO2_2_TDpGtC );
+                                  pm_CO2PriceLimitNDC(t,regi) * sm_DptCO2_2_TDpGtC );
 $ifThen.cm_NDC_CO2PriceLimit_continuation not "%cm_NDC_CO2PriceLimit_continuation%" == "off"
 *** For the periods after the carbon price limit:
 *** If this switch is on, limit increase by 20%/yr, but ensure the CO2 price limit (cap) is at least 200$/tCO2.
     pm_taxCO2eq(t2,regi)$( t2.val gt t.val) = min(    pm_taxCO2eq(t2,regi), 
-                                                      max(  p45_CO2PriceLimitNDC(t,regi) * (1 + 0.2 * (t2.val - t.val)) * sm_DptCO2_2_TDpGtC,
+                                                      max(  pm_CO2PriceLimitNDC(t,regi) * (1 + 0.2 * (t2.val - t.val)) * sm_DptCO2_2_TDpGtC,
                                                                200 * sm_DptCO2_2_TDpGtC
                                                       )  
                                                   );
 $endif.cm_NDC_CO2PriceLimit_continuation
   );
 $endif.cm_NDC_CO2PriceLimit
+
+*** calculate tax path until NDC target year - linear increase
+p45_taxCO2eqFirstNDCyear(regi) = smax(t$(t.val = p45_firstNDCyear(regi)), pm_taxCO2eq(t,regi));
+pm_taxCO2eq(t,regi) $ (t.val >= cm_startyear - 5 and t.val < p45_firstNDCyear(regi)) = macro_interpolate(t.val, cm_startyear - 5, p45_firstNDCyear(regi), pm_taxCO2eq(t,regi) $ (t.val eq cm_startyear - 5), p45_taxCO2eqFirstNDCyear(regi));
                      
 $endif
 
@@ -106,6 +113,15 @@ $endif
 loop( p45_NDCyearSet(t2,regi) ,
   pm_taxCO2eq(t,regi)$(t.val > t2.val AND not p45_NDCyearSet(t,regi)) = pm_taxCO2eq(t2,regi);
 ) ;
+
+*** if CO2 price limit is active, make sure that CO2 price does not exceed limit also before NDC target year 
+*** (carbon price obtained by interpolation from 2025 carbon price to carbon price in target year)
+$ifThen.cm_NDC_CO2PriceLimit not "%cm_NDC_CO2PriceLimit%" == "off"
+  loop( (t,regi) $ ( pm_CO2PriceLimitNDC(t,regi) > 0 ),
+    pm_taxCO2eq(t,regi) = min(    pm_taxCO2eq(t,regi), 
+                                  pm_CO2PriceLimitNDC(t,regi) * sm_DptCO2_2_TDpGtC );
+  );
+$endif.cm_NDC_CO2PriceLimit
 
 
 *** post-NDC target year development of CO2 price depends on switch cm_NDC_postTargetDevelopment

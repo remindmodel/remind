@@ -106,7 +106,7 @@ q_costOM(t,regi)..
              vm_costTeCapital(t,regi,te) * vm_cap(t,regi,te,rlf)
             )
   )
-  + vm_omcosts_cdr(t,regi)
+  + vm_EW_transport_costs(t,regi)
 ;
 
 ***---------------------------------------------------------------------------
@@ -802,17 +802,23 @@ q_emiCap(t,regi) ..
 *' Total GHG emissions excl. land-use change and excl. bunker emissions  (needed for NDC targets)
 ***--------------------------------------------------
 q_emiGHG_exclLULUCF_exclBunkers(t,regi)..
-  v_emiGHG_exclLULUCF_exclBunkers(t,regi)
+  vm_emiGHG_exclLULUCF_exclBunkers(t,regi)
   =e=
-*** total GHG emissions excl. F-Gases and excl. LULUCF
-  vm_co2eq(t,regi) 
+*** total GHG emissions excl. F-Gases, incl. bunkers, incl. LULUCF
+  sum( emiMkt,
+         vm_emiAllMkt(t,regi,"co2",emiMkt)
+      +  vm_emiAllMkt(t,regi,"n2o",emiMkt) * sm_tgn_2_pgc
+      +  vm_emiAllMkt(t,regi,"ch4",emiMkt) * sm_tgch4_2_pgc
+    )
 *** add F-Gases, convert from MtCO2eq/yr to GtC/yr
   + vm_emiFgas(t,regi,"emiFgasTotal") / sm_c_2_co2 / 1000
 *** subtract bunker emissions
   - sum(se2fe(enty,enty2,te),
       pm_emifac(t,regi,enty,enty2,te,"co2")
       * vm_demFeSector(t,regi,enty,enty2,"trans","other") 
-    );
+    )
+*** substract LULUCF emissions
+  - vm_emiMacSector(t,regi,"co2luc");
   
 
 ***-----------------------------------------------------------------
@@ -1090,7 +1096,11 @@ q_shSeFe(t,regi,entySe)$(entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(ent
       vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
 ;
 
-q_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt)$((entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) AND (sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)))..
+q_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt)$(
+    (sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)) AND
+    (entySeBio(entySe) OR entySeSyn(entySe)) AND
+    (NOT (sameas(entyFe,"fesos") AND (sameas(sector,"build") OR sameas(sector,"indst")))) !! exclude build/indst solids (not in share penalty; prevents zero-demand infeasibility)
+  )..
   v_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt) 
   * sum(entySe2$sefe(entySe2,entyFe),
       vm_demFeSector_afterTax(t,regi,entySe2,entyFe,sector,emiMkt)*(1+999$(sameas(sector,"CDR"))))
