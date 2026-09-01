@@ -55,8 +55,19 @@ p45_factorRescaleCO2TaxLtd_iter(iteration,t,regi) = p45_factorRescaleCO2TaxLtd(t
 
 display p45_factorRescaleCO2TaxLtd_iter;
 
+
+*** calculate tax path until NDC target year - linear increase
 $ifThen "%cm_targetDelay%" == "prisma"
-  pm_taxCO2eq(t,regi)$( t.val < 2040 ) = min(    pm_taxCO2eq(t,regi), 
+p45_taxCO2eqFirstNDCyear(regi) = smax(t$(t.val = p45_firstNDCyear(regi)), pm_taxCO2eq(t,regi));
+pm_taxCO2eq(t,regi) $ (t.val >= 2030 and t.val < p45_firstNDCyear(regi)) = macro_interpolate(t.val, 2030, p45_firstNDCyear(regi), pm_taxCO2eq("2030",regi), p45_taxCO2eqFirstNDCyear(regi));
+$else
+p45_taxCO2eqFirstNDCyear(regi) = smax(t$(t.val = p45_firstNDCyear(regi)), pm_taxCO2eq(t,regi));
+pm_taxCO2eq(t,regi)$(t.val > 2021 AND t.val < p45_firstNDCyear(regi)) = (p45_taxCO2eqFirstNDCyear(regi) - pm_taxCO2eq("2020",regi))*(t.val-2020)/(p45_firstNDCyear(regi)-2020) + pm_taxCO2eq("2020",regi);
+$endif
+
+
+$ifThen "%cm_targetDelay%" == "prisma"
+  pm_taxCO2eq(t,regi)$( t.val < 2035 ) = min(    pm_taxCO2eq(t,regi), 
                                     p45_CO2PriceLimitNDC(t,regi) * sm_DptCO2_2_TDpGtC);
 $ifThen.cm_NDC_CO2PriceLimit_continuation not "%cm_NDC_CO2PriceLimit_continuation%" == "off"
 *** For the periods after the carbon price limit:
@@ -89,14 +100,7 @@ $endif.cm_NDC_CO2PriceLimit
                      
 $endif
 
-*** calculate tax path until NDC target year - linear increase
-$ifThen "%cm_targetDelay%" == "prisma"
-p45_taxCO2eqFirstNDCyear(regi) = smax(t$(t.val = p45_firstNDCyear(regi)), pm_taxCO2eq(t,regi));
-pm_taxCO2eq(t,regi)$(t.val > 2031 AND t.val < p45_firstNDCyear(regi)) = (p45_taxCO2eqFirstNDCyear(regi) - pm_taxCO2eq("2035",regi))*(t.val-2035)/(p45_firstNDCyear(regi)-2035) + pm_taxCO2eq("2035",regi);
-$else
-p45_taxCO2eqFirstNDCyear(regi) = smax(t$(t.val = p45_firstNDCyear(regi)), pm_taxCO2eq(t,regi));
-pm_taxCO2eq(t,regi)$(t.val > 2021 AND t.val < p45_firstNDCyear(regi)) = (p45_taxCO2eqFirstNDCyear(regi) - pm_taxCO2eq("2020",regi))*(t.val-2020)/(p45_firstNDCyear(regi)-2020) + pm_taxCO2eq("2020",regi);
-$endif
+
 
 *** replace taxCO2eq between NDC targets such that taxCO2eq between goals does not decrease
 loop( p45_NDCyearSet(t2,regi) ,
