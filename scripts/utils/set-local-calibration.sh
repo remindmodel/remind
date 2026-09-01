@@ -24,10 +24,7 @@ cp ../scripts/utils/set-local-calibration/pre-commit .git/hooks
 cp ../scripts/utils/set-local-calibration/post-commit .git/hooks
 chmod u+x .git/hooks/pre-commit .git/hooks/post-commit
 
-# create additional .Rprofile (sourced through default .Rprofile)
-echo -e "options(remind_repos = c(\n" \
-	"    getOption(\"remind_repos\"),\n" \
-	"    stats::setNames(list(x = NULL), \"$PWD\")))" \
-	> .Rprofile_calibration_results
+# add additional .Rprofile (sourced through default .Rprofile)
+cp ../scripts/utils/set-local-calibration/.Rprofile_calibration_results ./
 
 cd "$OLDPWD"
