@@ -49,7 +49,7 @@ magAP <- c(#paste0("Emissions|", species, "|AFOLU|Agriculture"), # temporarily e
            paste0("Emissions|", c("NH3", "NO2"), "|Land|+|Agriculture"), # exists for NH3, NO2 only (endogenous in MAgPIE)
            paste0("Emissions|", species, "|Land|Biomass Burning|+|Burning of Crop Residues"),
            #paste0("Emissions|", species, "|Land|+|Peatland"),
-           paste0("Emissions|", species, "|AFOLU|Land|Fires"),                               
+           paste0("Emissions|", species, "|AFOLU|Land|Fires"),
            paste0("Emissions|", species, "|AFOLU|Land|Fires|+|Forest Burning"),
            paste0("Emissions|", species, "|AFOLU|Land|Fires|+|Grassland Burning"),
            paste0("Emissions|", species, "|AFOLU|Land|Fires|+|Peat Burning")
@@ -59,7 +59,7 @@ remAP <- c(#paste0("Emi|", species, "|AFOLU|+|Agriculture"),
            paste0("Emi|", c("NH3", "NO2"), "|AFOLU|+|Agriculture"),
            paste0("Emi|", species, "|AFOLU|+|Agricultural Waste Burning"),
            #paste0("Emi|", species, "|AFOLU|Land|+|Peatland"),
-           paste0("Emi|", species, "|AFOLU|Land|+|Fires"),           
+           paste0("Emi|", species, "|AFOLU|Land|+|Fires"),
            paste0("Emi|", species, "|AFOLU|Land|Fires|+|Forest Burning"),
            paste0("Emi|", species, "|AFOLU|Land|Fires|+|Grassland Burning"),
            paste0("Emi|", species, "|AFOLU|Land|Fires|+|Peat Burning")
@@ -99,7 +99,7 @@ createREMINDReporting <- function(gdx) {
 runMAgPIE <- function(pathToRemindReport) {
   # Record the time when MAgPIE starts in runtime.log
   write(paste(format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "MAgPIE", NashIteration, sep = ","), file = paste0("runtime.log"), append = TRUE)
-  
+
   # Switch to MAgPIE main folder
   message(round(Sys.time()), " Preparing MAgPIE")
   message("                    Switching from REMIND ", getwd())
@@ -111,9 +111,9 @@ runMAgPIE <- function(pathToRemindReport) {
     cfg$cfg_mag$results_folder <- paste0("output/",runname,"-mag-",i)
     cfg$cfg_mag$title          <- paste0(runname,"-mag-",i)
     cfg$cfg_mag$path_to_report_bioenergy <- pathToRemindReport
-    # Set path for GHG prices only if path_to_report_ghgprices is NA. This can only be the case in the first 
+    # Set path for GHG prices only if path_to_report_ghgprices is NA. This can only be the case in the first
     # Nash iteration. In all later iterations it will not be NA anymore since they inherit it from the preceding
-    # iteration. If in the first iteration path_to_report_ghgprices is not NA (path to external mif) nothing 
+    # iteration. If in the first iteration path_to_report_ghgprices is not NA (path to external mif) nothing
     # will be changed and MAgPIE will thus use the GHG prices from the externel path.
     if (is.na(cfg$cfg_mag$path_to_report_ghgprices)) cfg$cfg_mag$path_to_report_ghgprices <- pathToRemindReport
 
@@ -148,7 +148,7 @@ runMAgPIE <- function(pathToRemindReport) {
       gdxlist <- paste0("output/", runname, "-mag-", i-1, "/magpie_y", seq(cfg$gms$cm_startyear,2150,5), ".gdx")
       cfg$cfg_mag$files2export$start <- .setgdxcopy(".gdx",cfg$cfg_mag$files2export$start,gdxlist)
     }
-    
+
     # Save the same (potentially updated) elements that were loaded to make MAgPIE paths accessible for getRunStatus
     save(list = elementsLoaded, file = file.path(cfg$remind_folder, cfg$results_folder, "config.Rdata"))
 
@@ -161,9 +161,10 @@ runMAgPIE <- function(pathToRemindReport) {
     # Checking whether MAgPIE is optimal in all years
     file_modstat <- file.path(outfolder_mag, "glo.magpie_modelstat.csv")
     if (file.exists(file_modstat)) {
-      modstat_mag <- read.csv(file_modstat, stringsAsFactors = FALSE, row.names=1, na.strings="")
+      modstat_mag <- read.csv(file_modstat, stringsAsFactors = FALSE, row.names = 1, na.strings = "")
     } else {
-      modstat_mag <- gdx::readGDX(file.path(outfolder_mag, "fulldata.gdx"), "p80_modelstat", "o_modelstat", format="first_found")
+      modstat_mag <- gdx2::readGDX(gdx = file.path(outfolder_mag, "fulldata.gdx"), "p80_modelstat", "o_modelstat",
+                                   format = "first_found")
     }
 
     if (!all((modstat_mag == 2) | (modstat_mag == 7)))
@@ -180,23 +181,23 @@ runMAgPIE <- function(pathToRemindReport) {
 writeToGdx <- function(rem, mapping) {
   require(gamstransfer, quietly = TRUE, warn.conflicts = FALSE)
   # ---- Start creating objects that will be written to gdx ----
-  
+
   # ---- Define SETS ----
-  
+
   m <- Container$new()
-  
+
   regi <- m$addSet(
     "regi",
     records = unique(rem$regi),
     description = "regions"
   )
-  
+
   ttot <- m$addSet(
     "ttot",
     records = unique(rem$ttot),
     description = "years"
   )
-  
+
   emiMacMagpie <- m$addSet(
     "emiMacMagpie",
     records = mapping |>
@@ -205,9 +206,9 @@ writeToGdx <- function(rem, mapping) {
       unique(),
     description = "emission types coming from MAgPIE"
   )
-  
+
   # ---- Define PARAMETERS ----
-  
+
   f_macBaseMagpie_coupling <- m$addParameter(
     "f_macBaseMagpie_coupling",
     domain = c(ttot, regi, emiMacMagpie),
@@ -217,7 +218,7 @@ writeToGdx <- function(rem, mapping) {
       rename(emiMacMagpie = enty),
     description = "emissions from MAgPIE"
   )
-  
+
   p30_pebiolc_pricemag <- m$addParameter(
     "p30_pebiolc_pricemag",
     domain = c(ttot, regi),
@@ -226,33 +227,33 @@ writeToGdx <- function(rem, mapping) {
       select(ttot, regi, value),
     description = "bioenergy price from MAgPIE"
   )
-  
+
   pm_pebiolc_demandmag <- m$addParameter(
     "pm_pebiolc_demandmag",
     domain = c(ttot, regi),
-    records = rem |> 
-      filter(parameter == "pm_pebiolc_demandmag") |> 
+    records = rem |>
+      filter(parameter == "pm_pebiolc_demandmag") |>
       select(ttot, regi, value),
     description = "demand for bioenergy in MAgPIE from which the prices result"
   )
-  
+
   p26_totLUcost_coupling <- m$addParameter(
     "p26_totLUcost_coupling",
     domain = c(ttot, regi),
-    records = rem |> 
-      filter(parameter == "p26_totLUcost_coupling") %>% 
+    records = rem |>
+      filter(parameter == "p26_totLUcost_coupling") %>%
       select(ttot, regi, value),
     description = "total production costs from MAgPIE without costs for GHG"
   )
-  
+
   # ---- Write to gdx file ----
-  
+
   m$write("magpieData.gdx")
 }
 
 # Write air pollutant emissions to file for reporting
 writeAPToReporting <- function(rem, mapping) {
-  
+
   # select only air pollutant emissions and write to file
   rem <- rem |>
     filter(parameter == "AirPollutantsMAgPIE") |>
@@ -265,28 +266,28 @@ writeAPToReporting <- function(rem, mapping) {
 
 # Transfer coupling variables from MAgPIE report to magpieData.gdx read by REMIND between the Nash iterations
 getMagpieData <- function(path_to_report = "report.mif", mapping) {
-  
+
   require(quitte,       quietly = TRUE, warn.conflicts = FALSE)
   require(dplyr,        quietly = TRUE, warn.conflicts = FALSE)
-  
+
   # ---- Record runtime when the data transfer from MAgPIE to REMIND starts in runtime.log ----
 
   write(paste(format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "getMagpieData", NashIteration, sep = ","), file = paste0("runtime.log"), append = TRUE)
   message(round(Sys.time()), " Transferring MAgPIE data")
   message("                    from ", path_to_report)
   message("                      to ./magpieData.gdx and ./reporting/AirPollutantsMAgPIE.cs4r")
-  
+
   # ---- Read and prepare MAgPIE data ----
-  
+
   mag <- quitte::read.quitte(path_to_report, check.duplicates = FALSE)
-  
+
   # Stop if variables are missing
   variablesMissing <- ! mapping$mag %in% mag$variable
   if (any(variablesMissing)) {
-    stop("The following variables defined in the coupling interface could not be found in the MAgPIE report: \n", 
+    stop("The following variables defined in the coupling interface could not be found in the MAgPIE report: \n",
          paste(mapping$mag[variablesMissing], collapse = "\n"))
   }
-  
+
   rem <- mag |>
     inner_join(mapping, by = c("variable" = "mag"),          # combine tables keeping relevant variables only
                relationship = "many-to-one",                 # each row in x (mag) matches at most 1 row in y (mapping)
@@ -294,19 +295,19 @@ getMagpieData <- function(path_to_report = "report.mif", mapping) {
     mutate(value = value * factorMag2Rem)                 |> # apply unit conversion
     group_by(period, region, enty, parameter, unit)             |> # define groups for summation, include unit to keep it (needed for export of air pollutants to REMIND reporting)
     summarise(value = sum(value), .groups = "drop")       |> # sum MAgPIE emissions (variable) that have the same enty in remind
-    rename(ttot = period, regi = region)                  |> # use REMIND set names 
+    rename(ttot = period, regi = region)                  |> # use REMIND set names
     filter(regi != "World", between(ttot, 2005, 2150))     # keep REMIND time horizon and remove World region
-    
 
-  # write data to gdx, that will be read by REMIND in the next Nash iteration. 
+
+  # write data to gdx, that will be read by REMIND in the next Nash iteration.
   # If you change the structure of rem, check whether writeToGdx needs to be adjusted.
   # keep only columns required for import to REMIND
   writeToGdx(rem |> select(regi, ttot, enty, parameter, value) , mapping)
 
-  # write data to file, that will be read by remind2::reportAirPollutantEmissions in the reporting step. 
+  # write data to file, that will be read by remind2::reportAirPollutantEmissions in the reporting step.
   # If you change the structure of rem, check whether reportAirPollutantEmissions needs to be adjusted.
   writeAPToReporting(rem, mapping)
-  
+
 }
 
 # Obtain number of MAgPIE iteration and Nash iteration passed to this script by GAMS
@@ -319,7 +320,7 @@ message("                    MAgPIE iteration ", i)
 message("                    Nash   iteration ", NashIteration)
 
 # Rename gdx from previous MAgPIE iteration so that REMIND can only continue if a new one could be successfully created
-if(file.exists("magpieData.gdx")) file.rename("magpieData.gdx", paste0("magpieData-", i-1,".gdx")) 
+if(file.exists("magpieData.gdx")) file.rename("magpieData.gdx", paste0("magpieData-", i-1,".gdx"))
 
 # Load REMIND config
 elementsLoaded <- load("config.Rdata")
@@ -328,7 +329,7 @@ if (is.null(cfg$continueFromHere) || NashIteration > 1) {
   # Regular magpie iteration
   pathToRemindReport <- createREMINDReporting(gdx = "fulldata.gdx")
   pathToMagpieReport <- runMAgPIE(pathToRemindReport)
-  
+
 } else if (names(cfg$continueFromHere) %in% "full") {
   # No regular magpie iteration
   # Continue from an external REMIND fulldata.gdx
@@ -337,7 +338,7 @@ if (is.null(cfg$continueFromHere) || NashIteration > 1) {
   pathToMagpieReport <- runMAgPIE(pathToRemindReport)
 
 } else if (names(cfg$continueFromHere) %in% "runMAgPIE") {
-  # No regular magpie iteration 
+  # No regular magpie iteration
   # Continue from an external REMIND mif
   message(round(Sys.time()), " Continuing with runMAgPIE using ", cfg$continueFromHere)
   pathToRemindReport <- cfg$continueFromHere
