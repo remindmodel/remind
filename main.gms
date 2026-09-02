@@ -1706,11 +1706,6 @@ $setGlobal cm_VREminShare    off !! def = off
 ***     amount of Carbon Capture and Storage (including DACCS and BECCS) is limited to a maximum of 2GtCO2 per yr globally, and 250 Mt CO2 per yr in EU28.
 ***   This switch only works for model native regions. If you want to apply it to a group region use cm_implicitQttyTarget instead.
 $setGlobal cm_CCSmaxBound    off  !! def = off
-*** cm_CDRregiLimit "limits novel Carbon Dioxide Removal (CDR) to a maximum value per year per region until the given time step."
-***   Example on how to use:
-***     cm_CDRregiLimit   "2040.EUR.50"
-***     This limits the amount of novel CDR to a maximum of 50 Mt CO2 per yr until 2040.
-$setGlobal cm_CDRregiLimit    off  !! def = off
 *** cm_33_EW_maxShareOfCropland
 *** limit the share of cropland on which rocks can be spread. Affects the maximum total amount of rocks weathering on fields.
 *** example: "GLO 1, LAM 0.5" limits amount of rocks weathering on cropland in LAM to 50% of max value if all LAM cropland were used.

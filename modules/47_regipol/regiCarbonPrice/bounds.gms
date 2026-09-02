@@ -155,12 +155,6 @@ vm_emiTeDetail.up(t,regi,peFos,entySe,teFosCCS,"cco2")$((sameas(regi,"DEU")) AND
 *' Convert cm_deuCDRmax from MtCO2/yr to model unit of GtC/yr. 
 vm_emiCdrAll.up(t,regi)$((cm_deuCDRmax ge 0) AND (sameas(regi,"DEU"))) = cm_deuCDRmax / 1000 / sm_c_2_co2;
 
-*** limit EUR CDR amount (Energy system and industry BECCS, DACCS, biochar, EW, other industry storage), conversion from MtCO2 to GtC
-$ifthen not "%cm_CDRregiLimit%" == "off"
-loop((t, regi) $ p47_CDRregiLimit(t, regi),
-    vm_emiCdrNovel.up(t2,regi)$(t2.val le t.val) = p47_CDRregiLimit(t, regi) / 1000 / sm_c_2_co2;
-);
-$endIf
 
 *' Bounds for German Energy Security Scenario (activated by switches)
 

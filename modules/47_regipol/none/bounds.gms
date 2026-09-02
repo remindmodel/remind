@@ -25,13 +25,6 @@ vm_emiTeDetail.up(t,regi,peFos,entySe,teFosCCS,"cco2")$((sameas(regi,"DEU")) AND
 *** limit German CDR amount (Energy system BECCS, DACCS, EW and negative Landuse Change emissions), conversion from MtCO2 to GtC
 vm_emiCdrAll.up(t,regi)$((cm_deuCDRmax ge 0) AND (sameas(regi,"DEU"))) = cm_deuCDRmax / 1000 / sm_c_2_co2;
 
-*** limit regional CDR amount (Energy system and industry BECCS, DACCS, biochar, EW, other industry storage), conversion from MtCO2 to GtC
-$ifthen not "%cm_CDRregiLimit%" == "off"
-loop((t, regi) $ p47_CDRregiLimit(t, regi),
-    vm_emiCdrNovel.up(t2,regi)$(t2.val le t.val) = p47_CDRregiLimit(t, regi) / 1000 / sm_c_2_co2;
-);
-$endIf
-
 *** adaptation of power system for Germany in early years  to prevent coal to gas switch in Germany due to coal-phase out policies
 loop(regi$(sameAs(regi,"DEU")),
 vm_deltaCap.up("2015",regi,"ngcc","1") = 0.002;
