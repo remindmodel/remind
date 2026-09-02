@@ -55,3 +55,4 @@ pm_regionalBudget_absDevTol,input,added by codeCheck
 pm_NDCTargetNotReached_iter,input,unique to NDC
 pm_CO2PriceLimitNDC,input,not used outside of NDC
 vm_emiGHG_exclLULUCF_exclBunkers,input,only used for NDC scenario
+pm_implicitQttyTarget,input,only used in NPi2025 scenario
