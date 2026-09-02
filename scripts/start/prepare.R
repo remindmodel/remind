@@ -29,7 +29,7 @@ prepare <- function() {
         } else {
            cat(paste0("Copied ",filelist[i]," to ",to,"\n"))
         }
-	        
+
       }
 	  }
   }
@@ -52,7 +52,7 @@ prepare <- function() {
     # list all packages of interest alphabetically here
         tribble(
             ~Package, "data.table", "devtools", "dplyr", "edgeTransport",
-            "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools",
+            "flexdashboard", "gdx2", "gdxdt", "gdxrrw", "ggplot2", "gtools",
             "lucode2", "luplot", "luscale", "magclass", "magpie4", "methods",
             "mip", "mrtransport", "optparse", "parallel",
             "plotly", "remind2", "reporttransport", "reticulate", "rlang",
@@ -148,13 +148,6 @@ prepare <- function() {
   ############ download and distribute input data ########
   # check whether the regional resolution and input data revision are outdated and update data if needed
   cfg <- updateInputData(cfg, remindPath = ".")
-
-  # extract BAU emissions for NDC runs to set up emission goals for region where only some countries have a target
-  if (isTRUE(cfg$gms$carbonprice == "NDC") || isTRUE(cfg$gms$carbonpriceRegi == "NDC")) {
-    cat("\nRun scripts/input/prepare_NDC.R.\n")
-    source("scripts/input/prepare_NDC.R")
-    prepare_NDC(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
-  }
 
   ############ update information ########################
   # update_info, which regional resolution and input data revision in tmpModelFile
@@ -377,7 +370,7 @@ prepare <- function() {
   }
 
   if (cfg$gms$cm_startyear > 2005) {
-    cm_startyear_ref <- as.integer(readGDX("input_ref.gdx", name = "cm_startyear", format = "simplest"))
+    cm_startyear_ref <- as.integer(gdx2::readGDX("input_ref.gdx", name = "cm_startyear", format = "simplest"))
     if (cfg$gms$cm_startyear < cm_startyear_ref) stop("cm_startyear must be larger than its counterpart in input_ref.gdx")
   }
 

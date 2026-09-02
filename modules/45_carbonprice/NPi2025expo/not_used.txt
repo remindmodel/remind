@@ -11,8 +11,6 @@ pm_ttot_val,parameter,???
 cm_startyear,switch,???
 cm_iterative_target_adj,switch,???
 cm_expoLinear_yearStart,switch,???
-vm_co2eq,variable,???
-vm_emiFgas,input,questionnaire
 pm_globalMeanTemperature,input,questionnaire
 pm_temperatureImpulseResponseCO2,input,questionnaire
 pm_consPC,input,questionnaire
@@ -23,8 +21,6 @@ pm_ttot_2_tall,input,questionnaire
 pm_shPPPMER,input,questionnaire
 pm_pop,input,questionnaire
 pm_gdp,input,questionnaire
-vm_demFeSector,input,questionnaire
-pm_emifac,input,questionnaire
 cm_peakBudgYr,input,not needed
 sm_D2005_2_D2017,input,not needed
 sm_budgetCO2eqGlob,input,no iterative target adjustment
@@ -54,3 +50,6 @@ cm_useInputGdxForCarbonPrice,input,added by codeCheck
 pm_factorRescale_taxCO2Regi_Funneled2,input,added by codeCheck
 pm_budgetDeviation,input,added by codeCheck
 pm_regionalBudget_absDevTol,input,added by codeCheck
+pm_NDCTargetNotReached_iter,input,unique to NDC
+pm_CO2PriceLimitNDC,input,not used outside of NDC
+vm_emiGHG_exclLULUCF_exclBunkers,input,only used for NDC scenario
