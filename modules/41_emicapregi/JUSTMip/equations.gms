@@ -12,7 +12,7 @@
 q41_globalPermitTradeCap(t,regi)$(t.val gt 2025) ..
 
     sum(regi2,
-        (vm_Xport(t,regi2,"perm") + vm_Mport(t,regi2,"perm"))*(1/sm_c_2_co2)
+        (vm_Xport(t,regi2,"perm") + vm_Mport(t,regi2,"perm"))
         * (pm_taxCO2eq(t,regi2))
     )
 

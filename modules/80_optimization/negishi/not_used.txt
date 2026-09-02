@@ -86,3 +86,5 @@ pm_taxCO2eq,parameter,not needed
 cm_TaxConv_tolerance,input,not needed
 cm_nashObjVal_tolerance,input,not needed
 cm_DevPriceAnticip_tolFactor,input,not needed
+pm_NDCTargetNotReached_iter,input,unique to NDC
+pm_CO2PriceLimitNDC,input,not used outside of NDC
