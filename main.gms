@@ -623,13 +623,6 @@ parameter
 *'
 
 parameter
-  cm_taxCO2_lowerBound_nr "switch to set a numeric lower bound for the carbon price"
-;
-  cm_taxCO2_lowerBound_nr = 0; !! def = 0 
-*' * (0): no numeric lower bound for the carbon price
-*' * (any number > 0): numeric lower bound for the carbon price in $ per t CO2eq
-
-parameter
   jpn_goes_wild             "implement looser CDR constraints in Japan, i.e. ccs, oae, erw"
 ;
   jpn_goes_wild      = 0;         !! def = 0  !! regexp = 0|1
