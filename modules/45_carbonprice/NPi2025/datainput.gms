@@ -55,4 +55,13 @@ pm_taxCO2eq(t,regi)$(t.val gt 2100) = pm_taxCO2eq("2100",regi);
 *** switch off MAC abatement of land emissions, scenario should only have Magpie baseline emissions
 pm_macSwitch(ttot,regi,emiMacMagpie) = 0;
 
+
+*** Add limitation to novel CDR in EUR. Beware: this would be overwritten by explicit cm_implicitQttyTarget settings for novelCDR and EUR. 
+*** The 2040 value should not far exceed ~75 Mt CO2 to reflect the current proposals for EU-ETS (max 48 Mt in 2040)
+*** and the 2021 UK Net zero strategy, assuming policy updates soon. Due to upscaling dynamics, the upper value is set to 120 Mt CO2 for
+*** the entire time horizon.
+*** Conversion from Mt CO2 to GtC in regiCarbonPrice/datainput.gms
+pm_implicitQttyTarget(t,ext_regi,"tax","t","novelCDR","all")$(sameas(ext_regi,"EUR_regi") AND (t.val le 2130)) = 120; 
+
+
 *** EOF ./modules/45_carbonprice/NPi2025/datainput.gms
