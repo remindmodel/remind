@@ -37,12 +37,9 @@ Parameter p40_RefCap(ttot, all_regi, all_te, rlf) "capacity pathways from refere
 
 Execute_Loadpoint "input_ref" p40_RefCap = vm_cap.l;
 
-p40_TechBound(ttot,all_regi,te)$(
-    ttot.val ge 2030 AND ttot.val le 2100
-    AND (sameas(te,"windon") OR sameas(te,"windoff") OR sameas(te,"spv") OR sameas(te,"csp"))
-) = max(
-    p40_TechBound(ttot,all_regi,te),
-    p40_RefCap(ttot,all_regi,te, "1")*1000
+p40_TechBound(t,all_regi,teVRE) = max(
+    p40_TechBound(t,all_regi,teVRE),
+    p40_RefCap(t,all_regi,teVRE, "1") * 1000
 );
 ** end of PRISMA Staying Alive
 $ENDIF
