@@ -127,13 +127,12 @@ p45_NDCyearSet("2070","REF") = p45_NDCyearSet("2035","REF");
 p45_NDCyearSet("2070","MEA") = p45_NDCyearSet("2035","MEA");
 p45_NDCyearSet(t,regi)$(t.val eq 2030) = 0;
 p45_NDCyearSet(t,regi)$(t.val eq 2035) = 0;
-** end of PRISMA Asymetric rollback
-$ENDIF
-
+*** In PRISMA Asymetric rollback, USA keeps its targets
+$else
 *** remove 2030 USA and 2035 USA targets from p45_NDCyearSet as US has withdrawn from Paris Agreement and has no NDC targets anymore
 p45_NDCyearSet("2030","USA") = NO;
 p45_NDCyearSet("2035","USA") = NO;
-
+$ENDIF
 
 
 
