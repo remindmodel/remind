@@ -17,7 +17,7 @@
   }
 
   # Start validateScenarios
-  startVal <- function(outputDirs, validationConfig) {
+  startVal <- function(outputDirs, validationConfig, validationReportName) {
     if (!exists("slurmConfig")) {
       slurmConfig <- "--qos=standby"
     }
@@ -39,6 +39,7 @@
         " --wrap=\"Rscript ", script,
         " outputdirs=", paste(outputDirs, collapse = ","),
         " validationConfig=", validationConfig,
+        " validationReportName=", validationReportName,
         "\"")
       cat(clcom, "\n")
       system(clcom)
@@ -54,9 +55,7 @@
 
   # choose a config file either from the package or your own
   if (! exists("validationConfig")) {
-    availableConfigs <- list.files(
-      piamutils::getSystemFile("config/", package = "piamValidation"))
-    config <- gms::chooseFromList(availableConfigs,
+    config <- gms::chooseFromList(piamValidation::listConfigs(),
                                   type = "a validation config",
                                   multiple = FALSE)
     if (config == "") {
@@ -66,12 +65,25 @@
     }
   }
 
+  # choose a report template from the package, empty selection uses default
+  if (! exists("validationReportName")) {
+    validationReportName <- gms::chooseFromList(
+      piamValidation::listReports(),
+      type = "a validation report template (leave empty for default)",
+      multiple = FALSE)
+    if (identical(validationReportName, "")) validationReportName <- "default"
+  }
+
   # Create core of file name / job name.
   timeStamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
-  valName <- gsub(".csv", "", gsub("validationConfig_", "", validationConfig))
-  nameCore <- paste0(valName, "-", timeStamp)
+  # strip prefix/suffix in case validationConfig was predefined as file name
+  valName <- gsub("\\.csv$", "", gsub("^validationConfig_", "", validationConfig))
+  repInfix <- if (validationReportName == "default") "" else
+    paste0("-", validationReportName)
+  nameCore <- paste0(valName, repInfix, "-", timeStamp)
 
   # Start the job
     startVal(
       outputDirs = outputdirs,
-      validationConfig = valName)
+      validationConfig = valName,
+      validationReportName = validationReportName)
