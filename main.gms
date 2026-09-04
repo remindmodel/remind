@@ -1331,16 +1331,10 @@ parameter
 *' Default assumption is that only 30% of announced or planned capacities will be realised, either due to discontinuation or delay
 
 parameter
-  cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
+  cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y, incl. land-use change emissions"
 ;
   cm_deuCDRmax = -1; !! def = -1
 *'  switch to cap annual DEU CDR amount by value assigned to switch, or no cap if -1, in MtCO2
-
-parameter
-  cm_EURCDRmax                 "switch to limit maximum annual CDR amount in the EU in MtCO2 per y"
-;
-  cm_EURCDRmax = -1; !! def = -1
-*'  switch to cap annual EUR CDR amount by value assigned to switch, or no cap if -1, in MtCO2
 
 parameter
   cm_EnSecScen_limit        "switch for limiting the gas demand from 2025 onward, currently only applied to Germany"

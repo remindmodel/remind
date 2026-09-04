@@ -27,6 +27,7 @@ vm_capCum.l(tall,all_regi,all_te) $ (not (ttot(tall) and regi(all_regi) and te(a
 vm_emiMacSector.l(ttot,regi,enty)      = 0;
 vm_emiTe.l(ttot,regi,enty)      = 0;
 vm_emiCdr.l(ttot,regi,enty)	     = 0;
+vm_emiCdrNovel.l(t,regi) = 0;
 vm_prodFe.l(ttot,regi,entyFe2,entyFe2,te) = 0;
 vm_prodSe.l(ttot,regi,enty,enty2,te) = 0;
 vm_demSe.l(ttot,regi,enty,enty2,te) = 0;

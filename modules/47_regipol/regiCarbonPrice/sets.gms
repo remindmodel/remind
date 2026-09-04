@@ -58,6 +58,7 @@ qttyTarget "quantity target for energy carrier level (primary, secondary, final 
   FE_wo_b_wo_n_e  "Final Energy without bunkers and non-energy"
   CCS             "carbon capture and storage"
   oae             "ocean alkalinity enhancement"
+  novelCDR         "novel carbon dioxide removal"
 /
 
 qttyTargetGroup "quantity target aggregated categories"
