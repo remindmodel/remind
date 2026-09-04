@@ -511,6 +511,10 @@ if (c_ccsinjecratescen eq 5, s_ccsinjecrate = s_ccsinjecrate *   0.20 ); !! sust
 if (c_ccsinjecratescen eq 6, s_ccsinjecrate = s_ccsinjecrate *   0.44 ); !! Intermediate estimate
 pm_ccsinjecrate(regi) = s_ccsinjecrate;
 
+if (jpn_goes_wild = 1, 
+  pm_ccsinjecrate("JPN") = 0.005; !! Set Japan's injection rate to 0.5% to allow for more flexibility there
+);
+
 *** OR: overwrite with regional values of ccs injection rate
 $ifthen.c_ccsinjecrateRegi not "%c_ccsinjecrateRegi%" == "off"
 Parameter p_extRegiccsinjecrateRegi(ext_regi) "Regional CCS injection rate factor. 1/a. (extended regions)" / %c_ccsinjecrateRegi% /;

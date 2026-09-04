@@ -100,37 +100,37 @@ else   !! if not yet within tolerance
   !! copy the information before further funnel adjustments
   pm_factorRescale_taxCO2Regi_Funneled2(iteration, regi)  = p45_factorRescale_taxCO2Regi_Funneled(iteration, regi) ;
   
-  !! check how the rescaling factor changed over the last three iterations to dampen or expand the rescaling factor depending on the case
+   !! check how the rescaling factor changed over the last three iterations to dampen or expand the rescaling factor depending on the case
   if ((iteration.val ge 4),
   loop(regi, 
     !! if the factor was set to the *upper* bound for this and the last 2 iterations: increase the allowed factor this iteration
-    if ((   (pm_factorRescale_taxCO2Regi_Funneled2(iteration, regi) ge p45_FunnelUpper(iteration))  !! ge because last iteration may have already been adjusted upwards
-        AND (pm_factorRescale_taxCO2Regi_Funneled2(iteration-1, regi) ge p45_FunnelUpper(iteration-1))
-        AND (pm_factorRescale_taxCO2Regi_Funneled2(iteration-2, regi) ge p45_FunnelUpper(iteration-2))),
-        pm_factorRescale_taxCO2Regi_Funneled2(iteration, regi) = min(1.2 * p45_FunnelUpper(iteration), !! if funnel was 1.001, it is now 1.201
+    if ((   (pm_factorRescale_taxCO2Regi_Funneled2(iteration, regi) gt p45_FunnelUpper(iteration))  !! ge because last iteration may have already been adjusted upwards
+        AND (pm_factorRescale_taxCO2Regi_Funneled2(iteration-1, regi) gt p45_FunnelUpper(iteration-1))
+        AND (pm_factorRescale_taxCO2Regi_Funneled2(iteration-2, regi) gt p45_FunnelUpper(iteration-2))),
+        pm_factorRescale_taxCO2Regi_Funneled2(iteration, regi) = min(1.1 * p45_FunnelUpper(iteration), !! if funnel was 1.001, it is now 1.201
                                                                       p45_factorRescale_taxCO2Regi(iteration,regi));  !! unless the original planned rescaling factor was less
         );
 
     !! if the factor was set to the *lower* bound for this and the last 2 iterations: increase the allowed factor this iteration
-    if ((   (pm_factorRescale_taxCO2Regi_Funneled2(iteration, regi) le (1/p45_FunnelUpper(iteration)))  !! le because last iteration may have already been adjusted upwards
-        AND (pm_factorRescale_taxCO2Regi_Funneled2(iteration-1, regi) le (1/p45_FunnelUpper(iteration-1)))
-        AND (pm_factorRescale_taxCO2Regi_Funneled2(iteration-2, regi) le (1/p45_FunnelUpper(iteration-2)))),
-        pm_factorRescale_taxCO2Regi_Funneled2(iteration, regi) = max( (1/p45_FunnelUpper(iteration)) / 1.2, 
+    if ((   (pm_factorRescale_taxCO2Regi_Funneled2(iteration, regi) lt (1/p45_FunnelUpper(iteration)))  !! le because last iteration may have already been adjusted upwards
+        AND (pm_factorRescale_taxCO2Regi_Funneled2(iteration-1, regi) lt (1/p45_FunnelUpper(iteration-1)))
+        AND (pm_factorRescale_taxCO2Regi_Funneled2(iteration-2, regi) lt (1/p45_FunnelUpper(iteration-2)))),
+        pm_factorRescale_taxCO2Regi_Funneled2(iteration, regi) = max( (1/p45_FunnelUpper(iteration)) / 1.1, 
                                                                       p45_factorRescale_taxCO2Regi(iteration,regi));
         );
     !! if the factor jumping pos-neg-pos or neg-pos-neg or if it was already on 1 for the last two iterations -> make the last increase only 30% of what was intended
-    if ((   (pm_factorRescale_taxCO2Regi_Funneled2(iteration, regi) le 1)  !! ge because last iteration may have already been adjusted upwards
-        AND (pm_factorRescale_taxCO2Regi_Funneled2(iteration-1, regi) ge 1)
-        AND (pm_factorRescale_taxCO2Regi_Funneled2(iteration-2, regi) le 1))
-        OR 
-        (   (pm_factorRescale_taxCO2Regi_Funneled2(iteration, regi) ge 1)  !! ge because last iteration may have already been adjusted upwards
-        AND (pm_factorRescale_taxCO2Regi_Funneled2(iteration-1, regi) le 1)
+    if ((   (pm_factorRescale_taxCO2Regi_Funneled2(iteration, regi) lt 1)  !! ge because last iteration may have already been adjusted upwards
+        AND (pm_factorRescale_taxCO2Regi_Funneled2(iteration-1, regi) gt 1)
+        AND (pm_factorRescale_taxCO2Regi_Funneled2(iteration-2, regi) lt 1))
+        OR
+        (   (pm_factorRescale_taxCO2Regi_Funneled2(iteration, regi) gt 1)  !! ge because last iteration may have already been adjusted upwards
+        AND (pm_factorRescale_taxCO2Regi_Funneled2(iteration-1, regi) lt 1)
         AND (pm_factorRescale_taxCO2Regi_Funneled2(iteration-2, regi) ge 1)),
         pm_factorRescale_taxCO2Regi_Funneled2(iteration, regi) = 1 - (0.3 * (1-p45_factorRescale_taxCO2Regi_Funneled(iteration, regi))); !! decrease the distance to 1
         );
   ); !! regi loop
   ); !! if iteration far enough
-
+  
 !! Simultaneous up- and downward adjustment of carbon prices in early iterations
 if (iteration.val le 30,
   p45_factorRescale_taxCO2Regi_Final(iteration, regi) = pm_factorRescale_taxCO2Regi_Funneled2(iteration, regi);
@@ -159,7 +159,11 @@ if (iteration.val le 30,
 
 *** 4. Shift anchor curve with regional adjustment factor
 !! 4.1. get the carbon price trajectory used in this iteration
-p45_taxCO2eq_anchorRegi(ttot, regi)$(ttot.val gt 2005) = pm_taxCO2eq(ttot,regi); 
+if (iteration.val ge 2,
+  p45_taxCO2eq_anchorRegi(ttot, regi)$(ttot.val gt 2005) = p45_taxCO2eq_anchorRegi_iter(ttot, regi, iteration - 1); 
+else 
+  p45_taxCO2eq_anchorRegi(ttot, regi)$(ttot.val gt 2005) = pm_taxCO2eq(ttot,regi)$(ttot.val gt 2005); 
+);
 
 !! Option 4A: slope of CP is not adjusted --> entire trajectory is rescaled, values will be used as of cm_startyear (see below)
 if(cm_CPslopeAdjustment = 0, 
@@ -169,10 +173,14 @@ if(cm_CPslopeAdjustment = 0,
 
     !! Adjust the shape if the peak-budget carbon price shape is set
   if(cm_taxCO2_Shape eq 2,
-  loop(regi,
+ loop(regi,
     !! After the regional peakBudgYr, the regional anchor trajectory increases linearly with fixed annual increase given by cm_taxCO2_IncAfterPeakBudgYr
-        p45_taxCO2eq_anchorRegi(t,regi)$(t.val gt p45_peakBudgYr_regi(regi)) = sum(t2$(t2.val eq p45_peakBudgYr_regi(regi)), p45_taxCO2eq_anchorRegi(t2,regi)) !! CO2 tax in peak budget year
-                                                      + (t.val - p45_peakBudgYr_regi(regi)) * cm_taxCO2_IncAfterPeakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year 
+      !! if the rescaled carbon price in the peak year is lower than 1.5 times the carbon price in the start year, then have a no increase after the peak budget year.
+    if(sum(ttot$(ttot.val eq p45_peakBudgYr_regi(regi)), p45_taxCO2eq_anchorRegi(ttot,regi)) le (1.5 * sum(ttot2$(ttot2.val eq s45_YearBeforeStartYear), pm_taxCO2eq(ttot2,regi))),
+          p45_taxCO2eq_anchorRegi(ttot3,regi)$(ttot3.val gt p45_peakBudgYr_regi(regi)) = sum(ttot4$(ttot4.val eq p45_peakBudgYr_regi(regi)), p45_taxCO2eq_anchorRegi(ttot4,regi)); !! CO2 tax in peak budget year    
+    else 
+        p45_taxCO2eq_anchorRegi(ttot3,regi)$(ttot3.val gt p45_peakBudgYr_regi(regi)) = sum(ttot4$(ttot4.val eq p45_peakBudgYr_regi(regi)), p45_taxCO2eq_anchorRegi(ttot4,regi)) !! CO2 tax in peak budget year
+                                                      + (ttot3.val - p45_peakBudgYr_regi(regi)) * cm_taxCO2_IncAfterPeakBudgYr * sm_DptCO2_2_TDpGtC);  !! increase by cm_taxCO2inc_after_peakBudgYr per year 
     );
   ); !! peak shape
 );  !! no CP slope adjustment
@@ -191,11 +199,13 @@ if(cm_CPslopeAdjustment = 1,
         p45_taxCO2eq_anchorRegi(ttot,regi)$(ttot.val eq p45_peakBudgYr_regi(regi)) = 
                     p45_temp_anchor(ttot,regi) * p45_factorRescale_taxCO2Regi_Final(iteration,regi);
       !! Set the peakBudgYr value plus predefined increase thereafter (the only currently tested version is post-increase slope = 0) (necessary because initial shape & thus all following are taken from the anchor trajectory)
-        p45_taxCO2eq_anchorRegi(ttot,regi)$(ttot.val ge p45_peakBudgYr_regi(regi)) = 
-                                            sum(ttot2$(ttot2.val eq p45_peakBudgYr_regi(regi)), p45_taxCO2eq_anchorRegi(ttot2,regi)) !! CO2 tax in peak budget year
-                                          + (ttot.val - p45_peakBudgYr_regi(regi)) * cm_taxCO2_IncAfterPeakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year 
-      
-      !! B4.4a: Calculate the slope for a linear connection between the last carbon price from input data and the Price in the Peak Budget year
+       !! if the rescaled carbon price in the peak year is lower than 1.5 times the carbon price in the start year, then have a no increase after the peak budget year.
+       if(sum(ttot$(ttot.val eq p45_peakBudgYr_regi(regi)), p45_taxCO2eq_anchorRegi(ttot,regi)) le (1.5 * sum(ttot2$(ttot2.val eq s45_YearBeforeStartYear), p45_taxCO2eq_anchorRegi(ttot2,regi))),
+                p45_taxCO2eq_anchorRegi(ttot3,regi)$(ttot3.val gt p45_peakBudgYr_regi(regi)) = sum(ttot4$(ttot4.val eq p45_peakBudgYr_regi(regi)), p45_taxCO2eq_anchorRegi(ttot4,regi)); !! CO2 tax in peak budget year
+          else
+              p45_taxCO2eq_anchorRegi(ttot,regi)$(ttot.val gt p45_peakBudgYr_regi(regi)) = sum(ttot2$(ttot2.val eq p45_peakBudgYr_regi(regi)), p45_taxCO2eq_anchorRegi(ttot2,regi)) !! CO2 tax in peak budget year
+                                                            + (ttot.val - p45_peakBudgYr_regi(regi)) * cm_taxCO2_IncAfterPeakBudgYr * sm_DptCO2_2_TDpGtC);  !! increase by cm_taxCO2inc_after_peakBudgYr per year
+      !! B4.4a: Calculate the slope for a linear connection between the last carbon price from input data and the price in the Peak Budget year
         p45_CarbonPriceSlope(regi) = (sum(ttot2$(ttot2.val eq p45_peakBudgYr_regi(regi)), p45_taxCO2eq_anchorRegi(ttot2,regi)) 
                                   - sum(ttot3$(ttot3.val eq s45_YearBeforeStartYear), p45_taxCO2eq_anchorRegi(ttot3,regi)))
                                         /  (p45_peakBudgYr_regi(regi) - s45_YearBeforeStartYear);
@@ -239,6 +249,14 @@ p45_taxCO2eq_anchorRegi_iter(ttot, regi, iteration)  = p45_taxCO2eq_anchorRegi(t
 if(cm_taxCO2_lowerBound_path_gdx_ref = 1,
   pm_taxCO2eq(t,regi) = max(pm_taxCO2eq(t,regi), p45_taxCO2eq_path_gdx_ref(t,regi));
   display pm_taxCO2eq;
+);
+
+*** set 1 USD as minimum carbon price
+loop(regi,
+  loop(t,
+    pm_taxCO2eq(t,regi) = max(pm_taxCO2eq(t,regi), 1 * sm_DptCO2_2_TDpGtC);
+  display pm_taxCO2eq;
+  );
 );
 
 ***------------------------------------------------------------------------------------------------------------------------------------------------

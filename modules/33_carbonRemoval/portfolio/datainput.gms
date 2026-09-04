@@ -66,6 +66,10 @@ loop(ext_regi$f33_EW_maxShareOfCropland(ext_regi),
     p33_EW_maxShareOfCropland(regi)$(regi_groupExt(ext_regi, regi)) = f33_EW_maxShareOfCropland(ext_regi);
   );
 
+if (jpn_goes_wild = 1, 
+  p33_EW_maxShareOfCropland("JPN") = 0.5; !! increase the share of cropland available for EW in Japan to 50%
+);
+
 *------------------------------------------------------------------------------------
 *' #### Biochar input data
 ***---------------------------------------------------------------------------

@@ -24,6 +24,7 @@
 $Ifi "%emicapregi%" == "AbilityToPay" $include "./modules/41_emicapregi/AbilityToPay/realization.gms"
 $Ifi "%emicapregi%" == "CandC" $include "./modules/41_emicapregi/CandC/realization.gms"
 $Ifi "%emicapregi%" == "GDPint" $include "./modules/41_emicapregi/GDPint/realization.gms"
+$Ifi "%emicapregi%" == "JUSTMip" $include "./modules/41_emicapregi/JUSTMip/realization.gms"
 $Ifi "%emicapregi%" == "POPint" $include "./modules/41_emicapregi/POPint/realization.gms"
 $Ifi "%emicapregi%" == "PerCapitaConvergence" $include "./modules/41_emicapregi/PerCapitaConvergence/realization.gms"
 $Ifi "%emicapregi%" == "TradingOnRef" $include "./modules/41_emicapregi/TradingOnRef/realization.gms"
