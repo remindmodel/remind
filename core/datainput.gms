@@ -1652,23 +1652,34 @@ $offdelim
 
 pm_fedemandBuild(t,regi,cal_ppf_buildings_dyn36) = f_fedemandBuild(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 
-*** Scale FE demand across industry and building sectors
+*** Scale demand across industry (FE and UE) and building sectors (FE; UE happens in module 36)
 $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
   loop((tall,tall2,all_regi) $ pm_scaleDemand(tall,tall2,all_regi),
-*FL*  rescaled demand                = normal demand                  * [ scaling factor                      + (1-scaling factor)                      * remaining phase-in, between zero and one               ]
-      pm_fedemandInd(t,all_regi,all_in) = pm_fedemandInd(t,all_regi,all_in) * ( pm_scaleDemand(tall,tall2,all_regi) + (1-pm_scaleDemand(tall,tall2,all_regi)) * min(1, max(0, tall2.val-t.val) / (tall2.val-tall.val)) );
-      pm_fedemandBuild(t,all_regi,all_in) = pm_fedemandBuild(t,all_regi,all_in) * ( pm_scaleDemand(tall,tall2,all_regi) + (1-pm_scaleDemand(tall,tall2,all_regi)) * min(1, max(0, tall2.val-t.val) / (tall2.val-tall.val)) );
+    loop(t $ t.val > tall.val,
+      pm_fedemandInd(t,all_regi,all_in)   $ (t.val < tall2.val)  = pm_fedemandInd(t,all_regi,all_in)   * macro_interpolate(t,tall,tall2,1,pm_scaleDemand(tall,tall2,all_regi));
+      pm_fedemandBuild(t,all_regi,all_in) $ (t.val < tall2.val)  = pm_fedemandBuild(t,all_regi,all_in) * macro_interpolate(t,tall,tall2,1,pm_scaleDemand(tall,tall2,all_regi));
+      pm_fedemandInd(t,all_regi,all_in)   $ (t.val >= tall2.val) = pm_fedemandInd(t,all_regi,all_in)   * pm_scaleDemand(tall,tall2,all_regi);
+      pm_fedemandBuild(t,all_regi,all_in) $ (t.val >= tall2.val) = pm_fedemandBuild(t,all_regi,all_in) * pm_scaleDemand(tall,tall2,all_regi);
+    );
   );
 $endif.scaleDemand
 
-*** Scale FE demand in building sectors
-$ifthen.scaleDemandBuildTable not "%cm_scaleDemandBuildTable%" == "off"
+*** Scale FE and UE demand for chemicals
+$ifthen.scaleDemandChem not "%cm_scaleDemandChem%" == "off"
+  loop((tall,tall2,all_regi) $ pm_scaleDemandChem(tall,tall2,all_regi),
+    loop((t,all_in) $ (t.val > tall.val and secInd37_2_pf("chemicals",all_in)),
+      pm_fedemandInd(t,all_regi,all_in) $ (t.val < tall2.val)  = pm_fedemandInd(t,all_regi,all_in) * macro_interpolate(t,tall,tall2,1,pm_scaleDemandChem(tall,tall2,all_regi));
+      pm_fedemandInd(t,all_regi,all_in) $ (t.val >= tall2.val) = pm_fedemandInd(t,all_regi,all_in) * pm_scaleDemandChem(tall,tall2,all_regi);
+    );
+  );
+$endif.scaleDemandChem
 
-*** File should have the following format:
+
+$ifthen.scaleDemandBuildTable not "%cm_scaleDemandBuildTable%" == "off"
+*** Scale FE demand in building sectors, using file with following format:
 *** 2025,USA,1.00
 *** 2030,USA,0.9
 *** 2035,USA,0.8
-
 
 Parameter f_scaleDemandBuildTable(ttot,all_regi) "Rescaling factor on industry final energy and usable energy demand, read-in from a table"
 /
@@ -1687,10 +1698,8 @@ pm_scaleDemandBuildTable(t,regi) $ (t.val > 2100 ) = pm_scaleDemandBuildTable("2
   );
 $endif.scaleDemandBuildTable
 
-*** Scale FE demand in industry sectors
 $ifthen.scaleDemandIndTable not "%c_scaleDemandIndTable%" == "off"
-
-*** File should have the following format:
+*** Scale FE demand in industry sectors, using file with following format:
 *** 2025,USA,1.00
 *** 2030,USA,0.9
 *** 2035,USA,0.8
