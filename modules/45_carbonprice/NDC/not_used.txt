@@ -48,3 +48,5 @@ pm_budgetDeviation,input,added by codeCheck
 pm_regionalBudget_absDevTol,input,added by codeCheck
 sm_D2005_2_D2017,input,not used
 cm_iterative_target_adj,input,not used
+vm_emiCdrNovel,input,only used in NPi2025 scenario
+sm_MtCO2_2_GtC,input,only used in NPi2025 scenario
