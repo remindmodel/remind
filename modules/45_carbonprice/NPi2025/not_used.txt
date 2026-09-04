@@ -20,7 +20,6 @@ cm_carbonprice_temperatureLimit,input,questionnaire
 pm_ttot_2_tall,input,questionnaire
 pm_shPPPMER,input,questionnaire
 pm_pop,input,questionnaire
-pm_gdp,input,questionnaire
 cm_peakBudgYr,input,not needed
 sm_D2005_2_D2017,input,not needed
 sm_budgetCO2eqGlob,input,added by codeCheck
