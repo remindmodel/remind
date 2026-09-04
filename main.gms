@@ -781,9 +781,6 @@ parameter
 *'
 
 parameter
-  cm_LTSstartYr "[46_carbonpriceRegi] First year activating a regional carbon price markup to reach net-zero targets (Long-Term Strategy)"
-;
-parameter
 cm_LTSstartYr "[46_carbonpriceRegi] First year with non-zero regional carbon price markup to reach net-zero targets (Long-Term Strategy)"
 ;
 cm_LTSstartYr = 2040;        !! def = 2040  !! regexp = 20[0-9](0|5)
