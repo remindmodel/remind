@@ -35,6 +35,10 @@ compScen-*.err
 compScen-*.out
 compScen-*/*
 
+# Ignore validation reports
+validation_*.html
+valScen*.out
+
 # Ignore everything in "doc" folders, except for 3 specific files
 doc/
 !doc/literature.bib

@@ -17,7 +17,7 @@ if (!exists("outputdirs")) {
 }
 
 # Start validateScenarios
-startVal <- function(outputDirs, validationConfig, validationReportName) {
+startVal <- function(outputDirs, validationConfig, validationReportName, nameCore) {
   if (!exists("slurmConfig")) {
     slurmConfig <- "--qos=standby"
   }
@@ -110,4 +110,5 @@ nameCore <- glue::glue("{prefix}{valName}{repInfix}-{timeStamp}")
   startVal(
     outputDirs = outputdirs,
     validationConfig = validationConfig,
-    validationReportName = validationReportName)
+    validationReportName = validationReportName,
+    nameCore = nameCore)
