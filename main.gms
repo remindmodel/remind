@@ -1946,6 +1946,13 @@ $setGlobal cm_reducCostB  none  !! def = none
 *** cfg$gms$cm_effHP         <- 5 #def <- 5 , efficiency of heat pumps
 $setGlobal cm_effHP  5  !! def = 5
 
+*** cm_climateCorrection "enable or disable climate correction for buildings energy demand"
+*** def = "off", climate correction is disabled and pm_climateCorrection is set to 1.0 for all iterations
+*** (on): climate correction is enabled and correction factors are calculated iteratively using
+***        external R scripts (climateAssessmentInterimRun.R and calculateClimateCorrection.R)
+***        to adjust building energy demand based on climate conditions
+$setGlobal cm_climateCorrection  off  !! def = off
+
 *** Note on CES markup cost:
 *** They represent the sector-specific demand-side transformation cost, can also
 *** be used to influence efficiencies during calibration as higher markup-cost
