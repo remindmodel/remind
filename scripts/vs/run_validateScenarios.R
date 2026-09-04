@@ -28,7 +28,8 @@ if (grepl("^SCI(_|$)", validationConfig)) {
 
 # option 1: HTML validation Report
 piamValidation::validationReport(dataPath, validationConfig,
-                                 report = validationReportName)
+                                 report = validationReportName,
+                                 outputDir = ".")
 
 # option 3: export data (TODO: file location + name)
 valiData <- piamValidation::validateScenarios(dataPath, validationConfig)
