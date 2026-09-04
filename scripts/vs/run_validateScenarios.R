@@ -7,11 +7,10 @@
 
 library(piamValidation)
 
-# default report template, overwritten by a command line argument or by the
-# calling environment when this script is sourced directly
+if (!exists("source_include")) {
+  lucode2::readArgs("outputdirs", "validationConfig", "validationReportName")
+}
 if (!exists("validationReportName")) validationReportName <- "default"
-
-lucode2::readArgs("outputdirs", "validationConfig", "validationReportName")
 
 # working directory is assumed to be the remind directory
 outputdirs <- normalizePath(outputdirs, mustWork = TRUE)

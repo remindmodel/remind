@@ -25,7 +25,6 @@
       "valScen",
       "-", nameCore
     )
-    outFileName <- jobName
     script <- "scripts/vs/run_validateScenarios.R"
     cat("Starting ", jobName, "\n")
     if (isSlurmAvailable() && ! identical(slurmConfig, "direct")) {
@@ -37,9 +36,9 @@
         " --error=", jobName, ".out",
         " --mail-type=END --time=200 --mem-per-cpu=8000",
         " --wrap=\"Rscript ", script,
-        " outputdirs=", paste(outputDirs, collapse = ","),
-        " validationConfig=", validationConfig,
-        " validationReportName=", validationReportName,
+        " --outputdirs=", shQuote(paste(outputDirs, collapse = ",")),
+        " --validationConfig=", shQuote(validationConfig),
+        " --validationReportName=", shQuote(validationReportName),
         "\"")
       cat(clcom, "\n")
       system(clcom)
@@ -53,37 +52,63 @@
     }
   }
 
-  # choose a config file either from the package or your own
-  if (! exists("validationConfig")) {
-    config <- gms::chooseFromList(piamValidation::listConfigs(),
-                                  type = "a validation config",
+  # let the user pick an entry from the package or provide an own file
+  chooseFromPackageOrFile <- function(available, type, fileHint, userinfo = NULL) {
+    ownFile <- paste0("enter path to own file (", fileHint, ")")
+    choice <- gms::chooseFromList(c(available, ownFile),
+                                  type = type,
+                                  userinfo = userinfo,
                                   multiple = FALSE)
-    if (config == "") {
+    if (length(choice) == 0) return("")
+    if (identical(choice, ownFile)) {
+      message("Path to own file (", fileHint, "):")
+      choice <- normalizePath(gms::getLine(), mustWork = FALSE)
+      if (!file.exists(choice)) stop("File not found: ", choice)
+    }
+    choice
+  }
+
+  # choose a config from the package or an own file
+  if (! exists("validationConfig")) {
+    validationConfig <- chooseFromPackageOrFile(
+      piamValidation::listConfigs(),
+      type = "a validation config",
+      fileHint = ".csv/.xlsx",
+      userinfo = "Leave empty to abort.")
+    if (validationConfig == "") {
       q()
-    } else {
-      validationConfig <- config
+    }
+  }
+  # strip prefix/suffix in case validationConfig was predefined as file name
+  if (!file.exists(validationConfig)) {
+    validationConfig <- gsub("\\.csv$", "",
+                             gsub("^validationConfig_", "", validationConfig))
+  }
+
+  # choose a report template from the package or an own file
+  if (! exists("validationReportName")) {
+    validationReportName <- chooseFromPackageOrFile(
+      piamValidation::listReports(),
+      type = "a validation report template",
+      fileHint = ".Rmd",
+      userinfo = "Leave empty for the default report.")
+    if (validationReportName == "") {
+      validationReportName <- "default"
+      message("Default: default report template.\n")
     }
   }
 
-  # choose a report template from the package, empty selection uses default
-  if (! exists("validationReportName")) {
-    validationReportName <- gms::chooseFromList(
-      piamValidation::listReports(),
-      type = "a validation report template (leave empty for default)",
-      multiple = FALSE)
-    if (identical(validationReportName, "")) validationReportName <- "default"
-  }
-
-  # Create core of file name / job name.
+  # Create core of file name / job name, "custom" for user-provided files.
   timeStamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
-  # strip prefix/suffix in case validationConfig was predefined as file name
-  valName <- gsub("\\.csv$", "", gsub("^validationConfig_", "", validationConfig))
-  repInfix <- if (validationReportName == "default") "" else
-    paste0("-", validationReportName)
-  nameCore <- paste0(valName, repInfix, "-", timeStamp)
+  if (!exists("filename_prefix")) filename_prefix <- ""
+  valName <- if (file.exists(validationConfig)) "custom" else validationConfig
+  repInfix <- if (identical(validationReportName, "default")) "" else paste0(
+    "-", if (file.exists(validationReportName)) "custom" else validationReportName)
+  nameCore <- paste0(filename_prefix, ifelse(filename_prefix == "", "", "-"),
+                     valName, repInfix, "-", timeStamp)
 
   # Start the job
     startVal(
       outputDirs = outputdirs,
-      validationConfig = valName,
+      validationConfig = validationConfig,
       validationReportName = validationReportName)
