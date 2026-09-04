@@ -30,10 +30,10 @@ if (grepl("^SCI(_|$)", validationConfig)) {
 piamValidation::validationReport(dataPath, validationConfig,
                                  report = validationReportName,
                                  outputDir = ".")
+# ToDo: other output options
 
-# option 3: export data (TODO: file location + name)
-valiData <- piamValidation::validateScenarios(dataPath, validationConfig)
-cat(getwd())
+# option 2: export data
+#valiData <- piamValidation::validateScenarios(dataPath, validationConfig)
 
-# option 2: pass or fail?
-piamValidation::validationPass(valiData)
+# option 3: pass or fail?
+#piamValidation::validationPass(valiData)
