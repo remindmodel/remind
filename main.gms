@@ -781,9 +781,9 @@ parameter
 *'
 
 parameter
-  cm_LTSstartYr "[46_carbonpriceRegi] First year activating a regional carbon price markup to reach net-zero targets (Long-Term Strategy)"
+cm_LTSstartYr "[46_carbonpriceRegi] First year with non-zero regional carbon price markup to reach net-zero targets (Long-Term Strategy)"
 ;
-  cm_LTSstartYr = 2040;        !! def = 2040  !! regexp = 20[2-9](0|5)
+cm_LTSstartYr = 2040;        !! def = 2040  !! regexp = 20[0-9](0|5)
 *' *  (2040): NDC-LTS scenario: default start of rescaling is 2040, which allows meeting 2035 NDC targets
 *' *  (2030): LTS scenario: from 2030 onward, regions see a carbon price markup to reach their net-zero targets, so they may overshoot NDC targets
 
@@ -1460,6 +1460,10 @@ $setglobal cm_NDC_targetYear  2030, 2035    !! def = "2030, 2035"
 *'      *   30 years delay for "Fossil-dependant": REF, MEA
 *'      *   Exceptions apply for some regions: the delay might deviate by 5 years due to model 10-year timesteps after 2060
 $setglobal cm_targetDelay  off     !! def = "off"
+
+*' cm_ReferenceCapacities            "using capacity pathways of reference scenario"
+*' *  (prisma): PRISMA Staying Alive: use MeetAspiration as reference scenario for wind and solar capacity pathways by using "prisma_SA"
+$setglobal cm_ReferenceCapacities  off     !! def = "off"
 
 *' cm_NDC_CO2PriceLimit            "sets regional upper limit for CO2 prices in NDC realization" [requires 45_carbonprice = NDC]"
 *' This serves to not force regions to reach NDC emissions targets at extremly high CO2 prices in the near-term. 

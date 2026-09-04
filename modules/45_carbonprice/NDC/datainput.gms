@@ -118,10 +118,21 @@ display p45_bestNDCcoverage;
 
 p45_NDCyearSet(t,regi)$(t_NDC_targetYear(t)) = p45_shareTarget(t,regi) >= p45_minRatioOfCoverageToMax * p45_bestNDCcoverage(regi);
 
+$ifThen "%cm_targetDelay%" == "prisma"
+*** PRISMA Asymetric rollback
+** Requires cm_NDC_version = 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
+p45_NDCyearSet(t,regi)$(t.val eq 2030 + p45_delay(regi)) = p45_NDCyearSet("2030",regi);
+p45_NDCyearSet(t,regi)$(t.val eq 2035 + p45_delay(regi)) = p45_NDCyearSet("2035",regi);
+p45_NDCyearSet("2070","REF") = p45_NDCyearSet("2035","REF");
+p45_NDCyearSet("2070","MEA") = p45_NDCyearSet("2035","MEA");
+p45_NDCyearSet(t,regi)$(t.val eq 2030) = 0;
+p45_NDCyearSet(t,regi)$(t.val eq 2035) = 0;
+*** In PRISMA Asymetric rollback, USA keeps its targets
+$else
 *** remove 2030 USA and 2035 USA targets from p45_NDCyearSet as US has withdrawn from Paris Agreement and has no NDC targets anymore
 p45_NDCyearSet("2030","USA") = NO;
 p45_NDCyearSet("2035","USA") = NO;
-
+$ENDIF
 
 
 
