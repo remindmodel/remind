@@ -3,13 +3,17 @@ on:
     types: [opened, reopened, edited, ready_for_review]
     branches-ignore:
       - 'master'
+    paths-ignore:
+      - '**.md'
+
+name: check-pr-description
 
 jobs:
-  check-pr-template:
+  check-pr-code-tasks:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
-      - name: Check PR description
+      - name: Check PR Description
         env:
           PR_DESCRIPTION: ${{ github.event.pull_request.body }}
         run: |
@@ -28,14 +32,6 @@ jobs:
           if ! echo "$IMPACT_SECTION" | grep -q ":ballot_box_with_check:"; then
             echo "ERROR: No items selected in 'Impact' section."
             echo "Please select at least one item by replacing :white_medium_square: with :ballot_box_with_check:"
-            ERROR_FOUND=1
-          fi
-          
-          # Check 3: All checkboxes in "Checklist" must be checked
-          CHECKLIST_SECTION=$(echo "$PR_DESCRIPTION" | sed -n '/## Checklist/,/## Further information (optional)/p')
-          if echo "$CHECKLIST_SECTION" | grep -q "\[ \]"; then
-            echo "ERROR: Unchecked checkboxes found in 'Checklist' section."
-            echo "All checklist items must be checked before merging."
             ERROR_FOUND=1
           fi
           

@@ -27,7 +27,7 @@
 ## Checklist
 
 *Do not delete any line. Leave **unfinished** elements unchecked so others know how far along you are.\
-In the end all checkboxes must be ticked before you can merge*.
+In the end all checkboxes must be ticked before you can merge*. (You may skip this list if only .md files are changed.)
 
 - [ ] **I executed the automated model tests (`make test`) after my final commit and all tests pass (`FAIL 0`)**
 - [ ] **I adjusted the reporting in [`remind2`](https://github.com/pik-piam/remind2) if and where it was needed**
