@@ -727,7 +727,14 @@ sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 *** Define macros that can be used as functions throughout the model code.
 *** This is especially useful for more complex expressions that are used in multiple places, to avoid code duplication and to ensure consistency.
 *** Parameters of a macro are replaced directly by the chosen value at compile time: they have nothing to do with the model parameters or sets.
-*** Because the replacement is automatic, please pay attention to brackets.
+*** More information in: https://www.gams.com/latest/docs/UG_DollarControlOptions.html#UG_DollarControl_MacrosInGAMS
+
+*** When defining new macros, make sure to put brackets around parameters to ensure correct calculation.
+*** The following counter example will return wrong values because of missing brackets:
+***   Wrong definition:   $macro macro_multiply(a,b)  a * b
+***   Utilisation:        macro_multiply(3+1, 2)   will return 3+1*2 = 5 instead of 8, due to precendence of multiplication over addition
+***   Utilisation:        1 / macro_multiply(2, 2) will return 1/2*2 = 1 instead of 0.25, due to left-to-right precendence
+***   Correct definition: $macro macro_multiply(a,b)  ( (a) * (b) )
 
 *** macro_interpolate: Linear interpolation between two values x0 and x1 at time points t0 and t1 for an intermediate time point t
 *** Example 1:

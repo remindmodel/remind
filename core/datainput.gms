@@ -1668,8 +1668,8 @@ pm_fedemandBuild(t,regi,cal_ppf_buildings_dyn36) = f_fedemandBuild(t,regi,"%cm_d
 $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
   loop((tall,tall2,all_regi) $ pm_scaleDemand(tall,tall2,all_regi),
     loop(t $ t.val > tall.val,
-      pm_fedemandInd(t,all_regi,all_in)   $ (t.val < tall2.val)  = pm_fedemandInd(t,all_regi,all_in)   * macro_interpolate(t,tall,tall2,1,pm_scaleDemand(tall,tall2,all_regi));
-      pm_fedemandBuild(t,all_regi,all_in) $ (t.val < tall2.val)  = pm_fedemandBuild(t,all_regi,all_in) * macro_interpolate(t,tall,tall2,1,pm_scaleDemand(tall,tall2,all_regi));
+      pm_fedemandInd(t,all_regi,all_in)   $ (t.val < tall2.val)  = pm_fedemandInd(t,all_regi,all_in)   * macro_interpolate(t.val,tall.val,tall2.val,1,pm_scaleDemand(tall,tall2,all_regi));
+      pm_fedemandBuild(t,all_regi,all_in) $ (t.val < tall2.val)  = pm_fedemandBuild(t,all_regi,all_in) * macro_interpolate(t.val,tall.val,tall2.val,1,pm_scaleDemand(tall,tall2,all_regi));
       pm_fedemandInd(t,all_regi,all_in)   $ (t.val >= tall2.val) = pm_fedemandInd(t,all_regi,all_in)   * pm_scaleDemand(tall,tall2,all_regi);
       pm_fedemandBuild(t,all_regi,all_in) $ (t.val >= tall2.val) = pm_fedemandBuild(t,all_regi,all_in) * pm_scaleDemand(tall,tall2,all_regi);
     );
@@ -1680,7 +1680,7 @@ $endif.scaleDemand
 $ifthen.scaleDemandChem not "%cm_scaleDemandChem%" == "off"
   loop((tall,tall2,all_regi) $ pm_scaleDemandChem(tall,tall2,all_regi),
     loop((t,all_in) $ (t.val > tall.val and secInd37_2_pf("chemicals",all_in)),
-      pm_fedemandInd(t,all_regi,all_in) $ (t.val < tall2.val)  = pm_fedemandInd(t,all_regi,all_in) * macro_interpolate(t,tall,tall2,1,pm_scaleDemandChem(tall,tall2,all_regi));
+      pm_fedemandInd(t,all_regi,all_in) $ (t.val < tall2.val)  = pm_fedemandInd(t,all_regi,all_in) * macro_interpolate(t.val,tall.val,tall2.val,1,pm_scaleDemandChem(tall,tall2,all_regi));
       pm_fedemandInd(t,all_regi,all_in) $ (t.val >= tall2.val) = pm_fedemandInd(t,all_regi,all_in) * pm_scaleDemandChem(tall,tall2,all_regi);
     );
   );
