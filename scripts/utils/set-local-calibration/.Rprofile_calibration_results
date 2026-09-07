@@ -1,0 +1,4 @@
+options(remind_repos = c(
+     getOption("remind_repos"),
+     stats::setNames(list(x = NULL),
+                     dirname(normalizePath(parent.frame(2)[['ofile']])))))
