@@ -29,7 +29,7 @@ p21_taxrevCCS0(ttot,regi) = cm_frac_CCS
                               * vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf) / ( pm_dataccs(regi,"quan",te) * pm_ccsinjecrate(regi))
                             ));
 
-pm_taxrevNetNegEmi0(ttot,regi) = s21_frac_NetNegEmi * pm_taxCO2eqSum(ttot,regi) * ( (1 - cm_NetNegEmi_calculation) * vm_emiAllco2neg.l(ttot,regi) + cm_NetNegEmi_calculation * v21_emiAllco2neg_acrossIterations.l(ttot,regi) );
+pm_taxrevNetNegEmi0(ttot,regi) = s21_frac_NetNegEmi * p21_taxCO2eqSum_NetNegEmi(ttot,regi) * ( (1 - cm_NetNegEmi_calculation) * vm_emiAllco2neg.l(ttot,regi) + cm_NetNegEmi_calculation * v21_emiAllco2neg_acrossIterations.l(ttot,regi) );
 p21_taxrevFE0(ttot,regi) = sum((entyFe,sector)$entyFe2Sector(entyFe,sector),
     ( p21_tau_fe_tax(ttot,regi,sector,entyFe) + p21_tau_fe_sub(ttot,regi,sector,entyFe) ) 
     * 

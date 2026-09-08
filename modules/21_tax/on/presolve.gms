@@ -13,6 +13,9 @@ if( (cm_NetNegEmi_calculation eq 1) AND (iteration.val le 2),
     s21_frac_NetNegEmi = cm_frac_NetNegEmi;
 );
 
+*** calculate CO2 tax for netnegative emissions tax as non-negative carbon price to avoid subsidy when pm_taxCO2eqSum < 0
+p21_taxCO2eqSum_NetNegEmi(ttot,regi) = max(0, pm_taxCO2eqSum(ttot,regi));
+
 *JS*
 *** calculation of tax rate, as a function of per-capita gdp levels
 p21_tau_so2_tax(ttot,regi)$(ttot.val ge 2005)=s21_so2_tax_2010*pm_gdp(ttot,regi)/pm_pop(ttot,regi);  !! scaled by GDP/cap in the unit [trn US$/bn people]
@@ -35,7 +38,7 @@ p21_taxrevCCS0(ttot,regi) = cm_frac_CCS
                               * vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf) / ( pm_dataccs(regi,"quan",te) * pm_ccsinjecrate(regi))
                             ));
 
-pm_taxrevNetNegEmi0(ttot,regi) = s21_frac_NetNegEmi * pm_taxCO2eqSum(ttot,regi) * ( (1 - cm_NetNegEmi_calculation) * vm_emiAllco2neg.l(ttot,regi) + cm_NetNegEmi_calculation * v21_emiAllco2neg_acrossIterations.l(ttot,regi) );
+pm_taxrevNetNegEmi0(ttot,regi) = s21_frac_NetNegEmi * p21_taxCO2eqSum_NetNegEmi(ttot,regi) * ( (1 - cm_NetNegEmi_calculation) * vm_emiAllco2neg.l(ttot,regi) + cm_NetNegEmi_calculation * v21_emiAllco2neg_acrossIterations.l(ttot,regi) );
 p21_emiAllco2neg0(ttot,regi)  = vm_emiAllco2neg.l(ttot,regi);
 p21_emiAllco2neg_acrossIterations0(ttot,regi)  = v21_emiAllco2neg_acrossIterations.l(ttot,regi);
 p21_taxrevFE0(ttot,regi) = sum((entyFe,sector)$entyFe2Sector(entyFe,sector),

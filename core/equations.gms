@@ -705,13 +705,9 @@ q_emiMac(t,regi,emiMac) ..
 ***--------------------------------------------------
 *' All CDR emissions summed up
 ***--------------------------------------------------
-q_emiCdrAll(t,regi)..
-  vm_emiCdrAll(t,regi) !! positive value
-  =e=
-  !! ---- net LUC CDR
-  !! net negative emissions from co2luc
-  - p_macBaseMagpieNegCo2(t,regi) !! negative value
-  
+q_emiCdrNovel(t,regi)..
+  vm_emiCdrNovel(t,regi) !! positive value
+  =e=  
   !! ---- gross non-industry CDR
   !! 1. directly geologically stored gross atmospheric removal from pe2se-BECCS + DACCS
   + ( !! pe2se-BECC 
@@ -746,13 +742,22 @@ q_emiCdrAll(t,regi)..
   !! 2a) plastics CDR -- incinerated  waste that is captured + stored from  non-fossil feedstocks
   + sum(emiMkt, 
       vm_nonFosPlastic_incinCC(t,regi,emiMkt)  * v_ccsShare(t,regi)) !! positive value
-  !! 2b) plastics CDR -- landfilled waste from non-fossil feedstocks
+;
+
+q_emiCdrAll(t,regi)..
+  vm_emiCdrAll(t,regi) 
+  =e=
+  vm_emiCdrNovel(t,regi)   
+  !! ---- net LUC CDR
+  !! 0.  net negative emissions from co2luc
+  - p_macBaseMagpieNegCo2(t,regi) !! negative value
+  !! 2. Feedstocks
+   !! 2b) plastics CDR -- landfilled waste from non-fossil feedstocks
   - sum((emi,emiMkt), 
       vm_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)) !! negative value
   !! 2c) non-plastics materials CDR -- bound carbon from non-fossil feedstocks 
   + vm_nonFosNonPlasticNonEmitted(t,regi) !! positive value
 ;
-
 
 ***------------------------------------------------------
 *' Total regional emissions are computed as the sum of total emissions over all emission markets.
@@ -802,17 +807,23 @@ q_emiCap(t,regi) ..
 *' Total GHG emissions excl. land-use change and excl. bunker emissions  (needed for NDC targets)
 ***--------------------------------------------------
 q_emiGHG_exclLULUCF_exclBunkers(t,regi)..
-  v_emiGHG_exclLULUCF_exclBunkers(t,regi)
+  vm_emiGHG_exclLULUCF_exclBunkers(t,regi)
   =e=
-*** total GHG emissions excl. F-Gases and excl. LULUCF
-  vm_co2eq(t,regi) 
+*** total GHG emissions excl. F-Gases, incl. bunkers, incl. LULUCF
+  sum( emiMkt,
+         vm_emiAllMkt(t,regi,"co2",emiMkt)
+      +  vm_emiAllMkt(t,regi,"n2o",emiMkt) * sm_tgn_2_pgc
+      +  vm_emiAllMkt(t,regi,"ch4",emiMkt) * sm_tgch4_2_pgc
+    )
 *** add F-Gases, convert from MtCO2eq/yr to GtC/yr
   + vm_emiFgas(t,regi,"emiFgasTotal") / sm_c_2_co2 / 1000
 *** subtract bunker emissions
   - sum(se2fe(enty,enty2,te),
       pm_emifac(t,regi,enty,enty2,te,"co2")
       * vm_demFeSector(t,regi,enty,enty2,"trans","other") 
-    );
+    )
+*** substract LULUCF emissions
+  - vm_emiMacSector(t,regi,"co2luc");
   
 
 ***-----------------------------------------------------------------

@@ -35,6 +35,10 @@ compScen-*.err
 compScen-*.out
 compScen-*/*
 
+# Ignore validation reports
+validation_*.html
+valScen*.out
+
 # Ignore everything in "doc" folders, except for 3 specific files
 doc/
 !doc/literature.bib
@@ -97,6 +101,6 @@ calibration_results/
 # ignore files created by tests
 tests/test-full*.log
 tests/testthat/C_TESTTHAT_startlog_*.txt
-225a/
+/225*/*
 main_testOneRegi.dmp
 main_testOneRegi.lst

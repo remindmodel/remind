@@ -26,6 +26,11 @@ teSeTax_coeff          "coefficients of logistic function to describe relationss
   "a"
   "b"
 /
+
+all_fetaxscen  "all final energy tax scenarios"
+/
+    0*5
+/
 ;  
 
 *** EOF ./modules/21_tax/on/sets.gms

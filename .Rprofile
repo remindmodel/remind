@@ -42,6 +42,20 @@ if ("" != remindReposDirs) {
   options(remind_repos = c(options("remind_repos")[[1]], directoriesList))
 }
 
+remindReposSCP <- Sys.getenv("REMIND_repos_scp") # scp URL
+remindReposSCPUser <- Sys.getenv("REMIND_repos_scp_user")  # ssh user name
+remindReposSCPKey <- Sys.getenv("REMIND_repos_scp_key")  # ssh key path
+
+# add remote directories, if any remote directory and username and SSH key are set
+if ("" != remindReposSCP && "" != remindReposSCPUser && "" != remindReposSCPKey) {
+  SCPUrls <- unlist(strsplit(remindReposSCP, ";", fixed = TRUE))
+  config <- list(list(username = remindReposSCPUser, ssh_private_keyfile = remindReposSCPKey))
+  for (SCPUrl in SCPUrls) {
+    names(config) <- SCPUrl
+    options(remind_repos = c(options("remind_repos")[[1]], config))
+  }
+}
+
 # Include local calibration results, if they exist, from either the main
 # directory or output directories.
 path <- file.path(

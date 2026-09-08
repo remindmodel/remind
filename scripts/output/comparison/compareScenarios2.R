@@ -36,8 +36,8 @@ determineDefaultProfiles <- function(outputDir) {
   defaults <- switch(
     regionMappingFile,
     "default",
-    "regionmappingH12.csv" =  c("H12", "H12-short"),
-    "regionmapping_21_EU11.csv" =  c("H12", "H12-short", "EU27", "EU27-short", "AriadneDEU"))
+    "regionmappingH12.csv" =  c("H12", "H12-to2050"),
+    "regionmapping_21_EU11.csv" =  c("H12", "H12-to2050", "EU27", "EU27-to2050", "AriadneDEU"))
   return(defaults)
 }
 
@@ -71,11 +71,11 @@ startComp <- function(
       " --mail-type=END,FAIL --time=200",
       if (!grepl("--mem", slurmConfig)) " --mem=8000",
       " --wrap=\"Rscript ", script,
-      " --outputdirs=", paste(outputdirs, collapse = ","),
-      " --profileName=", profileName,
-      " --outFileName=", outFileName,
-      " --aliases=", paste(aliases, collapse = ","),
-      " --sections=", paste(sections, collapse = ","),
+      " --outputdirs=", shQuote(paste(outputdirs, collapse = ",")),
+      " --profileName=", shQuote(profileName),
+      " --outFileName=", shQuote(outFileName),
+      " --aliases=", shQuote(paste(aliases, collapse = ",")),
+      " --sections=", shQuote(paste(sections, collapse = ",")),
       "\"")
     cat(clcom, "\n")
     system(clcom)
@@ -105,7 +105,12 @@ if (! exists("sections")) {
 # Let user choose cs2 profile(s).
 profileNamesDefault <- determineDefaultProfiles(outputdirs[1])
 
-if (! exists("profileNames") || ! all(profileNames %in% names(profiles))) {
+stopifnot(all(profileNamesDefault %in% names(profiles)))
+if (exists("profileNames") && !all(profileNames %in% names(profiles))) {
+  stop("At least one supplied profile does not exist in scripts/cs2/profiles.json")
+}
+
+if (! exists("profileNames")) {
   profileNames <- names(profiles)[gms::chooseFromList(
     ifelse(names(profiles) %in% profileNamesDefault, crayon::cyan(names(profiles)), names(profiles)),
     type = "profiles for cs2",

@@ -684,19 +684,6 @@ pm_histCap("2025",regi,teReNoBio) = max(pm_histCap("2020",regi,teReNoBio), pm_hi
 *** calculate historic capacity additions
 pm_delta_histCap(ttot,regi,te) = pm_histCap(ttot,regi,te) - pm_histCap(ttot-1,regi,te);
 
-*** historical installed capacity for yearly time-steps
-*** (same as pm_histCap, but with yearly time-steps instead of 5-year time-steps)
-$Offlisting
-table   p_histCapYearly(tall,all_regi,all_te) "historical installed capacity in yearly time steps (TW)"
-$ondelim
-$include "./core/input/pm_histCapYearly.cs3r"
-$offdelim
-;
-$Onlisting
-
-
-
-
 *** historical PE installed capacity
 table p_PE_histCap(tall,all_regi,all_enty,all_enty) "historical installed capacity (TW)"
 $ondelim
@@ -1334,6 +1321,7 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,"dac")          = 0.8;
   p_adj_coeff(ttot,regi,'oae_ng')       = 0.8;
   p_adj_coeff(ttot,regi,'oae_el')       = 0.8;
+  p_adj_coeff(ttot,regi,'weathering')   = 1.0;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 *** steel technologies
   p_adj_coeff(ttot,regi,"bfcc")         = 4.0;
