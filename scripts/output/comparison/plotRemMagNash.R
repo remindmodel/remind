@@ -32,6 +32,11 @@ if (!exists("source_include")) lucode2::readArgs("outputdirs")
 # Plot dimension specified for 'color' over dimension specified for 'xaxis' as line plot or bar plot
 myplot <- function(dat, parName, runName, type = "line", xaxis = "ttot", color = "iteration", scales = "free_y", ylab = NULL, title = "auto") {
   
+  if (nrow(dat |> filter(par %in% parName)) == 0) {
+    message(paste0("No data for ", parName, " in run ", runName$outputdirs))
+    return(NULL)
+  }
+
   # Find last (continuous) iteration per outputDir
   if("outputdirs" %in% names(dat)) last <- dat |> group_by(outputdirs) |> summarise(iteration = max(iteration))
   
@@ -157,7 +162,8 @@ plot_iterations <- function(dat, runname) {
     "```{r plots, results='asis'}",
     "# `plots` is provided by plot_iterations() via the render environment.",
     "for (i in seq_along(plots)) {",
-    "  print(plots[[i]])",
+    "  # Only plot if plot could be generated correctly",
+    "  if (inherits(plots[[i]], 'ggplot')) print(plots[[i]]) ",
     "  if (i %% 2 == 1) {",
     "    # First figure on the page: stretchable space pushes this figure to",
     "    # the top margin and the next one to the bottom margin.",
