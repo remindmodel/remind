@@ -1631,12 +1631,12 @@ $setGlobal cm_emiMktTarget_tolerance  GLO 0.01    !! def = GLO 0.01
 *** cm_scaleDemand - Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window.
 *** Requires re-calibration in order to work.
 ***   Example on how to use:
-***     cm_scaleDemand = '2020.2040.(EUR,NEU,USA,JPN,CAZ) 0.75' applies a 25% demand reduction on those regions progressively between 2020 (100% demand) and 2040 (75% demand).
+***     cm_scaleDemand = '2020.2040.(EUR,NEU,USA,JPN,CAZ) 0.75' linearly phases in a 25% demand reduction on those regions from 2020 (100% demand) to 2040 (75% demand) and keeps the reduction constant afterwards.
 $setGlobal cm_scaleDemand  off    !! def = off
 *** cm_scaleDemandChem - Rescaling factor on chemicals final energy and usable energy demand, for selected regions and over a phase-in window.
 *** Requires re-calibration in order to work.
 ***   Example on how to use:
-***     cm_scaleDemandChem = '2020.2040.(EUR,NEU,USA,JPN,CAZ) 0.75' applies a 25% chemical demand reduction on those regions progressively between 2020 (100% demand) and 2040 (75% demand).
+***     cm_scaleDemandChem = '2020.2040.(EUR,NEU,USA,JPN,CAZ) 0.75' linearly phases in a 25% chemical demand reduction on those regions from 2020 (100% demand) to 2040 (75% demand) and keeps the reduction constant afterwards.
 $setGlobal cm_scaleDemandChem  off    !! def = off
 *** cm_scaleDemandBuildTable - Rescaling factor on buildings final energy and usable energy demand, with values coming from an input table.
 *** Requires re-calibration in order to work.
