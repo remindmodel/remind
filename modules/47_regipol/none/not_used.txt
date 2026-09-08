@@ -86,3 +86,4 @@ vm_co2CCS,input,not needed
 cm_implicitPriceTarget_tolerance,input,not needed
 cm_implicitPePriceTarget_tolerance,input,not needed
 vm_emiCdrNovel,input,not needed
+vm_emiCdrAll,input,not needed
