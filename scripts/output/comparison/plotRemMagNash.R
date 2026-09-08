@@ -32,9 +32,12 @@ if (!exists("source_include")) lucode2::readArgs("outputdirs")
 # Plot dimension specified for 'color' over dimension specified for 'xaxis' as line plot or bar plot
 myplot <- function(dat, parName, runName, type = "line", xaxis = "ttot", color = "iteration", scales = "free_y", ylab = NULL, title = "auto") {
   
-  if (nrow(dat |> filter(par %in% parName)) == 0) {
-    message(paste0("No data for ", parName, " in run ", runName$outputdirs))
-    return(NULL)
+ if (nrow(dat |> filter(ttot > 2000, par %in% parName)) == 0) {
+   message(paste0(
+     "No data for ", paste(parName, collapse = ", "),
+     " in run ", paste(unique(runName$outputdirs), collapse = ", ")
+   ))
+   return(NULL)
   }
 
   # Find last (continuous) iteration per outputDir
