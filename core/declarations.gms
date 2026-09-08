@@ -317,20 +317,12 @@ pm_shGasLiq_fe_lo(ttot,all_regi,emi_sectors)         "Final energy gases plus li
 p_demFeSector0(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Final Energy demand in the previous iteration [TWa]"
 pm_demFeTotal0(ttot,all_regi)                        "Total Final Energy demand in the previous iteration [TWa]"
 
-$ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
-*** FE demand rescaling parameters
-  pm_scaleDemand(tall,tall,all_regi)                 "Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
-$endif.scaleDemand
 
-$ifthen.scaleDemandBuildTable not "%cm_scaleDemandBuildTable%" == "off"
-*** FE demand rescaling parameters
-  pm_scaleDemandBuildTable(ttot, all_regi)                 "Rescaling factor on buildings final energy and usable energy demand, read-in from a table" 
-$endif.scaleDemandBuildTable
-
-$ifthen.scaleDemandIndTable not "%c_scaleDemandIndTable%" == "off"
-*** FE demand rescaling parameters
-  p_scaleDemandIndTable(ttot, all_regi)                 "Rescaling factor on industry final energy and usable energy demand, read-in from a table" 
-$endif.scaleDemandIndTable
+*** FE and UE demand rescaling parameters
+$if not "%cm_scaleDemand%" == "off"     pm_scaleDemand(tall,tall,all_regi)     "Rescaling factor on industry and buildings final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
+$if not "%cm_scaleDemandChem%" == "off" pm_scaleDemandChem(tall,tall,all_regi) "Rescaling factor on chemicals final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemandChem% /
+$if not "%cm_scaleDemandBuildTable%" == "off" pm_scaleDemandBuildTable(ttot, all_regi) "Rescaling factor on buildings final energy and usable energy demand, read-in from a table" 
+$if not "%c_scaleDemandIndTable%" == "off"    p_scaleDemandIndTable(ttot, all_regi)    "Rescaling factor on industry final energy and usable energy demand, read-in from a table" 
 
 *** energy prices
 pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)     "parameter to capture all FE prices across sectors and markets [tr$2017/TWa]"
@@ -737,7 +729,14 @@ sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 *** Define macros that can be used as functions throughout the model code.
 *** This is especially useful for more complex expressions that are used in multiple places, to avoid code duplication and to ensure consistency.
 *** Parameters of a macro are replaced directly by the chosen value at compile time: they have nothing to do with the model parameters or sets.
-*** Because the replacement is automatic, please pay attention to brackets.
+*** More information in: https://www.gams.com/latest/docs/UG_DollarControlOptions.html#UG_DollarControl_MacrosInGAMS
+
+*** When defining new macros, make sure to put brackets around parameters to ensure correct calculation.
+*** The following counter example will return wrong values because of missing brackets:
+***   Wrong definition:   $macro macro_multiply(a,b)  a * b
+***   Utilisation:        macro_multiply(3+1, 2)   will return 3+1*2 = 5 instead of 8, due to precendence of multiplication over addition
+***   Utilisation:        1 / macro_multiply(2, 2) will return 1/2*2 = 1 instead of 0.25, due to left-to-right precendence
+***   Correct definition: $macro macro_multiply(a,b)  ( (a) * (b) )
 
 *** macro_interpolate: Linear interpolation between two values x0 and x1 at time points t0 and t1 for an intermediate time point t
 *** Example 1:
