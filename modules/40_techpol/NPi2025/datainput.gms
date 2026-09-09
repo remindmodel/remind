@@ -28,6 +28,24 @@ p40_TechBound(ttot,all_regi,te) = smax(ttot2$(ttot2.val le ttot.val) , f40_TechB
 p40_TechBound(ttot,all_regi,"wind") = f40_TechBound(ttot,all_regi,"%cm_NPi_version%","wind");
 p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
 
+
+*** Follow technology pathways of a reference run, e.g., as in PRISMA WP6 Staying Alive
+$ifThen "%cm_ReferenceCapacities%" == "prisma_SA"
+
+*** PRISMA Staying Alive: 
+Parameter p40_RefCap(ttot, all_regi, all_te, rlf) "capacity pathways from reference run";
+
+Execute_Loadpoint "input_ref" p40_RefCap = vm_cap.l;
+
+p40_TechBound(t,all_regi,teVRE) = max(
+    p40_TechBound(t,all_regi,teVRE),
+    p40_RefCap(t,all_regi,teVRE, "1") * 1000
+);
+** end of PRISMA Staying Alive
+$ENDIF
+
+
+
 *** In scenarios with 2nd generation bioenergy technology phaseout,
 *** switch-off biomass capacity targets of NDC
 if (cm_phaseoutBiolc eq 1,

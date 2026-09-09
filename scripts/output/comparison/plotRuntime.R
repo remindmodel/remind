@@ -51,7 +51,7 @@ readRun <- function(runDir) {
   }
   runStatistics <- loadRunStatistics()
 
-  statsFull <- gdx::readGDX(file.path(runDir, "fulldata.gdx"), "p80_repy_iteration") %>%
+  statsFull <- gdx2::readGDX(file.path(runDir, "fulldata.gdx"), "p80_repy_iteration") %>%
     as.data.frame() %>%
     filter(Data1 == "resusd") %>%
     filter(Value > 0) %>%

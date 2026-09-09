@@ -6,72 +6,109 @@
 # |  Contact: remind@pik-potsdam.de
 
 
-  source("./scripts/start/isSlurmAvailable.R")
+source("./scripts/start/isSlurmAvailable.R")
 
-  # This script expects a variable `outputdirs` to be defined.
-  # Variables `slurmConfig` and `filename_prefix` are used if they defined.
-  if (!exists("outputdirs")) {
-    stop(
-      "Variable outputdirs does not exist. ",
-      "Please call validateScenarios.R via output.R, which defines outputdirs.")
+# This script expects a variable `outputdirs` to be defined.
+# Variables `slurmConfig` and `filename_prefix` are used if they defined.
+if (!exists("outputdirs")) {
+  stop(
+    "Variable outputdirs does not exist. ",
+    "Please call validateScenarios.R via output.R, which defines outputdirs.")
+}
+
+# Start validateScenarios
+startVal <- function(outputDirs, validationConfig, validationReportName, nameCore) {
+  if (!exists("slurmConfig")) {
+    slurmConfig <- "--qos=standby"
   }
-
-  # Start validateScenarios
-  startVal <- function(outputDirs, validationConfig) {
-    if (!exists("slurmConfig")) {
-      slurmConfig <- "--qos=standby"
-    }
-    jobName <- paste0(
-      "valScen",
-      "-", nameCore
-    )
-    outFileName <- jobName
-    script <- "scripts/vs/run_validateScenarios.R"
-    cat("Starting ", jobName, "\n")
-    if (isSlurmAvailable() && ! identical(slurmConfig, "direct")) {
-      clcom <- paste0(
-        "sbatch ", slurmConfig,
-        " --job-name=", jobName,
-        " --comment=validateScenarios",
-        " --output=", jobName, ".out",
-        " --error=", jobName, ".out",
-        " --mail-type=END --time=200 --mem-per-cpu=8000",
-        " --wrap=\"Rscript ", script,
-        " outputdirs=", paste(outputDirs, collapse = ","),
-        " validationConfig=", validationConfig,
-        "\"")
-      cat(clcom, "\n")
-      system(clcom)
-    } else {
-      tmpEnv <- new.env()
-      tmpError <- try(sys.source(script, envir = tmpEnv))
-      if (!is.null(tmpError))
-        warning("Script ", script,
-                " was stopped by an error and not executed properly!")
-      rm(tmpEnv)
-    }
+  jobName  <- glue::glue("valScen-{nameCore}")
+  script <- "scripts/vs/run_validateScenarios.R"
+  cat("Starting ", jobName, "\n")
+  if (isSlurmAvailable() && ! identical(slurmConfig, "direct")) {
+    clcom <- paste0(
+      "sbatch ", slurmConfig,
+      " --job-name=", jobName,
+      " --comment=validateScenarios",
+      " --output=", jobName, ".out",
+      " --error=", jobName, ".out",
+      " --mail-type=END --time=200 --mem-per-cpu=8000",
+      " --wrap=\"Rscript ", script,
+      " --outputdirs=", shQuote(paste(outputDirs, collapse = ",")),
+      " --validationConfig=", shQuote(validationConfig),
+      " --validationReportName=", shQuote(validationReportName),
+      "\"")
+    cat(clcom, "\n")
+    system(clcom)
+  } else {
+    tmpEnv <- new.env()
+    tmpError <- try(sys.source(script, envir = tmpEnv))
+    if (!is.null(tmpError))
+      warning("Script ", script,
+              " was stopped by an error and not executed properly!")
+    rm(tmpEnv)
   }
+}
 
-  # choose a config file either from the package or your own
-  if (! exists("validationConfig")) {
-    availableConfigs <- list.files(
-      piamutils::getSystemFile("config/", package = "piamValidation"))
-    config <- gms::chooseFromList(availableConfigs,
-                                  type = "a validation config",
-                                  multiple = FALSE)
-    if (config == "") {
-      q()
-    } else {
-      validationConfig <- config
-    }
+# let the user pick an entry from the package or provide an own file
+chooseFromPackageOrFile <- function(available, type, fileHint, userinfo = NULL) {
+  ownFile <- paste0("enter path to own file (", fileHint, ")")
+  choice <- gms::chooseFromList(c(available, ownFile),
+                                type = type,
+                                userinfo = userinfo,
+                                multiple = FALSE)
+  if (length(choice) == 0) return("")
+  if (identical(choice, ownFile)) {
+    message("Path to own file (", fileHint, "):")
+    choice <- normalizePath(gms::getLine(), mustWork = FALSE)
+    if (!file.exists(choice)) stop("File not found: ", choice)
   }
+  choice
+}
 
-  # Create core of file name / job name.
-  timeStamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
-  valName <- gsub(".csv", "", gsub("validationConfig_", "", validationConfig))
-  nameCore <- paste0(valName, "-", timeStamp)
+# choose a config from the package or an own file
+if (! exists("validationConfig")) {
+  validationConfig <- chooseFromPackageOrFile(
+    piamValidation::listConfigs(),
+    type = "a validation config",
+    fileHint = ".csv/.xlsx",
+    userinfo = "Leave empty to abort.")
+  if (validationConfig == "") {
+    q()
+  }
+}
+# strip prefix/suffix in case validationConfig was predefined as file name
+if (!file.exists(validationConfig)) {
+  validationConfig <- gsub("\\.csv$", "",
+                            gsub("^validationConfig_", "", validationConfig))
+}
 
-  # Start the job
-    startVal(
-      outputDirs = outputdirs,
-      validationConfig = valName)
+# choose a report template from the package or an own file
+if (! exists("validationReportName")) {
+  validationReportName <- chooseFromPackageOrFile(
+    piamValidation::listReports(),
+    type = "a validation report template",
+    fileHint = ".Rmd",
+    userinfo = "Leave empty for the default report.")
+  if (validationReportName == "") {
+    validationReportName <- "default"
+    message("Default: default report template.\n")
+  }
+}
+
+# Create core of file name / job name, "custom" for user-provided files.
+timeStamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
+if (!exists("filename_prefix")) filename_prefix <- ""
+valName <- if (file.exists(validationConfig)) "custom" else validationConfig
+
+reportName <- if (file.exists(validationReportName)) "custom" else validationReportName
+repInfix   <- if (identical(validationReportName, "default")) "" else glue::glue("-{reportName}")
+prefix     <- if (filename_prefix == "") "" else glue::glue("{filename_prefix}-")
+
+nameCore <- glue::glue("{prefix}{valName}{repInfix}-{timeStamp}")
+
+# Start the job
+  startVal(
+    outputDirs = outputdirs,
+    validationConfig = validationConfig,
+    validationReportName = validationReportName,
+    nameCore = nameCore)

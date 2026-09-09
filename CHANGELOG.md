@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### input data/calibration
+- update of exogenous data for REMIND stand alone runs based on MAgPIE v4.14.1 for land use emissions and costs
+  see also reladed mrcommons PR: https://github.com/pik-piam/mrcommons/pull/209
+   [[#2462](https://github.com/remindmodel/remind/pull/2462)]
 
 ### changed
 - **scripts** Harmonize command line arguments for output.R: prefix `--` is now required, change `--outputdir` to `--outputdirs`
@@ -22,6 +25,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** Add the possibility to build only some sections of the compareScenarios2 report with `--sections=`
     [[#2415](https://github.com/remindmodel/remind/pull/2415)]
 - **47_regipol** New (optional) quantity targets for limiting PE lignocellulosic biomass
+- **scripts** Add report template selection to the `validateScenarios` output script: users can now choose a report (e.g. the SCI evaluation) from `piamValidation` in addition to the validation config
+    [[#2456](https://github.com/remindmodel/remind/pull/2456)]
 
 ### removed
 -

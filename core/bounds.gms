@@ -73,27 +73,7 @@ loop(teRe2rlfDetail(te,rlf),
 loop(t $ (t.val >= 2015 and t.val <= 2025),
 *** fix renewable capacities to real world historical values if available
   vm_cap.lo(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
-  if(t.val <= 2020, !! TODO: activate 2025 upper-bound when consolidated data available
-    vm_cap.up(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 1.05 * pm_histCap(t,regi,te);
-  );
-*** for 2025: as no 2025 data avaiable yet, fix lower bound to 2024 capacity + 0.5 times the annual growth in 2022-2024
-*** but at least 2024 capacity
-  if(t.val = 2025,
-    vm_cap.lo(t,regi,teVRE(te),"1") $ p_histCapYearly("2024",regi,te) = max(p_histCapYearly("2024",regi,te) 
-                                                                                + 0.5
-                                                                                  * ( p_histCapYearly("2024",regi,te) 
-                                                                                    - p_histCapYearly("2022",regi,te) ) / 2,
-                                                                              p_histCapYearly("2024",regi,te)
-                                                                            );
-*** for 2025: as no 2025 data avaiable yet, fix upper bound to 2024 capacity + 2 times the annual growth in 2022-2024
-*** but at least 10% growth of 2024 capacity
-    vm_cap.up(t,regi,teVRE(te),"1") $ p_histCapYearly("2024",regi,te) = max(p_histCapYearly("2024",regi,te) 
-                                                                                + 2
-                                                                                  * ( p_histCapYearly("2024",regi,te) 
-                                                                                    - p_histCapYearly("2022",regi,te) ) / 2,
-                                                                              1.1 * p_histCapYearly("2024",regi,te)
-                                                                            );
-  );
+  vm_cap.up(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 1.05 * pm_histCap(t,regi,te);
 *** broader bounds for renewables with lower data quality
   loop(te $ (sameas(te, "hydro") or sameas(te, "geohdr")),
     vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.7 * pm_histCap(t,regi,te);
@@ -315,8 +295,13 @@ loop(teBiopyr(te) $ (not sameas(te, "biopyrliq")), !! established industrial tec
     vm_cap.up("2020",regi,te,rlf) = p_boundCapBiochar("2020",regi) * sm_tBC_2_TWa / 3; 
     vm_cap.lo("2025",regi,te,rlf) = p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3; 
     !! set upper bound to 70% above the lower bound which is based on 2024 values    
-    vm_cap.up("2025",regi,te,rlf) = 1.7 * p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3;                      
-  );
+    vm_cap.up("2025",regi,te,rlf) = 1.7 * p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3;
+    vm_cap.lo("2030",regi,te,rlf) = sm_eps; !! initiate a starting value in all regions from 2030, even if no deployment in 2025
+    !! upper bound of 0.1 Mt biochar in 2030 (approx. 2025 production in Europe), for regions without 2025 value
+    vm_cap.up("2030",regi,te,rlf) = power(10,5) * sm_tBC_2_TWa / 3 ;
+    !!short-term upscaling limit based on recent growth rates in EUR, for regions with 2025 values      
+    vm_cap.up("2030",regi,te,rlf)$(p_boundCapBiochar("2025",regi)) = power(1.7, 5) * vm_cap.up("2025",regi,te,rlf);   
+    );
 );
 
 loop(te $ sameas(te, "biopyrliq"), !! does not yet exist commercially
