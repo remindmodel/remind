@@ -27,6 +27,24 @@ q80_budg_intertemp(regi)..
       )
     );
 
+*' Intertemporal permit trade balance over the century must be zero
+$ifthen.justMip "%emicapregi%" == "JUSTMip" 
+
+Equation q80_budg_intertemp_perm;
+
+q80_budg_intertemp_perm..
+
+0 =e=
+    sum(ttot$(ttot.val ge 2005 and ttot.val le 2100),
+        pm_ts(ttot)
+      * sum(regi,
+            vm_Xport(ttot,regi,"perm")
+          - vm_Mport(ttot,regi,"perm")
+        )
+    );
+
+$endif.justMip
+
 *' quadratic adjustment costs, penalizing deviations from the trade pattern of the last iteration.
 q80_costAdjNash(ttot,regi)$( ttot.val ge cm_startyear ) ..
   vm_costAdjNash(ttot,regi) 

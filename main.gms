@@ -371,6 +371,7 @@ $setglobal techpol  NPi2025           !! def = NPi2025
 *' * (exog):   exogenous emission cap path (generic)  (under construction)
 *' * (PerCapitaConvergence):   based on CandC: convergence, to be run with emiscen = 4
 *' * (AbilityToPay):   mitigation requirement shared based on per-capita GDP, to be run with emiscen = 4
+*' * (JUSTMip):   limited trade in a regional budget run, to be run with emiscen = 9
 $setglobal emicapregi  none           !! def = none
 *'---------------------    45_carbonprice  ----------------------------------------
 *'
@@ -620,6 +621,21 @@ parameter
 *' * (1): carbon price trajectories (pm_taxCO2eq) from path_gdx_ref are used as lower bound for pm_taxCO2eq
 *' * (0): no lower bound
 *'
+
+parameter
+  jpn_goes_wild             "implement looser CDR constraints in Japan, i.e. ccs, oae, erw"
+;
+  jpn_goes_wild      = 0;         !! def = 0  !! regexp = 0|1
+*' *  (0): no, Japan has the same CDR constraints as other regions
+*' *  (1): yes, Japan has looser CDR constraints than other regions
+
+parameter
+  cm_permTradingJustMip     "switch to allow for trading of CO2 budgets between regions in a policy run"
+;
+  cm_permTradingJustMip      = 1;         !! def = 0  !! regexp = 0|1
+*' *  (0): no, Trading of CO2 budgets in policy runs is not allowed
+*' *  (1): yes, Trading of CO2 budgets in policy runs is allowed
+
 parameter
   c_macscen                 "scenario switch on whether or not to use MAC (Marginal Abatement Cost) for certain sectors not related to direct combustion of fossil fuel, e.g. fugitive emissions from old mines, forestry, agriculture and cement"
 ;
