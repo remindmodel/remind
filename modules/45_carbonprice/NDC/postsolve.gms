@@ -77,7 +77,7 @@ $endif.cm_NDC_CO2PriceLimit
 
 *** calculate tax path until NDC target year - linear increase
 p45_taxCO2eqFirstNDCyear(regi) = smax(t$(t.val = p45_firstNDCyear(regi)), pm_taxCO2eq(t,regi));
-pm_taxCO2eq(t,regi) $ (t.val >= cm_startyear - 5 and t.val < p45_firstNDCyear(regi)) = macro_interpolate(t.val, cm_startyear - 5, p45_firstNDCyear(regi), pm_taxCO2eq(t,regi) $ (t.val eq cm_startyear - 5), p45_taxCO2eqFirstNDCyear(regi));
+pm_taxCO2eq(t,regi) $ (t.val >= 2025 and t.val < p45_firstNDCyear(regi)) = macro_interpolate(t.val, 2025, p45_firstNDCyear(regi), pm_taxCO2eq("2025",regi), p45_taxCO2eqFirstNDCyear(regi));
 
 *** replace taxCO2eq between NDC targets such that taxCO2eq between goals does not decrease
 loop( p45_NDCyearSet(t2,regi) ,
