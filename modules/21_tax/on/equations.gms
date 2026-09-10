@@ -344,7 +344,7 @@ v21_taxrevNetNegEmi(t,regi) =e= s21_frac_NetNegEmi * p21_taxCO2eqSum_NetNegEmi(t
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevCDR(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevCDR(t,regi) =e= cm_frac_CDR * pm_taxCO2eqSum(t,regi) * vm_emiCdrAll(t,regi) - pm_taxrevCDR0(t,regi);
+v21_taxrevCDR(t,regi) =e= cm_frac_CDR * pm_taxCO2eqSum(t,regi) * vm_emiCdrAll(t,regi) - p21_taxrevCDR0(t,regi);
 
 ***---------------------------------------------------------------------------
 *'  Auxiliary calculation of net-negative CO2 emissions in the current iteration: 
