@@ -1175,6 +1175,11 @@ parameter
 ;
   cm_frac_CCS          = 10;   !! def = 10
 *'
+parameter
+  cm_frac_CDR         "tax on CDR that effectively reduces the CDR subsidy by that fraction"
+;
+cm_frac_CDR = 0; !! def = 0
+*' This tax reduces the effective carbon price for all CDR options except land-use change (either exogenous in REMIND standalone, or calculated in MAgPIE); default is 0. Caution: if combined with cm_frac_NetNegEmi both effects are combined
 
 parameter
   cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshooting, formulated as fraction of carbon price"

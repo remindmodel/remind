@@ -54,6 +54,7 @@ q21_taxrevPseudo(t,regi)$(t.val ge max(2010,cm_startyear))..
   + v21_taxrevFlex(t,regi)
   + v21_taxrevCCS(t,regi) 
   + v21_taxrevNetNegEmi(t,regi)
+  + v21_taxrevCDR(t,regi)
   + v21_taxrevBioSust(t,regi)
   + v21_taxrevEI(t,regi)
   + v21_taxrevChProdStartYear(t,regi)
@@ -337,6 +338,13 @@ q21_taxrevNetNegEmi(t,regi)$(t.val ge max(2010,cm_startyear))..
 v21_taxrevNetNegEmi(t,regi) =e= s21_frac_NetNegEmi * p21_taxCO2eqSum_NetNegEmi(t,regi)
                                 * ( (1 - cm_NetNegEmi_calculation) * vm_emiAllco2neg(t,regi) + cm_NetNegEmi_calculation * v21_emiAllco2neg_acrossIterations(t,regi) )
                                  - pm_taxrevNetNegEmi0(t,regi);
+
+***---------------------------------------------------------------------------
+*'  Calculation of CDR tax: tax rate (defined as fraction of carbon price) times amount of CDR
+*'  Documentation of overall tax approach is above at q21_taxrev.
+***---------------------------------------------------------------------------
+q21_taxrevCDR(t,regi)$(t.val ge max(2010,cm_startyear))..
+v21_taxrevCDR(t,regi) =e= cm_frac_CDR * pm_taxCO2eqSum(t,regi) * vm_emiCdrAll(t,regi) - p21_taxrevCDR0(t,regi);
 
 ***---------------------------------------------------------------------------
 *'  Auxiliary calculation of net-negative CO2 emissions in the current iteration: 

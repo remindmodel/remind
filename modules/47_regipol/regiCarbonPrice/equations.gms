@@ -40,6 +40,10 @@ q47_implicitQttyTargetTax(t,regi)$(t.val ge max(2010,cm_startyear))..
     (
       p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * (vm_emiCdrNovel(t,regi))
     )$(sameas(qttyTarget,"novelCDR"))
+          +
+    (
+      p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * (vm_emiCdrAll(t,regi))
+    )$(sameas(qttyTarget,"allCDR"))
   )
   -
   p47_implicitQttyTargetTax0(t,regi)
