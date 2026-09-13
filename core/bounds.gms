@@ -37,6 +37,7 @@ loop(pe2se(enty,enty2,te) $ (
     (not sameas(te,"gasftcrec")) and
     (not sameas(te,"gasftrec")) and
     (not sameas(te,"tnrs")) and
+    (not sameas(te,"bioBurial")) and
     (not teBiopyr(te))
   ),
   vm_cap.lo(t,regi,te,"1") $ (t.val >= 2030 and t.val <= 2070) = 1e-7;
