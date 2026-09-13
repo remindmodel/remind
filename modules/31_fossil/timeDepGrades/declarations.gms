@@ -89,9 +89,9 @@ $ENDIF.mofex
 *-------------------------------------------
 positive variables
 *** Others
-v31_fuExtrCum(ttot,all_regi,all_enty,rlf)           "cumulated extraction of exhaustible resources"
-v31_fuExtrCumMax(all_regi,all_enty,rlf)             "maximum of cumulated extraction of exhaustible resources"
-v31_fuExtrMC(all_enty,rlf)                          "MC exhaustible resources"
+v31_fuExtrCum(ttot,all_regi,all_enty,rlf)           "cumulated extraction of exhaustible resources [TWa, Uranium: Mt_Ur]"
+v31_fuExtrCumMax(all_regi,all_enty,rlf)             "maximum of cumulated extraction of exhaustible resources [Mt_Ur]"
+v31_fuExtrMC(all_enty,rlf)                          "MC exhaustible uranium resources [T$/Mt_Ur]"
 v31_fuSlack(ttot,all_regi,all_enty,rlf)             "Amount of oil that is not extracted but put aside never to be used again. Unit: TWa/a"
 ;
 
