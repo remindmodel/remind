@@ -9,6 +9,14 @@
 * defining the CO2 price parameter that sums up the 3 CO2eq tax components
 pm_taxCO2eqSum(ttot,regi) = pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqSCC(ttot,regi);
 
+$ifThen.cm_NDC_CO2PriceLimit not "%cm_NDC_CO2PriceLimit%" == "off"
+*** limit CO2 prices in target year according to switch cm_NDC_CO2PriceLimit
+  loop( pm_NDCyearSet(t,regi)$( pm_CO2PriceLimitNDC(t,regi) > 0 ) ,
+    pm_taxCO2eq(t,regi) = min(    pm_taxCO2eqSum(t,regi), 
+                                  pm_CO2PriceLimitNDC(t,regi) * sm_DptCO2_2_TDpGtC );
+                                    );
+$endif.cm_NDC_CO2PriceLimit
+
 *AJS* we need those in nash
 pm_capCum0(ttot,regi,teLearn)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq 1)) = vm_capCum.l(ttot,regi,teLearn);
 pm_co2eq0(ttot,regi)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq 1)) = vm_co2eq.l(ttot,regi);

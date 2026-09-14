@@ -783,8 +783,8 @@ parameter
 parameter
 cm_LTSstartYr "[46_carbonpriceRegi] First year with non-zero regional carbon price markup to reach net-zero targets (Long-Term Strategy)"
 ;
-cm_LTSstartYr = 2040;        !! def = 2040  !! regexp = 20[0-9](0|5)
-*' *  (2040): NDC-LTS scenario: default start of rescaling is 2040, which allows meeting 2035 NDC targets
+cm_LTSstartYr = 2030;        !! def = 2030  !! regexp = 20[0-9](0|5)
+*' *  (2040): NDC-LTS scenario: scenario starts in 2040, which allows meeting 2035 NDC targets
 *' *  (2030): LTS scenario: from 2030 onward, regions see a carbon price markup to reach their net-zero targets, so they may overshoot NDC targets
 
 parameter
