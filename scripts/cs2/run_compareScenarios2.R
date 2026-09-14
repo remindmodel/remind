@@ -28,6 +28,7 @@ run_compareScenarios2 <- function(
 
   # load cs2 profiles
   profiles <- piamPlotComparison::getCs2Profiles()
+  stopifnot(profileName %in% names(profiles))
 
   # Create temporary folder. This is necessary because each compareScenarios2
   # run creates a folder named 'figure'. If multiple compareScenarios2 run in

@@ -1,0 +1,835 @@
+---
+title: "magclass for REMINDers"
+author: "Falk Benke"
+output: 
+  html_document:
+    theme: paper
+    toc: true
+    toc_float:
+      collapsed: false
+    toc_depth: 3
+date: "2026-09-07"
+---
+
+This is a [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  dev = "svg", # svg, png,...
+  fig.ext = ".svg",
+  # fig.asp = .8 # default aspect ratio
+  fig.width = 16,
+  fig.height = 9,
+  dpi = 100
+)
+```
+
+```{r message=FALSE}
+# load the library
+library(magclass)
+library(madrat)
+
+# loading other helpers used in this tutorial
+library(tidyr)
+library(dplyr)
+library(piamutils)
+
+# load example data
+pop <- maxample("pop")
+animal <- maxample("animal")
+
+```
+
+# Part 1: Basics
+
+## declaring a magpie object
+
+```{r}
+# creating a magpie object with 2 regions, 2 years and 2 different variables
+
+m1 <- new.magpie(
+  cells_and_regions = c("USA", "BRA"),
+  years = c(1995, 2000),
+  names = c("iron", "steel"),
+  sets = c("region", "year", "product"),
+  fill = 0
+)
+
+# take a look at the data
+print(m1)
+
+# creating a magpie object with more than one subdimension in the third dimension
+m2 <- new.magpie(
+  cells_and_regions = c("USA", "BRA"),
+  years = seq(1995, 2020, 5),
+  names = c("IEA.iron", "IEA.steel", "WoldSteelDatabase.steel"),
+  sets = c("region", "year", "model.product"),
+  fill = NA
+)
+
+# take a look at the data structure
+print(m2)
+
+# take a look at the sets
+getSets(m2)
+
+# Note that the first and second dimension can also be multidimensional. For example, you could have coordinates in dimension one and subannual data (months and years) in dimension two, but this is not a frequent use case for REMIND users.
+```
+
+## creating from a data frame
+
+```{r}
+df <- data.frame(
+  region = c("USA", "BRA", "FRA"),
+  years = c(2000, 2005, 2010),
+  product = c("iron", "steel", "cement")
+) %>%
+  complete(region, years, product) %>%
+  mutate("value" = sample.int(n = 1000, size = 27))
+
+# Let's try to create a magpie object from this data frame (excerpt).
+print(head(df))
+
+# The library will try guessing the right attribution. To be safe, make the spatial, temporal and data column explicit. All other columns will form the third dimension with its subdimensions.
+m <- as.magpie(df, spatial = 1, temporal = 2, datacol = 4)
+print(m)
+
+# Explicitly assigning dimensions is recommended, because otherwise magclass will guess dimensions. Assume, you have a model column with the model name 'IEA'. As it contains a three letter, uppercase string, magclass assumes it must be spatial column, although it is a column of the third dimension.
+
+df$model <- "IEA"
+m <- as.magpie(df)
+head(m)
+
+# Column order is also important. 'as.magpie' seems to struggle with the conversion when the value column is not the last column of the data frame. Even explicit assignment does not work here.
+m <- as.magpie(df, spatial = 1, temporal = 2, datacol = 4)
+head(m)
+
+# In order to avoid wrong assignments during the conversion to magpie objects, always make sure the column order in your data frame is: regional column, temporal column, other columns and the value column at last.
+df <- df[, c("region", "years", "model", "product", "value")]
+m <- as.magpie(df, spatial = 1, temporal = 2, datacol = 5)
+head(m)
+```
+
+## reading in from different file formats
+
+```{r eval=FALSE}
+# read from gdx
+
+# If you want to try this yourself, download a release from  https://rse.pik-potsdam.de/data/example/remind2_test-convGDX2MIF_SSP2-EU21-PkBudg650-release.gdx and edit gdxPath to reference the downloaded file
+gdxPath <- "./remind2_test-convGDX2MIF_SSP2-EU21-PkBudg650-release.gdx"
+
+# Often, setting 'restoreZeros' to FALSE is advisable to limit the size of the magpie object.
+m <- gdx2::readGDX(gdxPath, c("vm_prodFe"), field = "l", restoreZeros = FALSE, format = "first_found")
+
+# read from cs4r
+cs4rPath <- "./f_fedemandInd.cs4r"
+x <- read.magpie(cs4rPath)
+```
+
+## writing a magpie object to a file
+```{r eval=FALSE}
+# write to the cs4r file format
+magclass::write.magpie(x = pop, file_name = "population_example.cs4r")
+
+# write to a mif report
+
+# The mif format is a csv file with the columns 'Model', Scenario', 'Region', 'Variable', 'Unit',  followed by year columns. Let's add all missing information to the magpie object before writing to the mif format.
+
+popOut <- addDim(pop, dim = 3.2, dimName = "variable", item = "Population (million)")
+magclass::write.report(x = popOut, file = "population_example.mif", model = "WDI")
+```
+
+## exploring a magpie object
+
+```{r}
+# show the structure of the object
+str(pop)
+
+# show the first elements
+head(pop)
+
+# Which elements do exist in each dimension?
+getItems(pop)
+
+# show spatial elements
+getItems(pop, dim = 1)
+
+# You can select the dimension via its dimension code 
+getItems(pop, dim = 3)
+
+# .. or its dimension name.
+getItems(pop, dim = "scenario")
+
+# What are the sets (dimensions names) of the data?
+getSets(pop)
+
+# What are the years of the data?
+getYears(pop)
+
+# Return the years as integers instead of strings.
+getYears(pop, as.integer = TRUE)
+
+# Create a simple line plot from a magpie object.
+mplot(pop)
+
+# Let's investigate a higher dimensional magpie object.
+getSets(animal)
+getItems(animal)
+
+# You can list dimension items per subdimension separately.
+getItems(animal, split = TRUE)
+
+# get all animal species
+getNames(animal, dim = 2)
+
+# get all animal colors
+getNames(animal, dim = 3)
+
+# the same can be achieved by
+getItems(animal, dim = 3.2)
+getItems(animal, dim = 3.3)
+
+# A magpie object can have several subdimensions in all dimensions, not only the third.
+# The animal data set has four spatial dimensions 'x', 'y', 'country', 'cell'.
+getItems(animal, dim = 1)
+getItems(animal, dim = 2)
+```
+
+## filtering a magpie object
+
+```{r}
+
+# Filtering can be done using square brackets. Spatial filters go to the first position, temporal filters to the second position and other filters on the third position.
+
+# return all data of the A2 scenario for LAM and the years 2005 and 2015.
+pop["LAM", c(2005, 2015), "A2"]
+
+# Filtering allows for partial matching using 'pmatch'.
+# return data for regions which have “AS” in their name 
+pop["AS", , , pmatch = TRUE]
+
+# Filters excluding values can be written using 'invert'.
+# get all regions except for LAM
+pop["LAM", , , invert = TRUE]
+
+# You can use dimension names for filtering using 'mselect'.
+mselect(pop, scenario = "B1", i = c("FSU", "LAM"))
+
+# Alternatively, you can use lists in square bracket notation.
+pop[list(i = c("FSU", "LAM")), , list(scenario = "B1")]
+
+# an example for filtering higher dimensionality objects
+animal[
+  list(x = "5p75", country = c("NLD", "BEL")),
+  list(year = "y2000"),
+  list(species = "bird", color = "black")
+]
+
+# get all birds in Luxembourg
+head(animal["LUX", , "bird"])
+
+# get all red birds
+head(animal[, , "bird.red"])
+
+# this can also be achieved by chaining subsets, i.e.
+head(animal[, , "bird"][, , "red"])
+
+# Be careful when using the square bracket notation in cases where values are not unique to one dimension.
+
+# In this example 'ccs' is a possible value for both the 'technology' and 'scenario' dimension.
+
+m <- new.magpie(
+  cells_and_regions = c("World"),
+  years = c(2000, 2005),
+  names = c("ccs.ssp2", "ccu.ssp3", "dac.ccs"),
+  sets = c("region", "year", "technology", "scenario"),
+  fill = sample(6)
+)
+
+# This returns two rows, although you might only expect to get one.
+m[, , "ccs"]
+
+# Therefore, this filter specifying the dimension name is more precise.
+m[, , list(technology = "ccs")]
+
+```
+
+## manipulating a magpie object
+
+```{r}
+
+# You can sort magpie objects (spatial and temporal dimension).
+
+m <- new.magpie(
+  cells_and_regions = c("NZL", "CAN", "AUS"),
+  years = c(2005, 1993, 2000),
+  names = c("ssp1", "ssp2", "ssp3"),
+  fill = sample(27)
+)
+
+# before sorting
+print(m)
+
+# after sorting
+magpiesort(m)
+
+# Let's make adjustments to the population object. 
+pop1 <- pop
+
+# assign 0 to all A2 scenario data
+pop1[, , "A2"] <- 0
+
+# overwrite the first region 'AFR' with 'GHA'
+getItems(pop1, dim = 1)[1] <- "GHA"
+head(pop1)
+
+# Let's make adjustments to the animals object.
+a1 <- animal
+
+# replace the four animal colors with new ones
+
+# before 
+getNames(a1)
+
+# black -> green, white -> yellow, red -> purple, brown -> orange
+getItems(a1, dim = "color") <- c("green", "yellow", "purple", "orange")
+
+# after
+getNames(a1)
+
+# add a dimension 'newcolor' on the fly and fill with values 1..5
+getItems(a1, maindim = 3, dim = "newcolor") <- paste0("color", 1:5)
+getItems(a1, dim = 3)
+
+# rename the temporal dimension from 't' to 'year' and spatial dimension from 'i' to 'region'
+getSets(pop1)[[2]] <- "year"
+getSets(pop1)[[1]] <- "region"
+getSets(pop1)
+
+# drop all the names in the data dimension that are the same for each element. In this case, the 'type' dimension is dropped, as it is only value is 'animal'.
+a1 <- collapseDim(animal)
+getNames(a1)
+
+# In the following magpie object filtering by rabbits, 'collapseDim' would drop both the 'type' and 'species' dimension, because 'type' is always 'animal' and 'species' always 'rabbit'.
+a2 <- animal[, , "rabbit"]
+
+# This call using the 'keepdim' argument makes sure that the 'type' dimension is not dropped although it only contains the value 'animal'.
+a2 <- collapseDim(a2, keepdim = "type")
+getNames(a2)
+
+# Another way of dropping the type dimension is this:
+a3 <- animal
+getItems(a3, dim = "type") <- NULL
+
+# But careful, dropping a dimension with more than one value this way will introduce duplicates!
+getItems(a3, dim = "color") <- NULL
+head(a3)
+
+# add a new dimension to existing data
+pop1 <- addDim(pop, dim = 3.1, dimName = "model", item = "WDI")
+getNames(pop1)
+
+# add a new entry to an existing dimension, set all values to NA
+pop1 <- add_columns(pop1, addnm = "C3", dim = 3.2, fill = NA)
+getNames(pop1)
+
+# let 'C3' values be the difference between A2 and B1
+pop1[, , "C3"] <- pop1[, , "A2"] - pop1[, , "B1"]
+head(pop1[, , "C3"])
+
+# You can apply mathematic operations to each item of the magclass objects.
+
+# create example object
+m3 <- pop["AFR", c(2015, 2025), "B1"]
+print(m3)
+
+# multiply each item with a factor (scalar)
+m3 * 2.5
+
+# squared of each item
+m3^2
+
+# convert the world population data from millions to billions
+pop1 <- pop1 / 1000
+
+# set all values greater than 1 to 1
+pop1[pop1 > 1] <- 1
+
+# get the maximum value in the data
+max(pop1)
+```
+
+## exercises from the workshop / tutorial
+
+```{r eval=FALSE}
+# Calculate the share of the global population for each region per year
+pop / dimSums(pop, dim = 1)
+
+# Take the 'animal' example data set from the magclass package and compute how many rabbits there are reported in Luxembourg (LUX) in may of each available year.
+collapseDim(dimSums(animal["LUX", "may", "rabbit"], dim = c(3.1, 3.3)))
+
+a1 <- animal
+
+# Set all values for red birds in the animal data set to 0 and all values greater than 10 to 10.
+a1[, , "bird"][, , "red"] <- 0
+a1[a1 > 10] <- 10
+
+# Rename all dogs in the animal data set to cats and remove the 'type' subdimension.
+getNames(a1, dim = 2)[3] <- "cat"
+a1 <- collapseDim(a1)
+```
+
+# Part 2: Advanced operations
+
+## summing over dimensions
+
+```{r}
+
+# The 'dimSums' function helps with summation over various regions.
+
+# get the global population (assuming the regions all sum up to global)
+dimSums(pop, dim = 1)
+
+# a sample with made-up emissions in various industry sectors
+m <- new.magpie(
+  cells_and_regions = c("USA", "BRA"),
+  years = c(1995, 2000, 2005),
+  names = c("steel", "cement", "chemicals"),
+  sets = c("region", "year", "emissions"),
+  fill = sample(16)
+)
+
+print(m)
+
+# get emissions over all sectors
+dimSums(m, dim = 3)
+
+# get emissions over all sectors and all years
+dimSums(m, dim = c(2, 3))
+
+# You can also sum over subdimensions.
+
+# sum over colors in animals object
+head(dimSums(animal, dim = 3.3))
+
+# Be careful when a magpie object contains NAs.
+
+# set USA, 2000, cement emissions to NA
+m["USA", 2000, "cement"] <- NA
+
+# Summing over sectors yields NA for USA in 2000, because cement has no value for that year.
+dimSums(m, dim = 3)
+
+# This makes sense, as we cannot assume that data gaps can be interpreted as 0 values. If you still want to, you can set na.rm = TRUE.
+dimSums(m, dim = 3, na.rm = TRUE)
+```
+
+## looping with 'magpply'
+
+```{r}
+m <- new.magpie(
+  cells_and_regions = c("USA", "BRA"),
+  years = c(1995, 2000, 2005),
+  names = c("cement"),
+  sets = c("region", "year", "emissions"),
+  fill = c(72, NA, NA, NA)
+)
+
+print(m)
+
+# Efficient looping over magpie objects can be done using 'magpply'.
+
+# This call loops over the spatial dimension and identifies rows with all NAs.
+magpply(m, function(y) all(is.na(y)), MARGIN = 1)
+
+# This could be useful when dropping such countries.
+m[!magpply(m, function(y) all(is.na(y)), MARGIN = 1), , ]
+
+# Same could be done for the temporal dimension
+magpply(m, function(y) all(is.na(y)), MARGIN = 2)
+```
+
+## object expansion
+```{r}
+
+# This section explores object expansion, the concept of auto expanding magpie objects when used in calculations with other magpie objects.
+
+m <- new.magpie(
+  cells_and_regions = c("USA", "BRA"),
+  years = c(1995, 2000, 2005),
+  names = c("steel", "cement"),
+  sets = c("region", "year", "product"),
+  fill = sample(12)
+)
+
+print(m)
+
+# Simple case: all dimension values in 'factor' either perfectly match pop1 (year), or they have exactly one value (region, product).
+factor <- new.magpie(years = getItems(m, 2), fill = c(1.5, 2, 4))
+
+print(factor)
+
+# If you do this calculation, the factors will be multiplied with the matching years. The same factors are applied for each region and scenario
+m * factor
+
+# Behind the scenes, the 'factor' object is expanded to match 'm' to then do an element-wise multiplication.
+magpie_expand(factor, m)
+
+# What happens if the 'factor' object does not have matching years? magpie assumes the years in both objects are of different sets and creates the cross product between all years in both sets. Therefore, the object is blown up in size.
+m * factor[, c(1995, 2005), ]
+
+# If you do calculations with two magpie objects with exact same dimensions, the data will be applied element-wise.
+
+factor <- new.magpie(
+  cells_and_regions = c("USA", "BRA"),
+  years = c(1995, 2000, 2005),
+  names = c("steel", "cement"),
+  fill = seq(1, 2, length.out = 12)
+)
+
+print(factor)
+
+m * factor
+```
+
+## merging two magpie objects
+
+```{r error=TRUE}
+m1 <- new.magpie(
+  cells_and_regions = c("USA", "BRA"),
+  years = c(1995, 2000, 2005),
+  names = c("steel", "cement"),
+  sets = c("region", "year", "product"),
+  fill = sample(12)
+)
+
+m2 <- new.magpie(
+  cells_and_regions = c("USA", "BRA"),
+  years = c(1995, 2000, 2005),
+  names = c("chemicals"),
+  sets = c("region", "year", "product"),
+  fill = sample(4)
+)
+
+# Appending one magpie object to another one is done using 'mbind'.
+
+mbind(m1, m2)
+
+# However, binding two objects is not straightforward when the dimensions do not match. Binding 'm1' to 'm3' will crash, because both temporal and spatial dimension differ.
+
+m3 <- new.magpie(
+  cells_and_regions = c("DEU", "FRA"),
+  years = c(2000, 2005),
+  names = c("chemicals"),
+  sets = c("region", "year", "product"),
+  fill = sample(4)
+)
+
+# This will crash
+mbind(m1, m3)
+```
+
+```{r}
+
+# One way of fixing this is adding missing dimension values before binding, but this can be cumbersome for larger differences.
+m1 <- add_columns(m1, addnm = c("DEU", "FRA"), dim = 1, fill = NA)
+m3 <- add_columns(m3, addnm = c("y1995"), dim = 2, fill = NA)
+m3 <- add_columns(m3, addnm = c("USA", "BRA"), dim = 1, fill = NA)
+
+mbind(m1, m3)
+
+# In some cases, the best way to deal with this is defining a new magpie object that has all the dimension values of the objects you want to merge and copy over values.
+
+m1 <- new.magpie(
+  cells_and_regions = c("USA", "BRA"),
+  years = c(1995, 2000, 2005),
+  names = c("steel", "cement"),
+  sets = c("region", "year", "product"),
+  fill = sample(12)
+)
+
+m2 <- new.magpie(
+  cells_and_regions = c("FRA", "DEU"),
+  years = c(2010, 2015),
+  names = c("chemicals"),
+  sets = c("region", "year", "product"),
+  fill = sample(4)
+)
+
+# create a new magpie object that has all the dimension values of 'm1' and 'm2'
+m3 <- new.magpie(
+  cells_and_regions = union(getItems(m1, dim = 1), getItems(m2, dim = 1)),
+  years = union(getItems(m1, dim = 2), getItems(m2, dim = 2)),
+  names = union(getNames(m1), getNames(m2)),
+  fill = NA
+)
+
+# copy 'm1' and 'm2' contents into 'm3'
+m3[getItems(m1, dim = 1), getItems(m1, dim = 2), getNames(m1)] <- m1
+m3[getItems(m2, dim = 1), getItems(m2, dim = 2), getNames(m2)] <- m2
+m3
+
+# Sometimes you just want to fit one magpie object to a reference to make appending possible.
+m1 <- new.magpie(
+  cells_and_regions = c("FRA", "DEU"),
+  years = c(1995, 2000, 2005),
+  names = c("chemicals"),
+  sets = c("region", "year", "sector"),
+  fill = sample(6)
+)
+
+m2 <- new.magpie(
+  cells_and_regions = c("FRA", "DEU"),
+  years = c(2000, 2005, 2010),
+  names = c("steel", "cement"),
+  sets = c("region", "year", "sector"),
+  fill = sample(12)
+)
+
+# 'matchDim'  matches the years of 'm1'  to the years of 'm2', i.e. 1995 is dropped and 2005 is added with NAs. Afterwards, the two magpie object can be merged into one
+m1 <- matchDim(x = m1, ref = m2, dim = 2, fill = NA)
+print(m1)
+mbind(m1, m2)
+
+# 'matchDim' can also be used to make one magpie object match another one so you can do element-wise multiplication.
+
+m1 <- new.magpie(
+  cells_and_regions = c("FRA", "DEU"),
+  years = c(1995, 2000, 2005, 2010),
+  names = c("steel"),
+  sets = c("region", "year", "sector"),
+  fill = sample(6)
+)
+
+factor <- new.magpie(
+  cells_and_regions = c("FRA", "DEU"),
+  years = c(2000, 2005, 2010, 2015),
+  names = c("steel", "chemicals"),
+  sets = c("region", "year", "sector"),
+  fill = sample(12)
+)
+
+# This makes 'm1' match factor by removing 1995 from 'm1', adding 2015 with all 0s and adding the sector 'chemicals' with all 0s. As 'dim' is not specified, all dimensions are matched. Afterwards, element-wise multiplication becomes possible.
+m2 <- matchDim(m1, factor, fill = 0)
+m2 * factor
+```
+
+## time interpolation
+
+```{r}
+m <- new.magpie(
+  cells_and_regions = c("USA", "BRA"),
+  years = c(1995, 2005),
+  names = NULL,
+  sets = c("region", "year", "emissions"),
+  fill = c(72, 81, 99, 102)
+)
+
+print(m)
+
+# You can fill missing time steps by linear interpolation, e.g. add a 2000 time step.
+time_interpolate(m, interpolated_year = seq(1995, 2005, 5))
+
+# You can also extrapolate time steps before or after the time steps.
+time_interpolate(m, interpolated_year = seq(1990, 2010, 5), extrapolation_type = "linear")
+
+# You can specify that extrapolated time steps just repeat the earliest / latest value.
+time_interpolate(m, interpolated_year = seq(1990, 2010, 5), extrapolation_type = "constant")
+
+# The magclass interpolation method has limitations, though ..
+
+m <- new.magpie(
+  cells_and_regions = c("USA", "BRA"),
+  years = c(1995, 2000, 2005),
+  names = c("cement", "steel"),
+  sets = c("region", "year", "emissions"),
+  fill = c(72, 81, NA, 99, 102, NA, 80, NA, 90, 12, NA, 33)
+)
+
+print(m)
+
+# Interpolation won't fill the NA gaps, because interpolated steps are inferred by missing values in the temporal dimension (i.e "y2000" has to be missing to create an interpolated step). However, the example object has NAs for some of the existing time steps for some regions and sectors.
+time_interpolate(m, interpolated_year = seq(1995, 2005, 5))
+
+# To fill the NAs with interpolated values, you have to do row-wise interpolation, dropping NAs from the rows. This is admittedly a bit cumbersome.
+for (reg in getItems(m, 1)) {
+  for (sec in getItems(m, 3)) {
+    dropYears <- magpply(m[reg, , sec], function(y) all(is.na(y)), MARGIN = 2)
+    m[reg, , sec] <- time_interpolate(m[reg, !dropYears, sec], interpolated_year = seq(1995, 2005, 5))
+  }
+}
+
+print(m)
+```
+
+
+# Part 3: Useful tool functions
+
+## managing ISO countries
+
+```{r eval=FALSE} 
+# retrieve a list of all 249 ISO countries with their full names and 3-letter codes
+madrat::getISOlist()
+
+m <- new.magpie(
+  cells_and_regions = c("USA", "BRA"),
+  years = c(1995),
+  names = c("cement"),
+  sets = c("region", "year", "emissions"),
+  fill = sample(2)
+)
+
+# Add all the missing ISO countries to a magpie object. New values are set to NA, warnings are not printed.
+madrat::toolCountryFill(m, fill = NA, verbosity = 2)
+
+# Regions that are not recognized ISO countries are dropped, throwing a warning 'Data for following unknown country codes removed: EUR'
+
+m <- new.magpie(
+  cells_and_regions = c("USA", "EUR"),
+  years = c(1995),
+  names = c("cement"),
+  sets = c("region", "year", "emissions"),
+  fill = sample(2)
+)
+
+# You can list regions that you intentionally want to drop to omit that warning.
+madrat::toolCountryFill(m, fill = NA, verbosity = 2, no_remove_warning = c("EUR"))
+
+# You can onvert the country names in the spatial region to ISO-3 country codes.
+m <- new.magpie(
+  cells_and_regions = c("United States of America", "England", "Germany"),
+  years = c(1995),
+  names = c("cement"),
+  sets = c("region", "year", "emissions"),
+  fill = sample(4)
+)
+
+# In this example, not all names can be mapped automatically. These will produce NAs and throw a warning: 'Following country names could not be found in the country list and returned as NA: "England"'
+toolCountry2isocode(getItems(m, dim = 1))
+
+# If this is intentional, you can turn off the warning for England
+toolCountry2isocode(getItems(m, dim = 1), ignoreCountries = c("England"))
+
+# .. or add manual mapping entries
+toolCountry2isocode(getItems(m, dim = 1), mapping = c("England" = "GBR"))
+
+# Adjusting the regions must be done explicitly by assignment. Do not ignore warnings produced in this step.
+getItems(m, dim = 1) <- toolCountry2isocode(getItems(m, dim = 1), mapping = c("England" = "GBR"))
+```
+
+## (dis)aggregating dimensions
+
+```{r}
+# For renaming the values of a single dimension, you can use 'toolAggregate'.
+
+m <- new.magpie(
+  cells_and_regions = c("FRA", "USA"),
+  years = c(2000, 2005, 2010),
+  names = c("steel.automobile", "cement.B&C", "chemicals.agriculture", "chemicals.other"),
+  sets = c("region", "year", "product.sector"),
+  fill = sample(24)
+)
+
+print(m)
+
+# In this example, we want to rename the sector names.
+sectormap <- data.frame(
+  from = c("automobile", "B&C", "agriculture", "other"),
+  to = c("transport", "buildings", "other", "other")
+)
+
+# Note that 'agriculture'  and ' other' map to other, so values are added up.
+toolAggregate(x = m, rel = sectormap, dim = 3.2)
+
+# 'toolAggregate' is also used to aggregate and disaggregate regions. Aggregation of regions works as in the example before. The following example shows how disaggregation works.
+
+m <- new.magpie(
+  cells_and_regions = c("CAZ", "USA", "IND"),
+  years = c(2000, 2005, 2010),
+  names = c("co2"),
+  sets = c("region", "year", "emissions"),
+  fill = sample(9)
+)
+
+print(m)
+
+# Normally, such a regionmapping would be retrieved using a call like this 'toolGetMapping("regionmappingH12.csv")', assuming madrat is set up correctly. For this example, we create a data frame for the mapping by hand.
+regionmapping <- data.frame(
+  RegionCode = c("CAZ", "CAZ", "CAZ", "USA", "IND"),
+  CountryCode = c("CAN", "NZL", "AUS", "USA", "IND")
+)
+
+# The disaggregation needs a weight (magpie object) according to which the values in CAZ should be split into CAN, NZL, AUS. Here we use a 50%/20%/30% ratio. Note that weights do not have to be normalized for disaggregation to work.
+weight <- data.frame(
+  to = c("CAN", "NZL", "AUS", "USA", "IND"),
+  weight = c(0.5, 0.2, 0.3, 1, 1)
+) |> as.magpie()
+
+toolAggregate(x = m, rel = regionmapping, dim = 1, from = "RegionCode", to = "CountryCode", weight = weight)
+
+```
+
+
+## disaggregating historic regions
+
+```{r message=FALSE}
+# This is a special case of disaggregating countries where a historic regions (e.g. Former Soviet Union or Yugoslavia) have values until a specific year, then cease to exist and the values are reported for the individual countries that followed.
+
+# 'toolISOhistorical' allows you to disaggregate the values for the historic region to the current countries.
+
+# This example has data for Yugoslavia until 1989, after that the data is reported for the former Yugoslavian countries individually.
+
+m <- new.magpie(
+  cells_and_regions = c("YUG", "SRB", "MNE", "SVN", "HRV", "MKD", "BIH"),
+  years = seq(1985, 1995, 1),
+  names = c("steel"),
+  sets = c("region", "year", "emissions"),
+  fill = NA
+)
+m["YUG", seq(1985, 1989, 1), ] <- sample(5)
+m[c("SRB", "MNE", "SVN", "HRV", "MKD", "BIH"), seq(1990, 1995, 1), ] <- sample(36)
+
+print(m)
+
+# Define a mapping describing the transition from the former county to new countries.
+histMap <- data.frame(
+  fromISO = "YUG",
+  toISO = c("SRB", "MNE", "SVN", "HRV", "MKD", "BIH"),
+  lastYear = "y1989"
+)
+
+# This call disaggregates YUG values until 1989 and removes YUG, using the values in 1990 as a weight.
+madrat::toolISOhistorical(m, mapping = histMap)
+```
+
+## comparing magpie objects
+```{r}
+
+# Sometimes you want to compare the differences between two magpie objects, for example to make sure they are still identical after you made some changes
+
+m1 <- new.magpie(
+  cells_and_regions = c("FRA", "DEU"),
+  years = c(1995, 2000, 2005),
+  names = c("steel", "cement"),
+  sets = c("region", "year", "sector"),
+  fill = sample(12)
+)
+
+# 'm2' is a copy of my, but the value for France in 2000 is smaller.
+m2 <- m1
+m2["FRA", 2000, ] <- m2["FRA", 2000, ] * 0.2
+
+
+piamutils::compareMagpieObject(m1, m2)
+
+# 'compareMagpieObject' accepts either two magpie objects or string paths to files containing magpie objects
+```
+
+
+# Sources
+- [magclass concept: Explaining the general concept behing magclass objects in comparison to arrays and data frames](https://pik-piam.r-universe.dev/magclass/doc/magclass-concept.html)
+- [magclass main tutorial: Central tutorial explaining the basics how to use magclass](https://pik-piam.r-universe.dev/magclass/doc/magclass.html)
+- [magclass 6: Tutorial about some important changes which came with the complete rewrite of the package in version 6.](https://pik-piam.r-universe.dev/magclass/doc/magclass6.html)
+- [magclass object expansion: more specific tutorial going into the details of object expansion and set matching.](https://pik-piam.r-universe.dev/magclass/doc/magclass-expansion.html)
+- [The magclass tutorial on github.io](https://magpiemodel.github.io/tutorials/t13-magclass)

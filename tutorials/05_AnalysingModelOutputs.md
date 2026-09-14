@@ -166,9 +166,9 @@ In both cases, you can choose from the list of available model scenarios, for wh
 
 Now, the selected scripts are executed. After completion, the results are written in the respective folder of the run (combination of **model title** name and the **current date** inside the **output** folder of the model).
 
-One recommended script for comparison of different scenarios is `compareScenarios2`, see [the specific tutorial](https://pik-piam.r-universe.dev/articles/remind2/compareScenariosRemind2.html). After you selected folder names, specified a `filename_prefix`, the priority on the cluster, and a *profile* (describes some output parameters) it produces a large PDF (or HTML if a respective profile is chosen) in the `./remind/` folder.
+#### CompareScenarios
 
-Another useful script it `validateScenarios`, which performs an automated check of the scenario data against thresholds defined in a `validationConfig` and returns an html report with interactive heat maps in a traffic-light evaluation format. After choosing `validateScenarios` as a `comparison` script, you are prompted to select one of the configs that are shipped with the `piamValidation` package. The `default` config is a good starting point for any REMIND run and the `AMT` config is specifically tailored towards the automated model testruns. If you want to perform a more personalized validation, follow the instructions in the [vignette](https://pik-piam.r-universe.dev/articles/piamValidation/validateScenarios.html).
+One recommended script for comparison of different scenarios is `compareScenarios2`, see [the specific tutorial](https://pik-piam.r-universe.dev/articles/remind2/compareScenariosRemind2.html). After you selected folder names, specified a `filename_prefix`, the priority on the cluster, and a *profile* (describes some output parameters) it produces a large PDF (or HTML if a respective profile is chosen) in the `./remind/` folder.
 
 You can also specify the parameters in the command line, for example starting a `compareScenario2` run without any prefix as:
 
@@ -179,6 +179,18 @@ If you want to compare runs from different REMIND folders, add `--remind_dir=.,.
 
 How to create new plots is described in the tutorial [8_Advanced_AnalysingModelOutputs.Rmd](./08_Advanced_AnalysingModelOutputs.Rmd).
 Another useful and compatible resource for generating plots (e.g. box plots) from REMIND results is UTokyo's *mipplot* R package: https://github.com/UTokyo-mip/mipplot.
+
+#### ValidateScenarios
+
+Another useful script it `validateScenarios`, which performs an automated check of the scenario data against thresholds defined in a `validationConfig` and returns an html report with interactive heat maps in a traffic-light evaluation format. After choosing `validateScenarios` as a `comparison` script, you are prompted to select one of the validation configs and report templates that are shipped with the `piamValidation` package or specify the path to a config or report of your choosing.
+
+The validation config defines the checks which will be performed on the scenario data, while the report template defines the visualizations in the html output file.
+
+- The `AMT` config is a good starting point for any REMIND run and usually contains the latest near-term estimates based on most recent third party data releases.
+- The `SCI_REMIND` config performs the exact checks as defined by the [Scenario Compass Initiative evaluation](https://scenario-evaluation-criteria.iamconsortium.org/stable/). Selecting the respective `SCI_REMIND` report will render an html document tailored to those checks, including a summary of which scenarios fail or pass the evaluation. If you want to perform the SCI evaluation on scenarios using the SCI variable names (following the [common-definitions](https://github.com/IAMconsortium/common-definitions) template), use the `SCI` config and report.
+
+For any further questions or if you want to perform a more personalized validation, take a look at the [documentation](https://pik-piam.github.io/piamValidation/index.html) of `piamValidation` or follow the instructions in the [vignette](https://pik-piam.r-universe.dev/articles/piamValidation/validateScenarios.html).
+
 
 ## 6. Analysis of outputs with the remind2 R package
 

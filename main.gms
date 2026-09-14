@@ -797,9 +797,9 @@ parameter
 *'
 
 parameter
-  cm_LTSstartYr "[46_carbonpriceRegi] First year activating a regional carbon price markup to reach net-zero targets (Long-Term Strategy)"
+cm_LTSstartYr "[46_carbonpriceRegi] First year with non-zero regional carbon price markup to reach net-zero targets (Long-Term Strategy)"
 ;
-  cm_LTSstartYr = 2040;        !! def = 2040  !! regexp = 20[2-9](0|5)
+cm_LTSstartYr = 2040;        !! def = 2040  !! regexp = 20[0-9](0|5)
 *' *  (2040): NDC-LTS scenario: default start of rescaling is 2040, which allows meeting 2035 NDC targets
 *' *  (2030): LTS scenario: from 2030 onward, regions see a carbon price markup to reach their net-zero targets, so they may overshoot NDC targets
 
@@ -1191,6 +1191,11 @@ parameter
 ;
   cm_frac_CCS          = 10;   !! def = 10
 *'
+parameter
+  cm_frac_CDR         "tax on CDR that effectively reduces the CDR subsidy by that fraction"
+;
+cm_frac_CDR = 0; !! def = 0
+*' This tax reduces the effective carbon price for all CDR options except land-use change (either exogenous in REMIND standalone, or calculated in MAgPIE); default is 0. Caution: if combined with cm_frac_NetNegEmi both effects are combined
 
 parameter
   cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshooting, formulated as fraction of carbon price"
@@ -1347,16 +1352,10 @@ parameter
 *' Default assumption is that only 30% of announced or planned capacities will be realised, either due to discontinuation or delay
 
 parameter
-  cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
+  cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y, incl. land-use change emissions"
 ;
   cm_deuCDRmax = -1; !! def = -1
 *'  switch to cap annual DEU CDR amount by value assigned to switch, or no cap if -1, in MtCO2
-
-parameter
-  cm_EURCDRmax                 "switch to limit maximum annual CDR amount in the EU in MtCO2 per y"
-;
-  cm_EURCDRmax = -1; !! def = -1
-*'  switch to cap annual EUR CDR amount by value assigned to switch, or no cap if -1, in MtCO2
 
 parameter
   cm_EnSecScen_limit        "switch for limiting the gas demand from 2025 onward, currently only applied to Germany"
@@ -1482,6 +1481,10 @@ $setglobal cm_NDC_targetYear  2030, 2035    !! def = "2030, 2035"
 *'      *   30 years delay for "Fossil-dependant": REF, MEA
 *'      *   Exceptions apply for some regions: the delay might deviate by 5 years due to model 10-year timesteps after 2060
 $setglobal cm_targetDelay  off     !! def = "off"
+
+*' cm_ReferenceCapacities            "using capacity pathways of reference scenario"
+*' *  (prisma): PRISMA Staying Alive: use MeetAspiration as reference scenario for wind and solar capacity pathways by using "prisma_SA"
+$setglobal cm_ReferenceCapacities  off     !! def = "off"
 
 *' cm_NDC_CO2PriceLimit            "sets regional upper limit for CO2 prices in NDC realization" [requires 45_carbonprice = NDC]"
 *' This serves to not force regions to reach NDC emissions targets at extremly high CO2 prices in the near-term. 
@@ -1631,11 +1634,17 @@ $setGlobal cm_emiMktTarget  off    !! def = off
 ***   Example on how to use:
 ***      cm_emiMktTarget_tolerance = 'GLO 0.004, DEU 0.01'. All regional emission targets will be considered converged if they have at most 0.4% of the target deviation, except for Germany that requires 1%.
 $setGlobal cm_emiMktTarget_tolerance  GLO 0.01    !! def = GLO 0.01
+
 *** cm_scaleDemand - Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window.
 *** Requires re-calibration in order to work.
 ***   Example on how to use:
-***     cm_scaleDemand = '2020.2040.(EUR,NEU,USA,JPN,CAZ) 0.75' applies a 25% demand reduction on those regions progressively between 2020 (100% demand) and 2040 (75% demand).
+***     cm_scaleDemand = '2020.2040.(EUR,NEU,USA,JPN,CAZ) 0.75' linearly phases in a 25% demand reduction on those regions from 2020 (100% demand) to 2040 (75% demand) and keeps the reduction constant afterwards.
 $setGlobal cm_scaleDemand  off    !! def = off
+*** cm_scaleDemandChem - Rescaling factor on chemicals final energy and usable energy demand, for selected regions and over a phase-in window.
+*** Requires re-calibration in order to work.
+***   Example on how to use:
+***     cm_scaleDemandChem = '2020.2040.(EUR,NEU,USA,JPN,CAZ) 0.75' linearly phases in a 25% chemical demand reduction on those regions from 2020 (100% demand) to 2040 (75% demand) and keeps the reduction constant afterwards.
+$setGlobal cm_scaleDemandChem  off    !! def = off
 *** cm_scaleDemandBuildTable - Rescaling factor on buildings final energy and usable energy demand, with values coming from an input table.
 *** Requires re-calibration in order to work.
 *** One needs to name the cs4r-file with the multipliers in the scenario_config, and the file needs to be copied by hand to core/input
@@ -1647,6 +1656,7 @@ $setGlobal c_scaleDemandIndTable  off    !! def = off
 *** cm_quantity_regiCO2target "emissions quantity upper bound from specific year for region group."
 ***   Example on how to use:
 ***     '2050.EUR_regi.netGHG 0.000001, obliges European GHG emissions to be approximately zero from 2050 onward"
+
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 *** cm_dispatchSetyDown <- "off", if set to some value, this allows dispatching of pe2se technologies,
 *** i.e. the capacity factors can be varied by REMIND and are not fixed. The value of this switch gives the percentage points by how much the lower bound of capacity factors should be lowered.
