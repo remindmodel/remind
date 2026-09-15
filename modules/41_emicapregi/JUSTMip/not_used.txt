@@ -14,5 +14,7 @@ p41_precorrection_reduction, parameter, ???
 p41_correct_factor, parameter, ???
 pm_shPPPMER,input,questionnaire
 pm_pop, parameter, ???
-pm_gdp,input,questionnaire
 p41_co2eq_bau, parameter, ???
+cm_permittradescen, input, ???
+cm_permitTradeFinalYr, input, ???
+cm_permitTradeRatio, input, ???
