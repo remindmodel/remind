@@ -8,11 +8,6 @@
 *** calculate emission cap in absolute terms
 
 *** In later iterations, recalculate allocation from market emissions
-
-!! Set bounds for permit allocation
-vm_perm.lo(t,regi) = -10;
-vm_perm.up(t,regi) = 100;
-
 !! no permit trading after 2100
 vm_Xport.fx(t,regi,"perm")$(t.val gt 2100) = 0;
 vm_Mport.fx(t,regi,"perm")$(t.val gt 2100) = 0;

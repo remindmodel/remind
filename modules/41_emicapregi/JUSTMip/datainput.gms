@@ -10,9 +10,12 @@
 
 
 *** initialization of pm_shPermit and vm_perm for preloop not used as condition in optimization
-pm_emicapglob(t) = 100;
-pm_shPerm(t,regi) = 1;
-vm_perm.fx(t,regi) = 0;
+pm_emicapglob(t) = 
+sum(regi, vm_perm(t,regi));
+
+pm_shPerm(t,regi) = 
+vm_perm(t,regi) / pm_emicapglob(t);
+
 
 *** get global GDP
 p41_gdpGlob(t) =

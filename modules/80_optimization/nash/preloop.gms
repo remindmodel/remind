@@ -98,17 +98,16 @@ loop(tradePe,
 *RM* Permit price growth reflects the carbon price trajectory
 $ifthen.justMip "%emicapregi%" == "JUSTMip"
 loop(ttot$(ttot.val ge 2005),
-
     if(ttot.val le 2060,
         pm_pvp(ttot,"perm") =
             0.35 * 1.055**(ttot.val-2020)
           * pm_pvp(ttot,"good");
     else
         pm_pvp(ttot,"perm") =
-            0.78 * 1.025**(ttot.val-2060)
+            ( 0.35 * 1.055**(2060-2020) 
+            + (ttot.val - 2060) * (2 / 272))
           * pm_pvp(ttot,"good");
     );
-
 );
 
 pm_pvp("2005","perm") = 0; 

@@ -623,13 +623,6 @@ parameter
 *'
 
 parameter
-  jpn_goes_wild             "implement looser CDR constraints in Japan, i.e. ccs, oae, erw"
-;
-  jpn_goes_wild      = 0;         !! def = 0  !! regexp = 0|1
-*' *  (0): no, Japan has the same CDR constraints as other regions
-*' *  (1): yes, Japan has looser CDR constraints than other regions
-
-parameter
   cm_permTradingJustMip     "switch to allow for trading of CO2 budgets between regions in a policy run"
 ;
   cm_permTradingJustMip      = 1;         !! def = 0  !! regexp = 0|1
