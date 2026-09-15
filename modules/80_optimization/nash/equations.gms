@@ -27,6 +27,7 @@ q80_budg_intertemp(regi)..
       )
     );
 
+
 *' quadratic adjustment costs, penalizing deviations from the trade pattern of the last iteration.
 q80_costAdjNash(ttot,regi)$( ttot.val ge cm_startyear ) ..
   vm_costAdjNash(ttot,regi) 
