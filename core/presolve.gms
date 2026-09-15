@@ -11,10 +11,12 @@ pm_taxCO2eqSum(ttot,regi) = pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) 
 
 $ifThen.cm_NDC_CO2PriceLimit not "%cm_NDC_CO2PriceLimit%" == "off"
 *** limit CO2 prices in target year according to switch cm_NDC_CO2PriceLimit
-  loop( pm_NDCyearSet(t,regi)$( pm_CO2PriceLimitNDC(t,regi) > 0 ) ,
-    pm_taxCO2eqSum(t,regi) = min(    pm_taxCO2eqSum(t,regi), 
-                                  pm_CO2PriceLimitNDC(t,regi) * sm_DptCO2_2_TDpGtC );
-                                    );
+  loop(regi$(pm_CO2PriceLimitNDC("2030",regi) > 0),
+  pm_taxCO2eqSum("2030",regi) = min(
+    pm_taxCO2eqSum("2030",regi),
+    pm_CO2PriceLimitNDC("2030",regi) * sm_DptCO2_2_TDpGtC
+  );
+);                                  
 $endif.cm_NDC_CO2PriceLimit
 
 *AJS* we need those in nash
