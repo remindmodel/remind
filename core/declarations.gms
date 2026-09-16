@@ -586,8 +586,8 @@ pm_actualbudgetco2eqRegi(ttot,all_regi)                "Regional- actual level o
 p_actualbudgetco2eqRegi_iter(iteration,ttot,all_regi)  "Regional- track actual level of cumulated emissions starting from 2020 over iterations [GtCO2]"
 
 *** policy parameters
-$ifthen not "%cm_NDC_CO2PriceLimit%" == "off"
-pm_CO2PriceLimitNDC(ttot,all_regi)                       "Upper limit of CO2 price in NDC realization, read from switch cm_NDC_CO2PriceLimit [$/tCO2]" / %cm_NDC_CO2PriceLimit% /
+$ifthen not "%cm_CO2PriceLimit%" == "off"
+pm_CO2PriceLimit(ttot,all_regi)                       "Upper limit of CO2 price, read from switch cm_CO2PriceLimit [$/tCO2]" / %cm_CO2PriceLimit% /
 $endif
 
 *** iteration parameters
