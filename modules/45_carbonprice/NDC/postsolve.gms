@@ -59,14 +59,14 @@ p45_factorRescaleCO2TaxLtd_iter(iteration,t,regi) = p45_factorRescaleCO2TaxLtd(t
 
 $ifThen.cm_CO2PriceLimit not "%cm_CO2PriceLimit%" == "off"
 *** limit CO2 prices in target year according to switch cm_CO2PriceLimit
-  loop( p45_NDCyearSet(t,regi)$( pm_CO2PriceLimitNDC(t,regi) > 0 ) ,
+  loop( p45_NDCyearSet(t,regi)$( pm_CO2PriceLimit(t,regi) > 0 ) ,
     pm_taxCO2eq(t,regi) = min(    pm_taxCO2eq(t,regi), 
-                                  pm_CO2PriceLimitNDC(t,regi) * sm_DptCO2_2_TDpGtC );
+                                  pm_CO2PriceLimit(t,regi) * sm_DptCO2_2_TDpGtC );
 $ifThen.cm_NDC_CO2PriceLimit_continuation not "%cm_NDC_CO2PriceLimit_continuation%" == "off"
 *** For the periods after the carbon price limit:
 *** If this switch is on, limit increase by 20%/yr, but ensure the CO2 price limit (cap) is at least 200$/tCO2.
     pm_taxCO2eq(t2,regi)$( t2.val gt t.val) = min(    pm_taxCO2eq(t2,regi), 
-                                                      max(  pm_CO2PriceLimitNDC(t,regi) * (1 + 0.2 * (t2.val - t.val)) * sm_DptCO2_2_TDpGtC,
+                                                      max(  pm_CO2PriceLimit(t,regi) * (1 + 0.2 * (t2.val - t.val)) * sm_DptCO2_2_TDpGtC,
                                                                200 * sm_DptCO2_2_TDpGtC
                                                       )  
                                                   );
