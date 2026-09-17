@@ -29,6 +29,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **47_regipol** New (optional) quantity targets for limiting PE lignocellulosic biomass
 - **scripts** Add report template selection to the `validateScenarios` output script: users can now choose a report (e.g. the SCI evaluation) from `piamValidation` in addition to the validation config
     [[#2456](https://github.com/remindmodel/remind/pull/2456)]
+- **scripts** Prepend `RSCRIPT_SLURM_HOOK` to the sbatch `--wrap` so compute-node jobs re-enter the piam-apptainer container. No-op when the hook is unset, so runs under the current piam module are unaffected.
+    [[#2443](https://github.com/remindmodel/remind/pull/2443)]
 
 ### removed
 -
