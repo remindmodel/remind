@@ -585,6 +585,11 @@ p_actualbudgetco2_iter(iteration,ttot)               "track actual level of cumu
 pm_actualbudgetco2eqRegi(ttot,all_regi)                "Regional- actual level of cumulated emissions starting from 2020 [GtCO2]"
 p_actualbudgetco2eqRegi_iter(iteration,ttot,all_regi)  "Regional- track actual level of cumulated emissions starting from 2020 over iterations [GtCO2]"
 
+*** policy parameters
+$ifthen not "%cm_CO2PriceLimit%" == "off"
+pm_CO2PriceLimit(ttot,all_regi)                       "Upper limit of CO2 price, read from switch cm_CO2PriceLimit [$/tCO2]" / %cm_CO2PriceLimit% /
+$endif
+
 *** iteration parameters
 pm_SolNonInfes(all_regi)                             "model status from last iteration. 1 means status 2 or 7, 0 for all other status codes"
 o_iterationNumber                                    "output parameter to be able to display the iteration number"
