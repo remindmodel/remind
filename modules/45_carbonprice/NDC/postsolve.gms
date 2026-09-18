@@ -64,9 +64,10 @@ $ifThen.cm_NDC_CO2PriceLimit not "%cm_NDC_CO2PriceLimit%" == "off"
                                   pm_CO2PriceLimitNDC(t,regi) * sm_DptCO2_2_TDpGtC );
 $ifThen.cm_NDC_CO2PriceLimit_continuation not "%cm_NDC_CO2PriceLimit_continuation%" == "off"
 *** For the periods after the carbon price limit:
-*** If this switch is on, limit increase by 20%/yr, but ensure the CO2 price limit (cap) is at least 200$/tCO2.
+*** If this switch is on, allow for tripling of co2 price over one 5-year time-step, 
+*** but ensure the CO2 price limit (cap) is at least 200$/tCO2.
     pm_taxCO2eq(t2,regi)$( t2.val gt t.val) = min(    pm_taxCO2eq(t2,regi), 
-                                                      max(  pm_CO2PriceLimitNDC(t,regi) * (1 + 0.2 * (t2.val - t.val)) * sm_DptCO2_2_TDpGtC,
+                                                      max(  pm_CO2PriceLimitNDC(t,regi) * (1 + 0.4 * (t2.val - t.val)) * sm_DptCO2_2_TDpGtC,
                                                                200 * sm_DptCO2_2_TDpGtC
                                                       )  
                                                   );
