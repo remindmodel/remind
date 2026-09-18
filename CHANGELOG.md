@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **47_regipol** Use dynamic implicit quantity target to limit biomass to 100 EJ/yr in default setting (instead of ex-ante regional allocations via `cm_maxProdBiolc`)
 - **29_CES-parameters** add 2020 to historic periods for corrections in industry FE demands
     [[#2442](https://github.com/remindmodel/remind/pull/2442)]
+- **scripts** Map the other-planted-forest regrowth and legacy-clearing (Storage/Release) land-use-change children from newer MAgPIE reports (magpie4 >= 2.82) to the `co2luc` subtypes, so the net equals the sum of its positive/negative parts in coupled runs; the extra children are dropped when a report lacks them, keeping coupling with older MAgPIE backward compatible (reporting-only, no change to optimization results)
+    [[#2471](https://github.com/remindmodel/remind/pull/2471)]
 
 ### added
 - **scripts** Add the possibility to build only some sections of the compareScenarios2 report with `--sections=`
@@ -27,6 +29,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **47_regipol** New (optional) quantity targets for limiting PE lignocellulosic biomass
 - **scripts** Add report template selection to the `validateScenarios` output script: users can now choose a report (e.g. the SCI evaluation) from `piamValidation` in addition to the validation config
     [[#2456](https://github.com/remindmodel/remind/pull/2456)]
+- **scripts** Prepend `RSCRIPT_SLURM_HOOK` to the sbatch `--wrap` so compute-node jobs re-enter the piam-apptainer container. No-op when the hook is unset, so runs under the current piam module are unaffected.
+    [[#2443](https://github.com/remindmodel/remind/pull/2443)]
 
 ### removed
 -
