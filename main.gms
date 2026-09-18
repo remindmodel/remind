@@ -1481,9 +1481,9 @@ $setglobal cm_ReferenceCapacities  off     !! def = "off"
 *' *  For policy scenarios: 2030.EUR 200, 2030.(CAZ,USA, JPN, NEU) 80, 2030.(REF,MEA) 50, 2030.(LAM, CHA) 40, 2030.OAS 30, 2030.IND 15, 2030.SSA 10
 $setglobal cm_CO2PriceLimit   off   !! def = "off" 
 *' cm_NDC_CO2PriceLimit_continuation "switch to determine whether CO2 price limits in NDC realization are applied only in the specified target year or also in subsequent years" [requires 45_carbonprice = NDC]
-*' *  (on): CO2 price limits are applied not only in the specified target year but also in subsequent years, with the limit increasing by 20% per year after the target year, but allowing for carbon price of at least 200$/tCO2 at minimum
+*' *  (on): CO2 price limits are applied not only in the specified target year but also in subsequent targett years (e.g. 2035), carbon price limit triples over 5-year time period (e.g. between 2030-35) but is at least 200$/tCO2 from 2035 on, needs cm_CO2PriceLimit to be non-zero
 *' *  (off): CO2 price limits are only applied in the specified target year, but not in subsequent years
-$setglobal cm_NDC_CO2PriceLimit_continuation  off     !! def = "off"  !! regexp = on|off
+$setglobal cm_NDC_CO2PriceLimit_continuation  on     !! def = "on"  !! regexp = on|off
 *' cm_NDC_postTargetDevelopment            "choose assumption on co2 price trajectory after NDC target years" [requires 45_carbonprice = NDC]
 *' *  (constant):                     carbon price remains constant after the last NDC target year
 *' *  (global_conv):                  carbon price converges across regions to a global value of 100$/tCO2 by 2100
