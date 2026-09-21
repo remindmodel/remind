@@ -25,9 +25,6 @@ pm_NDCTargetNotReached_iter(iteration,ttot,all_regi)     "flag to indicate wheth
 $ifthen "%cm_targetDelay%" == "prisma"
 p45_delay(all_regi)                                      "delay of NDC targets, defined per region [years]"
 $endif
-$ifthen not "%cm_NDC_CO2PriceLimit%" == "off"
-pm_CO2PriceLimitNDC(ttot,all_regi)                       "Upper limit of CO2 price in NDC realization, read from switch cm_NDC_CO2PriceLimit [$/tCO2]" / %cm_NDC_CO2PriceLimit% /
-$endif
 ;
 
 Scalar    p45_adjustExponent                             "exponent in tax adjustment process [1]";

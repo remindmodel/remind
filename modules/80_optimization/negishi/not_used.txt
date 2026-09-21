@@ -87,5 +87,5 @@ cm_TaxConv_tolerance,input,not needed
 cm_nashObjVal_tolerance,input,not needed
 cm_DevPriceAnticip_tolFactor,input,not needed
 pm_NDCTargetNotReached_iter,input,unique to NDC
-pm_CO2PriceLimitNDC,input,not used outside of NDC
 cm_permTradingJustMip, input, not needed
+pm_CO2PriceLimit,input,not used outside of NDC

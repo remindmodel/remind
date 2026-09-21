@@ -324,7 +324,10 @@ runSingle <- function(output, outputdirs, slurmConfig, interactiveSession, test)
       # send the output script to slurm
       timestamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
       logfile <- file.path(outputdir, paste0("log_output_", timestamp, ".txt"))
-      Rscripts <- paste0("Rscript scripts/output/single/", name, " --outputdir=", outputdir, collapse = "; ")
+      # prefix the piam-apptainer hook per script; "; " starts a new shell command, so
+      # each Rscript needs its own prefix to run inside the container
+      hookedRscript <- trimws(paste(Sys.getenv("RSCRIPT_SLURM_HOOK", unset = ""), "Rscript"))
+      Rscripts <- paste0(hookedRscript, " scripts/output/single/", name, " --outputdir=", outputdir, collapse = "; ")
       slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
                     " --mail-type=END,FAIL --comment=output.R --wrap='", Rscripts, "'")
       message("Sending to slurm: ", paste(name, collapse = ", "), ". Find log in ", logfile)
