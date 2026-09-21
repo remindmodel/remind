@@ -22,6 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#2442](https://github.com/remindmodel/remind/pull/2442)]
 - **scripts** Map the other-planted-forest regrowth and legacy-clearing (Storage/Release) land-use-change children from newer MAgPIE reports (magpie4 >= 2.82) to the `co2luc` subtypes, so the net equals the sum of its positive/negative parts in coupled runs; the extra children are dropped when a report lacks them, keeping coupling with older MAgPIE backward compatible (reporting-only, no change to optimization results)
     [[#2471](https://github.com/remindmodel/remind/pull/2471)]
+- **scripts** Make the climate-assessment reported variables configurable via "variable profiles": `MAGICC7_AR6.R` forwards optional `climate_assessment_magicc_extra_config`, `climate_assessment_output_variables_file` and `climate_assessment_variable_definitions_file` from `default.cfg` to the `ca-harmonize-infill`/`ca-run-climate` new console entry points now installed in the associated conda env; ready-made `pbo`/`slr` profiles ship with remindClimateAssessment (>= 0.2.0), and empty overrides keep the built-in AR6 defaults
+    [[#2475](https://github.com/remindmodel/remind/pull/2475)]
 
 ### added
 - **scripts** Add the possibility to build only some sections of the compareScenarios2 report with `--sections=`
