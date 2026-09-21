@@ -9,16 +9,37 @@
 *' @equations
 
 *' calculate emission cap in absolute terms (1e9 converts GtCeq to tonnes of CO2-equivalent and 1e-12 then converts the result to trillion USD)
-q41_globalPermitTradeCap(t,regi)$(t.val gt 2025) ..
 
-    sum(regi2,
-        (vm_Xport(t,regi2,"perm") + vm_Mport(t,regi2,"perm"))
-        * (pm_taxCO2eq(t,regi2))
-    )
+*** preparation: calculate the total trade volume of emission permits in each region and globally (as seen by each region in a given nash iteration)
+q41_tradeVolumeRegi(t,regi) ..
+    (vm_Xport(t,regi,"perm") + vm_Mport(t,regi,"perm"))
+        * pm_taxCO2eq(t,regi)
+    =e=
+    vm_permTradeVolumeRegi(t,regi);
 
+q41_tradeVolumeGlo(t,regi) ..
+    vm_permTradeVolumeRegi(t,regi) +
+    pm_otherRegionsTradeVolume(t,regi) 
+    =e=
+    vm_permTradeVolumeGlo(t,regi)
+;
+
+*** Define the actual limitation equations 
+*** limitation based on global GDP, relevant if cm_permTradingLimGlo between 0 and 1
+q41_globalPermitTradeCap(t,regi) ..
+    vm_permTradeVolumeGlo(t,regi)
     =l=
+    cm_permTradingLimGlo * p41_gdpGlob(t)
+;
 
-    0.01 * p41_gdpGlob(t);
+*** limitation based on regional GDP, relevant if cm_permTradingLimRegi between 0 and 1
+q41_globalPermitTradeCapRegi(t,regi) ..
+
+    vm_permTradeVolumeRegi(t,regi)
+    =l=
+    cm_permTradingLimRegi  * pm_gdp(t,regi)
+;
+
 
 
 *' @stop

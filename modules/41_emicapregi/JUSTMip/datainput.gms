@@ -6,19 +6,12 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/41_emicapregi/JUSTMip/datainput.gms
 
-
-
-
-*** initialization of pm_shPermit and vm_perm for preloop not used as condition in optimization
-pm_emicapglob(t) = 
-sum(regi, vm_perm(t,regi));
-
-pm_shPerm(t,regi) = 
-vm_perm(t,regi) / pm_emicapglob(t);
-
-
-*** get global GDP
+*** get global GDP -- NOTE: should be moved to postsolve to be continuously updated as pm_gdp changes over the iterations
 p41_gdpGlob(t) =
     sum(regi, pm_gdp(t,regi));
-	 
+
+*** initiate trade volume of other regions to 0 for the first iteration
+pm_otherRegionsTradeVolume(t,regi) = 0;
+vm_permTradeVolumeGlo.l(t,regi) = 0;	 
+
 *** EOF ./modules/41_emicapregi/JUSTMip/datainput.gms

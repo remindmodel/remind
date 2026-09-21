@@ -12,4 +12,8 @@
 vm_Xport.fx(t,regi,"perm")$(t.val gt 2100) = 0;
 vm_Mport.fx(t,regi,"perm")$(t.val gt 2100) = 0;
 
+
+vm_permTradeVolumeRegi.up(t,regi) = cm_permTradingLimRegi * pm_gdp(t,regi);
+vm_permTradeVolumeGlo.up(t,regi) = cm_permTradingLimGlo * p41_gdpGlob(t);
+
 *** EOF ./modules/41_emicapregi/JUSTMip/bounds.gms

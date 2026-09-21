@@ -14,5 +14,6 @@ $Ifi "%phase%" == "declarations" $include "./modules/41_emicapregi/JUSTMip/decla
 $Ifi "%phase%" == "datainput" $include "./modules/41_emicapregi/JUSTMip/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/41_emicapregi/JUSTMip/equations.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/41_emicapregi/JUSTMip/bounds.gms"
+$Ifi "%phase%" == "postsolve" $include "./modules/41_emicapregi/JUSTMip/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/41_emicapregi/JUSTMip/realization.gms

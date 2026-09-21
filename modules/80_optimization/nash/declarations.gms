@@ -125,7 +125,11 @@ vm_costAdjNash(ttot,all_regi)               "Adjustment costs for deviation from
 equations
 q80_budg_intertemp(all_regi)               "interemporal trade balance (Nash mode only)"
 q80_costAdjNash(ttot,all_regi)             "calculate Nash adjustment costs (of anticipation of the difference in trade pattern, compared to the last iteration), combined for all markets"
+
+$ifthen "%emicapregi%" ne "JUSTMip"
+*' link between permit budget and  emission budget
 q80_budgetPermRestr(all_regi)              "constraints regional permit budget to given regional emission budget";
+$endif
 
 scalars
 ***convergence criteria. if met, the optimization is stopped. Feel free to adjust these to your needs. Denote maximum tolerable deviation from market clearance.(the one for goods is given in  million US$2017/yr, the resources in EJ/yr)

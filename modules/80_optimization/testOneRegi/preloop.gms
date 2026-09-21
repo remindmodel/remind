@@ -50,7 +50,7 @@ $offtext
 
         p80_normalize0(ttot,regi,"good")   = vm_cons.l(ttot,regi);
 ***        p80_normalize0(ttot,regi,"perm") = vm_cons.l(ttot,regi);
-                    p80_normalize0(ttot,regi,"perm")$(ttot.val ge 2005) = max(abs(pm_shPerm(ttot,regi) * pm_emicapglob(ttot)) , 1E-6);
+                    p80_normalize0(ttot,regi,"perm")$(ttot.val ge 2005 and cm_permTradingJustMip eq 0) = max(abs(pm_shPerm(ttot,regi) * pm_emicapglob(ttot)) , 1E-6);
         p80_normalize0(ttot,regi,tradePe) =  0.5 * (sum(rlf,vm_fuExtr.l(ttot,regi,tradePe,rlf)) + vm_prodPe.l(ttot,regi,tradePe));
 
 p80_taxrev0(ttot,regi) = vm_taxrev.l(ttot,regi);
