@@ -193,7 +193,6 @@ all_te          "all energy technologies, including from modules"
     fnrs            "fast nuclear reactor (simple structure)"
     elh2            "hydrogen electrolysis, using grid electricity"
     h2turb          "hydrogen turbine for electricity production"
-    elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
     h2turbVRE       "dummy technology: hydrogen turbine for electricity production; to demonstrate the capacities and SE flows inside the storXXX technologies"
     h2curt          "hydrogen production from curtailment"
     h22ch4          "production of synthetic methane from hydrogen and captured carbon via methanation"
@@ -1128,7 +1127,6 @@ te(all_te)              "energy technologies"
     fnrs            "fast nuclear reactor (simple structure)"
     elh2            "hydrogen electrolysis"
     h2turb          "hydrogen turbine for electricity production"
-    elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
     h2turbVRE       "dummy technology: hydrogen turbine for electricity production; to demonstrate the capacities and SE flows inside the storXXX technologies"
     h2curt          "hydrogen production from curtailment"
     tdels           "transmission and distribution for electricity to stationary users"
@@ -2231,7 +2229,7 @@ char            "characteristics of technologies"
     min             "minimum"
     max             "maximum"
     usehr            "number of hours in a year when the technology is used"
-    elh2VREcapRatio    "ratio of elh2VRE capacity to storage technology capacity"
+    elh2capRatio    "ratio of elh2 capacity to storage technology capacity"
     h2turbVREcapRatio  "ratio of h2turbVRE capacity to storage technology capacity"
     batteryVREcapRatio  "ratio of battery capacity to storage technology capacity"
     priceLow        "biochar price path assumption"
@@ -2491,7 +2489,6 @@ se2se(all_enty,all_enty,all_te)  "map secondary energy to secondary energy using
 /
     seel.seh2.elh2
     seh2.seel.h2turb
-    seel.seh2.elh2VRE
     seh2.seel.h2turbVRE
 /
 
@@ -2821,7 +2818,7 @@ teSe2rlf(all_te,rlf)        "mapping for techologies to grades. Currently, the i
     igcc,igccc,pc,coaltr,coalgas,coalh2,coalh2c,coalchp,coalhp,coalftrec,coalftcrec,
     biotr,biotrmod,biogas,biogasc,bioftrec,bioftcrec,bioh2,bioh2c,biohp,biochp,bioigcc,bioigccc,
     biopyronly,biopyrhe,biopyrchp,biopyrliq,
-    elh2,h2turb,elh2VRE,h2turbVRE,bioethl,bioeths,biodiesel,tnrs,fnrs
+    elh2,h2turb,h2turbVRE,bioethl,bioeths,biodiesel,tnrs,fnrs
     ) . 1
 /
 
