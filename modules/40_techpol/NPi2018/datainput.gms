@@ -6,7 +6,18 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/40_techpol/NPi2018/datainput.gms
 
-Table f40_TechBound(ttot,all_regi,NDC_version,all_te) "Table for all NDC versions with NDC capacity targets (GW)"
+*** Quick patch: cm_NDC_version switch was removed (PBL 2026 NDC inputs carry no version dimension).
+*** Local set mirrors the version members present in the input file; assignments are hard-coded
+*** to "2024_cond" (latest version in the file, previous default of the removed switch) until module 40 is cleaned up.
+Set NDC_version "NDC data versions present in input file"
+  /
+    2018_cond, 2018_uncond,
+    2021_cond, 2021_uncond,
+    2022_cond, 2022_uncond,
+    2023_cond, 2023_uncond,
+    2024_cond, 2024_uncond
+  /;
+Table f40_TechBound(ttot,all_regi,NDC_version,all_te) "NDC capacity targets (GW), single version 2024_cond"
 $offlisting
 $ondelim
 $include "./modules/40_techpol/NPi2018/input/f40_NDC+REN21+CHN_NUC.cs3r"
@@ -14,9 +25,9 @@ $offdelim
 $onlisting
 ;
 
-p40_TechBound(ttot,all_regi,te) = f40_TechBound(ttot,all_regi,"%cm_NDC_version%",te);
+p40_TechBound(ttot,all_regi,te) = f40_TechBound(ttot,all_regi,"2024_cond",te);
 *** windoffshore-todo: separate NDC targets for windon and windoff
-p40_TechBound(ttot,all_regi,"wind") = f40_TechBound(ttot,all_regi,"%cm_NDC_version%","wind");
+p40_TechBound(ttot,all_regi,"wind") = f40_TechBound(ttot,all_regi,"2024_cond","wind");
 
 p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
 
