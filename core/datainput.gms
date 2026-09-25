@@ -712,7 +712,6 @@ $Onlisting
 
 pm_cf(ttot,regi,te) =  f_cf(ttot,regi,te);
 ***pm_cf(ttot,regi,"h2turbVRE") = 0.15;
-pm_cf(ttot,regi,"elh2VRE") = 0.6;
 *** short-term fix for new synfuel td technologies
 pm_cf(ttot,regi,"tdsyngas") = 0.65;
 pm_cf(ttot,regi,"tdsynhos") = 0.6;
