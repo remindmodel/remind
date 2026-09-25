@@ -131,7 +131,7 @@ vm_co2eq(ttot,all_regi)                              "total greenhouse gas emiss
 vm_co2eqMkt(ttot,all_regi,all_emiMkt)                "total greenhouse gas emissions per market measured in co2 equivalents that are subject to carbon pricing, be aware that emissions coverage of this variable depends on switch cm_multigasscen [GtCeq]"
 vm_emiAll(ttot,all_regi,all_enty)                    "total emissions by species [GtC, Mt CH4, Mt N, Mt SO2, Mt BC, Mt OC]"
 v_co2eqCum(all_regi)                                 "cumulated vm_co2eq emissions for the first budget period [GtCeq]"
-v_emiGHG_exclLULUCF_exclBunkers(ttot,all_regi)       "total GHG emissions excl LULUCF and excl bunkers, needed for NDC targets [GtCeq]"
+vm_emiGHG_exclLULUCF_exclBunkers(ttot,all_regi)       "total GHG emissions excl LULUCF and excl bunkers, needed for NDC targets [GtCeq]"
 
 *** sectoral emissions
 vm_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty)  "emissions from energy technologies on supply-side (pm_emifac * PE) and demand-side (pm_emifac * FE), note: not equivalent to Emi|CO2|Energy in reporting [GtC, Mt CH4, Mt N, Mt SO2, Mt BC, Mt OC]"
@@ -158,6 +158,7 @@ v_co2capture(ttot,all_regi)                                 "total captured CO2 
 vm_co2CCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)       "total CO2 injected into geological storage [GtC/a]"
 v_co2capturevalve(ttot,all_regi)                            "total CO2 emitted right after capture [GtC/a], note: used in q_balCCUvsCCS to account for different lifetimes of capture and CCU/CCS te and capacities [GtC/year]"
 v_ccsShare(ttot,all_regi)                                    "fraction of captured CO2 that is stored geologically [share]"
+vm_emiCdrNovel(ttot,all_regi)                                 "all novel CDR emissions, gross removals for all options, excluding land-use change emissions and materials [GtC/year]"
 vm_emiCdrAll(ttot,all_regi)                                  "all CDR emissions, net negative emissions from land-use change, gross removals for all other options [GtC/year]"
 ;
 
@@ -181,7 +182,8 @@ q_emiTeDetailMkt(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "de
 q_emiTeMkt(ttot,all_regi,all_enty,all_emiMkt)        "total energy-emissions per region and market"
 q_emiEnFuelEx(ttot,all_regi,all_enty)                "energy emissions from fuel extraction"
 q_emiAllMkt(ttot,all_regi,all_enty,all_emiMkt)       "total regional emissions for each emission market"
-q_emiCdrAll(ttot,all_regi)                           "summing over all CDR emissions"
+q_emiCdrNovel(ttot,all_regi)                         "sum over all CDR emissions, except net negative land-use change emissions and materials"
+q_emiCdrAll(ttot,all_regi)                           "sum over all CDR emissions, incl. net negative land-use change emissions and materials"
 q_balcapture(ttot,all_regi)                          "balance equation for carbon capture"
 q_balCCUvsCCS(ttot,all_regi)                         "balance equation for captured carbon to CCU or CCS or valve"
 q_ccsShare(ttot,all_regi)                            "calculate the share of captured CO2 that is stored geologically"
@@ -315,20 +317,12 @@ pm_shGasLiq_fe_lo(ttot,all_regi,emi_sectors)         "Final energy gases plus li
 p_demFeSector0(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Final Energy demand in the previous iteration [TWa]"
 pm_demFeTotal0(ttot,all_regi)                        "Total Final Energy demand in the previous iteration [TWa]"
 
-$ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
-*** FE demand rescaling parameters
-  pm_scaleDemand(tall,tall,all_regi)                 "Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
-$endif.scaleDemand
 
-$ifthen.scaleDemandBuildTable not "%cm_scaleDemandBuildTable%" == "off"
-*** FE demand rescaling parameters
-  pm_scaleDemandBuildTable(ttot, all_regi)                 "Rescaling factor on buildings final energy and usable energy demand, read-in from a table" 
-$endif.scaleDemandBuildTable
-
-$ifthen.scaleDemandIndTable not "%c_scaleDemandIndTable%" == "off"
-*** FE demand rescaling parameters
-  p_scaleDemandIndTable(ttot, all_regi)                 "Rescaling factor on industry final energy and usable energy demand, read-in from a table" 
-$endif.scaleDemandIndTable
+*** FE and UE demand rescaling parameters
+$if not "%cm_scaleDemand%" == "off"     pm_scaleDemand(tall,tall,all_regi)     "Rescaling factor on industry and buildings final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
+$if not "%cm_scaleDemandChem%" == "off" pm_scaleDemandChem(tall,tall,all_regi) "Rescaling factor on chemicals final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemandChem% /
+$if not "%cm_scaleDemandBuildTable%" == "off" pm_scaleDemandBuildTable(ttot, all_regi) "Rescaling factor on buildings final energy and usable energy demand, read-in from a table" 
+$if not "%c_scaleDemandIndTable%" == "off"    p_scaleDemandIndTable(ttot, all_regi)    "Rescaling factor on industry final energy and usable energy demand, read-in from a table" 
 
 *** energy prices
 pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)     "parameter to capture all FE prices across sectors and markets [tr$2017/TWa]"
@@ -591,6 +585,11 @@ p_actualbudgetco2_iter(iteration,ttot)               "track actual level of cumu
 pm_actualbudgetco2eqRegi(ttot,all_regi)                "Regional- actual level of cumulated emissions starting from 2020 [GtCO2]"
 p_actualbudgetco2eqRegi_iter(iteration,ttot,all_regi)  "Regional- track actual level of cumulated emissions starting from 2020 over iterations [GtCO2]"
 
+*** policy parameters
+$ifthen not "%cm_CO2PriceLimit%" == "off"
+pm_CO2PriceLimit(ttot,all_regi)                       "Upper limit of CO2 price, read from switch cm_CO2PriceLimit [$/tCO2]" / %cm_CO2PriceLimit% /
+$endif
+
 *** iteration parameters
 pm_SolNonInfes(all_regi)                             "model status from last iteration. 1 means status 2 or 7, 0 for all other status codes"
 o_iterationNumber                                    "output parameter to be able to display the iteration number"
@@ -616,10 +615,21 @@ o_pm_pebiolc_demandmag(iteration,ttot,all_regi)      "track pm_pebiolc_demandmag
 o_pm_macBaseMagpie(iteration,ttot,all_regi,all_enty) "track pm_macBaseMagpie across Nash iterations"
 o_pm_macSwitch(iteration,ttot,all_regi,all_enty)     "track pm_macSwitch across Nash iterations"
 o_p_efFossilFuelExtr_n2obio(iteration,all_regi)      "track p_efFossilFuelExtr for n2obio across Nash iterations"
-o_vm_fuExtr_pebiolc(iteration,ttot,all_regi)         "track vm_fuExtr for pebiolc across Nash iterations"
-o_vm_pebiolc_price(iteration,ttot,all_regi)          "track vm_pebiolc_price across Nash iterations"
-o_PEDem_Bio_ECrops(iteration,ttot,all_regi)          "track pebiolc demand across Nash iterations"
-o_vm_emiMacSector_co2luc(iteration,ttot,all_regi)    "track co2luc across Nash iterations"
+o_vm_fuExtr_pebiolc_iter(iteration,ttot,all_regi)         "track vm_fuExtr for pebiolc across Nash iterations"
+o_vm_pebiolc_price_iter(iteration,ttot,all_regi)          "track vm_pebiolc_price across Nash iterations"
+o_PEDem_Bio_ECrops_iter(iteration,ttot,all_regi)          "track pebiolc demand across Nash iterations"
+o_vm_emiMacSector_co2luc_iter(iteration,ttot,all_regi)    "track co2luc across Nash iterations"
+
+*** CES tree and energy services
+o_vm_cesIO_iter(ttot,all_regi,all_in,iteration)                              "Production factor over iterations" 
+o_vm_demFeForEs_iter(ttot,all_regi,all_enty,all_esty,all_teEs,iteration)     "Final energy which will be used in the energy service layer over iterations [TWa]"
+o_v_prodEs_iter(ttot,all_regi,all_enty,all_esty,all_teEs,iteration)          "Energy services over iterations [Tpkm for passenger transport, Ttkm for freight transport]"
+
+*** edgeTransport
+o_pm_esCapCost_iter(ttot,all_regi,all_teEs,iteration)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer) over iterations [T$/unit energy service]"
+o_pm_fe2es_iter(ttot,all_regi,all_teEs,iteration)                     "Conversion factor from final energies to transport energy services over iterations [Tpkm/TWa, Ttkm/TWa]"
+o_pm_shFeCes_iter(ttot,all_regi,all_enty,all_in,all_teEs,iteration)   "Shares of fuels by CES node over iterations"
+
 ;
 
 *** ------------- Scalars ----------------------------
@@ -724,7 +734,14 @@ sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 *** Define macros that can be used as functions throughout the model code.
 *** This is especially useful for more complex expressions that are used in multiple places, to avoid code duplication and to ensure consistency.
 *** Parameters of a macro are replaced directly by the chosen value at compile time: they have nothing to do with the model parameters or sets.
-*** Because the replacement is automatic, please pay attention to brackets.
+*** More information in: https://www.gams.com/latest/docs/UG_DollarControlOptions.html#UG_DollarControl_MacrosInGAMS
+
+*** When defining new macros, make sure to put brackets around parameters to ensure correct calculation.
+*** The following counter example will return wrong values because of missing brackets:
+***   Wrong definition:   $macro macro_multiply(a,b)  a * b
+***   Utilisation:        macro_multiply(3+1, 2)   will return 3+1*2 = 5 instead of 8, due to precendence of multiplication over addition
+***   Utilisation:        1 / macro_multiply(2, 2) will return 1/2*2 = 1 instead of 0.25, due to left-to-right precendence
+***   Correct definition: $macro macro_multiply(a,b)  ( (a) * (b) )
 
 *** macro_interpolate: Linear interpolation between two values x0 and x1 at time points t0 and t1 for an intermediate time point t
 *** Example 1:

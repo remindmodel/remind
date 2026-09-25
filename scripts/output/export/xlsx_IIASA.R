@@ -30,7 +30,7 @@ mapping <- NULL                                # file obtained from piamInterfac
 iiasatemplate <- NULL                          # provided for each project, can be yaml or xlsx with a column 'Variable'
 checkSummation <- TRUE                         # if TRUE, tries to use the one from mapping. Or specify here
 
-# note: you can also pass all these options to output.R, so 'Rscript output.R logFile=mylogfile.txt' works.
+# note: you can also pass all these options to output.R, so 'Rscript output.R --logFile=mylogfile.txt' works.
 lucode2::readArgs("project")
 
 
@@ -59,10 +59,11 @@ projects <- list(
     iiasatemplate = "https://files.ece.iiasa.ac.at/ngfs-phase-5/ngfs-phase-5-template.xlsx",
     removeFromScen = "C_|_bIT|_bit|_bIt|_KLW"),
   NGFS6 = list(
-    model = "REMIND-MAgPIE 3.6-4.14",
+    model = "REMIND-MAgPIE 3.7-4.14",
     mapping = c("ScenarioMIP", "NGFS6"),
     iiasatemplate = "https://files.ece.iiasa.ac.at/ngfs-phase-6/ngfs-phase-6-template.xlsx",
-    removeFromScen = "C_"),
+    removeFromScen = "C_|_Pk[0-9]+",
+    checkSummation = "ScenarioMIP"),
   RIKEN = list(
     model = "REMIND-MAgPIE 3.4-4.8",
     mapping = c("ScenarioMIP", "MAGICC7_AR6"),
@@ -111,7 +112,7 @@ projects <- list(
     renameScen = c("SMIPv04-M-SSP2-NPi2025-def" = "SSP2 - Medium Emissions", "SMIPv04-L-SSP2-PkBudg1000-def" = "SSP2 - Low Emissions"),
     checkSummation = "NAVIGATE"),
   PRISMA_WP6 = list(
-    model = "REMIND-MAgPIE 3.6-4.14",
+    model = "REMIND-MAgPIE 3.7-4.14",
     mapping = c("ScenarioMIP", "PRISMA"),
     iiasatemplate = "https://files.ece.iiasa.ac.at/prisma/prisma-template.xlsx",  
     removeFromScen = "C_",
@@ -119,7 +120,7 @@ projects <- list(
       "SSP2-MeetAspirations" = "SSP2 - Meet Aspirations",
       "SSP2-AsymmetricRoll-Back" = "SSP2 - Asymmetric Roll-Back",
       "SSP2-LateReawakening" = "SSP2 - Late Reawakening",
-      "SSP2-StayingAlive_exo" = "SSP2 - Staying Alive"),
+      "SSP2-StayingAlive" = "SSP2 - Staying Alive"),
     checkSummation = "ScenarioMIP"),
   NAVIGATE_coupled = list(mapping = c("NAVIGATE", "NAVIGATE_coupled")),
   SHAPE            = list(mapping = c("NAVIGATE", "NAVIGATE_coupled", "SHAPE")),
@@ -207,15 +208,9 @@ withCallingHandlers({ # piping messages to logFile
 
   filename_remind2_mif <- paste0(outputFilename, "_remind2.mif")
 
-  message("\n### Read mif files and bind them together...")
-
-  mifdata <- NULL
-  for (mif in mif_path) {
-    thismifdata <- read.quitte(mif, factors = FALSE)
-    # remove -rem-xx and mag-xx from scenario names
-    thismifdata$scenario <- gsub("^C_|-(rem|mag)-[0-9]{1,2}$", "", thismifdata$scenario)
-    mifdata <- rbind(mifdata, thismifdata)
-  }
+  message("\n### Load mif files...")
+  mifdata <- bind_rows(lapply(mif_path, read.quitte, factors = FALSE)) # combine all scenarios into one data frame
+  mifdata$scenario <- gsub("^C_|-(rem|mag)-[0-9]{1,2}$", "", mifdata$scenario) # remove C_, -rem-xx, mag-xx from scenario names
 
   # rename scenarios
   if (! is.null(renameScen)) {

@@ -20,6 +20,9 @@ if(! exists("source_include")) {
   outputdir <- "."
   flags <- lucode2::readArgs("outputdir", .flags = c(i = "--interactive"))
 }
+if(! exists("interactiveSession")) {
+  interactiveSession = exists("flags") && "--interactive" %in% flags
+}
 
 # find the mif file of the reference run automatically by reading from cfg the output folder
 findRefMif <- function(outputdir, envi) {
@@ -113,7 +116,7 @@ fixOnMif <- function(outputdir) {
   if (! isTRUE(fixeddata) && isTRUE(envi$cfg$fixOnRefAuto %in% c(TRUE, "TRUE"))) {
     d <- fixeddata
     update <- "data from reference run because cfg$fixOnRefAuto=TRUE."
-  } else if (! isTRUE(fixeddata) && exists("flags") && isTRUE("--interactive" %in% flags)) {
+  } else if (! isTRUE(fixeddata) && interactiveSession) {
     message("\nDo you want to fix that by overwriting ", title, " mif with reference run ",
             refname, " for t < ", startyear, "?\nType: y/N")
     if (tolower(gms::getLine()) %in% c("y", "yes")) {

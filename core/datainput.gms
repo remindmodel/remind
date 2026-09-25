@@ -290,9 +290,9 @@ fm_dataglob("inco0", "oae_ng") = fm_dataglob("inco0", "oae_ng") / (cm_33_OAE_eff
 fm_dataglob("inco0", "oae_el") = fm_dataglob("inco0", "oae_el") / (cm_33_OAE_eff / sm_c_2_co2);
 
 *** convert inco0, floorcost and omv to REMIND units by applying a factor 0.001
-***   category          energy technology   ccs technology    process-based industry 
-***   input data unit   $/kW                $/(tC/a)          $/(t/a)
-***   REMIND unit       T$/TW               T$/(GtC/a)        T$/(Gt/a)
+***   category          energy technology   ccs technology    process-based industry            weathering
+***   input data unit   $/kW                $/(tC/a)          $/(t/a)                         $/(t rock/a)
+***   REMIND unit       T$/TW               T$/(GtC/a)        T$/(Gt/a)                       T$/(Gt rock/a)
 fm_dataglob("inco0",te)        = s_DpKW_2_TDpTW   * fm_dataglob("inco0",te);
 fm_dataglob("floorcost",te)    = s_DpKW_2_TDpTW   * fm_dataglob("floorcost",te);
 fm_dataglob("omv",te)          = s_DpKWa_2_TDpTWa * fm_dataglob("omv",te);
@@ -683,19 +683,6 @@ pm_histCap("2025",regi,teReNoBio) = max(pm_histCap("2020",regi,teReNoBio), pm_hi
 
 *** calculate historic capacity additions
 pm_delta_histCap(ttot,regi,te) = pm_histCap(ttot,regi,te) - pm_histCap(ttot-1,regi,te);
-
-*** historical installed capacity for yearly time-steps
-*** (same as pm_histCap, but with yearly time-steps instead of 5-year time-steps)
-$Offlisting
-table   p_histCapYearly(tall,all_regi,all_te) "historical installed capacity in yearly time steps (TW)"
-$ondelim
-$include "./core/input/pm_histCapYearly.cs3r"
-$offdelim
-;
-$Onlisting
-
-
-
 
 *** historical PE installed capacity
 table p_PE_histCap(tall,all_regi,all_enty,all_enty) "historical installed capacity (TW)"
@@ -1334,6 +1321,7 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,"dac")          = 0.8;
   p_adj_coeff(ttot,regi,'oae_ng')       = 0.8;
   p_adj_coeff(ttot,regi,'oae_el')       = 0.8;
+  p_adj_coeff(ttot,regi,'weathering')   = 1.0;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 *** steel technologies
   p_adj_coeff(ttot,regi,"bfcc")         = 4.0;
@@ -1416,10 +1404,10 @@ $if  "%cm_rcp_scen%" == "none"    sm_budgetCO2eqGlob = 20000.0000;
   );
   if(cm_multigasscen eq 2,
 $if  "%cm_rcp_scen%" == "rcp20"   sm_budgetCO2eqGlob = 500.0000;
-     if(cm_ccapturescen eq 1,
+     if(c_co2captureEnergy eq 1,
 $if  "%cm_rcp_scen%" == "rcp26"   sm_budgetCO2eqGlob = 530.0000;
      );
-     if(cm_ccapturescen gt 1,
+     if(c_co2captureEnergy gt 1,
 $if  "%cm_rcp_scen%" == "rcp26"   sm_budgetCO2eqGlob = 700.0000;
      );
 $if  "%cm_rcp_scen%" == "rcp37"   sm_budgetCO2eqGlob = 1000.0000;
@@ -1664,23 +1652,34 @@ $offdelim
 
 pm_fedemandBuild(t,regi,cal_ppf_buildings_dyn36) = f_fedemandBuild(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 
-*** Scale FE demand across industry and building sectors
+*** Scale demand across industry (FE and UE) and building sectors (FE; UE happens in module 36)
 $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
   loop((tall,tall2,all_regi) $ pm_scaleDemand(tall,tall2,all_regi),
-*FL*  rescaled demand                = normal demand                  * [ scaling factor                      + (1-scaling factor)                      * remaining phase-in, between zero and one               ]
-      pm_fedemandInd(t,all_regi,all_in) = pm_fedemandInd(t,all_regi,all_in) * ( pm_scaleDemand(tall,tall2,all_regi) + (1-pm_scaleDemand(tall,tall2,all_regi)) * min(1, max(0, tall2.val-t.val) / (tall2.val-tall.val)) );
-      pm_fedemandBuild(t,all_regi,all_in) = pm_fedemandBuild(t,all_regi,all_in) * ( pm_scaleDemand(tall,tall2,all_regi) + (1-pm_scaleDemand(tall,tall2,all_regi)) * min(1, max(0, tall2.val-t.val) / (tall2.val-tall.val)) );
+    loop(t $ t.val > tall.val,
+      pm_fedemandInd(t,all_regi,all_in)   $ (t.val < tall2.val)  = pm_fedemandInd(t,all_regi,all_in)   * macro_interpolate(t.val,tall.val,tall2.val,1,pm_scaleDemand(tall,tall2,all_regi));
+      pm_fedemandBuild(t,all_regi,all_in) $ (t.val < tall2.val)  = pm_fedemandBuild(t,all_regi,all_in) * macro_interpolate(t.val,tall.val,tall2.val,1,pm_scaleDemand(tall,tall2,all_regi));
+      pm_fedemandInd(t,all_regi,all_in)   $ (t.val >= tall2.val) = pm_fedemandInd(t,all_regi,all_in)   * pm_scaleDemand(tall,tall2,all_regi);
+      pm_fedemandBuild(t,all_regi,all_in) $ (t.val >= tall2.val) = pm_fedemandBuild(t,all_regi,all_in) * pm_scaleDemand(tall,tall2,all_regi);
+    );
   );
 $endif.scaleDemand
 
-*** Scale FE demand in building sectors
-$ifthen.scaleDemandBuildTable not "%cm_scaleDemandBuildTable%" == "off"
+*** Scale FE and UE demand for chemicals
+$ifthen.scaleDemandChem not "%cm_scaleDemandChem%" == "off"
+  loop((tall,tall2,all_regi) $ pm_scaleDemandChem(tall,tall2,all_regi),
+    loop((t,all_in) $ (t.val > tall.val and secInd37_2_pf("chemicals",all_in)),
+      pm_fedemandInd(t,all_regi,all_in) $ (t.val < tall2.val)  = pm_fedemandInd(t,all_regi,all_in) * macro_interpolate(t.val,tall.val,tall2.val,1,pm_scaleDemandChem(tall,tall2,all_regi));
+      pm_fedemandInd(t,all_regi,all_in) $ (t.val >= tall2.val) = pm_fedemandInd(t,all_regi,all_in) * pm_scaleDemandChem(tall,tall2,all_regi);
+    );
+  );
+$endif.scaleDemandChem
 
-*** File should have the following format:
+
+$ifthen.scaleDemandBuildTable not "%cm_scaleDemandBuildTable%" == "off"
+*** Scale FE demand in building sectors, using file with following format:
 *** 2025,USA,1.00
 *** 2030,USA,0.9
 *** 2035,USA,0.8
-
 
 Parameter f_scaleDemandBuildTable(ttot,all_regi) "Rescaling factor on industry final energy and usable energy demand, read-in from a table"
 /
@@ -1699,10 +1698,8 @@ pm_scaleDemandBuildTable(t,regi) $ (t.val > 2100 ) = pm_scaleDemandBuildTable("2
   );
 $endif.scaleDemandBuildTable
 
-*** Scale FE demand in industry sectors
 $ifthen.scaleDemandIndTable not "%c_scaleDemandIndTable%" == "off"
-
-*** File should have the following format:
+*** Scale FE demand in industry sectors, using file with following format:
 *** 2025,USA,1.00
 *** 2030,USA,0.9
 *** 2035,USA,0.8

@@ -19,17 +19,24 @@ Check the general system requirements in [Section 1: Getting REMIND](01_GettingR
 
 **This is the supported way of input data handling**
 
-As long as we do not provide a curated collection of input data please obtain these files from the cluster:
+As long as we do not provide a curated collection of input data please obtain the current version of these files from the cluster:
+
+In `/p/projects/rd3mod/inputdata/output`:
 
 ```bash
 rev6.606_62eff8f7_remind.tgz
 rev6.606_62eff8f7_validationremind.tgz
+```
+
+and in `/p/projects/remind/inputdata/CESparametersAndGDX`:
+
+```bash
 CESparametersAndGDX_878ac5d69254efb4eba5c1fa39aba64000307bb1.tgz
 ```
 
-The contents of these tar-archives are necessary to run REMIND locally. Since REMIND input data is constantly updated the up-to-date file names may vary, but will exhibit a similar pattern. The first two files can be found on the cluster at `/p/projects/rd3mod/inputdata/output`, the latter file in `/p/projects/remind/inputdata/CESparametersAndGDX`.
+The up-to-date hashes and revision numbers will be different but the pattern is similar, use `make test` to figure out which files are needed. The contents of these tar-archives are necessary to run REMIND locally.
 
-Download & store them in a folder of your choice. The corresponding path is provided to REMIND via environment variable. Add to your local `~/.Renviron` file (in linux, found in your home directory, in windows, found at `C:\Users\<your windows username>\Documents\.Renviron`):
+Download & store them in a folder of your choice. The corresponding path is provided to REMIND via environment variable. Add to your local `~/.Renviron` file (in Linux, `~/.Renviron`, in Windows, `C:\Users\<your windows username>\Documents\.Renviron`):
 
 ```bash
 # REMIND data setup
@@ -47,22 +54,15 @@ Make sure that the configuration parameters `inputRevision` and `CESandGDXversio
 
 ### Download Input Data Automatically
 
-**This approach requires a working, OpenSSH-based SSH key management set-up on your machine**
-
-Please verify the SSH set-up on your machine by running `ssh-key -L` in a terminal session. The output should look similar to
-
-```bash
-ssh-rsa LongStringOfRandomLettersNumbersAndSuch== pikaccounts\\<Your PIK user name>@<Host Name>
-```
-
-If your output is empty, try the [Use Local Input Data](#use-local-input-data) approach mentioned above.
+**This approach requires PIK HPC access via SSH key**
 
 If you have access to the PIK cluster (if you don't have access to the PIK cluster, you can get access only if you are a PIK employee) and like to automatically download the input data when running REMIND on your local machine, you need to configure this via environment variables.
-Add to your `~/.Renviron` file (in linux, found in your home directory, in windows, found at `C:\Users\<your windows username>\Documents\.Renviron`):
+Add to your `~/.Renviron` file (in Linux, `~/.Renviron`, in Windows, `C:\Users\<your windows username>\Documents\.Renviron`):
+
 ```bash
 # REMIND data repository setup
 # Download from the PIK cluster, (needs access)
-REMIND_repos_scp="scp://cluster.pik-potsdam.de/p/projects/rd3mod/inputdata/output;scp://cluster.pik-potsdam.de/p/projects/remind/inputdata/CESparametersAndGDX"
+REMIND_repos_scp="scp://hpc.pik-potsdam.de/p/projects/rd3mod/inputdata/output;scp://hpc.pik-potsdam.de/p/projects/remind/inputdata/CESparametersAndGDX"
 # Username on the PIK cluster
 REMIND_repos_scp_user="myusername"
 # Path to your ssh private key on your laptop (might also be id_rsa or similar)

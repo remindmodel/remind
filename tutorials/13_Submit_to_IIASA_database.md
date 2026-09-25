@@ -37,12 +37,12 @@ The script requires the inputs as above, expect that it lets you select the `mif
 
 You can specify the information above in two ways: Either edit [`xlsx_IIASA.R`](../scripts/output/export/xlsx_IIASA.R) and add a project in a similar way to `NGFS` or `ENGAGE`. You can then start the scripts with:
 ```
-Rscript output.R comp=export output=xlsx_IIASA project=NGFS
+Rscript output.R --comp=export --output=xlsx_IIASA --project=NGFS
 ```
 You do not need to specify `comp` and `output` in the command line, you can just wait to be asked for it.
 An alternative is to specify everything individually as command-line arguments:
 ```
-Rscript output.R comp=export output=xlsx_IIASA model="REMIND 3.2" mapping=AR6,AR6_NGFS addToScen=whatever removeFromScen=C_ filename_prefix=test
+Rscript output.R --comp=export --output=xlsx_IIASA --model="REMIND 3.2" --mapping=AR6,AR6_NGFS --addToScen=whatever --removeFromScen=C_ --filename_prefix=test
 ```
 All the information printed to you during the run will also be present in the logfile whose path will be told you at the end.
 

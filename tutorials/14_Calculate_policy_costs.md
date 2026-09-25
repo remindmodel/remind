@@ -46,7 +46,7 @@ scenarioAndReference=( "${scenarioAndReference[@]/#/output/C_}" )
 scenarioAndReference=( "${scenarioAndReference[@]/%/-rem-$remnr}" )
 scenarioAndReference=( $( IFS="," ; echo "${scenarioAndReference[*]}") )
 
-Rscript output.R comp=T output=policyCosts outputdir=$scenarioAndReference
+Rscript output.R --comp=T --output=policyCosts --outputdirs=$scenarioAndReference
 ```
 
 Short version if you have a single base run for all your scenarios and want to automatically start a compareScenario2 and an IIASA export:
@@ -64,6 +64,6 @@ Rscript scripts/output/comparison/policyCosts.R outputdirs=$outputstringpc speci
 outputarraycs=( "${runs[@]/%/-rem-${remnr}}" )
 outputarraycs=( "${outputarraycs[@]/#/output/C_}" )
 outputstringcs="$(IFS=,; echo "${outputarraycs[*]}")"
-Rscript output.R comp=export output=xlsx_IIASA outputdir=$outputstringcs project=NGFS_v4 filename_prefix=NGFS_v4
-Rscript output.R comp=comparison output=compareScenarios2 outputdir=$outputstringcs filename_prefix=NGFS_v4 slurmConfig=priority profileNames=REMIND-MAgPIE
+Rscript output.R --comp=export --output=xlsx_IIASA --outputdirs=$outputstringcs --project=NGFS_v4 --filename_prefix=NGFS_v4
+Rscript output.R --comp=comparison --output=compareScenarios2 --outputdirs=$outputstringcs --filename_prefix=NGFS_v4 --slurmConfig=priority --profileNames=REMIND-MAgPIE
 ```

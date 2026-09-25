@@ -86,7 +86,7 @@ release <- function(newVersion) {
   message("Please only continue if you already cleaned CHANGELOG.md:\n",
           "In another terminal:\n",
           "1. git add -p\n",
-          "2. git commit -m 'your commit message\n'",
+          "2. git commit -m 'your commit message'\n",
           "3. git push yourRemote yourReleaseCandidateBranch",
           "--> When done press ENTER to create PR")
   gms::getLine()

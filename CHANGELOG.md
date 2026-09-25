@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
+## [3.7.1] - 2026-09-25
+
+### input data/calibration
+- update of exogenous data for REMIND stand alone runs based on MAgPIE v4.14.1 for land use emissions and costs
+  see also reladed mrcommons PR: https://github.com/pik-piam/mrcommons/pull/209
+   [[#2462](https://github.com/remindmodel/remind/pull/2462)]
+
+### changed
+- **29_CES-parameters** add 2020 to historic periods for corrections in industry FE demands
+    [[#2442](https://github.com/remindmodel/remind/pull/2442)]
+- **47_regipol** Use dynamic implicit quantity target to limit biomass to 100 EJ/yr in default setting (instead of ex-ante regional allocations via `cm_maxProdBiolc`)
+- **scripts** Harmonize command line arguments for output.R: prefix `--` is now required, change `--outputdir` to `--outputdirs`
+    [[#2413](https://github.com/remindmodel/remind/pull/2413)]
+- **scripts** Move LCOE reporting into `reoirtingLCOE` instead of `reporting`
+    [[#2416](https://github.com/remindmodel/remind/pull/2416)]
+- **scripts** Map the other-planted-forest regrowth and legacy-clearing (Storage/Release) land-use-change children from newer MAgPIE reports (magpie4 >= 2.82) to the `co2luc` subtypes, so the net equals the sum of its positive/negative parts in coupled runs; the extra children are dropped when a report lacks them, keeping coupling with older MAgPIE backward compatible (reporting-only, no change to optimization results)
+    [[#2471](https://github.com/remindmodel/remind/pull/2471)]
+- **scripts** Make the climate-assessment reported variables configurable via "variable profiles": `MAGICC7_AR6.R` forwards optional `climate_assessment_magicc_extra_config`, `climate_assessment_output_variables_file` and `climate_assessment_variable_definitions_file` from `default.cfg` to the `ca-harmonize-infill`/`ca-run-climate` new console entry points now installed in the associated conda env; ready-made `pbo`/`slr` profiles ship with remindClimateAssessment (>= 0.2.0), and empty overrides keep the built-in AR6 defaults
+    [[#2475](https://github.com/remindmodel/remind/pull/2475)]
+
+### added
+- **47_regipol** New (optional) quantity targets for limiting PE lignocellulosic biomass
+- **scripts** Add the possibility to build only some sections of the compareScenarios2 report with `--sections=`
+    [[#2415](https://github.com/remindmodel/remind/pull/2415)]
+- **scripts** Prepend `RSCRIPT_SLURM_HOOK` to the sbatch `--wrap` so compute-node jobs re-enter the piam-apptainer container. No-op when the hook is unset, so runs under the current piam module are unaffected.
+    [[#2443](https://github.com/remindmodel/remind/pull/2443)]
+- **scripts** Add report template selection to the `validateScenarios` output script: users can now choose a report (e.g. the SCI evaluation) from `piamValidation` in addition to the validation config
+    [[#2456](https://github.com/remindmodel/remind/pull/2456)]
+
+### removed
+-
+
+### fixed
+-
+
+
 ## [3.7.0] - 2026-07-15
 
 ### input data/calibration
@@ -33,6 +69,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#2334](https://github.com/remindmodel/remind/pull/2361)]
 - **scripts** include reporttransport/remind2 (EDGE-T/REMIND) variable harmonization. reporttransport (EDGE-T side) energy service demand is rescaled to match exactly remind2 ES/FE/Emi values for variables reported by both models
     [[#2320](https://github.com/remindmodel/remind/pull/2320)]
+- **45_carbonprice** implement negative carbon prices for NPI2025 in US from 2030
+    [[#2418](https://github.com/remindmodel/remind/pull/2418)]
+
 
 ### added
 - **30_biomass** Quick-fix for `cm_maxProdBiolc`: allocate up to 25 EJ/yr of the global lignocellulosic biomass potential to regions by hardcoded 2020 crop-production shares (remainder still via marginal-cost inversion); scales down if the budget is smaller and works for both the H12 and EU21 region resolutions

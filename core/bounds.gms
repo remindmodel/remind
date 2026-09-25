@@ -73,27 +73,7 @@ loop(teRe2rlfDetail(te,rlf),
 loop(t $ (t.val >= 2015 and t.val <= 2025),
 *** fix renewable capacities to real world historical values if available
   vm_cap.lo(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
-  if(t.val <= 2020, !! TODO: activate 2025 upper-bound when consolidated data available
-    vm_cap.up(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 1.05 * pm_histCap(t,regi,te);
-  );
-*** for 2025: as no 2025 data avaiable yet, fix lower bound to 2024 capacity + 0.5 times the annual growth in 2022-2024
-*** but at least 2024 capacity
-  if(t.val = 2025,
-    vm_cap.lo(t,regi,teVRE(te),"1") $ p_histCapYearly("2024",regi,te) = max(p_histCapYearly("2024",regi,te) 
-                                                                                + 0.5
-                                                                                  * ( p_histCapYearly("2024",regi,te) 
-                                                                                    - p_histCapYearly("2022",regi,te) ) / 2,
-                                                                              p_histCapYearly("2024",regi,te)
-                                                                            );
-*** for 2025: as no 2025 data avaiable yet, fix upper bound to 2024 capacity + 2 times the annual growth in 2022-2024
-*** but at least 10% growth of 2024 capacity
-    vm_cap.up(t,regi,teVRE(te),"1") $ p_histCapYearly("2024",regi,te) = max(p_histCapYearly("2024",regi,te) 
-                                                                                + 2
-                                                                                  * ( p_histCapYearly("2024",regi,te) 
-                                                                                    - p_histCapYearly("2022",regi,te) ) / 2,
-                                                                              1.1 * p_histCapYearly("2024",regi,te)
-                                                                            );
-  );
+  vm_cap.up(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 1.05 * pm_histCap(t,regi,te);
 *** broader bounds for renewables with lower data quality
   loop(te $ (sameas(te, "hydro") or sameas(te, "geohdr")),
     vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.7 * pm_histCap(t,regi,te);
@@ -315,8 +295,13 @@ loop(teBiopyr(te) $ (not sameas(te, "biopyrliq")), !! established industrial tec
     vm_cap.up("2020",regi,te,rlf) = p_boundCapBiochar("2020",regi) * sm_tBC_2_TWa / 3; 
     vm_cap.lo("2025",regi,te,rlf) = p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3; 
     !! set upper bound to 70% above the lower bound which is based on 2024 values    
-    vm_cap.up("2025",regi,te,rlf) = 1.7 * p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3;                      
-  );
+    vm_cap.up("2025",regi,te,rlf) = 1.7 * p_boundCapBiochar("2025",regi) * sm_tBC_2_TWa / 3;
+    vm_cap.lo("2030",regi,te,rlf) = sm_eps; !! initiate a starting value in all regions from 2030, even if no deployment in 2025
+    !! upper bound of 0.1 Mt biochar in 2030 (approx. 2025 production in Europe), for regions without 2025 value
+    vm_cap.up("2030",regi,te,rlf) = power(10,5) * sm_tBC_2_TWa / 3 ;
+    !!short-term upscaling limit based on recent growth rates in EUR, for regions with 2025 values      
+    vm_cap.up("2030",regi,te,rlf)$(p_boundCapBiochar("2025",regi)) = power(1.7, 5) * vm_cap.up("2025",regi,te,rlf);   
+    );
 );
 
 loop(te $ sameas(te, "biopyrliq"), !! does not yet exist commercially
@@ -324,7 +309,7 @@ loop(te $ sameas(te, "biopyrliq"), !! does not yet exist commercially
   vm_deltaCap.lo(t,regi,"biopyrliq",rlf) $ (t.val > cm_startyear) = 1e-8; !! initiate a negligible increase to help model find the technology
   vm_deltaCap.up(t,regi,"biopyrliq",rlf) $ (t.val > cm_startyear) = inf; !! revert fixing to small values above
   if(c_biopyrOptions le 1,
-  vm_deltaCap.fx(t,regi,"biopyrliq",rlf) $ (t.val >= cm_startyear) = 0;
+  vm_deltaCap.fx(t,regi,"biopyrliq",rlf) = 0;
   );
 );
 
@@ -342,8 +327,8 @@ vm_cap.fx("2010",regi,teCCS,rlf) = 0;
 vm_cap.fx("2020",regi,te,rlf) $ (teBio(te) and teCCS(te)) = 0;
 
 *' switch to deactivate carbon sequestration
-if(c_ccsinjecratescen = 0,
-  vm_co2CCS.fx(t,regi_capturescen,"cco2","ico2",te,rlf) $ teCCS2rlf(te,rlf) = 0;
+if(c_ccsinjecratescen = 0, 
+  vm_deltaCap.up(t,regi_co2captureEnergy,teccsinje,"1") = sm_eps;
 );
 
 *' Bounds on maximum annual carbon storage by region
@@ -393,15 +378,14 @@ if(cm_emiscen = 1,
 );
 
 
-if(cm_ccapturescen = 2, !! no carbon capture at all
-  vm_cap.fx(t,regi_capturescen,teCCS,rlf) = 0;
-  vm_cap.fx(t,regi_capturescen,te,rlf) $ teCCS2rlf(te,rlf) = 0;
-elseif(cm_ccapturescen = 3), !! no bio carbon capture:
-  vm_cap.fx(t,regi_capturescen,te,rlf) $ (teCCS(te) and teBio(te)) = 0;
-elseif(cm_ccapturescen = 4), !! no carbon capture in the electricity sector
-  loop(emi2te(enty,"seel",te,"cco2") $ ( sum(regi_capturescen, pm_emifac("2020",regi_capturescen,enty,"seel",te,"cco2")) > 0 ),
+if(c_co2captureEnergy = 2, !! no carbon capture at all
+  vm_deltaCap.up(t,regi_co2captureEnergy,teCCS,rlf) = sm_eps;
+elseif(c_co2captureEnergy = 3), !! no bio carbon capture:
+  vm_deltaCap.up(t,regi_co2captureEnergy,te,rlf) $ (teCCS(te) and teBio(te)) = sm_eps;
+elseif(c_co2captureEnergy = 4), !! no carbon capture in the electricity sector
+  loop(emi2te(enty,"seel",te,"cco2") $ ( sum(regi_co2captureEnergy, pm_emifac("2020",regi_co2captureEnergy,enty,"seel",te,"cco2")) > 0 ),
     loop(te2rlf(te,rlf),
-      vm_cap.fx(t,regi_capturescen,te,rlf) = 0;
+      vm_deltaCap.up(t,regi_co2captureEnergy,te,rlf)  = sm_eps;
     );
   );
 );
@@ -532,6 +516,10 @@ vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt) $ (t.val <= cm_H2InBuild
 
 *' upper bound on bioliquids as a share of transport liquids
 v_shBioTrans.up(t,regi) $ (t.val > 2020) = c_shBioTrans;
+
+*' upper bounds on secondary energy subtype shares in FE demand
+v_shSeFeSector.up(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) = 1;
+v_shSeFe.up(ttot,all_regi,all_enty) = 1;
 
 
 *** ==================================================================

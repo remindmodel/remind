@@ -10,6 +10,7 @@
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/NPi2025/datainput.gms"
+$Ifi "%phase%" == "bounds" $include "./modules/45_carbonprice/NPi2025/bounds.gms"
 *######################## R SECTION END (PHASES) ###############################
 
 *** EOF ./modules/45_carbonprice/NPi2025/realization.gms
