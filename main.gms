@@ -371,6 +371,7 @@ $setglobal techpol  NPi2025           !! def = NPi2025
 *' * (exog):   exogenous emission cap path (generic)  (under construction)
 *' * (PerCapitaConvergence):   based on CandC: convergence, to be run with emiscen = 4
 *' * (AbilityToPay):   mitigation requirement shared based on per-capita GDP, to be run with emiscen = 4
+*' * (JUSTMip):   limited trade in a regional budget run, to be run with emiscen = 9
 $setglobal emicapregi  none           !! def = none
 *'---------------------    45_carbonprice  ----------------------------------------
 *'
@@ -620,6 +621,52 @@ parameter
 *' * (1): carbon price trajectories (pm_taxCO2eq) from path_gdx_ref are used as lower bound for pm_taxCO2eq
 *' * (0): no lower bound
 *'
+
+parameter
+  cm_permTradingJustMip     "switch to allow for trading of CO2 budgets between regions in a policy run"
+;
+  cm_permTradingJustMip      = 1;         !! def = 0  !! regexp = 0|1
+*' *  (0): no, Trading of CO2 budgets in policy runs is not allowed
+*' *  (1): yes, Trading of CO2 budgets in policy runs is allowed
+
+parameter
+  cm_nash_etaAdj_perm       "Nash permit-market adjustment-cost damping"
+;
+  cm_nash_etaAdj_perm    = 100;     !! def = 100  !! regexp = is.numeric
+*' default matches the current p80_etaAdj("perm") calibration
+
+parameter
+  cm_nash_etaXp_perm        "Nash permit-market within-iteration price update step"
+;
+  cm_nash_etaXp_perm     = 0.1;    !! def = 0.1  !! regexp = is.nonnegative
+*' default matches the current p80_etaXp("perm") calibration
+
+parameter
+  cm_nash_etaLT_perm        "Nash permit-market between-iteration learning/inertia"
+;
+  cm_nash_etaLT_perm     = 0.02;   !! def = 0.02  !! regexp = is.nonnegative
+*' default matches the current p80_etaLT("perm") calibration
+
+parameter
+  cm_nash_etaST_perm        "Nash permit-market surplus damping"
+;
+  cm_nash_etaST_perm     = 0.1;    !! def = 0.1  !! regexp = is.nonnegative
+*' default matches the current p80_etaST("perm") calibration
+
+parameter
+  cm_permTradingLimGlo     "switch to limit global trade volume to share of global GDP in each time step"
+;
+  cm_permTradingLimGlo      = 100;         !! def = 100 
+*' * (100): no limit on trade volume, equation is turned on but has no effect 
+*' * (any number between 0 and 1): limit trade volume to this share of GDP 
+
+parameter
+  cm_permTradingLimRegi     "switch to limit regional trade volume to share of regional GDP in each time step"
+;
+  cm_permTradingLimRegi      = 100;         !! def = 100 
+*' * (100): no limit on trade volume, equation is turned on but has no effect 
+*' * (any number between 0 and 1): limit trade volume to this share of GDP 
+
 parameter
   c_macscen                 "scenario switch on whether or not to use MAC (Marginal Abatement Cost) for certain sectors not related to direct combustion of fossil fuel, e.g. fugitive emissions from old mines, forestry, agriculture and cement"
 ;

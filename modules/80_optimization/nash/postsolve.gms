@@ -17,7 +17,22 @@ p80_taxrev0(ttot,regi)$( (ttot.val ge max(2010,cm_startyear)) and (pm_SolNonInfe
 *AJS*update normalization paramaters, take values from last iteration for regions that were not solved optimally
 p80_normalize0(ttot,regi,"good")$(ttot.val ge 2005) = max(vm_cons.l(ttot,regi)$(pm_SolNonInfes(regi) eq 1) + p80_normalize0(ttot,regi,"good")$(pm_SolNonInfes(regi) eq 0),sm_eps);
 *ML*normalize permit trade corrections to consumption or positive cap path instead of emissions, as those may be negative
-p80_normalize0(ttot,regi,"perm")$(ttot.val ge 2005) = max(abs(pm_shPerm(ttot,regi) * pm_emicapglob("2050")) , sm_eps);
+$ifthen "%emicapregi%" ne "JUSTMip"
+p80_normalize0(ttot,regi,"perm")$(ttot.val ge 2005 and cm_permTradingJustMip eq 0) = max(abs(pm_shPerm(ttot,regi) * pm_emicapglob("2050")) , sm_eps);
+$endif
+
+
+*normalize permit trade corrections to absolute trade volumes 
+$ifthen.justMip "%emicapregi%" == "JUSTMip" 
+p80_normalize0(ttot,regi,"perm")$(ttot.val ge 2005) =
+    max(
+        0.5 * (
+              abs(vm_Xport.l(ttot,regi,"perm"))
+            + abs(vm_Mport.l(ttot,regi,"perm"))
+        ),
+        1
+    );
+$endif.justMip
 p80_normalize0(ttot,regi,tradePe)$(ttot.val ge 2005) = max(0.5 * (sum(rlf, vm_fuExtr.l(ttot,regi,tradePe,rlf)) + vm_prodPe.l(ttot,regi,tradePe))$(pm_SolNonInfes(regi) eq 1)
                                                         + p80_normalize0(ttot,regi,tradePe)$(pm_SolNonInfes(regi) eq 0) ,sm_eps);
 
@@ -467,6 +482,7 @@ $ifthen.carbonpriceRegi %carbonprice% == "functionalFormRegi"
       s80_bool = 0;
       p80_messageShow("regiBudget") = YES;
     );
+  if( cm_permTradingJustMip eq 0, !! negative deviation excluded in permit trading mode
   !! If the deviation is negative, i.e. budget is too low and would require a decrease of the Carbon Price => only "not converged" if the carbon price is not already very low, 
   !! "Very low" is for now <1 USD/t CO2 in 2100, tbd
   else
@@ -475,6 +491,7 @@ $ifthen.carbonpriceRegi %carbonprice% == "functionalFormRegi"
       s80_bool = 0;
       p80_messageShow("regiBudget") = YES;
     );
+  );
   );
   );  
 $endIf.carbonpriceRegi
@@ -822,6 +839,8 @@ if (cm_abortOnConsecFail gt 0,
   );
 );
 
+$ifthen "%emicapregi%" ne "JUSTMip"
+
 
 ***--------------------------
 ***  EMIOPT implementation
@@ -885,7 +904,7 @@ display p80_eoMargEmiCum, p80_eoMargPermBudg, p80_eoEmiMarg, p80_eoMargAverage, 
 );
 $endif.emiopt
 
-
+$endif
 
 
 
