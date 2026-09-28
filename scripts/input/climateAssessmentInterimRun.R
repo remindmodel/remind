@@ -48,7 +48,7 @@ magiccEnv <- c(
 magiccInit <- condaInit(how = "pik-cluster", log = cfg$logFile, verbose = 1)
 
 runHarmoniseAndInfillCmd <- paste(
-  "python", file.path(cfg$scriptsDir, "run_harm_inf.py"), cfg$remindEmissionsFile, cfg$climateDir,
+  "ca-harmonize-infill", cfg$remindEmissionsFile, cfg$climateDir,
   "--infilling-database", cfg$infillingDatabase
 )
 
