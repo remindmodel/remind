@@ -19,6 +19,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -
 
 ### fixed
+- **scripts** Fix call to harmonization and infilling console entry point in  `climateAssessmentInterimRun.R`
+    [[#2484](https://github.com/remindmodel/remind/pull/2484)]
 -
 
 
