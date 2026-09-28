@@ -51,7 +51,7 @@ dir.create(cfg$workersDir, showWarnings = FALSE)
 magiccEnv <- c(
   "MAGICC_EXECUTABLE_7"    = cfg$magiccBin,
   "MAGICC_WORKER_ROOT_DIR" = cfg$workersDir,
-  "MAGICC_WORKER_NUMBER"   = 1
+  "MAGICC_WORKER_NUMBER"   = 4
 )
 
 magiccInit <- piamenv::condaInit(how = "pik-cluster", log = cfg$logFile, verbose = 1)
