@@ -791,9 +791,13 @@ q_emiAll(t,regi,emi)..
 *' Total global emissions in CO2 equivalents that are part of the climate policy also take into account foreign emissions.
 ***------------------------------------------------------
 *mlb 20140108* computation of global emissions (related to cap)
-  q_co2eqGlob(t) $(t.val > 2010)..
-        vm_co2eqGlob(t) =e= sum(regi, vm_co2eq(t,regi) + pm_co2eqForeign(t,regi));
 
+$ifthen "%emicapregi%" ne "JUSTMip"
+q_co2eqGlob(t) $(t.val > 2010)..
+        vm_co2eqGlob(t) =e= sum(regi, vm_co2eq(t,regi) + pm_co2eqForeign(t,regi));
+$endif
+
+  
 ***------------------------------------
 *' Linking GHG emissions to tradable emission permits.
 ***------------------------------------

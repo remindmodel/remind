@@ -76,8 +76,11 @@ $endIf.cm_implicitPePriceTarget
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevGHG(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevGHG(t,regi) =e= pm_taxCO2eqSum(t,regi) * (vm_co2eq(t,regi) - vm_emiMacSector(t,regi,"co2luc")$(cm_multigasscen ne 3))
-                           - pm_taxrevGHG0(t,regi)
+v21_taxrevGHG(t,regi) =e= pm_taxCO2eqSum(t,regi) * 
+  (vm_co2eq(t,regi) - vm_emiMacSector(t,regi,"co2luc")$(cm_multigasscen ne 3)
+   + (vm_Xport(t,regi,"perm") - vm_Mport(t,regi,"perm"))$(cm_permTradingJustMip eq 1)
+  )
+  - pm_taxrevGHG0(t,regi)
 ;
 
 ***---------------------------------------------------------------------------

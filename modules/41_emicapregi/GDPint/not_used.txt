@@ -15,3 +15,4 @@ pm_gdp,input,questionnaire
 cm_permittradescen,input,questionnaire
 cm_permitTradeFinalYr, input, ???
 cm_permitTradeRatio, input, ???
+pm_taxCO2eq, parameter, ???

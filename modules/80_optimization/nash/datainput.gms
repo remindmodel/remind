@@ -13,7 +13,13 @@ o80_trackSurplusSign(ttot,trade,iteration)$(NOT tradeSe(trade)) = 0;
 pm_cumEff(t, regi, in) = 100;
 
 *MLB 20140109* initialization of climate externality is sensitive
-pm_co2eqForeign(t, regi) = (1 - pm_shPerm(t,regi)) * pm_emicapglob(t);
+
+$ifthen "%emicapregi%" ne "JUSTMip"
+pm_co2eqForeign(t,regi) =
+    (1 - pm_shPerm(t,regi)) * pm_emicapglob(t);
+$endif
+
+
 
 ***convergence mode
 if(cm_nash_autoconverge gt 0,
@@ -45,21 +51,21 @@ cm_iteration_max = 100;
 *Nash adjustment costs. Involves a trade-off: If set too low, markets jump far away from clearance. Set too high, changes in trade patten over iterations are very slow, convergence takes many many iterations. Default value around 150
 p80_etaAdj(tradePe) = 80; 
 p80_etaAdj("good") = 100;
-p80_etaAdj("perm") = 10;
+p80_etaAdj("perm") = cm_nash_etaAdj_perm;
 
 *LB* parameter for nash price algorithm within the optimization. 
 p80_etaXp(tradePe) = 0.1;
 p80_etaXp("good") = 0.1;
-p80_etaXp("perm") = 0.2;
+p80_etaXp("perm") = cm_nash_etaXp_perm;
 
 *LB* parameter for Nash price algorithm between different iterations
 p80_etaLT(trade) = 0;
-p80_etaLT("perm") = 0.04;
+p80_etaLT("perm") = cm_nash_etaLT_perm;
 
 ***These parameters are pretty sensitive. If market surpluses diverge, try higher values (up to 1). If surpluses oscillate, try lower values. 
 p80_etaST(tradePe) = 0.3;
 p80_etaST("good") = 0.25;
-p80_etaST("perm") = 0.8;
+p80_etaST("perm") = cm_nash_etaST_perm;
 
 $ifi %banking% == "banking"  p80_etaST("perm") = 0.2;      !! in banking mode, the permit market reacts more sensitively.
 $ifi %emicapregi% == "budget"  p80_etaST("perm") = 0.25;      !! in budget mode, the permit market reacts more sensitively.
@@ -93,7 +99,10 @@ p80_repy_iteration(all_regi,solveinfo80,iteration) = 0;
 p80_repy_nashitr_solitr(all_regi,solveinfo80,iteration,sol_itr) = 0;
 pm_capCumForeign(ttot,regi,teLearn)$(ttot.val ge 2005)=0;
 qm_co2eqCum.m(regi) = 0;
+$ifthen "%emicapregi%" ne "JUSTMip"
 q80_budgetPermRestr.m(regi) = 0;
+$endif
+
 
 ***read in price paths as fallback option
 ***p80_pvpFallback(ttot,trade) = 0;

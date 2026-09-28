@@ -203,6 +203,8 @@ p45_taxCO2eq_anchorRegi(t,regi)$(t.val gt 2100) = p45_taxCO2eq_anchorRegi("2100"
 *** Set pm_taxCO2eq to that value for the first iteration.
 pm_taxCO2eq(ttot,regi) = p45_taxCO2eq_anchorRegi(ttot,regi);
 
+p45_taxCO2eq_anchorRegi_iter(ttot, regi, "1") = p45_taxCO2eq_anchorRegi(ttot,regi);
+
 *** Lower bound pm_taxCO2eq by p45_taxCO2eq_path_gdx_ref if switch cm_taxCO2_lowerBound_path_gdx_ref is on
 if(cm_taxCO2_lowerBound_path_gdx_ref = 1,
   pm_taxCO2eq(t,regi) = max(pm_taxCO2eq(t,regi), p45_taxCO2eq_path_gdx_ref(t,regi));

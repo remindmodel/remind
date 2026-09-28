@@ -16,3 +16,4 @@ pm_shPPPMER,input,questionnaire
 pm_pop, parameter, ???
 pm_gdp,input,questionnaire
 p41_co2eq_bau, parameter, ???
+pm_taxCO2eq, parameter, ???

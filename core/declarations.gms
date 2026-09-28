@@ -73,7 +73,11 @@ q_esCapInv(ttot,all_regi,all_teEs)                   "investment equation for en
 parameters
 
 *** emissions parameters for nash algorithm
+$ifthen "%emicapregi%" ne "JUSTMip"
 pm_co2eqForeign(tall,all_regi)                       "emissions, which are part of the climate policy, of other regions (nash relevant)."
+$endif
+
+
 pm_co2eq0(tall,all_regi)                             "Total greenhouse gas emissions from last iteration based on vm_co2eq used in nash algorithm [GtCeq]"
 
 *** parameters used for MAC curves
@@ -126,7 +130,10 @@ pm_share_CCS_CCO2(ttot,all_regi)                     "share of stored CO2 from t
 variables
 
 *** total emissions
+$ifthen "%emicapregi%" ne "JUSTMip"
 vm_co2eqGlob(ttot)                                   "total global greenhouse gas emissions to be balanced by allowances [GtCeq]"
+$endif
+
 vm_co2eq(ttot,all_regi)                              "total greenhouse gas emissions measured in co2 equivalents that are subject to carbon pricing, be aware that emissions coverage of this variable depends on switch cm_multigasscen [GtCeq]"
 vm_co2eqMkt(ttot,all_regi,all_emiMkt)                "total greenhouse gas emissions per market measured in co2 equivalents that are subject to carbon pricing, be aware that emissions coverage of this variable depends on switch cm_multigasscen [GtCeq]"
 vm_emiAll(ttot,all_regi,all_enty)                    "total emissions by species [GtC, Mt CH4, Mt N, Mt SO2, Mt BC, Mt OC]"
@@ -175,7 +182,9 @@ q_emiCap(ttot,all_regi)                              "emission cap"
 q_emiMac(ttot,all_regi,all_enty)                     "summing up all non-energy emissions"
 q_co2eq(ttot,all_regi)                               "regional emissions in co2 equivalents"
 q_co2eqMkt(ttot,all_regi,all_emiMkt)                 "regional emissions per market in co2 equivalents"
+$ifthen "%emicapregi%" ne "JUSTMip"
 q_co2eqGlob(ttot)                                    "global emissions in co2 equivalents"
+$endif
 qm_co2eqCum(all_regi)                                "cumulate regional emissions over time"
 q_budgetCO2eqGlob                                    "global emission budget balance"
 q_emiTeDetailMkt(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "detailed energy specific emissions per region and market"

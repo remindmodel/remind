@@ -10,6 +10,11 @@ pm_gdp_gdx, parameter, ???
 pm_budgetCO2eq, parameter, ???
 vm_co2eqGlob,input,questionnaire
 cm_emiscen,input,questionnaire
+p41_precorrection_reduction, parameter, ???
+p41_correct_factor, parameter, ???
+pm_shPPPMER,input,questionnaire
+pm_pop, parameter, ???
+p41_co2eq_bau, parameter, ???
+cm_permittradescen, input, ???
 cm_permitTradeFinalYr, input, ???
 cm_permitTradeRatio, input, ???
-pm_taxCO2eq, parameter, ???

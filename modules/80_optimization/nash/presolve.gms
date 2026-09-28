@@ -16,9 +16,17 @@ pm_capCumForeign(ttot,regi,teLearn)$((ttot.val ge 2025) and (pm_SolNonInfes(regi
 
 pm_cumEff(ttot,regi, in)$(ttot.val ge 2005 and pm_SolNonInfes(regi) eq 1) = sum( regi2$(pm_SolNonInfes(regi2) eq 1), (pm_cesdata("2005",regi2,in,"eff") * vm_effGr.l(ttot,regi2,in))) - (pm_cesdata("2005",regi,in,"eff") * vm_effGr.l(ttot,regi,in)); !! TODO: take care of the case of infeasible solution
 
+
+$ifthen "%emicapregi%" ne "JUSTMip"
 pm_co2eqForeign(ttot,regi)$((ttot.val ge 2005) and (pm_SolNonInfes(regi) eq 1)) = sum(regi2$((NOT sameas(regi,regi2))), pm_co2eq0(ttot,regi2)); !! does this interfere with the initialization in datainput?
+$endif
+
 
 pm_fuExtrForeign(ttot,regi,enty,rlf)$((ttot.val ge 2005) and (pm_SolNonInfes(regi) eq 1)) = sum(regi2$((NOT sameas(regi,regi2))), vm_fuExtr.l(ttot,regi2,enty,rlf));
 
-display pm_capCumForeign, pm_co2eqForeign;
+display pm_capCumForeign;
+$ifthen "%emicapregi%" ne "JUSTMip"
+display pm_capCumForeign;
+$endif
+
 *** EOF ./modules/80_optimization/nash/presolve.gms

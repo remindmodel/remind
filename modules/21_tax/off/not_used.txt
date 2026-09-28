@@ -74,3 +74,4 @@ vm_deltaCap,variable,only needed if tax is on
 vm_emiCdrAll,input,added by codeCheck
 cm_NetNegEmi_calculation,input,added by codeCheck
 vm_emiAllco2neg,input,added by codeCheck
+cm_permTradingJustMip, input, ???
