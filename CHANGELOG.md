@@ -16,7 +16,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 -
 
 ### removed
--
+- **scripts** Drop the `gdxrrw`/`gdx` R dependency from REMIND scripts; GDX writes now use `gamstransfer`-based `quitte::write.gdx`
+    [[#2485](https://github.com/remindmodel/remind/pull/2485)]
 
 ### fixed
 - **scripts** Fix call to harmonization and infilling console entry point in  `climateAssessmentInterimRun.R`

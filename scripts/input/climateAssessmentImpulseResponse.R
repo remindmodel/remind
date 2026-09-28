@@ -6,7 +6,6 @@
 # |  Contact: remind@pik-potsdam.de
 # !/bin/bash
 library(dplyr)
-require(gdxrrw) # Needs an environmental variable to be set, see below
 library(lucode2)
 library(magrittr)
 library(piamInterfaces)
@@ -234,18 +233,15 @@ oupt <- oupt %>%
 runTimes <- c(runTimes, "postprocessing end" = Sys.time())
 runTimes <- c(runTimes, "write_gdx start" = Sys.time())
 
-writeToGdx <- function(file = "pm_magicc_temperatureImpulseResponse", df) {
-  df$tall <- factor(df$tall)
-  df$tall1 <- factor(df$tall1)
-  attr(df, which = "symName") <- "pm_temperatureImpulseResponse"
-  attr(df, which = "domains") <- c("tall", "tall")
-  attr(df, which = "domInfo") <- "full"
-
-  wgdx.lst(file, df, squeeze = FALSE)
-}
-
-# write to GDX:
-writeToGdx("pm_magicc_temperatureImpulseResponse", oupt)
+# write to GDX
+oupt %>%
+  rename(value = tirf) %>%
+  mutate(variable = "pm_temperatureImpulseResponse") %>%
+  write.gdx(
+    "pm_magicc_temperatureImpulseResponse.gdx",
+    varmap  = c("pm_temperatureImpulseResponse" = "pm_temperatureImpulseResponse"),
+    dimCols = c("tall", "tall1")
+  )
 cat(date(), "climateAssessmentImpulseResponse.R: Wrote results to 'pm_magicc_temperatureImpulseResponse.gdx'\n")
 runTimes <- c(runTimes, "write_gdx end" = Sys.time())
 

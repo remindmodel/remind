@@ -6,7 +6,6 @@
 # |  Contact: remind@pik-potsdam.de
 # !/bin/bash
 library(dplyr)
-require(gdxrrw) # Needs an environmental variable to be set, see below
 library(lucode2)
 library(magrittr)
 library(piamInterfaces)

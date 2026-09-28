@@ -8,7 +8,6 @@ library(gms, quietly = TRUE,warn.conflicts =FALSE)
 library(lucode2, quietly = TRUE,warn.conflicts =FALSE)
 library(dplyr, quietly = TRUE,warn.conflicts =FALSE)
 library(yaml, quietly = TRUE,warn.conflicts=FALSE)
-require(gdx)
 
 
 # Call prepare() and run() without cfg, because cfg is read from results folder, where it has been
