@@ -36,6 +36,7 @@ if ("--update" %in% argv) {
 library(optparse)
 library(lucode2)
 library(gms)
+library(glue)
 require(stringr, quietly = TRUE)
 
 # Import all functions from the scripts/start folder
@@ -83,6 +84,10 @@ parseOptions <- function() {
     make_option("--slurmConfig",
       type = "character", default = NULL,
       help = "specify SLURM selection: use 'priority', 'short', or 'standby', or pass multiple SLURM arguments (e.g. '--qos=priority --mem=8000')"
+    ),
+    make_option("--sections",
+      type = "character", default = NULL,
+      help = "[compareScenarios2 only] choose sections to build (e.g. '--sections=0,2,4')"
     )
   )
   parser <- OptionParser(
@@ -91,14 +96,18 @@ parseOptions <- function() {
   )
   # these flags appear in the various output scripts and are necessary here
   # if you add a command line argument to a script, add it here as well
-  additionalScriptOptions = list("profileNames", "runs", "folder", "project", "sections",
+  additionalScriptOptions = list("profileNames", "runs", "folder", "project",
     "outputFilename", "model", "mapping", "summationFile", "logFile", "removeFromScen",
     "addToScen", "iiasatemplate", "timesteps", "validationConfig", "interactive")
   for (option in additionalScriptOptions) {
-    parser <- add_option(parser, paste0("--", option), help="This option is used in an output script, see your script for information.")
+    parser <- add_option(parser, glue::glue("--{option}"), help="This option is used in an output script, see your script for information.")
   }
 
   return(parse_args(parser))
+}
+
+bold <- function(text) {
+  return(glue::glue("\033[1m{text}\033[22m"))
 }
 
 chooseSlurmConfigOutput <- function(output) {
@@ -129,17 +138,17 @@ chooseSlurmConfigOutput <- function(output) {
 }
 
 chooseFilenamePrefix <- function(modules, title = "") {
-  cat(paste0("\n\n ", title, "Please choose a prefix for filenames of ", paste(modules, collapse=", "), ".\n"))
-  cat(" For example compareScenarios2 uses it for the filenames: compScen-yourprefix-2022-….pdf.\n Use only A-Za-z0-9_-, or leave empty:\n\n")
+  cat(glue::glue("\n\n\n{title}Please choose a prefix for filenames of {paste(modules, collapse=', ')} ({bold('--filename_prefix')}).") + "\n")
+  cat("For example compareScenarios2 uses it for the filenames: compScen-yourprefix-2022-….pdf.\nUse only A-Za-z0-9_-, or leave empty:\n\n")
   filename_prefix <- gms::getLine()
   if(grepl("[^A-Za-z0-9_-]", filename_prefix)) {
-    filename_prefix <- chooseFilenamePrefix(modules, title = paste("No, this contained special characters, try again.\n",title))
+    filename_prefix <- chooseFilenamePrefix(modules, title = "No, this contained special characters, try again.\n")
   }
   return(filename_prefix)
 }
 
 promptForAliases <- function(outputdirs, scenarios) {
-  message("\nSuggested names to be used in the output (e.g. PDF files):")
+  message(glue::glue("\n\n\nSuggested names to be used in the output (e.g. PDF files, {bold('--aliases')}):"))
   for (i in seq_along(outputdirs)) {
     message(sprintf("  [%d] %s -> \"%s\"", i, basename(outputdirs[i]), scenarios[i]))
   }
@@ -162,7 +171,7 @@ promptForAliases <- function(outputdirs, scenarios) {
 
 chooseCompMode <- function() {
   modes <- c("single" = "Output for single run", "comparison" = "Comparison across runs", "export" = "Export", "exit" = "Exit")
-  comp <- names(modes)[which(chooseFromList(unname(modes), type = "output mode", multiple = FALSE, returnBoolean = TRUE, userinfo = "Leave empty for 'single'."))]
+  comp <- names(modes)[which(chooseFromList(unname(modes), type = glue::glue("output mode ({bold('--comp')})"), multiple = FALSE, returnBoolean = TRUE, userinfo = "Leave empty for 'single'."))]
   if (length(comp) == 0) comp <- names(modes)[[1]]
   if (comp == "exit") q()
   return(comp)
@@ -174,7 +183,7 @@ chooseOutputScript <- function(comp) {
   # if more than one option exists, let user choose
   defaultoutput <- switch(comp, "single" = gms::readDefaultConfig(".")$output, "comparison" = "compareScenarios2", "export" = "xlsx_IIASA")
   userinfo <- paste("Leave empty for", paste(defaultoutput, collapse = ", "))
-  output <- if (length(modules) == 1) modules else chooseFromList(modules, type = "modules to be used for output generation", addAllPattern = FALSE, userinfo = userinfo)
+  output <- if (length(modules) == 1) modules else chooseFromList(modules, type = glue::glue("modules to be used for output generation ({bold('--output')})"), addAllPattern = FALSE, userinfo = userinfo)
   if (length(output) == 0) output <- defaultoutput
   # move "reporting" to first position, if it exists
   output <- c(if ("reporting" %in% output) "reporting", output[! output %in% "reporting"])
@@ -202,7 +211,7 @@ chooseOutputDirs <- function(output, remind_dir) {
   if (length(dirnames) == 0) {
     stop("No directories found containing gdx", if (needingMif) " and mif", " files. Aborting.")
   }
-  selectedDirs <- chooseFromList(dirnames, type = "runs to be used for output generation",
+  selectedDirs <- chooseFromList(dirnames, type = glue::glue("runs to be used for output generation ({bold('--outputdirs')})"),
                     userinfo = paste0(if ("policyCosts" %in% output) "The reference run will be selected separately! " else NULL,
                                       if (needingMif) "Do you miss a run? Check if .mif exists and rerun reporting. " else NULL),
                     returnBoolean = FALSE, multiple = TRUE)
