@@ -14,16 +14,14 @@ pm_taxCO2eq(t,regi) = p45_taxCO2eq_bau(t,regi);
 
 
 *** load NDC emissions targets (only fraction of emissions in REMIND region from countries with NDC targets)
-Table f45_EmiTargetAbs(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with absolute NDC emissions targets, emissions from countries without targets are not included [Mt CO2eq/yr]"
+Parameter p45_EmiTargetAbs(ttot,all_regi) "Absolute NDC emissions targets, emissions from countries without targets are not included [Mt CO2eq/yr]"
+/
 $offlisting
 $ondelim
-$include "./modules/45_carbonprice/NDC/input/fm_EmiTargetAbs.cs3r"
+$include "./modules/45_carbonprice/NDC/input/fm_EmiTargetAbs.cs4r"
 $offdelim
 $onlisting
-;
-
-Parameter p45_EmiTargetAbs(ttot,all_regi) "Absolute NDC emissions targets, emissions from countries without targets are not included [Mt CO2eq/yr]";
-p45_EmiTargetAbs(t,all_regi) = f45_EmiTargetAbs(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
+/;
 
 *** quick-fix EUR 2035 NDC target, to be removed after target calculation rewrite in mrremind
 *** take mean of 66.25% and 72.5% reduction instead of higher 72.5% reduction which is default in mrremind target calculation if countries provide a range
@@ -49,7 +47,7 @@ Parameter p45_delay(all_regi) "delay of NDC targets, defined per region [years]"
     REF 30, MEA 30 
 /;
 
-** Requires cm_NDC_version = 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
+** copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
 *** Special case for REF and MEA: delay of 2035 NDC by 35 years (until 2070) as 2065 is not a valid timestep
 p45_EmiTargetAbs(t,regi)$(t.val eq 2030 + p45_delay(regi)) = p45_EmiTargetAbs("2030",regi);
 p45_EmiTargetAbs(t,regi)$(t.val eq 2035 + p45_delay(regi)) = p45_EmiTargetAbs("2035",regi);
@@ -63,21 +61,19 @@ $ENDIF
 
 display p45_EmiTargetAbs;
 
-Table f45_shareTarget(tall,all_regi,NDC_version,all_GDPpopScen) "Table for all NDC versions with estimated target year GHG emissions share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]"
+Parameter p45_shareTarget(ttot,all_regi) "Estimated target year GHG emissions share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]"
+/
 $offlisting
 $ondelim
-$include "./modules/45_carbonprice/NDC/input/fm_shareTarget.cs3r"
+$include "./modules/45_carbonprice/NDC/input/fm_shareTarget.cs4r"
 $offdelim
 $onlisting
-;
-
-Parameter p45_shareTarget(ttot,all_regi) "Estimated target year GHG emissions share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years [0..1]";
-p45_shareTarget(t,all_regi) = f45_shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
+/;
 
 
 $ifThen "%cm_targetDelay%" == "prisma"
 *** PRISMA Asymetric rollback
-** Requires cm_NDC_version = 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
+** copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
 p45_shareTarget(t,regi)$(t.val eq 2030 + p45_delay(regi)) = p45_shareTarget("2030",regi);
 p45_shareTarget(t,regi)$(t.val eq 2035 + p45_delay(regi)) = p45_shareTarget("2035",regi);
 p45_shareTarget("2070","REF") = p45_shareTarget("2035","REF");
@@ -120,7 +116,7 @@ p45_NDCyearSet(t,regi)$(t_NDC_targetYear(t)) = p45_shareTarget(t,regi) >= p45_mi
 
 $ifThen "%cm_targetDelay%" == "prisma"
 *** PRISMA Asymetric rollback
-** Requires cm_NDC_version = 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
+** copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
 p45_NDCyearSet(t,regi)$(t.val eq 2030 + p45_delay(regi)) = p45_NDCyearSet("2030",regi);
 p45_NDCyearSet(t,regi)$(t.val eq 2035 + p45_delay(regi)) = p45_NDCyearSet("2035",regi);
 p45_NDCyearSet("2070","REF") = p45_NDCyearSet("2035","REF");

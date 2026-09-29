@@ -6,7 +6,18 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/40_techpol/NDC/datainput.gms
 
-Table f40_TechBound(ttot,all_regi,NDC_version,all_te) "Table for all NDC versions with NDC capacity targets (GW)"
+*** Quick patch: cm_NDC_version switch was removed (PBL 2026 NDC inputs carry no version dimension).
+*** Local set mirrors the version members present in the input file; assignments are hard-coded
+*** to "2024_cond" (latest version in the file, previous default of the removed switch) until module 40 is cleaned up.
+Set NDC_version "NDC data versions present in input file"
+  /
+    2018_cond, 2018_uncond,
+    2021_cond, 2021_uncond,
+    2022_cond, 2022_uncond,
+    2023_cond, 2023_uncond,
+    2024_cond, 2024_uncond
+  /;
+Table f40_TechBound(ttot,all_regi,NDC_version,all_te) "NDC capacity targets (GW), single version 2024_cond"
 $offlisting
 $ondelim
 $include "./modules/40_techpol/NDC/input/f40_NDC+REN21+CHN_NUC.cs3r"
@@ -16,10 +27,10 @@ $onlisting
 
 *** ensure that lower technology bounds are not decreasing
 *** this only refers to lower bounds and needs to be revised once upper bounds are introduced.
-p40_TechBound(ttot,all_regi,te) = smax(ttot2 $ (ttot2.val <= ttot.val) , f40_TechBound(ttot2,all_regi,"%cm_NDC_version%",te));
+p40_TechBound(ttot,all_regi,te) = smax(ttot2 $ (ttot2.val <= ttot.val) , f40_TechBound(ttot2,all_regi,"2024_cond",te));
 
 *** windoffshore-todo: separate NDC targets for windon and windoff
-p40_TechBound(ttot,all_regi,"wind") = f40_TechBound(ttot,all_regi,"%cm_NDC_version%","wind");
+p40_TechBound(ttot,all_regi,"wind") = f40_TechBound(ttot,all_regi,"2024_cond","wind");
 
 *** IND nuclear target is now 63GW in 2032 https://unfccc.int/sites/default/files/NDC/2022-06/INDIA%20INDC%20TO%20UNFCCC.pdf#page=10
 *** Realistic maximum of 17.25GW calculated with the near-term analysis rules: https://github.com/pik-piam/mrremind/discussions/540
