@@ -151,10 +151,6 @@ vm_costTeCapital.fx(t,   regi,teNoLearn) = pm_inco0_t(t,regi,teNoLearn);
 *' No battery storage in 2010
 vm_cap.up("2010",regi,teStor,"1") = 0;
 
-*** NR: cumulated capacity never falls below initial cumulated capacity:
-vm_capCum.lo(ttot,regi,teLearn) $ (ttot.val >= cm_startyear) = pm_data(regi,"ccap0",teLearn);
-*** exception for tech_stat 4 technologies whose ccap0 refers to 2025 as these technologies don't exist in 2005
-vm_capCum.lo(ttot,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) = 4 and ttot.val <= 2020) = 0;
 
 
 *' Advanced technologies shouldn't be built prior to 2015/2020
@@ -175,9 +171,7 @@ loop(regi,
 
 *' no technologies with tech_stat 4 before 2025
 vm_cap.fx(t,regi,te,rlf) $ (t.val <= 2020 and pm_data(regi,"tech_stat",te) = 4) = 0;
-*** initialize cumulative capacity of tech_stat 4 technologies at 0 
-*** (not at ccap0 from generisdata_tech.prn which gives the cucmulative capacity
-***  at the initial investment cost of the first year in which the technology can be built)
+*** initialize cumulative capacity of tech_stat 4 technologies at 0
 vm_capCum.fx(t0,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) = 4) = 0;
 *** tech_stat 4 technologies don't learn before 2025, so capital cost should be fixed
 vm_costTeCapital.fx(t,regi,teLearn) $ (t.val <= 2020 and pm_data(regi,"tech_stat",teLearn) = 4) = fm_dataglob("inco0",teLearn);
@@ -185,6 +179,34 @@ vm_costTeCapital.fx(t,regi,teLearn) $ (t.val <= 2020 and pm_data(regi,"tech_stat
 *** no technologies with tech_stat 5 before 2030
 vm_deltaCap.fx(t,regi,te,rlf) $ (t.val <= 2025 and pm_data(regi,"tech_stat",te) = 5) = 0;
 
+
+
+*** Assume no retirements before 2005 for more established learning techs
+vm_capCum.fx("2005", regi, "windon") = pm_histCap("2005", regi, "windon");
+vm_capCum.fx("2005", regi, "windoff") = pm_histCap("2005", regi, "windoff");
+vm_capCum.fx("2005", regi, "spv") = pm_histCap("2005", regi, "spv");
+vm_capCum.fx("2005", regi, "csp") = pm_histCap("2005", regi, "csp");
+
+*** Capacity: 0.5 GW(el), elh2 efficiency: 0.65 (elh2 efficiency)
+*** Based on Ramboll 2023, https://energycentral.com/system/files/ece/nodes/658117/ghpp.pdf
+*** and IEA 2024 Hydrogen Review, https://www.iea.org/reports/global-hydrogen-review-2024
+vm_capCum.fx("2020",regi,"elh2") = 0.5 * 0.65 * s_GW_2_TW / card(regi);
+
+*** these are guesses by Robert Pietzcker
+vm_capCum.fx("2005",regi,"storwindon") = 0.00005 / card(regi);
+vm_capCum.fx("2005",regi,"storwindoff") = 0.00005 / card(regi);
+vm_capCum.fx("2005",regi,"storspv") = 0.00005 / card(regi);
+vm_capCum.fx("2005",regi,"storcsp") = 0.00005 / card(regi);
+
+*** Assume that 3 MtCO2/yr DAC capacity installed gobally by 2025 (https://www.iea.org/reports/direct-air-capture)
+vm_capCum.fx("2025",regi,"dac") = 3 * sm_MtCO2_2_GtC / card(regi);
+
+$ifthen.c_BCLearning not "%c_BCLearning%" == 0
+*** these are guesses by Tabea Dorndorf
+  vm_capCum.fx("2015",regi,"biopyronly") = 0.001 / card(regi);
+  vm_capCum.fx("2015",regi,"biopyrhe") = 0.001 / card(regi);
+  vm_capCum.fx("2015",regi,"biopyrchp") = 0.001 / card(regi);
+$endif.c_BCLearning
 
 *** ------------------------------------------------------------------
 *' ##### Capacity for nuclear energy
