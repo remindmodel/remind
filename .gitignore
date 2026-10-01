@@ -81,8 +81,8 @@ plotRuntimeDependencies/
 .Rproj.user
 runtime.rds
 
-# main renv.lock should only be commited for releases
 /.Rbuildignore
+renv.lock
 
 # ignore RStudio project files
 /*.Rproj
