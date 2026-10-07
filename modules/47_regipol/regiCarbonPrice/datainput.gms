@@ -157,6 +157,7 @@ $endif.cm_implicitQttyTargetType
   pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"CCS",qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"CCS",qttyTargetGroup) = pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"CCS",qttyTargetGroup)/(sm_c_2_co2*1000);
   pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"oae",qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"oae",qttyTargetGroup) = pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"oae",qttyTargetGroup)/(sm_c_2_co2*1000);
   pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"novelCDR",qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"novelCDR",qttyTargetGroup) = pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"novelCDR",qttyTargetGroup)/(sm_c_2_co2*1000);
+  pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"allCDR",qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"allCDR",qttyTargetGroup) = pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"allCDR",qttyTargetGroup)/(sm_c_2_co2*1000);
 	p47_implicitQttyTargetTax0(t,all_regi) = 0;
 $endIf.cm_implicitQttyTarget
 

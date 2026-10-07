@@ -33,6 +33,7 @@ pm_data,input,questionnaire
 pm_inco0_t,input,questionnaire
 cm_frac_CCS,input,questionnaire
 cm_frac_NetNegEmi,input,questionnaire
+cm_frac_CDR,input,questionnaire
 pm_fuExtrForeign,input,questionnaire
 vm_emiMacSector,input,questionnaire
 cm_multigasscen,input,questionnaire

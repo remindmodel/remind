@@ -59,6 +59,7 @@ qttyTarget "quantity target for energy carrier level (primary, secondary, final 
   CCS             "carbon capture and storage"
   oae             "ocean alkalinity enhancement"
   novelCDR         "novel carbon dioxide removal"
+  allCDR          "all CDR including negative LUC emissions"
 /
 
 qttyTargetGroup "quantity target aggregated categories"

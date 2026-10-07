@@ -783,8 +783,8 @@ parameter
 parameter
 cm_LTSstartYr "[46_carbonpriceRegi] First year with non-zero regional carbon price markup to reach net-zero targets (Long-Term Strategy)"
 ;
-cm_LTSstartYr = 2040;        !! def = 2040  !! regexp = 20[0-9](0|5)
-*' *  (2040): NDC-LTS scenario: default start of rescaling is 2040, which allows meeting 2035 NDC targets
+cm_LTSstartYr = 2030;        !! def = 2030  !! regexp = 20[0-9](0|5)
+*' *  (2040): NDC-LTS scenario: scenario starts in 2040, which allows meeting 2035 NDC targets
 *' *  (2030): LTS scenario: from 2030 onward, regions see a carbon price markup to reach their net-zero targets, so they may overshoot NDC targets
 
 parameter
@@ -1175,6 +1175,11 @@ parameter
 ;
   cm_frac_CCS          = 10;   !! def = 10
 *'
+parameter
+  cm_frac_CDR         "tax on CDR that effectively reduces the CDR subsidy by that fraction"
+;
+cm_frac_CDR = 0; !! def = 0
+*' This tax reduces the effective carbon price for all CDR options except land-use change (either exogenous in REMIND standalone, or calculated in MAgPIE); default is 0. Caution: if combined with cm_frac_NetNegEmi both effects are combined
 
 parameter
   cm_frac_NetNegEmi    "tax on net negative emissions to reflect risk of overshooting, formulated as fraction of carbon price"
@@ -1465,19 +1470,20 @@ $setglobal cm_targetDelay  off     !! def = "off"
 *' *  (prisma): PRISMA Staying Alive: use MeetAspiration as reference scenario for wind and solar capacity pathways by using "prisma_SA"
 $setglobal cm_ReferenceCapacities  off     !! def = "off"
 
-*' cm_NDC_CO2PriceLimit            "sets regional upper limit for CO2 prices in NDC realization" [requires 45_carbonprice = NDC]"
-*' This serves to not force regions to reach NDC emissions targets at extremly high CO2 prices in the near-term. 
+*' cm_CO2PriceLimit            "sets regional upper limit for CO2 prices."
+*' This serves to not force regions to reach e.g., NDC emissions targets at extremly high CO2 prices in the near-term. 
 *' Instead, regions go "as close as still plausible" to their NDC targets. 
 *' * Examples on how to use:
 *' *  "2030.EUR 150" means that EUR has maximum CO2 price of 150 USD/tCO2 in 2030. 
 *' *  For the development after the target year, the switch cm_NDC_CO2PriceLimit_continuation determines whether or not an upper limit on CO2 prices is imposed.
 *' *  By default 2030 CO2 prices are limited to 150 USD/tCO2 in EUR, 80 USD/tCO2 in CAZ, USA, JPN and NEU, 50 USD/tCO2 in REF and MEA, 40 USD/tCO2 in LAM and CHA, 30 USD/tCO2 in OAS, 15 USD/tCO2 in IND and 10 USD/tCO2 in SSA.
 *' *  If set to "off", no CO2 price limits are applied in any region.
-$setglobal cm_NDC_CO2PriceLimit  2030.EUR 200, 2030.(CAZ,USA, JPN, NEU) 80, 2030.(REF,MEA) 50, 2030.(LAM, CHA) 40, 2030.OAS 30, 2030.IND 15, 2030.SSA 10    !! def = "2030.EUR 200, 2030.(CAZ,USA, JPN, NEU) 80, 2030.(REF,MEA) 50, 2030.(LAM, CHA) 40, 2030.OAS 30, 2030.IND 15, 2030.SSA 10" 
+*' *  For policy scenarios: 2030.EUR 200, 2030.(CAZ,USA, JPN, NEU) 80, 2030.(REF,MEA) 50, 2030.(LAM, CHA) 40, 2030.OAS 30, 2030.IND 15, 2030.SSA 10
+$setglobal cm_CO2PriceLimit   off   !! def = "off" 
 *' cm_NDC_CO2PriceLimit_continuation "switch to determine whether CO2 price limits in NDC realization are applied only in the specified target year or also in subsequent years" [requires 45_carbonprice = NDC]
-*' *  (on): CO2 price limits are applied not only in the specified target year but also in subsequent years, with the limit increasing by 20% per year after the target year, but allowing for carbon price of at least 200$/tCO2 at minimum
+*' *  (on): CO2 price limits are applied not only in the specified target year but also in subsequent targett years (e.g. 2035), carbon price limit triples over 5-year time period (e.g. between 2030-35) but is at least 200$/tCO2 from 2035 on, needs cm_CO2PriceLimit to be non-zero
 *' *  (off): CO2 price limits are only applied in the specified target year, but not in subsequent years
-$setglobal cm_NDC_CO2PriceLimit_continuation  off     !! def = "off"  !! regexp = on|off
+$setglobal cm_NDC_CO2PriceLimit_continuation  on     !! def = "on"  !! regexp = on|off
 *' cm_NDC_postTargetDevelopment            "choose assumption on co2 price trajectory after NDC target years" [requires 45_carbonprice = NDC]
 *' *  (constant):                     carbon price remains constant after the last NDC target year
 *' *  (global_conv):                  carbon price converges across regions to a global value of 100$/tCO2 by 2100
@@ -1613,11 +1619,17 @@ $setGlobal cm_emiMktTarget  off    !! def = off
 ***   Example on how to use:
 ***      cm_emiMktTarget_tolerance = 'GLO 0.004, DEU 0.01'. All regional emission targets will be considered converged if they have at most 0.4% of the target deviation, except for Germany that requires 1%.
 $setGlobal cm_emiMktTarget_tolerance  GLO 0.01    !! def = GLO 0.01
+
 *** cm_scaleDemand - Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window.
 *** Requires re-calibration in order to work.
 ***   Example on how to use:
-***     cm_scaleDemand = '2020.2040.(EUR,NEU,USA,JPN,CAZ) 0.75' applies a 25% demand reduction on those regions progressively between 2020 (100% demand) and 2040 (75% demand).
+***     cm_scaleDemand = '2020.2040.(EUR,NEU,USA,JPN,CAZ) 0.75' linearly phases in a 25% demand reduction on those regions from 2020 (100% demand) to 2040 (75% demand) and keeps the reduction constant afterwards.
 $setGlobal cm_scaleDemand  off    !! def = off
+*** cm_scaleDemandChem - Rescaling factor on chemicals final energy and usable energy demand, for selected regions and over a phase-in window.
+*** Requires re-calibration in order to work.
+***   Example on how to use:
+***     cm_scaleDemandChem = '2020.2040.(EUR,NEU,USA,JPN,CAZ) 0.75' linearly phases in a 25% chemical demand reduction on those regions from 2020 (100% demand) to 2040 (75% demand) and keeps the reduction constant afterwards.
+$setGlobal cm_scaleDemandChem  off    !! def = off
 *** cm_scaleDemandBuildTable - Rescaling factor on buildings final energy and usable energy demand, with values coming from an input table.
 *** Requires re-calibration in order to work.
 *** One needs to name the cs4r-file with the multipliers in the scenario_config, and the file needs to be copied by hand to core/input
@@ -1629,6 +1641,7 @@ $setGlobal c_scaleDemandIndTable  off    !! def = off
 *** cm_quantity_regiCO2target "emissions quantity upper bound from specific year for region group."
 ***   Example on how to use:
 ***     '2050.EUR_regi.netGHG 0.000001, obliges European GHG emissions to be approximately zero from 2050 onward"
+
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 *** cm_dispatchSetyDown <- "off", if set to some value, this allows dispatching of pe2se technologies,
 *** i.e. the capacity factors can be varied by REMIND and are not fixed. The value of this switch gives the percentage points by how much the lower bound of capacity factors should be lowered.

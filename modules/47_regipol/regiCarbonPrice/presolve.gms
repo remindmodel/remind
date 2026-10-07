@@ -71,6 +71,8 @@ p47_implicitQttyTargetTax0(t,regi) =
       +
       (vm_emiCdrNovel.l(t,regi)) $ (sameas(qttyTarget,"novelCDR") AND sameas(qttyTargetGroup,"all"))
       +
+      (vm_emiCdrAll.l(t,regi)) $ (sameas(qttyTarget,"allCDR") AND sameas(qttyTargetGroup,"all"))
+      +
       (( !! Supply side BECCS
         sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail.l(t,regi,enty,enty2,te,enty3))
         !! Industry BECCS (using biofuels in Industry with CCS)

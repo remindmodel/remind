@@ -27,6 +27,11 @@ mag2rem <- tibble::tribble(
     'Emissions|CO2|Land|Land-use Change|Soil|Soil Carbon Management|+|Withdrawals'   ,   'co2lucNegIntentSCM'         ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
     'Emissions|CO2|Land|Land-use Change|Timber|+|Storage in HWP'                     ,   'co2lucNegIntentTimber'      ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
     'Emissions|CO2|Land|Land-use Change|Timber|+|Release from HWP'                   ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
+    # children only in newer MAgPIE reports: other-planted-forest regrowth and the legacy-clearing decay
+    # tail (magpie4 >= 2.82); optional, dropped in getMagpieData when the report lacks them
+    'Emissions|CO2|Land|Land-use Change|Regrowth|+|Other Planted Forest'             ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Legacy clearing|+|Release'                   ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Legacy clearing|+|Storage'                   ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
     'Emissions|N2O|Land|Agriculture|+|Animal Waste Management'                       ,   'n2oanwstm'                  ,   28/44           ,   'f_macBaseMagpie_coupling',
     'Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Inorganic Fertilizers'      ,   'n2ofertin'                  ,   28/44           ,   'f_macBaseMagpie_coupling',
     'Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Manure applied to Croplands',   'n2oanwstc'                  ,   28/44           ,   'f_macBaseMagpie_coupling',
@@ -280,6 +285,15 @@ getMagpieData <- function(path_to_report = "report.mif", mapping) {
   # ---- Read and prepare MAgPIE data ----
 
   mag <- quitte::read.quitte(path_to_report, check.duplicates = FALSE)
+
+  # These CO2 land-use-change children appear only in newer MAgPIE reports: the other-planted-forest
+  # regrowth pool, and the legacy-clearing decay tail (magpie4 >= 2.82). Drop them when the report lacks
+  # them, so coupling with an older MAgPIE stays backward compatible; the strict check below still
+  # catches any genuinely missing required variable.
+  optionalVars <- c("Emissions|CO2|Land|Land-use Change|Regrowth|+|Other Planted Forest",
+                    "Emissions|CO2|Land|Land-use Change|Legacy clearing|+|Release",
+                    "Emissions|CO2|Land|Land-use Change|Legacy clearing|+|Storage")
+  mapping <- mapping[!(mapping$mag %in% optionalVars & !mapping$mag %in% mag$variable), ]
 
   # Stop if variables are missing
   variablesMissing <- ! mapping$mag %in% mag$variable
