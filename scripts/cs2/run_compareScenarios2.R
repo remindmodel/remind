@@ -8,17 +8,19 @@
 library(piamPlotComparison)
 
 if (!exists("source_include")) {
-  lucode2::readArgs("outputdirs", "outFileName", "profileName", "aliases", "sections")
+  lucode2::readArgs("outputdirs", "outFileName", "profileName", "aliases", "sections", "validationConfig")
 }
 if (!exists("aliases"))  { aliases <- NULL }
 if (!exists("sections")) { sections <- "all" }
+if (!exists("validationConfig")) { validationConfig <- NULL }
 
 run_compareScenarios2 <- function(
   outputdirs,
   outFileName,
   profileName,
   aliases,
-  sections
+  sections,
+  validationConfig = NULL
 ) {
 
   stopifnot(length(profileName) == 1 && is.character(profileName) && !is.na(profileName))
@@ -60,6 +62,11 @@ run_compareScenarios2 <- function(
     sections = sections
   )
 
+  # show piamValidation thresholds in line plots, can be overwritten by profiles
+  if (!is.null(validationConfig)) {
+    args$validationConfig <- validationConfig
+  }
+
   # Load cs2 profile and change args.
   message("Applying profile ", profileName)
   profile <- profiles[[profileName]]
@@ -99,4 +106,4 @@ run_compareScenarios2 <- function(
   message("Done!\n")
 }
 
-run_compareScenarios2(outputdirs, outFileName, profileName, aliases, sections)
+run_compareScenarios2(outputdirs, outFileName, profileName, aliases, sections, validationConfig)

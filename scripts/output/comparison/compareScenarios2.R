@@ -11,6 +11,9 @@
 #' @param sections List of section numbers to be included in the PDF
 #' separated by commas. Default: "all".
 #' Examples: --sections=2 --sections=2,3
+#' @param validationConfig Name of or path to a piamValidation config. If
+#' given, validation thresholds are shown as colored background bands in
+#' line plots. Example: --validationConfig=default
 
 
 
@@ -48,7 +51,8 @@ startComp <- function(
   nameCore,
   profileName,
   aliases,
-  sections
+  sections,
+  validationConfig = NULL
 ) {
   if (!exists("slurmConfig")) {
     slurmConfig <- "--qos=standby"
@@ -76,6 +80,7 @@ startComp <- function(
       " --outFileName=", shQuote(outFileName),
       " --aliases=", shQuote(paste(aliases, collapse = ",")),
       " --sections=", shQuote(paste(sections, collapse = ",")),
+      if (!is.null(validationConfig)) paste0(" --validationConfig=", shQuote(validationConfig)),
       "\"")
     cat(clcom, "\n")
     system(clcom)
@@ -96,10 +101,13 @@ startComp <- function(
 # Load cs2 profiles.
 profiles <- piamPlotComparison::getCs2Profiles()
 
-lucode2::readArgs("profileNames", "sections")
+lucode2::readArgs("profileNames", "sections", "validationConfig")
 
 if (! exists("sections")) {
   sections = "all"
+}
+if (! exists("validationConfig")) {
+  validationConfig <- NULL
 }
 
 # Let user choose cs2 profile(s).
@@ -136,5 +144,6 @@ for (profileName in profileNames) {
     nameCore = nameCore,
     profileName = profileName,
     aliases = aliases,
-    sections = sections)
+    sections = sections,
+    validationConfig = validationConfig)
 }
