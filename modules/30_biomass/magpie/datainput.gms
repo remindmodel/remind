@@ -41,9 +41,11 @@ p30_pebiolc_pricemag(ttot,regi) = 0;
 *** Read production of ligno-cellulosic purpose grown bioenergy from look-up table (used to calculate bioenergy costs in standalone runs and substract them from budget equation)
 parameter p30_biolcProductionLookup(tall,all_regi,all_LU_emi_scen,all_rcp_scen)  "regional production of pebiolc purpose grown"
 /
+$offlisting
 $ondelim
 $include "./modules/30_biomass/magpie/input/p30_biolcProductionLookup.cs4r"
 $offdelim
+$onlisting
 /
 ;
 
@@ -54,9 +56,11 @@ pm_pebiolc_demandmag(ttot,regi) = p30_biolcProductionLookup(ttot,regi,"%cm_LU_em
 *** Read parameters for bioenergy supply curve
 parameter f30_bioen_price(tall,all_regi,all_LU_emi_scen,all_rcp_scen,all_charScen)  "time dependent fit coefficients for bioenergy price formula"
 /
+$offlisting
 $ondelim
 $include "./modules/30_biomass/magpie/input/f30_bioen_price.cs4r"
 $offdelim
+$onlisting
 /
 ;
 

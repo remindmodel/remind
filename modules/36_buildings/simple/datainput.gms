@@ -39,9 +39,11 @@ pm_cesdata_sigma(ttot,"enhgab")$ (ttot.val eq 2040) = 3;
 Parameter
 p36_floorspace_scen(tall, all_regi, all_demScen, secBuild36) "floorspace, in buildings simple realization only used for reporting at the moment, not in optimization itself"
 /
+$offlisting
 $ondelim
 $include "./modules/36_buildings/simple/input/f36_floorspace_scen.cs4r"
 $offdelim
+$onlisting
 /
 ;
 p36_floorspace(ttot,regi,secBuild36) =
@@ -52,9 +54,11 @@ p36_floorspace(ttot,regi,secBuild36) =
 Parameter
 f36_uedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in)   "useful energy demand in buildings"
 /
+$offlisting
 $ondelim
 $include "./modules/36_buildings/simple/input/f36_uedemand_build.cs4r"
 $offdelim
+$onlisting
 /
 ;
 

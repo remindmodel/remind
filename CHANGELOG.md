@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
+## [Unreleased]
+
+### input data/calibration
+
+### changed
+-
+
+### added
+-
+
+### removed
+- **scripts** Drop the `gdxrrw`/`gdx` R dependency from REMIND scripts; GDX writes now use `gamstransfer`-based `quitte::write.gdx`
+    [[#2485](https://github.com/remindmodel/remind/pull/2485)]
+
+### fixed
+- **scripts** Fix call to harmonization and infilling console entry point in  `climateAssessmentInterimRun.R`
+    [[#2484](https://github.com/remindmodel/remind/pull/2484)]
+-
+
+
 ## [3.7.1] - 2026-09-25
 
 ### input data/calibration

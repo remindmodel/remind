@@ -19,7 +19,6 @@
 #
 require(tidyverse)
 require(quitte)
-require(gdx)
 require(yaml)
 
 cat("===================== STARTING checkClimatePercentiles.R", "\n")
