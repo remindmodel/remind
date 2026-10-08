@@ -52,7 +52,7 @@ startComp <- function(
   profileName,
   aliases,
   sections,
-  validationConfig = NULL
+  validationConfig
 ) {
   if (!exists("slurmConfig")) {
     slurmConfig <- "--qos=standby"
