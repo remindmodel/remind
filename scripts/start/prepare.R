@@ -5,6 +5,27 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
+library(stringr)
+library(glue)
+
+#' check if delimiters only occur paired in a file. No nesting allowed.
+#'
+#' @param file_path where to check
+#' @param openDelim string of the open delimiter
+#' @param closeDelim string of the closing delimiter
+#'
+#' @return boolean
+validatePairedDelimiters <- function(file_path, openDelim = "$onDelim", closeDelim = "$offDelim") {
+  content <- paste(readLines(file_path, warn = FALSE), collapse = "\n")
+  matches <- str_extract_all(content, glue("{str_escape(openDelim)}|{str_escape(closeDelim)}"))[[1]]
+
+  # Build expected alternating sequence
+  expected <- rep_len(c(openDelim, closeDelim), length(matches))
+
+  # Valid if matches alternating pattern AND count is even
+  return(length(matches) %% 2 == 0 && identical(matches, expected))
+}
+
 prepare <- function() {
 
   timePrepareStart <- Sys.time()
@@ -226,6 +247,15 @@ prepare <- function() {
            paste(from[which(!exist[1:3])], collapse = ', '),
            ' are missing.  Call RSE immediately')
   }
+
+  # $offlisting appears in main.gms but the current process does not let it survive into full.gms
+  # therefore all cs3r/cs4r file contents are dumped directly into the full.lst
+  # to avoid this we add $offlisting manually at $onDelim present at each include of a cs4r/cs3r
+  # first do a sanity check on "$onDelim", "$offDelim"
+  if (!validatePairedDelimiters(dumpFilePath, "$onDelim", "$offDelim")) {
+    stop("We either have nested $onDelim/$offDelim blocks (unnecessarily large) or $onDelim/$offDelim are not correctly matched.")
+  }
+  lucode2::manipulateFile(dumpFilePath, list(c("$onDelim", "$offlisting\n$onDelim"), c("$offDelim", "$offDelim\n$onlisting")), fixed = TRUE)
 
   file.rename(from[exist], to[exist])
 
