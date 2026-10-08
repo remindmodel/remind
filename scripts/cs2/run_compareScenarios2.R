@@ -20,7 +20,7 @@ run_compareScenarios2 <- function(
   profileName,
   aliases,
   sections,
-  validationConfig = NULL
+  validationConfig
 ) {
 
   stopifnot(length(profileName) == 1 && is.character(profileName) && !is.na(profileName))
@@ -63,9 +63,7 @@ run_compareScenarios2 <- function(
   )
 
   # show piamValidation thresholds in line plots, can be overwritten by profiles
-  if (!is.null(validationConfig)) {
-    args$validationConfig <- validationConfig
-  }
+  args$validationConfig <- validationConfig
 
   # Load cs2 profile and change args.
   message("Applying profile ", profileName)
