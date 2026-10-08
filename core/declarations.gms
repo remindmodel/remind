@@ -382,7 +382,7 @@ vm_cap(tall,all_regi,all_te,rlf)                     "net total capacities [TW] 
 v_capDistr(tall,all_regi,all_te,rlf)                 "net capacities, distributed to the different grades for renewables [TW]"
 vm_capTotal(ttot,all_regi,all_enty,all_enty)         "total capacity of pe2se conversion technologies without technology differentation [TW]"
 vm_deltaCap(tall,all_regi,all_te,rlf)                "capacity additions [TW/yr] for energy conversion technologies, [GtC/yr^2] for CCS chain in ccs2te (pipelines/injection)"
-vm_capCum(tall,all_regi,all_te)                      "cumulated capactiy of learning technologies [TW]"
+vm_capCum(tall,all_regi,all_te)                      "cumulated capacity of learning technologies [TW]"
 vm_capEarlyReti(tall,all_regi,all_te)                "fraction of early retired capacity from total standing capacity, can only be increased for technologies for which early retirement is switched on [share]"
 
 *** technoeconomic parameters
@@ -466,7 +466,6 @@ q_smoothphaseoutCapEarlyReti(ttot,all_regi,all_te)   "constraint to limit phase-
 q_capH2BI(ttot,all_regi)                             "calculate hydrogen transmission and distribution capacities for buildings and industry, as total of stationary sector, needed to avoid switching behavior of H2 between both sectors"
 
 *** technology learning equations
-q_capCumNet(t0,all_regi,all_te)                      "set initial cumulated capacity of learning technologies (vm_capCum) in start year"
 qm_deltaCapCumNet(ttot,all_regi,all_te)              "calculate cumulated capacities of learning technologies (vm_capCum)"
 q_costTeCapital(tall,all_regi,all_te)                "calculate investment cost for learning technologies (learning curve)"
 
@@ -657,6 +656,7 @@ sm_TWa_2_TWh                 "convert Tera Watt annum to Tera Wh"           /8.7
 sm_TWa_2_MWh                 "convert Tera Watt annum to Mega Wh"           /8.76e+9/,
 sm_TWa_2_kWh                 "convert Tera Watt annum to kilo Wh"           /8.76e+12/,
 sm_h2kg_2_h2kWh              "convert kg of hydrogen to kWh energy value"   /32.5/,
+s_GW_2_TW                   "convert GW to TW"                             /0.001/,
 sm_tBC_2_TWa                 "t biochar to TWa biochar (28700 [MJ/tBC]*10^-12[EJ/MJ]/31.536[EJ/TWa])" /9.101e-10/,
 
 *** emissions units
