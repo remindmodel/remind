@@ -17,6 +17,9 @@
 # ignore libreoffice lock files
 .~*#
 
+# ignore Mac OS files
+.DS_Store
+
 # Ignore everything in "input" folders
 input/
 !input/files

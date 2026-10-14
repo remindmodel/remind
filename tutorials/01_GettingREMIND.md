@@ -11,7 +11,7 @@ REQUIREMENTS
 - input data
 - git
 - GAMS >= 39.1.0 with CONOPT license
-- R >= 4.0. We recommend R 4.3.2.
+- R >= 4.0. We recommend R 4.6.1.
 - Windows only: RTools
 - LaTeX
 - pandoc
