@@ -2,6 +2,7 @@
 $ontext
 tech_stat   technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'
 inco0       Initial investment costs given in $[2015] / kW[output] capacity; for dac/prc cc: $[2015] / (tC[captured]/a); for other industry prc: $[2015]/(t[output]/a); for weathering:  $[2015]/(t rock/a)
+inco0year   Year in which inco0 holds (only given for learning technologies)
 floorcost   Floor investment costs, given in $[2015] / kW[output]; for dac: $[2015] / (tC[captured]/a)
 constrTme   Construction time in years, needed to calculate turn-key cost premium compared to overnight costs
 lifetime    Average lifetime of a technology, given in years. Effective maximum lifetime is longer than that.
@@ -9,7 +10,6 @@ mix0        Fraction of output that is produced by this technology in 2005. This
 eta         Conversion efficieny, i.e. energy output divided by energy input (except for nuclear plants, where it is TW energy output over Mt Uranium input)
 omf         Fixed operation and maintenace costs given as a fraction of investment costs
 omv         Variable operation and maintenance costs given in $[2015] / (kW[output] * a) energy production
-ccap0       Cumulated capacity in 2005 given in TW
 learn       Learning rate given in percent cost reduction per doubling of cumulated capacity
 luse        land use factor of solar technologies
 flexibility by RP (parameterization after simple algorithm)
@@ -69,51 +69,51 @@ flexibility                         0.7              0.75        0.7
 +              biopyronly      biopyrhe        biopyrchp           biopyrliq    biocharuse
 tech_stat               1             1                1                 3 
 inco0                1080          1430             1750              3215  
+inco0year            2025          2025             2025
 floorcost             511           668              989        
 constrTme               4             4                4                 4
 eta                  0.48           0.48             0.48              0.36 
 omf                  0.04           0.04             0.04              0.05 
 omv                    70             70               70              138          
 lifetime               30             30               30               40             1
-learn                0.10           0.10             0.10       
-ccap0               0.001          0.001            0.001       
+learn                0.10           0.10             0.10
 
 *** hydrogen technologies
 +                   elh2    h2turb      h2curt    h2turbVRE    h22ch4    MeOH
 tech_stat              3         5           5            5         3       3
 inco0               3500       510         700          510       700     800
+inco0year           2020
 floorcost            130
 constrTme              2         2           2            2         2       2
 lifetime              30        30          30           30        30      30
 eta                 0.73      0.40        0.62         0.40       0.8     0.7
 omf                 0.05      0.03        0.05         0.03      0.03    0.03
 omv                    3        24           0           24        12      12
-ccap0            0.00077
 learn               0.15
 flexibility                     16                       16
 
 
-*** variable relewable energy
+*** variable renewable energy
 +                windon      windoff         spv        csp
 inco0              2400         5000        5160       7224
+inco0year          2005         2005        2005       2005
 floorcost           500          750          50       1092
 constrTme             1            4           1          3
 eta                1.00         1.00        1.00       1.00
 omf                0.02         0.03        0.02      0.025
 lifetime             25           25          30         30
-ccap0              0.06       0.0007       0.005     0.0002
 learn              0.17         0.16        0.25      0.103
 luse                                        0.09      0.021
 flexibility          -1           -1         -1          -1
 
 +            storwindon  storwindoff     storspv    storcsp       gridwindon
 inco0              2940         2940        7720       2520       720
+inco0year          2005         2005        2005       2005
 floorcost           850          850        2280        720 
 mix0               0.00         0.00        0.00       0.00       
 eta                0.85         0.85        0.74       0.79       1
 omf                0.02         0.02        0.02       0.02       0.02
 lifetime             25           25          25         25       45
-ccap0           0.00005      0.00005     0.00005    0.00005 
 learn              0.10         0.10        0.10       0.10 
 flexibility        1.86         1.93        1.85       1.85
 
@@ -156,14 +156,14 @@ lifetime               30        30          45          45          45         
 *** carbon management
 +           ccsinjeon   ccsinjeoff    weathering         dac      oae_ng      oae_el
 tech_stat           0            0             1           4 
-inco0             350          525            43        18800        200         400
+inco0             350          525            43       18800         200         400
+inco0year                                               2025
 floorcost                                               4800
 constrTme           3            5
 lifetime           40           40            20          20          25          25
 mix0             1.00         1.00
 eta              1.00         1.00          1.00        1.00        1.00        1.00
 omf              0.06         0.12          0.59       0.025        0.35        0.17
-ccap0                                                 0.0008
 learn                                                   0.15
 
 
@@ -202,7 +202,6 @@ Electrolysis - elh2
     Initialize learning curve for electrolysis at 0.5 GW(el) installed globally at CAPEX of 2300 USD/kW(el) in 2020.
     Based on Ramboll 2023, https://energycentral.com/system/files/ece/nodes/658117/ghpp.pdf
     and IEA 2024 Hydrogen Review, https://www.iea.org/reports/global-hydrogen-review-2024
-    0.5 GW(el) * 0.65 (elh2 efficiency) * 1e-3 ~ 0.00077 TW(H2) = ccap0 (for 2020)
     2300 USD/kW(el) / 0.65 (elh2 efficiency)  ~ 3500 USD/kW(H2) = inco0 (for 2020)
     Assume floor cost: 100 USD/kW(el)
     100 USD/kW(el) / 0.75 (long-term elh2 efficiency) ~ 133 USD/kW(H2) floorcost
@@ -280,11 +279,9 @@ Hydropower - hydro
 
 Direct Air Capture - dac
     learning parameterization:
-    Assume that 3 MtCO2/yr DAC capacity installed gobally by 2025 (https://www.iea.org/reports/direct-air-capture)
-    that produce at (unit) cost of 400 USD/tCO2 (Climeworks).
+    Assume (unit) cost of 400 USD/tCO2 (Climeworks).
     Assume that all 400 USD/tCO2 are investment cost as current plants runs with waste energy.
 
-    3 MtCO2/yr / 3.66 * / 1000 ~ 0.0008 GtC/yr = ccap0
     400 USD/tCO2 * 0.9 (capacity factor) / (0.07 1/yr) (annuity factor, stretch cost over plant lifetime)
     * 3.66 (tCO2 to tC) ~ 18800 USD/(tC/yr)
     Assume floor cost 100 USD/tCO2.
