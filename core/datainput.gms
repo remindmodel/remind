@@ -592,16 +592,20 @@ $include "./core/input/generisdata_varying_eta.prn"
 *** Read in mac historical emissions to calibrate MAC reference emissions
 parameter p_histEmiMac(tall,all_regi,all_enty)    "historical emissions per MAC"
 /
+$offlisting
 $ondelim
 $include "./core/input/p_histEmiMac.cs4r"
 $offdelim
+$onlisting
 /;
 *** Read in historical emissions per sector to calibrate MAC reference emissions
 parameter p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types)    "historical emissions per sector"
 /
+$offlisting
 $ondelim
 $include "./core/input/p_histEmiSector.cs4r"
 $offdelim
+$onlisting
 /;
 
 ***---------------------------------------------------------------------------
@@ -639,9 +643,11 @@ display pm_emifac;
 *NB* include data and parameters for upper bounds on fossil fuel transport
 parameter f_IO_trade(tall,all_regi,all_enty,char)        "Energy trade bounds based on IEA data"
 /
+$offlisting
 $ondelim
 $include "./core/input/f_IO_trade.cs4r"
 $offdelim
+$onlisting
 /;
 pm_IO_trade(ttot,regi,enty,char) = f_IO_trade(ttot,regi,enty,char) * sm_EJ_2_TWa;
 
@@ -712,7 +718,6 @@ $Onlisting
 
 pm_cf(ttot,regi,te) =  f_cf(ttot,regi,te);
 ***pm_cf(ttot,regi,"h2turbVRE") = 0.15;
-pm_cf(ttot,regi,"elh2VRE") = 0.6;
 *** short-term fix for new synfuel td technologies
 pm_cf(ttot,regi,"tdsyngas") = 0.65;
 pm_cf(ttot,regi,"tdsynhos") = 0.6;
@@ -945,12 +950,13 @@ $include "./core/input/p_boundEmi.cs4r"
 $offdelim
 /;
 *** read in F-Gas emissions
-parameter f_emiFgas(tall,all_regi,all_SSP_forcing_adjust,all_rcp_scen,all_delayPolicy,all_enty)        "F-gas emissions by single gases from IMAGE"
-/
+table f_emiFgas(tall,all_regi,all_SSP_forcing_adjust,all_rcp_scen,all_delayPolicy,all_enty)        "F-gas emissions by single gases from IMAGE"
+$offlisting
 $ondelim
-$include "./core/input/f_emiFgas.cs4r"
+$include "./core/input/f_emiFgas.cs3r"
 $offdelim
-/;
+$onlisting
+;
 
 
 * GA Read choice of non-CO2 MACs version
@@ -959,38 +965,38 @@ $offdelim
 $IFTHEN.MaccVersion %c_nonco2_macc_version% == "PBL_2007"
 * PBL_2007 MACs are discretized in steps of 5 $/tC
 sm_dmac = 5 ;
-parameter p_abatparam_CH4(tall,all_regi,all_enty,steps)        "MAC costs for CH4 by source"
-/
+table p_abatparam_CH4(tall,all_regi,all_enty,steps)        "MAC costs for CH4 by source"
 $ondelim
-$include "./core/input/p_abatparam_CH4.cs4r"
+$include "./core/input/p_abatparam_CH4.cs3r"
 $offdelim
-/;
-parameter p_abatparam_N2O(tall,all_regi,all_enty,steps)        "MAC costs for N2O by source"
-/
+;
+table p_abatparam_N2O(tall,all_regi,all_enty,steps)        "MAC costs for N2O by source"
 $ondelim
-$include "./core/input/p_abatparam_N2O.cs4r"
+$include "./core/input/p_abatparam_N2O.cs3r"
 $offdelim
-/;
+;
 $ELSEIF.MaccVersion %c_nonco2_macc_version% == "PBL_2022"
 *** PBL_2022 MACs are discretized in steps of 20 $/tC
 *** PBL_2022 includes three scenarios, read the big file into p_all_abatparam_CH4 and subset based on c_nonco2_macc_scenario
 *** Create the set here, as it's not really used anywhere else
 set macc_scens "MAC scenarios for PBL_SSP2_2022 MACCs" /Default, Optimistic, Pessimistic/;
-parameter p_all_abatparam_CH4(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for CH4 by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_CH4"
-/
+table p_all_abatparam_CH4(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for CH4 by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_CH4"
+$offlisting
 $ondelim
-$include "./core/input/p_abatparam_SSP22022_CH4.cs4r"
+$include "./core/input/p_abatparam_SSP22022_CH4.cs3r"
 $offdelim
-/;
+$onlisting
+;
 parameter p_abatparam_CH4(tall,all_regi,all_enty,steps) "MAC costs for CH4 by source";
 *** Pick MACC scenario
 p_abatparam_CH4(tall,all_regi,all_enty,steps) = p_all_abatparam_CH4(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
-parameter p_all_abatparam_N2O(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for N2O by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_N2O"
-/
+table p_all_abatparam_N2O(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for N2O by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_N2O"
+$offlisting
 $ondelim
-$include "./core/input/p_abatparam_SSP22022_N2O.cs4r"
+$include "./core/input/p_abatparam_SSP22022_N2O.cs3r"
 $offdelim
-/;
+$onlisting
+;
 parameter p_abatparam_N2O(tall,all_regi,all_enty,steps) "MAC costs for N2O by source";
 *** Pick MACC scenario
 p_abatparam_N2O(tall,all_regi,all_enty,steps) = p_all_abatparam_N2O(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
@@ -999,9 +1005,11 @@ $ENDIF.MaccVersion
 
 parameter p_abatparam_CO2(tall,all_enty,steps)    "MAC costs for CO2 by source"
 /
+$offlisting
 $ondelim
 $include "./core/input/p_abatparam_CO2.cs4r"
 $offdelim
+$onlisting
 /;
 p_abatparam_CH4(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p_abatparam_CH4(tall,all_regi,all_enty,"201");
 p_abatparam_N2O(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p_abatparam_N2O(tall,all_regi,all_enty,"201");
@@ -1497,18 +1505,22 @@ $offdelim
 
 parameter f_macBaseExo(tall,all_regi,all_enty,all_LU_emi_scen)        "baseline emissions of N2O and CH4 from landuse based on exogenous data"
 /
+$offlisting
 $ondelim
 $include "./core/input/f_macBaseExo.cs4r"
 $offdelim
+$onlisting
 /;
 p_macBaseExo(ttot,regi,emiMacExo(enty))$(ttot.val ge 2005) = f_macBaseExo(ttot,regi,emiMacExo,"%cm_LU_emi_scen%");
 
 
 parameter f_macBaseMagpie(tall,all_regi,all_enty,all_LU_emi_scen,all_rcp_scen)    "baseline emissions of N2O and CH4 from landuse based on data from Magpie"
 /
+$offlisting
 $ondelim
 $include "./core/input/f_macBaseMagpie.cs4r"
 $offdelim
+$onlisting
 /;
 pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
 
@@ -1628,13 +1640,14 @@ loop(te,
 
 *** ---- FE demand trajectories for calibration -------------------------------
 
-Parameter
+Table
 f_fedemandInd(tall,all_regi,all_demScen,all_in) "final energy demand in industry"
-/
+$offlisting
 $ondelim
-$include "./core/input/f_fedemandInd.cs4r"
+$include "./core/input/f_fedemandInd.cs3r"
 $offdelim
-/;
+$onlisting
+;
 
 pm_fedemandInd(t,regi,in) = f_fedemandInd(t,regi,"%cm_demScen%",in);
 *** data input for industry FE that is no part of the CES tree 
@@ -1642,13 +1655,14 @@ pm_fedemandInd(t,regi,in) = f_fedemandInd(t,regi,"%cm_demScen%",in);
 pm_fedemandInd(t,regi,ppfen_no_ces_use) = f_fedemandInd(t,regi,"%cm_demScen%",ppfen_no_ces_use);
 
 *** RCP-dependent demands in buildings (climate impact)
-Parameter 
+Table
 f_fedemandBuild(tall,all_regi,all_demScen,all_rcp_scen,all_in) "RCP-dependent final energy demand in buildings"
-/
+$offlisting
 $ondelim
-$include "./core/input/f_fedemandBuild.cs4r"
+$include "./core/input/f_fedemandBuild.cs3r"
 $offdelim
-/;
+$onlisting
+;
 
 pm_fedemandBuild(t,regi,cal_ppf_buildings_dyn36) = f_fedemandBuild(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 

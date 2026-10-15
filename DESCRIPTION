@@ -23,8 +23,6 @@ Imports:
     flexdashboard,
     GDPuc,
     gdx2,
-    gdxdt,
-    gdxrrw,
     ggplot2,
     glue,
     gms (>= 0.33.4),

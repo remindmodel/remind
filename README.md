@@ -94,8 +94,8 @@ so!
 Model dependencies **must be publicly available** and should be Open Source.
 Development aim is to rather minimize than expand dependencies on non-free
 and/or non open source software. That means that besides currently existing
-dependencies on GAMS, the `gdxrrw` R package and the corresponding solvers there
-should be no additional dependencies of this kind and that these existing
+dependencies on GAMS and the corresponding solvers there should be no
+additional dependencies of this kind and that these existing
 dependencies should be resolved in the future if possible.
 
 If a new R package is added as dependency this package should fulfill the

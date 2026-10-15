@@ -16,9 +16,11 @@ pm_NXagr(tall,all_regi) = 0;
 
 parameter p26_totLUcostLookup(tall,all_regi,all_LU_emi_scen,all_rcp_scen)  "regional total landuse cost"
 /
+$offlisting
 $ondelim
 $include "./modules/26_agCosts/costs/input/p26_totLUcostLookup.cs4r"
 $offdelim
+$onlisting
 /
 ;
 
@@ -37,9 +39,11 @@ p26_totLUcosts_withMAC(ttot,regi) = p26_totLUcostLookup(ttot,regi,"%cm_LU_emi_sc
 
 parameter p26_macCostLuLookup(tall,all_regi,all_LU_emi_scen,all_rcp_scen)  "land use emissions MAC cost from MAgPIE"
 /
+$offlisting
 $ondelim
 $include "./modules/26_agCosts/costs/input/p26_macCostLuLookup.cs4r"
 $offdelim
+$onlisting
 /
 ;
 

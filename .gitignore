@@ -17,6 +17,9 @@
 # ignore libreoffice lock files
 .~*#
 
+# ignore Mac OS files
+.DS_Store
+
 # Ignore everything in "input" folders
 input/
 !input/files
@@ -81,8 +84,8 @@ plotRuntimeDependencies/
 .Rproj.user
 runtime.rds
 
-# main renv.lock should only be commited for releases
 /.Rbuildignore
+renv.lock
 
 # ignore RStudio project files
 /*.Rproj
