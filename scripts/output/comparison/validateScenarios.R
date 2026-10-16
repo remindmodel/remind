@@ -33,7 +33,7 @@ startVal <- function(outputDirs, validationConfig, validationReportName, nameCor
       " --error=", jobName, ".out",
       " --mail-type=END --time=200 --mem-per-cpu=8000",
         # Prefix RSCRIPT_SLURM_HOOK for piam-apptainer integration (empty if unset)
-      " --wrap=\"", trimws(paste(Sys.getenv("RSCRIPT_SLURM_HOOK", unset = ""), "Rscript")), " ", script,
+      " --wrap=\"set -e; ", trimws(paste(Sys.getenv("RSCRIPT_SLURM_HOOK", unset = ""), "Rscript")), " ", script,
       " --outputdirs=", shQuote(paste(outputDirs, collapse = ",")),
       " --validationConfig=", shQuote(validationConfig),
       " --validationReportName=", shQuote(validationReportName),
