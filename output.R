@@ -338,7 +338,7 @@ runSingle <- function(output, outputdirs, slurmConfig, interactiveSession, test)
       hookedRscript <- trimws(paste(Sys.getenv("RSCRIPT_SLURM_HOOK", unset = ""), "Rscript"))
       Rscripts <- paste0(hookedRscript, " scripts/output/single/", name, " --outputdir=", outputdir, collapse = "; ")
       slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
-                    " --mail-type=END,FAIL --comment=output.R --wrap='", Rscripts, "'")
+                    " --mail-type=END,FAIL --comment=output.R --wrap='set -e; ", Rscripts, "'")
       message("Sending to slurm: ", paste(name, collapse = ", "), ". Find log in ", logfile)
       system(slurmcmd)
     }
