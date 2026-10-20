@@ -57,7 +57,7 @@ magiccEnv <- c(
 magiccInit <- piamenv::condaInit(how = "pik-cluster", log = cfg$logFile, verbose = 1)
 
 runHarmoniseAndInfillCmd <- paste(
-  "python", file.path(system.file(package = "remindClimateAssessment"), "caCompat.py"), "harmonize-infill", cfg$remindEmissionsFile, cfg$climateDir,
+  "python", file.path(system.file(package = "remindClimateAssessment"), "runHarmInfGcages.py"), cfg$remindEmissionsFile, cfg$climateDir,
   "--infilling-database", cfg$infillingDatabase
 )
 
@@ -74,7 +74,7 @@ optionalEmulatorArgs <- c(
 )
 
 runClimateEmulatorCmd <- paste(
-  "python", file.path(system.file(package = "remindClimateAssessment"), "caCompat.py"), "run-climate", cfg$harmInfEmissionsFile, cfg$climateDir,
+  "python", file.path(system.file(package = "remindClimateAssessment"), "runClimateGcages.py"), cfg$harmInfEmissionsFile, cfg$climateDir,
   "--num-cfgs", cfg$nSets,
   "--scenario-batch-size", 1,
   "--probabilistic-file", cfg$probabilisticFile,

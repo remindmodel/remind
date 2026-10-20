@@ -97,7 +97,7 @@ mifBaseScen <- bind_rows(
 # Keep flexible, as we may want to do this with other gases as well
 # Here we assume the pulse comes from energy emissions. AFOLU emissions
 # imply deforestation in some SCMs and would lead to spurious regrowth
-emisVarName <- "AR6 climate diagnostics|Infilled|Emissions|CO2|Energy and Industrial Processes"
+emisVarName <- "Emissions|CO2|Fossil"
 
 # Build a quitte with scenarios that scan the range of pulse sizes and years set above
 # This is pretty fast, so opting for a readable loop instead of an apply
