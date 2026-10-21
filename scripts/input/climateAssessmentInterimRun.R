@@ -48,7 +48,8 @@ magiccInit <- condaInit(how = "pik-cluster", log = cfg$logFile, verbose = 1)
 
 runHarmoniseAndInfillCmd <- paste(
   "python", file.path(system.file(package = "remindClimateAssessment"), "runHarmInfGcages.py"), cfg$remindEmissionsFile, cfg$climateDir,
-  "--infilling-database", cfg$infillingDatabase
+  "--infilling-database", cfg$infillingDatabase,
+  cfg$harmInfArgs
 )
 
 runClimateEmulatorCmd <- paste(
@@ -58,7 +59,8 @@ runClimateEmulatorCmd <- paste(
   "--endyear", 2250,
   "--num-cfgs", cfg$nSets,
   "--scenario-batch-size", 1,
-  "--probabilistic-file", cfg$probabilisticFile
+  "--probabilistic-file", cfg$probabilisticFile,
+  cfg$climateArgs
 )
 
 runTimes <- c(runTimes, "set_up_assessment end" = Sys.time())

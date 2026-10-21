@@ -58,7 +58,8 @@ magiccInit <- piamenv::condaInit(how = "pik-cluster", log = cfg$logFile, verbose
 
 runHarmoniseAndInfillCmd <- paste(
   "python", file.path(system.file(package = "remindClimateAssessment"), "runHarmInfGcages.py"), cfg$remindEmissionsFile, cfg$climateDir,
-  "--infilling-database", cfg$infillingDatabase
+  "--infilling-database", cfg$infillingDatabase,
+  cfg$harmInfArgs
 )
 
 # Optional flags that broaden the reported climate variables. Each is only appended when the
@@ -78,7 +79,8 @@ runClimateEmulatorCmd <- paste(
   "--num-cfgs", cfg$nSets,
   "--scenario-batch-size", 1,
   "--probabilistic-file", cfg$probabilisticFile,
-  paste(optionalEmulatorArgs, collapse = " ")
+  paste(optionalEmulatorArgs, collapse = " "),
+  cfg$climateArgs
 )
 
 runTimes <- c(runTimes, "set_up_assessment end" = Sys.time())
