@@ -82,7 +82,7 @@ if (!file.exists(cfg$harmInfEmissionsFile)) {
   cat(errMsg, file = cfg$logFile, append = TRUE)
   stop(errMsg)
 }
-mifBaseScen <- read.quitte(cfg$harmInfEmissionsFile)
+mifBaseScen <- read.quitte.ca(cfg$harmInfEmissionsFile)
 
 # Skip the pulse years before the first year of the emissions data, which is 2023 in the SCI setup
 scanValsYears <- scanValsYears[scanValsYears >= min(mifBaseScen$period)]
@@ -153,7 +153,7 @@ runTimes <- c(runTimes, "postprocessing start" = Sys.time())
 # Actual runs done, read the output, already filtering what we need
 # temperatureVarName <- "AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile"
 temperatureVarName <- "Surface Air Temperature Change"
-mifAllPulsesClimate <- read.quitte(cfg$climateAssessmentFile) %>%
+mifAllPulsesClimate <- read.quitte.ca(cfg$climateAssessmentFile, variables = temperatureVarName, periods = 2020:2300) %>%
   filter(variable == temperatureVarName) %>%
   filter(between(period, 2020, 2300))
 

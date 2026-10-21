@@ -119,7 +119,7 @@ varmap <- c(
 # Postprocess by renaming IAMC-style `period` (year) column to REMIND compatible `tall` set & using this as sole index 
 # `dimCol`, No need to further rename variables since during iterative call to climate assessment the variables names 
 # are not expanded as in `MAGICC7_AR6.Report`/the standard call to `run_climate` in `climate-assessment`
-read.quitte(cfg$climateAssessmentFile) %>% 
+read.quitte.ca(cfg$climateAssessmentFile) %>%
   rename(tall = period) %>% 
   write.gdx(file.path(outputDir, "p15_climate.gdx"), varmap = varmap, dimCols = c("tall"))
 

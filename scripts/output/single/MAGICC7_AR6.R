@@ -129,7 +129,7 @@ cat(date(), "MAGICC7_AR6.R: Produced", cfg$climateAssessmentFile, "\n", file = c
 runTimes <- c(runTimes, "postprocessing start" = Sys.time())
 # Filter only periods used in REMIND, so that it doesn't expand the original mif
 periods <- as.numeric(grep("[0-9]+", quitte::read_mif_header(remindReportingFile)$header, value = TRUE))
-climateAssessmentData <- read.quitte(cfg$climateAssessmentFile) %>%
+climateAssessmentData <- read.quitte.ca(cfg$climateAssessmentFile) %>%
   cleanUpClimateAssessment(periods = periods) %>%
   appendClimateAssessmentToMif(remindReportingFile)
 piamutils::deletePlus(remindReportingFile, writemif = TRUE)
