@@ -51,7 +51,8 @@ dir.create(cfg$workersDir, showWarnings = FALSE)
 magiccEnv <- c(
   "MAGICC_EXECUTABLE_7"    = cfg$magiccBin,
   "MAGICC_WORKER_ROOT_DIR" = cfg$workersDir,
-  "MAGICC_WORKER_NUMBER"   = 4
+  "MAGICC_WORKER_NUMBER"   = 4,
+  "PYTHONNOUSERSITE"       = 1 # TODO: ignore packages in ~/.local, a stale pint there shadows the conda env one. Revisit with the env setup
 )
 
 magiccInit <- piamenv::condaInit(how = "pik-cluster", log = cfg$logFile, verbose = 1)
