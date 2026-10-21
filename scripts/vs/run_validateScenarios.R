@@ -29,7 +29,7 @@ if (grepl("^SCI(_|$)", validationConfig)) {
 # option 1: HTML validation Report
 piamValidation::validationReport(dataPath, validationConfig,
                                  report = validationReportName,
-                                 outputDir = ".")
+                                 outputDir = "output")
 # ToDo: other output options
 
 # option 2: export data
