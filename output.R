@@ -18,7 +18,7 @@
 options(error = quote({
   dump.frames(to.file = TRUE)
   traceback()
-  q()
+  q(status = -1)
 }))
 
 # preliminary option parsing to avoid loading any libraries that cause trouble with renv
