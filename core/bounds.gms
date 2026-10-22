@@ -74,8 +74,10 @@ loop(t $ (t.val >= 2015 and t.val <= 2025),
 *** fix renewable capacities to real world historical values if available
   vm_cap.lo(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
   vm_cap.up(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 1.05 * pm_histCap(t,regi,te);
+  vm_cap.lo(t,regi,"elh2","1") $ pm_histCap(t,regi,"elh2") = 0.95 * pm_histCap(t,regi,"elh2");
+  vm_cap.up(t,regi,"elh2","1") $ pm_histCap(t,regi,"elh2") = 1.05 * pm_histCap(t,regi,"elh2");
 *** broader bounds for renewables with lower data quality
-  loop(te $ (sameas(te, "hydro") or sameas(te, "geohdr") or sameas(te, "elh2")),
+  loop(te $ (sameas(te, "hydro") or sameas(te, "geohdr")),
     vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.7 * pm_histCap(t,regi,te);
     vm_cap.up(t,regi,te,"1") $ pm_histCap(t,regi,te) = 1.4 * pm_histCap(t,regi,te);
   );
@@ -143,8 +145,6 @@ vm_costTeCapital.fx(t,   regi,teNoLearn) = pm_inco0_t(t,regi,teNoLearn);
 *' No battery storage in 2010
 vm_cap.up("2010",regi,teStor,"1") = 0;
 
-
-
 *' Advanced technologies shouldn't be built prior to 2015/2020
 loop(regi,
   loop(teNoLearn(te) $ (pm_data(regi,"tech_stat",te) = 2),
@@ -161,6 +161,9 @@ loop(regi,
   );
 );
 
+*** Assume that 3 MtCO2/yr DAC capacity installed gobally by 2025 (https://www.iea.org/reports/direct-air-capture)
+vm_cap.fx("2025",regi,"dac","1") = 3 * sm_MtCO2_2_GtC / card(regi);
+
 *' no technologies with tech_stat 4 before 2025
 vm_cap.fx(t,regi,te,rlf) $ (t.val <= 2020 and pm_data(regi,"tech_stat",te) = 4) = 0;
 *** initialize cumulative capacity of tech_stat 4 technologies at 0
@@ -168,33 +171,27 @@ vm_capCum.fx(t0,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) = 4) = 0;
 *** tech_stat 4 technologies don't learn before 2025, so capital cost should be fixed
 vm_costTeCapital.fx(t,regi,teLearn) $ (t.val <= 2020 and pm_data(regi,"tech_stat",teLearn) = 4) = fm_dataglob("inco0",teLearn);
 
+$ifthen.c_BCLearning not "%c_BCLearning%" == 0
+*** assume initial capacity
+  vm_cap.fx("2015",regi,"biopyronly","1") = 0.001 / card(regi);
+  vm_cap.fx("2015",regi,"biopyrhe","1") = 0.001 / card(regi);
+  vm_cap.fx("2015",regi,"biopyrchp","1") = 0.001 / card(regi);
+$endif.c_BCLearning
+
 *** no technologies with tech_stat 5 before 2030
 vm_deltaCap.fx(t,regi,te,rlf) $ (t.val <= 2025 and pm_data(regi,"tech_stat",te) = 5) = 0;
 
 
+vm_capCum.fx("2005",regi,teLearn) = 0;
 
-*** Assume no retirements before 2005 for more established learning techs
+*** Assume no retirements before 2005 for more established learning techs with good data for 2005
 vm_capCum.fx("2005", regi, "windon") = pm_histCap("2005", regi, "windon");
 vm_capCum.fx("2005", regi, "windoff") = pm_histCap("2005", regi, "windoff");
 vm_capCum.fx("2005", regi, "spv") = pm_histCap("2005", regi, "spv");
 vm_capCum.fx("2005", regi, "csp") = pm_histCap("2005", regi, "csp");
 vm_capCum.fx("2005", regi, "elh2") = pm_histCap("2005", regi, "elh2");
-
-*** these are guesses by Robert Pietzcker
-vm_capCum.fx("2005",regi,"storwindon") = 0.00005 / card(regi);
-vm_capCum.fx("2005",regi,"storwindoff") = 0.00005 / card(regi);
-vm_capCum.fx("2005",regi,"storspv") = 0.00005 / card(regi);
-vm_capCum.fx("2005",regi,"storcsp") = 0.00005 / card(regi);
-
-*** Assume that 3 MtCO2/yr DAC capacity installed gobally by 2025 (https://www.iea.org/reports/direct-air-capture)
-vm_capCum.fx("2025",regi,"dac") = 3 * sm_MtCO2_2_GtC / card(regi);
-
-$ifthen.c_BCLearning not "%c_BCLearning%" == 0
-*** these are guesses by Tabea Dorndorf
-  vm_capCum.fx("2015",regi,"biopyronly") = 0.001 / card(regi);
-  vm_capCum.fx("2015",regi,"biopyrhe") = 0.001 / card(regi);
-  vm_capCum.fx("2015",regi,"biopyrchp") = 0.001 / card(regi);
-$endif.c_BCLearning
+*** assume initial capacity
+vm_capCum.fx("2005", regi, teStor) = 0.00005 / card(regi);
 
 *** ------------------------------------------------------------------
 *' ##### Capacity for nuclear energy
