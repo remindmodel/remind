@@ -464,25 +464,18 @@ q_costTeCapital(t,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) < 4 or t.va
   vm_costTeCapital(t,regi,teLearn)
   =e=
 *** until 2005: using global estimates better matches historic values
-  macro_costGlob $ (t.val <= 2005)
-    
 *** 2005 to 2020: linear transition from global 2005 to regional 2020
 *** to phase-in the observed 2020 regional variation from input-data
-  + macro_interpolate(t.val, 2005, 2020, macro_costGlob, macro_costRegi) $ (t.val > 2005 and t.val <= 2020)
-
-*** after 2020 for specific cm_floorCostScen: regional capital costs
-$if %cm_floorCostScen% == "pricestruc"  + macro_costRegi $ (t.val > 2020)
-$if %cm_floorCostScen% == "gdpBased"    + macro_costRegi $ (t.val > 2020)
+  macro_clamped_interpolate(t.val, 2005, 2020, macro_costGlob, macro_costRegi) $ (t.val <= 2020)
 
 $ifthen.default %cm_floorCostScen% == "uniform"
 *** from 2020 to c_teLearnConvStartYr: regional capital costs
-  + macro_costRegi $ (t.val > 2020 and t.val <= c_teLearnConvStartYr)
-
 *** c_teLearnConvStartYr to c_teLearnConvEndYr: linear convergence from regional costs to global costs
-  + macro_interpolate(t.val, c_teLearnConvStartYr, c_teLearnConvEndYr, macro_costRegi, macro_costGlob) $ (t.val > c_teLearnConvStartYr and t.val < c_teLearnConvEndYr)
-
 *** after c_teLearnConvEndYr: global capital costs
-  + macro_costGlob $ (t.val >= c_teLearnConvEndYr)
+  + macro_clamped_interpolate(t.val, c_teLearnConvStartYr, c_teLearnConvEndYr, macro_costRegi, macro_costGlob) $ (t.val > 2020)
+$else.default
+*** for all other scenarios: continue regional cost
+  + macro_costRegi $ (t.val > 2020)
 $endif.default
 
 ;
