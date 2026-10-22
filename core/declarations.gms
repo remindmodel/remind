@@ -656,7 +656,7 @@ sm_TWa_2_TWh                 "convert Tera Watt annum to Tera Wh"           /8.7
 sm_TWa_2_MWh                 "convert Tera Watt annum to Mega Wh"           /8.76e+9/,
 sm_TWa_2_kWh                 "convert Tera Watt annum to kilo Wh"           /8.76e+12/,
 sm_h2kg_2_h2kWh              "convert kg of hydrogen to kWh energy value"   /32.5/,
-s_GW_2_TW                   "convert GW to TW"                             /0.001/,
+s_GW_2_TW                    "convert GW to TW"                             /0.001/,
 sm_tBC_2_TWa                 "t biochar to TWa biochar (28700 [MJ/tBC]*10^-12[EJ/MJ]/31.536[EJ/TWa])" /9.101e-10/,
 
 *** emissions units
