@@ -10,7 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### input data/calibration
 
 ### changed
--
+- **scripts** Move results of most comparison scripts to output folder.
+    [[#2500](https://github.com/remindmodel/remind/pull/2500)]
 
 ### added
 - **scripts** Introduce new optional argument to compare scenario scripts ``validationConfig`` to enable plotting validation thresholds from piamValidation directly
