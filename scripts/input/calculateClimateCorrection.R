@@ -1,0 +1,12 @@
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
+
+# Load the local climbed package for development
+devtools::load_all("/p/tmp/hagento/dev/climbed")
+
+# Calculate climate correction factors
+climbed::computeClimateCorrection()
