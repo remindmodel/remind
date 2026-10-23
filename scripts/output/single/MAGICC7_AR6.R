@@ -51,14 +51,16 @@ dir.create(cfg$workersDir, showWarnings = FALSE)
 magiccEnv <- c(
   "MAGICC_EXECUTABLE_7"    = cfg$magiccBin,
   "MAGICC_WORKER_ROOT_DIR" = cfg$workersDir,
-  "MAGICC_WORKER_NUMBER"   = 4
+  "MAGICC_WORKER_NUMBER"   = 4,
+  "PYTHONNOUSERSITE"       = 1 # TODO: ignore packages in ~/.local, a stale pint there shadows the conda env one. Revisit with the env setup
 )
 
 magiccInit <- piamenv::condaInit(how = "pik-cluster", log = cfg$logFile, verbose = 1)
 
 runHarmoniseAndInfillCmd <- paste(
-  "ca-harmonize-infill", cfg$remindEmissionsFile, cfg$climateDir,
-  "--infilling-database", cfg$infillingDatabase
+  "python", file.path(system.file(package = "remindClimateAssessment"), "runHarmInfGcages.py"), cfg$remindEmissionsFile, cfg$climateDir,
+  "--infilling-database", cfg$infillingDatabase,
+  cfg$harmInfArgs
 )
 
 # Optional flags that broaden the reported climate variables. Each is only appended when the
@@ -74,11 +76,12 @@ optionalEmulatorArgs <- c(
 )
 
 runClimateEmulatorCmd <- paste(
-  "ca-run-climate", cfg$harmInfEmissionsFile, cfg$climateDir,
+  "python", file.path(system.file(package = "remindClimateAssessment"), "runClimateGcages.py"), cfg$harmInfEmissionsFile, cfg$climateDir,
   "--num-cfgs", cfg$nSets,
   "--scenario-batch-size", 1,
   "--probabilistic-file", cfg$probabilisticFile,
-  paste(optionalEmulatorArgs, collapse = " ")
+  paste(optionalEmulatorArgs, collapse = " "),
+  cfg$climateArgs
 )
 
 runTimes <- c(runTimes, "set_up_assessment end" = Sys.time())
@@ -126,7 +129,7 @@ cat(date(), "MAGICC7_AR6.R: Produced", cfg$climateAssessmentFile, "\n", file = c
 runTimes <- c(runTimes, "postprocessing start" = Sys.time())
 # Filter only periods used in REMIND, so that it doesn't expand the original mif
 periods <- as.numeric(grep("[0-9]+", quitte::read_mif_header(remindReportingFile)$header, value = TRUE))
-climateAssessmentData <- read.quitte(cfg$climateAssessmentFile) %>%
+climateAssessmentData <- read.quitte.ca(cfg$climateAssessmentFile) %>%
   cleanUpClimateAssessment(periods = periods) %>%
   appendClimateAssessmentToMif(remindReportingFile)
 piamutils::deletePlus(remindReportingFile, writemif = TRUE)
