@@ -9,7 +9,7 @@ skipIfPreviousFailed()
 test_that("output.R -> compare -> compareScenarios2 works", {
   output <- localSystem2("Rscript", c(
     "output.R", "--comp=comparison", "--output=compareScenarios2", "--outputdirs=output/testOneRegi", "--sections=0",
-    "--aliases=test", "--filename_prefix=TESTTHAT", "--profileNames=H12"
+    "--aliases=test", "--filename_prefix=TESTTHAT", "--profileNames=H12", "--slurmConfig=direct"
   ))
   printIfFailed(output)
   expectSuccessStatus(output)
