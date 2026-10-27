@@ -455,6 +455,14 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
 *' In equations.gms, the investment costs equation `q_costTeCapital` corresponds to $I = a'\times C^{b'} + F$,
 *' with variations depending on time period and floor cost scenarios.
 
+*** learnExp_wFC must be strictly negative for q_costTeCapital to work
+loop((regi, teLearn)$(pm_data(regi, "learnExp_wFC", teLearn) >= 0),
+    abort "Parameter error: pm_data('learnExp_wFC') must be strictly negative! This may be violated if floorcost > inco0 for some region/tech";
+);
+loop(teLearn$(fm_dataglob("learnExp_wFC", teLearn) >= 0),
+    abort "Parameter error: fm_dataglob('learnExp_wFC') must be strictly negative! This may be violated if floorcost > inco0 for some region/tech";
+);
+
 
 $macro macro_capCumGlob (sum(regi2, vm_capCum(t,regi2,teLearn)) + pm_capCumForeign(t,regi,teLearn))
 $macro macro_costRegi   (pm_data(regi,"floorcost",teLearn) + pm_data(regi,"learnMult_wFC",teLearn) * macro_capCumGlob ** pm_data(regi,"learnExp_wFC",teLearn))
