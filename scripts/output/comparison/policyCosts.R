@@ -32,9 +32,9 @@ rm_timestamp <- function(strings, name_timestamp_seperator = "_", timestamp_form
 }
 
 
-policy_costs_pdf <- function(policy_costs, fileName = "PolicyCost.pdf") {
+policy_costs_pdf <- function(policy_costs, fileName = "PolicyCost.pdf", folder = "output") {
 
-  message("A pdf with the name ", crayon::green(fileName), " is being created in the main remind folder.")
+  message("A pdf with the name ", crayon::green(fileName), " is being created in the output folder.")
 
   template <-  c("\\documentclass[a4paper,landscape,twocolumn]{article}",
                  "\\setlength{\\oddsidemargin}{-0.8in}",
@@ -58,9 +58,9 @@ policy_costs_pdf <- function(policy_costs, fileName = "PolicyCost.pdf") {
                  "<<echo=false>>=",
                  "options(width=110)",
                  "@")
-  tmpfolder <- paste0("tmp_", gsub("[\\. ]*", "", basename(fileName)))
+  tmpfolder <- file.path(folder, "tmp", basename(fileName))
   # Create temporary folder in which to create the policyCost pdf
-  dir.create(tmpfolder)
+  dir.create(tmpfolder, recursive = TRUE)
   # Open stream in tmp_folder
   sw <- lusweave::swopen(fileName, folder = tmpfolder, template = template)
 
@@ -101,9 +101,8 @@ policy_costs_pdf <- function(policy_costs, fileName = "PolicyCost.pdf") {
   # Close stream to-pdf
   lusweave::swclose(sw)
 
-  # Copy pdf from tmp folder to remind folder and delete tmp folder
-  system(paste0("mv ", file.path(tmpfolder, fileName), " ."))
-  system(paste0("rm -r ", tmpfolder))
+  file.rename(from = file.path(tmpfolder, fileName), to = file.path(folder, fileName))
+  unlink(tmpfolder, recursive = TRUE)
 }
 
 

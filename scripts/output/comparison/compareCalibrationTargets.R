@@ -19,5 +19,6 @@ outputFile <- paste0("compareCalibrationTargets-",
 
 remind2::compareCalibrationTargets(
   gdxPaths = gdxPaths,
+  outputDir = "output",
   outputFile = outputFile
 )

@@ -143,7 +143,7 @@ vm_emiMacSector(ttot,all_regi,all_enty)              "total emissions subject to
 
 vm_emiCdr(ttot,all_regi,all_enty)                    "total (negative) CO2 emissions from CDR technologies that are calculated in the CDR module. Note that it includes all atmospheric CO2 entering the CCUS chain (i.e. CO2 stored (CDR) AND used (not CDR)) [GtC]"
 vm_emiMac(ttot,all_regi,all_enty)                    "total non-energy-related emission of each region. [GtC, Mt CH4, Mt N]"
-vm_emiFgas(ttot,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE [emiFgasTotal in MtCO2eq, for other units see f_emiFgas.cs4r]"
+vm_emiFgas(ttot,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE [emiFgasTotal in MtCO2eq, for other units see f_emiFgas.cs3r]"
 
 *** emissions per emissions market
 vm_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "emissions from energy technologies on supply-side (pm_emifac * PE) and demand-side (pm_emifac * FE) per emissions market, note: not equivalent to Emi|CO2|Energy in reporting [GtC, Mt CH4, Mt N, Mt SO2, Mt BC, Mt OC]"
@@ -751,6 +751,24 @@ sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 *** Example 2:
 ***   Suppose we have a subsidy that we want to phase out with a different date for each region.
 ***   p_subsidy(t,regi) = macro_interpolate(t.val, cm_startyear, p_subsidyEndYr(regi), p_subsidy(cm_startyear,regi), 0);
+*** Outside t0 and t1, the linear function is continued
+*** x0 _|         /
+***     |        /
+***     |       /
+*** x1 _|      /
+***     |_____/___________
+***            | |
+***          t0  t1
 $macro macro_interpolate(t,t0,t1,x0,x1) ( ((t1) - (t)) / ((t1) - (t0)) * (x0) + ((t) - (t0)) / ((t1) - (t0)) * (x1) )
+
+*** macro_clamped_interpolate: Like macro_interpolate, but if t is not between t0 and t1, we return the respective boundary value
+*** x0 _|         _____
+***     |        /
+***     |       /
+*** x1 _|______/
+***     |________________
+***            | |
+***          t0  t1
+$macro macro_clamped_interpolate(t, t0, t1, x0, x1) ( (x0)$((t) <= (t0)) + (x1)$((t) >= (t1)) + ((x0) + ((x1) - (x0)) * ((t) - (t0)) / ((t1) - (t0)))$(((t) > (t0)) AND ((t) < (t1))))
 
 *** EOF ./core/declarations.gms
