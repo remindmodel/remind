@@ -1438,7 +1438,7 @@ $setglobal cm_rcp_scen  rcp45         !! def = "rcp45"  !! regexp = none|rcp20|r
 *' *  (MESSAGEVeryLow): MESSAGEix very-low-emission F-gas pathway (ScenarioMIP, harmonized to EDGAR7)
 *' *  (MESSAGEKAFull): MESSAGEVeryLow with Kigali Amendment caps in all countries from 2030
 *' *  (MESSAGEKAImplemented): MESSAGEVeryLow with Kigali Amendment caps only in countries whose current policies include it
-$setglobal cm_fgas_scen  MESSAGEKAImplemented  !! def = "MESSAGEVeryLow"  !! regexp = MESSAGEHigh|MESSAGEVeryLow|MESSAGEKAFull|MESSAGEKAImplemented
+$setglobal cm_fgas_scen  MESSAGEKAImplemented  !! def = "MESSAGEKAImplemented"  !! regexp = MESSAGEHigh|MESSAGEVeryLow|MESSAGEKAFull|MESSAGEKAImplemented
 *' cm_NDC_version            "choose version of NDC targets to be applied, including differentiation between conditional vs. unconditional targets"
 *' * This switch allows to run different states of NDC targets over the past years, allowing for comparison of NDC succession over the years. 
 *' * For the latest NDC version (2026_cond/uncond), the targets are based on the collection provided by PBL. The collection provides two formats for emissions targets, which we use as follows: 
