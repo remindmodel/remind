@@ -955,8 +955,7 @@ $include "./core/input/p_boundEmi.cs4r"
 $offdelim
 /;
 *** read in F-Gas emissions
-parameter f_emiFgas(tall,all_regi,all_fgas_scen,all_enty)        "F-gas emissions by single gases from prescribed scenarios"
-/
+table f_emiFgas(tall,all_regi,all_fgas_scen,all_enty)        "F-gas emissions by single gases from prescribed scenarios"
 $offlisting
 $ondelim
 $include "./core/input/f_emiFgas.cs3r"
