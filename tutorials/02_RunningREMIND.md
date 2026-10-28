@@ -80,6 +80,18 @@ NOTE: A few words on the scripts that we currently use to start runs. The script
 - they submit the run to the cluster or to your GAMS system if you work locally
 - they create the `full.gms` file (this is the file that will eventually be submitted to GAMS once your run has been compiled) and compile the needed files to start a run in a subfolder of the output folder
 
+## SLURM notification
+
+SLURM will send you a mail when the job is finished.
+The status code tells you if it succeeded or not and gives hints as to why it failed:
+
+- 0: succesfull
+- 1: failure during the run
+- 127: possibly apptainer related
+- 255: failure after the run, e.g. reporting scripts
+
+Check `log.txt` for more details.
+
 ## Restarting runs
 
 Sometimes you want to restart a run in its already existing results folder without creating a new results folder and without compiling a new full.gms, e.g. you want a nash run to perform additional nash iterations because you are not satisfied with the convergence so far. Adding the parameter `--restart` displays a list of existing runs and lets you choose the run(s) you want to restart:
@@ -108,7 +120,7 @@ Let us go through each of the stages and briefly describe what happens:
 ## `renv` Setup
 REMIND is using renv for R package library management, see [the REMIND renv tutorial](11_ManagingRenv.md) for details. When starting a run the main renv is essentially copied to the run folder which ensures that the run is always using the same package versions for reproducibility and packages cannot become corrupt because of global package updates.
 
-The R libraries required for indput data preparation and output processing (e.g. **madrat**, **mrremind** and **remind2**) are made available to the run this way.
+The R libraries required for input data preparation and output processing (e.g. **madrat**, **mrremind** and **remind2**) are made available to the run this way.
 
 ## Input Data Preparation
 

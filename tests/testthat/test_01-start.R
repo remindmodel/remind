@@ -15,11 +15,11 @@ test_that("start.R fails on missing path_gdx* files", {
   expectFailStatus(output)
 })
 
-test_that("start.R --test startgroup=AMT titletag=AMT config/scenario_config.csv works", {
+test_that("start.R --test --startgroup=AMT --titletag=AMT config/scenario_config.csv works", {
   testthat::with_mocked_bindings({
     skipIfPreviousFailed()
     output <- localSystem2("Rscript",
-                           c("start.R", "--test", "slurmConfig=16", "startgroup=AMT", "titletag=TESTTHAT", "config/scenario_config.csv"))
+                           c("start.R", "--test", "--slurmConfig=16", "--startgroup=AMT", "--titletag=TESTTHAT", "config/scenario_config.csv"))
     printIfFailed(output)
     expectSuccessStatus(output)
     expect_false(any(grepl("Waiting for.* NA( |$)", output)))
