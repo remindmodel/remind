@@ -122,6 +122,9 @@ The calibration can further be adjusted using the following switches:
   derivatives on the CES production function) into the file `pm_cesdata_price`.
   Can help finding a suitable value for `cm_CES_calibration_default_price`.
 
+### Running
+
+Instead of setting up and starting the above manually, you can run `Rscript start.R --startgroup=calibrate config/scenario_config.csv` to calibrate all scenarios we normally use.
 
 
 ### Results
@@ -150,12 +153,12 @@ all REMIND users) or used in a local directory (for project work):
   ```sh
   ./collect_calibration /p/tmp/username/Remind/output/SSP2-calibrate_2024-12-31_23.59.59/
   ```
-  Note that both absolute and relative paths may be used. 
+  Note that both absolute and relative paths may be used. Separate multiple paths with spaces.
   The script copies the necessary `.inc` and `.gdx` files to `calibration_results/`,
   adjusting the file names as needed, stages and commits them (you may review and
   modify the commit message, then commit with `:wq` or abort with `:cq`).
   The script then displays the commit hash and offers to include it as the
-  `CESandGDXrevision` in the REMIND configuration, so that the next REMIND runs are 
+  `CESandGDXversion` in the REMIND configuration, so that the next REMIND runs are 
   able to find the `.tgz` archive containing the calibration files.
 
 3. New calibration files are automatically copied from the `.tgz` archive to the relevant directories

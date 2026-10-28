@@ -76,6 +76,8 @@ Make sure to use your username on the cluster and the correct path to your priva
 
 ### Tell REMIND where to find MAGICC
 
+TODO: Update this section!
+
 REMIND needs to be told where to find the configuration files of the 'Model for the Assessment of Greenhouse Gas Induced Climate Change' ([MAGICC](https://magicc.org/)). The config files all come with REMIND, so we just need to set the appropriate location in the REMIND default config file at `<REMIND_DIR>/config/default.cfg`. Open the file with a text editor of your choice and locate the variable `magicc_template`. In the `default.cfg` file, the corresponding section will look like
 
 ```R
