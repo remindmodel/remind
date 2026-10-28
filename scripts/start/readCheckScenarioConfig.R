@@ -210,7 +210,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_CCS_steel" = "Rename to cm_co2captureSteel, see https://github.com/remindmodel/remind/pull/2424",
        "c_regi_capturescen" = "Rename to c_regi_co2captureEnergy, see https://github.com/remindmodel/remind/pull/2424",
        "cm_CCS_markup" = "Rename to cm_co2captureEnergyMarkup, see https://github.com/remindmodel/remind/pull/2424",
-       "cm_Industry_CCS_markup" = "Rename to cm_co2captureIndMarkup, see https://github.com/remindmodel/remind/pull/2424"
+       "cm_Industry_CCS_markup" = "Rename to cm_co2captureIndMarkup, see https://github.com/remindmodel/remind/pull/2424",
+       "cm_techcosts" = "Deleted, not used anymore, see https://github.com/remindmodel/remind/pull/2507"
      )
 
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
