@@ -412,9 +412,10 @@ $endif.floorscen
 *** See equations.gms for documentation of learning equations and floor costs
 *** -------------------------------------------------------------------------------
 
-*** our learing implementation fails if floorcost >= inco0
-pm_data(regi,"floorcost",teLearn) = min(pm_data(regi,"floorcost",teLearn), 0.99 * pm_data(regi,"inco0",teLearn));
-fm_dataglob("floorcost",teLearn) = min(fm_dataglob("floorcost",teLearn), 0.99 * fm_dataglob("inco0",teLearn));
+*** our learing implementation fails if floorcost >= inco0 or even if it is to close to inco0
+*** 0.8 gives a good safety margin
+pm_data(regi,"floorcost",teLearn) = min(pm_data(regi,"floorcost",teLearn), 0.8 * pm_data(regi,"inco0",teLearn));
+fm_dataglob("floorcost",teLearn) = min(fm_dataglob("floorcost",teLearn), 0.8 * fm_dataglob("inco0",teLearn));
 
 loop(teLearn(te),
 *** calculate default learnable costs for learning technologies
