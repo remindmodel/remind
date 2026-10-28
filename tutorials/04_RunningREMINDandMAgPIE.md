@@ -30,7 +30,7 @@ To start a coupled run, use:
 ```
 Rscript start.R config/scenario_config_magpie*.csv
 ```
-The new coupling is mainly perforemd in `core/presolve.gms`, by calling the R script `scripts/input/magpie.R`, that transfers the data of the latest Nash solution to MAgPIE, runs MAgPIE, and transfers the MAgPIE data to a `magpieData.gdx`. Then REMIND GAMS continues, reads the `magpieData.gdx` and continues the Nash iterations.
+The new coupling is mainly performed in `core/presolve.gms`, by calling the R script `scripts/input/magpie.R`, that transfers the data of the latest Nash solution to MAgPIE, runs MAgPIE, and transfers the MAgPIE data to a `magpieData.gdx`. Then REMIND GAMS continues, reads the `magpieData.gdx` and continues the Nash iterations.
 
 If you need to continue runs to yield a better convergence, paste the path to a previous REMIND or MAgPIE report into the column `continueFromHere`  in the `scenario_config_magpie.csv` and start the respective scenario. 
 
@@ -92,7 +92,7 @@ Use `start.R` together with a `scenario_config_magpie*.csv` file (formerly known
 Rscript start.R config/scenario_config_magpie.csv
 ```
 
-The new coupling is mainly perforemd in `core/presolve.gms`, by calling an external R script, that transfers the data of the latest Nash solution to MAgPIE, runs MAgPIE, and transfers the MAgPIE data to a `magpieData.gdx`, which is then read by GAMS.
+The new coupling is mainly performed in `core/presolve.gms`, by calling an external R script, that transfers the data of the latest Nash solution to MAgPIE, runs MAgPIE, and transfers the MAgPIE data to a `magpieData.gdx`, which is then read by GAMS.
 
 ### What happens during a single coupled run
 
@@ -103,8 +103,8 @@ You can find a more technical explanation in the sections below, but the start s
 Here's an example of a simple case. If you start a new coupled run with the scenario name `Base`, which doesn't depend on any other run, the script will:
 
    - Set up and start a normal REMIND run called `C_Base_timestamp`, based on the configurations in `scenario_config.csv` and `scenario_config_magpie.csv`
-   - Everytime the Nash loop reaches an iteration that is defined im `c_magpieIter`, set up a MAgPIE run, in the folder 'magpie' within the REMIND main folder, called `C_Base_timestamp-mag-1`. This run will be configured to:
-      - Take the bioenergy demands and GHG prices from the previous REMIND run's reporting output, in `path_remind/output/C_Base_timestamp/REMIND_rem2mag-1.mif.mif`
+   - Everytime the Nash loop reaches an iteration that is defined in `c_magpieIter`, set up a MAgPIE run, in the folder 'magpie' within the REMIND main folder, called `C_Base_timestamp-mag-1`. This run will be configured to:
+      - Take the bioenergy demands and GHG prices from the previous REMIND run's reporting output, in `path_remind/output/C_Base_timestamp/REMIND_rem2mag-1.mif`
       - Take other MAgPIE configurations from the `magpie_scen` column in `scenario_config_magpie.csv`.
    - After that MAgPIE run finishes, continue REMIND with the next Nash iterations, which will:
       - Take bioenergy prices and land-use GHG emissions from the previous MAgPIE run's reporting output, in `path_magpie/output/C_Base_timestamp-mag-1/report.mif`
@@ -144,9 +144,9 @@ All the columns must be present in the `scenario_config_magpie.csv` file, but mo
 
 Other, optional columns allow you to make a run start only after another has finished, set starting conditions, and give you finer control over which data is fed from REMIND to MAgPIE or from MAgPIE to REMIND.
 
-   - `continueFromHere`: If the coupling has not yet converged and you want to continue iterations to improve the convergence, provide a path to a REMIND repoting or fulldata.gdx or a MAgPIE report here and start the run again. If provided REMIND will continue from there, meaning:
+   - `continueFromHere`: If the coupling has not yet converged and you want to continue iterations to improve the convergence, provide a path to a REMIND reporting or fulldata.gdx or a MAgPIE report here and start the run again. If provided REMIND will continue from there, meaning:
      - if a REMIND output was provided, it will start a MAgPIE run before the first Nash iteration and use the REMIND output as input for it
-     - if a MAgPIE output was provied, it will start the Nash iterations as usual and use the MAgPIE output as input
+     - if a MAgPIE output was provided, it will start the Nash iterations as usual and use the MAgPIE output as input
    - `magpieIter` Use this to specify the Nash iterations in which MAgPIE runs, overwriting what is defined in `c_magpieIter` in `main.gms`.
    - `path_mif_ghgprice_land`: This setting allows MAgPIE to be run using an exogenous, fixed GHG price path, regardless of the GHG price in the REMIND coupling. This can be useful if you want to simulate different GHG pricing policies in the land-use sector. Its timing is also controlled by `no_ghgprices_land_until`.
       - As with the `path_gdx*` settings, this can be set both to the full path of a REMIND `.mif` reporting file (*not* a `.gdx`) or to the name of another scenario. If set to the name of another scenario, it will also wait for that run to finish before starting the dependent run as described.
