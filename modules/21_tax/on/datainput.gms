@@ -8,14 +8,14 @@
 ***        *CB* Final energy taxes, subsidies and inconvinience costs
 ***---------------------------------------------------------------------
 
-***gl 20110817 load paths for final energy taxes, subsidies and inconvenience costs (read in in  $/GJ, get rescaled further down to trillion $ / TWa, subsidies also get constrained to avoid negative prices(in preloop.gms))
-Parameter f21_tau_fe_tax(tall,all_regi,emi_sectors,all_enty) "2005 final energy tax"
+Parameter f21_tau_fe_tax(tall,all_regi,all_fetaxscen,emi_sectors,all_enty) "2005 final energy tax [T$/TWa]"
   /
 $ondelim
 $include "./modules/21_tax/on/input/f21_tau_fe_tax.cs4r"
 $offdelim
   /
 ;
+***gl 20110817 load paths for final energy subsidies and inconvenience costs (read in in $/GJ, get rescaled further down to T$ / TWa, subsidies also get constrained to avoid negative prices(in preloop.gms))
 Parameter f21_tau_fe_sub(tall,all_regi,emi_sectors,all_enty) "2005 final energy subsidy"
   /
 $ondelim
@@ -30,20 +30,6 @@ $include "./modules/21_tax/on/input/f21_tau_pe_sub.cs4r"
 $offdelim
   /
 ;
-Parameter f21_tax_convergence(tall,all_regi,all_enty) "Tax convergence level for specific regions, year and final energy type"
-  /
-$ondelim
-$include "./modules/21_tax/on/input/f21_tax_convergence.cs4r"
-$offdelim
-  /
-;
-Parameter f21_tax_convergence_rollback(tall,all_regi,all_enty) "Tax convergence level for specific regions, year and final energy type in rollback scenario"
-  /
-$ondelim
-$include "./modules/21_tax/on/input/f21_tax_convergence_rollback.cs4r"
-$offdelim
-  /
-;
 
 Parameter f21_sub_convergence_rollback(tall,all_regi,emi_sectors,all_enty) "Subsidy convergence level for specific regions, year and final energy type in rollback scenario"
   /
@@ -55,11 +41,10 @@ $offdelim
 
 
 
+p21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe)$f21_tau_fe_tax(ttot,all_regi,"%cm_fetaxscen%",emi_sectors,entyFe) = f21_tau_fe_tax(ttot,all_regi,"%cm_fetaxscen%",emi_sectors,entyFe);
 *** transfer data to parameters and rescaling of FE parameters from $/GJ to trillion $ / TWa (subsidies also get adjusted in preloop.gms to avoid neg. prices)
-
-  p21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe)$f21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe) = f21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe)*0.001/sm_EJ_2_TWa;
-  p21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe)$f21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe) = f21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe)*0.001/sm_EJ_2_TWa;
-  p21_tau_fuEx_sub(ttot,regi,entyPe)$f21_tau_fuEx_sub(ttot,regi,entyPe) = f21_tau_fuEx_sub(ttot,regi,entyPe)*0.001/sm_EJ_2_TWa;
+p21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe)$f21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe) = f21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe)*0.001/sm_EJ_2_TWa;
+p21_tau_fuEx_sub(ttot,regi,entyPe)$f21_tau_fuEx_sub(ttot,regi,entyPe) = f21_tau_fuEx_sub(ttot,regi,entyPe)*0.001/sm_EJ_2_TWa;
 
 
 *** -------------------------PE2SE Taxes--------------------------(Primary to secondary energy technology taxes, specified by technology)

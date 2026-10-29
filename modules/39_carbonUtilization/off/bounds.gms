@@ -6,8 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/39_carbonUtilization/off/bounds.gms
 
-vm_co2CCUshort.fx(t,regi,"cco2","ccuco2short",teCCU2rlf(te2,rlf)) = 0;
-vm_cap.fx(t,regi,"h22ch4",rlf)$te2rlf("h22ch4",rlf) = 0;
-vm_cap.fx(t,regi,"MeOH",rlf)$te2rlf("MeOH",rlf) = 0;
+vm_co2CCUshort.up(t,regi,"cco2","ccuco2short",teCCU2rlf(te2,rlf)) = sm_eps;
+vm_deltaCap.up(t,regi,"h22ch4",rlf) $ (te2rlf("h22ch4",rlf)) = sm_eps;
+vm_deltaCap.up(t,regi,"MeOH",rlf) $ (te2rlf("MeOH",rlf)) = sm_eps;
 
 *** EOF ./modules/39_carbonUtilization/off/bounds.gms

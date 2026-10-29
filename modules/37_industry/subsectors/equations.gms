@@ -550,7 +550,7 @@ q37_emiCCPrc(t,regi,emiInd37)$(
 ***------------------------------------------------------
 *' Limit biosolids in industry (only for ETS - all sectors except otherInd)
 ***------------------------------------------------------
-q37_limitBioSolidsIndst(t,regi,entyFe)$((t.val ge 2025) AND sameas(entyFe,"fesos"))..
+q37_limitBioSolidsIndst(t,regi,entyFe)$(sameas(entyFe,"fesos"))..
   v37_shSolidsIndst(t,regi)
   *
   sum((entySe,te)$se2fe(entySe,entyFe,te),

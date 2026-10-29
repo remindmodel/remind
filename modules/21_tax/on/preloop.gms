@@ -13,33 +13,18 @@
 ***   - subsidies (p21_tau_fe_sub, p21_tau_fuEx_sub)
 
 ***----- TAXES  ----------------------------------
-if(cm_fetaxscen eq 0, !! no FE tax, constant PE2SE tax
-    p21_tau_fe_tax(ttot,all_regi,emi_sectors,entyFe) = 0;
-  elseif (cm_fetaxscen eq 1) or (cm_fetaxscen eq 3) or (cm_fetaxscen eq 4), !! constant FE and PE2SE tax
-    p21_tau_fe_tax(ttot,regi,sector,entyFe)$(ttot.val gt 2005) = p21_tau_fe_tax("2005",regi,sector,entyFe);
-  elseif cm_fetaxscen eq 2, !! converging FE tax (-2050), constant PE2SE tax
-    p21_tau_fe_tax(ttot,regi,sector,entyFe)$(ttot.val gt 2005) = p21_tau_fe_tax("2005",regi,sector,entyFe);
-    p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2050",regi,entyFe) AND ttot.val gt 2025 AND ttot.val le 2050)
-	  = p21_tau_fe_tax("2025",regi,sector,entyFe) 
-      + ( f21_tax_convergence("2050",regi,entyFe) * 0.001 / sm_EJ_2_TWa - p21_tau_fe_tax("2025",regi,sector,entyFe) ) * ( ( ttot.val - 2025 ) / ( 2050 - 2025 ) );
-    p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence("2050",regi,entyFe) AND ttot.val gt 2050) = f21_tax_convergence("2050",regi,entyFe) * 0.001 / sm_EJ_2_TWa;
-  elseif cm_fetaxscen eq 5, !! rollback FE tax (-2035), no PE2SE tax
-    p21_tau_pe2se_tax(tall,regi,te) = 0;
-    p21_tau_fe_tax(ttot,regi,sector,entyFe)$(ttot.val gt 2005) = p21_tau_fe_tax("2005",regi,sector,entyFe);
-    p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence_rollback("2035",regi,entyFe) AND ttot.val gt 2025 AND ttot.val le 2035 )
-	   = p21_tau_fe_tax("2025",regi,sector,entyFe) 
-       + ( f21_tax_convergence_rollback("2035",regi,entyFe) * 0.001 / sm_EJ_2_TWa - p21_tau_fe_tax("2025",regi,sector,entyFe) ) * ( (ttot.val - 2025) / (2035 - 2025) );
-    p21_tau_fe_tax(ttot,regi,sector,entyFe)$(f21_tax_convergence_rollback("2035",regi,entyFe) AND ttot.val  gt 2035) = f21_tax_convergence_rollback("2035",regi,entyFe) * 0.001 / sm_EJ_2_TWa;
+if (%cm_fetaxscen% eq 5,
+  p21_tau_pe2se_tax(tall,regi,te) = 0;
 );
 
 ***----- SUBSIDIES  ----------------------------------
-if (cm_fetaxscen eq 0, !! no FE and ResEx sub
+if (%cm_fetaxscen% eq 0, !! no FE and ResEx sub
     p21_tau_fe_sub(ttot,all_regi,emi_sectors,entyFe) = 0;
     p21_tau_fuEx_sub(ttot,regi,all_enty) = 0;
-  elseif (cm_fetaxscen eq 1) or (cm_fetaxscen eq 5), !! constant FE and ResEx sub, in case of 5 (i.e. rollback) some reduction in tax levels to avoid absurd results
+  elseif (%cm_fetaxscen% eq 1) or (%cm_fetaxscen% eq 5), !! constant FE and ResEx sub, in case of 5 (i.e. rollback) some reduction in tax levels to avoid absurd results
     p21_tau_fe_sub(ttot,regi,sector,entyFe)$(ttot.val gt 2005) = p21_tau_fe_sub("2005",regi,sector,entyFe);
     p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val gt 2005) = p21_tau_fuEx_sub("2005",regi,entyPe);
-    if ( (cm_fetaxscen eq 5),
+    if ( (%cm_fetaxscen% eq 5),
       p21_tau_fe_sub(ttot,regi,sector,entyFe)$(f21_sub_convergence_rollback("2035",regi,sector,entyFe) gt 0 AND ttot.val gt 2025 AND ttot.val le 2035 )
    	      = p21_tau_fe_sub("2025",regi,sector,entyFe) 
          + ( f21_sub_convergence_rollback("2035",regi,sector,entyFe) * 0.001 / sm_EJ_2_TWa - p21_tau_fe_sub("2025",regi,sector,entyFe) ) * ( (ttot.val - 2025) / (2035 - 2025) );
@@ -50,12 +35,12 @@ if (cm_fetaxscen eq 0, !! no FE and ResEx sub
       p21_tau_fe_sub("2035",regi,sector,entyFe) - 
       (p21_tau_fe_sub("2050",regi,sector,entyFe) - (-0.2)) * (ttot.val - 2035) / (2050 - 2035);
     p21_tau_fe_sub(ttot,regi,sector,entyFe)$((ttot.val gt 2050)) = p21_tau_fe_sub("2050",regi,sector,entyFe);
-  elseif(cm_fetaxscen eq 2) or (cm_fetaxscen eq 3) or (cm_fetaxscen eq 4), 
+  elseif(%cm_fetaxscen% eq 2) or (%cm_fetaxscen% eq 3) or (%cm_fetaxscen% eq 4), 
     p21_tau_fe_sub(ttot,regi,sector,entyFe)$(ttot.val gt 2005)=p21_tau_fe_sub("2005",regi,sector,entyFe);
     p21_tau_fuEx_sub(ttot,regi,entyPe)$(ttot.val gt 2005)=p21_tau_fuEx_sub("2005",regi,entyPe);
-    if ( (cm_fetaxscen eq 2) or (cm_fetaxscen eq 4), !! phased out FE and ResEx sub (-2035)
+    if ( (%cm_fetaxscen% eq 2) or (%cm_fetaxscen% eq 4), !! phased out FE and ResEx sub (-2035)
         s21_tax_time = 2035;
-      elseif cm_fetaxscen eq 3, !! phased out FE and ResEx sub (-2050)
+      elseif %cm_fetaxscen% eq 3, !! phased out FE and ResEx sub (-2050)
         s21_tax_time = 2050;
     );
     s21_tax_value = 0;

@@ -54,6 +54,7 @@ q21_taxrevPseudo(t,regi)$(t.val ge max(2010,cm_startyear))..
   + v21_taxrevFlex(t,regi)
   + v21_taxrevCCS(t,regi) 
   + v21_taxrevNetNegEmi(t,regi)
+  + v21_taxrevCDR(t,regi)
   + v21_taxrevBioSust(t,regi)
   + v21_taxrevEI(t,regi)
   + v21_taxrevChProdStartYear(t,regi)
@@ -255,7 +256,7 @@ q21_taxrevImport(t,regi,tradePe)..
   v21_taxrevImport(t,regi,tradePe)
   =e=
 ***---------------------------------------------------------------------------
-*'  import taxation: 1. "worldPricemarkup" = import tax level * world market price * tradePE import
+*'  import taxation: 1. "worldPricemarkup" = import tax level * world market price * tradePe import
 *'                   2. "CO2taxmarkup" = import tax level * national carbon price * imported carbon by carrier
 *'                   3. "avCO2taxmarkup" = import tax level * max( national carbon price, average carbonprice) * imported carbon by carrier
 * NOTE: In case of "CO2taxmarkup" and "avCO2taxmarkup" there is double-taxation of the CO2-content of the imported energy carrier: Once when being imported (at the border) and once when being converted to Secondary Energy (normal CO2price applied by REMIND)
@@ -331,11 +332,19 @@ q21_taxrevCCS(t,regi)$(t.val ge max(2010,cm_startyear))..
 *'  Calculation of net-negative emissions tax: tax rate (defined as fraction of carbon price) times net-negative emissions
 *'  Documentation of overall tax approach is above at q21_taxrev.
 *'  Calculation of net-negative emissions within iteration or across iterations depending on cm_NetNegEmi_calculation
+*'  Use of non-negative carbon price for the net-neg-emissions tax (p21_taxCO2eqSum_NetNegEmi) to avoid subsidy when pm_taxCO2eqSum < 0
 ***---------------------------------------------------------------------------
 q21_taxrevNetNegEmi(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevNetNegEmi(t,regi) =e= s21_frac_NetNegEmi * pm_taxCO2eqSum(t,regi) 
+v21_taxrevNetNegEmi(t,regi) =e= s21_frac_NetNegEmi * p21_taxCO2eqSum_NetNegEmi(t,regi)
                                 * ( (1 - cm_NetNegEmi_calculation) * vm_emiAllco2neg(t,regi) + cm_NetNegEmi_calculation * v21_emiAllco2neg_acrossIterations(t,regi) )
                                  - pm_taxrevNetNegEmi0(t,regi);
+
+***---------------------------------------------------------------------------
+*'  Calculation of CDR tax: tax rate (defined as fraction of carbon price) times amount of CDR
+*'  Documentation of overall tax approach is above at q21_taxrev.
+***---------------------------------------------------------------------------
+q21_taxrevCDR(t,regi)$(t.val ge max(2010,cm_startyear))..
+v21_taxrevCDR(t,regi) =e= cm_frac_CDR * pm_taxCO2eqSum(t,regi) * vm_emiCdrAll(t,regi) - p21_taxrevCDR0(t,regi);
 
 ***---------------------------------------------------------------------------
 *'  Auxiliary calculation of net-negative CO2 emissions in the current iteration: 
@@ -418,7 +427,7 @@ q21_rc_tau_import_RE(t,regi)..
     vm_costInvTeDir(t,regi,teNoTransform) + vm_costInvTeAdj(t,regi,teNoTransform)$teAdj(teNoTransform)
   )
 =g= 
-  sum(tradePE, sum(tax_import_type_21, p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)))
+  sum(tradePe, sum(tax_import_type_21, p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)))
   +
   sum(en2en(enty,enty2,te)$(teVRE(te)),
       p21_ref_costInvTeDir_RE(t,regi,te) + p21_ref_costInvTeAdj_RE(t,regi,te)$teAdj(te)  !! Reference VRE investment

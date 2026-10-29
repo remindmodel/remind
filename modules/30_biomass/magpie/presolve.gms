@@ -136,7 +136,7 @@ vm_fuExtr.l(ttot,regi,"pebiolc","1")  = p30_pebiolc_demand_helper_level(ttot,reg
 *** This must be calculated outside the optimization and stored in a 
 *** parameter to not create an incentive to increase the total
 *** PE demand just to increase the BECCS limit.
-*** Using the substitution method to adjust vm_prodSE from non-fossil
+*** Using the substitution method to adjust vm_prodSe from non-fossil
 *** energy sources to the primary energy inputs that would be needed
 *** if it was generated from fossil fuels with an average efficiency of 40%.
 

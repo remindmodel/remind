@@ -67,7 +67,6 @@ cm_budgetCO2_absDevTol,input,added by codeCheck
 cm_peakBudgYr,input,not needed
 sm_peakbudget_diff_tolerance,input,not needed
 cm_iterative_target_adj,input,not needed
-sm_peakBudgYr_check,input,not needed
 sm_peakbudget_diff,input,not needed
 cm_NDC_target_DevTol,input,added by codeCheck
 pm_NDCEmiTargetDeviation,input,not used
@@ -78,3 +77,8 @@ pm_regionalBudget_absDevTol, input,added by codeCheck
 sm_magpieIter,switch,not needed
 sm_magpieIterEnd,switch,not needed
 cm_MAgPIE_Nash,switch,not needed
+cm_TaxConv_tolerance,input,not needed
+cm_nashObjVal_tolerance,input,not needed
+cm_DevPriceAnticip_tolFactor,input,not needed
+pm_NDCTargetNotReached_iter,input,unique to NDC
+pm_CO2PriceLimit,input,not used outside of NDC

@@ -50,17 +50,23 @@ qttyTarget "quantity target for energy carrier level (primary, secondary, final 
   PE              "Primary Energy"
   SE              "Secondary Energy"
   FE              "Final Energy"
+  FE_indst        "Final Energy industry"
+  FE_build        "Final Energy buildings"
+  FE_trans        "Final Energy transport"
   FE_wo_b         "Final Energy without bunkers"
   FE_wo_n_e       "Final Energy without non-energy"
   FE_wo_b_wo_n_e  "Final Energy without bunkers and non-energy"
   CCS             "carbon capture and storage"
   oae             "ocean alkalinity enhancement"
+  novelCDR         "novel carbon dioxide removal"
+  allCDR          "all CDR including negative LUC emissions"
 /
 
 qttyTargetGroup "quantity target aggregated categories"
 /
   all
   biomass
+  biolc
   fossil
   VRE
   wind
@@ -78,6 +84,7 @@ energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,all_enty) "set combinin
 *** Primary energy type categories
 ***  PE.all.(entyPe) !! defined below as calculated set
   PE.biomass.(pebiolc,pebios,pebioil)
+  PE.biolc.(pebiolc)
   PE.fossil.(peoil,pegas,pecoal)
   PE.VRE.(pewin,pesol)
   PE.wind.pewin
@@ -100,6 +107,10 @@ energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,all_enty) "set combinin
   FE.hydrogen.(seh2)
   FE.electricity.(seel)
   FE.heat.(sehe)
+*** Total final energy per sector and final energy type
+  FE_indst.all.(fegas,fehos,fesos,feels,fehes,feh2s)
+  FE_build.all.(fegas,fehos,fesos,feels,fehes,feh2s)
+  FE_trans.all.(fepet,fedie,feh2t,feelt,fegat)
 /
 
 qttyDelayType_47 "options to define different delay rules for starting the quantity targets algorithm"
@@ -117,10 +128,16 @@ qttyTargetScenario  "hard-coded quantity scenarios"
   EU27_RpEUEff "RePowerEU energy efficiency target  (750 Mtoe final energy by 2030)"
 
   EU27_bio4    "EU-27 primary energy biomass limited to 6 EJ by 2035 and 4 EJ by 2050"
-  EU27_bio7    "EU-27 primary energy biomass limited to 7 EJ by 2035 and 2050"
-  EU27_bio7p5  "EU-27 primary energy biomass limited to 7.5 EJ by 2035 and 2050"
-  EU27_bio12   "EU-27 primary energy biomass limited to 12 EJ by 2035 and 2050"
-  GLO_bio100   "Global primary energy biomass limited to 100EJ by 2035 and 2050"
+  EU27_bio7    "EU-27 primary energy biomass limited to 7 EJ from 2035 to 2050"
+  EU27_bio7p5  "EU-27 primary energy biomass limited to 7.5 EJ from 2035 to 2050"
+  EU27_bio12   "EU-27 primary energy biomass limited to 12 EJ from 2035 to 2050"
+  
+  GLO_bio100   "Global primary energy biomass limited to 100EJ from 2035 to 2100"
+  GLO_bio110   "Global primary energy biomass limited to 110EJ from 2035 to 2100"
+  GLO_bio150   "Global primary energy biomass limited to 150EJ from 2035 to 2100"
+  GLO_bio200   "Global primary energy biomass limited to 200EJ from 2035 to 2100"
+  GLO_bio250   "Global primary energy biomass limited to 250EJ from 2035 to 2100"
+  GLO_bio300   "Global primary energy biomass limited to 300EJ from 2035 to 2100"
 
   EU27_limVRE  "wind and solar limited to linear extrapolation of 2021-2022 growth of generation capacity by 2025 and 2050"
 

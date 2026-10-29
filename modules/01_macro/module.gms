@@ -10,6 +10,7 @@
 *' @description The macro module allows for the implementation of different 
 *' macro-economic modules. 
 *###################### R SECTION START (MODULETYPES) ##########################
+$Ifi "%macro%" == "Investment_Inefficiencies" $include "./modules/01_macro/Investment_Inefficiencies/realization.gms"
 $Ifi "%macro%" == "singleSectorGr" $include "./modules/01_macro/singleSectorGr/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
 *** EOF ./modules/01_macro/module.gms

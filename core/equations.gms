@@ -106,7 +106,7 @@ q_costOM(t,regi)..
              vm_costTeCapital(t,regi,te) * vm_cap(t,regi,te,rlf)
             )
   )
-  + vm_omcosts_cdr(t,regi)
+  + vm_EW_transport_costs(t,regi)
 ;
 
 ***---------------------------------------------------------------------------
@@ -474,7 +474,7 @@ q_costTeCapital(t,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) < 4 or t.va
 $if %cm_floorCostScen% == "pricestruc"  + macro_costRegi $ (t.val > 2020)
 $if %cm_floorCostScen% == "gdpBased"    + macro_costRegi $ (t.val > 2020)
 
-$ifthen.default %cm_floorCostScen% == "default"
+$ifthen.default %cm_floorCostScen% == "uniform"
 *** from 2020 to c_teLearnConvStartYr: regional capital costs
   + macro_costRegi $ (t.val > 2020 and t.val <= c_teLearnConvStartYr)
 
@@ -705,13 +705,9 @@ q_emiMac(t,regi,emiMac) ..
 ***--------------------------------------------------
 *' All CDR emissions summed up
 ***--------------------------------------------------
-q_emiCdrAll(t,regi)..
-  vm_emiCdrAll(t,regi) !! positive value
-  =e=
-  !! ---- net LUC CDR
-  !! net negative emissions from co2luc
-  - p_macBaseMagpieNegCo2(t,regi) !! negative value
-  
+q_emiCdrNovel(t,regi)..
+  vm_emiCdrNovel(t,regi) !! positive value
+  =e=  
   !! ---- gross non-industry CDR
   !! 1. directly geologically stored gross atmospheric removal from pe2se-BECCS + DACCS
   + ( !! pe2se-BECC 
@@ -746,13 +742,22 @@ q_emiCdrAll(t,regi)..
   !! 2a) plastics CDR -- incinerated  waste that is captured + stored from  non-fossil feedstocks
   + sum(emiMkt, 
       vm_nonFosPlastic_incinCC(t,regi,emiMkt)  * v_ccsShare(t,regi)) !! positive value
-  !! 2b) plastics CDR -- landfilled waste from non-fossil feedstocks
+;
+
+q_emiCdrAll(t,regi)..
+  vm_emiCdrAll(t,regi) 
+  =e=
+  vm_emiCdrNovel(t,regi)   
+  !! ---- net LUC CDR
+  !! 0.  net negative emissions from co2luc
+  - p_macBaseMagpieNegCo2(t,regi) !! negative value
+  !! 2. Feedstocks
+   !! 2b) plastics CDR -- landfilled waste from non-fossil feedstocks
   - sum((emi,emiMkt), 
       vm_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)) !! negative value
   !! 2c) non-plastics materials CDR -- bound carbon from non-fossil feedstocks 
   + vm_nonFosNonPlasticNonEmitted(t,regi) !! positive value
 ;
-
 
 ***------------------------------------------------------
 *' Total regional emissions are computed as the sum of total emissions over all emission markets.
@@ -802,17 +807,23 @@ q_emiCap(t,regi) ..
 *' Total GHG emissions excl. land-use change and excl. bunker emissions  (needed for NDC targets)
 ***--------------------------------------------------
 q_emiGHG_exclLULUCF_exclBunkers(t,regi)..
-  v_emiGHG_exclLULUCF_exclBunkers(t,regi)
+  vm_emiGHG_exclLULUCF_exclBunkers(t,regi)
   =e=
-*** total GHG emissions excl. F-Gases and excl. LULUCF
-  vm_co2eq(t,regi) 
+*** total GHG emissions excl. F-Gases, incl. bunkers, incl. LULUCF
+  sum( emiMkt,
+         vm_emiAllMkt(t,regi,"co2",emiMkt)
+      +  vm_emiAllMkt(t,regi,"n2o",emiMkt) * sm_tgn_2_pgc
+      +  vm_emiAllMkt(t,regi,"ch4",emiMkt) * sm_tgch4_2_pgc
+    )
 *** add F-Gases, convert from MtCO2eq/yr to GtC/yr
   + vm_emiFgas(t,regi,"emiFgasTotal") / sm_c_2_co2 / 1000
 *** subtract bunker emissions
   - sum(se2fe(enty,enty2,te),
       pm_emifac(t,regi,enty,enty2,te,"co2")
       * vm_demFeSector(t,regi,enty,enty2,"trans","other") 
-    );
+    )
+*** substract LULUCF emissions
+  - vm_emiMacSector(t,regi,"co2luc");
   
 
 ***-----------------------------------------------------------------
@@ -1090,7 +1101,11 @@ q_shSeFe(t,regi,entySe)$(entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(ent
       vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
 ;
 
-q_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt)$((entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) AND (sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)))..
+q_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt)$(
+    (sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)) AND
+    (entySeBio(entySe) OR entySeSyn(entySe)) AND
+    (NOT (sameas(entyFe,"fesos") AND (sameas(sector,"build") OR sameas(sector,"indst")))) !! exclude build/indst solids (not in share penalty; prevents zero-demand infeasibility)
+  )..
   v_shSeFeSector(t,regi,entySe,entyFe,sector,emiMkt) 
   * sum(entySe2$sefe(entySe2,entyFe),
       vm_demFeSector_afterTax(t,regi,entySe2,entyFe,sector,emiMkt)*(1+999$(sameas(sector,"CDR"))))
@@ -1139,10 +1154,11 @@ q_limitCapFeH2BI(t,regi,sector)$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst"
 ;
 
 ***---------------------------------------------------------------------------
-*' Enforce historical data biomass share per carrier in sector final energy for transport, buildings and industry (+- 2%)
+*' Enforce historical data biomass share per carrier in sector final energy for transport and buildings (+- 2%)
+*' Exempt industry solids as they are covered below
 ***---------------------------------------------------------------------------
 
-q_shbiofe_up(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector) and sector2emiMkt(sector,emiMkt))..
+q_shbiofe_up(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector) and sector2emiMkt(sector,emiMkt) and NOT (sameas(sector,"indst") and sameas(entyFe,"fesos")))..
   (pm_secBioShare(t,regi,entyFe,sector) + 0.02)
   *
   sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt))
@@ -1150,12 +1166,41 @@ q_shbiofe_up(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector) 
   sum((entySeBio,te)$se2fe(entySeBio,entyFe,te), vm_demFeSector_afterTax(t,regi,entySeBio,entyFe,sector,emiMkt))
 ;
 
-q_shbiofe_lo(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector) and sector2emiMkt(sector,emiMkt))..
+q_shbiofe_lo(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector) and sector2emiMkt(sector,emiMkt) and NOT (sameas(sector,"indst") and sameas(entyFe,"fesos")))..
   (pm_secBioShare(t,regi,entyFe,sector) - 0.02)
   *
   sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt))
   =l=
   sum((entySeBio,te)$se2fe(entySeBio,entyFe,te), vm_demFeSector_afterTax(t,regi,entySeBio,entyFe,sector,emiMkt))
+;
+
+***---------------------------------------------------------------------------
+*' Enforce historical data biomass share per carrier in sector final energy for industry (+- 2%)
+*' Applies to the sum of emiMkt
+***---------------------------------------------------------------------------
+
+q_shbiofe_indst_up(t,regi,entyFe,sector)$(pm_secBioShare(t,regi,entyFe,sector) and (sameas(sector,"indst") and sameas(entyFe,"fesos")))..
+  (pm_secBioShare(t,regi,entyFe,sector) + 0.02)
+  *
+  sum(emiMkt$sector2emiMkt(sector,emiMkt),
+    sum((entySe,te)$se2fe(entySe,entyFe,te),
+      vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
+  =g=
+  sum(emiMkt$sector2emiMkt(sector,emiMkt),
+    sum((entySeBio,te)$se2fe(entySeBio,entyFe,te),
+      vm_demFeSector_afterTax(t,regi,entySeBio,entyFe,sector,emiMkt)))
+;
+
+q_shbiofe_indst_lo(t,regi,entyFe,sector)$(pm_secBioShare(t,regi,entyFe,sector) and (sameas(sector,"indst") and sameas(entyFe,"fesos")))..
+  (pm_secBioShare(t,regi,entyFe,sector) - 0.02)
+  *
+  sum(emiMkt$sector2emiMkt(sector,emiMkt),
+    sum((entySe,te)$se2fe(entySe,entyFe,te),
+      vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)))
+  =l=
+  sum(emiMkt$sector2emiMkt(sector,emiMkt),
+    sum((entySeBio,te)$se2fe(entySeBio,entyFe,te),
+      vm_demFeSector_afterTax(t,regi,entySeBio,entyFe,sector,emiMkt)))
 ;
 
 ***---------------------------------------------------------------------------
@@ -1167,7 +1212,8 @@ q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
     (t.val ge 2025) AND  !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds   
     ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
     ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
-    ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
+    ( NOT(sameas(sector,"build") AND (sameas(entyFe,"fesos"))) ) AND !!disable buildings solids share incentives
+    ( NOT(sameas(sector,"indst") AND (sameas(entyFe,"fesos"))) ) !!disable industry solids share incentives
   )..
   v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
   =e=
@@ -1179,7 +1225,8 @@ q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
     (t.val ge 2025) AND  !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds
     ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
     ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
-    ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
+    ( NOT(sameas(sector,"build") AND (sameas(entyFe,"fesos"))) ) AND !!disable buildings solids share incentives
+    ( NOT(sameas(sector,"indst") AND (sameas(entyFe,"fesos"))) ) !!disable industry solids share incentives
   )..
   v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
   =e=
@@ -1191,7 +1238,8 @@ q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
     (t.val ge 2025) AND  !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds
     ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
     ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
-    ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
+    ( NOT(sameas(sector,"build") AND (sameas(entyFe,"fesos"))) ) AND !!disable buildings solids share incentives
+    ( NOT(sameas(sector,"indst") AND (sameas(entyFe,"fesos"))) ) !!disable industry solids share incentives
   )..
   v_penSeFeSectorShare(t,regi,entySe,entyFe,sector,emiMkt)
   =e=
@@ -1203,7 +1251,8 @@ q_minMaxPenSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
     (t.val ge 2025) AND  !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds
     ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
     ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
-    ( NOT(sameas(sector,"build") AND (sameas(entyFE,"fesos"))) ) !!disable buildings solids share incentives
+    ( NOT(sameas(sector,"build") AND (sameas(entyFe,"fesos"))) ) AND !!disable buildings solids share incentives
+    ( NOT(sameas(sector,"indst") AND (sameas(entyFe,"fesos"))) ) !!disable industry solids share incentives
   )..
   (
     v_shSeFe(t,regi,entySe)

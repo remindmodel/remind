@@ -15,19 +15,16 @@ library(reshape2)
 
 if(!exists("source_include")) {
   #Define arguments that can be read from command line
-  output_folder <- "dummy"
-  readArgs("output_folder")
-
-} else {
-  output_folder <- outputdir
+  outputdir <- "dummy"
+  readArgs("outputdir")
 }
 
 #---------------READ-IN DATA ----------------------------
 filename = "Logit_buildings.csv"
 if (file.exists(filename)) {
   df = read.csv(filename, stringsAsFactors = F)
-}else if (file.exists(file.path(output_folder,filename))) {
-  df = read.csv(file.path(output_folder,filename), stringsAsFactors = F)
+}else if (file.exists(file.path(outputdir,filename))) {
+  df = read.csv(file.path(outputdir,filename), stringsAsFactors = F)
   
 } else {
   stop("No capital_unit.csv file found - please perform postprocessing first!")

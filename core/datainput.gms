@@ -290,9 +290,9 @@ fm_dataglob("inco0", "oae_ng") = fm_dataglob("inco0", "oae_ng") / (cm_33_OAE_eff
 fm_dataglob("inco0", "oae_el") = fm_dataglob("inco0", "oae_el") / (cm_33_OAE_eff / sm_c_2_co2);
 
 *** convert inco0, floorcost and omv to REMIND units by applying a factor 0.001
-***   category          energy technology   ccs technology    process-based industry 
-***   input data unit   $/kW                $/(tC/a)          $/(t/a)
-***   REMIND unit       T$/TW               T$/(GtC/a)        T$/(Gt/a)
+***   category          energy technology   ccs technology    process-based industry            weathering
+***   input data unit   $/kW                $/(tC/a)          $/(t/a)                         $/(t rock/a)
+***   REMIND unit       T$/TW               T$/(GtC/a)        T$/(Gt/a)                       T$/(Gt rock/a)
 fm_dataglob("inco0",te)        = s_DpKW_2_TDpTW   * fm_dataglob("inco0",te);
 fm_dataglob("floorcost",te)    = s_DpKW_2_TDpTW   * fm_dataglob("floorcost",te);
 fm_dataglob("omv",te)          = s_DpKWa_2_TDpTWa * fm_dataglob("omv",te);
@@ -374,7 +374,7 @@ fm_dataglob("floorcost",te)  = (1 + sum(regi, p_tkpremused(regi,te)) / card(regi
 
 
 *** ====================== floor cost scenarios ===========================
-$ifthen.floorscen not %cm_floorCostScen% == "default"
+$ifthen.floorscen not %cm_floorCostScen% == "uniform"
 *** report old floor costs pre manipulation in non-default scenario
   p_oldFloorCostdata(regi,teLearn(te)) = pm_data(regi,"floorcost",te);
   display p_oldFloorCostdata;
@@ -620,8 +620,8 @@ loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
 option pm_emifac:3:3:1;
 pm_emifac(ttot,regi,enty,enty2,te,"co2")$emi2te(enty,enty2,te,"co2")   = f_dataemiglob(enty,enty2,te,"co2");
 pm_emifac(ttot,regi,enty,enty2,te,"cco2")$emi2te(enty,enty2,te,"cco2") = f_dataemiglob(enty,enty2,te,"cco2");
-*JeS scale N2O energy emissions to EDGAR
-pm_emifac(ttot,regi,enty,enty2,te,"n2o")$emi2te(enty,enty2,te,"n2o") = 0.905 * f_dataemiglob(enty,enty2,te,"n2o");
+*GA  scale N2O energy emissions to match CEDS2025 in 2020 with a simple global factor
+pm_emifac(ttot,regi,enty,enty2,te,"n2o")$emi2te(enty,enty2,te,"n2o") = 1.288 * f_dataemiglob(enty,enty2,te,"n2o");
 
 ***JeS from IPCC http://www.ipcc-nggip.iges.or.jp/public/gp/bgp/2_2_Non-CO2_Stationary_Combustion.pdf:
 ***JeS CH4: 300 kg/TJ = 0.3 Mt/EJ * 31.536 EJ/TWa = 9.46 Mt /TWa
@@ -825,10 +825,10 @@ pm_data(regi,"lifetime","tdh2b") = pm_data(regi,"lifetime","tdh2s");
 *' slow depreciation during the first half of the lifetime and faster during the second half.
 *' The area under that curve (capacity * age) equals the average technical lifetime of the technology,
 *' provided in generisdata_tech.prn.
-*' There is still some non-zero capacity beyond the average lifetime, until the maximum lifetime p_lifetime_max
+*' There is still some non-zero capacity beyond the average lifetime, until the maximum lifetime pm_lifetime_max
 *' (calculated from an integral as 5/4 times the average lifetime).
-p_lifetime_max(regi,te) = 5 / 4 * pm_data(regi,"lifetime",te);
-pm_omeg(regi,opTimeYr,te) = max(0, 1 - ((opTimeYr.val - 0.5) / p_lifetime_max(regi,te))**4);
+pm_lifetime_max(regi,te) = 5 / 4 * pm_data(regi,"lifetime",te);
+pm_omeg(regi,opTimeYr,te) = max(0, 1 - ((opTimeYr.val - 0.5) / pm_lifetime_max(regi,te))**4);
 
 *** Map each technology with its possible age
 opTimeYr2te(te,opTimeYr) $ sum(regi $ (pm_omeg(regi,opTimeYr,te) > 0), 1) = yes;
@@ -858,8 +858,8 @@ loop(regi,
     if(pm_omeg(regi,"1",te) eq 0,
       abort "Technology has zero lifetime", pm_omeg);
 ***   - lifetime of technology is longer than allowed by opTimeYr
-    if(p_lifetime_max(regi,te) > smax(opTimeYr, opTimeYr.val),
-      abort "Technology has longer lifetime than allowed by opTimeYr", opTimeYr, p_lifetime_max);
+    if(pm_lifetime_max(regi,te) > smax(opTimeYr, opTimeYr.val),
+      abort "Technology has longer lifetime than allowed by opTimeYr", opTimeYr, pm_lifetime_max);
 ***   - technology has remaining capacity beyond its lifetime
     if(
       sum(opTimeYr $ (opTimeYr.val > smax(opTimeYr2te(te,opTimeYr2), opTimeYr2.val)),
@@ -1325,6 +1325,7 @@ $endif.cm_subsec_model_steel
   p_adj_coeff(ttot,regi,"dac")          = 0.8;
   p_adj_coeff(ttot,regi,'oae_ng')       = 0.8;
   p_adj_coeff(ttot,regi,'oae_el')       = 0.8;
+  p_adj_coeff(ttot,regi,'weathering')   = 1.0;
 $ifthen.cm_subsec_model_steel "%cm_subsec_model_steel%" == "processes"
 *** steel technologies
   p_adj_coeff(ttot,regi,"bfcc")         = 4.0;
@@ -1407,10 +1408,10 @@ $if  "%cm_rcp_scen%" == "none"    sm_budgetCO2eqGlob = 20000.0000;
   );
   if(cm_multigasscen eq 2,
 $if  "%cm_rcp_scen%" == "rcp20"   sm_budgetCO2eqGlob = 500.0000;
-     if(cm_ccapturescen eq 1,
+     if(c_co2captureEnergy eq 1,
 $if  "%cm_rcp_scen%" == "rcp26"   sm_budgetCO2eqGlob = 530.0000;
      );
-     if(cm_ccapturescen gt 1,
+     if(c_co2captureEnergy gt 1,
 $if  "%cm_rcp_scen%" == "rcp26"   sm_budgetCO2eqGlob = 700.0000;
      );
 $if  "%cm_rcp_scen%" == "rcp37"   sm_budgetCO2eqGlob = 1000.0000;
@@ -1517,7 +1518,16 @@ pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMag
 
 *** pm_macBaseMagpie gets updated in core/presolve.gms when coupling to MAgPIE is active
 
-p_co2lucSub(ttot,regi,emiMacMagpieCO2Sub(all_enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpieCO2Sub,"%cm_LU_emi_scen%","%cm_rcp_scen%");
+*** In case of fixing, load p_co2lucSub from input_ref.gdx, since parameters are not automatically treated by the fixing mechanism.
+*** Years >= cm_startyear get their values from the lookup table rather than the input_ref.gdx (see below).
+if( (cm_startyear gt 2005),
+    Execute_Loadpoint "input_ref" p_co2lucSub = p_co2lucSub;
+);
+
+
+*** Overwrite values >= cm_startyear with lookup table, leave values < cm_startyear untouched (from input_ref.gdx, see above).
+*** Gets updated for >= cm_startyear in core/presolve.gms when coupling to MAgPIE is active.
+p_co2lucSub(ttot,regi,emiMacMagpieCO2Sub(all_enty))$(ttot.val ge cm_startyear) = f_macBaseMagpie(ttot,regi,emiMacMagpieCO2Sub,"%cm_LU_emi_scen%","%cm_rcp_scen%");
 
 *** p_macPolCO2luc defines the lower limit for abatement of CO2 landuse change emissions in REMIND
 *** The values are derived from MAgPIE runs with very strong mitigation
@@ -1646,23 +1656,34 @@ $offdelim
 
 pm_fedemandBuild(t,regi,cal_ppf_buildings_dyn36) = f_fedemandBuild(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 
-*** Scale FE demand across industry and building sectors
+*** Scale demand across industry (FE and UE) and building sectors (FE; UE happens in module 36)
 $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
   loop((tall,tall2,all_regi) $ pm_scaleDemand(tall,tall2,all_regi),
-*FL*  rescaled demand                = normal demand                  * [ scaling factor                      + (1-scaling factor)                      * remaining phase-in, between zero and one               ]
-      pm_fedemandInd(t,all_regi,all_in) = pm_fedemandInd(t,all_regi,all_in) * ( pm_scaleDemand(tall,tall2,all_regi) + (1-pm_scaleDemand(tall,tall2,all_regi)) * min(1, max(0, tall2.val-t.val) / (tall2.val-tall.val)) );
-      pm_fedemandBuild(t,all_regi,all_in) = pm_fedemandBuild(t,all_regi,all_in) * ( pm_scaleDemand(tall,tall2,all_regi) + (1-pm_scaleDemand(tall,tall2,all_regi)) * min(1, max(0, tall2.val-t.val) / (tall2.val-tall.val)) );
+    loop(t $ t.val > tall.val,
+      pm_fedemandInd(t,all_regi,all_in)   $ (t.val < tall2.val)  = pm_fedemandInd(t,all_regi,all_in)   * macro_interpolate(t.val,tall.val,tall2.val,1,pm_scaleDemand(tall,tall2,all_regi));
+      pm_fedemandBuild(t,all_regi,all_in) $ (t.val < tall2.val)  = pm_fedemandBuild(t,all_regi,all_in) * macro_interpolate(t.val,tall.val,tall2.val,1,pm_scaleDemand(tall,tall2,all_regi));
+      pm_fedemandInd(t,all_regi,all_in)   $ (t.val >= tall2.val) = pm_fedemandInd(t,all_regi,all_in)   * pm_scaleDemand(tall,tall2,all_regi);
+      pm_fedemandBuild(t,all_regi,all_in) $ (t.val >= tall2.val) = pm_fedemandBuild(t,all_regi,all_in) * pm_scaleDemand(tall,tall2,all_regi);
+    );
   );
 $endif.scaleDemand
 
-*** Scale FE demand in building sectors
-$ifthen.scaleDemandBuildTable not "%cm_scaleDemandBuildTable%" == "off"
+*** Scale FE and UE demand for chemicals
+$ifthen.scaleDemandChem not "%cm_scaleDemandChem%" == "off"
+  loop((tall,tall2,all_regi) $ pm_scaleDemandChem(tall,tall2,all_regi),
+    loop((t,all_in) $ (t.val > tall.val and secInd37_2_pf("chemicals",all_in)),
+      pm_fedemandInd(t,all_regi,all_in) $ (t.val < tall2.val)  = pm_fedemandInd(t,all_regi,all_in) * macro_interpolate(t.val,tall.val,tall2.val,1,pm_scaleDemandChem(tall,tall2,all_regi));
+      pm_fedemandInd(t,all_regi,all_in) $ (t.val >= tall2.val) = pm_fedemandInd(t,all_regi,all_in) * pm_scaleDemandChem(tall,tall2,all_regi);
+    );
+  );
+$endif.scaleDemandChem
 
-*** File should have the following format:
+
+$ifthen.scaleDemandBuildTable not "%cm_scaleDemandBuildTable%" == "off"
+*** Scale FE demand in building sectors, using file with following format:
 *** 2025,USA,1.00
 *** 2030,USA,0.9
 *** 2035,USA,0.8
-
 
 Parameter f_scaleDemandBuildTable(ttot,all_regi) "Rescaling factor on industry final energy and usable energy demand, read-in from a table"
 /
@@ -1681,10 +1702,8 @@ pm_scaleDemandBuildTable(t,regi) $ (t.val > 2100 ) = pm_scaleDemandBuildTable("2
   );
 $endif.scaleDemandBuildTable
 
-*** Scale FE demand in industry sectors
 $ifthen.scaleDemandIndTable not "%c_scaleDemandIndTable%" == "off"
-
-*** File should have the following format:
+*** Scale FE demand in industry sectors, using file with following format:
 *** 2025,USA,1.00
 *** 2030,USA,0.9
 *** 2035,USA,0.8

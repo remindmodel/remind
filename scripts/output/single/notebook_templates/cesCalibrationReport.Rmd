@@ -22,7 +22,7 @@ params:
 library(tidyverse)
 library(quitte)
 library(colorspace)
-library(gdx)
+library(gdx2)
 
 knitr::opts_chunk$set(
   echo = FALSE,
@@ -67,8 +67,8 @@ ces <- ces %>%
   mutate("scenario" = as.factor(.data$scenario))
 
 # select only calibrated nodes to show in report
-ppf_29 <- readGDX(gdx, "ppf_29")
-pf_eff_target_dyn37 <- readGDX(gdx, "pf_eff_target_dyn37")
+ppf_29 <- gdx2::readGDX(gdx, "ppf_29")
+pf_eff_target_dyn37 <- gdx2::readGDX(gdx, "pf_eff_target_dyn37")
 ces <- ces %>% filter(.data$pf %in% c(ppf_29, pf_eff_target_dyn37))
 
 last_iteration <- max(itr)
@@ -146,10 +146,9 @@ te <- c(
   "gastr", "refliq", "biotr", "coaltr", "hydro", "ngcc", "ngt",
   "pc", "dot", "gaschp", "windon", "tnrs"
 )
-in_set <- readGDX(gdx, "in", "sets")
+
+in_set <- gdx2::readGDX(gdx, name = "in")
 structure <- sort(intersect(in_set, getColValues(ces, "pf")))
-
-
 
 for (s in levels(ces$scenario)) {
   for (r in sort(unique(ces$regi))) {

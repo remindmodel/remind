@@ -9,16 +9,16 @@ on:
       - main
       - master
       - develop
-        
+
 name: check
 
 jobs:
   check:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
       - name: Remove .Rprofile
         run: rm .Rprofile

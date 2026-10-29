@@ -42,7 +42,6 @@ Rscript start.R
                    - load config.Rdata
                    - cd mainfolder
                    - LOCK model
-                   - prepare NDC [scripts/input/prepare_NDC.R]
                    - prepare calibration
                    - if coupled get MAgPIE data
                    - download and distribute input data

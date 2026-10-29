@@ -276,6 +276,9 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       # General settings for MAgPIE coupling (independent of the scenario)
       path_magpie <- normalizePath(file.path(getwd(), "magpie"), mustWork = FALSE)
       if (! dir.exists(path_magpie)) path_magpie <- normalizePath(file.path(getwd(), "..", "magpie"), mustWork = FALSE)
+      if (! dir.exists(path_magpie)) {
+        stop("Could not find a 'magpie' folder in the REMIND main folder or its parent folder. Please clone MAgPIE into the REMIND main folder (or place it in the parent folder) and try again.")
+      }
       
       # =======================================================
     }    

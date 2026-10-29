@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           token: ${{ secrets.AUTO_DEV_VERSION_REMIND }}
@@ -36,7 +36,7 @@ jobs:
 
       - name: Commit changes to CITATION.cff
         uses: EndBug/add-and-commit@v9
-        with:          
+        with:
           add: '["CITATION.cff", "config/default.cfg"]'
           author_name: REMIND Research Software Engineering
           author_email: rse@pik-potsdam.de

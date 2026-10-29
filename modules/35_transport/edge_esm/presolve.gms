@@ -11,7 +11,7 @@ if(edgeTransportIter(iteration),
 *** Track runtime
     putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",iterativeEdgeTransport," iteration.val:0;
 
-    Execute "Rscript -e 'library(edgeTransport); edgeTransport::iterativeEdgeTransport()'";
+    execute.checkErrorLevel "Rscript -e 'library(edgeTransport); edgeTransport::iterativeEdgeTransport()'";
 *** Track runtime
     putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",GAMS," iteration.val:0;
 

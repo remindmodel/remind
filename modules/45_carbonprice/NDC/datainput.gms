@@ -25,6 +25,17 @@ $onlisting
 Parameter p45_EmiTargetAbs(ttot,all_regi) "Absolute NDC emissions targets, emissions from countries without targets are not included [Mt CO2eq/yr]";
 p45_EmiTargetAbs(t,all_regi) = f45_EmiTargetAbs(t,all_regi,"%cm_NDC_version%","%cm_GDPpopScen%");
 
+*** quick-fix EUR 2035 NDC target, to be removed after target calculation rewrite in mrremind
+*** take mean of 66.25% and 72.5% reduction instead of higher 72.5% reduction which is default in mrremind target calculation if countries provide a range
+*** Calculation assumptions:
+*** EU27 1990 reference GHG emissions incl LULUCF: 4652 MtCO2eq/yr (UNFCCC)
+*** UK 1990 reference GHG emissions incl LULUCF: 817 MtCO2eq/yr (UNFCCC)
+*** EU27 2035 percentage reduction target: mean(0.6625,0.725) = 69.375
+*** UK 2035 percentage reduction target: 0.81
+*** EUR target = EU27 + UK target = 4652*(1-0.69375) + 817*(1-0.81) = 1579.9 MtCO2eq/yr (incl LULUCF)
+*** Assume -310 LULUCF 2035 emissions  (kept constant from 2030 goal) => EUR 2035 target excl LULUCF = 1579.9 + 310 ~ 1890 MtCO2eq/yr
+p45_EmiTargetAbs(t,regi)$(t.val eq 2035 AND sameas(regi,"EUR")) = 1890;
+
 $ifThen "%cm_targetDelay%" == "prisma"
 *** PRISMA Asymetric rollback: 
 **   the delay of NDC targets of "10, 20, or 30 years" per region would be assigned as:
@@ -79,21 +90,14 @@ $ENDIF
 
 display p45_shareTarget;
 
-Parameter p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,all_regi) "regional GHG emissions (without LU and without bunkers) in BAU scenario [MtCO2eq/yr]"
-  /
-$ondelim
-$ifthen exist "./modules/45_carbonprice/NDC/input/pm_BAU_reg_emi_wo_LU_wo_bunkers.cs4r"
-$include "./modules/45_carbonprice/NDC/input/pm_BAU_reg_emi_wo_LU_wo_bunkers.cs4r"
-$endif
-$offdelim
-  /             ;
+Parameter p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,all_regi) "regional GHG emissions (without LU and without bunkers) in BAU scenario [MtCO2eq/yr]";
 
 *** --------------------------------------------------------------------------
 *** use new GAMS internal variables for total GHG excl LULUCF and excl bunkers
 
 *** overwrite BAU emissions with emissions in GAMS variable from reference GDX
 p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,regi) = 0;
-Execute_Loadpoint 'input_ref' p45_BAU_reg_emi_wo_LU_wo_bunkers = v_emiGHG_exclLULUCF_exclBunkers.l;
+Execute_Loadpoint 'input_ref' p45_BAU_reg_emi_wo_LU_wo_bunkers = vm_emiGHG_exclLULUCF_exclBunkers.l;
 *** convert from GtCeq/yr to MtCO2eq/yr
 p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,regi) = p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,regi) * sm_c_2_co2 * 1000;
 
@@ -114,6 +118,24 @@ display p45_bestNDCcoverage;
 
 p45_NDCyearSet(t,regi)$(t_NDC_targetYear(t)) = p45_shareTarget(t,regi) >= p45_minRatioOfCoverageToMax * p45_bestNDCcoverage(regi);
 
+$ifThen "%cm_targetDelay%" == "prisma"
+*** PRISMA Asymetric rollback
+** Requires cm_NDC_version = 2026_cond: copy 2030 and 2035 targets to later years based on region delay, set 2030 and 2035 targets to 0
+p45_NDCyearSet(t,regi)$(t.val eq 2030 + p45_delay(regi)) = p45_NDCyearSet("2030",regi);
+p45_NDCyearSet(t,regi)$(t.val eq 2035 + p45_delay(regi)) = p45_NDCyearSet("2035",regi);
+p45_NDCyearSet("2070","REF") = p45_NDCyearSet("2035","REF");
+p45_NDCyearSet("2070","MEA") = p45_NDCyearSet("2035","MEA");
+p45_NDCyearSet(t,regi)$(t.val eq 2030) = 0;
+p45_NDCyearSet(t,regi)$(t.val eq 2035) = 0;
+*** In PRISMA Asymetric rollback, USA keeps its targets
+$else
+*** remove 2030 USA and 2035 USA targets from p45_NDCyearSet as US has withdrawn from Paris Agreement and has no NDC targets anymore
+p45_NDCyearSet("2030","USA") = NO;
+p45_NDCyearSet("2035","USA") = NO;
+$ENDIF
+
+
+
 if(p45_useSingleYearCloseTo > 0,
   p45_distanceToOptyear(p45_NDCyearSet(t,regi)) = abs(t.val - p45_useSingleYearCloseTo);
   p45_minDistanceToOptyear(regi) = smin(t$(p45_NDCyearSet(t,regi)), p45_distanceToOptyear(t,regi));
@@ -123,6 +145,7 @@ if(p45_useSingleYearCloseTo > 0,
 *** first and last NDC year as a number
 Parameter p45_firstNDCyear(all_regi) "last year with NDC coverage within region [year]";
 p45_firstNDCyear(regi) = smin( p45_NDCyearSet(t, regi), t.val );
+p45_firstNDCyear(regi)$(p45_firstNDCyear(regi) = +INF) = 0;
 Parameter p45_lastNDCyear(all_regi)  "last year with NDC coverage within region [year]";
 p45_lastNDCyear(regi)  = smax( p45_NDCyearSet(t, regi), t.val );
 

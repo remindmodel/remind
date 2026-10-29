@@ -18,7 +18,7 @@ in which intertemporal global welfare is optimized subject to equilibrium constr
 
 A model description paper on REMIND 2.1 has been published in Geoscientific Model Development (GMD): https://doi.org/10.5194/gmd-14-6571-2021 .
 
-The model documentation for version 3.2.0 can be found at https://rse.pik-potsdam.de/doc/remind/3.2.0 .
+The model documentation for version 3.7.0 can be found at https://rse.pik-potsdam.de/doc/remind/3.7.0 .
 
 The most recent version of the documentation can also be extracted from the
 model source code via the R package goxygen

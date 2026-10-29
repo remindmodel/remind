@@ -8,8 +8,8 @@ First, find out the state of your run by executing this in the run directory:
 ```bash
 Rscript -e "modelstats::loopRuns('.')"
 ```
-PIK cluster users can access information on all their runs in all directories by executing `rs2 -c` (or `rs2 -a` for only active runs).
-If you want information on all (or some) runs in a given output folder, no matter who ran them, simply type `rs2` and then select either `1` for all runs or just the runs you want information about.
+PIK cluster users can access information on all their runs in all directories by executing `rs` (or `rs -C` for only active runs).
+If you want information on all (or some) runs in a given output folder, no matter who ran them, simply run `rs -p <output-folder>` and then select either `1` for all runs or just the runs you want information about.
 
 This tutorial should help you if REMIND (1) [did not start](#case-1-remind-did-not-start), (2) [did produce an error](#case-2-remind-did-produce-an-error), (3) [ran into infeasibilities](#case-3-remind-ran-into-infeasibilities) or (4) [did not converge](#case-4-remind-did-not-converge).
 
@@ -143,7 +143,7 @@ There are different types of solver infeasibilities: pre-triangular and optimiza
 Case 4: REMIND did not converge
 -------------------------------
 
-If the iterations are not sufficient to converge, you will see in the output of `rs2 -c` that `RunStatus` is `Normal completion`, but `Conv` shows `not_converged`.
+If the iterations are not sufficient to converge, you will see in the output of `rs` that `RunStatus` is `Normal completion`, but `Conv` shows `not_converged`.
 
 You can run
 ```
