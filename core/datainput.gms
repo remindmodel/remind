@@ -112,7 +112,7 @@ p_inv_gdx(ttot,regi)     = vm_invMacro.l(ttot,regi,"kap");
 *------------------------------------------------------------------------------------
 
 *** initialize upper and lower bound to FE share parameters as zero (this will leave any FE share bounds non-activated)
-*** please set FE share bounds by modying this parameter in the sectormodules, e.g. 36_buildings and 37_industry datainput files
+*** please set FE share bounds by modifying this parameter in the sectormodules, e.g. 36_buildings and 37_industry datainput files
 pm_shfe_up(ttot,regi,entyFe,sector)=0;
 pm_shfe_lo(ttot,regi,entyFe,sector)=0;
 pm_shGasLiq_fe_up(ttot,regi,sector)=0;
@@ -166,7 +166,7 @@ $ifthen.c_techAssumptScen "%c_techAssumptScen%" == "SSP1"
     );
 *** hampers nuclear a lot
     fm_dataglob("inco0","tnrs") =        1.3 * fm_dataglob("inco0","tnrs");
-*** favours transmission for non-ICE vehicules
+*** favours transmission for non-ICE vehicles
     fm_dataglob("inco0",te) $ (sameas(te,"tdelt") or sameas(te,"tdh2t")) = 0.7 * fm_dataglob("inco0",te);
 *** favours VRE and electricity storage
     fm_dataglob("learn",teVRE) =         1.1 * fm_dataglob("learn",teVRE);
@@ -191,7 +191,7 @@ $elseif.c_techAssumptScen "%c_techAssumptScen%" == "SSP3"
     );
 *** hampers nuclear
     fm_dataglob("inco0","tnrs") =        1.3 * fm_dataglob("inco0","tnrs");
-*** hampers transmission for non-ICE vehicules
+*** hampers transmission for non-ICE vehicles
     fm_dataglob("inco0",te) $ (sameas(te,"tdelt") or sameas(te,"tdh2t")) = 2 * fm_dataglob("inco0",te);
 *** hampers VRE a lot, and electricity storage
     fm_dataglob("learn",teVRE) $ (not sameas(teVRE,"spv")) = 0.5 * fm_dataglob("learn",teVRE);
@@ -339,14 +339,14 @@ $endif.REG_techcosts
 
 *** =============== Regional risk premium during building time ====================
 parameter p_risk_premium_constr(all_regi) "risk premium during construction time. Use same values as pm_risk_premium used in module 23_capital markets"
-*RP* 2 parameters needed because pm_risk_premium is set to 0 in module 23 realization perfect".
+*RP* 2 parameters needed because pm_risk_premium is set to 0 in module 23 realization perfect.
 /
 $ondelim
 $include "./core/input/pm_risk_premium.cs4r"
 $offdelim
 /;
 
-*** calculate turnkey costs, which are the sum of the overnight costs and the "interest during construction” (IDC)
+*** calculate turnkey costs, which are the sum of the overnight costs and the "interest during construction" (IDC)
 loop(te $ (fm_dataglob("constrTme",te) > 0),
   p_tkpremused(regi,te) = 1 / fm_dataglob("constrTme",te)
     * sum(integ $ (integ.val <= fm_dataglob("constrTme",te)),
@@ -381,7 +381,7 @@ $ifthen.floorscen not %cm_floorCostScen% == "uniform"
 $endif.floorscen
 
 $ifthen.floorscen %cm_floorCostScen% == "pricestruc"
-*' Floor costs based on current price structure: for selected technologie, floor cost follows the historical price structure across regions.
+*' Floor costs based on current price structure: for selected technologies, floor cost follows the historical price structure across regions.
 *' The rescaling is relative to global average investment costs: if a region has twice higher costs than average at historical time steps
 *' then it will also have a twice higher floor cost.
   pm_data(regi,"floorcost",te) $ (teRegTechCosts(te) and teLearn(te)) =
@@ -414,7 +414,7 @@ $endif.floorscen
 *** See equations.gms for documentation of learning equations and floor costs
 *** -------------------------------------------------------------------------------
 
-*** our learing implementation fails if floorcost >= inco0
+*** our learning implementation fails if floorcost >= inco0
 pm_data(regi,"floorcost",teLearn) = min(pm_data(regi,"floorcost",teLearn), 0.99 * pm_data(regi,"inco0",teLearn));
 fm_dataglob("floorcost",teLearn) = min(fm_dataglob("floorcost",teLearn), 0.99 * fm_dataglob("inco0",teLearn));
 
@@ -486,7 +486,7 @@ $ifthen.REG_techcosts "%cm_techcosts%" == "REG"   !! cm_techcosts REG
     pm_inco0_t(ttot,regi,te) $ (ttot.val >= 2015 and ttot.val <= 2020) = p_inco0(ttot,regi,te);
 
 *** from 2025 to c_teNoLearnConvEndYr, apply linear convergence of investment costs so that
-*** all regions converge and stabilise at the technology cost data given in generisdata.prn
+*** all regions converge and stabilise at the technology cost data given in generisdata_tech.prn
     loop(ttot $ (ttot.val > 2020 and ttot.val < c_teNoLearnConvEndYr),
       pm_inco0_t(ttot,regi,te)
         = macro_interpolate(ttot.val, 2020, c_teNoLearnConvEndYr, p_inco0("2020",regi,te), fm_dataglob("inco0",te))
@@ -507,8 +507,8 @@ $endif.REG_techcosts
 *------------------------------------------------------------------------------------
 
 *** Determine CCS injection rates
-*** for c_ccsinjecratescen =0 the storing variable vm_co2CCS will be fixed to 0 in bounds.gms, the sm_ccsinjecrate=0 will cause a division by 0 error in the 21_tax module
-s_ccsinjecrate = 0.005
+*** for c_ccsinjecratescen =0 the storing variable vm_co2CCS will be fixed to 0 in bounds.gms, the pm_ccsinjecrate=0 will cause a division by 0 error in the 21_tax module
+s_ccsinjecrate = 0.005;
 if (c_ccsinjecratescen eq 2, s_ccsinjecrate = s_ccsinjecrate *   0.50 ); !! Lower estimate
 if (c_ccsinjecratescen eq 3, s_ccsinjecrate = s_ccsinjecrate *   1.50 ); !! Upper estimate
 if (c_ccsinjecratescen eq 4, s_ccsinjecrate = s_ccsinjecrate * 200    ); !! remove flow constraint for DAC runs
@@ -566,7 +566,7 @@ loop(pe2se(entyPe,entySe,te)$(p_tech_co2capturerate(te)),
     if(sameAs(entyPe,"pebiolc"),
       f_dataemiglob(entyPe,entySe,te,"co2") = -f_dataemiglob(entyPe,entySe,te,"cco2") ;
     else
-      f_dataemiglob(entyPe,entySe,te,"co2") = p_PECarriers_CarbonContent(entyPe) - f_dataemiglob(entyPe,entySe,te,"cco2") ;
+      f_dataemiglob(entyPe,entySe,te,"co2") = p_PECarriers_CarbonContent(entyPe) * s_ZJ_2_TWa - f_dataemiglob(entyPe,entySe,te,"cco2") ;
 	);
   );
 );
@@ -672,7 +672,7 @@ display pm_IO_trade;
 ***nicolasb*DOT* tbd the script is available in the common script folder
 ***nicolasb*DOT* The parameter describes the extra CO2 emissions from fuel extraction on top of the PE combustion emissions
 ***nicolasb*DOT* the units are: GtC per TWa
-***nicolasb*DOT* ATTENTION: the data given here must crrespond with the mapping emi2fuelMine(enty,enty2,rlf)
+***nicolasb*DOT* ATTENTION: the data given here must correspond with the mapping emi2fuelMine(enty,enty2,rlf)
 p_cint(regi,"co2","peoil","4")=0.0475647000;
 p_cint(regi,"co2","peoil","5")=0.1078133200;
 p_cint(regi,"co2","peoil","6")=0.1775748800;
@@ -771,7 +771,7 @@ loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi),
 
 
 *** for runs with all EU subregions (regionmapping21_EU21), increase early retirement rates for the EU regions
-*** because the higher regional resolution already introduces more intertia to the phase-out dynamics
+*** because the higher regional resolution already introduces more inertia to the phase-out dynamics
 *** This increase of the parameter value between the two regional resolution actually makes H12 results better match EU21 results. 
 *** The larger heterogeneity of the EU subregions means that the single-region version needs less flexibility to change at the 
 *** same speed that the sum over the many regions can change.
@@ -793,7 +793,7 @@ if(       (sum(regi$sameas(regi,"DEU"),1) > 0)
 *** increase early retirement for technologies that are old and should be phased out faster
 pm_regiEarlyRetiRate(t,regi,"pc")      = 1.2 * pm_regiEarlyRetiRate(t,regi,"pc");       !! standard coal power plants, pc, are a relatively old technology that should be allowed to retire faster
 *** reduce early retirement for technologies with additional characteristics that are difficult to represent in REMIND, eg. industries built around heating/CHP plants, or flexibility from ngt plants
-pm_regiEarlyRetiRate(t,regi,"ngt")     = 0.3 * pm_regiEarlyRetiRate(t,regi,"ngt");      !! ngt should only be phased out very slowly, as they provide flexibility - which REMIND is not too good at capturing endogeneously
+pm_regiEarlyRetiRate(t,regi,"ngt")     = 0.3 * pm_regiEarlyRetiRate(t,regi,"ngt");      !! ngt should only be phased out very slowly, as they provide flexibility - which REMIND is not too good at capturing endogenously
 pm_regiEarlyRetiRate(t,regi,"gaschp")  = 0.7 * pm_regiEarlyRetiRate(t,regi,"gaschp");   !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
 pm_regiEarlyRetiRate(t,regi,"coalchp") = 0.7 * pm_regiEarlyRetiRate(t,regi,"coalchp");  !! chp should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
 pm_regiEarlyRetiRate(t,regi,"gashp")   = 0.5 * pm_regiEarlyRetiRate(t,regi,"gashp");    !! district heating plants should only be phased out slowly, as district heating networks/ industry uses are designed to a specific heat input
@@ -889,7 +889,7 @@ $ondelim
 $include "./core/input/pm_NuclearConstraint.cs4r"
 $offdelim
 /;
-*** avoid negative additions requiremnet for 2020
+*** avoid negative additions requirement for 2020
 loop(regi,
 if(pm_NuclearConstraint("2020",regi,"tnrs")<0,
     pm_NuclearConstraint("2020",regi,"tnrs")=0;
@@ -932,7 +932,7 @@ $offdelim
 /;
 
 *** read in indicators on whether CCS is used in 2025 and 2030 (0 = no)
-parameter p_boundCapCCSindicator(all_regi)        "CCS used in until 2030"
+parameter p_boundCapCCSindicator(all_regi)        "CCS used until 2030"
 /
 $ondelim
 $include "./core/input/p_boundCapCCSindicator.cs4r"
@@ -947,7 +947,7 @@ $include "./core/input/p_boundCapBiochar.cs4r"
 $offdelim
 /;
 
-*** read in CO2 emisisons for 2010, used to fix vm_emiTe.up("2010",regi,"co2")
+*** read in CO2 emissions for 2010, used to fix vm_emiTe.up("2010",regi,"co2")
 parameter p_boundEmi(tall,all_regi)        "domestic CO2 emissions that are allowed in 2010 Unit: GtC"
 /
 $ondelim
@@ -965,8 +965,8 @@ $onlisting
 
 
 * GA Read choice of non-CO2 MACs version
-* PBL_2007 is based on Lucas et al. (2007), and abatement is relative to that study's IMAGE baseline scenario emissions, asssumed relative to ours here
-* PBL_2022 is based on van Harmsen et al. (2022), and abatement is relative to that study's IMAGE SSP2 baseline scenario emissions, asssumed relative to ours here
+* PBL_2007 is based on Lucas et al. (2007), and abatement is relative to that study's IMAGE baseline scenario emissions, assumed relative to ours here
+* PBL_2022 is based on van Harmsen et al. (2022), and abatement is relative to that study's IMAGE SSP2 baseline scenario emissions, assumed relative to ours here
 $IFTHEN.MaccVersion %c_nonco2_macc_version% == "PBL_2007"
 * PBL_2007 MACs are discretized in steps of 5 $/tC
 sm_dmac = 5 ;
@@ -994,7 +994,7 @@ $onlisting
 ;
 parameter p_abatparam_CH4(tall,all_regi,all_enty,steps) "MAC costs for CH4 by source";
 *** Pick MACC scenario
-p_abatparam_CH4(tall,all_regi,all_enty,steps) = p_all_abatparam_CH4(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
+p_abatparam_CH4(tall,all_regi,all_enty,steps) = p_all_abatparam_CH4(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps);
 table p_all_abatparam_N2O(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for N2O by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_N2O"
 $offlisting
 $ondelim
@@ -1046,7 +1046,7 @@ $if %cm_LU_emi_scen% == "SSP5"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0
 $if %cm_LU_emi_scen% == "SDP"    p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0047/sm_EJ_2_TWa;
 
 *** In case REMIND is coupled to MAgPIE emissions are obtained from the MAgPIE reporting. 
-*** Thus, emission factors are set to zero in core/presolve.gms after MAgPIE has run at least one.
+*** Thus, emission factors are set to zero in core/presolve.gms after MAgPIE has run at least once.
 
 *** capacity factors (nur) are 1 by default
 pm_dataren(regi,"nur",rlf,te)     = 1;
@@ -1351,7 +1351,7 @@ $ifthen not "%cm_adj_coeff_multiplier%" == "off"
   p_adj_coeff(ttot,regi,te)$(p_adj_coeff_multiplier(te)) = p_adj_coeff_multiplier(te) * p_adj_coeff(ttot,regi,te);
 $endif
 
-***Overwritting adj seed and coeff if adj cost overwrite switches are on
+***Overwriting adj seed and coeff if adj cost overwrite switches are on
 $ifthen not "%cm_adj_seed_cont%" == "off"
   p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te) = p_new_adj_seed(te);
 $elseIf not "%cm_adj_seed%" == "off"
@@ -1456,7 +1456,7 @@ $offdelim
 /;
 pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = fm_taxCO2eqHist(ttot,regi) * sm_DptCO2_2_TDpGtC;
 
-*** As long as there is hardly any CO2 LUC reduction in MAgPIE we dont need MACs in REMIND
+*** As long as there is hardly any CO2 LUC reduction in MAgPIE we don't need MACs in REMIND
 pm_macSwitch(ttot,regi,"co2luc") = 0;
 *** The tiny fraction n2ofertsom of total land use n2o can get slightly negative in some cases. Ignore MAC for n2ofertsom by default.
 pm_macSwitch(ttot,regi,"n2ofertsom") = 0;
@@ -1466,12 +1466,12 @@ pm_macSwitch(ttot,regi,"n2ofertsom") = 0;
 pm_macSwitch(ttot,regi,emiMacSector)$(ttot.val le 2025) = 0;
 
 *** load econometric emission data
-*** read in p3 and p4
+*** initialize p1 and p2
 parameter p_emineg_econometric(all_regi,all_enty,p)        "parameters for ch4 and n2o emissions from waste baseline and co2 emissions from cement production"
 ;
 p_emineg_econometric(regi,enty,"p1") = 0;
 p_emineg_econometric(regi,enty,"p2") = 0;
-*** p2 is calculated in presolve
+*** p1 and p2 are calculated in presolve
 
 parameter p_macBase2005(all_regi,all_enty)        "baseline emissions of mac options in 2005"
 /
@@ -1585,12 +1585,12 @@ pm_emifac(ttot,regi,"segafos","fegat","tdfosgat","co2") = p_ef_dem(regi,"fegas")
 
 $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
 *** Changing refineries emission factors in regions that belong to cm_altFeEmiFac to avoid negative emissions on pe2se 
-*** (changing from 18.4 to 20 zeta joule = 20/31.7098 = 0.630719841 Twa = 0.630719841 * 3.66666666666666 * 1000 * 0.03171  GtC/TWa = 73.33 GtC/TWa)
+*** (changing from 18.4 to 20 GtC/ZJ = 20/31.7098 = 0.630719841 GtC/TWa = 0.630719841 * 3.66666666666666 * 1000 * 0.03171 MtCO2/EJ = 73.33 MtCO2/EJ)
 loop(ext_regi$altFeEmiFac_regi(ext_regi),
   pm_emifac(ttot,regi,"peoil","seliqfos","refliq","co2")$(regi_group(ext_regi,regi)) = 0.630719841;
 );
 *** Changing Germany and UKI solids emissions factors to be in line with CRF numbers
-*** (changing from 26.1 to 29.27 zeta joule = 0.922937989 TWa = 107.31 GtC/TWa)
+*** (changing from 26.1 to 29.27 GtC/ZJ = 0.922937989 GtC/TWa = 107.31 MtCO2/EJ)
 pm_emifac(ttot,regi,"pecoal","sesofos","coaltr","co2")$(sameas(regi,"DEU") OR sameas(regi,"UKI")) = 0.922937989;
 $endif.altFeEmiFac
 
@@ -1655,7 +1655,7 @@ $onlisting
 ;
 
 pm_fedemandInd(t,regi,in) = f_fedemandInd(t,regi,"%cm_demScen%",in);
-*** data input for industry FE that is no part of the CES tree 
+*** data input for industry FE that is not part of the CES tree 
 *** needed for process-based steel implementation, where these items are not part of "in"
 pm_fedemandInd(t,regi,ppfen_no_ces_use) = f_fedemandInd(t,regi,"%cm_demScen%",ppfen_no_ces_use);
 
@@ -1700,7 +1700,7 @@ $ifthen.scaleDemandBuildTable not "%cm_scaleDemandBuildTable%" == "off"
 *** 2030,USA,0.9
 *** 2035,USA,0.8
 
-Parameter f_scaleDemandBuildTable(ttot,all_regi) "Rescaling factor on industry final energy and usable energy demand, read-in from a table"
+Parameter f_scaleDemandBuildTable(ttot,all_regi) "Rescaling factor on buildings final energy and usable energy demand, read-in from a table"
 /
 $ondelim
 $include "./core/input/%cm_scaleDemandBuildTable%.cs4r"

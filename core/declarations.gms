@@ -48,7 +48,7 @@ p_developmentState(tall,all_regi)                    "level of development based
 f_lab(tall,all_regi,all_GDPpopScen)                  "labour data for all possible scenarios [million people]"
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
 pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer) [T$/unit energy service]"
-pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution, higher values increase sustitutability between inputs of the CES function (i.e. stronger reaction of quantities to price changes) [unitless]"
+pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution, higher values increase substitutability between inputs of the CES function (i.e. stronger reaction of quantities to price changes) [unitless]"
 p_r(ttot,all_regi)                                   "capital interest rate calculated as a diagnostic parameter (not used in the optimization) as the sum of the pure rate of time preference and endogenous consumption growth rate [year-1]"
 ;
 
@@ -97,11 +97,11 @@ p_macPE(ttot,all_regi,all_enty)                      "Primary energy production 
 p_priceCO2(tall,all_regi)                            "carbon price [$/tC]"
 p_priceCO2forMAC(tall,all_regi,all_enty)             "carbon price defined for MAC gases [$/tC]"
 p_priceGas(tall,all_regi)                            "gas price for ch4gas MAC [$/tCeq]"
-p_emi_quan_conv_ar4(all_enty)                        "conversion factor of non-CO2 greenhouses gases to GtCeq"
+p_emi_quan_conv_ar4(all_enty)                        "conversion factor of non-CO2 greenhouse gases to GtCeq"
 
 $IFTHEN.agricult_base_shift not "%c_agricult_base_shift%" == "off"
 p_agricult_base_shift(ext_regi)                      "fraction by which to scale agricultural emissions of baseline up or down, positive values increase emissions, negative values decrease emissions [fraction]" / %c_agricult_base_shift% /
-p_agricult_shift_phasein(ttot)                       "phase in parameter for baseline agricultural process ch4 and no2 reduction [share]"
+p_agricult_shift_phasein(ttot)                       "phase in parameter for baseline agricultural process ch4 and n2o reduction [share]"
 p_macBaseMagpie_beforeShift(ttot,all_regi,all_enty)  "pm_macBaseMagpie parameter before shift of c_agricult_base_shift is applied [GtC, Mt CH4, Mt N]"
 $ENDIF.agricult_base_shift
 
@@ -111,12 +111,12 @@ p_aux_scaleEmiHistorical_ch4(all_regi)               "auxiliary parameter to res
 *** emissions factors and incineration rates
 pm_emifac(tall,all_regi,all_enty,all_enty,all_te,all_enty) "emission factor by technology for all types of energy-related emissions [GtC/TWa, Mt CH4/TWa, Mt N/TWa, Mt SO2/TWa, Mt BC/TWa, Mt OC/TWa]"
 p_ef_dem(all_regi,all_enty)                          "read-in parameter for demand side emission factors of final energy carriers [MtCO2/EJ]"
-pm_emifacNonEnergy(ttot,all_regi,all_enty,all_enty,emi_sectors,all_enty) "emission factor for non-energy fedstocks, only for chemical industry [GtC/TWa]"
+pm_emifacNonEnergy(ttot,all_regi,all_enty,all_enty,emi_sectors,all_enty) "emission factor for non-energy feedstocks, only for chemical industry [GtC/TWa]"
 pm_incinerationRate(ttot,all_regi)                   "share of plastic waste that gets incinerated [fraction]"
 pm_cintraw(all_enty)                                 "CO2 emissions factor of fossil fuels [GtC/TWa]"
 p_cint(all_regi,all_enty,all_enty,rlf)               "CO2 emissions factor of energy-related emissions from unconventional fossil fuel extraction [GtC/TWa]" 
-p_efFossilFuelExtr(all_regi,all_enty,all_enty)       "CH4 and N2O emission factor of PE production: fugitive CH4 from fossil fuel extraction and N2O from bioenergy [Mt CH4/TWA, Mt N/TWa]"
-p_efFossilFuelExtrGlo(all_enty,all_enty)             "CH4 and N2O emission factor of PE production - global value: fugitive CH4 from fossil fuel extraction and N2O from bioenergy [Mt CH4/TWA, Mt N/TWa]"
+p_efFossilFuelExtr(all_regi,all_enty,all_enty)       "CH4 and N2O emission factor of PE production: fugitive CH4 from fossil fuel extraction and N2O from bioenergy [Mt CH4/TWa, Mt N/TWa]"
+p_efFossilFuelExtrGlo(all_enty,all_enty)             "CH4 and N2O emission factor of PE production - global value: fugitive CH4 from fossil fuel extraction and N2O from bioenergy [Mt CH4/TWa, Mt N/TWa]"
 
 *** share of stored carbon in captured carbon
 pm_share_CCS_CCO2(ttot,all_regi)                     "share of stored CO2 from total captured CO2 from previous iteration [share]"
@@ -156,7 +156,7 @@ positive variables
 
 v_co2capture(ttot,all_regi)                                 "total captured CO2 [GtC/year]"
 vm_co2CCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)       "total CO2 injected into geological storage [GtC/a]"
-v_co2capturevalve(ttot,all_regi)                            "total CO2 emitted right after capture [GtC/a], note: used in q_balCCUvsCCS to account for different lifetimes of capture and CCU/CCS te and capacities [GtC/year]"
+v_co2capturevalve(ttot,all_regi)                            "total CO2 emitted right after capture [GtC/a], note: used in q_balCCUvsCCS to account for different lifetimes of capture and CCU/CCS te and capacities"
 v_ccsShare(ttot,all_regi)                                    "fraction of captured CO2 that is stored geologically [share]"
 vm_emiCdrNovel(ttot,all_regi)                                 "all novel CDR emissions, gross removals for all options, excluding land-use change emissions and materials [GtC/year]"
 vm_emiCdrAll(ttot,all_regi)                                  "all CDR emissions, net negative emissions from land-use change, gross removals for all other options [GtC/year]"
@@ -170,7 +170,7 @@ q_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty) "determination of
 q_macBase(tall,all_regi,all_enty)                    "baseline emissions for all emissions subject to MACCs (type emiMacSector)"
 q_emiMacSector(ttot,all_regi,all_enty)               "total non-energy-related emission of each region"
 q_emiTe(ttot,all_regi,all_enty)                      "total energy-emissions per region"
-q_emiAll(ttot,all_regi,all_enty)                     "calculates all regional emissions as sum over energy and non-energy relates emissions"
+q_emiAll(ttot,all_regi,all_enty)                     "calculates all regional emissions as sum over energy and non-energy related emissions"
 q_emiCap(ttot,all_regi)                              "emission cap"
 q_emiMac(ttot,all_regi,all_enty)                     "summing up all non-energy emissions"
 q_co2eq(ttot,all_regi)                               "regional emissions in co2 equivalents"
@@ -198,12 +198,12 @@ q_emiGHG_exclLULUCF_exclBunkers(ttot,all_regi)       "calculate total GHG emissi
 parameters
 
 *** general technoeconomic parameters
-pm_eta_conv(tall,all_regi,all_te)                    "conversion efficiency of all energy technologies, only applying to technologies that do not have explicit time-dependant conversion efficiencies, still eta converges until 2050 to dataglob_values. [efficiency (0..1)]"
+pm_eta_conv(tall,all_regi,all_te)                    "conversion efficiency of all energy technologies, only applying to technologies that do not have explicit time-dependent conversion efficiencies, still eta converges until 2050 to dataglob_values. [efficiency (0..1)]"
 pm_dataeta(tall,all_regi,all_te)                     "read-in parameter for conversion efficiency of technologies that vary exogenously over time based on generisdata_varying_eta.prn file [efficiency (0..1)]"
 pm_data(all_regi,char,all_te)                        "Large array for most technical parameters of technologies, more detail on the individual technical parameters and their units can be found in the declaration of the set 'char' "
 pm_cf(tall,all_regi,all_te)                          "read-in parameter for capacity factor (fraction of the year that a plant is running) [share]"
-p_tkpremused(all_regi,all_te)                        "turn-key cost premium used in the model (with a discount rate of 3 + pure rate of time preference), measured as relative increase of overnight investment costs)"
-pm_inco0_t(ttot,all_regi,all_te)                     "investment cost parameter including exogenuous time-variance for non-learning technologies [T$/TW]"
+p_tkpremused(all_regi,all_te)                        "turn-key cost premium used in the model (with a discount rate of 3 + pure rate of time preference), measured as relative increase of overnight investment costs"
+pm_inco0_t(ttot,all_regi,all_te)                     "investment cost parameter including exogenous time-variance for non-learning technologies [T$/TW]"
 pm_omeg(all_regi,opTimeYr,all_te)                    "technical depreciation parameter, gives the share of a capacity that is still usable after technical life time. [none/share, value between 0 and 1]"
 pm_lifetime_max(all_regi,all_te)                      "maximum lifetime of a technology (generisdata_tech gives the average lifetime) [years]"
 p_discountedLifetime(all_te)                         "Sum over the discounted (@6%) depreciation factor (omega) [unitless]"
@@ -229,7 +229,7 @@ pm_capCumForeign(ttot,all_regi,all_te)               "Total cumulated capacity o
 pm_regiEarlyRetiRate(ttot,all_regi,all_te)           "regional early retirement rate, maximum allowed annual increase in the share of early retired capacity of a technology for which early retirement is allowed [1/year]"
 pm_extRegiEarlyRetiRate(ext_regi)                    "regional early retirement rate (extended regions) [1/year]" / %c_regi_earlyreti_rate% /
 $IFTHEN.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
-p_techEarlyRetiRate(ext_regi,all_te)                 "Technology specific early retirement rate [1/year" / %c_tech_earlyreti_rate% /
+p_techEarlyRetiRate(ext_regi,all_te)                 "Technology specific early retirement rate [1/year]" / %c_tech_earlyreti_rate% /
 $ENDIF.tech_earlyreti
 
 *** adjustment cost parameters
@@ -241,7 +241,7 @@ p_adj_seed_te_Orig(ttot,all_regi,all_te)             "initial value of p_adj_see
 $ifthen not "%cm_adj_seed_cont%" == "off"
   p_new_adj_seed(all_te)                             "redefine adjustment seed parameters through model config switch" / %cm_adj_seed% , %cm_adj_seed_cont% /
 $elseif not "%cm_adj_seed%" == "off"
-  p_new_adj_seed(all_te)                             "redefine adjustment coefficient parameters through model config switch"  / %cm_adj_seed% /
+  p_new_adj_seed(all_te)                             "redefine adjustment seed parameters through model config switch"  / %cm_adj_seed% /
 $endif
 $ifthen not "%cm_adj_coeff_cont%" == "off"
   p_new_adj_coeff(all_te)                            "new adj coef parameters" / %cm_adj_coeff% , %cm_adj_coeff_cont% /
@@ -259,7 +259,7 @@ $endif
 *** parameters for interpreting adjustment costs
 o_margAdjCostInv(ttot,all_regi,all_te)               "marginal adjustment cost calculated in postsolve for diagnostics [T$/TW]"
 o_avgAdjCostInv(ttot,all_regi,all_te)                "average adjustment cost calculated in postsolve for diagnostics [T$/TW]"
-o_avgAdjCost_2_InvCost_ratioPc(ttot,all_regi,all_te) "ratio of adjustment cost compared to direct invesment costs [%]"
+o_avgAdjCost_2_InvCost_ratioPc(ttot,all_regi,all_te) "ratio of adjustment cost compared to direct investment costs [%]"
 
 *** parameters for renewable energy potentials
 pm_dataren(all_regi,char,rlf,all_te)                 "regional renewable potential, maxprod [TWa] and capacity factor, nur [share]"
@@ -301,7 +301,7 @@ p_prodUeReference(ttot,all_regi,all_enty,all_enty,all_te) "Useful Energy output 
 p_co2CCSReference(ttot,all_regi,all_enty,all_enty,all_te,rlf) "Captured CO2 put through the CCS chain in ccs2te (pipelines/injection) in the reference run [GtC]"
 p_prodAllReference(ttot,all_regi,all_te)             "Sum of the above in the reference run. As each technology has only one type of output, the differing units should not be a problem"
 
-*** CES calibration tarjectories industry and buildings
+*** CES calibration trajectories industry and buildings
 pm_fedemandInd(tall,all_regi,all_in)                    "read-in parameter for final energy and production trajectories used for the CES parameter calibration in industry [EJ, ue_primary_steel, ue_secondary_steel: Gt, ue_otherInd: $tn]"
 pm_fedemandBuild(tall,all_regi,all_in)                  "read-in parameter for final energy and production trajectories used for the CES parameter calibration in buildings [EJ]"
 
@@ -361,7 +361,7 @@ vm_costInvTeDir(tall,all_regi,all_te)                "annual direct investments 
 vm_costInvTeAdj(tall,all_regi,all_te)                "annual investments into a technology due to adjustment costs [T$]"
 
 *** CES mark-up costs with budget effect
-vm_costCESMkup(ttot,all_regi,all_in)                 "CES markup cost to represent demand-side technology cost of end-use transformation [T$/TWa]"
+vm_costCESMkup(ttot,all_regi,all_in)                 "CES markup cost to represent demand-side technology cost of end-use transformation [T$]"
 
 *** penalty cost implementation for cm_startyear to limit change in policy run relative to reference run
 v_changeProdStartyear(ttot,all_regi,all_te)          "absolute change of output with respect to the reference run for each te [TWa] for all energy-conversion tech, [GtC] for the CCS chain in ccs2te (pipelines/injection)"
@@ -370,7 +370,7 @@ v_changeProdStartyearSlack(ttot,all_regi,all_te)     "slack variable to allow a 
 
 v_costFu(ttot,all_regi)                              "costs of primary energy production/extraction (can be negative depending on vm_costFuBio) [T$]"
 
-vm_flexAdj(tall,all_regi,all_te)                     "flexibility mark-up cost or subsidy, used to emulate price changes of technologies which see lower-than-average or higher-than-average electricity prices due to more or less flexible operation[T$/TWa]"
+vm_flexAdj(tall,all_regi,all_te)                     "flexibility mark-up cost or subsidy, used to emulate price changes of technologies which see lower-than-average or higher-than-average electricity prices due to more or less flexible operation [T$/TWa]"
 ;
 
 
@@ -378,11 +378,11 @@ vm_flexAdj(tall,all_regi,all_te)                     "flexibility mark-up cost o
 Positive variables
 
 *** capacity variables
-vm_cap(tall,all_regi,all_te,rlf)                     "net total capacities [TW] for energy conversion technologies, [GtC] for CCS chain in ccs2te (pipelines/injection)"
+vm_cap(tall,all_regi,all_te,rlf)                     "net total capacities [TW] for energy conversion technologies, [GtC/yr] for CCS chain in ccs2te (pipelines/injection)"
 v_capDistr(tall,all_regi,all_te,rlf)                 "net capacities, distributed to the different grades for renewables [TW]"
-vm_capTotal(ttot,all_regi,all_enty,all_enty)         "total capacity of pe2se conversion technologies without technology differentation [TW]"
+vm_capTotal(ttot,all_regi,all_enty,all_enty)         "total capacity of pe2se conversion technologies without technology differentiation [TW]"
 vm_deltaCap(tall,all_regi,all_te,rlf)                "capacity additions [TW/yr] for energy conversion technologies, [GtC/yr^2] for CCS chain in ccs2te (pipelines/injection)"
-vm_capCum(tall,all_regi,all_te)                      "cumulated capactiy of learning technologies [TW]"
+vm_capCum(tall,all_regi,all_te)                      "cumulated capacity of learning technologies [TW]"
 vm_capEarlyReti(tall,all_regi,all_te)                "fraction of early retired capacity from total standing capacity, can only be increased for technologies for which early retirement is switched on [share]"
 
 *** technoeconomic parameters
@@ -392,7 +392,7 @@ vm_costTeCapital(ttot,all_regi,all_te)               "specific (per capacity) te
 *** energy supply and demand variables
 *** primary energy variables
 vm_fuExtr(ttot,all_regi,all_enty,rlf)                "production (extraction) of primary energy fossil fuels, biomass and uranium (before trade)  [TWa, Uranium: Mt Ur]"
-*** consider renaming vm_prodPe as production varibles should be before trade?
+*** consider renaming vm_prodPe as production variables should be before trade?
 vm_prodPe(ttot,all_regi,all_enty)                    "primary energy production (after trade but not including PE production for MAC curves, e.g. capturing methane leakage) [TWa, Uranium: Mt Ur]"
 vm_demPe(tall,all_regi,all_enty,all_enty,all_te)     "primary energy demand [TWa, Uranium: Mt Ur]"
 *** secondary energy variables
@@ -414,7 +414,7 @@ vm_costAddTeInv(tall,all_regi,all_te,emi_sectors)    "additional sector-specific
 *** energy share variables
 v_shGreenH2(ttot,all_regi)                           "share of green hydrogen in total hydrogen production [share]"
 v_shBioTrans(ttot,all_regi)                          "share of biofuels in transport liquids [share]"
-v_shfe(ttot,all_regi,all_enty,emi_sectors)           "share of final energy carrier total final energy per sector  [share]"
+v_shfe(ttot,all_regi,all_enty,emi_sectors)           "share of final energy carrier in total final energy per sector  [share]"
 v_shSeFe(ttot,all_regi,all_enty)                     "share of energy carrier subtype in final energy demand of the aggregated carrier type (e.g. 'the share of bio-based FE liquids in all FE liquids') [share]"
 v_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "share of energy carrier subtype in final energy demand of the aggregated carrier type per sector/emiMarket combination (e.g. 'the share of bio-based FE liquids in all FE liquids used in ETS-covered transport') [share]"
 v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids in sectoral final energy [share]"
@@ -440,7 +440,7 @@ $endif.minMaxSeFeSectorShareDev
 
 v_prodUe(ttot,all_regi,all_enty,all_enty,all_te)    "Useful energy production [TWa]"
 *** TODO: should be renamed?
-vm_demSeOth(ttot,all_regi,all_enty,all_te)          "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
+vm_demSeOth(ttot,all_regi,all_enty,all_te)          "other sety demand from certain technologies, have to be calculated in additional equations [TWa]"
 *** TODO: can be removed? 
 v_prodSeOth(ttot,all_regi,all_enty,all_te)          "other sety production from certain technologies, have to be calculated in additional equations [TWa]"
 ;
@@ -473,7 +473,7 @@ q_costTeCapital(tall,all_regi,all_te)                "calculate investment cost 
 *** renewable technology equations
 q_limitProd(ttot,all_regi,all_te,rlf)                "constrain renewable production by renewable energy potentials"
 q_limitGeopot(ttot,all_regi,all_enty,rlf)            "constrain land use of solar PV and CSP power to compete for the same geographical potential"
-q_windoff_low(tall,all_regi)                         "constraint to ensure that offshore wind capacity is also built to a some extend if region builds onshore wind and has notable offshore potential relative to its onshore potential"
+q_windoff_low(tall,all_regi)                         "constraint to ensure that offshore wind capacity is also built to some extent if region builds onshore wind and has notable offshore potential relative to its onshore potential"
 q_limitSeel2fehes(ttot,all_regi)                     "equation to limit the share of electricity in district heating"
 q_capNonDecreasing(tall,all_regi,all_te)             "constrain capacity of some capital-intensive and site-specific technologies like hydropower and geothermal to not decrease over time once it is built"
 
@@ -482,7 +482,7 @@ q_limitCapSe(ttot,all_regi,all_enty,all_enty,all_te)    "capacity constraint for
 q_limitCapSe2se(ttot,all_regi,all_enty,all_enty,all_te) "capacity constraint for se2se secondary energy production"
 q_limitCapFe(ttot,all_regi,all_te)                      "capacity constraint for final energy production"
 
-*** capacity constraint for H2 infrastructure in buildings and indsutry (capacity * capacity factor = FE demand)
+*** capacity constraint for H2 infrastructure in buildings and industry (capacity * capacity factor = FE demand)
 q_limitCapFeH2BI(ttot,all_regi,emi_sectors)               "capacity limit equation for H2 infrastructure capacities of buildings and industry, needed to avoid switching behavior of H2 between both sectors"
 
 *** energy balance equations (energy supply = energy demand)
@@ -509,7 +509,7 @@ q_shGreenH2(ttot,all_regi)                           "calculate share of green h
 q_shBioTrans(ttot,all_regi)                          "calculate share of biofuels in transport liquids"
 q_shfe(ttot,all_regi,all_enty,emi_sectors)           "calculate share of final energy carrier in the sectoral final energy"
 q_shSeFe(ttot,all_regi,all_enty)                     "calculate share of energy carrier subtype in final energy demand of the aggregated carrier type (e.g. 'the share of bio-based FE liquids in all FE liquids')"
-q_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "calculate share of energy carrier subtype in final energy demand of the aggregated carrier type for each sector/emiMarket combination (e.g. 'the share of bio-based FE liquids in all FE liquids within ETS-covered transport)"
+q_shSeFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "calculate share of energy carrier subtype in final energy demand of the aggregated carrier type for each sector/emiMarket combination (e.g. 'the share of bio-based FE liquids in all FE liquids within ETS-covered transport')"
 q_shGasLiq_fe(ttot,all_regi,emi_sectors)             "calculate share of gases and liquids in sectoral final energy"
 $IFTHEN.sehe_upper not "%cm_sehe_upper%" == "off"
 q_heat_limit(ttot,all_regi)                          "limit maximum level of secondary energy district heating and heat pumps use"
@@ -519,7 +519,7 @@ $ifthen.limitSolidsFossilRegi not %cm_limitSolidsFossilRegi% == "off"
 $endif.limitSolidsFossilRegi
 
 *** equations to align model with historic data
-q_PE_histCap(ttot,all_regi,all_enty,all_enty)        "require minimum of fossil and nuclear power capacity in historial years based on historical data"
+q_PE_histCap(ttot,all_regi,all_enty,all_enty)        "require minimum of fossil and nuclear power capacity in historical years based on historical data"
 q_PE_histCap_NGCC_2020_up(ttot,all_regi,all_enty,all_enty) "require maximum of gas power capacity in 2020 based on 2015 historical data and growth rate assumptions"
 q_shbiofe_up(ttot,all_regi,all_enty,emi_sectors,all_emiMkt) "constrain share of biomass in hydrocarbons of sectoral final energy in historical years based on historical data (upper bound)"
 q_shbiofe_lo(ttot,all_regi,all_enty,emi_sectors,all_emiMkt) "constrain share of biomass in hydrocarbons of sectoral final energy in historical years based on historical data (lower bound)"
@@ -604,12 +604,12 @@ pm_tall_2_ttot(tall,ttot)                            "mapping from tall to ttot"
 pm_ttot_2_tall(ttot,tall)                            "mapping from ttot to tall"
 
 *** diagnostic output parameters to help track convergence over iterations
-o_negitr_cumulative_peprod(iteration,entyPe)         "estimated production 2005-2100. 'estimated' because of different times step lengths around 2100 [ZJ]"
-o_negitr_cumulative_CO2_emineg_co2luc(iteration)     "estimated CO2 emissions from LUC 2005-2100. 'estimated' because of different times step lengths around 2100 [GtCO2]"
-o_negitr_cumulative_CO2_emineg_cement(iteration)     "estimated CO2 emissions from cement 2005-2100. 'estimated' because of different times step lengths around 2100 [GtCO2]"
-o_negitr_cumulative_CO2_emieng_seq(iteration)        "estimated sequestered CO2 emissions 2005-2100. 'estimated' because of different times step lengths around 2100 [GtCO2]"
-o_negitr_disc_cons_dr5_reg(iteration,all_regi)       "estimated discounted consumption 2005-2100 with discount rate 5%. 'estimated' because of different times step lengths around 2100 [T$]"
-o_negitr_disc_cons_drInt_reg(iteration,all_regi)     "estimated discounted consumption 2005-2100 with internal discount rate. 'estimated' because of different times step lengths around 2100 [T$]"
+o_negitr_cumulative_peprod(iteration,entyPe)         "estimated production 2005-2100. 'estimated' because of different time step lengths around 2100 [ZJ]"
+o_negitr_cumulative_CO2_emineg_co2luc(iteration)     "estimated CO2 emissions from LUC 2005-2100. 'estimated' because of different time step lengths around 2100 [GtCO2]"
+o_negitr_cumulative_CO2_emineg_cement(iteration)     "estimated CO2 emissions from cement 2005-2100. 'estimated' because of different time step lengths around 2100 [GtCO2]"
+o_negitr_cumulative_CO2_emieng_seq(iteration)        "estimated sequestered CO2 emissions 2005-2100. 'estimated' because of different time step lengths around 2100 [GtCO2]"
+o_negitr_disc_cons_dr5_reg(iteration,all_regi)       "estimated discounted consumption 2005-2100 with discount rate 5%. 'estimated' because of different time step lengths around 2100 [T$]"
+o_negitr_disc_cons_drInt_reg(iteration,all_regi)     "estimated discounted consumption 2005-2100 with internal discount rate. 'estimated' because of different time step lengths around 2100 [T$]"
 o_negitr_total_forc(iteration)                       "total forcing in 2100"
 o_pm_pebiolc_demandmag(iteration,ttot,all_regi)      "track pm_pebiolc_demandmag across Nash iterations"
 o_pm_macBaseMagpie(iteration,ttot,all_regi,all_enty) "track pm_macBaseMagpie across Nash iterations"
@@ -636,7 +636,7 @@ o_pm_shFeCes_iter(ttot,all_regi,all_enty,all_in,all_teEs,iteration)   "Shares of
 scalars
 
 *** ------------Unit Conversion Factors---------------
-*** All these conversion factors with the form "s_xxx_2_yyy" are multplicative factors. 
+*** All these conversion factors with the form "s_xxx_2_yyy" are multiplicative factors. 
 *** Thus, if you have a number in Unit xxx, you have to multiply this number by the 
 *** conversion factor s_xxx_2_yyy to get the new value in Unit yyy.
 
@@ -648,7 +648,7 @@ sm_giga_2_non                "giga to non"                             /1e+9/,
 sm_trillion_2_non            "trillion to non"                         /1e+12/,
 
 *** energy units
-s_ZJ_2_TWa                   "convert from Zeta Joule to Tera Watt annum"   /31.71/,
+s_ZJ_2_TWa                   "convert from Zetta Joule to Tera Watt annum"   /31.71/,
 sm_EJ_2_TWa                  "convert from Exa Joule to Tera Watt annum"    /31.71e-03/,
 sm_GJ_2_TWa                  "convert from Giga Joule to Tera Watt annum"   /31.71e-12/,
 sm_TWa_2_EJ                  "convert from Tera Watt annum to Exa Joule"    /31.54/,
@@ -687,7 +687,7 @@ sm_EURO2023_2_D2017          "Convert EURO 2023 to US$2017"    /0.8915/
 o_modelstat                  "critical solver status for solution"
 
 * GA sm_dmac changes depending on the choice of MACs in c_nonco2_macc_version
-sm_dmac                      "step in MAC functions [US$]"                                                                   
+sm_dmac                      "step in MAC functions [US$2017/tCeq]"                                                                   
 sm_macChange                 "maximum yearly increase of relative abatement in percentage points of maximum abatement. [0..1]"      /0.05/
 
 s_co2pipe_leakage            "Leakage rate of CO2 pipelines. [0..1]"
@@ -739,8 +739,8 @@ sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 *** When defining new macros, make sure to put brackets around parameters to ensure correct calculation.
 *** The following counter example will return wrong values because of missing brackets:
 ***   Wrong definition:   $macro macro_multiply(a,b)  a * b
-***   Utilisation:        macro_multiply(3+1, 2)   will return 3+1*2 = 5 instead of 8, due to precendence of multiplication over addition
-***   Utilisation:        1 / macro_multiply(2, 2) will return 1/2*2 = 1 instead of 0.25, due to left-to-right precendence
+***   Utilisation:        macro_multiply(3+1, 2)   will return 3+1*2 = 5 instead of 8, due to precedence of multiplication over addition
+***   Utilisation:        1 / macro_multiply(2, 2) will return 1/2*2 = 1 instead of 0.25, due to left-to-right precedence
 ***   Correct definition: $macro macro_multiply(a,b)  ( (a) * (b) )
 
 *** macro_interpolate: Linear interpolation between two values x0 and x1 at time points t0 and t1 for an intermediate time point t
@@ -752,20 +752,20 @@ sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 ***   Suppose we have a subsidy that we want to phase out with a different date for each region.
 ***   p_subsidy(t,regi) = macro_interpolate(t.val, cm_startyear, p_subsidyEndYr(regi), p_subsidy(cm_startyear,regi), 0);
 *** Outside t0 and t1, the linear function is continued
-*** x0 _|         /
+*** x1 _|         /
 ***     |        /
 ***     |       /
-*** x1 _|      /
+*** x0 _|      /
 ***     |_____/___________
 ***            | |
 ***          t0  t1
 $macro macro_interpolate(t,t0,t1,x0,x1) ( ((t1) - (t)) / ((t1) - (t0)) * (x0) + ((t) - (t0)) / ((t1) - (t0)) * (x1) )
 
 *** macro_clamped_interpolate: Like macro_interpolate, but if t is not between t0 and t1, we return the respective boundary value
-*** x0 _|         _____
+*** x1 _|         _____
 ***     |        /
 ***     |       /
-*** x1 _|______/
+*** x0 _|______/
 ***     |________________
 ***            | |
 ***          t0  t1

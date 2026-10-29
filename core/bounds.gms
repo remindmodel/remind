@@ -29,7 +29,7 @@
 *' Set lower bounds on variables otherwise the conopt solver doesn't see a benefit from changing variable value away from 0
 *' These lower bounds are set so low that they do not restrict the results
 
-*' Lower limit on all P2SE technologies capacities to 100 kW of all technologies and all time steps
+*' Lower limit on all PE2SE technologies capacities to 100 kW of all technologies and all time steps
 loop(pe2se(enty,enty2,te) $ (
     (not sameas(te,"biotr")) and
     (not sameas(te,"biodiesel")) and
@@ -103,7 +103,7 @@ vm_prodSe.up("2020",regi,"pegas","seel","gaschp") = 1e-4 + 1.3 * pm_IO_output("2
 
 
 *** lower bounds on near-term capacity additions based on projects in "under construction" and "planned" category and
-*** the respective assumptions on completion rates (i.e. shares of projects that will actucally be completed and start operation until 2030,
+*** the respective assumptions on completion rates (i.e. shares of projects that will actually be completed and start operation until 2030,
 *** see p_ProjectsCompletionShare assumptions defined in  core/datainput.gms)
 *** generic implementation (other historic and near-term bounds above could be fit into this generic implementation in the future to have less and more structured code)
 vm_deltaCap.lo("2030",regi,te,"1") = sum( project_status,
@@ -119,7 +119,7 @@ vm_deltaCap.lo("2030",regi,te,"1") = sum( project_status,
 *' ##### Near-term capacity for electrolysis and hydrogen 
 *** ------------------------------------------------------------------
 
-*' set lower and upper bounds for 2025 and 2030 based on projects annoucements from IEA Hydryogen project database:
+*' set lower and upper bounds for 2025 and 2030 based on project announcements from IEA Hydrogen project database:
 *' https://www.iea.org/data-and-statistics/data-product/hydrogen-production-and-infrastructure-projects-database
 *' distribute to regions via GDP share of 2025 (we do not use later time steps as they may have different GDPs depending on the scenario)
 *' in future this should be differentiated by region based on regionalized input data of project announcements
@@ -176,7 +176,7 @@ loop(regi,
 *' no technologies with tech_stat 4 before 2025
 vm_cap.fx(t,regi,te,rlf) $ (t.val <= 2020 and pm_data(regi,"tech_stat",te) = 4) = 0;
 *** initialize cumulative capacity of tech_stat 4 technologies at 0 
-*** (not at ccap0 from generisdata_tech.prn which gives the cucmulative capacity
+*** (not at ccap0 from generisdata_tech.prn which gives the cumulative capacity
 ***  at the initial investment cost of the first year in which the technology can be built)
 vm_capCum.fx(t0,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) = 4) = 0;
 *** tech_stat 4 technologies don't learn before 2025, so capital cost should be fixed
@@ -193,7 +193,7 @@ vm_deltaCap.fx(t,regi,te,rlf) $ (t.val <= 2025 and pm_data(regi,"tech_stat",te) 
 loop(t,
   if( ( t.val > 2010 ) AND ( t.val < 2030 ) AND ( cm_startyear <= t.val ),
 *' The spin-up capacity from initialcap2 may be larger than historic capacities. For all regions but DEU, we don't want to enforce early retirement, so we calculate the standing capacities 
-*' resulting from 2005 capacities and normal technical depreciation. For DEU, the explicit nuclear phaseout means that capacities are phased down faster than the normal techincal lifetime
+*' resulting from 2005 capacities and normal technical depreciation. For DEU, the explicit nuclear phaseout means that capacities are phased down faster than the normal technical lifetime
     p_CapFixFromRWfix(t,regi,"tnrs") $ (NOT sameas(regi,"DEU") ) = max( pm_aux_capLowerLimit("tnrs",regi,t) , pm_NuclearConstraint(t,regi,"tnrs") );
     p_CapFixFromRWfix(t,regi,"tnrs") $ ( sameas(regi,"DEU") ) = pm_NuclearConstraint(t,regi,"tnrs") ;  
     p_deltaCapFromRWfix(t,regi,"tnrs") = ( p_CapFixFromRWfix(t,regi,"tnrs") - pm_aux_capLowerLimit("tnrs",regi,t) )
@@ -229,7 +229,7 @@ if(cm_nucscen = 5,
 *' #### 3. Assumptions on biomass
 *** (move to biomass module?) ========================================
 
-*' Traditional biomass use is phased out on an exogeneous time path
+*' Traditional biomass use is phased out on an exogenous time path
 *** Note: make sure that this matches with the settings for residues in modules/05_initialCap/on/preloop.gms
 
 *** BS/DK:
@@ -346,7 +346,7 @@ if(c_ccsinjecratescen > 0,
 *' Upper limit for 2025 and 2030 additionally includes all projects under construction and 30% 
 *' (default, or changed by c_fracRealfromAnnouncedCCScap2030) of announced/planned projects from project data base
 *' See also corresponding code in input validation data preparation in mrremind/R/calcProjectPipeline.R.
-*' In nash-mode regions cannot easily share ressources, therefore CCS potentials are redistributed in Europe in data preprocessing in mrremind:
+*' In nash-mode regions cannot easily share resources, therefore CCS potentials are redistributed in Europe in data preprocessing in mrremind:
 *' Potential of EU27 regions is pooled and redistributed according to GDP (Only upper limit for 2030)
 *' Norway and UK announced to store CO2 for EU27 countries. So 50% of Norway and UK potential in 2030 is attributed to EU27-Pool
 *' Furthermore we restrict 2035 capacities to a maximum of 2.5 times 2030 capacities, assuming an optimistic 20 percent annual growth.
@@ -401,7 +401,7 @@ loop(regi,
   );
 );
 
-*' Limit REMINDs ability to vent captured CO2 to 1 MtCO2 per yr per region. This happens otherwise to a great extend in stringent climate 
+*' Limit REMIND's ability to vent captured CO2 to 1 MtCO2 per yr per region. This happens otherwise to a great extent in stringent climate 
 *' policy scenarios if CCS and CCU capacities are limited in early years, to lower overall adjustment costs of capture technologies.
 v_co2capturevalve.up(t,regi) = 1 * sm_MtCO2_2_GtC;
 
@@ -409,7 +409,7 @@ v_co2capturevalve.up(t,regi) = 1 * sm_MtCO2_2_GtC;
 *' ##### Assumptions on leakage in the CCUS chain:
 *** ------------------------------------------------------------------
 *' 1. Leakage from CO2 capture and transportation:
-*' 1 percent of captured CO2 leaks back to the atmosphere and is directly deduced from each technology's capture rate 
+*' 1 percent of captured CO2 leaks back to the atmosphere and is directly deducted from each technology's capture rate 
 *' See s_co2pipe_leakage in datainput.
 *' 2. Leakage from the geological reservoir:
 *' NOT considered in REMIND. 
@@ -418,7 +418,7 @@ v_co2capturevalve.up(t,regi) = 1 * sm_MtCO2_2_GtC;
 *' "An unrealistic scenario, where CO2 storage is inadequately regulated, estimates that more than 78% will be retained over 10,000 years."
 *' Relating these numbers to REMIND scenarios:
 *' Let R(t) be the fraction remaining after time t with (simplified) constant leakage rate k:
-*' R(t)=e^(kt)
+*' R(t)=e^(-kt)
 *' with R(10 000) = 0.78
 *' leakage rate k = 0.0025% / yr
 *' After 100 years, this leads to a loss of 0.25% from the reservoirs
@@ -447,7 +447,7 @@ loop((ext_regi,te) $ p_techEarlyRetiRate(ext_regi,te),
 );
 $endif.tech_earlyreti
 
-*** restrict early retirement to time frame between 2015 and 2100 where it is relevant
+*** restrict early retirement to time frame between 2010 and 2110 where it is relevant
 vm_capEarlyReti.up(ttot,regi,te) $ (ttot.val < 2010 or ttot.val > 2110) = 0;
 
 *** only US and EUR allow early retirement before 2035
@@ -455,15 +455,15 @@ loop(regi$(NOT(regi_group("USA_regi",regi) or regi_group("EUR_regi",regi))),
   vm_capEarlyReti.up(t,regi,te) $ (t.val <= 2030) = 0;
 );
 
-*** lower bound of 0.01% to help the model to be aware of the early retirement option is time steps where it is active
+*** lower bound of 0.01% to help the model to be aware of the early retirement option in time steps where it is active
 vm_capEarlyReti.lo(t,regi,teEarlyReti) $ ( vm_capEarlyReti.up(t,regi,teEarlyReti) eq 1 and t.val > 2010 and t.val <= 2100) = 1e-4;
 
 *' Phase-out of technologies
 
-*' Switch off coal-h2 hydrogen investments after 2020, and gas-h2 investments after 2030. Our current seh2 hydrogen represents
+*' Switch off coal-h2 hydrogen investments from 2020 on, and gas-h2 investments after 2030. Our current seh2 hydrogen represents
 *' only additional (clean) hydrogen use cases to current ones. However, as we have too high H2 demand in 2025 and 2030 from the
 *' input data, we need to allow grey hydrogen for these time periods to meet the hydrogen demand which cannot be fully met by
-*' incoming low-carbon H2 techologies. This should be removed once FE H2 industry input data is adapted.
+*' incoming low-carbon H2 technologies. This should be removed once FE H2 industry input data is adapted.
 *' It is allowed before 2020 to not make the model infeasible for low demands of hydrogen in that year.
 vm_deltaCap.fx(t,regi,"coalh2",rlf) $ (t.val >= 2020) = 0;
 vm_deltaCap.fx(t,regi,"gash2",rlf) $ (t.val > 2030) = 0;
@@ -503,7 +503,7 @@ $endif
 *' #### 6. Energy demand sectors and final energy
 *** ==================================================================
 
-*** bounds on final energy use (relevant in case some switches are acitvated that make pm_shfe_up and pm_shfe_lo non-zero)
+*** bounds on final energy use (relevant in case some switches are activated that make pm_shfe_up and pm_shfe_lo non-zero)
 *' upper and lower bounds on FE carrier shares
 v_shfe.up(t,regi,entyFe,sector) $ pm_shfe_up(t,regi,entyFe,sector) = pm_shfe_up(t,regi,entyFe,sector);
 v_shfe.lo(t,regi,entyFe,sector) $ pm_shfe_lo(t,regi,entyFe,sector) = pm_shfe_lo(t,regi,entyFe,sector);
@@ -539,7 +539,7 @@ display vm_emiFgas.L;
 
 
 *** ==================================================================
-*' #### Other bounds 
+*' #### 8. Other bounds 
 *** ==================================================================
 *' @stop
 
@@ -578,7 +578,7 @@ loop(te $ (teSe2rlf(te,"1") or teFe2rlf(te,"1")),
 );
 
 
-*** lower bound on share of green hydrogen starting from 2030 (switch c_shGreenH2 has default value zero)
+*** lower bound on share of green hydrogen starting from 2025 (switch c_shGreenH2 has default value zero)
 v_shGreenH2.lo(t,regi) $ (t.val = 2025) = c_shGreenH2 * 2/3;
 v_shGreenH2.lo(t,regi) $ (t.val > 2025) = c_shGreenH2;
 
