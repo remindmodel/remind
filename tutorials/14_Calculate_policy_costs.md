@@ -13,7 +13,7 @@ What you need to do:
 1. In the remind folder with all your submission relevant runs, run `Rscript output.R`, pick `Comparison across runs`, and then `policyCosts`.
 2. Now you have to pick the scenarios of your policy runs, and afterwards, the single reference run with regards to which you want to compute the policy costs.
 3. Wait for the updated mif file(s) to be created, and a pdf with the computed policy costs.
-4. Use the new mif files for your submission. If necessary, perform final adjustments by hand (e.g. removing regional consumption losses, see /p/projects/piam/SDP_runs/SDP_round1/remind/rm_regipolicycosts.sh)
+4. Use the new mif files for your submission. If necessary, perform final adjustments by hand (e.g. removing regional consumption losses, see `/p/projects/piam/SDP_runs/SDP_round1/remind/rm_regipolicycosts.sh`)
 
 For coupled runs, you may adapt and use these small bash scripts:
 ``` bash
@@ -46,7 +46,7 @@ scenarioAndReference=( "${scenarioAndReference[@]/#/output/C_}" )
 scenarioAndReference=( "${scenarioAndReference[@]/%/-rem-$remnr}" )
 scenarioAndReference=( $( IFS="," ; echo "${scenarioAndReference[*]}") )
 
-Rscript output.R --comp=T --output=policyCosts --outputdirs=$scenarioAndReference
+Rscript output.R --comp=comparison --output=policyCosts --outputdirs=$scenarioAndReference
 ```
 
 Short version if you have a single base run for all your scenarios and want to automatically start a compareScenario2 and an IIASA export:

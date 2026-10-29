@@ -108,7 +108,7 @@ Let us go through each of the stages and briefly describe what happens:
 ## `renv` Setup
 REMIND is using renv for R package library management, see [the REMIND renv tutorial](11_ManagingRenv.md) for details. When starting a run the main renv is essentially copied to the run folder which ensures that the run is always using the same package versions for reproducibility and packages cannot become corrupt because of global package updates.
 
-The R libraries required for indput data preparation and output processing (e.g. **madrat**, **mrremind** and **remind2**) are made available to the run this way.
+The R libraries required for input data preparation and output processing (e.g. **madrat**, **mrremind** and **remind2**) are made available to the run this way.
 
 ## Input Data Preparation
 
