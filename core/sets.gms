@@ -138,7 +138,7 @@ all_te          "all energy technologies, including from modules"
     ngccc           "natural gas combined cycle with capture"
     ngt             "natural gas turbine"
     gastr           "transformation of gases"
-    gaschp          "combined heating power using gas"
+    gaschp          "combined heat and power using gas"
     gashp           "heating plant using gas"
     gash2           "gas to hydrogen"
     gash2c          "gas to hydrogen with capture"
@@ -151,7 +151,7 @@ all_te          "all energy technologies, including from modules"
     igccc           "integrated coal gasification combined cycle with capture"
     pc              "pulverised coal power plant"
     coalchp         "combined heat and power coal"
-    coalhp          "heating plantcoal"
+    coalhp          "heating plant coal"
     coaltr          "transformation of coal"
     coalgas         "coal gasification"
     coalftrec       "coal based fischer-tropsch recycle"
@@ -215,12 +215,12 @@ all_te          "all energy technologies, including from modules"
     tdfoshob        "transmission and distribution for heating oil from fossil origin to buildings"
     tdh2s           "transmission and distribution for hydrogen to stationary users"
     tdh2t           "transmission and distribution for hydrogen to transportation"
-    tdbiodie        "transmission and distribution for diesel from biomass origin to stationary users"
-    tdfosdie        "transmission and distribution for diesel from fossil origin to stationary users"
-    tdsyndie        "transmission and distribution for diesel from synthetic origin to stationary users"
-    tdbiopet        "transmission and distribution for petrol from biomass origin to stationary users"
-    tdfospet        "transmission and distribution for petrol from fossil origin to stationary users"
-    tdsynpet        "transmission and distribution for petrol from synthetic origin to stationary users"
+    tdbiodie        "transmission and distribution for diesel from biomass origin to transportation"
+    tdfosdie        "transmission and distribution for diesel from fossil origin to transportation"
+    tdsyndie        "transmission and distribution for diesel from synthetic origin to transportation"
+    tdbiopet        "transmission and distribution for petrol from biomass origin to transportation"
+    tdfospet        "transmission and distribution for petrol from fossil origin to transportation"
+    tdsynpet        "transmission and distribution for petrol from synthetic origin to transportation"
     tdbiosos        "transmission and distribution for solids from biomass origin to stationary users"
     tdfossos        "transmission and distribution for solids from fossil origin to stationary users"
     tdbiosob        "transmission and distribution for solids from biomass origin to buildings"
@@ -401,12 +401,12 @@ all_enty             "all types of quantities"
     ch4rice    "ch4 emissions from rice cultivation (rice_ch4)"
     ch4peatland "ch4 emissions from peatlands (no MAC available)"
     ch4animals "ch4 emissions from enteric fermentation of ruminants (ent_ferm_ch4)"
-    ch4anmlwst "ch4 emissions from animal waste management(awms_ch4)"
+    ch4anmlwst "ch4 emissions from animal waste management (awms_ch4)"
     ch4agwaste "ch4 emissions from agricultural waste burning (no MAC available)"
     ch4forest  "ch4 emissions from forest burning"
-    ch4savan   "ch4 emissions from savannah burnging"
+    ch4savan   "ch4 emissions from savannah burning"
     n2oforest  "n2o emissions from forest burning"
-    n2osavan   "n2o emissions from savannah burnging"
+    n2osavan   "n2o emissions from savannah burning"
     n2otrans   "n2o emissions from transport"
     n2oacid    "n2o emissions from acid production (only 2005 EDGAR data for calibration of n2oadac and n2onitac baselines)"
     n2oadac    "n2o emissions from adipic acid production"
@@ -557,7 +557,7 @@ all_in   "all inputs and outputs of the CES function"
 
     eni                     "industry energy use"
     enhi                    "industry heat energy use"
-    enhgai                  "industry heat gaseous energy use (fegab and feh2b)"
+    enhgai                  "industry heat gaseous energy use (fegai and feh2i)"
 
 *** FIXME this should be reworked with Robert when revising the transport module
     entrp                   "transport energy use"
@@ -618,7 +618,7 @@ all_in   "all inputs and outputs of the CES function"
     feli_steel              "liquids energy use of primary steel production"
     fega_steel              "gases energy use of primary steel production"
     feh2_steel              "hydrogen energy use of primary steel production"
-    feel_steel_primary      "electricity energy use pf primary steel production"
+    feel_steel_primary      "electricity energy use of primary steel production"
     feel_steel_secondary    "electricity energy use of secondary steel production"
 
     ue_otherInd             "useful energy of other industry production"
@@ -959,7 +959,7 @@ regi(all_regi)  "all regions used in the solution process"
 ***-----------------------------------------------------------------------------
 sets
   counter   "helper set to facilitate looping in defined order"   / 1 * 20 /
-  project_status "project status read in from input data to define upper and lower near-term capacitiy bounds for CCS"
+  project_status "project status read in from input data to define upper and lower near-term capacity bounds for CCS"
   /
     "operational",
     "construction",
@@ -994,7 +994,7 @@ sets
 ***     For declaration, you can only use declared sets: tall (avoid) or ttot (preferable).
 ***     For assignment:
 ***         prefer using t to avoid overwriting values from path_gdx_ref for years before cm_startyear.
-***         if it needs a vlue for all model years, use ttot together with $(ttot.val ge 2005).
+***         if it needs a value for all model years, use ttot together with $(ttot.val ge 2005).
 ***         avoid using tall unless absolutely necessary.
 
 sets
@@ -1012,7 +1012,7 @@ tall    "time index, each year from 1900 to 3000"
 ttot(tall)    "time index with spin-up, years between 1900 and 2150 with 5 to 20 years time steps"
 *** This set represents the periods that can be used in REMIND model equations. ttot is a subset of tall and contains only elements defined in tall.
 *** It includes both historical (1900-2000) and modeled years (2005-2150). Time steps are:
-***      5-year intervals from 1990 to 2060,
+***      5-year intervals from 1900 to 2060,
 ***     10-year intervals from 2060 to 2110,
 ***     20-year intervals from 2110 to 2150.
 /
@@ -1354,7 +1354,7 @@ te2teCCS(all_te,all_te) "Map an energy technology to its CCS equivalent"
     gasftrec  . gasftcrec  "gas based fischer-tropsch recycle"
     igcc      . igccc      "integrated coal gasification combined cycle"
     coalftrec . coalftcrec "coal based fischer-tropsch recycle"
-    coalh2    . coalh2c    "coal to hydrogen with carbon capture"
+    coalh2    . coalh2c    "coal to hydrogen"
     bioigcc   . bioigccc   "integrated biomass gasification combined cycle"
     biogas    . biogasc    "gasification of biomass"
     bioftrec  . bioftcrec  "biomass based fischer-tropsch recycle"
@@ -1369,7 +1369,7 @@ teccsinje(all_te)         "transport, storage, and injection of ico2"
 
 teNoCCS(all_te)     "Technologies without CCS"
 
-teChp(all_te)       "Technologies that produce seel as main output und sehe as secondary output - dynamically defined"
+teChp(all_te)       "Technologies that produce seel as main output and sehe as secondary output - dynamically defined"
 
 teBio(all_te)      "biomass energy systems technologies"
 /
@@ -1562,7 +1562,7 @@ teNoTransform(all_te) "all technologies that do not transform energy but still h
     gridwindon      "grid between areas with high wind onshore production and the rest"
     gridwindoff     "grid between areas with high wind offshore production and the rest"
 /
-teRegTechCosts(all_te) "all technologies for which we differantiate tech costs by region"
+teRegTechCosts(all_te) "all technologies for which we differentiate tech costs by region"
 /
     pc
     igcc
@@ -1602,9 +1602,9 @@ teNonDecreasing(all_te) "all technologies for which capacity should not decrease
 feForUe(all_enty)    "final energy types that are transformed into useful energys - is filled automatically from the content of fe2ue"
 ppfenFromUe(all_in)  "all ppfEn that are equivalent to UE - is filled automatically from the content of fe2ue"
 
-feForEs(all_enty)    "final energy types that are transformed into final energys - is filled automatically from the content of fe2es"
-ppfenFromEs(all_in)  "all ppfEn that are equivalent to ES - is filled automatically from the content of fe2ue"
-feViaEs2ppfen(all_enty,all_in,all_teEs) "map final energies to the primar production factor - is filled automatically from the content of fe2es and es2ppfen"
+feForEs(all_enty)    "final energy types that are transformed into energy services - is filled automatically from the content of fe2es"
+ppfenFromEs(all_in)  "all ppfEn that are equivalent to ES - is filled automatically from the content of es2ppfen"
+feViaEs2ppfen(all_enty,all_in,all_teEs) "map final energies to the primary production factor - is filled automatically from the content of fe2es and es2ppfen"
 
 fe2ppfEn(all_enty,all_in) "mapping between CES FE variables and ESM FE variables" /  /
 ***-----------------------------------------------------------------------------
@@ -1662,12 +1662,12 @@ enty(all_enty)       "all types of quantities"
     ch4rice    "ch4 emissions from rice cultivation (rice_ch4)"
     ch4peatland "ch4 emissions from peatlands (no MAC available)"
     ch4animals "ch4 emissions from enteric fermentation of ruminants (ent_ferm_ch4)"
-    ch4anmlwst "ch4 emissions from animal waste management(awms_ch4)"
+    ch4anmlwst "ch4 emissions from animal waste management (awms_ch4)"
     ch4agwaste "ch4 emissions from agricultural waste burning (no MAC available)"
     ch4forest  "ch4 emissions from forest burning"
-    ch4savan   "ch4 emissions from savannah burnging"
+    ch4savan   "ch4 emissions from savannah burning"
     n2oforest  "n2o emissions from forest burning"
-    n2osavan   "n2o emissions from savannah burnging"
+    n2osavan   "n2o emissions from savannah burning"
     n2otrans   "n2o emissions from transport"
     n2oacid    "n2o emissions from acid production (only 2005 EDGAR data for calibration of n2oadac and n2onitac baselines)"
     n2oadac    "n2o emissions from adipic acid production"
@@ -1886,7 +1886,7 @@ emiMacSector(all_enty)  "types of climate-relevant non-energy emissions with mac
     ch4rice    "ch4 emissions from rice cultivation (rice_ch4)"
     ch4peatland "ch4 emissions from peatlands (no MAC available)"
     ch4animals "ch4 emissions from enteric fermentation of ruminants (ent_ferm_ch4)"
-    ch4anmlwst "ch4 emissions from animal waste management(awms_ch4)"
+    ch4anmlwst "ch4 emissions from animal waste management (awms_ch4)"
     ch4agwaste "ch4 emissions from agricultural waste burning (no MAC available)"
     ch4forest  "ch4 emissions from forest burning (no MAC available)"
     ch4savan   "ch4 emissions from savannah burning (no MAC available)"
@@ -1959,7 +1959,7 @@ emiMacMagpieCH4(all_enty)  "types of climate-relevant non-energy CH4 emissions w
 /
     ch4rice    "ch4 emissions from rice cultivation (rice_ch4)"
     ch4animals "ch4 emissions from enteric fermentation of ruminants (ent_ferm_ch4)"
-    ch4anmlwst "ch4 emissions from animal waste management(awms_ch4)"
+    ch4anmlwst "ch4 emissions from animal waste management (awms_ch4)"
     ch4peatland "ch4 emissions from peatlands (no MAC available)"
 /
 emiMacMagpieCO2(all_enty)  "types of climate-relevant non-energy CO2 emissions with mac curve where baseline emissions come from MAgPIE only"
@@ -2217,7 +2217,7 @@ char            "characteristics of technologies"
     luse            "land use factor of solar technologies"
     capacity        "capacity of solar technologies"
     constrTme       "Construction time in years, needed to calculate turn-key cost premium compared to overnight costs"
-    tkpremused      "turn-key cost premium used in the model (with a discount rate of 3+ pure rate of time preference); in comparison to overnight costs)"
+    tkpremused      "turn-key cost premium used in the model (with a discount rate of 3+ pure rate of time preference; in comparison to overnight costs)"
     lifetime        "average lifetime of a technology (integral under the omeg-curve). Unit: years"
     flexibility                        "representing ramping constraints or additional costs for partial load of technologies in power sector"
     tech_stat       "technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'"
@@ -2355,7 +2355,7 @@ alias(regi_group,regi_group2);
 ***-----------------------------------------------------------------------------
 sets
 
-*NB* mappings resulting from set opertations
+*NB* mappings resulting from set operations
 en2en(all_enty,all_enty,all_te)  "all energy conversion mappings"
 en2en2(all_enty,all_enty,all_te) "alias of en2en: all energy conversion mappings"
 en2se(all_enty,all_enty,all_te)   "all energy conversion mappings producing SE"
@@ -2459,7 +2459,7 @@ VRE2teStor(all_te,teStor)   "mapping to know which technology uses which storage
     csp.storcsp
 /
 
-VRE2teVRElinked(all_te,all_te)    "mapping between the technologies requiring storage which use the same fluctutating source (so the shareseel counts half towards the other shareseel)"
+VRE2teVRElinked(all_te,all_te)    "mapping between the technologies requiring storage which use the same fluctuating source (so the shareseel counts half towards the other shareseel)"
 /
     spv.csp
     csp.spv
@@ -2521,7 +2521,7 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
 
 sefe(all_enty,all_enty) "map secondary energy to final energy"
 fete(all_enty,all_te) "map final energy to technologies"
-fe2ue(all_enty,all_enty,all_te)    "map FE carriers to ES via appliances"
+fe2ue(all_enty,all_enty,all_te)    "map FE carriers to UE via appliances"
 //
 
 fe2es(all_enty,all_esty,all_teEs)    "map FE carriers to ES via ES technologies"
@@ -2764,7 +2764,7 @@ emiBiochar2te(all_enty,all_enty,all_te,all_enty) "mapping of Biochar PE,SE,techn
 /
 
 *NB*111125 emissions from fossil fuel extraction by grade that is on top of combustion
-emi2fuelMine(all_enty,all_enty,rlf)   "missions from fossil fuel extraction"
+emi2fuelMine(all_enty,all_enty,rlf)   "emissions from fossil fuel extraction"
 /
     co2.peoil.(4*8)
 /
@@ -2811,7 +2811,7 @@ prodSeOth2te(all_enty,all_te)      "map other se production not directly followi
     seh2.h2curt
 /
 
-teSe2rlf(all_te,rlf)        "mapping for techologies to grades. Currently, the information was shifted to teRe2rlfDetail. Thus, teSe2rlf now only has '1' for the rlf values"
+teSe2rlf(all_te,rlf)        "mapping for technologies to grades. Currently, the information was shifted to teRe2rlfDetail. Thus, teSe2rlf now only has '1' for the rlf values"
 /
 *** wind
     (windon,windoff,spv,csp,refliq,hydro,geohe,geohdr,solhe,ngcc,ngccc,ngt,gaschp,gashp,gash2,gash2c,gastr,gasftrec,gasftcrec,dot,
@@ -2822,7 +2822,7 @@ teSe2rlf(all_te,rlf)        "mapping for techologies to grades. Currently, the i
     ) . 1
 /
 
-teRe2rlfDetail(all_te,rlf)        "mapping for SE techologies to grades"
+teRe2rlfDetail(all_te,rlf)        "mapping for SE technologies to grades"
 /
 ***        wind.(1*9)
     windon.(1*9)
@@ -2839,7 +2839,7 @@ teFe2rlf(all_te,rlf)      "mapping for final energy to grades"
     (tdels,tdelt,tdbiogas,tdfosgas,tdsyngas,tdbiogat,tdfosgat,tdsyngat,tdbiohos,tdfoshos,tdsynhos,tdh2s,tdh2t,tdbiodie,tdfosdie,tdsyndie,tdbiopet,tdfospet,tdsynpet,tdbiosos,tdfossos,tdhes) . 1
 /
 
-teFe2rlfH2BI(all_te,rlf) "mapping for final energy to grades of helper technologies of H2 t&d in buildlings and industry (which should not produce vm_prodFe in q_limitCapFe)"
+teFe2rlfH2BI(all_te,rlf) "mapping for final energy to grades of helper technologies of H2 t&d in buildings and industry (which should not produce vm_prodFe in q_limitCapFe)"
 /
     (tdh2i,tdh2b).1
 /

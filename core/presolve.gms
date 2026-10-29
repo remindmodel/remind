@@ -34,11 +34,11 @@ p_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005
 
 *** calculate p1
 *** GA: p1 is based on GDP per capita. The older implementation assumes that
-*** richer countries (GPDpc > 10K USD) effectively have an older emission factor.
+*** richer countries (GDPpc > 10K USD) effectively have an older emission factor.
 *** The newer implementation, based on 2020 CEDS, assumes the same base year
 *** for both, with p2 only creating a distinction between the groups.
 *** The choice between implementations is controlled by setting the 
-*** the base year in cm_emifacs_baseyear, but we need an if condition
+*** base year in cm_emifacs_baseyear, but we need an if condition
 *** here to account for the 1990 quirk. Choosing 2005 keeps the old version,
 *** and any other choice assumes 2020. 
 $ifthen %cm_emifacs_baseyear% == "2005"
@@ -115,7 +115,7 @@ else
 if (sm_updateMagpieData eq 1,
 *** Track runtime: done in magpie.R
 *** Temporarily change numeric round format (nr) and number of decimals (nd) of the
-*** outpt of the put_utility such that the arguments passed to magpie.R have integer format
+*** output of the put_utility such that the arguments passed to magpie.R have integer format
   sm_tmp  = logfile.nr;
   sm_tmp2 = logfile.nd;
   logfile.nr = 1;
@@ -138,7 +138,7 @@ if (sm_magpieIter gt 0,
   Execute_Loadpoint 'magpieData.gdx' f_macBaseMagpie_coupling;
   pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005)  = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
   p_co2lucSub(ttot,regi,emiMacMagpieCO2Sub(all_enty))$(ttot.val ge cm_startyear) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpieCO2Sub);
-*** Biomass emission factor is set to zero after MAgPIE has run at least one, since biomass emissions are included in the emissions imported above. 
+*** Biomass emission factor is set to zero after MAgPIE has run at least once, since biomass emissions are included in the emissions imported above. 
   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0;
 *** In coupling mode LU emissions are abated in MAgPIE (moved here from core/datainput.gms)
   pm_macSwitch(ttot,regi,enty)$emiMacMagpie(enty) = 0;
@@ -159,7 +159,7 @@ p_macCostSwitch(enty)=pm_macSwitch("2050","USA",enty);
 *** Code moved here from core/preloop.gms
 *** The N2O emissions generated during biomass production in agriculture (in MAgPIE)
 *** are represented in REMIND by applying the n2obio emission factor (zero in coupled runs)
-*** in q_macBase. In standaolne runs the resulting emissions need to be subtracted (see below)
+*** in q_macBase. In standalone runs the resulting emissions need to be subtracted (see below)
 *** from the exogenous emission baseline read from MAgPIE, since the baseline already implicitly 
 *** includes the N2O emissions from biomass. In q_macBase in core/equations.gms the N2O 
 *** emissions resulting from the actual biomass demand in REMIND are then added again. 
@@ -174,7 +174,7 @@ $IFTHEN.scaleEmiHist %c_scaleEmiHistorical% == "on"
 *** Re-scale MAgPie reference CH4 and N2O emissions to be inline with eurostat
 *** data (depending on the region MAgPIE non-CO2 GHG emissions can be up to 
 *** twice as high as historic emissions). This involves different emission variables in
-*** pm_macBaseMagpie and additionall agwaste variables from p_macBaseExo
+*** pm_macBaseMagpie and additional agwaste variables from p_macBaseExo
 
 *** Since this part is repeated in each Nash iteration and it changes p_macBaseExo, reset p_macBaseExo to initial values.
 p_macBaseExo(ttot,regi,emiMacExo(enty))$(ttot.val ge 2005) = f_macBaseExo(ttot,regi,emiMacExo,"%cm_LU_emi_scen%");
@@ -256,7 +256,7 @@ loop(regi,
 p_priceCO2(ttot,regi) = pm_taxCO2eqSum(ttot,regi) * 1000;
 
 *** Define co2 price for entities that are used in MAC.
-loop((enty,enty2)$emiMac2mac(enty,enty2), !! make sure that both mac sectors and mac curves have prices asigned as both sets are used in calculations below
+loop((enty,enty2)$emiMac2mac(enty,enty2), !! make sure that both mac sectors and mac curves have prices assigned as both sets are used in calculations below
   p_priceCO2forMAC(ttot,regi,enty) = p_priceCO2(ttot,regi);
   p_priceCO2forMAC(ttot,regi,enty2) = p_priceCO2(ttot,regi);
 );
@@ -268,7 +268,7 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
 *** average CO2 price aggregated by FE
     p_priceCO2(t,regi) = ( (sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt) * sum((entySe,entyFe,sector)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) / (sum((entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt))) )*1000;
     loop((enty,emiMkt)$(macSector2emiMkt(enty,emiMkt)),
-      loop(enty2$emiMac2mac(enty,enty2), !! make sure that both mac sectors and mac curves have prices asigned as both sets are used in calculations below
+      loop(enty2$emiMac2mac(enty,enty2), !! make sure that both mac sectors and mac curves have prices assigned as both sets are used in calculations below
         p_priceCO2forMAC(t,regi,enty) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
         p_priceCO2forMAC(t,regi,enty2) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
         p_priceCO2forMAC(t,regi,"co2chemicals") = pm_taxemiMkt(t,regi,"ETS")* 1000;
@@ -328,7 +328,7 @@ $endif
 *** baseline continuation after 2100
 v_macBase.fx(ttot,regi,enty)$((ttot.val gt 2100)$((NOT emiMacMagpie(enty)) AND (NOT emiFuEx(enty)) AND (NOT sameas(enty,"n2ofertin")) ))=v_macBase.l("2100",regi,enty);
 *DK: baseline continuation not necessary for magpie-emissions as the exogenous data reaches until 2150
-* JeS: exclude endgenous baseline calculation, i.e. emiFuEx and n2ofertin
+* JeS: exclude endogenous baseline calculation, i.e. emiFuEx and n2ofertin
 
 
 ***--------------------------------------
@@ -385,7 +385,7 @@ p_macUse2005(regi,"ch4wstl")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) ge 10)
 p_macUse2005(regi,"ch4wsts")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) ge 10) = 1 - p_macBase2005(regi,"ch4wsts")/v_macBase.l("2005",regi,"ch4wsts");
 
 *** Set first grade of abatement options (it represents low- or no-cost abatement potentials) for land use
-*** emissions to zero, because they are alredy included in the emissions baselines we get from MAgPIE.
+*** emissions to zero, because they are already included in the emissions baselines we get from MAgPIE.
 *** This includes sum of sub-categories from MAgPIE (see mapping emiMac2mac).
 pm_macAbat(ttot,regi,MacSectorMagpie(enty),"1") = 0;
 
@@ -407,10 +407,10 @@ p_macLevFree(ttot,regi,enty)$( ttot.val gt 2005 )
 $IFTHEN.scaleEmiHist %c_scaleEmiHistorical% == "on"
 
 *** p_macLevFree(ttot,regi,emiMacMagpie(enty))=0;
-*** Set minimum abatment levels based on historical emissions
+*** Set minimum abatement levels based on historical emissions
 p_macLevFree("2010",regi,enty)$(p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst"))) = max( 0, 1 - (p_histEmiSector("2010",regi,"ch4","agriculture","process")+p_histEmiSector("2010",regi,"ch4","lulucf","process"))/(p_histEmiSector("2005",regi,"ch4","agriculture","process")+p_histEmiSector("2005",regi,"ch4","lulucf","process")));
 p_macLevFree(ttot,regi,enty)$((ttot.val ge 2015) AND p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst"))) = max( 0, 1 - (p_histEmiSector("2015",regi,"ch4","agriculture","process")+p_histEmiSector("2015",regi,"ch4","lulucf","process"))/(p_histEmiSector("2005",regi,"ch4","agriculture","process")+p_histEmiSector("2005",regi,"ch4","lulucf","process")) );
-p_macLevFree("2010",regi,enty)$(p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp"))) = max( 0, 1 - (p_histEmiSector("2010",regi,"n2o","agriculture","process")+p_histEmiSector("2010",regi,"n2o","lulucf","process"))/(p_histEmiSector("2005",regi,"n2o","agriculture","process")+p_histEmiSector("2005",regi,"n2o","lulucf","process")) );
+p_macLevFree("2010",regi,enty)$(p_histEmiSector("2005",regi,"n2o","agriculture","process") AND (sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp"))) = max( 0, 1 - (p_histEmiSector("2010",regi,"n2o","agriculture","process")+p_histEmiSector("2010",regi,"n2o","lulucf","process"))/(p_histEmiSector("2005",regi,"n2o","agriculture","process")+p_histEmiSector("2005",regi,"n2o","lulucf","process")) );
 p_macLevFree(ttot,regi,emiMacMagpie(enty))$((ttot.val ge 2015) AND p_histEmiSector("2005",regi,"n2o","agriculture","process") AND (sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp"))) = max( 0, 1 - (p_histEmiSector("2015",regi,"n2o","agriculture","process")+p_histEmiSector("2015",regi,"n2o","lulucf","process"))/(p_histEmiSector("2005",regi,"n2o","agriculture","process")+p_histEmiSector("2005",regi,"n2o","lulucf","process")) );
 
 p_macLevFree("2010",regi,enty)$((p_histEmiMac("2010",regi,enty)) AND (sameas(enty,"ch4wstl") OR sameas(enty,"ch4wsts"))) = max( 0, 1 - (p_histEmiMac("2010",regi,enty)) /v_macBase.l("2010",regi,enty) );

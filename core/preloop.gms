@@ -28,7 +28,7 @@ vm_emiMacSector.l(ttot,regi,enty)      = 0;
 vm_emiTe.l(ttot,regi,enty)      = 0;
 vm_emiCdr.l(ttot,regi,enty)	     = 0;
 vm_emiCdrNovel.l(t,regi) = 0;
-vm_prodFe.l(ttot,regi,entyFe2,entyFe2,te) = 0;
+vm_prodFe.l(ttot,regi,enty,enty2,te) = 0;
 vm_prodSe.l(ttot,regi,enty,enty2,te) = 0;
 vm_demSe.l(ttot,regi,enty,enty2,te) = 0;
 vm_Xport.l(ttot,regi,tradePe)       = 0;
@@ -57,7 +57,7 @@ if (cm_gdximport_target eq 1,
   sm_budgetCO2eqGlob=p_emi_budget1_gdx;
   );
 );
-*MLB 07072014* ficticious budget break down for Negishi mode, not part of the optimization
+*MLB 07072014* fictitious budget break down for Negishi mode, not part of the optimization
 pm_budgetCO2eq(regi) = 1/card(regi) * sm_budgetCO2eqGlob;
 display sm_budgetCO2eqGlob;
 
@@ -112,7 +112,7 @@ vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)$(
   ( p_shSeFe(t,regi,entySe) ) AND
   (t.val ge 2025) AND  !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds
   ( entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe) ) AND !! only redefine vm_demFeSector for entySeBio, entySeSyn and entySeFos items
-  ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
+  ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid combinations of entySe, entyFe, sector and emiMkt
   ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
   ( NOT(sameas(sector,"build") AND (sameas(entyFe,"fesos"))) ) AND !!disable buildings solids share incentives
   ( NOT(sameas(sector,"indst") AND (sameas(entyFe,"fesos"))) ) !!disable indst solids share incentives

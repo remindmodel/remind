@@ -111,7 +111,7 @@ q_costOM(t,regi)..
 
 ***---------------------------------------------------------------------------
 *' Energy balance equations equate the production of and demand for each primary, secondary and final energy.
-*' The balance equation for primary energy equals supply of primary energy demand on primary energy.
+*' The balance equation for primary energy equates supply of primary energy with demand for primary energy.
 ***---------------------------------------------------------------------------
 q_balPe(t,regi,entyPe(enty))..
          vm_prodPe(t,regi,enty) + p_macPE(t,regi,enty)
@@ -164,9 +164,9 @@ q_balSe(t,regi,enty2)$( entySe(enty2) AND (NOT (sameas(enty2,"seel"))) )..
 ;
 
 ***---------------------------------------------------------------------------
-*' Taking the technology-specific transformation eficiency into account,
+*' Taking the technology-specific transformation efficiency into account,
 *' the equations describe the transformation of an energy type to another type.
-*' Depending on the detail of the technology representation, the transformation technology's eficiency
+*' Depending on the detail of the technology representation, the transformation technology's efficiency
 *' can depend either only on the current year or on the year when a specific technology was built.
 *' Transformation from primary to secondary energy:
 ***---------------------------------------------------------------------------
@@ -381,7 +381,7 @@ q_capCumNet(t0,regi,teLearn)$(pm_data(regi,"tech_stat",teLearn) < 4)..
   pm_data(regi,"ccap0",teLearn);
 
 ***---------------------------------------------------------------------------
-*' Additional equation for fuel shadow price calulation:
+*' Additional equation for fuel shadow price calculation:
 ***---------------------------------------------------------------------------
 *ml* reasonable results only for members of peExGrade and peren2rlf30
 *NB*110625 changes for transition towards grades
@@ -406,7 +406,7 @@ q_limitProd(t,regi,teRe2rlfDetail(teReNoBio(te),rlf))..
 ***-----------------------------------------------------------------------------
 *' Definition of competition for geographical potential for renewable energy types:
 ***-----------------------------------------------------------------------------
-*RP* assuming q_limitGeopot to be geographical potential, whith luse equivalent to the land use parameter
+*RP* assuming q_limitGeopot to be geographical potential, with luse equivalent to the land use parameter
 q_limitGeopot(t,regi,peReComp(enty),rlf)..
   p_datapot(regi,"limitGeopot",rlf,enty)
   =g=
@@ -422,7 +422,7 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
 *' This widely-used formulation derives from empirical observations across different energy
 *' technologies of a log-linear relationship between the unit cost $I$ of the technology and its
 *' cumulative production or installed capacity $C$ (see for example empirical paper[^2]).
-*' [^1]: Edward S. Rubin, Iness M.L. Azevedo, Paulina Jaramillo, and Sonia Yeh. A review of learning rates for electricity supply technologies. Energy Policy, 86:198-218, 2015.
+*' [^1]: Edward S. Rubin, Inês M.L. Azevedo, Paulina Jaramillo, and Sonia Yeh. A review of learning rates for electricity supply technologies. Energy Policy, 86:198-218, 2015.
 *' [^2]: Alan McDonald and Leo Schrattenholzer. Learning rates for energy technologies. Energy Policy, 29(4):255–261, 2001.
 
 *' Learning rate $\lambda$ is defined as the fractional reduction in cost associated with a doubling of cumulative capacity.
@@ -440,8 +440,8 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
 *' $$ I = a'\times C^{b'} + F $$ with $a' = \frac{I_0 - F}{C_0^{b'}}$.
 *' By design, REMIND learning equations ensure that the initial slope of learning is independent of the floor cost.
 *' Mathematically, the slopes are given by the derivative of $I$ and $I'$ with respect to $C$:
-*' $$ \frac{dI}{dC} = a \times b \times C^{b-1} = I_0 \times b \times \left(\frac{C}{C_0}\right)^{b-1} $$ 
-*' $$ \frac{dI'}{dC} = a' \times b' \times C^{b'-1} = (I_0-F) \times b' \times \left(\frac{C}{C_0}\right)^{b'-1} $$
+*' $$ \frac{dI}{dC} = a \times b \times C^{b-1} = \frac{I_0}{C_0} \times b \times \left(\frac{C}{C_0}\right)^{b-1} $$
+*' $$ \frac{dI'}{dC} = a' \times b' \times C^{b'-1} = \frac{I_0-F}{C_0} \times b' \times \left(\frac{C}{C_0}\right)^{b'-1} $$
 *' For the two curves to have the same slope initially, we want the two derivatives to be equal for $C=C_0$. 
 *' This means $I_0 \times b = (I_0-F) \times b'$, that we rewrite as:
 *' $$ b' = \frac{I_0}{I_0-F}b $$
@@ -536,7 +536,7 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
     * sum(sector$(    entyFe2Sector(enty2,sector)
                   AND sector2emiMkt(sector,emiMkt) ),
         vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)
-        !! substract FE used for non-energy purposes (as feedstocks) so it does
+        !! subtract FE used for non-energy purposes (as feedstocks) so it does
         !! not create energy-related emissions
       - sum(entyFE2sector2emiMkt_NonEn(enty2,sector,emiMkt),
           vm_demFeNonEnergySector(t,regi,enty,enty2,sector,emiMkt))
@@ -592,7 +592,7 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt) ..
   )$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
     !! plastic waste incineration; net from positive (fossil non-ccs) and negative (bio/syn w/ CCS)
   + vm_wasteIncinerationEmiBalance(t,regi,enty,emiMkt)
-    !! Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS
+    !! Valve from cco2 capture step, to manage if capture capacity and CCU/CCS
     !! capacity don't have the same lifetime
   + v_co2capturevalve(t,regi)$( sameas(enty,"co2") AND sameas(emiMkt,"ETS") )
     !! CO2 from short-term CCU (short term CCU co2 is emitted again in a time
@@ -640,7 +640,7 @@ q_emiCO2Sector(t,regi,sector) $ (   sameAs(sector, "build")
         * vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
     )
   )
-*** substract emissions of bunker fuels for transport sector
+*** subtract emissions of bunker fuels for transport sector
   - sum(se2fe(entySe,entyFe,te),
         pm_emifac(t,regi,entySe,entyFe,te,"co2")
         * vm_demFeSector(t,regi,entySe,entyFe,sector,"other")
@@ -823,7 +823,7 @@ q_emiGHG_exclLULUCF_exclBunkers(t,regi)..
       pm_emifac(t,regi,enty,enty2,te,"co2")
       * vm_demFeSector(t,regi,enty,enty2,"trans","other") 
     )
-*** substract LULUCF emissions
+*** subtract LULUCF emissions
   - vm_emiMacSector(t,regi,"co2luc");
   
 
@@ -1145,7 +1145,7 @@ q_capH2BI(t,regi)$(t.val ge max(2015, cm_startyear))..
   vm_cap(t,regi,"tdh2s","1")
 ;
 
-q_limitCapFeH2BI(t,regi,sector)$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst") AND t.val ge max(2015, cm_startyear))..
+q_limitCapFeH2BI(t,regi,sector)$((SAMEAS(sector,"build") OR SAMEAS(sector,"indst")) AND t.val ge max(2015, cm_startyear))..
     sum(sector2emiMkt(sector,emiMkt),
       vm_demFeSector(t,regi,"seh2","feh2s",sector,emiMkt))
     =l=
@@ -1211,7 +1211,7 @@ q_shbiofe_indst_lo(t,regi,entyFe,sector)$(pm_secBioShare(t,regi,entyFe,sector) a
 $ifthen.seFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "sqSectorShare"
 q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
     (t.val ge 2025) AND  !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds   
-    ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
+    ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid combinations of entySe, entyFe, sector and emiMkt
     ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
     ( NOT(sameas(sector,"build") AND (sameas(entyFe,"fesos"))) ) AND !!disable buildings solids share incentives
     ( NOT(sameas(sector,"indst") AND (sameas(entyFe,"fesos"))) ) !!disable industry solids share incentives
@@ -1224,7 +1224,7 @@ q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
 $elseIf.seFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "sqSectorAvrgShare"
 q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
     (t.val ge 2025) AND  !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds
-    ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
+    ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid combinations of entySe, entyFe, sector and emiMkt
     ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
     ( NOT(sameas(sector,"build") AND (sameas(entyFe,"fesos"))) ) AND !!disable buildings solids share incentives
     ( NOT(sameas(sector,"indst") AND (sameas(entyFe,"fesos"))) ) !!disable industry solids share incentives
@@ -1237,7 +1237,7 @@ q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
 $elseIf.seFeSectorShareDev "%cm_seFeSectorShareDevMethod%" == "minMaxAvrgShare"
 q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
     (t.val ge 2025) AND  !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds
-    ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
+    ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid combinations of entySe, entyFe, sector and emiMkt
     ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
     ( NOT(sameas(sector,"build") AND (sameas(entyFe,"fesos"))) ) AND !!disable buildings solids share incentives
     ( NOT(sameas(sector,"indst") AND (sameas(entyFe,"fesos"))) ) !!disable industry solids share incentives
@@ -1250,7 +1250,7 @@ q_penSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
 
 q_minMaxPenSeFeSectorShareDev(t,regi,entySe,entyFe,sector,emiMkt)$(
     (t.val ge 2025) AND  !!disable share incentives for historical years in buildings, industry and CDR as this should be handled by historical bounds
-    ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid cobinations of entySe, entyFe, sector and emiMkt
+    ( sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) ) AND !!only create the equation for valid combinations of entySe, entyFe, sector and emiMkt
     ( (entySeBio(entySe) OR entySeSyn(entySe)) ) AND !!share incentives only need to be applied to n-1 secondary energy carriers
     ( NOT(sameas(sector,"build") AND (sameas(entyFe,"fesos"))) ) AND !!disable buildings solids share incentives
     ( NOT(sameas(sector,"indst") AND (sameas(entyFe,"fesos"))) ) !!disable industry solids share incentives
