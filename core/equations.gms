@@ -381,7 +381,7 @@ q_capCumNet(t0,regi,teLearn)$(pm_data(regi,"tech_stat",teLearn) < 4)..
   pm_data(regi,"ccap0",teLearn);
 
 ***---------------------------------------------------------------------------
-*' Additional equation for fuel shadow price calulation:
+*' Additional equation for fuel shadow price calculation:
 ***---------------------------------------------------------------------------
 *ml* reasonable results only for members of peExGrade and peren2rlf30
 *NB*110625 changes for transition towards grades
