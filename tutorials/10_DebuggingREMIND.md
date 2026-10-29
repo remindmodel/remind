@@ -83,7 +83,7 @@ Rscript start.R --restart
 ### Case 2b: execution errors
 
 For execution errors, again try to identify the location of the error in the `full.lst` file.
-If it points to a specific line number where the error occured, mark this number, then type `?` and paste it into the editor which is then searching backwards for this number, and typing `n` (eventually multiple times) should bring you to the source code part at the beginning of the file.
+If it points to a specific line number where the error occurred, mark this number, then type `?` and paste it into the editor which is then searching backwards for this number, and typing `n` (eventually multiple times) should bring you to the source code part at the beginning of the file.
 You should now see the equation where the error was created. If you recently changed this equation, this may have caused the error.
 Again, tutorials such as as the [McCarl GAMS User Guide](https://www.gams.com/mccarlGuide/) may be helpful.
 If not, it is worth looking at the `.gms` file this equation is part of, by searching for `SOF` (start of file) and `EOF` (end of file) marks above and below the equation. Then navigate to this file in github and see in the history whether it was recently changed, which may have caused this error.

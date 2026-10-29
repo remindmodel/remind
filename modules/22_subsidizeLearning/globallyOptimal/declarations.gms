@@ -30,7 +30,7 @@ parameters
     p22_debugInfoMarginalBudget(ttot,all_regi,all_te,iteration)    "debug display helper, not solution relevant"
     p22_debugInfoMarginalCapcum(ttot,all_regi,all_te,iteration)    "debug display helper, not solution relevant"
     p22_debugInfoInvestcost(ttot,all_regi,all_te,iteration)        "debug display helper, not solution relevant"
-    p22_infoCapcumGlob2050(all_te)                                 "info paramter: global capacities in 2050"
+    p22_infoCapcumGlob2050(all_te)                                 "info parameter: global capacities in 2050"
 
 ;
 *** EOF ./modules/22_subsidizeLearning/globallyOptimal/declarations.gms
