@@ -325,14 +325,12 @@ display fm_dataglob;
 *** initialize regionalized data using global data
 pm_data(all_regi,char,te) = fm_dataglob(char,te);
 
-$ifthen.REG_techcosts not "%cm_techcosts%" == "GLO"   !! cm_techcosts is REG or REG2040
 *** Initial investment costs differentiated by region:
-  pm_data(regi,"inco0",teRegTechCosts(te)) = p_inco0("2015",regi,te);
-  pm_data(regi,"inco0","spv") = p_inco0("2020",regi,"spv");
+pm_data(regi,"inco0",teRegTechCosts(te)) = p_inco0("2015",regi,te);
+pm_data(regi,"inco0","spv") = p_inco0("2020",regi,"spv");
 
 *** Initial capacity differentiated by region:
-  Execute_Loadpoint 'input' p_capCum = vm_capCum.l; !! read vm_capCum(t0,regi,teLearn) from input.gdx
-$endif.REG_techcosts
+Execute_Loadpoint 'input' p_capCum = vm_capCum.l; !! read vm_capCum(t0,regi,teLearn) from input.gdx
 
 
 *** =============== Regional risk premium during building time ====================
@@ -351,7 +349,7 @@ loop(te $ (fm_dataglob("constrTme",te) > 0),
                               (1
                                   + 0.02 / pm_ies(regi) !! intertemporal elasticity of substitution
                                   + pm_prtp(regi) !! pure rate of time preference
-$if not "%cm_techcosts%" == "GLO" + p_risk_premium_constr(regi) !! if technology costs are regionalised, also use regionalised financing costs
+                                  + p_risk_premium_constr(regi) !! also use regionalised financing costs
 *** nuclear sees 3% higher interest rates during construction time due to higher construction time risk
 *** see "The economic future of nuclear power - A study conducted at The University of Chicago" (2004)
                                   + 0.03 $ sameas(te,"tnrs")
@@ -465,31 +463,20 @@ display pm_inco0_t;
 
 
 *** ============== Convergence of non-learning technologies costs ===================
-$ifthen.REG2040_techcosts "%cm_techcosts%" == "REG2040"   !! cm_techcosts REG2040
-*** for 2015-2040, use differentiated costs when available for a specific non-learning technology
-  loop(te $ (teNoLearn(te) and teRegTechCosts(te)),
-    pm_inco0_t(ttot,regi,te) $ (ttot.val >= 2015 and ttot.val < 2040) = p_inco0(ttot,regi,te);
 
-*** after 2040, keep the same regionally differentiated costs
-    pm_inco0_t(ttot,regi,te) $ (ttot.val >= 2040) = p_inco0("2040",regi,te);
-  );
-$endif.REG2040_techcosts
-
-$ifthen.REG_techcosts "%cm_techcosts%" == "REG"   !! cm_techcosts REG
 *** for 2015-2020, use differentiated costs when available for a specific non-learning technology
-  loop(te $ (teNoLearn(te) and teRegTechCosts(te)),
-    pm_inco0_t(ttot,regi,te) $ (ttot.val >= 2015 and ttot.val <= 2020) = p_inco0(ttot,regi,te);
+loop(te $ (teNoLearn(te) and teRegTechCosts(te)),
+  pm_inco0_t(ttot,regi,te) $ (ttot.val >= 2015 and ttot.val <= 2020) = p_inco0(ttot,regi,te);
 
 *** from 2025 to c_teNoLearnConvEndYr, apply linear convergence of investment costs so that
 *** all regions converge and stabilise at the technology cost data given in generisdata.prn
-    loop(ttot $ (ttot.val > 2020 and ttot.val < c_teNoLearnConvEndYr),
-      pm_inco0_t(ttot,regi,te)
-        = macro_interpolate(ttot.val, 2020, c_teNoLearnConvEndYr, p_inco0("2020",regi,te), fm_dataglob("inco0",te))
-    );
-
-    pm_inco0_t(ttot,regi,te) $ (ttot.val >= c_teNoLearnConvEndYr) = fm_dataglob("inco0",te);
+  loop(ttot $ (ttot.val > 2020 and ttot.val < c_teNoLearnConvEndYr),
+    pm_inco0_t(ttot,regi,te)
+      = macro_interpolate(ttot.val, 2020, c_teNoLearnConvEndYr, p_inco0("2020",regi,te), fm_dataglob("inco0",te))
   );
-$endif.REG_techcosts
+
+  pm_inco0_t(ttot,regi,te) $ (ttot.val >= c_teNoLearnConvEndYr) = fm_dataglob("inco0",te);
+);
 
 
 
