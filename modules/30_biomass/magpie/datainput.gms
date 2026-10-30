@@ -35,18 +35,18 @@ p30_datapebio(regi,"pebiolc","2","maxprod",ttot)$(ttot.val ge 2005) = p30_biolcR
 *** RoSa: The last one should be pretending that there is 500 PJ of Manure available in each region. This should be set explicitly for Germany based on Input from BENOPT or input from MAgPIE. CAUTION: IEA might define biogas, so output of digestors rather than input.  
 p30_datapebio(regi,"pebios","5","maxprod",ttot)$(ttot.val ge 2005) = p30_bio1stgen(ttot,regi,"pebios") * sm_EJ_2_TWa / 1000;
 p30_datapebio(regi,"pebioil","5","maxprod",ttot)$(ttot.val ge 2005) = p30_bio1stgen(ttot,regi,"pebioil") * sm_EJ_2_TWa / 1000;
-* p30_datapebio(regi,"pemanure","5","maxprod",ttot)$(ttot.val ge 2005) = 500 * sm_EJ_2_TWa / 1000;  
+p30_datapebio(regi,"pemanure","5","maxprod",ttot)$(ttot.val ge 2005) = 500 * sm_EJ_2_TWa / 1000;  
 
-*** manure availability: historic values 2005-2020, 2022 values from 2025 onward
-p30_datapebio(regi,"pemanure","5","maxprod",ttot)$(ttot.val ge 2005 AND ttot.val le 2020) =
-  sum((all_enty,all_te)$(sameas(all_enty,"seel") OR sameas(all_enty,"segabio")),
-    f04_IO_input(ttot,regi,"pemanure",all_enty,all_te)
-  );
+* *** manure availability: historic values 2005-2020, 2022 values from 2025 onward
+* p30_datapebio(regi,"pemanure","5","maxprod",ttot)$(ttot.val ge 2005 AND ttot.val le 2020) =
+*   sum((all_enty,all_te)$(sameas(all_enty,"seel") OR sameas(all_enty,"segabio")),
+*     f04_IO_input(ttot,regi,"pemanure",all_enty,all_te)
+*   );
 
-p30_datapebio(regi,"pemanure","5","maxprod",ttot)$(ttot.val ge 2025) =
-  sum((all_enty,all_te)$(sameas(all_enty,"seel") OR sameas(all_enty,"segabio")),
-    f04_IO_input("2022",regi,"pemanure",all_enty,all_te)
-  );
+* p30_datapebio(regi,"pemanure","5","maxprod",ttot)$(ttot.val ge 2025) =
+*   sum((all_enty,all_te)$(sameas(all_enty,"seel") OR sameas(all_enty,"segabio")),
+*     f04_IO_input("2022",regi,"pemanure",all_enty,all_te)
+*   );
 
 
 display p30_datapebio;
