@@ -1,0 +1,107 @@
+# BioMIP
+
+## Biomass Production 
+
+```{r PE Biomass Production}
+items <- c(
+  "PE|Production|Biomass|Lignocellulosic|Energy Crops",
+  "PE|Production|Biomass|Lignocellulosic|Residues",
+  "PE|Production|Biomass|1st Generation|SugarAndStarch",
+  "PE|Production|Biomass|1st Generation|Sunflowers_PalmOil_others",
+  "PE|Production|Biomass|Manure",
+  NULL)
+showAreaAndBarPlots(data, items, tot = "PE|Production|Biomass", orderVars = "user", scales = "fixed")
+```
+
+```{r PE Biomass Production - details}
+showLinePlots(data, "PE|Production|Biomass|Lignocellulosic|Energy Crops")
+showLinePlots(data, "PE|Production|Biomass|Lignocellulosic|Residues")
+showLinePlots(data, "PE|Production|Biomass|1st Generation|SugarAndStarch")
+showLinePlots(data, "PE|Production|Biomass|1st Generation|Sunflowers_PalmOil_others")
+showLinePlots(data, "PE|Production|Biomass|Manure")
+```
+
+## Biomass Consumption 
+
+### Overall Biomass Consumption
+```{r PE Biomass Consumption Carriers}
+tot <- "PE|Biomass"
+items <- c(
+  "PE|Biomass|Hydrogen|w/ CC",
+  "PE|Biomass|Hydrogen|w/o CC",
+  "PE|Biomass|Electricity|w/ CC",
+  "PE|Biomass|Electricity|w/o CC",  
+  "PE|Biomass|Heat",
+  "PE|Biomass|Gases|w/ CC",
+  "PE|Biomass|Gases|w/o CC",  
+  "PE|Biomass|Liquids|w/ CC",
+  "PE|Biomass|Liquids|w/o CC",
+  "PE|Biomass|Solids",
+  "PE|Biomass|Biochar",
+  NULL)
+
+showLinePlots(data, tot)
+showAreaAndBarPlots(data, items, tot = tot, orderVars = "user", scales = "fixed")
+```
+
+### PE Manure
+```{r PE Manure}
+tot <- "PE|Biomass|Manure"
+items <- c(
+  "PE|Biomass|Manure|Electricity",
+  "PE|Biomass|Manure|Heat",
+  "PE|Biomass|Manure|Gases",
+  NULL)
+
+showLinePlots(data, tot)
+showAreaAndBarPlots(data, items, tot = tot, orderVars = "user", scales = "fixed")
+```
+
+### PE Biomass Technology
+```{r PE Biomass Technology}
+tot <- "PE|Biomass"
+items <- c(
+    "biotr",
+    "biotrmod",
+    "bioftrec",
+    "bioftcrec",
+    "bioethl",
+    "biogas",
+    "biogasc",
+    "bioigcc",
+    "bioigccc",
+    "biochp",
+    "bioh2",
+    "bioh2c",
+    "biohp",
+    "biochp",
+    "biopyronly",
+    "biopyrhe",
+    # "biopyrhe_char",    
+    # "biopyrhe_heat",
+    "biopyrchp",
+    # "biopyrchp_char",
+    # "biopyrchp_heat",
+    # "biopyrchp_elec",
+    "bioeths",
+    "biodiesel",
+    "biodigestCHP",
+    # "biodigestCHP_elec",
+    # "biodigestCHP_heat",  
+    "biodigestGAS",  
+  NULL)
+
+showLinePlots(data, tot)
+showAreaAndBarPlots(data, items, tot = tot, orderVars = "user", scales = "fixed")
+```
+
+
+## Biomass with or without carbon capture 
+
+```{r PE Biomass Production Carbon Capture}
+items <- c(
+  "PE|Biomass|w/ CC",
+  "PE|Biomass|w/o CC",
+  NULL)
+showAreaAndBarPlots(data, items, tot = "PE|Biomass", orderVars = "user", scales = "fixed")
+```
