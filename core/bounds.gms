@@ -541,7 +541,7 @@ vm_emiMac.fx(t,regi,"bc") = 0;
 vm_emiMac.fx(t,regi,"oc") = 0;
 
 *** fix F-gas emissions to inputdata (IMAGE)
-vm_emiFgas.fx(ttot,all_regi,all_enty) = f_emiFgas(ttot,all_regi,"%c_SSP_forcing_adjust%","%cm_rcp_scen%","SPA0",all_enty);
+vm_emiFgas.fx(ttot,all_regi,all_enty) = f_emiFgas(ttot,all_regi,"%cm_fgas_scen%",all_enty);
 display vm_emiFgas.L;
 
 
