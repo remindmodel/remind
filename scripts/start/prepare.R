@@ -52,7 +52,7 @@ prepare <- function() {
     # list all packages of interest alphabetically here
         tribble(
             ~Package, "data.table", "devtools", "dplyr", "edgeTransport",
-            "flexdashboard", "gdx2", "gdxdt", "gdxrrw", "ggplot2", "gtools",
+            "flexdashboard", "gdx2", "ggplot2", "gtools",
             "lucode2", "luplot", "luscale", "magclass", "magpie4", "methods",
             "mip", "mrtransport", "optparse", "parallel",
             "plotly", "remind2", "reporttransport", "reticulate", "rlang",
@@ -226,6 +226,11 @@ prepare <- function() {
            paste(from[which(!exist[1:3])], collapse = ', '),
            ' are missing.  Call RSE immediately')
   }
+
+  # $offlisting appears in main.gms but the current process does not let it survive into full.gms
+  # therefore all cs3r/cs4r file contents are dumped directly into the full.lst
+  # to avoid this we add $offlisting manually at $onDelim present at each include of a cs4r/cs3r
+  lucode2::manipulateFile(dumpFilePath, list(c("$onDelim", "$offlisting\n$onDelim"), c("$offDelim", "$offDelim\n$onlisting")), fixed = TRUE)
 
   file.rename(from[exist], to[exist])
 

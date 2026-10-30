@@ -195,7 +195,6 @@ all_te          "all energy technologies, including from modules"
     fnrs            "fast nuclear reactor (simple structure)"
     elh2            "hydrogen electrolysis, using grid electricity"
     h2turb          "hydrogen turbine for electricity production"
-    elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
     h2turbVRE       "dummy technology: hydrogen turbine for electricity production; to demonstrate the capacities and SE flows inside the storXXX technologies"
     h2curt          "hydrogen production from curtailment"
     h22ch4          "production of synthetic methane from hydrogen and captured carbon via methanation"
@@ -1141,7 +1140,6 @@ te(all_te)              "energy technologies"
     fnrs            "fast nuclear reactor (simple structure)"
     elh2            "hydrogen electrolysis"
     h2turb          "hydrogen turbine for electricity production"
-    elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
     h2turbVRE       "dummy technology: hydrogen turbine for electricity production; to demonstrate the capacities and SE flows inside the storXXX technologies"
     h2curt          "hydrogen production from curtailment"
     tdels           "transmission and distribution for electricity to stationary users"
@@ -2206,8 +2204,8 @@ numberEmiRCP "number of emission types" / 1 * 23 /
 char            "characteristics of technologies"
 /
     mix0            "share in the production of v*_INIdemEn0, which is the energy demand in t0 minus the energy produced by couple production"
-    ccap0           "cumulated installed capacity in t0. Unit: TW"
-    inco0           "investment costs in t0. Unit: $/kW"
+    inco0           "investment costs at inco0year. Unit: $/kW"
+    inco0year       "year where inco0 holds"
     inco0_d         "Initial investment costs given in $(2015)/kW(output) capacity. Per 1000km."
     incolearn       "Investment costs that can be reduced through learning = inco0 - floorcost. Unit: $/kW"
     floorcost       "Floor investment costs for learning technologies. Unit: $/kW"
@@ -2245,7 +2243,7 @@ char            "characteristics of technologies"
     tkpremused      "turn-key cost premium used in the model (with a discount rate of 3+ pure rate of time preference); in comparison to overnight costs)"
     lifetime        "average lifetime of a technology (integral under the omeg-curve). Unit: years"
     flexibility                        "representing ramping constraints or additional costs for partial load of technologies in power sector"
-    tech_stat       "technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'"
+    tech_stat       "technology status: how close a technology is to market readiness. Scale: 0-5, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary' to 5 'Further in the future'"
     Xport           "exports"
     Mport           "imports"
     use             "financial trade costs for PE use [trl$US per TWa]"
@@ -2254,7 +2252,7 @@ char            "characteristics of technologies"
     min             "minimum"
     max             "maximum"
     usehr            "number of hours in a year when the technology is used"
-    elh2VREcapRatio    "ratio of elh2VRE capacity to storage technology capacity"
+    elh2capRatio    "ratio of elh2 capacity to storage technology capacity"
     h2turbVREcapRatio  "ratio of h2turbVRE capacity to storage technology capacity"
     batteryVREcapRatio  "ratio of battery capacity to storage technology capacity"
     priceLow        "biochar price path assumption"
@@ -2516,7 +2514,6 @@ se2se(all_enty,all_enty,all_te)  "map secondary energy to secondary energy using
 /
     seel.seh2.elh2
     seh2.seel.h2turb
-    seel.seh2.elh2VRE
     seh2.seel.h2turbVRE
 /
 
@@ -2854,7 +2851,7 @@ teSe2rlf(all_te,rlf)        "mapping for techologies to grades. Currently, the i
     igcc,igccc,pc,coaltr,coalgas,coalh2,coalh2c,coalchp,coalhp,coalftrec,coalftcrec,
     biotr,biotrmod,biogas,biogasc,bioftrec,bioftcrec,bioh2,bioh2c,biohp,biochp,bioigcc,bioigccc,
     biopyronly,biopyrhe,biopyrchp,biopyrliq,
-    elh2,h2turb,elh2VRE,h2turbVRE,bioethl,bioeths,biodiesel,biodigestCHP,biodigestGAS,tnrs,fnrs
+    elh2,h2turb,h2turbVRE,bioethl,bioeths,biodiesel,biodigestCHP,biodigestGAS,tnrs,fnrs
     ) . 1
 /
 

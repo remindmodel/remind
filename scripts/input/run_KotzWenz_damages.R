@@ -8,9 +8,7 @@
 # FP
 print("Calculating damages and marginal damages for SCC ")
 require(dplyr)
-require(gdxrrw)
 require(quitte)
-igdx(system("dirname $( which gams )", intern = TRUE))
 
 beta1 <- read.csv("../../modules/50_damages/KotzWenz/input/f50_KLW_df_beta1.cs4r",skip=4,header=FALSE) %>% rename(iso=V1,realization=V2,value=V3)
 beta2 <- read.csv("../../modules/50_damages/KotzWenz/input/f50_KLW_df_beta2.cs4r",skip=4,header=FALSE) %>% rename(iso=V1,realization=V2,value=V3)
@@ -56,23 +54,18 @@ for(i in countries){
   alldam_marg <- rbind(alldam_marg,rename(select(dam_q,c("iso","period","low_marg","med_marg","mean_marg","high_marg")),tall=period))
 }
 
-writeToGdx = function(file,df,name){
-  df$tall = factor(df$tall)
-  df$iso = factor(df$iso)
-  df$percentile = factor(df$percentile)
-  attr(df,which = 'symName') = name
-  attr(df,which = 'domains') = c('tall','iso','percentile')
-  attr(df,which = 'domInfo') = 'full'
-  
-  wgdx.lst(file,df,squeeze = F)
-}
-
 alldam <- reshape2::melt(alldam,id.vars=c("tall","iso")) %>% rename(percentile=variable)
 alldam_marg <- reshape2::melt(rename(alldam_marg,low=low_marg,med=med_marg,mean=mean_marg,high=high_marg),id.vars=c("tall","iso")) %>% rename(percentile=variable)
 
-# write to GDX:
-writeToGdx('pm_KotzWenz_damageIso',alldam,'pm_damageIso')
-writeToGdx('pm_KotzWenz_damageMarginalIso',alldam_marg,'pm_damageMarginalIso')
+# write to GDX
+alldam %>%
+  mutate(variable = "pm_damageIso") %>%
+  write.gdx("pm_KotzWenz_damageIso.gdx",
+            varmap = c(pm_damageIso = "pm_damageIso"), dimCols = c("tall", "iso", "percentile"))
+alldam_marg %>%
+  mutate(variable = "pm_damageMarginalIso") %>%
+  write.gdx("pm_KotzWenz_damageMarginalIso.gdx",
+            varmap = c(pm_damageMarginalIso = "pm_damageMarginalIso"), dimCols = c("tall", "iso", "percentile"))
 print("...done.")
 
 

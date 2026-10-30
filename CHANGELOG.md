@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
+## [Unreleased]
+
+### input data/calibration
+
+### changed
+- **scripts** Move results of most comparison scripts to output folder.
+    [[#2500](https://github.com/remindmodel/remind/pull/2500)]
+
+### added
+- **scripts** Introduce new optional argument to compare scenario scripts ``validationConfig`` to enable plotting validation thresholds from piamValidation directly
+    into line plots of cs documents.
+    [[#2493](https://github.com/remindmodel/remind/pull/2493)]
+
+### removed
+- **scripts** Drop the `gdxrrw`/`gdx` R dependency from REMIND scripts; GDX writes now use `gamstransfer`-based `quitte::write.gdx`
+    [[#2485](https://github.com/remindmodel/remind/pull/2485)]
+
+### fixed
+- **scripts** Fix call to harmonization and infilling console entry point in  `climateAssessmentInterimRun.R`
+    [[#2484](https://github.com/remindmodel/remind/pull/2484)]
+-
+
+
 ## [3.7.1] - 2026-09-25
 
 ### input data/calibration

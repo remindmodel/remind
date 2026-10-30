@@ -4,8 +4,27 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-skipIfFast()
 skipIfPreviousFailed()
+
+test_that("output.R -> compare -> compareScenarios2 works", {
+  output <- localSystem2("Rscript", c(
+    "output.R", "--comp=comparison", "--output=compareScenarios2", "--outputdirs=output/testOneRegi", "--sections=0",
+    "--aliases=test", "--filename_prefix=TESTTHAT", "--profileNames=H12", "--slurmConfig=direct"
+  ))
+  printIfFailed(output)
+  expectSuccessStatus(output)
+  csfiles <- Sys.glob(file.path("..", "..", "output", "*TESTTHAT*"))
+  expect_true(sum(grepl("compScen-TESTTHAT.*", csfiles)) >= 1)
+})
+
+test_that("cleanup compareScenarios2", {
+  skipIfPreviousFailed()
+  csfiles <- Sys.glob(file.path("..", "..", "output", "*TESTTHAT*"))
+  expect_true(length(csfiles) >= 1)
+  unlink(csfiles)
+})
+
+skipIfFast()
 
 test_that("output.R -> single -> reporting works", {
   output <- localSystem2("Rscript", c("output.R", "--comp=single", "--output=reporting", "--outputdirs=output/testOneRegi",

@@ -98,13 +98,13 @@ q32_h2turbVREcapfromTestorUp(t,regi)..
 ;
 
 *** build additional electrolysis capacities with stored VRE electricity, phase-in from 2030 to 2040
-q32_elh2VREcapfromTestor(t,regi)..
+q32_elh2capfromTestor(t,regi)..
   vm_cap(t,regi,"elh2","1")
   =g=
   sum(teStor,
-    p32_storageCap(teStor,"elh2VREcapratio") * vm_cap(t,regi,teStor,"1")
+    p32_storageCap(teStor,"elh2capratio") * vm_cap(t,regi,teStor,"1")
   )
-  * p32_phaseInElh2VREcap(t)
+  * p32_phaseInElh2cap(t)
 ;
 
 
