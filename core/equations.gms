@@ -372,15 +372,6 @@ qm_deltaCapCumNet(ttot,regi,teLearn)$(ord(ttot) lt card(ttot) AND pm_ttot_val(tt
   vm_capCum(ttot,regi,teLearn);
 
 ***---------------------------------------------------------------------------
-*' Initial values for cumulated capacities (learning technologies only):
-*' (except for tech_stat 4 technologies that have no standing capacities in 2005 and ccap0 refers to another year)
-***---------------------------------------------------------------------------
-q_capCumNet(t0,regi,teLearn)$(pm_data(regi,"tech_stat",teLearn) < 4)..
-  vm_capCum(t0,regi,teLearn)
-  =e=
-  pm_data(regi,"ccap0",teLearn);
-
-***---------------------------------------------------------------------------
 *' Additional equation for fuel shadow price calulation:
 ***---------------------------------------------------------------------------
 *ml* reasonable results only for members of peExGrade and peren2rlf30
@@ -447,13 +438,20 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
 *' $$ b' = \frac{I_0}{I_0-F}b $$
 
 *' In datainput.gms, `fm_dataglob` external data provides the observed learning rate `learn` ($\lambda$),
-*' the initial investment costs `inco0` ($I_0$), the floorcost ($F$) and
-*' the cumulative capacity in 2015 `ccap0` ($C_0$).
+*' the initial investment costs `inco0` ($I_0$) and the floorcost ($F$).
 *' The other learning parameters are computed using the equations described above:
 *' `learnExp_wFC` ($b'$), `learnMult_wFC` ($a'$).
 
 *' In equations.gms, the investment costs equation `q_costTeCapital` corresponds to $I = a'\times C^{b'} + F$,
 *' with variations depending on time period and floor cost scenarios.
+
+*** learnExp_wFC must be strictly negative for q_costTeCapital to work
+loop((regi, teLearn)$(pm_data(regi, "learnExp_wFC", teLearn) >= 0),
+    abort "Parameter error: pm_data('learnExp_wFC') must be strictly negative! This may be violated if floorcost > inco0 for some region/tech";
+);
+loop(teLearn$(fm_dataglob("learnExp_wFC", teLearn) >= 0),
+    abort "Parameter error: fm_dataglob('learnExp_wFC') must be strictly negative! This may be violated if floorcost > inco0 for some region/tech";
+);
 
 
 $macro macro_capCumGlob (sum(regi2, vm_capCum(t,regi2,teLearn)) + pm_capCumForeign(t,regi,teLearn))
@@ -464,26 +462,19 @@ q_costTeCapital(t,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) < 4 or t.va
   vm_costTeCapital(t,regi,teLearn)
   =e=
 *** until 2005: using global estimates better matches historic values
-  macro_costGlob $ (t.val <= 2005)
-    
 *** 2005 to 2020: linear transition from global 2005 to regional 2020
 *** to phase-in the observed 2020 regional variation from input-data
-  + macro_interpolate(t.val, 2005, 2020, macro_costGlob, macro_costRegi) $ (t.val > 2005 and t.val <= 2020)
+  macro_clamped_interpolate(t.val, 2005, 2020, macro_costGlob, macro_costRegi) $ (t.val <= 2020)
 
-*** after 2020 for specific cm_floorCostScen: regional capital costs
-$if %cm_floorCostScen% == "pricestruc"  + macro_costRegi $ (t.val > 2020)
-$if %cm_floorCostScen% == "gdpBased"    + macro_costRegi $ (t.val > 2020)
-
-$ifthen.default %cm_floorCostScen% == "uniform"
+$ifthen.uniform %cm_floorCostScen% == "uniform"
 *** from 2020 to c_teLearnConvStartYr: regional capital costs
-  + macro_costRegi $ (t.val > 2020 and t.val <= c_teLearnConvStartYr)
-
 *** c_teLearnConvStartYr to c_teLearnConvEndYr: linear convergence from regional costs to global costs
-  + macro_interpolate(t.val, c_teLearnConvStartYr, c_teLearnConvEndYr, macro_costRegi, macro_costGlob) $ (t.val > c_teLearnConvStartYr and t.val < c_teLearnConvEndYr)
-
 *** after c_teLearnConvEndYr: global capital costs
-  + macro_costGlob $ (t.val >= c_teLearnConvEndYr)
-$endif.default
+  + macro_clamped_interpolate(t.val, c_teLearnConvStartYr, c_teLearnConvEndYr, macro_costRegi, macro_costGlob) $ (t.val > 2020)
+$else.uniform
+*** for all other scenarios: continue regional cost
+  + macro_costRegi $ (t.val > 2020)
+$endif.uniform
 
 ;
 *' @stop
