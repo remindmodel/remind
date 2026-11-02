@@ -18,7 +18,7 @@ Parameter p45_EmiTargetAbs(ttot,all_regi) "Absolute NDC emissions targets, emiss
 /
 $offlisting
 $ondelim
-$include "./modules/45_carbonprice/NDC/input/fm_EmiTargetAbs.cs4r"
+$include "./modules/45_carbonprice/NDC/input/f45_EmiTargetAbs.cs4r"
 $offdelim
 $onlisting
 /;
@@ -65,7 +65,7 @@ Parameter p45_shareTarget(ttot,all_regi) "Estimated target year GHG emissions sh
 /
 $offlisting
 $ondelim
-$include "./modules/45_carbonprice/NDC/input/fm_shareTarget.cs4r"
+$include "./modules/45_carbonprice/NDC/input/f45_shareTarget.cs4r"
 $offdelim
 $onlisting
 /;
