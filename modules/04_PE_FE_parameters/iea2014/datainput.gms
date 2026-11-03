@@ -299,7 +299,12 @@ p04_prodCoupleGlob("pebiolc","seel","biochp","sehe")        = 0.72;
 p04_prodCoupleGlob("pebiolc","segabio","biogasc","seel")    = -0.07;
 p04_prodCoupleGlob("pebiolc","seliqbio","bioethl","seel")   = 0.153;
 
-p04_prodCoupleGlob("pemanure","seel","biodigestCHP","sehe")   = 0.1;
+*** usable heat per unit of electricity: 0.44 thermal efficiency * 45% externally used heat / 0.41 electrical efficiency
+*** IEE/DBFZ/ESE (2025), EEG-Evaluationsbericht, Tab. 6-1
+p04_prodCoupleGlob("pemanure","seel","biodigestCHP","sehe")   = 0.48;
+*** auxiliary electricity per unit of biomethane: digester 2.3% of biogas output * 1.22 + upgrading 1.9% of biogas input
+*** Danish Energy Agency, Technology Data for Renewable Fuels (08/2026), sheets 81 and 91
+p04_prodCoupleGlob("pemanure","segabio","biodigestGAS","seel") = -0.048;
 
 *** Electricity co-production for this Fischer-Tropsch-based biomass-to-liquids route. Values taken from:
 *** - Liu et al. 2011 (Making Fischer-Tropsch Fuels and Electricity from Coal and Biomass: Performance and Cost Analysis) https://doi.org/10.1021/ef101184e

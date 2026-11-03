@@ -759,8 +759,10 @@ pm_cf(ttot,regi,"h2turbVRE")$(ttot.val ge 2025) = pm_cf(ttot,regi,"ngt");
 pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
-*** RoSa: set CF for biodigestCHP and biodigestGAS 
-pm_cf(ttot,regi,"biodigestCHP") = 0.9;
+*** RoSa: set CF for biodigestCHP and biodigestGAS
+*** biodigestCHP: flexible operation with 2.2x overbuilt CHP, 3942 full-load hours (EEG 2023: rated output = 45% of installed capacity)
+*** IEE/DBFZ/ESE (2025), EEG-Evaluationsbericht, Tab. 6-1. biodigestGAS: continuous operation of digester and upgrading
+pm_cf(ttot,regi,"biodigestCHP") = 0.45;
 pm_cf(ttot,regi,"biodigestGAS") = 0.9;
 
 *** Region- and tech-specific early retirement rates

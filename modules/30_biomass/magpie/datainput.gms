@@ -25,7 +25,9 @@ $offdelim
 *** and for pebios, pebioil (defined only for 5th grade)
 p30_datapebio(regi,"pebios","5","cost",ttot)$(ttot.val ge 2005)  = 12.4 * s30_D2TD / sm_GJ_2_TWa;
 p30_datapebio(regi,"pebioil","5","cost",ttot)$(ttot.val ge 2005) = 15.8 * s30_D2TD / sm_GJ_2_TWa;
-p30_datapebio(regi,"pemanure","5","cost",ttot)$(ttot.val ge 2005) = 1 * s30_D2TD / sm_GJ_2_TWa;
+*** pemanure (raw biogas energy): feedstock is 50-60% of biogas LCOE (IEE/DBFZ/ESE 2025, 2026);
+*** 0.55 * 34.6 ct/kWh_el * 0.41 = 7.8 ct/kWh_biogas ~ 21.7 EUR2026/GJ ~ 18.4 USD2015/GJ ~ 19 USD2017/GJ
+p30_datapebio(regi,"pemanure","5","cost",ttot)$(ttot.val ge 2005) = 19 * s30_D2TD / sm_GJ_2_TWa;
 p30_datapebio(regi,"pebiolc","2","cost",ttot)$(ttot.val ge 2005) =    1 * s30_D2TD / sm_GJ_2_TWa;
 
 *** maxprod pebiolc: choose SSP and convert from PJ/yr to TWa/yr
