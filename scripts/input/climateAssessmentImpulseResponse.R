@@ -45,7 +45,8 @@ dir.create(cfg$workersDir, showWarnings = FALSE)
 magiccEnv <- c(
   "MAGICC_EXECUTABLE_7"    = cfg$magiccBin,
   "MAGICC_WORKER_ROOT_DIR" = cfg$workersDir,
-  "MAGICC_WORKER_NUMBER"   = 1
+  "MAGICC_WORKER_NUMBER"   = 12,
+  "PYTHONNOUSERSITE"       = 1 # TODO: ignore packages in ~/.local, a stale pint there shadows the conda env one. Revisit with the env setup
 )
 
 magiccInit <- condaInit(how = "pik-cluster", log = cfg$logFile, verbose = 1)
@@ -57,7 +58,8 @@ runClimateEmulatorCmd <- paste(
   "--endyear", 2200,
   "--num-cfgs", cfg$nSets,
   "--scenario-batch-size", 1,
-  "--probabilistic-file", cfg$probabilisticFile
+  "--probabilistic-file", cfg$probabilisticFile,
+  cfg$climateArgs
 )
 
 runTimes <- c(runTimes, "set_up_assessment end" = Sys.time())
@@ -69,7 +71,7 @@ runTimes <- c(runTimes, "preprocessing start" = Sys.time())
 
 # define years and pulse size
 scanValsPulse <- c(0, 1) # pulse size in GtC. Keep 0 in here as the baseline against which the pulse run is compared to
-scanValsYears <- c(2020, 2030, 2040, 2050, 2060, 2070, 2080, 2090, 2100, 2110, 2130)
+scanValsYears <- c(2020, 2025, 2030, 2040, 2050, 2060, 2070, 2080, 2090, 2100, 2110, 2130)
 
 # Read base emissions scenario file
 if (!file.exists(cfg$harmInfEmissionsFile)) {
@@ -80,7 +82,10 @@ if (!file.exists(cfg$harmInfEmissionsFile)) {
   cat(errMsg, file = cfg$logFile, append = TRUE)
   stop(errMsg)
 }
-mifBaseScen <- read.quitte(cfg$harmInfEmissionsFile)
+mifBaseScen <- read.quitte.ca(cfg$harmInfEmissionsFile)
+
+# Skip the pulse years before the first year of the emissions data, which is 2023 in the SCI setup
+scanValsYears <- scanValsYears[scanValsYears >= min(mifBaseScen$period)]
 
 # Add emissions data up to 2300, assuming constant emissions of all species after 2100
 mifBaseScen <- bind_rows(
@@ -97,7 +102,7 @@ mifBaseScen <- bind_rows(
 # Keep flexible, as we may want to do this with other gases as well
 # Here we assume the pulse comes from energy emissions. AFOLU emissions
 # imply deforestation in some SCMs and would lead to spurious regrowth
-emisVarName <- "AR6 climate diagnostics|Infilled|Emissions|CO2|Energy and Industrial Processes"
+emisVarName <- "Emissions|CO2|Fossil"
 
 # Build a quitte with scenarios that scan the range of pulse sizes and years set above
 # This is pretty fast, so opting for a readable loop instead of an apply
@@ -148,7 +153,7 @@ runTimes <- c(runTimes, "postprocessing start" = Sys.time())
 # Actual runs done, read the output, already filtering what we need
 # temperatureVarName <- "AR6 climate diagnostics|Surface Temperature (GSAT)|MAGICCv7.5.3|50.0th Percentile"
 temperatureVarName <- "Surface Air Temperature Change"
-mifAllPulsesClimate <- read.quitte(cfg$climateAssessmentFile) %>%
+mifAllPulsesClimate <- read.quitte.ca(cfg$climateAssessmentFile, variables = temperatureVarName, periods = 2020:2300) %>%
   filter(variable == temperatureVarName) %>%
   filter(between(period, 2020, 2300))
 
@@ -179,11 +184,11 @@ tirf <- tirf %>%
   })) %>%
   unnest()
 
-# Assume tirf has the same shape in year_pulse 2010 as in 2020
+# Assume tirf has the same shape in year_pulse 2010 as in the first pulse year (2020, or 2025 in SCI)
 tirf <- rbind(
     tirf %>%
-      filter(year_pulse == 2020) %>%
-      mutate(year_pulse = year_pulse - 10, period = period - 10),
+      filter(year_pulse == scanValsYears[1]) %>%
+      mutate(year_pulse = year_pulse - (scanValsYears[1] - 2010), period = period - (scanValsYears[1] - 2010)),
     tirf
   ) %>%
   filter(period >= 2010)

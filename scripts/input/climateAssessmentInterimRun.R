@@ -41,14 +41,16 @@ dir.create(cfg$workersDir, showWarnings = FALSE)
 magiccEnv <- c(
   "MAGICC_EXECUTABLE_7"    = cfg$magiccBin,
   "MAGICC_WORKER_ROOT_DIR" = cfg$workersDir,
-  "MAGICC_WORKER_NUMBER"   = 1
+  "MAGICC_WORKER_NUMBER"   = 1,
+  "PYTHONNOUSERSITE"       = 1 # TODO: ignore packages in ~/.local, a stale pint there shadows the conda env one. Revisit with the env setup
 )
 
 magiccInit <- condaInit(how = "pik-cluster", log = cfg$logFile, verbose = 1)
 
 runHarmoniseAndInfillCmd <- paste(
-  "ca-harmonize-infill", cfg$remindEmissionsFile, cfg$climateDir,
-  "--infilling-database", cfg$infillingDatabase
+  "python", file.path(system.file(package = "remindClimateAssessment"), "runHarmInfGcages.py"), cfg$remindEmissionsFile, cfg$climateDir,
+  "--infilling-database", cfg$infillingDatabase,
+  cfg$harmInfArgs
 )
 
 runClimateEmulatorCmd <- paste(
@@ -58,7 +60,8 @@ runClimateEmulatorCmd <- paste(
   "--endyear", 2250,
   "--num-cfgs", cfg$nSets,
   "--scenario-batch-size", 1,
-  "--probabilistic-file", cfg$probabilisticFile
+  "--probabilistic-file", cfg$probabilisticFile,
+  cfg$climateArgs
 )
 
 runTimes <- c(runTimes, "set_up_assessment end" = Sys.time())
@@ -116,7 +119,7 @@ varmap <- c(
 # Postprocess by renaming IAMC-style `period` (year) column to REMIND compatible `tall` set & using this as sole index 
 # `dimCol`, No need to further rename variables since during iterative call to climate assessment the variables names 
 # are not expanded as in `MAGICC7_AR6.Report`/the standard call to `run_climate` in `climate-assessment`
-read.quitte(cfg$climateAssessmentFile) %>% 
+read.quitte.ca(cfg$climateAssessmentFile) %>%
   rename(tall = period) %>% 
   write.gdx(file.path(outputDir, "p15_climate.gdx"), varmap = varmap, dimCols = c("tall"))
 

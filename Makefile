@@ -105,10 +105,10 @@ create-conda: ## Create a conda environment from the config/py_requirements.txt 
 	echo "Creating Conda environment: $$DEST/$$ENV with Python 3.11"; \
 	mkdir -p $$DEST; \
 	conda create --prefix $$DEST/$$ENV python=3.11 -y; \
-	echo "Activating Conda environment: $$ENV"; \
-	. $$(conda info --base)/etc/profile.d/conda.sh && conda activate $$DEST/$$ENV && \
 	echo "Installing requirements from config/py_requirements.txt"; \
-	pip install -r config/py_requirements.txt; \
+	PYTHONNOUSERSITE=1 $$DEST/$$ENV/bin/python -m pip install -r config/py_requirements.txt || exit 1; \
+	echo "Installing gcages on top, from config/py_requirements_gcages.txt"; \
+	PYTHONNOUSERSITE=1 $$DEST/$$ENV/bin/python -m pip install -r config/py_requirements_gcages.txt || exit 1; \
 	echo "Conda environment $$ENV created and requirements installed successfully in $$DEST with Python 3.11.";
 
 check:           ## Check if the GAMS code follows the coding etiquette

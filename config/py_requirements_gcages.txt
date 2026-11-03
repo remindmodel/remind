@@ -1,0 +1,16 @@
+# |  (C) 2006-2024 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
+# Installed AFTER py_requirements.txt (see make create-conda). gcages needs aneris>=0.4.2, which upgrades aneris,
+# openscm-runner and scmdata beyond the exact pins of climate-assessment. pip warns about that, which is expected:
+# remindClimateAssessment's inst/caCompat.py adapts climate-assessment to the newer versions at runtime.
+gcages[cmip7scenariomip] @ git+https://github.com/openscm/gcages.git@31cb27e0977cb2577bc9092f624ad97aa6c27d74
+
+# scmdata>=0.19 does not work with xarray>=2025
+xarray<2025
+
+# imported by climate_assessment.cli, but not declared by it
+click
