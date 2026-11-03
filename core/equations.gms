@@ -1171,7 +1171,7 @@ q_shbiofe_lo(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector) 
 ***---------------------------------------------------------------------------
 
 q_shbiofe_indst_up(t,regi,entyFe,sector)$(pm_secBioShare(t,regi,entyFe,sector) and (sameas(sector,"indst") and sameas(entyFe,"fesos")))..
-  (pm_secBioShare(t,regi,entyFe,sector) + 0.02)
+  (pm_secBioShare(t,regi,entyFe,sector) + 0.025)
   *
   sum(emiMkt$sector2emiMkt(sector,emiMkt),
     sum((entySe,te)$se2fe(entySe,entyFe,te),
@@ -1183,7 +1183,7 @@ q_shbiofe_indst_up(t,regi,entyFe,sector)$(pm_secBioShare(t,regi,entyFe,sector) a
 ;
 
 q_shbiofe_indst_lo(t,regi,entyFe,sector)$(pm_secBioShare(t,regi,entyFe,sector) and (sameas(sector,"indst") and sameas(entyFe,"fesos")))..
-  (pm_secBioShare(t,regi,entyFe,sector) - 0.02)
+  (pm_secBioShare(t,regi,entyFe,sector) - 0.025)
   *
   sum(emiMkt$sector2emiMkt(sector,emiMkt),
     sum((entySe,te)$se2fe(entySe,entyFe,te),
