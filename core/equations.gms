@@ -1166,7 +1166,7 @@ q_shbiofe_lo(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector) 
 ;
 
 ***---------------------------------------------------------------------------
-*' Enforce historical data biomass share per carrier in sector final energy for industry (+- 2%)
+*' Enforce historical data biomass share per carrier in sector final energy for industry (+- 2.5%)
 *' Applies to the sum of emiMkt
 ***---------------------------------------------------------------------------
 
