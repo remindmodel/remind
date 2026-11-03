@@ -14,16 +14,11 @@ p51_lab(tall,regi)$(tall.val ge 2150) = p51_lab("2150",regi);
 
 loop(ttot$(ttot.val ge 2010),
 	loop(tall$(pm_tall_2_ttot(tall,ttot)),
-		p51_labXi(tall,regi)=(1-pm_interpolWeight_ttot_tall(tall))*pm_cesdata(ttot,regi,"lab","xi")
-				     + pm_interpolWeight_ttot_tall(tall) * pm_cesdata(ttot+1,regi,"lab","xi");
-		p51_labEff(tall,regi)=(1-pm_interpolWeight_ttot_tall(tall))*pm_cesdata(ttot,regi,"lab","eff")
-				     + pm_interpolWeight_ttot_tall(tall) * pm_cesdata(ttot+1,regi,"lab","eff");
-		p51_labEffgr(tall,regi)=(1-pm_interpolWeight_ttot_tall(tall))*pm_cesdata(ttot,regi,"lab","effgr")
-				     + pm_interpolWeight_ttot_tall(tall) * pm_cesdata(ttot+1,regi,"lab","effgr");
-		p51_labRho(tall,regi)=(1-pm_interpolWeight_ttot_tall(tall))*pm_cesdata(ttot,regi,"inco","rho")
-				     + pm_interpolWeight_ttot_tall(tall) * pm_cesdata(ttot+1,regi,"inco","rho");
-		p51_lab(tall,regi)=(1-pm_interpolWeight_ttot_tall(tall))*pm_lab(ttot,regi)
-				     + pm_interpolWeight_ttot_tall(tall) * pm_lab(ttot+1,regi);
+		p51_labXi(tall,regi) = macro_tallInterp(pm_cesdata(ttot,regi,"lab","xi"), pm_cesdata(ttot+1,regi,"lab","xi"));
+		p51_labEff(tall,regi) = macro_tallInterp(pm_cesdata(ttot,regi,"lab","eff"), pm_cesdata(ttot+1,regi,"lab","eff"));
+		p51_labEffgr(tall,regi) = macro_tallInterp(pm_cesdata(ttot,regi,"lab","effgr"), pm_cesdata(ttot+1,regi,"lab","effgr"));
+		p51_labRho(tall,regi) = macro_tallInterp(pm_cesdata(ttot,regi,"inco","rho"), pm_cesdata(ttot+1,regi,"inco","rho"));
+		p51_lab(tall,regi) = macro_tallInterp(pm_lab(ttot,regi), pm_lab(ttot+1,regi));
 ));
 
 *calculate damage shift factor, pm_GDPGross is already the GDP net of the labor damage, s I calculate the actual gross GDP

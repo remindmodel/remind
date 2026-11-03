@@ -12,9 +12,7 @@ pm_damage(tall,regi) = 1;
 pm_GDPfrac(tall,iso)=f50_countryGDP(tall,iso,"%cm_GDPpopScen%")/1000000/(sum(regi2iso(regi,iso),pm_gdp(tall,regi)/pm_shPPPMER(regi))+1e-9);
 loop(ttot$(ttot.val ge 2005),
     loop(tall$(pm_tall_2_ttot(tall,ttot)),
-        pm_GDPfrac(tall,iso) = 
-           (1-pm_interpolWeight_ttot_tall(tall))*pm_GDPfrac(ttot,iso)
-           + pm_interpolWeight_ttot_tall(tall)*pm_GDPfrac(ttot+1,iso);
+        pm_GDPfrac(tall,iso) = macro_tallInterp(pm_GDPfrac(ttot,iso), pm_GDPfrac(ttot+1,iso));
 ));
 
 display pm_GDPfrac;

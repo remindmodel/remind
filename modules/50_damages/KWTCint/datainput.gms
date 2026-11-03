@@ -60,9 +60,7 @@ $offdelim
 pm_GDPfrac(ttot,iso)$(ttot.val ge 2005) = f50_countryGDP(ttot,iso,"SSP2")/1000000/sum(regi2iso(regi,iso),pm_gdp(ttot,regi)/pm_shPPPMER(regi));
 loop(ttot$(ttot.val ge 2005),
     loop(tall$(pm_tall_2_ttot(tall,ttot)),
-        pm_GDPfrac(tall,iso) = 
-           (1-pm_interpolWeight_ttot_tall(tall))*pm_GDPfrac(ttot,iso)
-           + pm_interpolWeight_ttot_tall(tall)*pm_GDPfrac(ttot+1,iso);
+        pm_GDPfrac(tall,iso) = macro_tallInterp(pm_GDPfrac(ttot,iso), pm_GDPfrac(ttot+1,iso));
 ));
 display pm_GDPfrac;
 pm_GDPfrac(tall,iso)$(tall.val ge 2150) = pm_GDPfrac("2150",iso);

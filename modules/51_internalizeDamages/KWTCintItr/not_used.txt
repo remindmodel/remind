@@ -9,7 +9,6 @@ cm_damages_BurkeLike_persistenceTime,input,questionnaire
 pm_damageMarginal,input,questionnaire
 pm_cesdata,input,questionnaire
 pm_lab,input,questionnaire
-pm_interpolWeight_ttot_tall,input,questionnaire
 pm_damage,input,questionnaire
 pm_tall_2_ttot,input,questionnaire
 pm_GDPGrossIso,input,questionnaire

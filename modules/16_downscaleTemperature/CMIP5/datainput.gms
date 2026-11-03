@@ -59,12 +59,10 @@ pm_tempScaleGlob2Reg(ttot, regi)$(ttot.val ge 2005) =
 ;
 display pm_tempScaleGlob2Reg;
 
-*** interpolate (I use this many times, this should be a function. is there a better way to do this in GAMS?)
+*** interpolate onto the annual grid
 loop(ttot$(ttot.val ge 2005) ,
     loop(tall$(pm_tall_2_ttot(tall, ttot) and tall.val le 2100),
-	    pm_tempScaleGlob2Reg(tall,regi) =
-		(1 - pm_interpolWeight_ttot_tall(tall)) * pm_tempScaleGlob2Reg(ttot,regi)
-		+ pm_interpolWeight_ttot_tall(tall) * pm_tempScaleGlob2Reg(ttot + 1,regi);
+	    pm_tempScaleGlob2Reg(tall,regi) = macro_tallInterp(pm_tempScaleGlob2Reg(ttot,regi), pm_tempScaleGlob2Reg(ttot + 1,regi));
 ));
 *** keep constant from 2090 on
 pm_tempScaleGlob2Reg(tall,regi)$(tall.val gt 2090) = pm_tempScaleGlob2Reg("2090",regi);

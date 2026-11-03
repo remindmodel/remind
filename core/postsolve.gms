@@ -70,9 +70,7 @@ pm_GDPGross(ttot,regi)$( (pm_SolNonInfes(regi) eq 1) ) =  vm_cesIO.l(ttot,regi,"
 *interpolate GDP
 loop(ttot$(ttot.val ge 2005),
     loop(tall$(pm_tall_2_ttot(tall, ttot)),
-        pm_GDPGross(tall,regi) =
-       (1- pm_interpolWeight_ttot_tall(tall)) * pm_GDPGross(ttot,regi)
-       + pm_interpolWeight_ttot_tall(tall) * pm_GDPGross(ttot+1,regi);
+        pm_GDPGross(tall,regi) = macro_tallInterp(pm_GDPGross(ttot,regi), pm_GDPGross(ttot+1,regi));
 ));
 
 *** assume GDP is flat from 2150 on (only enters damage calculations in the far future)

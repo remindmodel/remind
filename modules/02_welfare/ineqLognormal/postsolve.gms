@@ -29,9 +29,7 @@ pm_sccIneq(ttot,regi)$((pm_SolNonInfes(regi) eq 1)) = exp(-1*(2*cm_distrAlphaDam
 *interpolate sigma
 loop(ttot$(ttot.val ge 2005),
 	loop(tall$(pm_tall_2_ttot(tall, ttot)),
-	    pm_sccIneq(tall,regi) =
-		(1- pm_interpolWeight_ttot_tall(tall)) * pm_sccIneq(ttot,regi)
-		+ pm_interpolWeight_ttot_tall(tall) * pm_sccIneq(ttot+1,regi);
+	    pm_sccIneq(tall,regi) = macro_tallInterp(pm_sccIneq(ttot,regi), pm_sccIneq(ttot+1,regi));
 ));
 
 * assume sigma is flat from 2150 on (only enters damage calculations in the far future)

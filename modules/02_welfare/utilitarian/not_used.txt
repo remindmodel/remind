@@ -14,7 +14,6 @@ vm_emiTeMkt,variable,???
 pm_taxCO2eq,input,questionnaire
 pm_taxCO2eqSCC,input,questionnaire
 pm_SolNonInfes,input,questionnaire
-pm_interpolWeight_ttot_tall,input,questionnaire
 pm_tall_2_ttot,input,questionnaire
 pm_FEPrice,input,questionnaire
 cm_emiscen,switch,???

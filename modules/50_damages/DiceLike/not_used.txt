@@ -27,6 +27,5 @@ pm_gdp,input,questionnaire
 pm_damageIso,input,questionnaire
 pm_damageGrowthRateIso,input,questionnaire
 pm_shPPPMER,input,questionnaire
-pm_interpolWeight_ttot_tall,input,questionnaire
 pm_tall_2_ttot,input,questionnaire
 pm_globalMeanTemperature,input,questionnaire

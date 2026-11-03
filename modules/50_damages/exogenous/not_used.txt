@@ -4,7 +4,6 @@ pm_gdp,input,added by codeCheck
 pm_globalMeanTemperatureZeroed1900,input,added by codeCheck
 pm_temperatureImpulseResponseCO2,input,added by codeCheck
 pm_GDPGross,input,added by codeCheck
-pm_interpolWeight_ttot_tall,input,added by codeCheck
 pm_tall_2_ttot,input,added by codeCheck
 cm_damages_BurkeLike_specification,input,added by codeCheck
 cm_damages_BurkeLike_persistenceTime,input,added by codeCheck
