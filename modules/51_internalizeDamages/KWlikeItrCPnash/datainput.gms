@@ -7,8 +7,8 @@
 *** SOF ./modules/51_internalizeDamages/KWlikeItrCPnash/datainput.gms
 
 * satisfy dependencies
-$ifi not %damages% == 'KWLike' abort "module internalizeDamages=KWlikeItrCPreg requires module damages=KWLike";
-$ifi not %cm_magicc_temperatureImpulseResponse% == 'on' abort "module internalizeDamages=KWlikeItrCPreg requires cm_magicc_temperatureImpulseResponse=on";
+$ifi not %damages% == 'KWLike' abort "module internalizeDamages=KWlikeItrCPnash requires module damages=KWLike";
+$ifi not %cm_magicc_temperatureImpulseResponse% == 'on' abort "module internalizeDamages=KWlikeItrCPnash requires cm_magicc_temperatureImpulseResponse=on";
 
 
 *inital guess carbon tax for 1st iter. Does not influence solution point.

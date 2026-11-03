@@ -8,7 +8,7 @@
 
 * satisfy dependencies
 *$ifi not %damages% == 'KWLike' abort "module internalizeDamages=KWlikeItr requires module damages=KWLike";
-$ifi not %cm_magicc_temperatureImpulseResponse% == 'on' abort "module internalizeDamages=KWlikeItr requires cm_magicc_temperatureImpulseResponse=on";
+$ifi not %cm_magicc_temperatureImpulseResponse% == 'on' abort "module internalizeDamages=KW_SEitr requires cm_magicc_temperatureImpulseResponse=on";
 
 
 *inital guess carbon tax for 1st iter. Does not influence solution point.
