@@ -26,3 +26,6 @@ pm_damageImp,input,questionnaire
 pm_damageIso,input,questionnaire
 pm_damageGrowthRateIso,input,questionnaire
 pm_sccIneq,input,questionnaire
+sm_eps,scalar,only used through macro_margUtilRatio
+pm_ies,input,only used through macro_margUtilRatio
+pm_consPC,input,only used through macro_margUtilRatio

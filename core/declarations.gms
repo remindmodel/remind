@@ -771,4 +771,12 @@ $macro macro_interpolate(t,t0,t1,x0,x1) ( ((t1) - (t)) / ((t1) - (t0)) * (x0) + 
 ***          t0  t1
 $macro macro_clamped_interpolate(t, t0, t1, x0, x1) ( (x0)$((t) <= (t0)) + (x1)$((t) >= (t1)) + ((x0) + ((x1) - (x0)) * ((t) - (t0)) / ((t1) - (t0)))$(((t) > (t0)) AND ((t) < (t1))))
 
+*** macro_margUtilRatio: marginal utility ratio between two years tLow and tHigh for a constant relative aversion
+*** (CRRA / Ramsey) utility function with pm_ies as the elasticity of intertemporal substitution. The consumption
+*** level cancels out, only the ratio of the two years matters. Requires tLow < tHigh and it is often used inside
+*** loops over (tall, tall2, regi).
+*** Example:
+***   p51_scc(tall,regi2) = ... * macro_margUtilRatio(tall, tall2, regi2) ...
+$macro macro_margUtilRatio(tLow,tHigh,regi) ( (pm_consPC(tLow,regi) / (pm_consPC(tHigh,regi) + sm_eps)) ** (1 / pm_ies(regi)) )
+
 *** EOF ./core/declarations.gms
