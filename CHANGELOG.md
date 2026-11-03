@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### changed
 - **scripts** Move results of most comparison scripts to output folder.
     [[#2500](https://github.com/remindmodel/remind/pull/2500)]
+- **core** Increase tolerance in equations `q_shbiofe_up` and `q_shbiofe_lo` from 2% to 2.5% after changes IEA input data.
+    [[#2513](https://github.com/remindmodel/remind/pull/2513)]
+- **45_carbonprice** Refactoring of NDC emissions target calculation and implementation
+    [[#2487](https://github.com/remindmodel/remind/pull/2487)]
 
 ### added
 - **scripts** Introduce new optional argument to compare scenario scripts ``validationConfig`` to enable plotting validation thresholds from piamValidation directly
@@ -21,6 +25,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### removed
 - **scripts** Drop the `gdxrrw`/`gdx` R dependency from REMIND scripts; GDX writes now use `gamstransfer`-based `quitte::write.gdx`
     [[#2485](https://github.com/remindmodel/remind/pull/2485)]
+- **core** Remove switch cm_techcosts
+    [[#2507](https://github.com/remindmodel/remind/pull/2507)]
 
 ### fixed
 - **scripts** Fix call to harmonization and infilling console entry point in  `climateAssessmentInterimRun.R`
