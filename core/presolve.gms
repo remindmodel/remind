@@ -25,12 +25,12 @@ pm_co2eq0(ttot,regi)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq 1)) = vm
 
 *LB* moved here from datainput to be updated based on the gdp-path
 *** calculate econometric emission data: p2
-p_emineg_econometric(regi,"ch4wstl","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10)   = 0.5702590;
-p_emineg_econometric(regi,"ch4wstl","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)   = 0.2057304;
-p_emineg_econometric(regi,"ch4wsts","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10)   = 0.5702590;
-p_emineg_econometric(regi,"ch4wsts","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)   = 0.2057304;
-p_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10)  = 0.3813973;
-p_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)  = 0.1686718;
+p10_emineg_econometric(regi,"ch4wstl","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10)   = 0.5702590;
+p10_emineg_econometric(regi,"ch4wstl","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)   = 0.2057304;
+p10_emineg_econometric(regi,"ch4wsts","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10)   = 0.5702590;
+p10_emineg_econometric(regi,"ch4wsts","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)   = 0.2057304;
+p10_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10)  = 0.3813973;
+p10_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)  = 0.1686718;
 
 *** calculate p1
 *** GA: p1 is based on GDP per capita. The older implementation assumes that
@@ -42,20 +42,20 @@ p_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005
 *** here to account for the 1990 quirk. Choosing 2005 keeps the old version,
 *** and any other choice assumes 2020. 
 $ifthen %cm_emifacs_baseyear% == "2005"
-p_emineg_econometric(regi,"n2owaste","p1") = p_macBase2005(regi,"n2owaste") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"n2owaste","p2"));
-p_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10) = p_macBase2005(regi,"ch4wstl") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2"));
-p_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10) = p_macBase2005(regi,"ch4wsts") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wsts","p2"));
-p_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10) = p_macBase1990(regi,"ch4wstl") / (pm_pop("1990",regi) * (1000*pm_gdp("1990",regi) / (pm_pop("1990",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2"));
-p_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10) = p_macBase1990(regi,"ch4wsts") / (pm_pop("1990",regi) * (1000*pm_gdp("1990",regi) / (pm_pop("1990",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wsts","p2"));
+p10_emineg_econometric(regi,"n2owaste","p1") = p10_macBase2005(regi,"n2owaste") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**p10_emineg_econometric(regi,"n2owaste","p2"));
+p10_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10) = p10_macBase2005(regi,"ch4wstl") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**p10_emineg_econometric(regi,"ch4wstl","p2"));
+p10_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10) = p10_macBase2005(regi,"ch4wsts") / (pm_pop("2005",regi) * (1000*pm_gdp("2005",regi) / (pm_pop("2005",regi)*pm_shPPPMER(regi)))**p10_emineg_econometric(regi,"ch4wsts","p2"));
+p10_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10) = p10_macBase1990(regi,"ch4wstl") / (pm_pop("1990",regi) * (1000*pm_gdp("1990",regi) / (pm_pop("1990",regi)*pm_shPPPMER(regi)))**p10_emineg_econometric(regi,"ch4wstl","p2"));
+p10_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10) = p10_macBase1990(regi,"ch4wsts") / (pm_pop("1990",regi) * (1000*pm_gdp("1990",regi) / (pm_pop("1990",regi)*pm_shPPPMER(regi)))**p10_emineg_econometric(regi,"ch4wsts","p2"));
 $else
-p_emineg_econometric(regi,"n2owaste","p1") = p_macBaseCEDS2020(regi,"n2owaste") / (pm_pop("%cm_emifacs_baseyear%",regi) * (1000*pm_gdp("%cm_emifacs_baseyear%",regi) / (pm_pop("%cm_emifacs_baseyear%",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"n2owaste","p2"));
-p_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("%cm_emifacs_baseyear%",regi)/pm_pop("%cm_emifacs_baseyear%",regi) le 10) = p_macBaseCEDS2020(regi,"ch4wstl") / (pm_pop("%cm_emifacs_baseyear%",regi) * (1000*pm_gdp("%cm_emifacs_baseyear%",regi) / (pm_pop("%cm_emifacs_baseyear%",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2"));
-p_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("%cm_emifacs_baseyear%",regi)/pm_pop("%cm_emifacs_baseyear%",regi) le 10) = p_macBaseCEDS2020(regi,"ch4wsts") / (pm_pop("%cm_emifacs_baseyear%",regi) * (1000*pm_gdp("%cm_emifacs_baseyear%",regi) / (pm_pop("%cm_emifacs_baseyear%",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wsts","p2"));
-p_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("%cm_emifacs_baseyear%",regi)/pm_pop("%cm_emifacs_baseyear%",regi) gt 10) = p_macBaseCEDS2020(regi,"ch4wstl") / (pm_pop("%cm_emifacs_baseyear%",regi) * (1000*pm_gdp("%cm_emifacs_baseyear%",regi) / (pm_pop("%cm_emifacs_baseyear%",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2"));
-p_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("%cm_emifacs_baseyear%",regi)/pm_pop("%cm_emifacs_baseyear%",regi) gt 10) = p_macBaseCEDS2020(regi,"ch4wsts") / (pm_pop("%cm_emifacs_baseyear%",regi) * (1000*pm_gdp("%cm_emifacs_baseyear%",regi) / (pm_pop("%cm_emifacs_baseyear%",regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wsts","p2"));
+p10_emineg_econometric(regi,"n2owaste","p1") = p10_macBaseCEDS2020(regi,"n2owaste") / (pm_pop("%cm_emifacs_baseyear%",regi) * (1000*pm_gdp("%cm_emifacs_baseyear%",regi) / (pm_pop("%cm_emifacs_baseyear%",regi)*pm_shPPPMER(regi)))**p10_emineg_econometric(regi,"n2owaste","p2"));
+p10_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("%cm_emifacs_baseyear%",regi)/pm_pop("%cm_emifacs_baseyear%",regi) le 10) = p10_macBaseCEDS2020(regi,"ch4wstl") / (pm_pop("%cm_emifacs_baseyear%",regi) * (1000*pm_gdp("%cm_emifacs_baseyear%",regi) / (pm_pop("%cm_emifacs_baseyear%",regi)*pm_shPPPMER(regi)))**p10_emineg_econometric(regi,"ch4wstl","p2"));
+p10_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("%cm_emifacs_baseyear%",regi)/pm_pop("%cm_emifacs_baseyear%",regi) le 10) = p10_macBaseCEDS2020(regi,"ch4wsts") / (pm_pop("%cm_emifacs_baseyear%",regi) * (1000*pm_gdp("%cm_emifacs_baseyear%",regi) / (pm_pop("%cm_emifacs_baseyear%",regi)*pm_shPPPMER(regi)))**p10_emineg_econometric(regi,"ch4wsts","p2"));
+p10_emineg_econometric(regi,"ch4wstl","p1")$(pm_gdp_gdx("%cm_emifacs_baseyear%",regi)/pm_pop("%cm_emifacs_baseyear%",regi) gt 10) = p10_macBaseCEDS2020(regi,"ch4wstl") / (pm_pop("%cm_emifacs_baseyear%",regi) * (1000*pm_gdp("%cm_emifacs_baseyear%",regi) / (pm_pop("%cm_emifacs_baseyear%",regi)*pm_shPPPMER(regi)))**p10_emineg_econometric(regi,"ch4wstl","p2"));
+p10_emineg_econometric(regi,"ch4wsts","p1")$(pm_gdp_gdx("%cm_emifacs_baseyear%",regi)/pm_pop("%cm_emifacs_baseyear%",regi) gt 10) = p10_macBaseCEDS2020(regi,"ch4wsts") / (pm_pop("%cm_emifacs_baseyear%",regi) * (1000*pm_gdp("%cm_emifacs_baseyear%",regi) / (pm_pop("%cm_emifacs_baseyear%",regi)*pm_shPPPMER(regi)))**p10_emineg_econometric(regi,"ch4wsts","p2"));
 $endif
 
-display p_emineg_econometric;
+display p10_emineg_econometric;
 
 *** Calculate total FE demand of previous iteration or input gdx.
 *** Required as a weight for penalty terms
@@ -144,7 +144,7 @@ if (sm_magpieIter gt 0,
   pm_macSwitch(ttot,regi,enty)$emiMacMagpie(enty) = 0;
 else 
 *** MAgPIE has not run (and might never run): the start values for pm_macBaseMagpie come from input data file
-  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
+  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f10_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
 );
 
 display pm_PeProdEmifac;
@@ -174,37 +174,37 @@ $IFTHEN.scaleEmiHist %c_scaleEmiHistorical% == "on"
 *** Re-scale MAgPie reference CH4 and N2O emissions to be inline with eurostat
 *** data (depending on the region MAgPIE non-CO2 GHG emissions can be up to 
 *** twice as high as historic emissions). This involves different emission variables in
-*** pm_macBaseMagpie and additionall agwaste variables from p_macBaseExo
+*** pm_macBaseMagpie and additionall agwaste variables from p10_macBaseExo
 
-*** Since this part is repeated in each Nash iteration and it changes p_macBaseExo, reset p_macBaseExo to initial values.
-p_macBaseExo(ttot,regi,emiMacExo(enty))$(ttot.val ge 2005) = f_macBaseExo(ttot,regi,emiMacExo,"%cm_LU_emi_scen%");
-display p_macBaseExo;
+*** Since this part is repeated in each Nash iteration and it changes p10_macBaseExo, reset p10_macBaseExo to initial values.
+p10_macBaseExo(ttot,regi,emiMacExo(enty))$(ttot.val ge 2005) = f10_macBaseExo(ttot,regi,emiMacExo,"%cm_LU_emi_scen%");
+display p10_macBaseExo;
 
 *** Define rescale factor for MAgPIE CH4 emissions
-p_aux_scaleEmiHistorical_ch4(regi)$p_histEmiSector("2005",regi,"ch4","agriculture","process") =
-  (p_histEmiSector("2005",regi,"ch4","agriculture","process")+p_histEmiSector("2005",regi,"ch4","lulucf","process")) !!no rescaling needed - REMIND-internal unit is Mt CH4
+p_aux_scaleEmiHistorical_ch4(regi)$p10_histEmiSector("2005",regi,"ch4","agriculture","process") =
+  (p10_histEmiSector("2005",regi,"ch4","agriculture","process")+p10_histEmiSector("2005",regi,"ch4","lulucf","process")) !!no rescaling needed - REMIND-internal unit is Mt CH4
     /
-  (sum(enty$emiMacMagpieCH4(enty), pm_macBaseMagpie("2005",regi,enty)) + p_macBaseExo("2005",regi,"ch4agwaste"));
+  (sum(enty$emiMacMagpieCH4(enty), pm_macBaseMagpie("2005",regi,enty)) + p10_macBaseExo("2005",regi,"ch4agwaste"));
 *** Rescale CH4 emissions so that all subtypes add up to the historic values
 *** pm_macBaseMagpie
 pm_macBaseMagpie(ttot,regi,enty)$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_ch4(regi) AND emiMacMagpieCH4(enty)) =
   pm_macBaseMagpie(ttot,regi,enty) * p_aux_scaleEmiHistorical_ch4(regi);
-*** p_macBaseExo
-p_macBaseExo(ttot,regi,"ch4agwaste")$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_ch4(regi)) =
-  p_macBaseExo(ttot,regi,"ch4agwaste") * p_aux_scaleEmiHistorical_ch4(regi);
+*** p10_macBaseExo
+p10_macBaseExo(ttot,regi,"ch4agwaste")$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_ch4(regi)) =
+  p10_macBaseExo(ttot,regi,"ch4agwaste") * p_aux_scaleEmiHistorical_ch4(regi);
 
 *** Define rescale factor for MAgPIE N2O emissions
-p_aux_scaleEmiHistorical_n2o(regi)$p_histEmiSector("2005",regi,"n2o","agriculture","process") =
-  p_histEmiSector("2005",regi,"n2o","agriculture","process")/( 44 / 28) !! rescaling to Mt N (internal unit for N2O emissions), since eurostat uses 298 to convert N2O to CO2eq
+p_aux_scaleEmiHistorical_n2o(regi)$p10_histEmiSector("2005",regi,"n2o","agriculture","process") =
+  p10_histEmiSector("2005",regi,"n2o","agriculture","process")/( 44 / 28) !! rescaling to Mt N (internal unit for N2O emissions), since eurostat uses 298 to convert N2O to CO2eq
     /
-  (sum(enty$emiMacMagpieN2O(enty), pm_macBaseMagpie("2005",regi,enty)) + p_macBaseExo("2005",regi,"n2oagwaste"));
+  (sum(enty$emiMacMagpieN2O(enty), pm_macBaseMagpie("2005",regi,enty)) + p10_macBaseExo("2005",regi,"n2oagwaste"));
 *** Rescale N2O emissions so that all subtypes add up to the historic values
 *** pm_macBaseMagpie
 pm_macBaseMagpie(ttot,regi,enty)$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_n2o(regi) AND emiMacMagpieN2O(enty)) =
   pm_macBaseMagpie(ttot,regi,enty) * p_aux_scaleEmiHistorical_n2o(regi);
-*** p_macBaseExo
-p_macBaseExo(ttot,regi,"n2oagwaste")$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_n2o(regi)) =
-  p_macBaseExo(ttot,regi,"n2oagwaste") * p_aux_scaleEmiHistorical_n2o(regi);
+*** p10_macBaseExo
+p10_macBaseExo(ttot,regi,"n2oagwaste")$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_n2o(regi)) =
+  p10_macBaseExo(ttot,regi,"n2oagwaste") * p_aux_scaleEmiHistorical_n2o(regi);
 
 display pm_macBaseMagpie;
 $ENDIF.scaleEmiHist
@@ -303,27 +303,27 @@ display p_priceCO2,p_priceCO2forMAC;
 ***--------------------------------------
 *** endogenous in equations.gms
 *** econometric
-vm_macBase.fx(ttot,regi,"ch4wsts")$(ttot.val ge 2005) = p_emineg_econometric(regi,"ch4wsts","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wsts","p2");
-vm_macBase.fx(ttot,regi,"ch4wstl")$(ttot.val ge 2005) = p_emineg_econometric(regi,"ch4wstl","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"ch4wstl","p2");
-vm_macBase.fx(ttot,regi,"n2owaste")$(ttot.val ge 2005) = p_emineg_econometric(regi,"n2owaste","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p_emineg_econometric(regi,"n2owaste","p2");
+vm_macBase.fx(ttot,regi,"ch4wsts")$(ttot.val ge 2005) = p10_emineg_econometric(regi,"ch4wsts","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p10_emineg_econometric(regi,"ch4wsts","p2");
+vm_macBase.fx(ttot,regi,"ch4wstl")$(ttot.val ge 2005) = p10_emineg_econometric(regi,"ch4wstl","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p10_emineg_econometric(regi,"ch4wstl","p2");
+vm_macBase.fx(ttot,regi,"n2owaste")$(ttot.val ge 2005) = p10_emineg_econometric(regi,"n2owaste","p1") * pm_pop(ttot,regi) * (1000*pm_gdp(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)))**p10_emineg_econometric(regi,"n2owaste","p2");
 
 vm_macBase.lo(ttot,regi,"co2cement_process")$( ttot.val ge 2005 ) = 0;
 
 *** exogenous
 vm_macBase.fx(ttot,regi,enty)$emiMacMagpie(enty) = pm_macBaseMagpie(ttot,regi,enty);
-vm_macBase.fx(ttot,regi,enty)$emiMacExo(enty) = p_macBaseExo(ttot,regi,enty);
+vm_macBase.fx(ttot,regi,enty)$emiMacExo(enty) = p10_macBaseExo(ttot,regi,enty);
 vm_macBase.fx(ttot,regi,"co2luc") = pm_macBaseMagpie(ttot,regi,"co2luc")-pm_macPolCO2luc(ttot,regi);
 vm_macBase.up(ttot,regi,"n2ofertin") = Inf;
 ***scale exogenous baselines from van Vuuren to EDGAR v4.2 2005 data or CEDS2024 2020 data
 ***Since they are exogenous anyway, it's OK to scale to after cm_startyear, but something to watch out for
 $ifthen %cm_emifacs_baseyear% == "2005" 
-vm_macBase.fx(ttot,regi,"n2otrans")$p_macBaseIMAGE("2005",regi,"n2otrans") = p_macBaseIMAGE(ttot,regi,"n2otrans") * (p_macBase2005(regi,"n2otrans") / p_macBaseIMAGE("2005",regi,"n2otrans"));
-vm_macBase.fx(ttot,regi,"n2oadac")$p_macBaseIMAGE("2005",regi,"n2oadac")  = p_macBaseIMAGE(ttot,regi,"n2oadac")  * (p_macBase2005(regi,"n2oacid")  / (p_macBaseIMAGE("2005",regi,"n2oadac") + p_macBaseIMAGE("2005",regi,"n2onitac")));
-vm_macBase.fx(ttot,regi,"n2onitac")$(p_macBaseIMAGE("2005",regi,"n2oadac") OR p_macBaseIMAGE("2005",regi,"n2onitac")) = p_macBaseIMAGE(ttot,regi,"n2onitac") * (p_macBase2005(regi,"n2oacid")  / (p_macBaseIMAGE("2005",regi,"n2oadac") + p_macBaseIMAGE("2005",regi,"n2onitac")));
+vm_macBase.fx(ttot,regi,"n2otrans")$p10_macBaseIMAGE("2005",regi,"n2otrans") = p10_macBaseIMAGE(ttot,regi,"n2otrans") * (p10_macBase2005(regi,"n2otrans") / p10_macBaseIMAGE("2005",regi,"n2otrans"));
+vm_macBase.fx(ttot,regi,"n2oadac")$p10_macBaseIMAGE("2005",regi,"n2oadac")  = p10_macBaseIMAGE(ttot,regi,"n2oadac")  * (p10_macBase2005(regi,"n2oacid")  / (p10_macBaseIMAGE("2005",regi,"n2oadac") + p10_macBaseIMAGE("2005",regi,"n2onitac")));
+vm_macBase.fx(ttot,regi,"n2onitac")$(p10_macBaseIMAGE("2005",regi,"n2oadac") OR p10_macBaseIMAGE("2005",regi,"n2onitac")) = p10_macBaseIMAGE(ttot,regi,"n2onitac") * (p10_macBase2005(regi,"n2oacid")  / (p10_macBaseIMAGE("2005",regi,"n2oadac") + p10_macBaseIMAGE("2005",regi,"n2onitac")));
 $else
-vm_macBase.fx(ttot,regi,"n2otrans")$p_macBaseIMAGE("2020",regi,"n2otrans") = p_macBaseIMAGE(ttot,regi,"n2otrans") * (p_macBaseCEDS2020(regi,"n2otrans") / p_macBaseIMAGE("2020",regi,"n2otrans"));
-vm_macBase.fx(ttot,regi,"n2oadac")$p_macBaseIMAGE("2020",regi,"n2oadac")  = p_macBaseIMAGE(ttot,regi,"n2oadac")  * (p_macBaseCEDS2020(regi,"n2oacid")  / (p_macBaseIMAGE("2020",regi,"n2oadac") + p_macBaseIMAGE("2020",regi,"n2onitac")));
-vm_macBase.fx(ttot,regi,"n2onitac")$(p_macBaseIMAGE("2020",regi,"n2oadac") OR p_macBaseIMAGE("2020",regi,"n2onitac")) = p_macBaseIMAGE(ttot,regi,"n2onitac") * (p_macBaseCEDS2020(regi,"n2oacid")  / (p_macBaseIMAGE("2020",regi,"n2oadac") + p_macBaseIMAGE("2020",regi,"n2onitac")));
+vm_macBase.fx(ttot,regi,"n2otrans")$p10_macBaseIMAGE("2020",regi,"n2otrans") = p10_macBaseIMAGE(ttot,regi,"n2otrans") * (p10_macBaseCEDS2020(regi,"n2otrans") / p10_macBaseIMAGE("2020",regi,"n2otrans"));
+vm_macBase.fx(ttot,regi,"n2oadac")$p10_macBaseIMAGE("2020",regi,"n2oadac")  = p10_macBaseIMAGE(ttot,regi,"n2oadac")  * (p10_macBaseCEDS2020(regi,"n2oacid")  / (p10_macBaseIMAGE("2020",regi,"n2oadac") + p10_macBaseIMAGE("2020",regi,"n2onitac")));
+vm_macBase.fx(ttot,regi,"n2onitac")$(p10_macBaseIMAGE("2020",regi,"n2oadac") OR p10_macBaseIMAGE("2020",regi,"n2onitac")) = p10_macBaseIMAGE(ttot,regi,"n2onitac") * (p10_macBaseCEDS2020(regi,"n2oacid")  / (p10_macBaseIMAGE("2020",regi,"n2oadac") + p10_macBaseIMAGE("2020",regi,"n2onitac")));
 $endif
 *** baseline continuation after 2100
 vm_macBase.fx(ttot,regi,enty)$((ttot.val gt 2100)$((NOT emiMacMagpie(enty)) AND (NOT emiFuEx(enty)) AND (NOT sameas(enty,"n2ofertin")) ))=vm_macBase.l("2100",regi,enty);
@@ -335,9 +335,9 @@ vm_macBase.fx(ttot,regi,enty)$((ttot.val gt 2100)$((NOT emiMacMagpie(enty)) AND 
 *** MAC abatement
 ***--------------------------------------
 pm_macAbat(ttot,regi,enty,steps)
-  =  p_abatparam_N2O(ttot,regi,enty,steps)
-  +  p_abatparam_CH4(ttot,regi,enty,steps)
-  +  p_abatparam_CO2(ttot,enty,steps)
+  =  p10_abatparam_N2O(ttot,regi,enty,steps)
+  +  p10_abatparam_CH4(ttot,regi,enty,steps)
+  +  p10_abatparam_CO2(ttot,enty,steps)
   + pm_abatparam_Ind(ttot,regi,enty,steps)
 ;
 pm_macAbat(ttot,regi,enty,steps)$(ttot.val gt 2100) = pm_macAbat("2100",regi,enty,steps);
@@ -381,8 +381,8 @@ loop ((ttot,regi,MacSector(enty))$(NOT sameas(enty,"co2luc")),
 *** in 1990. These levels of abatement are enforced as a minimum in all
 *** scenarios including BAU.
 p_macUse2005(regi,enty) = 0.0;
-p_macUse2005(regi,"ch4wstl")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) ge 10) = 1 - p_macBase2005(regi,"ch4wstl")/vm_macBase.l("2005",regi,"ch4wstl");
-p_macUse2005(regi,"ch4wsts")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) ge 10) = 1 - p_macBase2005(regi,"ch4wsts")/vm_macBase.l("2005",regi,"ch4wsts");
+p_macUse2005(regi,"ch4wstl")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) ge 10) = 1 - p10_macBase2005(regi,"ch4wstl")/vm_macBase.l("2005",regi,"ch4wstl");
+p_macUse2005(regi,"ch4wsts")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) ge 10) = 1 - p10_macBase2005(regi,"ch4wsts")/vm_macBase.l("2005",regi,"ch4wsts");
 
 *** Set first grade of abatement options (it represents low- or no-cost abatement potentials) for land use
 *** emissions to zero, because they are alredy included in the emissions baselines we get from MAgPIE.
@@ -408,13 +408,13 @@ $IFTHEN.scaleEmiHist %c_scaleEmiHistorical% == "on"
 
 *** p_macLevFree(ttot,regi,emiMacMagpie(enty))=0;
 *** Set minimum abatment levels based on historical emissions
-p_macLevFree("2010",regi,enty)$(p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst"))) = max( 0, 1 - (p_histEmiSector("2010",regi,"ch4","agriculture","process")+p_histEmiSector("2010",regi,"ch4","lulucf","process"))/(p_histEmiSector("2005",regi,"ch4","agriculture","process")+p_histEmiSector("2005",regi,"ch4","lulucf","process")));
-p_macLevFree(ttot,regi,enty)$((ttot.val ge 2015) AND p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst"))) = max( 0, 1 - (p_histEmiSector("2015",regi,"ch4","agriculture","process")+p_histEmiSector("2015",regi,"ch4","lulucf","process"))/(p_histEmiSector("2005",regi,"ch4","agriculture","process")+p_histEmiSector("2005",regi,"ch4","lulucf","process")) );
-p_macLevFree("2010",regi,enty)$(p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp"))) = max( 0, 1 - (p_histEmiSector("2010",regi,"n2o","agriculture","process")+p_histEmiSector("2010",regi,"n2o","lulucf","process"))/(p_histEmiSector("2005",regi,"n2o","agriculture","process")+p_histEmiSector("2005",regi,"n2o","lulucf","process")) );
-p_macLevFree(ttot,regi,emiMacMagpie(enty))$((ttot.val ge 2015) AND p_histEmiSector("2005",regi,"n2o","agriculture","process") AND (sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp"))) = max( 0, 1 - (p_histEmiSector("2015",regi,"n2o","agriculture","process")+p_histEmiSector("2015",regi,"n2o","lulucf","process"))/(p_histEmiSector("2005",regi,"n2o","agriculture","process")+p_histEmiSector("2005",regi,"n2o","lulucf","process")) );
+p_macLevFree("2010",regi,enty)$(p10_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst"))) = max( 0, 1 - (p10_histEmiSector("2010",regi,"ch4","agriculture","process")+p10_histEmiSector("2010",regi,"ch4","lulucf","process"))/(p10_histEmiSector("2005",regi,"ch4","agriculture","process")+p10_histEmiSector("2005",regi,"ch4","lulucf","process")));
+p_macLevFree(ttot,regi,enty)$((ttot.val ge 2015) AND p10_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst"))) = max( 0, 1 - (p10_histEmiSector("2015",regi,"ch4","agriculture","process")+p10_histEmiSector("2015",regi,"ch4","lulucf","process"))/(p10_histEmiSector("2005",regi,"ch4","agriculture","process")+p10_histEmiSector("2005",regi,"ch4","lulucf","process")) );
+p_macLevFree("2010",regi,enty)$(p10_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp"))) = max( 0, 1 - (p10_histEmiSector("2010",regi,"n2o","agriculture","process")+p10_histEmiSector("2010",regi,"n2o","lulucf","process"))/(p10_histEmiSector("2005",regi,"n2o","agriculture","process")+p10_histEmiSector("2005",regi,"n2o","lulucf","process")) );
+p_macLevFree(ttot,regi,emiMacMagpie(enty))$((ttot.val ge 2015) AND p10_histEmiSector("2005",regi,"n2o","agriculture","process") AND (sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp"))) = max( 0, 1 - (p10_histEmiSector("2015",regi,"n2o","agriculture","process")+p10_histEmiSector("2015",regi,"n2o","lulucf","process"))/(p10_histEmiSector("2005",regi,"n2o","agriculture","process")+p10_histEmiSector("2005",regi,"n2o","lulucf","process")) );
 
-p_macLevFree("2010",regi,enty)$((p_histEmiMac("2010",regi,enty)) AND (sameas(enty,"ch4wstl") OR sameas(enty,"ch4wsts"))) = max( 0, 1 - (p_histEmiMac("2010",regi,enty)) /vm_macBase.l("2010",regi,enty) );
-p_macLevFree(ttot,regi,enty)$((ttot.val ge 2015) AND (p_histEmiMac("2015",regi,enty)) AND (sameas(enty,"ch4wstl") OR sameas(enty,"ch4wsts"))) = max( 0, 1 - (p_histEmiMac("2015",regi,enty))/vm_macBase.l("2015",regi,enty) );
+p_macLevFree("2010",regi,enty)$((p10_histEmiMac("2010",regi,enty)) AND (sameas(enty,"ch4wstl") OR sameas(enty,"ch4wsts"))) = max( 0, 1 - (p10_histEmiMac("2010",regi,enty)) /vm_macBase.l("2010",regi,enty) );
+p_macLevFree(ttot,regi,enty)$((ttot.val ge 2015) AND (p10_histEmiMac("2015",regi,enty)) AND (sameas(enty,"ch4wstl") OR sameas(enty,"ch4wsts"))) = max( 0, 1 - (p10_histEmiMac("2015",regi,enty))/vm_macBase.l("2015",regi,enty) );
 
 $ELSE.scaleEmiHist
 
@@ -465,7 +465,7 @@ Display "computed abatement levels at carbon price", pm_macAbatLev;
 pm_macCost(t,regi,emiMacSector(enty))
   = 1e-3
   * p_macCostSwitch(enty)
-  * p_emi_quan_conv_ar4(enty)
+  * p10_emi_quan_conv_ar4(enty)
   * vm_macBase.l(t,regi,enty)
   * sm_dmac
   * ( ( sum(emiMac2mac(enty,enty2),

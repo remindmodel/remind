@@ -539,20 +539,6 @@ table f_dataetaglob(tall,all_te)                      "global eta data"
 $include "./core/input/generisdata_varying_eta.prn"
 ;
 
-*** Read in mac historical emissions to calibrate MAC reference emissions
-parameter p_histEmiMac(tall,all_regi,all_enty)    "historical emissions per MAC"
-/
-$ondelim
-$include "./core/input/p_histEmiMac.cs4r"
-$offdelim
-/;
-*** Read in historical emissions per sector to calibrate MAC reference emissions
-parameter p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types)    "historical emissions per sector"
-/
-$ondelim
-$include "./core/input/p_histEmiSector.cs4r"
-$offdelim
-/;
 
 ***---------------------------------------------------------------------------
 *** Import and set regional data
@@ -852,67 +838,7 @@ $ondelim
 $include "./core/input/p_boundEmi.cs4r"
 $offdelim
 /;
-*** read in F-Gas emissions
-parameter f_emiFgas(tall,all_regi,all_SSP_forcing_adjust,all_rcp_scen,all_delayPolicy,all_enty)        "F-gas emissions by single gases from IMAGE"
-/
-$ondelim
-$include "./core/input/f_emiFgas.cs4r"
-$offdelim
-/;
 
-
-* GA Read choice of non-CO2 MACs version
-* PBL_2007 is based on Lucas et al. (2007), and abatement is relative to that study's IMAGE baseline scenario emissions, asssumed relative to ours here
-* PBL_2022 is based on van Harmsen et al. (2022), and abatement is relative to that study's IMAGE SSP2 baseline scenario emissions, asssumed relative to ours here
-$IFTHEN.MaccVersion %c_nonco2_macc_version% == "PBL_2007"
-* PBL_2007 MACs are discretized in steps of 5 $/tC
-sm_dmac = 5 ;
-parameter p_abatparam_CH4(tall,all_regi,all_enty,steps)        "MAC costs for CH4 by source"
-/
-$ondelim
-$include "./core/input/p_abatparam_CH4.cs4r"
-$offdelim
-/;
-parameter p_abatparam_N2O(tall,all_regi,all_enty,steps)        "MAC costs for N2O by source"
-/
-$ondelim
-$include "./core/input/p_abatparam_N2O.cs4r"
-$offdelim
-/;
-$ELSEIF.MaccVersion %c_nonco2_macc_version% == "PBL_2022"
-*** PBL_2022 MACs are discretized in steps of 20 $/tC
-*** PBL_2022 includes three scenarios, read the big file into p_all_abatparam_CH4 and subset based on c_nonco2_macc_scenario
-*** Create the set here, as it's not really used anywhere else
-set macc_scens "MAC scenarios for PBL_SSP2_2022 MACCs" /Default, Optimistic, Pessimistic/;
-parameter p_all_abatparam_CH4(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for CH4 by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_CH4"
-/
-$ondelim
-$include "./core/input/p_abatparam_SSP22022_CH4.cs4r"
-$offdelim
-/;
-parameter p_abatparam_CH4(tall,all_regi,all_enty,steps) "MAC costs for CH4 by source";
-*** Pick MACC scenario
-p_abatparam_CH4(tall,all_regi,all_enty,steps) = p_all_abatparam_CH4(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
-parameter p_all_abatparam_N2O(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for N2O by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_N2O"
-/
-$ondelim
-$include "./core/input/p_abatparam_SSP22022_N2O.cs4r"
-$offdelim
-/;
-parameter p_abatparam_N2O(tall,all_regi,all_enty,steps) "MAC costs for N2O by source";
-*** Pick MACC scenario
-p_abatparam_N2O(tall,all_regi,all_enty,steps) = p_all_abatparam_N2O(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
-$ENDIF.MaccVersion
-;
-
-parameter p_abatparam_CO2(tall,all_enty,steps)    "MAC costs for CO2 by source"
-/
-$ondelim
-$include "./core/input/p_abatparam_CO2.cs4r"
-$offdelim
-/;
-p_abatparam_CH4(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p_abatparam_CH4(tall,all_regi,all_enty,"201");
-p_abatparam_N2O(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p_abatparam_N2O(tall,all_regi,all_enty,"201");
 
 *** In case REMIND is coupled to MAgPIE emissions are obtained from the MAgPIE reporting. 
 *** Thus, emission factors are set to zero in core/presolve.gms after MAgPIE has run at least one.
@@ -1238,22 +1164,6 @@ p_adj_coeff(ttot,regi,te)            = 32 * p_adj_coeff(ttot,regi,te);  !! Resca
 p_adj_coeff_Orig(ttot,regi,te)    = p_adj_coeff(ttot,regi,te);
 p_adj_seed_te_Orig(ttot,regi,te)  = p_adj_seed_te(ttot,regi,te);
 
-*** Unit conversions
-p_emi_quan_conv_ar4(enty) = 1;
-p_emi_quan_conv_ar4(enty)$(emiMacMagpieCH4(enty)) = sm_tgch4_2_pgc * (25/s_gwpCH4);  !! need to use old GWP for MAC cost conversion as it only reverts what has been done in the calculation of the MACs
-p_emi_quan_conv_ar4(enty)$(emiMacMagpieN2O(enty)) = sm_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4(enty)$(emiMacExoCH4(enty)) = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4(enty)$(emiMacExoN2O(enty)) = sm_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4("ch4coal")    = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("ch4gas")     = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("ch4oil")     = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("ch4wstl")    = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("ch4wsts")    = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("n2otrans")   = sm_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4("n2oadac")    = sm_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4("n2onitac")   = sm_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4("n2owaste")   = sm_tgn_2_pgc * (298/s_gwpN2O);
-
 
 *RP* Distribute ccap0 for all regions
 pm_data(regi,"ccap0",te) = 1/card(regi)*fm_dataglob("ccap0",te);
@@ -1303,17 +1213,6 @@ $if  "%cm_rcp_scen%" == "none"    sm_budgetCO2eqGlob = 20000.0000;
 display sm_budgetCO2eqGlob;
 ***-----------------------------------------------------------------------------
 
-***------------------------------------------------------------------------------------
-***                                ESM  MAC data
-***------------------------------------------------------------------------------------
-if(c_macscen eq 2,
-  pm_macSwitch(ttot,regi,emiMacSector)  = 0;
-);
-  pm_macSwitch(ttot,regi,"ch4wstl") = 1;
-  pm_macSwitch(ttot,regi,"ch4wsts") = 1;
-if(c_macscen eq 1,
-  pm_macSwitch(ttot,regi,emiMacSector) = 1;
-);
 
 *** Load historical carbon prices defined in $/t CO2, need to be rescaled to right unit
 pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = 0;
@@ -1325,96 +1224,6 @@ $offdelim
 /;
 pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = fm_taxCO2eqHist(ttot,regi) * sm_DptCO2_2_TDpGtC;
 
-*** As long as there is hardly any CO2 LUC reduction in MAgPIE we dont need MACs in REMIND
-pm_macSwitch(ttot,regi,"co2luc") = 0;
-*** The tiny fraction n2ofertsom of total land use n2o can get slightly negative in some cases. Ignore MAC for n2ofertsom by default.
-pm_macSwitch(ttot,regi,"n2ofertsom") = 0;
-
-
-* GA: Deactivate MAC abatement for historical periods, assuming no abatement happens until 2030
-pm_macSwitch(ttot,regi,emiMacSector)$(ttot.val le 2025) = 0;
-
-*** load econometric emission data
-*** read in p3 and p4
-parameter p_emineg_econometric(all_regi,all_enty,p)        "parameters for ch4 and n2o emissions from waste baseline and co2 emissions from cement production"
-;
-p_emineg_econometric(regi,enty,"p1") = 0;
-p_emineg_econometric(regi,enty,"p2") = 0;
-*** p2 is calculated in presolve
-
-parameter p_macBase2005(all_regi,all_enty)        "baseline emissions of mac options in 2005"
-/
-$ondelim
-$include "./core/input/p_macBase2005.cs4r"
-$offdelim
-/;
-parameter p_macBase1990(all_regi,all_enty)     "baseline emissions of mac options in 1990"
-/
-$ondelim
-$include "./core/input/p_macBase1990.cs4r"
-$offdelim
-/;
-parameter p_macBaseCEDS2005(all_regi,all_enty)        "baseline emissions of mac options in 2005 from CEDS"
-/
-$ondelim
-$include "./core/input/p_macBaseCEDS2005.cs4r"
-$offdelim
-/;
-parameter p_macBaseCEDS2020(all_regi,all_enty)        "baseline emissions of mac options in 2020"
-/
-$ondelim
-$include "./core/input/p_macBaseCEDS2020.cs4r"
-$offdelim
-/;
-parameter p_macBaseIMAGE(tall,all_regi,all_enty)        "baseline emissions of N2O from transport, adipic acid production, and nitric acid production based on data from van Vuuren"
-/
-$ondelim
-$ifthen %cm_emifacs_baseyear% == "2005" 
-$include "./core/input/p_macBaseVanv.cs4r"
-$else
-$include "./core/input/p_macBaseHarmsen2022.cs4r"
-$endif
-$offdelim
-/;
-
-parameter f_macBaseExo(tall,all_regi,all_enty,all_LU_emi_scen)        "baseline emissions of N2O and CH4 from landuse based on exogenous data"
-/
-$ondelim
-$include "./core/input/f_macBaseExo.cs4r"
-$offdelim
-/;
-p_macBaseExo(ttot,regi,emiMacExo(enty))$(ttot.val ge 2005) = f_macBaseExo(ttot,regi,emiMacExo,"%cm_LU_emi_scen%");
-
-
-parameter f_macBaseMagpie(tall,all_regi,all_enty,all_LU_emi_scen,all_rcp_scen)    "baseline emissions of N2O and CH4 from landuse based on data from Magpie"
-/
-$ondelim
-$include "./core/input/f_macBaseMagpie.cs4r"
-$offdelim
-/;
-pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
-
-*** pm_macBaseMagpie gets updated in core/presolve.gms when coupling to MAgPIE is active
-
-*** In case of fixing, load p_co2lucSub from input_ref.gdx, since parameters are not automatically treated by the fixing mechanism.
-*** Years >= cm_startyear get their values from the lookup table rather than the input_ref.gdx (see below).
-if( (cm_startyear gt 2005),
-    Execute_Loadpoint "input_ref" p_co2lucSub = p_co2lucSub;
-);
-
-
-*** Overwrite values >= cm_startyear with lookup table, leave values < cm_startyear untouched (from input_ref.gdx, see above).
-*** Gets updated for >= cm_startyear in core/presolve.gms when coupling to MAgPIE is active.
-p_co2lucSub(ttot,regi,emiMacMagpieCO2Sub(all_enty))$(ttot.val ge cm_startyear) = f_macBaseMagpie(ttot,regi,emiMacMagpieCO2Sub,"%cm_LU_emi_scen%","%cm_rcp_scen%");
-
-*** pm_macPolCO2luc defines the lower limit for abatement of CO2 landuse change emissions in REMIND
-*** The values are derived from MAgPIE runs with very strong mitigation
-parameter pm_macPolCO2luc(tall,all_regi)                "co2 emissions from landuse change with strong mitigation in MAgPIE"
-/
-$ondelim
-$include "./core/input/p_macPolCO2luc.cs4r"
-$offdelim
-/;
 
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!
@@ -1545,8 +1354,6 @@ execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
 execute_load "input_ref.gdx", pm_prodFEReference = vm_prodFe.l;
 execute_load "input_ref.gdx", p_prodUeReference = v_prodUe.l;
 execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
-*' load MAC costs from reference gdx. Values for t (i.e. after cm_start_year) will be overwritten in core/presolve.gms 
-execute_load "input_ref.gdx" pm_macCost;
 );
 
 p_prodAllReference(t,regi,te) =
