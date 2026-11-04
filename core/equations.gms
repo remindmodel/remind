@@ -114,7 +114,7 @@ q_costOM(t,regi)..
 *' The balance equation for primary energy equals supply of primary energy demand on primary energy.
 ***---------------------------------------------------------------------------
 q_balPe(t,regi,entyPe(enty))..
-         vm_prodPe(t,regi,enty) + p_macPE(t,regi,enty)
+         vm_prodPe(t,regi,enty) + pm_macPE(t,regi,enty)
          =e=
          sum(pe2se(enty,enty2,te), vm_demPe(t,regi,enty,enty2,te))
 ;

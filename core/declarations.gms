@@ -93,7 +93,7 @@ pm_macCost(tall,all_regi,all_enty)                   "abatement costs for all em
 pm_macStep(tall,all_regi,all_enty)                   "step number of abatement level [integer]"
 pm_macSwitch(ttot,all_regi,all_enty)                 "switch to include mac options in specific sectors and years [0/1]"
 p_macCostSwitch(all_enty)                            "switch to include mac costs in the code [0/1] (e.g. in coupled scenarios, we want to include the costs in REMIND, but MAC effects on emissions are calculated in MAgPIE)"
-p_macPE(ttot,all_regi,all_enty)                      "Primary energy production from MACs, e.g. methane production from abated methane leakage in coal extraction [TWa]"
+pm_macPE(ttot,all_regi,all_enty)                     "Primary energy production from MACs, e.g. methane production from abated methane leakage in coal extraction [TWa]"
 p_priceCO2(tall,all_regi)                            "carbon price [$/tC]"
 p_priceCO2forMAC(tall,all_regi,all_enty)             "carbon price defined for MAC gases [$/tC]"
 p_priceGas(tall,all_regi)                            "gas price for ch4gas MAC [$/tCeq]"

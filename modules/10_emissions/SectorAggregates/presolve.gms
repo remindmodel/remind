@@ -418,8 +418,8 @@ pm_macCost(t,regi,emiMacSector(enty))
 *JeS* add 50% of abated CH4 from coal MACs to PEprod. CH4 from oil production is usually flared and not re-used. CH4 from gas production is mostly avoided losses from leakages.
 *** These losses are not accounted for, so neither are the avoided losses.
 *** conversion factor MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 (BP statistical review)
-p_macPE(ttot,regi,enty) = 0.0;
-p_macPE(ttot,regi,"pegas")$(ttot.val gt 2005) = s_MtCH4_2_TWa * 0.5 * (vm_macBase.l(ttot,regi,"ch4coal")-vm_emiMacSector.l(ttot,regi,"ch4coal"));
+pm_macPE(ttot,regi,enty) = 0.0;
+pm_macPE(ttot,regi,"pegas")$(ttot.val gt 2005) = s_MtCH4_2_TWa * 0.5 * (vm_macBase.l(ttot,regi,"ch4coal")-vm_emiMacSector.l(ttot,regi,"ch4coal"));
 
 
 *** ==================================================================
