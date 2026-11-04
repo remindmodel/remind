@@ -524,18 +524,12 @@ v_shSeFe.up(ttot,all_regi,all_enty) = 1;
 
 *** ==================================================================
 *' #### 7. Assumptions for emissions
-*** (move to a module?) ==============================================
+*** Bounds for non-CO2 emissions with MACs and for F-gas emissions: see modules/10_emissions
+*** (air pollutants: move to a module?) ==========================================
 
-vm_emiMacSector.lo(t,regi,enty) = 0;
-vm_emiMacSector.lo(t,regi,"co2luc") = -5.0; !! afforestation can lead to negative emissions
-vm_emiMacSector.lo(t,regi,"n2ofertsom") = -1; !! small negative emissions can result from human activity
 vm_emiMac.fx(t,regi,"so2") = 0;
 vm_emiMac.fx(t,regi,"bc") = 0;
 vm_emiMac.fx(t,regi,"oc") = 0;
-
-*** fix F-gas emissions to inputdata (IMAGE)
-vm_emiFgas.fx(ttot,all_regi,all_enty) = f10_emiFgas(ttot,all_regi,"%c_SSP_forcing_adjust%","%cm_rcp_scen%","SPA0",all_enty);
-display vm_emiFgas.L;
 
 
 *** ==================================================================
