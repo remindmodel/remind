@@ -84,10 +84,10 @@ display pm_PeProdEmifac;
 
 *** Moved here from core/datainput.gms, because pm_macSwitch is changed above after first MAgPIE iteration
 *** An alternative to the approach below could be to introduce a new value for c_macswitch that only deactivates the LU MACs
-*** GA: Use long term (2050) pm_macSwitch to set p_macCostSwitch, as some MACCs
+*** GA: Use long term (2050) pm_macSwitch to set p10_macCostSwitch, as some MACCs
 *** are turned off in the short term 
 pm_macSwitch(ttot,regi,"co2cement_process") =0 ;
-p_macCostSwitch(enty)=pm_macSwitch("2050","USA",enty);
+p10_macCostSwitch(enty)=pm_macSwitch("2050","USA",enty);
 
 *** Code moved here from core/preloop.gms
 *** The N2O emissions generated during biomass production in agriculture (in MAgPIE)
@@ -114,57 +114,57 @@ p10_macBaseExo(ttot,regi,emiMacExo(enty))$(ttot.val ge 2005) = f10_macBaseExo(tt
 display p10_macBaseExo;
 
 *** Define rescale factor for MAgPIE CH4 emissions
-p_aux_scaleEmiHistorical_ch4(regi)$p10_histEmiSector("2005",regi,"ch4","agriculture","process") =
+p10_aux_scaleEmiHistorical_ch4(regi)$p10_histEmiSector("2005",regi,"ch4","agriculture","process") =
   (p10_histEmiSector("2005",regi,"ch4","agriculture","process")+p10_histEmiSector("2005",regi,"ch4","lulucf","process")) !!no rescaling needed - REMIND-internal unit is Mt CH4
     /
   (sum(enty$emiMacMagpieCH4(enty), pm_macBaseMagpie("2005",regi,enty)) + p10_macBaseExo("2005",regi,"ch4agwaste"));
 *** Rescale CH4 emissions so that all subtypes add up to the historic values
 *** pm_macBaseMagpie
-pm_macBaseMagpie(ttot,regi,enty)$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_ch4(regi) AND emiMacMagpieCH4(enty)) =
-  pm_macBaseMagpie(ttot,regi,enty) * p_aux_scaleEmiHistorical_ch4(regi);
+pm_macBaseMagpie(ttot,regi,enty)$((ttot.val ge 2005) AND p10_aux_scaleEmiHistorical_ch4(regi) AND emiMacMagpieCH4(enty)) =
+  pm_macBaseMagpie(ttot,regi,enty) * p10_aux_scaleEmiHistorical_ch4(regi);
 *** p10_macBaseExo
-p10_macBaseExo(ttot,regi,"ch4agwaste")$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_ch4(regi)) =
-  p10_macBaseExo(ttot,regi,"ch4agwaste") * p_aux_scaleEmiHistorical_ch4(regi);
+p10_macBaseExo(ttot,regi,"ch4agwaste")$((ttot.val ge 2005) AND p10_aux_scaleEmiHistorical_ch4(regi)) =
+  p10_macBaseExo(ttot,regi,"ch4agwaste") * p10_aux_scaleEmiHistorical_ch4(regi);
 
 *** Define rescale factor for MAgPIE N2O emissions
-p_aux_scaleEmiHistorical_n2o(regi)$p10_histEmiSector("2005",regi,"n2o","agriculture","process") =
+p10_aux_scaleEmiHistorical_n2o(regi)$p10_histEmiSector("2005",regi,"n2o","agriculture","process") =
   p10_histEmiSector("2005",regi,"n2o","agriculture","process")/( 44 / 28) !! rescaling to Mt N (internal unit for N2O emissions), since eurostat uses 298 to convert N2O to CO2eq
     /
   (sum(enty$emiMacMagpieN2O(enty), pm_macBaseMagpie("2005",regi,enty)) + p10_macBaseExo("2005",regi,"n2oagwaste"));
 *** Rescale N2O emissions so that all subtypes add up to the historic values
 *** pm_macBaseMagpie
-pm_macBaseMagpie(ttot,regi,enty)$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_n2o(regi) AND emiMacMagpieN2O(enty)) =
-  pm_macBaseMagpie(ttot,regi,enty) * p_aux_scaleEmiHistorical_n2o(regi);
+pm_macBaseMagpie(ttot,regi,enty)$((ttot.val ge 2005) AND p10_aux_scaleEmiHistorical_n2o(regi) AND emiMacMagpieN2O(enty)) =
+  pm_macBaseMagpie(ttot,regi,enty) * p10_aux_scaleEmiHistorical_n2o(regi);
 *** p10_macBaseExo
-p10_macBaseExo(ttot,regi,"n2oagwaste")$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_n2o(regi)) =
-  p10_macBaseExo(ttot,regi,"n2oagwaste") * p_aux_scaleEmiHistorical_n2o(regi);
+p10_macBaseExo(ttot,regi,"n2oagwaste")$((ttot.val ge 2005) AND p10_aux_scaleEmiHistorical_n2o(regi)) =
+  p10_macBaseExo(ttot,regi,"n2oagwaste") * p10_aux_scaleEmiHistorical_n2o(regi);
 
 display pm_macBaseMagpie;
 $ENDIF.scaleEmiHist
 
 !! all net negative co2luc
-pm_macBaseMagpieNegCo2(t,regi) = pm_macBaseMagpie(t,regi,"co2luc")$(pm_macBaseMagpie(t,regi,"co2luc") < 0);
+p10_macBaseMagpieNegCo2(t,regi) = pm_macBaseMagpie(t,regi,"co2luc")$(pm_macBaseMagpie(t,regi,"co2luc") < 0);
 
 *** Rescale agricultural emissions baseline if c_agricult_base_shift switch is activated
 $IFTHEN.agricult_base_shift not "%c_agricult_base_shift%" == "off"
 
-p_macBaseMagpie_beforeShift(t,regi,enty)=pm_macBaseMagpie(t,regi,enty);
+p10_macBaseMagpie_beforeShift(t,regi,enty)=pm_macBaseMagpie(t,regi,enty);
 *** gradual phase-in of rescaling until 2040
-p_agricult_shift_phasein(t) = 0;
-p_agricult_shift_phasein("2025") = 0.25;
-p_agricult_shift_phasein("2030") = 0.5;
-p_agricult_shift_phasein("2035") = 0.75;
-p_agricult_shift_phasein(t)$(t.val ge 2040) = 1;
+p10_agricult_shift_phasein(t) = 0;
+p10_agricult_shift_phasein("2025") = 0.25;
+p10_agricult_shift_phasein("2030") = 0.5;
+p10_agricult_shift_phasein("2035") = 0.75;
+p10_agricult_shift_phasein(t)$(t.val ge 2040) = 1;
 
 *** rescaling all ext_regi provided by c_agricult_base_shift
-loop((ext_regi)$(p_agricult_base_shift(ext_regi)), 
+loop((ext_regi)$(p10_agricult_base_shift(ext_regi)), 
  loop(regi$regi_groupExt(ext_regi,regi),
 
     pm_macBaseMagpie(t,regi,enty)$( emiMac2sector(enty,"agriculture","process","ch4") 
                                     OR emiMac2sector(enty,"agriculture","process","n2o"))
-    = p_macBaseMagpie_beforeShift(t,regi,enty)
-      * (1 + p_agricult_shift_phasein(t)
-           * p_agricult_base_shift(ext_regi));
+    = p10_macBaseMagpie_beforeShift(t,regi,enty)
+      * (1 + p10_agricult_shift_phasein(t)
+           * p10_agricult_base_shift(ext_regi));
 
   );
 );
@@ -190,8 +190,8 @@ p_priceCO2(ttot,regi) = pm_taxCO2eqSum(ttot,regi) * 1000;
 
 *** Define co2 price for entities that are used in MAC.
 loop((enty,enty2)$emiMac2mac(enty,enty2), !! make sure that both mac sectors and mac curves have prices asigned as both sets are used in calculations below
-  p_priceCO2forMAC(ttot,regi,enty) = p_priceCO2(ttot,regi);
-  p_priceCO2forMAC(ttot,regi,enty2) = p_priceCO2(ttot,regi);
+  p10_priceCO2forMAC(ttot,regi,enty) = p_priceCO2(ttot,regi);
+  p10_priceCO2forMAC(ttot,regi,enty2) = p_priceCO2(ttot,regi);
 );
 
 *** Redefine the MAC price for regions with emission tax defined by the regipol module
@@ -202,10 +202,10 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
     p_priceCO2(t,regi) = ( (sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt) * sum((entySe,entyFe,sector)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) / (sum((entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt))) )*1000;
     loop((enty,emiMkt)$(macSector2emiMkt(enty,emiMkt)),
       loop(enty2$emiMac2mac(enty,enty2), !! make sure that both mac sectors and mac curves have prices asigned as both sets are used in calculations below
-        p_priceCO2forMAC(t,regi,enty) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
-        p_priceCO2forMAC(t,regi,enty2) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
-        p_priceCO2forMAC(t,regi,"co2chemicals") = pm_taxemiMkt(t,regi,"ETS")* 1000;
-        p_priceCO2forMAC(t,regi,"co2steel") = pm_taxemiMkt(t,regi,"ETS")* 1000;
+        p10_priceCO2forMAC(t,regi,enty) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
+        p10_priceCO2forMAC(t,regi,enty2) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
+        p10_priceCO2forMAC(t,regi,"co2chemicals") = pm_taxemiMkt(t,regi,"ETS")* 1000;
+        p10_priceCO2forMAC(t,regi,"co2steel") = pm_taxemiMkt(t,regi,"ETS")* 1000;
       );
     );
   );
@@ -218,19 +218,19 @@ $ENDIF.emiMkt
 *** in MAgPIE is 1. Deviations from this MAgPIE default should only be handled in coupled runs and not in REMIND standalone runs.
 *** Therefore, we do not need a counterpart in REMIND standalone.
 *** 2. Phase-in of co2 price for land-use entities, see line 22-35 in preloop.gms in modules/56_ghg_policy/price_jan19 in MAgPIE
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val lt cm_startyear)    = 0;
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear)    = 0.1 * p_priceCO2forMAC(ttot,regi,MacSectorMagpie);
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear+5)  = 0.2 * p_priceCO2forMAC(ttot,regi,MacSectorMagpie);
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear+10) = 0.4 * p_priceCO2forMAC(ttot,regi,MacSectorMagpie);
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear+15) = 0.8 * p_priceCO2forMAC(ttot,regi,MacSectorMagpie);
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val ge cm_startyear+20) = p_priceCO2forMAC(ttot,regi,MacSectorMagpie);
+p10_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val lt cm_startyear)    = 0;
+p10_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear)    = 0.1 * p10_priceCO2forMAC(ttot,regi,MacSectorMagpie);
+p10_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear+5)  = 0.2 * p10_priceCO2forMAC(ttot,regi,MacSectorMagpie);
+p10_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear+10) = 0.4 * p10_priceCO2forMAC(ttot,regi,MacSectorMagpie);
+p10_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear+15) = 0.8 * p10_priceCO2forMAC(ttot,regi,MacSectorMagpie);
+p10_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val ge cm_startyear+20) = p10_priceCO2forMAC(ttot,regi,MacSectorMagpie);
 *** 3. Reduce co2 price for land-use entities by level of development (uses the same data from MOINPUT as MAgPIE for im_development_state)
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p_priceCO2forMAC(ttot,regi,MacSectorMagpie) * p_developmentState(ttot,regi);
+p10_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p10_priceCO2forMAC(ttot,regi,MacSectorMagpie) * p_developmentState(ttot,regi);
 *** 4. Price for MACs was calculated with AR4 GWPs --> convert CO2 price with old GWPs here as well
-p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) = p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) * (s_gwpN2O_AR4/s_gwpN2O);
-p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) = p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) * (s_gwpCH4_AR4/s_gwpCH4);
+p10_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) = p10_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) * (s_gwpN2O_AR4/s_gwpN2O);
+p10_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) = p10_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) * (s_gwpCH4_AR4/s_gwpCH4);
 
-display p_priceCO2,p_priceCO2forMAC;
+display p_priceCO2,p10_priceCO2forMAC;
 ***--------------------------------------
 *** MAC baselines
 ***--------------------------------------
@@ -278,19 +278,19 @@ pm_macAbat(ttot,regi,enty,steps)$(ttot.val gt 2100) = pm_macAbat("2100",regi,ent
 *** Abatement options are in steps of length sm_dmac; options at zero price are
 *** in the first step
 pm_macStep(ttot,regi,enty)$(MacSector(enty))
-  = min(801, ceil(p_priceCO2forMAC(ttot,regi,enty) / sm_dmac) + 1);
+  = min(801, ceil(p10_priceCO2forMAC(ttot,regi,enty) / sm_dmac) + 1);
 
 *** If the gas price increase since 2005 is higher than the CO2 price, it will drive CH4 emission abatement.
-*** Conversion: p_priceCO2forMAC [$/tCeq]; T$/TWa = 1e6 M$/TWa * s_MtCH4_2_TWa * 1 MtCH4/s_gwpCH4 MtCO2eq * (44/12) MtCO2eq/MtCeq
-p_priceGas(ttot,regi)=q_balPe.m(ttot,regi,"pegas")/(qm_budget.m(ttot,regi)+sm_eps) * 1000000 * s_MtCH4_2_TWa * (1/s_gwpCH4) * 44/12;
+*** Conversion: p10_priceCO2forMAC [$/tCeq]; T$/TWa = 1e6 M$/TWa * s_MtCH4_2_TWa * 1 MtCH4/s_gwpCH4 MtCO2eq * (44/12) MtCO2eq/MtCeq
+p10_priceGas(ttot,regi)=q_balPe.m(ttot,regi,"pegas")/(qm_budget.m(ttot,regi)+sm_eps) * 1000000 * s_MtCH4_2_TWa * (1/s_gwpCH4) * 44/12;
 
 pm_macStep(ttot,regi,"ch4gas")
-  = min(801, ceil(max(p_priceCO2forMAC(ttot,regi,"ch4gas") * (25/s_gwpCH4), max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);
+  = min(801, ceil(max(p10_priceCO2forMAC(ttot,regi,"ch4gas") * (25/s_gwpCH4), max(0,(p10_priceGas(ttot,regi)-p10_priceGas("2005",regi))) ) / sm_dmac) + 1);
 pm_macStep(ttot,regi,"ch4coal")
-  = min(801, ceil(max(p_priceCO2forMAC(ttot,regi,"ch4coal") * (25/s_gwpCH4), 0.5 * max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);
+  = min(801, ceil(max(p10_priceCO2forMAC(ttot,regi,"ch4coal") * (25/s_gwpCH4), 0.5 * max(0,(p10_priceGas(ttot,regi)-p10_priceGas("2005",regi))) ) / sm_dmac) + 1);
 
 *** limit yearly increase of MAC usage to sm_macChange
-p_macAbat_lim(ttot,regi,enty)
+p10_macAbat_lim(ttot,regi,enty)
   = sum(steps$(ord(steps) eq pm_macStep(ttot-1,regi,enty)),
       pm_macAbat(ttot-1,regi,enty,steps)
     )
@@ -301,9 +301,9 @@ p_macAbat_lim(ttot,regi,enty)
 *** be set to the highest step number where pm_macAbat is still lower or equal to
 *** this limit
 loop ((ttot,regi,MacSector(enty))$(NOT sameas(enty,"co2luc")),
-  if (p_macAbat_lim(ttot,regi,enty) lt sum(steps$(ord(steps) eq pm_macStep(ttot,regi,enty)), pm_macAbat(ttot,regi,enty,steps)),
+  if (p10_macAbat_lim(ttot,regi,enty) lt sum(steps$(ord(steps) eq pm_macStep(ttot,regi,enty)), pm_macAbat(ttot,regi,enty,steps)),
         loop(steps$(ord(steps) lt pm_macStep(ttot,regi,enty)),
-            if (pm_macAbat(ttot,regi,enty,steps) gt p_macAbat_lim(ttot,regi,enty),
+            if (pm_macAbat(ttot,regi,enty,steps) gt p10_macAbat_lim(ttot,regi,enty),
 	            pm_macStep(ttot,regi,enty) = min(801,steps.val-1);
             );
         );
@@ -313,9 +313,9 @@ loop ((ttot,regi,MacSector(enty))$(NOT sameas(enty,"co2luc")),
 *** In USA, EUR and JPN, abatement measures for CH4 emissions from waste started
 *** in 1990. These levels of abatement are enforced as a minimum in all
 *** scenarios including BAU.
-p_macUse2005(regi,enty) = 0.0;
-p_macUse2005(regi,"ch4wstl")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) ge 10) = 1 - p10_macBase2005(regi,"ch4wstl")/vm_macBase.l("2005",regi,"ch4wstl");
-p_macUse2005(regi,"ch4wsts")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) ge 10) = 1 - p10_macBase2005(regi,"ch4wsts")/vm_macBase.l("2005",regi,"ch4wsts");
+p10_macUse2005(regi,enty) = 0.0;
+p10_macUse2005(regi,"ch4wstl")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) ge 10) = 1 - p10_macBase2005(regi,"ch4wstl")/vm_macBase.l("2005",regi,"ch4wstl");
+p10_macUse2005(regi,"ch4wsts")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) ge 10) = 1 - p10_macBase2005(regi,"ch4wsts")/vm_macBase.l("2005",regi,"ch4wsts");
 
 *** Set first grade of abatement options (it represents low- or no-cost abatement potentials) for land use
 *** emissions to zero, because they are alredy included in the emissions baselines we get from MAgPIE.
@@ -324,48 +324,48 @@ pm_macAbat(ttot,regi,MacSectorMagpie(enty),"1") = 0;
 
 *** phase in use of zero cost abatement options until 2040 if there is no
 *** carbon price
-p_macLevFree(ttot,regi,enty)$( ttot.val gt 2005 )
+p10_macLevFree(ttot,regi,enty)$( ttot.val gt 2005 )
   =
     max(
       pm_macAbat(ttot,regi,enty,"1")
     * (1 - ((2040 - ttot.val) / (2040 - 2010))),
-    p_macUse2005(regi,enty)
+    p10_macUse2005(regi,enty)
     )$( ttot.val ge 2010 AND ttot.val le 2040 )
   + max(
       pm_macAbat(ttot,regi,enty,"1"),
-      p_macUse2005(regi,enty)
+      p10_macUse2005(regi,enty)
     )$( (ttot.val gt 2040) )
 ;
 
 $IFTHEN.scaleEmiHist %c_scaleEmiHistorical% == "on"
 
-*** p_macLevFree(ttot,regi,emiMacMagpie(enty))=0;
+*** p10_macLevFree(ttot,regi,emiMacMagpie(enty))=0;
 *** Set minimum abatment levels based on historical emissions
-p_macLevFree("2010",regi,enty)$(p10_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst"))) = max( 0, 1 - (p10_histEmiSector("2010",regi,"ch4","agriculture","process")+p10_histEmiSector("2010",regi,"ch4","lulucf","process"))/(p10_histEmiSector("2005",regi,"ch4","agriculture","process")+p10_histEmiSector("2005",regi,"ch4","lulucf","process")));
-p_macLevFree(ttot,regi,enty)$((ttot.val ge 2015) AND p10_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst"))) = max( 0, 1 - (p10_histEmiSector("2015",regi,"ch4","agriculture","process")+p10_histEmiSector("2015",regi,"ch4","lulucf","process"))/(p10_histEmiSector("2005",regi,"ch4","agriculture","process")+p10_histEmiSector("2005",regi,"ch4","lulucf","process")) );
-p_macLevFree("2010",regi,enty)$(p10_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp"))) = max( 0, 1 - (p10_histEmiSector("2010",regi,"n2o","agriculture","process")+p10_histEmiSector("2010",regi,"n2o","lulucf","process"))/(p10_histEmiSector("2005",regi,"n2o","agriculture","process")+p10_histEmiSector("2005",regi,"n2o","lulucf","process")) );
-p_macLevFree(ttot,regi,emiMacMagpie(enty))$((ttot.val ge 2015) AND p10_histEmiSector("2005",regi,"n2o","agriculture","process") AND (sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp"))) = max( 0, 1 - (p10_histEmiSector("2015",regi,"n2o","agriculture","process")+p10_histEmiSector("2015",regi,"n2o","lulucf","process"))/(p10_histEmiSector("2005",regi,"n2o","agriculture","process")+p10_histEmiSector("2005",regi,"n2o","lulucf","process")) );
+p10_macLevFree("2010",regi,enty)$(p10_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst"))) = max( 0, 1 - (p10_histEmiSector("2010",regi,"ch4","agriculture","process")+p10_histEmiSector("2010",regi,"ch4","lulucf","process"))/(p10_histEmiSector("2005",regi,"ch4","agriculture","process")+p10_histEmiSector("2005",regi,"ch4","lulucf","process")));
+p10_macLevFree(ttot,regi,enty)$((ttot.val ge 2015) AND p10_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst"))) = max( 0, 1 - (p10_histEmiSector("2015",regi,"ch4","agriculture","process")+p10_histEmiSector("2015",regi,"ch4","lulucf","process"))/(p10_histEmiSector("2005",regi,"ch4","agriculture","process")+p10_histEmiSector("2005",regi,"ch4","lulucf","process")) );
+p10_macLevFree("2010",regi,enty)$(p10_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp"))) = max( 0, 1 - (p10_histEmiSector("2010",regi,"n2o","agriculture","process")+p10_histEmiSector("2010",regi,"n2o","lulucf","process"))/(p10_histEmiSector("2005",regi,"n2o","agriculture","process")+p10_histEmiSector("2005",regi,"n2o","lulucf","process")) );
+p10_macLevFree(ttot,regi,emiMacMagpie(enty))$((ttot.val ge 2015) AND p10_histEmiSector("2005",regi,"n2o","agriculture","process") AND (sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp"))) = max( 0, 1 - (p10_histEmiSector("2015",regi,"n2o","agriculture","process")+p10_histEmiSector("2015",regi,"n2o","lulucf","process"))/(p10_histEmiSector("2005",regi,"n2o","agriculture","process")+p10_histEmiSector("2005",regi,"n2o","lulucf","process")) );
 
-p_macLevFree("2010",regi,enty)$((p10_histEmiMac("2010",regi,enty)) AND (sameas(enty,"ch4wstl") OR sameas(enty,"ch4wsts"))) = max( 0, 1 - (p10_histEmiMac("2010",regi,enty)) /vm_macBase.l("2010",regi,enty) );
-p_macLevFree(ttot,regi,enty)$((ttot.val ge 2015) AND (p10_histEmiMac("2015",regi,enty)) AND (sameas(enty,"ch4wstl") OR sameas(enty,"ch4wsts"))) = max( 0, 1 - (p10_histEmiMac("2015",regi,enty))/vm_macBase.l("2015",regi,enty) );
+p10_macLevFree("2010",regi,enty)$((p10_histEmiMac("2010",regi,enty)) AND (sameas(enty,"ch4wstl") OR sameas(enty,"ch4wsts"))) = max( 0, 1 - (p10_histEmiMac("2010",regi,enty)) /vm_macBase.l("2010",regi,enty) );
+p10_macLevFree(ttot,regi,enty)$((ttot.val ge 2015) AND (p10_histEmiMac("2015",regi,enty)) AND (sameas(enty,"ch4wstl") OR sameas(enty,"ch4wsts"))) = max( 0, 1 - (p10_histEmiMac("2015",regi,enty))/vm_macBase.l("2015",regi,enty) );
 
 $ELSE.scaleEmiHist
 
-p_macLevFree(ttot,regi,emiMacMagpie(enty))=0;
+p10_macLevFree(ttot,regi,emiMacMagpie(enty))=0;
 
 $ENDIF.scaleEmiHist
 
 pm_macAbatLev(ttot,regi,enty) = 0.0;
-pm_macAbatLev("2005",regi,enty) = p_macUse2005(regi,enty);
-pm_macAbatLev("2010",regi,enty) = p_macLevFree("2010",regi,enty);
-pm_macAbatLev("2015",regi,enty) = p_macLevFree("2015",regi,enty);
+pm_macAbatLev("2005",regi,enty) = p10_macUse2005(regi,enty);
+pm_macAbatLev("2010",regi,enty) = p10_macLevFree("2010",regi,enty);
+pm_macAbatLev("2015",regi,enty) = p10_macLevFree("2015",regi,enty);
 pm_macAbatLev(ttot,regi,enty)$( ttot.val gt 2015 )
   =
     max(
       sum(steps$(ord(steps) eq pm_macStep(ttot,regi,enty)),
         pm_macAbat(ttot,regi,enty,steps)
       ),
-      p_macLevFree(ttot,regi,enty)
+      p10_macLevFree(ttot,regi,enty)
     );
 
 pm_macAbatLev("2015",regi,"co2luc") = 0;
@@ -397,7 +397,7 @@ Display "computed abatement levels at carbon price", pm_macAbatLev;
 *** q_i = abatement [fraction] at step i
 pm_macCost(t,regi,emiMacSector(enty))
   = 1e-3
-  * p_macCostSwitch(enty)
+  * p10_macCostSwitch(enty)
   * p10_emi_quan_conv_ar4(enty)
   * vm_macBase.l(t,regi,enty)
   * sm_dmac

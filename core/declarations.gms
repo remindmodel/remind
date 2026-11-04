@@ -76,38 +76,6 @@ parameters
 pm_co2eqForeign(tall,all_regi)                       "emissions, which are part of the climate policy, of other regions (nash relevant)."
 pm_co2eq0(tall,all_regi)                             "Total greenhouse gas emissions from last iteration based on vm_co2eq used in nash algorithm [GtCeq]"
 
-*** parameters used for MAC curves
-pm_macBaseMagpie(tall,all_regi,all_enty)             "baseline emissions from MAgPIE (type emiMacMagpie) [GtC, Mt CH4, Mt N]"
-f_macBaseMagpie_coupling(tall,all_regi,all_enty)     "baseline emissions from MAgPIE (type emiMacMagpie) read from magpie.gdx in coupling [GtC, Mt CH4, Mt N]"
-pm_macBaseMagpieNegCo2(tall,all_regi)                 "net negative CO2 emissions from land-use change [GtC]"
-p10_macBaseExo(tall,all_regi,all_enty)                 "exogenous baseline emissions (type emiMacExo) [Mt CH4, Mt N]"
-p_co2lucSub(tall,all_regi,all_enty)                  "subtypes of CO2 land use change emissions, add up to total land use change emissions, coming from MAgPIE, passed through REMIND for reporting, not used anywhere, remain unchanged [GtC]"
-pm_macAbat(tall,all_regi,all_enty,steps)             "abatement levels based on data from van Vuuren [fraction]"
-pm_macAbatLev(tall,all_regi,all_enty)                "actual level of abatement per time step, region, and source [fraction]"
-p_macAbat_lim(tall,all_regi,all_enty)                "limit of abatement level based on limit of yearly change [fraction]"
-p_macUse2005(all_regi,all_enty)                      "usage of MACs in 2005 [fraction]"
-p10_histEmiMac(tall,all_regi,all_enty)                 "historical emissions per MAC (type emiMacSector); from Eurostat and CEDS, to correct CH4 and N2O reporting [GtC, Mt CH4, Mt N]"
-p10_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types) "historical emissions per sector; from Eurostat and CEDS, to correct CH4 and N2O reporting [GtC, Mt CH4, Mt N]"
-p_macLevFree(tall,all_regi,all_enty)                 "Phase in of zero-cost MAC options [fraction]"
-pm_macCost(tall,all_regi,all_enty)                   "abatement costs for all emissions subject to MACCs (type emiMacSector) [T$]"
-pm_macStep(tall,all_regi,all_enty)                   "step number of abatement level [integer]"
-pm_macSwitch(ttot,all_regi,all_enty)                 "switch to include mac options in specific sectors and years [0/1]"
-p_macCostSwitch(all_enty)                            "switch to include mac costs in the code [0/1] (e.g. in coupled scenarios, we want to include the costs in REMIND, but MAC effects on emissions are calculated in MAgPIE)"
-pm_macPE(ttot,all_regi,all_enty)                     "Primary energy production from MACs, e.g. methane production from abated methane leakage in coal extraction [TWa]"
-p_priceCO2(tall,all_regi)                            "carbon price [$/tC]"
-p_priceCO2forMAC(tall,all_regi,all_enty)             "carbon price defined for MAC gases [$/tC]"
-p_priceGas(tall,all_regi)                            "gas price for ch4gas MAC [$/tCeq]"
-p10_emi_quan_conv_ar4(all_enty)                        "conversion factor of non-CO2 greenhouses gases to GtCeq"
-
-$IFTHEN.agricult_base_shift not "%c_agricult_base_shift%" == "off"
-p_agricult_base_shift(ext_regi)                      "fraction by which to scale agricultural emissions of baseline up or down, positive values increase emissions, negative values decrease emissions [fraction]" / %c_agricult_base_shift% /
-p_agricult_shift_phasein(ttot)                       "phase in parameter for baseline agricultural process ch4 and no2 reduction [share]"
-p_macBaseMagpie_beforeShift(ttot,all_regi,all_enty)  "pm_macBaseMagpie parameter before shift of c_agricult_base_shift is applied [GtC, Mt CH4, Mt N]"
-$ENDIF.agricult_base_shift
-
-p_aux_scaleEmiHistorical_n2o(all_regi)               "auxiliary parameter to rescale MAgPIE n2o emissions to historical values [Mt N]"
-p_aux_scaleEmiHistorical_ch4(all_regi)               "auxiliary parameter to rescale MAgPIE ch4 emissions to historical values [Mt CH4]"
-
 ;
 
 *** ---------------------------------------------------------------------------
@@ -529,9 +497,6 @@ o_negitr_disc_cons_dr5_reg(iteration,all_regi)       "estimated discounted consu
 o_negitr_disc_cons_drInt_reg(iteration,all_regi)     "estimated discounted consumption 2005-2100 with internal discount rate. 'estimated' because of different times step lengths around 2100 [T$]"
 o_negitr_total_forc(iteration)                       "total forcing in 2100"
 o_pm_pebiolc_demandmag(iteration,ttot,all_regi)      "track pm_pebiolc_demandmag across Nash iterations"
-o_pm_macBaseMagpie(iteration,ttot,all_regi,all_enty) "track pm_macBaseMagpie across Nash iterations"
-o_pm_macSwitch(iteration,ttot,all_regi,all_enty)     "track pm_macSwitch across Nash iterations"
-o_pm_PeProdEmifac_n2obio(iteration,all_regi)          "track pm_PeProdEmifac for n2obio across Nash iterations"
 o_vm_fuExtr_pebiolc_iter(iteration,ttot,all_regi)         "track vm_fuExtr for pebiolc across Nash iterations"
 o_vm_pebiolc_price_iter(iteration,ttot,all_regi)          "track vm_pebiolc_price across Nash iterations"
 o_PEDem_Bio_ECrops_iter(iteration,ttot,all_regi)          "track pebiolc demand across Nash iterations"
@@ -603,10 +568,6 @@ sm_EURO2023_2_D2017          "Convert EURO 2023 to US$2017"    /0.8915/
 *** ------------ Scalar Model Parameters ---------------
 o_modelstat                  "critical solver status for solution"
 
-* GA sm_dmac changes depending on the choice of MACs in c_nonco2_macc_version
-sm_dmac                      "step in MAC functions [US$]"                                                                   
-sm_macChange                 "maximum yearly increase of relative abatement in percentage points of maximum abatement. [0..1]"      /0.05/
-
 s_tau_cement                 "range of per capita investments for switching from short-term to long-term behavior in CO2 cement emissions"                / 12000 /
 s_c_so2                      "constant, see S. Smith, 2004, Future Sulfur Dioxide Emissions"    /4.39445/
 s_ccsinjecrate               "CCS injection rate factor. [1/a]"
@@ -629,15 +590,6 @@ sm_updateMagpieData          "Boolean defined in core/presolve indicating if MAg
 ;
 
 sm_magpieIterEnd = card(magpieIter);
-* GA sm_dmac changes depending on the choice of MACs in c_nonco2_macc_version
-$ifthen %c_nonco2_macc_version% == "PBL_2007"
-* PBL_2007 MACs are discretized in steps of 5 $2005/tCeq
-sm_dmac = 5 * sm_D2005_2_D2017;
-$elseif %c_nonco2_macc_version% == "PBL_2022"
-* PBL_2022 MACs are discretized in steps of 20 $2010/tCeq
-sm_dmac = 20 * s_D2010_2_D2017;
-$endif
-;
 
 
 *** calculate further conversion factors for emissions
