@@ -378,7 +378,7 @@ $offdelim
 /;
 pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f10_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
 
-*** pm_macBaseMagpie gets updated in core/presolve.gms when coupling to MAgPIE is active
+*** pm_macBaseMagpie gets updated in modules/10_emissions/SectorAggregates/presolve.gms when coupling to MAgPIE is active
 
 *** In case of fixing, load p_co2lucSub from input_ref.gdx, since parameters are not automatically treated by the fixing mechanism.
 *** Years >= cm_startyear get their values from the lookup table rather than the input_ref.gdx (see below).
@@ -388,7 +388,7 @@ if( (cm_startyear gt 2005),
 
 
 *** Overwrite values >= cm_startyear with lookup table, leave values < cm_startyear untouched (from input_ref.gdx, see above).
-*** Gets updated for >= cm_startyear in core/presolve.gms when coupling to MAgPIE is active.
+*** Gets updated for >= cm_startyear in modules/10_emissions/SectorAggregates/presolve.gms when coupling to MAgPIE is active.
 p_co2lucSub(ttot,regi,emiMacMagpieCO2Sub(all_enty))$(ttot.val ge cm_startyear) = f10_macBaseMagpie(ttot,regi,emiMacMagpieCO2Sub,"%cm_LU_emi_scen%","%cm_rcp_scen%");
 
 *** pm_macPolCO2luc defines the lower limit for abatement of CO2 landuse change emissions in REMIND
@@ -439,7 +439,7 @@ $offdelim
 *** ==================================================================
 
 if (cm_startyear gt 2005,
-*' load MAC costs from reference gdx. Values for t (i.e. after cm_start_year) will be overwritten in core/presolve.gms 
+*' load MAC costs from reference gdx. Values for t (i.e. after cm_start_year) will be overwritten in modules/10_emissions/SectorAggregates/presolve.gms 
 execute_load "input_ref.gdx" pm_macCost;
 );
 
