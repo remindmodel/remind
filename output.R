@@ -59,7 +59,7 @@ parseOptions <- function() {
     ),
     make_option("--filename_prefix",
       type = "character", default = NULL,
-      help = "string to be added to filenames by some output scripts (compareScenarios, xlsx_IIASA)"
+      help = "string to be added to filenames by some output scripts (compareScenarios2, xlsx_IIASA)"
     ),
     make_option("--output",
       type = "character", default = NULL,
@@ -191,8 +191,8 @@ chooseOutputScript <- function(comp) {
 }
 
 chooseOutputDirs <- function(output, remind_dir) {
-  modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
-                         "plot_compare_iterations", "varListHtml", "fixOnRef", "MAGICC7_AR6",
+  modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts",
+                         "fixOnRef", "MAGICC7_AR6",
                          "validateScenarios", "checkClimatePercentiles", "selectPlots",
                          "checkProjectSummations")
   needingMif <- any(modulesNeedingMif %in% output) && ! "reporting" %in% output[[1]]
@@ -382,7 +382,7 @@ output <- function(args) {
     }
     if (is.null(args[["filename_prefix"]])) {
       # ask for filename_prefix, if one of the modules that use it is selected
-      modules_using_filename_prefix <- c("compareScenarios2", "xlsx_IIASA", "varListHtml", "selectPlots")
+      modules_using_filename_prefix <- c("compareScenarios2", "xlsx_IIASA", "selectPlots")
       if (any(modules_using_filename_prefix %in% output)) {
         filename_prefix <- chooseFilenamePrefix(modules = intersect(modules_using_filename_prefix, output))
       } else {

@@ -85,7 +85,7 @@ NOTE: A few words on the scripts that we currently use to start runs. The script
 SLURM will send you a mail when the job is finished.
 The status code tells you if it succeeded or not and gives hints as to why it failed:
 
-- 0: succesfull
+- 0: successfull
 - 1: failure during the run
 - 127: possibly apptainer related
 - 255: failure after the run, e.g. reporting scripts
