@@ -205,7 +205,7 @@ q10_emiMacSector(t,regi,emiMacSector(enty))..
     - vm_emiIndCCS(t,regi,enty)
     )$( sameas(enty,"co2cement_process") )
 
-   + pm_macPolCO2luc(t,regi)$( sameas(enty,"co2luc") )
+   + p10_macPolCO2luc(t,regi)$( sameas(enty,"co2luc") )
 ;
 
 q10_emiMac(t,regi,emiMac) ..

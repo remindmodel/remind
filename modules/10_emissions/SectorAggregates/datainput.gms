@@ -221,7 +221,7 @@ $if %cm_LU_emi_scen% == "SDP"        pm_PeProdEmifac(regi,"pebiolc","n2obio") = 
 * GA Read choice of non-CO2 MACs version
 * PBL_2007 is based on Lucas et al. (2007), and abatement is relative to that study's IMAGE baseline scenario emissions, asssumed relative to ours here
 * PBL_2022 is based on van Harmsen et al. (2022), and abatement is relative to that study's IMAGE SSP2 baseline scenario emissions, asssumed relative to ours here
-$IFTHEN.MaccVersion %c_nonco2_macc_version% == "PBL_2007"
+$IFTHEN.MaccVersion %cm_nonco2_macc_version% == "PBL_2007"
 * PBL_2007 MACs are discretized in steps of 5 $/tC
 sm_dmac = 5 ;
 parameter p10_abatparam_CH4(tall,all_regi,all_enty,steps)        "MAC costs for CH4 by source"
@@ -236,7 +236,7 @@ $ondelim
 $include "./modules/10_emissions/SectorAggregates/input/p_abatparam_N2O.cs4r"
 $offdelim
 /;
-$ELSEIF.MaccVersion %c_nonco2_macc_version% == "PBL_2022"
+$ELSEIF.MaccVersion %cm_nonco2_macc_version% == "PBL_2022"
 *** PBL_2022 MACs are discretized in steps of 20 $/tC
 *** PBL_2022 includes three scenarios, read the big file into p10_all_abatparam_CH4 and subset based on c_nonco2_macc_scenario
 *** Create the set here, as it's not really used anywhere else
@@ -295,12 +295,12 @@ p10_emi_quan_conv_ar4("n2owaste")   = sm_tgn_2_pgc * (298/s_gwpN2O);
 *** but some scenarios may turn off certain MACs. Currently setting to 2
 *** turns everything but waste MACs off, while setting to 1 turns everything on.
 *** GA: This 2 setting is a leftover from the SSP-RCP scenarios but still useful to keep.
-if(c_macscen eq 2,
+if(cm_macscen eq 2,
   pm_macSwitch(ttot,regi,emiMacSector)  = 0;
 );
   pm_macSwitch(ttot,regi,"ch4wstl") = 1;
   pm_macSwitch(ttot,regi,"ch4wsts") = 1;
-if(c_macscen eq 1,
+if(cm_macscen eq 1,
   pm_macSwitch(ttot,regi,emiMacSector) = 1;
 );
 
@@ -391,9 +391,9 @@ if( (cm_startyear gt 2005),
 *** Gets updated for >= cm_startyear in modules/10_emissions/SectorAggregates/presolve.gms when coupling to MAgPIE is active.
 p_co2lucSub(ttot,regi,emiMacMagpieCO2Sub(all_enty))$(ttot.val ge cm_startyear) = f10_macBaseMagpie(ttot,regi,emiMacMagpieCO2Sub,"%cm_LU_emi_scen%","%cm_rcp_scen%");
 
-*** pm_macPolCO2luc defines the lower limit for abatement of CO2 landuse change emissions in REMIND
+*** p10_macPolCO2luc defines the lower limit for abatement of CO2 landuse change emissions in REMIND
 *** The values are derived from MAgPIE runs with very strong mitigation
-parameter pm_macPolCO2luc(tall,all_regi)                "co2 emissions from landuse change with strong mitigation in MAgPIE"
+parameter p10_macPolCO2luc(tall,all_regi)                "co2 emissions from landuse change with strong mitigation in MAgPIE"
 /
 $ondelim
 $include "./modules/10_emissions/SectorAggregates/input/p_macPolCO2luc.cs4r"

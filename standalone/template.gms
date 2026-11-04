@@ -126,7 +126,7 @@ cm_nash_autoconverge  "choice of nash convergence mode"
 cm_emiscen            "policy scenario choice"
 cm_taxCO2_startyear    "level of co2 tax in start year in $ per t CO2eq"
 cm_taxCO2_expGrowth     "growth rate of carbon tax"
-c_macscen            "use of mac"
+cm_macscen            "use of mac"
 cm_nucscen            "nuclear option choice"
 c_co2captureEnergy       "carbon capture option choice"
 c_bioliqscen          "bioenergy liquids technology choise"
@@ -194,7 +194,7 @@ cm_emiscen        = 1;         !! def = 1
 $setglobal cm_rcp_scen  none   !! def = "none"
 cm_taxCO2_startyear   = -1;   !! def = -1
 cm_taxCO2_expGrowth = 1.05;      !! def = 1.05
-c_macscen         = 1;         !! def = 1
+cm_macscen         = 1;         !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
 c_co2captureEnergy  = 1;        !! def = 1

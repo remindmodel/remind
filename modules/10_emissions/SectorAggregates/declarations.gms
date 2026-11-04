@@ -173,18 +173,18 @@ o_pm_PeProdEmifac_n2obio(iteration,all_regi)          "track pm_PeProdEmifac for
 
 scalars
 
-* GA sm_dmac changes depending on the choice of MACs in c_nonco2_macc_version
+* GA sm_dmac changes depending on the choice of MACs in cm_nonco2_macc_version
 sm_dmac                      "step in MAC functions [US$]"                                                                   
 sm_macChange                 "maximum yearly increase of relative abatement in percentage points of maximum abatement. [0..1]"      /0.05/
 ;
 
-* GA sm_dmac changes depending on the choice of MACs in c_nonco2_macc_version
-$ifthen %c_nonco2_macc_version% == "PBL_2007"
+* GA sm_dmac changes depending on the choice of MACs in cm_nonco2_macc_version
+$ifthen %cm_nonco2_macc_version% == "PBL_2007"
 * PBL_2007 MACs are discretized in steps of 5 $2005/tCeq
 sm_dmac = 5 * sm_D2005_2_D2017;
-$elseif %c_nonco2_macc_version% == "PBL_2022"
+$elseif %cm_nonco2_macc_version% == "PBL_2022"
 * PBL_2022 MACs are discretized in steps of 20 $2010/tCeq
-sm_dmac = 20 * s_D2010_2_D2017;
+sm_dmac = 20 * sm_D2010_2_D2017;
 $endif
 ;
 

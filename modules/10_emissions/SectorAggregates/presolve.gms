@@ -177,11 +177,11 @@ $ENDIF.agricult_base_shift
 *** Non-energy emissions reductions (MAC)
 ***--------------------------------------
 
-*** make sure that minimum CO2 luc emissions given in pm_macPolCO2luc do not exceed the baseline
+*** make sure that minimum CO2 luc emissions given in p10_macPolCO2luc do not exceed the baseline
 loop(regi,
      loop(ttot,
-          if( (pm_macPolCO2luc(ttot,regi) > pm_macBaseMagpie(ttot,regi,"co2luc")),
-                    pm_macPolCO2luc(ttot,regi) = pm_macBaseMagpie(ttot,regi,"co2luc")
+          if( (p10_macPolCO2luc(ttot,regi) > pm_macBaseMagpie(ttot,regi,"co2luc")),
+                    p10_macPolCO2luc(ttot,regi) = pm_macBaseMagpie(ttot,regi,"co2luc")
              );
           );
     );
@@ -225,10 +225,10 @@ p10_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear+10) = 0.
 p10_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear+15) = 0.8 * p10_priceCO2forMAC(ttot,regi,MacSectorMagpie);
 p10_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val ge cm_startyear+20) = p10_priceCO2forMAC(ttot,regi,MacSectorMagpie);
 *** 3. Reduce co2 price for land-use entities by level of development (uses the same data from MOINPUT as MAgPIE for im_development_state)
-p10_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p10_priceCO2forMAC(ttot,regi,MacSectorMagpie) * p_developmentState(ttot,regi);
+p10_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p10_priceCO2forMAC(ttot,regi,MacSectorMagpie) * pm_developmentState(ttot,regi);
 *** 4. Price for MACs was calculated with AR4 GWPs --> convert CO2 price with old GWPs here as well
-p10_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) = p10_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) * (s_gwpN2O_AR4/s_gwpN2O);
-p10_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) = p10_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) * (s_gwpCH4_AR4/s_gwpCH4);
+p10_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) = p10_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) * (sm_gwpN2O_AR4/s_gwpN2O);
+p10_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) = p10_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) * (sm_gwpCH4_AR4/s_gwpCH4);
 
 display p_priceCO2,p10_priceCO2forMAC;
 ***--------------------------------------
@@ -245,7 +245,7 @@ vm_macBase.lo(ttot,regi,"co2cement_process")$( ttot.val ge 2005 ) = 0;
 *** exogenous
 vm_macBase.fx(ttot,regi,enty)$emiMacMagpie(enty) = pm_macBaseMagpie(ttot,regi,enty);
 vm_macBase.fx(ttot,regi,enty)$emiMacExo(enty) = p10_macBaseExo(ttot,regi,enty);
-vm_macBase.fx(ttot,regi,"co2luc") = pm_macBaseMagpie(ttot,regi,"co2luc")-pm_macPolCO2luc(ttot,regi);
+vm_macBase.fx(ttot,regi,"co2luc") = pm_macBaseMagpie(ttot,regi,"co2luc")-p10_macPolCO2luc(ttot,regi);
 vm_macBase.up(ttot,regi,"n2ofertin") = Inf;
 ***scale exogenous baselines from van Vuuren to EDGAR v4.2 2005 data or CEDS2024 2020 data
 ***Since they are exogenous anyway, it's OK to scale to after cm_startyear, but something to watch out for
@@ -281,8 +281,8 @@ pm_macStep(ttot,regi,enty)$(MacSector(enty))
   = min(801, ceil(p10_priceCO2forMAC(ttot,regi,enty) / sm_dmac) + 1);
 
 *** If the gas price increase since 2005 is higher than the CO2 price, it will drive CH4 emission abatement.
-*** Conversion: p10_priceCO2forMAC [$/tCeq]; T$/TWa = 1e6 M$/TWa * s_MtCH4_2_TWa * 1 MtCH4/s_gwpCH4 MtCO2eq * (44/12) MtCO2eq/MtCeq
-p10_priceGas(ttot,regi)=q_balPe.m(ttot,regi,"pegas")/(qm_budget.m(ttot,regi)+sm_eps) * 1000000 * s_MtCH4_2_TWa * (1/s_gwpCH4) * 44/12;
+*** Conversion: p10_priceCO2forMAC [$/tCeq]; T$/TWa = 1e6 M$/TWa * sm_MtCH4_2_TWa * 1 MtCH4/s_gwpCH4 MtCO2eq * (44/12) MtCO2eq/MtCeq
+p10_priceGas(ttot,regi)=q_balPe.m(ttot,regi,"pegas")/(qm_budget.m(ttot,regi)+sm_eps) * 1000000 * sm_MtCH4_2_TWa * (1/s_gwpCH4) * 44/12;
 
 pm_macStep(ttot,regi,"ch4gas")
   = min(801, ceil(max(p10_priceCO2forMAC(ttot,regi,"ch4gas") * (25/s_gwpCH4), max(0,(p10_priceGas(ttot,regi)-p10_priceGas("2005",regi))) ) / sm_dmac) + 1);
@@ -419,7 +419,7 @@ pm_macCost(t,regi,emiMacSector(enty))
 *** These losses are not accounted for, so neither are the avoided losses.
 *** conversion factor MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 (BP statistical review)
 pm_macPE(ttot,regi,enty) = 0.0;
-pm_macPE(ttot,regi,"pegas")$(ttot.val gt 2005) = s_MtCH4_2_TWa * 0.5 * (vm_macBase.l(ttot,regi,"ch4coal")-vm_emiMacSector.l(ttot,regi,"ch4coal"));
+pm_macPE(ttot,regi,"pegas")$(ttot.val gt 2005) = sm_MtCH4_2_TWa * 0.5 * (vm_macBase.l(ttot,regi,"ch4coal")-vm_emiMacSector.l(ttot,regi,"ch4coal"));
 
 
 *** ==================================================================
