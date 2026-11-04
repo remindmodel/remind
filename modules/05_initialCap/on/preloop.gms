@@ -450,20 +450,6 @@ pm_eta_conv(t,regi,"tdsyngas")$(sameAs(regi,"DEU") and t.val ge 2020) = 0.975;
 
 display pm_eta_conv, fm_dataglob;
 
-
-*RP* Regions where efficiency is below the average see this lower efficiency also for new construction - therefore these plants should be cheaper (e.g., subcritical instead of supercritical coal)
-$if %cm_techcosts% == "GLO"   loop(ttot$((ttot.val le 2030) AND (ttot.val ge 2005)),
-$if %cm_techcosts% == "GLO"     loop(te$( teEtaIncr(te) AND (sameas(te,"pc") OR sameas(te,"ngt") OR  sameas(te,"ngcc") ) ),
-$if %cm_techcosts% == "GLO"      pm_inco0_t(ttot,regi,te) = pm_inco0_t(ttot,regi,te) * 1/ (2030-2005) * (((2030-ttot.val) * p05_eta_correct_factor(regi,te)) + (ttot.val-2005));
-$if %cm_techcosts% == "GLO"     );
-$if %cm_techcosts% == "GLO"   );
-$if %cm_techcosts% == "GLO"   loop(ttot$((ttot.val le 2050) AND (ttot.val ge 2005)),
-$if %cm_techcosts% == "GLO"     loop(te$(teEtaConst(te) AND ( sameas(te,"pc") OR sameas(te,"ngt") OR  sameas(te,"ngcc") ) ),
-$if %cm_techcosts% == "GLO"       pm_inco0_t(ttot,regi,te) = pm_inco0_t(ttot,regi,te) *  ( 1 - ( fm_dataglob("eta",te) - pm_data(regi,"eta",te) ) / fm_dataglob("eta",te)  * (2050 - ttot.val) / (2050-2005) )
-$if %cm_techcosts% == "GLO"     );
-$if %cm_techcosts% == "GLO"   );
-display  pm_inco0_t;
-
 ***---------------------------------------------------------------------------
 ***      recalibrate time-variable etas     END
 ***---------------------------------------------------------------------------
@@ -592,18 +578,6 @@ if (cm_startyear gt 2005,
                               OR sameas(te,"biochp") )
                             AND sameas(char,"eta") ) = p05_pmdata_ref(regi,char,te);
 
-
-
-*** if %cm_techcosts% == "GLO", load pm_inco0_t from input_ref.gdx and overwrite values
-*** only for pc, ngt, ngcc since they have been adapted in initialCap routine above
-*** This is to avoid overwriting changes to pm_inco0_t by scenario switches
-$ifThen %cm_techcosts% == "GLO"
-  Execute_Loadpoint 'input_ref' p05_inco0_t_ref = pm_inco0_t;
-  pm_inco0_t(t,regi,te)$( teEtaIncr(te)
-                          AND (sameas(te,"pc")
-                            OR sameas(te,"ngt")
-                            OR sameas(te,"ngcc") ) ) = p05_inco0_t_ref(t,regi,te);
-$endIf
 );
 
 ***------------------------------------------------------------------------------

@@ -143,7 +143,7 @@ vm_emiMacSector(ttot,all_regi,all_enty)              "total emissions subject to
 
 vm_emiCdr(ttot,all_regi,all_enty)                    "total (negative) CO2 emissions from CDR technologies that are calculated in the CDR module. Note that it includes all atmospheric CO2 entering the CCUS chain (i.e. CO2 stored (CDR) AND used (not CDR)) [GtC]"
 vm_emiMac(ttot,all_regi,all_enty)                    "total non-energy-related emission of each region. [GtC, Mt CH4, Mt N]"
-vm_emiFgas(ttot,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE [emiFgasTotal in MtCO2eq, for other units see f_emiFgas.cs4r]"
+vm_emiFgas(ttot,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE [emiFgasTotal in MtCO2eq, for other units see f_emiFgas.cs3r]"
 
 *** emissions per emissions market
 vm_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "emissions from energy technologies on supply-side (pm_emifac * PE) and demand-side (pm_emifac * FE) per emissions market, note: not equivalent to Emi|CO2|Energy in reporting [GtC, Mt CH4, Mt N, Mt SO2, Mt BC, Mt OC]"
@@ -382,7 +382,7 @@ vm_cap(tall,all_regi,all_te,rlf)                     "net total capacities [TW] 
 v_capDistr(tall,all_regi,all_te,rlf)                 "net capacities, distributed to the different grades for renewables [TW]"
 vm_capTotal(ttot,all_regi,all_enty,all_enty)         "total capacity of pe2se conversion technologies without technology differentation [TW]"
 vm_deltaCap(tall,all_regi,all_te,rlf)                "capacity additions [TW/yr] for energy conversion technologies, [GtC/yr^2] for CCS chain in ccs2te (pipelines/injection)"
-vm_capCum(tall,all_regi,all_te)                      "cumulated capactiy of learning technologies [TW]"
+vm_capCum(tall,all_regi,all_te)                      "cumulated capacity of learning technologies [TW]"
 vm_capEarlyReti(tall,all_regi,all_te)                "fraction of early retired capacity from total standing capacity, can only be increased for technologies for which early retirement is switched on [share]"
 
 *** technoeconomic parameters
@@ -466,7 +466,6 @@ q_smoothphaseoutCapEarlyReti(ttot,all_regi,all_te)   "constraint to limit phase-
 q_capH2BI(ttot,all_regi)                             "calculate hydrogen transmission and distribution capacities for buildings and industry, as total of stationary sector, needed to avoid switching behavior of H2 between both sectors"
 
 *** technology learning equations
-q_capCumNet(t0,all_regi,all_te)                      "set initial cumulated capacity of learning technologies (vm_capCum) in start year"
 qm_deltaCapCumNet(ttot,all_regi,all_te)              "calculate cumulated capacities of learning technologies (vm_capCum)"
 q_costTeCapital(tall,all_regi,all_te)                "calculate investment cost for learning technologies (learning curve)"
 
@@ -657,6 +656,7 @@ sm_TWa_2_TWh                 "convert Tera Watt annum to Tera Wh"           /8.7
 sm_TWa_2_MWh                 "convert Tera Watt annum to Mega Wh"           /8.76e+9/,
 sm_TWa_2_kWh                 "convert Tera Watt annum to kilo Wh"           /8.76e+12/,
 sm_h2kg_2_h2kWh              "convert kg of hydrogen to kWh energy value"   /32.5/,
+s_GW_2_TW                    "convert GW to TW"                             /0.001/,
 sm_tBC_2_TWa                 "t biochar to TWa biochar (28700 [MJ/tBC]*10^-12[EJ/MJ]/31.536[EJ/TWa])" /9.101e-10/,
 
 *** emissions units
@@ -751,6 +751,24 @@ sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 *** Example 2:
 ***   Suppose we have a subsidy that we want to phase out with a different date for each region.
 ***   p_subsidy(t,regi) = macro_interpolate(t.val, cm_startyear, p_subsidyEndYr(regi), p_subsidy(cm_startyear,regi), 0);
+*** Outside t0 and t1, the linear function is continued
+*** x0 _|         /
+***     |        /
+***     |       /
+*** x1 _|      /
+***     |_____/___________
+***            | |
+***          t0  t1
 $macro macro_interpolate(t,t0,t1,x0,x1) ( ((t1) - (t)) / ((t1) - (t0)) * (x0) + ((t) - (t0)) / ((t1) - (t0)) * (x1) )
+
+*** macro_clamped_interpolate: Like macro_interpolate, but if t is not between t0 and t1, we return the respective boundary value
+*** x0 _|         _____
+***     |        /
+***     |       /
+*** x1 _|______/
+***     |________________
+***            | |
+***          t0  t1
+$macro macro_clamped_interpolate(t, t0, t1, x0, x1) ( (x0)$((t) <= (t0)) + (x1)$((t) >= (t1)) + ((x0) + ((x1) - (x0)) * ((t) - (t0)) / ((t1) - (t0)))$(((t) > (t0)) AND ((t) < (t1))))
 
 *** EOF ./core/declarations.gms

@@ -6,20 +6,22 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/40_techpol/NDCplus/datainput.gms
 
-Table f40_TechBound(ttot,all_regi,NDC_version,all_te) "Table for all NDC versions with NDC capacity targets (GW)"
+*** Capacity targets loaded from the shared NewClimate input file used by the NPi2025 realization
+*** (see modules/40_techpol/NPi2025/datainput.gms). Version selected via %cm_NPi_version%.
+Table f40_TechBound(ttot,all_regi,NPi_version,all_te) "NDC capacity targets (GW), from NewClimate data source"
 $offlisting
 $ondelim
-$include "./modules/40_techpol/NDCplus/input/f40_NDC+REN21+CHN_NUC.cs3r"
+$include "./modules/40_techpol/NPi2025/input/f40_NewClimate.cs3r"
 $offdelim
 $onlisting
 ;
 
 *** ensure that lower technology bounds are not decreasing
 *** this only refers to lower bounds and needs to be revised once upper bounds are introduced.
-p40_TechBound(ttot,all_regi,te) = smax(ttot2 $ (ttot2.val <= ttot.val) , f40_TechBound(ttot2,all_regi,"%cm_NDC_version%",te));
+p40_TechBound(ttot,all_regi,te) = smax(ttot2 $ (ttot2.val <= ttot.val) , f40_TechBound(ttot2,all_regi,"%cm_NPi_version%",te));
 
 *** windoffshore-todo: separate NDC targets for windon and windoff
-p40_TechBound(ttot,all_regi,"wind") = f40_TechBound(ttot,all_regi,"%cm_NDC_version%","wind");
+p40_TechBound(ttot,all_regi,"wind") = f40_TechBound(ttot,all_regi,"%cm_NPi_version%","wind");
 
 *** IND nuclear target is now 63GW in 2032 https://unfccc.int/sites/default/files/NDC/2022-06/INDIA%20INDC%20TO%20UNFCCC.pdf#page=10
 *** Realistic maximum of 17.25GW calculated with the near-term analysis rules: https://github.com/pik-piam/mrremind/discussions/540

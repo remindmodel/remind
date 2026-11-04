@@ -74,6 +74,8 @@ loop(t $ (t.val >= 2015 and t.val <= 2025),
 *** fix renewable capacities to real world historical values if available
   vm_cap.lo(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 0.95 * pm_histCap(t,regi,te);
   vm_cap.up(t,regi,teVRE(te),"1") $ pm_histCap(t,regi,te) = 1.05 * pm_histCap(t,regi,te);
+  vm_cap.lo(t,regi,"elh2","1") $ pm_histCap(t,regi,"elh2") = 0.95 * pm_histCap(t,regi,"elh2");
+  vm_cap.up(t,regi,"elh2","1") $ pm_histCap(t,regi,"elh2") = 1.05 * pm_histCap(t,regi,"elh2");
 *** broader bounds for renewables with lower data quality
   loop(te $ (sameas(te, "hydro") or sameas(te, "geohdr")),
     vm_cap.lo(t,regi,te,"1") $ pm_histCap(t,regi,te) = 0.7 * pm_histCap(t,regi,te);
@@ -119,14 +121,6 @@ vm_deltaCap.lo("2030",regi,te,"1") = sum( project_status,
 *' ##### Near-term capacity for electrolysis and hydrogen 
 *** ------------------------------------------------------------------
 
-*' set lower and upper bounds for 2025 and 2030 based on projects annoucements from IEA Hydryogen project database:
-*' https://www.iea.org/data-and-statistics/data-product/hydrogen-production-and-infrastructure-projects-database
-*' distribute to regions via GDP share of 2025 (we do not use later time steps as they may have different GDPs depending on the scenario)
-*' in future this should be differentiated by region based on regionalized input data of project announcements
-*' 2 GW(el) at least globally in 2025, about operational capacity as of 2023
-vm_cap.lo("2025",regi,"elh2","1") =   2e-3 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi) / sum(regi2,pm_gdp("2025",regi2));
-*' 20 GW(el) at maximum globally in 2025 (be more generous to not overconstrain regions which scale-up fastest)
-vm_cap.up("2025",regi,"elh2","1") =  20e-3 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi) / sum(regi2,pm_gdp("2025",regi2));
 *' 100 GW(el) at maximum globally in 2030 (upper end of feasibility range in Odenweller et al. 2022, https://doi.org/10.1038/s41560-022-01097-4, Fig. 4)
 vm_cap.up("2030",regi,"elh2","1") = 100e-3 * pm_eta_conv("2025",regi,"elh2") * pm_gdp("2025",regi) / sum(regi2,pm_gdp("2025",regi2));
 
@@ -151,12 +145,6 @@ vm_costTeCapital.fx(t,   regi,teNoLearn) = pm_inco0_t(t,regi,teNoLearn);
 *' No battery storage in 2010
 vm_cap.up("2010",regi,teStor,"1") = 0;
 
-*** NR: cumulated capacity never falls below initial cumulated capacity:
-vm_capCum.lo(ttot,regi,teLearn) $ (ttot.val >= cm_startyear) = pm_data(regi,"ccap0",teLearn);
-*** exception for tech_stat 4 technologies whose ccap0 refers to 2025 as these technologies don't exist in 2005
-vm_capCum.lo(ttot,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) = 4 and ttot.val <= 2020) = 0;
-
-
 *' Advanced technologies shouldn't be built prior to 2015/2020
 loop(regi,
   loop(teNoLearn(te) $ (pm_data(regi,"tech_stat",te) = 2),
@@ -173,18 +161,37 @@ loop(regi,
   );
 );
 
+*** Assume that 3 MtCO2/yr DAC capacity installed gobally by 2025 (https://www.iea.org/reports/direct-air-capture)
+vm_cap.fx("2025",regi,"dac","1") = 3 * sm_MtCO2_2_GtC / card(regi);
+
 *' no technologies with tech_stat 4 before 2025
 vm_cap.fx(t,regi,te,rlf) $ (t.val <= 2020 and pm_data(regi,"tech_stat",te) = 4) = 0;
-*** initialize cumulative capacity of tech_stat 4 technologies at 0 
-*** (not at ccap0 from generisdata_tech.prn which gives the cucmulative capacity
-***  at the initial investment cost of the first year in which the technology can be built)
+*** initialize cumulative capacity of tech_stat 4 technologies at 0
 vm_capCum.fx(t0,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) = 4) = 0;
 *** tech_stat 4 technologies don't learn before 2025, so capital cost should be fixed
 vm_costTeCapital.fx(t,regi,teLearn) $ (t.val <= 2020 and pm_data(regi,"tech_stat",teLearn) = 4) = fm_dataglob("inco0",teLearn);
 
+$ifthen.c_BCLearning not "%c_BCLearning%" == 0
+*** assume initial capacity
+  vm_cap.fx("2015",regi,"biopyronly","1") = 0.001 / card(regi);
+  vm_cap.fx("2015",regi,"biopyrhe","1") = 0.001 / card(regi);
+  vm_cap.fx("2015",regi,"biopyrchp","1") = 0.001 / card(regi);
+$endif.c_BCLearning
+
 *** no technologies with tech_stat 5 before 2030
 vm_deltaCap.fx(t,regi,te,rlf) $ (t.val <= 2025 and pm_data(regi,"tech_stat",te) = 5) = 0;
 
+
+vm_capCum.fx("2005",regi,teLearn) = 0;
+
+*** Assume no retirements before 2005 for more established learning techs with good data for 2005
+vm_capCum.fx("2005", regi, "windon") = pm_histCap("2005", regi, "windon");
+vm_capCum.fx("2005", regi, "windoff") = pm_histCap("2005", regi, "windoff");
+vm_capCum.fx("2005", regi, "spv") = pm_histCap("2005", regi, "spv");
+vm_capCum.fx("2005", regi, "csp") = pm_histCap("2005", regi, "csp");
+vm_capCum.fx("2005", regi, "elh2") = pm_histCap("2005", regi, "elh2");
+*** assume initial capacity
+vm_capCum.fx("2005", regi, teStor) = 0.00005 / card(regi);
 
 *** ------------------------------------------------------------------
 *' ##### Capacity for nuclear energy
