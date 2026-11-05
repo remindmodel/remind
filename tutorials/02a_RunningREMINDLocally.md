@@ -74,32 +74,6 @@ REMIND_repos_scp_key="/home/myusername/.ssh/id_ed25519"
 
 Make sure to use your username on the cluster and the correct path to your private ssh key (might also be named `id_rsa` or something similar starting with `id_`).
 
-### Tell REMIND where to find MAGICC
-
-REMIND needs to be told where to find the configuration files of the 'Model for the Assessment of Greenhouse Gas Induced Climate Change' ([MAGICC](https://magicc.org/)). The config files all come with REMIND, so we just need to set the appropriate location in the REMIND default config file at `<REMIND_DIR>/config/default.cfg`. Open the file with a text editor of your choice and locate the variable `magicc_template`. In the `default.cfg` file, the corresponding section will look like
-
-```R
-cfg$magicc_template <- "/p/projects/rd3mod/magicc/"
-```
-
-Change it to the fully qualified file path (i.e. a file path without double points `..` or the tilde `~`) of the MAGICC configuration files. These are located at `<REMIND_DIR>/core/magicc`. The resulting line should look like:
-
-```R
-cfg$magicc_template <- "<REMIND_DIR>/core/magicc/"
-```
-
-On Linux the fully qualified file path will look similar to:
-
-```R
-cfg$magicc_template <- "/home/<YOUR USERNAME>/REMIND/core/magicc"
-```
-
-On Windows remember to also escape the backslashes:
-
-```R
-cfg$magicc_template <- "C:\\Users\\<YOUR USERNAME>\\REMIND\\core\\magicc"
-```
-
 ## Start a run
 
 In a terminal session change directory to the location where REMIND was cloned via `cd <REMIND_DIR>` and start a run as you would do on the cluster. As a linux user, type

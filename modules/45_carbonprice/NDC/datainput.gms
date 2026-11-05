@@ -95,7 +95,7 @@ Parameter p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,all_regi) "regional GHG emission
 p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,regi) = 0;
 Execute_Loadpoint 'input_ref' p45_BAU_reg_emi_wo_LU_wo_bunkers = vm_emiGHG_exclLULUCF_exclBunkers.l;
 *** convert from GtCeq/yr to MtCO2eq/yr
-p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,regi) = p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,regi) * sm_c_2_co2 * 1000;
+p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,regi) = p45_BAU_reg_emi_wo_LU_wo_bunkers(ttot,regi) * sm_GtC_2_MtCO2;
 
 *** --------------------------------------------------------------------------
 
