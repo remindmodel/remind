@@ -15,6 +15,6 @@ p51_scc(tall,regi) = 0;
 p51_scc("2025",regi) = 20;
 p51_scc(tall,regi)$(tall.val ge 2025 and tall.val le 2150) = p51_scc("2025",regi)*(1+0.025*(tall.val-2025));
 
-pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2010) = p51_scc(ttot,regi) * sm_c_2_co2/1000;
+pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2010) = p51_scc(ttot,regi) * sm_DptCO2_2_TDpGtC;
 
 *** EOF ./modules/51_internalizeDamages/KotzWenzCPreg/datainput.gms
