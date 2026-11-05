@@ -125,7 +125,7 @@ if (sm_updateMagpieData eq 1,
   logfile.nr = sm_tmp;
   logfile.nd = sm_tmp2;
 *** Track runtime
-  putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",GAMS," iteration.val:0;
+  macro_runtimeLog("GAMS")
 *** In coupled runs overwrite pebiolc production from look-up table with actual MAgPIE values
 *** Read production of 2nd gen. purpose grown bioenergy from MAgPIE (given to MAgPIE from previous Remind run)
   Execute_Loadpoint 'magpieData.gdx' pm_pebiolc_demandmag;

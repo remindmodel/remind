@@ -772,4 +772,13 @@ $macro macro_interpolate(t,t0,t1,x0,x1) ( ((t1) - (t)) / ((t1) - (t0)) * (x0) + 
 ***          t0  t1
 $macro macro_clamped_interpolate(t, t0, t1, x0, x1) ( (x0)$((t) <= (t0)) + (x1)$((t) >= (t1)) + ((x0) + ((x1) - (x0)) * ((t) - (t0)) / ((t1) - (t0)))$(((t) > (t0)) AND ((t) < (t1))))
 
+*** macro_runtimeLog: write one line with the current wall-clock time to runtime.log, followed
+*** by a label and the iteration number, so that the runtime of individual model parts can be
+*** reconstructed (see scripts/output/plotRuntime.R), e.g.:
+***   macro_runtimeLog("GAMS")
+***   macro_runtimeLog("run_KotzWenz_damages")
+*** Make sure the label contains no commas.
+*** Format of runtime.log: time, label, iteration
+$macro macro_runtimeLog(label) putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",",label,"," iteration.val:0;
+
 *** EOF ./core/declarations.gms

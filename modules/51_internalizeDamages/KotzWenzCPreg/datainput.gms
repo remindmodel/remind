@@ -7,7 +7,7 @@
 *** SOF ./modules/51_internalizeDamages/KotzWenzCPreg/datainput.gms
 
 * satisfy dependencies
-$ifi not %damages% == 'KotzWenz' abort "module internalizeDamages=KotzWenzItr requires module damages=KotzWenz";
+$ifi not %damages% == 'KotzWenz' abort "module internalizeDamages=KotzWenzCPreg requires module damages=KotzWenz";
 $ifi not %cm_magicc_temperatureImpulseResponse% == 'on' abort "module internalizeDamages=KotzWenzCPreg requires cm_magicc_temperatureImpulseResponse=on";
 
 *init carbon tax for 1st iteration
