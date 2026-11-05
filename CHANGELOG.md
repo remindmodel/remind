@@ -16,6 +16,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     [[#2513](https://github.com/remindmodel/remind/pull/2513)]
 - **45_carbonprice** Refactoring of NDC emissions target calculation and implementation
     [[#2487](https://github.com/remindmodel/remind/pull/2487)]
+- **37_industry** Move read-in of chemicals process emission factors (`f_nechem_emissionFactors.cs4r`) from core to module 37
+    [[#2520](https://github.com/remindmodel/remind/pull/2520)]
 
 ### added
 - **scripts** Introduce new optional argument to compare scenario scripts ``validationConfig`` to enable plotting validation thresholds from piamValidation directly

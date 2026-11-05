@@ -1573,20 +1573,6 @@ pm_emifac(ttot,regi,"pecoal","sesofos","coaltr","co2")$(sameas(regi,"DEU") OR sa
 $endif.altFeEmiFac
 
 
-***------ Read in emission factors for process emissions in chemicals sector---
-*** calculated using IEA data on feedstocks flows and UNFCCC data on chem sector process emissions
-*** these emission factors are for the chemical industry only
-parameter f_nechem_emissionFactors(ttot,all_regi,*)  "non-energy emission factors [GtC per ZJ]"
-/
-$ondelim
-$include "./core/input/f_nechem_emissionFactors.cs4r"
-$offdelim
-/;
-
-pm_emifacNonEnergy(ttot,regi,"sesofos", "fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids")  / s_ZJ_2_TWa;
-pm_emifacNonEnergy(ttot,regi,"seliqfos","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_ZJ_2_TWa;
-pm_emifacNonEnergy(ttot,regi,"segafos", "fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases")   / s_ZJ_2_TWa;
-
 ***------ Read in projections for incineration rates of plastic waste---
 *** "incineration rates [fraction]"
 parameter f_incinerationShares(ttot,all_regi)         "incineration rate of plastic waste"

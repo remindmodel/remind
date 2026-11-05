@@ -646,6 +646,21 @@ $offdelim
   /
 ;
 
+*** emission factors for process emissions in the chemicals sector,
+*** calculated using IEA data on feedstocks flows and UNFCCC data on chem sector process emissions
+Parameter f37_nechem_emissionFactors(ttot,all_regi,*)   "non-energy emission factors [GtC per ZJ]"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/f_nechem_emissionFactors.cs4r"
+$offdelim
+  /
+;
+
+*** convert from GtC/ZJ to GtC/TWa
+pm_emifacNonEnergy(ttot,regi,"sesofos", "fesos","indst","co2") = f37_nechem_emissionFactors(ttot,regi,"solids")  / (1000 * sm_EJ_2_TWa);
+pm_emifacNonEnergy(ttot,regi,"seliqfos","fehos","indst","co2") = f37_nechem_emissionFactors(ttot,regi,"liquids") / (1000 * sm_EJ_2_TWa);
+pm_emifacNonEnergy(ttot,regi,"segafos", "fegas","indst","co2") = f37_nechem_emissionFactors(ttot,regi,"gases")   / (1000 * sm_EJ_2_TWa);
+
 * Define carbon capture and storage share in waste incineration emissions
 * capture rate increases linearly from zero in 2025 to value the set in the switch for the defined year, and it is kept constant for years afterwards
 p37_regionalWasteIncinerationCCSMaxShare(ttot,all_regi) = 0;
