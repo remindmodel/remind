@@ -598,7 +598,7 @@ pm_ttot_val(ttot)                                    "value of ttot set element"
 p_tall_val(tall)                                     "value of tall set element"
 pm_ts(tall)                                          "(t_n+1 - t_n-1)/2 for a timestep t_n"
 pm_dt(tall)                                          "difference to last timestep"
-pm_interpolWeight_ttot_tall(tall)                    "weight for linear interpolation of ttot-dependent variables"
+p_interpolWeight_ttot_tall(tall)                     "weight for linear interpolation of ttot-dependent variables, used by macro_tallInterp"
 pm_tall_2_ttot(tall,ttot)                            "mapping from tall to ttot"
 pm_ttot_2_tall(ttot,tall)                            "mapping from ttot to tall"
 
@@ -771,5 +771,15 @@ $macro macro_interpolate(t,t0,t1,x0,x1) ( ((t1) - (t)) / ((t1) - (t0)) * (x0) + 
 ***            | |
 ***          t0  t1
 $macro macro_clamped_interpolate(t, t0, t1, x0, x1) ( (x0)$((t) <= (t0)) + (x1)$((t) >= (t1)) + ((x0) + ((x1) - (x0)) * ((t) - (t0)) / ((t1) - (t0)))$(((t) > (t0)) AND ((t) < (t1))))
+
+*** macro_tallInterp: linearly interpolate a quantity from the model years (ttot) to all years (tall).
+*** E.g. it computes the value for 2006 from the values for 2005 and 2010 (need to be manually passed).
+*** The values xLo and xHi need to be two timesteps neighboring in ttot. Usually it is used in two loops
+*** and then values for ttot and ttot1 are passed. Example:
+***   loop(ttot$(ttot.val ge 2005),
+***     loop(tall$(pm_tall_2_ttot(tall,ttot)),
+***       pm_GDPGross(tall,regi) = macro_tallInterp(pm_GDPGross(ttot,regi), pm_GDPGross(ttot+1,regi));
+***   ));
+$macro macro_tallInterp(xLo,xHi) ( (1 - p_interpolWeight_ttot_tall(tall)) * (xLo) + p_interpolWeight_ttot_tall(tall) * (xHi) )
 
 *** EOF ./core/declarations.gms

@@ -39,7 +39,7 @@ display pm_ts, pm_dt;
 
 loop(ttot,
     loop(tall$((ttot.val le tall.val) AND (pm_ttot_val(ttot+1) ge tall.val)),
-         pm_interpolWeight_ttot_tall(tall) = ( p_tall_val(tall) - pm_ttot_val(ttot) ) / ( pm_ttot_val(ttot+1) - pm_ttot_val(ttot) );
+         p_interpolWeight_ttot_tall(tall) = ( p_tall_val(tall) - pm_ttot_val(ttot) ) / ( pm_ttot_val(ttot+1) - pm_ttot_val(ttot) );
     );
 );
 
