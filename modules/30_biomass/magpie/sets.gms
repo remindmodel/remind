@@ -14,6 +14,7 @@ peren2rlf30(all_enty,rlf)    "map biomass energy to grades"
 /
         pebios.(5)            
         pebioil.(5)
+        pemanure.(5)
         pebiolc.2            "residues from agriculture and forestry"
 /
 
