@@ -430,10 +430,6 @@ loop(teLearn(te),
 
 *** regional uses different years than global data
   pm_data(regi,"learnMult_wFC",te) = pm_data(regi,"incolearn",te) / (sum((ttot, regi2)$(ttot.val = fm_dataglob("inco0year",te)), p_capCum(ttot,regi2,te)) ** pm_data(regi,"learnExp_wFC",te));
-*FS* initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020)
-*** equally for all regions based on global cumulative capacity of ccap0 and incolearn (difference between initial investment cost and floor cost)
-  pm_data(regi,"learnMult_wFC",te) $ (pm_data(regi,"tech_stat",te) = 4)
-    = pm_data(regi,"incolearn",te) / (sum((ttot, regi2)$(ttot.val = fm_dataglob("inco0year",te)), p_capCum(ttot,regi2,te)) ** pm_data(regi,"learnExp_wFC",te));
 );
 pm_data(regi,"learnMult_wFC","spv") = pm_data(regi,"incolearn","spv") / sum(regi2,p_capCum("2020",regi2,"spv")) ** pm_data(regi,"learnExp_wFC","spv");
 pm_data(regi,"learnMult_wFC","windon") = pm_data(regi,"incolearn","windon") / sum(regi2,p_capCum("2015",regi2,"windon")) ** pm_data(regi,"learnExp_wFC","windon");
