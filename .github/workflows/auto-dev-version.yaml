@@ -5,41 +5,55 @@ on:
     types: [ closed ]
 name: auto-dev-version
 
+permissions:
+  contents: read
+
+concurrency:
+  group: auto-dev-version
+  cancel-in-progress: false
+
 jobs:
   auto-dev-version:
     if: github.repository == 'remindmodel/remind' && github.event.pull_request.merged == true
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: refs/heads/develop
           fetch-depth: 0
           token: ${{ secrets.AUTO_DEV_VERSION_REMIND }}
+          persist-credentials: false
 
       - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v0.9.15
+        uses: gittools/actions/gitversion/setup@31b3198b2de324472547fecec2c0f721b70c38e2 # v0.9.15
         with:
           versionSpec: '5.x'
 
       - name: Determine Version
         id: gitversion
-        uses: gittools/actions/gitversion/execute@v0.9.15
+        uses: gittools/actions/gitversion/execute@31b3198b2de324472547fecec2c0f721b70c38e2 # v0.9.15
         with:
           useConfigFile: true
           configFilePath: .github/GitVersion.yml
 
       - name: Update CITATION.cff and config/default.cfg with version and date
+        env:
+          VERSION: ${{ steps.gitversion.outputs.assemblySemVer }}
         run: |
-          sed -i 's/^version:.*$/version: "${{ steps.gitversion.outputs.assemblySemVer }}"/' CITATION.cff
+          sed -i "s/^version:.*$/version: \"$VERSION\"/" CITATION.cff
           sed -i "s/^date-released:.*$/date-released: $(date --iso)/" CITATION.cff
-          sed -i 's/^cfg$model_version <-.*$/cfg$model_version <- "${{ steps.gitversion.outputs.assemblySemVer }}"/' config/default.cfg
+          sed -i "s/^cfg\$model_version <-.*$/cfg\$model_version <- \"$VERSION\"/" config/default.cfg
 
-      - name: Commit changes to CITATION.cff
-        uses: EndBug/add-and-commit@v9
-        with:
-          add: '["CITATION.cff", "config/default.cfg"]'
-          author_name: REMIND Research Software Engineering
-          author_email: rse@pik-potsdam.de
-          message: 'Release development version ${{ steps.gitversion.outputs.assemblySemVer }}'
-          tag: 'v${{ steps.gitversion.outputs.assemblySemVer }}'
-          pathspec_error_handling: exitImmediately
+      - name: Commit and tag
+        env:
+          VERSION: ${{ steps.gitversion.outputs.assemblySemVer }}
+          TOKEN: ${{ secrets.AUTO_DEV_VERSION_REMIND }}
+        run: |
+          git config user.name "REMIND Research Software Engineering"
+          git config user.email "rse@pik-potsdam.de"
+          git add CITATION.cff config/default.cfg
+          git commit -m "Release development version $VERSION"
+          git tag "v$VERSION"
+          AUTH="$(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)"
+          git -c http.extraHeader="Authorization: Basic ${AUTH}" push --atomic "https://github.com/${GITHUB_REPOSITORY}.git" HEAD:develop "v$VERSION"
