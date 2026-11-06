@@ -8,6 +8,10 @@ name: auto-dev-version
 permissions:
   contents: read
 
+concurrency:
+  group: auto-dev-version
+  cancel-in-progress: false
+
 jobs:
   auto-dev-version:
     if: github.repository == 'remindmodel/remind' && github.event.pull_request.merged == true
@@ -16,6 +20,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: refs/heads/develop
           fetch-depth: 0
           token: ${{ secrets.AUTO_DEV_VERSION_REMIND }}
           persist-credentials: false
@@ -50,4 +55,5 @@ jobs:
           git add CITATION.cff config/default.cfg
           git commit -m "Release development version $VERSION"
           git tag "v$VERSION"
-          git push "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:develop "v$VERSION"
+          AUTH="$(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)"
+          git -c http.extraHeader="Authorization: Basic ${AUTH}" push --atomic "https://github.com/${GITHUB_REPOSITORY}.git" HEAD:develop "v$VERSION"
