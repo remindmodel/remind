@@ -56,7 +56,7 @@ flexibility   0.85        0.7      0.9        0.75
 
 *** biomass technologies
 +             biotr   biotrmod   biochp   biohp   bioigcc   bioigccc   biogas   biogasc   bioh2   bioh2c   bioethl   bioeths   biodiesel   bioftrec   bioftcrec
-tech_stat                                               1          3        1         3       2        3         2                                3           3
+tech_stat                                               1          3        1         3       2        3         2                                3           3           
 inco0            10        300     3000     550      2450       3150     1200      1230    1680     2040      2860       590         160       2800        3100
 constrTme         0          1        4       2         4          5        4         4       4        4         4         2           2          4           5
 lifetime         35         35       40      40        40         40       40        40      35       35        35        35          35         35          35
@@ -66,17 +66,17 @@ omf                       0.03     0.04    0.04      0.04       0.04     0.04   
 omv                               30.11   25.00     31.50      50.50    10.90     12.80   10.60    10.60     97.27     38.99        5.05      10.60       10.60
 flexibility                         0.7              0.75        0.7
 
-+              biopyronly      biopyrhe        biopyrchp           biopyrliq    biocharuse
-tech_stat               1             1                1                 3 
-inco0                1080          1430             1750              3215  
-inco0year            2025          2025             2025
-floorcost             511           668              989        
-constrTme               4             4                4                 4
-eta                  0.48           0.48             0.48              0.36 
-omf                  0.04           0.04             0.04              0.05 
-omv                    70             70               70              138          
-lifetime               30             30               30               40             1
-learn                0.10           0.10             0.10
++              biopyronly   biopyrhe   biopyrchp   biopyrliq   biodigestCHP   biodigestGAS   biocharuse
+tech_stat               1          1           1           3 
+inco0                1080       1430        1750        3215           3400           1500
+inco0year            2025       2025        2025
+floorcost             511        668         989
+constrTme               4          4           4           4              2              2
+eta                  0.48       0.48        0.48        0.36           0.41           0.82
+omf                  0.04       0.04        0.04        0.05           0.04           0.05
+omv                    70         70          70         138            140             26
+lifetime               30         30          30          40             25             20            1
+learn                0.10       0.10        0.10          
 
 *** hydrogen technologies
 +                   elh2    h2turb      h2curt    h2turbVRE    h22ch4    MeOH
@@ -254,7 +254,27 @@ Biomass pyrolysis to Biochar and energy co-products - biopyronly; biopyrhe; biop
     For biopyrliq: Biochar yield based on Woolf et al. (2014), https://doi.org/10.1021/es500474q. 
         inco0 based on bioftrec, omv from Brown et al. (2011), https://doi.org/10.1002/bbb.254. 
     omf is set based on other bioenergy technologies.
-    
+
+Anaerobic digestion - biodigestCHP; biodigestGAS
+    PE input (pemanure) is measured as raw biogas energy (IEA convention), so eta is per unit of biogas.
+    Full derivation in biodigest_parameters.md. Currency: 1 EUR2026 ~ 0.85 USD2015; 1 EUR2020 ~ 1.05 USD2015.
+    --- biodigestCHP: agricultural plant, 70% energy crops / 30% manure, 511 kW rated output (Bemessungsleistung),
+        1135 kW CHP installed (2.2x overbuilt), IEE/DBFZ/ESE (2025) EEG-Evaluationsbericht, 1. Zwischenbericht, Tab. 6-1
+    inco0: 8937 EUR/kW_rated * 511/1135 = 4022 EUR/kW_installed ~ 3400 USD2015/kW
+           (cross-check: Kurzfristanalyse IEE/DBFZ/ESE (2026), Tab. 4-2: 4370 EUR/kW_installed)
+    eta: 0.41 electrical (range 0.36-0.43 for 75 kW - 2 MW plants)
+    omf: 2% maintenance + 1.5% admin & insurance (of investment) + ~0.5% labour allowance
+    omv: CHP full-maintenance contract ~1.9 ct/kWh_el (interpolated from 3.2/2.3/1.0 ct at 75 kW/150 kW/10 MW)
+    lifetime: 25 (20 a depreciation period; existing plants continue 10-13 a after a 15-30% retrofit)
+    capacity factor 0.45 (3942 h/a, EEG 2023 rated output = 45% of installed) set in core/datainput.gms;
+    usable heat 0.48 per unit of electricity (0.44 thermal * 45% heat used) set in 04_PE_FE_parameters
+    --- biodigestGAS: Danish Energy Agency, Technology Data for Renewable Fuels, data sheets updated 08/2026,
+        sheets "81 Biogas, Basic Plant, small" and "91 Upgrading Biogas, small" (amine scrubber), 2025 values, EUR2020
+    eta: 0.82 = 0.99 CH4 recovery, with process heat (digester 6.9% + upgrading 10.5% of biogas) from a biogas boiler
+    inco0: 1032 EUR/kW_biogas * 1.22 kW_biogas/kW_CH4 + 193 EUR/kW_CH4 = 1452 EUR2020/kW ~ 1500 USD2015/kW
+    omf: 0.05 (fixed O&M excluding electricity and heat); omv: 0.80 EUR/GJ ~ 26 USD2015/kWa
+    lifetime 20 (DEA range 15-25); auxiliary electricity 0.048 per unit of biomethane set in 04_PE_FE_parameters
+
 Photovoltaics - spv
     overall learning rate was increased to 25% and floor costs decreased to 50$2015/kW, as recent
     (2024) prices in various IEA-PVPS reports or other market reports show learning was faster than expected.

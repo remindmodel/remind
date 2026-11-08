@@ -1,0 +1,25 @@
+```{r}
+library(quitte)
+library(mip)
+library(httpgd)
+```
+
+```{r}
+hgd()
+```
+
+```{r}
+data <- read.quitte("/p/tmp/robertsa/digestion/remind/output/SSP2-NPi2025_2026-06-15_18.31.39/REMIND_generic_SSP2-NPi2025_withoutPlus.mif")
+```
+
+```{r PE Biomass Production}
+options(mip.yearsBarPlot = c(2020, 2030, 2050, 2100))
+options(mip.mainReg = "World")
+items <- c(
+  "PE|Production|Biomass|Lignocellulosic|Energy Crops",
+  "PE|Production|Biomass|Lignocellulosic|Residues",
+  "PE|Production|Biomass|1st Generation",
+  "PE|Production|Biomass|Manure (EJ/yr)",
+  NULL)
+showAreaAndBarPlots(data, items, tot = "PE|Production|Biomass", orderVars = "user", scales = "fixed", mainRegion = "World")
+```
