@@ -104,6 +104,19 @@ vm_prodSe.lo("2020",regi,"pecoal","seel","coalchp") = 0.8 * pm_IO_output("2020",
 vm_prodSe.up("2020",regi,"pegas","seel","gaschp") = 1e-4 + 1.3 * pm_IO_output("2020",regi,"pegas","seel","gaschp");
 
 
+*** RoSa: until 2020 biogas was used almost exclusively for on-site CHP (driven by feed-in tariffs, e.g. EEG, not represented in REMIND);
+*** upgrading to biomethane only scales up afterwards. Follow IEA data for both biogas routes in 2010-2020, free from 2025 on.
+vm_prodSe.lo(t,regi,"pemanure","seel","biodigestCHP")$(t.val ge 2010 AND t.val le 2020)
+  = 0.8 * pm_IO_output(t,regi,"pemanure","seel","biodigestCHP");
+*** limit new biodigestGAS capacity to the historical increase of output; production bounds would conflict with the
+*** fixed 2005 vintages since vm_capFac is fixed
+loop(ttot$(ttot.val ge 2010 AND ttot.val le 2020),
+  vm_deltaCap.up(ttot,regi,"biodigestGAS","1")
+    = 1.2 * max(0, pm_IO_output(ttot,regi,"pemanure","segabio","biodigestGAS") - pm_IO_output(ttot-1,regi,"pemanure","segabio","biodigestGAS"))
+    / (pm_cf(ttot,regi,"biodigestGAS") * pm_ts(ttot));
+);
+
+
 *** lower bounds on near-term capacity additions based on projects in "under construction" and "planned" category and
 *** the respective assumptions on completion rates (i.e. shares of projects that will actucally be completed and start operation until 2030,
 *** see p_ProjectsCompletionShare assumptions defined in  core/datainput.gms)
