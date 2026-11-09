@@ -13,6 +13,7 @@
 *' @authors Anselm Schultes, Franziska Piontek
 
 *###################### R SECTION START (MODULETYPES) ##########################
+$Ifi "%damages%" == "ACCREU" $include "./modules/50_damages/ACCREU/realization.gms"
 $Ifi "%damages%" == "BurkeLike" $include "./modules/50_damages/BurkeLike/realization.gms"
 $Ifi "%damages%" == "COACCH" $include "./modules/50_damages/COACCH/realization.gms"
 $Ifi "%damages%" == "DiceLike" $include "./modules/50_damages/DiceLike/realization.gms"
