@@ -55,7 +55,7 @@ display p51_scc;
 p51_scc(tall) = p51_sccLastItr(tall) *  min(max( (p51_scc(tall)/max(p51_sccLastItr(tall),1e-8)),1 - 0.5*0.95**iteration.val),1 + 0.95**iteration.val);
 
 pm_taxCO2eqSCC(ttot,regi) = 0;
-pm_taxCO2eqSCC(t,regi)$(t.val ge 2025) = max(0, p51_scc(t) * sm_c_2_co2/1000);
+pm_taxCO2eqSCC(t,regi)$(t.val ge 2025) = max(0, p51_scc(t) * sm_DptCO2_2_TDpGtC);
 
 *);
 

@@ -372,15 +372,6 @@ qm_deltaCapCumNet(ttot,regi,teLearn)$(ord(ttot) lt card(ttot) AND pm_ttot_val(tt
   vm_capCum(ttot,regi,teLearn);
 
 ***---------------------------------------------------------------------------
-*' Initial values for cumulated capacities (learning technologies only):
-*' (except for tech_stat 4 technologies that have no standing capacities in 2005 and ccap0 refers to another year)
-***---------------------------------------------------------------------------
-q_capCumNet(t0,regi,teLearn)$(pm_data(regi,"tech_stat",teLearn) < 4)..
-  vm_capCum(t0,regi,teLearn)
-  =e=
-  pm_data(regi,"ccap0",teLearn);
-
-***---------------------------------------------------------------------------
 *' Additional equation for fuel shadow price calulation:
 ***---------------------------------------------------------------------------
 *ml* reasonable results only for members of peExGrade and peren2rlf30
@@ -447,8 +438,7 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
 *' $$ b' = \frac{I_0}{I_0-F}b $$
 
 *' In datainput.gms, `fm_dataglob` external data provides the observed learning rate `learn` ($\lambda$),
-*' the initial investment costs `inco0` ($I_0$), the floorcost ($F$) and
-*' the cumulative capacity in 2015 `ccap0` ($C_0$).
+*' the initial investment costs `inco0` ($I_0$) and the floorcost ($F$).
 *' The other learning parameters are computed using the equations described above:
 *' `learnExp_wFC` ($b'$), `learnMult_wFC` ($a'$).
 
@@ -1155,12 +1145,12 @@ q_limitCapFeH2BI(t,regi,sector)$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst"
 ;
 
 ***---------------------------------------------------------------------------
-*' Enforce historical data biomass share per carrier in sector final energy for transport and buildings (+- 2%)
+*' Enforce historical data biomass share per carrier in sector final energy for transport and buildings (+- 2.5%)
 *' Exempt industry solids as they are covered below
 ***---------------------------------------------------------------------------
 
 q_shbiofe_up(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector) and sector2emiMkt(sector,emiMkt) and NOT (sameas(sector,"indst") and sameas(entyFe,"fesos")))..
-  (pm_secBioShare(t,regi,entyFe,sector) + 0.02)
+  (pm_secBioShare(t,regi,entyFe,sector) + 0.025)
   *
   sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt))
   =g=
@@ -1168,7 +1158,7 @@ q_shbiofe_up(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector) 
 ;
 
 q_shbiofe_lo(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector) and sector2emiMkt(sector,emiMkt) and NOT (sameas(sector,"indst") and sameas(entyFe,"fesos")))..
-  (pm_secBioShare(t,regi,entyFe,sector) - 0.02)
+  (pm_secBioShare(t,regi,entyFe,sector) - 0.025)
   *
   sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt))
   =l=

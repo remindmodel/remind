@@ -393,7 +393,7 @@ $setglobal emicapregi  none           !! def = none
 *' * (expoLinear): 4.5% exponential increase until cm_expoLinear_yearStart, transitioning into linear increase thereafter
 *' * (exogenous): carbon price is specified using an external input file or using the switch cm_regiExoPrice. Requires cm_emiscen = 9 and cm_iterative_target_adj = 0
 *' * (temperatureNotToExceed): [see realization for details. Test and verify before using it! ]
-*' * (NDC): implements a carbon price trajectory consistent with the NDC targets (up to 2030) and a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). Choose version using cm_NDC_version "2023_cond", "2023_uncond", or replace 2023 by 2022, 2021 or 2018 to get all NDC published until end of these years.
+*' * (NDC): implements a carbon price trajectory consistent with the NDC emissions targets for 2030 and 2035 based on PBL target collection and own target calculations, see ./modules/45_carbonprice/NDC/input/
 *' * (NPi): National Policies Implemented, extrapolation of historical (until 2020) carbon prices
 *' * (none): no tax policy (combined with all emiscens except emiscen = 9)
 *' * (functionalFormRegi): [Under development!] Regional EOC budgets
@@ -1442,24 +1442,6 @@ $setglobal cm_rcp_scen  rcp45         !! def = "rcp45"  !! regexp = none|rcp20|r
 *'      Note: this scenario was based on MESSAGEVeryLow in earlier versions; it is now based on MESSAGEMedium, so results
 *'      are not comparable with runs made with the earlier input revision (8.27fgas). MESSAGEKAFull changed in the same way
 $setglobal cm_fgas_scen  MESSAGEKAImplemented  !! def = "MESSAGEKAImplemented"  !! regexp = MESSAGEHigh|MESSAGEVeryLow|MESSAGEMedium|MESSAGEKAFull|MESSAGEKAImplemented
-*' cm_NDC_version            "choose version of NDC targets to be applied, including differentiation between conditional vs. unconditional targets"
-*' * This switch allows to run different states of NDC targets over the past years, allowing for comparison of NDC succession over the years. 
-*' * For the latest NDC version (2026_cond/uncond), the targets are based on the collection provided by PBL. The collection provides two formats for emissions targets, which we use as follows: 
-*' * For major emitters, we derive absolute emissions targets based on a detailed collection by PBL adding our own assumptions (e.g. regarding LULUCF emissions), while
-*' * for minor emitters, we rely on the absolute emissions targets directly provided by PBL. 
-*' * while for minor emitters, absolute emissions targets are directly taken from PBL collection. 
-*' *  (2026_cond):                all NDCs conditional to international financial support published until end of 2025 (PBL collection), note that for countries / regions with target ranges (e.g. EU 66-72% 2035 target)
-*' *                              the more ambitious target is chosen even if it is strictly speaking not a conditional NDC target
-*' *  (2026_uncond):              all NDCs independent of international financial support published until end of 2025 (PBL collection), note that for countries / regions with target ranges (e.g. EU 66-72% 2035 target) 
-*' *                              the less ambitious target is chosen even if it is strictly speaking not an unconditional NDC target
-*' *  (2024_cond_extrapol):       all NDCs conditional to international financial support published until August 31, 2024 with extrapolation of 2030 targets to 2035 targets for conutries without 2035 target
-*' *  (2024_uncond_extrapol):     all NDCs independent of international financial support published until August 31, 2024 with extrapolation of 2030 targets to 2035 targets for conutries without 2035 target
-*' *  (2024_cond):                all NDCs conditional to international financial support published until August 31, 2024
-*' *  (2024_uncond):              all NDCs independent of international financial support published until August 31, 2024
-*' *  (2023_cond):                all NDCs conditional to international financial support published until December 31, 2023
-*' *  (2023_uncond):              all NDCs independent of international financial support published until December 31, 2023
-*' *  Other supported years are 2022, 2021 and 2018, always containing NDCs published until December 31 of that year
-$setglobal cm_NDC_version  2026_cond    !! def = "2024_cond" !! regexp = 20(18|2[1-6])_(un)?cond(_extrapol)?$
 *' cm_NDC_targetYear            "choose years for which NDC emissions targets can be applied" [requires 45_carbonprice = NDC]
 *' * Examples on how to use:
 *' *  "2030" means that only 2030 target are included
@@ -1467,8 +1449,7 @@ $setglobal cm_NDC_version  2026_cond    !! def = "2024_cond" !! regexp = 20(18|2
 *' * Note: including target years here does not mean they are automcatically considered in the carbonprice NDC realization. 
 *' * Depending on the p45_minRatioOfCoverageToMax parameter, each region receives the target year with the highest share of emissions covered under NDCs.
 $setglobal cm_NDC_targetYear  2030, 2035    !! def = "2030, 2035"
-
-*' cm_targetDelay            "delays NDC and LTS targets beyond the default target years" [requires cm_NDC_version = 2026_cond]
+*' cm_targetDelay            "delays NDC and LTS targets beyond the default target years"
 *' *  (prisma): PRISMA asymetric rollback delays NDC and LTS target per region:
 *'      *   10 years delay for "Transition leaders": EUR, NEU, JPN (e.g. 2030 NDC shifted to 2040, 2035 NDC shifted to 2045, and 2050 NZ target shifted to 2060)
 *'      *   20 years delay for "Diversifying economies": LAM, USA, CAZ, IND, CHA, SSA, OAS
@@ -1747,11 +1728,6 @@ $setglobal cm_CES_calibration_default_prices  0.01  !!  def  =  0.01
 $setglobal cm_in_limit_price_change "ue_steel_primary, kap_steel_primary"   !! def = ""
 *** cm_calibration_string "def = off, else = additional string to include in the calibration name to be used" label for your calibration run to keep calibration files with different setups apart (e.g. with low elasticities, high elasticities)
 $setglobal cm_calibration_string  off    !!  def  =  off
-*** cm_techcosts -     use regionalized or globally homogenous technology costs for certain technologies
-*** (REG) regionalized technology costs with linear convergence between 2020 and year c_teNoLearnConvEndYr
-*** (REG2040) regionalized technology costs given by p_inco0 until 2040, then stable without convergence
-*** (GLO) globally homogenous technology costs
-$setglobal cm_techcosts  REG       !! def = REG  !! regexp = REG|REG2040|GLO
 *** cm_floorCostScen: regionally differentiated floor cost scenarios
 ***   (uniform)    uniform floor cost (almost no regional differentiation)
 ***   (pricestruc) regionally differentiated floor costs, the differentiated costs have the same ratio between regions as the ratio between 2020 tech cost values
@@ -1924,12 +1900,10 @@ $setglobal cm_adj_coeff_multiplier  off
 *** cm_inco0Factor "change investment costs. [factor]."
 *' *  (off): no scale-factor, use default investment costs (inco0) values
 *' *  (any value ge 0) list of techs with respective factor to change inco0 value by a multiplication factor. (e.g. "ccsinjeon 0.5,bioigccc 0.66)
-*'  Note: if %cm_techcosts% == "GLO", switch will not work for policy runs, i.e. cm_startyear > 2005, for pc, ngt and ngcc as this gets overwritten in 05_initialCap module
 $setglobal cm_inco0Factor  off !! def = off
 *** cm_inco0RegiFactor "change investment costs regionalized technology values. [factor]."
 *' *  def <- "off" = use default p_inco0 values.
 *' *  or list of techs with respective factor to change p_inco0 value by a multiplication factor. (ex. "windon 0.33, spv 0.33" makes investment costs for windon and spv 3 times cheaper)
-*' *  (note: if %cm_techcosts% == "GLO", switch will not work for policy runs, i.e. cm_startyear > 2005, for pc, ngt and ngcc as this gets overwritten in 05_initialCap module)
 $setglobal cm_inco0RegiFactor  off  !! def = off
 *' switch from standard to low and high CO2 transport & storage cost.
 *' Warning: it applies absolute values; only use it in combination with default c_techAssumptScen SSP2. 
