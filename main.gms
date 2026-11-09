@@ -435,6 +435,7 @@ $setglobal regipol  regiCarbonPrice              !! def = regiCarbonPrice
 *' * (Labor): Labor supply damages from Dasgupta et al. (2021)
 *' * (TC): tropical cyclone damages from Krichene et al. (2022)
 *' * (COACCH): bottom-up damage function from the COACCH project (van der Wijst et al. 2023)
+*' * (ACCREU): bottom-up damage function from the ACCREU project
 $setGlobal damages  off               !! def = off
 *'---------------------    51_internalizeDamages    ----------------------------
 *'
@@ -450,12 +451,18 @@ $setGlobal damages  off               !! def = off
 *' * (LabItr): Internalize labor supply damages based on Dasgupta et al. (2021). Requires cm_emiscen set to 9 for now.
 *' * (TCitr): Internalize tropical cyclone damage function based on Krichene et al. (2022). Requires cm_emiscen set to 9 for now.
 *' * (COACCHitr): Internalize COACCH damage function. Requires cm_emiscen set to 9
+*' * (ACCREUitr): Internalize ACCREU damage function. Requires cm_emiscen set to 9
 $setGlobal internalizeDamages  off               !! def = off
 *'---------------------    52_internalizeLCAimpacts    ----------------------------
 *'
 *' * (off): No internalization
 *' * (coupled): Run LCA internalization workflow in between iterations
 $setGlobal internalizeLCAimpacts  off               !! def = off
+*'---------------------    53_adaptation    ----------------------------
+*'
+*' * (off): No adaptation
+*' * (ACCREU): adaptation through adaptation cost functions from the ACCREU project
+$setGlobal adaptation  off               !! def = off
 *'---------------------    70_water  -------------------------------------------
 *'
 *' * (off): no water demand taken into account
@@ -778,6 +785,13 @@ parameter
 *' *  (2005): standard for baseline to check if model is well calibrated
 *' *  (2015): standard for all policy runs (eq. to fix2010), NDC, NPi and production baselines, especially if various baselines with varying parameters are explored
 *' *  (....): later start for delay policy runs, eg. 2025 for what used to be delay2020
+*'
+
+parameter
+  cm_SCCstartyear	"year where SCC starts to be endogenized as carbon tax"
+;
+  cm_SCCstartyear = 2030;	!! def = cm_startyear for policy runs
+*' * any year after the startyear is possible
 *'
 
 parameter
@@ -2128,6 +2142,17 @@ $setGlobal cm_KotzWenzPerc mean !! def = mean !! regexp = low|med|mean|high
 $setGlobal cm_damage_COACCH_adaptSpec	noadapt  !! def = noadapt
 *' COACCH damage function percentile specification ,p5 is median(p05,p5,p59)
 $setGlobal cm_damage_COACCH_CIspec	p5  !! def = p5
+*' separate SLR damage on or off
+$setGlobal cm_SLR	off  !! def = off
+*' damage from heat/cold-related mortality loss on or off
+$setGlobal cm_mortality	off  !! def = off
+*' exogenous adaptation costs on or off
+$setGlobal cm_adaCostExogenous	off  !! def = off
+parameter
+  cm_adaLim   "settings for adaptation limits; 1 = no limits, 2 = reduced spending, 3 = reduced effectiveness"
+;
+  cm_adaLim = 1;      !! def = 1  !! regexp = 1|2|3
+*** cfg$gms$cm_damage_Labor_exposure <- "low" # def = "low"; {low,high}
 *** cfg$gms$cm_damage_Labor_exposure <- "low" # def = "low"; {low,high}
 $setGlobal cm_damage_Labor_exposure  low    !! def = low  !! regexp = low|high
 *** cfg$gms$cm_TCssp <- "SSP2"  #def = "SSP2"; {SSP2,SSP5} the scenario for which the damage function is specified - currently only SSP2 and SSP5 are available

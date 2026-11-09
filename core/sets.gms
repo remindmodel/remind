@@ -902,6 +902,7 @@ sets
        damages
        internalizeDamages
        internalizeLCAimpacts
+       adaptation
        water
        optimization
        codePerformance
@@ -939,6 +940,7 @@ module2realisation(modules,*) "mapping of modules and active realisations" /
        damages . %damages%
        internalizeDamages . %internalizeDamages%
        internalizeLCAimpacts . %internalizeLCAimpacts%
+       adaptation . %adaptation%
        water . %water%
        optimization . %optimization%
        codePerformance . %codePerformance%
