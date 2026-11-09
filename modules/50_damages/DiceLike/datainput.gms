@@ -38,7 +38,8 @@ $ifi %cm_damage_DiceLike_specification% == "KWpanelPop" p50_damageFuncCoef1 = 0.
 $ifi %cm_damage_DiceLike_specification% == "KWpanelPop" p50_damageFuncCoef2 = 0.0009;
 
 *initialize
-pm_damage(tall,regi) = 1;
+pm_damage(tall,regi) = 0;
+pm_laborBenefit(tall,regi) = 0;
 pm_damageMarginal(tall,regi)           = 0;
 
 *** EOF ./modules/50_damages/DiceLike/datainput.gms

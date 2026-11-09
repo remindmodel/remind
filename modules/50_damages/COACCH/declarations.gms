@@ -12,10 +12,10 @@ p50_damageFuncCoef2(all_regi) 			"damage function coefficient, quadratic in temp
 p50_damage(tall,all_regi)			"damage factor"
 pm_damage(tall,all_regi)			"damage factor for general use"
 pm_damageMarginal(tall,all_regi)		"marginal damage"
+pm_laborBenefit(tall,all_regi)			"damage factor for benefitical labor impacts"
 ;
 
 positive variable
-vm_damageFactor(ttot,all_regi)      "damage factor reducing GDP"
 vm_damageProdFactor(ttot,all_regi,all_in)      "damage factor reducing production factors"
 ;
 *** EOF ./modules/50_damages/COACCH/declarations.gms

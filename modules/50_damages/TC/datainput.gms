@@ -34,7 +34,8 @@ p50_damageFuncCoefTC1(iso) = f50_TCtasK(iso,"%cm_TCspec%");
 display p50_damageFuncCoefTC0;
 
 *** initialize
-pm_damage(tall,regi) = 1;
+pm_damage(tall,regi) = 0;
+pm_laborBenefit(tall,regi) = 0;
 
 *** read in GDP to calculate GDP fraction of countries in a region and convert to MER
 table f50_countryGDP(tall,iso,all_GDPpopScen)	"ratio of country to regional GDP"

@@ -8,13 +8,13 @@
 parameters
 pm_damage(tall,all_regi)                             "damage factor (reduces GDP)"
 pm_damageMarginal(tall,all_regi)                     "damage function derivative"
+pm_laborBenefit(tall,all_regi)		"benefit of labor impact"
 p50_damageFuncCoef1			"damage function coefficient, linear in temperature"
 p50_damageFuncCoef2 			"damage function coefficient, quadratic in temperture"
 p50_damageFuncCoef3 			"damage function coefficient, exponent"
 ;
 
 positive variable
-vm_damageFactor(ttot,all_regi)      "damage factor reducing GDP"
 vm_damageProdFactor(ttot,all_regi,all_in)      "damage factor reducing production factors"
 ;
 *** EOF ./modules/50_damages/DiceLike/declarations.gms

@@ -51,7 +51,7 @@ display pm_damageTC;
 
 *combined regional damage
 pm_damage(tall,regi)$(tall.val ge 2005 and tall.val le 2300) = 
-    pm_damageProd(tall,regi)*sum(regi2iso(regi,iso),pm_damageTC(tall,iso)*pm_GDPfrac(tall,iso))
+   1- pm_damageProd(tall,regi)*sum(regi2iso(regi,iso),pm_damageTC(tall,iso)*pm_GDPfrac(tall,iso))
 ;
 
 *gross GDP on country level

@@ -47,7 +47,7 @@ if ((cm_emiscen ne 1),
     Execute_Loadpoint 'input_ref' p02_taxrev_redistr0_ref=v02_taxrev_Add.l;
     Execute_Loadpoint 'input_ref' p02_cons_ref=vm_cons.l;
     Execute_Loadpoint 'input_ref' p02_energyExp_ref=v02_energyExp.l;
-    Execute_Loadpoint 'input_ref' p02_damageFactor_ref=vm_damageFactor.l;
+    Execute_Loadpoint 'input_ref' p02_damageFactor_ref=vm_damageFactorAdapt.l;
 );
 
 *** income elasticity of tax revenues redistribution.
@@ -79,5 +79,11 @@ $offdelim
 
 p02_damConsFactor1(ttot,regi)=f02_damConsFactor(regi,"f1");
 p02_damConsFactor2(ttot,regi)=f02_damConsFactor(regi,"f2");
+
+*FP* initialize the mortality damage as 0, fix it to zero before start year
+*FP* fix it to zero unless the mortality switch is on - then this is calculated in module 50
+vm_mortalityDamage.l = 0;
+vm_mortalityDamage.fx(ttot,regi)$(ttot.val lt cm_startyear) = 0;
+vm_mortalityDamage.fx(ttot,regi)$(ttot.val ge cm_startyear & sameas('%cm_mortality%','on')) = 0;
 
 *** EOF ./modules/02_welfare/ineqLognormal/datainput.gms

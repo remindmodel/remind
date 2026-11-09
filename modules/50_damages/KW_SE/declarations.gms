@@ -12,6 +12,7 @@ p50_damageGrowthRateImp(tall,tall,all_regi)	     "growth rate damage with emissi
 p50_seImp(tall,tall,all_regi)			     "damage standard error with emission pulse"
 pm_damageImp(tall,tall,all_regi)		     "damage with emission pulse"
 pm_damage(tall,all_regi)                             "damage factor (reduces GDP)"
+pm_laborBenefit(tall,all_regi)			     "beneficial impact on labor"
 pm_damageGrowthRate(tall,all_regi)                   "damage function for growth rate of GDP"
 pm_damageMarginalT(tall,all_regi)                    "damage function derivative for KW"
 pm_damageMarginalTm1(tall,all_regi)                  "damage function derivative for KW"
@@ -39,7 +40,6 @@ p50_delTimp2(tall,tall,all_regi)    "temperature difference of lag years with em
 ;
 
 positive variable
-vm_damageFactor(ttot,all_regi)      "damage factor reducing GDP"
 vm_damageProdFactor(ttot,all_regi,all_in)      "damage factor reducing production factors"
 ;
 *** EOF ./modules/50_damages/KW_SE/declarations.gms

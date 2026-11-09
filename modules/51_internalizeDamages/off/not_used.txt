@@ -36,3 +36,11 @@ sm_eps,input,not needed
 pm_ies,input,not needed
 pm_ttot_2_tall,input,questionnaire
 sm_DptCO2_2_TDpGtC,scalar,added by codeCheck
+pm_protectionLevelNonSLR,input,questionnaire
+pm_protectionLevelSLR,input,questionnaire
+cm_SCCstartyear,parameter,???
+pm_slrImpulseResponseCO2,parameter,???
+pm_nonSLRdamageMarginal,parameter,???
+pm_SLRdamageMarginal,parameter,???
+pm_laborBenefitMarginal,parameter,???
+pm_mortalityDamageMarginal,parameter,???

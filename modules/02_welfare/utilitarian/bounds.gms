@@ -11,4 +11,5 @@ v02_inconvPenSolidsBuild.fx("2005",regi) = 0;
 v02_inconvPen.fx("2005",regi) = 0;
 $ENDIF.INCONV
 
+
 *** EOF ./modules/02_welfare/utilitarian/bounds.gms

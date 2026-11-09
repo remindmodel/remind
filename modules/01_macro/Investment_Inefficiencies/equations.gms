@@ -18,7 +18,7 @@
 *' Net tax revenues and adjustment costs converge to zero in the optimal solution (equilibrium point).
 ***---------------------------------------------------------------------------
 qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
-    vm_cesIO(ttot,regi,"inco") * vm_damageFactor(ttot,regi)
+    vm_cesIO(ttot,regi,"inco") * vm_damageFactorAdapt(ttot,regi)
   - vm_Xport(ttot,regi,"good")
   + vm_Mport(ttot,regi,"good") * (1 - pm_tradecostgood(regi) - pm_risk_premium(regi))
   + vm_biocharRevenue(ttot,regi)

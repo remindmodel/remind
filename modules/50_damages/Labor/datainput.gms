@@ -48,7 +48,8 @@ $ifi %cm_damage_Labor_exposure% == "remind" p50_damageFuncCoef2("SSA") = -0.0025
 $ifi %cm_damage_Labor_exposure% == "remind" p50_damageFuncCoef2("USA") = -0.00058;
 
 *initialize
-pm_damage(tall,regi) = 1;
+pm_damage(tall,regi) = 0;
+pm_laborBenefit(tall,regi) = 0;
 pm_damageMarginal(tall,regi)           = 0;
 
 *** EOF ./modules/50_damages/Labor/datainput.gms

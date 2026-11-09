@@ -11,4 +11,7 @@ v02_inconvPenSolidsBuild.fx("2005",regi) = 0;
 v02_inconvPen.fx("2005",regi) = 0;
 $ENDIF.INCONV
 
+***initialize the mortality damage as 0, can be overwritten in the damage module
+vm_mortalityDamage.fx(ttot,regi)$(ttot.val lt cm_startyear) = 0;
+vm_mortalityDamage.fx(ttot,regi)$(ttot.val gt cm_startyear) = 0;
 *** EOF ./modules/02_welfare/ineqLognormal/bounds.gms

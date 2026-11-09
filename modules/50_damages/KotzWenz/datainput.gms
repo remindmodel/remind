@@ -6,7 +6,8 @@ $offdelim
 ;
 
 *** initialize
-pm_damage(tall,regi) = 1;
+pm_damage(tall,regi) = 0;
+pm_laborBenefit(tall,regi) = 0;
 
 *** calculate and interpolate country GDP fraction of regional GDP, country GDP is in PPP, regional GDP in trl MER!
 pm_GDPfrac(tall,iso)=f50_countryGDP(tall,iso,"%cm_GDPpopScen%")/1000000/(sum(regi2iso(regi,iso),pm_gdp(tall,regi)/pm_shPPPMER(regi))+1e-9);

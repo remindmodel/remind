@@ -26,3 +26,14 @@ pm_damageGrowthRateTC,input,questionnaire
 pm_damageIso,input,questionnaire
 pm_damageGrowthRateIso,input,questionnaire
 pm_globalMeanTemperature,input,questionnaire
+pm_pop,parameter,???
+cm_startyear,input,???
+vm_mortalityDamage,variable,???
+pm_globalMeanSLR,parameter,???
+pm_nonSLRdamageMarginal,parameter,???
+pm_SLRdamageMarginal,parameter,???
+pm_damageNonSLR,parameter,???
+pm_damageSLR,parameter,???
+pm_laborBenefitMarginal,parameter,???
+pm_mortalityDamage,parameter,???
+pm_mortalityDamageMarginal,parameter,???

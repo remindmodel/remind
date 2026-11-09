@@ -27,7 +27,8 @@ p50_damageFuncCoef2 = -0.000097;
  
 
 * initialize
-pm_damage(tall,regi) = 1;
+pm_damage(tall,regi) = 0;
+pm_laborBenefit(tall,regi) = 0;
 pm_damageGrowthRate(tall,regi)         = 0;
 pm_damageMarginal(tall,regi)           = 0;
 

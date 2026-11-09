@@ -13,6 +13,7 @@ p50_damageFuncCoefTC0(iso)		"damage function coefficient for TC, constant"
 p50_damageFuncCoefTC1(iso)			"damage function coefficient for TC, linear in temperature"
 p50_damageFuncCoefTC2(iso) 			"damage function coefficient for TC, quadratic in temperture"
 pm_damage(tall,all_regi)                             "damage factor (reduces GDP)"
+pm_laborBenefit(tall,all_regi)			 "beneficial impact on labor"
 pm_damageIso(tall,iso)                             "damage factor (reduces GDP)"
 *p50_damageAllIso(tall,iso)                             "damage factor (reduces GDP)"
 pm_damageGrowthRateIso(tall,iso)                   "damage function for growth rate of GDP"
@@ -23,7 +24,6 @@ p50_test(tall,iso)		"to check regional sum of GDP"
 ;
 
 positive variable
-vm_damageFactor(ttot,all_regi)      "damage factor reducing GDP"
 vm_damageProdFactor(ttot,all_regi,all_in)      "damage factor reducing production factors"
 ;
 

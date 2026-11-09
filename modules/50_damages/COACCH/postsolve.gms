@@ -16,7 +16,7 @@ pm_damageMarginal(tall,regi)$(tall.val ge 2000 and tall.val le 2300) =
 *  ( p50_damageFuncCoef1(regi)/100  + 2 * p50_damageFuncCoef2(regi)/100 * (pm_globalMeanTemperatureZeroed1900(tall)-pm_globalMeanTemperatureZeroed1900("2005") ));
 
 pm_damage(tall,regi)$(tall.val ge 2030 and tall.val le 2300) = 
-  1-(p50_damage(tall,regi)-p50_damage("2020",regi));
+  p50_damage(tall,regi)-p50_damage("2020",regi);
 
 display pm_damage,pm_damageMarginal;
 

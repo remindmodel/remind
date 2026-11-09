@@ -30,6 +30,7 @@ $ENDIF.INCONV_bioSwitch
 ***-------------------------------------------------------------------------------
 variables
 v02_welfare(all_regi)                             "Regional welfare"
+vm_mortalityDamage(ttot,all_regi)		  "damage from heat/cold-related mortality, reducing consumption - currently only available for ACCREU damage function"
 vm_welfareGlob                                    "Global welfare"
 
 ;

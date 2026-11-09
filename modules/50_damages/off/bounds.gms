@@ -6,7 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/50_damages/off/bounds.gms
 
-vm_damageFactor.fx(ttot,regi) = 1;
 vm_damageProdFactor.fx(ttot,regi,in) = 1;
+
+pm_damage(ttot,regi) = 0;
+pm_laborBenefit(ttot,regi) = 0;
 
 *** EOF ./modules/50_damages/off/bounds.gms

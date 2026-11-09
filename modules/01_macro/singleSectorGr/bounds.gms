@@ -6,8 +6,14 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/01_macro/singleSectorGr/bounds.gms
 
+
 *nb* lower bounds on CES values
+$ifthen "%damages%" == "ACCREU"
+vm_cons.lo(t,regi) = pm_mortalityDamage(t,regi) + 1e-3;
+$else
 vm_cons.lo(t,regi)     = 1e-3;
+$endif
+
 vm_cesIO.lo(t,regi,in)$( NOT in_industry_dyn37(in) ) 
   = max(1e-6, abs(pm_cesdata(t,regi,in,"offset_quantity")));
 

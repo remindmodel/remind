@@ -17,7 +17,7 @@ pm_damageMarginal(tall,regi)$(tall.val gt 2025 and tall.val le 2300) =
 
 *regional damage using SSP country level GDP as weight
 pm_damage(tall,regi)$(tall.val gt 2025 and tall.val le 2300) = 
-	1-sum(regi2iso(regi,iso),p50_damageIsoPerc(tall,iso,"%cm_KotzWenzPerc%")*pm_GDPfrac(tall,iso))
+	sum(regi2iso(regi,iso),p50_damageIsoPerc(tall,iso,"%cm_KotzWenzPerc%")*pm_GDPfrac(tall,iso))
 ;
 
 display pm_damage,pm_damageMarginal;

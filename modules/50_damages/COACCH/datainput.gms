@@ -22,7 +22,8 @@ p50_damageFuncCoef1(regi)=p50_damageCoefs("%cm_damage_COACCH_adaptSpec%",regi,"b
 p50_damageFuncCoef2(regi)=p50_damageCoefs("%cm_damage_COACCH_adaptSpec%",regi,"b2","%cm_damage_COACCH_CIspec%");
 
 *initialize
-pm_damage(tall,regi) = 1;
+pm_damage(tall,regi) = 0;
+pm_laborBenefit(tall,regi) = 0;
 p50_damage(tall,regi) = 1;
 
 *** EOF .modules/50_damages/COACCH/datainput.gms

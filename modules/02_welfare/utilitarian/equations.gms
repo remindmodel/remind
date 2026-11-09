@@ -31,7 +31,7 @@ q02_welfare(regi) ..
     * pm_ts(ttot)
     / ((1 + pm_prtp(regi)) ** (pm_ttot_val(ttot) - 2005))
     * ( ( pm_pop(ttot,regi) 
-        * ( ( ( ( vm_cons(ttot,regi)
+        * ( ( ( ( (vm_cons(ttot,regi) - vm_mortalityDamage(ttot,regi))
             / pm_pop(ttot,regi)
         )
          ** (1 - 1 / pm_ies(regi))
@@ -39,7 +39,7 @@ q02_welfare(regi) ..
           )
         / (1 - 1 / pm_ies(regi))
         )$( pm_ies(regi) ne 1 )
-      + log(vm_cons(ttot,regi) / pm_pop(ttot,regi))$( pm_ies(regi) eq 1 )
+      + log((vm_cons(ttot,regi) - vm_mortalityDamage(ttot,regi)) / pm_pop(ttot,regi))$( pm_ies(regi) eq 1 )
           )
         )
 

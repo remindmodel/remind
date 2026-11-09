@@ -31,7 +31,7 @@ q02_welfare(regi) ..
     * pm_ts(ttot)
     / ((1 + pm_prtp(regi)) ** (pm_ttot_val(ttot) - 2005))
     * ( ( pm_pop(ttot,regi)
-        * ( ( ( ( (  vm_cons(ttot,regi)
+        * ( ( ( ( (  (vm_cons(ttot,regi) - vm_mortalityDamage(ttot,regi))
           * exp(
               -0.5 
             * (1 / pm_ies(regi))
@@ -45,7 +45,7 @@ q02_welfare(regi) ..
           )
         / (1 - 1/pm_ies(regi)) 
         )$( pm_ies(regi) ne 1 )
-      + ( log((vm_cons(ttot,regi)) / pm_pop(ttot,regi))
+      + ( log((vm_cons(ttot,regi)-vm_mortalityDamage(ttot,regi)) / pm_pop(ttot,regi))
         - 0.5 * v02_distrFinal_sigmaSq_welfare(ttot,regi)
         )$( pm_ies(regi) eq 1 )
           )
@@ -175,8 +175,8 @@ q02_relTaxlevels(ttot,regi)$(ttot.val ge cm_startyear)..
 q02_consLossShare(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_damageConsShare(ttot,regi)
   =e=
-    vm_cons(ttot,regi)/((p02_damConsFactor1(ttot,regi)+vm_damageFactor(ttot,regi)*p02_damConsFactor2(ttot,regi))*p02_cons_ref(ttot,regi))-vm_cons(ttot,regi)/p02_cons_ref(ttot,regi)
-***    1/(p02_damConsFactor1(ttot,regi)+vm_damageFactor(ttot,regi)*p02_damConsFactor2(ttot,regi))-1
+    vm_cons(ttot,regi)/((p02_damConsFactor1(ttot,regi)+vm_damageFactorAdapt(ttot,regi)*p02_damConsFactor2(ttot,regi))*p02_cons_ref(ttot,regi))-vm_cons(ttot,regi)/p02_cons_ref(ttot,regi)
+***    1/(p02_damConsFactor1(ttot,regi)+vm_damageFactorAdapt(ttot,regi)*p02_damConsFactor2(ttot,regi))-1
 ;
 
 *** Alpha, the elasticity of energy expenditure, depends upon the region's GDP
@@ -184,7 +184,7 @@ q02_consLossShare(ttot,regi)$(ttot.val ge cm_startyear)..
 q02_distrAlpha(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_distrAlpha(ttot,regi)
     =e=
-    1+1.618788-2*0.09746092*log(1000*(vm_cesIO(ttot,regi,"inco")/pm_shPPPMER(regi)*vm_damageFactor(ttot,regi))/pm_pop(ttot,regi))
+    1+1.618788-2*0.09746092*log(1000*(vm_cesIO(ttot,regi,"inco")/pm_shPPPMER(regi)*vm_damageFactorAdapt(ttot,regi))/pm_pop(ttot,regi))
 ***    1+1.618788-2*0.09746092*log(1000*vm_cesIO(ttot,regi,"inco")/pm_pop(ttot,regi))
 *** Note that the above equation defines alpha as a parameter depending upon GDP, which could potentially bring a complex feedback (rich countries moderating GDP growth to reduce the regressivity of energy expenditures).
 *** For tests, I also used previously consumption in the baseline instead of actual GDP in the current scenario, so that alpha is a parameter

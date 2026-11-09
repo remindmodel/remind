@@ -8,6 +8,7 @@
 
 parameters
 pm_damage(tall,all_regi)                             "damage factor (reduces GDP)"
+pm_laborBenefit(tall,all_regi)			     "beneficial impact on labor"
 pm_damageGrowthRate(tall,all_regi)                   "damage function for growth rate of GDP"
 pm_damageMarginalT(tall,all_regi)                    "damage function derivative for KW"
 pm_damageMarginalTm1(tall,all_regi)                  "damage function derivative for KW"
@@ -19,7 +20,6 @@ p50_damageFuncCoefb2     "coef2 of damage function"
 ;
 
 positive variable
-vm_damageFactor(ttot,all_regi)      "damage factor reducing GDP"
 vm_damageProdFactor(ttot,all_regi,all_in)      "damage factor reducing production factors"
 ;
 *** EOF ./modules/50_damages/KWLike/declarations.gms

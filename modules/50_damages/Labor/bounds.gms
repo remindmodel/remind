@@ -6,7 +6,6 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/50_damages/Labor/bounds.gms
 
-vm_damageFactor.fx(ttot,regi) = 1;
 vm_damageProdFactor.fx(ttot,regi,in) = 1;
 vm_damageProdFactor.fx(ttot,regi,"lab")$(ttot.val ge cm_startyear) = pm_damage(ttot,regi);
 

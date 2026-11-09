@@ -11,10 +11,10 @@ pm_damageGrowthRate(tall,all_regi)                   "damage function for growth
 pm_damageMarginal(tall,all_regi)                     "damage function derivative"
 p50_damageFuncCoef1     "coef1 of damage function",
 p50_damageFuncCoef2     "coef2 of damage function"
+pm_laborBenefit(tall,all_regi)			"damage factor for benefitical labor impacts"
 ;
 
 positive variable
-vm_damageFactor(ttot,all_regi)      "damage factor reducing GDP"
 vm_damageProdFactor(ttot,all_regi,all_in)      "damage factor reducing production factors"
 ;
 *** EOF ./modules/50_damages/BurkeLike/declarations.gms

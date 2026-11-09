@@ -7,7 +7,6 @@
 name,type,reason
 pm_globalMeanTemperatureZeroed1900,input,questionnaire
 pm_regionalTemperature,input,questionnaire
-pm_damage,input,questionnaire
 pm_damageGrowthRate,input,questionnaire
 pm_damageMarginal,input,questionnaire
 cm_damages_BurkeLike_specification,input,questionnaire
@@ -34,3 +33,13 @@ pm_interpolWeight_ttot_tall,input,questionnaire
 pm_tall_2_ttot,input,questionnaire
 pm_globalMeanTemperature,input,questionnaire
 cm_startyear,input,questionnaire
+pm_pop,parameter,???
+vm_mortalityDamage,variable,???
+pm_globalMeanSLR,parameter,???
+pm_nonSLRdamageMarginal,parameter,???
+pm_SLRdamageMarginal,parameter,???
+pm_damageNonSLR,parameter,???
+pm_damageSLR,parameter,???
+pm_laborBenefitMarginal,parameter,???
+pm_mortalityDamage,parameter,???
+pm_mortalityDamageMarginal,parameter,???

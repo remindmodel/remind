@@ -9,6 +9,8 @@
 *** Damage factors
 ***----------------------------
 
+pm_damage(tall,regi) = 0;
+pm_laborBenefit(tall,regi) = 0;
 
 $ifthen exist "./modules/50_damages/exogenous/input/p50_damage_exo.inc"
 $include "./modules/50_damages/exogenous/input/p50_damage_exo.inc"

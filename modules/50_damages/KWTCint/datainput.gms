@@ -43,7 +43,8 @@ p50_damageFuncCoefTC0(iso) = f50_TCconst(iso,"%cm_TCpers%","%cm_TCspec%")/100;
 p50_damageFuncCoefTC1(iso) = f50_TCtasK(iso,"%cm_TCpers%","%cm_TCspec%")/100;
 
 *** initialize
-pm_damage(tall,regi) = 1;
+pm_damage(tall,regi) = 0;
+pm_laborBenefit(tall,regi) = 0;
 pm_damageTC(tall,iso) = 1;
 pm_damageProd(tall,regi) = 1;
 pm_damageGrowthRate(tall,regi)         = 0;

@@ -27,3 +27,13 @@ pm_damageIso,input,added by codeCheck
 pm_damageGrowthRateIso,input,added by codeCheck
 pm_globalMeanTemperature,input,questionnaire
 cm_startyear,input,questionnaire
+pm_pop,parameter,???
+vm_mortalityDamage,variable,???
+pm_globalMeanSLR,parameter,???
+pm_nonSLRdamageMarginal,parameter,???
+pm_SLRdamageMarginal,parameter,???
+pm_damageNonSLR,parameter,???
+pm_damageSLR,parameter,???
+pm_laborBenefitMarginal,parameter,???
+pm_mortalityDamage,parameter,???
+pm_mortalityDamageMarginal,parameter,???

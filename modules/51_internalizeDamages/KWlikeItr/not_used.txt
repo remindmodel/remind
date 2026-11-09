@@ -21,3 +21,11 @@ pm_damageImp,input,questionnaire
 pm_damageIso,input,questionnaire
 pm_damageGrowthRateIso,input,questionnaire
 pm_ttot_2_tall,input,questionnaire
+pm_protectionLevelNonSLR,input,questionnaire
+pm_protectionLevelSLR,input,questionnaire
+cm_SCCstartyear,parameter,???
+pm_slrImpulseResponseCO2,parameter,???
+pm_nonSLRdamageMarginal,parameter,???
+pm_SLRdamageMarginal,parameter,???
+pm_laborBenefitMarginal,parameter,???
+pm_mortalityDamageMarginal,parameter,???

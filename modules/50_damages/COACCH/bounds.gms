@@ -7,8 +7,6 @@
 *** SOF .modules/50_damages/COACCH/bounds.gms
 
 vm_damageProdFactor.fx(ttot,regi,in) = 1;
-vm_damageFactor.fx(ttot,regi)$(ttot.val lt cm_startyear) = 1;
-vm_damageFactor.fx(ttot,regi)$(ttot.val ge cm_startyear) = pm_damage(ttot,regi);
 
 *** EOF .modules/50_damages/COACCH/bounds.gms
 

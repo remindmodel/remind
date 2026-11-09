@@ -28,7 +28,7 @@ pm_damageGrowthRate(tall,regi)$(tall.val gt 2150) = 0;
 
 *damage function. match observed 2020 GDP, that is, assume that no climate damages until then.
 pm_damage(tall,regi)$(tall.val ge 2020 and tall.val le 2300) = 
-    prod(tall2$(tall2.val ge 2020 AND tall2.val le tall.val),  
+    1 - prod(tall2$(tall2.val ge 2020 AND tall2.val le tall.val),  
 	(1 + pm_damageGrowthRate(tall2,regi) * 2**(-(tall.val - tall2.val)/cm_damages_BurkeLike_persistenceTime) )    
     )
 ;
