@@ -14,6 +14,7 @@
 *' @authors Anselm Schultes, Franziska Piontek
 
 *###################### R SECTION START (MODULETYPES) ##########################
+$Ifi "%internalizeDamages%" == "ACCREUitr" $include "./modules/51_internalizeDamages/ACCREUitr/realization.gms"
 $Ifi "%internalizeDamages%" == "BurkeLikeItr" $include "./modules/51_internalizeDamages/BurkeLikeItr/realization.gms"
 $Ifi "%internalizeDamages%" == "COACCHitr" $include "./modules/51_internalizeDamages/COACCHitr/realization.gms"
 $Ifi "%internalizeDamages%" == "DiceLikeItr" $include "./modules/51_internalizeDamages/DiceLikeItr/realization.gms"
