@@ -440,23 +440,23 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
 *' In datainput.gms, `fm_dataglob` external data provides the observed learning rate `learn` ($\lambda$),
 *' the initial investment costs `inco0` ($I_0$) and the floorcost ($F$).
 *' The other learning parameters are computed using the equations described above:
-*' `learnExp_wFC` ($b'$), `learnMult_wFC` ($a'$).
+*' `p_learnExpGlob`/`p_learnExpReg` ($b'$), `p_learnMultGlob`/`p_learnMultReg` ($a'$).
 
 *' In equations.gms, the investment costs equation `q_costTeCapital` corresponds to $I = a'\times C^{b'} + F$,
 *' with variations depending on time period and floor cost scenarios.
 
-*** learnExp_wFC must be strictly negative for q_costTeCapital to work
-loop((regi, teLearn)$(pm_data(regi, "learnExp_wFC", teLearn) >= 0),
-    abort "Parameter error: pm_data('learnExp_wFC') must be strictly negative! This may be violated if floorcost > inco0 for some region/tech";
+*** p_learnExpReg/p_learnExpGlob must be strictly negative for q_costTeCapital to work
+loop((regi, teLearn)$(p_learnExpReg(regi, teLearn) >= 0),
+    abort "Parameter error: p_learnExpReg must be strictly negative! This may be violated if floorcost > inco0 for some region/tech";
 );
-loop(teLearn$(fm_dataglob("learnExp_wFC", teLearn) >= 0),
-    abort "Parameter error: fm_dataglob('learnExp_wFC') must be strictly negative! This may be violated if floorcost > inco0 for some region/tech";
+loop(teLearn$(p_learnExpGlob(teLearn) >= 0),
+    abort "Parameter error: p_learnExpGlob must be strictly negative! This may be violated if floorcost > inco0 for some region/tech";
 );
 
 
 $macro macro_capCumGlob (sum(regi2, vm_capCum(t,regi2,teLearn)) + pm_capCumForeign(t,regi,teLearn))
-$macro macro_costRegi   (pm_data(regi,"floorcost",teLearn) + pm_data(regi,"learnMult_wFC",teLearn) * macro_capCumGlob ** pm_data(regi,"learnExp_wFC",teLearn))
-$macro macro_costGlob   (fm_dataglob("floorcost",teLearn) + fm_dataglob("learnMult_wFC",teLearn) * macro_capCumGlob ** fm_dataglob("learnExp_wFC",teLearn))
+$macro macro_costRegi   (pm_data(regi,"floorcost",teLearn) + p_learnMultReg(regi,teLearn) * macro_capCumGlob ** p_learnExpReg(regi,teLearn))
+$macro macro_costGlob   (fm_dataglob("floorcost",teLearn) + p_learnMultGlob(teLearn) * macro_capCumGlob ** p_learnExpGlob(teLearn))
 
 q_costTeCapital(t,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) < 4 or t.val > 2020) ..
   vm_costTeCapital(t,regi,teLearn)
