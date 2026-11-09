@@ -11,4 +11,5 @@ path_gdx_list <- c("path_gdx" = "input.gdx",
                    "path_gdx_refpolicycost" = "input_refpolicycost.gdx",
                    "path_gdx_bau" = "input_bau.gdx",
                    "path_gdx_carbonprice" = "input_carbonprice.gdx",
-                   "path_gdx_damage" = "input_damage.gdx")
+                   "path_gdx_damage" = "input_damage.gdx",
+		   "path_gdx_adaptationCosts" = "input_adaptationCosts.gdx")

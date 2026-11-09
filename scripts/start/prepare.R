@@ -109,6 +109,13 @@ prepare <- function() {
     create_input_for_50_damage_exogenous(as.character(cfg$files2export$start["input_damage.gdx"]))
   }
 
+  # Create input file with exogenous adaptation costs from another run
+  if((cfg$gms$cm_adaCostExogenous == "on") && (!is.na(cfg$files2export$start["input_adaptationCosts.gdx"]))){
+    cat("\nRun scripts/input/create_input_for_53_adaptation_costs.R to create input file with exogenous adaptation costs from another run.\n")
+    source("scripts/input/create_input_for_53_adaptation_costs.R")
+    create_input_for_53_adaptation_costs(as.character(cfg$files2export$start["input_adaptationCosts.gdx"]))
+  }
+
   # Update module paths in GAMS code
   update_modules_embedding()
 
