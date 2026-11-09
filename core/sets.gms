@@ -93,8 +93,9 @@ all_fgas_scen   "all possible F-gas emission scenarios (switch cm_fgas_scen)"
 /
     MESSAGEHigh            "MESSAGEix high-emission pathway"
     MESSAGEVeryLow         "MESSAGEix very-low-emission pathway"
-    MESSAGEKAFull          "VeryLow with Kigali Amendment caps in all countries from 2030"
-    MESSAGEKAImplemented   "VeryLow with Kigali Amendment caps only where current policies include it"
+    MESSAGEMedium          "MESSAGEix medium-emission pathway"
+    MESSAGEKAFull          "Medium with Kigali Amendment caps in all countries from 2030"
+    MESSAGEKAImplemented   "Medium with Kigali Amendment caps only where current policies include it"
 /
 
 *** If you get a domain violation here, check if cm_APssp and cm_APscen values are correctly paired. See main.gms for details.
