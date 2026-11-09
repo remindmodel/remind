@@ -36,6 +36,8 @@ p15_gmt0(tall)        "global mean temperature convergence saved for the next it
 pm_globalMeanTemperature(tall)                "global mean temperature anomaly [K]"
 pm_globalMeanTemperatureZeroed1900(tall)      "global mean temperature anomaly, zero around 1900 [K]"
 pm_temperatureImpulseResponseCO2(tall,tall)   "temperature impulse response to CO2 [K/GtCO2]" 
+pm_globalMeanSLR(tall)		"global mean SLR anomaly [mm]"
+pm_slrImpulseResponseCO2(tall,tall)		"SLR impulse response to CO2 [mm/GtCO2]"
 ;
 
 scalars

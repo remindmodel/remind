@@ -54,4 +54,6 @@ pm_gmt_conv = 0;
 pm_globalMeanTemperature(tall) = 0;
 pm_globalMeanTemperatureZeroed1900(tall) = 0;
 pm_temperatureImpulseResponseCO2(tall,tall) = 0;
+pm_globalMeanSLR(tall) = 0;
+pm_slrImpulseResponseCO2(tall,tall) = 0;
 *** EOF ./modules/15_climate/off/datainput.gms

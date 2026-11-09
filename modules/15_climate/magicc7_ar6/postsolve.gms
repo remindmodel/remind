@@ -44,12 +44,20 @@ $ifthen.cm_magicc_calibrateTemperature2000 %cm_magicc_calibrateTemperature2000% 
 
 ***---------------------------------------------------------------------------
 *' Calibrate temperature such that anomaly in 2006-2015 reference period is 0.97 (SR1.5 Table 2.2, footnote 1)
+*' Update: calibrate to 2010-2020 reference period
 ***---------------------------------------------------------------------------
 * TODO: Is manual adjustment of temperature still needed?
-s15_tempOffset2010 = sum(tall$(tall.val gt 2005 and tall.val le 2015),pm_globalMeanTemperature(tall))/10; 
+*s15_tempOffset2010 = sum(tall$(tall.val gt 2005 and tall.val le 2015),pm_globalMeanTemperature(tall))/10; 
+s15_tempOffset2010 = sum(tall$(tall.val gt 2010 and tall.val le 2020),pm_globalMeanTemperature(tall))/10; 
 display s15_tempOffset2010;
-pm_globalMeanTemperature(tall) = pm_globalMeanTemperature(tall) - s15_tempOffset2010 + 0.97;
-display pm_globalMeanTemperature;
+*pm_globalMeanTemperature(tall) = pm_globalMeanTemperature(tall) - s15_tempOffset2010 + 0.97;
+pm_globalMeanTemperature(tall) = pm_globalMeanTemperature(tall) - s15_tempOffset2010 + 1.09;
+
+$ifthen.cm_SLR %cm_SLR% == "on"
+* SLR is calibrated to 2018 value for ACCREU project
+pm_globalMeanSLR(tall) = pm_globalMeanSLR(tall) - pm_globalMeanSLR("2018") + 0.2;
+$endif.cm_SLR
+display pm_globalMeanTemperature,pm_globalMeanSLR;
 
 *** temperature convergence indicator
 pm_gmt_conv = 100*smax(t,abs(pm_globalMeanTemperature(t)/max(p15_gmt0(t),1e-8) -1));
@@ -75,7 +83,11 @@ $ifthen.cm_magicc_tirf "%cm_magicc_temperatureImpulseResponse%" == "on"
 if( ((iteration.val le 10) or ( mod(iteration.val,5 ) eq 0)) ,
     execute.checkErrorLevel "Rscript climateAssessmentImpulseResponse.R";
     execute_loadpoint 'pm_magicc_temperatureImpulseResponse'  pm_temperatureImpulseResponseCO2 = pm_temperatureImpulseResponse;
+$ifthen.cm_SLR %cm_SLR% == "on"
+    execute_loadpoint 'pm_magicc_slrImpulseResponse' pm_slrImpulseResponseCO2 = pm_slrImpulseResponse;
+    pm_slrImpulseResponseCO2(tall2,tall) = pm_slrImpulseResponseCO2(tall2,tall)/1000;	
 );
+$endif.cm_SLR
 *NOTE the MAGICC results (*.OUT files) are from  the last pulse experiment now, so take care if reading them in after this point.
 $endif.cm_magicc_tirf
 
