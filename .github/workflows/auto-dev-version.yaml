@@ -1,8 +1,7 @@
 on:
-  pull_request_target:
+  push:
     branches:
       - develop
-    types: [ closed ]
 name: auto-dev-version
 
 permissions:
@@ -14,7 +13,9 @@ concurrency:
 
 jobs:
   auto-dev-version:
-    if: github.repository == 'remindmodel/remind' && github.event.pull_request.merged == true
+    if: >-
+      github.repository == 'remindmodel/remind' &&
+      github.event.head_commit.author.name != 'REMIND Research Software Engineering'
     runs-on: ubuntu-26.04
     steps:
       - name: Checkout
@@ -22,7 +23,6 @@ jobs:
         with:
           ref: refs/heads/develop
           fetch-depth: 0
-          token: ${{ secrets.AUTO_DEV_VERSION_REMIND }}
           persist-credentials: false
 
       - name: Install GitVersion
@@ -45,15 +45,23 @@ jobs:
           sed -i "s/^date-released:.*$/date-released: $(date --iso)/" CITATION.cff
           sed -i "s/^cfg\$model_version <-.*$/cfg\$model_version <- \"$VERSION\"/" config/default.cfg
 
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ vars.REMIND_BOT_APP_CLIENT_ID }}
+          private-key: ${{ secrets.REMIND_BOT_APP_PRIVATE_KEY }}
+          permission-contents: write
+
       - name: Commit and tag
         env:
           VERSION: ${{ steps.gitversion.outputs.assemblySemVer }}
-          TOKEN: ${{ secrets.AUTO_DEV_VERSION_REMIND }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           git config user.name "REMIND Research Software Engineering"
           git config user.email "rse@pik-potsdam.de"
           git add CITATION.cff config/default.cfg
           git commit -m "Release development version $VERSION"
           git tag "v$VERSION"
-          AUTH="$(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)"
+          AUTH="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
           git -c http.extraHeader="Authorization: Basic ${AUTH}" push --atomic "https://github.com/${GITHUB_REPOSITORY}.git" HEAD:develop "v$VERSION"
