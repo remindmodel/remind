@@ -376,7 +376,7 @@ q_limitCapFeH2BI(ttot,all_regi,emi_sectors)               "capacity limit equati
 
 *** energy balance equations (energy supply = energy demand)
 qm_fuel2pe(ttot,all_regi,all_enty)                   "balance of primary energy extraction, import and export and production"
-q_balPe(ttot,all_regi,all_enty)                      "balance of primary energy (pe)"
+qm_balPe(ttot,all_regi,all_enty)                     "balance of primary energy (pe)"
 q_balSe(ttot,all_regi,all_enty)                      "balance of secondary energy (se)"
 q_balFe(ttot,all_regi,all_enty,all_enty,all_te)      "balance of final energy (fe)"
 q_balFeAfterTax(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "balance of final energy after considering FE sectoral taxes (fe)"
@@ -549,8 +549,8 @@ sm_tgn_2_pgc                 "conversion factor 100-yr GWP from TgN to PgCeq"
 sm_tgch4_2_pgc               "conversion factor 100-yr GWP from TgCH4 to PgCeq"
 sm_MtCO2_2_GtC               "conversion factor from MtCO2 to native REMIND emission unit GtC" /2.727e-04/
 sm_MtCH4_2_TWa                "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
-s_gwpCH4                     "Global Warming Potentials of CH4, AR5 WG1 CH08 Table 8.7"     /28/
-s_gwpN2O                     "Global Warming Potentials of N2O, AR5 WG1 CH08 Table 8.7"     /265/
+sm_gwpCH4                    "Global Warming Potentials of CH4, AR5 WG1 CH08 Table 8.7"     /28/
+sm_gwpN2O                    "Global Warming Potentials of N2O, AR5 WG1 CH08 Table 8.7"     /265/
 sm_gwpCH4_AR4                 "Global Warming Potentials of CH4 as in the AR4, used in the MACCs"     /25/
 sm_gwpN2O_AR4                 "Global Warming Potentials of N2O as in the AR4, used in the MACCs"     /298/
 
@@ -593,8 +593,8 @@ sm_magpieIterEnd = card(magpieIter);
 
 
 *** calculate further conversion factors for emissions
-sm_tgn_2_pgc = (44/28) * s_gwpN2O * (12/44) * 0.001;
-sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
+sm_tgn_2_pgc = (44/28) * sm_gwpN2O * (12/44) * 0.001;
+sm_tgch4_2_pgc = sm_gwpCH4 * (12/44) * 0.001;
 
 
 

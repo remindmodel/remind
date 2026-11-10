@@ -68,9 +68,9 @@ display p10_emineg_econometric;
 *** since it gets changed by calculations further down in each Nash iteration, regardless of whether MAgPIE runs or not.
 if (sm_magpieIter gt 0,
 *** MAgPIE has run once at least: the start values for pm_macBaseMagpie come from the last MAgPIE iteration
-  Execute_Loadpoint 'magpieData.gdx' f_macBaseMagpie_coupling;
-  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005)  = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
-  p_co2lucSub(ttot,regi,emiMacMagpieCO2Sub(all_enty))$(ttot.val ge cm_startyear) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpieCO2Sub);
+  Execute_Loadpoint 'magpieData.gdx' f10_macBaseMagpie_coupling;
+  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005)  = f10_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
+  p10_co2lucSub(ttot,regi,emiMacMagpieCO2Sub(all_enty))$(ttot.val ge cm_startyear) = f10_macBaseMagpie_coupling(ttot,regi,emiMacMagpieCO2Sub);
 *** Biomass emission factor is set to zero after MAgPIE has run at least one, since biomass emissions are included in the emissions imported above. 
   pm_PeProdEmifac(regi,"pebiolc","n2obio") = 0.0;
 *** In coupling mode LU emissions are abated in MAgPIE (moved here from core/datainput.gms)
@@ -186,12 +186,12 @@ loop(regi,
           );
     );
 
-p_priceCO2(ttot,regi) = pm_taxCO2eqSum(ttot,regi) * 1000;
+p10_priceCO2(ttot,regi) = pm_taxCO2eqSum(ttot,regi) * 1000;
 
 *** Define co2 price for entities that are used in MAC.
 loop((enty,enty2)$emiMac2mac(enty,enty2), !! make sure that both mac sectors and mac curves have prices asigned as both sets are used in calculations below
-  p10_priceCO2forMAC(ttot,regi,enty) = p_priceCO2(ttot,regi);
-  p10_priceCO2forMAC(ttot,regi,enty2) = p_priceCO2(ttot,regi);
+  p10_priceCO2forMAC(ttot,regi,enty) = p10_priceCO2(ttot,regi);
+  p10_priceCO2forMAC(ttot,regi,enty2) = p10_priceCO2(ttot,regi);
 );
 
 *** Redefine the MAC price for regions with emission tax defined by the regipol module
@@ -199,7 +199,7 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
  loop(ext_regi$regiEmiMktTarget(ext_regi),
   loop(regi$regi_groupExt(ext_regi,regi),
 *** average CO2 price aggregated by FE
-    p_priceCO2(t,regi) = ( (sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt) * sum((entySe,entyFe,sector)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) / (sum((entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt))) )*1000;
+    p10_priceCO2(t,regi) = ( (sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt) * sum((entySe,entyFe,sector)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) / (sum((entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt))) )*1000;
     loop((enty,emiMkt)$(macSector2emiMkt(enty,emiMkt)),
       loop(enty2$emiMac2mac(enty,enty2), !! make sure that both mac sectors and mac curves have prices asigned as both sets are used in calculations below
         p10_priceCO2forMAC(t,regi,enty) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
@@ -227,10 +227,10 @@ p10_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val ge cm_startyear+20) = p1
 *** 3. Reduce co2 price for land-use entities by level of development (uses the same data from MOINPUT as MAgPIE for im_development_state)
 p10_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p10_priceCO2forMAC(ttot,regi,MacSectorMagpie) * pm_developmentState(ttot,regi);
 *** 4. Price for MACs was calculated with AR4 GWPs --> convert CO2 price with old GWPs here as well
-p10_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) = p10_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) * (sm_gwpN2O_AR4/s_gwpN2O);
-p10_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) = p10_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) * (sm_gwpCH4_AR4/s_gwpCH4);
+p10_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) = p10_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) * (sm_gwpN2O_AR4/sm_gwpN2O);
+p10_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) = p10_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) * (sm_gwpCH4_AR4/sm_gwpCH4);
 
-display p_priceCO2,p10_priceCO2forMAC;
+display p10_priceCO2,p10_priceCO2forMAC;
 ***--------------------------------------
 *** MAC baselines
 ***--------------------------------------
@@ -281,13 +281,13 @@ pm_macStep(ttot,regi,enty)$(MacSector(enty))
   = min(801, ceil(p10_priceCO2forMAC(ttot,regi,enty) / sm_dmac) + 1);
 
 *** If the gas price increase since 2005 is higher than the CO2 price, it will drive CH4 emission abatement.
-*** Conversion: p10_priceCO2forMAC [$/tCeq]; T$/TWa = 1e6 M$/TWa * sm_MtCH4_2_TWa * 1 MtCH4/s_gwpCH4 MtCO2eq * (44/12) MtCO2eq/MtCeq
-p10_priceGas(ttot,regi)=q_balPe.m(ttot,regi,"pegas")/(qm_budget.m(ttot,regi)+sm_eps) * 1000000 * sm_MtCH4_2_TWa * (1/s_gwpCH4) * 44/12;
+*** Conversion: p10_priceCO2forMAC [$/tCeq]; T$/TWa = 1e6 M$/TWa * sm_MtCH4_2_TWa * 1 MtCH4/sm_gwpCH4 MtCO2eq * (44/12) MtCO2eq/MtCeq
+p10_priceGas(ttot,regi)=qm_balPe.m(ttot,regi,"pegas")/(qm_budget.m(ttot,regi)+sm_eps) * 1000000 * sm_MtCH4_2_TWa * (1/sm_gwpCH4) * 44/12;
 
 pm_macStep(ttot,regi,"ch4gas")
-  = min(801, ceil(max(p10_priceCO2forMAC(ttot,regi,"ch4gas") * (25/s_gwpCH4), max(0,(p10_priceGas(ttot,regi)-p10_priceGas("2005",regi))) ) / sm_dmac) + 1);
+  = min(801, ceil(max(p10_priceCO2forMAC(ttot,regi,"ch4gas") * (25/sm_gwpCH4), max(0,(p10_priceGas(ttot,regi)-p10_priceGas("2005",regi))) ) / sm_dmac) + 1);
 pm_macStep(ttot,regi,"ch4coal")
-  = min(801, ceil(max(p10_priceCO2forMAC(ttot,regi,"ch4coal") * (25/s_gwpCH4), 0.5 * max(0,(p10_priceGas(ttot,regi)-p10_priceGas("2005",regi))) ) / sm_dmac) + 1);
+  = min(801, ceil(max(p10_priceCO2forMAC(ttot,regi,"ch4coal") * (25/sm_gwpCH4), 0.5 * max(0,(p10_priceGas(ttot,regi)-p10_priceGas("2005",regi))) ) / sm_dmac) + 1);
 
 *** limit yearly increase of MAC usage to sm_macChange
 p10_macAbat_lim(ttot,regi,enty)

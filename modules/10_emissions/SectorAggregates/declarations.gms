@@ -121,10 +121,10 @@ parameters
 
 *** parameters used for MAC curves
 pm_macBaseMagpie(tall,all_regi,all_enty)             "baseline emissions from MAgPIE (type emiMacMagpie) [GtC, Mt CH4, Mt N]"
-f_macBaseMagpie_coupling(tall,all_regi,all_enty)     "baseline emissions from MAgPIE (type emiMacMagpie) read from magpie.gdx in coupling [GtC, Mt CH4, Mt N]"
+f10_macBaseMagpie_coupling(tall,all_regi,all_enty)   "baseline emissions from MAgPIE (type emiMacMagpie) read from magpie.gdx in coupling [GtC, Mt CH4, Mt N]"
 p10_macBaseMagpieNegCo2(tall,all_regi)                 "net negative CO2 emissions from land-use change [GtC]"
 p10_macBaseExo(tall,all_regi,all_enty)                 "exogenous baseline emissions (type emiMacExo) [Mt CH4, Mt N]"
-p_co2lucSub(tall,all_regi,all_enty)                  "subtypes of CO2 land use change emissions, add up to total land use change emissions, coming from MAgPIE, passed through REMIND for reporting, not used anywhere, remain unchanged [GtC]"
+p10_co2lucSub(tall,all_regi,all_enty)                "subtypes of CO2 land use change emissions, add up to total land use change emissions, coming from MAgPIE, passed through REMIND for reporting, not used anywhere, remain unchanged [GtC]"
 pm_macAbat(tall,all_regi,all_enty,steps)             "abatement levels based on data from van Vuuren [fraction]"
 pm_macAbatLev(tall,all_regi,all_enty)                "actual level of abatement per time step, region, and source [fraction]"
 p10_macAbat_lim(tall,all_regi,all_enty)                "limit of abatement level based on limit of yearly change [fraction]"
@@ -137,7 +137,7 @@ pm_macStep(tall,all_regi,all_enty)                   "step number of abatement l
 pm_macSwitch(ttot,all_regi,all_enty)                 "switch to include mac options in specific sectors and years [0/1]"
 p10_macCostSwitch(all_enty)                            "switch to include mac costs in the code [0/1] (e.g. in coupled scenarios, we want to include the costs in REMIND, but MAC effects on emissions are calculated in MAgPIE)"
 pm_macPE(ttot,all_regi,all_enty)                     "Primary energy production from MACs, e.g. methane production from abated methane leakage in coal extraction [TWa]"
-p_priceCO2(tall,all_regi)                            "carbon price [$/tC]"
+p10_priceCO2(tall,all_regi)                          "carbon price [$/tC]"
 p10_priceCO2forMAC(tall,all_regi,all_enty)             "carbon price defined for MAC gases [$/tC]"
 p10_priceGas(tall,all_regi)                            "gas price for ch4gas MAC [$/tCeq]"
 p10_emi_quan_conv_ar4(all_enty)                        "conversion factor of non-CO2 greenhouses gases to GtCeq"

@@ -104,7 +104,7 @@ pm_SEPrice(ttot,regi,entySe)$(abs (qm_budget.m(ttot,regi)) gt sm_eps AND (NOT (s
        q_balSe.m(ttot,regi,entySe) / qm_budget.m(ttot,regi);
 
 pm_PEPrice(ttot,regi,entyPe)$(abs (qm_budget.m(ttot,regi)) gt sm_eps) = 
-       q_balPe.m(ttot,regi,entyPe) / qm_budget.m(ttot,regi);
+       qm_balPe.m(ttot,regi,entyPe) / qm_budget.m(ttot,regi);
 
 *** calculate share of stored CO2 from captured CO2
 pm_share_CCS_CCO2(t,regi) = sum(teCCS2rlf(te,rlf), vm_co2CCS.l(t,regi,"cco2","ico2",te,rlf)) / (vm_co2capture.l(t,regi)+sm_eps);

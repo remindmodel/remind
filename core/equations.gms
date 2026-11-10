@@ -113,7 +113,7 @@ q_costOM(t,regi)..
 *' Energy balance equations equate the production of and demand for each primary, secondary and final energy.
 *' The balance equation for primary energy equals supply of primary energy demand on primary energy.
 ***---------------------------------------------------------------------------
-q_balPe(t,regi,entyPe(enty))..
+qm_balPe(t,regi,entyPe(enty))..
          vm_prodPe(t,regi,enty) + pm_macPE(t,regi,enty)
          =e=
          sum(pe2se(enty,enty2,te), vm_demPe(t,regi,enty,enty2,te))

@@ -6,43 +6,43 @@ mag2rem <- tibble::tribble(
     'Demand|Bioenergy|2nd generation|++|Bioenergy crops'                             ,   NA                           ,   1/31.536        ,   'pm_pebiolc_demandmag'    ,
     'Costs Accounting|Costs without incentives'                                      ,   NA                           ,   1/1000/1000     ,   'p26_totLUcost_coupling'  ,
     'Prices|Bioenergy'                                                               ,   NA                           ,   0.0315576       ,   'p30_pebiolc_pricemag'    ,
-    'Emissions|CO2|Land|+|Land-use Change'                                           ,   'co2luc'                     ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|+|Deforestation'                             ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|+|Forest degradation'                        ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|+|Other land conversion'                     ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|+|Wood Harvest'                              ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Peatland|+|Positive'                         ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Peatland|+|Negative'                         ,   'co2lucNegIntentPeat'        ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Regrowth|+|CO2-price AR'                     ,   'co2lucNegIntentAR'          ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Regrowth|+|NPI_NDC AR'                       ,   'co2lucNegIntentAR'          ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Regrowth|+|Cropland Tree Cover'              ,   'co2lucNegIntentAgroforestry',   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Regrowth|+|Other Land'                       ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Regrowth|+|Secondary Forest'                 ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Regrowth|+|Timber Plantations'               ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Residual|+|Positive'                         ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Residual|+|Negative'                         ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Soil|++|Emissions'                           ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Soil|Cropland management|+|Withdrawals'      ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Soil|Land Conversion|+|Withdrawals'          ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Soil|Soil Carbon Management|+|Withdrawals'   ,   'co2lucNegIntentSCM'         ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Timber|+|Storage in HWP'                     ,   'co2lucNegIntentTimber'      ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Timber|+|Release from HWP'                   ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|+|Land-use Change'                                           ,   'co2luc'                     ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|+|Deforestation'                             ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|+|Forest degradation'                        ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|+|Other land conversion'                     ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|+|Wood Harvest'                              ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Peatland|+|Positive'                         ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Peatland|+|Negative'                         ,   'co2lucNegIntentPeat'        ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Regrowth|+|CO2-price AR'                     ,   'co2lucNegIntentAR'          ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Regrowth|+|NPI_NDC AR'                       ,   'co2lucNegIntentAR'          ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Regrowth|+|Cropland Tree Cover'              ,   'co2lucNegIntentAgroforestry',   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Regrowth|+|Other Land'                       ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Regrowth|+|Secondary Forest'                 ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Regrowth|+|Timber Plantations'               ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Residual|+|Positive'                         ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Residual|+|Negative'                         ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Soil|++|Emissions'                           ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Soil|Cropland management|+|Withdrawals'      ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Soil|Land Conversion|+|Withdrawals'          ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Soil|Soil Carbon Management|+|Withdrawals'   ,   'co2lucNegIntentSCM'         ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Timber|+|Storage in HWP'                     ,   'co2lucNegIntentTimber'      ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Timber|+|Release from HWP'                   ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
     # children only in newer MAgPIE reports: other-planted-forest regrowth and the legacy-clearing decay
     # tail (magpie4 >= 2.82); optional, dropped in getMagpieData when the report lacks them
-    'Emissions|CO2|Land|Land-use Change|Regrowth|+|Other Planted Forest'             ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Legacy clearing|+|Release'                   ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|CO2|Land|Land-use Change|Legacy clearing|+|Storage'                   ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f_macBaseMagpie_coupling',
-    'Emissions|N2O|Land|Agriculture|+|Animal Waste Management'                       ,   'n2oanwstm'                  ,   28/44           ,   'f_macBaseMagpie_coupling',
-    'Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Inorganic Fertilizers'      ,   'n2ofertin'                  ,   28/44           ,   'f_macBaseMagpie_coupling',
-    'Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Manure applied to Croplands',   'n2oanwstc'                  ,   28/44           ,   'f_macBaseMagpie_coupling',
-    'Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Decay of Crop Residues'     ,   'n2ofertcr'                  ,   28/44           ,   'f_macBaseMagpie_coupling',
-    'Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Soil Organic Matter Loss'   ,   'n2ofertsom'                 ,   28/44           ,   'f_macBaseMagpie_coupling',
-    'Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Pasture'                    ,   'n2oanwstp'                  ,   28/44           ,   'f_macBaseMagpie_coupling',
-    'Emissions|N2O|Land|+|Peatland'                                                  ,   'n2opeatland'                ,   28/44           ,   'f_macBaseMagpie_coupling',
-    'Emissions|CH4|Land|Agriculture|+|Rice'                                          ,   'ch4rice'                    ,   1               ,   'f_macBaseMagpie_coupling',
-    'Emissions|CH4|Land|Agriculture|+|Animal waste management'                       ,   'ch4anmlwst'                 ,   1               ,   'f_macBaseMagpie_coupling',
-    'Emissions|CH4|Land|Agriculture|+|Enteric fermentation'                          ,   'ch4animals'                 ,   1               ,   'f_macBaseMagpie_coupling',
-    'Emissions|CH4|Land|+|Peatland'                                                  ,   'ch4peatland'                ,   1               ,   'f_macBaseMagpie_coupling')
+    'Emissions|CO2|Land|Land-use Change|Regrowth|+|Other Planted Forest'             ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Legacy clearing|+|Release'                   ,   'co2lucPos'                  ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CO2|Land|Land-use Change|Legacy clearing|+|Storage'                   ,   'co2lucNegUnintent'          ,   1/1000*12/44    ,   'f10_macBaseMagpie_coupling',
+    'Emissions|N2O|Land|Agriculture|+|Animal Waste Management'                       ,   'n2oanwstm'                  ,   28/44           ,   'f10_macBaseMagpie_coupling',
+    'Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Inorganic Fertilizers'      ,   'n2ofertin'                  ,   28/44           ,   'f10_macBaseMagpie_coupling',
+    'Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Manure applied to Croplands',   'n2oanwstc'                  ,   28/44           ,   'f10_macBaseMagpie_coupling',
+    'Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Decay of Crop Residues'     ,   'n2ofertcr'                  ,   28/44           ,   'f10_macBaseMagpie_coupling',
+    'Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Soil Organic Matter Loss'   ,   'n2ofertsom'                 ,   28/44           ,   'f10_macBaseMagpie_coupling',
+    'Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Pasture'                    ,   'n2oanwstp'                  ,   28/44           ,   'f10_macBaseMagpie_coupling',
+    'Emissions|N2O|Land|+|Peatland'                                                  ,   'n2opeatland'                ,   28/44           ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CH4|Land|Agriculture|+|Rice'                                          ,   'ch4rice'                    ,   1               ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CH4|Land|Agriculture|+|Animal waste management'                       ,   'ch4anmlwst'                 ,   1               ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CH4|Land|Agriculture|+|Enteric fermentation'                          ,   'ch4animals'                 ,   1               ,   'f10_macBaseMagpie_coupling',
+    'Emissions|CH4|Land|+|Peatland'                                                  ,   'ch4peatland'                ,   1               ,   'f10_macBaseMagpie_coupling')
 
 
 # Mapping of air pollutant emissions from MAgPIE names to REMIND names
@@ -206,7 +206,7 @@ writeToGdx <- function(rem, mapping) {
   emiMacMagpie <- m$addSet(
     "emiMacMagpie",
     records = mapping |>
-      filter(parameter == "f_macBaseMagpie_coupling") |>
+      filter(parameter == "f10_macBaseMagpie_coupling") |>
       select(enty) |>
       unique(),
     description = "emission types coming from MAgPIE"
@@ -214,11 +214,11 @@ writeToGdx <- function(rem, mapping) {
 
   # ---- Define PARAMETERS ----
 
-  f_macBaseMagpie_coupling <- m$addParameter(
-    "f_macBaseMagpie_coupling",
+  f10_macBaseMagpie_coupling <- m$addParameter(
+    "f10_macBaseMagpie_coupling",
     domain = c(ttot, regi, emiMacMagpie),
     records = rem |>
-      filter(parameter == "f_macBaseMagpie_coupling") |>
+      filter(parameter == "f10_macBaseMagpie_coupling") |>
       select(ttot, regi, enty, value) |>
       rename(emiMacMagpie = enty),
     description = "emissions from MAgPIE"

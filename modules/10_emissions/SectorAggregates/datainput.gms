@@ -273,19 +273,19 @@ p10_abatparam_N2O(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p10_abatpa
 
 *** Unit conversions
 p10_emi_quan_conv_ar4(enty) = 1;
-p10_emi_quan_conv_ar4(enty)$(emiMacMagpieCH4(enty)) = sm_tgch4_2_pgc * (25/s_gwpCH4);  !! need to use old GWP for MAC cost conversion as it only reverts what has been done in the calculation of the MACs
-p10_emi_quan_conv_ar4(enty)$(emiMacMagpieN2O(enty)) = sm_tgn_2_pgc * (298/s_gwpN2O);
-p10_emi_quan_conv_ar4(enty)$(emiMacExoCH4(enty)) = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p10_emi_quan_conv_ar4(enty)$(emiMacExoN2O(enty)) = sm_tgn_2_pgc * (298/s_gwpN2O);
-p10_emi_quan_conv_ar4("ch4coal")    = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p10_emi_quan_conv_ar4("ch4gas")     = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p10_emi_quan_conv_ar4("ch4oil")     = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p10_emi_quan_conv_ar4("ch4wstl")    = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p10_emi_quan_conv_ar4("ch4wsts")    = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p10_emi_quan_conv_ar4("n2otrans")   = sm_tgn_2_pgc * (298/s_gwpN2O);
-p10_emi_quan_conv_ar4("n2oadac")    = sm_tgn_2_pgc * (298/s_gwpN2O);
-p10_emi_quan_conv_ar4("n2onitac")   = sm_tgn_2_pgc * (298/s_gwpN2O);
-p10_emi_quan_conv_ar4("n2owaste")   = sm_tgn_2_pgc * (298/s_gwpN2O);
+p10_emi_quan_conv_ar4(enty)$(emiMacMagpieCH4(enty)) = sm_tgch4_2_pgc * (25/sm_gwpCH4);  !! need to use old GWP for MAC cost conversion as it only reverts what has been done in the calculation of the MACs
+p10_emi_quan_conv_ar4(enty)$(emiMacMagpieN2O(enty)) = sm_tgn_2_pgc * (298/sm_gwpN2O);
+p10_emi_quan_conv_ar4(enty)$(emiMacExoCH4(enty)) = sm_tgch4_2_pgc * (25/sm_gwpCH4);
+p10_emi_quan_conv_ar4(enty)$(emiMacExoN2O(enty)) = sm_tgn_2_pgc * (298/sm_gwpN2O);
+p10_emi_quan_conv_ar4("ch4coal")    = sm_tgch4_2_pgc * (25/sm_gwpCH4);
+p10_emi_quan_conv_ar4("ch4gas")     = sm_tgch4_2_pgc * (25/sm_gwpCH4);
+p10_emi_quan_conv_ar4("ch4oil")     = sm_tgch4_2_pgc * (25/sm_gwpCH4);
+p10_emi_quan_conv_ar4("ch4wstl")    = sm_tgch4_2_pgc * (25/sm_gwpCH4);
+p10_emi_quan_conv_ar4("ch4wsts")    = sm_tgch4_2_pgc * (25/sm_gwpCH4);
+p10_emi_quan_conv_ar4("n2otrans")   = sm_tgn_2_pgc * (298/sm_gwpN2O);
+p10_emi_quan_conv_ar4("n2oadac")    = sm_tgn_2_pgc * (298/sm_gwpN2O);
+p10_emi_quan_conv_ar4("n2onitac")   = sm_tgn_2_pgc * (298/sm_gwpN2O);
+p10_emi_quan_conv_ar4("n2owaste")   = sm_tgn_2_pgc * (298/sm_gwpN2O);
 
 ***------------------------------------------------------------------------------------
 ***                                Turning MACs on/off
@@ -380,16 +380,16 @@ pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f10_macBaseM
 
 *** pm_macBaseMagpie gets updated in modules/10_emissions/SectorAggregates/presolve.gms when coupling to MAgPIE is active
 
-*** In case of fixing, load p_co2lucSub from input_ref.gdx, since parameters are not automatically treated by the fixing mechanism.
+*** In case of fixing, load p10_co2lucSub from input_ref.gdx, since parameters are not automatically treated by the fixing mechanism.
 *** Years >= cm_startyear get their values from the lookup table rather than the input_ref.gdx (see below).
 if( (cm_startyear gt 2005),
-    Execute_Loadpoint "input_ref" p_co2lucSub = p_co2lucSub;
+    Execute_Loadpoint "input_ref" p10_co2lucSub = p10_co2lucSub;
 );
 
 
 *** Overwrite values >= cm_startyear with lookup table, leave values < cm_startyear untouched (from input_ref.gdx, see above).
 *** Gets updated for >= cm_startyear in modules/10_emissions/SectorAggregates/presolve.gms when coupling to MAgPIE is active.
-p_co2lucSub(ttot,regi,emiMacMagpieCO2Sub(all_enty))$(ttot.val ge cm_startyear) = f10_macBaseMagpie(ttot,regi,emiMacMagpieCO2Sub,"%cm_LU_emi_scen%","%cm_rcp_scen%");
+p10_co2lucSub(ttot,regi,emiMacMagpieCO2Sub(all_enty))$(ttot.val ge cm_startyear) = f10_macBaseMagpie(ttot,regi,emiMacMagpieCO2Sub,"%cm_LU_emi_scen%","%cm_rcp_scen%");
 
 *** p10_macPolCO2luc defines the lower limit for abatement of CO2 landuse change emissions in REMIND
 *** The values are derived from MAgPIE runs with very strong mitigation
