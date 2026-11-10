@@ -37,8 +37,9 @@ run_compareScenarios2 <- function(
   # parallel they would interfere with the others' figure folder. So we create a
   # temporary subfolder in which each compareScenarios2 creates its own figure
   # folder.
-  system(paste0("mkdir ", outFileName))
-  outDir <- normalizePath(outFileName, mustWork = TRUE)
+  outDir <- file.path("output", "tmp", outFileName)
+  dir.create(outDir, recursive = TRUE)
+  outDir <- normalizePath(outDir, mustWork = TRUE)
 
   outputdirs <- unique(normalizePath(outputdirs, mustWork = TRUE))
 
@@ -98,8 +99,8 @@ run_compareScenarios2 <- function(
 
   message("Move outputFile and delete temporary folder.\n")
   outputFilePath <- file.path(args$outputDir, args$outputFile)
-  system(paste0("mv ", outputFilePath, " ."))
-  system(paste0("rm -rf ", args$outputDir))
+  file.rename(from = outputFilePath, to = file.path("output", args$outputFile))
+  unlink(args$outputDir, recursive = TRUE)
 
   message("Done!\n")
 }

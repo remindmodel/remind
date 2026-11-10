@@ -15,7 +15,6 @@ pm_GDPGross,input,questionnaire
 pm_prtp,input,questionnaire
 cm_carbonprice_temperatureLimit,input,questionnaire
 pm_ttot_2_tall,input,questionnaire
-sm_c_2_co2,input,questionnaire
 cm_iterative_target_adj,input,questionnaire
 pm_shPPPMER,input,questionnaire
 pm_pop,input,questionnaire
@@ -56,3 +55,4 @@ pm_CO2PriceLimit,input,not used outside of NDC
 vm_emiGHG_exclLULUCF_exclBunkers,input,only used for NDC scenario
 vm_emiCdrNovel,input,only used in NPi2025 scenario
 sm_MtCO2_2_GtC,input,only used in NPi2025 scenario
+sm_GtC_2_MtCO2,scalar,added by codeCheck

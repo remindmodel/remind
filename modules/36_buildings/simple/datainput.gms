@@ -51,15 +51,13 @@ p36_floorspace(ttot,regi,secBuild36) =
 
 
 *** UE demand for reporting
-Parameter
+Table
 f36_uedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in)   "useful energy demand in buildings"
-/
 $offlisting
 $ondelim
-$include "./modules/36_buildings/simple/input/f36_uedemand_build.cs4r"
+$include "./modules/36_buildings/simple/input/f36_uedemand_build.cs3r"
 $offdelim
 $onlisting
-/
 ;
 
 *** load UE demand for reporting from input_ref.gdx cm_startyear

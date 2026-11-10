@@ -9,7 +9,7 @@ Check the general system requirements in [Section 1: Getting REMIND](01_GettingR
 
 - Installed python version must be `< 3.11`. We recommend a python version `3.10.X` as it is closest to being up-to-date while remaining REMIND compatible. To check your python version run `python --version` in a terminal of your choice
 - There are some additional recommendations for running REMIND locally on a **Windows systems**:  
-  - To avoid lengthy compilation times during preparation for your remind run, we recommend to use a version of R for which most R-packages that REMIND depends on, are available as binary packages. This is typically the case for recent versions of R, currently `4.2.X` or `4.3.X`. To check your R version run `R --version` in a terminal of your choice
+  - To avoid lengthy compilation times during preparation for your remind run, we recommend to use a version of R for which most R-packages that REMIND depends on, are available as binary packages. This is typically the case for recent versions of R, currently `4.6.X`. To check your R version run `R --version` in a terminal of your choice
   - As mentioned in the general system requirements, GAMS must be installed. On Windows, make sure that the path to GAMS applications is in your PATH environment variable
   - We recommend to use PowerShell rather than the standard command prompt
 
@@ -73,32 +73,6 @@ REMIND_repos_scp_key="/home/myusername/.ssh/id_ed25519"
 ```
 
 Make sure to use your username on the cluster and the correct path to your private ssh key (might also be named `id_rsa` or something similar starting with `id_`).
-
-### Tell REMIND where to find MAGICC
-
-REMIND needs to be told where to find the configuration files of the 'Model for the Assessment of Greenhouse Gas Induced Climate Change' ([MAGICC](https://magicc.org/)). The config files all come with REMIND, so we just need to set the appropriate location in the REMIND default config file at `<REMIND_DIR>/config/default.cfg`. Open the file with a text editor of your choice and locate the variable `magicc_template`. In the `default.cfg` file, the corresponding section will look like
-
-```R
-cfg$magicc_template <- "/p/projects/rd3mod/magicc/"
-```
-
-Change it to the fully qualified file path (i.e. a file path without double points `..` or the tilde `~`) of the MAGICC configuration files. These are located at `<REMIND_DIR>/core/magicc`. The resulting line should look like:
-
-```R
-cfg$magicc_template <- "<REMIND_DIR>/core/magicc/"
-```
-
-On Linux the fully qualified file path will look similar to:
-
-```R
-cfg$magicc_template <- "/home/<YOUR USERNAME>/REMIND/core/magicc"
-```
-
-On Windows remember to also escape the backslashes:
-
-```R
-cfg$magicc_template <- "C:\\Users\\<YOUR USERNAME>\\REMIND\\core\\magicc"
-```
 
 ## Start a run
 

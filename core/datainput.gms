@@ -325,16 +325,12 @@ display fm_dataglob;
 *** initialize regionalized data using global data
 pm_data(all_regi,char,te) = fm_dataglob(char,te);
 
-$ifthen.REG_techcosts not "%cm_techcosts%" == "GLO"   !! cm_techcosts is REG or REG2040
 *** Initial investment costs differentiated by region:
-  pm_data(regi,"inco0",teRegTechCosts(te)) = p_inco0("2015",regi,te);
-  pm_data(regi,"inco0","spv")              = p_inco0("2020",regi,"spv");
+pm_data(regi,"inco0",teRegTechCosts(te)) = p_inco0("2015",regi,te);
+pm_data(regi,"inco0","spv") = p_inco0("2020",regi,"spv");
 
 *** Initial capacity differentiated by region:
-  Execute_Loadpoint 'input' p_capCum = vm_capCum.l; !! read vm_capCum(t0,regi,teLearn) from input.gdx to have 2005 investment costs
-  p_capCum("2015",regi,te) $ (p_capCum("2015",regi,te) = 0) = fm_dataglob("ccap0",te) / card(regi); !! if technology not in gdx, default to global value
-  p_capCum("2020",regi,"spv") $ (p_capCum("2020",regi,"spv") = 0) = 0.6 / card(regi2); !! assume 600GW of solar PV in 2020 globally
-$endif.REG_techcosts
+Execute_Loadpoint 'input' p_capCum = vm_capCum.l; !! read vm_capCum(t0,regi,teLearn) from input.gdx
 
 
 *** =============== Regional risk premium during building time ====================
@@ -353,7 +349,7 @@ loop(te $ (fm_dataglob("constrTme",te) > 0),
                               (1
                                   + 0.02 / pm_ies(regi) !! intertemporal elasticity of substitution
                                   + pm_prtp(regi) !! pure rate of time preference
-$if not "%cm_techcosts%" == "GLO" + p_risk_premium_constr(regi) !! if technology costs are regionalised, also use regionalised financing costs
+                                  + p_risk_premium_constr(regi) !! also use regionalised financing costs
 *** nuclear sees 3% higher interest rates during construction time due to higher construction time risk
 *** see "The economic future of nuclear power - A study conducted at The University of Chicago" (2004)
                                   + 0.03 $ sameas(te,"tnrs")
@@ -413,6 +409,12 @@ $endif.floorscen
 *** Calculate learning parameters
 *** See equations.gms for documentation of learning equations and floor costs
 *** -------------------------------------------------------------------------------
+
+*** our learing implementation fails if floorcost >= inco0 or even if it is to close to inco0
+*** 0.8 gives a good safety margin
+pm_data(regi,"floorcost",teLearn) = min(pm_data(regi,"floorcost",teLearn), 0.8 * pm_data(regi,"inco0",teLearn));
+fm_dataglob("floorcost",teLearn) = min(fm_dataglob("floorcost",teLearn), 0.8 * fm_dataglob("inco0",teLearn));
+
 loop(teLearn(te),
 *** calculate default learnable costs for learning technologies
   fm_dataglob("incolearn",te)  = fm_dataglob("inco0",te)  - fm_dataglob("floorcost",te);
@@ -422,25 +424,21 @@ loop(teLearn(te),
 *** b' = \frac{I_0}{I_0 - F} b = \frac{I_0}{I_0 - F} \log_2(1-\lambda)
   fm_dataglob("learnExp_wFC",te) = fm_dataglob("inco0",te) / fm_dataglob("incolearn",te) * log(1 - fm_dataglob("learn",te)) / log(2);
 *** a' = \frac{I_0 - F}{C_0^{b'}}
-  fm_dataglob("learnMult_wFC",te) = fm_dataglob("incolearn",te) / (fm_dataglob("ccap0",te) ** fm_dataglob("learnExp_wFC", te));
-
+  fm_dataglob("learnMult_wFC",te) = fm_dataglob("incolearn",te) / (sum((ttot, regi2)$(ttot.val = fm_dataglob("inco0year",te)), p_capCum(ttot,regi2,te)) ** fm_dataglob("learnExp_wFC", te));
 *** regional parameters
   pm_data(regi,"learnExp_wFC",te) = pm_data(regi,"inco0",te) / pm_data(regi,"incolearn",te) * log(1 - pm_data(regi,"learn",te)) / log(2);
 
-$ifthen %cm_techcosts% == "GLO"
-  pm_data(regi,"learnMult_wFC",te) = pm_data(regi,"incolearn",te) / sum(regi2,pm_data(regi2,"ccap0",te)) ** pm_data(regi,"learnExp_wFC",te);
-
-$else
-!! cm_techcosts is REG or REG2040
-    pm_data(regi,"learnMult_wFC",te)    = pm_data(regi,"incolearn",te)    / sum(regi2,p_capCum("2015",regi2,te))    ** pm_data(regi,"learnExp_wFC",te);
-    pm_data(regi,"learnMult_wFC","spv") = pm_data(regi,"incolearn","spv") / sum(regi2,p_capCum("2020",regi2,"spv")) ** pm_data(regi,"learnExp_wFC","spv");
-$endif
-
+*** regional uses different years than global data
+  pm_data(regi,"learnMult_wFC",te) = pm_data(regi,"incolearn",te) / (sum((ttot, regi2)$(ttot.val = fm_dataglob("inco0year",te)), p_capCum(ttot,regi2,te)) ** pm_data(regi,"learnExp_wFC",te));
 *FS* initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020)
 *** equally for all regions based on global cumulative capacity of ccap0 and incolearn (difference between initial investment cost and floor cost)
   pm_data(regi,"learnMult_wFC",te) $ (pm_data(regi,"tech_stat",te) = 4)
-    = pm_data(regi,"incolearn",te) / fm_dataglob("ccap0",te) ** pm_data(regi,"learnExp_wFC",te);
+    = pm_data(regi,"incolearn",te) / (sum((ttot, regi2)$(ttot.val = fm_dataglob("inco0year",te)), p_capCum(ttot,regi2,te)) ** pm_data(regi,"learnExp_wFC",te));
 );
+pm_data(regi,"learnMult_wFC","spv") = pm_data(regi,"incolearn","spv") / sum(regi2,p_capCum("2020",regi2,"spv")) ** pm_data(regi,"learnExp_wFC","spv");
+pm_data(regi,"learnMult_wFC","windon") = pm_data(regi,"incolearn","windon") / sum(regi2,p_capCum("2015",regi2,"windon")) ** pm_data(regi,"learnExp_wFC","windon");
+pm_data(regi,"learnMult_wFC","windoff") = pm_data(regi,"incolearn","windoff") / sum(regi2,p_capCum("2015",regi2,"windoff")) ** pm_data(regi,"learnExp_wFC","windoff");
+pm_data(regi,"learnMult_wFC","csp") = pm_data(regi,"incolearn","csp") / sum(regi2,p_capCum("2015",regi2,"csp")) ** pm_data(regi,"learnExp_wFC","csp");
 display pm_data;
 
 
@@ -465,31 +463,20 @@ display pm_inco0_t;
 
 
 *** ============== Convergence of non-learning technologies costs ===================
-$ifthen.REG2040_techcosts "%cm_techcosts%" == "REG2040"   !! cm_techcosts REG2040
-*** for 2015-2040, use differentiated costs when available for a specific non-learning technology
-  loop(te $ (teNoLearn(te) and teRegTechCosts(te)),
-    pm_inco0_t(ttot,regi,te) $ (ttot.val >= 2015 and ttot.val < 2040) = p_inco0(ttot,regi,te);
 
-*** after 2040, keep the same regionally differentiated costs
-    pm_inco0_t(ttot,regi,te) $ (ttot.val >= 2040) = p_inco0("2040",regi,te);
-  );
-$endif.REG2040_techcosts
-
-$ifthen.REG_techcosts "%cm_techcosts%" == "REG"   !! cm_techcosts REG
 *** for 2015-2020, use differentiated costs when available for a specific non-learning technology
-  loop(te $ (teNoLearn(te) and teRegTechCosts(te)),
-    pm_inco0_t(ttot,regi,te) $ (ttot.val >= 2015 and ttot.val <= 2020) = p_inco0(ttot,regi,te);
+loop(te $ (teNoLearn(te) and teRegTechCosts(te)),
+  pm_inco0_t(ttot,regi,te) $ (ttot.val >= 2015 and ttot.val <= 2020) = p_inco0(ttot,regi,te);
 
 *** from 2025 to c_teNoLearnConvEndYr, apply linear convergence of investment costs so that
 *** all regions converge and stabilise at the technology cost data given in generisdata.prn
-    loop(ttot $ (ttot.val > 2020 and ttot.val < c_teNoLearnConvEndYr),
-      pm_inco0_t(ttot,regi,te)
-        = macro_interpolate(ttot.val, 2020, c_teNoLearnConvEndYr, p_inco0("2020",regi,te), fm_dataglob("inco0",te))
-    );
-
-    pm_inco0_t(ttot,regi,te) $ (ttot.val >= c_teNoLearnConvEndYr) = fm_dataglob("inco0",te);
+  loop(ttot $ (ttot.val > 2020 and ttot.val < c_teNoLearnConvEndYr),
+    pm_inco0_t(ttot,regi,te)
+      = macro_interpolate(ttot.val, 2020, c_teNoLearnConvEndYr, p_inco0("2020",regi,te), fm_dataglob("inco0",te))
   );
-$endif.REG_techcosts
+
+  pm_inco0_t(ttot,regi,te) $ (ttot.val >= c_teNoLearnConvEndYr) = fm_dataglob("inco0",te);
+);
 
 
 
@@ -950,14 +937,13 @@ $include "./core/input/p_boundEmi.cs4r"
 $offdelim
 /;
 *** read in F-Gas emissions
-parameter f_emiFgas(tall,all_regi,all_SSP_forcing_adjust,all_rcp_scen,all_delayPolicy,all_enty)        "F-gas emissions by single gases from IMAGE"
-/
+table f_emiFgas(tall,all_regi,all_SSP_forcing_adjust,all_rcp_scen,all_delayPolicy,all_enty)        "F-gas emissions by single gases from IMAGE"
 $offlisting
 $ondelim
-$include "./core/input/f_emiFgas.cs4r"
+$include "./core/input/f_emiFgas.cs3r"
 $offdelim
 $onlisting
-/;
+;
 
 
 * GA Read choice of non-CO2 MACs version
@@ -966,42 +952,38 @@ $onlisting
 $IFTHEN.MaccVersion %c_nonco2_macc_version% == "PBL_2007"
 * PBL_2007 MACs are discretized in steps of 5 $/tC
 sm_dmac = 5 ;
-parameter p_abatparam_CH4(tall,all_regi,all_enty,steps)        "MAC costs for CH4 by source"
-/
+table p_abatparam_CH4(tall,all_regi,all_enty,steps)        "MAC costs for CH4 by source"
 $ondelim
-$include "./core/input/p_abatparam_CH4.cs4r"
+$include "./core/input/p_abatparam_CH4.cs3r"
 $offdelim
-/;
-parameter p_abatparam_N2O(tall,all_regi,all_enty,steps)        "MAC costs for N2O by source"
-/
+;
+table p_abatparam_N2O(tall,all_regi,all_enty,steps)        "MAC costs for N2O by source"
 $ondelim
-$include "./core/input/p_abatparam_N2O.cs4r"
+$include "./core/input/p_abatparam_N2O.cs3r"
 $offdelim
-/;
+;
 $ELSEIF.MaccVersion %c_nonco2_macc_version% == "PBL_2022"
 *** PBL_2022 MACs are discretized in steps of 20 $/tC
 *** PBL_2022 includes three scenarios, read the big file into p_all_abatparam_CH4 and subset based on c_nonco2_macc_scenario
 *** Create the set here, as it's not really used anywhere else
 set macc_scens "MAC scenarios for PBL_SSP2_2022 MACCs" /Default, Optimistic, Pessimistic/;
-parameter p_all_abatparam_CH4(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for CH4 by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_CH4"
-/
+table p_all_abatparam_CH4(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for CH4 by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_CH4"
 $offlisting
 $ondelim
-$include "./core/input/p_abatparam_SSP22022_CH4.cs4r"
+$include "./core/input/p_abatparam_SSP22022_CH4.cs3r"
 $offdelim
 $onlisting
-/;
+;
 parameter p_abatparam_CH4(tall,all_regi,all_enty,steps) "MAC costs for CH4 by source";
 *** Pick MACC scenario
 p_abatparam_CH4(tall,all_regi,all_enty,steps) = p_all_abatparam_CH4(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
-parameter p_all_abatparam_N2O(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for N2O by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_N2O"
-/
+table p_all_abatparam_N2O(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for N2O by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_N2O"
 $offlisting
 $ondelim
-$include "./core/input/p_abatparam_SSP22022_N2O.cs4r"
+$include "./core/input/p_abatparam_SSP22022_N2O.cs3r"
 $offdelim
 $onlisting
-/;
+;
 parameter p_abatparam_N2O(tall,all_regi,all_enty,steps) "MAC costs for N2O by source";
 *** Pick MACC scenario
 p_abatparam_N2O(tall,all_regi,all_enty,steps) = p_all_abatparam_N2O(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
@@ -1386,10 +1368,6 @@ p_emi_quan_conv_ar4("n2onitac")   = sm_tgn_2_pgc * (298/s_gwpN2O);
 p_emi_quan_conv_ar4("n2owaste")   = sm_tgn_2_pgc * (298/s_gwpN2O);
 
 
-*RP* Distribute ccap0 for all regions
-pm_data(regi,"ccap0",te) = 1/card(regi)*fm_dataglob("ccap0",te);
-
-
 *** -----------------------------------------------------------------------------
 *** ------------ emission budgets and their time periods ------------------------
 *** -----------------------------------------------------------------------------
@@ -1576,12 +1554,12 @@ $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
 
 $endif.altFeEmiFac
 
-pm_emifac(ttot,regi,"segafos","fegas","tdfosgas","co2") = p_ef_dem(regi,"fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(ttot,regi,"sesofos","fesos","tdfossos","co2") = p_ef_dem(regi,"fesos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(ttot,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem(regi,"fehos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem(regi,"fepet") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem(regi,"fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(ttot,regi,"segafos","fegat","tdfosgat","co2") = p_ef_dem(regi,"fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"segafos","fegas","tdfosgas","co2") = p_ef_dem(regi,"fegas") / (sm_GtC_2_MtCO2*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"sesofos","fesos","tdfossos","co2") = p_ef_dem(regi,"fesos") / (sm_GtC_2_MtCO2*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem(regi,"fehos") / (sm_GtC_2_MtCO2*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem(regi,"fepet") / (sm_GtC_2_MtCO2*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem(regi,"fedie") / (sm_GtC_2_MtCO2*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"segafos","fegat","tdfosgat","co2") = p_ef_dem(regi,"fegas") / (sm_GtC_2_MtCO2*sm_EJ_2_TWa); !! GtC/TWa
 
 $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
 *** Changing refineries emission factors in regions that belong to cm_altFeEmiFac to avoid negative emissions on pe2se 
@@ -1645,15 +1623,14 @@ loop(te,
 
 *** ---- FE demand trajectories for calibration -------------------------------
 
-Parameter
+Table
 f_fedemandInd(tall,all_regi,all_demScen,all_in) "final energy demand in industry"
-/
 $offlisting
 $ondelim
-$include "./core/input/f_fedemandInd.cs4r"
+$include "./core/input/f_fedemandInd.cs3r"
 $offdelim
 $onlisting
-/;
+;
 
 pm_fedemandInd(t,regi,in) = f_fedemandInd(t,regi,"%cm_demScen%",in);
 *** data input for industry FE that is no part of the CES tree 
@@ -1661,15 +1638,14 @@ pm_fedemandInd(t,regi,in) = f_fedemandInd(t,regi,"%cm_demScen%",in);
 pm_fedemandInd(t,regi,ppfen_no_ces_use) = f_fedemandInd(t,regi,"%cm_demScen%",ppfen_no_ces_use);
 
 *** RCP-dependent demands in buildings (climate impact)
-Parameter 
+Table
 f_fedemandBuild(tall,all_regi,all_demScen,all_rcp_scen,all_in) "RCP-dependent final energy demand in buildings"
-/
 $offlisting
 $ondelim
-$include "./core/input/f_fedemandBuild.cs4r"
+$include "./core/input/f_fedemandBuild.cs3r"
 $offdelim
 $onlisting
-/;
+;
 
 pm_fedemandBuild(t,regi,cal_ppf_buildings_dyn36) = f_fedemandBuild(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 
