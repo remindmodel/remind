@@ -393,7 +393,7 @@ output <- function(args) {
     }
 
     # choose the slurm options. If you use command line arguments, use slurmConfig=priority or standby
-    modulesUsingSlurmConfig <- c("compareScenarios2", "validateScenarios")
+    modulesUsingSlurmConfig <- c("compareScenarios2", "validateScenarios", "xlsx_IIASA")
     if (isSlurmAvailable() && any(modulesUsingSlurmConfig %in% output)) {
       if (is.null(args[["slurmConfig"]])) {
         slurmConfig <- chooseSlurmConfigOutput(output = output)
