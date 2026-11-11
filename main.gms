@@ -1432,6 +1432,16 @@ $setglobal c_edgeTransportIter 10,12,14,16,18,20,22,24,27,30,33,36,39,42,45,50,5
 *' *  (rcp60): RCP6.0 [currently not operational: test and verify before using it!]
 *' *  (rcp85): RCP8.5 [currently not operational: test and verify before using it!]
 $setglobal cm_rcp_scen  rcp45         !! def = "rcp45"  !! regexp = none|rcp20|rcp26|rcp37|rcp45|rcp60|rcp85
+*' cm_fgas_scen       "chooses the F-gas emission scenario (input f_emiFgas), independent of cm_rcp_scen"
+*'
+*' *  (MESSAGEHigh): MESSAGEix high-emission F-gas pathway (ScenarioMIP, harmonized to EDGAR7)
+*' *  (MESSAGEVeryLow): MESSAGEix very-low-emission F-gas pathway (ScenarioMIP, harmonized to EDGAR7)
+*' *  (MESSAGEMedium): MESSAGEix medium-emission F-gas pathway (ScenarioMIP, harmonized to EDGAR7)
+*' *  (MESSAGEKAFull): MESSAGEMedium with Kigali Amendment caps in all countries from 2030
+*' *  (MESSAGEKAImplemented): MESSAGEMedium with Kigali Amendment caps only in countries whose current policies include it.
+*'      Note: this scenario was based on MESSAGEVeryLow in earlier versions; it is now based on MESSAGEMedium, so results
+*'      are not comparable with runs made with the earlier input revision (8.27fgas). MESSAGEKAFull changed in the same way
+$setglobal cm_fgas_scen  MESSAGEKAImplemented  !! def = "MESSAGEKAImplemented"  !! regexp = MESSAGEHigh|MESSAGEVeryLow|MESSAGEMedium|MESSAGEKAFull|MESSAGEKAImplemented
 *' cm_NDC_targetYear            "choose years for which NDC emissions targets can be applied" [requires 45_carbonprice = NDC]
 *' * Examples on how to use:
 *' *  "2030" means that only 2030 target are included
