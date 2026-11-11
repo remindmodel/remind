@@ -26,7 +26,7 @@ jobs:
           persist-credentials: false
 
       - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@31b3198b2de324472547fecec2c0f721b70c38e2 # v0.9.15
+        uses: gittools/actions/gitversion/setup@7417b1089e2c7de93510f1901d656ddf60bb024f # v4.7.0
         with:
           versionSpec: '5.x'
 
