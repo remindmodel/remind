@@ -15,7 +15,7 @@ jobs:
   auto-dev-version:
     if: >-
       github.repository == 'remindmodel/remind' &&
-      github.event.head_commit.author.name != 'REMIND Research Software Engineering'
+      !startsWith(github.event.head_commit.message, 'Release development version')
     runs-on: ubuntu-26.04
     steps:
       - name: Checkout
@@ -57,9 +57,11 @@ jobs:
         env:
           VERSION: ${{ steps.gitversion.outputs.assemblySemVer }}
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
         run: |
-          git config user.name "REMIND Research Software Engineering"
-          git config user.email "rse@pik-potsdam.de"
+          user_id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)
+          git config user.name "${APP_SLUG}[bot]"
+          git config user.email "${user_id}+${APP_SLUG}[bot]@users.noreply.github.com"
           git add CITATION.cff config/default.cfg
           git commit -m "Release development version $VERSION"
           git tag "v$VERSION"
