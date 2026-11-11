@@ -159,6 +159,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   if (length(unknownColumnNames) > 0) {
     message("")
     forbiddenColumnNames <- list(   # specify forbidden column name and what should be done with it
+       "c_macscen" = "Rename to cm_macscen, see https://github.com/remindmodel/remind/pull/2512",
+       "c_nonco2_macc_version" = "Rename to cm_nonco2_macc_version, see https://github.com/remindmodel/remind/pull/2512",
        "c_budgetCO2" = "Rename to cm_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
        "c_budgetCO2from2020" = "Rename to cm_budgetCO2from2020, see https://github.com/remindmodel/remind/pull/1874",
        "c_budgetCO2from2020FFI" = "Deleted, use cm_budgetCO2from2020 instead, and adapt emission budgets, see https://github.com/remindmodel/remind/pull/1874",

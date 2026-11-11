@@ -113,8 +113,8 @@ q_costOM(t,regi)..
 *' Energy balance equations equate the production of and demand for each primary, secondary and final energy.
 *' The balance equation for primary energy equals supply of primary energy demand on primary energy.
 ***---------------------------------------------------------------------------
-q_balPe(t,regi,entyPe(enty))..
-         vm_prodPe(t,regi,enty) + p_macPE(t,regi,enty)
+qm_balPe(t,regi,entyPe(enty))..
+         vm_prodPe(t,regi,enty) + pm_macPE(t,regi,enty)
          =e=
          sum(pe2se(enty,enty2,te), vm_demPe(t,regi,enty,enty2,te))
 ;
@@ -149,7 +149,7 @@ q_balSe(t,regi,enty2)$( entySe(enty2) AND (NOT (sameas(enty2,"seel"))) )..
     )
 ***   add (reused gas from waste landfills) to segas to not account for CO2
 ***   emissions - it comes from biomass
-  + ( s_MtCH4_2_TWa
+  + ( sm_MtCH4_2_TWa
     * ( vm_macBase(t,regi,"ch4wstl")
       - vm_emiMacSector(t,regi,"ch4wstl")
       )

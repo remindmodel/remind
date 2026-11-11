@@ -625,9 +625,9 @@ parameter
 *' * (0): no lower bound
 *'
 parameter
-  c_macscen                 "scenario switch on whether or not to use MAC (Marginal Abatement Cost) for certain sectors not related to direct combustion of fossil fuel, e.g. fugitive emissions from old mines, forestry, agriculture and cement"
+  cm_macscen                 "scenario switch on whether or not to use MAC (Marginal Abatement Cost) for certain sectors not related to direct combustion of fossil fuel, e.g. fugitive emissions from old mines, forestry, agriculture and cement"
 ;
-  c_macscen         = 1;               !! def = 1  !! regexp = 1|2
+  cm_macscen         = 1;               !! def = 1  !! regexp = 1|2
 *' * (1): on
 *' * (2): off
 *'
@@ -2231,7 +2231,7 @@ $setglobal cm_taxrc_RE  none   !! def = none   !! regexp = none|REdirect
 *' (2020): Uses CEDS2024 data with 2020 as base year, and Harmsen et al. 2022 IMAGE for N2O baselines
 $setGlobal cm_emifacs_baseyear  2020          !! def = 2005
 *** Switches to choose Marginal Abatement Cost Curves (MACCs) version (PBL_2007, PBL_2022) and scenarios (Default, Pessismistic, Optimistic)
-$setGlobal c_nonco2_macc_version  PBL_2022    !! def = PBL_2007
+$setGlobal cm_nonco2_macc_version  PBL_2022    !! def = PBL_2007
 $setGlobal c_nonco2_macc_scenario  Default     !! def = Default
 *** China-specific brownfield planning pipeline (informed by Global energy monitor and pypsa capacity pipeline data, off by default)
 $setGlobal cm_chaCoalBounds off    !! def = off

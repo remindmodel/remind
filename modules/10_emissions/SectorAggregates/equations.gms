@@ -205,7 +205,7 @@ q10_emiMacSector(t,regi,emiMacSector(enty))..
     - vm_emiIndCCS(t,regi,enty)
     )$( sameas(enty,"co2cement_process") )
 
-   + pm_macPolCO2luc(t,regi)$( sameas(enty,"co2luc") )
+   + p10_macPolCO2luc(t,regi)$( sameas(enty,"co2luc") )
 ;
 
 q10_emiMac(t,regi,emiMac) ..
@@ -264,7 +264,7 @@ q10_emiCdrAll(t,regi)..
   vm_emiCdrNovel(t,regi)   
   !! ---- net LUC CDR
   !! 0.  net negative emissions from co2luc
-  - pm_macBaseMagpieNegCo2(t,regi) !! negative value
+  - p10_macBaseMagpieNegCo2(t,regi) !! negative value
   !! 2. Feedstocks
    !! 2b) plastics CDR -- landfilled waste from non-fossil feedstocks
   - sum((emi,emiMkt), 

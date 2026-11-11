@@ -44,7 +44,7 @@ pm_cesdata(tall,all_regi,all_in,cesParameter)        "parameters of the CES func
 f_pop(tall,all_regi,all_GDPpopScen)                  "population data for all possible scenarios [million people]"
 pm_pop(tall,all_regi)                                "population data [bn people]"
 pm_gdp(tall,all_regi)                                "GDP MER data [trn US$ 2005]"
-p_developmentState(tall,all_regi)                    "level of development based on GDP per capita, 0 is low income, 1 is high income"
+pm_developmentState(tall,all_regi)                    "level of development based on GDP per capita, 0 is low income, 1 is high income"
 f_lab(tall,all_regi,all_GDPpopScen)                  "labour data for all possible scenarios [million people]"
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
 pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer) [T$/unit energy service]"
@@ -75,38 +75,6 @@ parameters
 *** emissions parameters for nash algorithm
 pm_co2eqForeign(tall,all_regi)                       "emissions, which are part of the climate policy, of other regions (nash relevant)."
 pm_co2eq0(tall,all_regi)                             "Total greenhouse gas emissions from last iteration based on vm_co2eq used in nash algorithm [GtCeq]"
-
-*** parameters used for MAC curves
-pm_macBaseMagpie(tall,all_regi,all_enty)             "baseline emissions from MAgPIE (type emiMacMagpie) [GtC, Mt CH4, Mt N]"
-f_macBaseMagpie_coupling(tall,all_regi,all_enty)     "baseline emissions from MAgPIE (type emiMacMagpie) read from magpie.gdx in coupling [GtC, Mt CH4, Mt N]"
-pm_macBaseMagpieNegCo2(tall,all_regi)                 "net negative CO2 emissions from land-use change [GtC]"
-p_macBaseExo(tall,all_regi,all_enty)                 "exogenous baseline emissions (type emiMacExo) [Mt CH4, Mt N]"
-p_co2lucSub(tall,all_regi,all_enty)                  "subtypes of CO2 land use change emissions, add up to total land use change emissions, coming from MAgPIE, passed through REMIND for reporting, not used anywhere, remain unchanged [GtC]"
-pm_macAbat(tall,all_regi,all_enty,steps)             "abatement levels based on data from van Vuuren [fraction]"
-pm_macAbatLev(tall,all_regi,all_enty)                "actual level of abatement per time step, region, and source [fraction]"
-p_macAbat_lim(tall,all_regi,all_enty)                "limit of abatement level based on limit of yearly change [fraction]"
-p_macUse2005(all_regi,all_enty)                      "usage of MACs in 2005 [fraction]"
-p_histEmiMac(tall,all_regi,all_enty)                 "historical emissions per MAC (type emiMacSector); from Eurostat and CEDS, to correct CH4 and N2O reporting [GtC, Mt CH4, Mt N]"
-p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types) "historical emissions per sector; from Eurostat and CEDS, to correct CH4 and N2O reporting [GtC, Mt CH4, Mt N]"
-p_macLevFree(tall,all_regi,all_enty)                 "Phase in of zero-cost MAC options [fraction]"
-pm_macCost(tall,all_regi,all_enty)                   "abatement costs for all emissions subject to MACCs (type emiMacSector) [T$]"
-pm_macStep(tall,all_regi,all_enty)                   "step number of abatement level [integer]"
-pm_macSwitch(ttot,all_regi,all_enty)                 "switch to include mac options in specific sectors and years [0/1]"
-p_macCostSwitch(all_enty)                            "switch to include mac costs in the code [0/1] (e.g. in coupled scenarios, we want to include the costs in REMIND, but MAC effects on emissions are calculated in MAgPIE)"
-p_macPE(ttot,all_regi,all_enty)                      "Primary energy production from MACs, e.g. methane production from abated methane leakage in coal extraction [TWa]"
-p_priceCO2(tall,all_regi)                            "carbon price [$/tC]"
-p_priceCO2forMAC(tall,all_regi,all_enty)             "carbon price defined for MAC gases [$/tC]"
-p_priceGas(tall,all_regi)                            "gas price for ch4gas MAC [$/tCeq]"
-p_emi_quan_conv_ar4(all_enty)                        "conversion factor of non-CO2 greenhouses gases to GtCeq"
-
-$IFTHEN.agricult_base_shift not "%c_agricult_base_shift%" == "off"
-p_agricult_base_shift(ext_regi)                      "fraction by which to scale agricultural emissions of baseline up or down, positive values increase emissions, negative values decrease emissions [fraction]" / %c_agricult_base_shift% /
-p_agricult_shift_phasein(ttot)                       "phase in parameter for baseline agricultural process ch4 and no2 reduction [share]"
-p_macBaseMagpie_beforeShift(ttot,all_regi,all_enty)  "pm_macBaseMagpie parameter before shift of c_agricult_base_shift is applied [GtC, Mt CH4, Mt N]"
-$ENDIF.agricult_base_shift
-
-p_aux_scaleEmiHistorical_n2o(all_regi)               "auxiliary parameter to rescale MAgPIE n2o emissions to historical values [Mt N]"
-p_aux_scaleEmiHistorical_ch4(all_regi)               "auxiliary parameter to rescale MAgPIE ch4 emissions to historical values [Mt CH4]"
 
 ;
 
@@ -408,7 +376,7 @@ q_limitCapFeH2BI(ttot,all_regi,emi_sectors)               "capacity limit equati
 
 *** energy balance equations (energy supply = energy demand)
 qm_fuel2pe(ttot,all_regi,all_enty)                   "balance of primary energy extraction, import and export and production"
-q_balPe(ttot,all_regi,all_enty)                      "balance of primary energy (pe)"
+qm_balPe(ttot,all_regi,all_enty)                     "balance of primary energy (pe)"
 q_balSe(ttot,all_regi,all_enty)                      "balance of secondary energy (se)"
 q_balFe(ttot,all_regi,all_enty,all_enty,all_te)      "balance of final energy (fe)"
 q_balFeAfterTax(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "balance of final energy after considering FE sectoral taxes (fe)"
@@ -529,9 +497,6 @@ o_negitr_disc_cons_dr5_reg(iteration,all_regi)       "estimated discounted consu
 o_negitr_disc_cons_drInt_reg(iteration,all_regi)     "estimated discounted consumption 2005-2100 with internal discount rate. 'estimated' because of different times step lengths around 2100 [T$]"
 o_negitr_total_forc(iteration)                       "total forcing in 2100"
 o_pm_pebiolc_demandmag(iteration,ttot,all_regi)      "track pm_pebiolc_demandmag across Nash iterations"
-o_pm_macBaseMagpie(iteration,ttot,all_regi,all_enty) "track pm_macBaseMagpie across Nash iterations"
-o_pm_macSwitch(iteration,ttot,all_regi,all_enty)     "track pm_macSwitch across Nash iterations"
-o_pm_PeProdEmifac_n2obio(iteration,all_regi)          "track pm_PeProdEmifac for n2obio across Nash iterations"
 o_vm_fuExtr_pebiolc_iter(iteration,ttot,all_regi)         "track vm_fuExtr for pebiolc across Nash iterations"
 o_vm_pebiolc_price_iter(iteration,ttot,all_regi)          "track vm_pebiolc_price across Nash iterations"
 o_PEDem_Bio_ECrops_iter(iteration,ttot,all_regi)          "track pebiolc demand across Nash iterations"
@@ -583,16 +548,16 @@ s_NO2_2_N                    "convert NO2 to N [14 / (14 + 2 * 16)]"   / .304 /
 sm_tgn_2_pgc                 "conversion factor 100-yr GWP from TgN to PgCeq"
 sm_tgch4_2_pgc               "conversion factor 100-yr GWP from TgCH4 to PgCeq"
 sm_MtCO2_2_GtC               "conversion factor from MtCO2 to native REMIND emission unit GtC" /2.727e-04/
-s_MtCH4_2_TWa                "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
-s_gwpCH4                     "Global Warming Potentials of CH4, AR5 WG1 CH08 Table 8.7"     /28/
-s_gwpN2O                     "Global Warming Potentials of N2O, AR5 WG1 CH08 Table 8.7"     /265/
-s_gwpCH4_AR4                 "Global Warming Potentials of CH4 as in the AR4, used in the MACCs"     /25/
-s_gwpN2O_AR4                 "Global Warming Potentials of N2O as in the AR4, used in the MACCs"     /298/
+sm_MtCH4_2_TWa                "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
+sm_gwpCH4                    "Global Warming Potentials of CH4, AR5 WG1 CH08 Table 8.7"     /28/
+sm_gwpN2O                    "Global Warming Potentials of N2O, AR5 WG1 CH08 Table 8.7"     /265/
+sm_gwpCH4_AR4                 "Global Warming Potentials of CH4 as in the AR4, used in the MACCs"     /25/
+sm_gwpN2O_AR4                 "Global Warming Potentials of N2O as in the AR4, used in the MACCs"     /298/
 
 *** monetary units
 s_DpKWa_2_TDpTWa             "convert Dollar per kWa to Tera Dollar per TWa" /0.001/
 s_DpKW_2_TDpTW               "convert Dollar per kW to Tera Dollar per TW"   /0.001/
-s_D2010_2_D2017              "Convert US$2010 to US$2017"      /1.1491/
+sm_D2010_2_D2017              "Convert US$2010 to US$2017"      /1.1491/
 sm_D2015_2_D2017             "Convert US$2015 to US$2017"      /1.0292/
 sm_D2005_2_D2017             "Convert US$2005 to US$2017"      /1.231/
 sm_D2020_2_D2017             "Convert US$2020 to US$2017"      /0.9469/
@@ -602,10 +567,6 @@ sm_EURO2023_2_D2017          "Convert EURO 2023 to US$2017"    /0.8915/
 
 *** ------------ Scalar Model Parameters ---------------
 o_modelstat                  "critical solver status for solution"
-
-* GA sm_dmac changes depending on the choice of MACs in c_nonco2_macc_version
-sm_dmac                      "step in MAC functions [US$]"                                                                   
-sm_macChange                 "maximum yearly increase of relative abatement in percentage points of maximum abatement. [0..1]"      /0.05/
 
 s_tau_cement                 "range of per capita investments for switching from short-term to long-term behavior in CO2 cement emissions"                / 12000 /
 s_c_so2                      "constant, see S. Smith, 2004, Future Sulfur Dioxide Emissions"    /4.39445/
@@ -629,20 +590,11 @@ sm_updateMagpieData          "Boolean defined in core/presolve indicating if MAg
 ;
 
 sm_magpieIterEnd = card(magpieIter);
-* GA sm_dmac changes depending on the choice of MACs in c_nonco2_macc_version
-$ifthen %c_nonco2_macc_version% == "PBL_2007"
-* PBL_2007 MACs are discretized in steps of 5 $2005/tCeq
-sm_dmac = 5 * sm_D2005_2_D2017;
-$elseif %c_nonco2_macc_version% == "PBL_2022"
-* PBL_2022 MACs are discretized in steps of 20 $2010/tCeq
-sm_dmac = 20 * s_D2010_2_D2017;
-$endif
-;
 
 
 *** calculate further conversion factors for emissions
-sm_tgn_2_pgc = (44/28) * s_gwpN2O * (12/44) * 0.001;
-sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
+sm_tgn_2_pgc = (44/28) * sm_gwpN2O * (12/44) * 0.001;
+sm_tgch4_2_pgc = sm_gwpCH4 * (12/44) * 0.001;
 
 
 

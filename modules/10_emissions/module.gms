@@ -13,7 +13,7 @@
 *' (e.g. 21_tax, 45_cabonprice, 46_carbonpriceRegi, 47_regipol) and for reporting purposes
 *' (remind2::reportEmi()). 
 
-*' @authors Felix Schreyer, Anne Merfort, Renato Rodrigues
+*' @authors Felix Schreyer, Anne Merfort, Renato Rodrigues, Gabriel Abrahao
 
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%emissions%" == "SectorAggregates" $include "./modules/10_emissions/SectorAggregates/realization.gms"

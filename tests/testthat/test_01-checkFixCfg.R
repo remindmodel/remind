@@ -14,7 +14,7 @@ test_that("checkFixCfg works", {
     "cm_emiscen" = "123",
     "cm_nash_autoconverge" = "NA",
     "cm_taxCO2_expGrowth" = "333++",
-    "c_macscen" = "-1",
+    "cm_macscen" = "-1",
     "cm_keep_presolve_gdxes" = "1.1",
     "cm_startyear" = "1985",
     "cm_rcp_scen" = "apocalypse",
