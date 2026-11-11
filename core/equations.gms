@@ -440,14 +440,14 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
 *' In datainput.gms, `fm_dataglob` external data provides the observed learning rate `learn` ($\lambda$),
 *' the initial investment costs `inco0` ($I_0$) and the floorcost ($F$).
 *' The other learning parameters are computed using the equations described above:
-*' `p_learnExpGlob`/`p_learnExpReg` ($b'$), `p_learnMultGlob`/`p_learnMultReg` ($a'$).
+*' `p_learnExpGlob` or `p_learnExpRegi` ($b'$), `p_learnMultGlob` or `p_learnMultRegi` ($a'$).
 
 *' In equations.gms, the investment costs equation `q_costTeCapital` corresponds to $I = a'\times C^{b'} + F$,
 *' with variations depending on time period and floor cost scenarios.
 
-*** p_learnExpReg/p_learnExpGlob must be strictly negative for q_costTeCapital to work
-loop((regi, teLearn)$(p_learnExpReg(regi, teLearn) >= 0),
-    abort "Parameter error: p_learnExpReg must be strictly negative! This may be violated if floorcost > inco0 for some region/tech";
+*** p_learnExpRegi/p_learnExpGlob must be strictly negative for q_costTeCapital to work
+loop((regi, teLearn)$(p_learnExpRegi(regi, teLearn) >= 0),
+    abort "Parameter error: p_learnExpRegi must be strictly negative! This may be violated if floorcost > inco0 for some region/tech";
 );
 loop(teLearn$(p_learnExpGlob(teLearn) >= 0),
     abort "Parameter error: p_learnExpGlob must be strictly negative! This may be violated if floorcost > inco0 for some region/tech";
@@ -455,7 +455,7 @@ loop(teLearn$(p_learnExpGlob(teLearn) >= 0),
 
 
 $macro macro_capCumGlob (sum(regi2, vm_capCum(t,regi2,teLearn)) + pm_capCumForeign(t,regi,teLearn))
-$macro macro_costRegi   (pm_data(regi,"floorcost",teLearn) + p_learnMultReg(regi,teLearn) * macro_capCumGlob ** p_learnExpReg(regi,teLearn))
+$macro macro_costRegi   (pm_data(regi,"floorcost",teLearn) + p_learnMultRegi(regi,teLearn) * macro_capCumGlob ** p_learnExpRegi(regi,teLearn))
 $macro macro_costGlob   (fm_dataglob("floorcost",teLearn) + p_learnMultGlob(teLearn) * macro_capCumGlob ** p_learnExpGlob(teLearn))
 
 q_costTeCapital(t,regi,teLearn) $ (pm_data(regi,"tech_stat",teLearn) < 4 or t.val > 2020) ..

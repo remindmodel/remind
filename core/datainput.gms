@@ -417,24 +417,24 @@ fm_dataglob("floorcost",teLearn) = min(fm_dataglob("floorcost",teLearn), 0.8 * f
 
 loop(teLearn(te),
 *** calculate default learnable costs for learning technologies
-  p_incolearnGlob(te)  = fm_dataglob("inco0",te)  - fm_dataglob("floorcost",te);
-  p_incolearnRegi(regi,te) = pm_data(regi,"inco0",te) - pm_data(regi,"floorcost",te);
+  p_learnDeltaGlob(te)  = fm_dataglob("inco0",te)  - fm_dataglob("floorcost",te);
+  p_learnDeltaRegi(regi,te) = pm_data(regi,"inco0",te) - pm_data(regi,"floorcost",te);
 
 *** global parameters: calculation for global level, that regional values can gradually converge to
 *** b' = \frac{I_0}{I_0 - F} b = \frac{I_0}{I_0 - F} \log_2(1-\lambda)
-  p_learnExpGlob(te) = fm_dataglob("inco0",te) / p_incolearnGlob(te) * log(1 - fm_dataglob("learn",te)) / log(2);
+  p_learnExpGlob(te) = fm_dataglob("inco0",te) / p_learnDeltaGlob(te) * log(1 - fm_dataglob("learn",te)) / log(2);
 *** a' = \frac{I_0 - F}{C_0^{b'}}
-  p_learnMultGlob(te) = p_incolearnGlob(te) / (sum((ttot, regi2)$(ttot.val = fm_dataglob("inco0year",te)), p_capCum(ttot,regi2,te)) ** p_learnExpGlob(te));
+  p_learnMultGlob(te) = p_learnDeltaGlob(te) / (sum((ttot, regi2)$(ttot.val = fm_dataglob("inco0year",te)), p_capCum(ttot,regi2,te)) ** p_learnExpGlob(te));
 *** regional parameters
-  p_learnExpReg(regi, te) = pm_data(regi,"inco0",te) / p_incolearnRegi(regi,te) * log(1 - pm_data(regi,"learn",te)) / log(2);
+  p_learnExpRegi(regi, te) = pm_data(regi,"inco0",te) / p_learnDeltaRegi(regi,te) * log(1 - pm_data(regi,"learn",te)) / log(2);
 
 *** regional uses different years than global data
-  p_learnMultReg(regi, te) = p_incolearnRegi(regi,te) / (sum((ttot, regi2)$(ttot.val = fm_dataglob("inco0year",te)), p_capCum(ttot,regi2,te)) ** p_learnExpReg(regi, te));
+  p_learnMultRegi(regi, te) = p_learnDeltaRegi(regi,te) / (sum((ttot, regi2)$(ttot.val = fm_dataglob("inco0year",te)), p_capCum(ttot,regi2,te)) ** p_learnExpRegi(regi, te));
 );
-p_learnMultReg(regi, "spv") = p_incolearnRegi(regi,"spv") / sum(regi2,p_capCum("2020",regi2,"spv")) ** p_learnExpReg(regi, "spv");
-p_learnMultReg(regi, "windon") = p_incolearnRegi(regi,"windon") / sum(regi2,p_capCum("2015",regi2,"windon")) ** p_learnExpReg(regi, "windon");
-p_learnMultReg(regi, "windoff") = p_incolearnRegi(regi,"windoff") / sum(regi2,p_capCum("2015",regi2,"windoff")) ** p_learnExpReg(regi, "windoff");
-p_learnMultReg(regi, "csp") = p_incolearnRegi(regi,"csp") / sum(regi2,p_capCum("2015",regi2,"csp")) ** p_learnExpReg(regi, "csp");
+p_learnMultRegi(regi, "spv") = p_learnDeltaRegi(regi,"spv") / sum(regi2,p_capCum("2020",regi2,"spv")) ** p_learnExpRegi(regi, "spv");
+p_learnMultRegi(regi, "windon") = p_learnDeltaRegi(regi,"windon") / sum(regi2,p_capCum("2015",regi2,"windon")) ** p_learnExpRegi(regi, "windon");
+p_learnMultRegi(regi, "windoff") = p_learnDeltaRegi(regi,"windoff") / sum(regi2,p_capCum("2015",regi2,"windoff")) ** p_learnExpRegi(regi, "windoff");
+p_learnMultRegi(regi, "csp") = p_learnDeltaRegi(regi,"csp") / sum(regi2,p_capCum("2015",regi2,"csp")) ** p_learnExpRegi(regi, "csp");
 
 
 *** =================== Markup for advanced technologies ========================
