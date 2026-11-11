@@ -82,9 +82,17 @@ run_compareScenarios2 <- function(
   )
   args[names(profile)] <- profileEval
 
-  # Only the project library remind2 computes validation thresholds. Other
-  # profiles have to set validationConfig themselves to use it.
-  if (!identical(args$projectLibrary, "remind2") && !"validationConfig" %in% names(profile)) {
+  # Only the project library remind2 computes validation thresholds. For other
+  # profiles the default config is dropped. An explicitly chosen config raises an
+  # error, unless the profile sets validationConfig itself.
+  if (!identical(args$projectLibrary, "remind2") && 
+      !"validationConfig" %in% names(profile) &&
+      !is.null(args$validationConfig)) {
+    if (!identical(args$validationConfig, "AMT")) {
+      stop("Profile '", profileName, "' does not support validation thresholds, but validationConfig = '",
+           args$validationConfig, "' was requested. Omit --validationConfig or choose another profile or 
+           edit the chosen profile to use a validationConfig.")
+    }
     args$validationConfig <- NULL
   }
 
