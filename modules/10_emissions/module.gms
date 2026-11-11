@@ -8,10 +8,11 @@
 
 *' @title Emissions
 *'
-*' @description This module calculates and/or collects all GHG emissions. It sums them to
+*' @description This module calculates and/or collects all GHG emissions and carbon management flows. It sums them to
 *' relevant aggregate emissions categories used in the policy modules
 *' (e.g. 21_tax, 45_cabonprice, 46_carbonpriceRegi, 47_regipol) and for reporting purposes
-*' (remind2::reportEmi()). 
+*' (remind2::reportEmi()). It moreover contains the calculation of non-CO2 and land-use change emissions from
+*' marginal abatement cost curves (MACCs).
 
 *' @authors Felix Schreyer, Anne Merfort, Renato Rodrigues, Gabriel Abrahao
 

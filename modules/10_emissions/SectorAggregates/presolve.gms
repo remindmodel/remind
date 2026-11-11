@@ -25,7 +25,6 @@
 *' #### 1. Econometric baseline emissions of waste
 *** ==================================================================
 
-*LB* moved here from datainput to be updated based on the gdp-path
 *** calculate econometric emission data: p2
 p10_emineg_econometric(regi,"ch4wstl","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) gt 10)   = 0.5702590;
 p10_emineg_econometric(regi,"ch4wstl","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005",regi) le 10)   = 0.2057304;
@@ -73,7 +72,7 @@ if (sm_magpieIter gt 0,
   p10_co2lucSub(ttot,regi,emiMacMagpieCO2Sub(all_enty))$(ttot.val ge cm_startyear) = f10_macBaseMagpie_coupling(ttot,regi,emiMacMagpieCO2Sub);
 *** Biomass emission factor is set to zero after MAgPIE has run at least one, since biomass emissions are included in the emissions imported above. 
   pm_PeProdEmifac(regi,"pebiolc","n2obio") = 0.0;
-*** In coupling mode LU emissions are abated in MAgPIE (moved here from core/datainput.gms)
+*** In coupling mode LU emissions are abated in MAgPIE 
   pm_macSwitch(ttot,regi,enty)$emiMacMagpie(enty) = 0;
 else 
 *** MAgPIE has not run (and might never run): the start values for pm_macBaseMagpie come from input data file
@@ -82,14 +81,11 @@ else
 
 display pm_PeProdEmifac;
 
-*** Moved here from core/datainput.gms, because pm_macSwitch is changed above after first MAgPIE iteration
-*** An alternative to the approach below could be to introduce a new value for c_macswitch that only deactivates the LU MACs
 *** GA: Use long term (2050) pm_macSwitch to set p10_macCostSwitch, as some MACCs
 *** are turned off in the short term 
 pm_macSwitch(ttot,regi,"co2cement_process") =0 ;
 p10_macCostSwitch(enty)=pm_macSwitch("2050","USA",enty);
 
-*** Code moved here from core/preloop.gms
 *** The N2O emissions generated during biomass production in agriculture (in MAgPIE)
 *** are represented in REMIND by applying the n2obio emission factor (zero in coupled runs)
 *** in q10_macBase. In standaolne runs the resulting emissions need to be subtracted (see below)

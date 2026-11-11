@@ -34,8 +34,5 @@ $Ifi "%phase%" == "equations" $include "./modules/10_emissions/SectorAggregates/
 $Ifi "%phase%" == "preloop" $include "./modules/10_emissions/SectorAggregates/preloop.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/10_emissions/SectorAggregates/bounds.gms"
 $Ifi "%phase%" == "presolve" $include "./modules/10_emissions/SectorAggregates/presolve.gms"
-$Ifi "%phase%" == "solve" $include "./modules/10_emissions/SectorAggregates/solve.gms"
-$Ifi "%phase%" == "postsolve" $include "./modules/10_emissions/SectorAggregates/postsolve.gms"
-$Ifi "%phase%" == "output" $include "./modules/10_emissions/SectorAggregates/output.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/10_emissions/SectorAggregates/realization.gms
