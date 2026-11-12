@@ -221,9 +221,15 @@ p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data 
 pm_tsu2opTimeYr(ttot,opTimeYr)                       "auxiliary parameter to map time steps to past time steps: counts the number of model timesteps between years ttot-opTimeYr and ttot, used for q_transPe2se and q_cap equations [unitless]" 
 
 *** parameters used for endogenous technology learning implementation
-pm_capCum0(tall,all_regi,all_te)                     "Total cumulated capacity of learning technologies from last iteration used for learning curves based on vm_capCum [TW]"
-p_capCum(tall, all_regi,all_te)                      "Total cumulated capacity of learning technologies from input.gdx used for learning curves based on vm_capCum [TW]"
-pm_capCumForeign(ttot,all_regi,all_te)               "Total cumulated capacity of learning technologies of all other regions except regi [TW]"
+pm_capCum0(tall,all_regi,all_te)                     "Total cumulated capacity of learning technologies from last iteration used for learning curves based on vm_capCum [TW] or [GtC/yr]"
+p_capCum(tall, all_regi,all_te)                      "Total cumulated capacity of learning technologies from input.gdx used for learning curves based on vm_capCum [TW] or [GtC/yr]"
+pm_capCumForeign(ttot,all_regi,all_te)               "Total cumulated capacity of learning technologies of all other regions except regi [TW] or [GtC/yr]"
+p_learnDeltaGlob(all_te)                              "Investment costs that can be reduced through learning = inco0 - floorcost. Unit: $/kW"
+p_learnDeltaRegi(all_regi,all_te)                     "Investment costs that can be reduced through learning = inco0 - floorcost, based on regional investment costs. Unit: $/kW"
+p_learnExpGlob(all_te)                               "exponent in learning equation, based on global data"
+p_learnMultGlob(all_te)                              "multiplicative parameter in learning equation, based on global data"
+p_learnExpRegi(all_regi,all_te)                       "exponent in learning equation, based on regional investment costs"
+p_learnMultRegi(all_regi,all_te)                      "multiplicative parameter in learning equation, based on regional investment costs"
 
 *** early retirement parameters
 pm_regiEarlyRetiRate(ttot,all_regi,all_te)           "regional early retirement rate, maximum allowed annual increase in the share of early retired capacity of a technology for which early retirement is allowed [1/year]"

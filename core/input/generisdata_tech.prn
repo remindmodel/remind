@@ -1,6 +1,6 @@
 *** SOF ./core/input/generisdata_tech.prn
 $ontext
-tech_stat   technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'
+tech_stat   technology status: how close a technology is to market readiness. Scale: 0-5, with 0 'I can go out and build a GW plant today' over 3 'Still some research necessary' to 5 'Further in the future'
 inco0       Initial investment costs given in $[2015] / kW[output] capacity; for dac/prc cc: $[2015] / (tC[captured]/a); for other industry prc: $[2015]/(t[output]/a); for weathering:  $[2015]/(t rock/a)
 inco0year   Year in which inco0 holds (only given for learning technologies)
 floorcost   Floor investment costs, given in $[2015] / kW[output]; for dac: $[2015] / (tC[captured]/a)

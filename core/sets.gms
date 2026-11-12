@@ -1577,6 +1577,7 @@ teRegTechCosts(all_te) "all technologies for which we differantiate tech costs b
     csp
 ***       wind
     windon
+    windoff
 /
 
 teFlex(all_te)       "all technologies which can benefit from flexibility tax"
@@ -2181,7 +2182,6 @@ char            "characteristics of technologies"
     inco0           "investment costs at inco0year. Unit: $/kW"
     inco0year       "year where inco0 holds"
     inco0_d         "Initial investment costs given in $(2015)/kW(output) capacity. Per 1000km."
-    incolearn       "Investment costs that can be reduced through learning = inco0 - floorcost. Unit: $/kW"
     floorcost       "Floor investment costs for learning technologies. Unit: $/kW"
     eta             "conversion efficiency"
     eta_d           "conversion efficiency, i.e. the amount of energy NOT lost in transportation. Per 1000km."
@@ -2192,8 +2192,6 @@ char            "characteristics of technologies"
     tlt             "technical life time"
     delta           "depreciation rate"
     learn           "learning rate"
-    learnMult_wFC   "multiplicative parameter in learning equation, adjusted to take Floor Costs into account"
-    learnExp_wFC    "exponent in learning equation, adjusted to take Floor Costs into account"
     bgrl            "lower bound on growth rate"
     bgru            "upper bound on growth rate"
     bcal            "lower bound on capacity"
