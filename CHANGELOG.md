@@ -14,8 +14,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - **scripts** Move results of most comparison scripts to output folder.
   [[#2500](https://github.com/remindmodel/remind/pull/2500)]
-- **core** Increase tolerance in equations `q_shbiofe_up` and `q_shbiofe_lo` from 2% to 2.5% after changes IEA input data.
-  [[#2513](https://github.com/remindmodel/remind/pull/2513)]
 - **45_carbonprice** Refactoring of NDC emissions target calculation and implementation
   [[#2487](https://github.com/remindmodel/remind/pull/2487)]
 
@@ -36,7 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - **scripts** Fix call to harmonization and infilling console entry point in  `climateAssessmentInterimRun.R`
   [[#2484](https://github.com/remindmodel/remind/pull/2484)]
-- 
+-
 
 ## [3.7.1] - 2026-09-25
 
