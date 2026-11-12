@@ -1640,10 +1640,6 @@ $setGlobal cm_quantity_regiCO2target  off !! def = off
 *** Setting capacity factors free is numerically expensive but can be helpful to see if negative prices disappear in historic years as the model is allowed to dispatch.
 $setGlobal cm_dispatchSetyDown  off   !! def = off  The amount that te producing any sety can dispatch less (in percent) - so setting "20" in a cm_dispatchSetyDown column in scenario_config will allow the model to reduce the output of this te by 20%
 *** cm_dispatchSeelDown <- "off", same as cm_dispatchSetyDown but only provides range to capacity factors of electricity generation technologies
-*** cm_steel_secondary_max_share_scenario
-*** defines maximum secondary steel share per region
-*** Share is faded in from cm_startyear or 2020 to the denoted level by region/year.
-*** Example: "2040.EUR 0.6" will cap the share of secondary steel production at 60 % in EUR from 2040 onwards
 $setGlobal cm_dispatchSeelDown  off   !! def = off  The amount that te producing seel can dispatch less (in percent) (overrides cm_dispatchSetyDown for te producing seel)
 *' *   cm_NucRegiPol "enable European region specific nuclear phase-out and new capacitiy constraints"
 $setGlobal cm_NucRegiPol   on   !! def = on
@@ -1761,9 +1757,6 @@ $setglobal cm_floorCostScen gdpBased       !! def = gdpBased  !! regexp = unifor
 ***  ("HydrHype4") similar to Mix4 but with a strong focus on FCEVs in both passenger and freight sectors.
 ***  This information has been added on 4.10.22. Please contact the transport sector experts for more detail.
 $setGlobal cm_EDGEtr_scen  Mix2ICEban  !! def = Mix2ICEban
-*** industry
-*** maximum secondary steel share
-$setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for maximum secondary steel share
 *** cm_import_tax
 *** set tax on imports for specific regions on traded energy carriers
 *** as a fraction of import price
