@@ -149,6 +149,17 @@ prepare <- function() {
   # check whether the regional resolution and input data revision are outdated and update data if needed
   cfg <- updateInputData(cfg, remindPath = ".")
 
+  # check that the committed POSTED data in core/input/f_technoeconomic.csv matches
+  # technoeconomic/create_input.py and the POSTED commit pinned in pyproject.toml:
+  # REMIND runs with the committed csv as it is, like it runs with uncommitted
+  # GAMS code, the GitHub check running the same --check is what refuses a commit
+  source("scripts/input/create_input_for_technoeconomic.R")
+  check <- technoeconomicCheck(".")
+  # an outdated csv (3) and an unchecked one (2) only report, a failed check (1)
+  # means nothing is known about the data, so REMIND refuses to run
+  if (! check$status %in% c(0L, 2L, 3L)) stop(check$message)
+  if (check$status != 0L && nzchar(check$message)) message("WARNING: ", check$message)
+
   ############ update information ########################
   # update_info, which regional resolution and input data revision in tmpModelFile
   update_info(madrat::regionscode(cfg$regionmapping), cfg$inputRevision, cfg$model_version)

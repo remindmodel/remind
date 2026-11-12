@@ -26,6 +26,10 @@ jobs:
       - name: Remove .Rprofile
         run: rm .Rprofile
 
+      # checks if the core/input/f_technoeconomic.csv matches the current posted version
+      - name: technoeconomicCheck
+        run: python3 technoeconomic/create_input.py --check
+
       - uses: r-lib/actions/setup-r@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05 # v2.14.0
         with:
           use-public-rspm: true

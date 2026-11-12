@@ -136,6 +136,31 @@ $include "./core/input/generisdata_tech.prn"
 $include "./core/input/generisdata_trade.prn"
 ;
 
+*** generisdata_tech is in $2015. Needs to be converted to $2017
+fm_dataglob("inco0",te)        = sm_D2015_2_D2017 * fm_dataglob("inco0",te);
+fm_dataglob("floorcost",te)    = sm_D2015_2_D2017 * fm_dataglob("floorcost",te);
+fm_dataglob("omv",te)          = sm_D2015_2_D2017 * fm_dataglob("omv",te);
+
+***---------------------------------------------------------------------------
+*** POSTED data (https://github.com/PhilippVerpoort/posted), written by
+*** technoeconomic/create_input.py. Every (char,te) in it replaces its generisdata_tech.prn
+*** value, in the units of that file (costs in USD[2017]). To add one, extend
+*** QUERIES in technoeconomic/content.py and regenerate the csv, no GAMS change.
+***---------------------------------------------------------------------------
+parameter f_technoeconomic(char,all_te) "technology characteristics from POSTED, global medians across sources, replaces generisdata_tech.prn values [unit as in generisdata_tech.prn]"
+/
+$ondelim
+$include "./core/input/f_technoeconomic.csv"
+$offdelim
+/
+;
+
+*** record the replaced generisdata values for the .lst, then overwrite
+p_dataglobPrn(char,te) $ f_technoeconomic(char,te) = fm_dataglob(char,te);
+fm_dataglob(char,te)   $ f_technoeconomic(char,te) = f_technoeconomic(char,te);
+display "fm_dataglob values replaced by POSTED, before (p_dataglobPrn) and after (f_technoeconomic), USD2017",
+        p_dataglobPrn, f_technoeconomic;
+
 *** TODO: merge all grid types into one
 fm_dataglob(char,teGrid) = fm_dataglob(char,"gridwindon");
 
@@ -279,11 +304,6 @@ $if not "%cm_inco0RegiFactor%" == "off"           p_inco0(ttot,regi,te)$(p_inco0
 ***---------------------------------------------------------------------------
 *** Unit uniformisation
 ***---------------------------------------------------------------------------
-
-*** generisdata_tech is in $2015. Needs to be converted to $2017
-fm_dataglob("inco0",te)        = sm_D2015_2_D2017 * fm_dataglob("inco0",te);
-fm_dataglob("floorcost",te)    = sm_D2015_2_D2017 * fm_dataglob("floorcost",te);
-fm_dataglob("omv",te)          = sm_D2015_2_D2017 * fm_dataglob("omv",te);
 
 *** adjust costs for oae from USD/GtCaO to USD/GtC
 fm_dataglob("inco0", "oae_ng") = fm_dataglob("inco0", "oae_ng") / (cm_33_OAE_eff / sm_c_2_co2);

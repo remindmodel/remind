@@ -92,6 +92,7 @@ renv.lock
 # Python related
 .venv/
 __pycache__
+uv.lock
 
 # ignore slurm logs
 slurm-[0-9]*.log
