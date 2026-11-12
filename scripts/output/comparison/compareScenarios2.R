@@ -11,9 +11,10 @@
 #' @param sections List of section numbers to be included in the PDF
 #' separated by commas. Default: "all".
 #' Examples: --sections=2 --sections=2,3
-#' @param validationConfig Name of or path to a piamValidation config. If
-#' given, validation thresholds are shown as colored background bands in
-#' line plots. Example: --validationConfig=default
+#' @param validationConfig Name of or path to a piamValidation config. Its
+#' validation thresholds are shown as colored background bands in line plots.
+#' Default: "AMT". Use NULL to show no thresholds.
+#' Examples: --validationConfig=default --validationConfig=NULL
 
 
 
@@ -108,7 +109,7 @@ if (! exists("sections")) {
   sections = "all"
 }
 if (! exists("validationConfig")) {
-  validationConfig <- NULL
+  validationConfig <- "AMT"
 }
 
 # Let user choose cs2 profile(s).

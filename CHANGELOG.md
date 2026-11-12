@@ -7,13 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### input data/calibration
 
-- **core ** New Fgas scenarios, including a new scenario format
+- **core** New Fgas scenarios, including a new scenario format
   [[#2506]([github.com/remindmodel/remind/pull/2506](https://github.com/remindmodel/remind/pull/2506))]
 
 ### changed
 
 - **scripts** Move results of most comparison scripts to output folder.
   [[#2500](https://github.com/remindmodel/remind/pull/2500)]
+- **scripts** compareScenarios2 now shows validation thresholds of the piamValidation config `AMT` in line plots by default
+    . Use `--validationConfig=<name>` to choose another config or `--validationConfig=NULL`
+    to switch them off.
+    [[#2527](https://github.com/remindmodel/remind/pull/2527)]
 - **45_carbonprice** Refactoring of NDC emissions target calculation and implementation
   [[#2487](https://github.com/remindmodel/remind/pull/2487)]
 

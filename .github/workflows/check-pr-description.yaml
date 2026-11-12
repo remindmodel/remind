@@ -4,6 +4,10 @@ on:
     branches-ignore:
       - 'master'
 
+name: check-pr-description
+
+permissions: {}
+
 jobs:
   check-pr-template:
     if: github.event.pull_request.draft == false
