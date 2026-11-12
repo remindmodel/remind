@@ -35,6 +35,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   [[#2485](https://github.com/remindmodel/remind/pull/2485)]
 - **core** Remove switch cm_techcosts
   [[#2507](https://github.com/remindmodel/remind/pull/2507)]
+- **37_industry** Remove unused switch cm_steel_secondary_max_share_scenario
+  [[#2533](https://github.com/remindmodel/remind/pull/2533)]
 
 ### fixed
 
