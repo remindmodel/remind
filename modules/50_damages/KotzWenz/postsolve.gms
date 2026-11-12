@@ -3,7 +3,7 @@
 *** Track runtime
 putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",run_KotzWenz_damages," iteration.val:0;
 
-execute "Rscript run_KotzWenz_damages.R"
+execute.checkErrorLevel "Rscript run_KotzWenz_damages.R"
 
 *** Track runtime
 putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",GAMS," iteration.val:0;

@@ -123,17 +123,6 @@ test-fix:        ## First run codeCheck interactively, then test if the model co
 	@echo "Do not forget to commit possible changes done by codeCheck to not_used.txt files"
 	@git add -p modules/*/*/not_used.txt
 
-test-coupled:    ## Test if the coupling with MAgPIE works. Takes significantly
-                 ## longer than 60 minutes to run and needs slurm and magpie
-                 ## available
-	$(info Coupling tests take around 75 minutes to run, please be patient)
-	@TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_file("tests/testthat/test_20-coupled.R")'
-
-test-coupled-slurm: ## test-coupled, but on slurm
-	$(info Coupling tests take around 75 minutes to run. Sent to slurm, find log in test-coupled.log)
-	make ensure-reqs
-	@sbatch --qos=priority --wrap="make test-coupled" --job-name=test-coupled --mail-type=END,FAIL --time=180 --output=test-coupled.log --comment="test-coupled.log"
-
 test-full:       ## Run all tests, including coupling tests and a default
                  ## REMIND scenario. Takes several hours to run.
 	$(info Full tests take more than an hour to run, please be patient)
@@ -142,7 +131,7 @@ test-full:       ## Run all tests, including coupling tests and a default
 test-full-slurm: ##test-full, but on slurm
 	$(info Full tests take more than an hour to run, please be patient)
 	make ensure-reqs
-	@sbatch --qos=priority --wrap="make test-full" --job-name=test-full --mail-type=END,FAIL --output=test-full.log --comment="test-full.log"
+	@sbatch --qos=priority --wrap="$(RSCRIPT_SLURM_HOOK) make test-full" --job-name=test-full --mail-type=END,FAIL --output=test-full.log --comment="test-full.log"
 
 test-validation: ## Run validation tests, requires a full set of runs in the output folder
 	$(info Run validation tests, requires a full set of runs in the output folder)

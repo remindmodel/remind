@@ -23,6 +23,7 @@ cm_GDPpopScen    "cm_GDPpopScen as set for use in GDX"      /%cm_GDPpopScen%/
 cm_APssp         "cm_APssp as set for use in GDX"           /%cm_APssp%/
 cm_APscen        "cm_APscen as set for use in GDX"          /%cm_APscen%/
 cm_LU_emi_scen   "cm_LU_emi_scen as set for use in GDX"     /%cm_LU_emi_scen%/
+cm_fetaxscen     "cm_fetaxscen as set for use in GDX"       /%cm_fetaxscen%/
 cm_rcp_scen      "cm_rcp_scen as set for use in GDX"        /%cm_rcp_scen%/
 
 
@@ -836,11 +837,11 @@ $ELSE.RegScenNuc
   set regi_nucscen(all_regi) "regions which nucscen applies to" / %c_regi_nucscen% /;
 $ENDIF.RegScenNuc
 
-$IFTHEN.RegScenCapt "%c_regi_capturescen%" == "all"
-  set regi_capturescen(all_regi) "regions which capturescen applies to";
-  regi_capturescen(all_regi)=YES;
+$IFTHEN.RegScenCapt "%c_regi_co2captureEnergy%" == "all"
+  set regi_co2captureEnergy(all_regi) "regions which energy carbon capture scenario c_co2captureEnergy applies to";
+  regi_co2captureEnergy(all_regi)=YES;
 $ELSE.RegScenCapt
-  set regi_capturescen(all_regi) "regions which capturescen applies to" / %c_regi_capturescen% /;
+  set regi_co2captureEnergy(all_regi) "regions which energy carbon capture scenario c_co2captureEnergy applies to" / %c_regi_co2captureEnergy% /;
 $ENDIF.RegScenCapt
 
 *** definition of set of regions that use alternative FE emission factors from umweltbundesamt
@@ -2346,7 +2347,6 @@ alias(steps,steps2);
 alias(all_emiMkt,emiMkt,emiMkt2);
 alias(all_emiMktExt,emiMktExt);
 alias(emi_sectors,sector,sector2);
-alias(sector_types,type);
 alias(ext_regi,ext_regi2);
 alias(regi_group,regi_group2);
 

@@ -88,6 +88,16 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
       else stop(errorsfound, " errors found, see above.")
   }
 
+  # Check for compatibility with cm_implicitQttyTargetType and cm_implicitQttyTarget
+  if ((cfg$gms$regipol == "none") && !(cfg$gms$cm_implicitQttyTargetType == "config" && cfg$gms$cm_implicitQttyTarget == "off")) {
+    message(
+      "regipol='none' is only compatible with cm_implicitQttyTargetType='config' and cm_implicitQttyTarget='off'.
+      Switching cm_implicitQttyTargetType to 'config' and cm_implicitQttyTarget to 'off' now."
+    )
+    cfg$gms$cm_implicitQttyTargetType <- "config"
+    cfg$gms$cm_implicitQttyTarget <- "off"
+  }
+
   # Check for compatibility with subsidizeLearning
   if ((cfg$gms$optimization != "nash") && (cfg$gms$subsidizeLearning == "globallyOptimal") ) {
     message("Only optimization='nash' is compatible with subsidizeLearning='globallyOptimal'. Switching subsidizeLearning to 'off' now.")

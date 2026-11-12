@@ -12,3 +12,4 @@ cm_shSynGas,input,questionnaire
 vm_prodSe,input,questionnaire
 pm_gdp,input,not used
 pm_cf,input,not used
+vm_cap,input,not used

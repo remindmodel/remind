@@ -17,7 +17,7 @@ h <- "
 #' If a GAMS parameter is defined on more sets then regi and t, simply the first element is printed.
 "
 suppressMessages(library(tidyverse))
-suppressMessages(library(gdx))
+suppressMessages(library(gdx2))
 suppressMessages(library(modelstats))
 suppressMessages(library(magclass))
 suppressMessages(library(quitte))
@@ -86,7 +86,7 @@ for (v in vars) {
           suppressWarnings(try(report <- file.path(rfolder, paste0("REMIND_generic_", getScenNames(rfolder), "_withoutPlus.mif")), silent = TRUE))
           data <- NA
           if (usegdx && file.exists(gdx)) { # read from fulldata.gdx
-            data <- try(gdx::readGDX(gdx, v, react = "silent"), silent = TRUE)
+            data <- try(gdx2::readGDX(gdx, v, react = "silent"), silent = TRUE)
             # handle errors and null
             if (inherits(data, "try-error") || is.null(data)) {
               data <- "-"
