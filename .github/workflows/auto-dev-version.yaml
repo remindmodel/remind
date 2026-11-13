@@ -26,20 +26,19 @@ jobs:
           persist-credentials: false
 
       - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@31b3198b2de324472547fecec2c0f721b70c38e2 # v0.9.15
+        uses: gittools/actions/gitversion/setup@7417b1089e2c7de93510f1901d656ddf60bb024f # v4.7.0
         with:
-          versionSpec: '5.x'
+          versionSpec: '6.x'
 
-      - name: Determine Version
+      - name: Run GitVersion
         id: gitversion
-        uses: gittools/actions/gitversion/execute@31b3198b2de324472547fecec2c0f721b70c38e2 # v0.9.15
+        uses: gittools/actions/gitversion/execute@7417b1089e2c7de93510f1901d656ddf60bb024f # v4.7.0
         with:
-          useConfigFile: true
           configFilePath: .github/GitVersion.yml
 
       - name: Update CITATION.cff and config/default.cfg with version and date
         env:
-          VERSION: ${{ steps.gitversion.outputs.assemblySemVer }}
+          VERSION: ${{ steps.gitversion.outputs.majorMinorPatch }}.dev${{ steps.gitversion.outputs.versionSourceDistance }}
         run: |
           sed -i "s/^version:.*$/version: \"$VERSION\"/" CITATION.cff
           sed -i "s/^date-released:.*$/date-released: $(date --iso)/" CITATION.cff
@@ -55,7 +54,7 @@ jobs:
 
       - name: Commit and tag
         env:
-          VERSION: ${{ steps.gitversion.outputs.assemblySemVer }}
+          VERSION: ${{ steps.gitversion.outputs.majorMinorPatch }}.dev${{ steps.gitversion.outputs.versionSourceDistance }}
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
         run: |
