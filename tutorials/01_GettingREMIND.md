@@ -36,9 +36,9 @@ To get a specific REMIND release (e.g. 2.2.0):
 git clone -b v2.2.0 --filter=blob:limit=1m https://github.com/remindmodel/remind.git
 ```
 After getting a specific release, you also need to get the corresponding R environment. To do this, run
-```
-make restore-renv
 ```sh
+make restore-renv
+```
 in your REMIND folder to start an interactive script. It should let you choose a list of lockfiles. Pick the one for the release you cloned. Then it should install all the libraries in the version used in that release and use cached files.
 
 To get the latest development version (might be unstable):
