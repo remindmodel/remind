@@ -8,7 +8,7 @@
 
 * satisfy dependencies
 $ifi not %damages% == 'Labor' abort "module internalizeDamages=LabItr requires module damages=Labor";
-$ifi not %cm_magicc_temperatureImpulseResponse% == 'on' abort "module internalizeDamages=DiceLikeItr requires cm_magicc_temperatureImpulseResponse=on";
+$ifi not %cm_magicc_temperatureImpulseResponse% == 'on' abort "module internalizeDamages=LabItr requires cm_magicc_temperatureImpulseResponse=on";
 
 p51_lab(ttot,regi) = pm_lab(ttot,regi);
 p51_labXi(ttot,regi) = pm_cesdata(ttot,regi,"lab","xi");
