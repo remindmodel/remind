@@ -225,7 +225,7 @@ if(cm_iterative_target_adj eq 9,
     );  !! loop ttot$(ttot.val eq cm_peakBudgYr),  !! set ttot to the current peakBudgYr 
     cm_peakBudgYr = o45_peakBudgYr_Itr(iteration+1);  !! this has to happen outside the loop, otherwise the loop condition might be true twice
   ); !! if o45_delay_increase_peakBudgYear(iteration) = 1,   !! if there was a flip-floping in the previous iterations, try to solve this
-  s45_peakBudget = smax((ttot), pm_actualbudgetco2(ttot));
+  s45_peakBudget = smax(ttot$(ttot.val <= 2100), pm_actualbudgetco2(ttot));
   p45_peakBudgYr_check(ttot) = pm_actualbudgetco2(ttot) = s45_peakBudget; !! calculate the peak budget year as the year of maximum cumulative CO2 emissions
   sm_peakbudget_diff = s45_actualbudgetco2 - s45_peakBudget; !! calculate difference between maximum CO2 budget and budget in peak budget year
   loop( ttot$(p45_peakBudgYr_check(ttot) ), !! transfer peak budget year based on maximum cumulative CO2 emissions to parameter

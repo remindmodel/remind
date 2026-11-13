@@ -131,7 +131,7 @@ vm_co2eq(ttot,all_regi)                              "total greenhouse gas emiss
 vm_co2eqMkt(ttot,all_regi,all_emiMkt)                "total greenhouse gas emissions per market measured in co2 equivalents that are subject to carbon pricing, be aware that emissions coverage of this variable depends on switch cm_multigasscen [GtCeq]"
 vm_emiAll(ttot,all_regi,all_enty)                    "total emissions by species [GtC, Mt CH4, Mt N, Mt SO2, Mt BC, Mt OC]"
 v_co2eqCum(all_regi)                                 "cumulated vm_co2eq emissions for the first budget period [GtCeq]"
-v_emiGHG_exclLULUCF_exclBunkers(ttot,all_regi)       "total GHG emissions excl LULUCF and excl bunkers, needed for NDC targets [GtCeq]"
+vm_emiGHG_exclLULUCF_exclBunkers(ttot,all_regi)       "total GHG emissions excl LULUCF and excl bunkers, needed for NDC targets [GtCeq]"
 
 *** sectoral emissions
 vm_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty)  "emissions from energy technologies on supply-side (pm_emifac * PE) and demand-side (pm_emifac * FE), note: not equivalent to Emi|CO2|Energy in reporting [GtC, Mt CH4, Mt N, Mt SO2, Mt BC, Mt OC]"
@@ -143,7 +143,7 @@ vm_emiMacSector(ttot,all_regi,all_enty)              "total emissions subject to
 
 vm_emiCdr(ttot,all_regi,all_enty)                    "total (negative) CO2 emissions from CDR technologies that are calculated in the CDR module. Note that it includes all atmospheric CO2 entering the CCUS chain (i.e. CO2 stored (CDR) AND used (not CDR)) [GtC]"
 vm_emiMac(ttot,all_regi,all_enty)                    "total non-energy-related emission of each region. [GtC, Mt CH4, Mt N]"
-vm_emiFgas(ttot,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE [emiFgasTotal in MtCO2eq, for other units see f_emiFgas.cs4r]"
+vm_emiFgas(ttot,all_regi,all_enty)                   "F-gas emissions by single gases from exogenous scenarios [emiFgasTotal in MtCO2eq, for other units see f_emiFgas.cs3r]"
 
 *** emissions per emissions market
 vm_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "emissions from energy technologies on supply-side (pm_emifac * PE) and demand-side (pm_emifac * FE) per emissions market, note: not equivalent to Emi|CO2|Energy in reporting [GtC, Mt CH4, Mt N, Mt SO2, Mt BC, Mt OC]"
@@ -158,6 +158,7 @@ v_co2capture(ttot,all_regi)                                 "total captured CO2 
 vm_co2CCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)       "total CO2 injected into geological storage [GtC/a]"
 v_co2capturevalve(ttot,all_regi)                            "total CO2 emitted right after capture [GtC/a], note: used in q_balCCUvsCCS to account for different lifetimes of capture and CCU/CCS te and capacities [GtC/year]"
 v_ccsShare(ttot,all_regi)                                    "fraction of captured CO2 that is stored geologically [share]"
+vm_emiCdrNovel(ttot,all_regi)                                 "all novel CDR emissions, gross removals for all options, excluding land-use change emissions and materials [GtC/year]"
 vm_emiCdrAll(ttot,all_regi)                                  "all CDR emissions, net negative emissions from land-use change, gross removals for all other options [GtC/year]"
 ;
 
@@ -181,7 +182,8 @@ q_emiTeDetailMkt(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "de
 q_emiTeMkt(ttot,all_regi,all_enty,all_emiMkt)        "total energy-emissions per region and market"
 q_emiEnFuelEx(ttot,all_regi,all_enty)                "energy emissions from fuel extraction"
 q_emiAllMkt(ttot,all_regi,all_enty,all_emiMkt)       "total regional emissions for each emission market"
-q_emiCdrAll(ttot,all_regi)                           "summing over all CDR emissions"
+q_emiCdrNovel(ttot,all_regi)                         "sum over all CDR emissions, except net negative land-use change emissions and materials"
+q_emiCdrAll(ttot,all_regi)                           "sum over all CDR emissions, incl. net negative land-use change emissions and materials"
 q_balcapture(ttot,all_regi)                          "balance equation for carbon capture"
 q_balCCUvsCCS(ttot,all_regi)                         "balance equation for captured carbon to CCU or CCS or valve"
 q_ccsShare(ttot,all_regi)                            "calculate the share of captured CO2 that is stored geologically"
@@ -219,9 +221,15 @@ p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data 
 pm_tsu2opTimeYr(ttot,opTimeYr)                       "auxiliary parameter to map time steps to past time steps: counts the number of model timesteps between years ttot-opTimeYr and ttot, used for q_transPe2se and q_cap equations [unitless]" 
 
 *** parameters used for endogenous technology learning implementation
-pm_capCum0(tall,all_regi,all_te)                     "Total cumulated capacity of learning technologies from last iteration used for learning curves based on vm_capCum [TW]"
-p_capCum(tall, all_regi,all_te)                      "Total cumulated capacity of learning technologies from input.gdx used for learning curves based on vm_capCum [TW]"
-pm_capCumForeign(ttot,all_regi,all_te)               "Total cumulated capacity of learning technologies of all other regions except regi [TW]"
+pm_capCum0(tall,all_regi,all_te)                     "Total cumulated capacity of learning technologies from last iteration used for learning curves based on vm_capCum [TW] or [GtC/yr]"
+p_capCum(tall, all_regi,all_te)                      "Total cumulated capacity of learning technologies from input.gdx used for learning curves based on vm_capCum [TW] or [GtC/yr]"
+pm_capCumForeign(ttot,all_regi,all_te)               "Total cumulated capacity of learning technologies of all other regions except regi [TW] or [GtC/yr]"
+p_learnDeltaGlob(all_te)                              "Investment costs that can be reduced through learning = inco0 - floorcost. Unit: $/kW"
+p_learnDeltaRegi(all_regi,all_te)                     "Investment costs that can be reduced through learning = inco0 - floorcost, based on regional investment costs. Unit: $/kW"
+p_learnExpGlob(all_te)                               "exponent in learning equation, based on global data"
+p_learnMultGlob(all_te)                              "multiplicative parameter in learning equation, based on global data"
+p_learnExpRegi(all_regi,all_te)                       "exponent in learning equation, based on regional investment costs"
+p_learnMultRegi(all_regi,all_te)                      "multiplicative parameter in learning equation, based on regional investment costs"
 
 *** early retirement parameters
 pm_regiEarlyRetiRate(ttot,all_regi,all_te)           "regional early retirement rate, maximum allowed annual increase in the share of early retired capacity of a technology for which early retirement is allowed [1/year]"
@@ -315,20 +323,12 @@ pm_shGasLiq_fe_lo(ttot,all_regi,emi_sectors)         "Final energy gases plus li
 p_demFeSector0(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Final Energy demand in the previous iteration [TWa]"
 pm_demFeTotal0(ttot,all_regi)                        "Total Final Energy demand in the previous iteration [TWa]"
 
-$ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
-*** FE demand rescaling parameters
-  pm_scaleDemand(tall,tall,all_regi)                 "Rescaling factor on final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
-$endif.scaleDemand
 
-$ifthen.scaleDemandBuildTable not "%cm_scaleDemandBuildTable%" == "off"
-*** FE demand rescaling parameters
-  pm_scaleDemandBuildTable(ttot, all_regi)                 "Rescaling factor on buildings final energy and usable energy demand, read-in from a table" 
-$endif.scaleDemandBuildTable
-
-$ifthen.scaleDemandIndTable not "%c_scaleDemandIndTable%" == "off"
-*** FE demand rescaling parameters
-  p_scaleDemandIndTable(ttot, all_regi)                 "Rescaling factor on industry final energy and usable energy demand, read-in from a table" 
-$endif.scaleDemandIndTable
+*** FE and UE demand rescaling parameters
+$if not "%cm_scaleDemand%" == "off"     pm_scaleDemand(tall,tall,all_regi)     "Rescaling factor on industry and buildings final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemand% /
+$if not "%cm_scaleDemandChem%" == "off" pm_scaleDemandChem(tall,tall,all_regi) "Rescaling factor on chemicals final energy and usable energy demand, for selected regions and over a phase-in window." / %cm_scaleDemandChem% /
+$if not "%cm_scaleDemandBuildTable%" == "off" pm_scaleDemandBuildTable(ttot, all_regi) "Rescaling factor on buildings final energy and usable energy demand, read-in from a table" 
+$if not "%c_scaleDemandIndTable%" == "off"    p_scaleDemandIndTable(ttot, all_regi)    "Rescaling factor on industry final energy and usable energy demand, read-in from a table" 
 
 *** energy prices
 pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)     "parameter to capture all FE prices across sectors and markets [tr$2017/TWa]"
@@ -388,7 +388,7 @@ vm_cap(tall,all_regi,all_te,rlf)                     "net total capacities [TW] 
 v_capDistr(tall,all_regi,all_te,rlf)                 "net capacities, distributed to the different grades for renewables [TW]"
 vm_capTotal(ttot,all_regi,all_enty,all_enty)         "total capacity of pe2se conversion technologies without technology differentation [TW]"
 vm_deltaCap(tall,all_regi,all_te,rlf)                "capacity additions [TW/yr] for energy conversion technologies, [GtC/yr^2] for CCS chain in ccs2te (pipelines/injection)"
-vm_capCum(tall,all_regi,all_te)                      "cumulated capactiy of learning technologies [TW]"
+vm_capCum(tall,all_regi,all_te)                      "cumulated capacity of learning technologies [TW]"
 vm_capEarlyReti(tall,all_regi,all_te)                "fraction of early retired capacity from total standing capacity, can only be increased for technologies for which early retirement is switched on [share]"
 
 *** technoeconomic parameters
@@ -472,7 +472,6 @@ q_smoothphaseoutCapEarlyReti(ttot,all_regi,all_te)   "constraint to limit phase-
 q_capH2BI(ttot,all_regi)                             "calculate hydrogen transmission and distribution capacities for buildings and industry, as total of stationary sector, needed to avoid switching behavior of H2 between both sectors"
 
 *** technology learning equations
-q_capCumNet(t0,all_regi,all_te)                      "set initial cumulated capacity of learning technologies (vm_capCum) in start year"
 qm_deltaCapCumNet(ttot,all_regi,all_te)              "calculate cumulated capacities of learning technologies (vm_capCum)"
 q_costTeCapital(tall,all_regi,all_te)                "calculate investment cost for learning technologies (learning curve)"
 
@@ -529,6 +528,8 @@ q_PE_histCap(ttot,all_regi,all_enty,all_enty)        "require minimum of fossil 
 q_PE_histCap_NGCC_2020_up(ttot,all_regi,all_enty,all_enty) "require maximum of gas power capacity in 2020 based on 2015 historical data and growth rate assumptions"
 q_shbiofe_up(ttot,all_regi,all_enty,emi_sectors,all_emiMkt) "constrain share of biomass in hydrocarbons of sectoral final energy in historical years based on historical data (upper bound)"
 q_shbiofe_lo(ttot,all_regi,all_enty,emi_sectors,all_emiMkt) "constrain share of biomass in hydrocarbons of sectoral final energy in historical years based on historical data (lower bound)"
+q_shbiofe_indst_up(ttot,all_regi,all_enty,emi_sectors) "constrain share of biomass in solids of industry final energy in historical years based on historical data (upper bound)"
+q_shbiofe_indst_lo(ttot,all_regi,all_enty,emi_sectors) "constrain share of biomass in solids of industry final energy in historical years based on historical data (lower bound)"
 
 *** energy service layer equations (only relevant for transport)
 q_transFe2Es(ttot,all_regi,all_enty,all_esty,all_teEs) "conversion from final energy to energy services"
@@ -589,6 +590,11 @@ p_actualbudgetco2_iter(iteration,ttot)               "track actual level of cumu
 pm_actualbudgetco2eqRegi(ttot,all_regi)                "Regional- actual level of cumulated emissions starting from 2020 [GtCO2]"
 p_actualbudgetco2eqRegi_iter(iteration,ttot,all_regi)  "Regional- track actual level of cumulated emissions starting from 2020 over iterations [GtCO2]"
 
+*** policy parameters
+$ifthen not "%cm_CO2PriceLimit%" == "off"
+pm_CO2PriceLimit(ttot,all_regi)                       "Upper limit of CO2 price, read from switch cm_CO2PriceLimit [$/tCO2]" / %cm_CO2PriceLimit% /
+$endif
+
 *** iteration parameters
 pm_SolNonInfes(all_regi)                             "model status from last iteration. 1 means status 2 or 7, 0 for all other status codes"
 o_iterationNumber                                    "output parameter to be able to display the iteration number"
@@ -614,10 +620,21 @@ o_pm_pebiolc_demandmag(iteration,ttot,all_regi)      "track pm_pebiolc_demandmag
 o_pm_macBaseMagpie(iteration,ttot,all_regi,all_enty) "track pm_macBaseMagpie across Nash iterations"
 o_pm_macSwitch(iteration,ttot,all_regi,all_enty)     "track pm_macSwitch across Nash iterations"
 o_p_efFossilFuelExtr_n2obio(iteration,all_regi)      "track p_efFossilFuelExtr for n2obio across Nash iterations"
-o_vm_fuExtr_pebiolc(iteration,ttot,all_regi)         "track vm_fuExtr for pebiolc across Nash iterations"
-o_vm_pebiolc_price(iteration,ttot,all_regi)          "track vm_pebiolc_price across Nash iterations"
-o_PEDem_Bio_ECrops(iteration,ttot,all_regi)          "track pebiolc demand across Nash iterations"
-o_vm_emiMacSector_co2luc(iteration,ttot,all_regi)    "track co2luc across Nash iterations"
+o_vm_fuExtr_pebiolc_iter(iteration,ttot,all_regi)         "track vm_fuExtr for pebiolc across Nash iterations"
+o_vm_pebiolc_price_iter(iteration,ttot,all_regi)          "track vm_pebiolc_price across Nash iterations"
+o_PEDem_Bio_ECrops_iter(iteration,ttot,all_regi)          "track pebiolc demand across Nash iterations"
+o_vm_emiMacSector_co2luc_iter(iteration,ttot,all_regi)    "track co2luc across Nash iterations"
+
+*** CES tree and energy services
+o_vm_cesIO_iter(ttot,all_regi,all_in,iteration)                              "Production factor over iterations" 
+o_vm_demFeForEs_iter(ttot,all_regi,all_enty,all_esty,all_teEs,iteration)     "Final energy which will be used in the energy service layer over iterations [TWa]"
+o_v_prodEs_iter(ttot,all_regi,all_enty,all_esty,all_teEs,iteration)          "Energy services over iterations [Tpkm for passenger transport, Ttkm for freight transport]"
+
+*** edgeTransport
+o_pm_esCapCost_iter(ttot,all_regi,all_teEs,iteration)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer) over iterations [T$/unit energy service]"
+o_pm_fe2es_iter(ttot,all_regi,all_teEs,iteration)                     "Conversion factor from final energies to transport energy services over iterations [Tpkm/TWa, Ttkm/TWa]"
+o_pm_shFeCes_iter(ttot,all_regi,all_enty,all_in,all_teEs,iteration)   "Shares of fuels by CES node over iterations"
+
 ;
 
 *** ------------- Scalars ----------------------------
@@ -645,6 +662,7 @@ sm_TWa_2_TWh                 "convert Tera Watt annum to Tera Wh"           /8.7
 sm_TWa_2_MWh                 "convert Tera Watt annum to Mega Wh"           /8.76e+9/,
 sm_TWa_2_kWh                 "convert Tera Watt annum to kilo Wh"           /8.76e+12/,
 sm_h2kg_2_h2kWh              "convert kg of hydrogen to kWh energy value"   /32.5/,
+s_GW_2_TW                    "convert GW to TW"                             /0.001/,
 sm_tBC_2_TWa                 "t biochar to TWa biochar (28700 [MJ/tBC]*10^-12[EJ/MJ]/31.536[EJ/TWa])" /9.101e-10/,
 
 *** emissions units
@@ -654,6 +672,7 @@ s_NO2_2_N                    "convert NO2 to N [14 / (14 + 2 * 16)]"   / .304 /
 sm_tgn_2_pgc                 "conversion factor 100-yr GWP from TgN to PgCeq"
 sm_tgch4_2_pgc               "conversion factor 100-yr GWP from TgCH4 to PgCeq"
 sm_MtCO2_2_GtC               "conversion factor from MtCO2 to native REMIND emission unit GtC" /2.727e-04/
+sm_GtC_2_MtCO2               "conversion factor from native REMIND emission unit GtC to MtCO2 (44/12*1000)" /3.66667e+03/,
 s_MtCH4_2_TWa                "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
 s_gwpCH4                     "Global Warming Potentials of CH4, AR5 WG1 CH08 Table 8.7"     /28/
 s_gwpN2O                     "Global Warming Potentials of N2O, AR5 WG1 CH08 Table 8.7"     /265/
@@ -722,7 +741,14 @@ sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 *** Define macros that can be used as functions throughout the model code.
 *** This is especially useful for more complex expressions that are used in multiple places, to avoid code duplication and to ensure consistency.
 *** Parameters of a macro are replaced directly by the chosen value at compile time: they have nothing to do with the model parameters or sets.
-*** Because the replacement is automatic, please pay attention to brackets.
+*** More information in: https://www.gams.com/latest/docs/UG_DollarControlOptions.html#UG_DollarControl_MacrosInGAMS
+
+*** When defining new macros, make sure to put brackets around parameters to ensure correct calculation.
+*** The following counter example will return wrong values because of missing brackets:
+***   Wrong definition:   $macro macro_multiply(a,b)  a * b
+***   Utilisation:        macro_multiply(3+1, 2)   will return 3+1*2 = 5 instead of 8, due to precendence of multiplication over addition
+***   Utilisation:        1 / macro_multiply(2, 2) will return 1/2*2 = 1 instead of 0.25, due to left-to-right precendence
+***   Correct definition: $macro macro_multiply(a,b)  ( (a) * (b) )
 
 *** macro_interpolate: Linear interpolation between two values x0 and x1 at time points t0 and t1 for an intermediate time point t
 *** Example 1:
@@ -732,6 +758,24 @@ sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 *** Example 2:
 ***   Suppose we have a subsidy that we want to phase out with a different date for each region.
 ***   p_subsidy(t,regi) = macro_interpolate(t.val, cm_startyear, p_subsidyEndYr(regi), p_subsidy(cm_startyear,regi), 0);
+*** Outside t0 and t1, the linear function is continued
+*** x0 _|         /
+***     |        /
+***     |       /
+*** x1 _|      /
+***     |_____/___________
+***            | |
+***          t0  t1
 $macro macro_interpolate(t,t0,t1,x0,x1) ( ((t1) - (t)) / ((t1) - (t0)) * (x0) + ((t) - (t0)) / ((t1) - (t0)) * (x1) )
+
+*** macro_clamped_interpolate: Like macro_interpolate, but if t is not between t0 and t1, we return the respective boundary value
+*** x0 _|         _____
+***     |        /
+***     |       /
+*** x1 _|______/
+***     |________________
+***            | |
+***          t0  t1
+$macro macro_clamped_interpolate(t, t0, t1, x0, x1) ( (x0)$((t) <= (t0)) + (x1)$((t) >= (t1)) + ((x0) + ((x1) - (x0)) * ((t) - (t0)) / ((t1) - (t0)))$(((t) > (t0)) AND ((t) < (t1))))
 
 *** EOF ./core/declarations.gms

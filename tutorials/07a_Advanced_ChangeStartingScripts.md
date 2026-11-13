@@ -34,7 +34,6 @@ Rscript start.R
        - create output folder
        - copy scripts/start/prepareAndRun.R into results folder
        - create renv in results folder
-       - create python virtual env in results folder if cfg$pythonEnabled
        - save cfg to config.Rdata into results folder
        - change to results folder
        - send job to cluster: sbatch Rscript prepareAndRun.R
@@ -42,7 +41,6 @@ Rscript start.R
                    - load config.Rdata
                    - cd mainfolder
                    - LOCK model
-                   - prepare NDC [scripts/input/prepare_NDC.R]
                    - prepare calibration
                    - if coupled get MAgPIE data
                    - download and distribute input data

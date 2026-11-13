@@ -6,7 +6,6 @@
 # |  Contact: remind@pik-potsdam.de
 # !/bin/bash
 library(dplyr)
-require(gdxrrw) # Needs an environmental variable to be set, see below
 library(lucode2)
 library(magrittr)
 library(piamInterfaces)
@@ -48,7 +47,7 @@ magiccEnv <- c(
 magiccInit <- condaInit(how = "pik-cluster", log = cfg$logFile, verbose = 1)
 
 runHarmoniseAndInfillCmd <- paste(
-  "python", file.path(cfg$scriptsDir, "run_harm_inf.py"), cfg$remindEmissionsFile, cfg$climateDir,
+  "ca-harmonize-infill", cfg$remindEmissionsFile, cfg$climateDir,
   "--infilling-database", cfg$infillingDatabase
 )
 

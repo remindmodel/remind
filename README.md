@@ -18,7 +18,7 @@ in which intertemporal global welfare is optimized subject to equilibrium constr
 
 A model description paper on REMIND 2.1 has been published in Geoscientific Model Development (GMD): https://doi.org/10.5194/gmd-14-6571-2021 .
 
-The model documentation for version 3.2.0 can be found at https://rse.pik-potsdam.de/doc/remind/3.2.0 .
+The model documentation for version 3.7.1 can be found at https://rse.pik-potsdam.de/doc/remind/3.7.1 .
 
 The most recent version of the documentation can also be extracted from the
 model source code via the R package goxygen
@@ -94,8 +94,8 @@ so!
 Model dependencies **must be publicly available** and should be Open Source.
 Development aim is to rather minimize than expand dependencies on non-free
 and/or non open source software. That means that besides currently existing
-dependencies on GAMS, the `gdxrrw` R package and the corresponding solvers there
-should be no additional dependencies of this kind and that these existing
+dependencies on GAMS and the corresponding solvers there should be no
+additional dependencies of this kind and that these existing
 dependencies should be resolved in the future if possible.
 
 If a new R package is added as dependency this package should fulfill the

@@ -23,6 +23,7 @@ cm_GDPpopScen    "cm_GDPpopScen as set for use in GDX"      /%cm_GDPpopScen%/
 cm_APssp         "cm_APssp as set for use in GDX"           /%cm_APssp%/
 cm_APscen        "cm_APscen as set for use in GDX"          /%cm_APscen%/
 cm_LU_emi_scen   "cm_LU_emi_scen as set for use in GDX"     /%cm_LU_emi_scen%/
+cm_fetaxscen     "cm_fetaxscen as set for use in GDX"       /%cm_fetaxscen%/
 cm_rcp_scen      "cm_rcp_scen as set for use in GDX"        /%cm_rcp_scen%/
 
 
@@ -86,6 +87,15 @@ all_delayPolicy   "all possible SPA policy choices"
 /
     SPA0            "no baseline policy"
     SPAx            "moderate baseline policy, depends on the SSP-scenario"
+/
+
+all_fgas_scen   "all possible F-gas emission scenarios (switch cm_fgas_scen)"
+/
+    MESSAGEHigh            "MESSAGEix high-emission pathway"
+    MESSAGEVeryLow         "MESSAGEix very-low-emission pathway"
+    MESSAGEMedium          "MESSAGEix medium-emission pathway"
+    MESSAGEKAFull          "Medium with Kigali Amendment caps in all countries from 2030"
+    MESSAGEKAImplemented   "Medium with Kigali Amendment caps only where current policies include it"
 /
 
 *** If you get a domain violation here, check if cm_APssp and cm_APscen values are correctly paired. See main.gms for details.
@@ -192,7 +202,6 @@ all_te          "all energy technologies, including from modules"
     fnrs            "fast nuclear reactor (simple structure)"
     elh2            "hydrogen electrolysis, using grid electricity"
     h2turb          "hydrogen turbine for electricity production"
-    elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
     h2turbVRE       "dummy technology: hydrogen turbine for electricity production; to demonstrate the capacities and SE flows inside the storXXX technologies"
     h2curt          "hydrogen production from curtailment"
     h22ch4          "production of synthetic methane from hydrogen and captured carbon via methanation"
@@ -471,7 +480,6 @@ all_enty             "all types of quantities"
     peog         "aggregated oil and gas, only relevant for calibration because IEA only provides aggregated data"
     bfco2        "CO2 emission from blast furnace"
     
-*** outdated entries, still used in module 04 until structuremappings are fixed
     fesoi        "industry use of solid energy carriers"
     fehoi        "industry use of liquid energy carriers"
     fegai        "industry use of gaseous energy carriers"
@@ -836,11 +844,11 @@ $ELSE.RegScenNuc
   set regi_nucscen(all_regi) "regions which nucscen applies to" / %c_regi_nucscen% /;
 $ENDIF.RegScenNuc
 
-$IFTHEN.RegScenCapt "%c_regi_capturescen%" == "all"
-  set regi_capturescen(all_regi) "regions which capturescen applies to";
-  regi_capturescen(all_regi)=YES;
+$IFTHEN.RegScenCapt "%c_regi_co2captureEnergy%" == "all"
+  set regi_co2captureEnergy(all_regi) "regions which energy carbon capture scenario c_co2captureEnergy applies to";
+  regi_co2captureEnergy(all_regi)=YES;
 $ELSE.RegScenCapt
-  set regi_capturescen(all_regi) "regions which capturescen applies to" / %c_regi_capturescen% /;
+  set regi_co2captureEnergy(all_regi) "regions which energy carbon capture scenario c_co2captureEnergy applies to" / %c_regi_co2captureEnergy% /;
 $ENDIF.RegScenCapt
 
 *** definition of set of regions that use alternative FE emission factors from umweltbundesamt
@@ -964,17 +972,6 @@ sets
     "operational",
     "construction",
     "planned"
-  /
-  NDC_version "NDC data version for NDC realizations of 40_techpol and 45_carbonprice"
-  /
-    2018_cond, 2018_uncond,
-    2021_cond, 2021_uncond,
-    2022_cond, 2022_uncond,
-    2023_cond, 2023_uncond,
-    2024_cond, 2024_uncond,
-    2025_cond, 2025_uncond,
-    2025_cond_extrapol, 2025_uncond_extrapol,
-    2026_cond, 2026_uncond
   /
   NPi_version "NPi data version for NPi realizations of 40_techpol and 45_carbonprice"
   /
@@ -1127,7 +1124,6 @@ te(all_te)              "energy technologies"
     fnrs            "fast nuclear reactor (simple structure)"
     elh2            "hydrogen electrolysis"
     h2turb          "hydrogen turbine for electricity production"
-    elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
     h2turbVRE       "dummy technology: hydrogen turbine for electricity production; to demonstrate the capacities and SE flows inside the storXXX technologies"
     h2curt          "hydrogen production from curtailment"
     tdels           "transmission and distribution for electricity to stationary users"
@@ -1581,6 +1577,7 @@ teRegTechCosts(all_te) "all technologies for which we differantiate tech costs b
     csp
 ***       wind
     windon
+    windoff
 /
 
 teFlex(all_te)       "all technologies which can benefit from flexibility tax"
@@ -2182,10 +2179,9 @@ numberEmiRCP "number of emission types" / 1 * 23 /
 char            "characteristics of technologies"
 /
     mix0            "share in the production of v*_INIdemEn0, which is the energy demand in t0 minus the energy produced by couple production"
-    ccap0           "cumulated installed capacity in t0. Unit: TW"
-    inco0           "investment costs in t0. Unit: $/kW"
+    inco0           "investment costs at inco0year. Unit: $/kW"
+    inco0year       "year where inco0 holds"
     inco0_d         "Initial investment costs given in $(2015)/kW(output) capacity. Per 1000km."
-    incolearn       "Investment costs that can be reduced through learning = inco0 - floorcost. Unit: $/kW"
     floorcost       "Floor investment costs for learning technologies. Unit: $/kW"
     eta             "conversion efficiency"
     eta_d           "conversion efficiency, i.e. the amount of energy NOT lost in transportation. Per 1000km."
@@ -2196,8 +2192,6 @@ char            "characteristics of technologies"
     tlt             "technical life time"
     delta           "depreciation rate"
     learn           "learning rate"
-    learnMult_wFC   "multiplicative parameter in learning equation, adjusted to take Floor Costs into account"
-    learnExp_wFC    "exponent in learning equation, adjusted to take Floor Costs into account"
     bgrl            "lower bound on growth rate"
     bgru            "upper bound on growth rate"
     bcal            "lower bound on capacity"
@@ -2221,7 +2215,7 @@ char            "characteristics of technologies"
     tkpremused      "turn-key cost premium used in the model (with a discount rate of 3+ pure rate of time preference); in comparison to overnight costs)"
     lifetime        "average lifetime of a technology (integral under the omeg-curve). Unit: years"
     flexibility                        "representing ramping constraints or additional costs for partial load of technologies in power sector"
-    tech_stat       "technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'"
+    tech_stat       "technology status: how close a technology is to market readiness. Scale: 0-5, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary' to 5 'Further in the future'"
     Xport           "exports"
     Mport           "imports"
     use             "financial trade costs for PE use [trl$US per TWa]"
@@ -2230,7 +2224,7 @@ char            "characteristics of technologies"
     min             "minimum"
     max             "maximum"
     usehr            "number of hours in a year when the technology is used"
-    elh2VREcapRatio    "ratio of elh2VRE capacity to storage technology capacity"
+    elh2capRatio    "ratio of elh2 capacity to storage technology capacity"
     h2turbVREcapRatio  "ratio of h2turbVRE capacity to storage technology capacity"
     batteryVREcapRatio  "ratio of battery capacity to storage technology capacity"
     priceLow        "biochar price path assumption"
@@ -2346,7 +2340,6 @@ alias(steps,steps2);
 alias(all_emiMkt,emiMkt,emiMkt2);
 alias(all_emiMktExt,emiMktExt);
 alias(emi_sectors,sector,sector2);
-alias(sector_types,type);
 alias(ext_regi,ext_regi2);
 alias(regi_group,regi_group2);
 
@@ -2491,7 +2484,6 @@ se2se(all_enty,all_enty,all_te)  "map secondary energy to secondary energy using
 /
     seel.seh2.elh2
     seh2.seel.h2turb
-    seel.seh2.elh2VRE
     seh2.seel.h2turbVRE
 /
 
@@ -2821,7 +2813,7 @@ teSe2rlf(all_te,rlf)        "mapping for techologies to grades. Currently, the i
     igcc,igccc,pc,coaltr,coalgas,coalh2,coalh2c,coalchp,coalhp,coalftrec,coalftcrec,
     biotr,biotrmod,biogas,biogasc,bioftrec,bioftcrec,bioh2,bioh2c,biohp,biochp,bioigcc,bioigccc,
     biopyronly,biopyrhe,biopyrchp,biopyrliq,
-    elh2,h2turb,elh2VRE,h2turbVRE,bioethl,bioeths,biodiesel,tnrs,fnrs
+    elh2,h2turb,h2turbVRE,bioethl,bioeths,biodiesel,tnrs,fnrs
     ) . 1
 /
 

@@ -22,12 +22,27 @@ p80_normalize0(ttot,regi,tradePe)$(ttot.val ge 2005) = max(0.5 * (sum(rlf, vm_fu
                                                         + p80_normalize0(ttot,regi,tradePe)$(pm_SolNonInfes(regi) eq 0) ,sm_eps);
 
 
+*** track exports and imports and fuel extraction and prodPe
+loop(ttot$(ttot.val ge 2005),
+  loop(regi,
+    loop(trade,
+      p80_Mport_iter(ttot,regi,trade,iteration) = vm_Mport.l(ttot,regi,trade);
+      p80_Xport_iter(ttot,regi,trade,iteration) = vm_Xport.l(ttot,regi,trade);
+    );
+    loop(entyPe,
+      p80_prodPe_iter(ttot,regi,entyPe,iteration)      = vm_prodPe.l(ttot,regi,entyPe);   
+      p80_fuExtr_iter(ttot,regi,entyPe,rlf,iteration)  = vm_fuExtr.l(ttot,regi,entyPe,rlf);
+    );
+  ); 
+); 
+
 ***calculate residual surplus on the markets
 loop(ttot$(ttot.val ge 2005),
   loop(trade$(NOT tradeSe(trade)),
-     p80_surplus(ttot,trade,iteration) = sum(regi, (vm_Xport.l(ttot,regi,trade) - vm_Mport.l(ttot,regi,trade))$(pm_SolNonInfes(regi) eq 1)
+    p80_surplus(ttot,trade,iteration) = sum(regi, (vm_Xport.l(ttot,regi,trade) - vm_Mport.l(ttot,regi,trade))$(pm_SolNonInfes(regi) eq 1)
                                                + (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade) )$(pm_SolNonInfes(regi) eq 0) );
-      ); 
+
+  ); 
 ); 
 
 *' calculate both the size of the price change due to the price change anticipation effect in percent, as well as  
@@ -288,9 +303,9 @@ loop(regi,
     !! no last iteration if this is the first; NA value in p80_repyLastOptim is
     !! sticky, so test this separately
     if ( p80_repy(regi,'modelstat') eq 7
-        !! The 1E-4 are quite arbitrary. One should do more research on how
-        !! the solution differs over iteration when status 7 occurs. 
-        AND p80_convNashObjVal_iter(iteration,regi) lt - 1e-4,
+        !! cm_nashObjVal_tolerance (def 1e-4) is rather arbitrary. One should do more
+        !! research on how the solution differs over iteration when status 7 occurs.
+        AND p80_convNashObjVal_iter(iteration,regi) lt - cm_nashObjVal_tolerance,
       s80_bool = 0;
       p80_messageShow("nonopt") = YES;     
       display "Not all regions were status 2 in the last iteration. The deviation of the objective function from the last optimal solution is too large to be accepted:";
@@ -309,7 +324,7 @@ if(sm_fadeoutPriceAnticip gt cm_maxFadeOutPriceAnticip,
 
 *' criterion "Deviation due to price anticipation": are the resulting deviations sufficiently small?
 *' compare to 1/10th of the cutoff for goods imbalance 
-if(p80_DevPriceAnticipGlobAllMax2100Iter(iteration) gt 0.1 * p80_surplusMaxTolerance("good"),
+if(p80_DevPriceAnticipGlobAllMax2100Iter(iteration) gt cm_DevPriceAnticip_tolFactor * p80_surplusMaxTolerance("good"),
   s80_bool=0;                
   p80_messageShow("DevPriceAnticip") = YES;
 );
@@ -326,7 +341,7 @@ loop(regi,
     loop(t,
          p80_convNashTaxrev_iter(iteration,t,regi) = vm_taxrev.l(t,regi) / vm_cesIO.l(t,regi,"inco");
          if (cm_TaxConvCheck eq 1,
-             if( abs(p80_convNashTaxrev_iter(iteration,t,regi)) gt 0.001,
+             if( abs(p80_convNashTaxrev_iter(iteration,t,regi)) gt cm_TaxConv_tolerance,
                  s80_bool = 0;
                  p80_messageShow("taxconv") = YES;
              );
@@ -334,7 +349,7 @@ loop(regi,
     );
 );
 
-*** additional criterion: Were regional climate targets reached? 
+*** additional criterion: Were regional climate targets reached?
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off" 
 loop((ttot,ttot2,ext_regi,emiMktExt)$pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt),
   if(NOT(pm_allTargetsConverged(ext_regi) eq 1),
@@ -351,11 +366,27 @@ $ifthen.targetCheck  "%cm_NDC_TargetCheckConv%" == "on"
 loop((t,regi)$pm_NDCEmiTargetDeviation(t,regi),
 *** pm_NDCEmiTargetDeviation gives the difference between actual model emissions and target emissions normalized to target emissions, 
 *** so a negative value means that actual emissions are below target, while a positive value means that actual emissions are above target.
-*** The convergence criterion is that actual emissions should at max up to cm_NDC_target_DevTol above the target.
-  if( (pm_NDCEmiTargetDeviation(t,regi)  le -cm_NDC_target_DevTol),
-    s80_bool = 0;
-    p80_messageShow("NDC") = YES;
+*** The convergence criterion is that actual emissions should at max up to cm_NDC_target_DevTol above the target. 
+*** However, if co2 price is already at co2 price limit, then the convergence criterion is not applied, as the model cannot increase co2 price anymore to reduce emissions.
+$ifthen not "%cm_CO2PriceLimit%" == "off"
+  if(   (      pm_CO2PriceLimit(t,regi) gt 0 
+*** If CO2 price is at limit (within some 2% tolerance), then the convergence criterion is not applied, 
+*** as the model cannot increase CO2 price anymore to reduce emissions.
+          AND  pm_taxCO2eq(t,regi) lt 0.98 * pm_CO2PriceLimit(t,regi) * sm_DptCO2_2_TDpGtC ),
+    if( (pm_NDCEmiTargetDeviation(t,regi)  le -cm_NDC_target_DevTol),
+      s80_bool = 0;
+      p80_messageShow("NDC") = YES;
+      pm_NDCTargetNotReached_iter(iteration,t,regi) = 1;
+    );
   );
+$else
+  if( (pm_NDCEmiTargetDeviation(t,regi)  le -cm_NDC_target_DevTol),
+      s80_bool = 0;
+      p80_messageShow("NDC") = YES;
+      pm_NDCTargetNotReached_iter(iteration,t,regi) = 1;
+  );
+$endif
+
 );
 $endif.targetCheck
 $endif.NDC

@@ -36,11 +36,11 @@ helpText <- "
 #'   --restart, -r:      interactively restart run(s)
 #'   --test, -t:         test scenario configuration without starting the runs
 #'   --testOneRegi, -1:  starting the REMIND run(s) in testOneRegi mode
-#'   startgroup=MYGROUP  when reading a scenario config .csv file, don't start
+#'   --startgroup=MYGROUP  when reading a scenario config .csv file, don't start
 #'                       everything specified by \"start = 1\", instead start everything
 #'                       specified by \"start = MYGROUP\". Use startgroup=* to start all.
-#'   titletag=MYTAG      append \"-MYTAG\" to all titles of all runs that are started
-#'   slurmConfig=CONFIG  use the provided CONFIG as slurmConfig: a string, or an integer <= 16
+#'   --titletag=MYTAG      append \"-MYTAG\" to all titles of all runs that are started
+#'   --slurmConfig=CONFIG  use the provided CONFIG as slurmConfig: a string, or an integer <= 16
 #'                       to select one of the options shown when running './start.R -t'.
 #'                       CONFIG is used only for scenarios where no slurmConfig
 #'                       is specified in the scenario config csv file, or
@@ -276,6 +276,9 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       # General settings for MAgPIE coupling (independent of the scenario)
       path_magpie <- normalizePath(file.path(getwd(), "magpie"), mustWork = FALSE)
       if (! dir.exists(path_magpie)) path_magpie <- normalizePath(file.path(getwd(), "..", "magpie"), mustWork = FALSE)
+      if (! dir.exists(path_magpie)) {
+        stop("Could not find a 'magpie' folder in the REMIND main folder or its parent folder. Please clone MAgPIE into the REMIND main folder (or place it in the parent folder) and try again.")
+      }
       
       # =======================================================
     }    

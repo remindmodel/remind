@@ -5,6 +5,16 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
+#' @title Compare Scenarios 2
+#' @description Creates a PDF document that compares multiple scenarios
+#'
+#' @param sections List of section numbers to be included in the PDF
+#' separated by commas. Default: "all".
+#' Examples: --sections=2 --sections=2,3
+#' @param validationConfig Name of or path to a piamValidation config. Its
+#' validation thresholds are shown as colored background bands in line plots.
+#' Default: "AMT". Use NULL to show no thresholds.
+#' Examples: --validationConfig=default --validationConfig=NULL
 
 
 
@@ -18,7 +28,7 @@ source("./scripts/start/isSlurmAvailable.R")
 if (!exists("outputdirs")) {
   stop(
     "Variable outputdirs does not exist. ",
-    "Please call compareScenarios.R via output.R, which defines outputdirs.")
+    "Please call compareScenarios2.R via output.R, which defines outputdirs.")
 }
 
 # Find a suitable default cs2 profile depending on config.RData.
@@ -30,17 +40,20 @@ determineDefaultProfiles <- function(outputDir) {
   defaults <- switch(
     regionMappingFile,
     "default",
-    "regionmappingH12.csv" =  c("H12", "H12-short"),
-    "regionmapping_21_EU11.csv" =  c("H12", "H12-short", "EU27", "EU27-short", "AriadneDEU"))
+    "regionmappingH12.csv" =  c("H12", "H12-to2050"),
+    "regionmapping_21_EU11.csv" =  c("H12", "H12-to2050", "EU27", "EU27-to2050", "AriadneDEU"))
   return(defaults)
 }
 
 
 # Start compareScenarios2 either on the cluster or locally.
 startComp <- function(
-  outputDirs,
+  outputdirs,
   nameCore,
-  profileName
+  profileName,
+  aliases,
+  sections,
+  validationConfig
 ) {
   if (!exists("slurmConfig")) {
     slurmConfig <- "--qos=standby"
@@ -62,10 +75,14 @@ startComp <- function(
       " --error=", jobName, ".out",
       " --mail-type=END,FAIL --time=200",
       if (!grepl("--mem", slurmConfig)) " --mem=8000",
-      " --wrap=\"Rscript ", script,
-      " outputDirs=", paste(outputDirs, collapse = ","),
-      " profileName=", profileName,
-      " outFileName=", outFileName,
+      # Prefix RSCRIPT_SLURM_HOOK for piam-apptainer integration (empty if unset)
+      " --wrap=\"set -e; ", trimws(paste(Sys.getenv("RSCRIPT_SLURM_HOOK", unset = ""), "Rscript")), " ", script,
+      " --outputdirs=", shQuote(paste(outputdirs, collapse = ",")),
+      " --profileName=", shQuote(profileName),
+      " --outFileName=", shQuote(outFileName),
+      " --aliases=", shQuote(paste(aliases, collapse = ",")),
+      " --sections=", shQuote(paste(sections, collapse = ",")),
+      if (!is.null(validationConfig)) paste0(" --validationConfig=", shQuote(validationConfig)),
       "\"")
     cat(clcom, "\n")
     system(clcom)
@@ -86,12 +103,24 @@ startComp <- function(
 # Load cs2 profiles.
 profiles <- piamPlotComparison::getCs2Profiles()
 
-lucode2::readArgs("profileNames")
+lucode2::readArgs("profileNames", "sections", "validationConfig")
+
+if (! exists("sections")) {
+  sections = "all"
+}
+if (! exists("validationConfig")) {
+  validationConfig <- "AMT"
+}
 
 # Let user choose cs2 profile(s).
 profileNamesDefault <- determineDefaultProfiles(outputdirs[1])
 
-if (! exists("profileNames") || ! all(profileNames %in% names(profiles))) {
+stopifnot(all(profileNamesDefault %in% names(profiles)))
+if (exists("profileNames") && !all(profileNames %in% names(profiles))) {
+  stop("At least one supplied profile does not exist in scripts/cs2/profiles.json")
+}
+
+if (! exists("profileNames")) {
   profileNames <- names(profiles)[gms::chooseFromList(
     ifelse(names(profiles) %in% profileNamesDefault, crayon::cyan(names(profiles)), names(profiles)),
     type = "profiles for cs2",
@@ -113,7 +142,10 @@ nameCore <- paste0(filename_prefix, ifelse(filename_prefix == "", "", "-"), time
 # Start a job for each profile.
 for (profileName in profileNames) {
   startComp(
-    outputDirs = outputdirs,
+    outputdirs = outputdirs,
     nameCore = nameCore,
-    profileName = profileName)
+    profileName = profileName,
+    aliases = aliases,
+    sections = sections,
+    validationConfig = validationConfig)
 }

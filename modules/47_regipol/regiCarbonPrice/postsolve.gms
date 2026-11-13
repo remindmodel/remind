@@ -509,6 +509,12 @@ p47_implicitQttyTargetTax0(t,regi) =
       ( sum(te_oae33, -vm_emiCdrTeDetail.l(t,regi,te_oae33))
       )$(sameas(qttyTarget,"oae") AND sameas(qttyTargetGroup,"all"))
       +
+      (vm_emiCdrNovel.l(t,regi)
+      )$(sameas(qttyTarget,"novelCDR") AND sameas(qttyTargetGroup,"all"))
+      +
+      (vm_emiCdrAll.l(t,regi)
+      )$(sameas(qttyTarget,"allCDR") AND sameas(qttyTargetGroup,"all"))
+      +      
       (( !! Supply side BECCS
         sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail.l(t,regi,enty,enty2,te,enty3))
         !! Industry BECCS (using biofuels in Industry with CCS)
@@ -550,6 +556,12 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
       ( sum(regi$regi_groupExt(ext_regi,regi), sum(te_oae33, -vm_emiCdrTeDetail.l(ttot,regi,te_oae33)))
       )$(sameas(qttyTarget,"oae") AND sameas(qttyTargetGroup,"all"))
       +
+      ( sum(regi$regi_groupExt(ext_regi,regi), vm_emiCdrNovel.l(ttot,regi))
+      )$(sameas(qttyTarget,"novelCDR") AND sameas(qttyTargetGroup,"all"))
+      +
+      ( sum(regi$regi_groupExt(ext_regi,regi), vm_emiCdrAll.l(ttot,regi))
+      )$(sameas(qttyTarget,"allCDR") AND sameas(qttyTargetGroup,"all"))
+      +      
       sum(regi$regi_groupExt(ext_regi,regi), ( !! Supply side BECCS
         sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail.l(ttot,regi,enty,enty2,te,enty3))
         !! Industry BECCS (using biofuels in Industry with CCS)
@@ -817,7 +829,7 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
 
 *** updating implicit price target tax for next iteration (iteration+1)
   loop((t,regi,entyFe,entySe,sector)$pm_implicitPriceTarget(t,regi,entyFe,entySe,sector),
-    if((abs(p47_implicitPrice_dev(t,regi,entyFe,entySe,sector)) gt 0.05), !! convergence criteria not reached
+    if((abs(p47_implicitPrice_dev(t,regi,entyFe,entySe,sector)) gt cm_implicitPriceTarget_tolerance), !! convergence criteria not reached
       if((pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector) lt 1e-5), !! repeat tax if there is no price
         p47_implicitPriceTax(t,regi,entyFe,entySe,sector) = p47_implicitPriceTax(t,regi,entyFe,entySe,sector);
       else
@@ -830,7 +842,7 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
 
 *** convergence criteria
   pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t) = 0;
-  pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t)$(abs(p47_implicitPrice_dev(t,regi,entyFe,entySe,sector)) gt 0.05) = p47_implicitPrice_dev(t,regi,entyFe,entySe,sector); !! target did not converged = prices deviate more than 5% from target
+  pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t)$(abs(p47_implicitPrice_dev(t,regi,entyFe,entySe,sector)) gt cm_implicitPriceTarget_tolerance) = p47_implicitPrice_dev(t,regi,entyFe,entySe,sector); !! target did not converged = prices deviate more than the tolerance from target
 *** additional convergence checks: 
 ***   ignoring non existent prices from price convergence check
   pm_implicitPrice_ignConv(regi,sector,entyFe,entySe,t)$((pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t)) AND (pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector) lt 1e-5)) = 1; !!1 = non existent price  
@@ -888,7 +900,7 @@ $ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
 
 *** updating implicit price target tax for next iteration (iteration+1)
   loop((t,regi,entyPe)$pm_implicitPePriceTarget(t,regi,entyPe),
-    if((abs(p47_implicitPePrice_dev(t,regi,entyPe)) gt 0.05), !! convergence criteria not reached
+    if((abs(p47_implicitPePrice_dev(t,regi,entyPe)) gt cm_implicitPePriceTarget_tolerance), !! convergence criteria not reached
       if((pm_PEPrice(t,regi,entyPe) lt 1e-5), !! repeat tax if there is no price
         p47_implicitPePriceTax(t,regi,entyPe) = p47_implicitPePriceTax(t,regi,entyPe);
       else
@@ -901,7 +913,7 @@ $ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
 
 *** convergence criteria
   pm_implicitPePrice_NotConv(regi,entyPe,t) = 0;
-  pm_implicitPePrice_NotConv(regi,entyPe,t)$(abs(p47_implicitPePrice_dev(t,regi,entyPe)) gt 0.05) = p47_implicitPePrice_dev(t,regi,entyPe); !! target did not converged = prices deviate more than 5% from target
+  pm_implicitPePrice_NotConv(regi,entyPe,t)$(abs(p47_implicitPePrice_dev(t,regi,entyPe)) gt cm_implicitPePriceTarget_tolerance) = p47_implicitPePrice_dev(t,regi,entyPe); !! target did not converged = prices deviate more than the tolerance from target
 *** additional convergence checks: 
 ***   ignoring non existent prices from price convergence check
   pm_implicitPePrice_ignConv(regi,entyPe,t)$((pm_implicitPePrice_NotConv(regi,entyPe,t)) AND (pm_PEPrice(t,regi,entyPe) lt 1e-5)) = 1; !!1 = non existent price  

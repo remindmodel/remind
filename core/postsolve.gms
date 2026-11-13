@@ -220,9 +220,28 @@ p_FEPrice_by_EmiMkt_iter(iteration,t,regi,entyFe,emiMkt) = p_FEPrice_by_EmiMkt(t
 p_FEPrice_by_FE_iter(iteration,t,regi,entyFe) = p_FEPrice_by_FE(t,regi,entyFe);
 
 *** Track demand for purpose-grown ligno-cellulosic biomass across iterations
-o_vm_pebiolc_price(iteration,ttot,regi)  = vm_pebiolc_price.l(ttot,regi);
-o_vm_fuExtr_pebiolc(iteration,ttot,regi) = vm_fuExtr.l(ttot,regi,"pebiolc","1");
-o_PEDem_Bio_ECrops(iteration,ttot,regi) = vm_fuExtr.l(ttot,regi,"pebiolc","1") + (1 - pm_costsPEtradeMp(regi,"pebiolc")) * vm_Mport.l(ttot,regi,"pebiolc") - vm_Xport.l(ttot,regi,"pebiolc");
-o_vm_emiMacSector_co2luc(iteration,ttot,regi) = vm_emiMacSector.l(ttot,regi,"co2luc");
+o_vm_pebiolc_price_iter(iteration,ttot,regi)  = vm_pebiolc_price.l(ttot,regi);
+o_vm_fuExtr_pebiolc_iter(iteration,ttot,regi) = vm_fuExtr.l(ttot,regi,"pebiolc","1");
+o_PEDem_Bio_ECrops_iter(iteration,ttot,regi) = vm_fuExtr.l(ttot,regi,"pebiolc","1") + (1 - pm_costsPEtradeMp(regi,"pebiolc")) * vm_Mport.l(ttot,regi,"pebiolc") - vm_Xport.l(ttot,regi,"pebiolc");
+o_vm_emiMacSector_co2luc_iter(iteration,ttot,regi) = vm_emiMacSector.l(ttot,regi,"co2luc");
+
+*** track CES tree and energy services over iterations
+loop(ttot$(ttot.val ge 2005),
+  o_vm_cesIO_iter(ttot,regi,in,iteration) = vm_cesIO.l(ttot,regi,in) ;
+  loop(entyFe2Sector(entyFe,"trans"),
+    o_vm_demFeForEs_iter(ttot,regi,entyFe,esty,teEs,iteration)$fe2es(entyFe,esty,teEs) = vm_demFeForEs.l(ttot,regi,entyFe,esty,teEs);
+    o_v_prodEs_iter(ttot,regi,entyFe,esty,teEs,iteration)$fe2es(entyFe,esty,teEs) = v_prodEs.l(ttot,regi,entyFe,esty,teEs);
+  );
+);
+
+*** track parameters read in from edgeTransport over iterations
+if(edgeTransportIter(iteration),
+  loop(ttot$(ttot.val ge 2005),
+    o_pm_esCapCost_iter(ttot,regi,teEs_dyn35,iteration)                  = pm_esCapCost(ttot,regi,teEs_dyn35);
+    o_pm_fe2es_iter(ttot,regi,teEs_dyn35,iteration)                      = pm_fe2es(ttot,regi,teEs_dyn35);
+    o_pm_shFeCes_iter(ttot,regi,entyFe,ppfen_dyn35,teEs_dyn35,iteration) = pm_shFeCes(ttot,regi,entyFe,ppfen_dyn35,teEs_dyn35);
+  );
+); 
+
 
 *** EOF ./core/postsolve.gms

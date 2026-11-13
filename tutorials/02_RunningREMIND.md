@@ -74,11 +74,23 @@ To see how far your run is or whether it was stopped due to some problems, you c
 remindstatus output/default_2024-02-29_16.45.19
 ```
 in the console. If you are in the folder, `remindstatus` is sufficient.
-For a short version, use `rs2` (see help at `rs2 -h`). For more commands to manage your runs, type `piaminfo`.
+For a short version and an overview of all runs, use `rs` (see help at `rs -h`). For more commands to manage your runs, type `piaminfo`.
 
 NOTE: A few words on the scripts that we currently use to start runs. The scripts containing the string 'start' have a double functionality:
 - they submit the run to the cluster or to your GAMS system if you work locally
 - they create the `full.gms` file (this is the file that will eventually be submitted to GAMS once your run has been compiled) and compile the needed files to start a run in a subfolder of the output folder
+
+## SLURM notification
+
+SLURM will send you a mail when the job is finished.
+The status code tells you if it succeeded or not and gives hints as to why it failed:
+
+- 0: successfull
+- 1: failure during the run
+- 127: possibly apptainer related
+- 255: failure after the run, e.g. reporting scripts
+
+Check `log.txt` for more details.
 
 ## Restarting runs
 
@@ -108,7 +120,7 @@ Let us go through each of the stages and briefly describe what happens:
 ## `renv` Setup
 REMIND is using renv for R package library management, see [the REMIND renv tutorial](11_ManagingRenv.md) for details. When starting a run the main renv is essentially copied to the run folder which ensures that the run is always using the same package versions for reproducibility and packages cannot become corrupt because of global package updates.
 
-The R libraries required for indput data preparation and output processing (e.g. **madrat**, **mrremind** and **remind2**) are made available to the run this way.
+The R libraries required for input data preparation and output processing (e.g. **madrat**, **mrremind** and **remind2**) are made available to the run this way.
 
 ## Input Data Preparation
 
@@ -138,7 +150,7 @@ The actual REMIND is written in GAMS, a programming software to numerically solv
 GAMS code structure
 </p>
 
-Fundamentally, we distinguish between two kinds of variables: variables (starting with *v_*) and parameters (starting with *p_*). Parameters are fixed (exogenous data in economists' lingo), while variables are free within a certain range and can be adjusted to maximize the objective function of the optimization problem (endogenous variables in economist's lingo). However, there are many constraints that fix relations between the variables and parameters. Within the remaining solution space, the optimization procedure tries to find the maximum of the objective function. The output file of the optimization is the **fulldata.gdx** which is under `output` in the folder of your REMIND run. You can open it, for instance, with GAMS IDE or load it into `R` using the command  `readGDX()` (see details below). In the file, you can find, among other things, the optimal levels of the variables (`variable.l`) and all the predefined parameter values.
+Fundamentally, we distinguish between two kinds of variables: variables (starting with *v_*) and parameters (starting with *p_*). Parameters are fixed (exogenous data in economists' lingo), while variables are free within a certain range and can be adjusted to maximize the objective function of the optimization problem (endogenous variables in economist's lingo). However, there are many constraints that fix relations between the variables and parameters. Within the remaining solution space, the optimization procedure tries to find the maximum of the objective function. The output file of the optimization is the **fulldata.gdx** which is under `output` in the folder of your REMIND run. You can open it, for instance, with GAMS IDE or load it into `R` using the command  `gdx2::readGDX()` (see details below). In the file, you can find, among other things, the optimal levels of the variables (`variable.l`) and all the predefined parameter values.
 
 ## Output Processing
 

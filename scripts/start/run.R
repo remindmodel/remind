@@ -252,18 +252,24 @@ run <- function() {
   source_include <- TRUE
 
   # Postprocessing / Output Generation
-  output    <- cfg$output
-  outputdir <- cfg$results_folder
 
   # make sure the renv used for the run is also used for generating output
   if (!is.null(renv::project())) {
-    if (normalizePath(renv::project()) != normalizePath(outputdir)) {
-      warning("loaded renv=", normalizePath(renv::project()), " and outputdir=", normalizePath(outputdir), " must be equal.")
+    if (normalizePath(renv::project()) != normalizePath(cfg$results_folder)) {
+      warning("loaded renv=", normalizePath(renv::project()), " and outputdir=", normalizePath(cfg$results_folder), " must be equal.")
     }
     message("Using ", normalizePath(renv::project()), " as renv project")
     argv <- c(get0("argv"), paste0("--renv=", renv::project()))
   }
 
+  # these arguments are read by output.R to replace the command line interface
+  # this is not more explicit yet due to renv doubts
+  passedArgs <- list(
+    outputdirs = cfg$results_folder,
+    output    = cfg$output,
+    comp      = "single",
+    test      = FALSE
+  )
   sys.source("output.R",envir=new.env())
   # get runtime for output
   timeOutputEnd <- Sys.time()

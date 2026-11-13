@@ -29,7 +29,7 @@ For each scenario, results are written to a folder that is created automatically
 
 As mentioned in [tutorial 2 - RunningREMIND](02_RunningREMIND.md), the two main output files you will typically care about are the *fulldata.gdx* and the *REMIND_generic_NameofYourRun.mif* files in the *output* folder of your run. The *fulldata.gdx* is the actual technical output of the GAMS optimization and contains all the variables, parameters, sets etc. of the REMIND model (the differences between these GAMS objects are explained in tutorial 2 section 3c). However, this gdx-file is mainly interesting once you actually work on the GAMS code and want to check specific the variables and their values. If you simply want to look at REMIND results of your run or use it for further data analysis and plotting, you would open the *REMIND_generic_NameofYourRun.mif* which is basically a csv-file in a certain standardized format (called the model intercomparison file format) used in the Integrated Assessment Modeling community. Please refer to the `vignette("mif")` of the package *mip* (model intercomparison plots) to learn more about the mif format.
 
-Looking at the *REMIND_generic_NameofYourRun.mif*, the column **scenario** gives the name of the run (that you specified in the first column of your config file when starting the run). The column **region** provides an three-letter acronym of the region (e.g. EUR -> EU, SSA -> Sub-Saharan Africa). The column **variable** represents the variable you are looking at (To avoid confusion with the above: It does not necessarily represent a variable in the GAMS code of REMIND. The mif-file is a synthetized output generated from *fulldata.gdx* by post-processing Rscripts from the *remind* package). Scrolling through the **variable** column, you will get an impression of the outputs the REMIND model permits you to explore.
+Looking at the *REMIND_generic_NameofYourRun.mif*, the column **scenario** gives the name of the run (that you specified in the first column of your config file when starting the run). The column **region** provides a three-letter acronym of the region (e.g. EUR -> EU, SSA -> Sub-Saharan Africa). The column **variable** represents the variable you are looking at (To avoid confusion with the above: It does not necessarily represent a variable in the GAMS code of REMIND. The mif-file is a synthetized output generated from *fulldata.gdx* by post-processing Rscripts from the *remind2* package). Scrolling through the **variable** column, you will get an impression of the outputs the REMIND model permits you to explore.
 
 ## 3. Loading and analyzing model output in R
 
@@ -54,10 +54,10 @@ you see the dimension of the magpie object. Magpie objects are basically arrays,
 ``` r
 out["EUR", c("y2020","y2050"), "FE|Transport (EJ/yr)"]
 ```
-Instead of these objects from the R package **magclass**, you can also use data frames from the R package **quitte**. Arrays are generally better for doing calculations, while data frames are better for plotting. You will find out after a while which way works best for you. The **quitte** data frames are probably better for output analysis because this is a lot about plotting. For reading in the *.mif* file as a data frame, you have to load the package **quitte** and then run the command
 
 ### 3.3 Load a mif file as a quitte Object
 
+Instead of these objects from the R package **magclass**, you can also use data frames from the R package **quitte**. Arrays are generally better for doing calculations, while data frames are better for plotting. You will find out after a while which way works best for you. The **quitte** data frames are probably better for output analysis because this is a lot about plotting. For reading in the *.mif* file as a data frame, you have to load the package **quitte** and then run the command
 ``` r
 mifdata <- read.quitte('PathtoYourMifFile.mif')
 ```
@@ -72,16 +72,16 @@ df <- filter(mifdata,
 ```
 ### 3.4 Load a gdx file as a Magpie Object
 
-Finally, you can also load the content of the **fulldata.gdx** via the function **readGDX** of the **gdx** package  (<https://github.com/pik-piam/gdx>) into a magpie file to directly access the GAMS output. Here is an example of how **readGDX** is used:
+Finally, you can also load the content of the **fulldata.gdx** via the function **readGDX** of the **gdx2** package  (<https://github.com/pik-piam/gdx2>) into a magpie file to directly access the GAMS output. Here is an example of how **readGDX** is used:
 
 ``` r
 pe2se  <- readGDX(gdx,"pe2se")
 Mport  <- readGDX(gdx,c("vm_Mport"),field="l",format="first_found")
-demPE  <- readGDX(gdx,name=c("vm_demPe","v_pedem"),field="l",restore_zeros=FALSE,format="first_found")
+demPE  <- readGDX(gdx,name=c("vm_demPe","v_pedem"),field="l",restoreZeros=FALSE,format="first_found")
 ```
-Here **gdx** is the path to the gdx file, while the second argument is the **name** of the GAMS object you want to load. It is possible to extract various GAMS objects like *"sets"*, *"equations"*, *"parameters"*, *"variables"* and *"aliases"* with **readGDX**. With the arguemtn *field="l"*, you can select the levels of endogenous variables. With *field="m"* you can extract the marginal values of these variables.
+Here **gdx** is the path to the gdx file, while the second argument is the **name** of the GAMS object you want to load. It is possible to extract various GAMS objects like *"sets"*, *"equations"*, *"parameters"*, *"variables"* and *"aliases"* with **readGDX**. With the argument *field="l"*, you can select the levels of endogenous variables. With *field="m"* you can extract the marginal values of these variables.
 
-**To learn how to produce nice graphs from the model output you read in above please refer to [8_Advanced_AnalysingModelOutputs](./8_Advanced_AnalysingModelOutputs.Rmd).**
+**To learn how to produce nice graphs from the model output you read in above please refer to [8_Advanced_AnalysingModelOutputs](./08_Advanced_AnalysingModelOutputs.Rmd).**
 
 ---
 
@@ -100,14 +100,14 @@ The `appResultsLocal` tool is meant to work on a local REMIND ouput folder in yo
 
 #### appResults(): runs made on the PIK cluster
 
-To use this tool, you first have to set up authentication in your `.Rprofile`. PIK-internal instructions on how to do this can be found in the [Wiki](https://gitlab.pik-potsdam.de/rse/rsewiki/-/wikis/Configuration-for-AppResults) (login with your PIK account required).
 
-You can then use the tool by running the following R command in your computer, which will automatically collect all runs made on the cluster (regardless of where in the cluster) and visualize them:
 
+#### Interactive results on a local computer
+
+If you run the following command in the output folder of your local computer you get an interactive window containing the results of this output folder:
 ``` r
-shinyresults::appResults()
+shinyresults::appResultsLocal()
 ```
-
 This command opens an interactive window, where you can select the scenarios that you want to evaluate.
 
 <img src="figures/appResults_window.png" alt="Interactive Results app" width="70%" />
@@ -123,12 +123,7 @@ You can use filters to select a subset of all runs stored in the output folder o
 Run selection by using a filter
 </p>
 
-#### Interactive results on a local computer
 
-If you run the following command in the output folder of your local computer you get an interactive window containing the results of this output folder. Usage is similar to that of `appResults` above:
-``` r
-shinyresults::appResultsLocal()
-```
 Another tool for analyzing model output on your local computer is the scenario tool from the mip package. You can open it from the R console by:
 
 ``` r
@@ -139,10 +134,10 @@ mip::scenTool()
 
 ### 5.1. Execution of model-internal output scripts via the REMIND configuration file
 
-In the file *config/default.cfg*, it is possible to indicate which R-scripts are executed for output analysis after a model run is finished. Scripts evaluating single runs are stored in the folder **scripts/output/[title-of-the-run]**. In the default REMIND configuration, the scripts *reporting*, *validation* (see section 2.3), *validationSummary*  (see section 2.3), *rds\_report* (to be used in appResults; see section 3), and *dashboard* are selected via cfg$output:
+In the file *config/default.cfg*, it is possible to indicate which R-scripts are executed for output analysis after a model run is finished. Scripts evaluating single runs are stored in the folder **scripts/output/single/[title-of-the-run]**. In the default REMIND configuration, the scripts *reporting*, *rds\_report* (to be used in appResults; see section 4), and more are selected via cfg$output. Currently, but his might change:
 
 ``` r
-cfg$output <- c("reporting","validation","rds_report","validationSummary","dashboard")
+cfg$output <- c("reporting","reportCEScalib","MAGICC7_AR6","fixOnRef","rds_report","checkProjectSummations")
 ```
 
 ### 5.2. Execution of model-internal output scripts in the command window
@@ -166,19 +161,32 @@ In both cases, you can choose from the list of available model scenarios, for wh
 
 Now, the selected scripts are executed. After completion, the results are written in the respective folder of the run (combination of **model title** name and the **current date** inside the **output** folder of the model).
 
-One recommended script for comparison of different scenarios is `compareScenarios2`, see [the specific tutorial](https://pik-piam.r-universe.dev/articles/remind2/compareScenariosRemind2.html). After you selected folder names, specified a `filename_prefix`, the priority on the cluster, and a *profile* (describes some output parameters) it produces a large PDF (or HTML if a respective profile is chosen) in the `./remind/` folder.
+#### CompareScenarios2
 
-Another useful script it `validateScenarios`, which performs an automated check of the scenario data against thresholds defined in a `validationConfig` and returns an html report with interactive heat maps in a traffic-light evaluation format. After choosing `validateScenarios` as a `comparison` script, you are prompted to select one of the configs that are shipped with the `piamValidation` package. The `default` config is a good starting point for any REMIND run and the `AMT` config is specifically tailored towards the automated model testruns. If you want to perform a more personalized validation, follow the instructions in the [vignette](https://pik-piam.r-universe.dev/articles/piamValidation/validateScenarios.html).
+One recommended script for comparison of different scenarios is `compareScenarios2`, see [the specific tutorial](https://pik-piam.r-universe.dev/articles/remind2/compareScenariosRemind2.html). After you selected folder names, specified a `filename_prefix`, the priority on the cluster, and a *profile* (describes some output parameters) it produces a large PDF (or HTML if a respective profile is chosen) in the `output` folder.
 
-You can also specify the parameters in the command line, for example starting a `compareScenario2` run without any prefix as:
+You can also specify the parameters in the command line, for example starting a `compareScenarios2` run without any prefix as:
 
 ``` bash
-Rscript output.R comp=comparison filename_prefix= output=compareScenarios2 slurmConfig=priority
+Rscript output.R --comp=comparison --filename_prefix= --output=compareScenarios2 --slurmConfig=priority
 ```
-If you want to compare runs from different REMIND folders, add `remind_dir=.,../otherremind` as a parameter.
+If you want to compare runs from different REMIND folders, add `--remind_dir=.,../otherremind` as a parameter.
+Add `--sections=0,2,4` to generate only specific sections.
 
 How to create new plots is described in the tutorial [8_Advanced_AnalysingModelOutputs.Rmd](./08_Advanced_AnalysingModelOutputs.Rmd).
 Another useful and compatible resource for generating plots (e.g. box plots) from REMIND results is UTokyo's *mipplot* R package: https://github.com/UTokyo-mip/mipplot.
+
+#### ValidateScenarios
+
+Another useful script it `validateScenarios`, which performs an automated check of the scenario data against thresholds defined in a `validationConfig` and returns an html report with interactive heat maps in a traffic-light evaluation format. After choosing `validateScenarios` as a `comparison` script, you are prompted to select one of the validation configs and report templates that are shipped with the `piamValidation` package or specify the path to a config or report of your choosing.
+
+The validation config defines the checks which will be performed on the scenario data, while the report template defines the visualizations in the html output file.
+
+- The `AMT` config is a good starting point for any REMIND run and usually contains the latest near-term estimates based on most recent third party data releases.
+- The `SCI_REMIND` config performs the exact checks as defined by the [Scenario Compass Initiative evaluation](https://scenario-evaluation-criteria.iamconsortium.org/stable/). Selecting the respective `SCI_REMIND` report will render an html document tailored to those checks, including a summary of which scenarios fail or pass the evaluation. If you want to perform the SCI evaluation on scenarios using the SCI variable names (following the [common-definitions](https://github.com/IAMconsortium/common-definitions) template), use the `SCI` config and report.
+
+For any further questions or if you want to perform a more personalized validation, take a look at the [documentation](https://pik-piam.github.io/piamValidation/index.html) of `piamValidation` or follow the instructions in the [vignette](https://pik-piam.r-universe.dev/articles/piamValidation/validateScenarios.html).
+
 
 ## 6. Analysis of outputs with the remind2 R package
 
@@ -205,11 +213,11 @@ You can click on the index and search for interesting functions. All functions u
 
 ### Run Status
 
-To get an overview of the status of your run, your can use the commandline tool `rs2` on the cluser (see help at `rs2 -h`). The tool provides information about runtime, convergence, number of iterations needed to converge, optimality etc.
+To get an overview of the status of your run, your can use the commandline tool `rs` on the cluster (see help at `rs -h`). The tool provides information about runtime, convergence, number of iterations needed to converge, optimality etc.
 
 ### Summation Checks
 
-In order to get an overview of the outcome of the summation checks applied after the run, use `rsanity` (see help at `rsanity -h`). The overview only applies to runs that produce a mif file, i.e. the reporting has completed successfully. 
+In order to get an overview of the outcome of the summation checks applied after the run, use `rs -s`. The overview only applies to runs that produce a mif file, i.e. the reporting has completed successfully. 
 
 Table contains the following columns:
 

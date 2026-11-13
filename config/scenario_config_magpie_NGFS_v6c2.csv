@@ -16,14 +16,19 @@ h_cpol;NGFS;;;;SSP2|NPI|AR-natveg|nocc_hist;y2150;;1;;;0;;;0;const2030;734;;0;1;
 h_ndc;NGFS;;;;SSP2|NDC|AR-natveg|nocc_hist;y2150;;1;;;0;;;0;const2030;734;;0;1;2030;2030;2030
 o_1p5c;NGFS,NGFS_1p5c;;;;SSP2|NDC|AR-natveg|nocc_hist;y2030;;1;;;0.03;;;0.3;const2030;734;;0;0;2030;2030;2030
 o_2c;NGFS;;;;SSP2|NDC|AR-natveg|nocc_hist;y2030;;1;;;0.01;;;0.1;const2030;734;;0;0;2030;2030;2030
-d_delfrag;NGFS;;;;SSP2|NDC|AR-natveg|nocc_hist;y2030;;1;;;0.01;;;0.1;const2030;734;;0;0;2030;2030;2030
+d_delfrag;NGFS;;;;SSP2|NDC-delay|AR-natveg|nocc_hist;y2030;;1;;;0.01;;;0.1;const2030;734;;0;0;2030;2030;2030
 d_strain;NGFS;;;;SSP2|NDC|AR-natveg|nocc_hist;y2030;;1;;;0;;;0;const2030;734;;0;1;2030;2030;2030
 # tests;;;;;;;;;;;;;;;;;;;;;;
 # cpol same as NPi2025?;FALSE;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-;-
 # 1p5c same as Pk650?;FALSE;-;-;-;-;-;-;-;FALSE;FALSE;-;FALSE;FALSE;-;-;-;-;-;-;-;-;-
 # variations;;;;;;;;;;;;;;;;;;;;;;
-d_delfrag_2030;NGFS;d_delfrag;;;;;;;;;;;;;;;;;;;;
-d_strain_2035;NGFS;d_strain;;;;;;;;;;;;;;;;;;;;
-o_1p5c_noDAC;NGFS_1p5c;o_1p5c;;;;;;;;;;;;;;;;;;;;
-o_1p5c_Pk725;NGFS_1p5c;o_1p5c;;;;;;;;;;;;;;;;;;;;
-o_1p5c_Pk750;NGFS_1p5c;o_1p5c;;;;;;;;;;;;;;;;;;;;
+h_cpol_bioUnlimited;NGFS_variations;h_cpol;;;;;;;;;;;;;;;;;;;;
+o_1p5c_bioUnlimited;NGFS_variations;o_1p5c;;;;;;;;;;;;;;;;;;;;
+o_1p5c_Pk700;NGFS_variations;o_1p5c;;;;;;;;;;;;;;;;;;;;
+o_1p5c_Pk800;NGFS_variations;o_1p5c;;;;;;;;;;;;;;;;;;;;
+o_1p5c_pp0;NGFS_variations;o_1p5c;;;;;;;;;;;;;;;;;;;;
+o_1p5c_pp3;NGFS_variations;o_1p5c;;;;;;;;;;;;;;;;;;;;
+o_1p5c_pp9;NGFS_variations;o_1p5c;;;;;;;;;;;;;;;;;;;;
+o_1p5c_pp12;NGFS_variations;o_1p5c;;;;;;;;;;;;;;;;;;;;
+d_delfrag_early;NGFS_variations;d_delfrag;;;;;;;;;;;;;;;;;;;;
+d_delfrag_late;NGFS_variations;d_delfrag;;;;;;;;;;;;;;;;;;;;

@@ -10,10 +10,8 @@ test_that("checkFixCfg works", {
   expect_no_warning(checkFixCfg(cfg, remind_folder, testmode = TRUE))
 
   wrongsetting <- c(
-    "cm_NDC_version" = "2004_cond",
     "cm_emiscen" = "123",
     "cm_nash_autoconverge" = "NA",
-    "cm_gs_ew" = "2.2.2",
     "cm_taxCO2_expGrowth" = "333++",
     "c_macscen" = "-1",
     "cm_keep_presolve_gdxes" = "1.1",
@@ -22,7 +20,8 @@ test_that("checkFixCfg works", {
     "c_testOneRegi_region" = "LOONG",
     "c_shGreenH2" = "1.5",
     "cm_taxCO2_startyear" = "-2",
-  NULL)
+    NULL
+  )
 
   cfg <- savecfg
   cfg$gms[names(wrongsetting)] <- wrongsetting

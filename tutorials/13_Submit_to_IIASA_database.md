@@ -31,18 +31,18 @@ Usually, you will find the result in in the `output` subdirectory, but you can a
 
 Starting from your REMIND directory, you can start this process by running `./output.R`, then selecting `export` and `xlsx_IIASA`. Then choose the directories of the runs you would like to use. This works also for coupled runs, as the `REMIND_generic_*.mif` contains the MAgPIE output since [October 4, 2022](https://github.com/remindmodel/remind/pull/992).
 
-The script requires the inputs as above, expect that it lets you select the `mifs` from a list, and provides additional options:
+The script requires the inputs as above, except that it lets you select the `mifs` from a list, and provides additional options:
 - mapping: either the path to a mapping or a vector of mapping names such as `c("NAVIGATE", "SHAPE")` referring to the last part of the file names in [this piamInterfaces directory](https://github.com/pik-piam/piamInterfaces/tree/master/inst/mappings)
 - filename_prefix: optional prefix of the resulting outputFile, such as your project name
 
 You can specify the information above in two ways: Either edit [`xlsx_IIASA.R`](../scripts/output/export/xlsx_IIASA.R) and add a project in a similar way to `NGFS` or `ENGAGE`. You can then start the scripts with:
 ```
-Rscript output.R comp=export output=xlsx_IIASA project=NGFS
+Rscript output.R --comp=export --output=xlsx_IIASA --project=NGFS
 ```
 You do not need to specify `comp` and `output` in the command line, you can just wait to be asked for it.
 An alternative is to specify everything individually as command-line arguments:
 ```
-Rscript output.R comp=export output=xlsx_IIASA model="REMIND 3.2" mapping=AR6,AR6_NGFS addToScen=whatever removeFromScen=C_ filename_prefix=test
+Rscript output.R --comp=export --output=xlsx_IIASA --model="REMIND 3.2" --mapping=AR6,AR6_NGFS --addToScen=whatever --removeFromScen=C_ --filename_prefix=test
 ```
 All the information printed to you during the run will also be present in the logfile whose path will be told you at the end.
 

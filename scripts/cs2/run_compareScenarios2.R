@@ -8,13 +8,19 @@
 library(piamPlotComparison)
 
 if (!exists("source_include")) {
-  lucode2::readArgs("outputDirs", "outFileName", "profileName")
+  lucode2::readArgs("outputdirs", "outFileName", "profileName", "aliases", "sections", "validationConfig")
 }
+if (!exists("aliases"))  { aliases <- NULL }
+if (!exists("sections")) { sections <- "all" }
+if (!exists("validationConfig")) { validationConfig <- NULL }
 
 run_compareScenarios2 <- function(
-  outputDirs,
+  outputdirs,
   outFileName,
-  profileName
+  profileName,
+  aliases,
+  sections,
+  validationConfig
 ) {
 
   stopifnot(length(profileName) == 1 && is.character(profileName) && !is.na(profileName))
@@ -24,24 +30,26 @@ run_compareScenarios2 <- function(
 
   # load cs2 profiles
   profiles <- piamPlotComparison::getCs2Profiles()
+  stopifnot(profileName %in% names(profiles))
 
   # Create temporary folder. This is necessary because each compareScenarios2
   # run creates a folder named 'figure'. If multiple compareScenarios2 run in
   # parallel they would interfere with the others' figure folder. So we create a
   # temporary subfolder in which each compareScenarios2 creates its own figure
   # folder.
-  system(paste0("mkdir ", outFileName))
-  outDir <- normalizePath(outFileName, mustWork = TRUE)
+  outDir <- file.path("output", "tmp", outFileName)
+  dir.create(outDir, recursive = TRUE)
+  outDir <- normalizePath(outDir, mustWork = TRUE)
 
-  outputDirs <- unique(normalizePath(outputDirs, mustWork = TRUE))
+  outputdirs <- unique(normalizePath(outputdirs, mustWork = TRUE))
 
   if (profileName == "EDGE-Transport") {
-    mifPath <- normalizePath(file.path(outputDirs, "EDGE-T", "Transport.mif"), mustWork = TRUE)
+    mifPath <- normalizePath(file.path(outputdirs, "EDGE-T", "Transport.mif"), mustWork = TRUE)
   } else {
-    mifPath <- remind2::getMifScenPath(outputDirs, mustWork = TRUE)
+    mifPath <- remind2::getMifScenPath(outputdirs, mustWork = TRUE)
   }
-  histPath <- remind2::getMifHistPath(outputDirs[1], mustWork = TRUE)
-  scenConfigPath <- remind2::getCfgScenPath(outputDirs, mustWork = TRUE)
+  histPath <- remind2::getMifHistPath(outputdirs[1], mustWork = TRUE)
+  scenConfigPath <- remind2::getCfgScenPath(outputdirs, mustWork = TRUE)
 
   # predefined arguments
   args <- list(
@@ -50,8 +58,13 @@ run_compareScenarios2 <- function(
     cfgScen = scenConfigPath,
     outputDir = outDir,
     outputFile = outFileName,
-    outputFormat = "pdf"
+    outputFormat = "pdf",
+    mifScenNames = aliases,
+    sections = sections
   )
+
+  # show piamValidation thresholds in line plots, can be overwritten by profiles
+  args$validationConfig <- validationConfig
 
   # Load cs2 profile and change args.
   message("Applying profile ", profileName)
@@ -69,6 +82,20 @@ run_compareScenarios2 <- function(
   )
   args[names(profile)] <- profileEval
 
+  # Only the project library remind2 computes validation thresholds. For other
+  # profiles the default config is dropped. An explicitly chosen config raises an
+  # error, unless the profile sets validationConfig itself.
+  if (!identical(args$projectLibrary, "remind2") && 
+      !"validationConfig" %in% names(profile) &&
+      !is.null(args$validationConfig)) {
+    if (!identical(args$validationConfig, "AMT")) {
+      stop("Profile '", profileName, "' does not support validation thresholds, but validationConfig = '",
+           args$validationConfig, "' was requested. Omit --validationConfig or choose another profile or 
+           edit the chosen profile to use a validationConfig.")
+    }
+    args$validationConfig <- NULL
+  }
+
   # Check outputFile ending.
   expectedEnding <- paste0(".", tolower(args$outputFormat))
   if (!endsWith(tolower(args$outputFile), expectedEnding)) {
@@ -81,15 +108,19 @@ run_compareScenarios2 <- function(
     message("    ", names(args)[i], " = ", capture.output(dput(args[[i]])), if (i < length(args)) ",")
   message("  )")
 
+  # Thresholds of a previous profile must not be shown in this one, as all
+  # profiles share one R session when run locally.
+  options(mip.validationThresholds = NULL)
+
   message("Calling piamPlotComparison::compareScenarios()...\n")
   do.call(piamPlotComparison::compareScenarios, args)
 
   message("Move outputFile and delete temporary folder.\n")
   outputFilePath <- file.path(args$outputDir, args$outputFile)
-  system(paste0("mv ", outputFilePath, " ."))
-  system(paste0("rm -rf ", args$outputDir))
+  file.rename(from = outputFilePath, to = file.path("output", args$outputFile))
+  unlink(args$outputDir, recursive = TRUE)
 
   message("Done!\n")
 }
 
-run_compareScenarios2(outputDirs, outFileName, profileName)
+run_compareScenarios2(outputdirs, outFileName, profileName, aliases, sections, validationConfig)

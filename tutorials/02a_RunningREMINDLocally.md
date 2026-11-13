@@ -9,7 +9,7 @@ Check the general system requirements in [Section 1: Getting REMIND](01_GettingR
 
 - Installed python version must be `< 3.11`. We recommend a python version `3.10.X` as it is closest to being up-to-date while remaining REMIND compatible. To check your python version run `python --version` in a terminal of your choice
 - There are some additional recommendations for running REMIND locally on a **Windows systems**:  
-  - To avoid lengthy compilation times during preparation for your remind run, we recommend to use a version of R for which most R-packages that REMIND depends on, are available as binary packages. This is typically the case for recent versions of R, currently `4.2.X` or `4.3.X`. To check your R version run `R --version` in a terminal of your choice
+  - To avoid lengthy compilation times during preparation for your remind run, we recommend to use a version of R for which most R-packages that REMIND depends on, are available as binary packages. This is typically the case for recent versions of R, currently `4.6.X`. To check your R version run `R --version` in a terminal of your choice
   - As mentioned in the general system requirements, GAMS must be installed. On Windows, make sure that the path to GAMS applications is in your PATH environment variable
   - We recommend to use PowerShell rather than the standard command prompt
 
@@ -19,17 +19,24 @@ Check the general system requirements in [Section 1: Getting REMIND](01_GettingR
 
 **This is the supported way of input data handling**
 
-As long as we do not provide a curated collection of input data please obtain these files from the cluster:
+As long as we do not provide a curated collection of input data please obtain the current version of these files from the cluster:
+
+In `/p/projects/rd3mod/inputdata/output`:
 
 ```bash
 rev6.606_62eff8f7_remind.tgz
 rev6.606_62eff8f7_validationremind.tgz
+```
+
+and in `/p/projects/remind/inputdata/CESparametersAndGDX`:
+
+```bash
 CESparametersAndGDX_878ac5d69254efb4eba5c1fa39aba64000307bb1.tgz
 ```
 
-The contents of these tar-archives are necessary to run REMIND locally. Since REMIND input data is constantly updated the up-to-date file names may vary, but will exhibit a similar pattern. The first two files can be found on the cluster at `/p/projects/rd3mod/inputdata/output`, the latter file in `/p/projects/remind/inputdata/CESparametersAndGDX`.
+The up-to-date hashes and revision numbers will be different but the pattern is similar, use `make test` to figure out which files are needed. The contents of these tar-archives are necessary to run REMIND locally.
 
-Download & store them in a folder of your choice. The corresponding path is provided to REMIND via environment variable. Add to your local `~/.Renviron` file (in linux, found in your home directory, in windows, found at `C:\Users\<your windows username>\Documents\.Renviron`):
+Download & store them in a folder of your choice. The corresponding path is provided to REMIND via environment variable. Add to your local `~/.Renviron` file (in Linux, `~/.Renviron`, in Windows, `C:\Users\<your windows username>\Documents\.Renviron`):
 
 ```bash
 # REMIND data setup
@@ -47,22 +54,15 @@ Make sure that the configuration parameters `inputRevision` and `CESandGDXversio
 
 ### Download Input Data Automatically
 
-**This approach requires a working, OpenSSH-based SSH key management set-up on your machine**
-
-Please verify the SSH set-up on your machine by running `ssh-key -L` in a terminal session. The output should look similar to
-
-```bash
-ssh-rsa LongStringOfRandomLettersNumbersAndSuch== pikaccounts\\<Your PIK user name>@<Host Name>
-```
-
-If your output is empty, try the [Use Local Input Data](#use-local-input-data) approach mentioned above.
+**This approach requires PIK HPC access via SSH key**
 
 If you have access to the PIK cluster (if you don't have access to the PIK cluster, you can get access only if you are a PIK employee) and like to automatically download the input data when running REMIND on your local machine, you need to configure this via environment variables.
-Add to your `~/.Renviron` file (in linux, found in your home directory, in windows, found at `C:\Users\<your windows username>\Documents\.Renviron`):
+Add to your `~/.Renviron` file (in Linux, `~/.Renviron`, in Windows, `C:\Users\<your windows username>\Documents\.Renviron`):
+
 ```bash
 # REMIND data repository setup
 # Download from the PIK cluster, (needs access)
-REMIND_repos_scp="scp://cluster.pik-potsdam.de/p/projects/rd3mod/inputdata/output;scp://cluster.pik-potsdam.de/p/projects/remind/inputdata/CESparametersAndGDX"
+REMIND_repos_scp="scp://hpc.pik-potsdam.de/p/projects/rd3mod/inputdata/output;scp://hpc.pik-potsdam.de/p/projects/remind/inputdata/CESparametersAndGDX"
 # Username on the PIK cluster
 REMIND_repos_scp_user="myusername"
 # Path to your ssh private key on your laptop (might also be id_rsa or similar)
@@ -73,32 +73,6 @@ REMIND_repos_scp_key="/home/myusername/.ssh/id_ed25519"
 ```
 
 Make sure to use your username on the cluster and the correct path to your private ssh key (might also be named `id_rsa` or something similar starting with `id_`).
-
-### Tell REMIND where to find MAGICC
-
-REMIND needs to be told where to find the configuration files of the 'Model for the Assessment of Greenhouse Gas Induced Climate Change' ([MAGICC](https://magicc.org/)). The config files all come with REMIND, so we just need to set the appropriate location in the REMIND default config file at `<REMIND_DIR>/config/default.cfg`. Open the file with a text editor of your choice and locate the variable `magicc_template`. In the `default.cfg` file, the corresponding section will look like
-
-```R
-cfg$magicc_template <- "/p/projects/rd3mod/magicc/"
-```
-
-Change it to the fully qualified file path (i.e. a file path without double points `..` or the tilde `~`) of the MAGICC configuration files. These are located at `<REMIND_DIR>/core/magicc`. The resulting line should look like:
-
-```R
-cfg$magicc_template <- "<REMIND_DIR>/core/magicc/"
-```
-
-On Linux the fully qualified file path will look similar to:
-
-```R
-cfg$magicc_template <- "/home/<YOUR USERNAME>/REMIND/core/magicc"
-```
-
-On Windows remember to also escape the backslashes:
-
-```R
-cfg$magicc_template <- "C:\\Users\\<YOUR USERNAME>\\REMIND\\core\\magicc"
-```
 
 ## Start a run
 
