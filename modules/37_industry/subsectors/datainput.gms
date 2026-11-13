@@ -528,28 +528,11 @@ $ifthen.CESMkup NOT "%cm_CESMkup_ind%" == "standard"
 *' and linearly interpolate between cm_startyear and 2050 to have smooth phase-in
 
 *' overwrite if CES mark-up cost implemented as cost with budget effect
-p37_CESMkup(ttot,regi,in)$(ppfen_MkupCost37(in) AND ttot.val ge 2050) = p37_CESMkup_input(in);
-loop(ttot2$(ttot2.val eq 2050),
-  loop(ttot3$(ttot3.val eq cm_startyear),
-    p37_CESMkup(ttot,regi,in)$(ppfen_MkupCost37(in) AND ttot.val lt 2050 AND ttot.val ge cm_startyear) =
-      p37_CESMkup(ttot3,regi,in)
-      + ( p37_CESMkup(ttot2,regi,in) - p37_CESMkup(ttot3,regi,in) )
-        * (ttot.val - cm_startyear)
-        / (2050 - cm_startyear);
-  );
-);
-
+p37_CESMkup(ttot,regi,in)$(ppfen_MkupCost37(in) AND ttot.val > cm_startyear) =
+  macro_clamped_interpolate(ttot.val, cm_startyear, 2050, sum(ttot2, p37_CESMkup(ttot2,regi,in)$(ttot2.val = cm_startyear)), p37_CESMkup_input(in));
 *' overwrite if CES mark-up cost implement as tax without budget effect
-pm_tau_ces_tax(ttot,regi,in)$(NOT ppfen_MkupCost37(in) AND ttot.val ge 2050) = p37_CESMkup_input(in);
-loop(ttot2$(ttot2.val eq 2050),
-  loop(ttot3$(ttot3.val eq cm_startyear),
-    pm_tau_ces_tax(ttot,regi,in)$(NOT ppfen_MkupCost37(in) AND ttot.val lt 2050 AND ttot.val ge cm_startyear) =
-      pm_tau_ces_tax(ttot3,regi,in)
-      + ( pm_tau_ces_tax(ttot2,regi,in) - pm_tau_ces_tax(ttot3,regi,in) )
-        * (ttot.val - cm_startyear)
-        / (2050 - cm_startyear);
-  );
-);
+pm_tau_ces_tax(ttot,regi,in)$(NOT ppfen_MkupCost37(in) AND ttot.val > cm_startyear) =
+  macro_clamped_interpolate(ttot.val, cm_startyear, 2050, sum(ttot2, pm_tau_ces_tax(ttot2,regi,in)$(ttot2.val = cm_startyear)), p37_CESMkup_input(in));
 
 $endif.CESMkup
 

@@ -465,12 +465,8 @@ loop(te $ (teNoLearn(te) and teRegTechCosts(te)),
 
 *** from 2025 to c_teNoLearnConvEndYr, apply linear convergence of investment costs so that
 *** all regions converge and stabilise at the technology cost data given in generisdata.prn
-  loop(ttot $ (ttot.val > 2020 and ttot.val < c_teNoLearnConvEndYr),
-    pm_inco0_t(ttot,regi,te)
-      = macro_interpolate(ttot.val, 2020, c_teNoLearnConvEndYr, p_inco0("2020",regi,te), fm_dataglob("inco0",te))
-  );
-
-  pm_inco0_t(ttot,regi,te) $ (ttot.val >= c_teNoLearnConvEndYr) = fm_dataglob("inco0",te);
+  pm_inco0_t(ttot,regi,te) $ (ttot.val > 2020)
+      = macro_clamped_interpolate(ttot.val, 2020, c_teNoLearnConvEndYr, p_inco0("2020",regi,te), fm_dataglob("inco0",te));
 );
 
 
