@@ -23,11 +23,11 @@ Execute_unload 'fulldata_postsolve';
 * Run the climate assessment script. Takes around 2-3m for a single parameter set, including harmonization and infilling
 
 *** Track runtime
-putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",climateAssessmentInterimRun," iteration.val:0;
+macro_runtimeLog("climateAssessmentInterimRun")
 execute.checkErrorLevel "Rscript climateAssessmentInterimRun.R";
 
 *** Track runtime
-putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",GAMS," iteration.val:0;
+macro_runtimeLog("GAMS")
 
 * Read in results
 Execute_Loadpoint 'p15_climate' p15_forc_magicc;
