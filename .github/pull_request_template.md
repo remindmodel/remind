@@ -19,6 +19,8 @@
 ### Impact
 - :white_medium_square: Bug fix
 - :white_medium_square: Refactoring
+- :white_medium_square: Deletion
+- :white_medium_square: Documentation / comments
 - :white_medium_square: New feature
 - :white_medium_square: Change of parameter values or input data (including CES parameters)
 - :white_medium_square: Minor change (default scenarios show only small differences)
@@ -28,6 +30,8 @@
 
 *Do not delete any line. Leave **unfinished** elements unchecked so others know how far along you are.\
 In the end all checkboxes must be ticked before you can merge*.
+
+**Note:** *This is not required for documentation PRs that only touch `tutorials/` or `*.md`/`*.Rmd` files.*
 
 - [ ] **I executed the automated model tests (`make test`) after my final commit and all tests pass (`FAIL 0`)**
 - [ ] **I adjusted the reporting in [`remind2`](https://github.com/pik-piam/remind2) if and where it was needed**
