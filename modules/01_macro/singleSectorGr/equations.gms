@@ -16,6 +16,7 @@
 *' Other additional costs like non-energy related greenhouse gas abatement costs and
 *' agricultural costs, which are delivered by the land use model MAgPIE, are deduced from disposable output.
 *' Net tax revenues and adjustment costs converge to zero in the optimal solution (equilibrium point).
+*' Cost in this equation is in T$2017/a.
 ***---------------------------------------------------------------------------
 qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
     vm_cesIO(ttot,regi,"inco") * vm_damageFactor(ttot,regi)
