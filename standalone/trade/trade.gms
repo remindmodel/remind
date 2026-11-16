@@ -408,7 +408,6 @@ $setGLobal cm_debug_preloop  off !! def = off
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setglobal cm_INCONV_PENALTY_bioSwitch  off !! def = off
 $setGlobal c_skip_output  off        !! def = off
-$setGlobal cm_MOFEX  off        !! def = off
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
 
 $setGlobal cm_APscen  SSP2          !! def = SSP2

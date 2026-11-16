@@ -67,41 +67,6 @@ q31_totfuex_dummy(peExPol(enty))..
 ;
 
 ***-----------------------------------------
-*** MOFEX
-***-----------------------------------------
-*** LB, JH
-
-*' MOFEX (Model of Fossil Extraction) minimizes the discounted extraction and trade costs of fossils while balancing trade for each time step.
-*' The model takes fossil demand, imports and exports from a prior REMIND run as inputs, and it calculates fossil extraction and trade as outputs. 
-*' In this realization, the output variables are returned to the current REMIND run as starting points for the hybrid optimization.
-
-$IFTHEN.mofex %cm_MOFEX% == "on"
-*** Trade of resources (oil, gas and coal)
-q31_MOFEX_tradebal(t,trade(peExGrade))..
-	sum(regi,  vm_Xport(t,regi,trade) - vm_Mport(t,regi,trade)) =e= 0;
-
-*** Discounted extraction and trade costs of fossil fuels 
-	q31_MOFEX_costMinFuelEx..
-	v31_MOFEX_costMinFuelEx
-	=e=
-	sum(ttot$(ttot.val ge cm_startyear), 
-		sum(regi,
-			pm_ts(ttot) / ((1 + pm_prtp(regi))**(pm_ttot_val(ttot)-cm_startyear))
-			* (sum(peFos(enty), vm_costFuEx(ttot,regi,enty))
-				+ sum(peFos(enty), pm_costsTradePeFinancial(regi,"Mport",enty) * vm_Mport(ttot,regi,enty))
-				+ sum(peFos(enty),
-					(pm_costsTradePeFinancial(regi,"Xport",enty) * vm_Xport(ttot,regi,enty))
-					* (1
-						+ pm_costsTradePeFinancial(regi,"XportElasticity",enty) / sqr(pm_ttot_val(ttot)-pm_ttot_val(ttot-1))
-						* ( vm_Xport(ttot,regi,enty)  / (vm_Xport(ttot-1,regi,enty) + pm_costsTradePeFinancial(regi, "tradeFloor",enty)) - 1)
-					  )
-				     )
-			  )
-		   )
-   );
-$ENDIF.mofex
-
-***-----------------------------------------
 *** Fossil fuel extraction (grade structure)
 ***-----------------------------------------
 *NB/LB/BB/GL/IM* fossil extraction costs as grade structure with linearly increasing marginal extraction costs

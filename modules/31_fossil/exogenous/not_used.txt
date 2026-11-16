@@ -8,12 +8,9 @@ name,type,reason
 pm_extRegiEarlyRetiRate, parameter, ??
 pm_IO_trade, parameter, ??
 pm_EN_demand_from_initialcap2, parameter, ??
-vm_prodPe, variable, ??
 vm_Xport, variable, ??
-vm_Mport, variable, ??
 pm_ttot_val, parameter, ??
 pm_ts, parameter, ??
-pm_prtp, parameter, ??
 cm_startyear, switch, ???
 cm_nucscen, switch, ???
 cm_rentdiscoil,switch,???
@@ -26,7 +23,6 @@ cm_rentdisccoal,switch,???
 cm_rentdisccoal2,switch,???
 cm_rentconvcoal,switch,???
 pm_costsTradePeFinancial,parameter,???
-qm_fuel2pe,equation,???
 pm_ffPolyCumEx,input,questionnaire
 pm_fuelex_cum,input,questionnaire
 pm_prodIni,input,questionnaire

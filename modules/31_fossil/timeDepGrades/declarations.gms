@@ -38,16 +38,6 @@ s31_max_disp_peur                                    "maximum amount of cumulati
 *** PARAMETERS
 *-------------------------------------------
 parameter
-$IFTHEN.mofex %cm_MOFEX% == "on"
-*** MOFEX
-p31_MOFEX_peprod_ref(tall,all_regi,all_enty)         "Load PE production level values from reference GDX"
-p31_MOFEX_Xport_ref(tall,all_regi,all_enty)          "Load exports values from reference GDX"
-p31_MOFEX_Mport_ref(tall,all_regi,all_enty)          "Load imports values from reference GDX"
-p31_MOFEX_fuelex_costMin(tall,all_regi,all_enty,rlf) "Result of MOFEX calculation: fuelex"
-p31_MOFEX_cumfex_costMin(tall,all_regi,all_enty,rlf) "Result of MOFEX calculation: cumulative fuelex"
-p31_MOFEX_Mport_costMin(tall,all_regi,all_enty)      "Result of MOFEX calculation: imports"
-p31_MOFEX_Xport_costMin(tall,all_regi,all_enty)      "Result of MOFEX calculation: exports"
-$ENDIF.mofex
 *** Input ------------------------------------
 p31_costExPoly(all_regi,xirog,all_enty)              "(Input) information about exhaustibles according to Rogner's polynomial approach. Unit: "
 p31_grades(tall,all_regi,xirog,all_enty,rlf)         "(Input) information about exhaustibles according to the grade structure concept. Unit: TWa"
@@ -69,19 +59,7 @@ p31_max_oil_extraction(all_regi,all_enty,rlf)        "maximum oil extraction, ca
 p31_fuel_cost(tall,all_regi,all_enty)                "Pure extraction costs"
 
 p31_fuExtrCumMaxBound(all_regi,all_enty,rlf)         "value of regional uranium extraction bound"
-p31_sol_itr_max                                      "parameter for maximum solves for MOFEX"
-
 p31_extraseed(tall,all_regi,all_enty,rlf)                    "extra seed value that scales up the ramp-up potential"
-;
-
-*-------------------------------------------
-*** VARIABLES
-*-------------------------------------------
-$IFTHEN.mofex %cm_MOFEX% == "on"
-variables
-*** MOFEX
-v31_MOFEX_costMinFuelEx                              "Minimization of discounted fossil fuel extraction and trade costs"
-$ENDIF.mofex
 ;
 
 *-------------------------------------------
@@ -99,11 +77,6 @@ v31_fuSlack(ttot,all_regi,all_enty,rlf)             "Amount of oil that is not e
 *** EQUATIONS
 *-------------------------------------------
 equations
-*** MOFEX
-$IFTHEN.mofex %cm_MOFEX% == "on"
-q31_MOFEX_costMinFuelEx                                "Minimization of discounted fossil fuel extraction and trade costs"
-q31_MOFEX_tradebal(ttot,all_enty)                      "New trade equation for MOFEX purposes"
-$ENDIF.mofex
 *** Cost
 q31_costFuExPol(ttot,all_regi,all_enty)                "costs of fuels estimated by polynomial; exhaustible fuels (uranium)"
 q31_mc_dummy(all_regi,all_enty)                        "marginal costs of fuels estimated by polynomial; exhaustible fuels (uranium)"

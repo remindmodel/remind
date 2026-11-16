@@ -491,7 +491,7 @@ q_limitCapFe(ttot,all_regi,all_te)                      "capacity constraint for
 q_limitCapFeH2BI(ttot,all_regi,emi_sectors)               "capacity limit equation for H2 infrastructure capacities of buildings and industry, needed to avoid switching behavior of H2 between both sectors"
 
 *** energy balance equations (energy supply = energy demand)
-qm_fuel2pe(ttot,all_regi,all_enty)                   "balance of primary energy extraction, import and export and production"
+q_fuel2pe(ttot,all_regi,all_enty)                   "balance of primary energy extraction, import and export and production"
 q_balPe(ttot,all_regi,all_enty)                      "balance of primary energy (pe)"
 q_balSe(ttot,all_regi,all_enty)                      "balance of secondary energy (se)"
 q_balFe(ttot,all_regi,all_enty,all_enty,all_te)      "balance of final energy (fe)"
