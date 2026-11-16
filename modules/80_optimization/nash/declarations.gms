@@ -128,7 +128,7 @@ q80_costAdjNash(ttot,all_regi)             "calculate Nash adjustment costs (of 
 q80_budgetPermRestr(all_regi)              "constraints regional permit budget to given regional emission budget";
 
 scalars
-***convergence criteria. if met, the optimization is stopped. Feel free to adjust these to your needs. Denote maximum tolerable deviation from market clearance.(the one for goods is given in  million US$2017/yr, the resources in EJ/yr)
+***convergence criteria. if met, the optimization is stopped. Feel free to adjust these to your needs. Denote maximum tolerable deviation from market clearance.(the one for goods is given in trillion US$2017/yr, the resources in EJ/yr)
 sm_fadeoutPriceAnticip                     "Helper parameter, describes fadeout of price anticipation during iterations"
 s80_fadeoutPriceAnticipStartingPeriod      "Helper parameter, denotes iteration in which price anticipation fadeout starts"
 s80_dummy                                  "dummy scalar"
