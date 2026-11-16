@@ -20,7 +20,6 @@ pm_sccConvergenceMaxDeviation,	   parameter,   ???
 pm_gmt_conv,			           parameter,   ???
 pm_budgetCO2eq,                    parameter,   ???
 pm_capCum0,                        parameter,   ???
-pm_cesdata,                        parameter,   ???
 pm_co2eq0,                         parameter,   ???
 pm_emicapglob,                     parameter,   ???
 pm_emiMktCurrent,                  input,       ??
@@ -56,7 +55,6 @@ sm_tmp,                            scalar,      not needed
 vm_capacityTradeBalance,           variable,    not implemented yet
 vm_cesIO,                          variable,    ???
 vm_co2eq,                          variable,    ???
-vm_effGr,                          variable,    ??
 vm_emiAll,                         variable,    ??
 vm_emiTe,                          variable,    ??
 vm_fuExtr,                         variable,    ??

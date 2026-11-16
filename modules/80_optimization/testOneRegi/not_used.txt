@@ -9,7 +9,6 @@ pm_pop,                         parameter,  ???
 vm_emiTe,                       variable,   ???
 sm_EJ_2_TWa,                    scalar,     ???
 vm_emiAll,                      variable,   ???
-vm_effGr,                       variable,   ???
 pm_welf,                        parameter,  ???
 pm_prtp,                        parameter,  ???
 cm_iteration_max,               switch,     ???
@@ -23,7 +22,6 @@ pm_co2eq0,                      parameter,  ???
 pm_capCum0,                     parameter,  ???
 pm_NXagr,                       parameter,  ???
 vm_perm,                        variable,   ???
-pm_cesdata,                     parameter,  ???
 pm_budgetCO2eq,                 parameter,  ???
 sm_budgetCO2eqGlob,             parameter,  ???
 qm_co2eqCum,                    equation,   ???

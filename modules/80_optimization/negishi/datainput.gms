@@ -20,7 +20,6 @@ p80_defic_sum("1") = 1;
 
 *MLB*LB*AJS* This parameter is only relevant for the nash algorithm. 
 pm_capCumForeign(t,regi,teLearn) = 0;
-pm_cumEff(t,regi,in) = 0;
 pm_co2eqForeign(t,regi) = 0;
 pm_fuExtrForeign(t,regi,enty,rlf) = 0;
 

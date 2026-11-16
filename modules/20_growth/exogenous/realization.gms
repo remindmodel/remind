@@ -12,7 +12,7 @@
 *' in module 29_CES_parameters, respectively.
 
 *' @limitations
-*' Apart from variation of exogenous GDP scenarios, the model can (in contrast to the endogenous/spillover realization) only slightly correct
+*' Apart from variation of exogenous GDP scenarios, the model can only slightly correct
 *' growth paths in reaction of policy shocks. This correction is done by an adjustment of capital accumulation.
 
 *####################### R SECTION START (PHASES) ##############################

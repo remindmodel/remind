@@ -9,9 +9,6 @@ pm_w(regi) = 1;
 
 o80_trackSurplusSign(ttot,trade,iteration)$(NOT tradeSe(trade)) = 0;
 
-*MLB 20130920* initialization only
-pm_cumEff(t, regi, in) = 100;
-
 *MLB 20140109* initialization of climate externality is sensitive
 pm_co2eqForeign(t, regi) = (1 - pm_shPerm(t,regi)) * pm_emicapglob(t);
 
