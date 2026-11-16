@@ -676,7 +676,7 @@ $offdelim
 ;
 
 *** historical secondary energy production
-table p_histProdSe(tall,all_regi,all_enty,all_te) "historical installed production/generation (TWa)"
+table p_histProdSe(tall,all_regi,all_enty,all_te) "historical installed production/generation, read in as TWh/yr and converted to TWa below"
 $ondelim
 $include "./core/input/p_histProdSe.cs3r"
 $offdelim
