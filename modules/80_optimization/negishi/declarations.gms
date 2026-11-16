@@ -19,7 +19,6 @@ p80_tradeVolume(tall,all_regi,all_enty)  "Trade volume"
 p80_curracc(ttot,all_regi)               "current account"
 p80_nfa(tall,all_regi)                   "net foreign assets"
 p80_currentaccount_bau(tall,all_regi)    "baseline current account path"
-pm_cumEff(tall,all_regi,all_in)          "parameter for spillover externality (aggregated productivity level)"
 pm_fuExtrForeign(ttot,all_regi,all_enty,rlf) "foreign fuel extraction"
 ;
 

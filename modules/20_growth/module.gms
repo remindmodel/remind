@@ -16,6 +16,5 @@
 
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%growth%" == "exogenous" $include "./modules/20_growth/exogenous/realization.gms"
-$Ifi "%growth%" == "spillover" $include "./modules/20_growth/spillover/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
 *** EOF ./modules/20_growth/module.gms
