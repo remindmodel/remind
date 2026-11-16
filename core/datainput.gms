@@ -941,8 +941,7 @@ $onlisting
 * PBL_2007 is based on Lucas et al. (2007), and abatement is relative to that study's IMAGE baseline scenario emissions, asssumed relative to ours here
 * PBL_2022 is based on van Harmsen et al. (2022), and abatement is relative to that study's IMAGE SSP2 baseline scenario emissions, asssumed relative to ours here
 $IFTHEN.MaccVersion %c_nonco2_macc_version% == "PBL_2007"
-* PBL_2007 MACs are discretized in steps of 5 $/tC
-sm_dmac = 5 ;
+* PBL_2007 MACs are discretized in steps of 5 $2005/tC (sm_dmac is set in core/declarations.gms incl. deflator to $2017)
 table p_abatparam_CH4(tall,all_regi,all_enty,steps)        "MAC costs for CH4 by source"
 $ondelim
 $include "./core/input/p_abatparam_CH4.cs3r"
@@ -1554,12 +1553,12 @@ pm_emifac(ttot,regi,"segafos","fegat","tdfosgat","co2") = p_ef_dem(regi,"fegas")
 
 $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
 *** Changing refineries emission factors in regions that belong to cm_altFeEmiFac to avoid negative emissions on pe2se 
-*** (changing from 18.4 to 20 zeta joule = 20/31.7098 = 0.630719841 Twa = 0.630719841 * 3.66666666666666 * 1000 * 0.03171  GtC/TWa = 73.33 GtC/TWa)
+*** (changing from 18.4 to 20 GtC/ZJ = 20/31.7098 = 0.630719841 GtC/TWa = 0.630719841 * 3.66666666666666 * 1000 * 0.03171 = 73.33 MtCO2/EJ)
 loop(ext_regi$altFeEmiFac_regi(ext_regi),
   pm_emifac(ttot,regi,"peoil","seliqfos","refliq","co2")$(regi_group(ext_regi,regi)) = 0.630719841;
 );
 *** Changing Germany and UKI solids emissions factors to be in line with CRF numbers
-*** (changing from 26.1 to 29.27 zeta joule = 0.922937989 TWa = 107.31 GtC/TWa)
+*** (changing from 26.1 to 29.27 GtC/ZJ = 0.922937989 GtC/TWa = 107.31 MtCO2/EJ)
 pm_emifac(ttot,regi,"pecoal","sesofos","coaltr","co2")$(sameas(regi,"DEU") OR sameas(regi,"UKI")) = 0.922937989;
 $endif.altFeEmiFac
 

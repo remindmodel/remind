@@ -15,7 +15,7 @@ p41_lambda(tall) $(tall.val>2049) = 1;
 Execute_Loadpoint "input_ref" p41_co2eq = vm_co2eq.l;
 
 ***calculate 2020 share of emissions by region
-p41_shEmi20200(regi) = p41_co2eq("2020",regi) / sum(regi2, p41_co2eq("2020",regi2) );
+p41_shEmi2020(regi) = p41_co2eq("2020",regi) / sum(regi2, p41_co2eq("2020",regi2) );
 display p41_shEmi2020;
 
 *** calculate global emissions pathway in cost-optimal scenario
