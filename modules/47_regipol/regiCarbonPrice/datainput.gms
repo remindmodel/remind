@@ -71,7 +71,7 @@ p47_taxemiMkt_init(ttot,regi,emiMkt)$(p47_taxCO2eq_ref(ttot,regi) and (NOT(p47_t
   loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47),
     loop(regi$regi_groupExt(ext_regi,regi),
       loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
-        p47_taxemiMkt_init(t,regi,emiMkt)$(t.val gt 2020) = (20*sm_D2005_2_D2017*sm_DptCO2_2_TDpGtC) + (1*sm_DptCO2_2_TDpGtC)*(t.val-2020);
+        p47_taxemiMkt_init(t,regi,emiMkt)$(t.val gt 2020) = (20*sm_D2005_2_D2017*sm_DptCO2_2_TDpGtC) + (1*sm_D2005_2_D2017*sm_DptCO2_2_TDpGtC)*(t.val-2020);
       );
     );
   );
