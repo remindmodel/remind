@@ -376,7 +376,7 @@ qm_deltaCapCumNet(ttot,regi,teLearn)$(ord(ttot) lt card(ttot) AND pm_ttot_val(tt
 ***---------------------------------------------------------------------------
 *ml* reasonable results only for members of peExGrade and peren2rlf30
 *NB*110625 changes for transition towards grades
-qm_fuel2pe(t,regi,peRicardian(enty))..
+q_fuel2pe(t,regi,peRicardian(enty))..
   vm_prodPe(t,regi,enty)
   =e=
   sum(pe2rlf(enty,rlf2), vm_fuExtr(t,regi,enty,rlf2))

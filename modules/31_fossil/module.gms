@@ -13,7 +13,6 @@
 *' @authors Nico Bauer, Jerome Hilaire, Robert Pietzcker, Lavinia Baumstark
 
 *###################### R SECTION START (MODULETYPES) ##########################
-$Ifi "%fossil%" == "MOFEX" $include "./modules/31_fossil/MOFEX/realization.gms"
 $Ifi "%fossil%" == "exogenous" $include "./modules/31_fossil/exogenous/realization.gms"
 $Ifi "%fossil%" == "grades2poly" $include "./modules/31_fossil/grades2poly/realization.gms"
 $Ifi "%fossil%" == "timeDepGrades" $include "./modules/31_fossil/timeDepGrades/realization.gms"

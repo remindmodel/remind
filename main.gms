@@ -323,7 +323,6 @@ $setglobal biomass  magpie     !! def = magpie
 *' * (timeDepGrades): time-dependent grade structure of fossil resources (oil & gas only)
 *' * (grades2poly)  : simplified version of the time-dependent grade realization (using polynomial functions)
 *' * (exogenous)    : exogenous fossil extraction and costs
-*' * (MOFEX)        : contains the standalone version of MOFEX (Model Of Fossil EXtraction), which minimizes the discounted extraction and trade costs of fossils while balancing trade for each time step. Not to be run within a REMIND run but instead through the standalone architecture or soft-linked with REMIND (not yet implemented)
 $setglobal fossil  grades2poly        !! def = grades2poly
 *'---------------------    32_power    ----------------------------------------
 *'
@@ -2109,10 +2108,6 @@ $setglobal cm_seFeSectorShareDevMethod  sqSectorAvrgShare !! def = sqSectorAvrgS
 ***  share,  "The square penalization is applied directly to the share values. This results in different-sized regions having varying relative penalization incentives, but the range of penalization values will be more consistent from the solver's perspective."
 ***  energy, "The square penalization is applied to the share values multiplied by the energy demand. This approach scales penalizations better across different-sized regions, but there is a higher risk of the penalizations being ignored and the shares not being enforced if the value range is too small."
 $setglobal c_seFeSectorShareDevUnit  share !! def = share  !! regexp = share|energy
-***  cm_MOFEX  off    !! def=off
-*** *JH/LB* Activate MOFEX partial fossil fuel extraction cost minimization model
-*** * Warning: Use a well-converged run since the model uses vm_prodPe from the input GDX
-$setGlobal cm_MOFEX  off        !! def = off  !! regexp = off|on
 *** cm_limitSolidsFossilRegi off   !! def=off
 *** starting in max(2020, cm_startyear), fossil solids use in each (sector x emiMkt) has to decrease compared to the previous time step for each region included in the switch cm_limitSolidsFossilRegi
 *** aceptable values: any of the ext_regi set elements
