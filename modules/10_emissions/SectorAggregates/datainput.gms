@@ -237,8 +237,7 @@ $if %cm_LU_emi_scen% == "SDP"        pm_PeProdEmifac(regi,"pebiolc","n2obio") = 
 * PBL_2007 is based on Lucas et al. (2007), and abatement is relative to that study's IMAGE baseline scenario emissions, asssumed relative to ours here
 * PBL_2022 is based on van Harmsen et al. (2022), and abatement is relative to that study's IMAGE SSP2 baseline scenario emissions, asssumed relative to ours here
 $IFTHEN.MaccVersion %cm_nonco2_macc_version% == "PBL_2007"
-* PBL_2007 MACs are discretized in steps of 5 $/tC
-sm_dmac = 5 ;
+* PBL_2007 MACs are discretized in steps of 5 $2005/tC (sm_dmac is set in declarations.gms incl. deflator to $2017)
 table p10_abatparam_CH4(tall,all_regi,all_enty,steps)        "MAC costs for CH4 by source"
 $ondelim
 $include "./modules/10_emissions/SectorAggregates/input/p_abatparam_CH4.cs3r"
