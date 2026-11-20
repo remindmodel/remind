@@ -575,6 +575,10 @@ loop(prodSeOth2te(enty,te),
   v_prodSeOth.fx(t,regi,"seh2","h2curt") = 0;
 );
 
+*** CSP no longer co-fires H2 or gas (q32_H2cofiring was removed with RLDC, 6a1f2ab0b).
+*** Fix the leftover csp entries of demSeOth2te to zero, so q_balSe cannot dump SE for free.
+vm_demSeOth.fx(t,regi,enty,"csp") $ demSeOth2te(enty,"csp") = 0;
+
 
 *** Make sure no grades > 9 are used. Only cosmetic to avoid entries in lst file
 v_capDistr.fx(t,regi,te,rlf) $ (rlf.val > 9) = 0;
