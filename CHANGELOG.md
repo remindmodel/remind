@@ -40,6 +40,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - **scripts** Fix call to harmonization and infilling console entry point in  `climateAssessmentInterimRun.R`
   [[#2484](https://github.com/remindmodel/remind/pull/2484)]
+- **core** Fix leftover `vm_demSeOth` csp entries to zero; since the RLDC removal they let `q_balSe` dump hydrogen and biogas for free
+  [[#2544](https://github.com/remindmodel/remind/pull/2544)]
 -
 
 ## [3.7.1] - 2026-09-25
