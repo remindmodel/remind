@@ -6,13 +6,15 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/11_aerosols/exoGAINS2025/equations.gms
 ***--------------------------------------------------------------------------
-*** JeS: factor 0.000001 converts units from M$ to T$: e.g. for sulfur units are [TgS/TWa]*[TWa]*[$/pm_ts]
+*** Unit chain, e.g. for sulfur: emission factor [Tg SO2/TWa] * energy flow [TWa/yr] * abatement cost [$/t SO2] = [Mt SO2/yr] * [$/t SO2] = [M$/yr];
+*** sm_million_2_trillion then converts M$/yr to T$/yr
+*** vm_costpollution is an annual flow entering the annual budget equation (qm_budget), so no time-step weighting is applied here
 
 *' @equations
 
 q11_costpollution(t,regi)..
 vm_costpollution(t,regi)=e=sum(emi2te(enty,enty2,te,enty3),
-    0.000001*pm_ts(t)
+    sm_million_2_trillion
   * (
       ( (p11_EF_uncontr(enty,enty2,te,regi,enty3,"indst")-pm_emifac(t,regi,enty,enty2,te,enty3))
       * vm_demPe(t,regi,enty,enty2,te)
