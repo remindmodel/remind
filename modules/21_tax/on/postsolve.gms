@@ -75,6 +75,7 @@ p21_taxrevGHG_iter(iteration+1,ttot,regi) = v21_taxrevGHG.l(ttot,regi);
 p21_taxrevCCS_iter(iteration+1,ttot,regi) = v21_taxrevCCS.l(ttot,regi); 
 p21_taxrevNetNegEmi_iter(iteration+1,ttot,regi) = v21_taxrevNetNegEmi.l(ttot,regi);
 p21_emiAllco2neg0(ttot,regi) = vm_emiAllco2neg.l(ttot,regi);
+p21_emiAllco2neg_acrossIterations0(ttot,regi) = v21_emiAllco2neg_acrossIterations.l(ttot,regi);
 p21_taxrevFE_iter(iteration+1,ttot,regi) = v21_taxrevFE.l(ttot,regi); 
 p21_taxrevResEx_iter(iteration+1,ttot,regi) = v21_taxrevResEx.l(ttot,regi);
 p21_taxrevPE_iter(iteration+1,ttot,regi,entyPe) = v21_taxrevPE.l(ttot,regi,entyPe);

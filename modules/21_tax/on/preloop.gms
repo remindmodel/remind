@@ -30,7 +30,7 @@ if (%cm_fetaxscen% eq 0, !! no FE and ResEx sub
          + ( f21_sub_convergence_rollback("2035",regi,sector,entyFe) * 0.001 / sm_EJ_2_TWa - p21_tau_fe_sub("2025",regi,sector,entyFe) ) * ( (ttot.val - 2025) / (2035 - 2025) );
       p21_tau_fe_sub(ttot,regi,sector,entyFe)$(f21_sub_convergence_rollback("2035",regi,sector,entyFe) gt 0 AND ttot.val  gt 2035) = f21_sub_convergence_rollback("2035",regi,sector,entyFe) * 0.001 / sm_EJ_2_TWa;
     );
-*** Limit subsidy feelt and feels maximum value at 2050 onward to 0.2 [$/TWa] to avoid negative electricity prices. Linearly reduce values from 2035.
+*** Limit subsidy feelt and feels maximum value at 2050 onward to 0.2 [T$/TWa] to avoid negative electricity prices. Linearly reduce values from 2035.
     p21_tau_fe_sub(ttot,regi,sector,entyFe)$((ttot.val gt 2035) AND (ttot.val le 2050) AND (p21_tau_fe_sub("2050",regi,sector,entyFe) lt -0.2) AND (sameas(entyFe,"feelt") OR sameas(entyFe,"feels"))) = 
       p21_tau_fe_sub("2035",regi,sector,entyFe) - 
       (p21_tau_fe_sub("2050",regi,sector,entyFe) - (-0.2)) * (ttot.val - 2035) / (2050 - 2035);

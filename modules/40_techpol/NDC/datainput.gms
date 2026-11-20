@@ -58,7 +58,7 @@ $ondelim
 $include "./modules/40_techpol/NDC/input/f40_FE_RenShare.cs4r"
 $offdelim
 /;
-p40_FE_RenShare(tall,regi) = f40_FE_RenShare(tall,regi);  !! rescale unit from [million people] to [billion] people
+p40_FE_RenShare(tall,regi) = f40_FE_RenShare(tall,regi);
 
 *** Chinese PE targets are defined with substitution accounting method
 p40_noncombust_acc_eff(t,"CHN",te)$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"windon") OR sameas(te,"windoff") OR sameas(te,"tnrs") OR sameas(te,"spv") OR sameas(te,"geohdr") OR sameas(te,"hydro")) = 0.38; !! substitution accounting for low-carbon electricity generation at coal efficiency of 38%
