@@ -8,7 +8,7 @@
 
 parameters
 p39_carbon_efficiency(ttot,all_regi,all_te)						"Carbon efficiency of CCU technologies, carbon content of output fuel divided by carbon input into production process  [share]"
-p39_co2_dem(ttot,all_regi,all_enty,all_enty,all_te)					"CO2 demand of CCU technologies [tC/TWa (output)]"
+p39_co2_dem(ttot,all_regi,all_enty,all_enty,all_te)					"CO2 demand of CCU technologies [GtC/TWa (output)]"
 
 ;
 

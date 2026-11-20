@@ -454,7 +454,7 @@ loop((ext_regi,te) $ p_techEarlyRetiRate(ext_regi,te),
 );
 $endif.tech_earlyreti
 
-*** restrict early retirement to time frame between 2015 and 2100 where it is relevant
+*** restrict early retirement to time frame between 2010 and 2110 where it is relevant
 vm_capEarlyReti.up(ttot,regi,te) $ (ttot.val < 2010 or ttot.val > 2110) = 0;
 
 *** only US and EUR allow early retirement before 2035
