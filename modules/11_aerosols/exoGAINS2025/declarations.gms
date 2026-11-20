@@ -11,7 +11,7 @@ vm_costpollution(tall,all_regi)                                                 
 ;
 
 parameter
-p11_emiFacAP(tall,all_regi,all_enty,all_enty,all_te,sectorEndoEmi11,all_enty)  "air pollutant emission factors [Gt(species)/TWa]"
+p11_emiFacAP(tall,all_regi,all_enty,all_enty,all_te,sectorEndoEmi11,all_enty)  "air pollutant emission factors [Tg(species)/TWa]"
 p11_share_sector(tall,all_enty,all_enty,all_te,sectorEndoEmi11,all_regi)       "share of technology that goes into industry, residential, and transport sectorEndoEmi11 [1]"
 p11_costpollution(all_te,all_enty,sectorEndoEmi11)                             "pollutant abatement costs in [$/t]"
 
