@@ -273,7 +273,6 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off
-$setGlobal cm_MOFEX  off        !! def = off
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
 
 $setGlobal cm_APscen  SSP2          !! def = SSP2

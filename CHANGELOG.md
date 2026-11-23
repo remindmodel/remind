@@ -31,6 +31,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### removed
 
+- **31_fossil** Delete realization `MOFEX` and`cm_MOFEX` switch
+  [[#2538](https://github.com/remindmodel/remind/pull/2538)]
 - **scripts** Drop the `gdxrrw`/`gdx` R dependency from REMIND scripts; GDX writes now use `gamstransfer`-based `quitte::write.gdx`
   [[#2485](https://github.com/remindmodel/remind/pull/2485)]
 - **core** Remove switch cm_techcosts

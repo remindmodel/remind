@@ -2775,7 +2775,7 @@ ccs2Leak(all_enty,all_enty,all_te,all_enty)   "leakage along ccs chain"
     cco2.ico2.ccsinjeoff.co2
 /
 
-pe2rlf(all_enty,rlf)     "map exhaustible energy to grades for qm_fuel2pe"
+pe2rlf(all_enty,rlf)     "map exhaustible energy to grades for q_fuel2pe"
 /
     peoil.(1*8)
     pegas.(1*6)

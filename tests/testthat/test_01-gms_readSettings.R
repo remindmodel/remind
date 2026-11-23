@@ -11,5 +11,4 @@ test_that("readSettings exits without warning", {
 test_that("standalone models have consistent settings definition", {
   skip("standalone models aren't consistent at the moment")
   expect_no_warning(gms::readSettings("../../standalone/trade/trade.gms"))
-  expect_no_warning(gms::readSettings("../../standalone/MOFEX/MOFEX.gms"))
 })

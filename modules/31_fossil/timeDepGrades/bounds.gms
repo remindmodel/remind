@@ -106,17 +106,6 @@ if(ord(iteration) eq 1,
     );
   );
 
-*------------------------------------
-*** [Optional] MOFEX
-*------------------------------------
-*** If MOFEX was run, fix fossil fuel extraction, cumulative FF Ext. and trade to values computed by MOFEX
-$IFTHEN.mofex %cm_MOFEX% == "on"
-  vm_fuExtr.l(ttot,regi,pe2rlf(peExGrade(enty),rlf))      = p31_MOFEX_fuelex_costMin(ttot,regi,enty,rlf);
-  v31_fuExtrCum.l(ttot,regi,pe2rlf(peExGrade(enty),rlf)) = p31_MOFEX_cumfex_costMin(ttot,regi,enty,rlf);
-  vm_Mport.l(ttot,regi,peExGrade(trade))                    = p31_MOFEX_Mport_costMin(ttot,regi,trade);
-  vm_Xport.l(ttot,regi,peExGrade(trade))                    = p31_MOFEX_Xport_costMin(ttot,regi,trade);
-$ENDIF.mofex
-
 );
 
 *------------------------------------
