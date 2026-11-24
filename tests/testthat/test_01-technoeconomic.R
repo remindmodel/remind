@@ -4,7 +4,7 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-test_that("core/input/f_technoeconomic.csv matches technoeconomic/create_input.py and the POSTED pin", {
+test_that("core/input/f_technoeconomic.csv matches technoeconomic/create_input.py and the uv.lock", {
   source("../../scripts/input/create_input_for_technoeconomic.R", local = TRUE)
   check <- technoeconomicCheck("../..")
   # 3 outdated or editable and 2 without uv or its .venv both mean the file on

@@ -1,7 +1,7 @@
 * description: techno-economic data from POSTED, averaged across sources; replaces fm_dataglob values from generisdata_tech.prn
 * origin: technoeconomic/create_input.py and content.py, regenerate with scripts/input/create_input_for_technoeconomic.R and commit
 * uv.lock sha256: 3095f7d585f72e1f5daf17688a0ba41221a3bb6e8cd998056a72f2aa2d723df1
-* technoeconomic md5: bc665ee12443f2ac148c599f632dcec3
+* technoeconomic sha256: 802c08f71421b2faa05e920cef49e9bf0fe27aed1c479b1115d0186ca0842e9c
 * columns: char,te,value; a comment gives the unit of the rows below it, up to the next comment
 * unit eta -> kWh / kWh_H2_LHV or kWh_MeOH_LHV / kWh_H2_LHV
 eta,MeOH,0.791651

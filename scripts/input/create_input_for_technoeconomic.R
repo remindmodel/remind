@@ -13,7 +13,7 @@
 # writes them into core/input/f_technoeconomic.csv, which core/datainput.gms
 # reads to replace values from generisdata_tech.prn. The csv is committed and
 # records in its header the sha256 of technoeconomic/uv.lock, the resolved
-# environment it was computed in, and the md5 of the scripts which produced it.
+# environment it was computed in, and the sha256 of the scripts which produced it.
 #
 # technoeconomic/ is a Python project of its own, with pyproject.toml, uv.lock
 # and .venv; uv is called with --project to reach it, so REMIND can host more
