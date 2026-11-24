@@ -11,15 +11,15 @@ core/input/f_technoeconomic.csv, which core/datainput.gms reads to replace
 values from generisdata_tech.prn: one char,te,value line per property, the
 shape of fm_dataglob, grouped under comments naming their unit, which GAMS
 ignores inside a data definition. The file is committed, and its header records
-the POSTED commit and the md5 of these scripts that produced it; --check
-compares all of them with pyproject.toml and these files. The exit code
-tells what to do with the csv: 0 it is up to date, 3 regenerate and commit it,
-1 this script failed, 2 is what argparse and uv exit with. scripts/input/
-create_input_for_technoeconomic.R uses these same codes, adding 2 for
-environments without uv or its .venv.
+the uv.lock and the md5 of these scripts that produced it; --check compares
+both with technoeconomic/uv.lock and these files and attributes the values to
+the package commits the lock pins. The exit code tells what to do with the csv:
+0 it is up to date, 3 regenerate and commit it, 1 this script failed, 2 is what
+argparse and uv exit with. scripts/input/create_input_for_technoeconomic.R uses
+these same codes, adding 2 for environments without uv or its .venv.
 
-    python technoeconomic/create_input.py [--out PATH]
-    python technoeconomic/create_input.py --check
+    uv run --project technoeconomic python technoeconomic/create_input.py [--out PATH]
+    uv run --project technoeconomic python technoeconomic/create_input.py --check
 """
 
 import argparse
@@ -35,24 +35,35 @@ REMIND_FOLDER = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = REMIND_FOLDER / "core" / "input" / "f_technoeconomic.csv"
 # the values depend on the queries and on how they are formatted here
 SOURCE_FILES = [Path(__file__), Path(__file__).with_name("content.py")]
-# the packages the values are computed with, each of them recorded in the csv
-# header under its upper-case name, so that the database they were taken from
-# can be attributed
-PACKAGES = ["posted"]
+# the resolved environment the values were computed in, committed next to the
+# scripts and recorded in the csv header under its sha256, so that both the
+# data and the code computing them, down to numpy and pandas, can be attributed
+LOCK_FILE = Path(__file__).resolve().with_name("uv.lock")
 
 
-def header(package):
-    """The csv header line the version of one package is recorded under."""
-    return f"{package.upper()} version"
+def lock_sha256():
+    """sha256 of uv.lock, the identity of the whole resolved environment."""
+    return hashlib.sha256(LOCK_FILE.read_bytes()).hexdigest()
+
+
+def lock_resolutions():
+    """The git-sourced packages of uv.lock, name to resolved commit: the
+    packages whose content the values are numbers of, unlike the registry ones
+    uv run reinstates from the lock anyway."""
+    with LOCK_FILE.open("rb") as lock:
+        packages = tomllib.load(lock)["package"]
+    return {package["name"]: package["source"]["git"].rsplit("#", 1)[-1]
+            for package in packages
+            if isinstance(package.get("source"), dict) and package["source"].get("git")}
 
 
 def commit_text(path):
     """How to commit a csv, core/input being git-ignored: its values belong to
-    the commit which changes the scripts or the pins which produced them."""
+    the commit which changes the scripts or the environment which produced them."""
     if path.is_relative_to(REMIND_FOLDER):
         path = path.relative_to(REMIND_FOLDER)
-    return (f"Commit it with 'git add -f {path}' and commit technoeconomic/content.py "
-            "and create_input.py together with it.")
+    return (f"Commit it with 'git add -f {path}' and commit the scripts and uv.lock "
+            "of technoeconomic/ together with it.")
 
 
 def editable_text(installations, path):
@@ -65,7 +76,7 @@ def editable_text(installations, path):
 
 
 def has_editable(installations):
-    """Whether any PACKAGES is installed in editable mode."""
+    """Whether any package the lock resolves from git is editable-installed."""
     return any(here and here["editable"] for here in installations.values())
 
 
@@ -99,38 +110,24 @@ def identity(installation):
             else installation["commit"] or installation["version"])
 
 
-def expected_versions(installations):
-    """The versions the values are attributed to: the commits pinned as git
-    dependencies in pyproject.toml, or an installed package where nothing is."""
-    with (REMIND_FOLDER / "pyproject.toml").open("rb") as pyproject:
-        dependencies = tomllib.load(pyproject)["project"]["dependencies"]
-    found = {}
-    for package, here in installations.items():
-        match = [dep for dep in dependencies
-                 if dep.replace(" ", "").startswith(f"{package}@git+")]
-        found[package] = match[0].rsplit("@", 1)[-1] if match else identity(here)
-    return found
-
-
 def mismatch(installations):
-    """Installations that cannot be attributed to the commits pinned in
-    pyproject.toml, editable installs excepted: their values are attributed to
-    their folder."""
-    expected = expected_versions(installations)
+    """Installations that are not the commits the lock resolves, editable
+    installs excepted: their values are attributed to their folder."""
+    expected = lock_resolutions()
     return [f"{package} should be {expected[package]}, {sys.executable} has "
-            f"{identity(here) or 'nothing'}"
-            for package, here in installations.items()
-            if not (here and here["editable"]) and identity(here) != expected[package]]
+            f"{identity(installations[package]) or 'nothing'}"
+            for package in expected
+            if not (installations[package] and installations[package]["editable"])
+            and identity(installations[package]) != expected[package]]
 
 
 def csv_header(path):
-    """The package versions and technoeconomic md5 recorded in a GAMS csv
-    header, missing ones as "none"."""
-    found = {**{name: "none" for name in PACKAGES}, "md5": "none"}
+    """The uv.lock sha256 and technoeconomic md5 recorded in a GAMS csv header,
+    missing ones as "none"."""
+    found = {"lock": "none", "md5": "none"}
     if not path.is_file():
         return found
-    keys = {**{header(package): package for package in PACKAGES},
-            "technoeconomic md5": "md5"}
+    keys = {"uv.lock sha256": "lock", "technoeconomic md5": "md5"}
     for line in path.read_text(encoding="utf-8").splitlines():
         if not line.startswith("*"):
             break
@@ -141,25 +138,26 @@ def csv_header(path):
 
 
 def check(path):
-    """Whether the csv at path is up to date with these scripts and the pinned
-    versions of all PACKAGES. Returns an exit code and a message: 0 up to date,
-    3 regenerate it, be it outdated, missing or written by an editable install
+    """Whether the csv at path was written under the current uv.lock and by
+    these scripts. Returns an exit code and a message: 0 up to date, 3
+    regenerate it, be it outdated, missing or written by an editable install
     which then must not be committed."""
-    installations = {package: installed(package) for package in PACKAGES}
+    installations = {package: installed(package) for package in lock_resolutions()}
     if has_editable(installations):
         return 3, editable_text(installations, path)
-    expected = expected_versions(installations)
-    found, md5 = csv_header(path), sources_md5()
-    differences = [f"{package} {found[package]}, expected {expected[package] or 'none'}"
-                   for package in PACKAGES if found[package] != expected[package]]
+    found, md5, sha = csv_header(path), sources_md5(), lock_sha256()
+    differences = []
+    if found["lock"] != sha:
+        differences.append(f"uv.lock {found['lock']}, expected {sha}")
     if found["md5"] != md5:
         differences.append(f"technoeconomic md5 {found['md5']}, expected {md5}")
     if differences:
         return 3, (f"{path} is outdated ({'; '.join(differences)}). Regenerate it "
                    "with 'Rscript scripts/input/create_input_for_technoeconomic.R'. "
                    + commit_text(path))
-    versions = "; ".join(f"{package} {expected[package]}" for package in PACKAGES)
-    return 0, f"{path} is up to date with {versions}."
+    commits = ", ".join(f"{package} {commit}"
+                        for package, commit in lock_resolutions().items())
+    return 0, f"{path} is up to date with uv.lock {sha} ({commits})."
 
 
 def format_value(value):
@@ -181,13 +179,13 @@ def unit_lines(selected):
         yield from values
 
 
-def write_gams(path, selected, versions, md5):
+def write_gams(path, selected, sha, md5):
     lines = [
         "* description: techno-economic data from POSTED, averaged across "
         "sources; replaces fm_dataglob values from generisdata_tech.prn",
         "* origin: technoeconomic/create_input.py and content.py, regenerate "
         "with scripts/input/create_input_for_technoeconomic.R and commit",
-        *(f"* {header(package)}: {version}" for package, version in versions.items()),
+        f"* uv.lock sha256: {sha}",
         f"* technoeconomic md5: {md5}",
         "* columns: char,te,value; a comment gives the unit of the rows below "
         "it, up to the next comment",
@@ -203,22 +201,23 @@ def run(args):
         code, text = check(args.out)
         print(text)
         return code
-    installations = {package: installed(package) for package in PACKAGES}
+    installations = {package: installed(package) for package in lock_resolutions()}
     wrong = mismatch(installations)
     if wrong:
-        print(f"{' and '.join(wrong)}. Run 'uv sync' or update pyproject.toml.",
+        print(f"{' and '.join(wrong)}. Run 'uv --directory technoeconomic sync "
+              "--locked', after 'uv lock' if you changed pyproject.toml.",
               file=sys.stderr)
         return 1
     # only the fetch needs POSTED, so --check runs without it
     import content
 
     selected = content.fetch()
-    versions = {package: identity(here) for package, here in installations.items()}
-    md5 = sources_md5()
-    write_gams(args.out, selected, versions, md5)
-    listed = ", ".join(f"{package} {version}" for package, version in versions.items())
+    sha, md5 = lock_sha256(), sources_md5()
+    write_gams(args.out, selected, sha, md5)
+    commits = ", ".join(f"{package} {commit}"
+                        for package, commit in lock_resolutions().items())
     print(f"Wrote {len(selected)} values to {args.out} "
-          f"({listed}, technoeconomic md5 {md5})")
+          f"(uv.lock {sha}, {commits}, technoeconomic md5 {md5})")
     # an editable install may have written this file, in which case it is not
     # reproducible and must not be committed
     print(editable_text(installations, args.out) if has_editable(installations)

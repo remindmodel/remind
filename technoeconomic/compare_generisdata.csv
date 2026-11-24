@@ -1,0 +1,50 @@
+char,te,unit,generisdata_tech.prn (2015$),prn_as_overwritten (2017$),f_technoeconomic.csv (2017$),change_percent
+eta,MeOH,kWh / kWh_H2_LHV or kWh_MeOH_LHV / kWh_H2_LHV,0.7,0.7,0.791651,13.1
+eta,coalh2,kWh_H2_LHV / kWh_coal_LHV,0.57,0.57,0.683224,19.9
+eta,coalh2c,kWh_H2_LHV / kWh_coal_LHV,0.53,0.53,0.68328,28.9
+eta,elh2,kWh_H2_LHV / kWh,0.73,0.73,0.596474,-18.3
+eta,gash2,kWh_H2_LHV / kWh_NG_LHV,0.73,0.73,0.715132,-2.0
+eta,gash2c,kWh_H2_LHV / kWh_NG_LHV,0.7,0.7,0.722513,3.2
+eta,h2turb,kWh / kWh_H2_LHV,0.4,0.4,0.6,50.0
+eta,ngcc,kWh / kWh_NG_LHV,0.57,0.57,0.6,5.3
+eta,ngccc,kWh / kWh_NG_LHV,0.49,0.49,0.46,-6.1
+inco0,MeOH,USD_2017 / kW or USD_2017 / kW_MeOH_LHV,800,823.36,741.139,-10.0
+inco0,coalh2,USD_2017 / kW_H2_LHV,1510,1554.09,4118.14,165.0
+inco0,coalh2c,USD_2017 / kW_H2_LHV,1720,1770.22,4747.15,168.2
+inco0,eaf,USD_2017 * a / t,350,360.22,289.173,-19.7
+inco0,elh2,USD_2017 / kW_H2_LHV,2580,2655.34,1382.64,-47.9
+inco0,gash2,USD_2017 / kW_H2_LHV,900,926.28,747.547,-19.3
+inco0,gash2c,USD_2017 / kW_H2_LHV,1400,1440.88,1032.17,-28.4
+inco0,h2turb,USD_2017 / kW,510,524.892,1209.47,130.4
+inco0,idr,USD_2017 * a / t,420,432.264,377.834,-12.6
+inco0,idrcc,USD_2017 * a / t,900,926.28,480.541,-48.1
+inco0,ngcc,USD_2017 / kW,950,977.74,1051.71,7.6
+inco0,ngccc,USD_2017 / kW,1350,1389.42,2038.52,46.7
+inco0year,elh2,year,2025,2025,2025,0.0
+lifetime,MeOH,a,30,30,23.3333,-22.2
+lifetime,bf,a,35,35,25,-28.6
+lifetime,bof,a,35,35,25,-28.6
+lifetime,coalh2,a,35,35,30,-14.3
+lifetime,coalh2c,a,35,35,30,-14.3
+lifetime,gash2,a,35,35,27.5,-21.4
+lifetime,gash2c,a,35,35,30,-14.3
+omf,MeOH,1 / a,0.03,0.03,0.0529627,76.5
+omf,bf,1 / a,0.06,0.06,0.119579,99.3
+omf,bof,1 / a,0.06,0.06,0.119579,99.3
+omf,coalh2,1 / a,0.05,0.05,0.0264026,-47.2
+omf,coalh2c,1 / a,0.06,0.06,0.0261565,-56.4
+omf,eaf,1 / a,0.06,0.06,0.128671,114.5
+omf,elh2,1 / a,0.05,0.05,0.0300402,-39.9
+omf,gash2,1 / a,0.05,0.05,0.0320583,-35.9
+omf,gash2c,1 / a,0.06,0.06,0.0255415,-57.4
+omf,h2turb,1 / a,0.03,0.03,0.0161411,-46.2
+omf,idr,1 / a,0.06,0.06,0.111564,85.9
+omf,idrcc,1 / a,0.06,0.06,0.156354,160.6
+omf,ngcc,1 / a,0.03,0.03,0.0185622,-38.1
+omf,ngccc,1 / a,0.03,0.03,0.0234192,-21.9
+omv,MeOH,USD_2017 / kW_MeOH_LHV / a,12,12.3504,54.4453,340.8
+omv,coalh2,USD_2017 / kW_H2_LHV / a,6,6.1752,111.12,1699.5
+omv,coalh2c,USD_2017 / kW_H2_LHV / a,6,6.1752,8.97044,45.3
+omv,gash2,USD_2017 / kW_H2_LHV / a,20,20.584,12.3337,-40.1
+omv,gash2c,USD_2017 / kW_H2_LHV / a,25,25.73,91.836,256.9
+omv,ngccc,USD_2017 / kW / a,30,30.876,10.3747,-66.4

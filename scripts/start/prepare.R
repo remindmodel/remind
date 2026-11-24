@@ -150,7 +150,7 @@ prepare <- function() {
   cfg <- updateInputData(cfg, remindPath = ".")
 
   # check that the committed POSTED data in core/input/f_technoeconomic.csv matches
-  # technoeconomic/create_input.py and the POSTED commit pinned in pyproject.toml:
+  # technoeconomic/create_input.py and the uv.lock committed in technoeconomic/:
   # REMIND runs with the committed csv as it is, like it runs with uncommitted
   # GAMS code, the GitHub check running the same --check is what refuses a commit
   source("scripts/input/create_input_for_technoeconomic.R")

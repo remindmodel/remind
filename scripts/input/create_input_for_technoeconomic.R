@@ -12,8 +12,13 @@
 # (https://github.com/PhilippVerpoort/cet-units), technoeconomic/create_input.py
 # writes them into core/input/f_technoeconomic.csv, which core/datainput.gms
 # reads to replace values from generisdata_tech.prn. The csv is committed and
-# records in its header which POSTED commit and which version of the scripts
-# produced it.
+# records in its header the sha256 of technoeconomic/uv.lock, the resolved
+# environment it was computed in, and the md5 of the scripts which produced it.
+#
+# technoeconomic/ is a Python project of its own, with pyproject.toml, uv.lock
+# and .venv; uv is called with --project to reach it, so REMIND can host more
+# than one, incompatible Python environment. pyproject.toml is where pins are
+# edited, 'uv lock' (in technoeconomic/) resolves them into uv.lock.
 #
 # Checking is done by create_input.py --check run with 'uv run --no-sync'. Its
 # exit code is technoeconomicCheck's status, one code per action: 0 nothing to
@@ -24,10 +29,11 @@
 # Nothing here stops a run over an outdated csv: REMIND runs with the committed
 # file as it is, like it runs with uncommitted GAMS code, and the GitHub check
 # which runs the same --check is what refuses the commit.
-# create_input_for_technoeconomic regenerates the csv with 'uv run', which syncs
-# the .venv with the POSTED commit and cet-units version pinned in
-# pyproject.toml, the only place where REMIND touches the Python environment, and
-# never does so without an environment to run in.
+# create_input_for_technoeconomic regenerates the csv with 'uv run --locked',
+# which syncs the .venv to the committed uv.lock and refuses to run when that
+# is out of date with pyproject.toml; uv.lock is the only place where REMIND
+# touches the Python environment, and never does so without an environment to
+# run in.
 #
 # Standalone: Rscript scripts/input/create_input_for_technoeconomic.R [remindPath] [--force]
 
@@ -37,19 +43,21 @@
 technoeconomicCheck <- function(remindPath = ".") {
   remindPath <- normalizePath(remindPath, mustWork = FALSE)
   uv <- Sys.which("uv")
-  if (! nzchar(uv) || ! dir.exists(file.path(remindPath, ".venv"))) {
+  if (! nzchar(uv) || ! dir.exists(file.path(remindPath, "technoeconomic", ".venv"))) {
     return(list(status = 2L,
-                message = paste("Neither uv nor its .venv were found, core/input/f_technoeconomic.csv",
-                                "is used as committed and unchecked. Run 'uv sync' to check it.")))
+                message = paste("Neither uv nor technoeconomic/.venv were found, core/input/f_technoeconomic.csv",
+                                "is used as committed and unchecked. Run 'uv --directory technoeconomic sync --locked' to check it.")))
   }
   scriptfile <- file.path(remindPath, "technoeconomic", "create_input.py")
-  # --quiet removes uv's own messages but keeps errors
-  args <- c("run", "--no-sync", "--quiet", "python", scriptfile, "--check")
+  # --quiet removes uv's own messages but keeps errors, --locked refuses a lock
+  # which is out of date with pyproject.toml
+  args <- c("run", "--project", "technoeconomic", "--no-sync", "--locked", "--quiet",
+            "python", scriptfile, "--check")
   result <- processx::run(uv, args, wd = remindPath, error_on_status = FALSE)
   list(status = result$status, message = trimws(paste0(result$stdout, result$stderr), "r"))
 }
 
-# create the csv from POSTED, 'uv run' syncs the .venv with pyproject.toml
+# create the csv from POSTED, 'uv run --locked' syncs the .venv with uv.lock
 create_input_for_technoeconomic <- function(remindPath = ".", force = FALSE) {
   remindPath <- normalizePath(remindPath, mustWork = FALSE)
   scriptfile <- file.path(remindPath, "technoeconomic", "create_input.py")
@@ -71,7 +79,8 @@ create_input_for_technoeconomic <- function(remindPath = ".", force = FALSE) {
   }
   # create_input.py prints what to commit the file it wrote with, including that
   # what an editable install writes must not be committed
-  args <- c("run", "python", scriptfile, "--out", datafile)
+  args <- c("run", "--project", "technoeconomic", "--locked", "python", scriptfile,
+            "--out", datafile)
   result <- processx::run("uv", args, wd = remindPath, error_on_status = FALSE)
   cat(paste0(result$stdout, result$stderr))
   if (result$status != 0L) {
