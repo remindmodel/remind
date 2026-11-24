@@ -11,8 +11,8 @@ core/input/f_technoeconomic.csv, which core/datainput.gms reads to replace
 values from generisdata_tech.prn: one char,te,value line per property, the
 shape of fm_dataglob, grouped under comments naming their unit, which GAMS
 ignores inside a data definition. The file is committed, and its header records
-the POSTED and TEAM commits and the md5 of these scripts that produced it;
---check compares all of them with pyproject.toml and these files. The exit code
+the POSTED commit and the md5 of these scripts that produced it; --check
+compares all of them with pyproject.toml and these files. The exit code
 tells what to do with the csv: 0 it is up to date, 3 regenerate and commit it,
 1 this script failed, 2 is what argparse and uv exit with. scripts/input/
 create_input_for_technoeconomic.R uses these same codes, adding 2 for
@@ -36,9 +36,9 @@ DEFAULT_OUT = REMIND_FOLDER / "core" / "input" / "f_technoeconomic.csv"
 # the values depend on the queries and on how they are formatted here
 SOURCE_FILES = [Path(__file__), Path(__file__).with_name("content.py")]
 # the packages the values are computed with, each of them recorded in the csv
-# header under its upper-case name, so that both the database and the units it is
-# calculated in can be attributed
-PACKAGES = ["posted", "team"]
+# header under its upper-case name, so that the database they were taken from
+# can be attributed
+PACKAGES = ["posted"]
 
 
 def header(package):

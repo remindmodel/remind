@@ -8,12 +8,12 @@
 # Techno-economic data from POSTED (https://github.com/PhilippVerpoort/posted)
 #
 # technoeconomic/content.py fetches the values configured in its QUERIES from
-# POSTED and calculates the properties with TEAM
-# (https://github.com/PhilippVerpoort/team), technoeconomic/create_input.py
+# POSTED and calculates the properties as pint quantities from cet-units
+# (https://github.com/PhilippVerpoort/cet-units), technoeconomic/create_input.py
 # writes them into core/input/f_technoeconomic.csv, which core/datainput.gms
 # reads to replace values from generisdata_tech.prn. The csv is committed and
-# records in its header which POSTED and TEAM commits and which version of the
-# scripts produced it.
+# records in its header which POSTED commit and which version of the scripts
+# produced it.
 #
 # Checking is done by create_input.py --check run with 'uv run --no-sync'. Its
 # exit code is technoeconomicCheck's status, one code per action: 0 nothing to
@@ -25,9 +25,9 @@
 # file as it is, like it runs with uncommitted GAMS code, and the GitHub check
 # which runs the same --check is what refuses the commit.
 # create_input_for_technoeconomic regenerates the csv with 'uv run', which syncs
-# the .venv with the POSTED and TEAM commits pinned in pyproject.toml, the only
-# place where REMIND touches the Python environment, and never does so without an
-# environment to run in.
+# the .venv with the POSTED commit and cet-units version pinned in
+# pyproject.toml, the only place where REMIND touches the Python environment, and
+# never does so without an environment to run in.
 #
 # Standalone: Rscript scripts/input/create_input_for_technoeconomic.R [remindPath] [--force]
 

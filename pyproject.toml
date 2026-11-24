@@ -4,18 +4,10 @@ version = "0.1"
 requires-python = ">=3.11"
 dependencies = [
     "posted @ git+https://github.com/PhilippVerpoort/posted.git@36dc53c33011de9f0b167dc05603f130035b9167",
-    "team @ git+https://github.com/PhilippVerpoort/team.git@e34b10c9af246bf77a8e07f65a8fcdd02cd51d1e",
-    # pint-pandas 0.7.1 imports packaging.version but does not declare it, and
-    # uv's venvs only contain the packages that are declared dependencies of.
-    "packaging>=24",
+    # content.py uses cet-units' pint registry directly, posted only depends on
+    # it unversioned, so pin the version its aggregate() units are defined in.
+    "cet-units @ git+https://github.com/PhilippVerpoort/cet-units.git@v0.3.0",
 ]
 
 [tool.uv.sources]
 # posted = { path = "../posted", editable = true }
-
-# posted 0.6 requires cet-units v0.3 while team 0.1 still references v0.2, both
-# as direct git URLs, which uv cannot reconcile. Only v0.3 is ever installed.
-[tool.uv]
-override-dependencies = [
-    "cet-units @ git+https://github.com/PhilippVerpoort/cet-units.git@v0.3.0",
-]

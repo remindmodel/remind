@@ -13,15 +13,15 @@ PROPERTIES, technoeconomic/create_input.py checks and writes the csv files.
 
 POSTED's aggregate() harmonises units and averages across sources, subtechnologies
 and sizes, normalising all values to one unit of output capacity and output
-activity of the technology. TEAM (https://github.com/PhilippVerpoort/team) then
-calculates the properties from these, keeping track of their units, so that the
-unit written above every value of the csv is derived, not asserted. POSTED
-delivers global data only; regional values would belong in p_inco0 and pm_data in
-core/datainput.gms, not in fm_dataglob, and are not handled here.
+activity of the technology. The properties are then calculated from these with
+pint quantities from cet_units (https://github.com/PhilippVerpoort/cet-units),
+keeping track of their units, so that the unit written above every value of the
+csv is derived, not asserted. POSTED delivers global data only; regional values
+would belong in p_inco0 and pm_data in core/datainput.gms, not in fm_dataglob,
+and are not handled here.
 """
 
 import pandas as pd
-import team  # noqa: F401 registers the .team dataframe accessor and pint's units
 from cet_units import Unit
 from posted import TEDF, defaults
 
@@ -63,14 +63,13 @@ VARIABLES = {
 # every variable to one unit of reference activity or capacity, so CAPEX and
 # OPEX Variable are only divided by input, output and capacity to get them back
 # per unit. Units follow from the carriers of the query, see property_unit().
-# One expression per property: team's keyword assignments are all evaluated with
-# the last one's expression, so they cannot be passed as keyword arguments.
+# One expression per property, evaluated with the variables as pint quantities.
 #
 # omf is a fraction of the investment costs per year. REMIND's omv is charged per
 # unit of output, but generisdata_tech.prn and therefore GAMS give it per kW of
-# output and year, so team's unit_to multiplies POSTED's per output kWh value by
-# the 8760 hours of a full-load year; for the technologies measured in mass it is
-# already per tonne and stays untouched.
+# output and year, so converting POSTED's per output kWh value to that unit
+# multiplies it by the 8760 hours of a full-load year; for the technologies
+# measured in mass it is already per tonne and stays untouched.
 # inco0year is not calculated: fetch writes the year of the inco0 above into the
 # csv as this char, as generisdata_tech.prn does, and core/datainput.gms anchors
 # the learning curve of teLearn at it.
@@ -276,21 +275,40 @@ def compute(query, years):
     )
     if "region" not in tedf.fields:
         df = df.assign(region="global")
+    # of every variable wanted from POSTED, keep it as a pint quantity: from
+    # here on, units travel with the values and arithmetic derives their units
+    df = df[df.variable.isin(wanted)]
+    df = df.assign(q=[v * Unit(u) for v, u in zip(df.value, df.unit)])
+    df = df.drop(columns=["value", "unit"])
     if "component" in df.columns:
         whole = df[df.component == "#"].drop(columns="component")
         parts = df[df.component != "#"]
-        # the components of a variable POSTED has no whole-plant value for
+        # the components of a variable POSTED has no whole-plant value for,
+        # summed; where components are reported in different units, pint
+        # converts them, the unit is fixed by property_unit() further down
         parts = parts[~parts.variable.isin(whole.variable)]
-        df = pd.concat([whole, parts.team.sum_over("component")])
+        summed = [c for c in parts.columns if c not in ("component", "q")]
+        parts = parts.groupby(summed, dropna=False).q.sum().reset_index()
+        df = pd.concat([whole, parts])
     names = {name: short for name, (short, _) in wanted.items()}
-    df = df.assign(variable=df.variable.map(names)).dropna(subset="variable")
+    df = df.assign(variable=df.variable.map(names))
     requested = query["properties"]
-    expressions = [f"{prop} = {PROPERTIES[prop]}" for prop in requested]
-    # team raises if POSTED does not report a variable an expression needs
-    values = df.team.calculate(*expressions, only_new=True)
-    # and pint if its units cannot be rewritten into the ones REMIND expects
+    # one row per technology, one column per variable, so an expression can be
+    # evaluated on it; wide.eval raises if POSTED did not report a variable an
+    # expression needs
+    index = [c for c in df.columns if c not in ("variable", "q")]
+    wide = df.pivot(index=index, columns="variable", values="q")
+    for prop in requested:
+        wide.eval(f"{prop} = {PROPERTIES[prop]}", inplace=True,
+                  engine="python")
+    values = (wide[requested].rename_axis(columns="variable").stack()
+              .rename("q").reset_index())
+    values = values[[q.m == q.m for q in values.q]]
+    # and pint raises if a unit cannot be rewritten into the one REMIND expects
     expected = {prop: property_unit(query, prop) for prop in requested}
-    values = values.team.unit_to(expected)
+    converted = [q.to(expected[prop])
+                 for q, prop in zip(values.q, values.variable)]
+    values = values.assign(value=[q.m for q in converted])
     # a pivot, not a pivot_table: values have to be unique per period and region
     return values.pivot(index=["period", "region"], columns="variable",
                         values="value")[requested]
@@ -302,7 +320,7 @@ def fetch():
     a technology queried from more than one TEDF, the mean over those. The year
     is written as the inco0year property of every technology whose inco0 is taken
     from POSTED, it anchors the learning curve of teLearn at that year. Anything
-    POSTED or team raise for a technology is reported as that technology's."""
+    POSTED or pint raise for a technology is reported as that technology's."""
     selected = {}
     for tech, queries in QUERIES.items():
         try:
