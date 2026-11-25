@@ -11,74 +11,89 @@
 # POSTED and calculates the properties as pint quantities from cet-units
 # (https://github.com/PhilippVerpoort/cet-units), technoeconomic/create_input.py
 # writes them into core/input/f_technoeconomic.csv, which core/datainput.gms
-# reads to replace values from generisdata_tech.prn. The csv is committed and
-# records in its header the sha256 of technoeconomic/uv.lock, the resolved
-# environment it was computed in, and the sha256 of the scripts which produced it.
+# reads to replace values from generisdata_tech.prn. That csv is not committed,
+# it is generated input like everything else in core/input, and its header
+# records what produced it, see technoeconomic/create_input.py.
 #
+# uv, Python and POSTED are mandatory: there is no way to run REMIND without
+# them, everything which cannot check or generate the csv stops the run.
+# prepare.R calls create_input_for_technoeconomic, so the csv exists before GAMS
+# starts, standalone runs fetch it with this script.
+#
+# The POSTED version is configured as cfg$postedVersion in config/default.cfg,
+# the only place where it is edited. syncPostedVersion copies it to the posted
+# pin in technoeconomic/pyproject.toml and runs 'uv lock' when they differ.
 # technoeconomic/ is a Python project of its own, with pyproject.toml, uv.lock
 # and .venv; uv is called with --project to reach it, so REMIND can host more
-# than one, incompatible Python environment. pyproject.toml is where pins are
-# edited, 'uv lock' (in technoeconomic/) resolves them into uv.lock.
+# than one, incompatible Python environment.
 #
-# Checking is done by create_input.py --check run with 'uv run --no-sync'. Its
-# exit code is technoeconomicCheck's status, one code per action: 0 nothing to
-# do, the csv is up to date, 1 create_input.py failed so nothing is known and a
-# run is refused, 2 the csv could not be checked (uv's or argparse's exit, or
-# there is no uv at all) so the committed file is used, 3 regenerate the csv.
-# Anything else counts as 1.
-# Nothing here stops a run over an outdated csv: REMIND runs with the committed
-# file as it is, like it runs with uncommitted GAMS code, and the GitHub check
-# which runs the same --check is what refuses the commit.
-# create_input_for_technoeconomic regenerates the csv with 'uv run --locked',
-# which syncs the .venv to the committed uv.lock and refuses to run when that
-# is out of date with pyproject.toml; uv.lock is the only place where REMIND
-# touches the Python environment, and never does so without an environment to
-# run in.
+# Checking is done by create_input.py --check, see technoeconomicCheck.
 #
 # Standalone: Rscript scripts/input/create_input_for_technoeconomic.R [remindPath] [--force]
 
-# run create_input.py --check without touching the environment, returns the status
-# code documented above and the message belonging to it; a uv which cannot start
-# raises, so an unusable environment is never mistaken for an up to date csv
-technoeconomicCheck <- function(remindPath = ".") {
-  remindPath <- normalizePath(remindPath, mustWork = FALSE)
-  uv <- Sys.which("uv")
-  if (! nzchar(uv) || ! dir.exists(file.path(remindPath, "technoeconomic", ".venv"))) {
-    return(list(status = 2L,
-                message = paste("Neither uv nor technoeconomic/.venv were found, core/input/f_technoeconomic.csv",
-                                "is used as committed and unchecked. Run 'uv --directory technoeconomic sync --locked' to check it.")))
+# the POSTED version configured as cfg$postedVersion in config/default.cfg
+configPostedVersion <- function(remindPath = ".") {
+  conffile <- file.path(remindPath, "config", "default.cfg")
+  env <- new.env()
+  sys.source(conffile, envir = env)
+  postedVersion <- get("cfg", envir = env)$postedVersion
+  if (! is.character(postedVersion) || length(postedVersion) != 1L) {
+    stop("cfg$postedVersion <- \"commit\" expected in ", conffile, ".")
   }
-  scriptfile <- file.path(remindPath, "technoeconomic", "create_input.py")
-  # --quiet removes uv's own messages but keeps errors, --locked refuses a lock
-  # which is out of date with pyproject.toml
-  args <- c("run", "--project", "technoeconomic", "--no-sync", "--locked", "--quiet",
-            "python", scriptfile, "--check")
-  result <- processx::run(uv, args, wd = remindPath, error_on_status = FALSE)
-  list(status = result$status, message = trimws(paste0(result$stdout, result$stderr), "r"))
+  return(postedVersion)
 }
 
-# create the csv from POSTED, 'uv run --locked' syncs the .venv with uv.lock
+# copy cfg$postedVersion from config/default.cfg to the posted pin in
+# technoeconomic/pyproject.toml and resolve the change with 'uv lock'
+syncPostedVersion <- function(remindPath = ".") {
+  remindPath <- normalizePath(remindPath, mustWork = FALSE)
+  pyproject <- file.path(remindPath, "technoeconomic", "pyproject.toml")
+  want <- configPostedVersion(remindPath)
+  lines <- readLines(pyproject)
+  isposted <- grepl("posted @ git\\+https://github\\.com/PhilippVerpoort/posted\\.git@", lines)
+  if (sum(isposted) != 1L) {
+    stop("exactly one posted dependency expected in ", pyproject, ", found ", sum(isposted), ".")
+  }
+  current <- sub(".*posted\\.git@([0-9a-zA-Z._-]+).*", "\\1", lines[isposted])
+  if (identical(current, want)) return(invisible(NULL))
+  message("posted is pinned to ", current, " in ", pyproject, ", config/default.cfg wants ", want, ", updating.")
+  lines[isposted] <- sub("posted\\.git@[0-9a-zA-Z._-]+", paste0("posted.git@", want), lines[isposted])
+  writeLines(lines, pyproject)
+  result <- processx::run("uv", c("lock", "--project", "technoeconomic"), wd = remindPath, error_on_status = FALSE)
+  cat(paste0(result$stdout, result$stderr))
+  if (result$status != 0L) stop("uv lock failed, see its output above.")
+  return(invisible(pyproject))
+}
+
+# run create_input.py --check in the locked environment, returning its status
+# (0 csv up to date, 3 regenerate) and message; uv, Python and POSTED are
+# mandatory, so anything else raises.
+technoeconomicCheck <- function(remindPath = ".") {
+  remindPath <- normalizePath(remindPath, mustWork = FALSE)
+  scriptfile <- file.path(remindPath, "technoeconomic", "create_input.py")
+  # --locked refuses a lock which is out of date with pyproject.toml, uv run
+  # syncs the .venv to that lock if it is not already
+  args <- c("run", "--project", "technoeconomic", "--locked", "--quiet",
+            "python", scriptfile, "--check")
+  result <- processx::run("uv", args, wd = remindPath, error_on_status = FALSE)
+  status <- result$status
+  message <- trimws(paste0(result$stdout, result$stderr), "r")
+  if (! status %in% c(0L, 3L)) stop("checking ", scriptfile, " failed (exit ", status, "): ", message)
+  list(status = status, message = message)
+}
+
+# create the csv from POSTED after syncing the configured posted version
 create_input_for_technoeconomic <- function(remindPath = ".", force = FALSE) {
   remindPath <- normalizePath(remindPath, mustWork = FALSE)
   scriptfile <- file.path(remindPath, "technoeconomic", "create_input.py")
   datafile <- file.path(remindPath, "core", "input", "f_technoeconomic.csv")
 
+  syncPostedVersion(remindPath)
   check <- technoeconomicCheck(remindPath)
-  # only these three codes say something about the csv, anything else means the
-  # check failed and so nothing is known about it
-  if (! check$status %in% c(0L, 2L, 3L)) stop(check$message)
   if (check$status == 0L && ! force) {
     message(check$message, " Use --force=TRUE to refetch.")
     return(invisible(datafile))
   }
-  # without uv or its .venv nothing can be fetched, the committed csv stays as it
-  # is, code 3 is exactly what refetching is for
-  if (check$status == 2L) {
-    message(check$message, " ", datafile, " is not regenerated.")
-    return(invisible(NULL))
-  }
-  # create_input.py prints what to commit the file it wrote with, including that
-  # what an editable install writes must not be committed
   args <- c("run", "--project", "technoeconomic", "--locked", "python", scriptfile,
             "--out", datafile)
   result <- processx::run("uv", args, wd = remindPath, error_on_status = FALSE)

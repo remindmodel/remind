@@ -3,6 +3,7 @@ name = "technoeconomic"
 version = "0.1"
 requires-python = ">=3.11"
 dependencies = [
+    # the posted version is edited in config/default.cfg (cfg$postedVersion), not here
     "posted @ git+https://github.com/PhilippVerpoort/posted.git@36dc53c33011de9f0b167dc05603f130035b9167",
     # content.py uses cet-units' pint registry directly, posted only depends on
     # it unversioned, so pin the version its aggregate() units are defined in.

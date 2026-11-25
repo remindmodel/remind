@@ -10,13 +10,17 @@ This is what scripts/input/create_input_for_technoeconomic.R calls. It writes
 core/input/f_technoeconomic.csv, which core/datainput.gms reads to replace
 values from generisdata_tech.prn: one char,te,value line per property, the
 shape of fm_dataglob, grouped under comments naming their unit, which GAMS
-ignores inside a data definition. The file is committed, and its header records
-the sha256 of uv.lock and of these scripts that produced it; --check compares
-both with technoeconomic/uv.lock and these files and attributes the values to
-the package commits the lock pins. The exit code tells what to do with the csv:
-0 it is up to date, 3 regenerate and commit it, 1 this script failed, 2 is what
-argparse and uv exit with. scripts/input/create_input_for_technoeconomic.R uses
-these same codes, adding 2 for environments without uv or its .venv.
+ignores inside a data definition. The file is not committed, it is generated
+input like everything else in core/input, but its header still records the
+sha256 of uv.lock and of these scripts that produced it; --check compares both
+with technoeconomic/uv.lock and these files.
+
+Exit codes of --check:
+    0  the csv is up to date
+    3  regenerate it, outdated or missing
+    1  this script crashed, 2 what argparse and uv exit with, both failures
+The posted pin in pyproject.toml is not checked here,
+scripts/input/create_input_for_technoeconomic.R syncs it from config/default.cfg.
 
     uv run --project technoeconomic python technoeconomic/create_input.py [--out PATH]
     uv run --project technoeconomic python technoeconomic/create_input.py --check
@@ -25,20 +29,17 @@ these same codes, adding 2 for environments without uv or its .venv.
 import argparse
 import hashlib
 import itertools
-import json
 import math
 import sys
 import tomllib
-from importlib import metadata
 from pathlib import Path
 
 REMIND_FOLDER = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = REMIND_FOLDER / "core" / "input" / "f_technoeconomic.csv"
 # the values depend on the queries and on how they are formatted here
 SOURCE_FILES = [Path(__file__), Path(__file__).with_name("content.py")]
-# the resolved environment the values were computed in, committed next to the
-# scripts and recorded in the csv header under its sha256, so that both the
-# data and the code computing them, down to numpy and pandas, can be attributed
+# the resolved environment the values were computed in; its sha256 in the csv
+# header attributes them, down to numpy and pandas, to a commit
 LOCK_FILE = Path(__file__).resolve().with_name("uv.lock")
 
 
@@ -68,63 +69,6 @@ def commits_text():
                      for package, commit in lock_commits().items())
 
 
-def commit_text(path):
-    """How to commit a csv, core/input being git-ignored: its values belong to
-    the commit which changes the scripts or the environment which produced them."""
-    if path.is_relative_to(REMIND_FOLDER):
-        path = path.relative_to(REMIND_FOLDER)
-    return (f"Commit it with 'git add -f {path}' and commit the scripts and uv.lock "
-            "of technoeconomic/ together with it.")
-
-
-def editables(installations):
-    """Names of the lock's git packages that are installed in editable mode."""
-    return [package for package, here in installations.items()
-            if here and here["editable"]]
-
-
-def editable_text(installations, path):
-    """Why a csv which an editable install wrote must not be committed."""
-    editable = editables(installations)
-    return (f"{', '.join(editable)} installed in editable mode from "
-            f"{', '.join(installations[package]['url'] for package in editable)}, "
-            f"so {path} is rebuilt on every run and must not be committed.")
-
-
-def installed(package):
-    """Installed package as version, url, commit and editable, from the PEP 610
-    direct_url.json that pip and uv write; None if not installed."""
-    try:
-        dist = metadata.distribution(package)
-    except metadata.PackageNotFoundError:
-        return None
-    direct = json.loads(dist.read_text("direct_url.json") or "{}")
-    return {"version": dist.version, "url": direct.get("url"),
-            "commit": (direct.get("vcs_info") or {}).get("commit_id"),
-            "editable": bool((direct.get("dir_info") or {}).get("editable"))}
-
-
-def installations():
-    """The lock's git packages as installed in this environment."""
-    return {package: installed(package) for package in lock_commits()}
-
-
-def mismatch(installations):
-    """Installations that are not the commits the lock resolves, editable
-    installs excepted: their values are attributed to their folder."""
-    wrong = []
-    for package, commit in lock_commits().items():
-        here = installations[package]
-        # an editable install is attributed to its folder, not the lock
-        if here and here["editable"]:
-            continue
-        identity = here and (here["commit"] or here["version"])
-        if identity != commit:
-            wrong.append(f"{package} should be {commit}, {sys.executable} has "
-                         f"{identity or 'nothing'}")
-    return wrong
-
-
 def csv_header(path):
     """The provenance values recorded in a GAMS csv header, missing ones as "none"."""
     found = dict.fromkeys(provenance(), "none")
@@ -143,19 +87,14 @@ def csv_header(path):
 
 def check(path):
     """Whether the csv at path was written under the current uv.lock and by
-    these scripts. Returns an exit code and a message: 0 up to date, 3
-    regenerate it, be it outdated, missing or written by an editable install
-    which then must not be committed."""
-    here = installations()
-    if edits := editables(here):
-        return 3, editable_text(here, path)
+    these scripts, as (exit code, message)."""
     found, want = csv_header(path), provenance()
     differences = [f"{key} {found[key]}, expected {value}"
                    for key, value in want.items() if found[key] != value]
     if differences:
-        return 3, (f"{path} is outdated ({'; '.join(differences)}). Regenerate it "
-                   "with 'Rscript scripts/input/create_input_for_technoeconomic.R'. "
-                   + commit_text(path))
+        return 3, (f"{path} is missing or outdated ({'; '.join(differences)}). "
+                   "Regenerate it with "
+                   "'Rscript scripts/input/create_input_for_technoeconomic.R'.")
     return 0, (f"{path} is up to date with uv.lock {want['uv.lock sha256']} "
                f"({commits_text()}).")
 
@@ -184,7 +123,7 @@ def write_gams(path, selected, prov):
         "* description: techno-economic data from POSTED, averaged across "
         "sources; replaces fm_dataglob values from generisdata_tech.prn",
         "* origin: technoeconomic/create_input.py and content.py, regenerate "
-        "with scripts/input/create_input_for_technoeconomic.R and commit",
+        "with scripts/input/create_input_for_technoeconomic.R",
         *(f"* {key}: {value}" for key, value in prov.items()),
         "* columns: char,te,value; a comment gives the unit of the rows below "
         "it, up to the next comment",
@@ -200,13 +139,6 @@ def run(args):
         code, text = check(args.out)
         print(text)
         return code
-    here = installations()
-    wrong = mismatch(here)
-    if wrong:
-        print(f"{' and '.join(wrong)}. Run 'uv --directory technoeconomic sync "
-              "--locked', after 'uv lock' if you changed pyproject.toml.",
-              file=sys.stderr)
-        return 1
     # only the fetch needs POSTED, so --check runs without it
     import content
 
@@ -216,9 +148,6 @@ def run(args):
     written = ", ".join(f"{key} {value}" for key, value in prov.items())
     print(f"Wrote {len(selected)} values to {args.out} "
           f"({written}, {commits_text()})")
-    # an editable install may have written this file, in which case it is not
-    # reproducible and must not be committed
-    print(editable_text(here, args.out) if editables(here) else commit_text(args.out))
     return 0
 
 
