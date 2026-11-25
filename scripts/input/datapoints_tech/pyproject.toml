@@ -1,5 +1,5 @@
 [project]
-name = "technoeconomic"
+name = "datapoints_tech"
 version = "0.1"
 requires-python = ">=3.11"
 dependencies = [
@@ -11,4 +11,4 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-# posted = { path = "../../posted", editable = true }
+# posted = { path = "../../../posted", editable = true }

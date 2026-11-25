@@ -143,9 +143,9 @@ fm_dataglob("omv",te)          = sm_D2015_2_D2017 * fm_dataglob("omv",te);
 
 ***---------------------------------------------------------------------------
 *** POSTED data (https://github.com/PhilippVerpoort/posted), written by
-*** technoeconomic/create_input.py. Every (char,te) in it replaces its generisdata_tech.prn
+*** scripts/input/datapoints_tech/create_input.py. Every (char,te) in it replaces its generisdata_tech.prn
 *** value, in the units of that file (costs in USD[2017]). To add one, extend
-*** QUERIES in technoeconomic/content.py and regenerate the csv, no GAMS change.
+*** QUERIES in scripts/input/datapoints_tech/content.py and regenerate the csv, no GAMS change.
 ***---------------------------------------------------------------------------
 parameter f_technoeconomic(char,all_te) "technology characteristics from POSTED, global medians across sources, replaces generisdata_tech.prn values [unit as in generisdata_tech.prn]"
 /

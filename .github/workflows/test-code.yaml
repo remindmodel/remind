@@ -26,7 +26,7 @@ jobs:
       - name: Remove .Rprofile
         run: rm .Rprofile
 
-      # needed by the technoeconomic step below
+      # needed by the datapoints_tech step below
       - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
 
       - uses: r-lib/actions/setup-r@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05 # v2.14.0
@@ -45,8 +45,8 @@ jobs:
           # available; by using extra-packages we get the newest version
 
       # generates the csv from POSTED, verifying cfg$postedVersion,
-      # technoeconomic/pyproject.toml and uv.lock agree
-      - name: technoeconomic
+      # scripts/input/datapoints_tech/pyproject.toml and uv.lock agree
+      - name: datapoints_tech
         run: Rscript scripts/input/create_input_for_technoeconomic.R
 
       - name: codeCheck

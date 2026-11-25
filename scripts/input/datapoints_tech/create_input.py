@@ -13,7 +13,7 @@ shape of fm_dataglob, grouped under comments naming their unit, which GAMS
 ignores inside a data definition. The file is not committed, it is generated
 input like everything else in core/input, but its header still records the
 sha256 of uv.lock and of these scripts that produced it; --check compares both
-with technoeconomic/uv.lock and these files.
+with scripts/input/datapoints_tech/uv.lock and these files.
 
 Exit codes of --check:
     0  the csv is up to date
@@ -22,8 +22,8 @@ Exit codes of --check:
 The posted pin in pyproject.toml is not checked here,
 scripts/input/create_input_for_technoeconomic.R syncs it from config/default.cfg.
 
-    uv run --project technoeconomic python technoeconomic/create_input.py [--out PATH]
-    uv run --project technoeconomic python technoeconomic/create_input.py --check
+    uv run --project scripts/input/datapoints_tech python scripts/input/datapoints_tech/create_input.py [--out PATH]
+    uv run --project scripts/input/datapoints_tech python scripts/input/datapoints_tech/create_input.py --check
 """
 
 import argparse
@@ -34,7 +34,7 @@ import sys
 import tomllib
 from pathlib import Path
 
-REMIND_FOLDER = Path(__file__).resolve().parent.parent
+REMIND_FOLDER = Path(__file__).resolve().parents[3]
 DEFAULT_OUT = REMIND_FOLDER / "core" / "input" / "f_technoeconomic.csv"
 # the values depend on the queries and on how they are formatted here
 SOURCE_FILES = [Path(__file__), Path(__file__).with_name("content.py")]
@@ -50,7 +50,7 @@ def provenance():
     for source in SOURCE_FILES:
         digest.update(source.read_bytes())
     return {"uv.lock sha256": hashlib.sha256(LOCK_FILE.read_bytes()).hexdigest(),
-            "technoeconomic sha256": digest.hexdigest()}
+            "scripts sha256": digest.hexdigest()}
 
 
 def lock_commits():
@@ -122,8 +122,8 @@ def write_gams(path, selected, prov):
     lines = [
         "* description: techno-economic data from POSTED, averaged across "
         "sources; replaces fm_dataglob values from generisdata_tech.prn",
-        "* origin: technoeconomic/create_input.py and content.py, regenerate "
-        "with scripts/input/create_input_for_technoeconomic.R",
+        "* origin: scripts/input/datapoints_tech/create_input.py and content.py, "
+        "regenerate with scripts/input/create_input_for_technoeconomic.R",
         *(f"* {key}: {value}" for key, value in prov.items()),
         "* columns: char,te,value; a comment gives the unit of the rows below "
         "it, up to the next comment",
