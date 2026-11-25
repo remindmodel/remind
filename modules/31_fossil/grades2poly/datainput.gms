@@ -31,7 +31,7 @@ p31_ffPolyRent(all_regi,"pecoal",polyCoeffRent) = f31_ffPolyRent(all_regi,"pecoa
 p31_ffPolyRent(all_regi,"peoil",polyCoeffRent)  = f31_ffPolyRent(all_regi,"peoil",polyCoeffRent,"%cm_oil_scen%");
 p31_ffPolyRent(all_regi,"pegas",polyCoeffRent)  = f31_ffPolyRent(all_regi,"pegas",polyCoeffRent,"%cm_gas_scen%");
 
-parameter f31_ffPolyCumEx(all_regi,all_enty,char,all_fossilScen)   "Linear rent approx (e.g. Price - average extraction cost) (Oil, Gas and Coal)"
+parameter f31_ffPolyCumEx(all_regi,all_enty,char,all_fossilScen)   "Minimum and maximum cumulative extraction of the polynomial cost curves (Oil, Gas and Coal)"
 /
 $ondelim
 $include "./modules/31_fossil/grades2poly/input/f31_ffPolyCumEx.cs4r"

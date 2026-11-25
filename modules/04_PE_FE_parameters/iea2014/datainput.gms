@@ -417,7 +417,7 @@ pm_fuExtrOwnCons(regi, "seel", "pecoal") = f04_IO_input("2005", regi, "seel",  "
 *RP* Distribute the initial gas numbers to ngcc and ngt based on energy values:
 *** ----------------------------------------------------------------------------------------------------------
 loop(regi,
-  if( pm_data(regi,"mix0","ngcc") < 0.1 ,  !! in regions where gas provides < 10% of electricity, distribute 80/20
+  if( pm_data(regi,"mix0","ngcc") < 0.1 ,  !! in regions where gas provides < 10% of electricity, distribute 85/15
     p04_shareNGTinGas(regi) = 0.15;
   elseif pm_data(regi,"mix0","ngcc") < 0.3 ,  !! in regions where gas provides > 10% and < 30% of electricity, distribute 90/10 (else the amount of peak-load ngt plants is unrealistically high)
     p04_shareNGTinGas(regi) = 0.1;

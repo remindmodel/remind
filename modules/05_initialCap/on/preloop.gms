@@ -283,7 +283,7 @@ p05_cap0
 *** Step 2: compare this average eta-value to the eta-value used in the 2005-calibration
 *** Step 3: shift all pm_dataeta-values from 1900 to 2005 up/down by the correction factor deduced in step 2
 *** Step 4: check if the recalibration of past dataetas worked
-*** Step 5: apply the 2005 recalibration to later dataetas, with fade-out until 2025
+*** Step 5: apply the 2005 recalibration to later dataetas, with fade-out until 2030
 
 display pm_dataeta;
 
@@ -374,7 +374,7 @@ loop(regi,
     pm_data(regi,"eta","biochp") =  fm_dataglob("eta","biochp") * p05_eta_correct_factor(regi,"biochp");
   );
 );
-*RP* slowly fade out recalibration in the next 15 years:
+*RP* slowly fade out recalibration linearly between 2005 and 2030:
 loop(ttot$((ttot.val le 2030) AND (ttot.val ge 2010)),
    pm_dataeta(ttot,regi,te) = pm_dataeta(ttot,regi,te) * 1/ (2030-2005) * (((2030-ttot.val) * p05_eta_correct_factor(regi,te)) + (ttot.val-2005));
 );
@@ -498,8 +498,8 @@ $if %cm_GDPpopScen% == "SSP5" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) =
 display p05_deltacap_res;
 
 p05_cap_res(ttot,regi,teBioPebiolc) =
-  sum(opTimeYr2te(teBioPebiolc,opTimeYr)$tsu2opTimeYr(ttot,opTimeYr),
-    pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1)) * pm_omeg(regi,opTimeYr,teBioPebiolc)
+  sum(opTimeYr2te(teBioPebiolc,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val ge 1)),
+    pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1)) * pm_omeg(regi,opTimeYr+1,teBioPebiolc)
     * p05_deltacap_res(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,teBioPebiolc)
   )
 ;

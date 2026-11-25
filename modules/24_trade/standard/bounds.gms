@@ -56,7 +56,7 @@ loop( regi,
     loop (enty$peFos(enty),
         if ( (p24_Mport2005correct(regi,enty) = 0),
             vm_Xport.fx(t0(tall),regi,peFos(enty)) = pm_IO_trade(t0,regi,enty,"Xport") +
-                   ( pm_IO_trade(t0,regi,enty,"Xport") / sum((regi2)$(NOT (p24_Mport2005correct(regi,enty))),pm_IO_trade(t0,regi2,enty,"Xport")) ) !! share of region Xports between regions with no balance problems
+                   ( pm_IO_trade(t0,regi,enty,"Xport") / sum((regi2)$(NOT (p24_Mport2005correct(regi2,enty))),pm_IO_trade(t0,regi2,enty,"Xport")) ) !! share of region Xports between regions with no balance problems
                    * sum((regi2),p24_Mport2005correct(regi2,enty)) !! total unbalance problem
             ;
         else
@@ -85,7 +85,7 @@ $ENDIF.fossil_realization
 );
 
 
-*** bounds on oil, gas and coal trade in 2010 and 2015 (+-10% from historical IEA values)
+*** bounds on oil, gas and coal trade in 2010, 2015 and 2020 (+-10% from historical IEA values)
 loop( ttot$(ttot.val eq 2010 OR ttot.val eq 2015 OR ttot.val eq 2020),
 	loop( peFos,
 		vm_Xport.lo(ttot,regi,peFos) = 0.9 * pm_IO_trade(ttot,regi,peFos,"Xport");
@@ -107,7 +107,7 @@ loop( regi$regi_group("EUR_regi",regi),
 	);
 );
 
-*** upper bounds ( 1% yearly growth rate) on all big oil exporters (more than 15EJ in 2010) in 2020, 2025 and 2030
+*** upper bounds ( 2% yearly growth rate) on all big oil exporters (more than 15EJ in 2010) in 2020, 2025 and 2030
 loop(regi,
       if( (pm_IO_trade("2010",regi,"peoil","Xport") ge (15*sm_EJ_2_TWa)),
         vm_Xport.up("2020",regi,"peoil") = ((1 + 0.02) **  10) * pm_IO_trade("2010",regi,"peoil","Xport");
