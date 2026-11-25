@@ -149,10 +149,10 @@ prepare <- function() {
   # check whether the regional resolution and input data revision are outdated and update data if needed
   cfg <- updateInputData(cfg, remindPath = ".")
 
-  # core/input/f_technoeconomic.csv is not committed, so it must exist before
+  # core/input/f_techdata.csv is not committed, so it must exist before
   # GAMS reads it; this stops the run when it cannot be built
-  source("scripts/input/create_input_for_technoeconomic.R")
-  create_input_for_technoeconomic(".")
+  source("scripts/input/create_input_for_techdata.R")
+  create_input_for_techdata(".")
 
   ############ update information ########################
   # update_info, which regional resolution and input data revision in tmpModelFile

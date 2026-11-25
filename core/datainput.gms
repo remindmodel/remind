@@ -143,23 +143,23 @@ fm_dataglob("omv",te)          = sm_D2015_2_D2017 * fm_dataglob("omv",te);
 
 ***---------------------------------------------------------------------------
 *** POSTED data (https://github.com/PhilippVerpoort/posted), written by
-*** scripts/input/datapoints_tech/create_input.py. Every (char,te) in it replaces its generisdata_tech.prn
+*** scripts/input/techdata/create_input.py. Every (char,te) in it replaces its generisdata_tech.prn
 *** value, in the units of that file (costs in USD[2017]). To add one, extend
-*** QUERIES in scripts/input/datapoints_tech/content.py and regenerate the csv, no GAMS change.
+*** QUERIES in scripts/input/techdata/content.py and regenerate the csv, no GAMS change.
 ***---------------------------------------------------------------------------
-parameter f_technoeconomic(char,all_te) "technology characteristics from POSTED, global medians across sources, replaces generisdata_tech.prn values [unit as in generisdata_tech.prn]"
+parameter f_techdata(char,all_te) "technology characteristics from POSTED, global medians across sources, replaces generisdata_tech.prn values [unit as in generisdata_tech.prn]"
 /
 $ondelim
-$include "./core/input/f_technoeconomic.csv"
+$include "./core/input/f_techdata.csv"
 $offdelim
 /
 ;
 
 *** record the replaced generisdata values for the .lst, then overwrite
-p_dataglobPrn(char,te) $ f_technoeconomic(char,te) = fm_dataglob(char,te);
-fm_dataglob(char,te)   $ f_technoeconomic(char,te) = f_technoeconomic(char,te);
-display "fm_dataglob values replaced by POSTED, before (p_dataglobPrn) and after (f_technoeconomic), USD2017",
-        p_dataglobPrn, f_technoeconomic;
+p_dataglobPrn(char,te) $ f_techdata(char,te) = fm_dataglob(char,te);
+fm_dataglob(char,te)   $ f_techdata(char,te) = f_techdata(char,te);
+display "fm_dataglob values replaced by POSTED, before (p_dataglobPrn) and after (f_techdata), USD2017",
+        p_dataglobPrn, f_techdata;
 
 *** TODO: merge all grid types into one
 fm_dataglob(char,teGrid) = fm_dataglob(char,"gridwindon");

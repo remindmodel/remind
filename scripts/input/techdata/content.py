@@ -9,7 +9,7 @@
 POSTED (https://github.com/PhilippVerpoort/posted), the Potsdam open-source
 techno-economic database, provides values for energy and climate-mitigation
 technologies. This module aggregates the TEDFs listed in QUERIES into the REMIND
-PROPERTIES, scripts/input/datapoints_tech/create_input.py checks and writes the
+PROPERTIES, scripts/input/techdata/create_input.py checks and writes the
 csv files.
 
 POSTED's aggregate() harmonises units and averages across sources, subtechnologies
@@ -59,7 +59,7 @@ VARIABLES = {
     "Lifetime": ("life", "a"),
 }
 
-# REMIND properties (char in GAMS) written to f_technoeconomic.csv, calculated
+# REMIND properties (char in GAMS) written to f_techdata.csv, calculated
 # from the renamed variables of a technology. POSTED's aggregate() normalises
 # every variable to one unit of reference activity or capacity, so CAPEX and
 # OPEX Variable are only divided by input, output and capacity to get them back

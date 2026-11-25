@@ -6,24 +6,24 @@
 # |  Contact: remind@pik-potsdam.de
 """Write the REMIND input csv file computed from POSTED by content.py.
 
-This is what scripts/input/create_input_for_technoeconomic.R calls. It writes
-core/input/f_technoeconomic.csv, which core/datainput.gms reads to replace
+This is what scripts/input/create_input_for_techdata.R calls. It writes
+core/input/f_techdata.csv, which core/datainput.gms reads to replace
 values from generisdata_tech.prn: one char,te,value line per property, the
 shape of fm_dataglob, grouped under comments naming their unit, which GAMS
 ignores inside a data definition. The file is not committed, it is generated
 input like everything else in core/input, but its header still records the
 sha256 of uv.lock and of these scripts that produced it; --check compares both
-with scripts/input/datapoints_tech/uv.lock and these files.
+with scripts/input/techdata/uv.lock and these files.
 
 Exit codes of --check:
     0  the csv is up to date
     3  regenerate it, outdated or missing
     1  this script crashed, 2 what argparse and uv exit with, both failures
 The posted pin in pyproject.toml is not checked here,
-scripts/input/create_input_for_technoeconomic.R syncs it from config/default.cfg.
+scripts/input/create_input_for_techdata.R syncs it from config/default.cfg.
 
-    uv run --project scripts/input/datapoints_tech python scripts/input/datapoints_tech/create_input.py [--out PATH]
-    uv run --project scripts/input/datapoints_tech python scripts/input/datapoints_tech/create_input.py --check
+    uv run --project scripts/input/techdata python scripts/input/techdata/create_input.py [--out PATH]
+    uv run --project scripts/input/techdata python scripts/input/techdata/create_input.py --check
 """
 
 import argparse
@@ -35,7 +35,7 @@ import tomllib
 from pathlib import Path
 
 REMIND_FOLDER = Path(__file__).resolve().parents[3]
-DEFAULT_OUT = REMIND_FOLDER / "core" / "input" / "f_technoeconomic.csv"
+DEFAULT_OUT = REMIND_FOLDER / "core" / "input" / "f_techdata.csv"
 # the values depend on the queries and on how they are formatted here
 SOURCE_FILES = [Path(__file__), Path(__file__).with_name("content.py")]
 # the resolved environment the values were computed in; its sha256 in the csv
@@ -94,7 +94,7 @@ def check(path):
     if differences:
         return 3, (f"{path} is missing or outdated ({'; '.join(differences)}). "
                    "Regenerate it with "
-                   "'Rscript scripts/input/create_input_for_technoeconomic.R'.")
+                   "'Rscript scripts/input/create_input_for_techdata.R'.")
     return 0, (f"{path} is up to date with uv.lock {want['uv.lock sha256']} "
                f"({commits_text()}).")
 
@@ -122,8 +122,8 @@ def write_gams(path, selected, prov):
     lines = [
         "* description: techno-economic data from POSTED, averaged across "
         "sources; replaces fm_dataglob values from generisdata_tech.prn",
-        "* origin: scripts/input/datapoints_tech/create_input.py and content.py, "
-        "regenerate with scripts/input/create_input_for_technoeconomic.R",
+        "* origin: scripts/input/techdata/create_input.py and content.py, "
+        "regenerate with scripts/input/create_input_for_techdata.R",
         *(f"* {key}: {value}" for key, value in prov.items()),
         "* columns: char,te,value; a comment gives the unit of the rows below "
         "it, up to the next comment",
