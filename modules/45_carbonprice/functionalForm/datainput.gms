@@ -176,9 +176,9 @@ elseif cm_taxCO2_regiDiff = 1, !! initialSpread10
 elseif cm_taxCO2_regiDiff = 2, !! initialSpread20
   !! Choose p45_regiDiff_startYr to be the start year 
   p45_regiDiff_startYr(regi) = cm_startyear;
-  !! Define p45_regiDiff_initialRatio for maximal initial spread equal to 10
+  !! Define p45_regiDiff_initialRatio for maximal initial spread equal to 20
   !! Guiding principle: Apply full carbon price (ratio = 1) for OECD regions - having average GDP per capita around 50 (in 1e3 $ PPP 2017),
-  !!                    apply 5 percent of it (ratio = 0.1) for regions with GDP per capita below 5 (in 1e3 $ PPP 2017),
+  !!                    apply 5 percent of it (ratio = 0.05) for regions with GDP per capita below 5 (in 1e3 $ PPP 2017),
   p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2025",regi) le 5) = 0.05; !! SSA
   p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2025",regi) gt 5  and p45_gdppcap_PPP("2025",regi) le 10) = 0.1; !! IND
   p45_regiDiff_initialRatio(regi)$(p45_gdppcap_PPP("2025",regi) gt 10 and p45_gdppcap_PPP("2025",regi) le 15) = 0.2; !! OAS
