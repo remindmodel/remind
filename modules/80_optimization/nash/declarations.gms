@@ -72,8 +72,6 @@ p80_trackConsecFail(all_regi)              "Parameter to keep track of consecuti
 
 p80_curracc(ttot,all_regi)                 "current account"
 
-pm_cumEff(tall,all_regi,all_in)            "parameter for spillover externality (aggregated productivity level)"
-
 p80_PriceChangePriceAnticipReg(ttot,all_enty,all_regi)  "Price change of a trade good due to the price anticipation effect. [Percent]"
 o80_PriceChangePriceAnticipReg(ttot,all_enty,all_regi)  "only for display: Price change of a trade good due to price anticipation. If nothing is displayed, all values are <0.1%. [Percent, rounded to 0.1%]"
 o80_PriceChangePriceAnticipRegMaxIter(ttot,iteration)   "only for display: Largest absolute value of o80_PriceChangePriceAnticipReg until 2100/2150, tracked over iteration. [Percent, rounded to 0.1%]"

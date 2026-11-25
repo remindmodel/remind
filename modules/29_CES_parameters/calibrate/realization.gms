@@ -48,7 +48,7 @@
 *' However, we keep the split into the three components for the following reasons:
 *'
 *' - We split the efficiency parameter in a time-constant $\xi_i, \thata_i$ and a time-variant $\delta_i(t)$ component to
-*'   allow the latter to be controlled endogenously by the model (in module 20_growth/spillover).
+*'   allow the latter in principle to be controlled endogenously by the model.
 *' - The split of the time-constant part into the two components $\xi_i$ and $\theta_i$ is (1) for historic reasons
 *'   and (2) allows for easier testing the resulting parameter trajectories in an economic context by checking $\xi_i$
 *'   against certain bounds.

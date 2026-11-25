@@ -14,8 +14,6 @@ pm_capCumForeign(ttot,regi,teLearn)$((ttot.val ge 2005) and (pm_SolNonInfes(regi
 pm_capCumForeign(ttot,regi,teLearn)$((ttot.val ge 2025) and (pm_SolNonInfes(regi) eq 1) and (cm_LearningSpillover eq 0)) = sum(regi2$((NOT sameas(regi,regi2))), pm_capCum0("2020",regi2,teLearn));
 * if cm_LearningSpillover is 0, the foreign capacity in technology learning is fixed to the level of 2020. This simulates a world of protectionism with noch no further foreign technology learning spillover.
 
-pm_cumEff(ttot,regi, in)$(ttot.val ge 2005 and pm_SolNonInfes(regi) eq 1) = sum( regi2$(pm_SolNonInfes(regi2) eq 1), (pm_cesdata("2005",regi2,in,"eff") * vm_effGr.l(ttot,regi2,in))) - (pm_cesdata("2005",regi,in,"eff") * vm_effGr.l(ttot,regi,in)); !! TODO: take care of the case of infeasible solution
-
 pm_co2eqForeign(ttot,regi)$((ttot.val ge 2005) and (pm_SolNonInfes(regi) eq 1)) = sum(regi2$((NOT sameas(regi,regi2))), pm_co2eq0(ttot,regi2)); !! does this interfere with the initialization in datainput?
 
 pm_fuExtrForeign(ttot,regi,enty,rlf)$((ttot.val ge 2005) and (pm_SolNonInfes(regi) eq 1)) = sum(regi2$((NOT sameas(regi,regi2))), vm_fuExtr.l(ttot,regi2,enty,rlf));

@@ -275,7 +275,6 @@ $setGlobal downscaleTemperature  off  !! def = off
 *'---------------------    20_growth    ------------------------------------------
 *'
 *' * (exogenous): exogenous growth
-*' * (spillover): endogenous growth with spillover externality !!Warning: not yet calibrated!!
 $setglobal growth  exogenous                !! def = exogenous
 *'---------------------    21_tax    ------------------------------------------
 *'
