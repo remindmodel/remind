@@ -19,7 +19,7 @@
 *' #### 1. Restore emissions-equivalent marginal values
 *** ==================================================================
 
-Execute_Loadpoint 'input' qm_co2eq.m = q_co2eq.m;
+Execute_Loadpoint 'input' qm_co2eq.m = qm_co2eq.m;
 
 *** ==================================================================
 *' #### 2. Adapt Pe2Se emissions factors

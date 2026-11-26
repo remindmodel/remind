@@ -880,5 +880,3 @@ q_fossilSolidsLimitReg(ttot,regi,entySe,entyFe,sector,emiMkt)$(limitSolidsFossil
 $endif.limitSolidsFossilRegi
 
 *** EOF ./core/equations.gms
-q_co2eq(ttot,regi)$(0)..
-  0 =e= 0;

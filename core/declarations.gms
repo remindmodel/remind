@@ -376,7 +376,6 @@ q_limitCapSe2se(ttot,all_regi,all_enty,all_enty,all_te) "capacity constraint for
 q_limitCapFe(ttot,all_regi,all_te)                      "capacity constraint for final energy production"
 
 *** capacity constraint for H2 infrastructure in buildings and indsutry (capacity * capacity factor = FE demand)
-q_co2eq(ttot,all_regi)                               "legacy input GDX compatibility equation"
 q_limitCapFeH2BI(ttot,all_regi,emi_sectors)               "capacity limit equation for H2 infrastructure capacities of buildings and industry, needed to avoid switching behavior of H2 between both sectors"
 
 *** energy balance equations (energy supply = energy demand)
