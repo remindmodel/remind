@@ -28,6 +28,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **scripts** Introduce new optional argument to compare scenario scripts ``validationConfig`` to enable plotting validation thresholds from piamValidation directly
   into line plots of cs documents.
   [[#2493](https://github.com/remindmodel/remind/pull/2493)]
+- **10_emissions** introduce new emissions module and move all emissions-related equations and data to it as well as the handling of the MAC curves
+  [[#2512](https://github.com/remindmodel/remind/pull/2512)]
+
 
 ### removed
 
