@@ -412,26 +412,6 @@ loop(regi,
 *' policy scenarios if CCS and CCU capacities are limited in early years, to lower overall adjustment costs of capture technologies.
 vm_co2capturevalve.up(t,regi) = 1 * sm_MtCO2_2_GtC;
 
-*** ------------------------------------------------------------------
-*' ##### Assumptions on leakage in the CCUS chain:
-*** ------------------------------------------------------------------
-*' 1. Leakage from CO2 capture and transportation:
-*' 1 percent of captured CO2 leaks back to the atmosphere and is directly deduced from each technology's capture rate 
-*' See p10_co2pipe_leakage in the emissions module data input.
-*' 2. Leakage from the geological reservoir:
-*' NOT considered in REMIND. 
-*' Justification: effect is too small
-*' According to Alcalde et al. 2018  DOI: 10.1038/s41467-018-04423-1 
-*' "An unrealistic scenario, where CO2 storage is inadequately regulated, estimates that more than 78% will be retained over 10,000 years."
-*' Relating these numbers to REMIND scenarios:
-*' Let R(t) be the fraction remaining after time t with (simplified) constant leakage rate k:
-*' R(t)=e^(kt)
-*' with R(10 000) = 0.78
-*' leakage rate k = 0.0025% / yr
-*' After 100 years, this leads to a loss of 0.25% from the reservoirs
-*' so in the "unrealistic scenario" for every 400 GtCO2 stored, 1 GtCO2 leaks after 100 years.
-
-
 
 *** ==================================================================
 *' #### 5. Early retirement and phase-out of technologies
@@ -530,9 +510,9 @@ v_shSeFe.up(ttot,all_regi,all_enty) = 1;
 
 
 *** ==================================================================
-*' #### 7. Assumptions for emissions
-*** Bounds for non-CO2 emissions with MACs and for F-gas emissions: see modules/10_emissions
-*** (air pollutants: move to a module?) ==========================================
+*' #### 7. Assumptions for air pollutants
+*** ==================================================================
+***( move to air pollutants module?)
 
 vm_emiMac.fx(t,regi,"so2") = 0;
 vm_emiMac.fx(t,regi,"bc") = 0;

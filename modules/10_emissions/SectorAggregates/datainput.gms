@@ -87,8 +87,23 @@ f10_dataemiglob(enty,enty2,te,"cco2") = 1/sm_ZJ_2_TWa * f10_dataemiglob(enty,ent
 *' #### 3. Apply CO2 transport pipeline leakage assumptions
 *** ==================================================================
 
-*' CO2 capture rates adjusted to account for CO2 transport pipeline leakage
-*' The default assumption is 1% leakage
+*' 1. Leakage from CO2 capture and transportation:
+*' One percent of captured CO2 leaks back to the atmosphere and is directly deduced from each technology's capture rate 
+*' (see p10_co2pipe_leakage)
+*' 2. Leakage from the geological reservoir:
+*' NOT considered in REMIND. 
+*' Justification: effect is too small
+*' According to Alcalde et al. 2018  DOI: 10.1038/s41467-018-04423-1 
+*' "An unrealistic scenario, where CO2 storage is inadequately regulated, estimates that more than 78% will be retained over 10,000 years."
+*' Relating these numbers to REMIND scenarios:
+*' Let R(t) be the fraction remaining after time t with (simplified) constant leakage rate k:
+*' R(t)=e^(kt)
+*' with R(10 000) = 0.78
+*' leakage rate k = 0.0025% / yr
+*' After 100 years, this leads to a loss of 0.25% from the reservoirs
+*' so in the "unrealistic scenario" for every 400 GtCO2 stored, 1 GtCO2 leaks after 100 years.
+
+
 p10_co2pipe_leakage = 0.01;
 loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
   f10_dataemiglob(enty,enty2,te,"co2") = f10_dataemiglob(enty,enty2,te,"co2") + f10_dataemiglob(enty,enty2,te,"cco2") * p10_co2pipe_leakage;
