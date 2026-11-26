@@ -533,28 +533,11 @@ $ifthen.CESMkup NOT "%cm_CESMkup_ind%" == "standard"
 *' and linearly interpolate between cm_startyear and 2050 to have smooth phase-in
 
 *' overwrite if CES mark-up cost implemented as cost with budget effect
-p37_CESMkup(ttot,regi,in)$(ppfen_MkupCost37(in) AND ttot.val ge 2050) = p37_CESMkup_input(in);
-loop(ttot2$(ttot2.val eq 2050),
-  loop(ttot3$(ttot3.val eq cm_startyear),
-    p37_CESMkup(ttot,regi,in)$(ppfen_MkupCost37(in) AND ttot.val lt 2050 AND ttot.val ge cm_startyear) =
-      p37_CESMkup(ttot3,regi,in)
-      + ( p37_CESMkup(ttot2,regi,in) - p37_CESMkup(ttot3,regi,in) )
-        * (ttot.val - cm_startyear)
-        / (2050 - cm_startyear);
-  );
-);
-
+p37_CESMkup(ttot,regi,in)$(ppfen_MkupCost37(in) AND ttot.val > cm_startyear) =
+  macro_clamped_interpolate(ttot.val, cm_startyear, 2050, sum(ttot2, p37_CESMkup(ttot2,regi,in)$(ttot2.val = cm_startyear)), p37_CESMkup_input(in));
 *' overwrite if CES mark-up cost implement as tax without budget effect
-pm_tau_ces_tax(ttot,regi,in)$(NOT ppfen_MkupCost37(in) AND ttot.val ge 2050) = p37_CESMkup_input(in);
-loop(ttot2$(ttot2.val eq 2050),
-  loop(ttot3$(ttot3.val eq cm_startyear),
-    pm_tau_ces_tax(ttot,regi,in)$(NOT ppfen_MkupCost37(in) AND ttot.val lt 2050 AND ttot.val ge cm_startyear) =
-      pm_tau_ces_tax(ttot3,regi,in)
-      + ( pm_tau_ces_tax(ttot2,regi,in) - pm_tau_ces_tax(ttot3,regi,in) )
-        * (ttot.val - cm_startyear)
-        / (2050 - cm_startyear);
-  );
-);
+pm_tau_ces_tax(ttot,regi,in)$(NOT ppfen_MkupCost37(in) AND ttot.val > cm_startyear) =
+  macro_clamped_interpolate(ttot.val, cm_startyear, 2050, sum(ttot2, pm_tau_ces_tax(ttot2,regi,in)$(ttot2.val = cm_startyear)), p37_CESMkup_input(in));
 
 $endif.CESMkup
 
@@ -600,49 +583,6 @@ if (smax((t,regi),
 putclose logfile, " " /;
 );
 
-$ifthen.sec_steel_scen NOT "%cm_steel_secondary_max_share_scenario%" == "off"   !! cm_steel_secondary_max_share_scenario
-* Modify secondary steel share limits by scenario assumptions
-
-$ifthen.calibrate "%CES_parameters%" == "calibrate"   !! CES_parameters
-* Abort if scenario limits are to be prescribed during calibration.
-$abort "cm_steel_secondary_max_share_scenario != off is incompatible with calibration"
-$endif.calibrate
-
-* Protect against the prescription of seconday steel shares in historic/fixed
-* time steps.
-if (smax((t,regi)$( t.val le max(cm_startyear, 2020) ),
-      p37_steel_secondary_max_share_scenario(t,regi)),
-  put logfile;
-  put "Error: cm_steel_secondary_max_share_scenario scaling before ",
-      "cm_startyear/2020" /;
-  loop ((t,regi)$(    t.val le max(cm_startyear, 2020)
-                  AND p37_steel_secondary_max_share_scenario(t,regi) ),
-    put p37_steel_secondary_max_share_scenario.tn(t,regi), " = ",
-        p37_steel_secondary_max_share_scenario(t,regi) /;
-  );
-  putclose logfile " " /;
-
-  execute_unload "abort.gdx";
-  abort "Faulty cm_steel_secondary_max_share_scenario scaling. See .log file for details.";
-);
-
-* Modify limits on secondary steel shares.  Linear fade from calibration limits
-* to scenario limits.
-loop ((regi,t2)$( p37_steel_secondary_max_share_scenario(t2,regi) ),
-  loop (t3$( t3.val eq max(cm_startyear, 2020) ),
-    loop (t,
-      sm_tmp = max(0, min(1, (t.val - t3.val) / (t2.val - t3.val)));
-
-      p37_steel_secondary_max_share(t,regi)
-      = (p37_steel_secondary_max_share(t,regi)           * (1 - sm_tmp))
-      + (p37_steel_secondary_max_share_scenario(t2,regi) * sm_tmp      );
-    );
-  );
-);
-
-display "scenario limits for maximum secondary steel share",
-        p37_steel_secondary_max_share;
-$endif.sec_steel_scen
 Parameter p37_chemicals_feedstock_share(ttot,all_regi)   "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
   /
 $ondelim

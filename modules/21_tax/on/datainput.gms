@@ -10,32 +10,40 @@
 
 Parameter f21_tau_fe_tax(tall,all_regi,all_fetaxscen,emi_sectors,all_enty) "2005 final energy tax [T$/TWa]"
   /
+$offlisting
 $ondelim
 $include "./modules/21_tax/on/input/f21_tau_fe_tax.cs4r"
 $offdelim
+$onlisting
   /
 ;
 ***gl 20110817 load paths for final energy subsidies and inconvenience costs (read in in $/GJ, get rescaled further down to T$ / TWa, subsidies also get constrained to avoid negative prices(in preloop.gms))
 Parameter f21_tau_fe_sub(tall,all_regi,emi_sectors,all_enty) "2005 final energy subsidy"
   /
+$offlisting
 $ondelim
 $include "./modules/21_tax/on/input/f21_tau_fe_sub.cs4r"
 $offdelim
+$onlisting
   /
 ;
 Parameter f21_tau_fuEx_sub(tall,all_regi,all_enty) "2005 subsidy for fuel extraction"
   /
+$offlisting
 $ondelim
 $include "./modules/21_tax/on/input/f21_tau_pe_sub.cs4r"
 $offdelim
+$onlisting
   /
 ;
 
 Parameter f21_sub_convergence_rollback(tall,all_regi,emi_sectors,all_enty) "Subsidy convergence level for specific regions, year and final energy type in rollback scenario"
   /
+$offlisting
 $ondelim
 $include "./modules/21_tax/on/input/f21_sub_convergence_rollback.cs4r"
 $offdelim
+$onlisting
   /
 ;
 

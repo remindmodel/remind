@@ -48,16 +48,20 @@ p11_share_trans("2150",regi) = 0.872;
 *** GAINS2025 emission factors --------------------------------------------------------------------------
 parameter f11_emifacs_sectREMIND_sourceCEDS(tall,all_regi,all_enty,all_enty,all_te,all_sectorEmi11,emisForEmiFac11,all_APscen,all_APssp)     "GAINS2025 emission factors weighted by CEDS emissions"
 /
+$offlisting
 $ondelim
 $include "./modules/11_aerosols/exoGAINS2025/input/f11_emifacs_sectREMIND_sourceCEDS.cs4r"
 $offdelim
+$onlisting
 /
 ;
 parameter f11_emifacs_sectREMIND_sourceGAINS(tall,all_regi,all_enty,all_enty,all_te,all_sectorEmi11,emisForEmiFac11,all_APscen,all_APssp)     "GAINS2025 emission factors weighted by GAINS emissions"
 /
+$offlisting
 $ondelim
 $include "./modules/11_aerosols/exoGAINS2025/input/f11_emifacs_sectREMIND_sourceGAINS.cs4r"
 $offdelim
+$onlisting
 /
 ;
 p11_emiFacAP(ttot,regi,enty,enty2,te,sectorEndoEmi11,emisForEmiFac11)$(ttot.val ge 2005) = 0.0;

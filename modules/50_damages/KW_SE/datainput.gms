@@ -7,7 +7,7 @@
 *** SOF ./modules/50_damages/KW_SE/datainput.gms
 
 * satisfy dependencies
-$ifi not %downscaleTemperature% == 'CMIP5' abort "module damages=KWLike requires downscaleTemperature=CMIP5";
+$ifi not %downscaleTemperature% == 'CMIP5' abort "module damages=KW_SE requires downscaleTemperature=CMIP5";
 
 ** damage specification
     

@@ -428,8 +428,6 @@ $setglobal cm_calibration_string  off      !! def = off
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
-$setglobal cm_techcosts  REG       !! def = REG
-
 $setglobal cm_incolearn  off !! def = off
 $setglobal cm_storageFactor  off !! def = off
 

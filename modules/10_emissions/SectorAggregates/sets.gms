@@ -157,6 +157,15 @@ emiFuEx(all_enty)   "fugitive emissions"
     ch4oil     "fugitive emissions from oil production"
 /
 
+all_fgas_scen   "all possible F-gas emission scenarios (switch cm_fgas_scen)"
+/
+    MESSAGEHigh            "MESSAGEix high-emission pathway"
+    MESSAGEVeryLow         "MESSAGEix very-low-emission pathway"
+    MESSAGEMedium          "MESSAGEix medium-emission pathway"
+    MESSAGEKAFull          "Medium with Kigali Amendment caps in all countries from 2030"
+    MESSAGEKAImplemented   "Medium with Kigali Amendment caps only where current policies include it"
+/
+
 
 *** ==================================================================
 *' #### 2. Mappings of MAC sectors to emission markets, emission sources and sectors

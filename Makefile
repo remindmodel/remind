@@ -28,6 +28,16 @@ update-renv-all: ## Upgrade all packages (including CRAN packages) in your renv
                  ## to the respective latest release, write renv.lock archive
 	@Rscript -e 'renv::update(); piamenv::archiveRenv()'
 
+upgrade-renv-version: ## Upgrade the renv version and remove
+	@Rscript -e 'renv::upgrade()'
+	@if grep -qE 'attr\(version, *"md5"\) *<- *"[^"]*"' renv/activate.R; then \
+		sed -i -E 's/attr\(version, *"md5"\) *<- *"[^"]*"/attr(version, "md5") <- NULL/' renv/activate.R; \
+		echo "Successfully removed hash from renv/activate.R"; \
+	else \
+		echo "Error: Target pattern 'attr(version, \"md5\") <- \"...\"' not found in renv/activate.R" >&2; \
+		exit 1; \
+	fi
+
 revert-dev-packages: ## All PIK-PIAM packages that are development versions, i.e.
                      ## that have a non-zero fourth version number component, are
                      ## reverted to the highest version lower than the
@@ -131,7 +141,7 @@ test-full:       ## Run all tests, including coupling tests and a default
 test-full-slurm: ##test-full, but on slurm
 	$(info Full tests take more than an hour to run, please be patient)
 	make ensure-reqs
-	@sbatch --qos=priority --wrap="$(RSCRIPT_SLURM_HOOK) make test-full" --job-name=test-full --mail-type=END,FAIL --output=test-full.log --comment="test-full.log"
+	@sbatch --qos=priority --wrap="set -e; $(RSCRIPT_SLURM_HOOK) make test-full" --job-name=test-full --mail-type=END,FAIL --output=test-full.log --comment="test-full.log"
 
 test-validation: ## Run validation tests, requires a full set of runs in the output folder
 	$(info Run validation tests, requires a full set of runs in the output folder)

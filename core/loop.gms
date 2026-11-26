@@ -79,7 +79,7 @@ if (cm_nash_mode eq 1,
 );
 
 *** For each Nash iteration track runtime of solution (all regions and soliter)
-putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",solve," iteration.val:0;
+macro_runtimeLog("solve")
 
 o_modelstat = 100;
 loop(sol_itr$(sol_itr.val <= cm_solver_try_max),
@@ -89,7 +89,7 @@ $batinclude "./modules/include.gms" solve
 );  !! end of sol_itr loop, when o_modelstat is not equal to 2
 
 *** Track runtime
-putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",GAMS," iteration.val:0;
+macro_runtimeLog("GAMS")
 
 ***---------------------------------------------------------
 ***     Track of changes between iterations

@@ -33,7 +33,7 @@ vm_emiMacSector.lo(t,regi,"n2ofertsom") = -1; !! small negative emissions can re
 *** ==================================================================
 
 *** fix F-gas emissions to inputdata (IMAGE)
-vm_emiFgas.fx(ttot,all_regi,all_enty) = f10_emiFgas(ttot,all_regi,"%c_SSP_forcing_adjust%","%cm_rcp_scen%","SPA0",all_enty);
+vm_emiFgas.fx(ttot,all_regi,all_enty) = f10_emiFgas(ttot,all_regi,"%cm_fgas_scen%",all_enty);
 display vm_emiFgas.L;
 
 *** EOF ./modules/10_emissions/SectorAggregates/bounds.gms

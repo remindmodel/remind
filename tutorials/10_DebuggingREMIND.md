@@ -2,7 +2,7 @@ Debugging REMIND
 ================
 Collaborative effort, coordinated by Oliver Richters, March–May, 2022
 
-When running and changing REMIND, a multitude of errors may occur. In such a collaborative effort, they need not have been created by you. So an important part of debugging is to find out whether something you changed created the error, or whether there is a general problem. The `develop` branch is permanently developed and may temporarily contain bugs, so use a release instead.
+When running and changing REMIND, a multitude of errors may occur. In such a collaborative effort, they need not have been created by you. So an important part of debugging is to find out whether something you changed created the error, or whether there is a general problem. The `develop` branch is permanently developed and may temporarily contain bugs, so use a release instead. Or, if you have access to the cluster, check the AMTs (automated model tests) which scenarios are currently working.
 
 First, find out the state of your run by executing this in the run directory:
 ```bash
@@ -22,7 +22,7 @@ The first place to look is `log.txt` in the output subfolder for each run. It sh
 
 - the model is still locked? Another model run has locked the folder, so you have to wait until it has unlocked it again.
 - input files are missing or outdated? delete `input/source_files.log` or set `cfg$force_download <- TRUE` to force the loading of new ones. If this doesn’t help, the input generation may be broken.
-- you use an outdated git branch? check `git log` or use main branch with `git checkout main/develop; git pull`.
+- you use an outdated git branch? check `git log` or use main branch with `git checkout master/develop; git pull`.
 - a recent change in the start scripts may have broken the prepare scripts, check the [file history](https://github.com/remindmodel/remind/commits/develop/scripts/start/) for changes.
 
 Case 2: REMIND did produce an error
@@ -88,6 +88,8 @@ You should now see the equation where the error was created. If you recently cha
 Again, tutorials such as as the [McCarl GAMS User Guide](https://www.gams.com/mccarlGuide/) may be helpful.
 If not, it is worth looking at the `.gms` file this equation is part of, by searching for `SOF` (start of file) and `EOF` (end of file) marks above and below the equation. Then navigate to this file in github and see in the history whether it was recently changed, which may have caused this error.
 But it is important that the error may have first appeared in this equation, but may have been caused somewhere else.
+You can also check for which model the error appears.
+The main model of REMIND is called `hybrid`.
 
 If you find out that your run stopped specifically in iteration 14, you likely have a problem with the EDGE-T transport model. It runs iteratively with REMIND, but only after iteration 14. It calls [`edgeTransport::iterativeEdgeTransport()`](https://github.com/pik-piam/edgeTransport/blob/master/R/iterativeEDGETransport.R) and its input/output data are in the `EDGE-T` subfolder. You should find an error message in `log.txt`.
 If this is not helpful, try opening that script in an interactive `R` session (on your run’s folder) and run it line by line, you’ll have a better idea of what the problem actually was. Forcing the model to redownload its input data (see above) can help if something in either model changed when you created that folder.
@@ -96,7 +98,7 @@ Also make sure that the R packages installed in your renv are up-to-date. The ED
 The file `abort.gdx` contains the latest data at the point GAMS aborted execution, which can be analysed using GAMS Studio.
 
 After a certain number of consecutive infeasibilities (default: `cm_abortOnConsecFail` = 2) REMIND will switch to the debug mode in which infeasibility are listed (and can be shown with `listinfes`).
-In case this does not help, it stops automatically, to avoid loosing too much time on an already doomed run. While REMIND sometimes is able to recover from a region being infes for 1 or 2 iterations, more will likely mean that the run will fail. In this case an `execution error` will be raised and the message `Run was aborted because the maximum number of consecutive failures was reached in at least one region!` can be found in the `full.log` and `full.lst` files. Continue with "Case 3" to solve the infeasibility.
+In case this does not help, it stops automatically, to avoid losing too much time on an already doomed run. While REMIND sometimes is able to recover from a region being infes for 1 or 2 iterations, more will likely mean that the run will fail. In this case an `execution error` will be raised and the message `Run was aborted because the maximum number of consecutive failures was reached in at least one region!` can be found in the `full.log` and `full.lst` files. Continue with "Case 3" to solve the infeasibility.
 
 ### Case 2c: GDX or R file missing
 

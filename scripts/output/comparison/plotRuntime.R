@@ -226,7 +226,7 @@ regionSolverTimePlot <- ggplot(stats, aes(x = as.numeric(Iteration),
 
 # Create Output pdf and html files
 now <- format(Sys.time(), "%Y-%m-%d_%H:%M:%S")
-plotRuntimePdfPath <- paste0("plotRuntime_", now, ".pdf")
+plotRuntimePdfPath <- file.path("output", paste0("plotRuntime_", now, ".pdf"))
 withr::with_pdf(plotRuntimePdfPath, {
   print(solverTimePlot)
   print(runtimeRectanglePlot)
@@ -234,7 +234,7 @@ withr::with_pdf(plotRuntimePdfPath, {
   print(regionSolverTimePlot)
 })
 
-plotRuntimeHtmlPath <- paste0("plotRuntime_", now, ".html")
+plotRuntimeHtmlPath <- file.path("output", paste0("plotRuntime_", now, ".html"))
 htmltools::save_html(htmltools::tagList(plotly::ggplotly(solverTimePlot),
                                         plotly::ggplotly(runtimeRectanglePlot),
                                         plotly::ggplotly(stackedBarPlot),

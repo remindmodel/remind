@@ -8,9 +8,11 @@
 
 parameter f04_IO_input(tall,all_regi,all_enty,all_enty,all_te) "Energy input based on IEA data"
 /
+$offlisting
 $ondelim
 $include "./modules/04_PE_FE_parameters/iea2014/input/f04_IO_input.cs4r"
 $offdelim
+$onlisting
 /
 ;
 
@@ -40,9 +42,11 @@ f04_IO_input(tall,regi,entyPe,entySe,te)$(f04_IO_input(tall,regi,entyPe,entySe,t
 *** This facilitates comparison with other sources which usually report gross electricity generation as well as gross capacity factors
 parameter f04_IO_output(tall,all_regi,all_enty,all_enty,all_te) "Energy output based on IEA data"
 /
+$offlisting
 $ondelim
 $include "./modules/04_PE_FE_parameters/iea2014/input/f04_IO_output.cs4r"
 $offdelim
+$onlisting
 /
 ;
 

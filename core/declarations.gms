@@ -86,7 +86,7 @@ pm_co2eq0(tall,all_regi)                             "Total greenhouse gas emiss
 parameters
 
 *** general technoeconomic parameters
-pm_eta_conv(tall,all_regi,all_te)                    "conversion efficiency of all energy technologies, only applying to technologies that do not have explicit time-dependant conversion efficiencies, still eta converges until 2050 to dataglob_values. [efficiency (0..1)]"
+pm_eta_conv(tall,all_regi,all_te)                    "conversion efficiency of all energy technologies, only applying to technologies that do not have explicit time-dependant conversion efficiencies, still eta converges until 2050 to dataglob_values. [efficiency (0..1), nuclear: TWa_elec/Mt_Ur]"
 pm_dataeta(tall,all_regi,all_te)                     "read-in parameter for conversion efficiency of technologies that vary exogenously over time based on generisdata_varying_eta.prn file [efficiency (0..1)]"
 pm_data(all_regi,char,all_te)                        "Large array for most technical parameters of technologies, more detail on the individual technical parameters and their units can be found in the declaration of the set 'char' "
 pm_cf(tall,all_regi,all_te)                          "read-in parameter for capacity factor (fraction of the year that a plant is running) [share]"
@@ -109,9 +109,15 @@ p_oldFloorCostdata(all_regi,all_te)                  "print old floor cost data 
 pm_tsu2opTimeYr(ttot,opTimeYr)                       "auxiliary parameter to map time steps to past time steps: counts the number of model timesteps between years ttot-opTimeYr and ttot, used for q_transPe2se and q_cap equations [unitless]" 
 
 *** parameters used for endogenous technology learning implementation
-pm_capCum0(tall,all_regi,all_te)                     "Total cumulated capacity of learning technologies from last iteration used for learning curves based on vm_capCum [TW]"
-p_capCum(tall, all_regi,all_te)                      "Total cumulated capacity of learning technologies from input.gdx used for learning curves based on vm_capCum [TW]"
-pm_capCumForeign(ttot,all_regi,all_te)               "Total cumulated capacity of learning technologies of all other regions except regi [TW]"
+pm_capCum0(tall,all_regi,all_te)                     "Total cumulated capacity of learning technologies from last iteration used for learning curves based on vm_capCum [TW] or [GtC/yr]"
+p_capCum(tall, all_regi,all_te)                      "Total cumulated capacity of learning technologies from input.gdx used for learning curves based on vm_capCum [TW] or [GtC/yr]"
+pm_capCumForeign(ttot,all_regi,all_te)               "Total cumulated capacity of learning technologies of all other regions except regi [TW] or [GtC/yr]"
+p_learnDeltaGlob(all_te)                              "Investment costs that can be reduced through learning = inco0 - floorcost. Unit: $/kW"
+p_learnDeltaRegi(all_regi,all_te)                     "Investment costs that can be reduced through learning = inco0 - floorcost, based on regional investment costs. Unit: $/kW"
+p_learnExpGlob(all_te)                               "exponent in learning equation, based on global data"
+p_learnMultGlob(all_te)                              "multiplicative parameter in learning equation, based on global data"
+p_learnExpRegi(all_regi,all_te)                       "exponent in learning equation, based on regional investment costs"
+p_learnMultRegi(all_regi,all_te)                      "multiplicative parameter in learning equation, based on regional investment costs"
 
 *** early retirement parameters
 pm_regiEarlyRetiRate(ttot,all_regi,all_te)           "regional early retirement rate, maximum allowed annual increase in the share of early retired capacity of a technology for which early retirement is allowed [1/year]"
@@ -216,7 +222,7 @@ $if not "%c_scaleDemandIndTable%" == "off"    p_scaleDemandIndTable(ttot, all_re
 pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)     "parameter to capture all FE prices across sectors and markets [tr$2017/TWa]"
 pm_FEPrice_iter(iteration,ttot,all_regi,all_enty,sector,emiMkt) "parameter to capture all FE prices across sectors and markets [tr$2017/TWa] across iterations"
 pm_SEPrice(ttot,all_regi,all_enty)                   "parameter to capture all SE prices [tr$2017/TWa]"
-pm_PEPrice(ttot,all_regi,all_enty)                   "parameter to capture all PE prices [tr$2017/TWa]"
+pm_PEPrice(ttot,all_regi,all_enty)                   "parameter to capture all PE prices [tr$2017/TWa, Uranium: tr$2017/Mt_Ur]"
 
 p_FEPrice_by_SE_Sector_EmiMkt(ttot,all_regi,entySe,all_enty,sector,emiMkt) "parameter to save FE price per SE, sector and emission market [tr$2017/TWa]"
 p_FEPrice_by_Sector_EmiMkt(ttot,all_regi,all_enty,sector,emiMkt) "parameter to save FE marginal price per sector and emission market [tr$2017/TWa]"
@@ -270,7 +276,7 @@ vm_cap(tall,all_regi,all_te,rlf)                     "net total capacities [TW] 
 v_capDistr(tall,all_regi,all_te,rlf)                 "net capacities, distributed to the different grades for renewables [TW]"
 vm_capTotal(ttot,all_regi,all_enty,all_enty)         "total capacity of pe2se conversion technologies without technology differentation [TW]"
 vm_deltaCap(tall,all_regi,all_te,rlf)                "capacity additions [TW/yr] for energy conversion technologies, [GtC/yr^2] for CCS chain in ccs2te (pipelines/injection)"
-vm_capCum(tall,all_regi,all_te)                      "cumulated capactiy of learning technologies [TW]"
+vm_capCum(tall,all_regi,all_te)                      "cumulated capacity of learning technologies [TW]"
 vm_capEarlyReti(tall,all_regi,all_te)                "fraction of early retired capacity from total standing capacity, can only be increased for technologies for which early retirement is switched on [share]"
 
 *** technoeconomic parameters
@@ -354,7 +360,6 @@ q_smoothphaseoutCapEarlyReti(ttot,all_regi,all_te)   "constraint to limit phase-
 q_capH2BI(ttot,all_regi)                             "calculate hydrogen transmission and distribution capacities for buildings and industry, as total of stationary sector, needed to avoid switching behavior of H2 between both sectors"
 
 *** technology learning equations
-q_capCumNet(t0,all_regi,all_te)                      "set initial cumulated capacity of learning technologies (vm_capCum) in start year"
 qm_deltaCapCumNet(ttot,all_regi,all_te)              "calculate cumulated capacities of learning technologies (vm_capCum)"
 q_costTeCapital(tall,all_regi,all_te)                "calculate investment cost for learning technologies (learning curve)"
 
@@ -539,6 +544,7 @@ sm_TWa_2_TWh                 "convert Tera Watt annum to Tera Wh"           /8.7
 sm_TWa_2_MWh                 "convert Tera Watt annum to Mega Wh"           /8.76e+9/,
 sm_TWa_2_kWh                 "convert Tera Watt annum to kilo Wh"           /8.76e+12/,
 sm_h2kg_2_h2kWh              "convert kg of hydrogen to kWh energy value"   /32.5/,
+s_GW_2_TW                    "convert GW to TW"                             /0.001/,
 sm_tBC_2_TWa                 "t biochar to TWa biochar (28700 [MJ/tBC]*10^-12[EJ/MJ]/31.536[EJ/TWa])" /9.101e-10/,
 
 *** emissions units
@@ -548,6 +554,7 @@ s_NO2_2_N                    "convert NO2 to N [14 / (14 + 2 * 16)]"   / .304 /
 sm_tgn_2_pgc                 "conversion factor 100-yr GWP from TgN to PgCeq"
 sm_tgch4_2_pgc               "conversion factor 100-yr GWP from TgCH4 to PgCeq"
 sm_MtCO2_2_GtC               "conversion factor from MtCO2 to native REMIND emission unit GtC" /2.727e-04/
+sm_GtC_2_MtCO2               "conversion factor from native REMIND emission unit GtC to MtCO2 (44/12*1000)" /3.66667e+03/
 sm_MtCH4_2_TWa                "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
 sm_gwpCH4                    "Global Warming Potentials of CH4, AR5 WG1 CH08 Table 8.7"     /28/
 sm_gwpN2O                    "Global Warming Potentials of N2O, AR5 WG1 CH08 Table 8.7"     /265/
@@ -619,6 +626,33 @@ sm_tgch4_2_pgc = sm_gwpCH4 * (12/44) * 0.001;
 *** Example 2:
 ***   Suppose we have a subsidy that we want to phase out with a different date for each region.
 ***   p_subsidy(t,regi) = macro_interpolate(t.val, cm_startyear, p_subsidyEndYr(regi), p_subsidy(cm_startyear,regi), 0);
+*** Outside t0 and t1, the linear function is continued
+*** x1 _|         /
+***     |        /
+***     |       /
+*** x0 _|      /
+***     |_____/___________
+***            | |
+***          t0  t1
 $macro macro_interpolate(t,t0,t1,x0,x1) ( ((t1) - (t)) / ((t1) - (t0)) * (x0) + ((t) - (t0)) / ((t1) - (t0)) * (x1) )
+
+*** macro_clamped_interpolate: Like macro_interpolate, but if t is not between t0 and t1, we return the respective boundary value
+*** x1 _|         _____
+***     |        /
+***     |       /
+*** x0 _|______/
+***     |________________
+***            | |
+***          t0  t1
+$macro macro_clamped_interpolate(t, t0, t1, x0, x1) ( (x0)$((t) <= (t0)) + (x1)$((t) >= (t1)) + ((x0) + ((x1) - (x0)) * ((t) - (t0)) / ((t1) - (t0)))$(((t) > (t0)) AND ((t) < (t1))))
+
+*** macro_runtimeLog: write one line with the current wall-clock time to runtime.log, followed
+*** by a label and the iteration number, so that the runtime of individual model parts can be
+*** reconstructed (see scripts/output/plotRuntime.R), e.g.:
+***   macro_runtimeLog("GAMS")
+***   macro_runtimeLog("run_KotzWenz_damages")
+*** Make sure the label contains no commas.
+*** Format of runtime.log: time, label, iteration
+$macro macro_runtimeLog(label) putclose runtime gyear(jnow):0:0 "-" gmonth(jnow):0:0 "-" gday(jnow):0:0 " " ghour(jnow):0:0 ":" gminute(jnow):0:0 ":" gsecond(jnow):0:0 ",",label,"," iteration.val:0;
 
 *** EOF ./core/declarations.gms

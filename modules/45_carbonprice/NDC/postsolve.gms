@@ -12,7 +12,7 @@ display pm_taxCO2eq;
 *#' @equations 
 *#' emissions of current iteration to check whether NDC implementation meets the targets
 *#' (GHG emissions w/o land-use change and w/o transport bunker emissions, unit [Mt CO2eq/yr])
-p45_CO2eqwoLU_actual(p45_NDCyearSet(t,regi)) = vm_emiGHG_exclLULUCF_exclBunkers.l(t,regi) * sm_c_2_co2 * 1000;
+p45_CO2eqwoLU_actual(p45_NDCyearSet(t,regi)) = vm_emiGHG_exclLULUCF_exclBunkers.l(t,regi) * sm_GtC_2_MtCO2;
 
 pm_taxCO2eq_iter(iteration,p45_NDCyearSet(t,regi)) = pm_taxCO2eq(t,regi);
 p45_CO2eqwoLU_actual_iter(iteration,p45_NDCyearSet(t,regi)) = p45_CO2eqwoLU_actual(t,regi);

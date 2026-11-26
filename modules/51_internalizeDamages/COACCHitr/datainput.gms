@@ -16,7 +16,7 @@ p51_scc(tall)$(tall.val ge 2020 and tall.val le 2150) = p51_scc("2020")*(1+0.025
 
 loop(ttot$(ttot.val ge 2020),
 	loop(tall$(pm_ttot_2_tall(ttot,tall)),
-	    pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2020) = p51_scc(tall)   * sm_c_2_co2/1000;
+	    pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2020) = p51_scc(tall)   * sm_DptCO2_2_TDpGtC;
 	));
 
 *** EOF ./modules/51_internalizeDamages/COACCHitr/datainput.gms

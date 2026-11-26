@@ -227,6 +227,11 @@ prepare <- function() {
            ' are missing.  Call RSE immediately')
   }
 
+  # $offlisting appears in main.gms but the current process does not let it survive into full.gms
+  # therefore all cs3r/cs4r file contents are dumped directly into the full.lst
+  # to avoid this we add $offlisting manually at $onDelim present at each include of a cs4r/cs3r
+  lucode2::manipulateFile(dumpFilePath, list(c("$onDelim", "$offlisting\n$onDelim"), c("$offDelim", "$offDelim\n$onlisting")), fixed = TRUE)
+
   file.rename(from[exist], to[exist])
 
   if ( 0 < exitcode ) {

@@ -23,23 +23,29 @@ pm_cesdata_sigma(ttot,in)$p35_cesdata_sigma(in) = p35_cesdata_sigma(in);
 parameters
 p35_esCapCost(tall,all_regi,all_GDPpopScen,all_demScen,EDGE_scenario_all,all_teEs) "Capital costs for the transport system [$/pkm or $/tkm]"
 /
+$offlisting
 $ondelim
 $include "./modules/35_transport/edge_esm/input/f35_esCapCost.cs4r"
 $offdelim
+$onlisting
 /
 
 p35_fe2es(tall,all_regi,all_GDPpopScen,all_demScen,EDGE_scenario_all,all_teEs) "Aggregate energy efficiency of transport fuel technologies [trn pkm/Twa or trn tkm/Twa]"
 /
+$offlisting
 $ondelim
 $include "./modules/35_transport/edge_esm/input/f35_fe2es.cs4r"
 $offdelim
+$onlisting
 /
 
 p35_demByTech(tall,all_regi,all_GDPpopScen,all_demScen,EDGE_scenario_all,all_enty,all_in,all_teEs) "Aggregate FE Demand per transport fuel technology [TWa]"
 /
+$offlisting
 $ondelim
 $include "./modules/35_transport/edge_esm/input/f35_demByTech.cs4r"
 $offdelim
+$onlisting
 /
 
 

@@ -8,17 +8,19 @@
 library(piamPlotComparison)
 
 if (!exists("source_include")) {
-  lucode2::readArgs("outputdirs", "outFileName", "profileName", "aliases", "sections")
+  lucode2::readArgs("outputdirs", "outFileName", "profileName", "aliases", "sections", "validationConfig")
 }
 if (!exists("aliases"))  { aliases <- NULL }
 if (!exists("sections")) { sections <- "all" }
+if (!exists("validationConfig")) { validationConfig <- NULL }
 
 run_compareScenarios2 <- function(
   outputdirs,
   outFileName,
   profileName,
   aliases,
-  sections
+  sections,
+  validationConfig
 ) {
 
   stopifnot(length(profileName) == 1 && is.character(profileName) && !is.na(profileName))
@@ -35,8 +37,9 @@ run_compareScenarios2 <- function(
   # parallel they would interfere with the others' figure folder. So we create a
   # temporary subfolder in which each compareScenarios2 creates its own figure
   # folder.
-  system(paste0("mkdir ", outFileName))
-  outDir <- normalizePath(outFileName, mustWork = TRUE)
+  outDir <- file.path("output", "tmp", outFileName)
+  dir.create(outDir, recursive = TRUE)
+  outDir <- normalizePath(outDir, mustWork = TRUE)
 
   outputdirs <- unique(normalizePath(outputdirs, mustWork = TRUE))
 
@@ -60,6 +63,9 @@ run_compareScenarios2 <- function(
     sections = sections
   )
 
+  # show piamValidation thresholds in line plots, can be overwritten by profiles
+  args$validationConfig <- validationConfig
+
   # Load cs2 profile and change args.
   message("Applying profile ", profileName)
   profile <- profiles[[profileName]]
@@ -76,6 +82,20 @@ run_compareScenarios2 <- function(
   )
   args[names(profile)] <- profileEval
 
+  # Only the project library remind2 computes validation thresholds. For other
+  # profiles the default config is dropped. An explicitly chosen config raises an
+  # error, unless the profile sets validationConfig itself.
+  if (!identical(args$projectLibrary, "remind2") && 
+      !"validationConfig" %in% names(profile) &&
+      !is.null(args$validationConfig)) {
+    if (!identical(args$validationConfig, "AMT")) {
+      stop("Profile '", profileName, "' does not support validation thresholds, but validationConfig = '",
+           args$validationConfig, "' was requested. Omit --validationConfig or choose another profile or 
+           edit the chosen profile to use a validationConfig.")
+    }
+    args$validationConfig <- NULL
+  }
+
   # Check outputFile ending.
   expectedEnding <- paste0(".", tolower(args$outputFormat))
   if (!endsWith(tolower(args$outputFile), expectedEnding)) {
@@ -88,15 +108,19 @@ run_compareScenarios2 <- function(
     message("    ", names(args)[i], " = ", capture.output(dput(args[[i]])), if (i < length(args)) ",")
   message("  )")
 
+  # Thresholds of a previous profile must not be shown in this one, as all
+  # profiles share one R session when run locally.
+  options(mip.validationThresholds = NULL)
+
   message("Calling piamPlotComparison::compareScenarios()...\n")
   do.call(piamPlotComparison::compareScenarios, args)
 
   message("Move outputFile and delete temporary folder.\n")
   outputFilePath <- file.path(args$outputDir, args$outputFile)
-  system(paste0("mv ", outputFilePath, " ."))
-  system(paste0("rm -rf ", args$outputDir))
+  file.rename(from = outputFilePath, to = file.path("output", args$outputFile))
+  unlink(args$outputDir, recursive = TRUE)
 
   message("Done!\n")
 }
 
-run_compareScenarios2(outputdirs, outFileName, profileName, aliases, sections)
+run_compareScenarios2(outputdirs, outFileName, profileName, aliases, sections, validationConfig)

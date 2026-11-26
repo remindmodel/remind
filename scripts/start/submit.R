@@ -133,7 +133,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
                               " --mail-type=END,FAIL",
                               " --comment=REMIND",
                               # Prefix RSCRIPT_SLURM_HOOK for piam-apptainer integration (empty if unset)
-                              " --wrap=\"", trimws(paste(Sys.getenv("RSCRIPT_SLURM_HOOK", unset = ""), "Rscript")), " prepareAndRun.R \" ",
+                              " --wrap=\"set -e; ", trimws(paste(Sys.getenv("RSCRIPT_SLURM_HOOK", unset = ""), "Rscript")), " prepareAndRun.R \" ",
                               cfg$slurmConfig))
     Sys.sleep(1)
   }

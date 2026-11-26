@@ -224,38 +224,39 @@ $if %cm_LU_emi_scen% == "SDP"        pm_PeProdEmifac(regi,"pebiolc","n2obio") = 
 $IFTHEN.MaccVersion %cm_nonco2_macc_version% == "PBL_2007"
 * PBL_2007 MACs are discretized in steps of 5 $/tC
 sm_dmac = 5 ;
-parameter p10_abatparam_CH4(tall,all_regi,all_enty,steps)        "MAC costs for CH4 by source"
-/
+table p10_abatparam_CH4(tall,all_regi,all_enty,steps)        "MAC costs for CH4 by source"
 $ondelim
-$include "./modules/10_emissions/SectorAggregates/input/p_abatparam_CH4.cs4r"
+$include "./modules/10_emissions/SectorAggregates/input/p_abatparam_CH4.cs3r"
 $offdelim
-/;
-parameter p10_abatparam_N2O(tall,all_regi,all_enty,steps)        "MAC costs for N2O by source"
-/
+;
+
+table p10_abatparam_N2O(tall,all_regi,all_enty,steps)        "MAC costs for N2O by source"
 $ondelim
-$include "./modules/10_emissions/SectorAggregates/input/p_abatparam_N2O.cs4r"
+$include "./modules/10_emissions/SectorAggregates/input/p_abatparam_N2O.cs3r"
 $offdelim
-/;
+;
 $ELSEIF.MaccVersion %cm_nonco2_macc_version% == "PBL_2022"
 *** PBL_2022 MACs are discretized in steps of 20 $/tC
 *** PBL_2022 includes three scenarios, read the big file into p10_all_abatparam_CH4 and subset based on c_nonco2_macc_scenario
 *** Create the set here, as it's not really used anywhere else
 set macc_scens "MAC scenarios for PBL_SSP2_2022 MACCs" /Default, Optimistic, Pessimistic/;
-parameter p10_all_abatparam_CH4(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for CH4 by source for different scenarios, c_nonco2_macc_scenario is chosen for p10_abatparam_CH4"
-/
+table p10_all_abatparam_CH4(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for CH4 by source for different scenarios, c_nonco2_macc_scenario is chosen for p10_abatparam_CH4"
+$offlisting
 $ondelim
-$include "./modules/10_emissions/SectorAggregates/input/p_abatparam_SSP22022_CH4.cs4r"
+$include "./modules/10_emissions/SectorAggregates/input/p_abatparam_SSP22022_CH4.cs3r"
 $offdelim
-/;
+$onlisting
+;
 parameter p10_abatparam_CH4(tall,all_regi,all_enty,steps) "MAC costs for CH4 by source";
 *** Pick MACC scenario
 p10_abatparam_CH4(tall,all_regi,all_enty,steps) = p10_all_abatparam_CH4(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
-parameter p10_all_abatparam_N2O(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for N2O by source for different scenarios, c_nonco2_macc_scenario is chosen for p10_abatparam_N2O"
-/
+table p10_all_abatparam_N2O(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for N2O by source for different scenarios, c_nonco2_macc_scenario is chosen for p10_abatparam_N2O"
+$offlisting
 $ondelim
-$include "./modules/10_emissions/SectorAggregates/input/p_abatparam_SSP22022_N2O.cs4r"
+$include "./modules/10_emissions/SectorAggregates/input/p_abatparam_SSP22022_N2O.cs3r"
 $offdelim
-/;
+$onlisting
+;
 parameter p10_abatparam_N2O(tall,all_regi,all_enty,steps) "MAC costs for N2O by source";
 *** Pick MACC scenario
 p10_abatparam_N2O(tall,all_regi,all_enty,steps) = p10_all_abatparam_N2O(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
@@ -426,12 +427,13 @@ $offdelim
 *** ==================================================================
 
 *** read in F-Gas emissions
-parameter f10_emiFgas(tall,all_regi,all_SSP_forcing_adjust,all_rcp_scen,all_delayPolicy,all_enty)        "F-gas emissions by single gases from IMAGE"
-/
+table f10_emiFgas(tall,all_regi,all_fgas_scen,all_enty)        "F-gas emissions by single gases from prescribed scenarios"
+$offlisting
 $ondelim
-$include "./modules/10_emissions/SectorAggregates/input/f_emiFgas.cs4r"
+$include "./modules/10_emissions/SectorAggregates/input/f_emiFgas.cs3r"
 $offdelim
-/;
+$onlisting
+;
 
 
 *** ==================================================================
