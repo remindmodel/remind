@@ -46,14 +46,14 @@ pm_taxCO2eq_iter(iteration,t,regi) = pm_taxCO2eq(t,regi);
 *** saving pm_taxemiMkt used in this iteration
 pm_taxemiMkt_iteration(iteration,ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt);
 
-if( (cm_emiscen eq 6), 
-$ifthen.neg %optimization% == 'negishi'     
-    pm_taxCO2eqSum(ttot,regi) = abs((abs(q_co2eq.m(ttot,regi)) / pm_ts(ttot)) / (pm_pvp(ttot,"good") + sm_eps));
+if( (cm_emiscen eq 6),
+$ifthen.neg %optimization% == 'negishi'
+    pm_taxCO2eqSum(ttot,regi) = abs((abs(qm_co2eq.m(ttot,regi)) / pm_ts(ttot)) / (pm_pvp(ttot,"good") + sm_eps));
 $else.neg
-    pm_taxCO2eqSum(ttot,regi) = abs( abs(q_co2eq.m(ttot,regi)) / (abs(qm_budget.m(ttot,regi))+ sm_eps) );
-$endif.neg 
-   elseif (cm_emiscen eq 1),  !! even in a BAU scenario without other climate policies, the 2010/2015/2020 CO2 prices should be reported (that still needs to be fixed, I guess, maybe by adding the historic prices to the 45/carbonprice/off variation
-    pm_taxCO2eqSum(ttot,regi)$(ttot.val < 2025) = pm_taxCO2eq(ttot,regi); 
+    pm_taxCO2eqSum(ttot,regi) = abs( abs(qm_co2eq.m(ttot,regi)) / (abs(qm_budget.m(ttot,regi))+ sm_eps) );
+$endif.neg
+   elseif (cm_emiscen eq 1),
+    pm_taxCO2eqSum(ttot,regi)$(ttot.val < 2025) = pm_taxCO2eq(ttot,regi);
 );
 
 ***-----------------------------------------------
@@ -104,10 +104,10 @@ pm_SEPrice(ttot,regi,entySe)$(abs (qm_budget.m(ttot,regi)) gt sm_eps AND (NOT (s
        q_balSe.m(ttot,regi,entySe) / qm_budget.m(ttot,regi);
 
 pm_PEPrice(ttot,regi,entyPe)$(abs (qm_budget.m(ttot,regi)) gt sm_eps) = 
-       q_balPe.m(ttot,regi,entyPe) / qm_budget.m(ttot,regi);
+       qm_balPe.m(ttot,regi,entyPe) / qm_budget.m(ttot,regi);
 
 *** calculate share of stored CO2 from captured CO2
-pm_share_CCS_CCO2(t,regi) = sum(teCCS2rlf(te,rlf), vm_co2CCS.l(t,regi,"cco2","ico2",te,rlf)) / (v_co2capture.l(t,regi)+sm_eps);
+pm_share_CCS_CCO2(t,regi) = sum(teCCS2rlf(te,rlf), vm_co2CCS.l(t,regi,"cco2","ico2",te,rlf)) / (vm_co2capture.l(t,regi)+sm_eps);
 
 
 *CG**ML*: capital interest rate

@@ -27,7 +27,7 @@
 *' bound to enforce matching the historical feedstock quantities. Please note
 *' that the link between capacity additions `vm_deltaCap` and the feedstock
 *' quantities basically follows what happens in the equations `qm_fuel2pe`,
-*' `q_balPe`, `q_transPe2se`, `q_limitCapSe` and `q_cap`. It is a bit
+*' `qm_balPe`, `q_transPe2se`, `q_limitCapSe` and `q_cap`. It is a bit
 *' simplified here, assuming that there is a one to one mapping between PE
 *' (pebios, pebioil) and the respective conversion technologies (bioeths,
 *' biodiesel, respectively), which is currently the case. If this changes in

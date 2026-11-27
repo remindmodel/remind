@@ -99,7 +99,7 @@ q02_energyExp(ttot,regi)$(ttot.val ge max(2015,cm_startyear))..
         )
 ;
 
-*** 2/ Emissions which will generate revenues, following the way emissions are summed in q_emiAllMkt while only retaining specific sources (see documentation)
+*** 2/ Emissions which will generate revenues, following the way emissions are summed in q10_emiAllMkt while only retaining specific sources (see documentation)
 *ML* In the future: try to remove non-energy emissions from FF and industry?
 q02_emitaxredistr(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_emitaxredistr(ttot,regi)

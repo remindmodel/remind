@@ -6,7 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/subsectors/datainput.gms
 
-vm_emiIndBase.l(ttot,regi,entyFe,secInd37) = 0;
+
+
+
 
 Parameters
 
@@ -238,6 +240,9 @@ loop (industry_ue_calibration_target_dyn37(out),
 );
 display p37_energy_limit_def, p37_energy_limit_slope;
 $endif.no_calibration
+
+*** initialize baseline industry emissions before CCS to 0
+vm_emiIndBase.l(ttot,regi,entyFe,secInd37) = 0;
 
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
@@ -596,6 +601,35 @@ loop((ttot,ext_regi)$p37_wasteIncinerationCCSMaxShare(ttot,ext_regi),
   );
 );
 $endIf.cm_wasteIncinerationCCSshare
+
+
+*** Feedstock Input Data -----------------------------------------------------
+
+*** Read non-energy emissions factors for the chemical industry.
+*** These factors are based on IEA feedstock flows and UNFCCC process
+*** emissions data and are converted from GtC/ZJ to GtC/TWa.
+parameter f37_nechem_emissionFactors(ttot,all_regi,*) "non-energy emission factors [GtC per ZJ]"
+/
+$ondelim
+$include "./modules/37_industry/subsectors/input/f_nechem_emissionFactors.cs4r"
+$offdelim
+/;
+
+p37_emifacNonEnergy(ttot,regi,"sesofos","fesos","indst","co2")
+  = f37_nechem_emissionFactors(ttot,regi,"solids") / sm_ZJ_2_TWa;
+p37_emifacNonEnergy(ttot,regi,"seliqfos","fehos","indst","co2")
+  = f37_nechem_emissionFactors(ttot,regi,"liquids") / sm_ZJ_2_TWa;
+p37_emifacNonEnergy(ttot,regi,"segafos","fegas","indst","co2")
+  = f37_nechem_emissionFactors(ttot,regi,"gases") / sm_ZJ_2_TWa;
+
+*** Read projections for the share of plastic waste that is incinerated.
+parameter f37_incinerationShares(ttot,all_regi) "incineration rate of plastic waste"
+/
+$ondelim
+$include "./modules/37_industry/subsectors/input/f_incinerationShares.cs4r"
+$offdelim
+/;
+p37_incinerationRate(ttot,all_regi) = f37_incinerationShares(ttot,all_regi);
 
 *** ---------------------------------------------------------------------------
 ***        2. Process-Based

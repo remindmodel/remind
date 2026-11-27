@@ -410,27 +410,7 @@ loop(regi,
 
 *' Limit REMINDs ability to vent captured CO2 to 1 MtCO2 per yr per region. This happens otherwise to a great extend in stringent climate 
 *' policy scenarios if CCS and CCU capacities are limited in early years, to lower overall adjustment costs of capture technologies.
-v_co2capturevalve.up(t,regi) = 1 * sm_MtCO2_2_GtC;
-
-*** ------------------------------------------------------------------
-*' ##### Assumptions on leakage in the CCUS chain:
-*** ------------------------------------------------------------------
-*' 1. Leakage from CO2 capture and transportation:
-*' 1 percent of captured CO2 leaks back to the atmosphere and is directly deduced from each technology's capture rate 
-*' See s_co2pipe_leakage in datainput.
-*' 2. Leakage from the geological reservoir:
-*' NOT considered in REMIND. 
-*' Justification: effect is too small
-*' According to Alcalde et al. 2018  DOI: 10.1038/s41467-018-04423-1 
-*' "An unrealistic scenario, where CO2 storage is inadequately regulated, estimates that more than 78% will be retained over 10,000 years."
-*' Relating these numbers to REMIND scenarios:
-*' Let R(t) be the fraction remaining after time t with (simplified) constant leakage rate k:
-*' R(t)=e^(kt)
-*' with R(10 000) = 0.78
-*' leakage rate k = 0.0025% / yr
-*' After 100 years, this leads to a loss of 0.25% from the reservoirs
-*' so in the "unrealistic scenario" for every 400 GtCO2 stored, 1 GtCO2 leaks after 100 years.
-
+vm_co2capturevalve.up(t,regi) = 1 * sm_MtCO2_2_GtC;
 
 
 *** ==================================================================
@@ -530,19 +510,13 @@ v_shSeFe.up(ttot,all_regi,all_enty) = 1;
 
 
 *** ==================================================================
-*' #### 7. Assumptions for emissions
-*** (move to a module?) ==============================================
+*' #### 7. Assumptions for air pollutants
+*** ==================================================================
+***( move to air pollutants module?)
 
-vm_emiMacSector.lo(t,regi,enty) = 0;
-vm_emiMacSector.lo(t,regi,"co2luc") = -5.0; !! afforestation can lead to negative emissions
-vm_emiMacSector.lo(t,regi,"n2ofertsom") = -1; !! small negative emissions can result from human activity
 vm_emiMac.fx(t,regi,"so2") = 0;
 vm_emiMac.fx(t,regi,"bc") = 0;
 vm_emiMac.fx(t,regi,"oc") = 0;
-
-*** fix F-gas emissions to inputdata (IMAGE)
-vm_emiFgas.fx(ttot,all_regi,all_enty) = f_emiFgas(ttot,all_regi,"%cm_fgas_scen%",all_enty);
-display vm_emiFgas.L;
 
 
 *** ==================================================================

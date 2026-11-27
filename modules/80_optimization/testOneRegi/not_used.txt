@@ -26,7 +26,7 @@ vm_perm,                        variable,   ???
 pm_cesdata,                     parameter,  ???
 pm_budgetCO2eq,                 parameter,  ???
 sm_budgetCO2eqGlob,             parameter,  ???
-qm_co2eqCum,                    equation,   ???
+qm_co2eqCum,                   equation,   ???
 sm_endBudgetCO2eq,              scalar,     ???
 pm_ttot_val,                    parameter,  ???
 qm_budget,                      equation,   ???
