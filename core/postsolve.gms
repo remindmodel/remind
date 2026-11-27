@@ -24,7 +24,7 @@ pm_actualbudgetco2eqRegi(ttot,regi)$( 2020 lt ttot.val )
   = sum((ttot2)$( 2020 le ttot2.val AND ttot2.val le ttot.val ),
       ((vm_emiAll.l(ttot2,regi,"co2") - vm_emiMacSector.l(ttot2,regi,"co2luc")$(c_budgetscen gt 2 AND c_budgetscen ne 4)) !! co2 emissions including or excluding land-use co2 emissions
       + (sm_tgn_2_pgc * vm_emiAll.l(ttot2, regi, "n2o") + sm_tgch4_2_pgc * vm_emiAll.l(ttot2,regi, "ch4"))$(c_budgetscen le 3)  !! include other GHG emissions if c_budgetscen is 1, 2 or 3
-      - sum(se2fe(enty,enty2,te),     !! subtract bunker emissions if cm_bunkerscen is eq 3 or 6
+      - sum(se2fe(enty,enty2,te),     !! subtract bunker emissions if c_budgetscen is eq 3 or 6
         pm_emifac(ttot2,regi,enty,enty2,te,"co2")
         * vm_demFeSector.l(ttot2,regi,enty,enty2,"trans","other"))$(c_budgetscen eq 3 OR c_budgetscen eq 6))
       * ( (0.5 + pm_ts(ttot2) / 2)$( ttot2.val eq 2020 ) !! second half of the 2020 period (mid 2020 - end 2022) plus 0.5 to account fo beginning 2020 - mid 2020  

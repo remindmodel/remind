@@ -277,8 +277,9 @@ pm_macStep(ttot,regi,enty)$(MacSector(enty))
   = min(801, ceil(p10_priceCO2forMAC(ttot,regi,enty) / sm_dmac) + 1);
 
 *** If the gas price increase since 2005 is higher than the CO2 price, it will drive CH4 emission abatement.
-*** Conversion: p10_priceCO2forMAC [$/tCeq]; T$/TWa = 1e6 M$/TWa * sm_MtCH4_2_TWa * 1 MtCH4/sm_gwpCH4 MtCO2eq * (44/12) MtCO2eq/MtCeq
-p10_priceGas(ttot,regi)=qm_balPe.m(ttot,regi,"pegas")/(qm_budget.m(ttot,regi)+sm_eps) * 1000000 * sm_MtCH4_2_TWa * (1/sm_gwpCH4) * 44/12;
+*** The MAC curves are defined per tCeq using AR4 GWPs (see the sm_gwpCH4_AR4/sm_gwpCH4 rescaling of the carbon price above), so the same GWP must be used here.
+*** Conversion: p10_priceCO2forMAC [$/tCeq]; T$/TWa = 1e6 M$/TWa * sm_MtCH4_2_TWa * 1 MtCH4/sm_gwpCH4_AR4 MtCO2eq * (44/12) MtCO2eq/MtCeq
+p10_priceGas(ttot,regi)=qm_balPe.m(ttot,regi,"pegas")/(qm_budget.m(ttot,regi)+sm_eps) * 1000000 * sm_MtCH4_2_TWa * (1/sm_gwpCH4_AR4) * 44/12;
 
 pm_macStep(ttot,regi,"ch4gas")
   = min(801, ceil(max(p10_priceCO2forMAC(ttot,regi,"ch4gas") * (25/sm_gwpCH4), max(0,(p10_priceGas(ttot,regi)-p10_priceGas("2005",regi))) ) / sm_dmac) + 1);
