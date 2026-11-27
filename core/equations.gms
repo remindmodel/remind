@@ -1145,12 +1145,12 @@ q_limitCapFeH2BI(t,regi,sector)$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst"
 ;
 
 ***---------------------------------------------------------------------------
-*' Enforce historical data biomass share per carrier in sector final energy for transport and buildings (+- 2.5%)
+*' Enforce historical data biomass share per carrier in sector final energy for transport and buildings (+- 2%)
 *' Exempt industry solids as they are covered below
 ***---------------------------------------------------------------------------
 
 q_shbiofe_up(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector) and sector2emiMkt(sector,emiMkt) and NOT (sameas(sector,"indst") and sameas(entyFe,"fesos")))..
-  (pm_secBioShare(t,regi,entyFe,sector) + 0.025)
+  (pm_secBioShare(t,regi,entyFe,sector) + 0.02)
   *
   sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt))
   =g=
@@ -1158,7 +1158,7 @@ q_shbiofe_up(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector) 
 ;
 
 q_shbiofe_lo(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector) and sector2emiMkt(sector,emiMkt) and NOT (sameas(sector,"indst") and sameas(entyFe,"fesos")))..
-  (pm_secBioShare(t,regi,entyFe,sector) - 0.025)
+  (pm_secBioShare(t,regi,entyFe,sector) - 0.02)
   *
   sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt))
   =l=
