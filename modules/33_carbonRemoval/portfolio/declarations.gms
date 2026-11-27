@@ -15,7 +15,7 @@ s33_rock_weath_rate_ambientT    "fraction of stone weathering per year at ambien
 s33_step                        "size of bins in v33_EW_onfield_tot [Gt rock]" / 2.5 /
 *JeS* GJ/tCO2 = EJ/Gt CO2 = 44/12 EJ/Gt C.
 *** OAE
-s33_OAE_efficiency          "the amount of rock required to sequester 1GtC [Gt rock / GtC]"
+s33_OAE_efficiency          "ocean CO2 uptake per unit of CaO [GtC / Gt CaO]"
 s33_OAE_chem_decomposition  "the fraction of CO2 that comes from chemical decomposition in the calcination process"
 s33_OAE_glo_limit           "global limit for OAE [tC / a]"
 ;
