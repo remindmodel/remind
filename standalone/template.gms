@@ -126,7 +126,7 @@ cm_nash_autoconverge  "choice of nash convergence mode"
 cm_emiscen            "policy scenario choice"
 cm_taxCO2_startyear    "level of co2 tax in start year in $ per t CO2eq"
 cm_taxCO2_expGrowth     "growth rate of carbon tax"
-c_macscen            "use of mac"
+cm_macscen            "use of mac"
 cm_nucscen            "nuclear option choice"
 c_co2captureEnergy       "carbon capture option choice"
 c_bioliqscen          "bioenergy liquids technology choise"
@@ -156,11 +156,11 @@ cm_rentconvgas        "[grades2poly] number of years required to converge to the
 cm_rentdisccoal       "[grades2poly] discount factor for the coal rent"
 cm_rentdisccoal2      "[grades2poly] discount factor for the coal rent achieved in 2100"
 cm_rentconvcoal       "[grades2poly] number of years required to converge to the 2100 coal rent"
-c_cint_scen           "additional GHG emissions from mining fossil fuels"
+cm_cint_scen           "additional GHG emissions from mining fossil fuels"
 cm_so2tax_scen         "level of SO2 tax"
 c_techAssumptScen     "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
 c_ccsinjecratescen    "CCS injection rate factor, 0.5% by default yielding a 60 Mt per year IR"
-c_ccscapratescen      "CCS capture rate"
+cm_ccscapratescen      "CCS capture rate"
 c_export_tax_scen    "choose which oil export tax is used in the model. 0 = none, 1 = fix"
 cm_iterative_target_adj "whether or not a tax or a budget target should be iteratively adjusted depending on actual emission or forcing level"
 cm_gdximport_target   "whether or not the starting value for iteratively adjusted budgets, tax scenarios, or forcing targets (emiscen 5,6,8,9) should be read in from the input.gdx"
@@ -194,7 +194,7 @@ cm_emiscen        = 1;         !! def = 1
 $setglobal cm_rcp_scen  none   !! def = "none"
 cm_taxCO2_startyear   = -1;   !! def = -1
 cm_taxCO2_expGrowth = 1.05;      !! def = 1.05
-c_macscen         = 1;         !! def = 1
+cm_macscen         = 1;         !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
 c_co2captureEnergy  = 1;        !! def = 1
@@ -242,10 +242,10 @@ cm_rentdisccoal2    = 0.6;       !! def 0.6
 cm_rentconvcoal     = 50;        !! def 50
 
 cm_so2tax_scen        = 1;         !! def =
-c_cint_scen           = 1;         !! def = 1
+cm_cint_scen           = 1;         !! def = 1
 $setGlobal c_techAssumptScen     = SSP2;         !! def = SSP2
 c_ccsinjecratescen    = 1;         !! def = 1
-c_ccscapratescen      = 1;         !! def = 1
+cm_ccscapratescen      = 1;         !! def = 1
 c_export_tax_scen     = 0;         !! def = 0
 cm_iterative_target_adj  = 0;      !! def = 0
 cm_gdximport_target      = 0;      !! def = 0

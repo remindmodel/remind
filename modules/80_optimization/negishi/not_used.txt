@@ -44,7 +44,7 @@ pm_nfa_start,                      input,       questionnaire
 pm_shPerm,                         parameter,   ???
 pm_taxemiMkt_iteration,            input,       ??
 pm_Xport0,                         parameter,   ???
-qm_co2eqCum,                       equation,    ???
+qm_co2eqCum,                      equation,    ???
 sm_budgetCO2eqGlob,                parameter,   ???
 sm_EJ_2_TWa,                       scalar,      ???
 sm_endBudgetCO2eq,                 scalar,      ???

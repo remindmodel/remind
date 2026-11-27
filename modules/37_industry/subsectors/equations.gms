@@ -300,7 +300,7 @@ q37_incineratedPlastics(t,regi,sefe(entySe,entyFe),emiMkt)$(
   v37_incineratedPlastics(t,regi,entySe,entyFe,emiMkt)
   =e=
     v37_plasticWaste(t,regi,entySe,entyFe,emiMkt)
-  * pm_incinerationRate(t,regi)
+  * p37_incinerationRate(t,regi)
   ;
 
 *' emissions from plastics incineration as a share of total plastic waste,
@@ -343,7 +343,7 @@ q37_emiNonFosNonIncineratedPlastics(t,regi,emi,emiMkt)..
     - v37_plasticsCarbon(t,regi,entySe,entyFe,emiMkt2)
 *' add non-fossil incinerated plastics carbon
     + v37_plasticWaste(t,regi,entySe,entyFe,emiMkt2)
-      * pm_incinerationRate(t,regi)
+      * p37_incinerationRate(t,regi)
   )$( sameas(emi,"co2") AND sameas(emiMkt,"ES") )
 ;
 
@@ -380,7 +380,7 @@ q37_emiChemicalsProcess(t,regi,emi,emiMkt)..
   sum((entyFE2sector2emiMkt_NonEn(entyFe,sector,emiMkt),
          se2fe(entySe,entyFe,te)),
   vm_demFeNonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
-  * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
+  * p37_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
   )
 ;
 

@@ -13,6 +13,8 @@ Scalar
 ;
 
 Parameters
+  p37_emifacNonEnergy(ttot,all_regi,all_enty,all_enty,emi_sectors,all_enty)  "emission factor for non-energy feedstocks, only for chemical industry [GtC/TWa]"
+  p37_incinerationRate(ttot,all_regi)                                         "share of plastic waste that gets incinerated [fraction]"
   pm_abatparam_Ind(ttot,all_regi,all_enty,steps)                               "industry CCS MAC curves [ratio @ US$2017]"
   pm_energy_limit(all_in)                                                      "thermodynamic/technical limits of subsector energy use [GJ/t product]"
   pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)                          "parameters for scaling efficiencies in CES calibration for industry [unitless]"

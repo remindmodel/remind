@@ -142,9 +142,9 @@ o_negitr_cumulative_CO2_emieng_seq(iteration)
     )
 ;
 o_negitr_disc_cons_dr5_reg(iteration,regi) =
-    sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), vm_cons.l(ttot,regi) * (0.95 ** (pm_ttot_val(ttot) - s_t_start)) * pm_ts(ttot) )
-    + sum(ttot$(ttot.val eq 2005), vm_cons.l(ttot,regi) * (0.95 ** (pm_ttot_val(ttot) - s_t_start)) * pm_ts(ttot) * 0.5 )
-    + sum(ttot$(ttot.val eq 2100), vm_cons.l(ttot,regi) * (0.95 ** (pm_ttot_val(ttot) - s_t_start)) * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5 )
+    sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), vm_cons.l(ttot,regi) * (0.95 ** (pm_ttot_val(ttot) - sm_t_start)) * pm_ts(ttot) )
+    + sum(ttot$(ttot.val eq 2005), vm_cons.l(ttot,regi) * (0.95 ** (pm_ttot_val(ttot) - sm_t_start)) * pm_ts(ttot) * 0.5 )
+    + sum(ttot$(ttot.val eq 2100), vm_cons.l(ttot,regi) * (0.95 ** (pm_ttot_val(ttot) - sm_t_start)) * ( pm_ttot_val(ttot)- pm_ttot_val(ttot-1) ) * 0.5 )
 ;
 o_negitr_disc_cons_drInt_reg(iteration,regi) =
     sum(ttot$( (ttot.val lt 2100) AND (ttot.val gt 2005)), vm_cons.l(ttot,regi) * qm_budget.m(ttot,regi)/ (qm_budget.m("2005",regi) + 1.e-8) * pm_ts(ttot) )

@@ -97,7 +97,7 @@ $ondelim
 $include "./core/input/f_developmentState.cs3r"
 $offdelim
 ;
-p_developmentState(tall,all_regi) = f_developmentState(tall,all_regi,"%cm_GDPpopScen%");
+pm_developmentState(tall,all_regi) = f_developmentState(tall,all_regi,"%cm_GDPpopScen%");
 
 *** Load information from BAU run
 Execute_Loadpoint 'input'      vm_cesIO, vm_invMacro;
@@ -498,10 +498,6 @@ loop((ext_regi)$p_extRegiccsinjecrateRegi(ext_regi),
 ;
 $endif.c_ccsinjecrateRegi
 
-table f_dataemiglob(all_enty,all_enty,all_te,all_enty)  "read-in of emissions factors co2,cco2"
-$include "./core/input/generisdata_emi.prn"
-;
-
 parameter pm_share_ind_fesos(tall,all_regi)              "Share of coal solids (coaltr) used in the industry (rest is residential)"
 /
 $ondelim
@@ -517,106 +513,14 @@ $offdelim
 /;
 
 
-*** carbon intensities of coal, oil, and gas
-*** emissions factor of primary energy fossil fuels
-pm_cintraw("pecoal") = 26.1 / s_ZJ_2_TWa;
-pm_cintraw("peoil")  = 20.0 / s_ZJ_2_TWa;
-pm_cintraw("pegas")  = 15.0 / s_ZJ_2_TWa;
-
-$ifthen.tech_CO2capturerate not "%c_tech_CO2capturerate%" == "off"
-p_PECarriers_CarbonContent(peFos)=pm_cintraw(peFos);
-*** From conversation: 25 GtC/ZJ is the assumed carbon content of PE biomass (makes default bioh2c capture rate 90%)
-*** Convert to GtC/TWa
-p_PECarriers_CarbonContent("pebiolc")=25 / s_ZJ_2_TWa;
-loop(pe2se(entyPe,entySe,te)$(p_tech_co2capturerate(te)),
-  if(p_tech_co2capturerate(te) gt 0,
-    if(p_tech_co2capturerate(te) ge 1,
-		  abort "Error: Inconsistent switch usage. A CO2 capture rate is greater than 1. Check c_tech_CO2capturerate.";
-	  );
-*** Alter CO2 capture rate in f_dataemiglob
-*** f_dataemiglob is given in GtC/ZJ
-    f_dataemiglob(entyPe,entySe,te,"cco2") = p_tech_co2capturerate(te) * p_PECarriers_CarbonContent(entyPe) * s_ZJ_2_TWa;
-    if(sameAs(entyPe,"pebiolc"),
-      f_dataemiglob(entyPe,entySe,te,"co2") = -f_dataemiglob(entyPe,entySe,te,"cco2") ;
-    else
-      f_dataemiglob(entyPe,entySe,te,"co2") = p_PECarriers_CarbonContent(entyPe) - f_dataemiglob(entyPe,entySe,te,"cco2") ;
-	);
-  );
-);
-display f_dataemiglob;
-$endif.tech_CO2capturerate
-
-*** CO2 capture rate of CCS technologies (new SSP5 assumptions)
-if (c_ccscapratescen eq 2,
-  f_dataemiglob("pecoal","seel","igccc","co2")    = 0.2;
-  f_dataemiglob("pecoal","seel","igccc","cco2")   = 25.9;
-  f_dataemiglob("pecoal","seh2","coalh2c","co2")  = 0.2;
-  f_dataemiglob("pecoal","seh2","coalh2c","cco2") = 25.9;
-$ifthen "%c_SSP_forcing_adjust%" == "forcing_SSP5"
-  f_dataemiglob("pegas","seel","ngccc","co2")  = 0.1;
-  f_dataemiglob("pegas","seel","ngccc","cco2") = 15.2;
-  f_dataemiglob("pegas","seh2","gash2c","co2")  = 0.1;
-  f_dataemiglob("pegas","seh2","gash2c","cco2") = 15.2;
-$endif
-);
-*nb* specific emissions of transformation technologies (co2 in gtc/zj -> conv. gtc/twyr):
-f_dataemiglob(enty,enty2,te,"co2")$pe2se(enty,enty2,te)       = 1/s_ZJ_2_TWa * f_dataemiglob(enty,enty2,te,"co2");
-f_dataemiglob(enty,enty2,te,"cco2")                           = 1/s_ZJ_2_TWa * f_dataemiglob(enty,enty2,te,"cco2");
-
 table f_dataetaglob(tall,all_te)                      "global eta data"
 $include "./core/input/generisdata_varying_eta.prn"
 ;
 
-*** Read in mac historical emissions to calibrate MAC reference emissions
-parameter p_histEmiMac(tall,all_regi,all_enty)    "historical emissions per MAC"
-/
-$offlisting
-$ondelim
-$include "./core/input/p_histEmiMac.cs4r"
-$offdelim
-$onlisting
-/;
-*** Read in historical emissions per sector to calibrate MAC reference emissions
-parameter p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types)    "historical emissions per sector"
-/
-$offlisting
-$ondelim
-$include "./core/input/p_histEmiSector.cs4r"
-$offdelim
-$onlisting
-/;
 
 ***---------------------------------------------------------------------------
 *** Import and set regional data
 ***---------------------------------------------------------------------------
-
-*** CO2-technologies don't have own emissions, but the pipeline leakage rate (s_co2pipe_leakage) is multiplied on the individual pe2se
-s_co2pipe_leakage = 0.01;
-
-loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
-    f_dataemiglob(enty,enty2,te,"co2")  = f_dataemiglob(enty,enty2,te,"co2") + f_dataemiglob(enty,enty2,te,"cco2") * s_co2pipe_leakage ;
-    f_dataemiglob(enty,enty2,te,"cco2") = f_dataemiglob(enty,enty2,te,"cco2") * (1 - s_co2pipe_leakage );
-);
-
-*** Allocate emission factors to pm_emifac
-option pm_emifac:3:3:1;
-pm_emifac(ttot,regi,enty,enty2,te,"co2")$emi2te(enty,enty2,te,"co2")   = f_dataemiglob(enty,enty2,te,"co2");
-pm_emifac(ttot,regi,enty,enty2,te,"cco2")$emi2te(enty,enty2,te,"cco2") = f_dataemiglob(enty,enty2,te,"cco2");
-*GA  scale N2O energy emissions to match CEDS2025 in 2020 with a simple global factor
-pm_emifac(ttot,regi,enty,enty2,te,"n2o")$emi2te(enty,enty2,te,"n2o") = 1.288 * f_dataemiglob(enty,enty2,te,"n2o");
-
-***JeS from IPCC http://www.ipcc-nggip.iges.or.jp/public/gp/bgp/2_2_Non-CO2_Stationary_Combustion.pdf:
-***JeS CH4: 300 kg/TJ = 0.3 Mt/EJ * 31.536 EJ/TWa = 9.46 Mt /TWa
-***JeS N2O: 1 kg/TJ = 0.001 Mt/EJ * 31.536 EJ/TWa = 0.031536 Mt / TWa
-*** coal 1.4 kg/TJ = 0.04415 Mt/TWa
-*** gas 0.1 kg/TJ = 0.00315 Mt/TWa
-*** oil 0.6 kg/TJ = 0.01892 Mt/TWa
-*** biomass 4 kg/TJ = 0.12614 Mt/TWa;
-*** EF for N2O are in generisdata_emi.prn
-pm_emifac(t,regi,"pecoal","sesofos","coaltr","ch4") = 9.46 * (1-pm_share_ind_fesos("2005",regi));
-pm_emifac(t,regi,"pebiolc","sesobio","biotr","ch4") = 9.46 * (1-pm_share_ind_fesos_bio("2005",regi));
-
-display pm_emifac;
 
 *NB* include data and parameters for upper bounds on fossil fuel transport
 parameter f_IO_trade(tall,all_regi,all_enty,char)        "Energy trade bounds based on IEA data"
@@ -638,19 +542,6 @@ loop(tradePe,
     );
 );
 display pm_IO_trade;
-
-***nicolasb*DOT* FILE produced from D:\projekte\rose\resources\fossilGrades_nico.m; 2011,12,16;12:14:44
-***nicolasb*DOT* original data from literature (Brandt 2009, Charpentier 2009)
-***nicolasb*DOT* data files are available at RD3 drive roseBob_finSSP.xls
-***nicolasb*DOT* tbd the script is available in the common script folder
-***nicolasb*DOT* The parameter describes the extra CO2 emissions from fuel extraction on top of the PE combustion emissions
-***nicolasb*DOT* the units are: GtC per TWa
-***nicolasb*DOT* ATTENTION: the data given here must crrespond with the mapping emi2fuelMine(enty,enty2,rlf)
-p_cint(regi,"co2","peoil","4")=0.0475647000;
-p_cint(regi,"co2","peoil","5")=0.1078133200;
-p_cint(regi,"co2","peoil","6")=0.1775748800;
-p_cint(regi,"co2","peoil","7")=0.2283105600;
-p_cint(regi,"co2","peoil","8")=0.4153983800;
 
 *** historical installed capacity
 $Offlisting
@@ -927,96 +818,7 @@ $ondelim
 $include "./core/input/p_boundEmi.cs4r"
 $offdelim
 /;
-*** read in F-Gas emissions
-table f_emiFgas(tall,all_regi,all_fgas_scen,all_enty)        "F-gas emissions by single gases from prescribed scenarios"
-$offlisting
-$ondelim
-$include "./core/input/f_emiFgas.cs3r"
-$offdelim
-$onlisting
-;
 
-
-* GA Read choice of non-CO2 MACs version
-* PBL_2007 is based on Lucas et al. (2007), and abatement is relative to that study's IMAGE baseline scenario emissions, asssumed relative to ours here
-* PBL_2022 is based on van Harmsen et al. (2022), and abatement is relative to that study's IMAGE SSP2 baseline scenario emissions, asssumed relative to ours here
-$IFTHEN.MaccVersion %c_nonco2_macc_version% == "PBL_2007"
-* PBL_2007 MACs are discretized in steps of 5 $/tC
-sm_dmac = 5 ;
-table p_abatparam_CH4(tall,all_regi,all_enty,steps)        "MAC costs for CH4 by source"
-$ondelim
-$include "./core/input/p_abatparam_CH4.cs3r"
-$offdelim
-;
-table p_abatparam_N2O(tall,all_regi,all_enty,steps)        "MAC costs for N2O by source"
-$ondelim
-$include "./core/input/p_abatparam_N2O.cs3r"
-$offdelim
-;
-$ELSEIF.MaccVersion %c_nonco2_macc_version% == "PBL_2022"
-*** PBL_2022 MACs are discretized in steps of 20 $/tC
-*** PBL_2022 includes three scenarios, read the big file into p_all_abatparam_CH4 and subset based on c_nonco2_macc_scenario
-*** Create the set here, as it's not really used anywhere else
-set macc_scens "MAC scenarios for PBL_SSP2_2022 MACCs" /Default, Optimistic, Pessimistic/;
-table p_all_abatparam_CH4(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for CH4 by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_CH4"
-$offlisting
-$ondelim
-$include "./core/input/p_abatparam_SSP22022_CH4.cs3r"
-$offdelim
-$onlisting
-;
-parameter p_abatparam_CH4(tall,all_regi,all_enty,steps) "MAC costs for CH4 by source";
-*** Pick MACC scenario
-p_abatparam_CH4(tall,all_regi,all_enty,steps) = p_all_abatparam_CH4(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
-table p_all_abatparam_N2O(tall,all_regi,all_enty,macc_scens,steps)        "MAC costs for N2O by source for different scenarios, c_nonco2_macc_scenario is chosen for p_abatparam_N2O"
-$offlisting
-$ondelim
-$include "./core/input/p_abatparam_SSP22022_N2O.cs3r"
-$offdelim
-$onlisting
-;
-parameter p_abatparam_N2O(tall,all_regi,all_enty,steps) "MAC costs for N2O by source";
-*** Pick MACC scenario
-p_abatparam_N2O(tall,all_regi,all_enty,steps) = p_all_abatparam_N2O(tall,all_regi,all_enty,"%c_nonco2_macc_scenario%",steps)
-$ENDIF.MaccVersion
-;
-
-parameter p_abatparam_CO2(tall,all_enty,steps)    "MAC costs for CO2 by source"
-/
-$offlisting
-$ondelim
-$include "./core/input/p_abatparam_CO2.cs4r"
-$offdelim
-$onlisting
-/;
-p_abatparam_CH4(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p_abatparam_CH4(tall,all_regi,all_enty,"201");
-p_abatparam_N2O(tall,all_regi,all_enty,steps)$(ord(steps) gt 201) = p_abatparam_N2O(tall,all_regi,all_enty,"201");
-
-*** Read methane emissions from fossil fuel extraction for calculating emission factors. 
-*** The base year determines whether the data comes from CEDS or EDGAR
-$ifthen %cm_emifacs_baseyear% == "2005" 
-parameter p_emiFossilFuelExtr(all_regi,all_enty)          "methane emissions in 2005 [Mt CH4], needed for the calculation of p_efFossilFuelExtr"
-/
-$ondelim
-$include "./core/input/p_emiFossilFuelExtr.cs4r"
-$offdelim
-/;
-$else
-parameter p_emiFossilFuelExtr(all_regi,all_enty)          "methane emissions in 2020 [Mt CH4], needed for the calculation of p_efFossilFuelExtr"
-/
-$ondelim
-$include "./core/input/p_emiFossilFuelExtr2020.cs4r"
-$offdelim
-/;
-$endif
-
-*** GA: These hardcoded values were probably assuming 2005 as base year, TODO: check and adjust for 2020 case
-$if %cm_LU_emi_scen% == "SSP1"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0047/sm_EJ_2_TWa;
-$if %cm_LU_emi_scen% == "SSP2"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0079/sm_EJ_2_TWa;
-$if %cm_LU_emi_scen% == "SSP2_lowEn"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0079/sm_EJ_2_TWa;
-$if %cm_LU_emi_scen% == "SSP3"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0079/sm_EJ_2_TWa;
-$if %cm_LU_emi_scen% == "SSP5"   p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0066/sm_EJ_2_TWa;
-$if %cm_LU_emi_scen% == "SDP"    p_efFossilFuelExtr(regi,"pebiolc","n2obio") = 0.0047/sm_EJ_2_TWa;
 
 *** In case REMIND is coupled to MAgPIE emissions are obtained from the MAgPIE reporting. 
 *** Thus, emission factors are set to zero in core/presolve.gms after MAgPIE has run at least one.
@@ -1342,29 +1144,13 @@ p_adj_coeff(ttot,regi,te)            = 32 * p_adj_coeff(ttot,regi,te);  !! Resca
 p_adj_coeff_Orig(ttot,regi,te)    = p_adj_coeff(ttot,regi,te);
 p_adj_seed_te_Orig(ttot,regi,te)  = p_adj_seed_te(ttot,regi,te);
 
-*** Unit conversions
-p_emi_quan_conv_ar4(enty) = 1;
-p_emi_quan_conv_ar4(enty)$(emiMacMagpieCH4(enty)) = sm_tgch4_2_pgc * (25/s_gwpCH4);  !! need to use old GWP for MAC cost conversion as it only reverts what has been done in the calculation of the MACs
-p_emi_quan_conv_ar4(enty)$(emiMacMagpieN2O(enty)) = sm_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4(enty)$(emiMacExoCH4(enty)) = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4(enty)$(emiMacExoN2O(enty)) = sm_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4("ch4coal")    = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("ch4gas")     = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("ch4oil")     = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("ch4wstl")    = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("ch4wsts")    = sm_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("n2otrans")   = sm_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4("n2oadac")    = sm_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4("n2onitac")   = sm_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4("n2owaste")   = sm_tgn_2_pgc * (298/s_gwpN2O);
-
 
 *** -----------------------------------------------------------------------------
 *** ------------ emission budgets and their time periods ------------------------
 *** -----------------------------------------------------------------------------
 
 *** definition of budgets on energy emissions in GtC and associated time period
-s_t_start        = 2005;
+sm_t_start        = 2005;
 sm_endBudgetCO2eq      = 2110;
 *cb single budget should cover the full modeling time, as otherwise CO2 prices show strange behaviour around 2100 (and rest of behaviour is also biased by foresight of cap-free post 2100)
 if (cm_emiscen eq 6,
@@ -1403,17 +1189,6 @@ $if  "%cm_rcp_scen%" == "none"    sm_budgetCO2eqGlob = 20000.0000;
 display sm_budgetCO2eqGlob;
 ***-----------------------------------------------------------------------------
 
-***------------------------------------------------------------------------------------
-***                                ESM  MAC data
-***------------------------------------------------------------------------------------
-if(c_macscen eq 2,
-  pm_macSwitch(ttot,regi,emiMacSector)  = 0;
-);
-  pm_macSwitch(ttot,regi,"ch4wstl") = 1;
-  pm_macSwitch(ttot,regi,"ch4wsts") = 1;
-if(c_macscen eq 1,
-  pm_macSwitch(ttot,regi,emiMacSector) = 1;
-);
 
 *** Load historical carbon prices defined in $/t CO2, need to be rescaled to right unit
 pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = 0;
@@ -1425,168 +1200,6 @@ $offdelim
 /;
 pm_taxCO2eq(ttot,regi)$(ttot.val le 2020) = fm_taxCO2eqHist(ttot,regi) * sm_DptCO2_2_TDpGtC;
 
-*** As long as there is hardly any CO2 LUC reduction in MAgPIE we dont need MACs in REMIND
-pm_macSwitch(ttot,regi,"co2luc") = 0;
-*** The tiny fraction n2ofertsom of total land use n2o can get slightly negative in some cases. Ignore MAC for n2ofertsom by default.
-pm_macSwitch(ttot,regi,"n2ofertsom") = 0;
-
-
-* GA: Deactivate MAC abatement for historical periods, assuming no abatement happens until 2030
-pm_macSwitch(ttot,regi,emiMacSector)$(ttot.val le 2025) = 0;
-
-*** load econometric emission data
-*** read in p3 and p4
-parameter p_emineg_econometric(all_regi,all_enty,p)        "parameters for ch4 and n2o emissions from waste baseline and co2 emissions from cement production"
-;
-p_emineg_econometric(regi,enty,"p1") = 0;
-p_emineg_econometric(regi,enty,"p2") = 0;
-*** p2 is calculated in presolve
-
-parameter p_macBase2005(all_regi,all_enty)        "baseline emissions of mac options in 2005"
-/
-$ondelim
-$include "./core/input/p_macBase2005.cs4r"
-$offdelim
-/;
-parameter p_macBase1990(all_regi,all_enty)     "baseline emissions of mac options in 1990"
-/
-$ondelim
-$include "./core/input/p_macBase1990.cs4r"
-$offdelim
-/;
-parameter p_macBaseCEDS2005(all_regi,all_enty)        "baseline emissions of mac options in 2005 from CEDS"
-/
-$ondelim
-$include "./core/input/p_macBaseCEDS2005.cs4r"
-$offdelim
-/;
-parameter p_macBaseCEDS2020(all_regi,all_enty)        "baseline emissions of mac options in 2020"
-/
-$ondelim
-$include "./core/input/p_macBaseCEDS2020.cs4r"
-$offdelim
-/;
-parameter p_macBaseIMAGE(tall,all_regi,all_enty)        "baseline emissions of N2O from transport, adipic acid production, and nitric acid production based on data from van Vuuren"
-/
-$ondelim
-$ifthen %cm_emifacs_baseyear% == "2005" 
-$include "./core/input/p_macBaseVanv.cs4r"
-$else
-$include "./core/input/p_macBaseHarmsen2022.cs4r"
-$endif
-$offdelim
-/;
-
-parameter f_macBaseExo(tall,all_regi,all_enty,all_LU_emi_scen)        "baseline emissions of N2O and CH4 from landuse based on exogenous data"
-/
-$offlisting
-$ondelim
-$include "./core/input/f_macBaseExo.cs4r"
-$offdelim
-$onlisting
-/;
-p_macBaseExo(ttot,regi,emiMacExo(enty))$(ttot.val ge 2005) = f_macBaseExo(ttot,regi,emiMacExo,"%cm_LU_emi_scen%");
-
-
-parameter f_macBaseMagpie(tall,all_regi,all_enty,all_LU_emi_scen,all_rcp_scen)    "baseline emissions of N2O and CH4 from landuse based on data from Magpie"
-/
-$offlisting
-$ondelim
-$include "./core/input/f_macBaseMagpie.cs4r"
-$offdelim
-$onlisting
-/;
-pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
-
-*** pm_macBaseMagpie gets updated in core/presolve.gms when coupling to MAgPIE is active
-
-*** In case of fixing, load p_co2lucSub from input_ref.gdx, since parameters are not automatically treated by the fixing mechanism.
-*** Years >= cm_startyear get their values from the lookup table rather than the input_ref.gdx (see below).
-if( (cm_startyear gt 2005),
-    Execute_Loadpoint "input_ref" p_co2lucSub = p_co2lucSub;
-);
-
-
-*** Overwrite values >= cm_startyear with lookup table, leave values < cm_startyear untouched (from input_ref.gdx, see above).
-*** Gets updated for >= cm_startyear in core/presolve.gms when coupling to MAgPIE is active.
-p_co2lucSub(ttot,regi,emiMacMagpieCO2Sub(all_enty))$(ttot.val ge cm_startyear) = f_macBaseMagpie(ttot,regi,emiMacMagpieCO2Sub,"%cm_LU_emi_scen%","%cm_rcp_scen%");
-
-*** p_macPolCO2luc defines the lower limit for abatement of CO2 landuse change emissions in REMIND
-*** The values are derived from MAgPIE runs with very strong mitigation
-parameter p_macPolCO2luc(tall,all_regi)                "co2 emissions from landuse change with strong mitigation in MAgPIE"
-/
-$ondelim
-$include "./core/input/p_macPolCO2luc.cs4r"
-$offdelim
-/;
-
-*** ----- Emission factor of final energy carriers -----------------------------------
-*** demand side emission factor of final energy carriers in MtCO2/EJ
-*** www.eia.gov/oiaf/1605/excel/Fuel%20EFs_2.xls
-p_ef_dem(regi,entyFe) = 0;
-p_ef_dem(regi,"fedie") = 69.3;
-p_ef_dem(regi,"fehos") = 69.3;
-p_ef_dem(regi,"fepet") = 68.5;
-p_ef_dem(regi,"fegas") = 50.3;
-p_ef_dem(regi,"fegat") = 50.3;
-p_ef_dem(regi,"fesos") = 90.5;
-
-$ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
-*** demand side emission factor of final energy carriers in MtCO2/EJ
-*** https://www.umweltbundesamt.de/sites/default/files/medien/1968/publikationen/co2_emission_factors_for_fossil_fuels_correction.pdf
-  loop(ext_regi$altFeEmiFac_regi(ext_regi),
-    p_ef_dem(regi,entyFe)$(regi_group(ext_regi,regi)) = 0;
-    p_ef_dem(regi,"fedie")$(regi_group(ext_regi,regi)) = 74;
-    p_ef_dem(regi,"fehos")$(regi_group(ext_regi,regi)) = 73;
-    p_ef_dem(regi,"fepet")$(regi_group(ext_regi,regi)) = 73;
-    p_ef_dem(regi,"fegas")$(regi_group(ext_regi,regi)) = 55;
-    p_ef_dem(regi,"fesos")$(regi_group(ext_regi,regi)) = 96;
-  );
-
-$endif.altFeEmiFac
-
-pm_emifac(ttot,regi,"segafos","fegas","tdfosgas","co2") = p_ef_dem(regi,"fegas") / (sm_GtC_2_MtCO2*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(ttot,regi,"sesofos","fesos","tdfossos","co2") = p_ef_dem(regi,"fesos") / (sm_GtC_2_MtCO2*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(ttot,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem(regi,"fehos") / (sm_GtC_2_MtCO2*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem(regi,"fepet") / (sm_GtC_2_MtCO2*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem(regi,"fedie") / (sm_GtC_2_MtCO2*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(ttot,regi,"segafos","fegat","tdfosgat","co2") = p_ef_dem(regi,"fegas") / (sm_GtC_2_MtCO2*sm_EJ_2_TWa); !! GtC/TWa
-
-$ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
-*** Changing refineries emission factors in regions that belong to cm_altFeEmiFac to avoid negative emissions on pe2se 
-*** (changing from 18.4 to 20 zeta joule = 20/31.7098 = 0.630719841 Twa = 0.630719841 * 3.66666666666666 * 1000 * 0.03171  GtC/TWa = 73.33 GtC/TWa)
-loop(ext_regi$altFeEmiFac_regi(ext_regi),
-  pm_emifac(ttot,regi,"peoil","seliqfos","refliq","co2")$(regi_group(ext_regi,regi)) = 0.630719841;
-);
-*** Changing Germany and UKI solids emissions factors to be in line with CRF numbers
-*** (changing from 26.1 to 29.27 zeta joule = 0.922937989 TWa = 107.31 GtC/TWa)
-pm_emifac(ttot,regi,"pecoal","sesofos","coaltr","co2")$(sameas(regi,"DEU") OR sameas(regi,"UKI")) = 0.922937989;
-$endif.altFeEmiFac
-
-
-***------ Read in emission factors for process emissions in chemicals sector---
-*** calculated using IEA data on feedstocks flows and UNFCCC data on chem sector process emissions
-*** these emission factors are for the chemical industry only
-parameter f_nechem_emissionFactors(ttot,all_regi,*)  "non-energy emission factors [GtC per ZJ]"
-/
-$ondelim
-$include "./core/input/f_nechem_emissionFactors.cs4r"
-$offdelim
-/;
-
-pm_emifacNonEnergy(ttot,regi,"sesofos", "fesos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"solids")  / s_ZJ_2_TWa;
-pm_emifacNonEnergy(ttot,regi,"seliqfos","fehos","indst","co2") = f_nechem_emissionFactors(ttot,regi,"liquids") / s_ZJ_2_TWa;
-pm_emifacNonEnergy(ttot,regi,"segafos", "fegas","indst","co2") = f_nechem_emissionFactors(ttot,regi,"gases")   / s_ZJ_2_TWa;
-
-***------ Read in projections for incineration rates of plastic waste---
-*** "incineration rates [fraction]"
-parameter f_incinerationShares(ttot,all_regi)         "incineration rate of plastic waste"
-/
-$ondelim
-$include "./core/input/f_incinerationShares.cs4r"
-$offdelim
-/;
-pm_incinerationRate(ttot,all_regi)=f_incinerationShares(ttot,all_regi);
 
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!
@@ -1719,8 +1332,6 @@ execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
 execute_load "input_ref.gdx", pm_prodFEReference = vm_prodFe.l;
 execute_load "input_ref.gdx", p_prodUeReference = v_prodUe.l;
 execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
-*' load MAC costs from reference gdx. Values for t (i.e. after cm_start_year) will be overwritten in core/presolve.gms 
-execute_load "input_ref.gdx" pm_macCost;
 );
 
 p_prodAllReference(t,regi,te) =

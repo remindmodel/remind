@@ -29,7 +29,7 @@ q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr"))..
 *'  Second part: The gross negative emissions form oae are discounted by unavoidable  
 *'  calcination emissions released due to <100 percent capture.
 *'  Accounting note: The variable is the maximum potential, as if all captured carbon was stored. 
-*'  The net-effect is smaller, if not all captured carbon (vm_co2capture_cdr -> v_co2capture in core)  
+*'  The net-effect is smaller, if not all captured carbon (vm_co2capture_cdr -> vm_co2capture in core)  
 *'  is stored but used for CCU (or vented by capturevalve).
 *'  The net effect is only explicitly calculated in reportEmi.R. 
 *'  Furthermore, the CDR module might also capture energy related and CDR process emissions 

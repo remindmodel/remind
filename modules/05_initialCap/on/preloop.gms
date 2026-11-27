@@ -511,45 +511,7 @@ display p05_deltacap_res,p05_cap_res,pm_pedem_res;
 ***      Enhancing residue potential     END
 ***---------------------------------------------------------------------------
 
-***------------------------------------------------------------------------------
-***------------------------------------------------------------------------------
-***      Adapt Pe2Se emissions factors      START
-***------------------------------------------------------------------------------
-***------------------------------------------------------------------------------
-
-
-*** Calculate pe2se emissions factors based on
-*** 1) PE emissions factor from genersidata_emi.prn (total carbon content of PE input)
-*** 2) FE emissions factor used for combusting fuels on in the energy demand sectors (Emi|CO2|Energy|Demand...)
-*** 3) Conversion efficiencies (etas) of pe2se and se2fe technologies that were calculated in the section above
-*** The calculation is:
-*** Pe2Se emission factor [GtC/TWa(PE))] = PE emissions factor [GtC/TWa(PE))] - Carbon content of output fuel of pe2se technology per unit PE input [GtC/TWa(PE))]
-*** The second term is calculated as a (weighted) average of the FE emissions factor converted to a unit of PE input by multiplying the se2fe and pe2se eta.
-*** The average of FE emissions factor is done as liquids, for example, have different emissions factors depending on the sector (fedie, fehos, fepet).
-loop(entySe$(    sameas(entySe,"segafos")
-              OR sameas(entySe,"seliqfos")
-              OR sameas(entySe,"sesofos")),
-*** Pe2Se emissions factor
-  pm_emifac(ttot,regi,entyPe,entySe,te,"co2")$pm_emifac(ttot,regi,entyPe,entySe,te,"co2")
-    =
-*** Previous PE emissions factor
-  pm_emifac(ttot,regi,entyPe,entySe,te,"co2")
-*** Pe2Se conversion efficiency
-  - pm_eta_conv(ttot,regi,te)
-*** Average of FE emissions factor weighted by se2fe conversion efficiency
-    * ( sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"),
-              pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2")
-              * pm_eta_conv(ttot,regi,te2)  )
-        / sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"),1)  );
 );
-
-display pm_emifac;
-
-);
-
-***------------------------------------------------------------------------------
-***      Adapt Pe2Se emissions factors      END
-***------------------------------------------------------------------------------
 
 ***------------------------------------------------------------------------------
 ***      Load InitialCap outputs in policy runs from reference GDX      START
@@ -564,7 +526,6 @@ if (cm_startyear gt 2005,
   Execute_Loadpoint 'input_ref' pm_pedem_res = pm_pedem_res;
   Execute_Loadpoint 'input_ref' pm_dataeta = pm_dataeta;
   Execute_Loadpoint 'input_ref' pm_aux_capLowerLimit = pm_aux_capLowerLimit;
-  Execute_Loadpoint 'input_ref' pm_emifac = pm_emifac;
   Execute_Loadpoint 'input_ref' vm_deltaCap.l = vm_deltaCap.l;
   Execute_Loadpoint 'input_ref' vm_deltaCap.lo = vm_deltaCap.lo;
   Execute_Loadpoint 'input_ref' vm_deltaCap.up = vm_deltaCap.up;

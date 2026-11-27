@@ -16,7 +16,7 @@ pm_NonFos_IndCC_fraction0(ttot,all_regi,emiInd37) = 0;
 p37_FeedstockCarbonContent(ttot,regi,entyFe)
   = sum(se2fe(entySeFos,entyFe,te),
       pm_emifac(ttot,regi,entySeFos,entyFe,te,"co2") 
-    - pm_emifacNonEnergy(ttot,regi,entySeFos,entyFe,"indst","co2")
+    - p37_emifacNonEnergy(ttot,regi,entySeFos,entyFe,"indst","co2")
     );
 
 *** EOF ./modules/37_industry/subsectors/preloop.gms
