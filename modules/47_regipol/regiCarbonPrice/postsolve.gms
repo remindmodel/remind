@@ -251,6 +251,8 @@ loop((ext_regi,ttot)$regiANDperiodEmiMktTarget_47(ttot,ext_regi),
     p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = 1;
   elseif(NOT(p47_currentConvergence_iter(iteration,ttot,ext_regi) eq p47_currentConvergence_iter(iteration-1,ttot,ext_regi))), !! reset the iteration reference for slope calculation if the target that is being analyzed changes
     p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = ord(iteration);
+  elseif ( iteration.val - p47_slopeReferenceIteration_iter(iteration-1,ttot,ext_regi) > 8 ) !! make sure the reference point is updated regularly, so the comparison point is not stuck in some very different past.
+    p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = iteration.val - 8 ;
   else
     p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = p47_slopeReferenceIteration_iter(iteration-1,ttot,ext_regi);
   );
@@ -329,10 +331,10 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
 ***               if we are still using the slope
                   if(NOT(regiEmiMktRescaleType(iteration,ttot,ttot2,ext_regi,emiMktExt,"squareDev_noNonPositiveSlope")),
 ***                 clamp slopes values to avoid extreme changes (or no change) on a single iteration (avoid corner cases where other parts of the model changes causing undesirable fluctuations on the calculated slope)
-                    if((p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) gt -0.3) OR (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) lt -5),
+                    if((p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) gt -0.05) OR (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) lt -5),
                       p47_clampedRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt);
                     );
-                    p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = max(-5,min(-0.3, p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)));               
+                    p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) = max(-5,min(-0.05, p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)));               
 ***                 calculate the tax rescale factor using the above calculated slope
                     pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = 
                       (
