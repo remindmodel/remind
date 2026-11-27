@@ -1028,6 +1028,10 @@ q_PE_histCap(t,regi,entyPe,entySe)$(p_PE_histCap(t,regi,entyPe,entySe))..
     sum(te$pe2se(entyPe,entySe,te),
       sum(te2rlf(te,rlf), vm_cap(t,regi,te,rlf))
     )
+*** RoSa: historical biomass power capacity (pebiolc.seel) includes biogas plants, which are represented by biodigestCHP (pebiogas). This is caused by the shortcoming of the Ember mapping which maps all electricity production to pebiolc. 
+  + sum(te$pe2se("pebiogas",entySe,te),
+      sum(te2rlf(te,rlf), vm_cap(t,regi,te,rlf))
+    )$( sameas(entyPe,"pebiolc") )
     =g=
     0.9 * p_PE_histCap(t,regi,entyPe,entySe)
 ;

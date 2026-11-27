@@ -111,14 +111,14 @@ p30_maxprod_residue(ttot,regi)     = max(p30_datapebio(regi,"pebiolc","2","maxpr
 vm_fuExtr.up(t,regi,"pebiolc","2") = p30_maxprod_residue(t,regi)*1.0001;
 
 *** RoSa: This should become explicit values by MAgPIE, with respective projections. For now 500 PJ/yr per region.
-vm_fuExtr.up(t,regi,"pemanure","5") = p30_datapebio(regi,"pemanure","5","maxprod",t); 
+vm_fuExtr.up(t,regi,"pebiogas","5") = p30_datapebio(regi,"pebiogas","5","maxprod",t); 
 
 *** RoSa: Now include explicit limits for Germany studies. So far rather arbitrarily. 
 loop(regi$sameas(regi,"DEU"),
 *** Manure bounds
-    vm_fuExtr.up(t,regi,"pemanure","5")$(t.val le 2025) = 0.39 * sm_EJ_2_TWa;
-    vm_fuExtr.up(t,regi,"pemanure","5")$(t.val ge 2030) = 0.35 * sm_EJ_2_TWa;
-    vm_fuExtr.up(t,regi,"pemanure","5")$(t.val ge 2040) = 0.3 * sm_EJ_2_TWa;
+    vm_fuExtr.up(t,regi,"pebiogas","5")$(t.val le 2025) = 0.39 * sm_EJ_2_TWa;
+    vm_fuExtr.up(t,regi,"pebiogas","5")$(t.val ge 2030) = 0.35 * sm_EJ_2_TWa;
+    vm_fuExtr.up(t,regi,"pebiogas","5")$(t.val ge 2040) = 0.3 * sm_EJ_2_TWa;
 *** Residue bounds
     vm_fuExtr.up(t,regi,"pebiolc","2")$(t.val ge 2030) = 0.60 * sm_EJ_2_TWa;
 *** 2nd generation bounds

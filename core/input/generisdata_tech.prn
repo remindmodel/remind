@@ -256,7 +256,7 @@ Biomass pyrolysis to Biochar and energy co-products - biopyronly; biopyrhe; biop
     omf is set based on other bioenergy technologies.
 
 Anaerobic digestion - biodigestCHP; biodigestGAS
-    PE input (pemanure) is measured as raw biogas energy (IEA convention), so eta is per unit of biogas.
+    PE input (pebiogas) is measured as raw biogas energy (IEA convention), so eta is per unit of biogas.
     Full derivation in biodigest_parameters.md. Currency: 1 EUR2026 ~ 0.85 USD2015; 1 EUR2020 ~ 1.05 USD2015.
     --- biodigestCHP: agricultural plant, 70% energy crops / 30% manure, 511 kW rated output (Bemessungsleistung),
         1135 kW CHP installed (2.2x overbuilt), IEE/DBFZ/ESE (2025) EEG-Evaluationsbericht, 1. Zwischenbericht, Tab. 6-1

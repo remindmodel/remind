@@ -337,7 +337,7 @@ all_enty             "all types of quantities"
     pebiolc      "PE biomass lignocellulosic"
     pebios       "PE biomass sugar and starch"
     pebioil      "PE biomass sunflowers, palm oil, etc"
-    pemanure     "PE manure"
+    pebiogas     "PE biogas from anaerobic digestion"
 
     all_seso     "all to SE solids"
     sesofos      "SE solids from fossil PE"
@@ -1630,7 +1630,7 @@ enty(all_enty)       "all types of quantities"
     pesol        "primary energy solar"
     pebiolc      "primary energy biomass lignocellulosic"
     pebios       "primary energy biomass sugar and starch"
-    pemanure     "PE manure"
+    pebiogas     "PE biogas from anaerobic digestion"
     pebioil      "primary energy biomass sunflowers, palm oil, etc"
     seliqbio     "secondary energy liquids from biomass (ex. ethanol)"
     seliqfos     "secondary energy liquids from fossil primary energy (ex. petrol and diesel)"
@@ -1729,14 +1729,14 @@ entyPe(all_enty)      "Primary energy types (PE)"
     pesol        "PE solar"
     pebiolc      "PE biomass lignocellulosic"
     pebios       "PE biomass sugar and starch"
-    pemanure     "PE manure"
+    pebiogas     "PE biogas from anaerobic digestion"
     pebioil      "PE biomass sunflowers, palm oil, etc"
 /
 peBio(all_enty)      "biomass primary energy types"
 /
     pebiolc      "PE biomass lignocellulosic"
     pebios       "PE biomass sugar and starch"
-    pemanure     "PE manure"
+    pebiogas     "PE biogas from anaerobic digestion"
     pebioil      "PE biomass sunflowers, palm oil, etc"
 /
 peRe(all_enty)    "Renewable primary energy sources"
@@ -1747,7 +1747,7 @@ peRe(all_enty)    "Renewable primary energy sources"
     pesol        "PE solar"
     pebiolc      "PE biomass lignocellulosic"
     pebios       "PE biomass sugar and starch"
-    pemanure     "PE manure"
+    pebiogas     "PE biogas from anaerobic digestion"
     pebioil      "PE biomass sunflowers, palm oil, etc"
 /
 peFos(all_enty)      "primary energy fossil fuels"
@@ -2399,8 +2399,8 @@ pe2se(all_enty,all_enty,all_te) "map primary energy carriers to secondary"
     pebiolc.seliqbio.bioftrec
     pebiolc.seliqbio.bioftcrec
     pebioil.seliqbio.biodiesel
-    pemanure.seel.biodigestCHP
-    pemanure.segabio.biodigestGAS
+    pebiogas.seel.biodigestCHP
+    pebiogas.segabio.biodigestGAS
     pebios.seliqbio.bioeths
     pebiolc.seliqbio.bioethl
     peoil.seel.dot
@@ -2557,9 +2557,9 @@ pc2te(all_enty,all_enty,all_te,all_enty)    "mapping for own consumption of tech
     pecoal.seh2.coalh2.seel
     pecoal.seh2.coalh2c.seel
     pebiolc.seel.biochp.sehe
-    pemanure.seel.biodigestCHP.sehe
+    pebiogas.seel.biodigestCHP.sehe
     pebiolc.segabio.biogasc.seel
-    pemanure.segabio.biodigestGAS.seel
+    pebiogas.segabio.biodigestGAS.seel
     segabio.fegas.tdbiogas.seel
     segafos.fegas.tdfosgas.seel
     pegeo.sehe.geohe.seel
@@ -2650,17 +2650,17 @@ emi2te(all_enty,all_enty,all_te,all_enty)    " map emissions to technologies"
     pebiolc.seliqbio.bioethl.bc
     pebios.seliqbio.bioeths.bc
     pebioil.seliqbio.biodiesel.bc
-    pemanure.seel.biodigestCHP.bc
-    pemanure.segabio.biodigestGAS.bc
+    pebiogas.seel.biodigestCHP.bc
+    pebiogas.segabio.biodigestGAS.bc
     pebiolc.seliqbio.bioethl.oc
     pebios.seliqbio.bioeths.oc
     pebioil.seliqbio.biodiesel.oc
-    pemanure.seel.biodigestCHP.oc
-    pemanure.segabio.biodigestGAS.oc
+    pebiogas.seel.biodigestCHP.oc
+    pebiogas.segabio.biodigestGAS.oc
     pebiolc.seh2.bioh2c.n2o
     pebiolc.seel.biochp.n2o
-    pemanure.seel.biodigestCHP.n2o
-    pemanure.segabio.biodigestGAS.n2o
+    pebiogas.seel.biodigestCHP.n2o
+    pebiogas.segabio.biodigestGAS.n2o
     pebiolc.sehe.biohp.n2o
     pebiolc.sesobio.biotr.n2o
     pebiolc.sesobio.biotrmod.n2o
@@ -2809,7 +2809,7 @@ pe2rlf(all_enty,rlf)     "map exhaustible energy to grades for qm_fuel2pe"
     pebiolc.(1*2)
     pebios.(5)
     pebioil.(5)
-    pemanure.(5)
+    pebiogas.(5)
     (peur,pegeo,pehyd,pewin,pesol).1
 /
 
