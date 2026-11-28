@@ -1236,10 +1236,10 @@ $offdelim
 $onlisting
 ;
 
-pm_fedemandInd(t,regi,in) = f_fedemandInd(t,regi,"%cm_demScen%",in);
+pm_fedemandInd(tall,regi,in) = f_fedemandInd(tall,regi,"%cm_demScen%",in);
 *** data input for industry FE that is no part of the CES tree 
 *** needed for process-based steel implementation, where these items are not part of "in"
-pm_fedemandInd(t,regi,ppfen_no_ces_use) = f_fedemandInd(t,regi,"%cm_demScen%",ppfen_no_ces_use);
+pm_fedemandInd(tall,regi,ppfen_no_ces_use) = f_fedemandInd(tall,regi,"%cm_demScen%",ppfen_no_ces_use);
 
 *** RCP-dependent demands in buildings (climate impact)
 Table
@@ -1251,7 +1251,7 @@ $offdelim
 $onlisting
 ;
 
-pm_fedemandBuild(t,regi,cal_ppf_buildings_dyn36) = f_fedemandBuild(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
+pm_fedemandBuild(tall,regi,cal_ppf_buildings_dyn36) = f_fedemandBuild(tall,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 
 *** Scale demand across industry (FE and UE) and building sectors (FE; UE happens in module 36)
 $ifthen.scaleDemand not "%cm_scaleDemand%" == "off"
