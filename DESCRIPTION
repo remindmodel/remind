@@ -54,6 +54,7 @@ Imports:
     piamutils,
     piamValidation (>= 0.19.0),
     plotly,
+    processx,
     purrr,
     quitte (>= 0.3149.0),
     R.utils,

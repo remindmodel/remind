@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### input data/calibration
 
+
+- **core** Integrate POSTED to eventually replace values from `generisdata_tech.prn`
+  [[#2547]([github.com/remindmodel/remind/pull/2547](https://github.com/remindmodel/remind/pull/2547))]
 - **core** New Fgas scenarios, including a new scenario format
   [[#2506]([github.com/remindmodel/remind/pull/2506](https://github.com/remindmodel/remind/pull/2506))]
 

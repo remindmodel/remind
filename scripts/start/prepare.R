@@ -149,6 +149,15 @@ prepare <- function() {
   # check whether the regional resolution and input data revision are outdated and update data if needed
   cfg <- updateInputData(cfg, remindPath = ".")
 
+  # core/input/f_techdata.csv is not committed, so it must exist before
+  # GAMS reads it; this stops the run when it cannot be built
+  source("scripts/input/create_input_for_techdata.R")
+  create_input_for_techdata(".")
+  # archive the resolved Python environment f_techdata.csv was built from in
+  # the run folder, like renv.lock does for the R environment
+  file.copy("scripts/input/techdata/uv.lock",
+            file.path(cfg$results_folder, "techdata-uv.lock"), overwrite = TRUE)
+
   ############ update information ########################
   # update_info, which regional resolution and input data revision in tmpModelFile
   update_info(madrat::regionscode(cfg$regionmapping), cfg$inputRevision, cfg$model_version)

@@ -89,6 +89,7 @@ parameters
 pm_eta_conv(tall,all_regi,all_te)                    "conversion efficiency of all energy technologies, only applying to technologies that do not have explicit time-dependant conversion efficiencies, still eta converges until 2050 to dataglob_values. [efficiency (0..1), nuclear: TWa_elec/Mt_Ur]"
 pm_dataeta(tall,all_regi,all_te)                     "read-in parameter for conversion efficiency of technologies that vary exogenously over time based on generisdata_varying_eta.prn file [efficiency (0..1)]"
 pm_data(all_regi,char,all_te)                        "Large array for most technical parameters of technologies, more detail on the individual technical parameters and their units can be found in the declaration of the set 'char' "
+p_dataglobPrn(char,all_te)                           "fm_dataglob values from generisdata_tech.prn, replaced by POSTED in core/input/f_techdata.csv [unit as in generisdata_tech.prn]"
 pm_cf(tall,all_regi,all_te)                          "read-in parameter for capacity factor (fraction of the year that a plant is running) [share]"
 p_tkpremused(all_regi,all_te)                        "turn-key cost premium used in the model (with a discount rate of 3 + pure rate of time preference), measured as relative increase of overnight investment costs)"
 pm_inco0_t(ttot,all_regi,all_te)                     "investment cost parameter including exogenuous time-variance for non-learning technologies [T$/TW]"
