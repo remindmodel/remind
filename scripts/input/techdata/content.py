@@ -9,25 +9,18 @@
 POSTED (https://github.com/PhilippVerpoort/posted), the Potsdam open-source
 techno-economic database, provides values for energy and climate-mitigation
 technologies. This module aggregates the TEDFs listed in QUERIES into the REMIND
-PROPERTIES, scripts/input/techdata/create_input.py checks and writes the
-csv files.
+variables in PROPERTIES.
 
 POSTED's aggregate() harmonises units and averages across sources, subtechnologies
 and sizes, normalising all values to one unit of output capacity and output
-activity of the technology. The properties are then calculated from these with
-pint quantities from cet_units (https://github.com/PhilippVerpoort/cet-units),
-keeping track of their units, so that the unit written above every value of the
-csv is derived, not asserted. POSTED delivers global data only; regional values
-would belong in p_inco0 and pm_data in core/datainput.gms, not in fm_dataglob,
-and are not handled here.
+activity of the technology. At the moment, POSTED delivers global data only.
 """
 
 import pandas as pd
 from cet_units import Unit
 from posted import TEDF, defaults
 
-# Currency of all monetary values. Must match the currency REMIND expects in
-# core/datainput.gms (fm_dataglob after the generisdata conversion).
+# default currency in REMIND
 defaults["currency"] = "USD_2017"
 
 # Activity and capacity unit per carrier (POSTED flow names), lower heating
@@ -67,15 +60,12 @@ VARIABLES = {
 # One expression per property, evaluated with the variables as pint quantities.
 #
 # omf is a fraction of the investment costs per year. REMIND's omv is charged per
-# unit of output, but generisdata_tech.prn and therefore GAMS give it per kW of
-# output and year, so converting POSTED's per output kWh value to that unit
-# multiplies it by the 8760 hours of a full-load year; for the technologies
-# measured in mass it is already per tonne and stays untouched.
-# inco0year is not calculated: fetch writes the year of the inco0 above into the
-# csv as this char, as generisdata_tech.prn does, and core/datainput.gms anchors
-# the learning curve of teLearn at it.
+# unit of output, but REMIND give it per kW of output and year, so converting
+# POSTED's per output kWh value to that unit multiplies it by the 8760 hours of a
+# full-load year; for the technologies measured in mass it is already per tonne.
 PROPERTIES = {
     "inco0": "capex / capacity",
+    # inco0year written later
     "eta": "output / input",
     "omf": "opexf / capex",
     "omv": "opexv / output",
@@ -131,12 +121,7 @@ PERIODS = [2020, 2025, 2030, 2040, 2050]
 #
 # Asterisks cannot be selected for, omit a field to aggregate over all its
 # values. Field values are listed explicitly instead of relying on POSTED adding
-# new ones. The technologies of the process-based industry model have no input
-# carrier and no eta, and POSTED reports the blast-furnace route as a whole: its
-# CAPEX is not split between bf and bof, so their inco0 stays from
-# generisdata_tech.prn, and its OPEX Variable is charged once, through bof, whose
-# output is the route's, because core/equations.gms q_costOM charges omv on the
-# output of every one of the two.
+# new ones.
 QUERIES = {
     "elh2": {
         "tedf": "Tech|Electrolysis",

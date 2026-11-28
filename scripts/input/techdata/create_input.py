@@ -5,22 +5,20 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 """Write the REMIND input csv file computed from POSTED by content.py.
+Format written:
+* unit for the next block
+char,te,value
+char,te,value
+char,te,value
+* unit for the next block
+char,te,value
+char,te,value
 
-This is what scripts/input/create_input_for_techdata.R calls. It writes
-core/input/f_techdata.csv, which core/datainput.gms reads to replace
-values from generisdata_tech.prn: one char,te,value line per property, the
-shape of fm_dataglob, grouped under comments naming their unit, which GAMS
-ignores inside a data definition. The file is not committed, it is generated
-input like everything else in core/input, but its header still records the
-sha256 of uv.lock and of these scripts that produced it; --check compares both
-with scripts/input/techdata/uv.lock and these files.
-
-Exit codes of --check:
+Call with --check to see status of the csv file. Exit codes:
     0  the csv is up to date
     3  regenerate it, outdated or missing
     1  this script crashed, 2 what argparse and uv exit with, both failures
-The posted pin in pyproject.toml is not checked here,
-scripts/input/create_input_for_techdata.R syncs it from config/default.cfg.
+The posted pin in pyproject.toml is not checked here, but on the R side.
 
     uv run --project scripts/input/techdata python scripts/input/techdata/create_input.py [--out PATH]
     uv run --project scripts/input/techdata python scripts/input/techdata/create_input.py --check
@@ -30,7 +28,6 @@ import argparse
 import hashlib
 import itertools
 import math
-import sys
 import tomllib
 from pathlib import Path
 

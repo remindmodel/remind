@@ -7,32 +7,19 @@
 
 # Techno-economic data from POSTED (https://github.com/PhilippVerpoort/posted)
 #
-# scripts/input/techdata/content.py fetches the values configured in its
-# QUERIES from POSTED and calculates the properties as pint quantities from
-# cet-units (https://github.com/PhilippVerpoort/cet-units),
+# scripts/input/techdata/content.py fetches the values configured in its QUERIES from POSTED
 # scripts/input/techdata/create_input.py writes them into
 # core/input/f_techdata.csv, which core/datainput.gms reads to replace
-# values from generisdata_tech.prn. That csv is not committed, it is generated
-# input like everything else in core/input, and its header records what produced
-# it, see scripts/input/techdata/create_input.py.
+# values from generisdata_tech.prn. Its header contains hashes on how it was produced.
 #
-# uv, Python and POSTED are mandatory: there is no way to run REMIND without
-# them, everything which cannot check or generate the csv stops the run.
-# prepare.R calls create_input_for_techdata, so the csv exists before GAMS
-# starts, standalone runs fetch it with this script.
+# This script is called during a run from prepare.R and requires uv and Python
 #
-# The POSTED version is configured as cfg$postedVersion in config/default.cfg,
-# the only place where it is edited. syncPostedVersion copies it to the posted
-# pin in scripts/input/techdata/pyproject.toml and runs 'uv lock' when
-# they differ. scripts/input/techdata/ is a Python project of its own,
-# with pyproject.toml, uv.lock and .venv; uv is called with --project to reach
-# it, so REMIND can host more than one, incompatible Python environment.
-#
-# Checking is done by create_input.py --check, see techdataCheck.
+# The POSTED version is configured as cfg$postedVersion in config/default.cfg
+# and copied to scripts/input/techdata/pyproject.toml.
 #
 # Standalone: Rscript scripts/input/create_input_for_techdata.R [remindPath] [--force]
 
-# the POSTED version configured as cfg$postedVersion in config/default.cfg
+# get the POSTED version configured as cfg$postedVersion in config/default.cfg
 configPostedVersion <- function(remindPath = ".") {
   conffile <- file.path(remindPath, "config", "default.cfg")
   env <- new.env()
